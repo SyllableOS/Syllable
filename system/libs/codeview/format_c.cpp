@@ -40,7 +40,7 @@ using namespace cv;
 #define C_FLAGS         (C_ESCAPE | C_SLASH | C_STAR)
 
 
-static const string names[]={
+static const os::String names[]={
 	"Default",
 	"Comment",
 	"String",
@@ -48,7 +48,7 @@ static const string names[]={
 	"Keyword"
 };
 
-static const string unusedname="<Not Used>";
+static const os::String unusedname="<Not Used>";
 
 static const os::Color32_s defaultcolors[]={
 	os::Color32_s(  0,   0,   0),//default, black
@@ -142,7 +142,7 @@ uint Format_C::GetStyleCount()
 }
 
 
-const string & Format_C::GetStyleName( char nType )
+const os::String & Format_C::GetStyleName( char nType )
 {
     if( nType < 0 || nType >= FORMAT_COUNT )
 	return ::unusedname;
@@ -172,7 +172,7 @@ static inline bool canContinueIdentifier(char c){ return c=='_' || (c>='a' && c<
 
 
 //TODO: this method is slightly wrong. Fix it
-void Format_C::FindWords( const string &line, string &format )
+void Format_C::FindWords( const os::String &line, os::String &format )
 {
 	uint start=0, end;
 
@@ -184,7 +184,7 @@ void Format_C::FindWords( const string &line, string &format )
 		++end;
 
 	while(start<line.size()){
-		string tmp=line.substr(start, end-start);
+		os::String tmp=line.const_str().substr(start, end-start);
 
 		int max=sizeof(keywords)/sizeof(keywords[0]);
 		int min=0;
@@ -192,7 +192,7 @@ void Format_C::FindWords( const string &line, string &format )
 
 		//binary search
 		while(max-min>1){
-			if(keywords[test]==tmp)
+			if(!strcmp(keywords[test], tmp.c_str()))
 				break;
 			if(tmp<keywords[test])
 				max=test;
@@ -200,7 +200,7 @@ void Format_C::FindWords( const string &line, string &format )
 				min=test;
 			test=(max+min)/2;
 		}
-		if(keywords[test]==tmp){
+		if(!strcmp(keywords[test], tmp.c_str())){
 			for(;start<end;++start)
 				format[start]=F_KEYWORD;
 		}
@@ -216,7 +216,7 @@ void Format_C::FindWords( const string &line, string &format )
 	}
 }
 
-CodeViewContext Format_C::Parse( const string &line, string &format, CodeViewContext cookie )
+CodeViewContext Format_C::Parse( const os::String &line, os::String &format, CodeViewContext cookie )
 {
 	int oldcntx = cookie.nContext, newcntx = cookie.nContext;
 	char c;
@@ -345,7 +345,7 @@ CodeViewContext Format_C::Parse( const string &line, string &format, CodeViewCon
 		return newcntx & ( C_SPANCOMMENT );
 }
 
-string Format_C::GetIndentString( const string &line, bool useTabs, uint tabSize )
+os::String Format_C::GetIndentString( const os::String &line, bool useTabs, uint tabSize )
 {
 	if(line.size()==0)
 		return "";
@@ -357,18 +357,18 @@ string Format_C::GetIndentString( const string &line, bool useTabs, uint tabSize
 			
 	//TODO: ignore trailing whitespace
 	if(line[line.size()-1]=='{' || line[line.size()-1]==':'){
-		string pad;		
+		os::String pad;		
 		if(useTabs)
 			pad="\t";
 		else
 			pad.resize(tabSize, ' ');
 			
-		return line.substr(0, white)+pad;
+		return os::String(line.const_str().substr(0, white))+pad;
 	}else
-		return line.substr(0, white);
+		return line.const_str().substr(0, white);
 }
 
-uint Format_C::GetPreviousWordLimit(const std::string &line, uint chr)
+uint Format_C::GetPreviousWordLimit(const os::String &line, uint chr)
 {
 	if(chr==0)
 		return 0;
@@ -388,7 +388,7 @@ uint Format_C::GetPreviousWordLimit(const std::string &line, uint chr)
 	return chr;
 }
 
-uint Format_C::GetNextWordLimit(const std::string &line, uint chr)
+uint Format_C::GetNextWordLimit(const os::String &line, uint chr)
 {
 	uint max=line.size();
 	if(chr>=max)
@@ -405,7 +405,7 @@ uint Format_C::GetNextWordLimit(const std::string &line, uint chr)
 }
 
 
-int Format_C::GetFoldLevel( const std::string &cLine, int nOldFoldLevel )
+int Format_C::GetFoldLevel( const os::String &cLine, int nOldFoldLevel )
 {
 	int i;
 
@@ -416,3 +416,4 @@ int Format_C::GetFoldLevel( const std::string &cLine, int nOldFoldLevel )
 	
 	return nOldFoldLevel;
 }
+

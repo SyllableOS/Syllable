@@ -41,14 +41,14 @@ using namespace cv;
 #define C_FLAGS         (C_ESCAPE | C_SLASH | C_STAR)
 
 
-static const string names[]={
+static const os::String names[]={
 	"Default",
 	"Comment",
 	"String",
 	"Keyword"
 };
 
-static const string unusedname="<Not Used>";
+static const os::String unusedname="<Not Used>";
 
 static const os::Color32_s defaultcolors[]={
 	os::Color32_s(  0,   0,   0),//default, black
@@ -141,7 +141,7 @@ uint Format_Perl::GetStyleCount()
     return FORMAT_COUNT;
 }
 
-const string & Format_Perl::GetStyleName( char nType )
+const os::String & Format_Perl::GetStyleName( char nType )
 {
     if( nType < 0 || nType >= FORMAT_COUNT )
 	return ::unusedname;
@@ -171,7 +171,7 @@ static inline bool canContinueIdentifier(char c) { return c=='_' || (c>='a' && c
 
 
 //TODO: this method is slightly wrong. Fix it
-void Format_Perl::FindWords(const string &line, string &format){
+void Format_Perl::FindWords(const os::String &line, os::String &format){
 	uint start=0, end;
 
 	while(start<line.size() && (format[start]!=F_DEFAULT || !canStartIdentifier(line[start])))
@@ -182,7 +182,7 @@ void Format_Perl::FindWords(const string &line, string &format){
 		++end;
 
 	while(start<line.size()){
-		string tmp=line.substr(start, end-start);
+		os::String tmp=line.substr(start, end-start);
 
 		int max=sizeof(keywords)/sizeof(keywords[0]);
 		int min=0;
@@ -190,7 +190,7 @@ void Format_Perl::FindWords(const string &line, string &format){
 
 		//binary search
 		while(max-min>1){
-			if(keywords[test]==tmp)
+			if(os::String(keywords[test])==tmp)
 				break;
 			if(tmp<keywords[test])
 				max=test;
@@ -198,7 +198,7 @@ void Format_Perl::FindWords(const string &line, string &format){
 				min=test;
 			test=(max+min)/2;
 		}
-		if(keywords[test]==tmp){
+		if(os::String(keywords[test])==tmp){
 			for(;start<end;++start)
 				format[start]=F_KEYWORD;
 		}
@@ -214,7 +214,7 @@ void Format_Perl::FindWords(const string &line, string &format){
 	}
 }
 
-CodeViewContext Format_Perl::Parse(const string &line, string &format, CodeViewContext cookie){
+CodeViewContext Format_Perl::Parse(const os::String &line, os::String &format, CodeViewContext cookie){
 	int oldcntx=cookie.nContext, newcntx=cookie.nContext;
 	char c;
 
@@ -313,7 +313,7 @@ CodeViewContext Format_Perl::Parse(const string &line, string &format, CodeViewC
 		return newcntx & ( C_SPANCOMMENT );
 }
 
-string Format_Perl::GetIndentString( const string &line, bool useTabs, uint tabSize )
+os::String Format_Perl::GetIndentString( const os::String &line, bool useTabs, uint tabSize )
 {
 	if(line.size()==0)
 		return "";
@@ -336,7 +336,7 @@ string Format_Perl::GetIndentString( const string &line, bool useTabs, uint tabS
 		return line.substr(0, white);
 }
 
-uint Format_Perl::GetPreviousWordLimit(const std::string &line, uint chr)
+uint Format_Perl::GetPreviousWordLimit(const os::String &line, uint chr)
 {
 	if(chr==0)
 		return 0;
@@ -356,7 +356,7 @@ uint Format_Perl::GetPreviousWordLimit(const std::string &line, uint chr)
 	return chr;
 }
 
-uint Format_Perl::GetNextWordLimit(const std::string &line, uint chr)
+uint Format_Perl::GetNextWordLimit(const os::String &line, uint chr)
 {
 	uint max=line.size();
 	if(chr>=max)
@@ -371,5 +371,3 @@ uint Format_Perl::GetNextWordLimit(const std::string &line, uint chr)
 	}
 	return chr;
 }
-
-

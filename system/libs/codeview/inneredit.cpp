@@ -146,7 +146,7 @@ void InnerEdit::Paint(const os::Rect &r)
 	uint32 nBufferIndex = _TranslateBufferIndex( nVisibleLine );
 	float y = nVisibleLine * lineHeight;
 	while( nBufferIndex <= nBotLine && nBufferIndex < buffer.size() ) {
-		std::string& pcLineText = buffer[ nBufferIndex ].text;
+		os::String& pcLineText = buffer[ nBufferIndex ].text;
 		uint invStart=0, invEnd=0, nMargin = 0;
 		bool bIsFolded = _LineIsFolded( nBufferIndex );
 
@@ -309,10 +309,10 @@ void InnerEdit::invalidateLines(int start, int stop)
 }
 
 /** Set the entire buffer */
-void InnerEdit::setText(const string &s)
+void InnerEdit::setText(const os::String &s)
 {
 	buffer.clear();
-	vector<string> list;
+	vector<os::String> list;
 
 	splitLine(list, s);
 	buffer.resize(list.size());
@@ -337,13 +337,13 @@ void InnerEdit::setText(const string &s)
 }
 
 /** Insert text at a certain location and optionally create an UndoNode */
-void InnerEdit::insertText(const string &str, uint x, uint y, bool addUndo)
+void InnerEdit::insertText(const os::String &str, uint x, uint y, bool addUndo)
 {
 	uint nBufferIndex = _TranslateBufferIndex( y );
 	nBufferIndex = min( nBufferIndex, buffer.size() );
 	x = min( x, buffer[nBufferIndex].text.size() );
 
-	vector<string> list;
+	vector<os::String> list;
 
 	splitLine(list, str);
 
@@ -353,7 +353,7 @@ void InnerEdit::insertText(const string &str, uint x, uint y, bool addUndo)
 		addUndoNode(UndoNode::ADDED, str, x, y);
 
 	if(list.size()==1){
-		buffer[nBufferIndex].text.insert(x, str);
+		buffer[nBufferIndex].text.str().insert(x, str);
 	
 		if( _TranslateBufferIndex(cursorY) == nBufferIndex && cursorChar >= x )
 			cursorChar += list[0].size();
@@ -362,7 +362,7 @@ void InnerEdit::insertText(const string &str, uint x, uint y, bool addUndo)
 		//_AdjustFoldedSections( nBufferIndex, 1 );
 		invalidateLines(y, y);
 	}else{
-		string tmp=buffer[ nBufferIndex ].text.substr(x);
+		os::String tmp=buffer[ nBufferIndex ].text.str().substr(x);
 		buffer[nBufferIndex].text.erase(x);
 		buffer[nBufferIndex].text+=list[0];
 
@@ -404,7 +404,7 @@ void InnerEdit::insertText(const string &str, uint x, uint y, bool addUndo)
 	eventBuffer |= CodeView::EI_CONTENT_CHANGED;
 }
 
-void InnerEdit::getText(string* str, uint left, uint top, uint right, uint bot) const
+void InnerEdit::getText(os::String* str, uint left, uint top, uint right, uint bot) const
 {
 	if(!str)
 		return;
@@ -429,11 +429,11 @@ void InnerEdit::getText(string* str, uint left, uint top, uint right, uint bot) 
 
 
 	if( top == bot ) {
-		*str = buffer[top].text.substr(left, right-left);
+		*str = buffer[top].text.const_str().substr(left, right-left);
 		return;
 	}
 
-	*str=buffer[top].text.substr(left);
+	*str=buffer[top].text.const_str().substr(left);
 	*str+='\n';
 	
 
@@ -442,7 +442,7 @@ void InnerEdit::getText(string* str, uint left, uint top, uint right, uint bot) 
 		*str += '\n';
 	}
 
-	*str += buffer[bot].text.substr(0, right);
+	*str += buffer[bot].text.const_str().substr(0, right);
 }
 
 void InnerEdit::removeText( uint nLeft, uint nTop, uint nRight, uint nBot, bool bAddUndo )
@@ -465,7 +465,7 @@ void InnerEdit::removeText( uint nLeft, uint nTop, uint nRight, uint nBot, bool 
 	if( nBfrTop == nBfrBot ) {
 		if(bAddUndo)
 			addUndoNode( UndoNode::REMOVED,
-				buffer[ nBfrTop ].text.substr( nLeft, nRight - nLeft), nLeft, nTop);
+				buffer[ nBfrTop ].text.str().substr( nLeft, nRight - nLeft), nLeft, nTop);
 
 		buffer[ nBfrTop ].text.erase( nLeft, nRight - nLeft );
 		updateWidth( nBfrTop );
@@ -481,23 +481,23 @@ void InnerEdit::removeText( uint nLeft, uint nTop, uint nRight, uint nBot, bool 
 	//	_AdjustFoldedSections( nBfrTop, -1 );
 		invalidateLines( nTop, nTop );
 	} else {
-		string cUndoStr;
+		os::String cUndoStr;
 
 		if(bAddUndo)
-			cUndoStr = buffer[ nBfrTop ].text.substr( nLeft ) + "\n";
+			cUndoStr = buffer[ nBfrTop ].text.str().substr( nLeft ) + "\n";
 
 		buffer[ nBfrTop ].text.erase( nLeft );
 		if(cursorY == nTop && nCursorChar > nLeft)
 			nCursorChar = nLeft;
 
-		buffer[ nBfrTop ].text += buffer[ nBfrBot ].text.substr( nRight );
+		buffer[ nBfrTop ].text += buffer[ nBfrBot ].text.str().substr( nRight );
 
 		for( uint a = nBfrTop + 1; a <= nBfrBot; ++a ) {
 			if( bAddUndo )
 				if( a < nBfrBot )
 					cUndoStr += buffer[ nBfrTop + 1 ].text + "\n";
 				else
-					cUndoStr += buffer[ nBfrTop + 1 ].text.substr( 0, nRight );
+					cUndoStr += buffer[ nBfrTop + 1 ].text.str().substr( 0, nRight );
 
 			//TODO: erase all lines at once - this is slow
 			buffer.erase( buffer.begin() + nBfrTop + 1 );
@@ -557,7 +557,7 @@ void InnerEdit::FontChanged(os::Font* f)
 	Flush();
 }
 
-void InnerEdit::splitLine(vector<string> &list, const string& line, const char splitter)
+void InnerEdit::splitLine(vector<os::String> &list, const os::String& line, const char splitter)
 {
 	uint start=0;
 	int end;
@@ -565,11 +565,11 @@ void InnerEdit::splitLine(vector<string> &list, const string& line, const char s
 	list.clear();
 
 	while(start<=line.size()){
-		end=line.find(splitter, start);
+		end=line.const_str().find(splitter, start);
 		if(end==-1)
 			end=line.size();
 
-		list.push_back(line.substr(start, end-start));
+		list.push_back(line.const_str().substr(start, end-start));
 
 		start=end+1;
 	}
@@ -756,7 +756,7 @@ void InnerEdit::KeyDown(const char* str, const char* rawstr, uint32 modifiers)
 			if(useTab)
 /***/				insertText("\t", getChar(cursorX, charY), cursorY);
 			else{
-			    string tmp;
+			    os::String tmp;
 			    tmp.resize(tabSize, ' ');
 				insertText(tmp, getChar(cursorX, charY), cursorY);
 			}
@@ -798,7 +798,7 @@ void InnerEdit::KeyDown(const char* str, const char* rawstr, uint32 modifiers)
 			cursorX=min(cursorX, getW(buffer[charY].text.size(), charY));
 			uint chr=getChar(cursorX, charY);
 			if(format){
-				insertText("\n"+format->GetIndentString( buffer[charY].text.substr(0, chr), 
+				insertText(os::String("\n")+format->GetIndentString( buffer[charY].text.str().substr(0, chr), 
 					useTab, tabSize), chr, cursorY);
 			}else{
 				insertText("\n", chr, cursorY);
@@ -1445,7 +1445,7 @@ void InnerEdit::copy() const
 	os::Clipboard clip;
 	clip.Lock();
 	clip.Clear();
-	string tmp;
+	os::String tmp;
 	getText(&tmp, selStart, selEnd);
 	clip.GetData()->AddString("text/plain", tmp);
 	clip.Commit();
@@ -1455,7 +1455,7 @@ void InnerEdit::copy() const
 void InnerEdit::paste()
 {
 	os::Clipboard clip;
-	string str;
+	os::String str;
 
 	clip.Lock();
 	
@@ -1494,7 +1494,7 @@ void InnerEdit::del()
 	}
 }
 
-void InnerEdit::setLine(const string &line, uint y, bool addUndo)
+void InnerEdit::setLine(const os::String &line, uint y, bool addUndo)
 {
 	if(addUndo){
 		addUndoNode(UndoNode::SET_LINE, buffer[y].text, 0, y);
@@ -1578,7 +1578,7 @@ int InnerEdit::getMaxUndoSize()
 	return maxUndo;
 }
 
-void InnerEdit::addUndoNode(uint mode, const string &str, uint x, uint y)
+void InnerEdit::addUndoNode(uint mode, const os::String &str, uint x, uint y)
 {
 	UndoNode *node=new UndoNode();
 	node->mode=mode;
@@ -1649,9 +1649,9 @@ bool InnerEdit::undo()
 	switch(undoCurrent->mode){
 		case UndoNode::ADDED:
 		{
-			string& str=undoCurrent->text;
+			os::String& str=undoCurrent->text;
 			uint y=undoCurrent->y;
-			uint x=undoCurrent->x+str.length();
+			uint x=undoCurrent->x+str.size();
 		
 			while(x>buffer[y].text.size()){
 				x-=buffer[y].text.size()+1;
@@ -1666,7 +1666,7 @@ bool InnerEdit::undo()
 			break;
 		case UndoNode::SET_LINE:
 		{
-			string tmp=buffer[undoCurrent->y].text;
+			os::String tmp=buffer[undoCurrent->y].text;
 			setLine(undoCurrent->text, undoCurrent->y, false);
 			undoCurrent->text=tmp;
 			break;
@@ -1697,9 +1697,9 @@ bool InnerEdit::redo()
 	switch(node->mode){
 		case UndoNode::REMOVED:
 		{
-			string& str=node->text;
+			os::String& str=node->text;
 			uint y=node->y;
-			uint x=node->x+str.length();
+			uint x=node->x+str.size();
 		
 			while(x>buffer[y].text.size()){
 				x-=buffer[y].text.size()+1;
@@ -1714,7 +1714,7 @@ bool InnerEdit::redo()
 			break;
 		case UndoNode::SET_LINE:
 		{
-			string tmp=buffer[node->y].text;
+			os::String tmp=buffer[node->y].text;
 			setLine(node->text, node->y, false);
 			node->text=tmp;
 			break;
@@ -1782,7 +1782,7 @@ void InnerEdit::indentSelection(bool unindent)
 	
 	for(uint a=top;a<=bot;++a){
 		if(unindent){			
-			const string &line=buffer[a].text;
+			const os::String &line=buffer[a].text;
 			
 			if(line.size()==0)
 				continue;
@@ -1803,7 +1803,7 @@ void InnerEdit::indentSelection(bool unindent)
 			if(useTab)
 				insertText("\t", 0, a);
 			else{
-				string pad;
+				os::String pad;
 				pad.resize(tabSize, ' ');
 				insertText(pad, 0, a);
 			}

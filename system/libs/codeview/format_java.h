@@ -43,26 +43,25 @@ private:
 
     CodeViewStyle styles[FORMAT_COUNT];
 
-    void FindWords(const string&, string&);
+    void FindWords(const os::String&, os::String&);
 	
 public:
     Format_java();
 
     uint GetStyleCount();
-    const string& GetStyleName( char );
+    const os::String& GetStyleName( char );
     void SetStyle( char, const CodeViewStyle& );
     const CodeViewStyle& GetStyle( char );
 
-    CodeViewContext Parse( const std::string &cLine, std::string &cFormat, CodeViewContext cookie);
+    CodeViewContext Parse( const os::String &cLine, os::String &cFormat, CodeViewContext cookie);
 
-    std::string GetIndentString( const std::string &cText, bool bUseTabs, uint nTabSize );
+    os::String GetIndentString( const os::String &cText, bool bUseTabs, uint nTabSize );
 
-    uint GetPreviousWordLimit( const std::string&, uint nChr );
-    uint GetNextWordLimit( const std::string&, uint nChr );
-    int GetFoldLevel( const std::string &cLine, int nOldFoldLevel );
+    uint GetPreviousWordLimit( const os::String&, uint nChr );
+    uint GetNextWordLimit( const os::String&, uint nChr );
+    int GetFoldLevel( const os::String &cLine, int nOldFoldLevel );
 };
 
 } /* namespace cv */
 
 #endif /* F_CODEVIEW_FORMAT_JAVA_H */
-

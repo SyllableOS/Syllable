@@ -43,8 +43,8 @@ class InnerEdit;
 class Line
 {
 public:
-	string		text;		/** Text on this line */
-	string		style;		/** Style numbers for each character on this line */
+	os::String		text;		/** Text on this line */
+	os::String		style;		/** Style numbers for each character on this line */
 	CodeViewContext cookie;		/** Used by the formatters */
 	float		w;		/** ? */
 
@@ -65,7 +65,7 @@ public:
 		SET_LINE
 	};
 	
-	string		text;		/** The text that changed */
+	os::String		text;		/** The text that changed */
 	uint		mode,		/** ADDED, REMOVED or SET_LINE */
 			x,		/** Column that was affected */
 			y;		/** Row that was affected */
@@ -150,7 +150,7 @@ private:
 	void		updateAllWidths();
 	void		invalidateLines(int, int);
 
-	void		splitLine(vector<string>&, const string&, const char splitter='\n');
+	void		splitLine(vector<os::String>&, const os::String&, const char splitter='\n');
 
 	void		preMove(bool);
 	void		postMove(bool);
@@ -162,7 +162,7 @@ private:
 	bool		enabled;
 	bool		readOnly;
 
-	void		addUndoNode(uint mode, const string &str, uint x, uint y);
+	void		addUndoNode(uint mode, const os::String &str, uint x, uint y);
 	uint		maxUndo;
 	uint		undoCount;
 	uint		redoCount;
@@ -174,22 +174,22 @@ public:
 	InnerEdit(os::Control* c);
 	~InnerEdit();
 
-	void setText(const string &);
+	void setText(const os::String &);
 
-	void getText(string*, uint startx, uint starty, uint endx, uint endy) const;
-	void getText(string *str, const os::IPoint &p0, const os::IPoint &p1) const{
+	void getText(os::String*, uint startx, uint starty, uint endx, uint endy) const;
+	void getText(os::String *str, const os::IPoint &p0, const os::IPoint &p1) const{
 		getText(str, p0.x, p0.y, p1.x, p1.y);
 	}
-	void insertText(const string &, uint x, uint y, bool addUndo=true);
-	void insertText(const string &str, const os::IPoint &p){
+	void insertText(const os::String &, uint x, uint y, bool addUndo=true);
+	void insertText(const os::String &str, const os::IPoint &p){
 		insertText(str, p.x, p.y);
 	}
 	void removeText(uint startx, uint starty, uint startx, uint starty, bool addUndo=true);
 	void removeText(const os::IPoint &p0, const os::IPoint &p1){
 		removeText(p0.x, p0.y, p1.x, p1.y);
 	}
-	const string& getLine(uint y)const { return buffer[y].text; }
-	void setLine(const string &, uint y, bool addUndo=true);
+	const os::String& getLine(uint y)const { return buffer[y].text; }
+	void setLine(const os::String &, uint y, bool addUndo=true);
 	uint getLineCount() const{ return buffer.size()-1; }
 
 	void setFormat(Format *);

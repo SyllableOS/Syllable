@@ -24,7 +24,7 @@
 #include <gui/gfxtypes.h>
 #include <atheos/types.h>
 
-#include <string>
+#include <util/string.h>
 
 using namespace std;
 
@@ -92,7 +92,7 @@ public:
      * \param style The number of the style to return.
      * \return A string containing the display name of the given style.
      */
-    virtual const string& GetStyleName( char nStyle ) = 0;
+    virtual const os::String& GetStyleName( char nStyle ) = 0;
 
     /**Set the color used to display the given style.
      * This method must accept a color for each of the styles
@@ -134,7 +134,7 @@ public:
      * \param context A value representing the current context.
      * \return A value representing the new context.
      */
-    virtual CodeViewContext Parse( const std::string &cText, std::string &cStyle,
+    virtual CodeViewContext Parse( const os::String &cText, os::String &cStyle,
 	CodeViewContext nContext ) = 0;
 
 	
@@ -154,7 +154,7 @@ public:
      * \sa CodeView::setUseTab()
      * \sa CodeView::getUseTab()
      */
-    virtual std::string GetIndentString( const std::string &cText, bool bUseTabs, uint nTabSize)=0;
+    virtual os::String GetIndentString( const os::String &cText, bool bUseTabs, uint nTabSize)=0;
 	
     /**Get the character index of the previous word limit.
      * What is considered a word is up to the format.
@@ -163,7 +163,7 @@ public:
      * \return The character index of the previous word limit, or 0
      * if the string if none are found.
      */
-    virtual uint GetPreviousWordLimit( const std::string &cLine, uint nChr)=0;
+    virtual uint GetPreviousWordLimit( const os::String &cLine, uint nChr)=0;
 
     /**Get the character index of the next word limit.
      * What is considered a word is up to the format.
@@ -172,7 +172,7 @@ public:
      * \return The character index of the next word limit, or the length
      * if the string if none are found.
      */
-    virtual uint GetNextWordLimit( const std::string &cLine, uint nChr) = 0;
+    virtual uint GetNextWordLimit( const os::String &cLine, uint nChr) = 0;
 
     /** Find foldable sections.
      * Returns nOldFoldLevel + 1 if cLine contains something that can start
@@ -183,7 +183,7 @@ public:
      * \param nOldFoldLevel Set to 0 in the first call. In subsequent calls,
      * it should be passed the value returned by the previous call.
      */
-    virtual int GetFoldLevel( const std::string &cLine, int nOldFoldLevel ) { return nOldFoldLevel; }
+    virtual int GetFoldLevel( const os::String &cLine, int nOldFoldLevel ) { return nOldFoldLevel; }
 };
 
 } /* end of namespace */

@@ -34,7 +34,7 @@ using namespace cv;
 #define C_COMMENT_CLOSE_1   	0x10000000
 #define C_COMMENT_CLOSE_2	0x20000000
 
-static const string names[]={
+static const os::String names[]={
 	"Default",
 	"Comment",
 	"Tag",
@@ -42,7 +42,7 @@ static const string names[]={
 	"Attribute"
 };
 
-static const string unusedname="<Not Used>";
+static const os::String unusedname="<Not Used>";
 
 static const os::Color32_s defaultcolors[]={
 	os::Color32_s(  0,   0,   0), // default, black
@@ -166,7 +166,7 @@ uint Format_HTML::GetStyleCount()
     return FORMAT_COUNT;
 }
 
-const string & Format_HTML::GetStyleName( char nType )
+const os::String & Format_HTML::GetStyleName( char nType )
 {
     if( nType < 0 || nType >= FORMAT_COUNT )
 	return ::unusedname;
@@ -193,7 +193,7 @@ void Format_HTML::SetStyle( char nType, const CodeViewStyle& cStyle )
 static inline bool canStartIdentifier(char c) { return (c>='a' && c<='z') || (c>='A' && c<='Z'); }
 static inline bool canContinueIdentifier(char c) { return (c>='a' && c<='z') || (c>='A' && c<='Z') || (c>='0' && c<='9') || c=='=' || c=='/'; }
 
-void Format_HTML::FindWords(const string &line, string &format)
+void Format_HTML::FindWords(const os::String &line, os::String &format)
 {
 	uint start=0, end;
 	const char **keywords;
@@ -256,7 +256,7 @@ void Format_HTML::FindWords(const string &line, string &format)
 	} while( start<line.size() );
 }
 
-CodeViewContext Format_HTML::Parse( const string &line, string &format, CodeViewContext cookie )
+CodeViewContext Format_HTML::Parse( const os::String &line, os::String &format, CodeViewContext cookie )
 {
     int oldcntx = cookie.nContext, newcntx=cookie.nContext;
     char c;
@@ -311,7 +311,7 @@ CodeViewContext Format_HTML::Parse( const string &line, string &format, CodeView
     return newcntx & C_COMMENT;
 }
 
-string Format_HTML::GetIndentString(const string &line, bool useTabs, uint tabSize){
+os::String Format_HTML::GetIndentString(const os::String &line, bool useTabs, uint tabSize){
 	if(line.size()==0)
 		return "";
 
@@ -323,7 +323,7 @@ string Format_HTML::GetIndentString(const string &line, bool useTabs, uint tabSi
 	return line.substr(0, white);
 }
 
-uint Format_HTML::GetPreviousWordLimit(const std::string &line, uint chr){
+uint Format_HTML::GetPreviousWordLimit(const os::String &line, uint chr){
 	if(chr==0)
 		return 0;
 	--chr;
@@ -342,7 +342,7 @@ uint Format_HTML::GetPreviousWordLimit(const std::string &line, uint chr){
 	return chr;
 }
 
-uint Format_HTML::GetNextWordLimit(const std::string &line, uint chr){
+uint Format_HTML::GetNextWordLimit(const os::String &line, uint chr){
 	uint max=line.size();
 	if(chr>=max)
 		return max;
@@ -356,4 +356,3 @@ uint Format_HTML::GetNextWordLimit(const std::string &line, uint chr){
 	}
 	return chr;
 }
-

@@ -176,7 +176,7 @@ void CodeView::GetRegion(os::String *buffer){
 		return;
 	}
 
-	edit->getText(&buffer->str(), edit->selStart, edit->selEnd);
+	edit->getText(buffer, edit->selStart, edit->selEnd);
 }
 		
 //void CodeView::SetMinPreferredSize(int widthChars, int heightChars){ edit->setMinPreferredSize(widthChars, heightChars); }
