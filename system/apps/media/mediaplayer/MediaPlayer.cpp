@@ -25,6 +25,16 @@
  * - Reopen streams after track change.
  * - Change to the next track after the current ends.
  */
+ 
+
+void SetButtonImageFromResource( os::ImageButton* pcButton, os::String zResource )
+{
+	os::File cSelf( open_image_file( get_image_id() ) );
+	os::Resources cCol( &cSelf );		
+	os::ResStream *pcStream = cCol.GetResourceStream( zResource );
+	pcButton->SetImage( pcStream );
+	delete( pcStream );
+}
 
 
 /* MPWindow class */
@@ -80,11 +90,11 @@ MPWindow::MPWindow( const os::Rect & cFrame, const std::string & cName, const st
 	m_pcControls = new os::View( cNewFrame, "mp_controls", os::CF_FOLLOW_LEFT | os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_BOTTOM );
 	/* Create buttons */
 	m_pcPlayPause = new os::ImageButton( os::Rect( 0, 0, 40, 40 ), "mp_play_pause", "", new os::Message( MP_GUI_PLAY_PAUSE ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, false, true );
-	m_pcPlayPause->SetImageFromResource( "play.png" );
+	SetButtonImageFromResource( m_pcPlayPause, "play.png" );
 	m_pcPlayPause->SetEnable( false );
 
 	m_pcStop = new os::ImageButton( os::Rect( 41, 0, 81, 40 ), "mp_stop", "", new os::Message( MP_GUI_STOP ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, false, true );
-	m_pcStop->SetImageFromResource( "stop.png" );
+	SetButtonImageFromResource( m_pcStop, "stop.png" );
 	m_pcStop->SetEnable( false );
 	
 
@@ -103,7 +113,9 @@ MPWindow::MPWindow( const os::Rect & cFrame, const std::string & cName, const st
 	
 	/* Create file selector */
 	m_pcFileDialog = new os::FileRequester( os::FileRequester::LOAD_REQ, new os::Messenger( os::Application::GetInstance() ), NULL, os::FileRequester::NODE_FILE, false );
-	
+	m_pcFileDialog->Lock();
+	m_pcFileDialog->Start();
+	m_pcFileDialog->Unlock();
 	
 	/* Set Icon */
 	os::Resources cCol( get_image_id() );
@@ -205,19 +217,19 @@ void MPWindow::HandleMessage( os::Message * pcMessage )
 			{
 				m_pcPlayPause->SetEnable( true );
 				m_pcStop->SetEnable( false );
-				m_pcPlayPause->SetImageFromResource( "play.png" );
+				SetButtonImageFromResource( m_pcPlayPause, "play.png" );
 			}
 			else if ( m_nState == MP_STATE_PLAYING )
 			{
 				m_pcPlayPause->SetEnable( true );
 				m_pcStop->SetEnable( true );
-				m_pcPlayPause->SetImageFromResource( "pause.png" );	
+				SetButtonImageFromResource( m_pcPlayPause, "pause.png" );	
 			}
 			else if ( m_nState == MP_STATE_PAUSED )
 			{
 				m_pcPlayPause->SetEnable( true );
 				m_pcStop->SetEnable( true );
-				m_pcPlayPause->SetImageFromResource( "play.png" );
+				SetButtonImageFromResource( m_pcPlayPause, "play.png" );
 			}
 			m_pcControls->Invalidate( true );
 			Sync();
@@ -1018,6 +1030,8 @@ int main( int argc, char *argv[] )
 	pcApp->Run();
 	return ( 0 );
 }
+
+
 
 
 

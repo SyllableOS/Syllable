@@ -62,7 +62,9 @@ SelectWin::SelectWin( os::Rect cFrame )
 	
 	/* Create file selector */
 	m_pcFileDialog = new os::FileRequester( os::FileRequester::LOAD_REQ, new os::Messenger( this ), NULL, os::FileRequester::NODE_FILE, false );
-	
+	m_pcFileDialog->Lock();
+	m_pcFileDialog->Start();
+	m_pcFileDialog->Unlock();
 	
 	AddChild( m_pcFileLabel );
 	AddChild( m_pcFileInput );
@@ -108,3 +110,4 @@ void SelectWin::HandleMessage( os::Message* pcMessage )
 			os::Window::HandleMessage( pcMessage );
 	}
 }
+

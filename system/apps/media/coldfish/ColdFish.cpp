@@ -24,6 +24,14 @@
 #include <fstream>
 
 
+void SetButtonImageFromResource( os::ImageButton* pcButton, os::String zResource )
+{
+	os::File cSelf( open_image_file( get_image_id() ) );
+	os::Resources cCol( &cSelf );		
+	os::ResStream *pcStream = cCol.GetResourceStream( zResource );
+	pcButton->SetImage( pcStream );
+	delete( pcStream );
+}
 
 static inline void secs_to_ms( uint64 nTime, uint32 *nM, uint32 *nS )
 {
@@ -104,17 +112,17 @@ CFWindow::CFWindow( const os::Rect & cFrame, const std::string & cName, const st
 
 	/* Create buttons */
 	m_pcPlay = new os::ImageButton( os::Rect( 0, 0, 1, 1 ), "cf_play", "Play", new os::Message( CF_GUI_PLAY ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, true, true );
-	m_pcPlay->SetImageFromResource( "play.png" );
+	SetButtonImageFromResource( m_pcPlay, "play.png" );
 
 	m_pcPause = new os::ImageButton( os::Rect( 0, 0, 1, 1 ), "cf_pause", "Pause", new os::Message( CF_GUI_PAUSE ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, true, true );
-	m_pcPause->SetImageFromResource( "pause.png" );
+	SetButtonImageFromResource( m_pcPause, "pause.png" );
 
 	m_pcStop = new os::ImageButton( os::Rect( 0, 0, 1, 1 ), "cf_stop", "Stop", new os::Message( CF_GUI_STOP ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, true, true );
-	m_pcStop->SetImageFromResource( "stop.png" );
+	SetButtonImageFromResource( m_pcStop, "stop.png" );
 
 	
 	m_pcShowList = new os::ImageButton( os::Rect( 0, 0, 1, 1 ), "cf_show_list", "Playlist", new os::Message( CF_GUI_SHOW_LIST ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, true, true );
-	m_pcShowList->SetImageFromResource( "list.png" );
+	SetButtonImageFromResource( m_pcShowList, "list.png" );
 
 	m_pcPause->SetEnable( false );
 	m_pcStop->SetEnable( false );
@@ -160,6 +168,9 @@ CFWindow::CFWindow( const os::Rect & cFrame, const std::string & cName, const st
 	
 	/* Create file selector */
 	m_pcFileDialog = new os::FileRequester( os::FileRequester::LOAD_REQ, new os::Messenger( os::Application::GetInstance() ), NULL, os::FileRequester::NODE_FILE, false );
+	m_pcFileDialog->Lock();
+	m_pcFileDialog->Start();
+	m_pcFileDialog->Unlock();
 
 	/* Set Icon */
 	os::Resources cCol( get_image_id() );
@@ -1162,6 +1173,8 @@ int main( int argc, char *argv[] )
 	pcApp->Run();
 	return ( 0 );
 }
+
+
 
 
 
