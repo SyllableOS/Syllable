@@ -3,7 +3,7 @@
 modules
 	programming/languages/nasm-0.98.38
 ;	programming/languages/ruby-1.8.1
-	programming/libraries/ffmpeg-0.4.9-pre1
+	programming/libraries/ffmpeg-0.4.8
 	programming/libraries/freetype-2.1.9
 	programming/libraries/libjpeg-6b
 	programming/libraries/libpng-1.2.5
