@@ -28,7 +28,10 @@ all: $(OBJDIR) $(OBJS)
 	$(LL) $(LOPTS) $(OBJS) -o $(EXE)
 
 install: all
-	-cp -f $(EXE) /system/bin/
+	cp -f $(EXE) /system/bin/
+
+dist: all
+	install -s $(EXE) $(DIST_DIR)/atheos/sys/bin/$(EXE)
 
 clean:
 	-rm $(EXE)
