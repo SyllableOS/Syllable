@@ -310,14 +310,26 @@ Point MenuItem::GetContentSize()
 {
 	Menu* pcMenu = GetSuperMenu();
 
+	// Are we a super-menu?  If so, we need to make room for the sub-menu arrow
 	if ( m_pzLabel != NULL && pcMenu != NULL && GetSubMenu() != NULL && m_pcSuperMenu->GetLayout() == ITEMS_IN_COLUMN )
 	{
 		font_height sHeight;
 		pcMenu->GetFontHeight( &sHeight );
 
-		return( Point( pcMenu->GetStringWidth( GetLabel() ) + 16, sHeight.ascender + sHeight.descender + sHeight.line_gap ) );
+		return( Point( pcMenu->GetStringWidth( GetLabel() ) + 32, sHeight.ascender + sHeight.descender + sHeight.line_gap ) );
 	}
 
+	// Are we a "normal" menu, in a column of other menus?  If so, we need to allow for a gap on the left
+	if ( m_pzLabel != NULL && pcMenu != NULL && m_pcSuperMenu->GetLayout() != ITEMS_IN_ROW )
+	{
+		font_height sHeight;
+		pcMenu->GetFontHeight( &sHeight );
+
+		return( Point( pcMenu->GetStringWidth( GetLabel() ) + 16, sHeight.ascender + sHeight.descender + sHeight.line_gap ) );
+
+	}
+
+	// We are a menu which is in a row of menus, I.e. a menu bar.  We don't need a gap, and we can't have a sub-menu
 	if ( m_pzLabel != NULL && pcMenu != NULL )
 	{
 		font_height sHeight;
@@ -327,6 +339,7 @@ Point MenuItem::GetContentSize()
 
 	}
 
+	// We don't have a label, probably
 	return( Point( 0.0f, 0.0f ) );
 }
 
@@ -351,11 +364,7 @@ const char* MenuItem::GetLabel() const
 
 Point MenuItem::GetContentLocation() const
 {
-    if ( m_pcSuperMenu ) {
 	return( Point( m_cFrame.left, m_cFrame.top ) );
-    } else {
-	return( Point( m_cFrame.left, m_cFrame.top ) );
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -410,11 +419,17 @@ void MenuItem::Draw()
 
 	float vCharHeight = sHeight.ascender + sHeight.descender + sHeight.line_gap;
 	float y = cFrame.top + (cFrame.Height()+1.0f) / 2 - vCharHeight / 2 + sHeight.ascender + sHeight.line_gap * 0.5f;
-  
-	pcMenu->DrawString( pzLabel, Point( cFrame.left + 2, y ) );
+
+	if ( m_pcSuperMenu->GetLayout() == ITEMS_IN_COLUMN )
+	{
+		pcMenu->DrawString( pzLabel, Point( cFrame.left + 16, y ) );
+	}
+	else
+	{
+		pcMenu->DrawString( pzLabel, Point( cFrame.left + 2, y ) );
+	}
 
 	// If we are the super-menu, draw the sub-menu triangle on the right of the label
-
 	if ( GetSubMenu() != NULL && m_pcSuperMenu->GetLayout() == ITEMS_IN_COLUMN )
 	{
 		Rect cSourceRect = s_pcSubMenuBitmap->GetBounds();
