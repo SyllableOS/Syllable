@@ -1038,7 +1038,7 @@ int via_dsp_ioctl (void *node, void *cookie, uint32 cmd, void *args, bool kernel
 			if (val > 0) {
 				val *= chan->frag_size;
 				val -= chan->frag_size -
-				       inl (chan->iobase + VIA_PCM_BLOCK_COUNT);
+				       ( inl (chan->iobase + VIA_PCM_BLOCK_COUNT) & 0xffffff );
 			}
 			val += chan->slop_len % chan->frag_size;
 		} else
