@@ -359,13 +359,15 @@ Splitter::~Splitter()
 
 /** Change the position of the split bar.
 *
-* \par Description:   
+* \par Description:
+* Move the separator bar. For instance, a value of -100 will move the
+* separator bar 100 pixels to the left (or up, if the splitter is vertical).
 * \par Notes:
-*  Move the separator bar. 
 * \par Warning:
+* This method works with pixel values, normally you should use SetSplitRatio().
 * \param  fValue relative value of the deplacement
 * \return
-* \sa
+* \sa SetSplitRatio()
 * \bug
 * \author Sebastien Keim (s.keim@laposte.net)
 */
@@ -457,6 +459,7 @@ void Splitter::SplitBy( float fValue )
 * Move the separator.
 * \par Notes:
 * \par Warning:
+* This method works with pixel values, normally you should use SetSplitRatio().
 * \param  fValue new height(width) of the top(left) view
 * \return
 * \sa
@@ -721,4 +724,34 @@ void Splitter::KeyDown( const char *pzString, const char *pzRawString, uint32 nQ
 		break;
 	}
 	View::KeyDown( pzString, pzRawString, nQualifiers );
+}
+
+/** Set split ratio.
+*
+* \par Description:
+* Set the ratio between the two views of the splitter, eg. a ratio of 0.5 will
+* make the two views share the size equally and position the splitter bar in
+* the middle. Note that min/max sizes still apply, so you can't set the ratio to
+* values that would violate those sizes.
+* \param vRatio The ratio View1 / (View1 + View2)
+* \author Henrik Isaksson (syllable@isaksson.tk)
+*/
+void Splitter::SetSplitRatio( float vRatio )
+{
+	m->m_vSplitPos = vRatio;
+	AdjustLayout();
+	Invalidate();
+	Flush();
+}
+
+/** Get split ratio.
+*
+* \par Description:
+* Get the split ratio.
+* \sa SetSplitRatio()
+* \author Henrik Isaksson (syllable@isaksson.tk)
+*/
+float Splitter::GetSplitRatio() const
+{
+	return m->m_vSplitPos;
 }
