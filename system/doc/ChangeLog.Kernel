@@ -1,3 +1,16 @@
+* October 20 2004, Kristian Van Der Vliet *
+
+A minor patch to kernel/debug.c which fixes the code to work properly if
+your client sends <CR>, <CR><LF>, or <CR><NUL> for newline.  This patch is
+intended to allow the use of a Telnet client as a debug terminal in conjunction
+with VMWare.  See the VMWare FAQ for more information.  Patch from
+Jack Hamby <jhamby@anobject.com>
+
+* October 20 2004, Kristian Van Der Vliet *
+
+read_cpu_id() was modifying %ebx but didn't tell GCC.  Patch from
+Jack Hamby <jhamby@anobject.com>
+
 * October 13 2004, Kristian Van Der Vliet *
 
 Fixed a possible race condition in devices.c/register_device()  Spotted by
