@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.3.24
+# Version 0.3.25
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -189,7 +189,7 @@ def configurePackage target
 
 		true  # Continue building even if dependencies failed
 	else
-		unless exists? cmd = (cmd = (recipe = recipe(package = fullName(target)))["configure-cmd"]) ? cmd : "configure"
+		unless exists? cmd = (cmd = (recipe = recipe(package = fullName(target)))["configure-cmd"]) ? toString(cmd) : "configure"
 			true
 		else
 			logHeader "Configuring"
@@ -705,7 +705,7 @@ def toString value  # Join list value into a space-separated string
 end
 
 def thirdParty?
-	exists? ((cmd = recipe(dir = Dir.getwd)["configure-cmd"]) ? cmd : "configure") or
+	exists? ((cmd = recipe(dir = Dir.getwd)["configure-cmd"]) ? toString(cmd) : "configure") or
 		shortName(dir) == "bzip2"
 # Currently conflicts with Ffmpeg:
 #		exists? File.join(@packagesPath, package = fullName(Dir.getwd), package + ".recipe")
@@ -851,7 +851,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.3.24",
+	puts "Syllable Build System 0.3.25",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
