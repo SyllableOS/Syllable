@@ -59,10 +59,27 @@ enum
 	PTY_MASTER
 };
 
+enum
+{
+	FLAG_XOFF  = 1,		// XON/XOFF mode and stop key (^S) was pressed
+	FLAG_LNEXT = 2		// lnext key (^V) pressed; next char is literal
+};
+
 #define	PTY_BUFFER_SIZE	1024
 
 #define	 IS_MASTER( node )	(NULL != (node)->fn_psParent && PTY_MASTER == (node)->fn_psParent->fn_nInodeNum )
 #define	 IS_SLAVE( node )	(NULL != (node)->fn_psParent && PTY_SLAVE == (node)->fn_psParent->fn_nInodeNum )
+
+#define INlToCr		( psTermios->c_iflag & INLCR )
+#define IIgnoreCr	( psTermios->c_iflag & IGNCR )
+#define ICrToNl		( psTermios->c_iflag & ICRNL )
+#define IUcToLc		( psTermios->c_iflag & IUCLC )
+#define Echo		( psTermios->c_lflag & ECHO )
+#define EchoCtl		( psTermios->c_lflag & ECHOCTL )
+#define EchoNl		( psTermios->c_lflag & ECHONL )
+#define ICanon		( psTermios->c_lflag & ICANON )
+#define ISignals	( psTermios->c_lflag & ISIG )
+#define IXonXoff	( psTermios->c_iflag & IXON )
 
 typedef struct
 {
@@ -92,6 +109,7 @@ struct FileNode
 	int fn_nSize;
 	int fn_nNewLineCount;
 	int fn_nCsrPos;
+	int fn_nFlags;
 
 	int fn_nOpenCount;
 
@@ -118,9 +136,9 @@ struct FileNode
 typedef struct
 {
 	kdev_t nDevNum;
-	FileNode_s *psRootNode;	/* /dev/pty     */
-	FileNode_s *psMasterNode;	/* /dev/pty/mst */
-	FileNode_s *psSlaveNode;	/* /dev/pty/slv */
+	FileNode_s *psRootNode;		///<  /dev/pty
+	FileNode_s *psMasterNode;	///<  /dev/pty/mst
+	FileNode_s *psSlaveNode;	///<  /dev/pty/slv
 } PtyVolume_s;
 
 typedef struct
@@ -354,32 +372,28 @@ static int pty_lookup( void *pVolume, void *pParent, const char *pzName, int nNa
 static int pty_can_read( FileNode_s *psNode )
 {
 	bool bNeedNewLine = false;
+	bool bXonXoff = false;
 
-	if ( psNode->fn_psParent == NULL )
+	if ( psNode->fn_psParent == NULL || psNode->fn_psTermInfo == NULL )
 	{
 		return ( -EINVAL );
 	}
 
 	if ( NULL == psNode->fn_psPartner || 0 == psNode->fn_psPartner->fn_nOpenCount )
 	{
-		return ( -EPIPE );
+		return ( -EIO );
 	}
 
-	if ( PTY_SLAVE == psNode->fn_psParent->fn_nInodeNum )
+	if ( IS_SLAVE( psNode ) && psNode->fn_psTermInfo->sTermios.c_lflag & ICANON )
 	{
-		if ( NULL != psNode->fn_psTermInfo )
-		{
-			if ( psNode->fn_psTermInfo->sTermios.c_lflag & ICANON )
-			{
-				bNeedNewLine = true;
-			}
-		}
-		else
-		{
-			return ( -EINVAL );
-		}
+		bNeedNewLine = true;
 	}
-	if ( 0 == psNode->fn_nSize || ( bNeedNewLine && 0 == psNode->fn_nNewLineCount ) )
+	if ( IS_MASTER( psNode ) && psNode->fn_psTermInfo->sTermios.c_iflag & IXON )
+	{
+		bXonXoff = true;
+	}
+
+	if ( 0 == psNode->fn_nSize || ( bNeedNewLine && 0 == psNode->fn_nNewLineCount ) || ( bXonXoff && ( psNode->fn_nFlags & FLAG_XOFF ) ) )
 	{
 		return ( 0 );
 	}
@@ -400,7 +414,7 @@ static int pty_can_write( FileNode_s *psNode, size_t nSize )
 {
 	if ( NULL == psNode->fn_psPartner || 0 == psNode->fn_psPartner->fn_nOpenCount )
 	{
-		return ( -EPIPE );
+		return ( -EIO );
 	}
 
 	if ( nSize > ( PTY_BUFFER_SIZE - psNode->fn_nSize ) )
@@ -423,6 +437,7 @@ static int pty_can_write( FileNode_s *psNode, size_t nSize )
 static int pty_do_read( FileNode_s *psNode, char *pzBuf, size_t nLen, int nFlags )
 {
 	bool bNeedNewLine = false;
+	bool bXonXoff = false;
 	int i;
 	int nError;
 
@@ -440,17 +455,21 @@ static int pty_do_read( FileNode_s *psNode, char *pzBuf, size_t nLen, int nFlags
 		return ( -EINVAL );
 	}
 
-
 	LOCK( psNode->fn_hMutex );
-	if ( PTY_SLAVE == psNode->fn_psParent->fn_nInodeNum && ( psNode->fn_psTermInfo->sTermios.c_lflag & ICANON ) )
+
+	if ( IS_SLAVE( psNode ) && psNode->fn_psTermInfo->sTermios.c_lflag & ICANON )
 	{
 		bNeedNewLine = true;
 	}
-	while ( 0 == psNode->fn_nSize || ( bNeedNewLine && 0 == psNode->fn_nNewLineCount ) )
+	if ( IS_MASTER( psNode ) && psNode->fn_psTermInfo->sTermios.c_iflag & IXON )
+	{
+		bXonXoff = true;
+	}
+	while ( 0 == psNode->fn_nSize || ( bNeedNewLine && 0 == psNode->fn_nNewLineCount ) || ( bXonXoff && ( psNode->fn_nFlags & FLAG_XOFF ) ) )
 	{
 		if ( NULL == psNode->fn_psPartner || 0 == psNode->fn_psPartner->fn_nOpenCount )
 		{
-			nError = 0;
+			nError = -EIO;
 			goto error;
 		}
 		if ( nFlags & O_NONBLOCK )
@@ -477,23 +496,16 @@ static int pty_do_read( FileNode_s *psNode, char *pzBuf, size_t nLen, int nFlags
 	nError = min( nLen, psNode->fn_nSize );
 	for ( i = 0; i < nError; ++i )
 	{
-		if ( psNode->fn_pzBuffer[psNode->fn_nReadPos] == 0x04 )
-		{		// CTRL-d
-			if ( bNeedNewLine )
-			{
-				if ( i == 0 )
-				{
-					psNode->fn_nNewLineCount--;
-					psNode->fn_nSize--;
-					psNode->fn_nReadPos = ( psNode->fn_nReadPos + 1 ) & ( PTY_BUFFER_SIZE - 1 );
-				}
-				nError = i;
-				break;
-			}
-			else
-			{
-				psNode->fn_nNewLineCount--;
-			}
+		struct termios *psTermios = &psNode->fn_psTermInfo->sTermios;
+
+		if ( bNeedNewLine && psNode->fn_pzBuffer[psNode->fn_nReadPos] ==
+		     psTermios->c_cc[ VEOF ] )
+		{
+			psNode->fn_nNewLineCount--;
+			psNode->fn_nSize--;
+			psNode->fn_nReadPos = ( psNode->fn_nReadPos + 1 ) & ( PTY_BUFFER_SIZE - 1 );
+			nError = i;
+			break;
 		}
 		if ( psNode->fn_pzBuffer[psNode->fn_nReadPos] == '\n' )
 		{
@@ -556,7 +568,7 @@ static int pty_do_write( FileNode_s *psNode, const char *pzBuf, size_t nLen, int
 		return ( -EINVAL );
 	}
 
-	if ( PTY_SLAVE == psNode->fn_psParent->fn_nInodeNum )
+	if ( IS_SLAVE( psNode ) )
 	{
 		if ( NULL == psNode->fn_psTermInfo )
 		{
@@ -569,29 +581,31 @@ static int pty_do_write( FileNode_s *psNode, const char *pzBuf, size_t nLen, int
 		}
 	}
 
-
 	LOCK( psNode->fn_hMutex );
 	while ( nBytesToWrite > 0 )
 	{
 		int nCurLen;
 
+		if ( NULL == psNode->fn_psPartner || 0 == psNode->fn_nOpenCount )
+		{
+			// immediately fail when the master is closed
+			if ( IS_MASTER( psNode ) )
+			{
+				nError = -EIO;
+				goto error;
+			}
+		}
+
 		while ( psNode->fn_nSize == PTY_BUFFER_SIZE )
 		{
 			if ( NULL == psNode->fn_psPartner || 0 == psNode->fn_nOpenCount )
 			{
-				nError = -EPIPE;
 				if ( IS_MASTER( psNode ) )
 				{
-					// FIXME: Not sure if this error handling is OK for pty's.
-					printk( "Attempt to write to master %s after slave is closed\n", psNode->fn_zName );
-					switch ( get_signal_mode( SIGPIPE ) )
-					{
-					case SIG_DEFAULT:
-					case SIG_HANDLED:
-						sys_kill( sys_get_thread_id( NULL ), SIGPIPE );
-					}
+					nError = -EIO;
+					goto error;
 				}
-				goto error;
+				// else block until the slave is reopened
 			}
 			if ( nFlags & O_NONBLOCK )
 			{
@@ -614,28 +628,14 @@ static int pty_do_write( FileNode_s *psNode, const char *pzBuf, size_t nLen, int
 		psNode->fn_nSize += nCurLen;
 		nBytesToWrite -= nCurLen;
 
+		struct termios *psTermios = &psNode->fn_psTermInfo->sTermios;
 		while ( nCurLen > 0 )
 		{
-			switch ( pzBuf[nBytesWritten] )
+			// EOF acts like newline for purposes of waking up
+			if ( pzBuf[nBytesWritten] == '\n' ||
+			     ( ICanon && pzBuf[nBytesWritten] == psTermios->c_cc[ VEOF ] ) )
 			{
-			case 0x03:	/* CTRL-c */
-				if ( IS_MASTER( psNode ) && -1 != psNode->fn_psTermInfo->hPGroupID )
-				{
-					printk( "send SIGINT to %x\n", psNode->fn_psTermInfo->hPGroupID );
-					sys_kill( -psNode->fn_psTermInfo->hPGroupID, SIGINT );
-				}
-				break;
-			case 26:	/* CTRL-z */
-				if ( IS_MASTER( psNode ) && -1 != psNode->fn_psTermInfo->hPGroupID )
-				{
-					printk( "send SIGSTOP to %x\n", psNode->fn_psTermInfo->hPGroupID );
-					sys_kill( -psNode->fn_psTermInfo->hPGroupID, SIGSTOP );
-				}
-				break;
-			case 0x04:	/* CTRL-d */
-			case '\n':
 				psNode->fn_nNewLineCount++;
-				break;
 			}
 			psNode->fn_pzBuffer[psNode->fn_nWritePos++] = pzBuf[nBytesWritten++];
 			psNode->fn_nWritePos &= ( PTY_BUFFER_SIZE - 1 );
@@ -671,7 +671,7 @@ static int pty_write_to_master( FileNode_s *psMaster, FileNode_s *psSlave, const
 	bool bNlToCrNl = false;
 	bool bCrToNl = false;
 	bool bNoCrAtCol0 = false;	/* Dont output CR at col 0      */
-	bool bNoCr = false;	/* Dont output CR       */
+	bool bNoCr = false;		/* Dont output CR       */
 	int nBytesWritten = 0;
 	int nError;
 	int i;
@@ -715,7 +715,7 @@ static int pty_write_to_master( FileNode_s *psMaster, FileNode_s *psSlave, const
 			break;
 		case '\r':
 			nError = 1;
-			if ( bNoCr == false && !( bNoCrAtCol0 && 0 == psMaster->fn_nCsrPos ) )
+			if ( bNoCr == false /* && !( bNoCrAtCol0 && 0 == psMaster->fn_nCsrPos ) */ )
 			{
 				nError = pty_do_write( psMaster, ( bCrToNl ) ? "\n" : "\r", 1, nFlags );
 			}
@@ -732,26 +732,6 @@ static int pty_write_to_master( FileNode_s *psMaster, FileNode_s *psSlave, const
 			else
 			{
 				nError = pty_do_write( psMaster, &pzBuf[i], 1, nFlags );
-			}
-			break;
-		case 0x03:	// CTRL-c
-			if ( bEchoMode )
-			{
-				nError = pty_do_write( psMaster, &pzBuf[i], 1, nFlags );
-			}
-			else
-			{
-				nError = 1;
-			}
-			break;
-		case 26:	/* CTRL-z */
-			if ( bEchoMode )
-			{
-				nError = pty_do_write( psMaster, &pzBuf[i], 1, nFlags );
-			}
-			else
-			{
-				nError = 1;
 			}
 			break;
 		default:
@@ -789,87 +769,158 @@ static int pty_write_to_slave( FileNode_s *psMaster, FileNode_s *psSlave, const 
 {
 	struct termios *psTermios = &psMaster->fn_psTermInfo->sTermios;
 	int nBytesWritten = 0;
-	bool bNlToCr = false;
-	bool bIgnoreCr = false;
-	bool bCrToNl = false;
-	bool bUpCaseToLowCase = false;
-	bool bEcho = false;
 	int nError;
 	int i;
 
-	if ( psTermios->c_iflag & INLCR )
-	{
-		bNlToCr = true;
-	}
-	if ( psTermios->c_iflag & IGNCR )
-	{
-		bIgnoreCr = true;
-	}
-	if ( psTermios->c_iflag & ICRNL )
-	{
-		bCrToNl = true;
-	}
-	if ( psTermios->c_iflag & IUCLC )
-	{
-		bUpCaseToLowCase = true;
-	}
-	if ( psTermios->c_lflag & ECHO )
-	{
-		bEcho = true;
-	}
-
 	for ( i = 0; i < nLen; ++i )
 	{
-		switch ( pzBuf[i] )
+		if ( pzBuf[i] == '\n' )
 		{
-		case '\n':
-			nError = pty_do_write( psSlave, ( bNlToCr ) ? "\r" : "\n", 1, nFlags );
-			if ( bEcho == false && ( psTermios->c_lflag & ECHONL ) )
+			nError = pty_do_write( psSlave, ( INlToCr ) ? "\r" : "\n", 1, nFlags );
+			if ( Echo || EchoNl )
 			{
 				pty_write_to_master( psMaster, psSlave, "\n", 1, O_NONBLOCK, true );
 			}
-			break;
-		case '\r':
-			if ( false == bIgnoreCr )
+			goto noecho;
+		}
+		else if ( pzBuf[i] == '\r' )
+		{
+			if ( !IIgnoreCr )
 			{
-				nError = pty_do_write( psSlave, ( bCrToNl ) ? "\n" : "\r", 1, nFlags );
+				nError = pty_do_write( psSlave, ( ICrToNl ) ? "\n" : "\r", 1, nFlags );
 			}
 			else
 			{
 				nError = 1;
 			}
-			break;
-		case 0x08:	/* BACKSPACE */
-			if ( psTermios->c_lflag & ICANON )
+			goto echo;
+		}
+		else if ( psSlave->fn_nFlags & FLAG_LNEXT )
+		{
+			psSlave->fn_nFlags &= ~FLAG_LNEXT;
+			goto write_and_echo;
+		}
+		else if ( pzBuf[i] == '\0' )
+		{
+			goto write_and_echo;
+		}
+		else if ( ISignals && pzBuf[i] == psTermios->c_cc[ VINTR ] )
+		{
+			if ( psSlave->fn_psTermInfo->hPGroupID != -1 )
 			{
-				int nNewPos;
+				//printk( "send SIGINT to %x\n", psSlave->fn_psTermInfo->hPGroupID );
+				sys_kill( -psSlave->fn_psTermInfo->hPGroupID, SIGINT );
+			}
+			nError = 1;
+			goto noecho;
+		}
+		else if ( ISignals && pzBuf[i] == psTermios->c_cc[ VQUIT ] )
+		{
+			if ( psSlave->fn_psTermInfo->hPGroupID != -1 )
+			{
+				//printk( "send SIGQUIT to %x\n", psSlave->fn_psTermInfo->hPGroupID );
+				sys_kill( -psSlave->fn_psTermInfo->hPGroupID, SIGQUIT );
+			}
+			nError = 1;
+			goto noecho;
+		}
+		else if ( ICanon && pzBuf[i] == psTermios->c_cc[ VERASE ] )
+		{
+			int nNewPos;
 
-				LOCK( psSlave->fn_hMutex );
-				nNewPos = ( psSlave->fn_nWritePos + PTY_BUFFER_SIZE - 1 ) & ( PTY_BUFFER_SIZE - 1 );
+			LOCK( psSlave->fn_hMutex );
+			nNewPos = ( psSlave->fn_nWritePos + PTY_BUFFER_SIZE - 1 ) & ( PTY_BUFFER_SIZE - 1 );
+			if ( psSlave->fn_nSize > 0 && '\n' != psSlave->fn_pzBuffer[nNewPos] )
+			{
+				psSlave->fn_nSize--;
+				psSlave->fn_nWritePos = nNewPos;
+			}
+			nError = 1;
+			wakeup_sem( psSlave->fn_hWriteQueue, false );
+			pty_notify_write_select( psSlave );
+			UNLOCK( psSlave->fn_hMutex );
+			if ( Echo )
+			{
+				pty_write_to_master( psMaster, psSlave, "\x08", 1, O_NONBLOCK, true );
+			}
+			goto noecho;
+		}
+		else if ( ICanon && pzBuf[i] == psTermios->c_cc[ VKILL ] )
+		{
+			// TODO kill the line
+		}
+		else if ( ICanon && pzBuf[i] == psTermios->c_cc[ VEOF ] )
+		{
+			nError = pty_do_write( psSlave, &pzBuf[i], 1, nFlags );
+			goto noecho;
+		}
+		else if ( IXonXoff && pzBuf[i] == psTermios->c_cc[ VSTART ] )
+		{
+			psMaster->fn_nFlags &= ~FLAG_XOFF;
+			wakeup_sem( psMaster->fn_hReadQueue, false );
+			pty_notify_read_select( psMaster );
+			nError = 1;
+			goto noecho;
+		}
+		else if ( IXonXoff && pzBuf[i] == psTermios->c_cc[ VSTOP ] )
+		{
+			psMaster->fn_nFlags |= FLAG_XOFF;
+			nError = 1;
+			goto noecho;
+		}
+		else if ( ISignals && pzBuf[i] == psTermios->c_cc[ VSUSP ] )
+		{
+			if ( psSlave->fn_psTermInfo->hPGroupID != -1 )
+			{
+				//printk( "send SIGSTOP to %x\n", psSlave->fn_psTermInfo->hPGroupID );
+				sys_kill( -psSlave->fn_psTermInfo->hPGroupID, SIGSTOP );
+			}
+			nError = 1;
+			goto noecho;
+		}
+		else if ( ICanon && pzBuf[i] == psTermios->c_cc[ VREPRINT ] )
+		{
+		}
+		else if ( ICanon && pzBuf[i] == psTermios->c_cc[ VWERASE ] )
+		{
+		}
+		else if ( ICanon && pzBuf[i] == psTermios->c_cc[ VLNEXT ] )
+		{
+			psSlave->fn_nFlags |= FLAG_LNEXT;
+			pty_write_to_master( psMaster, psSlave, "^\x08", 2, O_NONBLOCK, false );
+			nError = 1;
+			goto noecho;
+		}
 
-				if ( psSlave->fn_nSize > 0 && '\n' != psSlave->fn_pzBuffer[nNewPos] )
-				{
-					psSlave->fn_nSize--;
-					psSlave->fn_nWritePos = nNewPos;
-				}
-				nError = 1;
-				wakeup_sem( psSlave->fn_hWriteQueue, false );
-				pty_notify_write_select( psSlave );
-				UNLOCK( psSlave->fn_hMutex );
+	write_and_echo:
+		{
+			char nChar = ( IUcToLc ) ? tolower( pzBuf[i] ) : pzBuf[i];
+			nError = pty_do_write( psSlave, &nChar, 1, nFlags );
+		}
+
+	echo:
+		if ( Echo && !( IXonXoff && psSlave->fn_nFlags & FLAG_XOFF ) )
+		{
+			char nChar = ( IUcToLc ) ? tolower( pzBuf[i] ) : pzBuf[i];
+			if ( nChar == '\r' && ICrToNl )
+			{
+				nChar = '\n';
+			}
+			if ( EchoCtl && ( nChar < ' ' || nChar == '\x7f' ) && nChar != '\n' )
+			{
+				char buf[2];
+				buf[0] = '^';
+				buf[1] = ( nChar == '\x7f' ) ? '?' : ( nChar + '@' );
+				pty_write_to_master( psMaster, psSlave, buf, 2, O_NONBLOCK, true );
 			}
 			else
 			{
-				nError = pty_do_write( psSlave, &pzBuf[i], 1, nFlags );
-			}
-			break;
-		default:
-			{
-				char nChar = ( bUpCaseToLowCase ) ? tolower( pzBuf[i] ) : pzBuf[i];
-
-				nError = pty_do_write( psSlave, &nChar, 1, nFlags );
-				break;
+				pty_write_to_master( psMaster, psSlave, &nChar, 1, O_NONBLOCK, true );
 			}
 		}
+
+	noecho:
+
 		kassertw( nError <= 1 );
 		if ( nError < 1 )
 		{
@@ -884,14 +935,6 @@ static int pty_write_to_slave( FileNode_s *psMaster, FileNode_s *psSlave, const 
 		}
 		else
 		{
-
-	      /*** FIX ME : Dont echo ignored backspace and CR characters ***/
-			if ( bEcho )
-			{
-				char nChar = ( bUpCaseToLowCase ) ? tolower( pzBuf[i] ) : pzBuf[i];
-
-				pty_write_to_master( psMaster, psSlave, &nChar, 1, O_NONBLOCK, true );
-			}
 			nBytesWritten++;
 		}
 	}
@@ -1103,12 +1146,12 @@ static int pty_close( void *pVolData, void *pNode, void *pCookie )
 	psNode->fn_nOpenCount--;
 	if ( 0 == psNode->fn_nOpenCount )
 	{
-		if ( NULL != psNode->fn_psParent )
+		if ( psNode->fn_psPartner != NULL )
 		{
-			wakeup_sem( psNode->fn_hReadQueue, true );
-			wakeup_sem( psNode->fn_hWriteQueue, true );
-			pty_notify_read_select( psNode );
-			pty_notify_write_select( psNode );
+			wakeup_sem( psNode->fn_psPartner->fn_hReadQueue, true );
+			wakeup_sem( psNode->fn_psPartner->fn_hWriteQueue, true );
+			pty_notify_read_select( psNode->fn_psPartner );
+			pty_notify_write_select( psNode->fn_psPartner );
 		}
 	}
 	UNLOCK( psNode->fn_hMutex );
@@ -1154,8 +1197,9 @@ static int pty_read_inode( void *pVolume, ino_t nInodeNum, void **ppNode )
 		break;
 	}
 
-	if ( NULL != psNode && psNode->fn_bReleased == false )
+	if ( NULL != psNode )
 	{
+		psNode->fn_bReleased = false;	// allow slave to be reopened
 		*ppNode = psNode;
 		return ( 0 );
 	}
@@ -1298,6 +1342,17 @@ static int pty_create( void *pVolume, void *pParentNode, const char *pzName, int
 	psMasterNode->fn_psTermInfo->sTermios.c_oflag = OPOST | ONLCR;
 	psMasterNode->fn_psTermInfo->sTermios.c_cflag = CREAD | HUPCL | CLOCAL;
 	psMasterNode->fn_psTermInfo->sTermios.c_lflag = ISIG | ICANON | ECHO | ECHOE | ECHOK | IEXTEN | ECHOCTL | ECHOKE;
+	psMasterNode->fn_psTermInfo->sTermios.c_cc[VINTR] = '\x03';	// ^C
+	psMasterNode->fn_psTermInfo->sTermios.c_cc[VQUIT] = '\x1c';	// ^\. 
+	psMasterNode->fn_psTermInfo->sTermios.c_cc[VERASE] = '\x08';	// ^H
+	psMasterNode->fn_psTermInfo->sTermios.c_cc[VKILL] = '\x15';	// ^U
+	psMasterNode->fn_psTermInfo->sTermios.c_cc[VEOF] = '\x04';	// ^D
+	psMasterNode->fn_psTermInfo->sTermios.c_cc[VSTART] = '\x11';	// ^Q
+	psMasterNode->fn_psTermInfo->sTermios.c_cc[VSTOP] = '\x13';	// ^S
+	psMasterNode->fn_psTermInfo->sTermios.c_cc[VSUSP] = '\x1a';	// ^Z
+	psMasterNode->fn_psTermInfo->sTermios.c_cc[VREPRINT] = '\x12';	// ^R
+	psMasterNode->fn_psTermInfo->sTermios.c_cc[VWERASE] = '\x17';	// ^W
+	psMasterNode->fn_psTermInfo->sTermios.c_cc[VLNEXT] = '\x16';	// ^V
 
 	psMasterNode->fn_psTermInfo->sWinSize.ws_row = 80;
 	psMasterNode->fn_psTermInfo->sWinSize.ws_col = 25;
@@ -1561,7 +1616,7 @@ static int pty_ioctl( void *pVolData, void *pNode, void *pCookie, int nCmd, void
 			}
 			break;
 		}
-	case TIOCSPGRP:	// Set forground process group
+	case TIOCSPGRP:	// Set foreground process group
 		{
 			Process_s *psProc = CURRENT_PROC;
 			pid_t hPGroup;
@@ -1592,7 +1647,7 @@ static int pty_ioctl( void *pVolData, void *pNode, void *pCookie, int nCmd, void
 			}
 			break;
 		}
-	case TIOCGPGRP:	// Get forground process group
+	case TIOCGPGRP:	// Get foreground process group
 		{
 			Process_s *psProc = CURRENT_PROC;
 
