@@ -1,3 +1,32 @@
+* Sept 21 2003, Kristian Van Der Vliet *
+
+PCI & USB bus managers and some new drivers by Arno Klenke
+<arno_klenke@yahoo.de>  The full changes are:
+
+o Busmanager management
+o Devices management + some changed to the dev fs
+o Kernel configfile
+  o A new kernel paramater (disable_config) to disable the configfile access.
+     This is probably necessary when booting from a read-only volume
+     (E.g. CDROM ).
+o All drivers have been ported to the changed APIs
+o Fixed some of the drivers makefiles so that make clean really removes
+  all binary stuff
+o The alloc_physical() function:
+ o The memory allocator has been re-written for the realmode memory to also be
+    useful for memory region allocations.
+ o The kernel reserves the region used by the RAM and tries to use the e820
+    function of the BIOS to reserve the other regions (e.g. ACPI). The PCI busmanager
+    also reserves the memory of the PCI devices.
+
+The following new drivers have been added:
+
+o PCI busmanager
+o USB busmanager
+o USB UHCI driver
+o USB mouse driver
+o VIA LAN driver
+
 * Sept 13 2003, Kristian Van Der Vliet *
 
 Combined networking patch from William Rose <wrose@zip-it.org>
@@ -149,5 +178,7 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
+
 
 
