@@ -1,0 +1,24 @@
+authors
+	Jan L. Hauffa
+	Kaj de Vos
+status				testing
+
+licenses			LGPL GFDL
+home				www.webdav.org/neon/
+locations			http://www.webdav.org/neon/
+
+needs				openssl
+;build-needs			expat | libxml2
+
+patch-config
+configure-options
+;	--enable-shared
+;	--disable-debug
+;	--with-expat
+	--with-ssl
+	--with-libs=/usr/local/ssl
+documentation
+	README BUGS src/COPYING.LIB ChangeLog NEWS THANKS TODO AUTHORS
+;	Mostly double:
+;	doc
+;	test/COPYING
