@@ -621,10 +621,10 @@ bool DirKeeper::Idle()
 				m_eState = S_IDLE;
 				return ( false );
 			}
-			std::string cName;
+			String cName;
 			if( m_pcCurrentDir->GetNextEntry( &cName ) == 1 )
 			{
-				if( cName != "." )
+				if( ! (cName == ".") )
 				{
 					SendAddMsg( cName );
 				}
@@ -937,7 +937,7 @@ bool CopyFile( const char *pzDst, const char *pzSrc, bool *pbReplaceFiles, bool 
 			cSrcPath.Append( psEntry->d_name );
 			cDstPath.Append( psEntry->d_name );
 
-			if( CopyFile( cDstPath.GetPath(), cSrcPath.GetPath(  ), pbReplaceFiles, pbDontOverwrite, pcProgress ) == false )
+			if( CopyFile( cDstPath.GetPath().c_str(), cSrcPath.GetPath(  ).c_str(), pbReplaceFiles, pbDontOverwrite, pcProgress ) == false )
 			{
 				closedir( pDir );
 				return ( false );
@@ -1298,11 +1298,11 @@ int32 DelFileThread( void *pData )
 		}
 		if( S_ISDIR( sStat.st_mode ) )
 		{
-			cMsg << "Are you sure you want to delete\n" "the directory \"" << Path( psArgs->m_cPaths[0].c_str() ).GetLeaf(  ) << "\"\n" "and all it's sub directories?";
+			cMsg << "Are you sure you want to delete\n" "the directory \"" << Path( psArgs->m_cPaths[0].c_str() ).GetLeaf(  ).c_str() << "\"\n" "and all it's sub directories?";
 		}
 		else
 		{
-			cMsg << "Are you sure you want to delete the file\n" "\"" << Path( psArgs->m_cPaths[0].c_str() ).GetLeaf(  ) << "\"\n";
+			cMsg << "Are you sure you want to delete the file\n" "\"" << Path( psArgs->m_cPaths[0].c_str() ).GetLeaf(  ).c_str() << "\"\n";
 		}
 
 		pzNo = "Leave it";
@@ -1629,7 +1629,7 @@ int32 DirectoryView::ReadDirectory( void *pData )
 
 		cFilePath.Append( psEnt->d_name );
 
-		stat( cFilePath.GetPath(), &sStat );
+		stat( cFilePath.GetPath().c_str(), &sStat );
 
 		FileRow *pcRow = new FileRow( pcView->m_pcIconBitmap, psEnt->d_name, sStat );
 
@@ -1748,7 +1748,7 @@ void DirectoryView::Invoked( int nFirstRow, int nLastRow )
 	}
 	else
 	{
-		m_cStack.push( State( this, m_cPath.GetPath() ) );
+		m_cStack.push( State( this, m_cPath.GetPath().c_str() ) );
 		m_cPath.Append( pcRow->m_cName.c_str() );
 	}
 	ReRead();
@@ -2509,4 +2509,3 @@ bool FileRow::IsLessThan( const ListViewRow * pcOther, uint nColumn ) const
 		return ( false );
 	}
 }
-

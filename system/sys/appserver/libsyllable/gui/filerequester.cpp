@@ -534,9 +534,9 @@ void FileRequester::HandleMessage( Message * pcMessage )
 
 				struct::stat sStat;
 
-				if( pcMessage->GetCode() != ID_ALERT &&::stat( cPath.GetPath(  ), &sStat ) >= 0 )
+				if( pcMessage->GetCode() != ID_ALERT &&::stat( cPath.GetPath(  ).c_str(), &sStat ) >= 0 )
 				{
-					std::string cMsg = "The file '" + ( std::string ) cPath.GetPath() + "' already exists\nDo you want to overwrite it?\n";
+					String cMsg = "The file '" + ( std::string ) cPath.GetPath() + "' already exists\nDo you want to overwrite it?\n";
 
 					Alert *pcAlert = new Alert( "Warning:", cMsg.c_str(), Alert::ALERT_WARNING, 0, "No", "Yes", NULL );
 
@@ -624,3 +624,4 @@ String FileRequester::GetPath() const
 {
 	return ( m->m_pcDirView->GetPath() );
 }
+
