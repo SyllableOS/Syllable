@@ -1,0 +1,41 @@
+#!/bin/sh
+# -*- perl -*-
+
+: ${PERL=perl}
+: ${srcdir=.}
+
+case "$PERL" in
+  *'missing perl')
+  echo 1>&2 "$0: configure didn't find a usable version of Perl, so can't run this test"
+  exit 77
+  ;;
+esac
+
+# Export this to avoid hassles when run in a UTF-8 locale,
+# since we use 8-bit characters below, and those values are
+# interpolated into strings (to perform substitution) in Fetish.pm.
+LC_ALL=C
+export LC_ALL
+
+exec $PERL -w -I$srcdir/.. -MFetish -- - <<\EOF
+require 5.003;
+use strict;
+
+(my $program_name = $0) =~ s|.*/||;
+
+my @Tests =
+    (
+     ['8-bit-pfx', qw (-p 'ç'),
+      {IN=> "ça\nçb\n"},
+      {OUT=>"ça b\n"}],
+     ['wide-1', '-32768',	{IN=> "a\n"}, {OUT=>"a\n"}],
+     ['wide-2', '-2147483647',	{IN=> "a\n"}, {OUT=>"a\n"}],
+    );
+
+my $save_temps = $ENV{DEBUG};
+my $verbose = $ENV{VERBOSE};
+
+my $prog = $ENV{PROG} || die "$0: \$PROG not specified in environment\n";
+my $fail = run_tests ($program_name, $prog, \@Tests, $save_temps, $verbose);
+exit $fail;
+EOF

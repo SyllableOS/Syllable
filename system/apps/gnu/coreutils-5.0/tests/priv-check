@@ -1,0 +1,38 @@
+# -*- sh -*-
+# Source this file at the beginning of a test that works
+# only when run as root or as non-root.
+
+case "$PRIV_CHECK_ARG" in
+  require-root) who='as root';;
+  require-non-root) who='by an unprivileged user';;
+  *) echo "Usage: PRIV_CHECK_ARG={require-root|require-non-root} . priv-check"\
+     1>&2; exit 1;;
+esac
+
+priv_check_temp=priv-check.$$
+touch $priv_check_temp || framework_failure=1
+chmod a-w $priv_check_temp || framework_failure=1
+
+(echo foo >> $priv_check_temp) >/dev/null 2>&1
+overwrite_status=$?
+give_msg=no
+case $PRIV_CHECK_ARG:$overwrite_status in
+  require-root:0) ;;
+  require-root:*) give_msg=yes ;;
+  require-non-root:0) give_msg=yes ;;
+  require-non-root:*) ;;
+esac
+
+test $give_msg = yes && {
+  cat <<EOF
+***************************
+NOTICE:
+$0: This test is being skipped, since it works only
+when run $who.
+***************************
+EOF
+  rm -f $priv_check_temp
+  (exit 77); exit
+}
+
+rm -f $priv_check_temp
