@@ -117,7 +117,7 @@ void LoginView::Layout()
     m_pcNameView->SetFrame(Rect(0,0,170,25) + Point(270,175));  //290
     m_pcPasswordView->SetFrame(Rect(0,0,170,25) + Point(270,204));
     m_pcOkBut->SetFrame(Rect(0,0,65,25) + Point(375,240));
-    m_pcNameView->Set(ReadLoginOption(),true);
+    m_pcNameView->Set(ReadLoginOption());
 }
 
 
@@ -147,13 +147,8 @@ LoginWindow::LoginWindow( const Rect& cFrame ) : Window( cFrame, "login_window",
     m_pcView = new LoginView(cRect);
     AddChild( m_pcView );
 
-    CheckLoginConfig();
-
-
-    if (!strcmp(ReadLoginOption(),"\n") == 0)
+    if (strlen(ReadLoginOption()) > 0)
         SetFocusChild(m_pcView->m_pcPasswordView);
-
-
     else
         SetFocusChild(m_pcView->m_pcNameView);
 

@@ -56,47 +56,10 @@ int BecomeUser( struct passwd *psPwd, LoginWindow* pcWindow )
 */
 void UpdateLoginConfig(os::String zName)
 {
-    char junk[1024];
-    char login_info[1024];
-    char login_name[1024];
-
-    ifstream filRead;
-    filRead.open("/boot/atheos/sys/config/login.cfg");
-
-    filRead.getline(junk,1024);
-    filRead.getline((char*)login_info,1024);
-    filRead.close();
-
-    FILE* fin;
-    fin = fopen("/boot/atheos/sys/config/login.new","w");
-
-    fprintf(fin,"<Login Name Option>\n");
-    fprintf(fin, login_info);
-    fprintf(fin, "\n<Login Name>\n");
-    fprintf(fin,zName.c_str());
-    fprintf(fin,"\n");
-    fclose(fin);
-
-    rename("/boot/atheos/sys/config/login.new", "/boot/atheos/sys/config/login.cfg");
-}
-
-/*
-** name:       WriteLoginConfigFile
-** purpose:    Writes a config file to /boot/atheos/sys/config/login.cfg; if one does
-**			   not exsist.
-** parameters: 
-** returns:	   
-*/
-void WriteLoginConfigFile()
-{
-    FILE* fin;
-    fin = fopen("/boot/atheos/sys/config/login.cfg","w");
-
-    fprintf(fin,"<Login Name Option>\n");
-    fprintf(fin,"false\n\n");
-    fprintf(fin, "<Login Name>\n");
-    fprintf(fin,"\n");
-    fclose(fin);
+	FSNode* pcNode = new FSNode("/bin/dlogin");
+	pcNode->RemoveAttr("user");
+	pcNode->WriteAttr("user",0,ATTR_TYPE_STRING,zName.c_str(),0,zName.size());
+	delete pcNode;	
 }
 
 /*
@@ -107,42 +70,14 @@ void WriteLoginConfigFile()
 */
 const char* ReadLoginOption()
 {
-    char junk[1024];
-    char login_info[1024];
-    ifstream filRead;
-
-    filRead.open("/boot/atheos/sys/config/login.cfg");
-    filRead.getline(junk,1024);
-    filRead.getline(login_info,1024);
-    filRead.getline(junk, 1024);
-    filRead.getline(junk,1024);
-    filRead.close();
-
-    if (strcmp(login_info,"true")==0)
-    {
-        return(junk);
-    }
-    else
-        return ("\n");
+	char zUser[1024]= {NULL,};
+	FSNode* pcNode = new FSNode("/bin/dlogin");
+	pcNode->ReadAttr("user",ATTR_TYPE_STRING,zUser,0,1024);
+	delete pcNode;
+	return zUser;
 }
 
-/*
-** name:       CheckLoginConfig
-** purpose:    Checks to see if /boot/atheos/sys/config/login.cfg exsists; if it doesn't
-**			   exsist.
-** parameters: 
-** returns:	   
-*/
-void CheckLoginConfig()
-{
-    ifstream filestr;
-    filestr.open("/boot/atheos/sys/config/login.cfg");
-    if (filestr)
-    {
-        filestr.close();
-        ReadLoginOption();
-    }
-}
+
 
 os::String GetSyllableVersion()
 {
