@@ -946,13 +946,14 @@ void InnerEdit::moveLeft(bool select)
 {
 	preMove(select);
 
-	uint y = _TranslateBufferIndex( cursorY );
+	uint y = _TranslateBufferIndex( cursorY );;
 	uint x = min(getChar(cursorX, y), buffer[y].text.size());
 
-	if(x==0){
-		if(cursorY>0){
+	if( !x ) {
+		if( cursorY > 0 ) {
 			--cursorY;
-			cursorX=getW(buffer[y].text.size(), y);
+			y = _TranslateBufferIndex( cursorY );
+			cursorX = getW( buffer[y].text.size(), y );
 			invalidateLines(cursorY, cursorY+1);
 		}
 	}else{
@@ -1952,6 +1953,7 @@ void InnerEdit::_AdjustFoldedSections( uint nStart, int nLen )
 //		}
 	}
 }
+
 
 
 
