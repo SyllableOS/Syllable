@@ -1,4 +1,4 @@
-dhcpc 1.2 -:- A DHCP client for Syllable
+dhcpc 1.3 -:- A DHCP client for Syllable
 
 dhcpc is a simple DHCP/BOOTP client for Syllable 0.4.3 and later.  dhcpc is
 released under the GNU General Public Licencse.  See the file COPYING for more

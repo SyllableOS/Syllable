@@ -43,7 +43,7 @@ struct _DHCPSessionInfo{
 	uint32 giaddr;
 	uint8 chaddr[16];
 	uint8 sname[64];
-
+	int hw_type;
 	uint32 lease_time;
 	uint32 subnetmask;
 

@@ -69,7 +69,8 @@ typedef struct _DHCPOption DHCPOption_s;
 #define OPTION_CLIENTID 61
 #define OPTION_END 255
 
-DHCPPacket_s* build_packet( bool is_broadcast, uint32 client, uint32 server, uint8* hwaddress, clock_t boot_time );
+
+DHCPPacket_s* build_packet( bool is_broadcast, uint32 client, uint32 server, uint32 gateway, uint8* hwaddress, clock_t boot_time );
 uint32 getxid( void );
 
 int setoptions( DHCPPacket_s* packet, DHCPOption_s *options );

@@ -155,6 +155,8 @@ int dhcp_init( char* if_name )
 	info->lease_time = ( DEFAULT_LEASE_MINS * 60 );
 	info->if_name = if_name;
 	info->timeout = 10;	// Wait 10 seconds for a response from the server
+	info->giaddr = 0;  // Assume to start that we're not being relayed.
+	info->hw_type = 1;  // Also assume we're running on Ethernet.  Should change this.
 
 	// Fill in the relevent runtime information
 	info->state_lock = create_semaphore( "dhcp_state", 1, 0);
@@ -276,8 +278,9 @@ static void state_init( void )
 	// We build DHCP DHCPDISCOVER packets & broadcast them to 255.255.255.255
 	// After the packet is sent we move onto STATE_SELECTING and let that deal
 	// with the details
-
-	packet = build_packet( true, 0, 0, info->if_hwaddress, info->boot_time);
+	
+	debug(INFO,__FUNCTION__,"lease time is now: %i", (unsigned int)info->lease_time);
+	packet = build_packet( true, 0, 0, 0, info->if_hwaddress, info->boot_time);
 	if( packet == NULL )
 	{
 		debug(PANIC,__FUNCTION__,"unable to create DHCPDISCOVER packet\n");
@@ -289,7 +292,7 @@ static void state_init( void )
 	option = NULL;
 	options_head = option;
 
-	for( current_option = 1; current_option <= 3; current_option++ )
+	for( current_option = 1; current_option <= 5; current_option++ )
 	{
 		if( option == NULL )
 		{
@@ -339,6 +342,7 @@ static void state_init( void )
 				}
 
 				memcpy(option->data,&info->lease_time,4);
+				option->next = NULL;
 				break;
 			}
 
@@ -359,6 +363,34 @@ static void state_init( void )
 				}
 				memcpy(option->data,&dns_val,1);
 				memcpy((option->data + 1),&routers_val,1);
+
+				option->next = NULL;
+				break;
+			}
+
+			case 4:
+			{
+				option->type = OPTION_CLIENTID;
+				option->length = 7;					// FIXME: We assume that we are using Ethernet
+				option->data = (uint8*)malloc(7);
+				if( option->data == NULL )
+				{
+					debug(PANIC,__FUNCTION__,"unable to allocate data for client id option\n");
+					free( packet );
+					freeoptions( options_head );
+					return;
+				}
+				memcpy(option->data,&info->hw_type,1);
+				memcpy((option->data + 1),&info->if_hwaddress,6);
+
+				option->next = NULL;
+				break;
+			}
+
+			case 5: //End option
+			{
+				option->type = OPTION_END;
+				option->length = 1;
 
 				option->next = NULL;
 				break;
@@ -530,9 +562,9 @@ static void state_selecting( void )
 		info->attempts += 1;
 		change_state(STATE_INIT);	// Try again
 	}
-	else
+	else		
 		change_state(STATE_REQUESTING);
-
+    
 	free(in_packet);
 }
 
@@ -553,7 +585,7 @@ static void state_requesting( void )
 	// & requested IP address options.  The server should reply with either a
 	// DHCPACK or DHCPNAK.
 
-	packet = build_packet( true, 0, 0, info->if_hwaddress, info->boot_time);
+	packet = build_packet( true, 0, 0, 0, info->if_hwaddress, info->boot_time);
 	if( packet == NULL )
 	{
 		debug(PANIC,__FUNCTION__,"unable to create a DHCPREQUEST packet\n");
@@ -567,7 +599,7 @@ static void state_requesting( void )
 	option = NULL;
 	options_head = option;
 
-	for( current_option = 1; current_option <= 5; current_option++ )
+	for( current_option = 1; current_option <= 7; current_option++ )
 	{
 		if( option == NULL )
 		{
@@ -664,7 +696,7 @@ static void state_requesting( void )
 				}
 
 				memcpy(option->data,&info->lease_time,4);
-
+				debug(INFO,__FUNCTION__,"requesting lease time of %i seconds\n",(unsigned int)info->lease_time);
 				option->next = NULL;
 				break;
 			}
@@ -672,8 +704,8 @@ static void state_requesting( void )
 			case 5:
 			{
 				option->type = OPTION_CLIENTID;
-				option->length = 6;					// FIXME: We assume that we are using Ethernet
-				option->data = (uint8*)malloc(6);
+				option->length = 7;					// FIXME: We assume that we are using Ethernet
+				option->data = (uint8*)malloc(7);
 				if( option->data == NULL )
 				{
 					debug(PANIC,__FUNCTION__,"unable to allocate data for client id option\n");
@@ -681,8 +713,39 @@ static void state_requesting( void )
 					freeoptions( options_head );
 					return;
 				}
+				memcpy(option->data,&info->hw_type,1);
+				memcpy((option->data + 1),&info->if_hwaddress,6);
 
-				memcpy(option->data,&info->if_hwaddress,option->length);
+				option->next = NULL;
+				break;
+			}
+
+			case 6:	// Please give us a list of DNS servers & gateways
+			{
+				uint8 dns_val = OPTION_DNSSERVERS;
+				uint8 routers_val = OPTION_ROUTERS;
+
+				option->type = OPTION_PARLIST;
+				option->length = 2;
+				option->data = (uint8*)malloc(option->length);
+				if( option->data == NULL )
+				{
+					debug(PANIC,__FUNCTION__,"unable to allocate data for paramter list option\n");
+					free( packet );
+					freeoptions( options_head );
+					return;
+				}
+				memcpy(option->data,&dns_val,1);
+				memcpy((option->data + 1),&routers_val,1);
+
+				option->next = NULL;
+				break;
+			}
+
+			case 7: // End option
+			{
+				option->type = OPTION_END;
+				option->length = 1;
 
 				option->next = NULL;
 				break;
@@ -788,9 +851,7 @@ static void state_requesting( void )
 		{
 			debug(WARNING,__FUNCTION__,"this xid %X does not match last xid %X\n",(unsigned int)in_packet->xid,(unsigned int)info->last_xid);
 			free( in_packet );
-			info->attempts += 1;
-			change_state(STATE_INIT);
-			return;
+			continue;		// Try for another packet.
 		}
 		else
 		{
@@ -957,7 +1018,7 @@ static void state_renewing( void )
 	// Unicast a DHCPREQUEST, without the requested IP address, server ID or client ID
 	// options.  The server should reply with either a DHCPACK or DHCPNAK.
 
-	packet = build_packet( true, info->ciaddr, 0, info->if_hwaddress, info->boot_time);
+	packet = build_packet( true, info->ciaddr, 0, info->giaddr, info->if_hwaddress, info->boot_time);
 	if( packet == NULL )
 	{
 		debug(PANIC,__FUNCTION__,"unable to create a DHCPREQUEST packet\n");
@@ -1162,9 +1223,7 @@ static void state_renewing( void )
 		{
 			debug(WARNING,__FUNCTION__,"this xid %X does not match last xid %X\n",(unsigned int)in_packet->xid,(unsigned int)info->last_xid);
 			free( in_packet );
-			info->attempts += 1;
-			change_state(STATE_INIT);
-			return;
+			continue;		// Try for another packet.
 		}
 		else
 		{
@@ -1275,7 +1334,7 @@ static void state_rebinding( void )
 	// Broadcast a DHCPREQUEST, without the requested IP address or server ID
 	// options.  The server should reply with either a DHCPACK or DHCPNAK.
 
-	packet = build_packet( true, info->ciaddr, 0, info->if_hwaddress, info->boot_time);
+	packet = build_packet( true, info->ciaddr, 0, info->giaddr, info->if_hwaddress, info->boot_time);
 	if( packet == NULL )
 	{
 		debug(PANIC,__FUNCTION__,"unable to create a DHCPREQUEST packet\n");
@@ -1466,9 +1525,7 @@ static void state_rebinding( void )
 		{
 			debug(WARNING,__FUNCTION__,"this xid %X does not match last xid %X\n",(unsigned int)in_packet->xid,(unsigned int)info->last_xid);
 			free( in_packet );
-			info->attempts += 1;
-			change_state(STATE_INIT);
-			return;
+			continue;		// Try for another packet.
 		}
 		else
 		{
@@ -1585,7 +1642,7 @@ static void do_release( void )
 	}
 
 	// Build a DHCPRELEASE packet
-	packet = build_packet( false, info->siaddr, 0, info->if_hwaddress, info->boot_time);
+	packet = build_packet( false, info->siaddr, 0, info->giaddr, info->if_hwaddress, info->boot_time);
 	if( packet == NULL )
 	{
 		debug(PANIC,__FUNCTION__,"unable to create a DHCPRELEASE packet\n");

@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include <posix/errno.h>
 
-DHCPPacket_s* build_packet( bool is_broadcast, uint32 client, uint32 server, uint8* hwaddress, clock_t boot_time )
+DHCPPacket_s* build_packet( bool is_broadcast, uint32 client, uint32 server, uint32 gateway, uint8* hwaddress, clock_t boot_time )
 {
 	DHCPPacket_s* packet;
 
@@ -64,6 +64,10 @@ DHCPPacket_s* build_packet( bool is_broadcast, uint32 client, uint32 server, uin
 
 	if( server != 0 )
 		packet->siaddr = server;	// Only send to a specific server if the server is known
+
+	if( gateway !=0 )
+		packet->giaddr = gateway;	// Add a BOOTP gateway option, if it exists.
+	
 
 	return( packet );
 }
@@ -167,6 +171,14 @@ int setoptions( DHCPPacket_s* packet, DHCPOption_s *options )
 				memcpy(packet->options + (offset + 2), current_option->data, current_option->length);
 
 				offset+=(2+current_option->length);
+				break;
+			}
+
+			case OPTION_END:
+			{
+				packet->options[offset] = OPTION_END;
+
+				offset+=1;
 				break;
 			}
 
