@@ -1,3 +1,12 @@
+* January 28 2004, Henrik Isaksson *
+
+	Fixed apps to match changes in API:
+		o aclock
+		o archiver
+		o aview
+		o desktop
+		o guiprefs
+
 * January 9 2004, Henrik Isaksson *
 	- DiskManager:
 		o Added shortcuts
@@ -173,4 +182,5 @@ Network Preferences
 		* Added NetworkPreferences from Daryl Dudey(daryl.dudey@ntlworld.com).
 		* Added SlbMgr(AtheMgr renamed).
 		* Patches by Vanders for AEdit.
+
 
