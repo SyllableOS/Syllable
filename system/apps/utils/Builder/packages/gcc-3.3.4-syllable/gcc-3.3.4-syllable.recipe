@@ -38,6 +38,10 @@ make-env
 	C_INCLUDE_PATH		$PWD/../atheos/usr/glibc2/include:/ainc
 ;	CPLUS_INCLUDE_PATH	$PWD/../atheos/usr/glibc2/include:/ainc
 ;	DLL_PATH		$PWD/../atheos/sys/libs
+;	The cross-assembling toolchain:
+;	GCC_EXEC_PREFIX		/usr/binutils/lib
+;	LIBRARY_PATH		/usr/binutils/lib
+;	LD_LIBRARY_PATH		/usr/binutils/lib
 make-targets		all-gcc
 
 install-targets		install-gcc
