@@ -1,0 +1,47 @@
+authors
+	Jan L. Hauffa
+	Kaj de Vos
+status				developing
+warnings
+	configure hangs on conftest. You need to kill conftest (twice) to let the build continue.
+	Shared memory support in the APR library is a hack: the implementation of anonymous shared memory is untested, implementation of named shared memory isn't possible due to limitations of the Syllable API.
+
+headline			An advanced version control system
+description
+	The goal of the Subversion project is to build a version control system that is a compelling replacement for CVS in the open source community.
+licenses			other Apache ISC
+home				subversion.tigris.org
+locations			http://subversion.tigris.org/tarballs/
+
+build-needs			neon >= 0.24.6
+build-recommends
+	apr >= 0.9.5
+	apr-util >= 0.9.5
+;	For local repositories:
+	db >= 4.0.14
+	expat
+;	swig
+	texinfo
+test-needs			python >= 2.0
+recommends			apache >= 2.0.49
+
+patch-config
+	apr/build
+	apr-util/build
+	apr-util/xml/expat/conftools
+	ac-helpers
+
+configure-options
+;	(Needs internal APR and APR-Util versions)
+;	--with-apr=/usr/apr
+;	--with-apr-util=/usr/apr-util
+	--with-berkeley-db=/usr/db
+;	--with-expat=
+	--with-neon=/usr/neon
+;	For Windows?
+;	--with-zlib
+;	--with-apache=
+;	--with-swig=
+;	--with-jdk=
+;	--with-editor=
+documentation		README INSTALL BUGS STATUS COPYING ChangeLog.CVS CHANGES COMMITTERS HACKING doc notes www
