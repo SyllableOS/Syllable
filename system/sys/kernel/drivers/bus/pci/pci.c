@@ -96,6 +96,19 @@ static void pci_inst_check( void )
 			return;
 		}
 	}
+
+	/* Check for Virtual PC PCI method 1 */
+	outl( 0x80000000, 0x0cf8 );
+	if ( inl( 0x0cf8 ) == 0x80000000 )
+	{
+		outl( 0x0, 0x0cf8 );
+		if ( inl( 0x0cf8 ) == 0x80000000 )
+		{
+			g_nPCIMethod = PCI_METHOD_1;
+			printk( "PCI: Detected Virtual PC, using access method 1\n" );
+			return;
+		}
+	}
 }
 
 /** 
