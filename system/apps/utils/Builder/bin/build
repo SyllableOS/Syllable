@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.5.10
+# Version 0.5.11
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -509,7 +509,7 @@ end
 def doModules command, target
 	# Visit all directories
 
-	for package in getModules target
+	for package in target.modules
 		@log.entry package
 
 		Dir.chdir package
@@ -519,7 +519,7 @@ def doModules command, target
 end
 
 def prepare target
-	if @systemBuild and tree = getRecipe(target)['distro-tree']
+	if @systemBuild and tree = target.profile['distro-tree']
 		@log.header 'Building distribution tree'
 
 		if exists? @distroRoot
@@ -541,11 +541,11 @@ def prepare target
 end
 
 def patch target
-	@log.header 'Patching ' + target
+	@log.header 'Patching ' + target.to_s
 
 	# Patch all directories
 
-	for package in getModules target
+	for package in target.modules
 		@log.entry package
 
 		Dir.chdir package
@@ -558,27 +558,27 @@ def patch target
 end
 
 def get target
-	@log.header 'Fetching ' + target
+	@log.header 'Fetching ' + target.to_s
 
 	# Fetch all directories
 
-	for package in getModules target
+	for package in target.modules
 		@log.entry package
 		getPackage package
 	end
 end
 
 def distclean target
-	@log.header 'Cleaning distribution ' + target
+	@log.header 'Cleaning distribution ' + target.to_s
 	doModules 'make distclean', target
 end
 
 def configure target
-	@log.header 'Configuring ' + target
+	@log.header 'Configuring ' + target.to_s
 
 	# Configure all directories
 
-	for package in getModules target
+	for package in target.modules
 		@log.entry package
 
 		Dir.chdir package
@@ -588,11 +588,11 @@ def configure target
 end
 
 def clean target
-	@log.header 'Cleaning ' + target
+	@log.header 'Cleaning ' + target.to_s
 
 	# Clean all directories
 
-	for package in getModules target
+	for package in target.modules
 		@log.entry package
 
 		Dir.chdir package
@@ -602,11 +602,11 @@ def clean target
 end
 
 def make target
-	@log.header 'Making ' + target
+	@log.header 'Making ' + target.to_s
 
 	# Make all directories
 
-	for package in getModules target
+	for package in target.modules
 		@log.entry package
 
 		Dir.chdir package
@@ -616,11 +616,11 @@ def make target
 end
 
 def test target
-	@log.header 'Testing ' + target
+	@log.header 'Testing ' + target.to_s
 
 	# Test all directories
 
-	for package in getModules target
+	for package in target.modules
 		@log.entry package
 
 		Dir.chdir package
@@ -630,11 +630,11 @@ def test target
 end
 
 def install target
-	@log.header 'Installing ' + target
+	@log.header 'Installing ' + target.to_s
 
 	# Install all directories or distribution packages
 
-	for package in getModules target
+	for package in target.modules
 		@log.entry package
 
 		installPackage package
@@ -643,11 +643,11 @@ def install target
 end
 
 def uninstall target
-	@log.header 'Uninstalling ' + target
+	@log.header 'Uninstalling ' + target.to_s
 
 	# Uninstall all directories
 
-	for package in getModules target
+	for package in target.modules
 		@log.entry package
 
 		uninstallPackage package
@@ -656,9 +656,9 @@ def uninstall target
 end
 
 def makeDistro target
-	@log.header 'Making distribution ' + target
+	@log.header 'Making distribution ' + target.to_s
 
-	modules = getModules target
+	modules = target.modules
 
 	if @systemBuild
 		# Visit all directories
@@ -705,11 +705,11 @@ def makeDistro target
 end
 
 def build target
-	@log.header 'Building ' + target
+	@log.header 'Building ' + target.to_s
 
 	# Build all directories
 
-	for package in getModules target
+	for package in target.modules
 		@log.entry package
 		buildPackage package
 	end
@@ -916,13 +916,27 @@ attr_reader :profile
 	end
 end
 
-def getModules target  # Return the list of modules for the build target, or a single module
-	if target['/']  # A single target directory
-		target[-1, 1] == '/' ? target.chop : target
-	elsif (profile = Profile.new target).profile  # A profile
-		toList profile['modules']
-	else
-		target
+class Target
+attr_reader :profile, :modules
+
+	def initialize target
+		@name = target
+
+		# The list of modules for the build target, or a single module
+		@profile = nil
+		@modules =
+			if target['/']  # A single target directory
+				target[-1, 1] == '/' ? target.chop : target
+			elsif (profile = Profile.new target).profile  # A profile
+				@profile = profile
+				toList profile['modules']
+			else
+				target
+			end
+	end
+
+	def to_s
+		@name
 	end
 end
 
@@ -1037,7 +1051,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.10',
+	puts 'Syllable Build System 0.5.11',
 		'Copyright (c) 2002-2004 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1079,47 +1093,50 @@ else
 	if arg1 == 'scrub'
 		deleteCVSData
 	else
-		profile = Profile.new target = arg2 ? arg2 : arg1 ? arg1 : 'default'
+		target  = Target.new arg2 ? arg2 : arg1 ? arg1 : 'default'
+		profile = target.profile
 
-		Profile.new('last')['modules'] = profile['modules'] if profile.profile  # Not a single module
+		Profile.new('last')['modules'] = profile['modules'] if profile  # Processing a profile
 
-		if @systemBuild
-			@log.header 'Temporarily replacing system headers'
-			action "ln -sf #{File.join @workDir, 'sys/include'} /ainc"
-
-			prepare target unless exists? @distroRoot
-		end
-
-		case arg1
-		when 'prepare'		then prepare arg2
-		when 'get'			then get arg2
-		when 'patch'		then patch arg2
-		when 'distclean'	then distclean arg2
-		when 'clean'		then clean arg2
-		when 'configure'	then configure arg2
-		when 'make'			then make arg2
-		when 'test'			then test arg2
-		when 'install'		then install arg2
-		when 'uninstall'	then uninstall arg2
-		when 'distro'		then makeDistro arg2
+		if arg1 == 'prepare'
+			prepare target
 		else
-			if arg2
-				@log.error 'Unrecognized command'
-				exit
-			else
-				build target
+			if @systemBuild
+				@log.header 'Temporarily replacing system headers'
+				action "ln -sf #{File.join @workDir, 'sys/include'} /ainc"
+	
+				prepare target unless exists? @distroRoot
 			end
+	
+			case arg1
+			when 'get'			then get		target
+			when 'patch'		then patch		target
+			when 'distclean'	then distclean	target
+			when 'clean'		then clean		target
+			when 'configure'	then configure	target
+			when 'make'			then make		target
+			when 'test'			then test		target
+			when 'install'		then install	target
+			when 'uninstall'	then uninstall	target
+			when 'distro'		then makeDistro	target
+			else
+				if arg2
+					@log.error 'Unrecognized command'
+					exit
+				else
+					build target
+				end
+			end
+	
+			if @systemBuild
+				@log.header 'Restoring system headers'
+				action 'ln -sf /system/include /ainc'
+			end
+	
+			Profile.new('failures')['modules'] = @log.failures if profile  # Processing a profile
 		end
-
-		Profile.new('failures')['modules'] = @log.failures if profile.profile  # Not a single module
-
-		if @systemBuild
-			@log.header 'Restoring system headers'
-			action 'ln -sf /system/include /ainc'
-		end
-
-		action 'sync'
 	end
 
+	action 'sync'
 	@log.close
 end
