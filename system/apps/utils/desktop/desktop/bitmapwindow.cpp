@@ -179,9 +179,9 @@ BitmapView::BitmapView( const Rect& cFrame ) :
 	pcMainMenu = new Menu(Rect(0,0,0,0),"",ITEMS_IN_COLUMN);
     pcMountMenu = new Menu(Rect(0,0,0,0),"Mount Drives    ",ITEMS_IN_COLUMN);
 
-    //Drives* pcAtheMenu = new Drives();
+    Drives* pcAtheMenu = new Drives(this);
     
-   
+    
     	
     //pcAtheMenu->AddItem("Show Info...",new Message(M_SHOW_DRIVE_INFO));
     //pcAtheMenu->AddItem("Unmount...", new Message(M_DRIVES_UNMOUNT));
@@ -190,13 +190,13 @@ BitmapView::BitmapView( const Rect& cFrame ) :
     //pcMountMenu->AddItem(new MenuSeparator());
     //pcMountMenu->AddItem("Settings...",NULL);
 
-    //pcMainMenu->AddItem(new ImageItem(pcAtheMenu,NULL,LoadBitmapFromResource("mount.png")));
+    pcMainMenu->AddItem(new ImageItem(pcAtheMenu, NULL, LoadBitmapFromResource("mount.png") ) );
     
     pcMainMenu->AddItem(new MenuSeparator());
     pcMainMenu->AddItem(new ImageItem("Properties", new Message(M_PROPERTIES_SHOW),"", LoadBitmapFromResource("kcontrol.png")));
     pcMainMenu->AddItem(new MenuSeparator());
     pcMainMenu->AddItem(new ImageItem("Logout",new Message(M_LOGOUT_ALERT),"", LoadBitmapFromResource("exit.png")));
-    pcMainMenu->GetPreferredSize(true);
+    pcMainMenu->GetPreferredSize(false);
 
     pcIconMenu = new IconMenu();
     pcIconMenu->SetTargetForItems(this);
@@ -761,18 +761,15 @@ void BitmapView::HandleMessage(Message* pcMessage)
         break;
 
     case M_SHOW_DRIVE_INFO:
-
-        /*char info[1024];
-        char vol_info[1024];
-
-        sprintf(vol_info," %s info",m_drives.vol_name);
-        sprintf(info,"Type:   %s    \n\nSize:  %s    \n\nUsed:   %s    \n\nAvailable:   %s    \n\nPercent Free:   %s    ",m_drives.zType, m_drives.zSize, m_drives.zUsed,m_drives.zAvail, m_drives.zPer );
-
-
-        pcAlert  = new Alert(vol_info,info, 0, "OK", NULL );
-        pcAlert->Go(new Invoker());*/
+    	{
+		string zAlertInfo;
+		string zAlertName;
+		pcMessage->FindString("Alert_Name", &zAlertName);
+		pcMessage->FindString("Alert_Info",  &zAlertInfo);
+		
+		(new Alert (zAlertName.c_str(),zAlertInfo.c_str(),Alert::ALERT_INFO,0,"Ok",NULL))->Go(new Invoker());
         break;
-
+		}
     case M_DRIVES_UNMOUNT:
 
         pcAlert = new Alert("Alert!!!","Unmount doesn't work yet!!!\n", 0, "OK",NULL );
@@ -841,6 +838,17 @@ bool BitmapWindow::OkToQuit(void)
     Application::GetInstance()->PostMessage(M_QUIT );
   	return (true);
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
