@@ -12,6 +12,13 @@ modules
 	libs/ncurses-5.4
 	sys/appserver/libsyllable
 	sys/appserver/appserver/server
+	sys/media/mediaserver
+	sys/media/drivers/ffmpeg
+	sys/media/drivers/oss
+	sys/media/drivers/raw
+	sys/media/drivers/videobitmap
+	sys/media/drivers/videooverlay
+	sys/media/drivers/vorbis
 	apps/gnu/coreutils-5.2.1
 	apps/gnu/less-382
 	apps/gnu/sed-4.1
