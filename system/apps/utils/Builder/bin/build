@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.48
+# Version 0.5.49
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -662,25 +662,36 @@ def makeDistro target
    Dir.chdir @workDir
   end
  else  # Create a single package
-  file = (name = fullName target.to_s) + '.bin.1'
+  file = (name = fullName target.to_s) + '.bin.1.zip'
 
   unless
    unless modules.is_a? Array and exists? distroDir = File.join(@packagesPath, name, 'distro')
-    action "tar -cvzf #{file}.tgz" +
-     " --directory=#{@installRoot} " +
-      installName(name) +
-#      toString(modules.collect {|package| installName package}) +
-     ( (links = (links = parseList(getRecipe(name)['links'])) ?
-       links.collect { |link|
-        (destination = toList(link)[1])[0, 1] == '/' ?  # A link into the system
-         destination :
-         nil
-       }.compact :
-       []
-      ) == [] ?
-       '' :
-       ' --absolute-names ' + toString(links)
-     )
+    if exists? file and not action 'rm ' + file  # Zip would add to the existing package
+     false
+    else
+     Dir.chdir @installRoot
+
+#     action 'tar -cvzf ' + file +
+#      " --directory=#{@installRoot} " +
+     action 'zip -ry' +
+#      ' -b ' + dereference(@installRoot) +  # Doesn't work
+      " #{File.join @workDir, file} " +
+       installName(name)
+##       toString(modules.collect {|package| installName package}) +
+#     Doesn't work with Zip:
+#      ( (links = (links = parseList(getRecipe(name)['links'])) ?
+#        links.collect { |link|
+#         (destination = toList(link)[1])[0, 1] == '/' ?  # A link into the system
+#          destination :
+#          nil
+#        }.compact :
+#        []
+#       ) == [] ?
+#        '' :
+##        ' --absolute-names ' + toString(links)
+#        ' ' + toString(links)
+#      )
+    end
    else  # A compound package
     unless action "mkdir " + name
      false
@@ -708,7 +719,8 @@ def makeDistro target
        then
         false
        else
-        action "tar --dereference --remove-files -cvzf #{file}.tgz " + name
+#        action "tar --dereference --remove-files -cvzf #{file}.tgz " + name
+        action "zip -rm #{file}.zip " + name
        end
       end
      end
@@ -769,6 +781,15 @@ end
 
 def dir? file
  FileTest.directory? file
+end
+
+def dereference file
+ FileTest.symlink?(file) ?
+  (file[0, 1] == '/' ?
+   ('/' + dereference(File.readlink(file))) :
+   dereference(File.readlink(file))
+  ) :
+  file
 end
 
 def loadFile file  # Load the lines of a file into an array, discarding comments and empty lines
@@ -1076,10 +1097,8 @@ end
 
 # Get the path to the application directory.
 # build should not be called from a relative path!
-@builderPath = File.dirname(File.dirname(FileTest.symlink?($0) ?
- File.readlink($0) :
- $0
-))
+@builderPath = File.dirname File.dirname(dereference($0))
+
 @packagesPath, Profile.path, @sourcesPath, @distrosPath,    Log.path = [
 'packages',    'profiles',   'sources',    'distributions', 'logs'
 ].collect {|dir| File.join @builderPath, dir}
@@ -1124,7 +1143,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
- puts 'Syllable Build System 0.5.48',
+ puts 'Syllable Build System 0.5.49',
   'Copyright (c) 2002-2004 Kaj de Vos',
   'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
