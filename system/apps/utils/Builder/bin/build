@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.57
+# Version 0.5.58
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -218,9 +218,9 @@ def configurePackage target
 										((p = recipe['configure-prefix']) ?
 											' ' + p :
 											' --prefix='
-										) + prefix(target)
+										) + prefix(target) +
+										(@crossCompile ? " --build=#{ENV['MACHTYPE']} --host=i586-pc-syllable" : '')
 									) +
-									(@crossCompile ? ' --host=i586-pc-syllable' : '') +
 									((options = recipe['configure-options']) ? ' ' + toString(options) : '')
 								)
 							end
@@ -1187,7 +1187,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.57',
+	puts 'Syllable Build System 0.5.58',
 		'Copyright (c) 2002-2004 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
