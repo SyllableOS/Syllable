@@ -29,6 +29,8 @@
 #include <atheos/bcache.h>
 #include <atheos/socket.h>
 #include <net/net.h>
+#include <net/if.h>
+#include <net/ip.h>
 #include <atheos/time.h>
 #include <atheos/irq.h>
 #include <atheos/device.h>
@@ -101,7 +103,6 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	KSYMBOL( set_thread_priority ),
 	KSYMBOL( __kfree ),
 	KSYMBOL( __sched_lock ),
-	KSYMBOL( add_route ),
 	KSYMBOL( add_to_sleeplist ),
 	KSYMBOL( add_to_waitlist ),
 	KSYMBOL( alloc_real ),
@@ -271,6 +272,16 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	KSYMBOL( get_semaphore_count ),
 	KSYMBOL( get_semaphore_owner ),
 	KSYMBOL( is_semaphore_locked ),
+	KSYMBOL( rwl_lock_read ),
+	KSYMBOL( rwl_lock_read_ex ),
+	KSYMBOL( rwl_lock_write ),
+	KSYMBOL( rwl_lock_write_ex ),
+	KSYMBOL( rwl_unlock_read ),
+	KSYMBOL( rwl_unlock_write ),
+	KSYMBOL( rwl_count_readers ),
+	KSYMBOL( rwl_count_all_readers ),
+	KSYMBOL( rwl_count_writers ),
+	KSYMBOL( rwl_count_all_writers ),
 	KSYMBOL( apm_poweroff ),
 
 	// TLD functions
@@ -358,10 +369,17 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	// Partition table functions:
 	KSYMBOL( decode_disk_partitions ),
 
-	// Network functions:
+
+	/**
+	 * Network functions:
+	 */
+	// Packet buffers
 	KSYMBOL( alloc_pkt_buffer ),
 	KSYMBOL( reserve_pkt_header ),
 	KSYMBOL( free_pkt_buffer ),
+
+
+	// Packet queues
 	KSYMBOL( init_net_queue ),
 	KSYMBOL( delete_net_queue ),
 	KSYMBOL( enqueue_packet ),
@@ -369,6 +387,8 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	KSYMBOL( setsockopt ),
 	KSYMBOL( getsockopt ),
 
+
+	// Sockets
 	KSYMBOL( socket ),
 	KSYMBOL( closesocket ),
 	KSYMBOL( shutdown ),
@@ -382,15 +402,52 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	KSYMBOL( sendmsg ),
 	KSYMBOL( recvfrom ),
 	KSYMBOL( sendto ),
+
+
+	// Network entry points
+	KSYMBOL( send_packet ),
 	KSYMBOL( dispatch_net_packet ),
-	KSYMBOL( add_net_interface ),
-	KSYMBOL( get_net_interface ),
-	KSYMBOL( ip_find_route ),
-	KSYMBOL( ip_release_route ),
 	KSYMBOL( ip_send ),
+	KSYMBOL( ip_send_via ),
+	KSYMBOL( ip_in ),
+
+
+	// Network interface management
+	KSYMBOL( add_net_interface ),
+	KSYMBOL( del_net_interface ),
+	KSYMBOL( acquire_net_interface ),
+	KSYMBOL( get_net_interface ),
+	KSYMBOL( find_interface ),
+	KSYMBOL( find_interface_by_addr ),
+	KSYMBOL( release_net_interface ),
+
+	KSYMBOL( get_interface_address ),
+	KSYMBOL( get_interface_broadcast ),
+	KSYMBOL( get_interface_destination ),
+	KSYMBOL( get_interface_netmask ),
+	KSYMBOL( get_interface_mtu ),
+	KSYMBOL( get_interface_flags ),
+
+	KSYMBOL( set_interface_address ),
+	KSYMBOL( set_interface_broadcast ),
+	KSYMBOL( set_interface_destination ),
+	KSYMBOL( set_interface_netmask ),
+	KSYMBOL( set_interface_mtu ),
+	KSYMBOL( set_interface_flags ),
+
+
+	// Routing table functions
+	KSYMBOL( add_route ),
+	KSYMBOL( del_route ),
+	KSYMBOL( ip_acquire_route ),
+	KSYMBOL( ip_find_route ),
+	KSYMBOL( ip_find_device_route ),
+	KSYMBOL( ip_find_static_route ),
+	KSYMBOL( ip_release_route ),
+
+
 
 	// Bootmodule functions:
-
 	KSYMBOL( get_boot_module_count ),
 	KSYMBOL( get_boot_module ),
 	KSYMBOL( put_boot_module ),
