@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.27
+# Version 0.5.28
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -271,7 +271,7 @@ def installPackage target
 				false
 			else
 				@log.header 'Unpacking ' + target
-				action 'tar -C /usr -xpPzf ' + target and
+				action 'tar --directory=/usr -xpPzf ' + target and
 				begin
 					@log.header 'Registering ' + target
 					action 'pkgmanager -a ' + root
@@ -641,36 +641,60 @@ def makeDistro target
 	else  # Create a single package
 		file = (name = fullName target.to_s) + '.bin.1'
 
-		if  # Tar it up
-			if action "tar cvf #{file}.tar" +
-				" --directory=#{@installRoot} " +
-					toString(modules.collect {|package| installName package}) +
-				(	(links = (links = parseList(getRecipe(target.to_s)['links'])) ?
-						links.collect { |link|
-							(destination = toList(link)[1])[0, 1] == '/' ?  # A link into the system
-								destination :
-								nil
-						}.compact :
-						[]
-					) == [] ?
-						'' :
-						' --absolute-names ' + toString(links)
-				)
-			then
-				if modules.is_a? Array and exists? distroDir = File.join(@packagesPath, name, 'distro')
-					# It's a compound package; add extra files
-					Dir.chdir distroDir
-					action "tar rvf #{File.join @workDir, file}.tar *"
-					Dir.chdir @workDir
+		unless
+			unless modules.is_a? Array and exists? distroDir = File.join(@packagesPath, name, 'distro')
+				action "tar -cvzf #{file}.tgz" +
+					" --directory=#{@installRoot} " +
+						installName(name) +
+#						toString(modules.collect {|package| installName package}) +
+					(	(links = (links = parseList(getRecipe(name)['links'])) ?
+							links.collect { |link|
+								(destination = toList(link)[1])[0, 1] == '/' ?  # A link into the system
+									destination :
+									nil
+							}.compact :
+							[]
+						) == [] ?
+							'' :
+							' --absolute-names ' + toString(links)
+					)
+			else  # A compound package
+				unless action "mkdir " + name
+					false
 				else
-					true
+					unless action "cp -a #{File.join distroDir, '*'} " + name
+						false
+					else
+						Dir.chdir name
+
+						unless
+							deleteCVSData
+						then
+							false
+						else
+							Dir.chdir @workDir
+
+							unless
+								for package in modules
+									# Try to find the latest release
+									break unless action "ln -s #{Dir[
+											File.join(@distrosPath, fullName(package)) + '.bin.*.tgz'
+										].last
+									} " + name
+								end
+							then
+								false
+							else
+								action "tar --dereference --remove-files -cvzf #{file}.tgz " + name
+							end
+						end
+					end
 				end
 			end
 		then
-			# Zip it up
-			if action "gzip #{file}.tar"
-				action "mv #{file}.tar.gz #{file}.tgz"
-			end
+			@log.failure target.to_s
+		else
+			action 'sync'
 		end
 	end
 end
@@ -1029,8 +1053,8 @@ end
 	File.readlink($0) :
 	$0
 ))
-@packagesPath, Profile.path, @sourcesPath, @distrosPath, Log.path = [
-'packages',    'profiles',   'sources',    'distros',    'logs'
+@packagesPath, Profile.path, @sourcesPath, @distrosPath,    Log.path = [
+'packages',    'profiles',   'sources',    'distributions', 'logs'
 ].collect {|dir| File.join @builderPath, dir}
 
 # Define settings
@@ -1073,7 +1097,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.27',
+	puts 'Syllable Build System 0.5.28',
 		'Copyright (c) 2002-2004 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
