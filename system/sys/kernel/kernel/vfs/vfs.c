@@ -4348,7 +4348,7 @@ static int do_unlink( Inode_s *psRoot, const char *pzPath )
 
 	if ( nLen == 0 )
 	{
-		nError = -EINVAL;
+		nError = -ENOENT;
 		goto error1;
 	}
 	LOCK_INODE_RO( psParent );

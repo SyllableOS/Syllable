@@ -2556,9 +2556,9 @@ void *sys_sbrk( int nDelta )
 		}
 		else
 		{
-			printk( "sbrk() Search for address\n" );
+			//printk( "sbrk() Search for address\n" );
 			pOldBrk = ( void * )( find_unmapped_area( psProc->tc_psMemSeg, AREA_ANY_ADDRESS, PAGE_SIZE, 0 ) );
-			printk( "sbrk() next address whould be %p\n", pOldBrk );
+			//printk( "sbrk() next address would be %p\n", pOldBrk );
 		}
 		goto error;
 	}

@@ -66,6 +66,8 @@ enum
 };
 
 #define	PTY_BUFFER_SIZE	1024
+#define NUM_SAVED_TABS	16	// saved cursor position before pressing TAB
+#define TAB_SIZE	8
 
 #define	 IS_MASTER( node )	(NULL != (node)->fn_psParent && PTY_MASTER == (node)->fn_psParent->fn_nInodeNum )
 #define	 IS_SLAVE( node )	(NULL != (node)->fn_psParent && PTY_SLAVE == (node)->fn_psParent->fn_nInodeNum )
@@ -110,6 +112,7 @@ struct FileNode
 	int fn_nNewLineCount;
 	int fn_nCsrPos;
 	int fn_nFlags;
+	uint8_t fn_nCsrPosBeforeTab[NUM_SAVED_TABS];
 
 	int fn_nOpenCount;
 
@@ -712,12 +715,14 @@ static int pty_write_to_master( FileNode_s *psMaster, FileNode_s *psSlave, const
 			{
 				nError = pty_do_write( psMaster, "\n", 1, nFlags );
 			}
+			psMaster->fn_nCsrPos = 0;
 			break;
 		case '\r':
 			nError = 1;
 			if ( bNoCr == false /* && !( bNoCrAtCol0 && 0 == psMaster->fn_nCsrPos ) */ )
 			{
 				nError = pty_do_write( psMaster, ( bCrToNl ) ? "\n" : "\r", 1, nFlags );
+				psMaster->fn_nCsrPos = 0;
 			}
 			break;
 		case 0x08:	/* BACKSPACE */
@@ -733,9 +738,26 @@ static int pty_write_to_master( FileNode_s *psMaster, FileNode_s *psSlave, const
 			{
 				nError = pty_do_write( psMaster, &pzBuf[i], 1, nFlags );
 			}
+			if ( psMaster->fn_nCsrPos > 0 )
+			{
+				psMaster->fn_nCsrPos--;
+			}
+			break;
+		case 0x09:	/* TAB */
+			nError = pty_do_write( psMaster, &pzBuf[i], 1, nFlags );
+			int nSavedIndex = ( psMaster->fn_nCsrPos / TAB_SIZE );
+			if ( nSavedIndex < NUM_SAVED_TABS )
+			{
+				psMaster->fn_nCsrPosBeforeTab[ nSavedIndex ] = psMaster->fn_nCsrPos;
+			}
+			psMaster->fn_nCsrPos = ( psMaster->fn_nCsrPos + TAB_SIZE ) & ~( TAB_SIZE - 1 );
 			break;
 		default:
 			nError = pty_do_write( psMaster, &pzBuf[i], 1, nFlags );
+			if ( pzBuf[i] >= ' ' && pzBuf[i] != '\x7f' )
+			{
+				psMaster->fn_nCsrPos++;
+			}
 			break;
 		}
 		kassertw( nError <= 1 );
@@ -765,6 +787,81 @@ static int pty_write_to_master( FileNode_s *psMaster, FileNode_s *psSlave, const
  * SEE ALSO:
  ****************************************************************************/
 
+static void pty_erase_one_char( FileNode_s *psMaster, FileNode_s *psSlave, char nChar, int nNewPos )
+{
+	int nNumErased = 0;
+	struct termios *psTermios = &psMaster->fn_psTermInfo->sTermios;
+
+	psSlave->fn_nSize--;
+	psSlave->fn_nWritePos = nNewPos;
+
+	if ( nChar == '\t' )
+	{
+		int nSavedIndex = ( psMaster->fn_nCsrPos / TAB_SIZE ) - 1;
+		if ( nSavedIndex >= 0 && nSavedIndex < NUM_SAVED_TABS )
+		{
+			nNumErased = psMaster->fn_nCsrPos -
+				psMaster->fn_nCsrPosBeforeTab[ nSavedIndex ];
+			kassertw( nNumErased > 0 );
+			kassertw( nNumErased <= TAB_SIZE );
+			if ( nNumErased < 0 || nNumErased > TAB_SIZE )
+				nNumErased = 0;
+		}
+	}
+	else if ( nChar < ' ' || nChar == '\x7f' )
+	{
+		if ( EchoCtl )
+			nNumErased = 2;
+	}
+	else
+	{
+		nNumErased = 1;
+	}
+	if ( Echo && nNumErased )
+	{
+		for ( ; nNumErased; --nNumErased )
+			pty_write_to_master( psMaster, psSlave, "\x08", 1, O_NONBLOCK, true );
+	}
+}
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+
+static void pty_echo_one_char( FileNode_s *psMaster, FileNode_s *psSlave, char nChar )
+{
+	struct termios *psTermios = &psMaster->fn_psTermInfo->sTermios;
+
+	if ( Echo && !( IXonXoff && psSlave->fn_nFlags & FLAG_XOFF ) )
+	{
+		if ( nChar == '\r' && ICrToNl )
+		{
+			nChar = '\n';
+		}
+		if ( EchoCtl && ( nChar < ' ' || nChar == '\x7f' ) && nChar != '\n' && nChar != '\t' )
+		{
+			char buf[2];
+			buf[0] = '^';
+			buf[1] = ( nChar == '\x7f' ) ? '?' : ( nChar + '@' );
+			pty_write_to_master( psMaster, psSlave, buf, 2, O_NONBLOCK, true );
+		}
+		else
+		{
+			pty_write_to_master( psMaster, psSlave, &nChar, 1, O_NONBLOCK, true );
+		}
+	}
+}
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+
 static int pty_write_to_slave( FileNode_s *psMaster, FileNode_s *psSlave, const char *pzBuf, size_t nLen, int nFlags )
 {
 	struct termios *psTermios = &psMaster->fn_psTermInfo->sTermios;
@@ -774,7 +871,8 @@ static int pty_write_to_slave( FileNode_s *psMaster, FileNode_s *psSlave, const 
 
 	for ( i = 0; i < nLen; ++i )
 	{
-		if ( pzBuf[i] == '\n' )
+		char nChar = ( IUcToLc ) ? tolower( pzBuf[i] ) : pzBuf[i];
+		if ( nChar == '\n' )
 		{
 			nError = pty_do_write( psSlave, ( INlToCr ) ? "\r" : "\n", 1, nFlags );
 			if ( Echo || EchoNl )
@@ -783,7 +881,7 @@ static int pty_write_to_slave( FileNode_s *psMaster, FileNode_s *psSlave, const 
 			}
 			goto noecho;
 		}
-		else if ( pzBuf[i] == '\r' )
+		else if ( nChar == '\r' )
 		{
 			if ( !IIgnoreCr )
 			{
@@ -800,11 +898,11 @@ static int pty_write_to_slave( FileNode_s *psMaster, FileNode_s *psSlave, const 
 			psSlave->fn_nFlags &= ~FLAG_LNEXT;
 			goto write_and_echo;
 		}
-		else if ( pzBuf[i] == '\0' )
+		else if ( nChar == '\0' )
 		{
 			goto write_and_echo;
 		}
-		else if ( ISignals && pzBuf[i] == psTermios->c_cc[ VINTR ] )
+		else if ( ISignals && nChar == psTermios->c_cc[ VINTR ] )
 		{
 			if ( psSlave->fn_psTermInfo->hPGroupID != -1 )
 			{
@@ -814,7 +912,7 @@ static int pty_write_to_slave( FileNode_s *psMaster, FileNode_s *psSlave, const 
 			nError = 1;
 			goto noecho;
 		}
-		else if ( ISignals && pzBuf[i] == psTermios->c_cc[ VQUIT ] )
+		else if ( ISignals && nChar == psTermios->c_cc[ VQUIT ] )
 		{
 			if ( psSlave->fn_psTermInfo->hPGroupID != -1 )
 			{
@@ -824,37 +922,50 @@ static int pty_write_to_slave( FileNode_s *psMaster, FileNode_s *psSlave, const 
 			nError = 1;
 			goto noecho;
 		}
-		else if ( ICanon && pzBuf[i] == psTermios->c_cc[ VERASE ] )
+		else if ( ICanon && nChar == psTermios->c_cc[ VERASE ] )
 		{
 			int nNewPos;
+			char nChar;
 
 			LOCK( psSlave->fn_hMutex );
 			nNewPos = ( psSlave->fn_nWritePos + PTY_BUFFER_SIZE - 1 ) & ( PTY_BUFFER_SIZE - 1 );
-			if ( psSlave->fn_nSize > 0 && '\n' != psSlave->fn_pzBuffer[nNewPos] )
+			nChar = psSlave->fn_pzBuffer[nNewPos];
+			if ( psSlave->fn_nSize > 0 && nChar != '\n' )
 			{
-				psSlave->fn_nSize--;
-				psSlave->fn_nWritePos = nNewPos;
+				pty_erase_one_char( psMaster, psSlave, nChar, nNewPos );
 			}
 			nError = 1;
 			wakeup_sem( psSlave->fn_hWriteQueue, false );
 			pty_notify_write_select( psSlave );
 			UNLOCK( psSlave->fn_hMutex );
-			if ( Echo )
+			goto noecho;
+		}
+		else if ( ICanon && nChar == psTermios->c_cc[ VKILL ] )
+		{
+			int nNewPos;
+			char nChar;
+
+			LOCK( psSlave->fn_hMutex );
+			nNewPos = ( psSlave->fn_nWritePos + PTY_BUFFER_SIZE - 1 ) & ( PTY_BUFFER_SIZE - 1 );
+			nChar = psSlave->fn_pzBuffer[nNewPos];
+			while ( psSlave->fn_nSize > 0 && nChar != '\n' )
 			{
-				pty_write_to_master( psMaster, psSlave, "\x08", 1, O_NONBLOCK, true );
+				pty_erase_one_char( psMaster, psSlave, nChar, nNewPos );
+				nNewPos = ( nNewPos + PTY_BUFFER_SIZE - 1 ) & ( PTY_BUFFER_SIZE - 1 );
+				nChar = psSlave->fn_pzBuffer[nNewPos];
 			}
+			nError = 1;
+			wakeup_sem( psSlave->fn_hWriteQueue, false );
+			pty_notify_write_select( psSlave );
+			UNLOCK( psSlave->fn_hMutex );
 			goto noecho;
 		}
-		else if ( ICanon && pzBuf[i] == psTermios->c_cc[ VKILL ] )
+		else if ( ICanon && nChar == psTermios->c_cc[ VEOF ] )
 		{
-			// TODO kill the line
-		}
-		else if ( ICanon && pzBuf[i] == psTermios->c_cc[ VEOF ] )
-		{
-			nError = pty_do_write( psSlave, &pzBuf[i], 1, nFlags );
+			nError = pty_do_write( psSlave, &nChar, 1, nFlags );
 			goto noecho;
 		}
-		else if ( IXonXoff && pzBuf[i] == psTermios->c_cc[ VSTART ] )
+		else if ( IXonXoff && nChar == psTermios->c_cc[ VSTART ] )
 		{
 			psMaster->fn_nFlags &= ~FLAG_XOFF;
 			wakeup_sem( psMaster->fn_hReadQueue, false );
@@ -862,13 +973,13 @@ static int pty_write_to_slave( FileNode_s *psMaster, FileNode_s *psSlave, const 
 			nError = 1;
 			goto noecho;
 		}
-		else if ( IXonXoff && pzBuf[i] == psTermios->c_cc[ VSTOP ] )
+		else if ( IXonXoff && nChar == psTermios->c_cc[ VSTOP ] )
 		{
 			psMaster->fn_nFlags |= FLAG_XOFF;
 			nError = 1;
 			goto noecho;
 		}
-		else if ( ISignals && pzBuf[i] == psTermios->c_cc[ VSUSP ] )
+		else if ( ISignals && nChar == psTermios->c_cc[ VSUSP ] )
 		{
 			if ( psSlave->fn_psTermInfo->hPGroupID != -1 )
 			{
@@ -878,13 +989,62 @@ static int pty_write_to_slave( FileNode_s *psMaster, FileNode_s *psSlave, const 
 			nError = 1;
 			goto noecho;
 		}
-		else if ( ICanon && pzBuf[i] == psTermios->c_cc[ VREPRINT ] )
+		else if ( ICanon && nChar == psTermios->c_cc[ VREPRINT ] )
 		{
+			// first echo the redraw character
+			pty_echo_one_char( psMaster, psSlave, nChar );
+			// then print a newline
+			pty_echo_one_char( psMaster, psSlave, '\n' );
+			// now find the position to start printing from
+			LOCK( psSlave->fn_hMutex );
+			int nPos = ( psSlave->fn_nWritePos + PTY_BUFFER_SIZE - 1 ) & ( PTY_BUFFER_SIZE - 1 );
+			int nSize = psSlave->fn_nSize;
+			while ( nSize > 0 && psSlave->fn_pzBuffer[nPos] != '\n' )
+			{
+				nPos = ( nPos + PTY_BUFFER_SIZE - 1 ) & ( PTY_BUFFER_SIZE - 1 );
+				nSize--;
+			}
+			// skip forward to first character on the line
+			nPos = ( nPos + 1 ) & ( PTY_BUFFER_SIZE - 1 );
+			// finally, echo each character in the buffer
+			while ( nPos != psSlave->fn_nWritePos )
+			{
+				pty_echo_one_char( psMaster, psSlave, psSlave->fn_pzBuffer[nPos] );
+				nPos = ( nPos + 1 ) & ( PTY_BUFFER_SIZE - 1 );
+			}
+			nError = 1;
+			UNLOCK( psSlave->fn_hMutex );
+			goto noecho;
 		}
-		else if ( ICanon && pzBuf[i] == psTermios->c_cc[ VWERASE ] )
+		else if ( ICanon && nChar == psTermios->c_cc[ VWERASE ] )
 		{
+			int nNewPos;
+			char nChar;
+
+			LOCK( psSlave->fn_hMutex );
+			nNewPos = ( psSlave->fn_nWritePos + PTY_BUFFER_SIZE - 1 ) & ( PTY_BUFFER_SIZE - 1 );
+			nChar = psSlave->fn_pzBuffer[nNewPos];
+			// first delete any whitespace after the word
+			while ( psSlave->fn_nSize > 0 && ( nChar == ' ' || nChar == '\t' ) )
+			{
+				pty_erase_one_char( psMaster, psSlave, nChar, nNewPos );
+				nNewPos = ( nNewPos + PTY_BUFFER_SIZE - 1 ) & ( PTY_BUFFER_SIZE - 1 );
+				nChar = psSlave->fn_pzBuffer[nNewPos];
+			}
+			// now delete the word
+			while ( psSlave->fn_nSize > 0 && nChar != '\n' && nChar != ' ' && nChar != '\t' )
+			{
+				pty_erase_one_char( psMaster, psSlave, nChar, nNewPos );
+				nNewPos = ( nNewPos + PTY_BUFFER_SIZE - 1 ) & ( PTY_BUFFER_SIZE - 1 );
+				nChar = psSlave->fn_pzBuffer[nNewPos];
+			}
+			nError = 1;
+			wakeup_sem( psSlave->fn_hWriteQueue, false );
+			pty_notify_write_select( psSlave );
+			UNLOCK( psSlave->fn_hMutex );
+			goto noecho;
 		}
-		else if ( ICanon && pzBuf[i] == psTermios->c_cc[ VLNEXT ] )
+		else if ( ICanon && nChar == psTermios->c_cc[ VLNEXT ] )
 		{
 			psSlave->fn_nFlags |= FLAG_LNEXT;
 			pty_write_to_master( psMaster, psSlave, "^\x08", 2, O_NONBLOCK, false );
@@ -893,31 +1053,10 @@ static int pty_write_to_slave( FileNode_s *psMaster, FileNode_s *psSlave, const 
 		}
 
 	write_and_echo:
-		{
-			char nChar = ( IUcToLc ) ? tolower( pzBuf[i] ) : pzBuf[i];
-			nError = pty_do_write( psSlave, &nChar, 1, nFlags );
-		}
+		nError = pty_do_write( psSlave, &nChar, 1, nFlags );
 
 	echo:
-		if ( Echo && !( IXonXoff && psSlave->fn_nFlags & FLAG_XOFF ) )
-		{
-			char nChar = ( IUcToLc ) ? tolower( pzBuf[i] ) : pzBuf[i];
-			if ( nChar == '\r' && ICrToNl )
-			{
-				nChar = '\n';
-			}
-			if ( EchoCtl && ( nChar < ' ' || nChar == '\x7f' ) && nChar != '\n' )
-			{
-				char buf[2];
-				buf[0] = '^';
-				buf[1] = ( nChar == '\x7f' ) ? '?' : ( nChar + '@' );
-				pty_write_to_master( psMaster, psSlave, buf, 2, O_NONBLOCK, true );
-			}
-			else
-			{
-				pty_write_to_master( psMaster, psSlave, &nChar, 1, O_NONBLOCK, true );
-			}
-		}
+		pty_echo_one_char( psMaster, psSlave, nChar );
 
 	noecho:
 
