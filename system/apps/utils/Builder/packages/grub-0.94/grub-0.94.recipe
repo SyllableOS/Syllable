@@ -26,6 +26,7 @@ patch
 	aclocal
 ;	Suffices on Linux:
 ;	automake
+	automake stage2/Makefile
 	automake Makefile
 	autoconf
 
