@@ -39,6 +39,7 @@
 #include <gui/guidefines.h>
 #include <gui/window.h>
 #include <util/locker.h>
+#include <util/messenger.h>
 #include <appserver/protocol.h>
 #include <atheos/filesystem.h>
 
@@ -207,10 +208,22 @@ void AppServer::R_ClientDied( thread_id hClient )
 {
 	SrvApplication *pcApp = SrvApplication::FindApp( hClient );
 
+	/* Tell the application thread to quit */
 	if( NULL != pcApp )
 	{
 		send_msg( pcApp->GetReqPort(), M_QUIT, NULL, 0 );
 	}
+	
+	
+	/* Tell the registrar that the application has died */
+	int nPort;
+	if( ( nPort = find_port( "l:registrar" ) ) < 0 )
+		return;
+	
+	Messenger cRegistrarLink = Messenger( nPort );
+	Message cMsg( -1 );
+	cMsg.AddInt64( "process", hClient );
+	cRegistrarLink.SendMessage( &cMsg );
 }
 
 /** Send a keyboard event

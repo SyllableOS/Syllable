@@ -1024,6 +1024,7 @@ static inline void blit_convert_copy( SrvBitmap * pcDst, SrvBitmap * pcSrc, cons
 					break;
 				}
 			case CS_RGB32:
+			case CS_RGBA32:
 				{
 					if( pcSrc == pcDst )
 					{
@@ -1353,7 +1354,7 @@ static inline void blit_convert_alpha( SrvBitmap * pcDst, SrvBitmap * pcSrc, con
 					if( nAlpha == ( 0xff >> 3 ) ) {
 						*pDst = ( nSrcColor >> 8 & 0xf800 ) + ( nSrcColor >> 5 & 0x7e0 ) 
 								+ ( nSrcColor >> 3  & 0x1f );
-					} else {
+					} else if( nAlpha != 0x00 ) {
 						uint32 nDstColor = *pDst;
 						nSrcColor = ( ( nSrcColor & 0xfc00 ) << 11 ) + ( nSrcColor >> 8 & 0xf800 )
 							      + ( nSrcColor >> 3 & 0x1f );
@@ -1401,6 +1402,7 @@ static inline void blit_convert_alpha( SrvBitmap * pcDst, SrvBitmap * pcSrc, con
 			break;
 		}
 	case CS_RGB32:
+	case CS_RGBA32:
 		{
 			uint32 *pDst = RAS_OFFSET32( pcDst->m_pRaster, cDstPos.x, cDstPos.y, pcDst->m_nBytesPerLine );
 			int nDstModulo = pcDst->m_nBytesPerLine - ( cSrcRect.Width() + 1 ) * 4;
@@ -1418,7 +1420,9 @@ static inline void blit_convert_alpha( SrvBitmap * pcDst, SrvBitmap * pcSrc, con
 					if( nAlpha == 0xff )
 					{
 						*pDst = nSrcColor;
-					} else {
+					} 
+					else if( nAlpha != 0x00 )
+					{
 						uint32 nDstColor = *pDst;
 						uint32 nSrc1;
 						uint32 nDst1;

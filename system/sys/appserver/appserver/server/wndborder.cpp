@@ -169,6 +169,8 @@ m_cAlignPos( 1, 1 ), m_cAlignPosOff( 0, 0 )
 
 void WndBorder::SetDecorator( os::WindowDecorator * pcDecorator )
 {
+	SetShapeRegion( NULL );
+	
 	if( m_pcDecorator )
 		delete m_pcDecorator;
 
