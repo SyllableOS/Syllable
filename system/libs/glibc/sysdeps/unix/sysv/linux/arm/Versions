@@ -1,7 +1,0 @@
-libc {
-  GLIBC_2.1 {
-    ioperm; iopl;
-    inb; inw; inl;
-    outb; outw; outl;
-  }
-}

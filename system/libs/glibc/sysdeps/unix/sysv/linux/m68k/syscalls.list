@@ -1,3 +1,0 @@
-# File name	Caller	Syscall name	# args	Strong name	Weak names
-
-cacheflush	EXTRA	cacheflush	4	__cacheflush	cacheflush
