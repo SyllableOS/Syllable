@@ -1,0 +1,190 @@
+diff -ruN gcc-3.3.2.orig/Makefile.in gcc-3.3.2/Makefile.in
+--- gcc-3.3.2.orig/Makefile.in	2003-07-05 02:37:09.000000000 +0000
++++ gcc-3.3.2/Makefile.in	2004-02-13 22:00:27.000000000 +0000
+@@ -1559,7 +1559,8 @@
+ 	esac; \
+ 	$(SET_LIB_PATH) \
+ 	echo "$$msg"; \
+-	cd gcc && $(MAKE) $(GCC_FLAGS_TO_PASS) $$compare
++	cd gcc
++# && $(MAKE) $(GCC_FLAGS_TO_PASS) $$compare
+ 	@r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}` ; export s; \
+ 	$(SET_LIB_PATH) \
+diff -ruN gcc-3.3.2.orig/configure.in gcc-3.3.2/configure.in
+--- gcc-3.3.2.orig/configure.in	2003-08-09 06:57:22.000000000 +0000
++++ gcc-3.3.2/configure.in	2004-02-13 21:57:40.000000000 +0000
+@@ -1134,6 +1134,9 @@
+   *-*-linux*)
+     target_makefile_frag="config/mt-linux"
+     ;;
++  *-*-syllable*)
++	target_makefile_frag="config/mt-syllable"
++	;;
+   *-*-aix4.[3456789]* | *-*-aix[56789].*)
+     target_makefile_frag="config/mt-aix43"
+     ;;
+@@ -1219,6 +1222,7 @@
+ if false && test "${host}" = "${target}" && test x${enable_shared} = x ; then
+   case "${target}" in
+     alpha*-dec-osf*)	enable_shared=yes ;;
++	*-*-syllable) enable_shared=yes;;
+     alpha*-*-linux*)	enable_shared=yes ;;
+     mips-sgi-irix5*)	enable_shared=yes ;;
+     *)			enable_shared=no ;;
+diff -ruN gcc-3.3.2.orig/gcc/config.gcc gcc-3.3.2/gcc/config.gcc
+--- gcc-3.3.2.orig/gcc/config.gcc	2003-10-01 19:07:02.000000000 +0000
++++ gcc-3.3.2/gcc/config.gcc	2004-02-13 21:57:40.000000000 +0000
+@@ -1120,6 +1120,16 @@
+ 	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h svr4.h i386/beos-elf.h"
+ 	extra_parts='crtbegin.o crtend.o'
+ 	;;
++i[34567]86-*-syllable*)
++	xmake_file=x-syllable
++	xm_defines="HAVE_ATEXIT POSIX BSTRING"
++	tmake_file='t-slibgcc-elf-ver i386/t-syllable i386/t-crtstuff'
++	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h svr4.h i386/syllable.h"
++	extra_parts='crtbegin.o crtend.o crtbeginS.o crtendS.o'
++	gnu_ld=yes
++	float_format=i386
++	thread_file='syllable'
++	;;
+ i[34567]86-*-freebsd2 | i[34567]86-*-freebsd2.* | i[34567]86-*-freebsd*aout*)
+ 	tm_file="${tm_file} i386/unix.h i386/bsd.h i386/gas.h i386/gstabs.h i386/freebsd-aout.h"
+ 	tmake_file=t-freebsd
+diff -ruN gcc-3.3.2.orig/gcc/configure gcc-3.3.2/gcc/configure
+--- gcc-3.3.2.orig/gcc/configure	2003-10-01 21:56:38.000000000 +0000
++++ gcc-3.3.2/gcc/configure	2004-02-13 21:57:40.000000000 +0000
+@@ -8008,12 +8008,13 @@
+   fi
+   rm -f conftest.* conftest[123].*
+ fi
+-if test x$gcc_cv_ld_ro_rw_mix = xread-write; then
+-	cat >> confdefs.h <<\EOF
++
++#if test x$gcc_cv_ld_ro_rw_mix = xread-write; then
++#	cat >> confdefs.h <<\EOF
+ #define HAVE_LD_RO_RW_SECTION_MIXING 1
+-EOF
++#EOF
+ 
+-fi
++#fi
+ echo "$ac_t""$gcc_cv_ld_ro_rw_mix" 1>&6
+ 
+ echo $ac_n "checking linker PT_GNU_EH_FRAME support""... $ac_c" 1>&6
+diff -ruN gcc-3.3.2.orig/gcc/gthr.h gcc-3.3.2/gcc/gthr.h
+--- gcc-3.3.2.orig/gcc/gthr.h	2002-06-04 11:30:45.000000000 +0000
++++ gcc-3.3.2/gcc/gthr.h	2004-02-13 21:57:40.000000000 +0000
+@@ -87,6 +87,8 @@
+ #include "gthr-dce.h"
+ #elif _SOLARIS_THREADS
+ #include "gthr-solaris.h"
++#elif defined __ATHEOS__ || defined __SYLLABLE__
++#include "gthr-syllable.h"
+ 
+ /* Include GTHREAD_FILE if one is defined.  */
+ #elif defined(HAVE_GTHR_DEFAULT)
+diff -ruN gcc-3.3.2.orig/libstdc++-v3/configure gcc-3.3.2/libstdc++-v3/configure
+--- gcc-3.3.2.orig/libstdc++-v3/configure	2003-09-11 03:08:36.000000000 +0000
++++ gcc-3.3.2/libstdc++-v3/configure	2004-02-13 21:57:40.000000000 +0000
+@@ -1919,6 +1919,10 @@
+   lt_cv_deplibs_check_method=pass_all
+   ;;
+ 
++syllable*)
++  lt_cv_deplibs_check_method=pass_all
++  ;;
++
+ bsdi4*)
+   lt_cv_deplibs_check_method='file_magic ELF [0-9][0-9]*-bit [ML]SB (shared object|dynamic lib)'
+   lt_cv_file_magic_cmd='/usr/bin/file -L'
+diff -ruN gcc-3.3.2.orig/libstdc++-v3/libio/libio.h gcc-3.3.2/libstdc++-v3/libio/libio.h
+--- gcc-3.3.2.orig/libstdc++-v3/libio/libio.h	2001-01-14 19:12:24.000000000 +0000
++++ gcc-3.3.2/libstdc++-v3/libio/libio.h	2004-02-13 21:57:40.000000000 +0000
+@@ -162,11 +162,21 @@
+ /* Handle lock.  */
+ #ifdef _IO_MTSAFE_IO
+ # if defined __GLIBC__ && __GLIBC__ >= 2
++#if defined __ATHEOS__ || defined __SYLLABLE__
++# include <bits/libc-lock.h>
++#  define _IO_lock_t __libc_lock_t
++#  define _IO_lock_init	__libc_lock_init
++#  define _IO_lock_fini	__libc_lock_fini
++#  define _IO_lock_initializer MUTEX_INITIALIZER
++#  define _IO_cleanup_region_start __libc_cleanup_region_start
++#  define _IO_cleanup_region_end   __libc_cleanup_region_end
++#else
+ #  if __GLIBC_MINOR__ == 0
+ #   include <stdio-lock.h>
+ #  else
+ #   include <bits/stdio-lock.h>
+ #  endif
++#endif
+ # else
+ /*# include <comthread.h>*/
+ # endif
+diff -ruN gcc-3.3.2.orig/libtool.m4 gcc-3.3.2/libtool.m4
+--- gcc-3.3.2.orig/libtool.m4	2003-09-09 08:04:18.000000000 +0000
++++ gcc-3.3.2/libtool.m4	2004-02-13 21:57:40.000000000 +0000
+@@ -595,6 +595,10 @@
+   lt_cv_deplibs_check_method=pass_all
+   ;;
+ 
++syllable*)
++  lt_cv_deplibs_check_method=pass_all
++  ;;
++
+ bsdi4*)
+   lt_cv_deplibs_check_method=['file_magic ELF [0-9][0-9]*-bit [ML]SB (shared object|dynamic lib)']
+   lt_cv_file_magic_cmd='/usr/bin/file -L'
+diff -ruN gcc-3.3.2.orig/ltconfig gcc-3.3.2/ltconfig
+--- gcc-3.3.2.orig/ltconfig	2003-02-20 02:10:03.000000000 +0000
++++ gcc-3.3.2/ltconfig	2004-02-13 21:57:40.000000000 +0000
+@@ -1052,6 +1052,31 @@
+   lt_cv_dlopen_self=yes
+   ;;
+ 
++syllable*)
++  version_type=linux
++  need_lib_prefix=no
++  need_version=no
++  library_names_spec='${libname}${release}.so$versuffix ${libname}${release}.so$major $libname.so'
++  soname_spec='${libname}${release}.so$major'
++  finish_cmds='PATH="\$PATH:/sbin" ldconfig -n $libdir'
++  shlibpath_var=LD_LIBRARY_PATH
++  shlibpath_overrides_runpath=no
++  # This implies no fast_install, which is unacceptable.
++  # Some rework will be needed to allow for fast_install
++  # before this can be enabled.
++  hardcode_into_libs=yes
++
++  # We used to test for /lib/ld.so.1 and disable shared libraries on
++  # powerpc, because MkLinux only supported shared libraries with the
++  # GNU dynamic linker.  Since this was broken with cross compilers,
++  # most powerpc-linux boxes support dynamic linking these days and
++  # people can always --disable-shared, the test was removed, and we
++  # assume the GNU/Linux dynamic linker is in use.
++  dynamic_linker='Syllable ld.so'
++  can_build_shared=yes
++  ;;
++
++
+ bsdi4*)
+   version_type=linux
+   need_version=no
+diff -ruN gcc-3.3.2.orig/ltmain.sh gcc-3.3.2/ltmain.sh
+--- gcc-3.3.2.orig/ltmain.sh	2002-11-20 15:59:04.000000000 +0000
++++ gcc-3.3.2/ltmain.sh	2004-02-13 21:57:40.000000000 +0000
+@@ -2605,6 +2605,11 @@
+ 	  versuffix="$major.$age.$revision"
+ 	  ;;
+ 
++	syllable)
++	  major=.`expr $current - $age`
++	  versuffix="$major.$age.$revision"
++	  ;;
++
+ 	osf)
+ 	  major=.`expr $current - $age`
+ 	  versuffix=".$current.$age.$revision"
