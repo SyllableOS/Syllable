@@ -21,6 +21,8 @@
 #define	__F_UTIL_SETTINGS_H__
 
 #include <util/message.h>
+#include <storage/file.h>
+#include <storage/path.h>
 #include <storage/seekableio.h>
 
 #define SETTINGS_MAGIC		0x53626C53	// Magic number to recognize files
@@ -47,7 +49,6 @@ class Settings : public Message
 {
 public:
     Settings();
-    Settings( const String& cFile, const String& cPath = "" );
     Settings( SeekableIO *pcFile );
     ~Settings();
 
@@ -56,11 +57,11 @@ public:
 
     Settings&	operator=( const Settings& cSource );
     Settings&	operator=( const Message& cSource );
-    
-    String	GetPath() const;
-    String	GetFile() const;
-    void	SetPath( const String& cPath = "" );
-    void	SetFile( const String& cFile = "Settings" );
+
+	Path	GetPath() const;
+	File	GetFile() const;
+	void	SetPath( Path* pcPath );
+	void	SetFile( SeekableIO* pcFile );
 
     String	GetString( const char* pzName, const char* pzDefault = "", int nIndex = 0 ) const;
     int8	GetInt8( const char* pzName, int8 nDefault, int nIndex = 0 ) const;

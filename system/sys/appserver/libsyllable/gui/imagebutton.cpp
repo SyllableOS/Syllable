@@ -391,36 +391,31 @@ void ImageButton::SetTextPosition( uint32 nTextPosition )
 	Flush();
 }				/*end SetTextPosition() */
 
-/**Sets the Image from a file...
+/**Load an image from a stream.
  * \par Description:
- *	Sets the BitmapImage for the ImageButton from a file.
- * \param pzFile - The path and name of the file(IE: if you wanted to load an Image from
- 	/tmp/img.png, you would call this method like this: SetImageFromFile("/tmp/img.png").
- * \author	Rick Caudill (cau0730@cup.edu)
+ *	Reads the BitmapImage for the ImageButton from a data stream.
+ * \param pcStream - A StreamableIO data source for the Bitmap data.
+ * \author	Kristian Van Der Vliet (vanders@liqwyd.com)
  *****************************************************************************/
-void ImageButton::SetImageFromFile( const char *pzFile )
+void ImageButton::SetImage( StreamableIO* pcStream )
 {
-	os::File file( pzFile );
-	Image *vBitmap = new BitmapImage( &file );
-
-	m->SetImage( vBitmap );
-}				/*end SetImageFromFile() */
-
-/** Sets the Image from a Resource...
- * \par Description:
- *	Sets the Image for the ImageButton from a Resouce.
- * \param pzFile - The name of the Resource(IE: if you wanted to load an Image called img.png 
- 	from your program, you would call this method like this: SetImageFromResource("img.png") .
- * \author	Rick Caudill (cau0730@cup.edu)
- *****************************************************************************/
-void ImageButton::SetImageFromResource( const char *pzFile )
-{
-	Resources cCol( get_image_id() );
-	ResStream *pcStream = cCol.GetResourceStream( pzFile );
 	Image *vImage = new BitmapImage( pcStream );
-
 	m->SetImage( vImage );
-}				/*end SetImageFromResource() */
+}
+
+/** Copy an ImageButton
+ * \par Description:
+ * Copy the Image from one ImageButton to another
+ * \param cImageButton - The ImageButton to copy from.
+ * \author Kristian Van Der Vliet (vanders@liqwyd.com)
+ *****************************************************************************/
+ImageButton& ImageButton::operator=( ImageButton& cImageButton )
+{
+	m->SetImage( cImageButton.GetImage() );
+	m->m_nTextPosition = cImageButton.m->m_nTextPosition;
+	SetLabel( cImageButton.GetLabel() );
+	return( *this );
+}
 
 /** Sets the Image from another image...
  * \par Description:
@@ -428,18 +423,10 @@ void ImageButton::SetImageFromResource( const char *pzFile )
  * \param pcImage - The image.
  * \author  Rick Caudill (cau0730@cup.edu)
  *****************************************************************************/
-void ImageButton::SetImageFromImage( Image * pcImage )
+void ImageButton::SetImage( Image * pcImage )
 {
-	m->SetImage( pcImage );
-}				/* end SetImageFromImage() */
-
-/*this does not work yet*/
-void ImageButton::SetImageFromMemory( const void *pData, int nSize )
-{
-	MemFile *cMemFile = new MemFile( pData, nSize );
-	Image *vImage = new BitmapImage( cMemFile );
-
-	SetImageFromImage( vImage );
+	if( pcImage )
+		m->SetImage( pcImage );
 }
 
 /*reserved*/

@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <atheos/types.h>
 #include <util/string.h>
+#include <storage/streamableio.h>
 
 #include <vector>
 
@@ -97,7 +98,7 @@ public:
 
     String GetHelpText( int nWidth = 0 ) const;
     void	PrintHelpText( int nWidth = 0 ) const;
-    void	PrintHelpText( FILE* hStream, int nWidth = 0 ) const;
+	void	PrintHelpText( StreamableIO* pcStream, int nWidth = 0 ) const;
     
     String operator[](int nIndex) const;
 private:

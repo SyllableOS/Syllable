@@ -189,21 +189,21 @@ FileRequester::FileRequester( file_req_mode_t nMode, Messenger * pcTarget, const
 	m->m_pcUpButton = new ImageButton( Rect( 0, 0, 0, 0 ), "UpBut", "up", new Message( ID_UP_BUT ), NULL );
 	BitmapImage *pImage = new BitmapImage( up_image, IPoint( 16, 16 ), CS_RGB32 );
 
-	m->m_pcUpButton->SetImageFromImage( pImage );
+	m->m_pcUpButton->SetImage( pImage );
 
 
 	m->m_pcHomeButton = new ImageButton( Rect( 0, 0, 0, 0 ), "HomeBut", "home", new Message( ID_HOME_BUT ), NULL );
 	pImage = new BitmapImage( home_image, IPoint( 16, 16 ), CS_RGB32 );
-	m->m_pcHomeButton->SetImageFromImage( pImage );
+	m->m_pcHomeButton->SetImage( pImage );
 
 	m->m_pcBackButton = new ImageButton( Rect( 0, 0, 0, 0 ), "BackBut", "back", new Message( ID_BACK_BUT ), NULL );
 	pImage = new BitmapImage( back_image, IPoint( 16, 16 ), CS_RGB32 );
-	m->m_pcBackButton->SetImageFromImage( pImage );
+	m->m_pcBackButton->SetImage( pImage );
 
 
 	m->m_pcForwardButton = new ImageButton( Rect( 0, 0, 0, 0 ), "ForwardBut", "forward", new Message( ID_FORWARD_BUT ), NULL );
 	pImage = new BitmapImage( forward_image, IPoint( 16, 16 ), CS_RGB32 );
-	m->m_pcForwardButton->SetImageFromImage( pImage );
+	m->m_pcForwardButton->SetImage( pImage );
 
 	AddChild( m->m_pcForwardButton );
 	AddChild( m->m_pcBackButton );

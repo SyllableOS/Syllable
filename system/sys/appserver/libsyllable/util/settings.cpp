@@ -177,26 +177,6 @@ Settings::Settings()
 
 /** Constructor
  * \par		Description:
- *		Creates a Settings object with a specific path and file name.
- *		If you leave cPath at it's default, it will be created
- *		automatically from the app signature.
- * \param	cFile The file name inside the application's settings directory.
- * \param	cPath Path to the settings file, \b with trailing '/'. At it's
- *		default value, the path will be "~/Settings/[Application name]/".
- * \note	This method relies on the Application object, and the app
- *		signature passed to it. If you haven't created an Application
- *		object, you will have to specify the path manually.
- * \sa Load(), Save(), os::Application
- * \author Henrik Isaksson (henrik@boing.nu)
- *****************************************************************************/
-Settings::Settings( const String & cFile, const String & cPath )
-{
-	m = new Private;
-	m->SetPath( cFile, cPath );
-}
-
-/** Constructor
- * \par		Description:
  *		Creates a Settings object bound to a specific stream object.
  * \param	pcFile SeekableIO object, e.g. os::File.
  * \sa Load(), Save(), os::File, os::SeekableIO
@@ -285,45 +265,48 @@ status_t Settings::Save( void ) const
  *		Returns the directory path to the settings file, excluding the
  *		file itself.
  * \sa GetFile()
- * \author Henrik Isaksson (henrik@boing.nu)
+ * \author Kristian Van Der Vliet (vanders@liqwyd.com)
  *****************************************************************************/
-String Settings::GetPath() const
+Path Settings::GetPath() const
 {
-	return m->m_cPath;
+	Path cPath( m->m_cPath );
+	return cPath;
 }
 
 /** Get filename
  * \par		Description:
  *		Returns the name of the settings file, excluding path.
  * \sa GetPath()
- * \author Henrik Isaksson (henrik@boing.nu)
+ * \author Kristian Van Der Vliet (vanders@liqwyd.com)
  *****************************************************************************/
-String Settings::GetFile() const
+File Settings::GetFile() const
 {
-	return m->m_cFile;
+	File cFile( m->m_cFile );
+	return cFile;
 }
 
 /** Set directory path.
  * \par		Description:
  *		Set directory path.
- * \param cPath The new path. An empty string means that the default path is
- *        used.
- * \author Henrik Isaksson (henrik@boing.nu)
+ * \param pcPath The new path.
+ * \author Kristian Van Der Vliet (vanders@liqwyd.com)
  *****************************************************************************/
-void Settings::SetPath( const String & cPath )
+void Settings::SetPath( Path* pcPath )
 {
-	m->SetPath( m->m_cFile, cPath );
+	if( pcPath )
+		m->SetPath( m->m_cFile, pcPath->GetPath() );
 }
 
 /** Set filename.
  * \par		Description:
- *		Set filename.
- * \param cFile The new filename.
- * \author Henrik Isaksson (henrik@boing.nu)
+ *		Change the file which should be used to save and load Settings.
+ * \param pcFile The new file.
+ * \author Kristian Van Der Vliet (vanders@liqwyd.com)
  *****************************************************************************/
-void Settings::SetFile( const String & cFile )
+void Settings::SetFile( SeekableIO* pcFile )
 {
-	m->SetPath( cFile, m->m_cPath );
+	if( pcFile )
+		m->SetIO( pcFile );
 }
 
 /** Copy a Settings object.

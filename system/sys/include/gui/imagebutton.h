@@ -50,11 +50,10 @@ public:
     uint32 GetTextPosition( void );
     void SetTextPosition( uint32 nTextPosition );
 
-    void SetImageFromFile( const char* pzFile );
-    void SetImageFromResource( const char* pzFile );
-    void SetImageFromImage( Image* pcImage );
-    void SetImageFromMemory( const void* pData, int nSize );
-    Image *GetImage( void );
+	void SetImage( StreamableIO* pcStream );
+    void SetImage( Image* pcImage );
+
+	Image *GetImage( void );
     void ClearImage();
     
     virtual void Activated(bool);
@@ -63,8 +62,10 @@ public:
     virtual void MouseUp( const Point& cPosition, uint32 nButton, Message* pcData );
     virtual void Paint( const Rect &cUpdateRect );   
     virtual Point GetPreferredSize( bool bLargest ) const;
-	
-    virtual void _reserved1();
+
+	ImageButton& operator=( ImageButton& cImageButton );
+
+	virtual void _reserved1();
     virtual void _reserved2();
     virtual void _reserved3();
     virtual void _reserved4();

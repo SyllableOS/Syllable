@@ -399,9 +399,13 @@ void OptionParser::PrintHelpText( int nWidth ) const
 	printf( "%s", GetHelpText( nWidth ).c_str() );
 }
 
-void OptionParser::PrintHelpText( FILE *hStream, int nWidth ) const
+void OptionParser::PrintHelpText( StreamableIO* pcStream, int nWidth ) const
 {
-	fprintf( hStream, "%s", GetHelpText( nWidth ).c_str() );
+	if( pcStream )
+	{
+		String cHelpText = GetHelpText( nWidth );
+		pcStream->Write( (void*)cHelpText.c_str(), cHelpText.CountChars() );
+	}
 }
 
 char OptionParser::_MapLongOpt( const String & cOpt ) const
