@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.41
+# Version 0.5.42
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -1114,7 +1114,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.41',
+	puts 'Syllable Build System 0.5.42',
 		'Copyright (c) 2002-2004 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1172,23 +1172,23 @@ else
 
 				ENV['ATHEOS_INCLUDE_PATH'] = File.join @workDir, 'sys/include'
 				ENV['C_INCLUDE_PATH'] =
-					(File.join @stage, 'boot/atheos/sys/include') + ':' +
-#					(File.join @stage, 'boot/atheos/autolnk/include') +
+					(File.join @workDir, 'sys/include') +
+#					':' + (File.join @stage, 'atheos/autolnk/include') +
 					((var = ENV['C_INCLUDE_PATH']) ? ':' + var : '')
 				ENV['CPLUS_INCLUDE_PATH'] =
-					(File.join @stage, 'boot/atheos/sys/include') + ':' +
-#					(File.join @stage, 'boot/atheos/autolnk/include') +
+					(File.join @workDir, 'sys/include') +
+#					':' + (File.join @stage, 'atheos/autolnk/include') +
 					((var = ENV['CPLUS_INCLUDE_PATH']) ? ':' + var : '')
 
-				ENV['ATHEOS_LIB_PATH'] = File.join @workDir, 'libs'
+				ENV['ATHEOS_LIB_PATH'] = File.join @stage, 'atheos/sys/libs'
 				ENV['DLL_PATH'] =
-					(File.join @stage, 'boot/atheos/sys/libs') + ':' +
-					(File.join @stage, 'boot/atheos/sys') + ':' +
-#					(File.join @stage, 'boot/atheos/autolnk/lib') +
+					(File.join @stage, 'atheos/sys/libs') +
+					':' + (File.join @stage, 'atheos/sys') +
+#					':' + (File.join @stage, 'atheos/autolnk/lib') +
 					((var = ENV['DLL_PATH']) ? ':' + var : '')
 				ENV['LIBRARY_PATH'] =
-					(File.join @stage, 'boot/atheos/sys/libs') + ':' +
-#					(File.join @stage, 'boot/atheos/autolnk/lib') +
+					(File.join @stage, 'atheos/sys/libs') +
+#					':' + (File.join @stage, 'atheos/autolnk/lib') +
 					((var = ENV['LIBRARY_PATH']) ? ':' + var : '')
 
 				prepare target unless exists? @stage
@@ -1226,3 +1226,4 @@ else
 	action 'sync'
 	@log.close
 end
+
