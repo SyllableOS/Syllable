@@ -3,10 +3,9 @@ authors
 	Kristian Van Der Vliet
 	Kaj de Vos
 maintainers			Kaj de Vos
-status				testing
+status				broken
 
 licenses			LGPL
-
 home				www.gnu.org/software/libc/
 packages
 	glibc-2.1.2
@@ -15,6 +14,7 @@ packages
 
 build-needs
 	autoconf 2.13
+	gcc < 3
 	gettext >= 0.10.35
 ;build-recommends	texinfo <
 test-needs
@@ -26,6 +26,7 @@ patch				autoconf
 
 no-build-dir
 
+configure-env		CFLAGS '-D__SYLLABLE__ -march=i586 -O2 -pipe'
 configure-options
 	--disable-versioning
 ;	--enable-add-ons
@@ -39,6 +40,8 @@ configure-options
 ;	For printed documentation:
 ;	dvi
 
+install-env			CFLAGS '-D__SYLLABLE__ -march=i586 -O2 -pipe'
 ;install-prefix-var	install_root
+system-files		lib/lib*.so* system/libs
 documentation		README BUGS INSTALL COPYING COPYING.LIB NEWS ChangeLog FAQ INTERFACE CONFORMANCE README.libm PROJECTS NOTES
 ;	manual
