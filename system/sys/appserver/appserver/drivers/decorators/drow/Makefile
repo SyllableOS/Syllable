@@ -18,23 +18,23 @@ $(OBJDIR)/%.o : %.cpp
 	$(CC) $(COPTS) $< -o $@
 
 
-all :	objs $(OBJDIR)/drow
+all :	objs $(OBJDIR)/Drow
 
 deps:
 
 objs:
 	mkdir objs
 
-$(OBJDIR)/drow: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/drow /system/appserver -lsyllable -lstdc++ -lz
-	gcc -plugin $(OBJS) -o $(OBJDIR)/drow -lsyllable -lstdc++
+$(OBJDIR)/Drow: $(OBJS)
+	gcc $(OBJS) -o $(OBJDIR)/Drow /system/appserver -lsyllable -lstdc++ -lz
+	gcc -plugin $(OBJS) -o $(OBJDIR)/Drow -lsyllable -lstdc++
 
-install: $(OBJDIR)/drow
-	cp -f $(OBJDIR)/drow $(DEVBIN)/drow
+install: $(OBJDIR)/Drow
+	cp -f $(OBJDIR)/Drow $(DEVBIN)/Drow
 
-dist: $(OBJDIR)/drow
-	cp -f $(OBJDIR)/drow $(DIST_DIR)/atheos/sys/drivers/appserver/decorators/Drow
+dist: $(OBJDIR)/Drow
+	cp -f $(OBJDIR)/Drow $(DIST_DIR)/atheos/sys/drivers/appserver/decorators/Drow
 
 clean:
-	-rm $(OBJS) $(OBJDIR)/drow
+	-rm $(OBJS) $(OBJDIR)/Drow
 
