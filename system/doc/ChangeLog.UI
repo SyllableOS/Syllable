@@ -1,3 +1,15 @@
+* March 28 2004, Henrik Isaksson *
+
+ - Translators
+	o Fixed PNG translator, saving was done with incorrect size
+	o Fixed ICON translator, loading and saving was done with incorrect sizes
+
+ - Image
+	o Bugfix: incorrect size when saving images
+
+ - Menu, CheckMenu, MenuItem
+	o Bugfix: keyboard navigation
+
 * March 20 2004, Henrik Isaksson *
 
  - Window
@@ -585,5 +597,4 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
-
 
