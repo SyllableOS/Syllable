@@ -1,9 +1,14 @@
 Meter: meter.o
-	g++ -o meter.so -shared meter.o -lsyllable
+	$(CC) -o meter.so -shared meter.o -lsyllable
 	rescopy meter.so -r images/*.png
+
+meter.o: meter.cpp meter.h
+	$(CC) -Wall -c meter.cpp
+
+install: Meter
 	if [ -e /system/drivers/dock/meter.so ]; then rm /system/drivers/dock/meter.so; fi
 	cp meter.so /system/drivers/dock/
 
-meter.o: meter.cpp meter.h
-	g++ -Wall -c meter.cpp
+dist: Meter
+	cp -f meter.so $(DIST_DIR)/atheos/sys/drivers/dock/
 
