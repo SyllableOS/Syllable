@@ -491,7 +491,6 @@ device_init( int nDeviceID )
 	/* See if we can find an SB Pro device */
 	if( sb_dsp_init() )
 		nError = nDeviceNode = create_device_node( nDeviceID, "sound/dsp", &dsp_ops, NULL );
-	else
 	
 	if ( nError < 0 )
 		DEBUG( "Failed to create 1 node %d\n", nError );
@@ -507,6 +506,7 @@ device_uninit( int nDeviceID )
 
         return( 0 );
 }
+
 
 
 
