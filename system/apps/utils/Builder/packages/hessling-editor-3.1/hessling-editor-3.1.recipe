@@ -1,6 +1,11 @@
 authors				Kaj de Vos
 status				testing
+
+licenses			GPL
+home				hessling-editor.sf.net
 packages			THE-3.1
+
+needs				regina-rexx
 patch-config
 configure-options	--with-rexx=regina --with-ncurses
 ;make-targets		the html

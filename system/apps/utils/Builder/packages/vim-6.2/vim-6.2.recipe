@@ -2,5 +2,14 @@ authors
 	Rodrigo Parra Novo
 	Kaj de Vos
 maintainers			Kaj de Vos
+
+licenses			custom
+home				www.vim.org
+;packages
+;	vim-6.2
+;	vim-6.2-lang
+
+build-needs			ruby
+no-build-dir
 configure-options	--enable-rubyinterp
 documentation		README.txt

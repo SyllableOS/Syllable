@@ -1,5 +1,8 @@
 authors			Kaj de Vos
 status			testing
+
+locations		ftp://space.mit.edu/pub/davis/slang/
+
 patch-config	autoconf
 ;test-targets	runtests
 ;install			make install && make elf && make install-elf && make install-links
