@@ -21,7 +21,7 @@ OBJS	= rect.o region.o desktop.o bitmap.o view.o tabview.o			\
 
 OBJS += appserverconfig.o looper.o handler.o application.o message.o messenger.o messagequeue.o	\
 	invoker.o clipboard.o string.o regexp.o variant.o circularbuffer.o	\
-	resources.o optionparser.o settings.o thread.o
+	resources.o optionparser.o settings.o thread.o messagefilter.o
 OBJS += filereference.o fsnode.o streamableio.o seekableio.o file.o tempfile.o	\
 	directory.o symlink.o nodemonitor.o path.o memfile.o datetime.o
 OBJS += translator.o
@@ -63,5 +63,6 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d
 
 -include $(OBJDIR)/*.d
+
 
 
