@@ -1131,6 +1131,7 @@ AlertView::AlertView( const String & cText, va_list pButtons, Bitmap * pcBitmap 
 
 		m->m_cButtons.push_back( pcButton );
 		AddChild( pcButton );
+		pcButton->SetTabOrder();
 
 		Point cSize = pcButton->GetPreferredSize( false );
 
@@ -1533,5 +1534,6 @@ void ProgressView::Layout( const Rect & cBounds )
 	}
 	Flush();
 }
+
 
 
