@@ -43,8 +43,52 @@ void ata_detect_pci_controllers( void )
 {
 	/* Scan the PCI bus for controllers.  Fall back to the EIDE */
 	/* base addresses if no PCI controllers found */
-	int currentdev, api;
+	int currentdev, api, i;
 	PCI_Info_s pcidevice;
+	char zArg[32];
+	bool bPrimaryEnabled = true, bSecondaryEnabled = true;
+    const char* const *argv;
+    int argc;
+    
+    get_kernel_arguments( &argc, &argv );
+
+	/* See if any of controllers are disabled by the user */
+	for( i = 0; i < argc; ++i )
+	{
+		if( get_str_arg( zArg, "ata0=", argv[i], strlen( argv[i] ) ) )
+		{
+			if( strcmp( zArg, "disabled" ) == 0 )
+			{
+				kerndbg( KERN_INFO, "ata0 disabled by user\n" );
+				bPrimaryEnabled = false;
+				continue;
+			}
+			else	/* Assume that the argument given is the base address */
+			{
+				kerndbg( KERN_INFO, "ata0 set to %s\n", zArg );
+
+				/* FIXME: Translate the base address & program the PCI device with it! */
+				continue;
+			}
+		}
+
+		if( get_str_arg( zArg, "ata1=", argv[i], strlen( argv[i] ) ) )
+		{
+			if( strcmp( zArg, "disabled" ) == 0 )
+			{
+				kerndbg( KERN_INFO, "ata1 disabled by user\n" );
+				bSecondaryEnabled = false;
+				continue;
+			}
+			else	/* Assume that the argument given is the base address */
+			{
+				kerndbg( KERN_INFO, "ata1 set to %s\n", zArg );
+
+				/* FIXME: Translate the base address & program the PCI device with it! */
+				continue;
+			}
+		}
+	}
 
 	for(currentdev = 0;get_pci_info(&pcidevice,currentdev)==0;currentdev++)
 	{
@@ -57,94 +101,100 @@ void ata_detect_pci_controllers( void )
 				continue;
 			}
 
-			/* Is the Primary channel in compatability or PCI native mode? */
-			if( ( read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1 ) & 0x01 ) != 0x00 )
+			if( bPrimaryEnabled )
 			{
-				/* The Primary channel is not in compatability mode; see if we can change it */
-				api = read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1 );
-				if( ( api & 0x02 ) != 0x02 )
+				/* Is the Primary channel in compatability or PCI native mode? */
+				if( ( read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1 ) & 0x01 ) != 0x00 )
 				{
-					kerndbg( KERN_INFO, "ATA controller at bus %u, device %u, function %u has a Primary channel that is native PCI only\n", pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction );
+					/* The Primary channel is not in compatability mode; see if we can change it */
+					api = read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1 );
+					if( ( api & 0x02 ) != 0x02 )
+					{
+						kerndbg( KERN_INFO, "ATA controller at bus %u, device %u, function %u has a Primary channel that is native PCI only\n", pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction );
 
-					/* FIXME: Program PCI native controllers */
-					g_nControllers[0].io_base = 0x00;
-					g_nControllers[0].irq = 0;
+						/* FIXME: Program PCI native controllers */
+						g_nControllers[0].io_base = 0x00;
+						g_nControllers[0].irq = 0;
+					}
+					else
+					{
+						/* Switch the channel to compatability mode */
+						write_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1, ( api & 0xFE ) );
+
+						g_nControllers[0].io_base = ATA_DEFAULT_PRIMARY_BASE;
+						g_nControllers[0].irq = ATA_DEFAULT_PRIMARY_IRQ;
+					}
 				}
 				else
 				{
-					/* Switch the channel to compatability mode */
-					write_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1, ( api & 0xFE ) );
-
+					/* The Primary channel is in compatability mode */
 					g_nControllers[0].io_base = ATA_DEFAULT_PRIMARY_BASE;
 					g_nControllers[0].irq = ATA_DEFAULT_PRIMARY_IRQ;
 				}
-			}
-			else
-			{
-				/* The Primary channel is in compatability mode */
-				g_nControllers[0].io_base = ATA_DEFAULT_PRIMARY_BASE;
-				g_nControllers[0].irq = ATA_DEFAULT_PRIMARY_IRQ;
-			}
 
-			/* Enable Busmastering , save dma port and request irq */
-			if( g_nControllers[0].io_base != 0x00 )
-			{
-				write_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND, 2, read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND , 2 ) | PCI_COMMAND_MASTER | PCI_COMMAND_IO );
-				g_nControllers[0].dma_base = pcidevice.u.h0.nBase4 & PCI_ADDRESS_IO_MASK;
-
-				/* Disable DMA transfers if the interrupt could not be requested */
-				if( request_irq( g_nControllers[0].irq, ata_interrupt, NULL, 0, "ata_controller0_irq", &g_nControllers[0] ) < 0 )
+				/* Enable Busmastering , save dma port and request irq */
+				if( g_nControllers[0].io_base != 0x00 )
 				{
-					g_nControllers[0].dma_base = 0x0;
-					kerndbg( KERN_INFO, "ATA IRQ could not be requested. DMA transfers will be disabled\n" );
+					write_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND, 2, read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND , 2 ) | PCI_COMMAND_MASTER | PCI_COMMAND_IO );
+					g_nControllers[0].dma_base = pcidevice.u.h0.nBase4 & PCI_ADDRESS_IO_MASK;
+
+					/* Disable DMA transfers if the interrupt could not be requested */
+					if( request_irq( g_nControllers[0].irq, ata_interrupt, NULL, 0, "ata_controller0_irq", &g_nControllers[0] ) < 0 )
+					{
+						g_nControllers[0].dma_base = 0x0;
+						kerndbg( KERN_INFO, "ATA IRQ could not be requested. DMA transfers will be disabled\n" );
+					}
+					if( g_nControllers[0].dma_base != 0x0 )
+						kerndbg( KERN_INFO, "DMA busmaster at 0x%x\n", g_nControllers[0].dma_base );
 				}
-				if( g_nControllers[0].dma_base != 0x0 )
-					kerndbg( KERN_INFO, "DMA busmaster at 0x%x\n", g_nControllers[0].dma_base );
 			}
- 
-			/* Is the Secondary channel in compatability or PCI native mode? */
-			if( ( read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1 ) & 0x04 ) != 0x00 )
-			{
-				/* The Primary channel is not in compatability mode; see if we can change it */
-				api = read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1 );
-				if( ( api & 0x08 ) != 0x08 )
-				{
-					kerndbg( KERN_INFO, "ATA controller at bus %u, device %u, function %u has a Secondary channel that is native PCI only\n", pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction );
 
-					/* FIXME: Program PCI native controllers */
-					g_nControllers[1].io_base = 0x00;
-					g_nControllers[1].irq = 0;
+			if( bSecondaryEnabled )
+			{
+				/* Is the Secondary channel in compatability or PCI native mode? */
+				if( ( read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1 ) & 0x04 ) != 0x00 )
+				{
+					/* The Primary channel is not in compatability mode; see if we can change it */
+					api = read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1 );
+					if( ( api & 0x08 ) != 0x08 )
+					{
+						kerndbg( KERN_INFO, "ATA controller at bus %u, device %u, function %u has a Secondary channel that is native PCI only\n", pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction );
+
+						/* FIXME: Program PCI native controllers */
+						g_nControllers[1].io_base = 0x00;
+						g_nControllers[1].irq = 0;
+					}
+					else
+					{
+						/* Switch the channel to compatability mode */
+						write_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1, ( api & 0xFB ) );
+
+						g_nControllers[1].io_base = ATA_DEFAULT_SECONDARY_BASE;
+						g_nControllers[1].irq = ATA_DEFAULT_SECONDARY_IRQ;
+					}
 				}
 				else
 				{
-					/* Switch the channel to compatability mode */
-					write_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1, ( api & 0xFB ) );
-
+					/* The Secondary channel is in compatability mode */
 					g_nControllers[1].io_base = ATA_DEFAULT_SECONDARY_BASE;
 					g_nControllers[1].irq = ATA_DEFAULT_SECONDARY_IRQ;
 				}
-			}
-			else
-			{
-				/* The Secondary channel is in compatability mode */
-				g_nControllers[1].io_base = ATA_DEFAULT_SECONDARY_BASE;
-				g_nControllers[1].irq = ATA_DEFAULT_SECONDARY_IRQ;
-			}
 
-			/* Enable Busmastering, save dma port and request irq */
-			if( g_nControllers[1].io_base != 0x00 )
-			{
-				write_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND, 2, read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND , 2 ) | PCI_COMMAND_MASTER | PCI_COMMAND_IO );
-				g_nControllers[1].dma_base = ( pcidevice.u.h0.nBase4 & PCI_ADDRESS_IO_MASK ) + 0x8;
-
-				/* Disable DMA transfers if the interrupt could not be requested */
-				if( request_irq( g_nControllers[1].irq, ata_interrupt, NULL, 0, "ata_controller1_irq", &g_nControllers[1] ) < 0 )
+				/* Enable Busmastering, save dma port and request irq */
+				if( g_nControllers[1].io_base != 0x00 )
 				{
-					g_nControllers[1].dma_base = 0x0;
-					kerndbg( KERN_INFO, "ATA IRQ could not be requested. DMA transfers will be disabled\n" );
+					write_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND, 2, read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND , 2 ) | PCI_COMMAND_MASTER | PCI_COMMAND_IO );
+					g_nControllers[1].dma_base = ( pcidevice.u.h0.nBase4 & PCI_ADDRESS_IO_MASK ) + 0x8;
+
+					/* Disable DMA transfers if the interrupt could not be requested */
+					if( request_irq( g_nControllers[1].irq, ata_interrupt, NULL, 0, "ata_controller1_irq", &g_nControllers[1] ) < 0 )
+					{
+						g_nControllers[1].dma_base = 0x0;
+						kerndbg( KERN_INFO, "ATA IRQ could not be requested. DMA transfers will be disabled\n" );
+					}
+					if( g_nControllers[1].dma_base != 0x0 )
+						kerndbg( KERN_INFO, "DMA busmaster at 0x%x\n", g_nControllers[1].dma_base );
 				}
-				if( g_nControllers[1].dma_base != 0x0 )
-					kerndbg( KERN_INFO, "DMA busmaster at 0x%x\n", g_nControllers[1].dma_base );
 			}
 
 			break;
