@@ -47,6 +47,8 @@ mount -t fatfs boot-cd.img disk
 mv kernel.so.gz disk/atheos/sys/
 cp ../$BASE/atheos/sys/drivers/fs/iso9660 disk/atheos/sys/drivers/fs/
 cp ../$BASE/atheos/sys/drivers/dev/disk/ata disk/atheos/sys/drivers/dev/disk/
+cp ../$BASE/atheos/sys/drivers/bus/pci disk/atheos/sys/drivers/bus/
+touch disk/atheos/sys/config/kernel.cfg
 
 unmount disk
 mv boot-cd.img ../objs/boot.img
