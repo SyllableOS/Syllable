@@ -1,0 +1,20 @@
+authors				Kaj de Vos
+status				broken
+
+; BSD?
+licenses			other
+home				www.libtiff.org
+;home				www.remotesensing.org/libtiff/
+packages			tiff-3.7.0
+locations
+	ftp://ftp.remotesensing.org/pub/libtiff/
+	http://libtiff.maptools.org/dl/
+
+build-recommends	libjpeg
+
+patch-config
+;no-build-dir
+documentation
+	README RELEASE-DATE VERSION COPYRIGHT ChangeLog TODO html
+;	HOWTO-RELEASE
+
