@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.1.0
+# Version 0.1.1
 # Copyright (c) 2002, 2003 Kaj de Vos
 # License: GPL 2
 
@@ -84,7 +84,7 @@ def getPackage target
 				# Source already prepared
 				true
 			else
-				print "WARNING! This will clobber your CVS repository!"
+				puts "\nWARNING! This will clobber your CVS repository!"
 
 				if exists File.join @sourcesDir, fullName(target) + ".*"
 					logHeader "Replacing source"
@@ -198,6 +198,7 @@ end
 
 def buildPackage target
 	if getPackage target  # Source is available
+		Dir.chdir @workDir
 		Dir.chdir target
 
 		logHeader "Cleaning"
@@ -578,7 +579,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "--version"
-	puts "Syllable Build System 0.1.0",
+	puts "Syllable Build System 0.1.1",
 		"Copyright (c) 2002, 2003 Kaj de Vos",
 		"License: GPL 2"
 when "--help"
