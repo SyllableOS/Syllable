@@ -125,7 +125,7 @@ documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
 ; a link that's internal to the package, and relative to the package root
 ; in the case of a link in the system.
 links
-	<Original> <Link>
+	[<Original> <Link>]
 ;	<Links path>
 ;		<Originals>
 ; Files to copy to the staging area, if used, after the main installation:
@@ -135,4 +135,3 @@ links
 ;system-files
 ;	<Source> <Destination>
 ;post-install		<Commands after installation, before registration>
-

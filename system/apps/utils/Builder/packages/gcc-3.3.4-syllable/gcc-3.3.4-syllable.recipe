@@ -6,7 +6,7 @@ warnings
 	Works, on Linux, without GLibC headers for cross-compiling kernel-space, but not yet for user-land.
 	The Syllable source tree "system" directory needs to be in your working directory.
 	/ainc needs to be linked to the Syllable system headers.
-	The Syllable base distribution "atheos" directory needs to be in your working directory.
+	The Syllable base distribution package needs to be in Builder/sources, so the "atheos" directory will be unpacked into your working directory.
 
 inherits			gcc-3.3.4
 
@@ -15,6 +15,7 @@ packages
 	gcc-3.3.4
 ;	gcc-core-3.3.4
 ;	gcc-g++-3.3.4
+	base-syllable-0.5.5
 
 configure-options
 	--target=i586-pc-syllable
