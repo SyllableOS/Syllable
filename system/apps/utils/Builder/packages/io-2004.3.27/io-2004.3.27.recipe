@@ -1,5 +1,5 @@
 authors			Kaj de Vos
-status			incomplete
+status			developing
 
 licenses		BSD LGPL
 home			www.iolanguage.com
@@ -10,6 +10,7 @@ packages
 no-build-dir
 test-targets	test
 install-tree	bin
+install			cp IoVM/io /usr/io/bin
 install-files	IoVM/io bin
 strip-files		bin/io
 documentation	_ReadMe.txt _BSDLicense.txt _ReleaseHistory.txt Docs.html _docs IoVM/_docs
