@@ -37,3 +37,4 @@ documentation
 	README LICENSE Misc/NEWS Misc/HISTORY
 ;	Doc
 	Demo
+post-install		rm -r /usr/python/lib/python2.3/test

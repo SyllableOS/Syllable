@@ -107,3 +107,4 @@ links
 	<Original> <Link>
 ;	<Links path>
 ;		<Originals>
+;post-install		<Commands after installation, before registration>
