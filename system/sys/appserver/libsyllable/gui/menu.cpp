@@ -2101,7 +2101,11 @@ MenuItem *Menu::GetSuperItem()
 
 Point Menu::GetPreferredSize( bool bLargest ) const
 {
-	return ( m_cSize + Point( 2.0f, 2.0f ) );
+	if( !bLargest ) {
+		return ( m_cSize + Point( 2.0f, 2.0f ) );
+	} else {
+		return Point( COORD_MAX, m_cSize.y + 2.0f );
+	}
 }
 
 //----------------------------------------------------------------------------
@@ -2219,3 +2223,4 @@ bool Menu::IsEnabled()
 {
 	return m_bEnabled;
 }
+
