@@ -1,0 +1,77 @@
+
+Locator 0.2 - Workin' Saturday
+
+Author: Andrew Kennan (bewilder@stresscow.org)
+
+Date: 06 July 2002
+
+http://www.stresscow.org/bewilder/atheos/
+
+
+
+Description
+-----------
+
+Locator is a fast file finding utility which keeps a database of all the files and directories on your machine.
+
+There are three parts to Locator:
+ 
+"create_db" creates the filesystem database. On my K6-2@350MHz machine it takes between 1.5 and 2 minutes to create the database of 30000+ files and 2000+ directories.
+
+"locate" is a CLI tool which searches the database. It takes two arguments: a string (or regex) to search for and (optionally) the directory to start the search in.
+
+"Locator" is a GUI program which provides an interface similar to the "Find Files Or Folders" utility in Windows. It allows you to choose whether or not to match directory names or follow sub directories while searching. It allows you to copy and paste the names of files found into other programs.
+
+
+
+Installation
+------------
+
+At the CLI:
+
+make
+make install
+create_db
+
+
+Usage
+-----
+
+  Locator: The GUI should be pretty self explanatory. If you can't figure it out how did you manage to read this file? The items in the Options menu correspond to the command line options for "locator"
+
+  create_db: This program takes one optional argument - the directory to use as root. So if you enter "create_db /home" it will only catalogue directories under /home. Otherwise it will record the names of every file and directory on your system.
+
+  locator: This CLI tool takes a few command line options, a string to search for and an optional directory to start the search in.
+
+    Options:
+
+      -d | --no-dirs          Do not match directory names.
+ 
+      -f | --no-follow        Do not search in sub-directories.
+
+      -r | --no-regex         Do not use regular expressions to match files.
+
+
+    eg:
+
+      bash-2.03$ locator -d "window\.[h|cpp]$" /home
+
+      Will match file (but not directory) names under /home which end in either window.h or window.cpp.
+
+
+
+Updating The Database
+---------------------
+
+You can update the database at any time by running the "create_db" command.
+
+You probably want to keep the database up to date. If you are running a cron you can add this line to your crontab:
+
+# Locator database update
+0 0 * * *	/Applications/Locator/create_db
+
+This will update the database at midnight every night as long as the cron is running.
+
+
+
+
