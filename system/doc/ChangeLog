@@ -1,3 +1,10 @@
+* Feb 8 2004, Henrik Isaksson *
+
+ libcodeview:
+	- Updated for GCC3.
+	- Changed std::strings in interface to os::String.
+	- Bumped version to 2.
+
 * Feb 7 2004, Henrik Isaksson *
 
 Updated AppServer, AppServer drivers and libsyllable for GCC3.
@@ -464,6 +471,7 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
 
 
 
