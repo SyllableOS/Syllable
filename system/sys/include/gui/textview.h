@@ -17,8 +17,8 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef __F_STRINGEDIT_H__
-#define __F_STRINGEDIT_H__
+#ifndef F_GUI_TEXTVIEW_H
+#define F_GUI_TEXTVIEW_H
 
 #include <gui/view.h>
 #include <gui/font.h>
@@ -136,6 +136,8 @@ public:
     void Paste( bool bSendNotify = true );
     void Delete( bool bSendNotify = true );
     void Delete( const IPoint& cStart, const IPoint& cEnd, bool bSendNotify = true );
+    void Undo();
+    void Redo();
   
     const buffer_type& GetBuffer() const;
 
@@ -161,4 +163,5 @@ private:
 
 } // end of namespace os
 
-#endif // __F_STRINGEDIT_H__
+#endif // F_GUI_TEXTVIEW_H
+
