@@ -33,7 +33,7 @@ operations:
 
 You should have unpacked this file with
 
-    tar -xpz
+    tar -xpzP
 
 or something equivalent. The 'p' option to Tar is important: it
 preserves permissions on the extracted files. Without the proper file
