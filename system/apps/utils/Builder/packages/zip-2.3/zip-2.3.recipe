@@ -1,0 +1,23 @@
+authors
+	Ruslan Nickolaev
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				testing
+
+licenses			other
+
+home				www.info-zip.org/Zip.html
+packages
+	zip23
+;	Encryption:
+;	zcrypt
+locations			ftp://ftp.info-zip.org/pub/infozip/src/
+
+makefile			atheos/Makefile
+
+install-tree		bin
+documentation
+	README atheos/README.Syllable MANUAL LICENSE WHATSNEW CHANGES TODO
+;	Currently applies only to BSD:
+;	BUGS
+

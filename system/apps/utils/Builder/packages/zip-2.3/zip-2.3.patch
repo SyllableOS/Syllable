@@ -1,0 +1,175 @@
+diff -ru zip-2.3.original/tailor.h zip-2.3/tailor.h
+--- zip-2.3.original/tailor.h	1999-11-07 10:31:14.000000000 +0000
++++ zip-2.3/tailor.h	2004-10-12 00:42:16.000000000 +0000
+@@ -22,6 +22,10 @@
+ #include "beos/osdep.h"
+ #endif
+ 
++#ifdef __SYLLABLE__
++#include "atheos/osdep.h"
++#endif
++
+ #ifdef DOS
+ #include "msdos/osdep.h"
+ #endif
+@@ -428,8 +432,11 @@
+ #ifdef THEOS
+ #  define OS_CODE  0x1200
+ #endif
++#ifdef __SYLLABLE__
++#  define OS_CODE  0x1E00
++#endif
+ 
+-#define NUM_HOSTS 19
++#define NUM_HOSTS 31
+ /* Number of operating systems. Should be updated when new ports are made */
+ 
+ #if defined(DOS) && !defined(OS_CODE)
+diff -ru zip-2.3.original/ttyio.c zip-2.3/ttyio.c
+--- zip-2.3.original/ttyio.c	1999-10-09 20:07:35.000000000 +0000
++++ zip-2.3/ttyio.c	2004-10-12 00:42:16.000000000 +0000
+@@ -54,6 +54,10 @@
+ #  define HAVE_TERMIOS_H
+ #endif
+ 
++#ifdef __SYLLABLE__
++#  define HAVE_TERMIOS_H
++#endif
++
+ #ifdef _POSIX_VERSION
+ #  ifndef USE_POSIX_TERMIOS
+ #    define USE_POSIX_TERMIOS  /* use POSIX style termio (termios) */
+@@ -298,7 +302,7 @@
+ 
+ #if (defined(UNZIP) && !defined(FUNZIP))
+ 
+-#if (defined(UNIX) || defined(__BEOS__))
++#if (defined(UNIX) || defined(__BEOS__) || defined(__SYLLABLE__))
+ #ifdef MORE
+ 
+ /*
+@@ -517,7 +521,7 @@
+ #else /* !HAVE_WORKING_GETCH */
+ 
+ 
+-#if (defined(UNIX) || defined(__MINT__) || defined(__BEOS__))
++#if (defined(UNIX) || defined(__MINT__) || defined(__BEOS__) || defined(__SYLLABLE__))
+ 
+ #ifndef _PATH_TTY
+ #  ifdef __MINT__
+@@ -574,7 +578,7 @@
+ 
+ } /* end function getp() */
+ 
+-#endif /* UNIX || __MINT__ || __BEOS__ */
++#endif /* UNIX || __MINT__ || __BEOS__ || __SYLLABLE__ */
+ 
+ 
+ 
+diff -ru zip-2.3.original/zip.c zip-2.3/zip.c
+--- zip-2.3.original/zip.c	1999-11-16 20:08:11.000000000 +0000
++++ zip-2.3/zip.c	2004-10-12 00:42:16.000000000 +0000
+@@ -2269,6 +2269,11 @@
+   setfiletype( zipfile, "application/zip" );
+ #endif
+ 
++#ifdef __SYLLABLE__
++  /* Set the filetype of the zipfile to "application/x-zip" */
++  setfiletype(zipfile, "application/x-zip");
++#endif
++
+ #ifdef MACOS
+   /* Set the Creator/Type of the zipfile to 'IZip' and 'ZIP ' */
+   setfiletype(zipfile, 'IZip', 'ZIP ');
+diff -ru zip-2.3.original/zip.h zip-2.3/zip.h
+--- zip-2.3.original/zip.h	1999-11-08 19:36:52.000000000 +0000
++++ zip-2.3/zip.h	2004-10-12 00:42:16.000000000 +0000
+@@ -165,6 +165,7 @@
+ #define EF_ACL       0x4C41   /* ACL Extra Field ID (access control list, "AL") */
+ #define EF_NTSD      0x4453   /* NT Security Descriptor Extra Field ID, ("SD") */
+ #define EF_BEOS      0x6542   /* BeOS Extra Field ID ("Be") */
++#define EF_ATHEOS    0x7441   /* AtheOS Extra Field ID ("At") */
+ #define EF_QDOS      0xfb4a   /* SMS/QDOS ("J\373") */
+ #define EF_AOSVS     0x5356   /* AOS/VS ("VS") */
+ #define EF_SPARK     0x4341   /* David Pilling's Acorn/SparkFS ("AC") */
+diff -ru zip-2.3.original/zipnote.c zip-2.3/zipnote.c
+--- zip-2.3.original/zipnote.c	1999-11-07 10:30:23.000000000 +0000
++++ zip-2.3/zipnote.c	2004-10-12 00:42:16.000000000 +0000
+@@ -36,7 +36,8 @@
+ local void help OF((void));
+ local void version_info OF((void));
+ local void putclean OF((char *, extent));
+-local char *getline OF((char *, extent));
++/* getline name conflicts with GNU getline() function */
++local char *_getline OF((char *, extent));
+ local int catalloc OF((char * far *, char *));
+ int main OF((int, char **));
+ 
+@@ -240,7 +241,7 @@
+ }
+ 
+ 
+-local char *getline(buf, size)
++local char *_getline(buf, size)
+ char *buf;
+ extent size;
+ /* Read a line of text from stdin into string buffer 'buf' of size 'size'.
+@@ -398,7 +399,7 @@
+ 
+   /* Process stdin, replacing comments */
+   z = zfiles;
+-  while (getline(a, FNMAX+1) != NULL && (a[0] != MARK || strcmp(a + 1, MARKZ)))
++  while (_getline(a, FNMAX+1) != NULL && (a[0] != MARK || strcmp(a + 1, MARKZ)))
+   {                                     /* while input and not file comment */
+     if (a[0] != MARK || a[1] != ' ')    /* better be "@ name" */
+       ziperr(ZE_NOTE, "unexpected input");
+@@ -406,7 +407,7 @@
+       z = z->nxt;                       /* allow missing entries in order */
+     if (z == NULL)
+       ziperr(ZE_NOTE, "unknown entry name");
+-    if (getline(a, FNMAX+1) != NULL && a[0] == MARK && a[1] == '=')
++    if (_getline(a, FNMAX+1) != NULL && a[0] == MARK && a[1] == '=')
+     {
+       if (z->name != z->iname)
+         free((zvoid *)z->iname);
+@@ -422,7 +423,7 @@
+  * Don't update z->nam here, we need the old value a little later.....
+  * The update is handled in zipcopy().
+  */
+-      getline(a, FNMAX+1);
++      _getline(a, FNMAX+1);
+     }
+     if (z->com)                         /* change zip entry comment */
+       free((zvoid *)z->comment);
+@@ -431,7 +432,7 @@
+     {
+       if ((r = catalloc(&(z->comment), a)) != ZE_OK)
+         ziperr(r, "was building new comments");
+-      getline(a, FNMAX+1);
++      _getline(a, FNMAX+1);
+     }
+     z->com = strlen(z->comment);
+     z = z->nxt;                         /* point to next entry */
+@@ -439,7 +440,7 @@
+   if (a != NULL)                        /* change zip file comment */
+   {
+     zcomment = malloc(1);  *zcomment = 0;
+-    while (getline(a, FNMAX+1) != NULL)
++    while (_getline(a, FNMAX+1) != NULL)
+       if ((r = catalloc(&zcomment, a)) != ZE_OK)
+         ziperr(r, "was building new comments");
+     zcomlen = strlen(zcomment);
+diff -ru zip-2.3.original/zipup.c zip-2.3/zipup.c
+--- zip-2.3.original/zipup.c	1999-11-07 10:30:38.000000000 +0000
++++ zip-2.3/zipup.c	2004-10-12 00:42:16.000000000 +0000
+@@ -56,6 +56,10 @@
+ #  include "beos/zipup.h"
+ #endif
+ 
++#ifdef __SYLLABLE__
++#  include "atheos/zipup.h"
++#endif /* __SYLLABLE__ */
++
+ #ifdef __human68k__
+ #  include "human68k/zipup.h"
+ #endif /* __human68k__ */
