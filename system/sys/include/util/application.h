@@ -101,6 +101,9 @@ public:
   
     thread_id	Run();
 
+   port_id		GetServerPort()	const;
+   port_id		GetAppPort() const;
+
 private:
     friend class Window;
     friend class Desktop;
@@ -109,10 +112,7 @@ private:
     friend class View;
     friend class Font;
     friend class AppserverConfig;
-
-    port_id		GetServerPort()	const;
-    port_id		GetAppPort() const;
-    
+  
       // Support for the Window class:
     port_id CreateWindow( View* pcTopView, const Rect& cFrame, const std::string& cTitle,
 			  uint32 nFlags, uint32 nDesktopMask, port_id hEventPort, int* phTopView );
@@ -158,3 +158,4 @@ private:
 }
 
 #endif	// __F_UTIL_APPLICATION_H__
+
