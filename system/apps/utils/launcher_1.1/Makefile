@@ -68,8 +68,11 @@ dist: $(EXE)
 	(cd plugins && $(MAKE) dist)
 
 
-$(LIB): $(LIBOBJS)
+$(LIB): lib/obj $(LIBOBJS)
 	$(LL) $(LIBOBJS) $(LIBINC) -shared -Wl,-soname,liblauncher.so -o $(LIB)
+
+lib/obj:
+	mkdir lib/obj
 
 lib/obj/launcher_plugin.o: lib/src/launcher_plugin.cpp include/launcher_plugin.h
 	$(CC) $(COPTS) lib/src/launcher_plugin.cpp -o $@
@@ -80,8 +83,11 @@ lib/obj/launcher_bar.o: include/launcher_bar.h lib/src/launcher_bar.cpp
 lib/obj/launcher_mime.o: include/launcher_mime.h lib/src/launcher_mime.cpp
 	$(CC) lib/src/launcher_mime.cpp $(COPTS) -o lib/obj/launcher_mime.o
 
-obj/main.o: src/main.cpp src/main.h
+obj/main.o: obj src/main.cpp src/main.h
 	$(CC) $(COPTS) src/main.cpp  -o $@
+
+obj:
+	mkdir obj
 
 obj/launcher_window.o: src/launcher_window.h src/launcher_window.cpp
 	$(CC) $(COPTS) src/launcher_window.cpp -o $@
