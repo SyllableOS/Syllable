@@ -88,7 +88,6 @@ typedef struct atapi_packet atapi_packet_s;
 /* ATAPI CD/DVD-ROM specific */
 status_t cdrom_test_unit_ready( AtapiInode_s *psInode );
 status_t cdrom_wait_for_unit_ready( AtapiInode_s *psInode );
-status_t cdrom_start_stop( AtapiInode_s *psInode, bool start );
 status_t cdrom_eject_media( AtapiInode_s *psInode );
 status_t cdrom_read_toc_entry( AtapiInode_s *psInode, int trackno, int msf_flag, int format, char *buf, int buflen );
 status_t cdrom_read_toc( AtapiInode_s *psInode, cdrom_toc_s *toc );

@@ -23,6 +23,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Changes
+ *
+ * 02/04/03 - Removed cdrom_start_stop(), which was not required and
+ *		      causing problems with some CD/DVD drives
+ *
  */
 
 #include "ata.h"
@@ -46,9 +52,6 @@ DeviceOperations_s g_sAtapiOperations = {
 	NULL	/* dop_rem_select_req */
 };
 
-#undef DEBUG_LIMIT
-#define DEBUG_LIMIT KERN_DEBUG_LOW
-
 int atapi_open( void* pNode, uint32 nFlags, void **ppCookie )
 {
 	AtapiInode_s* psInode = pNode;
@@ -64,27 +67,21 @@ int atapi_open( void* pNode, uint32 nFlags, void **ppCookie )
 	{
 		unsigned long capacity;
 
-		kerndbg( KERN_DEBUG, "Unit ready, starting\n");
+		kerndbg( KERN_DEBUG, "Unit ready\n");
 
-		nError = cdrom_start_stop( psInode, true );
+		nError = cdrom_read_capacity( psInode, &capacity );
 		if( nError == 0 )
 		{
-			nError = cdrom_read_capacity( psInode, &capacity );
-			if( nError == 0 )
-			{
-				psInode->bi_nSize = capacity;
-				psInode->bi_nSize *= CD_FRAMESIZE;
+			psInode->bi_nSize = capacity;
+			psInode->bi_nSize *= CD_FRAMESIZE;
 
-				kerndbg( KERN_DEBUG, "Capacity %Ld\n", psInode->bi_nSize );
-			}
-			else
-				kerndbg( KERN_WARNING, "Could not read capacity");
-
-			udelay( 200 );	/* FIXME: Should send another TEST UNIT READY to ensure the disc has spun up */
-			kerndbg( KERN_DEBUG, "Unit started\n");
+			kerndbg( KERN_DEBUG, "Capacity %Ld\n", psInode->bi_nSize );
 		}
 		else
-			kerndbg( KERN_WARNING, "Unable to start unit\n");
+			kerndbg( KERN_WARNING, "Could not read capacity");
+
+		udelay( 200 );	/* FIXME: Should send another TEST UNIT READY to ensure the disc has spun up */
+		kerndbg( KERN_DEBUG, "Unit started\n");
 	}
 	else
 	{
@@ -104,7 +101,7 @@ int atapi_close( void* pNode, void* pCookie )
 	atomic_add( &psInode->bi_nOpenCount, -1 );
 	UNLOCK( g_nControllers[controller].buf_lock );
 
-	return( cdrom_start_stop( psInode, false ) );
+	return( 0 );
 }
 
 int atapi_read( void* pNode, void* pCookie, off_t nPos, void* pBuf, size_t nLen )
@@ -457,24 +454,6 @@ status_t cdrom_wait_for_unit_ready( AtapiInode_s *psInode )
 		kerndbg( KERN_DEBUG, "Timedout waiting for device to become ready\n");
 		nError = -EIO;
 	}
-
-	return( nError );
-}
-
-status_t cdrom_start_stop( AtapiInode_s *psInode, bool start )
-{
-	atapi_packet_s command;
-	int nError, controller = psInode->bi_nController;
-
-	memset(&command, 0, sizeof(command));
-	command.packet[0] = GPCMD_START_STOP_UNIT;
-
-	if( start )
-		command.packet[4] = 0x01;	/* Set the START bit */
-
-	LOCK( g_nControllers[controller].buf_lock );
-	nError = atapi_packet_command( psInode, &command );
-	UNLOCK( g_nControllers[controller].buf_lock );
 
 	return( nError );
 }
