@@ -144,6 +144,7 @@ modules
 	sys/kernel/drivers/misc/w8378x
 	sys/kernel/drivers/net/3c509
 	sys/kernel/drivers/net/3c59x
+	sys/kernel/drivers/net/dp83815
 	sys/kernel/drivers/net/eepro100
 	sys/kernel/drivers/net/ne2000
 	sys/kernel/drivers/net/nvidia
@@ -234,7 +235,6 @@ modules
 	apps/utils/debug
 	apps/utils/dhcpc
 	apps/utils/fsutils
-;	apps/utils/guiprefs
 	apps/utils/man2html
 	apps/utils/nettools
 	apps/utils/pkgmanager
