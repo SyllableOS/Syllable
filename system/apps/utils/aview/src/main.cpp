@@ -16,36 +16,25 @@
 //  MA 02111-1307, USA
 //
 
-#include <util/application.h>
-#include "window.h"
+//Local include files
 
-using namespace os;
+#include "mainapp.h"
 
-class ImageApp : public Application
+//Main
+
+int main(int argc, char *argv[])
 {
- public:
-   ImageApp();
-   ~ImageApp();
-   
- private:
-   AppWindow* m_pcMainWindow;
-   
-};
 
-ImageApp::ImageApp() : Application( "application/x-VND.RGC-AView")
-{
-   m_pcMainWindow = new AppWindow(Rect(100,125,400,400));
+    ImageApp* pc_ImageApp=NULL;
+    char *imageFilename=NULL;
 
-   m_pcMainWindow->AddItems(m_pcMainWindow);
-   
-   m_pcMainWindow->Show();
-   m_pcMainWindow->MakeFocus();
+    if (argc>0)
+        imageFilename=argv[1];
+    pc_ImageApp= new ImageApp(imageFilename);
+    pc_ImageApp->Run();
 
-}
+    return(0);
 
-ImageApp::~ImageApp()
-{
-   
 }
 
 
