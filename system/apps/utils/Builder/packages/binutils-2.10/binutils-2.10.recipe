@@ -1,8 +1,12 @@
-authors			Kaj de Vos
+authors
+	Kurt Skauen
+	Kaj de Vos
+maintainers			Kaj de Vos
+licenses			GPL LGPL
 patch-config
-;configure-options
-; --enable-shared
-; --norecursion
-documentation	README COPYING COPYING.LIB binutils/NEWS binutils/ChangeLog
+;configure-options	--enable-shared
+documentation		README COPYING COPYING.LIB binutils/NEWS binutils/ChangeLog
 ; For OpenSSL:
-distro-files	/usr/bin/ranlib
+links
+	/usr/bin
+		bin/ranlib
