@@ -45,3 +45,15 @@ diff -ru IoDesktop-2004-04-06/IoServer/Makefile IoDesktop-Syllable/IoServer/Make
  # NetBSD, FreeBSD, OpenBSD, etc.
  ifeq ($(findstring BSD, $(PLATFORM)), BSD)
    CCLIBS += -L/usr/pkg/lib  
+diff -ru IoDesktop-2004-04-06/IoVM/IoNumber.c IoDesktop-Syllable/IoVM/IoNumber.c
+--- IoDesktop-2004-04-06/IoVM/IoNumber.c	2004-04-06 10:11:28.000000000 +0000
++++ IoDesktop-Syllable/IoVM/IoNumber.c	2004-04-07 21:49:13.000000000 +0000
+@@ -13,7 +13,7 @@
+ #include <math.h>
+ #include <ctype.h>
+ #include <assert.h>
+-#include <machine/limits.h>
++#include <limits.h>
+ #include <float.h>
+ 
+ #define NIVAR(self) (((IoNumberObject *)(self))->n)

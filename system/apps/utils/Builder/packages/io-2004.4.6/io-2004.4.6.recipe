@@ -36,9 +36,9 @@ configure
 	cd IoDesktop/Image/base/tiff
 	./configure --noninteractive
 
-;test
-;	cd IoVM
-;	make test
+test
+	cd IoVM
+	make test
 ;	cd ../IoDesktop
 ;	make test
 test-targets	test
