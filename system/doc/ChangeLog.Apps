@@ -1,3 +1,7 @@
+* June 6 2003, Rick Caudill    *
+	* Patched Launcher so that images will not be drawn with a little fuzz(tm) on them.
+	* Patched Launcher's Clock so that the text will align right with the new freetype.
+	* Patched Locator so that the imagebutton's text will align right with the new freetype.
 * May 24 2003, Henrik Isaksson *
 
 	* Patched Font prefs for Anti-AA option, made window larger and resizable.
