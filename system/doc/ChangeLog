@@ -1,3 +1,7 @@
+* March 24 2005, Henrik Isaksson *
+
+Added warpspeed to decorators Makefile.
+
 * March 19 2005, Arno Klenke *
 
 Fixed possible data corruptions in the atapi driver
