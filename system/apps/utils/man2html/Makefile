@@ -1,11 +1,11 @@
-name				= man2html
-source-path		= src/$(name)
-executable			= $(source-path)/$(name)
-binaries			= rebuild_all.sh mksection.sh mkindex.sh addpage.sh manaddpackage.sh
-posix-apps-path	= /usr
-binaries-dir		= bin
-install-path		= $(posix-apps-path)/$(name)
-distro-path		= ($DIST_ROOT)/atheos$(install-path)
+name				:= man2html
+source-path		:= src/$(name)
+executable			:= $(source-path)/$(name)
+binaries			:= rebuild_all.sh mksection.sh mkindex.sh addpage.sh manaddpackage.sh
+posix-apps-path	:= /usr
+binaries-dir		:= bin
+install-path		:= $(posix-apps-path)/$(name)
+distro-path		:= ($DIST_ROOT)/atheos$(install-path)
 
 all: $(executable)
 	make -C $(source-path)/
