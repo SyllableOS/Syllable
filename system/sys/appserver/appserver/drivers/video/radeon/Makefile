@@ -1,6 +1,7 @@
 COPTS   = -I$(TOP)/src $(shell freetype-config --cflags) -c -O2 -Wall
 
 DEVBIN = /system/drivers/appserver/video
+CFGDIR = /system/config/drivers/appserver/video
 OBJS = radeon.o radeon_accel.o radeon_cursor.o radeon_misc.o radeon_monitor.o radeon_pll.o radeon_rom.o radeon_video.o
 
 OBJDIR	:= objs
@@ -30,13 +31,10 @@ $(OBJDIR)/radeon: $(OBJS)
 
 install: $(OBJDIR)/radeon radeon.cfg
 	cp -f $(OBJDIR)/radeon $(DEVBIN)/radeon
-	cp -f radeon.cfg $(DEVBIN)/radeon.cfg
+	cp -f radeon.cfg $(CFGDIR)/radeon.cfg
 
 dist: $(OBJDIR)/radeon
 	cp -f $(OBJDIR)/radeon $(DIST_DIR)/atheos/sys/drivers/appserver/video/radeon
 
 clean:
 	-rm $(OBJDIR)/*
-
-
-
