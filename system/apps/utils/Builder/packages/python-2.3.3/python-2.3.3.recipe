@@ -3,7 +3,7 @@ authors
 	Kaj de Vos
 	Jamie Clarkson
 maintainers			Kaj de Vos
-status				broken
+status				testing
 notes				See README for GLibC issues
 
 licenses			OS
@@ -15,7 +15,6 @@ build-recommends	readline
 
 patch				autoconf
 
-no-build-dir
 test-targets		test
 ;install-prefix-var	DESTDIR
 ;install-targets		altinstall
