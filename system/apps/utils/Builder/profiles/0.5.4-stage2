@@ -1,0 +1,16 @@
+; Modules to (re)build for Syllable 0.5.4
+
+modules
+	sys/include
+	other/config/etc
+	other/init
+	libs/ncurses-5.4
+	apps/gnu/coreutils-5.2.1
+	apps/gnu/less-382
+	apps/gnu/sed-4.1
+	apps/gnu/tar-1.14
+	apps/utils/DiskManager
+	apps/utils/Preferences/Locale
+	apps/utils/Preferences/Network
+	apps/utils/catalog
+	apps/utils/pkgmanager
