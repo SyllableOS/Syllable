@@ -821,6 +821,11 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 							pzString++;
 							nLength--;
 							break;
+						case 'd':
+							nFlags |= DTF_IGNORE_FMT;
+							pzString++;
+							nLength--;
+							break;
 						case '[':
 							break;
 						}
@@ -1226,3 +1231,4 @@ void Layer::DrawBitMap( SrvBitmap * pcDstBitmap, SrvBitmap * pcBitMap, Rect cSrc
 	}
 	PutRegion( pcReg );
 }
+
