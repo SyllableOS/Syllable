@@ -12,6 +12,7 @@ modules
 	apps/other/zip-2.3
 	apps/desktop/dock_plugins/clock
 	apps/desktop/dock_plugins/Camera
+	apps/desktop/dock_plugins/Meter
 	apps/desktop/dock_plugins/WallpaperChanger
 	apps/media/coldfish
 	apps/media/coldfish_plugins/blursk
