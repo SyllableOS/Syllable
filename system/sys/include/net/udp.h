@@ -20,6 +20,9 @@
 #ifndef __F_ATHEOS_NET_UDP_H__
 #define __F_ATHEOS_NET_UDP_H__
 
+#include <net/if.h>
+#include <net/nettypes.h>
+#include <net/route.h>
 
 struct _UDPHeader
 {
@@ -42,6 +45,7 @@ struct _UDPEndPoint
     SelectRequest_s* ue_psFirstReadSelReq;
     SelectRequest_s* ue_psFirstWriteSelReq;
     SelectRequest_s* ue_psFirstExceptSelReq;
+		char ue_acBindToDevice[IFNAMSIZ];
 };
 
 struct _UDPPort

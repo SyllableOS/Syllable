@@ -25,6 +25,7 @@
 #include <atheos/kernel.h>
 #include <atheos/kdebug.h>
 #include <atheos/socket.h>
+#include <atheos/time.h>
 #include <net/net.h>
 #include <net/ip.h>
 #include <net/if_ether.h>
@@ -94,13 +95,12 @@ PacketBuf_s *clone_pkt_buffer( PacketBuf_s *psBuf )
 {
 	PacketBuf_s *psClonedPacket = NULL;
 
-	// allocate a new empty buffer
-	kerndbg( KERN_DEBUG, "clone_pkt_buffer: psBuf->pb_nRealSize: %d\n", psBuf->pb_nRealSize );
+	// Allocate a new empty buffer
+	kerndbg( KERN_DEBUG, "clone_pkt_buffer(): psBuf->pb_nRealSize: %d\n", psBuf->pb_nRealSize );
+
 	psClonedPacket = alloc_pkt_buffer( psBuf->pb_nRealSize );
 	if ( psClonedPacket == NULL )
-	{
-		return ( NULL );
-	}
+		return NULL;
 
 	kassertw( psClonedPacket->pb_nMagic == 0x12345678 );
 
@@ -108,10 +108,9 @@ PacketBuf_s *clone_pkt_buffer( PacketBuf_s *psBuf )
 	memcpy( ( void * )psClonedPacket, ( void * )psBuf, ( psBuf->pb_nRealSize + sizeof( PacketBuf_s ) ) );
 
 	// and set the pointers right???
-
 	psClonedPacket->pb_psNext = NULL;
 	psClonedPacket->pb_psPrev = NULL;
-	psClonedPacket->pb_psInterface = psBuf->pb_psInterface;
+	psClonedPacket->pb_nIfIndex = psBuf->pb_nIfIndex;
 
 	psClonedPacket->pb_uMacHdr.pRaw = ( ( void * )psBuf->pb_uMacHdr.pRaw - ( void * )psBuf ) + ( void * )psClonedPacket;
 	psClonedPacket->pb_uNetworkHdr.pRaw = ( ( void * )psBuf->pb_uNetworkHdr.pRaw - ( void * )psBuf ) + ( void * )psClonedPacket;
@@ -121,8 +120,10 @@ PacketBuf_s *clone_pkt_buffer( PacketBuf_s *psBuf )
 	psClonedPacket->pb_pHead = ( ( void * )psBuf->pb_pHead - ( void * )psBuf ) + ( void * )psClonedPacket;
 
 	kassertw( psClonedPacket->pb_nMagic == 0x12345678 );
-	kerndbg( KERN_DEBUG_LOW, "CLONE_PKT_BUFFER() leaving.\n" );
-	return ( psClonedPacket );
+
+	kerndbg( KERN_DEBUG_LOW, "clone_pkt_buffer(): Leaving.\n" );
+
+	return psClonedPacket;
 }
 
 /*****************************************************************************
@@ -131,23 +132,22 @@ PacketBuf_s *clone_pkt_buffer( PacketBuf_s *psBuf )
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/
-
 void reserve_pkt_header( PacketBuf_s *psBuf, int nSize )
 {
 	psBuf->pb_pData += nSize;
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/**
+ * \par Description:
+ * Releases the memory pointed to by psBuf.
+ *
+ * If the packet refers to an interface, the reference is released.
+ */
 void free_pkt_buffer( PacketBuf_s *psBuf )
 {
 	kassertw( psBuf != NULL );
 	kassertw( psBuf->pb_nMagic == 0x12345678 );
+
 	kfree( psBuf );
 }
 
@@ -193,7 +193,6 @@ void enqueue_packet( NetQueue_s *psQueue, PacketBuf_s *psBuf )
 	uint32 nFlags;
 
 	kassertw( psBuf->pb_nMagic == 0x12345678 );
-//  LOCK( psQueue->nq_hProtSem );
 
 	if ( NULL != psBuf->pb_psNext || NULL != psBuf->pb_psPrev )
 	{
@@ -215,11 +214,10 @@ void enqueue_packet( NetQueue_s *psQueue, PacketBuf_s *psBuf )
 	psBuf->pb_psPrev = psQueue->nq_psTail;
 	psQueue->nq_psTail = psBuf;
 	psQueue->nq_nCount++;
+
 	spinunlock_enable( &g_sQueueSpinLock, nFlags );
 
 	unlock_semaphore( psQueue->nq_hSyncSem );
-//    UNLOCK( psQueue->nq_hProtSem );
-//  Schedule();
 }
 
 /*****************************************************************************
@@ -264,17 +262,21 @@ PacketBuf_s *remove_head_packet( NetQueue_s *psQueue, bigtime_t nTimeout )
 {
 	PacketBuf_s *psBuf;
 	uint32 nFlags;
+	bigtime_t nNow = get_system_time();
 
 	lock_semaphore( psQueue->nq_hSyncSem, 0, nTimeout );
 
-//  LOCK( psQueue->nq_hProtSem );
+	nNow = get_system_time() - nNow;
+
 	nFlags = spinlock_disable( &g_sQueueSpinLock );
+
 	psBuf = psQueue->nq_psHead;
 	if ( psBuf != NULL )
 	{
 		remove_packet( psQueue, psBuf );
 	}
+
 	spinunlock_enable( &g_sQueueSpinLock, nFlags );
-//  UNLOCK( psQueue->nq_hProtSem );
+
 	return ( psBuf );
 }

@@ -227,8 +227,10 @@ typedef int op_rfsstat( void* pVolume, fs_info* );
 typedef int op_wfsstat( void* pVolume, const fs_info*, uint32 mask );
 
 typedef int op_isatty( void* pVolume, void* pNode );
-typedef int op_add_select_req( void* pVolume, void* pNode, SelectRequest_s* psRequest );
-typedef int op_rem_select_req( void* pVolume, void* pNode, SelectRequest_s* psRequest );
+typedef int op_add_select_req( void* pVolume, void* pNode, void *pCookie,
+                               SelectRequest_s* psRequest );
+typedef int op_rem_select_req( void* pVolume, void* pNode, void *pCookie,
+                               SelectRequest_s* psRequest );
 
 
 typedef int op_open_attrdir( void* pVolume, void* pNode, void** pCookie);

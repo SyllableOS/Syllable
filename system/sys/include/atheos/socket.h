@@ -212,6 +212,7 @@ struct msghdr {
 #define SO_PRIORITY	12
 #define SO_LINGER	13
 #define SO_BSDCOMPAT	14
+#define SO_BINDTODEVICE	25		/* From Linux */
 /* To add :#define SO_REUSEPORT 15 */
 
 /* Setsockoptions(2) level. Thanks to BSD these must match IPPROTO_xxx */
@@ -311,7 +312,7 @@ struct _Socket {
     int sk_nProto;
 //  bool                 sk_bDebug;
 //  bool                 sk_bReuseAddr;
-//  bool                 sk_bOobInline; /* Receive out-of-band data in-band     */
+//  bool                 sk_bOobInline; /* Receive out-of-band data in-band */
 //  bool                 sk_bKeep;      /* Send keep-alive messages */
 
     ipaddr_t sk_anSrcAddr;
@@ -320,9 +321,16 @@ struct _Socket {
     uint16 sk_nDstPort;
     bool sk_bIsBound;
     int sk_nOpenCount;
-    UDPEndPoint_s *sk_psUDPEndP;
-    TCPCtrl_s *sk_psTCPCtrl;
-    RawEndPoint_s *sk_psRawEndP;
+    union {
+	UDPEndPoint_s *psUDPEndP;
+    	TCPCtrl_s     *psTCPCtrl;
+    	RawEndPoint_s *psRawEndP;
+	void          *pData;
+    } sk_uData;
+#define sk_psUDPEndP sk_uData.psUDPEndP
+#define sk_psTCPCtrl sk_uData.psTCPCtrl
+#define sk_psRawEndP sk_uData.psRawEndP
+#define sk_pData     sk_uData.pData
     SocketOps_s *sk_psOps;	/* operations   */
 };
 

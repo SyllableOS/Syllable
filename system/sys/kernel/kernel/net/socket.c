@@ -386,7 +386,7 @@ int sys_setsockopt( int nFile, int nLevel, int nOptName, const void *pOptVal, in
 
 int setsockopt( int nFile, int nLevel, int nOptName, const void *pOptVal, int nOptLen )
 {
-	return ( do_setsockopt( false, nFile, nLevel, nOptName, pOptVal, nOptLen ) );
+	return ( do_setsockopt( true, nFile, nLevel, nOptName, pOptVal, nOptLen ) );
 }
 
 /*****************************************************************************
@@ -1173,7 +1173,7 @@ static int sk_writev( void *pVolume, void *pNode, void *pCookie, off_t nPos, con
  * SEE ALSO:
  ****************************************************************************/
 
-static int sk_add_select( void *pVolume, void *pNode, SelectRequest_s *psReq )
+static int sk_add_select( void *pVolume, void *pNode, void *pCookie, SelectRequest_s *psReq )
 {
 	Socket_s *psSocket = pNode;
 	int nError;
@@ -1198,7 +1198,7 @@ static int sk_add_select( void *pVolume, void *pNode, SelectRequest_s *psReq )
  * SEE ALSO:
  ****************************************************************************/
 
-static int sk_rem_select( void *pVolume, void *pNode, SelectRequest_s *psReq )
+static int sk_rem_select( void *pVolume, void *pNode, void *pCookie, SelectRequest_s *psReq )
 {
 	Socket_s *psSocket = pNode;
 	int nError;

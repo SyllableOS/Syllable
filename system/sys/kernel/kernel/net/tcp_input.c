@@ -836,17 +836,10 @@ static int tcp_winit( TCPCtrl_s *psTCPCtrl, TCPCtrl_s *newptcb, Route_s *psRoute
 
 	newptcb->tcb_lwack = newptcb->tcb_iss;	/* set in tcpsync()     */
 
-	if ( psRoute->rt_nMetric == 0 )
-	{
-		mss = psRoute->rt_psInterface->ni_nMTU;
-	}
-	else
-	{
-
-		/*	mss = 536; *//* RFC 1122 */
-		mss = 1500;	/* Everybody else :) */
-	}
+	/* mss = 536; *//* RFC 1122 */
+	mss = psRoute->rt_psInterface->ni_nMTU;
 	mss -= TCPMHLEN + sizeof( IpHeader_s );
+
 	if ( psTCPCtrl->tcb_smss )
 	{
 		newptcb->tcb_smss = min( psTCPCtrl->tcb_smss, mss );

@@ -27,7 +27,7 @@ struct _PacketBuf
 {
     PacketBuf_s*    pb_psNext;
     PacketBuf_s*    pb_psPrev;
-    NetInterface_s* pb_psInterface;	/* Interface this packet was received from (NULL for outgoing packets) */
+		int							pb_nIfIndex;
     int	       	    pb_nRealSize;
     int	       	    pb_nSize;
     int	       	    pb_nProtocol;  /* IP/ARP/... */

@@ -34,6 +34,17 @@
 #include <net/icmp.h>
 #include <net/udp.h>
 
+/* Selective debugging level overrides */
+#ifdef KERNEL_DEBUG_NET
+#undef DEBUG_LIMIT
+#define DEBUG_LIMIT KERNEL_DEBUG_NET
+#endif
+
+#ifdef KERNEL_DEBUG_NET_UDP
+#undef DEBUG_LIMIT
+#define DEBUG_LIMIT KERNEL_DEBUG_NET_UDP
+#endif
+
 extern SocketOps_s g_sUDPOperations;
 
 static UDPPort_s *g_psFirstUDPPort = NULL;
@@ -87,13 +98,10 @@ static uint16 udp_cksum( PacketBuf_s *psPkt )
 	return ( ~sum );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/**
+ * \par Description:
+ * Finds the port entry for the specified port.
+ */
 static UDPPort_s *udp_find_port( uint16 nPort )
 {
 	UDPPort_s *psPort;
@@ -108,13 +116,17 @@ static UDPPort_s *udp_find_port( uint16 nPort )
 	return ( NULL );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/**
+ * \par Description:
+ * Locates the best endpoint to dispatch an incoming packet to.
+ * The interface list is searched until an endpoint with
+ *   - a local address matching the packet destination,
+ *   - a remote address matching the packet source,
+ *   - a remote port matching the packet source.
+ *
+ * If an endpoint is found that meets all criteria, it is used.
+ * Otherwise the first interface matching most criteria is used.
+ */
 static void udp_enqueue_packet( UDPPort_s *psPort, PacketBuf_s *psPkt )
 {
 	UDPHeader_s *psUdpHdr = psPkt->pb_uTransportHdr.psUDP;
@@ -509,6 +521,7 @@ static int udp_connect( Socket_s *psSocket, const struct sockaddr *psAddr, int n
 		psUDPCtrl->ue_nRemotePort = 0;	// psAddrIn->sin_port;
 		return ( 0 );
 	}
+
 	if ( psUDPCtrl->ue_psPort == NULL )
 	{
 		if ( udp_autobind( psSocket ) != 0 )
@@ -517,25 +530,30 @@ static int udp_connect( Socket_s *psSocket, const struct sockaddr *psAddr, int n
 		}
 	}
 
-	psRoute = ip_find_route( psInAddr->sin_addr );
-
-	if ( NULL == psRoute )
+	/* Unless bound to a device, check the address is reachable */
+	if ( psUDPCtrl->ue_acBindToDevice[0] == 0 )
 	{
-		printk( "Error: udp_connect() failed, could not find a route\n" );
-		nError = -ENETUNREACH;
-		goto error;
-	}
 
-	if ( IP_SAMEADDR( psUDPCtrl->ue_anLocalAddr, anNullAddr ) )
-	{
-		IP_COPYADDR( psUDPCtrl->ue_anLocalAddr, psRoute->rt_psInterface->ni_anIpAddr );
+		psRoute = ip_find_route( psInAddr->sin_addr );
+
+		if ( NULL == psRoute )
+		{
+			kerndbg( KERN_DEBUG, "udp_connect(): Could not find a route to connected address.\n" );
+			nError = -ENETUNREACH;
+			goto error;
+		}
+
+		if ( IP_SAMEADDR( psUDPCtrl->ue_anLocalAddr, anNullAddr ) )
+			IP_COPYADDR( psUDPCtrl->ue_anLocalAddr, psRoute->rt_psInterface->ni_anIpAddr );
+
+		ip_release_route( psRoute );
 	}
-	ip_release_route( psRoute );
 
 	IP_COPYADDR( psUDPCtrl->ue_anRemoteAddr, psInAddr->sin_addr );
 	psUDPCtrl->ue_nRemotePort = ntohs( psInAddr->sin_port );
 
 	return ( 0 );
+
       error:
 	return ( nError );
 }
@@ -674,12 +692,12 @@ static ssize_t udp_sendmsg( Socket_s *psSocket, const struct msghdr *psMsg, int 
 
 	if ( ( psAddr == NULL || IP_SAMEADDR( psAddr->sin_addr, anNullAddr ) ) && IP_SAMEADDR( psUDPCtrl->ue_anRemoteAddr, anNullAddr ) )
 	{
-		printk( "Error: udp_sendmsg() attempt to send without address to a not connected socket\n" );
+		kerndbg( KERN_DEBUG, "udp_sendmsg(): Attempted send without address on unconnected socket\n" );
 		return ( -ENOTCONN );
 	}
 	if ( ( psAddr != NULL && IP_SAMEADDR( psAddr->sin_addr, anNullAddr ) == false ) && IP_SAMEADDR( psUDPCtrl->ue_anRemoteAddr, anNullAddr ) == false )
 	{
-		printk( "Error: udp_sendmsg() attempt to send with address to a connected socket\n" );
+		kerndbg( KERN_DEBUG, "udp_sendmsg(): Attempted send with address on a connected socket\n" );
 		return ( -EISCONN );
 	}
 	if ( psAddr == NULL || IP_SAMEADDR( psUDPCtrl->ue_anRemoteAddr, anNullAddr ) == false )
@@ -702,7 +720,7 @@ static ssize_t udp_sendmsg( Socket_s *psSocket, const struct msghdr *psMsg, int 
 
 	if ( nDstPort == 0 )
 	{
-		printk( "Error: udp_sendmsg() attempt to send to port 0\n" );
+		printk( "udp_sendmsg() attempt to send to port 0\n" );
 		return ( -EINVAL );
 	}
 	if ( psUDPCtrl->ue_nLocalPort == 0 )
@@ -710,17 +728,32 @@ static ssize_t udp_sendmsg( Socket_s *psSocket, const struct msghdr *psMsg, int 
 		printk( "Error: udp_sendmsg() attempt to send from port 0\n" );
 		return ( -EINVAL );
 	}
-	psRoute = ip_find_route( anDstAddr );
+
+	if ( psUDPCtrl->ue_acBindToDevice[0] == 0 )
+		psRoute = ip_find_route( anDstAddr );
+	else
+		psRoute = ip_find_device_route( psUDPCtrl->ue_acBindToDevice );
 
 	if ( psRoute == NULL )
 	{
-		char zBuffer[128];
+		if ( psUDPCtrl->ue_acBindToDevice[0] == 0 )
+		{
+			USE_FORMAT_IP( 1 );
 
-		format_ipaddress( zBuffer, anDstAddr );
-		printk( "Error: udp_sendto() Could not find route for address %s\n", zBuffer );
-		return ( -ENETUNREACH );
+			FORMAT_IP( anDstAddr, 0 );
+
+			kerndbg( KERN_DEBUG, __FUNCTION__ "(): Could not find route for address %s\n", FORMATTED_IP( 0 ) );
+			return ( -ENETUNREACH );
+		}
+		else
+		{
+			kerndbg( KERN_DEBUG, "udp_sendto(): Could not find device route for %s.\n", psUDPCtrl->ue_acBindToDevice );
+
+			return ( -ENETDOWN );
+		}
 	}
 
+	/* Allocate a packet buffer for the message */
 	psPkt = alloc_pkt_buffer( nTotSize );
 
 	if ( psPkt == NULL )
@@ -763,11 +796,13 @@ static ssize_t udp_sendmsg( Socket_s *psSocket, const struct msghdr *psMsg, int 
 	psUdpHdr->udp_nChkSum = 0;
 	psUdpHdr->udp_nChkSum = udp_cksum( psPkt );
 
-	ip_send( psPkt );
+	ip_send_via( psPkt, psRoute );
 
 	ip_release_route( psRoute );
 
 	return ( nBytsSendt );
+
+
       error:
 	ip_release_route( psRoute );
 	return ( nError );
@@ -809,10 +844,12 @@ int udp_open( Socket_s *psSocket )
 	psSocket->sk_psUDPEndP = kmalloc( sizeof( UDPEndPoint_s ), MEMF_KERNEL | MEMF_CLEAR );
 	if ( psSocket->sk_psUDPEndP == NULL )
 	{
-		printk( "Error: udp_open() no memory for udp control struct\n" );
+		kerndbg( KERN_FATAL, "udp_open(): No memory for UDP control struct\n" );
 		nError = -ENOMEM;
+
 		goto error;
 	}
+
 	init_net_queue( &psSocket->sk_psUDPEndP->ue_sPackets );
 
 	return ( 0 );
@@ -832,7 +869,6 @@ static int udp_add_select( Socket_s *psSocket, SelectRequest_s *psReq )
 		psReq->sr_psNext = psUDPCtrl->ue_psFirstReadSelReq;
 		psUDPCtrl->ue_psFirstReadSelReq = psReq;
 
-//      printk( "Add read request to %08x\n", psTCPCtrl );
 		if ( psUDPCtrl->ue_sPackets.nq_nCount > 0 )
 		{
 			psReq->sr_bReady = true;
@@ -841,25 +877,15 @@ static int udp_add_select( Socket_s *psSocket, SelectRequest_s *psReq )
 		nError = 0;
 		break;
 	case SELECT_WRITE:
-//      printk( "Add write request to %08x\n", psTCPCtrl );
 		psReq->sr_bReady = true;
 		UNLOCK( psReq->sr_hSema );
-
-/*      
-	psReq->sr_psNext = psTCPCtrl->tcb_psFirstWriteSelReq;
-	psTCPCtrl->tcb_psFirstWriteSelReq = psReq;
-      
-	if ( psTCPCtrl->tcb_nSndCount < psTCPCtrl->tcb_nSndBufSize || (psTCPCtrl->tcb_flags & TCBF_SDONE) ) {
-	tcp_wakeup( WRITERS, psTCPCtrl );	// Acknowlege the request right away.
-	}
-	*/
 		nError = 0;
 		break;
 	case SELECT_EXCEPT:
 		nError = 0;
 		break;
 	default:
-		printk( "ERROR : tcp_add_select() unknown mode %d\n", psReq->sr_nMode );
+		kerndbg( KERN_WARNING, "udp_add_select(): Unknown mode %d\n", psReq->sr_nMode );
 		nError = -EINVAL;
 		break;
 	}
@@ -880,21 +906,19 @@ static int udp_rem_select( Socket_s *psSocket, SelectRequest_s *psReq )
 	case SELECT_READ:
 		ppsTmp = &psUDPCtrl->ue_psFirstReadSelReq;
 		nError = 0;
-//      printk( "Rem read request from %08x\n", psTCPCtrl );
 		break;
 	case SELECT_WRITE:
-//      ppsTmp = &psTCPCtrl->tcb_psFirstWriteSelReq;
-//      printk( "Rem write request from %08x\n", psTCPCtrl );
 		nError = 0;
 		break;
 	case SELECT_EXCEPT:
 		nError = 0;
 		break;
 	default:
-		printk( "ERROR : tcp_rem_select() unknown mode %d\n", psReq->sr_nMode );
+		kerndbg( KERN_WARNING, "udp_rem_select(): unknown mode %d\n", psReq->sr_nMode );
 		nError = -EINVAL;
 		break;
 	}
+
 	if ( NULL != ppsTmp )
 	{
 		for ( ; NULL != *ppsTmp; ppsTmp = &( ( *ppsTmp )->sr_psNext ) )
@@ -912,6 +936,7 @@ static int udp_rem_select( Socket_s *psSocket, SelectRequest_s *psReq )
 
 static int udp_setsockopt( bool bKernel, Socket_s *psSocket, int nProtocol, int nOptName, const void *pOptVal, int nOptLen )
 {
+	UDPEndPoint_s *psUDPCtrl = psSocket->sk_psUDPEndP;
 	int nError = -ENOSYS;
 
 	switch ( nOptName )
@@ -928,6 +953,38 @@ static int udp_setsockopt( bool bKernel, Socket_s *psSocket, int nProtocol, int 
 			break;
 		}
 
+	case SO_BINDTODEVICE:
+		{
+			if ( pOptVal == NULL || nOptLen > IFNAMSIZ )
+			{
+				kerndbg( KERN_DEBUG, __FUNCTION__ "(): Invalid options for SO_BINDTODEVICE.\n" );
+
+				nError = -EINVAL;
+				break;
+			}
+
+			if ( bKernel )
+			{
+				strncpy( psUDPCtrl->ue_acBindToDevice, ( char * )pOptVal, nOptLen );
+			}
+			else
+			{
+				strncpy_from_user( psUDPCtrl->ue_acBindToDevice, ( char * )pOptVal, nOptLen );
+			}
+
+			psUDPCtrl->ue_acBindToDevice[IFNAMSIZ - 1] = 0;
+			if ( psUDPCtrl->ue_acBindToDevice[0] != 0 )
+			{
+				kerndbg( KERN_DEBUG, __FUNCTION__ "(): Binding to interface %s.\n", psUDPCtrl->ue_acBindToDevice );
+			}
+			else
+			{
+				kerndbg( KERN_DEBUG, __FUNCTION__ "(): Reverting to normal routing.\n" );
+			}
+
+			nError = 0;
+			break;
+		}
 	default:
 		kerndbg( KERN_WARNING, "udp_setsockopt() got unknown option %i\n", nOptName );
 	}

@@ -1,6 +1,9 @@
 
 /*
- *  The AtheOS kernel
+ *  Syllable Kernel
+ *  net/core.c
+ *  
+ *  Syllable Kernel is derived from the AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
  *
  *  This program is free software; you can redistribute it and/or
@@ -37,138 +40,128 @@
 #include <net/sockios.h>
 #include <net/route.h>
 
-static NetInterface_s *g_psLoopbackInterface = NULL;
+/* Selective debugging level overrides */
+#ifdef KERNEL_DEBUG_NET
+#undef DEBUG_LIMIT
+#define DEBUG_LIMIT KERNEL_DEBUG_NET
+#endif
+
+#ifdef KERNEL_DEBUG_NET_CORE
+#undef DEBUG_LIMIT
+#define DEBUG_LIMIT KERNEL_DEBUG_NET_CORE
+#endif
+
+
+static int g_nLoopbackInterface = -1;
 static NetQueue_s g_sLoopbackQueue;
 
-typedef struct
-{
-	uint32 li_nFlags;
-} LBInterface_s;
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/**
+ * \par Description:
+ * Writes a packet to the loopback interface.
+ * In order to emulate an Ethernet interface, a fake header is prepended
+ * to the packet.  This means that the packet buffer must have at least
+ * ETH_HLEN bytes between the packet head and network layer header.
+ * 
+ * If an error occurs, the packet is not freed and must be freed by
+ * the caller (usually send_packet()).  If the packet is successfully
+ * written, it should be considered consumed by this function.
+ */
 int loopback_write( Route_s *psRoute, ipaddr_t pDstAddress, PacketBuf_s *psPkt )
 {
 	psPkt->pb_uMacHdr.pRaw = psPkt->pb_uNetworkHdr.pRaw - ETH_HLEN;
 	psPkt->pb_nSize += ETH_HLEN;
+
 	if ( psPkt->pb_uMacHdr.pRaw < psPkt->pb_pHead )
 	{
-		printk( "Error: loopback_write() not enough space for ethernet header\n" );
+		kerndbg( KERN_FATAL, "loopback_write(): Not enough space for ethernet header\n" );
 		return ( -EINVAL );
 	}
+
 	psPkt->pb_bLocal = true;
 	psPkt->pb_uMacHdr.psEthernet->h_proto = htonw( psPkt->pb_nProtocol );
+
 	enqueue_packet( &g_sLoopbackQueue, psPkt );
-	return ( 0 );
-}
 
-static int loopback_set_interface_flags( LBInterface_s * psInterface, short nFlags )
-{
-	psInterface->li_nFlags = nFlags;
-	return ( 0 );
-}
-
-static int loopback_get_interface_flags( LBInterface_s * psInterface, short *pnFlags )
-{
-	*pnFlags = psInterface->li_nFlags;
-	return ( 0 );
-}
-
-static int loopback_ioctl( void *pInterface, int nCmd, void *pArg )
-{
-	LBInterface_s *psInterface = pInterface;
-	struct ifreq sIFReq;
-	int nError = 0;
-
-	if ( memcpy_from_user( &sIFReq, pArg, sizeof( sIFReq ) ) < 0 )
-	{
-		return ( -EFAULT );
-	}
-	switch ( nCmd )
-	{
-	case SIOCSIFFLAGS:	// Set interface flags
-		nError = loopback_set_interface_flags( psInterface, sIFReq.ifr_flags );
-		break;
-	case SIOCGIFFLAGS:	// Get interface flags
-		nError = loopback_get_interface_flags( psInterface, &sIFReq.ifr_flags );
-		break;
-	default:
-		printk( "Error: loopback_ioctl() unknown command: %08x\n", nCmd );
-		nError = -ENOSYS;
-		break;
-	}
-	if ( memcpy_to_user( pArg, &sIFReq, sizeof( sIFReq ) ) < 0 )
-	{
-		nError = -EFAULT;
-	}
 	return ( 0 );
 }
 
 /** 
  * \par Description:
- * \par Note:
- * \par Warning:
- * \param
- * \return
- * \sa
+ * Sends a packet through the specified interface.
+ * Outgoing packets addressed to the local interface's address are captured
+ * and sent via the loopback interface.
+ * 
+ * The route psRoute should have been acquired with ip_find_route() or
+ * ip_find_device_route() and should be released by the caller.
+ *
+ * If the function returns successfully, the packet buffer is consumed and
+ * should not be used.  If the function returns an error, the packet buffer
+ * needs to be freed by the caller.
+ *
  * \author	Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-
+ */
 int send_packet( Route_s *psRoute, ipaddr_t pDstAddress, PacketBuf_s *psPkt )
 {
 	NetInterface_s *psInterface;
+	int nError;
 
 	if ( IP_SAMEADDR( psRoute->rt_anNetAddr, pDstAddress ) )
 	{
-		psInterface = g_psLoopbackInterface;
+		/* Use loopback interface instead of route interface */
+		psInterface = get_net_interface( g_nLoopbackInterface );
+		if ( psInterface == NULL )
+		{
+			kerndbg( KERN_FATAL, "send_packet(): Unable to acquire loopback interface.\n" );
+
+			return ( -ENOENT );
+		}
+
+		psPkt->pb_bLocal = true;
+		nError = psInterface->ni_psOps->ni_write ( psRoute, pDstAddress, psPkt );
+
+		release_net_interface( psInterface );
 	}
 	else
 	{
 		psInterface = psRoute->rt_psInterface;
+
+		/* Kernel interface read lock is held by route; no need to lock again */
+		nError = psInterface->ni_psOps->ni_write ( psRoute, pDstAddress, psPkt );
 	}
-	psPkt->pb_psInterface = psInterface;
-	return ( psInterface->ni_psOps->ni_write ( psRoute, pDstAddress, psPkt ) );
+
+	return ( nError );
 }
 
 /** 
  * \par Description:
+ * Dispatches Ethernet packets that contain an IPv4 payload.
+ * 
  * \par Note:
- * \par Warning:
- * \param
- * \return
- * \sa
+ * This function should not be used with non-Ethernet packets.  If you want
+ * a packet to be handled by the IP processing code, call ip_in().
+ *
  * \author	Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-
+ */
 void dispatch_net_packet( PacketBuf_s *psPkt )
 {
 	psPkt->pb_nSize -= ETH_HLEN;
 
-//    printk( "Got packet with proto %d\n", ntohw( psPkt->pb_uMacHdr.psEthernet->h_proto ) );
 	switch ( ntohw( psPkt->pb_uMacHdr.psEthernet->h_proto ) )
 	{
 	case ETH_P_IP:
 		ip_in( psPkt, psPkt->pb_nSize );
 		break;
+
 	default:
-//      printk( "Received unknown packet %04x\n", ntohw( psPkt->pb_uMacHdr.psEthernet->h_proto ) );
 		free_pkt_buffer( psPkt );
 		break;
 	}
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/**
+ * \par Description:
+ * Receive thread routine for the loopback interface.
+ */
 static int net_rx_thread( void *pData )
 {
 	for ( ;; )
@@ -178,83 +171,89 @@ static int net_rx_thread( void *pData )
 		psBuf = remove_head_packet( &g_sLoopbackQueue, INFINITE_TIMEOUT );
 
 		if ( psBuf == NULL )
-		{
 			continue;
-		}
 
 		psBuf->pb_nSize -= ETH_HLEN;
 
-//    printk( "Got packet with proto %d\n", ntohw( psBuf->pb_uMacHdr.psEthernet->h_proto ) );
 		switch ( ntohw( psBuf->pb_uMacHdr.psEthernet->h_proto ) )
 		{
 		case ETH_P_IP:
 			ip_in( psBuf, psBuf->pb_nSize );
 			break;
+
 		default:
-//      printk( "Received unknown packet %04x\n", ntohw( psBuf->pb_uMacHdr.psEthernet->h_proto ) );
 			free_pkt_buffer( psBuf );
 			break;
 		}
 	}
+
 	return ( 0 );
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
 static NetInterfaceOps_s g_sLoopbackOps = {
 	loopback_write,
-	loopback_ioctl,
-	NULL
+	NULL,			/* ni_ioctl */
+	NULL,			/* ni_deinit */
+	NULL,			/* ni_notify */
+	NULL			/* ni_release */
 };
 
+/**
+ * \par Description:
+ * Initialises the networking code, creates the loopback interface, and scans
+ * for hardware interfaces.
+ */
 int init_net_core()
 {
-	NetInterface_s *psIFace;
-	LBInterface_s *psLBIface;
-
 	thread_id hThread;
-	ipaddr_t anNullAddr = { 0, 0, 0, 0 };
-	ipaddr_t anGatewayAddr;
+	ipaddr_t anLBIp = { 127, 0, 0, 1 }, anLBNm =
+	{
+	255, 0, 0, 0};
+	int nError;
+	NetInterface_s *psLB;
 
-	psIFace = kmalloc( sizeof( NetInterface_s ), MEMF_KERNEL | MEMF_CLEAR );
-	psLBIface = kmalloc( sizeof( LBInterface_s ), MEMF_KERNEL | MEMF_CLEAR );
-
-	psIFace->ni_pInterface = psLBIface;
-
-	IP_MAKEADDR( anGatewayAddr, 193, 71, 102, 1 );
-
-	strcpy( psIFace->ni_zName, "loopback" );
-	psIFace->ni_psOps = &g_sLoopbackOps;
-
-	psIFace->ni_anIpAddr[0] = 127;
-	psIFace->ni_anIpAddr[1] = 0;
-	psIFace->ni_anIpAddr[2] = 0;
-	psIFace->ni_anIpAddr[3] = 1;
-	IP_MAKEADDR( psIFace->ni_anSubNetMask, 255, 255, 255, 0 );
-	psIFace->ni_nMTU = 1500;
-	psLBIface->li_nFlags = IFF_UP | IFF_RUNNING | IFF_LOOPBACK | IFF_NOARP;
-
-	g_psLoopbackInterface = psIFace;
-
-	add_net_interface( psIFace );
-	add_route( psIFace->ni_anIpAddr, psIFace->ni_anSubNetMask, anNullAddr, 0, psIFace );
-
-	init_net_queue( &g_sLoopbackQueue );
-	init_net_interfaces();
-
-	hThread = spawn_kernel_thread( "net_rx_thread", net_rx_thread, 5, 0, NULL );
-	wakeup_thread( hThread, false );
-
+	/* Initialise network protocols */
 	init_sockets();
 	init_udp();
 	init_tcp();
 	init_raw();
+
+	/* Initialise interface handling code */
+	init_net_interfaces();
+
+	/* Initialise the loopback interface */
+	init_net_queue( &g_sLoopbackQueue );
+
+	if ( ( nError = add_net_interface( "loopback", &g_sLoopbackOps, NULL ) ) < 0 )
+		return ( nError );
+
+	g_nLoopbackInterface = nError;
+
+	/* Acquire net interface */
+	psLB = get_net_interface( nError );
+	if ( psLB == NULL )
+		return ( -ENOENT );
+
+	if ( ( nError = set_interface_address( psLB, anLBIp ) ) < 0 )
+		return ( nError );
+
+	if ( ( nError = set_interface_netmask( psLB, anLBNm ) ) < 0 )
+		return ( nError );
+
+	if ( ( nError = set_interface_mtu( psLB, 16384 ) ) < 0 )
+		return ( nError );
+
+	if ( ( nError = set_interface_flags( psLB, IFF_UP | IFF_RUNNING | IFF_LOOPBACK | IFF_NOARP ) ) < 0 )
+		return ( nError );
+
+	release_net_interface( psLB );
+
+	/* Start loopback receive thread */
+	hThread = spawn_kernel_thread( "Loopback Rx", net_rx_thread, 5, 0, NULL );
+	wakeup_thread( hThread, false );
+
+	/* Load other network interface drivers */
+	load_interface_drivers();
+
 	return ( 0 );
 }

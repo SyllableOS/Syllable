@@ -21,13 +21,10 @@
 #ifndef _NET_ROUTE_H
 #define _NET_ROUTE_H	1
 
-//#include <sys/socket.h>
-//#include <sys/types.h>
-//#include <netinet/in.h>
 #include <atheos/types.h>
 #include <net/net.h>
 
-/* This structure gets passed by the SIOCADDRT and SIOCDELRT calls. */
+/* This structure gets passed by the SIOCADDRT and SIOCDELRT ioctl calls. */
 struct rtentry
   {
     unsigned long int rt_pad1;
@@ -67,25 +64,10 @@ struct rtabentry
 struct rttable
 {
     int rtt_count;
-      /* array of struct rtabentry follows */
+    /* array of struct rtabentry follows */
 };
 
-/*
-struct in6_rtmsg
-  {
-    struct in6_addr rtmsg_dst;
-    struct in6_addr rtmsg_src;
-    struct in6_addr rtmsg_gateway;
-    u_int32_t rtmsg_type;
-    u_int16_t rtmsg_dst_len;
-    u_int16_t rtmsg_src_len;
-    u_int32_t rtmsg_metric;
-    unsigned long int rtmsg_info;
-    u_int32_t rtmsg_flags;
-    int rtmsg_ifindex;
-  };
-  */
-
+/* Route flags */
 #define	RTF_UP		0x0001		/* Route usable.  */
 #define	RTF_GATEWAY	0x0002		/* Destination is a gateway.  */
 
@@ -158,21 +140,28 @@ struct in6_rtmsg
 
 #define RTMSG_AR_FAILED		0x51	/* Address Resolution failed.  */
 
+
 #ifdef __KERNEL__
 
+/**
+ * Route structure used by kernel.
+ * This structure should be considered READ ONLY outside of kernel/net/route.c
+ */
 typedef struct  _Route  Route_s;
 struct  _Route
 {
-    Route_s*	    rt_psNext;
-    ipaddr_t	    rt_anNetAddr;
-    ipaddr_t	    rt_anNetMask;
-    ipaddr_t	    rt_anGatewayAddr;
-    int		    rt_nMetric;
-    uint32	    rt_nFlags;
-    NetInterface_s* rt_psInterface;
-    bigtime_t	    rt_nExpireTime;
-    int		    rt_nUseCount;
-    int		    rt_nRefCount;
+	/* Locked by the routing list mutex */
+	Route_s*        rt_psNext;
+	/* bigtime_t       rt_nExpireTime; */
+
+	/* Locked by rt_hMutex */
+	sem_id          rt_hMutex;
+	ipaddr_t        rt_anNetAddr;
+	ipaddr_t        rt_anNetMask;
+	ipaddr_t        rt_anGatewayAddr;
+	int             rt_nMaskBits, rt_nMetric;
+	uint32          rt_nFlags;
+	NetInterface_s* rt_psInterface;
 };
 
 typedef struct _RouteTable
@@ -181,11 +170,58 @@ typedef struct _RouteTable
     Route_s*  rtb_psDefaultRoute;
 } RouteTable_s;
 
+
+/**
+ * Routing table interface
+ */
+/* Obtain a pointer to a cloned route to use for pDstAddr */
+Route_s* ip_find_route( ipaddr_p pDstAddr );
+
+/* Create a clone route that leaves given via the interface specified */
+Route_s* ip_find_device_route( const char *pzName );
+
+/* Find the static route entry matching the supplied parameters */
+Route_s* ip_find_static_route( ipaddr_p pIp, ipaddr_p pMask, ipaddr_p pGw );
+
+
+/* Add a reference to an existing route */
+Route_s* ip_acquire_route( Route_s* psRoute );
+
+/* Release a previously obtained route reference */
+void ip_release_route( Route_s* psRoute );
+
+
+/* Add a new (static) route */
+int add_route( ipaddr_p pIp, ipaddr_p pMask, ipaddr_p pGw, int nMetric, uint32 nFlags );
+
+/* Delete a (static) route */
+int del_route( ipaddr_p pIp, ipaddr_p pMask, ipaddr_p pGw );
+
+
+/* Network interface events */
+/**
+ * Call to make the routing code drop references to an interface so it can
+ * be changed
+ **/
+void rt_release_interface( NetInterface_s* psIf );
+
+/* Routing socket ioctl()s */
+/* Return POSIX routing table structure */
 int get_route_table( struct rttable* psTable );
+
+/* Adds a route from a POSIX rtentry */
 int add_route_entry( struct rtentry* psREntry );
+
+/* Deletes the route specified by a POSIX rtentry */
 int delete_route_entry( struct rtentry* psREntry );
-void rt_interface_mask_changed( NetInterface_s* psInterface, ipaddr_t anNewMask );
-void rt_interface_address_changed( NetInterface_s* psInterface, ipaddr_t anNewAddress );
+
+
+/**
+ * The following are only for use by the kernel proper and are not exported
+ * into kernel.so.
+ */
+int init_route_table( void );
+
 #endif /* __KERNEL__ */
 
 #endif /* net/route.h */

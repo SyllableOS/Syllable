@@ -71,12 +71,12 @@ struct _UdpPort
 
 struct _ArpEntry
 {
-    ArpEntry_s*	ae_psNext;
-    ipaddr_t	ae_anIPAddress;
-    bigtime_t	ae_nExpieringTime;
-    uint8	ae_anHardwareAddr[IH_MAX_HWA_LEN];
-    NetQueue_s	ae_sPackets;
-    bool	ae_bIsValid;
+	ArpEntry_s* ae_psNext;
+	ipaddr_t    ae_anIPAddress;
+	bigtime_t   ae_nExpiryTime;
+	uint8       ae_anHardwareAddr[IH_MAX_HWA_LEN];
+	NetQueue_s  ae_sPackets;
+	bool        ae_bIsValid;
 };
 
 
@@ -97,61 +97,52 @@ struct ifc_set_address
   struct sockaddr netmask;
 };
 
+/*
 int net_config( const char* pzDevice, int nCmd, void* pArg );
-
 int config_net_dev( const char* pzDev, const struct sockaddr* psAddr, const struct sockaddr* psNetMask );
 int sys_config_net_dev( const char* pzDev, const struct sockaddr* psAddr, const struct sockaddr* psNetMask );
-
+*/
 
 int create_socket( bool bKernel, int nFamily, int nType, int nProtocol, bool bInitProtocol, Socket_s** ppsRes );
 
+/* Entry points to networking code for incoming packets */
 void ip_in( PacketBuf_s* psPkt, int nPktSize );
 void tcp_in( PacketBuf_s* psPkt, int nDataLen );
 void udp_in( PacketBuf_s* psPkt, int nDataLen );
 void raw_in(PacketBuf_s * psPkt, int nDataLen);
+
 RawPort_s *raw_find_port(uint8 a_nIPProtocol);
 
+/* Try FORMAT_IP macro in net/ip.h */
 void format_ipaddress( char* pzBuffer, ipaddr_t pAddress );
 int parse_ipaddress( ipaddr_t pAddress, const char* pzBuffer );
 
-Route_s*     ip_find_route( ipaddr_t pDstAddr );
-void 	     ip_release_route( Route_s* psRoute );
 
+/* Packet buffer routines */
 PacketBuf_s* alloc_pkt_buffer( int nSize );
 PacketBuf_s* clone_pkt_buffer(PacketBuf_s * psBuf);
-void	     free_pkt_buffer( PacketBuf_s* psBuf );
-void	     reserve_pkt_header( PacketBuf_s* psBuf, int nSize );
+void free_pkt_buffer( PacketBuf_s* psBuf );
+void reserve_pkt_header( PacketBuf_s* psBuf, int nSize );
 
+
+/* Packet queue routines */
 int 	     init_net_queue( NetQueue_s* psQueue );
 void	     delete_net_queue( NetQueue_s* psQueue );
 void 	     enqueue_packet( NetQueue_s* psQueue, PacketBuf_s* psBuf );
 PacketBuf_s* remove_head_packet( NetQueue_s* psQueue, bigtime_t nTimeout );
 
-Route_s* add_route( ipaddr_t pNetAddr, ipaddr_t pNetMask, ipaddr_t pGateway, int nMetric, NetInterface_s* psInterface );
 
-void init_net_interfaces(void);
-//void probe_eth_interfaces();
-int add_net_interface( NetInterface_s* psInterface );
-NetInterface_s* get_net_interface( int nIndex );
+/* Send outgoing Ethernet packet */
 int send_packet( Route_s* psRoute, ipaddr_t pDstAddress, PacketBuf_s* psPkt );
+/* Dispatch incoming Ethernet packets */
 void dispatch_net_packet( PacketBuf_s* psPkt );
 
+
+/* Send IP packets */
 int ip_send( PacketBuf_s* psPkt );
+int ip_send_via( PacketBuf_s* psPkt, Route_s* psRoute );
 
 
-NetInterface_s* find_interface( const char* pzName );
-NetInterface_s* find_interface_by_addr( ipaddr_t anAddress );
-
-int netif_ioctl( int nCmd, void* pBuf );
-
-/*
-int get_interface_config( struct ifconf* psConf );
-int get_interface_flags( struct ifreq* psConf );
-int get_interface_address( struct ifreq* psConf );
-int set_interface_address( struct ifreq* psConf );
-int get_interface_netmask( struct ifreq* psConf );
-int set_interface_netmask( struct ifreq* psConf );
-*/
 #endif /* __KERNEL__ */
 
 #endif /* __F_ATHEOS_NET_H__ */

@@ -38,10 +38,23 @@
 #include <net/in.h>
 #include <net/tcp.h>
 #include <net/raw.h>
+#include <net/route.h>
 
 #include <macros.h>
 
 #include <net/packet.h>
+
+/* Selective debugging level overrides */
+#ifdef KERNEL_DEBUG_NET
+#undef DEBUG_LIMIT
+#define DEBUG_LIMIT KERNEL_DEBUG_NET
+#endif
+
+#ifdef KERNEL_DEBUG_NET_IP
+#undef DEBUG_LIMIT
+#define DEBUG_LIMIT KERNEL_DEBUG_NET_IP
+#endif
+
 
 typedef struct _IpFragQueue IpFragQueue_s;
 struct _IpFragQueue
@@ -57,16 +70,9 @@ struct _IpFragQueue
 static IpFragQueue_s *g_psFirstFragmentQueue = NULL;
 static sem_id g_hFragListLock;
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
-void format_ipaddress( char *pzBuffer, ipaddr_t pAddress )
+void format_ipaddress( char *pzBuffer, ipaddr_t anIp )
 {
-	sprintf( pzBuffer, "%d.%d.%d.%d", pAddress[0], pAddress[1], pAddress[2], pAddress[3] );
+	sprintf( pzBuffer, "%d.%d.%d.%d", ( int )anIp[0], ( int )anIp[1], ( int )anIp[2], ( int )anIp[3] );
 }
 
 /*****************************************************************************
@@ -75,7 +81,6 @@ void format_ipaddress( char *pzBuffer, ipaddr_t pAddress )
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/
-
 int parse_ipaddress( ipaddr_t pAddress, const char *pzBuffer )
 {
 	int i;
@@ -109,23 +114,19 @@ int parse_ipaddress( ipaddr_t pAddress, const char *pzBuffer )
  * SEE ALSO:
  ****************************************************************************/
 
-uint16 ip_chksum( uint16 *pBuf, int nLength )
+uint16 ip_chksum( uint8 *pBuffer, int nLength )
 {
 	uint32 nSum = 0;
-	int i;
+	uint16 *pBuf = ( uint16 * )pBuffer;
 
 	if ( nLength & 0x01 )
-	{
-		pBuf[nLength] = 0;
-		nLength++;
-	}
+		pBuffer[nLength++] = 0;
 
 	nLength >>= 1;
 
-	for ( i = 0; i < nLength; ++i )
-	{
-		nSum += pBuf[i];
-	}
+	while ( nLength-- )
+		nSum += *pBuf++;
+
 	nSum = ( nSum >> 16 ) + ( nSum & 0xffff );	// Add in carry
 	nSum += nSum >> 16;	// Maybe one more
 	return ( ~nSum );
@@ -205,7 +206,7 @@ int icmp_send( PacketBuf_s *a_psOrig, int a_nType, int a_nCode, ipaddr_t a_anDes
 	}
 
 	psIcmp->ic_nChkSum = 0;
-	psIcmp->ic_nChkSum = ip_chksum( ( uint16 * )psIcmp, nDataLen );
+	psIcmp->ic_nChkSum = ip_chksum( ( uint8 * )psIcmp, nDataLen );
 
 	psIpHdr->iph_nProtocol = IPT_ICMP;	/* for generated packets */
 	IP_COPYADDR( psIpHdr->iph_nDstAddr, anDest );
@@ -228,9 +229,9 @@ void icmp_in( PacketBuf_s *psPkt, int nPktSize )
 
 	psIcmp = psPkt->pb_uTransportHdr.psIcmp;
 
-	if ( ip_chksum( ( uint16 * )psIcmp, nPktSize ) != 0 )
+	if ( ip_chksum( ( uint8 * )psIcmp, nPktSize ) != 0 )
 	{
-		kerndbg( KERN_WARNING, "icmp_in() invalid checksum %d\n", ip_chksum( ( uint16 * )psIcmp, nPktSize ) );
+		kerndbg( KERN_WARNING, "icmp_in() invalid checksum %d\n", ip_chksum( ( uint8 * )psIcmp, nPktSize ) );
 		free_pkt_buffer( psPkt );
 		return;
 	}
@@ -258,44 +259,77 @@ void icmp_in( PacketBuf_s *psPkt, int nPktSize )
 	}
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/**
+ * \par Description:
+ * Find an appropriate route for the packet's destination and call
+ * ip_send_via() to send the packet, fragmenting if necessary.
+ *
+ * The packet buffer is always consumed, even if an error is returned.
+ */
 int ip_send( PacketBuf_s *psPkt )
+{
+	Route_s *psRoute;
+	IpHeader_s *psIpHdr = psPkt->pb_uNetworkHdr.psIP;
+	int nError;
+
+	psRoute = ip_find_route( psIpHdr->iph_nDstAddr );
+
+	if ( psRoute == NULL )
+	{
+		USE_FORMAT_IP( 1 );
+
+		FORMAT_IP( psIpHdr->iph_nDstAddr, 0 );
+		kerndbg( KERN_WARNING, "Could not find route for address %s\n", FORMATTED_IP( 0 ) );
+
+		free_pkt_buffer( psPkt );
+		return ( -ENETUNREACH );
+	}
+
+	nError = ip_send_via( psPkt, psRoute );
+
+	ip_release_route( psRoute );
+
+	return ( nError );
+}
+
+/**
+ * \par Description:
+ * Prepares to send an IP packet to its next hop address.
+ * The packet may be fragmented if the MTU of the outgoing link is smaller
+ * than the packet.
+ *
+ * The packet buffer must be allocated with at least ETH_HLEN bytes to
+ * hold an ethernet header (usually rounded up to multiple of 4 bytes) as
+ * well as the IP packet itself.  The pb_uNetworkHdr pointer must correctly
+ * point to the start of the IP packet (e.g. not the ethernet header) and
+ * the pb_uTransportHdr pointer must point to the start of the IP payload.
+ * The size of the IP packet should be stored in pb_nSize (not including the
+ * ethernet header).
+ * 
+ * This function will fill in the pb_nProtocol field with ETH_P_IP, the
+ * TTL is set to 128.  The address of outgoing interface is copied into
+ * the source address.  The packet ID is assigned serially.  The IP header
+ * checksum is calculated last.
+ *
+ * If the packet is fragmented, the packet size and fragment offset fields
+ * are also calculated appropriately.
+ *
+ * The packet buffer is always consumed, even if an error is returned.
+ */
+int ip_send_via( PacketBuf_s *psPkt, Route_s *psRoute )
 {
 	static int16 nPacketID = 0;
 	IpHeader_s *psIpHdr = psPkt->pb_uNetworkHdr.psIP;
 	int nPacketSize = ntohw( psIpHdr->iph_nPacketSize );
 	int nHdrSize = IP_GET_HDR_LEN( psIpHdr );
+	int nEthHdrLen = ( ( ETH_HLEN + 3 ) & ~3 );	/* Length of ethernet header */
 	int nDataSize = nPacketSize - nHdrSize;
 	int nMTU;
-	Route_s *psRoute;
 	int nError;
 
+	/* FIXME: Use atomic_add()? */
 	psIpHdr->iph_nPacketId = htonw( nPacketID );
 	nPacketID++;
-
-	if ( psIpHdr->iph_nProtocol == IPT_TCP )
-	{
-		tcp_dump_packet( psPkt );
-	}
-	psRoute = ip_find_route( psIpHdr->iph_nDstAddr );
-
-	if ( psRoute == NULL )
-	{
-		char zBuffer[128];
-
-		format_ipaddress( zBuffer, psIpHdr->iph_nDstAddr );
-		kerndbg( KERN_WARNING, "Could not find route for address %s\n", zBuffer );
-		free_pkt_buffer( psPkt );
-		return ( -ENETUNREACH );
-	}
-
-	kerndbg( KERN_DEBUG, "Found route %d\n", psRoute->rt_psInterface->ni_nMTU );
 
 	psIpHdr->iph_nTimeToLive = 128;
 	IP_COPYADDR( psIpHdr->iph_nSrcAddr, psRoute->rt_psInterface->ni_anIpAddr );
@@ -307,7 +341,7 @@ int ip_send( PacketBuf_s *psPkt )
 		int nFragOffset = 0;
 		char *pBuffer = psPkt->pb_uTransportHdr.pRaw;
 
-		kerndbg( KERN_DEBUG, "Fragment buffer %d - %d\n", nHdrSize, nDataSize );
+		kerndbg( KERN_DEBUG, "ip_send_via(): Splitting packet into fragments: %d header/%d data\n", nHdrSize, nDataSize );
 
 		while ( nDataSize > 0 )
 		{
@@ -318,19 +352,19 @@ int ip_send( PacketBuf_s *psPkt )
 			if ( nCurSize > nMTU )
 			{
 				nCurSize = nMTU;
-				nCurSize &= ~7;
+				nCurSize &= ~7;	/* Round down to nearest 8-byte amount */
 			}
 
-			psFrag = alloc_pkt_buffer( nCurSize + nHdrSize + 16 );
+			psFrag = alloc_pkt_buffer( nCurSize + nHdrSize + nEthHdrLen );
 
 			if ( NULL == psFrag )
 			{
-				kerndbg( KERN_FATAL, "ip_send() no memory for fragment buffer\n" );
+				kerndbg( KERN_FATAL, "ip_send_via(): No memory for fragment buffer\n" );
 				nError = -ENOMEM;
 				goto error;
 			}
 
-			psFrag->pb_uNetworkHdr.pRaw = psFrag->pb_pData + 16;
+			psFrag->pb_uNetworkHdr.pRaw = psFrag->pb_pData + nEthHdrLen;
 			psFrag->pb_uTransportHdr.pRaw = psFrag->pb_uNetworkHdr.pRaw + nHdrSize;
 			psFrgHdr = psFrag->pb_uNetworkHdr.psIP;
 			psFrag->pb_nSize = nCurSize + nHdrSize;
@@ -349,15 +383,21 @@ int ip_send( PacketBuf_s *psPkt )
 			psFrgHdr->iph_nCheckSum = ip_fast_csum( ( uint8 * )psFrgHdr, psFrgHdr->iph_nHdrSize );
 			psFrag->pb_nProtocol = ETH_P_IP;
 
-			kerndbg( KERN_DEBUG, "Send %d bytes from %d (%d)\n", nCurSize, nFragOffset, ( int )ntohw( psFrgHdr->iph_nFragOffset ) );
+			kerndbg( KERN_DEBUG, "ip_send_via(): Send %d bytes from %d (%d)\n", nCurSize, nFragOffset, ( int )ntohw( psFrgHdr->iph_nFragOffset ) );
 
-			send_packet( psRoute, psFrgHdr->iph_nDstAddr, psFrag );
-//      psRoute->rt_psInterface->ni_write( psRoute, psFrag, psFrgHdr->iph_nDstAddr );
+			if ( ( nError = send_packet( psRoute, psFrgHdr->iph_nDstAddr, psFrag ) ) < 0 )
+			{
+				kerndbg( KERN_DEBUG, "ip_send_via(): send_packet() failed, freeing fragment buffer.\n" );
+
+				free_pkt_buffer( psFrag );
+				goto error;
+			}
 
 			nDataSize -= nCurSize;
 			nFragOffset += nCurSize;
 			pBuffer += nCurSize;
 		}
+
 		free_pkt_buffer( psPkt );
 	}
 	else			// No need for fragmenting
@@ -366,13 +406,18 @@ int ip_send( PacketBuf_s *psPkt )
 		psIpHdr->iph_nCheckSum = ip_fast_csum( ( uint8 * )psIpHdr, psIpHdr->iph_nHdrSize );
 
 		psPkt->pb_nProtocol = ETH_P_IP;
-		send_packet( psRoute, psIpHdr->iph_nDstAddr, psPkt );
-//    psRoute->rt_psInterface->ni_write( psRoute, psPkt, psIpHdr->iph_nDstAddr );
+
+		if ( ( nError = send_packet( psRoute, psIpHdr->iph_nDstAddr, psPkt ) ) < 0 )
+		{
+			kerndbg( KERN_DEBUG, "ip_send(): send_packet() failed, freeing packet buffer.\n" );
+
+			goto error;
+		}
 	}
-	ip_release_route( psRoute );
+
 	return ( 0 );
+
       error:
-	ip_release_route( psRoute );
 	free_pkt_buffer( psPkt );
 	return ( nError );
 }
@@ -402,11 +447,7 @@ static void ip_process_paket( PacketBuf_s *psPkt )
 	psRawPort = raw_find_port( psIpHdr->iph_nProtocol );
 	if ( psRawPort != NULL )
 	{
-		kerndbg( KERN_DEBUG_LOW, "IP_PROCESS_PAKET(): psPkt:\n" );
-		dump_pkt_buffer( psPkt );
 		psClonedPacket = clone_pkt_buffer( psPkt );
-		kerndbg( KERN_DEBUG_LOW, "IP_PROCESS_PAKET(): psClonedPacket:\n" );
-		dump_pkt_buffer( psClonedPacket );
 
 		if ( psClonedPacket != NULL )
 		{
@@ -674,20 +715,10 @@ void ip_expire_fragments( bigtime_t nNow )
 
 void ip_in( PacketBuf_s *psPkt, int nPktSize )
 {
+	/* FIXME: Should this assume the incoming packet has an Ethernet header? */
 	IpHeader_s *psIpHdr = ( IpHeader_s * )( psPkt->pb_uMacHdr.pRaw + ETH_HLEN );
 
-//  char              zSrc[64];
-//  char              zDst[64];
 	psPkt->pb_uNetworkHdr.psIP = psIpHdr;
-
-#if 0
-	printk( "Received IP packet HS=%d TS=%d PROTO=%d FRGO=%d\n", IP_GET_HDR_LEN( psIpHdr ), ntohw( psIpHdr->iph_nPacketSize ), psIpHdr->iph_nProtocol, ntohw( psIpHdr->iph_nFragOffset ) );
-
-	format_ipaddress( zSrc, psIpHdr->iph_nSrcAddr );
-	format_ipaddress( zDst, psIpHdr->iph_nDstAddr );
-
-	printk( "src = %s -> dst = %s\n", zSrc, zDst );
-#endif
 
 	if ( psPkt->pb_bLocal == false && ip_fast_csum( ( uint8 * )psIpHdr, psIpHdr->iph_nHdrSize ) != 0 )
 	{
@@ -740,6 +771,7 @@ void init_ip()
 	thread_id hThread;
 
 	g_hFragListLock = create_semaphore( "frglst_lock", 1, SEM_REQURSIVE );
+	init_route_table();
 	init_net_core();
 	hThread = spawn_kernel_thread( "ip_timer", ip_timer, 200, 0, NULL );
 	wakeup_thread( hThread, false );

@@ -28,11 +28,27 @@
 
 #define IP_SAMEADDR(ip1,ip2) 	 (*((uint32 *) ip1) == *((uint32 *) ip2))
 #define IP_COPYADDR(ipto,ipfrom) (*((uint32 *) ipto) = *((uint32 *) ipfrom))
+#define IP_COPYMASK(ipto,ipfrom,mask) \
+        (*((uint32 *) ipto) = *((uint32 *) ipfrom) & *((uint32 *) mask) )
 #define IP_MASKADDR(ip1,ip2) 	 ((*((uint32 *) ip1) & *((uint32 *) ip2)))
 #define IP_INVMASKADDR(ip1,ip2)  (*((uint32 *) ip1) & ~(*((uint32 *) ip2)))
-#define IP_MAKEADDR( ip, n0, n1, n2, n3 ) do { ip[0] = n0; ip[1] = n1; ip[2] = n2; ip[3] = n3; } while(0)
+#define IP_MAKEADDR( ip, n0, n1, n2, n3 ) \
+        do { ip[0] = n0; ip[1] = n1; ip[2] = n2; ip[3] = n3; } while(0)
 #define IP_GET_HDR_LEN( ip ) (((uint32)(ip)->iph_nHdrSize)<<2)
 /* Some Assigned Protocol Numbers */
+
+/* IP Formatting - expects an ipaddr_p */
+#ifdef __ENABLE_DEBUG__
+#define USE_FORMAT_IP( count )  char __aacIpAddr[count][16]
+#define FORMATTED_IP( index )   __aacIpAddr[index]
+#define FORMAT_IP( ip, index ) \
+	sprintf( __aacIpAddr[index], "%d.%d.%d.%d", \
+			     (int)(ip)[0], (int)(ip)[1], (int)(ip)[2], (int)(ip)[3] )
+#else
+#define USE_FORMAT_IP( count )
+#define FORMATTED_IP( index )		"debug mode off"
+#define FORMAT_IP( ip, index )
+#endif
 
 
 #define IP_FRAG_TIME	(30LL * 1000000LL)	/* Time before discarding partly received packets */

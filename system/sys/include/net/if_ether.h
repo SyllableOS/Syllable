@@ -128,21 +128,24 @@ typedef int eth_probe( int* pnInterfaceCount, const EthDriverOps_s** ppsOps );
 typedef struct _EthInterface EthInterface_s;
 struct _EthInterface
 {
-    EthInterface_s*	  ei_psNext;
-    NetInterface_s*	  ei_psInterface;
-    NetQueue_s		  ei_sInputQueue;
-    uint8		  ei_anHwAddr[IH_MAX_HWA_LEN];
-    ArpEntry_s* 	  ei_psFirstARPEntry;
-    void*		  ei_pDevice;	// Private device-driver data
-    int		      	  ei_nDevice;
-    thread_id	      	  ei_hRxThread;
-    uint32		  ei_nFlags;
-    char		  ei_zDeviceID[ETH_DEV_ID_LEN];
-    char		  ei_zDriverPath[PATH_MAX];
+	EthInterface_s* ei_psNext;
+	NetInterface_s* ei_psInterface;
+	int             ei_nIfIndex;
+	NetQueue_s      ei_sInputQueue;
+	uint8           ei_anHwAddr[IH_MAX_HWA_LEN];
+	ArpEntry_s*     ei_psFirstARPEntry;
+	void*           ei_pDevice;	// Private device-driver data
+	int             ei_nDevice;
+	thread_id       ei_hRxThread;
+	uint32          ei_nOldFlags;
+	char            ei_zDeviceID[ETH_DEV_ID_LEN];
+	char            ei_zDriverPath[PATH_MAX];
 };
 
 void arp_in( EthInterface_s* psInterface, PacketBuf_s* psPkt );
-int arp_send_packet( EthInterface_s* psInterface, PacketBuf_s* psPkt, ipaddr_t pAddress );
+int arp_send_packet( EthInterface_s* psInterface, PacketBuf_s* psPkt,
+		                 ipaddr_t pAddress );
+void arp_expire_interface( EthInterface_s* psInterface );
 
 #endif /* __KERNEL__ */
 

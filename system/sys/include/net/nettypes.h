@@ -43,5 +43,5 @@ typedef struct _PacketBuf PacketBuf_s;
 
 #define IP_ADR_LEN	4
 typedef uint8 ipaddr_t[IP_ADR_LEN];
-
+typedef uint8* ipaddr_p;
 #endif				/* __F_ATHEOS_NETTYPES_H__ */
