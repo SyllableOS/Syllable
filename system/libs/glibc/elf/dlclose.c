@@ -17,6 +17,8 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
+#ifndef __ATHEOS__
+
 #include <dlfcn.h>
 #include <elf/ldsodefs.h>
 
@@ -31,3 +33,29 @@ dlclose (void *handle)
 {
   return _dlerror_run (dlclose_doit, handle) ? -1 : 0;
 }
+
+#else	/* __ATHEOS__ */
+
+#include <dlfcn.h>
+#include <stdlib.h>
+#include <atheos/image.h>
+
+int
+dlclose(void *handle)
+{
+	int ret;
+	int* lib_handle;
+
+	lib_handle = (int*)handle;
+
+	ret = unload_library( *lib_handle );
+	free( *lib_handle );
+
+	if( ret < 0 )
+		return( NULL );	/* FIXME: We do not set an error for dlerror() */
+
+	return( ret );
+}
+
+#endif	/* __ATHEOS__ */
+

@@ -17,13 +17,12 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
+#ifndef __ATHEOS__
 
 #include <dlfcn.h>
 #include <setjmp.h>
 #include <stddef.h>
 #include <elf/ldsodefs.h>
-
-#ifndef __ATHEOS__
 
 struct dlsym_args
 {
@@ -103,10 +102,24 @@ dlsym (void *handle, const char *name)
 
 #else /* __ATHEOS__ */
 
+#include <dlfcn.h>
+#include <atheos/image.h>
+
 void *
 dlsym (void *handle, const char *name)
 {
-  return( 0 );
+	void* func;
+	int ret;
+	int* lib_handle;
+
+	lib_handle = (int*)handle;
+
+	ret = get_symbol_address( *lib_handle, name, -1, &func );
+
+	if( ret < 0 )
+		return( NULL );	/* FIXME: We do not set an error for dlerror() */
+
+	return( func );
 }
 
 #endif /* __ATHEOS__ */

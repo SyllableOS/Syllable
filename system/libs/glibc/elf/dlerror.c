@@ -17,6 +17,8 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
+#ifndef __ATHEOS__
+
 #include <dlfcn.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -150,3 +152,16 @@ free_key_mem (void *mem)
   free (mem);
   __libc_setspecific (key, NULL);
 }
+
+#else	/* __ATHEOS__ */
+
+#include <dlfcn.h>
+
+char *
+dlerror(void)
+{
+	return("An error occured\0");
+}
+
+#endif	/* __ATHEOS__ */
+

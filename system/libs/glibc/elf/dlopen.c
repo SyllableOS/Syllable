@@ -17,6 +17,8 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
+#ifndef __ATHEOS__
+
 #include <dlfcn.h>
 #include <stddef.h>
 #include <elf/ldsodefs.h>
@@ -57,3 +59,36 @@ default_symbol_version (__dlopen_check, dlopen, GLIBC_2.1);
 #else
 weak_alias (__dlopen_check, dlopen)
 #endif
+
+#else	/* __ATHEOS__ */
+
+#include <dlfcn.h>
+#include <stdlib.h>
+#include <atheos/image.h>
+
+void *
+__dlopen(const char *file, int mode)
+{
+	int flags=0;
+	int* handle;
+
+	if( file == 0 )
+		return( NULL );	/* FIXME: We do not set an error for dlerror() */
+
+	handle = malloc( sizeof( int ) );
+
+	/* FIXME: mode is currently ignored; we should attempt to */
+	/* map mode onto flags...                                 */
+
+	*handle = load_library( file, flags );
+	return( (void*)handle );
+}
+
+#if defined PIC && defined DO_VERSIONING
+default_symbol_version (__dlopen, dlopen, GLIBC_2.1);
+#else
+weak_alias (__dlopen, dlopen)
+#endif
+
+#endif	/* __ATHEOS__ */
+
