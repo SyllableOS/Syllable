@@ -1,7 +1,7 @@
 authors			Kaj de Vos
 status			testing
 
-licenses		GPL LGPL BSD Artistic custom PD
+licenses		GPL LGPL BSD Artistic other PD
 home			www.ruby-lang.org
 locations		ftp://ftp.ruby-lang.org/pub/ruby/
 

@@ -1,7 +1,7 @@
 authors				Kaj de Vos
 notes				Thinks mmap works!
 
-licenses			custom
+licenses			other
 home				www.zlib.org
 
 no-build-dir

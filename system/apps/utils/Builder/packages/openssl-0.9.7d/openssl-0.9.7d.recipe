@@ -2,7 +2,7 @@ authors 			Kaj de Vos
 status				testing
 warnings			Insists on installing in /usr/local/ssl.
 
-licenses			custom
+licenses			other
 home				www.openssl.org
 
 build-needs			perl 5

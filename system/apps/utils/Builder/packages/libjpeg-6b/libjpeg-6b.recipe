@@ -1,6 +1,6 @@
 authors				Kaj de Vos
 status				testing
-licenses			custom
+licenses			other
 packages			jpegsrc.v6b
 locations			ftp://ftp.uu.net/graphics/jpeg/
 patch-config

@@ -1,7 +1,7 @@
 authors			Kaj de Vos
 notes			Native code compiler not supported yet
 
-licenses		QPL LGPL custom
+licenses		QPL LGPL other
 home			caml.inria.fr
 locations		ftp://ftp.inria.fr/INRIA/caml-light
 

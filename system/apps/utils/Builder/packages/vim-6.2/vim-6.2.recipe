@@ -3,7 +3,7 @@ authors
 	Kaj de Vos
 maintainers			Kaj de Vos
 
-licenses			custom
+licenses			other
 home				www.vim.org
 ;packages
 ;	vim-6.2

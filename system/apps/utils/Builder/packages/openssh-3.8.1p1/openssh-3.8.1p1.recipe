@@ -1,7 +1,7 @@
 authors				Kaj de Vos
 status				testing
 
-licenses			BSD MIT ISC custom PD
+licenses			BSD MIT ISC other PD
 home				www.openssh.com
 
 build-needs

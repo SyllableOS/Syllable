@@ -2,7 +2,7 @@ authors				Kaj de Vos
 status				incomplete
 
 ; BSD?
-licenses			custom
+licenses			other
 home				www.remotesensing.org/libtiff/
 ;home				www.libtiff.org
 packages			tiff-v3.6.1

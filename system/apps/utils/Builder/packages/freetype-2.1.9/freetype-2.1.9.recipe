@@ -1,6 +1,6 @@
 authors				Kaj de Vos
 
-licenses			GPL custom
+licenses			GPL other
 home				www.freetype.org
 
 ;build-recommends	python

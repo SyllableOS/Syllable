@@ -1,8 +1,10 @@
 authors				Kaj de Vos
 status				testing
-licenses			custom
+
+licenses			other
 home				www.tcl.tk
 packages			tcl8.4.5-src
+
 configure-cmd		unix/configure
 configure-options
 	--enable-man-symlinks
