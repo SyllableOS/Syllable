@@ -110,6 +110,19 @@ enum
 };
 
 
+enum drawtext_flags
+{
+	DTF_DEFAULT			= 0x00000000,
+	DTF_CENTER			= 0x00000001,
+	DTF_ALIGN_CENTER	= DTF_CENTER,
+	DTF_ALIGN_RIGHT		= 0x00000002,
+	DTF_ALIGN_LEFT		= 0x00000000,
+	DTF_ALIGN_TOP		= 0x00000004,
+	DTF_ALIGN_BOTTOM	= 0x00000008,
+	DTF_ALIGN_MIDDLE	= 0x00000000,
+	DTF_IGNORE_FMT		= 0x00000100
+};
+
 /**\anchor os_gui_qualifiers
  * \par Description:
  *	Bit-masks for the verious qualifier keys. This defines can be used
@@ -329,6 +342,8 @@ struct screen_mode
 #endif
 
 #endif	// __F_GUI_GUIDEFS_H__
+
+
 
 
 
