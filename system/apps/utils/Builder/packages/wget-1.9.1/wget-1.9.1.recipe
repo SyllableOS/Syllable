@@ -1,4 +1,10 @@
-authors Kaj de Vos
+authors				Kaj de Vos
+
+licenses			GPL
+home				www.gnu.org/software/wget/
+
 patch-config
-;configure-options --with-ssl=
-documentation README INSTALL COPYING NEWS ChangeLog.README ChangeLog TODO AUTHORS MAILING-LIST PATCHES
+;configure-options
+;	--with-ssl=
+;	--disable-ipv6
+documentation		README INSTALL COPYING NEWS ChangeLog.README ChangeLog TODO AUTHORS MAILING-LIST PATCHES
