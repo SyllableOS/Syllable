@@ -31,7 +31,7 @@
 Locker SrvSprite::s_cLock( "sprite_lock" );
 
 std::vector < SrvSprite * >SrvSprite::s_cInstances;
-int SrvSprite::s_nHideCount = 0;
+atomic_t SrvSprite::s_nHideCount = ATOMIC_INIT(0);
 
 //----------------------------------------------------------------------------
 // NAME:
@@ -136,7 +136,7 @@ void SrvSprite::Hide( const IRect & cFrame )
 	bool bDoHide = false;
 
 	s_cLock.Lock();
-	atomic_add( &s_nHideCount, 1 );
+	atomic_inc( &s_nHideCount );
 
 	for( uint i = 0; i < s_cInstances.size(); ++i )
 	{
@@ -168,7 +168,7 @@ void SrvSprite::Hide( const IRect & cFrame )
 void SrvSprite::Hide()
 {
 	s_cLock.Lock();
-	if( atomic_add( &s_nHideCount, 1 ) != 0 )
+	if( atomic_inc_and_read( &s_nHideCount ) != 0 )
 	{
 		s_cLock.Unlock();
 		return;
@@ -196,7 +196,7 @@ void SrvSprite::Hide()
 void SrvSprite::Unhide()
 {
 	s_cLock.Lock();
-	if( atomic_add( &s_nHideCount, -1 ) != 1 )
+	if( !atomic_dec_and_test( &s_nHideCount ) )
 	{
 		s_cLock.Unlock();
 		return;
@@ -406,7 +406,7 @@ void SrvSprite::MoveBy( const IPoint & cDelta )
 		return;
 	}
 	s_cLock.Lock();
-	if( s_nHideCount > 0 )
+	if( atomic_read( &s_nHideCount ) > 0 )
 	{
 		for( int i = s_cInstances.size() - 1; i >= 0; --i )
 		{

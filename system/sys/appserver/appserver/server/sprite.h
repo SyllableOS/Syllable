@@ -55,7 +55,7 @@ public:
   
 private:
     static std::vector<SrvSprite*> s_cInstances;
-    static int		   	   s_nHideCount;
+    static atomic_t	   	   s_nHideCount;
     static Locker		   s_cLock;
 
     IPoint     m_cPosition;

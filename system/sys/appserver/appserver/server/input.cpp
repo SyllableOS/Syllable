@@ -39,7 +39,7 @@
 MessageQueue InputNode::s_cEventQueue;
 Point InputNode::s_cMousePos( 0, 0 );
 uint32 InputNode::s_nMouseButtons = 0;
-int InputNode::s_nMouseMoveEventCount = 0;
+atomic_t InputNode::s_nMouseMoveEventCount = ATOMIC_INIT(0);
 
 static thread_id g_hEventThread = -1;
 
@@ -136,7 +136,7 @@ void InputNode::EnqueueEvent( Message * pcEvent )
 			}
 			pcEvent->AddInt32( "_button", s_nMouseButtons );	// To be removed
 			pcEvent->AddInt32( "_buttons", s_nMouseButtons );
-			atomic_add( &s_nMouseMoveEventCount, 1 );
+			atomic_inc( &s_nMouseMoveEventCount );
 			break;
 		}
 	}
@@ -179,7 +179,7 @@ void InputNode::EventLoop()
 			s_cEventQueue.Unlock();
 			if( pcEvent != NULL && pcEvent->GetCode() == M_MOUSE_MOVED )
 			{
-				if( atomic_add( &s_nMouseMoveEventCount, -1 ) != 1 )
+				if( !atomic_dec_and_test( &s_nMouseMoveEventCount ) )
 				{
 					delete pcEvent;
 

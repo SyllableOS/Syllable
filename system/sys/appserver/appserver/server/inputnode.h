@@ -58,7 +58,7 @@ private:
     static int32 Loop( void* pData );
   
     static MessageQueue s_cEventQueue;
-    static int	      s_nMouseMoveEventCount;
+    static atomic_t	      s_nMouseMoveEventCount;
     static Point	      s_cMousePos;
     static uint32	      s_nMouseButtons;
 };

@@ -105,10 +105,10 @@ Looper::TimerNode::TimerNode( Handler * pcHandler, int nID, bigtime_t nPeriode, 
 
 Looper::Looper( const String & cName, int nPriority, int nPortSize ):Handler( cName )
 {
-	static atomic_t nLastID = 1;
+	static atomic_t nLastID = ATOMIC_INIT(1);
 
 	m = new Private( cName );
-	m->m_nID = atomic_add( &nLastID, 1 );
+	m->m_nID = atomic_inc_and_read( &nLastID );
 	m->m_nPriority = nPriority;
 	m->m_hThread = -1;
 	m->m_hPort = create_port( ( String( "l:" ) + cName ).c_str(), nPortSize );

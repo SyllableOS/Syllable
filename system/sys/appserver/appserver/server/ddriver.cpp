@@ -34,6 +34,7 @@
 extern "C"
 {
 #include "ddriver_mmx.h"
+#include "ddriver_mmx.c"
 }
 
 #include <gui/bitmap.h>

@@ -42,7 +42,7 @@ static const uint64 blue_16mask __attribute__((aligned(8))) = 0x0000001f0000001f
  * \author	Arno Klenke (arno_klenke@yahoo.de ) / MPlayer (www.mplayerhq.hu )
  *****************************************************************************/
 
-inline void mmx_rgb32_to_rgb16( uint8* pSrc, uint8* pDst, unsigned nPixels )
+static inline void mmx_rgb32_to_rgb16( uint8* pSrc, uint8* pDst, unsigned nPixels )
 {
 	const uint8* pS = pSrc;
 	const uint8* pEnd;

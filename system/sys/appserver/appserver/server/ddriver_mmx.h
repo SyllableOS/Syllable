@@ -21,7 +21,7 @@
 #ifndef	INTERFACE_DDRIVER_MMX_HPP
 #define	INTERFACE_DDRIVER_MMX_HPP
 
-inline void mmx_rgb32_to_rgb16( uint8* pSrc, uint8* pDst, unsigned nPixels );
+static inline void mmx_rgb32_to_rgb16( uint8* pSrc, uint8* pDst, unsigned nPixels );
 
 #endif	//	INTERFACE_DDRIVER_MMX_HPP
 

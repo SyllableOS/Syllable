@@ -464,7 +464,7 @@ bool SFontInstance::GetFirstSupportedChar( uint32* pnChar )
 
 	nCharCode = FT_Get_First_Char( psFace, &nGIndex );
 	if( nGIndex ) {
-		dbprintf("s: %d\n", nCharCode);
+		dbprintf("s: %u\n", ( unsigned int )nCharCode);
 		*pnChar = nCharCode;
 		return true;
 	}

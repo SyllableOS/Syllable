@@ -55,7 +55,7 @@ static 	uchar     settings[28];
 
 static sem_id	io_sem = -1;
 static sem_id   ge_sem = -1;
-static int      io_lock, ge_lock;
+static atomic_t io_lock, ge_lock;
 
 clone_info sCardInfo;
 
@@ -64,9 +64,9 @@ static void init_locks()
 {
     if (io_sem == -1)
     {
-	io_lock = 0L;
+	atomic_set( &io_lock, 0 );
 	io_sem = create_semaphore( "vga io sem", 0, 0 );
-	ge_lock = 0L;
+	atomic_set( &ge_lock, 0 );
 	ge_sem = create_semaphore( "vga ge sem", 0, 0 );
     }
 	
@@ -77,7 +77,7 @@ void lock_io()
 {
     int	old;
 
-    old = atomic_add( &io_lock, 1 );
+    old = atomic_inc_and_read( &io_lock );
     if (old >= 1) {
 	lock_semaphore(io_sem);
     }
@@ -86,10 +86,7 @@ void lock_io()
 // Release the protection on the general io-registers
 void unlock_io()
 {
-    int	old;
-
-    old = atomic_add (&io_lock, -1);
-    if (old > 1) {
+    if ( !atomic_dec_and_test( &io_lock ) ) {
 	unlock_semaphore(io_sem);
     }
 }	
@@ -100,7 +97,7 @@ void lock_ge()
 {
     int	old;
 
-    old = atomic_add( &ge_lock, 1 );
+    old = atomic_inc_and_read( &ge_lock );
     if (old >= 1) {
 	lock_semaphore(ge_sem);
     }
@@ -109,9 +106,7 @@ void lock_ge()
 // Release the protection on the memory and the graphic engine registers.
 void unlock_ge()
 {
-    int	old;
-    old = atomic_add( &ge_lock, -1 );
-    if (old > 1) {
+    if ( !atomic_dec_and_test( &ge_lock ) ) {
 	unlock_semaphore( ge_sem );
     }
 }	

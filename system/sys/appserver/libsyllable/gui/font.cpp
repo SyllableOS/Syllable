@@ -40,7 +40,7 @@ void Font::_CommonInit()
 
 	assert( Application::GetInstance() != NULL );
 
-	m_nRefCount = 1;
+	atomic_set( &m_nRefCount, 1 );
 	m_vSize = 0.0f;
 	m_vShear = 0.0f;
 	m_vRotation = 0.0f;
@@ -102,7 +102,7 @@ Font::Font( const font_properties & sProps )
 Font::~Font()
 {
 	assert( Application::GetInstance() != NULL );
-	assert( m_nRefCount == 0 );
+	assert( atomic_read( &m_nRefCount ) == 0 );
 
 	Message cReq( AR_DELETE_FONT );
 
@@ -133,12 +133,12 @@ Font & Font::operator=( const Font & cOther )
 
 void Font::AddRef()
 {
-	atomic_add( &m_nRefCount, 1 );
+	atomic_inc( &m_nRefCount );
 }
 
 void Font::Release()
 {
-	if( atomic_add( &m_nRefCount, -1 ) == 1 )
+	if( atomic_dec_and_test( &m_nRefCount ) )
 	{
 		delete this;
 	}
