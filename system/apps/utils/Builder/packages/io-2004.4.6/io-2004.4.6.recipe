@@ -43,7 +43,33 @@ test
 ;	make test
 test-targets	test
 
-install-tree	bin lib IoVM IoServer IoDesktop
+install-tree
+	bin
+	lib
+	IoVM
+	IoServer
+	IoServer/Blowfish
+	IoServer/CGI
+;	IoServer/Compression
+	IoServer/Curses
+;	IoServer/DBI
+	IoServer/Directory
+	IoServer/FFT
+	IoServer/Fnmatch
+	IoServer/Geometry
+	IoServer/md5
+;	IoServer/MDNS
+;	IoServer/Micro
+	IoServer/Regex
+	IoServer/SGML
+	IoServer/SleepyCat
+	IoServer/Sockets
+	IoServer/SQLite
+;	IoServer/Struct
+	IoServer/Tree
+;	IoServer/Unicode
+	IoServer/User
+	IoDesktop
 install
 	cp IoVM/io							/usr/io/bin
 	strip -s							/usr/io/bin/io
@@ -56,6 +82,10 @@ install
 	cp -a IoVM/_docs					/usr/io/IoVM
 	cp IoServer/_ReadMe.txt				/usr/io/IoServer
 	cp -a IoServer/_docs				/usr/io/IoServer
+	for module in Blowfish CGI Curses Directory FFT Fnmatch Geometry Regex SGML SleepyCat Sockets SQLite Tree User
+	do cp -a IoServer/$module/_docs /usr/io/IoServer/$module
+	done
+	cp -a IoServer/MD5/_docs			/usr/io/IoServer/md5
 	cp -a IoDesktop/_docs				/usr/io/IoDesktop
 ;install-files
 ;	IoVM/io							bin
