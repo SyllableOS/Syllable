@@ -1,3 +1,9 @@
+* Apr 27 2003, Henrik Isaksson *
+
+Updated appserver with dead key support, support for turning on/off
+antialiasing and support for shearing/rotating glyphs.
+Updated TextView for dead key support.
+
 * Feb 8 2003, Henrik Isaksson *
 
 Added Rick's ImageButton, fixed bugs in image.cpp and tabview.h.

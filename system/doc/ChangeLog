@@ -1,3 +1,8 @@
+* Apr 27 2003, Henrik Isaksson *
+
+Updated keymaps for the new keymap format.
+Added dead keys to Swedish keymap.
+
 * Apr 27 2003, Kristian Van Der Vliet *
 
 Fix compile errors when using pthread.h
