@@ -8,6 +8,7 @@
 
 #include <appserver/keymap.h>
 
+char *qualstrings[] = { "n", "s", "c", "o", "os", "C", "Cs", "Co", "Cos", NULL };
 
 int parse_number( const char* pzString )
 {
@@ -23,6 +24,8 @@ int parse_number( const char* pzString )
 	if ( sscanf( pzString, "%x", &nValue ) != 1 ) {
 	    return( -1 );
 	}
+    } else if ( strcmp( pzString, "DEADKEY" ) == 0 ) {
+    	return DEADKEY_ID;
     } else {
 	if ( sscanf( pzString, "%d", &nValue ) != 1 ) {
 	    return( -1 );
@@ -31,10 +34,32 @@ int parse_number( const char* pzString )
     return( nValue );
 }
 
+uint32 count_dead_keys( FILE* hFile )
+{
+    uint32 dead = 0;
+
+    for (;;)
+    {
+	char zLineBuf[4096];
+  
+	if ( fgets( zLineBuf, 4096, hFile ) == NULL ) {
+	    break;
+	}
+
+	if ( strncmp( zLineBuf, "DeadKey", 7 ) == 0 )
+		dead++;
+    }
+    
+    return dead;
+}
+
 int load_ascii_keymap( FILE* hFile, keymap* psKeymap )
 {
     int nLine = 0;
     int nVersion = 0;
+    int nDeadKeyIndex = 0;
+
+    fseek( hFile, 0, SEEK_SET );
 
     memset( psKeymap, 0, sizeof(*psKeymap) );
     
@@ -196,7 +221,35 @@ int load_ascii_keymap( FILE* hFile, keymap* psKeymap )
 	}
 
 	char pzKey[8];
-    
+
+	if ( strncmp( zLineBuf, "DeadKey", 7 ) == 0 ) {
+	    char zSource[17], zResult[17];
+	    if ( sscanf( zLineBuf, "DeadKey %16[^ ] %7[0-9a-fx] %16[^ ] = %16[^ ]\n", zBuf, pzKey, zSource, zResult ) == 4 ) {
+	    	int i;
+	    	bool found = false;
+	    	
+	    	psKeymap->m_sDeadKey[ nDeadKeyIndex ].m_nRawKey = parse_number( pzKey );
+	    	for( i = 0; qualstrings[i]; i++ ) {
+	    		if( strcmp( qualstrings[i], zBuf ) == 0 ) {
+	    			found = true;
+	    			break;
+	    		}
+	    	}
+	    	if( !found ) {
+			fprintf( stderr, "Error: Unknown constant '%s' at line %d\n", zBuf, nLine );
+			fprintf( stderr, "%s\n", zLineBuf );
+		}
+	    	psKeymap->m_sDeadKey[ nDeadKeyIndex ].m_nQualifier = i ;
+	    	psKeymap->m_sDeadKey[ nDeadKeyIndex ].m_nKey = parse_number( zSource );
+	    	psKeymap->m_sDeadKey[ nDeadKeyIndex ].m_nValue = parse_number( zResult );
+		nDeadKeyIndex++;
+	    } else {
+		fprintf( stderr, "Error: Syntax error at line %d\n", nLine );
+		fprintf( stderr, "%s\n", zLineBuf );
+	    }
+	    continue;
+	}
+   
 	int nCnt;
 	char azBuf[9][20];
 	nCnt = sscanf( zLineBuf,
@@ -226,6 +279,15 @@ int load_ascii_keymap( FILE* hFile, keymap* psKeymap )
 	}
     }
     return( 0 );
+}
+
+void write_key( FILE* hFile, int32 key )
+{
+    if ( key > 0x20 && key < 0x7f ) {
+	fprintf( hFile, " '%c'       ", (int)key );
+    } else {
+	fprintf( hFile, " 0x%-8lx", key );
+    }
 }
 
 int write_ascii_keymap( FILE* hFile, keymap* psKeymap )
@@ -275,7 +337,9 @@ int write_ascii_keymap( FILE* hFile, keymap* psKeymap )
     for ( int i = 0 ; i < 128 ; ++i ) {
 	fprintf( hFile, "Key 0x%02x =", i );
 	for ( int j = 0 ; j < 9 ; ++j ) {
-	    if (  psKeymap->m_anMap[i][j] > 0x20 && psKeymap->m_anMap[i][j] < 0x7f ) {
+	    if ( psKeymap->m_anMap[i][j] == DEADKEY_ID ) {
+	    	fprintf( hFile, " DEADKEY   " );
+	    } else if (  psKeymap->m_anMap[i][j] > 0x20 && psKeymap->m_anMap[i][j] < 0x7f ) {
 		fprintf( hFile, " '%c'       ", (int)psKeymap->m_anMap[i][j] );
 	    } else {
 		fprintf( hFile, " 0x%-8lx", psKeymap->m_anMap[i][j] );
@@ -283,6 +347,23 @@ int write_ascii_keymap( FILE* hFile, keymap* psKeymap )
 	}
 	fprintf( hFile, "\n" );
     }
+
+    fprintf( hFile, "\n# Dead keys:\n" );
+    fprintf( hFile, "# DeadKey <qualifiers> <rawkey> <second_key> = <result>\n" );   
+    fprintf( hFile, "# qualifier is one of the qualifiers listed above (n, s, c, o, os)\n" );
+    fprintf( hFile, "# rawkey is the raw key code of the dead key\n" );
+    fprintf( hFile, "# second_key is the translated key code (unicode) of the key following the dead key\n" );
+    fprintf( hFile, "# result is the character to display when the key sequence is encountered\n" );
+    fprintf( hFile, "#\n#       qual raw   second     = result\n\n");
+
+    for ( int i = 0 ; i < psKeymap->m_nNumDeadKeys ; ++i ) {   	
+	fprintf( hFile, "DeadKey %4s 0x%02x ", qualstrings[psKeymap->m_sDeadKey[i].m_nQualifier % 9], psKeymap->m_sDeadKey[i].m_nRawKey );
+	write_key( hFile, psKeymap->m_sDeadKey[i].m_nKey );
+	fprintf( hFile, "=" );
+	write_key( hFile, psKeymap->m_sDeadKey[i].m_nValue );
+	fprintf( hFile, "\n" );
+    }
+    
     return( 0 );
 }
 
@@ -302,19 +383,32 @@ int ascii_to_bin( const char* pzDst, const char* pzSrc )
 	fclose( hSrcFile );
 	return( - 1 );
     }
-    keymap sKeymap;
-    int nError = load_ascii_keymap( hSrcFile, &sKeymap );
+
+    uint32 nDeadKeys = count_dead_keys( hSrcFile );
+    uint32 nSize = sizeof( keymap ) + sizeof( deadkey ) * nDeadKeys;
+    
+    printf( "DeadKey count: %d\n", nDeadKeys );
+
+    keymap *psKeymap = (keymap *)malloc( nSize );
+    int nError = load_ascii_keymap( hSrcFile, psKeymap );
     if ( nError >= 0 ) {
-	uint32 anHeader[2] = { KEYMAP_MAGIC, CURRENT_KEYMAP_VERSION };
+    	keymap_header	sHeader;
+    	
+    	sHeader.m_nMagic = KEYMAP_MAGIC;
+    	sHeader.m_nVersion = CURRENT_KEYMAP_VERSION;
+	sHeader.m_nSize = nSize;
 	
-	if ( fwrite( anHeader, sizeof(uint32), 2, hDstFile ) != 2 ) {
+	psKeymap->m_nNumDeadKeys = nDeadKeys;
+	
+	if ( fwrite( &sHeader, sizeof(sHeader), 1, hDstFile ) != 1 ) {
 	    printf( "Error: failed to write '%s': %s\n", pzDst, strerror( errno ) );
 	    nError = -1;
-	} else if ( fwrite( &sKeymap, sizeof(sKeymap), 1, hDstFile ) != 1 ) {
+	} else if ( fwrite( psKeymap, nSize, 1, hDstFile ) != 1 ) {
 	    printf( "Error: failed to write '%s': %s\n", pzDst, strerror( errno ) );
 	    nError = -1;
 	}
     }
+    free( psKeymap );
     fclose( hDstFile );
     fclose( hSrcFile );
     return( nError );
@@ -335,20 +429,42 @@ int bin_to_ascii( const char* pzDst, const char* pzSrc )
 	fclose( hSrcFile );
 	return( - 1 );
     }
-    keymap sKeymap;
-    uint32 anHeader[2];
+    keymap *psKeymap = NULL;
+    keymap_header	sHeader;
 
     int nError = 0;
-    if ( fread( anHeader, sizeof(uint32), 2, hSrcFile ) != 2 ) {
+    if ( fread( &sHeader, sizeof(sHeader), 1, hSrcFile ) != 1 ) {
 	    printf( "Error: failed to read '%s': %s\n", pzSrc, strerror( errno ) );
 	    nError = -1;
-    } else if ( fread( &sKeymap, sizeof(sKeymap), 1, hSrcFile ) != 1 ) {
-	printf( "Error: failed to write '%s': %s\n", pzSrc, strerror( errno ) );
-	nError = -1;
+    } else {
+    	if( sHeader.m_nVersion == 1 ) {
+    		// For compatibility:
+    		sHeader.m_nSize = sizeof( struct keymap ) - 4;
+    		fseek( hSrcFile, 8, SEEK_SET );
+	    	psKeymap = (keymap*)malloc( sHeader.m_nSize + 4 );
+	    	if ( fread( psKeymap, sHeader.m_nSize, 1, hSrcFile ) != 1 ) {
+		    printf( "Error: failed to write '%s': %s\n", pzSrc, strerror( errno ) );
+		    nError = -1;
+		}
+		psKeymap->m_nNumDeadKeys = 0;
+    	} else {
+	    	psKeymap = (keymap*)malloc( sHeader.m_nSize );
+	    	if ( fread( psKeymap, sHeader.m_nSize, 1, hSrcFile ) != 1 ) {
+		    printf( "Error: failed to write '%s': %s\n", pzSrc, strerror( errno ) );
+		    nError = -1;
+		}
+	}
     }
+      
     if ( nError >= 0 ) {
-	nError = write_ascii_keymap( hDstFile, &sKeymap );
+        if( psKeymap->m_nNumDeadKeys ) {
+		printf( "Dead keys present in keymap\n" );
+	}
+
+	nError = write_ascii_keymap( hDstFile, psKeymap );
+	
     }
+    if( psKeymap ) free( psKeymap );
     fclose( hDstFile );
     fclose( hSrcFile );
     return( nError );
@@ -384,12 +500,19 @@ int main( int argc, char** argv )
     }
     fclose( hSrcFile );
     if ( anBuffer[0] == KEYMAP_MAGIC ) {
-	if ( anBuffer[1] != CURRENT_KEYMAP_VERSION ) {
-	    fprintf( stderr, "Error: Source keymap have unknown version %ld\n", anBuffer[1] );
-	    exit( 1 );
-	}
-	if ( bin_to_ascii( argv[2], argv[1] ) != 0 ) {
-	    exit( 1 );
+    	if ( anBuffer[1] == 1 ) {
+    	    printf( "Source keymap version is 1 (Syllable 0.4.3 or older)\n" );
+	    if ( bin_to_ascii( argv[2], argv[1] ) != 0 ) {
+	        exit( 1 );
+	    }
+    	} else {
+	    if ( anBuffer[1] != CURRENT_KEYMAP_VERSION ) {
+		fprintf( stderr, "Error: Source keymap have unknown version %ld\n", anBuffer[1] );
+		exit( 1 );
+	    }
+	    if ( bin_to_ascii( argv[2], argv[1] ) != 0 ) {
+	        exit( 1 );
+	    }
 	}
     } else {
 	if ( ascii_to_bin( argv[2], argv[1] ) != 0 ) {
@@ -398,3 +521,12 @@ int main( int argc, char** argv )
     }
     return( 0 );
 }
+
+
+
+
+
+
+
+
+
