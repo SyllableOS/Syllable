@@ -5,11 +5,12 @@ modules
 	programming/autoconf-2.13
 ;	programming/automake-1.7.9
 	programming/automake-1.4-p6
-	programming/indent-2.2.9
 	programming/make-3.79.1
 	programming/m4-1.4.1
 	programming/flex-2.5.4a
 	programming/bison-1.875
+	programming/indent-2.2.9
+	programming/splint-3.1.1
 	programming/languages/binutils-2.15
 	programming/languages/gcc-3.3.4
 	file/versioning/patch-2.5.4
