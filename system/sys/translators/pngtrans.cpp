@@ -326,16 +326,8 @@ void PNGTrans::WriteCallback( png_bytep pData, int nSize )
 
 bool PNGTrans::AppendToRowBuffer( void )
 {
-//#define xxx
-#ifdef xxx
-	// Free space in rowbuffer
-	uint32	nSize = m_nRowSize - m_nRowPos;
-	// Adjust to available amount of data (so we don't get a deadlock)
-	nSize = nSize > (uint32)m_cInBuffer.Size() ? m_cInBuffer.Size() : nSize;
-
-	m_cInBuffer.Read( &m_pRowBuffer[ m_nRowPos ], nSize );
-#else
 	uint8	buffer[1024];
+
 	// Free space in rowbuffer
 	uint32	nSize = m_nRowSize - m_nRowPos;
 	// Adjust to available amount of data (so we don't get a deadlock)
@@ -358,10 +350,10 @@ bool PNGTrans::AppendToRowBuffer( void )
 		m_pRowBuffer[ m_nRowPos + j + 1 ] = buffer[ i + 1 ];
 		m_pRowBuffer[ m_nRowPos + j + 2 ] = buffer[ i + 2 ];
 	}
-#endif
 	
-	m_nRowPos += nSize;
+	m_nRowPos += (nSize/4)*3;
 	if( m_nRowPos >= m_nRowSize ) {
+//		dbprintf("New row\n");
 		m_nRowPos = 0;
 		return true;
 	} else {
@@ -505,41 +497,3 @@ TranslatorNode* get_translator_node( int nIndex )
 }
     
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
