@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -49,7 +50,7 @@ enum MenuLayout_e { ITEMS_IN_COLUMN, ITEMS_IN_ROW, ITEMS_CUSTOM_LAYOUT };
 class MenuItem : public Invoker
 {
 public:
-    MenuItem( const char* pzLabel, Message* pcMsg );
+    MenuItem( const String& cLabel, Message* pcMsg );
     MenuItem( Menu* pcMenu, Message* pcMsg );
     ~MenuItem();
 
@@ -57,7 +58,7 @@ public:
     Menu*	GetSuperMenu() const;
     Rect	GetFrame() const;
     virtual Point GetContentSize();
-    const char*	  GetLabel() const;
+    const String&  GetLabel() const;
     virtual void  Draw();
     virtual void  DrawContent();
     Point	  GetContentLocation() const;
@@ -116,7 +117,7 @@ private:
 class	Menu : public View
 {
 public:
-    Menu( Rect cFrame, const char* pzName, MenuLayout_e eLayout,
+    Menu( Rect cFrame, const String& cName, MenuLayout_e eLayout,
 	  uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT | CF_FOLLOW_TOP,
 	  uint32 nFlags  = WID_WILL_DRAW | WID_CLEAR_BACKGROUND | WID_FULL_UPDATE_ON_RESIZE );
 
@@ -142,9 +143,9 @@ public:
     virtual void	Paint( const Rect& cUpdateRect );
 
 //	From Menu:
-    std::string GetLabel() const;
+    String GetLabel() const;
     MenuLayout_e GetLayout() const;
-    bool	AddItem( const char* pzLabel, Message* pcMessage );
+    bool	AddItem( const String& cLabel, Message* pcMessage );
     bool	AddItem( MenuItem* pcItem );
     bool	AddItem( MenuItem* pcItem, int nIndex );
     bool	AddItem( Menu* pcItem );
@@ -163,7 +164,7 @@ public:
     int		GetIndexOf( Menu* pcMenu ) const;
 
     MenuItem*	FindItem( int nCode ) const;
-    MenuItem*	FindItem( const char* pzName ) const;
+    MenuItem*	FindItem( const String& cName ) const;
 
     virtual	status_t SetTargetForItems( Handler* pcTarget );
     virtual	status_t SetTargetForItems( Messenger cMessenger );
@@ -216,5 +217,3 @@ private:
 
 }
 #endif	//	__F_GUI_MENU_H__
-
-

@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -50,7 +51,7 @@ enum	{ SB_MINSIZE = 12 };
 class ScrollBar : public Control
 {
 public:
-    ScrollBar( const Rect& cFrame, const char* pzName, Message* pcMsg,
+    ScrollBar( const Rect& cFrame, const String& cName, Message* pcMsg,
 	       float vMin = 0, float vMax = FLT_MAX, int nOrientation = VERTICAL, uint32 nResizeMask = 0 );
     ~ScrollBar();
 
@@ -61,7 +62,7 @@ public:
       // From Control:
 
     virtual void PostValueChange( const Variant& cNewValue );
-    virtual void LabelChanged( const std::string& cNewLabel );
+    virtual void LabelChanged( const String& cNewLabel );
     virtual void EnableStatusChanged( bool bIsEnabled );
     virtual bool Invoked( Message* pcMessage );
     
@@ -102,4 +103,3 @@ private:
 }
 
 #endif	// __F_GUI_SLIDER_H__
-

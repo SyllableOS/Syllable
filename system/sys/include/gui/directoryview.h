@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 2000 - 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -54,7 +55,7 @@ class Bitmap;
 class FileRow : public ListViewRow
 {
 public:
-    FileRow( Bitmap* pcBitmap, const std::string& cName, const struct ::stat& sStat ) : m_cName(cName) {
+    FileRow( Bitmap* pcBitmap, const String& cName, const struct ::stat& sStat ) : m_cName(cName.c_str()) {
 	m_sStat = sStat; m_pcIconBitmap = pcBitmap;
     }
     virtual void AttachToView( View* pcView, int nColumn );
@@ -66,7 +67,7 @@ public:
 			 bool bSelected, bool bHighlighted, bool bHasFocus );
     virtual bool  HitTest( View* pcView, const Rect& cFrame, int nColumn, Point cPos );
     virtual bool  IsLessThan( const ListViewRow* pcOther, uint nColumn ) const;
-    const std::string& GetName() const { return( m_cName ); }
+    const String GetName() const { return( m_cName ); }
     struct ::stat GetFileStat() const { return( m_sStat ); }
 private:
     friend class DirectoryView;
@@ -88,22 +89,22 @@ private:
 class DirectoryView : public ListView
 {
 public:
-    DirectoryView( const Rect& cFrame, const std::string& cPath,
+    DirectoryView( const Rect& cFrame, const String& cPath,
 		   uint32 nModeFlags = F_MULTI_SELECT | F_RENDER_BORDER,
 		   uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP,
 		   uint32 nViewFlags = WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
     ~DirectoryView();
   
     void ReRead();
-    void SetPath( const std::string& cPath );
-    std::string GetPath() const;
+    void SetPath( const String& cPath );
+    String GetPath() const;
 
     FileRow*	GetFile( int nRow ) const { return( static_cast<FileRow*>(GetRow(nRow)) ); }
     void	SetDirChangeMsg( Message* pcMsg );
 //  void	SetDirChangeTarget( const Handler* pcHandler, const Looper* pcLooper = NULL );
 //  void	SetDirChangeTarget( const Messenger& cTarget );
 
-    virtual void  DirChanged( const std::string& cNewPath );
+    virtual void  DirChanged( const String& cNewPath );
     virtual void  Invoked( int nFirstRow, int nLastRow );
     virtual bool  DragSelection( const Point& cPos );
     virtual void  HandleMessage( Message* pcMessage );
@@ -144,3 +145,4 @@ private:
 } // End of namespace
 
 #endif // __F_GUI_DIRECTORYVIEW_H__
+

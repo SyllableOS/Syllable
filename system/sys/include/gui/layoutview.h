@@ -1,6 +1,6 @@
 /*  libatheos.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001  Kurt Skauen
- *  Copyright (C) 2003  The Syllable Team
+ *  Copyright (C) 2003 - 2004  The Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -69,7 +69,7 @@ class LayoutView;
 class LayoutNode
 {
 public:
-    LayoutNode( const std::string& cName, float vWeight = 1.0f, LayoutNode* pcParent = NULL, View* pcView = NULL );
+    LayoutNode( const String& cName, float vWeight = 1.0f, LayoutNode* pcParent = NULL, View* pcView = NULL );
     virtual ~LayoutNode();
 
     virtual void		    SetView( View* pcView );
@@ -101,11 +101,11 @@ public:
     void			    RemoveChild( LayoutNode* pcChild );
     void			    RemoveChild( View* pcChild );
 
-    std::string			    GetName() const;
+    String			    GetName() const;
     const std::vector<LayoutNode*>& GetChildList() const;
     LayoutNode*			    GetParent() const;
     LayoutView*			    GetLayoutView() const;
-    LayoutNode* FindNode( const std::string& cName, bool bRequrcive = true, bool bIncludeSelf = false );
+    LayoutNode* FindNode( const String& cName, bool bRequrcive = true, bool bIncludeSelf = false );
 
     void SameWidth( const char* pzName1, ... );
     void SameHeight( const char* pzName1, ... );
@@ -130,7 +130,7 @@ private:
 	LayoutNode* m_pcNext;
 	LayoutNode* m_pcPrev;
     };
-    std::string		     m_cName;
+    String		     m_cName;
     Rect		     m_cFrame;
     Rect		     m_cBorders;
     View*		     m_pcView;
@@ -160,7 +160,7 @@ private:
 class LayoutSpacer : public LayoutNode
 {
 public:
-    LayoutSpacer( const std::string& cName, float vWeight = 1.0f, LayoutNode* pcParent = NULL,
+    LayoutSpacer( const String& cName, float vWeight = 1.0f, LayoutNode* pcParent = NULL,
 		  const Point& cMinSize = Point(0.0f,0.0f), const Point& cMaxSize = Point(MAX_SIZE,MAX_SIZE) );
 
     void SetMinSize( const Point& cSize );
@@ -184,7 +184,7 @@ private:
 class VLayoutSpacer : public LayoutSpacer
 {
 public:
-    VLayoutSpacer( const std::string& cName, float vMinHeight = 0.0f, float vMaxHeight = MAX_SIZE,
+    VLayoutSpacer( const String& cName, float vMinHeight = 0.0f, float vMaxHeight = MAX_SIZE,
 		   LayoutNode* pcParent = NULL, float vWeight = 1.0f ) :
 	    LayoutSpacer( cName, vWeight, pcParent, Point( 0.0f, vMinHeight ), Point( 0.0f, vMaxHeight ) )
     {}
@@ -201,7 +201,7 @@ public:
 class HLayoutSpacer : public LayoutSpacer
 {
 public:
-    HLayoutSpacer( const std::string& cName, float vMinWidth = 0.0f, float vMaxWidth = MAX_SIZE,
+    HLayoutSpacer( const String& cName, float vMinWidth = 0.0f, float vMaxWidth = MAX_SIZE,
 		   LayoutNode* pcParent = NULL, float vWeight = 1.0f ) :
 	    LayoutSpacer( cName, vWeight, pcParent, Point( vMinWidth, 0.0f ), Point( vMaxWidth, 0.0f ) )
     {}
@@ -219,7 +219,7 @@ public:
 class HLayoutNode : public LayoutNode
 {
 public:
-    HLayoutNode( const std::string& cName, float vWeight = 1.0f, LayoutNode* pcParent = NULL, View* pcView = NULL );
+    HLayoutNode( const String& cName, float vWeight = 1.0f, LayoutNode* pcParent = NULL, View* pcView = NULL );
 //    virtual Point GetPreferredSize( bool bLargest );
     virtual void  Layout();
 private:
@@ -238,7 +238,7 @@ private:
 class VLayoutNode : public LayoutNode
 {
 public:
-    VLayoutNode( const std::string& cName, float vWeight = 1.0f, LayoutNode* pcParent = NULL, View* pcView = NULL );
+    VLayoutNode( const String& cName, float vWeight = 1.0f, LayoutNode* pcParent = NULL, View* pcView = NULL );
 //    virtual Point GetPreferredSize( bool bLargest );
     virtual void  Layout();
 
@@ -262,13 +262,13 @@ private:
 class LayoutView : public View
 {
 public:
-    LayoutView( const Rect& cFrame, const std::string& cTitle, LayoutNode* pcRoot = NULL,
+    LayoutView( const Rect& cFrame, const String& cTitle, LayoutNode* pcRoot = NULL,
 		uint32 nResizeMask = CF_FOLLOW_ALL, uint32 nFlags = WID_WILL_DRAW | WID_CLEAR_BACKGROUND );
 
     LayoutNode* GetRoot() const;
     void	SetRoot( LayoutNode* pcRoot );
 
-    LayoutNode* FindNode( const std::string& cName, bool bRecursive = true );
+    LayoutNode* FindNode( const String& cName, bool bRecursive = true );
 
     void	InvalidateLayout();
     
@@ -285,5 +285,3 @@ private:
 
 
 #endif // __F_GUI_LAYOUTVIEW_H__
-
-

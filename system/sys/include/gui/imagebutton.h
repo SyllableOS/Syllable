@@ -44,7 +44,7 @@ public:
     } Positon;
 
 public:
-    ImageButton( Rect cFrame, const char *pzName, const char *pzLabel, Message *pcMessage, Image *pcBitmap, uint32 nTextPosition = ImageButton::IB_TEXT_BOTTOM, bool bShowFrames=false,bool bShowText=false, bool bMouse=false, uint32 nResizeMask = CF_FOLLOW_LEFT|CF_FOLLOW_TOP, uint32 nFlags=WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
+    ImageButton( Rect cFrame, const String& cName, const String& cLabel, Message *pcMessage, Image *pcBitmap, uint32 nTextPosition = ImageButton::IB_TEXT_BOTTOM, bool bShowFrames=false,bool bShowText=false, bool bMouse=false, uint32 nResizeMask = CF_FOLLOW_LEFT|CF_FOLLOW_TOP, uint32 nFlags=WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
     virtual ~ImageButton( );
    	
     uint32 GetTextPosition( void );

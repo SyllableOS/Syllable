@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 1999 - 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -17,8 +18,8 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef F_GUI_TEXTVIEW_H
-#define F_GUI_TEXTVIEW_H
+#ifndef __F_GUI_TEXTVIEW_H__
+#define __F_GUI_TEXTVIEW_H__
 
 #include <gui/view.h>
 #include <gui/font.h>
@@ -60,7 +61,7 @@ public:
 public:
     typedef std::vector<String> buffer_type;
   
-    TextView( const Rect& cFrame, const char* pzTitle, const char* pzBuffer,
+    TextView( const Rect& cFrame, const String& cTitle, const char* pzBuffer,
 	      uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP,
 	      uint32 nFlags = WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
     ~TextView();
@@ -71,7 +72,7 @@ public:
     virtual void	WheelMoved( const Point& cDelta );
     virtual void	KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
 
-    virtual void LabelChanged( const std::string& cNewLabel );
+    virtual void LabelChanged( const String& cNewLabel );
     virtual void EnableStatusChanged( bool bIsEnabled );
     virtual bool Invoked( Message* pcMessage );
     virtual void Activated( bool bIsActive );
@@ -103,7 +104,7 @@ public:
     uint32 GetEventMask() const;
     void   SetEventMask( uint32 nMask );
     
-    void  GetRegion( std::string* pcBuffer );
+    void  GetRegion( String* pcBuffer );
 
     void   SetMinPreferredSize( int nWidthChars, int nHeightChars );
     IPoint GetMinPreferredSize() const;
@@ -143,7 +144,7 @@ public:
 
     virtual void	SetTabOrder( int nOrder );
     virtual Point	GetPreferredSize( bool bLargest ) const;
-    virtual bool	FilterKeyStroke( const std::string* pcString );
+    virtual bool	FilterKeyStroke( const String* pcString );
   
     virtual void	FontChanged( Font* pcNewFont );
     virtual void	FrameSized( const Point& cDelta );
@@ -164,4 +165,3 @@ private:
 } // end of namespace os
 
 #endif // F_GUI_TEXTVIEW_H
-

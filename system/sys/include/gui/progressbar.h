@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 1999 - 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -40,7 +41,7 @@ namespace os
 class ProgressBar : public View
 {
 public:
-    ProgressBar( const Rect& cFrame, const std::string& cTitle, orientation eOrientation = HORIZONTAL,
+    ProgressBar( const Rect& cFrame, const String& cTitle, orientation eOrientation = HORIZONTAL,
 	  uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP,
 	  uint32 nFlags = WID_WILL_DRAW | WID_CLEAR_BACKGROUND );
 

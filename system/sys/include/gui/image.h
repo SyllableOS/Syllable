@@ -1,5 +1,6 @@
 /*  image.h - baseclass for image objects (bitmaps, vectors etc.)
  *  Copyright (C) 2002 Henrik Isaksson
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -26,7 +27,6 @@
 #include <gui/bitmap.h>
 #include <util/message.h>
 #include <storage/streamableio.h>
-#include <string>
 
 namespace os
 {
@@ -72,13 +72,13 @@ public:
     virtual ~Image();
 
 	/** Run-time type checking */
-    virtual const string ImageType( void ) const = 0;
+    virtual const String ImageType( void ) const = 0;
 
 	/** Check if object is initialized and ready to be used */
     virtual bool	IsValid( void ) const = 0;
 
-    virtual status_t	Load( StreamableIO* pcSource, const string& cType = "" ) = 0;
-    virtual status_t	Save( StreamableIO* pcDest, const string& cType ) = 0;
+    virtual status_t	Load( StreamableIO* pcSource, const String& cType = "" ) = 0;
+    virtual status_t	Save( StreamableIO* pcDest, const String& cType ) = 0;
 
 	/** Draw an image to a View
 	 * \par		Description:
@@ -150,12 +150,12 @@ public:
     virtual ~BitmapImage();
 
 	// From Image    
-    virtual const string ImageType( void ) const;
+    virtual const String ImageType( void ) const;
 
     virtual bool	IsValid( void ) const;
 
-    virtual status_t	Load( StreamableIO* pcSource, const string& cType = "" );
-    virtual status_t	Save( StreamableIO* pcDest, const string& cType );
+    virtual status_t	Load( StreamableIO* pcSource, const String& cType = "" );
+    virtual status_t	Save( StreamableIO* pcDest, const String& cType );
 
     virtual void	Draw( const Point& cPos, View* pcView );
     virtual void	Draw( const Rect& cSource, const Rect& cDest, View* pcView );
@@ -211,4 +211,3 @@ class GlowFilter : public Message {
 }
 
 #endif // __F_GUI_IMAGE_H__
-

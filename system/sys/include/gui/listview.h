@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -111,9 +112,9 @@ public:
 
     void		     AttachToView( View* pcView, int nColumn );
     void		     SetRect( const Rect& cRect, int nColumn );
-    void		     AppendString( const std::string& cString );
-    void	 	     SetString( int nIndex, const std::string& cString );
-    const std::string& 	     GetString( int nIndex ) const;
+    void		     AppendString( const String& cString );
+    void	 	     SetString( int nIndex, const String& cString );
+    const String& 	     GetString( int nIndex ) const;
     virtual float 	     GetWidth( View* pcView, int nColumn );
     virtual float  	     GetHeight( View* pcView );
     virtual void 	     Paint( const Rect& cFrame, View* pcView, uint nColumn,
@@ -121,7 +122,7 @@ public:
     virtual bool	     IsLessThan( const ListViewRow* pcOther, uint nColumn ) const;
   
 private:
-    std::vector< std::pair<std::string,float> > m_cStrings;
+    std::vector< std::pair<String,float> > m_cStrings;
 };
 
 
@@ -151,13 +152,13 @@ public:
     typedef std::vector<ListViewRow*>::const_iterator const_iterator;
     typedef std::vector<int>			      column_map;
     
-    ListView( const Rect& cFrame, const char* pzTitle, uint32 nModeFlags = F_MULTI_SELECT | F_RENDER_BORDER,
+    ListView( const Rect& cFrame, const String& cTitle, uint32 nModeFlags = F_MULTI_SELECT | F_RENDER_BORDER,
 	      uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP,
 	      uint32 nFlags = WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
     
     ~ListView();
 
-    virtual void LabelChanged( const std::string& cNewLabel );
+    virtual void LabelChanged( const String& cNewLabel );
     virtual void EnableStatusChanged( bool bIsEnabled );
     virtual bool Invoked( Message* pcMessage );
     
@@ -223,7 +224,10 @@ public:
     virtual void		AllAttached();
     virtual bool		HasFocus( void ) const;
 
-    virtual void		SortRows( std::vector<ListViewRow*>* pcRows, int nColumn );
+	virtual void		SortRows( std::vector<ListViewRow*>* pcRows, int nColumn );
+	virtual void		MouseDown(const Point&, uint32);
+	virtual void		MouseUp( const Point & cPosition, uint32 nButton, Message * pcData );
+	virtual void		MouseMove( const Point & cNewPos, int nCode, uint32 nButtons, Message * pcData );
 
       // STL iterator interface to the rows.
     const_iterator begin() const;
@@ -250,3 +254,4 @@ private:
 
 
 #endif // __F_GUI_LISTVIEW_H__
+

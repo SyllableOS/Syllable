@@ -1,6 +1,6 @@
-
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 1999 - 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -1038,6 +1038,11 @@ status_t Message::AddString( const char *pzName, const std::string & cString )
 	return ( AddData( pzName, T_STRING, cString.c_str(), cString.size(  ) + 1, false ) );
 }
 
+status_t Message::AddString( const char *pzName, const String & cString )
+{
+	return ( AddData( pzName, T_STRING, cString.c_str(), cString.size(  ) + 1, false ) );
+}
+
 //----------------------------------------------------------------------------
 // NAME:
 // DESC:
@@ -1567,6 +1572,18 @@ status_t Message::FindString( const char *pzName, std::string * pcString, int nI
 	return ( -1 );
 }
 
+status_t Message::FindString( const char *pzName, String * pcString, int nIndex ) const
+{
+	const char *pzString;
+
+	if( FindData( pzName, T_STRING, ( const void ** )&pzString, NULL, nIndex ) == 0 )
+	{
+		*pcString = pzString;
+		return ( 0 );
+	}
+	return ( -1 );
+}
+
 //----------------------------------------------------------------------------
 // NAME:
 // DESC:
@@ -1632,7 +1649,7 @@ int Message::CountNames( void ) const
 	return ( nCount );
 }
 
-std::string Message::GetName( int nIndex ) const
+String Message::GetName( int nIndex ) const
 {
 	DataArray_s *psArray;
 
@@ -1640,10 +1657,10 @@ std::string Message::GetName( int nIndex ) const
 	{
 		if( nIndex-- == 0 )
 		{
-			return ( std::string( ARRAY_NAME( psArray ), psArray->nNameLength ) );
+			return ( String( ARRAY_NAME( psArray ), psArray->nNameLength ) );
 		}
 	}
-	return ( std::string( "" ) );
+	return ( String( "" ) );
 }
 
 
@@ -1964,4 +1981,5 @@ status_t Message::_ReadPort( port_id hPort )
 
 	return ( nError );
 }
+
 

@@ -1,6 +1,6 @@
-
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 1999 - 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -257,7 +257,7 @@ int Application::GetScreenModeInfo( int nIndex, screen_mode * psMode )
 	}
 }
 
-int Application::GetFontConfigNames( std::vector < string > *pcTable ) const
+int Application::GetFontConfigNames( std::vector < String > *pcTable ) const
 {
 	Message cReq( DR_GET_DEFAULT_FONT_NAMES );
 	Message cReply;
@@ -281,7 +281,7 @@ int Application::GetFontConfigNames( std::vector < string > *pcTable ) const
 }
 
 
-int Application::GetDefaultFont( const std::string & cName, font_properties * psProps ) const
+int Application::GetDefaultFont( const String & cName, font_properties * psProps ) const
 {
 	Message cReq( DR_GET_DEFAULT_FONT );
 	Message cReply;
@@ -316,7 +316,7 @@ int Application::GetDefaultFont( const std::string & cName, font_properties * ps
 
 }
 
-int Application::SetDefaultFont( const std::string & cName, const font_properties & sProps )
+int Application::SetDefaultFont( const String & cName, const font_properties & sProps )
 {
 	Message cReq( DR_SET_DEFAULT_FONT );
 	Message cReply;
@@ -351,7 +351,7 @@ int Application::SetDefaultFont( const std::string & cName, const font_propertie
 	}
 }
 
-int Application::AddDefaultFont( const std::string & cName, const font_properties & sProps )
+int Application::AddDefaultFont( const String & cName, const font_properties & sProps )
 {
 	Message cReq( DR_ADD_DEFAULT_FONT );
 	Message cReply;
@@ -579,7 +579,7 @@ uint32 Application::GetQualifiers()
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-port_id Application::CreateWindow( View * pcTopView, const Rect & cFrame, const std::string & cTitle, uint32 nFlags, uint32 nDesktopMask, port_id hEventPort, int *phTopView )
+port_id Application::CreateWindow( View * pcTopView, const Rect & cFrame, const String & cTitle, uint32 nFlags, uint32 nDesktopMask, port_id hEventPort, int *phTopView )
 {
 	Message cReq( AR_OPEN_WINDOW );
 
@@ -810,7 +810,7 @@ void Application::CommitColorConfig()
 	Messenger( m->m_hServerPort ).SendMessage( &cMsg );
 }
 
-void Application::GetKeyboardConfig( std::string * pcKeymapName, int *pnKeyDelay, int *pnKeyRepeat )
+void Application::GetKeyboardConfig( String * pcKeymapName, int *pnKeyDelay, int *pnKeyRepeat )
 {
 	Message cReq( DR_GET_KEYBOARD_CFG );
 	Message cReply;

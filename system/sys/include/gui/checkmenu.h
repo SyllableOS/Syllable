@@ -44,7 +44,7 @@ class CheckMenu;
 class CheckMenu : public MenuItem
 {
 	public:
-		CheckMenu( const char* pzLabel, Message* pcMsg, bool bChecked=false );
+		CheckMenu( const String& cLabel, Message* pcMsg, bool bChecked=false );
 		CheckMenu( Menu* pcMenu, Message* pcMsg, bool bChecked=false );
 		~CheckMenu();
 
@@ -68,5 +68,3 @@ class CheckMenu : public MenuItem
 
 }
 #endif
-
-

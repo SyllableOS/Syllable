@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 1999  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -71,7 +72,7 @@ private:
 class	TableView : public View
 {
 public:
-  TableView( const Rect& cFrame, const char* pzName, const char* pzTitle,
+  TableView( const Rect& cFrame, const String& cName, const String& cTitle,
 	     int nWidth, int nHeight, uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
   ~TableView();
 
@@ -119,7 +120,7 @@ private:
   float			m_nRightBorder;
   float			m_nTopBorder;
   float			m_nBottomBorder;
-  char*			m_pzTitle;
+	String		m_cTitle;
 
   int			m_nNumRows;
   int			m_nNumCols;
@@ -128,3 +129,4 @@ private:
 }
 
 #endif // __F_GUI_TABLEVIEW_H__
+

@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -47,7 +48,7 @@ public:
     enum { TICKS_ABOVE = 0x0001, TICKS_BELOW = 0x0002, TICKS_LEFT = 0x0001, TICKS_RIGHT = 0x0002 };
     enum knob_mode { KNOB_SQUARE, KNOB_TRIANGLE, KNOB_DIAMOND };
     
-    Slider( const Rect& cFrame, const std::string& cName, Message* pcMsg, uint32 nTickFlags = TICKS_BELOW,
+    Slider( const Rect& cFrame, const String& cName, Message* pcMsg, uint32 nTickFlags = TICKS_BELOW,
 	    int nTickCount = 10, knob_mode eKnobMode = KNOB_SQUARE, orientation eOrientation = HORIZONTAL, uint32 nResizeMask = 0 );
     ~Slider();
 
@@ -69,9 +70,9 @@ public:
     virtual float	GetSliderSize() const;
 
     
-    virtual void	SetProgStrFormat( const std::string& cFormat );
-    virtual std::string GetProgStrFormat() const;
-    virtual std::string GetProgressString() const;
+    virtual void	SetProgStrFormat( const String& cFormat );
+    virtual String GetProgStrFormat() const;
+    virtual String GetProgressString() const;
 
     void		SetStepCount( int nCount );
     int			GetStepCount() const;
@@ -82,13 +83,13 @@ public:
     void		SetTickFlags( uint32 nFlags );
     uint32		GetTickFlags() const;
     
-    void		SetLimitLabels( const std::string& cMinLabel, const std::string& cMaxLabel );
-    void		GetLimitLabels( std::string* pcMinLabel, std::string* pcMaxLabel );
+    void		SetLimitLabels( const String& cMinLabel, const String& cMaxLabel );
+    void		GetLimitLabels( String* pcMinLabel, String* pcMaxLabel );
     
-    virtual void	SetSteps( float vSmall, float vBig )	       { m_vSmallStep = vSmall; m_vBigStep = vBig; }
-    virtual void	GetSteps( float* pvSmall, float* pvBig ) const { *pvSmall = m_vSmallStep; *pvBig = m_vBigStep; }
+    virtual void	SetSteps( float vSmall, float vBig );
+    virtual void	GetSteps( float* pvSmall, float* pvBig ) const ;
 
-    virtual void	SetMinMax( float vMin, float vMax ) { m_vMin = vMin; m_vMax = vMax; }
+    virtual void	SetMinMax( float vMin, float vMax );
     
       // From Control:
 
@@ -113,32 +114,11 @@ public:
 private:
     void _RefreshDisplay();
 
-    std::string m_cMinLabel;
-    std::string m_cMaxLabel;
-    std::string m_cProgressFormat;
-
-    Color32_s	m_sSliderColor1;
-    Color32_s	m_sSliderColor2;
-    View*	m_pcRenderView;
-    Bitmap*	m_pcRenderBitmap;
-    float	m_vSliderSize;
-    int		m_nNumSteps;
-    int		m_nNumTicks;
-    int		m_nTickFlags;
-    knob_mode	m_eKnobMode;
-    float	m_vMin;
-    float	m_vMax;
-    float	m_vSmallStep;
-    float	m_vBigStep;
-    orientation	m_eOrientation;
-    float	__m_vValue;
-    
-    bool	m_bChanged;
-    bool	m_bTrack;
-    Point	m_cHitPos;
-    uint32	__reserved__[16];
+	class Private;
+	Private *m;
 };
 
 }
 
 #endif	// __F_GUI_SLIDER_H__
+

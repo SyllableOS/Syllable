@@ -42,12 +42,12 @@ using namespace os;
 class Looper::Private
 {
       public:
-	Private( const std::string & cName ):m_cName( cName ), m_cDefaultMutex( cName.c_str() )
+	Private( const String & cName ):m_cName( cName ), m_cDefaultMutex( cName.c_str() )
 	{
 		m_pcMutex = &m_cDefaultMutex;
 	}
 
-	std::string m_cName;
+	String m_cName;
 	TimerNode *m_pcFirstTimer;
 
 	std::map <int, Handler * >m_cHandlerMap;
@@ -104,7 +104,7 @@ Looper::TimerNode::TimerNode( Handler * pcHandler, int nID, bigtime_t nPeriode, 
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-Looper::Looper( const std::string & cName, int nPriority, int nPortSize ):Handler( cName )
+Looper::Looper( const String & cName, int nPriority, int nPortSize ):Handler( cName )
 {
 	static atomic_t nLastID = 1;
 
@@ -112,7 +112,7 @@ Looper::Looper( const std::string & cName, int nPriority, int nPortSize ):Handle
 	m->m_nID = atomic_add( &nLastID, 1 );
 	m->m_nPriority = nPriority;
 	m->m_hThread = -1;
-	m->m_hPort = create_port( ( std::string( "l:" ) + cName ).c_str(), nPortSize );
+	m->m_hPort = create_port( ( String( "l:" ) + cName ).c_str(), nPortSize );
 	m->m_pcDefaultHandler = NULL;
 	m->m_pcFirstTimer = NULL;
 	m->m_nNextEvent = INFINITE_TIMEOUT;
@@ -191,7 +191,7 @@ port_id Looper::_GetPort() const
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-void Looper::SetName( const std::string & cName )
+void Looper::SetName( const String & cName )
 {
 	m->m_cName = cName;
 	if( m->m_hThread != -1 )
@@ -208,7 +208,7 @@ void Looper::SetName( const std::string & cName )
  * \sa SetName()
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
-std::string Looper::GetName() const
+String Looper::GetName() const
 {
 	return ( m->m_cName );
 }
@@ -786,7 +786,7 @@ void Looper::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 			}
 			
 			FilterMessage( pcMsg, &pcHandler, &pcHandler->m_cFilterList );
-
+			
 			pcHandler->HandleMessage( pcMsg );
 		}
 	}
@@ -915,7 +915,7 @@ bool Looper::RemoveHandler( Handler * pcHandler )
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-Handler *Looper::FindHandler( const std::string & cName ) const
+Handler *Looper::FindHandler( const String & cName ) const
 {
 	handler_map::const_iterator i;
 
@@ -1570,30 +1570,30 @@ void Looper::_DecodeMessage( uint32 nCode, const void *pData )
 			case NWEVENT_CREATED:
 			case NWEVENT_DELETED:
 				pcMsg->AddInt64( "dir_node", psEvent->nw_nOldDir );
-				pcMsg->AddString( "name", std::string( NWE_NAME( psEvent ), psEvent->nw_nNameLen ) );
+				pcMsg->AddString( "name", String( NWE_NAME( psEvent ), psEvent->nw_nNameLen ) );
 				break;
 			case NWEVENT_MOVED:
 				pcMsg->AddInt64( "old_dir", psEvent->nw_nOldDir );
 				pcMsg->AddInt64( "new_dir", psEvent->nw_nNewDir );
-				pcMsg->AddString( "name", std::string( NWE_NAME( psEvent ), psEvent->nw_nNameLen ) );
+				pcMsg->AddString( "name", String( NWE_NAME( psEvent ), psEvent->nw_nNameLen ) );
 				if( psEvent->nw_nPathLen > 0 )
 				{
 					if( psEvent->nw_nWhichPath == NWPATH_NEW )
 					{
-						pcMsg->AddString( "new_path", std::string( NWE_PATH( psEvent ), psEvent->nw_nPathLen ) );
+						pcMsg->AddString( "new_path", String( NWE_PATH( psEvent ), psEvent->nw_nPathLen ) );
 					}
 					else
 					{
-						pcMsg->AddString( "old_path", std::string( NWE_PATH( psEvent ), psEvent->nw_nPathLen ) );
+						pcMsg->AddString( "old_path", String( NWE_PATH( psEvent ), psEvent->nw_nPathLen ) );
 					}
 				}
 				break;
 			case NWEVENT_STAT_CHANGED:
-				pcMsg->AddString( "name", std::string( NWE_NAME( psEvent ), psEvent->nw_nNameLen ) );
+				pcMsg->AddString( "name", String( NWE_NAME( psEvent ), psEvent->nw_nNameLen ) );
 				break;
 			case NWEVENT_ATTR_WRITTEN:
 			case NWEVENT_ATTR_DELETED:
-				pcMsg->AddString( "attr_name", std::string( NWE_NAME( psEvent ), psEvent->nw_nNameLen ) );
+				pcMsg->AddString( "attr_name", String( NWE_NAME( psEvent ), psEvent->nw_nNameLen ) );
 				break;
 			case NWEVENT_FS_MOUNTED:
 			case NWEVENT_FS_UNMOUNTED:
@@ -1741,7 +1741,7 @@ void Looper::_Loop()
 					continue;
 				}
 			}
-
+			
 			Handler *pcTarget;
 			
 			if( -1 != m->m_pcCurrentMessage->m_nTargetToken )
@@ -1833,3 +1833,10 @@ void Looper::__LO_reserved7__()
 void Looper::__LO_reserved8__()
 {
 }
+
+
+
+
+
+
+

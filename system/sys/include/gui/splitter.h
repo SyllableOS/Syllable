@@ -1,5 +1,6 @@
-/* 
+/*  Splitter class
  *  Copyright (C) 2002  Sebastien Keim
+ *  Copyright (C) 2003 - 2004  Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -67,7 +68,7 @@ class Splitter : public View
    
  public:
  	
-   Splitter(const Rect &cFrame, const std::string &cTitle, View* pView1, 
+   Splitter(const Rect &cFrame, const String &cTitle, View* pView1, 
 	    View* pView2, orientation eOrientation = HORIZONTAL,
 	    uint32 nResizeMask = CF_FOLLOW_LEFT|CF_FOLLOW_TOP,
    uint32 nFalgs = WID_WILL_DRAW|WID_CLEAR_BACKGROUND|WID_DRAW_ON_CHILDREN);
@@ -108,4 +109,3 @@ class Splitter : public View
 } //namespace os
 
 #endif //ndef __F_GUI_SPLITTER_H__
-

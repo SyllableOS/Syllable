@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 1999 - 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -46,18 +47,18 @@ namespace os
 class TabView : public View, public Invoker
 {
 public:
-    TabView( const Rect& cFrame, const char* pzTitle,
+    TabView( const Rect& cFrame, const String& cTitle,
 	     uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP,
 	     uint32 nFlags = WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
 
-    int			AppendTab( const char* pzTitle, View* pcView = NULL );
-    int			InsertTab( uint nIndex, const char* pzTitle, View* pcView = NULL );
+    int			AppendTab( const String& cTitle, View* pcView = NULL );
+    int			InsertTab( uint nIndex, const String& cTitle, View* pcView = NULL );
     View*		DeleteTab( uint nIndex );
     View*		GetTabView( uint nIndex ) const;
     int			GetTabCount() const;
 
-    int			SetTabTitle( uint nIndex, const std::string& cTitle );
-    const std::string&	GetTabTitle( uint nIndex ) const;
+    int			SetTabTitle( uint nIndex, const String& cTitle );
+    const String&	GetTabTitle( uint nIndex ) const;
 
     uint		GetSelection();
     void		SetSelection( uint nIndex, bool bNotify = true );
@@ -74,9 +75,9 @@ public:
 
 private:
     struct Tab {
-	Tab( const char* pzTitle, View* pcView ) : m_cTitle( pzTitle ) { m_pcView = pcView; }
+	Tab( const String& cTitle, View* pcView ) : m_cTitle( cTitle ) { m_pcView = pcView; }
 	View* m_pcView;
-	std::string m_cTitle;
+	String m_cTitle;
 	float	    m_vWidth;
     };
 
@@ -107,9 +108,6 @@ private:
     TopView*	     m_pcTopView;
 };
 
-
 }
 
-
 #endif //__F_GUI_TABVIEW_H__
-

@@ -22,7 +22,7 @@ class Settings::Private
 			delete m_pcIO;
 	}
 
-	string GetAppName()
+	String GetAppName()
 	{
 		Application *pApp = Application::GetInstance();
 
@@ -33,16 +33,16 @@ class Settings::Private
 
 			if( pzAppName && strlen( pzAppName ) > 1 )
 			{
-				return string( pzAppName );
+				return String( pzAppName );
 			}
 		}
 
 		throw "Error! :(";
 	}
 
-	void CreatePath( const std::string & cPath )
+	void CreatePath( const String & cPath )
 	{
-		std::string cDirPath;
+		String cDirPath;
 		const char *pzPath = cPath.c_str();
 		char *pzBfr = new char[strlen( pzPath ) + 1];
 		const char *pzPart;
@@ -69,7 +69,7 @@ class Settings::Private
 		}
 	}
 
-	void SetPath( const std::string & cFile = "", const std::string & cPath = "" )
+	void SetPath( const String & cFile = "", const String & cPath = "" )
 	{
 		if( cFile == "" )
 		{
@@ -82,7 +82,7 @@ class Settings::Private
 		if( cPath == "" )
 		{
 			m_cPath = getenv( "HOME" );
-			m_cPath += "/Settings/" + GetAppName() + "/";
+			m_cPath += String("/Settings/") + GetAppName() + String("/");
 		}
 		else
 		{
@@ -154,8 +154,8 @@ class Settings::Private
 
 	SeekableIO *m_pcIO;
 	bool m_bUserStream;
-	string m_cFile;
-	string m_cPath;
+	String m_cFile;
+	String m_cPath;
 };
 
 /** Default constructor
@@ -189,7 +189,7 @@ Settings::Settings()
  * \sa Load(), Save(), os::Application
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-Settings::Settings( const std::string & cFile, const std::string & cPath = "" )
+Settings::Settings( const String & cFile, const String & cPath = "" )
 {
 	m = new Private;
 	m->SetPath( cFile, cPath );
@@ -287,7 +287,7 @@ status_t Settings::Save( void ) const
  * \sa GetFile()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-std::string Settings::GetPath() const
+String Settings::GetPath() const
 {
 	return m->m_cPath;
 }
@@ -298,7 +298,7 @@ std::string Settings::GetPath() const
  * \sa GetPath()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-std::string Settings::GetFile() const
+String Settings::GetFile() const
 {
 	return m->m_cFile;
 }
@@ -310,7 +310,7 @@ std::string Settings::GetFile() const
  *        used.
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-void Settings::SetPath( const std::string & cPath = "" )
+void Settings::SetPath( const String & cPath = "" )
 {
 	m->SetPath( m->m_cFile, cPath );
 }
@@ -321,7 +321,7 @@ void Settings::SetPath( const std::string & cPath = "" )
  * \param cFile The new filename.
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-void Settings::SetFile( const std::string & cFile = "Settings" )
+void Settings::SetFile( const String & cFile = "Settings" )
 {
 	m->SetPath( cFile, m->m_cPath );
 }
@@ -370,9 +370,9 @@ Settings & Settings::operator=( const Message & cSource )
  *        parameter to specify which one you want.
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-string Settings::GetString( const char *pzName, const char *pzDefault = "", int nIndex = 0 ) const
+String Settings::GetString( const char *pzName, const char *pzDefault = "", int nIndex = 0 ) const
 {
-	string v;
+	String v;
 
 	if( FindString( pzName, &v, nIndex ) < 0 )
 	{
@@ -760,7 +760,7 @@ status_t Settings::SetVariant( const char *pzName, const Variant & cValue, int n
  *	os::Message::FindData()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-status_t Settings::SetString( const char *pzName, const std::string & cValue, int nIndex = 0 )
+status_t Settings::SetString( const char *pzName, const String & cValue, int nIndex = 0 )
 {
 	return SetData( pzName, T_STRING, cValue.c_str(), cValue.size(  ) + 1, nIndex, false );
 }
@@ -1398,3 +1398,6 @@ Message::Chunk_s * Settings::_ResizeChunk( Message::DataArray_s * psArray, Messa
 
 	return ( NULL );
 }
+
+
+

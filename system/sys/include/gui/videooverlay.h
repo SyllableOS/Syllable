@@ -67,7 +67,7 @@ struct video_overlay
 class VideoOverlayView : public View
 {
 public:
-	VideoOverlayView( const Rect& cFrame, const std::string& cTitle, uint32 nResizeMask, const IPoint& cSrcSize, color_space eFormat,
+	VideoOverlayView( const Rect& cFrame, const String& cTitle, uint32 nResizeMask, const IPoint& cSrcSize, color_space eFormat,
 					Color32_s sColorKey );
 	~VideoOverlayView();
     
@@ -97,4 +97,3 @@ private:
 }
 
 #endif // __F_GUI_VIDEOOVERLAY_H__
-

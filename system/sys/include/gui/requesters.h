@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 1999 - 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -17,8 +18,8 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef __F_REQUESTERS_H__
-#define __F_REQUESTERS_H__
+#ifndef __F_GUI_REQUESTERS_H__
+#define __F_GUI_REQUESTERS_H__
 
 #include <stdarg.h>
 
@@ -44,7 +45,7 @@ class Invoker;
 class AlertView : public View
 {
 public:
-    AlertView( const std::string& cText, va_list pButtons, Bitmap* pcBitmap = NULL );
+    AlertView( const String& cText, va_list pButtons, Bitmap* pcBitmap = NULL );
     virtual Point GetPreferredSize( bool bLargest );
     virtual void	 Paint( const Rect& cUpdateRect );
     virtual void	 AllAttached();
@@ -52,7 +53,7 @@ public:
 private:
     friend class Alert;
   
-    std::vector<std::string> m_cLines;
+    std::vector<String> m_cLines;
     std::vector<Button*> 	   m_cButtons;
     Point		   m_cButtonSize;
     float		   m_vLineHeight;
@@ -74,10 +75,10 @@ class Alert : public Window
 {
 public:
 	enum alert_icon{ ALERT_WARNING = 0, ALERT_INFO = 1, ALERT_QUESTION = 2}; 
-    Alert( const std::string& cTitle, const std::string& cText, int nFlags, ... );
-    Alert( const std::string& cTitle, const std::string& cText, Bitmap* pcBitmap, int nFlags, ... ); 
-    Alert( const std::string& cTitle, const std::string& cText, alert_icon nAlertNum, int nFlags, ...);
-    Alert( const std::string& cTitle,View*);
+    Alert( const String& cTitle, const String& cText, int nFlags, ... );
+    Alert( const String& cTitle, const String& cText, Bitmap* pcBitmap, int nFlags, ... ); 
+    Alert( const String& cTitle, const String& cText, alert_icon nAlertNum, int nFlags, ...);
+    Alert( const String& cTitle,View*);
    ~Alert();
   
    
@@ -117,7 +118,7 @@ class ProgressRequester : public Window
 public:
     enum { IDC_CANCEL = 1, IDC_SKIP };
   
-    ProgressRequester( const Rect& cFrame, const char* pzName, const char* pzTitle, bool bCanSkip );
+    ProgressRequester( const Rect& cFrame, const String& cName, const String& cTitle, bool bCanSkip );
 
     virtual void	HandleMessage( Message* pcMessage );
   
@@ -135,32 +136,3 @@ private:
 
 }
 #endif // __F_REQUESTERS_H__
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

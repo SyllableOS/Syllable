@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 1999 - 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -70,7 +71,7 @@ enum
 class	Window : public Looper
 {
 public:
-    Window( const Rect& cFrame, const std::string& cName, const std::string& cTitle,
+    Window( const Rect& cFrame, const String& cName, const String& cTitle,
 	    uint32 nFlags = 0, uint32 nDesktopMask = CURRENT_DESKTOP );
     ~Window();
 
@@ -105,8 +106,8 @@ public:
     void		Show( bool bMakeVisible = true );
     void		Hide() { Show( false ); }
     void		Start();
-    void		SetTitle( const std::string& cTitle );
-    std::string		GetTitle( void ) const;
+    void		SetTitle( const String& cTitle );
+    String		GetTitle( void ) const;
     void		SetIcon( Bitmap* pcIcon );
     Bitmap*		GetIcon( void ) const;
 
@@ -116,7 +117,7 @@ public:
     void		Flush();
     void		Sync();
 
-    View*		FindView( const std::string& cName ) const	{ return( dynamic_cast<View*>(FindHandler( cName )) );	}
+    View*		FindView( const String& cName ) const	{ return( dynamic_cast<View*>(FindHandler( cName )) );	}
     View*		FindView( const Point& cPos ) const;
     View*		GetFocusChild( void ) const			{ return( dynamic_cast<View*>(GetDefaultHandler()) );	}
     View*		SetFocusChild( View* pcChild );
@@ -192,5 +193,3 @@ private:
 } // end of namespace
 
 #endif	// __F_GUI_WINDOW_H__
-
-

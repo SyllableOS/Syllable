@@ -1,6 +1,6 @@
-
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -39,7 +39,7 @@ using namespace os;
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-Handler::Handler( const std::string & cName ):m_cName( cName )
+Handler::Handler( const String & cName ):m_cName( cName )
 {
 	static int nLastToken = 1;
 
@@ -122,7 +122,7 @@ void Handler::HandleMessage( Message * pcMessage )
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-std::string Handler::GetName() const
+String Handler::GetName() const
 {
 	return ( m_cName );
 }
@@ -186,7 +186,7 @@ Handler *Handler::GetNextHandler() const
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-void Handler::SetName( const std::string & cName )
+void Handler::SetName( const String & cName )
 {
 	m_cName = cName;
 }

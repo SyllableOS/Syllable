@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 The Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -23,7 +24,7 @@
 #include <atheos/types.h>
 #include <gui/point.h>
 #include <util/locker.h>
-#include <string>
+#include <util/string.h>
 #include <vector>
 
 namespace os
@@ -44,8 +45,6 @@ class View;
 #define DEFAULT_FONT_FIXED	 "System/Fixed"
 #define DEFAULT_FONT_WINDOW	 "System/Window"
 #define DEFAULT_FONT_TOOL_WINDOW "System/ToolWindow"
-
-
 
 
 
@@ -118,7 +117,9 @@ enum font_spacing {
 
 enum font_direction {
     FONT_LEFT_TO_RIGHT,
-    FONT_RIGHT_TO_LEFT
+    FONT_RIGHT_TO_LEFT,
+    FONT_TOP_TO_BOTTOM,
+    FONT_BOTTOM_TO_TOP
 };
 
 
@@ -187,12 +188,12 @@ enum
 struct font_properties
 {
     font_properties() : m_nFlags(FPF_SYSTEM), m_vSize(10.0f), m_vShear(0.0f), m_vRotation(0.0f) {}
-    font_properties( const std::string& cFamily, const std::string& cStyle, uint32 nFlags = FPF_SYSTEM,
+    font_properties( const String& cFamily, const String& cStyle, uint32 nFlags = FPF_SYSTEM,
 		     float vSize = 10.0f, float vShear = 0.0f, float vRotation = 0.0f )
 	    : m_cFamily(cFamily), m_cStyle(cStyle), m_nFlags(nFlags), m_vSize(vSize), m_vShear(vShear), m_vRotation(vRotation) {}
     
-    std::string	m_cFamily;
-    std::string m_cStyle;
+    String	m_cFamily;
+    String m_cStyle;
     uint32	m_nFlags;
     float	m_vSize;
     float	m_vShear;
@@ -238,13 +239,13 @@ public:
     Font();
     Font( const Font& font );
     Font( const font_properties& sProps );
-    Font( const std::string& cConfigName );
+    Font( const String& cConfigName );
 
     void	    AddRef();
     void	    Release();
   
     status_t	    SetProperties( const font_properties& sProps );
-    status_t	    SetProperties( const std::string& cConfigName );
+    status_t	    SetProperties( const String& cConfigName );
     status_t	    SetProperties( float vSize, float vShear = 0.0f, float vRotation = 0.0f );
     status_t	    SetFamilyAndStyle( const char* pzFamily, const char* pzStyle );
     void	    SetSize( float vSize );
@@ -270,15 +271,19 @@ public:
 					 float width,
 					 char *resultArray[]) const;
 
-    float	GetStringWidth( const char* pzString) const;
-    float	GetStringWidth( const char* pzString, int nLength ) const;
-    float	GetStringWidth( const std::string& pzString ) const;
+    float	GetStringWidth( const char* pzString, int nLength = -1 ) const;
+    float	GetStringWidth( const String& cString ) const;
     void	GetStringWidths( const char** apzStringArray, const int* anLengthArray,
 				 int nStringCount, float* avWidthArray ) const;
 
+    Point	GetTextExtent( const char* pzString, int nLength = -1, uint32 nFlags = 0 ) const;
+    Point	GetTextExtent( const String& cString, uint32 nFlags = 0 ) const;
+    void	GetTextExtents( const char** apzStringArray, const int* anLengthArray,
+				 int nStringCount, Point* acExtentArray, uint32 nFlags ) const;
+
     int		GetStringLength( const char* pzString, float vWidth, bool bIncludeLast = false ) const;
     int		GetStringLength( const char* pzString, int nLength, float vWidth, bool bIncludeLast = false ) const;
-    int		GetStringLength( const std::string& cString, float vWidth, bool bIncludeLast = false ) const;
+    int		GetStringLength( const String& cString, float vWidth, bool bIncludeLast = false ) const;
     void	GetStringLengths( const char** apzStringArray, const int* anLengthArray, int nStringCount,
 				  float vWidth, int anMaxLengthArray[], bool bIncludeLast = false ) const;
 
@@ -286,22 +291,21 @@ public:
 
     int		GetFontID( void ) const { return( m_hFontHandle ); }
 
-
     bool  operator==( const Font& cOther );
     bool  operator!=( const Font& cOther );
     Font& operator=( const Font& cOther );
     
       // Static members for obtaining/setting global info about the fonts.
-    static status_t	GetConfigNames( std::vector<string>* pcTable );
-    static status_t	GetDefaultFont( const std::string& cName, font_properties* psProps );
-    static status_t	SetDefaultFont( const std::string& cName, const font_properties& sProps );
-    static status_t	AddDefaultFont( const std::string& cName, const font_properties& sProps );
+    static status_t	GetConfigNames( std::vector<String>* pcTable );
+    static status_t	GetDefaultFont( const String& cName, font_properties* psProps );
+    static status_t	SetDefaultFont( const String& cName, const font_properties& sProps );
+    static status_t	AddDefaultFont( const String& cName, const font_properties& sProps );
     
     static int		GetFamilyCount();
     static status_t	GetFamilyInfo( int nIndex, char* pzFamily );
     static int		GetStyleCount( const char* pzFamily );
     static status_t	GetStyleInfo( const char* pzFamily, int nIndex, char* pzStyle, uint32* pnFlags = NULL );
-    static status_t	GetBitmapSizes( const std::string& cFamily, const std::string& cStyle, size_list_t* pcList );
+    static status_t	GetBitmapSizes( const String& cFamily, const String& cStyle, size_list_t* pcList );
 
     static bool		Rescan();
 private:
@@ -317,8 +321,8 @@ private:
     port_id	 m_hReplyPort;
 	
     int		 m_hFontHandle;
-    std::string	 m_cFamily;
-    std::string	 m_cStyle;
+    String	 m_cFamily;
+    String	 m_cStyle;
     float	 m_vSize;
     float	 m_vShear;
     float	 m_vRotation;
@@ -332,4 +336,3 @@ private:
 }
 
 #endif	// __F_GUI_FONT_H__
-

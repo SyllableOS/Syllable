@@ -1,6 +1,6 @@
-/*
- *  ImageView - View class for images
+/*  ImageView - View class for images
  *  Copyright (C) 2002 Henrik Isaksson
+ *  Copyright (C) 2003 - 3004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -57,7 +57,7 @@ class ImageView : public View
 		};
 
 	public:
-	ImageView( Rect cFrame, const char *pzName, Image *pzImage, ImageMode eMode = DEFAULT,
+	ImageView( Rect cFrame, const String& cName, Image *pzImage, ImageMode eMode = DEFAULT,
 	             uint32 nResizeMask = CF_FOLLOW_LEFT|CF_FOLLOW_TOP, uint32 nFlags=WID_WILL_DRAW|WID_CLEAR_BACKGROUND|WID_FULL_UPDATE_ON_RESIZE);
 	~ImageView();
 

@@ -1,5 +1,5 @@
 /*  TreeView
- *  Copyright (C) 2003 Syllable Team
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -20,12 +20,10 @@
 #ifndef __F_GUI_TREEVIEW_H__
 #define __F_GUI_TREEVIEW_H__
 
-#include "listview.h"
-
+#include <gui/listview.h>
 #include <gui/image.h>
 
 #include <vector>
-#include <string>
 #include <functional>
 
 namespace os
@@ -112,9 +110,9 @@ public:
 
 	// From TreeViewStringNode
 	
-    void		     	AppendString( const std::string& cString );
-    void	 	     	SetString( int nIndex, const std::string& cString );
-    const std::string&	GetString( int nIndex ) const;
+    void		     	AppendString( const String& cString );
+    void	 	     	SetString( int nIndex, const String& cString );
+    const String&	GetString( int nIndex ) const;
 
 	void				SetIcon( Image* pcIcon );
 	Image*				GetIcon() const;
@@ -134,7 +132,7 @@ private:
 class TreeView : public ListView
 {
 public:  
-	TreeView( const Rect& cFrame, const char* pzTitle, uint32 nModeFlags = F_MULTI_SELECT | F_RENDER_BORDER,
+	TreeView( const Rect& cFrame, const String& cTitle, uint32 nModeFlags = F_MULTI_SELECT | F_RENDER_BORDER,
                     uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP,
                     uint32 nFlags = WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
 
@@ -197,5 +195,6 @@ private:
 
 
 #endif // __F_GUI_TREEVIEW_H__
+
 
 

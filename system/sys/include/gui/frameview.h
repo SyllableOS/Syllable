@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 1999 - 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -40,13 +41,13 @@ namespace os
 class FrameView : public LayoutView
 {
 public:
-    FrameView( const Rect& cFrame, const std::string& cName, const std::string& cLabel,
+    FrameView( const Rect& cFrame, const String& cName, const String& cLabel,
 	       uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP,
 	       uint32 nFlags = WID_WILL_DRAW | WID_CLEAR_BACKGROUND );
 
-    void	SetLabel( const std::string& cLabel );
+    void	SetLabel( const String& cLabel );
     View*	SetLabel( View* pcLabel, bool bResizeToPreferred = true );
-    std::string	GetLabelString() const;
+    String	GetLabelString() const;
     View*	GetLabelView() const;
     
     virtual void  AttachedToWindow();
@@ -61,7 +62,7 @@ private:
     Point 	 m_cLabelSize;
     font_height  m_sFontHeight;
     View* 	 m_pcLabelView;
-    std::string  m_cLabelString;
+    String  m_cLabelString;
 
     uint32	__reserver[16];
     
@@ -72,3 +73,4 @@ private:
 
 
 #endif // __F_GUI_FRAMEVIEW_H__
+
