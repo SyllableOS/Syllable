@@ -2517,16 +2517,28 @@ void TextEdit::MoveVert( int nDelta, bool bExpBlock )
 
 bool TextEdit::HandleMouseMove( const Point & cPosition, int nCode, uint32 nButtons, Message * pcData )
 {
-	if( nCode == MOUSE_ENTERED )
-	{
-		Application::GetInstance()->PushCursor( MPTR_MONO, g_anMouseImg, POINTER_WIDTH, POINTER_HEIGHT, IPoint( POINTER_WIDTH / 2, POINTER_HEIGHT / 2 ) );
-		m_bIBeamActive = true;
+	Rect	cBounds( GetBounds() );
+
+/*	if( nCode == MOUSE_ENTERED )
+	{*/
+	if( cBounds.DoIntersect( cPosition ) ) {
+		if( !m_bIBeamActive ) {
+			Application::GetInstance()->PushCursor( MPTR_MONO, g_anMouseImg, POINTER_WIDTH, POINTER_HEIGHT, IPoint( POINTER_WIDTH / 2, POINTER_HEIGHT / 2 ) );
+			m_bIBeamActive = true;
+		}
+	} else {
+		if( m_bIBeamActive ) {
+			m_bIBeamActive = false;
+			Application::GetInstance()->PopCursor(  );
+		}
 	}
-	else if( nCode == MOUSE_EXITED )
+/*	}
+	else*/ if( nCode == MOUSE_EXITED )
 	{
 		m_bIBeamActive = false;
 		Application::GetInstance()->PopCursor(  );
 	}
+
 	if( m_bEnabled == false || m_bMouseDownSeen == false )
 	{
 		return ( false );
