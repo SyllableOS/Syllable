@@ -1,0 +1,7 @@
+authors				Kaj de Vos
+status				testing
+packages			THE-3.1
+patch-config
+configure-options	--with-rexx=regina --with-ncurses
+;make-targets		the html
+documentation		README INSTALL COPYING FAQ HISTORY TODO doc
