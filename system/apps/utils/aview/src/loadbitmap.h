@@ -1,8 +1,7 @@
-
 #ifndef LOADBITMAP_H
 #define LOADBITMAP_H
 
-#include <gui/bitmap.h>
+#include <gui/image.h>
 #include <util/message.h>
 #include <translation/translator.h>
 #include <atheos/time.h>
@@ -12,12 +11,13 @@
 #include <util/locker.h>
 #include <util/resources.h>
 #include <storage/file.h>
+#include <util/string.h>
 
 using namespace os;
 
-Bitmap *LoadBitmapFromFile(const char *name);
-Bitmap *LoadBitmapFromResource(const char *name);
-Bitmap *LoadBitmapFromStream(StreamableIO* pcStream);
+
+BitmapImage *LoadImageFromResource(const String&);
+BitmapImage *LoadImageFromFile(const String&);
 
 #endif
 

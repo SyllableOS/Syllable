@@ -2,14 +2,17 @@
 #include "messages.h"
 #include "settingswindow.h"
 
-AppWindow::AppWindow(ImageApp* App,const Rect& cFrame, std::string& sFile) : Window(cFrame, "main_window", "AView 0.4")
+AppWindow::AppWindow(ImageApp* App,const Rect& cFrame, const String& sFile) : Window(cFrame, "main_window", "AView 0.4")
 {
     pcApp = App;
     sFileRequester = sFile;
     m_pcLoadRequester=NULL;
     g_pcHScrollBar = NULL;
     g_pcVScrollBar = NULL;
+
     AddItems();
+
+	SetIcon(LoadImageFromResource("icon24x24.png")->LockBitmap());
 }
 
 void AppWindow::AddItems()
@@ -51,27 +54,27 @@ void AppWindow::SetupMenus()
     cMenuBounds = GetBounds();
     cMenuBounds.bottom = MENU_OFFSET;
 
-    Menu* pcMenuBar = new Menu(cMenuBounds, "main_menu", ITEMS_IN_ROW, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT, WID_FULL_UPDATE_ON_H_RESIZE);
+    pcMenuBar = new Menu(cMenuBounds, "main_menu", ITEMS_IN_ROW, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT, WID_FULL_UPDATE_ON_H_RESIZE);
 
     // Create the menus within the bar
-    Menu* pcAppMenu = new Menu(Rect(0,0,0,0),"Application",ITEMS_IN_COLUMN);
-    pcAppMenu->AddItem("Settings...",new Message(ID_SETTINGS));
+    Menu* pcAppMenu = new Menu(Rect(0,0,0,0),"_Application",ITEMS_IN_COLUMN);
+    pcAppMenu->AddItem(new MenuItem("Settings...",new Message(ID_SETTINGS),"CTRL+S"));
     pcAppMenu->AddItem(new MenuSeparator());
-    pcAppMenu->AddItem("About...", new Message(ID_ABOUT));
+    pcAppMenu->AddItem(new MenuItem("About...", new Message(ID_ABOUT), "CTRL+A"));
     pcAppMenu->AddItem(new MenuSeparator());
-    pcAppMenu->AddItem("Quit", new Message (ID_EXIT));
+    pcAppMenu->AddItem(new MenuItem("Quit", new Message (ID_EXIT), "CTRL+Q"));
 
-    Menu* pcFileMenu = new Menu(Rect(0,0,1,1),"File", ITEMS_IN_COLUMN);
-    MenuItem* pcItem = new MenuItem("Open...",new Message(ID_FILE_LOAD));
+    Menu* pcFileMenu = new Menu(Rect(0,0,1,1),"_File", ITEMS_IN_COLUMN);
+    MenuItem* pcItem = new MenuItem("Open...",new Message(ID_FILE_LOAD), "CTRL+O");
     pcFileMenu->AddItem(pcItem);
 
-    Menu* pcViewMenu = new Menu(Rect(0,0,0,0),"View",ITEMS_IN_COLUMN);
+    Menu* pcViewMenu = new Menu(Rect(0,0,0,0),"_View",ITEMS_IN_COLUMN);
     pcSizeFitAll = new CheckMenu("Fit to screen",NULL,true);
     pcSizeFitWindow = new CheckMenu("Fit to window",NULL,false);
     pcViewMenu->AddItem(pcSizeFitAll);
     pcViewMenu->AddItem(pcSizeFitWindow);
 
-    Menu * pcHelpMenu =  new Menu(Rect(0,0,0,0),"Help",ITEMS_IN_COLUMN);
+    Menu * pcHelpMenu =  new Menu(Rect(0,0,0,0),"_Help",ITEMS_IN_COLUMN);
     pcHelpMenu->AddItem("Email...", new Message(ID_HELP));
 
     pcMenuBar->AddItem(pcAppMenu);
@@ -89,17 +92,64 @@ void AppWindow::SetupMenus()
 void AppWindow::SetupStatusBar()
 {
     pcStatusBar = new StatusBar(Rect(0,GetBounds().Height()-24,GetBounds().Width(), GetBounds().Height()-(-1)),"status_bar",3 );
-    pcStatusBar->configurePanel(0, StatusBar::CONSTANT,330);
-    pcStatusBar->configurePanel(1, StatusBar::FILL, 120);
+    pcStatusBar->ConfigurePanel(0, StatusBar::CONSTANT,330);
+    pcStatusBar->ConfigurePanel(1, StatusBar::FILL, 120);
 
-    pcStatusBar->setText("No files open!", 0,100);
+    pcStatusBar->SetText("No files open!", 0,100);
 
     AddChild(pcStatusBar);
 }
 
-void AppWindow::DispatchMessage( Message* pcMsg, Handler* pcHandler)
+void AppWindow::DispatchMessage( Message* pcMessage, Handler* pcHandler)
 {
-    Window::DispatchMessage(pcMsg, pcHandler);
+	String cRawString;
+	int32 nQual, nRawKey;
+
+	if( pcMessage->GetCode() == os::M_KEY_DOWN )	//a key must have been pressed
+	{
+		if( pcMessage->FindString( "_raw_string", &cRawString ) != 0 || pcMessage->FindInt32( "_qualifiers", &nQual ) != 0 || pcMessage->FindInt32( "_raw_key", &nRawKey ) != 0 )
+			Window::DispatchMessage( pcMessage, pcHandler );
+		else
+		{
+			if( nQual & os::QUAL_CTRL )	//ctrl key was caught
+			{
+				pcMenuBar->MakeFocus();	//simple hack in order to get menus to work 
+			}
+
+			else if( nQual & os::QUAL_ALT )
+			{
+				if( nRawKey == 60 )	//ALT+A
+				{
+					Point cPoint = pcMenuBar->GetItemAt( 0 )->GetContentLocation();
+
+					pcMenuBar->MouseDown( cPoint, 1 );
+				}
+
+				if( nRawKey == 63 )	//ALT+F
+				{
+					Point cPoint = pcMenuBar->GetItemAt( 1 )->GetContentLocation();
+
+					pcMenuBar->MouseDown( cPoint, 1 );
+				}
+
+				if( nRawKey == 79 )	//ALT+V
+				{
+					Point cPoint = pcMenuBar->GetItemAt( 2 )->GetContentLocation();
+
+					pcMenuBar->MouseDown( cPoint, 1 );
+				}
+
+				if( nRawKey == 65 )	//ALT+H
+				{
+					Point cPoint = pcMenuBar->GetItemAt( 6 )->GetContentLocation();
+
+					pcMenuBar->MouseDown( cPoint, 1 );
+				}
+				else;
+			}
+		}
+	}
+    Window::DispatchMessage(pcMessage, pcHandler);
 }
 
 void AppWindow::HandleMessage(Message* pcMessage)
@@ -192,7 +242,6 @@ void AppWindow::HandleMessage(Message* pcMessage)
     case M_MESSAGE_PASSED:
         pcMessage->FindString("dirname",&sFileRequester);
         m_pcLoadRequester = NULL;
-        //m_pcLoadRequester->SetPath(sFileRequester);
         break;
 
     default:
@@ -223,7 +272,7 @@ void AppWindow::Load(const char *cFileName)
         g_pcHScrollBar = NULL;
     }
 
-    if(strcmp(cFileName,""))  // This is a safeguard aginst use being passed an empty string.
+    if(strcmp(cFileName,""))  // This is a safeguard aginst use being passed an empty String.
         // Easier than finding the actual bug at the moment! ;)
     {
 
@@ -242,7 +291,7 @@ void AppWindow::Load(const char *cFileName)
             char img_fname[128];           //
             strcpy(img_fname,cFileName);   // This needs fixing! :)
 
-            main_bitmap=LoadBitmapFromFile(img_fname);
+            main_bitmap=LoadImageFromFile(img_fname)->LockBitmap();
 
             if(main_bitmap==NULL)
             {         // We wern't able to load the given file
@@ -302,17 +351,17 @@ void AppWindow::Load(const char *cFileName)
 
             if(bSetTitle==true)
             {
-                string sTitle = (string)"AView 0.4- " + (string)cFileName;
+                String sTitle = (String)"AView 0.4- " + (String)cFileName;
                 char sRes[1024];
                 sprintf((char*)sRes,"%.0fx%.0f",main_bitmap->GetBounds().Width()+1, main_bitmap->GetBounds().Height()+1);
 
                 SetTitle(sTitle.c_str());
-                pcStatusBar->setText(cFileName,0,0);
-                pcStatusBar->setText(sRes,1,0);
+                pcStatusBar->SetText(cFileName,0,0);
+                pcStatusBar->SetText(sRes,1,0);
             }
             else
             {
-                SetTitle("AView 0.3 Beta");
+                SetTitle("AView 0.4 Beta");
             }
 
         }
@@ -336,7 +385,7 @@ void AppWindow::HandleKeyEvent( int nKeyCode )
             {
                 current_image--;        // We decrement the counter that points to the image currently loaded
 
-                next_image=file_list[current_image].c_str();  // We need the c style string of the first image
+                next_image=file_list[current_image].c_str();  // We need the c style String of the first image
                 Load( next_image );                           // so that we can load it!
 
                 main_bitmap_view->MakeFocus();
@@ -352,7 +401,7 @@ void AppWindow::HandleKeyEvent( int nKeyCode )
             {
                 current_image++;
 
-                next_image=file_list[current_image].c_str();  // We need the c style string of the first image
+                next_image=file_list[current_image].c_str();  // We need the c style String of the first image
                 Load( next_image );                           // so that we can load it!
 
                 main_bitmap_view->MakeFocus();
@@ -393,45 +442,11 @@ void AppWindow::BuildDirList(const char* pzFPath)
     current_image=0;
     const char* first_image;
 
-    first_image=file_list[current_image].c_str();  // We need the c style string of the first image
+    first_image=file_list[current_image].c_str();  // We need the c style String of the first image
     Load( first_image );                           // so that we can load it!
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

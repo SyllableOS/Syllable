@@ -1,4 +1,4 @@
-COPTS	= -Wall -c -o3
+COPTS	= -Wall -c
 
 OBJS	= ../objs/main.o ../objs/mainapp.o ../objs/appwindow.o ../objs/bitmapview.o ../objs/loadbitmap.o ../objs/statusbar.o ../objs/settingswindow.o
 EXE	= ../objs/aview

@@ -1,14 +1,16 @@
 #include "mainapp.h"
 #include "appwindow.h"
 #include "messages.h"
+
 ImageApp::ImageApp(char *fileName) : Application( "application/x-wnd-RGC-"APP_NAME)
 {
-    r = CRect(400,400);
     bSaveSize = false;
     settings = new Settings();
     loadSettings();
-    Rect SRect = CRect(r.Width(),r.Height());
-    AppWindow* pcAppWindow =  new AppWindow(this,SRect,sFileRequester);
+    
+    AppWindow* pcAppWindow =  new AppWindow(this,Rect(0,0,400,400),sFileRequester);
+	pcAppWindow->CenterInScreen();
+
     if (fileName!=NULL)
         pcAppWindow->Load(fileName);
 
@@ -28,7 +30,7 @@ bool ImageApp::getSize()
     return bSaveSize;
 }
 
-std::string ImageApp::getFilePath()
+String ImageApp::getFilePath()
 {
     return sFileRequester;
 }
@@ -59,7 +61,7 @@ bool ImageApp::loadSettings()
     else
     {
         if(settings->FindString("dirname",&sFileRequester)!=0)
-            sFileRequester = getenv("HOME");
+            sFileRequester = (String)getenv("HOME") + (String)"/";
 
         if(settings->FindBool("savesize",&bSaveSize)!=0)
             bSaveSize = false;
@@ -87,7 +89,7 @@ bool ImageApp::storeSettings()
 
 void ImageApp::loadDefaults()
 {
-    sFileRequester = getenv("HOME");
+    sFileRequester = (String)getenv("HOME") + String("/");
     bSaveSize = false;
 }
 

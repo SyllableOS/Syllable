@@ -14,12 +14,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
-#include <vector.h>
-
-#include <cstdio>
-#include <strings.h>
-
-
+#include <vector>
+#include <util/string.h>
 #include <util/application.h>
 
 
@@ -28,11 +24,12 @@ using namespace os;
 class AppWindow : public Window
 {
 public:
-    AppWindow(ImageApp*,const Rect& cFrame, std::string&);
+    AppWindow(ImageApp*,const Rect& cFrame, const String&);
     void AddItems();
     void DispatchMessage(Message* pcMsg, Handler* pcHandler);
     virtual void HandleMessage(Message* pcMessage);
-    virtual bool AppWindow::OkToQuit( void );
+    virtual bool OkToQuit( void );
+
     void Load(const char *cFileName);
     void HandleKeyEvent( int nKeyCode );
     void BuildDirList(const char* pzFPath);
@@ -46,13 +43,14 @@ private:
     struct stat FPath_buf;
     struct dirent *FDir_entry;
     DIR* FDir_handle;
-    std::vector <std::string> file_list;
+    std::vector <String> file_list;
     uint32 current_image;
     const char* next_image;
 
     Window* MainWindow;
     Bitmap* main_bitmap;
     StatusBar* pcStatusBar;
+   	Menu* pcMenuBar;
     BitmapView* main_bitmap_view;
     CheckMenu *pcSizeFitAll, *pcSizeFitWindow;
     Rect pcBitmapRect;
@@ -64,7 +62,7 @@ private:
     ScrollBar* g_pcHScrollBar;
     int nKeyCode;
     bool bSetTitle;
-    std::string sFileRequester;
+    String sFileRequester;
     ImageApp* pcApp;
 };
 

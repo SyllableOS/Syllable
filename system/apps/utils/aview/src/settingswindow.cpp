@@ -1,21 +1,21 @@
 #include "settingswindow.h"
+#include "loadbitmap.h"
 #include <sys/stat.h>
 
-SettingsWindow::SettingsWindow(ImageApp* pcApp,Window* pcAppWindow) : Window(CRect(310,90), "","AView Settings")
+SettingsWindow::SettingsWindow(ImageApp* pcApp,Window* pcAppWindow) : Window(Rect(0,0,310,90), "","AView Settings")
 {
     m_pcLoadRequester = NULL;
     pcApplication = pcApp;
     pcParent = pcAppWindow;
-    pcOk = new ImageButton(Rect(GetBounds().Width()/2-100, GetBounds().Height()-25,GetBounds().Width()/2-40, GetBounds().Height()), "ib_1","Ok",new Message(ID_APPLY),NULL,ImageButton::IB_TEXT_RIGHT,true,true);
-    pcOk->SetImageFromResource("ok.png");
+
+    pcOk = new Button(Rect(GetBounds().Width()/2-100, GetBounds().Height()-30,GetBounds().Width()/2-40, GetBounds().Height()-5), "ib_1","Ok",new Message(ID_APPLY));
     AddChild(pcOk);
 
-    pcCancel = new ImageButton(Rect(GetBounds().Width()/2+40, GetBounds().Height()-25,GetBounds().Width()/2+115, GetBounds().Height()), "ib2","Cancel",new Message(ID_CANCEL),NULL,ImageButton::IB_TEXT_RIGHT,true,true);
-    pcCancel->SetImageFromResource("cancel.png");
+    pcCancel = new Button(Rect(GetBounds().Width()/2+40, GetBounds().Height()-30,GetBounds().Width()/2+115, GetBounds().Height()-5), "ib2","Cancel",new Message(ID_CANCEL));
     AddChild(pcCancel);
-
-    ImageButton* pcSearch = new ImageButton(Rect(GetBounds().Width()-16,3,GetBounds().Width(), 19), "ib2","",new Message(ID_SEARCH),NULL);
-    pcSearch->SetImageFromResource("open.png");
+	
+    ImageButton* pcSearch = new ImageButton(Rect(GetBounds().Width()-20,5,GetBounds().Width(), 21), "ib2","",new Message(ID_SEARCH),NULL);
+    pcSearch->SetImage(LoadImageFromResource("open.png"));
     AddChild(pcSearch);
 
     pcOpenFieldSView = new StringView(Rect(5,5,75,25),"","Open Path:");
@@ -26,13 +26,22 @@ SettingsWindow::SettingsWindow(ImageApp* pcApp,Window* pcAppWindow) : Window(CRe
 
     pcSaveSizeCBView = new CheckBox(Rect(5,30,GetBounds().Width(),60),"","Save window size on exit",NULL);
     AddChild(pcSaveSizeCBView);
-    _Init();
+    
+	_Init();
 }
 
 void SettingsWindow::_Init()
 {
     pcOpenFieldTView->Set(pcApplication->getFilePath().c_str());
     pcSaveSizeCBView->SetValue(pcApplication->getSize());
+	
+	SetFocusChild(pcOpenFieldTView);
+	SetDefaultButton(pcOk);
+
+	pcOpenFieldTView->SetTabOrder(NEXT_TAB_ORDER);
+	pcSaveSizeCBView->SetTabOrder(NEXT_TAB_ORDER);
+	pcOk->SetTabOrder(NEXT_TAB_ORDER);
+	pcCancel->SetTabOrder(NEXT_TAB_ORDER);
 }
 
 void SettingsWindow::HandleMessage(Message* pcMessage)
@@ -53,7 +62,7 @@ void SettingsWindow::HandleMessage(Message* pcMessage)
 
     case M_LOAD_REQUESTED:
         {
-            std::string temp;
+            String temp;
             pcMessage->FindString("file/path",&temp);
             temp += "/";
             struct stat my_stat;

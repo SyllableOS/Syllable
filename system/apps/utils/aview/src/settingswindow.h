@@ -6,11 +6,11 @@
 #include <gui/stringview.h>
 #include <gui/textview.h>
 #include <gui/imagebutton.h>
+#include <gui/button.h>
 #include <gui/filerequester.h>
 #include <gui/requesters.h>
 #include "mainapp.h"
 #include "messages.h"
-#include "crect.h"
 
 using namespace os;
 
@@ -21,8 +21,8 @@ public:
     virtual void HandleMessage(Message*);
 
 private:
-    ImageButton* pcOk;
-    ImageButton* pcCancel;
+    Button* pcOk;
+    Button* pcCancel;
     ImageButton* pcSearch;
     TextView* pcOpenFieldTView;
     StringView* pcOpenFieldSView;
