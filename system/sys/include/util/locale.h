@@ -32,6 +32,8 @@ namespace os
 #endif // Fool Emacs auto-indent
 
 
+class Catalog;
+
 /** Locale class
  * \ingroup util
  * \par Description:
@@ -55,6 +57,8 @@ public:
 	StreamableIO* GetLocalizedResourceStream( const String& cName );
 	StreamableIO* GetResourceStream( const String& cName );
 
+	Catalog* GetLocalizedCatalog( const String& cName );
+
 public:
 	static const Locale& GetSystemDefaultLocale();
 private:
@@ -62,6 +66,6 @@ private:
 	Private *m;
 };
 
-} // end of namespace
+}
 
-#endif // __F_UTIL_LOCALE_H__
+#endif
