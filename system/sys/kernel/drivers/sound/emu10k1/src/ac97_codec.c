@@ -61,6 +61,7 @@
 #include <atheos/spinlock.h>
 #include <macros.h>
 
+#include "bitops.h"
 #include "ac97_codec.h"
 #include "emu_wrapper.h"
 

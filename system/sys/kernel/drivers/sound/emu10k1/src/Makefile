@@ -6,7 +6,7 @@ OBJSDIR := ../objs/
 EMU10K1_MOD := ../emu10k1
 
 CFLAGS := -Wall -Wstrict-prototypes -Wno-trigraphs -O2 -fomit-frame-pointer -fno-strict-aliasing -fno-common -pipe -mpreferred-stack-boundary=2
-CFLAGS += -kernel -fno-PIC
+CFLAGS += -kernel -fno-PIC -ffreestanding
 
 LFLAGS := -kernel
 

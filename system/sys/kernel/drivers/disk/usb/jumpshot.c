@@ -705,12 +705,12 @@ int jumpshot_transport(SCSI_cmd_s * srb, USB_disk_s *us)
 
 	if (srb->nCmd[0] == SCSI_MODE_SENSE) {
 		printk("jumpshot_transport:  MODE_SENSE_6 detected\n");
-		return jumpshot_handle_mode_sense(us, srb, ptr, TRUE);
+		return jumpshot_handle_mode_sense(us, srb, ptr, true);
 	}
 
 	if (srb->nCmd[0] == SCSI_MODE_SENSE_10) {
 		printk("jumpshot_transport:  MODE_SENSE_10 detected\n");
-		return jumpshot_handle_mode_sense(us, srb, ptr, FALSE);
+		return jumpshot_handle_mode_sense(us, srb, ptr, false);
 	}
 	
 	if (srb->nCmd[0] == SCSI_ALLOW_MEDIUM_REMOVAL) {

@@ -1,5 +1,7 @@
 CFLAGS   = -kernel -fno-PIC -c -O3
 
+C_INCLUDE_PATH=/system/include
+
 OBJS := pcnet32.o
 DRIVER := pcnet32
 

@@ -1,6 +1,8 @@
 CFLAGS   = -kernel -fno-PIC -c -O3
 # -Wall
 
+C_INCLUDE_PATH=/system/include
+
 OBJS := rtl8139.o
 
 

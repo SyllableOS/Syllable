@@ -244,7 +244,7 @@ status_t gfx_ioctl( void *pNode, void *pCookie, uint32 nCommand, void *pArgs, bo
 	case FX_GET_DMA_ADDRESS:
 		{
 			area_id hArea;
-			iaddr_t nAddress;
+			uintptr_t nAddress;
 			
 			memcpy_from_user( &hArea, pArgs, sizeof( hArea ) );
 			if( get_area_physical_address( hArea, &nAddress ) != 0 )

@@ -1,5 +1,7 @@
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
 
+C_INCLUDE_PATH=/system/include
+
 SOURCE_DIR=.
 
 OBJS := sis900.o

@@ -97,7 +97,7 @@ void usb_register_driver_force( USB_driver_s* psDriver );
 typedef struct {
 	uint16 nPortStatus;
 	uint16 nPortChange;	
-} USB_port_status __attribute__ ((packed));
+} __attribute__ ((packed)) USB_port_status;
 
 /* 
  * nPortStatus bit field
@@ -140,7 +140,7 @@ typedef struct {
 typedef struct {
 	uint16 nHubStatus;
 	uint16 nHubChange;
-}  USB_hub_status __attribute__ ((packed));
+} __attribute__ ((packed)) USB_hub_status;
 
 /*
  * Hub Status & Hub Change bit masks
@@ -168,7 +168,7 @@ typedef struct {
 	    	/* add 1 bit for hub status change; round to bytes */
 	uint8  bDeviceRemovable[(16 + 1 + 7) / 8];
 	uint8  bPortPwrCtrlMask[(16 + 1 + 7) / 8];
-}  USB_desc_hub __attribute__ ((packed));
+} __attribute__ ((packed)) USB_desc_hub;
 
 struct USB_hub_t
 {
@@ -969,13 +969,12 @@ int usb_hub_thread( void* pData )
 
 void usb_hub_init()
 {
-	
 	/* Register */
 	USB_driver_s* pcDriver = ( USB_driver_s* )kmalloc( sizeof( USB_driver_s ), MEMF_KERNEL | MEMF_NOBLOCK );
 	
 	g_psFirstHub = NULL;
 	g_hHubWait = create_semaphore( "usb_hub_wait", 0, 0 );
-	g_hHubLock = INIT_SPIN_LOCK( "usb_hub_lock" );
+	spinlock_init( &g_hHubLock, "usb_hub_lock" );
 	g_hHubAddressLock = create_semaphore( "usb_hub_address_lock", 1, 0 );
 	
 	strcpy( pcDriver->zName, "USB HUB" );
@@ -987,83 +986,3 @@ void usb_hub_init()
 	/* Start thread */
 	wakeup_thread( spawn_kernel_thread( "usb_hub_thread", usb_hub_thread, 0, 4096, NULL ), true );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

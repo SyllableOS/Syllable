@@ -1,5 +1,7 @@
 CFLAGS   = -kernel -fno-PIC -c -O3
 
+C_INCLUDE_PATH=/system/include
+
 OBJS := tulip.o
 DRIVER := tulip
 

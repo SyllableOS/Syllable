@@ -641,7 +641,7 @@ USB_packet_s* usb_alloc_packet( int nISOPackets )
 	psPacket = ( USB_packet_s* )kmalloc( sizeof( USB_packet_s ) + nISOPackets * sizeof( USB_ISO_frame_s ), MEMF_KERNEL | MEMF_NOBLOCK );
 	memset( psPacket, 0, sizeof( USB_packet_s ) + nISOPackets * sizeof( USB_ISO_frame_s ) );
 	
-	psPacket->hLock = INIT_SPIN_LOCK( "usb_packet_lock" );
+	spinlock_init( &psPacket->hLock, "usb_packet_lock" );
 	
 	return( psPacket );
 }
@@ -1833,7 +1833,7 @@ status_t bus_init()
 	}
 	g_psFirstUSBDriver = NULL;
 	
-	g_hUSBLock = INIT_SPIN_LOCK( "usb_lock" );
+	spinlock_init( &g_hUSBLock, "usb_lock" );
 	
 	kerndbg( KERN_INFO, "USB: Busmanager initialized\n" );
 	

@@ -59,7 +59,7 @@
 typedef struct {
 	uint16 nPortStatus;
 	uint16 nPortChange;	
-} USB_port_status __attribute__ ((packed));
+} __attribute__ ((packed)) USB_port_status;
 
 /* 
  * nPortStatus bit field
@@ -102,7 +102,7 @@ typedef struct {
 typedef struct {
 	uint16 nHubStatus;
 	uint16 nHubChange;
-}  USB_hub_status __attribute__ ((packed));
+} __attribute__ ((packed)) USB_hub_status;
 
 /*
  * Hub Status & Hub Change bit masks

@@ -1,5 +1,7 @@
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall -D__ENABLE_DEBUG__
 
+C_INCLUDE_PATH=/system/include
+
 SOURCE_DIR=.
 
 OBJS := dp83815.o

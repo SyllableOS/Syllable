@@ -1,5 +1,7 @@
 CFLAGS   = -D__KERNEL__ -fno-PIC -c -O3 -Wall
 
+C_INCLUDE_PATH=/system/include
+
 OBJS := 3c509.o
 
 DRIVER := 3c509

@@ -1,8 +1,8 @@
-CFLAGS   = -kernel -fno-PIC -c -O3 -Wall -D__ENABLE_DEBUG__
+CFLAGS   = -kernel -fno-PIC -c -O3 -Wall -D__ENABLE_DEBUG__ -ffreestanding
 AFLAGS   = -c
 
 
-OBJS := hcd.o ehci.o
+OBJS := hcd.o ehci.o gcc34_memcpy.o
 
 
 OBJDIR	:= objs
