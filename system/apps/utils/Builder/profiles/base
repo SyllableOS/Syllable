@@ -47,7 +47,6 @@ sys/kernel/fs/ramfs
 ; Hangs during configuring:
 ;sys/boot/grub
 libs/glibc
-libs/codeview
 libs/compat-1.0
 libs/libpthread
 libs/ncurses-5.3
