@@ -16,7 +16,6 @@ modules
 	sys/kernel/drivers/hcd/usb_uhci
 	sys/kernel/fs/ext2
 	libs/ncurses-5.4
-	sys/translators
 	sys/appserver/libsyllable
 	sys/appserver/appserver/server
 	sys/appserver/appserver/drivers/decorators/amiga
@@ -25,6 +24,7 @@ modules
 	sys/appserver/appserver/drivers/decorators/win98
 	sys/appserver/appserver/drivers/video/tdfx
 	sys/appserver/registrar
+	sys/translators
 	sys/media/mediaserver
 	sys/media/drivers/cdda
 	sys/media/drivers/ffmpeg

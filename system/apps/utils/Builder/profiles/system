@@ -155,7 +155,6 @@ modules
 	libs/libpthread
 	libs/ncurses-5.4
 	libs/zlib-1.2.1
-	sys/translators
 	sys/appserver/libsyllable
 	sys/appserver/appserver/server
 	sys/appserver/appserver/drivers/decorators/amiga
@@ -181,6 +180,7 @@ modules
 	sys/appserver/appserver/drivers/video/trident
 	sys/appserver/appserver/drivers/video/vmware
 	sys/appserver/registrar
+	sys/translators
 	sys/media/libmedia
 	sys/media/mediaserver
 	sys/media/drivers/cdda
