@@ -1,5 +1,5 @@
 Meter: meter.o
-	$(CC) -o meter.so -shared meter.o -lsyllable
+	$(CXX) -o meter.so -shared meter.o -lsyllable
 	rescopy meter.so -r images/*.png
 
 meter.o: meter.cpp meter.h
