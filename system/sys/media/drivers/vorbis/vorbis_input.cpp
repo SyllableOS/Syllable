@@ -192,6 +192,7 @@ status_t VorbisInput::ReadPacket( os::MediaPacket_s* psPacket )
 	psPacket->pBuffer[0] = ( uint8* )malloc( nRead );
 	memcpy( psPacket->pBuffer[0], nBuffer, nRead );
 	psPacket->nSize[0] = nRead;
+	psPacket->nTimeStamp = ~0;
 	psPacket->pPrivate = m_psVorbis;
 	
 	//cout<<"Read packet of stream "<<psPacket->nStream<<" Size: "<<psPacket->nSize[0]<<endl;

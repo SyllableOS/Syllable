@@ -79,7 +79,8 @@ private:
 	os::MediaPacket_s* m_psFrame[VIDEO_FRAME_NUMBER];
 	sem_id			m_hLock;
 	uint32			m_nCurrentFrame;
-	bigtime_t		m_nFirstTime;
+	uint64			m_nFirstTimeStamp;
+	bigtime_t		m_nStartTime;
 };
 
 
@@ -88,7 +89,7 @@ VideoOverlayOutput::VideoOverlayOutput()
 	/* Set default values */
 	m_pcView = NULL;
 	m_nQueuedFrames = 0;
-	m_nFirstTime = 0;
+	m_nStartTime = 0;
 	m_nCurrentFrame = 0;
 	m_hLock = create_semaphore( "overlay_lock", 1, 0 );
 }
@@ -131,22 +132,74 @@ void VideoOverlayOutput::Flush()
 {
 	/* Always play the next packet in the queue */
 	os::MediaPacket_s *psFrame;
-	if( m_nFirstTime == 0 )
-		m_nFirstTime = get_system_time();
-	/* Calculate time for the next frame */
-	bigtime_t nNextTime = m_nFirstTime + ( bigtime_t )( (float)m_nCurrentFrame  / m_sFormat.vFrameRate * 1000000 );
-
-	if( ( nNextTime < get_system_time() ) || m_bNoCache )
-	{	
 	
-		lock_semaphore( m_hLock );
+	lock_semaphore( m_hLock );
+	if( m_nQueuedFrames > 0 ) 
+	{
+		/* Get next frame */
+		psFrame = m_psFrame[0];
+		bool bDrawFrame = false;
+		uint64 nNoTimeStamp = ~0;
 		
-		if( ( m_nQueuedFrames > 0 && m_pcView->GetRaster() != NULL ) ) 
+		/* Start timer */
+		if( m_nStartTime == 0 )
 		{
-			psFrame = m_psFrame[0];
-			bigtime_t nNextNextTime = m_nFirstTime + ( bigtime_t )( (float)( m_nCurrentFrame + 1 ) / m_sFormat.vFrameRate * 1000000 );
-			if( ( nNextNextTime >= nNextTime ) || m_bNoCache ) {
+			std::cout<<"Video Start!"<<std::endl;
+			m_nFirstTimeStamp = psFrame->nTimeStamp;
+			m_nStartTime = get_system_time();
+		}
+		
+		if( psFrame->nTimeStamp != nNoTimeStamp && !m_bNoCache )
+		{
+			/* Use the timestamp */
 			
+			uint64 nPacketPosition = psFrame->nTimeStamp - m_nFirstTimeStamp;
+			uint64 nRealPosition = ( get_system_time() - m_nStartTime ) / 1000;
+			uint64 nFrameLength = 1000 / (uint64)m_sFormat.vFrameRate;
+			
+			//std::cout<<psFrame->nTimeStamp<<std::endl;
+			//std::cout<<"VIDEO Time "<<nRealPosition<<" Stamp "<<
+				//			nPacketPosition<<" "<<nFrameLength<<std::endl;
+			//std::cout<<(int64)nPacketPosition - (int64)nRealPosition<<std::endl;
+			
+			if( nPacketPosition > nRealPosition )
+			{
+				/* Frame in the future */
+				unlock_semaphore( m_hLock );
+				return;
+			}
+			
+			
+			if( nRealPosition > nPacketPosition + nFrameLength * 2 )
+			{
+				std::cout<<"Framedrop"<<std::endl;
+			} else {
+				//std::cout<<"Draw!"<<std::endl;
+				bDrawFrame = true;
+			}
+			
+		} else {
+			/* Calculate time for the next frame */
+			bigtime_t nNextTime = m_nStartTime + ( bigtime_t )( (float)m_nCurrentFrame  / m_sFormat.vFrameRate * 1000000 );
+
+			if( nNextTime < get_system_time() || m_bNoCache )
+			{
+			
+				bigtime_t nNextNextTime = m_nStartTime + ( bigtime_t )( (float)( m_nCurrentFrame + 1 ) / m_sFormat.vFrameRate * 1000000 );
+				if( ( nNextNextTime >= nNextTime ) || m_bNoCache ) {
+					bDrawFrame = true;
+				} else {
+					std::cout<<"Framedrop"<<std::endl;
+				}
+			} else {
+				/* Frame in the future */
+				unlock_semaphore( m_hLock );
+				return;
+			}
+		}
+		
+		if( bDrawFrame )
+		{
 			/* Draw frame */
 			if( m_eColorSpace == os::CS_YUV12 )
 			{
@@ -182,26 +235,22 @@ void VideoOverlayOutput::Flush()
 			}
 			
 			m_pcView->Update();
-			} else {
-				std::cout<<"Framedrop"<<std::endl;
-			}
-			
-			/* Move frames up */
-			free( psFrame->pBuffer[0] );
-			free( psFrame->pBuffer[1] );
-			free( psFrame->pBuffer[2] );
-			free( psFrame );
-			m_nQueuedFrames--;
-			for( int i = 0; i < m_nQueuedFrames; i++ )
-			{
-				m_psFrame[i] = m_psFrame[i+1];
-			}
-			m_nCurrentFrame++;
-			//cout<<"Video:"<<m_nQueuedFrames<<" left"<<endl;
-		} 
+		}
 		
-		unlock_semaphore( m_hLock );
+		/* Move frames up */
+		free( psFrame->pBuffer[0] );
+		free( psFrame );
+		
+		m_nQueuedFrames--;
+		for( int i = 0; i < m_nQueuedFrames; i++ )
+		{
+			m_psFrame[i] = m_psFrame[i+1];
+		}
+		
+		/* Frame counter */
+		m_nCurrentFrame++;
 	}
+	unlock_semaphore( m_hLock );
 }
 
 
@@ -242,6 +291,7 @@ status_t VideoOverlayOutput::Open( os::String zFileName )
 	/* Clear frame buffer */
 	Close();
 	m_nQueuedFrames = 0;
+	m_nStartTime = 0;
 	for( int i = 0; i < VIDEO_FRAME_NUMBER; i++ ) {
 		m_psFrame[i] = NULL;
 	}
@@ -292,7 +342,7 @@ void VideoOverlayOutput::Close()
 
 void VideoOverlayOutput::Clear()
 {
-	m_nFirstTime = 0;
+	m_nStartTime = 0;
 	m_nCurrentFrame = 0;
 	/* Delete all pending frames */
 	for( int i = 0; i < m_nQueuedFrames; i++ ) {
@@ -351,6 +401,7 @@ status_t VideoOverlayOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psFr
 	if( psQueueFrame == NULL )
 		return( -1 );
 	memset( psQueueFrame, 0, sizeof( os::MediaPacket_s ) );
+	psQueueFrame->nTimeStamp = psFrame->nTimeStamp;
 	if( m_eColorSpace == os::CS_YUV12 )
 	{
 		/* YV12 */

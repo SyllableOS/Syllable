@@ -226,9 +226,7 @@ bool MediaServer::OpenSoundCard( int nDevice )
 		return( false );
 
 	m_hOSS = open( m_sDsps[nDevice].zPath, O_RDWR );
-	if( m_hOSS >= 0 )
-		std::cout<<"Soundcard detected"<<std::endl;	
-	else
+	if( m_hOSS < 0 )
 		return( false );
 		
 	/* Get buffer size */
@@ -236,16 +234,21 @@ bool MediaServer::OpenSoundCard( int nDevice )
 	ioctl( m_hOSS, SNDCTL_DSP_GETOSPACE, &sInfo );
 	m_nBufferSize = sInfo.bytes;
 
-	std::cout<<"Using "<<m_nBufferSize<<" Bytes of soundcard buffer"<<std::endl;
+	//std::cout<<"Using "<<m_nBufferSize<<" Bytes of soundcard buffer"<<std::endl;
 		
 	/* Set parameters */
 	ioctl( m_hOSS, SNDCTL_DSP_RESET, NULL );
 	int nVal = 44100;
 	ioctl( m_hOSS, SNDCTL_DSP_SPEED, &nVal );
+	m_sCardFormat.nSampleRate = nVal;
+	
 	nVal = 1;
 	ioctl( m_hOSS, SNDCTL_DSP_STEREO, &nVal );
+	m_sCardFormat.nChannels = nVal + 1;
 	nVal = AFMT_S16_LE;
 	ioctl( m_hOSS, SNDCTL_DSP_SETFMT, &nVal );
+	
+	std::cout<<m_sCardFormat.nChannels<<" channels, "<<m_sCardFormat.nSampleRate<<" samplerate"<<std::endl;
 	
 	m_nMasterValueCount = 0;
 	m_vMasterValue = 0;
@@ -348,7 +351,7 @@ void MediaServer::FlushThread()
 						psNextPacket->nSize[0] -= nSize;
 						memcpy( psNextPacket->pBuffer[0], psNextPacket->pBuffer[0] + nSize, psNextPacket->nSize[0] );
 					}
-					m_sAudioStream[i].nBufferPlayed = get_system_time() + nSize * 10 * 1000 / 441 / 2 / 2 + 1000 * 1000;
+					m_sAudioStream[i].nBufferPlayed = get_system_time() + nSize * 10 * 1000 / ( (uint64)m_sCardFormat.nSampleRate / 100 ) / 2 / 2 + 1000 * 1000;
 				}
 			}
 			
@@ -533,7 +536,8 @@ void MediaServer::CreateAudioStream( Message* pcMessage )
 	strcpy( m_sAudioStream[nHandle].zName, pzName );
 	
 	m_sAudioStream[nHandle].bActive = false;
-	if( m_sAudioStream[nHandle].nChannels != 2 || m_sAudioStream[nHandle].nSampleRate != 44100 ) {
+	if( m_sAudioStream[nHandle].nChannels != m_sCardFormat.nChannels || 
+		m_sAudioStream[nHandle].nSampleRate != m_sCardFormat.nSampleRate ) {
 		m_sAudioStream[nHandle].bResample = true;
 	} else {
 		m_sAudioStream[nHandle].bResample = false;
@@ -605,30 +609,35 @@ void MediaServer::DeleteAudioStream( Message* pcMessage )
 	m_pcControls->StreamChanged( nHandle ); 
 }
 
-uint32 MediaServer::Resample( os::MediaFormat_s sFormat, uint16* pDst, uint16* pSrc, uint32 nLength )
+/* Resampler */
+uint32 MediaServer::Resample( os::MediaFormat_s sSrcFormat, os::MediaFormat_s sDstFormat, uint16* pDst, uint16* pSrc, uint32 nLength )
 {
 	uint32 nSkipBefore = 0;
 	uint32 nSkipBehind = 0;
 	bool bOneChannel = false;
+
 	/* Calculate skipping ( I just guess what is right here ) */
-	if( sFormat.nChannels == 1 ) {
+	if( sSrcFormat.nChannels == 1 && sDstFormat.nChannels == 2 ) {
+		
 		bOneChannel = true;
-	} else if( sFormat.nChannels == 3 ) {
+	} else if( sSrcFormat.nChannels == 3 && sDstFormat.nChannels == 2 ) {
 		nSkipBefore = 0;
 		nSkipBehind = 1;
-	} else if( sFormat.nChannels == 4 ) {
+	} else if( sSrcFormat.nChannels == 4 && sDstFormat.nChannels == 2 ) {
 		nSkipBefore = 2;
 		nSkipBehind = 0;
-	} else if( sFormat.nChannels == 5 ) {
+	} else if( sSrcFormat.nChannels == 5 && sDstFormat.nChannels == 2 ) {
 		nSkipBefore = 2;
 		nSkipBehind = 1;
-	} else if( sFormat.nChannels == 6 ) {
+	} else if( sSrcFormat.nChannels == 6 && sDstFormat.nChannels == 2 ) {
 		nSkipBefore = 2;
 		nSkipBehind = 2;
-	} 
+	} else if( sSrcFormat.nChannels > sDstFormat.nChannels ) {
+		nSkipBehind = sSrcFormat.nChannels - sDstFormat.nChannels;
+	}
 	
-	/* Calculate sample factors */
-	float vFactor = 44100 / (float)sFormat.nSampleRate;
+	/* Calculate samplerate factors */
+	float vFactor = (float)sDstFormat.nSampleRate / (float)sSrcFormat.nSampleRate;
 	float vSrcActiveSample = 0;
 	float vDstActiveSample = 0;
 	float vSrcFactor = 0;
@@ -638,11 +647,11 @@ uint32 MediaServer::Resample( os::MediaFormat_s sFormat, uint16* pDst, uint16* p
 	if( vFactor < 1 ) {
 		vSrcFactor = 1;
 		vDstFactor = vFactor;
-		nSamples = nLength / sFormat.nChannels / 2;
+		nSamples = nLength / sSrcFormat.nChannels / 2;
 	} else {
 		vSrcFactor = 1 / vFactor;
 		vDstFactor = 1;
-		float vSamples = (float)nLength * vFactor / (float)sFormat.nChannels / 2;
+		float vSamples = (float)nLength * vFactor / (float)sSrcFormat.nChannels / 2;
 		nSamples = (uint32)vSamples;
 	}
 	
@@ -698,13 +707,13 @@ void MediaServer::FlushAudioStream( Message* pcMessage )
 		psQueuePacket->pBuffer[0] = ( uint8* )malloc( nSize );
 		memcpy( psQueuePacket->pBuffer[0], m_sAudioStream[nHandle].pAddress, psQueuePacket->nSize[0] );
 	} else {
-		uint64 nFullSize = ( uint64 )nSize * 2 * 44100;
+		uint64 nFullSize = ( uint64 )nSize * (uint64)m_sCardFormat.nChannels * (uint64)m_sCardFormat.nSampleRate;
 		nFullSize /= ( uint64 )m_sAudioStream[nHandle].nChannels * (uint64)m_sAudioStream[nHandle].nSampleRate;
-		psQueuePacket->pBuffer[0] = ( uint8* )malloc( (uint32) nFullSize + 100 );
+		psQueuePacket->pBuffer[0] = ( uint8* )malloc( (uint32) nFullSize + 4096 );
 		os::MediaFormat_s sFormat;
 		sFormat.nSampleRate = m_sAudioStream[nHandle].nSampleRate;
 		sFormat.nChannels = m_sAudioStream[nHandle].nChannels;
-		psQueuePacket->nSize[0] = Resample( sFormat, ( uint16* )psQueuePacket->pBuffer[0], ( uint16* )m_sAudioStream[nHandle].pAddress, nSize );
+		psQueuePacket->nSize[0] = Resample( sFormat, m_sCardFormat, ( uint16* )psQueuePacket->pBuffer[0], ( uint16* )m_sAudioStream[nHandle].pAddress, nSize );
 	}
 	lock_semaphore( m_hLock );
 	
@@ -752,7 +761,7 @@ void MediaServer::GetDelay( Message* pcMessage )
 	unlock_semaphore( m_hLock );
 	nTime = nDataSize;
 	nTime *= 1000;
-	nTime /= ( 2 * 2 * 44100 );
+	nTime /= ( 2 * (uint64)m_sCardFormat.nChannels * (uint64)m_sCardFormat.nSampleRate );
 	
 	cReply.AddInt64( "delay", nTime );
 	pcMessage->SendReply( &cReply );
@@ -803,8 +812,10 @@ void MediaServer::Clear( Message* pcMessage )
 		ioctl( m_hOSS, SNDCTL_DSP_RESET, NULL );
 		int nVal = 44100;
 		ioctl( m_hOSS, SNDCTL_DSP_SPEED, &nVal );
+		m_sCardFormat.nSampleRate = nVal;
 		nVal = 1;
 		ioctl( m_hOSS, SNDCTL_DSP_STEREO, &nVal );
+		m_sCardFormat.nChannels = nVal + 1;
 		nVal = AFMT_S16_LE;
 		ioctl( m_hOSS, SNDCTL_DSP_SETFMT, &nVal );
 	}
@@ -1030,170 +1041,6 @@ int main()
 		pcServer->Start();
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

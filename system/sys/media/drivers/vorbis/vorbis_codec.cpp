@@ -154,6 +154,10 @@ void RAWCodec::DeleteVideoOutputPacket( os::MediaPacket_s* psOutput )
 status_t RAWCodec::DecodePacket( os::MediaPacket_s* psPacket, os::MediaPacket_s* psOutput )
 {
 	int i;
+	
+	psOutput->nTimeStamp = psPacket->nTimeStamp;
+	
+	
 	if( m_sFormat.nType == os::MEDIA_TYPE_AUDIO )
 	{
 		psOutput->nSize[0] = psPacket->nSize[0];
@@ -175,6 +179,10 @@ status_t RAWCodec::DecodePacket( os::MediaPacket_s* psPacket, os::MediaPacket_s*
 status_t RAWCodec::EncodePacket( os::MediaPacket_s* psPacket, os::MediaPacket_s* psOutput )
 {
 	int i;
+	
+	psOutput->nTimeStamp = psPacket->nTimeStamp;
+	
+	
 	if( m_sFormat.nType == os::MEDIA_TYPE_AUDIO )
 	{
 		psOutput->nSize[0] = psPacket->nSize[0];

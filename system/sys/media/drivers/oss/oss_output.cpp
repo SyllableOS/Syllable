@@ -68,7 +68,9 @@ public:
 	void			FlushThread();
 	
 private:
-	void			Resample( uint16* pDst, uint16* pSrc, uint32 nLength );
+
+	uint32 Resample( os::MediaFormat_s sSrcFormat, os::MediaFormat_s sDstFormat, 
+						uint16* pDst, uint16* pSrc, uint32 nLength );
 	os::String		m_zDSPPath;
 	bool			m_bRunThread;
 	thread_id		m_hThread;
@@ -78,9 +80,12 @@ private:
 	int				m_nQueuedPackets;
 	os::MediaPacket_s* m_psPacket[OSS_PACKET_NUMBER];
 	sem_id			m_hLock;
-	os::MediaFormat_s m_sFormat;
+	os::MediaFormat_s m_sSrcFormat;
+	os::MediaFormat_s m_sDstFormat;
 	bool			m_bResample;
 	os::Messenger	m_cMediaServerLink;
+	uint64			m_nFirstTimeStamp;
+	bigtime_t		m_nStartTime;
 };
 
 
@@ -96,6 +101,7 @@ OSSOutput::OSSOutput( os::String zDSPPath )
 	m_nQueuedPackets = 0;
 	m_hThread = -1;
 	m_zDSPPath = zDSPPath;
+	m_nStartTime = 0;
 }
 
 OSSOutput::~OSSOutput()
@@ -139,9 +145,12 @@ os::View* OSSOutput::GetConfigurationView()
 
 void OSSOutput::FlushThread()
 {
-	/* Always play the next packet in the queue */
 	os::MediaPacket_s *psNextPacket;
+	
 	std::cout<<"OSS flush thread running"<<std::endl;
+	
+	m_bRunThread = true;
+	
 	while( m_bRunThread )
 	{
 		lock_semaphore( m_hLock );
@@ -150,10 +159,58 @@ void OSSOutput::FlushThread()
 		{
 			/* Get first packet */
 			psNextPacket = m_psPacket[0];
+			
+			/* Start timer */
+			if( m_nStartTime == 0 )
+			{
+				std::cout<<"Start! "<<get_system_time()<<std::endl;
+				m_nFirstTimeStamp = psNextPacket->nTimeStamp;
+				m_nStartTime = get_system_time();
+			}
+			
+			
+			uint64 nNoTimeStamp = ~0;
+			if( psNextPacket->nTimeStamp != nNoTimeStamp )
+			{
+				/* Use the timestamp of the stream  */
+				int nDelay = 0;
+				ioctl( m_hOSS, SNDCTL_DSP_GETODELAY, &nDelay );
+			
+				uint64 nCardDelay = (uint64)nDelay * 1000 / (uint64)m_nFactor;
+				uint64 nSampleLength = psNextPacket->nSize[0] * 1000 / (uint64)m_nFactor;	
+				uint64 nPacketPosition = psNextPacket->nTimeStamp - m_nFirstTimeStamp;
+				uint64 nRealPosition = ( get_system_time() - m_nStartTime ) / 1000 + nCardDelay;
+			
+				#if 0
+				std::cout<<"Time "<<nRealPosition<<" Stamp "<<
+							nPacketPosition<<" "<<nSampleLength<<std::endl;
+				std::cout<<(int64)nPacketPosition - (int64)nRealPosition<<std::endl;
+				#endif
+			
+				if( nSampleLength > 50 )
+					nSampleLength = 50;
+			
+				if( nPacketPosition > nRealPosition + nSampleLength )
+				{
+					/* Wait with writing the sample */
+					//std::cout<<"Waiting with writing!"<<std::endl;
+					goto skip;
+				} else if( nRealPosition > nPacketPosition + nSampleLength )
+				{
+					/* Skip the sample */
+				
+				} else {
+					unlock_semaphore( m_hLock );
+					write( m_hOSS, psNextPacket->pBuffer[0], psNextPacket->nSize[0] );
+					lock_semaphore( m_hLock );
+				}
+			} else {
+				unlock_semaphore( m_hLock );
+				write( m_hOSS, psNextPacket->pBuffer[0], psNextPacket->nSize[0] );
+				lock_semaphore( m_hLock );
+			}
 		
-			unlock_semaphore( m_hLock );
-			write( m_hOSS, psNextPacket->pBuffer[0], psNextPacket->nSize[0] );
-			lock_semaphore( m_hLock );
+			
 			//cout<<"Packet of "<<psNextPacket->nSize<<" flushed"<<endl;
 			free( psNextPacket->pBuffer[0] );
 			free( psNextPacket );
@@ -164,21 +221,12 @@ void OSSOutput::FlushThread()
 			}
 			//cout<<"Audio :"<<m_nQueuedPackets<<" packets left"<<endl;
 		}
+		skip:
 		unlock_semaphore( m_hLock );
 		snooze( 1000 );
-	} 
-	
+	}
 }
 
-void OSSOutput::Flush()
-{
-	/* Do nothing */
-}
-
-bool OSSOutput::FileNameRequired()
-{
-	return( false );
-}
 
 int flush_thread_entry( void* pData )
 {
@@ -186,6 +234,27 @@ int flush_thread_entry( void* pData )
 	pcOutput->FlushThread();
 	return( 0 );
 }
+
+void OSSOutput::Flush()
+{
+	/* Start flush thread if necessary */
+	if( m_hThread < 0 )
+	{
+		/* Spawn thread */
+		m_bRunThread = false;
+		m_hThread = spawn_thread( "oss_flush", (void*)flush_thread_entry, 0, 0, this );
+		resume_thread( m_hThread );
+		while( !m_bRunThread )
+			snooze( 1000 );
+	}
+}
+
+bool OSSOutput::FileNameRequired()
+{
+	return( false );
+}
+
+
 
 status_t OSSOutput::Open( os::String zFileName )
 {
@@ -202,11 +271,9 @@ status_t OSSOutput::Open( os::String zFileName )
 		m_psPacket[i] = NULL;
 	}
 	
-	/* Spawn thread */
-	m_bRunThread = true;
-	m_hThread = spawn_thread( "oss_flush", (void*)flush_thread_entry, 0, 0, this );
-	resume_thread( m_hThread );
-		
+	m_nStartTime = 0;
+	
+	
 	return( 0 );
 }
 
@@ -228,22 +295,22 @@ void OSSOutput::Clear()
 {
 	/* Stop playback */
 	m_bRunThread = false;
-	bool bRestart = true;
 	if( m_hThread > -1 ) {
 		wait_for_thread( m_hThread );
-	} else {
-		bRestart = false;
-	}
+	} 
+	m_hThread = -1;
 	if( m_hOSS ) {
 		ioctl( m_hOSS, SNDCTL_DSP_RESET, NULL );
-		int nVal = m_sFormat.nSampleRate;
+		int nVal = m_sSrcFormat.nSampleRate;
 		ioctl( m_hOSS, SNDCTL_DSP_SPEED, &nVal );
-		nVal = m_sFormat.nChannels;
-		if( m_sFormat.nChannels > 2 )
-			nVal = 2;
+		m_sDstFormat.nSampleRate = nVal;
+		nVal = m_sSrcFormat.nChannels;
+		if( m_sSrcFormat.nChannels > 2 )
+			nVal = 1;
 		else
-			nVal = m_sFormat.nChannels - 1;
+			nVal = m_sSrcFormat.nChannels - 1;
 		ioctl( m_hOSS, SNDCTL_DSP_STEREO, &nVal );
+		m_sDstFormat.nChannels = nVal + 1;
 		nVal = AFMT_S16_LE;
 		ioctl( m_hOSS, SNDCTL_DSP_SETFMT, &nVal );
 	}
@@ -253,12 +320,7 @@ void OSSOutput::Clear()
 		free( m_psPacket[i] );
 	}
 	m_nQueuedPackets = 0;
-	/* Spawn thread */
-	if( bRestart ) {
-		m_bRunThread = true;
-		m_hThread = spawn_thread( "oss_flush", (void*)flush_thread_entry, 0, 0, this );
-		resume_thread( m_hThread );
-	}
+	m_nStartTime = 0;
 }
 
 uint32 OSSOutput::GetOutputFormatCount()
@@ -288,25 +350,31 @@ status_t OSSOutput::AddStream( os::String zName, os::MediaFormat_s sFormat )
 		return( -1 );
 	
 	/* Set Media format ( TODO: Check if the soundcard accepts the values ) */
-	m_sFormat = sFormat;
-	int nVal = m_sFormat.nSampleRate;
+	m_sSrcFormat = sFormat;
+	int nVal = m_sSrcFormat.nSampleRate;
 	ioctl( m_hOSS, SNDCTL_DSP_SPEED, &nVal );
+	m_sDstFormat.nSampleRate = nVal;
+	std::cout<<"SampleRate: "<<m_sSrcFormat.nSampleRate<<" -> "<<m_sDstFormat.nSampleRate<<std::endl;
 	nVal = AFMT_S16_LE;
 	ioctl( m_hOSS, SNDCTL_DSP_SETFMT, &nVal );
 	
 	if( sFormat.nChannels > 2 ) {
-		std::cout<<sFormat.nChannels<<" Channels -> 2 Channels"<<std::endl;
-		nVal = 2;
-		m_bResample = true;
-		/* Calculate size -> time factor */
-		m_nFactor = (uint64)sFormat.nSampleRate * 2 * 2;
+		//std::cout<<m_sSrcFormat.nChannels<<" Channels -> 2 Channels"<<std::endl;
+		nVal = 1;
 	} else {
-		nVal = m_sFormat.nChannels - 1;
-		m_bResample =false;
-		/* Calculate size -> time factor */
-		m_nFactor = (uint64)sFormat.nSampleRate * (uint64)sFormat.nChannels * 2;
+		nVal = m_sSrcFormat.nChannels - 1;
 	}
 	ioctl( m_hOSS, SNDCTL_DSP_STEREO, &nVal );
+	m_sDstFormat.nChannels = nVal + 1;
+	
+	/* Calculate size -> time factor */
+	m_nFactor = (uint64)m_sDstFormat.nSampleRate * (uint64)m_sDstFormat.nChannels * 2;
+	
+	if( m_sDstFormat.nChannels != m_sSrcFormat.nChannels || m_sDstFormat.nSampleRate != m_sSrcFormat.nSampleRate )
+		m_bResample = true;
+	
+	std::cout<<"Channels: "<<m_sSrcFormat.nChannels<<" -> "<<m_sDstFormat.nChannels<<std::endl;
+	
 	
 	/* Get buffer size */
 	audio_buf_info sInfo;
@@ -316,40 +384,82 @@ status_t OSSOutput::AddStream( os::String zName, os::MediaFormat_s sFormat )
 	return( 0 );
 }
 
-void OSSOutput::Resample( uint16* pDst, uint16* pSrc, uint32 nLength )
+
+uint32 OSSOutput::Resample( os::MediaFormat_s sSrcFormat, os::MediaFormat_s sDstFormat, uint16* pDst, uint16* pSrc, uint32 nLength )
 {
 	uint32 nSkipBefore = 0;
 	uint32 nSkipBehind = 0;
+	bool bOneChannel = false;
+	
 	/* Calculate skipping ( I just guess what is right here ) */
-	if( m_sFormat.nChannels == 3 ) {
+	if( sSrcFormat.nChannels == 1 && sDstFormat.nChannels == 2 ) {
+		bOneChannel = true;
+	} else if( sSrcFormat.nChannels == 3 && sDstFormat.nChannels == 2 ) {
 		nSkipBefore = 0;
 		nSkipBehind = 1;
-	} else if( m_sFormat.nChannels == 4 ) {
+	} else if( sSrcFormat.nChannels == 4 && sDstFormat.nChannels == 2 ) {
 		nSkipBefore = 2;
 		nSkipBehind = 0;
-	} else if( m_sFormat.nChannels == 5 ) {
+	} else if( sSrcFormat.nChannels == 5 && sDstFormat.nChannels == 2 ) {
 		nSkipBefore = 2;
 		nSkipBehind = 1;
-	} else if( m_sFormat.nChannels == 6 ) {
+	} else if( sSrcFormat.nChannels == 6 && sDstFormat.nChannels == 2 ) {
 		nSkipBefore = 2;
 		nSkipBehind = 2;
-	} 
-	
-	//cout<<"Resample"<<endl;
-	for( uint32 i = 0; i < nLength / m_sFormat.nChannels / 2; i++ ) 
-	{
-		/* Skip */
-		pSrc += nSkipBefore;
-		/* Channel 1 */
-		*pDst++ = *pSrc++;
-		
-		/* Channel 2 */
-		*pDst++ = *pSrc++;
-		
-		/* Skip */
-		pSrc += nSkipBehind;
+	} else if( sSrcFormat.nChannels > sDstFormat.nChannels ) {
+		nSkipBehind = sSrcFormat.nChannels - sDstFormat.nChannels;
 	}
-	//cout<<"Finished"<<endl;
+	
+	/* Calculate samplerate factors */
+	float vFactor = (float)sDstFormat.nSampleRate / (float)sSrcFormat.nSampleRate;
+	float vSrcActiveSample = 0;
+	float vDstActiveSample = 0;
+	float vSrcFactor = 0;
+	float vDstFactor = 0;
+	uint32 nSamples = 0;
+	
+	if( vFactor < 1 ) {
+		vSrcFactor = 1;
+		vDstFactor = vFactor;
+		nSamples = nLength / sSrcFormat.nChannels / 2;
+	} else {
+		vSrcFactor = 1 / vFactor;
+		vDstFactor = 1;
+		float vSamples = (float)nLength * vFactor / (float)sSrcFormat.nChannels / 2;
+		nSamples = (uint32)vSamples;
+	}
+	
+	uint32 nSrcPitch;
+	uint32 nDstPitch = 2;
+	if( bOneChannel )
+		nSrcPitch = nSkipBefore + 1 + nSkipBehind;
+	else
+		nSrcPitch = nSkipBefore + 2 + nSkipBehind;
+	uint32 nBytes = 0;
+	
+	for( uint32 i = 0; i < nSamples; i++ ) 
+	{
+		uint16* pSrcWrite = &pSrc[nSrcPitch * (int)vSrcActiveSample];
+		uint16* pDstWrite = &pDst[nDstPitch * (int)vDstActiveSample];
+		/* Skip */
+		pSrcWrite += nSkipBefore;
+		
+		if( bOneChannel )
+		{
+			*pDstWrite++ = *pSrcWrite;
+			*pDstWrite++ = *pSrcWrite;
+		} else {
+			/* Channel 1 */
+			*pDstWrite++ = *pSrcWrite++;
+		
+			/* Channel 2 */
+			*pDstWrite++ = *pSrcWrite++;
+		}
+		vSrcActiveSample += vSrcFactor;
+		vDstActiveSample += vDstFactor;
+		nBytes += 4;
+	}
+	return( nBytes );
 }
 
 status_t OSSOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket )
@@ -362,10 +472,12 @@ status_t OSSOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket )
 		return( -1 );
 	memset( psQueuePacket, 0, sizeof( os::MediaPacket_s ) );
 	
+	psQueuePacket->nTimeStamp = psPacket->nTimeStamp;
+	
 	if( m_bResample ) {
-		psQueuePacket->pBuffer[0] = ( uint8* )malloc( psPacket->nSize[0] * 2 / m_sFormat.nChannels );
-		Resample( (uint16*)psQueuePacket->pBuffer[0], (uint16*)psPacket->pBuffer[0], psPacket->nSize[0] );
-		psQueuePacket->nSize[0] = psPacket->nSize[0] * 2 / m_sFormat.nChannels;
+		psQueuePacket->pBuffer[0] = ( uint8* )malloc( psPacket->nSize[0] * m_sDstFormat.nChannels / m_sSrcFormat.nChannels
+													* m_sDstFormat.nSampleRate / m_sSrcFormat.nSampleRate + 4096 );
+		psQueuePacket->nSize[0] = Resample( m_sSrcFormat, m_sDstFormat, (uint16*)psQueuePacket->pBuffer[0], (uint16*)psPacket->pBuffer[0], psPacket->nSize[0] );
 	}
 	else {
 		psQueuePacket->pBuffer[0] = ( uint8* )malloc( psPacket->nSize[0] );
@@ -384,8 +496,8 @@ status_t OSSOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket )
 	m_psPacket[m_nQueuedPackets] = psQueuePacket;
 	m_nQueuedPackets++;
 	unlock_semaphore( m_hLock );
-	//cout<<"Packet queued at position "<<m_nQueuedPackets - 1<<"( "<<m_nQueuedPackets * 100 / OSS_PACKET_NUMBER<<
-	//"% of the buffer used )"<<endl;
+	//std::cout<<"Packet queued at position "<<m_nQueuedPackets - 1<<"( "<<m_nQueuedPackets * 100 / OSS_PACKET_NUMBER<<
+	//"% of the buffer used )"<<std::endl;
 	return( 0 );	
 }
 
@@ -402,6 +514,7 @@ uint64 OSSOutput::GetDelay()
 	}
 	/* Add the data in the soundcard buffer */
 	ioctl( m_hOSS, SNDCTL_DSP_GETODELAY, &nDelay );
+	
 	nDataSize += nDelay;
 	unlock_semaphore( m_hLock );
 	nTime = nDataSize;
@@ -433,7 +546,7 @@ public:
 		hAudioDir = opendir( pzPath );
 		if( hAudioDir == NULL )
 		{
-			std::cout<<"UOSS: nable to open"<<pzPath<<std::endl;
+			std::cout<<"OSS: Unable to open"<<pzPath<<std::endl;
 			return( -1 );
 		}
 

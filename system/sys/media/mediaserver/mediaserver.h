@@ -143,7 +143,8 @@ private:
 	void Clear( Message* pcMessage );
 	void Start( Message* pcMessage );
 	
-	uint32 Resample( os::MediaFormat_s sFormat, uint16* pDst, uint16* pSrc, uint32 nLength );
+	
+	uint32 Resample( os::MediaFormat_s sSrcFormat, os::MediaFormat_s sDstFormat, uint16* pDst, uint16* pSrc, uint32 nLength );
 
 	void GetDspCount( Message* pcMessage );
 	void GetDspInfo( Message* pcMessage );
@@ -162,6 +163,7 @@ private:
 	int				m_nDefaultDsp;
 	int				m_hOSS;
 	int				m_nBufferSize;
+	MediaFormat_s	m_sCardFormat;
 	sem_id			m_hLock;
 	sem_id			m_hClearLock;
 	thread_id		m_hThread;
