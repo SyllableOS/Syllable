@@ -1,3 +1,7 @@
+* Jun 27 2003, Kristian Van Der Vliet *
+
+Read-only ext2/3 driver from Kurre Ståhlberg <kurre@cc.hut.fi>
+
 * Jun 26 2003, Kristian Van Der Vliet *
 
 ISO9660 filesystem updates from Ville Kallioniemi <festivus@mbnet.fi>.  Better
@@ -261,6 +265,7 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
 
 
 
