@@ -36,6 +36,29 @@ namespace os
 }
 #endif
 
+class TabView;
+
+class TabViewTab {
+	public:
+	TabViewTab( const String& cTitle, View* pcView = NULL );
+	virtual ~TabViewTab();
+	
+	void SetView( View* pcView );
+	View* GetView() const;
+	virtual void SetLabel( const String& cLabel );
+	const String& GetLabel() const;
+	virtual void SetOwner( TabView* pcTabView );
+	TabView* GetOwner() const;
+	
+	virtual Point GetSize() const;
+	
+	virtual void Paint( View* pcView, const Rect& cBounds, int nIndex );
+
+	private:
+	class Private;
+	Private* m;
+};
+
 /** 
  * \ingroup gui
  * \par Description:
@@ -51,8 +74,12 @@ public:
 	     uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP,
 	     uint32 nFlags = WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
 
+	~TabView();
+
     int			AppendTab( const String& cTitle, View* pcView = NULL );
     int			InsertTab( uint nIndex, const String& cTitle, View* pcView = NULL );
+    int			AppendTab( TabViewTab* pcTab, View* pcView = NULL );
+    int			InsertTab( uint nIndex, TabViewTab* pcTab, View* pcView = NULL );
     View*		DeleteTab( uint nIndex );
     View*		GetTabView( uint nIndex ) const;
     int			GetTabCount() const;
@@ -74,38 +101,24 @@ public:
     virtual void	AllAttached();
 
 private:
-    struct Tab {
-	Tab( const String& cTitle, View* pcView ) : m_cTitle( cTitle ) { m_pcView = pcView; }
-	View* m_pcView;
-	String m_cTitle;
-	float	    m_vWidth;
-    };
+	class TopView : public View
+	{
+		public:
+		TopView( const Rect& cFrame, TabView* pcParent ) :
+			View( cFrame, "top_view", CF_FOLLOW_NONE, WID_WILL_DRAW ) {
+			m_pcParent = pcParent;
+		}
+		
+		virtual void Paint( const Rect& cUpdateRect );
+		private:
+		TabView* m_pcParent;
+	};
 
-    class TopView : public View
-    {
-    public:
-	TopView( const Rect& cFrame, TabView* pcParent ) :
-		View( cFrame, "top_view", CF_FOLLOW_NONE, WID_WILL_DRAW ) {
-		    m_pcParent = pcParent;
-	}
-	
-	virtual void Paint( const Rect& cUpdateRect );
-    private:
-	TabView* m_pcParent;
-    };
-
-    friend class TabView::TopView;
-  
-    uint	     m_nSelectedTab;
-    float	     m_vScrollOffset;
-    Point	     m_cHitPos;
-    bool	     m_bMouseClicked;
-    float	     m_vTabHeight;
-    float	     m_vGlyphHeight;
-    font_height      m_sFontHeight;
-    float	     m_vTotalWidth;
-    std::vector<Tab> m_cTabList;
-    TopView*	     m_pcTopView;
+	friend class TabView::TopView;
+    
+    class Private;
+    
+    Private *m;
 };
 
 }
