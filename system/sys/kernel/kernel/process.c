@@ -348,6 +348,8 @@ int sys_free_tld( int nHandle )
     return( free_tld( nHandle ) );
 }
 
+/* NOTE: set_tld() is implemented as a inline function in <atheos/tld.h> */
+
 /** \fn void set_tld( int nHandle, int nValue )
  * \ingroup SysCalls
  * \brief Assign a value to a TLD slot.
@@ -366,19 +368,11 @@ int sys_free_tld( int nHandle )
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-void set_tld( int nHandle, void* pValue )
-{
-    Process_s* psProc = CURRENT_PROC;
+#ifndef __KERNEL__ // Workaround for a bug in doxygen. The function will bever be seen by the compiler
+void set_tld( int nHandle, int nValue ){}
+#endif
 
-    LOCK( psProc->pr_hSem );
-	psProc->pr_anTLDBitmap[nHandle] = (uint32)pValue;
-    UNLOCK( psProc->pr_hSem );
-}
-
-void sys_set_tld( int nHandle, void* pValue )
-{
-    return( set_tld( nHandle, pValue ) );
-}
+/* NOTE: get_tld() is implemented as a inline function in <atheos/tld.h> */
 
 /** \fn int get_tld( int nHandle )
  * \ingroup SysCalls
@@ -392,16 +386,9 @@ void sys_set_tld( int nHandle, void* pValue )
  * \sa set_tld(), alloc_tld(), free_tld()
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
-
-void* get_tld( int nHandle )
-{
-	return( (void*)CURRENT_PROC->pr_anTLDBitmap[nHandle] );
-}
-
-void* sys_get_tld( int nHandle )
-{
-	return( get_tld( nHandle ) );
-}
+#ifndef __KERNEL__ // Workaround for a bug in doxygen. The function will bever be seen by the compiler
+int get_tld( int nHandle ){}
+#endif
 
 /*****************************************************************************
  * NAME:
