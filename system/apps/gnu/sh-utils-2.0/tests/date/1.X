@@ -1,1 +1,0 @@
-% Sun Sunday Jan January

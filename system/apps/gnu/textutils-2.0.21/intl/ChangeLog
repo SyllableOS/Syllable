@@ -1,8 +1,0 @@
-2002-02-17  Jim Meyering  <meyering@lucent.com>
-
-	* dcigettext.c (_nl_find_msg): Rename local `index' to `idx' to avoid
-	shadowing the global.
-
-2002-01-31  GNU  <bug-gnu-gettext@gnu.org>
-
-	* Version 0.11 released.

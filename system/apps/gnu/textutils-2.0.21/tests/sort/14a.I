@@ -1,3 +1,0 @@
-mal
-mal-
-mala
