@@ -1,0 +1,48 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:557: checking for a BSD compatible install
+configure:610: checking whether build environment is sane
+configure:667: checking whether make sets ${MAKE}
+configure:713: checking for working aclocal
+configure:726: checking for working autoconf
+configure:739: checking for working automake
+configure:752: checking for working autoheader
+configure:765: checking for working makeinfo
+configure:781: checking for gcc
+configure:858: checking whether the C compiler (gcc  ) works
+configure:872: gcc -o conftest    conftest.c  1>&5
+configure:892: checking whether the C compiler (gcc  ) is a cross-compiler
+configure:897: checking whether we are using GNU C
+configure:921: checking whether gcc accepts -g
+configure:951: checking for ranlib
+configure:981: checking whether large file support needs explicit enabling
+configure:1012: checking how to run the C preprocessor
+configure:1074: checking for minix/config.h
+configure:1122: checking for AIX
+configure:1146: checking for strerror in -lcposix
+configure:1194: checking for ANSI C header files
+configure:1301: checking for string.h
+configure:1301: checking for stdlib.h
+configure:1301: checking for limits.h
+configure:1301: checking for unistd.h
+configure:1301: checking for memory.h
+configure:1301: checking for sys/types.h
+configure:1338: checking for working const
+configure:1413: checking for size_t
+configure:1447: checking which regex library to use
+configure:1590: checking for working alloca.h
+configure:1623: checking for alloca
+configure:1820: checking for unistd.h
+configure:1859: checking for getpagesize
+configure:1912: checking for working mmap
+configure:2083: checking for vprintf
+configure:2191: checking for memchr
+configure:2191: checking for memcmp
+configure:2191: checking for memmove
+configure:2191: checking for strerror
+configure:2248: checking for isatty
+configure:2248: checking for bcopy
+configure:2248: checking for bzero
+configure:2248: checking for isascii
+configure:2248: checking for memcpy
