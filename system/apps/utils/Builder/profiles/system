@@ -170,7 +170,7 @@ modules
 	libs/libdl
 	libs/libpthread
 	libs/glibc2-2.1.2
-	libs/zlib-1.2.1
+	libs/zlib-1.2.2
 	libs/ncurses-5.4
 	sys/appserver/libsyllable
 	sys/appserver/appserver/server
