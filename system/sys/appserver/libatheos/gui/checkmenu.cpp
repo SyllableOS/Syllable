@@ -27,7 +27,7 @@ Bitmap* CheckMenu::s_pcCheckBitmap = NULL;
 #define CHECK_W 10
 #define CHECK_H 10
 
-uint8 nCheckData[]={
+static uint8 nCheckData[]={
 	0xff, 0xff, 0xff, 0xff,
 	0xff, 0xff, 0xff, 0xff,
 	0xff, 0xff, 0xff, 0xff,
@@ -349,7 +349,11 @@ void CheckMenu::SetChecked(bool bChecked)
 
 bool CheckMenu::Invoked(Message *pcMessage)
 {
-	m_IsChecked=!m_IsChecked;
+	if( m_IsChecked )
+		m_IsChecked = false;
+	else
+		m_IsChecked = true;
+
 	pcMessage->AddBool("status",m_IsChecked);
 	return true;
 }
