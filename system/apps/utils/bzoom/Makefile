@@ -10,9 +10,9 @@ $(EXE) : $(OBJS)
 	$(LL) $(OBJS) -latheos -lstdc++ -lm -o $@
 
 dist: $(EXE)
-	mkdir $(DIST_DIR)/Applications/BZoom
-	cp -f $(EXE) $(DIST_DIR)//Applications/BZoom/$(EXE)
-	strip --strip-all $(DIST_DIR)//Applications/BZoom/$(EXE)
+	mkdir $(DIST_DIR)/atheos/Applications/BZoom
+	cp -f $(EXE) $(DIST_DIR)/atheos/Applications/BZoom/$(EXE)
+	strip --strip-all $(DIST_DIR)/atheos/Applications/BZoom/$(EXE)
 
 upgrade: $(EXE)
 	rfs $(EXE) /Applications/BZoom/$(EXE)
