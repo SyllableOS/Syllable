@@ -186,19 +186,78 @@ static void write_png( const char *file_name, SrvBitmap* pcBitmap )
        * layout, however, so choose what fits your needs best).  You need to
        * use the first method if you aren't handling interlacing yourself.
        */
-    uint16* pRaster = (uint16*) pcBitmap->m_pRaster;
-    png_byte* pRowBuffer = new png_byte[pcBitmap->m_nWidth * 3];
-//      png_byte* pRowPtr = pRowBuffer;
-    for ( int y = 0 ; y < pcBitmap->m_nHeight ; ++y ) {
-	for ( int x = 0 ; x < pcBitmap->m_nWidth ; ++x ) {
-	    Color32_s sColor = RGB16_TO_COL( *pRaster++ );
-	    pRowBuffer[x*3+0] = sColor.red;
-	    pRowBuffer[x*3+1] = sColor.green;
-	    pRowBuffer[x*3+2] = sColor.blue;
+	uint8*		pRaster   = (uint8 *) pcBitmap->m_pRaster;
+	uint8*		pRaster8  = (uint8 *) pRaster;
+	uint16*	pRaster16 = (uint16*) pRaster;
+	uint32*	pRaster32 = (uint32*) pRaster;
+	os::color_space eColorSpace = pcBitmap->m_eColorSpc;
+	switch (eColorSpace)
+	{
+	case CS_RGB32 :
+	case CS_RGBA32 :
+		eColorSpace = CS_RGB32;
+		break;
+	case CS_RGB24 :
+		break;
+	default :
+	case CS_RGB16 :
+		break;
+	case CS_RGB15 :
+	case CS_RGBA15 :
+		eColorSpace = CS_RGB15;
+		break;
 	}
-	png_write_rows( png_ptr, &pRowBuffer, 1);
-	pRaster = (uint16*)(((uint8*)pRaster) + (pcBitmap->m_nBytesPerLine - pcBitmap->m_nWidth * 2));
-    }
+	png_byte*	pRowBuffer = new png_byte[pcBitmap->m_nWidth * 3];
+	for ( int y = 0 ; y < pcBitmap->m_nHeight ; ++y )
+	{
+		int x;
+		png_byte*	pRowPtr = pRowBuffer;
+		switch (eColorSpace)
+		{
+		case CS_RGB32 :
+			for ( x = 0 ; x < pcBitmap->m_nWidth ; ++x )
+			{
+				Color32_s sColor = RGB32_TO_COL( *pRaster32++ );
+				*pRowPtr++ = sColor.red;
+				*pRowPtr++ = sColor.green;
+				*pRowPtr++ = sColor.blue;
+			}
+			break;
+		case CS_RGB24 :
+			for ( x = 0 ; x < pcBitmap->m_nWidth ; ++x )
+			{
+				*pRowPtr++ = *pRaster8++;
+				*pRowPtr++ = *pRaster8++;
+				*pRowPtr++ = *pRaster8++;
+			}
+			break;
+		case CS_RGB16 :
+			for ( x = 0 ; x < pcBitmap->m_nWidth ; ++x )
+			{
+				Color32_s sColor = RGB16_TO_COL( *pRaster16++ );
+				*pRowPtr++ = sColor.red;
+				*pRowPtr++ = sColor.green;
+				*pRowPtr++ = sColor.blue;
+			}
+			break;
+		case CS_RGB15 :
+			for ( x = 0 ; x < pcBitmap->m_nWidth ; ++x )
+			{
+				Color32_s sColor = RGB15_TO_COL( *pRaster16++ );
+				*pRowPtr++ = sColor.red;
+				*pRowPtr++ = sColor.green;
+				*pRowPtr++ = sColor.blue;
+			}
+			break;
+		default :
+			break;
+		}
+		png_write_rows( png_ptr, &pRowBuffer, 1);
+		pRaster  += pcBitmap->m_nBytesPerLine;
+		pRaster8  = (uint8 *) pRaster;
+		pRaster16 = (uint16*) pRaster;
+		pRaster32 = (uint32*) pRaster;
+	}
 
 #if 0      
     png_uint_32 k, height, width;
@@ -265,3 +324,4 @@ void ScreenShot()
 #endif
 }
 
+ 
