@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.3.15
+# Version 0.3.16
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -228,9 +228,7 @@ end
 
 def installPackage target
 	unless
-		unless thirdParty?
-			action "make install"
-		else
+		if target =~ /.*\.tgz$/ and exists? target  # A distribution package
 			if exists? dir = installPath(target) and not
 				begin
 					logHeader "Uninstalling " + shortName(target)
@@ -239,34 +237,57 @@ def installPackage target
 			then
 				false
 			else
-				if not action "make" +
-					(	(arg = recipe(target)["install-prefix"]) ? " " + arg + dir :
-						@systemBuild ? " prefix=" + dir :
-						""
-					) +
-					" install"
-#					" install-strip"
-				then
-					false
-				elsif files = recipe(target)["documentation"] and not
-					begin
-						logHeader "Installing documentation"
-						action "cp -a #{toString files} " + dir
-					end
-				then
-					false
-				elsif exists? filesPath = File.join(@packagesPath, fullName(target), "distro") and not
-					begin
-						logHeader "Installing extra files"
-						action "cp -a #{File.join filesPath, "*"} " + dir
-					end
-				then
-					false
+				action "tar -C /usr -xpzf #{target}" and
+				begin
+					logHeader "Registering " + target
+					action "pkgmanager -a " + dir
+				end
+			end
+		else
+			begin
+				Dir.chdir target
+	
+				unless thirdParty?
+					action "make install"
 				else
-					@systemBuild or
-					begin
-						logHeader "Registering " + target
-						action "pkgmanager -a " + dir
+					if exists? dir = installPath(target) and not
+						begin
+							logHeader "Uninstalling " + shortName(target)
+							uninstallPackage target  # Double failure logging!
+						end
+					then
+						false
+					else
+						if not action "make" +
+							(	(arg = recipe(target)["install-prefix"]) ? " " + arg + dir :
+								@systemBuild ? " prefix=" + dir :
+								""
+							) +
+							" install"
+#							" install-strip"
+						then
+							false
+						elsif files = recipe(target)["documentation"] and not
+							begin
+								logHeader "Installing documentation"
+								action "cp -a #{toString files} " + dir
+							end
+						then
+							false
+						elsif exists? filesPath = File.join(@packagesPath, fullName(target), "distro") and not
+							begin
+								logHeader "Installing extra files"
+								action "cp -a #{File.join filesPath, "*"} " + dir
+							end
+						then
+							false
+						else
+							@systemBuild or
+							begin
+								logHeader "Registering " + target
+								action "pkgmanager -a " + dir
+							end
+						end
 					end
 				end
 			end
@@ -280,7 +301,9 @@ end
 
 def uninstallPackage target
 	unless
-		unless thirdParty?
+		unless target =~ /.*\.tgz$/ and exists? target or  # A distribution package
+			thirdParty?
+		then
 			action "make uninstall"
 		else
 			dir = installPath target
@@ -483,12 +506,11 @@ end
 def install target
 	logHeader "Installing " + target
 
-	# Install all directories
+	# Install all directories or distribution packages
 
 	for package in profile target
 		logEntry package
 
-		Dir.chdir package
 		installPackage package
 		Dir.chdir @workDir
 	end
@@ -792,11 +814,11 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.3.15",
+	puts "Syllable Build System 0.3.16",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
-	puts "Usage: build [<command>] [<package> | <profile> | <log>]",
+	puts "Usage: build [<command>] [<package> | <profile> | <distribution> | <log>]",
 		"<command>:",
 		"  -h, --help,   Show this help information",
 		"    -help, ?, -?",
@@ -818,6 +840,7 @@ when "?", "-?", "-h", "-help", "--help"
 		"<profile>:      Profile name",
 		"  last          Last used profile",
 		"  failures      Profile for last failures",
+		"<distribution>: Distribution package ((un)install command only)",
 		"<log>:          Log name",
 		"  summary       Summarized log",
 		"  failures      Log of failed packages"
