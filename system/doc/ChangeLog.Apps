@@ -1,3 +1,8 @@
+* February 15 2004, Henrik Isaksson *
+
+	- aedit
+		o Updated due to more libsyllable changes.
+
 * February 14 2004, Henrik Isaksson *
 
 	- aedit
@@ -210,4 +215,3 @@ Network Preferences
 		* Added NetworkPreferences from Daryl Dudey(daryl.dudey@ntlworld.com).
 		* Added SlbMgr(AtheMgr renamed).
 		* Patches by Vanders for AEdit.
-

@@ -1,3 +1,41 @@
+* February 15 2004, Henrik Isaksson *
+
+ Applied Vander's "Use SeekableIO Everywhere" patch. Details below:
+
+ImageButton
+	Removed the following methods
+		o SetImageFromFile(const char *pzFile);
+		o SetImageFromResource (const char *pzFile);
+		o SetImageFromMemory (const void *pData, int nSize);
+	which have been replaced with a single method
+		o SetImage( StreamableIO *pcData );
+	
+	Renamed
+		o SetImageFromImage (Image *pcImage);
+	to
+		o SetImage (Image *pcImage);
+
+	Added a copy operator which copies the entire ImageButton.
+
+Settings
+	Added the following methods
+		o Path GetPath() const;
+		o File GetFile() const;
+		o SetPath( Path* pcPath );
+		o SetFile( SeekableIO* pcFile );
+	Removed
+		o Settings(const std::string &cFile, const std::string &cPath="");
+		o void SetPath( const String& cPath = "" );
+		o void SetFile( const String& cFile = "Settings" );
+		o String GetPath() const;
+		o String GetFile() const;
+
+OptionParser
+	Replaced
+		o void PrintHelpText (FILE *hStream, int nWidth=0) const;
+	With
+		o void PrintHelpText( StreamableIO* pcStream, int nWidth = 0 ) const;
+
 * February 14 2004, Henrik Isaksson *
 
  * requester.cpp
@@ -514,5 +552,4 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
-
 

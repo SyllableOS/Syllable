@@ -1,3 +1,9 @@
+* Feb 15 2004, Henrik Isaksson *
+
+ translators:
+	- Updated for GCC3 and API changes.
+	- Translators moved to /system/drivers/translators.
+
 * Feb 8 2004, Henrik Isaksson *
 
  libcodeview:
@@ -471,9 +477,4 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
-
-
-
-
-
 
