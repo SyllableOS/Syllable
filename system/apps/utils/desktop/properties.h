@@ -7,6 +7,7 @@
 #include "loadbitmap.h"
 #include "bitmapscale.h"
 #include "coloredit.h"
+#include "settings.h"
 using namespace os;
 
 typedef vector <ListViewStringRow*> t_ListRows;
@@ -90,13 +91,14 @@ class PropWin : public Window
         bool OkToQuit();
         void LoadPrefs();
         void SavePrefs(bool bShow, bool bLogin, string zPic, int32 nNewImageSize);
-
+		DeskSettings* pcSettings;
         bool bShwVr;
         const char* dImage;
         string zImage;
 };
 
 #endif
+
 
 
 

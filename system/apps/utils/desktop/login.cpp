@@ -1,5 +1,5 @@
 #include "login.h"
-
+#include "debug.h"
 
 /*
 ** name:       WriteLoginConfigFile
@@ -37,6 +37,7 @@ void CheckLoginConfig()
     if(filestr == NULL)
     {
         filestr.close();
+        Debug("CheckLoginConfig did not find /boot/atheos/sys/config/login.cfg,\n   so it is attempting to create a new one");
         WriteLoginConfigFile();
     }
 
@@ -344,6 +345,7 @@ void LoginWindow::Authorize( const char* pzLoginName )
         pzLoginName = NULL;
 }
 }
+
 
 
 

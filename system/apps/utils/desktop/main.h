@@ -10,13 +10,14 @@ class DeskApp : public Application
 {
 	public:
 		DeskApp();
-		
+		~DeskApp();
 	private:
 		Window* pcLogin;
 		
 };
 
 #endif
+
 
 
 

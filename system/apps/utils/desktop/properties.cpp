@@ -1,9 +1,9 @@
 #include "properties.h"
+#include "debug.h"
 char pzCgFile[1024];
 char junk2[1024];
 Color32_s c_bgColor, c_fgColor;
 int32 nImageSize = 0;
-
 
 MiscView::MiscView(const Rect & cFrame) : View(cFrame, "MiscView")
 {
@@ -122,7 +122,7 @@ ColorView::ColorView(const Rect & cFrame) : View(cFrame, "ColorView",CF_FOLLOW_A
     AddChild(pcColorEdit);
 
 
-
+    Debug("ColorView::ColorView : Just added the coloredit");
     pcColorDrop->SetReadOnly();
     pcColorDrop->AppendItem("Icon Background Color");
     pcColorDrop->AppendItem("Icon Text Color");
@@ -164,8 +164,7 @@ PropTab::PropTab(const Rect & cFrame) : TabView(cFrame, "MiscView",CF_FOLLOW_ALL
 
 PropWin::PropWin() : Window(CRect(400,395), "Desktop Properties", "Desktop Properties", WND_NOT_RESIZABLE)
 {
-    sprintf(pzCgFile,"%s/config/desktop/config/desktop.cfg", getenv("HOME"));
-
+	pcSettings = new DeskSettings();
     LoadPrefs();
 
     Rect cframe = GetBounds();
@@ -321,10 +320,14 @@ void PropWin::SaveLoginConfig(bool b_Login, const char* zName)
 
     fprintf(fin,"<Login Name Option>\n");
     if (b_Login == true)
-    {fprintf(fin,"true\n\n");}
-    else
-    {fprintf(fin,"false\n\n");}
+    {fprintf(fin,"true\n\n");
+    
+    }else{
+    	fprintf(fin,"false\n\n");
+    	 }
+    
     fprintf(fin, "<Login Name>\n");
+    
     fprintf(fin,zName);
     fclose(fin);
 
@@ -370,44 +373,28 @@ void PropWin::SavePrefs(bool bShow, bool bLogin, string zPic, int32 nNewImageSiz
     pcPrefs->AddBool   ( "ShowVer",    bShow   );
     pcPrefs->AddInt32  ( "SizeImage",  nNewImageSize);
 
+	pcSettings->SaveSettings(pcPrefs);   
 
-    File *pcConfig = new File("/tmp/desktop.cfg", O_WRONLY | O_CREAT );
-    if( pcConfig )
-    {
-        uint32 nSize = pcPrefs->GetFlattenedSize( );
-        void *pBuffer = malloc( nSize );
-        pcPrefs->Flatten( (uint8 *)pBuffer, nSize );
-
-        pcConfig->Write( pBuffer, nSize );
-
-        delete pcConfig;
-        free( pBuffer );
-    }
-
-    system("mv -f /tmp/desktop.cfg ~/config/desktop/config/");
+   
 
 }
 
 void PropWin::LoadPrefs(void)
 {
-    FSNode *pcNode = new FSNode();
-    if( pcNode->SetTo(pzCgFile ) == 0 )
-    {
-        File *pcConfig = new File( *pcNode );
-        uint32 nSize = pcConfig->GetSize( );
-        void *pBuffer = malloc( nSize );
-        pcConfig->Read( pBuffer, nSize );
-        Message *pcPrefs = new Message( );
-        pcPrefs->Unflatten( (uint8 *)pBuffer );
-
-        pcPrefs->FindColor32( "Back_Color", &c_bgColor );
-        pcPrefs->FindColor32( "Icon_Color",   &c_fgColor );
-        pcPrefs->FindString ( "DeskImage",  &zImage  );
-        pcPrefs->FindBool   ( "ShowVer",    &bShwVr   );
-        pcPrefs->FindInt32   ("SizeImage",   &nImageSize);
-    }
+	Message* pcPrefs = pcSettings->GetSettings();
+	
+	pcPrefs->FindColor32( "Back_Color", &c_bgColor );
+	pcPrefs->FindColor32( "Icon_Color",   &c_fgColor );
+	pcPrefs->FindString ( "DeskImage",  &zImage  );
+	pcPrefs->FindBool   ( "ShowVer",    &bShwVr   );
+	pcPrefs->FindInt32   ("SizeImage",   &nImageSize);
+    
 
 }
+
+
+
+
 
 
 

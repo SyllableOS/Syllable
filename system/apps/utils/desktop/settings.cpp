@@ -1,4 +1,5 @@
 #include "settings.h"
+#include "debug.h"
 
 DeskSettings::DeskSettings()
 {
@@ -15,15 +16,33 @@ DeskSettings::DeskSettings()
     sprintf(pzIconDir, "%s/Desktop/",getenv("HOME"));
 	
 	pcReturnMessage = new Message();
+	
+	Debug("DeskSettings::DeskSettings(), launching ReadSettings()");
 	ReadSettings();
 }
 
 void DeskSettings::SaveSettings(Message* pcMessage)
 {
+	File *pcConfig = new File("/tmp/desktop.cfg", O_WRONLY | O_CREAT );
+    if( pcConfig )
+    {
+        uint32 nSize = pcMessage->GetFlattenedSize( );
+        void *pBuffer = malloc( nSize );
+        pcMessage->Flatten( (uint8 *)pBuffer, nSize );
+
+        pcConfig->Write( pBuffer, nSize );
+
+        delete pcConfig;
+        free( pBuffer );
+    }
+
+    system("mv -f /tmp/desktop.cfg ~/config/desktop/config/");
 }
 
 Message* DeskSettings::GetSettings()
 {
+	ReadSettings();
+	
 	pcReturnMessage->AddString("DeskImage",zDeskImage);
 	pcReturnMessage->AddColor32("Back_Color",cBgColor);
 	pcReturnMessage->AddColor32("Icon_Color",cFgColor);
@@ -35,7 +54,10 @@ Message* DeskSettings::GetSettings()
 
 void DeskSettings::ReadSettings()
 {
+	
+	Debug("DeskSettings::ReadSettings() reads the settings from ~/config/desktop/config/desktop.cfg");
 	FSNode *pcNode = new FSNode();
+    
     if( pcNode->SetTo(pzConfigFile) == 0 )
     {
         File *pcConfig = new File( *pcNode );
@@ -45,15 +67,16 @@ void DeskSettings::ReadSettings()
         Message *pcPrefs = new Message( );
         pcPrefs->Unflatten( (uint8 *)pBuffer );
 
-        pcPrefs->FindColor32( "BackGround", &cBgColor );
-        pcPrefs->FindColor32( "IconText",   &cFgColor );
+        pcPrefs->FindColor32( "Back_Color", &cBgColor );
+        pcPrefs->FindColor32( "Icon_Color",   &cFgColor );
         pcPrefs->FindString ( "DeskImage",  &zDeskImage  );
         pcPrefs->FindBool   ( "ShowVer",    &bShowVer   );
         pcPrefs->FindInt32  ( "SizeImage",  &nSizeImage);
         pcPrefs->FindBool   ( "Alphabet",   &bAlpha);
-
-        //m_pcBitmap = ReadBitmap(zDImage.c_str());
-    }
+    
+    }else {
+    	Debug ("DeskSettings::ReadSettings(), ~/config/desktop/config/desktop.cfg is\n   nonexsistant, we will try to create it");
+	}
 }
 
 const char* DeskSettings::GetIconDir()
@@ -91,5 +114,10 @@ int32 DeskSettings::GetImageSize()
 {
 	return (nSizeImage);
 }
+
+
+
+
+
 
 
