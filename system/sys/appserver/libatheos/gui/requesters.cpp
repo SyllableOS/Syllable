@@ -433,41 +433,44 @@ Point AlertView::GetPreferredSize( bool bLargest )
 
 void AlertView::Paint( const Rect& cUpdateRect )
 {
-    FillRect( GetBounds(), get_default_color(COL_NORMAL) );
-    
-	if (pcBitmp !=NULL){
-	
-	SetDrawingMode(DM_BLEND);
-	DrawBitmap(pcBitmp,pcBitmp->GetBounds(),Rect(5,5,pcBitmp->GetBounds().Width() + 1,pcBitmp->GetBounds().Height()));
-	float y = 20.0f;
-    
-    for ( uint i = 0 ; i < m_cLines.size() ; ++i ){
-   
-	MovePenTo( 20 + pcBitmp->GetBounds().Width(), y  );
-	DrawString( m_cLines[i].c_str() );
-	y += m_vLineHeight;
-    }
-    
-    }
-    
-    else{
-	float y = 20.0f;
-    for ( uint i = 0 ; i < m_cLines.size() ; ++i )
-    {
-	if(pcBitmp !=NULL){
-		MovePenTo( pcBitmp->GetBounds().Width()/2 + 2, pcBitmp->GetBounds().Height()/2 + 7);
-		
-	} else {
-		MovePenTo(10,y);
-		}	
-	DrawString( m_cLines[i].c_str() );
-	y += m_vLineHeight;
-    }
-    }
-    
-    //Invalidate();
-   
-    
+	FillRect( GetBounds(), get_default_color(COL_NORMAL) );
+
+	if (pcBitmp !=NULL)
+	{
+		SetDrawingMode(DM_BLEND);
+		DrawBitmap(pcBitmp,pcBitmp->GetBounds(),Rect(5,5,pcBitmp->GetBounds().Width() + 1,pcBitmp->GetBounds().Height()));
+		SetDrawingMode(DM_OVER);
+
+		float y = 20.0f;
+
+		for ( uint i = 0 ; i < m_cLines.size() ; ++i )
+		{
+			MovePenTo( 20 + pcBitmp->GetBounds().Width(), y  );
+			DrawString( m_cLines[i].c_str() );
+			y += m_vLineHeight;
+		}
+	}
+	else
+	{
+		float y = 20.0f;
+
+		for ( uint i = 0 ; i < m_cLines.size() ; ++i )
+		{
+			if(pcBitmp !=NULL)
+			{
+				MovePenTo( pcBitmp->GetBounds().Width()/2 + 2, pcBitmp->GetBounds().Height()/2 + 7);
+			}
+			else
+			{
+				MovePenTo(10,y);
+			}
+
+			DrawString( m_cLines[i].c_str() );
+			y += m_vLineHeight;
+		}
+	}
+
+	//Invalidate();
 }
 
 
@@ -680,6 +683,7 @@ void ProgressView::Layout( const Rect& cBounds )
     }
     Flush();
 }
+
 
 
 
