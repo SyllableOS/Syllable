@@ -1,3 +1,35 @@
+* December 30 2003, Henrik Isaksson *
+
+ API:
+ - Splitter class:
+    * Fixed a bug that caused the splitter to follow the mouse pointer
+      even if it had not been clicked on first.
+ - Rect class:
+    * Added Scale() method, needed by the (crude) vector graphics in the
+      amiga decorator.
+
+ AppServer:
+ - Made some changes to the decorator API:
+    * SetButtonState() replaces the SetXXXButtonState() methods.
+    * Added HIT_MINIMIZE and HIT_STICKY.
+    * Added a note in the windowdecorator.h file, saying that the sequence
+      of the enum hit_items should not be changed, so that decorators can
+      store button state information in arrays.
+ - Added code for handling of the new MINIMIZE button, and cleaned up
+   the button handling a bit.
+ - Added a MINIMIZE button to the default decorator.
+ - The default decorator now uses arrays to store information about the
+   border buttons (makes the code easier to follow).
+ - The default decorator does no longer draw partial buttons in buttonless
+   windows.
+
+ Decorators:
+ - Updated the amiga decorator with code from the default decorator.
+   (minimize button + better handling of buttons).
+ - Updated the other decorators to work with the new API, did NOT add a
+   minimize button to any of them at this time.
+ - All decorators are now linked against libsyllable.
+
 * December 5 2003, Henrik Isaksson *
 
  - Window class:
@@ -320,6 +352,7 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
 
 
