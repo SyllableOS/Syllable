@@ -108,7 +108,7 @@ SrvApplication::~SrvApplication()
 	dbprintf( "Application %s forgot to delete %d bitmaps!\n", m_cName.c_str(), m_cBitmaps.size() );
     }
     if ( m_cSprites.size() > 0  ) {
-	dbprintf( "Application %s forgot to delete %d bitmaps!\n", m_cName.c_str(), m_cBitmaps.size() );
+	dbprintf( "Application %s forgot to delete %d sprites!\n", m_cName.c_str(), m_cBitmaps.size() );
     }
     while( m_cFonts.empty() == false ) {
 	std::set<FontNode*>::iterator i = m_cFonts.begin();
@@ -659,11 +659,13 @@ void SrvApplication::DispatchMessage( Message* pcReq )
 	    float vSize     = 8.0f;
 	    float vShear    = 0.0f;
 	    float vRotation = 0.0f;
+	    uint32 nFlags   = FPF_SMOOTHED;
 
 	    pcReq->FindInt( "handle", &hFont );
 	    pcReq->FindFloat( "size", &vSize );
 	    pcReq->FindFloat( "rotation", &vRotation );
 	    pcReq->FindFloat( "shear", &vShear );
+	    pcReq->FindInt32( "flags", (int32 *)&nFlags );
 
 	    Message cReply;
 	    
@@ -685,8 +687,9 @@ void SrvApplication::DispatchMessage( Message* pcReq )
 	    FontNode* pcNode = *i;
 	    pcNode->SnapPointSize( &vSize );
 	    int nError = pcNode->SetProperties( int(vSize     * 64.0f),
-						int(vShear    * 64.0f),
-						int(vRotation * 64.0f) );
+    						int( ( vShear / 360.0f ) * ( 6.283185f * 0x10000f ) ),
+						int( ( vRotation / 360.0f ) * ( 6.283185f * 0x10000f ) ),
+						nFlags );
 	    if ( nError < 0 ) {
 		cReply.AddInt32( "error", nError );
 		pcReq->SendReply( &cReply );
@@ -900,6 +903,7 @@ bool SrvApplication::DispatchMessage( const void* pMsg, int nCode )
 	case AR_DELETE_FONT:
 	case AR_SET_FONT_FAMILY_AND_STYLE:
 	case AR_SET_FONT_PROPERTIES:
+        case AR_SET_FONT_ANTIALIASING:
 	case AR_LOCK_DESKTOP:
 	case AR_UNLOCK_DESKTOP:
 	case AR_GET_SCREENMODE_COUNT:
@@ -1249,3 +1253,10 @@ SrvApplication* get_active_app()
 	return( pcWnd->GetApp() );
     }
 }
+
+
+
+
+
+
+

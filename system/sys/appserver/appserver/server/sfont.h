@@ -29,9 +29,7 @@
 #include <util/locker.h>
 
 #include <freetype/freetype.h>
-//#include <ft2build.h>
-//#include FT_FREETYPE_H
-
+#include <freetype/ftsynth.h>
 
 #include <map>
 #include <string>
@@ -42,42 +40,48 @@ class	SFontInstance;
 
 extern os::Locker g_cFontLock;
 
-
 struct Glyph
 {
-    int		   m_nAdvance;
+    //int		   m_nAdvance;
+    os::IPoint	   m_nAdvance;
     os::IRect	   m_cBounds;
     int		   m_nBytesPerLine;
     uint8*	   m_pRaster;
     SFontInstance* m_pcInstance;
 };
 
+#define FPF_MASK	( os::FPF_SMOOTHED | os::FPF_BOLD | os::FPF_ITALIC )
+
 class FontProperty
 {
 public:
-    FontProperty() {}
-    FontProperty( int nPointSize, int nShare, int nRotation ) {
-	m_nPointSize = nPointSize; m_nShear = nShare; m_nRotation = nRotation;
+    FontProperty() { m_nPointSize = m_nShear = m_nRotation = m_nFlags = os::FPF_SMOOTHED; }
+    FontProperty( int nPointSize, int nShear, int nRotation, uint32 nFlags = os::FPF_SMOOTHED ) {
+	m_nPointSize = nPointSize; m_nShear = nShear; m_nRotation = nRotation;
+	m_nFlags = nFlags;
     }
   
-    bool operator < ( const FontProperty& cProp ) const {
-/*    
-      if ( m_vPointSize == cProp.m_vPointSize ) {
-      if ( m_vShear == cProp.m_vShear ) {
-      return( m_vRotation < cProp.m_vRotation );
-      } else {
-      return( m_vShear < cProp.m_vShear );
-      }
-      } else {*/
-	return( m_nPointSize < cProp.m_nPointSize );
-//    }
-//    return( m_vPointSize < cProp.m_vPointSize || m_vShear < cProp.m_vShear || m_vRotation < cProp.m_vRotation );
+    bool operator < ( const FontProperty& cProp ) const
+    {
+	if ( m_nPointSize == cProp.m_nPointSize ) {
+	    if ( ( m_nFlags & FPF_MASK ) == ( cProp.m_nFlags & FPF_MASK ) ) {
+		if ( m_nShear == cProp.m_nShear ) {
+		    return( m_nRotation < cProp.m_nRotation );
+		} else {
+		    return( m_nShear < cProp.m_nShear );
+		}
+	    } else {
+		return ( ( m_nFlags & FPF_MASK ) < ( cProp.m_nFlags & FPF_MASK ) );
+	    }
+	} else {
+	    return( m_nPointSize < cProp.m_nPointSize );
+	}
     }
   
     int	m_nPointSize; // Fixed-point 26:6
     int	m_nShear;     // Fixed-point 26:6
     int	m_nRotation;  // Fixed-point 26:6
-  
+    uint32 m_nFlags;
 };
 
 class SFont
@@ -88,11 +92,12 @@ public:
 
     const std::string&	GetStyle() const { return( m_cStyle ); }
     FontFamily*		GetFamily() const { return( m_pcFamily ); }
-
+   
+   
     void		AddInstance( SFontInstance* pcInstance );
     void		RemoveInstance( SFontInstance* pcInstance );
     int			GetInstanceCount() const { return( m_cInstances.size() ); }
-    SFontInstance* 	     OpenInstance( int nPointSize, int nRotation = 0, int nShare = 0 );
+    SFontInstance* 	     OpenInstance( const FontProperty& cFP );
 
     bool		     IsFixedWidth() const		{ return( m_bFixedWidth );	}
     bool		     IsScalable() const 		{ return( m_bScalable ); }
@@ -100,7 +105,7 @@ public:
     FT_Face		     GetTTFace( void ) const		{ return( m_psFace );		}
     const os::Font::size_list_t& GetBitmapSizes() const { return( m_cBitmapSizes ); }
     int		 	     CharToUnicode( uint nChar );
-    SFontInstance* 	     FindInstance( int nPointSize, int nRotation, int nShare ) const;
+    SFontInstance* 	     FindInstance( const FontProperty& cFP ) const;
 
     void		     SetDeletedFlag( bool bDeleted ) { m_bDeleted = bDeleted; }
     bool		     IsDeleted() const { return( m_bDeleted ); }
@@ -121,16 +126,15 @@ private:
 class SFontInstance : public Resource
 {
 public:
-    SFontInstance( SFont* pcFont, int nPointSize, int nRotation, int nShare );
+    SFontInstance( SFont* pcFont, const FontProperty& cFP );
 
     SFont*	GetFont( void ) const { return( m_pcFont );	}
-    status_t	SetProperties( const os::font_properties& sProps );
-    status_t	SetProperties( int nPointSize, int nSheare, int nRotation );
+    status_t	SetProperties( const FontProperty& cFP );
     int		GetIdentifier()	const		{ return( m_nIdentifier );	}
 
-    int		_GetPointSize( ) const		{ return( m_nPointSize ); }
-    int		_GetShear() const 		{ return( m_nShear ); }
-    int		_GetRotation() const 		{ return( m_nRotation ); }
+    int		_GetPointSize( ) const		{ return( m_cInstanceProperties.m_nPointSize ); }
+    int		_GetShear() const 		{ return( m_cInstanceProperties.m_nShear ); }
+    int		_GetRotation() const 		{ return( m_cInstanceProperties.m_nRotation ); }
   
     int		GetGlyphCount() const		{ return( m_nGlyphCount );	}
     Glyph* 	GetGlyph( int nIndex );
@@ -157,9 +161,7 @@ private:
     bool	   m_bFixedWidth;
     int		   m_nIdentifier;	// Unique identifier, sent to application's
 
-    int		   m_nPointSize; // Fixed-point 26:6
-    int		   m_nShear;     // Fixed-point 26:6
-    int		   m_nRotation;  // Fixed-point 26:6
+    FontProperty   m_cInstanceProperties;
   
     int		   m_nNomWidth;
     int		   m_nNomHeight;
@@ -207,7 +209,7 @@ public:
 
     SFont*	 	OpenFont( const std::string& cFamily, const std::string& cStyle );
     SFontInstance* 	OpenInstance( const std::string& cFamily, const std::string& pzStyle,
-				      int nPointSize, int nRotation, int nShare );
+				      const FontProperty &cFP );
 
     int			GetFamilyCount() const;
     int			GetFamily( int nIndex, char* pzFamily, uint32* pnFlags );
@@ -229,3 +231,17 @@ private:
 
 
 #endif	// __F_SFONT_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+

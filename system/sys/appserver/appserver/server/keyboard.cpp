@@ -80,7 +80,8 @@ static int g_nKbdDev = 0;
 
 // Key n        s        c        o        os       C        Cs       Co       Cos
 
-keymap g_sKeymap;
+Gate g_cKeymapGate( "keymap_gate", false );
+keymap *g_psKeymap;
 
 void SetQualifiers( int nKeyCode )
 {
@@ -156,7 +157,53 @@ uint32 GetQualifiers()
     return( g_nQual );
 }
 
-int convert_key_code( char* pzDst, int nRawKey, int nQual )
+int FindDeadKey( int nDeadKeyState, int nKey )
+{
+	uint8 nDeadRaw = ( nDeadKeyState >> 8 );
+	uint8 nDeadQual = CM_NORMAL;
+	
+	switch( nDeadKeyState & 0xFF ) {
+		case CS_CAPSL:		nDeadQual = CM_NORMAL;	 break;
+		case CS_SHFT_CAPSL:	nDeadQual = CS_SHFT;	 break;
+		case CS_CAPSL_OPT:	nDeadQual = CS_OPT;	 break;
+		case CS_SHFT_CAPSL_OPT:	nDeadQual = CS_SHFT_OPT; break;
+	}
+	
+	// Search the table for this particular key combination
+	for( uint32 i = 0; i < g_psKeymap->m_nNumDeadKeys; i++ ) {
+		if( ( ( g_psKeymap->m_sDeadKey[i].m_nKey == nKey ) ||
+		      ( g_psKeymap->m_sDeadKey[i].m_nKey == 0x00 ) ) &&
+		    ( g_psKeymap->m_sDeadKey[i].m_nRawKey == nDeadRaw ) &&
+		    ( g_psKeymap->m_sDeadKey[i].m_nQualifier == nDeadQual ) ) {
+			return g_psKeymap->m_sDeadKey[i].m_nValue;
+		}
+	}
+	return 0x00;	// Truly a dead key: nothing about it exists in the keymap!
+}
+
+// Converts a UTF-8 character to a UTF-8 string
+int CharToString( int nChar, char *pzString )
+{
+    int nLen = 0;
+
+    if ( nChar < 0x100 ) {
+	nLen = 1;
+    } else if ( nChar < 0x10000 ) {
+	nLen = 2;
+    } else if ( nChar < 0x1000000 ) {
+	nLen = 3;
+    } else {
+	nLen = 4;
+    }
+    for ( int i = 0 ; i < nLen ; ++i ) {
+	pzString[i] = (nChar >> ((nLen-i-1)*8)) & 0xff;
+    }
+    pzString[nLen] = '\0';
+    
+    return nLen;
+}
+
+int convert_key_code( char* pzDst, int nRawKey, int nQual, int *pnDeadKeyState )
 {
     int	nTable = 0;
     int	nQ = 0;
@@ -202,22 +249,30 @@ int convert_key_code( char* pzDst, int nRawKey, int nQual )
 		}
 	}
 
-//    int nLen = unicode_to_utf8( pzDst, g_sKeymap.m_anMap[nRawKey][nTable] );
-    int nLen;
-    uint nChar = g_sKeymap.m_anMap[nRawKey][nTable];
-    if ( nChar < 0x100 ) {
-	nLen = 1;
-    } else if ( nChar < 0x10000 ) {
-	nLen = 2;
-    } else if ( nChar < 0x1000000 ) {
-	nLen = 3;
-    } else {
-	nLen = 4;
+    int nLen = 0;
+
+    g_cKeymapGate.Lock();
+    uint nChar = g_psKeymap->m_anMap[nRawKey][nTable];
+
+    if( pnDeadKeyState ) {	// Check for dead keys?
+    	if( nChar == DEADKEY_ID ) {
+	    if( ( nChar = FindDeadKey( ( nRawKey << 8 ) | nTable, 0x00 ) ) ) {
+		*pnDeadKeyState = ( nRawKey << 8 ) | nTable;
+		// Dead key found.
+	    }
+	} else if( *pnDeadKeyState && nChar ) {	// Last key was a dead one, but this one is not!
+		uint nNewChar = FindDeadKey( *pnDeadKeyState, nChar );
+		if( nNewChar ) {
+			nChar = nNewChar;
+		} 
+		*pnDeadKeyState = 0;
+	}
     }
-    for ( int i = 0 ; i < nLen ; ++i ) {
-	pzDst[i] = (nChar >> ((nLen-i-1)*8)) & 0xff;
-    }
-    pzDst[nLen] = '\0';
+    
+    nLen = CharToString( nChar, pzDst );
+
+    g_cKeymapGate.Unlock();
+
     return( nLen );
 }
 
@@ -237,8 +292,10 @@ void HandleKeyboard()
 	dbprintf( "Panic : Could not open keyboard device!\n" );
     }
 
+	g_cKeymapGate.Lock();
+
 	ioctl( g_nKbdDev, IOCTL_KBD_LEDRST);
-	switch(g_sKeymap.m_nLockSetting)
+	switch(g_psKeymap->m_nLockSetting)
 	{
 		case 0x00:		// None
 			break;
@@ -265,9 +322,11 @@ void HandleKeyboard()
 		}
 
 		default:
-			dbprintf("Unknown lock key 0x%2X\n",g_sKeymap.m_nLockSetting);
+			dbprintf("Unknown lock key 0x%2X\n", (int)g_psKeymap->m_nLockSetting);
 			break;
 	}
+
+	g_cKeymapGate.Unlock();
 
     for (;;) {
 	snooze( 10000 );
@@ -297,22 +356,47 @@ void HandleKeyboard()
     }
 }
 
+bool SetKeymap( const std::string& cKeymapPath )
+{
+	FILE* hFile = fopen( cKeymapPath.c_str(), "r" );
+	bool ok = false;
+
+	g_cKeymapGate.Lock();
+
+	if( g_psKeymap ) free( g_psKeymap );
+	g_psKeymap = NULL;
+
+	if( hFile ) {	
+		g_psKeymap = load_keymap( hFile );		
+
+		fclose( hFile );
+	}
+
+	if ( g_psKeymap == NULL ) {
+		dbprintf( "Error: failed to load keymap\n" );
+		g_psKeymap = (keymap *)malloc( sizeof( g_sDefaultKeyMap ) );
+		if ( g_psKeymap ) {
+			memcpy( g_psKeymap, &g_sDefaultKeyMap, sizeof( g_sDefaultKeyMap ) );
+		} else {
+			dbprintf( "Fatal: no mem for default keymap!\n" );
+		}
+	} else {
+		ok = true;
+	}
+
+	g_cKeymapGate.Unlock();
+
+	return ok;
+}
+
 void InitKeyboard( void )
 {
     thread_id hKbdThread;
 
-    FILE* hFile = fopen( AppserverConfig::GetInstance()->GetKeymapPath().c_str(), "r" );
+    SetKeymap( AppserverConfig::GetInstance()->GetKeymapPath() );
 
-    if ( hFile != NULL ) {
-	if ( load_keymap( hFile, &g_sKeymap ) != 0 ) {
-	    dbprintf( "Error: failed to load keymap\n" );
-	    g_sKeymap = g_sDefaultKeyMap;
-	}
-	fclose( hFile );
-    } else {
-	dbprintf( "Failed to open keymap file '%s'\n", AppserverConfig::GetInstance()->GetKeymapPath().c_str() );
-	g_sKeymap = g_sDefaultKeyMap;
-    }
     hKbdThread = spawn_thread( "keyb_thread", HandleKeyboard, 120, 0, NULL );
     resume_thread( hKbdThread );
 }
+
+

@@ -1,4 +1,4 @@
-/*
+/* 
  *  The AtheOS application server
  *  Copyright (C) 1999 - 2001 Kurt Skauen
  *
@@ -49,7 +49,7 @@ Locker g_cFontLock( "font_lock" );
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-SFontInstance::SFontInstance( SFont* pcFont, int nPointSize, int nRotation, int nShear )
+SFontInstance::SFontInstance( SFont* pcFont, const FontProperty &cFP )
 {
     m_bFixedWidth = pcFont->IsFixedWidth();
     g_cFontLock.Lock();
@@ -63,15 +63,13 @@ SFontInstance::SFontInstance( SFont* pcFont, int nPointSize, int nRotation, int 
     } else {
 	m_ppcGlyphTable = NULL;
     }
-    m_nPointSize	= nPointSize;
-    m_nRotation	= nRotation;
-    m_nShear	= nShear;
+    m_cInstanceProperties = cFP;
 
     FT_Face psFace = m_pcFont->GetTTFace();
     if ( psFace->face_flags & FT_FACE_FLAG_SCALABLE ) {
-	FT_Set_Char_Size( psFace, m_nPointSize, m_nPointSize, 96, 96 );
+	FT_Set_Char_Size( psFace, m_cInstanceProperties.m_nPointSize, m_cInstanceProperties.m_nPointSize, 96, 96 );
     } else {
-	FT_Set_Pixel_Sizes( psFace, 0, (m_nPointSize*96/72) / 64 );
+	FT_Set_Pixel_Sizes( psFace, 0, (m_cInstanceProperties.m_nPointSize*96/72) / 64 );
     }
     FT_Size psSize = psFace->size;
 
@@ -97,7 +95,7 @@ SFontInstance::SFontInstance( SFont* pcFont, int nPointSize, int nRotation, int 
 //	    psSize->metrics.ascender / 64, psSize->metrics.descender / 64, psSize->metrics.height / 64 );
     
       // Register our self with the font
-
+  
     m_pcFont->AddInstance( this );
 
     g_cFontLock.Unlock();
@@ -110,21 +108,19 @@ SFontInstance::SFontInstance( SFont* pcFont, int nPointSize, int nRotation, int 
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-status_t SFontInstance::SetProperties( int nPointSize, int nShear, int nRotation )
+status_t SFontInstance::SetProperties( const FontProperty &cFP )
 {
     g_cFontLock.Lock();
 
     m_pcFont->RemoveInstance( this );
-  
-    m_nPointSize = nPointSize;
-    m_nRotation	 = nRotation;
-    m_nShear	 = nShear;
+
+    m_cInstanceProperties = cFP;  
 
     FT_Face psFace = m_pcFont->GetTTFace();
     if ( psFace->face_flags & FT_FACE_FLAG_SCALABLE ) {
-	FT_Set_Char_Size( psFace, m_nPointSize, m_nPointSize, 96, 96 );
+	FT_Set_Char_Size( psFace, m_cInstanceProperties.m_nPointSize, m_cInstanceProperties.m_nPointSize, 96, 96 );
     } else {
-	FT_Set_Pixel_Sizes( psFace, 0, (m_nPointSize*96/72) / 64 );
+	FT_Set_Pixel_Sizes( psFace, 0, (m_cInstanceProperties.m_nPointSize*96/72) / 64 );
     }
 
     FT_Size psSize = psFace->size;
@@ -187,7 +183,6 @@ void SFontInstance::CalculateHeight()
     m_nAscender  = 0;
     m_nDescender = 0;
     m_nLineGap   = 0;
-
     FT_Size psSize = m_pcFont->GetTTFace()->size;
 
 /*    
@@ -204,7 +199,7 @@ void SFontInstance::CalculateHeight()
 	nError = FT_Load_Glyph( psSize->face, i, FT_LOAD_DEFAULT );
 
 	if ( nError != 0 ) {
-	    dbprintf( "Unable to load glyph %d (%d) -> %02x\n", i, (m_nPointSize*96/72) / 64, nError );
+	    dbprintf( "Unable to load glyph %d (%d) -> %02x\n", i, (m_cInstanceProperties.m_nPointSize*96/72) / 64, nError );
 	    continue;
 	}
 	FT_GlyphSlot  glyph = psSize->face->glyph;
@@ -243,15 +238,29 @@ Glyph* SFontInstance::GetGlyph( int nIndex )
     FT_Size psSize = m_pcFont->GetTTFace()->size;
 
     if ( psSize->face->face_flags & FT_FACE_FLAG_SCALABLE ) {
-	FT_Set_Char_Size( psSize->face, m_nPointSize, m_nPointSize, 96, 96 );
+	FT_Set_Char_Size( psSize->face, m_cInstanceProperties.m_nPointSize, m_cInstanceProperties.m_nPointSize, 96, 96 );
     } else {
-	FT_Set_Pixel_Sizes( psSize->face, 0, (m_nPointSize*96/72) / 64 );
+	FT_Set_Pixel_Sizes( psSize->face, 0, (m_cInstanceProperties.m_nPointSize*96/72) / 64 );
     }
-	
+
+    FT_Set_Transform( psSize->face, NULL, NULL );
+
+    if( m_cInstanceProperties.m_nShear || m_cInstanceProperties.m_nRotation ) {
+	FT_Matrix transform;
+
+	transform.xx = ( FT_Fixed )( 0x10000L *  cos( (float)m_cInstanceProperties.m_nRotation / 0x10000f ) );
+	transform.yx = ( FT_Fixed )( 0x10000L *  sin( (float)m_cInstanceProperties.m_nRotation / 0x10000f ) );
+	transform.xy = ( FT_Fixed )( 0x10000L * -sin( (float)m_cInstanceProperties.m_nRotation / 0x10000f ) +
+				     0x10000L *  tan( (float)m_cInstanceProperties.m_nShear    / 0x10000f ) );
+	transform.yy = ( FT_Fixed )( 0x10000L *  cos( (float)m_cInstanceProperties.m_nRotation / 0x10000f ) );
+		
+	FT_Set_Transform( psSize->face, &transform, NULL );
+    }
+
     nError = FT_Load_Glyph( psSize->face, nIndex, FT_LOAD_DEFAULT );
 
     if ( nError != 0 ) {
-	dbprintf( "Unable to load glyph %d (%d) -> %02x\n", nIndex, (m_nPointSize*96/72) / 64, nError );
+	dbprintf( "Unable to load glyph %d (%d) -> %02x\n", nIndex, (m_cInstanceProperties.m_nPointSize*96/72) / 64, nError );
 	if ( nIndex != 0 ) {
 	    return( GetGlyph(0) );
 	} else {
@@ -259,6 +268,17 @@ Glyph* SFontInstance::GetGlyph( int nIndex )
 	}
     }
     FT_GlyphSlot  glyph = psSize->face->glyph;
+
+    if( m_cInstanceProperties.m_nFlags & FPF_BOLD ) {
+/*	FT_GlyphSlot_Embolden( glyph );	*/
+	dbprintf("Embolden\n");
+    }
+    
+    if( m_cInstanceProperties.m_nFlags & FPF_ITALIC ) {
+/*	FT_GlyphSlot_Oblique( glyph ); */
+	dbprintf("Oblique\n");
+    }
+
 
     int nLeft;
     int nTop;
@@ -271,8 +291,12 @@ Glyph* SFontInstance::GetGlyph( int nIndex )
     }
 
     if ( m_pcFont->IsScalable() ) {
-	nError = FT_Render_Glyph( glyph, ft_render_mode_normal );
-
+       if ( m_cInstanceProperties.m_nFlags & FPF_SMOOTHED ) {
+		nError = FT_Render_Glyph( glyph, FT_RENDER_MODE_NORMAL );
+       } else {
+		nError = FT_Render_Glyph( glyph, FT_RENDER_MODE_MONO );
+       }
+	 
 	if ( nError != 0 ) {
 	    dbprintf( "Failed to render glyph, err = %x\n", nError );
 	    if ( nIndex != 0 ) {
@@ -317,12 +341,13 @@ Glyph* SFontInstance::GetGlyph( int nIndex )
 
     if ( m_pcFont->IsScalable() ) {
 	if ( IsFixedWidth() ) {
-	    pcGlyph->m_nAdvance = m_nAdvance;
+	    pcGlyph->m_nAdvance.x = m_nAdvance;
 	} else {
-	    pcGlyph->m_nAdvance = (glyph->metrics.horiAdvance + 32) / 64;
+	    pcGlyph->m_nAdvance.x = (glyph->metrics.horiAdvance + 32) / 64;
+	    pcGlyph->m_nAdvance.y = (glyph->metrics.vertAdvance + 32) / 64;
 	}
     } else {
-	pcGlyph->m_nAdvance = glyph->bitmap.width;
+	pcGlyph->m_nAdvance.x = glyph->bitmap.width;
     }
     
     if ( glyph->bitmap.pixel_mode == ft_pixel_mode_grays ) {
@@ -369,7 +394,7 @@ int SFontInstance::GetStringWidth( const char* pzString, int nLength )
 	    dbprintf( "Error: GetStringWidth() failed to load glyph\n" );
 	    continue;
 	}
-	nWidth += pcGlyph->m_nAdvance;
+	nWidth += pcGlyph->m_nAdvance.x;
     }
     g_cFontLock.Unlock();
     return( nWidth );
@@ -398,7 +423,7 @@ int SFontInstance::GetStringLength( const char* pzString, int nLength, int nWidt
 	    dbprintf( "Error: GetStringLength() failed to load glyph\n" );
 	    break;
 	}
-	if ( nWidth < pcGlyph->m_nAdvance ) {
+	if ( nWidth < pcGlyph->m_nAdvance.x ) {
 	    if ( bIncludeLast ) {
 		nStrLen  += nCharLen;
 	    }
@@ -407,7 +432,7 @@ int SFontInstance::GetStringLength( const char* pzString, int nLength, int nWidt
 	pzString += nCharLen;
 	nLength  -= nCharLen;
 	nStrLen  += nCharLen;
-	nWidth -= pcGlyph->m_nAdvance;
+	nWidth -= pcGlyph->m_nAdvance.x;
     }
     g_cFontLock.Unlock();
     return( nStrLen );
@@ -458,12 +483,12 @@ SFont::~SFont()
 
 #define	CMP_FLOATS( a, b, t )	(((a) > (b) - (t)) && ((a) < (b) + (t)))
 
-SFontInstance* SFont::FindInstance( int nPointSize, int nRotation, int nShear ) const
+SFontInstance* SFont::FindInstance( const FontProperty &cFP ) const
 {
     std::map<FontProperty,SFontInstance*>::const_iterator i;
 
     __assertw( g_cFontLock.IsLocked() );
-    i = m_cInstances.find( FontProperty( nPointSize, nShear, nRotation ) );
+    i = m_cInstances.find( cFP );
 
     if ( i == m_cInstances.end() ) {
 	return( NULL );
@@ -483,7 +508,7 @@ void SFont::AddInstance( SFontInstance* pcInstance )
 {
     g_cFontLock.Lock();
     __assertw( g_cFontLock.IsLocked() );
-    m_cInstances[ FontProperty( pcInstance->m_nPointSize, pcInstance->m_nShear, pcInstance->m_nRotation ) ] = pcInstance;
+    m_cInstances[ pcInstance->m_cInstanceProperties ] = pcInstance;
     g_cFontLock.Unlock();
 }
 
@@ -501,12 +526,12 @@ void SFont::RemoveInstance( SFontInstance* pcInstance )
     std::map<FontProperty,SFontInstance*>::iterator i;
 
     __assertw( g_cFontLock.IsLocked() );
-    i = m_cInstances.find( FontProperty( pcInstance->m_nPointSize, pcInstance->m_nShear, pcInstance->m_nRotation ) );
+    i = m_cInstances.find( pcInstance->m_cInstanceProperties );
 
     if ( i != m_cInstances.end() ) {
 	m_cInstances.erase( i );
     } else {
-	dbprintf( "Error: SFont::RemoveInstance() could not find instance\n" );
+	dbprintf( "Error: SFont::RemoveInstance could not find instance\n" );
     }
     if ( m_bDeleted && m_cInstances.empty() ) {
 	dbprintf( "Last instance of deleted font %s, %s removed. Deleting font\n", m_pcFamily->GetName().c_str(), m_cStyle.c_str() );
@@ -522,13 +547,33 @@ void SFont::RemoveInstance( SFontInstance* pcInstance )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-SFontInstance* SFont::OpenInstance( int nPointSize, int nRotation, int nShare )
+SFontInstance* SFont::OpenInstance( const FontProperty &cFP )
 {
-    SFontInstance* pcInstance = FindInstance( nPointSize, nRotation, nShare );
+    SFontInstance* pcInstance = FindInstance( cFP );
 
     if ( NULL == pcInstance ) {
-	pcInstance = new SFontInstance( this, nPointSize, nRotation, nShare );
+	pcInstance = new SFontInstance( this, cFP );
+
+/*	dbprintf("Creating new instance for: Size: %d Shear: %d Rot: %d Flg: %x\n",
+		(int)cFP.m_nPointSize, (int)cFP.m_nShear, (int)cFP.m_nRotation, (int)cFP.m_nFlags);*/
+
+	std::map<FontProperty,SFontInstance*>::iterator i;	
+	for(i = m_cInstances.begin(); i != m_cInstances.end(); i++) {
+/*		dbprintf("Size: %d Shear: %d Rot: %d Flg: %x\n",
+			(int)(*i).first.m_nPointSize,
+			(int)(*i).first.m_nShear,
+			(int)(*i).first.m_nRotation,
+			(int)(*i).first.m_nFlags);*/
+	}
+
     } else {
+/*	dbprintf("OpenInstance: %d %d %d %x == %d %d %d %x\n",
+		(int)cFP.m_nPointSize, (int)cFP.m_nShear, (int)cFP.m_nRotation, (int)cFP.m_nFlags,
+		(int)pcInstance->m_cInstanceProperties.m_nPointSize,
+		(int)pcInstance->m_cInstanceProperties.m_nShear,
+		(int)pcInstance->m_cInstanceProperties.m_nRotation,
+		(int)pcInstance->m_cInstanceProperties.m_nFlags );*/
+
 	pcInstance->AddRef();
     }
 
@@ -982,7 +1027,7 @@ restart:
 //----------------------------------------------------------------------------
 
 SFontInstance* FontServer::OpenInstance( const std::string& cFamily, const std::string& cStyle,
-					     int nPointSize, int nRotation, int nShare )
+					     const FontProperty &cFP )
 {
     FontFamily*	pcFamily;
 
@@ -992,7 +1037,7 @@ SFontInstance* FontServer::OpenInstance( const std::string& cFamily, const std::
 	SFont*	pcFont = pcFamily->FindStyle( cStyle );
 
 	if ( pcFont != NULL ) {
-	    SFontInstance* pcInstance= pcFont->OpenInstance( nPointSize, nRotation, nShare );
+	    SFontInstance* pcInstance= pcFont->OpenInstance( cFP );
 
 	    if ( pcInstance != NULL ) {
 		g_cFontLock.Unlock();
@@ -1024,12 +1069,4 @@ SFont* FontServer::OpenFont( const std::string& cFamily, const std::string& cSty
     }
     return( pcFont );
 }
-
-
-
-
-
-
-
-
 

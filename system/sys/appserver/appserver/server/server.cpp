@@ -149,6 +149,8 @@ AppServer::AppServer()
     m_pfDecoratorCreator = NULL;
     printf( "Load default fonts\n" );
 
+	dbprintf( "Load default fonts\n" );
+
     m_pcWindowTitleFont = new FontNode;
     m_pcToolWindowTitleFont = new FontNode;
     
@@ -189,13 +191,16 @@ void AppServer::R_ClientDied( thread_id hClient )
     }
 }
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
+/** Send a keyboard event
+ * \par		Description:
+ *		Called by the keyboard handler to input keyboard events to
+ *		the appserver. Global hotkey sequences are filtered out
+ *		here. Events that are not used by the appserver
+ *		itself are passed on to the active window via SendKeyboardEvent.
+ * \param	nKeyCode The raw key code (as delivered by the keyboard driver)
+ * \param	nQual Qualifiers eg. QUAL_SHIFT, QUAL_CTRL etc.
+ * \author Kurt Skauen, Henrik Isaksson
+ *****************************************************************************/
 void AppServer::SendKeyCode( int nKeyCode, int nQual )
 {
     ResetEventTime();
@@ -332,13 +337,14 @@ void AppServer::SendKeyCode( int nKeyCode, int nQual )
     }
   
     if ( !( (nQual & QUAL_ALT)  && (nQual & QUAL_CTRL) && (0x1e == nKeyCode || 0x9e == nKeyCode)) ) {  // BACKSPACE
-	char zConvString[8];
-	char zRawString[8];
+	char zConvString[16];
+	char zRawString[16];
+	static int nDeadKeyState = 0;	// This variable keeps track of the last dead key hit (if any), otherwise NULL
 
-	convert_key_code( zConvString, nKeyCode & 0x7f, nQual );
-	convert_key_code( zRawString, nKeyCode & 0x7f, 0 );
-      
-	SrvWindow::SendKbdEvent( nKeyCode, nQual, zConvString, zRawString );
+	convert_key_code( zConvString, nKeyCode & 0x7f, nQual, ( nKeyCode & 0x80 ) ? NULL : &nDeadKeyState );
+	convert_key_code( zRawString, nKeyCode & 0x7f, 0, NULL );
+
+	SrvWindow::SendKbdEvent( nKeyCode, nQual | ( nDeadKeyState ? QUAL_DEADKEY : 0 ), zConvString, zRawString );
     }
 }
 
@@ -668,7 +674,6 @@ int main( int argc, char** argv )
     dbprintf( "Load configuration\n" );
     hFile = fopen( "/system/config/appserver", "r" );
 
-    g_sKeymap = g_sDefaultKeyMap;
     if ( hFile != NULL ) {
 	pcConfig->LoadConfig( hFile, false );
 	fclose( hFile );

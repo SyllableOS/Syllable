@@ -28,8 +28,11 @@
 #include <list>
 #include <string>
 
+#include "sfont.h"
+
 class  SFont;
 class  SFontInstance;
+class  FontProperty;
 struct Glyph;
 
 namespace os {
@@ -49,8 +52,9 @@ public:
 
     void		SnapPointSize( float* pvSize ) const;
     status_t		SetProperties( const os::font_properties& sProps );
+    status_t		SetProperties( const FontProperty& cFP );
+    status_t		SetProperties( int nSize, int nShear, int nRotation, uint32 nFlags );
     status_t		SetFamilyAndStyle( const std::string& cFamily, const std::string& cStyle );
-    status_t		SetProperties( int nSize, int nShear, int nRotation );
 
     DependencyList_t::iterator AddDependency( os::Messenger* pcTarget, void* pView );
     void		       RemoveDependency( DependencyList_t::iterator& cIterator );
@@ -58,13 +62,13 @@ public:
 protected:
     ~FontNode();
 private:
+    status_t _SetProperties( const FontProperty& cFP );
+
     DependencyList_t	m_cDependencies;
     os::Locker		m_cDependenciesMutex;
     SFont*		m_pcFont;
     SFontInstance*	m_pcInstance;
-    int			m_nSize;
-    int			m_nShear;
-    int			m_nRotation;
+    FontProperty	m_cProperties;
 };
 
 #endif	// __F_FONT_NODE_H__

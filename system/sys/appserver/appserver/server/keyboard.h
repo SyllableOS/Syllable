@@ -19,11 +19,18 @@
 
 #include <stdio.h>
 #include <appserver/keymap.h>
+#include <util/locker.h>
 
 extern keymap g_sDefaultKeyMap;
-extern keymap g_sKeymap;
+extern keymap* g_psKeymap;
+extern os::Gate g_cKeymapGate;
 
-int     load_keymap( FILE* hFile, keymap* psKeymap );
+keymap* load_keymap( FILE* hFile );
+
 uint32	GetQualifiers();
-int     convert_key_code( char* pzDst, int nRawKey, int nQual );
+int convert_key_code( char* pzDst, int nRawKey, int nQual, int *nDeadKeyState );
 void	InitKeyboard( void );
+bool SetKeymap( const std::string& cKeymapPath );
+
+
+

@@ -27,27 +27,36 @@
 
 #include <appserver/keymap.h>
 
-int load_keymap( FILE* hFile, keymap* psKeymap )
+keymap* load_keymap( FILE* hFile )
 {
-    uint32 anHeader[2];
+    keymap_header	sHeader;
 
-    if ( fread( anHeader, sizeof(uint32), 2, hFile ) != 2 ) {
+    if ( fread( &sHeader, sizeof(sHeader), 1, hFile ) != 1 ) {
 	dbprintf( "Error: Failed to read keymap header\n" );
-	return( -1 );
+	return( NULL );
     }
-    if ( anHeader[0] != KEYMAP_MAGIC ) {
-	dbprintf( "Error: Keymap have bad magic number (%08lx) should have been %08x\n", anHeader[0], KEYMAP_MAGIC );
-	return( -1 );
+    if ( sHeader.m_nMagic != KEYMAP_MAGIC ) {
+	dbprintf( "Error: Keymap have bad magic number (%08lx) should have been %08x\n", sHeader.m_nMagic, KEYMAP_MAGIC );
+	return( NULL );
     }
-    if ( anHeader[1] != CURRENT_KEYMAP_VERSION ) {
-	dbprintf( "Error: Unknown keymap version %ld\n", anHeader[1] );
-	return( -1 );
+    if ( sHeader.m_nVersion != CURRENT_KEYMAP_VERSION ) {
+	dbprintf( "Error: Unknown keymap version %ld\n", sHeader.m_nVersion );
+	return( NULL );
     }
-    if ( fread( psKeymap, sizeof(*psKeymap), 1, hFile ) == 1 ) {
-	return( 0 );
+    
+    keymap* psKeymap = (keymap*)malloc( sHeader.m_nSize );
+
+    if( !psKeymap ) {
+	dbprintf( "Error: Could not allocate memory for keymap (Size: %ld)\n", sHeader.m_nSize );
+	return( NULL );
+    }
+
+    if ( fread( psKeymap, sHeader.m_nSize, 1, hFile ) == 1 ) {
+	return( psKeymap );
     } else {
 	dbprintf( "Error: Failed to read keymap\n" );
-	return( -1 );
+	return( NULL );
     }
 }
+
 

@@ -37,9 +37,7 @@ FontNode::FontNode() : m_cDependenciesMutex( "fnode_dep_mutex" )
     m_pcFont	= NULL;
     m_pcInstance= NULL;
 
-    m_nSize	= 63;
-    m_nShear	= 0;
-    m_nRotation	= 0;
+    m_cProperties.m_nPointSize = 63;
 }
 
 //----------------------------------------------------------------------------
@@ -106,11 +104,11 @@ status_t FontNode::SetFamilyAndStyle( const std::string& cFamily, const std::str
 
     if ( NULL != m_pcFont ) {
 	if ( m_pcFont->IsScalable() == false ) {
-	    float vSize = float(m_nSize)/64.0f;
+	    float vSize = float(m_cProperties.m_nPointSize)/64.0f;
 	    SnapPointSize( &vSize );
-	    m_nSize = int(vSize*64.0f);
+	    m_cProperties.m_nPointSize = int(vSize*64.0f);
 	}
-	m_pcInstance = m_pcFont->OpenInstance( m_nSize, m_nRotation, m_nShear );
+	m_pcInstance = m_pcFont->OpenInstance( m_cProperties );
 	g_cFontLock.Unlock();
 	return( 0 );
     }
@@ -126,35 +124,26 @@ status_t FontNode::SetFamilyAndStyle( const std::string& cFamily, const std::str
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-status_t FontNode::SetProperties( int nSize, int nShear, int nRotation )
+status_t FontNode::_SetProperties( const FontProperty& cFP )
 {
-    g_cFontLock.Lock();
-
-    if ( nSize == m_nSize && nShear == m_nShear && nRotation == m_nRotation ) {
-	g_cFontLock.Unlock();
-	return( 0 );
-    }
-  
     if ( m_pcInstance != NULL ) {
 	if ( m_pcInstance->GetRefCount() > 1 ) {
 	    m_pcInstance->Release();
-	    m_pcInstance = m_pcFont->OpenInstance( nSize, nShear, nRotation );
+	    m_pcInstance = m_pcFont->OpenInstance( cFP );
 	} else {
-	    SFontInstance* pcInstance = m_pcFont->FindInstance( nSize, nRotation, nShear );
+	    SFontInstance* pcInstance = m_pcFont->FindInstance( cFP );
 	    if ( pcInstance != NULL ) {
 		m_pcInstance->Release();
 		m_pcInstance = pcInstance;
 		m_pcInstance->AddRef();
 	    } else {
-		m_pcInstance->SetProperties( nSize, nShear, nRotation );
+		m_pcInstance->SetProperties( cFP );
 	    }
 	}
     }
 
     if ( NULL != m_pcInstance ) {
-	m_nSize		= nSize;
-	m_nShear	= nShear;
-	m_nRotation	= nRotation;
+	m_cProperties = cFP;
 
 	g_cFontLock.Unlock();
 	return( 0 );
@@ -163,6 +152,30 @@ status_t FontNode::SetProperties( int nSize, int nShear, int nRotation )
 	g_cFontLock.Unlock();
 	return( -1 );
     }
+}
+
+status_t FontNode::SetProperties( const FontProperty& cFP )
+{
+    g_cFontLock.Lock();
+
+    if ( cFP.m_nPointSize == m_cProperties.m_nPointSize && cFP.m_nShear == m_cProperties.m_nShear && cFP.m_nFlags == m_cProperties.m_nFlags && cFP.m_nRotation == m_cProperties.m_nRotation ) {
+	g_cFontLock.Unlock();
+	return( 0 );
+    }
+  
+    return _SetProperties( cFP );
+}
+
+status_t FontNode::SetProperties( int nSize, int nShear, int nRotation, uint32 nFlags )
+{
+    g_cFontLock.Lock();
+
+    if ( nSize == m_cProperties.m_nPointSize && nShear == m_cProperties.m_nShear && nRotation == m_cProperties.m_nRotation && nFlags == m_cProperties.m_nFlags ) {
+	g_cFontLock.Unlock();
+	return( 0 );
+    }
+
+    return _SetProperties( FontProperty( nSize, nShear, nRotation, nFlags ) );
 }
 
 status_t FontNode::SetProperties( const os::font_properties& sProps )
@@ -177,19 +190,20 @@ status_t FontNode::SetProperties( const os::font_properties& sProps )
 	m_pcInstance = NULL;
     }
 
-    m_nSize     = int(sProps.m_vSize*64.0f);
-    m_nShear    = int(sProps.m_vShear*64.0f);
-    m_nRotation = int(sProps.m_vRotation*64.0f);
+    m_cProperties.m_nPointSize	= int( sProps.m_vSize * 64.0f );
+    m_cProperties.m_nShear	= int( ( sProps.m_vShear / 360.0f ) * ( 6.283185f * 0x10000f ) );
+    m_cProperties.m_nRotation	= int( ( sProps.m_vRotation / 360.0f ) * ( 6.283185f * 0x10000f ) );
+    m_cProperties.m_nFlags	= sProps.m_nFlags;
     
     m_pcFont = FontServer::GetInstance()->OpenFont( sProps.m_cFamily, sProps.m_cStyle );
 
     if ( NULL != m_pcFont ) {
 	if ( m_pcFont->IsScalable() == false ) {
-	    float vSize = float(m_nSize)/64.0f;
+	    float vSize = float(m_cProperties.m_nPointSize)/64.0f;
 	    SnapPointSize( &vSize );
-	    m_nSize = int(vSize*64.0f);
+	    m_cProperties.m_nPointSize = int(vSize*64.0f);
 	}
-	m_pcInstance = m_pcFont->OpenInstance( m_nSize, m_nRotation, m_nShear );
+	m_pcInstance = m_pcFont->OpenInstance( m_cProperties );
 	g_cFontLock.Unlock();
 	return( 0 );
     }
@@ -249,3 +263,5 @@ void FontNode::NotifyDependent() const
     }
     m_cDependenciesMutex.Unlock();
 }
+
+

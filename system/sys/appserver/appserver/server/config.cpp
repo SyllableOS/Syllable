@@ -40,11 +40,11 @@ AppserverConfig::AppserverConfig()
     m_nDoubleClickDelay	    = 500000LL;
     m_bPopupSelectedWindows = false;
 
-    AddFontConfig( DEFAULT_FONT_REGULAR, os::font_properties( "Lucida Sans", "Regular", FPF_SYSTEM, 8.0f ) );
-    AddFontConfig( DEFAULT_FONT_BOLD, os::font_properties( "Lucida Sans", "Bold", FPF_SYSTEM, 8.0f ) );
-    AddFontConfig( DEFAULT_FONT_FIXED, os::font_properties( "Lucida Sans Typewriter", "Regular", FPF_SYSTEM | FPF_MONOSPACED, 8.0f ) );
-    AddFontConfig( DEFAULT_FONT_WINDOW, os::font_properties( "Lucida Sans", "Regular", FPF_SYSTEM, 8.0f ) );
-    AddFontConfig( DEFAULT_FONT_TOOL_WINDOW, os::font_properties( "Lucida Sans", "Regular", FPF_SYSTEM, 7.0f ) );
+    AddFontConfig( DEFAULT_FONT_REGULAR, os::font_properties( "Lucida Sans", "Regular", FPF_SYSTEM | FPF_SMOOTHED, 8.0f ) );
+    AddFontConfig( DEFAULT_FONT_BOLD, os::font_properties( "Lucida Sans", "Bold", FPF_SYSTEM | FPF_SMOOTHED, 8.0f ) );
+    AddFontConfig( DEFAULT_FONT_FIXED, os::font_properties( "Lucida Sans Typewriter", "Regular", FPF_SYSTEM | FPF_MONOSPACED | FPF_SMOOTHED, 8.0f ) );
+    AddFontConfig( DEFAULT_FONT_WINDOW, os::font_properties( "Lucida Sans", "Regular", FPF_SYSTEM | FPF_SMOOTHED, 8.0f ) );
+    AddFontConfig( DEFAULT_FONT_TOOL_WINDOW, os::font_properties( "Lucida Sans", "Regular", FPF_SYSTEM | FPF_SMOOTHED, 7.0f ) );
     
     m_bDirty = false;
 }
@@ -127,23 +127,35 @@ void AppserverConfig::GetConfig( Message* pcConfig )
 
 int AppserverConfig::SetKeymapPath( const std::string& cPath )
 {
-    int nError;
+    if( SetKeymap( cPath ) ) {
+	m_cKeymapPath = cPath;
+	m_bDirty = true;
+	return 0;
+    }
+    return -1;
+/*    int nError;
 
     FILE* hFile = fopen( cPath.c_str(), "r" );
 
     if ( hFile == NULL ) {
 	return( -1 );
     }
-    nError = load_keymap( hFile, &g_sKeymap );
-    if ( nError != 0 ) {
+    
+    g_cKeymapGate.Lock();
+    
+    g_psKeymap = load_keymap( hFile );
+    if ( !g_psKeymap ) {
 	dbprintf( "Error: AppserverConfig::SetKeymapPath() failed to load keymap\n" );
-	g_sKeymap = g_sDefaultKeyMap;
+	g_psKeymap = g_sDefaultKeyMap;
     } else {
 	m_cKeymapPath = cPath;
 	m_bDirty = true;
     }
+
+    g_cKeymapGate.Unlock();
+
     fclose( hFile );
-    return( nError );
+    return( nError );*/
 }
 std::string AppserverConfig::GetKeymapPath() const
 {
@@ -538,3 +550,6 @@ int AppserverConfig::SaveConfig()
     m_bDirty = false;
     return( 0 );
 }
+
+
+

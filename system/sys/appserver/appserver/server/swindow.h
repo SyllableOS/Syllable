@@ -144,3 +144,4 @@ private:
 };
 
 #endif	//	INTERFACE_SLAYER_HPP
+

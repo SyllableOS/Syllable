@@ -753,8 +753,8 @@ void Layer::DrawString( const char* pzString, int nLength )
 		    RenderGlyph( m_pcBitmap, pcGlyph, cPos,
 				 pcClip->m_cBounds + cITopLeft , anPallette );
 		}
-		cPos.x += pcGlyph->m_nAdvance;
-		m_cPenPos.x += pcGlyph->m_nAdvance;
+		cPos.x += pcGlyph->m_nAdvance.x;
+		m_cPenPos.x += pcGlyph->m_nAdvance.x;
 	    }
 	    FontServer::Unlock();
 	}
@@ -780,8 +780,8 @@ void Layer::DrawString( const char* pzString, int nLength )
 		    RenderGlyphBlend( m_pcBitmap, pcGlyph, cPos,
 				 pcClip->m_cBounds + cITopLeft , m_sFgColor );
 		}
-		cPos.x += pcGlyph->m_nAdvance;
-		m_cPenPos.x += pcGlyph->m_nAdvance;
+		cPos.x += pcGlyph->m_nAdvance.x;
+		m_cPenPos.x += pcGlyph->m_nAdvance.x;
 	    }
 	    FontServer::Unlock();
 	}
@@ -807,8 +807,8 @@ void Layer::DrawString( const char* pzString, int nLength )
 		    RenderGlyph( m_pcBitmap, pcGlyph, cPos,
 				 pcClip->m_cBounds + cITopLeft , m_sFgColor );
 		}
-		cPos.x += pcGlyph->m_nAdvance;
-		m_cPenPos.x += pcGlyph->m_nAdvance;
+		cPos.x += pcGlyph->m_nAdvance.x;
+		m_cPenPos.x += pcGlyph->m_nAdvance.x;
 	    }
 	    FontServer::Unlock();
 	}
@@ -1087,3 +1087,5 @@ void Layer::DrawBitMap( SrvBitmap* pcDstBitmap, SrvBitmap* pcBitMap, Rect cSrcRe
     }
     PutRegion( pcReg );
 }
+
+

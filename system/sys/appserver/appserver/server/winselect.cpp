@@ -33,7 +33,7 @@ WinSelect::WinSelect() : Layer( NULL, g_pcTopView, "", Rect( 0, 0, 1, 1), 0, NUL
     FontNode* pcNode = new FontNode();
     const font_properties* psProp = AppserverConfig::GetInstance()->GetFontConfig( DEFAULT_FONT_REGULAR );
     pcNode->SetFamilyAndStyle( psProp->m_cFamily, psProp->m_cStyle );
-    pcNode->SetProperties( int(psProp->m_vSize*64.0f), int(psProp->m_vShear*64.0f), int(psProp->m_vRotation*64.0f) );
+    pcNode->SetProperties( int(psProp->m_vSize*64.0f), int(psProp->m_vShear*64.0f), int(psProp->m_vRotation*64.0f), os::FPF_SMOOTHED );
     
     SetFont( pcNode );
     pcNode->Release();
@@ -223,4 +223,6 @@ void WinSelect::Step( bool bForward )
 	m_cWindows[m_nCurSelect]->MakeFocus( true );
     }
 }
+
+
 

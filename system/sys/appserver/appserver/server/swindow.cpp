@@ -695,13 +695,16 @@ void SrvWindow::R_Render( WR_Render_s* psPkt )
     }
 }
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
+/** Send a keyboard event
+ * \par		Description:
+ *		Sends a keyboard event (key up or key down) to the active
+ *		window.
+ * \param	nKeyCode The raw key code (as delivered by the keyboard driver)
+ * \param	nQualifiers Qualifiers eg. QUAL_SHIFT, QUAL_CTRL etc.
+ * \param	pzConvString UTF-8 encoded character as specified in the keymap.
+ * \param	pzRawString Like pzConvString, but no regard taken to qualifiers.
+ * \author Kurt Skauen
+ *****************************************************************************/
 void SrvWindow::SendKbdEvent( int nKeyCode, uint32 nQualifiers, const char* pzConvString, const char* pzRawString )
 {
     g_cLayerGate.Lock();
@@ -1452,3 +1455,5 @@ thread_id SrvWindow::Run()
     }
     return( hThread );
 }
+
+
