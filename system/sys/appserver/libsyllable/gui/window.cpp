@@ -33,6 +33,7 @@
 #include <gui/exceptions.h>
 #include <macros.h>
 #include <gui/desktop.h>
+#include <util/shortcutkey.h>
 
 
 using namespace os;
@@ -42,14 +43,48 @@ enum
 
 class TopView:public View
 {
-      public:
+	public:
 	TopView( const Rect & cFrame, Window * pcWindow );
 
 	virtual void FrameMoved( const Point & cDelta );
 	virtual void FrameSized( const Point & cDelta );
-      private:
-	  Window * m_pcWindow;
+
+	virtual void KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
+	
+	bool m_bKeyDownRejected;
+
+	private:
+	Window * m_pcWindow;
 };
+
+enum ShortcutDataFlags {
+	SDF_DELETE = 1,
+	SDF_MESSAGE = 2,
+	SDF_VIEW = 4
+};
+
+struct ShortcutData {
+	uint32		m_nFlags;
+	union {
+		Message*	m_pcMessage;
+		View*		m_pcView;
+	};
+
+	ShortcutData( Message* pcMessage ) {
+		m_pcMessage = pcMessage;
+		m_nFlags = SDF_DELETE | SDF_MESSAGE;
+	}
+	ShortcutData( View* pcView ) {
+		m_pcView = pcView;
+		m_nFlags = SDF_VIEW;
+	}
+	ShortcutData() {
+		m_pcMessage = NULL;
+		m_nFlags = 0;
+	}
+};
+
+typedef std::map<ShortcutKey, ShortcutData> shortcut_map;
 
 class Window::Private
 {
@@ -73,10 +108,12 @@ class Window::Private
 		m_pcDefaultButton = NULL;
 		m_pcDefaultWheelView = NULL;
 		m_bDidScrollRect = false;
+		m_pcIcon = NULL;
 		memset( m_apcFocusStack, 0, FOCUS_STACK_SIZE * sizeof( View * ) );
 	}
 
 	std::string m_cTitle;
+	Bitmap* m_pcIcon;
 	WR_Render_s *m_psRenderPkt;
 	uint32 m_nRndBufSize;
 
@@ -102,6 +139,8 @@ class Window::Private
 	bool m_bIsRunning;
 	bool m_bDidScrollRect;
 
+	shortcut_map	m_cShortcuts;
+
 };
 
 //----------------------------------------------------------------------------
@@ -113,6 +152,25 @@ class Window::Private
 
 void Window::_Cleanup()
 {
+	shortcut_map::iterator i;
+	for( i = m->m_cShortcuts.begin(); i != m->m_cShortcuts.end(); i++ ) {
+		if( ( (*i).second.m_nFlags & SDF_DELETE ) && ( (*i).second.m_pcMessage ) ) {
+			delete (*i).second.m_pcMessage;
+		}
+	}
+
+	if( m->m_pcIcon != NULL ) {
+		Message cReq( WR_SET_ICON );
+		cReq.AddInt32( "handle", -1 );
+
+		if( Messenger( m->m_hLayerPort ).SendMessage( &cReq ) < 0 )
+		{
+			dbprintf( "Error: Window::_Cleanup() failed to send WR_SET_ICON request to server\n" );
+		}
+		delete( m->m_pcIcon );
+		m->m_pcIcon = NULL;
+	}
+	
 	if( m->m_pcTopView != NULL )
 	{
 		Message cReq( AR_CLOSE_WINDOW );
@@ -128,7 +186,8 @@ void Window::_Cleanup()
 		}
 	}
 	delete m->m_psRenderPkt;
-
+	
+	
 	if( m->m_hReplyPort >= 0 )
 	{
 		delete_port( m->m_hReplyPort );
@@ -342,8 +401,6 @@ View *Window::GetDefaultWheelView() const
  * \sa View::MakeFocus()
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
-
-
 View *Window::SetFocusChild( View * pcView )
 {
 	View *pcPrevView = GetFocusChild();
@@ -403,6 +460,55 @@ void Window::SetTitle( const std::string & cTitle )
 		if( Messenger( m->m_hLayerPort ).SendMessage( &cReq ) < 0 )
 		{
 			dbprintf( "Error: Window::SetTitle() failed to send request to server\n" );
+		}
+	}
+}
+
+
+/** Change the window icon.
+ * \par Description:
+ *	SetIcon() will change the icon assigned to the window.
+ * \par Note:
+ *	The Bitmap will be copied, so you can delete the bitmap
+ *  afterwards,
+ * \param pcIcon
+ *	The new window icon.
+ * \sa GetIcon(), SetTitle()
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+
+void Window::SetIcon( Bitmap* pcIcon )
+{
+	if( pcIcon == NULL )
+	{
+		dbprintf( "Error: Window::SetIcon() called with empty icon\n" );
+		return;
+	}
+	
+	if( m->m_pcIcon != NULL )
+	{
+		/* Delete old icon */
+		delete( m->m_pcIcon );
+	}
+	m->m_pcIcon = NULL;
+	
+	
+	/* Create a new bitmap and copy the attributes of the old one */
+	m->m_pcIcon = new Bitmap( pcIcon->GetBounds().Width() + 1, pcIcon->GetBounds().Height() + 1,
+							pcIcon->GetColorSpace(), Bitmap::SHARE_FRAMEBUFFER );
+	memcpy( m->m_pcIcon->LockRaster(), pcIcon->LockRaster(), pcIcon->GetBytesPerRow() * 
+			(int)( pcIcon->GetBounds().Height() + 1 ) );
+	
+	
+	if( m->m_hLayerPort >= 0 )
+	{
+		Message cReq( WR_SET_ICON );
+
+		cReq.AddInt32( "handle", m->m_pcIcon->m_hHandle );
+
+		if( Messenger( m->m_hLayerPort ).SendMessage( &cReq ) < 0 )
+		{
+			dbprintf( "Error: Window::SetIcon() failed to send request to server\n" );
 		}
 	}
 }
@@ -478,6 +584,18 @@ void Window::SetAlignment( const IPoint & cSize, const IPoint & cSizeOffset, con
 std::string Window::GetTitle( void ) const
 {
 	return ( m->m_cTitle );
+}
+
+
+/** Obtain the current window icon.
+ * \return A pointer to the icon of the window or NULL if the window has no icon.
+ * \sa SetIcon(), GetTitle()
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+
+Bitmap* Window::GetIcon( void ) const
+{
+	return ( m->m_pcIcon );
 }
 
 /** Activate/Deactivate the window.
@@ -799,6 +917,29 @@ void Window::_ViewDeleted( View * pcView )
 			}
 			m->m_apcFocusStack[FOCUS_STACK_SIZE - 1] = NULL;
 		}
+	}
+}
+
+void Window::AddShortcut( const ShortcutKey& cKey, Message* pcMsg )
+{
+	RemoveShortcut( cKey );
+	m->m_cShortcuts[ cKey ] = ShortcutData( pcMsg );
+}
+
+void Window::AddShortcut( const ShortcutKey& cKey, View* pcView )
+{
+	RemoveShortcut( cKey );
+	m->m_cShortcuts[ cKey ] = ShortcutData( pcView );
+}
+
+void Window::RemoveShortcut( const ShortcutKey& cKey )
+{
+	shortcut_map::iterator cItem = m->m_cShortcuts.find( cKey );
+	if( cItem != m->m_cShortcuts.end() ) {
+		if( ( (*cItem).second.m_nFlags & SDF_DELETE ) && ( (*cItem).second.m_pcMessage ) ) {
+			delete (*cItem).second.m_pcMessage;
+		}
+		m->m_cShortcuts.erase( cItem );
 	}
 }
 
@@ -1152,7 +1293,7 @@ View *Window::_GetNextTabView( View * pcCurrent )
 void Window::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 {
 	View *pcView;
-
+	
 	if( pcMsg->FindPointer( "_widget", ( void ** )&pcView ) == 0 && pcView != NULL && _FindHandler( pcView->m_nToken ) == pcView )
 	{
 		switch ( pcMsg->GetCode() )
@@ -1348,9 +1489,18 @@ void Window::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 					}
 					else
 					{
+						// This flag will let us know if the event was rejected by the focus
+						// child and all it's ancestors.
+						m->m_pcTopView->m_bKeyDownRejected = false;
 						pcFocusChild->KeyDown( pzString, pzRawString, nQualifier );
+						if( m->m_pcTopView->m_bKeyDownRejected ) {
+							_HandleShortcuts( pzString, pzRawString, nQualifier );
+						}
 					}
+				} else {
+					_HandleShortcuts( pzString, pzRawString, nQualifier );
 				}
+
 				break;
 			}
 
@@ -1490,7 +1640,47 @@ void Window::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 				_HandleActivate( bIsActive, m->m_cMousePos );
 				break;
 			}
-		default:
+		case M_DESKTOP_ACTIVATED:
+			{
+				int32 nDesktop;
+				bool bActivated;
+
+				if( pcMsg->FindInt32( "_new_desktop", &nDesktop ) != 0  )
+				{
+					dbprintf( "Error: Failed to find '_new_desktop' member in M_DESKTOP_ACTIVATED message\n" );
+				} 
+				if( pcMsg->FindBool( "_activated", &bActivated ) != 0  )
+				{
+					dbprintf( "Error: Failed to find '_activated' member in M_DESKTOP_ACTIVATED message\n" );
+				} 
+				
+				DesktopActivated( nDesktop, bActivated );
+				break;
+			}
+		case M_SCREENMODE_CHANGED:
+			{
+				IPoint cPoint;
+				int32 nColorSpace;
+
+				if( pcMsg->FindIPoint( "_new_resolution", &cPoint ) != 0 )
+				{
+					dbprintf( "Error: Failed to find '_new_resolution' member in M_SCREENMODE_CHANGED message\n" );
+				} 
+				
+				if( pcMsg->FindInt32( "_new_color_space", &nColorSpace ) != 0 )
+				{
+					dbprintf( "Error: Failed to find '_new_color_space' member in M_SCREENMODE_CHANGED message\n" );
+				} 
+				enum color_space eSpace = ( enum color_space )nColorSpace;
+				ScreenModeChanged( cPoint, eSpace );
+				break;
+			}
+		case M_WINDOWS_CHANGED:
+			{
+				WindowsChanged();
+				break;
+			}
+			default:
 			Looper::DispatchMessage( pcMsg, pcHandler );
 //      m->m_pcMouseChild = NULL;
 			break;
@@ -1553,6 +1743,29 @@ void Window::_DeleteViewFromServer( View * pcView )
 	pcQueue->Unlock();
 }
 
+void Window::_HandleShortcuts( const char* pzString, const char* pzRawString, uint32 nQualifiers )
+{
+	ShortcutKey cKey( pzRawString, nQualifiers );
+	shortcut_map::iterator cItem = m->m_cShortcuts.find( cKey );
+	while( cItem != m->m_cShortcuts.end() ) {
+		if( (*cItem).first == cKey ) break;
+		if( cKey < (*cItem).first ) {
+			cItem = m->m_cShortcuts.end();
+			break;
+		}
+		cItem++;
+	}
+	if( cItem != m->m_cShortcuts.end() ) {
+		if( (*cItem).second.m_pcMessage ) {
+			if( (*cItem).second.m_nFlags & SDF_MESSAGE ) {
+				PostMessage( (*cItem).second.m_pcMessage );
+			} else if( (*cItem).second.m_nFlags & SDF_VIEW ) {
+				(*cItem).second.m_pcView->KeyDown( pzString, pzRawString, nQualifiers );
+			}
+		}
+	}
+}
+
 bool Window::IsActive() const
 {
 	return ( m->m_bIsActive || m->m_bMenuOpen );
@@ -1595,10 +1808,30 @@ void Window::FrameSized( const Point & cDelta )
 {
 }
 
+
+/** Called whenever the screenmode changes.
+ * \par Description:
+ * ScreenModeChanged( const IPoint & cNewRes, color_space eColorSpace ) will
+ * be called when the screenmode changes. This will also happen during a 
+ * desktop change to the desktop displaying the window if both desktops use
+ * different screenmodes.
+ * \param cNewRes - New resolution.
+ * \param eColorSpace - New colorspace.
+ * \author	Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
 void Window::ScreenModeChanged( const IPoint & cNewRes, color_space eColorSpace )
 {
 }
 
+
+/** Called whenever the desktop displaying the window will be activated or deactivated.
+ * \par Description:
+ * DesktopActivated( int nDesktop, bool bActive ) will
+ * be called when the desktop displaying the window will be activated or deactivated.
+ * \param nDesktop - Now activated desktop if bActive is true. Otherwise the old desktop.
+ * \param bActive - True if the desktop is activated.
+ * \author	Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
 void Window::DesktopActivated( int nDesktop, bool bActive )
 {
 }
@@ -1622,6 +1855,14 @@ void TopView::FrameSized( const Point & cDelta )
 	m_pcWindow->FrameSized( cDelta );
 }
 
+void TopView::KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers )
+{
+	/* It would be very risky to handle keyboard shortcuts here, so we'll use a flag */
+	/* to tell DispatchMessage() to do it. */
+	m_bKeyDownRejected = true;
+}
+
+
 void Window::_DefaultColorsChanged()
 {
 }
@@ -1640,10 +1881,17 @@ port_id Window::_GetAppserverPort() const
 {
 	return ( m->m_hLayerPort );
 }
-
-void Window::__WI_reserved1__()
+/** Called whenever the currently shown windows change.
+ * \par Description:
+ * WindowsChanged() will be called when the windows on the desktop change.
+ * \par Note:
+ * This will only work if you have set the WND_SEND_WINDOWS_CHANGED flag.
+ * \author	Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
+void Window::WindowsChanged()
 {
 }
+
 void Window::__WI_reserved2__()
 {
 }
