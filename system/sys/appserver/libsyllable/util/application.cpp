@@ -177,30 +177,14 @@ void Application::SetCatalog( Catalog* pcCatalog )
 
 bool Application::SetCatalog( const String& cCatalogName )
 {
-	Catalog *pcCat;
-	bool ret = false;
-
-	StreamableIO* pcStream = m->m_cLocale.GetLocalizedResourceStream( cCatalogName );
-	if( pcStream ) {
-		pcCat = new Catalog;
-		pcCat->Load( pcStream );
-		delete pcStream;
+	Catalog* pcCat = m->m_cLocale.GetLocalizedCatalog( cCatalogName );
+	if( pcCat ) {
 		SetCatalog( pcCat );
-		ret = true;
+		return true;
+	} else {
+		return false;
 	}
-
-	return ret;
 }
-
-/*const Locale& Application::GetDefaultLocale() const
-{
-	return m->m_cLocale;
-}
-
-void Application::SetDefaultLocale( Locale cLocale )
-{
-	m->m_cLocale = cLocale;
-}*/
 
 /** \brief Return the appserver message port.
  *
@@ -1023,6 +1007,5 @@ void Application::__reserved9__()
 void Application::__reserved10__()
 {
 }
-
 
 
