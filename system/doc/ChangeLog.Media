@@ -1,3 +1,5 @@
+---- 0.5.5 Released -------------------------------------------------------------------
+
 * October 6th 2004, Kristian Van Der Vliet *
 
 Pass an empty String instead of NULL as required by libsyllable.so.5 when creating a
