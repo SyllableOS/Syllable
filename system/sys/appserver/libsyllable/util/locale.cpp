@@ -98,8 +98,14 @@ void Locale::SetName( const String& cName )
 
 StreamableIO* Locale::GetResourceStream( const String& cName )
 {
-	Resources* pcCol = m->GetResources();
+	Resources* pcCol = NULL;
 	StreamableIO* pcStream = NULL;
+
+	try {
+		pcCol = m->GetResources();
+	} catch( ... ) {
+		// eat "could not find resource section" exceptions
+	}
 
 	if( pcCol ) {
 		pcStream = pcCol->GetResourceStream( cName );

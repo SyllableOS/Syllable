@@ -189,7 +189,7 @@ Settings::Settings()
  * \sa Load(), Save(), os::Application
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-Settings::Settings( const String & cFile, const String & cPath = "" )
+Settings::Settings( const String & cFile, const String & cPath )
 {
 	m = new Private;
 	m->SetPath( cFile, cPath );
@@ -310,7 +310,7 @@ String Settings::GetFile() const
  *        used.
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-void Settings::SetPath( const String & cPath = "" )
+void Settings::SetPath( const String & cPath )
 {
 	m->SetPath( m->m_cFile, cPath );
 }
@@ -321,7 +321,7 @@ void Settings::SetPath( const String & cPath = "" )
  * \param cFile The new filename.
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-void Settings::SetFile( const String & cFile = "Settings" )
+void Settings::SetFile( const String & cFile )
 {
 	m->SetPath( cFile, m->m_cPath );
 }
@@ -370,7 +370,7 @@ Settings & Settings::operator=( const Message & cSource )
  *        parameter to specify which one you want.
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-String Settings::GetString( const char *pzName, const char *pzDefault = "", int nIndex = 0 ) const
+String Settings::GetString( const char *pzName, const char *pzDefault, int nIndex ) const
 {
 	String v;
 
@@ -392,7 +392,7 @@ String Settings::GetString( const char *pzName, const char *pzDefault = "", int 
  *        parameter to specify which one you want.
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-int8 Settings::GetInt8( const char *pzName, int8 nDefault, int nIndex = 0 ) const
+int8 Settings::GetInt8( const char *pzName, int8 nDefault, int nIndex ) const
 {
 	int8 v;
 
@@ -414,7 +414,7 @@ int8 Settings::GetInt8( const char *pzName, int8 nDefault, int nIndex = 0 ) cons
  *        parameter to specify which one you want.
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-int16 Settings::GetInt16( const char *pzName, int16 nDefault, int nIndex = 0 ) const
+int16 Settings::GetInt16( const char *pzName, int16 nDefault, int nIndex ) const
 {
 	int16 v;
 
@@ -436,7 +436,7 @@ int16 Settings::GetInt16( const char *pzName, int16 nDefault, int nIndex = 0 ) c
  *        parameter to specify which one you want.
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-int32 Settings::GetInt32( const char *pzName, int32 nDefault, int nIndex = 0 ) const
+int32 Settings::GetInt32( const char *pzName, int32 nDefault, int nIndex ) const
 {
 	int32 v;
 
@@ -458,7 +458,7 @@ int32 Settings::GetInt32( const char *pzName, int32 nDefault, int nIndex = 0 ) c
  *        parameter to specify which one you want.
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-int64 Settings::GetInt64( const char *pzName, int64 nDefault, int nIndex = 0 ) const
+int64 Settings::GetInt64( const char *pzName, int64 nDefault, int nIndex ) const
 {
 	int64 v;
 
@@ -480,7 +480,7 @@ int64 Settings::GetInt64( const char *pzName, int64 nDefault, int nIndex = 0 ) c
  *        parameter to specify which one you want.
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-bool Settings::GetBool( const char *pzName, bool bDefault, int nIndex = 0 ) const
+bool Settings::GetBool( const char *pzName, bool bDefault, int nIndex ) const
 {
 	bool v;
 
@@ -502,7 +502,7 @@ bool Settings::GetBool( const char *pzName, bool bDefault, int nIndex = 0 ) cons
  *        parameter to specify which one you want.
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-float Settings::GetFloat( const char *pzName, float vDefault, int nIndex = 0 ) const
+float Settings::GetFloat( const char *pzName, float vDefault, int nIndex ) const
 {
 	float v;
 
@@ -524,7 +524,7 @@ float Settings::GetFloat( const char *pzName, float vDefault, int nIndex = 0 ) c
  *        parameter to specify which one you want.
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-double Settings::GetDouble( const char *pzName, double vDefault, int nIndex = 0 ) const
+double Settings::GetDouble( const char *pzName, double vDefault, int nIndex ) const
 {
 	double v;
 
@@ -546,7 +546,7 @@ double Settings::GetDouble( const char *pzName, double vDefault, int nIndex = 0 
  *        parameter to specify which one you want.
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-Rect Settings::GetRect( const char *pzName, const Rect & cDefault, int nIndex = 0 ) const
+Rect Settings::GetRect( const char *pzName, const Rect & cDefault, int nIndex ) const
 {
 	Rect v;
 
@@ -568,7 +568,7 @@ Rect Settings::GetRect( const char *pzName, const Rect & cDefault, int nIndex = 
  *        parameter to specify which one you want.
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-IRect Settings::GetIRect( const char *pzName, const IRect & cDefault, int nIndex = 0 ) const
+IRect Settings::GetIRect( const char *pzName, const IRect & cDefault, int nIndex ) const
 {
 	IRect v;
 
@@ -590,7 +590,7 @@ IRect Settings::GetIRect( const char *pzName, const IRect & cDefault, int nIndex
  *        parameter to specify which one you want.
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-Point Settings::GetPoint( const char *pzName, const Point & cDefault, int nIndex = 0 ) const
+Point Settings::GetPoint( const char *pzName, const Point & cDefault, int nIndex ) const
 {
 	Point v;
 
@@ -612,7 +612,7 @@ Point Settings::GetPoint( const char *pzName, const Point & cDefault, int nIndex
  *        parameter to specify which one you want.
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-IPoint Settings::GetIPoint( const char *pzName, const IPoint & cDefault, int nIndex = 0 ) const
+IPoint Settings::GetIPoint( const char *pzName, const IPoint & cDefault, int nIndex ) const
 {
 	IPoint v;
 
@@ -634,7 +634,7 @@ IPoint Settings::GetIPoint( const char *pzName, const IPoint & cDefault, int nIn
  *        parameter to specify which one you want.
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-Color32_s Settings::GetColor32( const char *pzName, const Color32_s & cDefault, int nIndex = 0 ) const
+Color32_s Settings::GetColor32( const char *pzName, const Color32_s & cDefault, int nIndex ) const
 {
 	Color32_s v;
 
@@ -656,7 +656,7 @@ Color32_s Settings::GetColor32( const char *pzName, const Color32_s & cDefault, 
  *        parameter to specify which one you want.
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-Variant Settings::GetVariant( const char *pzName, const Variant & cDefault, int nIndex = 0 ) const
+Variant Settings::GetVariant( const char *pzName, const Variant & cDefault, int nIndex ) const
 {
 	Variant v;
 
@@ -697,7 +697,7 @@ Variant Settings::GetVariant( const char *pzName, const Variant & cDefault, int 
  *	os::Message::FindData()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-status_t Settings::SetVariant( const char *pzName, const Variant & cValue, int nIndex = 0 )
+status_t Settings::SetVariant( const char *pzName, const Variant & cValue, int nIndex )
 {
 	DataArray_s *psArray = _FindArray( pzName, T_VARIANT );
 	Chunk_s *psChunk;
@@ -760,7 +760,7 @@ status_t Settings::SetVariant( const char *pzName, const Variant & cValue, int n
  *	os::Message::FindData()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-status_t Settings::SetString( const char *pzName, const String & cValue, int nIndex = 0 )
+status_t Settings::SetString( const char *pzName, const String & cValue, int nIndex )
 {
 	return SetData( pzName, T_STRING, cValue.c_str(), cValue.size(  ) + 1, nIndex, false );
 }
@@ -794,7 +794,7 @@ status_t Settings::SetString( const char *pzName, const String & cValue, int nIn
  *	os::Message::FindData()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-status_t Settings::SetInt8( const char *pzName, int8 nValue, int nIndex = 0 )
+status_t Settings::SetInt8( const char *pzName, int8 nValue, int nIndex )
 {
 	return SetData( pzName, T_INT8, &nValue, sizeof( nValue ), nIndex, true );
 }
@@ -828,7 +828,7 @@ status_t Settings::SetInt8( const char *pzName, int8 nValue, int nIndex = 0 )
  *	os::Message::FindData()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-status_t Settings::SetInt16( const char *pzName, int16 nValue, int nIndex = 0 )
+status_t Settings::SetInt16( const char *pzName, int16 nValue, int nIndex )
 {
 	return SetData( pzName, T_INT16, &nValue, sizeof( nValue ), nIndex, true );
 }
@@ -862,7 +862,7 @@ status_t Settings::SetInt16( const char *pzName, int16 nValue, int nIndex = 0 )
  *	os::Message::FindData()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-status_t Settings::SetInt32( const char *pzName, int32 nValue, int nIndex = 0 )
+status_t Settings::SetInt32( const char *pzName, int32 nValue, int nIndex )
 {
 	return SetData( pzName, T_INT32, &nValue, sizeof( nValue ), nIndex, true );
 }
@@ -896,7 +896,7 @@ status_t Settings::SetInt32( const char *pzName, int32 nValue, int nIndex = 0 )
  *	os::Message::FindData()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-status_t Settings::SetInt64( const char *pzName, int64 nValue, int nIndex = 0 )
+status_t Settings::SetInt64( const char *pzName, int64 nValue, int nIndex )
 {
 	return SetData( pzName, T_INT64, &nValue, sizeof( nValue ), nIndex, true );
 }
@@ -930,7 +930,7 @@ status_t Settings::SetInt64( const char *pzName, int64 nValue, int nIndex = 0 )
  *	os::Message::FindData()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-status_t Settings::SetBool( const char *pzName, bool bValue, int nIndex = 0 )
+status_t Settings::SetBool( const char *pzName, bool bValue, int nIndex )
 {
 	return SetData( pzName, T_BOOL, &bValue, sizeof( bValue ), nIndex, true );
 }
@@ -964,7 +964,7 @@ status_t Settings::SetBool( const char *pzName, bool bValue, int nIndex = 0 )
  *	os::Message::FindData()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-status_t Settings::SetFloat( const char *pzName, float vValue, int nIndex = 0 )
+status_t Settings::SetFloat( const char *pzName, float vValue, int nIndex )
 {
 	return SetData( pzName, T_FLOAT, &vValue, sizeof( vValue ), nIndex, true );
 }
@@ -998,7 +998,7 @@ status_t Settings::SetFloat( const char *pzName, float vValue, int nIndex = 0 )
  *	os::Message::FindData()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-status_t Settings::SetDouble( const char *pzName, double vValue, int nIndex = 0 )
+status_t Settings::SetDouble( const char *pzName, double vValue, int nIndex )
 {
 	return SetData( pzName, T_DOUBLE, &vValue, sizeof( vValue ), nIndex, true );
 }
@@ -1032,7 +1032,7 @@ status_t Settings::SetDouble( const char *pzName, double vValue, int nIndex = 0 
  *	os::Message::FindData()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-status_t Settings::SetRect( const char *pzName, const Rect & cValue, int nIndex = 0 )
+status_t Settings::SetRect( const char *pzName, const Rect & cValue, int nIndex )
 {
 	return SetData( pzName, T_RECT, &cValue, sizeof( cValue ), nIndex, true );
 }
@@ -1066,7 +1066,7 @@ status_t Settings::SetRect( const char *pzName, const Rect & cValue, int nIndex 
  *	os::Message::FindData()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-status_t Settings::SetIRect( const char *pzName, const IRect & cValue, int nIndex = 0 )
+status_t Settings::SetIRect( const char *pzName, const IRect & cValue, int nIndex )
 {
 	return SetData( pzName, T_IRECT, &cValue, sizeof( cValue ), nIndex, true );
 }
@@ -1100,7 +1100,7 @@ status_t Settings::SetIRect( const char *pzName, const IRect & cValue, int nInde
  *	os::Message::FindData()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-status_t Settings::SetPoint( const char *pzName, const Point & cValue, int nIndex = 0 )
+status_t Settings::SetPoint( const char *pzName, const Point & cValue, int nIndex )
 {
 	return SetData( pzName, T_POINT, &cValue, sizeof( cValue ), nIndex, true );
 }
@@ -1134,7 +1134,7 @@ status_t Settings::SetPoint( const char *pzName, const Point & cValue, int nInde
  *	os::Message::FindData()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-status_t Settings::SetIPoint( const char *pzName, const IPoint & cValue, int nIndex = 0 )
+status_t Settings::SetIPoint( const char *pzName, const IPoint & cValue, int nIndex )
 {
 	return SetData( pzName, T_IPOINT, &cValue, sizeof( cValue ), nIndex, true );
 }
@@ -1168,7 +1168,7 @@ status_t Settings::SetIPoint( const char *pzName, const IPoint & cValue, int nIn
  *	os::Message::FindData()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-status_t Settings::SetColor32( const char *pzName, const Color32_s & cValue, int nIndex = 0 )
+status_t Settings::SetColor32( const char *pzName, const Color32_s & cValue, int nIndex )
 {
 	return SetData( pzName, T_COLOR32, &cValue, sizeof( cValue ), nIndex, true );
 }
@@ -1202,7 +1202,7 @@ status_t Settings::SetColor32( const char *pzName, const Color32_s & cValue, int
  *	os::Message::FindData()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-status_t Settings::SetMessage( const char *pzName, const Message & cValue, int nIndex = 0 )
+status_t Settings::SetMessage( const char *pzName, const Message & cValue, int nIndex )
 {
 	DataArray_s *psArray = _FindArray( pzName, T_MESSAGE );
 	Chunk_s *psChunk;
@@ -1298,7 +1298,7 @@ status_t Settings::SetMessage( const char *pzName, const Message & cValue, int n
  * \sa os::Message::FindData(), os::Message::SetData()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-status_t Settings::SetData( const char *pzName, int nType, const void *pData, uint32 nSize, int nIndex = 0, bool bFixedSize = true, int nMaxCountHint = 1 )
+status_t Settings::SetData( const char *pzName, int nType, const void *pData, uint32 nSize, int nIndex, bool bFixedSize, int nMaxCountHint )
 {
 	DataArray_s *psArray = _FindArray( pzName, nType );
 
@@ -1398,6 +1398,3 @@ Message::Chunk_s * Settings::_ResizeChunk( Message::DataArray_s * psArray, Messa
 
 	return ( NULL );
 }
-
-
-

@@ -328,7 +328,7 @@ bool RegExp::Search( const String & cString )
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-bool RegExp::Search( const String & cString, int nStart, int nLen = -1 )
+bool RegExp::Search( const String & cString, int nStart, int nLen )
 {
 	if( nLen == -1 )
 	{
@@ -399,7 +399,7 @@ bool RegExp::Match( const String & cString )
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-bool RegExp::Match( const String & cString, int nStart, int nLen = -1 )
+bool RegExp::Match( const String & cString, int nStart, int nLen )
 {
 	if( nLen == -1 )
 	{

@@ -29,7 +29,7 @@ int32 Thread::_Entry( void *pvoid )
  * \sa Start()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-Thread::Thread( const char *pzName, int nPriority = NORMAL_PRIORITY, int nStackSize = 0 )
+Thread::Thread( const char *pzName, int nPriority, int nStackSize )
 {
 	Initialize( pzName, nPriority, nStackSize );
 }
@@ -123,12 +123,12 @@ void Thread::Terminate( void )
  *		execution, call Start().
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-void Thread::Initialize( const char *pzName, int nPriority = NORMAL_PRIORITY, int nStackSize = 0 )
+void Thread::Initialize( const char *pzName, int nPriority, int nStackSize )
 {
 	if( m_iThread >= 0 )
 		Terminate();
 
-	m_iThread = spawn_thread( pzName, _Entry, nPriority, nStackSize, this );
+	m_iThread = spawn_thread( pzName, (void*)_Entry, nPriority, nStackSize, this );
 	if( m_iThread < 0 )
 		throw ThreadException ( "spawn_thread() failed", errno );
 }
@@ -156,7 +156,7 @@ void Thread::Delay( uint32 nMicros )
  *	REALTIME_PRIORITY).
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-void Thread::SetPriority( int nPriority = IDLE_PRIORITY )
+void Thread::SetPriority( int nPriority )
 {
 	if( m_iThread < 0 )
 		throw ThreadException ( "Invalid thread ID", EINVALIDTHREAD );

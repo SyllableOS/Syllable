@@ -7,7 +7,7 @@
 
 using namespace os;
 
-ShortcutKey::ShortcutKey( const char* pzKey, uint32 nQualifiers = 0 )
+ShortcutKey::ShortcutKey( const char* pzKey, uint32 nQualifiers )
 {
 	if( ( strncasecmp( pzKey, "ALT+", 4 ) == 0 ) ) {
 		pzKey += 4;
@@ -24,7 +24,7 @@ ShortcutKey::ShortcutKey( const char* pzKey, uint32 nQualifiers = 0 )
 	m_nQualifiers = nQualifiers;
 }
 
-ShortcutKey::ShortcutKey( const uint32 nKey, uint32 nQualifiers = 0 )
+ShortcutKey::ShortcutKey( const uint32 nKey, uint32 nQualifiers )
 {
 	m_nKey = nKey;
 	m_nQualifiers = nQualifiers;
@@ -101,4 +101,3 @@ void ShortcutKey::_SetKey( const char* pzKey )
 
 	m_nKey = towupper( unicode );
 }
-

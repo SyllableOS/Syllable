@@ -526,8 +526,14 @@ status_t Resources::_LoadResourceList()
 			}
 			return ( -1 );
 		}
-		sDesc.m_cName.resize( nNameLen );
-		nError = m->m_pcStream->Read( sDesc.m_cName.begin(), nNameLen );
+		{
+			char *pzBfr = new char[ nNameLen + 1 ];
+			nError = m->m_pcStream->Read( pzBfr, nNameLen );
+			sDesc.m_cName = pzBfr;
+			delete []pzBfr;
+		}
+/*		sDesc.m_cName.resize( nNameLen );
+		nError = m->m_pcStream->Read( sDesc.m_cName.begin(), nNameLen );*/
 		sDesc.m_nHeaderSize += nNameLen + 1;
 		if( nError != nNameLen )
 		{
@@ -546,8 +552,14 @@ status_t Resources::_LoadResourceList()
 			}
 			return ( -1 );
 		}
-		sDesc.m_cType.resize( nNameLen );
-		nError = m->m_pcStream->Read( sDesc.m_cType.begin(), nNameLen );
+		{
+			char *pzBfr = new char[ nNameLen + 1 ];
+			nError = m->m_pcStream->Read( pzBfr, nNameLen );
+			sDesc.m_cType = pzBfr;
+			delete []pzBfr;
+		}
+/*		sDesc.m_cType.resize( nNameLen );
+		nError = m->m_pcStream->Read( sDesc.m_cType.begin(), nNameLen );*/
 		if( nError != nNameLen )
 		{
 			if( nError >= 0 )
@@ -866,7 +878,7 @@ ResStream *Resources::CreateResource( const String & cName, const String & cType
 	{
 		return ( NULL );
 	}
-	if( m->m_pcStream->Write( cName.begin(), nNameLen ) != nNameLen )
+	if( m->m_pcStream->Write( cName.c_str(), nNameLen ) != nNameLen )
 	{
 		return ( NULL );
 	}
@@ -875,7 +887,7 @@ ResStream *Resources::CreateResource( const String & cName, const String & cType
 	{
 		return ( NULL );
 	}
-	if( m->m_pcStream->Write( cType.begin(), nNameLen ) != nNameLen )
+	if( m->m_pcStream->Write( cType.c_str(), nNameLen ) != nNameLen )
 	{
 		return ( NULL );
 	}
@@ -990,4 +1002,3 @@ status_t Resources::FindExecutableResource( SeekableIO * pcStream, off_t *pnOffs
 	errno = ENOENT;
 	return ( -1 );
 }
-

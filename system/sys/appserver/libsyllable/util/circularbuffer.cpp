@@ -20,6 +20,8 @@
 
 #include <util/circularbuffer.h>
 #include <errno.h>
+#include <memory.h>
+#include <new>
 
 using namespace os;
 
@@ -181,3 +183,4 @@ ssize_t CircularBuffer::Read( void *pBuffer, int nSize )
 	}
 	return ( nBytesRead );
 }
+

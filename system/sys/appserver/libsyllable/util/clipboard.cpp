@@ -132,7 +132,7 @@ void Clipboard::Commit()
 
 		while( nSize > 0 )
 		{
-			int nCurSize = min( CLIPBOARD_FRAGMENT_SIZE, nSize );
+			int nCurSize = std::min( CLIPBOARD_FRAGMENT_SIZE, nSize );
 
 			memcpy( sReq.m_anBuffer, pBuffer + nOffset, nCurSize );
 			if( send_msg( m_hServerPort, DR_SET_CLIPBOARD_DATA, &sReq, sizeof( sReq ) - CLIPBOARD_FRAGMENT_SIZE + nCurSize ) != 0 )

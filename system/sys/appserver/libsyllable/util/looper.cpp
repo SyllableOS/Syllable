@@ -285,7 +285,7 @@ void Looper::SetPublic( bool bPublic )
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-void Looper::AddTimer( Handler * pcTarget, int nID, bigtime_t nPeriode, bool bOneShot = true )
+void Looper::AddTimer( Handler * pcTarget, int nID, bigtime_t nPeriode, bool bOneShot )
 {
 	RemoveTimer( pcTarget, nID );
 
@@ -1204,7 +1204,7 @@ void Looper::SpoolMessages()
 
 thread_id Looper::Run()
 {
-	m->m_hThread = spawn_thread( m->m_cName.c_str(), _Entry, m->m_nPriority, 0, this );
+	m->m_hThread = spawn_thread( m->m_cName.c_str(), (void*)_Entry, m->m_nPriority, 0, this );
 	if( m->m_hThread != -1 )
 	{
 		resume_thread( m->m_hThread );
@@ -1833,6 +1833,8 @@ void Looper::__LO_reserved7__()
 void Looper::__LO_reserved8__()
 {
 }
+
+
 
 
 

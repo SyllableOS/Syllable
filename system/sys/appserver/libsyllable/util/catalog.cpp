@@ -66,7 +66,7 @@ Catalog::Catalog( StreamableIO* pcFile )
 	Load( pcFile );
 }
 
-Catalog::Catalog( String& cName, Locale *pcLocale = NULL )
+Catalog::Catalog( String& cName, Locale *pcLocale )
 {
 	m = new Private;
 }
@@ -76,9 +76,16 @@ Catalog::~Catalog()
 	delete m;
 }
 
-const String& Catalog::GetString( uint32 nID ) const
+const String& Catalog::GetString( uint32 nID, const char* pzDefault ) const
 {
 	Lock();
+
+	const_iterator i = m->m_cStrings.find( nID );
+
+	if( i == m->m_cStrings.end() ) {
+		m->m_cStrings[ nID ] = pzDefault;
+	}
+
 	const String& cStr = m->m_cStrings[ nID ];
 	Unlock();
 	return cStr;
@@ -180,15 +187,13 @@ int Catalog::Unlock() const
 }
 
 
-LString::LString( uint32 nID, const Catalog* pcCatalog = NULL )
+LString::LString( uint32 nID, const char* pzDefault )
 {
-	const Catalog* pcCat = pcCatalog;
-
-	if( !pcCat ) {
-		pcCat = Application::GetInstance()->GetCatalog();
-	}
+	const Catalog* pcCat = Application::GetInstance()->GetCatalog();
 
 	if( pcCat ) {
-		String::operator=( pcCat->GetString( nID ) );
+		String::operator=( pcCat->GetString( nID, pzDefault ) );
+	} else {
+		String::operator=( pzDefault );
 	}
 }
