@@ -3,6 +3,8 @@ maintainers
 ; Patching options:
 patch-config		[directory]
 patch-legacy-config
+; Extra variables for configure:
+configure-vars		VAR="value"
 ; Non-standard configure command:
 configure-cmd		configure
 ; Extra configure options:
