@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.3.8
+# Version 0.3.9
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -51,23 +51,25 @@ end
 def unpackPackage target
 	Dir.chdir File.dirname(target) if target["/"]
 
+	base = File.join @sourcesPath, ((pack = recipe(target)["package-name"]) ?
+		pack :
+		fullName(target)
+	)
 #	file = Dir[File.join(@sourcesPath, fullName target) + ".*"] [0]
 #	case File.basename file
 	unless
-		if exists? file = (base = File.join @sourcesPath, dir = fullName(target)) + ".tar.bz2" or
-			exists? file = base + ".tbz2"
-		then
+		if exists? file = base + ".tar.bz2" or exists? file = base + ".tbz2"
 			action "bzcat #{file} | tar x"
 		elsif exists? file = base + ".tar.gz" or exists? file = base + ".tgz"
 			action "tar xzf " + file
 		else
-			logError "Source not found"
+			logError "Source package #{base}.* not found"
 			false
 		end
 	then
 		false
 	else
-		if exists? dir
+		if exists? dir = fullName(target)
 			true
 		else  # Tarball content has a deviating name
 			logSubheader "Moving source"
@@ -755,7 +757,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.3.8",
+	puts "Syllable Build System 0.3.9",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
@@ -839,3 +841,4 @@ else
 
 	closeLogs
 end
+

@@ -1,7 +1,8 @@
+package-name		<Deviating tarball name>
 authors				
 maintainers			
 ; Patching options:
-patch-config		[directory]
+patch-config		[<Directory>]
 patch-legacy-config
 ; Extra variables for configure:
 configure-vars		VAR="value"
