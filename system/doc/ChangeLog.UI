@@ -1,3 +1,34 @@
+* July 25, Henrik Isaksson *
+
+ - Font
+	o Added GetStyle() and GetFamily().
+	o Removed declaration for GetFamilyAndStyle(). It has never been implemented so there should
+      be no impact on compatibility.
+
+ - Slider
+    o Bugfix: AttachedToWindow() crashed when the slider was added to a window prior to
+      assigning frame dimensions to it.
+
+ - ListView
+	o Fixed column detection, so that the nColumn argument now holds the index to the clicked
+      column, when an item is clicked.
+    o Bugfix: MouseDown() now works when there aren't any items in the list. (patch by Ruslan)
+
+ - TreeViewStringNode:
+	o Added SetTextFlags() and GetTextFlags().
+	o Default text flags is now DTF_IGNORE_FMT, meaning that the text will not be parsed for
+	  escape sequences or underscore characters. This breaks the alpha version of CatFish, but
+	  most likely nothing else.
+
+ - Window
+	o Added IsVisible().
+
+ - AppServer
+	o DrawText(), added \33d escape sequence to disable text parser.
+
+ - Translators
+	o Added winicontrans, for Windows .ICO files.
+
 * June 25, Henrik Isaksson *
 
  - LayoutView
@@ -716,6 +747,4 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
-
-
 
