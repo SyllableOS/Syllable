@@ -1,3 +1,12 @@
+* Aug 14 2003, Kristian Van Der Vliet *
+
+Patch to the media detection code of the Tulip NIC driver in an attempt to fix problems
+with 10BaseT/10Base2 detection.
+
+* Aug 14 2003, Kristian Van Der Vliet *
+
+Trident audio driver from Michael Krueger <invenies@web.de>
+
 * Aug 7 2003, Kristian Van Der Vliet *
 
 Patch from William Rose for the nVidia driver which fixes problems when the driver is used
