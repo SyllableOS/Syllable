@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.3.1
+# Version 0.3.2
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -167,21 +167,25 @@ def configurePackage target
 
 		true  # Continue building even if dependencies failed
 	else
-		logHeader "Configuring"
-		action "rm config.cache" if exists? "config.cache"
-		name = shortName package = fullName(target)
-		if action "./configure" +
-			(name == "man" || name == "grub" ? "" :
-				" --prefix=" + prefix(package)
-			) +
-			((options = recipe(package)["configure-options"]) ? " " + options : "") +
-			(name != "ffmpeg" ? "" :
-				" --source-path=" + Dir.getwd
-			)
-		then true
+		unless exists? "configure"
+			true
 		else
-			logFailure target
-			false
+			logHeader "Configuring"
+			action "rm config.cache" if exists? "config.cache"
+			name = shortName package = fullName(target)
+			if action "./configure" +
+				(name == "man" || name == "grub" ? "" :
+					" --prefix=" + prefix(package)
+				) +
+				((options = recipe(package)["configure-options"]) ? " " + options : "") +
+				(name != "ffmpeg" ? "" :
+					" --source-path=" + Dir.getwd
+				)
+			then true
+			else
+				logFailure target
+				false
+			end
 		end
 	end
 end
@@ -601,7 +605,8 @@ def parseValues text  # Load key/value pairs into a hash table
 end
 
 def thirdParty?
-	exists? "configure"
+	exists? "configure" or
+		exists? File.join(@packagesPath, package = fullName(Dir.getwd), package + ".recipe")
 end
 
 def fullName package
@@ -740,7 +745,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.3.1",
+	puts "Syllable Build System 0.3.2",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
