@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/nv/nvreg.h,v 1.5 1999/11/12 02:12:41 mvojkovi Exp $ */
+/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/nv/nvreg.h,v 1.6 2002/01/25 21:56:06 tsi Exp $ */
 
 #ifndef __NVREG_H_
 #define __NVREG_H_
@@ -164,18 +164,9 @@
   (PDAC_Write(INDEX_HI,((NV_PDAC_EXT_##reg) >> 8) & 0xff)),\
   (PDAC_Write(INDEX_DATA,(value))))
 
-#define CRTC_Write(index,value) outb(0x3d4,(index));outb(0x3d5,value)
-#define CRTC_Read(index) (outb(0x3d4,index),inb(0x3d5))
-
-#define PCRTC_Write(index,value) CRTC_Write(NV_PCRTC_##index,value)
-#define PCRTC_Read(index) CRTC_Read(NV_PCRTC_##index)
-
 #define PCRTC_Def(mask,value)          DEVICE_DEF(PCRTC,mask,value)
 #define PCRTC_Val(mask,value)          DEVICE_VALUE(PCRTC,mask,value)
 #define PCRTC_Mask(mask)               DEVICE_MASK(PCRTC,mask)
-
-#define SR_Write(index,value) outb(0x3c4,(index));outb(0x3c5,value)
-#define SR_Read(index) (outb(0x3c4,index),inb(0x3c5))
 
 
 /* These are the variables which actually point at the register blocks */

@@ -28,6 +28,9 @@
 #include <atheos/types.h>
 #include <atheos/pci.h>
 #include <atheos/kernel.h>
+#include <atheos/vesa_gfx.h>
+#include <atheos/udelay.h>
+
 #include "../../../server/bitmap.h"
 #include "../../../server/sprite.h"
 
@@ -36,33 +39,59 @@
 #include "nvidia.h"
 #include "riva_hw.h"
 #include "nvreg.h"
+#include "nv_pci_ids.h"
+#include "nv_type.h"
 
 static video_mode g_sCurrentMode;
 
 static const struct chip_info asChipInfos[] = {
-	{0x0020, NV_ARCH_04, "Riva TNT"},
-	{0x0028, NV_ARCH_04, "Riva TNT2"},
-	{0x0029, NV_ARCH_04, "Riva TNT2 Ultra"},
-	{0x002C, NV_ARCH_04, "Riva Vanta"},
-	{0x002D, NV_ARCH_04, "Riva Ultra 64"},
-	{0x002E, NV_ARCH_04, "Riva TNT2 (A)"},
-	{0x002F, NV_ARCH_04, "Riva TNT2 (B)"},
-	{0x00A0, NV_ARCH_04, "Riva Integrated"},
-	{0x0100, NV_ARCH_10, "GeForce 256"},
-	{0x0101, NV_ARCH_10, "GeForce DDR"},
-	{0x0103, NV_ARCH_10, "Quadro"},
-	{0x0110, NV_ARCH_10, "GeForce2 MX"},
-	{0x0111, NV_ARCH_10, "GeForce2 MX DDR"},
-	{0x0112, NV_ARCH_10, "GeForce2 GO"},
-	{0x0113, NV_ARCH_10, "Quadro2 MXR"},
-	{0x0150, NV_ARCH_10, "GeForce2 GTS"},
-	{0x0151, NV_ARCH_10, "GeForce2 GTS (rev 1)"},
-	{0x0152, NV_ARCH_10, "GeForce2 Ultra"},
-	{0x0153, NV_ARCH_10, "Quadro2 PRO"},
-	{0x0200, NV_ARCH_20, "GeForce3"},
-	{0x0201, NV_ARCH_20, "GeForce3 (rev 1)"},
-	{0x0202, NV_ARCH_20, "GeForce3 (rev 2)"},
-	{0x0203, NV_ARCH_20, "GeForce3 (rev 3)"}
+    {NV_CHIP_RIVA_128,           NV_ARCH_03, "RIVA 128"},
+    {NV_CHIP_TNT,                NV_ARCH_04, "TNT"},
+    {NV_CHIP_TNT2_TNT2PRO,       NV_ARCH_04, "TNT2/TNT2 Pro"},
+    {NV_CHIP_TNT2_ULTRA,         NV_ARCH_04, "TNT2 Ultra"},
+    {NV_CHIP_TNT2,               NV_ARCH_04, "TNT2"},
+    {NV_CHIP_RIVATNT2,           NV_ARCH_04, "TNT2"},
+    {NV_CHIP_VTNT2,              NV_ARCH_04, "Vanta TNT2"},
+    {NV_CHIP_UVTNT2,             NV_ARCH_04, "TNT2 Ultra M64"},
+    {NV_CHIP_VANTA,              NV_ARCH_04, "Vanta TNT2"},
+    {NV_CHIP_VANTA_B,            NV_ARCH_04, "Vanta TNT2"},
+    {NV_CHIP_ITNT2,              NV_ARCH_04, "Aladdin TNT2"},
+    {NV_CHIP_GEFORCE_256,        NV_ARCH_10, "GeForce 256"},
+    {NV_CHIP_GEFORCE_DDR,        NV_ARCH_10, "GeForce DDR"},
+    {NV_CHIP_GEFORCE_ULTRA,      NV_ARCH_10, "GeForce Ultra"},
+    {NV_CHIP_QUADRO,             NV_ARCH_10, "Quadro"},
+    {NV_CHIP_GEFORCE2_MX,        NV_ARCH_10, "GeForce2 MX/MX 400"},
+    {NV_CHIP_GEFORCE2_MX_100,    NV_ARCH_10, "GeForce2 MX 100/200"},
+    {NV_CHIP_GEFORCE2_GO,        NV_ARCH_10, "GeForce2 Go"},
+    {NV_CHIP_QUADRO2_MXR,        NV_ARCH_10, "Quadro2 MXR"},
+    {NV_CHIP_GEFORCE2_GTS,       NV_ARCH_10, "GeForce2 GTS/Pro"},
+    {NV_CHIP_GEFORCE2_TI,        NV_ARCH_10, "GeForce2 Ti"},
+    {NV_CHIP_GEFORCE2_ULTRA,     NV_ARCH_10, "GeForce2 Ultra"},
+    {NV_CHIP_QUADRO2_PRO,        NV_ARCH_10, "Quadro2 Pro"},
+    {NV_CHIP_GEFORCE4_MX_460,    NV_ARCH_10, "GeForce4 MX 460"},
+    {NV_CHIP_GEFORCE4_MX_440,    NV_ARCH_10, "GeForce4 MX 440"},
+    {NV_CHIP_GEFORCE4_MX_420,    NV_ARCH_10, "GeForce4 MX 420"},
+    {NV_CHIP_GEFORCE4_MX,        NV_ARCH_10, "GeForce4 MX"},
+    {NV_CHIP_GEFORCE4_440_GO,    NV_ARCH_10, "GeForce4 440 Go"},
+    {NV_CHIP_GEFORCE4_420_GO,    NV_ARCH_10, "GeForce4 420 Go"},
+    {NV_CHIP_GEFORCE4_420_GO_M32,NV_ARCH_10, "GeForce4 420 Go M32"},
+    {NV_CHIP_QUADRO4_500XGL,     NV_ARCH_10, "Quadro4 500XGL"},
+    {NV_CHIP_GEFORCE4_440_GO_M64,NV_ARCH_10, "GeForce4 440 Go M64"},
+    {NV_CHIP_QUADRO4_200,        NV_ARCH_10, "Quadro4 200/400NVS"},
+    {NV_CHIP_QUADRO4_550XGL,     NV_ARCH_10, "Quadro4 550XGL"},
+    {NV_CHIP_QUADRO4_500_GOGL,   NV_ARCH_10, "Quadro4 GoGL"},
+    {NV_CHIP_IGEFORCE2,          NV_ARCH_10, "GeForce2 Integrated (nForce)"},
+    {NV_CHIP_GEFORCE3,           NV_ARCH_20, "GeForce3"},
+    {NV_CHIP_GEFORCE3_TI_200,    NV_ARCH_20, "GeForce3 Ti 200"},
+    {NV_CHIP_GEFORCE3_TI_500,    NV_ARCH_20, "GeForce3 Ti 500"},
+    {NV_CHIP_QUADRO_DCC,         NV_ARCH_20, "Quadro DCC"},
+    {NV_CHIP_GEFORCE4_TI_4600,   NV_ARCH_20, "GeForce4 Ti 4600"},
+    {NV_CHIP_GEFORCE4_TI_4400,   NV_ARCH_20, "GeForce4 Ti 4400"},
+    {NV_CHIP_GEFORCE4_TI_4200,   NV_ARCH_20, "GeForce4 Ti 4200"},
+    {NV_CHIP_QUADRO4_900XGL,     NV_ARCH_20, "Quadro4 900 XGL"},
+    {NV_CHIP_QUADRO4_750XGL,     NV_ARCH_20, "Quadro4 750 XGL"},
+    {NV_CHIP_QUADRO4_700XGL,     NV_ARCH_20, "Quadro4 700 XGL"},
+    {NV_CHIP_IGEFORCE3,          NV_ARCH_20, "GeForce3 Integrated (XBox)"},
 };
 
 inline uint32 pci_size(uint32 base, uint32 mask)
@@ -90,66 +119,124 @@ static uint32 get_pci_memory_size(const PCI_Info_s *pcPCIInfo, int nResource)
 	}
 }
 
-NVidia::NVidia() : m_cGELock("nvidia_ge_lock"), m_cCursorHotSpot(0,0)
+NVidia::NVidia()
+:	m_cGELock("nvidia_ge_lock"),
+	m_hRegisterArea(-1),
+	m_hFrameBufferArea(-1),
+	m_cCursorPos(0,0),
+	m_cCursorHotSpot(0,0)
 {	
-	bool bFound = false;
 	m_bIsInitiated = false;
 	m_bPaletteEnabled = false;
 	m_bUsingHWCursor = false;
 	m_bCursorIsOn = false;
 	
-	char *zCardName = "";
+	std::vector<PCI_Info_s> cCandidates;
+	std::vector<struct chip_info> cCandidatesInfo;
 	int nNrDevs = sizeof(asChipInfos)/sizeof(chip_info);
 	for (int i = 0; get_pci_info(&m_cPCIInfo, i)==0; i++) {
-		if (m_cPCIInfo.nVendorID == PCI_VENDOR_ID_NVIDIA) {
+		if ((m_cPCIInfo.nVendorID == PCI_VENDOR_ID_NVIDIA)
+		 || (m_cPCIInfo.nVendorID == PCI_VENDOR_ID_NVIDIA_SGS)) {
+		 	uint32 ChipsetID = (m_cPCIInfo.nVendorID << 16) | m_cPCIInfo.nDeviceID;
 			for (int j = 0; j < nNrDevs; j++) {
-				if (m_cPCIInfo.nDeviceID==asChipInfos[j].nDeviceId) {
-					bFound = true;
-					zCardName = asChipInfos[j].zName;
-					m_sRiva.Architecture = asChipInfos[j].nArchRev;
+				if (ChipsetID == asChipInfos[j].nDeviceId) {
+					cCandidates.push_back(m_cPCIInfo);
+					cCandidatesInfo.push_back(asChipInfos[j]);
 					break;
 				}
 			}
-			if (bFound) break;
 		}
 	}
+
+	int nCards = cCandidates.size();
+	if (!nCards) {
+ 		dbprintf("nVidia :: No supported cards found\n");
+ 		return;
+	}
 	
-	if (!bFound) {
-		dbprintf("No supported cards found\n");
+	dbprintf("nVidia :: Found supported cards:\n");
+	for (int i = 0; i < nCards; i++) {
+		dbprintf("  %s\n", cCandidatesInfo[i].pzName);
+	}
+	
+	int nPrimaryCardIndex = -1;
+	
+	Vesa_Info_s sVesaInfo;
+	VESA_Mode_Info_s sModeInfo;
+	uint16 anModes[1024];
+	uint32 nFBPhysAddr = 0;
+	
+	strcpy(sVesaInfo.VesaSignature, "VBE2");
+	int nModeCount = get_vesa_info(&sVesaInfo, anModes, 1024);
+	
+	for (int i = 0; i < nModeCount; i++) {
+		get_vesa_mode_info(&sModeInfo, anModes[i]);
+		if (!sModeInfo.PhysBasePtr) continue;
+		if (sModeInfo.BitsPerPixel < 8 ) continue;
+		if (sModeInfo.NumberOfPlanes != 1) continue;
+		nFBPhysAddr = (uint32)sModeInfo.PhysBasePtr;
+		break;
+	}
+	
+	if (!nFBPhysAddr) {
+		dbprintf("nVidia :: Could not get linear framebuffer address from vesa. Exiting.\n");
 		return;
 	}
 	
-	dbprintf("Found %s\n", zCardName);
+	for (int i = 0; i < nCards; i++) {
+		if (nFBPhysAddr == (cCandidates[i].u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK)) {
+			nPrimaryCardIndex = i;
+			break;
+		}
+	}
+	
+	if (nPrimaryCardIndex < 0) {
+		dbprintf("nVidia :: None of the found cards is primary. Exiting.\n");
+		return;
+	}
+	
+	dbprintf("nVidia :: Using %s\n", cCandidatesInfo[nPrimaryCardIndex].pzName);
+	
+	PCI_Info_s *pcPrimaryCardPCIInfo = &cCandidates[nPrimaryCardIndex];
+	m_sRiva.Chipset				= cCandidatesInfo[nPrimaryCardIndex].nDeviceId;
+	m_sRiva.riva.Architecture	= cCandidatesInfo[nPrimaryCardIndex].nArchRev;
 	
 	int nIoSize = get_pci_memory_size(&m_cPCIInfo, 0); 
 	m_hRegisterArea = create_area("nvidia_regs", (void**)&m_pRegisterBase, nIoSize,
 	                              AREA_FULL_ACCESS, AREA_NO_LOCK);
-	remap_area(m_hRegisterArea, (void*)(m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_IO_MASK));
+	remap_area(m_hRegisterArea, (void*)(pcPrimaryCardPCIInfo->u.h0.nBase0 & PCI_ADDRESS_IO_MASK));
 	
 	int nMemSize = get_pci_memory_size(&m_cPCIInfo, 1);
 	m_hFrameBufferArea = create_area("nvidia_framebuffer", (void**)&m_pFrameBufferBase,
 	                                 nMemSize, AREA_FULL_ACCESS, AREA_NO_LOCK);
-	remap_area(m_hFrameBufferArea, (void*)(m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK));
-	
-	m_sRiva.EnableIRQ = 0;
-	m_sRiva.PRAMDAC = (unsigned *)(m_pRegisterBase+0x00680000);
-	m_sRiva.PFB = (unsigned *)(m_pRegisterBase+0x00100000);
-	m_sRiva.PFIFO = (unsigned *)(m_pRegisterBase+0x00002000);
-	m_sRiva.PGRAPH = (unsigned *)(m_pRegisterBase+0x00400000);
-	m_sRiva.PEXTDEV = (unsigned *)(m_pRegisterBase+0x00101000);
-	m_sRiva.PTIMER = (unsigned *)(m_pRegisterBase+0x00009000);
-	m_sRiva.PMC = (unsigned *)(m_pRegisterBase+0x00000000);
-	m_sRiva.FIFO = (unsigned *)(m_pRegisterBase+0x00800000);
-	m_sRiva.PCIO = (U008 *)(m_pRegisterBase+0x00601000);
-	m_sRiva.PDIO = (U008 *)(m_pRegisterBase+0x00681000);
-	m_sRiva.PVIO = (U008 *)(m_pRegisterBase+0x000C0000);
-	
-	m_sRiva.IO = 0x3d0;
-	
-	m_sRiva.PCRTC = (unsigned *)(m_pRegisterBase+0x00600000);
-	m_sRiva.PRAMIN = (unsigned *)(m_pRegisterBase+0x00710000);
-	
-	RivaGetConfig(&m_sRiva);
+	remap_area(m_hFrameBufferArea, (void*)(pcPrimaryCardPCIInfo->u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK));
+
+	m_sRiva.FlatPanel = -1;   /* autodetect later */
+	m_sRiva.forceCRTC = -1;
+
+    switch (m_sRiva.Chipset & 0x0ff0) {
+        case 0x0010:
+            NV3Setup();
+            break;
+        case 0x0020:
+        case 0x00A0:
+            NV4Setup();
+            break;
+        case 0x0100:
+        case 0x0110:
+        case 0x0150:
+        case 0x0170:
+        case 0x01A0:
+            NV10Setup();
+		    break;
+		case 0x0200:
+		case 0x0250:
+            NV20Setup();
+            break;
+        default:
+        	dbprintf("nVidia :: No chipset has been set - this is BAD. Exiting.\n");
+        	return;
+    }
 	
 	os::color_space colspace[] = {CS_RGB16, CS_RGB32};
 	int bpp[] = {2, 4};
@@ -164,7 +251,7 @@ NVidia::NVidia() : m_cGELock("nvidia_ge_lock"), m_cCursorHotSpot(0,0)
 	memset(m_anCursorShape, 0, sizeof(m_anCursorShape));
 	
 	CRTCout(0x11, CRTCin(0x11) | 0x80);
-	m_sRiva.LockUnlock(&m_sRiva, 0);
+	m_sRiva.riva.LockUnlock(&m_sRiva.riva, 0);
 	
 	m_bIsInitiated = true;
 }
@@ -252,40 +339,53 @@ int NVidia::SetScreenMode(int nWidth, int nHeight, color_space eColorSpc,
 	int nHSyncEnd = nHSyncStart+nHSyncLength;
 	int nVSyncEnd = nVSyncStart+nVSyncLength;
 	
-	int nHTot = nHTotal/8-1;
-	int nHDisplay = nWidth/8-1;
-	int nHStart = nHSyncStart/8-1;
-	int nHEnd = nHSyncEnd/8-1;
-	int nVTot = nVTotal-2;
-	int nVDisplay = nHeight-1;
-	int nVStart = nVSyncStart-1;
-	int nVEnd = nVSyncEnd-1;
+//	int nHTot = nHTotal/8-1;
+//	int nHDisplay = nWidth/8-1;
+//	int nHStart = nHSyncStart/8-1;
+//	int nHEnd = nHSyncEnd/8-1;
+//	int nVTot = nVTotal-2;
+//	int nVDisplay = nHeight-1;
+//	int nVStart = nVSyncStart-1;
+//	int nVEnd = nVSyncEnd-1;
 	
-	newmode.crtc[0x00] = Set8Bits(nHTot-4);
-	newmode.crtc[0x01] = Set8Bits(nHDisplay);
-	newmode.crtc[0x02] = Set8Bits(nHDisplay);
-	newmode.crtc[0x03] = SetBitField(nHTot, 4:0, 4:0) | SetBit(7);
-	newmode.crtc[0x04] = Set8Bits(nHStart);
-	newmode.crtc[0x05] = SetBitField(nHTot, 5:5, 7:7) |
-	                     SetBitField(nHEnd, 4:0, 4:0);
-	newmode.crtc[0x06] = SetBitField(nVTot, 7:0, 7:0);
-	newmode.crtc[0x07] = SetBitField(nVTot, 8:8, 0:0) |
-	                     SetBitField(nVDisplay, 8:8, 1:1) |
-			     SetBitField(nVStart, 8: 8, 2:2) |
-			     SetBitField(nVDisplay, 8:8, 3:3) |
-			     SetBit(4) |
-			     SetBitField(nVTot, 9:9, 5:5) |
-			     SetBitField(nVDisplay, 9:9, 6:6) |
-			     SetBitField(nVStart, 9:9, 7:7);
-	newmode.crtc[0x09] = SetBitField(nVDisplay, 9:9, 5:5) |
-	                     SetBit(6);
-	newmode.crtc[0x10] = Set8Bits(nVStart);
-	newmode.crtc[0x11] = SetBitField(nVEnd, 3:0, 3:0) |
-	                     SetBit(5);
-	newmode.crtc[0x12] = Set8Bits(nVDisplay);
+	int horizTotal		= (nHTotal/8-1) - 4;
+	int horizDisplay	= nWidth/8-1;
+	int horizStart		= nHSyncStart/8-1;
+	int horizEnd		= nHSyncEnd/8-1;
+	int horizBlankStart	= nWidth/8-1;
+	int horizBlankEnd	= nHTotal/8-1;
+	int vertTotal		= nVTotal-2;
+	int vertDisplay		= nHeight-1;
+	int vertStart		= nVSyncStart-1;
+	int vertEnd			= nVSyncEnd-1;
+	int vertBlankStart	= nHeight-1;
+	int vertBlankEnd	= (nVTotal-2) + 1;
+	
+	newmode.crtc[0x00] = Set8Bits(horizTotal);
+	newmode.crtc[0x01] = Set8Bits(horizDisplay);
+	newmode.crtc[0x02] = Set8Bits(horizBlankStart);
+	newmode.crtc[0x03] = SetBitField(horizBlankEnd, 4:0, 4:0)
+						 | SetBit(7);
+	newmode.crtc[0x04] = Set8Bits(horizStart);
+	newmode.crtc[0x05] = SetBitField(horizBlankEnd, 5:5, 7:7)
+						 | SetBitField(horizEnd, 4:0, 4:0);
+	newmode.crtc[0x06] = SetBitField(vertTotal, 7:0, 7:0);
+	newmode.crtc[0x07] = SetBitField(vertTotal, 8:8, 0:0)
+	                     | SetBitField(vertDisplay, 8:8, 1:1)
+						 | SetBitField(vertStart, 8:8, 2:2)
+						 | SetBitField(vertBlankStart, 8:8, 3:3)
+						 | SetBit(4)
+						 | SetBitField(vertTotal, 9:9, 5:5)
+						 | SetBitField(vertDisplay, 9:9, 6:6)
+						 | SetBitField(vertStart, 9:9, 7:7);
+	newmode.crtc[0x09] = SetBitField(vertBlankStart, 9:9, 5:5)
+						 | SetBit(6);
+	newmode.crtc[0x10] = Set8Bits(vertStart);
+	newmode.crtc[0x11] = SetBitField(vertEnd, 3:0, 3:0) | SetBit(5);
+	newmode.crtc[0x12] = Set8Bits(vertDisplay);
 	newmode.crtc[0x13] = Set8Bits((nWidth/8)*nBpp);
-	newmode.crtc[0x15] = Set8Bits(nVDisplay);
-	newmode.crtc[0x16] = Set8Bits(nVTot+1);
+	newmode.crtc[0x15] = Set8Bits(vertBlankStart);
+	newmode.crtc[0x16] = Set8Bits(vertBlankEnd);
 	newmode.crtc[0x17] = 0xc3;
 	newmode.crtc[0x18] = 0xff;
 	
@@ -310,20 +410,34 @@ int NVidia::SetScreenMode(int nWidth, int nHeight, color_space eColorSpc,
 	newmode.ext.bpp = nBpp*8;
 	newmode.ext.width = nWidth;
 	newmode.ext.height = nHeight;
+
+    newmode.ext.screen = SetBitField(horizBlankEnd,6:6,4:4)
+						 | SetBitField(vertBlankStart,10:10,3:3)
+						 | SetBitField(vertStart,10:10,2:2)
+						 | SetBitField(vertDisplay,10:10,1:1)
+						 | SetBitField(vertTotal,10:10,0:0);
+
+    newmode.ext.horiz  = SetBitField(horizTotal,8:8,0:0) 
+						 | SetBitField(horizDisplay,8:8,1:1)
+						 | SetBitField(horizBlankStart,8:8,2:2)
+						 | SetBitField(horizStart,8:8,3:3);
+
+    newmode.ext.extra  = SetBitField(vertTotal,11:11,0:0)
+						 | SetBitField(vertDisplay,11:11,2:2)
+						 | SetBitField(vertStart,11:11,4:4)
+						 | SetBitField(vertBlankStart,11:11,6:6);
+
+	newmode.ext.interlace = 0xff;  /* interlace off */
 	
 	newmode.misc_output = 0x2f;
 	
-	m_sRiva.CalcStateExt(&m_sRiva, &newmode.ext, nBpp*8, nWidth,
-	                     nWidth, nHDisplay, nHStart, nHEnd,
-			     nHTot, nHeight, nVDisplay, nVStart, nVEnd,
-			     nVTot, nPixClock, 0);
-	
+	m_sRiva.riva.CalcStateExt(&m_sRiva.riva, &newmode.ext, nBpp*8, nWidth, nWidth, nHeight, nPixClock, 0);
 			     
 	LoadState(&newmode);
 	
-	//m_sRiva.SetStartAddress(&m_sRiva, 0);
+//	m_sRiva.riva.SetStartAddress(&m_sRiva, 0);
 	
-	m_sRiva.LockUnlock(&m_sRiva, 0);
+	m_sRiva.riva.LockUnlock(&m_sRiva.riva, 0);
 
 	SetupAccel();
 
@@ -331,7 +445,7 @@ int NVidia::SetScreenMode(int nWidth, int nHeight, color_space eColorSpc,
 	// restore the hardware cursor
 	if (m_bUsingHWCursor) {
 		uint32 *pnSrc = (uint32 *)m_anCursorShape;
-		volatile uint32 *pnDst = (uint32 *)m_sRiva.CURSOR;
+		volatile uint32 *pnDst = (uint32 *)m_sRiva.riva.CURSOR;
 		for (int i = 0; i < MAX_CURS*MAX_CURS/2; i++) {
 			*pnDst++ = *pnSrc++;
 		}
@@ -443,7 +557,7 @@ void NVidia::SetCursorBitmap(os::mouse_ptr_mode eMode, const os::IPoint& cHotSpo
 	}
 	
 	const uint8 *pnSrc = (const uint8*)pRaster;
-	volatile uint32 *pnDst = (uint32 *)m_sRiva.CURSOR;
+	volatile uint32 *pnDst = (uint32 *)m_sRiva.riva.CURSOR;
 	uint16 *pnSaved = m_anCursorShape;
 	uint32 *pnSaved32 = (uint32 *)m_anCursorShape;
 	static uint16 anPalette[] =
@@ -486,7 +600,7 @@ void NVidia::SetMousePos(os::IPoint cNewPos)
 	}
 	int x = cNewPos.x - m_cCursorHotSpot.x;
 	int y = cNewPos.y - m_cCursorHotSpot.y;
-	*(m_sRiva.CURSORPOS) = (y << 16) | (x & 0xffff);
+	*(m_sRiva.riva.CURSORPOS) = (y << 16) | (x & 0xffff);
 #endif
 }
 
@@ -508,7 +622,7 @@ void NVidia::MouseOn()
 		return DisplayDriver::MouseOn();
 #ifndef DISABLE_HW_CURSOR
 	}
-	m_sRiva.ShowHideCursor(&m_sRiva, 1);
+	m_sRiva.riva.ShowHideCursor(&m_sRiva.riva, 1);
 #endif
 }
 
@@ -526,10 +640,10 @@ void NVidia::MouseOff()
 	m_bCursorIsOn = false;
 	if (!m_bUsingHWCursor) {
 #endif
-		return DisplayDriver::MouseOn();
+		return DisplayDriver::MouseOff();
 #ifndef DISABLE_HW_CURSOR
 	}
-	m_sRiva.ShowHideCursor(&m_sRiva, 0);
+	m_sRiva.riva.ShowHideCursor(&m_sRiva.riva, 0);
 #endif
 }
 
@@ -568,15 +682,15 @@ bool NVidia::DrawLine(SrvBitmap* pcBitMap, const IRect& cClipRect,
 	
 	m_cGELock.Lock();
 	
-	RIVA_FIFO_FREE(m_sRiva, Line, 5);
-	m_sRiva.Line->Color = nColor;
-	m_sRiva.Line->Lin[0].point0 = (y1 << 16) | (x1 & 0xffff);
-	m_sRiva.Line->Lin[0].point1 = (y2 << 16) | (x2 & 0xffff);
+	RIVA_FIFO_FREE(m_sRiva.riva, Line, 5);
+	m_sRiva.riva.Line->Color = nColor;
+	m_sRiva.riva.Line->Lin[0].point0 = (y1 << 16) | (x1 & 0xffff);
+	m_sRiva.riva.Line->Lin[0].point1 = (y2 << 16) | (x2 & 0xffff);
 	
 	// The graphic engine won't draw the last pixel of the line
 	// so we have to draw it separately
-	m_sRiva.Line->Lin[1].point0 = (y2 << 16) | (x2 & 0xffff);
-	m_sRiva.Line->Lin[1].point1 = ((y2+1)<<16) | (x2 & 0xffff);
+	m_sRiva.riva.Line->Lin[1].point0 = (y2 << 16) | (x2 & 0xffff);
+	m_sRiva.riva.Line->Lin[1].point1 = ((y2+1)<<16) | (x2 & 0xffff);
 	
 	WaitForIdle();
 	m_cGELock.Unlock();
@@ -609,11 +723,11 @@ bool NVidia::FillRect(SrvBitmap *pcBitMap, const IRect& cRect, const Color32_s& 
 	
 	m_cGELock.Lock();
 	
-	RIVA_FIFO_FREE(m_sRiva, Bitmap, 1);
-	m_sRiva.Bitmap->Color1A = nColor;
-	RIVA_FIFO_FREE(m_sRiva, Bitmap, 2);
-	m_sRiva.Bitmap->UnclippedRectangle[0].TopLeft = (cRect.left << 16) | cRect.top;
-	m_sRiva.Bitmap->UnclippedRectangle[0].WidthHeight = (nWidth << 16) | nHeight;
+	RIVA_FIFO_FREE(m_sRiva.riva, Bitmap, 1);
+	m_sRiva.riva.Bitmap->Color1A = nColor;
+	RIVA_FIFO_FREE(m_sRiva.riva, Bitmap, 2);
+	m_sRiva.riva.Bitmap->UnclippedRectangle[0].TopLeft = (cRect.left << 16) | cRect.top;
+	m_sRiva.riva.Bitmap->UnclippedRectangle[0].WidthHeight = (nWidth << 16) | nHeight;
 	
 	WaitForIdle();
 	m_cGELock.Unlock();
@@ -639,10 +753,10 @@ bool NVidia::BltBitmap(SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap,
 	int nHeight = cSrcRect.Height()+1;
 	m_cGELock.Lock();
 	
-	RIVA_FIFO_FREE(m_sRiva, Blt, 3);
-	m_sRiva.Blt->TopLeftSrc = (cSrcRect.top << 16) | cSrcRect.left;
-	m_sRiva.Blt->TopLeftDst = (cDstPos.y << 16) | cDstPos.x;
-	m_sRiva.Blt->WidthHeight = (nHeight << 16) | nWidth;
+	RIVA_FIFO_FREE(m_sRiva.riva, Blt, 3);
+	m_sRiva.riva.Blt->TopLeftSrc = (cSrcRect.top << 16) | cSrcRect.left;
+	m_sRiva.riva.Blt->TopLeftDst = (cDstPos.y << 16) | cDstPos.x;
+	m_sRiva.riva.Blt->WidthHeight = (nHeight << 16) | nWidth;
 	
 	WaitForIdle();
 	m_cGELock.Unlock();
@@ -678,8 +792,8 @@ void NVidia::LoadState(struct riva_regs *regs)
 		ATTRout(i, regs->attr[i]);
 	}
 	
-	m_sRiva.LockUnlock(&m_sRiva, 0);
-	m_sRiva.LoadStateExt(&m_sRiva, state);
+	m_sRiva.riva.LockUnlock(&m_sRiva.riva, 0);
+	m_sRiva.riva.LoadStateExt(&m_sRiva.riva, state);
 }
 
 //-----------------------------------------------------------------------------
@@ -687,9 +801,9 @@ void NVidia::LoadState(struct riva_regs *regs)
 void NVidia::SetupAccel()
 {
 	m_cGELock.Lock();
-	RIVA_FIFO_FREE(m_sRiva, Clip, 2);
-	m_sRiva.Clip->TopLeft = 0x0;
-	m_sRiva.Clip->WidthHeight = 0x7fff7fff;
+	RIVA_FIFO_FREE(m_sRiva.riva, Clip, 2);
+	m_sRiva.riva.Clip->TopLeft = 0x0;
+	m_sRiva.riva.Clip->WidthHeight = 0x7fff7fff;
 	SetupROP();
 	WaitForIdle();
 	m_cGELock.Unlock();
@@ -699,15 +813,218 @@ void NVidia::SetupAccel()
 
 void NVidia::SetupROP()
 {
-	RIVA_FIFO_FREE(m_sRiva, Patt, 5);
-	m_sRiva.Patt->Shape = 0;
-	m_sRiva.Patt->Color0 = 0xffffffff;
-	m_sRiva.Patt->Color1 = 0xffffffff;
-	m_sRiva.Patt->Monochrome[0] = 0xffffffff;
-	m_sRiva.Patt->Monochrome[1] = 0xffffffff;
+	RIVA_FIFO_FREE(m_sRiva.riva, Patt, 5);
+	m_sRiva.riva.Patt->Shape = 0;
+	m_sRiva.riva.Patt->Color0 = 0xffffffff;
+	m_sRiva.riva.Patt->Color1 = 0xffffffff;
+	m_sRiva.riva.Patt->Monochrome[0] = 0xffffffff;
+	m_sRiva.riva.Patt->Monochrome[1] = 0xffffffff;
 	
-	RIVA_FIFO_FREE(m_sRiva, Rop, 1);
-	m_sRiva.Rop->Rop3 = 0xCC;
+	RIVA_FIFO_FREE(m_sRiva.riva, Rop, 1);
+	m_sRiva.riva.Rop->Rop3 = 0xCC;
+}
+
+//-----------------------------------------------------------------------------
+
+Bool NVidia::NVIsConnected(Bool second)
+{
+#if 0
+	if (second)
+		return 1;
+	else
+		return 0;
+#else
+    volatile U032 *PRAMDAC = m_sRiva.riva.PRAMDAC0;
+    U032 reg52C, reg608;
+    Bool present;
+
+    if(second) PRAMDAC += 0x800;
+
+    reg52C = PRAMDAC[0x052C/4];
+    reg608 = PRAMDAC[0x0608/4];
+
+    PRAMDAC[0x0608/4] = reg608 & ~0x00010000;
+
+    PRAMDAC[0x052C/4] = reg52C & 0x0000FEEE;
+    snooze(1000);
+    PRAMDAC[0x052C/4] |= 1;
+
+    m_sRiva.riva.PRAMDAC0[0x0610/4] = 0x94050140;
+    m_sRiva.riva.PRAMDAC0[0x0608/4] |= 0x00001000;
+
+    snooze(1000);
+
+    present = (PRAMDAC[0x0608/4] & (1 << 28)) ? TRUE : FALSE;
+
+    m_sRiva.riva.PRAMDAC0[0x0608/4] &= 0x0000EFFF;
+
+    PRAMDAC[0x052C/4] = reg52C;
+    PRAMDAC[0x0608/4] = reg608;
+
+    return present;
+#endif
+}
+
+void NVidia::NVOverrideCRTC()
+{
+    dbprintf("nVidia :: Detected CRTC controller %i being used\n", m_sRiva.SecondCRTC ? 1 : 0);
+    if(m_sRiva.forceCRTC != -1) {
+        dbprintf("nVidia :: Forcing usage of CRTC %i\n", m_sRiva.forceCRTC);
+        m_sRiva.SecondCRTC = m_sRiva.forceCRTC;
+    }
+}
+
+void NVidia::NVIsSecond()
+{
+    if(m_sRiva.FlatPanel == 1) {
+       switch(m_sRiva.Chipset) {
+       case NV_CHIP_GEFORCE4_440_GO:
+       case NV_CHIP_GEFORCE4_440_GO_M64:
+       case NV_CHIP_GEFORCE4_420_GO:
+       case NV_CHIP_GEFORCE4_420_GO_M32:
+       case NV_CHIP_QUADRO4_500_GOGL:
+           m_sRiva.SecondCRTC = TRUE;
+           break;
+       default:
+           m_sRiva.SecondCRTC = FALSE;
+           break;
+       }
+    } else {
+       if(NVIsConnected(0)) {
+          if(m_sRiva.riva.PRAMDAC0[0x0000052C/4] & 0x100)
+             m_sRiva.SecondCRTC = TRUE;
+          else
+             m_sRiva.SecondCRTC = FALSE;
+       } else 
+       if (NVIsConnected(1)) {
+          if(m_sRiva.riva.PRAMDAC0[0x0000252C/4] & 0x100)
+             m_sRiva.SecondCRTC = TRUE;
+          else
+             m_sRiva.SecondCRTC = FALSE;
+       } else /* default */
+          m_sRiva.SecondCRTC = FALSE;
+    }
+
+    NVOverrideCRTC();
+}
+
+void NVidia::NVCommonSetup()
+{
+//	m_sRiva.Dac.LoadPalette = NVDACLoadPalette;
+
+    /*
+     * No IRQ in use.
+     */
+    m_sRiva.riva.EnableIRQ = 0;
+    /*
+     * Map remaining registers. This MUST be done in the OS specific driver code.
+     */
+//	m_sRiva.riva.IO      = VGA_IOBASE_COLOR;
+
+    m_sRiva.riva.PRAMDAC0	= (unsigned	*)(m_pRegisterBase+0x00680000);
+    m_sRiva.riva.PFB		= (unsigned	*)(m_pRegisterBase+0x00100000);
+    m_sRiva.riva.PFIFO		= (unsigned	*)(m_pRegisterBase+0x00002000);
+    m_sRiva.riva.PGRAPH		= (unsigned	*)(m_pRegisterBase+0x00400000);
+    m_sRiva.riva.PEXTDEV	= (unsigned	*)(m_pRegisterBase+0x00101000);
+    m_sRiva.riva.PTIMER		= (unsigned	*)(m_pRegisterBase+0x00009000);
+    m_sRiva.riva.PMC		= (unsigned	*)(m_pRegisterBase+0x00000000);
+    m_sRiva.riva.FIFO		= (unsigned	*)(m_pRegisterBase+0x00800000);
+    m_sRiva.riva.PCIO0		= (U008		*)(m_pRegisterBase+0x00601000);
+    m_sRiva.riva.PDIO0		= (U008		*)(m_pRegisterBase+0x00681000);
+    m_sRiva.riva.PVIO		= (U008		*)(m_pRegisterBase+0x000C0000);
+
+    if(m_sRiva.FlatPanel == -1) {
+       switch(m_sRiva.Chipset) {
+       case NV_CHIP_GEFORCE4_440_GO:
+       case NV_CHIP_GEFORCE4_440_GO_M64:
+       case NV_CHIP_GEFORCE4_420_GO:
+       case NV_CHIP_GEFORCE4_420_GO_M32:
+       case NV_CHIP_QUADRO4_500_GOGL:
+       case NV_CHIP_GEFORCE2_GO:
+		   dbprintf("nVidia :: On a laptop - assuming Digital Flat Panel\n");
+           m_sRiva.FlatPanel = 1;
+           break;
+       default:
+           break;
+       }
+    }
+
+    switch(m_sRiva.Chipset & 0x0ff0) {
+    case 0x0110:
+        if(m_sRiva.Chipset == NV_CHIP_GEFORCE2_GO)
+            m_sRiva.SecondCRTC = TRUE;
+        NVOverrideCRTC();
+        break;
+    case 0x0170:
+    case 0x0250:
+        NVIsSecond();
+        break;
+    default:
+        break;
+    }
+
+    if(m_sRiva.SecondCRTC) {
+       m_sRiva.riva.PCIO	= m_sRiva.riva.PCIO0	+ 0x2000;
+       m_sRiva.riva.PCRTC	= m_sRiva.riva.PCRTC0	+ 0x0800;
+       m_sRiva.riva.PRAMDAC	= m_sRiva.riva.PRAMDAC0	+ 0x0800;
+       m_sRiva.riva.PDIO	= m_sRiva.riva.PDIO0	+ 0x2000;
+    } else {
+       m_sRiva.riva.PCIO	= m_sRiva.riva.PCIO0;
+       m_sRiva.riva.PCRTC	= m_sRiva.riva.PCRTC0;
+       m_sRiva.riva.PRAMDAC	= m_sRiva.riva.PRAMDAC0;
+       m_sRiva.riva.PDIO	= m_sRiva.riva.PDIO0;
+    }
+
+    RivaGetConfig(&m_sRiva);
+
+//	m_sRiva.Dac.maxPixelClock = m_sRiva.riva.MaxVClockFreqKHz;
+
+    m_sRiva.riva.LockUnlock(&m_sRiva.riva, 0);
+
+    if(m_sRiva.FlatPanel == -1) {
+        m_sRiva.FlatPanel = 0;
+    }
+    m_sRiva.riva.flatPanel = (m_sRiva.FlatPanel > 0) ? TRUE : FALSE;
+}
+
+void NVidia::NV1Setup()
+{
+}
+
+void NVidia::NV3Setup()
+{
+	dbprintf("nVidia :: NV3Setup\n");
+	m_sRiva.riva.Architecture = 3;
+	m_sRiva.riva.PRAMIN = (unsigned	*)(m_pRegisterBase+0x00C00000);
+	NVCommonSetup();
+	m_sRiva.riva.PCRTC = m_sRiva.riva.PCRTC0 = m_sRiva.riva.PGRAPH;
+}
+
+void NVidia::NV4Setup()
+{
+	dbprintf("nVidia :: NV4Setup\n");
+	m_sRiva.riva.Architecture = NV_ARCH_04;
+	m_sRiva.riva.PRAMIN = (unsigned	*)(m_pRegisterBase+0x00710000);
+	m_sRiva.riva.PCRTC0 = (unsigned	*)(m_pRegisterBase+0x00600000);
+	NVCommonSetup();
+}
+
+void NVidia::NV10Setup()
+{
+	dbprintf("nVidia :: NV10Setup\n");
+	m_sRiva.riva.Architecture = NV_ARCH_10;
+	m_sRiva.riva.PRAMIN = (unsigned	*)(m_pRegisterBase+0x00710000);
+	m_sRiva.riva.PCRTC0 = (unsigned	*)(m_pRegisterBase+0x00600000);
+	NVCommonSetup();
+}
+
+void NVidia::NV20Setup()
+{
+	dbprintf("nVidia :: NV20Setup\n");
+	m_sRiva.riva.Architecture = NV_ARCH_20;
+	m_sRiva.riva.PRAMIN = (unsigned	*)(m_pRegisterBase+0x00710000);
+	m_sRiva.riva.PCRTC0 = (unsigned	*)(m_pRegisterBase+0x00600000);
+	NVCommonSetup();
 }
 
 //-----------------------------------------------------------------------------
@@ -728,3 +1045,21 @@ extern "C" DisplayDriver* init_gfx_driver()
 	    return NULL;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
