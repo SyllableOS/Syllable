@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.4.8
+# Version 0.4.9
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -101,7 +101,7 @@ def patchPackage target
 			return false
 		else
 			# Crude way to remove possible CVS dirs from patches - to be fixed
-			deleteCVSData
+#			deleteCVSData
 		end
 	end
 
@@ -210,7 +210,7 @@ def configurePackage target
 					false
 				else
 					logHeader "Configuring"
-					Dir.chdir dir unless noBuildDir
+					Dir.chdir noBuildDir ? File.dirname(cmd) : dir
 					action "rm config.cache" if exists? "config.cache"
 
 					action((cmdLine = recipe["configure"]) ? toString(cmdLine) :
@@ -219,9 +219,7 @@ def configurePackage target
 							noBuildDir ?
 								"." :
 							# Some packages require an absolute path
-							target[0, 1] == "/" ?
-								target :
-								File.join(@workDir, target)
+								File.expand_path(target)
 						), cmd) +
 						((args = recipe["configure-args"]) ?
 							" " + toString(args) :
@@ -922,7 +920,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.4.8",
+	puts "Syllable Build System 0.4.9",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
