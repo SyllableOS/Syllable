@@ -1,3 +1,52 @@
+* January 29 2005, Jake Hamby *
+
+Build 0001:
+    * New 4-digit build version printed at system startup and logged to
+	/var/log/kernel.  Anyone checking a kernel change into CVS must
+	bump this version number along with adding a ChangeLog entry.
+
+WARNING:
+	This kernel now attempts to detect the SMP configuration
+	using ACPI, exposing SMP-related bugs in systems that were
+	previously detected as uniprocessor.  This includes Pentium 4
+	systems with hyperthreading.  Add "disable_smp=true" to your
+	boot flags if your system won't boot this kernel.
+
+Big kernel patch from Arno Klenke:
+    * Add support for AGP 2x, 4x and 8x devices and AGP fast writes.
+    * New boot argument to disable AGP code -- "disable_agp=true"
+    * Rename some struct members to use Hungarian notation:
+	affected headers are <atheos/multiboot.h>, <atheos/seqlock.h>
+    * Rename GetCMOSTime() to get_cmos_time()
+    * Rename InitAreaManager() to init_areas()
+    * Rename InitMsgPorts() to init_msg_ports()
+    * Rename InitProcesses() to init_processes()
+    * Rename InitSemaphores() to init_semaphores()
+    * Rename InitThreads() to init_threads()
+    * Rename SetColor() to dbcon_set_color() and move to dbconsole.c.
+    * Rename StartTimerInt() and StopTimerInt() to start/stop_timer_int()
+    * Rename SysInit() to system_init()
+    * Rename smp_scan_config() to smp_scan_mpc_config()
+    * New header "inc/acpi.h" with ACPI table definitions.
+    * New smp_read_acpi_rsdt() and smp_scan_acpi_config() functions in smp.c
+	retrieve CPU and IOAPIC information from ACPI tables if present.
+    * New init_kernel_mem_context() function sets up the g_psKernelSeg struct.
+    * New init_descriptors() function initializes the code and data segments.
+    * New init_cpuid() function in cpuid.c reads the cpuid and enables fast FPU and SSE.
+    * New init_pages() function to initialize page table structures.
+    * Clean up init_kernel(), which now calls the new init_*() functions.
+    * Move boot_ap_processors(), start_timer_int() and get_cmos_time() calls
+	from system_init() to kernel_init().
+    * Move Desc_*() Intel descriptor support functions to new descriptors.c.
+    * Move virtual 8086 structures from "inc/scheduler.h" to new "inc/virt86.h".
+    * Move structure typedefs in <atheos/typedefs.h> to new "inc/typedefs.h".
+    * Remove init_e820_memory_map() function.
+    * Print kernel parameters parsed by parse_kernel_params().
+    * Remove old commented-out code from intel.s.
+    * Move protect_dos_mem(), unprotect_dos_mem() from kernel.c to mman.c.
+    * Remove inline function enable_mmu() and copy its inline asm code to
+	calibrate_apic_timer() in smp.c.
+
 * December 12 2004, Kristian Van Der Vliet *
 
 Merged header changes required for Glibc 2.3.3, mostly changes to various
