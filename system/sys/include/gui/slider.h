@@ -96,7 +96,7 @@ public:
     virtual void PostValueChange( const Variant& cNewValue );
     virtual void EnableStatusChanged( bool bIsEnabled );
     
-    bool		Invoked( Message* pcMessage );
+	virtual bool Invoked( Message* pcMessage );
 //    void		SetCurValue( float nValue );
 //    virtual void	SetCurValue( float nValue, bool bInvoke );
 //    virtual float	GetCurValue() const;
@@ -123,4 +123,5 @@ private:
 }
 
 #endif	// __F_GUI_SLIDER_H__
+
 
