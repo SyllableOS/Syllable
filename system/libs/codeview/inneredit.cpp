@@ -78,8 +78,10 @@ maxUndo(1000), undoCount(0), redoCount(0), undoHead(0), undoTail(0), undoCurrent
 
 	buffer.resize(1);
 
-	updateBackBuffer();
-	updateScrollBars();
+	UpdateBackBuffer();
+	UpdateScrollbars();
+	
+	m_nMargin = 40;
 }
 
 InnerEdit::~InnerEdit()
@@ -89,6 +91,15 @@ InnerEdit::~InnerEdit()
 
 	if(IcursorActive)
 		os::Application::GetInstance()->PopCursor();
+}
+
+void InnerEdit::SetShowLineNumbers( bool bShowLineNumbers )
+{
+	if( bShowLineNumbers ) {
+		m_nMargin = (int)GetStringWidth( "000000" );
+	} else {
+		m_nMargin = 0;
+	}
 }
 
 inline static os::Color32_s invert(os::Color32_s c)
@@ -122,15 +133,15 @@ void InnerEdit::Paint(const os::Rect &r)
 	uint selBot=selEnd.y;
 	uint selRight=selEnd.x;
 
-	if(selectionValid){
-		if(selTop>selBot){
+	if( selectionValid ) {
+		if( selTop > selBot ) {
 			uint tmp=selTop;
 			selTop=selBot;
 			selBot=tmp;
 			tmp=selLeft;
 			selLeft=selRight;
 			selRight=tmp;
-		}else if(selTop==selBot && selLeft>selRight){
+		} else if( selTop == selBot && selLeft > selRight ) {
 			uint tmp=selLeft;
 			selLeft=selRight;
 			selRight=tmp;
@@ -138,37 +149,32 @@ void InnerEdit::Paint(const os::Rect &r)
 	}
 
 //	const uint nDigits = log10( buffer.size() ) + 1;
-//	const uint nMargin = 0; //( nDigits + 1 ) * backView->GetStringWidth( "0" );
+//	const uint nMargin = 40; //( nDigits + 1 ) * backView->GetStringWidth( "0" );
 	const float xOff = GetScrollOffset().x;
-	const float w = Width(); /* - nMargin;	 *** */
+	const float w = Width();
 
 	uint32 nVisibleLine = nTopLine;
 	uint32 nBufferIndex = _TranslateBufferIndex( nVisibleLine );
 	float y = nVisibleLine * lineHeight;
 	while( nBufferIndex <= nBotLine && nBufferIndex < buffer.size() ) {
 		os::String& pcLineText = buffer[ nBufferIndex ].text;
-		uint invStart=0, invEnd=0, nMargin = 0;
+		uint invStart=0, invEnd=0;
 		bool bIsFolded = _LineIsFolded( nBufferIndex );
 
-/*		if( bIsFolded ) {
-			nMargin = backView->GetStringWidth( "-> " );
-			backView->DrawFrame( os::Rect( 0, 0, nMargin, lineHeight ), 0 );
-			backView->MovePenTo( 2, lineBase );
-			backView->DrawString( "->" );
-		}*/
-
-/*		backView->FillRect( os::Rect( 0, 0, nMargin-1, lineHeight ), os::Color32_s( 220, 220, 250 ) );
-		backView->MovePenTo( 0, lineBase );
-		backView->SetFgColor( GetFgColor() );
-		backView->SetBgColor( os::Color32_s( 220, 220, 250 ) );
-		if( _LineIsFolded( nBufferIndex ) ) {
-			backView->DrawFrame( os::Rect(0, 0, nMargin, lineHeight), os::FRAME_THIN );
-			backView->DrawString( "+" );
-		} else {
-			os::String cLineNo;
-			cLineNo.Format( "%d", nBufferIndex );
-			backView->DrawString( cLineNo );
-		}*/
+		if( m_nMargin ) {
+			backView->FillRect( os::Rect( xOff, 0, xOff + m_nMargin - 1, lineHeight ), os::Color32_s( 220, 220, 250 ) );
+			backView->MovePenTo( xOff, lineBase );
+			backView->SetFgColor( GetFgColor() );
+			backView->SetBgColor( os::Color32_s( 220, 220, 250 ) );
+			if( bIsFolded ) {
+				backView->DrawFrame( os::Rect( xOff, 0, xOff + m_nMargin - 1, lineHeight), /*os::FRAME_THIN*/ os::FRAME_TRANSPARENT );
+				backView->DrawString( "+" );
+			} else {
+				os::String cLineNo;
+				cLineNo.Format( "%d", nBufferIndex );
+				backView->DrawString( cLineNo );
+			}
+		}
 
 		if(selectionValid){
 			if( nVisibleLine == selTop ) {
@@ -182,29 +188,29 @@ void InnerEdit::Paint(const os::Rect &r)
 
 			float f0=0, f1=0;
 			if(invStart>0){
-				f0=getW( invStart, nBufferIndex );
+				f0=GetW( invStart, nBufferIndex );
 				if(enabled)
-					backView->FillRect(os::Rect( nMargin + xOff, 0, nMargin + xOff + f0, lineHeight), GetBgColor());
+					backView->FillRect(os::Rect( m_nMargin + xOff, 0, m_nMargin + xOff + f0, lineHeight), GetBgColor());
 				else
-					backView->FillRect(os::Rect( nMargin + xOff, 0, nMargin + xOff + f0, lineHeight), dim(GetBgColor()));
+					backView->FillRect(os::Rect( m_nMargin + xOff, 0, m_nMargin + xOff + f0, lineHeight), dim(GetBgColor()));
 			}
 			if(invEnd>0){
-				f1=getW(invEnd, nBufferIndex );				
+				f1=GetW(invEnd, nBufferIndex );				
 				if(enabled)
-					backView->FillRect(os::Rect( nMargin + xOff + f0, 0, nMargin + xOff + f1, lineHeight), invert(GetBgColor()));
+					backView->FillRect(os::Rect( m_nMargin + xOff + f0, 0, m_nMargin + xOff + f1, lineHeight), invert(GetBgColor()));
 				else
-					backView->FillRect(os::Rect( nMargin + xOff + f0, 0, nMargin + xOff + f1, lineHeight), dim(invert(GetBgColor())));
+					backView->FillRect(os::Rect( m_nMargin + xOff + f0, 0, m_nMargin + xOff + f1, lineHeight), dim(invert(GetBgColor())));
 			}
 			if(xOff+f1<w)
 				if(enabled)
-					backView->FillRect(os::Rect( nMargin + xOff + f1, 0, nMargin + w, lineHeight), GetBgColor());
+					backView->FillRect(os::Rect( m_nMargin + xOff + f1, 0, w, lineHeight), GetBgColor());
 				else
-					backView->FillRect(os::Rect( nMargin + xOff + f1, 0, nMargin + w, lineHeight), dim(GetBgColor()));
+					backView->FillRect(os::Rect( m_nMargin + xOff + f1, 0, w, lineHeight), dim(GetBgColor()));
 		} else {
 			if(enabled) {
-				backView->FillRect( os::Rect( nMargin, 0, nMargin + w, lineHeight ), GetBgColor());
+				backView->FillRect( os::Rect( m_nMargin + xOff, 0, w, lineHeight ), GetBgColor());
 			} else {
-				backView->FillRect( os::Rect( nMargin, 0, nMargin + w, lineHeight ), dim(GetBgColor()));
+				backView->FillRect( os::Rect( m_nMargin + xOff, 0, w, lineHeight ), dim(GetBgColor()));
 			}
 		}
 
@@ -214,7 +220,7 @@ void InnerEdit::Paint(const os::Rect &r)
 		backView->SetFgColor(fg);
 		backView->SetBgColor(bg);
 
-		backView->MovePenTo( nMargin + xOff, lineBase );
+		backView->MovePenTo( m_nMargin + xOff, lineBase );
 
 		for( uint a = 0; a < pcLineText.size(); ) {
 			char chr = pcLineText[a];
@@ -273,8 +279,8 @@ void InnerEdit::Paint(const os::Rect &r)
 		}
 
 		if( HasFocus() && nVisibleLine == cursorY ) {
-			int c = min( getChar( cursorX, nBufferIndex ), pcLineText.size() );
-			float x = getW( c, nBufferIndex ) + xOff + nMargin;
+			int c = min( GetChar( cursorX, nBufferIndex ), pcLineText.size() );
+			float x = GetW( c, nBufferIndex ) + xOff + m_nMargin;
 			backView->SetDrawingMode(os::DM_INVERT);
 			backView->DrawLine(os::Point(x, 0), os::Point(x, lineHeight));
 			x+=1.0f;
@@ -300,7 +306,7 @@ void InnerEdit::Paint(const os::Rect &r)
 }
 
 /** Invalidate lines to cause a refresh */
-void InnerEdit::invalidateLines(int start, int stop)
+void InnerEdit::InvalidateLines(int start, int stop)
 {
 	os::Rect r=GetBounds();
 	r.top=start*lineHeight;
@@ -309,35 +315,32 @@ void InnerEdit::invalidateLines(int start, int stop)
 }
 
 /** Set the entire buffer */
-void InnerEdit::setText(const os::String &s)
+void InnerEdit::SetText(const os::String &s)
 {
 	buffer.clear();
 	vector<os::String> list;
 
-	splitLine(list, s);
+	SplitLine(list, s);
 	buffer.resize(list.size());
 
 	for(uint a=0;a<list.size();++a){
 		buffer[a].text=list[a];
 	}
-	updateAllWidths();
+	UpdateAllWidths();
 
-	reformat(0, buffer.size()-1);
-
-	// TODO: Remove
-	FoldSection( 0, buffer.size()-1 );
+	Reformat(0, buffer.size()-1);
 
 	cursorY=0;
 	cursorX=0;
 
-	updateScrollBars();
+	UpdateScrollbars();
 	Invalidate();
 	eventBuffer |= CodeView::EI_CONTENT_CHANGED;
-	clearUndo();
+	ClearUndo();
 }
 
 /** Insert text at a certain location and optionally create an UndoNode */
-void InnerEdit::insertText(const os::String &str, uint x, uint y, bool addUndo)
+void InnerEdit::InsertText(const os::String &str, uint x, uint y, bool addUndo)
 {
 	uint nBufferIndex = _TranslateBufferIndex( y );
 	nBufferIndex = min( nBufferIndex, buffer.size() );
@@ -345,12 +348,12 @@ void InnerEdit::insertText(const os::String &str, uint x, uint y, bool addUndo)
 
 	vector<os::String> list;
 
-	splitLine(list, str);
+	SplitLine(list, str);
 
-	uint cursorChar = getChar( cursorX, _TranslateBufferIndex( cursorY ) );
+	uint cursorChar = GetChar( cursorX, _TranslateBufferIndex( cursorY ) );
 
 	if(addUndo)
-		addUndoNode(UndoNode::ADDED, str, x, y);
+		AddUndoNode(UndoNode::ADDED, str, x, y);
 
 	if(list.size()==1){
 		buffer[nBufferIndex].text.str().insert(x, str);
@@ -358,12 +361,12 @@ void InnerEdit::insertText(const os::String &str, uint x, uint y, bool addUndo)
 		if( _TranslateBufferIndex(cursorY) == nBufferIndex && cursorChar >= x )
 			cursorChar += list[0].size();
 
-		updateWidth(y);
+		UpdateWidth(y);
 		//_AdjustFoldedSections( nBufferIndex, 1 );
-		invalidateLines(y, y);
+		InvalidateLines(y, y);
 	}else{
 		os::String tmp=buffer[ nBufferIndex ].text.str().substr(x);
-		buffer[nBufferIndex].text.erase(x);
+		buffer[nBufferIndex].text.erase(x, ~0);
 		buffer[nBufferIndex].text+=list[0];
 
 		if(nBufferIndex==buffer.size()-1){
@@ -382,7 +385,7 @@ void InnerEdit::insertText(const os::String &str, uint x, uint y, bool addUndo)
 		}
 
 		buffer[nBufferIndex+list.size()-1].text+=tmp;
-		updateAllWidths();
+		UpdateAllWidths();
 
 		if( _TranslateBufferIndex(cursorY) == nBufferIndex && cursorChar >= x ) {
 			cursorY+=list.size()-1;
@@ -393,18 +396,18 @@ void InnerEdit::insertText(const os::String &str, uint x, uint y, bool addUndo)
 
 		_AdjustFoldedSections( nBufferIndex, list.size()-1 );
 
-		invalidateLines( y, buffer.size()-1 );
+		InvalidateLines( y, buffer.size()-1 );
 	}
 
-	cursorX = getW( cursorChar, _TranslateBufferIndex( cursorY ) );
+	cursorX = GetW( cursorChar, _TranslateBufferIndex( cursorY ) );
 
-	reformat( nBufferIndex, nBufferIndex+list.size() );
+	Reformat( nBufferIndex, nBufferIndex+list.size() );
 
-	updateScrollBars();
+	UpdateScrollbars();
 	eventBuffer |= CodeView::EI_CONTENT_CHANGED;
 }
 
-void InnerEdit::getText(os::String* str, uint left, uint top, uint right, uint bot) const
+void InnerEdit::GetText(os::String* str, uint left, uint top, uint right, uint bot) const
 {
 	if(!str)
 		return;
@@ -445,7 +448,7 @@ void InnerEdit::getText(os::String* str, uint left, uint top, uint right, uint b
 	*str += buffer[bot].text.const_str().substr(0, right);
 }
 
-void InnerEdit::removeText( uint nLeft, uint nTop, uint nRight, uint nBot, bool bAddUndo )
+void InnerEdit::RemoveText( uint nLeft, uint nTop, uint nRight, uint nBot, bool bAddUndo )
 {
 	uint nBfrTop   = min( _TranslateBufferIndex( nTop ), buffer.size() - 1 );
 	uint nBfrBot   = min( _TranslateBufferIndex( nBot ), buffer.size() - 1 );
@@ -460,15 +463,15 @@ void InnerEdit::removeText( uint nLeft, uint nTop, uint nRight, uint nBot, bool 
 		uint tmp = nLeft;	nLeft = nRight;		nRight = tmp;
 	}
 
-	uint nCursorChar = getChar( cursorX, _TranslateBufferIndex( cursorY ) );
+	uint nCursorChar = GetChar( cursorX, _TranslateBufferIndex( cursorY ) );
 
 	if( nBfrTop == nBfrBot ) {
 		if(bAddUndo)
-			addUndoNode( UndoNode::REMOVED,
+			AddUndoNode( UndoNode::REMOVED,
 				buffer[ nBfrTop ].text.str().substr( nLeft, nRight - nLeft), nLeft, nTop);
 
 		buffer[ nBfrTop ].text.erase( nLeft, nRight - nLeft );
-		updateWidth( nBfrTop );
+		UpdateWidth( nBfrTop );
 		
 		if( cursorY == nTop ) {
 			if( nCursorChar > nRight ) {
@@ -479,14 +482,14 @@ void InnerEdit::removeText( uint nLeft, uint nTop, uint nRight, uint nBot, bool 
 		}
 
 	//	_AdjustFoldedSections( nBfrTop, -1 );
-		invalidateLines( nTop, nTop );
+		InvalidateLines( nTop, nTop );
 	} else {
 		os::String cUndoStr;
 
 		if(bAddUndo)
 			cUndoStr = buffer[ nBfrTop ].text.str().substr( nLeft ) + "\n";
 
-		buffer[ nBfrTop ].text.erase( nLeft );
+		buffer[ nBfrTop ].text.erase( nLeft, ~0 );
 		if(cursorY == nTop && nCursorChar > nLeft)
 			nCursorChar = nLeft;
 
@@ -502,12 +505,12 @@ void InnerEdit::removeText( uint nLeft, uint nTop, uint nRight, uint nBot, bool 
 			//TODO: erase all lines at once - this is slow
 			buffer.erase( buffer.begin() + nBfrTop + 1 );
 		}
-		updateAllWidths();
+		UpdateAllWidths();
 		
 		_AdjustFoldedSections( nBfrTop, nBfrTop - nBfrBot );
 
 		if(bAddUndo)
-			addUndoNode(UndoNode::REMOVED, cUndoStr, nLeft, nTop);
+			AddUndoNode(UndoNode::REMOVED, cUndoStr, nLeft, nTop);
 		
 		if(cursorY==nTop){
 			if(nCursorChar>nLeft){
@@ -527,13 +530,13 @@ void InnerEdit::removeText( uint nLeft, uint nTop, uint nRight, uint nBot, bool 
 			nCursorChar=nLeft;
 		}
 
-		updateScrollBars();
+		UpdateScrollbars();
 		Invalidate();
 	}
 
-	cursorX = getW( nCursorChar, _TranslateBufferIndex( cursorY ) );
+	cursorX = GetW( nCursorChar, _TranslateBufferIndex( cursorY ) );
 
-	reformat( nBfrTop, nBfrTop + 1 );
+	Reformat( nBfrTop, nBfrTop + 1 );
 	eventBuffer |= CodeView::EI_CONTENT_CHANGED;
 }
 
@@ -551,13 +554,13 @@ void InnerEdit::FontChanged(os::Font* f)
 		throw "Cannot use fonts with other directions than left-to-right!";
 	}
 
-	updateBackBuffer();
-	updateScrollBars();
+	UpdateBackBuffer();
+	UpdateScrollbars();
 	Invalidate();
 	Flush();
 }
 
-void InnerEdit::splitLine(vector<os::String> &list, const os::String& line, const char splitter)
+void InnerEdit::SplitLine(vector<os::String> &list, const os::String& line, const char splitter)
 {
 	uint start=0;
 	int end;
@@ -577,12 +580,12 @@ void InnerEdit::splitLine(vector<os::String> &list, const os::String& line, cons
 
 void InnerEdit::Activated(bool b)
 {
-	invalidateLines(cursorY, cursorY);
+	InvalidateLines(cursorY, cursorY);
 	Flush();
 	
 	if(!b){
 		eventBuffer |= CodeView::EI_FOCUS_LOST;
-		commitEvents();
+		CommitEvents();
 	}
 }
 
@@ -604,20 +607,20 @@ void InnerEdit::KeyDown(const char* str, const char* rawstr, uint32 modifiers)
 			if(ctrl && !alt && !shift) {
 				if( _LineIsFolded( charY ) ) {
 					_UnfoldSection( charY );
-					invalidateLines( cursorY, buffer.size()-1 );
-					updateScrollBars();
+					InvalidateLines( cursorY, buffer.size()-1 );
+					UpdateScrollbars();
 				} else if( selectionValid && selStart.y != selEnd.y ) {
 					uint nStart = min( selStart.y, selEnd.y );
 					uint nEnd = max( selStart.y, selEnd.y );
 					_FoldSection( _TranslateBufferIndex( nStart ), _TranslateBufferIndex( nEnd ) );
 					selectionValid = false;
 					cursorY = nStart;
-					showCursor();
-					invalidateLines( nStart, buffer.size()-1 );
-					updateScrollBars();
+					ShowCursor();
+					InvalidateLines( nStart, buffer.size()-1 );
+					UpdateScrollbars();
 				} else {
 					FoldSection( charY, charY + 1 );
-					updateScrollBars();
+					UpdateScrollbars();
 				}
 			}
 			break;
@@ -625,15 +628,15 @@ void InnerEdit::KeyDown(const char* str, const char* rawstr, uint32 modifiers)
 			if(ctrl && !alt && !shift){
 				if(readOnly)
 					break;
-				cut();
-				showCursor();
+				Cut();
+				ShowCursor();
 				goto done;
 			}
 			break;
 		case 'c':
 			if(ctrl && !alt && !shift){
-				copy();
-				showCursor();
+				Copy();
+				ShowCursor();
 				goto done;
 			}
 			break;
@@ -641,8 +644,8 @@ void InnerEdit::KeyDown(const char* str, const char* rawstr, uint32 modifiers)
 			if(ctrl && !alt && !shift){
 				if(readOnly)
 					break;
-				paste();
-				showCursor();
+				Paste();
+				ShowCursor();
 				goto done;
 			}
 			break;
@@ -650,8 +653,8 @@ void InnerEdit::KeyDown(const char* str, const char* rawstr, uint32 modifiers)
 			if(ctrl && !alt && !shift){
 				if(readOnly)
 					break;
-				redo();
-				showCursor();
+				Redo();
+				ShowCursor();
 				goto done;
 			}
 			break;
@@ -659,15 +662,15 @@ void InnerEdit::KeyDown(const char* str, const char* rawstr, uint32 modifiers)
 			if(ctrl && !alt && !shift){
 				if(readOnly)
 					break;
-				undo();
-				showCursor();
+				Undo();
+				ShowCursor();
 				goto done;
 			}
 			if(ctrl && !alt && shift){
 				if(readOnly)
 					break;
-				redo();
-				showCursor();
+				Redo();
+				ShowCursor();
 				goto done;
 			}
 			break;
@@ -679,70 +682,70 @@ void InnerEdit::KeyDown(const char* str, const char* rawstr, uint32 modifiers)
 		break;
 	case os::VK_LEFT_ARROW:
 		if(alt && !ctrl)
-			scrollLeft();
+			ScrollLeft();
 		else if(!alt && ctrl){
-			moveWordLeft(shift);
-			showCursor();
+			MoveWordLeft(shift);
+			ShowCursor();
 		}else if(!alt && !ctrl){
-			moveLeft(shift);
-			showCursor();
+			MoveLeft(shift);
+			ShowCursor();
 		}
 		break;
 	case os::VK_RIGHT_ARROW:
 		if(alt && !ctrl)
-			scrollRight();
+			ScrollRight();
 		else if(!alt && ctrl){
-			moveWordRight(shift);
-			showCursor();
+			MoveWordRight(shift);
+			ShowCursor();
 		}else if(!alt && !ctrl){
-			moveRight(shift);
-			showCursor();
+			MoveRight(shift);
+			ShowCursor();
 		}
 		break;
 	case os::VK_UP_ARROW:
 		if(alt)
-			scrollUp();
+			ScrollUp();
 		else{
-			moveUp(shift);
-			showCursor();
+			MoveUp(shift);
+			ShowCursor();
 		}
 		break;
 	case os::VK_DOWN_ARROW:
 		if(alt)
-			scrollDown();
+			ScrollDown();
 		else{
-			moveDown(shift);
-			showCursor();
+			MoveDown(shift);
+			ShowCursor();
 		}
 		break;
 	case os::VK_HOME:
 		if(ctrl)
-			moveTop(shift);
+			MoveTop(shift);
 		else
-			moveLineStart(shift);
-		showCursor();
+			MoveLineStart(shift);
+		ShowCursor();
 		break;
 	case os::VK_END:
 		if(ctrl)
-			moveBottom(shift);
+			MoveBottom(shift);
 		else
-			moveLineEnd(shift);
-		showCursor();
+			MoveLineEnd(shift);
+		ShowCursor();
 		break;
 	case os::VK_PAGE_UP:
 		if(alt)
-			scrollPageUp();
+			ScrollPageUp();
 		else{
-			movePageUp(shift);
-			showCursor();
+			MovePageUp(shift);
+			ShowCursor();
 		}
 		break;
 	case os::VK_PAGE_DOWN:
 		if(alt)
-			scrollPageDown();
+			ScrollPageDown();
 		else{
-			movePageDown(shift);
-			showCursor();
+			MovePageDown(shift);
+			ShowCursor();
 		}
 		break;
 	case os::VK_TAB:
@@ -750,61 +753,61 @@ void InnerEdit::KeyDown(const char* str, const char* rawstr, uint32 modifiers)
 			break;
 			
 		if(selectionValid){
-			indentSelection(shift);
+			IndentSelection(shift);
 		}else{
-			cursorX=min(cursorX, getW(buffer[charY].text.size(), charY));
+			cursorX=min(cursorX, GetW(buffer[charY].text.size(), charY));
 			if(useTab)
-/***/				insertText("\t", getChar(cursorX, charY), cursorY);
+/***/				InsertText("\t", GetChar(cursorX, charY), cursorY);
 			else{
 			    os::String tmp;
 			    tmp.resize(tabSize, ' ');
-				insertText(tmp, getChar(cursorX, charY), cursorY);
+				InsertText(tmp, GetChar(cursorX, charY), cursorY);
 			}
 			    
-			showCursor();
+			ShowCursor();
 		}
 		break;
 	case os::VK_BACKSPACE:
 		if(readOnly)
 			break;
 		if(alt && !shift && !ctrl)
-			undo();
+			Undo();
 		else if(!alt){
 			if(selectionValid){
-				del();
-			}else if(cursorY!=0 || (getChar(cursorX, 0)!=0 && buffer[0].text.size()!=0)){
-				moveLeft(false);
-				del();
+				Del();
+			}else if(cursorY!=0 || (GetChar(cursorX, 0)!=0 && buffer[0].text.size()!=0)){
+				MoveLeft(false);
+				Del();
 			}
 		}
-		showCursor();
+		ShowCursor();
 		break;		
 	case os::VK_DELETE:
 		if(readOnly)
 			break;
 		if(shift)
-			cut();
+			Cut();
 		else
-			del();
-		showCursor();
+			Del();
+		ShowCursor();
 		break;
 	case os::VK_ENTER:
 		{
 			if(readOnly)
 				break;
 			if(selectionValid)
-				del();
+				Del();
 
-			cursorX=min(cursorX, getW(buffer[charY].text.size(), charY));
-			uint chr=getChar(cursorX, charY);
+			cursorX=min(cursorX, GetW(buffer[charY].text.size(), charY));
+			uint chr=GetChar(cursorX, charY);
 			if(format){
-				insertText(os::String("\n")+format->GetIndentString( buffer[charY].text.str().substr(0, chr), 
+				InsertText(os::String("\n")+format->GetIndentString( buffer[charY].text.str().substr(0, chr), 
 					useTab, tabSize), chr, cursorY);
 			}else{
-				insertText("\n", chr, cursorY);
+				InsertText("\n", chr, cursorY);
 			}
 
-			showCursor();
+			ShowCursor();
 			eventBuffer |= CodeView::EI_ENTER_PRESSED;
 		}
 		break;		
@@ -812,12 +815,12 @@ void InnerEdit::KeyDown(const char* str, const char* rawstr, uint32 modifiers)
 		if(shift && !ctrl){
 			if(readOnly)
 				break;
-			paste();
-			showCursor();
+			Paste();
+			ShowCursor();
 		}
 		if(!shift && ctrl){
-			copy();
-			showCursor();
+			Copy();
+			ShowCursor();
 		}
 		break;			
 	case os::VK_ESCAPE:
@@ -829,20 +832,20 @@ void InnerEdit::KeyDown(const char* str, const char* rawstr, uint32 modifiers)
 		if(readOnly)
 			break;
 		if(selectionValid)
-			del();
+			Del();
 
-		cursorX=min(cursorX, getW(buffer[charY].text.size(), charY));
-		insertText(str, getChar(cursorX, charY), cursorY);
+		cursorX=min(cursorX, GetW(buffer[charY].text.size(), charY));
+		InsertText(str, GetChar(cursorX, charY), cursorY);
 		if(dead) {
-			moveLeft(false);
-			moveRight(true);
+			MoveLeft(false);
+			MoveRight(true);
 		}
-		showCursor();
+		ShowCursor();
 	}
 
 done:
 	Flush();
-	commitEvents();
+	CommitEvents();
 }
 
 void InnerEdit::WheelMoved(const os::Point &p)
@@ -867,20 +870,20 @@ void InnerEdit::MouseDown(const os::Point &p, uint32 but)
 	if(but&1){
 		mousePressed=true;
 
-		clearSelection();
+		ClearSelection();
 
 		uint line=min((uint)(p.y/lineHeight), buffer.size()-1);
 
-		invalidateLines(cursorY, cursorY);
+		InvalidateLines(cursorY, cursorY);
 		cursorY=line;
-		cursorX=p.x;
-		invalidateLines(cursorY, cursorY);
+		cursorX=p.x - m_nMargin;
+		InvalidateLines(cursorY, cursorY);
 
-		showCursor();
+		ShowCursor();
 	
 		Flush();
 
-		commitEvents();
+		CommitEvents();
 	}
 }
 
@@ -906,231 +909,231 @@ void InnerEdit::MouseMove(const os::Point &p, int code, uint32 but, os::Message 
 		int line=min((int)(p.y/lineHeight), (int)(buffer.size()-1));
 		if(line<0)
 			line=0;
-		float x=p.x;
+		float x=p.x - m_nMargin;
 		if(x<0)
 			x=0;
-		uint chr=getChar(x, _TranslateBufferIndex( line ));
+		uint chr=GetChar(x, _TranslateBufferIndex( line ));
 
-		setCursor(chr, line, true);
+		SetCursor(chr, line, true);
 
 		Flush();
-		commitEvents();
+		CommitEvents();
     }
 }
 
-void InnerEdit::setCursor(uint x, uint y, bool select)
+void InnerEdit::SetCursor(uint x, uint y, bool select)
 {
-	preMove(select);
+	PreMove(select);
 	
-	invalidateLines(cursorY, cursorY);
+	InvalidateLines(cursorY, cursorY);
 	cursorY=min(y, buffer.size()-1);
-	cursorX=getW(x, _TranslateBufferIndex( cursorY ) );
-	invalidateLines(cursorY, cursorY);
+	cursorX=GetW(x, _TranslateBufferIndex( cursorY ) );
+	InvalidateLines(cursorY, cursorY);
 
-	showCursor();
+	ShowCursor();
 
-	postMove(select);
+	PostMove(select);
 }
 
-void InnerEdit::preMove(bool select)
+void InnerEdit::PreMove(bool select)
 {
 	if(selectionValid && !select)
-		clearSelection();
+		ClearSelection();
 	else if(!selectionValid && select){
-		setSelectionStart(getChar(cursorX, _TranslateBufferIndex( cursorY )), cursorY);
+		SetSelectionStart(GetChar(cursorX, _TranslateBufferIndex( cursorY )), cursorY);
 	}
 }
 
-void InnerEdit::postMove(bool select)
+void InnerEdit::PostMove(bool select)
 {
 	if(select)
-		setSelectionEnd(getChar(cursorX, _TranslateBufferIndex( cursorY )), cursorY);
+		SetSelectionEnd(GetChar(cursorX, _TranslateBufferIndex( cursorY )), cursorY);
 }
 
-void InnerEdit::moveLeft(bool select)
+void InnerEdit::MoveLeft(bool select)
 {
-	preMove(select);
+	PreMove(select);
 
 	uint y = _TranslateBufferIndex( cursorY );;
-	uint x = min(getChar(cursorX, y), buffer[y].text.size());
+	uint x = min(GetChar(cursorX, y), buffer[y].text.size());
 
 	if( !x ) {
 		if( cursorY > 0 ) {
 			--cursorY;
 			y = _TranslateBufferIndex( cursorY );
-			cursorX = getW( buffer[y].text.size(), y );
-			invalidateLines(cursorY, cursorY+1);
+			cursorX = GetW( buffer[y].text.size(), y );
+			InvalidateLines(cursorY, cursorY+1);
 		}
 	}else{
 		--x;
 		while(x>0 && !os::is_first_utf8_byte(buffer[y].text[x]))
 			--x;
-		cursorX=getW(x, y);
-		invalidateLines(cursorY, cursorY);
+		cursorX=GetW(x, y);
+		InvalidateLines(cursorY, cursorY);
 	}
 	
-	postMove(select);	
+	PostMove(select);	
 }
 
-void InnerEdit::moveRight(bool select)
+void InnerEdit::MoveRight(bool select)
 {
-	preMove(select);
+	PreMove(select);
 
 	uint y = _TranslateBufferIndex( cursorY );
-	uint x = min(getChar(cursorX, y), buffer[y].text.size());
+	uint x = min(GetChar(cursorX, y), buffer[y].text.size());
 
 	if(x==buffer[y].text.size()){
 		if(y<buffer.size()-1){
 			++cursorY;
 			y = _TranslateBufferIndex( cursorY );
 			cursorX=0;
-			invalidateLines(cursorY-1, cursorY);
+			InvalidateLines(cursorY-1, cursorY);
 		}
 	}else{
 		int len=os::utf8_char_length(buffer[y].text[x]);
-		cursorX=getW(x+len, y);
-		invalidateLines(cursorY, cursorY);
+		cursorX=GetW(x+len, y);
+		InvalidateLines(cursorY, cursorY);
 	}
 
-	postMove(select);
+	PostMove(select);
 }
 
-void InnerEdit::moveUp(bool select)
+void InnerEdit::MoveUp(bool select)
 {
-	preMove(select);
+	PreMove(select);
 
 	if(cursorY>0){
 		--cursorY;
-		invalidateLines(cursorY, cursorY+1);
+		InvalidateLines(cursorY, cursorY+1);
 	}
 
-	postMove(select);
+	PostMove(select);
 }
 
-void InnerEdit::moveDown(bool select)
+void InnerEdit::MoveDown(bool select)
 {
-	preMove(select);
+	PreMove(select);
 
 	if( _TranslateBufferIndex( cursorY ) < buffer.size() - 1 ) {
 		++cursorY;
-		invalidateLines(cursorY-1, cursorY);
+		InvalidateLines(cursorY-1, cursorY);
 	}
 
-	postMove(select);
+	PostMove(select);
 }
 
-void InnerEdit::moveTop(bool select)
+void InnerEdit::MoveTop(bool select)
 {
-	preMove(select);
+	PreMove(select);
 
 	cursorX=0;
-	invalidateLines(0, cursorY);
+	InvalidateLines(0, cursorY);
 	cursorY=0;
 
-	postMove(select);
+	PostMove(select);
 }
 
-void InnerEdit::moveBottom(bool select)
+void InnerEdit::MoveBottom(bool select)
 {
-	preMove(select);
+	PreMove(select);
 
-	invalidateLines(cursorY, buffer.size());
+	InvalidateLines(cursorY, buffer.size());
 	uint y = buffer.size()-1;
 	cursorY = _TranslateLineNumber( y );
-	cursorX=getW(buffer[y].text.size(), y);
+	cursorX=GetW(buffer[y].text.size(), y);
 
-	postMove(select);
+	PostMove(select);
 }
 
-void InnerEdit::movePageUp(bool select)
+void InnerEdit::MovePageUp(bool select)
 {
-	preMove(select);
+	PreMove(select);
 
 	uint lines=((int)Height())/((int)lineHeight);
 
-	invalidateLines(cursorY, cursorY);
+	InvalidateLines(cursorY, cursorY);
 	if(lines>cursorY)
 		cursorY=0;
 	else
 		cursorY-=lines;
-	invalidateLines(cursorY, cursorY);
+	InvalidateLines(cursorY, cursorY);
 
-	postMove(select);
+	PostMove(select);
 }
 
-void InnerEdit::movePageDown(bool select)
+void InnerEdit::MovePageDown(bool select)
 {
-	preMove(select);
+	PreMove(select);
 
 	uint lines=((int)Height())/((int)lineHeight);
 
-	invalidateLines(cursorY, cursorY);
+	InvalidateLines(cursorY, cursorY);
 	cursorY = min( _TranslateLineNumber( buffer.size()-1 ), cursorY + lines );
-	invalidateLines(cursorY, cursorY);
+	InvalidateLines(cursorY, cursorY);
 
-	postMove(select);
+	PostMove(select);
 }
 
-void InnerEdit::moveLineStart(bool select)
+void InnerEdit::MoveLineStart(bool select)
 {
-	preMove(select);
+	PreMove(select);
 
 	cursorX=0;
-	invalidateLines(cursorY, cursorY);
+	InvalidateLines(cursorY, cursorY);
 
-	postMove(select);
+	PostMove(select);
 }
 
-void InnerEdit::moveLineEnd(bool select)
+void InnerEdit::MoveLineEnd(bool select)
 {
-	preMove(select);
+	PreMove(select);
 
 	uint y = _TranslateBufferIndex( cursorY );
-	cursorX=getW(buffer[y].text.size(), y);
-	invalidateLines(cursorY, cursorY);
+	cursorX=GetW(buffer[y].text.size(), y);
+	InvalidateLines(cursorY, cursorY);
 
-	postMove(select);
+	PostMove(select);
 }
 
-void InnerEdit::moveWordLeft(bool select){
+void InnerEdit::MoveWordLeft(bool select){
 	uint y = _TranslateBufferIndex( cursorY );
-	uint x = min(getChar(cursorX, y), buffer[y].text.size());
+	uint x = min(GetChar(cursorX, y), buffer[y].text.size());
 
 	if(x==0 || format==NULL)
-		moveLeft(select);
+		MoveLeft(select);
 	else{
-		preMove(select);
+		PreMove(select);
 
-		cursorX=getW(format->GetPreviousWordLimit(buffer[y].text, x), y);
-		invalidateLines(cursorY, cursorY);
+		cursorX=GetW(format->GetPreviousWordLimit(buffer[y].text, x), y);
+		InvalidateLines(cursorY, cursorY);
 
-		postMove(select);
+		PostMove(select);
 	}
 }
 
-void InnerEdit::moveWordRight(bool select)
+void InnerEdit::MoveWordRight(bool select)
 {
 	uint y = _TranslateBufferIndex( cursorY );
-	uint x=min(getChar(cursorX, y), buffer[y].text.size());
+	uint x=min(GetChar(cursorX, y), buffer[y].text.size());
 
 	if(x==buffer[y].text.size() || format==NULL)
-		moveRight(select);
+		MoveRight(select);
 	else{
-		preMove(select);
+		PreMove(select);
 
-		cursorX=getW(format->GetNextWordLimit(buffer[y].text, x), y);
-		invalidateLines(cursorY, cursorY);
+		cursorX=GetW(format->GetNextWordLimit(buffer[y].text, x), y);
+		InvalidateLines(cursorY, cursorY);
 
-		postMove(select);
+		PostMove(select);
 	}
 }
 
-void InnerEdit::setFormat(Format* f)
+void InnerEdit::SetFormat(Format* f)
 {
 	format=f;
 
 	if(format){
-		reformat(0, buffer.size()-1);
+		Reformat(0, buffer.size()-1);
 	}else{
 		for(uint a=0;a<buffer.size();++a)
 			buffer[a].style.resize(0);
@@ -1139,11 +1142,11 @@ void InnerEdit::setFormat(Format* f)
 
 void InnerEdit::FrameSized(const os::Point &p)
 {
-	updateBackBuffer();
-	updateScrollBars();
+	UpdateBackBuffer();
+	UpdateScrollbars();
 }
 
-void InnerEdit::updateScrollBars()
+void InnerEdit::UpdateScrollbars()
 {
 	os::ScrollBar* sb = GetVScrollBar();
 
@@ -1157,65 +1160,57 @@ void InnerEdit::updateScrollBars()
 
 	sb = GetHScrollBar();
 	if( sb ) {
-		float w=Width();
-		sb->SetSteps(spaceWidth, w-spaceWidth);
-		sb->SetMinMax(0, maxWidth+spaceWidth-w);
-		sb->SetProportion(w/(maxWidth+spaceWidth));
+		float w = Width();
+		sb->SetSteps( spaceWidth, w - spaceWidth );
+		sb->SetMinMax(0, maxWidth + spaceWidth - w );
+		sb->SetProportion( w / ( maxWidth + spaceWidth ) );
 	}
 }
 
-void InnerEdit::showCursor()
+void InnerEdit::ShowCursor()
 {
-	const float offset=5;
+	const float vOffset = 5;
+	os::Point cScroll = GetScrollOffset();
+	os::Point cInitialScroll = cScroll;
+	float w = Width();
+	float h = Height();
 
-	bool changed=false;
-	os::Point scroll=GetScrollOffset();
-	float w=Width();
-	float h=Height();
+	uint nCharY = _TranslateBufferIndex( cursorY );
 
-	uint charY = _TranslateBufferIndex( cursorY );
-
-	if( charY > buffer.size()-1 )
-		charY = buffer.size()-1;
+	if( nCharY > buffer.size() - 1 )
+		nCharY = buffer.size() - 1;
 	
-	float y=cursorY*lineHeight;
-	int cx=min(getChar(cursorX, charY), buffer[charY].text.size());
-	float x=getW(cx, charY);
+	float y = cursorY * lineHeight;
+	int cx = min( GetChar( cursorX, nCharY ), buffer[ nCharY ].text.size() );
+	float x = GetW( cx, nCharY );
 
-	if(y<-scroll.y){
-		scroll.y=-(y-offset);
-		changed=true;
+	if( y < -cScroll.y ){
+		cScroll.y = -( y - vOffset );
 	}
-	if(y+lineHeight+scroll.y>h){
-		scroll.y=-(y+lineHeight+offset-h);
-		changed=true;
+	if( y + lineHeight + cScroll.y > h ) {
+		cScroll.y = -( y + lineHeight + vOffset - h );
 	}
 
-	if(x<-scroll.x){
-		scroll.x=-(x-offset);
-		changed=true;
+	if( x < -cScroll.x ) {
+		cScroll.x = -( x - vOffset );
 	}
-	if(x+scroll.x>w){
-		scroll.x=-(x+offset-w);
-		changed=true;
+	if( x + cScroll.x + m_nMargin > w ) {
+		cScroll.x = -( x + m_nMargin + vOffset - w );
 	}
-
-	if(scroll.y>0){
-		scroll.y=0;
-		changed=true;
+	if( cScroll.y > 0 ) {
+		cScroll.y = 0 ;
 	}
-	if(scroll.x>0){
-		scroll.x=0;
-		changed=true;
+	if( cScroll.x > 0 ) {
+		cScroll.x = 0;
 	}
 
-	if(changed)
-		ScrollTo(scroll);
+	if( cScroll != cInitialScroll )
+		ScrollTo( cScroll );
 }
 
 /*Gets the adjusted width of line y, characters [0, x]
 */
-float InnerEdit::getW(uint x, uint y) const
+float InnerEdit::GetW(uint x, uint y) const
 {
 	y=min(y, buffer.size()-1);
 
@@ -1249,11 +1244,11 @@ float InnerEdit::getW(uint x, uint y) const
 		first=last+1;
 	}
 	
-//	cout << "getW:\t\t" << x << "\t" << y << "\t" << w+spaceWidth*dx << endl;
+//	cout << "GetW:\t\t" << x << "\t" << y << "\t" << w+spaceWidth*dx << endl;
 	return w+spaceWidth*dx;
 }
 
-uint InnerEdit::getChar(float targetX, uint y) const
+uint InnerEdit::GetChar(float targetX, uint y) const
 {
 	y=min(y, buffer.size()-1);
 
@@ -1278,11 +1273,11 @@ uint InnerEdit::getChar(float targetX, uint y) const
 	if(x<targetX)
 		c+=(int)((targetX-x)/spaceWidth);
 		
-//	cout << "getChar:\t" << c << "\t" << y << "\t" << targetX << endl;
+//	cout << "GetChar:\t" << c << "\t" << y << "\t" << targetX << endl;
 	return c;
 }
 
-void InnerEdit::setSelectionStart(uint x, uint y)
+void InnerEdit::SetSelectionStart(uint x, uint y)
 {
 	y=min(y, buffer.size()-1);
 	x=min(x, buffer[ _TranslateBufferIndex(y) ].text.size());
@@ -1293,7 +1288,7 @@ void InnerEdit::setSelectionStart(uint x, uint y)
 		selStart.y=y;
 		selStart.x=x;
 
-		invalidateLines(min(oldy, (uint)selStart.y), max(oldy, (uint)selStart.y));
+		InvalidateLines(min(oldy, (uint)selStart.y), max(oldy, (uint)selStart.y));
 	}else{
 		selEnd.y=selStart.y=y;
 		selEnd.x=selStart.x=x;
@@ -1302,7 +1297,7 @@ void InnerEdit::setSelectionStart(uint x, uint y)
 	eventBuffer |= CodeView::EI_SELECTION_CHANGED;
 }
 
-void InnerEdit::setSelectionEnd(uint x, uint y)
+void InnerEdit::SetSelectionEnd(uint x, uint y)
 {
 	y=min(y, buffer.size()-1);
 	x=min(x, buffer[ _TranslateBufferIndex(y) ].text.size());
@@ -1313,7 +1308,7 @@ void InnerEdit::setSelectionEnd(uint x, uint y)
 		selEnd.y=y;
 		selEnd.x=x;
 
-		invalidateLines(min(oldy, (uint)selEnd.y), max(oldy, (uint)selEnd.y));
+		InvalidateLines(min(oldy, (uint)selEnd.y), max(oldy, (uint)selEnd.y));
 	}else{
 		selEnd.y=selStart.y=y;
 		selEnd.x=selStart.x=x;
@@ -1322,16 +1317,16 @@ void InnerEdit::setSelectionEnd(uint x, uint y)
 	eventBuffer |= CodeView::EI_SELECTION_CHANGED;
 }
 
-void InnerEdit::clearSelection()
+void InnerEdit::ClearSelection()
 {
 	if(selectionValid){
 		selectionValid=false;
-		invalidateLines(min(selStart.y, selEnd.y), max(selStart.y, selEnd.y));
+		InvalidateLines(min(selStart.y, selEnd.y), max(selStart.y, selEnd.y));
 	}
 	eventBuffer |= CodeView::EI_SELECTION_CHANGED;
 }
 
-void InnerEdit::scrollLeft()
+void InnerEdit::ScrollLeft()
 {
 	os::Point p=GetScrollOffset();
 
@@ -1340,7 +1335,7 @@ void InnerEdit::scrollLeft()
 	ScrollTo(p);
 }
 
-void InnerEdit::scrollRight()
+void InnerEdit::ScrollRight()
 {
 	os::Point p=GetScrollOffset();
 
@@ -1349,7 +1344,7 @@ void InnerEdit::scrollRight()
 	ScrollTo(p);
 }
 
-void InnerEdit::scrollUp()
+void InnerEdit::ScrollUp()
 {
 	os::Point p=GetScrollOffset();
 
@@ -1358,7 +1353,7 @@ void InnerEdit::scrollUp()
 	ScrollTo(p);
 }
 
-void InnerEdit::scrollDown()
+void InnerEdit::ScrollDown()
 {
 	os::Point p=GetScrollOffset();
 
@@ -1369,7 +1364,7 @@ void InnerEdit::scrollDown()
 	ScrollTo(p);
 }
 
-void InnerEdit::scrollPageUp()
+void InnerEdit::ScrollPageUp()
 {
 	os::Point p=GetScrollOffset();
 
@@ -1378,7 +1373,7 @@ void InnerEdit::scrollPageUp()
 	ScrollTo( p );
 }
 
-void InnerEdit::scrollPageDown()
+void InnerEdit::ScrollPageDown()
 {
 	os::Point p = GetScrollOffset();
 
@@ -1389,7 +1384,7 @@ void InnerEdit::scrollPageDown()
 	ScrollTo( p );
 }
 
-void InnerEdit::updateBackBuffer()
+void InnerEdit::UpdateBackBuffer()
 {
 	if(backBM){
 		if(backView)
@@ -1408,7 +1403,7 @@ void InnerEdit::updateBackBuffer()
 	backBM->AddChild(backView);	
 }
 
-void InnerEdit::reformat(uint first, uint last)
+void InnerEdit::Reformat(uint first, uint last)
 {
 	if(format==NULL)
 		return;
@@ -1433,11 +1428,11 @@ void InnerEdit::reformat(uint first, uint last)
 		++line;
 	}while(line<=max && (!(newCookie==oldCookie) || line<=last) );
 
-	invalidateLines(first, line);
+	InvalidateLines(first, line);
 	Flush();
 }
 
-void InnerEdit::copy() const
+void InnerEdit::Copy() const
 {
 	if(!selectionValid)
 		return;
@@ -1446,13 +1441,13 @@ void InnerEdit::copy() const
 	clip.Lock();
 	clip.Clear();
 	os::String tmp;
-	getText(&tmp, selStart, selEnd);
+	GetText(&tmp, selStart, selEnd);
 	clip.GetData()->AddString("text/plain", tmp);
 	clip.Commit();
 	clip.Unlock();
 }
 
-void InnerEdit::paste()
+void InnerEdit::Paste()
 {
 	os::Clipboard clip;
 	os::String str;
@@ -1461,72 +1456,71 @@ void InnerEdit::paste()
 	
 	if(clip.GetData()->FindString("text/plain", &str)==0){
 		if(selectionValid)
-			del();
+			Del();
 
-//		uint y = _TranslateBufferIndex( cursorY );
-		insertText( str, getChar( cursorX, _TranslateBufferIndex( cursorY ) ), cursorY );
+		InsertText( str, GetChar( cursorX, _TranslateBufferIndex( cursorY ) ), cursorY );
 	}
 	clip.Unlock();
 }
 
-void InnerEdit::cut()
+void InnerEdit::Cut()
 {
 	if(!selectionValid)
 		return;
 
-	copy();
-	del();
+	Copy();
+	Del();
 }
 
-void InnerEdit::del()
+void InnerEdit::Del()
 {
 	if(selectionValid) {
-		removeText(selStart, selEnd);
-		clearSelection();
+		RemoveText(selStart, selEnd);
+		ClearSelection();
 	} else {
 		uint y = _TranslateBufferIndex( cursorY );
-		uint x = min( getChar( cursorX, y ), buffer[y].text.size() );
+		uint x = min( GetChar( cursorX, y ), buffer[y].text.size() );
 		if( x < buffer[y].text.size() ) {
-			removeText( x, cursorY, x + os::utf8_char_length( buffer[y].text[x] ), cursorY );
+			RemoveText( x, cursorY, x + os::utf8_char_length( buffer[y].text[x] ), cursorY );
 		}else if(cursorY<buffer.size()-1){
-			removeText( x, cursorY, 0, cursorY+1 );
+			RemoveText( x, cursorY, 0, cursorY+1 );
 		}
 	}
 }
 
-void InnerEdit::setLine(const os::String &line, uint y, bool addUndo)
+void InnerEdit::SetLine(const os::String &line, uint y, bool addUndo)
 {
 	if(addUndo){
-		addUndoNode(UndoNode::SET_LINE, buffer[y].text, 0, y);
+		AddUndoNode(UndoNode::SET_LINE, buffer[y].text, 0, y);
 	}
 
 	buffer[y].text=line;
 	buffer[y].style.resize(0);
-	updateWidth(y);
-	invalidateLines(y, y);
+	UpdateWidth(y);
+	InvalidateLines(y, y);
 
 
-	reformat(y, y);
+	Reformat(y, y);
 	eventBuffer |= CodeView::EI_CONTENT_CHANGED;
 }
 
-void InnerEdit::setTabSize(uint i)
+void InnerEdit::SetTabSize(uint i)
 {
 	uint y = _TranslateBufferIndex( cursorY );
-	uint chr = getChar( cursorX, y );
+	uint chr = GetChar( cursorX, y );
 	tabSize = i;
-	cursorX = getW( chr, y );
-	updateAllWidths();
+	cursorX = GetW( chr, y );
+	UpdateAllWidths();
 	Invalidate();
 }
 
-os::IPoint InnerEdit::getCursor() const
+os::IPoint InnerEdit::GetCursor() const
 {
-	return os::IPoint(min(buffer[cursorY].text.size(), getChar(cursorX, cursorY)), cursorY);
+	return os::IPoint(min(buffer[cursorY].text.size(), GetChar(cursorX, cursorY)), cursorY);
 }
 
 
-void InnerEdit::setEnable(bool b)
+void InnerEdit::SetEnable(bool b)
 {
 	if(b!=enabled){
 		enabled=b;
@@ -1534,7 +1528,7 @@ void InnerEdit::setEnable(bool b)
 	}
 }
 
-void InnerEdit::setReadOnly(bool b)
+void InnerEdit::SetReadOnly(bool b)
 {
 	if(b!=readOnly){
 		readOnly=b;
@@ -1542,7 +1536,7 @@ void InnerEdit::setReadOnly(bool b)
 	}
 }
 
-void InnerEdit::commitEvents()
+void InnerEdit::CommitEvents()
 {
 	if(cursorX!=old_cursorX || cursorY!=old_cursorY)
 		eventBuffer|=CodeView::EI_CURSOR_MOVED;
@@ -1555,7 +1549,7 @@ void InnerEdit::commitEvents()
 	eventBuffer=0;
 }
 
-size_t InnerEdit::getLength()
+size_t InnerEdit::GetLength()
 {
 	size_t tmp=buffer.size();
 	if(tmp>0)
@@ -1567,18 +1561,18 @@ size_t InnerEdit::getLength()
 	return tmp;
 }
 
-void InnerEdit::setMaxUndoSize(int size)
+void InnerEdit::SetMaxUndoSize(int size)
 {
 //TODO: implement
 	maxUndo=size;
 }
 
-int InnerEdit::getMaxUndoSize()
+int InnerEdit::GetMaxUndoSize()
 {
 	return maxUndo;
 }
 
-void InnerEdit::addUndoNode(uint mode, const os::String &str, uint x, uint y)
+void InnerEdit::AddUndoNode(uint mode, const os::String &str, uint x, uint y)
 {
 	UndoNode *node=new UndoNode();
 	node->mode=mode;
@@ -1616,7 +1610,7 @@ void InnerEdit::addUndoNode(uint mode, const os::String &str, uint x, uint y)
 	}
 }
 
-void InnerEdit::clearUndo()
+void InnerEdit::ClearUndo()
 {
 	if(!undoHead)
 		return;
@@ -1631,17 +1625,17 @@ void InnerEdit::clearUndo()
 	undoCount=redoCount=0;		
 }
 
-bool InnerEdit::undoAvailable()
+bool InnerEdit::UndoAvailable()
 {
 	return undoCount>0;
 }
 
-bool InnerEdit::redoAvailable()
+bool InnerEdit::RedoAvailable()
 {
 	return redoCount>0;
 }
 
-bool InnerEdit::undo()
+bool InnerEdit::Undo()
 {
 	if(undoCurrent==NULL || undoCount==0)
 		return false;
@@ -1658,16 +1652,16 @@ bool InnerEdit::undo()
 				++y;
 			}
 
-			removeText(undoCurrent->x, undoCurrent->y, x, y, false);
+			RemoveText(undoCurrent->x, undoCurrent->y, x, y, false);
 			break;
 		}
 		case UndoNode::REMOVED:
-			insertText(undoCurrent->text, undoCurrent->x, undoCurrent->y, false);
+			InsertText(undoCurrent->text, undoCurrent->x, undoCurrent->y, false);
 			break;
 		case UndoNode::SET_LINE:
 		{
 			os::String tmp=buffer[undoCurrent->y].text;
-			setLine(undoCurrent->text, undoCurrent->y, false);
+			SetLine(undoCurrent->text, undoCurrent->y, false);
 			undoCurrent->text=tmp;
 			break;
 		}
@@ -1684,7 +1678,7 @@ bool InnerEdit::undo()
 	return true;
 }
 
-bool InnerEdit::redo()
+bool InnerEdit::Redo()
 {
 	if(undoCurrent==NULL || redoCount==0)
 		return false;
@@ -1706,16 +1700,16 @@ bool InnerEdit::redo()
 				++y;
 			}
 	
-			removeText(node->x, node->y, x, y, false);
+			RemoveText(node->x, node->y, x, y, false);
 			break;
 		}
 		case UndoNode::ADDED:
-			insertText(node->text, node->x, node->y, false);
+			InsertText(node->text, node->x, node->y, false);
 			break;
 		case UndoNode::SET_LINE:
 		{
 			os::String tmp=buffer[node->y].text;
-			setLine(node->text, node->y, false);
+			SetLine(node->text, node->y, false);
 			node->text=tmp;
 			break;
 		}
@@ -1732,36 +1726,37 @@ bool InnerEdit::redo()
 	return true;
 }
 
-void InnerEdit::updateWidth(uint y)
+void InnerEdit::UpdateWidth(uint y)
 {
-	float ow=buffer[y].w;
-	float nw=getW(buffer[y].text.size(), y);
+	float ow = buffer[y].w + m_nMargin;
+	float nw = GetW( buffer[y].text.size(), y ) + m_nMargin;
 
 	buffer[y].w=nw;
 
-	if(ow>=maxWidth && nw<ow){
-		updateAllWidths();
-	}else{
+	if( ow >= maxWidth && nw < ow ) {
+		UpdateAllWidths();
+	} else {
 		if(nw>maxWidth){
 			maxWidth=nw;
-			updateScrollBars();
+			UpdateScrollbars();
 		}
 	}	
 }
 
-void InnerEdit::updateAllWidths()
+void InnerEdit::UpdateAllWidths()
 {
-	maxWidth=0;
+	maxWidth = 0;
 	for(uint a=0;a<buffer.size()-1;++a){
-		buffer[a].w=getW(buffer[a].text.size(), a);
+		buffer[a].w=GetW(buffer[a].text.size(), a);
 		if(buffer[a].w>maxWidth)
 			maxWidth=buffer[a].w;
 	}
-	updateScrollBars();					
+	maxWidth += m_nMargin;
+	UpdateScrollbars();					
 }
 
 
-void InnerEdit::indentSelection(bool unindent)
+void InnerEdit::IndentSelection(bool unindent)
 {
 	uint top, bot;
 	
@@ -1788,7 +1783,7 @@ void InnerEdit::indentSelection(bool unindent)
 				continue;
 				
 			if(line[0]=='\t'){
-				removeText(0, a, 1, a);
+				RemoveText(0, a, 1, a);
 			}else if(line[0]==' '){
 				uint len=max(tabSize, line.size());
 				uint spaces=1;
@@ -1797,15 +1792,15 @@ void InnerEdit::indentSelection(bool unindent)
 						++spaces;
 					else
 						break;
-				removeText(0, a, spaces, a);
+				RemoveText(0, a, spaces, a);
 			}//else ignore
 		}else{//indent
 			if(useTab)
-				insertText("\t", 0, a);
+				InsertText("\t", 0, a);
 			else{
 				os::String pad;
 				pad.resize(tabSize, ' ');
-				insertText(pad, 0, a);
+				InsertText(pad, 0, a);
 			}
 		}
 	}
@@ -1815,15 +1810,15 @@ void InnerEdit::indentSelection(bool unindent)
 	selStart.x=0;
 	selEnd.y=bot;
 	selEnd.x=buffer[bot].text.size();
-	float x=getW(selEnd.x, bot);
+	float x=GetW(selEnd.x, bot);
 	if(cursorY!=bot || cursorX!=x)
 		eventBuffer |= CodeView::EI_CURSOR_MOVED;
 	
 	cursorY=bot;
 	cursorX=x;
 	
-	reformat(top, bot);
-	invalidateLines(top, bot);
+	Reformat(top, bot);
+	InvalidateLines(top, bot);
 	eventBuffer |= CodeView::EI_CONTENT_CHANGED;
 }
 
@@ -1846,20 +1841,20 @@ void InnerEdit::FoldSection( uint nFirst, uint nLast )
 //    cout << "FoldSection: " << nFirst << ", " << nLast << endl;
 
     do {
-    	nOldFold = nFoldLevel;
-	nFoldLevel = format->GetFoldLevel( buffer[ nLine ].text, nOldFold );
-	if( nFoldLevel == 1 && nOldFold == 0 ) {
-		nFoldStart = nLine;
-	}
-	if( nFoldLevel == 0 && nOldFold == 1 ) {
+		nOldFold = nFoldLevel;
+		nFoldLevel = format->GetFoldLevel( buffer[ nLine ].text, nOldFold );
+		if( nFoldLevel == 1 && nOldFold == 0 ) {
+			nFoldStart = nLine;
+		}
+		if( nFoldLevel == 0 && nOldFold == 1 ) {
 //	        cout << "** _FoldSection: " << nFoldStart << ", " << nLine << endl;
 	        if( nLine-1 > nFoldStart )
-			_FoldSection( nFoldStart, nLine-1 );
-	}
-	++nLine;
-    } while( nLine <= nMax && ( nFoldLevel > 0 || nLine <= nLast ) );
+				_FoldSection( nFoldStart, nLine-1 );
+		}
+		++nLine;
+	} while( nLine <= nMax && ( nFoldLevel > 0 || nLine <= nLast ) );
 
-    invalidateLines( 0, buffer.size()-1 );
+    InvalidateLines( 0, buffer.size()-1 );
     Flush();
 }
 

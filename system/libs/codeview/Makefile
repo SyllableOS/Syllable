@@ -3,7 +3,7 @@ VERSION_MINOR = 0
 LOBJS = objs/inneredit.o objs/codeview.o objs/format_c.o objs/format_java.o objs/format_perl.o objs/format_html.o
 OBJS = objs/main.o
 CC = g++
-COPTS = -Wall -fPIC
+COPTS = -Wall -fPIC -g
 LL = g++
 EXE = testapp
 LIB = libcodeview.so
@@ -20,7 +20,7 @@ $(EXE): $(OBJS) $(LOBJS)
 
 
 $(LIB): $(LOBJS)
-	$(LL) $(LOBJS) -lsyllable -shared -Wl,-soname,$(LIB).$(VERSION_MAJOR) -o $(LIB)
+	$(LL) $(LOBJS) -lsyllable -shared -g -Wl,-soname,$(LIB).$(VERSION_MAJOR) -o $(LIB)
 
 
 .PHONY : install
@@ -72,3 +72,5 @@ objs/format_perl.o:  format_perl.cpp format_perl.h format.h
 objs/format_html.o:  format_html.cpp format_html.h format.h
 objs/format_java.o:  format_c.cpp format_c.h format_java.cpp \
 	format_java.h format.h
+
+

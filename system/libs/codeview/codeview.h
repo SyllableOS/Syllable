@@ -126,7 +126,7 @@ public:
     //virtual bool FilterKeyStroke(const string*);
 		
     //******************************
-    //  CodeView special methods
+    //  CodeView specific methods
     //******************************
     void SetFormat(Format* f);
     Format* GetFormat();
@@ -135,6 +135,9 @@ public:
     os::Color32_s GetTextColor();
     void SetBackground(os::Color32_s);
     os::Color32_s GetBackground();
+
+	void SetShowLineNumbers( bool bShowLN );
+	bool GetShowLineNumbers();
 
     uint GetLineCount() const;
     const os::String& GetLine(uint i) const;
@@ -160,3 +163,4 @@ private:
 } /* namespace cv */
 
 #endif /* F_CODEVIEW_CODEVIEW_H */
+

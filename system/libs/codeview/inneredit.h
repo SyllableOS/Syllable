@@ -124,7 +124,7 @@ private:
 
 	os::Bitmap*	backBM;
 	os::View*	backView;
-	void		updateBackBuffer();
+	void		UpdateBackBuffer();
 
 	float		maxWidth;
 	float		lineHeight;
@@ -137,32 +137,33 @@ private:
 	uint		old_cursorY;
 	uint		tabSize;
 	bool		useTab;
+	uint		m_nMargin;	// Margin in pixels (for line numbers)
 	
-	float		getW(uint x, uint y) const;
-	uint		getChar(float x, uint line) const;
+	float		GetW(uint x, uint y) const;
+	uint		GetChar(float x, uint line) const;
 
 	bool		selectionValid;
 	os::IPoint	selStart,
 			selEnd;
 
-	void		updateScrollBars();
-	void		updateWidth(uint);
-	void		updateAllWidths();
-	void		invalidateLines(int, int);
+	void		UpdateScrollbars();
+	void		UpdateWidth(uint);
+	void		UpdateAllWidths();
+	void		InvalidateLines(int, int);
 
-	void		splitLine(vector<os::String>&, const os::String&, const char splitter='\n');
+	void		SplitLine(vector<os::String>&, const os::String&, const char splitter='\n');
 
-	void		preMove(bool);
-	void		postMove(bool);
+	void		PreMove(bool);
+	void		PostMove(bool);
 
-	void		reformat(uint first, uint last);
+	void		Reformat(uint first, uint last);
 	
-	void		indentSelection(bool unindent);
+	void		IndentSelection(bool unindent);
 
 	bool		enabled;
 	bool		readOnly;
 
-	void		addUndoNode(uint mode, const os::String &str, uint x, uint y);
+	void		AddUndoNode(uint mode, const os::String &str, uint x, uint y);
 	uint		maxUndo;
 	uint		undoCount;
 	uint		redoCount;
@@ -174,100 +175,103 @@ public:
 	InnerEdit(os::Control* c);
 	~InnerEdit();
 
-	void setText(const os::String &);
+	void SetText(const os::String &);
 
-	void getText(os::String*, uint startx, uint starty, uint endx, uint endy) const;
-	void getText(os::String *str, const os::IPoint &p0, const os::IPoint &p1) const{
-		getText(str, p0.x, p0.y, p1.x, p1.y);
+	void GetText(os::String*, uint startx, uint starty, uint endx, uint endy) const;
+	void GetText(os::String *str, const os::IPoint &p0, const os::IPoint &p1) const{
+		GetText(str, p0.x, p0.y, p1.x, p1.y);
 	}
-	void insertText(const os::String &, uint x, uint y, bool addUndo=true);
-	void insertText(const os::String &str, const os::IPoint &p){
-		insertText(str, p.x, p.y);
+	void InsertText(const os::String &, uint x, uint y, bool addUndo=true);
+	void InsertText(const os::String &str, const os::IPoint &p){
+		InsertText(str, p.x, p.y);
 	}
-	void removeText(uint startx, uint starty, uint startx, uint starty, bool addUndo=true);
-	void removeText(const os::IPoint &p0, const os::IPoint &p1){
-		removeText(p0.x, p0.y, p1.x, p1.y);
+	void RemoveText(uint startx, uint starty, uint startx, uint starty, bool addUndo=true);
+	void RemoveText(const os::IPoint &p0, const os::IPoint &p1){
+		RemoveText(p0.x, p0.y, p1.x, p1.y);
 	}
-	const os::String& getLine(uint y)const { return buffer[y].text; }
-	void setLine(const os::String &, uint y, bool addUndo=true);
-	uint getLineCount() const{ return buffer.size()-1; }
+	const os::String& GetLine(uint y)const { return buffer[y].text; }
+	void SetLine(const os::String &, uint y, bool addUndo=true);
+	uint GetLineCount() const{ return buffer.size()-1; }
 
-	void setFormat(Format *);
-	Format* getFormat() const{ return format; }
+	void SetFormat(Format *);
+	Format* GetFormat() const{ return format; }
 
-	void setTabSize(uint);
-	uint getTabSize() const{ return tabSize; }
-	void setUseTab(bool b){ useTab=b; }
-	bool getUseTab(){ return useTab; }
+	void SetTabSize(uint);
+	uint GetTabSize() const{ return tabSize; }
+	void SetUseTab(bool b){ useTab=b; }
+	bool GetUseTab(){ return useTab; }
 
-	void setCursor(uint x, uint y, bool select=false);
-	void setCursor(const os::IPoint &p, bool select=false){
-		setCursor(p.x, p.y, select);
+	void SetCursor(uint x, uint y, bool select=false);
+	void SetCursor(const os::IPoint &p, bool select=false){
+		SetCursor(p.x, p.y, select);
 	}
-	os::IPoint getCursor() const;
-	void showCursor();
+	os::IPoint GetCursor() const;
+	void ShowCursor();
 
-	void moveLeft(bool select=false);
-	void moveRight(bool select=false);
-	void moveUp(bool select=false);
-	void moveDown(bool select=false);
-	void moveTop(bool select=false);
-	void moveBottom(bool select=false);
-	void movePageUp(bool select=false);
-	void movePageDown(bool select=false);
-	void moveLineStart(bool select=false);
-	void moveLineEnd(bool select=false);
-	void moveWordLeft(bool select=false);
-	void moveWordRight(bool select=false);
+	void MoveLeft(bool select=false);
+	void MoveRight(bool select=false);
+	void MoveUp(bool select=false);
+	void MoveDown(bool select=false);
+	void MoveTop(bool select=false);
+	void MoveBottom(bool select=false);
+	void MovePageUp(bool select=false);
+	void MovePageDown(bool select=false);
+	void MoveLineStart(bool select=false);
+	void MoveLineEnd(bool select=false);
+	void MoveWordLeft(bool select=false);
+	void MoveWordRight(bool select=false);
 
-	void scrollLeft();
-	void scrollRight();
-	void scrollUp();
-	void scrollDown();
-	void scrollPageUp();
-	void scrollPageDown();
+	void ScrollLeft();
+	void ScrollRight();
+	void ScrollUp();
+	void ScrollDown();
+	void ScrollPageUp();
+	void ScrollPageDown();
 
-	void setSelectionStart(uint x, uint y);
-	void setSelectionStart(const os::IPoint &p){
-		setSelectionStart(p.x, p.y);
+	void SetSelectionStart(uint x, uint y);
+	void SetSelectionStart(const os::IPoint &p){
+		SetSelectionStart(p.x, p.y);
 	}
-	void setSelectionEnd(uint x, uint y);
-	void setSelectionEnd(const os::IPoint &p){
-		setSelectionEnd(p.x, p.y);
+	void SetSelectionEnd(uint x, uint y);
+	void SetSelectionEnd(const os::IPoint &p){
+		SetSelectionEnd(p.x, p.y);
 	}
-	void setSelection(const os::IPoint &p0, const os::IPoint &p1){
-		setSelectionStart(p0.x, p0.y);
-		setSelectionEnd(p1.x, p1.y);
+	void SetSelection(const os::IPoint &p0, const os::IPoint &p1){
+		SetSelectionStart(p0.x, p0.y);
+		SetSelectionEnd(p1.x, p1.y);
 	}
-	void selectAll(){
-		setSelectionStart(0,0);
-		setSelectionEnd(buffer.back().text.size(), buffer.size());
+	void SelectAll(){
+		SetSelectionStart(0,0);
+		SetSelectionEnd(buffer.back().text.size(), buffer.size());
 	}
-	void clearSelection();
+	void ClearSelection();
 
-	void copy() const;
-	void cut();
-	void paste();
-	void del();
+	void Copy() const;
+	void Cut();
+	void Paste();
+	void Del();
 
-	void setEnable(bool b);
-	bool getEnable(){ return enabled; }
-	void setReadOnly(bool);
+	void SetEnable(bool b);
+	bool GetEnable(){ return enabled; }
+	void SetReadOnly(bool);
 	bool GetReadOnly() { return readOnly; }
-	
-	size_t getLength();
 
-	void commitEvents();
+	void SetShowLineNumbers( bool bShowLineNumbers );
+	bool GetShowLineNumbers( ) { return ( m_nMargin != 0 ); }
+	
+	size_t GetLength();
+
+	void CommitEvents();
 	void SetEventMask( uint32 nMask ) { eventMask = nMask; }
 	uint32 GetEventMask() { return eventMask; }
 
-	void setMaxUndoSize(int i);
-	int getMaxUndoSize();
-	bool undo();
-	bool redo();
-	bool undoAvailable();
-	bool redoAvailable();
-	void clearUndo();
+	void SetMaxUndoSize(int i);
+	int GetMaxUndoSize();
+	bool Undo();
+	bool Redo();
+	bool UndoAvailable();
+	bool RedoAvailable();
+	void ClearUndo();
 
 	virtual void Paint(const os::Rect&);
 	virtual void FrameSized(const os::Point &);
@@ -285,3 +289,4 @@ public:
 } /* namespace cv */
 
 #endif
+
