@@ -1,7 +1,6 @@
-CFLAGS   = -kernel -fno-PIC -c -O3
-# -Wall
+CFLAGS   = -kernel -fno-PIC -c -O3	# -Wall
 
-C_INCLUDE_PATH=/system/include
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
 
 OBJS := rtl8139.o
 

@@ -1,7 +1,7 @@
-
 CFLAGS   = -D__KERNEL__ -fno-PIC -c -O2 -Wall
 AFLAGS   = -c
 
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
 
 OBJS := driver.o cpialink.o pport.o isa_dma.o
 

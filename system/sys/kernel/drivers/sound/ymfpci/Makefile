@@ -3,6 +3,8 @@ CFLAGS   = -kernel -fno-PIC -O3 -c -Wall -I. -D__ENABLE_DEBUG__
 CFLAGS   += -DDEBUG_LIMIT=KERN_INFO
 AFLAGS   = -c
 
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
+
 OBJS := ymfpci.o ac97_codec.o
 DRIVER := ymfpci
 

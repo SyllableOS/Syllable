@@ -1,6 +1,8 @@
 CFLAGS   = -kernel -fno-PIC -O3 -c -Wall
 AFLAGS   = -c
 
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
+
 OBJS := ac97_codec.o vt82xx_io.o vt82xx.o
 DRIVER := vt82xx
 

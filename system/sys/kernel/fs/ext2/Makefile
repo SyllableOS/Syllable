@@ -1,6 +1,8 @@
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall -Wno-multichar -I../
 AFLAGS   = -c
 
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
+
 FS		:= ext2
 OBJS	:= ext2.o
 

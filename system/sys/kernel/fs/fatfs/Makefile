@@ -1,12 +1,7 @@
-#SRCS= dosfs.c attr.c dir.c dlist.c fat.c file.c iter.c util.c vcache.c \
-#	textencoding/encodings.cpp \
-#	textencoding/EncodingConversions.cpp \
-#	textencoding/UnicodeMappings.cpp \
-#	version.c
-
-
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall -Wno-multichar -fno-strict-aliasing -Itextencoding -I../
 AFLAGS   = -c
+
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
 
 #OBJS := afs.o balloc.o afs_inode.o attribs.o journal.o stream.o btree.o bt_delete.o
 

@@ -233,6 +233,16 @@ int sys_execve( const char *a_pzPath, char *const *argv, char *const *envv )
 		return ( nError );
 	}
 	close( nFile );
+	if ( S_ISDIR( sStat.st_mode ) )
+	{
+		kfree( pzPath );
+		return ( -EISDIR );
+	}
+	if ( !S_ISREG( sStat.st_mode ) )
+	{
+		kfree( pzPath );
+		return ( -EINVAL );
+	}
 
 #ifdef __PROFILE_EXEC
 	nTime1 = read_pentium_clock();
@@ -463,7 +473,7 @@ int sys_execve( const char *a_pzPath, char *const *argv, char *const *envv )
 		return ( 0 );
 	}
       error:
-	printk( "ERROR : execve(%s) failed. To late to recover, will exit\n", pzPath );
+	printk( "ERROR : execve(%s) failed. Too late to recover, will exit\n", pzPath );
 	kfree( pzPath );
 	do_exit( 1 << 8 );	/* We did pass the point of no return :(        */
 	return ( -1 );		// If we got this far something went seriously wrong!

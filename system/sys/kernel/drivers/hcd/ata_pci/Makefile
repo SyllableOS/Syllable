@@ -1,6 +1,8 @@
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall -I../../bus/ata
 AFLAGS   = -c
 
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
+
 # Enable the following to enable debug output
 CFLAGS += -D__ENABLE_DEBUG__
 

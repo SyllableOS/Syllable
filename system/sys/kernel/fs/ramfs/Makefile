@@ -1,6 +1,7 @@
 CFLAGS   = -c -kernel -O2 -Wall
 AFLAGS   = -c
 
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
 
 OBJS := ramfs.o
 

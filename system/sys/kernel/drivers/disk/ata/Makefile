@@ -1,6 +1,8 @@
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
 AFLAGS   = -c
 
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
+
 # Enable the following to enable possible CSH addressing
 #CFLAGS += -D__ENABLE_CSH_
 

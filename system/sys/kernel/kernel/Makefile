@@ -10,7 +10,7 @@ CP	= cp -f
 
 VFSOBJS := vfs.o inode.o nodemonitor.o attributes.o flock.o root.o dev.o fifo.o pty.o
 NETOBJS := core.o interface.o route.o ip.o udp.o tcp.o tcp_input.o tcp_output.o socket.o packets.o raw.o
-LIBOBJS := ct_flags.o ct_upper.o ct_lower.o vsprintf.o string.o strstr.o qsort.o gcc34_memcpy.o
+LIBOBJS := ct_flags.o ct_upper.o ct_lower.o vsprintf.o string.o strstr.o qsort.o gcc34_memcpy.o strlcpy.o strlcat.o
 
 OBJS := intel.o cpuid.o descriptors.o kernel.o dbconsole.o ksyms.o init.o fork.o syscall.o 	  		\
 	debug.o timer.o process.o threads.o sema.o msgport.o memory.o strace.o	\

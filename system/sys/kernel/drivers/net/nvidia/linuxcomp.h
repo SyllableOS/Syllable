@@ -70,11 +70,6 @@ typedef uint32					dma_addr_t;
 #define FMODE_READ				1	
 #define FMODE_WRITE				2
 
-#define atomic_read(x)			atomic_add(x, 0)
-#define atomic_set(x, y)		atomic_swap(x, y)
-#define atomic_inc(x)			atomic_add(x, 1)
-#define atomic_dec(x)			atomic_dec_and_test(x)
-
 #define spin_lock(x)			spinlock(x)
 #define spin_unlock(x)			spinunlock(x)
 
@@ -228,9 +223,6 @@ void* skb_put( PacketBuf_s* psBuffer, int nSize )
     psBuffer->pb_nSize += nSize;
     return( pOldEnd );
 }
-
-#define writel(b,addr) ((*(volatile unsigned int *) (addr)) = (b))
-#define readl(addr) ((*(volatile unsigned int *) (addr)))
 
 /* FIXME: I'm not sure if this is correct */
 static inline void *ioremap(unsigned long phys_addr, unsigned long size) {

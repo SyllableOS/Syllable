@@ -1,6 +1,8 @@
 CFLAGS   = -kernel -fno-PIC -O3 -c -Wall
 AFLAGS   = -c
 
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
+
 OBJS := es1371.o ac97_codec.o
 DRIVER := es1371
 

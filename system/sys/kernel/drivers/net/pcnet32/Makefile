@@ -1,6 +1,6 @@
 CFLAGS   = -kernel -fno-PIC -c -O3
 
-C_INCLUDE_PATH=/system/include
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
 
 OBJS := pcnet32.o
 DRIVER := pcnet32

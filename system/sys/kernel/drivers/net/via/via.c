@@ -124,6 +124,7 @@ KERN_INFO "  http://www.scyld.com/network/via-rhine.html\n";
 static char shortname[] = DRV_NAME;
 
 //#define CONFIG_VIA_RHINE_MMIO
+#if 0
 #define __io_virt(x) ((void *)(x))
 #define readb(addr) (*(volatile unsigned char *) __io_virt(addr))
 #define readw(addr) (*(volatile unsigned short *) __io_virt(addr))
@@ -138,6 +139,7 @@ static char shortname[] = DRV_NAME;
 #define __raw_writeb writeb
 #define __raw_writew writew
 #define __raw_writel writel
+#endif
 
 
 /* This driver was written to use PCI memory space, however most versions

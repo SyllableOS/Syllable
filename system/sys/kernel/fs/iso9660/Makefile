@@ -1,6 +1,7 @@
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall -Wno-multichar -fno-strict-aliasing -I../
 AFLAGS   = -c
 
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
 
 FS		:= iso9660
 OBJS	:= iso.o kernel_interface.o

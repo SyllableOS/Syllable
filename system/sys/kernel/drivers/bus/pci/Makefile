@@ -1,6 +1,7 @@
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall -fno-strict-aliasing -Wno-trigraphs -fno-common -D__ENABLE_DEBUG__ -Wstrict-prototypes -fomit-frame-pointer
 AFLAGS   = -c
 
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
 
 OBJS := pci.o pci_irq_router.o
 

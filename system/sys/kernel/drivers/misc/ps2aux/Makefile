@@ -1,6 +1,7 @@
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
 AFLAGS   = -c
 
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
 
 OBJS := ps2aux.o
 

@@ -1,6 +1,7 @@
 CFLAGS   = -kernel -D__BDD_EXTERNAL -fno-PIC -c -O3 -Wall
 AFLAGS   = -c
 
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
 
 OBJS := bdd.o
 

@@ -1,6 +1,6 @@
 CFLAGS   = -D__KERNEL__ -fno-PIC -c -O3 -Wall
 
-C_INCLUDE_PATH=/system/include
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
 
 OBJS := 3c509.o
 

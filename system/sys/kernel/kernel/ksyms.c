@@ -170,6 +170,8 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	KSYMBOL( sti ),
 	KSYMBOL( stop_thread ),
 	KSYMBOL( stricmp ),
+	KSYMBOL( strlcat ),
+	KSYMBOL( strlcpy ),
 	KSYMBOL( strnicmp ),
 	KSYMBOL( strpbrk ),
 	KSYMBOL( strspn ),

@@ -145,8 +145,6 @@ static inline PCI_Info_s * pci_find_device( int vendor_id, int device_id, PCI_In
 #define ALIGN16( p )  ALIGN(p,15)
 #define ALIGN32( p )  ALIGN(p,31)
 
-#define writel(b,addr) ((*(volatile unsigned int *) (addr)) = (b))
-
 /* FIXME: I'm not sure if this is correct */
 static inline void *ioremap(unsigned long phys_addr, unsigned long size) {
     return (void *)phys_addr;

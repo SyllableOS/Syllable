@@ -40,7 +40,7 @@
 #include <atheos/udelay.h>
 #include <atheos/schedule.h>
 #include <posix/signal.h>
-#include <errno.h>
+#include <posix/errno.h>
 
 #include "linuxcomp.h"
 #include "ac97_codec.h"

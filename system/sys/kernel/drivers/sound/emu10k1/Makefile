@@ -1,6 +1,8 @@
 DRIVER	:= emu10k1
 OBJDIR	:= objs
 
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
+
 all: $(OBJDIR) $(DRIVER)
 
 deps:

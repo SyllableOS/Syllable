@@ -1,6 +1,6 @@
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall -D__ENABLE_DEBUG__
 
-C_INCLUDE_PATH=/system/include
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
 
 SOURCE_DIR=.
 

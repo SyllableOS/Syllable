@@ -1,6 +1,7 @@
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
 AFLAGS   = -c
 
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
 
 OBJS := scsi_convert.o transport.o protocol.o jumpshot.o usb_disk.o
 

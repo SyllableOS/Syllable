@@ -1,6 +1,7 @@
 CFLAGS   = -kernel -D__LOADABLE__ -fno-PIC -c -O3 -g -Wall -fno-strict-aliasing
 AFLAGS   = -c
 
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
 
 OBJS := afs.o balloc.o afs_inode.o attribs.o index.o journal.o stream.o btree.o bt_delete.o
 

@@ -1,6 +1,7 @@
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall -D__ENABLE_DEBUG__ -ffreestanding
 AFLAGS   = -c
 
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
 
 OBJS := hcd.o ehci.o gcc34_memcpy.o
 

@@ -1,6 +1,8 @@
 CFLAGS   = -kernel -fno-PIC -O3 -c -Wall
 AFLAGS   = -c
 
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
+
 OBJS := ac97_codec.o via686a_io.o via686a.o
 DRIVER := via686a
 

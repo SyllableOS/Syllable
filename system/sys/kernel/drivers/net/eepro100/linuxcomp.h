@@ -174,8 +174,6 @@ void* skb_put( PacketBuf_s* psBuffer, int nSize )
     return( pOldEnd );
 }
 
-#define writel(b,addr) ((*(volatile unsigned int *) (addr)) = (b))
-
 /* FIXME: I'm not sure if this is correct */
 static inline void *ioremap(unsigned long phys_addr, unsigned long size) {
     return (void *)phys_addr;

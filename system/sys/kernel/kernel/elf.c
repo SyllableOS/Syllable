@@ -790,6 +790,23 @@ static int load_image( const char *pzImageName, const char *pzPath, int nFile, B
 	if ( psModule == NULL )
 	{
 		psFile = get_fd( true, nFile );
+
+		if ( psFile == NULL )
+		{
+			UNLOCK( g_hImageList );
+			return ( -EBADF );
+		}
+		if ( psFile->f_nType == FDT_DIR )
+		{
+			UNLOCK( g_hImageList );
+			return ( -EISDIR );
+		}
+		if ( psFile->f_nType == FDT_INDEX_DIR || psFile->f_nType == FDT_ATTR_DIR || psFile->f_nType == FDT_SYMLINK )
+		{
+			UNLOCK( g_hImageList );
+			return ( -EINVAL );
+		}
+
 		psImage = find_image( psFile );
 
 		if ( NULL != psImage )
@@ -1557,7 +1574,7 @@ int load_image_inst( ImageContext_s * psCtx, const char *pzPath, BootModule_s * 
 	}
 	if ( psInst->ii_nHandle < 0 )
 	{
-		printk( "load_image_inst() to many open images\n" );
+		printk( "load_image_inst(): too many open images\n" );
 		nError = -EMFILE;
 		goto error5;
 	}

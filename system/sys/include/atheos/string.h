@@ -483,6 +483,13 @@ static inline void * memscan(void * addr, int c, size_t size)
 long strtol(const char *nptr, char **endptr, int base);
 long strtoul(const char *nptr, char **endptr, int base);
 
+/*
+ * Safe string routines from OpenBSD.
+ * see: http://www.courtesan.com/todd/papers/strlcpy.html
+ */
+size_t strlcpy(char *dst, const char *src, size_t size);
+size_t strlcat(char *dst, const char *src, size_t size);
+
 #ifdef __cplusplus
 }
 #endif

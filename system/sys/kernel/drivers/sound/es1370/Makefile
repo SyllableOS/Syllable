@@ -1,6 +1,8 @@
 CFLAGS   = -kernel -fno-PIC -O3 -c -Wall -g
 AFLAGS   = -c
 
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
+
 OBJS := devinit.o es1370.o
 DRIVER := es1370
 

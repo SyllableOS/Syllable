@@ -1,6 +1,8 @@
 CFLAGS   = -kernel -fno-PIC -O3 -c -Wall
 AFLAGS   = -c
 
+C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
+
 OBJS := ac97_codec.o i810_audio.o
 DRIVER := i810_audio
 

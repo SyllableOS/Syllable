@@ -84,6 +84,7 @@ PCI_bus_s* g_psPCIBus;
 
 #include "usb-ohci.h"
 
+#if 0
 #define __io_virt(x) ((void *)(x))
 #define readb(addr) (*(volatile unsigned char *) __io_virt(addr))
 #define readw(addr) (*(volatile unsigned short *) __io_virt(addr))
@@ -93,7 +94,7 @@ PCI_bus_s* g_psPCIBus;
 #define writeb(b,addr) (*(volatile unsigned char *) __io_virt(addr) = (b))
 #define writew(b,addr) (*(volatile unsigned short *) __io_virt(addr) = (b))
 #define writel(b,addr) (*(volatile unsigned int *) __io_virt(addr) = (b))
-
+#endif
 
 
 /* For initializing controller (mask in an HCFS mode too) */
