@@ -37,7 +37,7 @@ namespace os
 	class ListViewStringRow;
 }
 
-#define APP_VERSION      "0.2.5"
+#define APP_VERSION      "0.2.6"
 #define APP_WINDOW_TITLE "Syllable Manager"
 
 #define NEW_VALUE              0
@@ -45,7 +45,6 @@ namespace os
 
 #define NUM_OF_MEMORY_ROWS     5
 #define NUM_OF_ADDITIONAL_ROWS 8
-#define NUM_OF_HD_ROWS         10
 
 /*******************************
  *  TIME RELATED #defines (duh)
@@ -89,11 +88,9 @@ class SysInfoPanel:public os::LayoutView
 	void SetUpVersionView();
 	void SetUpCPUView();
 	void SetUpMemoryView();
-	void SetUpHDView();
 	void SetUpAdditionView();
 
 	void UpdateUptime( bool bUpdate );
-	void UpdateHDInfo( bool bUpdate );
 	void UpdateAdditionalInfo( bool bUpdate );
 	void UpdateMemoryInfo( bool bUpdate );
 
@@ -102,7 +99,6 @@ class SysInfoPanel:public os::LayoutView
 	ListView *m_pcVersionView;
 	ListView *m_pcCPUView;
 	ListView *m_pcMemoryView;
-	ListView *m_pcHDView;
 	ListView *m_pcAdditionView;
 	TextView *m_pcUptimeView;
 	//bool          m_bDetail;
@@ -116,12 +112,11 @@ class SysInfoPanel:public os::LayoutView
 
 	int m_nDay;
 
-	off_t off_tHDSize[NUM_OF_HD_ROWS];	/* More than 10 mounts == problems */
-
 	system_info m_sSysInfo;
 };
 
 #endif // __F_SYSINFOPANEL_H_
+
 
 
 

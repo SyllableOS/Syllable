@@ -38,6 +38,7 @@
 #include "sysinfopanel.h"
 #include "performancepanel.h"
 #include "devicespanel.h"
+#include "drivespanel.h"
 
 #include <gui/tabview.h>
 using namespace os;
@@ -86,6 +87,7 @@ class MyWindow:public os::Window
 	SysInfoPanel *pcSysInfoPanel;
 	PerformancePanel *pcPerformancePanel;
 	DevicesPanel *pcDevicesPanel;
+	DrivesPanel *pcDrivesPanel;
 	CheckMenu*	m_pcMenuMedium;
 	CheckMenu*	m_pcMenuLow;
 	CheckMenu*	m_pcMenuHigh;
@@ -116,7 +118,9 @@ MyApp::MyApp( const char *pzName ):Application( pzName )
 //----------------------------------------------------------------------------
 MyApp::~MyApp()
 {
-	m_pcWindow->Quit();
+	dbprintf("MyApp::~MyApp() IN\n");
+	m_pcWindow->Terminate();
+	dbprintf("MyApp::~MyApp() OUT\n");
 }
 
 
@@ -272,8 +276,10 @@ MyWindow::MyWindow():Window( Rect(), "athe_wnd", APP_WINDOW_TITLE, 0 )
 	pcSysInfoPanel = new SysInfoPanel( cMainFrame );
 	pcPerformancePanel = new PerformancePanel( cMainFrame );
 	pcDevicesPanel = new DevicesPanel( cMainFrame );
+	pcDrivesPanel = new DrivesPanel( cMainFrame );
 
 	m_pcView->AppendTab( "System Info", pcSysInfoPanel );
+	m_pcView->AppendTab( "Drives", pcDrivesPanel );
 	m_pcView->AppendTab( "Devices", pcDevicesPanel );
 	m_pcView->AppendTab( "Processes", pcProcessPanel );
 	m_pcView->AppendTab( "Performance", pcPerformancePanel );
@@ -311,6 +317,7 @@ void MyWindow::DoUpdate()
 {
 	pcPerformancePanel->UpdatePerformanceList();
 	pcSysInfoPanel->UpdateSysInfoPanel();
+	pcDrivesPanel->UpdatePanel();
 	int	nCount = pcProcessPanel->ThreadCount();
 	if( pcProcessPanel->GetThreadCount() != nCount )
 	{

@@ -93,7 +93,6 @@ SysInfoPanel::SysInfoPanel( const Rect & cFrame ):LayoutView( cFrame, "", NULL, 
 	m_pcVersionView = new ListView( Rect( 0, 0, 0, 0 ), "version_info", ListView::F_RENDER_BORDER | ListView::F_NO_AUTO_SORT );
 	m_pcCPUView = new ListView( Rect( 0, 0, 0, 0 ), "cpu_info", ListView::F_RENDER_BORDER | ListView::F_NO_AUTO_SORT );
 	m_pcMemoryView = new ListView( Rect( 0, 0, 0, 0 ), "mem_info", ListView::F_RENDER_BORDER | ListView::F_NO_AUTO_SORT );
-	m_pcHDView = new ListView( Rect( 0, 0, 0, 0 ), "hd_info", ListView::F_RENDER_BORDER | ListView::F_NO_AUTO_SORT );
 	m_pcAdditionView = new ListView( Rect( 0, 0, 0, 0 ), "add_info", ListView::F_RENDER_BORDER | ListView::F_NO_AUTO_SORT );
 
 
@@ -112,7 +111,6 @@ SysInfoPanel::SysInfoPanel( const Rect & cFrame ):LayoutView( cFrame, "", NULL, 
 	pcRoot->AddChild( m_pcVersionView, 2.0f );
 	pcRoot->AddChild( m_pcCPUView, 1.0f );
 	pcRoot->AddChild( m_pcMemoryView, 3.0f );
-	pcRoot->AddChild( m_pcHDView, 1.0f );
 	pcRoot->AddChild( m_pcAdditionView, 3.0f );
 
 	pcRoot->AddChild( m_pcUptime, 0.0f );
@@ -122,10 +120,9 @@ SysInfoPanel::SysInfoPanel( const Rect & cFrame ):LayoutView( cFrame, "", NULL, 
 	SetUpVersionView();
 	SetUpCPUView();
 	SetUpMemoryView();
-	SetUpHDView();
 	SetUpAdditionView();
 
-	pcRoot->SetBorders( Rect( 5.0f, 5.0f, 5.0f, 5.0f ), "version_info", "cpu_info", "mem_info", "hd_info", "add_info", "uptime_view", NULL );
+	pcRoot->SetBorders( Rect( 5.0f, 5.0f, 5.0f, 5.0f ), "version_info", "cpu_info", "mem_info", "add_info", "uptime_view", NULL );
 	SetRoot( pcRoot );
 
 	//m_bDetail = false;
@@ -169,123 +166,10 @@ void SysInfoPanel::SetUpMemoryView()
 	m_pcMemoryView->InsertColumn( "Amount", 100 );
 }
 
-void SysInfoPanel::SetUpHDView()
-{
-	m_pcHDView->InsertColumn( "Volume", 78 );
-	m_pcHDView->InsertColumn( "Type", 50 );
-	m_pcHDView->InsertColumn( "Size", 62 );
-	m_pcHDView->InsertColumn( "Used", 75 );
-	m_pcHDView->InsertColumn( "Avail", 58 );
-	m_pcHDView->InsertColumn( "Percent Free", 80 );
-}
-
 void SysInfoPanel::SetUpAdditionView()
 {
 	m_pcAdditionView->InsertColumn( "Additional Info", 150 );
 	m_pcAdditionView->InsertColumn( "Amount", 100 );
-}
-
-void SysInfoPanel::UpdateHDInfo( bool bUpdate )
-{
-	fs_info fsInfo;
-
-	int nMountCount;
-
-	char szTmp[1024];
-	char zSize[64];
-	char zUsed[64];
-	char zAvail[64];
-
-	char szRow1[128], szRow2[128], szRow3[128], szRow4[128], szRow5[128], szRow6[128];
-
-    /*********************************************************************** 
-     * Adding drive information:  John Hall:  May 4, 2001
-     * However, nMountCount may be off.  I can't tell if it returns all
-     * IDE drives (CD-ROMs included) found through the BIOS or just what 
-     * AtheOS considers "mountable."
-     ***********************************************************************/
-/*	int x = get_mount_point_count();
-
-	nMountCount = 0;
-	for( int i = 0; i < x; i++ )
-	{
-		if( get_mount_point( i, szTmp, PATH_MAX ) < 0 )
-			continue;
-
-		int nFD = open( szTmp, O_RDONLY );
-
-		if( nFD < 0 )
-			continue;
-
-		if( get_fs_info( nFD, &fsInfo ) >= 0 )
-			nMountCount++;
-
-		close( nFD );
-	}*/
-	
-	nMountCount = get_mount_point_count();
-
-	for( int i = 0; i < nMountCount; ++i )
-	{
-		if( get_mount_point( i, szTmp, PATH_MAX ) < 0 )
-		{
-			continue;
-		}
-
-		int nFD = open( szTmp, O_RDONLY );
-
-		if( nFD < 0 )
-		{
-			continue;
-		}
-
-		if( get_fs_info( nFD, &fsInfo ) >= 0 )
-		{
-			if( ( off_tHDSize[i] != fsInfo.fi_free_blocks ) || !bUpdate ) {
-				off_tHDSize[i] = fsInfo.fi_free_blocks;
-
-				human( zSize, fsInfo.fi_total_blocks * fsInfo.fi_block_size );
-				human( zUsed, ( fsInfo.fi_total_blocks - fsInfo.fi_free_blocks ) * fsInfo.fi_block_size );
-				human( zAvail, fsInfo.fi_free_blocks * fsInfo.fi_block_size );
-
-				sprintf( szRow1, "%s", fsInfo.fi_volume_name );
-				sprintf( szRow2, "%s", fsInfo.fi_driver_name );
-				sprintf( szRow3, "%s", zSize );
-				sprintf( szRow4, "%s", zUsed );
-				sprintf( szRow5, "%s", zAvail );
-				sprintf( szRow6, "%.1f%%", ( ( double )fsInfo.fi_free_blocks / ( ( double )fsInfo.fi_total_blocks ) ) * 100.0 );
-
-				if( !bUpdate )
-				{
-					ListViewStringRow *pcRow = new ListViewStringRow();
-		
-					pcRow->AppendString( szRow1 );
-					pcRow->AppendString( szRow2 );
-					pcRow->AppendString( szRow3 );
-					pcRow->AppendString( szRow4 );
-					pcRow->AppendString( szRow5 );
-					pcRow->AppendString( szRow6 );
-
-					m_pcHDView->InsertRow( pcRow );
-				} else {
-					ListViewStringRow* pcRow = dynamic_cast<ListViewStringRow*>( m_pcHDView->GetRow( i ) );
-
-					if( pcRow ) {
-						pcRow->SetString( 0, szRow1 );
-						pcRow->SetString( 1, szRow2 );
-						pcRow->SetString( 2, szRow3 );
-						pcRow->SetString( 3, szRow4 );
-						pcRow->SetString( 4, szRow5 );
-						pcRow->SetString( 5, szRow6 );
-							
-						m_pcHDView->InvalidateRow( i, ListView::INV_VISUAL );
-					}
-				}
-			}
-
-		}
-		close( nFD );
-	}
 }
 
 void SysInfoPanel::UpdateAdditionalInfo( bool bUpdate )
@@ -579,8 +463,7 @@ void SysInfoPanel::SetupPanel()
 	//cout << "HERE\n";
 	UpdateMemoryInfo( false );
 	//cout << "HERE2\n";
-	UpdateHDInfo( false );
-	//cout << "HERE3\n";
+
 	UpdateAdditionalInfo( false );
 	UpdateUptime( false );
 
@@ -595,7 +478,6 @@ void SysInfoPanel::UpdateSysInfoPanel()
 
 	get_system_info( &m_sSysInfo );
 	UpdateMemoryInfo( true );
-	UpdateHDInfo( true );
 	UpdateAdditionalInfo( true );
 	UpdateUptime( true );
 }
@@ -610,5 +492,6 @@ void SysInfoPanel::HandleMessage( Message * pcMessage )
 		break;
 	}
 }
+
 
 

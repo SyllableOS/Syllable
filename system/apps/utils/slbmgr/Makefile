@@ -1,6 +1,6 @@
 COPTS	= -Wall -c
 
-OBJS	= main.o sysinfopanel.o processpanel.o memview.o cpuview.o performancepanel.o devicespanel.o
+OBJS	= main.o sysinfopanel.o drivespanel.o processpanel.o memview.o cpuview.o performancepanel.o devicespanel.o
 EXE	= SlbMgr
 
 CC	= g++
@@ -25,6 +25,9 @@ main.o : main.cpp
 sysinfopanel.o : sysinfopanel.cpp
 	$(CC) $(COPTS) $< -o $@
 
+drivespanel.o : drivespanel.cpp
+	$(CC) $(COPTS) $< -o $@
+
 processpanel.o : processpanel.cpp 
 	$(CC) $(COPTS) $< -o $@
 
@@ -36,6 +39,7 @@ cpuview.o : cpuview.cpp
 
 devicespanel.o : devicespanel.cpp
 	$(CC) $(COPTS) $< -o $@
+
 
 
 
