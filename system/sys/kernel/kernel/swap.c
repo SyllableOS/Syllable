@@ -40,7 +40,7 @@
 #include "inc/swap.h"
 #include "vfs/vfs.h"
 
-#define	NUM_SWAP_PAGES	(1024 * 1024 * 128 / PAGE_SIZE)
+#define	NUM_SWAP_PAGES	(1024 * 1024 * 64 / PAGE_SIZE)
 
 static uint16 g_anSwapInfo[NUM_SWAP_PAGES];
 static int g_anAgeCounts[256];
@@ -104,6 +104,7 @@ static uint32 alloc_swap_page()
 
 void dup_swap_page( int nPage )
 {
+	nPage = nPage & ~0x80000000;
 	nPage >>= 12;
 //  printk( "dup swap page %d\n", nPage );
 
@@ -128,6 +129,7 @@ void dup_swap_page( int nPage )
 
 void free_swap_page( int nPage )
 {
+	nPage = nPage & ~0x80000000;
 	nPage >>= 12;
 	if ( nPage >= NUM_SWAP_PAGES )
 	{
@@ -268,10 +270,10 @@ static int swap_out( pte_t * pPte, Page_s *psPage, uint32 nAddress )
 	int nOffset;
 	int nBlocksLeft;
 	char *pBuffer;
-
+	
 	nSwapPage = alloc_swap_page();
 
-//  printk( "swap out %d (%08x)\n", nSwapPage, nAddress );
+  //printk( "swap out %d (%08x) of %i\n", nSwapPage, nAddress, g_nFreeSwapPages );
 
 	if ( nSwapPage == 0 )
 	{
@@ -295,17 +297,15 @@ static int swap_out( pte_t * pPte, Page_s *psPage, uint32 nAddress )
 
 		nBlockCount = min( nBlocksLeft, nRunLength );
 
-//    printk( "write %d blocks at %d\n", nBlockCount, (int)nRunStart );
+    //printk( "write %d blocks at %d\n", nBlockCount, (int)nRunStart  );
 
 		write_phys_blocks( g_nSwapDev, nRunStart, pBuffer, nBlockCount, 1024 );
 		nBlocksLeft -= nBlockCount;
 		pBuffer += nBlockCount * 1024;
 		nOffset += nBlockCount;
 	}
-
-	PTE_VALUE( *pPte ) = ( nSwapPage | ( PTE_VALUE( *pPte ) & ~PAGE_MASK ) ) & ~PTE_PRESENT;
-
-//  write_pos_p( g_psSwapFile, nSwapPage, (void*)(psPage->p_nPageNum * PAGE_SIZE), PAGE_SIZE );
+	
+	PTE_VALUE( *pPte ) = ( 0x80000000 | nSwapPage | ( PTE_VALUE( *pPte ) & ~PAGE_MASK ) ) & ~PTE_PRESENT;
 
 	free_pages( nPageAddress, 1 );
 
@@ -327,15 +327,15 @@ int swap_in( pte_t * pPte )
 	int nOffset;
 	int nBlocksLeft;
 	char *pBuffer;
-	int nSwapPage = PTE_PAGE( *pPte );
+	int nSwapPage = PTE_PAGE( *pPte ) & ~0x80000000;
+	
 
-//  printk( "swap in %d\n", nSwapPage );
-
+ // printk( "swap in %d (%08x)\n", nSwapPage, nNewPage );
+  
 	if ( nNewPage == 0 )
 	{
-		return ( -EAGAIN );
 		printk( "PANIC: swap_in() out of memory\n" );
-//    return( -ENOMEM );
+		return( -ENOMEM );
 	}
 
 	g_nPageIn++;
@@ -344,25 +344,28 @@ int swap_in( pte_t * pPte )
 	nBlocksLeft = PAGE_SIZE / 1024;
 
 	pBuffer = ( char * )( psPage->p_nPageNum * PAGE_SIZE );
+	
+	
+	
 	while ( nBlocksLeft > 0 )
 	{
 		off_t nRunStart;
 		int nRunLength;
 		int nBlockCount;
-
+		
 		find_swap_block( nOffset, &nRunStart, &nRunLength );
-
-
+		
 		nBlockCount = min( nBlocksLeft, nRunLength );
 
-//    printk( "read %d blocks at %d\n", nBlockCount, (int)nRunStart );
+    //printk( "read %d blocks at %d\n", nBlockCount, (int)nRunStart );
+    	UNLOCK( g_hAreaTableSema );
 		read_phys_blocks( g_nSwapDev, nRunStart, pBuffer, nBlockCount, 1024 );
+		LOCK( g_hAreaTableSema );
+		
 		nBlocksLeft -= nBlockCount;
 		pBuffer += nBlockCount * 1024;
 		nOffset += nBlockCount;
 	}
-
-//  read_pos_p( g_psSwapFile, nSwapPage, (void*)(psPage->p_nPageNum * PAGE_SIZE), PAGE_SIZE );
 
 	PTE_VALUE( *pPte ) = nNewPage | ( PTE_VALUE( *pPte ) & ~PAGE_MASK ) | PTE_WRITE | PTE_PRESENT;
 
@@ -370,7 +373,7 @@ int swap_in( pte_t * pPte )
 
 	psPage->p_nAge = INITIAL_PAGE_AGE;
 	g_anAgeCounts[psPage->p_nAge]++;
-
+	
 	return ( 0 );
 }
 
@@ -393,10 +396,12 @@ static int swap_tick()
 	int nPageAddr;
 	int i = 0;
 	bool bNewArea = false;
-
+	
 	do
 	{
+		LOCK( g_hAreaTableSema );
 		psArea = get_area_from_handle( nAreaID );
+		UNLOCK( g_hAreaTableSema );
 
 		if ( NULL == psArea || ( nOffset > psArea->a_nEnd - psArea->a_nStart ) /*|| psArea->a_psNextShared != psArea */  )
 		{
@@ -417,9 +422,18 @@ static int swap_tick()
 		printk( "PANIC: swap_tick() no areas to flush :(\n" );
 		return ( 0 );
 	}
-//  if ( bNewArea ) {
-//    printk( "Check area %d (%08x-%08x) (%d)\n", nAreaID, psArea->a_nStart, psArea->a_nEnd, psArea->a_nRefCount );
-//  }
+  if ( bNewArea ) {
+    /*printk( "Check area %d (%08x-%08x) (%d)\n", nAreaID, psArea->a_nStart, psArea->a_nEnd, psArea->a_nRefCount );
+  	if ( psArea->a_nProtection & AREA_REMAPPED )
+  		printk( "Remapped\n" );
+  	if( psArea->a_nLockMode & AREA_FULL_LOCK )
+  		printk( "Full lock\n" );
+  	if( ( psArea->a_nProtection & AREA_KERNEL ) == 0 )
+  		printk( "User \n" );*/
+  }
+  
+	LOCK( g_hAreaTableSema );
+  
 	nLinAddress = psArea->a_nStart + nOffset;
 	pPgd = pgd_offset( psArea->a_psContext, nLinAddress );
 	pPte = pte_offset( pPgd, nLinAddress );
@@ -427,11 +441,19 @@ static int swap_tick()
 
 	if ( psArea->a_nProtection & AREA_REMAPPED )
 	{
+		UNLOCK( g_hAreaTableSema );
+		put_area( psArea );
+		return ( 0 );
+	}
+	if ( psArea->a_nLockMode & AREA_FULL_LOCK )
+	{
+		UNLOCK( g_hAreaTableSema );
 		put_area( psArea );
 		return ( 0 );
 	}
 	if ( PTE_ISPRESENT( *pPte ) == 0 )
 	{
+		UNLOCK( g_hAreaTableSema );
 		put_area( psArea );
 		return ( 0 );
 	}
@@ -440,6 +462,7 @@ static int swap_tick()
 
 	if ( nPageAddr == ( uint32 )g_sSysBase.ex_pNullPage )
 	{
+		UNLOCK( g_hAreaTableSema );
 		put_area( psArea );
 		return ( 0 );
 	}
@@ -455,17 +478,21 @@ static int swap_tick()
 
 	if ( psPage->p_nCount != 1 )
 	{
+		UNLOCK( g_hAreaTableSema );
 		put_area( psArea );
 		return ( 0 );
 	}
 
 	if ( psPage->p_nAge == 0 )
 	{
-//    printk( "Swap out page %d\n", psPage->p_nPageNum );
+		UNLOCK( g_hAreaTableSema );
+   //printk( "Swap out page %d\n", psPage->p_nPageNum );
+    	psPage->p_nAge = INITIAL_PAGE_AGE;
 //    swap_out( pPte, psPage, nLinAddress );
 		put_area( psArea );
 		return ( 1 );
 	}
+	UNLOCK( g_hAreaTableSema );
 
 	put_area( psArea );
 	return ( 0 );
@@ -508,49 +535,55 @@ static void insert_swap_node( SwapNode_s * apsList, MemArea_s *psArea, Page_s *p
  * SEE ALSO:
  ****************************************************************************/
 
-static void swap_out_pages( int nCount )
+int swap_out_pages( int nCount )
 {
 	SwapNode_s asSwapList[16];
 	area_id nAreaID;
 	int i;
 	bigtime_t nStartTime;
 	bigtime_t nEndTime;
-
-//  static bigtime_t  nAvgTime = 0;
-//  static int       cnt = 0;
-
+	int nSwappedOut = 0;
+	
 	memset( asSwapList, 0, sizeof( asSwapList ) );
 
 	nStartTime = get_real_time();
 
 	for ( nAreaID = 0; nAreaID != -1 && nCount >= 0; nAreaID = get_next_area( nAreaID ) )
 	{
-		MemArea_s *psArea = get_area_from_handle( nAreaID );
+		MemArea_s *psArea;
 		uint32 nAddress;
+		LOCK( g_hAreaTableSema );
+		psArea = get_area_from_handle( nAreaID );
+		
 
 		if ( psArea == NULL )
 		{
+			UNLOCK( g_hAreaTableSema );
 			continue;
 		}
 
-/*    
-    if ( psArea->a_bBusy ) {
-      put_area( psArea );
-      continue;
-    }
-    */
 		if ( psArea->a_nProtection & AREA_REMAPPED )
 		{
+			UNLOCK( g_hAreaTableSema );
 			put_area( psArea );
 			continue;
 		}
-
-/*    
-    if ( psArea->a_psNextShared != psArea ) {
-      put_area( psArea );
-      continue;
-    }
-    */
+		
+		if ( psArea->a_nProtection & AREA_KERNEL )
+		{
+			UNLOCK( g_hAreaTableSema );
+			put_area( psArea );
+			continue;
+		}
+		
+		
+		if ( psArea->a_nLockMode & AREA_FULL_LOCK )
+		{
+			UNLOCK( g_hAreaTableSema );
+			put_area( psArea );
+			continue;
+		}
+		
 		for ( nAddress = psArea->a_nStart; ( nAddress - 1 ) < psArea->a_nEnd && nCount >= 0; nAddress += PAGE_SIZE )
 		{
 			pgd_t *pPgd;
@@ -591,77 +624,40 @@ static void swap_out_pages( int nCount )
 
 			if ( psPage->p_nAge == 0 )
 			{
-//        printk( "Swap out page %d Addr = %08x (%08x-%08x)\n",
-//                psPage->p_nPageNum, nAddress, psArea->a_nStart, psArea->a_nEnd );
+				        //printk( "Swap out page %d Addr = %08x (%08x-%08x)\n",
+                //psPage->p_nPageNum, nAddress, psArea->a_nStart, psArea->a_nEnd );
 
 //        swap_out( pPte, psPage, nAddress );
 				nCount--;
 			}
 		}
+		UNLOCK( g_hAreaTableSema );
 		put_area( psArea );
 	}
 	nEndTime = get_real_time();
 
-/*
-  nAvgTime += nEndTime - nStartTime;
-  if ( (++cnt % 10) == 0) {
-  printk( "List build took %duS %d/S\n", (uint32) (nAvgTime / 10LL), (nAvgTime>0) ? (uint32)(10000000LL / nAvgTime) : -1 );
-  nAvgTime = 0;
-  }
-  */
 	if ( asSwapList[0].sn_psPage == NULL )
 	{
-		printk( "No pages to swap out\n" );
-		UNLOCK( g_hAreaTableSema );
+		printk( "PANIC: No pages to swap out\n" );
 		snooze( 1000000 );
-		LOCK( g_hAreaTableSema );
-		return;
+		
+		return( 0 );
 	}
-
-/*  
-  for ( i = 0 ; i < 16 ; ++i ) {
-    if ( asSwapList[i].sn_psPage != NULL ) {
-      kassertw( asSwapList[i].sn_psArea->a_bBusy == false );
-    }
-  }
-  
-  for ( i = 0 ; i < 16 ; ++i )
-  {
-    if ( asSwapList[i].sn_psPage != NULL ) {
-      asSwapList[i].sn_psArea->a_bBusy = true;
-//      atomic_add( &asSwapList[i].sn_psArea->a_nRefCount, 1 );
-    }
-  }
-  */
-	UNLOCK( g_hAreaTableSema );
 
 	for ( i = 0; i < 16; ++i )
 	{
 		if ( asSwapList[i].sn_psPage != NULL )
 		{
+			nSwappedOut++;
 			swap_out( asSwapList[i].sn_psPte, asSwapList[i].sn_psPage, asSwapList[i].sn_nAddress );
 		}
 	}
-
-	LOCK( g_hAreaTableSema );
-
-/*
-  for ( i = 0 ; i < 16 ; ++i )
-  {
-    if ( asSwapList[i].sn_psPage != NULL ) {
-      asSwapList[i].sn_psArea->a_bBusy = false;
-    }
-  }
-  */
-
-/*  
-  for ( i = 0 ; i < 16 ; ++i )
-  {
-    if ( asSwapList[i].sn_psPage != NULL ) {
-      put_area( asSwapList[i].sn_psArea );
-    }
-  }
-  */
+	
+	flush_tlb_global();
+	
+	//printk( "%i pages swapped out", nSwappedOut );
+		
+	return( nSwappedOut );
 }
 
 /*****************************************************************************
@@ -677,15 +673,12 @@ static int age_deamon( void *pData )
 	{
 		int j;
 
-		LOCK( g_hAreaTableSema );
-		for ( j = 0; j < 10; ++j )
+		for( j = 0; j < 10; j++ )
 		{
-			if ( swap_tick() > 0 )
-			{
+			if( swap_tick() > 0 )
 				break;
-			}
 		}
-		UNLOCK( g_hAreaTableSema );
+		
 		snooze( 10000 );
 		handle_signals( 0 );
 	}
@@ -704,13 +697,15 @@ static int swap_deamon( void *pData )
 
 	for ( ;; )
 	{
-		if ( g_sSysBase.ex_nFreePageCount < 500 )
+		if ( g_sSysBase.ex_nFreePageCount < 2000 )
 		{
-			LOCK( g_hAreaTableSema );
-			swap_out_pages( 16 );
-			UNLOCK( g_hAreaTableSema );
+			shrink_caches( PAGE_SIZE );
 		}
-		if ( g_sSysBase.ex_nFreePageCount > 100 )
+		if ( g_sSysBase.ex_nFreePageCount < 2000 )
+		{
+			swap_out_pages( 16 );
+		}
+		if ( g_sSysBase.ex_nFreePageCount > 500 )
 		{
 			snooze( 100000 );
 		}
@@ -838,16 +833,16 @@ void init_swapper()
 {
 	int nSwapFile;
 	thread_id hThread;
+	
+	//hThread = spawn_kernel_thread( "ager", age_deamon, 0, DEFAULT_KERNEL_STACK, NULL );
+	//wakeup_thread( hThread, false );
 
-	hThread = spawn_kernel_thread( "ager", age_deamon, 0, DEFAULT_KERNEL_STACK, NULL );
-	wakeup_thread( hThread, false );
-
-	hThread = spawn_kernel_thread( "swapper", swap_deamon, 0, DEFAULT_KERNEL_STACK, NULL );
+	hThread = spawn_kernel_thread( "swapper", swap_deamon, 100, DEFAULT_KERNEL_STACK, NULL );
 	wakeup_thread( hThread, false );
 
 	register_debug_cmd( "lspc", "list number of memory pages in each age group.", db_list_swap_counts );
-//  nSwapFile = open( "/boot/atheos.swp", O_RDWR | O_CREAT );
-	nSwapFile = open( "/afs/atheos.swp", O_RDWR | O_CREAT );
+	
+	nSwapFile = open( "/boot/syllable.swp", O_RDWR | O_CREAT );
 	kassertw( nSwapFile >= 0 );
 
 
@@ -860,4 +855,63 @@ void init_swapper()
 	kassertw( write( nSwapFile, "", 1 ) == 1 );	// Expand the swap file
 
 	g_nSwapDev = get_swap_blocks( g_psSwapFile, NUM_SWAP_PAGES * PAGE_SIZE );
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

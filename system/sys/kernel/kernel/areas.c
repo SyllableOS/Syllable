@@ -1591,6 +1591,80 @@ int sys_delete_area( area_id hArea )
 
 }
 
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+
+static status_t do_get_area_physical_address( area_id hArea, iaddr_t* pnAddress )
+{
+	MemArea_s *psArea;
+	int nError = 0;
+	pgd_t *pPgd;
+	pte_t *pPte;
+	iaddr_t nPageAddress;
+
+	kassertw( is_semaphore_locked( g_hAreaTableSema ) );
+
+	psArea = get_area_from_handle( hArea );
+
+	if ( NULL == psArea )
+	{
+		nError = -EINVAL;
+		goto error;
+	}
+	
+	pPgd = pgd_offset( psArea->a_psContext, psArea->a_nStart );
+	
+	if( PGD_PAGE( *pPgd ) == 0 ) 
+	{
+		/* Page Table not present */
+		printk( "Error: get_area_physical_address() No page directory for address %08x\n", (uint)psArea->a_nStart );
+		return ( -EINVAL );
+	}
+	
+	pPte = pte_offset( pPgd, psArea->a_nStart );
+
+	if ( PTE_ISPRESENT( *pPte ) )
+	{
+		nPageAddress = PTE_PAGE( *pPte );
+		*pnAddress = nPageAddress;
+	} else {
+		nError = -EINVAL;
+	}
+
+	put_area( psArea );
+      error:
+	return ( nError );
+}
+
+
+/** Get the physical memory address for one area.
+ * \ingroup DriverAPI
+ * \par Description:
+ * Returns the physical memory address for one area.
+ * \param hArea - ID of the Area.
+ * \param pnAddress - Will be set to the physical address.
+ * \return 0 if successful.
+ * \sa claim_device(), unregister_device()
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+
+status_t get_area_physical_address( area_id hArea, iaddr_t* pnAddress )
+{
+	int nError;
+
+	kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
+	LOCK( g_hAreaTableSema );
+	nError = do_get_area_physical_address( hArea, pnAddress );
+	UNLOCK( g_hAreaTableSema );
+
+	return ( nError );
+}
+
 /*****************************************************************************
  * NAME:
  * DESC:

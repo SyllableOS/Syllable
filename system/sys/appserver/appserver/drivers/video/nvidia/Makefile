@@ -26,7 +26,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/nvidia: $(OBJS)
-	gcc -plugin $(OBJS) -o $(OBJDIR)/nvidia -latheos -lstdc++
+	gcc -plugin $(OBJS) -o $(OBJDIR)/nvidia -lsyllable -lstdc++
 
 deps:
 

@@ -295,6 +295,7 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	KSYMBOL( remap_area ),
 //  KSYMBOL(map_area_to_file),
 	KSYMBOL( get_area_info ),
+	KSYMBOL( get_area_physical_address ),
 	KSYMBOL( memcpy_to_user ),
 	KSYMBOL( memcpy_from_user ),
 	KSYMBOL( strncpy_from_user ),

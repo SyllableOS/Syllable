@@ -27,6 +27,7 @@
 #include <atheos/types.h>
 #include <atheos/kernel.h>
 #include <atheos/isa_io.h>
+#include <appserver/pci_graphics.h>
 #include "../../../server/bitmap.h"
 #include "../../../server/sprite.h"
 
@@ -73,34 +74,17 @@ enum S3CHIPTAGS {
   S3_LAST
 };
 
-SavageDriver::SavageDriver(): m_cGELock( "savage_ge_lock" )
+SavageDriver::SavageDriver( int nFd ): m_cGELock( "savage_ge_lock" )
 {
-    bool bFound = false;
+    /* Get Info */
+	if( ioctl( nFd, PCI_GFX_GET_PCI_INFO, &sCardInfo.pcii ) != 0 )
+	{
+		dbprintf( "Error: Failed to call PCI_GFX_GET_PCI_INFO\n" );
+		return;
+	}
+	s3chip = S3_SAVAGE_MX;
+	dbprintf( "Savage IX/MX VGA Card found\n");
   
-    for ( int i = 0 ;  get_pci_info( &sCardInfo.pcii, i ) == 0 ; ++i ) {
-      if ( sCardInfo.pcii.nVendorID == 0x5333 ) {
-	switch( sCardInfo.pcii.nDeviceID ) {
-	case 0x8C10:
-	case 0x8C12:	// Savage IX/MX
-	  s3chip = S3_SAVAGE_MX;
-	  dbprintf( "Savage IX/MX VGA Card found\n");
-	  bFound = true;
-	  break;
-	default:
-	  break;
-	}
-
-	if ( bFound ) {
-	  break;
-	}
-      }
-    }
-
-    if ( false == bFound ) {
-	dbprintf( "No S3 Savage IX/MX VGA Card found\n" );
-	throw exception();
-    }
-
 }
 
 //----------------------------------------------------------------------------
@@ -810,12 +794,12 @@ void UpdateScreenMode()
     dbprintf( "Update screen mode\n" );
 }
 
-extern "C" DisplayDriver* init_gfx_driver()
+extern "C" DisplayDriver* init_gfx_driver( int nFd )
 {
     dbprintf( "s3_savage attempts to initialize\n" );
 
     try {
-	DisplayDriver* pcDriver = new SavageDriver();
+	DisplayDriver* pcDriver = new SavageDriver( nFd );
 	return( pcDriver );
     }
     catch( exception&  cExc ) {

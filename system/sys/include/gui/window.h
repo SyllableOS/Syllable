@@ -20,6 +20,7 @@
 #ifndef	__F_GUI_WINDOW_H
 #define	__F_GUI_WINDOW_H
 
+#include <gui/bitmap.h>
 #include <gui/view.h>
 #include <util/looper.h>
 
@@ -47,6 +48,7 @@ enum
     WND_FRONTMOST	= 0x00000100,
     WND_BACKMOST	= 0x00000200,
     WND_MODAL		= 0x00000400,
+    WND_SEND_WINDOWS_CHANGED = 0x00000800,
     WND_SYSTEM		= 0x00010000
 };
 
@@ -77,13 +79,15 @@ public:
     virtual void	ScreenModeChanged( const IPoint& cNewRes, color_space eColorSpace );
     virtual void	DesktopActivated( int nDesktop, bool bActive );
     virtual void	DesktopsChanged( uint32 nOldDesktops, uint32 nNewDesktops );
-
-    virtual void	__WI_reserved1__();
+    virtual void	WindowsChanged();
+    
+private:
     virtual void	__WI_reserved2__();
     virtual void	__WI_reserved3__();
     virtual void	__WI_reserved4__();
     virtual void	__WI_reserved5__();
     virtual void	__WI_reserved6__();
+public:
     
     void		SetFlags( uint32 nFlags );
     uint32		GetFlags() const;
@@ -102,6 +106,8 @@ public:
     void		Start();
     void		SetTitle( const std::string& cTitle );
     std::string		GetTitle( void ) const;
+    void		SetIcon( Bitmap* pcIcon );
+    Bitmap*		GetIcon( void ) const;
 
 //  void		SetMenuBar( Menu* pcMenu );
 

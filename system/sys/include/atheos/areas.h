@@ -132,6 +132,7 @@ area_id	  clone_area( const char* pzName, void** ppAddress, uint32 nProtection, 
 status_t get_area_info( area_id hArea, AreaInfo_s* psInfo );
 void*	 get_area_address( area_id nArea );
 area_id  get_next_area( const area_id hArea );
+status_t get_area_physical_address( area_id hArea, iaddr_t* pnAddress );
 
 int lock_mem_area( const void* pAddress, uint32 nSize, bool bWriteAccess );
 int unlock_mem_area( const void* pAddress, uint32 nSize );

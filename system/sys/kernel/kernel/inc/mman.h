@@ -134,6 +134,7 @@ void init_swapper();
 void dup_swap_page( int nPage );
 void free_swap_page( int nPage );
 int swap_in( pte_t * pPte );
+int swap_out_pages( int nCount );
 
 
 #ifdef __cplusplus

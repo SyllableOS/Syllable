@@ -177,6 +177,7 @@ void usb_deregister_driver( USB_driver_s* psDriver )
 	/* Remove driver from the list */
 	USB_driver_s* psPrevDriver = NULL;
 	USB_driver_s* psNextDriver = g_psFirstUSBDriver;
+	LOCK( g_hUSBLock );
 	while( psNextDriver != NULL )
 	{
 		if( psNextDriver == psDriver )
@@ -185,17 +186,21 @@ void usb_deregister_driver( USB_driver_s* psDriver )
 			delete_semaphore( psNextDriver->hLock );
 			if( psPrevDriver )
 				psPrevDriver->psNext = psNextDriver->psNext;
+			else
+				g_psFirstUSBDriver = psNextDriver->psNext;
 			for( i = 0; i < 64; i++ )
 			{
 				if( g_bUSBBusMap[i] )
 					usb_remove_driver( psDriver, g_psUSBBus[i]->psRootHUB ); 
 			}
 			printk( "USB: %s driver deregistered\n", psDriver->zName );
+			UNLOCK( g_hUSBLock );
 			return;
 		}
 		psPrevDriver = psNextDriver;
 		psNextDriver = psNextDriver->psNext;
 	}
+	UNLOCK( g_hUSBLock );
 	printk( "USB: Could not deregister not registered %s driver\n", psDriver->zName );
 }
 

@@ -41,7 +41,7 @@ struct riva_regs
 class NVidia : public DisplayDriver
 {
 public:
-	NVidia();
+	NVidia( int nFd );
 	~NVidia();
 
 	virtual area_id	Open();
@@ -51,7 +51,6 @@ public:
 	virtual bool    GetScreenModeDesc( int nIndex, os::screen_mode* psMode );
 	virtual int	SetScreenMode( os::screen_mode );
 	virtual os::screen_mode GetCurrentScreenMode();  
-	virtual void	SetColor(int nIndex, const Color32_s& sColor);
 
 	virtual void	SetCursorBitmap( os::mouse_ptr_mode eMode, const os::IPoint& cHotSpot, const void* pRaster, int nWidth, int nHeight );
 	virtual void	MouseOn( void );
@@ -213,7 +212,7 @@ private:
 	void		NV4Setup();
 	void		NV10Setup();
 	void		NV20Setup();
-
+	void		NV30Setup();
 };
 
 #endif // __NVIDIA_H__

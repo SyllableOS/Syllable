@@ -45,7 +45,7 @@ using namespace os;
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-M64VesaDriver::M64VesaDriver()
+M64VesaDriver::M64VesaDriver( int nFd )
 {
 }
 

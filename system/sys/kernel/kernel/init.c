@@ -48,6 +48,7 @@
 #include "inc/bcache.h"
 #include "inc/smp.h"
 #include "inc/sysbase.h"
+#include "inc/swap.h"
 
 extern int _end;
 
@@ -68,6 +69,7 @@ static uint32 g_nDebugBaudRate = 0;	//115200;
 static uint32 g_nDebugSerialPort = 2;
 static bool g_bPlainTextDebug = false;
 static uint32 g_nMemSize = 64 * 1024 * 1024;
+static bool g_bSwapEnabled = false;
 static bool g_bDisableSMP = false;
 static bool g_bFoundSmpConfig = false;
 static struct i3Task g_sInitialTSS;
@@ -539,6 +541,9 @@ static int kernel_init()
 	sti();
 
 	init_devices();	/* Load busmanagers */
+	
+	if( g_bSwapEnabled )
+		init_swapper(); /* Initialize swapper */
 
 	return ( 0 );
 }
@@ -555,7 +560,7 @@ void SysInit( void )
 {
 	char *apzBootShellArgs[32], **ppzArg = apzBootShellArgs;
 	int i;
-
+	
 	if ( Fork( "init" ) != 0 )
 	{
 		set_thread_priority( 0, -999 );
@@ -876,7 +881,7 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 	printk( "  UAS start:        %08lx\n", g_sSysBase.sb_nFirstUserAddress );
 	printk( "  UAS end:          %08lx\n", g_sSysBase.sb_nLastUserAddress );
 	printk( "  SMP  scan is %s\n", ( ( g_bDisableSMP ) ? "disabled" : "enabled" ) );
-
+	printk( "  Swapping is %s\n", ( ( g_bSwapEnabled ) ? "enabled" : "disabled" ) );
 	printk( "Loaded kernel modules:\n" );
 	for ( i = 0; i < g_sSysBase.ex_nBootModuleCount; ++i )
 	{
@@ -1059,6 +1064,7 @@ static void parse_kernel_params( char *pzParams )
 		get_bool_arg( &g_bPlainTextDebug, "debug_plaintext=", pzArg, nLen );
 		get_bool_arg( &g_bDisableSMP, "disable_smp=", pzArg, nLen );
 		get_bool_arg( &g_bDisableKernelConfig, "disable_config=", pzArg, nLen );
+		get_bool_arg( &g_bSwapEnabled, "enable_swap=", pzArg, nLen );
 
 		get_num_arg( &g_sSysBase.sb_nFirstUserAddress, "uspace_start=", pzArg, nLen );
 		get_num_arg( &g_sSysBase.sb_nLastUserAddress, "uspace_end=", pzArg, nLen );

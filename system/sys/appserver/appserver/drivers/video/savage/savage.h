@@ -131,7 +131,7 @@ class SavageDriver : public VesaDriver
 {
 public:
 
-    SavageDriver();
+    SavageDriver( int nFd );
     ~SavageDriver();
 
     area_id	    Open();

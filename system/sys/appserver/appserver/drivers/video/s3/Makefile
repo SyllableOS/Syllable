@@ -26,7 +26,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/s3_virge: $(OBJS)
-	gcc -plugin $(OBJS) -o $(OBJDIR)/s3_virge -latheos -lstdc++
+	gcc -plugin $(OBJS) -o $(OBJDIR)/s3_virge -lsyllable -lstdc++
 
 deps:
 

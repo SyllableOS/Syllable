@@ -80,6 +80,7 @@ extern ProcessorInfo_s g_asProcessorDescs[MAX_CPU_COUNT];
 BusHandle_s *g_psFirstBus;
 DeviceHandle_s *g_psFirstDevice;
 uint32 g_nDriverHandle = 0;
+sem_id g_hDeviceListLock;
 
 /** Register a device.
  * \ingroup DriverAPI
@@ -112,10 +113,13 @@ int register_device( const char *pzName, const char *pzBus )
 	psDevice->d_bClaimed = false;
 	psDevice->d_eType = DEVICE_UNKNOWN;
 	psDevice->d_psNext = g_psFirstDevice;
+	
+	LOCK( g_hDeviceListLock );
 
 	g_psFirstDevice = psDevice;
 
 	//printk( "New device %s (Bus: %s)\n", psDevice->d_zName, psDevice->d_zBus );
+	UNLOCK( g_hDeviceListLock );
 
 	return ( psDevice->d_nHandle );
 }
@@ -134,6 +138,8 @@ void unregister_device( int nHandle )
 {
 	DeviceHandle_s *psPrev = NULL;
 	DeviceHandle_s *psDevice = g_psFirstDevice;
+	
+	LOCK( g_hDeviceListLock );
 
 	while ( psDevice != NULL )
 	{
@@ -148,11 +154,14 @@ void unregister_device( int nHandle )
 
 			//printk( "Device %s removed\n", psDevice->d_zName );
 			kfree( psDevice );
+			UNLOCK( g_hDeviceListLock );
 			return;
 		}
 		psPrev = psDevice;
 		psDevice = psDevice->d_psNext;
 	}
+	UNLOCK( g_hDeviceListLock );
+	printk( "Error: unregister_device() called with invalid device\n" );
 }
 
 /** Claim one device.
@@ -170,6 +179,8 @@ void unregister_device( int nHandle )
 status_t claim_device( int nDeviceID, int nHandle, const char *pzName, enum device_type eType )
 {
 	DeviceHandle_s *psDevice = g_psFirstDevice;
+	
+	LOCK( g_hDeviceListLock );
 
 	while ( psDevice != NULL )
 	{
@@ -178,6 +189,7 @@ status_t claim_device( int nDeviceID, int nHandle, const char *pzName, enum devi
 			if ( psDevice->d_bClaimed )
 			{
 				printk( "Error: device %s already claimed\n", psDevice->d_zName );
+				UNLOCK( g_hDeviceListLock );
 				return ( -1 );
 			}
 
@@ -189,11 +201,12 @@ status_t claim_device( int nDeviceID, int nHandle, const char *pzName, enum devi
 			psDevice->d_nDeviceID = nDeviceID;
 			psDevice->d_eType = eType;
 			psDevice->d_bClaimed = true;
-
+			UNLOCK( g_hDeviceListLock );
 			return ( 0 );
 		}
 		psDevice = psDevice->d_psNext;
 	}
+	UNLOCK( g_hDeviceListLock );
 	printk( "Error: claim_device() called with invalid device\n" );
 	return ( -1 );
 }
@@ -209,6 +222,8 @@ status_t claim_device( int nDeviceID, int nHandle, const char *pzName, enum devi
 void release_device( int nHandle )
 {
 	DeviceHandle_s *psDevice = g_psFirstDevice;
+	
+	LOCK( g_hDeviceListLock );
 
 	while ( psDevice != NULL )
 	{
@@ -217,6 +232,7 @@ void release_device( int nHandle )
 			if ( !psDevice->d_bClaimed )
 			{
 				printk( "Error: device %s not claimed, but release_device() called\n", psDevice->d_zName );
+				UNLOCK( g_hDeviceListLock );
 				return;
 			}
 
@@ -224,10 +240,12 @@ void release_device( int nHandle )
 			//printk( "Device %s removed\n", psDevice->d_zName );
 			psDevice->d_bClaimed = false;
 			strcpy( psDevice->d_zName, psDevice->d_zOriginalName );
+			UNLOCK( g_hDeviceListLock );
 			return;
 		}
 		psDevice = psDevice->d_psNext;
 	}
+	UNLOCK( g_hDeviceListLock );
 	printk( "Error: release_device() called with invalid device\n" );
 	return;
 }
@@ -250,6 +268,8 @@ status_t get_device_info( DeviceInfo_s * psInfo, int nIndex )
 
 	if ( nIndex < 0 )
 		return ( -1 );
+		
+	LOCK( g_hDeviceListLock );
 
 	while ( psDevice != NULL )
 	{
@@ -260,11 +280,13 @@ status_t get_device_info( DeviceInfo_s * psInfo, int nIndex )
 			strcpy( psInfo->di_zName, psDevice->d_zName );
 			strcpy( psInfo->di_zBus, psDevice->d_zBus );
 			psInfo->di_eType = psDevice->d_eType;
+			UNLOCK( g_hDeviceListLock );
 			return ( 0 );
 		}
 		nCount++;
 		psDevice = psDevice->d_psNext;
 	}
+	UNLOCK( g_hDeviceListLock );
 	return ( -1 );
 }
 
@@ -491,6 +513,8 @@ void init_devices_boot()
 	/* First set everything to the default state */
 	g_psFirstBus = NULL;
 	g_psFirstDevice = NULL;
+	
+	g_hDeviceListLock = create_semaphore( "device_list_lock", 1, 0 );
 
 	/* Register CPUs */
 	for ( i = 0; i < MAX_CPU_COUNT; i++ )

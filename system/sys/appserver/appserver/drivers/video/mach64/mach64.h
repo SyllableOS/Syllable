@@ -77,11 +77,11 @@ class ATImach64 : public M64VesaDriver {
 public:
 
 	 // *** constructor and destructor ***
-	ATImach64 ();
+	ATImach64 ( int nFd );
 	virtual ~ATImach64 ();
 
 	uint32 ProbeHardware (PCI_Info_s * PCIInfo);
-	bool InitHardware ();
+	bool InitHardware ( int nFd );
 
 	area_id Open();
 	virtual void Close();

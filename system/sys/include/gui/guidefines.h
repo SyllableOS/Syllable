@@ -260,7 +260,7 @@ enum {
     M_COLOR_CONFIG_CHANGED,
     M_FONT_CHANGED,
     M_MENU_EVENT,
-    _M_UNUSED2,
+    M_WINDOWS_CHANGED,
     _M_UNUSED3,
     M_QUIT,			/* Quit if you want	*/
     M_TERMINATE,			/* Quit NOW	*/

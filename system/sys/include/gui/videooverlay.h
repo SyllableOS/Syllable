@@ -81,6 +81,11 @@ public:
 	* \author Arno Klenke (arno_klenke@yahoo.de)
 	*****************************************************************************/
 	uint8* GetRaster() { return( m_sOverlay.m_pAddress ); }
+	
+	/** Return the current physical memory area of the overlay.
+	* \author Arno Klenke (arno_klenke@yahoo.de)
+	*****************************************************************************/
+	area_id GetPhysicalArea() { return( m_sOverlay.m_hPhysArea ); }
 private:
 	
 	void Recreate( const IPoint& cSrcSize, const IRect& cDstRect );

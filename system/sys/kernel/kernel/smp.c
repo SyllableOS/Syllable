@@ -229,6 +229,7 @@ static void set_cpu_features()
 	unsigned int nRegs2[4];
 	char zVendor[17];
 	int i;
+	uint nCPUid = 0;
 
 	g_asProcessorDescs[g_nBootCPU].pi_nFeatures = CPU_FEATURE_NONE;
 
@@ -264,6 +265,7 @@ static void set_cpu_features()
 			{
 				if ( cpuname[i][CPUID_FAMILY][CPUID_MODEL] )
 				{
+					nCPUid = ( CPUID_FAMILY << 4 ) | CPUID_MODEL;
 					sprintf( g_asProcessorDescs[g_nBootCPU].pi_zName, "%s %s", cpuvendors[i].name, cpuname[i][CPUID_FAMILY][CPUID_MODEL] );
 				}
 			}
@@ -290,7 +292,7 @@ static void set_cpu_features()
 		strcpy( g_asProcessorDescs[i].pi_zName, g_asProcessorDescs[g_nBootCPU].pi_zName );
 		g_asProcessorDescs[i].pi_nFeatures = g_asProcessorDescs[g_nBootCPU].pi_nFeatures;
 	}
-	printk( "CPU: %s\n", g_asProcessorDescs[g_nBootCPU].pi_zName );
+	printk( "CPU: %s (0x%x)\n", g_asProcessorDescs[g_nBootCPU].pi_zName, nCPUid );
 	if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_MMX )
 		printk( "MMX supported\n" );
 	if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_MMX2 )

@@ -28,13 +28,13 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/mach64: $(OBJS)
-	g++ -plugin $(OBJS) -o $(OBJDIR)/mach64 -latheos
+	g++ -plugin $(OBJS) -o $(OBJDIR)/mach64 -lsyllable
 
 install: $(OBJDIR)/mach64
 	cp -f $(OBJDIR)/mach64 $(DEVBIN)/mach64
 
 dist: $(OBJDIR)/mach64
-	cp -f $(OBJDIR)/mach64 $(DIST_DIR)/atheos/sys/dribers/appserver/video/mach64
+	cp -f $(OBJDIR)/mach64 $(DIST_DIR)/atheos/sys/drivers/appserver/video/mach64
 
 clean:
 	-rm $(OBJDIR)/*

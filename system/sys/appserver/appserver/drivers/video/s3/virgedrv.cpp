@@ -40,6 +40,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <atheos/types.h>
 #include <atheos/kernel.h>
 #include <atheos/isa_io.h>
+#include <appserver/pci_graphics.h>
 #include "../../../server/bitmap.h"
 #include "../../../server/sprite.h"
 
@@ -227,8 +228,8 @@ static uint16 g_anVirgeTable[] =
 
 
 
-#define get_pci(o, s) 	 read_pci_config(sCardInfo.pcii.nBus, sCardInfo.pcii.nDevice, sCardInfo.pcii.nFunction, (o), (s))
-#define set_pci(o, s, v) write_pci_config(sCardInfo.pcii.nBus, sCardInfo.pcii.nDevice, sCardInfo.pcii.nFunction, (o), (s), (v))
+#define get_pci(o, s) 	 pci_gfx_read_config(sCardInfo.nFd, sCardInfo.pcii.nBus, sCardInfo.pcii.nDevice, sCardInfo.pcii.nFunction, (o), (s))
+#define set_pci(o, s, v) pci_gfx_write_config(sCardInfo.nFd, sCardInfo.pcii.nBus, sCardInfo.pcii.nDevice, sCardInfo.pcii.nFunction, (o), (s), (v))
 
 //#define isa_inb(a)	read_isa_io (0, (char *)(a) - 0x00008000, 1)
 //#define isa_outb(a, b)	write_isa_io (0, (char *)(a) - 0x00008000, 1, (b))
@@ -842,34 +843,15 @@ void vid_selectmode()
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-VirgeDriver::VirgeDriver()
+VirgeDriver::VirgeDriver( int nFd )
 {
-    bool bFound = false;
-  
-    for ( int i = 0 ;  get_pci_info( &sCardInfo.pcii, i ) == 0 ; ++i )
-    {
-	if ( sCardInfo.pcii.nVendorID == 0x5333 )
+    /* Get Info */
+	if( ioctl( nFd, PCI_GFX_GET_PCI_INFO, &sCardInfo.pcii ) != 0 )
 	{
-	    switch( sCardInfo.pcii.nDeviceID )
-	    {
-		case 0x5631:	// vanilla ViRGE
-		case 0x883d:	// ViRGE VX :-?
-		case 0x8a01:	// ViRGE DX
-		    bFound = true;
-		    break;
-		default:
-		    break;
-	    }
-	    if ( bFound ) {
-		break;
-	    }
+		dbprintf( "Error: Failed to call PCI_GFX_GET_PCI_INFO\n" );
+		return;
 	}
-    }
-
-    if ( false == bFound ) {
-	dbprintf( "No S3 Virge card found\n" );
-	throw exception();
-    }
+	sCardInfo.nFd = nFd;
   
 /*  
     m_pcMouseImage = new SrvBitmap( POINTER_WIDTH, POINTER_HEIGHT, CS_CMAP8 );
@@ -1468,12 +1450,12 @@ void UpdateScreenMode()
     vid_selectmode();
 }
 
-extern "C" DisplayDriver* init_gfx_driver()
+extern "C" DisplayDriver* init_gfx_driver( int nFd )
 {
     dbprintf( "s3_virge attempts to initialize\n" );
 
     try {
-	DisplayDriver* pcDriver = new VirgeDriver();
+	DisplayDriver* pcDriver = new VirgeDriver( nFd );
 	return( pcDriver );
     }
     catch( exception&  cExc ) {

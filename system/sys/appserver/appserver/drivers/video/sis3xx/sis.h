@@ -653,6 +653,7 @@ static const struct _sis_TV_filter {
 
 typedef struct
 {
+	int nFd;
 	PCI_Info_s pci_dev;
 	uint32	device_id;
 	char	name[30];

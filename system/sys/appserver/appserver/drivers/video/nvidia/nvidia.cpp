@@ -31,6 +31,7 @@
 #include <atheos/kernel.h>
 #include <atheos/vesa_gfx.h>
 #include <atheos/udelay.h>
+#include <appserver/pci_graphics.h>
 
 #include "../../../server/bitmap.h"
 #include "../../../server/sprite.h"
@@ -44,54 +45,68 @@
 #include "nv_type.h"
 
 static const struct chip_info asChipInfos[] = {
-    {NV_CHIP_RIVA_128,           NV_ARCH_03, "RIVA 128"},
-    {NV_CHIP_TNT,                NV_ARCH_04, "TNT"},
-    {NV_CHIP_TNT2_TNT2PRO,       NV_ARCH_04, "TNT2/TNT2 Pro"},
-    {NV_CHIP_TNT2_ULTRA,         NV_ARCH_04, "TNT2 Ultra"},
-    {NV_CHIP_TNT2,               NV_ARCH_04, "TNT2"},
-    {NV_CHIP_RIVATNT2,           NV_ARCH_04, "TNT2"},
-    {NV_CHIP_VTNT2,              NV_ARCH_04, "Vanta TNT2"},
-    {NV_CHIP_UVTNT2,             NV_ARCH_04, "TNT2 Ultra M64"},
-    {NV_CHIP_VANTA,              NV_ARCH_04, "Vanta TNT2"},
-    {NV_CHIP_VANTA_B,            NV_ARCH_04, "Vanta TNT2"},
-    {NV_CHIP_ITNT2,              NV_ARCH_04, "Aladdin TNT2"},
-    {NV_CHIP_GEFORCE_256,        NV_ARCH_10, "GeForce 256"},
-    {NV_CHIP_GEFORCE_DDR,        NV_ARCH_10, "GeForce DDR"},
-    {NV_CHIP_GEFORCE_ULTRA,      NV_ARCH_10, "GeForce Ultra"},
-    {NV_CHIP_QUADRO,             NV_ARCH_10, "Quadro"},
-    {NV_CHIP_GEFORCE2_MX,        NV_ARCH_10, "GeForce2 MX/MX 400"},
-    {NV_CHIP_GEFORCE2_MX_100,    NV_ARCH_10, "GeForce2 MX 100/200"},
-    {NV_CHIP_GEFORCE2_GO,        NV_ARCH_10, "GeForce2 Go"},
-    {NV_CHIP_QUADRO2_MXR,        NV_ARCH_10, "Quadro2 MXR"},
-    {NV_CHIP_GEFORCE2_GTS,       NV_ARCH_10, "GeForce2 GTS/Pro"},
-    {NV_CHIP_GEFORCE2_TI,        NV_ARCH_10, "GeForce2 Ti"},
-    {NV_CHIP_GEFORCE2_ULTRA,     NV_ARCH_10, "GeForce2 Ultra"},
-    {NV_CHIP_QUADRO2_PRO,        NV_ARCH_10, "Quadro2 Pro"},
-    {NV_CHIP_GEFORCE4_MX_460,    NV_ARCH_10, "GeForce4 MX 460"},
-    {NV_CHIP_GEFORCE4_MX_440,    NV_ARCH_10, "GeForce4 MX 440"},
-    {NV_CHIP_GEFORCE4_MX_420,    NV_ARCH_10, "GeForce4 MX 420"},
-    {NV_CHIP_GEFORCE4_MX,        NV_ARCH_10, "GeForce4 MX"},
-    {NV_CHIP_GEFORCE4_440_GO,    NV_ARCH_10, "GeForce4 440 Go"},
-    {NV_CHIP_GEFORCE4_420_GO,    NV_ARCH_10, "GeForce4 420 Go"},
-    {NV_CHIP_GEFORCE4_420_GO_M32,NV_ARCH_10, "GeForce4 420 Go M32"},
-    {NV_CHIP_QUADRO4_500XGL,     NV_ARCH_10, "Quadro4 500XGL"},
-    {NV_CHIP_GEFORCE4_440_GO_M64,NV_ARCH_10, "GeForce4 440 Go M64"},
-    {NV_CHIP_QUADRO4_200,        NV_ARCH_10, "Quadro4 200/400NVS"},
-    {NV_CHIP_QUADRO4_550XGL,     NV_ARCH_10, "Quadro4 550XGL"},
-    {NV_CHIP_QUADRO4_500_GOGL,   NV_ARCH_10, "Quadro4 GoGL"},
-    {NV_CHIP_IGEFORCE2,          NV_ARCH_10, "GeForce2 Integrated (nForce)"},
-    {NV_CHIP_GEFORCE3,           NV_ARCH_20, "GeForce3"},
-    {NV_CHIP_GEFORCE3_TI_200,    NV_ARCH_20, "GeForce3 Ti 200"},
-    {NV_CHIP_GEFORCE3_TI_500,    NV_ARCH_20, "GeForce3 Ti 500"},
-    {NV_CHIP_QUADRO_DCC,         NV_ARCH_20, "Quadro DCC"},
-    {NV_CHIP_GEFORCE4_TI_4600,   NV_ARCH_20, "GeForce4 Ti 4600"},
-    {NV_CHIP_GEFORCE4_TI_4400,   NV_ARCH_20, "GeForce4 Ti 4400"},
-    {NV_CHIP_GEFORCE4_TI_4200,   NV_ARCH_20, "GeForce4 Ti 4200"},
-    {NV_CHIP_QUADRO4_900XGL,     NV_ARCH_20, "Quadro4 900 XGL"},
-    {NV_CHIP_QUADRO4_750XGL,     NV_ARCH_20, "Quadro4 750 XGL"},
-    {NV_CHIP_QUADRO4_700XGL,     NV_ARCH_20, "Quadro4 700 XGL"},
-    {NV_CHIP_IGEFORCE3,          NV_ARCH_20, "GeForce3 Integrated (XBox)"},
+  { 0x12D20018, NV_ARCH_03,"RIVA 128" },
+  { 0x10DE0020, NV_ARCH_04,"RIVA TNT" },
+  { 0x10DE0028, NV_ARCH_04,"RIVA TNT2" },
+  { 0x10DE002A, NV_ARCH_04,"Unknown TNT2" },
+  { 0x10DE002C, NV_ARCH_04,"Vanta" },
+  { 0x10DE0029, NV_ARCH_04,"RIVA TNT2 Ultra" },
+  { 0x10DE002D, NV_ARCH_04,"RIVA TNT2 Model 64" },
+  { 0x10DE00A0, NV_ARCH_04,"Aladdin TNT2" },
+  { 0x10DE0100, NV_ARCH_10, "GeForce 256" },
+  { 0x10DE0101, NV_ARCH_10, "GeForce DDR" },
+  { 0x10DE0103, NV_ARCH_10, "Quadro" },
+  { 0x10DE0110, NV_ARCH_10, "GeForce2 MX/MX 400" },
+  { 0x10DE0111, NV_ARCH_10, "GeForce2 MX 100/200" },
+  { 0x10DE0112, NV_ARCH_10, "GeForce2 Go" },
+  { 0x10DE0113, NV_ARCH_10, "Quadro2 MXR/EX/Go" },
+  { 0x10DE01A0, NV_ARCH_10, "GeForce2 Integrated GPU" },
+  { 0x10DE0150, NV_ARCH_10, "GeForce2 GTS" },
+  { 0x10DE0151, NV_ARCH_10, "GeForce2 Ti" },
+  { 0x10DE0152, NV_ARCH_10, "GeForce2 Ultra" },
+  { 0x10DE0153, NV_ARCH_10, "Quadro2 Pro" },
+  { 0x10DE0170, NV_ARCH_10, "GeForce4 MX 460" },
+  { 0x10DE0171, NV_ARCH_10, "GeForce4 MX 440" },
+  { 0x10DE0172, NV_ARCH_10, "GeForce4 MX 420" },
+  { 0x10DE0173, NV_ARCH_10, "GeForce4 MX 440-SE" },
+  { 0x10DE0174, NV_ARCH_10, "GeForce4 440 Go" },
+  { 0x10DE0175, NV_ARCH_10, "GeForce4 420 Go" },
+  { 0x10DE0176, NV_ARCH_10, "GeForce4 420 Go 32M" },
+  { 0x10DE0177, NV_ARCH_10, "GeForce4 460 Go" },
+  { 0x10DE0179, NV_ARCH_10, "GeForce4 440 Go 64M" },
+  { 0x10DE017D, NV_ARCH_10, "GeForce4 410 Go 16M" },
+  { 0x10DE017C,NV_ARCH_10,  "Quadro4 500 GoGL" },
+  { 0x10DE0178, NV_ARCH_10, "Quadro4 550 XGL" },
+  { 0x10DE017A, NV_ARCH_10, "Quadro4 NVS" },
+  { 0x10DE0181, NV_ARCH_10, "GeForce4 MX 440 with AGP8X" },
+  { 0x10DE0182, NV_ARCH_10, "GeForce4 MX 440SE with AGP8X" },
+  { 0x10DE0183, NV_ARCH_10, "GeForce4 MX 420 with AGP8X" },
+  { 0x10DE0186, NV_ARCH_10, "GeForce4 448 Go" },
+  { 0x10DE0187, NV_ARCH_10, "GeForce4 488 Go" },
+  { 0x10DE0188, NV_ARCH_10, "Quadro4 580 XGL" },
+  { 0x10DE018A, NV_ARCH_10, "Quadro4 280 NVS" },
+  { 0x10DE018B, NV_ARCH_10, "Quadro4 380 XGL" },
+  { 0x10DE01F0, NV_ARCH_10, "GeForce4 MX Integrated GPU" },
+  { 0x10DE0200, NV_ARCH_20,"GeForce3" },
+  { 0x10DE0201, NV_ARCH_20,"GeForce3 Ti 200" },
+  { 0x10DE0202, NV_ARCH_20,"GeForce3 Ti 500" },
+  { 0x10DE0203,NV_ARCH_20, "Quadro DCC" },
+  { 0x10DE0250, NV_ARCH_20,"GeForce4 Ti 4600" },
+  { 0x10DE0251, NV_ARCH_20,"GeForce4 Ti 4400" },
+  { 0x10DE0252,NV_ARCH_20, "0x0252" },
+  { 0x10DE0253, NV_ARCH_20,"GeForce4 Ti 4200" },
+  { 0x10DE0258, NV_ARCH_20,"Quadro4 900 XGL" },
+  { 0x10DE0259, NV_ARCH_20,"Quadro4 750 XGL" },
+  { 0x10DE025B, NV_ARCH_20,"Quadro4 700 XGL" },
+  { 0x10DE0280, NV_ARCH_20,"GeForce4 Ti 4800" },
+  { 0x10DE0281, NV_ARCH_20,"GeForce4 Ti 4200 with AGP8X" },
+  { 0x10DE0282, NV_ARCH_20,"GeForce4 Ti 4800 SE" },
+  { 0x10DE0286, NV_ARCH_20,"GeForce4 4200 Go" },
+  { 0x10DE028C, NV_ARCH_20,"Quadro4 700 GoGL" },
+  { 0x10DE0288,NV_ARCH_20, "Quadro4 980 XGL" },
+  { 0x10DE0289,NV_ARCH_20, "Quadro4 780 XGL" },
 };
+
 
 inline uint32 pci_size(uint32 base, uint32 mask)
 {
@@ -99,16 +114,17 @@ inline uint32 pci_size(uint32 base, uint32 mask)
 	return size & ~(size-1);
 }
 
-static uint32 get_pci_memory_size(const PCI_Info_s *pcPCIInfo, int nResource)
+static uint32 get_pci_memory_size(int nFd, const PCI_Info_s *pcPCIInfo, int nResource)
 {
 	int nBus = pcPCIInfo->nBus;
 	int nDev = pcPCIInfo->nDevice;
 	int nFnc = pcPCIInfo->nFunction;
 	int nOffset = PCI_BASE_REGISTERS + nResource*4;
-	uint32 nBase = read_pci_config(nBus, nDev, nFnc, nOffset, 4);
-	write_pci_config(nBus, nDev, nFnc, nOffset, 4, ~0);
-	uint32 nSize = read_pci_config(nBus, nDev, nFnc, nOffset, 4);
-	write_pci_config(nBus, nDev, nFnc, nOffset, 4, nBase);
+	uint32 nBase = pci_gfx_read_config(nFd, nBus, nDev, nFnc, nOffset, 4);
+	
+	pci_gfx_write_config(nFd, nBus, nDev, nFnc, nOffset, 4, ~0);
+	uint32 nSize = pci_gfx_read_config(nFd, nBus, nDev, nFnc, nOffset, 4);
+	pci_gfx_write_config(nFd, nBus, nDev, nFnc, nOffset, 4, nBase);
 	if (!nSize || nSize == 0xffffffff) return 0;
 	if (nBase == 0xffffffff) nBase = 0;
 	if (!(nSize & PCI_ADDRESS_SPACE)) {
@@ -118,7 +134,7 @@ static uint32 get_pci_memory_size(const PCI_Info_s *pcPCIInfo, int nResource)
 	}
 }
 
-NVidia::NVidia()
+NVidia::NVidia( int nFd )
 :	m_cGELock("nvidia_ge_lock"),
 	m_hRegisterArea(-1),
 	m_hFrameBufferArea(-1),
@@ -133,19 +149,24 @@ NVidia::NVidia()
 	std::vector<PCI_Info_s> cCandidates;
 	std::vector<struct chip_info> cCandidatesInfo;
 	int nNrDevs = sizeof(asChipInfos)/sizeof(chip_info);
-	for (int i = 0; get_pci_info(&m_cPCIInfo, i)==0; i++) {
-		if ((m_cPCIInfo.nVendorID == PCI_VENDOR_ID_NVIDIA)
-		 || (m_cPCIInfo.nVendorID == PCI_VENDOR_ID_NVIDIA_SGS)) {
-		 	uint32 ChipsetID = (m_cPCIInfo.nVendorID << 16) | m_cPCIInfo.nDeviceID;
-			for (int j = 0; j < nNrDevs; j++) {
-				if (ChipsetID == asChipInfos[j].nDeviceId) {
-					cCandidates.push_back(m_cPCIInfo);
-					cCandidatesInfo.push_back(asChipInfos[j]);
-					break;
-				}
-			}
+	
+	/* Get Info */
+	if( ioctl( nFd, PCI_GFX_GET_PCI_INFO, &m_cPCIInfo ) != 0 )
+	{
+		dbprintf( "Error: Failed to call PCI_GFX_GET_PCI_INFO\n" );
+		return;
+	}
+	
+	
+	uint32 ChipsetID = (m_cPCIInfo.nVendorID << 16) | m_cPCIInfo.nDeviceID;
+	for (int j = 0; j < nNrDevs; j++) {
+		if (ChipsetID == asChipInfos[j].nDeviceId) {
+			cCandidates.push_back(m_cPCIInfo);
+			cCandidatesInfo.push_back(asChipInfos[j]);
+			break;
 		}
 	}
+		
 
 	int nCards = cCandidates.size();
 	if (!nCards) {
@@ -201,12 +222,12 @@ NVidia::NVidia()
 	m_sRiva.riva.Architecture	= cCandidatesInfo[nPrimaryCardIndex].nArchRev;
 	m_cPCIInfo = cCandidates[nPrimaryCardIndex];
 	
-	int nIoSize = get_pci_memory_size(&m_cPCIInfo, 0); 
+	int nIoSize = get_pci_memory_size(nFd, &m_cPCIInfo, 0); 
 	m_hRegisterArea = create_area("nvidia_regs", (void**)&m_pRegisterBase, nIoSize,
 	                              AREA_FULL_ACCESS, AREA_NO_LOCK);
 	remap_area(m_hRegisterArea, (void*)(pcPrimaryCardPCIInfo->u.h0.nBase0 & PCI_ADDRESS_IO_MASK));
 	
-	int nMemSize = get_pci_memory_size(&m_cPCIInfo, 1);
+	int nMemSize = get_pci_memory_size(nFd, &m_cPCIInfo, 1);
 	m_hFrameBufferArea = create_area("nvidia_framebuffer", (void**)&m_pFrameBufferBase,
 	                                 nMemSize, AREA_FULL_ACCESS, AREA_NO_LOCK);
 	remap_area(m_hFrameBufferArea, (void*)(pcPrimaryCardPCIInfo->u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK));
@@ -214,7 +235,7 @@ NVidia::NVidia()
 	m_sRiva.FlatPanel = -1;   /* autodetect later */
 	m_sRiva.forceCRTC = -1;
 
-    switch (m_sRiva.Chipset & 0x0ff0) {
+     switch (m_sRiva.Chipset & 0x0ff0) {
         case 0x0010:
             NV3Setup();
             break;
@@ -227,11 +248,20 @@ NVidia::NVidia()
         case 0x0150:
         case 0x0170:
         case 0x01A0:
+        case 0x01F0:
             NV10Setup();
-		    break;
+			break;
 		case 0x0200:
 		case 0x0250:
+		case 0x0280:
             NV20Setup();
+            break;
+        case 0x0300:
+		case 0x0310:
+		case 0x0320:
+		case 0x0330:
+		case 0x0340:
+			NV30Setup();
             break;
         default:
         	dbprintf("nVidia :: No chipset has been set - this is BAD. Exiting.\n");
@@ -485,18 +515,6 @@ os::screen_mode NVidia::GetCurrentScreenMode()
 // SEE ALSO:
 //-----------------------------------------------------------------------------
 
-void NVidia::SetColor(int nIndex, const Color32_s& sColor)
-{
-
-}
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
 bool NVidia::IntersectWithMouse(const IRect& cRect)
 {
 	return false;
@@ -671,7 +689,7 @@ bool NVidia::DrawLine(SrvBitmap* pcBitMap, const IRect& cClipRect,
 
 bool NVidia::FillRect(SrvBitmap *pcBitMap, const IRect& cRect, const Color32_s& sColor)
 {
-	if (pcBitMap->m_bVideoMem == false) {
+	if (pcBitMap->m_bVideoMem == false ) {
 		WaitForIdle();
 		return DisplayDriver::FillRect(pcBitMap, cRect, sColor);
 	}
@@ -709,7 +727,7 @@ bool NVidia::FillRect(SrvBitmap *pcBitMap, const IRect& cRect, const Color32_s& 
 bool NVidia::BltBitmap(SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap,
                        IRect cSrcRect, IPoint cDstPos, int nMode)
 {
-	if (pcDstBitMap->m_bVideoMem == false || pcSrcBitMap->m_bVideoMem == false || nMode != DM_COPY) {
+	if (pcDstBitMap->m_bVideoMem == false || pcSrcBitMap->m_bVideoMem == false || nMode != DM_COPY ) {
 		WaitForIdle();
 		return DisplayDriver::BltBitmap(pcDstBitMap, pcSrcBitMap, cSrcRect, cDstPos, nMode);
 	}
@@ -740,7 +758,6 @@ bool NVidia::CreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst,
 								os::color_space eFormat, os::Color32_s sColorKey, area_id *pBuffer )
 {
 	if( eFormat == CS_YUV422 && !m_bVideoOverlayUsed ) {
-		delete_area( *pBuffer );
 		/* Calculate offset */
     	uint32 pitch = 0; 
     	uint32 totalSize = 0;
@@ -782,7 +799,7 @@ bool NVidia::CreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst,
 			m_sRiva.riva.PMC[0x8900/4] = offset;
 			m_sRiva.riva.PMC[0x8908/4] = offset + totalSize;
 		
-			if( m_sRiva.riva.Architecture == NV_ARCH_20 ) {
+			if( m_sRiva.riva.Architecture >= NV_ARCH_20 ) {
 				m_sRiva.riva.PMC[0x8800/4] = offset;
 				m_sRiva.riva.PMC[0x8808/4] = offset + totalSize;
 			}
@@ -867,7 +884,7 @@ bool NVidia::RecreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDs
 			m_sRiva.riva.PMC[0x8900/4] = offset;
 			m_sRiva.riva.PMC[0x8908/4] = offset + totalSize;
 		
-			if( m_sRiva.riva.Architecture == NV_ARCH_20 ) {
+			if( m_sRiva.riva.Architecture >= NV_ARCH_20 ) {
 				m_sRiva.riva.PMC[0x8800/4] = offset;
 				m_sRiva.riva.PMC[0x8808/4] = offset + totalSize;
 			}
@@ -1069,18 +1086,27 @@ void NVidia::NVOverrideCRTC()
 void NVidia::NVIsSecond()
 {
     if(m_sRiva.FlatPanel == 1) {
-       switch(m_sRiva.Chipset) {
-       case NV_CHIP_GEFORCE4_440_GO:
-       case NV_CHIP_GEFORCE4_440_GO_M64:
-       case NV_CHIP_GEFORCE4_420_GO:
-       case NV_CHIP_GEFORCE4_420_GO_M32:
-       case NV_CHIP_QUADRO4_500_GOGL:
-           m_sRiva.SecondCRTC = TRUE;
-           break;
-       default:
-           m_sRiva.SecondCRTC = FALSE;
-           break;
-       }
+		switch(m_sRiva.Chipset) {
+			case 0x0112:
+			case 0x0113:
+			case 0x0174:
+			case 0x0175:
+			case 0x0176:
+			case 0x0177:
+			case 0x0178:
+			case 0x0179:
+			case 0x017D:
+			case 0x017C:
+			case 0x0186:
+			case 0x0187:
+			case 0x0286:
+			case 0x028C:
+				m_sRiva.SecondCRTC = TRUE;
+				break;
+			default:
+				m_sRiva.SecondCRTC = FALSE;
+				break;
+		}
     } else {
        if(NVIsConnected(0)) {
           if(m_sRiva.riva.PRAMDAC0[0x0000052C/4] & 0x100)
@@ -1127,28 +1153,56 @@ void NVidia::NVCommonSetup()
 
     if(m_sRiva.FlatPanel == -1) {
        switch(m_sRiva.Chipset) {
-       case NV_CHIP_GEFORCE4_440_GO:
-       case NV_CHIP_GEFORCE4_440_GO_M64:
-       case NV_CHIP_GEFORCE4_420_GO:
-       case NV_CHIP_GEFORCE4_420_GO_M32:
-       case NV_CHIP_QUADRO4_500_GOGL:
-       case NV_CHIP_GEFORCE2_GO:
-		   dbprintf("nVidia :: On a laptop - assuming Digital Flat Panel\n");
-           m_sRiva.FlatPanel = 1;
-           break;
-       default:
-           break;
+			case 0x0112:
+			case 0x0113:
+			case 0x0174:
+			case 0x0175:
+			case 0x0176:
+			case 0x0177:
+			case 0x0178:
+			case 0x0179:
+			case 0x017D:
+			case 0x017C:
+			case 0x0186:
+			case 0x0187:
+			case 0x0286:
+			case 0x028C:
+			case 0x0316:
+    		case 0x0317:
+    		case 0x031A:
+    		case 0x031B:
+    		case 0x031C:
+    		case 0x031D:
+    		case 0x031E:
+   			case 0x031F:
+    		case 0x0324:
+    		case 0x0325:
+    		case 0x0328:
+    		case 0x0329:
+    		case 0x032C:
+    		case 0x032D:
+		    case 0x0347:
+    		case 0x0348:
+    		case 0x0349:
+    		case 0x034B:
+    		case 0x034C:
+				dbprintf("nVidia :: On a laptop - assuming Digital Flat Panel\n");
+				m_sRiva.FlatPanel = 1;
+				break;
+			default:
+				break;
        }
     }
 
     switch(m_sRiva.Chipset & 0x0ff0) {
     case 0x0110:
-        if(m_sRiva.Chipset == NV_CHIP_GEFORCE2_GO)
+        if((m_sRiva.Chipset&0xFFFF) == 0x112)
             m_sRiva.SecondCRTC = TRUE;
         NVOverrideCRTC();
         break;
     case 0x0170:
     case 0x0250:
+	case 0x0280:
         NVIsSecond();
         break;
     default:
@@ -1219,14 +1273,24 @@ void NVidia::NV20Setup()
 	NVCommonSetup();
 }
 
+
+void NVidia::NV30Setup()
+{
+	dbprintf("nVidia :: NV30Setup\n");
+	m_sRiva.riva.Architecture = NV_ARCH_30;
+	m_sRiva.riva.PRAMIN = (unsigned	*)(m_pRegisterBase+0x00710000);
+	m_sRiva.riva.PCRTC0 = (unsigned	*)(m_pRegisterBase+0x00600000);
+	NVCommonSetup();
+}
+
 //-----------------------------------------------------------------------------
 
-extern "C" DisplayDriver* init_gfx_driver()
+extern "C" DisplayDriver* init_gfx_driver( int nFd )
 {
     dbprintf("nvidia attempts to initialize\n");
     
     try {
-	    NVidia *pcDriver = new NVidia();
+	    NVidia *pcDriver = new NVidia( nFd );
 	    if (pcDriver->IsInitiated()) {
 		    return pcDriver;
 	    }

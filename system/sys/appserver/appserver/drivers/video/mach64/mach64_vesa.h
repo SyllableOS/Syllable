@@ -33,7 +33,7 @@ class M64VesaDriver : public DisplayDriver
 {
 public:
 
-    M64VesaDriver();
+    M64VesaDriver( int nFd );
     ~M64VesaDriver();
     
     bool InitModes();

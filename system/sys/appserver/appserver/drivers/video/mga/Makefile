@@ -27,7 +27,7 @@ objs:
 	mkdir objs
 
 $(DRIVER): $(OBJS)
-	g++ -plugin -latheos $(OBJS) -o $(DRIVER)
+	g++ -plugin -lsyllable $(OBJS) -o $(DRIVER)
 
 deps:
 

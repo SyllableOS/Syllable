@@ -392,8 +392,25 @@ static int handle_not_present( MemArea_s *psArea, pte_t * pPte, iaddr_t nAddress
 	}
 	if ( PTE_PAGE( *pPte ) != 0 )
 	{
-		int nPage = PTE_PAGE( *pPte );
-		Page_s *psPage = &g_psFirstPage[nPage >> PAGE_SHIFT];
+		int nPage;
+		Page_s* psPage;
+		
+		if( PTE_PAGE( *pPte ) & 0x80000000 )
+		{
+			/* Try to swap in the page */
+			nError =  swap_in( pPte );
+			if( nError == 0 )
+			{
+				flush_tlb_global();
+				return( 0 );
+			} else {
+				shrink_caches( PAGE_SIZE );
+				return( -EAGAIN );
+			}
+		}
+		
+		nPage = PTE_PAGE( *pPte );
+		psPage = &g_psFirstPage[nPage >> PAGE_SHIFT];
 
 		if ( psPage->p_nFlags & PF_BUSY )
 		{

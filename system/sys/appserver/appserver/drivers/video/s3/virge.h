@@ -115,6 +115,7 @@ static inline void noprint( char* pzFormat, ... ) {}
 
 // internal struct used to clone the add-on from server space to client space
 typedef struct {
+	int nFd;
     PCI_Info_s	pcii;
     vuchar	*base0;
 #if !defined(__INTEL__)
@@ -164,7 +165,7 @@ class	VirgeDriver : public DisplayDriver
 {
 public:
 
-    VirgeDriver();
+    VirgeDriver( int nFd );
     ~VirgeDriver();
 
     area_id	 Open();

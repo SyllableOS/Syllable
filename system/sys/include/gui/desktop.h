@@ -24,6 +24,7 @@
 
 #include <gui/region.h>
 #include <gui/guidefines.h>
+#include <util/message.h>
 
 namespace os {
 #if 0
@@ -54,16 +55,12 @@ public:
     bool	SetColorSpace( color_space eColorSpace );
     bool	SetRefreshRate( float vRefreshRate );
     bool	Activate();
-  
+    
+	int32 GetWindows( Message* pcMsg );
+	void ActivateWindow( int32 nWindow );
 private:
-    int		 m_nCookie;
-    int		 m_nDesktop;
-    screen_mode* m_psScreenMode;
-    void*	 m_pFrameBuffer;
-    uint32	 unused[6];
-
-    area_id	m_hServerAreaID;
-    area_id	m_hLocalAreaID;
+	class Private;
+	Private* m;
 };
 
 }

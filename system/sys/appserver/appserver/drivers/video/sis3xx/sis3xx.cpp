@@ -38,6 +38,7 @@
 #include <atheos/types.h>
 #include <atheos/pci.h>
 #include <atheos/kernel.h>
+#include <appserver/pci_graphics.h>
 
 #undef HAVE_MTRR
 #ifdef HAVE_MTRR
@@ -51,36 +52,24 @@
 #include "sis3xx.h"
 #include "sis_cursor.h"
 
-
-static const struct chip_info asChipInfos[] = {
-	{ 0x0300 }, /* SIS 300 */
-	{ 0x5300 }, /* SIS 540 VGA */
-	{ 0x0630 }, /* SIS 630/730 */
-	{ 0x0310 }, /* SIS 315H */
-	{ 0x0315 }, /* SIS 315 */
-	{ 0x0325 }, /* SIS 315 PRO */
-	{ 0x0550 }, /* SIS 550 VGA */
-	{ 0x6325 }, /* SIS 650/740 */
-	{ 0x0330 }, /* SIS 330 ( Xabre ) */
-	{ 0x6330 }  /* SIS 660/760 */
-};
-
 inline uint32 pci_size(uint32 base, uint32 mask)
 {
 	uint32 size = base & mask;
 	return size & ~(size-1);
 }
 
-static uint32 get_pci_memory_size(const PCI_Info_s *pcPCIInfo, int nResource)
+
+static uint32 get_pci_memory_size(int nFd, const PCI_Info_s *pcPCIInfo, int nResource)
 {
 	int nBus = pcPCIInfo->nBus;
 	int nDev = pcPCIInfo->nDevice;
 	int nFnc = pcPCIInfo->nFunction;
 	int nOffset = PCI_BASE_REGISTERS + nResource*4;
-	uint32 nBase = read_pci_config(nBus, nDev, nFnc, nOffset, 4);
-	write_pci_config(nBus, nDev, nFnc, nOffset, 4, ~0);
-	uint32 nSize = read_pci_config(nBus, nDev, nFnc, nOffset, 4);
-	write_pci_config(nBus, nDev, nFnc, nOffset, 4, nBase);
+	uint32 nBase = pci_gfx_read_config(nFd, nBus, nDev, nFnc, nOffset, 4);
+	
+	pci_gfx_write_config(nFd, nBus, nDev, nFnc, nOffset, 4, ~0);
+	uint32 nSize = pci_gfx_read_config(nFd, nBus, nDev, nFnc, nOffset, 4);
+	pci_gfx_write_config(nFd, nBus, nDev, nFnc, nOffset, 4, nBase);
 	if (!nSize || nSize == 0xffffffff) return 0;
 	if (nBase == 0xffffffff) nBase = 0;
 	if (!(nSize & PCI_ADDRESS_SPACE)) {
@@ -90,27 +79,15 @@ static uint32 get_pci_memory_size(const PCI_Info_s *pcPCIInfo, int nResource)
 	}
 }
 
-SiS3xx::SiS3xx() : m_cGELock("sis3xx_ge_lock"), m_cCursorHotSpot(0,0)
+SiS3xx::SiS3xx( int nFd ) : m_cGELock("sis3xx_ge_lock"), m_cCursorHotSpot(0,0)
 {	
-	bool bFound = false;
 	m_bIsInitiated = false;
 	m_bCursorIsOn = false;
 	
-	int nNrDevs = sizeof(asChipInfos)/sizeof(chip_info);
-	for (int i = 0; get_pci_info(&m_cPCIInfo, i)==0; i++) {
-		if (m_cPCIInfo.nVendorID == 0x1039 ) {
-			for (int j = 0; j < nNrDevs; j++) {
-				if (m_cPCIInfo.nDeviceID==asChipInfos[j].nDeviceId) {
-					bFound = true;
-					break;
-				}
-			}
-			if (bFound) break;
-		}
-	}
-	
-	if (!bFound) {
-		dbprintf("No supported cards found\n");
+	/* Get Info */
+	if( ioctl( nFd, PCI_GFX_GET_PCI_INFO, &m_cPCIInfo ) != 0 )
+	{
+		dbprintf( "Error: Failed to call PCI_GFX_GET_PCI_INFO\n" );
 		return;
 	}
 	
@@ -125,20 +102,21 @@ SiS3xx::SiS3xx() : m_cGELock("sis3xx_ge_lock"), m_cCursorHotSpot(0,0)
 	
 	/* Map MMIO and IO ports */
 	m_pRegisterBase = NULL;
-	int nIoSize = get_pci_memory_size(&m_cPCIInfo, 1); 
+	int nIoSize = get_pci_memory_size(nFd, &m_cPCIInfo, 1); 
 	m_hRegisterArea = create_area("sis3xx_regs", (void**)&m_pRegisterBase, nIoSize,
 	                              AREA_FULL_ACCESS, AREA_NO_LOCK);
 	remap_area(m_hRegisterArea, (void*)(m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK));
 	
 	/* Map Framebuffer */
 	m_pFrameBufferBase = NULL;
-	int nMemSize = get_pci_memory_size(&m_cPCIInfo, 0); 
+	int nMemSize = get_pci_memory_size(nFd, &m_cPCIInfo, 0); 
 	m_hFrameBufferArea = create_area("sis3xx_framebuffer", (void**)&m_pFrameBufferBase,
 	                                 nMemSize, AREA_FULL_ACCESS, AREA_NO_LOCK);
 	remap_area(m_hFrameBufferArea, (void*)(m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK));
 	
 	/* Initialize shared info */
 	m_pHw = &si;
+	m_pHw->nFd = nFd;
 	m_pHw->pci_dev = m_cPCIInfo;
 	m_pHw->device_id = m_cPCIInfo.nDeviceID;
 	m_pHw->regs = ( vuint32* )m_pRegisterBase;
@@ -714,6 +692,7 @@ bool SiS3xx::BltBitmap(SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap,
 		SiS310SetupClipLT( 0, 0 );
 		SiS310SetupClipRB( (m_sCurrentMode.m_nWidth - 1), (m_sCurrentMode.m_nHeight - 1) );
 		SiS310SetupCMDFlag( m_pHw->AccelDepth )
+		
 	} else {
 		SiS300SetupDSTColorDepth( m_pHw->DstColor );
 		SiS300SetupSRCPitch( m_sCurrentMode.m_nBytesPerLine );
@@ -727,6 +706,7 @@ bool SiS3xx::BltBitmap(SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap,
 	if( cSrcRect.top >= 2048 ) {
 		nSrcBase = m_sCurrentMode.m_nBytesPerLine * cSrcRect.top;
 	}
+	
 	long nDstBase = 0;
 	if( cDstPos.y >= 2048 ) {
 		nDstBase = m_sCurrentMode.m_nBytesPerLine * cDstPos.y;
@@ -857,12 +837,12 @@ void SiS3xx::DeleteVideoOverlay( area_id *pBuffer )
 
 //-----------------------------------------------------------------------------
 
-extern "C" DisplayDriver* init_gfx_driver()
+extern "C" DisplayDriver* init_gfx_driver( int nFd )
 {
     dbprintf("sis3xx attempts to initialize\n");
     
     try {
-	    SiS3xx *pcDriver = new SiS3xx();
+	    SiS3xx *pcDriver = new SiS3xx( nFd );
 	    if (pcDriver->IsInitiated()) {
 		    return pcDriver;
 	    }

@@ -1,8 +1,6 @@
-# include ../freetype.makefile
+include ../freetype.makefile
 
-FREETYPEINCLUDE = $(shell freetype-config --cflags)
-
-COPTS   = -I$(TOP)/src $(FREETYPEINCLUDE) -c 
+COPTS   = -I$(TOP)/src -I$(FREETYPEINCLUDE) -c -O2 -Wall
 
 DEVBIN = /system/drivers/appserver/video
 OBJS =	savagedrv.o

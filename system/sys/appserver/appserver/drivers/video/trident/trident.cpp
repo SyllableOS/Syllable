@@ -27,6 +27,7 @@
 #include <atheos/types.h>
 #include <atheos/kernel.h>
 #include <atheos/isa_io.h>
+#include <appserver/pci_graphics.h>
 #include "../../../server/bitmap.h"
 #include "../../../server/sprite.h"
 
@@ -303,7 +304,7 @@ bool TridentDriver::SetBIOSMode( uint16 num ) {
 }
 
 
-TridentDriver::TridentDriver()
+TridentDriver::TridentDriver( int nFd )
 :m_cLock("TridentHWLock")
 {
   const TridentCardDesc *pCardDesc;
@@ -319,22 +320,23 @@ TridentDriver::TridentDriver()
   m_hMMIOArea = 0;
 
   dbprintf("Starting probing Trident video cards...\n");
+  
+  /* Get Info */
+	if( ioctl( nFd, PCI_GFX_GET_PCI_INFO, &pci ) != 0 )
+	{
+		dbprintf( "Assuming ISA card\n" );
+	} else {
+	
+		for ( int j = 0 ; TridentCardsDesc[j].CardName != NULL ; ++j ) {
+        	if ( pci.nDeviceID == TridentCardsDesc[j].PciDeviceID ) {
+	          bFound = true;
+    	      m_cCardInfo = pci;
+        	  m_nBusType = PCI;
+	          m_nChip = TridentCardsDesc[j].CardID;
+    	    }
+	      }
+   }
 
-  // First, check PCI bus
-  for ( int i = 0 ;  get_pci_info( &pci, i ) == 0 ; ++i ) {
-    dbprintf("PCI %d: Vendor: %x - Device: %x - Rev. %x.\n",
-             i, pci.nVendorID, pci.nDeviceID, pci.nRevisionID);
-    if ( pci.nVendorID == PCI_VENDOR_ID_TRIDENT ) {
-      for ( int j = 0 ; TridentCardsDesc[j].CardName != NULL ; ++j ) {
-        if ( pci.nDeviceID == TridentCardsDesc[j].PciDeviceID ) {
-          bFound = true;
-          m_cCardInfo = pci;
-          m_nBusType = PCI;
-          m_nChip = TridentCardsDesc[j].CardID;
-        }
-      }
-    }
-  }
 
   if ( bFound ) {
     // A PCI card has been found.
@@ -552,13 +554,13 @@ bool TridentDriver::BltBitmap( SrvBitmap* dstbm, SrvBitmap* srcbm, IRect cSrcRec
 }
 
 
-extern "C" DisplayDriver* init_gfx_driver()
+extern "C" DisplayDriver* init_gfx_driver( int nFd )
 {
   dbprintf( "Trident video driver (ver. %s) attempts to initialize...\n",
            VERSION );
 
   try {
-	DisplayDriver* pcDriver = new TridentDriver();
+	DisplayDriver* pcDriver = new TridentDriver( nFd );
 	return( pcDriver );
   }
   catch( exception&  cExc ) {

@@ -20,6 +20,7 @@
 
 #include <gui/bitmap.h>
 #include <exception>
+#include <appserver/pci_graphics.h>
 
 #include "mga.h"
 #include "mga_regs.h"
@@ -72,29 +73,21 @@ static struct MGAChip_s gs_sChips[MAXCHIPS] = {
 	{ 0, "Unknown", NONE }
 };
 
-Matrox::Matrox() : m_cGELock( "matrox_ge_lock" ), m_cCursorHotSpot(0,0)
+Matrox::Matrox( int nFd ) : m_cGELock( "matrox_ge_lock" ), m_cCursorHotSpot(0,0)
 {
 	int i;
-	bool bFound = false;
+
 
 	m_bIsInitiated = false;
 	m_hRegisterArea = -1;
 	m_hFrameBufferArea = -1;
 	m_pcCrtc = NULL;
 	m_pcDac = NULL;
-
-	for( i = 0; get_pci_info( &m_cPCIInfo, i ) == 0; i++ )
+	
+	/* Get Info */
+	if( ioctl( nFd, PCI_GFX_GET_PCI_INFO, &m_cPCIInfo ) != 0 )
 	{
-		if( m_cPCIInfo.nVendorID == PCI_VENDOR_ID_MATROX )
-		{
-			bFound = true;
-			break;
-		}
-	}
-
-	if ( bFound == false )
-	{
-		dbprintf( "No MGA card\n" );
+		dbprintf( "Error: Failed to call PCI_GFX_GET_PCI_INFO\n" );
 		return;
 	}
 
@@ -240,7 +233,7 @@ Matrox::Matrox() : m_cGELock( "matrox_ge_lock" ), m_cCursorHotSpot(0,0)
 	if( m_nPointerScheme == POINTER_MILLENIUM )
 		m_cLastMousePosition = IPoint( 0, 0 );
 
-	write_pci_config( m_cPCIInfo.nBus, m_cPCIInfo.nDevice, m_cPCIInfo.nFunction, 0x04, 4, 0x00000003 );
+	pci_gfx_write_config( nFd, m_cPCIInfo.nBus, m_cPCIInfo.nDevice, m_cPCIInfo.nFunction, 0x04, 4, 0x00000003 );
 	m_bIsInitiated = true;
 }
 
@@ -734,11 +727,11 @@ bool Matrox::BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap,
     return( true );
 }
 
-extern "C" DisplayDriver* init_gfx_driver()
+extern "C" DisplayDriver* init_gfx_driver( int nFd )
 {
 	dbprintf( "mga driver attempts to initialize\n" );
 
-	Matrox* pcDriver = new Matrox();
+	Matrox* pcDriver = new Matrox( nFd );
 
 	if ( pcDriver->IsInitiated() ) {
 		return( pcDriver );

@@ -143,10 +143,10 @@ sis_query_config_space(PSIS_HW_DEVICE_INFO psishw_ext,
 	unsigned long offset, unsigned long set, unsigned long *value)
 {
 	if (set == 0)
-		*value = read_pci_config( si.pci_dev.nBus, si.pci_dev.nDevice, si.pci_dev.nFunction,
+		*value = pci_gfx_read_config( si.nFd, si.pci_dev.nBus, si.pci_dev.nDevice, si.pci_dev.nFunction,
 								offset, 4 );
 	else
-		write_pci_config( si.pci_dev.nBus, si.pci_dev.nDevice, si.pci_dev.nFunction,
+		pci_gfx_write_config( si.nFd, si.pci_dev.nBus, si.pci_dev.nDevice, si.pci_dev.nFunction,
 								offset, 4, *value );
 
 	return TRUE;
@@ -335,7 +335,7 @@ int sis_get_dram_size_300(void)
 	uint8 pci_data, reg;
 	
 	if( si.chip == SIS_540 || si.chip == SIS_630 || si.chip == 730 ) {
-		pci_data = read_pci_config( si.pci_dev.nBus, si.pci_dev.nDevice, si.pci_dev.nFunction,
+		pci_data = pci_gfx_read_config( si.nFd, si.pci_dev.nBus, si.pci_dev.nDevice, si.pci_dev.nFunction,
 								IND_BRI_DRAM_STATUS, 1 );
 		pci_data = ( pci_data & BRI_DRAM_SIZE_MASK ) >> 4;
 		si.mem_size = (unsigned int)(1 << (pci_data+21));
@@ -539,7 +539,7 @@ int sis_get_dram_size_315(void)
 				dbprintf( "Warning: Could not determine memory size, "
 			       "now reading from PCI config\n");
 			
-				pci_data = read_pci_config( si.pci_dev.nBus, si.pci_dev.nDevice, si.pci_dev.nFunction,
+				pci_data = pci_gfx_read_config( si.nFd, si.pci_dev.nBus, si.pci_dev.nDevice, si.pci_dev.nFunction,
 								IND_BRI_DRAM_STATUS, 1 );
 				pci_data = ( pci_data & BRI_DRAM_SIZE_MASK ) >> 4;
 				si.mem_size = (unsigned int)( 1 << ( pci_data + 21 ) );

@@ -26,10 +26,15 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/sis3xx: $(OBJS)
-	gcc -plugin $(OBJS) -o $(OBJDIR)/sis3xx -latheos -lstdc++
+	gcc -plugin $(OBJS) -o $(OBJDIR)/sis3xx -lsyllable -lstdc++
 
 install: $(OBJDIR)/sis3xx
 	cp -f $(OBJDIR)/sis3xx $(DEVBIN)/sis3xx
+
+
+dist: $(OBJDIR)/sis3xx
+	cp -f $(OBJDIR)/sis3xx $(DIST_DIR)/atheos/sys/drivers/appserver/video/sis3xx
+
 clean:
 	-rm $(OBJS) $(OBJDIR)/sis3xx
 

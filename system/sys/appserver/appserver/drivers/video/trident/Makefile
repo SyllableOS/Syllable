@@ -28,7 +28,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/trident: $(OBJS)
-	gcc -plugin $(OBJS) -o $(OBJDIR)/trident -latheos -lstdc++
+	gcc -plugin $(OBJS) -o $(OBJDIR)/trident -lsyllable -lstdc++
 
 install: $(OBJDIR)/trident
 	cp -f $(OBJDIR)/trident $(DEVBIN)/trident

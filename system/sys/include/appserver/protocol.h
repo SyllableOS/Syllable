@@ -57,6 +57,9 @@ enum
     DR_ADD_DEFAULT_FONT,
     DR_RESCAN_FONTS,
     DR_SET_DESKTOP,
+    DR_GET_WINDOW_LIST,
+    DR_ACTIVATE_WINDOW,
+    DR_CLOSE_WINDOWS,
     
     AR_OPEN_WINDOW = 10000,
     AR_CLOSE_WINDOW,
@@ -113,7 +116,8 @@ enum
     WR_CREATE_VIDEO_OVERLAY,
     WR_RECREATE_VIDEO_OVERLAY,
     WR_UPDATE_VIDEO_OVERLAY,
-    WR_DELETE_VIDEO_OVERLAY
+    WR_DELETE_VIDEO_OVERLAY,
+    WR_SET_ICON,
 };
 
 
@@ -454,31 +458,14 @@ struct AR_GetScreenModeInfoReply_s
     int	      m_nBytesPerLine;
     color_space m_eColorSpace;
 };
-
-enum { SCRMF_RES = 0x0001, SCRMF_COLORSPACE = 0x0002, SCRMF_REFRESH = 0x0004, SCRMF_POS = 0x0008, SCRMF_SIZE = 0x0010 };
-
-struct AR_SetScreenMode_s
-{
-    int		m_nVersion;
-    int		m_nDesktop;
-    uint32	m_nValidityMask;
-    int		m_nWidth;
-    int		m_nHeight;
-    color_space	m_eColorSpace;
-    float	m_vRefreshRate;
-    float	m_vHPos;
-    float	m_vVPos;
-    float	m_vHSize;
-    float	m_vVSize;
-};
-
+#if 0
 typedef struct
 {
     int	nKeyCode;
     int	nQualifiers;
     char	zString[64];
 } SR_KbdEvent_s;
-
+#endif
 /***	Messages sendt to window threads in the display server	***/
 
 struct WR_Request_s

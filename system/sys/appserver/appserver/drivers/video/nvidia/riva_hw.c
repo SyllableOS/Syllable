@@ -1266,6 +1266,7 @@ static void CalcStateExt
             break;
         case NV_ARCH_10:
         case NV_ARCH_20:
+        case NV_ARCH_30:
 #if 0
             if(chip->Chipset == PCI_DEVICE_ID_NVIDIA_IGEFORCE2) {
                 nForceUpdateArbitrationSettings(VClk,
@@ -1341,6 +1342,7 @@ static void UpdateFifoState
             break;
         case NV_ARCH_10:
         case NV_ARCH_20:
+        case NV_ARCH_30:
             LOAD_FIXED_STATE(nv10,FIFO);
             break;
     }
@@ -1437,6 +1439,7 @@ static void LoadStateExt
             break;
         case NV_ARCH_10:
         case NV_ARCH_20:
+        case NV_ARCH_30:
             if(chip->twoHeads) {
                VGA_WR08(chip->PCIO, 0x03D4, 0x44);
                VGA_WR08(chip->PCIO, 0x03D5, state->crtcOwner);
@@ -1491,6 +1494,16 @@ static void LoadStateExt
                 chip->PGRAPH[0x00000864/4] = state->pitch3;
                 chip->PGRAPH[0x000009A4/4] = chip->PFB[0x00000200/4]; 
                 chip->PGRAPH[0x000009A8/4] = chip->PFB[0x00000204/4];
+	    }
+	    if(chip->Architecture >= NV_ARCH_30) {
+	    	 chip->PGRAPH[0x0084/4] = 0x40108700;
+             chip->PGRAPH[0x0890/4] = 0x00140000;
+             chip->PGRAPH[0x008C/4] = 0xf00e0431;
+             chip->PGRAPH[0x0090/4] = 0x00008000;
+             chip->PGRAPH[0x0610/4] = 0xf04b1f36;
+             chip->PGRAPH[0x0B80/4] = 0x1002d888;
+             chip->PGRAPH[0x0B88/4] = 0x62ff007f;
+	    
 	    }
             if(chip->twoHeads) {
                chip->PCRTC0[0x00000860/4] = state->head;
@@ -1605,6 +1618,11 @@ static void LoadStateExt
 
     LOAD_FIXED_STATE(Riva,FIFO);
     UpdateFifoState(chip);
+    
+	if(chip->Architecture >= NV_ARCH_30 && !chip->flatPanel) {
+		chip->PRAMDAC0[0x0578/4] = 0;
+		chip->PRAMDAC0[0x057C/4] = 0;   
+	}
 
     /*
      * Load HW mode state.
@@ -1725,6 +1743,7 @@ static void UnloadStateExt
             break;
         case NV_ARCH_10:
         case NV_ARCH_20:
+        case NV_ARCH_30:
             state->offset0  = chip->PGRAPH[0x00000640/4];
             state->offset1  = chip->PGRAPH[0x00000644/4];
             state->offset2  = chip->PGRAPH[0x00000648/4];
@@ -1977,7 +1996,15 @@ static void nv10GetConfig
                                                                   13500;
     switch(pNv->Chipset & 0x0ff0) {
     case 0x0170:
+    case 0x0180:
+    case 0x01F0:
     case 0x0250:
+    case 0x0280:
+    case 0x0300:
+    case 0x0310:
+    case 0x0320:
+    case 0x0330:
+    case 0x0340:
        if(chip->PEXTDEV[0x0000/4] & (1 << 22))
            chip->CrystalFreqKHz = 27000;
        break;
@@ -2034,6 +2061,7 @@ int RivaGetConfig
             break;
         case NV_ARCH_10:
         case NV_ARCH_20:
+        case NV_ARCH_30:
             nv10GetConfig(pNv);
             break;
         default:

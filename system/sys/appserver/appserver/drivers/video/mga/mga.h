@@ -34,7 +34,7 @@
 class Matrox : public VesaDriver
 {
 	public:
-		Matrox();
+		Matrox( int nFd );
 		~Matrox();
 
 		virtual area_id Open();

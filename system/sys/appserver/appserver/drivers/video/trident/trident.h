@@ -160,7 +160,7 @@ class TridentDriver : public DisplayDriver
 {
 public:
 
-    TridentDriver();
+    TridentDriver( int nFd );
     ~TridentDriver();
 
     virtual area_id Open();

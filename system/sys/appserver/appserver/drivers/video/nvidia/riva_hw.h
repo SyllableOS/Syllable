@@ -76,6 +76,7 @@ typedef int				Bool;
 #define NV_ARCH_04  0x04
 #define NV_ARCH_10  0x10
 #define NV_ARCH_20  0x20
+#define NV_ARCH_30  0x30
 /***************************************************************************\
 *                                                                           *
 *                             FIFO registers.                               *

@@ -29,7 +29,7 @@
 #include "inc/sysbase.h"
 #include "inc/bcache.h"
 #include "inc/areas.h"
-
+#include "inc/swap.h"
 
 Page_s *g_psFirstPage;
 Page_s *g_psFirstFreePage = NULL;
@@ -270,6 +270,7 @@ uint32 get_free_pages( int nPageCount, int nFlags )
 		memset( ( void * )nPage, 0, PAGE_SIZE * nPageCount );
 	}
 	flush_tlb_global();
+	
 	return ( nPage );
 }
 

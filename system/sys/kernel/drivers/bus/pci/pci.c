@@ -545,9 +545,7 @@ void pci_scan_bus( int nBusNum, int nBridgeFrom, int nBusDev )
 					psInfo->nHandle = register_device( zTemp, PCI_BUS_NAME );
 
 					/* Special devices */
-					if ( psInfo->nClassBase == PCI_DISPLAY )
-						claim_device( -1, psInfo->nHandle, "VGA controller", DEVICE_VIDEO );
-					else if ( psInfo->nClassBase == PCI_BRIDGE && psInfo->nClassSub == PCI_HOST )
+					if ( psInfo->nClassBase == PCI_BRIDGE && psInfo->nClassSub == PCI_HOST )
 						claim_device( -1, psInfo->nHandle, "PCI Host Bridge", DEVICE_SYSTEM );
 					else if ( psInfo->nClassBase == PCI_BRIDGE && psInfo->nClassSub == PCI_ISA )
 						claim_device( -1, psInfo->nHandle, "PCI->ISA Bridge", DEVICE_SYSTEM );

@@ -23,6 +23,7 @@
 #include "mach64.h"
 #include <gui/bitmap.h>
 #include <atheos/kdebug.h>
+#include <appserver/pci_graphics.h>
 
 static const char m64n_ct[]  = "mach64CT (ATI264CT)";
 static const char m64n_et[]  = "mach64ET (ATI264ET)";
@@ -161,22 +162,24 @@ inline uint32 pci_size(uint32 base, uint32 mask)
 	return size & ~(size-1);
 }
 
-static uint32 get_pci_memory_size(const PCI_Info_s *pcPCIInfo, int nResource)
+
+static uint32 get_pci_memory_size(int nFd, const PCI_Info_s *pcPCIInfo, int nResource)
 {
 	int nBus = pcPCIInfo->nBus;
 	int nDev = pcPCIInfo->nDevice;
 	int nFnc = pcPCIInfo->nFunction;
 	int nOffset = PCI_BASE_REGISTERS + nResource*4;
-	uint32 nBase = read_pci_config(nBus, nDev, nFnc, nOffset, 4);
-	write_pci_config(nBus, nDev, nFnc, nOffset, 4, ~0);
-	uint32 nSize = read_pci_config(nBus, nDev, nFnc, nOffset, 4);
-	write_pci_config(nBus, nDev, nFnc, nOffset, 4, nBase);
+	uint32 nBase = pci_gfx_read_config(nFd, nBus, nDev, nFnc, nOffset, 4);
+	
+	pci_gfx_write_config(nFd, nBus, nDev, nFnc, nOffset, 4, ~0);
+	uint32 nSize = pci_gfx_read_config(nFd, nBus, nDev, nFnc, nOffset, 4);
+	pci_gfx_write_config(nFd, nBus, nDev, nFnc, nOffset, 4, nBase);
 	if (!nSize || nSize == 0xffffffff) return 0;
 	if (nBase == 0xffffffff) nBase = 0;
 	if (!(nSize & PCI_ADDRESS_SPACE)) {
-		return( pci_size(nSize, PCI_ADDRESS_MEMORY_32_MASK) );
+		return pci_size(nSize, PCI_ADDRESS_MEMORY_32_MASK);
 	} else {
-		return( pci_size(nSize, PCI_ADDRESS_IO_MASK & 0xffff) );
+		return pci_size(nSize, PCI_ADDRESS_IO_MASK & 0xffff);
 	}
 }
 
@@ -204,14 +207,14 @@ uint32 ATImach64::ProbeHardware (PCI_Info_s * PCIInfo ) {
 // NOTE:
 // SEE ALSO:
 //-----------------------------------------------------------------------------
-bool ATImach64::InitHardware() {
+bool ATImach64::InitHardware( int nFd ) {
 
  	// initialize internal instance variables
 	memset (&info, 0, sizeof (struct ati_info)); // initialize chip state structure
 
 	 // allocate framebuffer area
 	m_hFramebufferArea = create_area ("mach64_fb", (void **)&m_pFramebufferBase,
-		get_pci_memory_size(&m_cPCIInfo, 0), AREA_FULL_ACCESS, AREA_NO_LOCK);
+		get_pci_memory_size(nFd, &m_cPCIInfo, 0), AREA_FULL_ACCESS, AREA_NO_LOCK);
 	if( m_hFramebufferArea < 0 ) {
 		dbprintf ("Mach64:: failed to create framebuffer area (%d)\n", m_hFramebufferArea);
 		return false;
@@ -227,7 +230,7 @@ bool ATImach64::InitHardware() {
 
 	// allocate register area
 	m_hRegisterArea = create_area ("mach64_register", (void **)&m_pRegisterBase,
-		get_pci_memory_size(&m_cPCIInfo, 2), AREA_FULL_ACCESS, AREA_NO_LOCK);
+		get_pci_memory_size(nFd, &m_cPCIInfo, 2), AREA_FULL_ACCESS, AREA_NO_LOCK);
 	if( m_hRegisterArea < 0 ) {
 		dbprintf ("Mach64::failed to create register area (%d)\n", m_hRegisterArea);
 		return false;
@@ -263,11 +266,11 @@ bool ATImach64::InitHardware() {
 	 * Enable memory-space accesses using config-space
 	 * command register.
 	 */
-	tmp=read_pci_config(m_cPCIInfo.nBus, m_cPCIInfo.nDevice, m_cPCIInfo.nFunction, PCI_COMMAND, 2);
+	tmp=pci_gfx_read_config(nFd, m_cPCIInfo.nBus, m_cPCIInfo.nDevice, m_cPCIInfo.nFunction, PCI_COMMAND, 2);
 	if( !(tmp & PCI_COMMAND_MEMORY) ) {
 		dprintf("Mach64:: Enabling memory-space access\n");
 		tmp |= PCI_COMMAND_MEMORY;
-		write_pci_config(m_cPCIInfo.nBus, m_cPCIInfo.nDevice, m_cPCIInfo.nFunction, PCI_COMMAND, 2, tmp);
+		pci_gfx_write_config(nFd, m_cPCIInfo.nBus, m_cPCIInfo.nDevice, m_cPCIInfo.nFunction, PCI_COMMAND, 2, tmp);
 	}
 	info.frame_buffer_phys = m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK;
 	info.frame_buffer =m_pFramebufferBase;
@@ -504,14 +507,18 @@ vesa:
 // NOTE:
 // SEE ALSO:
 //-----------------------------------------------------------------------------
-ATImach64::ATImach64() : m_cLock ("mach64_hardware_lock") {
+ATImach64::ATImach64( int nFd ) : M64VesaDriver( nFd ), m_cLock ("mach64_hardware_lock") {
 
 	m_bIsInitialized = false;
-
-	// scan all PCI devices
-	for( int i = 0 ; get_pci_info( &m_cPCIInfo, i ) == 0 ; i++ ) {
-		if( ProbeHardware (&m_cPCIInfo) ) { m_bIsInitialized = true; break; }
+	
+	/* Get Info */
+	if( ioctl( nFd, PCI_GFX_GET_PCI_INFO, &m_cPCIInfo ) != 0 )
+	{
+		dbprintf( "Error: Failed to call PCI_GFX_GET_PCI_INFO\n" );
+		return;
 	}
+	
+	if( ProbeHardware (&m_cPCIInfo) ) { m_bIsInitialized = true; }
 
 	if( m_bIsInitialized == false ) {
 		dbprintf("Mach64:: No supported cards found\n");
@@ -519,7 +526,7 @@ ATImach64::ATImach64() : m_cLock ("mach64_hardware_lock") {
 	}
 
 	// OK. card found. now initialize it.
-	if( !InitHardware () ) {
+	if( !InitHardware ( nFd ) ) {
 		m_bIsInitialized = false;
 		return;
 	}
@@ -779,10 +786,10 @@ bool ATImach64::IsInitialized() {
 //-----------------------------------------------------------------------------
 
 extern "C"
-DisplayDriver* init_gfx_driver() {
+DisplayDriver* init_gfx_driver( int nFd ) {
 
 	try {
-		ATImach64* pcDriver = new ATImach64();
+		ATImach64* pcDriver = new ATImach64( nFd );
 		if (pcDriver->IsInitialized()) {
 			return pcDriver;
 		} else {

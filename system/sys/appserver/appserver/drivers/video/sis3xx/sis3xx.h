@@ -19,7 +19,7 @@ struct chip_info
 class SiS3xx : public DisplayDriver
 {
 public:
-	SiS3xx();
+	SiS3xx( int nFd );
 	~SiS3xx();
 
 	virtual area_id	Open();
@@ -38,7 +38,7 @@ public:
 	virtual void    SetMousePos( os::IPoint cNewPos );	
 	
 	virtual bool	IntersectWithMouse(const IRect& cRect);
-
+	
 	virtual bool	DrawLine( SrvBitmap* psBitMap, const os::IRect& cClipRect,
 				  const os::IPoint& cPnt1, const os::IPoint& cPnt2, const os::Color32_s& sColor, int nMode );
 	virtual bool	FillRect( SrvBitmap* psBitMap, const os::IRect& cRect, const os::Color32_s& sColor );

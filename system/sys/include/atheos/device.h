@@ -56,6 +56,7 @@ enum device_type {
 	DEVICE_PROCESSOR
 };
 
+/* General device information */
 typedef struct
 {
 	int              di_nHandle;	
@@ -88,7 +89,9 @@ enum
     IOCTL_REREAD_PTABLE,
     IOCTL_GET_DEVICE_PATH = MK_IOCTLW( IOCTL_MOD_KERNEL, 0x01, PATH_MAX ),
 	IOCTL_GET_DEVICE_HANDLE = MK_IOCTLR( IOCTL_MOD_KERNEL, 0x02, 4 ),
-   
+	
+	IOCTL_GET_APPSERVER_DRIVER = MK_IOCTLR( IOCTL_MOD_KERNEL, 0x100, PATH_MAX ),
+	
     IOCTL_USER = 100000000
 };
 
