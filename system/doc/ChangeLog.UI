@@ -1,3 +1,10 @@
+* November 21 2004, Henrik Isaksson *
+
+ Added ShortcutKey::GetKeyCode() and ShortcutKey::GetQualifiers().
+
+ Checked in patches from Arno that change the look of selected items in
+ ListViewStringRow and TreeViewStringNode.
+
 * November 14 2004, Jake Hamby *
 
  Fix Radeon driver for 1400x1050 resolution and any other resolution whose
