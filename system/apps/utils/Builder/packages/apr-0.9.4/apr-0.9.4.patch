@@ -1,0 +1,86 @@
+diff -r -u apr-0.9.4/configure apr-mod/configure
+--- apr-0.9.4/configure	2003-09-26 05:29:47.000000000 +0000
++++ apr-mod/configure	2004-05-05 08:42:47.000000000 +0000
+@@ -27354,7 +27354,7 @@
+ fi
+ 
+ ac_rc=yes
+-for ac_spec in header:kernel/OS.h func:create_area; do
++for ac_spec in func:create_area; do
+     ac_type=`echo "$ac_spec" | sed -e 's/:.*$//'`
+     ac_item=`echo "$ac_spec" | sed -e 's/^.*://'`
+     case $ac_type in
+@@ -27585,7 +27585,7 @@
+ fi
+ 
+ ac_rc=yes
+-for ac_spec in header:kernel/OS.h func:create_area; do
++for ac_spec in func:create_area; do
+     ac_type=`echo "$ac_spec" | sed -e 's/:.*$//'`
+     ac_item=`echo "$ac_spec" | sed -e 's/^.*://'`
+     case $ac_type in
+diff -r -u apr-0.9.4/shmem/beos/shm.c apr-mod/shmem/beos/shm.c
+--- apr-0.9.4/shmem/beos/shm.c	2003-01-01 00:01:56.000000000 +0000
++++ apr-mod/shmem/beos/shm.c	2004-05-05 08:43:01.000000000 +0000
+@@ -59,9 +59,17 @@
+ #include "apr_strings.h"
+ #include <stdio.h>
+ #include <stdlib.h>
+-#include <kernel/OS.h>
++
++#ifdef __SYLLABLE__
++  #include <atheos/areas.h>
++  #define B_PAGE_SIZE PAGE_SIZE
++#else
++  #include <kernel/OS.h>
++#endif
++
+ #include "apr_portable.h"
+ 
++
+ struct apr_shm_t {
+     apr_pool_t *pool;
+     void *memblock;
+@@ -79,13 +87,23 @@
+     apr_size_t pagesize;
+     area_id newid;
+     char *addr;
++
++#ifdef __SYLLABLE__
++    if (file != NULL)
++      return APR_ENOTIMPL;
++#endif
+     
+     (*m) = (apr_shm_t *)apr_pcalloc(p, sizeof(apr_shm_t));
+     /* we MUST allocate in pages, so calculate how big an area we need... */
+     pagesize = ((reqsize + B_PAGE_SIZE - 1) / B_PAGE_SIZE) * B_PAGE_SIZE;
+-     
++
++#ifdef __SYLLABLE__
++    newid = create_area("apr_shmem", (void*)&addr, pagesize,
++                        AREA_ANY_ADDRESS | AREA_READ | AREA_WRITE, AREA_CONTIGUOUS);
++#else     
+     newid = create_area("apr_shmem", (void*)&addr, B_ANY_ADDRESS,
+                         pagesize, B_CONTIGUOUS, B_READ_AREA|B_WRITE_AREA);
++#endif
+ 
+     if (newid < 0)
+         return errno;
+@@ -113,6 +131,9 @@
+                                          const char *filename,
+                                          apr_pool_t *pool)
+ {
++#ifdef __SYLLABLE__
++    return APR_ENOTIMPL;
++#else
+     area_info ai;
+     thread_info ti;
+     area_id deleteme;
+@@ -150,6 +171,7 @@
+     (*m) = new_m;
+     
+     return APR_SUCCESS;
++#endif
+ }
+ 
+ APR_DECLARE(apr_status_t) apr_shm_detach(apr_shm_t *m)

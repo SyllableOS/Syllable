@@ -1,5 +1,7 @@
-authors			Jan L. Hauffa
-status			broken
+authors
+	Jan L. Hauffa
+	Kaj de Vos
+status			developing
 warnings
 	configure hangs on conftest. You need to kill conftest (twice) to let the build continue.
 	Shared memory support is a hack: the implementation of anonymous shared memory is untested, implementation of named shared memory isn't possible due to limitations of the Syllable API. If you build programs that make use of the shared memory functions in this library, you'll most likely experience strange behaviour.
