@@ -1,3 +1,8 @@
+* September 19th 2004, Kristian Van Der Vliet *
+	- fsutils
+		o Added a new dumpattrib utility and updated lsattrib with bug fixes.  Both
+		  from Ruslan Nickolaev <nruslan@hotbox.ru>
+
 * September 19th 2004, Arno Klenke *
 	-Archiver
 		o GUI updates
