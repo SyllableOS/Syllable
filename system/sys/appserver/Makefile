@@ -1,2 +1,3 @@
-SUBDIRS = libatheos appserver
+SUBDIRS = libsyllable appserver
 include $(ATHEOS_SRC)/recurse.rules
+
