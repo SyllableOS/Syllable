@@ -1,3 +1,11 @@
+* June 14 2003, Kaj de Vos *
+
+Imported Bitstream Vera fonts 1.10.
+
+* June 9 2003, Kaj de Vos *
+
+Imported Freetype 2.1.4. Removed Freetype 2 beta 8, but not Freetype 2.1.3, yet.
+
 * May 29 2003, Henrik Isaksson *
 
 Updated makefiles for video drivers and decorators, so that they will find
