@@ -1,3 +1,7 @@
+* Oct 24 2002, Kristian Van Der Vliet *
+
+Added a /dev/random character device driver, which makes use of the new kernel rand() function.
+
 * Oct 5 2002, Kristian Van Der Vliet *
 
 Added system/libs/libpthread  This is a POSIX threads library which wraps the Syllable kernel threads.  The current code is incomplete but functional.  For more information, see the README and CHANGES files included with libpthread.
