@@ -1,3 +1,12 @@
+* Nov 16 2003, Kaj de Vos *
+
+Fixed a number of build problems due to recent changes to Syllable:
+- Added patch-config directives to a number of recipes for third-party
+  packages to account for the new uname.
+- Updated the build system to match.
+- Added -lz flag to all decorator Makefiles to account for Zlib being
+  shared now.
+
 * Nov 12 2003, Kristian Van Der Vliet *
 
 Increase the size of the drive name buffer in the ATA driver to fix a buffer
