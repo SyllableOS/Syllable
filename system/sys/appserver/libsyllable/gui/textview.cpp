@@ -2348,7 +2348,7 @@ void TextEdit::RenderLine( View * pcView, int y, float vHOffset, float vVOffset,
 	}
 	if( y >= 0 && y < int ( m_cBuffer.size() ) && m_cBuffer[y].empty(  ) == false )
 	{
-		pcView->MovePenTo( LEFT_BORDER + vHOffset, floor( vTop + m_sFontHeight.ascender + m_sFontHeight.line_gap * 0.5f ) );
+		pcView->MovePenTo( LEFT_BORDER + vHOffset, floor( vTop + m_sFontHeight.ascender + m_sFontHeight.line_gap - 1.0f ) );
 
 		if( bRegionActive )
 		{
