@@ -13,4 +13,4 @@ configure-options
 	--with-tcl=/usr/tcl/lib
 
 test-targets		test
-documentation		README license.terms changes ChangeLog
+documentation		README FAQ HISTORY NEWS ChangeLog
