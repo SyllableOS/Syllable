@@ -10,6 +10,9 @@ modules
 ;	apps/other/man-1.5m2
 	apps/other/unzip-5.51
 	apps/other/zip-2.3
+	apps/desktop/dock_plugins/clock
+	apps/desktop/dock_plugins/Camera
+	apps/desktop/dock_plugins/WallpaperChanger
 	apps/media/coldfish
 	apps/media/coldfish_plugins/blursk
 	apps/media/coldfish_plugins/remote
@@ -33,3 +36,4 @@ modules
 	apps/utils/rescopy
 	apps/utils/shelltools
 	apps/utils/slbmgr
+
