@@ -2,8 +2,8 @@ authors				Kaj de Vos
 status				broken
 notes				Still looks for X11, even when disabled
 
-home				gambas.sf.net
 licenses			GPL
+home				gambas.sf.net
 
 build-needs
 	gcc 2.95 | gcc 3.2

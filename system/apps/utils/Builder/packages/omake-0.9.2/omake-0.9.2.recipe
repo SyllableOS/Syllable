@@ -1,6 +1,8 @@
 authors				Kaj de Vos
 status				broken
-notes				Seems to expect IPv6
+notes
+	Seems to expect IPv6.
+	Can't find NCurses.
 
 licenses			GPL
 home				mojave.caltech.edu/download.html
