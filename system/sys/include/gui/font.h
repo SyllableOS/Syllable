@@ -17,8 +17,8 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef GUI_FONT_HPP
-#define GUI_FONT_HPP
+#ifndef __F_GUI_FONT_H__
+#define __F_GUI_FONT_H__
 
 #include <atheos/types.h>
 #include <gui/point.h>
@@ -152,19 +152,6 @@ enum {
     FONT_IS_SCALABLE     = 0x0004
 };
 
-struct edge_info
-{
-    float	left;
-    float	right;
-};
-/*
-struct	OldFontHeight_s
-{
-    int	nAscender;  // Pixels from baseline to top of glyph (positive)
-    int	nDescender; // Pixels from baseline to bottom of glyph (negative)
-    int	nLineGap;   // Space between lines (positive)
-};
-*/
 struct	font_height
 {
     float ascender;   // Pixels from baseline to top of glyph (positive)
@@ -172,6 +159,8 @@ struct	font_height
     float line_gap;   // Space between lines (positive)
 };
 
+// NOTE: These two structures does not seem to be used anywhere, and should probably be removed.
+// Consider them obsolete!
 struct	font_attribs
 {
     float	vPointSize;
@@ -179,10 +168,19 @@ struct	font_attribs
     float	vShare;
 };
 
+struct edge_info
+{
+    float	left;
+    float	right;
+};
+
+
 enum
 {
     FPF_MONOSPACED = 0x00000001,
-    FPF_SMOOTHED   = 0x00000002,
+    FPF_SMOOTHED   = 0x00000002,	/** Antialiased */
+    FPF_BOLD       = 0x00000004,
+    FPF_ITALIC     = 0x00000008,
     FPF_SYSTEM     = 0x80000000
 };
 
@@ -244,9 +242,10 @@ public:
 
     void	    AddRef();
     void	    Release();
-    
+  
     status_t	    SetProperties( const font_properties& sProps );
     status_t	    SetProperties( const std::string& cConfigName );
+    status_t	    SetProperties( float vSize, float vShear = 0.0f, float vRotation = 0.0f );
     status_t	    SetFamilyAndStyle( const char* pzFamily, const char* pzStyle );
     void	    SetSize( float vSize );
     void	    SetShear( float vShear );
@@ -255,7 +254,6 @@ public:
     void	    SetEncoding( int nEncoding );
     void	    SetFace( uint16 nFace );
     void	    SetFlags( uint32 nFlags );
-    status_t	    SetProperties( float vSize, float vShear = 0.0f, float vRotation = 0.0f );
 
     void	    GetFamilyAndStyle( const char* pzFamily, const char* pzStyle ) const;
     float	    GetSize() const;
@@ -311,6 +309,7 @@ private:
 
     ~Font();
     void _CommonInit();
+    status_t _SetProperties( float vSize, float vShear, float vRotation, uint32 nFlags );
 
     int		 m_nRefCount;
     bool	 m_bIsValid;
@@ -332,4 +331,5 @@ private:
 
 }
 
-#endif	//	GUI_FONT_HPP
+#endif	// __F_GUI_FONT_H__
+

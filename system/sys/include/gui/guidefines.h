@@ -134,9 +134,11 @@ enum
     QUAL_RALT   = 0x20,				//!< Right <ALT> key
     QUAL_ALT    = QUAL_LALT | QUAL_RALT,	//!< Any <ALT> key
 
-    QUAL_REPEAT = 0x40				/*!< Set if the key-down event was caused
+    QUAL_REPEAT = 0x40,				/*!< Set if the key-down event was caused
 						 *   by key repeating.
 						 */
+
+    QUAL_DEADKEY = 0x100			/** Set if the event was caused by a deadkey */
 };
 
 /** \anchor os_gui_keyvalues
@@ -316,3 +318,5 @@ struct screen_mode
 #endif
 
 #endif	// __F_GUI_GUIDEFS_H__
+
+
