@@ -1,6 +1,6 @@
 diff -ru coreutils-5.0.orig/lib/fsusage.c coreutils-5.0/lib/fsusage.c
 --- coreutils-5.0.orig/lib/fsusage.c	2003-02-06 05:39:01.000000000 +0000
-+++ coreutils-5.0/lib/fsusage.c	2004-02-18 23:23:11.000000000 +0000
++++ coreutils-5.0/lib/fsusage.c	2004-02-19 01:51:15.000000000 +0000
 @@ -42,6 +42,10 @@
  # define CHAR_BIT 8
  #endif
@@ -55,7 +55,7 @@ diff -ru coreutils-5.0.orig/lib/fsusage.c coreutils-5.0/lib/fsusage.c
    fsp->fsu_blocks = PROPAGATE_ALL_ONES (fsd.f_blocks);
 diff -ru coreutils-5.0.orig/lib/mountlist.c coreutils-5.0/lib/mountlist.c
 --- coreutils-5.0.orig/lib/mountlist.c	2003-03-18 17:43:00.000000000 +0000
-+++ coreutils-5.0/lib/mountlist.c	2004-02-18 23:05:26.000000000 +0000
++++ coreutils-5.0/lib/mountlist.c	2004-02-19 01:51:15.000000000 +0000
 @@ -35,6 +35,10 @@
  #endif
  #include "xalloc.h"
@@ -121,7 +121,7 @@ diff -ru coreutils-5.0.orig/lib/mountlist.c coreutils-5.0/lib/mountlist.c
      struct tabmntent *mntlist, *p;
 diff -ru coreutils-5.0.orig/src/copy.c coreutils-5.0/src/copy.c
 --- coreutils-5.0.orig/src/copy.c	2003-03-11 18:02:24.000000000 +0000
-+++ coreutils-5.0/src/copy.c	2003-10-07 14:20:49.000000000 +0000
++++ coreutils-5.0/src/copy.c	2004-02-19 01:51:15.000000000 +0000
 @@ -46,6 +46,78 @@
  #include "same.h"
  #include "xreadlink.h"
@@ -216,7 +216,7 @@ diff -ru coreutils-5.0.orig/src/copy.c coreutils-5.0/src/copy.c
       we had to run chown, because the chown must have reset those bits.  */
 diff -ru coreutils-5.0.orig/src/df.c coreutils-5.0/src/df.c
 --- coreutils-5.0.orig/src/df.c	2003-03-04 21:07:54.000000000 +0000
-+++ coreutils-5.0/src/df.c	2004-02-18 23:46:11.000000000 +0000
++++ coreutils-5.0/src/df.c	2004-02-19 01:51:15.000000000 +0000
 @@ -320,19 +320,19 @@
      {
        int disk_name_len = (int) strlen (disk);
@@ -243,9 +243,22 @@ diff -ru coreutils-5.0.orig/src/df.c coreutils-5.0/src/df.c
      }
  
    if (inode_format)
+diff -ru coreutils-5.0.orig/src/du.c coreutils-5.0/src/du.c
+--- coreutils-5.0.orig/src/du.c	2003-03-08 10:18:46.000000000 +0000
++++ coreutils-5.0/src/du.c	2004-02-19 01:53:27.000000000 +0000
+@@ -366,7 +366,9 @@
+      via a hard link, then don't let it contribute to the sums.  */
+   if (info->skip
+       || (!opt_count_all
++#ifndef __SYLLABLE__
+ 	  && 1 < sb->st_nlink
++#endif
+ 	  && hash_ins (sb->st_ino, sb->st_dev)))
+     {
+       /* Note that we must not simply return here.
 diff -ru coreutils-5.0.orig/src/system.h coreutils-5.0/src/system.h
 --- coreutils-5.0.orig/src/system.h	2003-04-02 10:13:51.000000000 +0000
-+++ coreutils-5.0/src/system.h	2004-02-18 22:28:05.000000000 +0000
++++ coreutils-5.0/src/system.h	2004-02-19 01:51:15.000000000 +0000
 @@ -128,7 +128,11 @@
  #if HAVE_STDBOOL_H
  # include <stdbool.h>
