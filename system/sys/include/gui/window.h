@@ -105,6 +105,7 @@ public:
     void		Close() { Quit(); }
     void		Show( bool bMakeVisible = true );
     void		Hide() { Show( false ); }
+    bool		IsVisible() const;
     void		Start();
     void		SetTitle( const String& cTitle );
     String		GetTitle( void ) const;
@@ -193,4 +194,3 @@ private:
 } // end of namespace
 
 #endif	// __F_GUI_WINDOW_H__
-

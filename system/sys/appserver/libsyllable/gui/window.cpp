@@ -193,6 +193,7 @@ void Window::_Cleanup()
 		delete_port( m->m_hReplyPort );
 	}
 	Application::GetInstance()->RemoveWindow( this );
+
 	delete m;
 }
 
@@ -657,6 +658,11 @@ void Window::Show( bool bMakeVisible )
 		Run();
 //      Unlock();
 	}
+}
+
+bool Window::IsVisible() const
+{
+	return m->m_pcTopView->IsVisible();
 }
 
 /** Unlock the window and start the looper thread.
@@ -1739,7 +1745,7 @@ void Window::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 				WindowsChanged();
 				break;
 			}
-			default:
+		default:
 			Looper::DispatchMessage( pcMsg, pcHandler );
 //      m->m_pcMouseChild = NULL;
 			break;
@@ -1970,3 +1976,4 @@ void Window::__WI_reserved5__()
 void Window::__WI_reserved6__()
 {
 }
+
