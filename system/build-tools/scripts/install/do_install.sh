@@ -45,7 +45,7 @@ clear
 cat doc/installation.txt
 
 echo; echo "Please wait..."
-tar -xzpf /boot/Packages/base/base-syllable-0.4.4.tar.gz -C /inst/
+tar -xzpf /boot/Packages/base/base-syllable-0.4.5.tar.gz -C /inst/
 
 if [ $? -ne 0 ]; then
 	echo; echo "Failed to extract base package to $DRIVE.  Stopping"
@@ -75,7 +75,7 @@ echo; echo "Installing ABrowse"
 tar -xzpf /boot/Packages/net/abrowse-0.3.4.bin.tar.gz -C /inst/atheos/Applications/
 
 echo; echo "Installing Whisper"
-tar -xzpf /boot/Packages/net/whisper-0.1.6.bin.tar.gz -C /inst/atheos/Applications/
+tar -xzpf /boot/Packages/net/whisper-0.1.8.bin.tar.gz -C /inst/atheos/Applications/
 
 echo; echo "Installing Chat"
 tar -xzpf /boot/Packages/net/chat-0.0.1.bin.tar.gz -C /inst/atheos/Applications/
