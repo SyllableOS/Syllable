@@ -1,3 +1,8 @@
+* December 5 2004, Kristian Van Der Vliet *
+
+Reverted find_boot_dev() to version 1.13 of init.c; I had checked in an older
+version as 1.14 over-writing the changes.
+
 * November 14 2004, Jake Hamby *
 
   fatfs:
