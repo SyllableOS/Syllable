@@ -20,7 +20,10 @@ struct contrib
 struct contriblist
 {
     //	contriblist(int cnt) { contribcnt=0; contribs=new contrib[cnt]; }
-    ~contriblist() { delete[] contribs; }
+    ~contriblist()
+    {
+        delete[] contribs;
+    }
     int		contribcnt;
     contrib	*contribs;
 };
@@ -35,7 +38,10 @@ static float Filter_BSpline( float );
 static float Filter_Lanczos3( float );
 static float Filter_Mitchell( float );
 
-int clamp( int v, int l, int h ) { return v<l?l:v>h?h:v; }
+int clamp( int v, int l, int h )
+{
+    return v<l?l:v>h?h:v;
+}
 
 //-----------------------------------------------------------------------------
 

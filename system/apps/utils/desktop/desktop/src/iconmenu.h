@@ -5,6 +5,6 @@ using namespace os;
 class IconMenu : public Menu
 {
 
-    public:
-        IconMenu();
+public:
+    IconMenu();
 };

@@ -4,19 +4,18 @@
 
 DeskApp::DeskApp() : Application("application/x-vnd.RGC-desktop_manager")
 {
-	
-	pcWindow = new BitmapWindow();
-	pcWindow->Show();
+
+    pcWindow = new BitmapWindow();
+    pcWindow->Show();
     pcWindow->MakeFocus();
-    
-    
+
+
 }
 
 DeskApp::~DeskApp()
 {
-	
 }
-	 
+
 
 
 /*
@@ -29,7 +28,7 @@ int main( int argc, char** argv )
 {
     DeskApp* pcApp = new DeskApp();
     pcApp->Run();
-	return( 0 );
+    return( 0 );
 }
 
 

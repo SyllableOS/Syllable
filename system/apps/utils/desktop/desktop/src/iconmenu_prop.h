@@ -7,24 +7,24 @@ using namespace os;
 
 class IconProp : public Window
 {
-    public:
-        IconProp(string cIconName, string cExec, Bitmap* cIconPic);
+public:
+    IconProp(string cIconName, string cExec, Bitmap* cIconPic);
 
-    private:
-        TextView* pcIconNameText;
-        
-        StringView* pcIconNameString;
-        Button*    pcIconOkBut;
-        Button*    pcIconRenameBut;
-        
-        Button*    pcIconExecBut;
-        TextView*  pcIconExecTxt;
-        StringView* pcIconExecStr;
-        
-        Button*    pcIconPic;
-        
-        
-        virtual void HandleMessage(Message* pcMessage);
+private:
+    TextView* pcIconNameText;
+
+    StringView* pcIconNameString;
+    Button*    pcIconOkBut;
+    Button*    pcIconRenameBut;
+
+    Button*    pcIconExecBut;
+    TextView*  pcIconExecTxt;
+    StringView* pcIconExecStr;
+
+    Button*    pcIconPic;
+
+
+    virtual void HandleMessage(Message* pcMessage);
 };
 
 #endif

@@ -9,21 +9,20 @@ int32 nImageSize = 0;
 
 MiscView::MiscView(const Rect & cFrame) : View(cFrame, "MiscView")
 {
-    //char pzName[1024];
     pcLoginCheck = new CheckBox(Rect(0,0,0,0),"login_check","Remember the last user that logged in",NULL);
     pcLoginCheck->SetFrame(Rect(0,0,GetBounds().Width(),15) + Point(20,10));
     AddChild(pcLoginCheck);
 
-	if (getuid()==0)
-		pcLoginCheck->SetEnable(true);
-		
-	else
-		pcLoginCheck->SetEnable(false);	
-	
-	pcShowVerCheck = new CheckBox(Rect(0,0,0,0),"ver_check","Show Version on the Desktop",NULL);
+    if (getuid()==0)
+        pcLoginCheck->SetEnable(true);
+
+    else
+        pcLoginCheck->SetEnable(false);
+
+    pcShowVerCheck = new CheckBox(Rect(0,0,0,0),"ver_check","Show Version on the Desktop",NULL);
     pcShowVerCheck->SetFrame(Rect(0,0,220,15) + Point(20,45));
     AddChild(pcShowVerCheck);
-    
+
     pcTransCheck = new CheckBox(Rect(0,0,0,0),"trans","Make icon background transparent",NULL);
     pcTransCheck->SetFrame(Rect(0,0,GetBounds().Width(),15) + Point (20,80));
     AddChild(pcTransCheck);
@@ -64,7 +63,6 @@ BackView::BackView(const Rect & cFrame) : View(cFrame, "BackView", CF_FOLLOW_ALL
 
 void BackView::ListFiles()
 {
-    //ListViewStringRow* pcRow = new ListViewStringRow();
     t_List t_ImageList = ImageList();
     for (uint32 n = 0; n < t_ImageList.size(); n++)
     {
@@ -72,9 +70,6 @@ void BackView::ListFiles()
         vFolderRow[n]->AppendString(t_ImageList[n]);
         pcList->InsertRow(vFolderRow[n]);
     }
-    
-    //pcList->Insert(pcRow);
-
 }
 
 t_List BackView::ImageList()
@@ -121,7 +116,7 @@ void BackView::Paint(const Rect& cUpdate)
 
 BackView::~BackView()
 {
-	delete pcScreenBmp;
+    delete pcScreenBmp;
 }
 
 
@@ -142,7 +137,7 @@ ColorView::ColorView(const Rect & cFrame) : View(cFrame, "ColorView",CF_FOLLOW_A
     pcColorEdit = new ColorEdit(Rect(0,0,0,0),"Col",c_bgColor);
     pcColorEdit->SetFrame(Rect(0,0,150,90) + Point(225,225));
     AddChild(pcColorEdit);
-    
+
     pcColorDrop->SetReadOnly();
     pcColorDrop->AppendItem("Icon Background Color");
     pcColorDrop->AppendItem("Icon Text Color");
@@ -183,16 +178,16 @@ t_List ColorView::PopulateFolderList()
     string zName;
     string zDir;
     Directory* pcDir = new Directory();
-	struct stat my_stat;
+    struct stat my_stat;
     if(pcDir->SetTo("~/Settings/Desktop/Themes")==0)
     {
         while (pcDir->GetNextEntry(&zName))
-        
+
             if ((zName.find( ".",0)==string::npos) || (zName.find( ".",0)==string::npos))
-            	zDir = (string)"~/Settings/Desktop/Themes" + zName;
-            	stat(zDir.c_str(), &my_stat);
-            	if (my_stat.st_mode & S_IFDIR)
-	            	t_list.push_back(zName);
+                zDir = (string)"~/Settings/Desktop/Themes" + zName;
+        stat(zDir.c_str(), &my_stat);
+        if (my_stat.st_mode & S_IFDIR)
+            t_list.push_back(zName);
 
     }
     delete pcDir;
@@ -203,16 +198,16 @@ t_List ColorView::PopulateFolderList()
 /*switches the lists*/
 void ColorView::SwitchList()
 {
-	/*uint32 nSwitch = pcListTheme->GetSelection();
-	t_List t_ImageList = PopulateFolderList();
-	if (nSwitch != -1){
-		new Alert("","","OK")->Go());
-		}*/
+    /*uint32 nSwitch = pcListTheme->GetSelection();
+    t_List t_ImageList = PopulateFolderList();
+    if (nSwitch != -1){
+    	new Alert("","","OK")->Go());
+    	}*/
 }
 
 ColorView::~ColorView()
 {
-	delete pcScreenBmp;
+    delete pcScreenBmp;
 }
 
 
@@ -234,7 +229,7 @@ PropTab::PropTab(const Rect & cFrame) : TabView(cFrame, "MiscView",CF_FOLLOW_ALL
 
 PropWin::PropWin() : Window(CRect(400,395), "Desktop Properties", "Desktop Properties", WND_NOT_RESIZABLE)
 {
-	pcSettings = new DeskSettings();
+    pcSettings = new DeskSettings();
     LoadPrefs();
 
     Rect cframe = GetBounds();
@@ -261,11 +256,11 @@ PropWin::PropWin() : Window(CRect(400,395), "Desktop Properties", "Desktop Prope
 
     pcPropTab->pcColor->pcColorDrop->SetTarget(this);
     //pcPropTab->pcColor->pcListTheme->SetTargetforItems(this);
-	pcPropTab->pcColor->pcListTheme->SetSelChangeMsg(new Message(ID_PROP_TEST));
+    pcPropTab->pcColor->pcListTheme->SetSelChangeMsg(new Message(ID_PROP_TEST));
     pcPropTab->pcColor->pcColorDrop->SetSelectionMessage( new Message(ID_PEN_CHANGED));
     pcPropTab->pcBack->pcSizeDrop->SetSelection(nImageSize);
     pcPropTab->pcBack->pcList->SetSelChangeMsg(new Message(ID_PROP_LIST));
-	
+
 }
 
 
@@ -309,8 +304,8 @@ void PropWin::HandleMessage(Message* pcMessage)
 
     case ID_PROP_CLOSE:
         Save();
-        OkToQuit();
-
+        //OkToQuit();
+		Close();
         break;
 
     case ID_PROP_LIST:
@@ -324,17 +319,17 @@ void PropWin::HandleMessage(Message* pcMessage)
             pcPropTab->pcBack->Paint(pcPropTab->pcBack->GetBounds());
             pcPropTab->pcBack->DrawBitmap(pcSBitmap,pcSBitmap->GetBounds(),Rect(118,25,153,113));
         }
-        
-      
+
+
         break;
 
 
-	case ID_PROP_TEST:
-		{
-			printf("Thus works\n");
-			pcPropTab->pcColor->SwitchList();
-		}
-		break;
+    case ID_PROP_TEST:
+        {
+            printf("Thus works\n");
+            pcPropTab->pcColor->SwitchList();
+        }
+        break;
 
     default:
         HandleMessage(pcMessage);
@@ -357,25 +352,27 @@ void PropWin::Defaults()
     pcPropTab->pcMisc->pcShowVerCheck->SetValue(bShwVr);
     pcPropTab->pcMisc->pcTransCheck->SetValue(pcSettings->GetTrans());
 
-	string kImage = pcSettings->GetImageDir() + zImage;
-	FSNode *pcNode = new FSNode();
-    
+    string kImage = pcSettings->GetImageDir() + zImage;
+    FSNode *pcNode = new FSNode();
+
     if( pcNode->SetTo(kImage.c_str()) == 0 )
-    	{
-   			do{
-        		nImageList = nImageList + 1;
-    		  }
-    
-    		while ( strcmp(t_list[nImageList].c_str(),zImage.c_str())!=0);
-    
-    		pcPropTab->pcBack->pcList->Select(nImageList,true,true);
-    		
-		}
-		
-	
-	else {
-			pcPropTab->pcBack->pcList->Select(0,true,true);
-		 }
+    {
+        do
+        {
+            nImageList = nImageList + 1;
+        }
+
+        while ( strcmp(t_list[nImageList].c_str(),zImage.c_str())!=0);
+
+        pcPropTab->pcBack->pcList->Select(nImageList,true,true);
+
+    }
+
+
+    else
+    {
+        pcPropTab->pcBack->pcList->Select(0,true,true);
+    }
 
 }
 
@@ -415,20 +412,23 @@ void PropWin::SaveLoginConfig(bool b_Login, const char* zName)
 
     fprintf(fin,"<Login Name Option>\n");
     if (b_Login == true)
-    {fprintf(fin,"true\n\n");
-    
-    }else{
-    	fprintf(fin,"false\n\n");
-    	 }
-    
+    {
+        fprintf(fin,"true\n\n");
+
+    }
+    else
+    {
+        fprintf(fin,"false\n\n");
+    }
+
     fprintf(fin, "<Login Name>\n");
-    
+
     fprintf(fin,zName);
     fclose(fin);
-    
+
     system("/usr/bin/mv -f /tmp/login.cfg /boot/atheos/sys/config");
 
-    
+
 }
 
 
@@ -470,8 +470,8 @@ void PropWin::SavePrefs(bool bShow,bool bTran, string zPic, int32 nNewImageSize 
     pcPrefs->AddString ( "DeskImage",  zPic  );
     pcPrefs->AddBool   ( "ShowVer",    bShow   );
     pcPrefs->AddInt32  ( "SizeImage",  nNewImageSize);
-	pcPrefs->AddBool   ( "Transparent", bTran);
-	pcSettings->SaveSettings(pcPrefs);
+    pcPrefs->AddBool   ( "Transparent", bTran);
+    pcSettings->SaveSettings(pcPrefs);
 }
 
 void PropWin::LoadPrefs(void)
@@ -483,6 +483,8 @@ void PropWin::LoadPrefs(void)
     nImageSize = pcSettings->GetImageSize();
     bTrans     = pcSettings->GetTrans();
 }
+
+
 
 
 

@@ -1,4 +1,4 @@
-COPTS	= -Wall -c --no-warn
+COPTS	= -Wall -c
 
 OBJS	= ../objs/main.o ../objs/settings.o ../objs/bitmapwindow.o ../objs/iconview.o ../objs/iconmenu.o ../objs/iconmenu_prop.o ../objs/loadbitmap.o ../objs/imageitem.o ../objs/properties.o ../objs/bitmapscale.o ../objs/drives.o ../objs/coloredit.o ../objs/drives_settings.o 
 EXE	= ../objs/desktop
@@ -76,5 +76,6 @@ dist:
 ../objs/drives_settings.o : drives_settings.cpp
 	@echo Compiling : $<
 	@$(CC) $(COPTS) $< -o $@ 
+
 
 

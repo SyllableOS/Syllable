@@ -31,7 +31,7 @@ Icon::Icon( const char* pzTitle, const char* pzPath, const char* pzExec, Point c
         }
     }
 
-   //LoadBitmapFromFile(pzPath);
+    //LoadBitmapFromFile(pzPath);
     IconDir sDir;
     IconHeader sHeader;
 
@@ -159,7 +159,7 @@ Rect Icon::GetFrame( Font* pcFont )
 */
 void Icon::Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendText, bool bTrans, Color32_s bClr,Color32_s fClr )
 {
-	bTransParent = bTrans;
+    bTransParent = bTrans;
     bgColor = bClr;
     fgColor = fClr;
     bool bSelectColor = false;
@@ -171,7 +171,7 @@ void Icon::Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendTe
         {
             return;
         }
-        
+
         float vStrWidth = GetStrWidth( pcFont );
         font_height sHeight;
 
@@ -183,11 +183,11 @@ void Icon::Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendTe
 
         pcView->MovePenTo( x, y );
 
-          
+
 
         if ( bBlendText )
         {
-	    pcView->SetDrawingMode( DM_OVER );  // DM_OVER
+            pcView->SetDrawingMode( DM_OVER );  // DM_OVER
         }
         else
         {
@@ -196,31 +196,34 @@ void Icon::Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendTe
         }
         if ( m_bSelected && bBlendText )
         {
-            if (!bTrans){
-            pcView->SetFgColor(bClr);
-            Rect cRect( x - 2, y - sHeight.ascender,x + vStrWidth + 1, y + sHeight.descender );
-            pcView->FillRect( cRect );
+            if (!bTrans)
+            {
+                pcView->SetFgColor(bClr);
+                Rect cRect( x - 2, y - sHeight.ascender,x + vStrWidth + 1, y + sHeight.descender );
+                pcView->FillRect( cRect );
             }
-            else;
+            else
+                ;
             //pcView->SetFgColor(255,255,255,0xff); // this one is for setting highlight
-            
-          
+
+
         }
 
-         pcView->SetFgColor( fClr );
+        pcView->SetFgColor( fClr );
         if ( bBlendText )
         {
-        	if (!bTrans)
-            pcView->SetFgColor( fClr );
-            
-            else{
-            if (m_bSelected)
-            pcView->SetFgColor(fClr);
-            //pcView->SetFgColor(255,255,255,0xff);
-            
+            if (!bTrans)
+                pcView->SetFgColor( fClr );
+
             else
-            pcView->SetFgColor(0,0,0,0xff);
-            
+            {
+                if (m_bSelected)
+                    pcView->SetFgColor(fClr);
+                //pcView->SetFgColor(255,255,255,0xff);
+
+                else
+                    pcView->SetFgColor(0,0,0,0xff);
+
             }
         }
         else
@@ -228,12 +231,12 @@ void Icon::Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendTe
             pcView->SetFgColor( 255,255,255, 0xff );
         }
 
-		
-        	
-        	
-        	
+
+
+
+
         pcView->DrawString( m_cTitle.c_str(), m_nMaxStrLen );
-		pcView->SetDrawingMode( DM_BLEND );  //DM_BLEND
+        pcView->SetDrawingMode( DM_BLEND );  //DM_BLEND
 
         if ( s_nCurBitmap == 20 )
         {
@@ -392,9 +395,9 @@ int32 IconView::ReadDirectory( void* pData )
 
         /*if ( S_ISDIR( sStat.st_mode ) == false ) {
             pcIcon = new Icon( psEnt->d_name, "/system/icons/file.icon", NULL, , sStat );
-    } else {
+        } else {
             pcIcon = new Icon( psEnt->d_name, "/system/icons/folder.icon", NULL, NULL, sStat );
-    }*/
+        }*/
 
         pcWnd->Lock();
         pcView->m_cIcons.push_back( pcIcon );
@@ -627,7 +630,7 @@ void IconView::MouseDown( const Point& cPosition, uint32 nButtons )
         }
         else
         {
-        	
+
             m_bSelRectActive = true;
             m_cSelRect = Rect( cPosition.x, cPosition.y, cPosition.x, cPosition.y );
             SetDrawingMode( DM_INVERT );

@@ -16,12 +16,12 @@
 
 class DeskApp : public Application
 {
-	public:
-		DeskApp();
-		~DeskApp();
-	private:
-		BitmapWindow* pcWindow;
-		
+public:
+    DeskApp();
+    ~DeskApp();
+private:
+    BitmapWindow* pcWindow;
+
 };
 
 #endif

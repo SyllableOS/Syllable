@@ -10,49 +10,49 @@
 */
 IconProp::IconProp(string cIconName, string cExec, Bitmap* cIconPic) : Window(CRect(250,150), "Icon_Properties", "Icon Properties", WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_RESIZABLE)
 {
-   	
-   	/* For The Icon Name. */
-	 pcIconNameString = new StringView(Rect(0,0,0,0),"Icon_Name", "Name:");
+
+    /* For The Icon Name. */
+    pcIconNameString = new StringView(Rect(0,0,0,0),"Icon_Name", "Name:");
     pcIconNameString->SetFrame(Rect(0,0,50,20) + Point(10,10));
     AddChild(pcIconNameString);
 
     pcIconNameText = new TextView(Rect(0,0,0,0),"Icon_NAME_TEXT",cIconName.c_str());
     pcIconNameText->SetFrame(Rect(0,0,110,20) + Point(70,10));
     AddChild(pcIconNameText);
-    
+
     pcIconNameText->SetEnable(false);
 
     pcIconRenameBut = new Button(Rect(0,0,0,0),"Icon_Rename","Rename",new Message(ID_ICON_PROP_RENAME));
     pcIconRenameBut->SetFrame(Rect(0,0,50,20) + Point(190,10));
     AddChild(pcIconRenameBut);
 
-	/* For the executable that is launched when the icon is clicked. */
-	pcIconExecBut = new Button(Rect(0,0,0,0),"IC_EXEC","Change",new Message(ID_ICON_PROP_CHANGE));
-	pcIconExecBut->SetFrame(Rect(0,0,50,20) + Point(190, 40));
-	AddChild(pcIconExecBut);
-	
-	pcIconExecTxt = new TextView(Rect(0,0,0,0),"Icon_Exec_Txt", cExec.c_str());
-	pcIconExecTxt->SetFrame(Rect(0,0,110,20) + Point(70, 40));
-	AddChild(pcIconExecTxt);
+    /* For the executable that is launched when the icon is clicked. */
+    pcIconExecBut = new Button(Rect(0,0,0,0),"IC_EXEC","Change",new Message(ID_ICON_PROP_CHANGE));
+    pcIconExecBut->SetFrame(Rect(0,0,50,20) + Point(190, 40));
+    AddChild(pcIconExecBut);
 
-	pcIconExecTxt->SetEnable(false);
-	
-	pcIconExecStr = new StringView(Rect(0,0,0,0),"ICON_EXEC_STR","Execute:");
-	pcIconExecStr->SetFrame(Rect(0,0,50,20) + Point(10,40));
-	AddChild(pcIconExecStr);
-	
-	ImageButton* pcImageBut = new ImageButton(Rect(0,0,0,0), "IMAGE_CHANGE", "Change", NULL, NULL, ImageButton::IB_TEXT_BOTTOM, true,true);
+    pcIconExecTxt = new TextView(Rect(0,0,0,0),"Icon_Exec_Txt", cExec.c_str());
+    pcIconExecTxt->SetFrame(Rect(0,0,110,20) + Point(70, 40));
+    AddChild(pcIconExecTxt);
+
+    pcIconExecTxt->SetEnable(false);
+
+    pcIconExecStr = new StringView(Rect(0,0,0,0),"ICON_EXEC_STR","Execute:");
+    pcIconExecStr->SetFrame(Rect(0,0,50,20) + Point(10,40));
+    AddChild(pcIconExecStr);
+
+    ImageButton* pcImageBut = new ImageButton(Rect(0,0,0,0), "IMAGE_CHANGE", "Change", NULL, NULL, ImageButton::IB_TEXT_BOTTOM, true,true);
     pcImageBut->SetFrame(Rect(0,0,46,40) + Point(GetBounds().Width() /2 - 25, GetBounds().Height() - 80) );
     AddChild(pcImageBut);
     /*pcIconOkBut = new Button(Rect(0,0,0,0),"Icon_OK","OK",new Message(ID_ICON_PROP_OK) );
     pcIconOkBut->SetFrame(Rect(0,0,40,) + Point (GetBounds().Width() /2 - 25, GetBounds().Height() - 30) );
     AddChild(pcIconOkBut);*/
-    
+
     /*View* pcView = new View(Rect(00,10,32,32),"");
     pcView->DrawBitmap(cIconPic, cIconPic->GetBounds(), pcView->GetBounds());
     AddChild(pcView);*/
-    
-    
+
+
 }
 
 
@@ -67,7 +67,7 @@ void IconProp::HandleMessage(Message* pcMessage)
 {
     switch (pcMessage->GetCode())
     {
-    	
+
     case ID_ICON_PROP_RENAME:
         if(pcIconNameText->IsEnabled() == true)
             pcIconNameText->SetEnable(false);
@@ -78,15 +78,15 @@ void IconProp::HandleMessage(Message* pcMessage)
         break;
 
 
-	case ID_ICON_PROP_CHANGE:
-		if (pcIconExecTxt->IsEnabled() == true)
-			pcIconExecTxt->SetEnable(false);
-			
-		else
-			pcIconExecTxt->SetEnable(true);
-			
-		break;
-		
+    case ID_ICON_PROP_CHANGE:
+        if (pcIconExecTxt->IsEnabled() == true)
+            pcIconExecTxt->SetEnable(false);
+
+        else
+            pcIconExecTxt->SetEnable(true);
+
+        break;
+
     case ID_ICON_PROP_OK:
         PostMessage(M_QUIT);
         break;

@@ -34,52 +34,52 @@ class DiskInfo;
 class DriveWindow : public Window
 {
 public:
-	DriveWindow(Window* pcWindow, float fIcon);
-	~DriveWindow();
-	
-	
-private:	
-	Button* pcOk;
-	Button* pcCancel;
-	Button* pcAdd;
-	Button* pcRemove;
-	Button* pcRefresh;
-	ListView* pcList;
-	void SetupDrives();
-	char* GetInit();
-	void HandleMessage(Message* pcMessage);
-	char pzDriveDevice[20][200];
-	char pzDriveMount[20][200];
-	char pzDriveIcon[20][200];
-	void SaveInit();
-	void SaveDesktop();
-	void Add();
-	FILE* fout;
-	Window* pcAddWindow;
-	float fIconPoint;
+    DriveWindow(Window* pcWindow, float fIcon);
+    ~DriveWindow();
+
+
+private:
+    Button* pcOk;
+    Button* pcCancel;
+    Button* pcAdd;
+    Button* pcRemove;
+    Button* pcRefresh;
+    ListView* pcList;
+    void SetupDrives();
+    char* GetInit();
+    void HandleMessage(Message* pcMessage);
+    char pzDriveDevice[20][200];
+    char pzDriveMount[20][200];
+    char pzDriveIcon[20][200];
+    void SaveInit();
+    void SaveDesktop();
+    void Add();
+    FILE* fout;
+    Window* pcAddWindow;
+    float fIconPoint;
 };
 
 
 class AddWindow : public Window
 {
 public:
-	AddWindow(Window* pcWindow);
-	//~AddWindow();
+    AddWindow(Window* pcWindow);
+    //~AddWindow();
 
 private:
-	DropdownMenu* pcDeviceDrop;
-	CheckBox* pcDriveIcon;
-	Button* pcOk;
-	Button* pcCancel;
-	TextView* pcText;
-	BitmapImage* GetImage(const char* pzFile);
-	StringView* pcDeviceString;
-	StringView* pcMountString;
-	void HandleMessage(Message* pcMessage);
-	Window* pcWin;
-	FileRequester* pcOpenRequest;
-	string pzFPath, pzStorePath;
-	
+    DropdownMenu* pcDeviceDrop;
+    CheckBox* pcDriveIcon;
+    Button* pcOk;
+    Button* pcCancel;
+    TextView* pcText;
+    BitmapImage* GetImage(const char* pzFile);
+    StringView* pcDeviceString;
+    StringView* pcMountString;
+    void HandleMessage(Message* pcMessage);
+    Window* pcWin;
+    FileRequester* pcOpenRequest;
+    string pzFPath, pzStorePath;
+
 };
 
 struct DiskInfo
@@ -88,7 +88,7 @@ struct DiskInfo
     int			m_nDiskFD;
     device_geometry	m_sDriveInfo;
 };
-	
+
 #endif
 
 
