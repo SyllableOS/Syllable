@@ -1,3 +1,11 @@
+* December 5 2003, Henrik Isaksson *
+
+ - Window class:
+    * Added AddShortcut() and RemoveShortcut().
+    * Added code to handle shortcuts.
+ - New class: util/shortcutkey.cpp
+ - Checked in parts of Arno's patch that I missed last time...
+
 * December 1 2003, Henrik Isaksson *
 
  Applied Arno's patches:
@@ -312,6 +320,7 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
 
 
