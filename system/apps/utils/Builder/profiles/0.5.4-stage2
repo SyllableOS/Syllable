@@ -10,6 +10,7 @@ modules
 	sys/kernel/drivers/hcd/usb_ohci
 	sys/kernel/drivers/hcd/usb_uhci
 	libs/ncurses-5.4
+	sys/translators
 	sys/appserver/libsyllable
 	sys/appserver/appserver/server
 	sys/media/mediaserver
@@ -25,15 +26,23 @@ modules
 	apps/gnu/tar-1.14
 	apps/media/coldfish
 	apps/media/mediaplayer
+	apps/utils/Albert
 	apps/utils/CodeEdit
 	apps/utils/DiskManager
+	apps/utils/Preferences/Appearance
+	apps/utils/Preferences/DateTime
+	apps/utils/Preferences/Font
+	apps/utils/Preferences/Keyboard
 	apps/utils/Preferences/Locale
+	apps/utils/Preferences/Media
 	apps/utils/Preferences/Network
+	apps/utils/Preferences/Screen
 	apps/utils/aclock
 	apps/utils/aedit
 	apps/utils/aterm
 	apps/utils/bzoom
 	apps/utils/catalog
 	apps/utils/charmap
+	apps/utils/dhcpc
 	apps/utils/pkgmanager
 	apps/utils/slbmgr
