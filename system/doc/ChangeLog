@@ -1,3 +1,9 @@
+* Mar 29 2002, Kristian Van Der Vliet *
+
+Two more patchs from Arno Klenke<arno_klenke@yahoo.de> for the ATA[PI] driver which fixes some
+bugs in atapi_read(), atapi_readv() and atapi_packet_command().  It is now possible to mount, read
+and unmount an ISO9660 formatted disc under Syllable.
+
 * Mar 26 2002, Kristian Van Der Vliet *
 
 SiS 3xx video driver and Via82xx audio drivers from Arno Klenke<arno_klenke@yahoo.de>
