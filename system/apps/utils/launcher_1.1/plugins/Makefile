@@ -4,8 +4,8 @@ LLIBS = -L../lib -latheos -lstdc++ -lm -llauncher
 CC = g++
 LL = g++
 
-PLUGINS = obj/gbar.o Clock.so LauncherBar.so CPU.so Mem.so LauncherIcon.so CPUII.so MEMII.so 
-OBJS = obj/gbar.o obj/Clock.o obj/LauncherBar.o obj/CPU.o obj/Mem.o obj/LauncherIcon.o obj/CPUII.o obj/MEMII.o
+PLUGINS = obj/gbar.o Clock.so LauncherBar.so CPU.so Mem.so LauncherIcon.so CPUII.so MEMII.so Battery.so
+OBJS = obj/gbar.o obj/Clock.o obj/LauncherBar.o obj/CPU.o obj/Mem.o obj/LauncherIcon.o obj/CPUII.o obj/MEMII.o obj/Battery.o
 
 INSTDIR = /Applications/Launcher
 
@@ -38,6 +38,12 @@ CPUII.so: obj/CPUII.o
                                                                                                                                                                                                         
 obj/CPUII.o: src/CPUII.cpp src/gbar.h
 	$(CC) src/CPUII.cpp $(COPTS) -o obj/CPUII.o
+
+Battery.so: obj/Battery.o
+	$(LL) obj/Battery.o obj/gbar.o $(LLIBS) -shared -Wl,-soname,Battery.so -o Battery.so
+                                                                                                                                                                                                        
+obj/Battery.o: src/Battery.cpp src/gbar.h
+	$(CC) src/Battery.cpp $(COPTS) -o obj/Battery.o
 
 LauncherBar.so: obj/LauncherBar.o 
 	$(LL) obj/LauncherBar.o $(LLIBS) -shared -Wl,-soname,LauncherBar.so -o LauncherBar.so
