@@ -1,20 +1,28 @@
 authors
 	Arno Klenke
 	Kaj de Vos
-status			developing
+status			testing
 
 licenses		LGPL GPL
+
+; For MMX:
+build-needs		make >= 3.80
 
 configure-options
 	--extra-cflags="-DPIC -fomit-frame-pointer"
 	--extra-libs="-lm -ldl"
+;	Fails assertion in Make 3.79.x:
 ;	--disable-mmx
 	--disable-v4l
 	--disable-audio-oss
 	--disable-vhook
 	--disable-dv1394
 	--disable-risky
+
+install-tree	include lib
 install-files
-	libavcodec/libavcodec.a		lib
-	libavformat/libavformat.a	lib
+	../ffmpeg-0.4.8/libavcodec/*.h	include/
+	../ffmpeg-0.4.8/libavformat/*.h	include/
+	libavcodec/libavcodec.a			lib/
+	libavformat/libavformat.a		lib/
 documentation	README COPYING Changelog CREDITS doc/TODO doc/*.html
