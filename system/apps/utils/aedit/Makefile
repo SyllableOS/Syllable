@@ -16,6 +16,13 @@ $(OBJSDIR):
 $(EXE): $(OBJS)
 	$(LL) $(OBJS) -lsyllable -o $(EXE)
 	rescopy -r $(EXE) resources/aedit.catalog
+	rescopy -a $(EXE) sv/aedit.catalog=resources/sv/aedit.catalog
+	rescopy -a $(EXE) de/aedit.catalog=resources/de/aedit.catalog
+	rescopy -a $(EXE) nl/aedit.catalog=resources/nl/aedit.catalog
+	rescopy -a $(EXE) it/aedit.catalog=resources/it/aedit.catalog
+	rescopy -a $(EXE) es/aedit.catalog=resources/es/aedit.catalog
+	rescopy -a $(EXE) fr/aedit.catalog=resources/fr/aedit.catalog
+	rescopy -a $(EXE) da/aedit.catalog=resources/da/aedit.catalog
 
 deps:
 
@@ -53,7 +60,4 @@ $(OBJSDIR)replacedialog.o: replacedialog.cpp replacedialog.cpp
 
 $(OBJSDIR)settings.o: settings.cpp settings.h
 	$(CC) $(COPTS) settings.cpp -o $@
-
-
-
 

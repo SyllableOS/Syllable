@@ -25,7 +25,7 @@ GotoDialog::GotoDialog(const Rect& cFrame, Window* pcParent) : Window(cFrame, "g
 	pcParentWindow=pcParent;		// We need to know the parent window so we can send messages back to it
 
 	// Create the Layoutviews
-	pcMainLayoutView=new LayoutView(GetBounds(),"", NULL, CF_FOLLOW_NONE);
+	pcMainLayoutView=new LayoutView(GetBounds(),"", NULL, CF_FOLLOW_ALL);
 
 	// Make the base Vertical LayoutNode
 	pcHLayoutNode=new HLayoutNode("main_layout_node");
@@ -38,6 +38,7 @@ GotoDialog::GotoDialog(const Rect& cFrame, Window* pcParent) : Window(cFrame, "g
 
 	pcLineNoTextView= new TextView(Rect(0,0,0,0), "find_text_view", NULL, CF_FOLLOW_NONE);
 	pcLineNoTextView->SetNumeric(true);
+	pcLineNoTextView->SetMinPreferredSize( 10, 1 );
 	pcHLayoutNode->AddChild(pcLineNoTextView);
 
 	// Add a spacer to force the edit box to the top
@@ -75,6 +76,11 @@ GotoDialog::GotoDialog(const Rect& cFrame, Window* pcParent) : Window(cFrame, "g
 	// Set the focus
 	SetFocusChild(pcLineNoTextView);
 	SetDefaultButton(pcGotoButton);
+
+	Point cTopLeft = GetBounds().LeftTop();
+	Point cSize = pcMainLayoutView->GetPreferredSize( false );
+	Rect cWFrame( cTopLeft.x, cTopLeft.y, cTopLeft.x + cSize.x, cTopLeft.y + cSize.y );
+	SetFrame( cWFrame );
 }
 
 void GotoDialog::HandleMessage(Message* pcMessage)

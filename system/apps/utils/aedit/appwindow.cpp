@@ -32,7 +32,7 @@
 #include <util/invoker.h>
 #include <util/application.h>
 
-AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", "AEdit V1.3")
+AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", AEDIT_RELEASE_STRING)
 {
 	Rect cWinSize;
 	pcSettings=new AEditSettings();
@@ -233,7 +233,7 @@ void AEditWindow::SetupMenus()
 	pcMenuBar->AddItem(pcSettingsMenu);
 	pcMenuBar->AddItem(pcHelpMenu);
 	
-	cMenuFrame.bottom = pcMenuBar->GetPreferredSize( true ).y-2.0f;
+	cMenuFrame.bottom = pcMenuBar->GetPreferredSize( true ).y;
     cMainFrame.top = cMenuFrame.bottom + 1;
     pcMenuBar->SetFrame( cMenuFrame );
 	pcMenuBar->SetTargetForItems(this);
@@ -763,3 +763,4 @@ void AEditWindow::Save(const char* pzFileName)
 	hFile.close();
 
 }
+

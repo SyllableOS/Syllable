@@ -53,7 +53,7 @@ MSG_FIND_FIND_LABEL					Find
 MSG_FIND_CASE_SENSITIVE				Case Sensitive Search
 MSG_FIND_FIND						_Find
 MSG_FIND_FIND_NEXT					Find _Next
-MSG_FIND_CLOSE					_	_Close
+MSG_FIND_CLOSE					    _Close
 
 MSG_GOTO_TITLE=1100					Goto Line
 MSG_GOTO_GOTO						Goto Line
@@ -66,4 +66,5 @@ MSG_REPLACE_CASE_SENSITIVE			Case _Sensitive Search
 MSG_REPLACE_FIND					_Find
 MSG_REPLACE_FIND_NEXT				Find _Next
 MSG_REPLACE_REPLACE					_Replace
-MSG_REPLACE_CLOSE				_	_Close
+MSG_REPLACE_CLOSE				    _Close
+

@@ -53,7 +53,7 @@ MSG_FIND_FIND_LABEL					Sök
 MSG_FIND_CASE_SENSITIVE				Skilj på gemener/VERSALER
 MSG_FIND_FIND						_Sök
 MSG_FIND_FIND_NEXT					Sök _Nästa
-MSG_FIND_CLOSE						_Stäng
+MSG_FIND_CLOSE                      _Stäng
 
 MSG_GOTO_TITLE=1100					Gå till rad
 MSG_GOTO_GOTO						Gå till rad
@@ -66,5 +66,5 @@ MSG_REPLACE_CASE_SENSITIVE			Skilj på gemener/VERSALER
 MSG_REPLACE_FIND					_Sök
 MSG_REPLACE_FIND_NEXT				Sök _Nästa
 MSG_REPLACE_REPLACE					_Ersätt
-MSG_REPLACE_CLOSE					_Stäng
+MSG_REPLACE_CLOSE                   _Stäng
 
