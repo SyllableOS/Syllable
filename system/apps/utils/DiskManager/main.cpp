@@ -205,7 +205,7 @@ bool MainWindow::OkToQuit()
 
 PEditApp::PEditApp() : Application( "application/x-vnd.KHS.atheos-partitionedit" )
 {
-    m_pcMainWindow = new MainWindow( "AtheOS partition editor" );
+    m_pcMainWindow = new MainWindow( "Syllable Partition Editor" );
     m_pcMainWindow->Show();
 }
 

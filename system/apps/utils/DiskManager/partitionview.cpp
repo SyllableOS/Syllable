@@ -313,7 +313,7 @@ off_t PartitionEntry::GetByteSize( const device_geometry& sDiskGeom ) const
 **** PartitionEditReq *********************************************************
 ******************************************************************************/
 
-PartitionEditReq::PartitionEditReq( const DiskInfo& cDisk ) : Window( Rect(0,0,0,0), "partition_edit", "Partition setup" )
+PartitionEditReq::PartitionEditReq( const DiskInfo& cDisk ) : Window( Rect(0,0,0,0), "partition_edit", "Partition Setup" )
 {
     IPoint cScreenRes;
     m_cDiskInfo = cDisk;
