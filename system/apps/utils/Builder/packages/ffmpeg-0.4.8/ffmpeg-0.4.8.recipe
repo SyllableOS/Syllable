@@ -1,0 +1,16 @@
+authors
+	Arno Klenke
+	Kaj de Vos
+status developing
+configure-options
+	--extra-cflags="-DPIC -fomit-frame-pointer"
+	--extra-libs="-lm -ldl"
+;	--extra-libs="-ldl"
+	--disable-mmx
+	--disable-v4l
+	--disable-audio-oss
+	--disable-vhook
+	--disable-dv1394
+	--disable-risky
+documentation README COPYING Changelog CREDITS doc/TODO doc/*.html
+; libavcodec/libavcodec.a libavformat/libavformat.a
