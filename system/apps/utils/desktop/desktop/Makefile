@@ -27,7 +27,7 @@ deps:
 	mkdir objs
 	
 dist:
-	cp  -f $(EXE) $(DIST_DIR)/root/Trash/
+	cp  -f $(EXE) $(DIST_DIR)/atheos/sys/bin/
 
 install:
 	cp -f desktop /bin/
