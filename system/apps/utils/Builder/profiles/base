@@ -19,8 +19,6 @@ sys/kernel/drivers/disk/usb
 sys/kernel/drivers/hcd/usb_uhci
 sys/kernel/drivers/input/usb_mouse
 sys/kernel/drivers/keyboard
-; Old stuff:
-sys/kernel/drivers/misc/cpia
 sys/kernel/drivers/misc/devices
 sys/kernel/drivers/misc/ps2aux
 sys/kernel/drivers/misc/random
