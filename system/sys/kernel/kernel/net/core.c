@@ -29,6 +29,7 @@
 #include <net/if.h>
 #include <net/udp.h>
 #include <net/tcp.h>
+#include <net/raw.h>
 #include <net/if_ether.h>
 #include <net/if_arp.h>
 #include <net/icmp.h>
