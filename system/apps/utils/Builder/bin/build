@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.50
+# Version 0.5.51
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -21,11 +21,14 @@ def unpackPackage target
 #   file = Dir[File.join(@sourcesPath, fullName target) + '.*'] [0]
 #   case File.basename file
  
-   if exists? file = base + '.tar.bz2' or exists? file = base + '.tbz2'
-    gzip = false
+   if exists? file = base + '.zip'
+    type = :zip
+    break unless action 'unzip ' + file
+   elsif exists? file = base + '.tar.bz2' or exists? file = base + '.tbz2'
+    type = :bzip
     break unless action "bzcat #{file} | tar x"
    elsif exists? file = base + '.tar.gz' or exists? file = base + '.tgz'
-    gzip = true
+    type = :gzip
     break unless action 'tar xzf ' + file
    else
     @log.error "Source package #{base}.* not found"
@@ -37,15 +40,23 @@ def unpackPackage target
  else
   if exists? dir = fullName(target)
    true
-  else  # Tarball content has a deviating name
+  else  # Source package content has a deviating subdirectory name
    @log.subheader 'Renaming source'
 
-   result = `#{gzip ? 'tar tzf ' + file : "bzcat #{file} | tar --list"}`
+   result = `#{case type
+    when :zip  then 'unzip -lqq ' + file
+    when :bzip then "bzcat #{file} | tar --list"
+    when :gzip then 'tar tzf ' + file
+    end
+   }`
    unless (status = $? >> 8) == 0
     @log.error status
     false
-   else
-    action "mv #{result.split("/").first} " + dir
+   else  # Get the directory name from the package listing
+    action "mv #{type == :zip ?
+     result.first.split.last :
+     result.split("/").first
+    } " + dir
    end
   end
  end
@@ -276,7 +287,7 @@ end
 
 def installPackage target
  unless
-  if target[-4..-1] == '.tgz' and exists? target  # A distribution package
+  if target =~ /\.(zip|tgz)$/ and exists? target  # A distribution package
    # Packages are currently supposed to contain an unversioned directory
    root = File.join(File.dirname(installPath(target)), shortName(target))
 
@@ -289,7 +300,10 @@ def installPackage target
     false
    else
     @log.header 'Unpacking ' + target
-    action 'tar --directory=/usr -xpPzf ' + target and
+    action (target[-3..-1] == 'zip' ?
+     "unzip #{target} -d /usr" :
+     'tar --directory=/usr -xpPzf ' + target
+    ) and
     begin
      @log.header 'Registering ' + target
      action 'pkgmanager --add ' + root
@@ -723,7 +737,7 @@ def makeDistro target
         for package in modules
          # Try to find the latest release
          break unless action "ln -s #{Dir[
-           File.join(@distrosPath, fullName(package)) + '.bin.*.tgz'
+           File.join(@distrosPath, fullName(package)) + '.bin.*.*z*'
           ].last
          } " + name
         end
@@ -731,7 +745,7 @@ def makeDistro target
         false
        else
 #        action "tar --dereference --remove-files -cvzf #{file}.tgz " + name
-        action "zip -rm #{file}.zip " + name
+        action "zip -rm #{file} " + name
        end
       end
      end
@@ -1132,8 +1146,8 @@ else
 
  @installRoot = File.join @systemRoot = File.join(@stage, 'atheos'), 'usr'
 
- ENV['DIST_VER']  = '0.5.4'
- ENV['DIST_NAME'] = 'base-syllable-0.5.4.tgz'
+ ENV['DIST_VER']  = '0.5.4+'
+ ENV['DIST_NAME'] = 'base-syllable-0.5.4+.zip'
 
  ENV['ATHEOS_SRC'] = @workDir
  ENV['BUILD_TOOLS'] = File.join @workDir, 'build-tools'
@@ -1154,7 +1168,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
- puts 'Syllable Build System 0.5.50',
+ puts 'Syllable Build System 0.5.51',
   'Copyright (c) 2002-2004 Kaj de Vos',
   'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
