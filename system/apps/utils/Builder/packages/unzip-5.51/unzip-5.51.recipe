@@ -1,0 +1,26 @@
+authors
+	Ruslan Nickolaev
+	Kaj de Vos
+maintainers		Kaj de Vos
+status			testing
+
+licenses		other
+
+home			www.info-zip.org/UnZip.html
+packages
+	unzip551
+; For unreducing:
+;	unred550
+locations		ftp://ftp.info-zip.org/pub/infozip/src/
+
+makefile		atheos/Makefile
+
+; For unreducing:
+;make-env		LOCAL_UNZIP '-DUSE_SMITH_CODE'
+
+install-tree	bin man man/man1
+documentation
+	README atheos/README.Syllable WHERE LICENSE COPYING.OLD BUGS History.551 ToDo
+	unzip.txt unzipsfx.txt zipinfo.txt zipgrep.txt funzip.txt
+;	proginfo
+

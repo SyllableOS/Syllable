@@ -8,6 +8,8 @@ modules
 	apps/gnu/less-382
 	apps/gnu/tar-1.14
 ;	apps/other/man-1.5m2
+	apps/other/unzip-5.51
+	apps/other/zip-2.3
 	apps/media/coldfish
 	apps/media/mediaconverter
 	apps/media/mediaplayer
