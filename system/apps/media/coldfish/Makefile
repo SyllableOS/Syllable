@@ -30,6 +30,7 @@ deps:
 
 install:  $(OBJDIR)/ColdFish
 	mkdir -p $(APPBIN)
+	cp -r resources $(APPBIN)/resources
 	install -s ColdFish $(APPBIN)/ColdFish
 
 dist:  $(OBJDIR)/ColdFish
@@ -42,5 +43,6 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d ColdFish
 
 -include $(OBJDIR)/*.d
+
 
 
