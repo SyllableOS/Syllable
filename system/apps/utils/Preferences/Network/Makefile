@@ -5,8 +5,11 @@ OBJS = main.o mainwindow.o modifyconnection.o configuration.o detectmsgwindow.o 
 EXE = Prefs-Network
 
 $(EXE): $(OBJS)
-	$(LL) $(OBJS) -latheos -o $(EXE)
+	$(LL) $(OBJS) -lsyllable -o $(EXE)
 	strip --strip-all $(EXE)
+
+dist: $(EXE)
+	install -s $(EXE) $(DIST_DIR)/atheos/Applications/Preferences/$(EXE)
 
 clean:
 	-rm $(OBJS)
