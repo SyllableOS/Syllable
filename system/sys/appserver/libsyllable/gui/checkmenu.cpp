@@ -286,7 +286,7 @@ void CheckMenu::SetHighlighted( bool bHighlighted )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-Point CheckMenu::GetContentSize()
+Point CheckMenu::GetContentSize() const
 {
 	Menu *pcMenu = GetSuperMenu();
 
@@ -311,7 +311,7 @@ Point CheckMenu::GetContentSize()
  * \author Kristian Van Der Vliet (vanders@blueyonder.co.uk)
  *****************************************************************************/
 
-bool CheckMenu::IsChecked()
+bool CheckMenu::IsChecked() const
 {
 	return ( m_IsChecked );
 }
@@ -348,7 +348,7 @@ bool CheckMenu::Invoked( Message * pcMessage )
 }
 
 
-bool CheckMenu::IsSelectable()
+bool CheckMenu::IsSelectable() const
 {
 	return m_bIsSelectable;
 }

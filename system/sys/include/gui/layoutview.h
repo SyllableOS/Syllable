@@ -62,7 +62,7 @@ class LayoutView;
  *	layout to look like this:\n
  *	[  One  ]   [Two]\n
  *	That is, "One" has twice the weight of the two others, thus it will get
- *	twice the amount of exess screen space.
+ *	twice the amount of excess screen space.
  * \sa VLayoutNode, HLayoutNode, LayoutSpacer, SameWidth, SameHeight
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
@@ -105,7 +105,7 @@ public:
     const std::vector<LayoutNode*>& GetChildList() const;
     LayoutNode*			    GetParent() const;
     LayoutView*			    GetLayoutView() const;
-    LayoutNode* FindNode( const String& cName, bool bRequrcive = true, bool bIncludeSelf = false );
+    LayoutNode* FindNode( const String& cName, bool bRecursive = true, bool bIncludeSelf = false );
 
     void SameWidth( const char* pzName1, ... );
     void SameHeight( const char* pzName1, ... );

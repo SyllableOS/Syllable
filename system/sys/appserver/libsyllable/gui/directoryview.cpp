@@ -2386,7 +2386,7 @@ void FileRow::SetRect( const Rect & cRect, int nColumn )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-float FileRow::GetWidth( View * pcView, int nColumn )
+float FileRow::GetWidth( View * pcView, int nColumn ) const
 {
 	return ( m_avWidths[nColumn] );
 
@@ -2448,7 +2448,7 @@ float FileRow::GetWidth( View * pcView, int nColumn )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-float FileRow::GetHeight( View * pcView )
+float FileRow::GetHeight( View * pcView ) const
 {
 	font_height sHeight;
 

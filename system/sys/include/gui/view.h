@@ -254,15 +254,15 @@ public:
     virtual void	AddChild( View* pcView, bool bAssignTabOrder = false );
     void 		RemoveChild( View* pcChild );
     void		RemoveThis();
-    View*		GetChildAt( const Point& cPos );
-    View*		GetChildAt( int nIndex );
+    View*		GetChildAt( const Point& cPos ) const;
+    View*		GetChildAt( int nIndex ) const;
     View*		GetParent() const;
     ScrollBar*		GetVScrollBar() const;
     ScrollBar*		GetHScrollBar() const;
     Window*		GetWindow() const { return( (Window*)GetLooper() ); }
     String		GetTitle() const;
 
-    virtual int		GetTabOrder();
+    virtual int		GetTabOrder() const;
     virtual void	SetTabOrder( int nOrder = NEXT_TAB_ORDER );
 
 	virtual const ShortcutKey& GetShortcut() const;
@@ -273,7 +273,7 @@ public:
 	Menu*		GetContextMenu() const;
   
     uint32		GetQualifiers() const;
-    void		GetMouse( Point* pcPosition, uint32* pnButtons );
+    void		GetMouse( Point* pcPosition, uint32* pnButtons ) const;
     void		SetMousePos( const Point& cPosition );
 
     void		BeginDrag( Message* pcData, const Point& cOffset, const Bitmap* pcBitmap,
@@ -416,11 +416,14 @@ public:
 
     void		GetFontHeight( font_height* psHeight ) const;
   
-    void		Ping( int nSize = 0 );
+    void		Ping( int nSize = 0 ) const;
 private:
     friend class Window;
     friend class ScrollBar;
     friend class Font;
+
+    View& operator=( const View& );
+    View( const View& );
 
     static int	s_nNextTabOrder;
   

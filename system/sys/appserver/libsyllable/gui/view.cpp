@@ -286,7 +286,7 @@ View::~View()
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-int View::GetTabOrder()
+int View::GetTabOrder() const
 {
 	return ( m->m_nTabOrder );
 }
@@ -878,7 +878,7 @@ void View::AddChild( View * pcChild, bool bAssignTabOrder )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-View *View::GetChildAt( const Point & cPos )
+View *View::GetChildAt( const Point & cPos ) const
 {
 	View *pcChild;
 
@@ -903,7 +903,7 @@ View *View::GetChildAt( const Point & cPos )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-View *View::GetChildAt( int nIndex )
+View *View::GetChildAt( int nIndex ) const
 {
 	View *pcChild;
 
@@ -1106,7 +1106,7 @@ bool View::HasFocus( void ) const
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-void View::GetMouse( Point * pcPosition, uint32 *pnButtons )
+void View::GetMouse( Point * pcPosition, uint32 *pnButtons ) const
 {
 	Window *pcWindow = GetWindow();
 
@@ -1973,7 +1973,7 @@ void View::Paint( const Rect & cUpdateRect )
  * \par Description:
  *	Call the window's Flush() member to flush the render queue.
  * \par
- *	If the view is not attached to a window, this member do nothing.
+ *	If the view is not attached to a window, this member does nothing.
  * \par
  *	To get more info take a look at Window::Flush()
  * \sa Sync(), Window::Flush()
@@ -1995,7 +1995,7 @@ void View::Flush( void )
  *	Call the window's Flush() member to flush the render queue and
  *	syncronize the view with the appserver.
  * \par
- *	If the view is not attached to a window, this member do nothing.
+ *	If the view is not attached to a window, this member does nothing.
  * \par
  *	To get more info take a look at Window::Flush()
  * \sa Sync(), Window::Flush()
@@ -3600,7 +3600,7 @@ void View::FontChanged( Font * pcNewFont )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-void View::Ping( int nSize )
+void View::Ping( int nSize ) const
 {
 	Window *pcWindow = GetWindow();
 

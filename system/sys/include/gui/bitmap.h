@@ -86,6 +86,9 @@ private:
     friend class Window;
     friend class Sprite;
     friend class Desktop;
+
+    Bitmap& operator=( const Bitmap& );
+    Bitmap( const Bitmap& );
   
     Window* 	m_pcWindow;
     int	  	m_hHandle;

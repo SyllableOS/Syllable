@@ -164,12 +164,15 @@ private:
     friend	class	View;
     friend	class	Bitmap;
     friend	class	MenuItem;
+
+    Window& operator=( const Window& );
+    Window( const Window& );
   
     Window( Bitmap* pcBitmap );
     void	_ViewDeleted( View* pcView );
 //    void	Init();
     void	_Cleanup();
-    void*	_AllocRenderCmd( uint32 nCmd, View* pcView, uint32 nSize );
+    void*	_AllocRenderCmd( uint32 nCmd, const View* pcView, uint32 nSize );
     void	_HandleActivate( bool bIsActive, const Point& cMousePos );
     void	_CallMouseMoved( View* pcView, uint32 nButtons, int nWndTransit, Message* pcData );
     void	_MouseEvent( const Point& cNewPos, uint32 nButtons, Message* pcData, bool bReEntered );

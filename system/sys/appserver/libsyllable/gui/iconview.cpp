@@ -926,7 +926,7 @@ IconView::~IconView()
  * \return The current view type as VIEW_* enums.
  * \author	Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
-IconView::view_type IconView::GetView()
+IconView::view_type IconView::GetView() const
 {
 	return( m->m_eType );
 }

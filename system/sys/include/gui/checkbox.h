@@ -60,6 +60,9 @@ public:
 	virtual void Activated( bool bIsActive );
 
 private:
+    CheckBox& operator=( const CheckBox& );
+    CheckBox( const CheckBox& );
+
 	class Private;
 	Private *m;
 };

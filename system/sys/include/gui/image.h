@@ -120,6 +120,9 @@ private:
     virtual void	__IMG_reserved5__() {}
 
 private:
+    Image& operator=( const Image& );
+    Image( const Image& );
+
     class Private;
     Private *m;
 };
@@ -144,7 +147,7 @@ class BitmapImage : public Image
 {
 public:
     BitmapImage( uint32 nFlags = Bitmap::SHARE_FRAMEBUFFER );
-    BitmapImage( BitmapImage &cSource, uint32 nFlags = Bitmap::SHARE_FRAMEBUFFER );
+    BitmapImage( const BitmapImage &cSource, uint32 nFlags = Bitmap::SHARE_FRAMEBUFFER );
     BitmapImage( StreamableIO* pcSource, uint32 nFlags = Bitmap::SHARE_FRAMEBUFFER );
     BitmapImage( const uint8 *pData, const IPoint &cSize, color_space eColorSpace, uint32 nFlags = Bitmap::SHARE_FRAMEBUFFER );
     virtual ~BitmapImage();

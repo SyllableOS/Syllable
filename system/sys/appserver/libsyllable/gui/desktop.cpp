@@ -135,7 +135,7 @@ bool Desktop::SetScreenMode( screen_mode * psMode )
 	return ( true );
 }
 
-bool Desktop::SetResoulution( int nWidth, int nHeight )
+bool Desktop::SetResolution( int nWidth, int nHeight )
 {
 	m->m_psScreenMode->m_nWidth = nWidth;
 	m->m_psScreenMode->m_nHeight = nHeight;
@@ -158,7 +158,7 @@ bool Desktop::SetRefreshRate( float vRefreshRate )
 	return ( true );
 }
 
-bool Desktop::Activate()
+bool Desktop::Activate() const
 {
 	Application::GetInstance()->SwitchDesktop( m->m_nDesktop );
 	return ( true );
@@ -176,7 +176,7 @@ bool Desktop::Activate()
  * \return Number of windows on the desktop.
  * \author	Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
-int32 Desktop::GetWindows( Message* pcMsg )
+int32 Desktop::GetWindows( Message* pcMsg ) const
 {
 	int32 nCount;
 	Message cReq( DR_GET_WINDOW_LIST );
@@ -202,7 +202,7 @@ int32 Desktop::GetWindows( Message* pcMsg )
  * \param nWindow - The window.
  * \author	Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
-void Desktop::ActivateWindow( int32 nWindow )
+void Desktop::ActivateWindow( int32 nWindow ) const
 {
 	Message cReq( DR_ACTIVATE_WINDOW );
 	cReq.AddInt32( "window", nWindow );
@@ -221,7 +221,7 @@ void Desktop::ActivateWindow( int32 nWindow )
  * \param nWindow - The window.
  * \author	Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
-Bitmap* Desktop::GetWindowIcon( int32 nWindow )
+Bitmap* Desktop::GetWindowIcon( int32 nWindow ) const
 {
 	Message cReply;
 	
@@ -244,9 +244,3 @@ Bitmap* Desktop::GetWindowIcon( int32 nWindow )
 	delete( pcBitmap );
 	return( NULL );
 }
-
-
-
-
-
-

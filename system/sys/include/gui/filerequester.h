@@ -83,6 +83,9 @@ public:
 
 private:
 
+    FileRequester& operator=( const FileRequester& );
+    FileRequester( const FileRequester& );
+
 	enum
 	{ ID_PATH_CHANGED = 1, ID_SEL_CHANGED, ID_INVOKED, ID_CANCEL, ID_OK, ID_ALERT, ID_DROP_CHANGE, ID_UP_BUT = 0x55, ID_HOME_BUT = 0x56, ID_BACK_BUT = 0x57, ID_FORWARD_BUT = 0x58 };
 	

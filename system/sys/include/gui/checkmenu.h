@@ -50,14 +50,16 @@ class CheckMenu : public MenuItem
 
 		virtual void  Draw();
 		virtual void  SetHighlighted( bool bHighlighted );
-		virtual Point GetContentSize();
+		virtual Point GetContentSize() const;
 
-		bool IsChecked();
+		bool IsChecked() const;
 		void SetChecked(bool bChecked);
 
 		virtual bool Invoked(Message *pcMessage);
-		virtual bool IsSelectable();
+		virtual bool IsSelectable() const;
     private:
+		CheckMenu& operator=( const CheckMenu& );
+		CheckMenu( const CheckMenu& );
 
 		bool m_Enabled;
 		bool m_Highlighted;

@@ -76,6 +76,9 @@ public:
     virtual void	__CTRL_reserved5__();
     
 private:
+    Control& operator=( const Control& );
+    Control( const Control& );
+
     class Private;
     Private* m;
 };

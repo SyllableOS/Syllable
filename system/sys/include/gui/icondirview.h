@@ -55,14 +55,15 @@ public:
 	{
 		m_pcMonitor = NULL;
 	}
-	~DirectoryIconData()
-	{
-		delete( m_pcMonitor );
-	}
+	~DirectoryIconData();
+
 	os::String m_zPath;
 	struct stat m_sStat;
 	bool m_bBrokenLink;
 	os::NodeMonitor* m_pcMonitor;
+private:
+	DirectoryIconData& operator=( const DirectoryIconData& );
+	DirectoryIconData( const DirectoryIconData& );
 };
 
 
@@ -83,8 +84,8 @@ public:
     void ReRead();
     void SetPath( const String& cPath );
     String GetPath() const;
-    Image* GetDirIcon();
-    bool	JobsPending();
+    Image* GetDirIcon() const;
+    bool	JobsPending() const;
 
     void	SetDirChangeMsg( Message* pcMsg );
 	void	SetDirectoryLocked( bool bLocked );
@@ -104,6 +105,8 @@ private:
 	enum { M_ADD_ENTRY, M_UPDATE_ENTRY, M_REMOVE_ENTRY, M_LAYOUT, M_REREAD, M_MOUNT = 100, M_UNMOUNT, 
     		M_NEW_DIR, M_DELETE, M_RENAME, M_OPEN_WITH, M_INFO, M_MOVE_TO_TRASH, M_EMPTY_TRASH, M_JOB_END, M_JOB_END_REREAD };
 
+    IconDirectoryView& operator=( const IconDirectoryView& );
+    IconDirectoryView( const IconDirectoryView& );
 
     friend class os_priv::DirKeeper;
     class Private;

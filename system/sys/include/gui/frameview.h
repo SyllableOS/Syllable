@@ -59,6 +59,9 @@ public:
 private:
     void _CalcStringLabelSize();
 
+    FrameView& operator=( const FrameView& );
+    FrameView( const FrameView& );
+
     Point 	 m_cLabelSize;
     font_height  m_sFontHeight;
     View* 	 m_pcLabelView;

@@ -47,13 +47,13 @@ public:
     ImageButton( Rect cFrame, const String& cName, const String& cLabel, Message *pcMessage, Image *pcBitmap, uint32 nTextPosition = ImageButton::IB_TEXT_BOTTOM, bool bShowFrames=false,bool bShowText=false, bool bMouse=false, uint32 nResizeMask = CF_FOLLOW_LEFT|CF_FOLLOW_TOP, uint32 nFlags=WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
     virtual ~ImageButton( );
    	
-    uint32 GetTextPosition( void );
+    uint32 GetTextPosition( void ) const;
     void SetTextPosition( uint32 nTextPosition );
 
 	void SetImage( StreamableIO* pcStream );
     void SetImage( Image* pcImage );
 
-	Image *GetImage( void );
+	Image *GetImage( void ) const;
     void ClearImage();
     
     virtual void Activated(bool);
@@ -63,7 +63,7 @@ public:
     virtual void Paint( const Rect &cUpdateRect );   
     virtual Point GetPreferredSize( bool bLargest ) const;
 
-	ImageButton& operator=( ImageButton& cImageButton );
+    ImageButton& operator=( const ImageButton& );
 
 	virtual void _reserved1();
     virtual void _reserved2();
@@ -76,6 +76,8 @@ public:
     virtual void _reserved9();
     virtual void _reserved10();
 private:
+    ImageButton( const ImageButton& );
+
     /** \internal */
     class Private;
     Private *m;

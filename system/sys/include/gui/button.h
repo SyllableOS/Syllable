@@ -71,6 +71,9 @@ public:
     virtual bool Invoked( Message* pcMessage );
 
 private:
+    Button& operator=( const Button& );
+    Button( const Button& );
+
 	class Private;
 	Private *m;
 };

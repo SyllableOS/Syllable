@@ -150,7 +150,7 @@ void ImageButton::ClearImage( void )
  * Gets the Image that is passed to the ImageButton.
  * \author	Rick Caudill (cau0730@cup.edu)
  *****************************************************************************/
-Image *ImageButton::GetImage( void )
+Image *ImageButton::GetImage( void ) const
 {
 	return m->m_pcBitmap;
 }				/*end GetImage() */
@@ -191,7 +191,7 @@ Point ImageButton::GetPreferredSize( bool bLargest ) const
  *	Gets the text positon of the ImageButton.
  * \author	Rick Caudill (cau0730@cup.edu)
  *****************************************************************************/
-uint32 ImageButton::GetTextPosition( void )
+uint32 ImageButton::GetTextPosition( void ) const
 {
 	return m->m_nTextPosition;
 }				/*end GetTextPosition() */
@@ -397,10 +397,12 @@ void ImageButton::SetImage( StreamableIO* pcStream )
  * \param cImageButton - The ImageButton to copy from.
  * \author Kristian Van Der Vliet (vanders@liqwyd.com)
  *****************************************************************************/
-ImageButton& ImageButton::operator=( ImageButton& cImageButton )
+ImageButton& ImageButton::operator=( const ImageButton& cImageButton )
 {
 	m->SetImage( cImageButton.GetImage() );
 	m->m_nTextPosition = cImageButton.m->m_nTextPosition;
+	m->bShowFrame = cImageButton.m->bShowFrame;
+	m->bMouseOver = cImageButton.m->bMouseOver;
 	SetLabel( cImageButton.GetLabel() );
 	return( *this );
 }

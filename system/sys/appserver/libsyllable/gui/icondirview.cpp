@@ -653,11 +653,15 @@ bool DirKeeper::Idle()
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
+DirectoryIconData::~DirectoryIconData()
+{
+	delete m_pcMonitor;
+}
 
 class IconDirectoryView::Private
 {
 public:
-	os::BitmapImage* GetDriveIcon( os::String zPath, fs_info* psInfo, bool bSmall );
+	os::BitmapImage* GetDriveIcon( os::String zPath, fs_info* psInfo, bool bSmall ) const;
 	
 	Message*	        m_pcDirChangeMsg;
 	Path	        	m_cPath;
@@ -676,7 +680,7 @@ public:
     
 };
 
-os::BitmapImage* IconDirectoryView::Private::GetDriveIcon( os::String zPath, fs_info* psInfo, bool bSmall )
+os::BitmapImage* IconDirectoryView::Private::GetDriveIcon( os::String zPath, fs_info* psInfo, bool bSmall ) const
 {
 	
 	os::BitmapImage* pcItemIcon = NULL;
@@ -819,7 +823,7 @@ void IconDirectoryView::DetachedFromWindow()
  * \return Whether there are pending jobs.
  * \author	Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
-bool IconDirectoryView::JobsPending()
+bool IconDirectoryView::JobsPending() const
 {
 	//std::cout<<m_nJobsPending<<" pending"<<std::endl;
 	return( m->m_nJobsPending > 0 );
@@ -961,7 +965,7 @@ void IconDirectoryView::SetPath( const String& cPath )
  * \return The icon.
  * \author	Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
-os::Image* IconDirectoryView::GetDirIcon()
+os::Image* IconDirectoryView::GetDirIcon() const
 {
 	/* Look if the path is a mountpoint */
 	os::Volumes cVolumes;

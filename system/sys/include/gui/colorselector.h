@@ -53,6 +53,9 @@ class ColorSelector : public Control
 
 	private:
 
+	ColorSelector& operator=( const ColorSelector& );
+	ColorSelector( const ColorSelector& );
+
 	class Private;
 	Private* m;
 };

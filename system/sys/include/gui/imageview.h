@@ -70,6 +70,9 @@ class ImageView : public View
 	void Refresh();
 
 	private:
+	ImageView& operator=( const ImageView& );
+	ImageView( const ImageView& );
+
 	class Private;
 	Private*	m;
 };

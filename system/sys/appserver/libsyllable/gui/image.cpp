@@ -207,7 +207,7 @@ BitmapImage::BitmapImage( uint32 nFlags )
  *  \param	nFlags Bitmap flags, see os::Bitmap.
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-BitmapImage::BitmapImage( BitmapImage & cSource, uint32 nFlags )
+BitmapImage::BitmapImage( const BitmapImage & cSource, uint32 nFlags )
 {
 	m = new BitmapImage::Private;
 	m->m_nBitmapFlags = nFlags;

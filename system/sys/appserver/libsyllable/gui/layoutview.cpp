@@ -27,10 +27,12 @@
 
 using namespace os;
 
+#if 0
 static void AddBorders( Rect * pcRect, const Rect & cBorders )
 {
 	pcRect->Resize( -cBorders.left, -cBorders.top, cBorders.right, cBorders.bottom );
 }
+#endif
 
 static void RemBorders( Rect * pcRect, const Rect & cBorders )
 {
@@ -432,7 +434,7 @@ LayoutView *LayoutNode::GetLayoutView() const
 	return ( m_pcLayoutView );
 }
 
-LayoutNode *LayoutNode::FindNode( const String & cName, bool bRequrcive, bool bIncludeSelf )
+LayoutNode *LayoutNode::FindNode( const String & cName, bool bRecursive, bool bIncludeSelf )
 {
 	if( bIncludeSelf && cName == m_cName )
 	{
@@ -440,7 +442,7 @@ LayoutNode *LayoutNode::FindNode( const String & cName, bool bRequrcive, bool bI
 	}
 	for( uint i = 0; i < m_cChildList.size(); ++i )
 	{
-		if( bRequrcive )
+		if( bRecursive )
 		{
 			LayoutNode *pcChild = m_cChildList[i]->FindNode( cName, true );
 

@@ -52,14 +52,14 @@ public:
     color_space	GetColorSpace() const;
     void*	GetFrameBuffer();
     bool	SetScreenMode( screen_mode* psMode );
-    bool	SetResoulution( int nWidth, int nHeight );
+    bool	SetResolution( int nWidth, int nHeight );
     bool	SetColorSpace( color_space eColorSpace );
     bool	SetRefreshRate( float vRefreshRate );
-    bool	Activate();
+    bool	Activate() const;
     
-	int32	GetWindows( Message* pcMsg );
-	void	ActivateWindow( int32 nWindow );
-	Bitmap*	GetWindowIcon( int32 nWindow );
+	int32	GetWindows( Message* pcMsg ) const;
+	void	ActivateWindow( int32 nWindow ) const;
+	Bitmap*	GetWindowIcon( int32 nWindow ) const;
 private:
 	class Private;
 	Private* m;

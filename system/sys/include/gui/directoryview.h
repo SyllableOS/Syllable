@@ -61,8 +61,8 @@ public:
     virtual void AttachToView( View* pcView, int nColumn );
     virtual void SetRect( const Rect& cRect, int nColumn );
     
-    virtual float GetWidth( View* pcView, int nIndex );
-    virtual float GetHeight( View* pcView );
+    virtual float GetWidth( View* pcView, int nIndex ) const;
+    virtual float GetHeight( View* pcView ) const;
     virtual void  Paint( const Rect& cFrame, View* pcView, uint nColumn,
 			 bool bSelected, bool bHighlighted, bool bHasFocus );
     virtual bool  HitTest( View* pcView, const Rect& cFrame, int nColumn, Point cPos );
@@ -70,6 +70,9 @@ public:
     const String GetName() const { return( m_cName ); }
     struct stat GetFileStat() const { return( m_sStat ); }
 private:
+    FileRow& operator=( const FileRow& );
+    FileRow( const FileRow& );
+
     friend class DirectoryView;
     std::string		m_cName;
     struct stat	m_sStat;
@@ -114,6 +117,9 @@ public:
     virtual void  MouseMove( const Point& cNewPos, int nCode, uint32 nButtons, Message* pcData );
     virtual void  KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
 private:
+    DirectoryView& operator=( const DirectoryView& );
+    DirectoryView( const DirectoryView& );
+
     enum { M_CLEAR, M_ADD_ENTRY, M_UPDATE_ENTRY, M_REMOVE_ENTRY };
     friend class os_priv::DirKeeper;
     

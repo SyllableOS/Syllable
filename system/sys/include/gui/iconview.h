@@ -82,7 +82,7 @@ public:
 	virtual void DragSelection( os::Point cStartPoint );
 	virtual void OpenContextMenu( os::Point cPosition, bool bMouseOverIcon );
 	
-	view_type GetView();
+	view_type GetView() const;
 	void SetView( view_type eType );
 	void SetTextColor( os::Color32_s sColor );
 	void SetSelectionColor( os::Color32_s sColor );
@@ -131,6 +131,9 @@ public:
 	virtual os::Message* GetSelChangeMsg();
 	virtual os::Message* GetInvokeMsg();
 private:
+	IconView& operator=( const IconView& );
+	IconView( const IconView& );
+
 	class MainView;
 	class Private;
 	Private* m;
