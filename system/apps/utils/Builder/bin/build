@@ -987,16 +987,16 @@ def prefix package
 	File.join '/usr', installName(package)
 end
 
-def installRoot stage
+def installRoot staging
 	@systemBuild ?
 		File.join(@systemRoot, 'usr') :
-	stage ?
+	staging ?
 		@stage :
 		'/usr'
 end
 
-def installPath stage, package
-	File.join installRoot(stage), installName(package)
+def installPath staging, package
+	File.join installRoot(staging), installName(package)
 end
 
 def recipePath package
