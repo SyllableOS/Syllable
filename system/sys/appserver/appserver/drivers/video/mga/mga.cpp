@@ -244,10 +244,6 @@ Millenium2::Millenium2() : m_cGELock( "mill2_ge_lock" ), m_cCursorHotSpot(0,0)
 	{
 		for( int j = 0; j < 4; j++ ) 
 		{
-	    m_cScreenModeList.push_back( os::screen_mode(128, 88, (128*bpp[i]+15)&~15, colspace[i], rf[j]) ); // broken??!?
-	    m_cScreenModeList.push_back( os::screen_mode(160, 120, (160*bpp[i]+15)&~15, colspace[i], rf[j]) );
-	    m_cScreenModeList.push_back( os::screen_mode(320, 240, (320*bpp[i]+15)&~15, colspace[i], rf[j]) );
-	    m_cScreenModeList.push_back( os::screen_mode(512, 350, (512*bpp[i]+15)&~15, colspace[i], rf[j]) ); // broken??!?
 	    m_cScreenModeList.push_back( os::screen_mode(640, 480, (640*bpp[i]+15)&~15, colspace[i], rf[j]) );
 	    m_cScreenModeList.push_back( os::screen_mode(800, 600, (800*bpp[i]+15)&~15, colspace[i], rf[j]) );
 	    m_cScreenModeList.push_back( os::screen_mode(1024, 768, (1024*bpp[i]+15)&~15, colspace[i], rf[j]) );

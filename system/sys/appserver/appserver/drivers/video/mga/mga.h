@@ -49,6 +49,9 @@ public:
     virtual bool	BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap, os::IRect cSrcRect, os::IPoint cDstPos, int nMode );
 
     bool	IsInitiated() const { return( m_bIsInitiated ); }
+
+    virtual int		    GetFramebufferOffset() { return(0); }
+
 private:
     inline void   outl( uint32 nAddress, uint32 nValue ) const { *((vuint32*)(m_pRegisterBase + nAddress)) = nValue; }
     inline void   outb( uint32 nAddress, uint8 nValue ) const { *((vuint8*)(m_pRegisterBase + nAddress)) = nValue; }
