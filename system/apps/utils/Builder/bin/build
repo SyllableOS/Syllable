@@ -1066,17 +1066,17 @@ attr_reader :failures
 	def initialize
 		@failures = []
 
-		@log  = File.new File.join(@@logsPath, 'stdout'), 'w'
-		@summary = File.new File.join(@@logsPath, 'summary'), 'w'
-		@failLog = File.new File.join(@@logsPath, 'failures'), 'w'
+		@log		= File.new File.join(@@logsPath, 'stdout'), 'w'
+		@summary	= File.new File.join(@@logsPath, 'summary'), 'w'
+		@failLog	= File.new File.join(@@logsPath, 'failures'), 'w'
 
-		@log  << s = "Building in root directory #{Dir.getwd}\n"
+		@log << s = "Building in root directory #{Dir.getwd}\n"
 		@summary << s
 		@failLog << s
 	end
 
 	def close
-		@log  << s = "\nFinished\n"
+		@log << s = "\nFinished\n"
 		@summary << s
 
 		@log.close
@@ -1085,42 +1085,42 @@ attr_reader :failures
 	end
 
 	def header header
-		print  "\n" + s = header + "\n"
-		@log  << "\n#{s}\n"
+		print "\n" + s = header + "\n"
+		@log << "\n#{s}\n"
 		@summary << s
 	end
 
 	def subheader header
-		print  "\n" + s = header + "\n"
-		@log  << "\n#{s}\n"
+		print "\n" + s = header + "\n"
+		@log << "\n#{s}\n"
 		@summary << s
 	end
 
 	def entry entry
-		print  s = "\n#{entry}\n"
-		@log  << s
+		print s = "\n#{entry}\n"
+		@log << s
 		@summary << s
 	end
 
 	def detail detail
-		puts  detail
-		@log  << detail + "\n"
+		puts detail
+		@log << detail + "\n"
 	end
 
 	def action action
-		puts  "\n#{action}\n"
-		@log  << action + ': '
+		puts "\n#{action}\n"
+		@log << action + ': '
 		@summary << action
 	end
 
 	def error error
-		puts  "\n" + s = "Error: #{error}"
-		@log  << s + ':'
+		puts "\n" + s = "Error: #{error}"
+		@log << s + ':'
 		@summary << ": #{s}\n"
 	end
 
 	def result result
-		@log  << "\n\n" << result
+		@log << "\n\n" << result
 		@summary << "\n"
 	end
 
@@ -1133,7 +1133,7 @@ end
 
 # Define paths
 
-@workDir  = Dir.getwd
+@workDir = Dir.getwd
 
 # Get the path to the application directory.
 # build should not be called from a relative path!
@@ -1161,12 +1161,12 @@ else
 	@stage = File.join @workDir, 'dist-root'
 #	@buildTools = File.join @workDir, 'build-tools'
 
-	ENV['DIST_VER']  = '0.5.4+'
+	ENV['DIST_VER'] = '0.5.4+'
 	ENV['DIST_NAME'] = 'base-syllable-0.5.4+.zip'
 
 	ENV['ATHEOS_SRC'] = @workDir
 	ENV['BUILD_TOOLS'] = File.join @workDir, 'build-tools'
-	ENV['DIST_DIR']  = @stage
+	ENV['DIST_DIR'] = @stage
 end
 
 # Set environment variables
@@ -1265,7 +1265,7 @@ else
 #					':' + (File.join @stage, 'atheos/usr/sbin') +
 					':' + ENV['PATH']
 
-				# Pick up headers from the system repository and staging area
+				# Pick up headers from the staging area and system repository
 
 				headers =
 					# C library headers
@@ -1306,15 +1306,15 @@ else
 			end
 
 			case arg1
-			when 'get'   then get  target
-			when 'patch'  then patch  target
-			when 'distclean' then distclean target
-			when 'clean'  then clean  target
-			when 'configure' then configure target
-			when 'make'   then make  target
-			when 'test'   then test  target
-			when 'install'  then install target
-			when 'uninstall' then uninstall target
+			when 'get'			then get		target
+			when 'patch'		then patch		target
+			when 'distclean'	then distclean	target
+			when 'clean'		then clean		target
+			when 'configure'	then configure	target
+			when 'make'			then make		target
+			when 'test'			then test		target
+			when 'install'		then install	target
+			when 'uninstall'	then uninstall	target
 			when 'stage'
 				if exists? @stage or
 					begin
@@ -1324,7 +1324,7 @@ else
 				then
 					build true, target
 				end
-			when 'distro'  then makeDistro target
+			when 'distro'		then makeDistro	target
 			else
 				if arg2
 					@log.error 'Unrecognized command'
