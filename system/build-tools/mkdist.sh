@@ -53,13 +53,11 @@ echo "Building boot images"
 echo "Building floppy images"
 ./mkminibase.sh $BASE
 
-exit
-
 echo "Building CD image"
 ./mkbase.sh $BASE $TARBALL $VER
 
-echo "Cleaning up"
-rm -rf $BASE
+echo "Building large CD image"
+./mkbase-large.sh $VER
 
 echo "Done!"
 exit 0

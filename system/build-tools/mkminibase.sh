@@ -30,29 +30,17 @@ mkdir $ROOT/disk1
 mkdir $ROOT/disk1/atheos
 mkdir $ROOT/disk1/atheos/sys
 mkdir $ROOT/disk1/atheos/sys/bin
-mkdir $ROOT/disk1/atheos/sys/config
 mkdir $ROOT/disk1/atheos/sys/fonts
-mkdir $ROOT/disk1/atheos/sys/keymaps
-mkdir $ROOT/disk1/atheos/etc
-mkdir $ROOT/disk1/atheos/home
-mkdir $ROOT/disk1/atheos/home/root
 
 DISK=$ROOT/disk1
 
-cp -p $BASE/atheos/sys/bin/DiskManager $DISK/atheos/sys/bin/
 cp -p $BASE/atheos/sys/bin/aedit $DISK/atheos/sys/bin/
 cp -p $BASE/atheos/sys/bin/aterm $DISK/atheos/sys/bin/
-cp -p $BASE/atheos/sys/bin/dbterm $DISK/atheos/sys/bin/
 cp -p $BASE/atheos/sys/bin/devstat $DISK/atheos/sys/bin/
 cp -p $BASE/atheos/sys/bin/format $DISK/atheos/sys/bin/
 cp -p $BASE/atheos/sys/bin/fsprobe $DISK/atheos/sys/bin/
 cp -p $BASE/atheos/sys/bin/init $DISK/atheos/sys/bin/
 cp -p $BASE/atheos/sys/bin/mount $DISK/atheos/sys/bin/
-cp -p $BASE/atheos/sys/bin/reboot $DISK/atheos/sys/bin/
-cp -p $BASE/atheos/sys/bin/unmount $DISK/atheos/sys/bin/
-
-cp -p $BASE/atheos/sys/appserver $DISK/atheos/sys/
-strip --strip-all $DISK/atheos/sys/appserver
 
 cd $DISK/atheos/sys/bin
 ln -s /usr/bin/bash bash
@@ -60,26 +48,28 @@ ln -s /usr/bin/bash sh
 ln -s /usr/bin/pwd pwd
 cd ../../../../../
 
-cp -p $BASE/atheos/sys/config/appserver $DISK/atheos/sys/config/
+cp -p $BASE/atheos/sys/appserver $DISK/atheos/sys/
+strip --strip-all $DISK/atheos/sys/appserver
 
 cp -p $BASE/atheos/sys/fonts/NimbusSanL-Regu.ttf $DISK/atheos/sys/fonts/
 cp -p $BASE/atheos/sys/fonts/SyllableConsole-Regu.ttf $DISK/atheos/sys/fonts/
-
-cp -p $BASE/atheos/sys/keymaps/American $DISK/atheos/sys/keymaps/
-
-cp -p $BASE/atheos/etc/profile $DISK/atheos/etc/
-cp -p $BASE/atheos/etc/passwd $DISK/atheos/etc/
-
-cp -p $BASE/atheos/home/root/.profile $DISK/atheos/home/root/
 
 # Disk 2
 
 mkdir $ROOT/disk2
 mkdir $ROOT/disk2/atheos
 mkdir $ROOT/disk2/atheos/sys
+mkdir $ROOT/disk2/atheos/sys/bin
 mkdir $ROOT/disk2/atheos/sys/libs
+mkdir $ROOT/disk2/atheos/sys/keymaps
+mkdir $ROOT/disk2/atheos/sys/config
+mkdir $ROOT/disk2/atheos/etc
+mkdir $ROOT/disk2/atheos/home
+mkdir $ROOT/disk2/atheos/home/root
 
 DISK=$ROOT/disk2
+
+cp -p $BASE/atheos/sys/bin/DiskManager $DISK/atheos/sys/bin/
 
 cp -dpr $BASE/atheos/sys/libs/libc.so.1 $DISK/atheos/sys/libs/
 cp -dpr $BASE/atheos/sys/libs/libm-2.1.2.so $DISK/atheos/sys/libs/
@@ -88,15 +78,21 @@ cp -dpr $BASE/atheos/sys/libs/libgcc.so.1 $DISK/atheos/sys/libs/
 cp -dpr $BASE/atheos/sys/libs/libstdc++-2.so.3 $DISK/atheos/sys/libs/
 #cp -dpr $BASE/atheos/sys/libs/libnss_compat-2.1.2.so $DISK/atheos/sys/libs/
 
-cp -dpr $BASE/atheos/sys/libs/libatheos.so.3 $DISK/atheos/sys/libs/
-strip --strip-all $DISK/atheos/sys/libs/libatheos.so.3
+cp -p $BASE/atheos/sys/keymaps/American $DISK/atheos/sys/keymaps/
+
+cp -p $BASE/atheos/sys/config/appserver $DISK/atheos/sys/config/
+
+cp -p $BASE/atheos/etc/profile $DISK/atheos/etc/
+cp -p $BASE/atheos/etc/passwd $DISK/atheos/etc/
+
+cp -p $BASE/atheos/home/root/.profile $DISK/atheos/home/root/
 
 # Disk 3
 
 mkdir $ROOT/disk3
 mkdir $ROOT/disk3/atheos
 mkdir $ROOT/disk3/atheos/sys
-#mkdir $ROOT/disk3/atheos/sys/libs
+mkdir $ROOT/disk3/atheos/sys/libs
 mkdir $ROOT/disk3/atheos/sys/drivers
 mkdir $ROOT/disk3/atheos/sys/drivers/appserver
 mkdir $ROOT/disk3/atheos/sys/drivers/appserver/input
@@ -109,6 +105,9 @@ mkdir $ROOT/disk3/atheos/usr
 mkdir $ROOT/disk3/atheos/usr/bin
 
 DISK=$ROOT/disk3
+
+cp -dpr $BASE/atheos/sys/libs/libatheos.so.3 $DISK/atheos/sys/libs/
+strip --strip-all $DISK/atheos/sys/libs/libatheos.so.3
 
 cp -p $BASE/atheos/sys/drivers/appserver/input/* $DISK/atheos/sys/drivers/appserver/input/
 
@@ -127,18 +126,14 @@ cp -p $BASE/atheos/usr/bin/bash $DISKatheos/usr/bin/
 cp -p $BASE/atheos/usr/bin/cp $DISK/atheos/usr/bin/
 cp -p $BASE/atheos/usr/bin/gzip $DISK/atheos/usr/bin/
 cp -p $BASE/atheos/usr/bin/hostname $DISK/atheos/usr/bin/
-cp -p $BASE/atheos/usr/bin/less $DISK/atheos/usr/bin/
-cp -p $BASE/atheos/usr/bin/ln $DISK/atheos/usr/bin/
 cp -p $BASE/atheos/usr/bin/ls $DISK/atheos/usr/bin/
 cp -p $BASE/atheos/usr/bin/mkdir $DISK/atheos/usr/bin/
 cp -p $BASE/atheos/usr/bin/mv $DISK/atheos/usr/bin/
 cp -p $BASE/atheos/usr/bin/pwd $DISK/atheos/usr/bin/
 cp -p $BASE/atheos/usr/bin/rm $DISK/atheos/usr/bin/
-cp -p $BASE/atheos/usr/bin/rmdir $DISK/atheos/usr/bin/
 cp -p $BASE/atheos/usr/bin/sync $DISK/atheos/usr/bin/
 cp -p $BASE/atheos/usr/bin/tar $DISK/atheos/usr/bin/
 cp -p $BASE/atheos/usr/bin/whoami $DISK/atheos/usr/bin/
-cp -p $BASE/atheos/usr/bin/uname $DISK/atheos/usr/bin/
 
 cd $DISK/atheos/usr/bin
 ln -s gzip gunzip
@@ -168,6 +163,13 @@ mv bimage3.gz objs/
 
 echo "Building floppies"
 ./mkfloppies.sh
+
+echo "Cleaning up"
+rm objs/bimage1.gz
+rm objs/bimage2.gz
+rm objs/bimage3.gz
+
+rm -rf $ROOT
 
 echo "Done"
 exit 0
