@@ -1,3 +1,14 @@
+* February 9 2004, Henrik Isaksson *
+
+ * string.cpp/.h
+   Added substr() and find() in order to simplify the
+   std::string -> os::String changes.
+
+* February 8 2004, Henrik Isaksson *
+
+ * resource.cpp:
+   Bugfix: missing NULL-termination when loading list of resources.
+
 * February 7 2004, Henrik Isaksson *
 
  * Updated libsyllable for GCC3.
@@ -489,8 +500,3 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
-
-
-
-
-
