@@ -1,5 +1,6 @@
 #include "iconview.h"
 #include "loadbitmap.h"
+
 Bitmap* Icon::s_pcBitmap[16] = {NULL,};
 int	Icon::s_nCurBitmap = 0;
 Color32_s fgColor, bgColor;
@@ -180,7 +181,7 @@ void Icon::Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendTe
 
         if ( bBlendText )
         {
-            pcView->SetDrawingMode( DM_OVER );
+	    //pcView->SetDrawingMode( DM_OVER );
         }
         else
         {
@@ -532,7 +533,6 @@ void IconView::KeyDown( const char* pzString, const char* pzRawString, uint32 nQ
         case VK_BACKSPACE:
             m_cPath.Append( ".." );
             ReRead();
-            //	PopState();
             DirChanged( m_cPath.GetPath() );
             break;
         case VK_FUNCTION_KEY:
@@ -612,10 +612,6 @@ void IconView::MouseDown( const Point& cPosition, uint32 nButtons )
         m_nHitTime = get_system_time();
     }
 
-    //if (nButtons == 2){
-    //Invoked();
-    //  }
-    //
 }
 
 //----------------------------------------------------------------------------
@@ -868,6 +864,9 @@ void IconView::DirChanged( const std::string& cNewPath )
     }
 
 }
+
+
+
 
 
 

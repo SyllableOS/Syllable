@@ -12,13 +12,21 @@ class IconProp : public Window
 
     private:
         TextView* pcIconNameText;
+        
         StringView* pcIconNameString;
         Button*    pcIconOkBut;
         Button*    pcIconRenameBut;
+        
+        //Button*    pcIconExecBut;
+        //TextView*  pcIconExecTxt;
+        //StringView pcIconExecStr;
+        
+        
         virtual void HandleMessage(Message* pcMessage);
 };
 
 #endif
+
 
 
 
