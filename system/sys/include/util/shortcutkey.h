@@ -21,6 +21,7 @@
 #define	__F_UTIL_SHORTCUTKEY_H__
 
 #include <gui/guidefines.h>
+#include <util/string.h>
 #include <atheos/types.h>
 
 namespace os {
@@ -33,6 +34,7 @@ class ShortcutKey {
 	ShortcutKey();
 	~ShortcutKey();
 
+	void SetFromLabel( const String& cLabel );
 	void SetFromLabel( const char* pzLabel );
 	
 	bool IsValid() const;
@@ -41,6 +43,7 @@ class ShortcutKey {
 	bool operator==( const ShortcutKey& c ) const;
 	
 	private:
+//	char*		m_pzKey;
 	uint32		m_nKey;
 	uint32		m_nQualifiers;
 
@@ -53,5 +56,4 @@ class ShortcutKey {
 } // end of namespace
 
 #endif	// __F_UTIL_SHORTCUTKEY_H__
-
 

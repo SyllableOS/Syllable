@@ -72,6 +72,11 @@ bool ShortcutKey::operator==( const ShortcutKey& c ) const
 			( m_nKey == c.m_nKey  ) ;
 }
 
+void ShortcutKey::SetFromLabel( const String& cLabel )
+{
+	SetFromLabel( cLabel.c_str() );
+}
+
 void ShortcutKey::SetFromLabel( const char* pzLabel )
 {
 	int i, len = strlen( pzLabel );
@@ -96,3 +101,4 @@ void ShortcutKey::_SetKey( const char* pzKey )
 
 	m_nKey = towupper( unicode );
 }
+
