@@ -289,7 +289,7 @@ ISOMount(const char *path, const int flags, nspace** newVol)
 					dprintf("ISOMount: Is an ISO9660 volume, initting rec\n");
 					InitVolDesc( vol, buf );
 					strncpy(vol->devicePath,path,127);
-					vol->id = ISO_ROOTNODE_ID;
+					vol->id = vol->rootDirRec.id;
 					dprintf("ISO9660: vol->blockSize = %d\n",vol->logicalBlkSize[FS_DATA_FORMAT]); 
 					multiplier = deviceBlockSize / vol->logicalBlkSize[FS_DATA_FORMAT];
 					dprintf("ISOMount: block size multiplier is %d\n", multiplier);

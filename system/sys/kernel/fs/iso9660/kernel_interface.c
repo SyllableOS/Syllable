@@ -178,8 +178,8 @@ iso_probe( const char* devicePath, fs_info* info )
 	info->fi_dev = -1;
 
 	// Root vnode ID
-	info->fi_root = ISO_ROOTNODE_ID;
-	
+	info->fi_root = vol->rootDirRec.id;
+
 	// File system flags.
 	info->fi_flags = FS_CAN_MOUNT;
 	
@@ -251,7 +251,7 @@ iso_mount( kdev_t volumeID, const char *devicePath, uint32 flags, void *paramete
 		volume->rockRidge = true;
 		
 		// root node is a special case and has always value 1
-		*rootNodeID = ISO_ROOTNODE_ID;
+		*rootNodeID = volume->rootDirRec.id;
 		*data = (void*)volume;
 		volume->id = volumeID;
 		// initialize the cache
@@ -345,10 +345,13 @@ static int	iso_walk( void * _volume, void * _baseNode, const char * _fileName
 	size_t		nameLength = _nameLength;
 	ino_t*	vNodeID = _vNodeID;
 	vnode	*	newNode = NULL;
-	char	*	directoryName = baseNode->fileIDString;
 	char		fileName[nameLength+1];
 	bool		done = false;
 	int			result = -ENOENT;
+
+#ifdef __ENABLE_DEBUG__
+	char	*	directoryName = baseNode->fileIDString;
+#endif
 	
 	dprintf( "iso_walk - NEW - Enter\n" );
 	
@@ -379,24 +382,6 @@ static int	iso_walk( void * _volume, void * _baseNode, const char * _fileName
 			dprintf( "iso_walk - deleted trailing '/'\n" );
 		}
 		dprintf( "iso_walk - Looking for file: %s of length: %d \n", fileName, nameLength );
-	}
-	
-	// handle "." ...
-	if( !done && (strcmp( ".", fileName ) == 0) )
-	{
-		done = true;
-		dprintf( "iso_walk - Success, found %s\n", fileName );
-		*vNodeID = baseNode->id;
-		result = -EOK;
-
-	}
-	//  and ".."
-	if( !done && (strcmp( "..", fileName ) == 0) )
-	{
-		done = true;
-		dprintf( "iso_walk - Success, found %s\n", fileName );
-		*vNodeID = baseNode->parID;
-		result = -EOK;
 	}
 	
 	// ok, we'll have to actually walk the directory
@@ -535,7 +520,7 @@ iso_read_vnode(void *_ns, ino_t vnid, void **node)
 	if (newNode != NULL)
 	{
 		// root node is stored in the volume struct
-		if (vnid == ISO_ROOTNODE_ID)
+		if (vnid == ns->rootDirRec.id )
 		{
 			dprintf("iso_read_vnode - root node requested.\n");
 			memcpy(newNode, &(ns->rootDirRec), sizeof(vnode));
@@ -593,13 +578,14 @@ iso_write_vnode(void *_volume, void *_node )
 
 	int 		result = -EOK;
 	vnode* 		node = (vnode*)_node;
+	nspace*	vol = (nspace*)_volume;
 	
 	// free the resources owned by the vnode
 	dprintf("iso_write_vnode - ENTER \n" );
 
 	if ( node != NULL )
 	{ 
-		if ( node->id != ISO_ROOTNODE_ID )
+		if ( node->id != vol->rootDirRec.id )
 		{
 			if (node->fileIDString != NULL) free (node->fileIDString);
 			if (node->attr.slName != NULL) free (node->attr.slName);
