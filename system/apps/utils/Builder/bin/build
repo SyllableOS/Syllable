@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.33
+# Version 0.5.34
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -274,7 +274,7 @@ def installPackage target
 				action 'tar --directory=/usr -xpPzf ' + target and
 				begin
 					@log.header 'Registering ' + target
-					action 'pkgmanager -a ' + root
+					action 'pkgmanager -add ' + root
 				end
 			end
 		else
@@ -375,7 +375,7 @@ def installPackage target
 						@systemBuild or
 						begin
 							@log.header 'Registering ' + target
-							action 'pkgmanager -a ' + root
+							action 'pkgmanager -add ' + root
 						end
 					end
 				end
@@ -405,7 +405,7 @@ def uninstallPackage target
 			unless @systemBuild or
 				begin
 					@log.header 'Unregistering ' + name
-					action 'pkgmanager -r ' + dir
+					action 'pkgmanager -remove ' + dir
 				end
 			then
 				false
@@ -1095,7 +1095,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.33',
+	puts 'Syllable Build System 0.5.34',
 		'Copyright (c) 2002-2004 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1154,22 +1154,22 @@ else
 				ENV['ATHEOS_INCLUDE_PATH'] = File.join @workDir, 'sys/include'
 				ENV['C_INCLUDE_PATH'] =
 					(File.join @stage, 'boot/atheos/sys/include') + ':' +
-					(File.join @stage, 'boot/atheos/autolnk/include') +
+#					(File.join @stage, 'boot/atheos/autolnk/include') +
 					((var = ENV['C_INCLUDE_PATH']) ? ':' + var : '')
 				ENV['CPLUS_INCLUDE_PATH'] =
 					(File.join @stage, 'boot/atheos/sys/include') + ':' +
-					(File.join @stage, 'boot/atheos/autolnk/include') +
+#					(File.join @stage, 'boot/atheos/autolnk/include') +
 					((var = ENV['CPLUS_INCLUDE_PATH']) ? ':' + var : '')
 
 				ENV['ATHEOS_LIB_PATH'] = File.join @workDir, 'libs'
 				ENV['DLL_PATH'] =
 					(File.join @stage, 'boot/atheos/sys/libs') + ':' +
 					(File.join @stage, 'boot/atheos/sys') + ':' +
-					(File.join @stage, 'boot/atheos/autolnk/lib') +
+#					(File.join @stage, 'boot/atheos/autolnk/lib') +
 					((var = ENV['DLL_PATH']) ? ':' + var : '')
 				ENV['LIBRARY_PATH'] =
 					(File.join @stage, 'boot/atheos/sys/libs') + ':' +
-					(File.join @stage, 'boot/atheos/autolnk/lib') +
+#					(File.join @stage, 'boot/atheos/autolnk/lib') +
 					((var = ENV['LIBRARY_PATH']) ? ':' + var : '')
 
 				prepare target unless exists? @stage
