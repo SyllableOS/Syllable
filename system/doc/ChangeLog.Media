@@ -1,3 +1,6 @@
+* Feburary 13th 2005 Arno Klenke *
+Updated the ffmpeg plugin to work with the latest ffmpeg version
+
 * January 23th 2005, Arno Klenke *
 
 Added the new MediaTimeSource class which can be used to sync audio and video streams
