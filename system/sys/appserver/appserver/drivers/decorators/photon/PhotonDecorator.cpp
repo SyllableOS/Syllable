@@ -250,6 +250,13 @@ void PhotonDecorator::FrameSized( const Rect& cFrame )
 		Rect cDamage = m_cBounds;
 		cDamage.top = cDamage.bottom - std::max( m_vBottomBorder, m_vBottomBorder + cDelta.y ) - 1.0f;
 		pcView->Invalidate( cDamage );
+		// Make sure vertical resize handles are redrawn
+		cDamage.left = cDamage.right - 2;
+		cDamage.top = TITLE_HEIGHT;
+		pcView->Invalidate( cDamage );
+		cDamage.left = 0;
+		cDamage.right = cDamage.left + 2;
+		pcView->Invalidate( cDamage );
 	}
 }
 

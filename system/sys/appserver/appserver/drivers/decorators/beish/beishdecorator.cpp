@@ -17,7 +17,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  * 
  *  Modification of NextDecorator by Edwin de Jonge
- *  BeIsh 0.1
+ *  Updated July 2004 by Mike Saunders
+ *  BeIsh 0.2
  */
 
 #include "beishdecorator.h"
@@ -142,7 +143,7 @@ WindowDecorator::hit_item BeIshDecorator::HitTest( const Point& cPosition )
 		return( HIT_SIZE_TOP );
 	    }
 	} 
-	else if ( cPosition.y > m_cBounds.bottom - 8 ) 
+	else if ( cPosition.y > m_cBounds.bottom - 4 ) 
 	{
 	    if ( cPosition.x < 16 ) 
 	    {
@@ -157,11 +158,11 @@ WindowDecorator::hit_item BeIshDecorator::HitTest( const Point& cPosition )
 		return( HIT_SIZE_BOTTOM );
 	    }
 	}
-	else if ( cPosition.x < 2 ) 
+	else if ( cPosition.x < 4 ) 
 	{
 	    return( HIT_SIZE_LEFT );
 	}
-	else if ( cPosition.x > m_cBounds.right - 2 ) 
+	else if ( cPosition.x > m_cBounds.right - 4 ) 
 	{
 	    return( HIT_SIZE_RIGHT );
 	}
@@ -254,7 +255,7 @@ void BeIshDecorator::FrameSized( const Rect& cFrame )
     {
 	Rect cDamage = m_cBounds;
 
-	cDamage.left = m_cZoomRect.left - fabs(cDelta.x)  - 2.0f;
+	cDamage.left = m_cZoomRect.left - fabs(cDelta.x)  - 6.0f;
 	pcView->Invalidate( cDamage );
     }
     if ( cDelta.y != 0.0f ) 
@@ -287,7 +288,7 @@ void BeIshDecorator::Layout()
 //        dbprintf("hello");
     }
 
-    m_cToggleRect.right = m_cBounds.right - 3;
+    m_cToggleRect.right = m_cBounds.right - 4;
     if ( m_nFlags & WND_NO_DEPTH_BUT ) 
     {
 	m_cToggleRect.left = m_cToggleRect.right;
