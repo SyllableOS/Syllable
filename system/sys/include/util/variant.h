@@ -39,7 +39,6 @@ class IPoint;
 class Rect;
 class IRect;
 class Message;
-struct Color32_s;
 
 class Variant
 {
@@ -56,7 +55,7 @@ public:
     Variant( const Rect& cValue );
     Variant( const IRect& cValue );
     Variant( const Message& cValue );
-    Variant( Color32_s cValue );
+    Variant( const Color32& cValue );
     Variant( void* pValue );
     Variant( void* pData, int nSize );
     Variant( const Variant& cOther );
@@ -74,6 +73,7 @@ public:
     void SetIPoint( const IPoint& cValue );
     void SetRect( const Rect& cValue );
     void SetIRect( const IRect& cValue );
+    void SetColor32( const Color32& cValue );
     void SetPointer( void* pValue  );
     void SetRaw( const void* pData, int nSize );
     
@@ -89,6 +89,7 @@ public:
     IPoint	AsIPoint() const;
     Rect	AsRect() const;
     IRect	AsIRect() const;
+    Color32	AsColor32() const;
     void*	AsPointer() const;
     void*	AsRaw( size_t* pnSize );
 
@@ -104,6 +105,7 @@ public:
     Variant& operator=( const IPoint& cValue );
     Variant& operator=( const Rect& cValue );
     Variant& operator=( const IRect& cValue );
+    Variant& operator=( const Color32& cValue );
     Variant& operator=( const Variant& cValue );
     
     operator int() const;
@@ -116,36 +118,10 @@ public:
     operator IPoint() const;
     operator Rect() const;
     operator IRect() const;
+    operator Color32() const;
     
-/*
-    bool operator==( int8 nValue ) const;
-    bool operator==( int16 nValue ) const;
-    bool operator==( int32 nValue ) const;
-    bool operator==( int64 nValue ) const;
-    bool operator==( float vValue ) const;
-    bool operator==( double vValue ) const;
-    bool operator==( bool bValue ) const;
-    bool operator==( const String& cValue ) const;
-    bool operator==( const Point& cValue ) const;
-    bool operator==( const IPoint& cValue ) const;
-    bool operator==( const Rect& cValue ) const;
-    bool operator==( const IRect& cValue ) const;
-    */    
     bool operator==( const Variant& cValue ) const;
-/*
-    bool operator!=( int8 nValue ) const;
-    bool operator!=( int16 nValue ) const;
-    bool operator!=( int32 nValue ) const;
-    bool operator!=( int64 nValue ) const;
-    bool operator!=( float vValue ) const;
-    bool operator!=( double vValue ) const;
-    bool operator!=( bool bValue ) const;
-    bool operator!=( const String& cValue ) const;
-    bool operator!=( const Point& cValue ) const;
-    bool operator!=( const IPoint& cValue ) const;
-    bool operator!=( const Rect& cValue ) const;
-    bool operator!=( const IRect& cValue ) const;
-    */    
+
     bool operator!=( const Variant& cValue ) const;
 
     size_t GetFlattenedSize() const;
@@ -172,11 +148,6 @@ private:
 };
 
 
-
-
-
 } // end of namespace
-
-
 
 #endif // __F_UTIL_VARIANT_H__
