@@ -194,56 +194,45 @@ int dhcp_init( char* if_name )
 	signal(SIGTERM,sighandle);	// Trap SIGTERM so that we can gracefully release & shutdown
 	signal(SIGALRM,sighandle);	// Trap SIGALRM so that we can properly set the timer statuses
 
+	// Seed the RNG
+	srand(time(0));
+
 	return( EOK );
 }
 
 static int setup_sockets( bool outbound_broadcast )
 {
 	// Create & bind an outbound socket and an inbound socket
-	info->out_socket_fd = socket( PF_INET,SOCK_DGRAM,IPPROTO_UDP );
-
-	if( info->out_socket_fd < 0 )
-	{
-		debug(PANIC,__FUNCTION__,"could not create outbound socket\n");
-		return(EINVAL);
-	}
-
 	memset((char *)&info->out_sin, sizeof(info->out_sin),0);
 	info->out_sin.sin_family = AF_INET;
 
 	if( outbound_broadcast == true)
 	{
 		info->out_sin.sin_addr.s_addr = htonl(INADDR_BROADCAST);	// Send to all stations (Until we
-																			// have a server IP from a DHCPOFFER)
+																	// have a server IP from a DHCPOFFER)
 	}
 	else
-		info->out_sin.sin_addr.s_addr = htonl(info->siaddr);			// Send only to the specified server IP address
+		info->out_sin.sin_addr.s_addr = htonl(info->siaddr);		// Send only to the specified server IP address
 
-	info->out_sin.sin_port = htons(REMOTE_PORT);
-
-	if (bind(info->out_socket_fd, (struct sockaddr *)&info->out_sin, sizeof(info->out_sin)) < 0)
-	{
-		debug(PANIC,__FUNCTION__,"could not bind outbound socket to port %i\n",REMOTE_PORT);
-		return(EINVAL);
-	}
+	info->out_sin.sin_port = htons(REMOTE_PORT);	// 67
 
 	// Build & bind the inbound socket
-	info->in_socket_fd = socket( PF_INET,SOCK_DGRAM,IPPROTO_UDP );
+	info->in_socket_fd = info->out_socket_fd = socket( PF_INET,SOCK_DGRAM,IPPROTO_UDP );
 
 	if( info->in_socket_fd < 0 )
 	{
-		debug(PANIC,__FUNCTION__,"could not create inbound socket\n");
+		debug(PANIC,__FUNCTION__,"could not create socket\n");
 		return(EINVAL);
 	}
 
 	memset((char *)&info->in_sin, sizeof(info->in_sin),0);
 	info->in_sin.sin_family = AF_INET;
 	info->in_sin.sin_addr.s_addr = htonl(INADDR_ANY);
-	info->in_sin.sin_port = htons(LOCAL_PORT);
+	info->in_sin.sin_port = htons(LOCAL_PORT);		// 68
 
 	if (bind(info->in_socket_fd, (struct sockaddr *)&info->in_sin, sizeof(info->in_sin)) < 0)
 	{
-		debug(PANIC,__FUNCTION__,"could not bind inbound socket to port %i\n",LOCAL_PORT);
+		debug(PANIC,__FUNCTION__,"could not bind socket to port %i\n",LOCAL_PORT);
 		return(EINVAL);
 	}
 
