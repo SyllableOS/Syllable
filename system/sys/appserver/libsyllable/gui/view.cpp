@@ -2688,6 +2688,9 @@ void View::DrawFrame( const Rect & a_cRect, uint32 nStyle )
 {
 	Rect cRect( a_cRect );
 
+	Color32_s fg_save = GetFgColor();
+	Color32_s bg_save = GetBgColor();
+	
 	cRect.Floor();
 	bool bSunken = false;
 
@@ -2787,6 +2790,9 @@ void View::DrawFrame( const Rect & a_cRect, uint32 nStyle )
 			}
 		}
 	}
+
+	SetFgColor( fg_save );
+	SetBgColor( bg_save );
 }
 
 //----------------------------------------------------------------------------
