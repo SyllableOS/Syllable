@@ -149,7 +149,7 @@ modules
 	libs/glibc2-2.1.2
 	libs/compat-1.0
 	libs/libpthread
-	libs/ncurses-5.3
+	libs/ncurses-5.4
 	libs/zlib-1.2.1
 	sys/translators
 	sys/appserver/libsyllable
@@ -189,7 +189,7 @@ modules
 	apps/gnu/bash-2.03
 	apps/gnu/coreutils-5.0
 	apps/gnu/grep-2.5.1
-	apps/gnu/sed-4.0.9
+	apps/gnu/sed-4.1
 	apps/utils/Preferences/Appearance
 	apps/utils/Preferences/DateTime
 	apps/utils/Preferences/Font
