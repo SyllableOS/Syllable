@@ -236,6 +236,15 @@ static int setup_sockets( bool outbound_broadcast )
 		return(EINVAL);
 	}
 
+	// Set SO_BINDTODEVICE option to bind to our interface
+	debug( INFO, __FUNCTION__, "forcing packets via interface %s\n", info->if_name );
+	if( setsockopt( info->out_socket_fd, SOL_SOCKET, SO_BINDTODEVICE, info->if_name, strlen( info->if_name ) + 1 ) < 0 )
+	{
+		debug( INFO, __FUNCTION__, "failed to force packets via interface %s\n", info->if_name);
+		close( info->out_socket_fd );
+		return( EINVAL );
+	}
+
 	return(EOK);
 }
 

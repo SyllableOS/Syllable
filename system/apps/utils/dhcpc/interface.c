@@ -128,18 +128,6 @@ int bringup_interface( char* if_name )
 		return( EINVAL );
 	}
 
-	// Work around a bug where we must have a route on the interface before
-	// we can broadcast a packet.  The IP, netmask and gateway address are
-	// all 0.0.0.0 at this point.
-	//
-	// FIXME: Obviously, fix the bug & remove this code...
-	if( setup_route( if_socket ) != EOK )
-	{
-		debug(WARNING,__FUNCTION__,"failed to set dummy route for interface %s\n",if_name);
-		close( if_socket );
-		return( EINVAL );
-	}
-
 	close( if_socket );
 	return( EOK );
 }
@@ -226,18 +214,28 @@ int setup_route( int if_socket )
 	// Add gateway route
 
 	memset( &route, 0, sizeof( route ) );
-	route.rt_metric = 1;
-	route.rt_flags |= RTF_GATEWAY;
-	route.rt_dev = info->if_name;
+	route.rt_metric = 0;
 
-	memcpy( &(((struct sockaddr_in*)&route.rt_dst))->sin_addr, &info->yiaddr, 4 );
-	memcpy( &(((struct sockaddr_in*)&route.rt_genmask))->sin_addr, &info->subnetmask, 4 );
-	memcpy( &(((struct sockaddr_in*)&route.rt_gateway))->sin_addr, info->routers, 4 );
+	if ( info->routers != NULL )
+	{
+		route.rt_flags |= RTF_GATEWAY;
+		memset( &( ( ( struct sockaddr_in * )&route.rt_dst ) )->sin_addr, 0, 4 );
+		memset( &( ( ( struct sockaddr_in * )&route.rt_genmask ) )->sin_addr, 0, 4 );
+		memcpy( &( ( ( struct sockaddr_in * )&route.rt_gateway ) )->sin_addr, info->routers, 4 );
+	}
+	else
+	{
+		route.rt_flags &= ~RTF_GATEWAY;
+		memcpy( &( ( ( struct sockaddr_in * )&route.rt_dst ) )->sin_addr, &info->yiaddr, 4 );
+		memcpy( &( ( ( struct sockaddr_in * )&route.rt_genmask ) )->sin_addr, &info->subnetmask, 4 );
+		memset( &( ( ( struct sockaddr_in * )&route.rt_gateway ) )->sin_addr, 0, 4 );
+	}
 
-	debug( INFO, __FUNCTION__, "adding route to if %s IP: %s Mask: %s, GW: %s\n", route.rt_dev,
-	    format_ip( (((struct sockaddr_in*)&route.rt_dst))->sin_addr.s_addr ),
-	    format_ip( (((struct sockaddr_in*)&route.rt_genmask))->sin_addr.s_addr ),
-	    format_ip( (((struct sockaddr_in*)&route.rt_gateway))->sin_addr.s_addr ) );
+	debug( INFO, __FUNCTION__,
+		"adding route to if %s IP: %s Mask: %s, GW: %s\n", route.rt_dev,
+		format_ip( ( ( ( struct sockaddr_in * )&route.rt_dst ) )->sin_addr.s_addr ),
+		format_ip( ( ( ( struct sockaddr_in * )&route.rt_genmask ) )->sin_addr.s_addr ),
+		format_ip( ( ( ( struct sockaddr_in * )&route.rt_gateway ) )->sin_addr.s_addr ) );
 
 	// Now add the route to the interface
 	if ( ioctl( if_socket, SIOCADDRT, &route ) < 0 )
