@@ -2,7 +2,7 @@ CFLAGS   = -Wall -c -O2 -pipe -fexceptions
 CXXFLAGS = $(CFLAGS)
 AOPTS   = -c
 
-DRIVERBIN = /Applications/Media/Plugins
+DRIVERBIN = /Applications/Media/Plugins/
 
 VPATH = ./
 
@@ -24,11 +24,11 @@ deps:
 
 install:  $(OBJDIR)/Remote
 	mkdir -p $(DRIVERBIN)
-	install -s $(OBJDIR)/Remote $(DRIVERBIN)/Remote
+	install -s $(OBJDIR)/Remote $(DRIVERBIN)
 
-dist:  $(OBJDIR)/Blur
-	mkdir -p $(DIST_DIR)/atheos/Applications/Media/Plugins/
-	install -s $(OBJDIR)/Remote $(DIST_DIR)/atheos/Applications/Media/Plugins/
+dist:  $(OBJDIR)/Remote
+	mkdir -p $(DIST_DIR)/atheos$(DRIVERBIN)
+	install -s $(OBJDIR)/Remote $(DIST_DIR)/atheos$(DRIVERBIN)
 
 deps: $(OBJDIR) $(DEPS)
 
