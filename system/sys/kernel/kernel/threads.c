@@ -733,6 +733,8 @@ void Thread_Delete( Thread_s *psThread )
 	MArray_Remove( &g_sThreadTable, psThread->tr_hThreadID );
 	Desc_Free( psThread->tc_TSSDesc );
 
+	release_thread_semaphores( psThread->tr_hThreadID );
+
 	sched_unlock();
 	put_cpu_flags( nOldFlg );
 

@@ -48,6 +48,31 @@ struct _Semaphore
 //  int         ss_nLockBufPos;
 };
 
+typedef struct _RWHolder RWHolder_s;
+struct _RWHolder
+{
+	RWHolder_s *rwh_psNext;
+	thread_id rwh_hThreadId;
+	int32 rwh_nReadCount;
+	int32 rwh_nWriteCount;
+};
+
+typedef struct _RWWaiter RWWaiter_s;
+struct _RWWaiter
+{
+	RWWaiter_s *rww_psNext;
+	WaitQueue_s *rww_psWaitQueue;
+	int32 rww_nReading;
+};
+
+typedef struct _RWLock RWLock_s;
+struct _RWLock
+{
+	Semaphore_s rw_sSemaphore;
+	RWHolder_s *rw_psHolders;
+	RWWaiter_s *rw_psWaiters;
+};
+
 typedef struct
 {
 	Semaphore_s **sc_apsSemaphores;
@@ -59,6 +84,7 @@ typedef struct
 
 SemContext_s *create_semaphore_context();
 SemContext_s *clone_semaphore_context( SemContext_s * psOrig, proc_id hNewOwner );
+void release_thread_semaphores( thread_id hThread );
 void update_semaphore_context( SemContext_s * psCtx, proc_id hOwner );
 void exit_free_semaphores( Process_s *psProc );
 void exec_free_semaphores( Process_s *psProc );
