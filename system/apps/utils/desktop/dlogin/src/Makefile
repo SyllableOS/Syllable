@@ -1,7 +1,7 @@
 COPTS	= -Wall -c --no-warn
 
 OBJDIR	:= ../objs
-OBJS	= ../objs/main.o ../objs/loadbitmap.o ../objs/colorbutton.o
+OBJS	= ../objs/main.o ../objs/commonfuncs.o ../objs/mainwindow.o ../objs/colorbutton.o ../objs/imagebutton.o
 EXE		= $(OBJDIR)/dlogin
 
 CC	= g++
@@ -16,7 +16,7 @@ $(EXE): $(OBJS)
 	@echo Building : $(EXE)
 	@$(LL) $(OBJS) -lsyllable -lcrypt -o $@
 	@echo Adding images to : $(EXE)
-	@rescopy -r $(EXE) ./images/*.gif
+	@rescopy -r $(EXE) ./images/*.gif ./images/*.png
 
 clean:
 	@echo Removing all objects and executables 
@@ -37,7 +37,11 @@ astyle:
 	@echo Compiling : $<
 	@$(CC) $(COPTS) $< -o $@
 
-../objs/loadbitmap.o : loadbitmap.cpp
+../objs/commonfuncs.o : commonfuncs.cpp
+	@echo Compiling : $<
+	@$(CC) $(COPTS) $< -o $@
+
+../objs/mainwindow.o : mainwindow.cpp
 	@echo Compiling : $<
 	@$(CC) $(COPTS) $< -o $@
 
@@ -45,18 +49,6 @@ astyle:
 	@echo Compiling : $<
 	@$(CC) $(COPTS) $< -o $@
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+../objs/imagebutton.o : imagebutton.cpp
+	@echo Compiling : $<
+	@$(CC) $(COPTS) $< -o $@

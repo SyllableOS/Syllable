@@ -1,0 +1,14 @@
+#ifndef _MESSAGES_H
+#define _MESSAGES_H
+
+enum
+{
+	ID_OK,
+	ID_CANCEL,
+	ID_BAD_PASS,
+	ID_OPTIONS,
+	ID_SHUTDOWN,
+	ID_REBOOT
+};
+
+#endif

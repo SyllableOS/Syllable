@@ -1,4 +1,3 @@
-
 #include "colorbutton.h"
 #include <gui/font.h>
 #include <math.h>
@@ -44,31 +43,50 @@ ColorButton::ColorButton(const Rect& cFrame, char* s1, char* s2,Message* pcMess,
 */
 void ColorButton::Paint(const Rect & cUpdateRect)
 {
+	Rect cBounds = GetBounds();
+	View::SetEraseColor( sBgColor);
+	uint32 nFrameFlags = ( GetValue().AsBool(  ) && IsEnabled(  ) )? FRAME_RECESSED : FRAME_RAISED;
 
-    Rect cBounds = GetNormalizedBounds();
-    font_height sHeight;
-    GetFontHeight( &sHeight );
-    float vStrWidth = GetStringWidth( GetLabel() );
-    float vCharHeight = sHeight.ascender - sHeight.descender + sHeight.line_gap;
-    float y = floor((cBounds.Height()+1.0f)*0.5f - vCharHeight*0.5f + sHeight.ascender + sHeight.line_gap / 2 );
-    float x = floor((cBounds.Width()+1.0f) / 2.0f - vStrWidth / 2.0f);
+	if( IsEnabled() && (HasFocus()) )
+	{
+		if( HasFocus() ) {
+			View::SetFgColor( 0, 0xAA, 0 );
+		} else {
+			View::SetFgColor( 0, 0, 0 );
+		}
+		DrawLine( Point( cBounds.left, cBounds.top ), Point( cBounds.right, cBounds.top ) );
+		DrawLine( Point( cBounds.right, cBounds.bottom ) );
+		DrawLine( Point( cBounds.left, cBounds.bottom ) );
+		DrawLine( Point( cBounds.left, cBounds.top ) );
+		cBounds.Resize( 1, 1, -1, -1 );
+	}
 
-    if( GetValue() )
-    {
-        y += 1.0f;
-        x += 1.0f;
-    }
+	DrawFrame( cBounds, nFrameFlags );
 
-    SetEraseColor( sBgColor );
-    DrawFrame( cBounds, (GetValue()) ? FRAME_RECESSED : FRAME_RAISED );
+	if( IsEnabled() )
+	{
+		View::SetFgColor( sTextColor );
+	}
+	else
+	{
+		View::SetFgColor( 255, 255, 255 );
+	}
+	View::SetBgColor(sBgColor);
 
-    View::SetFgColor( sTextColor );
-    View::SetBgColor( sBgColor );
-    MovePenTo( x, y );
+	if( GetValue().AsBool(  ) )
+	{
+		cBounds.MoveTo( 1, 1 );
+	}
 
-    SetDrawingMode(DM_OVER);
-    DrawString( GetLabel() );
-
+	DrawText( cBounds, GetLabel(), DTF_ALIGN_CENTER );
+	if( IsEnabled() == false )
+	{
+		View::SetFgColor( 100, 100, 100 );
+		SetDrawingMode( DM_OVER );
+		cBounds.MoveTo( -1, -1 );
+		DrawText( cBounds, GetLabel(), DTF_ALIGN_CENTER );
+		SetDrawingMode( DM_COPY );
+	}
 }
 
 
