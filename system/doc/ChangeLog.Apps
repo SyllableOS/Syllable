@@ -1,3 +1,6 @@
+* December 24 2003, Rick Caudill *
+	* Fixed many makefiles to work with libsyllable instead of libatheos
+
 * October 9 2003. Kristian Van Der Vliet *
 
 Network Preferences
