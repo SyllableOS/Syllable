@@ -136,6 +136,8 @@ int	sigsuspend( const sigset_t *pSet );
 
 #endif /* __KERNEL__ */
 
+#include <atheos/pthreadsignal.h>
+
 #ifdef __cplusplus
 }
 #endif
