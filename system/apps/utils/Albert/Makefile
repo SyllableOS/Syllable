@@ -7,7 +7,7 @@ CC	= gcc
 LL	= gcc
 
 $(EXE) : $(OBJS)
-	$(LL) $(OBJS) -latheos -lstdc++ -lm -o $@
+	$(LL) $(OBJS) -lsyllable -lstdc++ -lm -o $@
 	rescopy -r $(EXE) *.png
 
 clean:
@@ -19,8 +19,8 @@ tar:
 	tar -cpzvf Albert.tar.gz -C .. Albert
 
 dist:
-	-mkdir $(DIST_DIR)/Applications/Albert
-	mv Albert $(DIST_DIR)/Applications/Albert/
+	mkdir -p $(DIST_DIR)/atheos/Applications/Albert
+	mv Albert $(DIST_DIR)/atheos/Applications/Albert/
 
 deps:
 	
