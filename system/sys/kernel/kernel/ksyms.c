@@ -39,6 +39,7 @@
 #include <atheos/msgport.h>
 #include <atheos/bootmodules.h>
 #include <atheos/tld.h>
+#include <atheos/random.h>
 
 #include <posix/fcntl.h>
 #include <posix/unistd.h>
@@ -416,6 +417,11 @@ static KernelSymbol_s g_asKernelSymbols[] =
   KSYMBOL(make_port_public),
   KSYMBOL(make_port_private),
   KSYMBOL(find_port),
+
+	// Randomness
+
+  KSYMBOL(seed),
+  KSYMBOL(rand),
 
   {NULL, NULL}
 };
