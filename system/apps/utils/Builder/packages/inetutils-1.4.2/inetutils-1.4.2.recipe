@@ -1,5 +1,14 @@
 authors				Kaj de Vos
+warnings			The servers reportedly don't work.
+
+licenses			GPL
+home				www.gnu.org/software/inetutils/
+
+build-needs			bash 2.03
+
 patch-config
-configure-options	--disable-ping
-; --disable-servers
+configure-options
+;	Ping acts irregular, and Syllable has its own:
+	--disable-ping
+;	--disable-servers
 documentation		README COPYING NEWS ChangeLog TODO AUTHORS THANKS

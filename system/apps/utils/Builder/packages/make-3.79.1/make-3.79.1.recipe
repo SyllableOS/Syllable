@@ -1,4 +1,13 @@
 authors			Kaj de Vos
+
+licenses		GPL
+home			www.gnu.org/software/make/
+
 build-needs		make
+test-needs		perl
+
 patch-config
+test-targets
+;	check-loadavg
+	check
 documentation	README README.customs INSTALL COPYING ABOUT-NLS NEWS ChangeLog AUTHORS
