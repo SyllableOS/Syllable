@@ -1,3 +1,6 @@
+* July 1  2003, Rick Caudill *
+	* Final patches to AView.  This source is the latest that is uploaded to my website.
+
 * June 24 2003, Kristian Van Der Vliet *
 	* Bug fixes to dhcpc
 		* Send & recieve on same port (BOOTPC, UDP 68)
