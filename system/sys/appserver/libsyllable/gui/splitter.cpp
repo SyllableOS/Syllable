@@ -193,10 +193,10 @@ static uint8 g_anMouseImgV[]=
 					Application::GetInstance()->PushCursor( MPTR_MONO, g_anMouseImgV, POINTERV_WIDTH, POINTERV_HEIGHT, IPoint( POINTERV_WIDTH / 2, POINTERV_HEIGHT / 2 ) );
 
 				}
-				if( ( nButtons == TRACK_BUTTON ) && ( pcData == NULL ) )
+			/*	if( ( nButtons == TRACK_BUTTON ) && ( pcData == NULL ) )
 				{
 					m_pSplitter->StartTracking( cNewPos );
-				}
+				}*/
 			}
 			else if( nCode == MOUSE_EXITED )
 			{
@@ -212,6 +212,7 @@ static uint8 g_anMouseImgV[]=
 			if( nButtons == TRACK_BUTTON )
 			{
 				m_pSplitter->StartTracking( cPosition );
+				MakeFocus();
 			}
 			View::MouseDown( cPosition, nButtons );
 		}
@@ -386,7 +387,7 @@ void Splitter::SplitBy( float fValue )
 			if( f1.bottom - f1.top + fValue < vLimit )
 			{
 				fValue = vLimit - f1.bottom + f1.top;
-				m->m_Tracking = false;
+				//m->m_Tracking = false;
 			}
 			m->m_pView1->ResizeBy( Point( 0, fValue ) );
 			m->m_pSeparator->MoveBy( Point( 0, fValue ) );
@@ -401,7 +402,7 @@ void Splitter::SplitBy( float fValue )
 			if( f2.bottom - f2.top - fValue < vLimit )
 			{
 				fValue = -vLimit + f2.bottom - f2.top;
-				m->m_Tracking = false;
+				//m->m_Tracking = false;
 			}
 			f2.top += fValue;
 			m->m_pView2->SetFrame( f2 );
@@ -423,7 +424,7 @@ void Splitter::SplitBy( float fValue )
 			if( f1.right - f1.left + fValue < vLimit )
 			{
 				fValue = vLimit - f1.right + f1.left;
-				m->m_Tracking = false;
+				//m->m_Tracking = false;
 			}
 			m->m_pView1->ResizeBy( Point( fValue, 0 ) );
 			m->m_pSeparator->MoveBy( Point( fValue, 0 ) );
@@ -438,7 +439,7 @@ void Splitter::SplitBy( float fValue )
 			if( f2.right - f2.left - fValue < vLimit )
 			{
 				fValue = -vLimit + f2.right - f2.left;
-				m->m_Tracking = false;
+				//m->m_Tracking = false;
 			}
 			f2.left += fValue;
 			m->m_pView2->SetFrame( f2 );
@@ -655,11 +656,12 @@ void Splitter::StartTracking( Point position )
 
 void Splitter::MouseMove( const Point & cNewPos, int nCode, uint32 nButtons, Message * pcData )
 {
-	if( nCode & MOUSE_EXITED )
+/*	if( nCode & MOUSE_EXITED )
 	{
 		m->m_Tracking = false;
 	}
-	else if( m->m_Tracking )
+	else */
+	if( m->m_Tracking )
 	{
 		float delta;
 
@@ -723,7 +725,6 @@ void Splitter::KeyDown( const char *pzString, const char *pzRawString, uint32 nQ
 	}
 	View::KeyDown( pzString, pzRawString, nQualifiers );
 }
-
 
 
 
