@@ -1,0 +1,19 @@
+diff -ru rsync-2.6.2.original/hlink.c rsync-2.6.2/hlink.c
+--- rsync-2.6.2.original/hlink.c	2004-03-26 16:46:21.000000000 +0000
++++ rsync-2.6.2/hlink.c	2004-07-09 15:25:28.000000000 +0000
+@@ -135,6 +135,7 @@
+ 
+ int hard_link_check(struct file_struct *file, int skip)
+ {
++#if SUPPORT_HARD_LINKS
+ 	if (!hlink_list || !file->link_u.links)
+ 		return 0;
+ 	if (skip && !(file->flags & FLAG_HLINK_EOL))
+@@ -146,6 +147,7 @@
+ 		}
+ 		return 1;
+ 	}
++#endif
+ 	return 0;
+ }
+ 
