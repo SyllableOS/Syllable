@@ -1,7 +1,7 @@
 ; Syllable base system
 ;
 sys/include
-build-tools/src
+build-tools/floppy/src
 other/config/default
 other/config/etc
 other/fonts
