@@ -7,3 +7,6 @@ libraries/libogg-1.0
 libraries/libvorbis-1.0
 applications/develop/nasm-0.98
 applications/develop/ruby-1.6.7
+applications/gnu/gettext-0.10.35
+;applications/gnu/texinfo-4.2
+
