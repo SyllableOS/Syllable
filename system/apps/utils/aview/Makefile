@@ -20,8 +20,8 @@ clean:
 deps:
 
 dist:
-	mkdir /Applications/AView
-	mkdir /Applications/AView/bin
+	mkdir $(DIST_DIR)/Applications/AView
+	mkdir $(DIST_DIR)/Applications/AView/bin
 	cp -f  $(EXE) $(DIST_DIR)/Applications/AView/bin/$(EXE)
 
 #.c.o :
