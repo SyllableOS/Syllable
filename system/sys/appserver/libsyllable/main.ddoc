@@ -1,0 +1,20 @@
+/*! \mainpage Documentation of the Syllable highlevel C++ API
+
+
+
+\ref gui "The Syllable GUI API"
+
+\ref storage "The higlevel filesystem API"
+
+\ref util "Various utillity classes"
+
+*/
+
+/*! \page intro
+
+Intro to the highlevel API
+
+
+*/
+
+
