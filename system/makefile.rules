@@ -7,7 +7,7 @@
 #
 # OBJDIR   - The directory where all temporary files will be placed.
 # CFLAGS   - Options given to the compiler when compiling C files
-# CPPFLAGS - Options given to the compiler when compiling C++ files
+# CXXFLAGS - Options given to the compiler when compiling C++ files
 # OBJS     - List of object files.
 #
 # The $(OBJDIR) varaiable will be prepended to all elements in
@@ -24,7 +24,7 @@ $(OBJDIR)/%.o : %.c
 	@$(CC) $(CFLAGS) $< -o $@
 $(OBJDIR)/%.o : %.cpp
 	@echo Compiling : $<
-	@$(CC) $(CPPFLAGS) $< -o $@
+	@$(CC) $(CXXFLAGS) $< -o $@
 $(OBJDIR)/%.o : %.s
 	@echo Assembling: $<
 	@$(CC) $(AFLAGS) -x assembler-with-cpp $< -o $@
@@ -39,7 +39,7 @@ $(OBJDIR)/%.d : %.c
 	@$(CC) $(CFLAGS) -M $< | sed 's%^\(.*\):%$(OBJDIR)\/\1:%' > $@
 $(OBJDIR)/%.d : %.cpp
 	@echo Making dependencies for : $<
-	@$(CC) $(CPPFLAGS) -M $< | sed 's%^\(.*\):%$(OBJDIR)\/\1:%' > $@
+	@$(CC) $(CXXFLAGS) -M $< | sed 's%^\(.*\):%$(OBJDIR)\/\1:%' > $@
 $(OBJDIR)/%.d : %.s
 	@touch $@
 $(OBJDIR)/%.d : %.S
