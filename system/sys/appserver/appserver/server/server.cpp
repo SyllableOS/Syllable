@@ -103,11 +103,11 @@ int AppServer::LoadDecorator( const std::string & cPath, op_create_decorator **p
 	{
 		if( nVersion < WNDDECORATOR_APIVERSION )
 		{
-			dbprintf( "Error: window decorator '%s' to old. VER=%d, CUR VER=%d\n", cPath.c_str(), nVersion, WNDDECORATOR_APIVERSION );
+			dbprintf( "Error: window decorator '%s' too old. VER=%d, CUR VER=%d\n", cPath.c_str(), nVersion, WNDDECORATOR_APIVERSION );
 		}
 		else
 		{
-			dbprintf( "Error: window decorator '%s' to new. VER=%d, CUR VER=%d\n", cPath.c_str(), nVersion, WNDDECORATOR_APIVERSION );
+			dbprintf( "Error: window decorator '%s' too new. VER=%d, CUR VER=%d\n", cPath.c_str(), nVersion, WNDDECORATOR_APIVERSION );
 		}
 		unload_library( nPlugin );
 		return ( -1 );
