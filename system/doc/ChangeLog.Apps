@@ -1,3 +1,21 @@
+* January 9 2004, Henrik Isaksson *
+	- DiskManager:
+		o Added shortcuts
+		o Fixed layout of buttons (due to changes in Button)
+	- Prefs-Appearance, Prefs-Screen:
+		o Added shortcuts
+	- Prefs-Network:
+		o Added shortcuts
+		o Changed the two StringViews in the 'detect' window into one, using the
+		  new multi-line capabilites.
+	- Prefs-Keyboard:
+		o Added shortcuts
+		o Updated for changes in API (GetDefaultKeymap)
+	- Prefs-Font:
+		o Added shortcuts
+		o Updated for changes in API (GetConfigNames)
+		o Added anti-aliasing checkbox to tab order
+
 * January 8 2004, Kaj de Vos *
 	Removed Windows Carriage Returns from this file.
 	Removed Inetutils 1.3.2 and Less 3.74. Syllable 0.5.2 now uses Inetutils 1.4.2
@@ -155,7 +173,4 @@ Network Preferences
 		* Added NetworkPreferences from Daryl Dudey(daryl.dudey@ntlworld.com).
 		* Added SlbMgr(AtheMgr renamed).
 		* Patches by Vanders for AEdit.
-	
-
-
 

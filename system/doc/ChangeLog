@@ -1,3 +1,7 @@
+* Jan 9 2003, Henrik Isaksson *
+
+Fixed bug in PNG translator when saving images wider than 256 pixels.
+
 * Jan 3 2003, Kristian Van Der Vliet *
 
 APM BIOS driver & APM battery meter Launcher plugin from Hilary Cheng
@@ -451,6 +455,7 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
 
 
 

@@ -1,3 +1,59 @@
+* January 9 2004, Henrik Isaksson *
+
+ API:
+ * Changed all std::string to os::String, and, where applicable, pzName and
+  pzLabel parameters from char* to String&, in the following classes:
+    Font, View, Control, Button, CheckBox, CheckMenu, Window, VideoOverlay,
+    Image, ScrollBar, Image, StringView, ImageView, ImageButton, Spinner,
+    Slider, Splitter, ProgressBar, TreeView, TabView, TableView,
+    LayoutView, RadioButton, ListView, TextView, DropdownMenu, Menu,
+    DirectoryView, FileRequester, Alert/ProgressRequester, FrameView,
+    Message, Looper, Handler, Application, Settings
+
+  DirectoryView and FileRequester still contains some std::strings, but none
+  are left in the interface.
+
+ * Added shortcut support to the following classes:
+	View, Control, Button, CheckBox, FileRequester, RadioButton,
+	DropdownMenu, Spinner
+
+ * Moved private variables to a Private class, or added a pointer for future
+  use in classes that didn't have private variables, in the following
+  classes:
+	CheckBox, RadioButton, Spinner, Slider
+
+ * Added/changed focus indicator in the following classes:
+  (this also includes changing the Activated() method to invalidate the
+  widget.)
+	Button, CheckBox, RadioButton, DropdownMenu, Spinner
+
+ * Changed the following classes to use DrawText() and GetTextExtent(), adds
+  multi-line capabilities and is the first step towards support for
+  vertical layout languages.
+	Button, StringView, CheckBox, RadioButton
+
+ * Changed GetPreferredSize to return the correct maximum size in the
+  following classes:
+	Button, CheckBox
+
+  Note! This may distort the layout in some apps.
+
+ * Other changes/details:
+	- View
+		o Added SetShortcut() and GetShortcut()
+		o Added SetShortcutFromLabel()
+		o Added DrawText()
+		o Added GetTextExtent()
+	- Control
+		o Removed obsolete method ValueChanged
+	- FileRequester
+		o Added shortcuts to buttons (Load, Save, Cancel)
+	- ListView
+		o Applied patch from Rick, makes it possible to add context
+		  menus.
+	- Font
+		o Added GetTextEntent()
+
 * January 5 2004, Henrik Isaksson *
 
  AppServer:
@@ -369,15 +425,4 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
-
-
-
-
-
-
-
-
-
-
-
 
