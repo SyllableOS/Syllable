@@ -1,0 +1,126 @@
+diff -ru mesa-6.0.1.original/Make-config mesa-6.0.1/Make-config
+--- mesa-6.0.1.original/Make-config	2004-03-30 14:47:14.000000000 +0000
++++ mesa-6.0.1/Make-config	2004-05-01 12:37:55.000000000 +0000
+@@ -136,6 +136,24 @@
+ 	"CFLAGS = -O -DNO_CONST" \
+ 	"APP_LIB_DEPS = "
+ 
++syllable:
++	$(MAKE) -f Makefile.Syllable targets \
++	"GL_LIB = libGL.so" \
++	"GLU_LIB = libGLU.so" \
++	"GLUT_LIB = libglut.so" \
++	"GLW_LIB = libGLw.so" \
++	"OSMESA_LIB = libOSMesa.so" \
++	"CC = gcc" \
++	"CXX = g++" \
++	"CFLAGS = -O3 -ffast-math -fPIC -pedantic  -DUSE_X86_ASM -DSYLLABLE" \
++	"CXXFLAGS = -O3 -ffast-math -fPIC -pedantic -DSYLLABLE" \
++	"GL_LIB_DEPS = -lstdc++ -lsyllable -lm" \
++	"OSMESA_LIB_DEPS = -L$(TOP)/lib -lGL -lstdc++ -lsyllable " \
++	"GLU_LIB_DEPS = -L$(TOP)/lib -lGL -lstdc++ -lsyllable  -lm" \
++	"GLUT_LIB_DEPS = -L$(TOP)/lib -lGLU -lGL -lstdc++ -lsyllable  -lm" \
++	"APP_LIB_DEPS = -lglut -lGLU -lGL -lstdc++ -lsyllable  -lm" \
++	"ASM_SOURCES = $(X86_SOURCES)"
++
+ cygnus:
+ 	$(MAKE) -f Makefile.cygnus $(MFLAGS) -f Makefile.X11 targets \
+ 	"GL_LIB = libGL.a" \
+diff -ru mesa-6.0.1.original/Makefile mesa-6.0.1/Makefile
+--- mesa-6.0.1.original/Makefile	2004-04-02 23:29:34.000000000 +0000
++++ mesa-6.0.1/Makefile	2004-05-01 12:37:46.000000000 +0000
+@@ -124,6 +124,7 @@
+ 	@echo "  make sunos5-v8-pthread     for Suns with SunOS 5.x, 32-bit V8 with threads"
+ 	@echo "  make sunos5-v9             for Suns with SunOS 5.x, 64-bit V8 no threads"
+ 	@echo "  make sunos5-v9-pthread     for Suns with SunOS 5.x, 64-bit V8 with threads"
++	@echo "  make syllable              for x86 Syllable OS"
+ 	@echo "  make ultrix-gcc            for DEC systems with Ultrix and GCC"
+ 	@echo "  make unixware              for PCs running UnixWare"
+ 	@echo "  make unixware-shared       for PCs running UnixWare, shared libs"
+@@ -330,6 +331,41 @@
+ 		$(MAKE) -f Makefile.BeOS-R4 $@ ; \
+ 	fi
+ 
++syllable:
++	-mkdir lib
++	if [ -d src/mesa ] ; then \
++		cd src/mesa ; \
++		rm -f depend ; \
++		touch depend ; \
++		$(MAKE) -f Makefile.Syllable $@ ; \
++	fi
++	if [ -d src/glu/sgi ] ; then \
++		cd src/glu/sgi ; \
++		rm -f depend ; \
++		touch depend ; \
++		$(MAKE) -f Makefile.Syllable $@ ; \
++	fi
++	if [ -d src/glut/syllable ] ; then \
++		cd src/glut/syllable ; \
++		$(MAKE) -f Makefile.Syllable $@ ; \
++		cp obj*/libglut.so ../../../lib ; \
++	fi
++	if [ -d progs/syllable ] ; then \
++		cd progs/syllable ; \
++		$(MAKE) ; \
++	fi
++	if [ -d progs/demos ] ; then \
++		cd progs/demos ; \
++		$(MAKE) -f Makefile.Syllable $@ ; \
++	fi
++	if [ -d progs/samples ] ; then \
++		cd progs/samples ; \
++		$(MAKE) -f Makefile.Syllable $@ ; \
++	fi
++	if [ -d progs/redbook ] ; then \
++		cd progs/redbook ; \
++		$(MAKE) -f Makefile.Syllable $@ ; \
++	fi
+ 
+ openstep:
+ 	-mkdir lib
+@@ -620,6 +656,8 @@
+ 	$(DIRECTORY)/src/mesa/drivers/osmesa/osmesa.dsp			\
+ 	$(DIRECTORY)/src/mesa/drivers/osmesa/*.[ch]			\
+ 	$(DIRECTORY)/src/mesa/drivers/svga/*.[ch]			\
++	$(DIRECTORY)/src/mesa/drivers/syllable/*.cpp			\
++	$(DIRECTORY)/src/mesa/drivers/syllable/*.h				\
+ 	$(DIRECTORY)/src/mesa/drivers/windows/*/*.[ch]			\
+ 	$(DIRECTORY)/src/mesa/drivers/windows/*/*.def			\
+ 	$(DIRECTORY)/src/mesa/drivers/windows/*/*.dsp			\
+@@ -681,6 +719,10 @@
+ 	$(DIRECTORY)/src/glut/beos/*.cpp		\
+ 	$(DIRECTORY)/src/glut/beos/libglut.def		\
+ 	$(DIRECTORY)/src/glut/beos/Makefile*		\
++	$(DIRECTORY)/src/glut/syllable/*.h			\
++	$(DIRECTORY)/src/glut/syllable/*.cpp		\
++	$(DIRECTORY)/src/glut/syllable/libglut.def		\
++	$(DIRECTORY)/src/glut/syllable/Makefile*		\
+ 	$(DIRECTORY)/src/glut/dos/*.[ch]		\
+ 	$(DIRECTORY)/src/glut/dos/Makefile.DJ		\
+ 	$(DIRECTORY)/src/glut/dos/PC_HW/*.[chS]		\
+diff -ru mesa-6.0.1.original/bin/mklib mesa-6.0.1/bin/mklib
+--- mesa-6.0.1.original/bin/mklib	2004-03-30 14:48:04.000000000 +0000
++++ mesa-6.0.1/bin/mklib	2004-05-01 13:00:55.000000000 +0000
+@@ -109,7 +109,7 @@
+ #
+ case $ARCH in
+ 
+-    'Linux' | 'OpenBSD')
++    'Linux' | 'OpenBSD' | 'syllable')
+ 	# GCC-based environment
+ 	LIBNAME="lib${LIBNAME}"     # prefix with "lib"
+ 
+diff -ru mesa-6.0.1.original/src/mesa/sources mesa-6.0.1/src/mesa/sources
+--- mesa-6.0.1.original/src/mesa/sources	2004-02-24 04:46:57.000000000 +0000
++++ mesa-6.0.1/src/mesa/sources	2004-05-01 12:40:45.000000000 +0000
+@@ -166,6 +166,9 @@
+ 	sparc/norm.S		\
+ 	sparc/xform.S
+ 
++SYLLABLE_DRIVER_SOURCES = \
++    drivers/syllable/GLView.cpp
++
+ X11_DRIVER_SOURCES =		\
+ 	drivers/x11/glxapi.c	\
+ 	drivers/x11/fakeglx.c	\
