@@ -1388,7 +1388,7 @@ void Schedule( void )
 
 	// If the previous thread was in ready state
 	// it means that it tried to sleep, but was woken
-	// up by a seccond CPU between setting it's state
+	// up by a second CPU between setting its state
 	// to TS_WAIT/SLEEP/STOP and the call to schedule()
 	// This means that a running thread is in the ready-list
 
