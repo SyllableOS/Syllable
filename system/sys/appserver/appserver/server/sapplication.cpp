@@ -613,6 +613,83 @@ void SrvApplication::DispatchMessage( Message * pcReq )
 			pcReq->SendReply( &cReply );
 			break;
 		}
+	case AR_GET_FONT_CHARACTERS:
+		{
+			int hFont = -1;
+			uint32 nLastChar = 0;
+			uint32 nMaxChars = 1000;
+
+			pcReq->FindInt( "handle", &hFont );
+			pcReq->FindInt32( "lastchar", (int32*)&nLastChar );
+			pcReq->FindInt32( "maxchars", (int32*)&nMaxChars );
+
+			Message cReply;
+
+			if( m_cFontLock.Lock() != 0 )
+			{
+				dbprintf( "Error: Failed to lock m_cFontLock while handling AR_GET_FONT_CHARACTERS request\n" );
+				cReply.AddInt32( "error", -EINVAL );
+				pcReq->SendReply( &cReply );
+				break;
+			}
+			std::set < FontNode * >::iterator i = m_cFonts.find( ( FontNode * ) hFont );
+
+			if( i == m_cFonts.end() )
+			{
+				dbprintf( "Error : GetFontCharacters() called on invalid font ID %08x\n", hFont );
+				cReply.AddInt32( "error", -EINVAL );
+				pcReq->SendReply( &cReply );
+				m_cFontLock.Unlock();
+				break;
+			}
+			FontNode *pcNode = *i;
+
+			SFontInstance *pcInstance = pcNode->GetInstance();
+
+			if( pcInstance == NULL )
+			{
+				dbprintf( "Error : GetFontCharacters() could not get instance for font ID %08x\n", hFont );
+
+				cReply.AddInt32( "error", -ENOMEM );
+				pcReq->SendReply( &cReply );
+				m_cFontLock.Unlock();
+				break;
+			}
+
+			cReply.AddInt32( "error", 0 );
+
+			uint32 nCharCode;
+			uint32 nNumChars=0;
+
+			if( nLastChar ) {
+				nCharCode = nLastChar;
+				while( pcInstance->GetNextSupportedChar( &nCharCode ) ) {
+					nNumChars++;
+					cReply.AddInt32( "character_code", nCharCode );
+					if( nNumChars >= nMaxChars ) {
+						if( pcInstance->GetNextSupportedChar( &nCharCode ) ) {
+							cReply.AddBool( "more_chars", true );
+						}
+						break;
+					}
+				}
+			} else {
+				if( pcInstance->GetFirstSupportedChar( &nCharCode ) ) do {
+					nNumChars++;
+					cReply.AddInt32( "character_code", nCharCode );
+					if( nNumChars >= nMaxChars ) {
+						if( pcInstance->GetNextSupportedChar( &nCharCode ) ) {
+							cReply.AddBool( "more_chars", true );
+						}
+						break;
+					}
+				} while( pcInstance->GetNextSupportedChar( &nCharCode ) );
+			}
+			
+			pcReq->SendReply( &cReply );
+			m_cFontLock.Unlock();
+			break;
+		}
 	case AR_CREATE_FONT:
 		{
 			FontNode *pcNode;
@@ -1147,6 +1224,7 @@ bool SrvApplication::DispatchMessage( const void *pMsg, int nCode )
 	case AR_DELETE_FONT:
 	case AR_SET_FONT_FAMILY_AND_STYLE:
 	case AR_SET_FONT_PROPERTIES:
+	case AR_GET_FONT_CHARACTERS:
 	case AR_LOCK_DESKTOP:
 	case AR_UNLOCK_DESKTOP:
 	case AR_GET_SCREENMODE_COUNT:
@@ -1600,8 +1678,3 @@ SrvApplication *get_active_app()
 		return ( pcWnd->GetApp() );
 	}
 }
-
-
-
-
-

@@ -97,6 +97,7 @@ enum
     AR_GET_FONT_SIZES,
 
     AR_GET_TEXT_EXTENTS,
+    AR_GET_FONT_CHARACTERS,
     
     WR_GET_VIEW_FRAME = 20000,
     WR_SET_SIZE_LIMITS,
@@ -527,8 +528,3 @@ struct WR_GetPenPositionReply_s
 
 }
 #endif	//	DEVICES_DISPLAY_PACKETS_H
-
-
-
-
-
