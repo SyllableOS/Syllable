@@ -36,7 +36,7 @@ BackView::BackView(const Rect & cFrame) : View(cFrame, "BackView", CF_FOLLOW_ALL
     pcSizeDrop = new DropdownMenu(Rect(0,0,0,0),"Size_Drop");
     pcSizeDrop->SetFrame(Rect(0,0,97,15) + Point(225,205));
     AddChild(pcSizeDrop);
-
+    
     pcSizeDrop->InsertItem(0,"Stretch Picture");
     pcSizeDrop->InsertItem(1,"Tile Picture");
 
@@ -52,7 +52,7 @@ BackView::BackView(const Rect & cFrame) : View(cFrame, "BackView", CF_FOLLOW_ALL
 
 void BackView::ListFiles()
 {
-
+    //ListViewStringRow* pcRow = new ListViewStringRow();
     t_List t_ImageList = ImageList();
     for (uint32 n = 0; n < t_ImageList.size(); n++)
     {
@@ -60,6 +60,8 @@ void BackView::ListFiles()
         vFolderRow[n]->AppendString(t_ImageList[n]);
         pcList->InsertRow(vFolderRow[n]);
     }
+    
+    //pcList->Insert(pcRow);
 
 }
 
@@ -70,7 +72,7 @@ t_List BackView::ImageList()
     string zName;
     Directory* pcDir = new Directory();
 
-    if(pcDir->SetTo("~/config/desktop/pictures/")==0)
+    if(pcDir->SetTo("~/Documents/Pictures/")==0)
     {
         while (pcDir->GetNextEntry(&zName))
             if (!(zName.find( ".jpg",0)==string::npos)
@@ -137,7 +139,7 @@ ColorView::ColorView(const Rect & cFrame) : View(cFrame, "ColorView",CF_FOLLOW_A
 
     pcColorDrop->SetSelection(0);
 
-
+	 ListFiles();
 }
 
 
@@ -151,6 +153,56 @@ void ColorView::Paint(const Rect& cUpdate)
     Sync();
 }
 
+
+void ColorView::ListFiles()
+{
+
+    t_List t_ImageList = PopulateFolderList();
+    for (uint32 n = 0; n < t_ImageList.size(); n++)
+    {
+        vFolderRow.push_back(new ListViewStringRow());
+        vFolderRow[n]->AppendString(t_ImageList[n]);
+        pcListTheme->InsertRow(vFolderRow[n]);
+    }
+
+}
+
+t_List ColorView::PopulateFolderList()
+{
+    t_List vList;
+	struct dirent *psDirEntry;
+    static struct stat sFileStat;
+    DIR* psDir = opendir("/home/root/config/desktop/themes");
+    while(psDirEntry=readdir(psDir))
+    {
+        if(!(!strstr(psDirEntry->d_name, ".")) || (!strcmp(psDirEntry->d_name,"..")))
+            continue;
+
+        stat(psDirEntry->d_name,&sFileStat);
+        if(!(sFileStat.st_mode & S_IFREG)) //&& (sFileStat.st_mode & S_IFDIR))  //S_IFREG
+        {
+            vList.push_back(psDirEntry->d_name);
+        }
+    }
+
+    closedir(psDir);
+     
+    return(vList);
+}
+
+
+/*switches the lists*/
+void ColorView::SwitchList()
+{
+	/*uint32 nSwitch = pcListTheme->GetSelection();
+	t_List t_ImageList = PopulateFolderList();
+	//if (nSwitch != -1){
+		printf("This is the switch to %d\n", nSwitch);
+		printf("Name is: %s",t_ImageList[nSwitch].c_str());
+		//}*/
+		
+		
+}
 
 ColorView::~ColorView()
 {
@@ -176,6 +228,7 @@ PropTab::PropTab(const Rect & cFrame) : TabView(cFrame, "MiscView",CF_FOLLOW_ALL
 
 PropWin::PropWin() : Window(CRect(400,395), "Desktop Properties", "Desktop Properties", WND_NOT_RESIZABLE)
 {
+	//sleep(500);
 	pcSettings = new DeskSettings();
     LoadPrefs();
 
@@ -202,10 +255,12 @@ PropWin::PropWin() : Window(CRect(400,395), "Desktop Properties", "Desktop Prope
     Defaults();
 
     pcPropTab->pcColor->pcColorDrop->SetTarget(this);
+    //pcPropTab->pcColor->pcListTheme->SetTarget(this);
+	pcPropTab->pcColor->pcListTheme->SetSelChangeMsg(new Message(ID_PROP_TEST));
     pcPropTab->pcColor->pcColorDrop->SetSelectionMessage( new Message(ID_PEN_CHANGED));
     pcPropTab->pcBack->pcSizeDrop->SetSelection(nImageSize);
     pcPropTab->pcBack->pcList->SetSelChangeMsg(new Message(ID_PROP_LIST));
-
+	
 }
 
 
@@ -255,7 +310,7 @@ void PropWin::HandleMessage(Message* pcMessage)
 
     case ID_PROP_LIST:
         {
-            string zPath = (string) getenv("HOME") + (string) "/config/desktop/pictures/" + pcPropTab->pcBack->ImageList()[pcPropTab->pcBack->pcList->GetLastSelected()];
+            string zPath = (string) getenv("HOME") + (string) "/Documents/Pictures/" + pcPropTab->pcBack->ImageList()[pcPropTab->pcBack->pcList->GetLastSelected()];
             Bitmap* pcBitmap = LoadBitmapFromFile(zPath.c_str());
             Bitmap* pcSBitmap = new Bitmap (154, 114, CS_RGB32,Bitmap::SHARE_FRAMEBUFFER);
 
@@ -264,7 +319,17 @@ void PropWin::HandleMessage(Message* pcMessage)
             pcPropTab->pcBack->Paint(pcPropTab->pcBack->GetBounds());
             pcPropTab->pcBack->DrawBitmap(pcSBitmap,pcSBitmap->GetBounds(),Rect(118,25,153,113));
         }
+        
+      
         break;
+
+
+	case ID_PROP_TEST:
+		{
+			printf("Thus works\n");
+			pcPropTab->pcColor->SwitchList();
+		}
+		break;
 
     default:
         HandleMessage(pcMessage);
@@ -279,7 +344,7 @@ void PropWin::Defaults()
 {
     int nImageList = -1;
     t_List t_list = pcPropTab->pcBack->ImageList();
-
+    pcPropTab->pcColor->pcListTheme->Select(0,true,true);
     ReadLoginConfig();
 
     SetDefaultButton(pcSave);
@@ -402,7 +467,7 @@ void PropWin::SavePrefs(bool bShow, bool bLogin, string zPic, int32 nNewImageSiz
 	pcSettings->SaveSettings(pcPrefs);
 	
 	  
-    system("/usr/bin/mv -f /tmp/desktop.cfg ~/config/desktop/config");   
+    system("/usr/bin/mv -f /tmp/desktop.cfg ~/Settings/Desktop/desktop.cfg");   
 
    
 
@@ -420,17 +485,3 @@ void PropWin::LoadPrefs(void)
     
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
