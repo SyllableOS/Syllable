@@ -6,7 +6,8 @@ C_INCLUDE_PATH=/ainc
 CPLUS_INCLUDE_PATH=/ainc
 
 
-OBJS := iso.o kernel_interface.o
+FS		:= iso9660
+OBJS	:= iso.o kernel_interface.o
 
 OBJDIR	:= objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
@@ -40,6 +41,9 @@ $(OBJDIR)/iso9660: $(OBJS) Makefile
 
 install: all
 	cp -f $(OBJDIR)/iso9660 /system/drivers/fs/iso9660
+
+dist: all
+	cp -f $(OBJDIR)/$(FS) $(DIST_DIR)/atheos/sys/drivers/fs/$(FS)
 
 clean:
 	rm $(OBJS) $(OBJDIR)/iso9660

@@ -5,8 +5,8 @@ OLD_INCLUDE_PATH:=$(C_INCLUDE_PATH)
 C_INCLUDE_PATH=/ainc
 CPLUS_INCLUDE_PATH=/ainc
 
-
-OBJS := ext2.o
+FS		:= ext2
+OBJS	:= ext2.o
 
 OBJDIR	:= objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
@@ -40,6 +40,9 @@ $(OBJDIR)/ext2: $(OBJS) Makefile
 
 install: all
 	cp -f $(OBJDIR)/ext2 /system/drivers/fs/ext2
+
+dist: all
+	cp -f $(OBJDIR)/$(FS) $(DIST_DIR)/atheos/sys/drivers/fs/$(FS)
 
 clean:
 	rm $(OBJS) $(OBJDIR)/ext2
