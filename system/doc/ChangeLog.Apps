@@ -1,3 +1,10 @@
+* August 31st 2004, Kristian Van Der Vliet *
+	-pkgmanager
+		o Call manmanager -a instead of manaddpackage.sh
+		o Call manmanager -r when removing a package with pkgmanager -r
+	-manmanager
+		o Bugfix: Avoid a null-string in an if[] during remove_section()
+
 * August 8th 2004, Henrik Isaksson *
 	-Aterm
 		o Bugfix: CTRL+C after activating the window by clicking in the TermView
