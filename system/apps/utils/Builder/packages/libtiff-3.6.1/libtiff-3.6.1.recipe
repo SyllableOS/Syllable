@@ -1,22 +1,29 @@
 authors				Kaj de Vos
-status				incomplete
+status				testing
+notes				Doesn't see configure environment variables
 
 ; BSD?
 licenses			other
-home				www.remotesensing.org/libtiff/
-;home				www.libtiff.org
+home				www.libtiff.org
+;home				www.remotesensing.org/libtiff/
 packages			tiff-v3.6.1
 locations
 	ftp://ftp.remotesensing.org/pub/libtiff/
 	http://libtiff.maptools.org/dl/
 
-;build-needs
-;	libjpeg
+;build-needs		libjpeg
+
 patch-config
-;configure-env
-;	DIRS_LIBINC		'/usr/libjpeg/include /usr/zlib/include'
-;	DIR_JPEGLIB		'/usr/libjpeg/lib'
-;	DIR_GZLIB		'/usr/zlib/lib'
-configure-options	--noninteractive --with-JPEG --with-ZIP
+no-build-dir
+;build-dir			build
+configure-env
+	DIRS_LIBINC	'/usr/libjpeg/include /usr/zlib/include'
+	DIR_JPEGLIB	'/usr/libjpeg/lib'
+	DIR_GZLIB	'/usr/zlib/lib'
+configure-options
+	--noninteractive
+;	--with-JPEG
+;	--with-ZIP
 ;	--with-DSO
 documentation		README RELEASE-DATE VERSION COPYRIGHT TODO html
+
