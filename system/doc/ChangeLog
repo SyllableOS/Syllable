@@ -1,3 +1,7 @@
+* Jun 29 2003, Kristian Van Der Vliet *
+
+Finally fixed the bizarre Matrox video-offset bug.
+
 * Jun 27 2003, Kristian Van Der Vliet *
 
 Read-only ext2/3 driver from Kurre Ståhlberg <kurre@cc.hut.fi>
@@ -265,6 +269,7 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
 
 
 
