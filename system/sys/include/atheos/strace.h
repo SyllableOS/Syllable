@@ -452,7 +452,8 @@ static struct Errno_info g_sErrnoTable[] = {
  {ENOSYM, "ENOSYM" },
  {EINITFAILED, "EINITFAILED" },
  {ENOADDRSPC, "ENOADDRSPC" },
- {EUNKNOWNFS, "EUNKNOWNFS" }
+ {EUNKNOWNFS, "EUNKNOWNFS" },
+ {ESYSCFAILED, "ESYSCFAILED" }
 };
 
 /* Userspace STrace API */
