@@ -38,8 +38,8 @@
 
 BlockCache_s g_sBlockCache;
 
-#define	READAHEAD_SIZE	(32 * 1024)
-#define BC_FLUSH_SIZE   64
+static const size_t READAHEAD_SIZE	= (32 * 1024);
+static const size_t BC_FLUSH_SIZE	= 64;
 
 static volatile bigtime_t g_nLastAccess = 0;
 
@@ -63,7 +63,8 @@ static DeviceEntry_s g_asDevices[MAX_DEVICES];
  * SEE ALSO:
  ****************************************************************************/
 
-#define HT_DEFAULT_SIZE   1024
+static const size_t HT_DEFAULT_SIZE	= 1024;
+
 #define HASH(d, b)   ((((off_t)d) << (sizeof(off_t)*8 - 6)) | (b))
 
 /*****************************************************************************

@@ -56,11 +56,11 @@ struct _CacheBlock
 	void *cb_pArg;
 };
 
-#define CBF_SIZE_MASK	0x000fffff
-#define	CBF_DIRTY	0x00100000
-#define	CBF_BUSY	0x00200000
-#define CBF_USED	0x00400000
-#define CBF_INLIST	0x00800000
+static const flags_t CBF_SIZE_MASK = 0x000fffff;
+static const flags_t CBF_DIRTY     = 0x00100000;
+static const flags_t CBF_BUSY      = 0x00200000;
+static const flags_t CBF_USED      = 0x00400000;
+static const flags_t CBF_INLIST    = 0x00800000;
 
 #define CB_SIZE(b) ((b)->cb_nFlags & CBF_SIZE_MASK)
 

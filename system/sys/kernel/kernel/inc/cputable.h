@@ -4,7 +4,7 @@
  * This file comes under the GNU GPL, see www.fsf.org for more info!
  */
 
-#define MAX_VENDORS 8		/* Number of CPU Vendors */
+#define MAX_VENDORS	8		///< Number of CPU Vendors
 
 //#define N_UNKNOWN "unknown"
 //#define N_UNKNOWNEXT "unknown extended model"
@@ -31,29 +31,29 @@ N_UNKNOWN \
 }
 
 static const char *cpuname
-		/* Vendor */ [MAX_VENDORS]
+	/* Vendor */ [MAX_VENDORS]
 			/* Family */ [16]
-				/* Model  */ [16]
+					/* Model  */ [16]
 	= {
 	/* Intel Corporation, "GenuineIntel" */ {
 			/* 0 */ F_UNKNOWN,
 			/* 1 */ F_UNKNOWN,
 			/* 2 */ F_UNKNOWN,
-						/* 3 i386 */ F_UNKNOWN,
-						/* XXX new 386 chips may support CPUID! */
+			/* 3 i386 */ F_UNKNOWN,
+			/* XXX new 386 chips may support CPUID! */
 			/* 4 i486 */ {
-								/* 0 */ "i486DX-25/33",
-								/*  only few of these */
-								/* 1 */ "i486DX-50",
-								/* support CPUID!     */
+					/* 0 */ "i486DX-25/33",
+					/*  only few of these */
+					/* 1 */ "i486DX-50",
+					/* support CPUID!     */
 					/* 2 */ "i486SX",
-								/* 3 */ "i486DX2",
-								/* CPUID only on new chips! */
+					/* 3 */ "i486DX2",
+					/* CPUID only on new chips! */
 					/* 4 */ "i486SL",
 					/* 5 */ "i486SX2",
 					/* 6 */ N_UNKNOWN,
-									/* 7 */ "i486DX2/write-back",
-									/* returns 3 in write-through mode */
+					/* 7 */ "i486DX2/write-back",
+					/* returns 3 in write-through mode */
 					/* 8 */ "i486DX4",
 					/* 9 */ "i486DX4/write-back",
 					/* A */ N_UNKNOWN,
@@ -69,10 +69,10 @@ static const char *cpuname
 					/* 2 */ "Pentium P54C",
 					/* 3 */ "Pentium OverDrive P24T",
 					/* 4 */ "Pentium MMX P55C",
-								/* 5 */ N_UNKNOWN,
-								/* XXX DX4 OverDrive? */
-								/* 6 */ N_UNKNOWN,
-								/* XXX P5 OverDrive? */
+					/* 5 */ N_UNKNOWN,
+					/* XXX DX4 OverDrive? */
+					/* 6 */ N_UNKNOWN,
+					/* XXX P5 OverDrive? */
 					/* 7 */ "Pentium P54C (new)",
 					/* 8 */ "Pentium MMX P55C (new)",
 					/* 9 */ N_UNKNOWN,
@@ -88,8 +88,8 @@ static const char *cpuname
 					/* 1 */ "PentiumPro",
 					/* 2 */ N_UNKNOWN,
 					/* 3 */ "Pentium II Klamath/Pentium II OverDrive",
-								/* 4 */ N_UNKNOWN,
-								/* XXX P55CT - OverDrive for P54? */
+					/* 4 */ N_UNKNOWN,
+					/* XXX P55CT - OverDrive for P54? */
 					/* 5 */ "Celeron Covington/Pentium II Deschutes,Tonga/Pentium II Xeon",
 					/* 6 */ "Celeron A Mendocino/Pentium II Dixon",
 					/* 7 */ "Pentium III Katmai/Pentium III Xeon Tanner",
@@ -130,8 +130,8 @@ static const char *cpuname
 			/* E */ F_UNKNOWN,
 			/* F extended family (P4/new IA-64) */ {
 					/* 0 */ "Pentium 4 Willamette/Xeon",
-										/* 1 */ "Pentium 4 Willamette/Xeon",
-										/*? */
+					/* 1 */ "Pentium 4 Willamette/Xeon",
+					/* ? */
 					/* 2 */ "Pentium 4 Northwood/Xeon",
 					/* 3 */ N_UNKNOWN,
 					/* 4 */ N_UNKNOWN,
@@ -225,8 +225,8 @@ static const char *cpuname
 					/* F */ N_UNKNOWN
 				},
 			/* 6 K7 */ {
-								/* 0 */ N_UNKNOWN,
-								/* Argon? */
+					/* 0 */ N_UNKNOWN,
+					/* Argon? */
 					/* 1 */ "Athlon K7",
 					/* 2 */ "Athlon K75 Pluto,Orion",
 					/* 3 */ "Duron Spitfire",
@@ -268,8 +268,8 @@ static const char *cpuname
 					/* 6 */ N_UNKNOWN,
 					/* 7 */ N_UNKNOWN,
 					/* 8 */ N_UNKNOWN,
-							/* 9 */ "5x86",
-							/* CPUID maybe only on newer chips */
+					/* 9 */ "5x86",
+					/* CPUID maybe only on newer chips */
 					/* A */ N_UNKNOWN,
 					/* B */ N_UNKNOWN,
 					/* E */ N_UNKNOWN,
@@ -278,8 +278,8 @@ static const char *cpuname
 					/* F */ N_UNKNOWN
 				},
 			/* 5 M1 */ {
-									/* 0 */ "M1 test-sample",
-									/*? */
+					/* 0 */ "M1 test-sample",
+					/* ? */
 					/* 1 */ N_UNKNOWN,
 					/* 2 */ "6x86 M1",
 					/* 3 */ N_UNKNOWN,
@@ -305,8 +305,8 @@ static const char *cpuname
 					/* 5 */ "Cyrix III Joshua (M2 core)",
 					/* 6 */ "Cyrix III Samuel (WinChip C5A core)",
 					/* 7 */ "C3 Samuel 2 (WinChip C5B core)",
-								/* 8 */ N_UNKNOWN,
-								/* XXX Samuel 3/Ezra? */
+					/* 8 */ N_UNKNOWN,
+					/* XXX Samuel 3/Ezra? */
 					/* 9 */ "C3 Nehemiah",
 					/* A */ N_UNKNOWN,
 					/* B */ N_UNKNOWN,
@@ -332,8 +332,8 @@ static const char *cpuname
 			/* 3 */ F_UNKNOWN,
 			/* 4 */ F_UNKNOWN,
 			/* 5 Nx586 */ {
-									/* 0 */ "Nx586/Nx586FPU",
-									/* only newer ones support CPUID! */
+					/* 0 */ "Nx586/Nx586FPU",
+					/* only newer ones support CPUID! */
 					/* 1 */ N_UNKNOWN,
 					/* 2 */ N_UNKNOWN,
 					/* 3 */ N_UNKNOWN,

@@ -200,7 +200,7 @@ FileLockRec_s *create_file_lock( Inode_s *psInode, thread_id hOwner, int nMode )
 
 	if ( psThread == NULL )
 	{
-		printk( "Painc: create_file_lock() invalid owner %d\n", hOwner );
+		printk( "Panic: create_file_lock() invalid owner %d\n", hOwner );
 	}
 
 	psLock = kmalloc( sizeof( FileLockRec_s ), MEMF_KERNEL | MEMF_CLEAR );

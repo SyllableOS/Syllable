@@ -61,13 +61,9 @@ typedef struct
 } pgd_t;
 
 
-
-
 extern Page_s *g_psFirstPage;
 extern Page_s *g_psFirstFreePage;
 extern sem_id g_hAreaTableSema;
-
-
 
 
 #define	PTE_VALUE( pte )	((pte)._pte)
@@ -86,11 +82,11 @@ extern sem_id g_hAreaTableSema;
 #define	PTE_ISACCESSED( pte )	(PTE_VALUE(pte) & PTE_ACCESSED)
 #define	PTE_ISDIRTY( pte )	(PTE_VALUE(pte) & PTE_DIRTY)
 
-#define	PTRS_PER_PTE	1024
-#define	GFP_CLEAR	0x0001
+static const size_t PTRS_PER_PTE = 1024;
+static const uint32_t GFP_CLEAR  = 0x0001;
 
 // Bit patterns for the p_nFlags member of Page_s
-#define PF_BUSY 0x0001
+static const uint32_t PF_BUSY	= 0x0001;
 
 struct _Page
 {
@@ -98,7 +94,7 @@ struct _Page
 	Page_s *p_psPrev;
 	int p_nAge;
 	atomic_t p_nCount;
-	uint32 p_nFlags;
+	uint32_t p_nFlags;
 	int p_nPageNum;
 	WaitQueue_s *p_psIOThreads;	// Threads waiting for this page to be loaded.
 };

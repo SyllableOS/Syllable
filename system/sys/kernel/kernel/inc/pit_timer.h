@@ -26,7 +26,7 @@
 #define	INT_FREQ		1000
 
 /* Countdown value to load into PIT timer, rounded to nearest integer. */
-#define LATCH		( ( PIT_TICKS_PER_SEC + INT_FREQ/2 ) / INT_FREQ )
+static const uint32_t LATCH = ( ( PIT_TICKS_PER_SEC + INT_FREQ/2 ) / INT_FREQ );
 
 void start_timer_int( void );
 void get_cmos_time( void );

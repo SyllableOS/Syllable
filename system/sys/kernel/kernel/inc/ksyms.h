@@ -25,5 +25,4 @@ int ksym_get_symbol_count( void );
 const char *ksym_get_symbol( int nIndex, void **ppValue );
 
 
-
 #endif /* __F_ATHEOS_KSYMS_H__ */

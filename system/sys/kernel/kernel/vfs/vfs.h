@@ -23,6 +23,7 @@
 
 #include <atheos/types.h>
 #include <atheos/atomic.h>
+#include <atheos/semaphore.h>
 
 #include <posix/types.h>
 #include <posix/stat.h>
@@ -193,17 +194,28 @@ struct _NodeMonitor
 	port_id nm_hPortID;
 };
 
+static const size_t VOLUME_MUTEX_COUNT = 1000000;
 
-#define VOLUME_MUTEX_COUNT	1000000
 
+static inline status_t LOCK_INODE_RO( Inode_s *psInode )
+{
+	return ( lock_semaphore_ex( psInode->i_psVolume->v_hMutex, 1, SEM_NOSIG, INFINITE_TIMEOUT ) );
+}
 
-#define LOCK_INODE_RO( psInode ) \
-         lock_semaphore_ex( psInode->i_psVolume->v_hMutex, 1, SEM_NOSIG, INFINITE_TIMEOUT );
-#define UNLOCK_INODE_RO( psInode ) unlock_semaphore_ex( psInode->i_psVolume->v_hMutex, 1 )
+static inline status_t UNLOCK_INODE_RO( Inode_s *psInode )
+{
+	return ( unlock_semaphore_ex( psInode->i_psVolume->v_hMutex, 1 ) );
+}
 
-#define LOCK_INODE_RW( psInode ) \
-         lock_semaphore_ex( psInode->i_psVolume->v_hMutex, VOLUME_MUTEX_COUNT, 0, INFINITE_TIMEOUT );
-#define UNLOCK_INODE_RW( psInode ) unlock_semaphore_ex( psInode->i_psVolume->v_hMutex, VOLUME_MUTEX_COUNT )
+static inline status_t LOCK_INODE_RW( Inode_s *psInode )
+{
+	return ( lock_semaphore_ex( psInode->i_psVolume->v_hMutex, VOLUME_MUTEX_COUNT, 0, INFINITE_TIMEOUT ) );
+}
+
+static inline status_t UNLOCK_INODE_RW( Inode_s *psInode )
+{
+	return ( unlock_semaphore_ex( psInode->i_psVolume->v_hMutex, VOLUME_MUTEX_COUNT ) );
+}
 
 
 FileSysDesc_s *register_file_system( const char *pzName, FSOperations_s * psOps, int nAPIVersion );

@@ -36,4 +36,4 @@ const char *g_pzSystem = "syllable";
  * of Syllable, add a letter and revision number; for example a patch to
  * Build 1023 becomes Build 1023r1.
  */
-const char *g_pzBuildVersion = "0013";
+const char *g_pzBuildVersion = "0014";

@@ -22,7 +22,7 @@
 #include <atheos/types.h>
 
 
-#define BUFFER_SIZE 1024
+static const size_t BUFFER_SIZE = 1024;
 
 int main( int argc, char **argv )
 {

@@ -60,7 +60,7 @@ extern bool g_bHasXMM;
  * bit takes on average 1.5 / INT_FREQ seconds.  This is a little better
  * than 1%.
  */
-#define LPS_PREC 8
+static const count_t LPS_PREC = 8;
 
 //void smp_ap_entry();
 
@@ -164,7 +164,7 @@ void calibrate_delay( void )
 	unsigned long loops_per_jiffy = ( 1 << 12 );	// start at 2 BogoMips
 	unsigned long loopbit;
 	unsigned long jiffy_countdown = 0xffff - ( PIT_TICKS_PER_SEC / INT_FREQ );
-	int lps_precision = LPS_PREC;
+	count_t lps_precision = LPS_PREC;
 
 	printk( "Calibrating delay loop for CPU %d\n", get_processor_id() );
 

@@ -93,11 +93,11 @@ void exec_free_semaphores( Process_s *psProc );
 
 Semaphore_s *get_semaphore_by_handle( proc_id hProcess, sem_id hSema );
 
-#define SEM_TYPE_MASK	0xff000000
-#define SEM_ID_MASK	0x00ffffff
-#define SEMTYPE_USER	0x00000000
-#define SEMTYPE_GLOBAL	0x01000000
-#define SEMTYPE_KERNEL	0x02000000
+static const uint32_t SEM_TYPE_MASK	= 0xff000000;
+static const uint32_t SEM_ID_MASK	= 0x00ffffff;
+static const uint32_t SEMTYPE_USER	= 0x00000000;
+static const uint32_t SEMTYPE_GLOBAL	= 0x01000000;
+static const uint32_t SEMTYPE_KERNEL	= 0x02000000;
 
 #ifdef __cplusplus
 }

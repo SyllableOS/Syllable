@@ -33,7 +33,7 @@
 #include "inc/intel.h"
 #include "inc/smp.h"
 
-#define V86_STACK_SIZE 0x4000
+static const uint16_t V86_STACK_SIZE = 0x4000;
 
 static Virtual86State_s *g_psFirstV86State = NULL;
 

@@ -32,9 +32,9 @@ SPIN_LOCK( g_sMemSpinLock, "page_list_slock" );
 
 /* Private flags. */
 
-#define MF_USED 0xffaa0055
-#define MF_DMA  0xff00aa55
-#define MF_FREE 0x0055ffaa
+static const uint32_t MF_USED = 0xffaa0055;
+static const uint32_t MF_DMA  = 0xff00aa55;
+static const uint32_t MF_FREE = 0x0055ffaa;
 
 /*
  * Much care has gone into making these routines in this file reentrant.
@@ -205,7 +205,7 @@ struct size_descriptor sizes[] = {
  * This is a _truly_ small cache, we just cache one single page
  * order (for orders 0, 1 and 2, that is  4, 8 and 16kB on x86).
  */
-#define MAX_CACHE_ORDER 3
+#define MAX_CACHE_ORDER		3
 struct page_descriptor *kmalloc_cache[MAX_CACHE_ORDER];
 
 static inline struct page_descriptor *get_kmalloc_pages( unsigned long priority, unsigned long order, int dma )

@@ -40,7 +40,7 @@
 #include "inc/sysbase.h"
 #include "vfs.h"
 
-#define O_OPEN_CONTROL_FLAGS (O_CREAT|O_EXCL|O_NOCTTY|O_TRUNC|O_DIRECTORY|O_NOTRAVERSE)
+static const int O_OPEN_CONTROL_FLAGS = (O_CREAT|O_EXCL|O_NOCTTY|O_TRUNC|O_DIRECTORY|O_NOTRAVERSE);
 
 static int lookup_parent_inode( Inode_s *psParent, const char *pzPath, const char **ppzName, int *pnNameLen, Inode_s **ppsResInode );
 
@@ -5253,7 +5253,6 @@ int Seek( int nFileDesc, int nDistance, int	nMode )
  * \sa
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
-
 
 int normalize_path( const char *pzPath, char **ppzResult )
 {

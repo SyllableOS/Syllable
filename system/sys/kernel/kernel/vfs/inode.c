@@ -40,7 +40,7 @@ int init_fifo( void );
 
 static FSOperations_s g_sDummyOperations;
 
-#define HT_DEFAULT_SIZE   128
+static const size_t HT_DEFAULT_SIZE = 128;
 #define HASH(d, i)  ((d) ^ (i))
 
 typedef struct

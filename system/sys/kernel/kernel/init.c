@@ -54,8 +54,6 @@
 
 extern int _end;
 
-#define KERNEL_LOAD_ADDR 0x100000
-#define MAX_KERNEL_ARGS	128
 static MultiBootHeader_s g_sMultiBootHeader;
 static char *g_apzEnviron[256];	// Environment from init script
 char g_zSysPath[256] = "/boot/atheos/";

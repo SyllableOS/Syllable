@@ -39,7 +39,7 @@ extern "C"
 
 extern MultiArray_s g_sAreas;
 
-#define AREA_MUTEX_COUNT	100000	/* Maximum simultanous read-only area table locks */
+static const size_t AREA_MUTEX_COUNT = 100000;	/* Maximum simultanous read-only area table locks */
 
 
 struct _MemContext
@@ -57,7 +57,7 @@ struct _MemContext
 
 struct _MemArea
 {
-	char a_zName[64];
+	char a_zName[OS_NAME_LENGTH];
 	MemArea_s *a_psNext;
 	MemArea_s *a_psPrev;
 	MemArea_s *a_psNextShared;
@@ -79,7 +79,6 @@ struct _MemArea
 	atomic_t a_nIOPages;		/* Number of pages currently being loaded/swapped in or out. */
 	bool a_bDeleted;	/* True while waiting for pending IO on a deleted area */
 };
-
 
 
 static inline int lock_area( MemArea_s *psArea, area_lock_mode eMode )

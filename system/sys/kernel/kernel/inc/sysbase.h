@@ -41,7 +41,6 @@ extern "C"
 #define MAX_BOOTMODULE_COUNT		64
 #define MAX_BOOTMODULE_ARGUMENT_SIZE	32768
 
-
 struct SystemBase
 {
 
@@ -106,9 +105,9 @@ struct SystemBase
 extern struct SystemBase *SysBase;
 extern struct SystemBase g_sSysBase;
 
-#define	DTAL_IDT 0x01		/* allocated in IDT     */
-#define	DTAL_GDT 0x02		/* allocated in GDT     */
-#define	DTAL_LDT 0x04		/* allocated in LDT     */
+static const uint8_t DTAL_IDT = 0x01;		/* allocated in IDT     */
+static const uint8_t DTAL_GDT = 0x02;		/* allocated in GDT     */
+static const uint8_t DTAL_LDT = 0x04;		/* allocated in LDT     */
 
 #ifdef __cplusplus
 }

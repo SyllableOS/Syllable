@@ -115,15 +115,6 @@ Inode_s *get_image_inode( int nLibrary );
 void init_image_module( void );
 
 
-
-
-
-
-
-
-
-
-
 #ifdef __cplusplus
 }
 #endif

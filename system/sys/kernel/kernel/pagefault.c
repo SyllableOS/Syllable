@@ -30,7 +30,7 @@
 #include "inc/areas.h"
 #include "inc/swap.h"
 
-#define WAIT_LENGTH 10000
+static const uint32_t WAIT_LENGTH = 10000;
 
 
 /*****************************************************************************

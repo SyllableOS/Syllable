@@ -415,6 +415,7 @@ static int pi_write( void *pVolume, void *pNode, void *pCookie, off_t nPos, cons
 
 		while ( psNode->pn_nBytesInBuffer == PIPE_BUF )
 		{
+			// check for broken pipe before blocking
 			if ( atomic_read( &psNode->pn_nReaders ) == 0 )
 			{
 				nError = -EPIPE;
@@ -437,6 +438,18 @@ static int pi_write( void *pVolume, void *pNode, void *pCookie, off_t nPos, cons
 				return ( nError );
 			}
 			LOCK( psNode->pn_hMutex );
+		}
+		// check for broken pipe before writing
+		if ( atomic_read( &psNode->pn_nReaders ) == 0 )
+		{
+			nError = -EPIPE;
+			switch ( get_signal_mode( SIGPIPE ) )
+			{
+			case SIG_DEFAULT:
+			case SIG_HANDLED:
+				sys_kill( sys_get_thread_id( NULL ), SIGPIPE );
+			}
+			goto error;
 		}
 		nLen = nBytesToWrite;
 		if ( nLen > PIPE_BUF - psNode->pn_nBytesInBuffer )

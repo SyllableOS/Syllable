@@ -36,7 +36,7 @@
 #include "inc/scheduler.h"
 #include "inc/sysbase.h"
 
-#define _BLOCKABLE ( ~( (1L << (SIGKILL - 1)) | (1L << (SIGSTOP - 1)) ) )
+static const unsigned long _BLOCKABLE = ~( (1L << (SIGKILL - 1)) | (1L << (SIGSTOP - 1)) );
 
 
 typedef struct _AlarmNode AlarmNode_s;

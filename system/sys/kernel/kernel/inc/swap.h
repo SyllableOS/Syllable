@@ -31,10 +31,10 @@ extern "C"
 #endif
 #endif
 
-#define MAX_PAGE_AGE	 127
-#define	PAGE_ADVANCE	 5
-#define	PAGE_DECLINE	 1
-#define	INITIAL_PAGE_AGE 20
+static const size_t MAX_PAGE_AGE	= 127;
+static const size_t PAGE_ADVANCE	= 5;
+static const size_t PAGE_DECLINE	= 1;
+static const size_t INITIAL_PAGE_AGE	= 20;
 
 typedef struct
 {

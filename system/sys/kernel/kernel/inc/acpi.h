@@ -23,7 +23,7 @@
 #ifndef _ACPI_H_
 #define _ACPI_H_
  
-#define ACPI_RSDP_SIGNATURE	"RSD PTR "
+#define ACPI_RSDP_SIGNATURE "RSD PTR "
 #define ACPI_RSDT_SIGNATURE "RSDT"
 #define ACPI_MADT_SIGNATURE "APIC"
 
@@ -62,7 +62,7 @@ typedef struct
 	uint32	am_nReserved;
 } AcpiMadt_s;
 
-#define ACPI_MADT_PROCESSOR 0
+#define ACPI_MADT_PROCESSOR	0
 #define ACPI_MADT_IOAPIC	1
 #define ACPI_MADT_LAPIC_OVR	2
 
@@ -72,7 +72,7 @@ typedef struct
 	uint8 ame_nLength;
 } __attribute__ ((packed)) AcpiMadtEntry_s;
 
-#define ACPI_MADT_CPU_ENABLED 1
+static const uint32_t ACPI_MADT_CPU_ENABLED = 1;
 
 typedef struct
 {

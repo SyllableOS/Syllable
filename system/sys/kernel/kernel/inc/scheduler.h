@@ -49,16 +49,14 @@ extern "C"
 
 extern int g_bNeedSchedule;	/* If true the scheduler will be called when returning from syscall */
 
+static const size_t MAIN_THREAD_STACK_SIZE	= (1024*1024*4);
+static const size_t DEFAULT_KERNEL_STACK	= (4096);
+static const size_t OLD_DEFAULT_STACK_SIZE	= (1024 * 256);
+static const size_t DEFAULT_STACK_SIZE		= (1024 * 128);
 
-#define MAIN_THREAD_STACK_SIZE	(1024*1024*4)
+static const size_t DEFAULT_QUANTUM = 5000;
 
-
-#define	DEFAULT_QUANTUM	5000LL
-
-#define	NUM_SIGS	32
-
-
-
+static const size_t NUM_SIGS = 32;
 
 typedef struct WaitThreadNode WaitThreadNode_s;
 struct WaitThreadNode
@@ -172,9 +170,9 @@ struct _Thread
 	int tr_nNumLockedCacheBlocks;
 };
 
-#define	TF_TRACED	0x0001		/* ???				 */
-#define TF_FPU_USED	0x0002		/* thread has used FPU		 */
-#define TF_FPU_DIRTY	0x0004		/* thread is currently using FPU */
+static const flags_t TF_TRACED = 0x0001;	///< ???
+static const flags_t TF_FPU_USED = 0x0002;	///< thread has used FPU
+static const flags_t TF_FPU_DIRTY = 0x0004;	///< thread is currently using FPU
 
 struct _Process
 {
@@ -216,10 +214,6 @@ struct _Process
 	bool pr_bUsedPriv;	/* The process has taken advantage of being root */
 	bool pr_bCanDump;
 };
-
-
-#define DEFAULT_KERNEL_STACK	4096
-#define	DEFAULT_STACK_SIZE	(256 * 1024)
 
 
 Thread_s *get_current_thread( void );

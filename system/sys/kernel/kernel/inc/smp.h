@@ -34,19 +34,17 @@ extern "C"
 #endif
 
 
-
 #ifdef __KERNEL__
 
 #include <atheos/kdebug.h>
 #include <atheos/kernel.h>
 
-
 #include "typedefs.h"
 #include "i82489.h"
 #include "acpi.h"
 
-#define SMP_MAGIC_IDENT	(('_'<<24)|('P'<<16)|('M'<<8)|'_')
 
+static const uint32_t SMP_MAGIC_IDENT = (('_'<<24)|('P'<<16)|('M'<<8)|'_');
 
 typedef struct
 {
@@ -59,8 +57,7 @@ typedef struct
 } SmpTrampolineCfg_s;
 
 
-
-#define MPC_SIGNATURE "PCMP"
+#define MPC_SIGNATURE	"PCMP"
 
 typedef struct
 {
@@ -98,13 +95,13 @@ typedef struct
 #define	MP_LINTSRC	4
 
 /* CPU flags */
-#define CPU_ENABLED		1	/* Processor is available */
-#define CPU_BOOTPROCESSOR	2	/* Processor is the BP */
+static const uint8_t CPU_ENABLED	= 1;	/* Processor is available */
+static const uint8_t CPU_BOOTPROCESSOR	= 2;	/* Processor is the BP */
 
 /* CPU features */
-#define CPU_STEPPING_MASK 0x0F
-#define CPU_MODEL_MASK	0xF0
-#define CPU_FAMILY_MASK	0xF00
+static const uint32_t CPU_STEPPING_MASK = 0x0F;
+static const uint32_t CPU_MODEL_MASK	 = 0xF0;
+static const uint32_t CPU_FAMILY_MASK	 = 0xF00;
 
 typedef struct
 {
@@ -128,13 +125,13 @@ typedef struct
 #define BUSTYPE_ISA	"ISA"
 #define BUSTYPE_INTERN	"INTERN"	/* Internal BUS */
 #define BUSTYPE_MCA	"MCA"
-#define BUSTYPE_VL	"VL"	/* Local bus */
+#define BUSTYPE_VL	"VL"		/* Local bus */
 #define BUSTYPE_PCI	"PCI"
 #define BUSTYPE_PCMCIA	"PCMCIA"
 
 /* We don't understand the others */
 
-#define MPC_APIC_USABLE		0x01
+static const uint8_t MPC_APIC_USABLE	= 0x01;
 
 typedef struct
 {
@@ -156,17 +153,18 @@ typedef struct
 	uint8 mpc_nDstIRQ;
 } MpConfigIntSrc_s;
 
-#define MP_INT_VECTORED		0
-#define MP_INT_NMI		1
-#define MP_INT_SMI		2
-#define MP_INT_EXTINT		3
+#if 0
+static const uint8_t MP_INT_VECTORED	= 0;
+static const uint8_t MP_INT_NMI	= 1;
+static const uint8_t MP_INT_SMI	= 2;
+static const uint8_t MP_INT_EXTINT	= 3;
 
-#define MP_IRQDIR_DEFAULT	0
-#define MP_IRQDIR_HIGH		1
-#define MP_IRQDIR_LOW		3
+static const uint8_t MP_IRQDIR_DEFAULT	= 0;
+static const uint8_t MP_IRQDIR_HIGH	= 1;
+static const uint8_t MP_IRQDIR_LOW	= 3;
 
-
-#define MP_APIC_ALL	0xFF
+static const uint8_t MP_APIC_ALL	= 0xFF;
+#endif
 
 typedef struct
 {
@@ -258,14 +256,14 @@ extern __inline ProcessorInfo_s* get_processor( void )
 int logical_to_physical_cpu_id( int nLogicalID );
 
 
-#define NO_PROC_ID		0xFF	/* No processor magic marker */
+static const uint32_t NO_PROC_ID	= 0xFF;		/* No processor magic marker */
 
 
 void init_smp( bool bInitSMP, bool bScanACPI );
 void boot_ap_processors( void );
 
-#define MSG_ALL_BUT_SELF	0x8000	/* Assume < 32768 CPU's */
-#define MSG_ALL			0x8001
+static const uint32_t MSG_ALL_BUT_SELF	= 0x8000;	/* Assume < 32768 CPU's */
+static const uint32_t MSG_ALL		= 0x8001;
 
 #endif /* __KERNEL__ */
 

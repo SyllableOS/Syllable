@@ -37,7 +37,7 @@
 
 MultiArray_s g_sThreadTable;	// Global thread table
 
-#define KSTACK_MAGIC	0x23145567
+static const uint32_t KSTACK_MAGIC = 0x23145567;
 
 /*****************************************************************************
  * NAME:
@@ -823,10 +823,6 @@ int sys_SetThreadExitCode( const thread_id hThread, const int nCode )
  * SEE ALSO:
  ****************************************************************************/
 
-#define	STACK_SIZE	1024 * 128
-
-/*#define	STACK_SIZE	1024 * 1024*/
-
 thread_id sys_spawn_thread( const char *const pzName, void *const pfEntry, const int nPri, int nStackSize, void *const pData )
 {
 	Thread_s *psParentThread = CURRENT_THREAD;
@@ -844,7 +840,7 @@ thread_id sys_spawn_thread( const char *const pzName, void *const pfEntry, const
 
 	if ( nStackSize == 0 )
 	{
-		nStackSize = STACK_SIZE;
+		nStackSize = DEFAULT_STACK_SIZE;
 	}
 	else if ( nStackSize < 32 * 1024 )
 	{
@@ -954,7 +950,7 @@ thread_id sys_spawn_thread( const char *const pzName, void *const pfEntry, const
 
 thread_id old_spawn_thread( const char *const pzName, void *const pfEntry, const int nPri, void *const pData )
 {
-	return ( sys_spawn_thread( pzName, pfEntry, nPri, DEFAULT_STACK_SIZE, pData ) );
+	return ( sys_spawn_thread( pzName, pfEntry, nPri, OLD_DEFAULT_STACK_SIZE, pData ) );
 }
 
 /*****************************************************************************

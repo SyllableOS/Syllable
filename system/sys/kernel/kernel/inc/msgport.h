@@ -25,58 +25,59 @@
 extern "C"
 {
 #endif
+#if 0
+}				/* Make emacs auto-indent work. */
+#endif
 
 #include <atheos/types.h>
 #include "typedefs.h"
 
 
+typedef struct _MessageNode MessageNode_s;
+
+struct _MessageNode
+{
+	MessageNode_s *mn_psNext;
+	int mn_nSize;
+	uint32 mn_nCode;
+};
 
 
-	typedef struct _MessageNode MessageNode_s;
+typedef struct _MsgPort MsgPort_s;
+struct _MsgPort
+{
+	char mp_zName[OS_NAME_LENGTH];
+	port_id mp_hPortID;	/* Index into the global port array     */
+	uint32 mp_nFlags;	/* see definition below                 */
+	int mp_nMaxCount;
+	int mp_nCount;
+	MessageNode_s *mp_psFirstMsg;
+	MessageNode_s *mp_psLastMsg;
+	sem_id mp_hSyncSema;
+	MsgPort_s *mp_psNext;
+	MsgPort_s *mp_psPrev;
+	proc_id mp_hOwner;
+};
 
-	struct _MessageNode
-	{
-		MessageNode_s *mn_psNext;
-		int mn_nSize;
-		uint32 mn_nCode;
-	};
+typedef struct _PublicPort PublicPort_s;
+struct _PublicPort
+{
+	port_id pp_hPortID;
+	char *pp_pzName;
+	PublicPort_s *pp_psNext;
+	PublicPort_s *pp_psPrev;
+};
 
+void init_msg_ports( void );
 
-	typedef struct _MsgPort MsgPort_s;
-	struct _MsgPort
-	{
-		char mp_zName[OS_NAME_LENGTH];
-		port_id mp_hPortID;	/* Index into the global port array     */
-		uint32 mp_nFlags;	/* see definition below                 */
-		int mp_nMaxCount;
-		int mp_nCount;
-		MessageNode_s *mp_psFirstMsg;
-		MessageNode_s *mp_psLastMsg;
-		sem_id mp_hSyncSema;
-		MsgPort_s *mp_psNext;
-		MsgPort_s *mp_psPrev;
-		proc_id mp_hOwner;
-	};
+MsgPort_s *get_port_from_handle( port_id hPort );
+void exit_free_ports( Process_s *psProc );
 
-	typedef struct _PublicPort PublicPort_s;
-	struct _PublicPort
-	{
-		port_id pp_hPortID;
-		char *pp_pzName;
-		PublicPort_s *pp_psNext;
-		PublicPort_s *pp_psPrev;
-	};
-	
-	void init_msg_ports( void );
+port_id do_find_port( const char *pzPortname );
 
-	MsgPort_s *get_port_from_handle( port_id hPort );
-	void exit_free_ports( Process_s *psProc );
-
-	port_id do_find_port( const char *pzPortname );
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif				/* __F_MSGPORTS_H__ */

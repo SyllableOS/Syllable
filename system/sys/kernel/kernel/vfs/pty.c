@@ -46,7 +46,7 @@
 typedef struct FileNode FileNode_s;
 typedef struct SuperInfo SuperInfo_s;
 
-#define	PTY_MAX_NAME_LEN	64
+#define PTY_MAX_NAME_LEN	64
 
 static void pty_notify_read_select( FileNode_s *psNode );
 static void pty_notify_write_select( FileNode_s *psNode );
@@ -65,9 +65,9 @@ enum
 	FLAG_LNEXT = 2		// lnext key (^V) pressed; next char is literal
 };
 
-#define	PTY_BUFFER_SIZE	1024
+static const size_t PTY_BUFFER_SIZE = 1024;
 #define NUM_SAVED_TABS	16	// saved cursor position before pressing TAB
-#define TAB_SIZE	8
+static const size_t TAB_SIZE = 8;
 
 #define	 IS_MASTER( node )	(NULL != (node)->fn_psParent && PTY_MASTER == (node)->fn_psParent->fn_nInodeNum )
 #define	 IS_SLAVE( node )	(NULL != (node)->fn_psParent && PTY_SLAVE == (node)->fn_psParent->fn_nInodeNum )
@@ -589,26 +589,17 @@ static int pty_do_write( FileNode_s *psNode, const char *pzBuf, size_t nLen, int
 	{
 		int nCurLen;
 
-		if ( NULL == psNode->fn_psPartner || 0 == psNode->fn_nOpenCount )
-		{
-			// immediately fail when the master is closed
-			if ( IS_MASTER( psNode ) )
-			{
-				nError = -EIO;
-				goto error;
-			}
-		}
-
 		while ( psNode->fn_nSize == PTY_BUFFER_SIZE )
 		{
+			// check for closed partner before blocking
 			if ( NULL == psNode->fn_psPartner || 0 == psNode->fn_nOpenCount )
 			{
+				// return an error when writing to closed master
 				if ( IS_MASTER( psNode ) )
 				{
 					nError = -EIO;
 					goto error;
 				}
-				// else block until the slave is reopened
 			}
 			if ( nFlags & O_NONBLOCK )
 			{
@@ -619,6 +610,17 @@ static int pty_do_write( FileNode_s *psNode, const char *pzBuf, size_t nLen, int
 			LOCK( psNode->fn_hMutex );
 			if ( nError < 0 )
 			{
+				goto error;
+			}
+		}
+
+		// check for closed partner before writing
+		if ( NULL == psNode->fn_psPartner || 0 == psNode->fn_nOpenCount )
+		{
+			// return an error when writing to closed master
+			if ( IS_MASTER( psNode ) )
+			{
+				nError = -EIO;
 				goto error;
 			}
 		}

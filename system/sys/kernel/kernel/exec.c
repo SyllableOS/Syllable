@@ -40,6 +40,7 @@
 #include "inc/smp.h"
 
 #define MAX_ARGS_PER_NODE 500
+
 typedef struct _ArgCopy ArgCopy_s;
 struct _ArgCopy
 {
