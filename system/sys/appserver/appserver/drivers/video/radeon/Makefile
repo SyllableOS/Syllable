@@ -28,8 +28,9 @@ objs:
 $(OBJDIR)/radeon: $(OBJS)
 	g++ -plugin $(OBJS) -o $(OBJDIR)/radeon -lsyllable
 
-install: $(OBJDIR)/radeon
+install: $(OBJDIR)/radeon radeon.cfg
 	cp -f $(OBJDIR)/radeon $(DEVBIN)/radeon
+	cp -f radeon.cfg $(DEVBIN)/radeon.cfg
 
 dist: $(OBJDIR)/radeon
 	cp -f $(OBJDIR)/radeon $(DIST_DIR)/atheos/sys/drivers/appserver/video/radeon
