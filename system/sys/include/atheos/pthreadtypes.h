@@ -52,7 +52,7 @@ typedef struct
 /* The following is used internally by pthread_cond_t */
 typedef struct __pt_thread_list_s
 {
-	pthread_t __thread;
+	pthread_t __thread_id;
 	struct __pt_thread_list_s* __prev;
 	struct __pt_thread_list_s* __next;
 } __pt_thread_list_t;

@@ -46,7 +46,7 @@ int pthread_cond_broadcast(pthread_cond_t *cond)
 
 	do
 	{
-		resume_thread( __current_thread->__thread );
+		resume_thread( __current_thread->__thread_id );
 
 		__next_thread = __current_thread->__next;
 
@@ -144,7 +144,7 @@ int pthread_cond_signal(pthread_cond_t *cond)
 
 	__pt_unlock_mutex( cond->__lock );
 
-	resume_thread( __waiting_thread->__thread );
+	resume_thread( __waiting_thread->__thread_id );
 
 	free( __waiting_thread );
 
@@ -228,7 +228,7 @@ int __pt_do_cond_wait( pthread_cond_t *cond, pthread_mutex_t *mutex )
 	if( __waiting_thread == NULL )
 		return( ENOMEM );		/* We're not supposed to return ENOMEM, but we do */
 
-	__waiting_thread->__thread = pthread_self();
+	__waiting_thread->__thread_id = pthread_self();
 
 	__pt_lock_mutex( cond->__lock );
 
@@ -249,7 +249,7 @@ int __pt_do_cond_wait( pthread_cond_t *cond, pthread_mutex_t *mutex )
 
 	__pt_unlock_mutex( cond->__lock );
 
-	suspend_thread( __waiting_thread->__thread );
+	suspend_thread( __waiting_thread->__thread_id );
 
 	/* FIXME: Is this correct?  Should mutex be locked on return?    */
 	/* OpenGroup do not win any Plain English awards for this one... */
