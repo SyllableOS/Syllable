@@ -1,0 +1,49 @@
+CFLAGS   = -kernel -fno-PIC -O3 -c -Wall
+AFLAGS   = -c
+
+OBJS := es1371.o ac97_codec.o
+DRIVER := es1371
+
+OBJDIR	:= objs
+OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
+
+
+#
+#	rules
+#
+
+$(OBJDIR)/%.o : %.c
+	$(CC) $(CFLAGS) $< -o $@
+
+$(OBJDIR)/%.o : %.cpp
+	$(CC) $(CFLAGS) $< -o $@
+
+$(OBJDIR)/%.o : %.s
+	$(CC) $(AFLAGS) -x assembler-with-cpp $< -o $@
+
+$(OBJDIR)/%.o : %.S
+	$(CC) $(CFLAGS) -x assembler-with-cpp $< -o $@
+
+
+
+
+all :	objs $(OBJDIR)/es1371
+
+deps:
+
+objs:
+	mkdir objs
+
+$(OBJDIR)/es1371: $(OBJS) Makefile
+	gcc -kernel $(OBJS) -o $(OBJDIR)/es1371
+
+install: all
+	cp -f $(OBJDIR)/es1371 /system/drivers/dev/sound/es1371
+
+dist: all
+	cp -f $(DRIVER) $(DIST_DIR)/atheos/sys/drivers/dev/sound/$(DRIVER)
+
+clean:
+	-rm $(OBJS)
+	-rm $(OBJDIR)/$(DRIVER)
+
