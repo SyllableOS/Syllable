@@ -61,6 +61,24 @@ int  register_debug_cmd( const char* pzName, const char* pzDesc, dbg_fnc* pFunc 
 void dbcon_write( const char* pData, int nSize );
 void dbcon_clear();
 
+enum debug_level{
+	KERN_DEBUG_LOW,
+	KERN_DEBUG,
+	KERN_INFO,
+	KERN_WARNING,
+	KERN_FATAL,
+	KERN_PANIC
+};
+
+#ifndef DEBUG_LIMIT
+#define DEBUG_LIMIT	KERN_WARNING	/* Default debug level */
+#endif
+
+#ifdef __ENABLE_DEBUG__
+#define kerndbg(level,format,arg...) if(level>=DEBUG_LIMIT)printk(format, ## arg);
+#else
+#define kerndbg(level,format,arg...)
+#endif	/* __ENABLE_DEBUG__ */
 
 #endif /* __KERNEL__ */
 
