@@ -1,0 +1,11 @@
+authors 
+maintainer 
+; Patching options:
+patch-config
+patch-legacy-config
+; Extra configure options:
+configure-options 
+; Extra files to install:
+documentation README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
+; Extra files to pack:
+distro-files 

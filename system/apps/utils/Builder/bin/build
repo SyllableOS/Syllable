@@ -1,0 +1,635 @@
+#! ruby
+
+# Syllable Build System
+# Version 0.1.0
+# Copyright (c) 2002, 2003 Kaj de Vos
+# License: GPL 2
+
+
+# Define paths
+
+@builderDir		= "/Applications/Builder"
+@profilesDir	= File.join @builderDir, "profiles"
+@sourcesDir	= File.join @builderDir, "sources"
+@packagesDir	= File.join @builderDir, "packages"
+@logDir			= File.join @builderDir, "logs"
+
+@workDir		= Dir.getwd
+@distroRoot		= File.join @workDir, "dist-root"
+#@buildTools		= File.join @workDir, "build-tools"
+
+# Define settings
+
+@installRoot = (@systemBuild = File.basename(@workDir) == "system") ?
+	File.join(@distroRoot, "atheos/usr") :
+	"/usr"
+@includeVersion = false
+#@includeVersion = true
+
+# Set environment variables
+
+ENV['DIST_VER']  = "0.5.0x"
+ENV['DIST_NAME'] = "base-syllable-0.5.0x.tgz"
+
+ENV['ATHEOS_SRC']			= @workDir
+ENV['ATHEOS_INCLUDE_PATH']	= File.join @workDir, "sys/include"
+ENV['ATHEOS_LIB_PATH']		= File.join @workDir, "libs"
+ENV['BUILD_TOOLS']			= File.join @workDir, "build-tools"
+ENV['DIST_DIR']				= @distroRoot
+
+ENV['CFLAGS']	= "-march=i586 -O2 -pipe"
+ENV['CXXFLAGS']	= "-march=i586 -O2 -pipe"
+
+
+# Functions for single packages
+
+def unpackPackage target
+	Dir.chdir File.dirname target if target["/"]
+
+#	file = Dir[File.join(@sourcesDir, fullName target) + ".*"] [0]
+#	case File.basename file
+	if exists file = (base = File.join @sourcesDir, fullName target) + ".tar.bz2" or
+		exists file = base + ".tbz2"
+	then
+		return false unless action "bzcat #{file} | tar x"
+	elsif exists file = base + ".tar.gz" or exists file = base + ".tgz"
+		return false unless action "tar xzf " + file
+	else
+		logError "Source not found"
+		return false
+	end
+
+	if exists dir = patchesDir(target)
+		logHeader "Patching source"
+		return false unless action "cp -a #{File.join dir, "*"} " + fullName(target)
+	end
+
+	if (recipe = recipe target)["patch-config"]
+		logHeader "Patching configuration"
+		action "cp -a #{File.join @sourcesDir, "config/config.*"} " + fullName(target)
+	elsif recipe["patch-legacy-config"]
+		logHeader "Patching configuration"
+		action "cp -a #{File.join @sourcesDir, "config/legacy/*"} " + fullName(target)
+	else
+		true
+	end
+end
+
+def getPackage target
+	if	unless exists target
+			logHeader "Installing source"
+			unpackPackage target
+		else
+			unless exists File.join target, "CVS"
+				# Source already prepared
+				true
+			else
+				print "WARNING! This will clobber your CVS repository!"
+
+				if exists File.join @sourcesDir, fullName(target) + ".*"
+					logHeader "Replacing source"
+
+					if action "rm -r " + target
+						unpackPackage target
+					else
+						logError "Failed to delete source"
+						false
+					end
+				else
+					Dir.chdir target
+					deleteCVSData
+				end
+			end
+		end
+	then
+		true
+	else
+		logError "Source not installed"
+		logFailure target
+		false
+	end
+end
+
+def configurePackage target
+	if exists "configure"  # configure command available
+		logHeader "Configuring"
+		action "rm config.cache"
+		name = shortName package = fullName(target)
+		if action "./configure" +
+			((options = recipe(package)["configure-options"]) ? " " + options : "") +
+			(name == "man" || name == "grub" ? "" :
+				" --prefix=" + prefix(package)
+			)
+		then true
+		else
+			logFailure target
+			false
+		end
+	else
+		logHeader "Building dependencies"
+		action "make deps"
+
+		true  # Continue building even if dependencies failed
+	end
+end
+
+def cleanPackage target
+	action "make clean"
+end
+
+def makePackage target
+	unless action "make"
+		logFailure target
+	end
+end
+
+def testPackage target
+	action "make check"
+end
+
+def installPackage target
+	dir = installDir target
+
+	unless action "make" +
+		(@systemBuild ? " prefix=" + dir : "") +
+		" install"
+#		" install-strip"
+	then
+		logFailure target
+	else
+		logHeader "Installing extra files"
+
+		action "cp -a #{files} " + dir if files = recipe(target)["documentation"]
+
+		if exists distroDir = File.join(@packagesDir, fullName(target), "distro")
+			# Extra files available
+			action "cp -a #{File.join distroDir, "*"} " + dir
+		end
+
+		unless @systemBuild
+			logHeader "Registering " + dir
+			logFailure target unless action "pkgmanager -a " + dir
+		end
+	end
+end
+
+def uninstallPackage target
+	p = prefix target
+	if @systemBuild or action "pkgmanager -r " + p
+		logHeader "Deleting " + p
+		action "rm -r " + p
+	end
+end
+
+def makeDistroPackage target
+	if exists "configure"  # 3rd-party package
+		installPackage target
+	else  # Native package
+		if action "make dist"
+			logHeader "Installing documentation"
+			if action "make doc"
+				action "make install-doc"
+			end
+		else
+			logFailure target
+		end
+	end
+end
+
+def buildPackage target
+	if getPackage target  # Source is available
+		Dir.chdir target
+
+		logHeader "Cleaning"
+		cleanPackage target
+
+		if configurePackage target  # No failed configuration
+			# Build the directory
+			logHeader "Making"
+			makePackage target
+		end
+		Dir.chdir @workDir
+	end
+end
+
+
+# Functions for multiple packages
+
+def doPackages command, target
+	# Visit all directories
+
+	for package in profile target
+		logEntry package
+
+		Dir.chdir package
+		action command
+		Dir.chdir @workDir
+	end
+end
+
+def get target
+	logHeader "Fetching " + target
+
+	# Fetch all directories
+
+	for package in profile target
+		logEntry package
+		getPackage package
+	end
+end
+
+def prepare target  # Ignored for now
+#	deleteCVSData
+
+	if @systemBuild
+		logHeader "Creating extra directories"
+
+		for dir in load File.join(@builderDir, "extra-source-dirs")
+			Dir.mkdir dir unless exists dir
+		end
+
+		logHeader "Building distribution tree"
+
+		if exists @distroRoot
+			action "rm -r " + File.join(@distroRoot, "*")
+		else
+			Dir.mkdir @distroRoot
+		end
+		Dir.chdir @distroRoot
+
+#		action File.join(@buildTools, "mkbase.sh") + " " + @distroRoot
+		for dir in load File.join(@builderDir, "distro-dirs")
+			Dir.mkdir dir unless exists dir
+		end
+	end
+end
+
+def distclean target
+	logHeader "Cleaning distribution " + target
+	doPackages "make distclean", target
+end
+
+def configure target
+	logHeader "Configuring " + target
+
+	# Configure all directories
+
+	for package in profile target
+		logEntry package
+
+		Dir.chdir package
+		configurePackage package
+		Dir.chdir @workDir
+	end
+end
+
+def clean target
+	logHeader "Cleaning " + target
+
+	# Clean all directories
+
+	for package in profile target
+		logEntry package
+
+		Dir.chdir package
+		cleanPackage package
+		Dir.chdir @workDir
+	end
+end
+
+def make target
+	logHeader "Making " + target
+
+	# Make all directories
+
+	for package in profile target
+		logEntry package
+
+		Dir.chdir package
+		makePackage package
+		Dir.chdir @workDir
+	end
+end
+
+def test target
+	logHeader "Testing " + target
+
+	# Test all directories
+
+	for package in profile target
+		logEntry package
+
+		Dir.chdir package
+		testPackage package
+		Dir.chdir @workDir
+	end
+end
+
+def install target
+	logHeader "Installing " + target
+
+	# Install all directories
+
+	for package in profile target
+		logEntry package
+
+		Dir.chdir package
+		installPackage package
+		Dir.chdir @workDir
+	end
+end
+
+def uninstall target
+	logHeader "Uninstalling " + target
+
+	# Uninstall all directories
+
+	for package in profile target
+		logEntry package
+		uninstallPackage package
+	end
+end
+
+def makeDistro target
+	logHeader "Making distribution " + target
+
+	profile = profile(target)
+	if @systemBuild
+		# Visit all directories
+
+		for package in profile
+			logEntry package
+			Dir.chdir package
+			makeDistroPackage package
+			Dir.chdir @workDir
+		end
+	else  # Create a single package
+		file = (name = fullName target) + ".bin.1"
+
+		if  # Tar it up
+			if action "tar cvf #{file}.tar" +
+				" -C #{@installRoot} " +
+					(profile.collect {|package| installName package}).join(" ") +
+				(files = recipe(target)["distro-files"] ? " " + files : "")
+			then
+				if profile.is_a? Array and exists distroDir = File.join(@packagesDir, name, "distro")
+					# It's a compound package; add extra files
+					Dir.chdir distroDir
+					action "tar rvf #{File.join @workDir, file}.tar *"
+					Dir.chdir @workDir
+				else
+					true
+				end
+			end
+		then
+			# Zip it up
+			if action "gzip #{file}.tar"
+				action "mv #{file}.tar.gz #{file}.tgz"
+			end
+		end
+	end
+end
+
+def build target
+	logHeader "Building " + target
+
+	# Build all directories
+
+	for package in profile target
+		logEntry package
+		buildPackage package
+	end
+end
+
+
+# Helper functions
+
+def deleteCVSData
+	# Delete all CVS dirs
+	# (They would trigger some packages to reconfigure themselves.)
+
+	print "\nCleaning out CVS dirs\n"
+	@log		<< "Cleaning out CVS dirs:\n"
+	@summary	<< "Cleaning out CVS dirs"
+
+	Dir["**/CVS"].each do |dir|
+		@log << dir + "\n"
+
+		# Delete all files in the CVS dir first
+		Dir.foreach dir do |file|
+			f = File.join dir, file
+			File.delete f if File.stat(f).file?
+		end
+
+		Dir.delete dir
+	end
+end
+
+def exists file
+	Dir[file] != []
+end
+
+def load file  # Load the lines of a file into an array, leaving out comments
+	lines = []
+
+	File.open file do |file|
+		file.each do |line|
+			# Get rid of record delimiter and comments
+			lines += [line.chomp] unless line =~ /\s*;/
+		end
+	end
+
+	lines
+end
+
+def parseValues text  # Load key/value pairs into a hash table
+	hash = {}
+
+	for line in text
+		if i = line.index(" ")
+			hash[line[0, i]] = line[i + 1 .. line.length - 1]
+		else
+			hash[line] = ""
+		end
+	end
+
+	hash
+end
+
+def fullName package
+	# Extract name including version, if necessary
+	File.basename package[-1, 1] == "/" ? package.chop : package
+end
+
+def shortName package
+	# Extract name without version
+	/(-\d)|$/.match(fullName(package)).pre_match
+end
+
+def installName package
+	package = fullName package
+	@includeVersion && ! @systemBuild ?
+		package :
+		shortName(package)
+end
+
+def prefix package
+	File.join "/usr", installName(package)
+end
+
+def installDir package
+	File.join @installRoot, installName(package)
+end
+
+def patchesDir package
+	File.join @packagesDir, fullName(package), "patches"
+end
+
+def profile target  # Return the list of packages for the build target
+	if target["/"]  # A single directory
+		target[-1, 1] == "/" ? target.chop : target
+	else  # A profile
+		load File.join(@profilesDir, target)
+	end
+end
+
+def recipe package  # Load the key/value pairs of a recipe into a hash table
+	package = fullName package
+	if exists recipe = File.join(@packagesDir, package, package + ".recipe")
+		parseValues load recipe
+	else
+		{}
+	end
+end
+
+def action command
+	logAction command
+	stdout = `#{command}`
+	status = $? >> 8
+	logError status unless ok = status == 0
+	logResult stdout
+	ok
+end
+
+def openLogs
+	Dir.mkdir @logDir unless exists @logDir
+
+	@log		= File.new File.join(@logDir, "last-stdout"), "w"
+	@summary	= File.new File.join(@logDir, "last-summary"), "w"
+	@failures		= File.new File.join(@logDir, "last-failures"), "w"
+ 
+	@log		<< s = "Building in root directory #{@workDir}\n"
+	@summary	<< s
+	@failures		<< s
+end
+
+def closeLogs
+	@log		<< s = "\nFinished\n"
+	@summary	<< s
+
+	@log.close
+	@summary.close
+	@failures.close
+ end
+
+def logHeader header
+	print			s = "\n#{header}\n"
+	@log		<< s + "\n"
+	@summary	<< s
+end
+
+def logSubheader header
+	print			s = "\n#{header}\n"
+	@log		<< s
+	@summary	<< s
+end
+
+def logEntry entry
+	print			"\n" + s = entry + "\n"
+	@log		<< s
+	@summary	<< "\n" + s
+end
+
+def logAction action
+	print			"\n#{action}\n\n"
+	@log		<< action + ": "
+	@summary	<< action
+end
+
+def logError error
+	print			"\n" + (s = "Error: #{error}") + "\n"
+	@log		<< s + ":"
+	@summary	<< ": " + s
+end
+
+def logResult result
+	@log		<< "\n\n#{result}\n\n"
+	@summary	<< "\n"
+end
+
+def logFailure target
+	@failures << target + "\n"
+end
+
+
+# Main function
+
+arg1, arg2 = ARGV[0], ARGV[1]
+
+case arg1
+when "--version"
+	puts "Syllable Build System 0.1.0",
+		"Copyright (c) 2002, 2003 Kaj de Vos",
+		"License: GPL 2"
+when "--help"
+	puts "Usage: build [<command>] [<package> | <profile>]",
+		"<command>:",
+		"  --version",
+		"  --help",
+		"  prepare:   Initialize distribution tree",
+		"  get:       Fetch and patch sources",
+		"  distclean",
+		"  clean",
+		"  configure",
+		"  make",
+		"  test",
+		"  install:   Run as super-user",
+		"  uninstall: Run as super-user",
+		"  distro",
+		"  log",
+		"  summary",
+		"  failures",
+		"<package>:   Package subdirectory",
+		"<profile>:   Profile name"
+when "log"		then print IO.readlines(File.join(@logDir, "last-stdout"))
+when "summary"	then print IO.readlines(File.join(@logDir, "last-summary"))
+when "failures"	then print IO.readlines(File.join(@logDir, "last-failures"))
+else
+	target = arg2 ? arg2 : "default"
+
+	openLogs
+	if @systemBuild
+#		File.delete "/ainc"
+#		action "ln -s #{File.join @workDir, "sys/include"} /ainc"
+	end
+
+	case arg1
+	when "prepare"	then prepare target
+	when "get"		then get target
+	when "distclean"	then distclean target
+	when "clean"		then clean target
+	when "configure"	then configure target
+	when "make"		then make target
+	when "test"		then test target
+	when "install"		then install target
+	when "uninstall"	then uninstall target
+	when "distro"		then makeDistro target
+	else build arg1 ? arg1 : "default"
+	end
+
+	if @systemBuild
+#		File.delete "/ainc"
+#		action "ln -s /system/include /ainc"
+	end
+	closeLogs
+end

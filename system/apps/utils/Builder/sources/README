@@ -1,0 +1,2 @@
+Drop tarballs of third-party software in this directory.
+The build system will find and unpack them.
