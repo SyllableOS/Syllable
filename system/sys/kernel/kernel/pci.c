@@ -1,6 +1,9 @@
 /*
- *  The AtheOS kernel
+ *  The Syllable kernel
+ *  PCI support
+ *  Copyright (C) 2003 Arno Klenke
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -18,19 +21,40 @@
  */
 
 #include <posix/errno.h>
+#include <atheos/kernel.h>
+#include <atheos/isa_io.h>
 #include <atheos/types.h>
 #include <atheos/pci.h>
 #include <atheos/kernel.h>
+#include <atheos/spinlock.h>
+#include <atheos/pci.h>
 
 #include <macros.h>
 
+#define MAX_PCI_BUSSES	16
 #define	MAX_PCI_DEVICES	255
 
-static int 	    g_nNumPCIDevices = 0;
-static PCI_Entry_s* g_apsPCIDevices[ MAX_PCI_DEVICES ];
+typedef struct
+{
+	uint32 nPCIDeviceNumber;
+	uint32 nPrimaryBus;
+	uint32 nSecondaryBus;
+} PCI_Bus_s;
+
+enum {
+	PCI_METHOD_1 	= 0x01,
+	PCI_METHOD_2 	= 0x02,
+};
+
+uint32		g_nPCIMethod;
+int			g_nPCINumBusses = 0;
+int			g_nPCINumDevices = 0;
+PCI_Bus_s*	g_apsPCIBus[ MAX_PCI_BUSSES ];
+PCI_Entry_s* g_apsPCIDevice[ MAX_PCI_DEVICES ];
+SpinLock_s g_sPCILock = INIT_SPIN_LOCK( "pci_lock" );
 
 /** 
- * \par Description:
+ * \par Description: Check wether a PCI bus is present and select the access ethod
  * \par Note:
  * \par Warning:
  * \param
@@ -39,80 +63,31 @@ static PCI_Entry_s* g_apsPCIDevices[ MAX_PCI_DEVICES ];
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-void PCI_PrintInfo( PCI_Entry_s* psInfo )
+static void pci_inst_check( void )
 {
-  printk( "----------------------------\n" );
-	
-  printk( "Vendor          = %04x\n", psInfo->nVendorID );
-  printk( "Device          = %04x\n", psInfo->nDeviceID );
-/*
-  printk( "Command         = %04x\n", psInfo->nCommand );
-  printk( "nStatus         = %08x\n", psInfo->nStatus );
-  */	
-  printk( "Revsion         = %01x\n", psInfo->nRevisionID );
-/*
-  printk( "CacheLineSize   = %d\n", psInfo->nCacheLineSize );
-  printk( "LatencyTimer    = %d\n", psInfo->nLatencyTimer );
-  printk( "HeaderType      = %x\n", psInfo->nHeaderType );
-*/
-	
-  printk( "Base0           = %08lx\n", psInfo->u.h0.nBase0 );
-  printk( "Base1           = %08lx\n", psInfo->u.h0.nBase1 );
-  printk( "Base2           = %08lx\n", psInfo->u.h0.nBase2 );
-  printk( "Base3           = %08lx\n", psInfo->u.h0.nBase3 );
-  printk( "Base4           = %08lx\n", psInfo->u.h0.nBase4 );
-  printk( "Base5           = %08lx\n", psInfo->u.h0.nBase5 );
-/*
-  printk( "CISPointer      = %08x\n", psInfo->u.h0.nCISPointer );
-  printk( "SubSystemVendor = %04x\n", psInfo->u.h0.nSubSysVendorID );
-  printk( "SubSystem       = %04x\n", psInfo->u.h0.nSubSysID );
-  printk( "RomBase         = %08x\n", psInfo->u.h0.nExpROMAddr );
-  printk( "CapabilityList  = %01x\n", psInfo->u.h0.nCapabilityList );
-*/	
-  printk( "InterruptLine   = %01x\n", psInfo->u.h0.nInterruptLine );
-  printk( "InterruptPin    = %01x\n", psInfo->u.h0.nInterruptPin );
-/*
-  printk( "Min DMA time    = %01x\n", psInfo->u.h0.nMinDMATime );
-  printk( "Max DMA latency = %01x\n", psInfo->u.h0.nMaxDMALatency );
-*/
-  printk( "\n" );
-}
-
-/** 
- * \par Description:
- * \par Note:
- * \par Warning:
- * \param
- * \return
- * \sa
- * \author	Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-
-static int pci_inst_check( void )
-{
-  struct RMREGS rm;
-
-  memset( &rm, 0, sizeof( rm ) );
-
-  rm.EAX = 0xb101;
-
-  realint( 0x1a, &rm );
-	
-  if ( (rm.flags & 0x01) == 0 && (rm.EAX & 0xff00) == 0 )
-  {
-/*		printk( "ID              = %0x (%4s)\n", rm.EDX, &rm.EDX ); */
-    printk( "PCI Characteristics = %lx\n", rm.EAX & 0xff );
-    printk( "PCI Version         = %ld.%ld\n", rm.EBX >> 8, rm.EBX & 0xff );
-    printk( "Last PCI bus        = %ld\n", rm.ECX & 0xff );
-		
-    return( (rm.ECX & 0xff) + 1 );
-  }
-  else
-  {
-    printk( "PCI installation check failed\n" );
-    return( -1 );
-  }
-	
+	g_nPCIMethod = 0;
+  
+	/* Do simple register checks to find the way how to access the pci bus */
+  
+  	/* Check PCI method 2 */
+	outb( 0x0, 0x0cf8 );
+	outb( 0x0, 0x0cfa );
+	if( inb( 0x0cf8 ) == 0x0 && inb( 0x0cfa ) == 0x0 ) {
+		g_nPCIMethod = PCI_METHOD_2;
+		printk( "PCI: Using access method 2\n" );
+		return;
+	}
+  
+	/* Check PCI method 1 */
+	outl( 0x80000000, 0x0cf8 );
+	if( inl( 0x0cf8 ) == 0x80000000 ) {
+		outl( 0x0, 0x0cf8 );
+		if( inl( 0x0cf8 ) == 0x0 ) {
+			g_nPCIMethod = PCI_METHOD_1;
+			printk( "PCI: Using access method 1\n" );
+			return;
+		}
+	}
 }
 
 /** 
@@ -127,33 +102,61 @@ static int pci_inst_check( void )
 
 uint32 read_pci_config( int nBusNum, int nDevNum, int nFncNum, int nOffset, int nSize )
 {
-  struct RMREGS rm;
+  uint32 nFlags;
+  uint32 nValue = 0;
 
   if ( 2 == nSize || 4 == nSize || 1 == nSize )
   {
-    int	anCmd[] = { 0xb108, 0xb109, 0x000, 0xb10a };
-    uint32	anMasks[] = { 0x000000ff, 0x0000ffff, 0x00000000, 0xffffffff };
-    memset( &rm, 0, sizeof( rm ) );
-
-    rm.EAX = anCmd[nSize - 1];
-
-    rm.EBX = (nBusNum << 8) | (((nDevNum << 3) | nFncNum));
-    rm.EDI = nOffset;
-		
-
-    realint( 0x1a, &rm );
-
-    if ( 0 == ((rm.EAX >> 8) & 0xff) ) {
-      return( rm.ECX & anMasks[ nSize- 1 ] );
+    if( g_nPCIMethod & PCI_METHOD_1 ) {
+    	spinlock_cli( &g_sPCILock, nFlags );
+    	outl( 0x80000000 | ( nBusNum << 16 ) | ( nDevNum << 11 ) | ( nFncNum << 8 ) 
+    		| ( nOffset & ~3 ), 0x0cf8 );
+    	switch( nSize ) {
+    		case 1:
+    			nValue = inb( 0x0cfc + ( nOffset & 3 ) );
+    		break;
+    		case 2:
+    			nValue = inw( 0x0cfc + ( nOffset & 2 ) );
+    		break;
+    		case 4:
+    			nValue = inl( 0x0cfc );
+    		break;
+    		default:
+    	}
+    	spinunlock_restore( &g_sPCILock, nFlags );
+    	return( nValue );
+    } else if( g_nPCIMethod & PCI_METHOD_2 ){
+    	if( nDevNum >= 16 ) {
+    		printk( "PCI: read_pci_config() with an invalid device number\n" );
+    	}
+    	spinlock_cli( &g_sPCILock, nFlags );
+    	outb( ( 0xf0 | ( nFncNum << 1 ) ), 0x0cf8 );
+    	outb( nBusNum, 0x0cfa );
+    	switch( nSize ) {
+    		case 1:
+    			nValue = inb( ( 0xc000 | ( nDevNum << 8 ) | nOffset ) );
+    		break;
+    		case 2:
+    			nValue = inw( ( 0xc000 | ( nDevNum << 8 ) | nOffset ) );
+    		break;
+    		case 4:
+    			nValue = inl( ( 0xc000 | ( nDevNum << 8 ) | nOffset ) );
+    		break;
+    		default:
+    	}
+    	outb( 0x0, 0x0cf8 );
+    	spinunlock_restore( &g_sPCILock, nFlags );
+    	
+    	return( nValue );
     } else {
-      return( anMasks[ nSize- 1 ] );
+    	printk( "PCI: read_pci_config() called without PCI present\n" );
     }
   }
   else
   {
-    printk( "ERROR : Invalid size %d passed to read_pci_config()\n", nSize );
-    return( 0 );
+    printk( "PCI: Invalid size %d passed to read_pci_config()\n", nSize );
   }
+  return( 0 );
 }
 
 /** 
@@ -184,29 +187,63 @@ status_t sys_raw_read_pci_config( int nBusNum, int nDevFnc, int nOffset, int nSi
 
 status_t write_pci_config( int nBusNum, int nDevNum, int nFncNum, int nOffset, int nSize, uint32 nValue )
 {
-  struct RMREGS rm;
+  uint32 nFlags;
 
   if ( 2 == nSize || 4 == nSize || 1 == nSize )
-  {
-    int	anCmd[] = { 0xb10b, 0xb10c, 0x000, 0xb10d };
-    uint32	anMasks[] = { 0x000000ff, 0x0000ffff, 0x00000000, 0xffffffff };
-    memset( &rm, 0, sizeof( rm ) );
-
-    rm.EAX = anCmd[nSize - 1];
-
-    rm.EBX = (nBusNum << 8) | (((nDevNum << 3) | nFncNum));
-    rm.EDI = nOffset;
-    rm.ECX = nValue & anMasks[ nSize - 1 ];
-
-    realint( 0x1a, &rm );
-
-    return(  (rm.flags & 0x01) ? -1 : 0 );
+  {   
+    if( g_nPCIMethod & PCI_METHOD_1 ) {
+    	spinlock_cli( &g_sPCILock, nFlags );
+    	outl( 0x80000000 | ( nBusNum << 16 ) | ( nDevNum << 11 ) | ( nFncNum << 8 ) 
+    		| ( nOffset & ~3 ), 0x0cf8 );
+    	switch( nSize ) {
+    		case 1:
+    			outb( nValue, 0x0cfc + ( nOffset & 3 ) );
+    		break;
+    		case 2:
+    			outw( nValue, 0x0cfc + ( nOffset & 2 ) );
+    		break;
+    		case 4:
+    			outl( nValue, 0x0cfc );
+    		break;
+    		default:
+    			spinunlock_restore( &g_sPCILock, nFlags );
+    			return( -1 );
+    	}
+    	spinunlock_restore( &g_sPCILock, nFlags );
+    	return( 0 );
+    } else if( g_nPCIMethod & PCI_METHOD_2 ){
+    	if( nDevNum >= 16 ) {
+    		printk( "PCI: write_pci_config() with an invalid device number\n" );
+    	}
+    	spinlock_cli( &g_sPCILock, nFlags );
+    	outb( ( 0xf0 | ( nFncNum << 1 ) ), 0x0cf8 );
+    	outb( nBusNum, 0x0cfa );
+    	switch( nSize ) {
+    		case 1:
+    			outb( nValue, ( 0xc000 | ( nDevNum << 8 ) | nOffset ) );
+    		break;
+    		case 2:
+    			outw( nValue, ( 0xc000 | ( nDevNum << 8 ) | nOffset ) );
+    		break;
+    		case 4:
+    			outl( nValue, ( 0xc000 | ( nDevNum << 8 ) | nOffset ) );
+    		break;
+    		default:
+    			spinunlock_restore( &g_sPCILock, nFlags );
+    			return( -1 );
+    	}
+    	outb( 0x0, 0x0cf8 );
+    	spinunlock_restore( &g_sPCILock, nFlags );
+    	return( 0 );
+    } else {
+    	printk( "PCI: write_pci_config() called without PCI present\n" );
+    }
   }
   else
   {
-    printk( "ERROR : Invalid size %d passed to write_pci_config()\n", nSize );
-    return( -1 );
+    printk( "PCI: Invalid size %d passed to write_pci_config()\n", nSize );
   }
+  return( -1 );
 }
 
 /** 
@@ -271,17 +308,6 @@ static int read_pci_header( PCI_Entry_s* psInfo, int nBusNum, int nDevNum, int n
   psInfo->u.h0.nInterruptPin	= read_pci_config( nBusNum, nDevNum, nFncNum, PCI_INTERRUPT_PIN, 1 );
   psInfo->u.h0.nMinDMATime	= read_pci_config( nBusNum, nDevNum, nFncNum, PCI_MIN_GRANT, 1 );
   psInfo->u.h0.nMaxDMALatency	= read_pci_config( nBusNum, nDevNum, nFncNum, PCI_MAX_LATENCY, 1 );
-/*
-  printk( "Sizes for bus: %d dev: %d fnc: %d\n", nBusNum, nDevNum, nFncNum );
-  
-  for ( i = 0 ; i < 5 ; ++i )
-  {
-    int	nSize;
-    write_pci_config( nBusNum, nDevNum, nFncNum, PCI_BASE_REGISTERS + i * 4, 4, ~0 );
-    nSize = read_pci_config( nBusNum, nDevNum, nFncNum, PCI_BASE_REGISTERS + i * 4, 4 );
-    printk( "Size %d = %08x\n", i, nSize );
-  }
-  */
   return( 0 );
 }
 
@@ -300,9 +326,9 @@ status_t sys_get_pci_info( PCI_Info_s* psInfo, int nIndex )
   if ( NULL == psInfo ) {
     return( -EFAULT );
   }
-  if ( nIndex >= 0 && nIndex < g_nNumPCIDevices )
+  if ( nIndex >= 0 && nIndex < g_nPCINumDevices )
   {
-    PCI_Entry_s* psEntry = g_apsPCIDevices[ nIndex ];
+    PCI_Entry_s* psEntry = g_apsPCIDevice[ nIndex ];
 
     kassertw( NULL != psEntry );
 			
@@ -356,8 +382,113 @@ status_t get_pci_info( PCI_Info_s* psInfo, int nIndex )
     return( sys_get_pci_info( psInfo, nIndex ) );
 }
 
+
 /** 
- * \par Description:
+ * \par Description: Scan one bus for PCI devices
+ * \par Note: It is used recursive when PCI bridges are detected
+ * \par Warning:
+ * \param
+ * \return
+ * \sa
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+void pci_scan_bus( int nBusNum, int nBridgeFrom, int nBusDev )
+{
+	PCI_Bus_s *psBus;
+	PCI_Entry_s* psInfo;
+	int nDeviceNumberPerBus = ( g_nPCIMethod & PCI_METHOD_1 ) ? 32 : 16;
+	int nDev, nFnc;
+	uint32 nVendorID;
+	uint8 nHeaderType = 0;
+	
+	/* Allocate Resources for the bus */
+	psBus = kmalloc( sizeof( PCI_Bus_s ), MEMF_KERNEL | MEMF_CLEAR );
+	g_apsPCIBus[ nBusNum ] = psBus;
+	g_nPCINumBusses++;
+	
+	psBus->nPCIDeviceNumber = nBusDev;
+	psBus->nPrimaryBus = nBridgeFrom;
+	psBus->nSecondaryBus = nBusNum;
+	
+	printk( "PCI: Scanning Bus %i\n", nBusNum );
+	
+	/* Look for devices on this bus */
+	for( nDev = 0; nDev < nDeviceNumberPerBus; nDev++ ) 
+	{
+		for( nFnc = 0; nFnc < 8; nFnc++ ) {
+			nVendorID = read_pci_config( nBusNum, nDev, nFnc, PCI_VENDOR_ID, 2 );
+			/* One device has been found */
+			if( nVendorID != 0xffff && nVendorID != 0x0000 ) {
+				/* If it is not a multifunction device than we do not have to continue scanning */
+				if( nFnc == 0 ) {
+					nHeaderType = read_pci_config( nBusNum, nDev, nFnc, PCI_HEADER_TYPE, 1 );
+				} else {
+					if ( ( nHeaderType & PCI_MULTIFUNCTION ) == 0 ) 
+						continue;
+				}
+				
+				/* Allocate resources for the new device */
+				psInfo = kmalloc( sizeof( PCI_Entry_s ), MEMF_KERNEL | MEMF_CLEAR );
+
+				if( psInfo != NULL ) {
+					read_pci_header( psInfo, nBusNum, nDev, nFnc );
+
+					if( g_nPCINumDevices < MAX_PCI_DEVICES ) {
+						g_apsPCIDevice[ g_nPCINumDevices++ ] = psInfo;
+
+						printk( "PCI: Device %i VendorID: %04x DeviceID: %04x at %i:%i:%i\n", g_nPCINumDevices - 1, psInfo->nVendorID, psInfo->nDeviceID,
+							nBusNum, nDev, nFnc );
+					} else {
+						printk( "WARNING : To many PCI devices!\n" );
+					}
+				}
+				
+				/* Look if the device is a bridge */
+				if( nHeaderType & PCI_HEADER_BRIDGE ) {
+					/* Disable bridge */
+					write_pci_config( nBusNum, nDev, nFnc, PCI_COMMAND, 2, 
+						read_pci_config( nBusNum, nDev, nFnc, PCI_COMMAND, 2 ) & 
+							~( PCI_COMMAND_IO | PCI_COMMAND_MEMORY ) );
+					 
+					/* Write new values */
+					write_pci_config( nBusNum, nDev, nFnc, PCI_BUS_PRIMARY, 1, nBusNum );
+					write_pci_config( nBusNum, nDev, nFnc, PCI_BUS_SECONDARY, 1, g_nPCINumBusses );
+					write_pci_config( nBusNum, nDev, nFnc, PCI_BUS_SUBORDINATE, 1, 0xff );
+					pci_scan_bus( g_nPCINumBusses, nBusNum, g_nPCINumDevices - 1 );
+					/* Note : g_nPCINumBusses - 1 because the number of busses will be increased by 
+							pci_scan_bus() */
+					write_pci_config( nBusNum, nDev, nFnc, PCI_BUS_SUBORDINATE, 1, g_nPCINumBusses - 1 );
+					/* Enable bridge */
+					write_pci_config( nBusNum, nDev, nFnc, PCI_COMMAND, 2, 
+						read_pci_config( nBusNum, nDev, nFnc, PCI_COMMAND, 2 ) | 
+							( PCI_COMMAND_IO | PCI_COMMAND_MEMORY ) );
+				}
+			}
+		}
+	}
+	printk("PCI: Scan of bus finished\n" );
+}
+
+/** 
+ * \par Description: Called to scan for pci devices
+ * \par Note:
+ * \par Warning:
+ * \param
+ * \return
+ * \sa
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+void pci_scan_all()
+{
+	if( g_nPCIMethod == 0 )
+		return;
+	/* Scan first bus */
+	pci_scan_bus( 0, -1, -1 );
+	printk( "PCI: %i devices detected\n", g_nPCINumDevices );
+}
+
+/** 
+ * \par Description: Check if a pci bus is present
  * \par Note:
  * \par Warning:
  * \param
@@ -367,60 +498,48 @@ status_t get_pci_info( PCI_Info_s* psInfo, int nIndex )
  *****************************************************************************/
 
 void	init_pci_module( void )
-{
-  int	nBusCount = pci_inst_check();
-
-  if ( -1 != nBusCount ) {
-    int	nBus;
-
-      //    "0000 0000 000 00000000 00000000 00000000 00000000 00000000 00000000 0    0"
-    printk( "Vend Dev  Rev Base0    Base1    Base2    Base3    Base4    Base5  irq-l irq-p\n" );
-    for ( nBus = 0 ; nBus < nBusCount ; ++nBus ) {
-      int	nDev;
-      for ( nDev = 0 ; nDev < 32 ; ++nDev ) {
-	int	nHeaderType = 0;
-	int	nFnc;
-				
-	for ( nFnc = 0 ; nFnc < 8 ; ++nFnc ) {
-	  uint32	nVendorID = read_pci_config( nBus, nDev, nFnc, PCI_VENDOR_ID, 2 );
-
-	  if ( 0xffff != nVendorID ) {
-	    PCI_Entry_s* psInfo;
-						
-	    if ( 0 == nFnc ) {
-	      nHeaderType = read_pci_config( nBus, nDev, nFnc, PCI_HEADER_TYPE, 1 );
-	    } else {
-	      if ( (nHeaderType & PCI_MULTIFUNCTION) == 0 ) {
-		continue;
-	      }
-	    }
-						
-	    psInfo = kmalloc( sizeof( PCI_Entry_s ), MEMF_KERNEL | MEMF_CLEAR );
-
-	    if ( NULL != psInfo ) {
-	      read_pci_header( psInfo, nBus, nDev, nFnc );
-
-	      if ( g_nNumPCIDevices < MAX_PCI_DEVICES ) {
-		g_apsPCIDevices[ g_nNumPCIDevices++ ] = psInfo;
-
-		printk( "%04x %04x %03x %08lx %08lx %08lx %08lx %08lx %08lx %01x    %01x\n",
-			psInfo->nVendorID, psInfo->nDeviceID, psInfo->nRevisionID,
-			psInfo->u.h0.nBase0, psInfo->u.h0.nBase1, psInfo->u.h0.nBase2,
-			psInfo->u.h0.nBase3, psInfo->u.h0.nBase4, psInfo->u.h0.nBase5,
-			psInfo->u.h0.nInterruptLine, psInfo->u.h0.nInterruptPin );
-//		PCI_PrintInfo( psInfo );
-	      } else {
-		printk( "WARNING : To many PCI devices!\n" );
-	      }
-	    }
-	  }
+{  
+	/* Check if we can access the pci bus */
+	pci_inst_check();
+	if( g_nPCIMethod == 0 ) {
+		printk( "No PCI bus found\n" );
+		return;
+	} else {
+		pci_scan_all();
 	}
-      }
-    }
-    printk( "Found %d PCI devices\n", g_nNumPCIDevices );
-  }
-  else
-  {
-    printk( "Unable to read PCI information\n" );
-  }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
