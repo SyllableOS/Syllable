@@ -1,3 +1,6 @@
+* June 10 2003, Kristian Van Der Vliet *
+	* Better font handling in AEdit
+
 * June 9 2003, Rick Caudill    *
 	* Patched up Diskmanager.  Now all the dialogs are friendlier
 
@@ -63,4 +66,5 @@
 		* Added SlbMgr(AtheMgr renamed).
 		* Patches by Vanders for AEdit.
 	
+
 
