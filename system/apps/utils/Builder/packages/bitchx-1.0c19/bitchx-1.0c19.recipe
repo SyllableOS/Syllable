@@ -1,0 +1,5 @@
+package-name		ircii-pana-1.0c19
+authors				Kaj de Vos
+;configure-options	--with-plugins --with-ssl
+documentation		README bugs Changelog
+
