@@ -1,3 +1,17 @@
+* Sep 30 2003, Kristian Van Der Vliet *
+
+German keymap fixes from Arno Klenke <arno_klenke@yahoo.de>
+
+* Sep 30 2003, Kristian Van Der Vliet *
+
+Updates to SlbMgr which adds a new "Devices" tab.  This uses the new device management
+sub system to display relevent information on all connected devices, by
+Arno Klenke <arno_klenke@yahoo.de>
+
+* Sep 30 2003, Kristian Van Der Vliet *
+
+SavageIX/MX video driver from Hilary Cheng <tinyobject@yahoo.com>
+
 * Sep 22 2003, Kristian Van Der Vliet *
 
 Removed the get_bios_params() function from the ATA driver.  This function was

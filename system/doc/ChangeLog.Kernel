@@ -1,3 +1,7 @@
+* Sept 30 2003, Kristian Van Der Vliet *
+
+Small bug fix to get_device_info()
+
 * Sept 21 2003, Kristian Van Der Vliet *
 
 PCI & USB bus managers and some new drivers by Arno Klenke
