@@ -1,3 +1,13 @@
+* Feb 1 2004, Kristian Van Der Vliet *
+
+Patch PCI bus manager so that it can detect the (buggy) PCI controller emulated by
+Microsoft Virtual PC.
+
+* Jan 11 2004, Kristian Van Der Vliet *
+
+Fixes to enable_bus_master() in PCI bus manager & a bug fix in pci.h from Hilary Cheng
+<tinyobject@yahoo.com>
+
 * Dec 21 2003, Arno Klenke *
 
 Updated elf loader to load binaries that have been created by binutils 2.14 or/and gcc 3.3.2

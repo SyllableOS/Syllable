@@ -1,13 +1,18 @@
-* Jan 9 2003, Henrik Isaksson *
+* Feb 1 2004, Kristian Van Der Vliet *
+
+Update RTL8139 driver to support more compatible cards.  Patch from
+Michael Krueger <invenies@web.de>
+
+* Jan 9 2004, Henrik Isaksson *
 
 Fixed bug in PNG translator when saving images wider than 256 pixels.
 
-* Jan 3 2003, Kristian Van Der Vliet *
+* Jan 3 2004, Kristian Van Der Vliet *
 
 APM BIOS driver & APM battery meter Launcher plugin from Hilary Cheng
 <tinyobject@yahoo.com>
 
-* Jan 2 2003, Kristian Van Der Vliet *
+* Jan 2 2004, Kristian Van Der Vliet *
 
 Updates to the i810 ICH audio driver by Michael Krueger <invenies@web.de>  It
 incorporates some cleanups from Linux 2.4 upstream patches by Herbert Xu and a
