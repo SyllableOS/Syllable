@@ -34,7 +34,7 @@ test-needs			dejagnu >= 1.4.1
 
 patch-config		. boehm-gc
 ;patch
-;	cd gcc;
+;	cd gcc
 ;	autoconf
 
 

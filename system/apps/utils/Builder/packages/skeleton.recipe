@@ -39,10 +39,12 @@ no-build-dir
 
 ; Configuring:
 ; <configure>
+; [<pre-configure>]
 ; [<configure-vars>] <configure-cmd> ([<configure-prefix>] | [<configure-args>]) [<configure-options>]
 
 configure			<Configuration commands>
 
+pre-configure		<Commands preceding configuration>
 ; Extra variables for configure:
 configure-vars		VAR='value'
 ; Non-standard configure command:

@@ -5,7 +5,9 @@ maintainers			Kaj de Vos
 licenses			GPL LGPL
 
 home				gcc.gnu.org
-packages			gcc-everything-2.95.3
+packages
+	gcc-everything-2.95.3
+;	gcc-2.95.3
 locations			ftp://gcc.gnu.org/pub/gcc/releases/gcc-2.95.3/
 
 needs				binutils
@@ -13,7 +15,7 @@ build-needs			autoconf 2.13
 
 patch-config
 patch
-	cd gcc;
+	cd gcc
 	autoconf
 
 configure-vars		CXXFLAGS='-march=i586 -O2 -pipe -idirafter /include -idirafter /ainc'
