@@ -1,3 +1,7 @@
+* June 6th 2004, Henrik Isaksson *
+
+	- Applied GCC3 patches from Damien.
+
 * June 1st 2004, Kristian Van Der Vliet *
 
 	- Bugfix for dhcpc.  Removed the OPTION_ROUTERS option during DHCPREQUEST
@@ -257,5 +261,4 @@ Network Preferences
 		* Added NetworkPreferences from Daryl Dudey(daryl.dudey@ntlworld.com).
 		* Added SlbMgr(AtheMgr renamed).
 		* Patches by Vanders for AEdit.
-
 
