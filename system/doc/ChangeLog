@@ -1,3 +1,9 @@
+* March 5 2004, Kaj de Vos *
+
+Changed the makefiles for the AppServer and the video drivers
+to make them use FreeType as a normally installed library,
+instead of embedded in the source tree.
+
 * February 28 2004, Kristian Van Der Vliet *
 
 Added Ukrainian and Belarusian keymaps from Nikolaev Ruslan
