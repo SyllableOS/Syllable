@@ -3,7 +3,7 @@
 # Root script to build a bootable CD ISO image from an installation tarball
 
 if [ "$1" = "" ]; then
-	echo "You must supply the path to the base tarball"
+	echo "You must supply the path to the base zip file"
 	exit 1
 fi;
 
@@ -23,7 +23,7 @@ if [ -e cd_root ]; then
 	rm -rf cd_root
 fi;
 
-TARBALL=$1
+ZIPFILE=$1
 VER=$2
 # The root directory which we extract the installation tarball too
 ROOT=root
@@ -36,18 +36,18 @@ if [ ! -e objs ]; then
 	mkdir objs
 fi;
 
-echo "Unpacking $TARBALL"
+echo "Unpacking $ZIPFILE"
 
 mkdir $ROOT
 cd $ROOT
-tar -xzpf $TARBALL
+unzip -d . $ZIPFILE
 cd ..
 
 echo "Building CD boot floppy image"
 ./mkboot.sh $ROOT
 
 echo "Building CD image"
-./mkbase.sh $ROOT $TARBALL $VER
+./mkbase.sh $ROOT $ZIPFILE $VER
 
 echo "Done!"
 exit 0

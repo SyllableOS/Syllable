@@ -111,6 +111,7 @@ cp -dpr $ROOT/atheos/sys/drivers/dev/graphics/* $CDROOT/atheos/sys/drivers/dev/g
 
 cp -p $ROOT/atheos/sys/drivers/fs/afs $CDROOT/atheos/sys/drivers/fs/
 cp -p $ROOT/atheos/sys/drivers/fs/fatfs $CDROOT/atheos/sys/drivers/fs/
+cp -p $ROOT/atheos/sys/drivers/fs/ext2 $CDROOT/atheos/sys/drivers/fs/
 
 cp -p $ROOT/atheos/sys/drivers/bus/pci $CDROOT/atheos/sys/drivers/bus/
 
@@ -160,11 +161,12 @@ cp -p $ROOT/atheos/usr/findutils/bin/find $CDROOT/atheos/usr/bin/
 cp -p $ROOT/atheos/usr/gzip/bin/gzip $CDROOT/atheos/usr/bin/
 cp -p $ROOT/atheos/usr/sed/bin/sed $CDROOT/atheos/usr/bin/
 cp -p $ROOT/atheos/usr/tar/bin/tar $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/zip/bin/unzip $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/ncurses/bin/clear $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/less/bin/less $CDROOT/atheos/usr/bin/
 
 cp -p $ROOT/atheos/usr/bin/bash $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/clear $CDROOT/atheos/usr/bin/
 cp -p $ROOT/atheos/usr/bin/grep $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/less $CDROOT/atheos/usr/bin/
 
 cp -p $ROOT/atheos/usr/share/terminfo/x/xterm $CDROOT/atheos/usr/share/terminfo/x/
 

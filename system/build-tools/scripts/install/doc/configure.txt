@@ -14,7 +14,7 @@ the installation described above:
 
      title  Syllable
      root   (hd0,1)
-     kernel /atheos/sys/kernel.so root=/dev/disk/ide/hda/0
+     kernel /atheos/sys/kernel.so root=/dev/disk/ata/hda/0
      module /atheos/sys/config/kernel.cfg
      module /atheos/sys/drivers/bus/pci
      module /atheos/sys/drivers/fs/afs

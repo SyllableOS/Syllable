@@ -8,10 +8,10 @@ require "grub-gen.rb"
 
 #
 # Remember to always update the version numbers below!
-Base = ["0.5.2", "base-syllable-%s.tar.gz"]
+Base = ["0.5.4", "base-syllable-%s.zip"]
 Packages = {
 	"ABrowse"	=> ["0.3.4", "abrowse-%s.bin.tar.gz"],
-	"Whisper"	=> ["0.1.8", "whisper-%s.bin.tar.gz"],
+	"Whisper"	=> ["0.2.0", "whisper-%s.bin.tar.gz"],
 	"Chat"		=> ["0.0.1", "chat-%s.bin.tar.gz"]
 	}
 
@@ -33,7 +33,7 @@ valid_partitions, shortmap = LSFS::list
 
 loop {
 	puts "\nEnter the name of the device that you would like to install Syllable onto, or \"ls\" to see the partition list again"
-	print "(E.g. /dev/disk/ide/hda/1): "
+	print "(E.g. /dev/disk/ata/hda/1): "
 	
 	resp = $stdin.getsc
 	resp = shortmap[resp] if shortmap.include? resp
@@ -88,7 +88,7 @@ Dir.mkdir "/inst"
 system "/bin/mount", "-t", "afs", $part, "/inst"
 
 pkg = sprintf(Base[1], Base[0])
-retval = system "/usr/bin/tar", "-xzvpf", "/boot/Packages/base/#{pkg}", "-C", "/inst/"
+retval = system "/usr/zip/bin/unzip", "-d", "/inst/", "/boot/Packages/base/#{pkg}"
 system "/usr/bin/sync"
 system "/usr/bin/sync"
 
