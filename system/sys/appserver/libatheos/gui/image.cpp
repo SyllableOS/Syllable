@@ -406,16 +406,20 @@ status_t BitmapImage::Save( StreamableIO* pcDest, const string& cType )
 
 void BitmapImage::Draw( const Point& cPos, View* pcView )
 {
-	if( !m->m_pcBitmap )
+	if( !m->m_pcBitmap || !pcView )
 		return;
 
-	Rect cBounds( 0, 0, GetSize().x, GetSize().y );
-	pcView->DrawBitmap( m->m_pcBitmap, cBounds, cBounds + cPos );
+/*	dbprintf("Drawing Image: %p, %d x %d to view: %p\n",  m->m_pcBitmap,
+		(int)GetSize().x, (int)GetSize().y, pcView );*/
+
+	Rect cSource( 0, 0, GetSize().x-1, GetSize().y-1 );
+	Rect cDest = cSource + Point( (int)cPos.x, (int)cPos.y );
+	pcView->DrawBitmap( m->m_pcBitmap, cSource, cDest );
 }
 
 void BitmapImage::Draw( const Rect& cSource, const Rect& cDest, View* pcView )
 {
-	if( !m->m_pcBitmap )
+	if( !m->m_pcBitmap || !pcView )
 		return;
 
 	pcView->DrawBitmap( m->m_pcBitmap, cSource, cDest );
