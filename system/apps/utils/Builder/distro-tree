@@ -1,9 +1,10 @@
-; Build the root tree structure to install into
+; Root tree structure to build the distribution in
 ;
-; Boot dir structure
+; Boot directory structure
+;
 boot
 ;
-; Syllable dir structure
+; Main directory structure
 ;
 atheos
 ;
@@ -13,29 +14,51 @@ atheos/home
 atheos/home/root
 ;
 atheos/sys
-atheos/sys/bin
 ;
 atheos/sys/config
 ;
-atheos/sys/fonts
-atheos/sys/keymaps
+atheos/sys/include
+;
+atheos/sys/bin
 atheos/sys/libs
+;
+atheos/sys/fonts
+atheos/sys/icons
+atheos/sys/keymaps
 ;
 atheos/sys/drivers
 ;
-atheos/sys/drivers/appserver
-atheos/sys/drivers/appserver/input
-atheos/sys/drivers/appserver/video
+atheos/sys/drivers/bus
 ;
 atheos/sys/drivers/dev
 atheos/sys/drivers/dev/disk
 atheos/sys/drivers/dev/misc
+atheos/sys/drivers/dev/net/eth
+atheos/sys/drivers/dev/sound
 ;
 atheos/sys/drivers/fs
-atheos/sys/drivers/bus
+;
+atheos/sys/drivers/net/if
+;
+atheos/sys/drivers/appserver
+atheos/sys/drivers/appserver/decorators
+atheos/sys/drivers/appserver/input
+atheos/sys/drivers/appserver/video
+;
+atheos/sys/translators
+;
+atheos/tmp
 ;
 atheos/usr
 atheos/usr/bin
 atheos/usr/share
 atheos/usr/share/terminfo
 atheos/usr/share/terminfo/x
+;
+atheos/usr/zlib
+atheos/usr/zlib/include
+atheos/usr/zlib/lib
+;
+atheos/Applications
+atheos/Applications/Preferences
+atheos/Documentation
