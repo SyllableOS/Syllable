@@ -1,3 +1,4 @@
+
 /*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
  *  Copyright (C) 2003 - 2004 The Syllable Team
@@ -64,7 +65,7 @@ namespace os
 	class TextEdit:public View
 	{
 	      public:
-		TextEdit( TextView * pcParent, const Rect & cFrame, const String& cTitle, uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP, uint32 nFlags = WID_WILL_DRAW | WID_CLEAR_BACKGROUND );
+		TextEdit( TextView * pcParent, const Rect & cFrame, const String &cTitle, uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP, uint32 nFlags = WID_WILL_DRAW | WID_CLEAR_BACKGROUND );
 		 ~TextEdit();
 
 		void SetEnable( bool bEnabled = true );
@@ -108,8 +109,8 @@ namespace os
 		void SetMaxPreferredSize( int nWidthChars, int nHeightChars );
 		IPoint GetMaxPreferredSize() const;
 
-		void GetRegion( IPoint cStart, IPoint cEnd, String * pcBuffer, bool bAddToClipboard = true );
-		void GetRegion( String * pcBuffer, bool bAddToClipboard = true );
+		void GetRegion( IPoint cStart, IPoint cEnd, String *pcBuffer, bool bAddToClipboard = true );
+		void GetRegion( String *pcBuffer, bool bAddToClipboard = true );
 		void MakeCsrVisible();
 		void InsertString( IPoint * pcPos, const char *pzBuffer, bool bMakeUndo = true );
 		void Delete( IPoint cStart, IPoint cEnd, bool bMakeUndo = true );
@@ -246,7 +247,7 @@ using namespace os;
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-TextView::TextView( const Rect & cFrame, const String& cTitle, const char *pzText, uint32 nResizeMask, uint32 nFlags ):Control( cFrame, cTitle, "", NULL, nResizeMask, nFlags )
+TextView::TextView( const Rect & cFrame, const String &cTitle, const char *pzText, uint32 nResizeMask, uint32 nFlags ):Control( cFrame, cTitle, "", NULL, nResizeMask, nFlags )
 {
 	Rect cChildFrame = GetBounds();
 
@@ -267,7 +268,7 @@ TextView::~TextView()
 {
 }
 
-void TextView::LabelChanged( const String & cNewLabel )
+void TextView::LabelChanged( const String &cNewLabel )
 {
 }
 
@@ -319,6 +320,7 @@ void TextView::SetValue( Variant cValue, bool bInvoke )
 Variant TextView::GetValue() const
 {
 	String cBuffer;
+
 	m_pcEditor->GetRegion( IPoint( 0, 0 ), IPoint( -1, -1 ), &cBuffer, false );
 	Variant cVariant( cBuffer );
 
@@ -633,7 +635,7 @@ IPoint TextView::GetMaxPreferredSize() const
 	return ( m_pcEditor->GetMaxPreferredSize() );
 }
 
-void TextView::GetRegion( String * pcBuffer )
+void TextView::GetRegion( String *pcBuffer )
 {
 	m_pcEditor->GetRegion( pcBuffer );
 }
@@ -774,6 +776,7 @@ size_t TextView::GetCurrentLength() const
 void TextView::Cut( bool bSendNotify )
 {
 	String cBuffer;
+
 	m_pcEditor->GetRegion( &cBuffer );
 	m_pcEditor->Delete();
 	if( bSendNotify )
@@ -785,6 +788,7 @@ void TextView::Cut( bool bSendNotify )
 void TextView::Copy()
 {
 	String cBuffer;
+
 	m_pcEditor->GetRegion( &cBuffer );
 }
 
@@ -832,7 +836,7 @@ const TextView::buffer_type &TextView::GetBuffer() const
 	return ( m_pcEditor->GetBuffer() );
 }
 
-bool TextView::FilterKeyStroke( const String * pcString )
+bool TextView::FilterKeyStroke( const String *pcString )
 {
 	return ( true );
 }
@@ -1008,11 +1012,7 @@ void TextView::Redo( void )
 /////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-TextEdit::TextEdit( TextView * pcParent, const Rect & cFrame, const String& cTitle,
-	uint32 nResizeMask, uint32 nFlags ):View( cFrame, cTitle, nResizeMask, nFlags ), 
-	m_cCsrPos( 0, 0 ), m_cPrevCursorPos( 0, 0 ), m_cPreferredSize( LEFT_BORDER + RIGHT_BORDER,
-	TOP_BORDER + BOTTOM_BORDER ), m_cMinPreferredSize( 0, 0 ), m_cMaxPreferredSize( 0, 0 ),
-	m_sCurFgColor( 0, 0, 0 ), m_sCurBgColor( 255, 255, 255 )
+TextEdit::TextEdit( TextView * pcParent, const Rect & cFrame, const String &cTitle, uint32 nResizeMask, uint32 nFlags ):View( cFrame, cTitle, nResizeMask, nFlags ), m_cCsrPos( 0, 0 ), m_cPrevCursorPos( 0, 0 ), m_cPreferredSize( LEFT_BORDER + RIGHT_BORDER, TOP_BORDER + BOTTOM_BORDER ), m_cMinPreferredSize( 0, 0 ), m_cMaxPreferredSize( 0, 0 ), m_sCurFgColor( 0, 0, 0 ), m_sCurBgColor( 255, 255, 255 )
 {
 	m_pcParent = pcParent;
 	m_cBuffer.push_back( "" );
@@ -1299,7 +1299,7 @@ Point TextEdit::GetPreferredSize( bool bLargest ) const
 		else
 		{
 			return Point( LEFT_BORDER + RIGHT_BORDER, m_vGlyphHeight + TOP_BORDER + BOTTOM_BORDER );
-//			return ( m_cPreferredSize );
+//                      return ( m_cPreferredSize );
 		}
 //      return( Point( GetStringWidth( m_cBuffer[0].c_str() ) + LEFT_BORDER + RIGHT_BORDER,
 //                      m_cBuffer.size() * m_vGlyphHeight + TOP_BORDER + BOTTOM_BORDER ) );
@@ -1730,7 +1730,7 @@ void TextEdit::InsertString( IPoint * pcPos, const char *pzBuffer, bool bMakeUnd
 	}
 }
 
-void TextEdit::GetRegion( IPoint cStart, IPoint cEnd, String * pcBuffer, bool bAddToClipboard )
+void TextEdit::GetRegion( IPoint cStart, IPoint cEnd, String *pcBuffer, bool bAddToClipboard )
 {
 	IPoint cRegStart;
 	IPoint cRegEnd;
@@ -1748,13 +1748,13 @@ void TextEdit::GetRegion( IPoint cStart, IPoint cEnd, String * pcBuffer, bool bA
 
 	if( cRegStart.y == cRegEnd.y )
 	{
-		*pcBuffer = String( m_cBuffer[cRegStart.y].begin() + cRegStart.x, m_cBuffer[cRegStart.y].begin(  ) + cRegEnd.x );
+		*pcBuffer = String ( m_cBuffer[cRegStart.y].begin() + cRegStart.x, m_cBuffer[cRegStart.y].begin(  ) + cRegEnd.x );
 	}
 	else if( cStart == IPoint( 0, 0 ) && cEnd == IPoint( -1, -1 ) )
 	{
 		TextView::buffer_type::iterator iBfr = m_cBuffer.begin();
 
-		*pcBuffer = String( "" );
+		*pcBuffer = String ( "" );
 		bool first = true;
 
 		while( iBfr != m_cBuffer.end() )
@@ -1770,14 +1770,15 @@ void TextEdit::GetRegion( IPoint cStart, IPoint cEnd, String * pcBuffer, bool bA
 	}
 	else
 	{
-		*pcBuffer = String( m_cBuffer[cRegStart.y].begin() + cRegStart.x, m_cBuffer[cRegStart.y].end(  ) );
+		*pcBuffer = String ( m_cBuffer[cRegStart.y].begin() + cRegStart.x, m_cBuffer[cRegStart.y].end(  ) );
+
 		for( int i = cRegStart.y + 1; i < cRegEnd.y; ++i )
 		{
 			*pcBuffer += "\n";
 			*pcBuffer += m_cBuffer[i];
 		}
 		*pcBuffer += "\n";
-		*pcBuffer += String( m_cBuffer[cRegEnd.y].begin(), m_cBuffer[cRegEnd.y].begin(  ) + cRegEnd.x );
+		*pcBuffer += String ( m_cBuffer[cRegEnd.y].begin(), m_cBuffer[cRegEnd.y].begin(  ) + cRegEnd.x );
 	}
 	if( m_bPassword == false && bAddToClipboard )
 	{
@@ -1793,7 +1794,7 @@ void TextEdit::GetRegion( IPoint cStart, IPoint cEnd, String * pcBuffer, bool bA
 	}
 }
 
-void TextEdit::GetRegion( String * pcBuffer, bool bAddToClipboard )
+void TextEdit::GetRegion( String *pcBuffer, bool bAddToClipboard )
 {
 	GetRegion( m_cRegionStart, m_cRegionEnd, pcBuffer, bAddToClipboard );
 }
@@ -2558,7 +2559,7 @@ bool TextEdit::HandleMouseMove( const Point & cPosition, int nCode, uint32 nButt
 
 bool TextEdit::HandleMouseDown( const Point & cPosition, uint32 nButton )
 {
-	if( nButton != 1 || m_bReadOnly || m_bEnabled == false )
+	if( nButton != 1 || m_bEnabled == false )
 	{
 		return ( false );
 	}
@@ -2618,6 +2619,7 @@ bool TextEdit::HandleKeyDown( const char *pzString, const char *pzRawString, uin
 		if( pzString[0] == VK_INSERT )
 		{
 			String cBuffer;
+
 			GetRegion( &cBuffer );
 			return ( true );
 		}
@@ -2639,6 +2641,7 @@ bool TextEdit::HandleKeyDown( const char *pzString, const char *pzRawString, uin
 				if( !m_bReadOnly )
 				{
 					String cBuffer;
+
 					GetRegion( &cBuffer );
 					Delete();
 					CommitEvents();
@@ -2672,6 +2675,7 @@ bool TextEdit::HandleKeyDown( const char *pzString, const char *pzRawString, uin
 			case 'c':
 				{
 					String cBuffer;
+
 					GetRegion( &cBuffer );
 				}
 				return true;
@@ -2728,6 +2732,7 @@ bool TextEdit::HandleKeyDown( const char *pzString, const char *pzRawString, uin
 		if( m_bMultiLine )
 		{
 			String cStr( pzString );
+
 			if( m_pcParent->FilterKeyStroke( &cStr ) )
 			{
 				if( m_bRegionActive )
@@ -2772,10 +2777,10 @@ bool TextEdit::HandleKeyDown( const char *pzString, const char *pzRawString, uin
 		MoveVert( 1, bShift );
 		break;
 	case VK_PAGE_UP:
-		MoveVert( (int)-( ( GetBounds().Height(  ) + 1.0f ) / m_vGlyphHeight - 1 ), bShift );
+		MoveVert( ( int )-( ( GetBounds().Height(  ) + 1.0f ) / m_vGlyphHeight - 1 ), bShift );
 		break;
 	case VK_PAGE_DOWN:
-		MoveVert( (int)( ( GetBounds().Height(  ) + 1.0f ) / m_vGlyphHeight - 1 ), bShift );
+		MoveVert( ( int )( ( GetBounds().Height(  ) + 1.0f ) / m_vGlyphHeight - 1 ), bShift );
 		break;
 	case VK_HOME:
 		MoveHoriz( -m_cCsrPos.x, bShift );
@@ -2823,6 +2828,7 @@ bool TextEdit::HandleKeyDown( const char *pzString, const char *pzRawString, uin
 		if( nQualifiers & QUAL_SHIFT )
 		{
 			String cBuffer;
+
 			GetRegion( &cBuffer );
 		}
 		Delete();
@@ -2830,6 +2836,7 @@ bool TextEdit::HandleKeyDown( const char *pzString, const char *pzRawString, uin
 		break;
 	default:
 		String cStr( pzString );
+
 		if( m_pcParent->FilterKeyStroke( &cStr ) )
 		{
 			if( ( m_bMultiLine || m_bNumeric == false ) || isdigit( cStr[0] ) || ( cStr[0] == '.' && int ( m_cBuffer[0].str().find( '.' ) ) == -1 )||( toupper( cStr[0] ) == 'E' && int ( m_cBuffer[0].str(  ).find( 'e' ) ) == -1 && int ( m_cBuffer[0].str(  ).find( 'E' ) ) == -1 )||( ( m_cCsrPos.x == 0 || toupper( m_cBuffer[0][m_cCsrPos.x - 1] ) == 'E' ) && ( cStr[0] == '+' || cStr[0] == '-' ) ) )
