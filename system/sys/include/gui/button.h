@@ -51,6 +51,12 @@ namespace os
 class Button : public Control
 {
 public:
+	enum InputMode {
+		InputModeNormal,
+		InputModeToggle,
+		InputModeRadio
+	};
+public:
     Button( Rect cFrame, const String& cName, const String& cLabel, Message* pcMessage,
 	    uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP, uint32 nFlags  = WID_WILL_DRAW | WID_CLEAR_BACKGROUND | WID_FULL_UPDATE_ON_RESIZE );
     ~Button();
@@ -70,8 +76,8 @@ public:
     virtual void EnableStatusChanged( bool bIsEnabled );
     virtual bool Invoked( Message* pcMessage );
     
-	void SetToggleMode( bool bToggle );
-	bool GetToggleMode() const;
+	void SetInputMode( InputMode eInputMode );
+	InputMode GetInputMode() const;
 
 
 private:
