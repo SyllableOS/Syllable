@@ -398,7 +398,7 @@ void LauncherClock::Paint( const Rect &cUpdateRect )
 	float fHeight = /*sHeight.ascender +*/ sHeight.descender;
 	
 	float x = ( cBounds.Width() / 2.0f) - (fWidth / 2.0f);
-	float y = 2.0f + (cBounds.Height()+1.0f)*0.5f - fHeight*0.5f + sHeight.descender;
+	float y = 4.0f + (cBounds.Height()+1.0f)*0.5f - fHeight*0.5f + sHeight.descender;
 
 	DrawFrame( cBounds, FRAME_RECESSED);
 
@@ -415,7 +415,7 @@ Point LauncherClock::GetPreferredSize( bool bLargest ) const
 	font_height sHeight;
 	GetFontHeight( &sHeight );
 	
-	return Point( fWidth + 16, /*sHeight.ascender +*/ sHeight.descender + sHeight.line_gap + 8 );
+	return Point( fWidth + 16, sHeight.ascender + sHeight.descender + sHeight.line_gap + 8 );
 }
 
 //*************************************************************************************
