@@ -139,13 +139,16 @@ void ColorWheel::SetValue( const Variant& cNewValue, bool bUpdate )
 	m->m_cRGB = cNewValue.AsColor32();
 	m->m_cKnobPos = _CalcKnobPos();
 
+	Color32 col = m->m_cRGB;
+	float val;
+	val = std::max( std::max( col.red, col.green ), col.blue );
+	val /= 255;
+	m->m_vBrightness = val;
+
 	if( m->m_pcSlider ) {
-		Color32 col = m->m_cRGB;
-		float val;
-		val = std::max( std::max( col.red, col.green ), col.blue );
-		val /= 255;
 		m->m_pcSlider->SetValue( val, false );
 	}
+
 	Control::SetValue( cNewValue, bUpdate );
 }
 
@@ -483,7 +486,7 @@ bool ColorWheel::_CalcWheelColor( int32 x, int32 y, uint32* col, bool bMargin )
 Point ColorWheel::_CalcKnobPos()
 {
 	double alpha;
-	double R, G, B, H, S, max, min, delta;
+	double R, G, B, H = 0.0, S, max, min, delta;
 
 	R = (double) m->m_cRGB.red / (double) 0xFF;
 	G = (double) m->m_cRGB.green / (double) 0xFF;
@@ -501,11 +504,7 @@ Point ColorWheel::_CalcKnobPos()
 		S = 0.0;
 	}
     
-	if (S == 0.0)
-	{
-		H = 0.0;
-	}
-	else
+	if (S != 0.0)
 	{
 		delta = max - min;
 
