@@ -23,8 +23,10 @@
 #
 # 180802 - Put Glibc back.  Still some more work		- Vanders
 #			 to be done for the Glibc "dist" target.
+#
+# 090603 - Updated to ncurses 5.3			- Kaj
 
-SUBDIRS = compat-1.0 ncurses-5.2
+SUBDIRS = compat-1.0 ncurses-5.3
 
 GLIBC_DIR := glibc
 
