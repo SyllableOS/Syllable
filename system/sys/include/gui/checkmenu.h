@@ -17,8 +17,8 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef	__F_CHECKMENU_H__
-#define	__F_CHECKMENU_H__
+#ifndef	__F_GUI_CHECKMENU_H__
+#define	__F_GUI_CHECKMENU_H__
 
 #include <gui/menu.h>
 #include <gui/bitmap.h>
@@ -50,7 +50,7 @@ class CheckMenu : public MenuItem
 
 		virtual void  Draw();
 		virtual void  DrawContent();
-		virtual void  Highlight( bool bHighlight );
+		virtual void  SetHighlighted( bool bHighlighted );
 		virtual Point GetContentSize();
 
 		bool IsChecked();
@@ -68,4 +68,5 @@ class CheckMenu : public MenuItem
 
 }
 #endif
+
 
