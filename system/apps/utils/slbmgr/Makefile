@@ -10,7 +10,7 @@ $(EXE) : $(OBJS)
 	$(LL) $(OBJS) -lsyllable -o $@
 
 dist: $(EXE)
-	cp -f $(EXE) %(DIST_DIR)/atheos/sys/bin/$(EXE)
+	cp -f $(EXE) $(DIST_DIR)/atheos/sys/bin/$(EXE)
 
 clean:  
 	-rm -f $(OBJS)
