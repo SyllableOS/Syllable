@@ -4235,6 +4235,11 @@ int sys_fcntl( int nFile, int nCmd, int nArg )
 	case F_GETLK:
 	{
 	    struct flock sLock;
+	    nError = memcpy_from_user( &sLock, (struct flock*) nArg, sizeof(sLock) );
+	    if ( nError < 0 ) {
+		break;
+	    }
+
 	    nError = get_file_lock( psFile, &sLock );
 	    if ( nError >= 0 ) {
 		nError = memcpy_to_user( (struct flock*) nArg, &sLock, sizeof(sLock) );
