@@ -1,15 +1,24 @@
-; Include version number in the installation prefix of ports:
-;include-version
-
 environment
 ;	For some strange reason, Linux defines OSTYPE and MACHTYPE, but doesn't pass them to child processes.
 ;	If you have the misfortune of running it, define them here:
 ;	OSTYPE		linux-gnu
 ;	MACHTYPE	i586-pc-linux-gnu
 
+;	Default anonymous access to the Syllable CVS repository:
+	CVSROOT		:pserver:anonymous@cvs.sourceforge.net:/cvsroot/syllable
+;	If you have write access:
+;	CVSROOT		:ext:<Your SF user name here>@cvs.sourceforge.net:/cvsroot/syllable
+
+;	Default compiler optimization settings:
 	CFLAGS		-march=i586 -O2 -pipe
 	CXXFLAGS	-march=i586 -O2 -pipe
 
+; Location in CVS we want, if not the CVS root:
+cvs-path		syllable/system
+
 ; For cross-compilation:
 ;target			i586-pc-syllable
+
+; Include version number in the installation path prefix of ports:
+;include-version
 

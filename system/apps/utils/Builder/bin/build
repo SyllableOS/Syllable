@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.2
+# Version 0.6.3
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -15,7 +15,7 @@ def downloadModule target
 			Dir.chdir File.dirname(target)  # if target['/']
 
 			@log.subheader 'Checking out sources from CVS repository'
-			action "cvs checkout -d #{File.basename target} " + target
+			action "cvs checkout -d #{File.basename target} " + File.join(@cvsPath, target)
 		end
 	then
 		@log.failure target
@@ -1312,6 +1312,9 @@ end
 
 @syllable = ENV['OSTYPE'] == 'syllable'
 
+# Confine ourselves to a subsection of CVS?
+@cvsPath = '' unless @cvsPath = @settings['cvs-path']
+
 # Include version number on installed ports?
 @includeVersion = @settings['include-version']
 
@@ -1357,7 +1360,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.2',
+	puts 'Syllable Build System 0.6.3',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
