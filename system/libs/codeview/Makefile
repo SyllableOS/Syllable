@@ -1,6 +1,6 @@
 VERSION_MAJOR = 2
 VERSION_MINOR = 0
-LOBJS = objs/inneredit.o objs/codeview.o objs/format_c.o objs/format_java.o objs/format_perl.o objs/format_html.o
+LOBJS = objs/inneredit.o objs/codeview.o objs/format_c.o objs/format_java.o objs/format_perl.o objs/format_html.o objs/format_ruby.o
 OBJS = objs/main.o
 CC = g++
 COPTS = -Wall -fPIC -g
@@ -39,6 +39,7 @@ install: all
 	-cp -f format_java.h /ainc/codeview/
 	-cp -f format_perl.h /ainc/codeview/
 	-cp -f format_html.h /ainc/codeview/
+	-cp -f format_ruby.h /ainc/codeview/
 
 .PHONY : docs
 docs:
@@ -72,5 +73,6 @@ objs/format_perl.o:  format_perl.cpp format_perl.h format.h
 objs/format_html.o:  format_html.cpp format_html.h format.h
 objs/format_java.o:  format_c.cpp format_c.h format_java.cpp \
 	format_java.h format.h
+objs/format_ruby: format_ruby.cpp format_ruby.h format.h
 
 

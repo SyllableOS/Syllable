@@ -80,9 +80,6 @@ public:
 		
     bool Invoked(os::Message*);
 
-    //void SetValue(os::Variant value, bool invoke=true);
-    //os::Variant GetValue() const;
-
     void SetReadOnly(bool flag=true);
     bool GetReadOnly() const;
 
@@ -93,11 +90,6 @@ public:
     void SetEventMask(uint32 mask);
 
     void GetRegion(os::String *buffer);
-		
-    //void SetMinPreferredSize(int widthChars, int heightChars);
-    //os::IPoint GetMinPreferredSize();
-    //void SetMaxPreferredSize(int widthChars, int heightChars);
-    //os::IPoint GetMaxPreferredSize();
 
     void MakeCsrVisible();
     void Clear(bool sendNotify=true);
@@ -122,9 +114,6 @@ public:
     void Delete(const os::IPoint &start, const os::IPoint &end, bool sendNotify=true);
 		
     void SetTabOrder(int order);
-
-    //os::Point GetPreferredSize(bool largest) const;
-    //virtual bool FilterKeyStroke(const string*);
 		
     //******************************
     //  CodeView specific methods
@@ -165,8 +154,15 @@ public:
 	void SetLineNumberBgColor(os::Color32_s);
 	os::Color32_s GetLineNumberBgColor();
 
+	void SetLineBackColor(os::Color32_s);
+	os::Color32_s GetLineBackColor();
+	
 	os::Font* GetEditorFont() const;
 	void SetContextMenu( os::Menu * pcMenu );
+	
+	void FoldAll();
+
+	virtual void MouseUp(const os::Point&, uint32, os::Message*);
 
 private:
     InnerEdit* edit;
@@ -176,4 +172,6 @@ private:
 } /* namespace cv */
 
 #endif /* F_CODEVIEW_CODEVIEW_H */
+
+
 

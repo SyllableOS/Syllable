@@ -176,6 +176,7 @@ private:
 	os::Color32_s sHighlight;
 	os::Color32_s m_sLineNumberFg;
 	os::Color32_s m_sLineNumberBg;
+	os::Color32_s m_sLineBackColor;
 
 public:
 
@@ -327,8 +328,19 @@ public:
 	{
 		return m_sLineNumberFg;
 	}
+	
+	void SetLineBackColor(os::Color32_s sColor)
+	{
+		m_sLineBackColor = sColor;
+	}
+	
+	os::Color32_s GetLineBackColor()
+	{
+		return m_sLineBackColor;
+	}
 };
 
 } /* namespace cv */
 
 #endif
+

@@ -73,7 +73,8 @@ m_pcContextMenu( NULL ), sHighlight(0,0,0,0)
 
 	m_sLineNumberBg = os::Color32_s( 200, 200, 255 );
 	m_sLineNumberFg = os::Color32_s( 0, 0, 0 );
-
+	m_sLineBackColor = os::Color32_s(220,220,250);
+	
 	os::font_properties fp;
 	os::Font::GetDefaultFont(DEFAULT_FONT_FIXED, &fp);
 	os::Font *f=new os::Font(fp);
@@ -172,16 +173,18 @@ void InnerEdit::Paint(const os::Rect &r)
 		bool bIsFolded = _LineIsFolded( nBufferIndex );
 
 		if( m_nMargin ) {
-			backView->FillRect( os::Rect( xOff, 0, xOff + m_nMargin - 1, lineHeight ), os::Color32_s( 220, 220, 250 ) );
+			backView->FillRect( os::Rect( xOff, 0, xOff + m_nMargin - 1/*was -4*/, lineHeight ),m_sLineBackColor);
+			backView->FillRect(os::Rect(m_nMargin-4,0,m_nMargin-2,lineHeight),os::Color32_s(255,255,255));
+			backView->FillRect( os::Rect(m_nMargin-2,0,m_nMargin-1,lineHeight ),m_sLineBackColor);
 			backView->MovePenTo( xOff, lineBase );
 			backView->SetFgColor( m_sLineNumberFg );
 			backView->SetBgColor( m_sLineNumberBg );
 			if( bIsFolded ) {
-				backView->DrawFrame( os::Rect( xOff, 0, xOff + m_nMargin - 1, lineHeight), /*os::FRAME_THIN*/ os::FRAME_TRANSPARENT );
+				backView->DrawFrame( os::Rect( xOff, 0, xOff + m_nMargin - 1, lineHeight),os::FRAME_TRANSPARENT );
 				backView->DrawString( "+" );
 			} else {
 				os::String cLineNo;
-				cLineNo.Format( "%d", nBufferIndex );
+				cLineNo.Format( "%d", nBufferIndex+1 );
 				backView->DrawString( cLineNo );
 			}
 		}
@@ -565,7 +568,7 @@ void InnerEdit::FontChanged(os::Font* f)
 	f->GetHeight(&fh);
 
 	lineBase=fh.ascender+fh.line_gap;
-	lineHeight=fh.ascender+fh.line_gap+fh.descender;
+	lineHeight=fh.ascender+fh.line_gap+fh.descender+1;
 	spaceWidth=f->GetStringWidth(" ");
 
 	if(f->GetDirection()!=os::FONT_LEFT_TO_RIGHT){
@@ -912,6 +915,13 @@ void InnerEdit::MouseDown(const os::Point &p, uint32 but)
 
 void InnerEdit::MouseUp(const os::Point &p, uint32 but, os::Message* m)
 {
+	os::String cString;
+	
+	if (m!=NULL && m->FindString("file/path", &cString) == 0)
+	{
+		control->MouseUp(p,but,m);
+	}
+
 	if(but&1)
 		mousePressed=false;
 }
@@ -1991,3 +2001,9 @@ void InnerEdit::_AdjustFoldedSections( uint nStart, int nLen )
 //		}
 	}
 }
+
+
+
+
+
+

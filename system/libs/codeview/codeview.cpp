@@ -68,6 +68,7 @@ CodeView::CodeView(const os::Rect &r, const os::String &s, const os::String &tex
 	ClearEvents();
 }
 
+
 /**Paints the CodeView.
  * Only the scrollbars and the frame is painted by the CodeView. The
  * text is painted by a child view.
@@ -480,6 +481,9 @@ bool CodeView::GetUseTab(){
 	return edit->GetUseTab();
 }
 
+void CodeView::MouseUp(const os::Point& cPoint, uint32 nButton, os::Message* pcMessage)
+{
+}
 
 /**Clears any buffered events - no notifies will be sent
 */
@@ -546,4 +550,22 @@ os::Color32_s CodeView::GetLineNumberBgColor()
 {
 	return edit->GetLineNumberBgColor();
 }
+
+void CodeView::SetLineBackColor(os::Color32_s c)
+{
+	edit->SetLineBackColor(c);
+}
+
+os::Color32_s CodeView::GetLineBackColor()
+{
+	return edit->GetLineBackColor();
+}
+
+void CodeView::FoldAll()
+{
+	edit->FoldSection(0,GetLineCount()-1);
+}
+
+
+
 
