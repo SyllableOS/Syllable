@@ -210,7 +210,7 @@ static void calibrate_delay( void )
 static void read_cpu_id( unsigned int nReg, unsigned int *pData )
 {
 	/* Read CPU ID */
-	__asm __volatile( "movl %%ebx, %%esi\n\t" "cpuid\n\t" "xchgl %%ebx, %%esi":"=a"( pData[0] ), "=S"( pData[1] ), "=c"( pData[2] ), "=d"( pData[3] ):"0"( nReg ) );
+	__asm __volatile( "cpuid" : "=a"( pData[0] ), "=b"( pData[1] ), "=c"( pData[2] ), "=d"( pData[3] ):"0"( nReg ) );
 }
 
 /*****************************************************************************
