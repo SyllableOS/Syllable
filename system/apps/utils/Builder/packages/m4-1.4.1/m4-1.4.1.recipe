@@ -1,0 +1,8 @@
+authors				Kaj de Vos
+
+licenses			GPL
+home				www.gnu.org/software/m4/
+
+documentation
+	README COPYING NEWS ChangeLog THANKS TODO
+	examples
