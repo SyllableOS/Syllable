@@ -1,3 +1,9 @@
-authors		Kaj de Vos
-patch-config	builds/unix
-documentation	README ChangeLog docs
+authors				Kaj de Vos
+
+licenses			GPL custom
+home				www.freetype.org
+
+;build-recommends	python
+patch-config		builds/unix
+;make-targets		refdoc
+documentation		README ChangeLog docs
