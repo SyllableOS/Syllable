@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.76
+# Version 0.6.0
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -341,7 +341,21 @@ def installPackage staging, target
 
 			if native?
 				if exists? dir = buildDir(target) then Dir.chdir dir end
-				action makeCommand(target) + ' install'
+
+				unless staging
+					action makeCommand(target) + ' install'
+				else
+					unless action makeCommand(target) + ' dist'
+						false
+					else
+#						@log.header 'Installing documentation'
+#						if action makeCommand(target) + ' doc'
+#							action makeCommand(target) + ' install-doc'
+#						end
+	
+						true
+					end
+				end
 			else
 				root = installPath staging, target
 
@@ -373,7 +387,7 @@ def installPackage staging, target
 							((vars = recipe['install-env']) ? toVariables(vars) + ' ' : '') +
 							makeCommand(target) +
 							( (var = recipe['install-prefix-var']) ? " #{var}=" + root :
-								@systemBuild || staging ? ' prefix=' + root :
+								staging ? ' prefix=' + root :
 								''
 							) +
 							((vars = recipe['install-vars']) ? ' ' + toVariables(vars) : '') +
@@ -425,7 +439,7 @@ def installPackage staging, target
 								if linkPath[0, 1] == '/'  # A link into the system
 									original = File.join prefix(target), original if original['/']
 
-									if @systemBuild
+									if staging and @systemBuild
 										linkPath = File.join @systemRoot,
 											linkPath[0, 4] == '/usr' ?
 												'' :
@@ -444,8 +458,8 @@ def installPackage staging, target
 					else
 						@log.header 'Registering ' + target
 
-						if @systemBuild or staging
-							registerPackage staging, target
+						if staging
+							registerPackage staging, target if @systemBuild
 						else
 							action 'pkgmanager --add ' + root
 						end
@@ -474,7 +488,7 @@ def uninstallPackage staging, target
 			dir = installPath staging, target
 			name = shortName target
 
-			unless @systemBuild or staging or
+			unless staging or
 				begin
 					@log.header 'Unregistering ' + name
 					action 'pkgmanager --remove ' + dir
@@ -495,35 +509,40 @@ def uninstallPackage staging, target
 end
 
 def makeDistroPackage target
-	unless exists? target
-		@log.error 'Source not installed'
+	file = (name = fullName target) + '.bin.1.zip'
+
+	unless
+		if exists? file and not action 'rm ' + file
+			# Zip would add to the existing package
+			@log.error "Couldn't remove existing package " + file
+			false
+		else
+			Dir.chdir root = installRoot(false)
+
+#			action 'tar -cvzf ' + file +
+#				" --directory=#{root} " +
+			action 'zip -ry' +
+#				' -b ' + dereference(root) +  # Doesn't work
+				" #{File.join @workDir, file} " +
+					installName(name)
+#				Doesn't work with Zip:
+#				(	(links = (links = parseList(getRecipe(name)['links'])) ?
+#						links.collect { |link|
+#							(destination = toList(link)[1])[0, 1] == '/' ?  # A link into the system
+#								destination :
+#								nil
+#						}.compact :
+#						[]
+#					) == [] ?
+#						'' :
+##						' --absolute-names ' + toString(links)
+#						' ' + toString(links)
+#				)
+		end
+	then
 		@log.failure target
 	else
-		Dir.chdir target
-
-		unless native?
-			Dir.chdir @workDir
-			installPackage true, target
-		else
-			if exists? dir = buildDir(target) then Dir.chdir dir end
-
-			unless
-				unless action makeCommand(target) + ' dist'
-					false
-				else
-#					@log.header 'Installing documentation'
-#					if action makeCommand(target) + ' doc'
-#						action makeCommand(target) + ' install-doc'
-#					end
-
-					true
-				end
-			then
-				@log.failure target
-			else
-				action 'sync'
-			end
-		end
+		action 'sync'
 	end
 end
 
@@ -637,8 +656,6 @@ end
 def patch target
 	@log.header 'Patching ' + target.to_s
 
-	# Patch all directories
-
 	for package in target.modules
 		@log.entry package
 
@@ -654,8 +671,6 @@ end
 def get target
 	@log.header 'Fetching ' + target.to_s
 
-	# Fetch all directories
-
 	for package in target.modules
 		@log.entry package
 		getPackage package
@@ -670,8 +685,6 @@ end
 def configure target
 	@log.header 'Configuring ' + target.to_s
 
-	# Configure all directories
-
 	for package in target.modules
 		@log.entry package
 
@@ -683,8 +696,6 @@ end
 
 def clean target
 	@log.header 'Cleaning ' + target.to_s
-
-	# Clean all directories
 
 	for package in target.modules
 		@log.entry package
@@ -698,8 +709,6 @@ end
 def make target
 	@log.header 'Making ' + target.to_s
 
-	# Make all directories
-
 	for package in target.modules
 		@log.entry package
 
@@ -711,8 +720,6 @@ end
 
 def test target
 	@log.header 'Testing ' + target.to_s
-
-	# Test all directories
 
 	for package in target.modules
 		@log.entry package
@@ -726,8 +733,6 @@ end
 def install target
 	@log.header 'Installing ' + target.to_s
 
-	# Install all directories or distribution packages
-
 	for package in target.modules
 		@log.entry package
 
@@ -739,8 +744,6 @@ end
 def uninstall target
 	@log.header 'Uninstalling ' + target.to_s
 
-	# Uninstall all directories
-
 	for package in target.modules
 		@log.entry package
 
@@ -749,89 +752,63 @@ def uninstall target
 	end
 end
 
-def makeDistro target
-	@log.header 'Making distribution ' + target.to_s
+def makePackages target
+	@log.header 'Making distribution packages ' + target.to_s
 
-	modules = target.modules
+	for package in target.modules
+		@log.entry package
 
-	if @systemBuild
-		# Visit all directories
+		makeDistroPackage package
+		Dir.chdir @workDir
+	end
+end
 
-		for package in modules
-			@log.entry package
-			makeDistroPackage package
-			Dir.chdir @workDir
-		end
-	else  # Create a single package
-		file = (name = fullName target.to_s) + '.bin.1.zip'
+def makePack target
+	@log.header 'Making compound package ' + name = target.to_s
 
-		unless
-			unless modules.is_a? Array and exists? distroDir = File.join(@packagesPath, name, 'distro')
-				if exists? file and not action 'rm ' + file  # Zip would add to the existing package
+	unless
+		unless (modules = target.modules).is_a? Array and exists? distroDir = File.join(@packagesPath, name, 'distro')
+			@log.error 'Not a valid compound package'
+			false
+		else
+			unless action "mkdir " + name
+				false
+			else
+				unless action "cp -a #{File.join distroDir, '*'} " + name
 					false
 				else
-					Dir.chdir root = installRoot(false)
-
-#					action 'tar -cvzf ' + file +
-#						" --directory=#{root} " +
-					action 'zip -ry' +
-#						' -b ' + dereference(root) +  # Doesn't work
-						" #{File.join @workDir, file} " +
-							installName(name)
-##							toString(modules.collect {|package| installName package}) +
-#					Doesn't work with Zip:
-#						( (links = (links = parseList(getRecipe(name)['links'])) ?
-#								links.collect { |link|
-#									(destination = toList(link)[1])[0, 1] == '/' ?  # A link into the system
-#										destination :
-#										nil
-#								}.compact :
-#								[]
-#							) == [] ?
-#								'' :
-##								' --absolute-names ' + toString(links)
-#								' ' + toString(links)
-#						)
-				end
-			else  # A compound package
-				unless action "mkdir " + name
-					false
-				else
-					unless action "cp -a #{File.join distroDir, '*'} " + name
+					Dir.chdir name
+			
+					unless
+						deleteCVSData
+					then
 						false
 					else
-						Dir.chdir name
-
+						Dir.chdir @workDir
+			
 						unless
-							deleteCVSData
+							for package in modules
+								# Try to find the latest release
+								break unless action "ln -s #{Dir[
+										File.join(@distrosPath, fullName(package)) + '.bin.*.*z*'
+									].last
+								} " + name
+							end
 						then
 							false
 						else
-							Dir.chdir @workDir
-
-							unless
-								for package in modules
-									# Try to find the latest release
-									break unless action "ln -s #{Dir[
-											File.join(@distrosPath, fullName(package)) + '.bin.*.*z*'
-										].last
-									} " + name
-								end
-							then
-								false
-							else
-#								action "tar --dereference --remove-files -cvzf #{file}.tgz " + name
-								action "zip -rm #{file} " + name
-							end
+#							action "tar --dereference --remove-files -cvzf #{name}.bin.1.tgz " + name
+							action "zip -rm #{name}.bin.1.zip " + name
+#								toString(modules.collect {|package| installName package})
 						end
 					end
 				end
 			end
-		then
-			@log.failure target.to_s
-		else
-			action 'sync'
 		end
+	then
+		@log.failure name
+	else
+		action 'sync'
 	end
 end
 
@@ -1310,7 +1287,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.76',
+	puts 'Syllable Build System 0.6.0',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1340,8 +1317,8 @@ when '?', '-?', '-h', '-help', '--help'
 #		'  activate      (Run as super user)',
 #		'  unregister    (Run as super user)',
 		'  stage         Build and install in the staging area',
-		'  distro        Build a distribution package or a system distribution',
-#		'  package       ',
+		'  package       Build distribution package',
+		'  pack          Build a compound package',
 #		'  release       ',
 		'  modules       List the modules of a profile',
 		'  recipe        List a recipe',
@@ -1459,7 +1436,8 @@ else
 				then
 					build true, target
 				end
-			when 'distro'		then makeDistro	target
+			when 'package'		then makePackages target
+			when 'pack'			then makePack target
 			else
 				if arg2
 					@log.error 'Unrecognized command'
@@ -1482,3 +1460,4 @@ else
 	@log.close
 	exit @log.failures.length  # FIXME: only works when processing a profile
 end
+
