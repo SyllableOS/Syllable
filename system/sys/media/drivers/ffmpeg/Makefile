@@ -10,6 +10,7 @@ CC	= gcc
 LL	= ld
 
 OBJS	= ffmpeg_demux.o ffmpeg_output.o ffmpeg_codec.o
+LIBS	:= ffmpeg/libavcodec/libavcodec.a ffmpeg/libavformat/libavformat.a
 
 OBJDIR	:= objs
 
@@ -20,9 +21,14 @@ all :	$(OBJDIR) $(OBJS) $(OBJDIR)/ffmpeg.so
 $(OBJDIR):
 	mkdir $(OBJDIR)
 
-$(OBJDIR)/ffmpeg.so: $(OBJS)
+$(OBJDIR)/ffmpeg.so: $(OBJS) $(LIBS)
+	gcc -shared -Xlinker "-soname=ffmpeg.so" $(OBJS) -lm -lstdc++ -lsyllable -lmedia -lavformat -Lffmpeg/libavcodec -Lffmpeg/libavformat -lavcodec -L/usr/lib/ -o $(OBJDIR)/ffmpeg.so
+
+ffmpeg/libavcodec/libavcodec.a:
 	make -C ffmpeg
-	gcc -shared -Xlinker "-soname=ffmpeg.so" $(OBJS) -lstdc++ -lsyllable -lmedia -lavformat -Lffmpeg/libavcodec -Lffmpeg/libavformat -lavcodec -L/usr/lib/ -o $(OBJDIR)/ffmpeg.so
+
+ffmpeg/libavformat/libavformat.a:
+	make -C ffmpeg
 
 
 deps:
