@@ -1,3 +1,4 @@
+
 /*
  *  The AtheOS application server
  *  Copyright (C) 1999 - 2000  Kurt Skauen
@@ -69,7 +70,7 @@ static int g_nKbdDev = 0;
  *[ctr]    {opt}      [cmd]      [  space  ]      [cmd]    {opt}    {menu}    [ctr]     [lft] [dwn] [rgt]   [ 0 ] [ . ]
  * 0x5c     0x66       0x5d          0x5e          0x5f     0x67     0x68      0x60      0x61  0x62  0x63    0x64  0x65
  */
- 
+
 
 // Legend:
 //   n = Normal
@@ -85,76 +86,76 @@ keymap *g_psKeymap;
 
 void SetQualifiers( int nKeyCode )
 {
-    switch( nKeyCode )
-    {
+	switch ( nKeyCode )
+	{
 	case 0x4b:
-	    g_nQual |= QUAL_LSHIFT;
-	    break;
+		g_nQual |= QUAL_LSHIFT;
+		break;
 	case 0x4b | 0x80:
-	    g_nQual &= ~QUAL_LSHIFT;
-	    break;
+		g_nQual &= ~QUAL_LSHIFT;
+		break;
 
 	case 0x56:
-	    g_nQual |= QUAL_RSHIFT;
-	    break;
+		g_nQual |= QUAL_RSHIFT;
+		break;
 	case 0x56 | 0x80:
-	    g_nQual &= ~QUAL_RSHIFT;
-	    break;
+		g_nQual &= ~QUAL_RSHIFT;
+		break;
 
 	case 0x5c:
-	    g_nQual |= QUAL_LCTRL;
-	    break;
+		g_nQual |= QUAL_LCTRL;
+		break;
 	case 0x5c | 0x80:
-	    g_nQual &= ~QUAL_LCTRL;
-	    break;
+		g_nQual &= ~QUAL_LCTRL;
+		break;
 
 	case 0x60:
-	    g_nQual |= QUAL_RCTRL;
-	    break;
+		g_nQual |= QUAL_RCTRL;
+		break;
 	case 0x60 | 0x80:
-	    g_nQual &= ~QUAL_RCTRL;
-	    break;
+		g_nQual &= ~QUAL_RCTRL;
+		break;
 
 	case 0x5d:
-	    g_nQual |= QUAL_LALT;
-	    break;
+		g_nQual |= QUAL_LALT;
+		break;
 	case 0x5d | 0x80:
-	    g_nQual &= ~QUAL_LALT;
-	    break;
+		g_nQual &= ~QUAL_LALT;
+		break;
 
 	case 0x5f:
-	    g_nQual |= QUAL_RALT;
-	    break;
+		g_nQual |= QUAL_RALT;
+		break;
 	case 0x5f | 0x80:
-	    g_nQual &= ~QUAL_RALT;
-	    break;
+		g_nQual &= ~QUAL_RALT;
+		break;
 
 	case 0x3b:
-	{
-		g_nLock ^= KLOCK_CAPSLOCK;
-		ioctl( g_nKbdDev, IOCTL_KBD_CAPLOC);
-		break;
-	}
+		{
+			g_nLock ^= KLOCK_CAPSLOCK;
+			ioctl( g_nKbdDev, IOCTL_KBD_CAPLOC );
+			break;
+		}
 
 	case 0x22:
-	{
-		g_nLock ^= KLOCK_NUMLOCK;
-		ioctl( g_nKbdDev, IOCTL_KBD_NUMLOC);
-		break;
-	}
+		{
+			g_nLock ^= KLOCK_NUMLOCK;
+			ioctl( g_nKbdDev, IOCTL_KBD_NUMLOC );
+			break;
+		}
 
 	case 0x0f:
-	{
-		g_nLock ^= KLOCK_SCROLLLOCK;			// ScrollLock doesn't do anything
-		ioctl( g_nKbdDev, IOCTL_KBD_SCRLOC);
-		break;
+		{
+			g_nLock ^= KLOCK_SCROLLLOCK;	// ScrollLock doesn't do anything
+			ioctl( g_nKbdDev, IOCTL_KBD_SCRLOC );
+			break;
+		}
 	}
-    }
 }
 
 uint32 GetQualifiers()
 {
-    return( g_nQual );
+	return ( g_nQual );
 }
 
 int FindDeadKey( int nDeadKeyState, int nKey )
@@ -162,78 +163,104 @@ int FindDeadKey( int nDeadKeyState, int nKey )
 	uint8 nDeadRaw = ( nDeadKeyState >> 8 );
 	uint8 nDeadQual = nDeadKeyState & 0xFF;
 
-	switch( nDeadQual ) {
-		case CS_CAPSL:			nDeadQual = CM_NORMAL;	 break;
-		case CS_SHFT_CAPSL:		nDeadQual = CS_SHFT;	 break;
-		case CS_CAPSL_OPT:		nDeadQual = CS_OPT;	 break;
-		case CS_SHFT_CAPSL_OPT:	nDeadQual = CS_SHFT_OPT; break;
+	switch ( nDeadQual )
+	{
+	case CS_CAPSL:
+		nDeadQual = CM_NORMAL;
+		break;
+	case CS_SHFT_CAPSL:
+		nDeadQual = CS_SHFT;
+		break;
+	case CS_CAPSL_OPT:
+		nDeadQual = CS_OPT;
+		break;
+	case CS_SHFT_CAPSL_OPT:
+		nDeadQual = CS_SHFT_OPT;
+		break;
 	}
-	
+
 	// Search the table for this particular key combination
-	for( uint32 i = 0; i < g_psKeymap->m_nNumDeadKeys; i++ ) {
-		if( ( ( g_psKeymap->m_sDeadKey[i].m_nKey == nKey ) ||
-		      ( g_psKeymap->m_sDeadKey[i].m_nKey == 0x00 ) ) &&
-		    ( g_psKeymap->m_sDeadKey[i].m_nRawKey == nDeadRaw ) &&
-		    ( g_psKeymap->m_sDeadKey[i].m_nQualifier == nDeadQual ) ) {
+	for( uint32 i = 0; i < g_psKeymap->m_nNumDeadKeys; i++ )
+	{
+		if( ( ( g_psKeymap->m_sDeadKey[i].m_nKey == nKey ) || ( g_psKeymap->m_sDeadKey[i].m_nKey == 0x00 ) ) && ( g_psKeymap->m_sDeadKey[i].m_nRawKey == nDeadRaw ) && ( g_psKeymap->m_sDeadKey[i].m_nQualifier == nDeadQual ) )
+		{
 			return g_psKeymap->m_sDeadKey[i].m_nValue;
 		}
 	}
-	return 0x00;	// Truly a dead key: nothing about it exists in the keymap!
+	return 0x00;		// Truly a dead key: nothing about it exists in the keymap!
 }
 
 // Converts a UTF-8 character to a UTF-8 string
 int CharToString( int nChar, char *pzString )
 {
-    int nLen = 0;
+	int nLen = 0;
 
-    if ( nChar < 0x100 ) {
-	nLen = 1;
-    } else if ( nChar < 0x10000 ) {
-	nLen = 2;
-    } else if ( nChar < 0x1000000 ) {
-	nLen = 3;
-    } else {
-	nLen = 4;
-    }
-    for ( int i = 0 ; i < nLen ; ++i ) {
-	pzString[i] = (nChar >> ((nLen-i-1)*8)) & 0xff;
-    }
-    pzString[nLen] = '\0';
-    
-    return nLen;
+	if( nChar < 0x100 )
+	{
+		nLen = 1;
+	}
+	else if( nChar < 0x10000 )
+	{
+		nLen = 2;
+	}
+	else if( nChar < 0x1000000 )
+	{
+		nLen = 3;
+	}
+	else
+	{
+		nLen = 4;
+	}
+	for( int i = 0; i < nLen; ++i )
+	{
+		pzString[i] = ( nChar >> ( ( nLen - i - 1 ) * 8 ) ) & 0xff;
+	}
+	pzString[nLen] = '\0';
+
+	return nLen;
 }
 
-int convert_key_code( char* pzDst, int nRawKey, int nQual, int *pnDeadKeyState )
+int convert_key_code( char *pzDst, int nRawKey, int nQual, int *pnDeadKeyState )
 {
-    int	nTable = 0;
-    int	nQ = 0;
+	int nTable = 0;
+	int nQ = 0;
 
-    if ( nRawKey < 0 || nRawKey >= 128 ) {
+	if( nRawKey < 0 || nRawKey >= 128 )
+	{
 		dbprintf( "convert_key_code() invalid keycode: %d\n", nRawKey );
-		return( -1 );
-    }
+		return ( -1 );
+	}
 
-    if ( nQual & QUAL_SHIFT ) nQ |= 0x01;
-    if ( nQual & QUAL_CTRL )  nQ |= 0x02;
-    if ( nQual & QUAL_ALT )   nQ |= 0x04;
+	if( nQual & QUAL_SHIFT )
+		nQ |= 0x01;
+	if( nQual & QUAL_CTRL )
+		nQ |= 0x02;
+	if( nQual & QUAL_ALT )
+		nQ |= 0x04;
 
 	if( g_nLock & KLOCK_NUMLOCK )
-		if( ( nRawKey >= 0x23 && nRawKey <= 0x25 ) ||
-		    ( nRawKey >= 0x37 && nRawKey <= 0x3a ) ||
-		    ( nRawKey >= 0x48 && nRawKey <= 0x4a ) ||
-		    ( nRawKey >= 0x58 && nRawKey <= 0x5b ) ||
-		    ( nRawKey >= 0x64 && nRawKey <= 0x65 ))
+		if( ( nRawKey >= 0x23 && nRawKey <= 0x25 ) || ( nRawKey >= 0x37 && nRawKey <= 0x3a ) || ( nRawKey >= 0x48 && nRawKey <= 0x4a ) || ( nRawKey >= 0x58 && nRawKey <= 0x5b ) || ( nRawKey >= 0x64 && nRawKey <= 0x65 ) )
 			nQ |= 0x01;
 
 	if( g_nLock & KLOCK_CAPSLOCK )
 	{
 		switch ( nQ )
 		{
-			case 0x0:  nTable = CS_CAPSL;			break;	// Caps
-			case 0x1:  nTable = CS_SHFT_CAPSL;		break;	// Caps + Shift
-			case 0x2:  nTable = CS_CTRL;			break;	// Ctrl (Not affected by the Capslock)
-			case 0x4:  nTable = CS_CAPSL_OPT;		break;	// Caps + Alt
-			case 0x5:  nTable = CS_SHFT_CAPSL_OPT;	break;	// Caps + Alt + Shift
+		case 0x0:
+			nTable = CS_CAPSL;
+			break;	// Caps
+		case 0x1:
+			nTable = CS_SHFT_CAPSL;
+			break;	// Caps + Shift
+		case 0x2:
+			nTable = CS_CTRL;
+			break;	// Ctrl (Not affected by the Capslock)
+		case 0x4:
+			nTable = CS_CAPSL_OPT;
+			break;	// Caps + Alt
+		case 0x5:
+			nTable = CS_SHFT_CAPSL_OPT;
+			break;	// Caps + Alt + Shift
 		}
 
 	}
@@ -241,146 +268,181 @@ int convert_key_code( char* pzDst, int nRawKey, int nQual, int *pnDeadKeyState )
 	{
 		switch ( nQ )
 		{
-			case 0x0:  nTable = CM_NORMAL;			break;	// Normal
-			case 0x1:  nTable = CS_SHFT;			break;	// Shift
-			case 0x2:  nTable = CS_CTRL;			break;	// Ctrl
-			case 0x4:  nTable = CS_OPT;				break;	// Alt
-			case 0x5:  nTable = CS_SHFT_OPT;		break;	// Alt + Shift
+		case 0x0:
+			nTable = CM_NORMAL;
+			break;	// Normal
+		case 0x1:
+			nTable = CS_SHFT;
+			break;	// Shift
+		case 0x2:
+			nTable = CS_CTRL;
+			break;	// Ctrl
+		case 0x4:
+			nTable = CS_OPT;
+			break;	// Alt
+		case 0x5:
+			nTable = CS_SHFT_OPT;
+			break;	// Alt + Shift
 		}
 	}
 
-    int nLen = 0;
+	int nLen = 0;
 
-    g_cKeymapGate.Lock();
-    uint nChar = g_psKeymap->m_anMap[nRawKey][nTable];
+	g_cKeymapGate.Lock();
+	uint nChar = g_psKeymap->m_anMap[nRawKey][nTable];
 
-    if( pnDeadKeyState ) {	// Check for dead keys?
-    	if( nChar == DEADKEY_ID ) {
-		    if( ( nChar = FindDeadKey( ( nRawKey << 8 ) | nTable, 0x00 ) ) ) {
+	if( pnDeadKeyState )
+	{			// Check for dead keys?
+		if( nChar == DEADKEY_ID )
+		{
+			if( ( nChar = FindDeadKey( ( nRawKey << 8 ) | nTable, 0x00 ) ) )
+			{
 				*pnDeadKeyState = ( nRawKey << 8 ) | nTable;
 				// Dead key found.
-		    }
-		} else if( *pnDeadKeyState && nChar ) {	// Last key was a dead one, but this one is not!
+			}
+		}
+		else if( *pnDeadKeyState && nChar )
+		{		// Last key was a dead one, but this one is not!
 			uint nNewChar = FindDeadKey( *pnDeadKeyState, nChar );
-			if( nNewChar ) {
+
+			if( nNewChar )
+			{
 				nChar = nNewChar;
-			} 
+			}
 			*pnDeadKeyState = 0;
 		}
 	}
-    
-    nLen = CharToString( nChar, pzDst );
 
-    g_cKeymapGate.Unlock();
+	nLen = CharToString( nChar, pzDst );
 
-    return( nLen );
+	g_cKeymapGate.Unlock();
+
+	return ( nLen );
 }
 
 void HandleKeyboard()
 {
-    uint	nKeyDownTime = 0;
-    uint8	nLastKey     = 0;
-    uint8	nKeyCode;
+	uint nKeyDownTime = 0;
+	uint8 nLastKey = 0;
+	uint8 nKeyCode;
 
-    signal( SIGINT, SIG_IGN );
-    signal( SIGQUIT, SIG_IGN );
-    signal( SIGTERM, SIG_IGN );
-	
-    g_nKbdDev = open( "/dev/keybd", O_RDONLY );
+	signal( SIGINT, SIG_IGN );
+	signal( SIGQUIT, SIG_IGN );
+	signal( SIGTERM, SIG_IGN );
 
-    if ( g_nKbdDev < 0 ) {
-	dbprintf( "Panic : Could not open keyboard device!\n" );
-    }
+	g_nKbdDev = open( "/dev/keybd", O_RDONLY );
+
+	if( g_nKbdDev < 0 )
+	{
+		dbprintf( "Panic : Could not open keyboard device!\n" );
+	}
 
 	g_cKeymapGate.Lock();
 
-	ioctl( g_nKbdDev, IOCTL_KBD_LEDRST);
-	switch(g_psKeymap->m_nLockSetting)
+	ioctl( g_nKbdDev, IOCTL_KBD_LEDRST );
+	switch ( g_psKeymap->m_nLockSetting )
 	{
-		case 0x00:		// None
-			break;
+	case 0x00:		// None
+		break;
 
-		case 0x01:		// Caps
+	case 0x01:		// Caps
 		{
 			g_nLock ^= KLOCK_CAPSLOCK;
-			ioctl( g_nKbdDev, IOCTL_KBD_CAPLOC);
+			ioctl( g_nKbdDev, IOCTL_KBD_CAPLOC );
 			break;
 		}
 
-		case 0x02:		// Scroll
+	case 0x02:		// Scroll
 		{
 			g_nLock ^= KLOCK_SCROLLLOCK;
-			ioctl( g_nKbdDev, IOCTL_KBD_SCRLOC);
+			ioctl( g_nKbdDev, IOCTL_KBD_SCRLOC );
 			break;
 		}
 
-		case 0x04:		// Num
+	case 0x04:		// Num
 		{
 			g_nLock ^= KLOCK_NUMLOCK;
-			ioctl( g_nKbdDev, IOCTL_KBD_NUMLOC);
+			ioctl( g_nKbdDev, IOCTL_KBD_NUMLOC );
 			break;
 		}
 
-		default:
-			dbprintf("Unknown lock key 0x%2X\n", (int)g_psKeymap->m_nLockSetting);
-			break;
+	default:
+		dbprintf( "Unknown lock key 0x%2X\n", ( int )g_psKeymap->m_nLockSetting );
+		break;
 	}
 
 	g_cKeymapGate.Unlock();
 
-    for (;;) {
-	snooze( 10000 );
-	if ( read( g_nKbdDev, &nKeyCode, 1 ) == 1 ) {
-	    SetQualifiers( nKeyCode );
-			
-	    if ( 0 != nKeyCode ) {
-		if ( nKeyCode & 0x80 ) {
-		    nKeyDownTime = 0;
-		    nLastKey	= 0;
-		} else {
-		    nKeyDownTime = clock() + (AppserverConfig::GetInstance()->GetKeyDelay() * CLOCKS_PER_SEC / 1000);
-		    nLastKey     = nKeyCode;
-		}
-		AppServer::GetInstance()->SendKeyCode( nKeyCode, g_nQual );
-	    }
-	    continue;
-	}
+	for( ;; )
+	{
+		snooze( 10000 );
+		if( read( g_nKbdDev, &nKeyCode, 1 ) == 1 )
+		{
+			SetQualifiers( nKeyCode );
 
-	if ( 0 != nKeyDownTime ) {
-	    uint nTime = clock();
-	    if ( nTime > nKeyDownTime ) {
-		nKeyDownTime = nTime + (AppserverConfig::GetInstance()->GetKeyRepeat() * CLOCKS_PER_SEC / 1000);
-		AppServer::GetInstance()->SendKeyCode( nLastKey, g_nQual | QUAL_REPEAT );
-	    }
+			if( 0 != nKeyCode )
+			{
+				if( nKeyCode & 0x80 )
+				{
+					nKeyDownTime = 0;
+					nLastKey = 0;
+				}
+				else
+				{
+					nKeyDownTime = clock() + ( AppserverConfig::GetInstance(  )->GetKeyDelay(  ) * CLOCKS_PER_SEC / 1000 );
+					nLastKey = nKeyCode;
+				}
+				AppServer::GetInstance()->SendKeyCode( nKeyCode, g_nQual );
+			}
+			continue;
+		}
+
+		if( 0 != nKeyDownTime )
+		{
+			uint nTime = clock();
+
+			if( nTime > nKeyDownTime )
+			{
+				nKeyDownTime = nTime + ( AppserverConfig::GetInstance()->GetKeyRepeat(  ) * CLOCKS_PER_SEC / 1000 );
+				AppServer::GetInstance()->SendKeyCode( nLastKey, g_nQual | QUAL_REPEAT );
+			}
+		}
 	}
-    }
 }
 
-bool SetKeymap( const std::string& cKeymapPath )
+bool SetKeymap( const std::string & cKeymapPath )
 {
-	FILE* hFile = fopen( cKeymapPath.c_str(), "r" );
+	FILE *hFile = fopen( cKeymapPath.c_str(), "r" );
 	bool ok = false;
 
 	g_cKeymapGate.Lock();
 
-	if( g_psKeymap ) free( g_psKeymap );
+	if( g_psKeymap )
+		free( g_psKeymap );
 	g_psKeymap = NULL;
 
-	if( hFile ) {	
-		g_psKeymap = load_keymap( hFile );		
+	if( hFile )
+	{
+		g_psKeymap = load_keymap( hFile );
 
 		fclose( hFile );
 	}
 
-	if ( g_psKeymap == NULL ) {
+	if( g_psKeymap == NULL )
+	{
 		dbprintf( "Error: failed to load keymap\n" );
-		g_psKeymap = (keymap *)malloc( sizeof( g_sDefaultKeyMap ) );
-		if ( g_psKeymap ) {
+		g_psKeymap = ( keymap * ) malloc( sizeof( g_sDefaultKeyMap ) );
+		if( g_psKeymap )
+		{
 			memcpy( g_psKeymap, &g_sDefaultKeyMap, sizeof( g_sDefaultKeyMap ) );
-		} else {
+		}
+		else
+		{
 			dbprintf( "Fatal: no mem for default keymap!\n" );
 		}
-	} else {
+	}
+	else
+	{
 		ok = true;
 	}
 
@@ -391,17 +453,10 @@ bool SetKeymap( const std::string& cKeymapPath )
 
 void InitKeyboard( void )
 {
-    thread_id hKbdThread;
+	thread_id hKbdThread;
 
-    SetKeymap( AppserverConfig::GetInstance()->GetKeymapPath() );
+	SetKeymap( AppserverConfig::GetInstance()->GetKeymapPath(  ) );
 
-    hKbdThread = spawn_thread( "keyb_thread", HandleKeyboard, 120, 0, NULL );
-    resume_thread( hKbdThread );
+	hKbdThread = spawn_thread( "keyb_thread", HandleKeyboard, 120, 0, NULL );
+	resume_thread( hKbdThread );
 }
-
-
-
-
-
-
-

@@ -1,3 +1,4 @@
+
 /*
  *  The AtheOS application server
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -21,17 +22,16 @@
 
 using namespace os;
 
-WindowDecorator::WindowDecorator( Layer* pcLayer, uint32 nWndFlags )
+WindowDecorator::WindowDecorator( Layer * pcLayer, uint32 nWndFlags )
 {
-    m_pcLayer = pcLayer;
+	m_pcLayer = pcLayer;
 }
 
 WindowDecorator::~WindowDecorator()
 {
 }
 
-Layer* WindowDecorator::GetLayer() const
+Layer *WindowDecorator::GetLayer() const
 {
-    return( m_pcLayer );
+	return ( m_pcLayer );
 }
-

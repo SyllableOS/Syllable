@@ -1,3 +1,4 @@
+
 /*
  *  The Syllable application server
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -25,20 +26,20 @@
 
 using namespace os;
 
-DefaultDecorator::DefaultDecorator( Layer* pcLayer, uint32 nWndFlags ) :
-	WindowDecorator( pcLayer, nWndFlags )
+DefaultDecorator::DefaultDecorator( Layer * pcLayer, uint32 nWndFlags ):WindowDecorator( pcLayer, nWndFlags )
 {
-    m_nFlags = nWndFlags;
+	m_nFlags = nWndFlags;
 
-    m_bHasFocus   = false;
+	m_bHasFocus = false;
 
-	for( int i = 0; i < HIT_DRAG + 1; i++ ) {
-		m_bObjectState[ i ] = false;
+	for( int i = 0; i < HIT_DRAG + 1; i++ )
+	{
+		m_bObjectState[i] = false;
 	}
 
-    m_sFontHeight = pcLayer->GetFontHeight();
-    
-    CalculateBorderSizes();
+	m_sFontHeight = pcLayer->GetFontHeight();
+
+	CalculateBorderSizes();
 }
 
 DefaultDecorator::~DefaultDecorator()
@@ -47,185 +48,228 @@ DefaultDecorator::~DefaultDecorator()
 
 uint32 DefaultDecorator::CheckIndex( uint32 nButton )
 {
-	return ( nButton < HIT_DRAG+1 && nButton > 0 ) ? nButton : 0 ;
+	return ( nButton < HIT_DRAG + 1 && nButton > 0 ) ? nButton : 0;
 }
 
 void DefaultDecorator::CalculateBorderSizes()
 {
-	if ( m_nFlags & WND_NO_BORDER ) {
-		m_vLeftBorder   = 0;
-		m_vRightBorder  = 0;
-		m_vTopBorder    = 0;
+	if( m_nFlags & WND_NO_BORDER )
+	{
+		m_vLeftBorder = 0;
+		m_vRightBorder = 0;
+		m_vTopBorder = 0;
 		m_vBottomBorder = 0;
-	} else {
-		if ( (m_nFlags & (WND_NO_TITLE | WND_NO_CLOSE_BUT | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_MOVEABLE)) ==
-		  (WND_NO_TITLE | WND_NO_CLOSE_BUT | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_MOVEABLE) ) {
+	}
+	else
+	{
+		if( ( m_nFlags & ( WND_NO_TITLE | WND_NO_CLOSE_BUT | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_MOVEABLE ) ) == ( WND_NO_TITLE | WND_NO_CLOSE_BUT | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_MOVEABLE ) )
+		{
 			m_vTopBorder = 4;
-		} else {
-			m_vTopBorder = float(m_sFontHeight.ascender + m_sFontHeight.descender + 6);
 		}
-		m_vLeftBorder   = 4;
-		m_vRightBorder  = 4;
+		else
+		{
+			m_vTopBorder = float ( m_sFontHeight.ascender + m_sFontHeight.descender + 6 );
+		}
+		m_vLeftBorder = 4;
+		m_vRightBorder = 4;
 		m_vBottomBorder = 4;
 	}
 }
 
 void DefaultDecorator::SetFlags( uint32 nFlags )
 {
-    Layer* pcView = GetLayer();
-    m_nFlags = nFlags;
-    CalculateBorderSizes();
-    pcView->Invalidate();
-    Layout();
+	Layer *pcView = GetLayer();
+
+	m_nFlags = nFlags;
+	CalculateBorderSizes();
+	pcView->Invalidate();
+	Layout();
 }
 
 void DefaultDecorator::FontChanged()
 {
-    Layer* pcView = GetLayer();
-    m_sFontHeight = pcView->GetFontHeight();
-    CalculateBorderSizes();
-    pcView->Invalidate();
-    Layout();
+	Layer *pcView = GetLayer();
+
+	m_sFontHeight = pcView->GetFontHeight();
+	CalculateBorderSizes();
+	pcView->Invalidate();
+	Layout();
 }
 
 Point DefaultDecorator::GetMinimumSize()
 {
-    Point cMinSize( 0.0f, m_vTopBorder + m_vBottomBorder );
+	Point cMinSize( 0.0f, m_vTopBorder + m_vBottomBorder );
 
-	cMinSize.x = m_cObjectFrame[ HIT_CLOSE ].right + m_cBounds.right - m_cObjectFrame[ HIT_MINIMIZE ].left;
+	cMinSize.x = m_cObjectFrame[HIT_CLOSE].right + m_cBounds.right - m_cObjectFrame[HIT_MINIMIZE].left;
 
-	if ( cMinSize.x < m_vLeftBorder + m_vRightBorder ) {
+	if( cMinSize.x < m_vLeftBorder + m_vRightBorder )
+	{
 		cMinSize.x = m_vLeftBorder + m_vRightBorder;
 	}
 
-	return( cMinSize );
+	return ( cMinSize );
 }
 
-WindowDecorator::hit_item DefaultDecorator::HitTest( const Point& cPosition )
+WindowDecorator::hit_item DefaultDecorator::HitTest( const Point & cPosition )
 {
-  if ( cPosition.x < 4 ) {
-    if ( cPosition.y < 4 ) {
-      return( HIT_SIZE_LT );
-    } else if ( cPosition.y > m_cBounds.bottom - 4 ) {
-      return( HIT_SIZE_LB );
-    } else {
-      return( HIT_SIZE_LEFT );
-    }
-  } else if ( cPosition.x > m_cBounds.right - 4 ) {
-    if ( cPosition.y < 4 ) {
-      return( HIT_SIZE_RT );
-    } else if ( cPosition.y > m_cBounds.bottom - 4 ) {
-      return( HIT_SIZE_RB );
-    } else {
-      return( HIT_SIZE_RIGHT );
-    }
-  } else if ( cPosition.y < 4 ) {
-    return( HIT_SIZE_TOP );
-  } else if ( cPosition.y > m_cBounds.bottom - 4 ) {
-    return( HIT_SIZE_BOTTOM );
-  }
-  if ( m_cObjectFrame[HIT_CLOSE].DoIntersect( cPosition ) ) {
-    return( HIT_CLOSE );
-  } else if ( m_cObjectFrame[HIT_ZOOM].DoIntersect( cPosition ) ) {
-    return( HIT_ZOOM );
-  } else if ( m_cObjectFrame[HIT_DEPTH].DoIntersect( cPosition ) ) {
-    return( HIT_DEPTH );
-  } else if ( m_cObjectFrame[HIT_MINIMIZE].DoIntersect( cPosition ) ) {
-    return( HIT_MINIMIZE );
-  } else if ( m_cObjectFrame[HIT_DRAG].DoIntersect( cPosition ) ) {
-    return( HIT_DRAG );
-  }
-  return( HIT_NONE );
+	if( cPosition.x < 4 )
+	{
+		if( cPosition.y < 4 )
+		{
+			return ( HIT_SIZE_LT );
+		}
+		else if( cPosition.y > m_cBounds.bottom - 4 )
+		{
+			return ( HIT_SIZE_LB );
+		}
+		else
+		{
+			return ( HIT_SIZE_LEFT );
+		}
+	}
+	else if( cPosition.x > m_cBounds.right - 4 )
+	{
+		if( cPosition.y < 4 )
+		{
+			return ( HIT_SIZE_RT );
+		}
+		else if( cPosition.y > m_cBounds.bottom - 4 )
+		{
+			return ( HIT_SIZE_RB );
+		}
+		else
+		{
+			return ( HIT_SIZE_RIGHT );
+		}
+	}
+	else if( cPosition.y < 4 )
+	{
+		return ( HIT_SIZE_TOP );
+	}
+	else if( cPosition.y > m_cBounds.bottom - 4 )
+	{
+		return ( HIT_SIZE_BOTTOM );
+	}
+	if( m_cObjectFrame[HIT_CLOSE].DoIntersect( cPosition ) )
+	{
+		return ( HIT_CLOSE );
+	}
+	else if( m_cObjectFrame[HIT_ZOOM].DoIntersect( cPosition ) )
+	{
+		return ( HIT_ZOOM );
+	}
+	else if( m_cObjectFrame[HIT_DEPTH].DoIntersect( cPosition ) )
+	{
+		return ( HIT_DEPTH );
+	}
+	else if( m_cObjectFrame[HIT_MINIMIZE].DoIntersect( cPosition ) )
+	{
+		return ( HIT_MINIMIZE );
+	}
+	else if( m_cObjectFrame[HIT_DRAG].DoIntersect( cPosition ) )
+	{
+		return ( HIT_DRAG );
+	}
+	return ( HIT_NONE );
 }
 
 Rect DefaultDecorator::GetBorderSize()
 {
-  return( Rect( m_vLeftBorder, m_vTopBorder, m_vRightBorder, m_vBottomBorder ) );
+	return ( Rect( m_vLeftBorder, m_vTopBorder, m_vRightBorder, m_vBottomBorder ) );
 }
 
-void DefaultDecorator::SetTitle( const char* pzTitle )
+void DefaultDecorator::SetTitle( const char *pzTitle )
 {
-  m_cTitle = pzTitle;
-  Render( m_cBounds );
+	m_cTitle = pzTitle;
+	Render( m_cBounds );
 }
 
 void DefaultDecorator::SetFocusState( bool bHasFocus )
 {
-  m_bHasFocus = bHasFocus;
-  Render( m_cBounds );
+	m_bHasFocus = bHasFocus;
+	Render( m_cBounds );
 }
 
 void DefaultDecorator::SetWindowFlags( uint32 nFlags )
 {
-  m_nFlags = nFlags;
+	m_nFlags = nFlags;
 }
 
-void DefaultDecorator::FrameSized( const Rect& cFrame )
+void DefaultDecorator::FrameSized( const Rect & cFrame )
 {
-    Layer* pcView = GetLayer();
-    Point cDelta( cFrame.Width() - m_cBounds.Width(), cFrame.Height() - m_cBounds.Height() );
-    
-    m_cBounds = cFrame.Bounds();
+	Layer *pcView = GetLayer();
+	Point cDelta( cFrame.Width() - m_cBounds.Width(  ), cFrame.Height(  ) - m_cBounds.Height(  ) );
 
-    Layout();
-    
-    if ( cDelta.x != 0.0f ) {
-	Rect cDamage = m_cBounds;
+	m_cBounds = cFrame.Bounds();
 
-	cDamage.left = m_cObjectFrame[ HIT_MINIMIZE ].left - fabs(cDelta.x)  - 2.0f;
-	pcView->Invalidate( cDamage );
-    }
-    if ( cDelta.y != 0.0f ) {
-	Rect cDamage = m_cBounds;
+	Layout();
 
-	cDamage.top = cDamage.bottom - max( m_vBottomBorder, m_vBottomBorder + cDelta.y ) - 1.0f;
-	pcView->Invalidate( cDamage );
-    }
+	if( cDelta.x != 0.0f )
+	{
+		Rect cDamage = m_cBounds;
+
+		cDamage.left = m_cObjectFrame[HIT_MINIMIZE].left - fabs( cDelta.x ) - 2.0f;
+		pcView->Invalidate( cDamage );
+	}
+	if( cDelta.y != 0.0f )
+	{
+		Rect cDamage = m_cBounds;
+
+		cDamage.top = cDamage.bottom - max( m_vBottomBorder, m_vBottomBorder + cDelta.y ) - 1.0f;
+		pcView->Invalidate( cDamage );
+	}
 }
 
 void DefaultDecorator::Layout()
 {
-	m_cObjectFrame[ HIT_DEPTH ] = Rect(0, 0, 0, 0);
-	m_cObjectFrame[ HIT_CLOSE ] = Rect(0, 0, 0, 0);
-	m_cObjectFrame[ HIT_ZOOM ] = Rect(0, 0, 0, 0);
-	m_cObjectFrame[ HIT_MINIMIZE ] = Rect(0, 0, 0, 0);
+	m_cObjectFrame[HIT_DEPTH] = Rect( 0, 0, 0, 0 );
+	m_cObjectFrame[HIT_CLOSE] = Rect( 0, 0, 0, 0 );
+	m_cObjectFrame[HIT_ZOOM] = Rect( 0, 0, 0, 0 );
+	m_cObjectFrame[HIT_MINIMIZE] = Rect( 0, 0, 0, 0 );
 
 	float vRight = m_cBounds.right;
-	float vBtnWidth = ceil(m_vTopBorder * 1.5f);
+	float vBtnWidth = ceil( m_vTopBorder * 1.5f );
 	float vLeft = m_cBounds.left;
 
-    if( ( m_nFlags & WND_NO_CLOSE_BUT ) == 0 ) {
-		m_cObjectFrame[ HIT_CLOSE ] = Rect(0,0,m_vTopBorder - 1,m_vTopBorder - 1);
-		vLeft = m_cObjectFrame[ HIT_CLOSE ].right + 1.0f;
+	if( ( m_nFlags & WND_NO_CLOSE_BUT ) == 0 )
+	{
+		m_cObjectFrame[HIT_CLOSE] = Rect( 0, 0, m_vTopBorder - 1, m_vTopBorder - 1 );
+		vLeft = m_cObjectFrame[HIT_CLOSE].right + 1.0f;
 	}
 
-    if( ( m_nFlags & WND_NO_DEPTH_BUT ) == 0 ) {
-		m_cObjectFrame[ HIT_DEPTH ] = Rect(vRight - vBtnWidth, 0, vRight,  m_vTopBorder - 1);
-		vRight = m_cObjectFrame[ HIT_DEPTH ].left - 1.0f;
-	}  
+	if( ( m_nFlags & WND_NO_DEPTH_BUT ) == 0 )
+	{
+		m_cObjectFrame[HIT_DEPTH] = Rect( vRight - vBtnWidth, 0, vRight, m_vTopBorder - 1 );
+		vRight = m_cObjectFrame[HIT_DEPTH].left - 1.0f;
+	}
 
-    if( ( m_nFlags & WND_NO_ZOOM_BUT ) == 0 ) {
-		m_cObjectFrame[ HIT_ZOOM ] = Rect(vRight - vBtnWidth, 0, vRight,  m_vTopBorder - 1);
-		vRight = m_cObjectFrame[ HIT_ZOOM ].left - 1.0f;
-	}  
+	if( ( m_nFlags & WND_NO_ZOOM_BUT ) == 0 )
+	{
+		m_cObjectFrame[HIT_ZOOM] = Rect( vRight - vBtnWidth, 0, vRight, m_vTopBorder - 1 );
+		vRight = m_cObjectFrame[HIT_ZOOM].left - 1.0f;
+	}
 
-    if( ( m_nFlags & WND_NO_ZOOM_BUT ) == 0 ) {
-		m_cObjectFrame[ HIT_MINIMIZE ] = Rect(vRight - vBtnWidth, 0, vRight,  m_vTopBorder - 1);
-		vRight = m_cObjectFrame[ HIT_MINIMIZE ].left - 1.0f;
-	} else {
-		m_cObjectFrame[ HIT_MINIMIZE ] = Rect( vRight, 0, vRight, 0 );
-	}    
+	if( ( m_nFlags & WND_NO_ZOOM_BUT ) == 0 )
+	{
+		m_cObjectFrame[HIT_MINIMIZE] = Rect( vRight - vBtnWidth, 0, vRight, m_vTopBorder - 1 );
+		vRight = m_cObjectFrame[HIT_MINIMIZE].left - 1.0f;
+	}
+	else
+	{
+		m_cObjectFrame[HIT_MINIMIZE] = Rect( vRight, 0, vRight, 0 );
+	}
 
-	m_cObjectFrame[ HIT_DRAG ] = Rect( vLeft, 0, vRight, m_vTopBorder - 1 );
+	m_cObjectFrame[HIT_DRAG] = Rect( vLeft, 0, vRight, m_vTopBorder - 1 );
 }
 
 void DefaultDecorator::SetButtonState( uint32 nButton, bool bPushed )
 {
-	if( nButton == HIT_CLOSE || nButton == HIT_ZOOM || nButton == HIT_DEPTH ||
-		nButton == HIT_MINIMIZE ) {
-			m_bObjectState[ nButton ] = bPushed;
-			Color32_s sFillColor =  m_bHasFocus ? GetDefaultColor( PEN_SELWINTITLE ) : GetDefaultColor( PEN_WINTITLE );
-			DrawButton( nButton, sFillColor );
+	if( nButton == HIT_CLOSE || nButton == HIT_ZOOM || nButton == HIT_DEPTH || nButton == HIT_MINIMIZE )
+	{
+		m_bObjectState[nButton] = bPushed;
+		Color32_s sFillColor = m_bHasFocus ? GetDefaultColor( PEN_SELWINTITLE ) : GetDefaultColor( PEN_WINTITLE );
+
+		DrawButton( nButton, sFillColor );
 	}
 }
 
@@ -238,13 +282,15 @@ void DefaultDecorator::SetButtonState( uint32 nButton, bool bPushed )
 												cFrame.top );			\
 									}
 
-void DefaultDecorator::DrawButton( uint32 nButton, const Color32_s& sFillColor )
+void DefaultDecorator::DrawButton( uint32 nButton, const Color32_s & sFillColor )
 {
 	Layer *pcView = GetLayer();
+
 	nButton = CheckIndex( nButton );
-	Rect cFrame = m_cObjectFrame[ nButton ];
-	bool bState = m_bObjectState[ nButton ];
+	Rect cFrame = m_cObjectFrame[nButton];
+	bool bState = m_bObjectState[nButton];
 	font_height fh;
+
 	fh = pcView->GetFontHeight();
 	Rect r;
 	Point cScale( cFrame.Size() );
@@ -253,107 +299,99 @@ void DefaultDecorator::DrawButton( uint32 nButton, const Color32_s& sFillColor )
 		return;
 
 	pcView->FillRect( cFrame, sFillColor );
-	pcView->DrawFrame( cFrame, FRAME_TRANSPARENT |
-		( bState ? FRAME_RECESSED : FRAME_RAISED ) );
+	pcView->DrawFrame( cFrame, FRAME_TRANSPARENT | ( bState ? FRAME_RECESSED : FRAME_RAISED ) );
 
-	switch( nButton ) {
-		case WindowDecorator::HIT_DRAG:
-			pcView->SetFgColor( 255, 255, 255, 0 );
-			pcView->SetBgColor( sFillColor );
-			pcView->MovePenTo( cFrame.left + 5,
-			   (cFrame.Height()+1.0f) / 2 -
-			   (fh.ascender + fh.descender) / 2 +
-				fh.ascender );
-			pcView->DrawString( m_cTitle.c_str(), -1 );
-			break;
-		case WindowDecorator::HIT_CLOSE:
-			SetRect( 0.33, 0.33, 0.67, 0.67 );
-			pcView->DrawFrame( r, FRAME_TRANSPARENT |
-				( bState ? FRAME_RAISED : FRAME_RECESSED ) );
-			break;
-		case WindowDecorator::HIT_MINIMIZE:
-			SetRect( 0.2, 0.2, 0.8, 0.8 );
-			pcView->DrawFrame( r, FRAME_TRANSPARENT |
-				( bState ? FRAME_RAISED : FRAME_RECESSED ) );
-			SetRect( 0.2, 0.6, 0.4, 0.8 );
-			r.left++;
-			r.right+=2;
-			r.top--;
-			r.bottom-=2;
-			pcView->DrawFrame( r, FRAME_TRANSPARENT |
-				( bState ? FRAME_RECESSED : FRAME_RAISED ) );
-			break;
-		case WindowDecorator::HIT_DEPTH:
-			if( bState ) {
-				SetRect( 0.2, 0.2, 0.6, 0.6 );
-				pcView->DrawFrame( r, FRAME_TRANSPARENT |
-					( FRAME_RAISED ) );
-				SetRect( 0.4, 0.4, 0.8, 0.8 );
-				pcView->FillRect( r, sFillColor );
-				pcView->DrawFrame( r, FRAME_TRANSPARENT |
-					( FRAME_RAISED ) );
-			} else {
-				SetRect( 0.4, 0.4, 0.8, 0.8 );
-				pcView->DrawFrame( r, FRAME_TRANSPARENT |
-					( FRAME_RECESSED ) );
-				SetRect( 0.2, 0.2, 0.6, 0.6 );
-				pcView->FillRect( r, sFillColor );
-				pcView->DrawFrame( r, FRAME_TRANSPARENT |
-					( FRAME_RECESSED ) );
-			}
-			break;
-		case WindowDecorator::HIT_ZOOM:
-			SetRect( 0.2, 0.2, 0.8, 0.8 );
-			pcView->DrawFrame( r, FRAME_TRANSPARENT | 
-				( bState ? FRAME_RAISED : FRAME_RECESSED ) );
+	switch ( nButton )
+	{
+	case WindowDecorator::HIT_DRAG:
+		pcView->SetFgColor( 255, 255, 255, 0 );
+		pcView->SetBgColor( sFillColor );
+		pcView->MovePenTo( cFrame.left + 5, ( cFrame.Height() + 1.0f ) / 2 - ( fh.ascender + fh.descender ) / 2 + fh.ascender );
+		pcView->DrawString( m_cTitle.c_str(), -1 );
+		break;
+	case WindowDecorator::HIT_CLOSE:
+		SetRect( 0.33, 0.33, 0.67, 0.67 );
+		pcView->DrawFrame( r, FRAME_TRANSPARENT | ( bState ? FRAME_RAISED : FRAME_RECESSED ) );
+		break;
+	case WindowDecorator::HIT_MINIMIZE:
+		SetRect( 0.2, 0.2, 0.8, 0.8 );
+		pcView->DrawFrame( r, FRAME_TRANSPARENT | ( bState ? FRAME_RAISED : FRAME_RECESSED ) );
+		SetRect( 0.2, 0.6, 0.4, 0.8 );
+		r.left++;
+		r.right += 2;
+		r.top--;
+		r.bottom -= 2;
+		pcView->DrawFrame( r, FRAME_TRANSPARENT | ( bState ? FRAME_RECESSED : FRAME_RAISED ) );
+		break;
+	case WindowDecorator::HIT_DEPTH:
+		if( bState )
+		{
 			SetRect( 0.2, 0.2, 0.6, 0.6 );
-			r.left+=2;
-			r.top+=2;
-			pcView->DrawFrame( r, FRAME_TRANSPARENT | 
-				( bState ? FRAME_RECESSED : FRAME_RAISED ) );
-			break;
+			pcView->DrawFrame( r, FRAME_TRANSPARENT | ( FRAME_RAISED ) );
+			SetRect( 0.4, 0.4, 0.8, 0.8 );
+			pcView->FillRect( r, sFillColor );
+			pcView->DrawFrame( r, FRAME_TRANSPARENT | ( FRAME_RAISED ) );
 		}
+		else
+		{
+			SetRect( 0.4, 0.4, 0.8, 0.8 );
+			pcView->DrawFrame( r, FRAME_TRANSPARENT | ( FRAME_RECESSED ) );
+			SetRect( 0.2, 0.2, 0.6, 0.6 );
+			pcView->FillRect( r, sFillColor );
+			pcView->DrawFrame( r, FRAME_TRANSPARENT | ( FRAME_RECESSED ) );
+		}
+		break;
+	case WindowDecorator::HIT_ZOOM:
+		SetRect( 0.2, 0.2, 0.8, 0.8 );
+		pcView->DrawFrame( r, FRAME_TRANSPARENT | ( bState ? FRAME_RAISED : FRAME_RECESSED ) );
+		SetRect( 0.2, 0.2, 0.6, 0.6 );
+		r.left += 2;
+		r.top += 2;
+		pcView->DrawFrame( r, FRAME_TRANSPARENT | ( bState ? FRAME_RECESSED : FRAME_RAISED ) );
+		break;
+	}
 }
 
-void DefaultDecorator::Render( const Rect& cUpdateRect )
+void DefaultDecorator::Render( const Rect & cUpdateRect )
 {
-    if ( m_nFlags & WND_NO_BORDER ) {
-	return;
-    }
-  
-    Color32_s sFillColor =  m_bHasFocus ? GetDefaultColor( PEN_SELWINTITLE ) : GetDefaultColor( PEN_WINTITLE );
+	if( m_nFlags & WND_NO_BORDER )
+	{
+		return;
+	}
 
-    Layer* pcView = GetLayer();
-  
-    Rect  cOBounds = pcView->GetBounds();
-    Rect  cIBounds = cOBounds;
-  
-    cIBounds.left   += m_vLeftBorder - 1;
-    cIBounds.right  -= m_vRightBorder - 1;
-    cIBounds.top    += m_vTopBorder - 1;
-    cIBounds.bottom -= m_vBottomBorder - 1;
+	Color32_s sFillColor = m_bHasFocus ? GetDefaultColor( PEN_SELWINTITLE ) : GetDefaultColor( PEN_WINTITLE );
 
-    pcView->DrawFrame( cOBounds, FRAME_RAISED | FRAME_THIN | FRAME_TRANSPARENT );
-    pcView->DrawFrame( cIBounds, FRAME_RECESSED | FRAME_THIN | FRAME_TRANSPARENT );
-  
-      // Bottom
-    pcView->FillRect( Rect( cOBounds.left + 1, cIBounds.bottom + 1, cOBounds.right - 1, cOBounds.bottom - 1 ), sFillColor );
-      // Left
-    pcView->FillRect( Rect( cOBounds.left + 1, cOBounds.top + m_vTopBorder,
-			    cIBounds.left - 1, cIBounds.bottom ), sFillColor );
-      // Right
-    pcView->FillRect( Rect( cIBounds.right + 1, cOBounds.top + m_vTopBorder,
-			    cOBounds.right - 1, cIBounds.bottom ), sFillColor );
+	Layer *pcView = GetLayer();
 
-    if ( (m_nFlags & WND_NO_TITLE) == 0 ) {
-    	DrawButton( HIT_DRAG, sFillColor );
-    } else {
+	Rect cOBounds = pcView->GetBounds();
+	Rect cIBounds = cOBounds;
+
+	cIBounds.left += m_vLeftBorder - 1;
+	cIBounds.right -= m_vRightBorder - 1;
+	cIBounds.top += m_vTopBorder - 1;
+	cIBounds.bottom -= m_vBottomBorder - 1;
+
+	pcView->DrawFrame( cOBounds, FRAME_RAISED | FRAME_THIN | FRAME_TRANSPARENT );
+	pcView->DrawFrame( cIBounds, FRAME_RECESSED | FRAME_THIN | FRAME_TRANSPARENT );
+
+	// Bottom
+	pcView->FillRect( Rect( cOBounds.left + 1, cIBounds.bottom + 1, cOBounds.right - 1, cOBounds.bottom - 1 ), sFillColor );
+	// Left
+	pcView->FillRect( Rect( cOBounds.left + 1, cOBounds.top + m_vTopBorder, cIBounds.left - 1, cIBounds.bottom ), sFillColor );
+	// Right
+	pcView->FillRect( Rect( cIBounds.right + 1, cOBounds.top + m_vTopBorder, cOBounds.right - 1, cIBounds.bottom ), sFillColor );
+
+	if( ( m_nFlags & WND_NO_TITLE ) == 0 )
+	{
+		DrawButton( HIT_DRAG, sFillColor );
+	}
+	else
+	{
 		pcView->FillRect( Rect( cOBounds.left + 1, cOBounds.top - 1, cOBounds.right - 1, cIBounds.top + 1 ), sFillColor );
-    }
+	}
 
 	DrawButton( HIT_ZOOM, sFillColor );
 	DrawButton( HIT_MINIMIZE, sFillColor );
 	DrawButton( HIT_DEPTH, sFillColor );
 	DrawButton( HIT_CLOSE, sFillColor );
 }
-

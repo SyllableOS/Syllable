@@ -1,3 +1,4 @@
+
 /*
  *  The AtheOS application server
  *  Copyright (C) 1999  Kurt Skauen
@@ -26,31 +27,36 @@ using namespace os;
 SrvClipboard::ClipboardMap SrvClipboard::s_cClipboardMap;
 
 
-void SrvClipboard::SetData( const char* pzName, uint8* pData, int nSize )
+void SrvClipboard::SetData( const char *pzName, uint8 *pData, int nSize )
 {
-    SrvClipboard* pcClipboard;
-    ClipboardMap::iterator i = s_cClipboardMap.find( pzName );
+	SrvClipboard *pcClipboard;
+	ClipboardMap::iterator i = s_cClipboardMap.find( pzName );
 
-    if ( i == s_cClipboardMap.end() ) {
-	pcClipboard = new SrvClipboard();
-	s_cClipboardMap[ pzName ] = pcClipboard;
-    } else {
-	pcClipboard = (*i).second;
-    }
+	if( i == s_cClipboardMap.end() )
+	{
+		pcClipboard = new SrvClipboard();
+		s_cClipboardMap[pzName] = pcClipboard;
+	}
+	else
+	{
+		pcClipboard = ( *i ).second;
+	}
 
-    delete[] pcClipboard->m_pData;
-    pcClipboard->m_pData = new uint8[nSize];
-    pcClipboard->m_nSize = nSize;
-    memcpy( pcClipboard->m_pData, pData, nSize );
+	delete[]pcClipboard->m_pData;
+	pcClipboard->m_pData = new uint8[nSize];
+
+	pcClipboard->m_nSize = nSize;
+	memcpy( pcClipboard->m_pData, pData, nSize );
 }
 
-uint8* SrvClipboard::GetData( const char* pzName, int* pnSize )
+uint8 *SrvClipboard::GetData( const char *pzName, int *pnSize )
 {
-    ClipboardMap::iterator i = s_cClipboardMap.find( pzName );
+	ClipboardMap::iterator i = s_cClipboardMap.find( pzName );
 
-    if ( i == s_cClipboardMap.end() ) {
-	return( NULL );
-    }
-    *pnSize = (*i).second->m_nSize;
-    return( (*i).second->m_pData );
+	if( i == s_cClipboardMap.end() )
+	{
+		return ( NULL );
+	}
+	*pnSize = ( *i ).second->m_nSize;
+	return ( ( *i ).second->m_pData );
 }

@@ -1,3 +1,4 @@
+
 /*
  *  The AtheOS application server
  *  Copyright (C) 1999  Kurt Skauen
@@ -27,36 +28,41 @@
 
 #include <appserver/keymap.h>
 
-keymap* load_keymap( FILE* hFile )
+keymap *load_keymap( FILE *hFile )
 {
-    keymap_header	sHeader;
+	keymap_header sHeader;
 
-    if ( fread( &sHeader, sizeof(sHeader), 1, hFile ) != 1 ) {
-	dbprintf( "Error: Failed to read keymap header\n" );
-	return( NULL );
-    }
-    if ( sHeader.m_nMagic != KEYMAP_MAGIC ) {
-	dbprintf( "Error: Keymap have bad magic number (%08lx) should have been %08x\n", sHeader.m_nMagic, KEYMAP_MAGIC );
-	return( NULL );
-    }
-    if ( sHeader.m_nVersion != CURRENT_KEYMAP_VERSION ) {
-	dbprintf( "Error: Unknown keymap version %ld\n", sHeader.m_nVersion );
-	return( NULL );
-    }
-    
-    keymap* psKeymap = (keymap*)malloc( sHeader.m_nSize );
+	if( fread( &sHeader, sizeof( sHeader ), 1, hFile ) != 1 )
+	{
+		dbprintf( "Error: Failed to read keymap header\n" );
+		return ( NULL );
+	}
+	if( sHeader.m_nMagic != KEYMAP_MAGIC )
+	{
+		dbprintf( "Error: Keymap have bad magic number (%08lx) should have been %08x\n", sHeader.m_nMagic, KEYMAP_MAGIC );
+		return ( NULL );
+	}
+	if( sHeader.m_nVersion != CURRENT_KEYMAP_VERSION )
+	{
+		dbprintf( "Error: Unknown keymap version %ld\n", sHeader.m_nVersion );
+		return ( NULL );
+	}
 
-    if( !psKeymap ) {
-	dbprintf( "Error: Could not allocate memory for keymap (Size: %ld)\n", sHeader.m_nSize );
-	return( NULL );
-    }
+	keymap *psKeymap = ( keymap * ) malloc( sHeader.m_nSize );
 
-    if ( fread( psKeymap, sHeader.m_nSize, 1, hFile ) == 1 ) {
-	return( psKeymap );
-    } else {
-	dbprintf( "Error: Failed to read keymap\n" );
-	return( NULL );
-    }
+	if( !psKeymap )
+	{
+		dbprintf( "Error: Could not allocate memory for keymap (Size: %ld)\n", sHeader.m_nSize );
+		return ( NULL );
+	}
+
+	if( fread( psKeymap, sHeader.m_nSize, 1, hFile ) == 1 )
+	{
+		return ( psKeymap );
+	}
+	else
+	{
+		dbprintf( "Error: Failed to read keymap\n" );
+		return ( NULL );
+	}
 }
-
-

@@ -1,3 +1,4 @@
+
 /*
  *  The AtheOS application server
  *  Copyright (C) 1999  Kurt Skauen
@@ -34,15 +35,15 @@
 #include	<gui/bitmap.hpp>
 #include	<gui/modeinfo.hpp>
 
-area_id	g_nFrameBufArea = -1;
+area_id g_nFrameBufArea = -1;
 
 
-long v_blit(long  x1,     // top-left point of the source
-		  long  y1,     //
-		  long  x2,     // top-left point of the destination
-		  long  y2,     //
-		  long  width,  // size of the rect to move (from border included to
-		  long  height); // opposite border included).
+long v_blit( long x1,		// top-left point of the source
+	long y1,		//
+	long x2,		// top-left point of the destination
+	long y2,		//
+	long width,		// size of the rect to move (from border included to
+	long height );		// opposite border included).
 
 
 #define		BLT_WIDTH_LOW		0x20
@@ -70,98 +71,98 @@ long v_blit(long  x1,     // top-left point of the source
 #define		BLT_RASTER_OP	0x32
 
 
-int S3Blit( int  x1, int  y1, int  x2, int  y2, int  width, int  height );
+int S3Blit( int x1, int y1, int x2, int y2, int width, int height );
 
-void S3FillRect_32( long  x1, long  y1, long  x2, long  y2, uint color );
+void S3FillRect_32( long x1, long y1, long x2, long y2, uint color );
 
-long S3DrawLine_32( long   x1, long x2, long y1, long y2, uint color, bool useClip, short clipLeft, short clipTop, short clipRight, short clipBottom );
-void	InitS3( void );
-void	EnableS3( void );
+long S3DrawLine_32( long x1, long x2, long y1, long y2, uint color, bool useClip, short clipLeft, short clipTop, short clipRight, short clipBottom );
+void InitS3( void );
+void EnableS3( void );
 
-static inline void	WriteBltReg( int nIndex, int nVal )
+static inline void WriteBltReg( int nIndex, int nVal )
 {
-	outw_p( (nVal << 8) | nIndex, 0x3ce );
-//	outb_p( nIndex, 0x3ce );
-//	outb_p( nVal, 0x3cf );
+	outw_p( ( nVal << 8 ) | nIndex, 0x3ce );
+//      outb_p( nIndex, 0x3ce );
+//      outb_p( nVal, 0x3cf );
 }
 
-static inline int	ReadBltReg( int nIndex )
+static inline int ReadBltReg( int nIndex )
 {
 	outb_p( nIndex, 0x3ce );
-	return( inb_p( 0x3cf ) );
+	return ( inb_p( 0x3cf ) );
 }
 
-static inline void	WaitBlit()
+static inline void WaitBlit()
 {
 	while( ReadBltReg( BLT_START ) & 0x08 );
 }
 
-static inline void	SetBltSrc( uint32 nAddress )
+static inline void SetBltSrc( uint32 nAddress )
 {
 	WriteBltReg( BLT_SRC_LOW, nAddress & 0xff );
-	WriteBltReg( BLT_SRC_MID, (nAddress >> 8) & 0xff );
-	WriteBltReg( BLT_SRC_HIG, (nAddress >> 16) & 0xff );
+	WriteBltReg( BLT_SRC_MID, ( nAddress >> 8 ) & 0xff );
+	WriteBltReg( BLT_SRC_HIG, ( nAddress >> 16 ) & 0xff );
 }
 
-static inline void	SetBltDst( uint32 nAddress )
+static inline void SetBltDst( uint32 nAddress )
 {
 	WriteBltReg( BLT_DST_LOW, nAddress & 0xff );
-	WriteBltReg( BLT_DST_MID, (nAddress >> 8) & 0xff );
-	WriteBltReg( BLT_DST_HIG, (nAddress >> 16) & 0xff );
+	WriteBltReg( BLT_DST_MID, ( nAddress >> 8 ) & 0xff );
+	WriteBltReg( BLT_DST_HIG, ( nAddress >> 16 ) & 0xff );
 }
 
-static inline void	SetBltWidth( uint32 nWidth )
+static inline void SetBltWidth( uint32 nWidth )
 {
 	WriteBltReg( BLT_WIDTH_LOW, nWidth & 0xff );
-	WriteBltReg( BLT_WIDTH_HIG, (nWidth >> 8) & 0xff );
+	WriteBltReg( BLT_WIDTH_HIG, ( nWidth >> 8 ) & 0xff );
 }
 
-static inline void	SetBltHeight( uint32 nHeight )
+static inline void SetBltHeight( uint32 nHeight )
 {
 	WriteBltReg( BLT_HEIGHT_LOW, nHeight & 0xff );
-	WriteBltReg( BLT_HEIGHT_HIG, (nHeight >> 8) & 0xff );
+	WriteBltReg( BLT_HEIGHT_HIG, ( nHeight >> 8 ) & 0xff );
 }
 
 static inline void SetSrcPitch( int nPitch )
 {
 	WriteBltReg( BLT_SPITCH_LOW, nPitch & 0xff );
-	WriteBltReg( BLT_SPITCH_HIG, (nPitch >> 8) & 0xff );
+	WriteBltReg( BLT_SPITCH_HIG, ( nPitch >> 8 ) & 0xff );
 }
 
 static inline void SetDstPitch( int nPitch )
 {
 	WriteBltReg( BLT_DPITCH_LOW, nPitch & 0xff );
-	WriteBltReg( BLT_DPITCH_HIG, (nPitch >> 8) & 0xff );
+	WriteBltReg( BLT_DPITCH_HIG, ( nPitch >> 8 ) & 0xff );
 }
 
 
-DispMode_c::operator	ModeInfo_s()
+DispMode_c::operator	 ModeInfo_s()
 {
-	ModeInfo_s	sInfo;
+	ModeInfo_s sInfo;
 
-	strcpy( sInfo.mi_zName, m_zName );					/* mode description							*/
-	sInfo.mi_nIndex					=	m_nIndex;
-	sInfo.mi_nRows					=	m_nRows;					/* number of visible rows				*/
-	sInfo.mi_nScanLines			=	m_nScanLines;			/* number of visible scanlines	*/
-	sInfo.mi_nBytesPerLine	=	m_nBytesPerLine;	/* number of bytes per scan line (use this when calculating modulos!!)	*/
-	sInfo.mi_nBitsPerPixel	=	m_nBitsPerPixel;	/* number of bits per pixel			*/
-	sInfo.mi_nRedBits				=	m_nRedBits;				/* bits on read cannon					*/
-	sInfo.mi_nGreenBits			=	m_nGreenBits;			/* bits on green cannon					*/
-	sInfo.mi_nBlueBits			=	m_nBlueBits;			/* bits on blue cannon					*/
-	sInfo.mi_nRedPos				=	m_nRedPos;				/* first bit in red field				*/
-	sInfo.mi_nGreenPos			=	m_nGreenPos;			/* first bit in green field			*/
-	sInfo.mi_nBluePos				=	m_nBluePos;			 	/* first bit in blue field			*/
-	sInfo.mi_nPlanes				=	m_nPlanes;				/* number of bit planes					*/
-	sInfo.mi_nPaletteSize		=	m_nPaletteSize;		/* number of entries in palette	*/
-	sInfo.mi_nFlags					=	m_nFlags;
-	sInfo.mi_pFrameBuffer			=	m_pFrameBuffer;
-	sInfo.mi_nFrameBufferSize	=	m_nFrameBufferSize;
-	return( sInfo );
+	strcpy( sInfo.mi_zName, m_zName );	/* mode description                                                     */
+	sInfo.mi_nIndex = m_nIndex;
+	sInfo.mi_nRows = m_nRows;	/* number of visible rows                               */
+	sInfo.mi_nScanLines = m_nScanLines;	/* number of visible scanlines  */
+	sInfo.mi_nBytesPerLine = m_nBytesPerLine;	/* number of bytes per scan line (use this when calculating modulos!!)  */
+	sInfo.mi_nBitsPerPixel = m_nBitsPerPixel;	/* number of bits per pixel                     */
+	sInfo.mi_nRedBits = m_nRedBits;	/* bits on read cannon                                  */
+	sInfo.mi_nGreenBits = m_nGreenBits;	/* bits on green cannon                                 */
+	sInfo.mi_nBlueBits = m_nBlueBits;	/* bits on blue cannon                                  */
+	sInfo.mi_nRedPos = m_nRedPos;	/* first bit in red field                               */
+	sInfo.mi_nGreenPos = m_nGreenPos;	/* first bit in green field                     */
+	sInfo.mi_nBluePos = m_nBluePos;	/* first bit in blue field                      */
+	sInfo.mi_nPlanes = m_nPlanes;	/* number of bit planes                                 */
+	sInfo.mi_nPaletteSize = m_nPaletteSize;	/* number of entries in palette */
+	sInfo.mi_nFlags = m_nFlags;
+	sInfo.mi_pFrameBuffer = m_pFrameBuffer;
+	sInfo.mi_nFrameBufferSize = m_nFrameBufferSize;
+	return ( sInfo );
 }
 
 VesaDriver_c::VesaDriver_c()
 {
-	m_pcMouse	=	NULL;
+	m_pcMouse = NULL;
 }
 
 VesaDriver_c::~VesaDriver_c()
@@ -174,10 +175,10 @@ void VesaDriver_c::GetVesaModeInfo( struct VESA_Mode_Info *psVesaModeInfo, uint3
 
 	memset( &rm, 0, sizeof( struct RMREGS ) );
 
-	rm.EAX	= 0x4f01;
-	rm.ECX	= nModeNr;
-	rm.EDI	= CUL( psVesaModeInfo ) & 0x0f;
-	rm.ES		= CUL( psVesaModeInfo ) >> 4;
+	rm.EAX = 0x4f01;
+	rm.ECX = nModeNr;
+	rm.EDI = CUL( psVesaModeInfo ) & 0x0f;
+	rm.ES = CUL( psVesaModeInfo ) >> 4;
 
 	realint( 0x10, &rm );
 }
@@ -185,16 +186,16 @@ void VesaDriver_c::GetVesaModeInfo( struct VESA_Mode_Info *psVesaModeInfo, uint3
 /******************************************************************************
  ******************************************************************************/
 
-void VesaDriver_c::GetVesaInfo( struct Vesa_Info* psVesaBlk )
+void VesaDriver_c::GetVesaInfo( struct Vesa_Info *psVesaBlk )
 {
-	struct	RMREGS	rm;
+	struct RMREGS rm;
 
-	memset( &rm, 0, sizeof(struct RMREGS) );
+	memset( &rm, 0, sizeof( struct RMREGS ) );
 
-	rm.EAX	= 0x4f00;
-	rm.ECX	= 0;
-	rm.EDI	= CUL( psVesaBlk ) & 0x0f;
-	rm.ES		= CUL( psVesaBlk ) >> 4;
+	rm.EAX = 0x4f00;
+	rm.ECX = 0;
+	rm.EDI = CUL( psVesaBlk ) & 0x0f;
+	rm.ES = CUL( psVesaBlk ) >> 4;
 
 	Forbid();
 	realint( 0x10, &rm );
@@ -203,52 +204,52 @@ void VesaDriver_c::GetVesaInfo( struct Vesa_Info* psVesaBlk )
 
 bool VesaDriver_c::InitModes( void )
 {
-	struct Vesa_Info 			 *MemPtr;
-	struct VESA_Mode_Info  *VMI;
-	uint16								*	ModePtr;
-	DispMode_c*							pcMode;
-	int											i=0;
-	int											ModeNr = 0;
+	struct Vesa_Info *MemPtr;
+	struct VESA_Mode_Info *VMI;
+	uint16 *ModePtr;
+	DispMode_c *pcMode;
+	int i = 0;
+	int ModeNr = 0;
 
-	pcMode	=	new	DispMode_c;
+	pcMode = new DispMode_c;
 
-	pcMode->m_nIndex			 	= ModeNr++;
-	pcMode->m_nRows				 	=	320;
-	pcMode->m_nScanLines	 	= 200;
-	pcMode->m_nBytesPerLine	=	320;
-	pcMode->m_nBitsPerPixel	= 8;
+	pcMode->m_nIndex = ModeNr++;
+	pcMode->m_nRows = 320;
+	pcMode->m_nScanLines = 200;
+	pcMode->m_nBytesPerLine = 320;
+	pcMode->m_nBitsPerPixel = 8;
 
-	pcMode->m_nRedBits		 	= 0;
-	pcMode->m_nRedPos			 	=	0;
-	pcMode->m_nGreenBits	 	=	0;
-	pcMode->m_nGreenPos		 	=	0;
-	pcMode->m_nBlueBits		 	=	0;
-	pcMode->m_nBluePos		 	=	0;
-	pcMode->m_nPlanes			 	=	1;
-	pcMode->m_nPaletteSize 	= 256;
-	pcMode->m_nFrameBufferSize			= pcMode->m_nScanLines * pcMode->m_nBytesPerLine;
+	pcMode->m_nRedBits = 0;
+	pcMode->m_nRedPos = 0;
+	pcMode->m_nGreenBits = 0;
+	pcMode->m_nGreenPos = 0;
+	pcMode->m_nBlueBits = 0;
+	pcMode->m_nBluePos = 0;
+	pcMode->m_nPlanes = 1;
+	pcMode->m_nPaletteSize = 256;
+	pcMode->m_nFrameBufferSize = pcMode->m_nScanLines * pcMode->m_nBytesPerLine;
 
-	if ( pcMode->m_nBitsPerPixel <=8 )
+	if( pcMode->m_nBitsPerPixel <= 8 )
 	{
 		SETBITS( pcMode->m_nFlags, MIF_PALETTE );
 	}
 
-	pcMode->m_pPhysDispAddr=	(uint8*) 0xa0000;
-	pcMode->m_nVesaMode		= 0x13;
+	pcMode->m_pPhysDispAddr = ( uint8 * )0xa0000;
+	pcMode->m_nVesaMode = 0x13;
 
-	sprintf( pcMode->m_zName,"VBE2:%dx%d %d BPP", pcMode->m_nRows, pcMode->m_nScanLines, pcMode->m_nBitsPerPixel );
+	sprintf( pcMode->m_zName, "VBE2:%dx%d %d BPP", pcMode->m_nRows, pcMode->m_nScanLines, pcMode->m_nBitsPerPixel );
 
- 	m_cModeList.AddTail( pcMode );
+	m_cModeList.AddTail( pcMode );
 
-	if( MemPtr = (Vesa_Info_s*) AllocVec( sizeof( Vesa_Info_s ) + 256, MEMF_REAL | MEMF_CLEAR ) )
+	if( MemPtr = ( Vesa_Info_s * ) AllocVec( sizeof( Vesa_Info_s ) + 256, MEMF_REAL | MEMF_CLEAR ) )
 	{
 		strcpy( MemPtr->VesaSignature, "VBE2" );
 
 		GetVesaInfo( MemPtr );
 
-		if( VMI = (VESA_Mode_Info_s*) AllocVec( sizeof( VESA_Mode_Info_s ) + 256, MEMF_REAL ) )
+		if( VMI = ( VESA_Mode_Info_s * ) AllocVec( sizeof( VESA_Mode_Info_s ) + 256, MEMF_REAL ) )
 		{
-			ModePtr = (uint16 *) (((CUL(MemPtr->VideoModePtr) & 0xffff0000) >> 12) + (CUL(MemPtr->VideoModePtr) & 0x0ffff));
+			ModePtr = ( uint16 * )( ( ( CUL( MemPtr->VideoModePtr ) & 0xffff0000 ) >> 12 ) + ( CUL( MemPtr->VideoModePtr ) & 0x0ffff ) );
 
 			while( ModePtr[i] != 0xffff )
 			{
@@ -256,42 +257,43 @@ bool VesaDriver_c::InitModes( void )
 
 				GetVesaModeInfo( VMI, ModePtr[i] );
 
-				if( VMI->PhysBasePtr ) /* We Have FlatMem	*/
+				if( VMI->PhysBasePtr )	/* We Have FlatMem       */
 				{
 					if( VMI->BitsPerPixel >= 8 )
 					{
 						if( VMI->NumberOfPlanes == 1 )
 						{
-							pcMode	=	new	DispMode_c;
+							pcMode = new DispMode_c;
 
-							pcMode->m_nIndex			 	= ModeNr++;
+							pcMode->m_nIndex = ModeNr++;
 
-							pcMode->m_nRows					=	VMI->XResolution;
-							pcMode->m_nScanLines		= VMI->YResolution;
-							pcMode->m_nBytesPerLine	=	VMI->BytesPerScanLine;
-							pcMode->m_nBitsPerPixel	= VMI->BitsPerPixel;
+							pcMode->m_nRows = VMI->XResolution;
+							pcMode->m_nScanLines = VMI->YResolution;
+							pcMode->m_nBytesPerLine = VMI->BytesPerScanLine;
+							pcMode->m_nBitsPerPixel = VMI->BitsPerPixel;
 
-							pcMode->m_nRedBits			= VMI->RedMaskSize;
-							pcMode->m_nRedPos				=	VMI->RedFieldPosition;
-							pcMode->m_nGreenBits		=	VMI->GreenMaskSize;
-							pcMode->m_nGreenPos			=	VMI->GreenFieldPosition;
-							pcMode->m_nBlueBits			=	VMI->BlueMaskSize;
-							pcMode->m_nBluePos			=	VMI->BlueFieldPosition;
-							pcMode->m_nPlanes				=	VMI->NumberOfPlanes;
-							pcMode->m_nPaletteSize	= 256;
-							pcMode->m_nFrameBufferSize			= pcMode->m_nScanLines * pcMode->m_nBytesPerLine;
+							pcMode->m_nRedBits = VMI->RedMaskSize;
+							pcMode->m_nRedPos = VMI->RedFieldPosition;
+							pcMode->m_nGreenBits = VMI->GreenMaskSize;
+							pcMode->m_nGreenPos = VMI->GreenFieldPosition;
+							pcMode->m_nBlueBits = VMI->BlueMaskSize;
+							pcMode->m_nBluePos = VMI->BlueFieldPosition;
+							pcMode->m_nPlanes = VMI->NumberOfPlanes;
+							pcMode->m_nPaletteSize = 256;
+							pcMode->m_nFrameBufferSize = pcMode->m_nScanLines * pcMode->m_nBytesPerLine;
 
-							if ( pcMode->m_nBitsPerPixel <=8 )
+							if( pcMode->m_nBitsPerPixel <= 8 )
 							{
 								SETBITS( pcMode->m_nFlags, MIF_PALETTE );
 							}
 
-							pcMode->m_pPhysDispAddr	=	(uint8*) VMI->PhysBasePtr;
-							pcMode->m_nVesaMode			= ModePtr[i] | 0x4000;
+							pcMode->m_pPhysDispAddr = ( uint8 * )VMI->PhysBasePtr;
+							pcMode->m_nVesaMode = ModePtr[i] | 0x4000;
+
 /*
 							dbprintf( "VBE2:%dx%d %d BPP (ADR = %lx)\n", pcMode->m_nRows, pcMode->m_nScanLines, pcMode->m_nBitsPerPixel, pcMode->m_nBytesPerLine );
 */
-							sprintf( pcMode->m_zName,"VBE2:%dx%d %d BPP", pcMode->m_nRows, pcMode->m_nScanLines, pcMode->m_nBitsPerPixel );
+							sprintf( pcMode->m_zName, "VBE2:%dx%d %d BPP", pcMode->m_nRows, pcMode->m_nScanLines, pcMode->m_nBitsPerPixel );
 
 							m_cModeList.AddTail( pcMode );
 						}
@@ -303,53 +305,55 @@ bool VesaDriver_c::InitModes( void )
 		}
 		FreeVec( MemPtr );
 
-		return( TRUE );
+		return ( TRUE );
 	}
 
-	return( FALSE );
+	return ( FALSE );
 }
 
-void	EnableVirge(void);
+void EnableVirge( void );
 
 bool VesaDriver_c::Open( void )
 {
 	EnableS3();
-//	EnableVirge();
+//      EnableVirge();
 
 
 
-	if ( InitModes() )
+	if( InitModes() )
 	{
 		m_nFrameBufferSize = 1024 * 1024 * 4;
 
-		g_nFrameBufArea = create_area( "frame_buffer", &m_pFrameBuffer, AREA_ANY_ADDRESS,
-																	 m_nFrameBufferSize, AREA_FULL_ACCESS, AREA_NO_LOCK );
-		
-//		g_nFrameBufArea = CreateArea( "frame_buffer", NULL, m_nFrameBufferSize, 0, 0 );
+		g_nFrameBufArea = create_area( "frame_buffer", &m_pFrameBuffer, AREA_ANY_ADDRESS, m_nFrameBufferSize, AREA_FULL_ACCESS, AREA_NO_LOCK );
 
-//		m_pFrameBuffer = GetAreaAddress( g_nFrameBufArea );
+//              g_nFrameBufArea = CreateArea( "frame_buffer", NULL, m_nFrameBufferSize, 0, 0 );
+
+//              m_pFrameBuffer = GetAreaAddress( g_nFrameBufArea );
 
 /*		if ( m_pFrameBuffer = (uint8*) AllocVec( m_nFrameBufferSize, MEMF_PUBLIC  | MEMF_PAGEALLIGN ) ) */
 		{
-//			SysBase->ex_pDisplayAddr = m_pFrameBuffer;
+//                      SysBase->ex_pDisplayAddr = m_pFrameBuffer;
 
-//			MemMapToDev( m_pFrameBuffer, GetModeDesc(0)->m_pPhysDispAddr, (m_nFrameBufferSize + MEM_PAGEMASK) & ~MEM_PAGEMASK, MPROT_USER | MPROT_READ | MPROT_WRITE );
+//                      MemMapToDev( m_pFrameBuffer, GetModeDesc(0)->m_pPhysDispAddr, (m_nFrameBufferSize + MEM_PAGEMASK) & ~MEM_PAGEMASK, MPROT_USER | MPROT_READ | MPROT_WRITE );
 
-			for ( int i = 0, nCount = GetModeCount() ; i < nCount ; ++i  )
+			for( int i = 0, nCount = GetModeCount(); i < nCount; ++i )
 			{
- 				DispMode_c*		pcMode;
+				DispMode_c *pcMode;
 
-				if ( pcMode = GetModeDesc( i ) ) {
+				if( pcMode = GetModeDesc( i ) )
+				{
 					pcMode->m_pFrameBuffer = m_pFrameBuffer;
-				}	else {
- 					dbprintf( "ERROR : No descriptor for mode %ld in 'VesaDriver_c'\n", i );
- 				}
+				}
+				else
+				{
+					dbprintf( "ERROR : No descriptor for mode %ld in 'VesaDriver_c'\n", i );
+				}
 			}
-//			outw_p( 0x1206, 0x3c4 );	// Enable extended registers
-			return( TRUE );
+//                      outw_p( 0x1206, 0x3c4 );        // Enable extended registers
+			return ( TRUE );
 		}
 	}
-	return( FALSE );
+	return ( FALSE );
 }
 
 void VesaDriver_c::Close( void )
@@ -358,28 +362,28 @@ void VesaDriver_c::Close( void )
 
 int VesaDriver_c::GetModeCount( void )
 {
-	return( m_cModeList.Count() );
+	return ( m_cModeList.Count() );
 }
 
-bool VesaDriver_c::GetModeInfo( ModeInfo_s*	psInfo, int nIndex )
+bool VesaDriver_c::GetModeInfo( ModeInfo_s * psInfo, int nIndex )
 {
-	DispMode_c*	pcMode;
+	DispMode_c *pcMode;
 
-	if ( pcMode = GetModeDesc( nIndex ) )
+	if( pcMode = GetModeDesc( nIndex ) )
 	{
 		*psInfo = *pcMode;
-		return( TRUE );
+		return ( TRUE );
 	}
-	return( FALSE );
+	return ( FALSE );
 }
 
-BitMap_c*	VesaDriver_c::SetScreenMode( int nIndex )
+BitMap_c *VesaDriver_c::SetScreenMode( int nIndex )
 {
 	m_pcCurMode = GetModeDesc( nIndex );
 
-	if ( NULL != m_pcCurMode  )
+	if( NULL != m_pcCurMode )
 	{
-		area_id	nArea;
+		area_id nArea;
 
 
 		RemapArea( g_nFrameBufArea, m_pcCurMode->m_pPhysDispAddr );
@@ -388,74 +392,82 @@ BitMap_c*	VesaDriver_c::SetScreenMode( int nIndex )
 
 		dbprintf( "Set Screen mode %lx\n", m_pcCurMode->m_nVesaMode );
 
-		if ( SetVesaMode( m_pcCurMode->m_nVesaMode ) )
+		if( SetVesaMode( m_pcCurMode->m_nVesaMode ) )
 		{
 			InitS3();
 
-			ModeInfo_s	sModeInfo = *m_pcCurMode;
+			ModeInfo_s sModeInfo = *m_pcCurMode;
 
-			BitMap_c* pcBitmap = new BitMap_c( &sModeInfo, m_pFrameBuffer );
-			pcBitmap->m_pcDriver 	= this;
-			pcBitmap->m_bVideoMem	=	true;
+			BitMap_c *pcBitmap = new BitMap_c( &sModeInfo, m_pFrameBuffer );
+
+			pcBitmap->m_pcDriver = this;
+			pcBitmap->m_bVideoMem = true;
 
 			m_pcMouse = new MousePtr_c( pcBitmap, this, 8, 8 );
 
-			return( pcBitmap );
+			return ( pcBitmap );
 		}
 	}
-	return( NULL );
+	return ( NULL );
 }
 
-void	VesaDriver_c::MouseOn( void )
+void VesaDriver_c::MouseOn( void )
 {
-	if ( NULL != m_pcMouse ) {
+	if( NULL != m_pcMouse )
+	{
 		m_pcMouse->Show();
 	}
 }
 
-void	VesaDriver_c::MouseOff( void )
+void VesaDriver_c::MouseOff( void )
 {
-	if ( NULL != m_pcMouse ) {
+	if( NULL != m_pcMouse )
+	{
 		m_pcMouse->Hide();
 	}
 }
 
-void	VesaDriver_c::SetMousePos( Point2_c cNewPos )
+void VesaDriver_c::SetMousePos( Point2_c cNewPos )
 {
-	if ( NULL != m_pcMouse ) {
+	if( NULL != m_pcMouse )
+	{
 		m_pcMouse->MoveTo( cNewPos );
 	}
 }
 
-bool	VesaDriver_c::IntersectWithMouse( const Rect_c& cRect )
+bool VesaDriver_c::IntersectWithMouse( const Rect_c & cRect )
 {
-	if ( NULL != m_pcMouse ) {
-		return( cRect.DoIntersect( m_pcMouse->GetFrame() ) );
-	} else {
-		return( false );
-	}
-}
-
-
-BitMap_c* VesaDriver_c::CreateBitmap( Rect_c cBounds, int nMode )
-{
-	DispMode_c* pcCurMode = GetModeDesc( nMode );
-
-	if ( NULL != pcCurMode )
+	if( NULL != m_pcMouse )
 	{
-		BitMap_c* pcBitmap = new BitMap_c( cBounds.Width(), cBounds.Height(), pcCurMode->m_nBitsPerPixel );
-		pcBitmap->m_pcDriver = this;
-		return( pcBitmap );
+		return ( cRect.DoIntersect( m_pcMouse->GetFrame() ) );
+	}
+	else
+	{
+		return ( false );
 	}
 }
 
 
-void	VesaDriver_c::DeleteBitmap( BitMap_c* pcBitmap )
+BitMap_c *VesaDriver_c::CreateBitmap( Rect_c cBounds, int nMode )
 {
-	delete	pcBitmap;
+	DispMode_c *pcCurMode = GetModeDesc( nMode );
+
+	if( NULL != pcCurMode )
+	{
+		BitMap_c *pcBitmap = new BitMap_c( cBounds.Width(), cBounds.Height(  ), pcCurMode->m_nBitsPerPixel );
+
+		pcBitmap->m_pcDriver = this;
+		return ( pcBitmap );
+	}
 }
 
-void VesaDriver_c::SetColor( int nIndex, const Color32_s& sColor )
+
+void VesaDriver_c::DeleteBitmap( BitMap_c * pcBitmap )
+{
+	delete pcBitmap;
+}
+
+void VesaDriver_c::SetColor( int nIndex, const Color32_s & sColor )
 {
 	outb_p( nIndex, 0x3c8 );
 	outb_p( sColor.anRGBA[0] >> 2, 0x3c9 );
@@ -463,35 +475,35 @@ void VesaDriver_c::SetColor( int nIndex, const Color32_s& sColor )
 	outb_p( sColor.anRGBA[2] >> 2, 0x3c9 );
 }
 
-DispMode_c*	VesaDriver_c::GetModeDesc( uint32 nIndex )
+DispMode_c *VesaDriver_c::GetModeDesc( uint32 nIndex )
 {
-	return( m_cModeList[ nIndex ] );
+	return ( m_cModeList[nIndex] );
 }
 
-bool	VesaDriver_c::SetVesaMode( uint32 nMode )
+bool VesaDriver_c::SetVesaMode( uint32 nMode )
 {
 	struct RMREGS rm;
 
-	memset( &rm, 0, sizeof(struct RMREGS) );
+	memset( &rm, 0, sizeof( struct RMREGS ) );
 
-	rm.EAX	= 0x4f02;
-	rm.EBX	= nMode;
+	rm.EAX = 0x4f02;
+	rm.EBX = nMode;
 
 	realint( 0x10, &rm );
 
-	return( rm.EAX & 0xffff );
+	return ( rm.EAX & 0xffff );
 }
 
 /******************************************************************************
  ******************************************************************************/
 
-void VesaDriver_c::FillBlit8( uint8* pDst, int nMod, int W,int H, int nColor )
+void VesaDriver_c::FillBlit8( uint8 *pDst, int nMod, int W, int H, int nColor )
 {
-	int X,Y;
+	int X, Y;
 
-	for ( Y = 0 ; Y < H ; Y++ )
+	for( Y = 0; Y < H; Y++ )
 	{
-		for ( X = 0 ; X < W ; X++ )
+		for( X = 0; X < W; X++ )
 		{
 			*pDst++ = nColor;
 		}
@@ -504,11 +516,11 @@ void VesaDriver_c::FillBlit8( uint8* pDst, int nMod, int W,int H, int nColor )
 
 void VesaDriver_c::FillBlit16( uint16 *pDst, int nMod, int W, int H, uint32 nColor )
 {
-	int X,Y;
+	int X, Y;
 
-	for ( Y = 0 ; Y < H ; Y++ )
+	for( Y = 0; Y < H; Y++ )
 	{
-		for ( X = 0 ; X < W ; X++ )
+		for( X = 0; X < W; X++ )
 		{
 			*pDst++ = nColor;
 		}
@@ -519,76 +531,74 @@ void VesaDriver_c::FillBlit16( uint16 *pDst, int nMod, int W, int H, uint32 nCol
 /******************************************************************************
  ******************************************************************************/
 
-void VesaDriver_c::FillBlit24( uint8* pDst, int nMod, int W, int H, uint32 nColor )
+void VesaDriver_c::FillBlit24( uint8 *pDst, int nMod, int W, int H, uint32 nColor )
 {
-	int X,Y;
+	int X, Y;
 
-	for ( Y = 0 ; Y < H ; Y++ )
+	for( Y = 0; Y < H; Y++ )
 	{
-		for ( X = 0 ; X < W ; X++ )
+		for( X = 0; X < W; X++ )
 		{
 			*pDst++ = nColor & 0xff;
-			*((uint16*)pDst) = nColor >> 8;
-			pDst	+= 2;
+			*( ( uint16 * )pDst ) = nColor >> 8;
+			pDst += 2;
 		}
 		pDst += nMod;
 	}
 }
 
-uint32	VesaDriver_c::ConvertColor32( Color32_s	sColor )
+uint32 VesaDriver_c::ConvertColor32( Color32_s sColor )
 {
-	uint32	nColor;
+	uint32 nColor;
 
-	nColor	=	(sColor.anRGBA[0] >> (8 - m_pcCurMode->m_nRedBits)) << m_pcCurMode->m_nRedPos |
-						(sColor.anRGBA[1] >> (8 - m_pcCurMode->m_nGreenBits)) << m_pcCurMode->m_nGreenPos |
-						(sColor.anRGBA[2] >> (8 - m_pcCurMode->m_nBlueBits)) << m_pcCurMode->m_nBluePos;
+	nColor = ( sColor.anRGBA[0] >> ( 8 - m_pcCurMode->m_nRedBits ) ) << m_pcCurMode->m_nRedPos | ( sColor.anRGBA[1] >> ( 8 - m_pcCurMode->m_nGreenBits ) ) << m_pcCurMode->m_nGreenPos | ( sColor.anRGBA[2] >> ( 8 - m_pcCurMode->m_nBlueBits ) ) << m_pcCurMode->m_nBluePos;
 
-	return( nColor );
+	return ( nColor );
 }
 
-bool	VesaDriver_c::WritePixel( BitMap_c*	psBitMap, int X, int Y, const Color8_s&	sColor )
+bool VesaDriver_c::WritePixel( BitMap_c * psBitMap, int X, int Y, const Color8_s & sColor )
 {
-	psBitMap->m_pRaster[ X + Y * psBitMap->m_nBytesPerLine ] = sColor.nIndex;
-	return( TRUE );
+	psBitMap->m_pRaster[X + Y * psBitMap->m_nBytesPerLine] = sColor.nIndex;
+	return ( TRUE );
 }
 
 
-bool	VesaDriver_c::DrawLine( BitMap_c*	psBitMap, const Point2_c& cPnt1, const Point2_c& cPnt2, const Color8_s& sColor )
+bool VesaDriver_c::DrawLine( BitMap_c * psBitMap, const Point2_c & cPnt1, const Point2_c & cPnt2, const Color8_s & sColor )
 {
-	int	I;
-	int	X,Y;
-	int	dX,dY,Xs,Ys;
+	int I;
+	int X, Y;
+	int dX, dY, Xs, Ys;
 
 	dX = cPnt1.X - cPnt2.X;
 	dY = cPnt1.Y - cPnt2.Y;
 
-	if ( dX || dY )
+	if( dX || dY )
 	{
-		if ( abs(dX) > abs(dY) )
+		if( abs( dX ) > abs( dY ) )
 		{
 			X = cPnt2.X;
-			Y = (cPnt2.Y << 16) + 0x8000;
+			Y = ( cPnt2.Y << 16 ) + 0x8000;
 
 			Xs = dX < 0 ? -1 : 1;
 
-			dY = (dY * 65536) / abs(dX);
+			dY = ( dY * 65536 ) / abs( dX );
 
-			for ( I = 0 ; I <= abs( dX ) ; ++I )
+			for( I = 0; I <= abs( dX ); ++I )
 			{
 				WritePixel( psBitMap, X, Y >> 16, sColor );
-				X+=Xs;
-				Y+=dY;
+				X += Xs;
+				Y += dY;
 			}
 		}
 		else
 		{
-			X = (cPnt2.X << 16) + 0x8000;
+			X = ( cPnt2.X << 16 ) + 0x8000;
 			Y = cPnt2.Y;
 
 			Ys = dY < 0 ? -1 : 1;
-			dX = (dX * 65536) / abs( dY );
+			dX = ( dX * 65536 ) / abs( dY );
 
-			for ( I = 0 ; I <= abs(dY) ; ++I )
+			for( I = 0; I <= abs( dY ); ++I )
 			{
 				WritePixel( psBitMap, X >> 16, Y, sColor );
 				X += dX;
@@ -600,69 +610,68 @@ bool	VesaDriver_c::DrawLine( BitMap_c*	psBitMap, const Point2_c& cPnt1, const Po
 	{
 		WritePixel( psBitMap, cPnt1.X, cPnt1.Y, sColor );
 	}
-	return( TRUE );
+	return ( TRUE );
 }
 
-bool	VesaDriver_c::WritePixel16( BitMap_c*	psBitMap, int X, int Y, uint32	nColor )
+bool VesaDriver_c::WritePixel16( BitMap_c * psBitMap, int X, int Y, uint32 nColor )
 {
-	((uint16*) &psBitMap->m_pRaster[ X * 2 + Y * psBitMap->m_nBytesPerLine ] )[0] = nColor;
-	return( TRUE );
+	( ( uint16 * )&psBitMap->m_pRaster[X * 2 + Y * psBitMap->m_nBytesPerLine] )[0] = nColor;
+	return ( TRUE );
 }
 
 
-bool	VesaDriver_c::DrawLine16( BitMap_c*	psBitMap, const Rect_c& cClipRect, const Point2_c& cPnt1, const Point2_c& cPnt2, const Color32_s& sColor )
+bool VesaDriver_c::DrawLine16( BitMap_c * psBitMap, const Rect_c & cClipRect, const Point2_c & cPnt1, const Point2_c & cPnt2, const Color32_s & sColor )
 {
-	uint32	nColor;
+	uint32 nColor;
 
-	nColor	=	(sColor.anRGBA[0] >> (8 - m_pcCurMode->m_nRedBits)) << m_pcCurMode->m_nRedPos |
-						(sColor.anRGBA[1] >> (8 - m_pcCurMode->m_nGreenBits)) << m_pcCurMode->m_nGreenPos |
-						(sColor.anRGBA[2] >> (8 - m_pcCurMode->m_nBlueBits)) << m_pcCurMode->m_nBluePos;
+	nColor = ( sColor.anRGBA[0] >> ( 8 - m_pcCurMode->m_nRedBits ) ) << m_pcCurMode->m_nRedPos | ( sColor.anRGBA[1] >> ( 8 - m_pcCurMode->m_nGreenBits ) ) << m_pcCurMode->m_nGreenPos | ( sColor.anRGBA[2] >> ( 8 - m_pcCurMode->m_nBlueBits ) ) << m_pcCurMode->m_nBluePos;
 
-	if ( psBitMap->m_bVideoMem && 0 )
+	if( psBitMap->m_bVideoMem && 0 )
 	{
 		S3DrawLine_32( cPnt1.X, cPnt1.Y, cPnt2.X, cPnt2.Y, nColor, true, cClipRect.MinX, cClipRect.MinY, cClipRect.MaxX, cClipRect.MaxY );
 	}
 	else
 	{
-		int			I;
-		int			X,Y;
-		int			dX,dY,Xs,Ys;
+		int I;
+		int X, Y;
+		int dX, dY, Xs, Ys;
 
 		dX = cPnt1.X - cPnt2.X;
 		dY = cPnt1.Y - cPnt2.Y;
 
-		if ( dX || dY )
+		if( dX || dY )
 		{
-			if ( abs(dX) > abs(dY) )
+			if( abs( dX ) > abs( dY ) )
 			{
 				X = cPnt2.X;
-				Y = (cPnt2.Y << 16) + 0x8000;
+				Y = ( cPnt2.Y << 16 ) + 0x8000;
 
 				Xs = dX < 0 ? -1 : 1;
 
-				dY = (dY * 65536) / abs(dX);
+				dY = ( dY * 65536 ) / abs( dX );
 
-				for ( I = 0 ; I <= abs( dX ) ; ++I )
+				for( I = 0; I <= abs( dX ); ++I )
 				{
-					if ( cClipRect.DoIntersect( Point2_c( X, Y >> 16 ) ) )
+					if( cClipRect.DoIntersect( Point2_c( X, Y >> 16 ) ) )
 					{
 						WritePixel16( psBitMap, X, Y >> 16, nColor );
 					}
-					X+=Xs;
-					Y+=dY;
+					X += Xs;
+					Y += dY;
 				}
 			}
 			else
 			{
-				X = (cPnt2.X << 16) + 0x8000;
+				X = ( cPnt2.X << 16 ) + 0x8000;
 				Y = cPnt2.Y;
 
 				Ys = dY < 0 ? -1 : 1;
-				dX = (dX * 65536) / abs( dY );
+				dX = ( dX * 65536 ) / abs( dY );
 
-				for ( I = 0 ; I <= abs(dY) ; ++I )
+				for( I = 0; I <= abs( dY ); ++I )
 				{
-					if ( cClipRect.DoIntersect( Point2_c( X >> 16 , Y ) ) )	{
+					if( cClipRect.DoIntersect( Point2_c( X >> 16, Y ) ) )
+					{
 						WritePixel16( psBitMap, X >> 16, Y, nColor );
 					}
 					X += dX;
@@ -672,72 +681,71 @@ bool	VesaDriver_c::DrawLine16( BitMap_c*	psBitMap, const Rect_c& cClipRect, cons
 		}
 		else
 		{
-	 		if ( cClipRect.DoIntersect( cPnt1 ) )	{
-	 			WritePixel16( psBitMap, cPnt1.X, cPnt1.Y, nColor );
+			if( cClipRect.DoIntersect( cPnt1 ) )
+			{
+				WritePixel16( psBitMap, cPnt1.X, cPnt1.Y, nColor );
 			}
 		}
 	}
-	return( true );
+	return ( true );
 }
 
 
 
-bool	VesaDriver_c::FillRect16( BitMap_c* psBitMap, const Rect_c& cRect, const Color32_s& sColor )
+bool VesaDriver_c::FillRect16( BitMap_c * psBitMap, const Rect_c & cRect, const Color32_s & sColor )
 {
-	int		BltX,BltY,BltW,BltH;
-	int		nBytesPerPix = 2;
+	int BltX, BltY, BltW, BltH;
+	int nBytesPerPix = 2;
 
-	uint32	nColor;
+	uint32 nColor;
 
-	nColor	=	((sColor.anRGBA[0] >> (8 - m_pcCurMode->m_nRedBits)) << m_pcCurMode->m_nRedPos) |
-						((sColor.anRGBA[1] >> (8 - m_pcCurMode->m_nGreenBits)) << m_pcCurMode->m_nGreenPos) |
-						((sColor.anRGBA[2] >> (8 - m_pcCurMode->m_nBlueBits)) << m_pcCurMode->m_nBluePos);
+	nColor = ( ( sColor.anRGBA[0] >> ( 8 - m_pcCurMode->m_nRedBits ) ) << m_pcCurMode->m_nRedPos ) | ( ( sColor.anRGBA[1] >> ( 8 - m_pcCurMode->m_nGreenBits ) ) << m_pcCurMode->m_nGreenPos ) | ( ( sColor.anRGBA[2] >> ( 8 - m_pcCurMode->m_nBlueBits ) ) << m_pcCurMode->m_nBluePos );
 
-	if ( psBitMap->m_bVideoMem && 0 )
+	if( psBitMap->m_bVideoMem && 0 )
 	{
 		S3FillRect_32( cRect.MinX, cRect.MinY, cRect.MaxX, cRect.MaxY, nColor );
 	}
 	else
 	{
-	/*
-		if ( rp->rp_Clips[0].BitMap->BitsPerPixel > 8 )		BytesPerPix++;
-		if ( rp->rp_Clips[0].BitMap->BitsPerPixel > 16 )	BytesPerPix++;
-		if ( rp->rp_Clips[0].BitMap->BitsPerPixel > 24 )	BytesPerPix++;
+		/*
+		   if ( rp->rp_Clips[0].BitMap->BitsPerPixel > 8 )              BytesPerPix++;
+		   if ( rp->rp_Clips[0].BitMap->BitsPerPixel > 16 )     BytesPerPix++;
+		   if ( rp->rp_Clips[0].BitMap->BitsPerPixel > 24 )     BytesPerPix++;
 
-		if ( BytesPerPix > 1 )
+		   if ( BytesPerPix > 1 )
+		   {
+		   Color = PenToRGB( RPort->BitMap->ColorMap, Color );
+		   }
+		 */
+
+		BltX = cRect.Left();
+		BltY = cRect.Top();
+		BltW = cRect.Width();
+		BltH = cRect.Height();
+
+		switch ( nBytesPerPix )
 		{
-			Color = PenToRGB( RPort->BitMap->ColorMap, Color );
-		}
-	*/
-
-		BltX	= cRect.Left();
-		BltY	= cRect.Top();
-		BltW	=	cRect.Width();
-		BltH	=	cRect.Height();
-
-		switch( nBytesPerPix )
-		{
-			case 1:
-				FillBlit8( psBitMap->m_pRaster + ((BltY * psBitMap->m_nBytesPerLine) + BltX), psBitMap->m_nBytesPerLine - BltW, BltW, BltH, nColor );
-				break;
-			case 2:
-				FillBlit16( (uint16*) &psBitMap->m_pRaster[ BltY * psBitMap->m_nBytesPerLine + BltX * 2 ], psBitMap->m_nBytesPerLine / 2 - BltW, BltW, BltH, nColor );
-				break;
-			case 3:
-				FillBlit24( &psBitMap->m_pRaster[ BltY * psBitMap->m_nBytesPerLine + BltX * 3 ], psBitMap->m_nBytesPerLine - BltW * 3, BltW, BltH, nColor );
-				break;
+		case 1:
+			FillBlit8( psBitMap->m_pRaster + ( ( BltY * psBitMap->m_nBytesPerLine ) + BltX ), psBitMap->m_nBytesPerLine - BltW, BltW, BltH, nColor );
+			break;
+		case 2:
+			FillBlit16( ( uint16 * )&psBitMap->m_pRaster[BltY * psBitMap->m_nBytesPerLine + BltX * 2], psBitMap->m_nBytesPerLine / 2 - BltW, BltW, BltH, nColor );
+			break;
+		case 3:
+			FillBlit24( &psBitMap->m_pRaster[BltY * psBitMap->m_nBytesPerLine + BltX * 3], psBitMap->m_nBytesPerLine - BltW * 3, BltW, BltH, nColor );
+			break;
 		}
 	}
-	return( true );
+	return ( true );
 }
 
 
-bool	VesaDriver_c::FillRect( BitMap_c* psBitMap, const Rect_c& cRect, const Color8_s& sColor )
+bool VesaDriver_c::FillRect( BitMap_c * psBitMap, const Rect_c & cRect, const Color8_s & sColor )
 {
-	int		BltX,BltY,BltW,BltH;
-	int		nBytesPerPix = 1;
+	int BltX, BltY, BltW, BltH;
+	int nBytesPerPix = 1;
 
-	uint32	nColor	=	sColor.nIndex;
+	uint32 nColor = sColor.nIndex;
 
 
 /*
@@ -751,101 +759,103 @@ bool	VesaDriver_c::FillRect( BitMap_c* psBitMap, const Rect_c& cRect, const Colo
 	}
 */
 
-	BltX	= cRect.Left();
-	BltY	= cRect.Top();
-	BltW	=	cRect.Width();
-	BltH	=	cRect.Height();
+	BltX = cRect.Left();
+	BltY = cRect.Top();
+	BltW = cRect.Width();
+	BltH = cRect.Height();
 
-	switch( nBytesPerPix )
+	switch ( nBytesPerPix )
 	{
-		case 1:
-			FillBlit8( psBitMap->m_pRaster + ((BltY * psBitMap->m_nBytesPerLine) + BltX), psBitMap->m_nBytesPerLine - BltW, BltW, BltH, nColor );
-			break;
-		case 2:
-			FillBlit16( (uint16*) &psBitMap->m_pRaster[ BltY * psBitMap->m_nBytesPerLine + BltX * 2 ], psBitMap->m_nBytesPerLine / 2 - BltW, BltW, BltH, nColor );
-			break;
-		case 3:
-			FillBlit24( &psBitMap->m_pRaster[ BltY * psBitMap->m_nBytesPerLine + BltX * 3 ], psBitMap->m_nBytesPerLine - BltW * 3, BltW, BltH, nColor );
-			break;
+	case 1:
+		FillBlit8( psBitMap->m_pRaster + ( ( BltY * psBitMap->m_nBytesPerLine ) + BltX ), psBitMap->m_nBytesPerLine - BltW, BltW, BltH, nColor );
+		break;
+	case 2:
+		FillBlit16( ( uint16 * )&psBitMap->m_pRaster[BltY * psBitMap->m_nBytesPerLine + BltX * 2], psBitMap->m_nBytesPerLine / 2 - BltW, BltW, BltH, nColor );
+		break;
+	case 3:
+		FillBlit24( &psBitMap->m_pRaster[BltY * psBitMap->m_nBytesPerLine + BltX * 3], psBitMap->m_nBytesPerLine - BltW * 3, BltW, BltH, nColor );
+		break;
 	}
-	return( TRUE );
+	return ( TRUE );
 }
 
-void Blit( uint8 *Src, uint8* Dst, int SMod, int DMod, int W, int H, bool Rev )
+void Blit( uint8 *Src, uint8 *Dst, int SMod, int DMod, int W, int H, bool Rev )
 {
-	int		i;
-	int 		X,Y;
-	uint32	 *LSrc,*LDst;
+	int i;
+	int X, Y;
+	uint32 *LSrc, *LDst;
+
 /*
 	uint8		anLineBuf[4096];
 	uint8*	pBufPtr;
 */
-	if (Rev)
+	if( Rev )
 	{
-		for (Y=0;Y<H;Y++)
+		for( Y = 0; Y < H; Y++ )
 		{
-			for( X = 0 ; (X < W) && (CUL(Src - 3) & 3) ; X++ )
+			for( X = 0; ( X < W ) && ( CUL( Src - 3 ) & 3 ); X++ )
 			{
 				*Dst-- = *Src--;
 			}
 
-			LSrc=(uint32*)(CUL(Src)-3);
-			LDst=(uint32*)(CUL(Dst)-3);
+			LSrc = ( uint32 * )( CUL( Src ) - 3 );
+			LDst = ( uint32 * )( CUL( Dst ) - 3 );
 
-			i = (W - X) / 4;
+			i = ( W - X ) / 4;
 
 			X += i * 4;
 
-			for ( ; i ; i-- )
+			for( ; i; i-- )
 			{
-				*LDst--=*LSrc--;
+				*LDst-- = *LSrc--;
 			}
 
-			Src=(uint8*)(CUL(LSrc)+3);
-			Dst=(uint8*)(CUL(LDst)+3);
+			Src = ( uint8 * )( CUL( LSrc ) + 3 );
+			Dst = ( uint8 * )( CUL( LDst ) + 3 );
 
-			for ( ; X < W ; X++ )
+			for( ; X < W; X++ )
 			{
-				*Dst--=*Src--;
+				*Dst-- = *Src--;
 			}
 
-			Dst-=CLO(DMod);
-			Src-=CLO(SMod);
+			Dst -= CLO( DMod );
+			Src -= CLO( SMod );
 		}
 	}
 	else
 	{
-		for ( Y = 0 ; Y < H ; Y++ )
+		for( Y = 0; Y < H; Y++ )
 		{
-			for ( X = 0 ; (X < W) && (CUL(Src) & 3) ; ++X )
+			for( X = 0; ( X < W ) && ( CUL( Src ) & 3 ); ++X )
 			{
 				*Dst++ = *Src++;
 			}
 
-			LSrc = (uint32*) Src;
-			LDst = (uint32*) Dst;
+			LSrc = ( uint32 * )Src;
+			LDst = ( uint32 * )Dst;
 
-			i = (W - X) / 4;
+			i = ( W - X ) / 4;
 
 			X += i * 4;
 
-			for( ; i ; i-- )
+			for( ; i; i-- )
 			{
 				*LDst++ = *LSrc++;
 			}
 
-			Src	=	(uint8*) LSrc;
-			Dst	=	(uint8*) LDst;
+			Src = ( uint8 * )LSrc;
+			Dst = ( uint8 * )LDst;
 
-			for ( ; X < W ; X++ )
+			for( ; X < W; X++ )
 			{
-				*Dst++=*Src++;
+				*Dst++ = *Src++;
 			}
 
 			Dst += DMod;
 			Src += SMod;
 		}
 	}
+
 /*
 		for ( Y = 0 ; Y < H ; Y++ )
 		{
@@ -914,71 +924,74 @@ void Blit( uint8 *Src, uint8* Dst, int SMod, int DMod, int W, int H, bool Rev )
 */
 }
 
-void	BitBlit( BitMap_c *sbm, BitMap_c *dbm, int sx, int sy, int dx, int dy, int w, int h )
+void BitBlit( BitMap_c * sbm, BitMap_c * dbm, int sx, int sy, int dx, int dy, int w, int h )
 {
-	int	Smod,Dmod;
-	int	BytesPerPix = 1;
+	int Smod, Dmod;
+	int BytesPerPix = 1;
 
-	int	InPtr,OutPtr;
+	int InPtr, OutPtr;
 
-	if ( dbm->m_nBitsPerPixel > 8 )	BytesPerPix++;
-	if ( dbm->m_nBitsPerPixel > 16 )	BytesPerPix++;
-	if ( dbm->m_nBitsPerPixel > 24 )	BytesPerPix++;
+	if( dbm->m_nBitsPerPixel > 8 )
+		BytesPerPix++;
+	if( dbm->m_nBitsPerPixel > 16 )
+		BytesPerPix++;
+	if( dbm->m_nBitsPerPixel > 24 )
+		BytesPerPix++;
 
 	sx *= BytesPerPix;
 	dx *= BytesPerPix;
-	w	 *= BytesPerPix;
+	w *= BytesPerPix;
 
-	if ( sx >= dx  && 1 )
+	if( sx >= dx && 1 )
 	{
-		if ( sy >= dy )
+		if( sy >= dy )
 		{
 			Smod = sbm->m_nBytesPerLine - w;
 			Dmod = dbm->m_nBytesPerLine - w;
-			InPtr		= sy * sbm->m_nBytesPerLine + sx;
-			OutPtr	= dy * dbm->m_nBytesPerLine + dx;
+			InPtr = sy * sbm->m_nBytesPerLine + sx;
+			OutPtr = dy * dbm->m_nBytesPerLine + dx;
 
 			Blit( sbm->m_pRaster + InPtr, dbm->m_pRaster + OutPtr, Smod, Dmod, w, h, NULL );
 		}
 		else
 		{
-			Smod	=-sbm->m_nBytesPerLine - w;
-			Dmod	=-dbm->m_nBytesPerLine - w;
-			InPtr		= ((sy+h-1)*sbm->m_nBytesPerLine)+sx;
-			OutPtr	= ((dy+h-1)*dbm->m_nBytesPerLine)+dx;
+			Smod = -sbm->m_nBytesPerLine - w;
+			Dmod = -dbm->m_nBytesPerLine - w;
+			InPtr = ( ( sy + h - 1 ) * sbm->m_nBytesPerLine ) + sx;
+			OutPtr = ( ( dy + h - 1 ) * dbm->m_nBytesPerLine ) + dx;
 
 			Blit( sbm->m_pRaster + InPtr, dbm->m_pRaster + OutPtr, Smod, Dmod, w, h, NULL );
 		}
 	}
 	else
 	{
-		if ( sy > dy )
+		if( sy > dy )
 		{
-			Smod=-(sbm->m_nBytesPerLine + w);
-			Dmod=-(dbm->m_nBytesPerLine + w);
-			InPtr		= (sy*sbm->m_nBytesPerLine)+sx+w-1;
-			OutPtr	= (dy*dbm->m_nBytesPerLine)+dx+w-1;
+			Smod = -( sbm->m_nBytesPerLine + w );
+			Dmod = -( dbm->m_nBytesPerLine + w );
+			InPtr = ( sy * sbm->m_nBytesPerLine ) + sx + w - 1;
+			OutPtr = ( dy * dbm->m_nBytesPerLine ) + dx + w - 1;
 			Blit( sbm->m_pRaster + InPtr, dbm->m_pRaster + OutPtr, Smod, Dmod, w, h, TRUE );
 		}
 		else
 		{
 			Smod = sbm->m_nBytesPerLine - w;
 			Dmod = dbm->m_nBytesPerLine - w;
-			InPtr		= (sy + h - 1) * sbm->m_nBytesPerLine + sx + w - 1;
-			OutPtr	= (dy + h - 1) * dbm->m_nBytesPerLine + dx + w - 1;
+			InPtr = ( sy + h - 1 ) * sbm->m_nBytesPerLine + sx + w - 1;
+			OutPtr = ( dy + h - 1 ) * dbm->m_nBytesPerLine + dx + w - 1;
 			Blit( sbm->m_pRaster + InPtr, dbm->m_pRaster + OutPtr, Smod, Dmod, w, h, TRUE );
 		}
 	}
 }
 
-bool	VesaDriver_c::BltBitMap( BitMap_c *dstbm, BitMap_c *srcbm, Rect_c	cSrcRect, Point2_c cDstPos )
+bool VesaDriver_c::BltBitMap( BitMap_c * dstbm, BitMap_c * srcbm, Rect_c cSrcRect, Point2_c cDstPos )
 {
-	if ( dstbm->m_bVideoMem && srcbm->m_bVideoMem && 0 )
+	if( dstbm->m_bVideoMem && srcbm->m_bVideoMem && 0 )
 	{
 #ifdef CIRRUS
-		int	nSrcAddr;
-		int	nDstAddr;
-		int	nMode;
+		int nSrcAddr;
+		int nDstAddr;
+		int nMode;
 
 		WriteBltReg( BLT_START, 0x04 );	// Reset blitter
 
@@ -988,18 +1001,18 @@ bool	VesaDriver_c::BltBitMap( BitMap_c *dstbm, BitMap_c *srcbm, Rect_c	cSrcRect,
 		SetDstPitch( 800 * 2 );
 		SetSrcPitch( 800 * 2 );
 
-		if ( cDstPos > cSrcRect.LeftTop() )
+		if( cDstPos > cSrcRect.LeftTop() )
 		{
-			Rect_c	cDstRect = cSrcRect.Bounds() + cDstPos;
+			Rect_c cDstRect = cSrcRect.Bounds() + cDstPos;
 
-			nDstAddr	=	cDstRect.MaxX * 2 + cDstRect.MaxY * 800 * 2 + 1;
-			nSrcAddr	=	cSrcRect.MaxX * 2 + cSrcRect.MaxY * 800 * 2 + 1;
+			nDstAddr = cDstRect.MaxX * 2 + cDstRect.MaxY * 800 * 2 + 1;
+			nSrcAddr = cSrcRect.MaxX * 2 + cSrcRect.MaxY * 800 * 2 + 1;
 			nMode = 0x01;	// Reverse
 		}
 		else
 		{
-	 		nDstAddr	=	cDstPos.X * 2 + cDstPos.Y * 800 * 2;
-			nSrcAddr	=	cSrcRect.MinX * 2 + cSrcRect.MinY * 800 * 2;
+			nDstAddr = cDstPos.X * 2 + cDstPos.Y * 800 * 2;
+			nSrcAddr = cSrcRect.MinX * 2 + cSrcRect.MinY * 800 * 2;
 			nMode = 0x00;
 		}
 
@@ -1014,96 +1027,103 @@ bool	VesaDriver_c::BltBitMap( BitMap_c *dstbm, BitMap_c *srcbm, Rect_c	cSrcRect,
 
 		WaitBlit();
 #else
-	S3Blit( cSrcRect.MinX, cSrcRect.MinY, cDstPos.X, cDstPos.Y, cSrcRect.Width(), cSrcRect.Height() );
-//	v_blit( cSrcRect.MinX, cSrcRect.MinY, cDstPos.X, cDstPos.Y, cSrcRect.Width(), cSrcRect.Height() );
+		S3Blit( cSrcRect.MinX, cSrcRect.MinY, cDstPos.X, cDstPos.Y, cSrcRect.Width(), cSrcRect.Height(  ) );
+//      v_blit( cSrcRect.MinX, cSrcRect.MinY, cDstPos.X, cDstPos.Y, cSrcRect.Width(), cSrcRect.Height() );
 #endif
 	}
 	else
 	{
-		int sx	=	cSrcRect.MinX;
-		int sy	=	cSrcRect.MinY;
-		int dx	=	cDstPos.X;
-		int dy	=	cDstPos.Y;
-		int w	=	cSrcRect.Width();
-		int h	=	cSrcRect.Height();
+		int sx = cSrcRect.MinX;
+		int sy = cSrcRect.MinY;
+		int dx = cDstPos.X;
+		int dy = cDstPos.Y;
+		int w = cSrcRect.Width();
+		int h = cSrcRect.Height();
 
-	#if 0
-		if ( srcbm == NULL )
+#if 0
+		if( srcbm == NULL )
 		{
-			int	BytesPerPix = 1;
+			int BytesPerPix = 1;
 
-			if ( dstbm->m_nBitsPerPixel > 8 )	BytesPerPix++;
-			if ( dstbm->m_nBitsPerPixel > 16 )	BytesPerPix++;
-			if ( dstbm->m_nBitsPerPixel > 24 )	BytesPerPix++;
+			if( dstbm->m_nBitsPerPixel > 8 )
+				BytesPerPix++;
+			if( dstbm->m_nBitsPerPixel > 16 )
+				BytesPerPix++;
+			if( dstbm->m_nBitsPerPixel > 24 )
+				BytesPerPix++;
 
-			switch( BytesPerPix )
+			switch ( BytesPerPix )
 			{
-				case 1:
-					FillBlit8( &dstbm->m_pRaster[dy * dstbm->m_nBytesPerLine + dx * BytesPerPix], dstbm->m_nBytesPerLine / BytesPerPix - w, w, h, 0 );
-					return( TRUE );
-	/*
-				case 2:
-					FillBlit16( (APTR) &dstbm->Raster[dy * dstbm->BytesPerLine + dx * BytesPerPix], dstbm->BytesPerLine / BytesPerPix - w, w, h, PenToRGB( dstbm->ColorMap, 0 ) );
-					return( TRUE );
-				case 3:
-					FillBlit24( &dstbm->Raster[dy * dstbm->BytesPerLine + dx * 3], dstbm->BytesPerLine - w * 3, w, h, PenToRGB( dstbm->ColorMap, 0 ) );
-					return( TRUE );
-	*/
+			case 1:
+				FillBlit8( &dstbm->m_pRaster[dy * dstbm->m_nBytesPerLine + dx * BytesPerPix], dstbm->m_nBytesPerLine / BytesPerPix - w, w, h, 0 );
+				return ( TRUE );
+				/*
+				   case 2:
+				   FillBlit16( (APTR) &dstbm->Raster[dy * dstbm->BytesPerLine + dx * BytesPerPix], dstbm->BytesPerLine / BytesPerPix - w, w, h, PenToRGB( dstbm->ColorMap, 0 ) );
+				   return( TRUE );
+				   case 3:
+				   FillBlit24( &dstbm->Raster[dy * dstbm->BytesPerLine + dx * 3], dstbm->BytesPerLine - w * 3, w, h, PenToRGB( dstbm->ColorMap, 0 ) );
+				   return( TRUE );
+				 */
 			}
-			return( TRUE );
+			return ( TRUE );
 		}
-	#endif
+#endif
 
-		if ( srcbm->m_nBitsPerPixel == dstbm->m_nBitsPerPixel )
+		if( srcbm->m_nBitsPerPixel == dstbm->m_nBitsPerPixel )
 		{
 			BitBlit( srcbm, dstbm, sx, sy, dx, dy, w, h );
 		}
 		else
 		{
-	#if 0
-			if ( srcbm->m_nBitsPerPixel == 8 )
+#if 0
+			if( srcbm->m_nBitsPerPixel == 8 )
 			{
-				switch( dstbm->m_nBitsPerPixel )
+				switch ( dstbm->m_nBitsPerPixel )
 				{
-					case 15:
-					case 16:
-						BitBlit8_16( srcbm, dstbm, sx, sy, dx, dy, w, h );
-						break;
-					case 24:
-						BitBlit8_24( srcbm, dstbm, sx, sy, dx, dy, w, h );
-						break;
+				case 15:
+				case 16:
+					BitBlit8_16( srcbm, dstbm, sx, sy, dx, dy, w, h );
+					break;
+				case 24:
+					BitBlit8_24( srcbm, dstbm, sx, sy, dx, dy, w, h );
+					break;
 				}
 			}
-	#endif
+#endif
 		}
-		return( TRUE );
+		return ( TRUE );
 	}
 }
 
 #if 0
-bool	VesaDriver_c::BltBitMap( BitMap_c *dstbm, BitMap_c *srcbm, Rect_c	cSrcRect, Point2_c cDstPos )
+bool VesaDriver_c::BltBitMap( BitMap_c * dstbm, BitMap_c * srcbm, Rect_c cSrcRect, Point2_c cDstPos )
 {
-	int sx	=	cSrcRect.MinX;
-	int sy	=	cSrcRect.MinY;
-	int dx	=	cDstPos.X;
-	int dy	=	cDstPos.Y;
-	int w	=	cSrcRect.Width();
-	int h	=	cSrcRect.Height();
+	int sx = cSrcRect.MinX;
+	int sy = cSrcRect.MinY;
+	int dx = cDstPos.X;
+	int dy = cDstPos.Y;
+	int w = cSrcRect.Width();
+	int h = cSrcRect.Height();
 
 #if 0
-	if ( srcbm == NULL )
+	if( srcbm == NULL )
 	{
-		int	BytesPerPix = 1;
+		int BytesPerPix = 1;
 
-		if ( dstbm->m_nBitsPerPixel > 8 )	BytesPerPix++;
-		if ( dstbm->m_nBitsPerPixel > 16 )	BytesPerPix++;
-		if ( dstbm->m_nBitsPerPixel > 24 )	BytesPerPix++;
+		if( dstbm->m_nBitsPerPixel > 8 )
+			BytesPerPix++;
+		if( dstbm->m_nBitsPerPixel > 16 )
+			BytesPerPix++;
+		if( dstbm->m_nBitsPerPixel > 24 )
+			BytesPerPix++;
 
-		switch( BytesPerPix )
+		switch ( BytesPerPix )
 		{
-			case 1:
-				FillBlit8( &dstbm->m_pRaster[dy * dstbm->BytesPerLine + dx * BytesPerPix], dstbm->BytesPerLine / BytesPerPix - w, w, h, 0 );
-				return( TRUE );
+		case 1:
+			FillBlit8( &dstbm->m_pRaster[dy * dstbm->BytesPerLine + dx * BytesPerPix], dstbm->BytesPerLine / BytesPerPix - w, w, h, 0 );
+			return ( TRUE );
+
 /*
 			case 2:
 				FillBlit16( (APTR) &dstbm->Raster[dy * dstbm->BytesPerLine + dx * BytesPerPix], dstbm->BytesPerLine / BytesPerPix - w, w, h, PenToRGB( dstbm->ColorMap, 0 ) );
@@ -1113,63 +1133,67 @@ bool	VesaDriver_c::BltBitMap( BitMap_c *dstbm, BitMap_c *srcbm, Rect_c	cSrcRect,
 				return( TRUE );
 */
 		}
-		return( TRUE );
+		return ( TRUE );
 	}
 #endif
 
-	if ( srcbm->BitsPerPixel == dstbm->BitsPerPixel )
+	if( srcbm->BitsPerPixel == dstbm->BitsPerPixel )
 	{
 		BitBlit( srcbm, dstbm, sx, sy, dx, dy, w, h );
 	}
 	else
 	{
 #if 0
-		if ( srcbm->BitsPerPixel == 8 )
+		if( srcbm->BitsPerPixel == 8 )
 		{
-			switch( dstbm->BitsPerPixel )
+			switch ( dstbm->BitsPerPixel )
 			{
-				case 15:
-				case 16:
-					BitBlit8_16( srcbm, dstbm, sx, sy, dx, dy, w, h );
-					break;
-				case 24:
-					BitBlit8_24( srcbm, dstbm, sx, sy, dx, dy, w, h );
-					break;
+			case 15:
+			case 16:
+				BitBlit8_16( srcbm, dstbm, sx, sy, dx, dy, w, h );
+				break;
+			case 24:
+				BitBlit8_24( srcbm, dstbm, sx, sy, dx, dy, w, h );
+				break;
 			}
 		}
 #endif
 	}
-	return( TRUE );
+	return ( TRUE );
 }
 #endif
 
 
-bool	VesaDriver_c::BltBitMapMask( BitMap_c *pcDstBitMap, BitMap_c *pcSrcBitMap, const Color32_s& sHighColor, const Color32_s& sLowColor, Rect_c	cSrcRect, Point2_c cDstPos )
+bool VesaDriver_c::BltBitMapMask( BitMap_c * pcDstBitMap, BitMap_c * pcSrcBitMap, const Color32_s & sHighColor, const Color32_s & sLowColor, Rect_c cSrcRect, Point2_c cDstPos )
 {
-	int	DX	=	cDstPos.X;
-	int	DY	=	cDstPos.Y;
+	int DX = cDstPos.X;
+	int DY = cDstPos.Y;
 
-	int	SX	=	cSrcRect.MinX;
-	int	SY	=	cSrcRect.MinY;
+	int SX = cSrcRect.MinX;
+	int SY = cSrcRect.MinY;
 
-	int	W		=	cSrcRect.Width();
-	int	H		=	cSrcRect.Height();
+	int W = cSrcRect.Width();
+	int H = cSrcRect.Height();
 
-	uint32	Fg	=	ConvertColor32(	sHighColor );
-	uint32	Bg	=	ConvertColor32(	sLowColor );
+	uint32 Fg = ConvertColor32( sHighColor );
+	uint32 Bg = ConvertColor32( sLowColor );
 
-	char	CB;
-	int	X,Y,SBit;
-	int	BytesPerPix = 1;
+	char CB;
+	int X, Y, SBit;
+	int BytesPerPix = 1;
 
-	uint32	BPR,SByte,DYoff;
+	uint32 BPR, SByte, DYoff;
 
-	BPR= pcSrcBitMap->m_nBytesPerLine;
+	BPR = pcSrcBitMap->m_nBytesPerLine;
 
 
-	if ( pcDstBitMap->m_nBitsPerPixel > 8 )	BytesPerPix++;
-	if ( pcDstBitMap->m_nBitsPerPixel > 16 )	BytesPerPix++;
-	if ( pcDstBitMap->m_nBitsPerPixel > 24 )	BytesPerPix++;
+	if( pcDstBitMap->m_nBitsPerPixel > 8 )
+		BytesPerPix++;
+	if( pcDstBitMap->m_nBitsPerPixel > 16 )
+		BytesPerPix++;
+	if( pcDstBitMap->m_nBitsPerPixel > 24 )
+		BytesPerPix++;
+
 /*
 	if ( BytesPerPix > 1 )
 	{
@@ -1179,141 +1203,142 @@ bool	VesaDriver_c::BltBitMapMask( BitMap_c *pcDstBitMap, BitMap_c *pcSrcBitMap, 
 */
 	switch ( BytesPerPix )
 	{
-		case 1:
-		case 2:
-			DYoff = DY * pcDstBitMap->m_nBytesPerLine / BytesPerPix;
-			break;
-		case 3:
-			DYoff = DY * pcDstBitMap->m_nBytesPerLine;
-			break;
-		default:
-			DYoff = DY * pcDstBitMap->m_nBytesPerLine;
-			kassertw( 0 );
-			break;
+	case 1:
+	case 2:
+		DYoff = DY * pcDstBitMap->m_nBytesPerLine / BytesPerPix;
+		break;
+	case 3:
+		DYoff = DY * pcDstBitMap->m_nBytesPerLine;
+		break;
+	default:
+		DYoff = DY * pcDstBitMap->m_nBytesPerLine;
+		kassertw( 0 );
+		break;
 	}
 
-	for ( Y = 0 ; Y < H ; Y++ )
+	for( Y = 0; Y < H; Y++ )
 	{
-		SByte = (SY*BPR)+(SX/8);
-		CB = pcSrcBitMap->m_pRaster[ SByte++ ];
-		SBit=7-(SX % 8);
+		SByte = ( SY * BPR ) + ( SX / 8 );
+		CB = pcSrcBitMap->m_pRaster[SByte++];
+		SBit = 7 - ( SX % 8 );
 
 		switch ( BytesPerPix )
 		{
-			case 1:
-				for ( X = 0 ; X < W ; X++ )
+		case 1:
+			for( X = 0; X < W; X++ )
+			{
+				if( CB & ( 1L << SBit ) )
 				{
-					if (CB & (1L<<SBit))
-					{
-						pcDstBitMap->m_pRaster[ DYoff + DX ] = Fg;
-					}
-					else
-					{
-						pcDstBitMap->m_pRaster[ DYoff + DX ] = Bg;
-					}
-					SX++;
-					DX++;
-					if (!SBit)
-					{
-						SBit=8;
-						CB = pcSrcBitMap->m_pRaster[ SByte++ ];
-					}
-					SBit--;
+					pcDstBitMap->m_pRaster[DYoff + DX] = Fg;
 				}
-				break;
-			case 2:
-				for ( X = 0 ; X < W ; X++ )
+				else
 				{
-					if (CB & (1L<<SBit))
-					{
-						((uint16*)pcDstBitMap->m_pRaster)[ DYoff + DX ] = Fg;
-					}
-					else
-					{
-						((uint16*)pcDstBitMap->m_pRaster)[ DYoff + DX ] = Bg;
-					}
-					SX++;
-					DX++;
-					if (!SBit)
-					{
-						SBit=8;
-						CB = pcSrcBitMap->m_pRaster[ SByte++ ];
-					}
-					SBit--;
+					pcDstBitMap->m_pRaster[DYoff + DX] = Bg;
 				}
-				break;
-			case 3:
-				for (X=0;X<W;X++)
+				SX++;
+				DX++;
+				if( !SBit )
 				{
-					if (CB & (1L<<SBit))
-					{
-						pcDstBitMap->m_pRaster[ DYoff + DX * 3 ] = Fg & 0xff;
-						((uint16*)&pcDstBitMap->m_pRaster[ DYoff + DX * 3 + 1 ])[0] = Fg >> 8;
-					}
-					else
-					{
-						pcDstBitMap->m_pRaster[ DYoff + DX * 3 ] = Bg & 0xff;
-						((uint16*)&pcDstBitMap->m_pRaster[ DYoff + DX * 3 + 1 ])[0] = Bg >> 8;
-					}
-					SX++;
-					DX++;
-					if (!SBit)
-					{
-						SBit=8;
-						CB = pcSrcBitMap->m_pRaster[ SByte++ ];
-					}
-					SBit--;
+					SBit = 8;
+					CB = pcSrcBitMap->m_pRaster[SByte++];
 				}
-				break;
+				SBit--;
+			}
+			break;
+		case 2:
+			for( X = 0; X < W; X++ )
+			{
+				if( CB & ( 1L << SBit ) )
+				{
+					( ( uint16 * )pcDstBitMap->m_pRaster )[DYoff + DX] = Fg;
+				}
+				else
+				{
+					( ( uint16 * )pcDstBitMap->m_pRaster )[DYoff + DX] = Bg;
+				}
+				SX++;
+				DX++;
+				if( !SBit )
+				{
+					SBit = 8;
+					CB = pcSrcBitMap->m_pRaster[SByte++];
+				}
+				SBit--;
+			}
+			break;
+		case 3:
+			for( X = 0; X < W; X++ )
+			{
+				if( CB & ( 1L << SBit ) )
+				{
+					pcDstBitMap->m_pRaster[DYoff + DX * 3] = Fg & 0xff;
+					( ( uint16 * )&pcDstBitMap->m_pRaster[DYoff + DX * 3 + 1] )[0] = Fg >> 8;
+				}
+				else
+				{
+					pcDstBitMap->m_pRaster[DYoff + DX * 3] = Bg & 0xff;
+					( ( uint16 * )&pcDstBitMap->m_pRaster[DYoff + DX * 3 + 1] )[0] = Bg >> 8;
+				}
+				SX++;
+				DX++;
+				if( !SBit )
+				{
+					SBit = 8;
+					CB = pcSrcBitMap->m_pRaster[SByte++];
+				}
+				SBit--;
+			}
+			break;
 		}
-	 	SX-=W;
-	 	DX-=W;
+		SX -= W;
+		DX -= W;
 
-	 	SY++;
-	 	DY++;
+		SY++;
+		DY++;
 
-		if ( BytesPerPix == 2)
-			DYoff	+= pcDstBitMap->m_nBytesPerLine / 2;
+		if( BytesPerPix == 2 )
+			DYoff += pcDstBitMap->m_nBytesPerLine / 2;
 		else
-			DYoff	+= pcDstBitMap->m_nBytesPerLine;
+			DYoff += pcDstBitMap->m_nBytesPerLine;
 	}
 }
 
-Color32_s	VesaDriver_c::ClutToCol( uint32 nClut )
+Color32_s VesaDriver_c::ClutToCol( uint32 nClut )
 {
-	Color32_s	sColor;
+	Color32_s sColor;
 
-	sColor.anRGBA[0]	=	(nClut >> m_pcCurMode->m_nRedPos) << (8 - m_pcCurMode->m_nRedBits);
-	sColor.anRGBA[1]	=	(nClut >> m_pcCurMode->m_nGreenPos) << (8 - m_pcCurMode->m_nGreenBits);
- 	sColor.anRGBA[2]	=	(nClut >> m_pcCurMode->m_nBluePos) << (8 - m_pcCurMode->m_nBlueBits);
+	sColor.anRGBA[0] = ( nClut >> m_pcCurMode->m_nRedPos ) << ( 8 - m_pcCurMode->m_nRedBits );
+	sColor.anRGBA[1] = ( nClut >> m_pcCurMode->m_nGreenPos ) << ( 8 - m_pcCurMode->m_nGreenBits );
+	sColor.anRGBA[2] = ( nClut >> m_pcCurMode->m_nBluePos ) << ( 8 - m_pcCurMode->m_nBlueBits );
 
-	return( sColor );
+	return ( sColor );
 }
 
-bool	VesaDriver_c::RenderGlyph( BitMap_c *pcBitmap, Glyph_c* pcGlyph, const Point2_c& cPos, const Rect_c& cClipRect, uint32* anPalette )
+bool VesaDriver_c::RenderGlyph( BitMap_c * pcBitmap, Glyph_c * pcGlyph, const Point2_c & cPos, const Rect_c & cClipRect, uint32 *anPalette )
 {
-	Rect_c	cBounds	= pcGlyph->m_cBounds + cPos;
-	Rect_c	cRect 	= cBounds & cClipRect;
+	Rect_c cBounds = pcGlyph->m_cBounds + cPos;
+	Rect_c cRect = cBounds & cClipRect;
 
-	if ( cRect.IsValid() )
+	if( cRect.IsValid() )
 	{
-		int	sx = cRect.MinX - cBounds.MinX;
-		int	sy = cRect.MinY - cBounds.MinY;
+		int sx = cRect.MinX - cBounds.MinX;
+		int sy = cRect.MinY - cBounds.MinY;
 
-		int	nWidth	=	cRect.Width();
-		int	nHeight	=	cRect.Height();
+		int nWidth = cRect.Width();
+		int nHeight = cRect.Height();
 
-		int	nSrcModulo	=	pcGlyph->m_nBytesPerLine - nWidth;
-		int	nDstModulo	=	pcBitmap->m_nBytesPerLine / 2 - nWidth;
+		int nSrcModulo = pcGlyph->m_nBytesPerLine - nWidth;
+		int nDstModulo = pcBitmap->m_nBytesPerLine / 2 - nWidth;
 
-		uint8*	pSrc = pcGlyph->m_pRaster + sx + sy * pcGlyph->m_nBytesPerLine;
-		uint16*	pDst = (uint16*)pcBitmap->m_pRaster + cRect.MinX + (cRect.MinY * pcBitmap->m_nBytesPerLine / 2);
+		uint8 *pSrc = pcGlyph->m_pRaster + sx + sy * pcGlyph->m_nBytesPerLine;
+		uint16 *pDst = ( uint16 * )pcBitmap->m_pRaster + cRect.MinX + ( cRect.MinY * pcBitmap->m_nBytesPerLine / 2 );
 
-		for ( int y = 0 ; y < nHeight ; ++y )
+		for( int y = 0; y < nHeight; ++y )
 		{
-			for ( int x = 0 ; x < nWidth ; ++x )
+			for( int x = 0; x < nWidth; ++x )
 			{
-				int	nPix = *pSrc++;
+				int nPix = *pSrc++;
+
 /*
 				Color32_s		sCurCol;
 				Color32_s		sFgColor;
@@ -1321,22 +1346,24 @@ bool	VesaDriver_c::RenderGlyph( BitMap_c *pcBitmap, Glyph_c* pcGlyph, const Poin
 
 				*((uint32*)&sBgColor) = *pDst;
 */
-				if ( nPix > 0 ) {
+				if( nPix > 0 )
+				{
+
 /*
 					for ( int j = 0 ; j < 3 ; ++j ) {
 						sCurCol.anRGBA[ j ] = sBgColor.anRGBA[ j ] + (sFgColor.anRGBA[ j ] - sBgColor.anRGBA[ j ]) * nPix / 4;
 					}
 					*pDst = ConvertColor32( sCurCol ); // anPalette[ nPix - 1 ];
 */
-					*pDst = anPalette[ nPix - 1 ];
+					*pDst = anPalette[nPix - 1];
 				}
 				pDst++;
 			}
-			pSrc	+= nSrcModulo;
-			pDst	+= nDstModulo;
+			pSrc += nSrcModulo;
+			pDst += nDstModulo;
 		}
 	}
-	return( true );
+	return ( true );
 }
 
 
@@ -1344,60 +1371,61 @@ bool	VesaDriver_c::RenderGlyph( BitMap_c *pcBitmap, Glyph_c* pcGlyph, const Poin
 
 
 
-bool	VesaDriver_c::RenderGlyph( BitMap_c *pcBitmap, Glyph_c* pcGlyph, const Point2_c& cPos, const Rect_c& cClipRect, const Color32_s& sFgColor )
+bool VesaDriver_c::RenderGlyph( BitMap_c * pcBitmap, Glyph_c * pcGlyph, const Point2_c & cPos, const Rect_c & cClipRect, const Color32_s & sFgColor )
 {
-	Rect_c	cBounds	= pcGlyph->m_cBounds + cPos;
-	Rect_c	cRect 	= cBounds & cClipRect;
+	Rect_c cBounds = pcGlyph->m_cBounds + cPos;
+	Rect_c cRect = cBounds & cClipRect;
 
-	if ( cRect.IsValid() )
+	if( cRect.IsValid() )
 	{
-		int	sx = cRect.MinX - cBounds.MinX;
-		int	sy = cRect.MinY - cBounds.MinY;
+		int sx = cRect.MinX - cBounds.MinX;
+		int sy = cRect.MinY - cBounds.MinY;
 
-		int	nWidth	=	cRect.Width();
-		int	nHeight	=	cRect.Height();
+		int nWidth = cRect.Width();
+		int nHeight = cRect.Height();
 
-		int	nSrcModulo	=	pcGlyph->m_nBytesPerLine - nWidth;
-		int	nDstModulo	=	pcBitmap->m_nBytesPerLine / 2 - nWidth;
+		int nSrcModulo = pcGlyph->m_nBytesPerLine - nWidth;
+		int nDstModulo = pcBitmap->m_nBytesPerLine / 2 - nWidth;
 
-		uint8*	pSrc = pcGlyph->m_pRaster + sx + sy * pcGlyph->m_nBytesPerLine;
-		uint16*	pDst = (uint16*)pcBitmap->m_pRaster + cRect.MinX + (cRect.MinY * pcBitmap->m_nBytesPerLine / 2);
+		uint8 *pSrc = pcGlyph->m_pRaster + sx + sy * pcGlyph->m_nBytesPerLine;
+		uint16 *pDst = ( uint16 * )pcBitmap->m_pRaster + cRect.MinX + ( cRect.MinY * pcBitmap->m_nBytesPerLine / 2 );
 
-		Color32_s		sCurCol;
- 		Color32_s		sBgColor;
+		Color32_s sCurCol;
+		Color32_s sBgColor;
 
 
 		int nFgClut = ConvertColor32( sFgColor );
 
-		for ( int y = 0 ; y < nHeight ; ++y )
+		for( int y = 0; y < nHeight; ++y )
 		{
-			for ( int x = 0 ; x < nWidth ; ++x )
+			for( int x = 0; x < nWidth; ++x )
 			{
-				int	nPix = *pSrc++;
+				int nPix = *pSrc++;
 
-				if ( nPix > 0 )
+				if( nPix > 0 )
 				{
-					if ( nPix == 4 )
+					if( nPix == 4 )
 					{
 						*pDst = nFgClut;
 					}
 					else
 					{
-						int	nClut = *pDst;
+						int nClut = *pDst;
 
-		 				sBgColor = ClutToCol( nClut );
+						sBgColor = ClutToCol( nClut );
 
-						for ( int j = 0 ; j < 3 ; ++j ) {
-							sCurCol.anRGBA[ j ] = sBgColor.anRGBA[ j ] + (sFgColor.anRGBA[ j ] - sBgColor.anRGBA[ j ]) * nPix / 4;
+						for( int j = 0; j < 3; ++j )
+						{
+							sCurCol.anRGBA[j] = sBgColor.anRGBA[j] + ( sFgColor.anRGBA[j] - sBgColor.anRGBA[j] ) * nPix / 4;
 						}
 						*pDst = ConvertColor32( sCurCol );
 					}
 				}
 				pDst++;
 			}
-			pSrc	+= nSrcModulo;
-			pDst	+= nDstModulo;
+			pSrc += nSrcModulo;
+			pDst += nDstModulo;
 		}
 	}
-	return( true );
+	return ( true );
 }

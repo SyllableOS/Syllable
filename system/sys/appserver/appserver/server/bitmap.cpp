@@ -1,3 +1,4 @@
+
 /*
  *  The AtheOS application server
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -35,32 +36,40 @@ using namespace os;
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-SrvBitmap::SrvBitmap( int nWidth, int nHeight, color_space eColorSpc, uint8* pRaster, int nBytesPerLine )
+SrvBitmap::SrvBitmap( int nWidth, int nHeight, color_space eColorSpc, uint8 *pRaster, int nBytesPerLine )
 {
-    m_nFlags		= 0;
-    m_nWidth		= nWidth;
-    m_nHeight		= nHeight;
-    m_eColorSpc		= eColorSpc;
-    m_pcDriver		= NULL;
-    m_bVideoMem		= false;
-    m_hArea	        = -1;
-  
-    if ( nBytesPerLine != 0 ) {
-	m_nBytesPerLine = nBytesPerLine;
-    } else {
-	int nBitsPerPixel = BitsPerPixel( eColorSpc );
-	if ( nBitsPerPixel == 15 ) {
-	    nBitsPerPixel = 16;
+	m_nFlags = 0;
+	m_nWidth = nWidth;
+	m_nHeight = nHeight;
+	m_eColorSpc = eColorSpc;
+	m_pcDriver = NULL;
+	m_bVideoMem = false;
+	m_hArea = -1;
+
+	if( nBytesPerLine != 0 )
+	{
+		m_nBytesPerLine = nBytesPerLine;
 	}
-	m_nBytesPerLine = (nWidth * nBitsPerPixel ) / 8;
-    }
-    if ( m_nWidth == 0 || pRaster != NULL ) {
-	m_bFreeRaster = false;
-	m_pRaster = pRaster;
-    } else {
-	m_bFreeRaster = true;
-	m_pRaster = (uint8*) calloc( m_nHeight, m_nBytesPerLine );
-    }
+	else
+	{
+		int nBitsPerPixel = BitsPerPixel( eColorSpc );
+
+		if( nBitsPerPixel == 15 )
+		{
+			nBitsPerPixel = 16;
+		}
+		m_nBytesPerLine = ( nWidth * nBitsPerPixel ) / 8;
+	}
+	if( m_nWidth == 0 || pRaster != NULL )
+	{
+		m_bFreeRaster = false;
+		m_pRaster = pRaster;
+	}
+	else
+	{
+		m_bFreeRaster = true;
+		m_pRaster = ( uint8 * )calloc( m_nHeight, m_nBytesPerLine );
+	}
 }
 
 //----------------------------------------------------------------------------
@@ -72,12 +81,14 @@ SrvBitmap::SrvBitmap( int nWidth, int nHeight, color_space eColorSpc, uint8* pRa
 
 SrvBitmap::~SrvBitmap()
 {
-    if ( m_bFreeRaster ) {
-	delete[] m_pRaster;
-    }
-    if ( m_hArea >= 0 ) {
-	delete_area( m_hArea );
-    }
+	if( m_bFreeRaster )
+	{
+		delete[]m_pRaster;
+	}
+	if( m_hArea >= 0 )
+	{
+		delete_area( m_hArea );
+	}
 }
 
 
@@ -88,11 +99,11 @@ SrvBitmap::~SrvBitmap()
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-BitmapNode::BitmapNode( SrvBitmap* pcBitmap )
+BitmapNode::BitmapNode( SrvBitmap * pcBitmap )
 {
-    pcBitmap->AddRef();
-    m_pcBitmap = pcBitmap;
-    m_hHandle  = g_pcBitmaps->Insert( this );
+	pcBitmap->AddRef();
+	m_pcBitmap = pcBitmap;
+	m_hHandle = g_pcBitmaps->Insert( this );
 }
 
 //----------------------------------------------------------------------------
@@ -104,6 +115,6 @@ BitmapNode::BitmapNode( SrvBitmap* pcBitmap )
 
 BitmapNode::~BitmapNode()
 {
-    g_pcBitmaps->Remove( m_hHandle );
-    m_pcBitmap->Release();
+	g_pcBitmaps->Remove( m_hHandle );
+	m_pcBitmap->Release();
 }

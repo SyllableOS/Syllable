@@ -1,3 +1,4 @@
+
 /*
  *  The AtheOS application server
  *  Copyright (C) 1999  Kurt Skauen
@@ -48,7 +49,7 @@
 #define  s3trio_DAC     3
 
 // Internal resolution id.
-#define vga640x480		1		// resolutions
+#define vga640x480		1	// resolutions
 #define vga800x600		2
 #define vga1024x768		3
 #define vga1152x900     4
@@ -331,90 +332,89 @@
 // 864 table
 //----------------------------------------------------------
 #if 0
-static uint16	vga_864_table[] =
-{
-	0x3c4,	0x0d,	0x3c5,	0x00,	// Screen saving
+static uint16 vga_864_table[] = {
+	0x3c4, 0x0d, 0x3c5, 0x00,	// Screen saving
 
-	0x3d4,	0x31,	0x3d5,	0x8c,	// Memory config
-	0x3d4,	0x32,	0x3d5,	0x00,	// Backward Compatibility 1
-	0x3d4,	0x33,	0x3d5,	0x02,	// Backward Compatibility 2
-	0x3d4,	0x34,	0x3d5,	0x10,	// Backward compatibility 3
-	0x3d4,	0x35,	0x3d5,	0x00,	// CRT Register Lock
-	0x3d4,	0x37,	0x3d5,	0xfb,	// Configuration 2
-	0x3d4,	0x3a,	0x3d5,	0x95,	// Miscellaneous 1
-	0x3d4,	0x3c,	0x3d5,	0x40,	// Interlace Retrace Start
+	0x3d4, 0x31, 0x3d5, 0x8c,	// Memory config
+	0x3d4, 0x32, 0x3d5, 0x00,	// Backward Compatibility 1
+	0x3d4, 0x33, 0x3d5, 0x02,	// Backward Compatibility 2
+	0x3d4, 0x34, 0x3d5, 0x10,	// Backward compatibility 3
+	0x3d4, 0x35, 0x3d5, 0x00,	// CRT Register Lock
+	0x3d4, 0x37, 0x3d5, 0xfb,	// Configuration 2
+	0x3d4, 0x3a, 0x3d5, 0x95,	// Miscellaneous 1
+	0x3d4, 0x3c, 0x3d5, 0x40,	// Interlace Retrace Start
 
-	0x3d4,	0x40,	0x3d5,	0xd1,	// (d1)System Configuration (?)
-	0x3d4,	0x42,	0x3d5,	0x03,	// (02)Mode Control
-	0x3d4,	0x43,	0x3d5,	0x00,	// Extended Mode
-	0x3d4,	0x45,	0x3d5,	0x04,	// (00)Hardware Graphics Cursor Mode
+	0x3d4, 0x40, 0x3d5, 0xd1,	// (d1)System Configuration (?)
+	0x3d4, 0x42, 0x3d5, 0x03,	// (02)Mode Control
+	0x3d4, 0x43, 0x3d5, 0x00,	// Extended Mode
+	0x3d4, 0x45, 0x3d5, 0x04,	// (00)Hardware Graphics Cursor Mode
 
-	0x3d4,	0x52,	0x3d5,	0x00,	// Extended BIOS Flag 1
-	0x3d4,	0x53,	0x3d5,	0x00,	// Extended Memory Cont 1
-	0x3d4,	0x55,	0x3d5,	0x40,	// (00)Extended DAC Control
-	0x3d4,	0x56,	0x3d5,	0x10,	// (00)External Sync Cont 1
-	0x3d4,	0x57,	0x3d5,	0x00,	// External Sync Cont 2
-	0x3d4,	0x5b,	0x3d5,	0x88, 	// (00)Extended BIOS Flag 2
-	0x3d4,	0x5c,	0x3d5,	0x03, 	// General Out Port
-	0x3d4,	0x5f,	0x3d5,	0x00,	// Bus Grant Termination Position
-	0x3d4,	0x63,	0x3d5,	0x00,	// External Sync Delay Adjust High
-	0x3d4,	0x64,	0x3d5,	0x00,	// Genlocking Adjustment
-	0x3d4,	0x65,	0x3d5,	0x02, 	// (00)Extended Miscellaneous Control
-	0x3d4,	0x66,	0x3d5,	0x00, 	// Extended Miscellaneous Control 1
-	0x3d4,	0x6a,	0x3d5,	0x00,	// Extended System Control 4
-	0x3d4,	0x6b,	0x3d5,	0x00,	// Extended BIOS flags 3
-	0x3d4,	0x6c,	0x3d5,	0x00,	// Extended BIOS flags 4
-	0x3d4,	0x6d,	0x3d5,	0x02,	// Extended Miscellaneous Control
-	0x000,	0x00	           		// End-of-table
+	0x3d4, 0x52, 0x3d5, 0x00,	// Extended BIOS Flag 1
+	0x3d4, 0x53, 0x3d5, 0x00,	// Extended Memory Cont 1
+	0x3d4, 0x55, 0x3d5, 0x40,	// (00)Extended DAC Control
+	0x3d4, 0x56, 0x3d5, 0x10,	// (00)External Sync Cont 1
+	0x3d4, 0x57, 0x3d5, 0x00,	// External Sync Cont 2
+	0x3d4, 0x5b, 0x3d5, 0x88,	// (00)Extended BIOS Flag 2
+	0x3d4, 0x5c, 0x3d5, 0x03,	// General Out Port
+	0x3d4, 0x5f, 0x3d5, 0x00,	// Bus Grant Termination Position
+	0x3d4, 0x63, 0x3d5, 0x00,	// External Sync Delay Adjust High
+	0x3d4, 0x64, 0x3d5, 0x00,	// Genlocking Adjustment
+	0x3d4, 0x65, 0x3d5, 0x02,	// (00)Extended Miscellaneous Control
+	0x3d4, 0x66, 0x3d5, 0x00,	// Extended Miscellaneous Control 1
+	0x3d4, 0x6a, 0x3d5, 0x00,	// Extended System Control 4
+	0x3d4, 0x6b, 0x3d5, 0x00,	// Extended BIOS flags 3
+	0x3d4, 0x6c, 0x3d5, 0x00,	// Extended BIOS flags 4
+	0x3d4, 0x6d, 0x3d5, 0x02,	// Extended Miscellaneous Control
+	0x000, 0x00		// End-of-table
 };
 #endif
-static uint16	vga_virge_table[] =
-{
+static uint16 vga_virge_table[] = {
 	0, 0
-#if 0	
-//	SEQ_INDEX,  0x09,   SEQ_DATA,  0x80,   // IO map disable
-	SEQ_INDEX,  0x0a,   SEQ_DATA,  0xe0, //0x40,   // External bus request (was 0x80/0xc0)
-	SEQ_INDEX,  0x0d,   SEQ_DATA,  0x00,   // Extended sequencer 1
-	SEQ_INDEX,  0x14,   SEQ_DATA,  0x00,   // CLKSYN
-	SEQ_INDEX,  0x18,   SEQ_DATA,  0x00,   // RAMDAC/CLKSYN
+#if 0
+//      SEQ_INDEX,  0x09,   SEQ_DATA,  0x80,   // IO map disable
+		SEQ_INDEX, 0x0a, SEQ_DATA, 0xe0,	//0x40,   // External bus request (was 0x80/0xc0)
+	SEQ_INDEX, 0x0d, SEQ_DATA, 0x00,	// Extended sequencer 1
+	SEQ_INDEX, 0x14, SEQ_DATA, 0x00,	// CLKSYN
+	SEQ_INDEX, 0x18, SEQ_DATA, 0x00,	// RAMDAC/CLKSYN
 
-	CRTC_INDEX,	0x11,   CRTC_DATA,	0x0c,	// CRTC regs 0-7 unlocked, v_ret_end = 0x0c
-	CRTC_INDEX,	0x31,	CRTC_DATA,	0x0c, //0x08,//0x8c,	// Memory config (0x08)
-	CRTC_INDEX,	0x32,	CRTC_DATA,	0x00,	// all interrupt disenabled
-	CRTC_INDEX,	0x33,	CRTC_DATA,	0x22,	// Backward Compatibility 2
-	CRTC_INDEX,	0x34,	CRTC_DATA,	0x00,	// Backward compatibility 3
-	CRTC_INDEX,	0x35,	CRTC_DATA,	0x00,	// CRT Register Lock
+	CRTC_INDEX, 0x11, CRTC_DATA, 0x0c,	// CRTC regs 0-7 unlocked, v_ret_end = 0x0c
+	CRTC_INDEX, 0x31, CRTC_DATA, 0x0c,	//0x08,//0x8c,    // Memory config (0x08)
+	CRTC_INDEX, 0x32, CRTC_DATA, 0x00,	// all interrupt disenabled
+	CRTC_INDEX, 0x33, CRTC_DATA, 0x22,	// Backward Compatibility 2
+	CRTC_INDEX, 0x34, CRTC_DATA, 0x00,	// Backward compatibility 3
+	CRTC_INDEX, 0x35, CRTC_DATA, 0x00,	// CRT Register Lock
 
-	CRTC_INDEX,	0x37,	CRTC_DATA,	0xff, /* want 0x19, bios has 0xff : bit 1 is magic :-(
-											 Trio32/64 databook says bit 1 is 0 for test, 1 for
-											 normal operation.  Must be a documentation error? */
-	CRTC_INDEX,	0x66,	CRTC_DATA,	0x01, 	// Extended Miscellaneous Control 1 (enable)
+	CRTC_INDEX, 0x37, CRTC_DATA, 0xff,	/* want 0x19, bios has 0xff : bit 1 is magic :-(
+						   Trio32/64 databook says bit 1 is 0 for test, 1 for
+						   normal operation.  Must be a documentation error? */
+	CRTC_INDEX, 0x66, CRTC_DATA, 0x01,	// Extended Miscellaneous Control 1 (enable)
 	//?? 0x66 first?
-	CRTC_INDEX,	0x3a,	CRTC_DATA,	0x15, //0x95,	// Miscellaneous 1 //95
-	//CRTC_INDEX,	0x3c,	CRTC_DATA,	0x40,	// Interlace Retrace Start
+	CRTC_INDEX, 0x3a, CRTC_DATA, 0x15,	//0x95,   // Miscellaneous 1 //95
+	//CRTC_INDEX,   0x3c,   CRTC_DATA,      0x40,   // Interlace Retrace Start
 
-	CRTC_INDEX,	0x42,	CRTC_DATA,	0x00,	// Mode Control (non interlace)
-	CRTC_INDEX,	0x43,	CRTC_DATA,	0x00,	// Extended Mode
-	CRTC_INDEX,	0x45,	CRTC_DATA,	0x00,	// Hardware Graphics Cursor Mode
+	CRTC_INDEX, 0x42, CRTC_DATA, 0x00,	// Mode Control (non interlace)
+	CRTC_INDEX, 0x43, CRTC_DATA, 0x00,	// Extended Mode
+	CRTC_INDEX, 0x45, CRTC_DATA, 0x00,	// Hardware Graphics Cursor Mode
 
-	//CRTC_INDEX,	0x52,	CRTC_DATA,	0x00,	// Extended BIOS Flag 1
-	CRTC_INDEX,	0x53,	CRTC_DATA,	0x08,	// Extended Memory Cont 1
-	CRTC_INDEX,	0x54,	CRTC_DATA,	0x02,	// Extended Memory Cont 2
-	CRTC_INDEX,	0x55,	CRTC_DATA,	0x00,	// Extended DAC Control
-	CRTC_INDEX,	0x56,	CRTC_DATA,	0x00,	// External Sync Cont 1
-	//CRTC_INDEX,	0x57,	CRTC_DATA,	0x00,	// External Sync Cont 2
-	CRTC_INDEX,	0x5c,	CRTC_DATA,	0x00, 	// General Out Port
-	CRTC_INDEX,	0x61,	CRTC_DATA,	0x00,	// Extended Memory Cont 4 pg 18-23
-	CRTC_INDEX,	0x63,	CRTC_DATA,	0x00,	// External Sync Delay Adjust High
-	CRTC_INDEX,	0x65,	CRTC_DATA,	0x00, 	// Extended Miscellaneous Control 0x24
-	CRTC_INDEX,	0x6a,	CRTC_DATA,	0x00,	// Extended System Control 4
-	CRTC_INDEX,	0x6b,	CRTC_DATA,	0x00,	// Extended BIOS flags 3
-	CRTC_INDEX,	0x6c,	CRTC_DATA,	0x00,	// Extended BIOS flags 4
-	0x000,	0x00			        // End-of-table
-#endif	
+	//CRTC_INDEX,   0x52,   CRTC_DATA,      0x00,   // Extended BIOS Flag 1
+	CRTC_INDEX, 0x53, CRTC_DATA, 0x08,	// Extended Memory Cont 1
+	CRTC_INDEX, 0x54, CRTC_DATA, 0x02,	// Extended Memory Cont 2
+	CRTC_INDEX, 0x55, CRTC_DATA, 0x00,	// Extended DAC Control
+	CRTC_INDEX, 0x56, CRTC_DATA, 0x00,	// External Sync Cont 1
+	//CRTC_INDEX,   0x57,   CRTC_DATA,      0x00,   // External Sync Cont 2
+	CRTC_INDEX, 0x5c, CRTC_DATA, 0x00,	// General Out Port
+	CRTC_INDEX, 0x61, CRTC_DATA, 0x00,	// Extended Memory Cont 4 pg 18-23
+	CRTC_INDEX, 0x63, CRTC_DATA, 0x00,	// External Sync Delay Adjust High
+	CRTC_INDEX, 0x65, CRTC_DATA, 0x00,	// Extended Miscellaneous Control 0x24
+	CRTC_INDEX, 0x6a, CRTC_DATA, 0x00,	// Extended System Control 4
+	CRTC_INDEX, 0x6b, CRTC_DATA, 0x00,	// Extended BIOS flags 3
+	CRTC_INDEX, 0x6c, CRTC_DATA, 0x00,	// Extended BIOS flags 4
+	0x000, 0x00		// End-of-table
+#endif
 };
 
 // internal struct used to clone the add-on from server space to client space
+
 /*
 typedef struct {
     int	    theVGA;
@@ -493,16 +493,16 @@ typedef struct {
 
 
 
-void	EnableS3( void )
+void EnableS3( void )
 {
-	outb_p( 0x38,0x3d4 );
-	outb_p( 0x48,0x3d5 );
+	outb_p( 0x38, 0x3d4 );
+	outb_p( 0x48, 0x3d5 );
 
-	outb_p( 0x39,0x3d4 );
-	outb_p( 0xa5,0x3d5 );
+	outb_p( 0x39, 0x3d4 );
+	outb_p( 0xa5, 0x3d5 );
 
-	outb_p( 0x40,0x3d4 );
-	outb_p( inb_p( 0x3d5 ) | 0x01 ,0x3d5 );
+	outb_p( 0x40, 0x3d4 );
+	outb_p( inb_p( 0x3d5 ) | 0x01, 0x3d5 );
 
 
 
@@ -511,26 +511,28 @@ void	EnableS3( void )
 }
 
 // All the other table settings are done with that very simple function.
-static void	set_table(uint16 *ptr)
+static void set_table( uint16 *ptr )
 {
-	uint16	p1;
-	uint16	p2;
+	uint16 p1;
+	uint16 p2;
 
-	while (TRUE) {
+	while( TRUE )
+	{
 		p1 = *ptr++;
 		p2 = *ptr++;
-		if (p1 == 0 && p2 == 0) {
+		if( p1 == 0 && p2 == 0 )
+		{
 			return;
 		}
-		outpb(p1, p2);
+		outpb( p1, p2 );
 	}
 }
 
 
-void	InitS3( void )
+void InitS3( void )
 {
 #if 0
-	set_table(vga_864_table);
+	set_table( vga_864_table );
 #else
 	set_table( vga_virge_table );
 #endif
@@ -538,82 +540,89 @@ void	InitS3( void )
 
 
 
-void wait_vga_hw(void)
+void wait_vga_hw( void )
 {
-	while (inw_p(GP_STAT) & 0x200)
-		/*** EMPTY ***/;
+	while( inw_p( GP_STAT ) & 0x200 )
 
-//		Delay(40);
+		/*** EMPTY ***/ ;
+
+//              Delay(40);
 }
 
-long S3DrawLine_32( long   x1, long x2, long y1, long y2, uint color, bool useClip, short clipLeft, short clipTop, short clipRight, short clipBottom );
+long S3DrawLine_32( long x1, long x2, long y1, long y2, uint color, bool useClip, short clipLeft, short clipTop, short clipRight, short clipBottom );
 
 // Stroke a line in 32 bits mode. (see documentation for more informations)
 // NB: this call will probably be used in future version for 16 bits line too.
-long S3DrawLine_32( long   x1,         // Coordinates of the two extremities
-			 long   y1,         //
-			 long   x2,         //
-			 long   y2,         //
-			 uint color,      	// RGB color
-			 bool   useClip,    // Clipping enabling
-			 short  clipLeft,   // Definition of the cliping rectangle if
-			 short  clipTop,    // cliping enabled
-			 short  clipRight,  //
-			 short  clipBottom) //
+long S3DrawLine_32( long x1,	// Coordinates of the two extremities
+	long y1,		//
+	long x2,		//
+	long y2,		//
+	uint color,		// RGB color
+	bool useClip,		// Clipping enabling
+	short clipLeft,		// Definition of the cliping rectangle if
+	short clipTop,		// cliping enabled
+	short clipRight,	//
+	short clipBottom )	//
 {
-	short		command;
-	short		min1, max1;
-	long    abs_dx, abs_dy;
+	short command;
+	short min1, max1;
+	long abs_dx, abs_dy;
 
 // This call is using the graphic engine and access video memory, so we need to
 // get the lock graphic-engine benaphore.
 
-//	lock_ge();
+//      lock_ge();
 
 // Refer to any s3 chip databook (864, 964, trio32, trio64 and more) to get
 // more information about specific graphic engine operation.
 // The cliping rectangle is discribed with 12 bits values.
-	if (useClip) {
-		outpw(DATA_REG, SCISSORS_T | (clipTop & 0xfff));
-		outpw(DATA_REG, SCISSORS_L | (clipLeft & 0xfff));
-		outpw(DATA_REG, SCISSORS_B | (clipBottom & 0xfff));
-		outpw(DATA_REG, SCISSORS_R | (clipRight & 0xfff));
+	if( useClip )
+	{
+		outpw( DATA_REG, SCISSORS_T | ( clipTop & 0xfff ) );
+		outpw( DATA_REG, SCISSORS_L | ( clipLeft & 0xfff ) );
+		outpw( DATA_REG, SCISSORS_B | ( clipBottom & 0xfff ) );
+		outpw( DATA_REG, SCISSORS_R | ( clipRight & 0xfff ) );
 	}
-	else {
-		outpw(DATA_REG, SCISSORS_T | 0);
-		outpw(DATA_REG, SCISSORS_L | 0);
-		outpw(DATA_REG, SCISSORS_B | 0x7ff);
-		outpw(DATA_REG, SCISSORS_R | 0x7ff);
+	else
+	{
+		outpw( DATA_REG, SCISSORS_T | 0 );
+		outpw( DATA_REG, SCISSORS_L | 0 );
+		outpw( DATA_REG, SCISSORS_B | 0x7ff );
+		outpw( DATA_REG, SCISSORS_R | 0x7ff );
 	}
 
 // Standard comand for x and y negative directions, and x major axis.
 	command = 0x2413;
 
 // Check for positive y direction.
-	if (y1 < y2)
-		command |= 0x80;
+	if( y1 < y2 )
+		command |=0x80;
 
 // Calculate vector coordinates...
-	abs_dx = abs(x2-x1);
-	abs_dy = abs(y2-y1);
+	abs_dx = abs( x2 - x1 );
+	abs_dy = abs( y2 - y1 );
 
 // ...and check orientation.
-	if (abs_dx > abs_dy) {
+	if( abs_dx > abs_dy )
+	{
 		max1 = abs_dx;
 		min1 = abs_dy;
 	}
-	else {
+	else
+	{
 		max1 = abs_dy;
 		min1 = abs_dx;
-  // Command correction when y is the major axis.
-		command |= 0x40;
+		// Command correction when y is the major axis.
+		command |=0x40;
 	}
 
 // Wait for 3 empty FIFO slots.
-	if (inw_p(CMD) & 0x20)
-		do {
-		  //		Delay(40);
-		} while (inw_p(CMD) & 0x20);
+	if( inw_p( CMD ) & 0x20 )
+		do
+		{
+			//            Delay(40);
+		}
+		while( inw_p( CMD ) & 0x20 );
 
 // Select mode code (copy), color and reset pixel control.
 //
@@ -625,69 +634,74 @@ long S3DrawLine_32( long   x1,         // Coordinates of the two extremities
 // For example, on the PPC Bebox, if rgba_order is "rgba", then the red channel
 // is coded in the highest byte of the ulong (0x##000000), as we're using
 // big-endian.
-	outpw(FRGD_MIX, 0x27);
-	outpl(FRGD_COLOR, color);
-	outpw(DATA_REG, PIX_CNTL);
+	outpw( FRGD_MIX, 0x27 );
+	outpl( FRGD_COLOR, color );
+	outpw( DATA_REG, PIX_CNTL );
 
 // Wait for 7 empty FIFO slots.
-	if (inw_p(CMD) & 0x02)
-		do {
-		  //			Delay(40);
-		} while (inw_p(CMD) & 0x02);
+	if( inw_p( CMD ) & 0x02 )
+		do
+		{
+			//                    Delay(40);
+		}
+		while( inw_p( CMD ) & 0x02 );
 
 // Send geometric description of the line in graphic engine format
 	outpw( CUR_X, x1 );
 	outpw( CUR_Y, y1 );
 	outpw( MAJ_AXIS_PCNT, max1 );
-	outpw( DESTX_DIASTP, 2 * (min1 - max1));
-	outpw( DESTY_AXSTP, 2 * min1);
-	if ((x2 - x1) > 0) {
-		outpw(ERR_TERM, 2 * (min1 - max1) );
-  // Command correction when x direction is positive.
-		command |= 0x20;
+	outpw( DESTX_DIASTP, 2 * ( min1 - max1 ) );
+	outpw( DESTY_AXSTP, 2 * min1 );
+	if( ( x2 - x1 ) > 0 )
+	{
+		outpw( ERR_TERM, 2 * ( min1 - max1 ) );
+		// Command correction when x direction is positive.
+		command |=0x20;
 	}
 	else
-		outpw( ERR_TERM, 2 * (min1 - max1) - 1 );
+		outpw( ERR_TERM, 2 * ( min1 - max1 ) - 1 );
 
 // Run the operation
-	outpw(CMD, command);
+	outpw( CMD, command );
 
 // Wait for terminaison (this operation is synchronous in the current
 // implementation).
 	wait_vga_hw();
 
 // Release the benaphore of the graphic engine
-//	unlock_ge();
-//	return B_NO_ERROR;
-	return( 0 );
+//      unlock_ge();
+//      return B_NO_ERROR;
+	return ( 0 );
 }
 
 
 // Fill a rect in 32 bits (see documentation for more informations)
-void S3FillRect_32(long  x1,    // The rect to fill. Call will always respect
-			 long  y1,    // x1 <= x2, y1 <= y2 and the rect will be
-			 long  x2,    // completly in the current screen space (no
-			 long  y2,    // cliping needed).
-			 uint color) // Rgb color.
+void S3FillRect_32( long x1,	// The rect to fill. Call will always respect
+	long y1,		// x1 <= x2, y1 <= y2 and the rect will be
+	long x2,		// completly in the current screen space (no
+	long y2,		// cliping needed).
+	uint color )		// Rgb color.
 {
 // This call is using the graphic engine and access video memory, so we need to
 // get the lock graphic-engine benaphore.
 
-//	lock_ge();
+//      lock_ge();
 
 // Refer to any s3 chip databook (864, 964, trio32, trio64 and more) to get
 // more information about specific graphic engine operation.
 // Disable the cliping rectangle.
-	outpw(DATA_REG, SCISSORS_T | 0);
-	outpw(DATA_REG, SCISSORS_L | 0);
-	outpw(DATA_REG, SCISSORS_B | 0x7ff);
-	outpw(DATA_REG, SCISSORS_R | 0x7ff);
+	outpw( DATA_REG, SCISSORS_T | 0 );
+	outpw( DATA_REG, SCISSORS_L | 0 );
+	outpw( DATA_REG, SCISSORS_B | 0x7ff );
+	outpw( DATA_REG, SCISSORS_R | 0x7ff );
 
 // Wait for 3 empty FIFO slots.
-	if (inw_p(CMD) & 0x20)
-		do {
-		  //			Delay(40);
-		} while (inw_p(CMD) & 0x20);
+	if( inw_p( CMD ) & 0x20 )
+		do
+		{
+			//                    Delay(40);
+		}
+		while( inw_p( CMD ) & 0x20 );
 
 // Select mode code (copy), color and reset pixel control.
 //
@@ -699,52 +713,55 @@ void S3FillRect_32(long  x1,    // The rect to fill. Call will always respect
 // For example, on the PPC Bebox, if rgba_order is "rgba", then the red channel
 // is coded in the highest byte of the ulong (0x##000000), as we're using
 // big-endian.
-	outpw(FRGD_MIX, 0x27);
-	outpl(FRGD_COLOR, color);
-	outpw(DATA_REG, PIX_CNTL);
+	outpw( FRGD_MIX, 0x27 );
+	outpl( FRGD_COLOR, color );
+	outpw( DATA_REG, PIX_CNTL );
 
 // Wait for 5 empty FIFO slots.
-	if (inw_p(CMD) & 0x08)
-		do {
-		  //			Delay(40);
-		} while (inw_p(CMD) & 0x08);
+	if( inw_p( CMD ) & 0x08 )
+		do
+		{
+			//                    Delay(40);
+		}
+		while( inw_p( CMD ) & 0x08 );
 
 // Send geometric description of the rect in graphic engine format
-	outpw(CUR_X, x1);
-	outpw(CUR_Y, y1);
-	outpw(MAJ_AXIS_PCNT, x2 - x1);
-	outpw(DATA_REG, MIN_AXIS_PCNT | (y2 - y1));
+	outpw( CUR_X, x1 );
+	outpw( CUR_Y, y1 );
+	outpw( MAJ_AXIS_PCNT, x2 - x1 );
+	outpw( DATA_REG, MIN_AXIS_PCNT | ( y2 - y1 ) );
 
 // Run the operation
-	outpw(CMD, 0x40b3);
+	outpw( CMD, 0x40b3 );
 
 // Wait for terminaison (this operation is synchronous in the current
 // implementation).
 	wait_vga_hw();
 
 // Release the benaphore of the graphic engine
-//	unlock_ge();
-//	return B_NO_ERROR;
+//      unlock_ge();
+//      return B_NO_ERROR;
 }
 
 
 // Blit a rect from screen to screen (see documentation for more informations)
-int S3Blit( int  x1,     // top-left point of the source
-		  int  y1,     //
-		  int  x2,     // top-left point of the destination
-		  int  y2,     //
-		  int  width,  // size of the rect to move (from border included to
-		  int  height) // opposite border included).
+int S3Blit( int x1,		// top-left point of the source
+	int y1,			//
+	int x2,			// top-left point of the destination
+	int y2,			//
+	int width,		// size of the rect to move (from border included to
+	int height )		// opposite border included).
 {
-	short	command;
-	short	srcx, srcy, destx, desty;
+	short command;
+	short srcx, srcy, destx, desty;
 
 // Check degenerated blit (source == destination)
-	if ((x1 == x2) && (y1 == y2)) return( 0 );
+	if( ( x1 == x2 ) && ( y1 == y2 ) )
+		return ( 0 );
 
 // This call is using the graphic engine and access video memory, so we need to
 // get the lock graphic-engine benaphore.
-//	lock_ge();
+//      lock_ge();
 
 // Refer to any s3 chip databook (864, 964, trio32, trio64 and more) to get
 // more information about specific graphic engine operation.
@@ -754,71 +771,83 @@ int S3Blit( int  x1,     // top-left point of the source
 // Convert application server width and height (as for BRect object) into
 // real width and height
 
-//	width += 1;
-//	height += 1;
+//      width += 1;
+//      height += 1;
 
 // Check if source and destination are not linked
-	if ((x2 > (x1 + width)) ||
-		((x2 + width) < x1) ||
-		(y2 > (y1 + height) ||
-		 (y2 + height) < y1)) {
+	if( ( x2 > ( x1 + width ) ) || ( ( x2 + width ) < x1 ) || ( y2 > ( y1 + height ) || ( y2 + height ) < y1 ) )
+	{
 		srcx = x1;
 		srcy = y1;
 		destx = x2;
 		desty = y2;
-  // Command correction when positive x and positive y.
-		command |= 0xa0;
+		// Command correction when positive x and positive y.
+		command |=0xa0;
 	}
 // In the other case, copy in the correct order
-	else {
-		if (x1 > x2) {
-  // Command correction when positive x.
-			command |= 0x20;
+	else
+	{
+		if( x1 > x2 )
+		{
+			// Command correction when positive x.
+			command |=0x20;
+
 			srcx = x1;
 			destx = x2;
 		}
-		else {
+		else
+		{
 			srcx = x1 + width - 1;
 			destx = x2 + width - 1;
 		}
-		if (y1 > y2) {
-  // Command correction when positive y.
-			command |= 0x80;
+		if( y1 > y2 )
+		{
+			// Command correction when positive y.
+			command |=0x80;
+
 			srcy = y1;
 			desty = y2;
 		}
-		else {
+		else
+		{
 			srcy = y1 + height - 1;
 			desty = y2 + height - 1;
 		}
 	}
 
 // Disable the cliping rectangle.
-	outpw(DATA_REG, SCISSORS_T | 0);
-	outpw(DATA_REG, SCISSORS_L | 0);
-	outpw(DATA_REG, SCISSORS_B | 0x7ff);
-	outpw(DATA_REG, SCISSORS_R | 0x7ff);
+	outpw( DATA_REG, SCISSORS_T | 0 );
+	outpw( DATA_REG, SCISSORS_L | 0 );
+	outpw( DATA_REG, SCISSORS_B | 0x7ff );
+	outpw( DATA_REG, SCISSORS_R | 0x7ff );
 
 // Wait for 2 empty FIFO slots.
 
-	int	c = 100000;
-	if (inw_p( CMD ) & 0x40)
-		do {
-			if ( c-- < 0 ) break;
-		  //			Delay( 40 );
-		} while ( inw_p( CMD ) & 0x40);
+	int c = 100000;
+
+	if( inw_p( CMD ) & 0x40 )
+		do
+		{
+			if( c-- < 0 )
+				break;
+			//                    Delay( 40 );
+		}
+		while( inw_p( CMD ) & 0x40 );
 
 // Select mode code (display memory source) and reset pixel control.
-	outpw(FRGD_MIX, 0x67);
-	outpw(DATA_REG, PIX_CNTL);
+	outpw( FRGD_MIX, 0x67 );
+	outpw( DATA_REG, PIX_CNTL );
 
 // Wait for 7 empty FIFO slots.
 	c = 100000;
-	if (inw_p(CMD) & 0x02)
-		do {
-		  //			Delay( 40 );
-			if ( c-- < 0 ) break;
-		} while (inw_p(CMD) & 0x02);
+	if( inw_p( CMD ) & 0x02 )
+		do
+		{
+			//                    Delay( 40 );
+			if( c-- < 0 )
+				break;
+		}
+		while( inw_p( CMD ) & 0x02 );
 
 // Send geometric description of the blit in graphic engine format
 
@@ -827,7 +856,7 @@ int S3Blit( int  x1,     // top-left point of the source
 	outpw( DESTX_DIASTP, destx );
 	outpw( DESTY_AXSTP, desty );
 	outpw( MAJ_AXIS_PCNT, width - 1 );
-	outpw( DATA_REG, MIN_AXIS_PCNT | ((height - 1) & 0xfff ) );
+	outpw( DATA_REG, MIN_AXIS_PCNT | ( ( height - 1 ) & 0xfff ) );
 
 // Run the operation
 	outpw( CMD, command );
@@ -844,17 +873,17 @@ int S3Blit( int  x1,     // top-left point of the source
 */
 
 
-	
-//...........................	wait_vga_hw();
+
+//...........................   wait_vga_hw();
 
 
 
 
-	
+
 
 // Release the benaphore of the graphic engine
-//	unlock_ge();
-	return( 0 );
+//      unlock_ge();
+	return ( 0 );
 }
 
 
@@ -877,138 +906,150 @@ int S3Blit( int  x1,     // top-left point of the source
 
 #define v_inb(a)			inl_p( (a) )
 #define v_outb(a, b)	outb_p( b, (a) )
-#define v_inw(a)			inw_p( (a) )			
+#define v_inw(a)			inw_p( (a) )
 #define v_outw(a, w)	outw_( w, (a) )
 #define v_inl(a)			inl_p( (a) )
 #define v_outl(a, l)	outl_p( l, (a) )
 
 
 
-void	EnableVirge()
+void EnableVirge()
 {
-#if 0	
-//		set_pci(0x04, 4, 0x02000003); // enable ISA IO, enable MemMapped IO
-//		isa_outb(VGA_ENABLE, 0x01); // pg 13-1
-//		dprintf("VGA_ENABLE: 0x%02x\n", (int)isa_inb(VGA_ENABLE));
-		v_outb(VGA_ENABLE, 0x01); // pg 13-1
-//		dprintf("VGA_ENABLE: 0x%02x\n", (int)inb(VGA_ENABLE));
-//		isa_outb(MISC_OUT_W, 0x0f);
-//		dprintf("MISC_OUT_R: 0x%02x\n", (int)isa_inb(MISC_OUT_R));
-		v_outb(MISC_OUT_W, 0x0f);
-//		dprintf("MISC_OUT_R: 0x%02x\n", (int)inb(MISC_OUT_R));
+#if 0
+//              set_pci(0x04, 4, 0x02000003); // enable ISA IO, enable MemMapped IO
+//              isa_outb(VGA_ENABLE, 0x01); // pg 13-1
+//              dprintf("VGA_ENABLE: 0x%02x\n", (int)isa_inb(VGA_ENABLE));
+	v_outb( VGA_ENABLE, 0x01 );	// pg 13-1
+//              dprintf("VGA_ENABLE: 0x%02x\n", (int)inb(VGA_ENABLE));
+//              isa_outb(MISC_OUT_W, 0x0f);
+//              dprintf("MISC_OUT_R: 0x%02x\n", (int)isa_inb(MISC_OUT_R));
+	v_outb( MISC_OUT_W, 0x0f );
+//              dprintf("MISC_OUT_R: 0x%02x\n", (int)inb(MISC_OUT_R));
 //#if 1
-//		uint8 t = isa_inb(MISC_OUT_R); // pg 13-1
-		uint8 t = v_inb(MISC_OUT_R); // pg 13-1
-//		isa_outb(DAC_ADR_MASK, 0xff);
-		v_outb(DAC_ADR_MASK, 0xff);
-//		isa_outb(SEQ_INDEX, 0x08); // pg 13-2 -- unlock extended Sequencer regs
-//		isa_outb(SEQ_DATA,  0x06);
-		v_outb(SEQ_INDEX, 0x08); // pg 13-2 -- unlock extended Sequencer regs
-		v_outb(SEQ_DATA,  0x06);
-//		isa_outb(CRTC_INDEX, 0x38); // pg 13-2 -- unlock extended CRTC 2D->3F
-//		isa_outb(CRTC_DATA,  0x48);
-		v_outb(CRTC_INDEX, 0x38); // pg 13-2 -- unlock extended CRTC 2D->3F
-		v_outb(CRTC_DATA,  0x48);
-//		isa_outb(CRTC_INDEX, 0x39); // pg 13-2 -- unlock extended CRTC 40->FF
-//		isa_outb(CRTC_DATA,  0xa5);
-		v_outb(CRTC_INDEX, 0x39); // pg 13-2 -- unlock extended CRTC 40->FF
-		v_outb(CRTC_DATA,  0xa5);
-//		isa_outb(CRTC_INDEX, 0x40); // pg 13-2 -- enable access to enhanced programming regs
-//		t = isa_inb(CRTC_DATA);
-//		isa_outb(CRTC_DATA,  t | 0x01);
-		v_outb(CRTC_INDEX, 0x40); // pg 13-2 -- enable access to enhanced programming regs
-		t = v_inb(CRTC_DATA);
-		v_outb(CRTC_DATA,  t | 0x01);
-//		isa_outb(CRTC_INDEX, 0x53);	// Extended memory control 1
-//		isa_outb(CRTC_DATA,  0x08);
-		v_outb(CRTC_INDEX, 0x53);	// Extended memory control 1
-		v_outb(CRTC_DATA,  0x08);
-#endif	
+//              uint8 t = isa_inb(MISC_OUT_R); // pg 13-1
+	uint8 t = v_inb( MISC_OUT_R );	// pg 13-1
+
+//              isa_outb(DAC_ADR_MASK, 0xff);
+	v_outb( DAC_ADR_MASK, 0xff );
+//              isa_outb(SEQ_INDEX, 0x08); // pg 13-2 -- unlock extended Sequencer regs
+//              isa_outb(SEQ_DATA,  0x06);
+	v_outb( SEQ_INDEX, 0x08 );	// pg 13-2 -- unlock extended Sequencer regs
+	v_outb( SEQ_DATA, 0x06 );
+//              isa_outb(CRTC_INDEX, 0x38); // pg 13-2 -- unlock extended CRTC 2D->3F
+//              isa_outb(CRTC_DATA,  0x48);
+	v_outb( CRTC_INDEX, 0x38 );	// pg 13-2 -- unlock extended CRTC 2D->3F
+	v_outb( CRTC_DATA, 0x48 );
+//              isa_outb(CRTC_INDEX, 0x39); // pg 13-2 -- unlock extended CRTC 40->FF
+//              isa_outb(CRTC_DATA,  0xa5);
+	v_outb( CRTC_INDEX, 0x39 );	// pg 13-2 -- unlock extended CRTC 40->FF
+	v_outb( CRTC_DATA, 0xa5 );
+//              isa_outb(CRTC_INDEX, 0x40); // pg 13-2 -- enable access to enhanced programming regs
+//              t = isa_inb(CRTC_DATA);
+//              isa_outb(CRTC_DATA,  t | 0x01);
+	v_outb( CRTC_INDEX, 0x40 );	// pg 13-2 -- enable access to enhanced programming regs
+	t = v_inb( CRTC_DATA );
+	v_outb( CRTC_DATA, t | 0x01 );
+//              isa_outb(CRTC_INDEX, 0x53);     // Extended memory control 1
+//              isa_outb(CRTC_DATA,  0x08);
+	v_outb( CRTC_INDEX, 0x53 );	// Extended memory control 1
+	v_outb( CRTC_DATA, 0x08 );
+#endif
 }
 
 
 
 // Wait for n*0x100 empty FIFO slots.
-static void wait_for_fifo(long value) {
-//	if ((v_inl(SUBSYS_STAT) & 0x1f00) < value)
+static void wait_for_fifo( long value )
+{
+//      if ((v_inl(SUBSYS_STAT) & 0x1f00) < value)
 	{
-			//do delay(40);
+		//do delay(40);
 
 		int r;
-		do {
-			r = v_inl(SUBSYS_STAT );
+
+		do
+		{
+			r = v_inl( SUBSYS_STAT );
 			dbprintf( "SUBSYS_STAT = %04x\n", r );
-		} while ((r & 0x1f00) < value);
-		
-//		while ((v_inl(SUBSYS_STAT) & 0x1f00) < value);
+		}
+		while( ( r & 0x1f00 ) < value );
+
+//              while ((v_inl(SUBSYS_STAT) & 0x1f00) < value);
 	}
 }
 
-static void wait_for_sync() {
-	if ((v_inl(SUBSYS_STAT) & 0x2000) == 0) {
+static void wait_for_sync()
+{
+	if( ( v_inl( SUBSYS_STAT ) & 0x2000 ) == 0 )
+	{
 		//do delay(40);
-		while ((v_inl(SUBSYS_STAT) & 0x2000) == 0);
+		while( ( v_inl( SUBSYS_STAT ) & 0x2000 ) == 0 );
 	}
 }
 
 
 // Blit a rect from screen to screen (see documentation for more informations)
-long v_blit(long  x1,     // top-left point of the source
-		  long  y1,     //
-		  long  x2,     // top-left point of the destination
-		  long  y2,     //
-		  long  width,  // size of the rect to move (from border included to
-		  long  height) // opposite border included).
+long v_blit( long x1,		// top-left point of the source
+	long y1,		//
+	long x2,		// top-left point of the destination
+	long y2,		//
+	long width,		// size of the rect to move (from border included to
+	long height )		// opposite border included).
 {
-	uint32	command;
+	uint32 command;
 
 // check for zero height/width blits :-(
 	//if ((height == 0) || (width == 0)) return B_NO_ERROR;
 
 // Check degenerated blit (source == destination)
-	if ((x1 == x2) && (y1 == y2)) return 0;
+	if( ( x1 == x2 ) && ( y1 == y2 ) )
+		return 0;
 
 	//dprintf("blit: from %d,%d to %d,%d size %d,%d depth %d\n", x1,y1, x2,y2, width, height, ci.scrnColors);
 // This call is using the graphic engine and access video memory, so we need to
 // get the lock graphic-engine benaphore.
-//...	lock_ge();
+//...   lock_ge();
 
 	command = 0x07980020;
 
-	if (x1 < x2) {
-		x1 += width;// - 1;
-		x2 += width;// - 1;
-		command &= ~0x02000000;
+	if( x1 < x2 )
+	{
+		x1 += width;	// - 1;
+		x2 += width;	// - 1;
+		command &=~0x02000000;
 	}
-	if (y1 < y2) {
-		y1 += height;// - 1;
-		y2 += height;// - 1;
-		command &= ~0x04000000;
+	if( y1 < y2 )
+	{
+		y1 += height;	// - 1;
+		y2 += height;	// - 1;
+		command &=~0x04000000;
 	}
 	// 16 bit mode
-#if 0	
-	if (ci.scrnColors == 16) command |= 0x00000004;
+#if 0
+	if( ci.scrnColors == 16 )
+		command |=0x00000004;
 #else
-	command |= 0x00000004;
+	command |=0x00000004;
 #endif
-	
-	wait_for_fifo(0x700);
-	v_outl(0xa500, 0x78000000); // turn off auto-execute
-	v_outl(0xa4d4, 0);	// source base addr
-	v_outl(0xa4d8, 0);	// dest base addr
-	
-//	v_outl(0xa4e4, ci.scrnRowByte | (ci.scrnRowByte << 16));	// source/dest bytes per row
-	v_outl(0xa4e4, 512 | (512 << 16));	// source/dest bytes per row
-	
-	v_outl(0xa504, ((width)<<16)|(height+1));
-	v_outl(0xa508, (x1<<16)|y1);
-	v_outl(0xa50c, (x2<<16)|y2);
-	v_outl(0xa500, command);
+
+	wait_for_fifo( 0x700 );
+	v_outl( 0xa500, 0x78000000 );	// turn off auto-execute
+	v_outl( 0xa4d4, 0 );	// source base addr
+	v_outl( 0xa4d8, 0 );	// dest base addr
+
+//      v_outl(0xa4e4, ci.scrnRowByte | (ci.scrnRowByte << 16));        // source/dest bytes per row
+	v_outl( 0xa4e4, 512 | ( 512 << 16 ) );	// source/dest bytes per row
+
+	v_outl( 0xa504, ( ( width ) << 16 ) | ( height + 1 ) );
+	v_outl( 0xa508, ( x1 << 16 ) | y1 );
+	v_outl( 0xa50c, ( x2 << 16 ) | y2 );
+	v_outl( 0xa500, command );
+
 	//dprintf("command was: 0x%08x\n", command);
 	wait_for_sync();
-	
+
 // Release the benaphore of the graphic engine
-//...	unlock_ge();
+//...   unlock_ge();
 	return 0;
 }
 #endif
