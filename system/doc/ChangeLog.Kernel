@@ -1,3 +1,7 @@
+* March 1 2005, Arno Klenke *
+
+Enabled nodemonitoring in the fat fs driver.
+
 * February 6 2005, Jake Hamby *
 
 Updated to Build 0006.  Upgraded get_system_time() and get_real_time() from

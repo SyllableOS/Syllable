@@ -1,3 +1,7 @@
+* March 1 2005, Arno Klenke *
+
+Updated sis3xx driver
+
 * February 27 2005, Kaj de Vos *
 
 Sanitized some aspects of the makefiles. Fixed bugs and parameterized hardcoded tool calls
