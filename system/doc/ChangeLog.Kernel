@@ -1,3 +1,8 @@
+* February 3 2005, Jake Hamby *
+
+Updated to Build 0003.  Fixed errno printing bug in strace and fixed
+sys_rmdir() to accept pathnames with a trailing '/'.
+
 * January 29 2005, Jake Hamby *
 
 Updated to Build 0002.  Patch from Daniel Gryniewicz to fix GCC 3.4.3
