@@ -11,6 +11,10 @@
     memory map returned by the BIOS.  Fixed a few spelling errors.  Added
     a few signals to <posix/signal.h> for POSIX completeness.
 
+  kernel patches from Arno Klenke:
+    * Some cleanups of the SSE registers save/restore code
+    * Added cpu id for celeron m/pentium m
+
 * November 7 2004, Jake Hamby *
 
 Fixed a bug in restoring the FPU registers on returning from a signal
