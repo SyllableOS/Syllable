@@ -1,0 +1,22 @@
+authors				Kaj de Vos
+status				broken
+notes				Seems to expect IPv6
+
+licenses			GPL
+home				mojave.caltech.edu/download.html
+locations			http://mojave.caltech.edu/download/omake/
+packages			omake-0.9.2-1
+
+build-needs
+	autoconf
+	ocaml
+
+patch-config
+no-build-dir
+pre-configure		autoconf
+;configure-options	--disable-ipv6
+documentation
+;	README.Unix
+;	omake.txt LICENSE
+;	html
+
