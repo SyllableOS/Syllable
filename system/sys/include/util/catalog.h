@@ -53,7 +53,7 @@ public:
 	Catalog( String& cName, Locale *pcLocale = NULL );
     ~Catalog();
 
-	const String& GetString( uint32 nID, const char* pzDefault ) const;
+	const String& GetString( uint32 nID ) const;
 	void SetString( uint32 nID, const String& cStr ) const;
 
 	status_t Load( StreamableIO* pcSource );
@@ -93,4 +93,3 @@ class LString : public String
 } // end of namespace
 
 #endif // __F_UTIL_CATALOG_H__
-
