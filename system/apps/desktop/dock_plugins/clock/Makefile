@@ -2,7 +2,7 @@
 COPTS = -Wall -c -O3 -pipe -fexceptions -ffast-math -fomit-frame-pointer
 
 APPBIN = /system/drivers/dock
-OBJS = Clock.o
+OBJS = ColorSelector.o Settings.o Clock.o colorbutton.o
 
 OBJDIR := objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
@@ -47,4 +47,6 @@ install: all
 	@echo Installing...
 	@mkdir -p /system/drivers/dock
 	@cp Clock.so /system/drivers/dock/Clock.so
+
+
 

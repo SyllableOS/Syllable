@@ -38,14 +38,54 @@
 #include <atheos/time.h>
 #include <posix/time.h>
 #include <storage/file.h>
+#include <util/datetime.h>
 #include <time.h>    
 
-#include "../../dock/dockplugin.h"                                                                                                                                              
+
+
+#include "dockplugin.h"                                                                                                                                              
+#include "Settings.h"
+#include "messages.h"
                                                                                                                                                                                                         
 using namespace os;
                                                                                                                                                                                                      
+static os::Color32_s BlendColours( const os::Color32_s& sColour1, const os::Color32_s& sColour2, float vBlend )
+{
+	int r = int( (float(sColour1.red)   * vBlend + float(sColour2.red)   * (1.0f - vBlend)) );
+	int g = int( (float(sColour1.green) * vBlend + float(sColour2.green) * (1.0f - vBlend)) );
+	int b = int( (float(sColour1.blue)  * vBlend + float(sColour2.blue)  * (1.0f - vBlend)) );
+	if ( r < 0 ) r = 0; else if (r > 255) r = 255;
+	if ( g < 0 ) g = 0; else if (g > 255) g = 255;
+	if ( b < 0 ) b = 0; else if (b > 255) b = 255;
+	return os::Color32_s(r, g, b, sColour1.alpha);
+}
+
+/* From the Photon Decorator */
+static os::Color32_s Tint( const os::Color32_s & sColor, float vTint )
+{
+	int r = int ( ( float ( sColor.red ) * vTint + 127.0f * ( 1.0f - vTint ) ) );
+	int g = int ( ( float ( sColor.green ) * vTint + 127.0f * ( 1.0f - vTint ) ) );
+	int b = int ( ( float ( sColor.blue ) * vTint + 127.0f * ( 1.0f - vTint ) ) );
+
+	if( r < 0 )
+		r = 0;
+	else if( r > 255 )
+		r = 255;
+	if( g < 0 )
+		g = 0;
+	else if( g > 255 )
+		g = 255;
+	if( b < 0 )
+		b = 0;
+	else if( b > 255 )
+		b = 255;
+	return ( os::Color32_s( r, g, b, sColor.alpha ) );
+}
+
                                                                                                                                                                                                         
 class DockClockUpdater;
+
+
 
 
 class DockClock : public DockPlugin
@@ -67,20 +107,34 @@ class DockClock : public DockPlugin
 		virtual void MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData );
 		virtual void MouseUp( const os::Point & cPosition, uint32 nButton, os::Message * pcData );
 		virtual void MouseDown( const os::Point& cPosition, uint32 nButtons );
-        
+        void HandleMessage(Message*);
 	private:
 		void LoadSettings();
 		void SaveSettings();
+		void UpdateFont();
 		
 		os::Path m_cPath;
 		os::BitmapImage* m_pcIcon;
 		os::Looper* m_pcDock;
 		bool m_bCanDrag;
 		bool m_bDragging;
-		bool m_b24h;
-		String m_zString;
+		
+		DockClockSettings* pcClockSettingsWindow;
+		
+		Color32_s m_cTextColor;
+		bool m_bFrame;
+		
 		std::string m_zTimeFormat;
+		std::string m_zDateFormat;
+		bool m_bDisplayTime;
+		float m_vFontSize;
+		String m_cFontType;
+		
+		String m_zString;
 		DockClockUpdater* m_pcThread;
+		bigtime_t m_nClickTime;
+		
+		Menu* pcContextMenu;
 };
 
 
@@ -106,6 +160,9 @@ private:
 };
 
 
+
+
+
 //*************************************************************************************
 
 DockClock::DockClock( os::Path cPath, os::Looper* pcDock ) : DockPlugin()
@@ -113,9 +170,13 @@ DockClock::DockClock( os::Path cPath, os::Looper* pcDock ) : DockPlugin()
 	m_pcDock = pcDock;
 	m_bCanDrag = m_bDragging = false;
 	m_zString = "99:99:99";
-	m_zTimeFormat = "%h:%m";
+	
+	m_nClickTime = 0;
+	m_bDisplayTime = true;
+	pcClockSettingsWindow = NULL;
+	
 	m_cPath = cPath;
-	m_b24h = false;
+	
 	
 	/* Load default icons */
 	os::File* pcFile = new os::File( cPath );
@@ -128,10 +189,74 @@ DockClock::DockClock( os::Path cPath, os::Looper* pcDock ) : DockPlugin()
 	/* Load settings */
 	LoadSettings();
 	
+	if (m_vFontSize >0)
+		GetFont()->SetSize(m_vFontSize);
+		
+	pcContextMenu = new Menu(Rect(0,0,10,10),"",ITEMS_IN_COLUMN);
+	pcContextMenu->AddItem("Preferences...",new Message(M_PREFS));
+	pcContextMenu->AddItem(new MenuSeparator());	
+	pcContextMenu->AddItem("Help...", new Message(M_HELP));
+	pcContextMenu->AddItem(new MenuSeparator());	
+	pcContextMenu->AddItem("About Clock...",new Message(M_CLOCK_ABOUT));
+	pcContextMenu->SetTargetForItems(this);
+	
+}
+
+void DockClock::HandleMessage(Message* pcMessage)
+{
+	switch (pcMessage->GetCode())
+	{
+		case M_PREFS:
+		{
+			if (pcClockSettingsWindow == NULL)
+			{
+				Message* pcMsg = new Message();
+				pcMsg->AddString("date_format",m_zDateFormat);
+				pcMsg->AddString("time_format",m_zTimeFormat);
+				pcMsg->AddColor32("color",m_cTextColor);
+				pcMsg->AddBool("frame",m_bFrame);
+				pcMsg->AddString("font",m_cFontType);
+				pcMsg->AddFloat("size",m_vFontSize);
+				
+				pcClockSettingsWindow = new DockClockSettings(pcMsg,this);
+				pcClockSettingsWindow->CenterInScreen();
+				pcClockSettingsWindow->Show();
+				pcClockSettingsWindow->MakeFocus();
+			}
+			else
+				pcClockSettingsWindow->MakeFocus();
+			break;
+		}
+		
+		case M_APPLY:
+		{
+			pcMessage->FindString("date_format",&m_zDateFormat);
+			pcMessage->FindString("time_format",&m_zTimeFormat);
+			pcMessage->FindColor32("color",&m_cTextColor);
+			pcMessage->FindBool("frame",&m_bFrame);
+			pcMessage->FindString("font",&m_cFontType);
+			pcMessage->FindFloat("size",&m_vFontSize);
+						
+			pcClockSettingsWindow->Close();
+			pcClockSettingsWindow = NULL;
+			SaveSettings();
+			UpdateFont();
+			Flush();
+			break;
+		}
+		
+		case M_CANCEL:
+		{
+			pcClockSettingsWindow->Close();
+			pcClockSettingsWindow = NULL;
+			break;
+		}		
+	}
 }
 
 DockClock::~DockClock( )
 {
+	SaveSettings();
 	delete( m_pcIcon );
 }
 
@@ -142,11 +267,12 @@ String DockClock::GetIdentifier()
 
 void DockClock::AttachedToWindow()
 {
-	
 	/* Start updater */
 	m_pcThread = new DockClockUpdater( this );
 	m_pcThread->Start();
 	DisplayTime();
+	
+	pcContextMenu->SetTargetForItems(this);
 }
 
 
@@ -164,12 +290,35 @@ void DockClock::LoadSettings()
 
 	try
 	{
-		os::Settings* pcSettings = new os::Settings( new os::File( zPath ) );
+		os::Settings* pcSettings = new os::Settings( new os::File( zPath) );
 		pcSettings->Load();
-		m_b24h = pcSettings->GetBool( "24h", false );
-
+		
+		if (pcSettings->FindString("date_format",&m_zDateFormat) != 0)
+			m_zDateFormat = "%a %b %e, %Y";
+			
+		if (pcSettings->FindString("time_format",&m_zTimeFormat) != 0)
+			m_zTimeFormat = "%H:%m:%s";
+			
+		if (pcSettings->FindColor32("color",&m_cTextColor) != 0)
+			m_cTextColor = Color32_s(0,0,0,0);
+			
+		if (pcSettings->FindBool("frame",&m_bFrame) != 0)
+			m_bFrame = true;
+			
+		if (pcSettings->FindString("font",&m_cFontType) != 0)
+			m_cFontType = "";
+			
+		if (pcSettings->FindFloat("size",&m_vFontSize) != 0)
+			m_vFontSize = -1;
+			
 		delete( pcSettings );
 	} catch( ... ) {
+		m_vFontSize = -1;
+		m_cFontType = "";
+		m_cTextColor = Color32_s(0,0,0,0);
+		m_zTimeFormat = "%H:%m:%s";
+		m_zDateFormat = "%a %b %e, %Y";
+		m_bFrame = true;
 	}
 }
 
@@ -181,101 +330,142 @@ void DockClock::SaveSettings()
 
 	try
 	{
+		
 		mkdir( zPath.c_str(), S_IRWXU | S_IRWXG | S_IRWXO );
 		zPath += "/Settings";
-		os::File cFile( zPath, O_RDWR | O_CREAT );
+		os::File* cFile = new File( zPath, O_RDWR | O_CREAT );
 	
-		os::Settings* pcSettings = new os::Settings( new os::File( zPath ) );
-		pcSettings->SetBool( "24h", m_b24h );
+		os::Settings* pcSettings = new os::Settings( cFile );
+		pcSettings->SetBool( "frame", m_bFrame );
+		pcSettings->SetColor32("color",m_cTextColor);
+		pcSettings->SetString("time_format",m_zTimeFormat);
+		pcSettings->SetString("date_format",m_zDateFormat);
+		pcSettings->SetString("font",m_cFontType);
+		pcSettings->SetFloat("size",m_vFontSize);
 		pcSettings->Save();
+		
 		delete( pcSettings );
 	} catch(...)
 	{
 	}
 }
 
+void DockClock::UpdateFont()
+{
+	Font *font = new Font();
+	font->SetFamilyAndStyle(m_cFontType.c_str(),"Regular");
+	font->SetSize(m_vFontSize);
+	SetFont(font);
+}
+	
+
 void DockClock::DisplayTime( void )
 {
 
-    std::string zTimeStr = m_zTimeFormat;
-
-	long nCurSysTime = get_real_time( ) / 1000000;
-
-    struct tm *psTime = gmtime( &nCurSysTime );
-
-    // Translate the Time Format.
-
-    const char *azTimeToken[] = { "%d", "%H", "%h", "%M", "%m", "%s", "%y" };
- 
-    long anTimes[] = 
-    { 
-      psTime->tm_mday,
-      psTime->tm_hour,
-      (psTime->tm_hour > 12) ? psTime->tm_hour - 12 : psTime->tm_hour,
-      psTime->tm_mon + 1,
-      psTime->tm_min,
-      psTime->tm_sec,
-      psTime->tm_year - 100
-    };
+	if (m_bDisplayTime)
+	{
+    	std::string zTimeStr = m_zTimeFormat;
+		long nCurSysTime = get_real_time( ) / 1000000;
+		struct tm *psTime = gmtime( &nCurSysTime );
+	    const char *azTimeToken[] = { "%d", "%H", "%h", "%M", "%m", "%s", "%y" };
+ 		long anTimes[] = 
+    	{ 
+      		psTime->tm_mday,
+      		psTime->tm_hour,
+      		(psTime->tm_hour > 12) ? psTime->tm_hour - 12 : psTime->tm_hour,
+      		psTime->tm_mon + 1,
+      		psTime->tm_min,
+      		psTime->tm_sec,
+      		psTime->tm_year - 100
+    	};
     
-    long anTimes24h[] = 
-    { 
-      psTime->tm_mday,
-      psTime->tm_hour,
-      psTime->tm_hour,
-      psTime->tm_mon + 1,
-      psTime->tm_min,
-      psTime->tm_sec,
-      psTime->tm_year - 100
-    };
-
-    uint nLoc;
-    char zValue[4];
+		uint nLoc;
+    	char zValue[4];
     
-    for( int n = 0; n < 7; n++ )
-    {
-    	nLoc = zTimeStr.find( azTimeToken[n] );
-    	if( nLoc != std::string::npos ) {
-    		if( m_b24h )
-    			sprintf( zValue, "%02ld", anTimes24h[n] ); 
-    		else
-    			sprintf( zValue, "%02ld", anTimes[n] ); 
-    		zTimeStr.replace( nLoc, 2, zValue );
+    	for( int n = 0; n < 7; n++ )
+    	{
+    		nLoc = zTimeStr.find( azTimeToken[n] );
+    		if( nLoc != std::string::npos ) 
+    		{
+    			if (azTimeToken[n] == "%s" || azTimeToken[n] == "%m")
+    				sprintf( zValue, "%02ld", anTimes[n] ); 
+    			else if (anTimes[1] == 0 && azTimeToken[n] == "%h")
+    				sprintf(zValue,"%ld",12);
+    			else
+    				sprintf( zValue, "%ld", anTimes[n] );
+    				 
+    			zTimeStr.replace( nLoc, 2, zValue );
+    		}
     	}
+    	m_zString = zTimeStr;
+    }
+    
+    else
+    {
+    	std::string zDateStr = m_zDateFormat;
     	
-    } 
- 
-    m_zString = zTimeStr;
+		
+		DateTime d = DateTime::Now();
+		char bfr[256];
+		struct tm *pstm;
+		time_t nTime = d.GetEpoch();
+		pstm = localtime( &nTime );
+		strftime( bfr, sizeof( bfr ), zDateStr.c_str(), pstm );    	 
+ 		m_zString = String(bfr);
+ 	}
+ 	
 	Invalidate( );
 	Flush( );
 }
 
 void DockClock::Paint( const Rect &cUpdateRect )
 {
-	Rect cBounds = GetBounds( );
+	Rect cBounds = GetBounds();
 	
-    FillRect( cBounds, get_default_color( COL_NORMAL ) );
+	os::Color32_s sCurrentColor = BlendColours(get_default_color(os::COL_SHINE),  get_default_color(os::COL_NORMAL_WND_BORDER), 0.5f);
+	SetFgColor( Tint( get_default_color( os::COL_SHADOW ), 0.5f ) );
+	os::Color32_s sBottomColor = BlendColours(get_default_color(os::COL_SHADOW), get_default_color(os::COL_NORMAL_WND_BORDER), 0.5f);
+	
+	os::Color32_s sColorStep = os::Color32_s( ( sCurrentColor.red-sBottomColor.red ) / 30, 
+											( sCurrentColor.green-sBottomColor.green ) / 30, 
+											( sCurrentColor.blue-sBottomColor.blue ) / 30, 0 );
+	
+	if( cUpdateRect.DoIntersect( os::Rect( 0, 0, GetBounds().right, 29 ) ) )
+	{
+		sCurrentColor.red -= (int)cUpdateRect.top * sColorStep.red;
+		sCurrentColor.green -= (int)cUpdateRect.top * sColorStep.green;
+		sCurrentColor.blue -= (int)cUpdateRect.top * sColorStep.blue;
+		for( int i = (int)cUpdateRect.top; i < ( (int)cUpdateRect.bottom < 30 ? (int)cUpdateRect.bottom + 1 : 30 ); i++ )
+		{
+			SetFgColor( sCurrentColor );
+			DrawLine( os::Point( cUpdateRect.left, i ), os::Point( cUpdateRect.right, i ) );
+			sCurrentColor.red -= sColorStep.red;
+			sCurrentColor.green -= sColorStep.green;
+			sCurrentColor.blue -= sColorStep.blue;
+		}
+	}
 	
 	float fWidth = GetStringWidth( m_zString );
 	font_height sHeight;
 	GetFontHeight( &sHeight );
-	float fHeight = /*sHeight.ascender +*/ sHeight.descender;
+	float fHeight = sHeight.descender;
 	
 	float x = ( cBounds.Width() / 2.0f) - (fWidth / 2.0f);
 	float y = 4.0f + (cBounds.Height()+1.0f)*0.5f - fHeight*0.5f + sHeight.descender;
 
-	DrawFrame( cBounds, FRAME_RECESSED);
+	if (m_bFrame)
+		DrawFrame( cBounds, FRAME_RECESSED);
 
-	SetFgColor( 0,0,0 );
-	SetBgColor( get_default_color( COL_NORMAL ) );
+	SetFgColor( m_cTextColor );
+	
 	MovePenTo( x,y );
   	DrawString( m_zString );
 }
 
 Point DockClock::GetPreferredSize( bool bLargest )
 {
-	
-	float fWidth = GetStringWidth( m_zString );
+	String cString = "Sat Mar 12, 2005";
+	float fWidth = GetStringWidth(cString);
 	font_height sHeight;
 	GetFontHeight( &sHeight );
 	
@@ -318,13 +508,25 @@ void DockClock::MouseUp( const os::Point & cPosition, uint32 nButtons, os::Messa
 void DockClock::MouseDown( const os::Point& cPosition, uint32 nButtons )
 {
 	MakeFocus( true );
+	
 	if( nButtons == os::MOUSE_BUT_LEFT )
-		m_bCanDrag = true;
-		
+	{
+		if (m_nClickTime + 500000 >= get_system_time())
+		{
+			if (fork() == 0)
+				execlp("/Applications/Preferences/DateTime","/Applications/Preferences/DateTime",NULL);
+		}
+		else
+		{
+			m_bCanDrag = true;
+			m_bDisplayTime = !m_bDisplayTime;
+			Flush();
+		}
+		m_nClickTime = get_system_time();
+	}	
 	if( nButtons == 2 ) {
 		/* Change time format */
-		m_b24h = !m_b24h;
-		SaveSettings();
+		pcContextMenu->Open(ConvertToScreen(cPosition));
 	}
 	os::DockPlugin::MouseDown( cPosition, nButtons );
 }
@@ -337,6 +539,23 @@ DockPlugin* init_dock_plugin( os::Path cPluginFile, os::Looper* pcDock )
 	return( new DockClock( cPluginFile, pcDock ) );
 }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
