@@ -1,0 +1,11 @@
+diff -ru ocaml-3.07pl2.original/configure ocaml-3.07pl2/configure
+--- ocaml-3.07pl2.original/configure	2003-09-25 08:17:14.000000000 +0000
++++ ocaml-3.07pl2/configure	2004-07-10 00:12:53.000000000 +0000
+@@ -547,6 +547,7 @@
+   i[3456]86-*-solaris*)         arch=i386; system=solaris;;
+   i[3456]86-*-beos*)            arch=i386; system=beos;;
+   i[3456]86-*-cygwin*)          arch=i386; system=cygwin;;
++  i[3456]86-*-syllable*)        arch=i386; system=linux_`sh ./runtest elf.c`;;
+   mips-*-irix6*)                arch=mips; system=irix;;
+   hppa1.1-*-hpux*)              arch=hppa; system=hpux;;
+   hppa2.0*-*-hpux*)             arch=hppa; system=hpux;;

@@ -1,8 +1,12 @@
-authors			Kaj de Vos
-notes			Native code compiler not supported yet
+authors
+	Kaj de Vos
+	Jamie Clarkson
+status			testing
+notes
+	The configuration for the native code compiler is a bit of a hack, but it seems to work
 
 licenses		QPL LGPL other
-home			caml.inria.fr
+home			www.ocaml.org
 locations		ftp://ftp.inria.fr/INRIA/caml-light
 
 no-build-dir
@@ -13,15 +17,19 @@ configure-args
 	-no-pthread
 
 make-targets
-;	world.opt
-		world
+	world.opt
+;		world
+;	For testing the bytecode compiler:
 ;;	bootstrap
+;		Native code compiler:
 ;		opt
+;		For testing the native code compiler, and generating native versions of the compilers:
 ;		opt.opt
 
-install
-;	umask 022;
-	make install
-;	cd emacs;
-;	make EMACSDIR="" install
+;install
+;;	umask 022
+;	make install
+;;	cd emacs
+;;	make EMACSDIR="" install
+;strip-files		<Everything but ocamldebug and ocamlbrowser?>
 documentation	README INSTALL Upgrading LICENSE Changes
