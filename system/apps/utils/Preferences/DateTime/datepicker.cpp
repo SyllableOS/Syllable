@@ -429,7 +429,7 @@ void DatePickerDay::Paint(const os::Rect &cUpdateRect)
   } else {
     SetFont(new os::Font("System/Bold"));
   }
-  DrawString(m_strValue, os::Point(x, y));
+  DrawString(os::Point(x, y), m_strValue);
   SetBgColor(sSavedColor);
 }
 
@@ -448,4 +448,3 @@ void DatePickerDay::MouseDown(const os::Point &cPosition, uint32 iButtons)
 {
   Invoke();
 }
-

@@ -124,6 +124,11 @@ CMainWindow::CMainWindow(const os::Rect& cFrame) :
   // Set root and add to window
   m_pcLRoot->SetRoot(m_pcVLRoot);
   AddChild(m_pcLRoot);
+  
+  os::Point cSize = m_pcLRoot->GetPreferredSize( false );
+  os::Rect cWFrame( 0, 0, cSize.x, cSize.y );
+  cWFrame.MoveTo( 100, 100 );
+  SetFrame( cWFrame );
 
   // Set Default button and initial focus
   if (g_bRoot) {
@@ -152,7 +157,7 @@ void CMainWindow::AddTimeZones()
 {
   // Open up file
   fstream fsIn;
-  fsIn.open("timezone.info", _IO_INPUT);
+  fsIn.open("timezone.info");
 
   // Check exists
   if (!fsIn.is_open()) {
@@ -298,16 +303,3 @@ void CMainWindow::TimerTick(int nID)
     m_pcSVFullTimeDate->SetString(szScratch);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
