@@ -1,5 +1,20 @@
 * November 7 2004, Jake Hamby *
 
+Update sys_kill() to verify that the real or effective user ID of the
+calling process matches either the real or saved user ID of the receiving
+process, or the caller is root, or the calling process is sending SIGCONT to
+a process with the same session ID (to allow job control of setuid programs).
+In order for a process to send SIGCHLD to its parent on exit, regardless of
+user ID, do_exit() now uses send_signal() with the third argument set to true
+instead of sys_kill().  Several other places have been changed to use
+send_signal() as an optimization when permissions don't need to be checked.
+
+The rather complicated code to transform the floating-point state to and
+from the format used by the signal handler stack frame has now been moved to
+a separate file, save_i387.c, to avoid cluttering up psignals.c.
+
+* November 7 2004, Jake Hamby *
+
 Fix fault.c to send SIGSEGV, SIGFPE, and SIGILL signals to the faulting thread
 instead of to all threads.  Fixed ExceptionHand() to kill the thread causing
 the exception with SIGSEGV (this required moving the exception handler stubs
