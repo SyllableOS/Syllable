@@ -1,3 +1,10 @@
+* January 2 2004, Henrik Isaksson *
+
+ API:
+ - Added Rick's PopupMenu class
+ - ShortcutKey changed to use a unicode wide char instead of UTF-8
+ - Window::AddShortcut now checks that the supplied ShortcutKey is valid.
+
 * December 30 2003, Henrik Isaksson *
 
  API:
@@ -352,6 +359,7 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
 
 
