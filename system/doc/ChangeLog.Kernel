@@ -1,3 +1,83 @@
+* March 25 2005, Jake Hamby *
+
+Updated to Build 0012.  Improvements to signal handling:
+
+    * Upgraded sigset_t from 32 to 64 bits, allowing for signals 1-64.
+    * Updated <posix/signal.h>, defining _NSIG as 64 inside the kernel
+	and as 65 (biggest signal number + 1) in user-space, as required
+	by POSIX and glibc.  Added definitions for SA_NOCLDWAIT and SA_SIGINFO,
+	SIGRTMIN and SIGRTMAX (range for "real-time" signals), inline signal
+	set macros, and SIG_HOLD, which is handled by glibc's sigset()
+	function and not by the kernel itself.
+    * Fixed a bug that assumed that glibc was passing sigaction structs with
+	a sigset_t of 32 bits.  In fact, glibc uses a sigset_t that is much
+	larger (128 bytes) so the kernel always read a 0 for sa_flags instead
+	of the correct value.  Added a definition of struct libc_sigaction to
+	<posix/signal.h> so that the kernel can convert to/from the version
+	of sigaction used by glibc.
+    * Added support for the SA_NOCLDWAIT flag, which can be set for SIGCHLD
+	to prevent zombie processes from being created when a child exits.
+	If wait() is called while SA_NOCLDWAIT is set, it returns immediately
+	with ECHILD.
+    * Added support for the SA_SIGINFO flag, which tells the kernel to call
+	the user's signal handler with three arguments instead of one.  The
+	second argument is a pointer to a siginfo_t structure which contains
+	additional information about the signal, and the third argument is a
+	pointer to a ucontext_t structure which contains the processor-specific
+	context saved by the signal handler.  For now, most of the fields in
+	siginfo_t are set to zero, as the kernel doesn't currently save the
+	information about pending signals necessary to fill in this structure.
+	See the Linux man page for sigaction(2) for more information on how
+	this structure should be initialized.
+    * Added support for signals 32-64 in sys_sigsuspend().  This requires a
+	patch to glibc to pass that portion of the signal mask in the second
+	argument to sys_sigsuspend().
+
+Most of the signal related tests in the Open POSIX Test Suite
+(posixtest.sourceforge.net) now pass, except for those related to POSIX
+real-time system calls (sigqueue(), sigwait(), sigtimedwait(), and
+sigwaitinfo()), and tests for the following missing functionality:
+
+    * As described above, the siginfo_t structure is not currently being
+	filled in correctly.  In order to do so, we will need to store a
+	small amount of additional information for each pending signal.
+	For example, the SIGCHLD signal sets si_code to one of the following:
+	CLD_EXITED : child has exited
+	CLD_KILLED : child was killed
+	CLD_DUMPED : child terminated abnormally
+	CLD_TRAPPED : traced child has trapped
+	CLD_STOPPED : child has stopped
+	CLD_CONTINUED : stopped child has continued
+	The cleanest solution will probably be to maintain a linked list of
+	siginfo_t structures for each pending signal, since for example several
+	child processes could stop or exit at about the same time, and the
+	process ID and real user ID of the child must be saved in addition to
+	the si_code.  However, if a child stops then continues before the
+	parent has a chance to run, the kernel is allowed to optimize away the
+	matched CLD_STOPPED/CLD_CONTINUED pair.
+    * Defining an alternate signal stack with sigaltstack() is not supported.
+	The uc_stack field in the ucontext_t structure is also not filled in.
+    * sys_sigsuspend() doesn't work correctly.  After waking, it should first
+	handle all signals not masked by the temporary signal mask, then
+	restore the previous signal mask and handle any remaining signals.  It
+	should also return -1 with errno = EINTR.  I wasn't able to fix this
+	easily because signals are normally handled before returning to user
+	mode by a call to handle_signals() in syscall.s.  To fix this bug,
+	sys_sigsuspend() would have to save the original signal mask in the
+	thread structure, return (thus calling signal handlers with the
+	temporary mask), then the original signal mask would have to be
+	restored elsewhere, after all signals had been handled with the
+	temporary mask.
+    * POSIX threads requires certain aspects of signal handling to be managed
+	on a per-process basis, while Syllable currently handles all aspects
+	of signals on a per-thread basis.  This is why getpid() returns a
+	thread_id rather than a proc_id.  At some point in the future, we will
+	need to refactor the signal code so that, for example, kill() will take
+	a proc_id (and deliver the signal to a single thread within that
+	process), while pthread_kill() will function as kill() does now.
+	Signal masks will continue to be set on a per-thread basis, while
+	signal actions and signal handlers will be set on a per-process basis.
+
 * March 21 2005, Jake Hamby *
 
 Updated to Build 0011.  List of fixes:
