@@ -2,10 +2,11 @@ authors
 	Kaj de Vos
 	Arno Klenke
 	Kristian Van Der Vliet
-status				testing
 
 licenses			GPL LGPL
 home				www.gnu.org/software/binutils/
+; For other recipes to inherit:
+packages			binutils-2.15
 
 build-needs
 	binutils
@@ -35,3 +36,4 @@ links
 ;	For OpenSSL:
 	bin/ranlib					/usr/bin/ranlib
 ;	/atheos/autolnk/bin/ranlib	/usr/bin/ranlib
+

@@ -4,7 +4,6 @@ status				testing
 inherits			binutils-2.15
 
 headline			"Cross-assembler for Linux"
-packages			binutils-2.15
 
 configure-options
 	--target=i586-pc-linux-gnu
@@ -15,6 +14,12 @@ configure-options
 ;	This would be for a 64-bits port:
 ;	--enable-64-bit-bfd
 
-; The normal links are not relevant. Cross-assembling binaries don't have the same names:
 links
+;	Optimize wasteful duplicates:
+	../../bin/i586-pc-linux-gnu-ar		i586-pc-linux-gnu/bin/ar
+	../../bin/i586-pc-linux-gnu-as		i586-pc-linux-gnu/bin/as
+	../../bin/i586-pc-linux-gnu-ld		i586-pc-linux-gnu/bin/ld
+	../../bin/i586-pc-linux-gnu-nm		i586-pc-linux-gnu/bin/nm
+	../../bin/i586-pc-linux-gnu-ranlib	i586-pc-linux-gnu/bin/ranlib
+	../../bin/i586-pc-linux-gnu-strip	i586-pc-linux-gnu/bin/strip
 
