@@ -1,3 +1,50 @@
+* January 25 2004, Henrik Isaksson *
+
+ * Changed all std::string to os::String, and, where applicable, pzName and
+   pzLabel parameters from char* to String&, in the following classes:
+	Clipboard, DateTime, Resources, OptionParser, RegExp, errno_exception,
+	Translator, DirIterator, Directory, File, FileReference, FSNode,
+	NodeMonitor, Path, SymLink,	TempFile
+ * Moved private variables to a Private class:
+	Directory, File, FileReference, FSNode, NodeMonitor, Path, Alert,
+	AlertView, ProgressRequester, ProgressView
+ * BitmapImage:
+	o bugfix: memory leak in Load() and Save() fixed, performance is
+	  also improved.
+ * DropdownMenu:
+ 	o Changed SetTabOrder() so it assigns different tab order numbers to
+	  the textview and the popup buttons.
+ * Alert/AlertView:
+	o new "tip" icon (Rick)
+	o more documentation (Rick)
+ * Slider:
+	o Added shortcut support.
+	o Added/changed focus indicator.
+	o Can now be controlled with the arrow keys.
+	o Retains focus when mouse is released.
+ * Scrollbar:
+	o Added shortcut support.
+	o Added/changed focus indicator.
+	o Can now be controlled with the arrow keys.
+	o Retains focus when mouse is released.
+ * String:
+	o added String::const_str()
+	o added operator+=( char )
+	o added operator+( char )
+ * DateTime:
+	o Added to namespace os.
+ * ShortcutKey
+	o Added SetFromLabel( String & )
+ * Locale:
+	o new class, mostly a placeholder at the moment
+ * Catalog:
+	o new class, a string catalogue class for localisation purposes
+ * Application:
+	o added SetCatalog() and GetCatalog()
+ * View:
+	o SetTabOrder() will now automatically assign the next tab order
+	  when given the argument NEXT_TAB_ORDER.
+
 * January 12 2004, Henrik Isaksson *
 
  AppServer:
@@ -430,4 +477,5 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
