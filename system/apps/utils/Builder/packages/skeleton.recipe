@@ -48,7 +48,7 @@ pre-configure		<Commands preceding configuration>
 ; Extra environment variables for configure:
 configure-env
 	VAR 'value'
-; Non-standard configure command:
+; Configure command, if non-standard or in a non-standard location:
 configure-cmd		configure
 ; Non-standard prefix option:
 configure-prefix	--prefix=

@@ -1,0 +1,17 @@
+authors
+	Kaj de Vos
+	Jan L. Hauffa
+status				testing
+
+name				Berkeley DB
+licenses			OSI
+home				www.sleepycat.com
+packages			db-4.2.52.NC
+locations			http://www.sleepycat.com/update/snapshot/
+
+patch-config		dist
+;build-dir			build_unix
+pre-configure		cp ../db-4.2.52/build_unix/* .
+configure-cmd		dist/configure
+configure-options	--enable-cxx
+documentation		README LICENSE docs examples_c examples_cxx
