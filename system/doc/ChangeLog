@@ -1,3 +1,6 @@
+* Aug 22 20003, Arno Klenke *
+Added libmedia, media drivers and media applications
+
 * Aug 20 2003, Kristian Van Der Vliet *
 
 Patched ping.c to fix the byte order in the ping output.  Patch from Daniel Gryniewicz
