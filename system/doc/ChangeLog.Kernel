@@ -1,7 +1,28 @@
 * March 16 2005, Jake Hamby *
 
 Updated to Build 0008.  Finished merging Arno's most recent set of SMP fixes,
-plus minor spelling corrections.
+plus minor spelling corrections.  Additional notes from Arno Klenke:
+
+    * descriptors.c: Clear a bit in the right descriptor (the initial tss
+	descriptor). Previously a bit in another descriptor was cleared. This
+	bit is marked as reserved in the Intel docs and has always been set
+	for new threads (Thread_New() in thread.c) but the docs say that
+	reserved bits have to be cleared.
+    * init.c: Changed the order of some calls to match the order that has
+	been used before my big refactoring patch.  I don't think that this
+	was necessary but I am not sure if there are dependencies in the order
+	that I haven't seen yet.
+    * init.c: Added the new kernel parameter disable_acpi=true.
+    * irq.c: Disable reflection of irqs to realmode.
+    * pagefault.c: Readded the line psThread->tr_nState = TS_WAIT.  It was
+	removed by the scheduler patches but is necessary for correct behaviour.
+    * smp.c: Fixed acpi table parsing.  Removed the cli()/put_cpu_flags() pair
+	in do_smp_invalidate_pgt() and do_smp_preempt() because both functions
+	are called with interrupts disabled. Of course this shouldn't make any
+	difference but it does because it seems that we get problems if
+	put_cpu_flags() is the last call in one function. This has been the
+	case in the do_smp_invalidate_pgt() function which is only called on
+	systems with more than one cpu.
 
 * March 14 2005, Jake Hamby *
 
