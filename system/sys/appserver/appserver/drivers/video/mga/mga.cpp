@@ -50,6 +50,7 @@ using namespace os;
 #define PCI_DEVICE_ID_MATROX_G400			0x0525		// G400
 #define PCI_DEVICE_ID_MATROX_MIS			0x2007		// Mistral
 #define PCI_DEVICE_ID_MATROX_G550			0x2527		// G550
+#define PCI_DEVICE_ID_MATROX_G550_2			0x2537		// G550
 #define PCI_DEVICE_ID_MATROX_PAR			0x0527		// Parhelia
 
 static struct MGAChip_s gs_sChips[MAXCHIPS] = {
@@ -69,6 +70,7 @@ static struct MGAChip_s gs_sChips[MAXCHIPS] = {
 	{ PCI_DEVICE_ID_MATROX_G400, "G400", MGAGx00 },
 	{ PCI_DEVICE_ID_MATROX_MIS, "Mistral", MGAGx00 },
 	{ PCI_DEVICE_ID_MATROX_G550, "G550", MGAGx50 },
+	{ PCI_DEVICE_ID_MATROX_G550_2, "G550", MGAGx50 },
 	{ PCI_DEVICE_ID_MATROX_PAR, "Parhelia", MGAGx50 },
 	{ 0, "Unknown", NONE }
 };
@@ -109,6 +111,13 @@ Matrox::Matrox( int nFd ) : m_cGELock( "matrox_ge_lock" ), m_cCursorHotSpot(0,0)
 		}
 	}
 
+	// Check for a G450
+	if( m_sChip.nDeviceID == PCI_DEVICE_ID_MATROX_G400 && m_cPCIInfo.nRevisionID >= 0x80 )
+	{
+		m_sChip.zName = "G450";
+		m_sChip.eDAC = MGAGx50;
+	}
+
 	if( m_sChip.nDeviceID == 0 )
 	{
 		dbprintf( "Found an Unknown Matrox device.  ID 0x%04x\n", m_cPCIInfo.nDeviceID );
@@ -134,8 +143,7 @@ Matrox::Matrox( int nFd ) : m_cGELock( "matrox_ge_lock" ), m_cCursorHotSpot(0,0)
 	else
 		remap_area( m_hRegisterArea, (void*) (m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK) );
 
-	// FIXME: Hardwire these in for now
-	m_nCRTCScheme = CRTC_GX00;
+	// FIXME: Support for hardware pointers not implement
 	m_nPointerScheme = POINTER_SPRITE;
 
 	// Use the correct DAC
@@ -144,19 +152,22 @@ Matrox::Matrox( int nFd ) : m_cGELock( "matrox_ge_lock" ), m_cCursorHotSpot(0,0)
 		case TVP3026:
 		{
 			m_pcDac = new DacTVP3026( m_pRegisterBase );
+			m_nCRTCScheme = CRTC_GX00;
 			break;
 		}
 
 		case MGAGx00:
 		{
 			m_pcDac = new DacGx00( m_pRegisterBase );
+			m_nCRTCScheme = CRTC_GX00;
 			break;
 		}
 
 		case MGAGx50:
 		{
-			dbprintf("Gx50 DAC not supported\n");
+			dbprintf("Gx50 DAC not supported, falling back to Vesa BIOS\n");
 			m_pcDac = NULL;
+			m_nCRTCScheme = CRTC_VESA;
 			return;
 			break;
 		}
@@ -228,7 +239,8 @@ Matrox::Matrox( int nFd ) : m_cGELock( "matrox_ge_lock" ), m_cCursorHotSpot(0,0)
 	else
 		remap_area( m_hFrameBufferArea, (void*) (m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK) );
 
-	m_pcCrtc = new MgaCRTC( m_pRegisterBase, m_pcDac, m_cPCIInfo );
+	if( m_nCRTCScheme == CRTC_GX00 )
+		m_pcCrtc = new MgaCRTC( m_pRegisterBase, m_pcDac, m_cPCIInfo );
 
 	if( m_nPointerScheme == POINTER_MILLENIUM )
 		m_cLastMousePosition = IPoint( 0, 0 );
