@@ -1,3 +1,8 @@
+* June 25, Henrik Isaksson *
+
+ - LayoutView
+	o SetRoot() will now remove the old root layout node, if there is one already.
+
 * June 19, Henrik Isaksson *
 
  - Catalog
@@ -711,5 +716,6 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
 
