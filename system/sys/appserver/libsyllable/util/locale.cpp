@@ -19,9 +19,13 @@
 
 #include <util/locale.h>
 #include <util/resources.h>
+#include <util/settings.h>
 #include <storage/file.h>
+#include <storage/path.h>
 #include <locale.h>
 #include <util/catalog.h>
+
+#include <vector>
 
 using namespace os;
 
@@ -31,6 +35,27 @@ class Locale::Private
 
 	Private() {
 		m_pcCol = NULL;
+
+		try {
+			char* pzHome;
+			pzHome = getenv( "HOME" );
+
+			File* pcFile = new File( String( pzHome ) + String( "/Settings/System/Locale" ) );
+			Settings cSettings( pcFile );
+			cSettings.Load( );
+			
+			int i;
+			int nCount = 0, nType;
+			cSettings.GetNameInfo( "LANG", &nType, &nCount );
+			for( i = 0; i < nCount; i++ ) {
+				String cString;
+				if( cSettings.FindString( "LANG", &cString, i ) == 0 ) {
+					m_cLang.push_back( cString );
+					dbprintf( "Preferred Language: %s (prio %d)\n", cString.c_str(), i );
+				}
+			}
+		} catch( ... ) {
+		}
 	}
 
 	~Private() {
@@ -46,6 +71,7 @@ class Locale::Private
 		return m_pcCol;
 	}
 
+	std::vector<String> m_cLang;
 	String		m_cName;
 	Resources*	m_pcCol;
 };
@@ -151,11 +177,14 @@ Catalog* Locale::GetLocalizedCatalog( const String& cName )
 		bDef = true;
 	}
 
-	pcStream = GetResourceStream( m->m_cName + String("/") + cName );
-	if( pcStream ) {
-		pcCatalog->Load( pcStream );
-		delete pcStream;
-		bLoc = true;
+	for( int i = 0; i < m->m_cLang.size(); i++ ) {
+		pcStream = GetResourceStream( m->m_cLang[i] + String("/") + cName );
+		if( pcStream ) {
+			pcCatalog->Load( pcStream );
+			delete pcStream;
+			bLoc = true;
+			break;
+		}
 	}
 
 	if( bLoc || bDef ) {
@@ -165,4 +194,3 @@ Catalog* Locale::GetLocalizedCatalog( const String& cName )
 		return NULL;
 	}
 }
-

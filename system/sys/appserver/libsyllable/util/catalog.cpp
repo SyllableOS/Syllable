@@ -24,7 +24,7 @@
 
 using namespace os;
 
-#define CURRENT_CATALOG_VERSION	1
+#define CURRENT_CATALOG_VERSION	2
 #define CATALOG_MAGIC			0x0CA7A106
 
 struct Catalog::FileHeader
@@ -33,6 +33,8 @@ struct Catalog::FileHeader
 	uint32	m_nVersion;
 	uint32	m_nHeaderSize;
 	uint32	m_nNumStrings;
+	uint32	m_nNumMnemonics;
+	uint32	m_nNumComments;
 };
 
 class Catalog::Private
@@ -43,11 +45,6 @@ class Catalog::Private
 	}
 
 	~Private() {
-/*		while( !m_cStrings.empty() ) {
-			StringMap::iterator i = m_cStrings.begin();
-			delete ( *i );
-			m_cStrings.erase( i );
-		}*/
 	}
 
 	FileHeader	m_sHdr;
@@ -105,17 +102,23 @@ status_t Catalog::Load( StreamableIO* pcSource )
 
 	Lock();
 
-	pcSource->Read( &m->m_sHdr, sizeof( m->m_sHdr ) );
+	pcSource->Read( &m->m_sHdr, 3 * sizeof( uint32 ) );
+	pcSource->Read( &m->m_sHdr.m_nNumStrings, std::min( (uint32)(sizeof( m->m_sHdr ) ), m->m_sHdr.m_nHeaderSize ) - 3 * sizeof( uint32 ) );
 	
 	if(	m->m_sHdr.m_nMagic == CATALOG_MAGIC &&
-		m->m_sHdr.m_nVersion == CURRENT_CATALOG_VERSION )
+		m->m_sHdr.m_nVersion <= CURRENT_CATALOG_VERSION )
 	{
 		uint32	i;
 		uint32	nID;
 		uint32	nLen;
 		char*	pzBfr = new char[ 256 ];
 		uint32	nBufSize = 256;
-		
+
+		if( m->m_sHdr.m_nVersion == 1 ) {
+			m->m_sHdr.m_nNumMnemonics = 0;
+			m->m_sHdr.m_nNumComments = 0;
+		}
+
 		for( i = 0; i < m->m_sHdr.m_nNumStrings; i++ ) {
 			pcSource->Read( &nID, sizeof( nID ) );
 			pcSource->Read( &nLen, sizeof( nLen ) );
@@ -127,7 +130,7 @@ status_t Catalog::Load( StreamableIO* pcSource )
 			pcSource->Read( pzBfr, nLen );
 			SetString( nID, pzBfr );
 		}
-		
+	
 		delete pzBfr;
 	} else {
 		retval = -1;
@@ -146,6 +149,8 @@ status_t Catalog::Save( StreamableIO* pcDest )
 	m->m_sHdr.m_nVersion = CURRENT_CATALOG_VERSION;
 	m->m_sHdr.m_nHeaderSize = sizeof( m->m_sHdr );
 	m->m_sHdr.m_nNumStrings = m->m_cStrings.size();
+	m->m_sHdr.m_nNumMnemonics = 0;
+	m->m_sHdr.m_nNumComments = 0;
 	pcDest->Write( &m->m_sHdr, sizeof( m->m_sHdr ) );
 
 	StringMap::iterator i;
@@ -198,3 +203,5 @@ LString::LString( uint32 nID )
 		throw GeneralFailure( "Catalog not loaded!", 0 );
 	}
 }
+
+
