@@ -31,9 +31,6 @@
 #include <gui/menu.h>
 #include <gui/filerequester.h>
 
-#include <codeview/Format_C.h>
-#include <codeview/Format_java.h>
-
 using namespace os;
 
 class AEditWindow : public Window
@@ -61,14 +58,9 @@ class AEditWindow : public Window
 		Menu* pcFileMenu;
 		Menu* pcEditMenu;
 		Menu* pcFindMenu;
-		Menu* pcFormatMenu;
+		Menu* pcFontMenu;
 		Menu* pcSettingsMenu;
 		Menu* pcHelpMenu;
-
-		char nFormator;
-
-		Format_C* pcFormatC;
-		Format_java* pcFormatJava;
 
 		FileRequester* pcLoadRequester;
 		FileRequester* pcSaveRequester;
@@ -84,13 +76,16 @@ class AEditWindow : public Window
 
 		std::string zFindText;				// All used for find & replace
 		std::string zReplaceText;
-		uint32 nTextPosition,nCurrentLine, nTotalLines;
+		int32 nTextPosition,nCurrentLine, nTotalLines;
 		bool bHasFind;
 		bool bCaseSensitive;
 		bool bSaveOnExit;
 		
 		AEditSettings* pcSettings;
 
+		std::string zFamily;				// Font family currently selected
+		std::string zStyle;					// Font style currently selected
+		float vSize;						// Font size currently selectes
 };
 
 #endif /* __APPWINDOW_H_ */

@@ -19,9 +19,9 @@
 
 #include <util/message.h>
 
-#include <codeview/CodeView.h>
+#include <gui/textview.h>
 
-EditView::EditView(const Rect& cFrame) : CodeView(cFrame,"edit_view","",CF_FOLLOW_ALL,WID_WILL_DRAW)
+EditView::EditView(const Rect& cFrame) : TextView(cFrame,"edit_view","",CF_FOLLOW_ALL,WID_WILL_DRAW)
 {
 	// Create a context menu
 	pcContextMenu=new Menu(Rect(0,0,10,10),"",ITEMS_IN_COLUMN);
@@ -30,9 +30,11 @@ EditView::EditView(const Rect& cFrame) : CodeView(cFrame,"edit_view","",CF_FOLLO
 	pcContextMenu->AddItem("Paste", new Message(M_MENU_EDIT_PASTE));
 	pcContextMenu->AddItem(new MenuSeparator());
 	pcContextMenu->AddItem("Select all", new Message(M_MENU_EDIT_SELECT_ALL));
+#ifdef ENABLE_UNDO
 	pcContextMenu->AddItem(new MenuSeparator());
 	pcContextMenu->AddItem("Undo", new Message(M_MENU_EDIT_UNDO));
 	pcContextMenu->AddItem("Redo", new Message(M_MENU_EDIT_REDO));
+#endif
 }
 
 void EditView::AttachedToWindow(void)
@@ -43,14 +45,16 @@ void EditView::AttachedToWindow(void)
 void EditView::MouseDown(const Point &cPosition, uint32 nButtons)
 {
 	if(nButtons == 2)
-		pcContextMenu->Open(cPosition);	// Open the menu where the mouse is
+		pcContextMenu->Open(ConvertToScreen(cPosition));	// Open the menu where the mouse is
+	else
+		TextView::MouseDown(cPosition, nButtons);
 }
 
 int EditView::Find(std::string zOriginal, std::string zFind, bool bCaseSensitive, int nStartPosition){
 // bCaseSensitive == True, do a case sensitive search
 // bCaseSensitive == False, do a case insensitive search
 
-	int nPosition1, nPosition2=0;
+	unsigned int nPosition1, nPosition2=0;
 
 	const char* cOriginal=zOriginal.c_str();
 	const char* cFind=zFind.c_str();
@@ -107,5 +111,25 @@ int EditView::Find(std::string zOriginal, std::string zFind, bool bCaseSensitive
 	}	// End of else() block
 
 	return(-1);
+}
+
+void EditView::Undo(void)
+{
+	return;
+}
+
+void EditView::Redo(void)
+{
+	return;
+}
+
+int EditView::GetLineCount(void)
+{
+	return TextView::GetBuffer().size();
+}
+
+std::string EditView::GetLine(int32 nLineNo)
+{
+	return TextView::GetBuffer()[nLineNo];
 }
 

@@ -24,6 +24,7 @@
 
 #include <gui/window.h>
 #include <gui/requesters.h>
+#include <gui/font.h>
 
 #include <util/invoker.h>
 #include <util/application.h>
@@ -60,19 +61,28 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", "AE
 	pcButtonBar->AddButton(ImageEditCopy,sizeof(ImageEditCopy),"appwindow_editcopy",new Message(M_BUT_EDIT_COPY));
 	pcButtonBar->AddButton(ImageEditPaste,sizeof(ImageEditPaste),"appwindow_editpaste",new Message(M_BUT_EDIT_PASTE));
 	pcButtonBar->AddButton(ImageFindFind,sizeof(ImageFindFind),"appwindow_find",new Message(M_BUT_FIND_FIND));
+#ifdef ENABLE_UNDO
 	pcButtonBar->AddButton(ImageUndo,sizeof(ImageUndo),"appwindow_undo",new Message(M_BUT_EDIT_UNDO));
 	pcButtonBar->AddButton(ImageRedo,sizeof(ImageRedo),"appwindow_redo",new Message(M_BUT_EDIT_REDO));
-	/*
-	pcButtonBar->AddButton(ImageStar,sizeof(ImageStar),"appwindow_anchor",new Message(M_BUT_ANCHOR_ANCHOR));
-	pcButtonBar->AddButton(ImageUp,sizeof(ImageUp),"appwindow_up",new Message(M_BUT_ANCHOR_UP));
-	pcButtonBar->AddButton(ImageDown,sizeof(ImageDown),"appwindow_down",new Message(M_BUT_ANCHOR_DOWN));
-	*/
+#endif
 
 	// Create & attach EditView
 	pcEditView=new EditView(Rect(0,0,0,0));
 	pcEditView->SetTarget(this);
 	pcEditView->SetMessage(new Message(M_EDITOR_INVOKED));
-	pcEditView->SetEventMask(CodeView::EI_CONTENT_CHANGED | CodeView::EI_CURSOR_MOVED);
+	pcEditView->SetEventMask(TextView::EI_CONTENT_CHANGED | TextView::EI_CURSOR_MOVED);
+	pcEditView->SetMultiLine(true);
+
+	zFamily="Lucida Sans Typewriter";
+	zStyle="Regular";
+	vSize=8;
+
+	Font *font = new Font();
+	font->SetFamilyAndStyle(zFamily.c_str(),zStyle.c_str());
+	font->SetSize(vSize);
+	pcEditView->SetFont(font);
+	font->Release();
+
 	pcVLayoutRoot->AddChild(pcEditView);
 
 	// Attach the completed LayoutViews to the window
@@ -103,33 +113,84 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", "AE
 	pcEditMenu->AddItem("Paste",new Message(M_MENU_EDIT_PASTE));
 	pcEditMenu->AddItem(new MenuSeparator());
 	pcEditMenu->AddItem("Select all",new Message(M_MENU_EDIT_SELECT_ALL));
+#ifdef ENABLE_UNDO
 	pcEditMenu->AddItem(new MenuSeparator());
 	pcEditMenu->AddItem("Undo",new Message(M_MENU_EDIT_UNDO));
 	pcEditMenu->AddItem("Redo",new Message(M_MENU_EDIT_REDO));
+#endif
 
-	/*
-	pcEditMenu->AddItem(new MenuSeparator());
-	pcEditMenu->AddItem("Add Anchor", new Message(M_MENU_EDIT_ANCHOR));
-	pcEditMenu->AddItem("Up", new Message(M_MENU_EDIT_UP));
-	pcEditMenu->AddItem("Down", new Message(M_MENU_EDIT_DOWN));
-	*/
-		
 	pcFindMenu=new Menu(Rect(0,0,1,1),"Find",ITEMS_IN_COLUMN);
 	pcFindMenu->AddItem("Find",new Message(M_MENU_FIND_FIND));
 	pcFindMenu->AddItem("Replace",new Message(M_MENU_FIND_REPLACE));
 	pcFindMenu->AddItem(new MenuSeparator());
 	pcFindMenu->AddItem("Goto line...",new Message(M_MENU_FIND_GOTO));
 
+	// Create Font Menu
+	pcFontMenu = new Menu(Rect(0,0,1,1), "Font", ITEMS_IN_COLUMN);
+
+	// Add Size Submenu
+	Menu* pcSizeMenu = new Menu(Rect(0,0,1,1), "Size", ITEMS_IN_COLUMN);
+
+	float sz,del=1.0;
+
+	Message *pcSizeMsg;
+	char zSizeLabel[8];
+
+	for (sz=5.0; sz < 30.0; sz += del)
+	{
+		pcSizeMsg = new Message(M_MENU_FONT_SIZE);
+
+		pcSizeMsg->AddFloat("size",sz);
+		sprintf(zSizeLabel,"%.1f",sz);
+		pcSizeMenu->AddItem(zSizeLabel,pcSizeMsg);
+
+		if (sz == 10.0)
+			del = 2.0;
+		else if (sz == 16.0)
+			del = 4.0;
+   }
+
+	pcFontMenu->AddItem(pcSizeMenu);
+	pcFontMenu->AddItem(new MenuSeparator());
+
+	// Add Family and Style Menu
+	int fc = Font::GetFamilyCount();
+	int sc,i=0,j=0;
+	uint32 nFlags;
+	char zFamily[FONT_FAMILY_LENGTH],zStyle[FONT_STYLE_LENGTH];
+
+	Menu *pcFamilyMenu;
+	Message *pcFontMsg;
+
+	for (i=0; i<fc; i++)
+	{
+		if (Font::GetFamilyInfo(i,zFamily) == 0)
+		{
+			sc = Font::GetStyleCount(zFamily);
+			pcFamilyMenu = new Menu(Rect(0,0,1,1),zFamily,ITEMS_IN_COLUMN);
+
+			for (j=0; j<sc; j++)
+			{
+				if (Font::GetStyleInfo(zFamily,j,zStyle,&nFlags) == 0)
+				{
+					pcFontMsg = new Message(M_MENU_FONT_FAMILY_AND_STYLE);
+					pcFontMsg->AddString("family",zFamily);
+					pcFontMsg->AddString("style",zStyle);
+
+					pcFamilyMenu->AddItem(zStyle,pcFontMsg);
+				}
+			}
+
+		pcFontMenu->AddItem(pcFamilyMenu);
+
+		}
+	}
+
+	// Create the Settings menu
 	pcSettingsMenu=new Menu(Rect(0,0,1,1),"Settings",ITEMS_IN_COLUMN);
 	pcSettingsMenu->AddItem("Save settings on Close",new Message(M_MENU_SETTINGS_SAVE_ON_CLOSE));
 	pcSettingsMenu->AddItem("Save settings now",new Message(M_MENU_SETTINGS_SAVE_NOW));
 	pcSettingsMenu->AddItem("Reset settings", new Message(M_MENU_SETTINGS_RESET));
-
-	pcFormatMenu=new Menu(Rect(0,0,1,1),"Format",ITEMS_IN_COLUMN);
-	pcFormatMenu->AddItem("None",new Message(M_MENU_FORMAT_NONE));
-	pcFormatMenu->AddItem(new MenuSeparator());
-	pcFormatMenu->AddItem("C/C++",new Message(M_MENU_FORMAT_C));
-	pcFormatMenu->AddItem("Java",new Message(M_MENU_FORMAT_JAVA));
 
 	pcHelpMenu=new Menu(Rect(0,0,1,1),"Help",ITEMS_IN_COLUMN);
 	pcHelpMenu->AddItem("Table of Contents",new Message(M_MENU_HELP_TOC));
@@ -140,37 +201,12 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", "AE
 	pcMenuBar->AddItem(pcFileMenu);
 	pcMenuBar->AddItem(pcEditMenu);
 	pcMenuBar->AddItem(pcFindMenu);
-	pcMenuBar->AddItem(pcFormatMenu);
+	pcMenuBar->AddItem(pcFontMenu);
 	pcMenuBar->AddItem(pcSettingsMenu);
 	pcMenuBar->AddItem(pcHelpMenu);
 
 	pcMenuBar->SetTargetForItems(this);
 	AddChild(pcMenuBar);
-
-	// Reset the Format
-	pcFormatC=NULL;
-	pcFormatJava=NULL;
-
-	nFormator='n';
-
-	switch(pcSettings->GetFormat())
-	{
-		case 'c':
-		{
-			nFormator='c';
-			pcFormatC=new Format_C();
-			pcEditView->SetFormat(pcFormatC);
-			break;
-		}
-		
-		case 'j':
-		{
-			nFormator='j';
-			pcFormatJava=new Format_java();
-			pcEditView->SetFormat(pcFormatJava);
-			break;
-		}
-	}
 
 	bSaveOnExit=pcSettings->GetSaveOnExit();
 
@@ -204,16 +240,6 @@ void AEditWindow::DispatchMessage(Message* pcMessage, Handler* pcHandler)
 
 		if(pcMessage->FindString("_raw_string", &zRaw)==0 && pcMessage->FindInt32("_qualifiers", &nQual)==0)
 			bPassOn=MapKey(zRaw.c_str(),nQual);
-	}
-
-	// Check for a mouse-click event
-	if(pcMessage->GetCode()==M_MOUSE_DOWN)
-	{
-		int32 nButtons=0;
-		Point cPosition;
-		
-		if(pcMessage->FindInt32("_buttons",&nButtons)==0 && pcMessage->FindPoint("_scr_pos",&cPosition)==0)
-			pcEditView->MouseDown(cPosition,nButtons);
 	}
 
 	// Pass on the Message to the base class (If the MapKey() method lets us)
@@ -256,6 +282,9 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 			zWindowTitle+=" : New File";
 
 			SetTitle(zWindowTitle);
+
+			// Set the focus
+			pcEditView->MakeFocus();
 
 			// Reset the current file name
 			zCurrentFile="";
@@ -381,24 +410,6 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 		case M_BUT_EDIT_REDO:
 		{
 			pcEditView->Redo();
-			break;
-		}
-
-		case M_MENU_EDIT_ANCHOR:
-		case M_BUT_ANCHOR_ANCHOR:
-		{
-			break;
-		}
-
-		case M_MENU_EDIT_UP:
-		case M_BUT_ANCHOR_UP:
-		{
-			break;
-		}
-
-		case M_MENU_EDIT_DOWN:
-		case M_BUT_ANCHOR_DOWN:
-		{
 			break;
 		}
 
@@ -548,37 +559,39 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 			break;
 		}
 
-		case M_MENU_FORMAT_NONE:
+		case M_MENU_FONT_SIZE:
 		{
-			nFormator='n';
+			float size;
 
-			pcEditView->SetFormat(NULL);
-			pcEditView->Invalidate();
-			pcEditView->Flush();
+			if (pcMessage->FindFloat("size",&size) == 0)
+			{
+				Font *font = new Font();
+				font->SetFamilyAndStyle(zFamily.c_str(),zStyle.c_str());
+				font->SetSize(size);
+				pcEditView->SetFont(font);
+				font->Release();
+
+				vSize = size;
+			}
 
 			break;
 		}
 
-		case M_MENU_FORMAT_C:
+		case M_MENU_FONT_FAMILY_AND_STYLE:
 		{
-			nFormator='c';
+			const char *family,*style;
+				
+			if (pcMessage->FindString("family",&family) == 0 && pcMessage->FindString("style",&style) == 0)
+			{
+				Font *font = new Font();
+				font->SetFamilyAndStyle(family,style);
+				font->SetSize(vSize);
+				pcEditView->SetFont(font);
+				font->Release();
 
-			if(pcFormatC==NULL)
-				pcFormatC=new Format_C();
-
-			pcEditView->SetFormat(pcFormatC);
-
-			break;
-		}
-
-		case M_MENU_FORMAT_JAVA:
-		{
-			nFormator='j';
-
-			if(pcFormatJava==NULL)
-				pcFormatJava=new Format_java();
-
-			pcEditView->SetFormat(pcFormatJava);
+				zFamily.assign(family);
+				zStyle.assign(style);
+			}
 
 			break;
 		}
@@ -592,7 +605,6 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 		case M_MENU_SETTINGS_SAVE_NOW:
 		{
 			pcSettings->SetWindowPos(GetFrame());
-			pcSettings->SetFormat(nFormator);
 			pcSettings->SetSaveOnExit(bSaveOnExit);
 			pcSettings->Save();
 
@@ -603,10 +615,7 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 		{
 			ResizeTo(600,375);
 			MoveTo(100,125);
-			nFormator='n';
 			bSaveOnExit=false;
-
-			HandleMessage(new Message(M_MENU_FORMAT_NONE));
 
 			break;
 		}
@@ -627,11 +636,11 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 			
 			if(pcMessage->FindInt32("events", &nEvent)==0)
 			{
-				if(!bContentChanged && (nEvent & CodeView::EI_CONTENT_CHANGED))
+				if(!bContentChanged && (nEvent & TextView::EI_CONTENT_CHANGED))
 				{
 					bContentChanged=true;
 				}
-				if(nEvent & CodeView::EI_CURSOR_MOVED)
+				if(nEvent & TextView::EI_CURSOR_MOVED)
 				{
 					// Do nothing just yet
 				}
@@ -646,6 +655,7 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 			break;
 		}
 	}
+
 }
 
 bool AEditWindow::OkToQuit(void)
@@ -658,7 +668,6 @@ bool AEditWindow::OkToQuit(void)
 	if(bSaveOnExit)
 	{
 		pcSettings->SetWindowPos(GetFrame());
-		pcSettings->SetFormat(nFormator);
 		pcSettings->SetSaveOnExit(bSaveOnExit);
 		pcSettings->Save();
 	}

@@ -9,16 +9,19 @@ OBJS = $(OBJSDIR)main.o $(OBJSDIR)appwindow.o $(OBJSDIR)image_button.o $(OBJSDIR
 EXE = aedit
 
 $(EXE): $(OBJS)
-	$(LL) $(OBJS) -latheos -lcodeview -o $(EXE)
-
-
-install:
-	cp -f $(EXE) /bin/$(EXE)
-
-dist:
-	cp -f $(EXE) $(DIST_DIR)/atheos/sys/bin/$(EXE)
+	$(LL) $(OBJS) -latheos -o $(EXE)
 
 deps:
+
+install: $(EXE)
+	-strip --strip-all $(EXE)
+	-mkdir /usr/aedit
+	-mkdir /usr/aedit/bin
+	-cp $(EXE) /usr/aedit/bin/
+
+dist: $(EXE)
+	-strip --strip-all $(EXE)
+	-cp -f $(EXE) $(DIST_DIR)/atheos/sys/bin/$(EXE)
 
 clean:
 	-rm $(OBJS)
@@ -50,4 +53,5 @@ $(OBJSDIR)replacedialog.o: replacedialog.cpp replacedialog.cpp
 
 $(OBJSDIR)settings.o: settings.cpp settings.h
 	$(CC) $(COPTS) settings.cpp -o $@
+
 

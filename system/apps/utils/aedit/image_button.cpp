@@ -20,7 +20,7 @@
 
 ImageButton::ImageButton(Rect cFrame, const char* pzName, const char* pzLabel, Message* pcMessage) : Button(cFrame, pzName, pzLabel, pcMessage, CF_FOLLOW_LEFT, WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE)
 {
-	pcButtonImage=new Bitmap(cFrame.Width()+1, cFrame.Height()+1, CS_RGBA32, 0x0002);
+	pcButtonImage=new Bitmap(cFrame.Width()+1, cFrame.Height()+1, CS_RGB32, 0x0002);
 	bMouseOver=false;
 }
 
@@ -120,7 +120,7 @@ void ImageButton::SetBitmap(uint8* pnData, uint nNumBytes)
 			(*nRaster++)=pnData[nCurrentByte];
 			(*nRaster++)=pnData[nCurrentByte+1];
 			(*nRaster++)=pnData[nCurrentByte+2];
-			(*nRaster++)=pnData[nCurrentByte+3];
+			nRaster++;
 		}
 		else	// This is odd, but I can't work out why the alpha doesn't
 				// work properly, so this *does* work for now at least!
@@ -128,7 +128,7 @@ void ImageButton::SetBitmap(uint8* pnData, uint nNumBytes)
 			(*nRaster++)=cColNormal.red;
 			(*nRaster++)=cColNormal.green;
 			(*nRaster++)=cColNormal.blue;
-			(*nRaster++)=cColNormal.alpha;
+			nRaster++;
 		}
 	}
 

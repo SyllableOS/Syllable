@@ -45,17 +45,6 @@ Rect AEditSettings::GetWindowPos(void)
 	return(cWindowPosition);
 }
 
-void AEditSettings::SetFormat(char nFormator)
-{
-	nFormat=nFormator;
-	return;
-}
-
-char AEditSettings::GetFormat(void)
-{
-	return(nFormat);
-}
-
 void AEditSettings::SetSaveOnExit(bool bSave)
 {
 	bSaveOnExit=bSave;
@@ -100,13 +89,7 @@ int AEditSettings::Load(void)
 	}
 
 	// Extract the settings from the message
-	const char* nReadFormat;
-
 	pcSettingsMessage->FindRect("win_pos",&cWindowPosition);
-
-	pcSettingsMessage->FindString("format",&nReadFormat);
-	nFormat=nReadFormat[0];
-
 	pcSettingsMessage->FindBool("save_exit",&bSaveOnExit);
 
 	// Clean up after ourselves & return
@@ -121,7 +104,6 @@ int AEditSettings::Save(void)
 	Message* pcSettingsMessage=new Message(887);		// Semi-random magic number
 
 	pcSettingsMessage->AddRect("win_pos",cWindowPosition);
-	pcSettingsMessage->AddString("format",&nFormat);
 	pcSettingsMessage->AddBool("save_exit",bSaveOnExit);
 
 	// Flatten the message

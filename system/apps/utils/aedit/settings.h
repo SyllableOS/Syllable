@@ -18,6 +18,7 @@
 #define __AEDIT_SETTINGS_H_
 
 #include <gui/rect.h>
+
 #include <string>
 
 using namespace os;
@@ -29,8 +30,6 @@ class AEditSettings
 		~AEditSettings();
 		void SetWindowPos(Rect cPosition);
 		Rect GetWindowPos(void);
-		void SetFormat(char nFormator);
-		char GetFormat(void);
 		void SetSaveOnExit(bool bSave);
 		bool GetSaveOnExit(void);
 
@@ -41,7 +40,6 @@ class AEditSettings
 		std::string zSettingsFile;
 
 		Rect cWindowPosition;
-		char nFormat;
 		bool bSaveOnExit;
 };
 

@@ -17,20 +17,25 @@
 #ifndef __EDITVIEW_H_
 #define __EDITVIEW_H_
 
+#include <string>
+
 #include <gui/menu.h>
 #include <gui/view.h>
-
-#include <codeview/CodeView.h>
+#include <gui/textview.h>
 
 using namespace os;
 
-class EditView : public CodeView
+class EditView : public TextView
 {
 	public:
 		EditView(const Rect& cFrame);
 		void AttachedToWindow(void);
 		void MouseDown(const Point& cPosition, uint32 nButtons); 
 		int Find(std::string zOriginal, std::string zFind, bool bCaseSensitive, int nStartPosition);
+		void Undo(void);
+		void Redo(void);
+		int GetLineCount(void);
+		std::string GetLine(int32 nLineNo);
 
 	private:
 		Menu* pcContextMenu;

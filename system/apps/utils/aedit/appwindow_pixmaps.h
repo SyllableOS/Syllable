@@ -53,19 +53,5 @@ uint8 ImageRedo[]= {
 	#include "pixmaps/redo.hex"
 };
 
-/*
-uint8 ImageStar[]= {
-	#include "pixmaps/star.hex"
-};
-
-uint8 ImageUp[]= {
-	#include "pixmaps/up.hex"
-};
-
-uint8 ImageDown[]= {
-	#include "pixmaps/down.hex"
-};
-*/
-
 #endif
 
