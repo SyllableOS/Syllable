@@ -34,6 +34,7 @@ modules
 	apps/utils/crypt
 	apps/utils/keymapconv
 	apps/utils/memmon
+;	Needs objcopy from BinUtils:
 	apps/utils/rescopy
 	apps/utils/shelltools
 	apps/utils/slbmgr
