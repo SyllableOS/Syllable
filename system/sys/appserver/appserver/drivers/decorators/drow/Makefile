@@ -1,6 +1,4 @@
-include ../freetype.makefile
-
-COPTS   = -I../../../server -I$(FREETYPEINCLUDE) -c -O3 -Wall
+COPTS   = -I../../../server $(shell freetype-config --cflags) -c -O3 -Wall
 
 DEVBIN = /system/drivers/appserver/decorators
 OBJS =	drowdecorator.o
