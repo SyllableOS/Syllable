@@ -53,7 +53,7 @@ bool ATImach64::CreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cD
     	}
     	uint32 offset = PAGE_ALIGN( info.total_vram - totalSize - PAGE_SIZE );
 		
-		*pBuffer = create_area( "mach64_overlay", NULL, totalSize, AREA_FULL_ACCESS, AREA_NO_LOCK );
+		*pBuffer = create_area( "mach64_overlay", NULL, PAGE_ALIGN( totalSize ), AREA_FULL_ACCESS, AREA_NO_LOCK );
 		remap_area( *pBuffer, (void*)(( info.frame_buffer_phys ) + offset) );
 		
 		
@@ -149,7 +149,7 @@ bool ATImach64::RecreateVideoOverlay( const os::IPoint& cSize, const os::IRect& 
     	}
     	uint32 offset = PAGE_ALIGN( info.total_vram - totalSize - PAGE_SIZE );
 		
-		*pBuffer = create_area( "mach64_overlay", NULL, totalSize, AREA_FULL_ACCESS, AREA_NO_LOCK );
+		*pBuffer = create_area( "mach64_overlay", NULL, PAGE_ALIGN( totalSize ), AREA_FULL_ACCESS, AREA_NO_LOCK );
 		remap_area( *pBuffer, (void*)(( info.frame_buffer_phys ) + offset) );
 		
 		
@@ -230,6 +230,7 @@ void ATImach64::DeleteVideoOverlay( area_id *pBuffer )
 	}
 	m_bVideoOverlayUsed = false;
 }
+
 
 
 

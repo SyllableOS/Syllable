@@ -9,10 +9,14 @@ void ATImach64::SetColor(int nIndex, const Color32_s &sColor)
 }
 //----------------------------------------------------------------
 int ATImach64::GetScreenModeCount() {
+	if( m_bVESA )
+		return( M64VesaDriver::GetScreenModeCount() );
 	return( m_cScreenModeList.size() );
 }
 //----------------------------------------------------------------
 bool ATImach64::GetScreenModeDesc(int nIndex, os::screen_mode *psMode) {
+	if( m_bVESA )
+		return( M64VesaDriver::GetScreenModeDesc( nIndex, psMode ) );
 	if( nIndex < 0 || unsigned (nIndex) > m_cScreenModeList.size() )
 		return( false );
 	*psMode = m_cScreenModeList[nIndex];
@@ -20,6 +24,8 @@ bool ATImach64::GetScreenModeDesc(int nIndex, os::screen_mode *psMode) {
 }
 //-----------------------------------------------------------------
 os::screen_mode ATImach64::GetCurrentScreenMode() {
+	if( m_bVESA )
+		return( M64VesaDriver::GetCurrentScreenMode() );
 	return( m_sCurrentMode );
 }
 
@@ -62,5 +68,7 @@ int ATImach64::BitsPerPixel (color_space cs) {
 			return( 8 );
 	}
 }
+
+
 
 

@@ -32,6 +32,7 @@
 
 #include "mach64_regs.h"
 #include "mach64_info.h"
+#include "mach64_vesa.h"
 
 #define dprintf dbprintf
 #define mach64_delay(arg) snooze( arg * 1000 )
@@ -72,7 +73,7 @@ struct VideoMode {
 
 
 // ****************************************************************************
-class ATImach64 : public DisplayDriver {
+class ATImach64 : public M64VesaDriver {
 public:
 
 	 // *** constructor and destructor ***
@@ -120,7 +121,7 @@ private:
 	// internal members
 	bool m_bIsInitialized; // set to true, if driver initialized
 	Locker m_cLock; // hardware access lock
-
+	bool m_bVESA; // Use vesa
 
 	// hardware resources
 	PCI_Info_s m_cPCIInfo;      // card descriptor
@@ -189,4 +190,6 @@ private:
 
 #endif
 // *** end of file ***
+
+
 

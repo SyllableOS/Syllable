@@ -427,6 +427,16 @@ found:
 	info.pll_per = 1000000/pll;
 	info.mclk_per = 1000000/mclk;
 	
+	/* Use VESA if necessary */
+	m_bVESA = false;
+	if( info.chip == MACH64_LT || info.chip == MACH64_XL || info.chip == MACH64_LTPRO || info.chip == MACH64_MOBILITY )
+	{
+		dbprintf( "Using VESA for mode switching\n" );
+		M64VesaDriver::InitModes();
+		m_bVESA = true;
+		goto vesa;
+	}
+	
 	/* LCD */
 	info.lcd.panel_id = -1;
 	if( info.chip == MACH64_LTPRO )
@@ -459,6 +469,8 @@ found:
 		dbprintf("Mach64:: LCD panel with size %ix%i detected\n", info.lcd.horizontal,
 				info.lcd.vertical );
 	}
+	
+vesa:
 
 	/*
 	*  Last page of 8 MB aperture can be MMIO
@@ -534,6 +546,31 @@ int ATImach64::SetScreenMode( os::screen_mode sMode ) {
 	if( sMode.m_eColorSpace == CS_CMAP8 || sMode.m_eColorSpace == CS_RGB24 ) {
 		dbprintf ("Mach64:: 8BPP or 24BPP modes are not supported!\n");
 		return( -1 );
+	}
+	
+	if( m_bVESA )
+	{
+		int nReturn = M64VesaDriver::SetScreenMode( sMode );
+		info.par.crtc.vxres = sMode.m_nWidth;
+		info.par.crtc.vyres = sMode.m_nHeight;
+		info.par.crtc.bpp = BitsPerPixel( sMode.m_eColorSpace );
+		m_sCurrentMode = sMode;
+		if( sMode.m_eColorSpace == CS_RGB15 ) {
+			info.par.crtc.dp_pix_width = HOST_15BPP | SRC_15BPP | DST_15BPP |
+				BYTE_ORDER_LSB_TO_MSB;
+			info.par.crtc.dp_chain_mask = 0x4210;
+		} else if( sMode.m_eColorSpace == CS_RGB16 ) {
+			info.par.crtc.dp_pix_width = HOST_16BPP | SRC_16BPP | DST_16BPP |
+				BYTE_ORDER_LSB_TO_MSB;
+			info.par.crtc.dp_chain_mask = 0x8410;
+		} else {
+			info.par.crtc.dp_pix_width = HOST_32BPP | SRC_32BPP | DST_32BPP |
+				BYTE_ORDER_LSB_TO_MSB;
+			info.par.crtc.dp_chain_mask = 0x8080;
+		}
+		init_engine(&info.par);
+		wait_for_idle();
+		return( nReturn );
 	}
 
 	 /* find display mode */
@@ -760,3 +797,10 @@ DisplayDriver* init_gfx_driver() {
 
 //-----------------------------------------------------------------------------
 // *** end of file ***
+
+
+
+
+
+
+
