@@ -40,8 +40,8 @@ extern "C" {
 #define CD_PLAY_TRACK		MKCDIOCTL(0x1003)	/* Play Audio Track */
 #define CD_PAUSE			MKCDIOCTL(0x1004)	/* Pause Audio */ 
 #define CD_RESUME			MKCDIOCTL(0x1005)	/* Resume paused Audio */
-#define CD_SET_VOL			MKCDIOCTL(0x1006)	/* Set the drives output volume */
-#define CD_GET_VOL			MKCDIOCTL(0x1007)	/* Get the drive's volume setting */
+#define CD_STOP				MKCDIOCTL(0x1006)	/* Stop Audio playback */
+#define CD_GET_TIME			MKCDIOCTL(0x1007)	/* Get current playback time & position */
 
 /* Drive controls */
 #define CD_EJECT			MKCDIOCTL(0x2001)	/* Open / Close the CD-ROM tray */
