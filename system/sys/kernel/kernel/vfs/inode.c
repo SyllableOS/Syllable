@@ -1009,9 +1009,10 @@ FileSysDesc_s* register_file_system( const char* pzName, FSOperations_s* psOps )
 static void release_fs( FileSysDesc_s* psDesc )
 {
     FileSysDesc_s** ppsTmp;
+    char zPath[256];
+    int i;
   
     atomic_t nCount = atomic_add( &psDesc->fs_nRefCount, -1 );
-
     if ( nCount != 1 ) {
 	return;
     }
@@ -1019,6 +1020,16 @@ static void release_fs( FileSysDesc_s* psDesc )
 	printk( "Painc: attempt to unload builtin filesystem %s\n", psDesc->fs_zName );
 	return;
     }
+  
+    /* Do not unload bootmodule fs drivers */
+    for( i = 0; i < g_sSysBase.ex_nBootModuleCount; i++ ) {
+		strcpy( zPath, "/atheos/sys/drivers/fs/" );
+		strcat( zPath, psDesc->fs_zName );
+		if( !strcmp( zPath, g_sSysBase.ex_asBootModules[i].bm_pzModuleArgs ) ) {
+			return;
+		}
+	}
+  
   
     LOCK( g_hFSListSema );
     for ( ppsTmp = &g_psFileSystems ; *ppsTmp != NULL ; ppsTmp = &(*ppsTmp)->fs_psNext ) {
@@ -1990,4 +2001,15 @@ void init_vfs_module( void )
 
     register_debug_cmd( "dump_ino_tab", "list inodes in used/free/hash tables",  dump_tables );
 }
+
+
+
+
+
+
+
+
+
+
+
 

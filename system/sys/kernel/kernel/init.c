@@ -355,6 +355,8 @@ static int find_boot_dev()
 					printk( "Found boot disk in %s\n", pzDiskPathBuf );
 					strcpy( g_zBootDev, pzDiskPathBuf );
 					bFound = true;
+				} else {
+					sys_unmount( "/boot", true );
 				}
 			}
 
@@ -929,3 +931,4 @@ void init_kernel_mb( MultiBootHeader_s* psInfo )
     
     init_kernel( (char*)0x10000, nKernelSize );
 }
+
