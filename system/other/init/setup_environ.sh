@@ -7,7 +7,7 @@ else
     export DLL_PATH=@bindir@/lib:./:/boot/atheos/sys_safe/:/boot/atheos/sys_safe/libs
 fi
 
-export SYSTEM=AtheOS
+export SYSTEM=Syllable
 export CC=gcc
 export HOME=/home/root
 export SHELL=bash
