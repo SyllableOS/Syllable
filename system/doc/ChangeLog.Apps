@@ -9,6 +9,9 @@
 	- BZoom
 		o Fixed crash on exit with new libsyllable
 
+	- CatalogTool, CatComp
+		o Initial check-in
+
 	- ColdFish
 		o Added localisation
 		o Fixed crash when exiting
@@ -288,5 +291,6 @@ Network Preferences
 		* Added NetworkPreferences from Daryl Dudey(daryl.dudey@ntlworld.com).
 		* Added SlbMgr(AtheMgr renamed).
 		* Patches by Vanders for AEdit.
+
 
 
