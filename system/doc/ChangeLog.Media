@@ -1,3 +1,9 @@
+* April 24 2004, Arno Klenke *
+
+The plugins are now handled using the new MediaAddon class
+The cdrom plugin exports one input for every drive
+The oss and serveraudio plugin exports one output for every soundcard
+
 * March 22 2004, Arno Klenke *
 
 Updates to work with gcc3 and current libsyllable
@@ -26,4 +32,6 @@ Added multiple soundcard support to the media server
 * Nov 18 2003, Kristian Van Der Vliet *
 
 Created this ChangeLog for changes specific to the media framework.
+
+
 
