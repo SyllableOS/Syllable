@@ -1,3 +1,40 @@
+* March 17 2005, Jake Hamby *
+
+Updated to Build 0009.  Many improvements to terminal handling (ptys).  Note
+that bash does its own processing of control keys, but you can verify
+handling of "cooked" mode by running /bin/cat to echo lines from stdin.
+
+    * The various control keys (^C, ^D, ^H, ^Z, etc.) are now programmable
+	instead of hard-coded.  See the stty utility for more information.
+    * Fixed several bugs in carriage return / newline handling.  In
+	particular, programs such as "bc" and "cat" will correctly jump
+	to the next line when the user presses return.
+    * By default, control keys are echoed back as ^A, ^B, etc.  This can be
+	disabled with "stty -echoctl".
+    * By default, XON/XOFF flow control is now available with ^S and ^Q.
+	This can be disabled with "stty -ixon".
+    * The quit key (default: ^\) is similar to ^C but sends SIGQUIT instead
+	of SIGINT.  Special handling of ^C, ^\, and ^Z can be disabled with
+	"stty -isig".
+    * To type a control character that would otherwise be processed specially,
+	you can press LNEXT (default: ^V) before typing the character.
+	Unfortunately, aterm catches ^V for pasting text, but you can remap
+	this functionality to a different control character using stty.
+    * If the master or the slave side of the pty is closed, the other side
+	will get an errno of EIO instead of EPIPE on the next read.  If the
+	master is closed and the slave is written to, EIO is returned, but
+	if the slave side is closed, data can still be written to the master
+	and it will be buffered, allowing the slave to be reopened for
+	reading.  This is the same behavior as Linux.
+
+Using the upcoming version of glibc, the "expect" program now works correctly,
+which means that the DejaGnu testing framework should now work (and passes
+its testsuite).  Input line handling functionality not yet implemented:
+
+    * Erase the entire line (default: ^U).
+    * Erase the last word (default: ^W).
+    * Reprint the current line (default: ^R).
+
 * March 16 2005, Jake Hamby *
 
 Updated to Build 0008.  Finished merging Arno's most recent set of SMP fixes,
