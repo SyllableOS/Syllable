@@ -1,0 +1,7 @@
+authors 			Kaj de Vos
+configure-cmd		config
+configure-args
+; --prefix=/usr --openssldir=/usr/openssl
+configure-options	shared threads
+;install-prefix		INSTALL_PREFIX=
+documentation		README README.ASN1 README.ENGINE INSTALL PROBLEMS LICENSE NEWS CHANGES doc
