@@ -14,21 +14,25 @@ export PATH=/usr/bin:/bin
 ln -s usr/glibc2/include /include
 
 if [ -e /atheos/src/include ]; then
-    ln -s atheos/src/include /ainc
+	ln -s atheos/src/include /ainc
 else
-    ln -s system/include  /ainc
+	ln -s system/include /ainc
 fi
+
 ln -s atheos/Applications /Applications
 
 if test "$1" = safe; then
-    aterm &
-else
-    if [ -e /bin/dlogin ]; then
-	. /etc/profile
-	/bin/dlogin </dev/null >>/var/log/desktop.log 2>&1 &
-    else
 	aterm &
-    fi
+else
+	if [ -e /bin/dlogin ]; then
+		. /etc/profile
+		/bin/dlogin </dev/null >>/var/log/desktop.log 2>&1 &
+		/system/mediaserver >>/dev/null &
+		/system/registrar >>/dev/null &
+	else
+		aterm &
+	fi
 fi
 
 . /system/user_init.sh
+

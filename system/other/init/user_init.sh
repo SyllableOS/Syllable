@@ -13,16 +13,15 @@ ln -s home/root /root
 # Start various daemons if they are installed
 
 if [ -e /usr/bind/sbin/named ]; then
-    /usr/bind/sbin/named
+	/usr/bind/sbin/named
 fi
-
 if [ -e /usr/inetutils/sbin/inetd ]; then
-    /usr/inetutils/sbin/inetd
+	/usr/inetutils/sbin/inetd
 fi
 if [ -e /usr/sbin/crond ]; then
-    /usr/sbin/crond
+	/usr/sbin/crond
 fi
 if [ -e /usr/apache/bin/apachectl ]; then
-    /usr/apache/bin/apachectl start
+	/usr/apache/bin/apachectl start
 fi
 
