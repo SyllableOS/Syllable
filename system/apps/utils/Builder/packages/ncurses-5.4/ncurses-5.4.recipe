@@ -1,0 +1,15 @@
+authors				Kaj de Vos
+warnings			Installs terminal definitions in /usr/share/terminfo/.
+
+licenses			?
+home				www.gnu.org/software/ncurses/
+
+build-needs			gawk
+
+configure-options
+;	--with-shared
+;	--with-termlib
+	--enable-symlinks
+documentation
+	README INSTALL ANNOUNCE NEWS TO-DO
+	doc/html
