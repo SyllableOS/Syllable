@@ -1,0 +1,41 @@
+; Build the root tree structure to install into
+;
+; Boot dir structure
+boot
+;
+; Syllable dir structure
+;
+atheos
+;
+atheos/etc
+;
+atheos/home
+atheos/home/root
+;
+atheos/sys
+atheos/sys/bin
+;
+atheos/sys/config
+;
+atheos/sys/fonts
+atheos/sys/keymaps
+atheos/sys/libs
+;
+atheos/sys/drivers
+;
+atheos/sys/drivers/appserver
+atheos/sys/drivers/appserver/input
+atheos/sys/drivers/appserver/video
+;
+atheos/sys/drivers/dev
+atheos/sys/drivers/dev/disk
+atheos/sys/drivers/dev/misc
+;
+atheos/sys/drivers/fs
+atheos/sys/drivers/bus
+;
+atheos/usr
+atheos/usr/bin
+atheos/usr/share
+atheos/usr/share/terminfo
+atheos/usr/share/terminfo/x
