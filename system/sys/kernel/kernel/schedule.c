@@ -37,14 +37,23 @@ static WaitQueue_s *g_psFirstSleeping = NULL;
 
 SPIN_LOCK( g_sSchedSpinLock, "sched_slock" );
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Print the list of sleeping threads
+ * \par Description:
+ * Walk the list of sleeping threads, and print information about each one.  Currently, this
+ * information consists of the resume time in seconds, and the thread handle.  This function is
+ * added to the serial debug menu under the commmand "ls sleep"
+ * \par Note:
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * Interrupts
+ * Scheduler lock
+ * \par Warning:
+ * \param argc	Number of elements in argv[]
+ * \param argv	Arguments to debug command.  Currently ignored
+ * \sa
  ****************************************************************************/
-
-void db_print_sleep_list( int argc, char **argv )
+static void db_print_sleep_list( int argc, char **argv )
 {
 	WaitQueue_s *psTmp;
 	int nFlg;
@@ -73,50 +82,82 @@ void db_print_sleep_list( int argc, char **argv )
 	put_cpu_flags( nFlg );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Initialize the scheduler module
+ * \par Description:
+ * This function will initialize the scheduler module.  It's called, along with other module
+ * initalization functions, from kernel_init().  Currently, this initializes globals scheduler
+ * lists, and registers the scheduler debug commands.
+ * \par Note:
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * None
+ * \par Warning:
+ * \param none
+ * \sa kernel_init
  ****************************************************************************/
-
 void init_scheduler( void )
 {
+	DLIST_HEAD_INIT( &g_sSysBase.ex_sFirstReady );
 	register_debug_cmd( "ls_sleep", "list sleep-list nodes", db_print_sleep_list );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Lock the scheduler
+ * \par Description:
+ * This function locks the scheduler.  It's wrapped by the sched_lock() macro, which asserts that
+ * the lock was successfully obtained.  Officially, this locks all the various data structures owned
+ * by the scheduler, but primarily the thread lists.
+ * \par Note:
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * Scheduler lock
+ * \par Warning:
+ * This version should not be called.  Use the sched_lock() wrapper.
+ * \param none
+ * \return Zero on success, negative error code on failure
+ * \sa sched_lock, sched_unlock
  ****************************************************************************/
-
 int __sched_lock( void )
 {
 	return ( spinlock( &g_sSchedSpinLock ) );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Unlock the scheduler
+ * \par Description:
+ * This function unlocks the scheduler.  See __sched_lock() for a description of the scheduler lock.
+ * \par Note:
+ * \par Locks Required:
+ * Scheduler lock
+ * \par Locks Taken:
+ * None
+ * \par Warning:
+ * \param none
+ * \sa sched_lock, __sched_lock
  ****************************************************************************/
-
 void sched_unlock( void )
 {
 	spinunlock( &g_sSchedSpinLock );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Add an entry to a wait queue
+ * \par Description:
+ * Add the given entry to the given wait queue.  Wait queues are used to put threads to sleep on a
+ * certain event.  When the even occurs, some or all of the threads waiting on the queue are woken
+ * up.  Note that this does not change the thread itself, it merely manages the queue.  Generally,
+ * sleep_on_queue() would be used to put a thread to sleep.
+ * \par Note:
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * Interrupts
+ * Scheduler lock
+ * \par Warning:
+ * \param ppsList	Waitqueue to add to
+ * \param psNode	Entry to add
+ * \sa sleep_on_queue, remove_from_waitlist
  ****************************************************************************/
-
-void add_to_waitlist( WaitQueue_s **psList, WaitQueue_s *psNode )
+void add_to_waitlist( WaitQueue_s **ppsList, WaitQueue_s *psNode )
 {
 	int nFlg;
 	WaitQueue_s *psHead;
@@ -124,7 +165,7 @@ void add_to_waitlist( WaitQueue_s **psList, WaitQueue_s *psNode )
 	nFlg = cli();
 	sched_lock();
 
-	psHead = *psList;
+	psHead = *ppsList;
 
 	if ( psNode >= ( WaitQueue_s * )0x80000000 )
 	{
@@ -140,7 +181,7 @@ void add_to_waitlist( WaitQueue_s **psList, WaitQueue_s *psNode )
 
 	if ( psHead == NULL )
 	{
-		*psList = psNode;
+		*ppsList = psNode;
 		psNode->wq_psNext = psNode;
 		psNode->wq_psPrev = psNode;
 	}
@@ -156,13 +197,21 @@ void add_to_waitlist( WaitQueue_s **psList, WaitQueue_s *psNode )
 	put_cpu_flags( nFlg );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Internal, unlocked implementation of add_to_sleeplist
+ * \par Description:
+ * This does the actual work of add_to_sleeplist.  It adds the given wait queue to the global list
+ * of sleeping wait queues.  This list is sorted by expire time of the wait queues.  First, see if
+ * it should be added first.  If so, add it, otherwise, walk the list to find the insertion point.
+ * \par Note:
+ * \par Locks Required:
+ * Interrupts
+ * Scheduler lock
+ * \par Locks Taken:
+ * none
+ * \par Warning:
+ * \param psNode	Wait queue to add
+ * \sa add_to_sleeplist
  ****************************************************************************/
-
 static void do_add_to_sleeplist( WaitQueue_s *psNode )
 {
 	WaitQueue_s *psTmp;
@@ -211,10 +260,25 @@ static void do_add_to_sleeplist( WaitQueue_s *psNode )
 	psNode->wq_psNext = NULL;
 	psNode->wq_psPrev = psTmp;
 	psTmp->wq_psNext = psNode;
-	
+
 //done:
 }
 
+/** Add a wait queue to the global sleep list
+ * \par Description:
+ * This will add the given wait queue to the global sleep list.  This is necessary before the queue
+ * is actually used, if it is desired that the queue time out at some point.  The actual work is
+ * done by do_add_to_sleeplist().  The queue must already be initialized with it's wakeup time.
+ * \par Note:
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * Interrupts
+ * Scheduler lock
+ * \par Warning:
+ * \param psNode	Wait queue to add
+ * \sa do_add_to_sleeplist, remove_from_sleeplist
+ ****************************************************************************/
 void add_to_sleeplist( WaitQueue_s *psNode )
 {
 	int nFlg;
@@ -226,13 +290,20 @@ void add_to_sleeplist( WaitQueue_s *psNode )
 	put_cpu_flags( nFlg );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Internal, unlocked implementation of remove_from_sleeplist
+ * \par Description:
+ * This does the actual work of remove_from_sleeplist.  It removes the given wait queue from the
+ * global list of sleeping wait queues.
+ * \par Note:
+ * \par Locks Required:
+ * Interrutps
+ * Scheduler lock
+ * \par Locks Taken:
+ * none
+ * \par Warning:
+ * \param psNode	Wait queue to remove
+ * \sa remove_from_sleeplist
  ****************************************************************************/
-
 static void do_remove_from_sleeplist( WaitQueue_s *psNode )
 {
 	if ( psNode->wq_bIsMember )
@@ -256,6 +327,20 @@ static void do_remove_from_sleeplist( WaitQueue_s *psNode )
 	}
 }
 
+/** Remove a wait queue from the global sleep list
+ * \par Description:
+ * This will remove the given wait queue from the global sleep list.  This is necessary before
+ * freeing the queue.  The actual work is done by do_remove_from_sleeplist().
+ * \par Note:
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * Interrupts
+ * Scheduler lock
+ * \par Warning:
+ * \param psNode	Wait queue to remove
+ * \sa do_remove_from_sleeplist, add_to_sleeplist
+ ****************************************************************************/
 void remove_from_sleeplist( WaitQueue_s *psNode )
 {
 	int nFlg;
@@ -267,13 +352,21 @@ void remove_from_sleeplist( WaitQueue_s *psNode )
 	put_cpu_flags( nFlg );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Remove an entry from a wait queue
+ * \par Description:
+ * Remove the given entry from the given wait queue.
+ * \par Note:
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * Interrupts
+ * Scheduler lock
+ * \par Warning:
+ * \param ppsList	Wait queue to remove from
+ * \param psNode	Entry to remove
+ * \return
+ * \sa
  ****************************************************************************/
-
 void remove_from_waitlist( WaitQueue_s **ppsList, WaitQueue_s *psNode )
 {
 	int nFlg = cli();
@@ -302,13 +395,27 @@ void remove_from_waitlist( WaitQueue_s **ppsList, WaitQueue_s *psNode )
 	put_cpu_flags( nFlg );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Wake up the given wait queue
+ * \par Description:
+ * Wake up one or all threads from the given wait queue.  A woken thread is marked as ready and
+ * added to the ready list.  The wait queue element containing the woken thread has it's return
+ * value set to the given return value.  If <bAll> is true, then all the threads on the queue are
+ * woken, otherwise only the first thread is woken.  No threads are removed from the queue.  If any
+ * threads were woken, then g_bNeedSchedule is set so that a schedule will happen at some point in
+ * the future.
+ * \par Note:
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * Interrupts
+ * Scheduler lock
+ * \par Warning:
+ * \param psList	Wait queue to wake
+ * \param nReturnCode	Return value to give the newly woken thread
+ * \param bAll		If true, wake all threads, otherwise wake first.
+ * \return Number of threads woken.
+ * \sa
  ****************************************************************************/
-
 int wake_up_queue( WaitQueue_s *psList, int nReturnCode, bool bAll )
 {
 	int nThreadsWoken = 0;
@@ -369,22 +476,23 @@ int wake_up_queue( WaitQueue_s *psList, int nReturnCode, bool bAll )
 	return ( nThreadsWoken );
 }
 
-/*****************************************************************************
- *
- *   SYNOPSIS
- *
- *   FUNCTION
- *
- *   NOTE
- *
- *   INPUTS
- *
- *   RESULT
- *
- *   SEE ALSO
- *
+/** Put the current thread to sleep on a wait queue
+ * \par Description:
+ * Put the current thread to sleep on the given wait queue.  This marks the thread as waiting, adds
+ * it to the wait queue, and schedules.  On return from schedule, the thread is removed from the
+ * wait queue again.  When this returns, the thread has been woken up again.  The wait queue must
+ * already be initialized.
+ * \par Note:
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * Interrupts
+ * Scheduler lock
+ * \par Warning:
+ * \param ppsList	Wait queue on which to sleep
+ * \return return value from wakeup of wait queue
+ * \sa
  ****************************************************************************/
-
 int sleep_on_queue( WaitQueue_s **ppsList )
 {
 	Thread_s *psThread = CURRENT_THREAD;
@@ -425,7 +533,22 @@ int sleep_on_queue( WaitQueue_s **ppsList )
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/
-
+/** Wake up sleeping wait queues
+ * \par Description:
+ * Wake up any wait queues that have timed out.  It is called periodically from the timer
+ * interrupt.  Walk the sleep list, and wake any queues that have expired.  If the queue has a
+ * thread, wake that thread.  Otherwise, the queue is a timer, call it's callback.  If the timer was
+ * not a oneshot timer, re-add it to the sleeplist at it's next timeout.
+ * \par Note:
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * Interrupts
+ * Scheduler lock
+ * \par Warning:
+ * \param nCurTime	The current tim
+ * \sa
+ ****************************************************************************/
 void wake_up_sleepers( bigtime_t nCurTime )
 {
 	WaitQueue_s *psFirstTimer = NULL;
@@ -492,6 +615,21 @@ void wake_up_sleepers( bigtime_t nCurTime )
 	}
 }
 
+/** Create a timer
+ * \par Description:
+ * Create a new timer. Internally, a timer is a wait queue with no associated thread.  Allocate the
+ * new wait queue, initialize it, and return it.
+ * \par Note:
+ * delete_timer() must be called to free the timer.
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * None
+ * \par Warning:
+ * \param none
+ * \return Newly allocated timer
+ * \sa start_timer, delete_timer
+ ****************************************************************************/
 ktimer_t create_timer( void )
 {
 	WaitQueue_s *psNode = kmalloc( sizeof( WaitQueue_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
@@ -504,6 +642,27 @@ ktimer_t create_timer( void )
 	return ( psNode );
 }
 
+/** Start a timer
+ * \par Description:
+ * Start the given timer. The timer is set to expire in <nPeriode> ticks.  If <bOneShot> is true,
+ * the timer is not repeating.  When fired, the timer will call the given callback with the given
+ * data.  Initialize the timer with the given information, and add it to the sleeplist, removing it
+ * first if it was already there.
+ * \par Note:
+ * If <pfCallback> is NULL, the timer is not added, merely removed
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * Interrupts
+ * Scheduler lock
+ * \par Warning:
+ * \param hTimer	Timer to start
+ * \param pfCallback	Callback to call when timer fires
+ * \param pData		Data to pass to the callback
+ * \param nPeriode	Time to fire in ticks
+ * \param bOneShot	If true, timer is one shot, otherwise, timer is periodic
+ * \sa
+ ****************************************************************************/
 void start_timer( ktimer_t hTimer, timer_callback *pfCallback, void *pData, bigtime_t nPeriode, bool bOneShot )
 {
 	WaitQueue_s *psNode = hTimer;
@@ -534,6 +693,18 @@ void start_timer( ktimer_t hTimer, timer_callback *pfCallback, void *pData, bigt
 	return;
 }
 
+/** Delete a timer
+ * \par Description:
+ * Delete the give timer, removing it from the sleeplist first.  The timer is freed.
+ * \par Note:
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * None
+ * \par Warning:
+ * \param hTimer	Timer to delete
+ * \sa create_timer
+ ****************************************************************************/
 void delete_timer( ktimer_t hTimer )
 {
 	WaitQueue_s *psNode = hTimer;
@@ -546,15 +717,9 @@ void delete_timer( ktimer_t hTimer )
 	kfree( psNode );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
 uint32 old_Delay( const uint32 nMicros )
 {
+#if 0
 	Thread_s *psThread;
 	WaitQueue_s sWaitNode;
 	int nFlg;
@@ -599,15 +764,30 @@ uint32 old_Delay( const uint32 nMicros )
 		nRestTime = 0;
 	}
 	return ( ( uint32 )nRestTime );
+#endif
+	return ( -ENOSYS );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Put the current thread to sleep for some time
+ * \par Description:
+ * Put the current thread to sleep for the given number of ticks.  Create a sleeping wait queue, and
+ * set it to time out after <nTimeout> ticks.  Add the current thread to it, and put the current
+ * thread to sleep.  Add the wait queue to the sleep list, and schedule.  When schedule returns, the
+ * thread has been woken up.  Remove the thread from the sleep list.
+ * \par Note:
+ * We need the scheduler lock to modify the thread's state, so we call do_add_to_sleeplist().
+ * However, rather than take the locks ourselves after schedule returns, we just call the locked
+ * version of remove_from_sleeplist.
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * Interrupts
+ * Scheduler lock
+ * \par Warning:
+ * \param nTimeout	Number of ticks to sleep
+ * \return 0 if the thread slept the whole timeout, -EINTR if it was woken up early.
+ * \sa
  ****************************************************************************/
-
 status_t snooze( bigtime_t nTimeout )
 {
 	Thread_s *psThread;
@@ -627,7 +807,7 @@ status_t snooze( bigtime_t nTimeout )
 
 	psThread->tr_nState = TS_SLEEP;
 
-	add_to_sleeplist( &sWaitNode );
+	do_add_to_sleeplist( &sWaitNode );
 
 	sched_unlock();
 	put_cpu_flags( nFlg );
@@ -636,35 +816,48 @@ status_t snooze( bigtime_t nTimeout )
 
 	Schedule();
 
-	nFlg = cli();
-	sched_lock();
-
 	remove_from_sleeplist( &sWaitNode );
 
-	sched_unlock();
-	put_cpu_flags( nFlg );
 	return ( ( sWaitNode.wq_nResumeTime > get_system_time() )? -EINTR : 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Put the current thread to sleep
+ * \par Description:
+ * This is the syscall entry point for putting a thread to sleep.
+ * \par Note:
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * None
+ * \par Warning:
+ * \param nTimeout	Number of ticks to sleep
+ * \return 0 if slept the entire timeout, -EINTR otherwise.
+ * \sa
  ****************************************************************************/
-
 status_t sys_snooze( bigtime_t nTimeout )
 {
 	return ( snooze( nTimeout ) );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Set the scheduling priority of a thread
+ * \par Description:
+ * Set the scheduling priority of the thread with the given id to the given value, then schedule.
+ * Look up the given thread id.  If such a thread exists, set it's priority to the given value, and
+ * schedule.  Once schedule returns, return the old priority
+ * \par Note:
+ * XXXDFG constrain given priority to some limits.
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * Interrupts
+ * Scheduler lock
+ * \par Warning:
+ * Schedules
+ * \param hThread	ID of thread.  If -1, use current thread.
+ * \param nPriority	New priority of thread
+ * \return old priority of thread
+ * \sa
  ****************************************************************************/
-
 status_t set_thread_priority( const thread_id hThread, const int nPriority )
 {
 	Thread_s *psThread;
@@ -673,14 +866,7 @@ status_t set_thread_priority( const thread_id hThread, const int nPriority )
 
 	sched_lock();
 
-	if ( hThread == -1 )
-	{
-		psThread = get_thread_by_name( NULL );
-	}
-	else
-	{
-		psThread = get_thread_by_handle( hThread );
-	}
+	psThread = get_thread_by_handle( hThread );
 
 	if ( psThread != NULL )
 	{
@@ -693,119 +879,116 @@ status_t set_thread_priority( const thread_id hThread, const int nPriority )
 	return ( nOldPri );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Set the priority of a thread
+ * \par Description:
+ * Syscall entry for set_thread_priority.  Set the priority of the given thread to the given value.
+ * \par Note:
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * None
+ * \par Warning:
+ * Schedules
+ * \param hThread	ID of thread.  If -1, use current thread.
+ * \param nPriority	New priority of thread
+ * \return old priority of thread
+ * \sa
  ****************************************************************************/
-
 int sys_set_thread_priority( const thread_id hThread, const int nPriority )
 {
 	return ( set_thread_priority( hThread, nPriority ) );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Suspend the current thread
+ * \par Description:
+ * Suspend the current thread.  If there's no pending signals, mark the thread as waiting, and
+ * schedule.   Note that there must be some other way to wake up this thread, or it will never wake
+ * up.
+ * \par Note:
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * Interrupts
+ * Scheduler lock
+ * \par Warning:
+ * Schedules
+ * \param None
+ * \return 0 if suspended, -EINTR if pending signals
+ * \sa
  ****************************************************************************/
-
 status_t suspend( void )
 {
 	Thread_s *psMyThread = CURRENT_THREAD;
 	int nError;
-	int nFlg = cli();
-
-	sched_lock();
+	int nFlg;
 
 	if ( is_signal_pending() == false )
 	{
+		nFlg = cli();
+		sched_lock();
 		psMyThread->tr_nState = TS_WAIT;
-
 		sched_unlock();
 		put_cpu_flags( nFlg );
+
 		Schedule();
+		nError = 0;
 	}
 	else
-	{
-		sched_unlock();
-		put_cpu_flags( nFlg );
-	}
-
-	if ( is_signal_pending() )
 	{
 		nError = -EINTR;
 	}
-	else
-	{
-		nError = 0;
-	}
 
-	return ( nError );
-	sched_unlock();
-	put_cpu_flags( nFlg );
 	return ( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Suspend a thread
+ * \par Description:
+ * Suspend the given thread.  If the given thread is the current thread, call suspend().  Otherwise,
+ * send a STOP signal to the thread.
+ * XXXDFG should probably error if current thread
+ * \par Note:
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * None
+ * \par Warning:
+ * May schedule
+ * \param hThread	ID of thread to suspend
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 status_t sys_suspend_thread( const thread_id hThread )
 {
 	Thread_s *psMyThread = CURRENT_THREAD;
 	int nError;
-	int nFlg = cli();
-
-	sched_lock();
 
 	if ( hThread == psMyThread->tr_hThreadID )	/* We are about to suspend our self     */
 	{
-		if ( is_signal_pending() == false )
-		{
-			psMyThread->tr_nState = TS_WAIT;
-
-			sched_unlock();
-			put_cpu_flags( nFlg );
-			Schedule();
-		}
-		else
-		{
-			sched_unlock();
-			put_cpu_flags( nFlg );
-		}
-
-		if ( is_signal_pending() )
-		{
-			nError = -EINTR;
-		}
-		else
-		{
-			nError = 0;
-		}
-		return ( nError );
+		nError = suspend();
 	}
 	else
 	{
 		nError = sys_kill( hThread, SIGSTOP );
 	}
-	sched_unlock();
-	put_cpu_flags( nFlg );
 	return ( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Stop the current thread
+ * \par Description:
+ * Stop the current thread.  If <bNotifyParent> is true, and there is a parent to this thread, send
+ * the parent a SIGCHLD.  Mark the thread as stopped, and schedule.
+ * \par Note:
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * Interrupts
+ * Scheduler lock
+ * \par Warning:
+ * Schedules
+ * \param bNotifyParent		If true, send a SIGCHLD to the parent of this thread
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 status_t stop_thread( bool bNotifyParent )
 {
 	Thread_s *psThread = CURRENT_THREAD;
@@ -831,50 +1014,40 @@ status_t stop_thread( bool bNotifyParent )
 	return ( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Resume a thread
+ * \par Description:
+ * Resume the given thread.  It must be either waiting or sleeping.  call wakeup_thread() to do the
+ * work.
+ * \par Note:
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * \par Warning:
+ * \param nThread	ID of thread to resume
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 status_t sys_resume_thread( const thread_id hThread )
 {
-	Thread_s *psThread;
-	int nError = 0;
-	int nFlags = cli();
-
-	sched_lock();
-
-	psThread = get_thread_by_handle( hThread );
-
-	if ( psThread != NULL )
-	{
-		if ( psThread->tr_nState == TS_WAIT || psThread->tr_nState == TS_SLEEP )
-		{
-			add_thread_to_ready( psThread );
-
-			sched_unlock();
-			put_cpu_flags( nFlags );
-			return ( 0 );
-		}
-	}
-	else
-	{
-		nError = -EINVAL;
-	}
-	sched_unlock();
-	put_cpu_flags( nFlags );
-	return ( nError );
+	return ( wakeup_thread( hThread, false ) );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Wake up a thread
+ * \par Description:
+ * Wake up the given thread from waiting, sleeping, or, if <bWakeUpSuspended>, stopped states.  Look
+ * up the thread from the handle.  If it exists, and the above state holds true, make it ready.
+ * \par Note:
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * Interrupt
+ * Scheduler lock
+ * \par Warning:
+ * \param hThread		ID of thread to wake
+ * \param bWakeupSuspended	If true, wake from stopped state as well
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 status_t wakeup_thread( thread_id hThread, bool bWakeupSuspended )
 {
 	Thread_s *psThread;
@@ -890,10 +1063,6 @@ status_t wakeup_thread( thread_id hThread, bool bWakeupSuspended )
 		if ( psThread->tr_nState == TS_WAIT || psThread->tr_nState == TS_SLEEP || ( bWakeupSuspended && psThread->tr_nState == TS_STOPPED ) )
 		{
 			add_thread_to_ready( psThread );
-
-			sched_unlock();
-			put_cpu_flags( nFlags );
-			return ( 0 );
 		}
 	}
 	else
@@ -905,50 +1074,42 @@ status_t wakeup_thread( thread_id hThread, bool bWakeupSuspended )
 	return ( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Start a thread
+ * \par Description:
+ * Start a thread that is not running.  It may be in stopped, wait, or sleep.  Call wakeup_thread()
+ * to do the work.
+ * \par Note:
+ * \par Locks Required:
+ * \par Locks Taken:
+ * \par Warning:
+ * \param
+ * \return
+ * \sa
  ****************************************************************************/
-
 status_t start_thread( thread_id hThread )
 {
-	Thread_s *psThread;
-	int nError = 0;
-	int nFlags = cli();
-
-	sched_lock();
-
-	psThread = get_thread_by_handle( hThread );
-
-	if ( psThread != NULL )
-	{
-		if ( psThread->tr_nState == TS_STOPPED || psThread->tr_nState == TS_WAIT || psThread->tr_nState == TS_SLEEP )
-		{
-			add_thread_to_ready( psThread );
-
-			sched_unlock();
-			put_cpu_flags( nFlags );
-			return ( 0 );
-		}
-	}
-	else
-	{
-		nError = -EINVAL;
-	}
-	sched_unlock();
-	put_cpu_flags( nFlags );
-	return ( nError );
+	return ( wakeup_thread( hThread, true ) );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Find a dead child thread
+ * \par Description:
+ * Find a dead child thread of the current thread.  If <hPid> is -1, find any dead child.  If <hPid>
+ * is > 0, find the child with that thread ID.  Otherwise, if <hGroup> is not -1, find any child in
+ * the group <hGroup>.  Loop all threads looking for children of the current thread.  Check for the
+ * above circumstances, and return appropriately.
+ * XXXDFG Maybe optimize by adding an actual list of children into the parent.
+ * \par Note:
+ * \par Locks Required:
+ * Scheduler lock
+ * \par Locks Taken:
+ * None
+ * \par Warning:
+ * \param hPid		Thread ID to find (>0), or any (-1), or group (otherwise)
+ * \param hGroup	Group ID to find.
+ * \param nOptions	Options.  Currently checked for untraced.
+ * \return Thread if found, NULL otherwise
+ * \sa sys_wait4
  ****************************************************************************/
-
 static Thread_s *find_dead_child( pid_t hPid, pid_t hGroup, int nOptions )
 {
 	Thread_s *psThread = CURRENT_THREAD;
@@ -983,8 +1144,8 @@ static Thread_s *find_dead_child( pid_t hPid, pid_t hGroup, int nOptions )
 					continue;
 				}
 			}
-			if ( hPid < -1 || 0 == hPid )
-			{	/* Any children belonging to group -hPid, or same group as us */
+			if ( hGroup != -1 )
+			{	/* Any children belonging to group hGroup */
 				if ( psChild->tr_psProcess->pr_hPGroupID == hGroup )
 				{
 					return ( psChild );
@@ -997,13 +1158,32 @@ static Thread_s *find_dead_child( pid_t hPid, pid_t hGroup, int nOptions )
 	return ( NULL );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Wait for children to die
+ * \par Description:
+ * Implementation of the wait4 syscall.  Wait for children to die.  What children to wait for is
+ * determined as follows: if <hPid> > 0, wait only for that PID.  If <hPid> is -1, wait for any
+ * children.  If <hPid> is 0, wait for any child in the same thread group as the current thread.
+ * Otherwise, wait for any child in the thread group -<hPid>.  First, check to see if any such
+ * children exist.  If not, return error.  Next, loop waiting for a correct child to die.  In each
+ * loop iteration, if no child had died, return if WNOHANG was given, or if a signal is pending.
+ * Otherwise, schedule, waiting for a SIGCHLD.  If a child was found, check it's state.  If it was
+ * stopped, set it's return value to 0, so it won't be returned again, copy it's info to userspace,
+ * and return it.  If was zombie (ie, it exited), copy it's info to userspace, wake up Init, delete
+ * the child, and return.
+ * \par Note:
+ * \par Locks Required:
+ * \par Locks Taken:
+ * Interrupts
+ * Scheduler lock
+ * \par Warning:
+ * may schedule
+ * \param hPid		Thread ID to wait for (or any or group, see description)
+ * \param pnStatLoc	Stat buffer to fill with child's information (or NULL)
+ * \param nOptions	Options flags.
+ * \param psRUsage	Rusage storage buffer.  Currently unused.
+ * \return PID of dead child on success, 0 if no child died and WNOHANG was given, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 pid_t sys_wait4( const pid_t hPid, int *const pnStatLoc, const int nOptions, struct rusage *const psRUsage )
 {
 	volatile Thread_s *psThread = CURRENT_THREAD;
@@ -1149,25 +1329,44 @@ pid_t sys_wait4( const pid_t hPid, int *const pnStatLoc, const int nOptions, str
 	printk( "Panic : sys_wait4() returned void!!!\n" );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Wait for a given child to exit
+ * \par Description:
+ * Wait for the child with the given thread ID to exit.  Calls sys_wait4 to do the work.
+ * \par Note:
+ * \par Locks Required:
+ * none
+ * \par Locks Taken:
+ * none
+ * \par Warning:
+ * \param hPid		Thread ID to wait for (or any or group, see description)
+ * \param pnStatLoc	Stat buffer to fill with child's information (or NULL)
+ * \param nOptions	Options flags.
+ * \return PID of dead child on success, 0 if no child died and WNOHANG was given, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 pid_t sys_waitpid( const pid_t hPid, int *const pnStatLoc, int const nOptions )
 {
 	return ( sys_wait4( hPid, pnStatLoc, nOptions, NULL ) );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Wait for a thread to exit
+ * \par Description:
+ * Wait for the thread with the given id to exit.  First, check to see if the thread exists.  If
+ * not, return error.  If the thread is not already zombie, add the current thread to it's
+ * termination wait list, and schedule.  When schedule returns, if the target thread still exists,
+ * remove is from it's waitlist.
+ * \par Note:
+ * \par Locks Required:
+ * None
+ * \par Locks Taken:
+ * Interrupts
+ * Scheduler lock
+ * \par Warning:
+ * Schedules
+ * \param hThread	ID of thread to wait for
+ * \return Return value of thread, or negative error code on failure
+ * \sa
  ****************************************************************************/
-
 int sys_wait_for_thread( const thread_id hThread )
 {
 	Thread_s *psMyThread = CURRENT_THREAD;
@@ -1216,16 +1415,22 @@ int sys_wait_for_thread( const thread_id hThread )
 	return ( nResult );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Add a thread to the ready list
+ * \par Description:
+ * Add the given thread to the list of threads ready to run.  The list is sorted in descending
+ * priority order.  Find the insertion point, and insert, otherwise append.
+ * \par Note:
+ * \par Locks Required:
+ * Scheduler lock
+ * \par Locks Taken:
+ * None
+ * \par Warning:
+ * \param psThread	Thread to add to the ready list
+ * \sa
  ****************************************************************************/
-
 void add_thread_to_ready( Thread_s *psThread )
 {
-	Thread_s **ppsTmp;
+	Thread_s *psTmp;
 
 	if ( IDLE_THREAD == psThread )
 	{
@@ -1237,63 +1442,74 @@ void add_thread_to_ready( Thread_s *psThread )
 	{
 		psThread->tr_nState = TS_READY;
 
-		for ( ppsTmp = &g_sSysBase.ex_psFirstReady; NULL != *ppsTmp; ppsTmp = &( ( *ppsTmp )->tr_psNext ) )
+		for ( psTmp = DLIST_FIRST( &g_sSysBase.ex_sFirstReady ); NULL != psTmp; psTmp = DLIST_NEXT( psTmp, tr_psNext ) )
 		{
-			if ( psThread->tr_nPriority > ( *ppsTmp )->tr_nPriority )
+			if ( psThread->tr_nPriority > ( psTmp )->tr_nPriority )
 			{
-				psThread->tr_psNext = *ppsTmp;
-				*ppsTmp = psThread;
+				DLIST_PREPEND( psTmp, psThread, tr_psNext );
 				return;
 			}
+			if ( DLIST_NEXT( psTmp, tr_psNext ) == NULL )
+				break;
 		}
 
-	  /*** Add to end of list ***/
-		psThread->tr_psNext = NULL;
-		*ppsTmp = psThread;
+		if ( DLIST_IS_EMPTY( &g_sSysBase.ex_sFirstReady ) )
+		{
+			DLIST_ADDHEAD( &g_sSysBase.ex_sFirstReady, psThread, tr_psNext );
+		}
+		else
+		{
+			DLIST_APPEND( psTmp, psThread, tr_psNext );
+		}
 	}
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Remove a thread from the ready list
+ * \par Description:
+ * Remove the given thread from the list of threads ready to run.  This is just a DLIST_REMOVE.
+ * \par Note:
+ * \par Locks Required:
+ * None XXXDFG  Is the ready list locked somehow?
+ * \par Locks Taken:
+ * None
+ * \par Warning:
+ * \param psThread	Thread to remove
+ * \sa
  ****************************************************************************/
-
 static void remove_thread_from_ready( Thread_s *psThread )
 {
-	Thread_s **ppsTmp;
-	bool bRemoved = false;
-
-	for ( ppsTmp = &g_sSysBase.ex_psFirstReady; NULL != *ppsTmp; ppsTmp = &( *ppsTmp )->tr_psNext )
-	{
-		if ( *ppsTmp == psThread )
-		{
-			*ppsTmp = psThread->tr_psNext;
-			psThread->tr_psNext = NULL;
-			bRemoved = true;
-			break;
-		}
-	}
-	if ( bRemoved == false )
-	{
-		printk( "Error: remove_thread_from_ready() failed to unlink %s from ready list\n", psThread->tr_zName );
-	}
+	DLIST_REMOVE( psThread, tr_psNext );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Select the best thread to run
+ * \par Description:
+ * Select the best thread to run next.  This is the guts of the scheduler, the function that
+ * actually determines what get's scheduled.  First, if there is a current thread, and it's in
+ * virtual 8086 mode, and we're on the first CPU, then reschedule it.  Otherwise, if there is no
+ * current thread, or it's a zombie, grab the first thread off the ready list.  If the current
+ * thread is waiting, asleep, or stopped, grab the first thread off the ready list.  If the ready
+ * list is empty, reschedule the current thread.  If the first process on the ready list has a
+ * higher priority than the current thread, preempt the current thread.  If their priorities are the
+ * same, and the current thread has used up it's quantum, preempt the current thread.  Otherwise,
+ * reschedule the current thread.  This function makes no changes to any list, it merely returns a
+ * pointer to the next thread to be run.
+ * \par Note:
+ * \par Locks Required:
+ * Interrupts
+ * Scheduler lock
+ * \par Locks Taken:
+ * None
+ * \par Warning:
+ * \param none
+ * \return Pointer to next thread to run
+ * \sa Schedule
  ****************************************************************************/
-
 static Thread_s *select_thread( void )
 {
 	int nThisProc = get_processor_id();
 	Thread_s *psPrev = CURRENT_THREAD;
 	Thread_s *psNext = psPrev;
-	Thread_s *psTopProc = g_sSysBase.ex_psFirstReady;
+	Thread_s *psTopProc = DLIST_FIRST( &g_sSysBase.ex_sFirstReady );
 	bigtime_t nCurTime = get_system_time();
 	bool bTimedOut;
 	int nState;
@@ -1315,7 +1531,7 @@ static Thread_s *select_thread( void )
 
 	if ( psPrev == NULL || psPrev->tr_nState == TS_ZOMBIE )
 	{			/* previous task was killed       */
-		psNext = g_sSysBase.ex_psFirstReady;
+		psNext = DLIST_FIRST( &g_sSysBase.ex_sFirstReady );
 
 		if ( psPrev != NULL )
 		{
@@ -1335,13 +1551,13 @@ static Thread_s *select_thread( void )
 	if ( nState == TS_WAIT || nState == TS_SLEEP || nState == TS_STOPPED )
 	{			/* previous task went to sleep  */
 		kassertw( atomic_read( &psPrev->tr_nInV86 ) == 0 || nThisProc != g_nBootCPU );
-		psNext = g_sSysBase.ex_psFirstReady;
+		psNext = DLIST_FIRST( &g_sSysBase.ex_sFirstReady );
 		goto found;
 	}
 
 	/* normal preemption cycle        */
 
-	if ( g_sSysBase.ex_psFirstReady == NULL )
+	if ( DLIST_IS_EMPTY( &g_sSysBase.ex_sFirstReady ) )
 	{
 		psNext = psPrev;
 		goto found;
@@ -1371,13 +1587,31 @@ static Thread_s *select_thread( void )
 	return ( psNext );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Schedule the next thread to run
+ * \par Description:
+ * Schedule a (possibly) different thread on the current CPU.   First, check if the current thread
+ * was marked ready by another CPU.  If so, remove it from the ready list and mark it running.  If
+ * the Scheduler lock was taken already, bail, because that lock protects CURRENT_THREAD.  Call
+ * select_thread() to pick the next thread to run.  If the thread returned was in virtual x86 mode
+ * and this isn't the boot CPU, or the thread returned was bound to a different CPU, skip to the
+ * next thread.  If we didn't find a suitable thread, use the idle thread.  If, at this point, we
+ * are switching to the current thread, there's nothing to do, return.  Otherwise, mark the next
+ * thread running, charge the current thread for it's CPU time, and add it to the ready list if it's
+ * still runnable.  Remove the next thread from the ready list, and set it's launch time.  If the
+ * previous thread dirtied the FPU, save the FPU sate for it.  Actually switch the CPU contexts to
+ * the new thread.  Return into the new thread.
+ * \par Note:
+ * \par Locks Required:
+ * Must not have Scheduler Lock taken
+ * \par Locks Taken:
+ * Interrupts
+ * Scheduler lock
+ * \par Warning:
+ * Schedules (duh)
+ * \param none
+ * \return Nothing, but returns into new thread.
+ * \sa
  ****************************************************************************/
-
 void Schedule( void )
 {
 	Thread_s *psPrev;
@@ -1424,12 +1658,10 @@ void Schedule( void )
 
 	g_bNeedSchedule = false;
 
-	// NOTE: Order is important, since select_thread() might alter CURRENT_THREAD!
 	psNext = select_thread();
-	psPrev = CURRENT_THREAD;
 
 	// Skip threads we don't like
-	for ( ; psNext != NULL; psNext = psNext->tr_psNext )
+	for ( ; psNext != NULL; psNext = DLIST_NEXT(psNext, tr_psNext) )
 	{
 		if ( atomic_read( &psNext->tr_nInV86 ) > 0 && nThisProc != g_nBootCPU )
 		{

@@ -75,6 +75,9 @@ extern inline int spinlock( SpinLock_s* psLock )
 	    }
 	    return( 0 );
 	}
+	do {
+		__asm__ __volatile__( "pause" );
+	} while ( atomic_read( &psLock->sl_nLocked ) == 1 );
     }
     psLock->sl_nProc = nProcID;
     atomic_inc( &psLock->sl_nNest );

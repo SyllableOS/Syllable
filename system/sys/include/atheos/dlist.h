@@ -68,7 +68,11 @@ extern "C" {
  * \return none
  * \sa
  ****************************************************************************/
-#define DLIST_ENTRY_INIT(entry, field) ((entry)->field.list_next = (entry)->field.list_pprev = NULL)
+#define DLIST_ENTRY_INIT(entry, field) do							\
+	{											\
+		(entry)->field.list_next = NULL;						\
+		(entry)->field.list_pprev = NULL;						\
+	} while (0)
 
 /** Check to see if a list is empty
  * \par Description:
@@ -103,6 +107,20 @@ extern "C" {
  * \sa
  ****************************************************************************/
 #define DLIST_NEXT(entry, field) (entry)->field.list_next
+
+/** Check to see if an entry is on a list
+ * \par Description:
+ * Check to see if the given entry is currently on a list.
+ * \par Note:
+ * \par Locks Required:
+ * \par Locks Taken:
+ * \par Warning:
+ * \param entry		Entry to check
+ * \param field		The name of the entry field in the struct
+ * \return TRUE if entry is on a list, FALSE otherwise
+ * \sa
+ ****************************************************************************/
+#define DLIST_ON_LIST(entry, field) ((entry)->field.list_next != NULL)
 
 /** Append an entry after another one on a doubly linked list
  * \par Description:

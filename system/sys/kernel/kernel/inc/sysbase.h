@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  Foundation, Inc., 58 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #ifndef __ATHEOS_SYSTEMBASE_H__
@@ -28,6 +28,7 @@
 #include "intel.h"
 #include "mman.h"
 #include "array.h"
+#include "scheduler.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -49,9 +50,9 @@ struct SystemBase
 	bigtime_t ex_nRealTime;
 	bigtime_t ex_nBootTime;
 
-      /*** Single linked list of ready threads ***/
+      /*** linked list of ready threads ***/
 
-	Thread_s *ex_psFirstReady;
+	ThreadList_s ex_sFirstReady;
 
       /*** Other Globals ***/
 

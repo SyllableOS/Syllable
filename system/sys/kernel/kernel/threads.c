@@ -254,20 +254,13 @@ Thread_s *get_thread_by_name( const char *pzName )
  * SEE ALSO:
  ****************************************************************************/
 
-Thread_s *GetThisThread( void )
-{
-	return ( ( SysBase != NULL ) ? CURRENT_THREAD : NULL );
-}
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
 Thread_s *GetThreadAddr( thread_id hThread )
 {
+	if ( hThread == -1 )
+	{
+		return ( CURRENT_THREAD );
+	}
+
 	return ( MArray_GetObj( &g_sThreadTable, hThread ) );
 }
 
@@ -280,6 +273,11 @@ Thread_s *GetThreadAddr( thread_id hThread )
 
 Thread_s *get_thread_by_handle( thread_id hThread )
 {
+	if ( hThread == -1 )
+	{
+		return ( CURRENT_THREAD );
+	}
+
 	return ( MArray_GetObj( &g_sThreadTable, hThread ) );
 }
 
@@ -1064,7 +1062,7 @@ static void db_dump_thread( int argc, char **argv )
 
 	dbprintf( DBP_DEBUGGER, "Name=%s : id=%d : parent=%d\n", psThread->tr_zName, psThread->tr_hThreadID, psThread->tr_hParent );
 
-	dbprintf( DBP_DEBUGGER, "Proc = %p : Next=%p : NextInProc=%p\n", psThread->tr_psProcess, psThread->tr_psNext, psThread->tr_psNextInProc );
+	dbprintf( DBP_DEBUGGER, "Proc = %p : Next=%p : NextInProc=%p\n", psThread->tr_psProcess, DLIST_NEXT( psThread, tr_psNext ), psThread->tr_psNextInProc );
 
 	dbprintf( DBP_DEBUGGER, "HasExeced=%d : ExitCode=%08x\n", psThread->tr_bHasExeced, psThread->tr_nExitCode );
 

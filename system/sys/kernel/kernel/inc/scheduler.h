@@ -29,6 +29,7 @@
 #include <posix/param.h>
 #include <posix/signal.h>
 #include <atheos/types.h>
+#include <atheos/dlist.h>
 
 #include "typedefs.h"
 #include "semaphore.h"
@@ -81,10 +82,11 @@ struct _WaitQueue
 	void *wq_pUserData;
 };
 
+typedef DLIST_HEAD(, _Thread) ThreadList_s;
 
 struct _Thread
 {
-	Thread_s *tr_psNext;
+	DLIST_ENTRY(_Thread)	tr_psNext;	///< Link into thread lists
 	Thread_s *tr_psNextInProc;	/* Next thread in process               */
 
 	Process_s *tr_psProcess;	/* Our process                          */

@@ -424,7 +424,6 @@ static int handle_not_present( MemArea_s *psArea, pte_t * pPte, iaddr_t nAddress
 
 			nFlg = cli();	// Make sure we are not pre-empted until we are added to the waitlist
 			add_to_waitlist( &psPage->p_psIOThreads, &sWaitNode );
-			psThread->tr_nState = TS_WAIT;
 			UNLOCK( g_hAreaTableSema );
 			put_cpu_flags( nFlg );
 			Schedule();
