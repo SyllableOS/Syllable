@@ -1,3 +1,2 @@
-SUBDIRS= desktop utils gnu other
+SUBDIRS = clock
 include $(ATHEOS_SRC)/recurse.rules
-
