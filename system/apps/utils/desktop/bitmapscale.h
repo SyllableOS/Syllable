@@ -14,13 +14,13 @@ using namespace os;
 
 enum bitmapscale_filtertype
 {
-  filter_filter,
-  filter_box,
-  filter_triangle,
-  filter_bell,
-  filter_bspline,
-  filter_lanczos3,
-  filter_mitchell
+    filter_filter,
+    filter_box,
+    filter_triangle,
+    filter_bell,
+    filter_bspline,
+    filter_lanczos3,
+    filter_mitchell
 };
 
 void Scale( Bitmap *srcbitmap, Bitmap *dstbitmap, bitmapscale_filtertype filtertype, float filterwidth=0.0f );

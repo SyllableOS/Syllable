@@ -26,18 +26,20 @@
 
 using namespace os;
 
-class CRect : public Rect {
-	public:
-	CRect(float w, float h) {
-		float		x, y;
-		Desktop	desktop;
-		x = desktop.GetResolution().x/2;
-		y = desktop.GetResolution().y/2;
-		left = x-w/2;
-		top = y-h/2;
-		right = x+w/2;
-		bottom = y+h/2;
-	}
+class CRect : public Rect
+{
+    public:
+        CRect(float w, float h)
+        {
+            float		x, y;
+            Desktop	desktop;
+            x = desktop.GetResolution().x/2;
+            y = desktop.GetResolution().y/2;
+            left = x-w/2;
+            top = y-h/2;
+            right = x+w/2;
+            bottom = y+h/2;
+        }
 };
 
 #endif /* __CRECT_H */
