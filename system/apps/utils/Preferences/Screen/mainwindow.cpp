@@ -37,18 +37,15 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   // Store v-node to store settings
   pcVLSettings = new os::VLayoutNode("VLSettings");
   pcVLSettings->SetBorders( os::Rect(5,5,5,5));
-  pcVLSettings->AddChild( new os::HLayoutSpacer(""));
   
   // Workspaces
   pcHLWorkspace = new os::HLayoutNode("HLWorkspace");
-  pcHLWorkspace->AddChild( new os::HLayoutSpacer(""));
   pcHLWorkspace->AddChild( new os::StringView(cRect, "SVWorkspace", "Apply to") );
-  pcHLWorkspace->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f));
+  pcHLWorkspace->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLWorkspace->AddChild( pcDDMWorkspace = new os::DropdownMenu(cRect, "DDMWorkspace"));
   pcDDMWorkspace->SetMinPreferredSize(12);
   pcDDMWorkspace->SetMaxPreferredSize(12);
   pcDDMWorkspace->SetReadOnly(true);
-  pcHLWorkspace->AddChild( new os::HLayoutSpacer(""));
   pcVLSettings->AddChild(pcHLWorkspace);
   pcVLSettings->AddChild( new os::VLayoutSpacer("", 5.0f, 5.0f));
 
@@ -91,8 +88,8 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcVLSettings->AddChild(pcHLRefresh);
 
   // Align the controls
-  pcVLSettings->SameWidth( "SVWorkspace", "SVResolution", "SVColour", "SVRefresh", "SVCustom", NULL);
-  pcVLSettings->SameWidth( "DDMWorkspace", "DDMResolution", "DDMColour", "DDMRefresh", "SLCustom", NULL);
+  pcVLSettings->SameWidth( "SVWorkspace", "SVResolution", "SVColour", "SVRefresh", NULL);
+  pcVLSettings->SameWidth( "DDMWorkspace", "DDMResolution", "DDMColour", "DDMRefresh", NULL);
 
   // Create frameview to store settings
   pcFVSettings = new os::FrameView( cBounds, "FVSettings", "Display", os::CF_FOLLOW_ALL);
@@ -147,83 +144,129 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   cCurrent = os::Desktop().GetScreenMode();
   memcpy(&cUndo, &cCurrent, sizeof(cCurrent));
   memcpy(&cUndo2, &cCurrent, sizeof(cCurrent));
+  
+  // Query all screenmodes
+  m_nModeCount = os::Application::GetInstance()->GetScreenModeCount();
+  m_pcModes = new os::screen_mode[m_nModeCount];
+  for( int i = 0; i < m_nModeCount; i++ ) {
+  	os::Application::GetInstance()->GetScreenModeInfo( i, &m_pcModes[i] );
+  }
 
   // Show data
   ShowData();
-  ColourChange();
 }
 
 MainWindow::~MainWindow()
 {
+	if( m_pcModes ) 
+		delete( m_pcModes );
 }
 
 void MainWindow::ShowData() 
 {
-  // How many modes?
-  os::Application *pcApp = os::Application::GetInstance();
-  int iModeCount = pcApp->GetScreenModeCount();
-  os::screen_mode sMode;
-
-  // Loop through all modes, to figure out all colour depths available
-  int iScratch[MAX_DEPTH_COUNT];
-  for (int i=0;i<iModeCount;i++) {
-
-    // See if mode is valid, if it is, add values to dropdown menus
-    if (pcApp->GetScreenModeInfo(i, &sMode)==0) {
-      iScratch[sMode.m_eColorSpace] = 1;
-    }
-  }
-
-  // Figure out how many depths are available
-  int iAvailDepths = 0;
-  pcDDMColour->Clear();
-  for (int i=MAX_DEPTH_COUNT-1;i>=0;i--) {
-    if (iScratch[i]==1) {
-      
-      // Add to drop down colour
-      switch (i) {
-      
-      case os::CS_RGB15: pcDDMColour->AppendItem("15 Bit"); break;
-      case os::CS_RGB16: pcDDMColour->AppendItem("16 Bit"); break;
-      case os::CS_RGB24: pcDDMColour->AppendItem("24 Bit"); break;
-      case os::CS_RGB32: pcDDMColour->AppendItem("32 Bit"); break;
-      default: pcDDMColour->AppendItem("Unknown"); break;
-      
-      }
-
-      // Set current colour space
-      if (i==cCurrent.m_eColorSpace) {
-	pcDDMColour->SetSelection(pcDDMColour->GetItemCount()-1);
-      }
-      iDepths[iAvailDepths++]=i;
-    }
-  } 
-
-  // Populate workspace dropdown
-  pcDDMWorkspace->Clear();
-  pcDDMWorkspace->AppendItem("This workspace");
-  pcDDMWorkspace->AppendItem("All workspaces");
-  pcDDMWorkspace->SetSelection(0);
-
-  // And populate refresh rates
-  pcDDMRefresh->AppendItem("56 Hz");
-  pcDDMRefresh->AppendItem("60 Hz");
-  pcDDMRefresh->AppendItem("70 Hz");
-  pcDDMRefresh->AppendItem("72 Hz");
-  pcDDMRefresh->AppendItem("75 Hz");
-  pcDDMRefresh->AppendItem("85 Hz");
-
-  // Set current refresh selectin
-  switch ((int)cCurrent.m_vRefreshRate) {
-    
-  case 56: pcDDMRefresh->SetSelection(0); break;
-  case 60: pcDDMRefresh->SetSelection(1); break;
-  case 70: pcDDMRefresh->SetSelection(2); break;
-  case 72: pcDDMRefresh->SetSelection(3); break;
-  case 75: pcDDMRefresh->SetSelection(4); break;
-  case 85: pcDDMRefresh->SetSelection(5); break;
-   
-  }
+	char *pzScratch = new char[20];
+	// Save all available resolutions
+	m_cResolutions.clear();
+	pcDDMResolution->Clear();
+	
+	for( int i = 0; i < m_nModeCount; i++ ) 
+	{
+		bool bFound = false;
+		uint32 nRes = ( (uint16)m_pcModes[i].m_nWidth << 16 ) | (uint16)m_pcModes[i].m_nHeight;
+		for( uint16 j = 0; j < m_cResolutions.size(); j++ ) {
+			if( m_cResolutions[j] == nRes )
+				bFound = true;
+		}
+		if( !bFound ) 
+		{
+			m_cResolutions.push_back( nRes );
+		}
+	}
+	
+	// Add them to the list
+	for( uint16 i = 0; i < m_cResolutions.size(); i++ ) 
+	{
+		sprintf(pzScratch, "%d x %d", (int)( m_cResolutions[i] >> 16 ), (int)( m_cResolutions[i] & 0xffff ) );
+		pcDDMResolution->AppendItem( pzScratch );
+		if( i == 0 )
+			pcDDMResolution->SetSelection( pcDDMResolution->GetItemCount() - 1, false );
+		if( (int)( m_cResolutions[i] >> 16 ) == cCurrent.m_nWidth && (int)( m_cResolutions[i] & 0xffff ) ==
+			cCurrent.m_nHeight ) 
+			pcDDMResolution->SetSelection( pcDDMResolution->GetItemCount() - 1, false );
+	}
+	
+	// Save matching color spaces
+	m_cColorSpaces.clear();
+	pcDDMColour->Clear();
+	for( int i = 0; i < m_nModeCount; i++ ) 
+	{
+		bool bFound = false;
+		if( m_pcModes[i].m_nWidth == cCurrent.m_nWidth && m_pcModes[i].m_nHeight == cCurrent.m_nHeight ) { 
+			uint32 nSpace = (uint32)m_pcModes[i].m_eColorSpace;
+			for( uint16 j = 0; j < m_cColorSpaces.size(); j++ ) {
+				if( m_cColorSpaces[j] == nSpace )
+					bFound = true;
+			}
+			if( !bFound ) 
+			{
+				m_cColorSpaces.push_back( nSpace );
+			}
+		}
+	}
+	// Add them to the list
+	for( uint16 i = 0; i < m_cColorSpaces.size(); i++ ) 
+	{
+		switch( m_cColorSpaces[i] )
+		{
+			case os::CS_RGB15:
+				strcpy( pzScratch, "15 Bit" );
+			break;
+			case os::CS_RGB16:
+				strcpy( pzScratch, "16 Bit" );
+			break;
+			case os::CS_RGB32:
+				strcpy( pzScratch, "32 Bit" );
+			break;
+			default:
+				strcpy( pzScratch, "Unknown" );
+			break;
+		}
+		pcDDMColour->AppendItem( pzScratch );
+		if( i == 0 )
+			pcDDMColour->SetSelection( pcDDMColour->GetItemCount() - 1, false );
+		if( m_cColorSpaces[i] == (uint32)cCurrent.m_eColorSpace ) 
+			pcDDMColour->SetSelection( pcDDMColour->GetItemCount() - 1, false );
+		
+			
+	}
+	// Save and add matching refresh rates
+	m_cRefreshRates.clear();
+	pcDDMRefresh->Clear();
+	bool bFirst = true;
+	for( int i = 0; i < m_nModeCount; i++ ) 
+	{
+		if( m_pcModes[i].m_nWidth == cCurrent.m_nWidth && m_pcModes[i].m_nHeight == cCurrent.m_nHeight 
+		 && m_pcModes[i].m_eColorSpace == cCurrent.m_eColorSpace ) { 
+			sprintf( pzScratch, "%i Hz", (int)m_pcModes[i].m_vRefreshRate );
+			m_cRefreshRates.push_back( (uint32)m_pcModes[i].m_vRefreshRate );
+			pcDDMRefresh->AppendItem( pzScratch );
+			if( bFirst ) {
+				bFirst = false;
+				pcDDMRefresh->SetSelection( pcDDMRefresh->GetItemCount() - 1, false );
+			}
+			if( m_pcModes[i].m_vRefreshRate == cCurrent.m_vRefreshRate )
+				pcDDMRefresh->SetSelection( pcDDMRefresh->GetItemCount() - 1, false );
+		}
+	}
+	
+	// Populate workspace dropdown
+	pcDDMWorkspace->Clear();
+	pcDDMWorkspace->AppendItem("This workspace");
+	pcDDMWorkspace->AppendItem("All workspaces");
+	pcDDMWorkspace->SetSelection(0);
+	
+	
+	delete( pzScratch );
 }
 
 void MainWindow::Apply() 
@@ -255,11 +298,7 @@ void MainWindow::Undo()
 void MainWindow::Default()
 {
   // Create system defaults
-  cCurrent.m_nWidth = 640;
-  cCurrent.m_nHeight = 480;
-  cCurrent.m_eColorSpace = os::CS_RGB16;
-  cCurrent.m_vRefreshRate = 60.0f;
-
+  cCurrent = m_pcModes[0];
   // Update controls
   ShowData();
   ColourChange();
@@ -267,63 +306,26 @@ void MainWindow::Default()
 
 void MainWindow::ColourChange()
 {
-  // Now figure out applicable resolutions
-  os::Application *pcApp = os::Application::GetInstance();
-  int iModeCount = pcApp->GetScreenModeCount();
-  os::screen_mode sMode;
-
-  // Now loop through all and figure out how many resolutions are applicable
-  pcDDMResolution->Clear();
-  int iResCount = 0;
-  int iPos = pcDDMColour->GetSelection();
-  char *pzScratch = new char[20];
-  for (int i=0;i<iModeCount;i++) {
-    if (pcApp->GetScreenModeInfo(i, &sMode)==0) {
-      if (sMode.m_eColorSpace==iDepths[iPos]) {
-	
-	// Fill the table with the values
-	iScrWidth[iResCount] = sMode.m_nWidth;
-	iScrHeight[iResCount] = sMode.m_nHeight;
-	
-	// Now add this to the dropdown menu
-	sprintf(pzScratch, "%d x %d", iScrWidth[iResCount], iScrHeight[iResCount]);
-	pcDDMResolution->AppendItem(pzScratch);
-
-	// If current resolution, make selection
-	if (sMode.m_nWidth==cCurrent.m_nWidth && sMode.m_nHeight==cCurrent.m_nHeight) {
-	  pcDDMResolution->SetSelection(pcDDMResolution->GetItemCount()-1, true);
-	}
-
-	iResCount++;
-      }
-    }
-  }
-  delete pzScratch;
+	int iPos = pcDDMColour->GetSelection();
+	cCurrent.m_eColorSpace = ( os::color_space )m_cColorSpaces[iPos];
+	ShowData();
 }
 
 void MainWindow::ResolutionChange()
 {
+	
   // Save the newly selected resolution
   int iPos = pcDDMResolution->GetSelection();
-  cCurrent.m_nWidth = iScrWidth[iPos];
-  cCurrent.m_nHeight = iScrHeight[iPos];
+  cCurrent.m_nWidth = (int)( m_cResolutions[iPos] >> 16 );
+  cCurrent.m_nHeight = (int)( m_cResolutions[iPos] & 0xffff );
+  ShowData();
 }
 
 void MainWindow::RefreshChange() 
 {
   // Save the newly selected refresh rate
   int iPos = pcDDMRefresh->GetSelection();
-
-  switch(iPos) {
-
-  case 0: cCurrent.m_vRefreshRate = 56.0f; break;
-  case 1: cCurrent.m_vRefreshRate = 60.0f; break;
-  case 2: cCurrent.m_vRefreshRate = 70.0f; break;
-  case 3: cCurrent.m_vRefreshRate = 72.0f; break;
-  case 4: cCurrent.m_vRefreshRate = 75.0f; break;
-  case 5: cCurrent.m_vRefreshRate = 85.0f; break;
- 
-  }
+  cCurrent.m_vRefreshRate = (float)( m_cRefreshRates[iPos] );
 }
 
 void MainWindow::HandleMessage(os::Message* pcMessage)

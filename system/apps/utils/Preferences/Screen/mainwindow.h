@@ -24,6 +24,7 @@
 #include <gui/stringview.h>
 #include <gui/dropdownmenu.h>
 #include <gui/slider.h>
+#include <vector.h>
 
 // This is the number of depths, I am only using RGB ones
 const int MAX_DEPTH_COUNT = 7;
@@ -51,12 +52,12 @@ private:
   os::screen_mode cUndo;
   os::screen_mode cUndo2;
 
-  // Available colour depths table
-  int iDepths[MAX_DEPTH_COUNT];
-
-  // Resolutions, slightly hacked, but works
-  int iScrWidth[MAX_RES_COUNT];
-  int iScrHeight[MAX_RES_COUNT];
+  // All screenmodes
+  int m_nModeCount;
+  os::screen_mode* m_pcModes;
+  std::vector<uint32> m_cResolutions;
+  std::vector<uint32> m_cColorSpaces;
+  std::vector<uint32> m_cRefreshRates;
 
   // Refresh flag/custom or not
 
