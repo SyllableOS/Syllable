@@ -1,0 +1,16 @@
+authors				Jake Hamby
+status				testing
+
+licenses			other
+home				expect.nist.gov
+
+needs
+	tcl >= 8.4.6
+
+patch-config
+configure-options
+	--with-tclinclude=../tcl-8.4.9/generic
+	--with-tcl=/usr/tcl/lib
+
+test-targets		test
+documentation		README license.terms changes ChangeLog
