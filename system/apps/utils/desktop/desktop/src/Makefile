@@ -25,6 +25,13 @@ dist:
 	@echo Copying $(EXE) to $(DIST_DIR)/atheos/sys/bin
 	@cp -f $(EXE) $(DIST_DIR)/atheos/sys/bin
 
+astyle:
+	@echo Cleaning up all of the source
+	@astyle --style=ansi *.cpp
+	@astyle --style=ansi *.h
+	@rm -rf *.orig
+
+
 ../objs/main.o : main.cpp
 	@echo Compiling : $<
 	@$(CC) $(COPTS) $< -o $@
@@ -76,6 +83,7 @@ dist:
 ../objs/drives_settings.o : drives_settings.cpp
 	@echo Compiling : $<
 	@$(CC) $(COPTS) $< -o $@ 
+
 
 
 

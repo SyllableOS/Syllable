@@ -41,10 +41,10 @@ IconProp::IconProp(string cIconName, string cExec, Bitmap* cIconPic) : Window(CR
     pcIconExecStr->SetFrame(Rect(0,0,50,20) + Point(10,40));
     AddChild(pcIconExecStr);
 
-   /* ImageButton* pcImageBut = new ImageButton(Rect(0,0,0,0), "IMAGE_CHANGE", "Change", NULL, (BitmapImage*)cIconPic, ImageButton::IB_TEXT_BOTTOM, true,true);
-    pcImageBut->SetFrame(Rect(0,0,46,40) + Point(GetBounds().Width() /2 - 25, GetBounds().Height() - 80) );
-    AddChild(pcImageBut);
-    */
+    /* ImageButton* pcImageBut = new ImageButton(Rect(0,0,0,0), "IMAGE_CHANGE", "Change", NULL, (BitmapImage*)cIconPic, ImageButton::IB_TEXT_BOTTOM, true,true);
+     pcImageBut->SetFrame(Rect(0,0,46,40) + Point(GetBounds().Width() /2 - 25, GetBounds().Height() - 80) );
+     AddChild(pcImageBut);
+     */
     pcIconOkBut = new Button(Rect(0,0,0,0),"Icon_OK","OK",new Message(ID_ICON_PROP_OK) );
     pcIconOkBut->SetFrame(Rect(0,0,25,25) + Point (GetBounds().Width() /2 - 25, GetBounds().Height() - 30) );
     AddChild(pcIconOkBut);

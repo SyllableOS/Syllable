@@ -18,7 +18,7 @@ DeskSettings::DeskSettings()
     sprintf(pzConfigDir, "%s/Settings/Desktop/",getenv("HOME"));
     sprintf(pzImageDir, "%s/Documents/Pictures/",getenv("HOME"));
     sprintf(pzIconDir, "%s/Desktop/",getenv("HOME"));
-	sprintf(pzExtDir, "%s/Settings/Desktop/Templates",getenv("HOME"));
+    sprintf(pzExtDir, "%s/Settings/Desktop/Templates",getenv("HOME"));
     pcReturnMessage = new Message();
 
     DefaultSettings();
@@ -171,7 +171,6 @@ int32 DeskSettings::GetImageSize()
 
 bool DeskSettings::GetTrans()
 {
-	cout << bTrans << endl;
     return (bTrans);
 }
 
@@ -184,6 +183,7 @@ bool DeskSettings::GetVersion()
 {
     return (bShowVer);
 }
+
 
 
 

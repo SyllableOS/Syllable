@@ -13,8 +13,7 @@ DeskApp::DeskApp() : Application("application/x-vnd.RGC-desktop_manager")
 }
 
 DeskApp::~DeskApp()
-{
-}
+{}
 
 
 

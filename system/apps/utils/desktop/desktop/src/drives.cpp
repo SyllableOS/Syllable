@@ -1,5 +1,4 @@
 #include "drives.h"
-//#include <storage/volume,h>  // working on a volume class that will aid the mount menu
 #include "messages.h"
 
 #include <gui/checkmenu.h>
@@ -86,9 +85,7 @@ void Drives::GetDrivesInfo()
         }
 
         if ( get_fs_info( nFD, &fsInfo ) >= 0 )
-        {
-
-        }
+        {}
         human( zSize, fsInfo.fi_total_blocks * fsInfo.fi_block_size );
         human( zUsed, (fsInfo.fi_total_blocks - fsInfo.fi_free_blocks) *fsInfo.fi_block_size );
         human( zAvail, fsInfo.fi_free_blocks * fsInfo.fi_block_size );
@@ -117,8 +114,8 @@ void Drives::Mount()
 {}
 
 void Drives::TimerTick(int nID)
-{
-}
+{}
+
 
 
 

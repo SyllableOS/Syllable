@@ -25,7 +25,7 @@ Icon::Icon( const char* pzTitle, const char* pzPath, const char* pzExec, Point c
 
     if ( s_pcBitmap[0] == NULL )
     {
-        for ( int i = 0 ; i < 20 ; ++i )
+        for ( int i = 0 ; i < 200 ; ++i )
         {
             s_pcBitmap[i] = new Bitmap( 32,32, CS_RGBA32 );
         }
@@ -893,6 +893,13 @@ void IconView::DirChanged( const std::string& cNewPath )
     }
 
 }
+
+
+
+
+
+
+
 
 
 

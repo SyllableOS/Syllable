@@ -26,7 +26,7 @@ MiscView::MiscView(const Rect & cFrame) : View(cFrame, "MiscView")
     pcTransCheck = new CheckBox(Rect(0,0,0,0),"trans","Make icon background transparent",NULL);
     pcTransCheck->SetFrame(Rect(0,0,GetBounds().Width(),15) + Point (20,80));
     AddChild(pcTransCheck);
-    
+
     pcFortuneCheck = new CheckBox(Rect(0,0,0,0),"fortune", "Show a random fortune at login", NULL);
     pcFortuneCheck->SetFrame(Rect(0,0,GetBounds().Width(), 15) + Point (20,115));
     AddChild(pcFortuneCheck);
@@ -309,7 +309,7 @@ void PropWin::HandleMessage(Message* pcMessage)
     case ID_PROP_CLOSE:
         Save();
         //OkToQuit();
-		Close();
+        Close();
         break;
 
     case ID_PROP_LIST:
@@ -330,7 +330,7 @@ void PropWin::HandleMessage(Message* pcMessage)
 
     case ID_PROP_TEST:
         {
-            printf("Thus works\n");
+            ;
             pcPropTab->pcColor->SwitchList();
         }
         break;
@@ -392,7 +392,6 @@ void PropWin::ReadLoginConfig()
     filRead.getline(junk2,1024);
     filRead.getline((char*)login_info,1024);
     filRead.getline(junk2,1024);
-    filRead.getline(junk2,1024);
     filRead.getline(zLoginName,1024);
 
     filRead.close();
@@ -417,12 +416,12 @@ void PropWin::SaveLoginConfig(bool b_Login, const char* zName)
     fprintf(fin,"<Login Name Option>\n");
     if (b_Login == true)
     {
-        fprintf(fin,"true\n\n");
+        fprintf(fin,"true\n");
 
     }
     else
     {
-        fprintf(fin,"false\n\n");
+        fprintf(fin,"false\n");
     }
 
     fprintf(fin, "<Login Name>\n");
@@ -487,6 +486,7 @@ void PropWin::LoadPrefs(void)
     nImageSize = pcSettings->GetImageSize();
     bTrans     = pcSettings->GetTrans();
 }
+
 
 
 

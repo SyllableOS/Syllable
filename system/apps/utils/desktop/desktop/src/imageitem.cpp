@@ -113,7 +113,7 @@ uint8 nSubMenuArrowData[]={
 ImageItem::ImageItem( Menu* pcMenu, Message* pcMsg, Bitmap* bmap, float nNumber )
         :MenuItem(pcMenu, pcMsg)
 {
-	nDivNum = nNumber;
+    nDivNum = nNumber;
     if( s_pcMenuBitmap == NULL )
     {
         Rect cSubMenuBitmapRect;
@@ -135,7 +135,7 @@ ImageItem::ImageItem( const char* pzLabel, Message* pcMsg, const char *shortcut,
         :MenuItem(pzLabel, pcMsg)
 {
 
-	nDivNum = nNumber;
+    nDivNum = nNumber;
     if( s_pcMenuBitmap == NULL )
     {
         Rect cSubMenuBitmapRect;
@@ -281,12 +281,12 @@ void ImageItem::Draw()
         m->DrawBitmap(s_pcMenuBitmap,cSourceRect,cTargetRect);
         m->SetDrawingMode( DM_COPY );
 
-        	/*if ( GetSubMenu() != NULL) //was commented
+        /*if ( GetSubMenu() != NULL) //was commented
         {
-        	
-        	m->SetDrawingMode( DM_OVER );
-        	m->DrawBitmap( s_pcMenuBitmap, cSourceRect, cTargetRect );
-        	m->SetDrawingMode( DM_COPY );
+
+        m->SetDrawingMode( DM_OVER );
+        m->DrawBitmap( s_pcMenuBitmap, cSourceRect, cTargetRect );
+        m->SetDrawingMode( DM_COPY );
         }*/
     }
 }
