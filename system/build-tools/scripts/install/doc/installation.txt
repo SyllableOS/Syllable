@@ -1,0 +1,7 @@
+Syllable will now be installed onto your hard drive.  This will take a few
+minutes.  Once the installation is complete, you will be asked a few more
+questions so that your Syllable installation can be correctly configured.
+
+WARNING: If you reboot or turn off your computer while Syllable is being
+installed, the installation will be corrupt and you most likely will not be
+able to boot your Syllable installation.

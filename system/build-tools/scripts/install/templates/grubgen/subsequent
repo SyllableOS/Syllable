@@ -1,0 +1,3 @@
+	title	##PARTITION TYPE## Partition: ##PARTITION PATH##
+	chainloader	##GRUB PARTITION DEVICE##+1
+	

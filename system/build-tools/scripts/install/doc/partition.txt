@@ -1,0 +1,12 @@
+Syllable requires a single hard disk partition, which must be formatted with the
+AtheOS File System.  The following step allows you to partition your hard drive
+for Syllable.  The step after that will allow you to format the partition.
+
+If the partition for Syllable already exists, just press the "n" key in response
+to the following question, and you will proceed directly to the formatting
+stage.
+
+WARNING: Partitioning a drive which already contains data may destroy
+the contents of that drive!  Ensure that you have backed up any data that
+you wish to keep before you proceed to partition and format your hard drive.
+

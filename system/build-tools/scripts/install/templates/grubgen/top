@@ -1,0 +1,11 @@
+	timeout	10
+	
+	title	Syllable ##SYLLABLE VERSION##
+	root	##GRUB ROOT DEVICE##
+	kernel	/atheos/sys/kernel.so root=##SYLLABLE ROOT DEVICE PATH##
+	module	/atheos/sys/config/kernel.cfg
+	module	/atheos/sys/drivers/bus/pci
+	module	/atheos/sys/drivers/fs/afs
+	module	/atheos/sys/drivers/bus/ata
+	module	/atheos/sys/drivers/dev/hcd/ata_pci
+	

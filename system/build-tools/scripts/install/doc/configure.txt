@@ -1,0 +1,50 @@
+You must now configure the Grub boot-menu file.  Please read the
+following information before you attempt to do this, as errors in the
+configuration file will mean that you will not be able to boot Syllable.
+
+First you must tell GRUB where to find the kernel and the required
+disk/FS drivers to load before booting Syllable. This information is
+found in "/afs/boot/grub/menu.lst". If you have other OS's installed
+on the machine you must either configure GRUB as a boot-manager or
+install another boot-manager that can "chainload" GRUB from the AFS
+partition.
+
+The menu.lst file should look something like this to boot Syllable from
+the installation described above:
+
+     title  Syllable
+     root   (hd0,1)
+     kernel /atheos/sys/kernel.so root=/dev/disk/ide/hda/0
+     module /atheos/sys/config/kernel.cfg
+     module /atheos/sys/drivers/bus/pci
+     module /atheos/sys/drivers/fs/afs
+     module /atheos/sys/drivers/dev/disk/ata
+
+This will tell GRUB to boot partition number 2 on the first drive
+through the "root (hd0,1)" command and where to find the kernel, the
+boot block-device driver and the boot-FS driver on that partition. The
+"root=/dev/disk/bios/hda/0" string after the kernel-path is a parameter
+that is passed to the kernel and tells what partition to mount as
+/boot/ before continue to boot. The kernel can also take a number of
+other parameters (listed below) that are given in the same manner after
+the "root" param.
+
+If you install Syllable on the second partition on the first drive the
+default config-file is ok. otherwise you must edit the "root (disk,partition)
+line to fit your setup. If you want to boot other OS's with GRUB you
+must add them to the config file as well. For example to boot BeOS, or
+Windows, or most other OS's that have a bootblock you can use the
+"chainloader" command like this:
+
+     title BeOS
+     chainloader (hd0,3)+1
+
+This will add a menu entry titled BeOS that will boot the OS
+found on the fourth partition on the first disk.
+
+You can also set a timeout for when to boot the first OS in the list
+(or the default as set by the "default" command) with the "timeout"
+command:
+
+     timeout 5
+
