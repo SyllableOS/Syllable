@@ -344,7 +344,6 @@ typedef struct
 	bool			bMediaChanged;
 	bool			bTocValid;
 	cdrom_toc_s		sToc;
-	bool			bDoCDDA;
 } ATAPI_device_s;
 
 /* ATA busmanager */

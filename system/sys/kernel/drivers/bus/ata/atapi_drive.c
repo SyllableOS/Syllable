@@ -62,9 +62,6 @@ int atapi_drive_close( void* pNode, void* pCookie )
 	ATAPI_device_s* psDev = pNode;
 	atomic_add( &psDev->nOpenCount, -1 );
 
-	/* Ensure we reset the current CD-DA mode information */
-	psDev->bDoCDDA = false;
-
 	return( 0 );
 }
 
@@ -97,7 +94,7 @@ int atapi_drive_read( void* pNode, void* pCookie, off_t nPos, void* pBuf, size_t
 	
 	nBytesLeft = nLen;
 	nPos += psDev->nStart;
-	
+
 	/* The iso9660 fs requires this workaround... */
 	if( nLen < psDev->nSectorSize )
 		nBytesLeft = psDev->nSectorSize;
@@ -107,12 +104,7 @@ int atapi_drive_read( void* pNode, void* pCookie, off_t nPos, void* pBuf, size_t
 		int nCurSize = min( 16 * PAGE_SIZE, nBytesLeft );
 		uint64 nBlock = nPos / psDev->nSectorSize;
 
-		if( psDev->bDoCDDA )
-		{
-			nError = atapi_do_cdda_read( psDev, nBlock, nCurSize );
-		}
-		else
-			nError = atapi_do_read( psDev, nBlock, nCurSize );
+		nError = atapi_do_read( psDev, nBlock, nCurSize );
 
 		if( nError < 0 )
 		{
@@ -196,12 +188,7 @@ int atapi_drive_readv( void* pNode, void* pCookie, off_t nPos, const struct iove
 			kassertw(0);
 		}
 
-		if( psDev->bDoCDDA )
-		{
-			nError = atapi_do_cdda_read( psDev, nBlock, nCurSize );
-		}
-		else
-			nError = atapi_do_read( psDev, nBlock, nCurSize );
+		nError = atapi_do_read( psDev, nBlock, nCurSize );
 		
 		if( nError < 0 )
 		{
@@ -361,19 +348,17 @@ status_t atapi_drive_ioctl( void* pNode, void* pCookie, uint32 nCommand, void* p
 
 		case CD_READ_CDDA:
 		{
-			kerndbg( KERN_DEBUG, "Switching to CD-DA read mode.\n");
+			struct cdda_block *psBlock = (struct cdda_block*)pArgs;
 
-			psDev->bDoCDDA = true;
-			nError = 0;
-			break;
-		}
+			if( psBlock != NULL )
+			{
+				nError = atapi_do_cdda_read( psDev, psBlock->nBlock, psBlock->nSize );
+				if( nError == 0 )
+					memcpy_to_user( psBlock->pBuf, psDev->psPort->pDataBuf, psBlock->nSize );
+			}
+			else
+				nError = -EINVAL;
 
-		case CD_READ_DATA:
-		{
-			kerndbg( KERN_DEBUG, "Switching to data (Non CD-DA) read mode.\n");
-
-			psDev->bDoCDDA = false;
-			nError = 0;
 			break;
 		}
 
@@ -419,7 +404,6 @@ void atapi_drive_add( ATA_port_s* psPort )
 	psDev->bRemovable = psPort->sID.configuration & 0x80;
 	psDev->bMediaChanged = false;
 	psDev->bTocValid = false;
-	psDev->bDoCDDA = false;
 	psDev->nDeviceHandle = register_device( "", "ata" );
 	
 	strcpy( zNodePath, "disk/ata/" );
@@ -436,21 +420,4 @@ void atapi_drive_add( ATA_port_s* psPort )
 		return;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

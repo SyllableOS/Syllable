@@ -51,8 +51,7 @@ extern "C" {
 #define CD_READ_TOC_ENTRY	MKCDIOCTL(0x3002)	/* Read an entry of the Table of Contents */
 
 /* CD-DA */
-#define CD_READ_CDDA		MKCDIOCTL(0x4001)	/* Toggle CD-DA read mode on */
-#define CD_READ_DATA		MKCDIOCTL(0x4002)	/* Toggle CD-DA read mode off (E.g. normal data reading) */
+#define CD_READ_CDDA		MKCDIOCTL(0x4001)	/* Read a single CD-DA block */
 
 /* Disc specific */
 
@@ -64,6 +63,8 @@ extern "C" {
 #define CD_SECS              60 /* seconds per minute */
 #define CD_FRAMES            75 /* frames per second */
 #define CD_MSF_OFFSET       150 /* MSF numbering offset of first frame */
+
+#define CD_CDDA_FRAMESIZE	2352
 
 static inline void lba_to_msf(int lba, uint8 *m, uint8 *s, uint8 *f)
 {
@@ -136,6 +137,13 @@ struct cdrom_audio_track
 	cdrom_msf_s msf_stop;
 	uint32 lba_start;
 	uint32 lba_stop;
+};
+
+struct cdda_block
+{
+	uint32 nBlock;
+	uint8 *pBuf;
+	uint32 nSize;
 };
 
 typedef struct cdrom_audio_track cdrom_audio_track_s;

@@ -105,7 +105,6 @@ status_t atapi_check_sense( ATAPI_device_s* psDev, ATAPI_sense_s *psSense )
 			/* Media changed, make a note of it and try again */
 			psDev->bMediaChanged = true;
 			psDev->bTocValid = false;
-			psDev->bDoCDDA = false;
 			nError = SENSE_RETRY;
 			break;
 		}
