@@ -6,7 +6,7 @@ posix-apps-path	:= /usr
 executables-dir	:= bin
 register			:= pkgmanager -a
 install-path		:= $(posix-apps-path)/$(name)
-distro-path		:= ($DIST_DIR)/atheos$(install-path)
+distro-path		:= $(DIST_DIR)/atheos$(install-path)
 
 .PHONY: all deps clean install dist
 
