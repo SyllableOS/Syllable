@@ -23,6 +23,7 @@
 #include <gui/window.h>
 #include <gui/menu.h>
 #include <gui/font.h>
+#include <gui/bitmap.h>
 #include <util/message.h>
 
 #include <atheos/kernel.h>
@@ -48,13 +49,45 @@ namespace os
     };
     
 }
+
 using namespace os;
 
+Bitmap* MenuItem::s_pcSubMenuBitmap = NULL;
+
+#define SUB_MENU_ARROW_W 4
+#define SUB_MENU_ARROW_H 7
+
+uint8* pnSubMenuArrowData[]={
+	0x00,0x00,0x00,0xff,
+	0xff,0xff,0xff,0x00,
+	0xff,0xff,0xff,0x00,
+	0xff,0xff,0xff,0x00,
+	0x00,0x00,0x00,0xff,
+	0x00,0x00,0x00,0xff,
+	0xff,0xff,0xff,0x00,
+	0xff,0xff,0xff,0x00,
+	0x00,0x00,0x00,0xff,
+	0x00,0x00,0x00,0xff,
+	0x00,0x00,0x00,0xff,
+	0xff,0xff,0xff,0x00,
+	0x00,0x00,0x00,0xff,
+	0x00,0x00,0x00,0xff,
+	0x00,0x00,0x00,0xff,
+	0x00,0x00,0x00,0xff,
+	0x00,0x00,0x00,0xff,
+	0x00,0x00,0x00,0xff,
+	0xff,0xff,0xff,0x00,
+	0x00,0x00,0x00,0xff,
+	0x00,0x00,0x00,0xff,
+	0xff,0xff,0xff,0x00,
+	0xff,0xff,0xff,0x00,
+	0x00,0x00,0x00,0xff,
+	0xff,0xff,0xff,0x00,
+	0xff,0xff,0xff,0x00,
+	0xff,0xff,0xff,0x00
+};
+
 Locker Menu::s_cMutex( "menu_mutex" );
-
-
-
-
 
 
 
@@ -77,20 +110,33 @@ public:
 
 MenuItem::MenuItem( const char* pzLabel, Message* pcMsg ) : Invoker( pcMsg, NULL, NULL )
 {
-    m_pcNext	   = NULL;
-    m_pcSuperMenu	   = NULL;
-    m_pcSubMenu	   = NULL;
-    m_bIsHighlighted = false;
+	m_pcNext	   = NULL;
+	m_pcSuperMenu	   = NULL;
+	m_pcSubMenu	   = NULL;
+	m_bIsHighlighted = false;
   
-    if ( NULL != pzLabel )
-    {
-	m_pzLabel = new char[ strlen( pzLabel ) + 1 ];
-	strcpy( m_pzLabel, pzLabel );
-    }
-    else
-    {
-	m_pzLabel = NULL;
-    }
+	if ( NULL != pzLabel )
+	{
+		m_pzLabel = new char[ strlen( pzLabel ) + 1 ];
+		strcpy( m_pzLabel, pzLabel );
+	}
+	else
+	{
+		m_pzLabel = NULL;
+	}
+
+	if( s_pcSubMenuBitmap == NULL )
+	{
+		Rect cSubMenuBitmapRect;
+
+		cSubMenuBitmapRect.left = 0;
+		cSubMenuBitmapRect.top = 0;
+		cSubMenuBitmapRect.right = SUB_MENU_ARROW_W;
+		cSubMenuBitmapRect.bottom = SUB_MENU_ARROW_H;
+
+		s_pcSubMenuBitmap = new Bitmap( cSubMenuBitmapRect.Width(), cSubMenuBitmapRect.Height(), CS_RGBA32 , Bitmap::SHARE_FRAMEBUFFER);
+		memcpy( s_pcSubMenuBitmap->LockRaster(), pnSubMenuArrowData, (unsigned int) ( cSubMenuBitmapRect.Width() * cSubMenuBitmapRect.Height() * 4 ) );
+	}
 }
 
 //----------------------------------------------------------------------------
@@ -189,15 +235,17 @@ Rect MenuItem::GetFrame() const
 
 Point MenuItem::GetContentSize()
 {
-    Menu* pcMenu = GetSuperMenu();
+	Menu* pcMenu = GetSuperMenu();
 
-    if ( m_pzLabel != NULL && pcMenu != NULL ) {
-	font_height sHeight;
-	pcMenu->GetFontHeight( &sHeight );
+	if ( m_pzLabel != NULL && pcMenu != NULL )
+	{
+		font_height sHeight;
+		pcMenu->GetFontHeight( &sHeight );
 
-	return( Point( pcMenu->GetStringWidth( GetLabel() ) + 4, sHeight.ascender + sHeight.descender + sHeight.line_gap ) );
-    }
-    return( Point( 0.0f, 0.0f ) );
+		return( Point( pcMenu->GetStringWidth( GetLabel() ) + 4, sHeight.ascender + sHeight.descender + sHeight.line_gap ) );
+	}
+
+	return( Point( 0.0f, 0.0f ) );
 }
 
 //----------------------------------------------------------------------------
@@ -237,44 +285,68 @@ Point MenuItem::GetContentLocation() const
 
 void MenuItem::Draw()
 {
-    Menu* pcMenu = GetSuperMenu();
+	Menu* pcMenu = GetSuperMenu();
 
-    if ( pcMenu == NULL ) {
-	return;
-    }
-    const char* pzLabel = GetLabel();
-    if ( pzLabel == NULL ) {
-	return;
-    }
-    Rect   cFrame = GetFrame();
+	if ( pcMenu == NULL )
+	{
+		return;
+	}
+
+	const char* pzLabel = GetLabel();
+
+	if ( pzLabel == NULL )
+	{
+		return;
+	}
+
+	Rect   cFrame = GetFrame();
+
+	font_height sHeight;
+	pcMenu->GetFontHeight( &sHeight );
+
+	if ( m_bIsHighlighted )
+	{
+		pcMenu->SetFgColor( get_default_color( COL_SEL_MENU_BACKGROUND ) );
+	}
+	else
+	{
+		pcMenu->SetFgColor( get_default_color( COL_MENU_BACKGROUND ) );
+	}
+
+	float vStrWidth = pcMenu->GetStringWidth( pzLabel );
+
+	pcMenu->FillRect( GetFrame() );
+
+	if ( m_bIsHighlighted )
+	{
+		pcMenu->SetFgColor( get_default_color( COL_SEL_MENU_TEXT ) );
+		pcMenu->SetBgColor( get_default_color( COL_SEL_MENU_BACKGROUND ) );
+	}
+	else
+	{
+		pcMenu->SetFgColor( get_default_color( COL_MENU_TEXT ) );
+		pcMenu->SetBgColor( get_default_color( COL_MENU_BACKGROUND ) );
+	}
+
+	float vCharHeight = sHeight.ascender + sHeight.descender + sHeight.line_gap;
+	float y = cFrame.top + (cFrame.Height()+1.0f) / 2 - vCharHeight / 2 + sHeight.ascender + sHeight.line_gap * 0.5f;
   
-    font_height sHeight;
+	pcMenu->DrawString( pzLabel, Point( cFrame.left + 2, y ) );
 
-    pcMenu->GetFontHeight( &sHeight );
+	// If we are the super-menu, draw the sub-menu triangle on the right of the label
 
-    if ( m_bIsHighlighted ) {
-	pcMenu->SetFgColor( get_default_color( COL_SEL_MENU_BACKGROUND ) );
-    } else {
-	pcMenu->SetFgColor( get_default_color( COL_MENU_BACKGROUND ) );
-    }
+	if ( GetSubMenu() != NULL && m_pcSuperMenu->GetLayout() == ITEMS_IN_COLUMN )
+	{
+		Rect cSourceRect = s_pcSubMenuBitmap->GetBounds();
+		Rect cTargetRect;
 
-    float vStrWidth = pcMenu->GetStringWidth( pzLabel );
+		cTargetRect = cSourceRect.Bounds() + Point( m_cFrame.right - 6.0f, m_cFrame.top + ( m_cFrame.Height() / 2) - 3.0f);
 
-    pcMenu->FillRect( GetFrame() );
-
-    if ( m_bIsHighlighted ) {
-	pcMenu->SetFgColor( get_default_color( COL_SEL_MENU_TEXT ) );
-	pcMenu->SetBgColor( get_default_color( COL_SEL_MENU_BACKGROUND ) );
-    } else {
-	pcMenu->SetFgColor( get_default_color( COL_MENU_TEXT ) );
-	pcMenu->SetBgColor( get_default_color( COL_MENU_BACKGROUND ) );
-    }
-
-    float vCharHeight = sHeight.ascender + sHeight.descender + sHeight.line_gap;
-    float y = cFrame.top + (cFrame.Height()+1.0f) / 2 - vCharHeight / 2 + sHeight.ascender + sHeight.line_gap * 0.5f;
-  
-    pcMenu->DrawString( pzLabel, Point( cFrame.left + 2, y ) );
-      
+//		pcMenu->SetDrawingMode( DM_OVER );
+		pcMenu->SetDrawingMode( DM_BLEND );
+		pcMenu->DrawBitmap( s_pcSubMenuBitmap, cSourceRect, cTargetRect );
+		pcMenu->SetDrawingMode( DM_COPY );
+	}
 }
 
 //----------------------------------------------------------------------------
@@ -1565,55 +1637,57 @@ Point Menu::GetPreferredSize( bool bLargest ) const
 
 void Menu::InvalidateLayout()
 {
-    MenuItem*	pcItem;
+	MenuItem*	pcItem;
 
-    m_cSize = Point( 0.0f, 0.0f );
+	m_cSize = Point( 0.0f, 0.0f );
 
-    switch( m_eLayout )
-    {
-	case ITEMS_IN_ROW:
-	    for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->m_pcNext )
-	    {
-		Point	cSize = pcItem->GetContentSize();
+	switch( m_eLayout )
+	{
+		case ITEMS_IN_ROW:
+			for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->m_pcNext )
+			{
+				Point	cSize = pcItem->GetContentSize();
 
-		pcItem->m_cFrame = Rect( m_cSize.x + m_cItemBorders.left,
-					 m_cItemBorders.top,
-					 m_cSize.x + cSize.x + m_cItemBorders.left - 1,
-					 cSize.y + m_cItemBorders.bottom - 1 );
+				pcItem->m_cFrame = Rect( m_cSize.x + m_cItemBorders.left,
+											m_cItemBorders.top,
+											m_cSize.x + cSize.x + m_cItemBorders.left - 1,
+											cSize.y + m_cItemBorders.bottom - 1 );
 
-		pcItem->m_cFrame += Point( 1.0f, 1.0f );	// Menu border
+				pcItem->m_cFrame += Point( 1.0f, 1.0f );	// Menu border
 
-		m_cSize.x += cSize.x + m_cItemBorders.left + m_cItemBorders.right;
+				m_cSize.x += cSize.x + m_cItemBorders.left + m_cItemBorders.right;
 
-		if ( cSize.y + m_cItemBorders.top + m_cItemBorders.bottom + 2 > m_cSize.y ) {
-		    m_cSize.y = cSize.y + m_cItemBorders.top + m_cItemBorders.bottom + 2;
-		}
-	    }
-	    break; 
-	case ITEMS_IN_COLUMN:
-	    for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->m_pcNext )
-	    {
-		Point	cSize = pcItem->GetContentSize();
+				if ( cSize.y + m_cItemBorders.top + m_cItemBorders.bottom + 2 > m_cSize.y )
+					m_cSize.y = cSize.y + m_cItemBorders.top + m_cItemBorders.bottom + 2;
+			}
 
-		pcItem->m_cFrame = Rect( m_cItemBorders.left,
-					 m_cSize.y + m_cItemBorders.top,
-					 cSize.x + m_cItemBorders.right - 1,
-					 m_cSize.y + cSize.y + m_cItemBorders.top - 1 );
+			break; 
 
-		m_cSize.y += cSize.y + m_cItemBorders.top + m_cItemBorders.bottom;
+		case ITEMS_IN_COLUMN:
+			for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->m_pcNext )
+			{
+				Point	cSize = pcItem->GetContentSize();
 
-		if ( cSize.x + m_cItemBorders.left + m_cItemBorders.right > m_cSize.x ) {
-		    m_cSize.x = cSize.x + m_cItemBorders.left + m_cItemBorders.right;
-		}
-	    }
-	    for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->m_pcNext ) {
-		pcItem->m_cFrame.right = m_cSize.x - 2;
-	    }
-	    break;
-	case ITEMS_CUSTOM_LAYOUT:
-	    dbprintf( "Error: ITEMS_CUSTOM_LAYOUT not supported\n" );
-	    break;
-    }
+				pcItem->m_cFrame = Rect( m_cItemBorders.left,
+											m_cSize.y + m_cItemBorders.top,
+											cSize.x + m_cItemBorders.right - 1,
+											m_cSize.y + cSize.y + m_cItemBorders.top - 1 );
+
+				m_cSize.y += cSize.y + m_cItemBorders.top + m_cItemBorders.bottom;
+
+				if ( cSize.x + m_cItemBorders.left + m_cItemBorders.right > m_cSize.x )
+					m_cSize.x = cSize.x + m_cItemBorders.left + m_cItemBorders.right;
+			}
+
+			for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->m_pcNext )
+				pcItem->m_cFrame.right = m_cSize.x - 2;
+
+			break;
+
+		case ITEMS_CUSTOM_LAYOUT:
+			dbprintf( "Error: ITEMS_CUSTOM_LAYOUT not supported\n" );
+			break;
+	}
 }
 
 //----------------------------------------------------------------------------
