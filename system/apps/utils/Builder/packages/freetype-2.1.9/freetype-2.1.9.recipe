@@ -1,0 +1,9 @@
+authors				Kaj de Vos
+
+licenses			GPL custom
+home				www.freetype.org
+
+;build-recommends	python
+no-build-dir
+;make-targets		refdoc
+documentation		README ChangeLog docs
