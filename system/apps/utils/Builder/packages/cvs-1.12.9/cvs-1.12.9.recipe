@@ -1,0 +1,14 @@
+authors			Kaj de Vos
+
+licenses		GPL
+home			www.cvshome.org
+
+test-needs		gawk
+
+patch-config
+configure-options
+	--with-external-zlib
+	--with-rsh=ssh
+;	--disable-server
+;	--enable-encryption
+documentation	README INSTALL ABOUT-NLS FAQ BUGS MINOR-BUGS COPYING COPYING.LIB NEWS ChangeLog TODO PROJECTS AUTHORS
