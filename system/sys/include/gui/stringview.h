@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -17,8 +18,8 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef	GUI_STRINGVIEW_HPP
-#define	GUI_STRINGVIEW_HPP
+#ifndef	__F_GUI_STRINGVIEW_H__
+#define	__F_GUI_STRINGVIEW_H__
 
 #include <atheos/types.h>
 #include <gui/view.h>
@@ -40,7 +41,7 @@ namespace os
 class StringView : public View
 {
 public:
-    StringView( Rect cFrame, const char* pzName, const char* pzString,
+    StringView( Rect cFrame, const String& cName, const String& cString,
 		alignment eAlign = ALIGN_LEFT,
 		uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP,
 		uint32 nFlags  = WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
@@ -55,8 +56,8 @@ public:
 
       // From StringView:
 
-    void	 SetString( const char* pzString );
-    const char*	 GetString( void ) const;
+    void	 SetString( const String& cString );
+    const String& GetString( void ) const;
 
     void	 SetAlignment( alignment eAlign );
     alignment	 GetAlignment( void ) const;
@@ -64,8 +65,7 @@ public:
 
 private:
     struct data {
-//	char*       m_pzString;
-	std::string m_cString;
+	String m_cString;
 	int	    m_nMinSize;
 	int	    m_nMaxSize;
     }* m;
@@ -74,4 +74,5 @@ private:
 
 }
 
-#endif	//	GUI_STRINGVIEW_HPP
+#endif	//	__F_GUI_STRINGVIEW_H__
+
