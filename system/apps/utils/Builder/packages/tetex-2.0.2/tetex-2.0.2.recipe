@@ -1,6 +1,7 @@
 authors				Kaj de Vos
-status				broken
-notes				Some header problem with /include/bits/stdio.h
+status				developing
+warnings
+	Writes in the installation area during unpacking; may need super-user access.
 
 licenses			other
 home				tug.org/teTeX/
@@ -15,6 +16,7 @@ build-needs
 	gawk
 	flex
 	bison
+	ed
 ;	perl
 ;	tk
 recommends
