@@ -3,7 +3,7 @@ dbterm 8 >>/var/log/kernel &
 
 # Mount any additional drives
 #mkdir /windows
-#mount /dev/disk/bios/hda/0 /windows
+#mount /dev/disk/ata/hda/0 /windows
 
 ln -s home/root /root
 
@@ -11,7 +11,7 @@ ln -s home/root /root
 netprefs --detect
 
 # Configure the network
-net_init.sh
+/system/net_init.sh
 
 # Start various daemons if they are installed
 
