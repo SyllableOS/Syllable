@@ -1,3 +1,8 @@
+* November 16 2003, Kaj de Vos *
+
+  Updated freetype.makefile to Freetype 2.1.5. I didn't import the sources,
+  because they're supposed to be installed by the new build system now.
+
 * September 19 2003, Henrik Isaksson *
 
  LibSyllable
