@@ -1,3 +1,4 @@
-authors		Kaj de Vos
+authors			Kaj de Vos
+build-needs		make
 patch-config
 documentation	README README.customs INSTALL COPYING ABOUT-NLS NEWS ChangeLog AUTHORS

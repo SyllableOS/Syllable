@@ -3,6 +3,7 @@ authors
 	Kaj de Vos
 maintainers			Kaj de Vos
 licenses			GPL LGPL
+build-needs			binutils
 patch-config
 ;configure-options	--enable-shared
 documentation		README COPYING COPYING.LIB binutils/NEWS binutils/ChangeLog
