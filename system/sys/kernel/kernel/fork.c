@@ -19,6 +19,7 @@
  */
 
 #include <posix/errno.h>
+#include <posix/select.h>
 
 #include <atheos/kernel.h>
 #include <atheos/semaphore.h>
@@ -414,6 +415,7 @@ thread_id create_idle_thread( const char *Name )
 
 	tss = &psThread->tc_sTSS;
 
+	tss->eflags = get_cpu_flags();
 	tss->ds = 0x18;
 	tss->es = 0x18;
 	tss->fs = 0x18;

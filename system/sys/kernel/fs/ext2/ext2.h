@@ -31,7 +31,7 @@
 #include <atheos/bcache.h>
 #include <macros.h>
 
-#define alloc(a) kmalloc((a), MEMF_KERNEL | MEMF_OKTOFAILHACK | MEMF_BUFFER)
+#define alloc(a) kmalloc((a), MEMF_KERNEL | MEMF_OKTOFAILHACK)
 #define free kfree
 
 

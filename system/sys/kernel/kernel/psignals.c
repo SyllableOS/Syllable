@@ -723,8 +723,8 @@ int sys_killpg( const pid_t nGrp, const int nSigNum )
 {
 	thread_id hThread = 0;
 	Thread_s *psThread;
-	bool bFound = FALSE;
-	bool bPermError = FALSE;
+	bool bFound = false;
+	bool bPermError = false;
 	int nFlg = cli();
 
 	if ( nSigNum < 0 || nSigNum > NSIG )
@@ -739,9 +739,9 @@ int sys_killpg( const pid_t nGrp, const int nSigNum )
 		{
 			if ( send_signal( psThread, nSigNum, false ) == -EPERM )
 			{
-				bPermError = TRUE;
+				bPermError = true;
 			}
-			bFound = TRUE;
+			bFound = true;
 		}
 	}
 	sched_unlock();
@@ -760,8 +760,8 @@ int sys_kill_proc( proc_id hProcess, int nSigNum )
 {
 	thread_id hThread = 0;
 	Thread_s *psThread;
-	bool bFound = FALSE;
-	bool bPermError = FALSE;
+	bool bFound = false;
+	bool bPermError = false;
 	int nFlg = cli();
 
 	if ( nSigNum < 0 || nSigNum > NSIG )
@@ -776,9 +776,9 @@ int sys_kill_proc( proc_id hProcess, int nSigNum )
 		{
 			if ( send_signal( psThread, nSigNum, false ) == -EPERM )
 			{
-				bPermError = TRUE;
+				bPermError = true;
 			}
-			bFound = TRUE;
+			bFound = true;
 		}
 	}
 	sched_unlock();

@@ -50,7 +50,7 @@ struct _CacheBlock
 	CacheBlock_s *cb_psPrev;
 	int cb_nDevice;
 	off_t cb_nBlockNum;
-	vint32 cb_nFlags;
+	volatile flags_t cb_nFlags;
 	int cb_nRefCount;
 	cache_callback *cb_pFunc;
 	void *cb_pArg;
@@ -100,8 +100,8 @@ int alloc_cache_blocks( CacheBlock_s **apsBlocks, int nCount, int nBlockSize, bo
 void free_cache_block( CacheBlock_s *psBlock );
 void release_cache_mem( void );
 
-int shrink_block_cache( int nBytesNeeded );
-int shrinc_cache_heaps( int nIgnoredOrder );
+size_t shrink_block_cache( size_t nBytesNeeded );
+ssize_t shrink_cache_heaps( int nIgnoredOrder );
 void release_cache_blocks( void );
 void flush_block_cache( void );
 void init_block_cache( void );

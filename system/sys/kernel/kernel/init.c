@@ -73,11 +73,12 @@ static bool g_bPlainTextDebug = false;
 static uint32 g_nMemSize = 64 * 1024 * 1024;
 static bool g_bSwapEnabled = false;
 static bool g_bDisableSMP = false;
+static bool g_bDisableACPI = false;
 
 bool g_bDisableKernelConfig = false;
 
 bool g_bRootFSMounted = false;
-bool g_bKernelInitiated = false;
+bool g_bKernelInitialized = false;
 
 uint32 g_nFirstUserAddress = AREA_FIRST_USER_ADDRESS;
 uint32 g_nLastUserAddress = AREA_LAST_USER_ADDRESS;
@@ -421,8 +422,6 @@ static int kernel_init( void )
 {
 	g_sSysBase.ex_hInitProc = sys_get_thread_id( NULL );
 	
-	cli();
-	
 	boot_ap_processors();
 
 	start_timer_int();	/* Start timer interrupt.      */
@@ -703,24 +702,26 @@ static void parse_kernel_params( char *pzParams )
 		}
 
 		if( get_num_arg( &g_nMemSize, "memsize=", pzArg, nLen ) )
-			printk( "  MemSize:          %ld\n", g_nMemSize );
+			printk( "  MemSize:          %d\n", g_nMemSize );
 		if( get_num_arg( &g_nDebugBaudRate, "debug_baudrate=", pzArg, nLen ) )
-			printk( "  Debug baudrate:   %ld\n", g_nDebugBaudRate );
+			printk( "  Debug baudrate:   %d\n", g_nDebugBaudRate );
 		if( get_num_arg( &g_nDebugSerialPort, "debug_port=", pzArg, nLen ) )
-			printk( "  Debug port        %ld\n", g_nDebugSerialPort );
+			printk( "  Debug port        %d\n", g_nDebugSerialPort );
 		if( get_bool_arg( &g_bPlainTextDebug, "debug_plaintext=", pzArg, nLen ) )
 			printk( "  Debug mode:       %s\n", ( g_bPlainTextDebug ) ? "plain text" : "packet protocol" );
 		if( get_bool_arg( &g_bDisableSMP, "disable_smp=", pzArg, nLen ) ) 
 			printk( "  SMP scan is %s\n", ( ( g_bDisableSMP ) ? "disabled" : "enabled" ) );
+		if( get_bool_arg( &g_bDisableACPI, "disable_acpi=", pzArg, nLen ) ) 
+			printk( "  ACPI SMP scan is %s\n", ( ( g_bDisableACPI ) ? "disabled" : "enabled" ) );
 		if( get_bool_arg( &g_bDisableKernelConfig, "disable_config=", pzArg, nLen ) )
 			printk( "  Kernel config is %s\n", ( ( g_bDisableKernelConfig ) ? "disabled" : "enabled" ) );
 		if( get_bool_arg( &g_bSwapEnabled, "enable_swap=", pzArg, nLen ) )
 			printk( "  Swapping is %s\n", ( ( g_bSwapEnabled ) ? "enabled" : "disabled" ) );
 					
 		if( get_num_arg( &g_sSysBase.sb_nFirstUserAddress, "uspace_start=", pzArg, nLen ) )
-			printk( "  UAS start:        %08lx\n", g_sSysBase.sb_nFirstUserAddress );
+			printk( "  UAS start:        %08x\n", g_sSysBase.sb_nFirstUserAddress );
 		if( get_num_arg( &g_sSysBase.sb_nLastUserAddress, "uspace_end=", pzArg, nLen ) )
-			printk( "  UAS end:          %08lx\n", g_sSysBase.sb_nLastUserAddress );
+			printk( "  UAS end:          %08x\n", g_sSysBase.sb_nLastUserAddress );
 		if ( pzParams[i] == '\0' )
 		{
 			break;
@@ -740,7 +741,7 @@ static void parse_kernel_params( char *pzParams )
 	printk( "Loaded kernel modules:\n" );
 	for ( i = 0; i < g_sSysBase.ex_nBootModuleCount; ++i )
 	{
-		printk( "  %02d : %p -> %p (%08lx)  '%s'\n", i, g_sSysBase.ex_asBootModules[i].bm_pAddress, ( char * )g_sSysBase.ex_asBootModules[i].bm_pAddress + g_sSysBase.ex_asBootModules[i].bm_nSize - 1, g_sSysBase.ex_asBootModules[i].bm_nSize, g_sSysBase.ex_asBootModules[i].bm_pzModuleArgs );
+		printk( "  %02d : %p -> %p (%08x)  '%s'\n", i, g_sSysBase.ex_asBootModules[i].bm_pAddress, ( char * )g_sSysBase.ex_asBootModules[i].bm_pAddress + g_sSysBase.ex_asBootModules[i].bm_nSize - 1, g_sSysBase.ex_asBootModules[i].bm_nSize, g_sSysBase.ex_asBootModules[i].bm_pzModuleArgs );
 	}
 }
 
@@ -779,7 +780,6 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 	pRealMemBase += 65536;
 	
 	init_cpuid();
-	init_interrupt_table();
 	
 	g_sSysBase.ex_nTotalPageCount = g_nMemSize / PAGE_SIZE;
 
@@ -788,16 +788,17 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 	kassertw( sizeof( MemContext_s ) <= PAGE_SIZE );	/* Late compile-time check :) */
 	kassertw( ( get_cpu_flags() & EFLG_IF ) == 0 );
 	
+	init_kmalloc();
+	
 	init_kernel_mem_context();
 	
 	g_sSysBase.ex_pNullPage = ( char * )get_free_page( GFP_CLEAR );
-
-	init_kmalloc();
 
 	kassertw( ( get_cpu_flags() & EFLG_IF ) == 0 );
 
 	/* Initialize the descriptors and enable the mmu */
 	set_page_directory_base_reg( g_psKernelSeg->mc_pPageDir );
+	init_interrupt_table();
 	init_descriptors();
 
 	kassertw( ( get_cpu_flags() & EFLG_IF ) == 0 );
@@ -806,19 +807,18 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 	
 	init_memory_pools( pRealMemBase, &g_sMultiBootHeader );
 	init_semaphores();
-
+	init_msg_ports();
+	init_processes();
+	init_threads();
+	init_areas();
+	init_smp( g_bDisableSMP == false, g_bDisableACPI == false );
+	
 	/* Create the semaphore for the kernel memory context */
 	g_psKernelSeg->mc_hSema = create_semaphore( "krn_seg_lock", 1, SEM_RECURSIVE );
 	if ( g_psKernelSeg->mc_hSema < 0 )
 	{
 		printk( "Panic : Unable to create semaphore for kernel segment!\n" );
 	}
-	
-	init_msg_ports();
-	init_processes();
-	init_threads();
-	init_areas();
-	init_smp( g_bDisableSMP == false );
 
 	create_init_proc( "kernel" );
 

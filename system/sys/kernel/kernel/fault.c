@@ -94,7 +94,7 @@ void print_symbol( int nIndex, uint32 nAddress )
 	void *pSymAddr = NULL;
 	uint32 nTxtAddr = 0;
 
-	printk( "%d -> %08lx\n", nIndex, nAddress );
+	printk( "%d -> %08x\n", nIndex, nAddress );
 
 	nModule = find_module_by_address( ( void * )nAddress );
 	if ( nModule >= 0 )
@@ -121,7 +121,7 @@ void print_symbol( int nIndex, uint32 nAddress )
 		strcpy( zModuleName, "*unknown*" );
 		strcpy( zSymName, "*unknown*" );
 	}
-	printk( "   %s + %08lx -> %s + %08lx\n", zModuleName, nAddress - nTxtAddr, zSymName, nAddress - ( uint32 )pSymAddr );
+	printk( "   %s + %08x -> %s + %08x\n", zModuleName, nAddress - nTxtAddr, zSymName, nAddress - ( uint32 )pSymAddr );
 }
 
 void trace_stack( uint32 nEIP, uint32 *pStack )
@@ -182,7 +182,7 @@ void print_registers( SysCallRegs_s * psRegs )
 	printk( "CS::EIP = %04x::%08lx\n", psRegs->cs, psRegs->eip );
 	printk( "DS = %04x : ES = %04x : FS = %04x : GS = %04x\n", psRegs->ds, psRegs->es, psRegs->fs, psRegs->gs );
 	printk( "EFLAGS = %08lx (%s)\n", psRegs->eflags, zBuffer );
-	printk( "CPU ID = %d : kernel stack = %08lx\n", get_processor_id(), ( uint32 )CURRENT_THREAD->tc_plKStack );
+	printk( "CPU ID = %d : kernel stack = %08x\n", get_processor_id(), ( uint32 )CURRENT_THREAD->tc_plKStack );
 
 	trace_stack( psRegs->eip, ( uint32 * )psRegs->ebp );
 
@@ -369,10 +369,10 @@ void TrackStack( uint32 *esp )
 		if ( ( esp[i] & 0xfff00000 ) == 0x00100000 )
 		{
 
-/*			printk( "%ld -> %.8lx  (%ld)\n", j, esp[i-1], i-1 );	*/
-			printk( "%ld -> %.8lx  (%ld)\n", j, esp[i + 0], i );
+/*			printk( "%d -> %.8x  (%d)\n", j, esp[i-1], i-1 );	*/
+			printk( "%d -> %.8x  (%d)\n", j, esp[i + 0], i );
 
-/*			printk( "%ld -> %.8lx  (%ld)\n", j, esp[i+1], i+1 );	*/
+/*			printk( "%d -> %.8x  (%d)\n", j, esp[i+1], i+1 );	*/
 
 /*			printk( "\n" );	*/
 			j++;

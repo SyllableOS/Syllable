@@ -37,7 +37,7 @@
 #define smp_wmb() __asm__ __volatile__( "" : : : "memory" )
 
 typedef struct {
-	uint32 sl_nSequence;
+	uint32_t sl_nSequence;
 	SpinLock_s sl_sLock;
 } SeqLock_s;
 
@@ -46,7 +46,7 @@ typedef struct {
  * OK now.  Be cautious.
  */
 #define SEQ_LOCK( var, name ) SeqLock_s var = { 0, INIT_SPIN_LOCK( name ) }
-#define INIT_SEQ_LOCK( name ) ((SeqLock_s){ 0, INIT_SPIN_LOCK( name ) })
+#define INIT_SEQ_LOCK( name ) { 0, INIT_SPIN_LOCK( name ) }
 
 static inline void seqlock_init( SeqLock_s *psLock, const char *pzName )
 {
@@ -84,9 +84,9 @@ static inline int write_tryseqlock(SeqLock_s *sl)
 }
 
 /* Start of read calculation -- fetch last complete writer token */
-static inline uint32 read_seqbegin(const SeqLock_s *sl)
+static inline uint32_t read_seqbegin(const SeqLock_s *sl)
 {
-	uint32 ret = sl->sl_nSequence;
+	uint32_t ret = sl->sl_nSequence;
 	smp_rmb();
 	return ret;
 }
@@ -99,7 +99,7 @@ static inline uint32 read_seqbegin(const SeqLock_s *sl)
  *    
  * Using xor saves one conditional branch.
  */
-static inline int read_seqretry(const SeqLock_s *sl, uint32 iv)
+static inline int read_seqretry(const SeqLock_s *sl, uint32_t iv)
 {
 	smp_rmb();
 	return (iv & 1) | (sl->sl_nSequence ^ iv);
@@ -114,16 +114,16 @@ static inline int read_seqretry(const SeqLock_s *sl, uint32 iv)
  */
 
 typedef struct seqcount {
-	uint32 sc_nSequence;
+	uint32_t sc_nSequence;
 } seqcount_t;
 
 #define SEQCNT_ZERO { 0 }
 #define seqcount_init(x)	do { *(x) = (seqcount_t) SEQCNT_ZERO; } while (0)
 
 /* Start of read using pointer to a sequence counter only.  */
-static inline uint32 read_seqcount_begin(const seqcount_t *s)
+static inline uint32_t read_seqcount_begin(const seqcount_t *s)
 {
-	uint32 ret = s->sc_nSequence;
+	uint32_t ret = s->sc_nSequence;
 	smp_rmb();
 	return ret;
 }
@@ -133,7 +133,7 @@ static inline uint32 read_seqcount_begin(const seqcount_t *s)
  *                (iv & 1) || (*s != iv)
  * Using xor saves one conditional branch.
  */
-static inline int read_seqcount_retry(const seqcount_t *s, uint32 iv)
+static inline int read_seqcount_retry(const seqcount_t *s, uint32_t iv)
 {
 	smp_rmb();
 	return (iv & 1) | (s->sc_nSequence ^ iv);
@@ -162,12 +162,12 @@ static inline void write_seqcount_end(seqcount_t *s)
 
 static inline int write_seqlock_disable( SeqLock_s* psLock )
 {
-	uint32 nFlg = cli();
+	uint32_t nFlg = cli();
 	write_seqlock( psLock );
 	return( nFlg );
 }
 
-static inline void write_sequnlock_enable( SeqLock_s* psLock, uint32 nFlg )
+static inline void write_sequnlock_enable( SeqLock_s* psLock, uint32_t nFlg )
 {
 	write_sequnlock( psLock );
 	put_cpu_flags( nFlg );

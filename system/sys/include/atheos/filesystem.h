@@ -22,7 +22,6 @@
 
 #include <atheos/types.h>
 #include <atheos/atomic.h>
-#include <atheos/typedefs.h>
 #include <atheos/fs_attribs.h>
 
 #include <posix/types.h>

@@ -48,5 +48,5 @@ dist: all
 	install -s $(OBJDIR)/$(FS) $(DIST_DIR)/atheos/sys/drivers/fs/$(FS)
 
 clean:
-	-rm $(OBJS)
+	rm -f $(OBJS)
 

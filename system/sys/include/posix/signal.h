@@ -81,7 +81,10 @@ extern "C" {
 #define SIG_UNBLOCK        1	/* for unblocking signals */
 #define SIG_SETMASK        2	/* for setting the signal mask */
 
+#ifndef __sigset_t_defined
 typedef	unsigned long sigset_t;
+# define __sigset_t_defined
+#endif
 
 /* Type of a signal handler.  */
 typedef void (*__sighandler_t)(int);

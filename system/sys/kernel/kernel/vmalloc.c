@@ -158,7 +158,7 @@ MemArea_s *verify_area( const void *pAddr, uint32 nSize, bool bWrite )
 
 	if ( nAddr < AREA_FIRST_USER_ADDRESS )
 	{
-		printk( "verify_area() got kernel address %08lx\n", nAddr );
+		printk( "verify_area() got kernel address %08x\n", nAddr );
 		return ( NULL );
 	}
 
@@ -166,12 +166,12 @@ MemArea_s *verify_area( const void *pAddr, uint32 nSize, bool bWrite )
 
 	if ( psArea == NULL )
 	{
-		printk( "verify_area() no area for address %08lx\n", nAddr );
+		printk( "verify_area() no area for address %08x\n", nAddr );
 		return ( NULL );
 	}
 	if ( nAddr + nSize - 1 > psArea->a_nEnd )
 	{
-		printk( "verify_area() adr=%08lx size=%ld does not fit in area %08lx-%08lx\n", nAddr, nSize, psArea->a_nStart, psArea->a_nEnd );
+		printk( "verify_area() adr=%08x size=%d does not fit in area %08x-%08x\n", nAddr, nSize, psArea->a_nStart, psArea->a_nEnd );
 		put_area( psArea );
 		return ( NULL );
 	}
@@ -276,13 +276,13 @@ void remove_area( MemContext_s *psCtx, MemArea_s *psArea )
 
 	if ( nIndex == -1 )
 	{
-		printk( "Error: remove_area() could not find area %08lx - %08lx\n", psArea->a_nStart, psArea->a_nEnd );
+		printk( "Error: remove_area() could not find area %08x - %08x\n", psArea->a_nStart, psArea->a_nEnd );
 		list_areas( psCtx );
 		return;
 	}
 	if ( psArea != psCtx->mc_apsAreas[nIndex] )
 	{
-		printk( "Error: remove_area() found wrong area %p (%08lx-%08lx) at index %d\n", psArea, psArea->a_nStart, psArea->a_nEnd, nIndex );
+		printk( "Error: remove_area() found wrong area %p (%08x-%08x) at index %d\n", psArea, psArea->a_nStart, psArea->a_nEnd, nIndex );
 		return;
 	}
 	if ( nIndex > 0 )
@@ -353,7 +353,7 @@ uint32 find_unmapped_area( MemContext_s *psCtx, int nAllocMode, uint32 nSize, ui
 
 	if ( nStart > nEnd )
 	{
-		printk( "find_unmapped_area() : invalid range %08lx - %08lx\n", nStart, nEnd );
+		printk( "find_unmapped_area() : invalid range %08x - %08x\n", nStart, nEnd );
 		return ( -1 );
 	}
 

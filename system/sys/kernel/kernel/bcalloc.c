@@ -156,7 +156,7 @@ static void init_heap( CacheHeap_s *psHeap )
 			nMaxBufSize >>= 1;
 			goto retry;
 		}
-		panic( "init_heap() failed to create area for %ld size blocks\n", psHeap->ch_nBlockSize );
+		panic( "init_heap() failed to create area for %d size blocks\n", psHeap->ch_nBlockSize );
 	}
 	pPtr = psHeap->ch_pAddress;
 	nBufSize = psHeap->ch_nSize;
@@ -211,7 +211,7 @@ int alloc_cache_blocks( CacheBlock_s **apsBlocks, int nCount, int nBlockSize, bo
 	if ( nFreeBlocks < nCount )
 	{
 		release_cache_blocks();
-		shrinc_cache_heaps( nOrder );
+		shrink_cache_heaps( nOrder );
 		*pbDidBlock = true;
 		nMaxBlocks = psHeap->ch_nSize / nRealBlockSize;
 		nFreeBlocks = nMaxBlocks - psHeap->ch_nUsedBlocks;
@@ -272,10 +272,10 @@ void free_cache_block( CacheBlock_s *psBlock )
 }
 
 
-int shrinc_cache_heaps( int nIgnoredOrder )
+ssize_t shrink_cache_heaps( int nIgnoredOrder )
 {
 	int i;
-	uint32 nBytesFreed = 0;
+	count_t nBytesFreed = 0;
 	bool bBusy = false;
 
 	for ( i = 0; i < MAX_CACHE_BLK_SIZE_ORDERS; ++i )
@@ -318,7 +318,7 @@ int shrinc_cache_heaps( int nIgnoredOrder )
 			{
 				if ( ( ( psBlock->cb_nFlags & CBF_USED ) && psBlock->cb_nRefCount > 0 ) || ( psBlock->cb_nFlags & CBF_BUSY ) )
 				{
-//                  printk( "shrinc_cache_heaps() Wait for block %p to be released (%d)\n", psBlock, psBlock->cb_nRefCount );
+//                  printk( "shrink_cache_heaps() Wait for block %p to be released (%d)\n", psBlock, psBlock->cb_nRefCount );
 					psHeap->ch_bBusy = false;
 					UNLOCK( g_sBlockCache.bc_hLock );
 					snooze( 10000 );
@@ -367,7 +367,7 @@ int shrinc_cache_heaps( int nIgnoredOrder )
 
 					if ( psFirstLowBlock == NULL )
 					{
-						panic( "shrinc_cache_heaps() no free block below new size (%d)\n", nBlockNum );
+						panic( "shrink_cache_heaps() no free block below new size (%d)\n", nBlockNum );
 					}
 
 					psFirstLowBlock = psFreeBlock->cb_psNext;
@@ -382,7 +382,7 @@ int shrinc_cache_heaps( int nIgnoredOrder )
 					}
 					if ( bc_hash_delete( &g_sBlockCache.bc_sHashTab, psBlock->cb_nDevice, psBlock->cb_nBlockNum ) != psBlock )
 					{
-						panic( "shrinc_cache_heaps() failed to remove block from hash-table\n" );
+						panic( "shrink_cache_heaps() failed to remove block from hash-table\n" );
 					}
 					memcpy( psFreeBlock, psBlock, nBlockSize );
 

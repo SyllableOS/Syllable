@@ -375,7 +375,7 @@ void remove_from_waitlist( WaitQueue_s **ppsList, WaitQueue_s *psNode )
 
 	kassertw( psNode->wq_bIsMember );
 
-	psNode->wq_bIsMember = FALSE;
+	psNode->wq_bIsMember = false;
 
 	if ( *ppsList == psNode )
 	{
@@ -1567,7 +1567,7 @@ static Thread_s *select_thread( void )
 
 	if ( psPrev->tr_nState != TS_RUN )
 	{
-		printk( "Running thread <%s> has state %ld!!!!!\n", psPrev->tr_zName, psPrev->tr_nState );
+		printk( "Running thread <%s> has state %d!!!!!\n", psPrev->tr_zName, psPrev->tr_nState );
 	}
 
 	if ( psTopProc->tr_nPriority > psPrev->tr_nPriority )

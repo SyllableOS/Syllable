@@ -1,24 +1,11 @@
 /*
- * GCC 3.4.3 generates code which requires us to have strcpy() and memcpy()
- * available as (non-inlined) functions, so supply them here.
+ * GCC 3.4.3 generates code which requires us to have memcpy() available
+ * as a non-inlined function, even with -ffreestanding flag (GCC bug?).
  */
 
 #include <atheos/types.h>
 
 #if __GNUC_MINOR__ == 4
-
-char * strcpy( char* dest, const char* src )
-{
-	int d0, d1, d2;
-	__asm__ __volatile__(
-		"1:\tlodsb\n\t"
-		"stosb\n\t"
-		"testb %%al,%%al\n\t"
-		"jne 1b"
-		: "=&S" (d0), "=&D" (d1), "=&a" (d2)
-		: "0" (src), "1" (dest) : "memory" );
-	return dest;
-}
 
 void * memcpy( void* to, const void* from, size_t n )
 {

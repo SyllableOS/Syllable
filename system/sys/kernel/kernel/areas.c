@@ -42,6 +42,7 @@
  */
 
 #include <posix/errno.h>
+#include <posix/unistd.h>
 #include <atheos/types.h>
 #include <atheos/kernel.h>
 #include <atheos/semaphore.h>
@@ -75,20 +76,19 @@ static MemAreaOps_s sMemMapOps = {
 	NULL,			/* swapin       */
 };
 
-//****************************************************************************/
-/** Prints all areas in the specified memory context to the debug console.
+/**
+ * Prints all areas in the specified memory context to the debug console.
  * \internal
  * \ingroup Areas
  * \param psCtx a pointer to the <code>MemContext_s</code> structure to print.
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
+ */
 void list_areas( MemContext_s *psCtx )
 {
 	MemArea_s *psArea;
-	int i;
 
 //  LOCK( g_hAreaTableSema );
-	for ( i = 0; i < psCtx->mc_nAreaCount; ++i )
+	for ( count_t i = 0; i < psCtx->mc_nAreaCount; ++i )
 	{
 		psArea = psCtx->mc_apsAreas[i];
 
@@ -97,7 +97,7 @@ void list_areas( MemContext_s *psCtx )
 			printk( "Error: list_areas() index %d of %d has a NULL pointer!\n", i, psCtx->mc_nAreaCount );
 			break;
 		}
-		if ( i > 0 && psArea->a_psPrev != psCtx->mc_apsAreas[i - 1] )
+		if ( i != 0 && psArea->a_psPrev != psCtx->mc_apsAreas[i - 1] )
 		{
 			printk( "Error: list_areas() area at index %d (%p) has invalid prev pointer %p\n", i, psArea, psArea->a_psPrev );
 		}
@@ -105,13 +105,13 @@ void list_areas( MemContext_s *psCtx )
 		{
 			printk( "Error: list_areas() area at index %d (%p) has invalid next pointer %p\n", i, psArea, psArea->a_psNext );
 		}
-		printk( "Area %04d (%d) -> %08lx-%08lx %p %02d %s\n", i, psArea->a_nAreaID, psArea->a_nStart, psArea->a_nEnd, psArea->a_psFile, atomic_read( &psArea->a_nRefCount ), psArea->a_zName );
+		printk( "Area %04d (%d) -> 0x%08x-0x%08x %p %02d %s\n", i, psArea->a_nAreaID, psArea->a_nStart, psArea->a_nEnd, psArea->a_psFile, atomic_read( &psArea->a_nRefCount ), psArea->a_zName );
 	}
 //  UNLOCK( g_hAreaTableSema );
 }
 
-//****************************************************************************/
-/** Clears all page-table entries for the virtual memory region from nAddress
+/**
+ * Clears all page-table entries for the virtual memory region from nAddress
  *  to (nAddress + nSize - 1) and frees the associated physical memory pages.
  *  Only the entries in the page table containing the entry for the start
  *  address will be updated.
@@ -125,10 +125,10 @@ void list_areas( MemContext_s *psCtx )
  *     <i>nAddress</i>; <code>0</code> otherwise.
  * \sa free_pages()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-static int clear_pagedir( pgd_t * pPgd, int nAddress, int nSize )
+ */
+static int clear_pagedir( pgd_t * pPgd, uintptr_t nAddress, size_t nSize )
 {
-	int nEnd;
+	uintptr_t nEnd;
 	pte_t *pPte = pte_offset( pPgd, nAddress );
 
 	nAddress &= ~PGDIR_MASK;
@@ -149,25 +149,25 @@ static int clear_pagedir( pgd_t * pPgd, int nAddress, int nSize )
 	{
 		if ( PTE_ISPRESENT( *pPte ) )
 		{
-			uint32 nPage = PTE_PAGE( *pPte );
-			int nPageNr = PAGE_NR( nPage );
+			uintptr_t nPage = PTE_PAGE( *pPte );
+			count_t nPageNr = PAGE_NR( nPage );
 
 			if ( 0 == nPage )
 			{
 				printk( "ERROR : Page table referenced physical address 0\n" );
-				PTE_VALUE( *pPte++ ) = ( ( uint32 )g_sSysBase.ex_pNullPage ) | PTE_PRESENT | PTE_USER;
+				PTE_VALUE( *pPte++ ) = ( uintptr_t )( g_sSysBase.ex_pNullPage ) | PTE_PRESENT | PTE_USER;
 				nAddress += PAGE_SIZE;
 				continue;
 			}
-			if ( nPage == ( uint32 )g_sSysBase.ex_pNullPage )
+			if ( nPage == (uintptr_t)( g_sSysBase.ex_pNullPage ) )
 			{
-				PTE_VALUE( *pPte++ ) = ( ( uint32 )g_sSysBase.ex_pNullPage ) | PTE_PRESENT | PTE_USER;
+				PTE_VALUE( *pPte++ ) = ( uintptr_t )( g_sSysBase.ex_pNullPage ) | PTE_PRESENT | PTE_USER;
 				nAddress += PAGE_SIZE;
 				continue;
 			}
 			if ( nPageNr >= g_sSysBase.ex_nTotalPageCount )
 			{
-				PTE_VALUE( *pPte++ ) = ( ( uint32 )g_sSysBase.ex_pNullPage ) | PTE_PRESENT | PTE_USER;
+				PTE_VALUE( *pPte++ ) = ( uintptr_t )( g_sSysBase.ex_pNullPage ) | PTE_PRESENT | PTE_USER;
 				nAddress += PAGE_SIZE;
 				continue;
 			}
@@ -177,7 +177,7 @@ static int clear_pagedir( pgd_t * pPgd, int nAddress, int nSize )
 			}
 			if ( atomic_read( &g_psFirstPage[nPageNr].p_nCount ) < 1 )
 			{
-				printk( "panic: clear_pagedir() page %08lx got ref count of %d\n", nPage, atomic_read( &g_psFirstPage[nPageNr].p_nCount ) - 1 );
+				printk( "panic: clear_pagedir() page %08x got ref count of %d\n", nPage, atomic_read( &g_psFirstPage[nPageNr].p_nCount ) - 1 );
 				atomic_set( &g_psFirstPage[nPageNr].p_nCount, 1000 );
 			}
 			do_free_pages( nPage, 1 );
@@ -189,7 +189,7 @@ static int clear_pagedir( pgd_t * pPgd, int nAddress, int nSize )
 				free_swap_page( PTE_PAGE( *pPte ) );
 			}
 		}
-		PTE_VALUE( *pPte++ ) = ( ( uint32 )g_sSysBase.ex_pNullPage ) | PTE_PRESENT | PTE_USER;
+		PTE_VALUE( *pPte++ ) = ( uintptr_t )( g_sSysBase.ex_pNullPage ) | PTE_PRESENT | PTE_USER;
 		nAddress += PAGE_SIZE;
 	}
 	while ( nAddress < nEnd );
@@ -198,8 +198,8 @@ static int clear_pagedir( pgd_t * pPgd, int nAddress, int nSize )
 	return ( 0 );
 }
 
-//****************************************************************************/
-/** Frees all page-table entries in <i>psArea</i> for the virtual memory
+/**
+ * Frees all page-table entries in <i>psArea</i> for the virtual memory
  *  region from nAddress to (nAddress + nSize - 1).
  * \internal
  * \ingroup Areas
@@ -210,8 +210,8 @@ static int clear_pagedir( pgd_t * pPgd, int nAddress, int nSize )
  * \return Always returns <code>0</code>.
  * \sa clear_pagedir()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-static int free_area_pages( MemArea_s *psArea, uint32 nStart, uint32 nEnd )
+ */
+static int free_area_pages( MemArea_s *psArea, uint32_t nStart, uint32_t nEnd )
 {
 	pgd_t *pPgd;
 
@@ -225,8 +225,8 @@ static int free_area_pages( MemArea_s *psArea, uint32 nStart, uint32 nEnd )
 	return ( 0 );
 }
 
-//****************************************************************************/
-/** Frees all page-directory entries in <i>psArea</i> for the virtual memory
+/*
+ * Frees all page-directory entries in <i>psArea</i> for the virtual memory
  *  region from nAddress to (nAddress + nSize - 1).
  * \internal
  * \ingroup Areas
@@ -237,21 +237,21 @@ static int free_area_pages( MemArea_s *psArea, uint32 nStart, uint32 nEnd )
  * \param bResized <code>true</code> if PDEs still being used by the resized
  *     area should be skipped; <code>false</code> otherwise.
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-static void free_area_page_tables( MemArea_s *psArea, uint32 nStart, uint32 nEnd, bool bResized )
+ */
+static void free_area_page_tables( MemArea_s *psArea, uint32_t nStart, uint32_t nEnd, bool bResized )
 {
 	MemContext_s *psCtx = psArea->a_psContext;
-	uint32 nFirstTab = nStart >> PGDIR_SHIFT;
-	uint32 nLastTab = nEnd >> PGDIR_SHIFT;
+	uint32_t nFirstTab = nStart >> PGDIR_SHIFT;
+	uint32_t nLastTab = nEnd >> PGDIR_SHIFT;
 	MemArea_s *psPrev = psArea->a_psPrev;
 	MemArea_s *psNext = psArea->a_psNext;
-	uint32 i;
+	uint32_t i;
 
 	for ( i = nFirstTab; i <= nLastTab; ++i )
 	{
-		uint32 nCurAddr = i << PGDIR_SHIFT;
-		uint32 nCurEnd = nCurAddr + PGDIR_SIZE - 1;
-		uint32 nPage;
+		uint32_t nCurAddr = i << PGDIR_SHIFT;
+		uint32_t nCurEnd = nCurAddr + PGDIR_SIZE - 1;
+		uint32_t nPage;
 
 		// Skip tables still used by the resized area
 		if ( bResized && nCurAddr <= psArea->a_nEnd )
@@ -289,8 +289,8 @@ static void free_area_page_tables( MemArea_s *psArea, uint32 nStart, uint32 nEnd
 	flush_tlb_global();
 }
 
-//****************************************************************************/
-/** Deletes the specified area from the memory context <i>psCtx</i>.
+/**
+ * Deletes the specified area from the memory context <i>psCtx</i>.
  * \internal
  * \ingroup Areas
  * \param psCtx a pointer to the <code>MemContext_s</code> for the area to
@@ -300,7 +300,7 @@ static void free_area_page_tables( MemArea_s *psArea, uint32 nStart, uint32 nEnd
  *     <code>0</code> otherwise.
  * \sa free_area_pages(), free_area_page_tables(), remove_area()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
+ */
 static int do_delete_area( MemContext_s *psCtx, MemArea_s *psArea )
 {
 	if ( atomic_read( &psArea->a_nRefCount ) != 0 )
@@ -352,8 +352,8 @@ static int do_delete_area( MemContext_s *psCtx, MemArea_s *psArea )
 	return ( 0 );
 }
 
-//****************************************************************************/
-/** Decrements the reference count of <i>psArea</i> and deletes it when its
+/*
+ * Decrements the reference count of <i>psArea</i> and deletes it when its
  *  reference count reaches <code>0</code>.
  * \internal
  * \ingroup Areas
@@ -362,10 +362,10 @@ static int do_delete_area( MemContext_s *psCtx, MemArea_s *psArea )
  *     otherwise.
  * \sa lock_area(), do_delete_area()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-int put_area( MemArea_s *psArea )
+ */
+status_t put_area( MemArea_s *psArea )
 {
-	int nError = 0;
+	status_t nError = 0;
 
 //  kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
 	LOCK( g_hAreaTableSema );
@@ -383,8 +383,8 @@ int put_area( MemArea_s *psArea )
 //    return( delete_area( psArea ) );
 }
 
-//****************************************************************************/
-/** Allocates page-table entries in <i>psArea</i> for the virtual memory
+/**
+ * Allocates page-table entries in <i>psArea</i> for the virtual memory
  *  region from <code>nStart</code> to <code>nEnd</code>.
  * \internal
  * \ingroup Areas
@@ -396,27 +396,26 @@ int put_area( MemArea_s *psArea )
  *     otherwise.
  * \sa get_free_page()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-static int alloc_area_page_tables( MemArea_s *psArea, uint32 nStart, uint32 nEnd )
+ */
+static int alloc_area_page_tables( MemArea_s *psArea, uintptr_t nStart, uintptr_t nEnd )
 {
 	MemContext_s *psCtx = psArea->a_psContext;
-	uint32 nFirstPTE = nStart >> PAGE_SHIFT;
-	uint32 nLastPTE = nEnd >> PAGE_SHIFT;
-	int i;
+	uintptr_t nFirstPTE = nStart >> PAGE_SHIFT;
+	uintptr_t nLastPTE = nEnd >> PAGE_SHIFT;
 
-	for ( i = nFirstPTE; i <= nLastPTE; ++i )
+	for ( uintptr_t i = nFirstPTE; i <= nLastPTE; ++i )
 	{
-		int nDir = i >> 10;
-		uint32 *pDir = ( uint32 * )PGD_PAGE( psCtx->mc_pPageDir[nDir] );
+		uintptr_t nDir = i >> 10;
+		uint32_t *pDir = ( uint32_t * )PGD_PAGE( psCtx->mc_pPageDir[nDir] );
 
 		if ( NULL == pDir )
 		{
-			pDir = ( uint32 * )get_free_page( GFP_CLEAR );
+			pDir = ( uint32_t * )get_free_page( GFP_CLEAR );
 			if ( pDir == NULL )
 			{
 				return ( -ENOMEM );
 			}
-			PGD_VALUE( psCtx->mc_pPageDir[nDir] ) = MK_PGDIR( ( uint32 )pDir );
+			PGD_VALUE( psCtx->mc_pPageDir[nDir] ) = MK_PGDIR( ( uint32_t )pDir );
 			if ( nStart < AREA_FIRST_USER_ADDRESS )
 			{
 				MemContext_s *psTmp;
@@ -429,7 +428,7 @@ static int alloc_area_page_tables( MemArea_s *psArea, uint32 nStart, uint32 nEnd
 		}
 		if ( NULL != pDir )
 		{
-			pDir[i % 1024] = ( ( uint32 )g_sSysBase.ex_pNullPage ) | PTE_PRESENT | PTE_USER;
+			pDir[i % 1024] = ( uintptr_t )( g_sSysBase.ex_pNullPage ) | PTE_PRESENT | PTE_USER;
 		}
 	}
 	flush_tlb_global();
@@ -437,8 +436,8 @@ static int alloc_area_page_tables( MemArea_s *psArea, uint32 nStart, uint32 nEnd
 }
 
 
-//****************************************************************************/
-/** Allocates pages in <i>psArea</i> for the virtual memory region from
+/**
+ * Allocates pages in <i>psArea</i> for the virtual memory region from
  *  <code>nStart</code> to <code>nEnd</code>.
  * \internal
  * \ingroup Areas
@@ -451,14 +450,14 @@ static int alloc_area_page_tables( MemArea_s *psArea, uint32 nStart, uint32 nEnd
  *     otherwise.
  * \sa load_area_page()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-static int alloc_area_pages( MemArea_s *psArea, uint32 nStart, uint32 nEnd,
-			    bool bWriteAccess )
+ */
+static status_t alloc_area_pages( MemArea_s *psArea, uintptr_t nStart,
+				  uintptr_t nEnd, bool bWriteAccess )
 {
 	MemContext_s *psSeg = psArea->a_psContext;
-	int nFlags = PTE_PRESENT;
-	int nError = 0;
-	uint32 nAddr;
+	flags_t nFlags = PTE_PRESENT;
+	status_t nError = 0;
+	uintptr_t nAddr;
 
 	if ( psArea->a_nProtection & AREA_WRITE )
 	{
@@ -490,8 +489,8 @@ static int alloc_area_pages( MemArea_s *psArea, uint32 nStart, uint32 nEnd,
 	return ( nError );
 }
 
-//****************************************************************************/
-/** Creates a new memory area in <i>psCtx</i> from nAddress to
+/**
+ * Creates a new memory area in <i>psCtx</i> from nAddress to
  *  (nAddress + nSize - 1).
  * \internal
  * \ingroup Areas
@@ -511,13 +510,14 @@ static int alloc_area_pages( MemArea_s *psArea, uint32 nStart, uint32 nEnd,
  *     <code>MemArea_s</code> otherwise.
  * \sa insert_area(), alloc_area_page_tables(), alloc_area_pages()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-static MemArea_s *do_create_area( MemContext_s *psCtx, uint32 nAddress,
-				 uint32 nSize, uint32 nMaxSize, bool bAllocTables,
-				 uint32 nProtection, uint32 nLockMode )
+ */
+static MemArea_s *do_create_area( MemContext_s *psCtx, uintptr_t nAddress,
+				  size_t nSize, size_t nMaxSize,
+				  bool bAllocTables, flags_t nProtection,
+				  flags_t nLockMode )
 {
 	MemArea_s *psArea;
-	int nError;
+	status_t nError;
 
 	psArea = kmalloc( sizeof( MemArea_s ), MEMF_KERNEL | MEMF_NOBLOCK | MEMF_CLEAR );
 
@@ -576,8 +576,8 @@ static MemArea_s *do_create_area( MemContext_s *psCtx, uint32 nAddress,
 	return ( NULL );
 }
 
-//****************************************************************************/
-/** Creates a new memory area in <i>psCtx</i> from nAddress to
+/**
+ * Creates a new memory area in <i>psCtx</i> from nAddress to
  *  (nAddress + nSize - 1).  The area is given the specified name, protection
  *  mask, locking mode and maximum size.  The <code>area_id</code> of the new
  *  area is stored in <i>pnArea</i>.
@@ -601,25 +601,26 @@ static MemArea_s *do_create_area( MemContext_s *psCtx, uint32 nAddress,
  *     <code>0</code> otherwise.
  * \sa do_create_area()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-static int alloc_area( const char *pzName, MemContext_s *psCtx, uint32 nProtection,
-		      uint32 nLockMode, uint32 nAddress, uint32 nSize,
-		      uint32 nMaxSize, area_id *pnArea )
+ */
+static status_t alloc_area( const char *pzName, MemContext_s *psCtx,
+			    flags_t nProtection, flags_t nLockMode,
+			    uintptr_t nAddress, size_t nSize,
+			    size_t nMaxSize, area_id *pnArea )
 {
 	MemArea_s *psArea;
-	uint32 nNewAddr;
-	int nError;
+	uintptr_t nNewAddr;
+	status_t nError;
 
 	kassertw( is_semaphore_locked( g_hAreaTableSema ) );
 
 	nNewAddr = find_unmapped_area( psCtx, nProtection, nMaxSize, nAddress );
 
-	if ( nNewAddr == -1 && ( nProtection & AREA_ADDR_SPEC_MASK ) == AREA_BASE_ADDRESS )
+	if ( nNewAddr == (uintptr_t)(-1) && ( nProtection & AREA_ADDR_SPEC_MASK ) == AREA_BASE_ADDRESS )
 	{
 		nNewAddr = find_unmapped_area( psCtx, ( nProtection & ~AREA_ADDR_SPEC_MASK ) | AREA_ANY_ADDRESS, nMaxSize, nAddress );
 	}
 
-	if ( nNewAddr == -1 )
+	if ( nNewAddr == (uintptr_t)(-1) )
 	{
 		printk( "Error: alloc_area() out of virtual space\n" );
 		nError = -ENOADDRSPC;
@@ -630,7 +631,7 @@ static int alloc_area( const char *pzName, MemContext_s *psCtx, uint32 nProtecti
 	{
 		if ( nNewAddr != nAddress )
 		{
-			printk( "PANIC: find_unmapped_area() returned %08lx during attempt to alloc at exact %08lx\n", nNewAddr, nAddress );
+			printk( "PANIC: find_unmapped_area() returned %p during attempt to alloc at exact %p\n", (void*)( nNewAddr ), (void*)( nAddress ) );
 			nNewAddr = nAddress;
 		}
 	}
@@ -655,8 +656,8 @@ static int alloc_area( const char *pzName, MemContext_s *psCtx, uint32 nProtecti
 	return ( nError );
 }
 
-//****************************************************************************/
-/** Allocates an array of areas with the specified names, starting offsets
+/**
+ * Allocates an array of areas with the specified names, starting offsets
  *  and sizes.  All areas will have the same protection mask and locking mode.
  * \ingroup DriverAPI
  * \param nProtection a protection bitmask containing any combination of:
@@ -686,16 +687,16 @@ static int alloc_area( const char *pzName, MemContext_s *psCtx, uint32 nProtecti
  *     physical memory available; <code>0</code> otherwise.
  * \sa find_unmapped_area(), do_create_area(), do_delete_area()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-int alloc_area_list( uint32 nProtection, uint32 nLockMode, uint32 nAddress,
-		    uint32 nCount, const char *const *apzNames,
-		    uint32 *panOffsets, uint32 *panSizes, area_id *panAreas )
+ */
+status_t alloc_area_list( uint32_t nProtection, uint32_t nLockMode,
+			  uintptr_t nAddress, uint_fast32_t nCount,
+			  const char *const *apzNames, size_t *panOffsets,
+			  size_t *panSizes, area_id *panAreas )
 {
 	MemContext_s *psCtx;
-	uint32 nTotSize = panOffsets[nCount - 1] + panSizes[nCount - 1];
-	uint32 nNewAddr;
-	int nError;
-	int i;
+	size_t nTotSize = panOffsets[nCount - 1] + panSizes[nCount - 1];
+	uintptr_t nNewAddr;
+	status_t nError;
 
 	if ( nProtection & AREA_KERNEL )
 	{
@@ -707,16 +708,16 @@ int alloc_area_list( uint32 nProtection, uint32 nLockMode, uint32 nAddress,
 	}
 
 	// Verify parameters.
-	for ( i = 0; i < nCount - 1; ++i )
+	for ( uint_fast32_t i = 0; i < nCount - 1; ++i )
 	{
 		if ( panOffsets[i] + panSizes[i] > panOffsets[i + 1] )
 		{
-			printk( "Error: alloc_area_list() area %d (%08lx, %08lx) overlaps area %d (%08lx,%08lx)\n", i, panOffsets[i], panSizes[i], i + 1, panOffsets[i + 1], panSizes[i + 1] );
+			printk( "Error: alloc_area_list() area %d (%08x, %08x) overlaps area %d (%08x,%08x)\n", i, panOffsets[i], panSizes[i], i + 1, panOffsets[i + 1], panSizes[i + 1] );
 			return ( -EINVAL );
 		}
 		if ( panOffsets[i] > panOffsets[i + 1] )
 		{
-			printk( "Error: alloc_area_list() area %d (%08lx, %08lx) addressed after area %d (%08lx,%08lx)\n", i, panOffsets[i], panSizes[i], i + 1, panOffsets[i + 1], panSizes[i + 1] );
+			printk( "Error: alloc_area_list() area %d (%08x, %08x) addressed after area %d (%08x,%08x)\n", i, panOffsets[i], panSizes[i], i + 1, panOffsets[i + 1], panSizes[i + 1] );
 			return ( -EINVAL );
 		}
 	}
@@ -732,27 +733,25 @@ int alloc_area_list( uint32 nProtection, uint32 nLockMode, uint32 nAddress,
 	}
 	nNewAddr = find_unmapped_area( psCtx, nProtection, nTotSize, nAddress );
 
-	if ( nNewAddr == -1 && ( nProtection & AREA_ADDR_SPEC_MASK ) == AREA_BASE_ADDRESS )
+	if ( nNewAddr == (uintptr_t)(-1) && ( nProtection & AREA_ADDR_SPEC_MASK ) == AREA_BASE_ADDRESS )
 	{
 		nNewAddr = find_unmapped_area( psCtx, ( nProtection & ~AREA_ADDR_SPEC_MASK ) | AREA_ANY_ADDRESS, nTotSize, nAddress );
-		printk( "alloc_area_list() failed to alloc %ld areas at %p, got %p\n", nCount, ( void * )nAddress, ( void * )nNewAddr );
+		printk( "alloc_area_list() failed to alloc %d areas at %p, got %p\n", nCount, (void*)( nAddress ), (void*)( nNewAddr ) );
 	}
-	if ( nNewAddr == -1 )
+	if ( nNewAddr == (uintptr_t)(-1) )
 	{
 		printk( "Error: alloc_area_list() out of address space\n" );
 		nError = -ENOADDRSPC;
 		goto error;
 	}
 
-	for ( i = 0; i < nCount; ++i )
+	for ( uint_fast32_t i = 0; i < nCount; ++i )
 	{
 		MemArea_s *psArea = do_create_area( psCtx, nNewAddr + panOffsets[i], panSizes[i], panSizes[i], true, nProtection, nLockMode );
 
 		if ( psArea == NULL )
 		{
-			int j;
-
-			for ( j = 0; j < i; ++j )
+			for ( uint_fast32_t j = 0; j < i; ++j )
 			{
 				psArea = get_area_from_handle( panAreas[j] );
 				if ( psArea == NULL )
@@ -784,8 +783,8 @@ int alloc_area_list( uint32 nProtection, uint32 nLockMode, uint32 nAddress,
 	return ( nError );
 }
 
-//****************************************************************************/
-/** Resizes the specified area.
+/**
+ * Resizes the specified area.
  * \ingroup DriverAPI
  * \param hArea a handle to the area to resize.
  * \param nNewSize the new area size in bytes.
@@ -799,8 +798,8 @@ int alloc_area_list( uint32 nProtection, uint32 nLockMode, uint32 nAddress,
  * \sa alloc_area_page_tables(), alloc_area_pages(), free_area_page_tables(),
  *     free_area_pages(), shrink_caches()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-status_t resize_area( area_id hArea, uint32 nNewSize, bool bAtomic )
+ */
+status_t resize_area( area_id hArea, size_t nNewSize, bool bAtomic )
 {
 	MemArea_s *psArea;
 	status_t nError = 0;
@@ -822,7 +821,7 @@ status_t resize_area( area_id hArea, uint32 nNewSize, bool bAtomic )
 	if ( psArea->a_nStart + nNewSize < psArea->a_nStart )
 	{
 		nError = -ENOADDRSPC;
-		printk( "resize_area() area to big %p -> %08lx\n", ( void * )psArea->a_nStart, nNewSize );
+		printk( "resize_area() area too big %p -> 0x%08x\n", (void*)( psArea->a_nStart ), nNewSize );
 		goto error2;
 	}
 	// Check that a kernel area won't extend into user-space.
@@ -831,7 +830,7 @@ status_t resize_area( area_id hArea, uint32 nNewSize, bool bAtomic )
 		if ( psArea->a_nStart + nNewSize > AREA_FIRST_USER_ADDRESS )
 		{
 			nError = -ENOADDRSPC;
-			printk( "resize_area() area extends out of the kernel %08lx\n", nNewSize );
+			printk( "resize_area() area extends out of the kernel: 0x%08x\n", nNewSize );
 			goto error2;
 		}
 	}
@@ -876,7 +875,7 @@ status_t resize_area( area_id hArea, uint32 nNewSize, bool bAtomic )
 	}
 	else
 	{
-		uint32 nOldEnd = psArea->a_nEnd;
+		uint32_t nOldEnd = psArea->a_nEnd;
 
 		if ( atomic_read( &psArea->a_nIOPages ) > 0 )
 		{
@@ -903,8 +902,8 @@ status_t resize_area( area_id hArea, uint32 nNewSize, bool bAtomic )
 	return ( nError );
 }
 
-//****************************************************************************/
-/** Deletes the specified area.
+/**
+ * Deletes the specified area.
  * \ingroup DriverAPI
  * \param hArea a handle to the area to resize.
  * \return <code>-EINVAL</code> if the area handle is invalid,
@@ -913,11 +912,11 @@ status_t resize_area( area_id hArea, uint32 nNewSize, bool bAtomic )
  *     available; <code>0</code> otherwise.
  * \sa do_delete_area()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
+ */
 status_t delete_area( area_id hArea )
 {
 	MemArea_s *psArea;
-	int nError = 0;
+	status_t nError = 0;
 
 //  kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
       again:
@@ -947,8 +946,8 @@ status_t delete_area( area_id hArea )
 	return ( nError );
 }
 
-//****************************************************************************/
-/** Deletes all areas in the specified memory context.
+/**
+ * Deletes all areas in the specified memory context.
  * \internal
  * \ingroup Areas
  * \param psCtx a pointer to the <code>MemContext_s</code> containing areas
@@ -957,11 +956,9 @@ status_t delete_area( area_id hArea )
  *     be locked.
  * \sa do_delete_area(), free_pages(), empty_mem_context()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
+ */
 static void delete_all_areas( MemContext_s *psCtx )
 {
-	int i;
-
 	kassertw( is_semaphore_locked( g_hAreaTableSema ) );
 
 	while ( psCtx->mc_nAreaCount > 0 )
@@ -970,16 +967,16 @@ static void delete_all_areas( MemContext_s *psCtx )
 
 		if ( !atomic_dec_and_test( &psCtx->mc_apsAreas[0]->a_nRefCount ) )
 		{
-			printk( "Error : delete_all_areas() area '%s' (%d) for addr %08lx has ref count of %d\n", psCtx->mc_apsAreas[0]->a_zName, psCtx->mc_apsAreas[0]->a_nAreaID, psCtx->mc_apsAreas[0]->a_nStart, atomic_read( &psCtx->mc_apsAreas[0]->a_nRefCount ) + 1 );
+			printk( "Error : delete_all_areas() area '%s' (%d) for addr %p has ref count of %d\n", psCtx->mc_apsAreas[0]->a_zName, psCtx->mc_apsAreas[0]->a_nAreaID, (void*)( psCtx->mc_apsAreas[0]->a_nStart ), atomic_read( &psCtx->mc_apsAreas[0]->a_nRefCount ) + 1 );
 
 			atomic_set( &psCtx->mc_apsAreas[0]->a_nRefCount, 0 );
 		}
 		do_delete_area( psCtx, psCtx->mc_apsAreas[0] );
 	}
 
-	for ( i = 512; i < 1024; ++i )
+	for ( uint_fast32_t i = 512; i < 1024; ++i )
 	{
-		uint32 nPage = PGD_PAGE( psCtx->mc_pPageDir[i] );
+		uint32_t nPage = PGD_PAGE( psCtx->mc_pPageDir[i] );
 
 		if ( 0 != nPage )
 		{
@@ -991,15 +988,15 @@ static void delete_all_areas( MemContext_s *psCtx )
 	flush_tlb_global();
 }
 
-//****************************************************************************/
-/** Deletes all areas in the specified memory context.
+/**
+ * Deletes all areas in the specified memory context.
  * \internal
  * \ingroup Areas
  * \param psCtx a pointer to the <code>MemContext_s</code> containing areas to
  *     delete.
  * \sa delete_all_areas()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
+ */
 void empty_mem_context( MemContext_s *psCtx )
 {
 	LOCK( g_hAreaTableSema );
@@ -1007,14 +1004,14 @@ void empty_mem_context( MemContext_s *psCtx )
 	UNLOCK( g_hAreaTableSema );
 }
 
-//****************************************************************************/
-/** Deletes the specified memory context and all of its areas.
+/**
+ * Deletes the specified memory context and all of its areas.
  * \internal
  * \ingroup Areas
  * \param psCtx a pointer to the <code>MemContext_s</code> to delete.
  * \sa delete_all_areas(), free_pages()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
+ */
 void delete_mem_context( MemContext_s *psCtx )
 {
 	MemContext_s *psTmp;
@@ -1034,7 +1031,7 @@ void delete_mem_context( MemContext_s *psCtx )
 	delete_all_areas( psCtx );
 	UNLOCK( g_hAreaTableSema );
 
-	free_pages( ( uint32 )psCtx->mc_pPageDir, 1 );
+	free_pages( ( uint32_t )psCtx->mc_pPageDir, 1 );
 	if ( psCtx->mc_apsAreas != NULL )
 	{
 		kfree( psCtx->mc_apsAreas );
@@ -1042,8 +1039,8 @@ void delete_mem_context( MemContext_s *psCtx )
 	kfree( psCtx );
 }
 
-//****************************************************************************/
-/** Copies a page-table entry, optionally setting up copy-on-write semantics.
+/**
+ * Copies a page-table entry, optionally setting up copy-on-write semantics.
  * \internal
  * \ingroup Areas
  * \param pDst a pointer to the destination page-table entry.
@@ -1052,8 +1049,8 @@ void delete_mem_context( MemContext_s *psCtx )
  *     copy-on-write semantics; <code>false</code> to share the physical page.
  * \return Always returns <code>0</code>.
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-int clone_page_pte( pte_t * pDst, pte_t * pSrc, bool bCow )
+ */
+status_t clone_page_pte( pte_t * pDst, pte_t * pSrc, bool bCow )
 {
 	pte_t nPte;
 	int nPageNr;
@@ -1080,8 +1077,8 @@ int clone_page_pte( pte_t * pDst, pte_t * pSrc, bool bCow )
 	return ( 0 );
 }
 
-//****************************************************************************/
-/** Copies an area from one memory context into another.  The area will have
+/**
+ * Copies an area from one memory context into another.  The area will have
  *  the same virtual memory address range in both contexts.
  * \internal
  * \ingroup Areas
@@ -1089,10 +1086,10 @@ int clone_page_pte( pte_t * pDst, pte_t * pSrc, bool bCow )
  * \param psSrcSeg a pointer to the source <code>MemContext_s</code>.
  * \param psArea a pointer to the <code>MemArea_s</code> to copy.
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
+ */
 static void do_clone_area( MemContext_s *psDstSeg, MemContext_s *psSrcSeg, MemArea_s *psArea )
 {
-	uint32 nSrcAddr;
+	uint32_t nSrcAddr;
 	bool bCow;
 
 	bCow = ( psArea->a_nProtection & ( AREA_SHARED | AREA_WRITE ) ) == AREA_WRITE;
@@ -1126,19 +1123,18 @@ static void do_clone_area( MemContext_s *psDstSeg, MemContext_s *psSrcSeg, MemAr
 	}
 }
 
-//****************************************************************************/
-/** Clones the specified memory context.
+/**
+ * Clones the specified memory context.
  * \internal
  * \ingroup Areas
  * \param psOrig a pointer to the memory context to clone.
  * \return a pointer to the new memory context.
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
+ */
 MemContext_s *clone_mem_context( MemContext_s *psOrig )
 {
 	MemContext_s *psNewSeg;
-	int i;
-	int nError;
+	status_t nError;
 
       again:
 	kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
@@ -1172,7 +1168,7 @@ MemContext_s *clone_mem_context( MemContext_s *psOrig )
 
 	memcpy( psNewSeg->mc_pPageDir, psOrig->mc_pPageDir, 2048 );	/* Copy shared page table pointers */
 
-	for ( i = 0; i < ( volatile int )psOrig->mc_nAreaCount; ++i )
+	for ( count_t i = 0; i < ( volatile count_t )psOrig->mc_nAreaCount; ++i )	// XXX is "volatile" qualifier necessary? should we use an atomic_t?
 	{
 		MemArea_s *psOldArea = psOrig->mc_apsAreas[i];
 		MemArea_s *psNewArea;
@@ -1187,12 +1183,11 @@ MemContext_s *clone_mem_context( MemContext_s *psOrig )
 		{
 			Thread_s *psThread = CURRENT_THREAD;
 			WaitQueue_s sWaitNode;
-			int nFlg;
 
 			printk( "clone_mem_context() Wait for area %s to finish IO on %d pages\n", psOldArea->a_zName, atomic_read( &psOldArea->a_nIOPages ) );
 			sWaitNode.wq_hThread = psThread->tr_hThreadID;
 
-			nFlg = cli();	// Make sure we are not pre-empted until we are added to the waitlist
+			flags_t nFlg = cli();	// Make sure we are not pre-empted until we are added to the waitlist
 			add_to_waitlist( &psOldArea->a_psIOThreads, &sWaitNode );
 			psThread->tr_nState = TS_WAIT;
 			UNLOCK( g_hAreaTableSema );
@@ -1249,7 +1244,7 @@ MemContext_s *clone_mem_context( MemContext_s *psOrig )
 	return ( psNewSeg );
       error3:
 	delete_all_areas( psNewSeg );
-	free_pages( ( uint32 )psNewSeg->mc_pPageDir, 1 );
+	free_pages( ( uint32_t )psNewSeg->mc_pPageDir, 1 );
       error2:
 	kfree( psNewSeg );
       error1:
@@ -1263,8 +1258,8 @@ MemContext_s *clone_mem_context( MemContext_s *psOrig )
 	return ( NULL );
 }
 
-//****************************************************************************/
-/** Unmaps the page-table entries from <code>nAddress</code> to
+/**
+ * Unmaps the page-table entries from <code>nAddress</code> to
  *  <code>(nAddress + nSize - 1)</code>.
  * \internal
  * \ingroup Areas
@@ -1276,10 +1271,11 @@ MemContext_s *clone_mem_context( MemContext_s *psOrig )
  *     <code>false</code> otherwise.
  * \return Always returns <code>0</code>.
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-static int unmap_pagedir( pgd_t * pPgd, uint32 nAddress, int nSize, bool bFreeOldPages )
+ */
+static status_t unmap_pagedir( pgd_t * pPgd, uintptr_t nAddress, count_t nSize,
+			       bool bFreeOldPages )
 {
-	int nEnd;
+	uintptr_t nEnd;
 
 	pte_t *pPte = pte_offset( pPgd, nAddress );
 
@@ -1296,10 +1292,10 @@ static int unmap_pagedir( pgd_t * pPgd, uint32 nAddress, int nSize, bool bFreeOl
 		{
 			if ( PTE_ISPRESENT( *pPte ) )
 			{
-				uint32 nOldPage = PTE_PAGE( *pPte );
-				int nPageNr = PAGE_NR( nOldPage );
+				uintptr_t nOldPage = PTE_PAGE( *pPte );
+				count_t nPageNr = PAGE_NR( nOldPage );
 
-				if ( 0 != nOldPage && nOldPage != ( uint32 )g_sSysBase.ex_pNullPage )
+				if ( 0 != nOldPage && nOldPage != ( uintptr_t )( g_sSysBase.ex_pNullPage ) )
 				{
 					if ( atomic_read( &g_psFirstPage[nPageNr].p_nCount ) == 1 )
 					{
@@ -1320,8 +1316,8 @@ static int unmap_pagedir( pgd_t * pPgd, uint32 nAddress, int nSize, bool bFreeOl
 	return ( 0 );
 }
 
-//****************************************************************************/
-/** Maps the specified area onto a file.
+/**
+ * Maps the specified area onto a file.
  * \internal
  * \ingroup Areas
  * \param hArea a handle to the area to map to the file.
@@ -1335,18 +1331,19 @@ static int unmap_pagedir( pgd_t * pPgd, uint32 nAddress, int nSize, bool bFreeOl
  * \return <code>-EINVAL</code> if <i>hArea</i> is invalid or has no associated
  *     memory context; <code>0</code> otherwise.
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-int map_area_to_file( area_id hArea, File_s *psFile, uint32 nProtection,
-		     off_t nOffset, size_t nSize )
+ */
+status_t map_area_to_file( area_id hArea, File_s *psFile,
+			   flags_t nProtection	__attribute__ ((unused)),
+			   off_t nOffset, size_t nSize )
 {
 	MemContext_s *psCtx;
 	MemArea_s *psArea;
 	Inode_s *psInode = psFile->f_psInode;
-	uint32 nAddress;
-	uint32 nEnd;
+	uintptr_t nAddress;
+	uintptr_t nEnd;
 	pgd_t *pPgd;
 	bool bFreeOldPages;
-	int nError = 0;
+	status_t nError = 0;
 	MemArea_s *psTmp;
 
 	kassertw( psFile != NULL );
@@ -1426,8 +1423,8 @@ int map_area_to_file( area_id hArea, File_s *psFile, uint32 nProtection,
 	return ( nError );
 }
 
-//****************************************************************************/
-/** Clones the specified area at a new address.
+/**
+ * Clones the specified area at a new address.
  * \ingroup Syscalls
  * \param pzName a pointer to the string containing the name of the new area.
  * \param ppAddress a pointer to the variable where the start address of the
@@ -1447,29 +1444,30 @@ int map_area_to_file( area_id hArea, File_s *psFile, uint32 nProtection,
  *     the <code>area_id</code> of the new area otherwise.
  * \sa alloc_area()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
+ */
 area_id sys_clone_area( const char *pzName, void **ppAddress,
-		       uint32 nProtection, int nLockMode, area_id hSrcArea )
+		        flags_t nProtection, flags_t nLockMode,
+			area_id hSrcArea )
 {
 	Process_s *psProc = CURRENT_PROC;
 	MemArea_s *psSrcArea;
 	MemArea_s *psNewArea;
 	area_id nNewArea;
-	uint32 nAddress;
-	uint32 nSrcAddr;
-	uint32 nDstAddr;
-	int nError;
+	uintptr_t nAddress;
+	uintptr_t nSrcAddr;
+	uintptr_t nDstAddr;
+	status_t nError;
 	MemContext_s *psDstSeg;
 	MemContext_s *psSrcSeg;
-	char zName[64];
+	char zName[ OS_NAME_LENGTH ];
 
 	if ( pzName != NULL )
 	{
-		if ( strncpy_from_user( zName, pzName, 64 ) < 0 )
+		if ( strncpy_from_user( zName, pzName, OS_NAME_LENGTH ) < 0 )
 		{
 			return ( -EFAULT );
 		}
-		zName[63] = '\0';
+		zName[OS_NAME_LENGTH - 1] = '\0';
 	}
 	else
 	{
@@ -1482,7 +1480,7 @@ area_id sys_clone_area( const char *pzName, void **ppAddress,
 	}
 	else
 	{
-		nAddress = ( uint32 )*ppAddress;
+		nAddress = ( uintptr_t )*ppAddress;
 		if ( nAddress < AREA_FIRST_USER_ADDRESS )
 		{
 			nAddress = AREA_FIRST_USER_ADDRESS + 512 * 1024 * 1024;
@@ -1490,7 +1488,7 @@ area_id sys_clone_area( const char *pzName, void **ppAddress,
 		}
 		else if ( ( nAddress & ~PAGE_MASK ) != 0 )
 		{
-			printk( "Error: sys_clone_area() unaligned address %08lx\n", nAddress );
+			printk( "Error: sys_clone_area() unaligned address %p\n", (void*)( nAddress ) );
 			return ( -EINVAL );
 		}
 	}
@@ -1548,7 +1546,7 @@ area_id sys_clone_area( const char *pzName, void **ppAddress,
 
 		if ( PTE_ISPRESENT( *pSrcPte ) )
 		{
-			int nPageNum = PAGE_NR( PTE_PAGE( *pSrcPte ) );
+			count_t nPageNum = PAGE_NR( PTE_PAGE( *pSrcPte ) );
 
 			if ( nPageNum < g_sSysBase.ex_nTotalPageCount )
 			{
@@ -1582,8 +1580,8 @@ area_id sys_clone_area( const char *pzName, void **ppAddress,
 	return ( nError );
 }
 
-//****************************************************************************/
-/** Creates a new memory area in the current process.
+/**
+ * Creates a new memory area in the current process.
  * \ingroup DriverAPI
  * \param pzName a pointer to the string containing the name for the new area.
  * \param ppAddress a pointer to the variable where the start address of the
@@ -1605,14 +1603,14 @@ area_id sys_clone_area( const char *pzName, void **ppAddress,
  *     the <code>area_id</code> of the new area otherwise.
  * \sa alloc_area()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
+ */
 area_id create_area( const char *pzName, void **ppAddress, size_t nSize,
-		    size_t nMaxSize, uint32 nProtection, int nLockMode )
+		     size_t nMaxSize, flags_t nProtection, flags_t nLockMode )
 {
 	MemContext_s *psSeg;
 	area_id hArea;
-	uint32 nAddress;
-	int nError;
+	uintptr_t nAddress;
+	status_t nError;
 
 	if ( NULL == ppAddress )
 	{
@@ -1621,10 +1619,10 @@ area_id create_area( const char *pzName, void **ppAddress, size_t nSize,
 	}
 	else
 	{
-		nAddress = ( uint32 )*ppAddress;
+		nAddress = ( uintptr_t )*ppAddress;
 		if ( ( nAddress & ~PAGE_MASK ) != 0 )
 		{
-			printk( "Error: create_area() unaligned address %08lx\n", nAddress );
+			printk( "Error: create_area() unaligned address %p\n", (void*)(nAddress) );
 			return ( -EINVAL );
 		}
 	}
@@ -1668,8 +1666,8 @@ area_id create_area( const char *pzName, void **ppAddress, size_t nSize,
 	return ( hArea );
 }
 
-//****************************************************************************/
-/** Creates a new memory area with the specified attributes.
+/**
+ * Creates a new memory area with the specified attributes.
  * \ingroup Syscalls
  * \param pzName a pointer to the string containing the name for the new area.
  * \param ppAddress a pointer to the variable where the start address of the
@@ -1691,11 +1689,11 @@ area_id create_area( const char *pzName, void **ppAddress, size_t nSize,
  *     <code>area_id</code> of the new area otherwise.
  * \sa alloc_area(), do_create_area()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
+ */
 area_id sys_create_area( const char *pzName, void **ppAddress, size_t nSize,
-			uint32 nProtection, int nLockMode )
+			 flags_t nProtection, flags_t nLockMode )
 {
-	char zName[64];
+	char zName[ OS_NAME_LENGTH ];
 	area_id hArea;
 	void *pAddress;
 
@@ -1707,11 +1705,11 @@ area_id sys_create_area( const char *pzName, void **ppAddress, size_t nSize,
 
 	if ( pzName != NULL )
 	{
-		if ( strncpy_from_user( zName, pzName, 64 ) < 0 )
+		if ( strncpy_from_user( zName, pzName, OS_NAME_LENGTH ) < 0 )
 		{
 			return ( -EFAULT );
 		}
-		zName[63] = '\0';
+		zName[OS_NAME_LENGTH - 1] = '\0';
 	}
 	else
 	{
@@ -1729,12 +1727,12 @@ area_id sys_create_area( const char *pzName, void **ppAddress, size_t nSize,
 		{
 			return ( -EFAULT );
 		}
-		if ( ( uint32 )pAddress < AREA_FIRST_USER_ADDRESS )
+		if ( ( uintptr_t )pAddress < AREA_FIRST_USER_ADDRESS )
 		{
 			pAddress = ( void * )( AREA_FIRST_USER_ADDRESS + 512 * 1024 * 1024 );
 			nProtection = ( nProtection & ~AREA_ADDR_SPEC_MASK ) | AREA_BASE_ADDRESS;
 		}
-		else if ( ( ( ( uint32 )pAddress ) & ~PAGE_MASK ) != 0 )
+		else if ( ( ( ( uintptr_t )pAddress ) & ~PAGE_MASK ) != 0 )
 		{
 			printk( "Error: sys_create_area() unaligned address %p\n", pAddress );
 			return ( -EINVAL );
@@ -1750,20 +1748,20 @@ area_id sys_create_area( const char *pzName, void **ppAddress, size_t nSize,
 	return ( hArea );
 }
 
-//****************************************************************************/
-/** Deletes the specified area.
+/**
+ * Deletes the specified area.
  * \ingroup Syscalls
  * \param hArea a handle to the area to delete.
  * \return <code>-EINVAL</code> if the area handle is invalid or if the area
  *     doesn't belong to this process; <code>0</code> otherwise.
  * \sa do_delete_area()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-int sys_delete_area( area_id hArea )
+ */
+status_t sys_delete_area( area_id hArea )
 {
 	MemContext_s *psCtx = CURRENT_PROC->tc_psMemSeg;
 	MemArea_s *psArea;
-	int nError = 0;
+	status_t nError = 0;
 
       again:
 	kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
@@ -1806,8 +1804,8 @@ int sys_delete_area( area_id hArea )
 
 }
 
-//****************************************************************************/
-/** Returns the starting physical address for the specified area.
+/**
+ * Returns the starting physical address for the specified area.
  * \internal
  * \ingroup Areas
  * \param hArea a handle to the area.
@@ -1818,14 +1816,14 @@ int sys_delete_area( area_id hArea )
  * \warning The area table semaphore <code>g_hAreaTableSema</code> must already
  *     be locked.
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-static status_t do_get_area_physical_address( area_id hArea, iaddr_t* pnAddress )
+ */
+static status_t do_get_area_physical_address( area_id hArea, uintptr_t* pnAddress )
 {
 	MemArea_s *psArea;
-	int nError = 0;
+	status_t nError = 0;
 	pgd_t *pPgd;
 	pte_t *pPte;
-	iaddr_t nPageAddress;
+	uintptr_t nPageAddress;
 
 	kassertw( is_semaphore_locked( g_hAreaTableSema ) );
 
@@ -1842,7 +1840,7 @@ static status_t do_get_area_physical_address( area_id hArea, iaddr_t* pnAddress 
 	if( PGD_PAGE( *pPgd ) == 0 ) 
 	{
 		/* Page Table not present */
-		printk( "Error: get_area_physical_address() No page directory for address %08x\n", (uint)psArea->a_nStart );
+		printk( "Error: get_area_physical_address() No page directory for address %p\n", (void*)( psArea->a_nStart ) );
 		return ( -EINVAL );
 	}
 	
@@ -1861,8 +1859,8 @@ static status_t do_get_area_physical_address( area_id hArea, iaddr_t* pnAddress 
 	return ( nError );
 }
 
-//****************************************************************************/
-/** Returns the starting physical memory address for the specified area.
+/**
+ * Returns the starting physical memory address for the specified area.
  * \ingroup DriverAPI
  * \param hArea a handle to the area.
  * \param pnAddress a pointer to the variable where the starting physical
@@ -1871,10 +1869,10 @@ static status_t do_get_area_physical_address( area_id hArea, iaddr_t* pnAddress 
  *     otherwise.
  * \sa claim_device(), unregister_device(), do_get_area_physical_address()
  * \author Arno Klenke (arno_klenke@yahoo.de)
- *****************************************************************************/
-status_t get_area_physical_address( area_id hArea, iaddr_t* pnAddress )
+ */
+status_t get_area_physical_address( area_id hArea, uintptr_t* pnAddress )
 {
-	int nError;
+	status_t nError;
 
 	kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
 	LOCK( g_hAreaTableSema );
@@ -1884,8 +1882,8 @@ status_t get_area_physical_address( area_id hArea, iaddr_t* pnAddress )
 	return ( nError );
 }
 
-//****************************************************************************/
-/** Returns an <code>AreaInfo_s</code> structure for the specified area.
+/**
+ * Returns an <code>AreaInfo_s</code> structure for the specified area.
  * \internal
  * \ingroup Areas
  * \param hArea a handle to the area for which to return information.
@@ -1896,11 +1894,11 @@ status_t get_area_physical_address( area_id hArea, iaddr_t* pnAddress )
  * \warning The area table semaphore <code>g_hAreaTableSema</code> must already
  *     be locked.
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
+ */
 static status_t do_get_area_info( area_id hArea, AreaInfo_s * psInfo )
 {
 	MemArea_s *psArea;
-	int nError = 0;
+	status_t nError = 0;
 
 	kassertw( is_semaphore_locked( g_hAreaTableSema ) );
 
@@ -1926,8 +1924,8 @@ static status_t do_get_area_info( area_id hArea, AreaInfo_s * psInfo )
 	return ( nError );
 }
 
-//****************************************************************************/
-/** Returns an <code>AreaInfo_s</code> for the specified area.
+/**
+ * Returns an <code>AreaInfo_s</code> for the specified area.
  * \ingroup DriverAPI
  * \param hArea a handle to the area for which to return info.
  * \param psInfo a pointer to the <code>AreaInfo_s</code> in which to store the
@@ -1935,10 +1933,10 @@ static status_t do_get_area_info( area_id hArea, AreaInfo_s * psInfo )
  * \return <code>-EINVAL</code> if the area handle is invalid or the area
  *     doesn't belong to this process; <code>0</code> otherwise.
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
+ */
 status_t get_area_info( area_id hArea, AreaInfo_s * psInfo )
 {
-	int nError;
+	status_t nError;
 
 	kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
 	LOCK( g_hAreaTableSema );
@@ -1948,8 +1946,8 @@ status_t get_area_info( area_id hArea, AreaInfo_s * psInfo )
 	return ( nError );
 }
 
-//****************************************************************************/
-/** Returns an <code>AreaInfo_s</code> for the specified area.
+/**
+ * Returns an <code>AreaInfo_s</code> for the specified area.
  * \ingroup Syscalls
  * \param hArea a handle to the area for which to return info.
  * \param psInfo a pointer to the <code>AreaInfo_s</code> in which to store the
@@ -1959,11 +1957,11 @@ status_t get_area_info( area_id hArea, AreaInfo_s * psInfo )
  *     memory access violation while copying to <i>psInfo</i>; <code>0</code>
  *     otherwise.
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
+ */
 status_t sys_get_area_info( area_id hArea, AreaInfo_s * psInfo )
 {
 	AreaInfo_s sInfo;
-	int nError;
+	status_t nError;
 
 	kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
 	LOCK( g_hAreaTableSema );
@@ -1977,8 +1975,8 @@ status_t sys_get_area_info( area_id hArea, AreaInfo_s * psInfo )
 	return ( nError );
 }
 
-//****************************************************************************/
-/** Remaps the specified region of virtual memory to point to a different
+/**
+ * Remaps the specified region of virtual memory to point to a different
  *  region of physical memory.  Only the entries in the page table containing
  *  the entry for the start address will be updated.
  * \internal
@@ -1992,10 +1990,11 @@ status_t sys_get_area_info( area_id hArea, AreaInfo_s * psInfo )
  *     remapping them; <code>false</code> otherwise.
  * \return Always returns <code>0</code>.
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-static int remap_pagedir( pgd_t * pPgd, int nAddress, int nSize, int nPhysAddress, bool bFreeOldPages )
+ */
+static status_t remap_pagedir( pgd_t * pPgd, uintptr_t nAddress, size_t nSize,
+			       uintptr_t nPhysAddress, bool bFreeOldPages )
 {
-	int nEnd;
+	uintptr_t nEnd;
 	pte_t *pPte = pte_offset( pPgd, nAddress );
 
 	nAddress &= ~PGDIR_MASK;
@@ -2012,10 +2011,10 @@ static int remap_pagedir( pgd_t * pPgd, int nAddress, int nSize, int nPhysAddres
 		{
 			if ( PTE_ISPRESENT( *pPte ) )
 			{
-				uint32 nOldPage = PTE_PAGE( *pPte );
+				uint32_t nOldPage = PTE_PAGE( *pPte );
 				int nPageNr = PAGE_NR( nOldPage );
 
-				if ( 0 != nOldPage && nOldPage != ( uint32 )g_sSysBase.ex_pNullPage )
+				if ( 0 != nOldPage && nOldPage != ( uint32_t )g_sSysBase.ex_pNullPage )
 				{
 					if ( atomic_read( &g_psFirstPage[nPageNr].p_nCount ) == 1 )
 					{
@@ -2037,8 +2036,8 @@ static int remap_pagedir( pgd_t * pPgd, int nAddress, int nSize, int nPhysAddres
 	return ( 0 );
 }
 
-//****************************************************************************/
-/** Remaps the specified area to use a different region of physical memory.
+/**
+ * Remaps the specified area to use a different region of physical memory.
  * \internal
  * \ingroup Areas
  * \param psArea a pointer to the <code>MemArea_s</code> to remap.
@@ -2046,18 +2045,18 @@ static int remap_pagedir( pgd_t * pPgd, int nAddress, int nSize, int nPhysAddres
  * \return <code>-EINVAL</code> if <i>nPhysAddress</i> isn't a multiple of
  *     <code>PAGE_SIZE</code>; <code>0</code> otherwise.
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-static int do_remap_area( MemArea_s *psArea, uint32 nPhysAddress )
+ */
+static status_t do_remap_area( MemArea_s *psArea, uintptr_t nPhysAddress )
 {
-	uint32 nAddress = psArea->a_nStart;
-	uint32 nEnd = psArea->a_nEnd;
+	uintptr_t nAddress = psArea->a_nStart;
+	uintptr_t nEnd = psArea->a_nEnd;
 	pgd_t *pPgd;
-	int nError = 0;
+	status_t nError = 0;
 	bool bFreeOldPages = ( psArea->a_nProtection & AREA_REMAPPED ) == 0;
 
 	if ( nPhysAddress & ~PAGE_MASK )
 	{
-		printk( "Error : Attempt to remap area to unaligned physical address %lx\n", nPhysAddress );
+		printk( "Error : Attempt to remap area to unaligned physical address %p\n", (void*)( nPhysAddress ) );
 		return ( -EINVAL );
 	}
 
@@ -2065,7 +2064,7 @@ static int do_remap_area( MemArea_s *psArea, uint32 nPhysAddress )
 
 	while ( nAddress - 1 < nEnd )
 	{
-		int nOffset;
+		intptr_t nOffset;
 
 		nError = remap_pagedir( pPgd++, nAddress, nEnd - nAddress, nPhysAddress, bFreeOldPages );
 		if ( 0 != nError )
@@ -2081,8 +2080,8 @@ static int do_remap_area( MemArea_s *psArea, uint32 nPhysAddress )
 	return ( nError );
 }
 
-//****************************************************************************/
-/** Remaps the specified area to use a different region of physical memory.
+/**
+ * Remaps the specified area to use a different region of physical memory.
  * \ingroup Syscalls
  * \param hArea a handle to the area to remap.
  * \param pPhysAddress the new start address in physical memory for the region.
@@ -2091,11 +2090,11 @@ static int do_remap_area( MemArea_s *psArea, uint32 nPhysAddress )
  *     <code>0</code> otherwise.
  * \sa do_remap_area()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
+ */
 status_t sys_remap_area( area_id hArea, void *pPhysAddress )
 {
 	MemArea_s *psArea;
-	int nError = 0;
+	status_t nError = 0;
 
 	kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
 	LOCK( g_hAreaTableSema );
@@ -2108,7 +2107,7 @@ status_t sys_remap_area( area_id hArea, void *pPhysAddress )
 		goto error;
 	}
 	lock_area( psArea, LOCK_AREA_WRITE );
-	nError = do_remap_area( psArea, ( uint32 )pPhysAddress );
+	nError = do_remap_area( psArea, ( uint32_t )pPhysAddress );
 	unlock_area( psArea, LOCK_AREA_WRITE );
 	put_area( psArea );
       error:
@@ -2116,8 +2115,8 @@ status_t sys_remap_area( area_id hArea, void *pPhysAddress )
 	return ( nError );
 }
 
-//****************************************************************************/
-/** Remaps the specified area to use a different region of physical memory.
+/**
+ * Remaps the specified area to use a different region of physical memory.
  * \ingroup DriverAPI
  * \param hArea a handle to the area to remap.
  * \param pPhysAddress the new start address in physical memory for the region.
@@ -2126,11 +2125,11 @@ status_t sys_remap_area( area_id hArea, void *pPhysAddress )
  *     <code>0</code> otherwise.
  * \sa do_remap_area()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
+ */
 status_t remap_area( area_id hArea, void *pPhysAddress )
 {
 	MemArea_s *psArea;
-	int nError = 0;
+	status_t nError = 0;
 
 	kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
 	LOCK( g_hAreaTableSema );
@@ -2143,7 +2142,7 @@ status_t remap_area( area_id hArea, void *pPhysAddress )
 		goto error;
 	}
 	lock_area( psArea, LOCK_AREA_WRITE );
-	nError = do_remap_area( psArea, ( uint32 )pPhysAddress );
+	nError = do_remap_area( psArea, ( uint32_t )pPhysAddress );
 	unlock_area( psArea, LOCK_AREA_WRITE );
 	put_area( psArea );
       error:
@@ -2151,8 +2150,8 @@ status_t remap_area( area_id hArea, void *pPhysAddress )
 	return ( nError );
 }
 
-//****************************************************************************/
-/** Copies a region of memory from kernel space into user space.
+/**
+ * Copies a region of memory from kernel space into user space.
  * \ingroup DriverAPI
  * \param pDst the starting address of the destination region.
  * \param pSrc the starting address of the source region.
@@ -2161,12 +2160,12 @@ status_t remap_area( area_id hArea, void *pPhysAddress )
  *     otherwise.
  * \sa lock_mem_area()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-int memcpy_to_user( void *pDst, const void *pSrc, int nSize )
+ */
+status_t memcpy_to_user( void *pDst, const void *pSrc, size_t nSize )
 {
-	if ( g_bKernelInitiated )
+	if ( g_bKernelInitialized )
 	{
-		int nError = lock_mem_area( pDst, nSize, true );
+		status_t nError = lock_mem_area( pDst, nSize, true );
 
 		if ( nError < 0 )
 		{
@@ -2183,8 +2182,8 @@ int memcpy_to_user( void *pDst, const void *pSrc, int nSize )
 	}
 }
 
-//****************************************************************************/
-/** Copies a region of memory from user space into kernel space.
+/**
+ * Copies a region of memory from user space into kernel space.
  * \ingroup DriverAPI
  * \param pDst the starting address of the destination region.
  * \param pSrc the starting address of the source region.
@@ -2193,12 +2192,12 @@ int memcpy_to_user( void *pDst, const void *pSrc, int nSize )
  *     otherwise.
  * \sa lock_mem_area()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-int memcpy_from_user( void *pDst, const void *pSrc, int nSize )
+ */
+status_t memcpy_from_user( void *pDst, const void *pSrc, size_t nSize )
 {
-	if ( g_bKernelInitiated )
+	if ( g_bKernelInitialized )
 	{
-		int nError = lock_mem_area( pSrc, nSize, false );
+		status_t nError = lock_mem_area( pSrc, nSize, false );
 
 		if ( nError < 0 )
 		{
@@ -2215,8 +2214,8 @@ int memcpy_from_user( void *pDst, const void *pSrc, int nSize )
 	}
 }
 
-//****************************************************************************/
-/** Copies a string from user space into kernel space.
+/**
+ * Copies a string from user space into kernel space.
  * \ingroup DriverAPI
  * \param pzDst the starting address of the destination region.
  * \param pzSrc the address of the string to copy.
@@ -2225,13 +2224,13 @@ int memcpy_from_user( void *pDst, const void *pSrc, int nSize )
  *     otherwise.
  * \sa lock_mem_area()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-int strncpy_from_user( char *pzDst, const char *pzSrc, int nMaxLen )
+ */
+status_t strncpy_from_user( char *pzDst, const char *pzSrc, size_t nMaxLen )
 {
-	if ( g_bKernelInitiated )
+	if ( g_bKernelInitialized )
 	{
-		int nMaxSize = ( ( ( ( uint32 )pzSrc ) + PAGE_SIZE ) & PAGE_MASK ) - ( ( uint32 )pzSrc );
-		int nLen = 0;
+		size_t nMaxSize = ( ( ( ( uintptr_t )pzSrc ) + PAGE_SIZE ) & PAGE_MASK ) - ( ( uintptr_t )pzSrc );
+		size_t nLen = 0;
 		bool bDone = false;
 
 		if ( nMaxSize > nMaxLen )
@@ -2241,14 +2240,13 @@ int strncpy_from_user( char *pzDst, const char *pzSrc, int nMaxLen )
 
 		while ( bDone == false && nLen < nMaxLen )
 		{
-			int nError = lock_mem_area( pzSrc, nMaxSize, false );
-			int i;
+			status_t nError = lock_mem_area( pzSrc, nMaxSize, false );
 
 			if ( nError < 0 )
 			{
 				return ( nError );
 			}
-			for ( i = 0; i < nMaxSize; ++i )
+			for ( uint_fast32_t i = 0; i < nMaxSize; ++i )
 			{
 				pzDst[i] = pzSrc[i];
 				if ( pzSrc[i] == '\0' )
@@ -2276,8 +2274,8 @@ int strncpy_from_user( char *pzDst, const char *pzSrc, int nMaxLen )
 	}
 }
 
-//****************************************************************************/
-/** Copies a string from user space into a newly allocated kernel region.
+/**
+ * Copies a string from user space into a newly allocated kernel region.
  * \ingroup DriverAPI
  * \param pzSrc the address of the string to copy.
  * \param nMaxLen the maximum size of the string to copy.
@@ -2290,18 +2288,17 @@ int strncpy_from_user( char *pzDst, const char *pzSrc, int nMaxLen )
  *     otherwise.
  * \sa lock_mem_area(), kmalloc()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-int strndup_from_user( const char *pzSrc, int nMaxLen, char **ppzDst )
+ */
+status_t strndup_from_user( const char *pzSrc, size_t nMaxLen, char **ppzDst )
 {
-	int nLen = strlen_from_user( pzSrc );
-	int nError;
+	ssize_t nLen = strlen_from_user( pzSrc );
 	char *pzDst;
 
 	if ( nLen < 0 )
 	{
 		return ( nLen );
 	}
-	if ( nLen > nMaxLen - 1 )
+	if ( ( size_t )( nLen ) > nMaxLen - 1 )
 	{
 		return ( -ENAMETOOLONG );
 	}
@@ -2310,7 +2307,8 @@ int strndup_from_user( const char *pzSrc, int nMaxLen, char **ppzDst )
 	{
 		return ( -ENOMEM );
 	}
-	nError = strncpy_from_user( pzDst, pzSrc, nLen + 1 );
+
+	status_t nError = strncpy_from_user( pzDst, pzSrc, nLen + 1 );
 	if ( nError != nLen )
 	{
 		kfree( pzDst );
@@ -2327,8 +2325,8 @@ int strndup_from_user( const char *pzSrc, int nMaxLen, char **ppzDst )
 	return ( nLen );
 }
 
-//****************************************************************************/
-/** Copies a string from kernel space into user space.
+/**
+ * Copies a string from kernel space into user space.
  * \ingroup DriverAPI
  * \param pzDst the starting address of the destination region.
  * \param pzSrc the address of the string to copy.
@@ -2336,39 +2334,38 @@ int strndup_from_user( const char *pzSrc, int nMaxLen, char **ppzDst )
  *     otherwise.
  * \sa lock_mem_area()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-int strcpy_to_user( char *pzDst, const char *pzSrc )
+ */
+status_t strcpy_to_user( char *pzDst, const char *pzSrc )
 {
 	return ( memcpy_to_user( pzDst, pzSrc, strlen( pzSrc ) ) );
 }
 
-//****************************************************************************/
-/** Returns the length of the specified string.
+/**
+ * Returns the length of the specified string.
  * \ingroup DriverAPI
  * \param pzString the starting address of the string.
- * \return The error code from lock_mem_area() on failure; <code>0</code>
- *     otherwise.
+ * \return The error code from lock_mem_area() on failure; the length of the
+ *     string otherwise.
  * \sa lock_mem_area()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-int strlen_from_user( const char *pzString )
+ */
+status_t strlen_from_user( const char *pzString )
 {
-	if ( g_bKernelInitiated )
+	if ( g_bKernelInitialized )
 	{
-		int nMaxSize = ( ( ( ( uint32 )pzString ) + PAGE_SIZE ) & PAGE_MASK ) - ( ( uint32 )pzString );
-		int nLen = 0;
+		size_t nMaxSize = ( ( ( ( uintptr_t )pzString ) + PAGE_SIZE ) & PAGE_MASK ) - ( ( uintptr_t )pzString );
+		status_t nLen = 0;
 		bool bDone = false;
 
 		while ( bDone == false )
 		{
-			int nError = lock_mem_area( pzString, nMaxSize, false );
-			int i;
+			status_t nError = lock_mem_area( pzString, nMaxSize, false );
 
 			if ( nError < 0 )
 			{
 				return ( nError );
 			}
-			for ( i = 0; i < nMaxSize; ++i )
+			for ( count_t i = 0; i < nMaxSize; ++i )
 			{
 				if ( pzString[i] == '\0' )
 				{
@@ -2389,8 +2386,8 @@ int strlen_from_user( const char *pzString )
 	}
 }
 
-//****************************************************************************/
-/** Locks a region of user memory for kernel access.
+/**
+ * Locks a region of user memory for kernel access.
  * \ingroup DriverAPI
  * \param pAddress the start address of the region to lock.
  * \param nSize the size in bytes of the region to lock.
@@ -2403,16 +2400,16 @@ int strlen_from_user( const char *pzString )
  *     <code>0</code> otherwise.
  * \sa alloc_area_pages(), unlock_mem_area()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-int lock_mem_area( const void *pAddress, uint32 nSize, bool bWriteAccess )
+ */
+status_t lock_mem_area( const void *pAddress, size_t nSize, bool bWriteAccess )
 {
 	MemArea_s *psArea;
-	iaddr_t nAddr = ( iaddr_t )pAddress;
-	int nError;
+	uintptr_t nAddr = ( uintptr_t )pAddress;
+	status_t nError;
 
 	if ( nAddr < AREA_FIRST_USER_ADDRESS )
 	{
-		printk( "lock_mem_area() got kernel address %08lx\n", nAddr );
+		printk( "lock_mem_area() got kernel address %08x\n", nAddr );
 		return ( -EFAULT );
 	}
       again:
@@ -2420,7 +2417,7 @@ int lock_mem_area( const void *pAddress, uint32 nSize, bool bWriteAccess )
 
 	if ( psArea == NULL )
 	{
-		printk( "lock_mem_area() no area for address %08lx\n", nAddr );
+		printk( "lock_mem_area() no area for address %08x\n", nAddr );
 		return ( -EFAULT );
 	}
 
@@ -2428,7 +2425,7 @@ int lock_mem_area( const void *pAddress, uint32 nSize, bool bWriteAccess )
 
 	if ( nAddr + nSize - 1 > psArea->a_nEnd )
 	{
-		printk( "lock_mem_area() adr=%08lx size=%ld does not fit in area %08lx-%08lx\n", nAddr, nSize, psArea->a_nStart, psArea->a_nEnd );
+		printk( "lock_mem_area() adr=%08x size=%d does not fit in area %08x-%08x\n", nAddr, nSize, psArea->a_nStart, psArea->a_nEnd );
 		UNLOCK( g_hAreaTableSema );
 		put_area( psArea );
 		return ( -EFAULT );
@@ -2450,8 +2447,8 @@ int lock_mem_area( const void *pAddress, uint32 nSize, bool bWriteAccess )
 	return ( nError );
 }
 
-//****************************************************************************/
-/** Unlocks a region of user memory locked for kernel access.
+/**
+ * Unlocks a region of user memory locked for kernel access.
  * \ingroup DriverAPI
  * \param pAddress the start address of the region to unlock.
  * \param nSize the size in bytes of the region to unlock.
@@ -2461,16 +2458,16 @@ int lock_mem_area( const void *pAddress, uint32 nSize, bool bWriteAccess )
  *     <code>0</code> otherwise.
  * \sa lock_mem_area()
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-int unlock_mem_area( const void *pAddress, uint32 nSize )
+ */
+status_t unlock_mem_area( const void *pAddress, size_t nSize )
 {
 	MemArea_s *psArea;
 
-	iaddr_t nAddr = ( iaddr_t )pAddress;
+	uintptr_t nAddr = ( uintptr_t )pAddress;
 
 	if ( nAddr < AREA_FIRST_USER_ADDRESS )
 	{
-		printk( "unlock_mem_area() got kernel address %08lx\n", nAddr );
+		printk( "unlock_mem_area() got kernel address %08x\n", nAddr );
 		return ( -EFAULT );
 	}
 
@@ -2478,13 +2475,13 @@ int unlock_mem_area( const void *pAddress, uint32 nSize )
 
 	if ( psArea == NULL )
 	{
-		printk( "unlock_mem_area() no area for address %08lx\n", nAddr );
+		printk( "unlock_mem_area() no area for address %08x\n", nAddr );
 		return ( -EFAULT );
 	}
 
 	if ( nAddr + nSize - 1 > psArea->a_nEnd )
 	{
-		printk( "unlock_mem_area() adr=%08lx size=%ld does not fit in area %08lx-%08lx\n", nAddr, nSize, psArea->a_nStart, psArea->a_nEnd );
+		printk( "unlock_mem_area() adr=%08x size=%d does not fit in area %08x-%08x\n", nAddr, nSize, psArea->a_nStart, psArea->a_nEnd );
 		put_area( psArea );
 		return ( -EFAULT );
 	}
@@ -2495,21 +2492,21 @@ int unlock_mem_area( const void *pAddress, uint32 nSize )
 	return ( 0 );
 }
 
-//****************************************************************************/
-/** Adjusts the upper bound of a user process's data segment.
+/**
+ * Adjusts the upper bound of a user process's data segment.
  * \ingroup Syscalls
  * \param nDelta the number of bytes by which to increase or decrease the
  *     data segment.
  * \return <code>-1</code> if there was an error adjusting the data segment;
  *     otherwise, the old upper bound of the process's data segment.
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
+ */
 void *sys_sbrk( int nDelta )
 {
 	Process_s *psProc = CURRENT_PROC;
 	void *pOldBrk = ( void * )-1;
-	int nError = 0;
-	uint32 nOldSize;
+	status_t nError = 0;
+	size_t nOldSize;
 
 
 	if ( nDelta > 0 )
@@ -2552,7 +2549,7 @@ void *sys_sbrk( int nDelta )
 
 			do_get_area_info( psProc->pr_nHeapArea, &sInfo );
 
-			pOldBrk = ( void * )( ( ( uint32 )sInfo.pAddress ) + sInfo.nSize );
+			pOldBrk = ( void * )( ( ( uint32_t )sInfo.pAddress ) + sInfo.nSize );
 			printk( "Delete proc area, old address = %p\n", pOldBrk );
 			delete_area( psProc->pr_nHeapArea );
 			psProc->pr_nHeapArea = -1;
@@ -2560,7 +2557,7 @@ void *sys_sbrk( int nDelta )
 		else
 		{
 			printk( "sbrk() Search for address\n" );
-			pOldBrk = ( void * )find_unmapped_area( psProc->tc_psMemSeg, AREA_ANY_ADDRESS, PAGE_SIZE, 0 );
+			pOldBrk = ( void * )( find_unmapped_area( psProc->tc_psMemSeg, AREA_ANY_ADDRESS, PAGE_SIZE, 0 ) );
 			printk( "sbrk() next address whould be %p\n", pOldBrk );
 		}
 		goto error;
@@ -2568,8 +2565,8 @@ void *sys_sbrk( int nDelta )
 
 	if ( psProc->pr_nHeapArea == -1 )
 	{
-		uint32 nReserveSize = 512 * 1024 * 1024;
-		uint32 nAddress = -1;
+		count_t   nReserveSize = 512 * 1024 * 1024;
+		uintptr_t nAddress = ( uintptr_t )( -1 );
 
 		if ( nDelta < 0 )
 		{
@@ -2579,13 +2576,13 @@ void *sys_sbrk( int nDelta )
 		while ( nReserveSize >= PAGE_SIZE )
 		{
 			nAddress = find_unmapped_area( psProc->tc_psMemSeg, AREA_ANY_ADDRESS, nReserveSize, 0 );
-			if ( nAddress != -1 )
+			if ( nAddress != (uintptr_t)(-1) )
 			{
 				break;
 			}
 			nReserveSize >>= 1;
 		}
-		if ( nAddress == -1 )
+		if ( nAddress == (uintptr_t)(-1) )
 		{
 			nAddress = AREA_FIRST_USER_ADDRESS;
 		}
@@ -2611,7 +2608,7 @@ void *sys_sbrk( int nDelta )
 		AreaInfo_s sInfo;
 
 		do_get_area_info( psProc->pr_nHeapArea, &sInfo );
-		pOldBrk = ( void * )( ( ( uint32 )sInfo.pAddress ) + sInfo.nSize );
+		pOldBrk = ( void * )( ( ( uint32_t )sInfo.pAddress ) + sInfo.nSize );
 
 		UNLOCK( g_hAreaTableSema );
 		nError = resize_area( psProc->pr_nHeapArea, sInfo.nSize + nDelta, true );
@@ -2628,26 +2625,26 @@ void *sys_sbrk( int nDelta )
 }
 
 
-//****************************************************************************/
-/** Creates the memory context for the kernel. This context holds all kernel
+/**
+ * Creates the memory context for the kernel. This context holds all kernel
  * areas below AREA_FIRST_USER_ADDRESS.
  * \internal
  * \ingroup Areas
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
+ */
 void init_kernel_mem_context()
 {
-	int i;
 	g_psKernelSeg = ( MemContext_s * )get_free_page( GFP_CLEAR );
 
 	g_psKernelSeg->mc_pPageDir = ( pgd_t * ) get_free_page( GFP_CLEAR );
 
-	for ( i = 0; i < ( ( ( g_sSysBase.ex_nTotalPageCount * PAGE_SIZE ) + PGDIR_SIZE - 1 ) / PGDIR_SIZE ); ++i )
+	for ( count_t i = 0; i < ( ( ( g_sSysBase.ex_nTotalPageCount * PAGE_SIZE ) + PGDIR_SIZE - 1 ) / PGDIR_SIZE ); ++i )
 	{
-		PGD_VALUE( g_psKernelSeg->mc_pPageDir[i] ) = MK_PGDIR( get_free_page( GFP_CLEAR ) );
+		PGD_VALUE( g_psKernelSeg->mc_pPageDir[i] ) =
+			MK_PGDIR( ( uintptr_t )( get_free_page( GFP_CLEAR ) ) );
 	}
 
-	for ( i = 0; i < g_sSysBase.ex_nTotalPageCount; ++i )
+	for ( count_t i = 0; i < g_sSysBase.ex_nTotalPageCount; ++i )
 	{
 		pgd_t *pPgd = pgd_offset( g_psKernelSeg, i * PAGE_SIZE );
 		pte_t *pPte = pte_offset( pPgd, i * PAGE_SIZE );
@@ -2658,19 +2655,18 @@ void init_kernel_mem_context()
 
 }
 
-//****************************************************************************/
-/** Print all areas in psCtx to the debug console.
+/**
+ * Print all areas in psCtx to the debug console.
  * \internal
  * \ingroup Areas
  * \param psCtx - pointer to a MemContext_s structure.
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-void db_list_proc_areas( MemContext_s *psCtx )
+ */
+static void db_list_proc_areas( MemContext_s *psCtx )
 {
 	MemArea_s *psArea;
-	int i;
 
-	for ( i = 0; i < psCtx->mc_nAreaCount; ++i )
+	for ( count_t i = 0; i < psCtx->mc_nAreaCount; ++i )
 	{
 		psArea = psCtx->mc_apsAreas[i];
 
@@ -2687,18 +2683,18 @@ void db_list_proc_areas( MemContext_s *psCtx )
 		{
 			dbprintf( DBP_DEBUGGER, "Error: db_list_proc_areas() area at index %d (%p) has invalid next pointer %p\n", i, psArea, psArea->a_psNext );
 		}
-		dbprintf( DBP_DEBUGGER, "Area %04d (%p) -> %08lx-%08lx %p %02d\n", i, psArea, psArea->a_nStart, psArea->a_nEnd, psArea->a_psFile, atomic_read( &psArea->a_nRefCount ) );
+		dbprintf( DBP_DEBUGGER, "Area %04d (%p) -> %08x-%08x %p %02d\n", i, psArea, psArea->a_nStart, psArea->a_nEnd, psArea->a_psFile, atomic_read( &psArea->a_nRefCount ) );
 	}
 }
 
-//****************************************************************************/
-/** Prints all areas for the specified process to the debug console.
+/**
+ * Prints all areas for the specified process to the debug console.
  * \internal
  * \ingroup Areas
  * \param argc the number of arguments in the debug command.
  * \param argv an array of pointers to the arguments in the debug command.
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
+ */
 static void db_list_areas( int argc, char **argv )
 {
 	if ( argc != 2 )
@@ -2721,12 +2717,12 @@ static void db_list_areas( int argc, char **argv )
 	}
 }
 
-//****************************************************************************/
-/** Initializes the area manager.
+/**
+ * Initializes the area manager.
  * \internal
  * \ingroup Areas
  * \author Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
+ */
 void init_areas( void )
 {
 	register_debug_cmd( "ls_area", "list all memory areas created by a given process.", db_list_areas );

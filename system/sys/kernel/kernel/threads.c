@@ -1068,8 +1068,8 @@ static void db_dump_thread( int argc, char **argv )
 
 //  TaskStateSeg_s tc_sTSS;             /* Intel 386 specific task state buffer */
 
-	dbprintf( DBP_DEBUGGER, "State=%ld\n", psThread->tr_nState );
-	dbprintf( DBP_DEBUGGER, "Flags = %08lx\n", psThread->tr_nFlags );
+	dbprintf( DBP_DEBUGGER, "State=%d\n", psThread->tr_nState );
+	dbprintf( DBP_DEBUGGER, "Flags = %08x\n", psThread->tr_nFlags );
 
 //  psThread->tc_TSSDesc;               /* task descriptor                      */
 
@@ -1094,16 +1094,16 @@ static void db_dump_thread( int argc, char **argv )
 
       /*** Stack pointers, and sizes	***/
 
-	dbprintf( DBP_DEBUGGER, "Stack size=0x%08lx\n", psThread->tr_nUStackSize );
+	dbprintf( DBP_DEBUGGER, "Stack size=0x%08x\n", psThread->tr_nUStackSize );
 	dbprintf( DBP_DEBUGGER, "StackArea=%d\n", psThread->tr_nStackArea );
 
-	dbprintf( DBP_DEBUGGER, "SysStackTop=0x%p, size=0x%08lx\n", psThread->tc_plKStack, psThread->tc_lKStackSize );
+	dbprintf( DBP_DEBUGGER, "SysStackTop=0x%p, size=0x%08x\n", psThread->tc_plKStack, psThread->tc_lKStackSize );
 
 
 	dbprintf( DBP_DEBUGGER, "Sendt data     = 0x%p\n", psThread->tr_pData );
-	dbprintf( DBP_DEBUGGER, "Sendt code     = %ld\n", psThread->tr_nCode );
-	dbprintf( DBP_DEBUGGER, "CurDataSize    = %ld\n", psThread->tr_nCurDataSize );
-	dbprintf( DBP_DEBUGGER, "MaxDataSize    = %ld\n", psThread->tr_nMaxDataSize );
+	dbprintf( DBP_DEBUGGER, "Sendt code     = %d\n", psThread->tr_nCode );
+	dbprintf( DBP_DEBUGGER, "CurDataSize    = %d\n", psThread->tr_nCurDataSize );
+	dbprintf( DBP_DEBUGGER, "MaxDataSize    = %d\n", psThread->tr_nMaxDataSize );
 //  dbprintf( DBP_DEBUGGER, "IsWaingForData = %d\n", psThread->tr_isWaitingForData );
 	dbprintf( DBP_DEBUGGER, "DataSender     = %d\n", psThread->tr_hDataSender );
 

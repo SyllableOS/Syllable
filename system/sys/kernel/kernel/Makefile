@@ -1,4 +1,4 @@
-CFLAGS   = -D__KERNEL__ -D__BUILD_KERNEL__ -no-fPIC -c -g -O2 -mpreferred-stack-boundary=2 -fno-strict-aliasing -Wall -Wstrict-prototypes -I./
+CFLAGS   = -D__KERNEL__ -D__BUILD_KERNEL__ -ffreestanding -no-fPIC -c -g -O2 -std=gnu99 -mpreferred-stack-boundary=2 -fno-strict-aliasing -Wall -Wstrict-prototypes -I./
 AFLAGS   = -c
 
 OLD_INCLUDE_PATH:=$(C_INCLUDE_PATH)
@@ -10,7 +10,7 @@ CP	= cp -f
 
 VFSOBJS := vfs.o inode.o nodemonitor.o attributes.o flock.o root.o dev.o fifo.o pty.o
 NETOBJS := core.o interface.o route.o ip.o udp.o tcp.o tcp_input.o tcp_output.o socket.o packets.o raw.o
-LIBOBJS := ct_flags.o ct_upper.o ct_lower.o vsprintf.o string.o strstr.o qsort.o gcc34_strcpy.o
+LIBOBJS := ct_flags.o ct_upper.o ct_lower.o vsprintf.o string.o strstr.o qsort.o gcc34_memcpy.o
 
 OBJS := intel.o cpuid.o descriptors.o kernel.o dbconsole.o ksyms.o init.o fork.o syscall.o 	  		\
 	debug.o timer.o process.o threads.o sema.o msgport.o memory.o strace.o	\
@@ -40,7 +40,7 @@ $(OBJDIR):
 
 $(OBJDIR)/kernel.so: $(OBJDIR)/version.o
 	$(LD) -m elf_i386_syllable -Tkernel.lnk $(OBJS) $(OBJDIR)/version.o -o \
-	   $(OBJDIR)/kernel.so `$CC -kernel -print-libgcc-file-name`
+	   $(OBJDIR)/kernel.so `$(CC) -kernel -print-libgcc-file-name`
 	$(CC) -nostdlib -w $(OBJDIR)/kernel.exports.c -o $(OBJDIR)/libkernel.so
 
 

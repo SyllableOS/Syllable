@@ -362,7 +362,8 @@ void handle_irq( SysCallRegs_s * psRegs, int nIrqNum )
 		}
 		else
 		{
-			reflect_irq_to_realmode( psRegs, nIrqNum + ( ( nIrqNum < 8 ) ? 0x08 : 0x68 ) );
+			mask_and_ack_8259A( nIrqNum );
+			//reflect_irq_to_realmode( psRegs, nIrqNum + ( ( nIrqNum < 8 ) ? 0x08 : 0x68 ) );
 		}
 	}
 	if ( bNeedSchedule )

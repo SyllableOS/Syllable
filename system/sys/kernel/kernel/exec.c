@@ -443,18 +443,20 @@ int sys_execve( const char *a_pzPath, char *const *argv, char *const *envv )
 		{
 			psProc->pr_nSGID = psProc->pr_nEGID = psProc->pr_nFSGID = sStat.st_uid;
 		}
+		
+		kfree( pzPath );
+		g_bKernelInitialized = true;
+
 		nFlg = cli();
+		sched_lock();
 		psRegs->gs = g_asProcessorDescs[get_processor_id()].pi_nGS;
 		Desc_SetBase( psRegs->gs, ( uint32 )psThread->tr_pThreadData );
 		psThread->tc_sTSS.gs = psRegs->gs;
-
-		g_bKernelInitiated = true;
-
+	
 		__asm__ __volatile__( "mov %0,%%ax; mov %%ax,%%gs"::"r"( psRegs->gs ):"ax" );
-
+		sched_unlock();
 		put_cpu_flags( nFlg );
-
-		kfree( pzPath );
+		
 
 #ifdef __PROFILE_EXEC
 		nTime9 = read_pentium_clock();

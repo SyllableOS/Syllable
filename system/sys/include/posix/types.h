@@ -20,77 +20,59 @@
 #ifndef __F_ATHEOS_POSIX_TYPES_H__
 #define __F_ATHEOS_POSIX_TYPES_H__
 
-#if !defined __time_t_defined && !defined time_t
+#ifndef __time_t_defined
 typedef long int time_t;
-# define time_t time_t
 # define __time_t_defined
 #endif
 
-#if !defined __pid_t_defined && !defined pid_t
+#ifndef __pid_t_defined
 typedef int pid_t;
-# define pid_t pid_t
 # define __pid_t_defined
 #endif
 
-#if !defined __uid_t_defined && !defined uid_t
+#ifndef __uid_t_defined
 typedef int uid_t;
-# define uid_t uid_t
 # define __uid_t_defined
 #endif
 
-#if !defined __gid_t_defined && !defined gid_t
+#ifndef __gid_t_defined
 typedef int gid_t;
-# define gid_t gid_t
 # define __gid_t_defined
 #endif
 
-#if !defined __dev_t_defined && !defined dev_t
+#ifndef __dev_t_defined
 typedef int dev_t;
-# define dev_t dev_t
 # define __dev_t_defined
 #endif
 
-#if !defined __mode_t_defined && !defined mode_t
+#ifndef __mode_t_defined
 typedef unsigned int mode_t;
-# define mode_t mode_t
 # define __mode_t_defined
 #endif
 
-#if !defined __ino_t_defined && !defined ino_t
+#ifndef __ino_t_defined
 typedef long long ino_t;
-# define ino_t ino_t
 # define __ino_t_defined
 #endif
 
-#if !defined __off_t_defined && !defined off_t
+#ifndef __off_t_defined
 typedef long long off_t;
-# define off_t off_t
 # define __off_t_defined
 #endif
 
 #ifdef __KERNEL__
 
-#ifndef nlink_t
+#ifndef __nlink_t_defined
 typedef int nlink_t;
-#define nlink_t nlink_t
+# define __nlink_t_defined
 #endif
 
-#ifndef ssize_t
+#ifndef __ssize_t_defined
 typedef int ssize_t;
-#define ssize_t ssize_t
+# define __ssize_t_defined
 #endif
 
 #define MAXHOSTNAMELEN	64
-#define FD_SETSIZE 1024
-
-typedef struct fd_set {
-  unsigned char fds_bits [((FD_SETSIZE) + 7) / 8];
-} fd_set;
-
-#define FD_SET(n, p)    ((p)->fds_bits[(n) / 8] |= (1 << ((n) & 7)))
-#define FD_CLR(n, p)	((p)->fds_bits[(n) / 8] &= ~(1 << ((n) & 7)))
-#define FD_ISSET(n, p)	((p)->fds_bits[(n) / 8] & (1 << ((n) & 7)))
-#define FD_ZERO(p)	memset ((void *)(p), 0, sizeof (*(p)))
 
 #endif /* __KERNEL__ */
 

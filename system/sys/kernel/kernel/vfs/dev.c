@@ -1170,7 +1170,7 @@ static int dfs_rmdir( void *pVolData, void *pParentNode, const char *pzName, int
 
 		kassertw( 0 == psNode->fn_nLinkCount );
 
-		if ( FALSE == psNode->fn_bIsLoaded )
+		if ( false == psNode->fn_bIsLoaded )
 		{
 			printk( "dfs_rmdir() : Delete node <%s>\n", pzName );
 			if ( NULL != psNode->fn_pzSymLinkPath )

@@ -62,9 +62,9 @@ struct _MemArea
 	MemArea_s *a_psPrev;
 	MemArea_s *a_psNextShared;
 	MemArea_s *a_psPrevShared;
-	iaddr_t a_nStart;
-	iaddr_t a_nEnd;
-	iaddr_t a_nMaxEnd;
+	uintptr_t a_nStart;
+	uintptr_t a_nEnd;
+	uintptr_t a_nMaxEnd;
 	File_s *a_psFile;
 	off_t a_nFileOffset;
 	size_t a_nFileLength;
@@ -72,7 +72,7 @@ struct _MemArea
 	MemAreaOps_s *a_psOps;
 
 	area_id a_nAreaID;
-	uint32 a_nProtection;
+	uint32_t a_nProtection;
 	int a_nLockMode;
 	atomic_t a_nRefCount;
 	WaitQueue_s *a_psIOThreads;	/* Threads waiting for all IO to . */
@@ -112,14 +112,14 @@ struct MemAreaOps
 {
 	void ( *open ) ( MemArea_s *area );
 	void ( *close ) ( MemArea_s *area );
-	void ( *unmap ) ( MemArea_s *area, unsigned long, size_t );
-	void ( *protect ) ( MemArea_s *area, unsigned long, size_t, unsigned int newprot );
-	int ( *sync ) ( MemArea_s *area, unsigned long, size_t, unsigned int flags );
-	void ( *advise ) ( MemArea_s *area, unsigned long, size_t, unsigned int advise );
-	unsigned long ( *nopage ) ( MemArea_s *area, iaddr_t address, bool bWriteAccess );
-	unsigned long ( *wppage ) ( MemArea_s *area, iaddr_t address, uint32 page );
-	int ( *swapout ) ( MemArea_s *, unsigned long, pte_t * );
-	  pte_t( *swapin ) ( MemArea_s *, iaddr_t nAddress, uint32 nPage );
+	void ( *unmap ) ( MemArea_s *area, uint32_t, size_t );
+	void ( *protect ) ( MemArea_s *area, uint32_t, size_t, unsigned int newprot );
+	int ( *sync ) ( MemArea_s *area, uint32_t, size_t, unsigned int flags );
+	void ( *advise ) ( MemArea_s *area, uint32_t, size_t, unsigned int advise );
+	uint32_t ( *nopage ) ( MemArea_s *area, uintptr_t address, bool bWriteAccess );
+	uint32_t ( *wppage ) ( MemArea_s *area, uintptr_t address, uint32 page );
+	int ( *swapout ) ( MemArea_s *, uint32_t, pte_t * );
+	  pte_t( *swapin ) ( MemArea_s *, uintptr_t nAddress, uint32 nPage );
 };
 
 
@@ -135,40 +135,40 @@ void empty_mem_context( MemContext_s *psCtx );
 void delete_mem_context( MemContext_s *psCtx );
 
 
-int load_area_page( MemArea_s *psArea, iaddr_t nAddress, bool bWriteAccess );
-int handle_copy_on_write( MemArea_s *psArea, pte_t * pPte, iaddr_t nVirtualAddress );
-uint32 memmap_no_page( MemArea_s *psArea, iaddr_t nAddress, bool bWriteAccess );
+int load_area_page( MemArea_s *psArea, uintptr_t nAddress, bool bWriteAccess );
+int handle_copy_on_write( MemArea_s *psArea, pte_t * pPte, uintptr_t nVirtualAddress );
+uint32_t memmap_no_page( MemArea_s *psArea, uintptr_t nAddress, bool bWriteAccess );
 int insert_area( MemContext_s *psCtx, MemArea_s *psArea );
 void remove_area( MemContext_s *psCtx, MemArea_s *psArea );
-int find_area( MemContext_s *psCtx, iaddr_t nAddress );
+int find_area( MemContext_s *psCtx, uintptr_t nAddress );
 
-uint32 find_unmapped_area( MemContext_s *psCtx, int nAllocMode, uint32 nSize, iaddr_t nAddress );
+uint32_t find_unmapped_area( MemContext_s *psCtx, int nAllocMode, uint32_t nSize, uintptr_t nAddress );
 
 int unmap_area( MemContext_s *psSegment, MemArea_s *psArea );
 
-MemArea_s *get_area( MemContext_s *psCtx, iaddr_t nAddress );
+MemArea_s *get_area( MemContext_s *psCtx, uintptr_t nAddress );
 MemArea_s *get_area_from_handle( area_id hArea );
-MemArea_s *verify_area( const void *pAddr, uint32 nSize, bool bWrite );
+MemArea_s *verify_area( const void *pAddr, uint32_t nSize, bool bWrite );
 int put_area( MemArea_s *psArea );
 
 int clone_page_pte( pte_t * pDst, pte_t * pSrc, bool bCow );
 void list_areas( MemContext_s *psSeg );
 
 
-int map_area_to_file( area_id hArea, File_s *psFile, uint32 nProt, off_t nOffset, size_t nLength );
+int map_area_to_file( area_id hArea, File_s *psFile, uint32_t nProt, off_t nOffset, size_t nLength );
 
 
-extern inline pte_t *pte_offset( pgd_t * dir, iaddr_t address )
+extern inline pte_t *pte_offset( pgd_t * dir, uintptr_t address )
 {
 	return ( ( pte_t * ) PGD_PAGE( *dir ) + ( ( address >> PAGE_SHIFT ) & ( PTRS_PER_PTE - 1 ) ) );
 }
 
-extern inline pgd_t *pgd_offset( MemContext_s *mm, iaddr_t address )
+extern inline pgd_t *pgd_offset( MemContext_s *mm, uintptr_t address )
 {
 	return ( mm->mc_pPageDir + ( address >> PGDIR_SHIFT ) );
 }
 
-extern inline void set_pte_address( pte_t * psPte, iaddr_t nAddress )
+extern inline void set_pte_address( pte_t * psPte, uintptr_t nAddress )
 {
 	PTE_VALUE( *psPte ) = ( PTE_VALUE( *psPte ) & ~PAGE_MASK ) | nAddress;
 }

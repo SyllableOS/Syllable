@@ -56,7 +56,7 @@ int sys_get_vesa_mode_info( VESA_Mode_Info_s * psVesaModeInfo, uint32 nModeNr )
 	}
 	if ( ( ( rm.EAX >> 8 ) & 0xff ) != 0 )
 	{
-		printk( "Error: sys_get_vesa_mode_info() function 0x4f01 failed with error code %ld\n", ( ( rm.EAX >> 8 ) & 0xff ) );
+		printk( "Error: sys_get_vesa_mode_info() function 0x4f01 failed with error code %d\n", ( ( rm.EAX >> 8 ) & 0xff ) );
 		return ( -EINVAL );
 	}
 	return ( 0 );

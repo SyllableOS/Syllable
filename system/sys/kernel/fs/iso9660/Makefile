@@ -42,5 +42,5 @@ dist: all
 	cp -f $(OBJDIR)/$(FS) $(DIST_DIR)/atheos/sys/drivers/fs/$(FS)
 
 clean:
-	rm $(OBJS) $(OBJDIR)/iso9660
+	rm -f $(OBJS) $(OBJDIR)/iso9660
 

@@ -20,7 +20,6 @@
 #ifndef __F_ATHEOS_SCHEDULE_H__
 #define __F_ATHEOS_SCHEDULE_H__
 
-#include <atheos/typedefs.h>
 #include <atheos/timer.h>
 #include <posix/types.h>
 #include <posix/resource.h>

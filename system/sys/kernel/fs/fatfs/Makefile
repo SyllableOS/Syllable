@@ -57,5 +57,5 @@ dist: all
 	cp -f $(OBJDIR)/fatfs $(DIST_DIR)/atheos/sys/drivers/fs/fatfs
 
 clean:
-	rm $(OBJS) $(OBJDIR)/fatfs
+	rm -f $(OBJS) $(OBJDIR)/fatfs
 

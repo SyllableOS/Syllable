@@ -43,22 +43,12 @@
 	
 
 _start:
-	fninit
+#	fninit                  # we don't need the fpu yet.
 	cmpl	$0x2BADB002,%eax
 	je	multiboot
-	movl	%cr0,%eax
-	andb	$0xfb,%al	# clear EM flag
-	orb	$0x22,%al	# set NE and MP flags
-	movl	%eax,%cr0
-
-	movl	%esp,%eax
-	movl	$g_anKernelStackEnd,%esp
-	
-	pushl	16(%eax)
-	pushl	12(%eax)
-	pushl	8(%eax)
-	pushl	4(%eax)
-	call	_C_SYM( init_kernel )
+# non multiboot code removed.  We now require GRUB to boot.
+1:      hlt
+        jmp 1b
 multiboot:
 	movl	%cr0,%eax
 	andb	$0xfb,%al	# clear EM flag
@@ -87,7 +77,7 @@ multiboot:
         outb	%al,$0xa0
         jmp	5f
 5:	
-        mov	$0x28,%al	# Seccond PIC start at vector 0x28
+        mov	$0x28,%al	# Second PIC start at vector 0x28
         outb	%al,$0xa1
         jmp	6f
 6:	
@@ -117,7 +107,7 @@ _C_SYM( v86Stack_off ):
 _C_SYM( irq0 ):                             # Do IRQs
 	pushl 	%eax
 	movb	$0x34,%al	# loop
- #	movb	$0x30,%al	# One shot
+#	movb	$0x30,%al	# One shot
 	outb	%al,$0x43
 	movb	$0x0f,%al
 	outb	%al,$0x40

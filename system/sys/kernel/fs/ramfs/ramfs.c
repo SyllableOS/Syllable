@@ -54,7 +54,7 @@ struct	FileNode
     int		fn_nSize;
     int		fn_nTime;
     int		fn_nLinkCount;
-    bool	fn_bIsLoaded;			/* TRUE between read_inode(), and write_inode() */
+    bool	fn_bIsLoaded;	// true between read_inode() and write_inode()
     char	fn_zName[ RFS_MAX_NAME_LEN ];
     char*	fn_pBuffer;
 };
@@ -389,8 +389,8 @@ static int rfs_read_inode( void* pVolume, ino_t nInodeNum, void** ppNode )
 	
     if ( NULL != psNode )
     {
-	kassertw( FALSE == psNode->fn_bIsLoaded );
-	psNode->fn_bIsLoaded = TRUE;
+	kassertw( false == psNode->fn_bIsLoaded );
+	psNode->fn_bIsLoaded = true;
 	*ppNode = psNode;
 	return( 0 );
     }
@@ -413,7 +413,7 @@ static int rfs_write_inode( void* pVolume, void* pNode )
     RDVolume_s* psVolume = pVolume;
     FileNode_s* psNode   = pNode;
 	
-    psNode->fn_bIsLoaded	= FALSE;
+    psNode->fn_bIsLoaded	= false;
 
     if ( 0 == psNode->fn_nLinkCount )
     {
@@ -493,7 +493,7 @@ static int rfs_rmdir( void* pVolume, void* pParentNode, const char* pzName, int 
 
 	kassertw( 0 == psNode->fn_nLinkCount );
 		
-	if ( FALSE == psNode->fn_bIsLoaded )
+	if ( false == psNode->fn_bIsLoaded )
 	{
 	    if ( NULL != psNode->fn_pBuffer ) {
 		kfree( psNode->fn_pBuffer );

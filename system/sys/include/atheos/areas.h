@@ -30,33 +30,34 @@ extern "C" {
 #endif
 
   /* Flags given to kmalloc() */
-#define MEMF_REAL   		0x00000002 /* memory located below 1M						*/
-#define	MEMF_USER		0x00000004 /* memory allocated for user-space areas				*/
-#define	MEMF_BUFFER		0x00000008 /* memory for disk-cache buffers					*/
-#define	MEMF_KERNEL		0x00000010 /* Kernel memory, must be supervisor					*/
-#define MEMF_OKTOFAILHACK	0x00000020 /* Ugly hack to let new fail-safe code avoid block forever when out of mem */
-#define	MEMF_PRI_MASK		0x000000ff
-#define	MEMF_NOBLOCK		0x00000100 /* make kmalloc fail rather than wait for pages to be swapped out	*/
-#define MEMF_CLEAR   		0x00010000 /* AllocMem: NULL out area before return				*/
-#define	MEMF_LOCKED		0x10000000 /* don't allow the memory to be swapped away				*/
+//#define MEMF_REAL   	    0x00000002 ///< memory located below 1M
+//#define MEMF_USER	    0x00000004 ///< memory allocated for user-space
+//#define MEMF_BUFFER	    0x00000008 ///< memory for disk-cache buffers
+#define	MEMF_KERNEL	    0x00000010 ///< Kernel memory, must be supervisor
+#define MEMF_OKTOFAILHACK   0x00000020 ///< Ugly hack to let new fail-safe code
+				       ///< avoid block forever when out of mem
+//#define MEMF_PRI_MASK	    0x000000ff
+#define	MEMF_NOBLOCK	    0x00000100 ///< make kmalloc fail rather than wait
+				       ///< for pages to be swapped out
+#define MEMF_CLEAR   	    0x00010000 ///< kmalloc: return a zero filled area
+#define	MEMF_LOCKED	    0x10000000 ///< memory is non-pageable
 
 
+/** Intel x86 has 4K pages */
 #define PAGE_SHIFT	12
 #define PAGE_SIZE	(1UL << PAGE_SHIFT)
 #define PAGE_MASK	(~(PAGE_SIZE-1))
 
-
+/** Intel x86 page directory manages 4MB page tables (1024 x 4K pages) */
 #define PGDIR_SHIFT	22
 #define PGDIR_SIZE	(1UL << PGDIR_SHIFT)
 #define PGDIR_MASK	(~(PGDIR_SIZE-1))
-
 
 /* to align the pointer to the (next) page boundary */
 #define PAGE_ALIGN(addr)	(((addr)+PAGE_SIZE-1)&PAGE_MASK)
 #define PAGE_NR(addr)		(((unsigned long)(addr)) >> PAGE_SHIFT)
 
-
-typedef unsigned long iaddr_t;
+//typedef unsigned long iaddr_t;	// changed to C99 type uintptr_t
 
 
 typedef enum {
@@ -66,13 +67,13 @@ typedef enum {
 
 typedef struct
 {
-    char    zName[64];
+    char    zName[OS_NAME_LENGTH];
     area_id hAreaID;
     size_t  nSize;
     int	    nLock;
-    uint32  nProtection;
+    uint32_t  nProtection;
     proc_id hProcess;
-    uint32  nAllocSize;
+    uint32_t  nAllocSize;
     void*   pAddress;
 } AreaInfo_s;
 
@@ -105,44 +106,50 @@ typedef struct
 #define	AREA_GROWSDOWN	0x0080
 #endif
 
-
-#define	AREA_FIRST_KERNEL_ADDRESS	0x00100000
-#define	AREA_LAST_KERNEL_ADDRESS	0x7fffffff
-#define	AREA_FIRST_USER_ADDRESS		0x80000000
-#define AREA_LAST_USER_ADDRESS		0xffffffff
+//  Moved to <atheos/tunables.h>
+//#define	AREA_FIRST_KERNEL_ADDRESS	0x00100000
+//#define	AREA_LAST_KERNEL_ADDRESS	0x7fffffff
+//#define	AREA_FIRST_USER_ADDRESS		0x80000000
+//#define	AREA_LAST_USER_ADDRESS		0xffffffff
 
 /*
  * Functions that can be used outside the area-handling code iteslf
  */
 
 #ifdef __KERNEL__
-area_id	create_area( const char* pzName, void** ppAddress, size_t nSize, size_t nMaxSize, uint32 nProtection, int nLock );
+area_id	create_area( const char* pzName, void** ppAddress, size_t nSize,
+		     size_t nMaxSize, flags_t nProtection, flags_t nLockMode );
+area_id	sys_create_area( const char* pzName, void** ppAddress, size_t nSize,
+			 flags_t nProtection, flags_t nLockMode );
 #else
-area_id	create_area( const char* pzName, void** ppAddress, size_t nSize, uint32 nProtection, int nLock );
+area_id	create_area( const char* pzName, void** ppAddress, size_t nSize,
+		     flags_t nProtection, flags_t nLockMode );
 #endif
 
-int alloc_area_list( uint32 nProtection, uint32 nLockMode, iaddr_t nAddress, uint32 nCount,
-		     const char* const * apzNames, uint32* panOffsets, uint32* panSizes, area_id* panAreas );
-status_t resize_area( area_id hArea, uint32 nNewSize, bool bAtomic );
-status_t remap_area( area_id nArea, void* pPhysAddress );
+__SYSCALL( status_t, delete_area( area_id hArea ) );
+__SYSCALL( status_t, remap_area( area_id nArea, void* pPhysAddress ) );
+__SYSCALL( area_id,  clone_area( const char* pzName, void** ppAddress, flags_t nProtection, flags_t nLockMode, area_id hSrcArea ) );
+__SYSCALL( status_t, get_area_info( area_id hArea, AreaInfo_s* psInfo ) );
 
-status_t  delete_area( area_id hArea );
-area_id	  clone_area( const char* pzName, void** ppAddress, uint32 nProtection, int nLockMode, area_id hSrcArea );
+status_t alloc_area_list( flags_t nProtection, flags_t nLockMode,
+			  uintptr_t nAddress, count_t nCount,
+			  const char *const *apzNames, size_t* panOffsets,
+			  size_t* panSizes, area_id* panAreas );
+status_t resize_area( area_id hArea, size_t nNewSize, bool bAtomic );
 
-status_t get_area_info( area_id hArea, AreaInfo_s* psInfo );
 void*	 get_area_address( area_id nArea );
-area_id  get_next_area( const area_id hArea );
-status_t get_area_physical_address( area_id hArea, iaddr_t* pnAddress );
+area_id  get_next_area( area_id hArea );
+status_t get_area_physical_address( area_id hArea, uintptr_t* pnAddress );
 
-int lock_mem_area( const void* pAddress, uint32 nSize, bool bWriteAccess );
-int unlock_mem_area( const void* pAddress, uint32 nSize );
+status_t lock_mem_area( const void* pAddress, size_t nSize, bool bWriteAccess );
+status_t unlock_mem_area( const void* pAddress, size_t nSize );
 
-int memcpy_to_user( void* pDst, const void* pSrc, int nSize );
-int memcpy_from_user( void* pDst, const void* pSrc, int nSize );
-int strncpy_from_user( char* pzDst, const char* pzSrc, int nLen );
-int strcpy_to_user( char* pzDst, const char* pzSrc );
-int strlen_from_user( const char* pzstring );
-int strndup_from_user( const char* pzSrc, int nMaxLen, char** ppzDst );
+status_t memcpy_to_user( void* pDst, const void* pSrc, size_t nSize );
+status_t memcpy_from_user( void* pDst, const void* pSrc, size_t nSize );
+status_t strncpy_from_user( char* pzDst, const char* pzSrc, size_t nLen );
+status_t strcpy_to_user( char* pzDst, const char* pzSrc );
+status_t strlen_from_user( const char* pzstring );
+status_t strndup_from_user( const char* pzSrc, size_t nMaxLen, char** ppzDst );
 
 
 

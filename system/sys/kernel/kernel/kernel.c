@@ -406,7 +406,7 @@ void panic( const char *pzFmt, ... )
 	va_start(args, pzFmt);
 	vsprintf( zBuf, pzFmt, args );
 	va_end(args);
-	printk( "kernel panic (%d) : %s\n", g_nDisableTS, zBuf );
+	printk( "kernel panic : %s\n", zBuf );
 
 /*    printk( "%p\n", __builtin_return_address(0) );
     printk( "%p\n", __builtin_return_address(1) );

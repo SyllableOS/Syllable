@@ -20,8 +20,6 @@
 #ifndef	__F_ATHEOS_THREADS_H__
 #define	__F_ATHEOS_THREADS_H__
 
-#include <atheos/typedefs.h>
-
 #include <atheos/types.h>
 
 #ifdef __cplusplus

@@ -87,7 +87,7 @@ bigtime_t get_system_time( void )
 	{
 		nSeq = read_seqbegin( &g_sTimerSeqLock );
 		nTime = g_sSysBase.ex_nRealTime - g_sSysBase.ex_nBootTime;
-		nTime += get_pit_offset();
+//		nTime += get_pit_offset();
 	}
 	while ( read_seqretry( &g_sTimerSeqLock, nSeq ) );
 
@@ -109,7 +109,7 @@ bigtime_t get_real_time( void )
 	{
 		nSeq = read_seqbegin( &g_sTimerSeqLock );
 		nTime = g_sSysBase.ex_nRealTime;
-		nTime += get_pit_offset();
+//		nTime += get_pit_offset();
 	}
 	while ( read_seqretry( &g_sTimerSeqLock, nSeq ) );
 
@@ -259,25 +259,19 @@ static void init_timer2( void )
 void TimerInterrupt( int dummy )
 {
 	bigtime_t nCurTime;
-	uint32 nFlg;
-
-	nFlg = cli();
 
 	if ( get_processor_id() != g_nBootCPU )
 	{
 		printk( "Got timer IRQ to CPU %d (Booted on %d)\n", get_processor_id(), g_nBootCPU );
-		put_cpu_flags( nFlg );
 		return;
 	}
 
 	outb( 0x20, PIC_MASTER_CMD );	/* Give handshake to interupt controller        */
 	
-	put_cpu_flags( nFlg );
-
-	nFlg = write_seqlock_disable( &g_sTimerSeqLock );
+	write_seqlock( &g_sTimerSeqLock );
 	g_sSysBase.ex_nRealTime += ( uint64 )( 1000000 / INT_FREQ );
 	nCurTime = g_sSysBase.ex_nRealTime - g_sSysBase.ex_nBootTime;
-	write_sequnlock_enable( &g_sTimerSeqLock, nFlg );
+	write_sequnlock( &g_sTimerSeqLock );
 
 	// TODO: move this to a separate thread
 	send_alarm_signals( nCurTime );
@@ -395,7 +389,7 @@ void get_cmos_time( void )
 	sys_SetTime( &sTime );
 	g_sSysBase.ex_nBootTime = g_sSysBase.ex_nRealTime;
 
-	printk( "TIME : %02ld-%02ld-%04ld %02ld:%02ld:%02ld\n", day, mon, year, hour, min, sec );
+	printk( "TIME : %02d-%02d-%04d %02d:%02d:%02d\n", day, mon, year, hour, min, sec );
 
 
 	a = 10000000000LL;

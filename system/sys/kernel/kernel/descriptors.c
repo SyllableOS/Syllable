@@ -48,7 +48,7 @@ bool Desc_SetBase( uint16 desc, uint32 base )
 	g_sSysBase.ex_GDT[desc].desc_bsl = base & 0xffff;
 	g_sSysBase.ex_GDT[desc].desc_bsm = ( base >> 16 ) & 0xff;
 	g_sSysBase.ex_GDT[desc].desc_bsh = ( base >> 24 ) & 0xff;
-	return ( TRUE );
+	return ( true );
 }
 
 /*****************************************************************************
@@ -92,7 +92,7 @@ bool Desc_SetLimit( uint16 desc, uint32 limit )
 	g_sSysBase.ex_GDT[desc].desc_lml = limit & 0xffff;
 	g_sSysBase.ex_GDT[desc].desc_lmh |= ( limit >> 16 ) & 0x0f;
 
-	return ( TRUE );
+	return ( true );
 }
 
 /*****************************************************************************
@@ -129,7 +129,7 @@ bool Desc_SetAccess( uint16 desc, uint8 acc )
 {
 	desc >>= 3;
 	g_sSysBase.ex_GDT[desc].desc_acc = acc;
-	return ( TRUE );
+	return ( true );
 }
 
 /*****************************************************************************
@@ -251,7 +251,7 @@ void init_descriptors()
 	Desc_SetLimit( 0x40, 0xffff );
 	Desc_SetBase( 0x40, ( uint32 )&g_sInitialTSS );
 	Desc_SetAccess( 0x40, 0x89 );
-	g_sSysBase.ex_GDT[0x40 << 3].desc_lmh &= 0x8f;	// TSS descriptor has bit 22 clear (as opposed to 32 bit data and code descriptors)
+	g_sSysBase.ex_GDT[0x40 >> 3].desc_lmh &= 0x8f;	// TSS descriptor has bit 22 clear (as opposed to 32 bit data and code descriptors)
 
 
 	IDT.Base = ( uint32 )g_sSysBase.ex_GDT;

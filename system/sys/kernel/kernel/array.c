@@ -33,7 +33,8 @@ static void *g_pMagic[256];
 static atomic_t g_nUsedMem = ATOMIC_INIT( 0 );
 static atomic_t g_nTotObjects = ATOMIC_INIT( 0 );
 
-static void dbg_print_stats( int argc, char **argv )
+static void dbg_print_stats( int argc		__attribute__ ((unused)),
+			     char **argv	__attribute__ ((unused)) )
 {
 	dbprintf( DBP_DEBUGGER, "Memory used: %d\n", atomic_read( &g_nUsedMem ) );
 	dbprintf( DBP_DEBUGGER, "Num objects: %d\n", atomic_read( &g_nTotObjects ) );
@@ -71,7 +72,7 @@ void MArray_Init( MultiArray_s * psArray )
 
 static void *ma_alloc_block( bool bNoBlock )
 {
-	uint32 nFlags = MEMF_KERNEL | MEMF_OKTOFAILHACK;
+	uint32_t nFlags = MEMF_KERNEL | MEMF_OKTOFAILHACK;
 
 	if ( bNoBlock )
 	{
@@ -93,7 +94,7 @@ static void ma_free_block( void *pBlock )
  * SEE ALSO:
  ****************************************************************************/
 
-void MArray_Destroy( MultiArray_s * psArray )
+void MArray_Destroy( MultiArray_s * psArray	__attribute__ ((unused)) )
 {
 }
 

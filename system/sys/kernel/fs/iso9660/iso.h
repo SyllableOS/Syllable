@@ -36,7 +36,7 @@
 
 #define calloc(a,b)  kmalloc( (a)*(b), MEMF_KERNEL | MEMF_OKTOFAILHACK | MEMF_CLEAR )
 #define free kfree
-#define malloc(a) kmalloc( (a), MEMF_KERNEL | MEMF_OKTOFAILHACK | MEMF_BUFFER )
+#define malloc(a) kmalloc( (a), MEMF_KERNEL | MEMF_OKTOFAILHACK )
 
 // ISO structure has both msb and lsb first data. These let you do a 
 // compile-time switch for different platforms.

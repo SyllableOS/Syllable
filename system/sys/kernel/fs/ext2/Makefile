@@ -41,5 +41,5 @@ dist: all
 	cp -f $(OBJDIR)/$(FS) $(DIST_DIR)/atheos/sys/drivers/fs/$(FS)
 
 clean:
-	rm $(OBJS) $(OBJDIR)/ext2
+	rm -f $(OBJS) $(OBJDIR)/ext2
 

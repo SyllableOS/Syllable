@@ -21,7 +21,6 @@
 #define __F_ATHEOS_ELF_H__
 
 #include <atheos/types.h>
-#include <atheos/typedefs.h>
 
 #ifdef __cplusplus
 extern "C" {

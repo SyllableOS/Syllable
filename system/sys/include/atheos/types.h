@@ -21,7 +21,17 @@
 #define	__F_ATHEOS_TYPES_H__
 
 #include <stddef.h>
+#ifdef __KERNEL__
+#include <atheos/stdint.h>		// kernel C99 integer types
+#else
+#include <stdint.h>			// C99 standard integer types
+#endif
 #include <posix/types.h>
+#ifndef __cplusplus
+#include <stdbool.h>			// C99 boolean type
+#endif
+
+#include <atheos/tunables.h>		// values which may be changed
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,79 +40,68 @@ extern "C" {
 #endif
 #endif
 
-typedef signed char		int8;	    /* signed 8-bit quantity */
-typedef signed short int	int16;	    /* signed 16-bit quantity */
-typedef signed long	int	int32;	    /* signed 32-bit quantity */
-
+/// old types ///
+typedef int8_t			int8;
+typedef int16_t			int16;
+typedef int32_t			int32;
+typedef int64_t			int64;
 typedef volatile int		vint;
-typedef volatile signed char	vint8;
-typedef volatile short		vint16;
-typedef volatile long		vint32;
+typedef volatile int8_t		vint8;
+typedef volatile int16_t	vint16;
+typedef volatile int32_t	vint32;
+typedef volatile int64_t	vint64;
+typedef uint8_t			uint8;
+typedef uint16_t		uint16;
+typedef uint32_t		uint32;
+typedef uint64_t		uint64;
+typedef volatile uint8_t	vuint8;
+typedef volatile uint16_t	vuint16;
+typedef volatile uint32_t	vuint32;
+typedef volatile uint64_t	vuint64;
+typedef unsigned int		uint;
+typedef unsigned char		uchar;
+/// end old types ///
 
+typedef	int_fast64_t		bigtime_t;
 
-typedef unsigned char		uint8;	  	/* unsigned 8-bit quantity */
-typedef unsigned short int	uint16;	  	/* unsigned 16-bit quantity */
-typedef unsigned long	int	uint32;		/* unsigned 32-bit quantity */
-#ifdef __KERNEL__
-typedef unsigned int		uint;		/* unsigned 32-bit quantity */
-#endif
+typedef	int_fast32_t		status_t;     ///< neg. numbers are error codes
+typedef uint_fast32_t           flags_t;      ///< default type for flag bits
+typedef uint_fast32_t           count_t;      ///< non-neg. count and loop vars
+typedef uint_fast32_t		irq_t;        ///< h/w IRQ number or INT number
+typedef int_fast32_t		handle_t;     ///< Handle to some kernel struct
 
-typedef volatile unsigned char	vuchar;
-typedef volatile unsigned char	vuint8;
-typedef volatile unsigned short	vuint16;
-typedef volatile unsigned long	vuint32;
-
-
-
-typedef signed long	long		int64;	    /* signed 64-bit quantity */
-typedef unsigned long	long		uint64;	    /* unsigned 64-bit quantity */
-typedef volatile long long		vint64;
-typedef volatile unsigned long long	vuint64;
-typedef	long long			bigtime_t;
-
-typedef unsigned char			uchar;
-
-
-#ifndef __cplusplus
-typedef char	bool;
-#if !defined(false) && !defined(true)
-enum {false,true};
-#endif
-#endif
-
-typedef	int	status_t;
-
-typedef	int	port_id;
-typedef	int	thread_id;	/* Process ID		*/
-typedef	int	proc_id;	/* Process ID		*/
-typedef	int	area_id;
-typedef	int	sem_id;
-typedef	int	timer_id;
-typedef	int	image_id;
-typedef int	fs_id;
+typedef uint_fast32_t		cpu_id;       ///< Processor ID
+typedef	int_fast32_t		port_id;      ///< Message Port ID
+typedef	int_fast32_t		thread_id;    ///< Thread ID
+typedef	int_fast32_t		proc_id;      ///< Process ID
+typedef	int_fast32_t		area_id;      ///< Area ID
+typedef	int_fast32_t		sem_id;       ///< Semaphore ID
+typedef	int_fast32_t		timer_id;     ///< Timer ID
+typedef	int_fast32_t		image_id;     ///< Image ID
+typedef int_fast32_t		fs_id;        ///< Filesystem ID
 
 /*
  * Make sure gcc doesn't try to be clever and move things around
  * on us. We need to use _exactly_ the address the user gave us,
  * not some alias that contains the same information.
  */
-typedef struct { volatile int counter; } atomic_t;
+typedef struct { volatile int_fast32_t counter; } atomic_t;
 
-#define	OS_NAME_LENGTH	64
+/// Maximum string length including NULL terminator.
+//#define	OS_NAME_LENGTH	64
 
 #define INFINITE_TIMEOUT		(9223372036854775807LL)
 
-#ifndef TRUE
-#define TRUE		1
-#endif
-#ifndef FALSE
-#define FALSE		0
+/// Declare both p() and kernel sys_p() prototypes.
+#ifdef __KERNEL__
+#define __SYSCALL(r,p)	r p;	r sys_ ## p;
+#else
+#define __SYSCALL(r,p)	r p;
 #endif
 
 #ifndef NULL
 #define NULL ((void*)0)
 #endif
-
 
 #ifdef __KERNEL__
 typedef void (*sighandler_t)(int);

@@ -29,9 +29,9 @@ extern "C"
 #endif
 #endif
 
-extern int g_nDisableTS;	/* Nesting counter for Forbid()/Permit() */
+//extern int g_nDisableTS;	/* Nesting counter for Forbid()/Permit() */
 extern bool g_bRootFSMounted;
-extern bool g_bKernelInitiated;
+extern bool g_bKernelInitialized;
 
 #ifdef __cplusplus
 }

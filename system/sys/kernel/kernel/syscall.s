@@ -28,8 +28,6 @@
 	.global	_C_SYM( probe )
 	.global	_C_SYM( ret_from_sys_call )
 	.global	_C_SYM( exit_from_sys_call )
-	.global	_C_SYM( g_nDisableTS )
-	
 
 	.global	_C_SYM( irq1 )
 	.global	_C_SYM( irq2 )
@@ -71,9 +69,7 @@
 	.global	_C_SYM( exc12 )
 	.global	_C_SYM( exc13 )
 
-_C_SYM( g_nDisableTS ):
-.long	0
-	
+
 #define	USER_DS		0x23
 #define	USER_CS		0x13
 #define	KERNEL_CS	0x08

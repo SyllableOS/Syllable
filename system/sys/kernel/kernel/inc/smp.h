@@ -261,7 +261,7 @@ int logical_to_physical_cpu_id( int nLogicalID );
 #define NO_PROC_ID		0xFF	/* No processor magic marker */
 
 
-void init_smp( bool bInitSMP );
+void init_smp( bool bInitSMP, bool bScanACPI );
 void boot_ap_processors( void );
 
 #define MSG_ALL_BUT_SELF	0x8000	/* Assume < 32768 CPU's */

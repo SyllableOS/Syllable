@@ -1000,7 +1000,7 @@ static status_t memmap_instance( ElfImageInst_s *psInst, int nMode )
 
 	if ( nTextStart + nMemTextSize > nDataStart )
 	{
-		printk( "memmap_instance() RO overlap RW (%08lx + %08lx -> %08lx)\n", nTextStart, nMemTextSize, nDataStart );
+		printk( "memmap_instance() RO overlap RW (%08x + %08x -> %08x)\n", nTextStart, nMemTextSize, nDataStart );
 		return ( -EINVAL );
 	}
 
@@ -1216,7 +1216,7 @@ static int do_reloc_image( ImageContext_s * psCtx, ElfImageInst_s *psInst, int n
 
 				if ( NULL != psDllSym )
 				{
-					printk( "R_386_COPY %d %d %08lx - %08lx\n", psDllSym->s_nSize, psSym->s_nSize, psDllSym->s_nAddress, psSym->s_nAddress );
+					printk( "R_386_COPY %d %d %08x - %08x\n", psDllSym->s_nSize, psSym->s_nSize, psDllSym->s_nAddress, psSym->s_nAddress );
 					printk( "Copy %d bytes from %p to %p\n", psDllSym->s_nSize, get_sym_address( psDllInst, psDllSym ), pTarget );
 					memcpy( pTarget, get_sym_address( psDllInst, psDllSym ), psDllSym->s_nSize );
 				}
@@ -2405,7 +2405,7 @@ void db_list_process_images( Process_s *psProc )
 			ElfImageInst_s *psInst = psCtx->ic_psInstances[i];
 			ElfImage_s *psImage = psInst->ii_psImage;
 
-			dbprintf( DBP_DEBUGGER, "%03d %02d %02d %08lx %08lx %04d %04d %s\n", i, atomic_read( &psInst->ii_nOpenCount ), atomic_read( &psInst->ii_nAppOpenCount ), psInst->ii_nTextAddress, psImage->im_nVirtualAddress, psImage->im_nSymCount, psImage->im_nRelocCount, psImage->im_zName );
+			dbprintf( DBP_DEBUGGER, "%03d %02d %02d %08x %08x %04d %04d %s\n", i, atomic_read( &psInst->ii_nOpenCount ), atomic_read( &psInst->ii_nAppOpenCount ), psInst->ii_nTextAddress, psImage->im_nVirtualAddress, psImage->im_nSymCount, psImage->im_nRelocCount, psImage->im_zName );
 		}
 	}
 	dbprintf( DBP_DEBUGGER, "\n" );

@@ -885,7 +885,7 @@ static bool detect_deadlock_thread( int hThread )
 
 	if ( NULL == psThread )
 	{
-		printk( "Error : detect_deadlock_thread() called width invalid thread %lx\n", hThread );
+		printk( "Error : detect_deadlock_thread() called width invalid thread %x\n", hThread );
 		return ( TRUE );
 	}
 
@@ -1698,7 +1698,7 @@ static status_t do_unlock_semaphore_ex( bool bKernel, sem_id hSema, int nCount )
 
 		if ( psSema->ss_lNestCount > 1 && psSema->ss_nFlags & SEM_WARN_DBL_UNLOCK )
 		{
-			printk( "Error: unlock_semaphore_ex() sem %s (%d) got count of %ld\n", psSema->ss_zName, hSema, psSema->ss_lNestCount );
+			printk( "Error: unlock_semaphore_ex() sem %s (%d) got count of %d\n", psSema->ss_zName, hSema, psSema->ss_lNestCount );
 		}
 
 #ifdef __DETECT_DEADLOCK
@@ -3586,9 +3586,9 @@ void dump_semaphore( Semaphore_s *psSema, bool bShort )
 	{
 	case SEMSTYLE_COUNTING:
 		if ( bShort )
-			dbprintf( DBP_DEBUGGER, "  Style: counting  Count: %ld  Flags: 0x%8.8lX Owner: %d\n", psSema->ss_lNestCount, psSema->ss_nFlags, psSema->ss_hHolder );
+			dbprintf( DBP_DEBUGGER, "  Style: counting  Count: %d  Flags: 0x%8.8X Owner: %d\n", psSema->ss_lNestCount, psSema->ss_nFlags, psSema->ss_hHolder );
 		else
-			dbprintf( DBP_DEBUGGER, "  Style: counting\n  Count: %ld\n  Flags: 0x%8.8lX\n  Owner: %d\n", psSema->ss_lNestCount, psSema->ss_nFlags, psSema->ss_hHolder );
+			dbprintf( DBP_DEBUGGER, "  Style: counting\n  Count: %d\n  Flags: 0x%8.8X\n  Owner: %d\n", psSema->ss_lNestCount, psSema->ss_nFlags, psSema->ss_hHolder );
 		break;
 
 	case SEMSTYLE_RWLOCK:
@@ -3608,7 +3608,7 @@ void dump_semaphore( Semaphore_s *psSema, bool bShort )
 
 			for ( psHolder = psRWLock->rw_psHolders; psHolder != NULL; psHolder = psHolder->rwh_psNext )
 			{
-				dbprintf( DBP_DEBUGGER, "    Thread %-6d:  %-3ld Read; %-3ld Write.\n", psHolder->rwh_hThreadId, psHolder->rwh_nReadCount, psHolder->rwh_nWriteCount );
+				dbprintf( DBP_DEBUGGER, "    Thread %-6d:  %-3d Read; %-3d Write.\n", psHolder->rwh_hThreadId, psHolder->rwh_nReadCount, psHolder->rwh_nWriteCount );
 			}
 		}
 		else

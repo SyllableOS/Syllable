@@ -73,7 +73,7 @@ static DeviceEntry_s g_asDevices[MAX_DEVICES];
  * SEE ALSO:
  ****************************************************************************/
 
-static int init_hash_table( HashTable_s * psTable )
+static status_t init_hash_table( HashTable_s * psTable )
 {
 	psTable->ht_nSize = HT_DEFAULT_SIZE;
 	psTable->ht_nMask = psTable->ht_nSize - 1;
@@ -99,41 +99,33 @@ static int init_hash_table( HashTable_s * psTable )
  * SEE ALSO:
  ****************************************************************************/
 
-static int resize_hash_table( HashTable_s * psTable )
+static status_t resize_hash_table( HashTable_s * psTable )
 {
-	int nPrevSize;
-	int nNewSize;
-	int nNewMask;
-	int i;
-	int nHash;
-	area_id hNewArea;
-	CacheBlock_s **pasNewTable;
-
 	if ( psTable->ht_nSize & psTable->ht_nMask )
 	{
 		panic( "bcache:resize_hash_table() Inconsistency between hashtable size %d and mask %d in bcache!\n", psTable->ht_nSize, psTable->ht_nMask );
 	}
 
-	nPrevSize = psTable->ht_nSize;
-	nNewSize = nPrevSize * 2;
-	nNewMask = nNewSize - 1;
-	pasNewTable = NULL;
+	int nPrevSize = psTable->ht_nSize;
+	int nNewSize = nPrevSize * 2;
+	int nNewMask = nNewSize - 1;
+	CacheBlock_s **pasNewTable = NULL;
 
-	hNewArea = create_area( "bcache_hash_table", ( void ** )&pasNewTable, nNewSize * sizeof( CacheBlock_s * ), nNewSize * sizeof( CacheBlock_s * ), AREA_ANY_ADDRESS | AREA_FULL_ACCESS | AREA_KERNEL, AREA_FULL_LOCK );
+	area_id hNewArea = create_area( "bcache_hash_table", ( void ** )&pasNewTable, nNewSize * sizeof( CacheBlock_s * ), nNewSize * sizeof( CacheBlock_s * ), AREA_ANY_ADDRESS | AREA_FULL_ACCESS | AREA_KERNEL, AREA_FULL_LOCK );
 
 	if ( hNewArea < 0 )
 	{
 		return ( -ENOMEM );
 	}
 
-	for ( i = 0; i < nPrevSize; ++i )
+	for ( count_t i = 0; i < nPrevSize; ++i )
 	{
 		CacheBlock_s *psEntry;
 		CacheBlock_s *psNext;
 
 		for ( psEntry = psTable->ht_apsTable[i]; NULL != psEntry; psEntry = psNext )
 		{
-			nHash = HASH( psEntry->cb_nDevice, psEntry->cb_nBlockNum ) & nNewMask;
+			int nHash = HASH( psEntry->cb_nDevice, psEntry->cb_nBlockNum ) & nNewMask;
 			psNext = psEntry->cb_psNextHash;
 
 			psEntry->cb_psNextHash = pasNewTable[nHash];
@@ -156,12 +148,11 @@ static int resize_hash_table( HashTable_s * psTable )
  * SEE ALSO:
  ****************************************************************************/
 
-int bc_hash_insert( HashTable_s * psTable, int nDev, off_t nBlockNum, CacheBlock_s *psBuffer )
+status_t bc_hash_insert( HashTable_s * psTable, dev_t nDev, off_t nBlockNum, CacheBlock_s *psBuffer )
 {
 	CacheBlock_s *psTmp;
-	int nHash;
 
-	nHash = HASH( nDev, nBlockNum ) & psTable->ht_nMask;
+	int nHash = HASH( nDev, nBlockNum ) & psTable->ht_nMask;
 
 	for ( psTmp = psTable->ht_apsTable[nHash]; psTmp != NULL; psTmp = psTmp->cb_psNextHash )
 	{
@@ -186,7 +177,6 @@ int bc_hash_insert( HashTable_s * psTable, int nDev, off_t nBlockNum, CacheBlock
 		resize_hash_table( psTable );
 	}
 	return ( 0 );
-
 }
 
 /*****************************************************************************
@@ -196,7 +186,7 @@ int bc_hash_insert( HashTable_s * psTable, int nDev, off_t nBlockNum, CacheBlock
  * SEE ALSO:
  ****************************************************************************/
 
-static void *hash_lookup( HashTable_s * psTable, int nDev, off_t nBlockNum )
+static void *hash_lookup( HashTable_s * psTable, dev_t nDev, off_t nBlockNum )
 {
 	int nHash = HASH( nDev, nBlockNum ) & psTable->ht_nMask;
 	CacheBlock_s *psEnt;
@@ -218,7 +208,7 @@ static void *hash_lookup( HashTable_s * psTable, int nDev, off_t nBlockNum )
  * SEE ALSO:
  ****************************************************************************/
 
-void *bc_hash_delete( HashTable_s * psTable, int nDev, off_t nBlockNum )
+void *bc_hash_delete( HashTable_s * psTable, dev_t nDev, off_t nBlockNum )
 {
 	int nHash = HASH( nDev, nBlockNum ) & psTable->ht_nMask;
 	CacheBlock_s *psTmp;
@@ -367,13 +357,12 @@ void bc_remove_from_list( CacheEntryList_s * psList, CacheBlock_s *psEntry )
  * SEE ALSO:
  ****************************************************************************/
 
-static CacheBlock_s *lookup_block( int nDev, off_t nBlockNum )
+static CacheBlock_s *lookup_block( dev_t nDev, off_t nBlockNum )
 {
 	CacheBlock_s *psBlock;
-	int i;
 	bool bWarned = false;
 
-	for ( i = 0;; ++i )
+	for ( count_t i = 0;; ++i )
 	{
 		psBlock = hash_lookup( &g_sBlockCache.bc_sHashTab, nDev, nBlockNum );
 		if ( NULL == psBlock )
@@ -461,14 +450,14 @@ static int cmp_blocks( const void *pBlk1, const void *pBlk2 )
  * SEE ALSO:
  ****************************************************************************/
 
-static int flush_block_list( CacheBlock_s **pasBlocks, int nCount )
+static status_t flush_block_list( CacheBlock_s **pasBlocks, count_t nCount )
 {
 	struct iovec pasIoVecs[BC_FLUSH_SIZE];
 	int nIoVecCnt = 0;
 	CacheBlock_s *psFirstBuffer;
 	CacheBlock_s *psPrevBuffer;
-	int nError = 0;
-	int i;
+	status_t nError = 0;
+	count_t i;
 
 	psPrevBuffer = NULL;
 	psFirstBuffer = pasBlocks[0];
@@ -503,11 +492,9 @@ static int flush_block_list( CacheBlock_s **pasBlocks, int nCount )
 		{
 			if ( psPrevBuffer->cb_nBlockNum - psFirstBuffer->cb_nBlockNum != nIoVecCnt - 1 )
 			{
-				int j;
-
-				for ( j = 0; j < nCount; j++ )
+				for ( count_t j = 0; j < nCount; j++ )
 				{
-					printk( "%d -> FLG=%02ld, RC=%02d, Num=%Ld\n", j, pasBlocks[j]->cb_nFlags, pasBlocks[j]->cb_nRefCount, pasBlocks[j]->cb_nBlockNum );
+					printk( "%d -> FLG=%02d, RC=%02d, Num=%Ld\n", j, pasBlocks[j]->cb_nFlags, pasBlocks[j]->cb_nRefCount, pasBlocks[j]->cb_nBlockNum );
 				}
 				panic( "flush_block_list:1() : Range %d - %d does not match with the length %d for node %d!\n", ( int )psFirstBuffer->cb_nBlockNum, ( int )psPrevBuffer->cb_nBlockNum, nIoVecCnt, i );
 			}
@@ -531,11 +518,9 @@ static int flush_block_list( CacheBlock_s **pasBlocks, int nCount )
 	{
 		if ( psPrevBuffer->cb_nBlockNum - psFirstBuffer->cb_nBlockNum != nIoVecCnt - 1 )
 		{
-			int j;
-
-			for ( j = 0; j < nCount; j++ )
+			for ( count_t j = 0; j < nCount; j++ )
 			{
-				printk( "%d -> FLG=%02ld, RC=%02d, Num=%Ld\n", j, pasBlocks[j]->cb_nFlags, pasBlocks[j]->cb_nRefCount, pasBlocks[j]->cb_nBlockNum );
+				printk( "%d -> FLG=%02d, RC=%02d, Num=%Ld\n", j, pasBlocks[j]->cb_nFlags, pasBlocks[j]->cb_nRefCount, pasBlocks[j]->cb_nBlockNum );
 			}
 			panic( "flush_block_list:2() : Range %d - %d does not match with the length %d for node%d!\n", ( int )psFirstBuffer->cb_nBlockNum, ( int )psPrevBuffer->cb_nBlockNum, nIoVecCnt, i );
 		}
@@ -569,7 +554,7 @@ static int flush_block_list( CacheBlock_s **pasBlocks, int nCount )
 		}
 	}
 
-	for ( i = 0; i < nCount; ++i )
+	for ( count_t i = 0; i < nCount; ++i )
 	{
 		if ( ( pasBlocks[i]->cb_nFlags & CBF_DIRTY ) == 0 )
 		{
@@ -587,11 +572,10 @@ static int flush_block_list( CacheBlock_s **pasBlocks, int nCount )
 
 void release_cache_blocks( void )
 {
-	CacheBlock_s *apsBlockList[BC_FLUSH_SIZE];	// FIXME : To much stack usage!!!!!!!!!!!
+	CacheBlock_s *apsBlockList[BC_FLUSH_SIZE];	// FIXME : Too much stack usage!!!!!!!!!!!
 	CacheBlock_s *psBlock;
-	int nCount = 0;
-	int nNumDirty = 0;
-	int i;
+	count_t nCount = 0;
+	count_t nNumDirty = 0;
 
 	for ( psBlock = g_sBlockCache.bc_sNormal.cl_psLRU; NULL != psBlock; psBlock = psBlock->cb_psNext )
 	{
@@ -626,7 +610,7 @@ void release_cache_blocks( void )
 		flush_block_list( apsBlockList, nCount );
 		LOCK( g_sBlockCache.bc_hLock );
 	}
-	for ( i = 0; i < nCount; ++i )
+	for ( count_t i = 0; i < nCount; ++i )
 	{
 		psBlock = apsBlockList[i];
 
@@ -639,10 +623,10 @@ void release_cache_blocks( void )
 	}
 }
 
-int shrink_block_cache( int nBytesNeeded )
+size_t shrink_block_cache( size_t nBytesNeeded )
 {
-	int nTotalFreed = 0;
-	int nRetries = 0;
+	size_t nTotalFreed = 0;
+	count_t nRetries = 0;
 
 	while ( nTotalFreed < nBytesNeeded && atomic_read( &g_sSysBase.ex_nBlockCacheSize ) > 0 )
 	{
@@ -651,7 +635,7 @@ int shrink_block_cache( int nBytesNeeded )
 		LOCK( g_sBlockCache.bc_hLock );
 		release_cache_blocks();
 
-		while ( ( nFreed = shrinc_cache_heaps( -1 ) ) == -EAGAIN )
+		while ( ( nFreed = shrink_cache_heaps( -1 ) ) == -EAGAIN )
 		{
 			UNLOCK( g_sBlockCache.bc_hLock );
 			snooze( 1000 );
@@ -678,15 +662,14 @@ int shrink_block_cache( int nBytesNeeded )
  * SEE ALSO:
  ****************************************************************************/
 
-static int read_block_list( int nDev, off_t nBlockNum, CacheBlock_s **apsList, int nCount, int nBlockSize )
+static status_t read_block_list( dev_t nDev, off_t nBlockNum, CacheBlock_s **apsList, count_t nCount, size_t nBlockSize )
 {
-	struct iovec asIoVecs[BC_FLUSH_SIZE];	// FIXME : To much stack usage!!!!!!!!!!!
-	int nError;
-	int i;
+	struct iovec asIoVecs[BC_FLUSH_SIZE];	// FIXME : Too much stack usage!!!!!!!!!!!
+	status_t nError;
 
 	kassertw( nCount <= BC_FLUSH_SIZE );
 
-	for ( i = 0; i < nCount; ++i )
+	for ( count_t i = 0; i < nCount; ++i )
 	{
 		kassertw( apsList[i]->cb_nFlags & CBF_BUSY );
 		kassertw( ( apsList[i]->cb_nFlags & CBF_DIRTY ) == 0 );
@@ -726,7 +709,7 @@ static void dump_list( CacheEntryList_s * psList )
  * SEE ALSO:
  ****************************************************************************/
 
-static CacheBlock_s *do_get_empty_block( int nDev, off_t nBlockNum, int nBlockSize )
+static CacheBlock_s *do_get_empty_block( dev_t nDev, off_t nBlockNum, size_t nBlockSize )
 {
 	CacheBlock_s *psBuffer;
 
@@ -784,7 +767,7 @@ static CacheBlock_s *do_get_empty_block( int nDev, off_t nBlockNum, int nBlockSi
 	return ( psBuffer );
 }
 
-void *get_empty_block( int nDev, off_t nBlockNum, int nBlockSize )
+void *get_empty_block( dev_t nDev, off_t nBlockNum, size_t nBlockSize )
 {
 	CacheBlock_s *psBuffer = NULL;
 
@@ -818,13 +801,12 @@ void *get_empty_block( int nDev, off_t nBlockNum, int nBlockSize )
  * SEE ALSO:
  ****************************************************************************/
 
-void *get_cache_block( int nDev, off_t nBlockNum, int nBlockSize )
+void *get_cache_block( dev_t nDev, off_t nBlockNum, size_t nBlockSize )
 {
 	CacheBlock_s *apsBlockList[BC_FLUSH_SIZE];
 	CacheBlock_s *psBuffer = NULL;
-	int nMaxReadahead = READAHEAD_SIZE / nBlockSize;
-	int nListSize = 0;
-	int i;
+	size_t nMaxReadahead = READAHEAD_SIZE / nBlockSize;
+	size_t nListSize = 0;
 
 	if ( nMaxReadahead > BC_FLUSH_SIZE )
 	{
@@ -857,7 +839,7 @@ void *get_cache_block( int nDev, off_t nBlockNum, int nBlockSize )
 	else
 	{
 		CacheBlock_s sGuardBlock;
-		int nNumNeeded;
+		count_t nNumNeeded;
 		off_t nReqBlock;
 		bool bBlocked;
 
@@ -946,7 +928,7 @@ void *get_cache_block( int nDev, off_t nBlockNum, int nBlockSize )
 		else if ( nListSize > nNumNeeded )
 		{
 			// Free excessive blocks
-			for ( i = nNumNeeded; i < nListSize; ++i )
+			for ( count_t i = nNumNeeded; i < nListSize; ++i )
 			{
 				free_cache_block( apsBlockList[i] );
 			}
@@ -954,7 +936,7 @@ void *get_cache_block( int nDev, off_t nBlockNum, int nBlockSize )
 		}
 
 		psBuffer = NULL;
-		for ( i = 0; i < nListSize; ++i )
+		for ( count_t i = 0; i < nListSize; ++i )
 		{
 			CacheBlock_s *psBlock = apsBlockList[i];
 
@@ -979,7 +961,7 @@ void *get_cache_block( int nDev, off_t nBlockNum, int nBlockSize )
 		read_block_list( nDev, nBlockNum, apsBlockList, nNumNeeded, nBlockSize );
 		LOCK( g_sBlockCache.bc_hLock );
 
-		for ( i = 0; i < nListSize; ++i )
+		for ( count_t i = 0; i < nListSize; ++i )
 		{
 			CacheBlock_s *psBlock = apsBlockList[i];
 
@@ -996,7 +978,7 @@ void *get_cache_block( int nDev, off_t nBlockNum, int nBlockSize )
 	// we might end up not using the already allocated blocks.
 	// We then must get rid of them here
 
-	for ( i = 0; i < nListSize; ++i )
+	for ( count_t i = 0; i < nListSize; ++i )
 	{
 		free_cache_block( apsBlockList[i] );
 	}
@@ -1020,11 +1002,10 @@ void *get_cache_block( int nDev, off_t nBlockNum, int nBlockSize )
  * SEE ALSO:
  ****************************************************************************/
 
-int mark_blocks_dirty( int nDev, off_t nBlockNum, int nBlockCount )
+status_t mark_blocks_dirty( dev_t nDev, off_t nBlockNum, size_t nBlockCount )
 {
 	CacheBlock_s *psBuffer = NULL;
-	int nError = 0;
-	int i;
+	status_t nError = 0;
 
 	lock_semaphore( g_sBlockCache.bc_hLock, SEM_NOSIG, INFINITE_TIMEOUT );
 
@@ -1041,7 +1022,7 @@ int mark_blocks_dirty( int nDev, off_t nBlockNum, int nBlockCount )
 		goto error;
 	}
 
-	for ( i = 0; i < nBlockCount; ++i )
+	for ( count_t i = 0; i < nBlockCount; ++i )
 	{
 		psBuffer = lookup_block( nDev, nBlockNum + i );
 
@@ -1069,18 +1050,19 @@ int mark_blocks_dirty( int nDev, off_t nBlockNum, int nBlockCount )
 /*****************************************************************************
  * NAME:
  * DESC:
- *	Register a callback with a set of chache blocks.
- *	The blocks are marked dirty, and gets their refrerence count
+ *	Register a callback with a set of cache blocks.
+ *	The blocks are marked dirty, and have their reference counts
  *	increased by one.
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/
 
-int set_blocks_info( int nDev, off_t *panBlocks, int nCount, bool bDoClone, cache_callback *pFunc, void *pArg )
+status_t set_blocks_info( dev_t nDev, off_t *panBlocks, size_t nCount,
+			  bool bDoClone  __attribute__ ((unused)),
+			  cache_callback *pFunc, void *pArg )
 {
 	CacheBlock_s *psBuffer;
-	int nError = 0;
-	int i;
+	status_t nError = 0;
 
 	lock_semaphore( g_sBlockCache.bc_hLock, SEM_NOSIG, INFINITE_TIMEOUT );
 
@@ -1091,7 +1073,7 @@ int set_blocks_info( int nDev, off_t *panBlocks, int nCount, bool bDoClone, cach
 		goto error;
 	}
 
-	for ( i = 0; i < nCount; ++i )
+	for ( count_t i = 0; i < nCount; ++i )
 	{
 		cache_callback *pOldFunc;
 		void *pOldArg;
@@ -1156,14 +1138,13 @@ int set_blocks_info( int nDev, off_t *panBlocks, int nCount, bool bDoClone, cach
  * SEE ALSO:
  ****************************************************************************/
 
-int write_logged_blocks( int nDev, off_t nBlockNum, const void *pBuffer, uint nCount, int nBlockSize, cache_callback *pFunc, void *pArg )
+status_t write_logged_blocks( dev_t nDev, off_t nBlockNum, const void *pBuffer, count_t nCount, size_t nBlockSize, cache_callback *pFunc, void *pArg )
 {
-	int nError = 0;
-	int i;
+	status_t nError = 0;
 
 	lock_semaphore( g_sBlockCache.bc_hLock, SEM_NOSIG, INFINITE_TIMEOUT );
 
-	for ( i = 0; i < nCount; ++i )
+	for ( count_t i = 0; i < nCount; ++i )
 	{
 		CacheBlock_s *psBlock = do_get_empty_block( nDev, nBlockNum + i, nBlockSize );
 
@@ -1213,7 +1194,7 @@ int write_logged_blocks( int nDev, off_t nBlockNum, const void *pBuffer, uint nC
  * SEE ALSO:
  ****************************************************************************/
 
-void release_cache_block( int nDev, off_t nBlockNum )
+void release_cache_block( dev_t nDev, off_t nBlockNum )
 {
 	CacheBlock_s *psBuffer;
 
@@ -1262,9 +1243,10 @@ void release_cache_block( int nDev, off_t nBlockNum )
  * SEE ALSO:
  ****************************************************************************/
 
-int read_phys_blocks( int nDev, off_t nBlockNum, void *pBuffer, uint nBlockCount, int nBlockSize )
+ssize_t read_phys_blocks( dev_t nDev, off_t nBlockNum, void *pBuffer,
+			  uint_fast32_t nBlockCount, size_t nBlockSize )
 {
-	int nError = 0;
+	ssize_t nError = 0;
 
 	if ( nDev < 0 || nDev >= MAX_DEVICES || g_asDevices[nDev].de_nBlockCount == 0 )
 	{
@@ -1281,10 +1263,8 @@ int read_phys_blocks( int nDev, off_t nBlockNum, void *pBuffer, uint nBlockCount
 
 	if ( nError >= 0 )
 	{
-		int i;
-
 		LOCK( g_sBlockCache.bc_hLock );
-		for ( i = 0; i < nBlockCount; ++i )
+		for ( count_t i = 0; i < nBlockCount; ++i )
 		{
 			CacheBlock_s *psBlock = lookup_block( nDev, nBlockNum + i );
 
@@ -1294,7 +1274,7 @@ int read_phys_blocks( int nDev, off_t nBlockNum, void *pBuffer, uint nBlockCount
 				{
 					printk( "Error: read_phys_blocks(%d,%d) block %d has a registered callback!\n", ( int )nBlockNum, nBlockCount, ( int )( nBlockNum + i ) );
 				}
-				memcpy( ( ( uint8 * )pBuffer ) + i * nBlockSize, CB_DATA( psBlock ), nBlockSize );
+				memcpy( ( ( uint8_t * )pBuffer ) + i * nBlockSize, CB_DATA( psBlock ), nBlockSize );
 			}
 		}
 		UNLOCK( g_sBlockCache.bc_hLock );
@@ -1310,9 +1290,10 @@ int read_phys_blocks( int nDev, off_t nBlockNum, void *pBuffer, uint nBlockCount
  * SEE ALSO:
  ****************************************************************************/
 
-int write_phys_blocks( int nDev, off_t nBlockNum, const void *pBuffer, uint nBlockCount, int nBlockSize )
+ssize_t write_phys_blocks( dev_t nDev, off_t nBlockNum, const void *pBuffer,
+			   count_t nBlockCount, size_t nBlockSize )
 {
-	int nError;
+	ssize_t nError;
 
 	if ( nDev < 0 || nDev >= MAX_DEVICES || g_asDevices[nDev].de_nBlockCount == 0 )
 	{
@@ -1329,10 +1310,8 @@ int write_phys_blocks( int nDev, off_t nBlockNum, const void *pBuffer, uint nBlo
 
 	if ( nError >= 0 )
 	{
-		int i;
-
 		LOCK( g_sBlockCache.bc_hLock );
-		for ( i = 0; i < nBlockCount; ++i )
+		for ( count_t i = 0; i < nBlockCount; ++i )
 		{
 			CacheBlock_s *psBlock = lookup_block( nDev, nBlockNum + i );
 
@@ -1342,7 +1321,7 @@ int write_phys_blocks( int nDev, off_t nBlockNum, const void *pBuffer, uint nBlo
 				{
 					printk( "Error: write_phys_blocks(%d,%d) block %d has a registered callback!\n", ( int )nBlockNum, nBlockCount, ( int )( nBlockNum + i ) );
 				}
-				memcpy( CB_DATA( psBlock ), ( ( uint8 * )pBuffer ) + i * nBlockSize, nBlockSize );
+				memcpy( CB_DATA( psBlock ), ( ( uint8_t * )pBuffer ) + i * nBlockSize, nBlockSize );
 
 				if ( psBlock->cb_nFlags & CBF_DIRTY )
 				{
@@ -1364,12 +1343,12 @@ int write_phys_blocks( int nDev, off_t nBlockNum, const void *pBuffer, uint nBlo
  * SEE ALSO:
  ****************************************************************************/
 
-int cached_read( int nDev, off_t nBlockNum, void *pBuffer, uint nBlockCount, int nBlockSize )
+status_t cached_read( dev_t nDev, off_t nBlockNum, void *pBuffer,
+		      count_t nBlockCount, size_t nBlockSize )
 {
-	int nError = 0;
-	int i;
+	status_t nError = 0;
 
-	for ( i = 0; i < nBlockCount; ++i )
+	for ( count_t i = 0; i < nBlockCount; ++i )
 	{
 		void *pBlock = get_cache_block( nDev, nBlockNum + i, nBlockSize );
 
@@ -1395,14 +1374,14 @@ int cached_read( int nDev, off_t nBlockNum, void *pBuffer, uint nBlockCount, int
  * SEE ALSO:
  ****************************************************************************/
 
-int cached_write( int nDev, off_t nBlockNum, const void *pBuffer, uint nBlockCount, int nBlockSize )
+status_t cached_write( dev_t nDev, off_t nBlockNum, const void *pBuffer,
+		       count_t nBlockCount, size_t nBlockSize )
 {
-	int nError = 0;
-	int i;
+	status_t nError = 0;
 
 	LOCK( g_sBlockCache.bc_hLock );
 
-	for ( i = 0; i < nBlockCount; ++i )
+	for ( count_t i = 0; i < nBlockCount; ++i )
 	{
 		CacheBlock_s *psBlock = do_get_empty_block( nDev, nBlockNum + i, nBlockSize );
 
@@ -1451,11 +1430,11 @@ int cached_write( int nDev, off_t nBlockNum, const void *pBuffer, uint nBlockCou
  * SEE ALSO:
  ****************************************************************************/
 
-int flush_device_cache( int nDevice, bool bOnlyLoggedBlocks )
+status_t flush_device_cache( dev_t nDevice, bool bOnlyLoggedBlocks )
 {
 	CacheBlock_s *pasIoList[BC_FLUSH_SIZE];
 	CacheBlock_s *psBuffer;
-	int i = 0;
+	count_t i = 0;
 
 	if ( nDevice < 0 || nDevice >= MAX_DEVICES || g_asDevices[nDevice].de_nBlockCount == 0 )
 	{
@@ -1490,13 +1469,11 @@ int flush_device_cache( int nDevice, bool bOnlyLoggedBlocks )
 
 		if ( i >= BC_FLUSH_SIZE )
 		{
-			int j;
-
 			qsort( pasIoList, BC_FLUSH_SIZE, sizeof( CacheBlock_s * ), cmp_blocks );
 			UNLOCK( g_sBlockCache.bc_hLock );
 			flush_block_list( pasIoList, BC_FLUSH_SIZE );
 			LOCK( g_sBlockCache.bc_hLock );	// No need to restart the iteration. The BUSY flag ensure the current node is not deleted.
-			for ( j = 0; j < BC_FLUSH_SIZE; ++j )
+			for ( count_t j = 0; j < BC_FLUSH_SIZE; ++j )
 			{
 				pasIoList[j]->cb_nFlags &= ~CBF_BUSY;
 			}
@@ -1506,12 +1483,11 @@ int flush_device_cache( int nDevice, bool bOnlyLoggedBlocks )
 	}
 	if ( i > 0 )
 	{
-		int j;
 		qsort( pasIoList, i, sizeof( CacheBlock_s * ), cmp_blocks );
 		UNLOCK( g_sBlockCache.bc_hLock );
 		flush_block_list( pasIoList, i );
 		LOCK( g_sBlockCache.bc_hLock );
-		for ( j = 0; j < i; ++j )
+		for ( count_t j = 0; j < i; ++j )
 		{
 			pasIoList[j]->cb_nFlags &= ~CBF_BUSY;
 		}
@@ -1522,12 +1498,11 @@ int flush_device_cache( int nDevice, bool bOnlyLoggedBlocks )
 }
 
 
-int flush_cache_block( int nDev, off_t nBlockNum )
+status_t flush_cache_block( dev_t nDev, off_t nBlockNum )
 {
 	CacheBlock_s *pasIoList[BC_FLUSH_SIZE];
 	CacheBlock_s *psBuffer;
-	int nCount = 1;
-	int i;
+	count_t nCount = 1;
 
 	if ( nDev < 0 || nDev >= MAX_DEVICES || g_asDevices[nDev].de_nBlockCount == 0 )
 	{
@@ -1554,7 +1529,7 @@ int flush_cache_block( int nDev, off_t nBlockNum )
 	}
 	psBuffer->cb_nFlags |= CBF_BUSY;
 
-	for ( i = 1; nCount < BC_FLUSH_SIZE; ++i )
+	for ( count_t i = 1; nCount < BC_FLUSH_SIZE; ++i )
 	{
 		psBuffer = lookup_block( nDev, nBlockNum + i );
 		if ( psBuffer == NULL || ( psBuffer->cb_nFlags & CBF_DIRTY ) == 0 )
@@ -1575,7 +1550,7 @@ int flush_cache_block( int nDev, off_t nBlockNum )
 		nCount++;
 		nBlockNum--;
 	}
-	for ( i = 0; i < nCount; ++i )
+	for ( count_t i = 0; i < nCount; ++i )
 	{
 		pasIoList[i] = hash_lookup( &g_sBlockCache.bc_sHashTab, nDev, nBlockNum + i );
 		if ( pasIoList[i] == NULL )
@@ -1587,7 +1562,7 @@ int flush_cache_block( int nDev, off_t nBlockNum )
 	UNLOCK( g_sBlockCache.bc_hLock );
 	flush_block_list( pasIoList, nCount );
 	LOCK( g_sBlockCache.bc_hLock );
-	for ( i = 0; i < nCount; ++i )
+	for ( count_t i = 0; i < nCount; ++i )
 	{
 		pasIoList[i]->cb_nFlags &= ~CBF_BUSY;
 	}
@@ -1596,11 +1571,9 @@ int flush_cache_block( int nDev, off_t nBlockNum )
 	return ( 0 );
 }
 
-int setup_device_cache( int nDevice, fs_id nFS, off_t nBlockCount )
+status_t setup_device_cache( dev_t nDevice, fs_id nFS, off_t nBlockCount )
 {
 	struct stat sStat;
-	int nError;
-	int i;
 
 	if ( nDevice < 0 || nDevice >= MAX_DEVICES )
 	{
@@ -1611,20 +1584,21 @@ int setup_device_cache( int nDevice, fs_id nFS, off_t nBlockCount )
 	{
 		return ( -EBUSY );
 	}
-	nError = fstat( nDevice, &sStat );
+	status_t nError = fstat( nDevice, &sStat );
 	if ( nError < 0 )
 	{
 		return ( nError );
 	}
 
 	LOCK( g_sBlockCache.bc_hLock );
-	for ( i = 0; i < MAX_DEVICES; ++i )
+	for ( count_t i = 0; i < MAX_DEVICES; ++i )
 	{
 		if ( g_asDevices[i].de_nBlockCount == 0 )
 		{
 			continue;
 		}
-		if ( g_asDevices[i].de_nDeviceID == sStat.st_dev && g_asDevices[i].de_nDeviceInode == sStat.st_ino )
+		if ( g_asDevices[i].de_nDeviceID == sStat.st_dev &&
+		     g_asDevices[i].de_nDeviceInode == sStat.st_ino )
 		{
 			nError = -EBUSY;
 			goto error;
@@ -1647,7 +1621,7 @@ int setup_device_cache( int nDevice, fs_id nFS, off_t nBlockCount )
  * SEE ALSO:
  ****************************************************************************/
 
-int shutdown_device_cache( int nDevice )
+status_t shutdown_device_cache( dev_t nDevice )
 {
 	CacheBlock_s *psBuffer;
 	bool bDoRetry = false;
@@ -1727,7 +1701,7 @@ void flush_block_cache( void )
 {
 	CacheBlock_s *pasIoList[BC_FLUSH_SIZE];
 	CacheBlock_s *psBuffer;
-	int i = 0;
+	count_t i = 0;
 
 	lock_semaphore( g_sBlockCache.bc_hLock, SEM_NOSIG, INFINITE_TIMEOUT );
 
@@ -1748,13 +1722,11 @@ void flush_block_cache( void )
 
 		if ( i >= BC_FLUSH_SIZE )
 		{
-			int j;
-
 			qsort( pasIoList, BC_FLUSH_SIZE, sizeof( CacheBlock_s * ), cmp_blocks );
 			UNLOCK( g_sBlockCache.bc_hLock );
 			flush_block_list( pasIoList, BC_FLUSH_SIZE );
 			LOCK( g_sBlockCache.bc_hLock );	// No need to restart the iteration. The BUSY flag ensure the current node is not deleted.
-			for ( j = 0; j < BC_FLUSH_SIZE; ++j )
+			for ( count_t j = 0; j < BC_FLUSH_SIZE; ++j )
 			{
 				pasIoList[j]->cb_nFlags &= ~CBF_BUSY;
 			}
@@ -1765,14 +1737,12 @@ void flush_block_cache( void )
 	}
 	if ( i > 0 )
 	{
-		int j;
-
 		qsort( pasIoList, i, sizeof( CacheBlock_s * ), cmp_blocks );
 		UNLOCK( g_sBlockCache.bc_hLock );
 		flush_block_list( pasIoList, i );
 		LOCK( g_sBlockCache.bc_hLock );
 
-		for ( j = 0; j < i; ++j )
+		for ( count_t j = 0; j < i; ++j )
 		{
 			pasIoList[j]->cb_nFlags &= ~CBF_BUSY;
 		}
@@ -1787,7 +1757,8 @@ void flush_block_cache( void )
  * SEE ALSO:
  ****************************************************************************/
 
-static int32 cache_flusher( void *pData )
+static status_t cache_flusher( void *pData )  __attribute__ ((noreturn)) ;
+static status_t cache_flusher( void *pData  __attribute__ ((unused)) )
 {
 	CacheBlock_s *psBuffer;
 	bigtime_t nLastFlushTime = get_system_time();
@@ -1795,9 +1766,9 @@ static int32 cache_flusher( void *pData )
 	for ( ;; )
 	{
 		CacheBlock_s *pasIoList[BC_FLUSH_SIZE];
-		int i = 0;
+		count_t i = 0;
 		bigtime_t nCurTime;
-		int nDev = -1;
+		dev_t nDev = -1;
 
 		if ( atomic_read( &g_sSysBase.ex_nDirtyCacheSize ) > 0 || atomic_read( &g_sSysBase.ex_nFreePageCount ) < 4096 )
 		{
@@ -1849,14 +1820,12 @@ static int32 cache_flusher( void *pData )
 		}
 		if ( i > 0 )
 		{
-			int j;
-
 			qsort( pasIoList, i, sizeof( CacheBlock_s * ), cmp_blocks );
 
 			UNLOCK( g_sBlockCache.bc_hLock );
 			flush_block_list( pasIoList, i );
 			LOCK( g_sBlockCache.bc_hLock );
-			for ( j = 0; j < i; ++j )
+			for ( count_t j = 0; j < i; ++j )
 			{
 				pasIoList[j]->cb_nFlags &= ~CBF_BUSY;
 			}
@@ -1864,11 +1833,10 @@ static int32 cache_flusher( void *pData )
 		if ( atomic_read( &g_sSysBase.ex_nFreePageCount ) < 4096 )
 		{
 			release_cache_blocks();
-			shrinc_cache_heaps( -1 );
+			shrink_cache_heaps( -1 );
 		}
 		UNLOCK( g_sBlockCache.bc_hLock );
 	}
-	return( 0 );
 }
 
 /*****************************************************************************
@@ -1878,7 +1846,7 @@ static int32 cache_flusher( void *pData )
  * SEE ALSO:
  ****************************************************************************/
 
-int shutdown_block_cache( void )
+status_t shutdown_block_cache( void )
 {
 	CacheBlock_s *psBuffer;
 

@@ -302,7 +302,7 @@ void *alloc_real( uint32 nSize, uint32 nFlags )
 	}
 	else
 	{
-		printk( "ERROR : alloc_real( %ld, %lx ) failed\n", nSize, nFlags );
+		printk( "ERROR : alloc_real( %d, %x ) failed\n", nSize, nFlags );
 	}
 
 	if ( nReturn == 0 )
@@ -402,7 +402,7 @@ void free_physical( uint32 nAddress )
 
 	if ( nReturn != 0 )
 	{
-		printk( "Error: free_physical() called width invalid address %lx\n", nAddress );
+		printk( "Error: free_physical() called width invalid address %x\n", nAddress );
 	}
 }
 

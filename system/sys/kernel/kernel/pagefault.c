@@ -40,7 +40,7 @@
  * SEE ALSO:
  ****************************************************************************/
 
-static uint32 find_clean_page( MemArea_s *psArea, pte_t * pDstPte, iaddr_t nAddress, off_t nOffset, bool bWriteAccess )
+static uint32 find_clean_page( MemArea_s *psArea, pte_t * pDstPte, uintptr_t nAddress, off_t nOffset, bool bWriteAccess )
 {
 	MemArea_s *psSrcArea;
 
@@ -95,12 +95,12 @@ static uint32 find_clean_page( MemArea_s *psArea, pte_t * pDstPte, iaddr_t nAddr
 
 		if ( bWriteAccess )
 		{
-			iaddr_t nPageAddr = PTE_PAGE( *pSrcPte );
-			iaddr_t nNewPage;
+			uintptr_t nPageAddr = PTE_PAGE( *pSrcPte );
+			uintptr_t nNewPage;
 
-			if ( nPageAddr == ( iaddr_t )g_sSysBase.ex_pNullPage )
+			if ( nPageAddr == ( uintptr_t )g_sSysBase.ex_pNullPage )
 			{
-				printk( "Panic: file-mapped area reference the global null-page for address %08lx (%08lx)!\n", ( iaddr_t )nSrcAddress, nAddress );
+				printk( "Panic: file-mapped area reference the global null-page for address %08x (%08x)!\n", ( uintptr_t )nSrcAddress, nAddress );
 				unlock_area( psSrcArea, LOCK_AREA_READ );
 				return ( 0 );
 			}
@@ -139,12 +139,12 @@ static uint32 find_clean_page( MemArea_s *psArea, pte_t * pDstPte, iaddr_t nAddr
  * SEE ALSO:
  ****************************************************************************/
 
-uint32 memmap_no_page( MemArea_s *psArea, iaddr_t nAddress, bool bWriteAccess )
+uint32 memmap_no_page( MemArea_s *psArea, uintptr_t nAddress, bool bWriteAccess )
 {
 	Process_s *psProc = CURRENT_PROC;
 	pgd_t *pPgd = pgd_offset( psProc->tc_psMemSeg, nAddress );
 	pte_t *pPte = pte_offset( pPgd, nAddress );
-	iaddr_t nNewPage;
+	uintptr_t nNewPage;
 	off_t nFileOffset;
 	int nSize;
 	size_t nBytesRead;
@@ -247,14 +247,14 @@ uint32 memmap_no_page( MemArea_s *psArea, iaddr_t nAddress, bool bWriteAccess )
  * SEE ALSO:
  ****************************************************************************/
 
-int handle_copy_on_write( MemArea_s *psArea, pte_t * pPte, iaddr_t nVirtualAddress )
+int handle_copy_on_write( MemArea_s *psArea, pte_t * pPte, uintptr_t nVirtualAddress )
 {
 	int nPageAddr = PTE_PAGE( *pPte );
 	Page_s *psPage = &g_psFirstPage[nPageAddr >> PAGE_SHIFT];
-	iaddr_t nNewPage;
+	uintptr_t nNewPage;
 
 	// COW of the global NULL page is very common, so we handle it specially.
-	if ( nPageAddr == ( iaddr_t )g_sSysBase.ex_pNullPage )
+	if ( nPageAddr == ( uintptr_t )g_sSysBase.ex_pNullPage )
 	{
 		Page_s *psNewPage;
 
@@ -276,7 +276,7 @@ int handle_copy_on_write( MemArea_s *psArea, pte_t * pPte, iaddr_t nVirtualAddre
 
 			for ( psTmp = psArea->a_psNextShared; psTmp != psArea; psTmp = psTmp->a_psNextShared )
 			{
-				iaddr_t nAddr = psTmp->a_nStart + nOffset;
+				uintptr_t nAddr = psTmp->a_nStart + nOffset;
 				pgd_t *pClPgd = pgd_offset( psTmp->a_psContext, nAddr );
 				pte_t *pClPte = pte_offset( pClPgd, nAddr );
 
@@ -353,7 +353,7 @@ int handle_copy_on_write( MemArea_s *psArea, pte_t * pPte, iaddr_t nVirtualAddre
  * SEE ALSO:
  ****************************************************************************/
 
-static MemArea_s *lookup_area( MemContext_s *psCtx, iaddr_t nAddress )
+static MemArea_s *lookup_area( MemContext_s *psCtx, uintptr_t nAddress )
 {
 	MemArea_s *psArea;
 	int nIndex;
@@ -382,13 +382,13 @@ static MemArea_s *lookup_area( MemContext_s *psCtx, iaddr_t nAddress )
 	return ( psArea );
 }
 
-static int handle_not_present( MemArea_s *psArea, pte_t * pPte, iaddr_t nAddress, bool bWriteAccess )
+static int handle_not_present( MemArea_s *psArea, pte_t * pPte, uintptr_t nAddress, bool bWriteAccess )
 {
 	int nError;
 
 	if ( PTE_ISPRESENT( *pPte ) )
 	{
-		printk( "handle_page_fault() not-present page at %08lx loaded by another thread\n", nAddress );
+		printk( "handle_page_fault() not-present page at %08x loaded by another thread\n", nAddress );
 		return ( 0 );
 	}
 	if ( PTE_PAGE( *pPte ) != 0 )
@@ -469,7 +469,7 @@ static int handle_not_present( MemArea_s *psArea, pte_t * pPte, iaddr_t nAddress
 	return ( nError );
 }
 
-static int handle_write_prot( MemArea_s *psArea, pte_t * pPte, iaddr_t nAddress )
+static int handle_write_prot( MemArea_s *psArea, pte_t * pPte, uintptr_t nAddress )
 {
 	if ( PTE_ISWRITE( *pPte ) )
 	{
@@ -493,7 +493,7 @@ static int handle_write_prot( MemArea_s *psArea, pte_t * pPte, iaddr_t nAddress 
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-int load_area_page( MemArea_s *psArea, iaddr_t nAddress, bool bWriteAccess )
+int load_area_page( MemArea_s *psArea, uintptr_t nAddress, bool bWriteAccess )
 {
 	MemContext_s *psCtx = psArea->a_psContext;
 	pgd_t *pPgd;
@@ -526,7 +526,7 @@ void handle_page_fault( SysCallRegs_s * psRegs, int nErrorCode )
 	pgd_t *pPgd;
 	pte_t *pPte;
 	MemArea_s *psArea = NULL;
-	iaddr_t nFaultAddr;
+	uintptr_t nFaultAddr;
 	bool bWriteAccess = ( nErrorCode & PFE_WRITE ) != 0;
 	int nError;
 
@@ -584,7 +584,7 @@ void handle_page_fault( SysCallRegs_s * psRegs, int nErrorCode )
 		// If it is a write access it might be a COW if not it is an access violation
 		if ( bWriteAccess == false )
 		{
-			printk( "*** PROTECTION VIOLATION WHILE ACCESSING ADDRESS %08lx ***\n", nFaultAddr );
+			printk( "*** PROTECTION VIOLATION WHILE ACCESSING ADDRESS %08x ***\n", nFaultAddr );
 			goto bad_pf;
 		}
 	}
@@ -593,22 +593,22 @@ void handle_page_fault( SysCallRegs_s * psRegs, int nErrorCode )
 
 	if ( psArea == NULL )
 	{
-		printk( "*** NO AREA FOR ADDRESS %08lx ***\n", nFaultAddr );
+		printk( "*** NO AREA FOR ADDRESS %08x ***\n", nFaultAddr );
 		goto bad_pf;
 	}
 	if ( psArea->a_nEnd < nFaultAddr )
 	{
-		printk( "*** NO AREA FOR ADDRESS %08lx ***\n", nFaultAddr );
+		printk( "*** NO AREA FOR ADDRESS %08x ***\n", nFaultAddr );
 		goto bad_pf;
 	}
 	if ( ( nErrorCode & PFE_USER ) && ( psArea->a_nProtection & AREA_KERNEL ) )
 	{
-		printk( "*** KERNEL AREA FOR ADDRESS %08lx ACCESSED FROM USER-SPACE\n", nFaultAddr );
+		printk( "*** KERNEL AREA FOR ADDRESS %08x ACCESSED FROM USER-SPACE\n", nFaultAddr );
 		goto bad_pf;
 	}
 	if ( psArea->a_bDeleted )
 	{
-		printk( "*** DELETED AREA %s ACCESSED AT ADDRESS %08lx\n", psArea->a_zName, nFaultAddr );
+		printk( "*** DELETED AREA %s ACCESSED AT ADDRESS %08x\n", psArea->a_zName, nFaultAddr );
 		goto bad_pf;
 	}
 
@@ -651,7 +651,7 @@ void handle_page_fault( SysCallRegs_s * psRegs, int nErrorCode )
 		put_area( psArea );
 	}
 
-	printk( "Invalid pagefault at %08lx (%s:%s:%s)\n", nFaultAddr, ( nErrorCode & PFE_PROTVIOL ) ? "PROTV" : "NOTP", ( nErrorCode & PFE_WRITE ) ? "WRITE" : "READ", ( nErrorCode & PFE_USER ) ? "USER" : "SUPER" );
+	printk( "Invalid pagefault at %08x (%s:%s:%s)\n", nFaultAddr, ( nErrorCode & PFE_PROTVIOL ) ? "PROTV" : "NOTP", ( nErrorCode & PFE_WRITE ) ? "WRITE" : "READ", ( nErrorCode & PFE_USER ) ? "USER" : "SUPER" );
 
 	UNLOCK( g_hAreaTableSema );
 	print_registers( psRegs );

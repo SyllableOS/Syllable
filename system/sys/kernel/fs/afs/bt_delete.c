@@ -376,7 +376,7 @@ static bool bt_join_right_to_left( const BNode_s *psParent, BNode_s *psLeft, bva
 			int16 *pnKeyIndexes = B_KEY_INDEX_OFFSET( psRight );
 			bvalue_t *apsValues = B_KEY_VALUE_OFFSET( psRight );
 
-			if( bt_will_key_fit( psLeft, pnKeyIndexes[0] ) == FALSE )
+			if( bt_will_key_fit( psLeft, pnKeyIndexes[0] ) == false )
 			{
 				break;
 			}

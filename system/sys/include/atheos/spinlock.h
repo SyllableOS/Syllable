@@ -27,8 +27,8 @@
 
 #include <atheos/smp.h>
 
-#ifdef __KERNEL__
-#include "inc/smp.h"
+#ifdef __BUILD_KERNEL__
+#include "inc/smp.h"		// pick up inline get_processor_id() function
 #endif
 
 #ifdef __cplusplus
@@ -42,18 +42,18 @@ extern "C" {
 
 typedef struct
 {
-  atomic_t sl_nLocked;
-  vint		    sl_nProc;
-  atomic_t sl_nNest;
-  const char*	    sl_pzName;
+  atomic_t		sl_nLocked;
+  volatile uint_fast32_t sl_nProc;
+  atomic_t 		sl_nNest;
+  const char*		sl_pzName;
 } SpinLock_s;
 
 
 #define SPIN_LOCK( var, name ) SpinLock_s var = { ATOMIC_INIT(0), -1, ATOMIC_INIT(0), name }
 
-#define INIT_SPIN_LOCK( name ) ((SpinLock_s){ ATOMIC_INIT(0), -1, ATOMIC_INIT(0), name })
+#define INIT_SPIN_LOCK( name ) { ATOMIC_INIT(0), -1, ATOMIC_INIT(0), name }
 
-extern inline void spinlock_init( SpinLock_s* psLock, const char* pzName )
+static inline void spinlock_init( SpinLock_s* psLock, const char* pzName )
 {
   atomic_set(&psLock->sl_nLocked, 0);
   psLock->sl_nProc   = -1;
@@ -61,9 +61,9 @@ extern inline void spinlock_init( SpinLock_s* psLock, const char* pzName )
   psLock->sl_pzName  = pzName;
 }
 
-extern inline int spinlock( SpinLock_s* psLock )
+static inline int spinlock( SpinLock_s* psLock )
 {
-    int	nProcID = get_processor_id();
+    uint_fast32_t nProcID = get_processor_id();
 
 #ifdef DEBUG_SPINLOCKS  
     kassertw( (get_cpu_flags() & EFLG_IF) == 0 );
@@ -93,7 +93,7 @@ extern inline int spinlock( SpinLock_s* psLock )
     return( 0 );
 }
 
-extern inline void spinunlock( SpinLock_s* psLock )
+static inline void spinunlock( SpinLock_s* psLock )
 {
 #ifdef DEBUG_SPINLOCKS  
   kassertw( atomic_read( &psLock->sl_nLocked ) >= 1 );
@@ -115,7 +115,7 @@ extern inline void spinunlock( SpinLock_s* psLock )
  */
 static inline int spin_trylock( SpinLock_s* psLock )
 {
-	int nProcID = get_processor_id();
+	uint_fast32_t nProcID = get_processor_id();
 
 #ifdef DEBUG_SPINLOCKS
 	kassertw( ( get_cpu_flags() & EFLG_IF ) == 0 );
@@ -140,18 +140,18 @@ static inline int spin_trylock( SpinLock_s* psLock )
 
 static inline int spinlock_disable( SpinLock_s* psLock )
 {
-  uint32 nFlg = cli();
+  uint32_t nFlg = cli();
   spinlock( psLock );
   return( nFlg );
 }
 
-static inline void spinunlock_enable( SpinLock_s* psLock, uint32 nFlg )
+static inline void spinunlock_enable( SpinLock_s* psLock, uint32_t nFlg )
 {
   spinunlock( psLock );
   put_cpu_flags( nFlg );
 }
 
-status_t  spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s* psLock, uint32 nCPUFlags, bigtime_t nTimeout );
+status_t  spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s* psLock, uint32_t nCPUFlags, bigtime_t nTimeout );
 
 #define spinlock_cli( lock, flags ) flags = cli(); spinlock( lock )
 #define spinunlock_restore( lock, flags ) spinunlock( lock ); put_cpu_flags( flags )

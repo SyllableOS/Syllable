@@ -55,7 +55,7 @@ struct FileNode
 	int fn_nMode;
 	int fn_nSize;
 	int fn_nLinkCount;
-	bool fn_bIsLoaded;	/* TRUE between read_inode(), and write_inode() */
+	bool fn_bIsLoaded;	///< true between read_inode() and write_inode()
 	char fn_zName[RFS_MAX_NAME_LEN];
 	char *fn_pzSymLinkPath;
 };
@@ -426,8 +426,8 @@ static int rfs_read_inode( void *pVolume, ino_t nInodeNum, void **ppNode )
 
 	if ( NULL != psNode )
 	{
-		kassertw( FALSE == psNode->fn_bIsLoaded );
-		psNode->fn_bIsLoaded = TRUE;
+		kassertw( false == psNode->fn_bIsLoaded );
+		psNode->fn_bIsLoaded = true;
 		*ppNode = psNode;
 		return ( 0 );
 	}
@@ -460,7 +460,7 @@ static int rfs_write_inode( void *pVolData, void *pNode )
 {
 	FileNode_s *psNode = pNode;
 
-	psNode->fn_bIsLoaded = FALSE;
+	psNode->fn_bIsLoaded = false;
 
 	if ( 0 == psNode->fn_nLinkCount )
 	{
@@ -569,7 +569,7 @@ static int rfs_rmdir( void *pVolData, void *pParentNode, const char *pzName, int
 
 		kassertw( 0 == psNode->fn_nLinkCount );
 
-		if ( FALSE == psNode->fn_bIsLoaded )
+		if ( false == psNode->fn_bIsLoaded )
 		{
 			printk( "rfs_rmdir() : Delete node <%s>\n", pzName );
 			if ( NULL != psNode->fn_pzSymLinkPath )
@@ -631,7 +631,7 @@ static int rfs_unlink( void *pVolData, void *pParentNode, const char *pzName, in
 
 		kassertw( 0 == psNode->fn_nLinkCount );
 
-		if ( FALSE == psNode->fn_bIsLoaded )
+		if ( false == psNode->fn_bIsLoaded )
 		{
 			printk( "rfs_unlink() : Delete node <%s>\n", pzName );
 			if ( NULL != psNode->fn_pzSymLinkPath )

@@ -25,7 +25,6 @@ extern "C" {
 #endif
 
 #include <atheos/types.h>
-#include <atheos/typedefs.h>
 
 #define	DEFAULT_PORT_SIZE		15
 

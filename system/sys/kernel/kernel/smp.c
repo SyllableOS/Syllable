@@ -100,6 +100,7 @@ void idle_loop( void )
 		apic_write( APIC_LVTT, APIC_LVT_TIMER_PERIODIC | INT_SCHEDULE );	// Make APIC local timer trig int INT_SCHEDULE
 		apic_write( APIC_TMICT, nAPICDiv );	// Start APIC timer
 	}
+	
 	sti();
 //  for(;;) Schedule();
 //  for(;;);
@@ -245,7 +246,7 @@ static void calibrate_apic_timer( int nProcessor )
 
 	g_asProcessorDescs[nProcessor].pi_nBusSpeed = ( uint32 )( ( uint64 )PIT_TICKS_PER_SEC * ( 0xffffffffLL - nAPICCount ) / 0xffff );
 	g_asProcessorDescs[nProcessor].pi_nCoreSpeed = ( uint32 )( ( uint64 )PIT_TICKS_PER_SEC * ( nEndPerf - nStartPerf ) / 0xffff );
-	printk( "CPU %d runs at %ld.%04ld / %ld.%04ld MHz\n", nProcessor, g_asProcessorDescs[nProcessor].pi_nBusSpeed / 1000000, ( g_asProcessorDescs[nProcessor].pi_nBusSpeed / 100 ) % 10000, g_asProcessorDescs[nProcessor].pi_nCoreSpeed / 1000000, ( g_asProcessorDescs[nProcessor].pi_nCoreSpeed / 100 ) % 10000 );
+	printk( "CPU %d runs at %d.%04d / %d.%04d MHz\n", nProcessor, g_asProcessorDescs[nProcessor].pi_nBusSpeed / 1000000, ( g_asProcessorDescs[nProcessor].pi_nBusSpeed / 100 ) % 10000, g_asProcessorDescs[nProcessor].pi_nCoreSpeed / 1000000, ( g_asProcessorDescs[nProcessor].pi_nCoreSpeed / 100 ) % 10000 );
 }
 
 /*****************************************************************************
@@ -493,7 +494,7 @@ static int smp_read_mpc( MpConfigTable_s * mpc )
 				if ( m->mpc_nFlags & MPC_APIC_USABLE )
 				{
 					apics++;
-					printk( "I/O APIC %d Version %d at 0x%08lX.\n", m->mpc_nAPICID, m->mpc_nAPICVer, m->mpc_nAPICAddress );
+					printk( "I/O APIC %d Version %d at 0x%08X.\n", m->mpc_nAPICID, m->mpc_nAPICVer, m->mpc_nAPICAddress );
 					g_nIoAPICAddr = m->mpc_nAPICAddress;
 				}
 				mpt += sizeof( *m );
@@ -695,21 +696,22 @@ static int smp_read_acpi_rsdt( uint32 nRsdt )
 		printk( "Error: smp_read_acpi_rsdt() failed to map the acpi rsdt table\n" );
 		return( 1 );
 	}
-	remap_area( hRsdtArea, (void*)nRsdt );
+	remap_area( hRsdtArea, (void*)( nRsdt & PAGE_MASK ) );
+	psRsdt = (AcpiRsdt_s*)( (uint32)psRsdt + ( nRsdt - ( nRsdt & PAGE_MASK ) ) );
 	
 	/* Check signature and checksum */
 	if ( strncmp( psRsdt->ar_sHeader.ath_anSignature, ACPI_RSDT_SIGNATURE, 4 ) )
 	{
 		printk( "Bad signature [%c%c%c%c].\n", psRsdt->ar_sHeader.ath_anSignature[0], psRsdt->ar_sHeader.ath_anSignature[1], psRsdt->ar_sHeader.ath_anSignature[2], psRsdt->ar_sHeader.ath_anSignature[3] );
 		delete_area( hRsdtArea );
-		return ( 1 );
+		return ( 0 );
 	}
 	
 	if ( mpf_checksum( ( unsigned char * )psRsdt, psRsdt->ar_sHeader.ath_nLength ) != 0 )
 	{
 		printk( "Checksum error.\n" );
 		delete_area( hRsdtArea );
-		return ( 1 );
+		return ( 0 );
 	}
 
 	printk( "OEM ID: %.6s Product ID: %.8s\n", psRsdt->ar_sHeader.ath_anOemId, psRsdt->ar_sHeader.ath_anOemTableId );
@@ -732,7 +734,7 @@ static int smp_read_acpi_rsdt( uint32 nRsdt )
 		if( hEntry < 0 )
 		{
 			printk( "Error: smp_read_acpi_rsdt() failed to map a rsdt entry\n" );
-			return( 1 );
+			return( 0 );
 		}
 		
 		remap_area( hEntry, (void*)( psRsdt->ar_nEntry[i] & PAGE_MASK ) );
@@ -754,7 +756,7 @@ static int smp_read_acpi_rsdt( uint32 nRsdt )
 			if( hMadt < 0 )
 			{
 				printk( "Error: smp_read_acpi_rsdt() failed to map the madt table\n" );
-				return( 1 );
+				return( 0 );
 			}
 			remap_area( hMadt, (void*)( psRsdt->ar_nEntry[i] & PAGE_MASK ) );
 			psMadt = (AcpiMadt_s*)( (uint32)psMadt + ( psRsdt->ar_nEntry[i] - ( psRsdt->ar_nEntry[i] & PAGE_MASK ) ) );
@@ -803,7 +805,7 @@ static int smp_read_acpi_rsdt( uint32 nRsdt )
 					{
 						AcpiMadtIoApic_s *psP = ( AcpiMadtIoApic_s * )psEntry;
 						nApics++;
-						printk( "I/O APIC %d at 0x%08lX.\n", psP->ami_nId, psP->ami_nAddr );
+						printk( "I/O APIC %d at 0x%08X.\n", psP->ami_nId, psP->ami_nAddr );
 						g_nIoAPICAddr = psP->ami_nAddr;
 					}
 					break;
@@ -841,7 +843,7 @@ static int smp_scan_acpi_config( void *pBase, uint nSize )
 	int nProcessorCount = 0;
 
 	for ( psRsdp = ( AcpiRsdp_s * ) pBase; nSize > 0;
-	      psRsdp = ( AcpiRsdp_s * )( ((uint8*)psRsdp) + 16 ), nSize -= 16 )
+	      psRsdp = ( AcpiRsdp_s * )( ((uint8_t*)psRsdp) + 16 ), nSize -= 16 )
 	{
 		if ( strncmp( ( char* )psRsdp->ar_anSignature, ACPI_RSDP_SIGNATURE, 8 ) )
 		{
@@ -859,6 +861,11 @@ static int smp_scan_acpi_config( void *pBase, uint nSize )
 		}
 
 		nProcessorCount = smp_read_acpi_rsdt( psRsdp->ar_nRsdt );
+		
+		if( nProcessorCount == 0 )
+		{
+			return( 0 );
+		}
 
 		printk( "Processors: %d\n", nProcessorCount );
 
@@ -1134,26 +1141,10 @@ void smp_boot_cpus( void )
 			g_anLogicToRealID[nID++] = i;
 		}
 	}
-	printk( "Total of %d processors activated (%lu.%02lu BogoMIPS).\n", nCPUCount + 1, nBogoSum / ( 500000 / INT_FREQ ), ( nBogoSum / ( 5000 / INT_FREQ ) ) % 100 );
+	printk( "Total of %d processors activated (%u.%02u BogoMIPS).\n", nCPUCount + 1, nBogoSum / ( 500000 / INT_FREQ ), ( nBogoSum / ( 5000 / INT_FREQ ) ) % 100 );
 	g_nActiveCPUCount = nCPUCount + 1;
 }
 
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
-void flush_tlb_global( void )
-{
-	flush_tlb();
-	if ( g_nActiveCPUCount > 1 )
-	{
-		send_ipi( MSG_ALL_BUT_SELF, APIC_DEST_DM_FIXED, INT_INVAL_PGT );
-	}
-}
 
 /*****************************************************************************
  * NAME:
@@ -1177,11 +1168,8 @@ void apic_eoi( void )
 
 void do_smp_invalidate_pgt( SysCallRegs_s * psRegs, int nIrqNum )
 {
-	uint32 nFlg = cli();
-
-	flush_tlb();
 	apic_eoi();
-	put_cpu_flags( nFlg );
+	flush_tlb();
 }
 
 /*****************************************************************************
@@ -1205,12 +1193,7 @@ void do_smp_spurious_irq( SysCallRegs_s * psRegs, int nIrqNum )
 
 void do_smp_preempt( SysCallRegs_s * psRegs, int nIrqNum )
 {
-	uint32 nFlg = cli();
-
 	apic_eoi();
-	put_cpu_flags( nFlg );
-
-//  wake_up_sleepers();
 	Schedule();
 }
 
@@ -1221,7 +1204,7 @@ void do_smp_preempt( SysCallRegs_s * psRegs, int nIrqNum )
  * SEE ALSO:
  ****************************************************************************/
 
-void init_smp( bool bInitSMP )
+void init_smp( bool bInitSMP, bool bScanACPI )
 {
 	bool bFound = false;
 	int i;
@@ -1243,13 +1226,16 @@ void init_smp( bool bInitSMP )
 			0, 0
 		};
 
-		printk( "Scan memory for ACPI SMP config tables...\n" );
-		
-		for ( i = 0; bFound == false && anAcpiConfigAreas[i + 1] > 0; i += 2 )
+		if( bScanACPI )
 		{
-			bFound = smp_scan_acpi_config( ( void * )anAcpiConfigAreas[i], anAcpiConfigAreas[i + 1] );
-			if( bFound )
-				break;
+			printk( "Scan memory for ACPI SMP config tables...\n" );
+		
+			for ( i = 0; bFound == false && anAcpiConfigAreas[i + 1] > 0; i += 2 )
+			{
+				bFound = smp_scan_acpi_config( ( void * )anAcpiConfigAreas[i], anAcpiConfigAreas[i + 1] );
+				if( bFound )
+					break;
+			}
 		}
 		
 		if( !bFound )
@@ -1341,11 +1327,27 @@ void boot_ap_processors( void )
 			Desc_SetLimit( g_asProcessorDescs[i].pi_nGS, TLD_SIZE );
 			Desc_SetBase( g_asProcessorDescs[i].pi_nGS, 0 );
 			Desc_SetAccess( g_asProcessorDescs[i].pi_nGS, 0xf2 );
-			printk( "CPU #%d got GS=%ld\n", i, g_asProcessorDescs[i].pi_nGS );
+			printk( "CPU #%d got GS=%d\n", i, g_asProcessorDescs[i].pi_nGS );
 		}
 	}
 }
 
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+
+void flush_tlb_global( void )
+{
+	flush_tlb();
+	if ( g_nActiveCPUCount > 1 )
+	{
+		send_ipi( MSG_ALL_BUT_SELF, APIC_DEST_DM_FIXED, INT_INVAL_PGT );
+	}
+}
 
 int logical_to_physical_cpu_id( int nLogicalID )
 {

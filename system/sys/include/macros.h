@@ -26,19 +26,21 @@
 #define	CHANGEBITS( d, m, f ) ( (d) = (f) ? ((d) | (m)) : ((d) & ~(m)) ) /* Set bits if f == TRUE clear otherwise*/
 
 #define BITSIZE(n)      (((n) + 31) & ~31)
-#define SETBIT(a,i,v)   *(((uint32*)(a))+(i)/32) = (*(((uint32*)(a))+(i)/32) & ~(1<<((i)%32))) | (v<<((i)%32))
-#define GETBIT(a,i)     ((*(((uint32*)(a))+(i)/32) & (1<<((i)%32))) >> ((i)%32))
+#define SETBIT(a,i,v)   *(((uint32_t*)(a))+(i)/32) = (*(((uint32_t*)(a))+(i)/32) & ~(1<<((i)%32))) | (v<<((i)%32))
+#define GETBIT(a,i)     ((*(((uint32_t*)(a))+(i)/32) & (1<<((i)%32))) >> ((i)%32))
 
 #define	ABS(a)	(((a)>=0) ? (a) : (-(a)))
-#define	SUMADR(a,b)	((void*)(((uint32)(a))+((uint32)(b))))
+#define	SUMADR(a,b)	((void*)(((uintptr_t)(a))+((uintptr_t)(b))))
 
 #define	min(a,b)	(((a)<(b)) ? (a) : (b) )
 #define	max(a,b)	(((a)>(b)) ? (a) : (b) )
 
 #if ( __GNUC__ >= 3 )
 #define __likely( expr )	__builtin_expect( !!(expr), 1 )
+#define __unlikely( expr )	__builtin_expect( !!(expr), 0 )
 #else
 #define __likely( expr )	(expr)
+#define __unlikely( expr )	(expr)
 #endif
 
 #ifdef __KERNEL__

@@ -26,6 +26,7 @@
 #include <posix/utime.h>
 #include <posix/time.h>
 #include <posix/limits.h>
+#include <posix/select.h>
 
 #include <atheos/types.h>
 #include <atheos/kernel.h>

@@ -1,3 +1,19 @@
+* March 14 2005, Jake Hamby *
+
+Updated to Build 0007.  Commented out the microsecond precision code for
+performance reasons.  Integrated Arno's SMP fixes and the kernel now boots
+correctly on my Pentium 4 with SMP enabled.  Other fixes:
+
+    * Fixed <atheos/spinlock.h> bug which prevented the devices from building.
+    * Added C99 type support and updated areas.c and bcache.c with the new
+	C99 types (the other kernel files will be updated later).
+    * Removed compiler warnings for mismatched printf types (%ld -> %d).
+    * Updated kernel printf() to support %z (C99 size_t type) and fixed
+	%p handling to print the leading "0x" in conformance with standard.
+    * Removed MEMF_BUFFER flag to kmalloc() which didn't do anything.
+    * Removed global g_nDisableTS which was not being used.
+    * Changed g_bKernelInitiated to g_bKernelInitialized.
+
 * March 1 2005, Arno Klenke *
 
 Enabled nodemonitoring in the fat fs driver.

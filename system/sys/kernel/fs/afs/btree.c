@@ -1439,7 +1439,7 @@ static bool bt_merge_node( AfsInode_s * psInode, BNode_s *psDstNode, const BNode
 		}
 		bt_assert_valid_node( psDstNode );
 
-		if( bt_will_key_fit( psDstNode, nCurKeySize ) == FALSE )
+		if( bt_will_key_fit( psDstNode, nCurKeySize ) == false )
 		{
 			break;
 		}

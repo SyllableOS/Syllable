@@ -231,7 +231,7 @@ int vsprintf( char *buf, const char *fmt, va_list args )
 
 		/* get the conversion qualifier */
 		qualifier = -1;
-		if ( *fmt == 'h' || *fmt == 'l' || *fmt == 'L' )
+		if ( *fmt == 'h' || *fmt == 'l' || *fmt == 'L' || *fmt == 'z' )
 		{
 			qualifier = *fmt;
 			++fmt;
@@ -275,6 +275,11 @@ int vsprintf( char *buf, const char *fmt, va_list args )
 				field_width = 2 * sizeof( void * );
 				flags |= ZEROPAD;
 			}
+			else
+			{
+				field_width -= 2;	// "0x"
+			}
+			*str++ = '0';  *str++ = 'x';
 			str = number( str, ( unsigned long )va_arg( args, void * ), 16, field_width, precision, flags );
 
 			continue;

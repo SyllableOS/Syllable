@@ -94,7 +94,7 @@ void validate_page_list( void )
 	}
 }
 
-void protect_phys_pages( iaddr_t nAddress, int nCount )
+void protect_phys_pages( uintptr_t nAddress, int nCount )
 {
 	int i;
 
@@ -108,7 +108,7 @@ void protect_phys_pages( iaddr_t nAddress, int nCount )
 	}
 }
 
-void unprotect_phys_pages( iaddr_t nAddress, int nCount )
+void unprotect_phys_pages( uintptr_t nAddress, int nCount )
 {
 	int i;
 
