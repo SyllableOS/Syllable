@@ -1,0 +1,20 @@
+* Aug 3rd 2002, Kristian Van Der Vliet *
+
+Aplied a series of patches from Henrik Isaksson, which adds a "Grayed out" look to
+disabled controls.  The following files have been patched:
+
+	sys/appserver/libatheos/gui/checkbox.cpp
+	sys/appserver/libatheos/gui/dropdownmenu.cpp
+	sys/appserver/libatheos/gui/radiobutton.cpp
+	sys/appserver/libatheos/gui/scrollbar.cpp
+	sys/appserver/libatheos/gui/slider.cpp
+	sys/appserver/libatheos/gui/textview.cpp
+
+	sys/include/gui/scrollbar.h
+
+* Aug 3rd 2002, Kristian Van Der Vliet *
+
+	The sub-menu arrow is now drawn corretly, and menus which have children
+	are now drawn slightly larger to allow for the arrow.
+
+

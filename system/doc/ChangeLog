@@ -1,3 +1,11 @@
+* Jul 28 2002, Kristian Van Der Vliet *
+
+Added upgrade tarball build scripts in build-tools/
+
+* Jul 28 2002, Kristian Van Der Vliet *
+
+Created ChangeLog.Kernel, ChangeLog.UI & ChangeLog.Desktop
+
 * Jul 11 2002, Kristian Van Der Vliet *
 
 Restructure and fix libs/compat-1.0, all of the libraries are kept within a tarball in
