@@ -30,7 +30,8 @@ class EditView : public TextView
 	public:
 		EditView(const Rect& cFrame);
 		void AttachedToWindow(void);
-		void MouseDown(const Point& cPosition, uint32 nButtons); 
+		void MouseDown(const Point& cPosition, uint32 nButtons);
+		void KeyDown(const char* pzString, const char* pzRawString, uint32 nQualifiers);
 		int Find(std::string zOriginal, std::string zFind, bool bCaseSensitive, int nStartPosition);
 		void Undo(void);
 		void Redo(void);

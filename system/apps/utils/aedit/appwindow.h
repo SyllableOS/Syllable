@@ -37,7 +37,6 @@ class AEditWindow : public Window
 {
 	public:
 		AEditWindow(const Rect& cFrame);
-		virtual void DispatchMessage(Message* pcMessage, Handler* pcHandler);
 		virtual void HandleMessage(Message* pcMessage);
 		virtual bool OkToQuit(void);
 		void LoadOnStart(char* pzFilename);
@@ -45,7 +44,6 @@ class AEditWindow : public Window
 	private:
 		void Load(char* pzFileName);
 		void Save(const char* pzFileName);
-		bool MapKey(const char* pzString, int32 nQualifiers);
 
 		LayoutView* pcAppWindowLayout;
 		VLayoutNode* pcVLayoutRoot;

@@ -25,6 +25,7 @@
 #include <gui/window.h>
 #include <gui/requesters.h>
 #include <gui/font.h>
+#include <gui/checkmenu.h>
 
 #include <util/invoker.h>
 #include <util/application.h>
@@ -186,9 +187,12 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", "AE
 		}
 	}
 
+	bSaveOnExit=pcSettings->GetSaveOnExit();
+
 	// Create the Settings menu
 	pcSettingsMenu=new Menu(Rect(0,0,1,1),"Settings",ITEMS_IN_COLUMN);
-	pcSettingsMenu->AddItem("Save settings on Close",new Message(M_MENU_SETTINGS_SAVE_ON_CLOSE));
+	pcSettingsMenu->AddItem(new CheckMenu("Save settings on Close",new Message(M_MENU_SETTINGS_SAVE_ON_CLOSE), bSaveOnExit));
+	pcSettingsMenu->AddItem(new MenuSeparator());
 	pcSettingsMenu->AddItem("Save settings now",new Message(M_MENU_SETTINGS_SAVE_NOW));
 	pcSettingsMenu->AddItem("Reset settings", new Message(M_MENU_SETTINGS_RESET));
 
@@ -208,8 +212,6 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", "AE
 	pcMenuBar->SetTargetForItems(this);
 	AddChild(pcMenuBar);
 
-	bSaveOnExit=pcSettings->GetSaveOnExit();
-
 	// Set the window title etc.
 	zWindowTitle=AEDIT_RELEASE_STRING;
 	zWindowTitle+=" : New File";
@@ -228,25 +230,6 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", "AE
 	pcEditView->MakeFocus();
 }
 
-void AEditWindow::DispatchMessage(Message* pcMessage, Handler* pcHandler)
-{
-	bool bPassOn=true;
-
-	// Check for a posible shortcut key
-	if(pcMessage->GetCode()==M_KEY_DOWN)
-	{
-		std::string zRaw;
-		int32 nQual=0;
-
-		if(pcMessage->FindString("_raw_string", &zRaw)==0 && pcMessage->FindInt32("_qualifiers", &nQual)==0)
-			bPassOn=MapKey(zRaw.c_str(),nQual);
-	}
-
-	// Pass on the Message to the base class (If the MapKey() method lets us)
-	if(bPassOn)
-		Window::DispatchMessage(pcMessage, pcHandler);
-}
-
 void AEditWindow::HandleMessage(Message* pcMessage)
 {
 	switch(pcMessage->GetCode())	//Get the message code from the message
@@ -263,7 +246,7 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 			zAboutTitle+=AEDIT_RELEASE_STRING;
 
 			std::string zAboutText=AEDIT_RELEASE_STRING;
-			zAboutText+="\n\nText Editor for Atheos\nCopyright 2000-2002 Kristian Van Der Vliet\n\nAEdit is released under the GNU General\nPublic License.  Please see the file COPYING,\ndistributed with AEdit, or http://www.gnu.org\nfor more information.";
+			zAboutText+="\n\nText Editor for Syllable\nCopyright 2000-2002 Kristian Van Der Vliet\n\nAEdit is released under the GNU General\nPublic License.  Please see the file COPYING,\ndistributed with AEdit, or http://www.gnu.org\nfor more information.";
 
 			Alert* pcAboutAlert=new Alert(zAboutTitle,zAboutText,0x00,"O.K",NULL);
 			pcAboutAlert->Go(new Invoker());
@@ -598,7 +581,9 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 
 		case M_MENU_SETTINGS_SAVE_ON_CLOSE:
 		{
-			bSaveOnExit=!bSaveOnExit;
+			pcMessage->FindBool("status",&bSaveOnExit);
+			pcSettings->SetSaveOnExit(bSaveOnExit);
+			
 			break;
 		}
 		
@@ -665,7 +650,7 @@ bool AEditWindow::OkToQuit(void)
 		// Pop an "Are you sure?" dialog
 	}
 
-	if(bSaveOnExit)
+	if(bSaveOnExit==true)
 	{
 		pcSettings->SetWindowPos(GetFrame());
 		pcSettings->SetSaveOnExit(bSaveOnExit);
@@ -763,63 +748,5 @@ void AEditWindow::Save(const char* pzFileName)
 
 	hFile.close();
 
-}
-
-bool AEditWindow::MapKey(const char* pzString, int32 nQualifiers)
-{
-	if(nQualifiers & QUAL_CTRL)
-	{
-		if(!(nQualifiers & QUAL_REPEAT))
-		{
-			switch(*pzString)
-			{
-				case 'o':	// Open (Ctrl+O)
-				{
-					HandleMessage(new Message(M_MENU_FILE_OPEN));
-					return(false);
-				}
-
-				case 's':	// Save (Ctrl+S)
-				{
-					HandleMessage(new Message(M_MENU_FILE_SAVE));
-					return(false);
-				}
-
-				case 'a':		// Save As (Ctrl+A)
-				{
-					HandleMessage(new Message(M_MENU_FILE_SAVE_AS));
-					return(false);
-				}
-
-				case 'f':		// Find (Ctrl+F)
-				{
-					HandleMessage(new Message(M_MENU_FIND_FIND));
-					return(false);
-				}
-
-				case 'r':	// Replace (Ctrl+R)
-				{
-					HandleMessage(new Message(M_MENU_FIND_REPLACE));
-					return(false);
-				}
-
-				case 'g':		// Goto Line (Ctrl+G)
-				{
-					HandleMessage(new Message(M_MENU_FIND_GOTO));
-					return(false);
-				}
-
-				case 'q':	// Quit (Ctrl+Q)
-				{
-					HandleMessage(new Message(M_MENU_APP_QUIT));
-					return(false);
-				}
-
-			}	// End of switch() block
-
-		}	// End of if() for testing the repeat
-	}	
-
-	return(true);
 }
 

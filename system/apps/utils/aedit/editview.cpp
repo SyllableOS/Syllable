@@ -50,6 +50,86 @@ void EditView::MouseDown(const Point &cPosition, uint32 nButtons)
 		TextView::MouseDown(cPosition, nButtons);
 }
 
+void EditView::KeyDown(const char* pzString, const char* pzRawString, uint32 nQualifiers)
+{
+	if(nQualifiers & QUAL_CTRL)
+	{
+		if(!(nQualifiers & QUAL_REPEAT))
+		{
+
+			switch(*pzString)
+			{
+				case 24:	// Cut (Ctrl+X)
+				{
+					GetWindow()->HandleMessage(new Message(M_MENU_EDIT_CUT));
+					break;
+				}
+
+				case 3:	// Copy (Ctrl+C)
+				{
+					GetWindow()->HandleMessage(new Message(M_MENU_EDIT_COPY));
+					break;
+				}
+
+				case 22:	// Paste (Ctrl+V)
+				{
+					GetWindow()->HandleMessage(new Message(M_MENU_EDIT_PASTE));
+					break;
+				}
+
+				case 15:	// Open (Ctrl+O)
+				{
+					GetWindow()->HandleMessage(new Message(M_MENU_FILE_OPEN));
+					break;
+				}
+
+				case 19:	// Save (Ctrl+S)
+				{
+					GetWindow()->HandleMessage(new Message(M_MENU_FILE_SAVE));
+					break;
+				}
+
+				case 1:	// Save As (Ctrl+A)
+				{
+					GetWindow()->HandleMessage(new Message(M_MENU_FILE_SAVE_AS));
+					break;
+				}
+
+				case 6:	// Find (Ctrl+F)
+				{
+					GetWindow()->HandleMessage(new Message(M_MENU_FIND_FIND));
+					break;
+				}
+
+				case 18:	// Replace (Ctrl+R)
+				{
+					GetWindow()->HandleMessage(new Message(M_MENU_FIND_REPLACE));
+					break;
+				}
+
+				case 7:	// Goto Line (Ctrl+G)
+				{
+					GetWindow()->HandleMessage(new Message(M_MENU_FIND_GOTO));
+					break;
+				}
+
+				case 17:	// Exit (Ctrl+Q)
+				{
+					GetWindow()->HandleMessage(new Message(M_MENU_APP_QUIT));
+					break;
+				}
+
+			}	// End of switch() block
+
+		}	// End of if() testing the repeat
+
+	}
+	else
+	{
+		TextView::KeyDown(pzString,pzRawString,nQualifiers);
+	}
+}
+
 int EditView::Find(std::string zOriginal, std::string zFind, bool bCaseSensitive, int nStartPosition){
 // bCaseSensitive == True, do a case sensitive search
 // bCaseSensitive == False, do a case insensitive search
@@ -132,4 +212,5 @@ std::string EditView::GetLine(int32 nLineNo)
 {
 	return TextView::GetBuffer()[nLineNo];
 }
+
 
