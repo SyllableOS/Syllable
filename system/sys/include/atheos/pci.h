@@ -369,7 +369,13 @@ typedef struct
 /***	masks for header type register ***/
 
 #define PCI_HEADER_TYPE_MASK	0x7F		/* header type field */
+#define PCI_HEADER_BRIDGE	0x01		/* pci bridge */
 #define PCI_MULTIFUNCTION	0x80		/* multifunction device flag */
+
+/***   masks for pci bridges ( header type 1 ) ***/
+#define PCI_BUS_PRIMARY		0x18
+#define PCI_BUS_SECONDARY	0x19
+#define PCI_BUS_SUBORDINATE 0x1a
 
 
 /***	masks for built in self test (bist) register bits ***/

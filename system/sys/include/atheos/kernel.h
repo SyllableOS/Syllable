@@ -35,6 +35,18 @@ extern "C" {
 
 #define MAX_CPU_COUNT	16
 
+enum 
+{
+	CPU_FEATURE_NONE 	= 0x00,
+	CPU_FEATURE_MMX 	= 0x01,
+	CPU_FEATURE_MMX2	= 0x02,
+	CPU_FEATURE_3DNOW	= 0x04,
+	CPU_FEATURE_3DNOWEX = 0x08,
+	CPU_FEATURE_SSE		= 0x10,
+	CPU_FEATURE_SSE2	= 0x20,
+	CPU_FEATURE_APIC	= 0x40
+};
+
 typedef struct
 {
   uint64	nCoreSpeed;
