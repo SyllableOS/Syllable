@@ -6,15 +6,13 @@ authors
 maintainers			Kaj de Vos
 status				broken
 warning				Hangs during configure on Syllable!
-notes				AutoMake warns about bad substitution, and stage2/Makefile.in is not regenerated
+notes				AutoMake warns about bad substitution
 
 licenses			GPL
 home				www.gnu.org/software/grub/
 locations			ftp://alpha.gnu.org/gnu/grub/
 
 build-needs
-;	For autoreconf:
-;	perl 5.0
 	automake >= 1.7
 	autoconf >= 2.57
 build-recommends	texinfo >= 4.0
@@ -26,9 +24,7 @@ patch
 	aclocal
 ;	Suffices on Linux:
 ;	automake
-	automake stage2/Makefile
-	automake Makefile
-	autoconf
+	automake stage2/Makefile; automake Makefile; autoconf
 
 configure-args		--prefix=/boot/boot/grub
 
