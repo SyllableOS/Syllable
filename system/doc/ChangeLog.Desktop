@@ -1,3 +1,7 @@
+* March 19 2005,    Arno Klenke
+	*Moved code from the constructors/destructors of some plugins into the (A/De)ttachedToWindow() method
+	*Fixed font handling in the clock plugin
+	*Added a slider to set the master volume to the mixer plugin
 * March 15 2005,    Rick Caudill
 	*Added Meter(William Hogarth) dock plugin which displays useful system information
 	*Added WallpaperChanger(Rick Caudill) dock plugin which gives options like time intervals to wallpapers

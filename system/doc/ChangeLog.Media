@@ -1,3 +1,7 @@
+* March 19th 2005 Arno Klenke *
+Added Get()/Put() methods to the media manager class
+Merged videobitmap and videooverlay driver into a screen driver
+
 * Feburary 13th 2005 Arno Klenke *
 Updated the ffmpeg plugin to work with the latest ffmpeg version
 
