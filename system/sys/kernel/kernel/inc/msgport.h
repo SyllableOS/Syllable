@@ -56,11 +56,19 @@ struct _MsgPort
     proc_id	   mp_hOwner;
 };
 
-  
+typedef struct _PublicPort PublicPort_s;
+struct _PublicPort
+{
+	port_id pp_hPortID;
+	char* pp_pzName;
+	PublicPort_s* pp_psNext;
+	PublicPort_s* pp_psPrev;
+};
+
 MsgPort_s*	get_port_from_handle( port_id hPort );
 void 		exit_free_ports( Process_s* psProc );
-    
 
+port_id do_find_port( const char* pzPortname );
 
 #ifdef __cplusplus
 }
