@@ -1,3 +1,8 @@
+* Nov 12 2003, Kristian Van Der Vliet *
+
+Increase the size of the drive name buffer in the ATA driver to fix a buffer
+overrun.
+
 * Oct 21 2003, Kristian Van Der Vliet *
 
 Changes to libpthread to fix an issue when GCC 3.x includes pthreadtypes.h;
