@@ -1,3 +1,15 @@
+* December 12 2004, Kristian Van Der Vliet *
+
+Merged header changes required for Glibc 2.3.3, mostly changes to various
+types.  Verified the kernel compiles against them.  The following files
+were changed:
+
+atheos/atomic.h
+atheos/pthreadtypes.h
+atheos/types.h
+posix/errno.h
+posix/types.h
+
 ---- 0.5.5 Released -------------------------------------------------------------------
 
 * December 5 2004, Kristian Van Der Vliet *
