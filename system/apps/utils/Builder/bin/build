@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.5.2
+# Version 0.5.3
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -652,7 +652,7 @@ def makeDistro target
 		if  # Tar it up
 			if action "tar cvf #{file}.tar" +
 				" -C #{@installRoot} " +
-				(profile.collect {|package| installName package}).join(' ') +
+				(modules.collect {|package| installName package}).join(' ') +
 				(files = getRecipe(target)['distro-files'] ? ' ' + files : '')
 			then
 				if modules.is_a? Array and exists? distroDir = File.join(@packagesPath, name, 'distro')
@@ -960,7 +960,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.2',
+	puts 'Syllable Build System 0.5.3',
 		'Copyright (c) 2002-2004 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
