@@ -5,6 +5,8 @@ status				broken | deprecated | unmaintained | incomplete | developing | testing
 warnings			<Important notes>
 notes				<Internal notes>
 
+inherits			<Package this recipe inherits from>
+
 ; Package information:
 name				<Display name of the package, if different from the file name>
 headline			<Brief description>
