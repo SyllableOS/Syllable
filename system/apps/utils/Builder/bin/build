@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.2.3
+# Version 0.2.4
 # Copyright (c) 2002, 2003 Kaj de Vos
 # License: GPL 2
 
@@ -160,25 +160,28 @@ def getPackage target
 end
 
 def configurePackage target
-	if thirdParty?
+	unless thirdParty?
+		logHeader "Building dependencies"
+		action "make deps"
+
+		true  # Continue building even if dependencies failed
+	else
 		logHeader "Configuring"
 		action "rm config.cache" if exists? "config.cache"
 		name = shortName package = fullName(target)
 		if action "./configure" +
-			((options = recipe(package)["configure-options"]) ? " " + options : "") +
 			(name == "man" || name == "grub" ? "" :
 				" --prefix=" + prefix(package)
+			) +
+			((options = recipe(package)["configure-options"]) ? " " + options : "") +
+			(name != "ffmpeg" ? "" :
+				" --source-path=" + Dir.getwd
 			)
 		then true
 		else
 			logFailure target
 			false
 		end
-	else
-		logHeader "Building dependencies"
-		action "make deps"
-
-		true  # Continue building even if dependencies failed
 	end
 end
 
@@ -680,16 +683,16 @@ end
 arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
-when "--version"
-	puts "Syllable Build System 0.2.3",
+when "-v", "--version"
+	puts "Syllable Build System 0.2.4",
 		"Copyright (c) 2002, 2003 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
 	puts "Usage: build [<command>] [<package> | <profile> | <log>]",
 		"<command>:",
-		"  ?, -?, -h,    Show this help information",
-		"  -help, --help",
-		"  --version     Show version information",
+		"  -h, --help,   Show this help information",
+		"    -help", ?, -?",
+		"  -v, --version Show version information",
 		"  prepare       Initialize system distribution tree",
 		"  get           Fetch and patch sources",
 		"  patch         Patch sources",
@@ -725,8 +728,8 @@ else
 		end
 
 		if @systemBuild
-#			File.delete "/ainc" if exists? "/ainc"
-#			action "ln -s #{File.join @workDir, "sys/include"} /ainc"
+			File.delete "/ainc" if exists? "/ainc"
+			action "ln -s #{File.join @workDir, "sys/include"} /ainc"
 
 			prepare unless exists? @distroRoot
 		end
@@ -756,8 +759,8 @@ else
 		end
 
 		if @systemBuild
-#			File.delete "/ainc"
-#			action "ln -s /system/include /ainc"
+			File.delete "/ainc"
+			action "ln -s /system/include /ainc"
 		end
 	end
 
