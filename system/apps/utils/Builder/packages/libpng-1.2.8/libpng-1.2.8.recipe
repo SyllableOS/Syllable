@@ -8,10 +8,12 @@ home			www.libpng.org
 no-build-dir
 configure		cp scripts/makefile.gcc makefile
 test-targets	test
-install
-	mkdir /usr/libpng
-	mkdir /usr/libpng/lib
-	mkdir /usr/libpng/include
-	cp libpng.a /usr/libpng/lib/
-	cp png.h pngconf.h /usr/libpng/include/
-documentation	README ANNOUNCE INSTALL LICENSE libpng.txt KNOWNBUG CHANGES TODO Y2KINFO example.c
+
+install-tree	include lib
+install-files
+	libpng.a	lib
+	png.h		include
+	pngconf.h	include
+documentation
+	README ANNOUNCE INSTALL LICENSE libpng.txt KNOWNBUG CHANGES TODO Y2KINFO example.c
+

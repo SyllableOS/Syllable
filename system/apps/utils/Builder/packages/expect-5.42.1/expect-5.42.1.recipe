@@ -1,5 +1,6 @@
 authors				Jake Hamby
 status				testing
+warnings			Needs TCL 8.4.9 source.
 
 licenses			other
 home				expect.nist.gov
@@ -14,3 +15,4 @@ configure-options
 
 test-targets		test
 documentation		README FAQ HISTORY NEWS ChangeLog
+

@@ -1,9 +1,11 @@
-authors			Jake Hamby
-status			testing
+authors				Jake Hamby
+status				testing
 
-licenses		other
-home			sourceforge.net/projects/libungif
+licenses			other
+home				sourceforge.net/projects/libungif/
 
 patch-config
 
-documentation	README AUTHORS BUGS COPYING ChangeLog DEVELOPERS NEWS ONEWS TODO UNCOMPRESSED_GIF
+documentation
+	README AUTHORS BUGS COPYING ChangeLog DEVELOPERS NEWS ONEWS TODO UNCOMPRESSED_GIF
+
