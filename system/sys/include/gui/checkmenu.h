@@ -17,14 +17,29 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef	_GUI_CHECKMENU_HPP
-#define	_GUI_CHECKMENU_HPP
+#ifndef	__F_CHECKMENU_H__
+#define	__F_CHECKMENU_H__
 
 #include <gui/menu.h>
 #include <gui/bitmap.h>
 #include <gui/font.h>
 
-namespace os;
+namespace os
+{
+#if 0
+}
+#endif // Fool Emacs auto-indent
+
+class CheckMenu;
+
+/** 
+ * \ingroup gui
+ * \par Description:
+ * A menuitem which can either be "On" or "Off"
+ * \since 0.4.0
+ * \sa os::MenuItem, os::Menu
+ * \author Kristian Van Der Vliet (vanders@blueyonder.co.uk)
+ *****************************************************************************/
 
 class CheckMenu : public MenuItem
 {
@@ -51,13 +66,6 @@ class CheckMenu : public MenuItem
 		static Bitmap* s_pcCheckBitmap;
 };
 
-
+}
 #endif
-
-
-
-
-
-
-
 
