@@ -1,0 +1,160 @@
+GCC for Syllable
+================
+
+29-Jun-2004
+
+1 Introduction
+==============
+
+This is a binary distribution of version 3.3.4 of the GNU compiler
+collection for the Syllable operating system. This distribution was
+built on Syllable 0.5.3, and was optimized for a Pentium CPU. It
+requires version 0.5.3 of Syllable, or newer. It supports only the C,
+C++ and Fortran languages. The compiler defaults to generating
+Pentium code (default --march=i586).
+
+If you encounter problems or have any other interesting observations,
+I would be interested to hear about them (see contact information).
+
+See the file README for more information on GCC.
+
+2 How to install GCC on Syllable
+================================
+
+2.1 
+----
+
+2.1.1 
+------
+
+Please note that GCC needs the BinUtils package, which is not
+included in this distribution, so you have to get that package and
+install it first.
+
+Now for the GCC installation. You may have to become the root user to
+perform the following operations:
+
+    su
+
+You should have unpacked this file with
+
+    tar -xpPz
+
+or something equivalent. The 'p' option to Tar is important: it
+preserves permissions on the extracted files. Without the proper file
+permissions, the installation will be broken.
+
+Unpacking produces the directory gcc. This should be installed under
+/usr. If you unpacked it somewhere else, do:
+
+    mv gcc /usr
+
+Then run:
+
+    pkgmanager -a /usr/gcc
+
+This creates links in Syllable to enable it to find GCC's files. You
+should now be able to use GCC; for example:
+
+    gcc --help
+
+2.1.2 Installing with the Syllable build system
+-----------------------------------------------
+
+If you have the Syllable build system installed, it can do the above
+steps for you. Just do:
+
+    su
+    build install gcc-3.3.4.bin.1.tgz
+
+2.2 Uninstalling & upgrading GCC
+--------------------------------
+
+2.2.1 
+------
+
+If you ever want to remove GCC, follow these steps. For example, you
+should do this before you install a new version of GCC. Again, you
+may have to become root first:
+
+    su
+
+Then you should remove the links to GCC from Syllable. You should
+even do this when you want to upgrade GCC, because the links will
+most likely have changed for the new version.
+
+    pkgmanager -r /usr/gcc
+
+To delete the files belonging to GCC, run:
+
+    rm -r /usr/gcc
+
+2.2.2 Uninstalling & upgrading with the Syllable build system
+-------------------------------------------------------------
+
+If you install a package with the Syllable build system, it will
+check if the package was already installed and remove the previous
+version automatically.
+
+If you just want to uninstall GCC, do:
+
+    su
+    build uninstall gcc
+
+3 Building GCC on Syllable
+==========================
+
+Normally you don't have to, but if you want to build GCC yourself,
+you need to get the source distribution. You can get the GCC
+distribution through its home page:
+
+    http://gcc.gnu.org
+
+Additionally, you need patches to the source that are specific to
+Syllable. These patches are kept in the Syllable build system. The
+build system also knows all other specifics for building GCC.
+
+When you have the build system installed, you should first provide it
+with the GCC source package:
+
+    cp gcc-3.3.4.tar.bz2 /usr/Builder/sources
+
+You may alternatively use a GZipped package, if you have that.
+
+To configure and compile GCC, do
+
+    build gcc-3.3.4
+
+from your work directory. If that succeeds, you can optionally run
+the testsuite:
+
+    build test gcc-3.3.4
+
+To install and register the package, become root first:
+
+    su
+
+then do:
+
+    build install gcc-3.3.4
+
+After the installation, you could even create a distribution package:
+
+    build distro gcc-3.3.4
+
+4 Contact information
+=====================
+
+GCC was originally ported to AtheOS by Kurt Skauen. That port was
+reconstructed and adapted to Syllable by Kaj de Vos. The port of GCC
+3 was done by Arno Klenke, and finalized by Kristian Van Der Vliet
+and Kaj de Vos. This distribution was built and packed for Syllable
+by Kaj de Vos. You can send me problem reports, fixes and the like at
+
+    gcc@syllable.info
+
+This distribution can be found in the download section of the
+Syllable web site:
+
+    http://syllable.org
+

@@ -1,0 +1,181 @@
+diff -ru gcc-3.3.4.original/Makefile.in gcc-3.3.4/Makefile.in
+--- gcc-3.3.4.original/Makefile.in	2003-07-05 02:37:09.000000000 +0000
++++ gcc-3.3.4/Makefile.in	2004-06-29 12:01:35.000000000 +0000
+@@ -1559,7 +1559,8 @@
+ 	esac; \
+ 	$(SET_LIB_PATH) \
+ 	echo "$$msg"; \
+-	cd gcc && $(MAKE) $(GCC_FLAGS_TO_PASS) $$compare
++	cd gcc
++# && $(MAKE) $(GCC_FLAGS_TO_PASS) $$compare
+ 	@r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}` ; export s; \
+ 	$(SET_LIB_PATH) \
+diff -ru gcc-3.3.4.original/configure.in gcc-3.3.4/configure.in
+--- gcc-3.3.4.original/configure.in	2004-01-02 14:09:49.000000000 +0000
++++ gcc-3.3.4/configure.in	2004-06-29 12:01:35.000000000 +0000
+@@ -1134,6 +1134,9 @@
+   *-*-linux*)
+     target_makefile_frag="config/mt-linux"
+     ;;
++  *-*-syllable*)
++	target_makefile_frag="config/mt-syllable"
++	;;
+   *-*-aix4.[3456789]* | *-*-aix[56789].*)
+     target_makefile_frag="config/mt-aix43"
+     ;;
+@@ -1219,6 +1222,7 @@
+ if false && test "${host}" = "${target}" && test x${enable_shared} = x ; then
+   case "${target}" in
+     alpha*-dec-osf*)	enable_shared=yes ;;
++	*-*-syllable) enable_shared=yes;;
+     alpha*-*-linux*)	enable_shared=yes ;;
+     mips-sgi-irix5*)	enable_shared=yes ;;
+     *)			enable_shared=no ;;
+diff -ru gcc-3.3.4.original/gcc/config.gcc gcc-3.3.4/gcc/config.gcc
+--- gcc-3.3.4.original/gcc/config.gcc	2004-04-29 04:42:48.000000000 +0000
++++ gcc-3.3.4/gcc/config.gcc	2004-06-29 12:01:35.000000000 +0000
+@@ -1120,6 +1120,16 @@
+ 	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h svr4.h i386/beos-elf.h"
+ 	extra_parts='crtbegin.o crtend.o'
+ 	;;
++i[34567]86-*-syllable*)
++	xmake_file=x-syllable
++	xm_defines="HAVE_ATEXIT POSIX BSTRING"
++	tmake_file='t-slibgcc-elf-ver i386/t-syllable i386/t-crtstuff'
++	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h svr4.h i386/syllable.h"
++	extra_parts='crtbegin.o crtend.o crtbeginS.o crtendS.o'
++	gnu_ld=yes
++	float_format=i386
++	thread_file='syllable'
++	;;
+ i[34567]86-*-freebsd2 | i[34567]86-*-freebsd2.* | i[34567]86-*-freebsd*aout*)
+ 	tm_file="${tm_file} i386/unix.h i386/bsd.h i386/gas.h i386/gstabs.h i386/freebsd-aout.h"
+ 	tmake_file=t-freebsd
+diff -ru gcc-3.3.4.original/gcc/configure gcc-3.3.4/gcc/configure
+--- gcc-3.3.4.original/gcc/configure	2004-04-01 16:55:24.000000000 +0000
++++ gcc-3.3.4/gcc/configure	2004-06-29 12:01:36.000000000 +0000
+@@ -8090,12 +8090,13 @@
+   fi
+   rm -f conftest.* conftest[123].*
+ fi
+-if test x$gcc_cv_ld_ro_rw_mix = xread-write; then
+-	cat >> confdefs.h <<\EOF
++
++#if test x$gcc_cv_ld_ro_rw_mix = xread-write; then
++#	cat >> confdefs.h <<\EOF
+ #define HAVE_LD_RO_RW_SECTION_MIXING 1
+-EOF
++#EOF
+ 
+-fi
++#fi
+ echo "$ac_t""$gcc_cv_ld_ro_rw_mix" 1>&6
+ 
+ echo $ac_n "checking linker PT_GNU_EH_FRAME support""... $ac_c" 1>&6
+diff -ru gcc-3.3.4.original/gcc/gthr.h gcc-3.3.4/gcc/gthr.h
+--- gcc-3.3.4.original/gcc/gthr.h	2002-06-04 11:30:45.000000000 +0000
++++ gcc-3.3.4/gcc/gthr.h	2004-06-29 12:01:36.000000000 +0000
+@@ -87,6 +87,8 @@
+ #include "gthr-dce.h"
+ #elif _SOLARIS_THREADS
+ #include "gthr-solaris.h"
++#elif defined __ATHEOS__ || defined __SYLLABLE__
++#include "gthr-syllable.h"
+ 
+ /* Include GTHREAD_FILE if one is defined.  */
+ #elif defined(HAVE_GTHR_DEFAULT)
+diff -ru gcc-3.3.4.original/libstdc++-v3/configure gcc-3.3.4/libstdc++-v3/configure
+--- gcc-3.3.4.original/libstdc++-v3/configure	2004-05-25 06:03:55.000000000 +0000
++++ gcc-3.3.4/libstdc++-v3/configure	2004-06-29 12:01:36.000000000 +0000
+@@ -1926,6 +1926,10 @@
+   lt_cv_deplibs_check_method=pass_all
+   ;;
+ 
++syllable*)
++  lt_cv_deplibs_check_method=pass_all
++  ;;
++
+ bsdi4*)
+   lt_cv_deplibs_check_method='file_magic ELF [0-9][0-9]*-bit [ML]SB (shared object|dynamic lib)'
+   lt_cv_file_magic_cmd='/usr/bin/file -L'
+diff -ru gcc-3.3.4.original/libstdc++-v3/libio/libio.h gcc-3.3.4/libstdc++-v3/libio/libio.h
+--- gcc-3.3.4.original/libstdc++-v3/libio/libio.h	2001-01-14 19:12:24.000000000 +0000
++++ gcc-3.3.4/libstdc++-v3/libio/libio.h	2004-06-29 12:01:36.000000000 +0000
+@@ -162,11 +162,21 @@
+ /* Handle lock.  */
+ #ifdef _IO_MTSAFE_IO
+ # if defined __GLIBC__ && __GLIBC__ >= 2
++#if defined __ATHEOS__ || defined __SYLLABLE__
++# include <bits/libc-lock.h>
++#  define _IO_lock_t __libc_lock_t
++#  define _IO_lock_init	__libc_lock_init
++#  define _IO_lock_fini	__libc_lock_fini
++#  define _IO_lock_initializer MUTEX_INITIALIZER
++#  define _IO_cleanup_region_start __libc_cleanup_region_start
++#  define _IO_cleanup_region_end   __libc_cleanup_region_end
++#else
+ #  if __GLIBC_MINOR__ == 0
+ #   include <stdio-lock.h>
+ #  else
+ #   include <bits/stdio-lock.h>
+ #  endif
++#endif
+ # else
+ /*# include <comthread.h>*/
+ # endif
+diff -ru gcc-3.3.4.original/libtool.m4 gcc-3.3.4/libtool.m4
+--- gcc-3.3.4.original/libtool.m4	2004-05-12 15:13:57.000000000 +0000
++++ gcc-3.3.4/libtool.m4	2004-06-29 12:01:36.000000000 +0000
+@@ -595,6 +595,10 @@
+   lt_cv_deplibs_check_method=pass_all
+   ;;
+ 
++syllable*)
++  lt_cv_deplibs_check_method=pass_all
++  ;;
++
+ bsdi4*)
+   lt_cv_deplibs_check_method=['file_magic ELF [0-9][0-9]*-bit [ML]SB (shared object|dynamic lib)']
+   lt_cv_file_magic_cmd='/usr/bin/file -L'
+diff -ru gcc-3.3.4.original/ltconfig gcc-3.3.4/ltconfig
+--- gcc-3.3.4.original/ltconfig	2004-03-05 21:07:42.000000000 +0000
++++ gcc-3.3.4/ltconfig	2004-06-29 12:01:36.000000000 +0000
+@@ -1333,6 +1333,22 @@
+   need_version=yes
+   ;;
+ 
++syllable*)
++  version_type=linux
++  need_lib_prefix=no
++  need_version=no
++  library_names_spec='${libname}${release}.so$versuffix ${libname}${release}.so$major $libname.so'
++  soname_spec='${libname}${release}.so$major'
++  shlibpath_var=LIBRARY_PATH
++  shlibpath_overrides_runpath=no
++  # This implies no fast_install, which is unacceptable.
++  # Some rework will be needed to allow for fast_install
++  # before this can be enabled.
++  hardcode_into_libs=yes
++  dynamic_linker='Syllable ld.so'
++  can_build_shared=yes
++  ;;
++
+ sysv4 | sysv4.2uw2* | sysv4.3* | sysv5*)
+   version_type=linux
+   library_names_spec='${libname}${release}.so$versuffix ${libname}${release}.so$major $libname.so'
+diff -ru gcc-3.3.4.original/ltmain.sh gcc-3.3.4/ltmain.sh
+--- gcc-3.3.4.original/ltmain.sh	2002-11-20 15:59:04.000000000 +0000
++++ gcc-3.3.4/ltmain.sh	2004-06-29 12:01:36.000000000 +0000
+@@ -2605,6 +2605,11 @@
+ 	  versuffix="$major.$age.$revision"
+ 	  ;;
+ 
++	syllable)
++	  major=.`expr $current - $age`
++	  versuffix="$major.$age.$revision"
++	  ;;
++
+ 	osf)
+ 	  major=.`expr $current - $age`
+ 	  versuffix=".$current.$age.$revision"
