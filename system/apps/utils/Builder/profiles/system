@@ -206,9 +206,8 @@ modules
 	sys/media/drivers/ffmpeg
 	sys/media/drivers/oss
 	sys/media/drivers/raw
+	sys/media/drivers/screen
 	sys/media/drivers/serveraudio
-	sys/media/drivers/videobitmap
-	sys/media/drivers/videooverlay
 	sys/media/drivers/vorbis
 	apps/utils/desktop/dlogin
 	apps/desktop/desktop
