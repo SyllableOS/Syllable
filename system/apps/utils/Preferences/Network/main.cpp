@@ -1,5 +1,8 @@
 // Network Preferences :: (C)opyright 2000-2001 Daryl Dudey
 //
+// 2 September 2003, Kaj de Vos
+//   Don't execute net_init.sh when called with --detect.
+//
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -70,13 +73,14 @@ int main(int argc, char* argv[])
   // Create activate files resolv.conf etc if needed
   if (bActivate) {
     pcConfig->Activate();
+
+    // Now execute /system/net_init.sh
+    system("/system/net_init.sh");
   }
 
   // Delete configuration
   delete pcConfig;
 
-  // Now execute /system/net_init.sh
-  system("/system/net_init.sh");
   return(0);
 }
 

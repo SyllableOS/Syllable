@@ -1,5 +1,8 @@
 // Netword Preferences :: (C)opyright Daryl Dudey 2002
 //
+// 2 September 2003, Kaj de Vos
+//   Fixed several off-by-one errors in Load().
+//
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -102,12 +105,12 @@ void Configuration::Load()
     char *pzScratch = new char[C_SCRATCHLEN];
 
     // Get host & domain name
-    fsIn.getline (pzHost, C_CO_HOSTLEN, '\n');
-    fsIn.getline (pzDomain, C_CO_DOMAINLEN, '\n');
+    fsIn.getline (pzHost, C_CO_HOSTLEN+1, '\n');
+    fsIn.getline (pzDomain, C_CO_DOMAINLEN+1, '\n');
 
     // Get dns addresses
-    fsIn.getline (pzName1, C_CO_IPLEN, '\n');
-    fsIn.getline (pzName2, C_CO_IPLEN, '\n');
+    fsIn.getline (pzName1, C_CO_IPLEN+1, '\n');
+    fsIn.getline (pzName2, C_CO_IPLEN+1, '\n');
 
     // Loop through all adaptors and read in settings
     for (int i=0;i<C_CO_MAXADAPTORS;i++) {
@@ -129,15 +132,15 @@ void Configuration::Load()
       }
 
       // Description
-      fsIn.getline (pcAdaptors[i].pzDescription, C_CO_DESCLEN, '\n');
+      fsIn.getline (pcAdaptors[i].pzDescription, C_CO_DESCLEN+1, '\n');
       
       // Next line is mac address
-      fsIn.getline (pcAdaptors[i].pzMac, C_CO_MACLEN, '\n');
+      fsIn.getline (pcAdaptors[i].pzMac, C_CO_MACLEN+1, '\n');
 
       // Next three are IP/SN/GW
-      fsIn.getline (pcAdaptors[i].pzIP, C_CO_IPLEN, '\n');
-      fsIn.getline (pcAdaptors[i].pzSN, C_CO_IPLEN, '\n');
-      fsIn.getline (pcAdaptors[i].pzGW, C_CO_IPLEN, '\n');
+      fsIn.getline (pcAdaptors[i].pzIP, C_CO_IPLEN+1, '\n');
+      fsIn.getline (pcAdaptors[i].pzSN, C_CO_IPLEN+1, '\n');
+      fsIn.getline (pcAdaptors[i].pzGW, C_CO_IPLEN+1, '\n');
     }
     
   }

@@ -18,7 +18,7 @@
 #define __CONFIGURATION_H_
 
 const int C_CO_DESCLEN = 25;
-const int C_CO_MACLEN = 18;
+const int C_CO_MACLEN = 17;
 const int C_CO_HOSTLEN = 25;
 const int C_CO_DOMAINLEN = 25;
 const int C_CO_IPLEN = 15;
