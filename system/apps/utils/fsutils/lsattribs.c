@@ -33,7 +33,7 @@ int main( int argc, char** argv )
 	return( 1 );
     }
 
-    nFile = open( argv[1], O_RDWR );
+    nFile = open( argv[1], O_RDWR | O_NOTRAVERSE );
 
     if ( nFile < 0 ) {
 	printf( "Failed to open %s: %s\n", argv[1], strerror( errno ) );
@@ -91,6 +91,7 @@ int main( int argc, char** argv )
     close_attrdir( pDir );
     return( 0 );
 }
+
 
 
 
