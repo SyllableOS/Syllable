@@ -14,6 +14,9 @@ export CC=gcc
 export HOME=/home/root
 export SHELL=bash
 export TEMP=/tmp
+export TERM=xterm
+export COLORTERM=$TERM
+export TERMINFO=/usr/share/terminfo
 
 aterm /boot/Install/install.rb &
 

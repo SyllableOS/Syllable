@@ -12,7 +12,7 @@ Base = ["0.5.4", "base-syllable-%s.zip"]
 Packages = {
 	"ABrowse"	=> ["0.3.4", "abrowse-%s.bin.tar.gz"],
 	"Whisper"	=> ["0.2.0", "whisper-%s.bin.tar.gz"],
-	"Chat"		=> ["0.0.1", "chat-%s.bin.tar.gz"]
+	"Chat"		=> ["0.2.0", "chat-%s.bin.tar.gz"]
 	}
 
 # Now on with the installation
@@ -88,7 +88,7 @@ Dir.mkdir "/inst"
 system "/bin/mount", "-t", "afs", $part, "/inst"
 
 pkg = sprintf(Base[1], Base[0])
-retval = system "/usr/zip/bin/unzip", "-d", "/inst/", "/boot/Packages/base/#{pkg}"
+retval = system "/usr/bin/unzip", "-d", "/inst/", "/boot/Packages/base/#{pkg}"
 system "/usr/bin/sync"
 system "/usr/bin/sync"
 
