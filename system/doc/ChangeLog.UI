@@ -1,3 +1,7 @@
+* Oct 6 2002, Henrik Isaksson *
+
+Added the new Thread class.
+
 * Sept 27 2002, Henrik Isaksson *
 
 Added new classes: Image, BitmapImage, ImageView, MemFile, Settings and
