@@ -39,7 +39,7 @@ patch				<Extra patching command sequence>
 configure			<Configuration command sequence>
 ;
 ; Extra variables for configure:
-configure-vars		VAR="value"
+configure-vars		VAR='value'
 ; Non-standard configure command:
 configure-cmd		configure
 ; Non-standard prefix argument:
@@ -48,16 +48,20 @@ configure-args		--prefix=/usr/foo
 configure-options	--with-option
 ;
 ; Building:
-; [<make-vars>] make <make-targets>
+; [<make-vars>] make [<make-options>] <make-targets>
 ;
 ; Extra variables for make:
-make-vars			VAR="value"
+make-vars			VAR='value'
+; Extra make options:
+make-options		VAR='value'
 ; Non-standard make targets:
 ;make-targets		all
 ;
 ; Testing:
-; make <test-targets>
+; make [<test-options>] <test-targets>
 ;
+; Extra test options:
+test-options		-k
 ; Non-standard test targets:
 test-targets		check
 ;
@@ -77,6 +81,8 @@ install-prefix		prefix=
 ; Extra files to install:
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
 ; Links to create:
+;links
+	<Source> <Destination>
 	<Destination>
 		<Source>
 ; Extra files to pack:
