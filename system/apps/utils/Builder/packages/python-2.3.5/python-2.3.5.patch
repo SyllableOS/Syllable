@@ -1,0 +1,224 @@
+--- python-2.3.5/configure.in.orig	2005-03-31 21:26:39.000000000 +0000
++++ python-2.3.5/configure.in	2005-03-31 21:30:29.000000000 +0000
+@@ -111,6 +111,11 @@
+ 	else
+ 		ac_sys_release=`uname -r`
+ 	fi
++	if test "$ac_sys_system" = "syllable"; then
++#      ac_sys_system = "atheos"
++		ac_sys_release=`uname -r`
++	fi
++
+ 	ac_md_system=`echo $ac_sys_system |
+ 			   tr -d '[/ ]' | tr '[[A-Z]]' '[[a-z]]'`
+ 	ac_md_release=`echo $ac_sys_release |
+@@ -121,6 +126,7 @@
+ 	cygwin*) MACHDEP="cygwin";;
+ 	darwin*) MACHDEP="darwin";;
+ 	atheos*) MACHDEP="atheos";;
++	syllable*) MACHDEP="atheos";;
+         irix646) MACHDEP="irix6";;
+ 	'')	MACHDEP="unknown";;
+ 	esac
+@@ -490,7 +496,7 @@
+ if test -z "$enable_shared"
+ then 
+   case $ac_sys_system in
+-  CYGWIN* | atheos*)
++  CYGWIN* | atheos* | syllable*)
+     enable_shared="yes";;
+   *)
+     enable_shared="no";;
+@@ -554,6 +560,11 @@
+ 	  BLDLIBRARY='-L. -lpython$(VERSION)'
+ 	  RUNSHARED=DLL_PATH=`pwd`:${DLL_PATH:-/atheos/sys/libs:/atheos/autolnk/lib}
+ 	  ;;
++    syllable*)
++	  LDLIBRARY='libpython$(VERSION).so'
++	  BLDLIBRARY='-L. -lpython$(VERSION)'
++	  RUNSHARED=DLL_PATH=`pwd`:${DLL_PATH:-/atheos/sys/libs:/atheos/autolnk/lib}
++	  ;;
+   esac
+   # DG/UX requires some fancy ld contortions to produce a .so from an .a
+   case $MACHDEP in
+@@ -587,6 +598,7 @@
+ 		BeOS*) LN="ln -s";;
+ 		CYGWIN*) LN="ln -s";;
+ 		atheos*) LN="ln -s";;
++		syllable*) LN="ln -s";;
+ 		*) LN=ln;;
+ 	esac
+ fi
+@@ -1000,6 +1012,12 @@
+   use_lfs=no
+ fi
+ 
++# Syllable glibc has a broken definition of readdir64() so we can't define
++# _FILE_OFFSET_BITS.  Besides, we have large file support automatically.
++if test "$ac_sys_system" = "syllable"; then
++  use_lfs=no
++fi
++
+ if test "$use_lfs" = "yes"; then
+ # Two defines needed to enable largefile support on various platforms
+ # These may affect some typedefs
+@@ -1338,6 +1356,7 @@
+ 	Monterey*) LDSHARED="cc -G -dy -Bdynamic -Bexport -L/usr/lib/ia64l64";;
+ 	CYGWIN*) LDSHARED="gcc -shared -Wl,--enable-auto-image-base";;
+ 	atheos*) LDSHARED="gcc -shared";;
++	syllable*) LDSHARED="gcc -shared";;
+ 	*)	LDSHARED="ld";;
+ 	esac
+ fi
+@@ -1375,6 +1394,7 @@
+ 		   *) CCSHARED="";;
+ 		   esac;;
+ 	atheos*) CCSHARED="-fPIC";;
++	syllable*) CCSHARED="-fPIC";;
+ 	esac
+ fi
+ AC_MSG_RESULT($CCSHARED)
+@@ -1674,7 +1694,7 @@
+     THREADOBJ="Python/thread.o"],[
+     AC_CHECK_HEADER(atheos/threads.h, [AC_DEFINE(WITH_THREAD)
+     AC_DEFINE(ATHEOS_THREADS, 1,
+-    [Define this if you have AtheOS threads.])
++    [Define this if you have AtheOS/Syllable threads.])
+     THREADOBJ="Python/thread.o"],[
+     AC_CHECK_HEADER(kernel/OS.h, [AC_DEFINE(WITH_THREAD)
+     AC_DEFINE(BEOS_THREADS, 1,
+@@ -2081,6 +2101,7 @@
+ 	hp*|HP*) DYNLOADFILE="dynload_hpux.o";;
+ 	Darwin/*) DYNLOADFILE="dynload_next.o";;
+ 	atheos*) DYNLOADFILE="dynload_atheos.o";;
++	syllable*) DYNLOADFILE="dynload_atheos.o";;
+ 	*)
+ 	# use dynload_shlib.c and dlopen() if we have it; otherwise stub
+ 	# out any dynamic loading
+--- python-2.3.5/pyconfig.h.in.orig	2004-09-18 09:58:41.000000000 +0000
++++ python-2.3.5/pyconfig.h.in	2005-03-30 14:10:46.000000000 +0000
+@@ -10,7 +10,7 @@
+ #undef AIX_GENUINE_CPLUSPLUS
+ 
+ /* Define this if you have AtheOS threads. */
+-#undef ATHEOS_THREADS
++#define ATHEOS_THREADS
+ 
+ /* Define if your <unistd.h> contains bad prototypes for exec*() (as it does
+    on SGI IRIX 4.x) */
+--- python-2.3.5/Python/dynload_atheos.c.orig	2002-06-11 06:22:32.000000000 +0000
++++ python-2.3.5/Python/dynload_atheos.c	2005-03-30 14:29:11.000000000 +0000
+@@ -1,12 +1,12 @@
+ 
+ /* Support for dynamic loading of extension modules */
+ 
+-#include <atheos/image.h>
+-#include <errno.h>
+-
+ #include "Python.h"
+ #include "importdl.h"
+ 
++#include <atheos/image.h>
++#include <errno.h>
++
+ 
+ const struct filedescr _PyImport_DynLoadFiletab[] = {
+ 	{".so", "rb", C_EXTENSION},
+--- python-2.3.5/Python/thread_atheos.h.orig	2002-06-11 06:22:32.000000000 +0000
++++ python-2.3.5/Python/thread_atheos.h	2005-03-30 14:41:36.000000000 +0000
+@@ -33,7 +33,7 @@
+ 
+ static int fastmutex_create(const char *name, fastmutex_t * mutex)
+ {
+-	mutex->count = 0;
++	atomic_set(&mutex->count, 0);
+ 	mutex->sem = create_semaphore(name, 0, 0);
+ 	return (mutex->sem < 0) ? -1 : 0;
+ }
+@@ -50,7 +50,7 @@
+ 
+ static int fastmutex_lock(fastmutex_t * mutex)
+ {
+-	atomic_t prev = atomic_add(&mutex->count, 1);
++	int prev = atomic_inc_and_read(&mutex->count);
+ 	if (prev > 0)
+ 		return lock_semaphore(mutex->sem);
+ 	return 0;
+@@ -59,7 +59,7 @@
+ 
+ static int fastmutex_timedlock(fastmutex_t * mutex, bigtime_t timeout)
+ {
+-	atomic_t prev = atomic_add(&mutex->count, 1);
++	int prev = atomic_inc_and_read(&mutex->count);
+ 	if (prev > 0)
+ 		return lock_semaphore_x(mutex->sem, 1, 0, timeout);
+ 	return 0;
+@@ -68,8 +68,8 @@
+ 
+ static int fastmutex_unlock(fastmutex_t * mutex)
+ {
+-	atomic_t prev = atomic_add(&mutex->count, -1);
+-	if (prev > 1)
++	int iszero = atomic_dec_and_test(&mutex->count);
++	if (!iszero)
+ 		return unlock_semaphore(mutex->sem);
+ 	return 0;
+ }
+@@ -94,18 +94,18 @@
+  *
+  */
+ 
+-static atomic_t thread_count = 0;
++static atomic_t thread_count = ATOMIC_INIT(0);
+ 
+ long PyThread_start_new_thread(void (*func) (void *), void *arg)
+ {
+ 	status_t success = -1;
+ 	thread_id tid;
+ 	char name[OS_NAME_LENGTH];
+-	atomic_t this_thread;
++	int this_thread;
+ 
+ 	dprintf(("PyThread_start_new_thread called\n"));
+ 
+-	this_thread = atomic_add(&thread_count, 1);
++	this_thread = atomic_inc_and_read(&thread_count);
+ 	PyOS_snprintf(name, sizeof(name), "python thread (%d)", this_thread);
+ 
+ 	tid = spawn_thread(name, func, NORMAL_PRIORITY, 0, arg);
+@@ -133,7 +133,7 @@
+ 	dprintf(("PyThread_exit_thread called\n"));
+ 
+ 	/* Thread-safe way to read a variable without a mutex: */
+-	if (atomic_add(&thread_count, 0) == 0) {
++	if (atomic_read(&thread_count) == 0) {
+ 		/* No threads around, so exit main(). */
+ 		if (no_cleanup)
+ 			_exit(0);
+@@ -189,7 +189,7 @@
+  *
+  */
+ 
+-static atomic_t lock_count = 0;
++static atomic_t lock_count = ATOMIC_INIT(0);
+ 
+ PyThread_type_lock PyThread_allocate_lock(void)
+ {
+@@ -199,7 +199,7 @@
+ 	sem_id sema;
+ #endif
+ 	char name[OS_NAME_LENGTH];
+-	atomic_t this_lock;
++	int this_lock;
+ 
+ 	dprintf(("PyThread_allocate_lock called\n"));
+ 
+@@ -210,7 +210,7 @@
+ 		return (PyThread_type_lock) NULL;
+ 	}
+ #endif
+-	this_lock = atomic_add(&lock_count, 1);
++	this_lock = atomic_inc_and_read(&lock_count);
+ 	PyOS_snprintf(name, sizeof(name), "python lock (%d)", this_lock);
+ 
+ #ifdef FASTLOCK

@@ -1,0 +1,183 @@
+Python for Syllable
+===================
+
+8-Jul-2004
+
+1 Introduction
+==============
+
+This is a binary distribution of version 2.3.5 of the Python
+programming language for the Syllable operating system. This
+distribution was built on Syllable 0.5.6 with GCC 3.4.3, and was
+optimized for a Pentium CPU. It should also run on other versions of
+Syllable, but this has not been tested.
+
+If you encounter problems or have any other interesting observations,
+I would be interested to hear about them (see contact information).
+
+See the file README for more information on Python.
+
+2 How to install Python on Syllable
+===================================
+
+2.1 
+----
+
+2.1.1 
+------
+
+You may have to become the root user to perform the following
+operations:
+
+    su
+
+You should have unpacked this file with
+
+    tar -xpz
+
+or something equivalent. The 'p' option to tar is important: it
+preserves permissions on the extracted files. Without the proper file
+permissions, the installation will be broken.
+
+Unpacking produces the directory python. This should be installed
+under /usr. If you unpacked it somewhere else, do:
+
+    mv python /usr
+
+Then run:
+
+    pkgmanager -a /usr/python
+
+This creates links in Syllable to enable it to find Python's files.
+You should now be able to use Python; for example:
+
+    python -h
+
+2.1.2 Installing with the Syllable build system
+-----------------------------------------------
+
+If you have the Syllable build system installed, it can do the above
+steps for you. Just do:
+
+    su
+    build install python-2.3.5.bin.1.tgz
+
+2.2 Uninstalling & upgrading Python
+-----------------------------------
+
+2.2.1 
+------
+
+If you ever want to remove Python, follow these steps. For example,
+you should do this before you install a new version of Python. Again,
+you may have to become root first:
+
+    su
+
+Then you should remove the links to Python from Syllable. You should
+even do this when you want to upgrade Python, because the links will
+most likely have changed for the new version.
+
+    pkgmanager -r /usr/python
+
+To delete the files belonging to Python, run:
+
+    rm -r /usr/python
+
+2.2.2 Uninstalling & upgrading with the Syllable build system
+-------------------------------------------------------------
+
+If you install a package with the Syllable build system, it will
+check if the package was already installed and remove the previous
+version automatically.
+
+If you just want to uninstall Python, do:
+
+    su
+    build uninstall python
+
+2.3 Getting started with Python
+-------------------------------
+
+/usr/python/Demo contains a number of sample Python programs. Note
+that some scripts you may come across won't run as is, because they
+contain a hardcoded path to the Python executable in the first line
+of the script. This is unfortunate, as this location varies among
+installations (Syllable likes to put it in /usr/python/bin). You can
+change the first line of the scripts, or you can run them like this:
+
+    python sample.py
+
+When writing your own scripts, you could keep them portable by
+finding Python dynamically in the first line:
+
+    #!/usr/bin/env python
+
+Have fun!
+
+3 Compiling Python on Syllable
+==============================
+
+Normally you don't have to, but if you want to compile Python
+yourself, you need to get the source distribution. You can get the
+Python distribution through its home page:
+
+    http://www.python.org
+
+See the file README for details.
+
+Additionally, you need patches to the source that are specific to
+Syllable. These patches are kept in the Syllable build system. The
+build system also knows all other specifics for building Python.
+
+When you have the build system installed, you should first provide it
+with the Python source package:
+
+    cp python-2.3.5.tar.bz2 /usr/Builder/sources
+
+You may alternatively use a GZipped package, if you have that.
+
+To configure and compile Python, do
+
+    build python-2.3.5
+
+from your work directory. If that succeeds, you can optionally run
+the testsuite:
+
+    build test python-2.3.5
+
+To install and register the package, become root first:
+
+    su
+
+then do:
+
+    build install python-2.3.5
+
+After the installation, you could even create a distribution package:
+
+    build distro python-2.3.5
+
+4 Known problems and limitations
+================================
+
+Obviously, features that are not implemented in Syllable (yet) will
+not work from Python.
+
+5 Contact information
+=====================
+
+Most of the porting work on Python was done by Octavian Cerna on
+AtheOS. He implemented support for AtheOS native threads and shared
+libraries, among other things. Jamie Clarkson adapted part of this
+work to Syllable and to a newer version of Python. This version of
+Python was built and packed for Syllable by Kaj de Vos. You can send
+me problem reports, fixes and the like at
+
+    python@syllable.info
+
+This distribution can be found in the download section of the
+Syllable web site:
+
+    http://syllable.org
+

@@ -1,0 +1,41 @@
+authors
+	Octavian Cerna
+	Kaj de Vos
+	Jamie Clarkson
+	Jake Hamby
+maintainers			Kaj de Vos
+status				testing
+notes				See README for GLibC issues
+
+licenses			OSI
+home				www.python.org
+packages			Python-2.3.5
+
+build-needs			autoconf >= 2.53
+build-recommends
+	readline
+	openssl
+	expat
+	db
+
+patch				autoconf
+
+configure-env		CPPFLAGS '-I/usr/ncurses/include/ncurses'
+;configure-options
+;	--with-threads=atheos
+;	--with-libs=
+;	--disable-ipv6
+
+test-targets		test
+
+;install-prefix-var	DESTDIR
+;install-targets		altinstall
+documentation
+	README LICENSE Misc/NEWS Misc/HISTORY Demo
+
+links
+	bin/python	/usr/bin/python
+
+; post-install not implemented yet in builder!
+post-install
+	rm -r /usr/python/lib/python2.3/test
