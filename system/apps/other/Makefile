@@ -16,8 +16,9 @@
 #
 # 090602 - Initial Version							- Vanders
 # 090602 - Copied & modified for system/apps/other	- Vanders
+# 280602 - Fix paths								- Vanders
 
-SUBDIRS= man
+SUBDIRS= man-1.5i2
 
 BUILD_TYPE:= i386-atheos
 PREFIX_PATH:= $(DIST_DIR)/atheos/usr

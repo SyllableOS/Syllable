@@ -18,8 +18,10 @@
 # 160602 - Test for Glibc, we normally don't want to
 # 		   build Glibc from source!						- Kristian Van Der Vliet
 # 230602 - Comment out Glibc from deps: rule for now	- Kristian Van Der Vliet
+# 290602 - Fix directory names (CVS doesn't liike
+		   symlinks!)									- Vanders
 
-SUBDIRS = compat ncurses
+SUBDIRS = compat-1.0 ncurses-5.2
 
 GLIBC_DIR := glibc
 
@@ -34,11 +36,11 @@ all:
 	done
 
 deps:
-	cd $(PWD)/compat; \
+	cd $(PWD)/compat-1.0; \
 	$(MAKE) deps; \
 	cd ..;
 
-	cd $(PWD)/ncurses; \
+	cd $(PWD)/ncurses-5.2; \
 	./configure --prefix=$(DIST_DIR)/atheos/usr; \
 	cd ..;
 
@@ -64,11 +66,11 @@ install-doc:
 	@echo Nothing to be done for $(PWD)
 
 dist:
-	cd $(PWD)/compat; \
+	cd $(PWD)/compat-1.0; \
 	$(MAKE) dist; \
 	cd ..;
 
-	cd $(PWD)/ncurses; \
+	cd $(PWD)/ncurses-5.2; \
 	$(MAKE) install; \
 	cd ..;
 
