@@ -63,12 +63,14 @@ LayoutNode *LayoutView::GetRoot() const
  *****************************************************************************/
 void LayoutView::SetRoot( LayoutNode * pcRoot )
 {
+	if( m_pcRoot )
+	{
+		m_pcRoot->_RemovedFromView();
+	}
 	m_pcRoot = pcRoot;
-	if( m_pcRoot != NULL )
+	if( m_pcRoot )
 	{
 		m_pcRoot->_AddedToView( this );
-//      m_pcRoot->SetFrame( GetNormalizedBounds() );
-//      m_pcRoot->Layout();
 		FrameSized( Point( 0, 0 ) );
 	}
 }
@@ -130,8 +132,6 @@ void LayoutView::AllAttached()
 {
 	if( m_pcRoot != NULL )
 	{
-//      m_pcRoot->SetFrame( GetNormalizedBounds() );
-//      m_pcRoot->Layout();
 		FrameSized( Point( 0, 0 ) );
 	}
 }
@@ -619,6 +619,19 @@ void LayoutNode::_RemovedFromParent()
 	for( uint i = 0; i < m_cChildList.size(); ++i )
 	{
 		m_cChildList[i]->_RemovedFromParent();
+	}
+}
+
+void LayoutNode::_RemovedFromView()
+{
+	if( m_pcView != NULL && m_pcLayoutView != NULL )
+	{
+		m_pcLayoutView->RemoveChild( m_pcView );
+	}
+	m_pcLayoutView = NULL;
+	for( uint i = 0; i < m_cChildList.size(); ++i )
+	{
+		m_cChildList[i]->_RemovedFromView();
 	}
 }
 
