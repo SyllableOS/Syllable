@@ -1,11 +1,11 @@
 [Icon Name]
-Home
+Terminal
 
 [Icon Picture]
-/system/icons/root.icon
+/system/icons/terminal.icon
 
 [Execute]
-LBrowser
+aterm
 
 [Icon Position]
-36 20
+36 120

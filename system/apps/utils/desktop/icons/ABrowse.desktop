@@ -1,8 +1,11 @@
 [Icon Name]
 ABrowse
+
 [Icon Picture]
 /system/icons/ABrowse.icon
+
 [Execute]
 /Applications/ABrowse/ABrowse
+
 [Icon Position]
 36 72
