@@ -49,15 +49,15 @@ typedef struct
 } SpinLock_s;
 
 
-#define SPIN_LOCK( var, name ) SpinLock_s var = { 0, -1, 0, name }
+#define SPIN_LOCK( var, name ) SpinLock_s var = { ATOMIC_INIT(0), -1, ATOMIC_INIT(0), name }
 
-#define INIT_SPIN_LOCK( name ) ((SpinLock_s){ 0, -1, 0, name })
+#define INIT_SPIN_LOCK( name ) ((SpinLock_s){ ATOMIC_INIT(0), -1, ATOMIC_INIT(0), name })
 
 extern inline void spinlock_init( SpinLock_s* psLock, const char* pzName )
 {
-  psLock->sl_nLocked = 0;
+  atomic_set(&psLock->sl_nLocked, 0);
   psLock->sl_nProc   = -1;
-  psLock->sl_nNest   = 0;
+  atomic_set(&psLock->sl_nNest, 0);
   psLock->sl_pzName  = pzName;
 }
 
@@ -70,19 +70,19 @@ extern inline int spinlock( SpinLock_s* psLock )
     kassertw( (get_cpu_flags() & EFLG_IF) == 0 );
 #endif
   
-    while( atomic_swap( (int*)&psLock->sl_nLocked, 1 ) == 1 ) {
+    while( atomic_swap( &psLock->sl_nLocked, 1 ) == 1 ) {
 	if ( psLock->sl_nProc == nProcID ) {
-	    psLock->sl_nNest++;
-	    if ( psLock->sl_nNest > 50 ) {
-		printk( "panic: spinlock %s nested to deep: %d\n", psLock->sl_pzName, psLock->sl_nNest );
+	    atomic_inc( &psLock->sl_nNest );
+	    if ( atomic_read( &psLock->sl_nNest ) > 50 ) {
+		printk( "panic: spinlock %s nested too deep: %d\n", psLock->sl_pzName, atomic_read( &psLock->sl_nNest ) );
 		return( -1 );
 	    }
 	    return( 0 );
 	}
     }
     psLock->sl_nProc = nProcID;
-    psLock->sl_nNest++;
-    if ( psLock->sl_nNest > 50 ) {
+    atomic_inc( &psLock->sl_nNest );
+    if ( atomic_read(&psLock->sl_nNest) > 50 ) {
 	return( -1 );
     }
     return( nError );
@@ -97,10 +97,10 @@ extern inline void spinunlock( SpinLock_s* psLock )
   kassertw( (get_cpu_flags() & EFLG_IF) == 0 );
 #endif /* DEBUG_SPINLOCKS */
   
-  psLock->sl_nNest--;
-  if ( psLock->sl_nNest == 0 ) {
+  atomic_dec( &psLock->sl_nNest );
+  if ( atomic_read( &psLock->sl_nNest ) == 0 ) {
     psLock->sl_nProc = -1;
-    psLock->sl_nLocked = 0;
+    atomic_set( &psLock->sl_nLocked, 0 );
   }
 }
 

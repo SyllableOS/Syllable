@@ -59,8 +59,8 @@ struct _ElfImageInst
 	ElfImage_s *ii_psImage;
 	ElfImageInst_s **ii_apsSubImages;
 	int ii_nHandle;
-	int ii_nOpenCount;	/* Total number of references                    */
-	int ii_nAppOpenCount;	/* Number of times loaded by load_library()      */
+	atomic_t ii_nOpenCount;	/* Total number of references                    */
+	atomic_t ii_nAppOpenCount;	/* Number of times loaded by load_library()      */
 	uint32 ii_nTextAddress;	/* The text-area address                         */
 	area_id ii_nTextArea;
 	area_id ii_nDataArea;
@@ -74,7 +74,7 @@ struct _ElfImage
 	char im_zName[64];
 	char *im_pzPath;
 	char *im_pzArguments;
-	int im_nOpenCount;
+	atomic_t im_nOpenCount;
 	int im_nSectionCount;
 	Elf32_SectionHeader_s *im_pasSections;
 

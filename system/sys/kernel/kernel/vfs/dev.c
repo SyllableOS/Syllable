@@ -330,7 +330,7 @@ static int load_device( Device_s *psDevice )
 			printk( "Error: load_device() failed to stat driver image %s\n", psDevice->d_zPath );
 			goto error1;
 		}
-		if ( psDevice->d_nOpenCount > 0 )
+		if ( atomic_read( &psDevice->d_nOpenCount ) > 0 )
 		{
 			nError = 0;
 			goto error1;
@@ -477,8 +477,8 @@ static void scan_driver_dir( FileNode_s *psParentNode, char *pzPath, int nPathBa
 				strcpy( psDevice->d_zPath, pzPath );
 				psDevice->d_psOps = NULL;
 				psDevice->d_nDeviceID = g_nDeviceID++;
-				psDevice->d_nNodeCount = 0;
-				psDevice->d_nOpenCount = 0;
+				atomic_set( &psDevice->d_nNodeCount, 0 );
+				atomic_set( &psDevice->d_nOpenCount, 0 );
 				psDevice->d_nDriverImage = -1;
 				psDevice->d_nImgInode = sStat.st_ino;
 				psDevice->d_nImgDeviceNum = sStat.st_dev;
@@ -508,8 +508,8 @@ void init_boot_device( const char *pzPath )
 	strcpy( psDevice->d_zPath, pzPath );
 	psDevice->d_psOps = NULL;
 	psDevice->d_nDeviceID = g_nDeviceID++;
-	psDevice->d_nNodeCount = 0;
-	psDevice->d_nOpenCount = 0;
+	atomic_set( &psDevice->d_nNodeCount, 0 );
+	atomic_set( &psDevice->d_nOpenCount, 0 );
 	psDevice->d_nDriverImage = -1;
 	psDevice->d_nImgInode = -1;
 	psDevice->d_nImgDeviceNum = -1;
@@ -651,7 +651,7 @@ static int dfs_lookup( void *pVolume, void *pParent, const char *pzName, int nNa
 
 					if ( nError >= 0 )
 					{
-						if ( psNode->fn_psDevice->d_nOpenCount > 0 )
+						if ( atomic_read( &psNode->fn_psDevice->d_nOpenCount ) > 0 )
 						{
 							bScan = false;
 							goto checked;
@@ -960,7 +960,7 @@ static int dfs_open( void *pVolume, void *pNode, int nMode, void **ppCookie )
 		nError = psNode->fn_psOps->open( psNode->fn_pDevNode, nMode, ppCookie );
 		if ( nError >= 0 && psNode->fn_psDevice != NULL )
 		{
-			psNode->fn_psDevice->d_nOpenCount++;
+			atomic_inc( &psNode->fn_psDevice->d_nOpenCount );
 		}
 	}
 	return ( nError );
@@ -983,7 +983,7 @@ static int dfs_Close( void *pVolume, void *pNode, void *pCookie )
 		nError = psNode->fn_psOps->close( psNode->fn_pDevNode, pCookie );
 		if ( psNode->fn_psDevice != NULL )
 		{
-			psNode->fn_psDevice->d_nOpenCount--;
+			atomic_dec( &psNode->fn_psDevice->d_nOpenCount );
 		}
 	}
 	return ( nError );
@@ -1055,7 +1055,7 @@ static int dfs_read_inode( void *pVolume, ino_t nInodeNum, void **ppNode )
 
 				if ( nError >= 0 )
 				{
-					if ( psNode->fn_psDevice->d_nOpenCount > 0 )
+					if ( atomic_read( &psNode->fn_psDevice->d_nOpenCount ) > 0 )
 					{
 						bScan = false;
 						goto checked;

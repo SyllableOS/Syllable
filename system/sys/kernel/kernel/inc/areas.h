@@ -69,9 +69,9 @@ struct _MemArea
 	area_id a_nAreaID;
 	uint32 a_nProtection;
 	int a_nLockMode;
-	int a_nRefCount;
+	atomic_t a_nRefCount;
 	WaitQueue_s *a_psIOThreads;	/* Threads waiting for all IO to . */
-	int a_nIOPages;		/* Number of pages currently being loaded/swapped in or out. */
+	atomic_t a_nIOPages;		/* Number of pages currently being loaded/swapped in or out. */
 	bool a_bDeleted;	/* True while waiting for pending IO on a deleted area */
 };
 

@@ -69,7 +69,7 @@ MemArea_s *get_area_from_handle( area_id hArea )
 		{
 			goto error;
 		}
-		atomic_add( &psArea->a_nRefCount, 1 );
+		atomic_inc( &psArea->a_nRefCount );
 		break;
 	}
       error:
@@ -136,7 +136,7 @@ MemArea_s *get_area( MemContext_s *psCtx, uint32 nAddress )
 		if ( nIndex >= 0 )
 		{
 			psArea = psCtx->mc_apsAreas[nIndex];
-			atomic_add( &psArea->a_nRefCount, 1 );
+			atomic_inc( &psArea->a_nRefCount );
 			break;
 		}
 		else

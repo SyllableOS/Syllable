@@ -320,7 +320,7 @@ struct _Socket {
     uint16 sk_nSrcPort;
     uint16 sk_nDstPort;
     bool sk_bIsBound;
-    int sk_nOpenCount;
+    atomic_t sk_nOpenCount;
     union {
 	UDPEndPoint_s *psUDPEndP;
     	TCPCtrl_s     *psTCPCtrl;

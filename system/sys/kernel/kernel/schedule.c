@@ -1294,7 +1294,7 @@ static Thread_s *select_thread( void )
 			printk( "Panic: select_thread() Current thread is running on CPU %d while we run on %d\n", psPrev->tr_nCurrentCPU, nThisProc );
 		}
 
-		if ( psPrev->tr_nInV86 > 0 && nThisProc == g_nBootCPU )
+		if ( atomic_read( &psPrev->tr_nInV86 ) > 0 && nThisProc == g_nBootCPU )
 		{
 			psNext = psPrev;
 			goto found;
@@ -1322,7 +1322,7 @@ static Thread_s *select_thread( void )
 
 	if ( nState == TS_WAIT || nState == TS_SLEEP || nState == TS_STOPPED )
 	{			/* previous task went to sleep  */
-		kassertw( psPrev->tr_nInV86 == 0 || nThisProc != g_nBootCPU );
+		kassertw( atomic_read( &psPrev->tr_nInV86 ) == 0 || nThisProc != g_nBootCPU );
 		psNext = g_sSysBase.ex_psFirstReady;
 		goto found;
 	}
@@ -1393,19 +1393,19 @@ void Schedule( void )
 		psPrev->tr_nState = TS_RUN;
 	}
 
-	if ( g_sSchedSpinLock.sl_nNest != 1 )
+	if ( atomic_read( &g_sSchedSpinLock.sl_nNest ) != 1 )
 	{
 		if ( CURRENT_THREAD != NULL )
 		{
 			sched_unlock();
 			put_cpu_flags( nFlg );
 
-			printk( "Schedule called while g_sSchedSpinLock.sl_nNest == %d\n", g_sSchedSpinLock.sl_nNest );
+			printk( "Schedule called while g_sSchedSpinLock.sl_nNest == %d\n", atomic_read( &g_sSchedSpinLock.sl_nNest ) );
 			return;
 		}
 		else
 		{
-			printk( "PANIC: schedule() no current thread, and spinlock nest count is %d\n", g_sSchedSpinLock.sl_nNest );
+			printk( "PANIC: schedule() no current thread, and spinlock nest count is %d\n", atomic_read( &g_sSchedSpinLock.sl_nNest ) );
 		}
 	}
 
@@ -1419,7 +1419,7 @@ void Schedule( void )
 	// Skip threads we don't like
 	for ( ; psNext != NULL; psNext = psNext->tr_psNext )
 	{
-		if ( psNext->tr_nInV86 > 0 && nThisProc != g_nBootCPU )
+		if ( atomic_read( &psNext->tr_nInV86 ) > 0 && nThisProc != g_nBootCPU )
 		{
 			continue;
 		}
@@ -1491,9 +1491,9 @@ void Schedule( void )
 	psNext->tc_sTSS.gs = g_asProcessorDescs[psNext->tr_nCurrentCPU].pi_nGS;
 	Desc_SetBase( psNext->tc_sTSS.gs, ( uint32 )psNext->tr_pThreadData );
 
-	if ( g_sSchedSpinLock.sl_nNest != 1 )
+	if ( atomic_read( &g_sSchedSpinLock.sl_nNest ) != 1 )
 	{
-		printk( "Error: Schedule() called with g_nSchedSpinLockNest = %d\n", g_sSchedSpinLock.sl_nNest );
+		printk( "Error: Schedule() called with g_nSchedSpinLockNest = %d\n", atomic_read( &g_sSchedSpinLock.sl_nNest ) );
 	}
 
 	sched_unlock();

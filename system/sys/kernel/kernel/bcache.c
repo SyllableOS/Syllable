@@ -557,8 +557,8 @@ static int flush_block_list( CacheBlock_s **pasBlocks, int nCount )
 		}
 		psBuffer->cb_pFunc = NULL;
 		psBuffer->cb_nFlags &= ~CBF_DIRTY;
-		atomic_add( &g_sBlockCache.bc_nDirtyCount, -1 );
-		atomic_add( &g_sSysBase.ex_nDirtyCacheSize, -CB_SIZE( psBuffer ) );
+		atomic_dec( &g_sBlockCache.bc_nDirtyCount );
+		atomic_sub( &g_sSysBase.ex_nDirtyCacheSize, CB_SIZE( psBuffer ) );
 		if ( NULL != pFunc )
 		{
 			pFunc( nBlock, 1, pArg );
@@ -640,7 +640,7 @@ int shrink_block_cache( int nBytesNeeded )
 	int nTotalFreed = 0;
 	int nRetries = 0;
 
-	while ( nTotalFreed < nBytesNeeded && g_sSysBase.ex_nBlockCacheSize > 0 )
+	while ( nTotalFreed < nBytesNeeded && atomic_read( &g_sSysBase.ex_nBlockCacheSize ) > 0 )
 	{
 		int nFreed;
 
@@ -660,7 +660,7 @@ int shrink_block_cache( int nBytesNeeded )
 		}
 		if ( nFreed <= 0 && nRetries++ > 10000 )
 		{
-			printk( "Warning: shrink_block_cache() failed to shrink the block-cache. Current size: %d\n", g_sSysBase.ex_nBlockCacheSize );
+			printk( "Warning: shrink_block_cache() failed to shrink the block-cache. Current size: %d\n", atomic_read( &g_sSysBase.ex_nBlockCacheSize ) );
 			break;
 		}
 	}
@@ -1045,7 +1045,7 @@ int mark_blocks_dirty( int nDev, off_t nBlockNum, int nBlockCount )
 		{
 			if ( ( psBuffer->cb_nFlags & CBF_DIRTY ) == 0 )
 			{
-				atomic_add( &g_sBlockCache.bc_nDirtyCount, 1 );
+				atomic_inc( &g_sBlockCache.bc_nDirtyCount );
 				atomic_add( &g_sSysBase.ex_nDirtyCacheSize, CB_SIZE( psBuffer ) );
 			}
 			psBuffer->cb_nFlags |= CBF_DIRTY;
@@ -1120,7 +1120,7 @@ int set_blocks_info( int nDev, off_t *panBlocks, int nCount, bool bDoClone, cach
 
 		if ( ( psBuffer->cb_nFlags & CBF_DIRTY ) == 0 )
 		{
-			atomic_add( &g_sBlockCache.bc_nDirtyCount, 1 );
+			atomic_inc( &g_sBlockCache.bc_nDirtyCount );
 			atomic_add( &g_sSysBase.ex_nDirtyCacheSize, CB_SIZE( psBuffer ) );
 		}
 
@@ -1168,7 +1168,7 @@ int write_logged_blocks( int nDev, off_t nBlockNum, const void *pBuffer, uint nC
 			memcpy( CB_DATA( psBlock ), ( ( char * )pBuffer ) + i * nBlockSize, nBlockSize );
 			if ( ( psBlock->cb_nFlags & CBF_DIRTY ) == 0 )
 			{
-				atomic_add( &g_sBlockCache.bc_nDirtyCount, 1 );
+				atomic_inc( &g_sBlockCache.bc_nDirtyCount );
 				atomic_add( &g_sSysBase.ex_nDirtyCacheSize, nBlockSize );
 				psBlock->cb_nFlags |= CBF_DIRTY;
 			}
@@ -1342,7 +1342,7 @@ int write_phys_blocks( int nDev, off_t nBlockNum, const void *pBuffer, uint nBlo
 
 				if ( psBlock->cb_nFlags & CBF_DIRTY )
 				{
-					atomic_add( &g_sBlockCache.bc_nDirtyCount, -1 );
+					atomic_dec( &g_sBlockCache.bc_nDirtyCount );
 					atomic_add( &g_sSysBase.ex_nDirtyCacheSize, nBlockSize );
 					psBlock->cb_nFlags &= ~CBF_DIRTY;
 				}
@@ -1413,7 +1413,7 @@ int cached_write( int nDev, off_t nBlockNum, const void *pBuffer, uint nBlockCou
 			LOCK( g_sBlockCache.bc_hLock );
 			if ( ( psBlock->cb_nFlags & CBF_DIRTY ) == 0 )
 			{
-				atomic_add( &g_sBlockCache.bc_nDirtyCount, 1 );
+				atomic_inc( &g_sBlockCache.bc_nDirtyCount );
 				atomic_add( &g_sSysBase.ex_nDirtyCacheSize, nBlockSize );
 				psBlock->cb_nFlags |= CBF_DIRTY;
 			}
@@ -1795,7 +1795,7 @@ static int32 cache_flusher( void *pData )
 		bigtime_t nCurTime;
 		int nDev = -1;
 
-		if ( g_sSysBase.ex_nDirtyCacheSize > 0 || g_sSysBase.ex_nFreePageCount < 4096 )
+		if ( atomic_read( &g_sSysBase.ex_nDirtyCacheSize ) > 0 || atomic_read( &g_sSysBase.ex_nFreePageCount ) < 4096 )
 		{
 			snooze( 500000 );
 		}
@@ -1803,7 +1803,7 @@ static int32 cache_flusher( void *pData )
 		{
 			snooze( 2000000 );
 		}
-		if ( g_sSysBase.ex_nDirtyCacheSize == 0 && g_sSysBase.ex_nFreePageCount >= 4096 )
+		if ( atomic_read( &g_sSysBase.ex_nDirtyCacheSize ) == 0 && atomic_read( &g_sSysBase.ex_nFreePageCount ) >= 4096 )
 		{
 			continue;
 		}
@@ -1857,7 +1857,7 @@ static int32 cache_flusher( void *pData )
 				pasIoList[j]->cb_nFlags &= ~CBF_BUSY;
 			}
 		}
-		if ( g_sSysBase.ex_nFreePageCount < 4096 )
+		if ( atomic_read( &g_sSysBase.ex_nFreePageCount ) < 4096 )
 		{
 			release_cache_blocks();
 			shrinc_cache_heaps( -1 );

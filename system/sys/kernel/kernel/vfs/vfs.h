@@ -74,7 +74,7 @@ struct _FileSysDesc
 {
 	FileSysDesc_s *fs_psNext;
 	FSOperations_s *fs_psOperations;
-	int fs_nRefCount;
+	atomic_t fs_nRefCount;
 	int fs_nImage;		/* Handle to the elf-image if loaded from disk. */
 	char fs_zName[32];
 };
@@ -92,7 +92,7 @@ struct _Volume
 	FSOperations_s *v_psOperations;
 	FileSysDesc_s *v_psFSDesc;
 	char v_zDevicePath[1024];
-	int v_nOpenCount;
+	atomic_t v_nOpenCount;
 	bool v_bUnmounted;
 };
 
@@ -131,7 +131,7 @@ struct _FileLockRec
 struct _Inode
 {
 	ino_t i_nInode;		/* Inode number invented by the file-system */
-	int i_nCount;		/* Reference counter */
+	atomic_t i_nCount;		/* Reference counter */
 	Volume_s *i_psVolume;	/* The volume we loaded this inode from */
 	FSOperations_s *i_psOperations;	/* List of file-system operations */
 	atomic_t i_nThreadsInFS;	/* Incremented before an decremented after a call
@@ -169,7 +169,7 @@ enum
 struct _File
 {
 	Inode_s *f_psInode;
-	int f_nRefCount;
+	atomic_t f_nRefCount;
 	int f_nType;
 	int64 f_nPos;
 	int f_nMode;

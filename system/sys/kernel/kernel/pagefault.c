@@ -200,7 +200,7 @@ uint32 memmap_no_page( MemArea_s *psArea, iaddr_t nAddress, bool bWriteAccess )
 		return ( 0 );
 	}
 
-	atomic_add( &psArea->a_nIOPages, 1 );
+	atomic_inc( &psArea->a_nIOPages );
 
 
 	UNLOCK( g_hAreaTableSema );
@@ -219,7 +219,7 @@ uint32 memmap_no_page( MemArea_s *psArea, iaddr_t nAddress, bool bWriteAccess )
 
 	flush_tlb_global();
 
-	atomic_add( &psArea->a_nIOPages, -1 );
+	atomic_dec( &psArea->a_nIOPages );
 
 	// Wake up threads bumping into the page while we was loading it.
 	if ( psPage->p_psIOThreads != NULL )
@@ -253,7 +253,7 @@ int handle_copy_on_write( MemArea_s *psArea, pte_t * pPte, iaddr_t nVirtualAddre
 	Page_s *psPage = &g_psFirstPage[nPageAddr >> PAGE_SHIFT];
 	iaddr_t nNewPage;
 
-	// COW of the global NULL page is very common, so we handles it specialy.
+	// COW of the global NULL page is very common, so we handle it specially.
 	if ( nPageAddr == ( iaddr_t )g_sSysBase.ex_pNullPage )
 	{
 		Page_s *psNewPage;
@@ -282,7 +282,7 @@ int handle_copy_on_write( MemArea_s *psArea, pte_t * pPte, iaddr_t nVirtualAddre
 
 				kassertw( PTE_ISWRITE( *pClPte ) == false );
 				*pClPte = *pPte;
-				atomic_add( &psNewPage->p_nCount, 1 );
+				atomic_inc( &psNewPage->p_nCount );
 			}
 		}
 
@@ -296,17 +296,17 @@ int handle_copy_on_write( MemArea_s *psArea, pte_t * pPte, iaddr_t nVirtualAddre
 		return ( 0 );
 	}
 
-	if ( psPage->p_nCount < 0 )
+	if ( atomic_read( &psPage->p_nCount ) < 0 )
 	{
-		printk( "PANIC: handle_copy_on_write()  Page at %08x got ref count of %d!\n", nPageAddr, psPage->p_nCount );
-		psPage->p_nCount = 100;
+		printk( "PANIC: handle_copy_on_write()  Page at %08x got ref count of %d!\n", nPageAddr, atomic_read( &psPage->p_nCount ) );
+		atomic_set( &psPage->p_nCount, 100 );
 	}
 
 	kassertw( ( psArea->a_nProtection & AREA_SHARED ) == 0 );
 
 //  nFlags = cli();
 //  lock_pagelist();
-	if ( psPage->p_nCount == 1 )
+	if ( atomic_read( &psPage->p_nCount ) == 1 )
 	{
 		PTE_VALUE( *pPte ) |= PTE_WRITE;
 //    unlock_pagelist();
@@ -334,9 +334,10 @@ int handle_copy_on_write( MemArea_s *psArea, pte_t * pPte, iaddr_t nVirtualAddre
 	set_pte_address( pPte, nNewPage );
 	PTE_VALUE( *pPte ) |= PTE_WRITE;
 
-	atomic_add( &psPage->p_nCount, -1 );
+	atomic_dec( &psPage->p_nCount );
 
-	if ( psPage->p_nCount == 1 )
+	// is there a potential race condition if p_nCount falls to zero?
+	if ( atomic_read( &psPage->p_nCount ) == 1 )
 	{
 		register_swap_page( nPageAddr );
 	}
@@ -369,7 +370,7 @@ static MemArea_s *lookup_area( MemContext_s *psCtx, iaddr_t nAddress )
 		if ( nIndex >= 0 )
 		{
 			psArea = psCtx->mc_apsAreas[nIndex];
-			atomic_add( &psArea->a_nRefCount, 1 );
+			atomic_inc( &psArea->a_nRefCount );
 			break;
 		}
 		else
@@ -569,7 +570,7 @@ void handle_page_fault( SysCallRegs_s * psRegs, int nErrorCode )
 		psCtx = CURRENT_PROC->tc_psMemSeg;
 	}
 
-	atomic_add( &g_sSysBase.ex_nPageFaultCount, 1 );
+	atomic_inc( &g_sSysBase.ex_nPageFaultCount );
 
 	pPgd = pgd_offset( psCtx, nFaultAddr );
 	pPte = pte_offset( pPgd, nFaultAddr );

@@ -86,7 +86,7 @@ struct _TCPCtrl
 	TCPCtrl_s *tcb_psNextHash;
 	TCPCtrl_s *tcb_psNextClient;
 	sem_id tcb_hMutex;	/* tcb mutual exclusion                 */
-	int tcb_nRefCount;
+	atomic_t tcb_nRefCount;
 	int tcb_nState;		/* TCP state                            */
 	int tcb_ostate;		/* output state                         */
 	int16 tcb_code;		/* TCP code for next packet             */

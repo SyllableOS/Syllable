@@ -77,28 +77,28 @@ struct SystemBase
 	uint32 sb_nLastUserAddress;
 
       /*** Various resource/statistics counters ***/
-	int ex_nPageFaultCount;
+	atomic_t ex_nPageFaultCount;
 
 	int ex_nTotalPageCount;
-	int ex_nFreePageCount;
+	atomic_t ex_nFreePageCount;
 	int ex_nCommitPageCount;
-	int ex_nKernelMemSize;	/* kmalloced() memory */
-	int ex_nKernelMemPages;	/* Pages allocated by kmalloc() */
-	int ex_nBlockCacheSize;
-	int ex_nDirtyCacheSize;
+	atomic_t ex_nKernelMemSize;	/* kmalloced() memory */
+	atomic_t ex_nKernelMemPages;	/* Pages allocated by kmalloc() */
+	atomic_t ex_nBlockCacheSize;
+	atomic_t ex_nDirtyCacheSize;
 	int ex_nLockedCacheBlocks;
-	int ex_nSemaphoreCount;
-	int ex_nMessagePortCount;
-	int ex_nProcessCount;
-	int ex_nThreadCount;
+	atomic_t ex_nSemaphoreCount;
+	atomic_t ex_nMessagePortCount;
+	atomic_t ex_nProcessCount;
+	atomic_t ex_nThreadCount;
 
-	int ex_nLoadedImageCount;
-	int ex_nImageInstanceCount;
+	atomic_t ex_nLoadedImageCount;
+	atomic_t ex_nImageInstanceCount;
 
-	int ex_nAllocatedInodeCount;
-	int ex_nLoadedInodeCount;
-	int ex_nUsedInodeCount;
-	int ex_nOpenFileCount;
+	atomic_t ex_nAllocatedInodeCount;
+	atomic_t ex_nLoadedInodeCount;
+	atomic_t ex_nUsedInodeCount;
+	atomic_t ex_nOpenFileCount;
 
 	int ex_nBootModuleCount;
 	char ex_anBootModuleArgs[MAX_BOOTMODULE_ARGUMENT_SIZE];

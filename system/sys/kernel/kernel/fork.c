@@ -119,9 +119,9 @@ int do_exit( int nErrorCode )
 
 	psThread->tr_nExitCode = nErrorCode;
 
-	kassertw( psProc->pr_nLivingThreadCount >= 1 );
+	kassertw( atomic_read(&psProc->pr_nLivingThreadCount) >= 1 );
 
-	if ( atomic_add( &psProc->pr_nLivingThreadCount, -1 ) == 1 )	/* Last out closing the door    */
+	if ( atomic_dec_and_test( &psProc->pr_nLivingThreadCount ) )	/* Last out closing the door    */
 	{
 		IoContext_s *psIOCtx;
 		DR_ThreadDied_s sAppMsg;
@@ -330,7 +330,7 @@ static Process_s *alloc_process( MemContext_s *psMemSeg )
 	psProc->pr_nSession = -1;
 	psProc->tc_zName[0] = '\0';
 
-	atomic_add( &g_sSysBase.ex_nProcessCount, 1 );
+	atomic_inc( &g_sSysBase.ex_nProcessCount );
 
 	return ( psProc );
 }

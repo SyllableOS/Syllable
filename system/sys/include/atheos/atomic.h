@@ -1,170 +1,258 @@
-/*
- *  The AtheOS kernel
- *  Copyright (C) 1999 - 2001 Kurt Skauen
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of version 2 of the GNU Library
- *  General Public License as published by the Free Software
- *  Foundation.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
-
 #ifndef __ATHEOS_ATOMIC_H__
 #define __ATHEOS_ATOMIC_H__
 
 #ifdef __cplusplus
 extern "C" {
-#if 0  
+#if 0
 } /*make emacs indention work */
 #endif
 #endif
 
-typedef int atomic_t;
+struct __atomic_fool_gcc_struct { unsigned long a[100]; };
+#define __atomic_fool_gcc(x) (*(struct __atomic_fool_gcc_struct *)(x))
 
-#include <atheos/types.h>
+/*
+ * Atomic operations that C can't guarantee us.  Useful for
+ * resource counting etc..
+ */
 
-struct __atomic_fool_gcc_struct { int a[100]; };
-#define __atomic_fool_gcc(x) (*(volatile struct __atomic_fool_gcc_struct *)x)
+#if 1  // CONFIG_SMP
+#define LOCK_ "lock ; "
+#else
+#define LOCK_ ""
+#endif
 
-/** 
- * \par Description:
- *	Add nValue to *pnTarget and return the old *pnTarget. The operation
- *	is atomic and can not be affected by interrupts or other CPU's writing
- *	to *pnTarget.
- * \par Note:
- * \par Warning:
- * \param
- * \return
- * \sa
- * \author	Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
+/*
+ * Make sure gcc doesn't try to be clever and move things around
+ * on us. We need to use _exactly_ the address the user gave us,
+ * not some alias that contains the same information.
+ */
+typedef struct { volatile int counter; } atomic_t;
 
-static inline atomic_t atomic_add( atomic_t* pnTarget, atomic_t nValue  )
+#define ATOMIC_INIT(i)	{ (i) }
+
+/**
+ * atomic_read - read atomic variable
+ * @v: pointer of type atomic_t
+ * 
+ * Atomically reads the value of @v.
+ */ 
+#define atomic_read(v)		((v)->counter)
+
+/**
+ * atomic_set - set atomic variable
+ * @v: pointer of type atomic_t
+ * @i: required value
+ * 
+ * Atomically sets the value of @v to @i.
+ */ 
+#define atomic_set(v,i)		(((v)->counter) = (i))
+
+/**
+ * atomic_add - add integer to atomic variable
+ * @i: integer value to add
+ * @v: pointer of type atomic_t
+ * 
+ * Atomically adds @i to @v.
+ */
+static __inline__ void atomic_add( atomic_t* v, int i )
 {
-    register atomic_t nOldVal;
-    register int nTmp = 0;
-    __asm__ volatile( "  movl %3,%%eax;"	/* Start with the old-value in EAX */
-		      "0:;"
-		      "  movl %%eax,%%edx;"	/* Put the old-value where cmpxchgl want it */
-		      "  addl %4,%%edx;"
-		      "  lock; cmpxchgl %%edx,%3;" /* if (*pnTarget==eax) {*pnTarget=edx;} else {eax=*pnTarget;goto 0;} */
-		      "  jnz 0b;"
-		      : "=&a" (nOldVal), "=m"(__atomic_fool_gcc(pnTarget)), "=&d"(nTmp)
-		      : "m" (__atomic_fool_gcc(pnTarget)), "r" (nValue)
-		      :  "cc" );
-    return( nOldVal );
+	__asm__ __volatile__(
+		LOCK_ "addl %1,%0"
+		:"=m" (v->counter)
+		:"ir" (i), "m" (v->counter));
 }
 
-/** 
- * \par Description:
- *	Bitwise or nValue to *pnTarget and return the old *pnTarget. The operation
- *	is atomic and can not be affected by interrupts or other CPU's writing
- *	to *pnTarget.
- * \par Note:
- * \par Warning:
- * \param
- * \return
- * \sa
- * \author	Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-
-static inline atomic_t atomic_or( atomic_t* pnTarget, atomic_t nValue  )
+/**
+ * atomic_sub - subtract the atomic variable
+ * @i: integer value to subtract
+ * @v: pointer of type atomic_t
+ * 
+ * Atomically subtracts @i from @v.
+ */
+static __inline__ void atomic_sub( atomic_t *v, int i )
 {
-    register atomic_t nOldVal;
-    register int nTmp = 0;
-    __asm__ volatile( "  movl %3,%%eax;"	/* Start with the old-value in EAX */
-		      "0:;"
-		      "  movl %%eax,%%edx;"	/* Put the old-value where cmpxchgl want it */
-		      "  orl %4,%%edx;"
-		      "  lock; cmpxchgl %%edx,%3;"	/* if (*pnTarget==eax) {*pnTarget=edx;} else {eax=*pnTarget;goto 0;} */
-		      "  jnz 0b;"
-		      : "=&a" (nOldVal), "=m"(__atomic_fool_gcc(pnTarget)), "=&d"(nTmp)
-		      : "m" (__atomic_fool_gcc(pnTarget)), "r" (nValue)
-		      : "cc" );
-    return( nOldVal );
+	__asm__ __volatile__(
+		LOCK_ "subl %1,%0"
+		:"=m" (v->counter)
+		:"ir" (i), "m" (v->counter));
 }
 
-/** 
- * \par Description:
- *	Bitwise and nValue with *pnTarget and return the old *pnTarget. The operation
- *	is atomic and can not be affected by interrupts or other CPU's writing
- *	to *pnTarget.
- * \par Note:
- * \par Warning:
- * \param
- * \return
- * \sa
- * \author	Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-
-static inline atomic_t atomic_and( atomic_t* pnTarget, atomic_t nValue  )
+/**
+ * atomic_or - bitwise OR the atomic variable
+ * @i: integer value to bitwise or
+ * @v: pointer of type atomic_t
+ * 
+ * Atomically ORs @i from @v.
+ */
+static __inline__ void atomic_or( atomic_t *v, int i )
 {
-    register atomic_t nOldVal;
-    register int nTmp = 0;
-    __asm__ volatile( "  movl %3,%%eax;"	/* Start with the old-value in EAX */
-		      "0:;"
-		      "  movl %%eax,%%edx;"	/* Put the old-value where cmpxchgl want it */
-		      "  andl %4,%%edx;"
-		      "  lock; cmpxchgl %%edx,%3;"	/* if (*pnTarget==eax) {*pnTarget=edx;} else {eax=*pnTarget;goto 0;} */
-		      "  jnz 0b;"
-		      : "=&a" (nOldVal), "=m"(__atomic_fool_gcc(pnTarget)), "=&d"(nTmp)
-		      : "m" (__atomic_fool_gcc(pnTarget)), "r" (nValue)
-		      : "cc" );
-    return( nOldVal );
+	__asm__ __volatile__(
+		LOCK_ "orl %1,%0"
+		:"=m" (v->counter)
+		:"ir" (i), "m" (v->counter));
 }
 
-/** 
- * \par Description:
- *	Move nValue into *pnTarget and return the old *pnTarget. The operation
- *	is atomic and can not be affected by interrupts or other CPU's writing
- *	to *pnTarget.
- * \par Note:
- * \par Warning:
- * \param
- * \return
- * \sa
- * \author	Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-
-static inline atomic_t atomic_swap( atomic_t* pnTarget, atomic_t nValue )
+/**
+ * atomic_and - bitwise AND the atomic variable
+ * @i: integer value to bitwise and
+ * @v: pointer of type atomic_t
+ * 
+ * Atomically ANDs @i from @v.
+ */
+static __inline__ void atomic_and( atomic_t *v, int i )
 {
-    atomic_t nOldValue;
-    __asm__ volatile( "lock; xchgl %3,%1"
-		      : "=r"(nOldValue), "=m" (__atomic_fool_gcc(pnTarget))
-		      : "m" (__atomic_fool_gcc(pnTarget)), "0"(nValue) );
-    return( nOldValue );
+	__asm__ __volatile__(
+		LOCK_ "andl %1,%0"
+		:"=m" (v->counter)
+		:"ir" (i), "m" (v->counter));
 }
 
-/** 
- * \par Description:
- *	Decrement a value and return "true" if the result was <= 0
- * \par Note:
- * \par Warning:
- * \param
- * \return
- * \sa
- * \author	Kurt Skauen (kurt@atheos.cx)
- *****************************************************************************/
-
-static inline bool atomic_dec_and_test( atomic_t* pnTarget )
+/**
+ * atomic_sub_and_test - subtract value from variable and test result
+ * @i: integer value to subtract
+ * @v: pointer of type atomic_t
+ * 
+ * Atomically subtracts @i from @v and returns
+ * true if the result is zero, or false for all
+ * other cases.
+ */
+static __inline__ int atomic_sub_and_test( atomic_t *v, int i )
 {
-    int nResult;
+	unsigned char c;
 
-    __asm__ volatile( "xorl %%eax,%%eax;"
-		      "lock; decl %1;"
-		      "setle %%al;"
-		      : "=&a"(nResult)
-		      : "m"(__atomic_fool_gcc(pnTarget)) );
-	    
-    return( (bool) nResult );
+	__asm__ __volatile__(
+		LOCK_ "subl %2,%0; sete %1"
+		:"=m" (v->counter), "=qm" (c)
+		:"ir" (i), "m" (v->counter) : "memory");
+	return c;
+}
+
+/**
+ * atomic_inc - increment atomic variable
+ * @v: pointer of type atomic_t
+ * 
+ * Atomically increments @v by 1.
+ */ 
+static __inline__ void atomic_inc(atomic_t *v)
+{
+	__asm__ __volatile__(
+		LOCK_ "incl %0"
+		:"=m" (v->counter)
+		:"m" (v->counter));
+}
+
+/**
+ * atomic_dec - decrement atomic variable
+ * @v: pointer of type atomic_t
+ * 
+ * Atomically decrements @v by 1.
+ */ 
+static __inline__ void atomic_dec(atomic_t *v)
+{
+	__asm__ __volatile__(
+		LOCK_ "decl %0"
+		:"=m" (v->counter)
+		:"m" (v->counter));
+}
+
+/**
+ * atomic_dec_and_test - decrement and test
+ * @v: pointer of type atomic_t
+ * 
+ * Atomically decrements @v by 1 and
+ * returns true if the result is 0, or false for all other
+ * cases.
+ */ 
+static __inline__ int atomic_dec_and_test(atomic_t *v)
+{
+	unsigned char c;
+
+	__asm__ __volatile__(
+		LOCK_ "decl %0; sete %1"
+		:"=m" (v->counter), "=qm" (c)
+		:"m" (v->counter) : "memory");
+	return c != 0;
+}
+
+/**
+ * atomic_inc_and_test - increment and test 
+ * @v: pointer of type atomic_t
+ * 
+ * Atomically increments @v by 1
+ * and returns true if the result is zero, or false for all
+ * other cases.
+ */ 
+static __inline__ int atomic_inc_and_test(atomic_t *v)
+{
+	unsigned char c;
+
+	__asm__ __volatile__(
+		LOCK_ "incl %0; sete %1"
+		:"=m" (v->counter), "=qm" (c)
+		:"m" (v->counter) : "memory");
+	return c != 0;
+}
+
+/**
+ * atomic_inc_and_read - increment and return old value
+ * @v: pointer of type atomic_t
+ * 
+ * Atomically increments @v by 1
+ * and returns the previous value.
+ */ 
+static __inline__ int atomic_inc_and_read(atomic_t *v)
+{
+	int nOldVal;
+	int nTmp = 0;
+
+	__asm__ __volatile__(
+		"movl %3,%0\n\t"	// Start with the old value in EAX
+		"0:\n\t"
+		"movl %0,%2\n\t"	// Copy the old value to nTmp
+		"incl %2\n\t"
+		LOCK_ "cmpxchgl %2,%3\n\t"	// Update v if value hasn't changed, else copy new v into EAX
+		"jnz 0b"
+		:"=&a" (nOldVal), "=m" (v->counter), "=&q" (nTmp)
+		:"m" (v->counter) : "memory");
+	return nOldVal;
+}
+
+/**
+ * atomic_add_negative - add and test if negative
+ * @v: pointer of type atomic_t
+ * @i: integer value to add
+ * 
+ * Atomically adds @i to @v and returns true
+ * if the result is negative, or false when
+ * result is greater than or equal to zero.
+ */ 
+static __inline__ int atomic_add_negative( atomic_t *v, int i )
+{
+	unsigned char c;
+
+	__asm__ __volatile__(
+		LOCK_ "addl %2,%0; sets %1"
+		:"=m" (v->counter), "=qm" (c)
+		:"ir" (i), "m" (v->counter) : "memory");
+	return c;
+}
+
+/**
+ * atomic_swap - swap two values
+ * @v: pointer to int or atomic_t value to swap
+ * @i: integer value to swap
+ *
+ * Atomically swaps @i into @v and returns the old value at @v.
+ * Note: no "lock" prefix even on SMP: xchg always implies lock.
+ */
+static __inline__ int atomic_swap( volatile void *v, int i )
+{
+	__asm__ __volatile__("xchgl %0,%1"
+		:"=r" (i)
+		:"m" (__atomic_fool_gcc(v)), "0" (i)
+		:"memory");
+	return i;
 }
 
 #ifdef __cplusplus

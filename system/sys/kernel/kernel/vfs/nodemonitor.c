@@ -52,7 +52,7 @@ static void add_monitor( Inode_s *psInode, NodeMonitor_s *psMonitor )
 	psMonitor->nm_psNextInInode = psInode->i_psFirstMonitor;
 	psInode->i_psFirstMonitor = psMonitor;
 
-	atomic_add( &psInode->i_nCount, 1 );
+	atomic_inc( &psInode->i_nCount );
 }
 
 static void remove_monitor( Inode_s *psInode, NodeMonitor_s *psMonitor )

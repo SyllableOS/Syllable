@@ -226,7 +226,7 @@ FileLockRec_s *create_file_lock( Inode_s *psInode, thread_id hOwner, int nMode )
 	}
 	psThread->tr_psFirstFileLock = psLock;
 
-	atomic_add( &psInode->i_nCount, 1 );
+	atomic_inc( &psInode->i_nCount );
 	return ( psLock );
 }
 

@@ -131,7 +131,7 @@ void dump_hash_table( HashTable_s * psTable )
 			dbprintf( DBP_DEBUGGER, "Hash %d:\n", i );
 			for ( psInode = psTable->ht_apsTable[i]; NULL != psInode; psInode = psInode->i_psHashNext )
 			{
-				dbprintf( DBP_DEBUGGER, "%03d::%08Ld cnt=%d vol=%p mnt=%p vno=%p busy=%d\n", psInode->i_psVolume->v_nDevNum, psInode->i_nInode, psInode->i_nCount, psInode->i_psVolume, psInode->i_psMount, psInode->i_pFSData, psInode->i_bBusy );
+				dbprintf( DBP_DEBUGGER, "%03d::%08Ld cnt=%d vol=%p mnt=%p vno=%p busy=%d\n", psInode->i_psVolume->v_nDevNum, psInode->i_nInode, atomic_read( &psInode->i_nCount ), psInode->i_psVolume, psInode->i_psMount, psInode->i_pFSData, psInode->i_bBusy );
 			}
 		}
 	}
@@ -274,7 +274,7 @@ static int hash_insert_inode( HashTable_s * psTable, Inode_s *psInode )
 
 	psTable->ht_nCount++;
 
-	atomic_add( &g_sSysBase.ex_nLoadedInodeCount, 1 );
+	atomic_inc( &g_sSysBase.ex_nLoadedInodeCount );
 
 	if ( psTable->ht_nCount >= ( ( psTable->ht_nSize * 3 ) / 4 ) )
 	{
@@ -336,7 +336,7 @@ static void hash_delete_inode( HashTable_s * psTable, Inode_s *psInode )
 
 	psTable->ht_nCount--;
 
-	atomic_add( &g_sSysBase.ex_nLoadedInodeCount, -1 );
+	atomic_dec( &g_sSysBase.ex_nLoadedInodeCount );
 
 	if ( psTable->ht_nCount < 0 )
 	{
@@ -357,7 +357,7 @@ void dump_list( InodeList_s * psList )
 
 	for ( psInode = psList->il_psLRU; NULL != psInode; psInode = psInode->i_psNext )
 	{
-		dbprintf( DBP_DEBUGGER, "%03d::%08Ld cnt=%d vol=%p mnt=%p vno=%p busy=%d\n", psInode->i_psVolume->v_nDevNum, psInode->i_nInode, psInode->i_nCount, psInode->i_psVolume, psInode->i_psMount, psInode->i_pFSData, psInode->i_bBusy );
+		dbprintf( DBP_DEBUGGER, "%03d::%08Ld cnt=%d vol=%p mnt=%p vno=%p busy=%d\n", psInode->i_psVolume->v_nDevNum, psInode->i_nInode, atomic_read( &psInode->i_nCount ), psInode->i_psVolume, psInode->i_psMount, psInode->i_pFSData, psInode->i_bBusy );
 	}
 }
 
@@ -567,7 +567,7 @@ static int grow_inodes( void )
 		{
 			add_to_tail( &g_sFreeList, &pasInodes[i] );
 		}
-		g_sSysBase.ex_nAllocatedInodeCount += PAGE_SIZE / sizeof( Inode_s );
+		atomic_add( &g_sSysBase.ex_nAllocatedInodeCount, PAGE_SIZE / sizeof( Inode_s ) );
 //      printk( "grow_inodes() : %d inodes added (f: %d, u: %d, h: %d)\n",
 //              i, g_sFreeList.il_nCount, g_sUsedList.il_nCount, g_sHashTable.ht_nCount );
 
@@ -586,7 +586,7 @@ static int grow_inodes( void )
 static void clear_inode( Inode_s *psInode )
 {
 	psInode->i_nInode = 0;
-	psInode->i_nCount = 0;
+	atomic_set( &psInode->i_nCount, 0 );
 	psInode->i_psVolume = NULL;
 	psInode->i_psOperations = NULL;
 	psInode->i_psMount = NULL;
@@ -606,9 +606,9 @@ static void clear_inode( Inode_s *psInode )
 
 static void write_inode( Inode_s *psInode )
 {
-	if ( psInode->i_nCount != 0 )
+	if ( atomic_read( &psInode->i_nCount ) != 0 )
 	{
-		panic( "write_inode() : inode has count of %d\n", psInode->i_nCount );
+		panic( "write_inode() : inode has count of %d\n", atomic_read( &psInode->i_nCount ) );
 	}
 
 	if ( NULL != psInode->i_psOperations->write_inode )
@@ -619,7 +619,7 @@ static void write_inode( Inode_s *psInode )
 			printk( "PANIC : failed to write inode %d::%Ld\n", psInode->i_psVolume->v_nDevNum, psInode->i_nInode );
 		}
 	}
-	atomic_add( &psInode->i_psVolume->v_nOpenCount, -1 );
+	atomic_dec( &psInode->i_psVolume->v_nOpenCount );
 }
 
 /*****************************************************************************
@@ -673,12 +673,12 @@ Inode_s *do_get_inode( kdev_t nDevNum, ino_t nInoNum, bool bCrossMount, bool bOk
 				psInode = psInode->i_psMount;
 			}
 
-			nCount = atomic_add( &psInode->i_nCount, 1 );
+			nCount = atomic_inc_and_read( &psInode->i_nCount );
 
 			if ( nCount == 0 )
 			{
 				remove_from_list( &g_sUsedList, psInode );
-				atomic_add( &g_sSysBase.ex_nUsedInodeCount, 1 );
+				atomic_inc( &g_sSysBase.ex_nUsedInodeCount );
 			}
 			UNLOCK( g_hInodeHashSem );
 			return ( psInode );
@@ -700,7 +700,7 @@ Inode_s *do_get_inode( kdev_t nDevNum, ino_t nInoNum, bool bCrossMount, bool bOk
 				return ( NULL );
 			}
 
-			// The inode was not loaded already, so we attempts to find a unused, non valid inode.
+			// The inode was not loaded already, so we attempt to find an unused, non valid inode.
 
 			if ( bOkToFlush == false || g_sUsedList.il_nCount < 128 )
 			{
@@ -743,10 +743,10 @@ Inode_s *do_get_inode( kdev_t nDevNum, ino_t nInoNum, bool bCrossMount, bool bOk
 					}
 					else
 					{
-						atomic_add( &psVolume->v_nOpenCount, 1 );
-						atomic_add( &psInode->i_nCount, 1 );
+						atomic_inc( &psVolume->v_nOpenCount );
+						atomic_inc( &psInode->i_nCount );
 						psInode->i_bBusy = false;	// tell the world that a new i-node is born
-						atomic_add( &g_sSysBase.ex_nUsedInodeCount, 1 );
+						atomic_inc( &g_sSysBase.ex_nUsedInodeCount );
 						return ( psInode );
 					}
 				}
@@ -759,9 +759,9 @@ Inode_s *do_get_inode( kdev_t nDevNum, ino_t nInoNum, bool bCrossMount, bool bOk
 				{
 					psInode->i_bBusy = true;
 
-					if ( psInode->i_nCount != 0 )
+					if ( atomic_read( &psInode->i_nCount ) != 0 )
 					{
-						panic( "get_inode() inode %d::%Ld in used list has count %d busy=%d\n", psInode->i_psVolume->v_nDevNum, psInode->i_nInode, psInode->i_nCount, psInode->i_bBusy );
+						panic( "get_inode() inode %d::%Ld in used list has count %d busy=%d\n", psInode->i_psVolume->v_nDevNum, psInode->i_nInode, atomic_read( &psInode->i_nCount ), psInode->i_bBusy );
 					}
 					// Lets inform the file-system about our intentions.
 					UNLOCK( g_hInodeHashSem );
@@ -771,7 +771,7 @@ Inode_s *do_get_inode( kdev_t nDevNum, ino_t nInoNum, bool bCrossMount, bool bOk
 
 					hash_delete_inode( &g_sHashTable, psInode );
 
-					if ( psInode->i_psVolume->v_bUnmounted == true && psInode->i_psVolume->v_nOpenCount == 0 )
+					if ( psInode->i_psVolume->v_bUnmounted == true && atomic_read( &psInode->i_psVolume->v_nOpenCount ) == 0 )
 					{
 						printk( "Last inode released from unmounted volume, deletes it...\n" );
 						delete_semaphore( psInode->i_psVolume->v_hMutex );
@@ -809,8 +809,6 @@ Inode_s *get_inode( kdev_t nDevNum, ino_t nInoNum, bool bCrossMount )
 
 void put_inode( Inode_s *psInode )
 {
-	int nCount;
-
 	if ( NULL == psInode )
 	{
 		printk( "PANIC : put_inode() called with NULL pointer!!\n" );
@@ -819,8 +817,7 @@ void put_inode( Inode_s *psInode )
 
 	LOCK( g_hInodeHashSem );
 
-	nCount = atomic_add( &psInode->i_nCount, -1 );
-	if ( nCount == 1 )
+	if ( atomic_dec_and_test( &psInode->i_nCount ) )
 	{
 		kassertw( psInode->i_psFirstFile == NULL );
 		if ( psInode->i_psVolume->v_bUnmounted )
@@ -828,10 +825,9 @@ void put_inode( Inode_s *psInode )
 
 			hash_delete_inode( &g_sHashTable, psInode );
 
-			atomic_add( &psInode->i_psVolume->v_nOpenCount, -1 );
-			if ( psInode->i_psVolume->v_nOpenCount == 0 )
+			if ( atomic_dec_and_test( &psInode->i_psVolume->v_nOpenCount ) )
 			{
-				printk( "put_inode() Last inode released from unmounted volume, deletes it...\n" );
+				printk( "put_inode() Last inode released from unmounted volume, delete it...\n" );
 				delete_semaphore( psInode->i_psVolume->v_hMutex );
 				kfree( psInode->i_psVolume );
 			}
@@ -849,9 +845,9 @@ void put_inode( Inode_s *psInode )
 
 				hash_delete_inode( &g_sHashTable, psInode );
 
-				if ( psInode->i_psVolume->v_bUnmounted == true && psInode->i_psVolume->v_nOpenCount == 0 )
+				if ( psInode->i_psVolume->v_bUnmounted == true && atomic_read( &psInode->i_psVolume->v_nOpenCount ) == 0 )
 				{
-					printk( "Last inode released from unmounted volume, deletes it...\n" );
+					printk( "Last inode released from unmounted volume, delete it...\n" );
 					delete_semaphore( psInode->i_psVolume->v_hMutex );
 					kfree( psInode->i_psVolume );
 				}
@@ -865,7 +861,7 @@ void put_inode( Inode_s *psInode )
 				add_to_head( &g_sUsedList, psInode );
 			}
 		}
-		atomic_add( &g_sSysBase.ex_nUsedInodeCount, -1 );
+		atomic_dec( &g_sSysBase.ex_nUsedInodeCount );
 	}
 	UNLOCK( g_hInodeHashSem );
 
@@ -900,7 +896,7 @@ int flush_inode( int nDev, ino_t nInode )
 		nError = -ENOENT;
 		goto error;
 	}
-	if ( psInode->i_nCount != 0 )
+	if ( atomic_read( &psInode->i_nCount ) != 0 )
 	{
 		nError = -EBUSY;
 		goto error;
@@ -914,7 +910,7 @@ int flush_inode( int nDev, ino_t nInode )
 
 	hash_delete_inode( &g_sHashTable, psInode );
 
-	if ( psInode->i_psVolume->v_bUnmounted == true && psInode->i_psVolume->v_nOpenCount == 0 )
+	if ( psInode->i_psVolume->v_bUnmounted == true && atomic_read( &psInode->i_psVolume->v_nOpenCount ) == 0 )
 	{
 		printk( "Last inode released from unmounted volume, deletes it...\n" );
 		delete_semaphore( psInode->i_psVolume->v_hMutex );
@@ -973,9 +969,9 @@ int put_vnode( int nDev, ino_t nInode )
 		nError = -EINVAL;
 		goto error;
 	}
-	kassertw( psInode->i_nCount > 1 );
+	kassertw( atomic_read( &psInode->i_nCount ) > 1 );
 
-	atomic_add( &psInode->i_nCount, -1 );	// One for get_inode() above
+	atomic_dec( &psInode->i_nCount );	// One for get_inode() above
 
 	put_inode( psInode );	// And one for the original get_vnode()
       error:
@@ -1083,7 +1079,7 @@ FileSysDesc_s *register_file_system( const char *pzName, FSOperations_s * psOps 
 
 	strcpy( psDesc->fs_zName, pzName );
 	psDesc->fs_psOperations = psOps;
-	psDesc->fs_nRefCount = 1;
+	atomic_set( &psDesc->fs_nRefCount, 1 );
 	psDesc->fs_nImage = -1;
 
 	psDesc->fs_psNext = g_psFileSystems;
@@ -1105,9 +1101,7 @@ static void release_fs( FileSysDesc_s *psDesc )
 	char zPath[256];
 	int i;
 
-	atomic_t nCount = atomic_add( &psDesc->fs_nRefCount, -1 );
-
-	if ( nCount != 1 )
+	if ( !atomic_dec_and_test( &psDesc->fs_nRefCount ) )
 	{
 		return;
 	}
@@ -1227,7 +1221,7 @@ static int probe_device_path( const char *pzDriverDir, const char *pzDevicePath,
 		}
 		if ( psFSInfo->fi_flags & FS_CAN_MOUNT )
 		{
-			atomic_add( &psDesc->fs_nRefCount, 1 );
+			atomic_inc( &psDesc->fs_nRefCount );
 			nError = 0;
 			goto done;
 		}
@@ -1308,7 +1302,7 @@ static FileSysDesc_s *load_filesystem( const char *pzName, const char *pzDeviceP
 
 		if ( psDesc != NULL )
 		{
-			atomic_add( &psDesc->fs_nRefCount, 1 );
+			atomic_inc( &psDesc->fs_nRefCount );
 			UNLOCK( g_hFSListSema );
 			return ( psDesc );
 		}
@@ -1423,7 +1417,7 @@ int sys_get_mount_point( int nIndex, char *pzBuffer, int nBufLen )
 		psMntPnt = psVol->v_psMountPoint;
 		if ( psMntPnt != NULL )
 		{
-			atomic_add( &psMntPnt->i_nCount, 1 );
+			atomic_inc( &psMntPnt->i_nCount );
 		}
 	}
 	UNLOCK( g_hInodeHashSem );
@@ -1465,7 +1459,7 @@ int sys_get_mount_point( int nIndex, char *pzBuffer, int nBufLen )
 			else
 			{
 				psParent = psMntPnt->i_psVolume->v_psMountPoint;
-				atomic_add( &psParent->i_nCount, 1 );
+				atomic_inc( &psParent->i_nCount );
 				put_inode( psMntPnt );
 				psMntPnt = psParent;
 			}
@@ -1803,9 +1797,9 @@ static int do_mount( const char *pzDevName, const char *pzDirName, const char *p
 
 int sys_mount( const char *pzDevName, const char *pzDirName, const char *pzFSName, int nFlags, void *pData )
 {
-	static int nVolNum = 124;
+	static atomic_t nVolNum = ATOMIC_INIT( 124 );
 
-	return ( do_mount( pzDevName, pzDirName, pzFSName, nFlags, atomic_add( &nVolNum, 1 ), pData ) );
+	return ( do_mount( pzDevName, pzDirName, pzFSName, nFlags, atomic_inc_and_read( &nVolNum ), pData ) );
 }
 
 /*****************************************************************************
@@ -1819,7 +1813,7 @@ static bool umount_flush_inode( Inode_s *psInode )
 {
 	FSOperations_s *psOps = psInode->i_psOperations;
 
-	if ( psInode->i_nCount == 0 )
+	if ( atomic_read( &psInode->i_nCount ) == 0 )
 	{
 		remove_from_list( &g_sUsedList, psInode );
 		psInode->i_bBusy = true;
@@ -1833,7 +1827,7 @@ static bool umount_flush_inode( Inode_s *psInode )
 			}
 		}
 		LOCK( g_hInodeHashSem );
-		atomic_add( &psInode->i_psVolume->v_nOpenCount, -1 );
+		atomic_dec( &psInode->i_psVolume->v_nOpenCount );
 
 		hash_delete_inode( &g_sHashTable, psInode );
 		clear_inode( psInode );
@@ -1847,7 +1841,7 @@ static bool umount_flush_inode( Inode_s *psInode )
 	{
 		psInode->i_bBusy = true;
 		psInode->i_psOperations = &g_sDummyOperations;
-		atomic_add( &psInode->i_nCount, 1 );
+		atomic_inc( &psInode->i_nCount );
 		UNLOCK( g_hInodeHashSem );
 
 		if ( psOps->close != NULL )
@@ -1930,7 +1924,7 @@ static bool check_fs_open_files( Volume_s *psVolume )
 	{
 		for ( psInode = g_sHashTable.ht_apsTable[i]; psInode != NULL; psInode = psInode->i_psHashNext )
 		{
-			if ( psInode->i_psVolume == psVolume && psInode->i_nCount > 0 && ( psInode->i_nInode != psVolume->v_nRootInode || psInode->i_nCount > 1 ) )
+			if ( psInode->i_psVolume == psVolume && atomic_read( &psInode->i_nCount ) > 0 && ( psInode->i_nInode != psVolume->v_nRootInode || atomic_read( &psInode->i_nCount ) > 1 ) )
 			{
 				return ( true );
 			}
@@ -2014,17 +2008,17 @@ int sys_unmount( const char *pzPath, bool bForce )
 	}
 
 	flush_volume_inodes( psVol );
-	kassertw( psMountPnt->i_nCount == 1 );
+	kassertw( atomic_read( &psMountPnt->i_nCount ) == 1 );
 
 	psInode->i_psMount = NULL;
-	atomic_add( &psMountPnt->i_nCount, -1 );
+	atomic_dec( &psMountPnt->i_nCount );
 	umount_flush_inode( psMountPnt );
 
 	UNLOCK( g_hInodeHashSem );
 
 	if ( bHasOpenFiles )
 	{
-		printk( "Force-unmount filesystem while %d files are open\n", psVol->v_nOpenCount );
+		printk( "Force-unmount filesystem while %d files are open\n", atomic_read( &psVol->v_nOpenCount ) );
 	}
 
 	nError = psVol->v_psOperations->unmount( psVol->v_pFSData );
@@ -2043,9 +2037,9 @@ int sys_unmount( const char *pzPath, bool bForce )
 	UNLOCK( g_hInodeHashSem );
 	release_fs( psVol->v_psFSDesc );
 
-	atomic_add( &psInode->i_nCount, -1 );	// release the mount point
+	atomic_dec( &psInode->i_nCount );	// release the mount point
 	put_inode( psInode );	// reverse the get_inode() above.
-	if ( psVol->v_nOpenCount == 0 )
+	if ( atomic_read( &psVol->v_nOpenCount ) == 0 )
 	{
 		delete_semaphore( psVol->v_hMutex );
 		kfree( psVol );

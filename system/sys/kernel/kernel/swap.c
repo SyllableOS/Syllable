@@ -617,7 +617,7 @@ int swap_out_pages( int nCount )
 			}
 			age_page( psPage );
 
-			if ( psPage->p_nCount != 1 )
+			if ( atomic_read( &psPage->p_nCount ) != 1 )
 			{
 				continue;
 			}
@@ -700,15 +700,15 @@ static int swap_daemon( void *pData )
 
 	for ( ;; )
 	{
-		if ( g_sSysBase.ex_nFreePageCount < 2000 )
+		if ( atomic_read( &g_sSysBase.ex_nFreePageCount ) < 2000 )
 		{
 			shrink_caches( PAGE_SIZE );
 		}
-		if ( g_sSysBase.ex_nFreePageCount < 2000 )
+		if ( atomic_read( &g_sSysBase.ex_nFreePageCount ) < 2000 )
 		{
 			swap_out_pages( 16 );
 		}
-		if ( g_sSysBase.ex_nFreePageCount > 500 )
+		if ( atomic_read( &g_sSysBase.ex_nFreePageCount ) > 500 )
 		{
 			snooze( 100000 );
 		}

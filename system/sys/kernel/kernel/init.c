@@ -829,13 +829,13 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 
 	for ( i = 0; i < ( KERNEL_LOAD_ADDR + nKernelSize ) / PAGE_SIZE; ++i )
 	{
-		kassertw( g_psFirstPage[i].p_nCount == 0 );
-		g_psFirstPage[i].p_nCount = 1;
+		kassertw( atomic_read(&g_psFirstPage[i].p_nCount) == 0 );
+		atomic_set( &g_psFirstPage[i].p_nCount, 1 );
 	}
 	for ( i = ( ( int )g_psFirstPage ) / PAGE_SIZE; i < ( ( ( int )( g_psFirstPage + g_sSysBase.ex_nTotalPageCount ) ) + PAGE_SIZE - 1 ) / PAGE_SIZE; ++i )
 	{
-		kassertw( g_psFirstPage[i].p_nCount == 0 );
-		g_psFirstPage[i].p_nCount = 1;
+		kassertw( atomic_read(&g_psFirstPage[i].p_nCount) == 0 );
+		atomic_set( &g_psFirstPage[i].p_nCount, 1 );
 	}
 	for ( i = 0; i < g_sSysBase.ex_nBootModuleCount; ++i )
 	{
@@ -846,8 +846,8 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 		nLast /= PAGE_SIZE;
 		for ( j = nFirst; j < nLast; ++j )
 		{
-			kassertw( g_psFirstPage[j].p_nCount == 0 );
-			g_psFirstPage[j].p_nCount = 1;
+			kassertw( atomic_read(&g_psFirstPage[j].p_nCount) == 0 );
+			atomic_set( &g_psFirstPage[j].p_nCount, 1 );
 		}
 	}
 
@@ -855,12 +855,12 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 	for ( i = g_sSysBase.ex_nTotalPageCount - 1; i >= 0; --i )
 	{
 		g_psFirstPage[i].p_nPageNum = i;
-		if ( g_psFirstPage[i].p_nCount == 0 )
+		if ( atomic_read(&g_psFirstPage[i].p_nCount) == 0 )
 		{
 			protect_phys_pages( i * PAGE_SIZE, 1 );
 			g_psFirstPage[i].p_psNext = g_psFirstFreePage;
 			g_psFirstFreePage = &g_psFirstPage[i];
-			g_sSysBase.ex_nFreePageCount++;
+			atomic_inc( &g_sSysBase.ex_nFreePageCount );
 		}
 	}
 

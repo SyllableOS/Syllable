@@ -139,7 +139,7 @@ static int cfs_locate_inode( Inode_s *psParent, const char *pzName, int nNameLen
 		}
 		else
 		{
-			atomic_add( &psParent->i_nCount, 1 );
+			atomic_inc( &psParent->i_nCount );
 			*ppsRes = psParent;
 			return ( 0 );
 		}
@@ -367,7 +367,7 @@ static int follow_sym_link( Inode_s **ppsParent, Inode_s **ppsInode, struct stat
 			return ( 0 );	// FIXME: Should be nError, fix when all FS's support rstat()
 		}
 	}
-//    atomic_add( &psParent->i_nCount, 1 );
+//    atomic_inc( &psParent->i_nCount );
 	psThread->tr_nSymLinkDepth++;
 	while ( S_ISLNK( psStat->st_mode ) )
 	{
@@ -419,7 +419,7 @@ static int follow_sym_link( Inode_s **ppsParent, Inode_s **ppsInode, struct stat
 		}
 		else
 		{
-			atomic_add( &psNewParent->i_nCount, 1 );
+			atomic_inc( &psNewParent->i_nCount );
 			psNewInode = psNewParent;
 		}
 		put_inode( *ppsParent );
@@ -482,7 +482,7 @@ static int lookup_parent_inode( Inode_s *psParent, const char *pzPath, const cha
 
 	if ( NULL != psParent )
 	{
-		atomic_add( &psParent->i_nCount, 1 );
+		atomic_inc( &psParent->i_nCount );
 	}
 	else
 	{
@@ -578,7 +578,7 @@ int get_named_inode( Inode_s *psRoot, const char *pzName, Inode_s **ppsResInode,
 	}
 	else
 	{
-		atomic_add( &psParent->i_nCount, 1 );
+		atomic_inc( &psParent->i_nCount );
 		psInode = psParent;
 	}
 
@@ -618,7 +618,7 @@ File_s *alloc_fd( void )
 
 	if ( psFile != NULL )
 	{
-		atomic_add( &g_sSysBase.ex_nOpenFileCount, 1 );
+		atomic_inc( &g_sSysBase.ex_nOpenFileCount );
 	}
 	return ( psFile );
 }
@@ -637,7 +637,7 @@ void free_fd( File_s *psFile )
 		printk( "Error: free_fd() called with NULL pointer!\n" );
 		return;
 	}
-	atomic_add( &g_sSysBase.ex_nOpenFileCount, -1 );
+	atomic_dec( &g_sSysBase.ex_nOpenFileCount );
 	kfree( psFile );
 }
 
@@ -658,7 +658,7 @@ File_s *get_fd( bool bKernel, int nFile )
 	if ( nFile >= 0 && nFile < psCtx->ic_nCount && psCtx->ic_apsFiles[nFile] != NULL )
 	{
 		psFile = psCtx->ic_apsFiles[nFile];
-		atomic_add( &psFile->f_nRefCount, 1 );
+		atomic_inc( &psFile->f_nRefCount );
 	}
 	UNLOCK( psCtx->ic_hLock );
 
@@ -675,11 +675,8 @@ File_s *get_fd( bool bKernel, int nFile )
 int put_fd( File_s *psFile )
 {
 	Inode_s *psInode = psFile->f_psInode;
-	int nCount;
 
-	nCount = atomic_add( &psFile->f_nRefCount, -1 );
-
-	if ( nCount != 1 )
+	if ( !atomic_dec_and_test( &psFile->f_nRefCount ) )
 	{
 		return ( 0 );
 	}
@@ -826,7 +823,7 @@ int new_fd( bool bKernel, int nNewFile, int nBase, File_s *psFile, bool bCloseOn
 
 	psCtx->ic_apsFiles[nNewFile] = psFile;
 
-	atomic_add( &psFile->f_nRefCount, 1 );
+	atomic_inc( &psFile->f_nRefCount );
 	nError = nNewFile;
 
       error:
@@ -903,7 +900,7 @@ int open_inode( bool bKernel, Inode_s *psInode, int nType, int nMode )
 	{
 		goto error2;
 	}
-	atomic_add( &psInode->i_nCount, 1 );
+	atomic_inc( &psInode->i_nCount );
 	add_file_to_inode( psInode, psFile );
 	return ( nError );
       error2:
@@ -943,7 +940,7 @@ static int open_file( Inode_s **ppsParent, const char *pzName, int nNameLen, int
 		if ( nError >= 0 )
 		{
 			add_file_to_inode( *ppsParent, psFile );
-			atomic_add( &( *ppsParent )->i_nCount, 1 );
+			atomic_inc( &( *ppsParent )->i_nCount );
 			psFile->f_psInode = *ppsParent;
 			psFile->f_nType = FDT_DIR;
 		}
@@ -1103,7 +1100,7 @@ int extended_open( bool bKernel, Inode_s *psRoot, const char *pzPath, Inode_s **
 	{
 		printk( "Error: extended_open() no free file descriptors\n" );
 		nError = nFile;
-		psFile->f_nRefCount = 1;
+		atomic_set( &psFile->f_nRefCount, 1 );
 		put_fd( psFile );
 		goto error2;
 	}
@@ -1558,24 +1555,24 @@ IoContext_s *fs_clone_io_context( IoContext_s * psSrc )
 	{
 		if ( NULL != psCtx->ic_apsFiles[i] )
 		{
-			atomic_add( &psCtx->ic_apsFiles[i]->f_nRefCount, 1 );
+			atomic_inc( &psCtx->ic_apsFiles[i]->f_nRefCount );
 		}
 	}
 	psCtx->ic_psCurDir = psSrc->ic_psCurDir;
 	if ( psCtx->ic_psCurDir != NULL )
 	{
-		atomic_add( &psCtx->ic_psCurDir->i_nCount, 1 );
+		atomic_inc( &psCtx->ic_psCurDir->i_nCount );
 	}
 	psCtx->ic_psBinDir = psSrc->ic_psBinDir;
 	if ( psCtx->ic_psBinDir != NULL )
 	{
-		atomic_add( &psCtx->ic_psBinDir->i_nCount, 1 );
+		atomic_inc( &psCtx->ic_psBinDir->i_nCount );
 	}
 	clone_ctty( psCtx, psSrc );
 	psCtx->ic_psRootDir = psSrc->ic_psRootDir;
 	if ( psCtx->ic_psRootDir != NULL )
 	{
-		atomic_add( &psCtx->ic_psRootDir->i_nCount, 1 );
+		atomic_inc( &psCtx->ic_psRootDir->i_nCount );
 	}
 	return ( psCtx );
 }
@@ -4204,7 +4201,7 @@ static int do_fchdir( bool bKernel, int nFile )
 	kassertw( NULL != psCtx->ic_psCurDir );
 	if ( NULL != psCtx->ic_psCurDir )
 	{
-		atomic_add( &psCtx->ic_psCurDir->i_nCount, 1 );
+		atomic_inc( &psCtx->ic_psCurDir->i_nCount );
 	}
 	UNLOCK( psCtx->ic_hLock );
 
@@ -5359,7 +5356,7 @@ status_t get_dirname( Inode_s *psInode, char *pzPath, size_t nBufSize )
 	int nError = 1;
 	int nPathLen = 0;
 
-	atomic_add( &psInode->i_nCount, 1 );
+	atomic_inc( &psInode->i_nCount );
 
 	while ( nError == 1 )
 	{

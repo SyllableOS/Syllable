@@ -227,7 +227,7 @@ struct _Thread
 	/* SMP stuff */
 	int tr_nCurrentCPU;
 	int tr_nPrevCPU;
-	int tr_nInV86;
+	atomic_t tr_nInV86;
 
 	/* Debugging */
 	int tr_nSysTraceMask;
@@ -247,8 +247,8 @@ struct _Process
 	char tc_zName[OS_NAME_LENGTH];	/* Process name */
 
 	Thread_s *pr_psFirstThread;
-	int pr_nThreadCount;	/* Number of thread spawned by this process */
-	int pr_nLivingThreadCount;
+	atomic_t pr_nThreadCount;	/* Number of thread spawned by this process */
+	atomic_t pr_nLivingThreadCount;
 	proc_id tc_hParent;	/* Parent process */
 	proc_id tc_hProcID;	/* Our process ID */
 	int pr_nOldTTYPgrp;

@@ -300,7 +300,7 @@ static int do_call_v86( Virtual86Struct_s * psState, SysCallRegs_s * psCallRegs 
 
 	nFlags = cli();	/* Will be reset when we exit to v86 mode */
 
-	atomic_add( &psThread->tr_nInV86, 1 );
+	atomic_inc( &psThread->tr_nInV86 );
 	while ( get_processor_id() != g_nBootCPU )
 	{
 		printk( "do_call_v86() wrong CPU (%d), will scedule\n", get_processor_id() );
@@ -399,7 +399,7 @@ static inline void return_to_32bit( Virtual86Regs_s * regs16, int retval )
 	{
 		protect_dos_mem();
 	}
-	atomic_add( &psThread->tr_nInV86, -1 );
+	atomic_dec( &psThread->tr_nInV86 );
 	psCallerRegs->eax = retval;
 
 	__asm__ __volatile__( "movl %0,%%esp\n\t" "jmp exit_from_sys_call"::"r"( psCallerRegs ) );
@@ -499,9 +499,9 @@ int sys_realint( int num, struct RMREGS *rm )
 	sRegs.regs.cs = pIntVects[num] >> 16;
 
 
-	atomic_add( &psThread->tr_nInV86, 1 );
+	atomic_inc( &psThread->tr_nInV86 );
 
-	kassertw( psThread->tr_nInV86 == 1 );
+	kassertw( atomic_read( &psThread->tr_nInV86 ) == 1 );
 
 	while ( get_processor_id() != g_nBootCPU )
 	{
@@ -521,7 +521,7 @@ int sys_realint( int num, struct RMREGS *rm )
 
 	v86Stack_off += V86_STACK_SIZE;
 
-	atomic_add( &psThread->tr_nInV86, -1 );
+	atomic_dec( &psThread->tr_nInV86 );
 
 
 	rm->EAX = sRegs.regs.eax;

@@ -149,7 +149,7 @@ TCPCtrl_s *tcp_lookup( uint32 nLocalAddr, uint16 nLocalPort, uint32 nRemoteAddr,
 	return ( NULL );
 
       found:
-	if ( psTCPCtrl->tcb_flags & TCBF_BUSY )
+	if ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_BUSY )
 	{
 		UNLOCK( g_hConnListMutex );
 		snooze( 1000 );
@@ -449,7 +449,7 @@ TCPCtrl_s *tcp_get_event( int *pnEvent )
 			continue;
 		}
 
-		while ( psEvent->te_psTCPCtrl->tcb_flags & TCBF_BUSY )
+		while ( atomic_read( &psEvent->te_psTCPCtrl->tcb_flags ) & TCBF_BUSY )
 		{
 			if ( psEvent->te_psNext != NULL && psEvent->te_psNext->te_nExpireTime <= nCurTime )
 			{
@@ -576,7 +576,7 @@ TCPCtrl_s *tcb_alloc( void )
 	psTCPCtrl->tcb_hSendQueue = -1;
 	psTCPCtrl->tcb_hListenSem = -1;
 	psTCPCtrl->tcb_ocsem = -1;
-	psTCPCtrl->tcb_flags = TCBF_ACTIVE;
+	atomic_set( &psTCPCtrl->tcb_flags, TCBF_ACTIVE );
 	psTCPCtrl->tcb_nLastReceiveTime = get_system_time();
 
 	LOCK( g_hConnListMutex );
@@ -1339,7 +1339,7 @@ static int tfcoalesce( TCPCtrl_s *psTCPCtrl, int datalen, TCPHeader_s *psTcpHdr 
 	psTCPCtrl->tcb_nRcvCount += datalen;
 
 	// CHECKME: Cant this happen if the sequence wrap?
-	if ( psTCPCtrl->tcb_nRcvNext == psTCPCtrl->tcb_finseq && ( psTCPCtrl->tcb_flags & TCBF_FIN_RECVD ) )
+	if ( psTCPCtrl->tcb_nRcvNext == psTCPCtrl->tcb_finseq && ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_FIN_RECVD ) )
 	{
 		goto alldone;
 	}
@@ -1366,7 +1366,7 @@ static int tfcoalesce( TCPCtrl_s *psTCPCtrl, int datalen, TCPHeader_s *psTcpHdr 
 			psTCPCtrl->tcb_nRcvNext += new;
 			psTCPCtrl->tcb_nRcvCount += new;
 		}
-		if ( psTCPCtrl->tcb_nRcvNext == psTCPCtrl->tcb_finseq && ( psTCPCtrl->tcb_flags & TCBF_FIN_RECVD ) )
+		if ( psTCPCtrl->tcb_nRcvNext == psTCPCtrl->tcb_finseq && ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_FIN_RECVD ) )
 		{
 			goto alldone;
 		}
@@ -1466,7 +1466,7 @@ int tcp_wakeup( int type, TCPCtrl_s *psTCPCtrl )
 
 		freelen = psTCPCtrl->tcb_nSndBufSize - psTCPCtrl->tcb_nSndCount;
 
-		if ( ( psTCPCtrl->tcb_flags & TCBF_SDONE ) || psTCPCtrl->tcb_nSndCount < psTCPCtrl->tcb_nSndBufSize )
+		if ( ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_SDONE ) || psTCPCtrl->tcb_nSndCount < psTCPCtrl->tcb_nSndBufSize )
 		{
 			// Wake up guy's stuck in sendmsg()
 			if ( psTCPCtrl->tcb_hSendQueue >= 0 )
@@ -1518,11 +1518,11 @@ bool __tcp_abort( TCPCtrl_s *psTCPCtrl, int error, const char *pzCallerFunc, int
 //    printk( "%s() Abort TCP connection %d (port=%d, sem=%d, err=%d)\n", pzCallerFunc, nLineNum, psTCPCtrl->tcb_lport, psTCPCtrl->tcb_hMutex, error );
 //  }
 
-	kassertw( psTCPCtrl->tcb_flags & TCBF_BUSY );
+	kassertw( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_BUSY );
 
 	tcp_killtimers( psTCPCtrl );
 
-	if ( ( psTCPCtrl->tcb_flags & TCBF_OPEN ) == 0 )
+	if ( ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_OPEN ) == 0 )
 	{
 //    printk( "tcp_abort() delete dead connection\n" );
 		tcb_dealloc( psTCPCtrl, true );
@@ -1553,7 +1553,7 @@ bool __tcp_abort( TCPCtrl_s *psTCPCtrl, int error, const char *pzCallerFunc, int
 
 int tcp_kick( TCPCtrl_s *psTCPCtrl )
 {
-	if ( ( psTCPCtrl->tcb_flags & TCBF_DELACK ) && tcp_event_time_left( psTCPCtrl, SEND ) == 0 )
+	if ( ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_DELACK ) && tcp_event_time_left( psTCPCtrl, SEND ) == 0 )
 	{
 		tcp_create_event( psTCPCtrl, SEND, TCP_ACKDELAY, true );
 	}
@@ -1691,7 +1691,7 @@ static int tcp_data( TCPCtrl_s *psTCPCtrl, PacketBuf_s *psPkt )
 		}
 	}
 	tcp_dodat( psTCPCtrl, psTcpHdr, first, nDataLen );	/* deal with it         */
-	if ( psTCPCtrl->tcb_flags & TCBF_NEEDOUT )
+	if ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_NEEDOUT )
 	{
 		tcp_kick( psTCPCtrl );
 	}
@@ -1788,7 +1788,7 @@ static int tcp_ostate( TCPCtrl_s *psTCPCtrl )
 	{
 		psTCPCtrl->tcb_rexmtcount = 0;
 	}
-	if ( psTCPCtrl->tcb_nSndCount == 0 && ( psTCPCtrl->tcb_flags & TCBF_SNDFIN ) == 0 )
+	if ( psTCPCtrl->tcb_nSndCount == 0 && ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_SNDFIN ) == 0 )
 	{
 		tcp_set_output_state( psTCPCtrl, TCPO_IDLE );
 //    printk( "tcp_ostate() tcp outputstate changed to TCPO_IDLE\n" );
@@ -1852,7 +1852,7 @@ static int tcp_acked( TCPCtrl_s *psTCPCtrl, PacketBuf_s *psPkt )
 		psTCPCtrl->tcb_code &= ~TCPF_SYN;
 		atomic_and( &psTCPCtrl->tcb_flags, ~TCBF_FIRSTSEND );
 	}
-	if ( ( psTCPCtrl->tcb_flags & TCBF_SNDFIN ) && ( psTCPCtrl->tcb_flags & TCBF_FINSENDT ) && SEQCMP( ( ( tcpseq )ntohl( psTcpHdr->tcp_ack ) ), psTCPCtrl->tcb_nSndNext ) == 0 )
+	if ( ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_SNDFIN ) && ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_FINSENDT ) && SEQCMP( ( ( tcpseq )ntohl( psTcpHdr->tcp_ack ) ), psTCPCtrl->tcb_nSndNext ) == 0 )
 	{
 		nAcked--;
 		nCtrlAcked++;
@@ -1968,9 +1968,9 @@ static int tcps_listen_state( TCPCtrl_s *psTCPCtrl, PacketBuf_s *psPkt )
 		goto error1;
 	}
 
-	if ( g_sSysBase.ex_nFreePageCount < 1024 * 128 / PAGE_SIZE )
+	if ( atomic_read( &g_sSysBase.ex_nFreePageCount ) < 1024 * 128 / PAGE_SIZE )
 	{
-		printk( "Error: tcps_listen_state() connection refused, to low on memory (%ld)\n", g_sSysBase.ex_nFreePageCount * PAGE_SIZE );
+		printk( "Error: tcps_listen_state() connection refused, to low on memory (%ld)\n", atomic_read( &g_sSysBase.ex_nFreePageCount ) * PAGE_SIZE );
 		tcp_reset( psPkt );
 		goto error1;
 	}
@@ -2161,7 +2161,7 @@ static int tcps_synrcvd( TCPCtrl_s *psTCPCtrl, PacketBuf_s *psPkt )
 	tcp_data( psTCPCtrl, psPkt );
 	// If all data was stuffed into that single packet we might 
 	// have to switch from TCPS_ESTABLISHED to TCPS_CLOSEWAIT already.
-	if ( psTCPCtrl->tcb_flags & TCBF_RDONE )
+	if ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_RDONE )
 	{
 		tcp_set_state( psTCPCtrl, TCPS_CLOSEWAIT );
 	}
@@ -2192,7 +2192,7 @@ static int tcps_fin1( TCPCtrl_s *psTCPCtrl, PacketBuf_s *psPkt )
 	// all interesting data from the other end. Therefor we don't attempt to change state
 	// before all data has been received.
 
-	if ( psTCPCtrl->tcb_flags & TCBF_RDONE )
+	if ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_RDONE )
 	{
 		if ( ( psTcpHdr->tcp_code & ( TCPF_FIN | TCPF_ACK ) ) == ( TCPF_FIN | TCPF_ACK ) )
 		{
@@ -2228,7 +2228,7 @@ static int tcps_fin1( TCPCtrl_s *psTCPCtrl, PacketBuf_s *psPkt )
 			tcp_create_event( psTCPCtrl, DELETE, TCP_TWOMSL, true );
 		}
 	}
-	else if ( ( psTCPCtrl->tcb_flags & TCBF_OPEN ) == 0 )
+	else if ( ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_OPEN ) == 0 )
 	{
 		tcp_create_event( psTCPCtrl, DELETE, TCP_TWOMSL, true );
 	}
@@ -2376,7 +2376,7 @@ void tcp_in( PacketBuf_s *psPkt, int nDataLen )
 			{
 				tcp_data( psTCPCtrl, psPkt );
 				tcp_swindow( psTCPCtrl, psPkt );
-				if ( psTCPCtrl->tcb_flags & TCBF_RDONE )
+				if ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_RDONE )
 				{
 					tcp_set_state( psTCPCtrl, TCPS_CLOSEWAIT );
 				}
@@ -2390,7 +2390,7 @@ void tcp_in( PacketBuf_s *psPkt, int nDataLen )
 			{
 				tcp_data( psTCPCtrl, psPkt );	/* for data + FIN ACKing */
 
-				if ( psTCPCtrl->tcb_flags & TCBF_RDONE )
+				if ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_RDONE )
 				{
 					tcp_set_state( psTCPCtrl, TCPS_TIMEWAIT );
 					tcp_wait( psTCPCtrl );

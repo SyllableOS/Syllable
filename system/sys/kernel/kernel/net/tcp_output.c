@@ -321,14 +321,14 @@ static int tcp_send( TCPCtrl_s *psTCPCtrl, int nMode )
 	psTCPHdr->tcp_ack = htonl( psTCPCtrl->tcb_nRcvNext );
 
 	psTCPHdr->tcp_code = psTCPCtrl->tcb_code;
-	if ( ( psTCPCtrl->tcb_flags & TCBF_SNDFIN ) && SEQCMP( ntohl( psTCPHdr->tcp_seq ) + nDataLen, psTCPCtrl->tcb_slast ) == 0 )
+	if ( ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_SNDFIN ) && SEQCMP( ntohl( psTCPHdr->tcp_seq ) + nDataLen, psTCPCtrl->tcb_slast ) == 0 )
 	{
 		psTCPHdr->tcp_code |= TCPF_FIN;
 		atomic_or( &psTCPCtrl->tcb_flags, TCBF_FINSENDT );
 	}
 
 	psTCPHdr->tcp_offset = TCPHOFFSET;
-	if ( ( psTCPCtrl->tcb_flags & TCBF_FIRSTSEND ) == 0 )
+	if ( ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_FIRSTSEND ) == 0 )
 	{
 		psTCPHdr->tcp_code |= TCPF_ACK;
 	}
@@ -427,7 +427,7 @@ static int tcp_howmuch( TCPCtrl_s *psTCPCtrl )
 	tosend = psTCPCtrl->tcb_nSndFirstUnacked + psTCPCtrl->tcb_nSndCount - psTCPCtrl->tcb_nSndNext;
 	if ( psTCPCtrl->tcb_code & TCPF_SYN )
 		++tosend;
-	if ( psTCPCtrl->tcb_flags & TCBF_SNDFIN )
+	if ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_SNDFIN )
 		++tosend;
 	return tosend;
 }
@@ -499,7 +499,7 @@ static void tcp_xmit( TCPCtrl_s *psTCPCtrl, int event )
 
 	if ( tcp_howmuch( psTCPCtrl ) == 0 )
 	{
-		if ( psTCPCtrl->tcb_flags & ( TCBF_NEEDOUT | TCBF_KEEPALIVE ) )
+		if ( atomic_read( &psTCPCtrl->tcb_flags ) & ( TCBF_NEEDOUT | TCBF_KEEPALIVE ) )
 		{
 			tcp_send( psTCPCtrl, TSF_NEWDATA );	/* just an ACK */
 		}

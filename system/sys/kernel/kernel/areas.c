@@ -95,7 +95,7 @@ void list_areas( MemContext_s *psCtx )
 		{
 			printk( "Error: print_areas() area at index %d (%p) has invalid next pointer %p\n", i, psArea, psArea->a_psNext );
 		}
-		printk( "Area %04d (%d) -> %08lx-%08lx %p %02d %s\n", i, psArea->a_nAreaID, psArea->a_nStart, psArea->a_nEnd, psArea->a_psFile, psArea->a_nRefCount, psArea->a_zName );
+		printk( "Area %04d (%d) -> %08lx-%08lx %p %02d %s\n", i, psArea->a_nAreaID, psArea->a_nStart, psArea->a_nEnd, psArea->a_psFile, atomic_read( &psArea->a_nRefCount ), psArea->a_zName );
 	}
 //  UNLOCK( g_hAreaTableSema );
 }
@@ -152,14 +152,14 @@ static int clear_pagedir( pgd_t * pPgd, int nAddress, int nSize )
 				nAddress += PAGE_SIZE;
 				continue;
 			}
-			if ( g_psFirstPage[nPageNr].p_nCount == 1 )
+			if ( atomic_read( &g_psFirstPage[nPageNr].p_nCount ) == 1 )
 			{
 				unregister_swap_page( nPage );
 			}
-			if ( g_psFirstPage[nPageNr].p_nCount < 1 )
+			if ( atomic_read( &g_psFirstPage[nPageNr].p_nCount ) < 1 )
 			{
-				printk( "panic: clear_pagedir() page %08lx got ref count of %d\n", nPage, g_psFirstPage[nPageNr].p_nCount - 1 );
-				g_psFirstPage[nPageNr].p_nCount = 1000;
+				printk( "panic: clear_pagedir() page %08lx got ref count of %d\n", nPage, atomic_read( &g_psFirstPage[nPageNr].p_nCount ) - 1 );
+				atomic_set( &g_psFirstPage[nPageNr].p_nCount, 1000 );
 			}
 			free_pages( nPage, 1 );
 		}
@@ -267,9 +267,9 @@ static void free_area_page_tables( MemArea_s *psArea, uint32 nStart, uint32 nEnd
 
 static int do_delete_area( MemContext_s *psCtx, MemArea_s *psArea )
 {
-	if ( psArea->a_nRefCount != 0 )
+	if ( atomic_read( &psArea->a_nRefCount ) != 0 )
 	{
-		panic( "do_delete_area() area ref count = %d\n", psArea->a_nRefCount );
+		panic( "do_delete_area() area ref count = %d\n", atomic_read( &psArea->a_nRefCount ) );
 		return ( -EINVAL );
 	}
 	if ( psArea->a_psFile != NULL )
@@ -290,7 +290,7 @@ static int do_delete_area( MemContext_s *psCtx, MemArea_s *psArea )
 
 	psArea->a_bDeleted = true;	// Make sure nobody maps in pages while we waits for IO
 
-	while ( psArea->a_nIOPages > 0 )
+	while ( atomic_read( &psArea->a_nIOPages ) > 0 )
 	{
 		UNLOCK( g_hAreaTableSema );
 		printk( "do_delete_area() wait for IO to finish\n" );
@@ -325,7 +325,6 @@ static int do_delete_area( MemContext_s *psCtx, MemArea_s *psArea )
 
 int put_area( MemArea_s *psArea )
 {
-	int nCount;
 	int nError = 0;
 
 //  kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
@@ -333,8 +332,7 @@ int put_area( MemArea_s *psArea )
 
 	if ( psArea != NULL )
 	{
-		nCount = atomic_add( &psArea->a_nRefCount, -1 );
-		if ( nCount == 1 )
+		if ( atomic_dec_and_test( &psArea->a_nRefCount ) )
 		{
 			lock_area( psArea, LOCK_AREA_WRITE );
 			nError = do_delete_area( psArea->a_psContext, psArea );
@@ -462,7 +460,7 @@ static MemArea_s *do_create_area( MemContext_s *psCtx, uint32 nAddress, uint32 n
 	psArea->a_psOps = NULL;
 	psArea->a_nProtection = nProtection;
 	psArea->a_nLockMode = nLockMode;
-	psArea->a_nRefCount = 1;
+	atomic_set( &psArea->a_nRefCount, 1 );
 
 	nError = insert_area( psCtx, psArea );
 
@@ -743,7 +741,7 @@ status_t resize_area( area_id hArea, uint32 nNewSize, bool bAtomic )
 	{
 		uint32 nOldEnd = psArea->a_nEnd;
 
-		if ( psArea->a_nIOPages > 0 )
+		if ( atomic_read( &psArea->a_nIOPages ) > 0 )
 		{
 			UNLOCK( g_hAreaTableSema );
 			printk( "resize_area() wait for IO to finish\n" );
@@ -778,7 +776,6 @@ status_t resize_area( area_id hArea, uint32 nNewSize, bool bAtomic )
 status_t delete_area( area_id hArea )
 {
 	MemArea_s *psArea;
-	int nCount;
 	int nError = 0;
 
 //  kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
@@ -791,16 +788,14 @@ status_t delete_area( area_id hArea )
 	{
 		if ( psArea->a_psContext->mc_bBusy )
 		{
-			atomic_add( &psArea->a_nRefCount, -1 );
+			atomic_dec( &psArea->a_nRefCount );
 			UNLOCK( g_hAreaTableSema );
 			printk( "delete_area(): wait for segment to become ready\n" );
 			snooze( 10000 );
 			goto again;
 		}
 
-		nCount = atomic_add( &psArea->a_nRefCount, -2 );
-
-		if ( nCount == 2 )
+		if ( atomic_sub_and_test( &psArea->a_nRefCount, 2 ) )
 		{
 //          lock_semaphore_ex( psArea->a_hMutex, AREA_MUTEX_COUNT, SEM_NOSIG, INFINITE_TIMEOUT );
 			lock_area( psArea, LOCK_AREA_WRITE );
@@ -826,17 +821,13 @@ static void delete_all_areas( MemContext_s *psCtx )
 
 	while ( psCtx->mc_nAreaCount > 0 )
 	{
-		int nCount;
-
 		lock_area( psCtx->mc_apsAreas[0], LOCK_AREA_WRITE );
 
-		nCount = atomic_add( &psCtx->mc_apsAreas[0]->a_nRefCount, -1 );
-
-		if ( 1 != nCount )
+		if ( !atomic_dec_and_test( &psCtx->mc_apsAreas[0]->a_nRefCount ) )
 		{
-			printk( "Error : delete_all_areas() area '%s' (%d) for addr %08lx has ref count of %d\n", psCtx->mc_apsAreas[0]->a_zName, psCtx->mc_apsAreas[0]->a_nAreaID, psCtx->mc_apsAreas[0]->a_nStart, nCount );
+			printk( "Error : delete_all_areas() area '%s' (%d) for addr %08lx has ref count of %d\n", psCtx->mc_apsAreas[0]->a_zName, psCtx->mc_apsAreas[0]->a_nAreaID, psCtx->mc_apsAreas[0]->a_nStart, atomic_read( &psCtx->mc_apsAreas[0]->a_nRefCount ) + 1 );
 
-			psCtx->mc_apsAreas[0]->a_nRefCount = 0;
+			atomic_set( &psCtx->mc_apsAreas[0]->a_nRefCount, 0 );
 		}
 		do_delete_area( psCtx, psCtx->mc_apsAreas[0] );
 	}
@@ -932,7 +923,7 @@ int clone_page_pte( pte_t * pDst, pte_t * pSrc, bool bCow )
 
 	if ( PTE_ISPRESENT( nPte ) )
 	{
-		atomic_add( &g_psFirstPage[nPageNr].p_nCount, 1 );
+		atomic_inc( &g_psFirstPage[nPageNr].p_nCount );
 	}
 	else if ( PTE_PAGE( nPte ) != 0 )
 	{
@@ -976,7 +967,7 @@ static void do_clone_area( MemContext_s *psDstSeg, MemContext_s *psSrcSeg, MemAr
 
 		if ( PTE_ISPRESENT( *pSrcPte ) )
 		{
-			atomic_add( &g_psFirstPage[PAGE_NR( PTE_PAGE( *pSrcPte ) )].p_nCount, 1 );
+			atomic_inc( &g_psFirstPage[PAGE_NR( PTE_PAGE( *pSrcPte ) )].p_nCount );
 		}
 		else if ( PTE_PAGE( *pSrcPte ) != 0 )
 		{
@@ -1041,13 +1032,13 @@ MemContext_s *clone_mem_context( MemContext_s *psOrig )
 		}
 
 		// Wait til all IO performed on pages in the area is finished
-		while ( psOldArea->a_nIOPages > 0 )
+		while ( atomic_read( &psOldArea->a_nIOPages ) > 0 )
 		{
 			Thread_s *psThread = CURRENT_THREAD;
 			WaitQueue_s sWaitNode;
 			int nFlg;
 
-			printk( "clone_mem_context() Wait for area %s to finish IO on %d pages\n", psOldArea->a_zName, psOldArea->a_nIOPages );
+			printk( "clone_mem_context() Wait for area %s to finish IO on %d pages\n", psOldArea->a_zName, atomic_read( &psOldArea->a_nIOPages ) );
 			sWaitNode.wq_hThread = psThread->tr_hThreadID;
 
 			nFlg = cli();	// Make sure we are not pre-empted until we are added to the waitlist
@@ -1093,7 +1084,7 @@ MemContext_s *clone_mem_context( MemContext_s *psOrig )
 				kassertw( psTmp->a_psFile != NULL );
 				kassertw( psTmp->a_psFile->f_psInode->i_nInode == psNewArea->a_psFile->f_psInode->i_nInode );
 			}
-			atomic_add( &psNewArea->a_psFile->f_nRefCount, 1 );
+			atomic_inc( &psNewArea->a_psFile->f_nRefCount );
 		}
 //      unlock_semaphore_ex( psOldArea->a_hMutex, 1 );
 		unlock_area( psOldArea, LOCK_AREA_READ );
@@ -1152,7 +1143,7 @@ static int unmap_pagedir( pgd_t * pPgd, uint32 nAddress, int nSize, bool bFreeOl
 
 				if ( 0 != nOldPage && nOldPage != ( uint32 )g_sSysBase.ex_pNullPage )
 				{
-					if ( g_psFirstPage[nPageNr].p_nCount == 1 )
+					if ( atomic_read( &g_psFirstPage[nPageNr].p_nCount ) == 1 )
 					{
 						unregister_swap_page( nOldPage );
 					}
@@ -1261,7 +1252,7 @@ int map_area_to_file( area_id hArea, File_s *psFile, uint32 nProt, off_t nOffset
 	put_area( psArea );
 	UNLOCK( g_hAreaTableSema );
 
-	atomic_add( &psFile->f_nRefCount, 1 );
+	atomic_inc( &psFile->f_nRefCount );
 	flush_tlb_global();
 	return ( nError );
 }
@@ -1356,7 +1347,7 @@ area_id sys_clone_area( const char *pzName, void **ppAddress, uint32 nProtection
 		return ( nError );
 	}
 	psNewArea = get_area_from_handle( nNewArea );
-	atomic_add( &psNewArea->a_nRefCount, -1 );
+	atomic_dec( &psNewArea->a_nRefCount );
 
 	psDstSeg = psNewArea->a_psContext;
 	psSrcSeg = psSrcArea->a_psContext;
@@ -1377,7 +1368,7 @@ area_id sys_clone_area( const char *pzName, void **ppAddress, uint32 nProtection
 
 			if ( nPageNum < g_sSysBase.ex_nTotalPageCount )
 			{
-				atomic_add( &g_psFirstPage[nPageNum].p_nCount, 1 );
+				atomic_inc( &g_psFirstPage[nPageNum].p_nCount );
 			}
 		}
 	}
@@ -1545,7 +1536,6 @@ int sys_delete_area( area_id hArea )
 {
 	MemContext_s *psCtx = CURRENT_PROC->tc_psMemSeg;
 	MemArea_s *psArea;
-	int nCount;
 	int nError = 0;
 
       again:
@@ -1570,16 +1560,14 @@ int sys_delete_area( area_id hArea )
 
 	if ( psCtx->mc_bBusy )
 	{
-		atomic_add( &psArea->a_nRefCount, -1 );
+		atomic_dec( &psArea->a_nRefCount );
 		UNLOCK( g_hAreaTableSema );
 		printk( "sys_delete_area(): wait for segment to become ready\n" );
 		snooze( 10000 );
 		goto again;
 	}
 
-	nCount = atomic_add( &psArea->a_nRefCount, -2 );
-
-	if ( nCount == 2 )
+	if ( atomic_sub_and_test( &psArea->a_nRefCount, 2 ) )
 	{
 		lock_area( psArea, LOCK_AREA_WRITE );
 
@@ -1762,7 +1750,7 @@ static int remap_pagedir( pgd_t * pPgd, int nAddress, int nSize, int nPhysAddres
 
 				if ( 0 != nOldPage && nOldPage != ( uint32 )g_sSysBase.ex_pNullPage )
 				{
-					if ( g_psFirstPage[nPageNr].p_nCount == 1 )
+					if ( atomic_read( &g_psFirstPage[nPageNr].p_nCount ) == 1 )
 					{
 						unregister_swap_page( nOldPage );
 					}
@@ -2323,7 +2311,7 @@ void db_list_proc_areas( MemContext_s *psCtx )
 		{
 			dbprintf( DBP_DEBUGGER, "Error: print_areas() area at index %d (%p) has invalid next pointer %p\n", i, psArea, psArea->a_psNext );
 		}
-		dbprintf( DBP_DEBUGGER, "Area %04d (%p) -> %08lx-%08lx %p %02d\n", i, psArea, psArea->a_nStart, psArea->a_nEnd, psArea->a_psFile, psArea->a_nRefCount );
+		dbprintf( DBP_DEBUGGER, "Area %04d (%p) -> %08lx-%08lx %p %02d\n", i, psArea, psArea->a_nStart, psArea->a_nEnd, psArea->a_psFile, atomic_read( &psArea->a_nRefCount ) );
 	}
 }
 

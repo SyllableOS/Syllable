@@ -123,7 +123,7 @@ static void create_kernel_image( void )
 	psImage->im_psNext = NULL;
 	strcpy( psImage->im_zName, "libkernel.so" );
 	psImage->im_pzPath = "";
-	psImage->im_nOpenCount = 1;
+	atomic_set( &psImage->im_nOpenCount, 1 );
 	psImage->im_nSectionCount = 0;
 	psImage->im_pasSections = NULL;
 	psImage->im_pzStrings = NULL;
@@ -143,8 +143,8 @@ static void create_kernel_image( void )
 	psInst->ii_psImage = psImage;
 	psInst->ii_apsSubImages = NULL;
 	psInst->ii_nHandle = 0;
-	psInst->ii_nOpenCount = 1;	/* Total number of references                 */
-	psInst->ii_nAppOpenCount = 1;	/* Number of times loaded by load_library()   */
+	atomic_set( &psInst->ii_nOpenCount, 1 );	/* Total number of references                 */
+	atomic_set( &psInst->ii_nAppOpenCount, 1 );	/* Number of times loaded by load_library()   */
 	psInst->ii_nTextArea = -1;
 	psInst->ii_nDataArea = -1;
 	psInst->ii_bRelocated = true;
@@ -683,19 +683,19 @@ static int find_symbol( ImageContext_s * psCtx, const char *pzName, ElfImageInst
 
 static void unload_image( ElfImage_s *psImage )
 {
-	int nCount = 1;
+	int nLastUnload = 1;
 
-	if ( psImage->im_nOpenCount != -1 )
+	if ( atomic_read( &psImage->im_nOpenCount ) != -1 )
 	{
-		nCount = atomic_add( &psImage->im_nOpenCount, -1 );
+		nLastUnload = atomic_dec_and_test( &psImage->im_nOpenCount );
 
-		if ( psImage->im_nOpenCount < 0 )
+		if ( atomic_read( &psImage->im_nOpenCount ) < 0 )
 		{
-			printk( "PANIC : unload_image() Image %s got open count of %d\n", psImage->im_zName, psImage->im_nOpenCount );
+			printk( "PANIC : unload_image() Image %s got open count of %d\n", psImage->im_zName, atomic_read( &psImage->im_nOpenCount ) );
 			return;
 		}
 	}
-	if ( nCount == 1 )
+	if ( nLastUnload )
 	{
 		ElfImage_s **ppsTmp;
 
@@ -734,7 +734,7 @@ static void unload_image( ElfImage_s *psImage )
 			put_fd( psImage->im_psFile );
 		}
 		kfree( psImage );
-		atomic_add( &g_sSysBase.ex_nLoadedImageCount, -1 );
+		atomic_dec( &g_sSysBase.ex_nLoadedImageCount );
 	}
 }
 
@@ -794,7 +794,7 @@ static int load_image( const char *pzImageName, const char *pzPath, int nFile, B
 
 		if ( NULL != psImage )
 		{
-			if ( psImage->im_nOpenCount == -1 )
+			if ( atomic_read( &psImage->im_nOpenCount ) == -1 )
 			{	// Image is about to being loaded
 				UNLOCK( g_hImageList );
 				snooze( 1000LL );
@@ -803,7 +803,7 @@ static int load_image( const char *pzImageName, const char *pzPath, int nFile, B
 			else
 			{
 				put_fd( psFile );
-				atomic_add( &psImage->im_nOpenCount, 1 );
+				atomic_inc( &psImage->im_nOpenCount );
 				*ppsRes = psImage;
 				UNLOCK( g_hImageList );
 				return ( 0 );
@@ -822,7 +822,7 @@ static int load_image( const char *pzImageName, const char *pzPath, int nFile, B
 		UNLOCK( g_hImageList );
 		return ( -ENOMEM );
 	}
-	psImage->im_nOpenCount = -1;	// Tell other threads that the image is about to be loaded.
+	atomic_set( &psImage->im_nOpenCount, -1 );	// Tell other threads that the image is about to be loaded.
 	psImage->im_psFile = psFile;
 	psImage->im_psModule = psModule;
 
@@ -887,8 +887,8 @@ static int load_image( const char *pzImageName, const char *pzPath, int nFile, B
 	}
 
 
-	atomic_add( &g_sSysBase.ex_nLoadedImageCount, 1 );
-	psImage->im_nOpenCount = 1;
+	atomic_inc( &g_sSysBase.ex_nLoadedImageCount );
+	atomic_set( &psImage->im_nOpenCount, 1 );
 
 	*ppsRes = psImage;
 	return ( 0 );
@@ -1378,7 +1378,7 @@ static void increase_instance_refcount( ElfImageInst_s *psInst )
 {
 	int i;
 
-	atomic_add( &psInst->ii_nOpenCount, 1 );
+	atomic_inc( &psInst->ii_nOpenCount );
 
 	for ( i = 0; i < psInst->ii_psImage->im_nSubImageCount; ++i )
 	{
@@ -1396,7 +1396,6 @@ static void increase_instance_refcount( ElfImageInst_s *psInst )
 static void close_image_inst( ImageContext_s * psCtx, ElfImageInst_s *psInst )
 {
 	ElfImage_s *psImage = psInst->ii_psImage;
-	int nCount;
 
 
 	if ( psInst->ii_apsSubImages != NULL )
@@ -1409,9 +1408,7 @@ static void close_image_inst( ImageContext_s * psCtx, ElfImageInst_s *psInst )
 		}
 	}
 
-	nCount = atomic_add( &psInst->ii_nOpenCount, -1 );
-
-	if ( nCount == 1 )
+	if ( atomic_dec_and_test( &psInst->ii_nOpenCount ) )
 	{
 		if ( psInst->ii_apsSubImages != NULL )
 		{
@@ -1428,7 +1425,7 @@ static void close_image_inst( ImageContext_s * psCtx, ElfImageInst_s *psInst )
 			delete_area( psInst->ii_nDataArea );
 		}
 		kfree( psInst );
-		atomic_add( &g_sSysBase.ex_nImageInstanceCount, -1 );
+		atomic_dec( &g_sSysBase.ex_nImageInstanceCount );
 
 		unload_image( psImage );
 	}
@@ -1453,7 +1450,7 @@ int load_image_inst( ImageContext_s * psCtx, const char *pzPath, BootModule_s * 
 
 	if ( nMode == IM_KERNEL_SPACE && strcmp( pzPath, "libkernel.so" ) == 0 )
 	{
-		atomic_add( &g_psKernelCtx->ic_psInstances[0]->ii_nOpenCount, 1 );
+		atomic_inc( &g_psKernelCtx->ic_psInstances[0]->ii_nOpenCount );
 		*ppsInst = g_psKernelCtx->ic_psInstances[0];
 		return ( 0 );
 	}
@@ -1530,7 +1527,7 @@ int load_image_inst( ImageContext_s * psCtx, const char *pzPath, BootModule_s * 
 	psInst->ii_nTextArea = -1;
 	psInst->ii_nDataArea = -1;
 
-	psInst->ii_nOpenCount = 1;
+	atomic_set( &psInst->ii_nOpenCount, 1 );
 	psInst->ii_apsSubImages = kmalloc( psImage->im_nSubImageCount * sizeof( ElfImageInst_s * ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
 
 	if ( psInst->ii_apsSubImages == NULL )
@@ -1608,7 +1605,7 @@ int load_image_inst( ImageContext_s * psCtx, const char *pzPath, BootModule_s * 
 	}
 	*ppsInst = psInst;
 
-	atomic_add( &g_sSysBase.ex_nImageInstanceCount, 1 );
+	atomic_inc( &g_sSysBase.ex_nImageInstanceCount );
 
 	return ( 0 );
       error7:
@@ -1702,7 +1699,7 @@ void close_all_images( ImageContext_s * psCtx )
 			kfree( psCtx->ic_psInstances[i]->ii_apsSubImages );
 			kfree( psCtx->ic_psInstances[i] );
 			psCtx->ic_psInstances[i] = NULL;
-			atomic_add( &g_sSysBase.ex_nImageInstanceCount, -1 );
+			atomic_dec( &g_sSysBase.ex_nImageInstanceCount );
 		}
 	}
 	UNLOCK( psCtx->ic_hLock );
@@ -1721,7 +1718,7 @@ void clone_image_inst( ElfImageInst_s *psDst, ElfImageInst_s *psSrc, MemContext_
 
 	psDst->ii_apsSubImages = NULL;
 
-	atomic_add( &psDst->ii_psImage->im_nOpenCount, 1 );
+	atomic_inc( &psDst->ii_psImage->im_nOpenCount );
 
 	psDst->ii_nTextArea = -1;
 	if ( psSrc->ii_nTextArea != -1 )
@@ -1792,7 +1789,7 @@ ImageContext_s *clone_image_context( ImageContext_s * psOrig, MemContext_s *psNe
 					if ( psNewCtx->ic_psInstances[j] != NULL )
 					{
 						kfree( psNewCtx->ic_psInstances[j] );
-						atomic_add( &g_sSysBase.ex_nImageInstanceCount, -1 );
+						atomic_dec( &g_sSysBase.ex_nImageInstanceCount );
 					}
 				}
 				delete_image_context( psNewCtx );
@@ -1805,7 +1802,7 @@ ImageContext_s *clone_image_context( ImageContext_s * psOrig, MemContext_s *psNe
 			psNewCtx->ic_psInstances[i] = psDst;
 
 			clone_image_inst( psDst, psSrc, psNewMemCtx );
-			atomic_add( &g_sSysBase.ex_nImageInstanceCount, 1 );
+			atomic_inc( &g_sSysBase.ex_nImageInstanceCount );
 		}
 	}
 	if ( psNewCtx != NULL )
@@ -1829,9 +1826,9 @@ ImageContext_s *clone_image_context( ImageContext_s * psOrig, MemContext_s *psNe
 							{
 								kfree( psNewCtx->ic_psInstances[j]->ii_apsSubImages );
 							}
-							atomic_add( &psNewCtx->ic_psInstances[j]->ii_psImage->im_nOpenCount, -1 );
+							atomic_dec( &psNewCtx->ic_psInstances[j]->ii_psImage->im_nOpenCount );
 							kfree( psNewCtx->ic_psInstances[j] );
-							atomic_add( &g_sSysBase.ex_nImageInstanceCount, -1 );
+							atomic_dec( &g_sSysBase.ex_nImageInstanceCount );
 						}
 					}
 					delete_image_context( psNewCtx );
@@ -2003,7 +2000,7 @@ int sys_load_library( const char *a_pzPath, uint32 nFlags, const char *pzSearchP
 
 	if ( nError >= 0 )
 	{
-		atomic_add( &psInst->ii_nAppOpenCount, 1 );
+		atomic_inc( &psInst->ii_nAppOpenCount );
 		nError = psInst->ii_nHandle;
 	}
 	UNLOCK( psCtx->ic_hLock );
@@ -2042,13 +2039,13 @@ int sys_unload_library( int nLibrary )
 		nError = -EINVAL;	// FIXME: Should may return someting like EBADF instead?
 		goto error;
 	}
-	if ( psInst->ii_nAppOpenCount == 0 )
+	if ( atomic_read( &psInst->ii_nAppOpenCount ) == 0 )
 	{
 		printk( "sys_unload_library() attempt to unload non load_library() loaded image %s\n", psInst->ii_psImage->im_zName );
 		nError = -EINVAL;
 		goto error;
 	}
-	atomic_add( &psInst->ii_nAppOpenCount, -1 );
+	atomic_dec( &psInst->ii_nAppOpenCount );
 	close_image_inst( psCtx, psInst );
       error:
 	UNLOCK( psCtx->ic_hLock );
@@ -2155,7 +2152,7 @@ Inode_s *get_image_inode( int nLibrary )
 	}
 	if ( psInode != NULL )
 	{
-		atomic_add( &psInode->i_nCount, 1 );
+		atomic_inc( &psInode->i_nCount );
 	}
 	UNLOCK( psCtx->ic_hLock );
 	return ( psInode );
@@ -2195,7 +2192,7 @@ int load_kernel_driver( const char *a_pzPath )
 	{
 		if ( psCtx->ic_psInstances[i] != NULL && strcmp( pzPath, psCtx->ic_psInstances[i]->ii_psImage->im_pzPath ) == 0 )
 		{
-			psCtx->ic_psInstances[i]->ii_nAppOpenCount++;
+			atomic_inc( &psCtx->ic_psInstances[i]->ii_nAppOpenCount );
 			nError = i;
 			goto done;
 		}
@@ -2205,7 +2202,7 @@ int load_kernel_driver( const char *a_pzPath )
 
 	if ( nError >= 0 )
 	{
-		atomic_add( &psInst->ii_nAppOpenCount, 1 );
+		atomic_inc( &psInst->ii_nAppOpenCount );
 		nError = psInst->ii_nHandle;
 	}
       done:
@@ -2246,13 +2243,13 @@ int unload_kernel_driver( int nLibrary )
 		nError = -EINVAL;	// FIXME: Should may return someting like EBADF instead?
 		goto error;
 	}
-	if ( psInst->ii_nAppOpenCount == 0 )
+	if ( atomic_read( &psInst->ii_nAppOpenCount ) == 0 )
 	{
 		printk( "unload_kernel_driver() attempt to unload non load_kernel_driver() loaded image %s\n", psInst->ii_psImage->im_zName );
 		nError = -EINVAL;
 		goto error;
 	}
-	atomic_add( &psInst->ii_nAppOpenCount, -1 );
+	atomic_dec( &psInst->ii_nAppOpenCount );
 	close_image_inst( psCtx, psInst );
       error:
 	UNLOCK( psCtx->ic_hLock );
@@ -2305,7 +2302,7 @@ static void do_get_image_info( image_info * psInfo, ElfImageInst_s *psInst )
 
 	psInfo->ii_image_id = psInst->ii_nHandle;
 	psInfo->ii_type = IM_APP_SPACE;
-	psInfo->ii_open_count = psInst->ii_nOpenCount;
+	psInfo->ii_open_count = atomic_read( &psInst->ii_nOpenCount );
 	psInfo->ii_sub_image_count = psImage->im_nSubImageCount;
 	psInfo->ii_init_order = 0;
 	if ( psImage->im_psFile != NULL )
@@ -2408,7 +2405,7 @@ void db_list_process_images( Process_s *psProc )
 			ElfImageInst_s *psInst = psCtx->ic_psInstances[i];
 			ElfImage_s *psImage = psInst->ii_psImage;
 
-			dbprintf( DBP_DEBUGGER, "%03d %02d %02d %08lx %08lx %04d %04d %s\n", i, psInst->ii_nOpenCount, psInst->ii_nAppOpenCount, psInst->ii_nTextAddress, psImage->im_nVirtualAddress, psImage->im_nSymCount, psImage->im_nRelocCount, psImage->im_zName );
+			dbprintf( DBP_DEBUGGER, "%03d %02d %02d %08lx %08lx %04d %04d %s\n", i, atomic_read( &psInst->ii_nOpenCount ), atomic_read( &psInst->ii_nAppOpenCount ), psInst->ii_nTextAddress, psImage->im_nVirtualAddress, psImage->im_nSymCount, psImage->im_nRelocCount, psImage->im_zName );
 		}
 	}
 	dbprintf( DBP_DEBUGGER, "\n" );
@@ -2515,7 +2512,7 @@ static void init_boot_modules( void )
 			printk( "  Error: init_boot_modules() failed to initialize %s\n", zFullPath );
 			continue;
 		}
-		psInst->ii_nAppOpenCount++;
+		atomic_inc( &psInst->ii_nAppOpenCount );
 	}
 	for ( i = 0; i < MAX_IMAGE_COUNT; ++i )
 	{

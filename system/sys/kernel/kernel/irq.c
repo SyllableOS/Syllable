@@ -128,7 +128,7 @@ int request_irq( int nIrqNum, irq_top_handler *pTopHandler, irq_bottom_handler *
 	IrqAction_s *psAction;
 	int nEFlags;
 	int nError;
-	static int nIrqHandle = 1;
+	static atomic_t nIrqHandle = ATOMIC_INIT(1);
 
 	if ( nIrqNum < 0 || nIrqNum >= IRQ_COUNT )
 	{
@@ -149,7 +149,7 @@ int request_irq( int nIrqNum, irq_top_handler *pTopHandler, irq_bottom_handler *
 	psAction->pzName = pzDevName;
 	psAction->pData = pData;
 	psAction->psNext = NULL;
-	psAction->nHandle = atomic_add( &nIrqHandle, 1 );
+	psAction->nHandle = atomic_inc_and_read( &nIrqHandle );
 
 	enable_8259A_irq( nIrqNum );
 	nEFlags = cli();
@@ -267,7 +267,7 @@ void handle_irq( SysCallRegs_s * psRegs, int nIrqNum )
 	IrqAction_s *psAction;
 	static IrqAction_s *apBottomHandler[1024];
 	static int nBottomIn = 0;
-	static int nBottomOut = 0;
+	static atomic_t nBottomOut = ATOMIC_INIT(0);
 	int nIn;
 	bool bNeedSchedule = false;
 
@@ -310,14 +310,14 @@ void handle_irq( SysCallRegs_s * psRegs, int nIrqNum )
 
 		for ( ;; )
 		{
-			int nOut = nBottomOut & 1023;
+			int nOut = atomic_read( &nBottomOut ) & 1023;
 
 			if ( nIn == nOut )
 			{
 				break;
 			}
 
-			atomic_add( &nBottomOut, 1 );
+			atomic_inc( &nBottomOut );
 
 			psAction = apBottomHandler[nOut];
 			psAction->nFlags &= ~IRQF_BH_IN_LIST;

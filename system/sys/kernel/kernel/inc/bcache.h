@@ -85,7 +85,7 @@ typedef struct
 	HashTable_s bc_sHashTab;
 
 	int bc_nMemUsage;
-	int bc_nDirtyCount;
+	atomic_t bc_nDirtyCount;
 	sem_id bc_hLock;
 } BlockCache_s;
 

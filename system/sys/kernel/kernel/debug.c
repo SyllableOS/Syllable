@@ -733,16 +733,16 @@ static void dbg_toggle_plain_text( int argc, char **argv )
 	dbprintf( DBP_DEBUGGER, "Plain-text debugging is no %s\n", ( g_bPlainTextDebug ) ? "enabled" : "disabled" );
 }
 
-static char *get_suff( float *pnSize )
+static char *get_suff( int *pnSize )
 {
-	if ( *pnSize > 1024.0f * 1024.0f )
+	if ( *pnSize > 1024 * 1024 )
 	{
-		*pnSize /= 1024.0f * 1024.0f;
+		*pnSize /= 1024 * 1024;
 		return ( "Mb" );
 	}
-	else if ( *pnSize > 1024.0f )
+	else if ( *pnSize > 1024 )
 	{
-		*pnSize /= 1024.0f;
+		*pnSize /= 1024;
 		return ( "Kb" );
 	}
 	else
@@ -754,11 +754,11 @@ static char *get_suff( float *pnSize )
 static void dbg_dump_mem( int argc, char **argv )
 {
 	SwapInfo_s sSwapInfo;
-	float vFreeRAM = ( float )( g_sSysBase.ex_nFreePageCount * PAGE_SIZE );
-	float vKMem = ( float )g_sSysBase.ex_nKernelMemSize;
-	float vKMemPages = ( float )( g_sSysBase.ex_nKernelMemPages * PAGE_SIZE );
-	float vTotSwap;
-	float vFreeSwap;
+	int vFreeRAM = ( atomic_read( &g_sSysBase.ex_nFreePageCount ) * PAGE_SIZE );
+	int vKMem = atomic_read( &g_sSysBase.ex_nKernelMemSize );
+	int vKMemPages = ( atomic_read( &g_sSysBase.ex_nKernelMemPages ) * PAGE_SIZE );
+	int vTotSwap;
+	int vFreeSwap;
 
 	const char *pzRamSuff;
 	const char *pzTSwpSuff;
@@ -768,8 +768,8 @@ static void dbg_dump_mem( int argc, char **argv )
 
 	get_swap_info( &sSwapInfo );
 
-	vTotSwap = ( float )sSwapInfo.si_nTotSize;
-	vFreeSwap = ( float )sSwapInfo.si_nFreeSize;
+	vTotSwap = sSwapInfo.si_nTotSize;
+	vFreeSwap = sSwapInfo.si_nFreeSize;
 
 	pzTSwpSuff = get_suff( &vTotSwap );
 	pzFSwpSuff = get_suff( &vFreeSwap );
@@ -777,8 +777,8 @@ static void dbg_dump_mem( int argc, char **argv )
 	pzKMemPagesSuff = get_suff( &vKMemPages );
 
 	pzRamSuff = get_suff( &vFreeRAM );
-	dbprintf( DBP_DEBUGGER, "Free RAM: %d%s Tot SWP: %d%s Free SWP: %d%s PGIN: %d PGOUT: %d\n", ( int )vFreeRAM, pzRamSuff, ( int )vTotSwap, pzTSwpSuff, ( int )vFreeSwap, pzFSwpSuff, sSwapInfo.si_nPageIn, sSwapInfo.si_nPageOut );
-	dbprintf( DBP_DEBUGGER, "Kernel MEM: %d%s Alloc KMem: %d%s\n", ( int )vKMem, pzKMemSuff, ( int )vKMemPages, pzKMemPagesSuff );
+	dbprintf( DBP_DEBUGGER, "Free RAM: %d%s Tot SWP: %d%s Free SWP: %d%s PGIN: %d PGOUT: %d\n", vFreeRAM, pzRamSuff, vTotSwap, pzTSwpSuff, vFreeSwap, pzFSwpSuff, sSwapInfo.si_nPageIn, sSwapInfo.si_nPageOut );
+	dbprintf( DBP_DEBUGGER, "Kernel MEM: %d%s Alloc KMem: %d%s\n", vKMem, pzKMemSuff, vKMemPages, pzKMemPagesSuff );
 }
 
 static void dbg_reboot( int argc, char **argv )

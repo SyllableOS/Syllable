@@ -1446,7 +1446,7 @@ void clone_ctty( IoContext_s * psDst, IoContext_s * psSrc )
 	psDst->ic_psCtrlTTY = psSrc->ic_psCtrlTTY;
 	if ( psDst->ic_psCtrlTTY != NULL )
 	{
-		atomic_add( &psDst->ic_psCtrlTTY->i_nCount, 1 );
+		atomic_inc( &psDst->ic_psCtrlTTY->i_nCount );
 	}
 	UNLOCK( g_hCTTYMutex );
 }
@@ -1460,7 +1460,7 @@ Inode_s *get_ctty( void )
 	psInode = psThisProc->pr_psIoContext->ic_psCtrlTTY;
 	if ( psInode != NULL )
 	{
-		atomic_add( &psInode->i_nCount, 1 );
+		atomic_inc( &psInode->i_nCount );
 	}
 	UNLOCK( g_hCTTYMutex );
 	return ( psInode );

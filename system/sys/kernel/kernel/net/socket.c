@@ -103,7 +103,7 @@ int create_socket( bool bKernel, int nFamily, int nType, int nProtocol, bool bIn
 	}
 
 	psSocket->sk_nInodeNum = ( ino_t )( ( uint32 )psSocket );
-	psSocket->sk_nOpenCount = 1;
+	atomic_set( &psSocket->sk_nOpenCount, 1 );
 	psSocket->sk_nFamily = nFamily;
 	psSocket->sk_nType = nType;
 	psSocket->sk_nProto = nProtocol;
@@ -1025,7 +1025,7 @@ static int sk_open( void *pVolume, void *pNode, int nMode, void **ppCookie )
 	Socket_s *psSocket = pNode;
 
 //  kassertw( psSocket->sk_bOpen == false );
-	atomic_add( &psSocket->sk_nOpenCount, 1 );
+	atomic_inc( &psSocket->sk_nOpenCount );
 	return ( 0 );
 }
 
@@ -1041,10 +1041,10 @@ static int sk_close( void *pVolume, void *pNode, void *pCookie )
 	Socket_s *psSocket = pNode;
 	int nError;
 
-	atomic_add( &psSocket->sk_nOpenCount, -1 );
-	kassertw( psSocket->sk_nOpenCount >= 0 );
+	atomic_dec( &psSocket->sk_nOpenCount );
+	kassertw( atomic_read( &psSocket->sk_nOpenCount ) >= 0 );
 
-	if ( psSocket->sk_nOpenCount == 0 && psSocket->sk_psOps->close != NULL )
+	if ( atomic_read( &psSocket->sk_nOpenCount ) == 0 && psSocket->sk_psOps->close != NULL )
 	{
 		nError = psSocket->sk_psOps->close( psSocket );
 	}

@@ -42,12 +42,12 @@ typedef struct
 	sem_id pn_hWriteSema;
 	sem_id pn_hReaderQueue;
 	sem_id pn_hWriterQueue;
-	int pn_nWriters;	// Number of O_WRONLY files attached
-	int pn_nReaders;	// Number of O_RDONLY files attached
+	atomic_t pn_nWriters;	// Number of O_WRONLY files attached
+	atomic_t pn_nReaders;	// Number of O_RDONLY files attached
 	int pn_nInPos;
 	int pn_nOutPos;
-	int pn_nReadOpenSeq;
-	int pn_nWriteOpenSeq;
+	atomic_t pn_nReadOpenSeq;
+	atomic_t pn_nWriteOpenSeq;
 	int pn_nBytesInBuffer;
 	SelectRequest_s *pn_psFirstReadSelReq;
 	SelectRequest_s *pn_psFirstWriteSelReq;
@@ -114,7 +114,7 @@ Inode_s *create_fifo_inode( Inode_s *psHostInode )
 	}
 	if ( psHostInode != NULL )
 	{
-		atomic_add( &psHostInode->i_nCount, 1 );
+		atomic_inc( &psHostInode->i_nCount );
 		psHostInode->i_psPipe = psInode;
 	}
 	UNLOCK( g_hPipeMutex );
@@ -254,18 +254,18 @@ static int pi_open( void *pVolume, void *pNode, int nMode, void **ppCookie )
 	switch ( nMode & O_ACCMODE )
 	{
 	case O_RDONLY:
-		nSeq = psNode->pn_nWriteOpenSeq;
-		atomic_add( &psNode->pn_nReaders, 1 );
-		atomic_add( &psNode->pn_nReadOpenSeq, 1 );
+		nSeq = atomic_read( &psNode->pn_nWriteOpenSeq );
+		atomic_inc( &psNode->pn_nReaders );
+		atomic_inc( &psNode->pn_nReadOpenSeq );
 		wakeup_sem( psNode->pn_hWriterQueue, true );
 		if ( ( nMode & O_NDELAY ) == 0 && psNode->pn_psHostInode != NULL )
 		{
-			while ( psNode->pn_nWriters == 0 && nSeq == psNode->pn_nWriteOpenSeq )
+			while ( atomic_read( &psNode->pn_nWriters ) == 0 && nSeq == atomic_read( &psNode->pn_nWriteOpenSeq ) )
 			{
 				nError = unlock_and_suspend( psNode->pn_hReaderQueue, psNode->pn_hMutex );
 				if ( nError < 0 )
 				{
-					atomic_add( &psNode->pn_nReaders, -1 );
+					atomic_dec( &psNode->pn_nReaders );
 					goto error;
 				}
 				LOCK( psNode->pn_hMutex );
@@ -273,18 +273,18 @@ static int pi_open( void *pVolume, void *pNode, int nMode, void **ppCookie )
 		}
 		break;
 	case O_WRONLY:
-		nSeq = psNode->pn_nReadOpenSeq;
-		atomic_add( &psNode->pn_nWriters, 1 );
-		atomic_add( &psNode->pn_nWriteOpenSeq, 1 );
+		nSeq = atomic_read( &psNode->pn_nReadOpenSeq );
+		atomic_inc( &psNode->pn_nWriters );
+		atomic_inc( &psNode->pn_nWriteOpenSeq );
 		wakeup_sem( psNode->pn_hReaderQueue, true );
 		if ( ( nMode & O_NDELAY ) == 0 && psNode->pn_psHostInode != NULL )
 		{
-			while ( psNode->pn_nReaders == 0 && nSeq == psNode->pn_nReadOpenSeq )
+			while ( atomic_read( &psNode->pn_nReaders ) == 0 && nSeq == atomic_read( &psNode->pn_nReadOpenSeq ) )
 			{
 				nError = unlock_and_suspend( psNode->pn_hWriterQueue, psNode->pn_hMutex );
 				if ( nError < 0 )
 				{
-					atomic_add( &psNode->pn_nWriters, -1 );
+					atomic_dec( &psNode->pn_nWriters );
 					goto error;
 				}
 				LOCK( psNode->pn_hMutex );
@@ -313,16 +313,16 @@ static int pi_close( void *pVolume, void *pNode, void *pCookie )
 	switch ( psCookie->pc_nMode & O_ACCMODE )
 	{
 	case O_RDONLY:
-		atomic_add( &psNode->pn_nReaders, -1 );
-		if ( psNode->pn_nReaders < 0 )
+		atomic_dec( &psNode->pn_nReaders );
+		if ( atomic_read( &psNode->pn_nReaders ) < 0 )
 		{
-			printk( "Error: pi_close() node got reader's count of %d\n", psNode->pn_nReaders );
-			psNode->pn_nReaders = 0;
+			printk( "Error: pi_close() node got reader's count of %d\n", atomic_read( &psNode->pn_nReaders ) );
+			atomic_set( &psNode->pn_nReaders, 0 );
 		}
 		// Not sure if this is correct. It should might be cleared
 		// every time someone closed it, or it might should only be
 		// cleared when both all reader and all writers are gone.
-		if ( psNode->pn_nReaders == 0 )
+		if ( atomic_read( &psNode->pn_nReaders ) == 0 )
 		{
 			psNode->pn_nOutPos = psNode->pn_nInPos = psNode->pn_nBytesInBuffer = 0;
 		}
@@ -330,11 +330,11 @@ static int pi_close( void *pVolume, void *pNode, void *pCookie )
 		pi_notify_write_select( psNode );
 		break;
 	case O_WRONLY:
-		atomic_add( &psNode->pn_nWriters, -1 );
-		if ( psNode->pn_nWriters < 0 )
+		atomic_dec( &psNode->pn_nWriters );
+		if ( atomic_read( &psNode->pn_nWriters ) < 0 )
 		{
-			printk( "Error: pi_close() node got writer's count of %d\n", psNode->pn_nWriters );
-			psNode->pn_nWriters = 0;
+			printk( "Error: pi_close() node got writer's count of %d\n", atomic_read( &psNode->pn_nWriters ) );
+			atomic_set( &psNode->pn_nWriters, 0 );
 		}
 		wakeup_sem( psNode->pn_hReadSema, true );
 		pi_notify_read_select( psNode );
@@ -357,7 +357,7 @@ static int pi_read( void *pVolume, void *pNode, void *pCookie, off_t nPos, void 
 
 	while ( psNode->pn_nBytesInBuffer <= 0 )
 	{
-		if ( psNode->pn_nWriters == 0 )
+		if ( atomic_read( &psNode->pn_nWriters ) == 0 )
 		{
 			nError = 0;
 			goto error;
@@ -415,7 +415,7 @@ static int pi_write( void *pVolume, void *pNode, void *pCookie, off_t nPos, cons
 
 		while ( psNode->pn_nBytesInBuffer == PIPE_BUF )
 		{
-			if ( psNode->pn_nReaders == 0 )
+			if ( atomic_read( &psNode->pn_nReaders ) == 0 )
 			{
 				nError = -EPIPE;
 				switch ( get_signal_mode( SIGPIPE ) )
@@ -461,7 +461,7 @@ static int pi_write( void *pVolume, void *pNode, void *pCookie, off_t nPos, cons
 		}
 		wakeup_sem( psNode->pn_hReadSema, false );
 		pi_notify_read_select( psNode );
-		if ( psNode->pn_nReaders == 0 || ( psCookie->pc_nMode & O_NONBLOCK ) )
+		if ( atomic_read( &psNode->pn_nReaders ) == 0 || ( psCookie->pc_nMode & O_NONBLOCK ) )
 		{
 			UNLOCK( psNode->pn_hMutex );
 			break;
@@ -544,7 +544,7 @@ static int pi_add_select_req( void *pVolume, void *pNode, void *pCookie, SelectR
 	case SELECT_READ:
 		psReq->sr_psNext = psNode->pn_psFirstReadSelReq;
 		psNode->pn_psFirstReadSelReq = psReq;
-		if ( psNode->pn_nBytesInBuffer > 0 || psNode->pn_nWriters == 0 )
+		if ( psNode->pn_nBytesInBuffer > 0 || atomic_read( &psNode->pn_nWriters ) == 0 )
 		{
 			pi_notify_read_select( psNode );
 		}
@@ -552,7 +552,7 @@ static int pi_add_select_req( void *pVolume, void *pNode, void *pCookie, SelectR
 	case SELECT_WRITE:
 		psReq->sr_psNext = psNode->pn_psFirstWriteSelReq;
 		psNode->pn_psFirstWriteSelReq = psReq;
-		if ( psNode->pn_nBytesInBuffer != PIPE_BUF || psNode->pn_nReaders == 0 )
+		if ( psNode->pn_nBytesInBuffer != PIPE_BUF || atomic_read( &psNode->pn_nReaders ) == 0 )
 		{
 			pi_notify_write_select( psNode );
 		}

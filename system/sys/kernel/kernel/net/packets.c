@@ -70,7 +70,7 @@ PacketBuf_s *alloc_pkt_buffer( int nSize )
 {
 	PacketBuf_s *psBuf;
 
-	if ( g_sSysBase.ex_nFreePageCount < 1024 * 128 / PAGE_SIZE )
+	if ( atomic_read( &g_sSysBase.ex_nFreePageCount ) < 1024 * 128 / PAGE_SIZE )
 	{
 		return ( NULL );
 	}

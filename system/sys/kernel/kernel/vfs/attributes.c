@@ -60,7 +60,7 @@ int sys_open_attrdir( int nFile )
 		goto error1;
 	}
 	psInode = psFile->f_psInode;
-	atomic_add( &psInode->i_nCount, 1 );
+	atomic_inc( &psInode->i_nCount );
 	put_fd( psFile );
 
 
@@ -505,7 +505,7 @@ int sys_open_indexdir( const char *pzVolume )
 		goto error2;
 	}
 	psTmp = psInode->i_psVolume->v_psMountPoint->i_psMount;
-	atomic_add( &psTmp->i_nCount, 1 );
+	atomic_inc( &psTmp->i_nCount );
 	put_inode( psInode );
 	psInode = psTmp;
 

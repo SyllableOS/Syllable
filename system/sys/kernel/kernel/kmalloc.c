@@ -250,7 +250,7 @@ static inline void free_kmalloc_pages( struct page_descriptor *page, unsigned lo
 			return;
 		}
 	}
-	atomic_add( &g_sSysBase.ex_nKernelMemPages, -( 1 << order ) );
+	atomic_sub( &g_sSysBase.ex_nKernelMemPages, ( 1 << order ) );
 
 	free_pages( ( unsigned long )page, ( 1 << order ) );
 }
@@ -477,7 +477,7 @@ int __kfree( void *__ptr )
 	flags = cli();
 	spinlock( &g_sMemSpinLock );
 
-	atomic_add( &g_sSysBase.ex_nKernelMemSize, -ptr->bh_length );
+	atomic_sub( &g_sSysBase.ex_nKernelMemSize, ptr->bh_length );
 
 	bucket->nfrees++;
 	bucket->nbytesmalloced -= ptr->bh_length;

@@ -128,17 +128,18 @@ void validate_page_list( void )
 
 	for ( i = 0; i < g_sSysBase.ex_nTotalPageCount - 1; ++i )
 	{
-		if ( g_psFirstPage[i].p_nCount < 0 )
+		int nCount = atomic_read( &g_psFirstPage[i].p_nCount );
+		if ( nCount < 0 )
 		{
-			printk( "PANIC Page %d got reference count of %d\n", i, g_psFirstPage[i].p_nCount );
+			printk( "PANIC Page %d got reference count of %d\n", i, nCount );
 		}
-		if ( 0 == g_psFirstPage[i].p_nCount && NULL == g_psFirstPage[i].p_psNext )
+		if ( 0 == nCount && NULL == g_psFirstPage[i].p_psNext )
 		{
 			printk( "Page %d got reference count of 0, but does not belong to the freelist!!\n", i );
 		}
-		if ( 0 != g_psFirstPage[i].p_nCount && NULL != g_psFirstPage[i].p_psNext )
+		if ( 0 != nCount && NULL != g_psFirstPage[i].p_psNext )
 		{
-			printk( "Page %d got reference count of %d, while present at the freelist!!\n", i, g_psFirstPage[i].p_nCount );
+			printk( "Page %d got reference count of %d, while present at the freelist!!\n", i, nCount );
 		}
 		kassertw( g_psFirstPage[i].p_nPageNum == i );
 	}
@@ -204,11 +205,11 @@ uint32 get_free_pages( int nPageCount, int nFlags )
 			g_psFirstFreePage = psPage->p_psNext;
 			psPage->p_psNext = NULL;
 
-			kassertw( 0 == psPage->p_nCount );
+			kassertw( 0 == atomic_read( &psPage->p_nCount ) );
 
-			atomic_add( &psPage->p_nCount, 1 );
+			atomic_inc( &psPage->p_nCount );
 			g_nAllocatedPages++;
-			g_sSysBase.ex_nFreePageCount--;
+			atomic_dec( &g_sSysBase.ex_nFreePageCount );
 
 			nPage = psPage->p_nPageNum * PAGE_SIZE;
 		}
@@ -242,14 +243,14 @@ uint32 get_free_pages( int nPageCount, int nFlags )
 
 						for ( ; psTmp <= psPage; psTmp++ )
 						{
-							if ( 0 != psTmp->p_nCount )
+							if ( 0 != atomic_read( &psTmp->p_nCount ) )
 							{
-								printk( "Page %d present on free list with count of %d\n", psTmp->p_nPageNum, psTmp->p_nCount );
+								printk( "Page %d present on free list with count of %d\n", psTmp->p_nPageNum, atomic_read( &psTmp->p_nCount ) );
 							}
-							atomic_add( &psTmp->p_nCount, 1 );
+							atomic_inc( &psTmp->p_nCount );
 							psTmp->p_psNext = NULL;
 							g_nAllocatedPages++;
-							g_sSysBase.ex_nFreePageCount--;
+							atomic_dec( &g_sSysBase.ex_nFreePageCount );
 						}
 						break;
 					}
@@ -289,14 +290,14 @@ void free_page( uint32 nPage )
 
 	spinlock( &g_sPageListSpinLock );
 
-	atomic_add( &psPage->p_nCount, -1 );
+	atomic_dec( &psPage->p_nCount );
 
-	kassertw( psPage->p_nCount >= 0 );
+	kassertw( atomic_read( &psPage->p_nCount ) >= 0 );
 
-	if ( 0 == psPage->p_nCount )
+	if ( 0 == atomic_read( &psPage->p_nCount ) )
 	{
 		g_nAllocatedPages--;
-		g_sSysBase.ex_nFreePageCount++;
+		atomic_inc( &g_sSysBase.ex_nFreePageCount );
 
 		if ( NULL == g_psFirstFreePage || psPage < g_psFirstFreePage )
 		{
@@ -307,7 +308,7 @@ void free_page( uint32 nPage )
 		{
 			for ( i = psPage->p_nPageNum - 1; i >= 0; --i )
 			{
-				if ( 0 == g_psFirstPage[i].p_nCount )
+				if ( 0 == atomic_read( &g_psFirstPage[i].p_nCount ) )
 				{
 					psPage->p_psNext = g_psFirstPage[i].p_psNext;
 					g_psFirstPage[i].p_psNext = psPage;

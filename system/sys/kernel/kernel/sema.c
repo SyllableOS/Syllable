@@ -120,7 +120,7 @@ static Semaphore_s *clone_semaphore( Semaphore_s *psSema, proc_id hNewOwner )
 	psClone->ss_hOwner = hNewOwner;
 
 	/* Increment global semaphore count */
-	atomic_add( &g_sSysBase.ex_nSemaphoreCount, 1 );
+	atomic_inc( &g_sSysBase.ex_nSemaphoreCount );
 
 	return ( psClone );
 }
@@ -198,7 +198,7 @@ SemContext_s *clone_semaphore_context( SemContext_s * psOrig, proc_id hNewOwner 
 				if ( psCtx->sc_apsSemaphores[i] != NULL )
 				{
 					kfree( psCtx->sc_apsSemaphores[i] );
-					atomic_add( &g_sSysBase.ex_nSemaphoreCount, -1 );
+					atomic_dec( &g_sSysBase.ex_nSemaphoreCount );
 				}
 			}
 			kfree( psCtx->sc_apsSemaphores );
@@ -524,7 +524,7 @@ static sem_id do_create_semaphore( bool bKernel, const char *pzName, int nCount,
 
 	if ( psSema->ss_hSemaID >= 0 )
 	{
-		atomic_add( &g_sSysBase.ex_nSemaphoreCount, 1 );
+		atomic_inc( &g_sSysBase.ex_nSemaphoreCount );
 		return ( psSema->ss_hSemaID );
 	}
 	else
@@ -658,7 +658,7 @@ static status_t do_delete_semaphore( sem_id hSema )
 		}
 
 		kfree( psSema );
-		atomic_add( &g_sSysBase.ex_nSemaphoreCount, -1 );
+		atomic_dec( &g_sSysBase.ex_nSemaphoreCount );
 
 		return ( 0 );
 	}
@@ -1190,9 +1190,9 @@ static status_t do_lock_semaphore_ex( bool bKernel, sem_id hSema, int nCount, ui
 	nFlg = cli();
 	spinlock( &g_sSemListSpinLock );
 
-	if ( g_sSchedSpinLock.sl_nNest != 1 )
+	if ( atomic_read(&g_sSchedSpinLock.sl_nNest) != 1 )
 	{
-		printk( "Panic: do_lock_semaphore_ex() spinlock nest count is %d, dumping call-stack...\n", g_sSchedSpinLock.sl_nNest );
+		printk( "Panic: do_lock_semaphore_ex() spinlock nest count is %d, dumping call-stack...\n", atomic_read(&g_sSchedSpinLock.sl_nNest) );
 		bDumpStack = true;
 	}
 
@@ -2118,9 +2118,9 @@ status_t sleep_on_sem( sem_id hSema, bigtime_t nTimeOut )
 
 	nFlg = spinlock_disable( &g_sSemListSpinLock );
 
-	if ( g_sSchedSpinLock.sl_nNest != 1 )
+	if ( atomic_read(&g_sSchedSpinLock.sl_nNest) != 1 )
 	{
-		printk( "PANIC: sleep_on_sem() spinlock nest count is %d\n", g_sSchedSpinLock.sl_nNest );
+		printk( "PANIC: sleep_on_sem() spinlock nest count is %d\n", atomic_read(&g_sSchedSpinLock.sl_nNest) );
 	}
 
 	psSema = get_semaphore_by_handle( -1, hSema );
@@ -2961,7 +2961,7 @@ static status_t do_rwlock_lock( bool bIgnored, sem_id hSema, bool bWantShared, u
 	nFlg = cli();
 	spinlock( &g_sSemListSpinLock );
 
-	if ( g_sSchedSpinLock.sl_nNest != 1 )
+	if ( atomic_read(&g_sSchedSpinLock.sl_nNest) != 1 )
 	{
 		kerndbg( KERN_FATAL, __FUNCTION__ "(): Scheduler spinlock held more than once - BAD.\n" );
 	}

@@ -123,13 +123,13 @@ status_t sys_get_system_info( system_info * psInfo, int nVersion )
 			sInfo.nCPUCount = g_nActiveCPUCount;
 			sInfo.nCPUType = 0;
 			sInfo.nMaxPages = g_sSysBase.ex_nTotalPageCount;	/* total # physical pages               */
-			sInfo.nFreePages = g_sSysBase.ex_nFreePageCount;	/* Number of free physical pages        */
+			sInfo.nFreePages = atomic_read( &g_sSysBase.ex_nFreePageCount );	/* Number of free physical pages        */
 			sInfo.nCommitedPages = g_sSysBase.ex_nCommitPageCount;	/* Total number of allocated pages      */
-			sInfo.nPageFaults = g_sSysBase.ex_nPageFaultCount;	/* Number of page faults                */
-			sInfo.nUsedSemaphores = g_sSysBase.ex_nSemaphoreCount;	/* Number of semaphores in use          */
-			sInfo.nUsedPorts = g_sSysBase.ex_nMessagePortCount;	/* Number of message ports in use       */
-			sInfo.nUsedThreads = g_sSysBase.ex_nThreadCount;	/* Number of living threads             */
-			sInfo.nUsedProcesses = g_sSysBase.ex_nProcessCount;	/* Number of living processes           */
+			sInfo.nPageFaults = atomic_read( &g_sSysBase.ex_nPageFaultCount );	/* Number of page faults                */
+			sInfo.nUsedSemaphores = atomic_read( &g_sSysBase.ex_nSemaphoreCount );	/* Number of semaphores in use          */
+			sInfo.nUsedPorts = atomic_read( &g_sSysBase.ex_nMessagePortCount );	/* Number of message ports in use       */
+			sInfo.nUsedThreads = atomic_read( &g_sSysBase.ex_nThreadCount );	/* Number of living threads             */
+			sInfo.nUsedProcesses = atomic_read( &g_sSysBase.ex_nProcessCount );	/* Number of living processes           */
 
 			strcpy( sInfo.zKernelName, g_pzKernelName );	/* Name of kernel image */
 			strcpy( sInfo.zKernelBuildDate, g_pzBuildData );	/* Date of kernel built */
@@ -157,25 +157,25 @@ status_t sys_get_system_info( system_info * psInfo, int nVersion )
 			sInfo.nCPUCount = g_nActiveCPUCount;
 			sInfo.nCPUType = g_asProcessorDescs[g_nBootCPU].pi_nFeatures;
 			sInfo.nMaxPages = g_sSysBase.ex_nTotalPageCount;	/* total # physical pages               */
-			sInfo.nFreePages = g_sSysBase.ex_nFreePageCount;	/* Number of free physical pages        */
+			sInfo.nFreePages = atomic_read( &g_sSysBase.ex_nFreePageCount );	/* Number of free physical pages        */
 			sInfo.nCommitedPages = g_sSysBase.ex_nCommitPageCount;	/* Total number of allocated pages      */
-			sInfo.nKernelMemSize = g_sSysBase.ex_nKernelMemSize;
+			sInfo.nKernelMemSize = atomic_read( &g_sSysBase.ex_nKernelMemSize );
 
-			sInfo.nPageFaults = g_sSysBase.ex_nPageFaultCount;	/* Number of page faults                */
-			sInfo.nUsedSemaphores = g_sSysBase.ex_nSemaphoreCount;	/* Number of semaphores in use          */
-			sInfo.nUsedPorts = g_sSysBase.ex_nMessagePortCount;	/* Number of message ports in use       */
-			sInfo.nUsedThreads = g_sSysBase.ex_nThreadCount;	/* Number of living threads             */
-			sInfo.nUsedProcesses = g_sSysBase.ex_nProcessCount;	/* Number of living processes           */
+			sInfo.nPageFaults = atomic_read( &g_sSysBase.ex_nPageFaultCount );	/* Number of page faults                */
+			sInfo.nUsedSemaphores = atomic_read( &g_sSysBase.ex_nSemaphoreCount );	/* Number of semaphores in use          */
+			sInfo.nUsedPorts = atomic_read( &g_sSysBase.ex_nMessagePortCount );	/* Number of message ports in use       */
+			sInfo.nUsedThreads = atomic_read( &g_sSysBase.ex_nThreadCount );	/* Number of living threads             */
+			sInfo.nUsedProcesses = atomic_read( &g_sSysBase.ex_nProcessCount );	/* Number of living processes           */
 
-			sInfo.nLoadedImageCount = g_sSysBase.ex_nLoadedImageCount;
-			sInfo.nImageInstanceCount = g_sSysBase.ex_nImageInstanceCount;
+			sInfo.nLoadedImageCount = atomic_read( &g_sSysBase.ex_nLoadedImageCount );
+			sInfo.nImageInstanceCount = atomic_read( &g_sSysBase.ex_nImageInstanceCount );
 
-			sInfo.nOpenFileCount = g_sSysBase.ex_nOpenFileCount;
-			sInfo.nAllocatedInodes = g_sSysBase.ex_nAllocatedInodeCount;
-			sInfo.nLoadedInodes = g_sSysBase.ex_nLoadedInodeCount;
-			sInfo.nUsedInodes = g_sSysBase.ex_nUsedInodeCount;
-			sInfo.nBlockCacheSize = g_sSysBase.ex_nBlockCacheSize;
-			sInfo.nDirtyCacheSize = g_sSysBase.ex_nDirtyCacheSize;
+			sInfo.nOpenFileCount = atomic_read( &g_sSysBase.ex_nOpenFileCount );
+			sInfo.nAllocatedInodes = atomic_read( &g_sSysBase.ex_nAllocatedInodeCount );
+			sInfo.nLoadedInodes = atomic_read( &g_sSysBase.ex_nLoadedInodeCount );
+			sInfo.nUsedInodes = atomic_read( &g_sSysBase.ex_nUsedInodeCount );
+			sInfo.nBlockCacheSize = atomic_read( &g_sSysBase.ex_nBlockCacheSize );
+			sInfo.nDirtyCacheSize = atomic_read( &g_sSysBase.ex_nDirtyCacheSize );
 			sInfo.nLockedCacheBlocks = g_sSysBase.ex_nLockedCacheBlocks;
 
 			strcpy( sInfo.zKernelName, g_pzKernelName );	/* Name of kernel image                */
@@ -204,25 +204,25 @@ status_t sys_get_system_info( system_info * psInfo, int nVersion )
 			sInfo.nCPUCount = g_nActiveCPUCount;
 			sInfo.nCPUType = g_asProcessorDescs[g_nBootCPU].pi_nFeatures;
 			sInfo.nMaxPages = g_sSysBase.ex_nTotalPageCount;	/* total # physical pages               */
-			sInfo.nFreePages = g_sSysBase.ex_nFreePageCount;	/* Number of free physical pages        */
+			sInfo.nFreePages = atomic_read( &g_sSysBase.ex_nFreePageCount );	/* Number of free physical pages        */
 			sInfo.nCommitedPages = g_sSysBase.ex_nCommitPageCount;	/* Total number of allocated pages      */
-			sInfo.nKernelMemSize = g_sSysBase.ex_nKernelMemSize;
+			sInfo.nKernelMemSize = atomic_read( &g_sSysBase.ex_nKernelMemSize );
 
-			sInfo.nPageFaults = g_sSysBase.ex_nPageFaultCount;	/* Number of page faults                */
-			sInfo.nUsedSemaphores = g_sSysBase.ex_nSemaphoreCount;	/* Number of semaphores in use          */
-			sInfo.nUsedPorts = g_sSysBase.ex_nMessagePortCount;	/* Number of message ports in use       */
-			sInfo.nUsedThreads = g_sSysBase.ex_nThreadCount;	/* Number of living threads             */
-			sInfo.nUsedProcesses = g_sSysBase.ex_nProcessCount;	/* Number of living processes           */
+			sInfo.nPageFaults = atomic_read( &g_sSysBase.ex_nPageFaultCount );	/* Number of page faults                */
+			sInfo.nUsedSemaphores = atomic_read( &g_sSysBase.ex_nSemaphoreCount );	/* Number of semaphores in use          */
+			sInfo.nUsedPorts = atomic_read( &g_sSysBase.ex_nMessagePortCount );	/* Number of message ports in use       */
+			sInfo.nUsedThreads = atomic_read( &g_sSysBase.ex_nThreadCount );	/* Number of living threads             */
+			sInfo.nUsedProcesses = atomic_read( &g_sSysBase.ex_nProcessCount );	/* Number of living processes           */
 
-			sInfo.nLoadedImageCount = g_sSysBase.ex_nLoadedImageCount;
-			sInfo.nImageInstanceCount = g_sSysBase.ex_nImageInstanceCount;
+			sInfo.nLoadedImageCount = atomic_read( &g_sSysBase.ex_nLoadedImageCount );
+			sInfo.nImageInstanceCount = atomic_read( &g_sSysBase.ex_nImageInstanceCount );
 
-			sInfo.nOpenFileCount = g_sSysBase.ex_nOpenFileCount;
-			sInfo.nAllocatedInodes = g_sSysBase.ex_nAllocatedInodeCount;
-			sInfo.nLoadedInodes = g_sSysBase.ex_nLoadedInodeCount;
-			sInfo.nUsedInodes = g_sSysBase.ex_nUsedInodeCount;
-			sInfo.nBlockCacheSize = g_sSysBase.ex_nBlockCacheSize;
-			sInfo.nDirtyCacheSize = g_sSysBase.ex_nDirtyCacheSize;
+			sInfo.nOpenFileCount = atomic_read( &g_sSysBase.ex_nOpenFileCount );
+			sInfo.nAllocatedInodes = atomic_read( &g_sSysBase.ex_nAllocatedInodeCount );
+			sInfo.nLoadedInodes = atomic_read( &g_sSysBase.ex_nLoadedInodeCount );
+			sInfo.nUsedInodes = atomic_read( &g_sSysBase.ex_nUsedInodeCount );
+			sInfo.nBlockCacheSize = atomic_read( &g_sSysBase.ex_nBlockCacheSize );
+			sInfo.nDirtyCacheSize = atomic_read( &g_sSysBase.ex_nDirtyCacheSize );
 			sInfo.nLockedCacheBlocks = g_sSysBase.ex_nLockedCacheBlocks;
 
 			strcpy( sInfo.zKernelName, g_pzKernelName );	/* Name of kernel image            */

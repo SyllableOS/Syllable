@@ -693,9 +693,9 @@ Thread_s *Thread_New( Process_s *psProc )
 	tss->IOMapBase = 104;
 	tss->cr3 = ( uint32 * )psProc->tc_psMemSeg->mc_pPageDir;
 
-	atomic_add( &psProc->pr_nThreadCount, 1 );
-	atomic_add( &psProc->pr_nLivingThreadCount, 1 );
-	atomic_add( &g_sSysBase.ex_nThreadCount, 1 );
+	atomic_inc( &psProc->pr_nThreadCount );
+	atomic_inc( &psProc->pr_nLivingThreadCount );
+	atomic_inc( &g_sSysBase.ex_nThreadCount );
 
 	return ( psThread );
       error4:
@@ -770,20 +770,20 @@ void Thread_Delete( Thread_s *psThread )
 		}
 	}
 
-	atomic_add( &psProc->pr_nThreadCount, -1 );
+	atomic_dec( &psProc->pr_nThreadCount );
 
-	kassertw( psProc->pr_nThreadCount >= 0 );
+	kassertw( atomic_read( &psProc->pr_nThreadCount ) >= 0 );
 
-	if ( psProc->pr_nThreadCount == 0 )
+	if ( atomic_read( &psProc->pr_nThreadCount ) == 0 )
 	{
 		remove_process( psProc );
 		delete_semaphore( psProc->pr_hSem );
 		delete_mem_context( psProc->tc_psMemSeg );
 		kfree( psProc );
-		atomic_add( &g_sSysBase.ex_nProcessCount, -1 );
+		atomic_dec( &g_sSysBase.ex_nProcessCount );
 	}
 	kfree( psThread );
-	atomic_add( &g_sSysBase.ex_nThreadCount, -1 );
+	atomic_dec( &g_sSysBase.ex_nThreadCount );
 }
 
 /*****************************************************************************
@@ -1113,7 +1113,7 @@ static void db_dump_thread( int argc, char **argv )
 
 	dbprintf( DBP_DEBUGGER, "Previous CPU = %d\n", psThread->tr_nPrevCPU );
 	dbprintf( DBP_DEBUGGER, "Current CPU  = %d\n", psThread->tr_nCurrentCPU );
-	dbprintf( DBP_DEBUGGER, "V86 nest cnt = %d\n", psThread->tr_nInV86 );
+	dbprintf( DBP_DEBUGGER, "V86 nest cnt = %d\n", atomic_read( &psThread->tr_nInV86 ) );
 	dbprintf( DBP_DEBUGGER, "SigPend      = %08lx\n", psThread->tr_nSigPend );
 	dbprintf( DBP_DEBUGGER, "SigBlock     = %08lx\n", psThread->tr_nSigBlock );
 

@@ -200,7 +200,7 @@ int alloc_cache_blocks( CacheBlock_s **apsBlocks, int nCount, int nBlockSize, bo
 	nMaxBlocks = psHeap->ch_nSize / nRealBlockSize;
 	nFreeBlocks = nMaxBlocks - psHeap->ch_nUsedBlocks;
 
-	if ( nFreeBlocks < nCount && g_sSysBase.ex_nFreePageCount > 1024 )
+	if ( nFreeBlocks < nCount && atomic_read( &g_sSysBase.ex_nFreePageCount ) > 1024 )
 	{
 		expand_heap( psHeap );
 		nMaxBlocks = psHeap->ch_nSize / nRealBlockSize;
@@ -262,7 +262,7 @@ void free_cache_block( CacheBlock_s *psBlock )
 	int nOrder = get_block_order( nBlockSize );
 	CacheHeap_s *psHeap = &g_asCacheHeaps[nOrder];
 
-	atomic_add( &g_sSysBase.ex_nBlockCacheSize, -nBlockSize );
+	atomic_sub( &g_sSysBase.ex_nBlockCacheSize, nBlockSize );
 	g_sBlockCache.bc_nMemUsage -= nBlockSize;
 
 	psBlock->cb_nFlags &= CBF_SIZE_MASK;

@@ -151,7 +151,7 @@ port_id sys_create_port( const char *const pzName, int nMaxCount )
 
 	unlock_mutex( g_hPortListSema );
 
-	atomic_add( &g_sSysBase.ex_nMessagePortCount, 1 );
+	atomic_inc( &g_sSysBase.ex_nMessagePortCount );
 
 	return ( psPort->mp_hPortID );
 
@@ -193,7 +193,7 @@ static void do_delete_port( Process_s *psProc, MsgPort_s *psPort )
 	}
 
 	kfree( psPort );
-	atomic_add( &g_sSysBase.ex_nMessagePortCount, -1 );
+	atomic_dec( &g_sSysBase.ex_nMessagePortCount );
 
 }
 

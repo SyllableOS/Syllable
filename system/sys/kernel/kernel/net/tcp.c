@@ -137,7 +137,7 @@ static int tcp_close( Socket_s *psSocket )
 
       again:
 	LOCK( g_hConnListMutex );
-	if ( psTCPCtrl->tcb_flags & TCBF_BUSY )
+	if ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_BUSY )
 	{
 		printk( "tcp_close() wait for connection to become ready\n" );
 		UNLOCK( g_hConnListMutex );
@@ -162,7 +162,7 @@ static int tcp_close( Socket_s *psSocket )
 
 		psSocket->sk_psTCPCtrl = NULL;
 
-		if ( psTCPCtrl->tcb_nState == TCPS_CLOSED || ( psTCPCtrl->tcb_flags & TCBF_ACTIVE ) == 0 )
+		if ( psTCPCtrl->tcb_nState == TCPS_CLOSED || ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_ACTIVE ) == 0 )
 		{
 			tcb_dealloc( psTCPCtrl, false );
 		}
@@ -493,7 +493,7 @@ static int tcp_accept( Socket_s *psSocket, struct sockaddr *psAddr, int *pnSize 
 		psClient = *ppsTmp;
 		if ( psClient->tcb_nState == TCPS_ESTABLISHED || psClient->tcb_nState == TCPS_CLOSEWAIT )
 		{
-			if ( psClient->tcb_flags & TCBF_BUSY )
+			if ( atomic_read( &psClient->tcb_flags ) & TCBF_BUSY )
 			{
 				UNLOCK( g_hConnListMutex );
 				UNLOCK( psTCPCtrl->tcb_hMutex );
@@ -553,7 +553,7 @@ static int tcp_accept( Socket_s *psSocket, struct sockaddr *psAddr, int *pnSize 
 		atomic_or( &psClient->tcb_flags, TCBF_OPEN );
 		psNewSocket->sk_psOps = &g_sTCPOperations;
 		psNewSocket->sk_psTCPCtrl = psClient;
-		atomic_add( &psClient->tcb_nRefCount, 1 );
+		atomic_inc( &psClient->tcb_nRefCount );
 	}
 	UNLOCK( g_hConnListMutex );
 	return ( nNewSocket );
@@ -600,7 +600,7 @@ static ssize_t tcp_peekmsg( Socket_s *psSocket, struct msghdr *psMsg )
 		goto error;
 	}
 
-	if ( psTCPCtrl->tcb_nRcvCount == 0 && ( psTCPCtrl->tcb_flags & TCBF_RDONE ) )
+	if ( psTCPCtrl->tcb_nRcvCount == 0 && ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_RDONE ) )
 	{
 		nError = 0;
 		goto error;
@@ -732,7 +732,7 @@ static ssize_t tcp_recvmsg( Socket_s *psSocket, struct msghdr *psMsg, int nFlags
 		goto error;
 	}
 
-	if ( psTCPCtrl->tcb_nRcvCount == 0 && ( psTCPCtrl->tcb_flags & TCBF_RDONE ) )
+	if ( psTCPCtrl->tcb_nRcvCount == 0 && ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_RDONE ) )
 	{
 		nError = 0;
 		goto error;
@@ -793,7 +793,7 @@ static ssize_t tcp_recvmsg( Socket_s *psSocket, struct msghdr *psMsg, int nFlags
 			break;
 		}
 	}
-	if ( psTCPCtrl->tcb_nRcvCount > 0 || ( psTCPCtrl->tcb_flags & TCBF_RDONE ) )
+	if ( psTCPCtrl->tcb_nRcvCount > 0 || ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_RDONE ) )
 	{
 		tcp_wakeup( READERS, psTCPCtrl );
 	}
@@ -804,7 +804,7 @@ static ssize_t tcp_recvmsg( Socket_s *psSocket, struct msghdr *psMsg, int nFlags
 	// Open the receive window, if it's closed and we've made
 	// enough space to fit a segment.
 
-	if ( ( psTCPCtrl->tcb_flags & TCBF_RWIN_CLOSED ) && tcp_rwindow( psTCPCtrl, false ) > 0 )
+	if ( ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_RWIN_CLOSED ) && tcp_rwindow( psTCPCtrl, false ) > 0 )
 	{
 		atomic_or( &psTCPCtrl->tcb_flags, TCBF_NEEDOUT );
 		atomic_and( &psTCPCtrl->tcb_flags, ~TCBF_RWIN_CLOSED );
@@ -876,7 +876,7 @@ static ssize_t tcp_sendmsg( Socket_s *psSocket, const struct msghdr *psMsg, int 
 		nError = -EINVAL;
 		goto error;
 	}
-	if ( psTCPCtrl->tcb_flags & TCBF_SDONE )
+	if ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_SDONE )
 	{
 		printk( "tcp_sendmsg() attempt to send to a shutdown socket\n" );
 		sys_kill( sys_get_thread_id( NULL ), SIGPIPE );
@@ -1008,7 +1008,7 @@ static ssize_t tcp_sendmsg( Socket_s *psSocket, const struct msghdr *psMsg, int 
 					put_area( psArea );
 					goto error;
 				}
-				if ( psTCPCtrl->tcb_flags & TCBF_SDONE )
+				if ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_SDONE )
 				{
 					printk( "tcp_sendmsg() attempt to send to a shutdown socket\n" );
 					sys_kill( sys_get_thread_id( NULL ), SIGPIPE );
@@ -1061,7 +1061,7 @@ int tcp_open( Socket_s *psSocket )
 	}
 	atomic_or( &psSocket->sk_psTCPCtrl->tcb_flags, TCBF_OPEN );
 	psSocket->sk_psOps = &g_sTCPOperations;
-	atomic_add( &psSocket->sk_psTCPCtrl->tcb_nRefCount, 1 );
+	atomic_inc( &psSocket->sk_psTCPCtrl->tcb_nRefCount );
 	return ( 0 );
 }
 
@@ -1084,7 +1084,7 @@ static int tcp_add_select( Socket_s *psSocket, SelectRequest_s *psReq )
 		psReq->sr_psNext = psTCPCtrl->tcb_psFirstReadSelReq;
 		psTCPCtrl->tcb_psFirstReadSelReq = psReq;
 
-		if ( psTCPCtrl->tcb_flags & TCBF_RDONE )
+		if ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_RDONE )
 		{
 			psReq->sr_bReady = true;
 			UNLOCK( psReq->sr_hSema );
@@ -1124,7 +1124,7 @@ static int tcp_add_select( Socket_s *psSocket, SelectRequest_s *psReq )
 		psReq->sr_psNext = psTCPCtrl->tcb_psFirstWriteSelReq;
 		psTCPCtrl->tcb_psFirstWriteSelReq = psReq;
 
-		if ( psTCPCtrl->tcb_nSndCount < psTCPCtrl->tcb_nSndBufSize || ( psTCPCtrl->tcb_flags & TCBF_SDONE ) )
+		if ( psTCPCtrl->tcb_nSndCount < psTCPCtrl->tcb_nSndBufSize || ( atomic_read( &psTCPCtrl->tcb_flags ) & TCBF_SDONE ) )
 		{
 			tcp_wakeup( WRITERS, psTCPCtrl );	// Acknowlege the request right away.
 		}
