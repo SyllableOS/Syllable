@@ -197,6 +197,7 @@ modules
 	sys/media/drivers/videobitmap
 	sys/media/drivers/videooverlay
 	sys/media/drivers/vorbis
+	apps/utils/desktop
 	apps/desktop/desktop
 	apps/desktop/dock
 	apps/desktop/dock_plugins/clock
@@ -219,7 +220,6 @@ modules
 	apps/utils/aterm
 	apps/utils/catalog
 	apps/utils/debug
-	apps/utils/desktop
 	apps/utils/dhcpc
 	apps/utils/fsutils
 	apps/utils/guiprefs
