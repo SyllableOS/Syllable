@@ -1,20 +1,25 @@
+* February 28 2004, Kristian Van Der Vliet *
+
+Added Ukrainian and Belarusian keymaps from Nikolaev Ruslan
+<nruslan@hotbox.ru>
+
 * February 27 2004, Arno Klenke *
- - Performance improvements in the DisplayDriver class
- - GFX driver updates for 32bit mouse cursors
- - Added support for 32bit mouse cursors in the appserver
+Performance improvements in the DisplayDriver class
+GFX driver updates for 32bit mouse cursors
+Added support for 32bit mouse cursors in the appserver
 
 * Feb 15 2004, Henrik Isaksson *
 
- translators:
-	- Updated for GCC3 and API changes.
-	- Translators moved to /system/drivers/translators.
+translators:
+	o Updated for GCC3 and API changes.
+	o Translators moved to /system/drivers/translators.
 
 * Feb 8 2004, Henrik Isaksson *
 
- libcodeview:
-	- Updated for GCC3.
-	- Changed std::strings in interface to os::String.
-	- Bumped version to 2.
+libcodeview:
+	o Updated for GCC3.
+	o Changed std::strings in interface to os::String.
+	o Bumped version to 2.
 
 * Feb 7 2004, Henrik Isaksson *
 
