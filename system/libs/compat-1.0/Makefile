@@ -5,36 +5,23 @@
 # directory!
 
 DIST_TARGET_PATH := $(DIST_DIR)/atheos/sys/libs/
-LIBC_DIR := libc
+
+SYS_COMPAT_ARCHIVE := sys-compat.bin.tgz
+LIBC_COMPAT_ARCHIVE := libc-compat.bin.tgz
 
 all:
-	@echo Nothing to be done for $(PWD)
 
 deps:
-	@echo Nothing to be done for $(PWD)
 
 install:
-	@echo Nothing to be done for $(PWD)
 
 doc:
-	@echo Nothing to be done for $(PWD)
 
 install-doc:
-	@echo Nothing to be done for $(PWD)
 
 dist:
-	cp -dp *.so $(DIST_TARGET_PATH)
-
-#	@if test $$BUILD_LIBC = 'n' ;then\
-#		cd $(PWD)/$(LIBC_DIR); \
-#		cp -dp * $(DIST_TARGET_PATH); \
-#		cd ..; \
-#	fi;
-
-	cd $(PWD)/$(LIBC_DIR); \
-	cp -dp * $(DIST_TARGET_PATH); \
-	cd ..;
+	tar -xzpf $(SYS_COMPAT_ARCHIVE) -C $(DIST_TARGET_PATH)
+	tar -xzpf $(LIBC_COMPAT_ARCHIVE) -C $(DIST_TARGET_PATH)
 
 clean:
-	@echo Nothing to be done for $(PWD)
 
