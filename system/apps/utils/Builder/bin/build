@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.45
+# Version 0.5.46
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -474,7 +474,7 @@ def makeDistroPackage target  # Should only be called if it's a system build
  end
 end
 
-def buildPackage target
+def buildPackage stage, target
  if getPackage target  # Source is available
   Dir.chdir @workDir  # Target path may be relative or absolute
   Dir.chdir target
@@ -485,7 +485,7 @@ def buildPackage target
   if configurePackage target  # No failed configuration
    @log.header 'Making'
 
-   if makePackage(target) and @systemBuild
+   if makePackage(target) and stage
     @log.header 'Installing in staging area'
     Dir.chdir @workDir
     makeDistroPackage target
@@ -722,14 +722,14 @@ def makeDistro target
 	end
 end
 
-def build target
+def build stage, target
 	@log.header 'Building ' + target.to_s
 
 	# Build all directories
 
 	for package in target.modules
 		@log.entry package
-		buildPackage package
+		buildPackage stage, package
 	end
 end
 
@@ -1120,7 +1120,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
- puts 'Syllable Build System 0.5.45',
+ puts 'Syllable Build System 0.5.46',
   'Copyright (c) 2002-2004 Kaj de Vos',
   'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1130,7 +1130,7 @@ when '?', '-?', '-h', '-help', '--help'
   '    -help, ?, -?',
   '  -v, --version Show version information',
   '  scrub         Delete CVS control files recursively from the current directory',
-  '  prepare       Initialize system distribution tree',
+  '  prepare       Initialize system distribution tree in staging area',
   '  get           Fetch and patch sources',
   '  patch         Patch sources',
   '  distclean',
@@ -1138,8 +1138,9 @@ when '?', '-?', '-h', '-help', '--help'
   '  configure',
   '  make',
   '  test',
-  '  install       (Run as super-user)',
-  '  uninstall     (Run as super-user)',
+  '  install       (Run as super user)',
+  '  uninstall     (Run as super user)',
+  '  stage         Build and install in the staging area',
   '  distro        Build a distribution package or a system distribution',
   '  modules       List the modules of a profile',
   '  recipe        List a recipe',
@@ -1178,22 +1179,26 @@ else
 
     ENV['ATHEOS_INCLUDE_PATH'] = File.join @workDir, 'sys/include'
     ENV['C_INCLUDE_PATH'] =
-     (File.join @workDir, 'sys/include') +
+     (File.join @workDir, 'libs/glibc/include') +
+     ':' + (File.join @workDir, 'sys/include') +
 #     ':' + (File.join @stage, 'atheos/autolnk/include') +
      ((var = ENV['C_INCLUDE_PATH']) ? ':' + var : '')
     ENV['CPLUS_INCLUDE_PATH'] =
-     (File.join @workDir, 'sys/include') +
+     (File.join @workDir, 'libs/glibc/include') +
+     ':' + (File.join @workDir, 'sys/include') +
 #     ':' + (File.join @stage, 'atheos/autolnk/include') +
      ((var = ENV['CPLUS_INCLUDE_PATH']) ? ':' + var : '')
 
     ENV['ATHEOS_LIB_PATH'] = File.join @stage, 'atheos/sys/libs'
     ENV['DLL_PATH'] =
-     (File.join @stage, 'atheos/sys/libs') +
+     (File.join @stage, 'atheos/usr/glibc2/lib') +
+     ':' + (File.join @stage, 'atheos/sys/libs') +
      ':' + (File.join @stage, 'atheos/sys') +
 #     ':' + (File.join @stage, 'atheos/autolnk/lib') +
      ((var = ENV['DLL_PATH']) ? ':' + var : '')
     ENV[name = (@syllable ? '' : 'LD_') + 'LIBRARY_PATH'] =
-     (File.join @stage, 'atheos/sys/libs') +
+     (File.join @stage, 'atheos/usr/glibc2/lib') +
+     ':' + (File.join @stage, 'atheos/sys/libs') +
      (@syllable ? '' : ':' + File.join(@stage, 'atheos/sys')) +
 #     ':' + (File.join @stage, 'atheos/autolnk/lib') +
      ((var = ENV[name]) ? ':' + var : '')
@@ -1211,13 +1216,14 @@ else
    when 'test'   then test  target
    when 'install'  then install target
    when 'uninstall' then uninstall target
+   when 'stage'  then build true, target
    when 'distro'  then makeDistro target
    else
     if arg2
      @log.error 'Unrecognized command'
      exit
     else
-     build target
+     build false, target
     end
    end
 
