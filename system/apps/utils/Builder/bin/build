@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.4.2
+# Version 0.4.3
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -252,6 +252,7 @@ def makePackage target
 
 	unless action(((vars = (recipe = getRecipe(target))["make-vars"]) ? toString(vars) + " " : "") +
 		"make" +
+		((options = recipe["make-options"]) ? " " + toString(options) : "") +
 		((targets = recipe["make-targets"]) ? " " + toString(targets) : "")
 	)
 		logFailure target
@@ -264,7 +265,10 @@ end
 def testPackage target
 	if exists? dir = buildDir(target) then Dir.chdir dir end
 
-	unless action "make " + (targets = getRecipe(target)["test-targets"]) ? toString(targets) : "check"
+	unless action "make " +
+		((options = (recipe = getRecipe(target))["test-options"]) ? toString(options) + " " : "") +
+		((targets = recipe["test-targets"]) ? toString(targets) : "check")
+	then
 		logFailure target
 		false
 	else
@@ -895,7 +899,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.4.2",
+	puts "Syllable Build System 0.4.3",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
