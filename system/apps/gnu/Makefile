@@ -24,8 +24,9 @@
 # 260602 - Make Groff seperate						- Vanders
 # 270602 - Make Groff un-seperate!					- Vanders
 # 290602 - Fix paths								- Vanders
+# 060802 - Add sed-3.02							- Vanders
 
-MOST_SUBDIRS= bash-2.05a diffutils-2.8.1 fileutils-4.1 findutils-4.1 grep-2.5 groff-1.17 gzip-1.2.4a less-374 sh-utils-2.0 tar-1.13 textutils-2.0.21
+MOST_SUBDIRS= bash-2.05a diffutils-2.8.1 fileutils-4.1 findutils-4.1 grep-2.5 groff-1.17 gzip-1.2.4a less-374 sed-3.02 sh-utils-2.0 tar-1.13 textutils-2.0.21
 
 BZIP_SUBDIR= bzip2-1.0.2
 INETUTILS_SUBDIR= inetutils-1.3.2
