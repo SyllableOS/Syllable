@@ -1,13 +1,13 @@
 ; Recipe information
 authors				<Recipe authors>
 maintainers			<Recipe maintainers>
-status				testing | developing | incomplete | broken
+status				broken | incomplete | developing | testing
 notes				<Internal notes>
 ;
 ; Package information
 summary				<Brief headline>
 description			<Full description>
-licenses			GPL | LGPL | GFDL | BSD | MIT | custom | PD | freeware | commercial
+licenses			GPL | LGPL | GFDL | BSD | MIT | OS | custom | PD | freeware | commercial
 ;
 home				syllable.sf.net
 packages			<Deviating tarball name>
@@ -31,7 +31,10 @@ patch-config		[<Directories>]
 patch-legacy-config
 ;
 ; Configuring:
+; <configure>
 ; [<configure-vars>] <configure-cmd> [<configure-args>] [<configure-options>]
+;
+configure			<Configuration command sequence>
 ;
 ; Extra variables for configure:
 configure-vars		VAR="value"
@@ -43,8 +46,10 @@ configure-args		--prefix=/usr/foo
 configure-options	--with-option
 ;
 ; Building:
-; make <make-targets>
+; [<make-vars>] make <make-targets>
 ;
+; Extra variables for make:
+make-vars			VAR="value"
 ; Non-standard make targets:
 make-targets		all
 ;
