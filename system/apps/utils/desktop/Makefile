@@ -1,7 +1,2 @@
-SUBDIRS = desktop dlogin 
+SUBDIRS = desktop dlogin
 include ./make.rules
-
-
-
-
-
