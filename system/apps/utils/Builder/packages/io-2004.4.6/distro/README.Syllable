@@ -1,0 +1,186 @@
+Io for Syllable
+===============
+
+11-Apr-2004
+
+1 Introduction
+==============
+
+This is a binary distribution of the Io programming language dated
+April 6 2004 for the Syllable operating system. This distribution was
+built on Syllable 0.5.2 with GCC 3.3.3, and was optimized for a
+Pentium CPU. It should also run on other versions of Syllable, but
+this has not been tested.
+
+If you encounter problems or have any other interesting observations,
+I would be interested to hear about them (see contact information).
+
+See the file _ReadMe.txt for more information on Io.
+
+2 How to install Io on Syllable
+===============================
+
+2.1 
+----
+
+2.1.1 
+------
+
+You may have to become the root user to perform the following
+operations:
+
+    su
+
+You should have unpacked this file with
+
+    tar -xpz
+
+or something equivalent. The 'p' option to tar is important: it
+preserves permissions on the extracted files. Without the proper file
+permissions, the installation will be broken.
+
+Unpacking produces the directory io. This should be installed under
+/usr. If you unpacked it somewhere else, do:
+
+    mv io /usr
+
+Then run:
+
+    pkgmanager -a /usr/io
+
+This creates links in Syllable to enable it to find Io's files. You
+should now be able to start Io; for example:
+
+    io --version
+
+Note that Io is position-independent, so alternatively you could copy
+the io executable (which is quite small) or the ioServer executable
+from the bin directory in this distribution to wherever you need it.
+
+2.1.2 Installing with the Syllable build system
+-----------------------------------------------
+
+If you have the Syllable build system installed, it can do the above
+steps for you. Just do:
+
+    su
+    build install io-2004.4.6.bin.1.tgz
+
+2.2 Uninstalling & upgrading Io
+-------------------------------
+
+2.2.1 
+------
+
+If you ever want to remove Io, follow these steps. For example, you
+should do this before you install a new version of Io. Again, you may
+have to become root first:
+
+    su
+
+Then you should remove the links to Io from Syllable. You should even
+do this when you want to upgrade Io, because the links will most
+likely have changed for the new version.
+
+    pkgmanager -r /usr/io
+
+To delete the files belonging to Io, run:
+
+    rm -r /usr/io
+
+2.2.2 Uninstalling & upgrading with the Syllable build system
+-------------------------------------------------------------
+
+If you install a package with the Syllable build system, it will
+check if the package was already installed and remove the previous
+version automatically.
+
+If you just want to uninstall Io, do:
+
+    su
+    build uninstall io
+
+2.3 Getting started with Io
+---------------------------
+
+Note that some scripts you may come across won't run as is, because
+they may contain a hardcoded path to the Io executable in the first
+line of the script. This is unfortunate, as this location varies
+among installations (Syllable likes to put it in /usr/io/bin). You
+can change the first line of the scripts, or you can run them like
+this:
+
+    io sample.io
+
+When writing your own scripts, you could keep them portable by not
+hardcoding a path in the first line:
+
+    #! io
+
+Have fun!
+
+3 Building Io on Syllable
+=========================
+
+Normally you don't have to, but if you want to compile Io yourself,
+you need to get the source distribution. You can get the Io
+distribution through its home page:
+
+    http://www.iolanguage.com
+
+Additionally, you need patches to the source that are specific to
+Syllable. These patches are kept in the Syllable build system. The
+build system also knows all other specifics for building Io.
+
+When you have the build system installed, you should first provide it
+with the Io source package:
+
+    cp IoDesktop-2004-04-06.tar.gz-link.gz \
+        /Applications/Builder/sources/IoDesktop-2004-04-06.tar.gz
+
+To configure and compile Io, do
+
+    build io-2004.4.6
+
+from your work directory. If that succeeds, you can optionally run
+the testsuite:
+
+    build test io-2004.4.6
+
+To install and register the package, become root first:
+
+    su
+
+then do:
+
+    build install io-2004.4.6
+
+After the installation, you could even create a distribution package:
+
+    build distro io-2004.4.6
+
+4 Known problems and limitations
+================================
+
+Obviously, features that are not implemented in Syllable (yet) will
+not work from Io.
+
+IoVM and IoServer are available for Syllable, but IoDesktop is not.
+The Berkeley DB library is currently missing from IoServer.
+
+5 Contact information
+=====================
+
+Io was ported to Syllable by Kaj de Vos. You can send me problem
+reports, fixes and the like at
+
+    io@syllable.info
+
+Thanks to Steve Dekorte for helping fix some problems and integrating
+the changes into Io.
+
+This distribution can be found in the download section of the
+Syllable web site:
+
+    http://syllable.org
+
