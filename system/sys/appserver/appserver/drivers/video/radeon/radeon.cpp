@@ -1020,7 +1020,7 @@ int ATIRadeon::SetScreenMode( screen_mode sMode )
 	m_sCurrentMode.m_nHeight = sMode.m_nHeight;
 	m_sCurrentMode.m_eColorSpace = sMode.m_eColorSpace;
 	m_sCurrentMode.m_vRefreshRate = bestVMode->Refresh;
-	m_sCurrentMode.m_nBytesPerLine = sMode.m_nWidth * BytesPerPixel( sMode.m_eColorSpace );
+	m_sCurrentMode.m_nBytesPerLine = ( ( sMode.m_nWidth + 63 ) & ~63 ) * BytesPerPixel( sMode.m_eColorSpace );
 
 	return 0;
 }
