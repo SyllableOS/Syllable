@@ -1,0 +1,7 @@
+authors			Kaj de Vos
+notes			Build: autom4te needs ftruncate
+licenses		GPL
+needs
+	m4 >= 1.4
+	perl >= 5.005_03
+documentation	README BUGS COPYING NEWS ChangeLog TODO AUTHORS THANKS
