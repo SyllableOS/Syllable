@@ -1,0 +1,142 @@
+CVS for Syllable/AtheOS
+=======================
+
+13 June 2003
+
+1 Introduction
+==============
+
+This is a binary distribution of version 1.12.1 of the CVS version
+control system for the Syllable operating system. This distribution
+was built on Syllable 0.4.3 with GCC 2.95.3, and was optimized for a
+Pentium CPU. It should also run on other versions of Syllable and on
+the AtheOS operating system, but this has not been tested. The remote
+shell protocol defaults to Ssh. (Meaning: you don't have to set the
+CVS_RSH environment variable to 'ssh'.)
+
+If you encounter problems or have any other interesting observations,
+I would be interested to hear about them (see contact information).
+
+See the file README for more information on CVS.
+
+2 How to install CVS on Syllable
+================================
+
+2.1 
+----
+
+Please note that CVS needs the Zlib library. Zlib is not included in
+this distribution, so you have to get that package and install it
+first, if it is not already installed on your system. You need Zlib
+as a shared library. The Zlib packages for Syllable are distributed
+in this form from version 1.1.4 onwards.
+
+Now for the CVS installation. You may have to become the root user to
+perform the following operations:
+
+    su
+
+You should have unpacked this file with
+
+    tar -xpz
+
+or something equivalent. The 'p' option to tar is important: it
+preserves permissions on the extracted files. Without the proper file
+permissions, the installation will be broken.
+
+Unpacking produces the directory cvs. This should be installed under
+/usr. If you unpacked it somewhere else, do:
+
+    mv cvs /usr
+
+Then run:
+
+    pkgmanager -a /usr/cvs
+
+This creates links in Syllable to enable it to find CVS's files. You
+should now be able to use CVS.
+
+2.2 Uninstalling & upgrading CVS
+--------------------------------
+
+If you ever want to remove CVS, follow these steps. For example, you
+should do this before you install a new version of CVS. Again, you
+may have to become root first:
+
+    su
+
+Then you should remove the links to CVS from Syllable. You should
+even do this when you want to upgrade CVS, because the links will
+most likely have changed for the new version.
+
+    pkgmanager -r /usr/cvs
+
+To delete the files belonging to CVS, run:
+
+    rm -r /usr/cvs
+
+3 Building CVS on Syllable
+==========================
+
+Normally you don't have to, but if you want to build CVS yourself,
+you need to get the source distribution. You can get the CVS
+distribution through its home page:
+
+    http://www.cvshome.org
+
+See the file README for details.
+
+Now you could use
+
+    ./configure
+
+but this will configure make for installing CVS in /usr/local. This
+is fine for local use, but to produce a distribution, I prefer
+
+    CFLAGS="-march=i586 -O2" \
+        ./configure --prefix=/usr/cvs
+
+to target it for /usr/cvs and optimize for a Pentium processor.
+
+Now you can do
+
+    make
+
+and optionally
+
+    make check
+
+After becoming root,
+
+    make install
+
+will install CVS's files. Alternatively,
+
+    make install-strip
+
+would strip the binaries from debugging information.
+
+If you configured to install in /usr/cvs, you will have to let
+Syllable know:
+
+    pkgmanager -a /usr/cvs
+
+If you had a previous installation in /usr/cvs, it would be wise to
+uninstall it before running make install:
+
+    pkgmanager -r /usr/cvs
+    rm -r /usr/cvs
+
+4 Contact information
+=====================
+
+This version of CVS was built and packed for Syllable/AtheOS by Kaj
+de Vos. You can send me problem reports, fixes and the like at
+
+    cvs@syllable.info
+
+This distribution can be found in the download section of the
+Syllable web site:
+
+    http://syllable.sourceforge.net
+

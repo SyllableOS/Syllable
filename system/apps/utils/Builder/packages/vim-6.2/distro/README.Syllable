@@ -1,0 +1,135 @@
+Vim for Syllable/AtheOS
+=======================
+
+6 June 2003
+
+1 Introduction
+==============
+
+This is a binary distribution of version 6.2 of the Vim editor for
+the Syllable operating system. This distribution was built on
+Syllable 0.4.3, and was optimized for a Pentium CPU. It should also
+run on other versions of Syllable and on the AtheOS operating system,
+but this has not been tested. It has support for multiple human
+languages, syntax coloring, and extension scripts written in Ruby.
+
+If you encounter problems or have any other interesting observations,
+I would be interested to hear about them (see contact information).
+
+See the file README for more information on Vim.
+
+2 How to install Vim on Syllable
+================================
+
+2.1 
+----
+
+You may have to become the root user to perform the following
+operations:
+
+    su
+
+You should have unpacked this file with
+
+    tar -xpz
+
+or something equivalent. The 'p' option to Tar is important: it
+preserves permissions on the extracted files. Without the proper file
+permissions, the installation will be broken.
+
+Unpacking produces the directory vim. This should be installed under
+/usr. If you unpacked it somewhere else, do:
+
+    mv vim /usr
+
+Then run:
+
+    pkgmanager -a /usr/vim
+
+This creates links in Syllable to enable it to find Vim's files. You
+should now be able to use Vim.
+
+2.2 Uninstalling & upgrading Vim
+--------------------------------
+
+If you ever want to remove Vim, follow these steps. For example, you
+should do this before you install a new version of Vim. Again, you
+may have to become root first:
+
+    su
+
+Then you should remove the links to Vim from Syllable. You should
+even do this when you want to upgrade Vim, because the links will
+most likely have changed for the new version.
+
+    pkgmanager -r /usr/vim
+
+To delete the files belonging to Vim, run:
+
+    rm -r /usr/vim
+
+3 Building Vim on Syllable
+==========================
+
+Normally you don't have to, but if you want to build Vim yourself,
+you need to get the source distribution. You can get the Vim
+distribution through its home page:
+
+    http://www.vim.org
+
+Now you could use
+
+    ./configure
+
+but this will configure Make for installing Vim in /usr/local. This
+is fine for local use, but to produce a distribution, I prefer
+
+    CFLAGS="-march=i586 -O2" \
+        ./configure --prefix=/usr/vim  --enable-rubyinterp
+
+to target it for /usr/vim, optimize for a Pentium processor, and
+enable support for the Ruby interpreter.
+
+Now you can do
+
+    make
+
+and optionally
+
+    make test
+
+After becoming root,
+
+    make install
+
+will install Vim's files. If you configured to install in /usr/vim,
+you will have to let Syllable know:
+
+    pkgmanager -a /usr/vim
+
+If you had a previous installation in /usr/vim, it would be wise to
+uninstall it before running make install:
+
+    pkgmanager -r /usr/vim
+    rm -r /usr/vim
+
+4 Known problems and limitations
+================================
+
+Vim does not use the native GUI on Syllable/AtheOS.
+
+5 Contact information
+=====================
+
+Vim was originally ported to AtheOS by Rodrigo Parra Novo. The vimrc
+configuration file in this version, which enables colors, is still
+his. This distribution was built and packed for Syllable/AtheOS by
+Kaj de Vos. You can send me problem reports, fixes and the like at
+
+    vim@syllable.info
+
+This distribution can be found in the download section of the
+Syllable web site:
+
+    http://syllable.sourceforge.net
+

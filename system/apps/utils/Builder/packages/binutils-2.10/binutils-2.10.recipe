@@ -1,0 +1,5 @@
+authors Kaj de Vos
+;configure-options
+; --enable-shared
+; --norecursion
+documentation README COPYING COPYING.LIB binutils/NEWS binutils/ChangeLog

@@ -1,0 +1,3 @@
+authors Kaj de Vos
+;configure-options --with-shared
+documentation README INSTALL ANNOUNCE NEWS TO-DO

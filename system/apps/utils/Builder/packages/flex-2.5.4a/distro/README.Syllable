@@ -1,0 +1,126 @@
+Flex for Syllable/AtheOS
+========================
+
+5 May 2003
+
+1 Introduction
+==============
+
+This is a binary distribution of version 2.5.4a of the Flex lexical
+analyser generator for the Syllable operating system. This
+distribution was built on Syllable 0.4.3, and was optimized for a
+Pentium CPU. It should also run on other versions of Syllable and on
+the AtheOS operating system, but this has not been tested.
+
+If you encounter problems or have any other interesting observations,
+I would be interested to hear about them (see contact information).
+
+See the file README for more information on Flex.
+
+2 How to install Flex on Syllable
+=================================
+
+2.1 
+----
+
+You may have to become the root user to perform the following
+operations:
+
+    su
+
+You should have unpacked this file with
+
+    tar -xpz
+
+or something equivalent. The 'p' option to Tar is important: it
+preserves permissions on the extracted files. Without the proper file
+permissions, the installation will be broken.
+
+Unpacking produces the directory flex. This should be installed under
+/usr. If you unpacked it somewhere else, do:
+
+    mv flex /usr
+
+Then run:
+
+    pkgmanager -a /usr/flex
+
+This creates links in Syllable to enable it to find Flex's files. You
+should now be able to use Flex.
+
+2.2 Uninstalling & upgrading Flex
+---------------------------------
+
+If you ever want to remove Flex, follow these steps. For example, you
+should do this before you install a new version of Flex. Again, you
+may have to become root first:
+
+    su
+
+Then you should remove the links to Flex from Syllable. You should
+even do this when you want to upgrade Flex, because the links will
+most likely have changed for the new version.
+
+    pkgmanager -r /usr/flex
+
+To delete the files belonging to Flex, run:
+
+    rm -r /usr/flex
+
+3 Building Flex on Syllable
+===========================
+
+Normally you don't have to, but if you want to build Flex yourself,
+you need to get the source distribution. You can get the Flex
+distribution through its home page:
+
+    http://www.gnu.org/software/flex/
+
+Now you could use
+
+    ./configure
+
+but this will configure Make for installing Flex in /usr/local. This
+is fine for local use, but to produce a distribution, I prefer
+
+    CFLAGS="-march=i586 -O2" \
+        ./configure --prefix=/usr/flex
+
+to target it for /usr/flex and optimize for a Pentium processor.
+
+Now you can do
+
+    make
+
+and optionally
+
+    make check
+
+After becoming root,
+
+    make install
+
+will install Flex's files. If you configured to install in /usr/flex,
+you will have to let Syllable know:
+
+    pkgmanager -a /usr/flex
+
+If you had a previous installation in /usr/flex, it would be wise to
+uninstall it before running make install:
+
+    pkgmanager -r /usr/flex
+    rm -r /usr/flex
+
+4 Contact information
+=====================
+
+This distribution was built and packed for Syllable/AtheOS by Kaj de
+Vos. You can send me problem reports, fixes and the like at
+
+    flex@syllable.info
+
+This distribution can be found in the download section of the
+Syllable web site:
+
+    http://syllable.sourceforge.net
+

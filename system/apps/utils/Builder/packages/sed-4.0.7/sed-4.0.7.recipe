@@ -1,0 +1,3 @@
+authors Kaj de Vos
+;configure-options --enable-html
+documentation README COPYING COPYING.DOC ABOUT-NLS BUGS NEWS ChangeLog AUTHORS THANKS

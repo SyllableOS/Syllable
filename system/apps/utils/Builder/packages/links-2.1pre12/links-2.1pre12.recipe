@@ -1,0 +1,4 @@
+authors Kaj de Vos
+configure-options --enable-graphics --enable-javascript
+; --with-libfl --with-ssl=
+documentation README SITES BUGS COPYING NEWS ChangeLog TODO AUTHORS doc

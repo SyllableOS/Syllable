@@ -1,0 +1,126 @@
+Bison for Syllable/AtheOS
+=========================
+
+5 May 2003
+
+1 Introduction
+==============
+
+This is a binary distribution of version 1.875 of the Bison parser
+generator for the Syllable operating system. This distribution was
+built on Syllable 0.4.3, and was optimized for a Pentium CPU. It
+should also run on other versions of Syllable and on the AtheOS
+operating system, but this has not been tested.
+
+If you encounter problems or have any other interesting observations,
+I would be interested to hear about them (see contact information).
+
+See the file README for more information on Bison.
+
+2 How to install Bison on Syllable
+==================================
+
+2.1 
+----
+
+You may have to become the root user to perform the following
+operations:
+
+    su
+
+You should have unpacked this file with
+
+    tar -xpz
+
+or something equivalent. The 'p' option to Tar is important: it
+preserves permissions on the extracted files. Without the proper file
+permissions, the installation will be broken.
+
+Unpacking produces the directory bison. This should be installed
+under /usr. If you unpacked it somewhere else, do:
+
+    mv bison /usr
+
+Then run:
+
+    pkgmanager -a /usr/bison
+
+This creates links in Syllable to enable it to find Bison's files.
+You should now be able to use Bison.
+
+2.2 Uninstalling & upgrading Bison
+----------------------------------
+
+If you ever want to remove Bison, follow these steps. For example,
+you should do this before you install a new version of Bison. Again,
+you may have to become root first:
+
+    su
+
+Then you should remove the links to Bison from Syllable. You should
+even do this when you want to upgrade Bison, because the links will
+most likely have changed for the new version.
+
+    pkgmanager -r /usr/bison
+
+To delete the files belonging to Bison, run:
+
+    rm -r /usr/bison
+
+3 Building Bison on Syllable
+============================
+
+Normally you don't have to, but if you want to build Bison yourself,
+you need to get the source distribution. You can get the Bison
+distribution through its home page:
+
+    http://www.gnu.org/software/bison/
+
+Now you could use
+
+    ./configure
+
+but this will configure Make for installing Bison in /usr/local. This
+is fine for local use, but to produce a distribution, I prefer
+
+    CFLAGS="-march=i586 -O2" \
+        ./configure --prefix=/usr/bison
+
+to target it for /usr/bison and optimize for a Pentium processor.
+
+Now you can do
+
+    make
+
+and optionally
+
+    make check
+
+After becoming root,
+
+    make install
+
+will install Bison's files. If you configured to install in
+/usr/bison, you will have to let Syllable know:
+
+    pkgmanager -a /usr/bison
+
+If you had a previous installation in /usr/bison, it would be wise to
+uninstall it before running make install:
+
+    pkgmanager -r /usr/bison
+    rm -r /usr/bison
+
+4 Contact information
+=====================
+
+This version of Bison was ported to Syllable/AtheOS by Kaj de Vos.
+You can send me problem reports, fixes and the like at
+
+    bison@syllable.info
+
+This distribution can be found in the download section of the
+Syllable web site:
+
+    http://syllable.sourceforge.net
+

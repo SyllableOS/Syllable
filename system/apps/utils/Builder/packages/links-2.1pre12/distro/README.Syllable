@@ -1,0 +1,155 @@
+Links for Syllable/AtheOS
+=========================
+
+30 September 2003
+
+1 Introduction
+==============
+
+This is a binary distribution of version 2.1pre12 of the Links web
+browser for the Syllable operating system. This distribution was
+built on Syllable 0.4.5 with GCC 2.95.3, and was optimized for a
+Pentium CPU. It should also run on other versions of Syllable and on
+the AtheOS operating system, but this has not been tested.
+
+If you encounter problems or have any other interesting observations,
+I would be interested to hear about them (see contact information).
+
+See the file README for more information on Links.
+
+2 How to install Links on Syllable
+==================================
+
+2.1 
+----
+
+Please note that Links needs the Zlib library. Zlib is not included
+in this distribution, so you may have to get that package and install
+it first, if it is not already installed on your system. Zlib is
+included in the base Syllable system in Syllable 0.4.5 and up. You
+need Zlib as a shared library. The Zlib packages for Syllable are
+distributed in this form from version 1.1.4 onwards.
+
+Now for the Links installation. You may have to become the root user
+to perform the following operations:
+
+    su
+
+You should have unpacked this file with
+
+    tar -xpz
+
+or something equivalent. The 'p' option to tar is important: it
+preserves permissions on the extracted files. Without the proper file
+permissions, the installation will be broken.
+
+Unpacking produces the directory links. This should be installed
+under /usr. If you unpacked it somewhere else, do:
+
+    mv links /usr
+
+Then run:
+
+    pkgmanager -a /usr/links
+
+This creates links in Syllable to enable it to find Links' files.
+
+You should now be able to use Links. It works in text mode when you
+start it as
+
+    links
+
+and in graphics mode when you start it as
+
+    links -g
+
+You may want to run Links' monitor calibration, like this
+
+    links -g /usr/links/doc/links_cal/calibration.html
+
+2.2 Uninstalling & upgrading Links
+----------------------------------
+
+If you ever want to remove Links, follow these steps. For example,
+you should do this before you install a new version of Links. Again,
+you may have to become root first:
+
+    su
+
+Then you should remove the links to Links - if you know what I mean
+:-) - from Syllable. You should even do this when you want to upgrade
+Links, because the links will most likely have changed for the new
+version.
+
+    pkgmanager -r /usr/links
+
+To delete the files belonging to Links, run:
+
+    rm -r /usr/links
+
+3 Building Links on Syllable
+============================
+
+Normally you don't have to, but if you want to build Links yourself,
+you need to get the source distribution. You can get the Links
+distribution through its home page:
+
+    http://atrey.karlin.mff.cuni.cz/~clock/twibright/links/
+
+See the file README for details. Furthermore, you will need to have
+the Zlib, Libpng, Libjpeg and Libungif libraries installed, and
+Libtiff and OpenSSL when these become available for Syllable.
+
+Now you could use
+
+    configure
+
+but this will configure make for installing Links in /usr/local. This
+is fine for local use, but to produce a distribution, I prefer
+
+    CFLAGS="-march=i586 -O2" \
+        configure --prefix=/usr/links \
+            --enable-graphics --enable-javascript
+
+to target it for /usr/links, optimize for a Pentium processor and
+enable graphics mode and JavaScript.
+
+Now you can do
+
+    make
+
+After becoming root,
+
+    make install
+
+will install Links' files. If you configured to install in
+/usr/links, you will have to let Syllable know:
+
+    pkgmanager -a /usr/links
+
+If you had a previous installation in /usr/links, it would be wise to
+uninstall it before running make install:
+
+    pkgmanager -r /usr/links
+    rm -r /usr/links
+
+4 Known problems and limitations
+================================
+
+TIFF support is not included because Libtiff is not available on
+Syllable yet. SSL support for HTTPS is included but doesn't seem to
+work yet.
+
+5 Contact information
+=====================
+
+This version of Links was built and packed for Syllable/AtheOS by Kaj
+de Vos. You can send me problem reports, fixes and the like at
+
+    links@syllable.info
+
+This distribution can be found in the download section of the
+Syllable web site:
+
+    http://syllable.sourceforge.net
+

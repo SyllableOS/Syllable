@@ -1,0 +1,138 @@
+Groff for Syllable/AtheOS
+=========================
+
+13 June 2003
+
+1 Introduction
+==============
+
+This is a binary distribution of version 1.19 of the GNU Troff
+typesetting software for the Syllable operating system. This
+distribution was built on Syllable 0.4.3 with GCC 2.95.3, and was
+optimized for a Pentium CPU. It should also run on other versions of
+Syllable and on the AtheOS operating system, but this has not been
+tested.
+
+If you encounter problems or have any other interesting observations,
+I would be interested to hear about them (see contact information).
+
+See the file README for more information on Groff.
+
+2 How to install Groff on Syllable
+==================================
+
+2.1 
+----
+
+You may have to become the root user to perform the following
+operations:
+
+    su
+
+You should have unpacked this file with
+
+    tar -xpz
+
+or something equivalent. The 'p' option to tar is important: it
+preserves permissions on the extracted files. Without the proper file
+permissions, the installation will be broken.
+
+Unpacking produces the directory groff. This should be installed
+under /usr. If you unpacked it somewhere else, do:
+
+    mv groff /usr
+
+Note that Syllable versions 0.4.2a and earlier have Groff installed
+in the base system in the directory /usr. This means that its files
+are spread out over directories such as /usr/bin and /usr/lib, and
+that your newly installed package in /usr/groff won't run because the
+old version takes precedence. To remedy this, you can delete the old
+version from Syllable's directories by running the included script
+
+    delete-old-groff.sh
+
+Then run:
+
+    pkgmanager -a /usr/groff
+
+This creates links in Syllable to enable it to find Groff's files.
+You should now be able to use Groff.
+
+2.2 Uninstalling & upgrading Groff
+----------------------------------
+
+If you ever want to remove Groff, follow these steps. For example,
+you should do this before you install a new version of Groff. Again,
+you may have to become root first:
+
+    su
+
+Then you should remove the links to Groff from Syllable. You should
+even do this when you want to upgrade Groff, because the links will
+most likely have changed for the new version.
+
+    pkgmanager -r /usr/groff
+
+To delete the files belonging to Groff, run:
+
+    rm -r /usr/groff
+
+3 Building Groff on Syllable
+============================
+
+Normally you don't have to, but if you want to build Groff yourself,
+you need to get the source distribution. You can get the Groff
+distribution through its home page:
+
+    http://www.gnu.org/software/groff/
+
+See the file README for details.
+
+Now you could use
+
+    ./configure
+
+but this will configure groff for installing Groff in /usr/local.
+This is fine for local use, but to produce a distribution, I prefer
+
+    CXXFLAGS="-march=i586 -O2" \
+        ./configure --prefix=/usr/groff
+
+to target it for /usr/groff and optimize for a Pentium processor.
+
+Now you can do
+
+    make
+
+and optionally
+
+    make check
+
+After becoming root,
+
+    make install
+
+will install Groff's files. If you configured to install in
+/usr/groff, you will have to let Syllable know:
+
+    pkgmanager -a /usr/groff
+
+If you had a previous installation in /usr/groff, it would be wise to
+uninstall it before running make install:
+
+    pkgmanager -r /usr/groff
+    rm -r /usr/groff
+
+4 Contact information
+=====================
+
+This version of Groff was built and packed for Syllable/AtheOS by Kaj
+de Vos. You can send me problem reports, fixes and the like at
+
+    groff@syllable.info
+
+This distribution can be found in the download section of the
+Syllable web site:
+
+    http://syllable.sourceforge.net
+

@@ -1,0 +1,147 @@
+LibXML2 for Syllable/AtheOS
+===========================
+
+19 June 2003
+
+1 Introduction
+==============
+
+This is a binary distribution of version 2.5.7 of the Libxml2 XML
+parser and library for the Syllable operating system. This
+distribution was built on Syllable 0.4.3 with GCC 2.95.3, and was
+optimized for a Pentium CPU. It should also run on other versions of
+Syllable and on the AtheOS operating system, but this has not been
+tested.
+
+If you encounter problems or have any other interesting observations,
+I would be interested to hear about them (see contact information).
+
+See the file README for more information on Libxml.
+
+2 How to install Libxml on Syllable
+===================================
+
+2.1 
+----
+
+Please note that Libxml needs the Zlib library. Zlib is not included
+in this distribution, so you have to get that package and install it
+first, if it is not already installed on your system. You need Zlib
+as a shared library. The Zlib packages for Syllable are distributed
+in this form from version 1.1.4 onwards.
+
+Now for the Libxml installation. You may have to become the root user
+to perform the following operations:
+
+    su
+
+You should have unpacked this file with
+
+    tar -xpz
+
+or something equivalent. The 'p' option to tar is important: it
+preserves permissions on the extracted files. Without the proper file
+permissions, the installation will be broken.
+
+Unpacking produces the directory libxml2. This should be installed
+under /usr. If you unpacked it somewhere else, do:
+
+    mv libxml2 /usr
+
+Then run:
+
+    pkgmanager -a /usr/libxml2
+
+This creates links in Syllable to enable it to find Libxml's files.
+
+You should now be able to use the Libxml tools and link your programs
+with the Libxml library.
+
+2.2 Uninstalling & upgrading Libxml
+-----------------------------------
+
+If you ever want to remove Libxml, follow these steps. For example,
+you should do this before you install a new version of Libxml. Again,
+you may have to become root first:
+
+    su
+
+Then you should remove the links to Libxml from Syllable. You should
+even do this when you want to upgrade Libxml, because the links will
+most likely have changed for the new version.
+
+    pkgmanager -r /usr/libxml2
+
+To delete the files belonging to Libxml, run:
+
+    rm -r /usr/libxml2
+
+3 Building Libxml on Syllable
+=============================
+
+Normally you don't have to, but if you want to build Libxml yourself,
+you need to get the source distribution. You can get the Libxml
+distribution through its home page:
+
+    http://www.libxml.org
+
+See the file README for details.
+
+Now you could use
+
+    configure
+
+but this will configure make for installing Libxml in /usr/local.
+This is fine for local use, but to produce a distribution, I prefer
+
+    CFLAGS="-march=i586 -O2" \
+        configure --prefix=/usr/libxml2 --without-threads
+
+to target it for /usr/libxml2, optimize for a Pentium processor and
+disable thread support.
+
+Now you can do
+
+    make
+
+and optionally
+
+    make tests
+
+After becoming root,
+
+    make install
+
+will install Libxml's files. If you configured to install in
+/usr/libxml, you will have to let Syllable know:
+
+    pkgmanager -a /usr/libxml2
+
+If you had a previous installation in /usr/libxml2, it would be wise
+to uninstall it before running make install:
+
+    pkgmanager -r /usr/libxml2
+    rm -r /usr/libxml2
+
+4 Known problems and limitations
+================================
+
+Libxml cannot be compiled as a shared library on Syllable/AtheOS
+because Libtool does not support this, yet.
+
+Syllable's Posix threads implementation is not yet complete enough to
+support multi-threading in Libxml.
+
+5 Contact information
+=====================
+
+This version of Libxml was ported to AtheOS/Syllable by Kaj de Vos.
+You can send me problem reports, fixes and the like at
+
+    libxml@syllable.info
+
+This distribution can be found in the download section of the
+Syllable web site:
+
+    http://syllable.sourceforge.net
+

@@ -1,0 +1,3 @@
+authors Kaj de Vos
+configure-options --without-threads
+documentation README NEWS ChangeLog TODO TODO_SCHEMAS AUTHORS
