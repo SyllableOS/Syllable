@@ -2,12 +2,27 @@ authors
 	Kurt Skauen
 	Kaj de Vos
 	Arno Klenke
+	Kristian Van Der Vliet
 maintainers			Kaj de Vos
 status				testing
+
 licenses			GPL LGPL
-build-needs			binutils
+home				www.gnu.org/software/binutils/
+
+build-needs
+	binutils
+	automake
+	autoconf >= 2.13
+
 patch-config
+patch
+	cd ld;
+	automake;
+	cd ../gas;
+	autoconf
+
 ;configure-options	--enable-shared
+
 documentation
 	README COPYING COPYING.LIB
 	binutils/NEWS binutils/ChangeLog binutils/MAINTAINERS

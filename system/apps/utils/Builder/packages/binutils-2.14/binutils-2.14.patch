@@ -1,6 +1,6 @@
-diff -NBaur binutils-2.14-orig/bfd/config.bfd binutils-2.14/bfd/config.bfd
---- binutils-2.14-orig/bfd/config.bfd	Mon Jun  2 20:35:21 2003
-+++ binutils-2.14/bfd/config.bfd	Sun Nov 30 11:51:49 2003
+diff -ru binutils-2.14.orig/bfd/config.bfd binutils-2.14/bfd/config.bfd
+--- binutils-2.14.orig/bfd/config.bfd	2003-06-02 20:35:21.000000000 +0000
++++ binutils-2.14/bfd/config.bfd	2004-03-01 15:33:45.000000000 +0000
 @@ -518,6 +518,9 @@
      targ_defvec=bfd_elf32_i386_vec
      targ_selvecs="i386pe_vec i386pei_vec"
@@ -11,9 +11,9 @@ diff -NBaur binutils-2.14-orig/bfd/config.bfd binutils-2.14/bfd/config.bfd
    i[3456]86-*-interix*)
      targ_defvec=i386pei_vec
      targ_selvecs="i386pe_vec"
-diff -NBaur binutils-2.14-orig/binutils/strings.c binutils-2.14/binutils/strings.c
---- binutils-2.14-orig/binutils/strings.c	Mon Dec 23 10:37:35 2002
-+++ binutils-2.14/binutils/strings.c	Fri Dec 12 19:52:35 2003
+diff -ru binutils-2.14.orig/binutils/strings.c binutils-2.14/binutils/strings.c
+--- binutils-2.14.orig/binutils/strings.c	2002-12-23 10:37:35.000000000 +0000
++++ binutils-2.14/binutils/strings.c	2004-03-01 15:33:45.000000000 +0000
 @@ -97,6 +97,10 @@
  /* The BFD section flags that identify an initialized data section.  */
  #define DATA_FLAGS (SEC_ALLOC | SEC_LOAD | SEC_HAS_CONTENTS)
@@ -33,20 +33,20 @@ diff -NBaur binutils-2.14-orig/binutils/strings.c binutils-2.14/binutils/strings
  
  /* Radix for printing addresses (must be 8, 10 or 16).  */
  static int address_radix;
-diff -NBaur binutils-2.14-orig/gas/configure binutils-2.14/gas/configure
---- binutils-2.14-orig/gas/configure	Mon Jun  2 20:35:24 2003
-+++ binutils-2.14/gas/configure	Sun Nov 30 11:51:49 2003
-@@ -2453,6 +2453,7 @@
+diff -ru binutils-2.14.orig/gas/configure.in binutils-2.14/gas/configure.in
+--- binutils-2.14.orig/gas/configure.in	2003-06-02 20:35:24.000000000 +0000
++++ binutils-2.14/gas/configure.in	2004-03-01 15:33:45.000000000 +0000
+@@ -247,6 +247,7 @@
        i386-sequent-bsd*)		fmt=aout em=dynix ;;
        i386-*-beospe*)			fmt=coff em=pe ;;
        i386-*-beos*)			fmt=elf ;;
-+      i386-*-syllable* ) fmt=elf bfd_gas=yes ;;
++      i386-*-syllable* )		fmt=elf bfd_gas=yes ;;
        i386-*-coff)			fmt=coff ;;
        i386-*-elf)			fmt=elf ;;
        i386-*-kaos*)			fmt=elf ;;
-diff -NBaur binutils-2.14-orig/ld/Makefile.am binutils-2.14/ld/Makefile.am
---- binutils-2.14-orig/ld/Makefile.am	Thu Apr 24 12:36:08 2003
-+++ binutils-2.14/ld/Makefile.am	Thu Dec  4 20:26:19 2003
+diff -ru binutils-2.14.orig/ld/Makefile.am binutils-2.14/ld/Makefile.am
+--- binutils-2.14.orig/ld/Makefile.am	2003-04-24 12:36:08.000000000 +0000
++++ binutils-2.14/ld/Makefile.am	2004-03-01 15:33:45.000000000 +0000
 @@ -185,6 +185,8 @@
  	eelf32xstormy16.o \
  	eelf32xtensa.o \
@@ -69,34 +69,9 @@ diff -NBaur binutils-2.14-orig/ld/Makefile.am binutils-2.14/ld/Makefile.am
  eelf_i386_chaos.c: $(srcdir)/emulparams/elf_i386_chaos.sh \
    $(srcdir)/emultempl/elf32.em $(srcdir)/scripttempl/elf_chaos.sc ${GEN_DEPENDS}
  	${GENSCRIPTS} elf_i386_chaos "$(tdir_elf_i386_chaos)"
-diff -NBaur binutils-2.14-orig/ld/Makefile.in binutils-2.14/ld/Makefile.in
---- binutils-2.14-orig/ld/Makefile.in	Thu Apr 24 12:36:08 2003
-+++ binutils-2.14/ld/Makefile.in	Thu Dec  4 20:25:47 2003
-@@ -299,6 +299,8 @@
- 	eelf32xstormy16.o \
- 	eelf32xtensa.o \
- 	eelf_i386.o \
-+	eelf_i386_atheos.o \
-+	eelf_i386_syllable.o \
- 	eelf_i386_be.o \
- 	eelf_i386_chaos.o \
- 	eelf_i386_fbsd.o \
-@@ -1520,6 +1522,12 @@
-   $(srcdir)/emulparams/elf_x86_64.sh \
-   $(srcdir)/emultempl/elf32.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
- 	${GENSCRIPTS} elf_x86_64_fbsd "$(tdir_elf_x86_64_fbsd)"
-+eelf_i386_atheos.c: $(srcdir)/emulparams/elf_i386_atheos.sh \
-+  $(srcdir)/emultempl/elf32.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
-+	${GENSCRIPTS} elf_i386_atheos "$(tdir_elf_i386_atheos)"
-+eelf_i386_syllable.c: $(srcdir)/emulparams/elf_i386_syllable.sh \
-+  $(srcdir)/emultempl/elf32.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
-+	${GENSCRIPTS} elf_i386_syllable "$(tdir_elf_i386_syllable)"
- eelf_i386_be.c: $(srcdir)/emulparams/elf_i386_be.sh \
-   $(srcdir)/emultempl/elf32.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
- 	${GENSCRIPTS} elf_i386_be "$(tdir_elf_i386_be)"
-diff -NBaur binutils-2.14-orig/ld/configure.tgt binutils-2.14/ld/configure.tgt
---- binutils-2.14-orig/ld/configure.tgt	Thu Jun 12 14:25:53 2003
-+++ binutils-2.14/ld/configure.tgt	Thu Dec  4 20:20:47 2003
+diff -ru binutils-2.14.orig/ld/configure.tgt binutils-2.14/ld/configure.tgt
+--- binutils-2.14.orig/ld/configure.tgt	2003-06-12 14:25:53.000000000 +0000
++++ binutils-2.14/ld/configure.tgt	2004-03-01 15:33:45.000000000 +0000
 @@ -218,6 +218,7 @@
   			targ_extra_ofiles="deffilep.o pe-dll.o" ;;
  i[3456]86-*-beospe*)    targ_emul=i386beos ;;
