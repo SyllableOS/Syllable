@@ -1,3 +1,10 @@
+* March 26 2005, Kaj de Vos *
+
+Fixed the installer, which was completely broken due to invalid hardcoded paths.
+Obviously, it still hardly has any error checking, or it wouldn't have worked at all.
+Also made it handle partitions with unrecognized types, which weren't presented in the
+user interface, although it was able to install onto them.
+
 * March 25 2005, Jake Hamby *
 
 Updated libpthread with a simple implementation of pthread_kill().
