@@ -1,3 +1,9 @@
+* February 23 2004, Henrik Isaksson *
+
+ Applied patches from Arno:
+ - TextView: Memory leak fixed.
+ - PopupMenu: Rendering error fixed.
+
 * February 15 2004, Henrik Isaksson *
 
  Applied Vander's "Use SeekableIO Everywhere" patch. Details below:
