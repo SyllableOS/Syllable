@@ -1,0 +1,12 @@
+authors			Jan L. Hauffa
+status			contributed
+
+headline		Tcsh is a version of the Berkeley C-Shell.
+licenses		other
+home			www.tcsh.org
+
+patch-config
+
+documentation	README BUGS FAQ Fixes NewThings Ported WishList Y2K
+links			bin/tcsh /bin/tcsh
+

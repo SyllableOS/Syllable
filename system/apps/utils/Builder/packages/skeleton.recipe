@@ -1,7 +1,7 @@
 ; Recipe information:
 authors				<Recipe and patches authors, in historical order>
 maintainers			<Recipe maintainers, if not first author>
-status				broken | deprecated | unmaintained | incomplete | developing | testing
+status				broken | deprecated | unmaintained | incomplete | developing | testing | contributed
 warnings			<Important notes>
 notes				<Internal notes>
 
@@ -11,7 +11,7 @@ headline			<Brief description>
 description			<Full description>
 licenses			GPL LGPL GFDL BSD MIT ISC Apache Artistic Python MPL QPL OSI other PD freeware commercial
 
-home				syllable.sf.net
+home				syllable.org
 packages
 	<Tarball names, if different from the package file name.
 	Common tarball extensions (.tgz, .tar.gz, .tbz2, .tar.bz2) should not be mentioned.>

@@ -1,0 +1,183 @@
+diff -ru tcsh-6.13.00/configure tcsh-mod/configure
+--- tcsh-6.13.00/configure	2003-06-18 19:32:44.000000000 +0000
++++ tcsh-mod/configure	2004-10-13 14:41:36.000000000 +0000
+@@ -1520,6 +1520,11 @@
+     tcsh_config_file=apollo
+   ;;
+ 
++  ## Syllable
++  *-syllable)
++    tcsh_config_file=syllable
++  ;;
++
+   * )
+     { { echo "$as_me:$LINENO: error: Tcsh can't guess the configuration file name
+ for \`${host}' systems.
+diff -ru tcsh-6.13.00/sh.h tcsh-mod/sh.h
+--- tcsh-6.13.00/sh.h	2004-02-21 20:34:26.000000000 +0000
++++ tcsh-mod/sh.h	2004-10-13 14:40:48.000000000 +0000
+@@ -227,6 +227,10 @@
+ #endif /* !_MINIX && !_VMS_POSIX && !WINNT_NATIVE && !__MVS__ */
+ #include <sys/stat.h>
+ 
++#ifdef __SYLLABLE__
++# include <sys/time.h>
++#endif /* __SYLLABLE__ */
++
+ #if defined(BSDTIMES) || defined(BSDLIMIT)
+ # include <sys/time.h>
+ # if SYSVREL>3 && !defined(SCO) && !defined(sgi) && !defined(SNI) && !defined(sun) && !(defined(__alpha) && defined(__osf__)) && !defined(_SX) && !defined(__MVS__)
+@@ -1037,6 +1041,10 @@
+ # undef MAXPATHLEN
+ #endif /* __CYGWIN__ */
+ 
++#ifdef __SYLLABLE__
++# undef MAXPATHLEN
++#endif /* __SYLLABLE__ */
++
+ #ifndef MAXPATHLEN
+ # define MAXPATHLEN 2048
+ #endif /* MAXPATHLEN */
+diff -ru tcsh-6.13.00/sh.proc.c tcsh-mod/sh.proc.c
+--- tcsh-6.13.00/sh.proc.c	2003-11-09 03:02:47.000000000 +0000
++++ tcsh-mod/sh.proc.c	2004-10-13 14:40:48.000000000 +0000
+@@ -269,7 +269,11 @@
+ #     ifdef _MINIX
+       pid = wait(&w);
+ #     else /* !_MINIX */
++#     ifdef __SYLLABLE__
++      pid = ourwait(&w);
++#     else
+       pid = ourwait(&w.w_status);
++#     endif
+ #     endif /* _MINIX */
+ #    else /* !UNRELSIGS */
+      /* 
+@@ -316,7 +320,7 @@
+     for (pp = proclist.p_next; pp != NULL; pp = pp->p_next)
+ 	if (pid == pp->p_procid)
+ 	    goto found;
+-#if !defined(BSDJOBS) && !defined(WINNT_NATIVE)
++#if !defined(BSDJOBS) && !defined(WINNT_NATIVE) && !defined(__SYLLABLE__)
+     /* this should never have happened */
+     stderror(ERR_SYNC, pid);
+     xexit(0);
+@@ -2014,6 +2018,7 @@
+ 	 */
+ 	if (t->t_dflg & F_NOHUP)
+ 	    (void) signal(SIGHUP, SIG_IGN);
++#ifndef __SYLLABLE__
+ 	if (t->t_dflg & F_NICE) {
+ 	    int nval = SIGN_EXTEND_CHAR(t->t_nice);
+ #ifdef BSDNICE
+@@ -2023,6 +2028,7 @@
+ 	    (void) nice(nval);
+ #endif /* !BSDNICE */
+ 	}
++#endif /* !__SYLLABLE__ */
+ #ifdef F_VER
+         if (t->t_dflg & F_VER) {
+ 	    tsetenv(STRSYSTYPE, t->t_systype ? STRbsd43 : STRsys53);
+diff -ru tcsh-6.13.00/sh.time.c tcsh-mod/sh.time.c
+--- tcsh-6.13.00/sh.time.c	2002-06-25 19:02:12.000000000 +0000
++++ tcsh-mod/sh.time.c	2004-10-13 14:40:48.000000000 +0000
+@@ -172,12 +172,14 @@
+ 	nval = 4;
+     else if (*v	== 0 &&	any("+-", cp[0]))
+ 	nval = getn(cp);
++#ifndef __SYLLABLE__
+ #ifdef BSDNICE
+     if (setpriority(PRIO_PROCESS, 0, nval) == -1 && errno)
+ 	stderror(ERR_SYSTEM, "setpriority", strerror(errno));
+ #else /* BSDNICE */
+     (void) nice(nval);
+ #endif /* BSDNICE */
++#endif /* !__SYLLABLE__ */
+ }
+ 
+ #ifdef BSDTIMES
+diff -ru tcsh-6.13.00/tc.decls.h tcsh-mod/tc.decls.h
+--- tcsh-6.13.00/tc.decls.h	2004-02-21 20:34:26.000000000 +0000
++++ tcsh-mod/tc.decls.h	2004-10-13 14:40:48.000000000 +0000
+@@ -261,6 +261,9 @@
+ extern	void		  xsigignore	__P((int));
+ #  define sigignore(x)	  xsigignore(x)
+ extern	void 		  xsigpause	__P((int));
++#  ifdef __SYLLABLE__
++#   undef sigpause
++#  endif /* __SYLLABLE__ */
+ #  define sigpause(x)	  xsigpause(x)
+ extern	pid_t 		  ourwait	__P((int *));
+ # endif /* UNRELSIGS */
+diff -ru tcsh-6.13.00/tc.os.h tcsh-mod/tc.os.h
+--- tcsh-6.13.00/tc.os.h	2004-01-23 16:21:11.000000000 +0000
++++ tcsh-mod/tc.os.h	2004-10-13 14:40:48.000000000 +0000
+@@ -82,11 +82,15 @@
+ # define NOFILE USR_NFDS
+ #endif /* USR_NFDS && !NOFILE */
+ 
++#ifdef __SYLLABLE__
++# undef NOFILE
++#endif /* __SYLLABLE__ */
++
+ #ifndef NOFILE
+ # define NOFILE 256
+ #endif /* NOFILE */
+ 
+-#if defined(linux) || defined(__NetBSD__) || defined(__FreeBSD__) || SYSVREL >= 4  || defined(_MINIX_VMD)
++#if defined(linux) || defined(__NetBSD__) || defined(__FreeBSD__) || SYSVREL >= 4  || defined(_MINIX_VMD) || defined(__SYLLABLE__)
+ # undef NEEDstrerror
+ #endif /* linux || __NetBSD__ || __FreeBSD__ || SYSVREL >= 4 || _MINIX_VMD */
+ 
+@@ -109,6 +113,10 @@
+ # endif /* POSIX */
+ #endif /* OREO */
+ 
++#ifdef __SYLLABLE__
++# undef NCARGS
++#endif /* __SYLLABLE__ */
++
+ #ifndef NCARGS
+ # ifdef _SC_ARG_MAX
+ #  define NCARGS sysconf(_SC_ARG_MAX)
+@@ -535,7 +543,7 @@
+ #endif /* NeXT */
+ 
+ #if !defined(BSD4_4) && !defined(__linux__) && !defined(__hpux) && \
+-    !defined(sgi) && !defined(_AIX) && !defined(__CYGWIN__)
++    !defined(sgi) && !defined(_AIX) && !defined(__CYGWIN__) && !defined(__SYLLABLE__)
+ #ifndef NEEDgethostname
+ extern int gethostname __P((char *, int));
+ #endif /* NEEDgethostname */
+diff -ru tcsh-6.13.00/tc.sig.h tcsh-mod/tc.sig.h
+--- tcsh-6.13.00/tc.sig.h	2002-07-12 13:16:20.000000000 +0000
++++ tcsh-mod/tc.sig.h	2004-10-13 14:40:48.000000000 +0000
+@@ -34,7 +34,7 @@
+ #ifndef _h_tc_sig
+ #define _h_tc_sig
+ 
+-#if (SYSVREL > 0) || defined(BSD4_4) || defined(_MINIX) || defined(DGUX) || defined(WINNT_NATIVE)
++#if (SYSVREL > 0) || defined(BSD4_4) || defined(_MINIX) || defined(DGUX) || defined(WINNT_NATIVE) || defined(__SYLLABLE__)
+ # include <signal.h>
+ # ifndef SIGCHLD
+ #  define SIGCHLD SIGCLD
+@@ -47,7 +47,7 @@
+ # define SAVESIGVEC
+ #endif /* SUNOS4 || DGUX || hp800 || SVR4 & POSIXSIGS & VFORK */
+ 
+-#if (SYSVREL > 0 && SYSVREL < 3 && !defined(BSDSIGS)) || defined(_MINIX) || defined(COHERENT)
++#if (SYSVREL > 0 && SYSVREL < 3 && !defined(BSDSIGS)) || defined(_MINIX) || defined(COHERENT) || defined(__SYLLABLE__)
+ /*
+  * If we have unreliable signals...
+  */
+@@ -124,6 +124,10 @@
+ # define killpg(a, b) kill(-(a), (b))
+ #endif /* atp _VMS_POSIX */
+ 
++#ifdef __SYLLABLE__
++# define killpg(a, b) kill((a), (b))
++#endif /* __SYLLABLE__ */
++
+ #if !defined(NSIG) && defined(SIGMAX)
+ # define NSIG (SIGMAX+1)
+ #endif /* !NSIG && SIGMAX */
