@@ -48,6 +48,7 @@ cp -f rebuild_all.sh $install/bin
 cp -f mksection.sh $install/bin
 cp -f mkindex.sh $install/bin
 cp -f addpage.sh $install/bin
+cp -f manaddpackage.sh $install/bin
 pkgmanager -a $install
 
 cd $out

@@ -1,6 +1,10 @@
 #!/bin/sh
 
-index=index.html
+base=/atheos/Documentation
+rpath=man
+out=$base/$rpath
+
+index=$out/index.html
 
 header()
 {
@@ -26,7 +30,7 @@ add_link()
 
 header;
 
-for d in $(ls | grep man);do
+for d in $(ls $out | grep man);do
 	url=index_$(echo $d | sed -e s/man//).html;
 	name="Manual Section $(echo $d | sed -e s/man//)";
 	add_link;
