@@ -137,6 +137,11 @@ extern uint32 v86Stack_seg;
 extern uint32 v86Stack_off;
 extern uint32 g_anKernelStackEnd[];
 
+#define	E820_RAM	1
+#define	E820_RESERVED	2
+#define	E820_ACPI	3    // usable as RAM once ACPI tables have been read
+#define	E820_NVS	4
+
 // must be inlined in order to work correctly
 static inline int Fork( const char *pzName )
 {
@@ -202,9 +207,9 @@ static int parse_num( const char *pzString )
  * SEE ALSO:
  ****************************************************************************/
 
-static int set_interrupt_gate( uint16 IntNum, void *Handler )
+static int set_interrupt_gate( int IntNum, void *Handler )
 {
-	g_sSysBase.ex_IDT[IntNum].igt_sel = 0x08;
+	g_sSysBase.ex_IDT[IntNum].igt_sel = CS_KERNEL;
 	g_sSysBase.ex_IDT[IntNum].igt_offl = ( ( uint32 )Handler ) & 0xffff;
 	g_sSysBase.ex_IDT[IntNum].igt_offh = ( ( uint32 )Handler ) >> 16;
 	g_sSysBase.ex_IDT[IntNum].igt_ctrl = 0x8e00;
@@ -220,10 +225,9 @@ static int set_interrupt_gate( uint16 IntNum, void *Handler )
 
 static int set_trap_gate( int IntNum, void *Handler )
 {
-	g_sSysBase.ex_IDT[IntNum].igt_sel = 0x08;
+	g_sSysBase.ex_IDT[IntNum].igt_sel = CS_KERNEL;
 	g_sSysBase.ex_IDT[IntNum].igt_offl = ( ( uint32 )Handler ) & 0xffff;
 	g_sSysBase.ex_IDT[IntNum].igt_offh = ( ( uint32 )Handler ) >> 16;
-
 	g_sSysBase.ex_IDT[IntNum].igt_ctrl = 0xef00;
 	return ( 0 );
 }
@@ -470,12 +474,16 @@ void init_e820_memory_map( void )
 	uint32 nEntry = 0;
 	memset( &rm, 0, sizeof( struct RMREGS ) );
 
+	printk( "BIOS-provided physical memory map:\n" );
+
 	for ( nEntry = 0; nEntry < 32; nEntry++ )
 	{
 		uint32 nAddr;
+		const char *pzType;
+		char zType[18];
 
 		rm.EAX = 0xe820;
-		rm.EDX = 0x534d4150;
+		rm.EDX = 0x534d4150;		/* "SMAP" */
 		rm.ECX = sizeof( e820entry );
 		rm.EDI = ( ( uint32 )&psEntry[nEntry] ) & 0x0f;
 		rm.ES = ( ( uint32 )&psEntry[nEntry] ) >> 4;
@@ -488,6 +496,29 @@ void init_e820_memory_map( void )
 			psEntry[nEntry].nSize = 0xffffffff - nAddr;
 
 		alloc_physical( &nAddr, true, ( uint32 )psEntry[nEntry].nSize );
+
+		switch ( psEntry[nEntry].nType )
+		{
+			case E820_RAM:
+				pzType = "(usable)";
+				break;
+			case E820_RESERVED:
+				pzType = "(reserved)";
+				break;
+			case E820_ACPI:
+				pzType = "(ACPI data)";
+				break;
+			case E820_NVS:
+				pzType = "(ACPI NVS)";
+				break;
+			default:
+				sprintf( zType, "type %lu", psEntry[nEntry].nType );
+				pzType = zType;
+				break;
+		}
+
+		printk( " BIOS-e820: %016Lx - %016Lx %s\n", psEntry[nEntry].nAddr,
+			psEntry[nEntry].nAddr + psEntry[nEntry].nSize, pzType );
 
 		if ( rm.EAX != 0x534d4150 )
 			break;
@@ -736,16 +767,6 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 	set_debug_port_params( g_nDebugBaudRate, g_nDebugSerialPort, g_bPlainTextDebug );
 
 #if 0
-	if ( sizeof( DescriptorTable_s ) == 8 )
-	{
-		int nCol;
-
-		for ( ;; )
-		{
-			SetColor( 0, 0, nCol++, 0 );
-		}
-	}
-
 	if ( sizeof( DescriptorTable_s ) != 6 )
 	{
 		int nCol;
@@ -789,23 +810,23 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 
 	memset( &g_sInitialTSS, 0, sizeof( g_sInitialTSS ) );
 
-	g_sInitialTSS.cs = 0x08;
-	g_sInitialTSS.ss = 0x18;
-	g_sInitialTSS.ds = 0x18;
-	g_sInitialTSS.es = 0x18;
-	g_sInitialTSS.fs = 0x18;
-	g_sInitialTSS.gs = 0x18;
+	g_sInitialTSS.cs = CS_KERNEL;
+	g_sInitialTSS.ss = DS_KERNEL;
+	g_sInitialTSS.ds = DS_KERNEL;
+	g_sInitialTSS.es = DS_KERNEL;
+	g_sInitialTSS.fs = DS_KERNEL;
+	g_sInitialTSS.gs = DS_KERNEL;
 	g_sInitialTSS.eflags = 0x203246;
 
 	g_sInitialTSS.cr3 = 0;
-	g_sInitialTSS.ss0 = 0x18;
+	g_sInitialTSS.ss0 = DS_KERNEL;
 	g_sInitialTSS.esp0 = g_anKernelStackEnd;
 	g_sInitialTSS.IOMapBase = 104;
 
 	Desc_SetLimit( 0x40, 0xffff );
 	Desc_SetBase( 0x40, ( uint32 )&g_sInitialTSS );
 	Desc_SetAccess( 0x40, 0x89 );
-	g_sSysBase.ex_GDT[0x40 << 3].desc_lmh &= 0x8f;	// TSS descriptors has bit 22 clear (as opposed to 32 bit data and code descriptors)
+	g_sSysBase.ex_GDT[0x40 << 3].desc_lmh &= 0x8f;	// TSS descriptor has bit 22 clear (as opposed to 32 bit data and code descriptors)
 
 
 	SetColor( 0, 0, 255, 0 );

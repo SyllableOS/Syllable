@@ -17,6 +17,7 @@
 #include <atheos/smp.h>
 
 #include "inc/smp.h"
+#include "inc/pit_timer.h"
 
 
 void __delay( unsigned long loops )
@@ -28,12 +29,17 @@ void __delay( unsigned long loops )
 inline void __const_udelay( unsigned long xloops )
 {
 	int d0;
-
-      __asm__( "mull %0": "=d"( xloops ), "=&a"( d0 ):"1"( xloops ), "0"( g_asProcessorDescs[get_processor_id()].pi_nDelayCount ) );
-	__delay( xloops );
+	xloops *= 4;
+	__asm__( "mull %0" : "=d"( xloops ), "=&a"( d0 ) : "1"( xloops ), "0"( g_asProcessorDescs[get_processor_id()].pi_nDelayCount * ( INT_FREQ / 4 ) ) );
+	__delay( ++xloops );
 }
 
 void __udelay( unsigned long usecs )
 {
-	__const_udelay( usecs * 0x000010c6 );	/* 2**32 / 1000000 */
+	__const_udelay( usecs * 0x000010c7 );	/* 2**32 / 1000000 (rounded up) */
+}
+
+void __ndelay( unsigned long nsecs )
+{
+	__const_udelay( nsecs * 0x00005 );	/* 2**32 / 1000000000 (rounded up) */
 }

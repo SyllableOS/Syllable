@@ -52,6 +52,13 @@ uint32 g_nVirtualAPICAddr = ( ( uint32 )&g_nFakeCPUID ) - APIC_ID;
 static area_id g_hAPICArea;
 static int g_anLogicToRealID[MAX_CPU_COUNT] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 
+/*
+ * This is the number of bits of precision for pi_nDelayCount.  Each
+ * bit takes on average 1.5 / INT_FREQ seconds.  This is a little better
+ * than 1%.
+ */
+#define LPS_PREC 8
+
 //void smp_ap_entry();
 
 uint8 g_anTrampoline[] = {
@@ -81,7 +88,7 @@ void idle_loop( void )
 	{
 		uint32 nAPICDiv;
 
-		nAPICDiv = g_asProcessorDescs[nProcessor].pi_nBusSpeed / 1000;
+		nAPICDiv = g_asProcessorDescs[nProcessor].pi_nBusSpeed / INT_FREQ;
 
 		nAPICDiv += nProcessor * 10000;	// Avoid re-scheduling all processors at the same time
 #ifdef SMP_DEBUG
@@ -150,55 +157,52 @@ static void wait_pit_wrap( void )
 
 static void calibrate_delay( void )
 {
-	int nLoopBit;
-	int nPresicion = 8;
-	uint32 nLoopsPerSec;
-
-	nLoopsPerSec = ( 1 << 12 );
+	unsigned long loops_per_jiffy = ( 1 << 12 );	// start at 2 BogoMips
+	unsigned long loopbit;
+	unsigned long jiffy_countdown = 0xffff - ( PIT_TICKS_PER_SEC / INT_FREQ );
+	int lps_precision = LPS_PREC;
 
 	printk( "Calibrating delay loop for CPU %d\n", get_processor_id() );
 
-	while ( nLoopsPerSec <<= 1 )
+	while ( ( loops_per_jiffy <<= 1 ) != 0 )
 	{
 		isa_writeb( PIT_MODE, 0x30 );	// one-shot mode
 		isa_writeb( PIT_CH0, 0xff );
 		isa_writeb( PIT_CH0, 0xff );
 
-		__delay( nLoopsPerSec );
+		__delay( loops_per_jiffy );
 
-		if ( read_pit_timer() < 64000 )
-		{		// to long
+		if ( read_pit_timer() < jiffy_countdown )
 			break;
-		}
 	}
 
-	nLoopsPerSec >>= 1;
-	nLoopBit = nLoopsPerSec;
-
-	while ( nPresicion-- && ( nLoopBit >>= 1 ) )
+	/*
+	 * Do a binary approximation to get loops_per_jiffy set to
+	 * equal one clock (up to lps_precision bits)
+	 */
+	loops_per_jiffy >>= 1;
+	loopbit = loops_per_jiffy;
+	while ( lps_precision-- && ( loopbit >>= 1 ) )
 	{
-		nLoopsPerSec |= nLoopBit;
+		loops_per_jiffy |= loopbit;
 
 		isa_writeb( PIT_MODE, 0x30 );	// one-shot mode
 		isa_writeb( PIT_CH0, 0xff );
 		isa_writeb( PIT_CH0, 0xff );
-		__delay( nLoopsPerSec );
-		if ( read_pit_timer() < 64000 )
-		{		// to long
-			nLoopsPerSec &= ~nLoopBit;
-		}
+		__delay( loops_per_jiffy );
+
+		if ( read_pit_timer() < jiffy_countdown )
+			loops_per_jiffy &= ~loopbit;
 	}
 
 	isa_writeb( PIT_MODE, 0x34 );	// loop mode
 	isa_writeb( PIT_CH0, 0x0 );
 	isa_writeb( PIT_CH0, 0x0 );
 
-	// Get loops per sec, instead of loops per 65535 - 64000 pit ticks.
-	nLoopsPerSec *= PIT_TICKS_PER_SEC / ( 65535 - 64000 );
-	g_asProcessorDescs[get_processor_id()].pi_nDelayCount = nLoopsPerSec;
+	g_asProcessorDescs[get_processor_id()].pi_nDelayCount = loops_per_jiffy;
 
 	// Round the value and print it.
-	printk( "ok - %lu.%02lu BogoMIPS\n", ( nLoopsPerSec + 2500 ) / 500000, ( ( nLoopsPerSec + 2500 ) / 5000 ) % 100 );
+	printk( "ok - %lu.%02lu BogoMIPS (lpj=%lu)\n", loops_per_jiffy / ( 500000 / INT_FREQ ), ( loops_per_jiffy / ( 5000 / INT_FREQ ) ) % 100, loops_per_jiffy );
 }
 
 /*****************************************************************************
@@ -351,7 +355,6 @@ static void calibrate_apic_timer( int nProcessor )
 	isa_writeb( PIT_CH0, 0xff );
 	isa_writeb( PIT_CH0, 0xff );
 
-
 	wait_pit_wrap();
 	apic_write( APIC_TMICT, ~0 );	// Start APIC timer
 	nStartPerf = read_pentium_clock();
@@ -362,7 +365,7 @@ static void calibrate_apic_timer( int nProcessor )
 
 	g_asProcessorDescs[nProcessor].pi_nBusSpeed = ( uint32 )( ( uint64 )PIT_TICKS_PER_SEC * ( 0xffffffffLL - nAPICCount ) / 0xffff );
 	g_asProcessorDescs[nProcessor].pi_nCoreSpeed = ( uint32 )( ( uint64 )PIT_TICKS_PER_SEC * ( nEndPerf - nStartPerf ) / 0xffff );
-	printk( "CPU %d runs at %ld/%ld MHz\n", nProcessor, ( g_asProcessorDescs[nProcessor].pi_nBusSpeed + 500000 ) / 1000000, ( g_asProcessorDescs[nProcessor].pi_nCoreSpeed + 500000 ) / 1000000 );
+	printk( "CPU %d runs at %ld.%04ld / %ld.%04ld MHz\n", nProcessor, g_asProcessorDescs[nProcessor].pi_nBusSpeed / 1000000, ( g_asProcessorDescs[nProcessor].pi_nBusSpeed / 100 ) % 10000, g_asProcessorDescs[nProcessor].pi_nCoreSpeed / 1000000, ( g_asProcessorDescs[nProcessor].pi_nCoreSpeed / 100 ) % 10000 );
 }
 
 /*****************************************************************************
@@ -441,8 +444,8 @@ static void install_trampoline( char *pBuffer )
 
 	psCfg->tc_nKernelEntry = ( uint32 )ap_entry_proc;
 	psCfg->tc_nKernelStack = ( ( uint32 )kmalloc( 4096, MEMF_KERNEL ) ) + 4092;
-	psCfg->tc_nKernelDS = 0x18;
-	psCfg->tc_nKernelCS = 0x08;
+	psCfg->tc_nKernelDS = DS_KERNEL;
+	psCfg->tc_nKernelCS = CS_KERNEL;
 	psCfg->tc_nGdt = ( uint32 )g_sSysBase.ex_GDT;	/* Pointer to global descriptor table */
 }
 
@@ -1041,7 +1044,7 @@ void smp_boot_cpus( void )
 			g_anLogicToRealID[nID++] = i;
 		}
 	}
-	printk( "Total of %d processors activated (%lu.%02lu BogoMIPS).\n", nCPUCount + 1, ( nBogoSum + 2500 ) / 500000, ( ( nBogoSum + 2500 ) / 5000 ) % 100 );
+	printk( "Total of %d processors activated (%lu.%02lu BogoMIPS).\n", nCPUCount + 1, nBogoSum / ( 500000 / INT_FREQ ), ( nBogoSum / ( 5000 / INT_FREQ ) ) % 100 );
 	g_bSmpActivated = true;
 	g_nActiveCPUCount = nCPUCount + 1;
 }

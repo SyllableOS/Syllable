@@ -37,7 +37,7 @@
 #include "inc/global.h"
 #include "inc/smp.h"
 
-#define	INT_FREQ	1000
+//#define INT_FREQ 1000		// moved to "inc/pit_timer.h"
 
 int g_bNeedSchedule;		/* If true the scheduler will be called when returning from syscall     */
 
@@ -432,7 +432,7 @@ uint32 GetCMOSTime( void )
 	sys_SetTime( &sTime );
 	g_sSysBase.ex_nBootTime = g_sSysBase.ex_nRealTime;
 
-	printk( "TIME : %ld-%ld-%ld %ld:%ld:%ld\n", day, mon, year, hour, min, sec );
+	printk( "TIME : %02ld-%02ld-%04ld %02ld:%02ld:%02ld\n", day, mon, year, hour, min, sec );
 
 
 	a = 10000000000LL;

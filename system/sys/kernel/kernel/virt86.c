@@ -200,7 +200,7 @@ void handle_v86_fault( Virtual86Regs_s * regs, uint32 nErrorCode )
 			return;
 			/* need this to avoid a fallthrough */
 		default:
-			printk( "ERROR : unknown v86 32 bit intruction %x\n", nInst );
+			printk( "ERROR : unknown v86 32 bit instruction %x\n", nInst );
 			return_to_32bit( regs, -EFAULT );
 		}
 
@@ -251,15 +251,15 @@ void handle_v86_fault( Virtual86Regs_s * regs, uint32 nErrorCode )
 
 		/* sti */
 	case 0xfb:
-		/* The interrupts should actualy be restored after the NEXT instrucion!
-		 * Hope this works. As long as not any DOS/BIOS code swapp the stack
+		/* The interrupts should actually be restored after the NEXT instruction!
+		 * Hope this works. As long as no DOS/BIOS code swaps the stack,
 		 * nothing bad should happen.
 		 */
 		regs->eip = ( regs->eip + 1 ) & 0xffff;
 		regs->eflags |= EFLG_IF;
 		return;
 	default:
-		printk( "ERROR : unknown v86 16 bit intruction %x\n", nInst );
+		printk( "ERROR : unknown v86 16 bit instruction %x\n", nInst );
 		return_to_32bit( regs, -EFAULT );
 	}
 }
@@ -303,11 +303,11 @@ static int do_call_v86( Virtual86Struct_s * psState, SysCallRegs_s * psCallRegs 
 	atomic_inc( &psThread->tr_nInV86 );
 	while ( get_processor_id() != g_nBootCPU )
 	{
-		printk( "do_call_v86() wrong CPU (%d), will scedule\n", get_processor_id() );
+		printk( "do_call_v86() wrong CPU (%d), will schedule\n", get_processor_id() );
 		Schedule();
 	}
 
-//      printk( "Enter v86\n" );
+      printk( "Enter v86\n" );
 
 	memcpy( &sState.regs, &psState->regs, sizeof( sState.regs ) );
 
@@ -498,6 +498,7 @@ int sys_realint( int num, struct RMREGS *rm )
 	sRegs.regs.eip = pIntVects[num] & 0xffff;
 	sRegs.regs.cs = pIntVects[num] >> 16;
 
+	printk( "sys_realint(%d) -> %04x:%04lx\n", num, sRegs.regs.cs, sRegs.regs.eip );
 
 	atomic_inc( &psThread->tr_nInV86 );
 
@@ -505,7 +506,7 @@ int sys_realint( int num, struct RMREGS *rm )
 
 	while ( get_processor_id() != g_nBootCPU )
 	{
-//    printk( "sys_call_v86() wrong CPU (%d), will scedule\n", get_processor_id() );
+//    printk( "sys_call_v86() wrong CPU (%d), will schedule\n", get_processor_id() );
 		Schedule();
 	}
 

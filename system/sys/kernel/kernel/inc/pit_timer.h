@@ -24,4 +24,6 @@
 #define	PIT_TICKS_PER_SEC	0x1234ddL
 #define	PIT_TICKS_PER_MIL	(0x1234ddL/1000)
 
+#define	INT_FREQ		1000
+
 #endif /* __F_ATHEOS_PIT_TIMER_H__ */
