@@ -1,3 +1,7 @@
+* Dec 2 2003, Henrik Isaksson *
+
+Checked in some drivers I forgot yesterday...
+
 * Dec 1 2003, Henrik Isaksson *
 
 Changed the psuedo-random number generator to a "Mersenne Twister", that
@@ -225,6 +229,7 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
 
 
 
