@@ -195,9 +195,9 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   // Add scheme delete/save
   pcHLSchemeButtons = new os::HLayoutNode("HLSchemeButtons");
   pcHLSchemeButtons->AddChild( new os::HLayoutSpacer("") );
-  pcHLSchemeButtons->AddChild( pcBSave = new os::Button(cRect, "BSave", "Save Scheme", new os::Message(M_MW_SAVE)) );
+  pcHLSchemeButtons->AddChild( pcBSave = new os::Button(cRect, "BSave", "_Save Scheme", new os::Message(M_MW_SAVE)) );
   pcHLSchemeButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f));
-  pcHLSchemeButtons->AddChild( pcBDelete = new os::Button(cRect, "BDelete", "Delete Scheme", new os::Message(M_MW_DELETE)) );
+  pcHLSchemeButtons->AddChild( pcBDelete = new os::Button(cRect, "BDelete", "D_elete Scheme", new os::Message(M_MW_DELETE)) );
   pcHLSchemeButtons->SameWidth( "BSave", "BDelete", NULL );
   pcVLColour->AddChild( pcHLSchemeButtons );
 
@@ -211,9 +211,9 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
     pcVLRoot->AddChild( new os::VLayoutSpacer("", 10.0f, 10.0f));
     pcHLButtons = new os::HLayoutNode("HLButtons");
     pcHLButtons->AddChild( new os::HLayoutSpacer(""));
-    pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", "Apply", new os::Message(M_MW_APPLY)) );
+    pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", "_Apply", new os::Message(M_MW_APPLY)) );
     pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
-    pcHLButtons->AddChild( pcBDefault = new os::Button(cRect, "BDefault", "Default", new os::Message(M_MW_DEFAULT)) );
+    pcHLButtons->AddChild( pcBDefault = new os::Button(cRect, "BDefault", "_Default", new os::Message(M_MW_DEFAULT)) );
     pcHLButtons->SameWidth( "BApply", "BDefault", NULL );
     pcVLRoot->AddChild(pcHLButtons);
   }
@@ -527,9 +527,6 @@ void ColourPreview::SetValue(int iRed, int iGreen, int iBlue)
   // And update control
   Paint(GetBounds());
 }
-
-
-
 
 
 
