@@ -30,7 +30,7 @@ packages			<Tarball names, if different from the package file name>
 ; Patching options:
 patch-config		[<Directories>]
 patch-legacy-config
-patch				<Extra patching command sequence>
+patch				<Extra patching commands>
 
 ; Don't use a separate build directory:
 no-build-dir
@@ -39,7 +39,7 @@ no-build-dir
 ; <configure>
 ; [<configure-vars>] <configure-cmd> [<configure-args>] [<configure-options>]
 
-configure			<Configuration command sequence>
+configure			<Configuration commands>
 
 ; Extra variables for configure:
 configure-vars		VAR='value'
@@ -74,7 +74,7 @@ install-tree		<Extra subdirectories to create>
 ; <install>
 ; make [<install-prefix>] <install-targets>
 
-install				<Installation command sequence>
+install				<Installation commands>
 
 ; Non-standard install prefix option:
 install-prefix		prefix=
@@ -85,8 +85,6 @@ install-prefix		prefix=
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
 ; Links to create:
 ;links
-	<Source> <Destination>
-	<Destination>
-		<Source>
-; Extra files to pack:
-distro-files		/bin/link
+;	<Source> <Destination>
+;	<Destination>
+;		<Source>
