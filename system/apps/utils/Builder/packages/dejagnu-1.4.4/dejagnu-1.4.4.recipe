@@ -10,10 +10,6 @@ needs
 	expect >= 5.42.1
 
 patch-config
-configure-options
-;	--with-tclinclude=../tcl-8.4.9/generic
-;	--with-tcl=/usr/tcl/lib
-
 no-build-dir
 
 test-targets		check
