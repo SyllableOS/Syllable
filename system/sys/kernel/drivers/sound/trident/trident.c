@@ -2043,6 +2043,7 @@ static int trident_ac97_init(struct trident_card *card)
 	}
 
 	for (num_ac97 = 0; num_ac97 < NR_AC97; num_ac97++) {
+               char* devname;
 		if ((codec = kmalloc(sizeof(struct ac97_codec), MEMF_KERNEL)) == NULL)
 			return -ENOMEM;
 		memset(codec, 0, sizeof(struct ac97_codec));
@@ -2061,15 +2062,24 @@ static int trident_ac97_init(struct trident_card *card)
 			codec->codec_write = trident_ac97_set;
 		}
 	
-		if (ac97_probe_codec(codec) == 0)
+               if (ac97_probe_codec(codec) == 0) {
+                       kfree(codec);
 			break;
+               }
 
-		if( create_device_node( card->nDeviceID, card->pci_dev->nHandle, "sound/trident/mixer/0", &trident_mixer_fops, codec ) < 0 ) {
+               if ((devname = kmalloc(30,MEMF_KERNEL)) == NULL) {
+                       kfree(codec); return -ENOMEM;
+               }
+               strcpy(devname,"sound/trident/mixer/0");
+               devname[strlen(devname)-1] = '0'+num_ac97;
+
+               if( create_device_node( card->nDeviceID, card->pci_dev->nHandle, devname, &trident_mixer_fops, codec ) < 0 ) {
 			printk( "trident: failed to create mixer node \n");
-			kfree(codec);
+                       kfree(codec); kfree(devname);
 			break;
 		}
 
+               kfree(devname); /* last component is copied and freed in vfs/dev.c */
 		card->ac97_codec[num_ac97] = codec;
 
 		/* if there is no secondary codec at all, don't probe any more */
