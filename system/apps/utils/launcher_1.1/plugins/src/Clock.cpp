@@ -249,6 +249,7 @@ LauncherClock::LauncherClock( string zName, LauncherMessage *pcPrefs ) : View( R
 	m_pcDDTimeFormat->AppendItem( "%h:%m:%s %d/%M" );
 	m_pcDDTimeFormat->AppendItem( "%h:%m %d/%M/%y" );
 	m_pcDDTimeFormat->AppendItem( "%h:%m:%s %d/%M/%y" );
+	m_pcDDTimeFormat->AppendItem( "%h:%m:%s %M/%d/%y" );
 	pcRoot->AddChild( m_pcDDTimeFormat );
 
 	m_pcPrefsLayout = new LayoutView( Rect( ), "clock_prefs_layout", pcRoot );
@@ -418,5 +419,6 @@ Point LauncherClock::GetPreferredSize( bool bLargest ) const
 }
 
 //*************************************************************************************
+
 
 
