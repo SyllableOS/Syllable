@@ -193,7 +193,7 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 	
 		if( id == CODEC_ID_MPEG1VIDEO )
 			m_sDecodeContext.flags |= CODEC_FLAG_TRUNCATED;
-		if( avcodec_open( &m_sDecodeContext, psCodec ) < 0 )
+		if( psCodec == NULL || avcodec_open( &m_sDecodeContext, psCodec ) < 0 )
 		{
 			cout<<"Error while opening codec "<<sFormat.zName.c_str()<<endl;
 			return( -1 );
@@ -608,6 +608,7 @@ extern "C"
 	}
 
 }
+
 
 
 

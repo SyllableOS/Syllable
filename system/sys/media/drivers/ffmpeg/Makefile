@@ -22,7 +22,7 @@ $(OBJDIR):
 
 $(OBJDIR)/ffmpeg.so: $(OBJS)
 	make -C ffmpeg
-	gcc -shared -Xlinker "-soname=ffmpeg.so" $(OBJS) -lstdc++ -latheos -lmedia -lavformat -Lffmpeg/libavcodec -Lffmpeg/libavformat -lavcodec -L/usr/lib/ -o $(OBJDIR)/ffmpeg.so
+	gcc -shared -Xlinker "-soname=ffmpeg.so" $(OBJS) -lstdc++ -lsyllable -lmedia -lavformat -Lffmpeg/libavcodec -Lffmpeg/libavformat -lavcodec -L/usr/lib/ -o $(OBJDIR)/ffmpeg.so
 
 
 deps:
@@ -40,6 +40,7 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*
 
 -include $(OBJDIR)/*.d
+
 
 
 

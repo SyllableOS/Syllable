@@ -21,7 +21,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/cdrom.so: $(OBJS)
-	gcc -shared -Xlinker "-soname=cdrom.so" $(OBJS) -lstdc++ -latheos -lmedia -L/usr/lib/ -o $(OBJDIR)/cdrom.so
+	gcc -shared -Xlinker "-soname=cdrom.so" $(OBJS) -lstdc++ -lsyllable -lmedia -L/usr/lib/ -o $(OBJDIR)/cdrom.so
 
 
 deps:
@@ -39,6 +39,7 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*
 
 -include $(OBJDIR)/*.d
+
 
 
 

@@ -21,7 +21,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/raw.so: $(OBJS)
-	gcc -shared -Xlinker "-soname=raw.so" $(OBJS) -lstdc++ -latheos -lmedia -o $(OBJDIR)/raw.so
+	gcc -shared -Xlinker "-soname=raw.so" $(OBJS) -lstdc++ -lsyllable -lmedia -o $(OBJDIR)/raw.so
 
 
 deps:
@@ -39,6 +39,7 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*
 
 -include $(OBJDIR)/*.d
+
 
 
 

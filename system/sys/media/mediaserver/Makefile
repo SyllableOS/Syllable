@@ -21,7 +21,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/mediaserver: $(OBJS)
-	gcc  $(OBJS) -lstdc++ -latheos -lmedia -o mediaserver
+	gcc  $(OBJS) -lstdc++ -lsyllable -lmedia -o mediaserver
 
 deps:
 
@@ -38,6 +38,7 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d mediaserver
 
 -include $(OBJDIR)/*.d
+
 
 
 

@@ -21,7 +21,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/videobitmap.so: $(OBJS)
-	gcc -shared -Xlinker "-soname=videobitmap.so" $(OBJS) -lstdc++ -latheos -lmedia -L/usr/lib/ -o $(OBJDIR)/videobitmap.so
+	gcc -shared -Xlinker "-soname=videobitmap.so" $(OBJS) -lstdc++ -lsyllable -lmedia -L/usr/lib/ -o $(OBJDIR)/videobitmap.so
 
 
 deps:
@@ -39,6 +39,7 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*
 
 -include $(OBJDIR)/*.d
+
 
 
 

@@ -21,7 +21,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/videooverlay.so: $(OBJS)
-	gcc -shared -Xlinker "-soname=videooverlay.so" $(OBJS) -lstdc++ -latheos -lmedia -L/usr/lib/ -o $(OBJDIR)/videooverlay.so
+	gcc -shared -Xlinker "-soname=videooverlay.so" $(OBJS) -lstdc++ -lsyllable -lmedia -L/usr/lib/ -o $(OBJDIR)/videooverlay.so
 
 
 deps:
@@ -39,6 +39,7 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*
 
 -include $(OBJDIR)/*.d
+
 
 
 

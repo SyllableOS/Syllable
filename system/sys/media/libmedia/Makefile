@@ -23,7 +23,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/$(LIBNAME): $(OBJS)
-	gcc -shared -Xlinker "-soname=$(LIBNAME)" $(OBJS) -lstdc++ -lm -latheos -o $(OBJDIR)/$(LIBNAME)
+	gcc -shared -Xlinker "-soname=$(LIBNAME)" $(OBJS) -lstdc++ -lm -lsyllable -o $(OBJDIR)/$(LIBNAME)
 
 deps:
 
@@ -53,6 +53,7 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d $(OBJDIR)/$(LIBNAME)
 
 -include $(OBJDIR)/*.d
+
 
 
 

@@ -21,7 +21,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/oss.so: $(OBJS)
-	gcc -shared -Xlinker "-soname=oss.so" $(OBJS) -lstdc++ -latheos -lmedia -L/usr/lib/ -o $(OBJDIR)/oss.so
+	gcc -shared -Xlinker "-soname=oss.so" $(OBJS) -lstdc++ -lsyllable -lmedia -L/usr/lib/ -o $(OBJDIR)/oss.so
 
 
 deps:
@@ -39,6 +39,8 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*
 
 -include $(OBJDIR)/*.d
+
+
 
 
 

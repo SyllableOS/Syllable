@@ -1,4 +1,4 @@
-/*  RAW Codec plugin
+/*  Ogg Vorbis RAW Codec plugin
  *  Copyright (C) 2003 Arno Klenke
  *
  *  This library is free software; you can redistribute it and/or
@@ -45,6 +45,7 @@ public:
 private:
 	bool			m_bEncode;
 	os::MediaFormat_s m_sFormat;
+	os::MediaFormat_s m_sExternalFormat;
 };
 
 RAWCodec::RAWCodec()
@@ -57,7 +58,7 @@ RAWCodec::~RAWCodec()
 
 os::String RAWCodec::GetIdentifier()
 {
-	return( "RAW Codec" );
+	return( "Ogg Vorbis Raw Codec" );
 }
 
 
@@ -68,10 +69,10 @@ os::View* RAWCodec::GetConfigurationView()
 
 status_t RAWCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExternal, bool bEncode )
 {
-	if( sFormat.zName.str() != "Raw Audio" && sFormat.zName.str() != "Raw Video" )
+	if( sFormat.zName.str() != "Ogg Vorbis Raw Audio" )
 		return( -1 );
-	
-	if( sExternal.zName.str() != "Raw Audio" && sExternal.zName.str() != "Raw Video" )
+		
+	if( sExternal.zName.str() != "Raw Audio"  )
 		return( -1 );
 		
 	if( !bEncode )
@@ -79,19 +80,15 @@ status_t RAWCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExternal,
 		/* Check decoding parameters */
 		if( sExternal.nSampleRate !=0 || sExternal.nChannels != 0
 		|| sExternal.nWidth != 0 || sExternal.nHeight != 0 ) {
-			cout<<"Format conversion not supported by the RAW codec"<<endl;
+			cout<<"Format conversion not supported by the Ogg Vorbis RAW codec"<<endl;
 			return( -1 );
 		}
 		m_sFormat = sFormat;
+		m_sExternalFormat = sFormat;
+		m_sExternalFormat.zName = "Raw Audio";
 	} else
 	{
-		/* Check encoding parameters */
-		if( sFormat.nSampleRate !=0 || sFormat.nChannels != 0
-		|| sFormat.nWidth != 0 || sFormat.nHeight != 0 ) {
-			cout<<"Format conversion not supported by the RAW codec"<<endl;
-			return( -1 );
-		}
-		m_sFormat = sExternal;
+		return( -1 );		
 	}
 	m_bEncode = bEncode;
 	
@@ -109,7 +106,7 @@ os::MediaFormat_s RAWCodec::GetInternalFormat()
 
 os::MediaFormat_s RAWCodec::GetExternalFormat()
 {
-	return( m_sFormat );		
+	return( m_sExternalFormat );		
 }
 
 status_t RAWCodec::CreateAudioOutputPacket( os::MediaPacket_s* psOutput )
@@ -203,6 +200,11 @@ extern "C"
 	}
 
 }
+
+
+
+
+
 
 
 
