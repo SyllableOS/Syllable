@@ -223,7 +223,8 @@ struct ATA_cmd_t
 	int nError;
 	ATAPI_sense_s sSense; /* For atapi devices only */
 	bool bCanDMA;	/* Indicate if the command is DMA'able */
-	
+	int nDirection;	/* Currently ATAPI only; indicate direction of data transfer */
+
 	uint8* pTransferBuffer;
 	uint32 nTransferLength;
 	
@@ -266,6 +267,7 @@ struct ATA_port_t
 	int nCable; /* ATA_cable value (controller) */
 	int nDevice; /* ATA_device value (busmanager) */
 	char zDeviceName[41]; /* ATA device name (busmanager) */
+	int nClass;	/* ATAPI device class (busmanager) */
 	
 	bool bConfigured; /* device is configured (busmanager/controller) */
 	

@@ -53,6 +53,9 @@ extern "C" {
 /* CD-DA */
 #define CD_READ_CDDA		MKCDIOCTL(0x4001)	/* Read a single CD-DA block */
 
+/* Direct packet interface (E.g. cdrecord) */
+#define CD_PACKET_COMMAND	MKCDIOCTL(0x5001)	/* Send a raw packet command to the drive */
+
 /* Disc specific */
 
 /* The leadout track is always 0xAA, regardless of # of tracks on disc */
@@ -60,8 +63,8 @@ extern "C" {
 
 /* Audio discs */
 #define CD_FRAMESIZE	2048	/* Sector size for Mode 1 & 2 discs */
-#define CD_SECS              60 /* seconds per minute */
-#define CD_FRAMES            75 /* frames per second */
+#define CD_SECS              60	/* seconds per minute */
+#define CD_FRAMES            75	/* frames per second */
 #define CD_MSF_OFFSET       150 /* MSF numbering offset of first frame */
 
 #define CD_CDDA_FRAMESIZE	2352
@@ -139,6 +142,8 @@ struct cdrom_audio_track
 	uint32 lba_stop;
 };
 
+typedef struct cdrom_audio_track cdrom_audio_track_s;
+
 struct cdda_block
 {
 	uint32 nBlock;
@@ -146,7 +151,36 @@ struct cdda_block
 	uint32 nSize;
 };
 
-typedef struct cdrom_audio_track cdrom_audio_track_s;
+struct cdrom_packet_cmd
+{
+	uint8 nCommand[12];
+	int nCommandLength;
+	uint8 *pnData;
+	int nDataLength;
+	uint8 *pnSense;
+	int nSenseLength;
+	unsigned int nDirection;
+	unsigned int nFlags;
+	uint8 nSense;
+	uint8 nError;
+};
+
+typedef struct cdrom_packet_cmd cdrom_packet_cmd_s;
+
+enum direction
+{
+	NO_DATA = 0,
+	WRITE,	/* TO device */
+	READ	/* FROM device */
+};
+
+/* Return values from atapi_check_sense() */
+enum check_sense
+{
+	SENSE_OK,
+	SENSE_RETRY,
+	SENSE_FATAL
+};
 
 #ifdef __cplusplus
 }

@@ -362,6 +362,12 @@ status_t atapi_drive_ioctl( void* pNode, void* pCookie, uint32 nCommand, void* p
 			break;
 		}
 
+		case CD_PACKET_COMMAND:
+		{
+			nError = atapi_do_packet_command( psDev, (cdrom_packet_cmd_s*)pArgs );
+			break;
+		}
+
 		default:
 		{
 			kerndbg( KERN_WARNING, "atapi_drive_ioctl() unknown command %ld\n", nCommand );

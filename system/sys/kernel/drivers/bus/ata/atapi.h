@@ -36,6 +36,8 @@
 #define ATAPI_START_STOP_UNIT		0x1b
 #define ATAPI_TEST_UNIT_READY	    0x00
 #define ATAPI_READ_CD				0xbe
+#define ATAPI_WRITE_10				0x2a
+#define ATAPI_XPWRITE_10			0x51
 
 /* Sense keys */
 #define ATAPI_NO_SENSE                0x00
@@ -78,15 +80,25 @@
 	#define	ATAPI_MEDIUM_TRAY_OPEN			0x02
 	#define	ATAPI_MEDIUM_LOADABLE			0x03
 
-/* Return values from atapi_check_sense() */
-enum check_sense{
-	SENSE_OK,
-	SENSE_RETRY,
-	SENSE_FATAL
-};
+/* ATAPI (SCSI) device classes */
+#define ATAPI_CLASS_DAD				0x00	/* Direct Access Device (Disk) */
+#define ATAPI_CLASS_SEQUENTIAL		0x01	/* Sequential-access device (Tape) */
+#define ATAPI_CLASS_PRINTER			0x02	/* Printer */
+#define ATAPI_CLASS_PROC			0x03	/* Processor */
+#define ATAPI_CLASS_WORM			0x04	/* Write-Once device */
+#define ATAPI_CLASS_CDVD			0x05	/* CD-ROM/DVD-ROM */
+#define ATAPI_CLASS_SCANNER			0x06	/* Optical scanner */
+#define ATAPI_CLASS_OPTI_MEM		0x07	/* Optical memory device */
+#define ATAPI_CLASS_CHANGER			0x08	/* Medium changer (E.g. a tape robot) */
+#define ATAPI_CLASS_COMMS			0x09	/* Communications device */
+#define ATAPI_CLASS_ARRAY			0x0c	/* Array Controller E.g. RAID */
+#define ATAPI_CLASS_ENCLOSURE		0x0d	/* Enclosure services device E.g. fan */
+#define ATAPI_CLASS_REDUCED_BLK		0x0e	/* Reduced block command device */
+#define ATAPI_CLASS_OPTI_CARD		0x0f	/* Optical card reader/writer */
+#define ATAPI_CLASS_RESERVED		0x1f	/* Reserved/Unknown device */
 
 /* Functions used by higher ATAPI layers */
-status_t atapi_check_sense( ATAPI_device_s* psDev, ATAPI_sense_s *psSense );
+status_t atapi_check_sense( ATAPI_device_s* psDev, ATAPI_sense_s *psSense, bool bQuiet );
 status_t atapi_unit_not_ready( ATAPI_device_s* psDev, ATAPI_sense_s *psSense );
 int atapi_drive_request_sense( ATAPI_device_s* psDev, ATAPI_sense_s *psSense );
 status_t atapi_read_capacity( ATAPI_device_s* psDev, unsigned long* pnCapacity );
@@ -101,6 +113,7 @@ status_t atapi_stop_audio( ATAPI_device_s *psDev );
 status_t atapi_get_playback_time( ATAPI_device_s *psDev, cdrom_msf_s *pnTime );
 status_t atapi_do_read( ATAPI_device_s *psDev, uint64 nBlock, int nSize );
 status_t atapi_do_cdda_read( ATAPI_device_s *psDev, uint64 nBlock, int nSize );
+status_t atapi_do_packet_command( ATAPI_device_s *psDev, cdrom_packet_cmd_s *psCmd );
 
 /* Inline functions */
 static inline uint32 be32_to_cpu(uint32 be_val)

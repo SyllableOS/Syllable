@@ -25,7 +25,7 @@
 
 #include "ata.h"
 #include "ata_private.h"
-
+#include "atapi.h"
 
 extern bool g_bEnableLBA48bit;
 extern bool g_bEnablePIO32bit;
@@ -190,7 +190,7 @@ void ata_probe_port( ATA_port_s* psPort )
 	uint8 nID[512];
 	char zNode[10];
 	ATA_identify_info_s* psID;
-	
+
 	if( psPort->bConfigured )
 		return;
 	
@@ -223,7 +223,6 @@ void ata_probe_port( ATA_port_s* psPort )
 		( nLbaMid == 0x69 && nLbaHigh == 0x96 ) )
 		{
 			psPort->nDevice = ATA_DEV_ATAPI;
-			kerndbg( KERN_INFO, "ATAPI device connected on %s cable\n", g_zCable[psPort->nCable] );
 		} else {
 			psPort->nDevice = ATA_DEV_NONE;
 			psPort->nCable = ATA_CABLE_NONE;
@@ -236,10 +235,10 @@ void ata_probe_port( ATA_port_s* psPort )
 	
 	if( psPort->nDevice == ATA_DEV_UNKNOWN )
 		goto end;
-		
+
 	/* Select drive */
 	psPort->sOps.select( psPort, 0 );
-	
+
 	if( ata_io_wait( psPort, ATA_STATUS_BUSY, 0 ) != 0 )
 		goto err_dev_data;
 		
@@ -248,15 +247,96 @@ void ata_probe_port( ATA_port_s* psPort )
 		ATA_WRITE_REG( psPort, ATA_REG_COMMAND, ATAPI_CMD_IDENTIFY )
 	else
 		ATA_WRITE_REG( psPort, ATA_REG_COMMAND, ATA_CMD_IDENTIFY )
-		
+
+	/* Wait for the drive to respond */
+	if( ata_io_wait( psPort, ATA_STATUS_DRQ|ATA_STATUS_BUSY, ATA_STATUS_DRQ ) != 0 )
+		goto err_dev_data;
+
 	if( ata_io_read( psPort, &nID[0], 512 ) != 512 )
 		goto err_dev_data;
 	
 	psID = (ATA_identify_info_s*)&nID[0];
-	
+
 	/* Get drive name */
 	extract_model_id( psPort->zDeviceName, psID->model_id );
-	
+
+	/* If it is an ATAPI device, find out what type */
+	if( psPort->nDevice == ATA_DEV_ATAPI )
+	{
+		char *zAtapiDev;
+
+		psPort->nClass = ((psID->configuration & 0xf00) >> 8);
+		switch( psPort->nClass )
+		{
+			case ATAPI_CLASS_DAD:
+				zAtapiDev = "disk device";
+				break;
+
+			case ATAPI_CLASS_SEQUENTIAL:
+				zAtapiDev = "tape device";
+				break;
+
+			case ATAPI_CLASS_PRINTER:
+				zAtapiDev = "printer";
+				break;
+
+			case ATAPI_CLASS_PROC:
+				zAtapiDev = "processor";
+				break;
+
+			case ATAPI_CLASS_WORM:
+				zAtapiDev = "WORM device";
+				break;
+
+			case ATAPI_CLASS_CDVD:
+				zAtapiDev = "CD-ROM/DVD-ROM";
+				break;
+
+			case ATAPI_CLASS_SCANNER:
+				zAtapiDev = "scanner";
+				break;
+
+			case ATAPI_CLASS_OPTI_MEM:
+				zAtapiDev = "optical memory";
+				break;
+
+			case ATAPI_CLASS_CHANGER:
+				zAtapiDev = "media changer";
+				break;
+
+			case ATAPI_CLASS_COMMS:
+				zAtapiDev = "communications device";
+				break;
+
+			case ATAPI_CLASS_ARRAY:
+				zAtapiDev = "array controller";
+				break;
+
+			case ATAPI_CLASS_ENCLOSURE:
+				zAtapiDev = "enclosure device";
+				break;
+
+			case ATAPI_CLASS_REDUCED_BLK:
+				zAtapiDev = "reduced block command device";
+				break;
+
+			case ATAPI_CLASS_OPTI_CARD:
+				zAtapiDev = "optical card reader/writer";
+				break;
+
+			default:
+			{
+				psPort->nClass = ATAPI_CLASS_RESERVED;
+				zAtapiDev = "unknown device";
+			}
+		}
+		kerndbg( KERN_INFO, "ATAPI %s connected on %s cable\n", zAtapiDev, g_zCable[psPort->nCable] );
+
+		/* Only CD-ROM/DVD-ROM devices are currently supported */
+		if( psPort->nClass != ATAPI_CLASS_CDVD )
+			goto err_id;
+	}
+
 	/* Get node name */
 	if( psPort->nDevice == ATA_DEV_ATAPI )
 		sprintf( zNode, "cd%c", 'a' + psPort->nID );

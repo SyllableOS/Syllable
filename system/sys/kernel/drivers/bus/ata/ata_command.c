@@ -148,7 +148,8 @@ void ata_cmd_atapi( ATA_cmd_s* psCmd )
 	uint8 nControl;
 	uint8 nStatus;
 	uint16* pCmd = (uint16*)&psCmd->nCmd[0];
-	
+	int nDirection = psCmd->nDirection;
+
 	LOCK( psPort->hPortLock );
 	
 again:
@@ -156,7 +157,10 @@ again:
 	psCmd->nError = -EIO;
 
 	/* Change DMA flag if necessary */
-	if( psPort->nCurrentSpeed >= ATA_SPEED_DMA && psCmd->bCanDMA ) {
+	if( psPort->nCurrentSpeed >= ATA_SPEED_DMA &&
+		psCmd->bCanDMA &&
+		nDirection != NO_DATA )
+	{
 		kerndbg(KERN_DEBUG,"Enabling DMA\n");
 		bDMA = true;
 	}
@@ -188,8 +192,13 @@ again:
 	{
 		status_t nReturn = -1;
 dma_again:
-		//printk( "Starting DMA command...\n" );	
-		nReturn = psPort->sOps.prepare_dma_read( psPort, (uint8*)pBuffer, nLen );
+		//printk( "Starting DMA command...\n" );
+		if( READ == nDirection )
+		{
+			nReturn = psPort->sOps.prepare_dma_read( psPort, (uint8*)pBuffer, nLen );
+		}
+		else
+			nReturn = psPort->sOps.prepare_dma_write( psPort, (uint8*)pBuffer, nLen );
 	
 		if( nReturn != 0 && nRetry++ >= 3 ) {
 			kerndbg( KERN_FATAL, "Failed to prepare the dma table\n" );
@@ -226,6 +235,9 @@ dma_again:
 	
 	if( nStatus & ATA_STATUS_DRQ )
 	{
+		bigtime_t nTime;
+		bool bTimedout;
+
 		/* Transfer command */
 		if( psPort->bPIO32bit )
 		{
@@ -239,11 +251,8 @@ dma_again:
 		kerndbg( KERN_DEBUG_LOW, "ATAPI command 0x%04x written. Length: %i\n", psCmd->nCmd[0], (int)psCmd->nTransferLength );
 
 		/* Transfer data */
-		if( psCmd->nTransferLength > 0 )
+		if( psCmd->nTransferLength > 0 && nDirection != NO_DATA )
 		{
-			bigtime_t nTime;
-			bool bTimedout;
-
 			if( bDMA )
 			{
 				status_t nReturn = -1;
@@ -259,11 +268,24 @@ dma_again:
 				goto end;
 			}
 
-			nTime = get_system_time();
-			bTimedout = true;
-
-			/* Wait for BUSY low, DRQ or ERR high */
-			while( get_system_time() - nTime < ATA_CMD_TIMEOUT )
+			/* Wait for BUSY low, DRQ or ERR high.
+			 *
+			 * This is an infinite loop; if the drive doesn't do what we expect
+			 * we will hang forever here.  In previous versions of this driver
+			 * this loop could timeout:
+			 *
+			 * while( get_system_time() - nTime < ATA_CMD_TIMEOUT )
+			 *
+			 * The only problem with this is that some drives take a very long
+			 * time to clear BUSY.  This is especially a problem with E.g. cdrecord
+			 * where some commands will not drop BUSY for nearly half a second.
+			 * Making this (and a few others) infinite loops ensures that we wait
+			 * however long is required and the operation completes as normal,
+			 * but we run the slim risk of a drive not doing what we expect and
+			 * getting stuck here.  If that happens to anyone we'll have to
+			 * re-evalute using a timeout for these loops.
+			 */
+			while( true )
 			{
 				ATA_READ_REG( psPort, ATA_REG_STATUS, nStatus )
 
@@ -271,42 +293,50 @@ dma_again:
 				if( !( nStatus & ATA_STATUS_BUSY ) && 
 				   ( ( nStatus & ATA_STATUS_DRQ ) || 
 				     ( nStatus & ATA_STATUS_ERROR ) ) )
-				{
-					bTimedout = false;
 					break;
-				}
 			}
 
 			kerndbg( KERN_DEBUG_LOW, "ATA_REG_STATUS is 0x%04x\n", nStatus );
 
-			if( false == bTimedout )
+			if( nStatus & ATA_STATUS_ERROR )
 			{
-				if( nStatus & ATA_STATUS_ERROR )
-				{
-					kerndbg( KERN_DEBUG_LOW, "ATA_STATUS_ERROR is high.\n");
+				uint8 nLow, nHigh;
+				int nCurrent;
 
-					ATA_READ_REG( psPort, ATA_REG_ERROR, psCmd->nError );
-					psCmd->sSense.sense_key = psCmd->nError >> 4;
-					goto err;
-				}
-				else
-				{
-					int nBytesLeft = nLen;
+				kerndbg( KERN_DEBUG_LOW, "ATA_STATUS_ERROR is high.\n");
 
-					while( nBytesLeft > 0 )
+				ATA_READ_REG( psPort, ATA_REG_ERROR, psCmd->nError );
+				psCmd->sSense.sense_key = psCmd->nError >> 4;
+
+				/* KV: Let's see if the drive still wants to transfer data.. */
+				ATA_READ_REG( psPort, ATAPI_REG_COUNT_LOW, nLow )
+				ATA_READ_REG( psPort, ATAPI_REG_COUNT_HIGH, nHigh )
+				nCurrent = nLow + (nHigh * 256);
+
+				kerndbg( KERN_DEBUG_LOW, "%i bytes available (Low %i High %i)\n", nCurrent, nLow, nHigh );
+
+				goto err;
+			}
+			else
+			{
+				int nBytesLeft = nLen;
+
+				while( nBytesLeft > 0 )
+				{
+					uint8 nLow, nHigh;
+					int nCurrent;
+
+					/* Wait for DRQ */
+					if( ata_io_wait_alt( psPort, ATA_STATUS_DRQ, ATA_STATUS_DRQ ) != 0 )
+						goto err;
+
+					if( READ == nDirection )
 					{
-						uint8 nLow, nHigh;
-						int nCurrent;
-
-						/* Wait for DRQ */
-						if( ata_io_wait_alt( psPort, ATA_STATUS_DRQ, ATA_STATUS_DRQ ) != 0 )
-							goto err;
-
 						/* Read position */
 						ATA_READ_REG( psPort, ATAPI_REG_COUNT_LOW, nLow )
 						ATA_READ_REG( psPort, ATAPI_REG_COUNT_HIGH, nHigh )
 						nCurrent = nLow + (nHigh * 256);
-					
+
 						kerndbg( KERN_DEBUG_LOW, "%i bytes available (Low %i High %i)\n", nCurrent, nLow, nHigh );
 
 						if( nCurrent > 0 )
@@ -387,36 +417,76 @@ dma_again:
 							goto err;
 						}
 					}
-
-					/* Wait for command completion; BUSY & DRQ low, DRDY high */
-					bool bTimedout = true;
-					nTime = get_system_time();
-					while( get_system_time() - nTime < ATA_CMD_TIMEOUT )
+					else	/* WRITE == nDirection */
 					{
-						ATA_READ_REG( psPort, ATA_REG_STATUS, nStatus )
-						/* Wait for BUSY & DRQ to clear, DRDY or ERROR to be set */
-						if( ( !( nStatus & ATA_STATUS_BUSY ) && !( nStatus & ATA_STATUS_DRQ ) ) && 
-						    ( nStatus & ATA_STATUS_DRDY ) )
+						/* Get transfer chunk size */
+						ATA_READ_REG( psPort, ATAPI_REG_COUNT_LOW, nLow )
+						ATA_READ_REG( psPort, ATAPI_REG_COUNT_HIGH, nHigh )
+						nCurrent = nLow + (nHigh * 256);
+
+						kerndbg( KERN_DEBUG_LOW, "Device requested %i bytes (Low %i High %i)\n", nCurrent, nLow, nHigh );
+
+						if( nCurrent > 0 )
 						{
-							bTimedout = false;
-							break;
-						}
-					}
-					if( bTimedout )
-						kerndbg( KERN_DEBUG, "Timedout waiting for the command to complete.\n");
+							if( nCurrent > nLen )
+								nCurrent = nLen;
+
+							/* Only perform a 32bit PIO transfer if the drive supports it *and*
+							   the data is an even muliple */
+							if( psPort->bPIO32bit && ( nCurrent % 4 == 0 ) )
+							{
+								uint32* pBuffer32 = (uint32*)pBuffer;
+								for( i = 0; i < nCurrent / 4; i++, pBuffer32++ )
+									ATA_WRITE_REG32( psPort, ATA_REG_DATA, *pBuffer32 )		
+								pBuffer += nCurrent / 2;
+
+								kerndbg( KERN_DEBUG_LOW, "PIO32 data transfer finished, %i bytes transfered\n", i * 4 );
+							}
+							else
+							{
+								for( i = 0; i < nCurrent / 2; i++, pBuffer++ )
+									ATA_WRITE_REG16( psPort, ATA_REG_DATA, *pBuffer )
+
+								kerndbg( KERN_DEBUG_LOW, "PIO16 data transfer finished, %i bytes transfered\n", i * 2 );
+							}
+
+							nBytesLeft -= nCurrent;
+						}	/* nCurrent > 0 */
+					}	/* nDirection */
 				}
+
+				/* Wait for command completion; BUSY & DRQ low, DRDY high */
+				bool bTimedout = true;
+				nTime = get_system_time();
+				while( get_system_time() - nTime < ATA_CMD_TIMEOUT )
+				{
+					ATA_READ_REG( psPort, ATA_REG_STATUS, nStatus )
+					/* Wait for BUSY & DRQ to clear, DRDY or ERROR to be set */
+					if( ( !( nStatus & ATA_STATUS_BUSY ) && !( nStatus & ATA_STATUS_DRQ ) ) && 
+					    ( nStatus & ATA_STATUS_DRDY ) )
+					{
+						bTimedout = false;
+						break;
+					}
+				}
+				if( bTimedout )
+					kerndbg( KERN_DEBUG, "Timedout waiting for the command to complete.\n");
 			}
-			else if( nLen > 0 ) {
-				kerndbg( KERN_FATAL, "Request timed out, ATA_REG_CONTROL was 0x%04x\n", nStatus );
-				goto err;
-			}
+
 			psCmd->nStatus = psCmd->nError = 0;
+
 		} else {
-			/* Command without data transfer */
-			if( ata_io_wait_alt( psPort, ATA_STATUS_BUSY, 0 ) != 0 ) {
-				goto err;
+			/* Command without data transfer.
+			 * Another infinite loop.  See the comment above */
+			while( true )
+			{
+				ATA_READ_REG( psPort, ATA_REG_ALTSTATUS, nStatus )
+
+				/* Wait for BUSY to clear */
+				if( !( nStatus & ATA_STATUS_BUSY ) )
+					break;
 			}
-			
+
 			ATA_READ_REG( psPort, ATA_REG_ERROR, psCmd->nError );
 			psCmd->sSense.sense_key = psCmd->nError >> 4;
 			

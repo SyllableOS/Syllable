@@ -33,7 +33,7 @@
  * SENSE_RETRY  The drive is in a transitional state, retry the operation.
  * SENSE_FATAL  The drive is not ready.  Stop the operation.
 */
-status_t atapi_check_sense( ATAPI_device_s* psDev, ATAPI_sense_s *psSense )
+status_t atapi_check_sense( ATAPI_device_s* psDev, ATAPI_sense_s *psSense, bool bQuiet )
 {
 	int nError;
 
@@ -73,7 +73,8 @@ status_t atapi_check_sense( ATAPI_device_s* psDev, ATAPI_sense_s *psSense )
 
 		case ATAPI_MEDIUM_ERROR:
 		{
-			kerndbg(KERN_WARNING, "ATAPI drive has reported ATAPI_MEDIUM_ERROR\n");
+			if( !bQuiet )
+				kerndbg(KERN_WARNING, "ATAPI drive has reported ATAPI_MEDIUM_ERROR\n");
 
 			/* Medium errors may be transient, so we should at least try again */
 			nError = SENSE_RETRY;
@@ -91,9 +92,10 @@ status_t atapi_check_sense( ATAPI_device_s* psDev, ATAPI_sense_s *psSense )
 
 		case ATAPI_ILLEGAL_REQUEST:
 		{
-			kerndbg(KERN_WARNING, "ATAPI drive has reported ATAPI_ILLEGAL_REQUEST\n");
+			if( !bQuiet )
+				kerndbg(KERN_WARNING, "ATAPI drive has reported ATAPI_ILLEGAL_REQUEST\n");
 
-			/* Either a drive error or someone is trying to do CD-DA on a non-CD-DA track, so give up */
+			/* May be caused by a drive error, a CD-DA error, or an unknown or bad raw packet command */
 			nError = SENSE_FATAL;
 			break;
 		}
@@ -467,6 +469,7 @@ int atapi_request_sense( ATAPI_device_s* psDev, ATAPI_sense_s *psSense )
 	/* Create and queue request sense command */
 	ata_cmd_init( &sCmd, psDev->psPort );
 
+	sCmd.nDirection = READ;
 	sCmd.pTransferBuffer = psDev->psPort->pDataBuf;
 	sCmd.nTransferLength = sizeof( ATAPI_sense_s );
 		
@@ -508,7 +511,8 @@ retry:
 
 	/* Create and queue request sense command */
 	ata_cmd_init( &sCmd, psDev->psPort );
-	
+
+	sCmd.nDirection = READ;
 	sCmd.pTransferBuffer = psDev->psPort->pDataBuf;
 	sCmd.nTransferLength = sizeof( sCap );
 		
@@ -531,7 +535,7 @@ retry:
 			goto error;
 		}
 
-		nError = atapi_check_sense( psDev, &sCmd.sSense );
+		nError = atapi_check_sense( psDev, &sCmd.sSense, false );
 		switch( nError )
 		{
 			case SENSE_OK:
@@ -599,7 +603,7 @@ retry:
 			return( -EIO );
 		}
 
-		nError = atapi_check_sense( psDev, &sCmd.sSense );
+		nError = atapi_check_sense( psDev, &sCmd.sSense, false );
 		switch( nError )
 		{
 			case SENSE_OK:
@@ -626,8 +630,7 @@ status_t atapi_do_start_stop( ATAPI_device_s* psDev, int nFlags )
 	
 	/* Create and queue request sense command */
 	ata_cmd_init( &sCmd, psDev->psPort );
-	
-	
+
 	sCmd.nCmd[0] = ATAPI_START_STOP_UNIT;
 	sCmd.nCmd[4] = nFlags;
 	
@@ -667,7 +670,8 @@ retry:
 	
 	/* Create and queue request sense command */
 	ata_cmd_init( &sCmd, psDev->psPort );
-	
+
+	sCmd.nDirection = READ;
 	sCmd.pTransferBuffer = psDev->psPort->pDataBuf;
 	sCmd.nTransferLength = buflen;
 	sCmd.nCmd[0] = ATAPI_READ_TOC_PMA_ATIP;
@@ -695,7 +699,7 @@ retry:
 			return( -EIO );
 		}
 
-		nError = atapi_check_sense( psDev, &sCmd.sSense );
+		nError = atapi_check_sense( psDev, &sCmd.sSense, false );
 		switch( nError )
 		{
 			case SENSE_OK:
@@ -909,7 +913,8 @@ status_t atapi_get_playback_time( ATAPI_device_s *psDev, cdrom_msf_s *pnTime )
 	
 	/* Create and queue request sense command */
 	ata_cmd_init( &sCmd, psDev->psPort );
-	
+
+	sCmd.nDirection = READ;
 	sCmd.pTransferBuffer = psDev->psPort->pDataBuf;
 	sCmd.nTransferLength = sizeof(posbuf);
 	
@@ -961,7 +966,8 @@ retry:
 
 	/* Prepare read command */
 	ata_cmd_init( &sCmd, psDev->psPort );
-	
+
+	sCmd.nDirection = READ;
 	sCmd.pTransferBuffer = psDev->psPort->pDataBuf;
 	sCmd.nTransferLength = nSize;
 	
@@ -992,7 +998,7 @@ retry:
 			goto error;
 		}
 
-		nError = atapi_check_sense( psDev, &sCmd.sSense );
+		nError = atapi_check_sense( psDev, &sCmd.sSense, false );
 		switch( nError )
 		{
 			case SENSE_OK:
@@ -1029,7 +1035,8 @@ retry:
 
 	/* Prepare read command */
 	ata_cmd_init( &sCmd, psDev->psPort );
-	
+
+	sCmd.nDirection = READ;
 	sCmd.pTransferBuffer = psDev->psPort->pDataBuf;
 	sCmd.nTransferLength = nSize;
 	
@@ -1062,7 +1069,7 @@ retry:
 			goto error;
 		}
 
-		nError = atapi_check_sense( psDev, &sCmd.sSense );
+		nError = atapi_check_sense( psDev, &sCmd.sSense, false );
 		switch( nError )
 		{
 			case SENSE_OK:
@@ -1078,6 +1085,104 @@ retry:
 			}
 		}
 	}
+
+	return 0;
+
+error:
+	return( -EIO );
+}
+
+status_t atapi_do_packet_command( ATAPI_device_s *psDev, cdrom_packet_cmd_s *psRawCmd )
+{
+	ATA_cmd_s sCmd;
+	int nError;
+
+retry:
+	nError = 0;
+	LOCK( psDev->hLock );
+
+	/* Prepare ATAPI command */
+	ata_cmd_init( &sCmd, psDev->psPort );
+	
+	memcpy_from_user( sCmd.nCmd, psRawCmd->nCommand, psRawCmd->nCommandLength );
+	kerndbg( KERN_DEBUG_LOW, "Raw packet command: 0x%02x\n", sCmd.nCmd[0] );
+
+	if( psRawCmd->nDataLength > 0 )
+	{
+		if( psRawCmd->nDirection == WRITE )
+		{
+			kerndbg( KERN_DEBUG, "Transfer %i bytes TO device\n", psRawCmd->nDataLength );
+			memcpy_from_user( psDev->psPort->pDataBuf, psRawCmd->pnData, psRawCmd->nDataLength );
+		}
+		else
+			kerndbg( KERN_DEBUG, "Transfer %i bytes FROM device\n", psRawCmd->nDataLength );
+	}
+	else
+		kerndbg( KERN_DEBUG, "No data to transfer\n" );
+
+	sCmd.nDirection = psRawCmd->nDirection;
+	sCmd.pTransferBuffer = psDev->psPort->pDataBuf;
+	sCmd.nTransferLength = psRawCmd->nDataLength;
+	
+	/* We can't know all possible commands which may be sent to the device but
+	   we can at least watch for a few common ones and enable DMA for them. */
+	switch( sCmd.nCmd[0] )
+	{
+		case ATAPI_READ_CD:
+		case ATAPI_WRITE_10:
+		case ATAPI_XPWRITE_10:
+			sCmd.bCanDMA = true;
+			break;
+		default:
+			sCmd.bCanDMA = false;
+	}
+
+	/* Queue and wait */
+	ata_cmd_queue( psDev->psPort, &sCmd );
+	LOCK( sCmd.hWait );
+	ata_cmd_free( &sCmd );
+
+	UNLOCK( psDev->hLock );
+
+	psRawCmd->nError = sCmd.nStatus;
+	psRawCmd->nSense = SENSE_OK;
+
+	if( sCmd.sSense.sense_key != ATAPI_NO_SENSE || sCmd.nStatus < 0 )
+	{
+		nError = atapi_request_sense( psDev, &sCmd.sSense );
+		if( nError < 0 )
+		{
+			kerndbg( KERN_PANIC, "Unable to request sense data from ATAPI device, aborting.\n" );
+			goto error;
+		}
+
+		memcpy_to_user( &psRawCmd->pnSense, &sCmd.sSense, psRawCmd->nSenseLength );
+
+		psRawCmd->nSense = nError = atapi_check_sense( psDev, &sCmd.sSense, true );
+		switch( psRawCmd->nSense )
+		{
+			case SENSE_OK:
+				break;
+			
+			case SENSE_RETRY:
+				goto retry;
+
+			case SENSE_FATAL:
+			{
+				kerndbg( KERN_DEBUG, "ATAPI device reporting fatal error, aborting.\n");
+
+				/* Dump cmd bytes */
+				kerndbg( KERN_DEBUG_LOW, "cmd data: 0x%.2x 0x%.2x 0x%.2x 0x%.2x 0x%.2x 0x%.2x 0x%.2x 0x%.2x 0x%.2x 0x%.2x 0x%.2x 0x%.2x\n",
+						sCmd.nCmd[0], sCmd.nCmd[1], sCmd.nCmd[2], sCmd.nCmd[3], 
+						sCmd.nCmd[4], sCmd.nCmd[5], sCmd.nCmd[6], sCmd.nCmd[7], 
+						sCmd.nCmd[8], sCmd.nCmd[9], sCmd.nCmd[10], sCmd.nCmd[11] );
+				goto error;
+			}
+		}
+	}
+
+	if( psRawCmd->nSense == SENSE_OK &&	psRawCmd->nDirection == READ && psRawCmd->nDataLength > 0 )
+		memcpy_to_user( psRawCmd->pnData, psDev->psPort->pDataBuf, psRawCmd->nDataLength );
 
 	return 0;
 
