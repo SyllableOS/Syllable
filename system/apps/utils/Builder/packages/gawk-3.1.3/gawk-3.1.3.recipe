@@ -1,3 +1,7 @@
-authors		Kaj de Vos
+authors			Kaj de Vos
+
+licenses		GPL
+home			www.gnu.org/software/gawk/
+
 patch-config
 documentation	README README_d/README.FIRST PROBLEMS LIMITATIONS POSIX.STD COPYING ABOUT-NLS NEWS ChangeLog FUTURES AUTHORS
