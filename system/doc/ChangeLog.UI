@@ -1,3 +1,7 @@
+* April 25 2004, Kristian Van Der Vliet *
+
+Software rendering speed improvements in ddriver.cpp, by Arno.
+
 * April 17 2004, Henrik Isaksson *
 
  - Slider

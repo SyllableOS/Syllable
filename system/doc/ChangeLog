@@ -1,3 +1,18 @@
+* April 25 2004, Kristian Van Der Vliet *
+
+ATi Radeon driver from Michael Krueger <invenies@web.de>  The driver supports all
+Radeon cards from the 7000 to the 9800 and Mobility chipsets.  9700 (and newer) and
+Mobility support is disabled by default but can be enabled with custom-modelines via.
+a config file.  The driver supports 2D accelerated drawing and video overlays.
+
+* April 25 2004, Kristian Van Der Vliet *
+
+Added a Yamaha DS-XG (DSE/DSE1) audio driver.
+
+* April 25 2004, Kristian Van Der Vliet *
+
+Patch to the i810 audio (Intel ICHx) driver from Michael Krueger <invenies@web.de>
+
 * April 2 2004, Kristian Van Der Vliet *
 
 Add Danish keymap from Flemming "BurningShadow" H. Sørensen
