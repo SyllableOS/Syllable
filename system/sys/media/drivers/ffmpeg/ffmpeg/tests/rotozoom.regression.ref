@@ -1,0 +1,49 @@
+ffmpeg regression test
+1738d12380be0d8aa20d08e178349299 *./data/a-mpeg1.mpg
+0cf790edd0f4c5cf993c2d59211b9de2 *./data/out.yuv
+stddev:  4.91 bytes:7299072
+14db391f167b52b21a983157b410affc *./data/a-msmpeg4v2.avi
+fc8881e0904af9491d5fa0163183954b *./data/out.yuv
+stddev:  5.29 bytes:7602176
+484b4dccac1e552f0f29971f4a066598 *./data/a-msmpeg4.avi
+dd82e8badc40ad5f76b0ffc1d6945b1c *./data/out.yuv
+stddev:  5.29 bytes:7602176
+d63c0cbb6d845bfd8e2735b4ea733a53 *./data/a-wmv1.avi
+407c23671e7c7265c19c91966dbba317 *./data/out.yuv
+stddev:  5.29 bytes:7602176
+ba4616dc4db0db636a7c26bc8f2de04e *./data/a-wmv2.avi
+407c23671e7c7265c19c91966dbba317 *./data/out.yuv
+stddev:  5.29 bytes:7602176
+f980b5e38c4b919fbe5b660fe12fcf1a *./data/a-h263.avi
+8bcc9f78373ec424e864b40734e124ba *./data/out.yuv
+stddev:  5.41 bytes:7602176
+c7683a914f7377dd0d3c2d0be6892fe9 *./data/a-h263p.avi
+a63dcff871fd46481a4a7260aebbcdb5 *./data/out.yuv
+stddev:  1.89 bytes:7602176
+ea8c6216f605c3e581de70a39463aa48 *./data/a-odivx.avi
+675ae0065619a2a73682f6a51ebf72d4 *./data/out.yuv
+stddev:  5.28 bytes:7602176
+242a7a18c2793e115007bc163861ef4e *./data/a-huffyuv.avi
+dde5895817ad9d219f79a52d0bdfb001 *./data/out.yuv
+stddev:  0.00 bytes:7602176
+2a9ee5a50073e3c5c25653f83d2b78ae *./data/a-mpeg4-rc.avi
+6851f0023a361b2b088d115f6d42d03e *./data/out.yuv
+stddev:  5.12 bytes:7145472
+aeb300900461bdf9e0321934aa6dcc93 *./data/a-mpeg4-adv.avi
+e465df12f2c8a6492a6ec0b1bddc1d0d *./data/out.yuv
+stddev:  4.97 bytes:7602176
+2ec827a941ee8e82911280405987f8ef *./data/a-mpeg1b.mpg
+2935a090a88c74ccb220c18c1399cea7 *./data/out.yuv
+stddev:  4.69 bytes:6993920
+e9218a1db885fe0262e88f9df630307d *./data/a-mjpeg.avi
+a365b4da246ad68caf96b702b7f961a1 *./data/out.yuv
+stddev:  4.76 bytes:7602176
+1b46671251277c14f3a24a034648c458 *./data/a-rv10.rm
+e1923bc2940a017858e354c3fb0e6244 *./data/out.yuv
+stddev: 13.18 bytes:7602176
+9c4f5a4613a5595c90c6b99bf143b6a9 *./data/a-asv1.avi
+4251d7f496bbf362251b065e840a1b73 *./data/out.yuv
+stddev:  9.80 bytes:7602176
+21f8ff9f1daacd9133683bb4ea0f50a4 *./data/a-mp2.mp2
+116d1290ba1b4eb98fdee52e423417b1 *./data/out.wav
+048b9c3444c788bac6ce5cc3a8f4db00 *./data/a-ac3.rm
