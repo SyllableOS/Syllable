@@ -33,10 +33,10 @@ clean:
 dist: $(EXE1) $(EXE2) $(EXE3)
 	
 	-strip --strip-all $(EXE1) $(EXE2) $(EXE3)
-	-mkdir $(DIST_DIR) $(INSTDIR)
-	-mkdir $(DIST_DIR) $(INSTDIR)/data
-	-mkdir $(DIST_DIR) $(INSTDIR)/bin
-	-mkdir $(INSTDIR)/icons
+	-mkdir $(DIST_DIR)$(INSTDIR)
+	-mkdir $(DIST_DIR)$(INSTDIR)/data
+	-mkdir $(DIST_DIR)$(INSTDIR)/bin
+	-mkdir $(DIST_DIR)$(INSTDIR)/icons
 	cp -f $(EXE1) $(DIST_DIR)$(INSTDIR)/bin
 	cp -f $(EXE2) $(DIST_DIR)$(INSTDIR)/bin
 	cp -f $(EXE3) $(DIST_DIR)$(INSTDIR)/bin
