@@ -1,4 +1,0 @@
-for dpy in LinuxFb Transformed:Rot90 Transformed:Rot180 Transformed:Rot270
-do
-    QWS_DISPLAY=$dpy ./makeqpf
-done
