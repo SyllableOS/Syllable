@@ -1,3 +1,9 @@
+* August 02, Henrik Isaksson *
+
+ - Decorators
+	o Applied patch by Michael Saunders, "Added minimize; fixed resize; better buttons and
+	  icon; fixed glitches"
+
 * July 30, Henrik Isaksson *
 
  - Decorators
@@ -755,4 +761,5 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
