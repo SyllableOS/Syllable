@@ -1,6 +1,7 @@
 
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 The Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -42,11 +43,24 @@ LayoutView::LayoutView( const Rect & cFrame, const std::string & cTitle, LayoutN
 	SetRoot( pcRoot );
 }
 
+/** Get root layout
+ * \par	Description:
+ *	Get the root layout object.
+ * \sa SetRoot()
+ * \author Kurt Skauen
+ *****************************************************************************/
 LayoutNode *LayoutView::GetRoot() const
 {
 	return ( m_pcRoot );
 }
 
+/** Set root layout
+ * \par	Description:
+ *	Set the root layout object.
+ * \param	pcRoot Pointer to root layout node.
+ * \sa GetRoot()
+ * \author Kurt Skauen
+ *****************************************************************************/
 void LayoutView::SetRoot( LayoutNode * pcRoot )
 {
 	m_pcRoot = pcRoot;
@@ -59,6 +73,11 @@ void LayoutView::SetRoot( LayoutNode * pcRoot )
 	}
 }
 
+/** Recalculate layout
+ * \par	Description:
+ *	Causes the layout to be re-calculated.
+ * \author Kurt Skauen
+ *****************************************************************************/
 void LayoutView::InvalidateLayout()
 {
 	if( m_pcRoot != NULL )
@@ -67,7 +86,15 @@ void LayoutView::InvalidateLayout()
 	}
 }
 
-LayoutNode *LayoutView::FindNode( const std::string & cName, bool bRequrcive )
+/** Find node by name
+ * \par	Description:
+ *	Find a layout node (in the hierarchy specifided with SetRoot) by its name.
+ * \param	cName The name of the searched node.
+ * \param	cRecursive Set to true if you want to look at the root node's subnodes.
+ * \sa SetRoot()
+ * \author Kurt Skauen
+ *****************************************************************************/
+LayoutNode *LayoutView::FindNode( const std::string & cName, bool bRecursive )
 {
 	if( m_pcRoot == NULL )
 	{
@@ -113,12 +140,12 @@ void LayoutView::AllAttached()
 ///// LayoutNode ///////////////////////////////////////////////////////////////
 
 
-LayoutNode::LayoutNode( const std::string & cName, float vWheight, LayoutNode * pcParent, View * pcView ):m_cName( cName ), m_cBorders( 0.0f, 0.0f, 0.0f, 0.0f ), m_cMinSize( 0.0f, 0.0f ), m_cMaxSizeExtend( 0.0f, 0.0f ), m_cMaxSizeLimit( MAX_SIZE, MAX_SIZE )
+LayoutNode::LayoutNode( const std::string & cName, float vWeight, LayoutNode * pcParent, View * pcView ):m_cName( cName ), m_cBorders( 0.0f, 0.0f, 0.0f, 0.0f ), m_cMinSize( 0.0f, 0.0f ), m_cMaxSizeExtend( 0.0f, 0.0f ), m_cMaxSizeLimit( MAX_SIZE, MAX_SIZE )
 {
 	m_eHAlign = ALIGN_CENTER;
 	m_eVAlign = ALIGN_CENTER;
 
-	m_vWheight = vWheight;
+	m_vWeight = vWeight;
 
 	m_pcView = pcView;
 
@@ -152,9 +179,9 @@ void LayoutNode::AddChild( LayoutNode * pcChild )
 	pcChild->_AddedToParent( this );
 }
 
-LayoutNode *LayoutNode::AddChild( View * pcChildView, float vWheight )
+LayoutNode *LayoutNode::AddChild( View * pcChildView, float vWeight )
 {
-	return ( new LayoutNode( pcChildView->GetName(), vWheight, this, pcChildView ) );
+	return ( new LayoutNode( pcChildView->GetName(), vWeight, this, pcChildView ) );
 }
 
 void LayoutNode::RemoveChild( LayoutNode * pcChild )
@@ -228,14 +255,14 @@ Rect LayoutNode::GetBorders() const
 	return ( m_cBorders );
 }
 
-float LayoutNode::GetWheight() const
+float LayoutNode::GetWeight() const
 {
-	return ( m_vWheight );
+	return ( m_vWeight );
 }
 
-void LayoutNode::SetWheight( float vWheight )
+void LayoutNode::SetWeight( float vWeight )
 {
-	m_vWheight = vWheight;
+	m_vWeight = vWeight;
 }
 
 void LayoutNode::SetHAlignment( alignment eAlignment )
@@ -449,9 +476,9 @@ void LayoutNode::SetBorders( const Rect & cBorders, const char *pzName1, ... )
 	FOR_EACH_NAME( pzName1, SetBorders( cBorders ) );
 }
 
-void LayoutNode::SetWheights( float vWheight, const char *pzFirstName, ... )
+void LayoutNode::SetWeights( float vWeight, const char *pzFirstName, ... )
 {
-	FOR_EACH_NAME( pzFirstName, SetWheight( vWheight ) );
+	FOR_EACH_NAME( pzFirstName, SetWeight( vWeight ) );
 }
 
 void LayoutNode::SetHAlignments( alignment eAlign, const char *pzFirstName, ... )
@@ -595,7 +622,7 @@ void LayoutNode::_RemovedFromParent()
 	}
 }
 
-static float SpaceOut( uint nCount, float vTotalSize, float vTotalMinSize, float vTotalWheight, float *avMinSizes, float *avMaxSizes, float *avWheights, float *avFinalSizes )
+static float SpaceOut( uint nCount, float vTotalSize, float vTotalMinSize, float vTotalWeight, float *avMinSizes, float *avMaxSizes, float *avWeights, float *avFinalSizes )
 {
 	float vExtraSpace = vTotalSize - vTotalMinSize;
 
@@ -613,13 +640,13 @@ static float SpaceOut( uint nCount, float vTotalSize, float vTotalMinSize, float
 			{
 				continue;
 			}
-			float vWeight = avWheights[i] / vTotalWheight;
+			float vWeight = avWeights[i] / vTotalWeight;
 
 			avFinalSizes[i] = avMinSizes[i] + vExtraSpace * vWeight;
 			if( avFinalSizes[i] >= avMaxSizes[i] )
 			{
 				vExtraSpace -= avMaxSizes[i] - avMinSizes[i];
-				vTotalWheight -= avWheights[i];
+				vTotalWeight -= avWeights[i];
 				avFinalSizes[i] = avMaxSizes[i];
 				abDone[i] = true;
 				break;
@@ -640,7 +667,7 @@ static float SpaceOut( uint nCount, float vTotalSize, float vTotalMinSize, float
 
 ///// HLayoutNode //////////////////////////////////////////////////////////////
 
-HLayoutNode::HLayoutNode( const std::string & cName, float vWheight, LayoutNode * pcParent, View * pcView ):LayoutNode( cName, vWheight, pcParent, pcView )
+HLayoutNode::HLayoutNode( const std::string & cName, float vWeight, LayoutNode * pcParent, View * pcView ):LayoutNode( cName, vWeight, pcParent, pcView )
 {
 }
 
@@ -674,11 +701,11 @@ void HLayoutNode::Layout()
 	float *avMinWidths = ( float * )alloca( sizeof( float ) * cChildList.size() );
 	float *avMaxWidths = ( float * )alloca( sizeof( float ) * cChildList.size() );
 	float *avMaxHeights = ( float * )alloca( sizeof( float ) * cChildList.size() );
-	float *avWheights = ( float * )alloca( sizeof( float ) * cChildList.size() );
+	float *avWeights = ( float * )alloca( sizeof( float ) * cChildList.size() );
 
 	float *avFinalHeights = ( float * )alloca( sizeof( float ) * cChildList.size() );
 	float vMinWidth = 0.0f;
-	float vTotalWheight = 0.0f;
+	float vTotalWeight = 0.0f;
 
 	for( uint i = 0; i < cChildList.size(); ++i )
 	{
@@ -686,20 +713,20 @@ void HLayoutNode::Layout()
 		Point cMaxSize = cChildList[i]->GetPreferredSize( true );
 
 		cChildList[i]->AdjustPrefSize( &cMinSize, &cMaxSize );
-		avWheights[i] = cChildList[i]->GetWheight();
+		avWeights[i] = cChildList[i]->GetWeight();
 
 		avMaxHeights[i] = cMaxSize.y;
 		avMaxWidths[i] = cMaxSize.x;
 		avMinWidths[i] = cMinSize.x;
 
 		vMinWidth += cMinSize.x;
-		vTotalWheight += avWheights[i];
+		vTotalWeight += avWeights[i];
 	}
 //    if ( vMinWidth > cBounds.Width() + 1.0f ) {
 //      printf( "Error: HLayoutNode::Layout() Width=%.2f, Required width=%.2f\n", cBounds.Width() + 1.0f, vMinWidth  );
 //    }
-	float vUnusedWidth = SpaceOut( cChildList.size(), cBounds.Width(  ) + 1.0f, vMinWidth, vTotalWheight,
-		avMinWidths, avMaxWidths, avWheights, avFinalHeights );
+	float vUnusedWidth = SpaceOut( cChildList.size(), cBounds.Width(  ) + 1.0f, vMinWidth, vTotalWeight,
+		avMinWidths, avMaxWidths, avWeights, avFinalHeights );
 
 	vUnusedWidth /= float ( cChildList.size() );
 	float x = cBounds.left + vUnusedWidth * 0.5f;
@@ -722,7 +749,7 @@ void HLayoutNode::Layout()
 
 ///// VLayoutNode //////////////////////////////////////////////////////////////
 
-VLayoutNode::VLayoutNode( const std::string & cName, float vWheight, LayoutNode * pcParent, View * pcView ):LayoutNode( cName, vWheight, pcParent, pcView )
+VLayoutNode::VLayoutNode( const std::string & cName, float vWeight, LayoutNode * pcParent, View * pcView ):LayoutNode( cName, vWeight, pcParent, pcView )
 {
 }
 
@@ -756,9 +783,9 @@ void VLayoutNode::Layout()
 	float *avMaxWidths = ( float * )alloca( sizeof( float ) * cChildList.size() );
 	float *avMinHeights = ( float * )alloca( sizeof( float ) * cChildList.size() );
 	float *avMaxHeights = ( float * )alloca( sizeof( float ) * cChildList.size() );
-	float *avWheights = ( float * )alloca( sizeof( float ) * cChildList.size() );
+	float *avWeights = ( float * )alloca( sizeof( float ) * cChildList.size() );
 	float *avFinalHeights = ( float * )alloca( sizeof( float ) * cChildList.size() );
-	float vTotalWheight = 0.0f;
+	float vTotalWeight = 0.0f;
 	float vMinHeight = 0.0f;
 	float vMaxHeight = 0.0f;
 
@@ -769,20 +796,20 @@ void VLayoutNode::Layout()
 
 		cChildList[i]->AdjustPrefSize( &cMinSize, &cMaxSize );
 
-		avWheights[i] = cChildList[i]->GetWheight();
+		avWeights[i] = cChildList[i]->GetWeight();
 		avMaxWidths[i] = cMaxSize.x;
 		avMinHeights[i] = cMinSize.y;
 		avMaxHeights[i] = cMaxSize.y;
 
 		vMinHeight += cMinSize.y;
 		vMaxHeight += cMaxSize.y;
-		vTotalWheight += avWheights[i];
+		vTotalWeight += avWeights[i];
 	}
 //    if ( vMinHeight > cBounds.Height() + 1.0f ) {
 //      printf( "Error: HLayoutNode::Layout() Width=%.2f, Required width=%.2f\n", cBounds.Height() + 1.0f, vMinHeight  );
 //    }
-	float vUnusedHeight = SpaceOut( cChildList.size(), cBounds.Height(  ) + 1.0f, vMinHeight, vTotalWheight,
-		avMinHeights, avMaxHeights, avWheights, avFinalHeights );
+	float vUnusedHeight = SpaceOut( cChildList.size(), cBounds.Height(  ) + 1.0f, vMinHeight, vTotalWeight,
+		avMinHeights, avMaxHeights, avWeights, avFinalHeights );
 
 	vUnusedHeight /= float ( cChildList.size() );
 	float y = cBounds.top + vUnusedHeight * 0.5f;
@@ -819,7 +846,7 @@ void VLayoutNode::Layout()
 }
 
 
-LayoutSpacer::LayoutSpacer( const std::string & cName, float vWheight, LayoutNode * pcParent, const Point & cMinSize, const Point & cMaxSize ):LayoutNode( cName, vWheight, pcParent )
+LayoutSpacer::LayoutSpacer( const std::string & cName, float vWeight, LayoutNode * pcParent, const Point & cMinSize, const Point & cMaxSize ):LayoutNode( cName, vWeight, pcParent )
 {
 	m_cMinSize = cMinSize;
 	m_cMaxSize = cMaxSize;
@@ -839,3 +866,5 @@ Point LayoutSpacer::CalculatePreferredSize( bool bLargest )
 {
 	return ( ( bLargest ) ? m_cMaxSize : m_cMinSize );
 }
+
+
