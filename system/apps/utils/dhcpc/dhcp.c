@@ -401,31 +401,44 @@ static void state_selecting( void )
 	uint8* buffer;			// Packet recieve buffer
 	size_t buffer_length;
 	socklen_t sizeof_in_sin;
+	int alarm_time;
 
 	in_packet = NULL;
 	options = NULL;
 
 	// Wait for a reply packet on UDP port 68.  Note that if more than one
 	// server responds, we select the first server (First come, first served!)
-
-	buffer = malloc(sizeof(DHCPPacket_s));
+	alarm_time = RESPONSE_TIMEOUT;
 	sizeof_in_sin = (socklen_t)sizeof(info->in_sin);
-
-	alarm(60);		// We'll sit in a loop and look at packets (Or just wait
-					// for a packet) for a maximum of 1 minute.  We give up after that.
 
 	while( info->do_shutdown == false )		// Keep getting data...
 	{
+		alarm(alarm_time);		// We'll sit in a loop and look at packets (Or just wait
+									// for a packet) for a maximum of 1 minute.  We give up after that.
+
+		buffer = malloc(sizeof(DHCPPacket_s));
 		buffer_length = recvfrom( info->in_socket_fd, (void*)buffer, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->in_sin, &sizeof_in_sin);
 
-		if( alarm(0) == 0 )
+		alarm_time = alarm(0);
+		if( alarm_time == 0 )
 		{
-			debug(PANIC,__FUNCTION__,"timeout after 60 seconds waiting for response\n");
+			debug(PANIC,__FUNCTION__,"timeout after %i seconds waiting for response\n",RESPONSE_TIMEOUT);
 			free(buffer);
+			info->attempts += 1;
+			change_state(STATE_INIT);
 			return;
 		}
 		else
-			debug(INFO,__FUNCTION__,"got a packet of %i bytes\n",buffer_length);
+			debug(INFO,__FUNCTION__,"%i seconds left to obtain response\n",alarm_time);
+
+		if( (int)buffer_length <= 0 )	// Probably caught SIGTERM
+		{
+			debug(PANIC,__FUNCTION__,"did not recieve data while waiting for response\n");
+			free(buffer);
+			return;
+		}
+
+		debug(INFO,__FUNCTION__,"got a packet of %i bytes\n",buffer_length);
 
 		// Place the buffer into a DHCP packet struct
 		in_packet = (DHCPPacket_s*)calloc(1,sizeof(DHCPPacket_s));
@@ -438,6 +451,7 @@ static void state_selecting( void )
 
 		memcpy( in_packet, buffer, buffer_length);
 		free(buffer);
+		buffer = NULL;
 
 		// We now have an inbound packet from someplace, with some data in it.
 		// Process the packet.
@@ -521,6 +535,10 @@ static void state_requesting( void )
 	socklen_t sizeof_out_sin, sizeof_in_sin;
 	uint8* buffer;			// Packet recieve buffer
 	size_t buffer_length;
+	int alarm_time;
+
+	in_packet = NULL;
+	in_options = NULL;
 
 	// Broadcast a DHCPREQUEST, with the previously discovered server identifier
 	// & requested IP address options.  The server should reply with either a
@@ -686,73 +704,92 @@ static void state_requesting( void )
 	free( packet );
 
 	// Now wait for a DHCPACK response...
-	buffer = malloc(sizeof(DHCPPacket_s));
+	alarm_time = info->timeout;
 	sizeof_in_sin = (socklen_t)sizeof(info->in_sin);
 
-	alarm(info->timeout);	// Just in case the server does not respond
-
-	buffer_length = recvfrom( info->in_socket_fd, (void*)buffer, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->in_sin, &sizeof_in_sin);
-
-	if( alarm(0) == 0 )
+	while( info->do_shutdown == false )		// Keep getting data...
 	{
-		debug(PANIC,__FUNCTION__,"timeout after %i seconds waiting for response\n",(unsigned int)info->timeout);
-		free(buffer);
-		return;
-	}
-	else
+		alarm(alarm_time);	// Just in case the server does not respond
+
+		buffer = malloc(sizeof(DHCPPacket_s));
+		buffer_length = recvfrom( info->in_socket_fd, (void*)buffer, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->in_sin, &sizeof_in_sin);
+
+		alarm_time = alarm(0);
+		if( alarm_time == 0 )
+		{
+			debug(PANIC,__FUNCTION__,"timeout after %i seconds waiting for response\n",(unsigned int)info->timeout);
+			free(buffer);
+			info->attempts += 1;
+			change_state(STATE_INIT);
+			return;
+		}
+
+		if( (int)buffer_length <= 0 )	// Probably caught SIGTERM
+		{
+			debug(PANIC,__FUNCTION__,"did not recieve data while waiting for response\n");
+			free(buffer);
+			return;
+		}
+
 		debug(INFO,__FUNCTION__,"got a packet of %i bytes\n",buffer_length);
 
-	// Place the buffer into a DHCP packet struct
-	in_packet = (DHCPPacket_s*)calloc(1,sizeof(DHCPPacket_s));
-	if( in_packet == NULL )
-	{
-		debug(PANIC,__FUNCTION__,"unable to allocate inbound packet\n");
+		// Place the buffer into a DHCP packet struct
+		in_packet = (DHCPPacket_s*)calloc(1,sizeof(DHCPPacket_s));
+		if( in_packet == NULL )
+		{
+			debug(PANIC,__FUNCTION__,"unable to allocate inbound packet\n");
+			free(buffer);
+			return;
+		}
+
+		memcpy( in_packet, buffer, buffer_length);
 		free(buffer);
-		return;
-	}
+		buffer=NULL;
 
-	memcpy( in_packet, buffer, buffer_length);
-	free(buffer);
+		// We now have an inbound packet from someplace, with some data in it.
+		// Process the packet.
 
-	// We now have an inbound packet from someplace, with some data in it.
-	// Process the packet.
+		if( in_packet->op == BOOT_REPLY )
+		{
+			debug(INFO,__FUNCTION__,"packet is a BOOT_REPLY\n");
+		}
+		else
+		{
+			debug(PANIC,__FUNCTION__,"packet is NOT a BOOT_REPLY\n");
+			free(in_packet);
+			info->attempts += 1;
+			change_state(STATE_INIT);
+			return;
+		}
 
-	if( in_packet->op == BOOT_REPLY )
-	{
-		debug(INFO,__FUNCTION__,"packet is a BOOT_REPLY\n");
-	}
-	else
-	{
-		debug(PANIC,__FUNCTION__,"packet is NOT a BOOT_REPLY\n");
-		free(in_packet);
-		info->attempts += 1;
-		change_state(STATE_INIT);
-		return;
-	}
+		// Parse the options field into a format we can more easily handle
+		in_options = parseoptions( in_packet->options, ( buffer_length - 236 ) );
 
-	// Parse the options field into a format we can more easily handle
-	in_options = parseoptions( in_packet->options, ( buffer_length - 236 ) );
+		if( in_options == NULL )
+		{
+			debug(PANIC,__FUNCTION__,"no options : this doesn't appear to be a valid reply\n");
+			free(in_packet);
+			info->attempts += 1;
+			change_state(STATE_INIT);
+			return;
+		}
 
-	if( in_options == NULL )
-	{
-		debug(PANIC,__FUNCTION__,"no options : this doesn't appear to be a valid reply\n");
-		free(in_packet);
-		info->attempts += 1;
-		change_state(STATE_INIT);
-		return;
-	}
+		// Check to see if this packet is correctly destined to us
+		if( in_packet->xid != info->last_xid )
+		{
+			debug(WARNING,__FUNCTION__,"this xid %X does not match last xid %X\n",(unsigned int)in_packet->xid,(unsigned int)info->last_xid);
+			free( in_packet );
+			info->attempts += 1;
+			change_state(STATE_INIT);
+			return;
+		}
+		else
+		{
+			debug(INFO,__FUNCTION__,"this xid %X matchs last xid %X\n",(unsigned int)in_packet->xid,(unsigned int)info->last_xid);
+			break;	// Stop getting packets
+		}
 
-	// Check to see if this packet is correctly destined to us
-	if( in_packet->xid != info->last_xid )
-	{
-		debug(WARNING,__FUNCTION__,"this xid %X does not match last xid %X\n",(unsigned int)in_packet->xid,(unsigned int)info->last_xid);
-		free( in_packet );
-		info->attempts += 1;
-		change_state(STATE_INIT);
-		return;
-	}
-	else
-		debug(INFO,__FUNCTION__,"this xid %X matchs last xid %X\n",(unsigned int)in_packet->xid,(unsigned int)info->last_xid);
+	}	// End of while loop
 
 	// See if it is a DHCPACK
 	current_in_option = in_options;
@@ -898,6 +935,9 @@ static void state_renewing( void )
 	uint8* buffer;			// Packet recieve buffer
 	size_t buffer_length;
 
+	in_packet = NULL;
+	in_options = NULL;
+
 	// Re-open the socket so that we can send a packet
 	if( setup_sockets(false) != EOK )
 	{
@@ -1010,105 +1050,120 @@ static void state_renewing( void )
 	info->t2_state = TIMER_RUNNING;
 
 	// Wait for a DHCPACK or DHCPNAK response...
-	buffer = malloc(sizeof(DHCPPacket_s));
 	sizeof_in_sin = (socklen_t)sizeof(info->in_sin);
 
-	buffer_length = recvfrom( info->in_socket_fd, (void*)buffer, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->in_sin, &sizeof_in_sin);
-
-	// Check to ensure that the alarm did not interupt us before we got a response
-	if( info->t2_state == TIMER_INTERUPTED)
+	while( info->t2_state != TIMER_INTERUPTED )		// Keep getting data...
 	{
-		debug(INFO,__FUNCTION__,"timer t2 expired before the server responded\n");
-		free( buffer );
-		info->attempts += 1;
+		buffer = malloc(sizeof(DHCPPacket_s));
+		buffer_length = recvfrom( info->in_socket_fd, (void*)buffer, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->in_sin, &sizeof_in_sin);
 
-		// Close the sockets & re-open them for broadcasts
-		if( info->in_socket_fd != 0)
-			close( info->in_socket_fd );
-
-		if( info->out_socket_fd != 0)
-			close( info->out_socket_fd );
-
-		if( setup_sockets(true) != EOK )
+		// Check to ensure that the alarm did not interupt us before we got a response
+		if( info->t2_state == TIMER_INTERUPTED)
 		{
-			debug(PANIC,__FUNCTION__,"unable to open sockets\n");
+			debug(INFO,__FUNCTION__,"timer t2 expired before the server responded\n");
+			free( buffer );
+			info->attempts += 1;
+
+			// Close the sockets & re-open them for broadcasts
+			if( info->in_socket_fd != 0)
+				close( info->in_socket_fd );
+
+			if( info->out_socket_fd != 0)
+				close( info->out_socket_fd );
+
+			if( setup_sockets(true) != EOK )
+			{
+				debug(PANIC,__FUNCTION__,"unable to open sockets\n");
+				return;
+			}
+
+			change_state(STATE_REBINDING);
+			return;
+		}
+		else
+			alarm(0);		// Clear the alarm so that it does not bother us
+
+		if( (int)buffer_length <= 0 )	// Probably caught SIGTERM
+		{
+			debug(PANIC,__FUNCTION__,"did not recieve data while waiting for response\n");
+			free(buffer);
 			return;
 		}
 
-		change_state(STATE_REBINDING);
-		return;
-	}
-	else
-		alarm(0);		// Clear the alarm so that it does not bother us
+		debug(INFO,__FUNCTION__,"got a packet of %i bytes\n",buffer_length);
 
-	debug(INFO,__FUNCTION__,"got a packet of %i bytes\n",buffer_length);
+		// Place the buffer into a DHCP packet struct
+		in_packet = (DHCPPacket_s*)calloc(1,sizeof(DHCPPacket_s));
+		if( in_packet == NULL )
+		{
+			debug(PANIC,__FUNCTION__,"unable to allocate inbound packet\n");
+			free(buffer);
+			return;
+		}
 
-	// Place the buffer into a DHCP packet struct
-	in_packet = (DHCPPacket_s*)calloc(1,sizeof(DHCPPacket_s));
-	if( in_packet == NULL )
-	{
-		debug(PANIC,__FUNCTION__,"unable to allocate inbound packet\n");
+		memcpy( in_packet, buffer, buffer_length);
 		free(buffer);
-		return;
-	}
+		buffer=NULL;
 
-	memcpy( in_packet, buffer, buffer_length);
-	free(buffer);
+		// We now have an inbound packet from someplace, with some data in it.
+		// Process the packet.
 
-	// We now have an inbound packet from someplace, with some data in it.
-	// Process the packet.
-
-	if( in_packet->op == BOOT_REPLY )
-	{
-		debug(INFO,__FUNCTION__,"packet is a BOOT_REPLY\n");
-	}
-	else
-	{
-		debug(PANIC,__FUNCTION__,"packet is NOT a BOOT_REPLY\n");
-		free(in_packet);
-		info->attempts += 1;
-
-		// Close the sockets & re-open them for broadcasts
-		if( info->in_socket_fd != 0)
-			close( info->in_socket_fd );
-
-		if( info->out_socket_fd != 0)
-			close( info->out_socket_fd );
-
-		if( setup_sockets(true) != EOK )
+		if( in_packet->op == BOOT_REPLY )
 		{
-			debug(PANIC,__FUNCTION__,"unable to open sockets\n");
+			debug(INFO,__FUNCTION__,"packet is a BOOT_REPLY\n");
+		}
+		else
+		{
+			debug(PANIC,__FUNCTION__,"packet is NOT a BOOT_REPLY\n");
+			free(in_packet);
+			info->attempts += 1;
+
+			// Close the sockets & re-open them for broadcasts
+			if( info->in_socket_fd != 0)
+				close( info->in_socket_fd );
+
+			if( info->out_socket_fd != 0)
+				close( info->out_socket_fd );
+
+			if( setup_sockets(true) != EOK )
+			{
+				debug(PANIC,__FUNCTION__,"unable to open sockets\n");
+				return;
+			}
+
+			// Try to reinitialise from scratch
+			change_state(STATE_INIT);
 			return;
 		}
 
-		// Try to reinitialise from scratch
-		change_state(STATE_INIT);
-		return;
-	}
+		// Parse the options field into a format we can more easily handle
+		in_options = parseoptions( in_packet->options, ( buffer_length - 236 ) );
 
-	// Parse the options field into a format we can more easily handle
-	in_options = parseoptions( in_packet->options, ( buffer_length - 236 ) );
+		if( in_options == NULL )
+		{
+			debug(PANIC,__FUNCTION__,"no options : this doesn't appear to be a valid reply\n");
+			free(in_packet);
+			info->attempts += 1;
+			change_state(STATE_INIT);
+			return;
+		}
 
-	if( in_options == NULL )
-	{
-		debug(PANIC,__FUNCTION__,"no options : this doesn't appear to be a valid reply\n");
-		free(in_packet);
-		info->attempts += 1;
-		change_state(STATE_INIT);
-		return;
-	}
+		// Check to see if this packet is correctly destined to us
+		if( in_packet->xid != info->last_xid )
+		{
+			debug(WARNING,__FUNCTION__,"this xid %X does not match last xid %X\n",(unsigned int)in_packet->xid,(unsigned int)info->last_xid);
+			free( in_packet );
+			info->attempts += 1;
+			change_state(STATE_INIT);
+			return;
+		}
+		else
+		{
+			debug(INFO,__FUNCTION__,"this xid %X matchs last xid %X\n",(unsigned int)in_packet->xid,(unsigned int)info->last_xid);
+			break;
+		}
 
-	// Check to see if this packet is correctly destined to us
-	if( in_packet->xid != info->last_xid )
-	{
-		debug(WARNING,__FUNCTION__,"this xid %X does not match last xid %X\n",(unsigned int)in_packet->xid,(unsigned int)info->last_xid);
-		free( in_packet );
-		info->attempts += 1;
-		change_state(STATE_INIT);
-		return;
-	}
-	else
-		debug(INFO,__FUNCTION__,"this xid %X matchs last xid %X\n",(unsigned int)in_packet->xid,(unsigned int)info->last_xid);
+	};	// End of while loop
 
 	// See if it is a DHCPACK
 	current_in_option = in_options;
@@ -1204,6 +1259,9 @@ static void state_rebinding( void )
 	socklen_t sizeof_out_sin, sizeof_in_sin;
 	uint8* buffer;			// Packet recieve buffer
 	size_t buffer_length;
+
+	in_packet = NULL;
+	in_options = NULL;
 
 	// Broadcast a DHCPREQUEST, without the requested IP address or server ID
 	// options.  The server should reply with either a DHCPACK or DHCPNAK.
@@ -1310,91 +1368,106 @@ static void state_rebinding( void )
 	info->t3_state = TIMER_RUNNING;
 
 	// Wait for a DHCPACK or DHCPNAK response...
-	buffer = malloc(sizeof(DHCPPacket_s));
 	sizeof_in_sin = (socklen_t)sizeof(info->in_sin);
 
-	buffer_length = recvfrom( info->in_socket_fd, (void*)buffer, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->in_sin, &sizeof_in_sin);
-
-	// Check to ensure that the alarm did not interupt us before we got a response
-	if( info->t3_state == TIMER_INTERUPTED)
+	while( info->t3_state != TIMER_INTERUPTED )		// Keep getting data...
 	{
-		debug(INFO,__FUNCTION__,"timer t3 expired before the server responded\n");
-		free( buffer );
-		info->attempts += 1;
-		change_state(STATE_INIT);
-		return;
-	}
-	else
-		alarm(0);		// Clear the alarm so that it does not bother us
+		buffer = malloc(sizeof(DHCPPacket_s));
+		buffer_length = recvfrom( info->in_socket_fd, (void*)buffer, sizeof(DHCPPacket_s), 0, (struct sockaddr*)&info->in_sin, &sizeof_in_sin);
 
-	debug(INFO,__FUNCTION__,"got a packet of %i bytes\n",buffer_length);
-
-	// Place the buffer into a DHCP packet struct
-	in_packet = (DHCPPacket_s*)calloc(1,sizeof(DHCPPacket_s));
-	if( in_packet == NULL )
-	{
-		debug(PANIC,__FUNCTION__,"unable to allocate inbound packet\n");
-		free(buffer);
-		return;
-	}
-
-	memcpy( in_packet, buffer, buffer_length);
-	free(buffer);
-
-	// We now have an inbound packet from someplace, with some data in it.
-	// Process the packet.
-
-	if( in_packet->op == BOOT_REPLY )
-	{
-		debug(INFO,__FUNCTION__,"packet is a BOOT_REPLY\n");
-	}
-	else
-	{
-		debug(PANIC,__FUNCTION__,"packet is NOT a BOOT_REPLY\n");
-		free(in_packet);
-		info->attempts += 1;
-
-		// Close the sockets & re-open them for broadcasts
-		if( info->in_socket_fd != 0)
-			close( info->in_socket_fd );
-
-		if( info->out_socket_fd != 0)
-			close( info->out_socket_fd );
-
-		if( setup_sockets(true) != EOK )
+		// Check to ensure that the alarm did not interupt us before we got a response
+		if( info->t3_state == TIMER_INTERUPTED)
 		{
-			debug(PANIC,__FUNCTION__,"unable to open sockets\n");
+			debug(INFO,__FUNCTION__,"timer t3 expired before the server responded\n");
+			free( buffer );
+			info->attempts += 1;
+			change_state(STATE_INIT);
+			return;
+		}
+		else
+			alarm(0);		// Clear the alarm so that it does not bother us
+
+		if( (int)buffer_length <= 0 )	// Probably caught SIGTERM
+		{
+			debug(PANIC,__FUNCTION__,"did not recieve data while waiting for response\n");
+			free(buffer);
 			return;
 		}
 
-		// Try to reinitialise from scratch
-		change_state(STATE_INIT);
-		return;
-	}
+		debug(INFO,__FUNCTION__,"got a packet of %i bytes\n",buffer_length);
 
-	// Parse the options field into a format we can more easily handle
-	in_options = parseoptions( in_packet->options, ( buffer_length - 236 ) );
+		// Place the buffer into a DHCP packet struct
+		in_packet = (DHCPPacket_s*)calloc(1,sizeof(DHCPPacket_s));
+		if( in_packet == NULL )
+		{
+			debug(PANIC,__FUNCTION__,"unable to allocate inbound packet\n");
+			free(buffer);
+			return;
+		}
 
-	if( in_options == NULL )
-	{
-		debug(PANIC,__FUNCTION__,"no options : this doesn't appear to be a valid reply\n");
-		free(in_packet);
-		info->attempts += 1;
-		change_state(STATE_INIT);
-		return;
-	}
+		memcpy( in_packet, buffer, buffer_length);
+		free(buffer);
+		buffer = NULL;
 
-	// Check to see if this packet is correctly destined to us
-	if( in_packet->xid != info->last_xid )
-	{
-		debug(WARNING,__FUNCTION__,"this xid %X does not match last xid %X\n",(unsigned int)in_packet->xid,(unsigned int)info->last_xid);
-		free( in_packet );
-		info->attempts += 1;
-		change_state(STATE_INIT);
-		return;
-	}
-	else
-		debug(INFO,__FUNCTION__,"this xid %X matchs last xid %X\n",(unsigned int)in_packet->xid,(unsigned int)info->last_xid);
+		// We now have an inbound packet from someplace, with some data in it.
+		// Process the packet.
+
+		if( in_packet->op == BOOT_REPLY )
+		{
+			debug(INFO,__FUNCTION__,"packet is a BOOT_REPLY\n");
+		}
+		else
+		{
+			debug(PANIC,__FUNCTION__,"packet is NOT a BOOT_REPLY\n");
+			free(in_packet);
+			info->attempts += 1;
+
+			// Close the sockets & re-open them for broadcasts
+			if( info->in_socket_fd != 0)
+				close( info->in_socket_fd );
+
+			if( info->out_socket_fd != 0)
+				close( info->out_socket_fd );
+
+			if( setup_sockets(true) != EOK )
+			{
+				debug(PANIC,__FUNCTION__,"unable to open sockets\n");
+				return;
+			}
+
+			// Try to reinitialise from scratch
+			change_state(STATE_INIT);
+			return;
+		}
+
+		// Parse the options field into a format we can more easily handle
+		in_options = parseoptions( in_packet->options, ( buffer_length - 236 ) );
+
+		if( in_options == NULL )
+		{
+			debug(PANIC,__FUNCTION__,"no options : this doesn't appear to be a valid reply\n");
+			free(in_packet);
+			info->attempts += 1;
+			change_state(STATE_INIT);
+			return;
+		}
+
+		// Check to see if this packet is correctly destined to us
+		if( in_packet->xid != info->last_xid )
+		{
+			debug(WARNING,__FUNCTION__,"this xid %X does not match last xid %X\n",(unsigned int)in_packet->xid,(unsigned int)info->last_xid);
+			free( in_packet );
+			info->attempts += 1;
+			change_state(STATE_INIT);
+			return;
+		}
+		else
+		{
+			debug(INFO,__FUNCTION__,"this xid %X matchs last xid %X\n",(unsigned int)in_packet->xid,(unsigned int)info->last_xid);
+			break;
+		}
+
+	}	// End of while loop
 
 	// See if it is a DHCPACK
 	current_in_option = in_options;

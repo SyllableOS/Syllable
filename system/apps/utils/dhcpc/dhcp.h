@@ -98,6 +98,8 @@ enum timer_status{
 
 #define DEFAULT_LEASE_MINS 60
 
+#define RESPONSE_TIMEOUT	 60	// Wait one minute for a reply
+
 void dhcp_start( void );
 
 int dhcp_init( char* if_name );

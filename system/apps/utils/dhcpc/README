@@ -1,4 +1,4 @@
-dhcpc 1.1 -:- A DHCP client for Syllable
+dhcpc 1.2 -:- A DHCP client for Syllable
 
 dhcpc is a simple DHCP/BOOTP client for Syllable 0.4.3 and later.  dhcpc is
 released under the GNU General Public Licencse.  See the file COPYING for more
@@ -47,8 +47,6 @@ TODO
 o Currently the client always releases the IP address when it catches
    SIGTERM.  It would be preferable if we stored the lease details and sent
    a renewal request when the client was started next.
-
-o The client can not always deal with packets arriving out of sequence.
 
 o It would be nice if the user could supply various details at startup,
    E.g. requested IP, lease time etc.
