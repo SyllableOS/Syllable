@@ -1913,19 +1913,30 @@ status_t unlock_and_suspend( sem_id hWaitQueue, sem_id hSema )
  *	This function can only be called from the kernel, or from device
  *	drivers. From user-space you should use unlock_and_suspend()
  * \par Warning:
- * \param
+ * \param hWaitQueue
+ *	Handle to the wait-queue to block on (created earlier with
+ *	create_semaphore()).
+ * \param psLock
+ *	Spinlock to release.
+ * \param nCPUFlags
+ *	The CPU flags to restore before returning.
+ * \param nTimeOut
+ *	Maximum number of microseconds to wait for someone to wake us
+ *	up before ETIME is returned.
  * \return
+ *	On success 0 is returned.
+ *	On error a negative error code is returned.
  * \sa unlock_and_suspend()
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-status_t spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s * psLock, uint32 nCPUFlags, bigtime_t nTimeout )
+status_t spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s * psLock, uint32 nCPUFlags, bigtime_t nTimeOut )
 {
 	Semaphore_s *psWaitQueue;
 	Thread_s *psThread = CURRENT_THREAD;
 	WaitQueue_s sWaitNode;
 	WaitQueue_s sSleepNode;
-	bigtime_t nResumeTime = get_system_time() + nTimeout;
+	bigtime_t nResumeTime = get_system_time() + nTimeOut;
 	int nError;
 
 	sWaitNode.wq_hThread = psThread->tr_hThreadID;
@@ -1954,7 +1965,7 @@ status_t spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s * psLock, uint32 
 
 	psThread->tr_hBlockSema = hWaitQueue;
 
-	if ( nTimeout == INFINITE_TIMEOUT )
+	if ( nTimeOut == INFINITE_TIMEOUT )
 	{
 		psThread->tr_nState = TS_WAIT;
 	}
@@ -1988,7 +1999,7 @@ status_t spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s * psLock, uint32 
 	cli();
 	spinlock( &g_sSemListSpinLock );
 
-	if ( INFINITE_TIMEOUT != nTimeout )
+	if ( INFINITE_TIMEOUT != nTimeOut )
 	{
 		remove_from_sleeplist( &sSleepNode );
 	}
@@ -2010,7 +2021,7 @@ status_t spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s * psLock, uint32 
 	{
 		return ( -EINTR );
 	}
-	else if ( nTimeout != INFINITE_TIMEOUT && get_system_time() > nResumeTime )
+	else if ( nTimeOut != INFINITE_TIMEOUT && get_system_time() > nResumeTime )
 	{
 		return ( -ETIME );
 	}
