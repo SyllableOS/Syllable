@@ -1,4 +1,4 @@
-SUBDIRS = geforcefx mach64 mga nvidia radeon s3_savage s3_virge sis3xx trident vmware
+SUBDIRS = geforcefx mach64 mga nvidia radeon s3_savage s3_virge sis3xx tdfx trident vmware
 include $(ATHEOS_SRC)/recurse.rules
 
 
