@@ -773,12 +773,13 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 											// Add the component to the total path.
 											slNameSize += compLen;
 											if ( useSeparator )
-												slNameSize++;											
-											if (useSeparator) 
-											{
-												dprintf("Adding separator\n");
-												slName[addPos++] = '/';
-											}	
+												slNameSize++;
+										
+											if (useSeparator  && addPos != 0 )
+											{							// KV: Don't add the seperator to the begining
+												dprintf("Adding separator\n");	// of a link, as this incorrectly forces all symlinks
+												slName[addPos++] = '/';		// to become relative to /, which is certainly not
+											}							// what we want!
 											
 											dprintf("doing memcopy of %u bytes at offset %d\n", compLen, addPos );
 											memcpy((slName + addPos), (buf + bytePos), compLen);
