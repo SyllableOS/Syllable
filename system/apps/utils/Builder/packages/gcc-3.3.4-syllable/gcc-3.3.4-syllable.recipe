@@ -1,8 +1,12 @@
-authors				Kaj de Vos
-status				testing
+authors
+	Kaj de Vos
+	Andy Wang
+status				developing
 warnings
+	Works, on Linux, without GLibC headers for cross-compiling kernel-space, but not yet for user-land.
 	The Syllable source tree "system" directory needs to be in your working directory.
 	/ainc needs to be linked to the Syllable system headers.
+	The Syllable base distribution "atheos" directory needs to be in your working directory.
 
 inherits			gcc-3.3.4
 
@@ -15,7 +19,7 @@ packages
 configure-options
 	--target=i586-pc-syllable
 ;	GLibC headers for Syllable:
-	--with-headers=$PWD/system/libs/glibc/include
+	--with-headers=$PWD/../atheos/usr/glibc2/include
 	--enable-languages=c,c++
 	--with-arch=i586
 	--enable-sjlj-exceptions
@@ -27,12 +31,14 @@ configure-options
 ;	--disable-nls
 
 ; Requires super-user access:
-;pre-make			ln -snf $PWD/system/sys/include /ainc
+;pre-make			ln -snf $PWD/../system/sys/include /ainc
 
-make-env			C_INCLUDE_PATH /ainc:$C_INCLUDE_PATH
+make-env
+	C_INCLUDE_PATH		$PWD/../atheos/usr/glibc2/include:/ainc
+;	CPLUS_INCLUDE_PATH	$PWD/../atheos/usr/glibc2/include:/ainc
+;	DLL_PATH		$PWD/../atheos/sys/libs
 make-targets		all-gcc
 
 install-targets		install-gcc
 ; The normal links are not relevant:
 links
-
