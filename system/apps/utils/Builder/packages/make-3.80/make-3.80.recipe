@@ -1,0 +1,4 @@
+authors			Kaj de Vos
+status			broken
+patch-config	config
+documentation	README README.customs INSTALL COPYING ABOUT-NLS NEWS ChangeLog AUTHORS
