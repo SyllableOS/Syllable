@@ -8,12 +8,12 @@ nVidia		:	Iain Hutchison <iain_hutchison@yahoo.com>
 Sound Drivers
 
 Via686a		:	Arno Klenke <arno_klenke@yahoo.de>
-Via82xxx		:	Arno Klenke <arno_klenke@yahoo.de>
+Via82xxx	:	Arno Klenke <arno_klenke@yahoo.de>
 
 Keymaps
 
 Belgian		:	Bram Van Dam <gandalfbram@pandora.be>
-British		:	Kristian Van Der Vliet <vanders@blueyonder.co.uk>
+British		:	Kristian Van Der Vliet <vanders@liqwyd.com>
 Dvorak		:	DraX <drax@stampede.org>
 French		:	Herve Parissi <hparissi@mail.dotcom.fr>
 German		:	Daniel Popescu <daniel@popescu.de>
@@ -26,22 +26,18 @@ Swedish		:	Tord Jansson <tord.jansson@swipnet.se>
 
 Patches
 
-Anthony Morphett <tonymorph@yahoo.com>
-Henrik Isaksson <henrik@boing.nu>
-Jack Tonkin <lists@tonkin.org.uk>
+Damien Danneels <ddanneels@free.fr>
 Daniel Gryniewicz <dang@fprintf.net>
+Jake Hamby <jhamby@pobox.com>
+Henrik Isaksson <henrik@isaksson.tk>
 Ville Kallioniemi <festivus@mbnet.fi>
 Arno Klenke <arno_klenke@yahoo.de>
-Damien Danneels
-	CodeEdit fixes.
+Anthony Morphett <tonymorph@yahoo.com>
+Jack Tonkin <lists@tonkin.org.uk>
+Kristian Van Der Vliet <vanders@liqwyd.com>
 
 Ports
 
 sed-3.02	:	Andrew Brown <abrown.taos@bemail.org>
 
 Misc. help, work and advice
-
-
-
-
-
