@@ -168,6 +168,7 @@ namespace os
 		{ AUTOSCROLL_TIMER = 1 };
 
 		  ListViewContainer( ListView * pcListView, const Rect & cFrame, uint32 nModeFlags );
+		  ~ListViewContainer();
 		int InsertColumn( const char *pzTitle, int nWidth, int nPos = -1 );
 		int InsertRow( int nPos, ListViewRow * pcRow, bool bUpdate );
 		ListViewRow *RemoveRow( int nIndex, bool bUpdate );
@@ -621,6 +622,15 @@ ListViewContainer::ListViewContainer( ListView * pcListView, const Rect & cFrame
 	m_bAutoScrollSelects = false;
 	m_bIsSelecting = false;
 	m_nModeFlags = nModeFlags;
+}
+
+ListViewContainer::~ListViewContainer()
+{
+	for( uint i = 0; i < m_cRows.size(); ++i )
+	{
+		delete m_cRows[i];
+	}
+	m_cRows.clear();
 }
 
 //----------------------------------------------------------------------------
@@ -3607,3 +3617,4 @@ void ListView::MouseUp( const Point & cPosition, uint32 nButton, Message * pcDat
 {
 	View::MouseUp(cPosition,nButton,pcData);
 }
+
