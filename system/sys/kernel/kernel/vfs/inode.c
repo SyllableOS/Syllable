@@ -1690,7 +1690,7 @@ int sys_sync( void )
  * SEE ALSO:
  ****************************************************************************/
 
-static int do_mount( const char *pzDevName, const char *pzDirName, const char *pzFSName, int nFlags, int nFSID, void *pData )
+static int do_mount( const char *pzDevName, const char *pzDirName, const char *pzFSName, int nFlags, int nFSID, const void *pData )
 {
 	Volume_s *psVol;
 	FileSysDesc_s *psDesc;
@@ -1795,7 +1795,7 @@ static int do_mount( const char *pzDevName, const char *pzDirName, const char *p
 	return ( nError );
 }
 
-int sys_mount( const char *pzDevName, const char *pzDirName, const char *pzFSName, int nFlags, void *pData )
+int sys_mount( const char *pzDevName, const char *pzDirName, const char *pzFSName, int nFlags, const void *pData )
 {
 	static atomic_t nVolNum = ATOMIC_INIT( 124 );
 

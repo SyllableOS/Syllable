@@ -235,7 +235,7 @@ static void pty_delete_node( FileNode_s *psNode )
  * SEE ALSO:
  ****************************************************************************/
 
-static int pty_mount( kdev_t nDevNum, const char *pzDevPath, uint32 nFlags, void *pArgs, int nArgLen, void **ppVolData, ino_t *pnRootIno )
+static int pty_mount( kdev_t nDevNum, const char *pzDevPath, uint32 nFlags, const void *pArgs, int nArgLen, void **ppVolData, ino_t *pnRootIno )
 {
 	PtyVolume_s *psVolume = kmalloc( sizeof( PtyVolume_s ), MEMF_KERNEL | MEMF_CLEAR );
 	FileNode_s *psRootNode;

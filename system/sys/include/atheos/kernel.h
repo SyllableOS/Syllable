@@ -255,14 +255,14 @@ int	kill_proc( proc_id hProcess, int nSigNum );
 int 	initialize_fs( const char* pzDevPath, const char* pzFsType, const char* pzVolName, void* pArgs, int nArgLen 
 );
 int 	mount( const char* pzDevName, const char* pzDirName,
-	   const char* pzFSName, int nFlags, void* pData );
+	   const char* pzFSName, int nFlags, const void* pData );
 int	sys_unmount( const char* pzPath, bool bForce );
 
 int	sys_initialize_fs( const char* pzDevPath, const char* pzFsType, const char* pzVolName, void* pArgs, int 
 nArgLen );
 
 int	sys_mount( const char* pzDevName, const char* pzDirName,
-		   const char* pzFSName, int nFlags, void* pData );
+		   const char* pzFSName, int nFlags, const void* pData );
 int	unmount( const char* pzPath, bool bForce );
 
 

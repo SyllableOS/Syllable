@@ -167,7 +167,7 @@ enum
 
 typedef int op_probe( const char* pzDevPath, fs_info* psInfo );
 typedef int op_mount( kdev_t nDevNum, const char* pzDevPath,
-		      uint32 nFlags, void* pArgs, int nArgLen, void** ppVolData, ino_t* pnRootIno );
+		      uint32 nFlags, const void* pArgs, int nArgLen, void** ppVolData, ino_t* pnRootIno );
 
 typedef int op_unmount( void* pVolume );
 
