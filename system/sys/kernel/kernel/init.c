@@ -23,6 +23,8 @@
 #include <posix/wait.h>
 #include <posix/errno.h>
 #include <posix/unistd.h>
+#include <posix/dirent.h>
+#include <posix/stat.h>
 
 #include <atheos/kernel.h>
 #include <atheos/kdebug.h>
@@ -292,8 +294,93 @@ int get_kernel_arguments( int* argc, const char* const** argv )
  * SEE ALSO:
  ****************************************************************************/
 
+static int find_boot_dev()
+{
+	int nBaseDir;
+    struct kernel_dirent sDevDirEnt;
+	char *pzDevPathBuf, *pzDiskPathBuf;
+	bool bFound = false;
+
+	pzDevPathBuf = kmalloc( 4096, MEMF_KERNEL );
+	pzDiskPathBuf = kmalloc( 4096, MEMF_KERNEL );
+
+	nBaseDir = open( "/dev/disk", O_RDONLY );
+	if( nBaseDir < 0 )
+	{
+		printk( "Unable to open directory /dev/disk\n" );
+		return( nBaseDir );
+	}
+
+    while( getdents( nBaseDir, &sDevDirEnt, sizeof(sDevDirEnt) ) == 1 && bFound == false )
+	{
+		int nDevDir, nError = 0;
+
+		if ( strcmp( sDevDirEnt.d_name, "." ) == 0 || strcmp( sDevDirEnt.d_name, ".." ) == 0 )
+	    	continue;
+
+		strcpy( pzDevPathBuf, "/dev/disk" );
+		strcat( pzDevPathBuf, "/" );
+		strcat( pzDevPathBuf, sDevDirEnt.d_name );
+
+		nDevDir = open( pzDevPathBuf, O_RDONLY );
+		if( nDevDir < 0 )
+			continue;
+		else
+		{
+		    struct kernel_dirent sDiskDirEnt;
+			struct stat sStat;
+
+			while( getdents( nDevDir, &sDiskDirEnt, sizeof(sDiskDirEnt) ) == 1 && bFound == false )
+			{
+				if ( strcmp( sDiskDirEnt.d_name, "." ) == 0 || strcmp( sDiskDirEnt.d_name, ".." ) == 0 )
+	    			continue;
+
+				strcpy( pzDiskPathBuf, pzDevPathBuf );
+				strcat( pzDiskPathBuf, "/" );
+				strcat( pzDiskPathBuf, sDiskDirEnt.d_name );
+				strcat( pzDiskPathBuf, "/raw" );
+
+				printk( "Checking %s\n", pzDiskPathBuf );
+
+				nError = sys_mount( pzDiskPathBuf, "/boot", g_zBootFS, MNTF_SLOW_DEVICE, g_zBootFSArgs );
+
+				if( nError < 0 )
+					continue;
+
+				printk( "Checking for boot disk in %s\n", pzDiskPathBuf );
+
+				nError = stat( "/boot/SYLLABLE", &sStat );
+				if ( nError >= 0 )
+				{
+					printk( "Found boot disk in %s\n", pzDiskPathBuf );
+					strcpy( g_zBootDev, pzDiskPathBuf );
+					bFound = true;
+				}
+			}
+
+			close( nDevDir );
+		}
+	}
+
+	close( nBaseDir );
+
+	kfree( pzDevPathBuf );
+	kfree( pzDiskPathBuf );
+
+	return( bFound ? 0 : -1 );
+}
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+
 static int kernel_init()
 {
+	int nError = -1;
+
     g_sSysBase.ex_hInitProc = sys_get_thread_id( NULL );
 	
     init_scheduler();
@@ -310,12 +397,21 @@ static int kernel_init()
     init_elf_loader();
     
     init_block_cache();
-  
+
     printk( "Mount boot FS: %s %s %s\n", g_zBootDev, g_zBootFS, g_zBootFSArgs );
     mkdir( "/boot", 0 );
-    if ( sys_mount( g_zBootDev, "/boot", g_zBootFS, 0, g_zBootFSArgs ) < 0 ) {
-	printk( "Error: failed to mount boot file system.\n" );
-    }
+
+	if( strcmp( g_zBootDev, "@boot" ) == 0 )
+	{
+		nError = find_boot_dev();
+		if( nError < 0 )
+			printk( "Unable to find boot device\n" );
+		else
+			printk( "Found boot device\n" );
+	}
+	else if ( sys_mount( g_zBootDev, "/boot", g_zBootFS, 0, g_zBootFSArgs ) < 0 )
+		printk( "Error: failed to mount boot file system.\n" );
+
     g_bRootFSMounted = true;
     protect_dos_mem();
 
