@@ -1,4 +1,5 @@
 ; Network Necessities
 ;
-applications/gnu/wget-1.9.1
 applications/network/openssh-3.7.1p2
+applications/network/wget-1.9.1
+applications/network/irc/bitchx-1.0c19
