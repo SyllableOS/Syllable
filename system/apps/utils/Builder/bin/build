@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.59
+# Version 0.5.60
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -71,20 +71,34 @@ def unpackPackage target
 end
 
 def patchPackage target
+	if parent = (recipe = getRecipe(target))['inherits']
+		if exists? file = File.join(recipePath(parent), fullName(parent) + '.patch')
+			@log.header 'Applying patch from parent ' + parent
+			return false unless action 'patch --strip=1 < ' + file
+		end
+	
+		if exists? dir = patchesPath(parent)
+			@log.header 'Overlaying extra source files from parent ' + parent
+			return false unless action "cp -a #{File.join dir, '*'} ." and
+				# FIXME: crude way to remove possible CVS dirs from patches
+				deleteCVSData
+		end
+	end
+
 	if exists? file = File.join(recipePath(target), fullName(target) + '.patch')
-		@log.header 'Applying delta'
+		@log.header 'Applying patch'
 		return false unless action 'patch --strip=1 < ' + file
 	end
 
 	if exists? dir = patchesPath(target)
-		@log.header 'Applying patches'
+		@log.header 'Overlaying extra source files'
 		return false unless action "cp -a #{File.join dir, '*'} ." and
 			# FIXME: crude way to remove possible CVS dirs from patches
 			deleteCVSData
 	end
 
 	unless
-		if dirs = (recipe = getRecipe target)['patch-config']
+		if dirs = recipe['patch-config']
 			@log.header 'Patching configuration'
 			files = File.join @sourcesPath, 'config/config.*'
 	
@@ -1189,7 +1203,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.59',
+	puts 'Syllable Build System 0.5.60',
 		'Copyright (c) 2002-2004 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
