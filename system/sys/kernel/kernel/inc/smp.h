@@ -193,6 +193,7 @@ typedef struct
 typedef struct
 {
     char      pi_anVendorID[16];
+    char      pi_zName[255];
     uint32    pi_nCoreSpeed;
     uint32    pi_nBusSpeed;
     uint32    pi_nDelayCount;
@@ -207,7 +208,8 @@ typedef struct
     bool      pi_bIsRunning;
     bool      pi_bHaveCPUID;
     bool      pi_bHavePERFCnt;
-    bool      pi_bHaveAPIC;
+    bool      pi_bHaveAPIC; 
+    uint32    pi_nFeatures;
 } ProcessorInfo_s;
 
 
