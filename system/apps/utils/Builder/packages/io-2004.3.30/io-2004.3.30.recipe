@@ -1,0 +1,72 @@
+authors			Kaj de Vos
+status			developing
+
+licenses		BSD LGPL
+home			www.iolanguage.com
+packages
+;	IoVM-2004-03-30.tar.gz-link.gz
+;	IoVM-2004-03-30
+;	IoServer-2004-03-30
+	IoDesktop-2004-03-30
+
+build-needs		gawk
+
+no-build-dir
+
+patch-config
+	IoServer/DBI/libdbi
+	IoServer/Micro/base/lightning-1.1/config
+	IoServer/Regex/pcre
+	IoServer/SleepyCat/base/db/dist
+	IoDesktop/Audio/base/lame
+	IoDesktop/Audio/base/libmad
+	IoDesktop/Audio/base/libogg
+	IoDesktop/Audio/base/libsndfile
+	IoDesktop/Audio/base/libvorbis
+	IoDesktop/Audio/base/portaudio
+	IoDesktop/FreeType/freetype/builds/unix
+	IoDesktop/Image/base/jpeg
+	IoDesktop/Image/base/tiff
+	IoDesktop/Movie/base/mpeg2dec/autotools
+
+configure
+	./configure
+;post-configure
+	cp IoDesktop/Image/base/png/scripts/makefile.gcc IoDesktop/Image/base/png/makefile
+	cd IoDesktop/Image/base/tiff
+	./configure --noninteractive
+
+;test
+;	cd IoVM
+;	make test
+;	cd ../IoDesktop
+;	make test
+test-targets	test
+
+install-tree	bin lib IoVM IoServer IoDesktop
+install
+	cp IoVM/io							/usr/io/bin
+	strip -s							/usr/io/bin/io
+	cp IoServer/ioServer				/usr/io/bin
+	strip -s							/usr/io/bin/ioServer
+	cp IoVM/_libs/libIoVM.a				/usr/io/lib
+	cp IoServer/_libs/libIoServer.a		/usr/io/lib
+	cp IoDesktop/_libs/libIoDesktop.a	/usr/io/lib
+	cp -a Projects/SyntaxHighlighters	/usr/io
+	cp -a IoVM/_docs					/usr/io/IoVM
+	cp IoServer/_ReadMe.txt				/usr/io/IoServer
+	cp -a IoServer/_docs				/usr/io/IoServer
+	cp -a IoDesktop/_docs				/usr/io/IoDesktop
+;install-files
+;	IoVM/io							bin
+;	IoServer/ioServer				bin
+;	IoVM/_libs/libIoVM.a			lib
+;	IoServer/_libs/libIoServer.a	lib
+;	IoDesktop/_libs/libIoDesktop.a	lib
+;	Projects/SyntaxHighlighters		.
+;	IoVM/_docs						IoVM
+;	IoServer/_ReadMe.txt			IoServer
+;	IoServer/_docs					IoServer
+;	IoDesktop/_docs					IoDesktop
+;strip-files		bin/io bin/ioServer
+documentation	_ReadMe.txt _BSDLicense.txt _ReleaseHistory.txt Docs.html _docs
