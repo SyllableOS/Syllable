@@ -1,4 +1,4 @@
 ; Libraries to (re)build or reinstall for Syllable 0.5.4
 
 modules
-	programming/libraries/freetype-2.1.8
+	programming/libraries/freetype-2.1.9
