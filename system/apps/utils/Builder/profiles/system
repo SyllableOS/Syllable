@@ -197,7 +197,7 @@ modules
 	sys/media/drivers/videobitmap
 	sys/media/drivers/videooverlay
 	sys/media/drivers/vorbis
-	apps/utils/desktop
+	apps/utils/desktop/dlogin
 	apps/desktop/desktop
 	apps/desktop/dock
 	apps/desktop/dock_plugins/clock
