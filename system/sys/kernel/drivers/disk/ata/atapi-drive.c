@@ -26,6 +26,10 @@
  *
  * Changes
  *
+ * 05/04/03 - Implemented CD_READ_TOC_ENTRY (Untested).  Added
+ *			  cdrom_stop_audio(), cdrom_get_plaback_time() and
+ *		      CD_STOP & CD_GET_TIME ioctl()'s
+ *
  * 02/04/03 - Removed cdrom_start_stop(), which was not required and
  *		      causing problems with some CD/DVD drives
  *
@@ -663,6 +667,70 @@ status_t cdrom_pause_resume_audio(AtapiInode_s *psInode, bool bPause )
 	return( nError );
 }
 
+status_t cdrom_stop_audio( AtapiInode_s *psInode )
+{
+	atapi_packet_s command;
+	int nError, controller = psInode->bi_nController;
+
+	/* The drive must be paused before it will stop */
+	nError = cdrom_pause_resume_audio( psInode, true );
+	if( !nError )
+	{
+		memset(&command, 0, sizeof (command));
+
+		command.packet[0] = GPCMD_STOP_AUDIO;
+
+		LOCK( g_nControllers[controller].buf_lock );
+		nError = atapi_packet_command( psInode, &command);
+		UNLOCK( g_nControllers[controller].buf_lock );
+	}
+
+	return( nError );
+}
+
+status_t cdrom_get_playback_time( AtapiInode_s *psInode, cdrom_msf_s *pnTime )
+{
+	struct {
+		uint8 format;
+		uint8 adr_ctl;
+		uint8 track;
+		uint8 index;
+		uint32 abs_addr;
+		uint32 rel_addr;
+	} posbuf;
+
+	atapi_packet_s command;
+	int nError, controller = psInode->bi_nController;
+
+	memset(&command, 0, sizeof (command));
+
+	command.packet[0] = GPCMD_READ_SUB_CHANNEL;
+	command.packet[2] = 0x40;	/* Return SUBQ data */
+	command.packet[3] = 0x01;	/* CD Current Position */
+	command.packet[7] = ( sizeof(posbuf) >> 8);
+	command.packet[8] = ( sizeof(posbuf) & 0xff);
+
+	command.count = sizeof(posbuf);
+
+	LOCK( g_nControllers[controller].buf_lock );
+
+	nError = atapi_packet_command(psInode, &command);
+	if(nError == 0)
+		memcpy( &posbuf, g_nControllers[controller].data_buffer, sizeof(posbuf));
+
+	UNLOCK( g_nControllers[controller].buf_lock );
+
+	/* posbuf.track *should* contain the # of the current track, but does not appear
+	   to be valid on my CD-RW drive?
+	   rel_addr & abs_addr *are* valid (Big Endian), though */
+ 
+	lba_to_msf( be32_to_cpu( posbuf.rel_addr ), &pnTime->minute, &pnTime->second, &pnTime->frame );
+
+	kerndbg( KERN_DEBUG_LOW, "Playback time : %.2i:%.2i\n", pnTime->minute, pnTime->second );
+
+	return( nError );
+}
+
 status_t cdrom_saw_media_change(AtapiInode_s *psInode)
 {
 	psInode->bi_bMediaChanged = true;
@@ -725,7 +793,24 @@ status_t atapi_ioctl( void* pNode, void* pCookie, uint32 nCommand, void* pArgs, 
 
 		case CD_READ_TOC_ENTRY:
 		{
-			nError = -ENOSYS;
+			nError = -EINVAL;
+
+			if( pArgs != NULL && psInode->bi_bTocValid )
+			{
+				cdrom_toc_entry_s *psEntry = (cdrom_toc_entry_s*)pArgs;
+				uint8 nTrack = psEntry->track;
+
+				if( nTrack > 0 && nTrack < psInode->toc.hdr.last_track )
+				{
+					if ( bFromKernel )
+						memcpy( pArgs, &psInode->toc.ent[nTrack], sizeof(cdrom_toc_entry_s) );
+					else
+						nError = memcpy_to_user( pArgs, &psInode->toc.ent[nTrack], sizeof(cdrom_toc_entry_s) );
+
+					nError = 0;
+				}
+			}
+
 			break;
 		}
 
@@ -754,6 +839,18 @@ status_t atapi_ioctl( void* pNode, void* pCookie, uint32 nCommand, void* pArgs, 
 		case CD_RESUME:
 		{
 			nError = cdrom_pause_resume_audio( psInode, false );
+			break;
+		}
+
+		case CD_STOP:
+		{
+			nError = cdrom_stop_audio( psInode );
+			break;
+		}
+
+		case CD_GET_TIME:
+		{
+			nError = cdrom_get_playback_time( psInode, (cdrom_msf_s*)pArgs );
 			break;
 		}
 

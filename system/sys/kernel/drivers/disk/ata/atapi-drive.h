@@ -95,6 +95,8 @@ status_t cdrom_read_toc( AtapiInode_s *psInode, cdrom_toc_s *toc );
 status_t cdrom_read_capacity(AtapiInode_s *psInode, unsigned long *capacity );
 status_t cdrom_play_audio(AtapiInode_s *psInode, int lba_start, int lba_end );
 status_t cdrom_pause_resume_audio(AtapiInode_s *psInode, bool bPause );
+status_t cdrom_stop_audio( AtapiInode_s *psInode );
+status_t cdrom_get_playback_time( AtapiInode_s *psInode, cdrom_msf_s *pnTime );
 status_t cdrom_saw_media_change(AtapiInode_s *psInode );
 
 /* Device function prototypes */
@@ -122,7 +124,9 @@ static inline uint32 be32_to_cpu(uint32 be_val)
 #define GPCMD_PLAY_AUDIO_MSF	    0x47
 #define GPCMD_READ_10			    0x28
 #define GPCMD_READ_CDVD_CAPACITY	0x25
+#define GPCMD_READ_SUB_CHANNEL		0x42
 #define GPCMD_READ_TOC_PMA_ATIP		0x43
+#define GPCMD_STOP_AUDIO			0x4e
 #define GPCMD_REQUEST_SENSE		    0x03
 #define GPCMD_START_STOP_UNIT		0x1b
 #define GPCMD_TEST_UNIT_READY	    0x00
