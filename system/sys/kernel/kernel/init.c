@@ -54,7 +54,7 @@ extern int _end;
 static MultiBootHeader_s g_sMultiBootHeader;
 static char *g_apzEnviron[256];	// Environment from init script
 char g_zSysPath[256] = "/boot/atheos/";
-static char g_zUsrPath[256] = "/boot/atheos/usr/";
+static char g_zAppServerPath[256] = "/system/appserver", *g_pzAppserver = NULL;
 static char g_zBootMode[256] = "normal";
 static char g_zKernelParams[4096];
 static const char *g_apzKernelArgs[MAX_KERNEL_ARGS];
@@ -444,8 +444,7 @@ static int kernel_init()
 
 void SysInit( void )
 {
-	char *apzBootShellArgs[32];
-	char zBootScriptPath[256];
+	char *apzBootShellArgs[32], **ppzArg = apzBootShellArgs;
 	int i;
 
 	if ( Fork( "init" ) != 0 )
@@ -485,20 +484,19 @@ void SysInit( void )
 
 	register_debug_cmd( "umode", "umode mode - Set single(0)/multi(1) user mode", dbg_set_user_mode );
 
-	sys_get_system_path( zBootScriptPath, 256 );
+	/* Create command line for init */
+	*ppzArg++ = "init";
 
-	strcat( zBootScriptPath, "sys/init.sh" );
+	if ( g_pzAppserver != NULL )
+	{
+		*ppzArg++ = "-p";
+		*ppzArg++ = g_pzAppserver;
+	}
 
-	apzBootShellArgs[0] = "sh";
-	apzBootShellArgs[1] = "-noprofile";
-	apzBootShellArgs[2] = zBootScriptPath;
-	apzBootShellArgs[3] = g_zBootMode;
-	apzBootShellArgs[4] = g_zSysPath;
-	apzBootShellArgs[5] = g_zUsrPath;
-	apzBootShellArgs[6] = NULL;
-
-	apzBootShellArgs[0] = "init";
-	apzBootShellArgs[1] = NULL;
+	/* Pass in the boot mode */
+	*ppzArg++ = g_zBootMode;
+	
+	*ppzArg = NULL;
 
 	chdir( "/" );
 
@@ -556,7 +554,7 @@ void SysInit( void )
 				}
 			}
 
-			printk( "start init...\n" );
+			printk( "Start init...\n" );
 			execve( "/boot/atheos/sys/bin/init", apzBootShellArgs, g_apzEnviron );
 			printk( "Failed to load boot-shell\n" );
 		}
@@ -573,7 +571,7 @@ void SysInit( void )
 				if ( nBytesRead <= 0 )
 				{
 					snooze( 1000000 );
-					printk( "...boot shell finnished\n" );
+					printk( "...boot shell finished\n" );
 					put_fd( psFile );
 					do_exit( 0 );
 				}
@@ -761,6 +759,7 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 	printk( "  Boot fs:         '%s'\n", g_zBootFS );
 	printk( "  Boot dev:        '%s'\n", g_zBootDev );
 	printk( "  Boot fs args:    '%s'\n", g_zBootFSArgs );
+	printk( "  Appserver Path:  '%s'\n", g_pzAppserver == NULL ? "<default>" : g_pzAppserver );
 	printk( "  Debug port        %ld\n", g_nDebugSerialPort );
 	printk( "  Debug baudrate:   %ld\n", g_nDebugBaudRate );
 	printk( "  Debug mode:       %s\n", ( g_bPlainTextDebug ) ? "plain text" : "packet protocol" );
@@ -930,6 +929,11 @@ static void parse_kernel_params( char *pzParams )
 		get_str_arg( g_zBootFS, "rootfs=", pzArg, nLen );
 		get_str_arg( g_zBootFSArgs, "rootfsargs=", pzArg, nLen );
 		get_str_arg( g_zBootMode, "bootmode=", pzArg, nLen );
+		if ( get_str_arg( g_zAppServerPath, "appserver=", pzArg, nLen ) )
+		{
+			g_pzAppserver = g_zAppServerPath;
+		}
+
 		get_num_arg( &g_nMemSize, "memsize=", pzArg, nLen );
 		get_num_arg( &g_nDebugBaudRate, "debug_baudrate=", pzArg, nLen );
 		get_num_arg( &g_nDebugSerialPort, "debug_port=", pzArg, nLen );
