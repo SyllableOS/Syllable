@@ -18,7 +18,7 @@ $(EXE): $(OBJS)
 
 deps:
 	@echo Making $(OBJDIR) directory
-	@mkdir objs
+	@mkdir $(OBJDIR)
 	
 dist:
 	@echo Making $(DIST_DIR)/atheos/Applications/Archiver
