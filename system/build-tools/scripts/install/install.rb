@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#! ruby
 
 # last modified for installer version 0.1.11.6
 

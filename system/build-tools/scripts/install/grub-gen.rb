@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#! ruby
 
 # last modified for installer version 0.1.11
 # generate a GRUB menu.lst based on detected partitions

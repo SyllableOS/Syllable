@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#! ruby
 # list all available partitions and their respective filesystems
 
 # last modified for installer version 0.1.11.6
