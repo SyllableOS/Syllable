@@ -122,12 +122,12 @@ ChangePasswordDlg::ChangePasswordDlg( const Rect& cFrame,
 
   Button *pcButton;
   
-  pcButton = new Button( Rect( 0, 0, 60, 20 ), "cancel", "Cancel",
+  pcButton = new Button( Rect( 0, 0, 60, 20 ), "cancel", "_Cancel",
                          new Message( ID_CANCEL ) );
   pcButton->SetTabOrder( nTabOrder += 2 );
   pcLine->AddChild( pcButton );
 
-  pcButton = new Button( Rect( 0, 0, 60, 20 ), "ok", "OK",
+  pcButton = new Button( Rect( 0, 0, 60, 20 ), "ok", "_OK",
                          new Message( ID_OK ) );
   pcButton->SetTabOrder( --nTabOrder );
   pcLine->AddChild( pcButton );
@@ -223,4 +223,3 @@ void ChangePasswordDlg::OnCancel( Message *pcMessage ) {
 bool ChangePasswordDlg::OkToQuit( ) {
   return true;
 }
-

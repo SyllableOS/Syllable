@@ -191,12 +191,12 @@ namespace ui {
          ppzNext != m_cLines.end();
          ++ppzNext, pos.y += line ) {
       
-      DrawString( pzCurrent, (*ppzNext) - pzCurrent, pos );
+      DrawString( pos, os::String( pzCurrent, (*ppzNext) - pzCurrent ) );
 
       pzCurrent = *ppzNext;
     }
 
     // Draw last line
-    DrawString( pzCurrent, pos );
+    DrawString( pos, pzCurrent );
   }
 };

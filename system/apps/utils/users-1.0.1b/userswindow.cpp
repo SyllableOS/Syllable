@@ -664,6 +664,9 @@ UsersWindow::Content::Content( const Rect& cFrame,
                                uint32 nResizeMask,
                                uint32 nFlags )
   : LayoutView( cFrame, cTitle, NULL, nResizeMask, nFlags ) {
+
+  Button* pcCancel;
+  Button* pcOk;
   
   VLayoutNode  *pcRoot = new VLayoutNode( "root" );
   
@@ -672,17 +675,17 @@ UsersWindow::Content::Content( const Rect& cFrame,
   FrameView *pcMgmt = new FrameView( Rect( 0, 0, 20, 20 ),
                                      "management_frame", "User Management" );
 
-  pcRoot->AddChild( pcMgmt, 1.0f );
+  pcRoot->AddChild( pcMgmt, 100.0f );
   pcRoot->AddChild( pcPwd, 0.0f );
   
-  HLayoutNode *pcButtons = new HLayoutNode( "buttons_frame", 1.0f, pcRoot );
+  HLayoutNode *pcButtons = new HLayoutNode( "buttons_frame", 0.0f, pcRoot );
 
-  pcButtons->AddChild( new Button( Rect( 0, 0, 100, 20 ), "cancel_button",
-                                   "Cancel",
+  pcButtons->AddChild( pcCancel = new Button( Rect( 0, 0, 100, 20 ), "cancel_button",
+                                   "_Cancel",
                                    new Message( UsersWindow::ID_CANCEL ) ) );
 
-  pcButtons->AddChild( new Button( Rect( 0, 0, 100, 20 ), "ok_button",
-                                   "OK",
+  pcButtons->AddChild( pcOk = new Button( Rect( 0, 0, 100, 20 ), "ok_button",
+                                   "_OK",
                                    new Message( UsersWindow::ID_OK ) ) );
 
   // Build the user list frame
@@ -697,25 +700,25 @@ UsersWindow::Content::Content( const Rect& cFrame,
   
   pcMgmtBtns->AddChild( m_pcAdd = new Button( Rect( 0, 0, 100, 20 ),
                                     "add_button",
-                                    "Add User..",
+                                    "_Add User..",
                                     new Message( UsersWindow::ID_ADD ) ),
                         1.0f );
   
   pcMgmtBtns->AddChild( m_pcProperties = new Button( Rect( 0, 0, 100, 20 ),
                                     "properties_button",
-                                    "Properties...",
+                                    "_Properties...",
                                     new Message( UsersWindow::ID_PROPERTIES ) ),
                         1.0f );
 
   pcMgmtBtns->AddChild( m_pcDelete = new Button( Rect( 0, 0, 100, 20 ),
                                     "delete_button",
-                                    "Delete User",
+                                    "_Delete User",
                                     new Message( UsersWindow::ID_DELETE ) ),
                         1.0f );
 
   pcMgmtBtns->AddChild( m_pcSetPassword = new Button( Rect( 0, 0, 100, 20 ),
                                     "set_password_button",
-                                    "Set Password...",
+                                    "_Set Password...",
                                     new Message( UsersWindow::ID_SET_PASSWD ) ),
                         1.0f );
 
@@ -758,10 +761,14 @@ UsersWindow::Content::Content( const Rect& cFrame,
   pcPwdTop->AddChild( pcPwdText );
   
   // Create a 'Change Password' button.
+  HLayoutNode* pcChPwLayout = new HLayoutNode( "chpwlayout" );
   m_pcChangePassword = new Button( Rect( 0, 0, 100, 20 ), "password_button",
-                                   "Change Password...",
+                                   "C_hange Password...",
                                    new Message( UsersWindow::ID_CHANGE_PWD ) );
-  pcPwdRoot->AddChild( m_pcChangePassword );
+  pcChPwLayout->AddChild( new HLayoutSpacer( "" ) );
+  pcChPwLayout->AddChild( m_pcChangePassword, 0.3f );
+  pcChPwLayout->AddChild( new HLayoutSpacer( "" ) );
+  pcPwdRoot->AddChild( pcChPwLayout );
       
   // If the effective user ID is 0, its probably because we're running
   // setuid so people can change their passwords.
@@ -801,12 +808,18 @@ UsersWindow::Content::Content( const Rect& cFrame,
                       NULL );
   
   SetRoot( pcRoot );
+
+  m_pcUserList->SetTabOrder();
+  m_pcAdd->SetTabOrder();
+  m_pcProperties->SetTabOrder();
+  m_pcDelete->SetTabOrder();
+  m_pcSetPassword->SetTabOrder();
+  m_pcChangePassword->SetTabOrder();
+  pcCancel->SetTabOrder();
+  pcOk->SetTabOrder();
+
   InvalidateLayout();
 }
 
 UsersWindow::Content::~Content( ) {
 }
-
-
-
-

@@ -61,7 +61,7 @@ bool compare_pwd_to_txt( const char *pzCmp, const char *pzTxt ) {
 
 
 
-void errno_alert( const char *pzTitle, const char *pzAction, Window* pcWin=NULL ) {
+void errno_alert( const char *pzTitle, const char *pzAction, Window* pcWin ) {
   char acMsg[256];
   
   snprintf( acMsg, 256, "An error occurred while %s (%d: %s).",
@@ -73,5 +73,6 @@ void errno_alert( const char *pzTitle, const char *pzAction, Window* pcWin=NULL 
   	pcAlert->CenterInWindow(pcWin);
   pcAlert->Go(new Invoker());
 }
+
 
 

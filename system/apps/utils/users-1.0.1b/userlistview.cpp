@@ -188,7 +188,7 @@ void UserListViewRow::Paint( const Rect& cFrame, View *pcView, uint nColumn,
       break;
   }
   
-  pcView->DrawString( pzRow, cPen );
+  pcView->DrawString( cPen, pzRow );
 }
 
 bool UserListViewRow::IsLessThan( const ListViewRow *pcOther, uint nColumn )
@@ -290,4 +290,5 @@ void UserListViewRow::SetPwd( const string& cPwd ) {
 void UserListViewRow::SetPwdText( const string& cPwd ) {
   m_cPwd = crypt( cPwd.c_str(), "$1$" );
 }
+
 

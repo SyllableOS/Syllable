@@ -72,18 +72,17 @@ UserProperties::UserProperties( const Rect& cFrame, const string& cName,
     string     name;
     const char *value, *caption;
   } *psLine, asLines[] = {
-    { &m_pcGecos, "gecos", sDetails.pw_gecos, "Name:" },
-    { &m_pcName,  "name",  sDetails.pw_name,  "Login:" },
-    { &m_pcUid,   "uid",   acUidBuf,          "User ID:" },
-    { &m_pcGid,   "gid",   acGidBuf,          "Group ID:" },
-    { &m_pcHome,  "home",  sDetails.pw_dir,   "Home:" },
-    { &m_pcShell, "shell", sDetails.pw_shell, "Shell:" },
+    { &m_pcGecos, "gecos", sDetails.pw_gecos, "_Name:" },
+    { &m_pcName,  "name",  sDetails.pw_name,  "_Login:" },
+    { &m_pcUid,   "uid",   acUidBuf,          "_User ID:" },
+    { &m_pcGid,   "gid",   acGidBuf,          "_Group ID:" },
+    { &m_pcHome,  "home",  sDetails.pw_dir,   "_Home:" },
+    { &m_pcShell, "shell", sDetails.pw_shell, "_Shell:" },
     { NULL, "", NULL, NULL }
   };
 
 
   // Create the various rows of the table.
-  int nTabStop = 0;
   
   for( psLine = asLines; psLine->view != NULL; ++psLine ) {
     pcLayout = new HLayoutNode( (psLine->name + "_line").c_str(),
@@ -97,7 +96,8 @@ UserProperties::UserProperties( const Rect& cFrame, const string& cName,
                                     psLine->name.c_str(),
                                     psLine->value );
     
-    (*psLine->view)->SetTabOrder( ++nTabStop );
+    (*psLine->view)->SetTabOrder( NEXT_TAB_ORDER );
+    (*psLine->view)->SetShortcutFromLabel( psLine->name );
     
     pcLayout->AddChild( *psLine->view );
   }
@@ -107,12 +107,12 @@ UserProperties::UserProperties( const Rect& cFrame, const string& cName,
   Button *pcButton;
   
 
-  pcButton = new Button( cRect, "cancel", "Cancel", new Message( ID_CANCEL ) );
-  pcButton->SetTabOrder( nTabStop += 2 );
+  pcButton = new Button( cRect, "cancel", "_Cancel", new Message( ID_CANCEL ) );
+  pcButton->SetTabOrder(  );
   pcLayout->AddChild( pcButton );
   
-  pcButton = new Button( cRect, "ok", "OK", new Message( ID_OK ) );
-  pcButton->SetTabOrder( --nTabStop );
+  pcButton = new Button( cRect, "ok", "_OK", new Message( ID_OK ) );
+  pcButton->SetTabOrder(  );
   pcLayout->AddChild( pcButton );
   
   pcRoot->SetBorders( Rect( 5, 5, 5, 5 ) );
@@ -182,4 +182,3 @@ void UserProperties::HandleMessage( Message *pcMessage ) {
 bool UserProperties::OkToQuit( ) {
   return true;
 }
-
