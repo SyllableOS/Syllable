@@ -1,4 +1,5 @@
-authors Kaj de Vos
+authors				Kaj de Vos
 patch-config
-;configure-options --disable-servers
-documentation README COPYING NEWS ChangeLog TODO AUTHORS THANKS
+configure-options	--disable-ping
+; --disable-servers
+documentation		README COPYING NEWS ChangeLog TODO AUTHORS THANKS
