@@ -10,6 +10,8 @@ Removed sh-utils and textutils. They were replaced by coreutils,
 and sh-utils didn't build, anyway. I left fileutils in there
 for reference to the patch it contains.
 
+Removed freetype 2.1.3. It was replaced by freetype 2.1.4.
+
 * Oct 3 2003, Kristian Van Der Vliet *
 
 Patch Savage driver to fix problems with 16bit modes from Hilary Cheng
