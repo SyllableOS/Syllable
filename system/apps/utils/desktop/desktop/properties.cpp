@@ -298,6 +298,7 @@ void PropWin::Defaults()
     		while ( strcmp(t_list[nImageList].c_str(),zImage.c_str())!=0);
     
     		pcPropTab->pcBack->pcList->Select(nImageList,true,true);
+    		
 		}
 		
 	
@@ -353,8 +354,10 @@ void PropWin::SaveLoginConfig(bool b_Login, const char* zName)
     
     fprintf(fin,zName);
     fclose(fin);
+    
+    system("/usr/bin/mv -f /tmp/login.cfg /boot/atheos/sys/config");
 
-    system("mv -f /tmp/login.cfg /boot/atheos/sys/config");
+    
 }
 
 
@@ -396,7 +399,10 @@ void PropWin::SavePrefs(bool bShow, bool bLogin, string zPic, int32 nNewImageSiz
     pcPrefs->AddBool   ( "ShowVer",    bShow   );
     pcPrefs->AddInt32  ( "SizeImage",  nNewImageSize);
 
-	pcSettings->SaveSettings(pcPrefs);   
+	pcSettings->SaveSettings(pcPrefs);
+	
+	  
+    system("/usr/bin/mv -f /tmp/desktop.cfg ~/config/desktop/config");   
 
    
 
@@ -414,6 +420,7 @@ void PropWin::LoadPrefs(void)
     
 
 }
+
 
 
 
