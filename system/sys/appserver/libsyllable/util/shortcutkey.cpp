@@ -1,66 +1,98 @@
 #include <util/shortcutkey.h>
+#include <gui/font.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <wctype.h>
 
 using namespace os;
 
 ShortcutKey::ShortcutKey( const char* pzKey, uint32 nQualifiers = 0 )
 {
-	if( ( strncmp( pzKey, "ALT+", 4 ) == 0 ) || ( strncmp( pzKey, "alt+", 4 ) == 0 ) ) {
+	if( ( strncasecmp( pzKey, "ALT+", 4 ) == 0 ) ) {
 		pzKey += 4;
 		nQualifiers |= QUAL_ALT;
-	} else if( ( strncmp( pzKey, "SHIFT+", 6 ) == 0 ) || ( strncmp( pzKey, "SHIFT+", 6 ) == 0 ) ) {
+	} else if( ( strncasecmp( pzKey, "SHIFT+", 6 ) == 0 ) ) {
 		pzKey += 6;
 		nQualifiers |= QUAL_SHIFT;
-	} else if( ( strncmp( pzKey, "CTRL+", 5 ) == 0 ) || ( strncmp( pzKey, "CTRL+", 5 ) == 0 ) ) {
+	} else if( ( strncasecmp( pzKey, "CTRL+", 5 ) == 0 ) ) {
 		pzKey += 5;
 		nQualifiers |= QUAL_CTRL;
 	}
 
-	m_pzKey = new char[ strlen( pzKey ) + 1 ];
-	strcpy( m_pzKey, pzKey );
+	_SetKey( pzKey );
 	m_nQualifiers = nQualifiers;
 }
 
-ShortcutKey::ShortcutKey( const char cKey, uint32 nQualifiers = 0 )
+ShortcutKey::ShortcutKey( const uint32 nKey, uint32 nQualifiers = 0 )
 {
-	m_pzKey = new char[2];
-	m_pzKey[0] = cKey;
-	m_pzKey[1] = 0;
+	m_nKey = nKey;
 	m_nQualifiers = nQualifiers;
 }
 
-ShortcutKey::ShortcutKey( const ShortcutKey& cShortcut ) {
+ShortcutKey::ShortcutKey( const ShortcutKey& cShortcut )
+{
 	m_nQualifiers = cShortcut.m_nQualifiers;
-	m_pzKey = new char[ strlen( cShortcut.m_pzKey ) + 1 ];
-	strcpy( m_pzKey, cShortcut.m_pzKey );
+	m_nKey = cShortcut.m_nKey;
 }
 
 ShortcutKey::ShortcutKey()
 {
-	m_pzKey = new char[1];
-	m_pzKey[0] = 0;
+	m_nKey = 0;
 	m_nQualifiers = 0;
 }
 
 ShortcutKey::~ShortcutKey()
 {
-	delete []m_pzKey;
 }
 
 bool ShortcutKey::operator<( const ShortcutKey& c ) const
 {
-	return strcmp( m_pzKey, c.m_pzKey ) < 0;
+	if( !IsValid() || !c.IsValid() ) {
+		dbprintf( "ShortcutKey::operator<() called with invalid shortcut!\n" );
+	}
+
+	if( m_nKey == c.m_nKey ) {
+		return m_nQualifiers < c.m_nQualifiers ;
+	} else {
+		return m_nKey < c.m_nKey ;
+	}
 }
 
 bool ShortcutKey::operator==( const ShortcutKey& c ) const
 {
 	uint32 nOnes = m_nQualifiers | c.m_nQualifiers;
 	uint32 nZeros = m_nQualifiers & c.m_nQualifiers;
+
+	if( !IsValid() ) return false;
+	
 	return	( ( nZeros & QUAL_CTRL ) || ( ! ( nOnes & QUAL_CTRL ) ) ) &&
 			( ( nZeros & QUAL_SHIFT ) || ( ! ( nOnes & QUAL_SHIFT ) ) ) &&
 			( ( nZeros & QUAL_ALT ) || ( ! ( nOnes & QUAL_ALT ) ) ) &&
-			( strcmp( m_pzKey, c.m_pzKey ) == 0 ) ;
+			( m_nKey == c.m_nKey  ) ;
 }
 
+void ShortcutKey::SetFromLabel( const char* pzLabel )
+{
+	int i, len = strlen( pzLabel );
+
+	for( i = 0; i < len; i+=utf8_char_length( pzLabel[i] ) ) {
+		if( pzLabel[i] == '_' && pzLabel[i+1] != '_' ) {
+			_SetKey( &pzLabel[i+1] );
+			return;
+		}
+	}
+	_SetKey( "" );
+}
+
+bool ShortcutKey::IsValid() const
+{
+	return ( m_nKey );
+}
+
+void ShortcutKey::_SetKey( const char* pzKey )
+{
+	uint32 unicode = utf8_to_unicode( pzKey );
+
+	m_nKey = towupper( unicode );
+}
