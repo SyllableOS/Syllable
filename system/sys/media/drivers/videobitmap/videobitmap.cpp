@@ -18,6 +18,7 @@
  */
 
 #include <media/output.h>
+#include <media/addon.h>
 #include <gui/view.h>
 #include <gui/bitmap.h>
 #include <atheos/threads.h>
@@ -326,115 +327,25 @@ uint32 VideoBitmapOutput::GetUsedBufferPercentage()
 	return( nValue );
 }
 
+class VideoBitmapAddon : public os::MediaAddon
+{
+public:
+	status_t Initialize() { 
+		return( 0 );
+	}
+	os::String GetIdentifier() { return( "Video Bitmap" ); }
+	uint32			GetOutputCount() { return( 1 ); }
+	os::MediaOutput* GetOutput( uint32 nIndex ) { return( new VideoBitmapOutput() ); }
+private:
+};
 
 extern "C"
 {
-	os::MediaOutput* init_media_output()
+	os::MediaAddon* init_media_addon()
 	{
-		return( new VideoBitmapOutput() );
+		return( new VideoBitmapAddon() );
 	}
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

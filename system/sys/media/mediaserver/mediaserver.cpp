@@ -882,7 +882,8 @@ void MediaServer::SetDefaultDsp( Message* pcMessage )
 	lock_semaphore( m_hLock );
 	m_nDefaultDsp = nHandle;
 	unlock_semaphore( m_hLock );
-	pcMessage->SendReply( &cReply );
+	if( pcMessage->IsSourceWaiting() ) 	
+		pcMessage->SendReply( &cReply );
 }
 
 void MediaServer::HandleMessage( Message* pcMessage )
@@ -1028,6 +1029,8 @@ int main()
 		pcServer->Start();
 	}
 }
+
+
 
 
 

@@ -193,14 +193,13 @@ status_t RAWCodec::EncodePacket( os::MediaPacket_s* psPacket, os::MediaPacket_s*
 	return( 0 );
 }
 
-extern "C"
+os::MediaCodec* init_vorbis_codec()
 {
-	os::MediaCodec* init_media_codec()
-	{
-		return( new RAWCodec() );
-	}
-
+	return( new RAWCodec() );
 }
+
+
+
 
 
 

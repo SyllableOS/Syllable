@@ -18,18 +18,21 @@
  */
  
 #include <media/input.h>
+#include <media/addon.h>
 #include <atheos/cdrom.h>
 #include <posix/ioctl.h>
 #include <sys/ioctl.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <fcntl.h>
 #include <iostream>
+#include <vector>
 
 class CDRom : public os::MediaInput
 {
 public:
-	CDRom();
+	CDRom( os::String zDevicePath );
 	~CDRom();
 	os::String 		GetIdentifier();
 	os::View*		GetConfigurationView();
@@ -52,15 +55,15 @@ public:
 	
 	
 private:
-	std::string m_zDevicePath;
+	os::String m_zDevicePath;
 	cdrom_toc_s *m_psToc;
 	int m_nTrack;
 	int m_hDevice;
 };
 
-CDRom::CDRom()
+CDRom::CDRom( os::String zDevicePath )
 {
-	m_zDevicePath = "/dev/null";
+	m_zDevicePath = zDevicePath;
 	m_psToc = NULL;
 	m_nTrack = 0;
 	m_hDevice = -1;
@@ -77,7 +80,7 @@ CDRom::~CDRom()
 
 os::String CDRom::GetIdentifier()
 {
-	return( "CD Audio" );
+	return( os::String( "CD Audio (" ) + m_zDevicePath.substr( 14, 3 ) + os::String( ")" )  );
 }
 
 os::View* CDRom::GetConfigurationView()
@@ -94,25 +97,14 @@ status_t CDRom::Open( os::String zFileName )
 {
 	m_psToc = (cdrom_toc_s*)malloc( sizeof( cdrom_toc_s ));
 	memset( m_psToc, 0, sizeof( cdrom_toc_s ));
-	os::String zDrives[] = { "/dev/disk/ide/cda/raw",
-							"/dev/disk/ide/cdb/raw", 
-							"/dev/disk/ide/cdc/raw",
-							"/dev/disk/ide/cdd/raw" };
-							
-	
-	/* Try all cd drives */
-	for( int i = 0; i < 4; i++ )
-	{
-		m_hDevice = open( zDrives[i].c_str(), O_RDONLY );
-		if( m_hDevice >= 0  )
-			if( ioctl( m_hDevice, CD_READ_TOC, m_psToc ) >= 0 ) {
-				break;
-			}
-			else {
-				close( m_hDevice );
-				m_hDevice = -1;
-			}
-	}
+	m_hDevice = open( m_zDevicePath.c_str(), O_RDONLY );
+	if( m_hDevice >= 0 )
+		if( ioctl( m_hDevice, CD_READ_TOC, m_psToc ) >= 0 ) {
+		}
+		else {
+			close( m_hDevice );
+			m_hDevice = -1;
+		}
 	if( m_hDevice < 0 )
 		return( -1 );
 	
@@ -261,43 +253,53 @@ uint64 CDRom::Seek( uint64 nPosition )
 }
 
 
+class CDRomAddon : public os::MediaAddon
+{
+public:
+	status_t Initialize()
+	{
+		m_cDrives.clear();
+		os::String zDrives[] = { "/dev/disk/ide/cda/raw",
+							"/dev/disk/ide/cdb/raw", 
+							"/dev/disk/ide/cdc/raw",
+							"/dev/disk/ide/cdd/raw",
+							"/dev/disk/ata/cda/raw",
+							"/dev/disk/ata/cdb/raw",
+							"/dev/disk/ata/cdc/raw",
+							"/dev/disk/ata/cdd/raw" };
+							
+		/* Try all cd drives */
+		for( int i = 0; i < 8; i++ )
+		{
+			struct stat sStat;
+			if( lstat( zDrives[i].c_str(), &sStat ) == 0 )
+				m_cDrives.push_back( zDrives[i] );
+		}
+		return( 0 );
+	}
+	os::String GetIdentifier() 
+	{
+		return( "CD Audio" );
+	}
+	uint32 GetInputCount()
+	{ 
+		return( m_cDrives.size() );
+	}
+	os::MediaInput*	GetInput( uint32 nIndex ) 
+	{
+		return( new CDRom( m_cDrives[nIndex] ) );
+	}
+private:
+	std::vector<os::String> m_cDrives;
+};
+
 
 extern "C"
 {
-	os::MediaInput* init_media_input()
+	os::MediaAddon* init_media_addon()
 	{
-		return( new CDRom() );
+		return( new CDRomAddon() );
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

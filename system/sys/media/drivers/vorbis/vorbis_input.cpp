@@ -19,6 +19,8 @@
  */
  
 #include <media/input.h>
+#include <media/codec.h>
+#include <media/addon.h>
 #include <posix/fcntl.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -248,92 +250,26 @@ os::MediaFormat_s VorbisInput::GetStreamFormat( uint32 nIndex )
 	return( sFormat );
 }
 
+
+extern os::MediaCodec* init_vorbis_codec();
+
+class VorbisAddon : public os::MediaAddon
+{
+public:
+	status_t Initialize() { return( 0 ); }
+	os::String GetIdentifier() { return( "Ogg Vorbis" ); }
+	uint32			GetCodecCount() { return( 1 ); }
+	os::MediaCodec*		GetCodec( uint32 nIndex ) { return( init_vorbis_codec() ); }
+	uint32			GetInputCount() { return( 1 ); }
+	os::MediaInput*		GetInput( uint32 nIndex ) { return( new VorbisInput() ); }
+};
+
 extern "C"
 {
-	os::MediaInput* init_media_input()
+	os::MediaAddon* init_media_addon()
 	{
-		return( new VorbisInput() );
+		return( new VorbisAddon() );
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

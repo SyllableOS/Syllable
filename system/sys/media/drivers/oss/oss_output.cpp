@@ -1,5 +1,6 @@
 /*  OSS output plugin
- *  Copyright (C) 2003 Arno Klenke
+ *  Copyright (C) 2003 - 2004 Arno Klenke
+ *  Copyright (C) 2003 Kristian Van Der Vliet
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -18,7 +19,8 @@
  */
 
 #include <media/output.h>
-#include <media/server.h>
+//#include <media/server.h>
+#include <media/addon.h>
 #include <atheos/soundcard.h>
 #include <atheos/threads.h>
 #include <atheos/semaphore.h>
@@ -30,7 +32,10 @@
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <dirent.h>
 #include <iostream>
+#include <vector>
+#include <stdio.h>
 #include "mixerview.h"
 
 #define OSS_PACKET_NUMBER 10
@@ -38,8 +43,9 @@
 class OSSOutput : public os::MediaOutput
 {
 public:
-	OSSOutput();
+	OSSOutput( os::String zDSPPath );
 	~OSSOutput();
+	os::String		GetMixerPath();
 	os::String		GetIdentifier();
 	os::View*		GetConfigurationView();
 	
@@ -82,13 +88,14 @@ private:
  * Note : Using threads here, because the non-threaded version caused bad noises 
  */
 
-OSSOutput::OSSOutput()
+OSSOutput::OSSOutput( os::String zDSPPath )
 {
 	/* Set default values */
 	m_hOSS = -1;
 	m_hLock = create_semaphore( "oss_lock", 1, 0 );
 	m_nQueuedPackets = 0;
 	m_hThread = -1;
+	m_zDSPPath = zDSPPath;
 }
 
 OSSOutput::~OSSOutput()
@@ -97,52 +104,9 @@ OSSOutput::~OSSOutput()
 	delete_semaphore( m_hLock );
 }
 
-os::String OSSOutput::GetIdentifier()
+
+os::String OSSOutput::GetMixerPath()
 {
-	return( "OSS Audio Output" );
-}
-
-
-os::View* OSSOutput::GetConfigurationView()
-{
-	port_id nPort;
-	os::Message cReply;
-	int32 hDefaultDsp;
-	std::string cDspPath;
-	
-	/* Get DSP path */
-	if( ( nPort = find_port( "l:media_server" ) ) < 0 ) {
-		std::cout<<"Could not connect to media server!"<<std::endl;
-		return( NULL );
-	}
-	
-	m_cMediaServerLink = os::Messenger( nPort );
-	m_cMediaServerLink.SendMessage( os::MEDIA_SERVER_PING, &cReply );
-	if( cReply.GetCode() != os::MEDIA_SERVER_OK ) {
-		return( NULL );
-	}
-
-	/* Find soundcard */
-	os::Message cMsg( os::MEDIA_SERVER_GET_DEFAULT_DSP );
-	m_cMediaServerLink.SendMessage( &cMsg, &cReply );
-	if( cReply.GetCode() != os::MEDIA_SERVER_OK )
-		return( NULL );
-
-	if( cReply.FindInt32( "handle", &hDefaultDsp ) != 0 )
-		return( NULL );
-
-	cMsg.SetCode( os::MEDIA_SERVER_GET_DSP_INFO );
-	cMsg.AddInt32( "handle", hDefaultDsp );
-	m_cMediaServerLink.SendMessage( &cMsg, &cReply );
-	if( cReply.GetCode() != os::MEDIA_SERVER_OK )
-		return( NULL );
-
-	if( cReply.FindString( "path", &cDspPath ) )
-		return( NULL );
-
-	/* Open soundcard */
-	m_zDSPPath = cDspPath.c_str();
-	
 	/* Remove "dsp/x" from the path and add "mixer/x" */
 	char zPath[255];
 	memset( zPath, 0, 255 );
@@ -152,7 +116,24 @@ os::View* OSSOutput::GetConfigurationView()
 	zTemp[1] = 0;
 	zTemp[0] = m_zDSPPath[m_zDSPPath.CountChars()-1];
 	strcat( zPath, zTemp );
-	os::MixerView* pcView = new os::MixerView( zPath, os::Rect( 0, 0, 1, 1 ) );
+	return( os::String( zPath ) );
+}
+
+os::String OSSOutput::GetIdentifier()
+{
+	mixer_info sInfo;
+	os::String zName = "Unknown";
+	/* Try to read the mixer name */
+	int nMixerDev = open( GetMixerPath().c_str(), O_RDWR );
+	if( ioctl( nMixerDev, SOUND_MIXER_INFO, &sInfo ) == 0 )
+		zName = os::String( sInfo.name );
+	
+	return( os::String( "Direct OSS (") + zName + os::String( ")" ) );
+}
+
+os::View* OSSOutput::GetConfigurationView()
+{	
+	os::MixerView* pcView = new os::MixerView( GetMixerPath().c_str(), os::Rect( 0, 0, 1, 1 ) );
 	return( pcView );
 }
 
@@ -208,48 +189,13 @@ int flush_thread_entry( void* pData )
 
 status_t OSSOutput::Open( os::String zFileName )
 {
-	/* Look for media manager port */	
-	port_id nPort;
-	os::Message cReply;
-	int32 hDefaultDsp;
-	std::string cDspPath;
-
-	if( ( nPort = find_port( "l:media_server" ) ) < 0 ) {
-		std::cout<<"Could not connect to media server!"<<std::endl;
-		return( -1 );
-	}
-	m_cMediaServerLink = os::Messenger( nPort );
-	m_cMediaServerLink.SendMessage( os::MEDIA_SERVER_PING, &cReply );
-	if( cReply.GetCode() != os::MEDIA_SERVER_OK ) {
-		return( -1 );
-	}
-
-	/* Find soundcard */
-	os::Message cMsg( os::MEDIA_SERVER_GET_DEFAULT_DSP );
-	m_cMediaServerLink.SendMessage( &cMsg, &cReply );
-	if( cReply.GetCode() != os::MEDIA_SERVER_OK )
-		return( -1 );
-
-	if( cReply.FindInt32( "handle", &hDefaultDsp ) != 0 )
-		return( -1 );
-
-	cMsg.SetCode( os::MEDIA_SERVER_GET_DSP_INFO );
-	cMsg.AddInt32( "handle", hDefaultDsp );
-	m_cMediaServerLink.SendMessage( &cMsg, &cReply );
-	if( cReply.GetCode() != os::MEDIA_SERVER_OK )
-		return( -1 );
-
-	if( cReply.FindString( "path", &cDspPath ) )
-		return( -1 );
-
 	/* Open soundcard */
 	Close();
-	m_hOSS = open( cDspPath.c_str(), O_WRONLY );
+	m_hOSS = open( m_zDSPPath.c_str(), O_WRONLY );
 	if( m_hOSS < 0 )
 		return( -1 );
 	
-	m_zDSPPath = cDspPath.c_str();
-		
+	
 	/* Clear packet buffer */
 	m_nQueuedPackets = 0;
 	for( int i = 0; i < OSS_PACKET_NUMBER; i++ ) {
@@ -473,143 +419,102 @@ uint32 OSSOutput::GetUsedBufferPercentage()
 	return( nValue );
 }
 
+class OSSAddon : public os::MediaAddon
+{
+public:
+	status_t Initialize()
+	{
+		int nDspCount = 0;
+		DIR *hAudioDir, *hDspDir;
+		struct dirent *hAudioDev, *hDspNode;
+		char *zCurrentPath = NULL;
+		const char* pzPath = "/dev/sound/";
+
+		hAudioDir = opendir( pzPath );
+		if( hAudioDir == NULL )
+		{
+			std::cout<<"UOSS: nable to open"<<pzPath<<std::endl;
+			return( -1 );
+		}
+
+		while( (hAudioDev = readdir( hAudioDir )) )
+		{
+			if( !strcmp( hAudioDev->d_name, "." ) || !strcmp( hAudioDev->d_name, ".." ) )
+				continue;
+
+			std::cout<<"OSS: Found audio device "<<hAudioDev->d_name<<std::endl;
+			zCurrentPath = (char*)calloc( 1, strlen( pzPath ) + strlen( hAudioDev->d_name ) + 5 );
+			if( zCurrentPath == NULL )
+			{
+				std::cout<<"OSS: Out of memory"<<std::endl;
+				closedir( hAudioDir );
+				return( -1 );
+			}
+
+			zCurrentPath = strcpy( zCurrentPath, pzPath );
+			zCurrentPath = strcat( zCurrentPath, hAudioDev->d_name );
+			zCurrentPath = strcat( zCurrentPath, "/dsp" );
+
+			/* Look for DSP device nodes for this device */
+			hDspDir = opendir( zCurrentPath );
+			if( hDspDir == NULL )
+			{
+				std::cout<<"OSS: Unable to open"<<zCurrentPath<<std::endl;
+				free( zCurrentPath );
+				continue;
+			}
+
+			while( (hDspNode = readdir( hDspDir )) )
+			{
+				char *zDspPath = NULL;
+
+				if( !strcmp( hDspNode->d_name, "." ) || !strcmp( hDspNode->d_name, ".." ) )
+					continue;
+
+				/* We have found a DSP device node */
+				++nDspCount;
+
+				zDspPath = (char*)calloc( 1, strlen( zCurrentPath ) + strlen( hDspNode->d_name ) + 1 );
+				if( zDspPath == NULL )
+				{
+					printf( "OSS: Out of memory\n" );
+					closedir( hDspDir );
+					free( zCurrentPath );
+					closedir( hAudioDir );
+					return( -1 );
+				}
+	
+				zDspPath = strcpy( zDspPath, zCurrentPath );
+				zDspPath = strcat( zDspPath, "/" );
+				zDspPath = strcat( zDspPath, hDspNode->d_name );
+
+				
+				std::cout<<"OSS: Added "<<zDspPath<<std::endl;
+				m_zDSP.push_back( os::String( zDspPath ) );
+				free( zDspPath );
+			}
+
+			closedir( hDspDir );
+			free( zCurrentPath );
+		}
+
+		closedir( hAudioDir );
+		return( 0 );
+	}
+	os::String GetIdentifier() { return( "OSS Audio" ); }
+	uint32			GetOutputCount() { return( m_zDSP.size() ); }
+	os::MediaOutput*	GetOutput( uint32 nIndex ) { return( new OSSOutput( m_zDSP[nIndex] ) ); }
+private:
+	std::vector<os::String> m_zDSP;
+};
+
 extern "C"
 {
-	os::MediaOutput* init_media_output()
+	os::MediaAddon* init_media_addon()
 	{
-		return( new OSSOutput() );
+		return( new OSSAddon() );
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

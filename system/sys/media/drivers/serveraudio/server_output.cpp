@@ -19,6 +19,8 @@
 
 #include <media/output.h>
 #include <media/server.h>
+#include <media/addon.h>
+#include <media/manager.h>
 #include <util/messenger.h>
 #include <util/message.h>
 #include <atheos/msgport.h>
@@ -29,7 +31,7 @@
 class ServerOutput : public os::MediaOutput
 {
 public:
-	ServerOutput();
+	ServerOutput( int nIndex );
 	~ServerOutput();
 	os::String		GetIdentifier();
 	os::View*		GetConfigurationView();
@@ -51,6 +53,7 @@ public:
 	uint32			GetUsedBufferPercentage();
 	
 private:
+	int					m_nIndex;
 	os::Messenger		m_cMediaServerLink;
 	os::MediaFormat_s 	m_sFormat;
 	int32				m_nHandle;
@@ -60,9 +63,9 @@ private:
 };
 
 
-ServerOutput::ServerOutput()
+ServerOutput::ServerOutput( int nIndex )
 {
-	
+	m_nIndex = nIndex;
 }
 
 ServerOutput::~ServerOutput()
@@ -71,13 +74,24 @@ ServerOutput::~ServerOutput()
 
 os::String ServerOutput::GetIdentifier()
 {
-	return( "Media Server Audio Output" );
+	os::String cName;
+
+	os::Message cReply;
+	os::Message cMsg( os::MEDIA_SERVER_GET_DSP_INFO );
+	cMsg.AddInt32( "handle", m_nIndex );
+	os::MediaManager::GetInstance()->GetServerLink().SendMessage( &cMsg, &cReply );
+
+	if ( cReply.GetCode() == os::MEDIA_SERVER_OK && cReply.FindString( "name", &cName ) == 0 )
+		return( os::String( os::String( "Media Server (" ) + cName + os::String( ")" ) ) );
+	else
+		return( "Media Server Audio Output" );
 }
 
 
 os::View* ServerOutput::GetConfigurationView()
 {
-	return( new PrefsView( os::Rect() ) );
+	return( NULL );
+//	return( new PrefsView( os::Rect() ) );
 }
 
 void ServerOutput::Flush()
@@ -107,6 +121,16 @@ status_t ServerOutput::Open( os::String zFileName )
 	if( cReply.GetCode() != os::MEDIA_SERVER_OK ) {
 		return( -1 );
 	}
+	
+	/* Set this dsp as the default one */
+	os::Message cDspMsg( os::MEDIA_SERVER_SET_DEFAULT_DSP );
+	cDspMsg.AddInt32( "handle", m_nIndex );
+	m_cMediaServerLink.SendMessage( &cDspMsg, &cReply );
+	if( cReply.GetCode() != os::MEDIA_SERVER_OK )
+	{
+		return( -1 );
+	}
+	
 	m_nHandle = -1;
 	return( 0 );
 	
@@ -229,151 +253,37 @@ uint32 ServerOutput::GetUsedBufferPercentage()
 	return( nPercentage );
 }
 
+class ServerOutputAddon : public os::MediaAddon
+{
+public:
+	status_t Initialize() { 
+		m_nDSPCount = 0;
+		os::Message cReply;
+		os::MediaManager::GetInstance()->GetServerLink().SendMessage( os::MEDIA_SERVER_GET_DSP_COUNT, &cReply );
+		int32 nCount;
+
+		if ( cReply.GetCode() == os::MEDIA_SERVER_OK && cReply.FindInt32( "dsp_count", &nCount ) == 0 )
+		{
+			m_nDSPCount = nCount;
+			return( 0 ); 
+		}
+		std::cout<<"Error: Could not get a list of DSPs from the mediaserver"<<std::endl;
+		return( -1 );
+	}
+	os::String GetIdentifier() { return( "Media Server Audio Output" ); }
+	uint32			GetOutputCount() { return( m_nDSPCount ); }
+	os::MediaOutput* GetOutput( uint32 nIndex ) { return( new ServerOutput( nIndex ) ); }
+private:
+	int m_nDSPCount;
+};
+
 extern "C"
 {
-	os::MediaOutput* init_media_output()
+	os::MediaAddon* init_media_addon()
 	{
-		return( new ServerOutput() );
+		return( new ServerOutputAddon() );
 	}
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

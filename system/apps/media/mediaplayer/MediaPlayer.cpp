@@ -125,6 +125,8 @@ MPWindow::MPWindow( const os::Rect & cFrame, const std::string & cName, const st
 	delete( pcIcon );
 }
 
+
+
 MPWindow::~MPWindow()
 {
 	m_pcFileDialog->Close();
@@ -1028,8 +1030,11 @@ int main( int argc, char *argv[] )
 	}
 
 	pcApp->Run();
+	delete( pcApp );
 	return ( 0 );
 }
+
+
 
 
 

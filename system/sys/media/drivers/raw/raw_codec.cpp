@@ -18,6 +18,7 @@
  */
 
 #include <media/codec.h>
+#include <media/addon.h>
 #include <iostream>
 
 class RAWCodec : public os::MediaCodec
@@ -195,139 +196,23 @@ status_t RAWCodec::EncodePacket( os::MediaPacket_s* psPacket, os::MediaPacket_s*
 	}
 	return( 0 );
 }
+class RAWAddon : public os::MediaAddon
+{
+public:
+	status_t Initialize() { return( 0 ); }
+	os::String GetIdentifier() { return( "RAW" ); }
+	uint32			GetCodecCount() { return( 1 ); }
+	os::MediaCodec*		GetCodec( uint32 nIndex ) { return( new RAWCodec() ); }
+};
 
 extern "C"
 {
-	os::MediaCodec* init_media_codec()
+	os::MediaAddon* init_media_addon()
 	{
-		return( new RAWCodec() );
+		return( new RAWAddon() );
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

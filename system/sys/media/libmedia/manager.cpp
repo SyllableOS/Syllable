@@ -19,6 +19,7 @@
 
 #include <media/manager.h>
 #include <media/server.h>
+#include <media/addon.h>
 #include <storage/directory.h>
 #include <util/message.h>
 #include <util/resources.h>
@@ -28,12 +29,23 @@
 
 using namespace os;
 
+typedef struct MediaPlugin
+{
+	MediaPlugin( image_id hImage, MediaAddon* pcAddon )
+	{
+		mp_hImage = hImage;
+		mp_pcAddon = pcAddon;
+	}
+	image_id mp_hImage;
+	MediaAddon* mp_pcAddon;
+};
+
 class MediaManager::Private
 {
 public:
 	bool			m_bValid;
 	Messenger		m_cMediaServerLink;
-	std::vector<int> m_nPlugins;
+	std::vector<MediaPlugin> m_nPlugins;
 };
 
 
@@ -73,6 +85,8 @@ MediaManager::MediaManager()
 	}
 	std::cout<<"Connected to media server at port "<<nPort<<std::endl;
 	
+	s_pcInstance = this;
+	
 	/* Open all media plugins in /system/media */
 	Directory *pcDirectory = new Directory();
 	if( pcDirectory->SetTo( "/system/drivers/media" ) != 0 )
@@ -87,17 +101,35 @@ MediaManager::MediaManager()
 	
 	while( pcDirectory->GetNextEntry( &zFileName ) )
 	{
+		/* Load image */
 		if( zFileName == "." || zFileName == ".." )
 			continue;
 		zFileName = zPath + String( "/" ) + zFileName;
 		
-		int nID = load_library( zFileName.c_str(), 0 );
+		image_id nID = load_library( zFileName.c_str(), 0 );
 		if( nID >= 0 ) {
-			std::cout<<zFileName.c_str()<<" loaded @ "<<nID<<std::endl;
-			m->m_nPlugins.push_back( nID );
+			init_media_addon *pInit;
+			/* Call init_media_addon() */
+			if( get_symbol_address( nID, "init_media_addon",
+			-1, (void**)&pInit ) == 0 ) {
+				MediaAddon* pcAddon = pInit();
+				if( pcAddon ) {
+					if( pcAddon->Initialize() != 0 )
+					{
+						std::cout<<pcAddon->GetIdentifier().c_str()<<" failed to initialize"<<std::endl;
+					} else {
+						std::cout<<pcAddon->GetIdentifier().c_str()<<" initialized"<<std::endl;
+						m->m_nPlugins.push_back( MediaPlugin( nID, pcAddon ) );
+					}
+				}
+			} else {
+				std::cout<<zFileName.c_str()<<" does not export init_media_addon()"<<std::endl;
+			}
+			
 		}
 	}
-	s_pcInstance = this;
+	std::cout<<"Plugin scan finished"<<std::endl;
+	
 }
 
 
@@ -110,7 +142,8 @@ MediaManager::MediaManager()
 MediaManager::~MediaManager()
 {
 	for( uint32 i = 0; i < m->m_nPlugins.size(); i++ ) {
-		unload_library( m->m_nPlugins[i] );
+		delete( m->m_nPlugins[i].mp_pcAddon );
+		unload_library( m->m_nPlugins[i].mp_hImage );
 	}
 	s_pcInstance = NULL;
 	delete( m );
@@ -167,12 +200,11 @@ Messenger MediaManager::GetServerLink()
 MediaInput* MediaManager::GetBestInput( String zFileName )
 {
 	/* Look through all plugins for the init_media_demuxer symbol */
-	init_media_input *pInit;
 	for( uint32 i = 0; i < m->m_nPlugins.size(); i++ )
 	{
-		if( get_symbol_address( m->m_nPlugins[i], "init_media_input",
-			-1, (void**)&pInit ) == 0 ) {
-			MediaInput* pcInput = pInit();
+		for( uint32 j = 0; j < m->m_nPlugins[i].mp_pcAddon->GetInputCount(); j++ )
+		{
+			MediaInput* pcInput = m->m_nPlugins[i].mp_pcAddon->GetInput( j );
 			if( pcInput ) {
 				if( pcInput->FileNameRequired() && pcInput->Open( zFileName ) == 0 ) {
 					pcInput->Close();
@@ -197,17 +229,18 @@ MediaInput* MediaManager::GetDefaultInput()
 {
 	Message cReply;
 	String zPlugin;
-	init_media_input *pInit;
 	if( !m->m_bValid )
 		return( NULL );
 	/* Ask media server */
 	m->m_cMediaServerLink.SendMessage( MEDIA_SERVER_GET_DEFAULT_INPUT, &cReply );
-	if( cReply.GetCode() == MEDIA_SERVER_OK && cReply.FindString( "input", &zPlugin.str() ) == 0 ) {
-		for( uint32 i = 0; i < m->m_nPlugins.size(); i++ )
+	if( !( cReply.GetCode() == MEDIA_SERVER_OK && cReply.FindString( "input", &zPlugin.str() ) == 0 ) )
+		return( NULL );
+	for( uint32 i = 0; i < m->m_nPlugins.size(); i++ )
+	{
+		for( uint32 j = 0; j < m->m_nPlugins[i].mp_pcAddon->GetInputCount(); j++ )
 		{
-			if( get_symbol_address( m->m_nPlugins[i], "init_media_input",
-			-1, (void**)&pInit ) == 0 ) {
-				MediaInput* pcInput = pInit();
+			MediaInput* pcInput = m->m_nPlugins[i].mp_pcAddon->GetInput( j );
+			if( pcInput ) {
 				if( pcInput ) {
 					if( pcInput->GetIdentifier() == zPlugin ) {
 						return( pcInput );
@@ -252,13 +285,12 @@ void MediaManager::SetDefaultInput( os::String zIdentifier )
  *****************************************************************************/
 MediaInput* MediaManager::GetInput( uint32 nIndex )
 {
-	init_media_input *pInit;
 	uint32 nCount = 0;
 	for( uint32 i = 0; i < m->m_nPlugins.size(); i++ )
 	{
-		if( get_symbol_address( m->m_nPlugins[i], "init_media_input",
-			-1, (void**)&pInit ) == 0 ) {
-			MediaInput* pcInput = pInit();
+		for( uint32 j = 0; j < m->m_nPlugins[i].mp_pcAddon->GetInputCount(); j++ )
+		{
+			MediaInput* pcInput = m->m_nPlugins[i].mp_pcAddon->GetInput( j );
 			if( pcInput ) {
 				if( nCount == nIndex )
 					return( pcInput );
@@ -283,12 +315,11 @@ MediaInput* MediaManager::GetInput( uint32 nIndex )
 MediaCodec* MediaManager::GetBestCodec( MediaFormat_s sInternal, MediaFormat_s sExternal, bool bEncode )
 {
 	/* Look through all plugins for the init_media_codec symbol */
-	init_media_codec *pInit;
 	for( uint32 i = 0; i < m->m_nPlugins.size(); i++ )
 	{
-		if( get_symbol_address( m->m_nPlugins[i], "init_media_codec",
-			-1, (void**)&pInit ) == 0 ) {
-			MediaCodec* pcCodec = pInit();
+		for( uint32 j = 0; j < m->m_nPlugins[i].mp_pcAddon->GetCodecCount(); j++ )
+		{
+			MediaCodec* pcCodec = m->m_nPlugins[i].mp_pcAddon->GetCodec( j );
 			if( pcCodec ) {
 				if( pcCodec->Open( sInternal, sExternal, bEncode ) == 0 ) {
 					pcCodec->Close();
@@ -315,13 +346,12 @@ MediaCodec* MediaManager::GetBestCodec( MediaFormat_s sInternal, MediaFormat_s s
  *****************************************************************************/
 MediaCodec* MediaManager::GetCodec( uint32 nIndex )
 {
-	init_media_codec *pInit;
 	uint32 nCount = 0;
 	for( uint32 i = 0; i < m->m_nPlugins.size(); i++ )
 	{
-		if( get_symbol_address( m->m_nPlugins[i], "init_media_codec",
-			-1, (void**)&pInit ) == 0 ) {
-			MediaCodec* pcCodec = pInit();
+		for( uint32 j = 0; j < m->m_nPlugins[i].mp_pcAddon->GetCodecCount(); j++ )
+		{
+			MediaCodec* pcCodec = m->m_nPlugins[i].mp_pcAddon->GetCodec( j );
 			if( pcCodec ) {
 				if( nCount == nIndex )
 					return( pcCodec );
@@ -347,14 +377,12 @@ MediaCodec* MediaManager::GetCodec( uint32 nIndex )
 MediaOutput* MediaManager::GetBestOutput( String zFileName, String zIdentifier )
 {
 	/* Look through all plugins for the init_media_output symbol */
-	init_media_output *pInit;
-	MediaFormat_s sSpFmt;
 	for( uint32 i = 0; i < m->m_nPlugins.size(); i++ )
 	{
-		if( get_symbol_address( m->m_nPlugins[i], "init_media_output",
-			-1, (void**)&pInit ) == 0 ) {
-			MediaOutput* pcOutput = pInit();
-			if( pcOutput != NULL ) {
+		for( uint32 j = 0; j < m->m_nPlugins[i].mp_pcAddon->GetOutputCount(); j++ )
+		{
+			MediaOutput* pcOutput = m->m_nPlugins[i].mp_pcAddon->GetOutput( j );
+			if( pcOutput ) {
 				if( pcOutput->GetIdentifier() == zIdentifier ) {
 					if( pcOutput->Open( zFileName ) == 0 ) {
 						pcOutput->Close();
@@ -380,24 +408,23 @@ MediaOutput* MediaManager::GetDefaultAudioOutput()
 {
 	Message cReply;
 	String zPlugin;
-	init_media_output *pInit;
 	if( !m->m_bValid )
 		return( NULL );
 	/* Ask media server */
 	m->m_cMediaServerLink.SendMessage( MEDIA_SERVER_GET_DEFAULT_AUDIO_OUTPUT, &cReply );
-	if( cReply.GetCode() == MEDIA_SERVER_OK && cReply.FindString( "output", &zPlugin.str() ) == 0 ) {
-		for( uint32 i = 0; i < m->m_nPlugins.size(); i++ )
+	if( !( cReply.GetCode() == MEDIA_SERVER_OK && cReply.FindString( "output", &zPlugin.str() ) == 0 ) )
+		return( NULL );
+		
+	for( uint32 i = 0; i < m->m_nPlugins.size(); i++ )
+	{
+		for( uint32 j = 0; j < m->m_nPlugins[i].mp_pcAddon->GetOutputCount(); j++ )
 		{
-			if( get_symbol_address( m->m_nPlugins[i], "init_media_output",
-			-1, (void**)&pInit ) == 0 ) {
-				MediaOutput* pcOutput = pInit();
-				if( pcOutput ) {
-					if( pcOutput->GetIdentifier() == zPlugin ) {
-						return( pcOutput );
-					}
-					delete( pcOutput );
+			MediaOutput* pcOutput = m->m_nPlugins[i].mp_pcAddon->GetOutput( j );
+			if( pcOutput ) {
+				if( pcOutput->GetIdentifier() == zPlugin ) {
+					return( pcOutput );
 				}
-				
+				delete( pcOutput );
 			}
 		}
 	}
@@ -435,24 +462,22 @@ MediaOutput* MediaManager::GetDefaultVideoOutput()
 {
 	Message cReply;
 	String zPlugin;
-	init_media_output *pInit;
 	if( !m->m_bValid )
 		return( NULL );
 	/* Ask media server */
 	m->m_cMediaServerLink.SendMessage( MEDIA_SERVER_GET_DEFAULT_VIDEO_OUTPUT, &cReply );
-	if( cReply.GetCode() == MEDIA_SERVER_OK && cReply.FindString( "output", &zPlugin.str() ) == 0 ) {
-		for( uint32 i = 0; i < m->m_nPlugins.size(); i++ )
+	if( !( cReply.GetCode() == MEDIA_SERVER_OK && cReply.FindString( "output", &zPlugin.str() ) == 0 ) )
+		return( NULL );
+	for( uint32 i = 0; i < m->m_nPlugins.size(); i++ )
+	{
+		for( uint32 j = 0; j < m->m_nPlugins[i].mp_pcAddon->GetOutputCount(); j++ )
 		{
-			if( get_symbol_address( m->m_nPlugins[i], "init_media_output",
-			-1, (void**)&pInit ) == 0 ) {
-				MediaOutput* pcOutput = pInit();
-				if( pcOutput ) {
-					if( pcOutput->GetIdentifier() == zPlugin ) {
-						return( pcOutput );
-					}
-					delete( pcOutput );
+			MediaOutput* pcOutput = m->m_nPlugins[i].mp_pcAddon->GetOutput( j );
+			if( pcOutput ) {
+				if( pcOutput->GetIdentifier() == zPlugin ) {
+					return( pcOutput );
 				}
-				
+				delete( pcOutput );
 			}
 		}
 	}
@@ -491,13 +516,12 @@ void MediaManager::SetDefaultVideoOutput( os::String zIdentifier )
  *****************************************************************************/
 MediaOutput* MediaManager::GetOutput( uint32 nIndex )
 {
-	init_media_output *pInit;
 	uint32 nCount = 0;
 	for( uint32 i = 0; i < m->m_nPlugins.size(); i++ )
 	{
-		if( get_symbol_address( m->m_nPlugins[i], "init_media_output",
-			-1, (void**)&pInit ) == 0 ) {
-			MediaOutput* pcOutput = pInit();
+		for( uint32 j = 0; j < m->m_nPlugins[i].mp_pcAddon->GetOutputCount(); j++ )
+		{
+			MediaOutput* pcOutput = m->m_nPlugins[i].mp_pcAddon->GetOutput( j );
 			if( pcOutput ) {
 				if( nCount == nIndex )
 					return( pcOutput );
@@ -519,6 +543,10 @@ void MediaManager::_reserved7() {}
 void MediaManager::_reserved8() {}
 void MediaManager::_reserved9() {}
 void MediaManager::_reserved10() {}
+
+
+
+
 
 
 
