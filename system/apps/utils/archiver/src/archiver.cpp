@@ -15,51 +15,44 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-
 #include "archiver.h"
-using namespace os;
-AListView::AListView(const Rect & r) : ListView(r,"arc_listview",ListView::F_MULTI_SELECT,CF_FOLLOW_ALL)
-{
-    InsertColumn( "Name", ( GetBounds().Width() / 5 ) + 51 );
-    InsertColumn( "Owner", ( GetBounds().Width() / 5 ) - 15 );
-    InsertColumn( "Size", GetBounds().Width() / 5 - 20 );
-    InsertColumn( "Date", GetBounds().Width() / 5 + 10);
-    InsertColumn( "Perm", ( GetBounds().Width() / 5 )  - 9 );
-    SetAutoSort( false );
-    SetInvokeMsg(new Message(ID_CHANGE_LIST));
+#include "settings.h"
 
+using namespace os;
+
+AListView::AListView( const Rect & r ):ListView( r, "arc_listview", ListView::F_MULTI_SELECT, CF_FOLLOW_ALL )
+{
+	InsertColumn( "Name", ( GetBounds().Width(  ) / 5 ) + 51 );
+	InsertColumn( "Owner", ( GetBounds().Width(  ) / 5 ) - 15 );
+	InsertColumn( "Size", GetBounds().Width(  ) / 5 - 20 );
+	InsertColumn( "Date", GetBounds().Width(  ) / 5 + 10 );
+	InsertColumn( "Perm", ( GetBounds().Width(  ) / 5 ) - 9 );
+	SetAutoSort( false );
+	SetInvokeMsg( new Message( ID_CHANGE_LIST ) );
 }
 
-
-
-
-
-ArcWindow::ArcWindow() : Window( Rect( 0, 0, 525, 280 ), "main_wnd", "Archiver 0.5 Reborn" )
+ArcWindow::ArcWindow(AppSettings* pcSettings):Window( Rect( 0, 0, 525, 280 ), "main_wnd", "Archiver 0.5 Reborn" )
 {
-    m_pcNewWindow = NULL;
-    m_pcExtractWindow = NULL;
-    m_pcExeWindow = NULL;
-    pcOpenRequest = NULL;
-    m_pcOptions = NULL;
-    pcOpenRequest = NULL;
-    
-    sprintf( zConfigFile, "%s/config/Archiver/Archiver.cfg", getenv( "HOME" ) );
-    Read();
-    
-    Rect r = GetBounds();
-    r.top = 79;
-    r.bottom=256;
-    pcView = new AListView(r);
-    AddChild(pcView);
-    
-    SetupMenus();
-    SetupToolBar();
-    SetupStatusBar();
-    
-    
+	m_pcNewWindow = NULL;
+	m_pcExtractWindow = NULL;
+	m_pcExeWindow = NULL;
+	pcOpenRequest = NULL;
+	m_pcOptions = NULL;
+	pcOpenRequest = NULL;
+	pcAppSettings = pcSettings;
 
-    
-    MoveTo( dDesktop.GetResolution().x / 2 - GetBounds().Width() / 2, dDesktop.GetResolution().y / 2 - GetBounds().Height() / 2 ); //moves the main window to the center of the desktop
+	SetupMenus();
+	SetupToolBar();
+	SetupStatusBar();
+
+	Rect r = GetBounds();
+
+	r.top = m_pcMenu->GetBounds().bottom + pcButtonBar->GetBounds(  ).bottom + 2;
+	r.bottom = 256;
+	pcView = new AListView( r );
+	AddChild( pcView );
+
+	SetIcon(LoadImageFromResource("icon24x24.png")->LockBitmap());
 }
 
 
@@ -69,1038 +62,905 @@ ArcWindow::~ArcWindow()
 
 void ArcWindow::SetupMenus()
 {
-    cMenuFrame = GetBounds();
-    Rect cMainFrame = cMenuFrame;
-    cMenuFrame.bottom = 18;
-    m_pcMenu = new Menu( cMenuFrame, "main_menu", ITEMS_IN_ROW, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT | CF_FOLLOW_TOP );
+	cMenuFrame = GetBounds();
+	Rect cMainFrame = cMenuFrame;
 
-    aMenu = new Menu( Rect( 0, 0, 0, 0 ), "Application", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
-    aMenu->AddItem( new ImageItem("Settings...", new Message( ID_APP_SET ), "Ctrl + S", LoadBitmapFromResource("settings-16.png")) ) ;
-    aMenu->AddItem( new MenuSeparator() );
-    aMenu->AddItem( new ImageItem("Exit", new Message( ID_QUIT ), "Ctrl + Q", LoadBitmapFromResource("close-16.png")) );
-    m_pcMenu->AddItem( aMenu );
+	m_pcMenu = new Menu( cMenuFrame, "main_menu", ITEMS_IN_ROW, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT | CF_FOLLOW_TOP );
 
-    fMenu = new Menu( Rect( 0, 0, 1, 1 ), "File", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
-    fMenu->AddItem( new ImageItem("Open...", new Message( ID_OPEN ),"Ctrl + O",LoadBitmapFromResource("open-16.png")) );
-    fMenu->AddItem( new MenuSeparator() );
-    fMenu->AddItem( new ImageItem("New...", new Message( ID_NEW ),"Ctrl + N",LoadBitmapFromResource("new-16.png")) );
-    m_pcMenu->AddItem( fMenu );
+	aMenu = new Menu( Rect( 0, 0, 0, 0 ), "_Application", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
+	aMenu->AddItem( new MenuItem( "Settings...", new Message( ID_APP_SET ), "Ctrl+S", LoadImageFromResource( "settings-16.png" ) ) );
+	aMenu->AddItem( new MenuSeparator() );
+	aMenu->AddItem( new MenuItem( "Exit", new Message( ID_QUIT ), "Ctrl+Q", LoadImageFromResource( "close-16.png" ) ) );
+	m_pcMenu->AddItem( aMenu );
 
-    actMenu = new Menu( Rect( 0, 0, 1, 4 ), "Actions", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
-    actMenu->AddItem( new ImageItem("Extract...", new Message( ID_EXTRACT ),"Ctrl + E", LoadBitmapFromResource("extract-16.png")) );
-    actMenu->AddItem( new MenuSeparator() );
-    actMenu->AddItem( new ImageItem("MakeSelf...", new Message( ID_EXE ),"Ctrl + M",LoadBitmapFromResource("exe-16.png")) );
-    m_pcMenu->AddItem( actMenu );
+	fMenu = new Menu( Rect( 0, 0, 1, 1 ), "_File", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
+	fMenu->AddItem( new MenuItem( "Open...", new Message( ID_OPEN ), "Ctrl+O", LoadImageFromResource( "open-16.png" ) ) );
+	fMenu->AddItem( new MenuSeparator() );
+	fMenu->AddItem( new MenuItem( "New...", new Message( ID_NEW ), "Ctrl+N", LoadImageFromResource( "new-16.png" ) ) );
+	m_pcMenu->AddItem( fMenu );
 
-    hMenu = new Menu( Rect( 0, 0, 1, 2 ), "Help", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
+	actMenu = new Menu( Rect( 0, 0, 1, 4 ), "A_ctions", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
+	actMenu->AddItem( new MenuItem( "Extract...", new Message( ID_EXTRACT ), "Ctrl+E", LoadImageFromResource( "extract-16.png" ) ) );
+	actMenu->AddItem( new MenuSeparator() );
+	actMenu->AddItem( new MenuItem( "MakeSelf...", new Message( ID_EXE ), "Ctrl+M", LoadImageFromResource( "exe-16.png" ) ) );
+	m_pcMenu->AddItem( actMenu );
 
-    
+	hMenu = new Menu( Rect( 0, 0, 1, 2 ), "_Help", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
+	hMenu->AddItem( new MenuItem( "About...", new Message( ID_HELP_ABOUT ), "Ctrl+A", LoadImageFromResource( "about-16.png" ) ) );
+	m_pcMenu->AddItem( hMenu );
 
-    hMenu->AddItem( new ImageItem("About...", new Message( ID_HELP_ABOUT ),"Ctrl + A", LoadBitmapFromResource("about-16.png")) );
-    m_pcMenu->AddItem( hMenu );
-
-    cMenuFrame.bottom = m_pcMenu->GetPreferredSize( true ).y + -4.0f;  //Sizes the menu.  The higher the negative, the smaller the menu.
-    cMainFrame.top = cMenuFrame.bottom + 1;
-    m_pcMenu->SetFrame( cMenuFrame );
-    m_pcMenu->SetTargetForItems( this );
-    AddChild( m_pcMenu );
-
-   
+	cMenuFrame.bottom = m_pcMenu->GetPreferredSize( true ).y;
+	m_pcMenu->SetFrame( cMenuFrame );
+	m_pcMenu->SetTargetForItems( this );
+	AddChild( m_pcMenu );
 }
 
 
 void ArcWindow::SetupToolBar()
 {
-	pcButtonBar = new ToolBar( Rect( 0, 0, GetBounds().Width(),59 ), "toolbar", true, ToolBar::Horizontal,CF_FOLLOW_RIGHT | CF_FOLLOW_LEFT | CF_FOLLOW_TOP,WID_FULL_UPDATE_ON_RESIZE | WID_WILL_DRAW);
-    pcButtonBar->MoveBy(0, 19);
-    AddChild(pcButtonBar);
-    
-    ImageButton* pcOpen = new ImageButton(Rect(2,3,62,56), "imagbut1","Open",new Message(ID_OPEN),NULL,ImageButton::IB_TEXT_BOTTOM, true,true,false, CF_FOLLOW_NONE);
-    pcOpen->SetImageFromResource("open.png");
-    pcButtonBar->AddChild(pcOpen);
-    
-    ImageButton* pcNew = new ImageButton(Rect(66,3,126,56), "imagbut2","New",new Message(ID_NEW),NULL, ImageButton::IB_TEXT_BOTTOM, true,true,false, CF_FOLLOW_NONE);
-    pcNew->SetImageFromResource("new.png");
-    pcButtonBar->AddChild(pcNew);
-    
-    ImageButton* pcExtract = new ImageButton(Rect(130,3,190,56), "imagbut3","Extract",new Message(ID_EXTRACT),NULL, ImageButton::IB_TEXT_BOTTOM, true,true,false, CF_FOLLOW_NONE);
-    pcExtract->SetImageFromResource("extract.png");
-    pcButtonBar->AddChild(pcExtract);
-    
-    ImageButton* pcExe = new ImageButton(Rect(194,3,254,56), "imagbut4","MakeSelf",new Message(ID_EXE),NULL, ImageButton::IB_TEXT_BOTTOM, true,true,false);
-    pcExe->SetImageFromResource("exe.png");
-    pcButtonBar->AddChild(pcExe);
-    
-    ImageButton* pcSettingsBut = new ImageButton(Rect(258,3,318,56), "imagbut5","Settings",new Message(ID_APP_SET),NULL, ImageButton::IB_TEXT_BOTTOM, true,true,false);
-    pcSettingsBut->SetImageFromResource("settings.png");
-    pcButtonBar->AddChild(pcSettingsBut);
-   
-    ImageButton* pcAboutBut = new ImageButton(Rect(322,3,382,56), "imagbut6","About",new Message(ID_HELP_ABOUT),NULL, ImageButton::IB_TEXT_BOTTOM, true,true,false);
-    pcAboutBut->SetImageFromResource("about.png");
-    pcButtonBar->AddChild(pcAboutBut);
-    
-    
-    
-   
+
+	pcButtonBar = new ToolBar( Rect(), "" );
+	HLayoutNode *pcNode = new HLayoutNode( "" );
+	pcNode->SetHAlignment( ALIGN_LEFT );
+
+	ImageButton *pcOpen = new ImageButton( Rect(), "imagebut1", "  Open", new Message( ID_OPEN ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	pcOpen->SetImage( LoadImageFromResource( "open.png" ) );
+	pcNode->AddChild( pcOpen );
+	pcNode->AddChild( new HLayoutSpacer( "", 2, 2 ) );	// Looks better when resizing if they're fixed width... :o)
+
+	ImageButton *pcNew = new ImageButton( Rect(), "imagebut2", "   New", new Message( ID_NEW ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	pcNew->SetImage( LoadImageFromResource( "new.png" ) );
+	pcNode->AddChild( pcNew );
+	pcNode->AddChild( new HLayoutSpacer( "", 2, 2 ) );	// Looks better when resizing if they're fixed width... :o)
+
+	ImageButton *pcExtract = new ImageButton( Rect(), "imagebut3", "Extract", new Message( ID_EXTRACT ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	pcExtract->SetImage( LoadImageFromResource( "extract.png" ) );
+	pcNode->AddChild( pcExtract );
+	pcNode->AddChild( new HLayoutSpacer( "", 2, 2 ) );	// Looks better when resizing if they're fixed width... :o)
+
+	ImageButton *pcExe = new ImageButton( Rect(), "imagebut4", "MakeSelf", new Message( ID_EXE ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	pcExe->SetImage( LoadImageFromResource( "exe.png" ) );
+	pcNode->AddChild( pcExe );
+	pcNode->AddChild( new HLayoutSpacer( "", 2, 2 ) );	// Looks better when resizing if they're fixed width... :o)
+
+	ImageButton *pcSettingsBut = new ImageButton( Rect(), "imagebut5", "Settings", new Message( ID_APP_SET ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	pcSettingsBut->SetImage( LoadImageFromResource( "settings.png" ) );
+	pcNode->AddChild( pcSettingsBut );
+	pcNode->AddChild( new HLayoutSpacer( "", 2, 2 ) );	// Looks better when resizing if they're fixed width... :o)
+
+	ImageButton *pcAboutBut = new ImageButton( Rect(), "imagebut6", "About", new Message( ID_HELP_ABOUT ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	pcAboutBut->SetImage( LoadImageFromResource( "about.png" ) );
+	pcNode->AddChild( pcAboutBut );
+	pcNode->AddChild( new HLayoutSpacer( "", 0, COORD_MAX, NULL, 100.0f ) );
+
+	pcButtonBar->SetRoot( pcNode );
+	pcButtonBar->SetFrame( Rect( 0, m_pcMenu->GetFrame().bottom + 1, GetBounds(  ).Width(  ), m_pcMenu->GetFrame(  ).bottom + pcButtonBar->GetPreferredSize( false ).y + 4 ) );
+	pcNode->SameWidth( "imagebut4", "imagebut2", "imagebut3", "imagebut1", "imagebut5", "imagebut6", NULL );
+	AddChild( pcButtonBar );
 }
 
 
-void ArcWindow::LoadAtStart( char* cFileName ) 
+void ArcWindow::LoadAtStart( char *cFileName )
 {
-    strcpy( pzStorePath, cFileName );
-    ListFiles( cFileName );
+	strcpy( pzStorePath, cFileName );
+	ListFiles( cFileName );
 }
 
 
-void ArcWindow::Load( char* cFileName )
+void ArcWindow::Load( char *cFileName )
 {
 	pcOpenRequest->Close();
-	MakeFocus(pcView);
-    strcpy( pzStorePath, cFileName );
-    ListFiles( cFileName );
-}
-
-bool ArcWindow::Read()
-{
-    ConfigFile.open( zConfigFile );
-	string rec;
-
-    if ( !ConfigFile.eof() )
-    {
-        ConfigFile.getline( junk, 1024 );
-        ConfigFile.getline( lineOpen, 1024 );
-
-		for(int i = 0; i<=10;i++){
-			ConfigFile.getline( junk, 1024 );
-		}
-        ConfigFile.getline((char*)rec.c_str(),1024);
-       jas = atoi(rec.c_str());
-      }
-
-    ConfigFile.close();
-	return true;
+	MakeFocus( pcView );
+	strcpy( pzStorePath, cFileName );
+	ListFiles( cFileName );
 }
 
 
 void ArcWindow::SetupStatusBar()
 {
-	pcStatus = new StatusBar(Rect(0,GetBounds().Height()-24,GetBounds().Width(), GetBounds().Height()-(-1)),"status_bar",1 );
- 	pcStatus->configurePanel(0, StatusBar::FILL, GetBounds().Width());
- 	
- 	pcStatus->setText("No archives open!", 0,80);
- 	
- 	AddChild(pcStatus);
+	pcStatus = new StatusBar( Rect( 0, GetBounds().Height(  ) - 24, GetBounds(  ).Width(  ), GetBounds(  ).Height(  ) - ( -1 ) ), "status_bar", 1 );
+	pcStatus->ConfigurePanel( 0, StatusBar::FILL, GetBounds().Width(  ) );
+	pcStatus->SetText( "No archives open!", 0, 80 );
+	AddChild( pcStatus );
 }
 
 
-void ArcWindow::HandleMessage( Message* pcMessage )
-
+void ArcWindow::HandleMessage( Message * pcMessage )
 {
-    Alert* m_pcError = new Alert("Error","Only one Window can \nbe opened at a time.",Alert::ALERT_WARNING,0x00,"OK",NULL);
-    m_pcError->CenterInWindow(this);
-    switch ( pcMessage->GetCode() )
-    {
+	Alert *m_pcError = new Alert( "Error", "Only one Window can \nbe opened at a time.", Alert::ALERT_WARNING, 0x00, "OK", NULL );
+	switch ( pcMessage->GetCode() )
+	{
+		case ID_NEW:
+		{
+			if( m_pcNewWindow == NULL )
+			{
+				m_pcNewWindow = new NewWindow(this, pcAppSettings->GetCloseNewWindow());
+				m_pcNewWindow->CenterInWindow( this );
+				m_pcNewWindow->Show();
+				m_pcNewWindow->MakeFocus();
+			}
+			else
+			{
+				m_pcError->CenterInWindow(this);
+				m_pcError->Go( new Invoker() );		
+			}	
+			break;
+		}
 
-     /*case ID_VIEW_FILE_VIEWER_FILE_PASS:
-     	break;//used to pass the file to the fileviewer
-     case ID_CHANGE_LIST:
-	 {
-	    pcViewer = new ArcViewerWindow();
-	    pcViewer->Show();
-	    pcViewer->MakeFocus();
-	 }
-       break;
-       */
-    case ID_CHANGE_FILEPATH:
-        {
+		case ID_NEW_CLOSE:
+		{
+			m_pcNewWindow = NULL;
+			break;
+		}
 
-            Read();
-           
-        }
+		case ID_EXE:
+		{
+			if( m_pcExeWindow == NULL )
+			{
+				m_pcExeWindow = new ExeWindow( this );
+				m_pcExeWindow->CenterInWindow( this );
+				m_pcExeWindow->Show();
+				m_pcExeWindow->MakeFocus();
+			}
+			else
+			{
+				m_pcError->CenterInWindow(this);
+				m_pcError->Go( new Invoker() );
+			}
+			break;
+		}
 
-        break;
+		case ID_EXE_CLOSE:
+		{
+			m_pcExeWindow = NULL;
+			break;
+		}
 
-        case ID_NEW:
-         {
-            if(m_pcNewWindow == NULL)
-            {
-                m_pcNewWindow = new NewWindow(this);
-                m_pcNewWindow->CenterInWindow(this);
-                m_pcNewWindow->Show();
-                m_pcNewWindow->MakeFocus();
-                Lock();
-            }
+		case ID_APP_SET:
+		{
+			if( m_pcOptions == NULL )
+			{
+				m_pcOptions = new OptionsWindow(this, pcAppSettings);
+				m_pcOptions->CenterInWindow( this );
+				m_pcOptions->Show();
+				m_pcOptions->MakeFocus();
+			}
+			else
+			{
+				m_pcError->CenterInWindow(this);
+				m_pcError->Go( new Invoker() );
+			}	
+			break;
+		}
 
-            else
-            {
-               m_pcError->Go(new Invoker());
-            }
-        }
+		case ID_OPT_CLOSE_OPT:
+		{
+			m_pcOptions = NULL;
+			break;
+		}
 
-        break;
+		case ID_HELP_ABOUT:
+		{
+			Alert *aAbout = new Alert( "About Archiver 0.5 Reborn", "Archiver 0.5 Reborn\n\nGui Archiver for Syllable    \nCopyright 2002 - 2003 Rick Caudill\n\nArchiver is released under the GNU General\nPublic License. Please go to www.gnu.org\nmore information.\n", Alert::ALERT_INFO, 0x00, "OK", NULL );
+			aAbout->CenterInWindow( this );
+			aAbout->Go( new Invoker() );
+			break;
+		}
 
-    case ID_NEW_CLOSE:
-        {
-			Unlock();
-            m_pcNewWindow = NULL;
-        }
+		case ID_GOING_TO_VIEW:
+		{
+			const char *FileName;
+			pcMessage->FindString( "newPath", &FileName );
+			LoadAtStart( ( char * )FileName );
+			break;
+		}
 
-        break;
+		case ID_EXTRACT:
+		{
+			if( m_pcExtractWindow == NULL )
+			{
+				if( Lst != false )
+				{
+					m_pcExtractWindow = new ExtractWindow( this,pcAppSettings->GetExtractPath(), String(pzStorePath));
+					m_pcExtractWindow->CenterInWindow( this );
+					m_pcExtractWindow->Show();
+					m_pcExtractWindow->MakeFocus();
+				}
+				else
+				{
+					Alert *aFile = new Alert( "Error", "You must select a file first.", Alert::ALERT_WARNING, 0x00, "OK", NULL );
+					aFile->CenterInWindow( this );
+					aFile->Go( new Invoker() );
+				}
+			}
+			else
+			{
+				m_pcError->CenterInWindow(this);
+				m_pcError->Go( new Invoker() );
+			}
+			break;
+		}
 
-      
-    case ID_EXE:
-        {
+		case ID_EXTRACT_CLOSE:
+		{
+			m_pcExtractWindow = NULL;
+			break;
+		}
+	
+		case ID_OPEN:
+		{
+			pcOpenRequest = new FileRequester( FileRequester::LOAD_REQ, new Messenger( this ),pcAppSettings->GetOpenPath().c_str(), FileRequester::NODE_FILE, false, NULL, NULL, true, true, "Open", "Cancel" );
+			pcOpenRequest->CenterInWindow( this );
+			pcOpenRequest->Show();
+			pcOpenRequest->MakeFocus();
+			break;
+		}
 
-            if(m_pcExeWindow == NULL)
-            {
-
-                m_pcExeWindow = new ExeWindow(this);
-                m_pcExeWindow->CenterInWindow(this);
-                m_pcExeWindow->Show();
-                m_pcExeWindow->MakeFocus();
-            }
-
-            else
-            {
-
-                m_pcError->Go( new Invoker() );
-            }
-
-        }
-
-        break;
-
-    case ID_EXE_CLOSE:
-        {
-
-            m_pcExeWindow = NULL;
-        }
-        break;
-
-
-    case ID_DELETE:
-        {
-            Alert* delAlert = new Alert( "Error", "The Delete function is not \nimplemented yet", 0x00, "OK", NULL );
-            delAlert->CenterInWindow(this);
-            delAlert->Go( new Invoker() );
-        }
-
-        break;
-
-
-    case ID_APP_SET:
-        {
-
-
-            if (m_pcOptions == NULL)
-            {
-                m_pcOptions = new OptionsWindow(this);
-                m_pcOptions->CenterInWindow(this);
-                m_pcOptions->Show();
-                m_pcOptions->MakeFocus();
-            }
-
-            else
-            {
-
-                m_pcError->Go( new Invoker() );
-           
-            }
-        }
-        break;
-
-
-    case ID_OPT_CLOSE_OPT:
-        {
-            m_pcOptions = NULL;
-        }
-        break;
-
-
-    case ID_HELP_ABOUT:
-        {
-
-            Alert* aAbout = new Alert( "About Archiver 0.5 Reborn","Archiver 0.5 Reborn\n\nGui Archiver for Syllable    \nCopyright 2002 - 2003 Rick Caudill\n\nArchiver is released under the GNU General\nPublic License. Please go to www.gnu.org\nmore information.\n", Alert::ALERT_INFO, 0x00, "OK", NULL );
-            aAbout->CenterInWindow(this);
-            aAbout->Go( new Invoker() );
-
-        }
-        break;
-
-
-        
-
-    case ID_GOING_TO_VIEW:
-        {
-            const char* FileName;
-            
-            pcMessage->FindString( "newPath", &FileName );
-            
-            LoadAtStart((char*)FileName);  
-        }
-        break;
-
-    case ID_EXTRACT:
-        {
-            if(m_pcExtractWindow == NULL){
-                if ( Lst != false )
-                {
-
-                    m_pcExtractWindow = new ExtractWindow(this);
-                    m_pcExtractWindow->CenterInWindow(this);
-                    m_pcExtractWindow->Show();
-                    m_pcExtractWindow->MakeFocus();
-                    Message* newMSG;
-                    newMSG = new Message( ID_GOING_TO_EXTRACT );
-                    newMSG->AddString( "pzPath", pzStorePath );
-                    m_pcExtractWindow->PostMessage( newMSG, m_pcExtractWindow );
-                }
-
-                else
-                {
-
-                    Alert* aFile = new Alert( "Error", "You must select a file first.",Alert::ALERT_WARNING, 0x00, "OK", NULL );
-                    aFile->CenterInWindow(this);
-                    aFile->Go( new Invoker() );
-                }
-
-            }
-            else
-            {
-                m_pcError->Go(new Invoker());
-            }
-
-        }
-        break;
+		case M_LOAD_REQUESTED:
+		{
+			if( pcMessage->FindString( "file/path", &pzFPath ) == 0 )
+			{
+				strcpy( pzStorePath, pzFPath );
+				Load( ( char * )pzStorePath );
+				pcOpenRequest = NULL;
+				break;
+			}
+		}
 
 
+		case ID_QUIT:
+		{
+			OkToQuit();
+			break;
+		}
 
-    case ID_EXTRACT_CLOSE:
-        {
-            m_pcExtractWindow = NULL;
-        }
-
-        break;
-
-    case ID_OPEN:
-        {
-
-            pcOpenRequest = new FileRequester( FileRequester::LOAD_REQ, new Messenger( this ), lineOpen, FileRequester::NODE_FILE, false, NULL, NULL, true, true, "Open", "Cancel" );
-            pcOpenRequest->CenterInWindow(this);
-            pcOpenRequest->Show();
-            pcOpenRequest->MakeFocus();
-
-        }
-        break;
-
-    case M_LOAD_REQUESTED:
-        {
-
-            if ( pcMessage->FindString( "file/path", &pzFPath ) == 0 )
-            {
-
-                strcpy( pzStorePath, pzFPath );
-                Load( ( char* ) pzStorePath );
-                pcOpenRequest = NULL;
-                break;
-            }
-
-        }
-
-
-    case ID_QUIT:
-        {
-            OkToQuit();
-        }
-        break;
-
-
-
-    default:
-
-        Window::HandleMessage( pcMessage );
-
-        break;
-
-    }
-
+		default:
+			Window::HandleMessage( pcMessage );
+			break;
+	}
 }
 
 
 bool ArcWindow::OkToQuit( void )
 {
-    Application::GetInstance()->PostMessage( M_QUIT );
-    return ( false );
+	pcAppSettings->SaveSettings();
+	delete pcAppSettings;
+	Application::GetInstance()->PostMessage( M_QUIT );
+	return ( false );
 }
 
 
 
-void ArcWindow::ListFiles( char* cFileName )
+void ArcWindow::ListFiles( char *cFileName )
 {
-	FILE* f;
-	FILE* fTmp;
+	FILE *f;
+	FILE *fTmp;
 	char zTmp[1024];
 	char output_buffer[1024];
 	int i;
 	int j;
-	
-	if (  strstr(pzStorePath, ".ace"))
-    {
 
-        char ace_n_args[ 300 ] = "";
-        strcpy( ace_n_args, "" );
-        strcat( ace_n_args, "unace l " );
-        strcat( ace_n_args, pzStorePath );
-        strcat( ace_n_args, " 2>&1");
-        f = NULL;
-        fTmp = NULL;
-        f = popen( ace_n_args, "r" );
-        fTmp = popen( ace_n_args, "r" );
-        
-        for (i=0; i<=3; i++)
-      		fgets(output_buffer, 1024, fTmp);
-      	
-      	char trash2[1024] = "Invalid archive file: ";
-      	strcat(trash2,pzStorePath);
-      	strcat(trash2,"\n");
-      	
-      	if (strcmp(output_buffer, trash2)==0)
-      	{
-      		sprintf(zTmp, "%s is not an ace file.", pzStorePath);
-        	pcStatus->setText(zTmp,0);
-        	pclose(f);
-        	pclose(fTmp);
-        	return;
-        }
-        
-        else{
-        pcView->Clear();
-        j = 0;
-        ListViewStringRow *row;
-        while ( !feof( f ) )
-        {
+	if( strstr( pzStorePath, ".ace" ) )
+	{
 
-            fscanf( f, "%s %s %s %s %s %s ", tmp[ 0 ], tmp[ 1 ], tmp[ 2 ], tmp[ 3 ], tmp[ 4 ], tmp[5] );
+		char ace_n_args[300] = "";
 
-            row = new ListViewStringRow();
-            row->AppendString( ( String ) ( const char* ) tmp[ 5 ] );
-            row->AppendString( "      ---   " );
-            row->AppendString( ( String ) ( const char* ) tmp[ 3 ] );
-            row->AppendString( ( String ) ( const char* ) tmp[ 1 ]  + "  " + ( const char* ) tmp[ 0 ] );
-            row->AppendString( "      ---   " );
-            pcView->InsertRow( row );
+		strcpy( ace_n_args, "" );
+		strcat( ace_n_args, "unace l " );
+		strcat( ace_n_args, pzStorePath );
+		strcat( ace_n_args, " 2>&1" );
+		f = NULL;
+		fTmp = NULL;
+		f = popen( ace_n_args, "r" );
+		fTmp = popen( ace_n_args, "r" );
 
-            j++;
+		for( i = 0; i <= 3; i++ )
+			fgets( output_buffer, 1024, fTmp );
 
-        }
-		pclose( f );
-        sprintf(zTmp, "%s has %d files located in it",pzStorePath, pcView->GetRowCount());
-        pcStatus->setText(zTmp, 0);
-        Lst = true;
-        ArcWindow::MakeFocus();
-        return ;
-       }
-     }
+		char trash2[1024] = "Invalid archive file: ";
 
-    if (strstr(pzStorePath, ".jar"))
-    {
+		strcat( trash2, pzStorePath );
+		strcat( trash2, "\n" );
 
-        char jar_n_args[ 300 ] = "";
-        strcpy( jar_n_args, "" );
-        strcat( jar_n_args, "fastjar tfv " );
-        strcat( jar_n_args, pzStorePath);
-        strcat( jar_n_args, " 2>&1");
-        f = NULL;
-        fTmp = NULL;
-        fTmp = popen(jar_n_args,"r");
-        f = popen( jar_n_args, "r" );
-        pcView->Clear();
-        j = 0;
-        fgets(output_buffer, 1024, fTmp);
-        
-        if (strcmp(output_buffer, "Error in JAR file format. zip-style comment?\n")==0){
-        	sprintf(zTmp, "%s is not a jar archive",pzStorePath);
-        	pclose(fTmp);
-        	pclose(f);
-        	pcStatus->setText(zTmp, 0);
-        	return;
-        }
-        
-        else{
-        pclose(fTmp);
-        ListViewStringRow *row;
-        while ( !feof( f ) )
-        {
-
-            fscanf( f, "%s %s %s %s %s %s %s %s", tmp[ 0 ], tmp[ 1 ], tmp[ 2 ], tmp[ 3 ], tmp[ 4 ], tmp[5], tmp[6],tmp[7] );
-            row = new ListViewStringRow();
-            row->AppendString( ( String ) ( const char* ) tmp[ 7 ] );
-            row->AppendString( "      ---   " );
-            row->AppendString( ( String ) (const char*) tmp[0] );
-            row->AppendString( ( String ) ( const char* ) tmp[ 4 ] +",  " + ( const char* ) tmp[ 2 ] + " " +( const char* ) tmp[ 3 ] + ", " + ( const char* ) tmp[ 6 ] );
-            row->AppendString( "      ---   " );
-            pcView->InsertRow( row );
-
-            j++;
-
-        }
-
-        pcView->RemoveRow(j-1);
-        sprintf(zTmp, "%s has %d files located in it",pzStorePath, pcView->GetRowCount());
-        pcStatus->setText(zTmp,0);
-        pclose( f );
-        Lst = true;
-        ArcWindow::MakeFocus();
-        return ;
-    	}
-    }
-	
-
-    if (strstr(pzStorePath, ".cab"))
-    {
-
-        char cab_n_args[ 300 ] = "";
-        strcpy( cab_n_args, "" );
-        strcat( cab_n_args, "uncab -v " );
-        strcat( cab_n_args, pzStorePath );
-        strcat( cab_n_args, " 2>&1");
-        f = NULL;
-        fTmp = NULL;
-        f = popen( cab_n_args, "r" );
-        fTmp = popen(cab_n_args,"r");
-        pcView->Clear();
-        
-        fgets(trash, 1024, fTmp);
-        
-        if (strcmp(trash, "\0\n")==0){
-        	sprintf(zTmp, "%s is not a cab archive",pzStorePath);
-        	pclose(fTmp);
-        	pclose(f);
-        	pcStatus->setText(zTmp, 0);
-        	return;
-        	}
-        	
-        else{
-        pclose(fTmp);	
-        for(int i=0;i<=1;i++){
-        fgets(trash, 1023, f);
-			}
-        j = 0;
-        ListViewStringRow *row;
-
-        while ( !feof( f ) )
-        {
-
-            fscanf( f, "%s %s %s %s %s %s ", tmp[ 0 ], tmp[ 1 ], tmp[ 2 ], tmp[ 3 ], tmp[ 4 ], tmp[5] );
-
-
-            row = new ListViewStringRow();
-            row->AppendString( ( String ) ( const char* ) tmp[ 5 ] );
-            row->AppendString( "      ---   " );
-            row->AppendString( ( String ) ( const char* ) tmp[ 0 ] );
-            row->AppendString( ( String ) ( const char* ) tmp[ 3 ] + "  " + ( const char* ) tmp[ 2 ] );
-            row->AppendString( "      ---   " );
-            pcView->InsertRow( row );
-
-            j++;
-
-        }
-		pclose( f );
-		sprintf(zTmp, "%s has %d files located in it",pzStorePath, pcView->GetRowCount());
-        pcStatus->setText(zTmp,0);
-        Lst = true;
-        ArcWindow::MakeFocus();
-        return ;
-        }
-    }
-
-    if ( strstr( pzStorePath, ".zip" ) )
-    {
-    	char zip_n_args[ 300 ] = "";
-        strcpy( zip_n_args, "" );
-        strcat( zip_n_args, "unzip -Z " );
-        strcat( zip_n_args, pzStorePath );
-        f = NULL;
-        f = popen( zip_n_args, "r" );
-        pcView->Clear();
-        j = 0;
-        char junk2[1024];
-       
-        fgets(junk2,sizeof(junk2),f);
-        fread(junk,sizeof(junk2),0,f);
-        sprintf(output_buffer, "[%s]\n", pzStorePath);
-        if (strcmp(junk2, output_buffer) == 0)
-        {
-        	sprintf(zTmp, "%s is not a zip file.", pzStorePath);
-        	pcStatus->setText(zTmp,0);
-        	pclose(f);
-        	return; 
-        }
-        
-        else{
-        while ( !feof(f)  )
-        {
-			
-            fscanf( f, "%s %s %s %s %s %s %s %s %s",tmp[0],tmp[1],tmp[2],tmp[3],tmp[4],tmp[5],tmp[6],tmp[7],tmp[8] );
-            ListViewStringRow *row;
-            row = new ListViewStringRow();
-            row->AppendString( ( String ) (const char*)tmp[8]);
-            row->AppendString( ( String)"");
-            row->AppendString( ( String ) (const char*)tmp[3]);
-            row->AppendString( ( String )( const char* ) tmp[ 7 ] + "  " + ( const char* ) tmp[ 6 ]);
-            row->AppendString( ( String ) (const char*)tmp[0]);
-            pcView->InsertRow( row );
-
-            j++;
-        }
-        
-        pcView->RemoveRow(j-1);
-        pcView->RemoveRow(j-2);
-        pclose( f );
-        sprintf(zTmp, "%s has %d files located in it",pzStorePath, pcView->GetRowCount());
-        pcStatus->setText(zTmp,0);
-        Lst = true;
-        ArcWindow::MakeFocus();
-        return;
-    	}
-	}
-	
-	
-    if ( ( strstr( pzStorePath, ".tar" ) ) && ( !strstr( pzStorePath, ".gz" ) ) && ( !strstr( pzStorePath, ".bz2" ) ) )
-    {
-        
-        char tar_n_args[ 300 ] = "";
-        strcpy( tar_n_args, "" );
-        strcat( tar_n_args, "tar -tvf " );
-        strcat( tar_n_args, pzStorePath );
-        strcat( tar_n_args, " 2>&1");
-        f = NULL;
-        f = popen( tar_n_args, "r" );
-        fTmp = popen(tar_n_args,"r");
-        pcView->Clear();
-        j = 0;
-        
-        
-        fgets(output_buffer, sizeof(output_buffer), fTmp);
-        
-        if (strcmp(output_buffer, "tar: Hmm, this doesn't look like a tar archive\n") == 0){
-        	sprintf(zTmp, "%s is not a tar archive",pzStorePath);
-        	pclose(fTmp);
-        	pclose(f);
-        	pcStatus->setText(zTmp, 0);
-        	return;
-        	}
-        	
-        else{
-		pclose(fTmp);
-		
-		while ( !feof( f ) )
-        	{
-		
-            	fscanf( f, "%s %s %s %s %s %s", tmp[ 0 ], tmp[ 1 ], tmp[ 2 ], tmp[ 3 ], tmp[ 4 ], tmp[ 5 ] );
-            	ListViewStringRow *row;
-            	row = new ListViewStringRow();
-            	row->AppendString( ( String ) ( const char* ) tmp[ 5 ] );
-            	row->AppendString( ( String ) ( const char* ) tmp[ 1 ] );
-            	row->AppendString( ( String ) ( const char* ) tmp[ 2 ] );
-            	row->AppendString( ( String ) ( const char* ) tmp[ 4 ] + "  " + ( const char* ) tmp[ 3 ] );
-            	row->AppendString( ( String ) ( const char* ) tmp[ 0 ] );
-            	pcView->InsertRow( row );
-            	j++;
-        	}
-        	pcView->RemoveRow(j-1);
-        	pclose( f );
-        	sprintf(zTmp, "%s has %d files located in it",pzStorePath, pcView->GetRowCount());
-        	pcStatus->setText(zTmp, 0);
-        	Lst = true;
-        	ArcWindow::MakeFocus();
-        	return ;
-		}
-    }
-
-
-    if ( strstr( pzStorePath, ".bz2" ) )
-    {
-
-        char bzip_n_args[ 300 ] = "";
-		strcpy( bzip_n_args, "" );
-        strcat( bzip_n_args, "tar --use-compress-prog=bzip2 -tvf " );
-        strcat( bzip_n_args, pzStorePath );
-        strcat( bzip_n_args, " 2>&1");        
-        f = NULL;
-        fTmp = NULL;
-        f = popen( bzip_n_args, "r" );
-        fTmp = popen(bzip_n_args,"r");
-        fgets(output_buffer, 1024, fTmp);
-        pcView->Clear();
-        j = 0;
-       
-        if(strcmp(output_buffer, "bzip2: (stdin) is not a bzip2 file.\n") == 0) 
+		if( strcmp( output_buffer, trash2 ) == 0 )
 		{
-       		sprintf(zTmp,"file '%s' is not a bzip file", pzStorePath); 
-       		pcStatus->setText(zTmp, 0);
-       		pclose(fTmp);
-       		pclose(f);
-       		return;
-        }
-       
-       else
-       {
-       	pclose(fTmp);
-        while ( !feof(f)  )
-        {
+			sprintf( zTmp, "%s is not an ace file.", pzStorePath );
+			pcStatus->SetText( zTmp, 0 );
+			pclose( f );
+			pclose( fTmp );
+			return;
+		}
 
-            fscanf( f, "%s %s %s %s %s", tmp[ 0 ], tmp[ 1 ], tmp[ 2 ], tmp[ 3 ], tmp[ 4 ] );
-			fgets(tmp[5], 1024, f);
-			tmp[5][strlen(tmp[5])-1] = '\0';
-            
-            ListViewStringRow *row;
-            row = new ListViewStringRow();
-            row->AppendString( ( String ) ( const char* ) tmp[ 5 ] );
-            row->AppendString( ( String ) ( const char* ) tmp[ 1 ] );
-            row->AppendString( ( String ) ( const char* ) tmp[ 2 ] );
-            row->AppendString( ( String ) ( const char* ) tmp[ 4] + "  " + ( const char* ) tmp[ 3]  );
-            row->AppendString( ( String ) ( const char* ) tmp[ 0 ] );
-            pcView->InsertRow( row );
+		else
+		{
+			pcView->Clear();
+			j = 0;
+			ListViewStringRow *row;
 
-            j++;
-        }
-        pcView->RemoveRow(j-1);
-     	sprintf(zTmp, "%s has %d files located in it",pzStorePath, pcView->GetRowCount());
-        pcStatus->setText(zTmp, 0);
-        pclose( f );
-        Lst = true;
-        ArcWindow::MakeFocus();
-        return ;
-    }
-    }
+			while( !feof( f ) )
+			{
+
+				fscanf( f, "%s %s %s %s %s %s ", tmp[0], tmp[1], tmp[2], tmp[3], tmp[4], tmp[5] );
+
+				row = new ListViewStringRow();
+				row->AppendString( ( String )( const char * )tmp[5] );
+				row->AppendString( "      ---   " );
+				row->AppendString( ( String )( const char * )tmp[3] );
+				row->AppendString( ( String )( const char * )tmp[1] + "  " + ( const char * )tmp[0] );
+				row->AppendString( "      ---   " );
+				pcView->InsertRow( row );
+
+				j++;
+
+			}
+			pclose( f );
+			sprintf( zTmp, "%s has %d files located in it", pzStorePath, pcView->GetRowCount() );
+			pcStatus->SetText( zTmp, 0 );
+			Lst = true;
+			ArcWindow::MakeFocus();
+			return;
+		}
+	}
+
+	if( strstr( pzStorePath, ".jar" ) )
+	{
+
+		char jar_n_args[300] = "";
+
+		strcpy( jar_n_args, "" );
+		strcat( jar_n_args, "fastjar tfv " );
+		strcat( jar_n_args, pzStorePath );
+		strcat( jar_n_args, " 2>&1" );
+		f = NULL;
+		fTmp = NULL;
+		fTmp = popen( jar_n_args, "r" );
+		f = popen( jar_n_args, "r" );
+		pcView->Clear();
+		j = 0;
+		fgets( output_buffer, 1024, fTmp );
+
+		if( strcmp( output_buffer, "Error in JAR file format. zip-style comment?\n" ) == 0 )
+		{
+			sprintf( zTmp, "%s is not a jar archive", pzStorePath );
+			pclose( fTmp );
+			pclose( f );
+			pcStatus->SetText( zTmp, 0 );
+			return;
+		}
+
+		else
+		{
+			pclose( fTmp );
+			ListViewStringRow *row;
+
+			while( !feof( f ) )
+			{
+
+				fscanf( f, "%s %s %s %s %s %s %s %s", tmp[0], tmp[1], tmp[2], tmp[3], tmp[4], tmp[5], tmp[6], tmp[7] );
+				row = new ListViewStringRow();
+				row->AppendString( ( String )( const char * )tmp[7] );
+				row->AppendString( "      ---   " );
+				row->AppendString( ( String )( const char * )tmp[0] );
+				row->AppendString( ( String )( const char * )tmp[4] + ",  " + ( const char * )tmp[2] + " " + ( const char * )tmp[3] + ", " + ( const char * )tmp[6] );
+				row->AppendString( "      ---   " );
+				pcView->InsertRow( row );
+
+				j++;
+
+			}
+
+			pcView->RemoveRow( j - 1 );
+			sprintf( zTmp, "%s has %d files located in it", pzStorePath, pcView->GetRowCount() );
+			pcStatus->SetText( zTmp, 0 );
+			pclose( f );
+			Lst = true;
+			ArcWindow::MakeFocus();
+			return;
+		}
+	}
 
 
+	if( strstr( pzStorePath, ".cab" ) )
+	{
+
+		char cab_n_args[300] = "";
+
+		strcpy( cab_n_args, "" );
+		strcat( cab_n_args, "uncab -v " );
+		strcat( cab_n_args, pzStorePath );
+		strcat( cab_n_args, " 2>&1" );
+		f = NULL;
+		fTmp = NULL;
+		f = popen( cab_n_args, "r" );
+		fTmp = popen( cab_n_args, "r" );
+		pcView->Clear();
+
+		fgets( trash, 1024, fTmp );
+
+		if( strcmp( trash, "\0\n" ) == 0 )
+		{
+			sprintf( zTmp, "%s is not a cab archive", pzStorePath );
+			pclose( fTmp );
+			pclose( f );
+			pcStatus->SetText( zTmp, 0 );
+			return;
+		}
+
+		else
+		{
+			pclose( fTmp );
+			for( int i = 0; i <= 1; i++ )
+			{
+				fgets( trash, 1023, f );
+			}
+			j = 0;
+			ListViewStringRow *row;
+
+			while( !feof( f ) )
+			{
+
+				fscanf( f, "%s %s %s %s %s %s ", tmp[0], tmp[1], tmp[2], tmp[3], tmp[4], tmp[5] );
 
 
+				row = new ListViewStringRow();
+				row->AppendString( ( String )( const char * )tmp[5] );
+				row->AppendString( "      ---   " );
+				row->AppendString( ( String )( const char * )tmp[0] );
+				row->AppendString( ( String )( const char * )tmp[3] + "  " + ( const char * )tmp[2] );
+				row->AppendString( "      ---   " );
+				pcView->InsertRow( row );
+
+				j++;
+
+			}
+			pclose( f );
+			sprintf( zTmp, "%s has %d files located in it", pzStorePath, pcView->GetRowCount() );
+			pcStatus->SetText( zTmp, 0 );
+			Lst = true;
+			ArcWindow::MakeFocus();
+			return;
+		}
+	}
+
+	if( strstr( pzStorePath, ".zip" ) )
+	{
+		char zip_n_args[300] = "";
+
+		strcpy( zip_n_args, "" );
+		strcat( zip_n_args, "unzip -Z " );
+		strcat( zip_n_args, pzStorePath );
+		f = NULL;
+		f = popen( zip_n_args, "r" );
+		pcView->Clear();
+		j = 0;
+		char junk2[1024];
+
+		fgets( junk2, sizeof( junk2 ), f );
+		fread( junk2, sizeof( junk2 ), 0, f );
+		sprintf( output_buffer, "[%s]\n", pzStorePath );
+		if( strcmp( junk2, output_buffer ) == 0 )
+		{
+			sprintf( zTmp, "%s is not a zip file.", pzStorePath );
+			pcStatus->SetText( zTmp, 0 );
+			pclose( f );
+			return;
+		}
+
+		else
+		{
+			while( !feof( f ) )
+			{
+
+				fscanf( f, "%s %s %s %s %s %s %s %s %s", tmp[0], tmp[1], tmp[2], tmp[3], tmp[4], tmp[5], tmp[6], tmp[7], tmp[8] );
+				ListViewStringRow *row;
+
+				row = new ListViewStringRow();
+				row->AppendString( ( String )( const char * )tmp[8] );
+				row->AppendString( ( String )"" );
+				row->AppendString( ( String )( const char * )tmp[3] );
+				row->AppendString( ( String )( const char * )tmp[7] + "  " + ( const char * )tmp[6] );
+				row->AppendString( ( String )( const char * )tmp[0] );
+				pcView->InsertRow( row );
+
+				j++;
+			}
+
+			pcView->RemoveRow( j - 1 );
+			pcView->RemoveRow( j - 2 );
+			pclose( f );
+			sprintf( zTmp, "%s has %d files located in it", pzStorePath, pcView->GetRowCount() );
+			pcStatus->SetText( zTmp, 0 );
+			Lst = true;
+			ArcWindow::MakeFocus();
+			return;
+		}
+	}
 
 
-    if ( strstr( pzStorePath, ".lha" ) )
-    {
+	if( ( strstr( pzStorePath, ".tar" ) ) && ( !strstr( pzStorePath, ".gz" ) ) && ( !strstr( pzStorePath, ".bz2" ) ) )
+	{
 
-        char lha_n_args[ 300 ] = "";
-        strcpy( lha_n_args, "" );
-        strcat( lha_n_args, "lha -l " );
-        strcat( lha_n_args, pzStorePath );
-        f = NULL;
-        f = popen( lha_n_args, "r" );
-        pcView->Clear();
-        fgets(trash, 1023, f);
-        fgets(trash, 1023, f);
-        j = 0;
-        while ( !feof(f)  )
-        {
+		char tar_n_args[300] = "";
 
-            fscanf( f, "%s %s %s %s %s %s %s %s", tmp[ 0 ], tmp[ 1 ], tmp[ 2 ], tmp[ 3 ], tmp[ 4 ], tmp[ 5 ], tmp[6],tmp[7] );
-
-            ListViewStringRow *row;
-            row = new ListViewStringRow();
-            row->AppendString( ( String ) ( const char* ) tmp[ 6 ] );
-            row->AppendString("      ---   " );
-            row->AppendString( ( String ) ( const char* ) tmp[ 1 ] );
-            row->AppendString( ( String ) ( const char* ) tmp[ 3] + " " + ( const char* ) tmp[ 4] + " " + ( const char* ) tmp[ 5]    );
-            row->AppendString("      ---   " );
-            pcView->InsertRow( row );
-
-            j++;
-        }
-        pcView->RemoveRow(j-1);
-        pcView->RemoveRow(j-2);
-        pclose( f );
-        Lst = true;
-        ArcWindow::MakeFocus();
-        return ;
-    }
+		strcpy( tar_n_args, "" );
+		strcat( tar_n_args, "tar -tvf " );
+		strcat( tar_n_args, pzStorePath );
+		strcat( tar_n_args, " 2>&1" );
+		f = NULL;
+		f = popen( tar_n_args, "r" );
+		fTmp = popen( tar_n_args, "r" );
+		pcView->Clear();
+		j = 0;
 
 
-    if ( strstr( pzStorePath, ".gz" ) )
-    {
+		fgets( output_buffer, sizeof( output_buffer ), fTmp );
 
-        char gzip_n_args[ 300 ] = "";
-	
+		if( strcmp( output_buffer, "tar: Hmm, this doesn't look like a tar archive\n" ) == 0 )
+		{
+			sprintf( zTmp, "%s is not a tar archive", pzStorePath );
+			pclose( fTmp );
+			pclose( f );
+			pcStatus->SetText( zTmp, 0 );
+			return;
+		}
+
+		else
+		{
+			pclose( fTmp );
+
+			while( !feof( f ) )
+			{
+
+				fscanf( f, "%s %s %s %s %s %s", tmp[0], tmp[1], tmp[2], tmp[3], tmp[4], tmp[5] );
+				ListViewStringRow *row;
+
+				row = new ListViewStringRow();
+				row->AppendString( ( String )( const char * )tmp[5] );
+				row->AppendString( ( String )( const char * )tmp[1] );
+				row->AppendString( ( String )( const char * )tmp[2] );
+				row->AppendString( ( String )( const char * )tmp[4] + "  " + ( const char * )tmp[3] );
+				row->AppendString( ( String )( const char * )tmp[0] );
+				pcView->InsertRow( row );
+				j++;
+			}
+			pcView->RemoveRow( j - 1 );
+			pclose( f );
+			sprintf( zTmp, "%s has %d files located in it", pzStorePath, pcView->GetRowCount() );
+			pcStatus->SetText( zTmp, 0 );
+			Lst = true;
+			ArcWindow::MakeFocus();
+			return;
+		}
+	}
+
+
+	if( strstr( pzStorePath, ".bz2" ) )
+	{
+
+		char bzip_n_args[300] = "";
+
+		strcpy( bzip_n_args, "" );
+		strcat( bzip_n_args, "tar --use-compress-prog=bzip2 -tvf " );
+		strcat( bzip_n_args, pzStorePath );
+		strcat( bzip_n_args, " 2>&1" );
+		f = NULL;
+		fTmp = NULL;
+		f = popen( bzip_n_args, "r" );
+		fTmp = popen( bzip_n_args, "r" );
+		fgets( output_buffer, 1024, fTmp );
+		pcView->Clear();
+		j = 0;
+
+		if( strcmp( output_buffer, "bzip2: (stdin) is not a bzip2 file.\n" ) == 0 )
+		{
+			sprintf( zTmp, "file '%s' is not a bzip file", pzStorePath );
+			pcStatus->SetText( zTmp, 0 );
+			pclose( fTmp );
+			pclose( f );
+			return;
+		}
+
+		else
+		{
+			pclose( fTmp );
+			while( !feof( f ) )
+			{
+
+				fscanf( f, "%s %s %s %s %s", tmp[0], tmp[1], tmp[2], tmp[3], tmp[4] );
+				fgets( tmp[5], 1024, f );
+				tmp[5][strlen( tmp[5] ) - 1] = '\0';
+
+				ListViewStringRow *row;
+
+				row = new ListViewStringRow();
+				row->AppendString( ( String )( const char * )tmp[5] );
+				row->AppendString( ( String )( const char * )tmp[1] );
+				row->AppendString( ( String )( const char * )tmp[2] );
+				row->AppendString( ( String )( const char * )tmp[4] + "  " + ( const char * )tmp[3] );
+				row->AppendString( ( String )( const char * )tmp[0] );
+				pcView->InsertRow( row );
+
+				j++;
+			}
+			pcView->RemoveRow( j - 1 );
+			sprintf( zTmp, "%s has %d files located in it", pzStorePath, pcView->GetRowCount() );
+			pcStatus->SetText( zTmp, 0 );
+			pclose( f );
+			Lst = true;
+			ArcWindow::MakeFocus();
+			return;
+		}
+	}
+
+	if( strstr( pzStorePath, ".lha" ) )
+	{
+
+		char lha_n_args[300] = "";
+
+		strcpy( lha_n_args, "" );
+		strcat( lha_n_args, "lha -l " );
+		strcat( lha_n_args, pzStorePath );
+		f = NULL;
+		f = popen( lha_n_args, "r" );
+		pcView->Clear();
+		fgets( trash, 1023, f );
+		fgets( trash, 1023, f );
+		j = 0;
+		while( !feof( f ) )
+		{
+
+			fscanf( f, "%s %s %s %s %s %s %s %s", tmp[0], tmp[1], tmp[2], tmp[3], tmp[4], tmp[5], tmp[6], tmp[7] );
+
+			ListViewStringRow *row;
+
+			row = new ListViewStringRow();
+			row->AppendString( ( String )( const char * )tmp[6] );
+			row->AppendString( "      ---   " );
+			row->AppendString( ( String )( const char * )tmp[1] );
+			row->AppendString( ( String )( const char * )tmp[3] + " " + ( const char * )tmp[4] + " " + ( const char * )tmp[5] );
+			row->AppendString( "      ---   " );
+			pcView->InsertRow( row );
+
+			j++;
+		}
+		pcView->RemoveRow( j - 1 );
+		pcView->RemoveRow( j - 2 );
+		pclose( f );
+		Lst = true;
+		ArcWindow::MakeFocus();
+		return;
+	}
+
+
+	if( strstr( pzStorePath, ".gz" ) )
+	{
+
+		char gzip_n_args[300] = "";
+
 		strcpy( gzip_n_args, "" );
-        strcat( gzip_n_args, "tar -ztvf " );
-        strcat( gzip_n_args, pzStorePath );
-        strcat( gzip_n_args, " 2>&1");
-        f = NULL;
-        fTmp=NULL;
-        fTmp = popen(gzip_n_args,"r");
-        f = popen( gzip_n_args, "r" );
-        pcView->Clear();
-        j = 0;
-      	for (i=0; i<=1; i++){
-      		fgets(output_buffer, 1024, fTmp);
-     }
-       
-       if(strcmp(output_buffer, "gzip: stdin: unexpected end of file\n") == 0) 
-       {
-       		sprintf(zTmp,"file '%s' is not a gzip file", pzStorePath); 
-       		pcStatus->setText(zTmp, 0);
-       		pclose(fTmp);
-       		pclose(f);
-       		return;
-       }
-       
-       else
-       {
-     		pclose(fTmp);
-       		while ( !feof( f ) )
-        	{
-   				fscanf( f, "%s %s %s %s %s", tmp[ 0 ], tmp[ 1 ], tmp[ 2 ], tmp[ 3 ], tmp[ 4 ] );
-				fgets(tmp[5], 1024, f);
-				tmp[5][strlen(tmp[5])-1] = '\0';
+		strcat( gzip_n_args, "tar -ztvf " );
+		strcat( gzip_n_args, pzStorePath );
+		strcat( gzip_n_args, " 2>&1" );
+		f = NULL;
+		fTmp = NULL;
+		fTmp = popen( gzip_n_args, "r" );
+		f = popen( gzip_n_args, "r" );
+		pcView->Clear();
+		j = 0;
+		for( i = 0; i <= 1; i++ )
+		{
+			fgets( output_buffer, 1024, fTmp );
+		}
+
+		if( strcmp( output_buffer, "gzip: stdin: unexpected end of file\n" ) == 0 )
+		{
+			sprintf( zTmp, "file '%s' is not a gzip file", pzStorePath );
+			pcStatus->SetText( zTmp, 0 );
+			pclose( fTmp );
+			pclose( f );
+			return;
+		}
+
+		else
+		{
+			pclose( fTmp );
+			while( !feof( f ) )
+			{
+				fscanf( f, "%s %s %s %s %s", tmp[0], tmp[1], tmp[2], tmp[3], tmp[4] );
+				fgets( tmp[5], 1024, f );
+				tmp[5][strlen( tmp[5] ) - 1] = '\0';
 				ListViewStringRow *row;
-            	row = new ListViewStringRow();
-        		row->AppendString( ( String ) ( const char* ) tmp[ 5 ]); //tmp[6] );
-            	row->AppendString( ( String ) ( const char* ) tmp[ 1 ] );
-            	row->AppendString( ( String ) ( const char* ) tmp[ 2 ] );
-            	row->AppendString( ( String ) ( const char* ) tmp[ 4 ] + "  " +  (const char*) tmp[3] );
-            	row->AppendString( ( String ) ( const char* ) tmp[ 0 ] );
-            	pcView->InsertRow( row );
+
+				row = new ListViewStringRow();
+				row->AppendString( ( String )( const char * )tmp[5] );	//tmp[6] );
+				row->AppendString( ( String )( const char * )tmp[1] );
+				row->AppendString( ( String )( const char * )tmp[2] );
+				row->AppendString( ( String )( const char * )tmp[4] + "  " + ( const char * )tmp[3] );
+				row->AppendString( ( String )( const char * )tmp[0] );
+				pcView->InsertRow( row );
 				j++;
-        	}
-        	pcView->RemoveRow(j-1);
-        	pclose( f );
-        	sprintf(zTmp, "%s has %d files located in it",pzStorePath, pcView->GetRowCount());
-        	pcStatus->setText(zTmp, 0);
-        	Lst = true;
-        	ArcWindow::MakeFocus();
-        	return;
-       }
-    }
+			}
+			pcView->RemoveRow( j - 1 );
+			pclose( f );
+			sprintf( zTmp, "%s has %d files located in it", pzStorePath, pcView->GetRowCount() );
+			pcStatus->SetText( zTmp, 0 );
+			Lst = true;
+			ArcWindow::MakeFocus();
+			return;
+		}
+	}
 
 
-    if ( strstr( pzStorePath, ".tgz" ) )
-    {
-        char gzip_n_args[ 300 ] = "";
-       	
-       	strcpy( gzip_n_args, "" );
-        strcat( gzip_n_args, "tar -ztvf " );
-        strcat( gzip_n_args, pzStorePath );
-        strcat( gzip_n_args, " 2>&1");
-        f = NULL;
-        fTmp=NULL;
-        fTmp = popen(gzip_n_args,"r");
-        f = popen( gzip_n_args, "r" );
-        pcView->Clear();
-        j = 0;
-      	for (i=0; i<=1; i++){
-      		fgets(output_buffer, 1024, fTmp);
-     }
-       
-       if(strcmp(output_buffer, "gzip: stdin: unexpected end of file\n") == 0) 
-       {
-       		sprintf(zTmp,"file '%s' is not a gzip file", pzStorePath); 
-       		pcStatus->setText(zTmp, 0);
-       		pclose(fTmp);
-       		pclose(f);
-       		return;
-       }
-       
-       else
-       {
-       		string zStatusStuff;
-     		pclose(fTmp);
-       		while ( !feof( f ) )
-        	{
-        		fscanf( f, "%s %s %s %s %s", tmp[ 0 ], tmp[ 1 ], tmp[ 2 ], tmp[ 3 ], tmp[ 4 ] );
-				fgets(tmp[5], 1024, f);
-				tmp[5][strlen(tmp[5])-1] = '\0';
+	if( strstr( pzStorePath, ".tgz" ) )
+	{
+		char gzip_n_args[300] = "";
+
+		strcpy( gzip_n_args, "" );
+		strcat( gzip_n_args, "tar -ztvf " );
+		strcat( gzip_n_args, pzStorePath );
+		strcat( gzip_n_args, " 2>&1" );
+		f = NULL;
+		fTmp = NULL;
+		fTmp = popen( gzip_n_args, "r" );
+		f = popen( gzip_n_args, "r" );
+		pcView->Clear();
+		j = 0;
+		for( i = 0; i <= 1; i++ )
+		{
+			fgets( output_buffer, 1024, fTmp );
+		}
+
+		if( strcmp( output_buffer, "gzip: stdin: unexpected end of file\n" ) == 0 )
+		{
+			sprintf( zTmp, "file '%s' is not a gzip file", pzStorePath );
+			pcStatus->SetText( zTmp, 0 );
+			pclose( fTmp );
+			pclose( f );
+			return;
+		}
+
+		else
+		{
+			String zStatusStuff;
+
+			pclose( fTmp );
+			while( !feof( f ) )
+			{
+				fscanf( f, "%s %s %s %s %s", tmp[0], tmp[1], tmp[2], tmp[3], tmp[4] );
+				fgets( tmp[5], 1024, f );
+				tmp[5][strlen( tmp[5] ) - 1] = '\0';
 				ListViewStringRow *row;
-            	row = new ListViewStringRow();
 
-        		row->AppendString( ( String ) ( const char* ) tmp[ 5 ] );
-            	row->AppendString( ( String ) ( const char* ) tmp[ 1 ] );
-            	row->AppendString( ( String ) ( const char* ) tmp[ 2 ] );
-            	row->AppendString( ( String ) ( const char* ) tmp[ 4 ] + "  " +  (const char*) tmp[3] );
-            	row->AppendString( ( String ) ( const char* ) tmp[ 0 ] );
-            	pcView->InsertRow( row );
+				row = new ListViewStringRow();
+
+				row->AppendString( ( String )( const char * )tmp[5] );
+				row->AppendString( ( String )( const char * )tmp[1] );
+				row->AppendString( ( String )( const char * )tmp[2] );
+				row->AppendString( ( String )( const char * )tmp[4] + "  " + ( const char * )tmp[3] );
+				row->AppendString( ( String )( const char * )tmp[0] );
+				pcView->InsertRow( row );
 				j++;
-        	}
-        	pcView->RemoveRow(j-1);
-        	pclose( f );
-        	sprintf(zTmp, "%s has %d files located in it",pzStorePath, pcView->GetRowCount());
-        	pcStatus->setText(zTmp, 0);
-        	Lst = true;
-        	ArcWindow::MakeFocus();
-        	return;
-       }
-        
-    }
+			}
+			pcView->RemoveRow( j - 1 );
+			pclose( f );
+			sprintf( zTmp, "%s has %d files located in it", pzStorePath, pcView->GetRowCount() );
+			pcStatus->SetText( zTmp, 0 );
+			Lst = true;
+			ArcWindow::MakeFocus();
+			return;
+		}
+
+	}
 
 
 
-    if ( strstr( pzStorePath, ".rar" ) )
-    {
+	if( strstr( pzStorePath, ".rar" ) )
+	{
 
-        char rar_n_args[ 300 ] = "";
-        strcpy( rar_n_args, "" );
-        strcat( rar_n_args, "unrar l " );
-        strcat( rar_n_args, pzStorePath );
-        f = NULL;
-        f = popen( rar_n_args, "r" );
-        pcView->Clear();
-        
-      for (int i=0;i<=7;i++){ 
-       fgets(trash,1023,f);
-      }
-        j = 0;
-        while ( !feof(f)  )
-        {
+		char rar_n_args[300] = "";
 
-            fscanf( f, "%s %s %s %s %s %s %s %s %s %s", tmp[ 0 ], tmp[ 1 ], tmp[ 2 ], tmp[ 3 ], tmp[ 4 ], tmp[ 5 ],tmp[6],tmp[7],tmp[8],tmp[9] );
+		strcpy( rar_n_args, "" );
+		strcat( rar_n_args, "unrar l " );
+		strcat( rar_n_args, pzStorePath );
+		f = NULL;
+		f = popen( rar_n_args, "r" );
+		pcView->Clear();
 
-            ListViewStringRow *row;
-            row = new ListViewStringRow();
+		for( int i = 0; i <= 7; i++ )
+		{
+			fgets( trash, 1023, f );
+		}
+		j = 0;
+		while( !feof( f ) )
+		{
 
-            row->AppendString( ( String ) ( const char* ) tmp[ 0 ] );
-            row->AppendString( ( String ) ( const char* ) tmp[ 1 ] );
-            row->AppendString( "    ---  " );
-            row->AppendString( ( String ) ( const char* ) tmp[ 5] + "  " + ( const char* ) tmp[ 4]  );
-            row->AppendString( "   ---  " );
-            pcView->InsertRow( row );
+			fscanf( f, "%s %s %s %s %s %s %s %s %s %s", tmp[0], tmp[1], tmp[2], tmp[3], tmp[4], tmp[5], tmp[6], tmp[7], tmp[8], tmp[9] );
 
-            j++;
-        }
-        pcView->RemoveRow(j-1);
-        pclose( f );
-        Lst = true;
-        ArcWindow::MakeFocus();
-        return ;
-    }
+			ListViewStringRow *row;
 
-    else
-    {
-    	sprintf(zTmp, "%s is not an archive",pzStorePath);
-    	pcStatus->setText(zTmp);
-        pcView->Clear();
-        Lst = false;
-    }
+			row = new ListViewStringRow();
+
+			row->AppendString( ( String )( const char * )tmp[0] );
+			row->AppendString( ( String )( const char * )tmp[1] );
+			row->AppendString( "    ---  " );
+			row->AppendString( ( String )( const char * )tmp[5] + "  " + ( const char * )tmp[4] );
+			row->AppendString( "   ---  " );
+			pcView->InsertRow( row );
+
+			j++;
+		}
+		pcView->RemoveRow( j - 1 );
+		pclose( f );
+		Lst = true;
+		ArcWindow::MakeFocus();
+		return;
+	}
+
+	else
+	{
+		sprintf( zTmp, "%s is not an archive", pzStorePath );
+		pcStatus->SetText( zTmp );
+		pcView->Clear();
+		Lst = false;
+	}
 }
 
-BitmapImage* ArcWindow::GetImage(const char* pzFile)
+
+/*************************************************************
+* Description: Using this method to catch input
+*			   This method will be superceded when menu shortcuts 
+*			   are enabled.
+* Author: Rick Caudill
+* Date: Tue Mar 16 11:40:01 2004
+*************************************************************/
+void ArcWindow::DispatchMessage( os::Message * pcMessage, os::Handler * pcHandler )
 {
-	Resources cCol(get_image_id());
- 	ResStream* pcStream = cCol.GetResourceStream(pzFile);
- 	BitmapImage* pcImage = new BitmapImage(pcStream);
- 	return (pcImage);
+	String cRawString;
+	int32 nQual, nRawKey;
+
+	if( pcMessage->GetCode() == os::M_KEY_DOWN )	//a key must have been pressed
+	{
+		if( pcMessage->FindString( "_raw_string", &cRawString ) != 0 || pcMessage->FindInt32( "_qualifiers", &nQual ) != 0 || pcMessage->FindInt32( "_raw_key", &nRawKey ) != 0 )
+			Window::DispatchMessage( pcMessage, pcHandler );
+		else
+		{
+			if( nQual & os::QUAL_CTRL )	//ctrl key was caught
+			{
+				m_pcMenu->MakeFocus();	//simple hack in order to get menus to work 
+			}
+
+			else if( nQual & os::QUAL_ALT )
+			{
+				if( nRawKey == 60 )	//ALT+A
+				{
+					Point cPoint = m_pcMenu->GetItemAt( 0 )->GetContentLocation();
+
+					m_pcMenu->MouseDown( cPoint, 1 );
+				}
+
+				if( nRawKey == 63 )	//ALT+F
+				{
+					Point cPoint = m_pcMenu->GetItemAt( 1 )->GetContentLocation();
+
+					m_pcMenu->MouseDown( cPoint, 1 );
+				}
+
+				if( nRawKey == 78 )	//ALT+C
+				{
+					Point cPoint = m_pcMenu->GetItemAt( 2 )->GetContentLocation();
+
+					m_pcMenu->MouseDown( cPoint, 1 );
+				}
+
+				if( nRawKey == 65 )	//ALT+H
+				{
+					Point cPoint = m_pcMenu->GetItemAt( 6 )->GetContentLocation();
+
+					m_pcMenu->MouseDown( cPoint, 1 );
+				}
+				else;
+			}
+		}
+	}
+	Window::DispatchMessage( pcMessage, pcHandler );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

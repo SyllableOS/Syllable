@@ -6,7 +6,7 @@ EXE	= ../objs/archiver
 OBJDIR	:= ../objs
 
 
-OBJS := ../objs/main.o ../objs/toolbar.o ../objs/archiver.o ../objs/new.o ../objs/options.o ../objs/exe.o ../objs/extract.o ../objs/statusbar.o ../objs/imageitem.o ../objs/loadbitmap.o 
+OBJS := ../objs/main.o ../objs/toolbar.o ../objs/archiver.o ../objs/new.o ../objs/options.o ../objs/exe.o ../objs/extract.o ../objs/statusbar.o ../objs/loadbitmap.o ../objs/settings.o 
 
 
 
@@ -64,10 +64,6 @@ clean:
 	@echo Compiling : $<
 	@$(CC) $(OPTS) $< -o $@
 
-../objs/imageitem.o : imageitem.cpp
-	@echo Compiling : $<
-	@$(CC) $(OPTS) $< -o $@
-
 ../objs/loadbitmap.o : loadbitmap.cpp
 	@echo Compiling : $<
 	@$(CC) $(OPTS) $< -o $@
@@ -76,7 +72,9 @@ clean:
 	@echo Compiling : $<
 	@$(CC) $(OPTS) $< -o $@
 
-
+../objs/settings.o : settings.cpp
+	@echo Compiling : $<
+	@$(CC) $(OPTS) $< -o $@
 
 
 

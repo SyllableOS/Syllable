@@ -1,4 +1,5 @@
 #include "new.h"
+#include "loadbitmap.h"
 #include <gui/font.h>
 
 NewDrop::NewDrop() : DropdownMenu( Rect( 0, 0, 100, 15 ), "" )
@@ -7,7 +8,6 @@ NewDrop::NewDrop() : DropdownMenu( Rect( 0, 0, 100, 15 ), "" )
     InsertItem( 1, "Gzip" );
     InsertItem( 2, "Tar" );
     SetSelection( 1, true );
-
 }
 
 
@@ -24,7 +24,7 @@ NewFrameView::NewFrameView( Rect & r ) : FrameView( r, "new_view", "Create File"
     AddChild(m_pcDropView);
 
     m_pcFileButton = new ImageButton( Rect( 0, 0, 0, 0 ), "file_but", "", new Message(ID_NEW_SELECT_1),NULL,false,false,false);
-    m_pcFileButton->SetImageFromResource("folder.png");
+    m_pcFileButton->SetImage(LoadImageFromResource("folder.png"));
     m_pcFileTextView = new TextView( Rect( 0, 0, 0, 0 ), "file_text", "" );
     m_pcFileStringView = new StringView( Rect( 0, 0, 0, 0 ), "file_str", "Name:" );
 
@@ -40,7 +40,7 @@ NewFrameView::NewFrameView( Rect & r ) : FrameView( r, "new_view", "Create File"
     m_pcDirectoryStringView = new StringView( Rect( 0, 0, 0, 0 ), "file_str", "Directory:" );
     
     m_pcDirectoryButton = new ImageButton( Rect( 0, 0, 0, 0 ), "file_but", "", new Message(ID_NEW_SELECT_2),NULL,false,false,false);
-	m_pcDirectoryButton->SetImageFromResource("folder.png");
+	m_pcDirectoryButton->SetImage(LoadImageFromResource("folder.png"));
 	
     m_pcDirectoryStringView->SetFrame( Rect( 0, 0, 60, 15 ) + Point( 10, 43 ) );
     m_pcDirectoryTextView->SetFrame( Rect( 0, 0, 195, 20 ) + Point( 75, 43 ) );
@@ -56,16 +56,15 @@ NewFrameView::NewFrameView( Rect & r ) : FrameView( r, "new_view", "Create File"
     m_pcFileButton->SetTabOrder(1);
     m_pcDirectoryButton->SetTabOrder(3);
     m_pcDirectoryTextView->SetTabOrder(2);
-
-
 }
 
 
 
-NewView::NewView( const Rect & r ) : View( r, "" )
+NewView::NewView(const Rect& cRect ) : View( cRect, "" )
 {
     Rect r( 0, 0, 310, 100 );
     r.Resize( 5, 5, 0, 0 );
+
     m_pcFrameView = new NewFrameView( r );
     AddChild( m_pcFrameView );
     m_pcCancel = new Button( Rect( 0, 0, 50, 25 ), "", "Cancel", new Message( ID_QUIT ) );
@@ -79,46 +78,25 @@ NewView::NewView( const Rect & r ) : View( r, "" )
 
     m_pcCancel->SetTabOrder(4);
     m_pcCreate->SetTabOrder(5);
-
 }
 
 
 
-NewWindow::NewWindow(Window* pcParent) : Window( Rect( 0, 0, 315, 130 ), "new_file", "Create New File", WND_NOT_RESIZABLE | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT )
+NewWindow::NewWindow(Window* pcParent, bool bCreation) : Window( Rect( 0, 0, 315, 130 ), "new_file", "Create New File", WND_NOT_RESIZABLE | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT )
 {
-
     pcParentWindow = pcParent;
-    Desktop dDesktop;
-    Rect dBounds = GetBounds();
-    m_pcView = new NewView( dBounds );
+	bCloseAfterCreation = bCreation;
+
+    m_pcView = new NewView(GetBounds());
     AddChild( m_pcView );
-    MoveTo( dDesktop.GetResolution().x / 2 - dBounds.Width() / 2, dDesktop.GetResolution().y / 2 - dBounds.Height() / 2 );
+
     SetFocusChild(m_pcView->m_pcFrameView->m_pcFileTextView);
     SetDefaultButton(m_pcView->m_pcCreate);
-    m_pcOpenSelect = new FileRequester( FileRequester::LOAD_REQ, new Messenger( this ), "/", FileRequester::NODE_DIR, false, NULL, NULL, true, true, "Open", "Cancel" );
-    m_pcSaveSelect = new FileRequester( FileRequester::SAVE_REQ, new Messenger( this ), "/", FileRequester::NODE_FILE, false, NULL, NULL, true, true, "Save", "Cancel" );
-    Read();
+    
+	m_pcOpenSelect = new FileRequester( FileRequester::LOAD_REQ, new Messenger( this ), getenv("$HOME"), FileRequester::NODE_DIR, false, NULL, NULL, true, true, "Open", "Cancel" );
+    m_pcSaveSelect = new FileRequester( FileRequester::SAVE_REQ, new Messenger( this ),getenv("$HOME"), FileRequester::NODE_FILE, false, NULL, NULL, true, true, "Save", "Cancel" );
 }
 
-bool NewWindow::Read()
-{
-    char* zConfigFile;
-    sprintf( zConfigFile, "%s/config/Archiver/Archiver.cfg", getenv( "HOME" ) );
-    ifstream ConfigFile;
-    char junk[ 1024 ];
-
-    ConfigFile.open( zConfigFile );
-    if ( !ConfigFile.eof() )
-    {
-        for(int i=0; i<=6; i++){
-            ConfigFile.getline( junk, 1024 );
-        }
-        ConfigFile.getline( close, 1024 );
-    }
-    ConfigFile.close();
-
-    return false;
-}
 
 void NewWindow::HandleMessage( Message* pcMessage )
 {
@@ -193,7 +171,7 @@ void NewWindow::Create(int Sel)
         system(openArc);
         sleep(1);
         pcParentWindow->PostMessage(newMsg,pcParentWindow);
-        if(strstr(close,"Yes")){
+        if(bCloseAfterCreation){
             PostMessage(M_QUIT);
         }
     }
@@ -211,7 +189,7 @@ void NewWindow::Create(int Sel)
         system(openArc);
         sleep(1);
         pcParentWindow->PostMessage(newMsg,pcParentWindow);
-        if(strstr(close,"Yes")){
+        if(bCloseAfterCreation){
             PostMessage(M_QUIT);
         }
 
@@ -228,7 +206,7 @@ void NewWindow::Create(int Sel)
         system(openArc);
         sleep(1);
         pcParentWindow->PostMessage(newMsg,pcParentWindow);
-        if(strstr(close,"Yes")){
+        if(bCloseAfterCreation){
             PostMessage(M_QUIT);
         }
     }

@@ -1,4 +1,4 @@
-/*  libatheos.so - the highlevel API library for Syllable
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 2002 - 2003 Rick Caudill
  *
  *  This library is free software; you can redistribute it and/or
@@ -31,7 +31,7 @@ using namespace os;
  * \param nFlags - Deteremines what flags will be sent to the ToolBar.
  * \author	Rick Caudill (cau0730@cup.edu)
  *****************************************************************************/
-ToolBar::ToolBar (const Rect& cRect, const char* zName, bool bDrawLines,uint32 nPos, uint32 nResizeMask, uint32 nFlags ) : View(cRect, zName, nResizeMask,nFlags)
+ToolBar::ToolBar (const Rect& cRect, const char* zName, bool bDrawLines,uint32 nPos, uint32 nResizeMask, uint32 nFlags ) : LayoutView(cRect, zName,NULL, nResizeMask)
 {
     nPosition = nPos;
     bDraw = bDrawLines;
@@ -39,7 +39,7 @@ ToolBar::ToolBar (const Rect& cRect, const char* zName, bool bDrawLines,uint32 n
 
 ToolBar::~ToolBar()
 {
-	/*destructor*/
+    /*destructor*/
 }/*end destructor*/
 
 /*Paint*/
@@ -48,9 +48,9 @@ void ToolBar::Paint(const Rect& cRect)
     SetEraseColor(get_default_color(COL_NORMAL));
     EraseRect(cRect);
     Draw();
-} /*end Paint()*/
+} //end Paint()
 
-/*Draw*/
+//Draw
 void ToolBar::Draw()
 {
     if (bDraw == true)
@@ -77,42 +77,40 @@ void ToolBar::Draw()
             DrawLine(Point(this->GetBounds().Width()-0.1f,0.0f), Point(this->GetBounds().Width()-0.1f,this->GetBounds().Height() +1.1f));
         }
     }
-} /*end Draw()*/
+} //end Draw()
 
-/*FrameSized*/
-void ToolBar::FrameSized( const Point& cDelta )
+void ToolBar::AddNode(LayoutNode* pcChild)
 {
-    if ( cDelta.x > 0.0f )
-    {
-        Rect cBounds = GetBounds();
-
-        cBounds.left = cBounds.right - cDelta.x;
-        Paint(cBounds);
-
-    }
-    else if ( cDelta.x < 0.0f )
-    {
-        Rect cBounds = GetBounds();
-
-        cBounds.left = cBounds.right - 2.0f;
-        Paint(cBounds);
-    }
-} /*end FrameSized()*/
-
+	SetRoot(pcChild);
+}
 
 /*reserved*/
-void ToolBar::_reserved1(){}
-void ToolBar::_reserved2(){}
-void ToolBar::_reserved3(){}
-void ToolBar::_reserved4(){}
-void ToolBar::_reserved5(){}
-void ToolBar::_reserved6(){}
-void ToolBar::_reserved7(){}
-void ToolBar::_reserved8(){}
-void ToolBar::_reserved9(){}
-void ToolBar::_reserved10(){}
+void ToolBar::_reserved1()
+{}
+void ToolBar::_reserved2()
+{}
+void ToolBar::_reserved3()
+{}
+void ToolBar::_reserved4()
+{}
+void ToolBar::_reserved5()
+{}
+void ToolBar::_reserved6()
+{}
+void ToolBar::_reserved7()
+{}
+void ToolBar::_reserved8()
+{}
+void ToolBar::_reserved9()
+{}
+void ToolBar::_reserved10()
+{}
 
-  
+
+
+
+
+
 
 
 

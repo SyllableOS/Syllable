@@ -24,10 +24,11 @@
 #include "extract.h"
 #include "statusbar.h"
 #include "messages.h"
-#include "imageitem.h"
 #include "loadbitmap.h"
 #include "toolbar.h"
 using namespace os;
+
+class AppSettings;
 
 class AListView : public ListView{
 public:
@@ -37,19 +38,21 @@ public:
 
 class ArcWindow : public Window{
 public:
-    ArcWindow();
+    ArcWindow(AppSettings*);
     ~ArcWindow();
     AListView* pcView;
     void LoadAtStart( char* cFileName );
 private:
-	char zConfigFile[1024];
-    void Load(char* cFileName);
-    bool Read();
-    void HandleMessage( Message* pcMessage);
-    bool OkToQuit();
-    void ListFiles( char* cFileName);
-    ifstream ConfigFile; 
-    void SetupToolBar();
+    void 	Load(char* cFileName);
+    void 	HandleMessage( Message* pcMessage);
+	void 	DispatchMessage(Message*, Handler*);
+    bool 	OkToQuit();
+    void 	ListFiles( char* cFileName);
+	void 	SetupToolBar();
+	void 	SetupMenus();
+	void 	SetupStatusBar();
+
+
     OptionsWindow* m_pcOptions;
     StatusBar* pcStatus;
     ToolBar* pcButtonBar;
@@ -62,19 +65,17 @@ private:
     ExeWindow* m_pcExeWindow;
     ExtractWindow* m_pcExtractWindow;
     FileRequester* pcOpenRequest;
-	Desktop dDesktop;
-	void SetupMenus();
+
 	bool Lst;
 	Rect cMenuFrame;
 	const char* pzFPath;
 	char pzStorePath[1024];
-	char junk[1024];
-	char lineOpen[1024];
+
 	char tmp[8][1024];
 	char trash[2048];
 	int jas;
-	void SetupStatusBar();
-	BitmapImage* GetImage(const char* pzFile);
+
+	AppSettings* pcAppSettings;
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*	CodeEdit - A programmers editor for Atheos
 	Copyright (c) 2002 Andreas Engh-Halstvedt
-
+ 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Library General Public
 	License as published by the Free Software Foundation; either
@@ -21,135 +21,185 @@
 #include <gui/font.h>
 #include <util/looper.h>
 
-
-class StatusPanel{
+//holds private information
+class StatusPanel
+{
 public:
-	string text;
-	StatusBar::panelmode mode;
-	float width;
-	
-	StatusPanel(){
-		text="";
-		mode=StatusBar::CONSTANT;
-		width=50;
-	}
+    String cText;
+    StatusBar::panelmode mode;
+    float vWidth;
+
+    StatusPanel()
+    {
+        cText="";
+        mode=StatusBar::CONSTANT;
+        vWidth=50;
+    }
 };
 
-
-StatusBar::StatusBar(const os::Rect &r, const string &s, int count, uint32 i0, uint32 i1)
-: os::View(r, s, i0, i1),
-  panelCount(count)
+/********************************************************************
+* Description: Statusbar constructor
+* Author: Andreas Engh-Halstvedt(with modifications by Rick Caudill)
+* Date: Thu Mar 18 20:07:11 2004
+*********************************************************************/
+StatusBar::StatusBar(const os::Rect& cRect, const String& cName, int nCount, uint32 nResizeMask, uint32 nFlags): os::View(cRect,cName, nResizeMask, nFlags),nPanelCount(nCount)
 {
-	panels=new StatusPanel[panelCount];
+    m_pcPanels=new StatusPanel[nPanelCount];
 }
 
-StatusBar::~StatusBar(){
-	delete[] panels;
+/********************************************************************
+* Description: Statusbar destructor
+* Author: Andreas Engh-Halstvedt(with modifications by Rick Caudill)
+* Date: Thu Mar 18 20:07:11 2004
+*********************************************************************/
+StatusBar::~StatusBar()
+{
+    delete[] m_pcPanels;
 }
 
-os::Point StatusBar::GetPreferredSize(bool largest) const{
-	os::font_height fh;
-	GetFont()->GetHeight(&fh);
-	
-	return os::Point(largest?10000.0f:20.0f, fh.ascender+fh.descender+fh.line_gap+10);
+/********************************************************************
+* Description: Returns the preferred size of the StatusBar
+* Author: Andreas Engh-Halstvedt(with modifications by Rick Caudill)
+* Date: Thu Mar 18 20:07:11 2004
+*********************************************************************/
+os::Point StatusBar::GetPreferredSize(bool bLargest) const
+{
+    os::font_height sHeight;
+    GetFont()->GetHeight(&sHeight);
+
+    return os::Point(bLargest?10000.0f:20.0f, sHeight.ascender+sHeight.descender+sHeight.line_gap+10);
 }
 
-void StatusBar::Paint(const os::Rect &r){
-	os::Rect b=GetBounds();
-	os::font_height fh;
-	GetFont()->GetHeight(&fh);
-	
-	
-	SetFgColor(GetBgColor());
-	FillRect(r);
+/********************************************************************
+* Description: Paints the statusbar
+* Author: Andreas Engh-Halstvedt(with modifications by Rick Caudill)
+* Date: Thu Mar 18 20:07:11 2004
+*********************************************************************/
+void StatusBar::Paint(const os::Rect& cUpdateRect)
+{
+    os::Rect cBounds=GetBounds();
+    float vPanel=3;
+    os::font_height sHeight;
+    GetFont()->GetHeight(&sHeight);
 
-	SetFgColor(255, 255, 255);
-	DrawLine(os::Point(0, 0), os::Point(b.right, 0));	
-	
-	
-	float x=3;
-	for(int a=0;a<panelCount;++a){
-		switch(panels[a].mode){
-		case RELATIVE:
-		{
-			if(panels[a].width<0)
-				continue;
-				
-			float w=(b.right-b.left)*panels[a].width;
-			drawPanel(panels[a].text, x, 3, x+w, b.bottom-3, fh.ascender+fh.line_gap);
-			x+=w;
-			break;
-		}
-		case FILL://TODO: handle FILL other places than at the end
-		{
-			float w=b.right-b.left-3-x;
-			if(w<0)
-				continue;
-			
-			drawPanel(panels[a].text, x, 3, x+w, b.bottom-3, fh.ascender+fh.line_gap);
-			x+=w;
-			break;
-		}
-		case CONSTANT:
-		default:
-			if(panels[a].width<0)
-				continue;
-				
-			drawPanel(panels[a].text, x, 3, x+panels[a].width, b.bottom-3, fh.ascender+fh.line_gap);
-			x+=panels[a].width;
-			break;
-		}
-		x+=5;
-	}
-	
+
+    SetFgColor(GetBgColor());
+    FillRect(cUpdateRect);
+
+    SetFgColor(255, 255, 255);
+    DrawLine(os::Point(0, 0), os::Point(cBounds.right, 0));
+
+
+
+    for(int a=0;a<nPanelCount;++a)
+    {
+        switch(m_pcPanels[a].mode)
+        {
+        case RELATIVE:
+            {
+                if(m_pcPanels[a].vWidth<0)
+                    continue;
+
+                float w=(cBounds.right-cBounds.left)*m_pcPanels[a].vWidth;
+                DrawPanel(m_pcPanels[a].cText, vPanel, 3, vPanel+w, cBounds.bottom-3, sHeight.ascender+sHeight.line_gap);
+                vPanel+=w;
+                break;
+            }
+        case FILL://TODO: handle FILL other places than at the end
+            {
+                float w=cBounds.right-cBounds.left-3-vPanel;
+                if(w<0)
+                    continue;
+
+                DrawPanel(m_pcPanels[a].cText, vPanel, 3, vPanel+w, cBounds.bottom-3, sHeight.ascender+sHeight.line_gap);
+                vPanel+=w;
+                break;
+            }
+        case CONSTANT:
+        default:
+            if(m_pcPanels[a].vWidth<0)
+                continue;
+
+            DrawPanel(m_pcPanels[a].cText, vPanel, 3, vPanel+m_pcPanels[a].vWidth, cBounds.bottom-3, sHeight.ascender+sHeight.line_gap);
+            vPanel+=m_pcPanels[a].vWidth;
+            break;
+        }
+        vPanel+=5;
+    }
 }
 
-void StatusBar::drawPanel(const string& str, float l, float t, float r, float b, float tbl){
-	SetFgColor(255, 255, 255);
-	
-	DrawLine(os::Point(l, t), os::Point(l, b));	
-	DrawLine(os::Point(l, b), os::Point(r, b));	
+/********************************************************************
+* Description: Draws a certain panel at a certain position
+* Author: Andreas Engh-Halstvedt(with modifications by Rick Caudill)
+* Date: Thu Mar 18 20:07:11 2004
+*********************************************************************/
+void StatusBar::DrawPanel(const String& cLabel, float vLeft, float vTop, float vRight, float vBottom, float vTable)
+{
+    SetFgColor(255, 255, 255);
 
-	SetFgColor(0, 0, 0);
-	DrawLine(os::Point(l+1, t), os::Point(r, t));	
-	DrawLine(os::Point(r, t), os::Point(r, b-1));	
+    DrawLine(os::Point(vLeft, vTop), os::Point(vLeft, vBottom));
+    DrawLine(os::Point(vLeft, vBottom), os::Point(vRight, vBottom));
 
-	DrawString(os::Point(l+4, t+2+tbl), str);
+    SetFgColor(0, 0, 0);
+    DrawLine(os::Point(vLeft+1, vTop), os::Point(vRight, vTop));
+    DrawLine(os::Point(vRight, vTop), os::Point(vRight, vBottom-1));
+
+    DrawString(os::Point(vLeft+4,vTop+2+vTable),cLabel);
 }
 
-void StatusBar::setText(const string& s, int panel, bigtime_t timeout){
-	if(panel<0 || panel>=panelCount)
-		return;
-		
-	panels[panel].text=s;
-	if(timeout>0){
-		os::Looper *l=GetLooper();
-		if(l){
-			l->RemoveTimer(this, panel);
-			l->AddTimer(this, panel, timeout);
-		}
-	}
-	Invalidate();
-	Flush();
+/********************************************************************
+* Description: Sets the text of a certain panel
+* Author: Andreas Engh-Halstvedt(with modifications by Rick Caudill)
+* Date: Thu Mar 18 20:07:11 2004
+*********************************************************************/
+void StatusBar::SetText(const String& cLabel, int nPanel, bigtime_t nTimeout)
+{
+    if(nPanel<0 || nPanel>=nPanelCount)
+        return;
+
+    m_pcPanels[nPanel].cText=cLabel;
+    if(nTimeout>0)
+    {
+        os::Looper* pcLooper=GetLooper();
+        if(pcLooper)
+        {
+            pcLooper->RemoveTimer(this, nPanel);
+            pcLooper->AddTimer(this, nPanel, nTimeout);
+        }
+    }
+    Invalidate();
+    Flush();
 }
 
-void StatusBar::configurePanel(int panel, panelmode mode, float width){
-	if(panel<0 || panel>=panelCount)
-		return;
-	
-	if(mode!=RELATIVE && mode!=FILL)
-		mode=CONSTANT;
+/********************************************************************
+* Description: Configures a certain panel
+* Author: Andreas Engh-Halstvedt(with modifications by Rick Caudill)
+* Date: Thu Mar 18 20:07:11 2004
+*********************************************************************/
+void StatusBar::ConfigurePanel(int nPanel, panelmode mode, float vWidth)
+{
+    if(nPanel<0 || nPanel>=nPanelCount)
+        return;
 
-	panels[panel].mode=mode;
-	panels[panel].width=width;
-	Invalidate();
+    if(mode!=RELATIVE && mode!=FILL)
+        mode=CONSTANT;
+
+    m_pcPanels[nPanel].mode=mode;
+    m_pcPanels[nPanel].vWidth=vWidth;
+    Invalidate();
 }
 
-void StatusBar::TimerTick(int i){
-	if(i<0 || i>=panelCount)
-		return;
-		
-	panels[i].text="";
-	Invalidate();
-	Flush();
+/********************************************************************
+* Description: TimerTick
+* Author: Andreas Engh-Halstvedt(with modifications by Rick Caudill)
+* Date: Thu Mar 18 20:07:11 2004
+*********************************************************************/
+void StatusBar::TimerTick(int i)
+{
+    if(i<0 || i>=nPanelCount)
+        return;
+
+    m_pcPanels[i].cText="";
+    Invalidate();
+    Flush();
 }

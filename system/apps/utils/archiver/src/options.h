@@ -23,8 +23,9 @@
 #include <unistd.h>
 using namespace os;
 
-class OptionsPathView : public FrameView
+class AppSettings;
 
+class OptionsPathView : public FrameView
 {
 public:
     OptionsPathView();
@@ -32,10 +33,8 @@ public:
 
 class OptionsSettingsView : public FrameView
 {
-
 public:
 	OptionsSettingsView();
-
 private:
 };
 
@@ -60,6 +59,7 @@ public:
 class OptionsMiscSettingsView : public View{
 public:
 	OptionsMiscSettingsView();
+	
 	StringView* m_pcSlideView;
 	Slider* m_pcSlider;
 	StringView* m_pcSetShortView;
@@ -72,7 +72,7 @@ public:
 class OptionsTabView : public TabView
 {
 public:
-	OptionsTabView(const Rect & r);
+	OptionsTabView(const Rect&);
     OptionsGeneralView* m_pcGenView;
     OptionsMiscSettingsView* m_pcMisc;
 };
@@ -81,29 +81,33 @@ public:
 class OptionsWindow : public Window
 {
 public:
-    OptionsWindow(Window* pcParent);
+    OptionsWindow(Window* pcParent, AppSettings*);
     ~OptionsWindow();
 private:
-    Desktop sDesktop;
-    Rect csBounds;
-    void HandleMessage(Message* pcMessage);
-    OptionsTabView* m_pcTabView;
+    void 	HandleMessage(Message* pcMessage);
+    void	SaveOptions();
+	void	_Init();
+
+    float 	GetSlide();
+    void 	SetSlide(float);
+    bool 	ExtractClose();
+    bool 	NewClose();
+    
+	void 	Tab();
+	
+	OptionsTabView* m_pcTabView;
     Button* m_pcCancelButton;
     Button* m_pcSaveButton;
-    bool Write();
+    
     Window* pcParentWindow;
-    char zConfigFile[128];
+
     String cExtractPath;
     String cOpenPath;
-    bool Read();
-    void Tab();
+
     bool Extract;
     bool Open;
-    float GetSlide();
-    void SetSlide(float);
-    bool ExtractClose();
-    bool NewClose();
-    //Extract Path Option Controls
+
+
     Button* m_pcExtractToBut;
     StringView* m_pcExtractToView;
     TextView* m_pcExtractToTextView;
@@ -114,11 +118,10 @@ private:
     TextView* m_pcOpenToTextView;
     FileRequester* m_pcPathRequester;
 
+	AppSettings* pcAppSettings;
+
     CheckBox* m_pcExtractClose;
     CheckBox* m_pcRecentOption;
-    const char* pzOPath;
-    const char* pzOptPath;
-
 };
 #endif
 

@@ -49,20 +49,22 @@ public:
 
 class NewWindow : public Window{
 public:
-	NewWindow(Window* pcParent);
+	NewWindow(Window* pcParent, bool);
 	~NewWindow();
-	NewView* m_pcView;
-	FileRequester* m_pcOpenSelect;
-	FileRequester* m_pcSaveSelect;
+	
 	void HandleMessage(Message* pcMessage);
 
 private:
-	Window* pcParentWindow;
-	bool Read();
-	ifstream ConfigFile;
 	void Create(int Sel);
+	
+	Window* pcParentWindow;
+	NewView* m_pcView;
+
+	FileRequester* m_pcOpenSelect;
+	FileRequester* m_pcSaveSelect;
+	
 	const char *pzSelectPath;
-	char close[1024];
+	bool bCloseAfterCreation;
 };
 #endif
 	
