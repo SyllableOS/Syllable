@@ -6,7 +6,7 @@ LL	= g++
 OBJDIR=objs
 BINDIR=../bin
 
-all: $(OBJDIR) $(OBJDIR)/makeramdisk $(OBJDIR)/splitramdisk
+all: $(OBJDIR) $(BINDIR) $(OBJDIR)/makeramdisk $(OBJDIR)/splitramdisk
 	@cp -f $(OBJDIR)/makeramdisk $(BINDIR)/makeramdisk
 	@cp -f $(OBJDIR)/splitramdisk $(BINDIR)/splitramdisk
 
@@ -17,6 +17,9 @@ clean:
 
 $(OBJDIR):
 	mkdir $(OBJDIR)
+
+$(BINDIR):
+	mkdir $(BINDIR)
 
 $(OBJDIR)/makeramdisk: $(OBJDIR)/makeramdisk.o
 	$(LL) $(OBJDIR)/makeramdisk.o -o $@
