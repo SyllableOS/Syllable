@@ -345,7 +345,7 @@ static int load_eth_driver( const char *pzPath, struct stat *psStat, void *pArg 
  * Initialises the Ethernet interface class.
  * Loads drivers for all hardware devices.
  */
-NetInterfaceOps_s *init_interfaces()
+NetInterfaceOps_s *init_interfaces( void )
 {
 	init_arp();
 	iterate_directory( "/dev/net/eth", false, load_eth_driver, NULL );

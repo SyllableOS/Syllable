@@ -21,7 +21,7 @@
 #ifndef __F_ATHEOS_KSYMS_H__
 #define __F_ATHEOS_KSYMS_H__
 
-int ksym_get_symbol_count();
+int ksym_get_symbol_count( void );
 const char *ksym_get_symbol( int nIndex, void **ppValue );
 
 

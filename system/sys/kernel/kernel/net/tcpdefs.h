@@ -247,7 +247,7 @@ int tcp_kick( TCPCtrl_s *psTCPCtrl );
 int tcp_wakeup( int type, TCPCtrl_s *psTCPCtrl );
 bool __tcp_abort( TCPCtrl_s *psTCPCtrl, int error, const char *pzCallerFunc, int nLineNum );
 int tcp_sync( TCPCtrl_s *ptcb );
-TCPCtrl_s *tcb_alloc();
+TCPCtrl_s *tcb_alloc( void );
 int tcb_dealloc( TCPCtrl_s *psTCPCtrl, bool bForceUnlink );
 void tcp_add_to_hash( TCPCtrl_s *psTCPCtrl );
 TCPCtrl_s *tcp_lookup( uint32 nLocalAddr, uint16 nLocalPort, uint32 nRemoteAddr, uint16 nRemotePort );

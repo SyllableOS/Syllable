@@ -1434,7 +1434,7 @@ void disable_device( int nDeviceID )
  * \sa disable_device()
  * \author	Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
-void enable_all_devices()
+void enable_all_devices( void )
 {
 	/* Delete list */
 	DisabledDevice_s *psDisabled = g_psFirstDisabled;
@@ -1999,7 +1999,7 @@ int decode_disk_partitions( device_geometry *psDiskGeom, Partition_s * pasPartit
 /** Save configuration of the devfs ( called by config.c )
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
-void write_dev_fs_config()
+void write_dev_fs_config( void )
 {
 	int nSize = 0;
 	DisabledDevice_s *psDevice = g_psFirstDisabled;
@@ -2031,7 +2031,7 @@ void write_dev_fs_config()
 /** Load configuration of the devfs ( called by config.c )
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
-void load_dev_fs_config()
+void load_dev_fs_config( void )
 {
 	uint8 *pBuffer;
 	size_t nSize;

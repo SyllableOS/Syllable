@@ -236,7 +236,7 @@ void	free_real( void* Block );
 status_t alloc_physical( uint32* pnAddress, bool bExactAddress, uint32 nSize );
 void     free_physical( uint32 nAddress );
 
-int	Fork( const char* pzName );
+//int	Fork( const char* pzName );
 int	reboot( void );
 void    hard_reset( void );
 int apm_poweroff( void );

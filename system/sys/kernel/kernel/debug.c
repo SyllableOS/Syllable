@@ -465,7 +465,7 @@ int sys_debug_read( int nPort, char *pBuffer, int nSize )
 	return ( nBytesRead );
 }
 
-static void receive_serial_data()
+static void receive_serial_data( void )
 {
 	static DBPacketHdr_s psHdr;
 	static int nState = 0;

@@ -214,7 +214,7 @@ void shutdown_vfs( void );
 void add_file_to_inode( Inode_s *psInode, File_s *psFile );
 void remove_file_from_inode( Inode_s *psInode, File_s *psFile );
 
-File_s *alloc_fd();
+File_s *alloc_fd( void );
 void free_fd( File_s *psFile );
 
 int new_fd( bool bKernel, int nNewFile, int nBase, File_s *psFile, bool bCloseOnExec );
@@ -268,9 +268,9 @@ Inode_s *create_fifo_inode( Inode_s *psHostInode );
 int open_inode( bool bKernel, Inode_s *psInode, int nType, int nMode );
 
 void disassociate_ctty( bool bOnExit );
-void clear_ctty();
+void clear_ctty( void );
 void clone_ctty( IoContext_s * psDst, IoContext_s * psSrc );
-Inode_s *get_ctty();
+Inode_s *get_ctty( void );
 
 #ifdef __cplusplus
 }

@@ -610,7 +610,7 @@ int get_named_inode( Inode_s *psRoot, const char *pzName, Inode_s **ppsResInode,
  * SEE ALSO:
  ****************************************************************************/
 
-File_s *alloc_fd()
+File_s *alloc_fd( void )
 {
 	File_s *psFile;
 

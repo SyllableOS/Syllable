@@ -1346,7 +1346,7 @@ static FSOperations_s g_sOperations = {
  * SEE ALSO:
  ****************************************************************************/
 
-void init_sockets()
+void init_sockets( void )
 {
 	Volume_s *psKVolume = kmalloc( sizeof( Volume_s ), MEMF_KERNEL | MEMF_CLEAR );
 

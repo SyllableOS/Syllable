@@ -130,7 +130,7 @@ void list_areas( MemContext_s *psSeg );
 
 int shrink_caches( int nBytesNeeded );
 
-void init_swapper();
+void init_swapper( void );
 void dup_swap_page( int nPage );
 void free_swap_page( int nPage );
 int swap_in( pte_t * pPte );

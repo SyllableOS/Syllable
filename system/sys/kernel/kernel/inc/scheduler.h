@@ -307,7 +307,7 @@ void sched_unlock( void );
 
 #define sched_lock() kassertw( __sched_lock() >= 0 );
 
-void init_scheduler();
+void init_scheduler( void );
 
 void handle_v86_fault( Virtual86Regs_s * psRegs, uint32 nErrorCode );
 void handle_v86_pagefault( Virtual86Regs_s * regs, uint32 nErrorCode );

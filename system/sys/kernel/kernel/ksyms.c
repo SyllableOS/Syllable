@@ -64,7 +64,7 @@ static KernelSymbol_s g_asKernelSymbols[];
 #define KSYMBOL( name ) { #name, &name }
 
 
-int ksym_get_symbol_count()
+int ksym_get_symbol_count( void )
 {
 	int i;
 

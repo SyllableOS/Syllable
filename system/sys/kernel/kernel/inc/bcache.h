@@ -97,7 +97,7 @@ void bc_remove_from_list( CacheEntryList_s * psList, CacheBlock_s *psEntry );
 
 int alloc_cache_blocks( CacheBlock_s **apsBlocks, int nCount, int nBlockSize, bool *pbDidBlock );
 void free_cache_block( CacheBlock_s *psBlock );
-void release_cache_mem();
+void release_cache_mem( void );
 
 int shrink_block_cache( int nBytesNeeded );
 int shrinc_cache_heaps( int nIgnoredOrder );

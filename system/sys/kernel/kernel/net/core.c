@@ -203,7 +203,7 @@ static NetInterfaceOps_s g_sLoopbackOps = {
  * Initialises the networking code, creates the loopback interface, and scans
  * for hardware interfaces.
  */
-int init_net_core()
+int init_net_core( void )
 {
 	thread_id hThread;
 	ipaddr_t anLBIp = { 127, 0, 0, 1 }, anLBNm =

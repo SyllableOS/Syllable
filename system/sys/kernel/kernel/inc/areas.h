@@ -122,7 +122,7 @@ struct MemAreaOps
  * Private functions for the memory managment system
  */
 
-void InitAreaManager();
+void InitAreaManager( void );
 MemContext_s *clone_mem_context( MemContext_s *psOrig );
 void empty_mem_context( MemContext_s *psCtx );
 void delete_mem_context( MemContext_s *psCtx );

@@ -1,4 +1,4 @@
-CFLAGS   = -D__KERNEL__ -D__BUILD_KERNEL__ -no-fPIC -c -g -O3 -fno-strict-aliasing -Wall -march=i586 -mcpu=i586 -I./
+CFLAGS   = -D__KERNEL__ -D__BUILD_KERNEL__ -no-fPIC -c -g -O2 -mpreferred-stack-boundary=2 -fno-strict-aliasing -Wall -Wstrict-prototypes -march=i586 -mcpu=i586 -I./
 CPPFLAGS = $(CFLAGS)
 AFLAGS   = -c
 
@@ -13,7 +13,7 @@ CP	= cp -f
 
 VFSOBJS := vfs.o inode.o nodemonitor.o attributes.o flock.o root.o dev.o fifo.o pty.o
 NETOBJS := core.o interface.o route.o ip.o udp.o tcp.o tcp_input.o tcp_output.o socket.o packets.o raw.o
-LIBOBJS := ct_flags.o ct_upper.o ct_lower.o vsprintf.o string.o qsort.o
+LIBOBJS := ct_flags.o ct_upper.o ct_lower.o vsprintf.o string.o strstr.o qsort.o
 
 OBJS :=intel.o kernel.o dbconsole.o ksyms.o init.o fork.o syscall.o 	  		\
 	debug.o timer.o process.o threads.o sema.o msgport.o memory.o strace.o	\
@@ -70,11 +70,13 @@ install: all
 	cp -f $(OBJDIR)/kernel.so	/system/kernel.so
 	cp -f $(OBJDIR)/eth_if		/system/drivers/net/if/eth_if
 	$(CP) $(OBJDIR)/libkernel.so	/system/libs/libkernel.so
+	strip --strip-all /system/kernel.so
 
 dist: all
 	cp -f $(OBJDIR)/kernel.so	$(DIST_DIR)/atheos/sys/kernel.so
 	cp -f $(OBJDIR)/eth_if		$(DIST_DIR)/atheos/sys/drivers/net/if/eth_if
 	$(CP) $(OBJDIR)/libkernel.so	$(DIST_DIR)/atheos/sys/libs/libkernel.so
+	strip --strip-all $(DIST_DIR)/atheos/sys/kernel.so
 
 #
 # dependencies for kernel

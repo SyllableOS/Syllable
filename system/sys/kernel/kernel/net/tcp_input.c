@@ -560,7 +560,7 @@ uint16 tcp_cksum( PacketBuf_s *psPkt )
  * SEE ALSO:
  ****************************************************************************/
 
-TCPCtrl_s *tcb_alloc()
+TCPCtrl_s *tcb_alloc( void )
 {
 	TCPCtrl_s *psTCPCtrl;
 
@@ -764,7 +764,7 @@ int tcb_dealloc( TCPCtrl_s *psTCPCtrl, bool bForceUnlink )
  * SEE ALSO:
  ****************************************************************************/
 
-static long tcp_iss()
+static long tcp_iss( void )
 {
 	static long seq = 0;
 

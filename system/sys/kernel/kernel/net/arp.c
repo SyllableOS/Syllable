@@ -565,6 +565,9 @@ static int arp_thread( void *pData )
 		/* Run again in one second */
 		snooze( 1000000 );
 	}
+
+	/* Keep GCC happy */
+	return 0;
 }
 
 /**
@@ -573,7 +576,7 @@ static int arp_thread( void *pData )
  * Initialises the ARP handling code and starts the ARP thread in the
  * background.
  */
-void init_arp()
+void init_arp( void )
 {
 	thread_id hArpThread;
 

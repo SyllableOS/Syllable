@@ -1426,7 +1426,7 @@ void disassociate_ctty( bool bOnExit )
 	put_vnode( nDevID, psNode->fn_nInodeNum );
 }
 
-void clear_ctty()
+void clear_ctty( void )
 {
 	Process_s *psThisProc = CURRENT_PROC;
 
@@ -1451,7 +1451,7 @@ void clone_ctty( IoContext_s * psDst, IoContext_s * psSrc )
 	UNLOCK( g_hCTTYMutex );
 }
 
-Inode_s *get_ctty()
+Inode_s *get_ctty( void )
 {
 	Process_s *psThisProc = CURRENT_PROC;
 	Inode_s *psInode;

@@ -67,7 +67,7 @@ void dump_semaphore( Semaphore_s *psSema, bool bShort );
  *
  * \return Returns a new semaphore context with an empty allocation map.
  */
-SemContext_s *create_semaphore_context()
+SemContext_s *create_semaphore_context( void )
 {
 	SemContext_s *psCtx;
 

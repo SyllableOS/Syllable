@@ -28,7 +28,7 @@ static int g_nHeight = 25;
 static char *g_pFrameBuffer = ( char * )0xb8000;
 
 
-static void dbcon_scroll()
+static void dbcon_scroll( void )
 {
 	int i;
 
@@ -74,7 +74,7 @@ void dbcon_write( const char *pData, int nSize )
 	}
 }
 
-void dbcon_clear()
+void dbcon_clear( void )
 {
 	int i;
 

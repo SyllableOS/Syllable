@@ -75,7 +75,7 @@ static int g_nBlockRunCount = 0;
  * SEE ALSO:
  ****************************************************************************/
 
-static uint32 alloc_swap_page()
+static uint32 alloc_swap_page( void )
 {
 	int i;
 
@@ -383,8 +383,8 @@ int swap_in( pte_t * pPte )
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/
-
-static int swap_tick()
+#if 0
+static int swap_tick( void )
 {
 	static int nAreaID = -1;
 	static uint32 nOffset = 0;
@@ -497,6 +497,7 @@ static int swap_tick()
 	put_area( psArea );
 	return ( 0 );
 }
+#endif
 
 /*****************************************************************************
  * NAME:
@@ -666,8 +667,8 @@ int swap_out_pages( int nCount )
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/
-
-static int age_deamon( void *pData )
+#if 0
+static int age_daemon( void *pData )
 {
 	for ( ;; )
 	{
@@ -684,6 +685,7 @@ static int age_deamon( void *pData )
 	}
 	return( 0 );
 }
+#endif
 
 /*****************************************************************************
  * NAME:
@@ -692,7 +694,7 @@ static int age_deamon( void *pData )
  * SEE ALSO:
  ****************************************************************************/
 
-static int swap_deamon( void *pData )
+static int swap_daemon( void *pData )
 {
 //  int i = 0;
 
@@ -831,15 +833,15 @@ int get_swap_info( SwapInfo_s * psInfo )
  * SEE ALSO:
  ****************************************************************************/
 
-void init_swapper()
+void init_swapper( void )
 {
 	int nSwapFile;
 	thread_id hThread;
 	
-	//hThread = spawn_kernel_thread( "ager", age_deamon, 0, DEFAULT_KERNEL_STACK, NULL );
+	//hThread = spawn_kernel_thread( "ager", age_daemon, 0, DEFAULT_KERNEL_STACK, NULL );
 	//wakeup_thread( hThread, false );
 
-	hThread = spawn_kernel_thread( "swapper", swap_deamon, 100, DEFAULT_KERNEL_STACK, NULL );
+	hThread = spawn_kernel_thread( "swapper", swap_daemon, 100, DEFAULT_KERNEL_STACK, NULL );
 	wakeup_thread( hThread, false );
 
 	register_debug_cmd( "lspc", "list number of memory pages in each age group.", db_list_swap_counts );

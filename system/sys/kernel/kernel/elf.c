@@ -67,7 +67,7 @@ static uint32 elf_sym_hash( const uint8 *pzName )
 	return ( h );
 }
 
-static void create_kernel_image()
+static void create_kernel_image( void )
 {
 	ElfImage_s *psImage;
 	ElfImageInst_s *psInst;
@@ -2455,7 +2455,7 @@ void db_list_images( int argc, char **argv )
 	}
 }
 
-static void init_boot_modules()
+static void init_boot_modules( void )
 {
 	int i;
 
@@ -2537,7 +2537,7 @@ static void init_boot_modules()
  * SEE ALSO:
  ****************************************************************************/
 
-void init_elf_loader()
+void init_elf_loader( void )
 {
 	register_debug_cmd( "ls_images", "list the images loaded by a process", db_list_images );
 

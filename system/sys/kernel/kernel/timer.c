@@ -180,7 +180,7 @@ int sys_set_real_time( bigtime_t nTime )
  * SEE ALSO:
  ****************************************************************************/
 
-void starttimer1()
+void starttimer1( void )
 {
 	int speed = PIT_TICKS_PER_SEC / INT_FREQ;
 
@@ -210,7 +210,7 @@ void starttimer2( void )
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/
-
+#if 0
 static uint16 readtimer1( void )
 {
 	uint16 n;
@@ -220,6 +220,7 @@ static uint16 readtimer1( void )
 	n += inb_p( 0x40 ) << 8;
 	return 0x10000L - n;
 }
+#endif
 
 /******************************************************************************
 		read counter value of PIT timer 2, and update g_sSysBase.ex_lTicksElapsed.

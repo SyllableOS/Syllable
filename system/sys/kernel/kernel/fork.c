@@ -38,7 +38,7 @@ extern MultiArray_s g_sProcessTable;
 extern MultiArray_s g_sThreadTable;	// Global thread table
 
 void SysInit( void );
-void idle_loop();
+void idle_loop( void );
 
 /*****************************************************************************
  * NAME:

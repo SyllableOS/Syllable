@@ -416,8 +416,11 @@ void panic( const char *pzFmt, ... )
 {
 	static char zBuf[2048];
 	int nOldFlags = cli();
+	va_list args;
 
-	vsprintf( zBuf, pzFmt, ( ( int * )( &pzFmt ) ) + 1 );
+	va_start(args, pzFmt);
+	vsprintf( zBuf, pzFmt, args );
+	va_end(args);
 	printk( "kernel panic (%d) : %s\n", g_nDisableTS, zBuf );
 
 /*    printk( "%p\n", __builtin_return_address(0) );

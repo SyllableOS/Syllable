@@ -38,8 +38,8 @@
 
 
 /* Function definitions */
-typedef status_t bus_init_t();
-typedef void bus_uninit_t();
+typedef status_t bus_init_t( void );
+typedef void bus_uninit_t( void );
 typedef void *bus_get_hooks_t( int nVersion );
 
 /* One busmanager */
@@ -369,7 +369,7 @@ void load_busmanager( const char *pzPath, char *pzName )
 
 	/* Initialize busmanager */
 
-	nError = pInitFunc( false );
+	nError = pInitFunc();
 
 	/* Look if we had success */
 	if ( nError != 0 )
@@ -453,7 +453,7 @@ void load_busmanagers( char *pzPath )
 /** Called by write_kernel_config() ( config.c ) to save the configuration.
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
-void write_devices_config()
+void write_devices_config( void )
 {
 	int nError;
 	BusHandle_s *psBus = g_psFirstBus;
@@ -506,7 +506,7 @@ void add_devices_bootmodule( const char *pzPath )
 /** Set defaults.
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
-void init_devices_boot()
+void init_devices_boot( void )
 {
 	int i;
 
@@ -538,7 +538,7 @@ static int dummy ( const char *pzPath, struct stat *psStat, void *pArg )
 /** Initialize all devices after the root volume has been mounted.
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
-void init_devices()
+void init_devices( void )
 {
 	char zPath[255];	/* /atheos/sys/drivers/kernel */
 

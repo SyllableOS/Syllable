@@ -37,7 +37,7 @@ static int g_nConfigFd = -1;	/* filedescriptor of the configfile when writing */
 
 extern bool g_bDisableKernelConfig;
 
-extern void write_dev_fs_config();
+extern void write_dev_fs_config( void );
 
 /** Write one entryheader into the configfile.
  * \par Description:
@@ -171,7 +171,7 @@ status_t read_kernel_config_entry( char *pzName, uint8 **pBuffer, size_t *pnSize
 /** Write configfile to disk.
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
-void write_kernel_config()
+void write_kernel_config( void )
 {
 
 	char zPath[255];	/* /atheos/sys/config/kernel.cfg */
@@ -214,7 +214,7 @@ void write_kernel_config()
 /** Load configfile from a bootmodule
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
-void init_kernel_config()
+void init_kernel_config( void )
 {
 	int i;
 	

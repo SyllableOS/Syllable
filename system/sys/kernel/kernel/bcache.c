@@ -293,7 +293,7 @@ void bc_add_to_head( CacheEntryList_s * psList, CacheBlock_s *psEntry )
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/
-
+#if 0
 static void add_to_tail( CacheEntryList_s * psList, CacheBlock_s *psEntry )
 {
 	if ( NULL != psEntry->cb_psNext || NULL != psEntry->cb_psPrev )
@@ -317,6 +317,7 @@ static void add_to_tail( CacheEntryList_s * psList, CacheBlock_s *psEntry )
 	psList->cl_psLRU = psEntry;
 	psList->cl_nCount++;
 }
+#endif
 
 /*****************************************************************************
  * NAME:
@@ -423,11 +424,12 @@ static CacheBlock_s *lookup_block( int nDev, off_t nBlockNum )
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/
-
+#if 0
 static int assert_valid_block( CacheBlock_s *psBuffer )
 {
 	return ( 0 );
 }
+#endif
 
 /*****************************************************************************
  * NAME:
@@ -700,7 +702,7 @@ static int read_block_list( int nDev, off_t nBlockNum, CacheBlock_s **apsList, i
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/
-
+#if 0
 static void dump_list( CacheEntryList_s * psList )
 {
 	CacheBlock_s *psEntry;
@@ -711,6 +713,7 @@ static void dump_list( CacheEntryList_s * psList )
 		printk( "%d -> FLG=%02ld, RC=%02d, Num=%Ld\n", i++, psEntry->cb_nFlags, psEntry->cb_nRefCount, psEntry->cb_nBlockNum );
 	}
 }
+#endif
 
 /*****************************************************************************
  * NAME:

@@ -766,7 +766,7 @@ static int ip_timer( void *pData )
  * SEE ALSO:
  ****************************************************************************/
 
-void init_ip()
+void init_ip( void )
 {
 	thread_id hThread;
 

@@ -40,11 +40,10 @@ extern "C" {
  */
 
 #define __HAVE_ARCH_STRCPY
-extern inline char * strcpy(char * dest,const char *src)
+static inline char * strcpy(char * dest,const char *src)
 {
 int d0, d1, d2;
 __asm__ __volatile__(
-	"cld\n"
 	"1:\tlodsb\n\t"
 	"stosb\n\t"
 	"testb %%al,%%al\n\t"
@@ -56,11 +55,10 @@ return dest;
 
 
 #define __HAVE_ARCH_STRNCPY
-extern inline char * strncpy(char * dest,const char *src,size_t count)
+static inline char * strncpy(char * dest,const char *src,size_t count)
 {
 int d0, d1, d2, d3;
 __asm__ __volatile__(
-	"cld\n"
 	"1:\tdecl %2\n\t"
 	"js 2f\n\t"
 	"lodsb\n\t"
@@ -75,13 +73,11 @@ __asm__ __volatile__(
 return dest;
 }
 
-#if 0
 #define __HAVE_ARCH_STRCAT
-extern inline char * strcat(char * dest,const char * src)
+static inline char * strcat(char * dest,const char * src)
 {
 int d0, d1, d2, d3;
 __asm__ __volatile__(
-	"cld\n\t"
 	"repne\n\t"
 	"scasb\n\t"
 	"decl %1\n"
@@ -90,39 +86,15 @@ __asm__ __volatile__(
 	"testb %%al,%%al\n\t"
 	"jne 1b"
 	: "=&S" (d0), "=&D" (d1), "=&a" (d2), "=&c" (d3)
-	: "0" (src), "1" (dest), "2" (0), "3" (0xffffffff):"memory");
+	: "0" (src), "1" (dest), "2" (0), "3" (0xffffffffu):"memory");
 return dest;
 }
-#else
-extern inline char * strcat(char * dest,const char * src)
-{
-register char *tmp = (char *)(dest-1);
-register char dummy;
-__asm__ __volatile__(
-	"\n1:\tincl %1\n\t"
-	"cmpb $0,(%1)\n\t"
-	"jne 1b\n"
-	"2:\tmovb (%2),%b0\n\t"
-	"incl %2\n\t"
-	"movb %b0,(%1)\n\t"
-	"incl %1\n\t"
-	"testb %b0,%b0\n\t"
-	"jne 2b\n"
-	:"=q" (dummy), "=r" (tmp), "=r" (src)
-	:"1"  (tmp), "2"  (src)
-	:"memory");
-return dest;
-}
-#endif
 
 #define __HAVE_ARCH_STRNCAT
-
-#if 0
-extern inline char * strncat(char * dest,const char * src,size_t count)
+static inline char * strncat(char * dest,const char * src,size_t count)
 {
 int d0, d1, d2, d3;
 __asm__ __volatile__(
-	"cld\n\t"
 	"repne\n\t"
 	"scasb\n\t"
 	"decl %1\n\t"
@@ -136,45 +108,17 @@ __asm__ __volatile__(
 	"2:\txorl %2,%2\n\t"
 	"stosb"
 	: "=&S" (d0), "=&D" (d1), "=&a" (d2), "=&c" (d3)
-	: "0" (src),"1" (dest),"2" (0),"3" (0xffffffff), "g" (count)
+	: "0" (src),"1" (dest),"2" (0),"3" (0xffffffffu), "g" (count)
 	: "memory");
 return dest;
 }
-#else
-extern inline char * strncat(char * dest,const char * src,size_t count)
-{
-register char *tmp = (char *)(dest-1);
-register char dummy;
-__asm__ __volatile__(
-	"\n1:\tincl %1\n\t"
-	"cmpb $0,(%1)\n\t"
-	"jne 1b\n"
-	"2:\tdecl %3\n\t"
-	"js 3f\n\t"
-	"movb (%2),%b0\n\t"
-	"incl %2\n\t"
-	"movb %b0,(%1)\n\t"
-	"incl %1\n\t"
-	"testb %b0,%b0\n\t"
-	"jne 2b\n"
-	"3:\txorl %0,%0\n\t"
-	"movb %b0,(%1)\n\t"
-	:"=q" (dummy), "=r" (tmp), "=r" (src), "=r" (count)
-	:"1"  (tmp), "2"  (src), "3"  (count)
-	:"memory");
-return dest;
-}
-
-#endif
-
 
 #define __HAVE_ARCH_STRCMP
-extern inline int strcmp(const char * cs,const char * ct)
+static inline int strcmp(const char * cs,const char * ct)
 {
 int d0, d1;
 register int __res;
 __asm__ __volatile__(
-	"cld\n"
 	"1:\tlodsb\n\t"
 	"scasb\n\t"
 	"jne 2f\n\t"
@@ -191,12 +135,11 @@ return __res;
 }
 
 #define __HAVE_ARCH_STRNCMP
-extern inline int strncmp(const char * cs,const char * ct,size_t count)
+static inline int strncmp(const char * cs,const char * ct,size_t count)
 {
 register int __res;
 int d0, d1, d2;
 __asm__ __volatile__(
-	"cld\n"
 	"1:\tdecl %3\n\t"
 	"js 2f\n\t"
 	"lodsb\n\t"
@@ -215,12 +158,11 @@ return __res;
 }
 
 #define __HAVE_ARCH_STRCHR
-extern inline char * strchr(const char * s, int c)
+static inline char * strchr(const char * s, int c)
 {
 int d0;
 register char * __res;
 __asm__ __volatile__(
-	"cld\n\t"
 	"movb %%al,%%ah\n"
 	"1:\tlodsb\n\t"
 	"cmpb %%ah,%%al\n\t"
@@ -235,12 +177,11 @@ return __res;
 }
 
 #define __HAVE_ARCH_STRRCHR
-extern inline char * strrchr(const char * s, int c)
+static inline char * strrchr(const char * s, int c)
 {
 int d0, d1;
 register char * __res;
 __asm__ __volatile__(
-	"cld\n\t"
 	"movb %%al,%%ah\n"
 	"1:\tlodsb\n\t"
 	"cmpb %%ah,%%al\n\t"
@@ -253,25 +194,23 @@ return __res;
 }
 
 #define __HAVE_ARCH_STRLEN
-extern inline size_t strlen(const char * s)
+static inline size_t strlen(const char * s)
 {
 int d0;
 register int __res;
 __asm__ __volatile__(
-	"cld\n\t"
 	"repne\n\t"
 	"scasb\n\t"
 	"notl %0\n\t"
 	"decl %0"
-	:"=c" (__res), "=&D" (d0) :"1" (s),"a" (0), "0" (0xffffffff));
+	:"=c" (__res), "=&D" (d0) :"1" (s),"a" (0), "0" (0xffffffffu));
 return __res;
 }
 
-extern inline void * __memcpy(void * to, const void * from, size_t n)
+static inline void * __memcpy(void * to, const void * from, size_t n)
 {
 int d0, d1, d2;
 __asm__ __volatile__(
-	"cld\n\t"
 	"rep ; movsl\n\t"
 	"testb $2,%b4\n\t"
 	"je 1f\n\t"
@@ -290,7 +229,7 @@ return (to);
  * This looks horribly ugly, but the compiler can optimize it totally,
  * as the count is constant.
  */
-extern inline void * __constant_memcpy(void * to, const void * from, size_t n)
+static inline void * __constant_memcpy(void * to, const void * from, size_t n)
 {
 	switch (n) {
 		case 0:
@@ -337,7 +276,6 @@ extern inline void * __constant_memcpy(void * to, const void * from, size_t n)
 	}
 #define COMMON(x) \
 __asm__ __volatile__( \
-	"cld\n\t" \
 	"rep ; movsl" \
 	x \
 	: "=&c" (d0), "=&D" (d1), "=&S" (d2) \
@@ -363,17 +301,11 @@ __asm__ __volatile__( \
  __memcpy((t),(f),(n)))
 
 #define __HAVE_ARCH_MEMMOVE
-extern inline void * memmove(void * dest,const void * src, size_t n)
+static inline void * memmove(void * dest,const void * src, size_t n)
 {
 int d0, d1, d2;
 if (dest<src)
-__asm__ __volatile__(
-	"cld\n\t"
-	"rep\n\t"
-	"movsb"
-	: "=&c" (d0), "=&S" (d1), "=&D" (d2)
-	:"0" (n),"1" (src),"2" (dest)
-	: "memory");
+	memcpy(dest,src,n);
 else
 __asm__ __volatile__(
 	"std\n\t"
@@ -391,14 +323,13 @@ return dest;
 #define memcmp __builtin_memcmp
 
 #define __HAVE_ARCH_MEMCHR
-extern inline void * memchr(const void * cs,int c,size_t count)
+static inline void * memchr(const void * cs,int c,size_t count)
 {
 int d0;
 register void * __res;
 if (!count)
 	return NULL;
 __asm__ __volatile__(
-	"cld\n\t"
 	"repne\n\t"
 	"scasb\n\t"
 	"je 1f\n\t"
@@ -408,11 +339,10 @@ __asm__ __volatile__(
 return __res;
 }
 
-extern inline void * __memset_generic(void * s, char c,size_t count)
+static inline void * __memset_generic(void * s, char c,size_t count)
 {
 int d0, d1;
 __asm__ __volatile__(
-	"cld\n\t"
 	"rep\n\t"
 	"stosb"
 	: "=&c" (d0), "=&D" (d1)
@@ -429,11 +359,10 @@ return s;
  * things 32 bits at a time even when we don't know the size of the
  * area at compile-time..
  */
-extern inline void * __constant_c_memset(void * s, unsigned long c, size_t count)
+static inline void * __constant_c_memset(void * s, unsigned long c, size_t count)
 {
 int d0, d1;
 __asm__ __volatile__(
-	"cld\n\t"
 	"rep ; stosl\n\t"
 	"testb $2,%b3\n\t"
 	"je 1f\n\t"
@@ -450,7 +379,7 @@ return (s);
 
 /* Added by Gertjan van Wingerde to make minix and sysv module work */
 #define __HAVE_ARCH_STRNLEN
-extern inline size_t strnlen(const char * s, size_t count)
+static inline size_t strnlen(const char * s, size_t count)
 {
 int d0;
 register int __res;
@@ -471,11 +400,15 @@ return __res;
 
 /* end of additional stuff */
 
+#define __HAVE_ARCH_STRSTR
+
+extern char *strstr(const char *cs, const char *ct);
+
 /*
  * This looks horribly ugly, but the compiler can optimize it totally,
  * as we by now know that both pattern and count is constant..
  */
-extern inline void * __constant_c_and_count_memset(void * s, unsigned long pattern, size_t count)
+static inline void * __constant_c_and_count_memset(void * s, unsigned long pattern, size_t count)
 {
 	switch (count) {
 		case 0:
@@ -495,7 +428,7 @@ extern inline void * __constant_c_and_count_memset(void * s, unsigned long patte
 			return s;
 	}
 #define COMMON(x) \
-__asm__  __volatile__("cld\n\t" \
+__asm__  __volatile__( \
 	"rep ; stosl" \
 	x \
 	: "=&c" (d0), "=&D" (d1) \
@@ -534,15 +467,14 @@ __asm__  __volatile__("cld\n\t" \
  * find the first occurrence of byte 'c', or 1 past the area if none
  */
 #define __HAVE_ARCH_MEMSCAN
-extern inline void * memscan(void * addr, int c, size_t size)
+static inline void * memscan(void * addr, int c, size_t size)
 {
 	if (!size)
 		return addr;
-	__asm__("cld\n\t"
-		"repnz; scasb\n\t"
+	__asm__("repnz; scasb\n\t"
 		"jnz 1f\n\t"
-		"dec %%edi\n\t"
-"1:\n\t"
+		"dec %%edi\n"
+		"1:"
 		: "=D" (addr), "=c" (size)
 		: "0" (addr), "1" (size), "a" (c));
 	return addr;

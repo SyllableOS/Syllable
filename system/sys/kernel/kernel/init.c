@@ -81,8 +81,8 @@ bool g_bKernelInitiated = false;
 uint32 g_nFirstUserAddress = AREA_FIRST_USER_ADDRESS;
 uint32 g_nLastUserAddress = AREA_LAST_USER_ADDRESS;
 
-void init_elf_loader();
-void idle_loop();
+void init_elf_loader( void );
+void idle_loop( void );
 
 extern void StartTimerInt( void );
 
@@ -133,7 +133,8 @@ extern uint32 v86Stack_seg;
 extern uint32 v86Stack_off;
 extern uint32 g_anKernelStackEnd[];
 
-int Fork( const char *pzName )
+// must be inlined in order to work correctly
+static inline int Fork( const char *pzName )
 {
 	int nError;
 	__asm__ volatile ( "int $0x80":"=a" ( nError ):"0"( __NR_Fork ), "b"( ( (int)pzName ) ) );
@@ -316,7 +317,7 @@ int get_kernel_arguments( int *argc, const char *const **argv )
 #undef DEBUG_LIMIT
 #define DEBUG_LIMIT	KERN_DEBUG_LOW
 
-static int find_boot_dev()
+static int find_boot_dev( void )
 {
 	int nBaseDir;
 	struct kernel_dirent sDevDirEnt;
@@ -447,7 +448,7 @@ static int find_boot_dev()
 /** Reserves memory using the e820 map.
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
-void init_e820_memory_map()
+void init_e820_memory_map( void )
 {
 	struct RMREGS rm;
 	typedef struct
@@ -496,7 +497,7 @@ void init_e820_memory_map()
  * SEE ALSO:
  ****************************************************************************/
 
-static int kernel_init()
+static int kernel_init( void )
 {
 	int nError = -1;
 

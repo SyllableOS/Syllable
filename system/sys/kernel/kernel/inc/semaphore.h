@@ -82,7 +82,7 @@ typedef struct
 	int sc_nLastID;
 } SemContext_s;
 
-SemContext_s *create_semaphore_context();
+SemContext_s *create_semaphore_context( void );
 SemContext_s *clone_semaphore_context( SemContext_s * psOrig, proc_id hNewOwner );
 void release_thread_semaphores( thread_id hThread );
 void update_semaphore_context( SemContext_s * psCtx, proc_id hOwner );

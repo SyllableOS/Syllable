@@ -65,7 +65,7 @@ uint8 g_anTrampoline[] = {
  * SEE ALSO:
  ****************************************************************************/
 
-void idle_loop()
+void idle_loop( void )
 {
 	char zThreadName[32];
 	int nProcessor = 0;
@@ -104,7 +104,7 @@ void idle_loop()
  * SEE ALSO:
  ****************************************************************************/
 
-static int read_pit_timer()
+static int read_pit_timer( void )
 {
 	int nCount;
 
@@ -121,7 +121,7 @@ static int read_pit_timer()
  * SEE ALSO:
  ****************************************************************************/
 
-static void wait_pit_wrap()
+static void wait_pit_wrap( void )
 {
 	uint nCurrent = read_pit_timer();
 	uint nPrev = 0;
@@ -222,7 +222,7 @@ static void read_cpu_id( unsigned int nReg, unsigned int *pData )
 
 #include "inc/cputable.h"
 
-static void set_cpu_features()
+static void set_cpu_features( void )
 {
 	/* Save cpu name and features ( from mplayer ) */
 	unsigned int nRegs[4];
@@ -362,7 +362,7 @@ static void calibrate_apic_timer( int nProcessor )
  * SEE ALSO:
  ****************************************************************************/
 
-static void ap_entry_proc()
+static void ap_entry_proc( void )
 {
 	struct i3DescrTable sIDT;
 	uint32 nReg;

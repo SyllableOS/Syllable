@@ -300,13 +300,15 @@ int vsprintf( char *buf, const char *fmt, va_list args )
 				*ip = ( str - buf );
 			}
 			continue;
+/* remove "%f" support -- if you must use floats in the kernel, cast to int and use "%d" instead
 		case 'f':
-			num = va_arg( args, float );
+			num = va_arg( args, double );
 
 			flags |= SIGN;
 			str = number( str, num, 10, field_width, precision, flags );
 //      break;
 			continue;
+ */
 			/* integer number formats - set up the flags and "break" */
 		case 'o':
 			base = 8;
@@ -340,12 +342,11 @@ int vsprintf( char *buf, const char *fmt, va_list args )
 			num = va_arg( args, long long );
 
 		else if ( qualifier == 'h' )
+		{
+			num = (unsigned short) va_arg( args, int );
 			if ( flags & SIGN )
-				num = va_arg( args, short );
-
-			else
-				num = va_arg( args, unsigned short );
-
+				num = (signed short) num;
+		}
 		else if ( flags & SIGN )
 			num = va_arg( args, int );
 

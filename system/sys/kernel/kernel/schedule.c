@@ -485,7 +485,7 @@ void wake_up_sleepers( bigtime_t nCurTime )
 	}
 }
 
-ktimer_t create_timer()
+ktimer_t create_timer( void )
 {
 	WaitQueue_s *psNode = kmalloc( sizeof( WaitQueue_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
 

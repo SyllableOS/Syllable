@@ -41,12 +41,12 @@ SPIN_LOCK( g_sPageListSpinLock, "page_list_slock" );
 
 int g_nAllocatedPages = 0;
 
-void lock_pagelist()
+void lock_pagelist( void )
 {
 	spinlock( &g_sPageListSpinLock );
 }
 
-void unlock_pagelist()
+void unlock_pagelist( void )
 {
 	spinunlock( &g_sPageListSpinLock );
 }
@@ -122,7 +122,7 @@ int32 get_free_page( int nFlags )
  * SEE ALSO:
  ****************************************************************************/
 
-void validate_page_list()
+void validate_page_list( void )
 {
 	int i;
 
