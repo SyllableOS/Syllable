@@ -5,7 +5,7 @@ EXE	= guiprefs
 
 CC	= gcc
 LL	= g++
-LIBS	= -lm -latheos
+LIBS	= -lm -lsyllable
 
 $(EXE) : $(OBJS)
 	$(LL) $(OBJS) $(LIBS) -o $@

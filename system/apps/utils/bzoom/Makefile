@@ -7,7 +7,7 @@ CC	= gcc
 LL	= gcc
 
 $(EXE) : $(OBJS)
-	$(LL) $(OBJS) -latheos -lstdc++ -lm -o $@
+	$(LL) $(OBJS) -lsyllable -lstdc++ -lm -o $@
 
 dist: $(EXE)
 	mkdir $(DIST_DIR)/atheos/Applications/BZoom

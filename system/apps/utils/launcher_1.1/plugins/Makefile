@@ -1,5 +1,5 @@
 COPTS =  -Wall -fPIC -c -O2
-LLIBS = -L../lib -latheos -lstdc++ -lm -llauncher
+LLIBS = -L../lib -lsyllable -lstdc++ -lm -llauncher
 
 CC = g++
 LL = g++
