@@ -143,7 +143,7 @@ MediaInputSelector::MediaInputSelector( const Point cPosition, const String zTit
 	}
 	
 	/* Create file selector */
-	m->m_pcFileDialog = new FileRequester( FileRequester::LOAD_REQ, new os::Messenger( this ), NULL, FileRequester::NODE_FILE, false );
+	m->m_pcFileDialog = new FileRequester( FileRequester::LOAD_REQ, new os::Messenger( this ), "", FileRequester::NODE_FILE, false );
 	m->m_pcFileDialog->Lock();
 	m->m_pcFileDialog->Start();
 	m->m_pcFileDialog->Unlock();

@@ -59,7 +59,7 @@ SelectWin::SelectWin( os::Rect cFrame )
 												m_pcInfo->GetPreferredSize( false ).y + 40 ) );
 	
 	/* Create file selector */
-	m_pcFileDialog = new os::FileRequester( os::FileRequester::LOAD_REQ, new os::Messenger( this ), NULL, os::FileRequester::NODE_FILE, false );
+	m_pcFileDialog = new os::FileRequester( os::FileRequester::LOAD_REQ, new os::Messenger( this ), "", os::FileRequester::NODE_FILE, false );
 	m_pcFileDialog->Lock();
 	m_pcFileDialog->Start();
 	m_pcFileDialog->Unlock();

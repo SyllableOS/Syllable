@@ -123,7 +123,7 @@ MPWindow::MPWindow( const os::Rect & cFrame, const std::string & cName, const st
 	AddChild( m_pcControls );
 	
 	/* Create file selector */
-	m_pcFileDialog = new os::FileRequester( os::FileRequester::LOAD_REQ, new os::Messenger( os::Application::GetInstance() ), NULL, os::FileRequester::NODE_FILE, false );
+	m_pcFileDialog = new os::FileRequester( os::FileRequester::LOAD_REQ, new os::Messenger( os::Application::GetInstance() ), "", os::FileRequester::NODE_FILE, false );
 	m_pcFileDialog->Lock();
 	m_pcFileDialog->Start();
 	m_pcFileDialog->Unlock();

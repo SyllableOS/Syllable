@@ -175,7 +175,7 @@ CFWindow::CFWindow( const os::Rect & cFrame, const os::String & cName, const os:
 	AddChild( m_pcRoot );
 	
 	/* Create file selector */
-	m_pcFileDialog = new os::FileRequester( os::FileRequester::LOAD_REQ, new os::Messenger( os::Application::GetInstance() ), NULL, os::FileRequester::NODE_FILE, false );
+	m_pcFileDialog = new os::FileRequester( os::FileRequester::LOAD_REQ, new os::Messenger( os::Application::GetInstance() ), "", os::FileRequester::NODE_FILE, false );
 	m_pcFileDialog->Lock();
 	m_pcFileDialog->Start();
 	m_pcFileDialog->Unlock();
