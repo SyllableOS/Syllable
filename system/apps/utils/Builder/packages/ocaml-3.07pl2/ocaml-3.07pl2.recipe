@@ -1,0 +1,22 @@
+authors			Kaj de Vos
+status			testing
+notes			Native code compiler not supported
+licenses		QPL LGPL custom
+home			caml.inria.fr
+locations		ftp://ftp.inria.fr/INRIA/caml-light
+patch-config	config/gnu
+configure-args
+	-prefix /usr/ocaml
+	-no-pthread
+make-targets
+;	world.opt
+		world
+;;	bootstrap
+;		opt
+;		opt.opt
+install
+;	umask 022;
+	make install
+;	cd emacs;
+;	make EMACSDIR="" install
+documentation	README INSTALL Upgrading LICENSE Changes

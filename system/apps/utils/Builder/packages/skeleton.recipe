@@ -7,7 +7,7 @@ notes				<Internal notes>
 ; Package information
 summary				<Brief headline>
 description			<Full description>
-licenses			GPL LGPL GFDL BSD MIT Apache Artistic Python MPL OS custom PD freeware commercial
+licenses			GPL LGPL GFDL BSD MIT Apache Artistic Python MPL QPL OS custom PD freeware commercial
 ;
 home				syllable.sf.net
 packages			<Deviating tarball name>
