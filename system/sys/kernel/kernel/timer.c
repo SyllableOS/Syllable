@@ -287,7 +287,7 @@ void TimerInterrupt( int dummy )
 	nCurTime = g_sSysBase.ex_nRealTime - g_sSysBase.ex_nBootTime;
 	write_sequnlock_enable( &g_sTimerSeqLock, nFlg );
 
-	// todo: move this to a separate thread
+	// TODO: move this to a separate thread
 	send_alarm_signals( nCurTime );
 	wake_up_sleepers( nCurTime );
 	if ( g_bAPICPresent == false )
