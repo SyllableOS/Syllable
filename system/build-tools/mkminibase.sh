@@ -76,13 +76,22 @@ mkdir $ROOT/disk2/atheos/home/root
 DISK=$ROOT/disk2
 
 cp -p $BASE/atheos/sys/bin/DiskManager $DISK/atheos/sys/bin/
+strip --strip-all $DISK/atheos/sys/bin/DiskManager
 
 cp -dpr $BASE/atheos/sys/libs/libc.so.1 $DISK/atheos/sys/libs/
-cp -dpr $BASE/atheos/sys/libs/libm-2.1.2.so $DISK/atheos/sys/libs/
 cp -dpr $BASE/atheos/sys/libs/libc-2.1.2.so $DISK/atheos/sys/libs/
+cp -dpr $BASE/atheos/sys/libs/libm.so.1 $DISK/atheos/sys/libs/
+cp -dpr $BASE/atheos/sys/libs/libm-2.1.2.so $DISK/atheos/sys/libs/
 cp -dpr $BASE/atheos/sys/libs/libgcc.so.1 $DISK/atheos/sys/libs/
 cp -dpr $BASE/atheos/sys/libs/libstdc++-2.so.3 $DISK/atheos/sys/libs/
-#cp -dpr $BASE/atheos/sys/libs/libnss_compat-2.1.2.so $DISK/atheos/sys/libs/
+cp -dpr $BASE/atheos/sys/libs/libstdc++-3-2-2.10.0.so $DISK/atheos/sys/libs/
+cp -dpr $BASE/atheos/usr/zlib/lib/libz.so $DISK/atheos/sys/libs/
+cp -dpr $BASE/atheos/usr/zlib/lib/libz.so.1 $DISK/atheos/sys/libs/
+cp -dpr $BASE/atheos/usr/zlib/lib/libz.so.1.1.4 $DISK/atheos/sys/libs/
+
+for l in $(ls $DISK/atheos/sys/libs/);do
+	strip --strip-all $DISK/atheos/sys/libs/$l;
+done;
 
 cp -p $BASE/atheos/sys/keymaps/American $DISK/atheos/sys/keymaps/
 

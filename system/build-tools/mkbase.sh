@@ -105,6 +105,7 @@ cp -p $BASE/atheos/sys/drivers/fs/afs $ROOT/atheos/sys/drivers/fs/
 cp -p $BASE/atheos/sys/drivers/fs/fatfs $ROOT/atheos/sys/drivers/fs/
 
 cp -dpr $BASE/atheos/sys/libs/* $ROOT/atheos/sys/libs/
+cp -dpr $BASE/atheos/usr/zlib/lib/* $ROOT/atheos/sys/libs/
 
 cp -p $BASE/atheos/sys/fonts/NimbusSanL-Regu.ttf $ROOT/atheos/sys/fonts/
 cp -p $BASE/atheos/sys/fonts/SyllableConsole-Regu.ttf $ROOT/atheos/sys/fonts/

@@ -16,15 +16,15 @@ cp ../images/blank.img ./syllable3.img
 mkdir disk
 
 mount -t fatfs syllable1.img disk
-cp ../objs/bimage1.gz disk/
+cp ../objs/bimage1.bin.gz disk/
 unmount disk
 
 mount -t fatfs syllable2.img disk
-cp ../objs/bimage2.gz disk/
+cp ../objs/bimage2.bin.gz disk/
 unmount disk
 
 mount -t fatfs syllable3.img disk
-cp ../objs/bimage3.gz disk/
+cp ../objs/bimage3.bin.gz disk/
 unmount disk
 
 rmdir disk
