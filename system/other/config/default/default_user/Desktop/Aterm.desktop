@@ -1,0 +1,11 @@
+[Icon Name]
+Terminal
+
+[Icon Picture]
+/system/icons/terminal.icon
+
+[Execute]
+aterm
+
+[Icon Position]
+36 120
