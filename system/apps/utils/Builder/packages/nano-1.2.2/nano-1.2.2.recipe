@@ -1,0 +1,5 @@
+authors				Kaj de Vos
+patch-config
+configure-options	--enable-all --with-slang
+; --enable-extra --enable-color
+documentation		README BUGS UPGRADE COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
