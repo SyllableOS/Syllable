@@ -1,5 +1,9 @@
 * April 29 2004. Kristian Van Der Vliet *
 
+VMWare video driver from James Hayhurst <james_hayhurst@hotmail.com>
+
+* April 29 2004. Kristian Van Der Vliet *
+
 nVidia driver
 	o Remove NV30Setup() (NV30 chipsets are handled by the GeForceFX driver)
 	o Cleaned up the NV??Setup() calls in NVidia::Nvidia()
