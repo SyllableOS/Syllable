@@ -1,8 +1,8 @@
 # include ../freetype.makefile
 
-FREETYPEINCLUDE = /home/root/freetype-2.1.4/include
+FREETYPEINCLUDE = $(shell freetype-config --cflags)
 
-COPTS   = -I$(TOP)/src -I$(FREETYPEINCLUDE) -c 
+COPTS   = -I$(TOP)/src $(FREETYPEINCLUDE) -c 
 
 DEVBIN = /system/drivers/appserver/video
 OBJS =	savagedrv.o
@@ -28,7 +28,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/s3_savage: $(OBJS)
-	gcc -plugin $(OBJS) -o $(OBJDIR)/s3_savage -latheos -lstdc++
+	gcc -plugin $(OBJS) -o $(OBJDIR)/s3_savage -lsyllable -lstdc++
 
 deps:
 
