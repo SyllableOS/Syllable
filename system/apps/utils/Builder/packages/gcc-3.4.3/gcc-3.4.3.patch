@@ -1,0 +1,246 @@
+diff -crN gcc-3.4.3/Makefile.in gcc-3.4.3-syllable/Makefile.in
+*** gcc-3.4.3/Makefile.in	Fri Nov  5 04:14:06 2004
+--- gcc-3.4.3-syllable/Makefile.in	Wed Jan 26 10:34:50 2005
+***************
+*** 23418,23424 ****
+  	esac; \
+  	$(SET_LIB_PATH) \
+  	echo "$$msg"; \
+! 	cd gcc && $(MAKE) $(GCC_FLAGS_TO_PASS) $$compare
+  	@r=`${PWD_COMMAND}`; export r; \
+  	s=`cd $(srcdir); ${PWD_COMMAND}` ; export s; \
+  	$(SET_LIB_PATH) \
+--- 23418,23425 ----
+  	esac; \
+  	$(SET_LIB_PATH) \
+  	echo "$$msg"; \
+! 	cd gcc
+! 	#&& $(MAKE) $(GCC_FLAGS_TO_PASS) $$compare
+  	@r=`${PWD_COMMAND}`; export r; \
+  	s=`cd $(srcdir); ${PWD_COMMAND}` ; export s; \
+  	$(SET_LIB_PATH) \
+diff -crN gcc-3.4.3/configure.in gcc-3.4.3-syllable/configure.in
+*** gcc-3.4.3/configure.in	Thu Nov  4 17:05:21 2004
+--- gcc-3.4.3-syllable/configure.in	Wed Jan 26 10:42:08 2005
+***************
+*** 531,536 ****
+--- 531,537 ----
+      # if the --with-newlib option has been given, because otherwise
+      # 'target-newlib' will appear in skipdirs.
+      ;;
++ 
+    i[[3456789]]86-*-mingw32*)
+      target_configdirs="$target_configdirs target-mingw"
+      noconfigdirs="$noconfigdirs expect target-libgloss ${libgcj}"
+***************
+*** 696,701 ****
+--- 697,705 ----
+      ;;
+    sparc-*-solaris* | sparc64-*-solaris* | sparcv9-*-solaris*)
+      ;;
++   *-*-syllable)
++     noconfigdirs="$noconfigdirs target-newlib"
++     ;;
+    v810-*-*)
+      noconfigdirs="$noconfigdirs bfd binutils gas gcc gdb ld target-libstdc++-v3 opcodes target-libgloss ${libgcj}"
+      ;;
+***************
+*** 1170,1175 ****
+--- 1174,1182 ----
+    *-*-linux*)
+      target_makefile_frag="config/mt-linux"
+      ;;
++   *-*-syllable*)
++ 	target_makefile_frag="config/mt-syllable"
++ 	;;
+    *-*-aix4.[[3456789]]* | *-*-aix[[56789]].*)
+      # nm and ar from AIX 4.3 and above require -X32_64 flag to all ar and nm 
+      # commands to handle both 32-bit and 64-bit objects.  These flags are
+diff -crN gcc-3.4.3/gcc/config.gcc gcc-3.4.3-syllable/gcc/config.gcc
+*** gcc-3.4.3/gcc/config.gcc	Wed Sep  8 15:16:11 2004
+--- gcc-3.4.3-syllable/gcc/config.gcc	Wed Jan 26 11:17:50 2005
+***************
+*** 938,943 ****
+--- 938,953 ----
+  	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h svr4.h i386/beos-elf.h"
+  	extra_parts='crtbegin.o crtend.o'
+  	;;
++ i[34567]86-*-syllable*)
++ 	xmake_file=x-syllable
++ 	xm_defines="HAVE_ATEXIT POSIX BSTRING"
++ 	tmake_file='t-slibgcc-syllable i386/t-syllable i386/t-crtstuff'
++ 	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h svr4.h i386/syllable.h"
++ 	extra_parts='crtbegin.o crtend.o crtbeginS.o crtendS.o'
++ 	gnu_ld=yes
++ 	float_format=i386
++ 	thread_file='syllable'
++ 	;;
+  i[34567]86-*-freebsd2 | i[34567]86-*-freebsd2.* | i[34567]86-*-freebsd*aout*)
+  	tm_file="${tm_file} i386/unix.h i386/bsd.h i386/gas.h i386/gstabs.h i386/freebsd-aout.h"
+  	tmake_file=t-freebsd
+diff -crN gcc-3.4.3/gcc/configure gcc-3.4.3-syllable/gcc/configure
+*** gcc-3.4.3/gcc/configure	Fri Nov  5 04:14:06 2004
+--- gcc-3.4.3-syllable/gcc/configure	Wed Jan 26 10:45:50 2005
+***************
+*** 11760,11772 ****
+    fi
+    rm -f conftest.* conftest[123].*
+  fi
+! if test x$gcc_cv_ld_ro_rw_mix = xread-write; then
+! 
+! cat >>confdefs.h <<\_ACEOF
+  #define HAVE_LD_RO_RW_SECTION_MIXING 1
+! _ACEOF
+  
+! fi
+  echo "$as_me:$LINENO: result: $gcc_cv_ld_ro_rw_mix" >&5
+  echo "${ECHO_T}$gcc_cv_ld_ro_rw_mix" >&6
+  
+--- 11760,11772 ----
+    fi
+    rm -f conftest.* conftest[123].*
+  fi
+! #if test x$gcc_cv_ld_ro_rw_mix = xread-write; then
+! #
+! #cat >>confdefs.h <<\_ACEOF
+  #define HAVE_LD_RO_RW_SECTION_MIXING 1
+! #_ACEOF
+  
+! #fi
+  echo "$as_me:$LINENO: result: $gcc_cv_ld_ro_rw_mix" >&5
+  echo "${ECHO_T}$gcc_cv_ld_ro_rw_mix" >&6
+  
+diff -crN gcc-3.4.3/gcc/gthr.h gcc-3.4.3-syllable/gcc/gthr.h
+*** gcc-3.4.3/gcc/gthr.h	Mon Dec 16 18:19:38 2002
+--- gcc-3.4.3-syllable/gcc/gthr.h	Wed Jan 26 10:46:34 2005
+***************
+*** 85,90 ****
+--- 85,92 ----
+  #include "gthr-dce.h"
+  #elif _SOLARIS_THREADS
+  #include "gthr-solaris.h"
++ #elif defined __SYLLABLE__
++ #include "gthr-syllable.h"
+  
+  /* Include GTHREAD_FILE if one is defined.  */
+  #elif defined(HAVE_GTHR_DEFAULT)
+diff -crN gcc-3.4.3/libstdc++-v3/configure gcc-3.4.3-syllable/libstdc++-v3/configure
+*** gcc-3.4.3/libstdc++-v3/configure	Thu Oct 28 21:52:03 2004
+--- gcc-3.4.3-syllable/libstdc++-v3/configure	Wed Jan 26 14:31:08 2005
+***************
+*** 3926,3931 ****
+--- 3926,3936 ----
+      ;;
+    esac
+    ;;
++ 
++ syllable*)
++   lt_cv_deplibs_check_method=pass_all
++   ;;
++ 
+  esac
+  
+  fi
+***************
+*** 4936,4954 ****
+    echo "$as_me:$LINENO: checking for enabled PCH" >&5
+  echo $ECHO_N "checking for enabled PCH... $ECHO_C" >&6
+     # Check whether --enable-libstdcxx-pch or --disable-libstdcxx-pch was given.
+! if test "${enable_libstdcxx_pch+set}" = set; then
+!   enableval="$enable_libstdcxx_pch"
+! 
+!       case "$enableval" in
+!        yes|no) ;;
+!        *) { { echo "$as_me:$LINENO: error: Argument to enable/disable libstdcxx-pch must be yes or no" >&5
+! echo "$as_me: error: Argument to enable/disable libstdcxx-pch must be yes or no" >&2;}
+!    { (exit 1); exit 1; }; } ;;
+!       esac
+  
+! else
+!   enable_libstdcxx_pch=$is_hosted
+! fi;
+  
+    echo "$as_me:$LINENO: result: $enable_libstdcxx_pch" >&5
+  echo "${ECHO_T}$enable_libstdcxx_pch" >&6
+--- 4941,4960 ----
+    echo "$as_me:$LINENO: checking for enabled PCH" >&5
+  echo $ECHO_N "checking for enabled PCH... $ECHO_C" >&6
+     # Check whether --enable-libstdcxx-pch or --disable-libstdcxx-pch was given.
+! enable_libstdcxx_pch=no
+! #if test "${enable_libstdcxx_pch+set}" = set; then
+! #  enableval="$enable_libstdcxx_pch"
+! #
+! #      case "$enableval" in
+! #       yes|no) ;;
+! #       *) { { echo "$as_me:$LINENO: error: Argument to enable/disable libstdcxx-pch must be yes or no" >&5
+! #echo "$as_me: error: Argument to enable/disable libstdcxx-pch must be yes or no" >&2;}
+! #   { (exit 1); exit 1; }; } ;;
+! #      esac
+  
+! #else
+! #  enable_libstdcxx_pch=$is_hosted
+! #fi;
+  
+    echo "$as_me:$LINENO: result: $enable_libstdcxx_pch" >&5
+  echo "${ECHO_T}$enable_libstdcxx_pch" >&6
+diff -crN gcc-3.4.3/libtool.m4 gcc-3.4.3-syllable/libtool.m4
+*** gcc-3.4.3/libtool.m4	Tue May 18 09:08:38 2004
+--- gcc-3.4.3-syllable/libtool.m4	Wed Jan 26 10:50:31 2005
+***************
+*** 734,739 ****
+--- 734,743 ----
+      ;;
+    esac
+    ;;
++ syllable*)
++   lt_cv_deplibs_check_method=pass_all
++   ;;
++ 
+  esac
+  ])
+  file_magic_cmd=$lt_cv_file_magic_cmd
+diff -crN gcc-3.4.3/ltconfig gcc-3.4.3-syllable/ltconfig
+*** gcc-3.4.3/ltconfig	Fri Mar  5 21:05:42 2004
+--- gcc-3.4.3-syllable/ltconfig	Wed Jan 26 10:51:28 2005
+***************
+*** 1348,1353 ****
+--- 1348,1369 ----
+    need_version=yes
+    ;;
+  
++ syllable*)
++   version_type=linux
++   need_lib_prefix=no
++   need_version=no
++   library_names_spec='${libname}${release}.so$versuffix ${libname}${release}.so$major $libname.so'
++   soname_spec='${libname}${release}.so$major'
++   shlibpath_var=LIBRARY_PATH
++   shlibpath_overrides_runpath=no
++   # This implies no fast_install, which is unacceptable.
++   # Some rework will be needed to allow for fast_install
++   # before this can be enabled.
++   hardcode_into_libs=yes
++   dynamic_linker='Syllable ld.so'
++   can_build_shared=yes
++   ;;
++ 
+  sysv4 | sysv4.2uw2* | sysv4.3* | sysv5*)
+    version_type=linux
+    library_names_spec='${libname}${release}.so$versuffix ${libname}${release}.so$major $libname.so'
+diff -crN gcc-3.4.3/ltmain.sh gcc-3.4.3-syllable/ltmain.sh
+*** gcc-3.4.3/ltmain.sh	Sun Feb  8 01:37:28 2004
+--- gcc-3.4.3-syllable/ltmain.sh	Wed Jan 26 10:52:09 2005
+***************
+*** 2650,2655 ****
+--- 2650,2660 ----
+  	  verstring="$verstring:${current}.0"
+  	  ;;
+  
++ 	syllable)
++ 	  major=.`expr $current - $age`
++ 	  versuffix="$major.$age.$revision"
++ 	  ;;
++ 
+  	sunos)
+  	  major=".$current"
+  	  versuffix=".$current.$revision"
