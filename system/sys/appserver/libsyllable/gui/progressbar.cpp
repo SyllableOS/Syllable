@@ -141,7 +141,7 @@ void ProgressBar::FrameSized( const Point & cDelta )
 	{
 		Rect cDamage = cBounds;
 
-		cDamage.left = cDamage.right - max( 4.0f, cDelta.x + 3.0f );
+		cDamage.left = cDamage.right - std::max( 4.0f, cDelta.x + 3.0f );
 		Invalidate( cDamage );
 		bNeedFlush = true;
 	}
@@ -149,7 +149,7 @@ void ProgressBar::FrameSized( const Point & cDelta )
 	{
 		Rect cDamage = cBounds;
 
-		cDamage.top = cDamage.bottom - max( 3.0f, cDelta.y + 2.0f );
+		cDamage.top = cDamage.bottom - std::max( 3.0f, cDelta.y + 2.0f );
 		Invalidate( cDamage );
 		bNeedFlush = true;
 	}
@@ -159,4 +159,3 @@ void ProgressBar::FrameSized( const Point & cDelta )
 		Flush();
 	}
 }
-

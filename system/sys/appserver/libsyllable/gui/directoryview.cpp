@@ -26,6 +26,7 @@
 #include <errno.h>
 #include <time.h>
 #include <sys/stat.h>
+#include <assert.h>
 
 #include <atheos/time.h>
 
@@ -46,8 +47,7 @@
 #include <list>
 #include <set>
 #include <strstream>
-
-
+//#include <sstream>
 
 using namespace os;
 
@@ -1366,7 +1366,7 @@ int32 DelFileThread( void *pData )
 void StartFileDelete( const std::vector < std::string > &cPaths, const Messenger & cViewTarget )
 {
 	DeleteFileParams_s *psParams = new DeleteFileParams_s( cPaths, cViewTarget );
-	thread_id hTread = spawn_thread( "delete_file_thread", DelFileThread, 0, 0, psParams );
+	thread_id hTread = spawn_thread( "delete_file_thread", (void*)DelFileThread, 0, 0, psParams );
 
 	if( hTread >= 0 )
 	{
@@ -1420,7 +1420,7 @@ int32 CopyFileThread( void *pData )
 void StartFileCopy( const std::vector < std::string > &cDstPaths, const std::vector < std::string > &cSrcPaths, const Messenger & cViewTarget )
 {
 	CopyFileParams_s *psParams = new CopyFileParams_s( cDstPaths, cSrcPaths, cViewTarget );
-	thread_id hTread = spawn_thread( "copy_file_thread", CopyFileThread, 0, 0, psParams );
+	thread_id hTread = spawn_thread( "copy_file_thread", (void*)CopyFileThread, 0, 0, psParams );
 
 	if( hTread >= 0 )
 	{
@@ -1530,7 +1530,8 @@ void DirectoryView::KeyDown( const char *pzString, const char *pzRawString, uint
 
 			if( pcRow != NULL )
 			{
-				if( m_cSearchString.compare( pcRow->m_cName, 0, m_cSearchString.size() ) == 0 )
+				if( m_cSearchString.compare( 0, m_cSearchString.size(), pcRow->m_cName ) == 0 )
+//				if( m_cSearchString.compare( pcRow->m_cName, 0, m_cSearchString.size() ) == 0 )
 				{
 					Select( i );
 					MakeVisible( i, false );
@@ -1875,7 +1876,7 @@ bool DirectoryView::DragSelection( const Point & cPos )
 
 	if( nLastSel - nFirstSel < 4 )
 	{
-		Bitmap cImage( cSelRect.Width() + 1.0f, cSelRect.Height(  ) + 1.0f, CS_RGB32, Bitmap::ACCEPT_VIEWS );
+		Bitmap cImage( (int)(cSelRect.Width() + 1.0f), (int)(cSelRect.Height(  ) + 1.0f), CS_RGB32, Bitmap::ACCEPT_VIEWS );
 		View *pcView = new View( cSelRect, "" );
 
 		cImage.AddChild( pcView );
@@ -1929,7 +1930,7 @@ void DirectoryView::HandleMessage( Message * pcMessage )
 		{
 //          std::string cName;
 			const char *pzName;
-			const struct::stat * psStat;
+			const struct stat * psStat;
 			size_t nSize;
 			int nCount = 0;
 
@@ -1966,7 +1967,7 @@ void DirectoryView::HandleMessage( Message * pcMessage )
 	case M_UPDATE_ENTRY:
 		{
 			const char *pzName;
-			const struct::stat * psStat;
+			const struct stat * psStat;
 			size_t nSize;
 			int nCount = 0;
 
@@ -2300,7 +2301,7 @@ void DirectoryView::MouseMove( const Point & cNewPos, int nCode, uint32 nButtons
 			Path cRowPath = m_cPath;
 
 			cRowPath.Append( pcRow->GetName().c_str(  ) );
-			if( cRowPath != Path( pzPath ) )
+			if( !( cRowPath == Path( pzPath ) ) )
 			{
 				Highlight( nSel, true, true );
 				return;
@@ -2453,7 +2454,7 @@ float FileRow::GetHeight( View * pcView )
 
 	pcView->GetFontHeight( &sHeight );
 
-	return ( max( 16.0f - 3.0f, sHeight.ascender + sHeight.descender ) );
+	return ( std::max( 16.0f - 3.0f, sHeight.ascender + sHeight.descender ) );
 }
 
 //----------------------------------------------------------------------------
@@ -2517,3 +2518,4 @@ bool FileRow::IsLessThan( const ListViewRow * pcOther, uint nColumn ) const
 		return ( false );
 	}
 }
+

@@ -2127,7 +2127,7 @@ void TextEdit::MakeCsrVisible()
 //    m_pcParent->AdjustScrollbars();
 }
 
-void TextEdit::DrawCursor( View * pcView = NULL, float vHOffset = 0.0f, float vVOffset = 0.0f )
+void TextEdit::DrawCursor( View * pcView, float vHOffset, float vVOffset )
 {
 	if( pcView == NULL )
 	{
@@ -2177,7 +2177,7 @@ void TextEdit::MaybeDrawString( View * pcView, float vHOffset, const char *pzStr
 	{
 		while( nLength > 0 )
 		{
-			int nCurLen = min( nLength, 32 );
+			int nCurLen = std::min( nLength, 32 );
 
 			pcView->DrawString( "********************************", nCurLen );
 			nLength -= nCurLen;
@@ -2763,10 +2763,10 @@ bool TextEdit::HandleKeyDown( const char *pzString, const char *pzRawString, uin
 		MoveVert( 1, bShift );
 		break;
 	case VK_PAGE_UP:
-		MoveVert( -( ( GetBounds().Height(  ) + 1.0f ) / m_vGlyphHeight - 1 ), bShift );
+		MoveVert( (int)-( ( GetBounds().Height(  ) + 1.0f ) / m_vGlyphHeight - 1 ), bShift );
 		break;
 	case VK_PAGE_DOWN:
-		MoveVert( ( GetBounds().Height(  ) + 1.0f ) / m_vGlyphHeight - 1, bShift );
+		MoveVert( (int)( ( GetBounds().Height(  ) + 1.0f ) / m_vGlyphHeight - 1 ), bShift );
 		break;
 	case VK_HOME:
 		MoveHoriz( -m_cCsrPos.x, bShift );
@@ -2838,7 +2838,6 @@ bool TextEdit::HandleKeyDown( const char *pzString, const char *pzRawString, uin
 
 	if( bDead )
 	{
-		dbprintf( "DeadKey. Qual = %x, str = %s\n", nQualifiers, pzString );
 		/* Note: this is a bit of hack. It marks the entered character, if it's a deadkey, */
 		/* so that it will be overwritten by the next char. */
 		int nDelta = -1;
@@ -2961,8 +2960,4 @@ void TextView::__TV_reserved3__()
 void TextView::__TV_reserved4__()
 {
 }
-
-
-
-
 

@@ -55,7 +55,7 @@ class Bitmap;
 class FileRow : public ListViewRow
 {
 public:
-    FileRow( Bitmap* pcBitmap, const String& cName, const struct ::stat& sStat ) : m_cName(cName.c_str()) {
+    FileRow( Bitmap* pcBitmap, const String& cName, const struct stat& sStat ) : m_cName(cName.c_str()) {
 	m_sStat = sStat; m_pcIconBitmap = pcBitmap;
     }
     virtual void AttachToView( View* pcView, int nColumn );
@@ -68,11 +68,11 @@ public:
     virtual bool  HitTest( View* pcView, const Rect& cFrame, int nColumn, Point cPos );
     virtual bool  IsLessThan( const ListViewRow* pcOther, uint nColumn ) const;
     const String GetName() const { return( m_cName ); }
-    struct ::stat GetFileStat() const { return( m_sStat ); }
+    struct stat GetFileStat() const { return( m_sStat ); }
 private:
     friend class DirectoryView;
     std::string		m_cName;
-    struct ::stat	m_sStat;
+    struct stat	m_sStat;
     uint8       	m_anIcon[16*16*4];
     Bitmap*		m_pcIconBitmap;
     float		m_avWidths[7];
@@ -145,4 +145,3 @@ private:
 } // End of namespace
 
 #endif // __F_GUI_DIRECTORYVIEW_H__
-

@@ -19,6 +19,7 @@
  */
 
 #include <stdio.h>
+#include <assert.h>
 
 #include <gui/dropdownmenu.h>
 #include <gui/textview.h>
@@ -47,7 +48,9 @@ static uint8 g_anArrow[] = {
 static Bitmap *g_pcArrows = NULL;
 
 
-DropdownMenu::DropdownTextView::DropdownTextView( DropdownMenu * pcParent, const Rect & cFrame, const char *pzTitle, const char *pzBuffer, uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP, uint32 nFlags = WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE ):os::TextView( cFrame, pzTitle, pzBuffer, nResizeMask, nFlags )
+DropdownMenu::DropdownTextView::DropdownTextView( DropdownMenu * pcParent, const Rect & cFrame,
+	const char *pzTitle, const char *pzBuffer, uint32 nResizeMask, uint32 nFlags )
+:os::TextView( cFrame, pzTitle, pzBuffer, nResizeMask, nFlags )
 {
 	m_pcParent = pcParent;
 }
@@ -1120,5 +1123,3 @@ void DropdownMenu::DropdownView::HandleMessage( Message * pcMessage )
 	}
 
 }
-
-

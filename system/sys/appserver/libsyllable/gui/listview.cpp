@@ -54,7 +54,7 @@ namespace os
 	{			// : public binary_function<ListViewRow,ListViewRow, bool> {
 		bool operator() ( const ListViewRow * x, const ListViewRow * y )const
 		{
-			cout << "x: " << x->m_vYPos << " y: " << y->m_vYPos << " r: " << ( ( x->m_vYPos < y->m_vYPos ) && x->IsVisible() ) << endl;
+//			cout << "x: " << x->m_vYPos << " y: " << y->m_vYPos << " r: " << ( ( x->m_vYPos < y->m_vYPos ) && x->IsVisible() ) << endl;
 			return ( ( x->m_vYPos < y->m_vYPos ) && x->IsVisible() );
 		}
 	};
@@ -2486,7 +2486,7 @@ void ListViewHeader::FrameSized( const Point & cDelta )
 	{
 		Rect cDamage = cBounds;
 
-		cDamage.left = cDamage.right - max( 2.0f, cDelta.x + 1.0f );
+		cDamage.left = cDamage.right - std::max( 2.0f, cDelta.x + 1.0f );
 		Invalidate( cDamage );
 		bNeedFlush = true;
 	}
@@ -2494,7 +2494,7 @@ void ListViewHeader::FrameSized( const Point & cDelta )
 	{
 		Rect cDamage = cBounds;
 
-		cDamage.top = cDamage.bottom - max( 2.0f, cDelta.y + 1.0f );
+		cDamage.top = cDamage.bottom - std::max( 2.0f, cDelta.y + 1.0f );
 		Invalidate( cDamage );
 		bNeedFlush = true;
 	}
@@ -2829,7 +2829,7 @@ void ListView::AdjustScrollBars( bool bOkToHScroll )
 				m_pcVScroll->SetSteps( ceil( vContentHeight / float ( m_pcMainView->m_cRows.size() ) ), ceil( vViewHeight * 0.8f ) );
 
 				m_pcVScroll->SetProportion( vProportion );
-				m_pcVScroll->SetMinMax( 0, max( vContentHeight - vViewHeight, 0.0f ) );
+				m_pcVScroll->SetMinMax( 0, std::max( vContentHeight - vViewHeight, 0.0f ) );
 			}
 		}
 		else
@@ -2896,7 +2896,7 @@ void ListView::AdjustScrollBars( bool bOkToHScroll )
 				vViewWidth = m_pcHeaderView->GetBounds().Width(  ) + 1.0f;
 				if( vViewWidth - nOff > m_pcMainView->m_vTotalWidth )
 				{
-					float nDeltaScroll = min( ( vViewWidth - nOff ) - m_pcMainView->m_vTotalWidth, -nOff );
+					float nDeltaScroll = std::min( ( vViewWidth - nOff ) - m_pcMainView->m_vTotalWidth, -nOff );
 
 					m_pcHeaderView->ScrollBy( nDeltaScroll, 0 );
 				}
@@ -2913,7 +2913,7 @@ void ListView::AdjustScrollBars( bool bOkToHScroll )
 			vViewHeight = m_pcMainView->GetBounds().Height(  ) + 1.0f;
 			if( vViewHeight - nOff > vContentHeight )
 			{
-				float nDeltaScroll = min( ( vViewHeight - nOff ) - vContentHeight, -nOff );
+				float nDeltaScroll = std::min( ( vViewHeight - nOff ) - vContentHeight, -nOff );
 
 				m_pcMainView->ScrollBy( 0, nDeltaScroll );
 			}

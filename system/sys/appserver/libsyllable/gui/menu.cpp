@@ -248,7 +248,7 @@ MenuItem::MenuItem( const String& cLabel, Message * pcMsg ):Invoker( pcMsg, NULL
 		cSubMenuBitmapRect.right = SUB_MENU_ARROW_W;
 		cSubMenuBitmapRect.bottom = SUB_MENU_ARROW_H;
 
-		s_pcSubMenuBitmap = new Bitmap( cSubMenuBitmapRect.Width(), cSubMenuBitmapRect.Height(  ), CS_RGBA32, Bitmap::SHARE_FRAMEBUFFER );
+		s_pcSubMenuBitmap = new Bitmap( (int)cSubMenuBitmapRect.Width(), (int)cSubMenuBitmapRect.Height(  ), CS_RGBA32, Bitmap::SHARE_FRAMEBUFFER );
 		memcpy( s_pcSubMenuBitmap->LockRaster(), nSubMenuArrowData, ( unsigned int )( cSubMenuBitmapRect.Width(  ) * cSubMenuBitmapRect.Height(  ) * 4 ) );
 	}
 }
@@ -2193,4 +2193,5 @@ bool Menu::IsEnabled()
 {
 	return m_bEnabled;
 }
+
 

@@ -2,6 +2,7 @@
 #include <gui/view.h>
 #include <util/exceptions.h>
 #include <gui/image.h>
+#include <assert.h>
 
 #define CLAMP255( x )	( x > 255 ? 255 : x )
 
@@ -157,7 +158,7 @@ class BitmapImage::Private
  * \sa os::Bitmap
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-BitmapImage::BitmapImage( uint32 nFlags = Bitmap::SHARE_FRAMEBUFFER )
+BitmapImage::BitmapImage( uint32 nFlags )
 {
 	m = new BitmapImage::Private;
 	m->m_nBitmapFlags = nFlags;
@@ -169,7 +170,7 @@ BitmapImage::BitmapImage( uint32 nFlags = Bitmap::SHARE_FRAMEBUFFER )
  *  \param	nFlags Bitmap flags, see os::Bitmap.
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-BitmapImage::BitmapImage( BitmapImage & cSource, uint32 nFlags = Bitmap::SHARE_FRAMEBUFFER )
+BitmapImage::BitmapImage( BitmapImage & cSource, uint32 nFlags )
 {
 	m = new BitmapImage::Private;
 	m->m_nBitmapFlags = nFlags;
@@ -188,7 +189,7 @@ BitmapImage::BitmapImage( BitmapImage & cSource, uint32 nFlags = Bitmap::SHARE_F
  *  \sa Load(), os::Bitmap
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-BitmapImage::BitmapImage( StreamableIO * pcSource, uint32 nFlags = Bitmap::SHARE_FRAMEBUFFER )
+BitmapImage::BitmapImage( StreamableIO * pcSource, uint32 nFlags )
 {
 	m = new BitmapImage::Private;
 	m->m_nBitmapFlags = nFlags;
@@ -205,7 +206,7 @@ BitmapImage::BitmapImage( StreamableIO * pcSource, uint32 nFlags = Bitmap::SHARE
  *  \sa os::color_space, os::Bitmap
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-BitmapImage::BitmapImage( const uint8 *pData, const IPoint & cSize, color_space eColorSpace, uint32 nFlags = Bitmap::SHARE_FRAMEBUFFER )
+BitmapImage::BitmapImage( const uint8 *pData, const IPoint & cSize, color_space eColorSpace, uint32 nFlags )
 {
 	m = new BitmapImage::Private;
 	m->m_nBitmapFlags = nFlags;
@@ -258,7 +259,7 @@ bool BitmapImage::IsValid( void ) const
  * \sa Save(), os::File, os::StreamableIO, os::MemFile
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-status_t BitmapImage::Load( StreamableIO * pcSource, const String & cType = "" )
+status_t BitmapImage::Load( StreamableIO * pcSource, const String & cType )
 {
 	Translator *trans = NULL;
 	TranslatorFactory *factory = TranslatorFactory::GetDefaultFactory();
@@ -317,7 +318,7 @@ status_t BitmapImage::Load( StreamableIO * pcSource, const String & cType = "" )
 
 				uint8 frameBuffer[8192];
 
-				bytesRead = trans->Read( frameBuffer, min( frameSize, sizeof( frameBuffer ) ) );
+				bytesRead = trans->Read( frameBuffer, std::min( frameSize, sizeof( frameBuffer ) ) );
 				if( bytesRead <= 0 )
 					break;
 
@@ -327,7 +328,7 @@ status_t BitmapImage::Load( StreamableIO * pcSource, const String & cType = "" )
 
 				for( ; y <= frameHeader.bf_frame.bottom && bytesRead > 0; )
 				{
-					int len = min( bytesRead, frameHeader.bf_bytes_per_row - x );
+					int len = std::min( bytesRead, frameHeader.bf_bytes_per_row - x );
 
 					memcpy( DstRaster + y * m->m_pcBitmap->GetBytesPerRow() + x, frameBuffer + SrcOffset, len );
 					if( x + len == frameHeader.bf_bytes_per_row )
@@ -485,7 +486,7 @@ void BitmapImage::Draw( const Rect & cSource, const Rect & cDest, View * pcView 
  *****************************************************************************/
 status_t BitmapImage::SetSize( const Point & cSize )
 {
-	Bitmap *bmap = new Bitmap( cSize.x, cSize.y, GetColorSpace(), m->m_nBitmapFlags );
+	Bitmap *bmap = new Bitmap( (int)cSize.x, (int)cSize.y, GetColorSpace(), m->m_nBitmapFlags );
 
 	if( bmap )
 	{
@@ -913,7 +914,7 @@ status_t BitmapImage::AlphaToOverlay( uint32 cTransparentColor )
  *  \sa os::color_space, os::Bitmap
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-void BitmapImage::SetBitmapData( const uint8 *pData, const IPoint & cSize, color_space eColorSpace, uint32 nFlags = Bitmap::SHARE_FRAMEBUFFER )
+void BitmapImage::SetBitmapData( const uint8 *pData, const IPoint & cSize, color_space eColorSpace, uint32 nFlags )
 {
 	Bitmap *bmap = new Bitmap( cSize.x, cSize.y, eColorSpace, nFlags );
 	uint8 *dest = bmap->LockRaster();

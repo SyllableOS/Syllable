@@ -121,7 +121,7 @@ bool Font::operator==( const Font & cOther )
 
 bool Font::operator!=( const Font & cOther )
 {
-	return ( m_cFamily != cOther.m_cFamily || m_cStyle != cOther.m_cStyle || m_vSize != cOther.m_vSize || m_vShear != cOther.m_vShear || m_vRotation != cOther.m_vRotation || m_nSpacing != cOther.m_nSpacing || m_nEncoding != cOther.m_nEncoding || m_nFlags != cOther.m_nFlags );
+	return ( !(m_cFamily == cOther.m_cFamily) || !(m_cStyle == cOther.m_cStyle) || m_vSize != cOther.m_vSize || m_vShear != cOther.m_vShear || m_vRotation != cOther.m_vRotation || m_nSpacing != cOther.m_nSpacing || m_nEncoding != cOther.m_nEncoding || m_nFlags != cOther.m_nFlags );
 }
 
 Font & Font::operator=( const Font & cOther )
@@ -747,4 +747,3 @@ bool Font::Rescan()
 		return ( false );
 	}
 }
-

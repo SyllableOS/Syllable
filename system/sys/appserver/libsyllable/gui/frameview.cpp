@@ -115,7 +115,7 @@ void FrameView::FrameSized( const Point & cDelta )
 	{
 		Rect cDamage = cBounds;
 
-		cDamage.left = cDamage.right - max( 2.0f, cDelta.x + 1.0f );
+		cDamage.left = cDamage.right - std::max( 2.0f, cDelta.x + 1.0f );
 		Invalidate( cDamage );
 		bNeedFlush = true;
 	}
@@ -123,7 +123,7 @@ void FrameView::FrameSized( const Point & cDelta )
 	{
 		Rect cDamage = cBounds;
 
-		cDamage.top = cDamage.bottom - max( 2.0f, cDelta.y + 1.0f );
+		cDamage.top = cDamage.bottom - std::max( 2.0f, cDelta.y + 1.0f );
 		Invalidate( cDamage );
 		bNeedFlush = true;
 	}
@@ -145,7 +145,7 @@ void FrameView::FontChanged( Font * pcNewFont )
 
 	Rect cDamage = GetBounds().Bounds(  );
 
-	cDamage.bottom = cDamage.top + max( vOldHeight, m_cLabelSize.y ) + 1.0f;
+	cDamage.bottom = cDamage.top + std::max( vOldHeight, m_cLabelSize.y ) + 1.0f;
 
 	Invalidate( cDamage );
 	Flush();

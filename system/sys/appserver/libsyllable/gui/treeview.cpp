@@ -506,9 +506,8 @@ class TreeView::Private
     }
 };
 
-TreeView::TreeView( const Rect& cFrame, const String& cName, uint32 nModeFlags = F_MULTI_SELECT | F_RENDER_BORDER,
-                    uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP,
-                    uint32 nFlags = WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE )
+TreeView::TreeView( const Rect& cFrame, const String& cName, uint32 nModeFlags,
+                    uint32 nResizeMask, uint32 nFlags )
         : ListView( cFrame, cName, nModeFlags, nResizeMask, nFlags ) {
     m = new Private;
 }
@@ -526,7 +525,7 @@ TreeView::~TreeView()
  *  \param	bUpdate Set to true to refresh TreeView.
  * \author Henrik Isaksson (henrik@isaksson.tk)
  *****************************************************************************/
-void TreeView::InsertNode( TreeViewNode* pcNode, bool bUpdate = true )
+void TreeView::InsertNode( TreeViewNode* pcNode, bool bUpdate )
 {
 	pcNode->_SetOwner( this );
     m->m_bTrunkValid = false;
@@ -541,7 +540,7 @@ void TreeView::InsertNode( TreeViewNode* pcNode, bool bUpdate = true )
  *  \param	bUpdate Set to true to refresh TreeView.
  * \author Henrik Isaksson (henrik@isaksson.tk)
  *****************************************************************************/
-void TreeView::InsertNode( int nPos, TreeViewNode* pcNode, bool bUpdate = true )
+void TreeView::InsertNode( int nPos, TreeViewNode* pcNode, bool bUpdate )
 {
 	pcNode->_SetOwner( this );
     m->m_bTrunkValid = false;
@@ -816,7 +815,7 @@ void TreeView::SetDrawTrunk( bool bDraw )
  *  \sa GetChild(), GetNext(), GetPrev(), ListView::GetRow()
  * \author Henrik Isaksson (henrik@isaksson.tk)
  *****************************************************************************/
-TreeViewNode* TreeView::GetParent(TreeViewNode* pcNode = NULL)
+TreeViewNode* TreeView::GetParent(TreeViewNode* pcNode)
 {
 	uint			count = GetRowCount();
 	bool			begin = false;
@@ -855,7 +854,7 @@ TreeViewNode* TreeView::GetParent(TreeViewNode* pcNode = NULL)
  *  \sa GetParent(), GetNext(), GetPrev(), ListView::GetRow()
  * \author Henrik Isaksson (henrik@isaksson.tk)
  *****************************************************************************/
-TreeViewNode* TreeView::GetChild(TreeViewNode* pcNode = NULL)
+TreeViewNode* TreeView::GetChild(TreeViewNode* pcNode)
 {
 	uint			i = 0;
 
@@ -886,7 +885,7 @@ TreeViewNode* TreeView::GetChild(TreeViewNode* pcNode = NULL)
  *  \sa GetChild(), GetNext(), GetParent(), ListView::GetRow()
  * \author Henrik Isaksson (henrik@isaksson.tk)
  *****************************************************************************/
-TreeViewNode* TreeView::GetPrev(TreeViewNode* pcNode = NULL)
+TreeViewNode* TreeView::GetPrev(TreeViewNode* pcNode)
 {
 	uint			count = GetRowCount();
 	bool			begin = false;
@@ -929,7 +928,7 @@ TreeViewNode* TreeView::GetPrev(TreeViewNode* pcNode = NULL)
  *  \sa GetChild(), GetPrev(), GetParent(), ListView::GetRow()
  * \author Henrik Isaksson (henrik@isaksson.tk)
  *****************************************************************************/
-TreeViewNode* TreeView::GetNext(TreeViewNode* pcNode = NULL)
+TreeViewNode* TreeView::GetNext(TreeViewNode* pcNode)
 {
 	uint			i = 0;
 
@@ -1000,7 +999,7 @@ Message* TreeView::GetExpandedMessage() const
  * \sa GetSiblings()
  * \author Henrik Isaksson (henrik@isaksson.tk)
  *****************************************************************************/
-void TreeView::GetChildren( std::vector<TreeViewNode*>& cvecChildren, TreeViewNode* pcNode = NULL )
+void TreeView::GetChildren( std::vector<TreeViewNode*>& cvecChildren, TreeViewNode* pcNode )
 {
 	uint						i = 0;
 
@@ -1043,7 +1042,7 @@ void TreeView::GetChildren( std::vector<TreeViewNode*>& cvecChildren, TreeViewNo
  * \sa GetChildren()
  * \author Henrik Isaksson (henrik@isaksson.tk)
  *****************************************************************************/
-void TreeView::GetSiblings( std::vector<TreeViewNode*>& cvecSiblings, TreeViewNode* pcNode = NULL )
+void TreeView::GetSiblings( std::vector<TreeViewNode*>& cvecSiblings, TreeViewNode* pcNode )
 {
 	TreeViewNode* pcParent = GetParent( pcNode );
 	if( pcParent ) {
@@ -1136,12 +1135,12 @@ void TreeView::Paint( const Rect& cUpdateRect )
  * \sa ListView::RemoveRow()
  * \author Henrik Isaksson (henrik@isaksson.tk)
  *****************************************************************************/
-TreeViewNode* TreeView::RemoveNode( int nIndex, bool bUpdate = true )
+TreeViewNode* TreeView::RemoveNode( int nIndex, bool bUpdate )
 {
 	return (TreeViewNode*)RemoveRow( nIndex, bUpdate );
 }
 
-ListViewRow* TreeView::RemoveRow( int nIndex, bool bUpdate = true )
+ListViewRow* TreeView::RemoveRow( int nIndex, bool bUpdate )
 {
 	m->m_bTrunkValid = false;
 	return ListView::RemoveRow( nIndex, bUpdate );
@@ -1149,12 +1148,10 @@ ListViewRow* TreeView::RemoveRow( int nIndex, bool bUpdate = true )
 
 /* Disabled - not valid in a TreeView */
 
-void TreeView::InsertRow( int nPos, ListViewRow* pcRow, bool bUpdate = true )
+void TreeView::InsertRow( int nPos, ListViewRow* pcRow, bool bUpdate )
 {
 }
 
-void TreeView::InsertRow( ListViewRow* pcRow, bool bUpdate = true )
+void TreeView::InsertRow( ListViewRow* pcRow, bool bUpdate )
 {
 }
-
-

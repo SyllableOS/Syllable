@@ -22,13 +22,13 @@
 
 #include <exception>
 
-class GeneralFailure : public exception
+class GeneralFailure : public std::exception
 {
 public:
     GeneralFailure( const char* pzMessage, int nErrorCode ) {
 	strncpy( m_zMessage, pzMessage, 256 ); m_zMessage[255] = '\0'; m_nErrorCode = nErrorCode;
     }
-    virtual const char* what () const { return( m_zMessage ); }
+    virtual const char* what () const throw() { return( m_zMessage ); }
     int code() const { return( m_nErrorCode ); }
 private:
     char	m_zMessage[256];
@@ -36,3 +36,5 @@ private:
 };
 
 #endif // __F_GUI_EXCEPTIONS_H__
+
+

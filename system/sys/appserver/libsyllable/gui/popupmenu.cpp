@@ -208,7 +208,7 @@ private:
  * \param nFlags		-	Deteremines what flags will be sent to the popupmenu. Default is WID_WILL_DRAW | WID_CLEAR_BACKGROUND | WID_FULL_UPDATE_ON_RESIZE
  * \author	Rick Caudill (syllable_desktop@hotpop.com)
  *****************************************************************************/
-PopupMenu::PopupMenu(const Rect& cFrame, const String& cName, const String& cLabel, Menu* pcMenu=NULL, Image* pcIcon=NULL,uint32 nResizeMask=CF_FOLLOW_LEFT|CF_FOLLOW_TOP,uint32 nFlags = WID_FULL_UPDATE_ON_RESIZE | WID_WILL_DRAW):View(cFrame,cName.c_str(),nResizeMask,nFlags)
+PopupMenu::PopupMenu(const Rect& cFrame, const String& cName, const String& cLabel, Menu* pcMenu, Image* pcIcon,uint32 nResizeMask,uint32 nFlags):View(cFrame,cName.c_str(),nResizeMask,nFlags)
 {	
 	m = new Private;
 	m->SetIcon(pcIcon);
@@ -251,7 +251,7 @@ void PopupMenu::SetLabel(const String& cString)
  * \sa IsEnabled()
  * \author	Rick Caudill (syllable_desktop@hotpop.com)
  *****************************************************************************/
-void PopupMenu::SetEnabled(bool bEnabled,bool bValidate=false)
+void PopupMenu::SetEnabled(bool bEnabled,bool bValidate)
 {
 	m->SetEnabled(bEnabled);
 	if (bValidate)
@@ -521,11 +521,3 @@ void PopupMenu::__pm_reserved9()
 void PopupMenu::__pm_reserved10()
 {
 }
-
-
-
-
-
-
-
-

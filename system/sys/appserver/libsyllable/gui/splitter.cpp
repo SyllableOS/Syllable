@@ -586,7 +586,7 @@ float Splitter::GetSeparatorWidth()
 * \param nMinSize2 minimal size that can take the bottom(right) view
 * \author Sebastien Keim (s.keim@laposte.net)
 */
-void Splitter::SetSplitLimits( float fMinSize1 = 0, float fMinSize2 = 0 )
+void Splitter::SetSplitLimits( float fMinSize1, float fMinSize2 )
 {
 	m->m_vLimit1 = fMinSize1;
 	m->m_vLimit2 = fMinSize2;

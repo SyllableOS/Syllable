@@ -742,17 +742,17 @@ void View::_WindowActivated( bool bIsActive )
 	Window *pcWnd = GetWindow();
 	View *pcChild;
 
-	assert( pcWnd != NULL );
-
-	WindowActivated( bIsActive );
-	if( pcWnd->GetFocusChild() == this )
-	{
-		Activated( bIsActive );
-	}
-
-	for( pcChild = m->m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m->m_pcHigherSibling )
-	{
-		pcChild->_WindowActivated( bIsActive );
+	if( pcWnd != NULL ) {
+		WindowActivated( bIsActive );
+		if( pcWnd->GetFocusChild() == this )
+		{
+			Activated( bIsActive );
+		}
+	
+		for( pcChild = m->m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m->m_pcHigherSibling )
+		{
+			pcChild->_WindowActivated( bIsActive );
+		}
 	}
 }
 
@@ -2075,7 +2075,7 @@ void View::DrawString( const String& cString )
 	}
 }
 
-void View::DrawString( const char *pzString, int nLength = -1 )
+void View::DrawString( const char *pzString, int nLength )
 {
 	Window *pcWindow = GetWindow();
 
@@ -2149,7 +2149,7 @@ void View::DrawString( const char *pzString, int nLength = -1 )
  * \sa SetFont(), os::Font, SetDrawingMode(), SetFgColor(), SetBgColor()
  * \author Henrik Isaksson (henrik@isaksson.tk)
  *****************************************************************************/
-void View::DrawText( const Rect& cPos, const String& cString, uint32 nFlags = 0 )
+void View::DrawText( const Rect& cPos, const String& cString, uint32 nFlags )
 {
 	Window *pcWindow = GetWindow();
 
@@ -2873,7 +2873,7 @@ void View::GetStringWidths( const char *apzStringArray[], const int *anLengthArr
 	m->m_pcFont->GetStringWidths( apzStringArray, anLengthArray, nStringCount, avWidthArray );
 }
 
-Point View::GetTextExtent( const String & cString, uint32 nFlags = 0 ) const
+Point View::GetTextExtent( const String & cString, uint32 nFlags ) const
 {
 	if( m->m_pcFont == NULL )
 	{
@@ -2890,7 +2890,7 @@ Point View::GetTextExtent( const String & cString, uint32 nFlags = 0 ) const
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-int View::GetStringLength( const String & cString, float vWidth, bool bIncludeLast = false ) const
+int View::GetStringLength( const String & cString, float vWidth, bool bIncludeLast ) const
 {
 	if( m->m_pcFont == NULL )
 	{
@@ -2900,7 +2900,7 @@ int View::GetStringLength( const String & cString, float vWidth, bool bIncludeLa
 	return ( m->m_pcFont->GetStringLength( cString, vWidth, bIncludeLast ) );
 }
 
-int View::GetStringLength( const char* pzString, int nLen, float vWidth, bool bIncludeLast = false ) const
+int View::GetStringLength( const char* pzString, int nLen, float vWidth, bool bIncludeLast ) const
 {
 	if( m->m_pcFont == NULL )
 	{
@@ -2917,7 +2917,7 @@ int View::GetStringLength( const char* pzString, int nLen, float vWidth, bool bI
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-void View::GetStringLengths( const char **apzStringArray, const int *anLengthArray, int nStringCount, float vWidth, int *anMaxLengthArray, bool bIncludeLast = false ) const
+void View::GetStringLengths( const char **apzStringArray, const int *anLengthArray, int nStringCount, float vWidth, int *anMaxLengthArray, bool bIncludeLast ) const
 {
 	if( m->m_pcFont == NULL )
 	{
@@ -3660,3 +3660,5 @@ void View::__VW_reserved19__()
 void View::__VW_reserved20__()
 {
 }
+
+

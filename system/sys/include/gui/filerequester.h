@@ -34,7 +34,7 @@ class DropdownMenu;
 class FileFilter
 {
 public:
-  virtual bool FileOk( const char* pzPath, const struct ::stat* psStat ) = 0;
+  virtual bool FileOk( const char* pzPath, const struct stat* psStat ) = 0;
 };
 
 /** Generic file requester.
@@ -87,5 +87,3 @@ private:
 }
 
 #endif // __F_GUI_FILEREQUESTER_H__
-
-

@@ -462,7 +462,7 @@ LayoutNode *LayoutNode::FindNode( const String & cName, bool bRequrcive, bool bI
     for( const char* name = name1 ; name != NULL ; name = va_arg(pArgs,const char*) ) {	\
 	LayoutNode* pcNode = FindNode( name, true, true );				\
 	if ( pcNode != NULL ) {								\
-	    pcNode->##func;								\
+	    pcNode->func;								\
 	} else {									\
 	    dbprintf( "Warning: LayoutNode::%s() could not find node '%s'\n", __FUNCTION__, name );	\
 	}										\
@@ -866,6 +866,3 @@ Point LayoutSpacer::CalculatePreferredSize( bool bLargest )
 {
 	return ( ( bLargest ) ? m_cMaxSize : m_cMinSize );
 }
-
-
-

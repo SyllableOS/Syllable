@@ -20,6 +20,7 @@
 #include <atheos/kernel.h>
 #include <atheos/image.h>
 
+#include <memory.h>
 
 #include <translation/translator.h>
 #include <util/message.h>
@@ -27,6 +28,7 @@
 #include <storage/directory.h>
 
 #include <vector>
+#include <new>
 
 using namespace os;
 
@@ -126,7 +128,7 @@ status_t TranslatorFactory::FindTranslator( const String& cSrcType, const String
 	TranslatorNode* pcNode = m->m_cNodes[i];
 	TranslatorInfo sInfo   = pcNode->GetTranslatorInfo();
 
-	if ( sInfo.dest_type != cDstType ) {
+	if ( !( sInfo.dest_type == cDstType ) ) {
 	    continue;
 	}
 
@@ -200,14 +202,29 @@ TranslatorFactory* TranslatorFactory::GetDefaultFactory()
 
 struct Translator::Internal
 {
-    Internal() {
-	m_pcDataTarget = NULL;
-    }
+	Internal() {
+		m_pcDataTarget = NULL;
+		m_nBufSize = 0;
+		m_pnBuffer = NULL;
+	}
+	~Internal() {
+		if( m_pnBuffer )
+			delete []m_pnBuffer;
+	}
+	void ResizeBuffer( uint32 nNewSize ) {
+		uint8* tmp = new uint8[ nNewSize ];
+		memcpy( tmp, m_pnBuffer, m_nBufSize );
+		m_nBufSize = nNewSize;
+		delete []tmp;
+		m_pnBuffer = tmp;
+	}
     Messenger	       m_cMsgTarget;
     Message	       m_cMessage;
     DataReceiver*      m_pcDataTarget;
     bool	       m_bSendData;
-    std::vector<uint8> m_cBuffer;
+//    std::vector<uint8> m_cBuffer;
+	uint8*		m_pnBuffer;
+	uint32		m_nBufSize;
 };
 
 
@@ -241,11 +258,15 @@ void Translator::SetTarget( DataReceiver* pcTarget )
 
 status_t Translator::AddData( const void* pData, size_t nLen, bool bFinal )
 {
-    size_t nOldSize = m->m_cBuffer.size();
-    m->m_cBuffer.resize( nOldSize + nLen );
-    memcpy( m->m_cBuffer.begin() + nOldSize, pData, nLen );
+//    size_t nOldSize = m->m_cBuffer.size();
+	size_t nOldSize = m->m_nBufSize;
+	m->ResizeBuffer( nOldSize + nLen );
+//    m->m_cBuffer.resize( nOldSize + nLen );
+//    memcpy( (void*)(m->m_cBuffer.begin() + nOldSize), pData, nLen );
+	memcpy( m->m_pnBuffer + nOldSize, pData, nLen );
 
-    return( DataAdded( m->m_cBuffer.begin(), m->m_cBuffer.size(), bFinal ) );
+	return( DataAdded( m->m_pnBuffer, m->m_nBufSize, bFinal ) );
+//    return( DataAdded( m->m_cBuffer.c_str(), m->m_cBuffer.size(), bFinal ) );
 }
 
 status_t Translator::DataAdded( void* pData, size_t nLen, bool bFinal )
@@ -280,5 +301,4 @@ TranslatorNode::TranslatorNode()
 TranslatorNode::~TranslatorNode()
 {
 }
-
 

@@ -494,7 +494,7 @@ void Window::SetIcon( Bitmap* pcIcon )
 	
 	
 	/* Create a new bitmap and copy the attributes of the old one */
-	m->m_pcIcon = new Bitmap( pcIcon->GetBounds().Width() + 1, pcIcon->GetBounds().Height() + 1,
+	m->m_pcIcon = new Bitmap( (int)pcIcon->GetBounds().Width() + 1, (int)pcIcon->GetBounds().Height() + 1,
 							pcIcon->GetColorSpace(), Bitmap::SHARE_FRAMEBUFFER );
 	memcpy( m->m_pcIcon->LockRaster(), pcIcon->LockRaster(), pcIcon->GetBytesPerRow() * 
 			(int)( pcIcon->GetBounds().Height() + 1 ) );
@@ -1931,3 +1931,4 @@ void Window::__WI_reserved5__()
 void Window::__WI_reserved6__()
 {
 }
+

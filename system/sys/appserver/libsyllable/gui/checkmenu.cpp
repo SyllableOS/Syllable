@@ -138,7 +138,8 @@ static uint8 nCheckData[] = {
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-CheckMenu::CheckMenu( const String& cLabel, Message * pcMsg, bool bChecked = false ):MenuItem( cLabel, pcMsg )
+CheckMenu::CheckMenu( const String& cLabel, Message * pcMsg, bool bChecked )
+:MenuItem( cLabel, pcMsg )
 {
 	m_Highlighted = false;
 	m_Enabled = true;
@@ -153,7 +154,7 @@ CheckMenu::CheckMenu( const String& cLabel, Message * pcMsg, bool bChecked = fal
 		cCheckBitmapRect.right = CHECK_W;
 		cCheckBitmapRect.bottom = CHECK_H;
 
-		s_pcCheckBitmap = new Bitmap( cCheckBitmapRect.Width(), cCheckBitmapRect.Height(  ), CS_RGBA32, Bitmap::SHARE_FRAMEBUFFER );
+		s_pcCheckBitmap = new Bitmap( (int)cCheckBitmapRect.Width(), (int)cCheckBitmapRect.Height(  ), CS_RGBA32, Bitmap::SHARE_FRAMEBUFFER );
 		memcpy( s_pcCheckBitmap->LockRaster(), nCheckData, ( unsigned int )( cCheckBitmapRect.Width(  ) * cCheckBitmapRect.Height(  ) * 4 ) );
 	}
 }
@@ -165,7 +166,8 @@ CheckMenu::CheckMenu( const String& cLabel, Message * pcMsg, bool bChecked = fal
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-CheckMenu::CheckMenu( Menu * pcMenu, Message * pcMsg, bool bChecked = false ):MenuItem( pcMenu, pcMsg )
+CheckMenu::CheckMenu( Menu * pcMenu, Message * pcMsg, bool bChecked )
+:MenuItem( pcMenu, pcMsg )
 {
 	m_Highlighted = false;
 	m_Enabled = true;
@@ -180,7 +182,7 @@ CheckMenu::CheckMenu( Menu * pcMenu, Message * pcMsg, bool bChecked = false ):Me
 		cCheckBitmapRect.right = CHECK_W;
 		cCheckBitmapRect.bottom = CHECK_H;
 
-		s_pcCheckBitmap = new Bitmap( cCheckBitmapRect.Width(), cCheckBitmapRect.Height(  ), CS_RGBA32, Bitmap::SHARE_FRAMEBUFFER );
+		s_pcCheckBitmap = new Bitmap( (int)cCheckBitmapRect.Width(), (int)cCheckBitmapRect.Height(  ), CS_RGBA32, Bitmap::SHARE_FRAMEBUFFER );
 		memcpy( s_pcCheckBitmap->LockRaster(), nCheckData, ( unsigned int )( cCheckBitmapRect.Width(  ) * cCheckBitmapRect.Height(  ) * 4 ) );
 	}
 }
@@ -355,5 +357,6 @@ bool CheckMenu::Invoked( Message * pcMessage )
 	pcMessage->AddBool( "status", m_IsChecked );
 	return true;
 }
+
 
 

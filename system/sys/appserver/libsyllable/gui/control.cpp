@@ -131,7 +131,7 @@ bool Control::IsEnabled( void ) const
 
 void Control::SetLabel( const String & cLabel )
 {
-	if( cLabel != m->m_cLabel )
+	if( !(cLabel == m->m_cLabel) )
 	{
 		SetShortcutFromLabel( cLabel );
 
@@ -215,8 +215,3 @@ void Control::__CTRL_reserved4__()
 void Control::__CTRL_reserved5__()
 {
 }
-
-
-
-
-

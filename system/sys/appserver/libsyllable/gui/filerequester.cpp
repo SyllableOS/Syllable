@@ -156,7 +156,7 @@ FileRequester::FileRequester( file_req_mode_t nMode, Messenger * pcTarget, const
 	{
 		if( nNodeType == NODE_FILE )
 		{
-			struct::stat sStat;
+			struct stat sStat;
 
 			if( cPath[cPath.size() - 1] != '/' || ( stat( cPath.c_str(  ), &sStat ) < 0 || S_ISREG( sStat.st_mode ) ) )
 			{
@@ -532,9 +532,9 @@ void FileRequester::HandleMessage( Message * pcMessage )
 
 				cPath.Append( m->m_pcPathView->GetBuffer()[0].c_str(  ) );
 
-				struct::stat sStat;
+				struct stat sStat;
 
-				if( pcMessage->GetCode() != ID_ALERT &&::stat( cPath.GetPath(  ).c_str(), &sStat ) >= 0 )
+				if( pcMessage->GetCode() != ID_ALERT && stat( cPath.GetPath(  ).c_str(), &sStat ) >= 0 )
 				{
 					String cMsg = "The file '" + ( std::string ) cPath.GetPath() + "' already exists\nDo you want to overwrite it?\n";
 
@@ -597,7 +597,7 @@ void FileRequester::SetPath( const String & a_cPath )
 	{
 		if( m->m_nNodeType == NODE_FILE )
 		{
-			struct::stat sStat;
+			struct stat sStat;
 
 			if( cPath[cPath.size() - 1] != '/' || ( stat( cPath.c_str(  ), &sStat ) < 0 || S_ISREG( sStat.st_mode ) ) )
 			{
@@ -624,4 +624,3 @@ String FileRequester::GetPath() const
 {
 	return ( m->m_pcDirView->GetPath() );
 }
-
