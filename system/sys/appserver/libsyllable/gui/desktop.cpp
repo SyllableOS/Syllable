@@ -67,6 +67,7 @@ Desktop::Desktop( int nDesktop )
 
 	cDesktopParams.FindInt( "desktop", &m->m_nDesktop );
 	cDesktopParams.FindIPoint( "resolution", &cResolution );
+	cDesktopParams.FindInt( "bytes_per_line", &m->m_psScreenMode->m_nBytesPerLine );
 	cDesktopParams.FindInt32( "color_space", &nColorSpace );
 	cDesktopParams.FindFloat( "refresh_rate", &m->m_psScreenMode->m_vRefreshRate );
 	cDesktopParams.FindFloat( "h_pos", &m->m_psScreenMode->m_vHPos );

@@ -271,6 +271,7 @@ static bool setup_screenmode( int nDesktop, bool bForce )
 
 				g_asDesktops[nDesktop].m_sScreenMode.m_nWidth = cModes[i].m_nWidth;
 				g_asDesktops[nDesktop].m_sScreenMode.m_nHeight = cModes[i].m_nHeight;
+				g_asDesktops[nDesktop].m_sScreenMode.m_nBytesPerLine = cModes[i].m_nBytesPerLine;
 				g_asDesktops[nDesktop].m_sScreenMode.m_eColorSpace = cModes[i].m_eColorSpace;
 				g_asDesktops[nDesktop].m_sScreenMode.m_vRefreshRate = 60.0f;
 
@@ -286,6 +287,7 @@ static bool setup_screenmode( int nDesktop, bool bForce )
 
 					g_asDesktops[nDesktop].m_sScreenMode.m_nWidth = cModes[i].m_nWidth;
 					g_asDesktops[nDesktop].m_sScreenMode.m_nHeight = cModes[i].m_nHeight;
+					g_asDesktops[nDesktop].m_sScreenMode.m_nBytesPerLine = cModes[i].m_nBytesPerLine;
 					g_asDesktops[nDesktop].m_sScreenMode.m_eColorSpace = cModes[i].m_eColorSpace;
 					g_asDesktops[nDesktop].m_sScreenMode.m_vRefreshRate = 60.0f;
 					if( g_pcDispDrv->SetScreenMode( g_asDesktops[nDesktop].m_sScreenMode ) == 0 )
@@ -310,6 +312,8 @@ static bool setup_screenmode( int nDesktop, bool bForce )
 	g_pcScreenBitmap->m_nBytesPerLine = g_pcDispDrv->GetCurrentScreenMode().m_nBytesPerLine;
 	g_pcScreenBitmap->m_eColorSpc = g_pcDispDrv->GetCurrentScreenMode().m_eColorSpace;
 	g_pcScreenBitmap->m_pRaster = ( ( uint8 * )g_sFBAreaInfo.pAddress ) + g_pcDispDrv->GetFramebufferOffset();
+	// update screenmode with correct nBytesPerLine
+	g_asDesktops[nDesktop].m_sScreenMode.m_nBytesPerLine = g_pcScreenBitmap->m_nBytesPerLine;
 
 	if( g_nActiveDesktop != -1 )
 	{

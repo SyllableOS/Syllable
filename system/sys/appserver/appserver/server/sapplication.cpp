@@ -893,6 +893,7 @@ void SrvApplication::DispatchMessage( Message * pcReq )
 
 				cReply.AddInt32( "desktop", nDesktop );
 				cReply.AddIPoint( "resolution", IPoint( sMode.m_nWidth, sMode.m_nHeight ) );
+				cReply.AddInt32( "bytes_per_line", sMode.m_nBytesPerLine );
 				cReply.AddInt32( "color_space", sMode.m_eColorSpace );
 				cReply.AddFloat( "refresh_rate", sMode.m_vRefreshRate );
 				cReply.AddFloat( "h_pos", sMode.m_vHPos );
