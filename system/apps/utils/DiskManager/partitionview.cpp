@@ -159,8 +159,8 @@ static void load_logical( PartitionList_t* pcList, MountMap_t* pcMountMap, const
 		    "The extended partition contain more\n"
 		    "than one nested extended partitions\n"
 		    "Editing the partition table might cause\n"
-		    "loss of one or more logical partitions.\n", 0,
-		    "Auch!", NULL ))->Go();
+		    "loss of one or more logical partitions.\n",Alert::ALERT_INFO, 0,
+		    "Ok", NULL ))->Go();
 	return;
     }
     if ( nLogicalCount > 1 ) {
@@ -169,8 +169,8 @@ static void load_logical( PartitionList_t* pcList, MountMap_t* pcMountMap, const
 		    "The extended partition contain more\n"
 		    "than one logical partitions\n"
 		    "Editing the partition table might cause\n"
-		    "loss of one or more logical partitions.\n", 0,
-		    "Auch!", NULL ))->Go();
+		    "loss of one or more logical partitions.\n",Alert::ALERT_INFO 0,
+		    "Ok", NULL ))->Go();
 	return;
     }
     
@@ -496,22 +496,22 @@ void PartitionEditReq::HandleMessage( os::Message* pcMessage )
 			(new Alert( "Warning!",
 				    "You have changed the layout on one or more partitions.\n"
 				    "All data on this partitions will be lost.\n"
-				    "Are you sure you want to write back the partition table?", 0,
-				    "Ohh no!", "Of course!", NULL ))->Go( new Invoker( new Message( ID_WRITE_PARTITION_TABLE ), this ) );
+				    "Are you sure you want to write back the partition table?", Alert::ALERT_INFO,0,
+				    "Cancel", "Ok", NULL ))->Go( new Invoker( new Message( ID_WRITE_PARTITION_TABLE ), this ) );
 		    } else if ( m_bTypeChanged ) {
 			(new Alert( "Warning!",
 				    "You have changed the type on one or more of the partitions.\n"
 				    "This should not damage any data on the partitions but might\n"
 				    "make it impossible to mount the partition again.\n"
-				    "Are you sure you want to write back the partition table?", 0,
-				    "Ohh no!", "Of course!", NULL ))->Go( new Invoker( new Message( ID_WRITE_PARTITION_TABLE ), this ) );
+				    "Are you sure you want to write back the partition table?", Alert::ALERT_INFO,0,
+				    "Cancel", "Ok", NULL ))->Go( new Invoker( new Message( ID_WRITE_PARTITION_TABLE ), this ) );
 		    } else {
 			(new Alert( "Warning!",
 				    "You have changed the status on one or more of the partitions.\n"
 				    "This should not damage any data on the partitions but might\n"
 				    "make it impossible to boot from the partition again.\n"
-				    "Are you sure you want to write back the partition table?", 0,
-				    "Ohh no!", "Of course!", NULL ))->Go( new Invoker( new Message( ID_WRITE_PARTITION_TABLE ), this ) );
+				    "Are you sure you want to write back the partition table?",Alert::ALERT_INFO, 0,
+				    "Cancel", "Ok", NULL ))->Go( new Invoker( new Message( ID_WRITE_PARTITION_TABLE ), this ) );
 		    }
 		} else {
 		    PostMessage( M_QUIT );
@@ -1547,8 +1547,8 @@ void PartitionView::SetPartitionType( int nType, bool bPromptDelete )
 		(new Alert( "Warning!",
 			    "This operation will delete the current partition.\n"
 			    "All data on the partition will be lost.\n"
-			    "Really sure this was what you meant?", 0,
-			    "Ohh no!", "Of course!", NULL ))->Go( new Invoker( new Message( ID_DELETE_PARTITION ), this ) );
+			    "Really sure this was what you meant?", Alert::ALERT_INFO,0,
+			    "Cancel", "Ok", NULL ))->Go( new Invoker( new Message( ID_DELETE_PARTITION ), this ) );
 	    }
 	} else {
 	    if ( nType == 0 && m_pcParent->IsExtended() ) {
