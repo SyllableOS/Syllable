@@ -1,5 +1,11 @@
 * August 23 2003, Henrik Isaksson *
 
+  Filerequester.cpp
+  - Applied Rick's patch, adds icons to the filerequester.
+
+  Splitter.cpp/splitter.h:
+  - Spelling mistake fixed
+
   Menu.cpp/menu.h:
   - Applied Rick's disable-patch.
   - Added greying to disabled items (so you see that they are disabled).
