@@ -1,3 +1,7 @@
+* May 11 2003, Henrik Isaksson *
+
+Applied Arno's Video Overlays patches.
+
 * Apr 27 2003, Henrik Isaksson *
 
 Updated appserver with dead key support, support for turning on/off
