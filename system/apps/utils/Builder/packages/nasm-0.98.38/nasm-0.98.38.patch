@@ -1,0 +1,13 @@
+diff -ru nasm-0.98.38.original/rdoff/rdoff.h nasm-0.98.38/rdoff/rdoff.h
+--- nasm-0.98.38.original/rdoff/rdoff.h	2002-12-04 00:49:38.000000000 +0000
++++ nasm-0.98.38/rdoff/rdoff.h	2004-07-09 13:49:20.000000000 +0000
+@@ -14,7 +14,9 @@
+ #define _RDOFF_H "RDOFF2 support routines v0.3"
+ 
+ /* Some systems don't define this automatically */
++#ifndef __SYLLABLE__
+ extern char *strdup(const char *);
++#endif
+ 
+ typedef unsigned short int16;
+ typedef unsigned char byte;

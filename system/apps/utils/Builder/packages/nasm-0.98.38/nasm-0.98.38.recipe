@@ -1,0 +1,24 @@
+authors			Kaj de Vos
+status			testing
+
+licenses		LGPL
+home			nasm.sf.net
+
+; For documentation:
+;build-needs
+;	perl
+;	ghostscript
+
+; For documentation:
+;no-build-dir
+
+make-targets
+	all
+;	For documentation:
+;	everything
+	strip
+
+install-tree	bin man man/man1
+; For documentation:
+;install-targets	install_everything
+documentation	README COPYING CHANGES ChangeLog TODO AUTHORS
