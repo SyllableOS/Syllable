@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <posix/unistd.h>
-
+#include <atheos/time.h>
 #include <atheos/types.h>
 #include <atheos/kernel.h>
 #include <atheos/isa_io.h>
@@ -50,8 +50,12 @@ clone_info sCardInfo;
 
 #define OUTREG(a, b)       *((uint32 *)(sCardInfo.base1 + a)) = b
 #define INREG(a)           *((uint32 *)(sCardInfo.base1 + a))
+#define OUTREG32(a, b)     *((uint32 *)(sCardInfo.base1 + a)) = b
+#define INREG32(a)         *((uint32 *)(sCardInfo.base1 + a))
 #define OUTREG16(a, b)     *((vuint16*)(sCardInfo.base1 + a)) = b
 #define INREG16(a)         *((vuint16*)(sCardInfo.base1 + a))
+#define OUTREG8(a, b)      *((uint8 *)(sCardInfo.base1 + a)) = b
+#define INREG8(a)          *((uint8 *)(sCardInfo.base1 + a))
 
 static area_id	g_nFrameBufArea = -1;
 static area_id  g_nMMIOArea     = -1;
@@ -76,15 +80,37 @@ enum S3CHIPTAGS {
 
 SavageDriver::SavageDriver( int nFd ): m_cGELock( "savage_ge_lock" )
 {
-    /* Get Info */
-	if( ioctl( nFd, PCI_GFX_GET_PCI_INFO, &sCardInfo.pcii ) != 0 )
-	{
-		dbprintf( "Error: Failed to call PCI_GFX_GET_PCI_INFO\n" );
-		return;
-	}
-	s3chip = S3_SAVAGE_MX;
-	dbprintf( "Savage IX/MX VGA Card found\n");
-  
+  unsigned int FrameBufferBase;
+  unsigned int MmioBase;
+
+  /* Get Info */
+  if( ioctl( nFd, PCI_GFX_GET_PCI_INFO, &sCardInfo.pcii ) != 0 )
+    {
+      dbprintf( "Error: Failed to call PCI_GFX_GET_PCI_INFO\n" );
+      return;
+    }
+  s3chip = S3_SAVAGE_MX;
+  dbprintf( "Savage IX/MX VGA Card found\n");
+
+  if (s3chip >= S3_SAVAGE3D && s3chip <= S3_SAVAGE_MX) {
+    FrameBufferBase = sCardInfo.pcii.u.h0.nBase0;
+    MmioBase = FrameBufferBase + SAVAGE_NEWMMIO_REGBASE_S3;
+  } else {
+    MmioBase        = sCardInfo.pcii.u.h0.nBase0 & 0xffffff00 + SAVAGE_NEWMMIO_REGBASE_S4;
+    FrameBufferBase = sCardInfo.pcii.u.h0.nBase1 & 0xffffff00;
+  }
+
+  m_pFrameBuffer = NULL;
+  m_pMMIOBuffer  = NULL;
+
+  g_nMMIOArea     = create_area("savage_io", (void**) &m_pMMIOBuffer, SAVAGE_NEWMMIO_REGSIZE,
+				AREA_FULL_ACCESS, AREA_NO_LOCK);
+
+  g_nFrameBufArea = create_area("savage_frame",(void**) &m_pFrameBuffer, 1024 * 1024 * 8,
+				AREA_FULL_ACCESS, AREA_NO_LOCK );
+
+  remap_area(g_nFrameBufArea, (void*) FrameBufferBase);
+  remap_area(g_nMMIOArea,     (void*) MmioBase);
 }
 
 //----------------------------------------------------------------------------
@@ -107,53 +133,49 @@ SavageDriver::~SavageDriver()
 
 void SavageDriver::EnableMMIO( void )
 {
-  uint8 val;
+  unsigned char val;
+  unsigned long tmp;
 
+  /*
   val = VGAIN8(0x3c3);
   VGAOUT8(0x3c3, val | 0x01);
   val = VGAIN8(VGA_MISC_OUT_R);
   VGAOUT8(VGA_MISC_OUT_W, val | 0x01);
+  */
 
   // FixME : Detect VGA IO Base as COLOR or MONO (pls refer to XFree86 Sources)
   vgaCRIndex = 0x3D0 + 4;
   vgaCRReg   = 0x3D0 + 5;
 
+  /*
+   * do we need to wake up the chip? and we can not do PIO
+   * to 0x3c3,use MM8510_0 instead
+   */
+  tmp = INREG32(0X8510);
+  OUTREG32(0X8510,tmp | 0x01);
+  
+  /*
+   * Miscellaneous Output Register
+   * read: 0x3cc/write:0x3c2
+   * bit_0 = 1: color emulation,address baseed at 3dx
+   *       = 0: monochrome emulation.address based at 3bx
+   */
+  val = INREG8(MISC_OUTPUT_REG_READ);
+  OUTREG(MISC_OUTPUT_REG_WRITE, val | 0x01);
+
   if (s3chip >= S3_SAVAGE4) {
-    VGAOUT8(vgaCRIndex, 0x40);
-    val = VGAIN8(vgaCRReg);
-    VGAOUT8(vgaCRReg, val | 1);
+    // VGAOUT8(vgaCRIndex, 0x40);
+    // val = VGAIN8(vgaCRReg);
+    // VGAOUT8(vgaCRReg, val | 1);
   }
 }
 
 area_id SavageDriver::Open( void )
 {
-    uint8    temp;
+    // uint8    temp;
     uint8    config1;
     uint8    cr66;
-    unsigned int FrameBufferBase;
-    unsigned int MmioBase;
-
-    if (s3chip >= S3_SAVAGE3D && s3chip <= S3_SAVAGE_MX) {
-      FrameBufferBase = sCardInfo.pcii.u.h0.nBase0 & 0xffffff00;
-      MmioBase = FrameBufferBase + SAVAGE_NEWMMIO_REGBASE_S3;
-      dbprintf("PCI Base0 : %08X\n", sCardInfo.pcii.u.h0.nBase0);
-      dbprintf("Savage Base : %08X %08X\n", MmioBase, FrameBufferBase);
-    } else {
-      MmioBase        = sCardInfo.pcii.u.h0.nBase0 & 0xffffff00 + SAVAGE_NEWMMIO_REGBASE_S4;
-      FrameBufferBase = sCardInfo.pcii.u.h0.nBase1 & 0xffffff00;
-    }
-
-    m_pFrameBuffer = NULL;
-    m_pMMIOBuffer  = NULL;
-
-    g_nMMIOArea     = create_area("savage_io", (void**) &m_pMMIOBuffer, SAVAGE_NEWMMIO_REGSIZE,
-				  AREA_FULL_ACCESS, AREA_NO_LOCK);
-
-    g_nFrameBufArea = create_area("savage_frame",(void**) &m_pFrameBuffer, 1024 * 1024 * 16,
-				  AREA_FULL_ACCESS, AREA_NO_LOCK );
-
-    remap_area(g_nFrameBufArea, (void*) FrameBufferBase);
-    remap_area(g_nMMIOArea,     (void*) MmioBase);
+    uint32   endfb;
 
     m_pBCIBuffer = (uint8*) (m_pMMIOBuffer + 0x10000);
 
@@ -187,24 +209,9 @@ area_id SavageDriver::Open( void )
     // Initialize the s3 chip in a reasonable configuration. Turn the chip on and
     // unlock all the registers we need to access (and even more...). Do a few
     // standard vga config. Then we're ready to identify the DAC.
-
-    // Unprotect CRTC[0-7]
-    VGAOUT8(vgaCRIndex, 0x11);
-    temp = VGAIN8(vgaCRReg);
-    VGAOUT8(vgaCRReg, temp & 0x7f);
-
-    // Unlock extends register
-    VGAOUT16(vgaCRIndex, 0x4838);
-    VGAOUT16(vgaCRIndex, 0xA039);
-    VGAOUT16(     0x3c4, 0x0608);
-
-    VGAOUT8(vgaCRIndex, 0x40);
-    temp = VGAIN8(vgaCRReg);
-    VGAOUT8(vgaCRReg, temp & ~0x01);
-
-    // Unlock System Register
-    VGAOUT8(vgaCRIndex, 0x38);
-    VGAOUT8(vgaCRReg,   0x48);
+    
+    UnProtectCRTC();
+    UnLockExtRegs();
 
     // FixME Gramme Setting ??
 
@@ -214,27 +221,41 @@ area_id SavageDriver::Open( void )
     VGAOUT8(vgaCRIndex, 0x36);
     config1 = VGAIN8(vgaCRReg);
 
+    UnLockExtRegs();
+
     {
       static unsigned char RamSavageMX[] = {2, 8, 4, 16, 8, 16, 4, 16};
 
       sCardInfo.theMem = RamSavageMX[(config1 & 0x0E) >> 1] * 1024;
       dbprintf("Savage VGA Card Memory Size : %d\n", sCardInfo.theMem);
 
-      sCardInfo.cobSize  = 1 << 17;
+      endfb = sCardInfo.theMem * 1024 - 0x20000 - 1;
+
+      sCardInfo.cobSize  = 0x20000;
       sCardInfo.cobIndex = 7;
-      sCardInfo.cobOffset = sCardInfo.theMem * 1024 - sCardInfo.cobSize;
-      sCardInfo.CursorKByte = (sCardInfo.cobOffset >> 10)  - 4;
+      sCardInfo.cobOffset = endfb - sCardInfo.cobSize;
     }
 
+    /* align cob to 128k */
+    sCardInfo.cobOffset = ((endfb - sCardInfo.cobSize + 1) + 0x20000) & ~0x20000;
+    endfb = sCardInfo.cobOffset - 1;
+
+    /* The cursor must be aligned on a 4k boundary. */
+    sCardInfo.CursorKByte = (endfb >> 10) - 4;
+    endfb = (sCardInfo.CursorKByte << 10) - 1;
+
+    sCardInfo.endfb = endfb;
+    
     // Reset Engine to Avoid Memory Corruption
-    VGAOUT8(vgaCRIndex, 0x66);
-    cr66 = VGAIN8(vgaCRReg);
-    VGAOUT8(vgaCRReg, cr66 | 0x02);
+    /* reset graphics engine to avoid memory corruption */
+    OUTREG8(CRT_ADDRESS_REG, 0x66);
+    cr66 = INREG8(CRT_DATA_REG);
+    OUTREG8(CRT_DATA_REG, cr66 | 0x02);
     usleep(10000);
 
     // Clear Reset Flag
-    VGAOUT8(vgaCRIndex, 0x66);
-    VGAOUT8(vgaCRReg, cr66 & ~0x02);
+    OUTREG8(CRT_ADDRESS_REG, 0x66);
+    OUTREG8(CRT_DATA_REG, cr66 & ~0x02);	/* clear reset flag */
     usleep(10000);
 
     // Detect current mclk
@@ -296,8 +317,11 @@ area_id SavageDriver::Open( void )
 
     m_nFrameBufferSize = sCardInfo.theMem * 1024;
 
-    // VesaDriver::Open();
-  
+    /* make sure the start address has been reset to 0 */
+    OUTREG16(CRT_ADDRESS_REG, (ushort) 0X0D);
+    OUTREG16(CRT_ADDRESS_REG, (ushort) 0X0C);
+    OUTREG16(CRT_ADDRESS_REG, (ushort) 0X69);
+
     VesaDriver::Open();
 
     dbprintf("Vesa Mode Initied\n");
@@ -350,8 +374,258 @@ void SavageDriver::Initialize2DEngine( void )
   SetGBD();
 }
 
+void SavageDriver::EnableMode(uint8 bEnable) {
+
+  UnProtectCRTC();
+  UnLockExtRegs();
+  VerticalRetraceWait();
+
+  if (!bEnable) {
+    EnableMode_M7(0);
+    return;
+  }
+
+  sCardInfo.lDelta = sCardInfo.scrnWidth * (sCardInfo.scrnColors >> 3);
+
+  EnableMode_M7(1);
+}
+
+void SavageDriver::EnableMode_M7(uint8 bEnable) {
+  uint32 ulTmp;
+  uint8  byte;
+
+  if (!bEnable) {
+    /* non dual-head mode code path */
+    /* IGA 1 */
+
+    OUTREG32(PRI_STREAM_STRIDE,  0);
+    OUTREG32(PRI_STREAM2_STRIDE, 0);
+        
+    OUTREG32(PRI_STREAM_FBUF_ADDR0,  0x00000000);
+    OUTREG32(PRI_STREAM_FBUF_ADDR1,  0x00000000);
+    OUTREG32(PRI_STREAM2_FBUF_ADDR0, 0x00000000);
+    OUTREG32(PRI_STREAM2_FBUF_ADDR1, 0x00000000);
+
+    /* MM81C0 and 81C4 are used to control primary stream. */
+    OUTREG8(CRT_ADDRESS_REG, 0x67); 
+    byte =  INREG8(CRT_DATA_REG) & ~0x08;
+    OUTREG8(CRT_DATA_REG, byte);
+
+    /* IGA 2 */
+    OUTREG16(SEQ_ADDRESS_REG,SELECT_IGA2_READS_WRITES);
+        
+    OUTREG8(CRT_ADDRESS_REG,0x67); 
+    byte =  INREG8(CRT_DATA_REG) & ~0x08;
+    OUTREG8(CRT_DATA_REG,byte);
+        
+    OUTREG16(SEQ_ADDRESS_REG,SELECT_IGA1);
+
+    return;
+  }
+  
+  /* following is the enable case */
+    
+  /* disable BCI and program the COB,and then enable BCI */
+  ulTmp= INREG32(S3_OVERFLOW_BUFFER_PTR); /* 0x48c18 */
+  OUTREG32(S3_OVERFLOW_BUFFER_PTR, ulTmp & (~(ENABLE_BCI)));
+
+  /* 0x48c14
+   * Bits 0-11  = Bits 22-11 of the Command Buffer Offset.
+   * Bits 12-28 = Total number of entries in the command buffer(Read only).
+   * Bits 29-31 = COB size, 111 = 32K entries or 128K bytes
+   *              (each entry is 4 bytes).
+   */
+  OUTREG32(S3_OVERFLOW_BUFFER,  
+	   sCardInfo.cobOffset >> 11 | 0xE0000000);
+
+  ulTmp = INREG32(S3_OVERFLOW_BUFFER_PTR) & (~(ENABLE_BCI | ENABLE_COMMAND_OVERFLOW_BUF));
+    
+  /* Enable BCI, Enable  Command buffer. */
+  OUTREG32(S3_OVERFLOW_BUFFER_PTR,
+	   (ulTmp | (ENABLE_BCI | ENABLE_COMMAND_OVERFLOW_BUF)));
+
+  /* SR01:turn off screen */
+  OUTREG8 (SEQ_ADDRESS_REG,0x01);
+  byte = INREG8(SEQ_DATA_REG) | 0x20;
+  OUTREG8(SEQ_DATA_REG,byte);
+
+  /*
+     * CR67_3:
+     *  = 1  stream processor MMIO address and stride register
+     *       are used to control the primary stream
+     *  = 0  standard VGA address and stride registers
+     *       are used t control the primary streams
+     */
+  OUTREG8(CRT_ADDRESS_REG,0x67); 
+  byte =  INREG8(CRT_DATA_REG) | 0x08;
+  OUTREG8(CRT_DATA_REG,byte);
+    
+  /* IGA 2 */
+  OUTREG16(SEQ_ADDRESS_REG, SELECT_IGA2_READS_WRITES);
+
+  OUTREG8(CRT_ADDRESS_REG,0x67); 
+  byte =  INREG8(CRT_DATA_REG) | 0x08;
+  OUTREG8(CRT_DATA_REG,byte);
+             
+  OUTREG16(SEQ_ADDRESS_REG,SELECT_IGA1);
+
+  /* Set primary stream to bank 0 */
+  OUTREG8(CRT_ADDRESS_REG, MEMORY_CTRL0_REG);/* CRCA */
+  byte =  INREG8(CRT_DATA_REG) & ~(MEM_PS1 + MEM_PS2) ;
+  OUTREG8(CRT_DATA_REG, byte);
+  /*
+     * if we have 8MB of frame buffer here then we must really be a 16MB
+     * card and that means that the second device is always in the upper
+     * bank of memory (MHS)
+     */
+  // if (sCardInfo.videoRambytes >= 0x800000) {
+  /* 16MB Video Memory cursor is at the end in Bank 1 */
+  // byte |= 0x3;
+  // OUTREG16(CRT_ADDRESS_REG, (byte << 8) | MEMORY_CTRL0_REG);
+  // }
+
+  /* MM81C0 and 81C4 are used to control primary stream. */
+  OUTREG32(PRI_STREAM_FBUF_ADDR0,  0x00000000);
+  OUTREG32(PRI_STREAM_FBUF_ADDR1,  0x00000000);
+  OUTREG32(PRI_STREAM2_FBUF_ADDR0, 0x00000000);
+  OUTREG32(PRI_STREAM2_FBUF_ADDR1, 0x00000000);
+
+  /*
+   *  Program Primary Stream Stride Register.
+   *
+   *  Tell engine if tiling on or off, set primary stream stride, and
+   *  if tiling, set tiling bits/pixel and primary stream tile offset.
+   *  Note that tile offset (bits 16 - 29) must be scanline width in
+   *  bytes/128bytespertile * 256 Qwords/tile.  This is equivalent to
+   *  lDelta * 2.  Remember that if tiling, lDelta is screenwidth in
+   *  bytes padded up to an even number of tilewidths.
+   */
+  if (true) {
+    OUTREG32(PRI_STREAM_STRIDE,
+	     (((sCardInfo.lDelta * 2) << 16) & 0x3FFF0000) |
+	     (sCardInfo.lDelta & 0x00003fff));
+    OUTREG32(PRI_STREAM2_STRIDE,
+	     (((sCardInfo.lDelta * 2) << 16) & 0x3FFF0000) |
+	     (sCardInfo.lDelta & 0x00003fff));
+  } else if (sCardInfo.scrnColors == 16) {
+    /* Scanline-length-in-bytes/128-bytes-per-tile * 256 Qwords/tile */
+    OUTREG32(PRI_STREAM_STRIDE,
+	     (((sCardInfo.lDelta * 2) << 16) & 0x3FFF0000)
+	     | 0x80000000 | (sCardInfo.lDelta & 0x00003fff));
+    OUTREG32(PRI_STREAM2_STRIDE,
+	     (((sCardInfo.lDelta * 2) << 16) & 0x3FFF0000)
+	     | 0x80000000 | (sCardInfo.lDelta & 0x00003fff));
+        
+  } else if (sCardInfo.scrnColors == 32) {
+    OUTREG32(PRI_STREAM_STRIDE,
+	     (((sCardInfo.lDelta * 2) << 16) & 0x3FFF0000)
+	     | 0xC0000000 | (sCardInfo.lDelta & 0x00003fff));
+    OUTREG32(PRI_STREAM2_STRIDE,
+	     (((sCardInfo.lDelta * 2) << 16) & 0x3FFF0000)
+	     | 0xC0000000 | (sCardInfo.lDelta & 0x00003fff));
+  }
+
+  OUTREG32(0x8128, 0xFFFFFFFFL);
+  OUTREG32(0x812C, 0xFFFFFFFFL);
+
+  OUTREG32(0x816C, BCI_ENABLE | S3_LITTLE_ENDIAN | S3_BD64);
+    
+  if (false) {
+    /* CR50, bit 7,6,0 = 111, Use GBD.*/
+    OUTREG8(CRT_ADDRESS_REG,0X50);
+    byte = INREG8(CRT_DATA_REG) | 0XC1;
+    OUTREG8(CRT_DATA_REG, byte);
+  }
+
+  /*
+     * CR78, bit 3  - Block write enabled(1)/disabled(0).
+     *       bit 2  - Block write cycle time(0:2 cycles,1: 1 cycle)
+     *      Note: Block write must be disabled when writing to tiled
+     *            memory.  Even when writing to non-tiled memory, block
+     *            write should only be enabled for certain types of SGRAM.
+     */
+  OUTREG8(CRT_ADDRESS_REG,0X78);
+  /*byte = INREG8(CRT_DATA_REG) & ~0x0C;*/
+  byte = INREG8(CRT_DATA_REG) | 0xfb;
+  OUTREG8(CRT_DATA_REG,byte);
+    
+  /*
+   * Tiled Surface 0 Registers MM48C40:
+   *  bit 0~23: tile surface 0 frame buffer offset
+   *  bit 24~29:tile surface 0 width
+   *  bit 30~31:tile surface 0 bits/pixel
+   *            00: reserved
+   *            01, 8 bits
+   *            10, 16 Bits.
+   *            11, 32 Bits.
+   */
+  /*
+   * Global Bitmap Descriptor Register MM816C
+   *   bit 24~25: tile format
+   *          00: linear
+   *          01: reserved
+   *          10: 16 bit
+   *          11: 32 bit
+   *   bit 29: block write disble/enable
+   *          0: enable
+   *          1: disable
+   */
+  if (true) {
+    /*
+     *  Do not enable block_write even for non-tiling modes, because
+     *  the driver cannot determine if the memory type is the certain
+     *  type of SGRAM for which block_write can be used.
+     */
+    sCardInfo.GlobalBD.bd1.HighPart.ResBWTile = 0;/* linear */
+  }
+  else if (sCardInfo.scrnColors == 16) {
+    sCardInfo.GlobalBD.bd1.HighPart.ResBWTile = 2;/* 16 bit */
+        
+    ulTmp =  ((sCardInfo.lDelta / 2) >> 6) << 24;
+    OUTREG32(TILED_SURFACE_REGISTER_0,ulTmp | TILED_SURF_BPP16);
+  }
+  else if (sCardInfo.scrnColors == 32) {
+    sCardInfo.GlobalBD.bd1.HighPart.ResBWTile = 3;/* 32 bit */
+        
+    ulTmp =  ((sCardInfo.lDelta / 4) >> 5) << 24;        
+    OUTREG32(TILED_SURFACE_REGISTER_0,ulTmp | TILED_SURF_BPP32);
+  }
+    
+  sCardInfo.GlobalBD.bd1.HighPart.ResBWTile |= 0x10;/* disable block write */
+  /* HW uses width */
+  sCardInfo.GlobalBD.bd1.HighPart.Stride = (ushort)(sCardInfo.lDelta / (sCardInfo.scrnColors >> 3));
+  sCardInfo.GlobalBD.bd1.HighPart.Bpp = (uchar) (sCardInfo.scrnColors);
+  sCardInfo.GlobalBD.bd1.Offset = 0;    
+  
+  /*
+   * CR31, bit 0 = 0, Disable address offset bits(CR6A_6-0).
+   *       bit 0 = 1, Enable 8 Mbytes of display memory thru 64K window
+   *                  at A000:0.
+   */
+  OUTREG8(CRT_ADDRESS_REG,MEMORY_CONFIG_REG);
+  byte = INREG8(CRT_DATA_REG) & (~(ENABLE_CPUA_BASE_A0000));
+  OUTREG8(CRT_DATA_REG,byte);
+
+  /* program the GBD */
+  OUTREG32(S3_GLB_BD_LOW, sCardInfo.GlobalBD.bd2.LoPart );
+  /* 8: bci enable */
+  OUTREG32(S3_GLB_BD_HIGH,(sCardInfo.GlobalBD.bd2.HiPart
+  			   | 8 | S3_LITTLE_ENDIAN | S3_BD64));
+    
+  OUTREG32(S3_PRI_BD_LOW,sCardInfo.GlobalBD.bd2.LoPart);
+  OUTREG32(S3_PRI_BD_HIGH,sCardInfo.GlobalBD.bd2.HiPart);
+  OUTREG32(S3_SEC_BD_LOW,sCardInfo.GlobalBD.bd2.LoPart);
+  OUTREG32(S3_SEC_BD_HIGH,sCardInfo.GlobalBD.bd2.HiPart);
+    
+  /* turn on screen */
+  OUTREG8(SEQ_ADDRESS_REG,0x01);
+  byte = INREG8(SEQ_DATA_REG) & ~0X20;
+  OUTREG8(SEQ_DATA_REG,byte);
+}
+
 void SavageDriver::SetGBD( void )
 {
+  // uint8  byte;
   uint32 GlobalBitmapDescriptor;
 
   GlobalBitmapDescriptor = 1 | 8 | BCI_BD_BW_DISABLE;
@@ -383,7 +657,8 @@ void SavageDriver::SetGBD( void )
 
 int SavageDriver::SetScreenMode( os::screen_mode sMode )
 {
-  int result;
+    int result;
+    unsigned char cr67, byte;
 
     sCardInfo.crtPosH     = (int)sMode.m_vHPos;
     sCardInfo.crtSizeH    = (int)sMode.m_vHSize;
@@ -466,61 +741,60 @@ int SavageDriver::SetScreenMode( os::screen_mode sMode )
 
     result = VesaDriver::SetScreenMode(sMode);
 
-    VGAOUT16(vgaCRIndex, 0x4838);
-    VGAOUT16(vgaCRIndex, 0xA039);
-    VGAOUT16(0x3c4, 0x0608);
-    
-    /* Enable Linear Addressing */
-    VGAOUT16(vgaCRIndex, 0x1358);
+    UnLockExtRegs();
 
-    /* Disable old MMIO */
-    VGAOUT8(vgaCRIndex, 0x53);
-    VGAOUT8(vgaCRReg, VGAIN8(vgaCRReg) & ~0x10);
+    /*
+     *  After mode set, the BIOS may have turned off linear addressing.
+     *  Be sure to re-enable it before doing any I/O!
+     */
+    OUTREG16(CRT_ADDRESS_REG, 0x1358);
 
-    /* Set Color Mode */
-    VGAOUT8(vgaCRIndex, 0x67);
+    /*  Disable old MMIO  (just a safeguard) */
+    OUTREG8(CRT_ADDRESS_REG, 0x53);
+    byte = INREG8(CRT_DATA_REG) & ~0X10;
+    OUTREG8(CRT_DATA_REG,byte);
+
+    /* Set the color mode. */
+    cr67 = 0x00;
+
     switch (sCardInfo.scrnColors) {
     case 8:
-      VGAOUT8(vgaCRReg, 0x00);
+      cr67 = 0x00;	/* 8bpp, 1 pixel/clock */
       break;
     case 15:
-      VGAOUT8(vgaCRReg, 0x30);
+      cr67 = 0x30;	/* 15bpp, 2 pixel/clock */
       break;
     case 16:
-      VGAOUT8(vgaCRReg, 0x50);
+      cr67 = 0x50;	/* 16bpp, 2 pixel/clock */
       break;
     case 24:
-      VGAOUT8(vgaCRReg, 0x70);
+      cr67 = 0x70;
       break;
     case 32:
-      VGAOUT8(vgaCRReg, 0xD0);
+      cr67 = 0xd0;
       break;
     }
 
-    /* Make sure 16-bit memory access is enabled */
-    VGAOUT16(vgaCRIndex, 0x0c31);
+    OUTREG8(CRT_ADDRESS_REG, 0x67);
+    OUTREG8(CRT_DATA_REG,cr67);
 
-    /* Enable the graphics engine */
-    VGAOUT16(vgaCRIndex, 0x0140);
+    /* Set FIFO fetch delay. */
+    OUTREG8(CRT_ADDRESS_REG, 0x85);
+    byte = (INREG8(CRT_DATA_REG) & 0XF8) | 0X03;
+    OUTREG8(CRT_DATA_REG,byte);
 
-    /* handle the pitch */
-    VGAOUT8(vgaCRIndex, 0x50);
-    VGAOUT8(vgaCRReg, VGAIN8(vgaCRReg) | 0xC1);
+    /*
+     * Make sure 16-bit memory reads/writes are enabled.
+     * CR31  bit 2 set = Enable 16-bit bus VGA  reads/writes.
+     */
+    OUTREG8(CRT_ADDRESS_REG, 0x31);
+    byte = INREG8(CRT_DATA_REG) | 0x04;
+    OUTREG8(CRT_DATA_REG,byte);
 
-    {
-      uint16 width = (sMode.m_nWidth * (sCardInfo.scrnColors / 8)) >> 3;
-      dbprintf("VGA OUT Port Width %d\n", width);
-      VGAOUT16(vgaCRIndex, ((width & 0xff)  << 8) | 0x13);
-      VGAOUT16(vgaCRIndex, ((width & 0x300) << 4) | 0x51);
-    }
+    /* Enable the graphics engine. */
+    OUTREG16(CRT_ADDRESS_REG, 0x0140);
 
-    dbprintf("Init 2D Engine\n");
-    Initialize2DEngine();
-    dbprintf("Set Global Bitmap Descriptor\n");
-    SetGBD();
-    VGAOUT16(vgaCRIndex, 0x0140);
-    dbprintf("Set Global Bitmap Descriptor\n");
-    SetGBD();
+    EnableMode(1);
 
     return result;
 }
@@ -582,23 +856,20 @@ bool SavageDriver::IntersectWithMouse( const IRect& cRect )
 
 void SavageDriver::WaitQueue( int v )
 {
-  int loop  = 0;
-  int slots = MAXFIFO - v;
+  sCardInfo.slots = MAXFIFO - v;
+  sCardInfo.loop &= STATUS_WORD0;
 
-  loop &= STATUS_WORD0;
-
-  while (((STATUS_WORD0 & 0x0000FFFF) > slots) && (loop < MAXLOOP))
-    loop++;
+  while (((STATUS_WORD0 & 0x0000FFFF) > (uint32) (sCardInfo.slots & 0x0000FFFF)) &&
+	 (sCardInfo.loop < MAXLOOP))
+    sCardInfo.loop++;
 }
 
 void SavageDriver::WaitIdle( void )
 {
-  int loop = 0;
+  sCardInfo.loop &= STATUS_WORD0;
 
-  loop &= STATUS_WORD0;
-
-  while( ((STATUS_WORD0 & 0x0008FFFF) != 0x80000) && (loop < MAXLOOP) )
-    loop++;
+  while( ((STATUS_WORD0 & 0x0008FFFF) != 0x80000) && (sCardInfo.loop < MAXLOOP) )
+    sCardInfo.loop++;
 }
 
 bool SavageDriver::DrawLine( SrvBitmap* psBitMap, const IRect& cClipRect,
@@ -611,11 +882,17 @@ bool SavageDriver::DrawLine( SrvBitmap* psBitMap, const IRect& cClipRect,
   int min, max, xp, yp, ym;
   uint32 nColor;
 
-  if ( psBitMap->m_bVideoMem && nMode == DM_COPY ) {
+  if ( psBitMap->m_bVideoMem && nMode == DM_COPY) {
     int x1 = cPnt1.x;
     int y1 = cPnt1.y;
     int x2 = cPnt2.x;
     int y2 = cPnt2.y;
+
+    /*
+    if ( DisplayDriver::ClipLine( cClipRect, &x1, &y1, &x2, &y2 ) == false ) {
+      return false;
+    }
+    */
 
     m_cGELock.Lock();
 
@@ -635,6 +912,9 @@ bool SavageDriver::DrawLine( SrvBitmap* psBitMap, const IRect& cClipRect,
     yp = (dy >= 0);
     if (!yp) dy = -dy;
 
+    if ((x2 - x1) != 0) dx += 1;
+    if ((y2 - y1) != 0) dy += 1;
+
     ym = (dy > dx);
     if (ym) {
       max = dy; min = dx;
@@ -642,21 +922,20 @@ bool SavageDriver::DrawLine( SrvBitmap* psBitMap, const IRect& cClipRect,
       max = dx; min = dy;
     }
 
-    cmd = (0x58000000 | BCI_CMD_CLIP_CURRENT |
+    cmd = (BCI_CMD_CLIP_CURRENT |
+	   BCI_CMD_RECT |
 	   BCI_CMD_RECT_XP | BCI_CMD_RECT_YP |
 	   BCI_CMD_DEST_GBD | BCI_CMD_SRC_SOLID |
-	   (0xcc << 16));
+	   (0x00CC << 16));
 
-    WaitQueue( 9 );
+    WaitQueue( 10 );
 
     BCI_SEND( BCI_CMD_NOP | BCI_CMD_CLIP_NEW );
     BCI_SEND( BCI_CLIP_TL( cClipRect.top, cClipRect.left ) );
-    BCI_SEND( BCI_CLIP_BR( cClipRect.bottom, cClipRect.right ) );
+    BCI_SEND( BCI_CLIP_BR( cClipRect.bottom + 1, cClipRect.right + 1 ) );
 
-    BCI_SEND( BCI_CMD_NOP | BCI_CMD_SEND_COLOR );
+    BCI_SEND( ( cmd & 0x00ffffff ) | BCI_CMD_LINE_LAST_PIXEL | BCI_CMD_SEND_COLOR );
     BCI_SEND( nColor );
-
-    BCI_SEND( cmd );
     BCI_SEND( BCI_LINE_X_Y( x1, y1 ) );
     BCI_SEND( BCI_LINE_STEPS( 2 * (min - max), 2 * min ) );
     BCI_SEND( BCI_LINE_MISC( max, ym, xp, yp, 2 * min - max ) );
@@ -667,6 +946,7 @@ bool SavageDriver::DrawLine( SrvBitmap* psBitMap, const IRect& cClipRect,
 
     return true;
   } else {
+    WaitIdle();
     return DisplayDriver::DrawLine( psBitMap, cClipRect, cPnt1, cPnt2, sColor, nMode );
   }
 }
@@ -689,23 +969,21 @@ bool SavageDriver::FillRect( SrvBitmap* psBitMap, const IRect& cRect, const Colo
     nColor = COL_TO_RGB16(sColor);
   }
 
-  if ( psBitMap->m_bVideoMem ) {
+  if ( psBitMap->m_bVideoMem && cRect.Width() > 1 && cRect.Height() > 1 ) {
     volatile unsigned int *bci_ptr = (unsigned int *) sCardInfo.BciMem;
     uint32 command;
 
     m_cGELock.Lock();
 
-    WaitQueue( 5 );
+    WaitQueue( 6 );
 
     command = BCI_CMD_RECT | BCI_CMD_RECT_XP | BCI_CMD_RECT_YP | BCI_CMD_DEST_GBD |
-      BCI_CMD_SRC_SOLID | (0x00CC << 16);
-
-    BCI_SEND( BCI_CMD_NOP | BCI_CMD_SEND_COLOR );
-    BCI_SEND( nColor );
+      BCI_CMD_SRC_SOLID | (0x00CC << 16) | BCI_CMD_SEND_COLOR;
 
     BCI_SEND( command );
+    BCI_SEND( nColor );
     BCI_SEND( BCI_X_Y( cRect.left, cRect.top ) );
-    BCI_SEND( BCI_W_H( cRect.Width() + 1, cRect.Height() + 1 ) );
+    BCI_SEND( BCI_W_H( cRect.Width() + 1, cRect.Height() + 1) );
 
     WaitIdle( );
 
@@ -713,6 +991,7 @@ bool SavageDriver::FillRect( SrvBitmap* psBitMap, const IRect& cRect, const Colo
 
     return true;
   } else {
+    WaitIdle();
     return( DisplayDriver::FillRect( psBitMap, cRect, sColor ) );
   }
 }
@@ -729,7 +1008,8 @@ bool SavageDriver::BltBitmap(SrvBitmap* dstbm, SrvBitmap* srcbm, IRect cSrcRect,
 {
   if (dstbm->m_bVideoMem == false || srcbm->m_bVideoMem == false || nMode != DM_COPY)
     {
-      return( VesaDriver::BltBitmap( dstbm, srcbm, cSrcRect, cDstPos, nMode ) );
+      WaitIdle();
+      return( DisplayDriver::BltBitmap( dstbm, srcbm, cSrcRect, cDstPos, nMode ) );
     }
 
   {
@@ -743,29 +1023,30 @@ bool SavageDriver::BltBitmap(SrvBitmap* dstbm, SrvBitmap* srcbm, IRect cSrcRect,
     int height = cSrcRect.Height() + 1;
 
     // Check degenerated blit (source == destination)
-    if ( x1 == x2 && y1 == y2 ) {
-      return( VesaDriver::BltBitmap( dstbm, srcbm, cSrcRect, cDstPos, nMode ) );
+    if ( x1 == x2 && y1 == y2 && (width == 0 || height == 0)) {
+      WaitIdle();
+      return( DisplayDriver::BltBitmap( dstbm, srcbm, cSrcRect, cDstPos, nMode ) );
     }
 
     m_cGELock.Lock();
 
     command = (BCI_CMD_RECT | BCI_CMD_DEST_GBD | BCI_CMD_SRC_GBD | (0x00CC << 16));
 
-    if (x2 <= x1) {
+    if (x1 > x2) {
       command |= BCI_CMD_RECT_XP;
     } else {
       x2 += (width - 1);
       x1 += (width - 1);
     }
 
-    if (y2 <= y1) {
+    if (y1 > y2) {
       command |= BCI_CMD_RECT_YP;
     } else {
       y2 += (height - 1);
       y1 += (height - 1);
     }
 
-    WaitQueue( 4 );
+    WaitQueue( 6 );
 
     BCI_SEND( command );
     BCI_SEND( BCI_X_Y( x1, y1 ) );
