@@ -20,6 +20,8 @@
 #include <gui/checkmenu.h>
 #include <util/message.h>
 
+using namespace os;
+
 Bitmap* CheckMenu::s_pcCheckBitmap = NULL;
 
 #define CHECK_W 10
@@ -128,6 +130,13 @@ uint8 nCheckData[]={
 	0xff, 0xff, 0xff, 0xff
 };
 
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
 CheckMenu::CheckMenu( const char* pzLabel, Message* pcMsg, bool bChecked=false ) :MenuItem(pzLabel, pcMsg)
 {
 	m_Highlighted = false;
@@ -147,6 +156,13 @@ CheckMenu::CheckMenu( const char* pzLabel, Message* pcMsg, bool bChecked=false )
 		memcpy( s_pcCheckBitmap->LockRaster(), nCheckData, (unsigned int) ( cCheckBitmapRect.Width() * cCheckBitmapRect.Height() * 4 ) );
 	}
 }
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
 
 CheckMenu::CheckMenu( Menu* pcMenu, Message* pcMsg, bool bChecked=false ) : MenuItem(pcMenu, pcMsg)
 {
@@ -168,10 +184,24 @@ CheckMenu::CheckMenu( Menu* pcMenu, Message* pcMsg, bool bChecked=false ) : Menu
 	}
 }
 
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
 CheckMenu::~CheckMenu()
 {
 
 }
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
 
 void CheckMenu::Draw()
 {
@@ -219,7 +249,7 @@ void CheckMenu::Draw()
 	float vCharHeight = sHeight.ascender + sHeight.descender + sHeight.line_gap;
 	float y = cFrame.top + (cFrame.Height()+1.0f) / 2 - vCharHeight / 2 + sHeight.ascender + sHeight.line_gap * 0.5f;
   
-	pcMenu->DrawString( pzLabel, Point( cFrame.left + 2, y ) );
+	pcMenu->DrawString( pzLabel, Point( cFrame.left + 16, y ) );
 
 	// If the menu is checked, draw the checkmark glyph on the right of the label
 	if ( m_IsChecked )
@@ -228,7 +258,7 @@ void CheckMenu::Draw()
 		Rect cTargetRect;
 		Rect cFrame = GetFrame();
 
-		cTargetRect = cSourceRect.Bounds() + Point( cFrame.right - (CHECK_W + 2.0f), cFrame.top + ( cFrame.Height() / 2) - 4.0f);
+		cTargetRect = cSourceRect.Bounds() + Point( cFrame.left + 2.0f, cFrame.top + ( cFrame.Height() / 2) - 5.0f);
 
 		pcMenu->SetDrawingMode( DM_OVER );
 		pcMenu->DrawBitmap( s_pcCheckBitmap, cSourceRect, cTargetRect );
@@ -236,16 +266,37 @@ void CheckMenu::Draw()
 	}
 }
 
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
 void CheckMenu::DrawContent()
 {
 
 }
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
 
 void CheckMenu::Highlight(bool bHighlight)
 {
 	m_Highlighted = bHighlight;
 	MenuItem::Highlight(bHighlight);
 }
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
 
 Point CheckMenu::GetContentSize()
 {
@@ -262,15 +313,39 @@ Point CheckMenu::GetContentSize()
 	return( Point( 0.0f, 0.0f ) );
 }
 
+/** Find out if the menu is currently selected
+ * \par Description:
+ *	Find out if a menu is checked
+ * \return
+ * true if the menu is checked, false if the menu is unchecked
+ * \sa void SetChecked(bool bChecked)
+ * \author Kristian Van Der Vliet (vanders@blueyonder.co.uk)
+ *****************************************************************************/
+
 bool CheckMenu::IsChecked()
 {
 	return(m_IsChecked);
 }
 
+/** Check or uncheck a menu
+ * \par Description:
+ *	Set a menu as checked, or uncheck a checked menu
+ * \param bChecked - True to check the menu, or false to uncheck
+ * \sa bool IsChecked( )
+ * \author Kristian Van Der Vliet (vanders@blueyonder.co.uk)
+ *****************************************************************************/
+
 void CheckMenu::SetChecked(bool bChecked)
 {
 	m_IsChecked=bChecked;
 }
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
 
 bool CheckMenu::Invoked(Message *pcMessage)
 {
