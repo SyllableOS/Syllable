@@ -1,3 +1,25 @@
+* Aug 6 2002, Kristian Van Der Vliet *
+
+Made a small amendment to du.c from fileutils-4.1; this may fix the problem with "du" showing 0 bytes for all
+files, but I havn't tested it.
+
+* Aug 6 2002, Kristian Van Der Vliet *
+
+Added sed-3.02 in apps/gnu/  Thanks goto Andrew Brown < abrown.taos@bemail.org> for porting & checking
+
+* Aug 6 2002, Kristian Van Der Vliet *
+
+Removed compile gaurds from pkgmanager.cpp
+
+* Aug 6 2002, Kristian Van Der Vliet *
+
+Moved other/keymaps/Contributors to doc/Contributors.  This will be a more general file to hold details of patch,
+driver, keymap etc. authors.
+
+* Aug 6 2002, Kristian Van Der Vliet *
+
+Added a Hungarian keymap, from Szekely Krisztian < szekelyk@different.hu >
+
 * Jul 28 2002, Kristian Van Der Vliet *
 
 Added upgrade tarball build scripts in build-tools/
@@ -72,5 +94,6 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
 
 
