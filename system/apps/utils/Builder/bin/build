@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.4.14+
+# Version 0.4.15
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -292,9 +292,11 @@ def testPackage target
 end
 
 def installPackage target
+	root = installPath target
+
 	unless
 		if target[-4..-1] == ".tgz" and exists? target  # A distribution package
-			if exists? dir = installPath(target) and not
+			if exists? root and not
 				begin
 					logHeader "Uninstalling " + shortName(target)
 					uninstallPackage target  # Double failure logging!
@@ -305,7 +307,7 @@ def installPackage target
 				action "tar -C /usr -xpzf " + target and
 				begin
 					logHeader "Registering " + target
-					action "pkgmanager -a " + dir
+					action "pkgmanager -a " + root
 				end
 			end
 		else
@@ -315,7 +317,7 @@ def installPackage target
 				if exists? dir = buildDir(target) then Dir.chdir dir end
 				action "make install"
 			else
-				if exists? root = installPath(target) and not
+				if exists? root and not
 					begin
 						logHeader "Uninstalling " + shortName(target)
 						uninstallPackage target  # Double failure logging!
@@ -365,17 +367,20 @@ def installPackage target
 					elsif links = recipe["links"] and not
 						begin
 							logHeader "Creating links"
+
 							for link in toList links
 								original, destination = link.split
 								linkPath = File.dirname destination
 								linkFile = File.basename destination
-								if linkPath[0, 1] == "/"
-									original = File.join prefix(target), original
+
+								if linkPath[0, 1] == "/"  # A link into the system
+									original = File.join prefix(target), original if original["/"]
 									linkPath = File.join @systemRoot, linkPath if @systemBuild
-								else
-									linkPath = File.join prefix(target), linkPath
+								else  # A link within the package
+									linkPath = File.join root, linkPath
 								end
-								action "cd #{linkPath} && ln -sf #{original} " + linkFile
+
+								break unless action "cd #{linkPath} && ln -sf #{original} " + linkFile
 							end
 						end
 					then
@@ -681,11 +686,11 @@ end
 # Helper functions
 
 def deleteCVSData
+	puts "\nWARNING! This will clobber your CVS repository!"
+
 	# Delete all CVS dirs
 	# (They would trigger some packages to reconfigure themselves.)
-
 	logHeader "Cleaning out CVS dirs"
-	puts "\nWARNING! This will clobber your CVS repository!"
 
 	Dir["**/CVS"].each do |dir|
 		logDetail dir
@@ -824,7 +829,7 @@ def buildDir package
 end
 
 def getProfile target  # Return the list of packages for the build target
-	if target["/"]  # A single directory
+	if target["/"]  # A single target directory
 		target[-1, 1] == "/" ? target.chop : target
 	elsif exists? file = File.join(@profilesPath, target)  # A profile
 		load file
@@ -933,7 +938,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.4.14+",
+	puts "Syllable Build System 0.4.15",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
@@ -983,6 +988,7 @@ else
 		end
 
 		if @systemBuild
+			logHeader "Temporarily replacing system headers"
 			File.delete "/ainc" if exists? "/ainc"
 			action "ln -s #{File.join @workDir, "sys/include"} /ainc"
 
@@ -1014,6 +1020,7 @@ else
 		end
 
 		if @systemBuild
+			logHeader "Restoring system headers"
 			File.delete "/ainc"
 			action "ln -s /system/include /ainc"
 		end
