@@ -1,0 +1,411 @@
+The Syllable Build System
+=========================
+
+11 October 2003
+
+Contents
+========
+
+1 Introduction
+2 How to install the build system on Syllable
+    2.1 
+    2.2 Uninstalling & upgrading the build system
+3 Getting started with the build system
+    3.1 Command line syntax
+    3.2 Modes of operation
+    3.3 Logging
+    3.4 Building a single native application
+    3.5 Building a third-party package
+        3.5.1 About build recipes
+        3.5.2 Installing the source
+            3.5.2.1 
+            3.5.2.2 Patching the source
+            3.5.2.3 Sources from a CVS repository
+        3.5.3 Building it
+    3.6 Building a single system module
+        3.6.1 
+        3.6.2 Installing the source
+        3.6.3 Building it
+    3.7 Building multiple modules
+        3.7.1 
+        3.7.2 Writing a profile
+    3.8 Building a compound package
+4 Known problems and limitations
+5 Contact information
+
+1 Introduction
+==============
+
+This documentation applies to version 0.1.1 of the build system for
+the Syllable operating system. If you encounter problems or have any
+other interesting observations, I would be interested to hear about
+them (see contact information).
+
+2 How to install the build system on Syllable
+=============================================
+
+2.1 
+----
+
+Please note that the build system is written in the Ruby language,
+hence you need to have the Ruby interpreter installed. Refer to the
+Ruby package for Syllable for instructions on installing Ruby.
+
+Now for the installation of the build system. You may have to become
+the root user to perform the following operations:
+
+    su
+
+If you received this software in a tarball package, you should have
+unpacked this file with
+
+    tar -xpz
+
+or something equivalent. The 'p' option to tar is important: it
+preserves permissions on the extracted files. Without the proper file
+permissions, the installation will be broken.
+
+Usually, however, it is best to get the build system from the
+Syllable CVS repository. This will ensure that you have the latest
+version, with the latest package definitions. The location of the
+build system in CVS is
+
+    /syllable/system/apps/utils/Builder
+
+The software is contained in the subdirectory Builder. This should be
+installed under /Applications. If you unpacked or copied it somewhere
+else, do:
+
+    mv Builder /Applications
+
+Then run:
+
+    pkgmanager -a /Applications/Builder
+
+This creates links in Syllable to enable it to find the build
+system's files.
+
+You should now be able to use the build system.
+
+2.2 Uninstalling & upgrading the build system
+---------------------------------------------
+
+If you ever want to remove the build system, follow these steps. For
+example, you should do this before you install a new version of the
+build system. Again, you may have to become root first:
+
+    su
+
+Then you should remove the links to the build system from Syllable.
+You should even do this when you want to upgrade the build system,
+because the links may have changed for the new version.
+
+    pkgmanager -r /Applications/Builder
+
+To delete the files belonging to the build system, run:
+
+    rm -r /Applications/Builder
+
+3 Getting started with the build system
+=======================================
+
+3.1 Command line syntax
+-----------------------
+
+The build system is called with one command: build. To see all
+possible uses of this command, run
+
+    build --help
+
+The various options to the build command provide a toolbox for
+building several kinds of software packages. Some of the options will
+be used more often than others. Some of them are usually not
+specified directly, but used internally by the build system.
+
+3.2 Modes of operation
+----------------------
+
+The build system can work in several different modes of operation. It
+can build a single software module or multiple modules at the same
+time, and it differentiates between building the Syllable system and
+building external applications. Which mode is used is determined by
+how and where the build command is called.
+
+A single module is built by passing the subdirectory in which the
+module resides to the build command. Multiple modules are built by
+passing the name of a profile, which is a list of software modules.
+The build command recognizes a single module by a slash ("/") in the
+directory name. This means that if you are building a module that is
+directly in your working directory, as opposed to more levels deep,
+you have to make sure to include a slash in the directory name to
+distinguish it from a profile. You can do this by making sure there
+is a slash at the end:
+
+    build example/
+
+or by including the current directory in the path:
+
+    build ./example
+
+When the build command is called from a working directory named
+"system", it assumes it is building the Syllable base system. This is
+the root directory of the Syllable directory tree in its CVS
+repository. In this mode, several functions are performed
+differently, so if you are building a separate application, make sure
+it is not from a directory named "system".
+
+3.3 Logging
+-----------
+
+Not all variations of the build command perform actual build
+operations, but those that do are logged in several forms. During
+building, only progress information and error messages are sent to
+the screen, in order to provide a better overview of the process
+(that is, stderr is sent to the screen as normal, but stdout is not).
+The rest of the output (stdout) is captured in a log file. To see the
+log of the last build operation performed, do
+
+    build log | less
+
+(It's usually quite long, so you will probably want to view it in a
+pager (less).) If you are building multiple modules, you may want to
+have a summary of the results, without all the process output:
+
+    build summary
+
+When building multiple modules, the build system doesn't stop at a
+module that won't build successfully. To see a list of only those
+modules that didn't build, do:
+
+    build failures
+
+3.4 Building a single native application
+----------------------------------------
+
+The simplest case of building a software module, as far as the build
+system is concerned, is that of a native Syllable application. The
+source code of the application should be self-contained, and should
+conform to the specifications that the build system expects from a
+native application. In this situation, the build system doesn't add
+much value to building the module "by hand" by calling "make"
+commands directly, so you may prefer that method. However, it forms
+the basis for more useful operations.
+
+You should place the source code in a subdirectory that will
+typically have the same name as the application. Suppose the root
+directory of the application is called "example". The first step in
+building it would then be
+
+    build example/
+
+Or if you placed the application directory in a subdirectory, for
+example "applications":
+
+    build applications/example/
+
+Watch the output to see exactly what operations are performed by the
+build system. It will clean the source code, configure it, and then
+try to compile it. If you want to see the standard process output as
+well, do
+
+    build log | less
+
+If the build procedure was successful, you can optionally run a suite
+of tests, if the application has one:
+
+    build test example/
+
+If all is well, you can install the application. You may have to
+become the super user to do that:
+
+    su
+
+Then run
+
+    build install example/
+
+3.5 Building a third-party package
+----------------------------------
+
+3.5.1 About build recipes
+-------------------------
+
+Building a third-party software package, i.e. software that is not
+native to Syllable but was ported to it from other systems, is much
+like building a native module. Here, the build system is starting to
+become useful. It shields you from many differences between the build
+procedures of third-party packages. In order to do that, it needs
+descriptions of these differences, that are written in the form of
+something called a recipe. The build system contains a number of
+recipes for packages that have been ported to Syllable, so if you are
+building one of these predefined packages, you don't have to worry
+about recipes. If you are trying to build a package that is not known
+by the build system, it is still possible that the default build
+procedure is able to build it. The default procedure is oriented
+towards commonly used build steps, and in particular towards the
+customary build procedures of packages from the GNU project. If the
+default procedure does not succeed in building a package, you will
+have to find a recipe for it, or write one yourself. A common case
+would be trying to build a newer version of a package that was ported
+before. In that situation, chances are that the recipe for the older
+version will work. In any case, refer to the section "Developing your
+own packages".
+
+3.5.2 Installing the source
+---------------------------
+
+3.5.2.1 
+--------
+
+You could install the source code for a third-party package manually,
+in a similar way to how you would put the source for a native module
+into place. You would probably receive the official release of a
+source package in the form of a compressed tarball, which you would
+have to unpack in the place where you want to build it. However, the
+build system can do this job for you. Just drop the source package
+into the build system in the directory
+
+    /Applications/Builder/sources
+
+When you ask the build system to build a package for which the source
+is not installed, it will look for it in this location and unpack it
+automatically. This is most useful when you regularly have to remove
+sources to clean up. As long as the source package is in the build
+system, the sources will be restored when needed.
+
+3.5.2.2 Patching the source
+---------------------------
+
+In addition to the build recipe described earlier, the description of
+a third-party package may also contain patches to the software that
+are required for Syllable. These patches will automatically be
+applied to the sources when you allow the build system to unpack the
+official source package. If you install the sources yourself,
+patching is also your own responsibility.
+
+3.5.2.3 Sources from a CVS repository
+-------------------------------------
+
+Source code from a CVS repository is treated specially. If you build
+a package that was checked out from a CVS repository, and the build
+system has a tarball for that package, it will replace the CVS source
+with the contents of that tarball. This is done because several
+third-party packages won't build successfully after having made the
+trip through CVS. Their internal build systems get confused by the
+changing of time stamps on their files.
+
+The build system recognizes a package from CVS by the presence of a
+directory named "CVS" in each subdirectory. These directories no
+longer exist after the source is replaced from a tarball. If no
+tarball is available, the build system removes each of these CVS
+directories, because some third-party packages detect them by
+themselves and get confused by them.
+
+Please take note that the removal of these CVS directories means that
+your CVS repository will be broken! Therefore, you should never build
+in your working copy of a repository, but instead in a copy that you
+will not use for subsequent CVS operations (like updating).
+
+3.5.3 Building it
+-----------------
+
+As mentioned before, building a third-party software package is much
+like building a native module. The name of the directory that
+contains the source code will typically include the version number of
+the package. The first step in building it would for example be
+
+    build example-1.2/
+
+If you want to see the standard process output, do
+
+    build log | less
+
+If the application has a test suite, you can run it:
+
+    build test example-1.2/
+
+To install the package, you may have to become the super user:
+
+    su
+
+The installion is done with
+
+    build install example-1.2/
+
+Third-party packages will be installed in the /usr directory. The
+Syllable package manager will be run to register the package with
+Syllable.
+
+The installation and registration can be undone with
+
+    build uninstall example-1.2/
+
+If you want to distribute the package to others, you can build a
+distribution package while the package is installed with
+
+    build distro example-1.2/
+
+The distribution package will be generated in your working directory.
+Take care that you are not distributing any sensitive data that the
+application may have written to its own directories while it was
+running. If you want to be certain about this, you should build the
+distribution package immediately after installing the program, before
+running it.
+
+3.6 Building a single system module
+-----------------------------------
+
+3.6.1 
+------
+
+
+
+3.6.2 Installing the source
+---------------------------
+
+
+
+3.6.3 Building it
+-----------------
+
+
+
+3.7 Building multiple modules
+-----------------------------
+
+3.7.1 
+------
+
+
+
+3.7.2 Writing a profile
+-----------------------
+
+
+
+3.8 Building a compound package
+-------------------------------
+
+
+
+4 Known problems and limitations
+================================
+
+The Syllable build system is a work in progress. It will develop with
+Syllable, so changes and improvements will be made regularly.
+Therefore, it is best to use a recent version, or at least a version
+that matches the software you are building.
+
+5 Contact information
+=====================
+
+The Syllable build system was created by Kaj de Vos. You can send me
+problem reports, fixes and the like at
+
+    builder@syllable.info
+
+The latest version of this software can be found through the download
+section of the Syllable web site, in the CVS repository:
+
+    http://syllable.sourceforge.net
+
