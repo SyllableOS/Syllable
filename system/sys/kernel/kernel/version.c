@@ -20,8 +20,8 @@
 #include "version.h"
 
 #define MAJOR	0LL
-#define MINOR	3LL
-#define SUB	9LL
+#define MINOR	4LL
+#define SUB	0LL
 
 const int64   g_nKernelVersion	= (MAJOR << 32) | (MINOR << 16) | (SUB);
 const char*   g_pzKernelName	= "kernel.so";
