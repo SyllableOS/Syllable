@@ -1,3 +1,23 @@
+* March 19 2005, Jake Hamby *
+
+Updated to Build 0010.  List of fixes:
+
+    * Added support for the remaining pty control characters:  ^U, ^W, ^R.
+	See the next ChangeLog entry for more details.
+    * Deleting characters, whether with backspace, ^U, or ^W, echos the
+	correct number of backspaces for each character on the line:  zero
+	or two for each control character depending on whether echoctl is set,
+	backspace to the last tab stop for tabs, and one backspace for all
+	other characters.
+    * Commented out two kernel printk messages:  "sbrk() Search for address"
+	and "sbrk() next address whould be 0x00000000".  Programs like gcc
+	were filling up the kernel log with these harmless messages.
+    * Changed the error code for unlink("") from EINVAL to ENOENT.  Some
+	Makefiles (for example GCC) try to [rm -f ""] which would print the
+	annoying message: "rm: cannot remove `': Invalid argument".  Changing
+	the error to "No such file or directory" causes the "-f" flag to
+	suppress the warning message.
+
 * March 17 2005, Jake Hamby *
 
 Updated to Build 0009.  Many improvements to terminal handling (ptys).  Note
