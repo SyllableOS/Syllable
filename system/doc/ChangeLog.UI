@@ -1,3 +1,8 @@
+* November 6 2004, Jake Hamby *
+
+Fix a couple of sprintf "warning: int format, different type arg" bugs in
+libsyllable "gui/icondirview.cpp" and "storage/filereference_info.cpp".
+
 * October 24 2004, Kristian Van Der Vliet *
 
 As part of a series of patches from Jake Hamby <jhamby@anobject.com> which changes the
