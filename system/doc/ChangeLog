@@ -1,3 +1,8 @@
+* Oct 3 2003, Kristian Van Der Vliet *
+
+Patch Savage driver to fix problems with 16bit modes from Hilary Cheng
+<tinyobject@yahoo.com>
+
 * Sep 30 2003, Kristian Van Der Vliet *
 
 German keymap fixes from Arno Klenke <arno_klenke@yahoo.de>
