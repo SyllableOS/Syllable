@@ -261,11 +261,11 @@ bool BitmapImage::IsValid( void ) const
 status_t BitmapImage::Load( StreamableIO * pcSource, const String & cType = "" )
 {
 	Translator *trans = NULL;
-	TranslatorFactory *factory = new TranslatorFactory;
+	TranslatorFactory *factory = TranslatorFactory::GetDefaultFactory();
 
 	assert( pcSource );
 
-	factory->LoadAll();
+	//factory->LoadAll();
 
 	try
 	{
@@ -344,6 +344,8 @@ status_t BitmapImage::Load( StreamableIO * pcSource, const String & cType = "" )
 				}
 			}
 		}
+		if( trans )
+			delete trans;
 		if( m->m_pcBitmap )
 			return 0;
 		else
@@ -375,9 +377,9 @@ status_t BitmapImage::Load( StreamableIO * pcSource, const String & cType = "" )
 status_t BitmapImage::Save( StreamableIO * pcDest, const String & cType )
 {
 	Translator *trans = NULL;
-	TranslatorFactory *factory = new TranslatorFactory;
+	TranslatorFactory *factory = TranslatorFactory::GetDefaultFactory();
 
-	factory->LoadAll();
+//	factory->LoadAll();
 
 	try
 	{
@@ -436,6 +438,9 @@ status_t BitmapImage::Save( StreamableIO * pcDest, const String & cType )
 			}
 		}
 		while( size == sizeof( buffer ) );
+		
+		if( trans )
+			delete trans;
 	}
 	catch( ... )
 	{
@@ -1324,4 +1329,3 @@ static float Filter_Mitchell( float t )
 }
 
 //-----------------------------------------------------------------------------
-
