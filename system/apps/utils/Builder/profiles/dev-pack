@@ -11,6 +11,6 @@ modules
 	programming/flex-2.5.4a
 	programming/bison-1.875
 	programming/languages/binutils-2.15
-	programming/languages/gcc-3.3.3
+	programming/languages/gcc-3.3.4
 	file/versioning/patch-2.5.4
 	file/versioning/cvs-1.12.9
