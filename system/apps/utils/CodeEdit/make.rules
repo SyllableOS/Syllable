@@ -1,28 +1,24 @@
 all:
 	@for subdir in $(SUBDIRS); do\
-		PWD=$(PWD)/$$subdir;\
-		if ! $(MAKE) -C $(PWD)/$$subdir; then exit 1; fi;\
+		PWD=$$PWD/$$subdir;\
+		if ! $(MAKE) -C $$PWD; then exit 1; fi;\
 	done
 
 dist:
 	@for subdir in $(SUBDIRS); do\
-		PWD=$(PWD)/$$subdir;\
-		if ! $(MAKE) -C $(PWD)/$$subdir dist; then exit 1; fi;\
+		PWD=$$PWD/$$subdir;\
+		if ! $(MAKE) -C $$PWD dist; then exit 1; fi;\
 	done
 
 clean:
 	@for subdir in $(SUBDIRS); do\
-		PWD=$(PWD)/$$subdir;\
-		if ! $(MAKE) -C $(PWD)/$$subdir clean; then exit 1; fi;\
+		PWD=$$PWD/$$subdir;\
+		if ! $(MAKE) -C $$PWD clean; then exit 1; fi;\
 	done
 
 astyle:
 	@for subdir in $(SUBDIRS); do\
-		PWD=$(PWD)/$$subdir;\
-		if ! $(MAKE) -C $(PWD)/$$subdir astyle; then exit 1; fi;\
+		PWD=$$PWD/$$subdir;\
+		if ! $(MAKE) -C $$PWD astyle; then exit 1; fi;\
 	done
-
-
-
-
 
