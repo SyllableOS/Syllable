@@ -19,7 +19,7 @@
 
 #include <gui/font.h>
 #include "clockview.h"
-
+#include <macros.h>
 
 ClockView::ClockView( Rect cFrame, Color32_s sColor, bool bShowSeconds, bool bDigital  ) : LayoutView( cFrame, "my_view" )
 {

@@ -186,7 +186,6 @@ bool MyApp::LoadSettings()
 
     if(settings->Load() != 0)
     {
-        cout << "must load defaults" << endl;
         LoadDefaults();
     }
     else
