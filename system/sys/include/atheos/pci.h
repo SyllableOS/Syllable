@@ -40,7 +40,9 @@ typedef struct
     uint16	nCommand;
     uint16	nStatus;
     uint8	nRevisionID;
-    uint8	nClassCode[3];
+	uint8 	nClassApi;
+	uint8	nClassBase;
+	uint8	nClassSub;
     uint8	nCacheLineSize;
     uint8	nLatencyTimer;
     uint8	nHeaderType;
@@ -78,8 +80,10 @@ typedef struct
   uint16	nVendorID;
   uint16	nDeviceID;
   uint8		nRevisionID;
-  uint8		nClassCode[3];
-  uint8		nCacheLineSize;
+	uint8 	nClassApi;
+	uint8	nClassBase;
+	uint8	nClassSub;
+   uint8		nCacheLineSize;
   uint8		nHeaderType;
 
   union

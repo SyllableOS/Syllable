@@ -245,6 +245,10 @@ static int read_pci_header( PCI_Entry_s* psInfo, int nBusNum, int nDevNum, int n
   psInfo->nCommand 	= read_pci_config( nBusNum, nDevNum, nFncNum, PCI_COMMAND, 2 );
   psInfo->nStatus 	= read_pci_config( nBusNum, nDevNum, nFncNum, PCI_STATUS, 2 );
   psInfo->nRevisionID	= read_pci_config( nBusNum, nDevNum, nFncNum, PCI_REVISION, 1 );
+
+  psInfo->nClassApi		= read_pci_config( nBusNum, nDevNum, nFncNum, PCI_CLASS_API, 1);
+  psInfo->nClassBase	= read_pci_config( nBusNum, nDevNum, nFncNum, PCI_CLASS_BASE, 1);
+  psInfo->nClassSub		= read_pci_config( nBusNum, nDevNum, nFncNum, PCI_CLASS_SUB, 1);
 	
   psInfo->nCacheLineSize= read_pci_config( nBusNum, nDevNum, nFncNum, PCI_LINE_SIZE, 1 );
   psInfo->nLatencyTimer = read_pci_config( nBusNum, nDevNum, nFncNum, PCI_LATENCY, 1 );
@@ -313,6 +317,9 @@ status_t sys_get_pci_info( PCI_Info_s* psInfo, int nIndex )
     psInfo->nCacheLineSize	= psEntry->nCacheLineSize;
     psInfo->nHeaderType		= psEntry->nHeaderType;
 
+	psInfo->nClassApi		= psEntry->nClassApi;
+	psInfo->nClassBase		= psEntry->nClassBase;
+	psInfo->nClassSub		= psEntry->nClassSub;
 	
     psInfo->u.h0.nBase0	= psEntry->u.h0.nBase0;
     psInfo->u.h0.nBase1	= psEntry->u.h0.nBase1;

@@ -12,7 +12,7 @@ CC	= gcc
 CP	= cp -f
 
 VFSOBJS := vfs.o inode.o nodemonitor.o attributes.o flock.o root.o dev.o fifo.o pty.o
-NETOBJS := core.o interface.o route.o ip.o udp.o tcp.o tcp_input.o tcp_output.o socket.o packets.o
+NETOBJS := core.o interface.o route.o ip.o udp.o tcp.o tcp_input.o tcp_output.o socket.o packets.o raw.o
 LIBOBJS := ct_flags.o ct_upper.o ct_lower.o vsprintf.o string.o qsort.o
 
 OBJS :=intel.o kernel.o dbconsole.o ksyms.o init.o fork.o syscall.o 	  		\

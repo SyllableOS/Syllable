@@ -1,3 +1,8 @@
+* Feb 16 2003, Kristian Van Der Vliet *
+
+Applied a patch by Alexander Deynichenko <thorn@fpss.ru> which splits
+the PCI class information into an API, base and sub-class.
+
 * Dec 31 2002, Kristian Van Der Vliet *
 
 Added SO_BROADCAST support to the ethernet driver and ARP layer.
