@@ -1,0 +1,351 @@
+		0.		CONTENTS
+
+		1.		WILL SYLLABLE RUN ON MY COMPUTER?
+		2.		INSTALLING SYLLABLE
+		2.1.		INSTALLING FROM THE CD
+		2.2.		INSTALLING FROM FLOPPY DISKS
+		2.2.1.			INSTALLING THE OS FILES
+		3.		CONFIGURING THE BOOTLOADER
+		3.1.		INSTALLING THE BOOTLOADER
+		3.1.1.		NOTES ON GRUB
+		4.		FIRST BOOT
+		4.1.		WHAT CAN I DO NOW?
+		4.2.		SOLVING PROBLEMS
+
+
+
+		1. WILL SYLLABLE RUN ON MY COMPUTER?
+
+Syllable is designed to run on modern Intel compatable PC's.  At a minimum,
+your machine must have at least a Pentium compatable processor and 32Mb of
+memory, but a faster processor and 128Mb of memory or more will allow
+Syllable to do more and run faster.
+
+Most common home computer motherboards, video cards and networks cards are
+supported.  Many common sound cards also work, and some USB devices are also
+supported.  For a comprehensive list of hardware which is known to work with
+Syllable, you should check the hardware compatability list on the Azaka website
+at http://azaka.nutus.com.ar  If your particular hardware is not listed there,
+it does not mean that your hardware will not work.  You can still try to
+install Syllable; the worst thing that will happen is that it simply will not
+run.
+
+
+
+		2. INSTALLING SYLLABLE
+
+You can install Syllable from a bootable CD.  You can either purchase
+a CD for $10 or burn your own CD.  Please see section 2.1 for more
+information.
+
+If for some reason you cannot boot from a CD you may be able to install
+Syllable by booting from a set of floppy disks.  Please see section 2.2
+for more information.
+
+
+
+		2.1. INSTALLING FROM THE CD
+
+Syllable is normally installed from a bootable CD which is a simple
+and painless way to install Syllable.  You can either download a disc
+image and burn a CD yourself, or you can purchase a CD for $10.
+
+A purchased CD is the same as the downloadable disc image but also includes
+the latest available applications and full sourcecode for Syllable.  If
+you purchase a CD you will be helping to support.  See
+http://syllable.sourceforge.net/modules.php?name=buy for more information.
+
+The downloadable Syllable CD image is distributed as a Gziped "ISO" image.
+Before you can burn this image to a CD you must first ungzip it.  On Linux,
+Syllable or other Unix-like systems such as MacOS X you should do this:
+
+bash$ gzip -d 0.5.3-basic.iso.gz
+
+On Windows you can use WinZip to decompress the Gzip file.
+
+Once you have decompressed the ISO disc image you must burn it to a CD
+using your preferred burning software E.g. cdrecord on Linux or Nero on
+Windows.  There are no special requirements for burning the Syllable CD
+image; it is a standard ISO9660 disc image which any disc burning software
+will be able to burn.
+
+Once you have burnt Syllable to CD you may boot your computer with it.
+The CD will start the installation scripts automatically.  Simply follow
+the instructions to install Syllable to your hard drive.
+
+Once Syllable has been installed to your hard drive you must configure the Grub 
+bootloader.  See section 3. "CONFIGURING THE BOOTLOADER"
+
+
+
+		2.2. INSTALLING FROM FLOPPY DISKS
+
+First you must write the floppy disk images to a set of three
+floppy disks. From Linux, BeOS, Syllable, and most other OS's you can do
+this with "dd" from a shell. On Windows you will need a special
+program that can write a raw disk image to a floppy. There is a
+free utility named "rawrite" that can be used to create the floppies
+under Windows.
+
+After creating the boot-floppies you should be able to boot Syllable
+and continue with the installation.
+
+If you don't already have a partition ready for the AFS filesystem you
+must first create one with the "DiskManager" tool that is included on
+the boot floppies. Just run "DiskManager &" from the shell. The
+partition editor has a fairly self-explanatory GUI where you first
+select the disk to edit and then edit the partitions either
+graphically by dragging the partition indicators or by explicitly
+typing start and end positions for each partition.
+
+Then you must get access to the archive containing the installation.
+There are several ways to do this. If possible the best way to
+achieve this is to put the base-syllable-#.#.#.tgz file on a FAT
+partition before booting Syllable and then mount that partition under
+Syllable. If you don't have a FAT partition and are not able to create
+one you must resort to floppy disks. You must then split the archive
+into files that can fit on a floppy. The simplest way to do this is
+probably to write the segments to raw floppies, but you can also make
+a FAT filesystem on the floppy and put each segment as a normal file
+inside that FS (it will be annoying to mount/copy/unmount all the
+floppies under Syllable though).
+
+To mount a FAT partition you must first make a mount-point and then
+mount the right partition. A mount-point is simply a directory and
+can be made with "mkdir". To mount the partition you must first figure
+out what the path is for that partition inside the /dev/ directory
+hierarchy and then mount it with the "mount" command.
+
+The /dev/ directory in Syllable is not flat like for example under Linux
+but hierarchical, and the disk block-devices are located under /dev/disk/.
+
+Currently the only driver available when you boot from the floppy disks
+is the BIOS disk-device so all disks are located under /dev/disk/bios/
+and are named hda, hdb, hdc, etc etc.  These disk-names are themselves
+directories that contain the actual device nodes. Under each drive you
+will find at least one node named "raw" that represent the whole disk
+and if the disk has a valid partition table you will find one node for
+each partition named "0", "1", etc etc. So to get the second partition
+on the third drive you will have to write /dev/disk/bios/hdc/1 (partition
+numbers start at 0).  The disks are listed in the order they were reported
+by the BIOS so drive 0x80 is hda, 0x81 is hdb and so on.
+
+In the following example I will assume that the base archive is
+located at /download/syllable-base-0.4.2.tgz on a FAT partition on the
+first partition (0) on the first drive (hda) and that we want to
+install the OS on the second partition (1) on the first drive (still
+hda :).
+
+
+
+		2.2.1. INSTALLING THE OS FILES
+
+First we make a mount-point for the FAT partition and mount it:
+
+bash-2.03$ mkdir dos
+bash-2.03$ mount /dev/disk/bios/hda/0 dos
+
+Then we must create and mount the native FS, be 100% sure you select
+the right partition before formatting it.  There is a couple of tools
+on the floppy that can help you find the right partition. To find an
+existing filesystem you can use "fsprobe".  "fsprobe" takes a block-device
+path as it's only parameter and will ask each filesystem driver if they
+recognise the partition and, if one of them do, it will print the FS-type,
+the volume label and some size/usage stats. The other tool is "devstat"
+that also takes a block-device path and prints the size and geometry of
+the disk/partition.  This can be useful to verify that the partition you
+are about to format is really the one you intend to format.
+
+Once you have found the partition you intend to use, you must format and
+mount it:
+
+bash-2.03$ format /dev/disk/bios/hda/1 afs MySyllablePartition
+bash-2.03$ mkdir afs
+bash-2.03$ mount /dev/disk/bios/hda/1 afs
+
+Now we are ready to unpack the base archive to install the FS:
+
+bash-2.03$ cd /afs
+bash-2.03$ tar -xvpzf /dos/download/syllable-base-0.4.2.tgz
+
+This should create an "syllable" directory containing well... Syllable and a
+"boot" directory containing the GRUB bootloader inside the /afs/
+mount-point.
+
+You must manually configure the GRUB boot loader.  See section 2 for more
+information.  To edit the GRUB config file you can use "aedit" which is a
+easy-to-use text editor included on the boot-floppies.
+
+
+		3. CONFIGURING THE BOOTLOADER
+
+The next step is to configure and install the bootloader.
+
+First you must tell GRUB where to find the kernel and the required
+disk/FS drivers to load before booting Syllable. This information is
+found in "/afs/boot/grub/menu.lst". If you have other OS's installed
+on the machine you must either configure GRUB as a boot-manager or
+install another boot-manager that can "chainload" GRUB from the AFS
+partition.
+
+The menu.lst file should look something like this to boot Syllable from
+the installation described above:
+
+     title  Syllable
+     root   (hd0,1)
+     kernel /atheos/sys/kernel.so root=/dev/disk/ide/hda/1
+     module /atheos/sys/config/kernel.cfg
+     module /atheos/sys/drivers/bus/pci
+     module /atheos/sys/drivers/fs/afs
+     module /atheos/sys/drivers/dev/disk/ata
+
+This will tell GRUB to boot partition number 2 on the first drive
+through the "root (hd0,1)" command and where to find the kernel, the
+boot block-device driver and the boot-FS driver on that partition. The
+"root=/dev/disk/ide/hda/1" string after the kernel-path is a parameter
+that is passed to the kernel and tells what partition to mount as
+/boot/ before continue to boot. The kernel can also take a number of
+other parameters (listed below) that are given in the same manner after
+the "root" param.
+
+If you install Syllable on the second partition on the first drive the
+default config-file is OK. otherwise you must edit the "root (disk,partition)
+line to fit your setup. If you want to boot other OS's with GRUB you
+must add them to the config file as well. For example to boot BeOS, or
+Windows, or most other OS's that have a bootblock you can use the
+"chainloader" command like this:
+
+     title BeOS
+     chainloader (hd0,3)+1
+
+This will add a menu entry titled BeOS that will boot the OS
+found on the fourth partition on the first disk.
+
+You can also set a timeout for when to boot the first OS in the list
+(or the default as set by the "default" command) with the "timeout"
+command:
+
+     timeout 5
+
+
+
+		3.1. INSTALLING THE BOOTLOADER
+
+When done editing the config file you must reboot the computer by
+pressing <CTRL>, <ALT>, and <DEL> simultaneously (DO NOT HIT THE RESET
+OR POWER BUTTON. THIS WILL CAUSE CACHED DATA THAT HAS NOT YET BEEN
+WRITTEN TO THE DISK TO BE LOST AND THE INSTALLATION TO BE CORRUPTED!)
+boot from the CD or first floppy disk again to install the bootloader.
+This time you should abort GRUB before it boot Syllable by hitting <ESC>
+and then hit "C" to enter the GRUB shell from which you can finish the
+install.
+
+Now you must decide whether you want to install GRUB in the MBR
+(Master Boot Record) of the first drive and use it as a boot-manager
+(or if Syllable is the only OS on the machine) or if you want to install
+it on the AFS partition only and use another bootmanager select what
+OS to boot.
+
+In either case you must tell GRUB where to find the config file and
+the second-stage loader by setting a "root" partition:
+
+root (hd0,1)
+
+If you did not install Syllable on the second partition on the first
+disk you must change the parameters accordingly.
+
+Then you must install the boot-loader with the "setup" command.
+
+To install on a MBR of the first drive run:
+
+setup (hd0)
+
+To install it on the AFS partition only run:
+
+setup (hd0,1) (again change the parameters according to your setup)
+
+Now it should be possible to boot Syllable off the native partition.
+
+
+
+		3.1.1. NOTES ON GRUB
+
+
+GRUB understands the AFS filesystem and can boot any kernel located on
+an AFS partition by changing the "kernel" line in the config file or
+by manually loading the kernel and required modules from the GRUB
+shell. There is no need to run any tools to update block-lists or
+anything like that after installing new kernels.
+
+Read the GRUB documentation <http://www.gnu.org/software/grub/grub.html>
+and use the "help" command in the GRUB shell for more information on the
+bootloader.
+
+
+
+		4. FIRST BOOT
+
+
+The first time you boot Syllable it will probe your computer to find drivers
+for your hardware.  If a driver is found which supports some piece of hardware
+the driver will be loaded automatically.
+
+When all of the drivers are available Syllable will start the graphical user
+interface.  You will see a single window in the centre of the screen with two
+input fields and a "Login" button.
+
+Before you will be able to do anything you will have to log in using a
+user-name and a password. The base-installation comes with two predefined users.
+"root"  with the password "root" is the super-user and has unrestricted access
+to the system. The other user is "guest" with the password "guest". This is a
+normal user. 
+
+It is recommended that you log in as the "root" user this first time.  Enter the
+username "root" and password "root" and click "Login" (Or press enter)  Syllable
+will then load the Desktop and Launcher.
+
+If something went wrong or Syllable failed to boot, please read section 3.2 of this
+document ("SOLVING PROBLEMS").
+
+
+
+		4.1. WHAT CAN I DO NOW?
+
+
+You should read the Welcome text, which can be found in the following locations:
+
+	On line at http://www.syllable.org/docs/latest/welcome.txt
+	On the installation CD at Documentation/welcome.txt
+	In Syllable at /atheos/Documentation/welcome.txt
+
+The Welcome file contains information on Syllable websites, mailing lists,
+software and hardware and will help you to get started with Syllable.
+
+
+
+		4.2. SOLVING PROBLEMS
+		
+
+If Syllable has failed to install or you cannot boot Syllable there are various places
+you can try for help and solutions to common problems.  Please read the Welcome file;
+see section 3.1 of this file ("WHAT CAN I DO NOW?") for more information.
+
+If there is a problem, the first thing you should do is try to narrow it down.  What
+has gone wrong?  Did the CD fail to boot?  Was Syllable unable to find your hard drive?
+Did the graphical user interface fail to start?  Collect any error messages that you see;
+these will be useful in helping to solve your problem.  Make a note of your hardware
+(Processor & motherboard type, total amount of memory, type of video card).
+
+You should then check the Frequently Asked Questions (FAQ) at
+http://www.syllable.org/modules.php?name=FAQ  These provide answers to very
+common questions concerning Syllable.  There is also a community-maintained FAQ at
+http://www.syllable-wiki.tk/ which may also answer your questions.
+
+If you are sure it is a problem with Syllable check the Forums at
+http://syllable.sourceforge.net/modules.php?name=Forums  Someone may already have
+had the same problem as you and received a solution!
+
+Finally, if none of those help, ask on the Syllable Developer mailing list.  You must
+first subscribe to this list.  See
+http://www.syllable.org/modules.php?name=Mailing_Lists for information on
+how to subscribe.

@@ -1,0 +1,210 @@
+		0.		CONTENTS
+
+		1.		WELCOME TO SYLLABLE
+		2.		SOFTWARE
+		2.1.		INSTALLING NATIVE SOFTWARE
+		2.2.		INSTALLING NON-NATIVE SOFTWARE
+		3.		THE COMMUNITY
+		3.1.		SYLLABLE.ORG
+		3.2.		MAILING LISTS
+		3.3.		AZAKA
+		3.4.		KAMIDAKE
+		3.5.		THE WIKI
+		4.		DEVELOPING FOR SYLLABLE
+
+
+
+		1. WELCOME TO SYLLABLE
+
+Thank you for installing Syllable, on the most exciting Open Source Operating
+Systems today!  Syllable has been in constant development for many years, and
+offers a compact, fast, well designed and easy to use Operating System.  Unlike
+many other Open Source Operating Systems Syllable has only one goal; to be the
+best Open Source Operating System on your desktop computer.
+
+Syllable already offers internet and multi-media capabilities and if you're
+interesting in developing software for Syllable there is a unique and exciting
+design waiting for you.
+
+Whatever you want to do, this short document is here to help you with your new
+Syllable installation and offers some pointers to further information.
+
+
+
+		2. SOFTWARE
+
+Syllable is designed as a modern desktop Operating System, and has a unique
+design which makes managing software easy.
+
+We separate software for Syllable into two category's.  Software which has been
+written for Syllable, using methods unique to Syllable, are known as "Native"
+software.  Syllable is also capable of running software which has been
+designed for more traditional UNIX style Operating Systems such as Linux, which
+is known as "Non-native" software.
+
+Because non-native software can not take advantage of the advanced features
+Syllable offers, installing such software differs from the way in which you
+install native Syllable software.  Instructions on how to install both native
+and non-native software for Syllable are described below.  You should choose
+the correct method depending on the type of software you are installing.
+
+
+
+		2.1. INSTALLING NATIVE SOFTWARE
+
+Applications which have been written for Syllable can be installed anywhere
+you wish, although the usual location is in the /Applications directory.  Most
+applications come as a single archive, which can be unpacked wherever you wish
+to install the software.  For example, if we wanted to install the ABrowse web
+browser:
+
+	$ tar -xzvpf abrowse-0.3.4.bin.1.tar.gz -C /Applications
+
+You can then add a new shortcut to the application in the Dock or Launcher, if
+you wish.
+
+Uninstalling such software is equally simple.  Just delete the application
+directory:
+
+	$ rm -r /Applications/ABrowse
+
+
+
+		2.2. INSTALLING NON-NATIVE SOFTWARE
+
+Unix or POSIX style applications usually come as a single archive which
+contains all of the files the application needs in one self contained
+distribution.  To install a package you simply open an ATerm, log in as
+the root user if you are not already, and unpack the archive with a command
+such as:
+
+	$ tar -xvpzf binutils-2.14.bin.1.tgz -C /usr/
+
+Then you must run the Syllable package manager tool to register the package
+with the system. For example, to install binutils, run:
+
+	$ pkgmanager -a /usr/binutils
+
+This will make a bunch of symbolic links in various subdirectories of
+/atheos/autolnk/ to make it possible for the system to find executables and
+other files belonging to the package.
+
+If you want to uninstall the package you must run the package manager
+again to allow Syllable to properly and cleanly update itself.  For example,
+to uninstall Binutils:
+
+	$ pkgmanager -r /usr/binutils
+
+You can then delete the actual package directory itself:
+
+	$ rm -r /usr/binutils
+
+Please note that this way of installing software should ONLY BE USED
+FOR COMMAND LINE APPLICATIONS AND APPLICATIONS THAT HAVE BEEN PORTED
+TO SYLLABLE FROM UNIX AND OTHER OS's USING A UNIX LIKE FILESYSTEM. Native
+applications should use the various mechanism available in Syllable for
+making the application "position independent" so it can be installed
+anywhere.  See section 2.1 for more information.
+
+
+
+		3. THE COMMUNITY
+
+Syllable has a lively and vibrant community which has built up around it over
+the years.  Our users and developers are friendly and helpful.  There are many
+websites which are dedicated to Syllable.  There are also several Syllable
+mailing lists, which are almost always busy and are a great way to keep in touch
+with other Syllable users and developers.
+
+
+
+		3.1. SYLLABLE.ORG
+
+		http://www.syllable.org
+
+Syllable.org is the official website for Syllable.  News and announcements are
+regularly posted.  The on line forums are lively and full of useful information and
+interesting discussions.  The official Frequently Asked Questions can be found there.
+Last but not least you can also find the latest official software downloads!
+
+
+
+		3.2. MAILING LISTS
+
+		http://lists.sourceforge.net/lists/listinfo/syllable-developer
+		http://lists.sourceforge.net/lists/listinfo/syllable-announce
+
+If there is one thing any Syllable user should do, it is subscribe to the
+Syllable-Developer mailing list!  Don't be put off by the name; you don't need to
+be a developer to join the list.  The list is busy, with an average of 20 messages
+a day, but it is interesting and informative.  If you have a problem and need an
+answer quick, the Syllable-Developer mailing list is the place to ask.  Everyone
+is friendly and helpful, so please join in!
+
+If you're just interested in new releases and important announcements concerning
+Syllable you can subscribe to the Syllable-Announce mailing list.  This list is
+read-only and is only used to announce new releases of Syllable.
+
+
+
+		3.3. AZAKA
+
+		http://azaka.nutus.com.ar
+
+Azaka is a list of hardware which is known to work (Or not!) with Syllable.  Once
+you have installed Syllable on your computer, please take a few moments to check
+if your hardware is already listed.  If you have hardware which is not listed on
+Azaka please add it to the list, wether it works, or not!  Not only will you help
+future users but the Syllable developers can also use Azaka to find popular but
+currently unsupported hardware.    
+
+
+
+		3.4. KAMIDAKE
+
+		http://kamidake.other-space.com
+
+Kamidake is one of the longest running Syllable websites.  At Kamidake you can find
+software developed for Syllable, from simple shell scripts to complete applications
+and games.  Kamidake is a "must see" website for any Syllable user!
+
+
+
+		3.5. THE WIKI
+
+		http://www.syllable-wiki.tk
+
+The Wiki is an effort to organise the thoughts of the developers and users of Syllable
+in one place.  The Wiki is used to track ideas and progress regarding Syllable.  The
+Wiki is now largely "static", but if you're interesting in where Syllable is going the
+Wiki will answer many of your questions.
+
+
+
+		4. DEVELOPING FOR SYLLABLE
+
+Syllable is still under heavy development, and there is plenty of opportunity for
+anybody who is interesting in developing software for Syllable or working on
+Syllable itself.
+
+Syllable is a POSIX complaint Operating System, with large parts of POSIX 1, 2 and
+4 available.  Above the POSIX layer Syllable has a unique set of C++ API's which
+provide utility classes, a Graphical User Interface, high level I/O and networking
+components which can all take advantage of the advanced design of Syllable.
+
+The development toolchain is based on the usual GNU tools such as Binutils, GCC 3
+and Make.  Several editors and IDE's are available for Syllable, which can be found
+on Syllable software websites such as Kamidake (See section 3.4 for more information)
+
+Many POSIX, UNIX and Linux command-line applications can be easily ported to Syllable,
+but Syllable does not use X nor any X toolkits.  Porting graphical applications from
+other platforms requires a native Syllable GUI to be written.
+
+The majority of the Syllable kernel and POSIX systems are licensed under the GNU
+General Public Licence.  The Syllable C++ libraries are licenced under the GNU Lesser
+General Public License.
+
+If you're interested in developing with Syllable you should join the Syllable-Developer
+mailing list (See section 3.2).  The source code for Syllable is available via.
+anonymous CVS at anonymous:pserver@cvs.syllable.sourceforge.net/cvsroot/syllable  You
+can also browse the CVS repository at http://cvs.sourceforge.net/viewcvs.py/syllable/
