@@ -87,18 +87,3 @@ diff -ruN binutils-2.10/ld/configure.tgt ../AtheOS/ports/src/binutils/ld/configu
  i[3456]86-*-bsd)	targ_emul=i386bsd ;;
  i[3456]86-*-bsd386)	targ_emul=i386bsd ;;
  i[3456]86-*-bsdi*)	targ_emul=i386bsd ;;
-diff -ruN binutils-2.10/ld/emulparams/elf_i386_atheos.sh ../AtheOS/ports/src/binutils/ld/emulparams/elf_i386_atheos.sh
---- binutils-2.10/ld/emulparams/elf_i386_atheos.sh	1970-01-01 00:00:01.000000000 +0000
-+++ ../AtheOS/ports/src/binutils/ld/emulparams/elf_i386_atheos.sh	2000-10-25 17:14:27.000000000 +0000
-@@ -0,0 +1,11 @@
-+SCRIPT_NAME=elf
-+OUTPUT_FORMAT="elf32-i386"
-+TEXT_START_ADDR=0x80000000
-+SHLIB_TEXT_START_ADDR=0x80000000
-+MAXPAGESIZE=0x1000
-+NONPAGED_TEXT_START_ADDR=0x80000000
-+ARCH=i386
-+MACHINE=
-+NOP=0x9090
-+TEMPLATE_NAME=elf32
-+GENERATE_SHLIB_SCRIPT=yes
