@@ -1,7 +1,6 @@
 ; The Bootstrap Bundle
 
 modules
-	programming/gettext-0.13.1
 	programming/languages/nasm-0.98.38
 ;	programming/languages/ruby-1.8.1
 	programming/libraries/freetype-2.1.9

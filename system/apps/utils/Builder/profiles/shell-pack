@@ -1,6 +1,7 @@
 ; Shell Essentials
 
 modules
+	system/gettext-0.14.1
 	system/libraries/slang-1.4.9
 	shell/which-2.16
 	file/file-4.07
