@@ -169,7 +169,7 @@ static void load_logical( PartitionList_t* pcList, MountMap_t* pcMountMap, const
 		    "The extended partition contain more\n"
 		    "than one logical partitions\n"
 		    "Editing the partition table might cause\n"
-		    "loss of one or more logical partitions.\n",Alert::ALERT_INFO 0,
+		    "loss of one or more logical partitions.\n",Alert::ALERT_INFO, 0,
 		    "Ok", NULL ))->Go();
 	return;
     }

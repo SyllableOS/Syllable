@@ -4,7 +4,7 @@ INSTDIR	= /Applications/Locator
 
 OBJS1	= objs/Locator.o objs/search_thread.o objs/locator_window.o objs/image_button.o objs/util.o
 OBJS2	= objs/create_db.o objs/util.o
-OBJS3	= objs/locator.o objs/search_thread.o objs/util.o
+OBJS3	= objs/Locator.o objs/search_thread.o objs/locator_window.o objs/image_button.o objs/util.o
 EXE1	= bin/Locator
 EXE2	= bin/create_db
 EXE3	= bin/locate
@@ -13,7 +13,7 @@ CC	= g++
 LL	= g++
 
 
-all	: $(EXE1) $(EXE2) $(EXE3)
+all	: dirs $(EXE1) $(EXE2) $(EXE3)
 
 $(EXE1) : $(OBJS1)
 	$(LL) $(OBJS1) -latheos -lstdc++ -lm -o $@
@@ -26,9 +26,25 @@ $(EXE2) : $(OBJS2)
 $(EXE3) : $(OBJS3)
 	$(LL) $(OBJS3) -latheos -lstdc++ -lm -o $@
 
+dirs:
+	-mkdir objs bin
 
 clean:
-	rm -rf bin/ objs/
+	rm -rf bin/* objs/*
+
+install: $(EXE1) $(EXE2) $(EXE3)
+	
+	-strip --strip-all $(EXE1) $(EXE2) $(EXE3)
+	-mkdir $(INSTDIR)
+	-mkdir $(INSTDIR)/data
+	-mkdir $(INSTDIR)/bin
+	-mkdir $(INSTDIR)/icons
+	cp -f $(EXE1) $(INSTDIR)/bin
+	cp -f $(EXE2) $(INSTDIR)/bin
+	cp -f $(EXE3) $(INSTDIR)/bin
+	cp -f icons/* $(INSTDIR)/icons
+	cp -f README $(INSTDIR)
+	cp -f COPYING $(INSTDIR)
 
 dist: $(EXE1) $(EXE2) $(EXE3)
 	
@@ -57,8 +73,8 @@ objs/locator_window.o: src/locator_window.cpp src/locator.h src/locator_window.h
 objs/search_thread.o: src/search_thread.cpp src/locator.h
 	$(CC) src/search_thread.cpp $(COPTS) -o objs/search_thread.o
 
-objs/locator.o: src/locator.cpp src/locator.h
-	$(CC) src/locator.cpp $(COPTS) -o objs/locator.o
+objs/locator.o: src/Locator.cpp src/locator.h
+	$(CC) src/Locator.cpp $(COPTS) -o objs/Locator.o
 
 objs/create_db.o: src/create_db.cpp src/locator.h
 	$(CC) src/create_db.cpp $(COPTS) -o objs/create_db.o

@@ -34,12 +34,20 @@ class ClockView : public LayoutView
     int m_nHour, m_nMin, m_nSec;                // Previous time shown.
     bool m_bShowSec;                            // Whether to show seconds moving.
     bool m_bShowDigital;                        // Whether to use the digital or the analog view.
+    Color32_s sBackColor;
   public:
-    ClockView( Rect cFrame );
+    ClockView( Rect cFrame, Color32_s, bool, bool );
     ~ClockView()  { }
     void Paint( const Rect& cUpdateRect );
     void TimerTick( int nID );                  // virtual.
     void FrameSized( const Point& cDelta );     // virtual.
     void showSeconds( bool bShowing );
     void showDigital( bool bShowing );
+    void SetBackColor(Color32_s);
+    Color32_s GetBackColor();
+    bool GetDigital();
+	bool GetShowSeconds();
+
 };
+
+
