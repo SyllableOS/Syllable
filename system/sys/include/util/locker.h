@@ -49,7 +49,7 @@ public:
     {
 	if ( !bRecursive ) bRecursive = false;
 	m_hSema = create_semaphore( pzName, 0, /*(bRecursive) ? SEM_RECURSIVE :*/ 0 );
-	m_nLock = 0;
+	atomic_set( &m_nLock, 0 );
 	m_nNestCount = 0;
 	  // FIXME: Check for errors.
 	m_bInterruptible = bInterruptible;
@@ -67,7 +67,7 @@ private:
     bool      m_bInterruptible;
     sem_id    m_hSema;
     mutable thread_id m_nOwner;
-    mutable int	      m_nLock;
+    mutable atomic_t  m_nLock;
     mutable int	      m_nNestCount;
 };
 
@@ -97,7 +97,7 @@ int Locker::Lock() const
 	m_nNestCount++;
 	nError = 0;
     } else {
-	if ( atomic_add( &m_nLock, 1 ) > 0 ) {
+	if ( atomic_inc_and_read( &m_nLock ) > 0 ) {
 	    for (;;) {
 		nError = lock_semaphore( m_hSema );
 		if ( nError >= 0 || errno != EINTR ) {
@@ -105,7 +105,7 @@ int Locker::Lock() const
 		}
 	    }
 	    if ( nError < 0 ) {
-		atomic_add( &m_nLock, -1 );
+		atomic_dec( &m_nLock );
 	    } else {
 		m_nOwner = nMyThread;
 		m_nNestCount = 1;
@@ -128,7 +128,7 @@ int Locker::Lock( bigtime_t nTimeout ) const
 	m_nNestCount++;
 	nError = 0;
     } else {
-	if ( atomic_add( &m_nLock, 1 ) > 0 ) {
+	if ( atomic_inc_and_read( &m_nLock ) > 0 ) {
 	    for (;;) {
 		nError = lock_semaphore_x( m_hSema, 1, 0, nTimeout );
 		if ( nError >= 0 || errno != EINTR ) {
@@ -136,7 +136,7 @@ int Locker::Lock( bigtime_t nTimeout ) const
 		}
 	    }
 	    if ( nError < 0 ) {
-		atomic_add( &m_nLock, -1 );
+		atomic_dec( &m_nLock );
 	    } else {
 		m_nOwner = nMyThread;
 		m_nNestCount = 1;
@@ -164,7 +164,7 @@ int Locker::Unlock() const
 	m_nOwner = -1;
 	m_nNestCount = 0;
     
-	if ( atomic_add( &m_nLock, -1 ) > 1 ) {
+	if ( !atomic_dec_and_test( &m_nLock ) ) {
 	    nError = unlock_semaphore( m_hSema );
 	} else {
 	    nError = 0;

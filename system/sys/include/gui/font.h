@@ -318,7 +318,7 @@ private:
     void _CommonInit();
     status_t _SetProperties( float vSize, float vShear, float vRotation, uint32 nFlags );
 
-    int		 m_nRefCount;
+    atomic_t	 m_nRefCount;
     bool	 m_bIsValid;
 
     port_id	 m_hReplyPort;
