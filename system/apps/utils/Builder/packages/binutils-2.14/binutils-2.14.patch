@@ -1,0 +1,147 @@
+diff -NBaur binutils-2.14-orig/bfd/config.bfd binutils-2.14/bfd/config.bfd
+--- binutils-2.14-orig/bfd/config.bfd	Mon Jun  2 20:35:21 2003
++++ binutils-2.14/bfd/config.bfd	Sun Nov 30 11:51:49 2003
+@@ -518,6 +518,9 @@
+     targ_defvec=bfd_elf32_i386_vec
+     targ_selvecs="i386pe_vec i386pei_vec"
+     ;;
++  i[3456]86-*-syllable*)
++    targ_defvec=bfd_elf32_i386_vec
++    ;;
+   i[3456]86-*-interix*)
+     targ_defvec=i386pei_vec
+     targ_selvecs="i386pe_vec"
+diff -NBaur binutils-2.14-orig/binutils/strings.c binutils-2.14/binutils/strings.c
+--- binutils-2.14-orig/binutils/strings.c	Mon Dec 23 10:37:35 2002
++++ binutils-2.14/binutils/strings.c	Fri Dec 12 19:52:35 2003
+@@ -97,6 +97,10 @@
+ /* The BFD section flags that identify an initialized data section.  */
+ #define DATA_FLAGS (SEC_ALLOC | SEC_LOAD | SEC_HAS_CONTENTS)
+ 
++#if defined __ATHEOS__ || defined __SYLLABLE__
++typedef off_t file_off;
++#define file_open(s,m) fopen(s, m)
++#else
+ #ifdef HAVE_FOPEN64
+ typedef off64_t file_off;
+ #define file_open(s,m) fopen64(s, m)
+@@ -104,6 +108,7 @@
+ typedef off_t file_off;
+ #define file_open(s,m) fopen(s, m)
+ #endif
++#endif
+ 
+ /* Radix for printing addresses (must be 8, 10 or 16).  */
+ static int address_radix;
+diff -NBaur binutils-2.14-orig/gas/configure binutils-2.14/gas/configure
+--- binutils-2.14-orig/gas/configure	Mon Jun  2 20:35:24 2003
++++ binutils-2.14/gas/configure	Sun Nov 30 11:51:49 2003
+@@ -2453,6 +2453,7 @@
+       i386-sequent-bsd*)		fmt=aout em=dynix ;;
+       i386-*-beospe*)			fmt=coff em=pe ;;
+       i386-*-beos*)			fmt=elf ;;
++      i386-*-syllable* ) fmt=elf bfd_gas=yes ;;
+       i386-*-coff)			fmt=coff ;;
+       i386-*-elf)			fmt=elf ;;
+       i386-*-kaos*)			fmt=elf ;;
+diff -NBaur binutils-2.14-orig/ld/Makefile.am binutils-2.14/ld/Makefile.am
+--- binutils-2.14-orig/ld/Makefile.am	Thu Apr 24 12:36:08 2003
++++ binutils-2.14/ld/Makefile.am	Thu Dec  4 20:26:19 2003
+@@ -185,6 +185,8 @@
+ 	eelf32xstormy16.o \
+ 	eelf32xtensa.o \
+ 	eelf_i386.o \
++	eelf_i386_atheos.o \
++	eelf_i386_syllable.o \
+ 	eelf_i386_be.o \
+ 	eelf_i386_chaos.o \
+ 	eelf_i386_fbsd.o \
+@@ -797,6 +799,12 @@
+ eelf_i386_be.c: $(srcdir)/emulparams/elf_i386_be.sh \
+   $(srcdir)/emultempl/elf32.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
+ 	${GENSCRIPTS} elf_i386_be "$(tdir_elf_i386_be)"
++eelf_i386_atheos.c: $(srcdir)/emulparams/elf_i386_atheos.sh \
++  $(srcdir)/emultempl/elf32.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
++	${GENSCRIPTS} elf_i386_atheos "$(tdir_elf_i386_atheos)"
++eelf_i386_syllable.c: $(srcdir)/emulparams/elf_i386_syllable.sh \
++  $(srcdir)/emultempl/elf32.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
++	${GENSCRIPTS} elf_i386_syllable "$(tdir_elf_i386_syllable)"
+ eelf_i386_chaos.c: $(srcdir)/emulparams/elf_i386_chaos.sh \
+   $(srcdir)/emultempl/elf32.em $(srcdir)/scripttempl/elf_chaos.sc ${GEN_DEPENDS}
+ 	${GENSCRIPTS} elf_i386_chaos "$(tdir_elf_i386_chaos)"
+diff -NBaur binutils-2.14-orig/ld/Makefile.in binutils-2.14/ld/Makefile.in
+--- binutils-2.14-orig/ld/Makefile.in	Thu Apr 24 12:36:08 2003
++++ binutils-2.14/ld/Makefile.in	Thu Dec  4 20:25:47 2003
+@@ -299,6 +299,8 @@
+ 	eelf32xstormy16.o \
+ 	eelf32xtensa.o \
+ 	eelf_i386.o \
++	eelf_i386_atheos.o \
++	eelf_i386_syllable.o \
+ 	eelf_i386_be.o \
+ 	eelf_i386_chaos.o \
+ 	eelf_i386_fbsd.o \
+@@ -1520,6 +1522,12 @@
+   $(srcdir)/emulparams/elf_x86_64.sh \
+   $(srcdir)/emultempl/elf32.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
+ 	${GENSCRIPTS} elf_x86_64_fbsd "$(tdir_elf_x86_64_fbsd)"
++eelf_i386_atheos.c: $(srcdir)/emulparams/elf_i386_atheos.sh \
++  $(srcdir)/emultempl/elf32.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
++	${GENSCRIPTS} elf_i386_atheos "$(tdir_elf_i386_atheos)"
++eelf_i386_syllable.c: $(srcdir)/emulparams/elf_i386_syllable.sh \
++  $(srcdir)/emultempl/elf32.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
++	${GENSCRIPTS} elf_i386_syllable "$(tdir_elf_i386_syllable)"
+ eelf_i386_be.c: $(srcdir)/emulparams/elf_i386_be.sh \
+   $(srcdir)/emultempl/elf32.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
+ 	${GENSCRIPTS} elf_i386_be "$(tdir_elf_i386_be)"
+diff -NBaur binutils-2.14-orig/ld/configure.tgt binutils-2.14/ld/configure.tgt
+--- binutils-2.14-orig/ld/configure.tgt	Thu Jun 12 14:25:53 2003
++++ binutils-2.14/ld/configure.tgt	Thu Dec  4 20:20:47 2003
+@@ -218,6 +218,7 @@
+  			targ_extra_ofiles="deffilep.o pe-dll.o" ;;
+ i[3456]86-*-beospe*)    targ_emul=i386beos ;;
+ i[3456]86-*-beos*)	targ_emul=elf_i386_be ;;
++i[3456]86-*-syllable*)	targ_emul=elf_i386_syllable; targ_extra_emuls=elf_i386_atheos ;;
+ i[3456]86-*-vxworks*)	targ_emul=i386aout ;;
+ i[3456]86-*-chaos)	targ_emul=elf_i386_chaos ;;
+ m8*-*-*)		targ_emul=m88kbcs ;;
+diff -NBaur binutils-2.14-orig/ld/emulparams/elf_i386_atheos.sh binutils-2.14/ld/emulparams/elf_i386_atheos.sh
+--- binutils-2.14-orig/ld/emulparams/elf_i386_atheos.sh	Thu Jan  1 00:00:01 1970
++++ binutils-2.14/ld/emulparams/elf_i386_atheos.sh	Tue Dec  2 18:38:07 2003
+@@ -0,0 +1,16 @@
++SCRIPT_NAME=elf
++OUTPUT_FORMAT="elf32-i386"
++TEXT_START_ADDR=0x08000000
++MAXPAGESIZE=0x1000
++COMMONPAGESIZE=0x1000
++TEXT_START_ADDR=0x80000000
++SHLIB_TEXT_START_ADDR=0x80000000
++NONPAGED_TEXT_START_ADDR=0x80000000
++ARCH=i386
++MACHINE=
++NOP=0x90909090
++TEMPLATE_NAME=elf32
++GENERATE_SHLIB_SCRIPT=yes
++NO_SMALL_DATA=yes
++
++
+diff -NBaur binutils-2.14-orig/ld/emulparams/elf_i386_syllable.sh binutils-2.14/ld/emulparams/elf_i386_syllable.sh
+--- binutils-2.14-orig/ld/emulparams/elf_i386_syllable.sh	Thu Jan  1 00:00:01 1970
++++ binutils-2.14/ld/emulparams/elf_i386_syllable.sh	Thu Dec  4 19:36:26 2003
+@@ -0,0 +1,16 @@
++SCRIPT_NAME=elf
++OUTPUT_FORMAT="elf32-i386"
++TEXT_START_ADDR=0x08000000
++MAXPAGESIZE=0x1000
++COMMONPAGESIZE=0x1000
++TEXT_START_ADDR=0x80000000
++SHLIB_TEXT_START_ADDR=0x80000000
++NONPAGED_TEXT_START_ADDR=0x80000000
++ARCH=i386
++MACHINE=
++NOP=0x90909090
++TEMPLATE_NAME=elf32
++GENERATE_SHLIB_SCRIPT=yes
++NO_SMALL_DATA=yes
++
++

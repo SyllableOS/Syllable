@@ -1,0 +1,14 @@
+authors
+	Kurt Skauen
+	Kaj de Vos
+	Arno Klenke
+maintainers			Kaj de Vos
+status				testing
+licenses			GPL LGPL
+patch-config
+;configure-options	--enable-shared
+documentation		README COPYING COPYING.LIB binutils/NEWS binutils/ChangeLog binutils/MAINTAINERS
+; For OpenSSL:
+links
+	/usr/bin
+		bin/ranlib
