@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.4.10
+# Version 0.4.11
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -32,12 +32,13 @@ ENV['CXXFLAGS']	= "-march=i586 -O2 -pipe"
 #@includeVersion = true
 
 unless @systemBuild = File.basename(@workDir) == "system"
+	@systemRoot = "/"
 	@installRoot = "/usr"
 else
 	@distroRoot = File.join @workDir, "dist-root"
 #	@buildTools = File.join @workDir, "build-tools"
 
-	@installRoot = File.join(@distroRoot, "atheos/usr")
+	@installRoot = File.join @systemRoot = File.join(@distroRoot, "atheos"), "usr"
 
 	ENV['DIST_VER']  = "0.5.2+"
 	ENV['DIST_NAME'] = "base-syllable-0.5.2+.tgz"
@@ -364,7 +365,7 @@ def installPackage target
 							for link in toList links
 								original, destination = link.split
 								action destination[0, 1] == "/" ?
-									"cd #{File.join(@installRoot, File.dirname destination)} && " +
+									"cd #{File.join(@systemRoot, File.dirname destination)} && " +
 										"ln -sf #{File.join(prefix(target), original)} " + File.basename(destination) :
 									"cd #{File.join(prefix(target), File.dirname destination)} && " +
 										"ln -sf #{original} " + File.basename(destination)
@@ -925,7 +926,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.4.10",
+	puts "Syllable Build System 0.4.11",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
