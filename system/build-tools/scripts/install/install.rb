@@ -31,19 +31,19 @@ if(choice.downcase == 'i')	# choice should never be nil, but better safe than so
 	
 	if(retval)
 		# installation was successful; yield to a shell
-		2.times {system "sync"}		# make sure the data's stored before the user reboots
+		system "sync"		# make sure the data's stored before the user reboots
 		puts "Syllable has now been installed!  Press Ctrl+Alt+Del to restart your computer.\n\n"
 		$stdout.flush
 		exec "/bin/bash", "--login"
 	else
 		# installation unsuccessful for some reason
 		case retval
-			when "fifty five"
-				# a no-op to satisfy ruby1.8
-			else
-				puts "\n\nThe installation failed for an unknown reason.  Please report this to the mailing list at:\n\t<syllable-developer@lists.sourceforge.net>\n\n"
-				$stdout.flush
-				exec "/bin/bash", "--login"
+		when "fifty five"
+			# a no-op to satisfy ruby1.8
+		else
+			puts "\n\nThe installation failed for an unknown reason.  Please report this to the mailing list at:\n\t<syllable-developer@lists.sourceforge.net>\n\n"
+			$stdout.flush
+			exec "/bin/bash", "--login"
 		end
 	end
 else
@@ -52,5 +52,4 @@ else
 	$stdout.flush
 	exec "/bin/bash", "--login"
 end
-
 

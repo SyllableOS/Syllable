@@ -1,14 +1,16 @@
 #! ruby
 
-# last modified for installer version 0.1.11.6
+# 26 March 2005, Kaj de Vos
+#   Removed invalid hardcoded paths.
+# Last modified by xsdg for installer version 0.1.11.6.
 
 # HELPER FUNCTIONS
 class IO
 	# a function for getting unbuffered characters
 	def getuc(suppress_linefeed = false)
-		system "/usr/bin/stty raw"
+		system "stty raw"
 		char = self.getc.chr
-		system "/usr/bin/stty -raw"
+		system "stty -raw"
 		$defout.puts unless suppress_linefeed
 		char
 	end
@@ -16,7 +18,7 @@ class IO
 	# automatically chomp if non-nil
 	def getsc(*args)
 		str = self.gets(*args)
-		str = str.chomp.downcase unless str.nil?
+		str = str.chomp.downcase if str
 		$defout.puts
 		str
 	end
@@ -26,7 +28,7 @@ end
 def read_to_user(filename, full_path = false)
 	filename = "doc/#{filename}" unless full_path
 	
-	system "/usr/bin/clear"
-	system "/usr/bin/less", "--quit-at-eof", "--no-init", "--tilde", filename
+	system "clear"
+	system "less", "--quit-at-eof", "--no-init", "--tilde", filename
 end
 
