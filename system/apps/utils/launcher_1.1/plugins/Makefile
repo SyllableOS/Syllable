@@ -15,8 +15,12 @@ clean:
 	-rm $(OBJS) $(PLUGINS)
 
 install: all
-	-strip --strip-all *.so
-	-cp *.so $(DIST_DIR)$(INSTDIR)/plugins
+	strip --strip-all *.so
+	cp *.so $(INSTDIR)/plugins
+
+dist: all
+	strip --strip-all *.so
+	cp *.so $(DIST_DIR)$(INSTDIR)/plugins
 
 obj/gbar.o: src/gbar.cpp src/gbar.h src/blendablecolor.h
 	$(CC) src/gbar.cpp $(COPTS) -o obj/gbar.o

@@ -19,29 +19,53 @@ clean:
 	(cd plugins && $(MAKE) clean)
 	-rm $(EXE) $(LIB) $(OBJS) $(LIBOBJS) bin/LBrowser bin/AddLauncherIcon obj/LBrowser.o obj/AddLauncherIcon.o
 
-install: $(EXE) 
-	-strip --strip-all $(EXE) $(LIB) bin/AddLauncherIcon bin/LBrowser
-	-mkdir $(DISTDIR)$(INSTDIR)
-	-mkdir $(DISTDIR)$(INSTDIR)/bin
-	-mkdir $(DISTDIR)$(INSTDIR)/lib
-	-mkdir $(DISTDIR)$(INSTDIR)/include
-	-mkdir $(DISTDIR)$(INSTDIR)/plugins
-	-mkdir $(DISTDIR)$(INSTDIR)/icons
-	-mkdir $(DISTDIR)$(INSTDIR)/mime
-	cp README $(DISTDIR)$(INSTDIR)
-	cp Developers $(DISTDIR)$(INSTDIR)
-	cp COPYING $(DISTDIR)$(INSTDIR)
-	cp include/COPYING $(DISTDIR)$(INSTDIR)/include
-	cp $(EXE) $(DISTDIR)$(INSTDIR)/bin
-	cp lib/*.so $(DISTDIR)$(INSTDIR)/lib
-	cp include/launcher_plugin.h $(DISTDIR)$(INSTDIR)/include
-	cp bin/create_default_config $(DISTDIR)$(INSTDIR)/bin
-	cp bin/AddLauncherIcon $(DISTDIR)$(INSTDIR)/bin
-	cp bin/LBrowser $(DISTDIR)$(INSTDIR)/bin
-	cp default.cfg $(DIST_DIR)$(INSTDIR)/default.cfg
-	cp icons/* $(DISTDIR)$(INSTDIR)/icons/
-	cp -r mime/* $(DISTDIR)$(INSTDIR)/mime/
-	(cd plugins && $(MAKE) install )
+install: $(EXE)
+	strip --strip-all $(EXE) $(LIB) bin/AddLauncherIcon bin/LBrowser
+	mkdir $(INSTDIR)
+	mkdir $(INSTDIR)/bin
+	mkdir $(INSTDIR)/lib
+	mkdir $(INSTDIR)/include
+	mkdir $(INSTDIR)/plugins
+	mkdir $(INSTDIR)/icons
+	mkdir $(INSTDIR)/mime
+	cp README $(INSTDIR)
+	cp Developers $(INSTDIR)
+	cp COPYING (INSTDIR)
+	cp include/COPYING $(INSTDIR)/include
+	cp $(EXE) $(INSTDIR)/bin
+	cp lib/*.so $(INSTDIR)/lib
+	cp include/launcher_plugin.h $(INSTDIR)/include
+	cp bin/create_default_config $(INSTDIR)/bin
+	cp bin/AddLauncherIcon $(INSTDIR)/bin
+	cp bin/LBrowser $(INSTDIR)/bin
+	cp default.cfg $(INSTDIR)/default.cfg
+	cp icons/* $(INSTDIR)/icons/
+	cp -r mime/* $(INSTDIR)/mime/
+	(cd plugins && $(MAKE) install)
+
+dist: $(EXE)
+	strip --strip-all $(EXE) $(LIB) bin/AddLauncherIcon bin/LBrowser
+	mkdir $(DIST_DIR)/atheos$(INSTDIR)
+	mkdir $(DIST_DIR)/atheos$(INSTDIR)/bin
+	mkdir $(DIST_DIR)/atheos$(INSTDIR)/lib
+	mkdir $(DIST_DIR)/atheos$(INSTDIR)/include
+	mkdir $(DIST_DIR)/atheos$(INSTDIR)/plugins
+	mkdir $(DIST_DIR)/atheos$(INSTDIR)/icons
+	mkdir $(DIST_DIR)/atheos$(INSTDIR)/mime
+	cp README $(DIST_DIR)/atheos$(INSTDIR)
+	cp Developers $(DIST_DIR)/atheos$(INSTDIR)
+	cp COPYING $(DIST_DIR)/atheos$(INSTDIR)
+	cp include/COPYING $(DIST_DIR)/atheos$(INSTDIR)/include
+	cp $(EXE) $(DIST_DIR)/atheos$(INSTDIR)/bin
+	cp lib/*.so $(DIST_DIR)/atheos$(INSTDIR)/lib
+	cp include/launcher_plugin.h $(DIST_DIR)/atheos$(INSTDIR)/include
+	cp bin/create_default_config $(DIST_DIR)/atheos$(INSTDIR)/bin
+	cp bin/AddLauncherIcon $(DIST_DIR)/atheos$(INSTDIR)/bin
+	cp bin/LBrowser $(DIST_DIR)/atheos$(INSTDIR)/bin
+	cp default.cfg $(DIST_DIR)/atheos$(INSTDIR)/default.cfg
+	cp icons/* $(DIST_DIR)/atheos$(INSTDIR)/icons/
+	cp -r mime/* $(DIST_DIR)/atheos$(INSTDIR)/mime/
+	(cd plugins && $(MAKE) dist)
 
 
 $(LIB): $(LIBOBJS)
