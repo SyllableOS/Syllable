@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.3.3
+# Version 0.3.4
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -609,7 +609,9 @@ end
 
 def thirdParty?
 	exists? "configure" or
-		exists? File.join(@packagesPath, package = fullName(Dir.getwd), package + ".recipe")
+		shortName(Dir.getwd) == "bzip2"
+# Currently conflicts with Ffmpeg:
+#		exists? File.join(@packagesPath, package = fullName(Dir.getwd), package + ".recipe")
 end
 
 def fullName package
@@ -748,7 +750,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.3.3",
+	puts "Syllable Build System 0.3.4",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
