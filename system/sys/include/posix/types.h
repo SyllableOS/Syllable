@@ -20,28 +20,33 @@
 #ifndef __F_ATHEOS_POSIX_TYPES_H__
 #define __F_ATHEOS_POSIX_TYPES_H__
 
-#ifndef __time_t_defined
+#if !defined __time_t_defined && !defined time_t
 typedef long int time_t;
-#define __time_t_defined
+# define time_t time_t
+# define __time_t_defined
 #endif
 
-#ifndef __pid_t_defined
+#if !defined __pid_t_defined && !defined pid_t
 typedef int pid_t;
-#define __pid_t_defined
+# define pid_t pid_t
+# define __pid_t_defined
 #endif
 
-#ifndef __uid_t_defined
+#if !defined __uid_t_defined && !defined uid_t
 typedef int uid_t;
+# define uid_t uid_t
 # define __uid_t_defined
 #endif
 
-#ifndef __gid_t_defined
+#if !defined __gid_t_defined && !defined gid_t
 typedef int gid_t;
+# define gid_t gid_t
 # define __gid_t_defined
 #endif
 
-#ifndef __dev_t_defined
+#if !defined __dev_t_defined && !defined dev_t
 typedef int dev_t;
+# define dev_t dev_t
 # define __dev_t_defined
 #endif
 
