@@ -21,7 +21,7 @@
 
 #define MAJOR	0LL
 #define MINOR	4LL
-#define SUB	2LL
+#define SUB	4LL
 
 const int64   g_nKernelVersion	= (MAJOR << 32) | (MINOR << 16) | (SUB);
 const char*   g_pzKernelName	= "kernel.so";
