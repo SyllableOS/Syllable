@@ -134,7 +134,11 @@ public: // std::string proxys
     String& 	erase( size_t nPos = 0, size_t nLen = npos );
     iterator 	erase( iterator i );
     iterator 	erase( iterator cFirst, iterator cLast );
-    
+
+	String		substr( size_t nPos = 0, size_t nLen = npos ) const;
+
+    size_t		find( const String& cStr, size_t nPos = 0 ) const;
+
 private:
     std::string m_cString;
 };

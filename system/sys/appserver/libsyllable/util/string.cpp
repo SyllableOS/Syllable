@@ -430,3 +430,13 @@ String::iterator String::erase( iterator cFirst, iterator cLast )
 	return ( m_cString.erase( cFirst, cLast ) );
 }
 
+String String::substr( size_t nPos, size_t nLen ) const
+{
+	return ( m_cString.substr( nPos, nLen ) );
+}
+
+size_t	String::find( const String& cStr, size_t nPos ) const
+{
+	return ( m_cString.find( cStr, nPos ) );
+}
+
