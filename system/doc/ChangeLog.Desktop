@@ -1,21 +1,21 @@
+* July 14,      2003, Rick Caudill *
+	* Pablo removed the syllable version number from the login image. 
+	* Added DrawString() to the login view, so that you can still see the version number. 
+	* Finally fixed the login config problem. The first time you use the new desktop/dlogin, there will be a problem, but as soon as you login and log back out it will be fixed, however; if you remove /system/config/login.cfg before you install the new desktop then you won’t have a problem at all. This problem only happens if you have a config file, so Syllable 0.4.6 will not be affected. 
+	* Cleaned up the source. Boy did it ever need it!!!
+
 * June 1,       2003, Rick Caudill *
 	* Bug Fix in icon color
 	* Fix icons in sys/other/icons
-      * Bug Fix
+	* Bug Fix
 
 * May 19,       2003, Rick Caudill *
 	* Changes(There has been so many since August) *
-	
 	* Icons load almost 3 times faster.
-
 	* Fixed major bugs in the desktop.
-	
 	* Added a drive settings window.
-	
 	* Added icon background transparency.
-
 	* Added Partition information to the specfic drive dialog.
-
 	* Many! Many other changes!
    
 * August 15/16, 2002, Rick Caudill *
