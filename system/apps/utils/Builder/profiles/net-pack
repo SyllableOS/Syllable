@@ -1,6 +1,7 @@
 ; Network Necessities
 ;
-applications/network/openssh-3.7.1p2
-applications/network/wget-1.9.1
-applications/network/web/links-2.1pre14
-applications/network/irc/bitchx-1.0c19
+network/openssh-3.7.1p2
+network/wget-1.9.1
+network/im/centericq-4.9.10
+network/irc/bitchx-1.0c19
+network/web/links-2.1pre14

@@ -1,12 +1,11 @@
 ; The Bootstrap Bundle
 ;
-libraries/libjpeg-6b
-libraries/libpng-1.0.5
-libraries/libungif-4.1.0
-libraries/libogg-1.0
-libraries/libvorbis-1.0
-applications/develop/nasm-0.98.38
-applications/develop/ruby-1.6.7
-applications/gnu/gettext-0.10.35
-;applications/gnu/texinfo-4.6
-
+programming/gettext-0.10.35
+programming/languages/nasm-0.98.38
+programming/languages/ruby-1.6.7
+programming/libraries/libjpeg-6b
+programming/libraries/libpng-1.0.5
+programming/libraries/libungif-4.1.0
+programming/libraries/libogg-1.0
+programming/libraries/libvorbis-1.0
+productivity/publishing/texinfo-4.6
