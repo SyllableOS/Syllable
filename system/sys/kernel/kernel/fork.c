@@ -245,12 +245,12 @@ int do_exit( int nErrorCode )
   */
 	if ( bChildrenLeft )
 	{
-		sys_kill( 1, SIGCHLD );
+		send_signal( get_thread_by_handle( 1 ), SIGCHLD, true );
 
 /*			printk( "Send SIGCHLD to init\n" ); */
 	}
 
-	sys_kill( psThread->tr_hParent, SIGCHLD );
+	send_signal( psParentThread, SIGCHLD, true );
 	psThread->tr_nState = TS_ZOMBIE;
 	wake_up_queue( psThread->tr_psTermWaitList, nErrorCode, true );
 

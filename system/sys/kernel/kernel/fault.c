@@ -210,7 +210,7 @@ void handle_general_protection( SysCallRegs_s * psRegs, int nErrorCode )
 	print_registers( psRegs );
 	printk( "\n" );
 
-	sys_kill( psThread->tr_hThreadID, SIGSEGV );
+	send_signal( psThread, SIGSEGV, true );
 
 //	do_exit( 12 << 8 );
 }
@@ -239,7 +239,7 @@ void handle_divide_exception( SysCallRegs_s * psRegs, int nErrorCode )
 //  printk( "Areas :\n" );
 //  list_areas( CURRENT_PROC->tc_psMemSeg );
 
-	sys_kill( psThread->tr_hThreadID, SIGFPE );
+	send_signal( psThread, SIGFPE, true );
 
 //	do_exit( 12 << 8 );
 }
@@ -262,7 +262,7 @@ void handle_fpu_exception( SysCallRegs_s * psRegs, int nErrorCode )
 //  printk( "Areas :\n" );
 //  list_areas( CURRENT_PROC->tc_psMemSeg );
 
-	sys_kill( psThread->tr_hThreadID, SIGFPE );
+	send_signal( psThread, SIGFPE, true );
 
 //	do_exit( 12 << 8 );
 }
@@ -322,7 +322,7 @@ void handle_sse_exception( SysCallRegs_s * psRegs, int nErrorCode )
 //  printk( "Areas :\n" );
 //  list_areas( CURRENT_PROC->tc_psMemSeg );
 
-	sys_kill( psThread->tr_hThreadID, SIGFPE );
+	send_signal( psThread, SIGFPE, true );
 
 //	do_exit( 12 << 8 );
 }
@@ -345,7 +345,7 @@ void handle_illegal_inst_exception( SysCallRegs_s * psRegs, int nErrorCode )
 //	printk( "Areas :\n" );
 //	list_areas( CURRENT_PROC->tc_psMemSeg );
 
-	sys_kill( psThread->tr_hThreadID, SIGILL );
+	send_signal( psThread, SIGILL, true );
 
 //	do_exit( 12 << 8 );
 }
@@ -396,7 +396,7 @@ void ExceptionHand( SysCallRegs_s * psRegs, int nException, int nErrorCode )
 
 	if ( CURRENT_THREAD != NULL )
 	{
-		sys_kill( CURRENT_THREAD->tr_hThreadID, SIGSEGV );
+		send_signal( CURRENT_THREAD, SIGSEGV, true );
 //		do_exit( 1 );
 	}
 	else

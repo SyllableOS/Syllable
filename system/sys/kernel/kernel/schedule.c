@@ -815,7 +815,11 @@ status_t stop_thread( bool bNotifyParent )
 
 	if ( bNotifyParent && psThread->tr_hParent != -1 )
 	{
-		sys_kill( psThread->tr_hParent, SIGCHLD );
+		Thread_s *psParentThread = get_thread_by_handle( psThread->tr_hParent );
+		if ( psParentThread != NULL )
+		{
+			send_signal( psParentThread, SIGCHLD, true );
+		}
 	}
 
 	psThread->tr_nState = TS_STOPPED;
@@ -1069,7 +1073,7 @@ pid_t sys_wait4( const pid_t hPid, int *const pnStatLoc, const int nOptions, str
 		sched_lock();
 		psChild = find_dead_child( hPid, hGroup, nOptions );
 
-		if ( psThread != NULL )
+		if ( psChild != NULL )
 		{
 			switch ( psChild->tr_nState )
 			{
@@ -1142,7 +1146,7 @@ pid_t sys_wait4( const pid_t hPid, int *const pnStatLoc, const int nOptions, str
 			return ( -EINTR );
 		}
 	}
-	printk( "Panic : sys_wait4() return void!!!\n" );
+	printk( "Panic : sys_wait4() returned void!!!\n" );
 }
 
 /*****************************************************************************

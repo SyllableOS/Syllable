@@ -357,7 +357,7 @@ int sleep_on_queue( WaitQueue_s **ppsList );
 thread_id get_next_thread( const thread_id hPrev );
 thread_id get_prev_thread( const thread_id hPrev );
 
-
+int send_signal( Thread_s *psThread, int nSigNum, bool bBypassChecks );
 
 
 #ifdef __cplusplus
