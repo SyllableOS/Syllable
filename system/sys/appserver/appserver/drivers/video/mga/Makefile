@@ -3,11 +3,12 @@ include ../freetype.makefile
 COPTS   = -I$(TOP)/src -I$(FREETYPEINCLUDE) -c -O2 -Wall -fexceptions
 
 DEVBIN = /system/drivers/appserver/video
-OBJS =	mga.o gx00_crtc.o gx00_crtc1.o
+OBJS =	mga.o mga_crtc.o
 
 OBJDIR	:= objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
 
+DRIVER := $(OBJDIR)/mga
 
 #
 #	rules
@@ -20,21 +21,22 @@ $(OBJDIR)/%.o : %.cpp
 	$(CC) $(COPTS) $< -o $@
 
 
-all :	objs $(OBJDIR)/mga_generic
+all :	objs $(DRIVER)
 
 objs:
 	mkdir objs
 
-$(OBJDIR)/mga_generic: $(OBJS)
-	g++ -plugin $(OBJS) -o $(OBJDIR)/mga_generic -latheos
+$(DRIVER): $(OBJS)
+	g++ -plugin -latheos $(OBJS) -o $(DRIVER)
 
 deps:
 
-install: $(OBJDIR)/mga_generic
-	cp -f $(OBJDIR)/mga_generic $(DEVBIN)/mga_generic
+install: $(DRIVER)
+	cp -f $(DRIVER) $(DEVBIN)/mga
 
-dist: $(OBJDIR)/mga_generic
-	cp -f $(OBJDIR)/mga_generic $(DIST_DIR)/atheos/sys/drivers/appserver/video/mga_generic
+dist: $(DRIVER)
+	cp -f $(DRIVER) $(DIST_DIR)/atheos/sys/drivers/appserver/video/
 
 clean:
-	-rm $(OBJS) $(OBJDIR)/mga_generic
+	-rm $(OBJS) $(DRIVER)
+

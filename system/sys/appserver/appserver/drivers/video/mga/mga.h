@@ -1,6 +1,7 @@
 /*
- *  The AtheOS application server
+ *  The Syllable application server
  *  Copyright (C) 1999 - 2001  Kurt Skauen
+ *  Copyright (C) 2003  Kristian Van Der Vliet
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -23,70 +24,69 @@
 #include <atheos/kernel.h>
 #include <atheos/pci.h>
 
+#include "mga_crtc.h"
+#include "mga_regs.h"
+
 #include "../../../server/vesadrv.h"
 
-class Millenium2 : public VesaDriver
+class Matrox : public VesaDriver
 {
-public:
-    Millenium2();
-    ~Millenium2();
-    virtual area_id	Open();
+	public:
+		Matrox();
+		~Matrox();
 
-    virtual int         GetScreenModeCount();
-    virtual bool        GetScreenModeDesc( int nIndex, os::screen_mode* psMode );
-    virtual int		SetScreenMode( os::screen_mode );
-    virtual os::screen_mode GetCurrentScreenMode();
+		virtual area_id Open();
 
-    virtual void	SetCursorBitmap( os::mouse_ptr_mode eMode, const os::IPoint& cHotSpot, const void* pRaster, int nWidth, int nHeight );
-    virtual void        MouseOn( void );
-    virtual void        MouseOff( void );
-    virtual void        SetMousePos( os::IPoint cNewPos );
+		virtual int GetScreenModeCount();
+		virtual bool GetScreenModeDesc( int nIndex, os::screen_mode* psMode );
+		virtual int SetScreenMode( os::screen_mode );
+		virtual os::screen_mode	GetCurrentScreenMode();
 
-    virtual bool	DrawLine( SrvBitmap* psBitMap, const os::IRect& cClipRect,
-				  const os::IPoint& cPnt1, const os::IPoint& cPnt2, const os::Color32_s& sColor, int nMode );
-  
-    virtual bool	FillRect( SrvBitmap* psBitMap, const os::IRect& cRect, const os::Color32_s& sColor );
-    virtual bool	BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap, os::IRect cSrcRect, os::IPoint cDstPos, int nMode );
+		virtual void SetCursorBitmap( os::mouse_ptr_mode eMode, const os::IPoint& cHotSpot, const void* pRaster, int nWidth, int nHeight );
+		virtual void MouseOn( void );
+		virtual void MouseOff( void );
+		virtual void SetMousePos( os::IPoint cNewPos );
 
-    bool	IsInitiated() const { return( m_bIsInitiated ); }
+		virtual bool DrawLine( SrvBitmap* psBitMap, const os::IRect& cClipRect, const os::IPoint& cPnt1, const os::IPoint& cPnt2, const os::Color32_s& sColor, int nMode );
+		virtual bool FillRect( SrvBitmap* psBitMap, const os::IRect& cRect, const os::Color32_s& sColor );
+		virtual bool BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap, os::IRect cSrcRect, os::IPoint cDstPos, int nMode );
 
-    virtual int		    GetFramebufferOffset() { return(0); }
+		bool IsInitiated() const { return( m_bIsInitiated ); }
+		virtual int GetFramebufferOffset() { return(0); }
 
-private:
-    inline void   outl( uint32 nAddress, uint32 nValue ) const { *((vuint32*)(m_pRegisterBase + nAddress)) = nValue; }
-    inline void   outb( uint32 nAddress, uint8 nValue ) const { *((vuint8*)(m_pRegisterBase + nAddress)) = nValue; }
-    inline uint32 inl( uint32 nAddress ) const { return( *((vuint32*)(m_pRegisterBase + nAddress)) ); }
-    inline uint8  inb( uint32 nAddress ) const { return( *((vuint8*)(m_pRegisterBase + nAddress)) ); }
+	private:
+		inline void   outl( uint32 nAddress, uint32 nValue ) const { *((vuint32*)(m_pRegisterBase + nAddress)) = nValue; }
+		inline void   outb( uint32 nAddress, uint8 nValue ) const { *((vuint8*)(m_pRegisterBase + nAddress)) = nValue; }
+		inline uint32 inl( uint32 nAddress ) const { return( *((vuint32*)(m_pRegisterBase + nAddress)) ); }
+		inline uint8  inb( uint32 nAddress ) const { return( *((vuint8*)(m_pRegisterBase + nAddress)) ); }
 
-    // Used by the gx00_* code.
-    friend class CGx00CRTC; // 
-//    uint8         ReadConfigBYTE( uint8 nReg );
-//    uint32        ReadConfigDWORD( uint8 nReg );
-    void          WriteConfigBYTE( uint8 nReg, uint8 nValue );
-    void          WriteConfigDWORD( uint8 nReg, uint32 nValue );
+		MgaCRTC *m_cCrtc;
 
-//    void        SetMouseBitmap( const uint8 *bits, int width, int height );
+		os::Locker m_cGELock;
 
-    bool	m_bIsInitiated;
-    PCI_Info_s  m_cPCIInfo;
-  
-    os::Locker      m_cGELock;
-    vuint8*     m_pRegisterBase;
-    area_id     m_hRegisterArea;
+		PCI_Info_s m_cPCIInfo;
+		struct MGAChip_s m_sChip;
 
-    // These are only valid if m_nCRTCScheme==GX00
-    vuint8*     m_pFrameBufferBase;
-    area_id     m_hFrameBufferArea;
+		bool m_bIsInitiated;
 
-    enum PointerScheme { POINTER_SPRITE, POINTER_MILLENIUM };
-    PointerScheme m_nPointerScheme;
-    os::IPoint       m_cLastMousePosition;
-    os::IPoint	 m_cCursorHotSpot;
+		vuint8 *m_pRegisterBase;
+		area_id m_hRegisterArea;
 
-    enum CRTCScheme { CRTC_VESA, CRTC_GX00 };
-    CRTCScheme  m_nCRTCScheme;
-    os::screen_mode         m_sCurrentMode;
-    std::vector<os::screen_mode> m_cScreenModeList;
+		// These are only valid if m_nCRTCScheme==GX00
+		vuint8* m_pFrameBufferBase;
+		area_id m_hFrameBufferArea;
+
+		enum CRTCScheme { CRTC_VESA, CRTC_GX00 };
+		CRTCScheme m_nCRTCScheme;
+
+		enum PointerScheme { POINTER_SPRITE, POINTER_MILLENIUM };
+		PointerScheme m_nPointerScheme;
+		os::IPoint m_cLastMousePosition;
+		os::IPoint m_cCursorHotSpot;
+
+		os::screen_mode m_sCurrentMode;
+		std::vector<os::screen_mode> m_cScreenModeList;
 };
 
 #endif // __F_MGA_MGA_H__
+
