@@ -1,3 +1,16 @@
+* Dec 31 2002, Kristian Van Der Vliet *
+
+Added SO_BROADCAST support to the ethernet driver and ARP layer.
+
+kernel/net/eth_interface.c : Always ignore gateway address if
+  the destination is 255.255.255.255
+
+kernel/net/arp.c : Always map IP address 255.255.255.255 to
+  MAC address ff:ff:ff:ff:ff:ff
+
+kernel/net/udp.c : Recognise SO_SETSOCKOPT flags SO_BROADCAST
+  and SO_REUSEPORT (Not correctly implemented, but recognised)
+
 * Dec 30 2002, Kristian Van Der Vliet *
 
 Added raw sockets (SOCK_RAW) support to the IP stack with a patch from
