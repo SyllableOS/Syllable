@@ -1,0 +1,9 @@
+authors			Kaj de Vos
+licenses		GPL
+build-recommends
+	libiconv
+	texinfo
+	tex
+patch-config	config
+;make-targets	html pdf ps
+documentation	README COPYING ABOUT-NLS NEWS ChangeLog AUTHORS
