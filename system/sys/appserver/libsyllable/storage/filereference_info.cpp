@@ -75,9 +75,9 @@ public:
 			bBlockTypeSelection = true;
 		} else {
 			if( sStat.st_size >= 1000000 )
-				sprintf( zSize, "%i Mb", sStat.st_size / 1000000 + 1 );
+				sprintf( zSize, "%i Mb", ( int )( sStat.st_size / 1000000 + 1 ) );
 			else
-				sprintf( zSize, "%i Kb", sStat.st_size / 1000 + 1 );
+				sprintf( zSize, "%i Kb", ( int )( sStat.st_size / 1000 + 1 ) );
 		}
 		
 		

@@ -1392,11 +1392,11 @@ void IconDirectoryView::HandleMessage( Message * pcMessage )
 					
 					char zSize[255];
 					if( m->m_cPath.GetPath() == "/" )
-						sprintf( zSize, "%i%% free", sInfo.fi_free_blocks * 100 / sInfo.fi_total_blocks );
+						sprintf( zSize, "%i%% free", ( int )( sInfo.fi_free_blocks * 100 / sInfo.fi_total_blocks ) );
 					else if( psStat->st_size >= 1000000 )
-						sprintf( zSize, "%i Mb", psStat->st_size / 1000000 + 1 );
+						sprintf( zSize, "%i Mb", ( int )( psStat->st_size / 1000000 + 1 ) );
 					else
-						sprintf( zSize, "%i Kb", psStat->st_size / 1000 + 1 );
+						sprintf( zSize, "%i Kb", ( int )( psStat->st_size / 1000 + 1 ) );
 					DirectoryIconData* pcData = new DirectoryIconData;
 					pcData->m_zPath = pzPath;
 					pcData->m_sStat = *psStat;
@@ -1521,11 +1521,11 @@ void IconDirectoryView::HandleMessage( Message * pcMessage )
 								
 							char zSize[255];
 							if( m->m_cPath.GetPath() == "/" )
-								sprintf( zSize, "%i%% free", sInfo.fi_free_blocks * 100 / sInfo.fi_total_blocks );
+								sprintf( zSize, "%i%% free", ( int )( sInfo.fi_free_blocks * 100 / sInfo.fi_total_blocks ) );
 							else if( nNodeSize >= 1000000 )
-								sprintf( zSize, "%i Mb", nNodeSize / 1000000 + 1 );
+								sprintf( zSize, "%i Mb", ( int )( nNodeSize / 1000000 + 1 ) );
 							else
-								sprintf( zSize, "%i Kb", nNodeSize / 1000 + 1 );
+								sprintf( zSize, "%i Kb", ( int )( nNodeSize / 1000 + 1 ) );
 							if( !S_ISDIR( sNewStat.st_mode ) )
 								SetIconString( j, 1, zSize );
 							
