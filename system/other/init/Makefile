@@ -17,7 +17,7 @@ doc:
 install-doc:
 
 dist:
-	cp -a * $(DIST_TARGET_PATH)
+	cp -a *.sh $(DIST_TARGET_PATH)
 
 clean:
 
