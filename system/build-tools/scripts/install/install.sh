@@ -1,6 +1,6 @@
 #!/bin/sh
 
-INSTALL_DIR=/boot/install
+INSTALL_DIR=/boot/Install
 
 if [ ! -e $INSTALL_DIR ]; then
   echo This script must be run from the installation CD.
@@ -27,4 +27,5 @@ echo "Syllable has now been installed!  Press Ctrl+Alt+Del to restart your compu
 aterm &
 
 exit 0
+
 
