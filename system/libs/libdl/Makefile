@@ -21,8 +21,13 @@ clean:
 
 install:
 	cp -f $(OBJDIR)/$(LIB) /system/libs/
-	ln -sf /system/libs/$(LIB) libdl.so
-	cp -f dlfcn.h /ainc/
+	ln -sf $(LIB) /system/libs/libdl.so
+	cp -f dlfcn.h /system/include/
+
+dist:
+	cp -f $(OBJDIR)/$(LIB) $(DIST_DIR)/atheos/sys/libs/
+	ln -sf $(LIB) $(DIST_DIR)/atheos/sys/libs/libdl.so
+	cp -f dlfcn.h $(DIST_DIR)/atheos/sys/include/
 
 $(OBJDIR):
 	-mkdir $(OBJDIR)
