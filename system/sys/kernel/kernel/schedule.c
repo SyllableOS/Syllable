@@ -1013,15 +1013,16 @@ pid_t sys_wait4( const pid_t hPid, int *const pnStatLoc, const int nOptions, str
 
 	sched_lock();
 
-      /*** First we verify that we has a child that can satisfy wait4()	***/
+      /*** First we verify that we have a child that can satisfy wait4() ***/
 	if ( hPid > 0 )
 	{
 		bFound = NULL != get_thread_by_handle( hPid );
 	}
 	else
 	{
+		/* Any children belonging to group -hPid, or same group as us */
 		if ( hPid < -1 || 0 == hPid )
-		{		/* Any children belonging to group -hPid, or same group as us */
+		{
 			hGroup = ( 0 == hPid ) ? psProc->pr_hPGroupID : -hPid;
 
 			FOR_EACH_THREAD( hTmpID, psTmp )
