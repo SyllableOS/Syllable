@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 1999 - 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 The Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -28,8 +29,9 @@
 
 
 #include <atheos/types.h>
-
+#include <util/string.h>
 #include <util/handler.h>
+#include <util/shortcutkey.h>
 #include <gui/guidefines.h>
 #include <gui/gfxtypes.h>
 #include <gui/region.h>
@@ -182,7 +184,7 @@ enum view_resize_flags
 class View : public Handler
 {
 public:
-    View( const Rect& cFrame, const std::string& cTitle,
+    View( const Rect& cFrame, const String& cTitle,
 	  uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP,
 	  uint32 nFlags = WID_WILL_DRAW | WID_CLEAR_BACKGROUND );
 	
@@ -246,10 +248,14 @@ public:
     ScrollBar*		GetVScrollBar() const;
     ScrollBar*		GetHScrollBar() const;
     Window*		GetWindow() const { return( (Window*)GetLooper() ); }
-    std::string		GetTitle() const;
+    String		GetTitle() const;
 
     virtual int		GetTabOrder();
     virtual void	SetTabOrder( int nOrder );
+
+	virtual const ShortcutKey& GetShortcut() const;
+	virtual void SetShortcut( const ShortcutKey& cShortcut );
+	virtual void SetShortcutFromLabel( const String& cLabel );
   
     uint32		GetQualifiers() const;
     void		GetMouse( Point* pcPosition, uint32* pnButtons );
@@ -368,16 +374,11 @@ public:
     void		DrawBitmap( const Bitmap* pcBitmap, const Rect& cSrcRect, const Rect& cDstRect );
     void		EraseRect( const Rect& cRect );
     void		DrawFrame( const Rect& cRect, uint32 nFlags );
-    void		DrawChar( int nChar )		   { char zStr[] = {nChar}; DrawString( zStr, 1 ); }
-    void		DrawChar( int nChar, const Point& cPos ) { char zStr[] = {nChar}; DrawString( zStr, 1, cPos ); }
 
-    void		DrawString( const char* pzString );
-    void		DrawString( const char* pString, int nLength );
-    void		DrawString( const std::string& cString );
-    
-    void		DrawString( const char* pzString, const Point& cPos );
-    void		DrawString( const char* pString, int nLength, const Point& cPos );
-    void		DrawString( const std::string& cString, const Point& cPos );
+    void		DrawString( const Point& cPos, const String& cString );
+    void		DrawString( const String& cString );
+    void		DrawString( const char *pzStr, int Len = -1 );
+    void		DrawText( const Rect& cPos, const String& cString, uint32 nFlags = 0 );
 
       // Font functions.
     void            	GetTruncatedStrings( const char** pazStringArray,
@@ -386,20 +387,19 @@ public:
 					     float  nWidth,
 					     char** pazResultArray ) const;
 
-    float		GetStringWidth( const char* pzString) const;
-    float		GetStringWidth( const char* pzString, int nLength ) const;
-    float		GetStringWidth( const std::string& cString ) const;
+    float		GetStringWidth( const String& cString ) const;
+    float		GetStringWidth( const char* pzString, int nLen = -1 ) const;
     void		GetStringWidths( const char** apzStringArray, const int* anLengthArray,
 					 int nStringCount, float* avWidthArray ) const;
 
-    int			GetStringLength( const char* pzString, float vWidth, bool bIncludeLast = false ) const;
-    int			GetStringLength( const char* pzString, int nLength, float vWidth, bool bIncludeLast = false ) const;
-    int			GetStringLength( const std::string& cString, float vWidth, bool bIncludeLast = false ) const;
+    Point		GetTextExtent( const String& cString, uint32 nFlags = 0 ) const;
+
+    int			GetStringLength( const String& cString, float vWidth, bool bIncludeLast = false ) const;
+    int			GetStringLength( const char* pzString, int nLen, float vWidth, bool bIncludeLast = false ) const;
     void		GetStringLengths( const char** apzStringArray, const int* anLengthArray, int nStringCount,
 					  float vWidth, int* anMaxLengthArray, bool bIncludeLast = false ) const;
 
     void		GetFontHeight( font_height* psHeight ) const;
-
   
     void		Ping( int nSize = 0 );
 private:
