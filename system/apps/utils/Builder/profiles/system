@@ -106,6 +106,7 @@ modules
 	sys/kernel/drivers/graphics/mach64
 	sys/kernel/drivers/graphics/mga
 	sys/kernel/drivers/graphics/nvidia
+	sys/kernel/drivers/graphics/radeon
 	sys/kernel/drivers/graphics/s3_savage
 	sys/kernel/drivers/graphics/s3_virge
 	sys/kernel/drivers/graphics/sis3xx
@@ -135,6 +136,7 @@ modules
 	sys/kernel/drivers/sound/trident
 	sys/kernel/drivers/sound/via686a
 	sys/kernel/drivers/sound/vt82xx
+	sys/kernel/drivers/sound/ymfpci
 	sys/kernel/fs/afs
 	sys/kernel/fs/ext2
 	sys/kernel/fs/fatfs
@@ -165,6 +167,7 @@ modules
 	sys/appserver/appserver/drivers/video/mach64
 	sys/appserver/appserver/drivers/video/mga
 	sys/appserver/appserver/drivers/video/nvidia
+	sys/appserver/appserver/drivers/video/radeon
 	sys/appserver/appserver/drivers/video/s3
 	sys/appserver/appserver/drivers/video/savage
 	sys/appserver/appserver/drivers/video/sis3xx
