@@ -21,7 +21,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/ColdFish: $(OBJS)
-	gcc  $(OBJS) -lstdc++ -latheos -lmedia -o ColdFish
+	gcc  $(OBJS) -lstdc++ -lsyllable -lmedia -o ColdFish
 	rescopy -r ColdFish *.png
 
 
