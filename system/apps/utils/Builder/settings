@@ -1,5 +1,8 @@
 ;include-version
 
 environment
-	CFLAGS		-march=i586 -O2 -pipe
-	CXXFLAGS	-march=i586 -O2 -pipe
+;	CFLAGS		-march=i586 -O2 -pipe
+	CFLAGS		-march=athlon-xp -O2 -pipe
+;	CXXFLAGS	-march=i586 -O2 -pipe
+	CXXFLAGS	-march=athlon-xp -O2 -pipe
+

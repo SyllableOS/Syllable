@@ -13,9 +13,9 @@ distro-tree
 
 	atheos/etc
 
-	atheos/home
-	atheos/home/root
-	atheos/home/guest
+	atheos/home			home.png
+	atheos/home/root	home.png
+	atheos/home/guest	home.png
 
 	atheos/autolnk
 	atheos/autolnk/bin
@@ -86,8 +86,8 @@ distro-tree
 	atheos/usr/share/terminfo
 	atheos/usr/share/terminfo/x
 
-	atheos/Applications
-	atheos/Applications/Preferences
+	atheos/Applications					applications.png
+	atheos/Applications/Preferences		settings.png
 	atheos/Documentation
 
 modules

@@ -1,15 +1,15 @@
 GCC for Syllable
 ================
 
-29-Jun-2004
+3-Jan-2005
 
 1 Introduction
 ==============
 
 This is a binary distribution of version 3.3.4 of the GNU compiler
 collection for the Syllable operating system. This distribution was
-built on Syllable 0.5.3, and was optimized for a Pentium CPU. It
-requires version 0.5.3 of Syllable, or newer. It supports only the C,
+built on Syllable 0.5.5, and was optimized for a Pentium CPU. It
+requires version 0.5.5 of Syllable, or newer. It supports only the C,
 C++ and Fortran languages. The compiler defaults to generating
 Pentium code (default --march=i586).
 
@@ -36,16 +36,8 @@ perform the following operations:
 
     su
 
-You should have unpacked this file with
-
-    tar -xpPz
-
-or something equivalent. The 'p' option to Tar is important: it
-preserves permissions on the extracted files. Without the proper file
-permissions, the installation will be broken.
-
-Unpacking produces the directory gcc. This should be installed under
-/usr. If you unpacked it somewhere else, do:
+Unpacking this distribution produced the directory gcc. This should
+be installed under /usr. If you unpacked it somewhere else, do:
 
     mv gcc /usr
 
@@ -65,7 +57,7 @@ If you have the Syllable build system installed, it can do the above
 steps for you. Just do:
 
     su
-    build install gcc-3.3.4.bin.1.tgz
+    build install gcc-3.3.4.bin.2.zip
 
 2.2 Uninstalling & upgrading GCC
 --------------------------------
