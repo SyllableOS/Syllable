@@ -158,6 +158,13 @@ public:
 
 	void SetHighlightColor(os::Color32_s);
 	os::Color32_s GetHighlightColor();
+
+	void SetLineNumberFgColor(os::Color32_s);
+	os::Color32_s GetLineNumberFgColor();
+
+	void SetLineNumberBgColor(os::Color32_s);
+	os::Color32_s GetLineNumberBgColor();
+
 	os::Font* GetEditorFont() const;
 	void SetContextMenu( os::Menu * pcMenu );
 
@@ -169,3 +176,4 @@ private:
 } /* namespace cv */
 
 #endif /* F_CODEVIEW_CODEVIEW_H */
+

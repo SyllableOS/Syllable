@@ -527,3 +527,23 @@ void CodeView::SetContextMenu( os::Menu * pcMenu )
 	edit->SetContextMenu( pcMenu );
 }
 
+void CodeView::SetLineNumberFgColor(os::Color32_s c)
+{
+	edit->SetLineNumberFgColor(c);
+}
+
+os::Color32_s CodeView::GetLineNumberFgColor()
+{
+	return edit->GetLineNumberFgColor();
+}
+
+void CodeView::SetLineNumberBgColor(os::Color32_s c)
+{
+	edit->SetLineNumberBgColor(c);
+}
+
+os::Color32_s CodeView::GetLineNumberBgColor()
+{
+	return edit->GetLineNumberBgColor();
+}
+

@@ -71,6 +71,9 @@ m_pcContextMenu( NULL ), sHighlight(0,0,0,0)
 	SetBgColor(255, 255, 255);
 	SetFgColor(0, 0, 0);
 
+	m_sLineNumberBg = os::Color32_s( 200, 200, 255 );
+	m_sLineNumberFg = os::Color32_s( 0, 0, 0 );
+
 	os::font_properties fp;
 	os::Font::GetDefaultFont(DEFAULT_FONT_FIXED, &fp);
 	os::Font *f=new os::Font(fp);
@@ -171,8 +174,8 @@ void InnerEdit::Paint(const os::Rect &r)
 		if( m_nMargin ) {
 			backView->FillRect( os::Rect( xOff, 0, xOff + m_nMargin - 1, lineHeight ), os::Color32_s( 220, 220, 250 ) );
 			backView->MovePenTo( xOff, lineBase );
-			backView->SetFgColor( GetFgColor() );
-			backView->SetBgColor( os::Color32_s( 220, 220, 250 ) );
+			backView->SetFgColor( m_sLineNumberFg );
+			backView->SetBgColor( m_sLineNumberBg );
 			if( bIsFolded ) {
 				backView->DrawFrame( os::Rect( xOff, 0, xOff + m_nMargin - 1, lineHeight), /*os::FRAME_THIN*/ os::FRAME_TRANSPARENT );
 				backView->DrawString( "+" );
@@ -242,7 +245,7 @@ void InnerEdit::Paint(const os::Rect &r)
 			if(chr=='\t') {
 				backView->Sync();//need this to get correct pen pos
 				float tab=spaceWidth*tabSize;
-				float x=backView->GetPenPosition().x-xOff;
+				float x = backView->GetPenPosition().x - xOff - m_nMargin;
 				x = tab*ceil((x+1)/tab);
 				
 				++a;
@@ -251,7 +254,7 @@ void InnerEdit::Paint(const os::Rect &r)
 					x+=tab;
 				}
 				
-				backView->MovePenTo( xOff + x, lineBase );
+				backView->MovePenTo( xOff + x + m_nMargin, lineBase );
 			} else {
 				os::Color32_s nfg, nbg;
 
@@ -1660,6 +1663,8 @@ bool InnerEdit::Undo()
 	if(undoCurrent==NULL || undoCount==0)
 		return false;
 
+	InvalidateLines( cursorY, cursorY );
+
 	switch(undoCurrent->mode){
 		case UndoNode::ADDED:
 		{
@@ -1667,22 +1672,28 @@ bool InnerEdit::Undo()
 			uint y=undoCurrent->y;
 			uint x=undoCurrent->x+str.size();
 		
-			while(x>buffer[y].text.size()){
-				x-=buffer[y].text.size()+1;
+			while( x > buffer[ _TranslateBufferIndex(y) ].text.size() ) {
+				x -= buffer[ _TranslateBufferIndex(y) ].text.size() + 1;
 				++y;
 			}
 
 			RemoveText(undoCurrent->x, undoCurrent->y, x, y, false);
+			cursorX = undoCurrent->x;
+			cursorY = undoCurrent->y;
 			break;
 		}
 		case UndoNode::REMOVED:
 			InsertText(undoCurrent->text, undoCurrent->x, undoCurrent->y, false);
+			cursorX = undoCurrent->x;
+			cursorY = undoCurrent->y;
 			break;
 		case UndoNode::SET_LINE:
 		{
 			os::String tmp=buffer[undoCurrent->y].text;
 			SetLine(undoCurrent->text, undoCurrent->y, false);
 			undoCurrent->text=tmp;
+			cursorX = undoCurrent->x;
+			cursorY = undoCurrent->y;
 			break;
 		}
 		default:
@@ -1707,6 +1718,7 @@ bool InnerEdit::Redo()
 	if(undoCount>0)
 		node=node->next;
 
+	InvalidateLines( cursorY, cursorY );
 
 	switch(node->mode){
 		case UndoNode::REMOVED:
@@ -1715,22 +1727,28 @@ bool InnerEdit::Redo()
 			uint y=node->y;
 			uint x=node->x+str.size();
 		
-			while(x>buffer[y].text.size()){
-				x-=buffer[y].text.size()+1;
+			while( x > buffer[ _TranslateBufferIndex(y) ].text.size() ) {
+				x -= buffer[ _TranslateBufferIndex(y) ].text.size() + 1;
 				++y;
 			}
-	
+
 			RemoveText(node->x, node->y, x, y, false);
+			cursorX = node->x;
+			cursorY = node->y;
 			break;
 		}
 		case UndoNode::ADDED:
 			InsertText(node->text, node->x, node->y, false);
+			cursorX = node->x;
+			cursorY = node->y;
 			break;
 		case UndoNode::SET_LINE:
 		{
 			os::String tmp=buffer[node->y].text;
 			SetLine(node->text, node->y, false);
 			node->text=tmp;
+			cursorX = node->x;
+			cursorY = node->y;
 			break;
 		}
 		default:

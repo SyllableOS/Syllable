@@ -174,6 +174,8 @@ private:
 
 	os::Menu* m_pcContextMenu;
 	os::Color32_s sHighlight;
+	os::Color32_s m_sLineNumberFg;
+	os::Color32_s m_sLineNumberBg;
 
 public:
 
@@ -306,10 +308,27 @@ public:
 		return sHighlight;
 	}
 
+	void SetLineNumberBgColor(os::Color32_s sColor)
+	{
+		m_sLineNumberBg = sColor;
+	}
+
+	os::Color32_s GetLineNumberBgColor()
+	{
+		return m_sLineNumberBg;
+	}
+
+	void SetLineNumberFgColor(os::Color32_s sColor)
+	{
+		m_sLineNumberFg = sColor;
+	}
+
+	os::Color32_s GetLineNumberFgColor()
+	{
+		return m_sLineNumberFg;
+	}
 };
 
 } /* namespace cv */
 
 #endif
-
-
