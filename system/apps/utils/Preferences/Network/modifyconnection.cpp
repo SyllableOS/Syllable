@@ -18,11 +18,11 @@
 #include <gui/checkbox.h>
 #include <util/application.h>
 #include <util/message.h>
+#include <gui/requesters.h>
 #include "modifyconnection.h"
 #include "messages.h"
 #include "main.h"
 #include "validator.h"
-#include "errorwindow.h"
 
 // Boolean to signal if window is already open
 bool bModifyOpen[C_CO_MAXADAPTORS];
@@ -38,7 +38,7 @@ ModifyConnectionWindow::ModifyConnectionWindow(const os::Rect& cFrame, AdaptorCo
   // Create the layouts/views
   pcLRoot = new os::LayoutView(cBounds, "L", NULL, os::CF_FOLLOW_ALL);
   pcVLRoot = new os::VLayoutNode("VL");
-  pcVLRoot->SetBorders( os::Rect(10,10,10,10) );
+  pcVLRoot->SetBorders( os::Rect(10,5,10,5) );
 
   // Show adaptor description
   pcHLDesc = new os::HLayoutNode("HLDesc");
@@ -46,23 +46,19 @@ ModifyConnectionWindow::ModifyConnectionWindow(const os::Rect& cFrame, AdaptorCo
   pcHLDesc->AddChild( new os::StringView(cRect, "AdaptorDesc1", "Interface : " ) );
   pcHLDesc->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
   pcHLDesc->AddChild( new os::StringView(cRect, "AdaptorDesc2", pcAdaptor->pzDescription ) );
+  pcHLDesc->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
+  pcHLDesc->AddChild( pcSVAdaptor = new os::StringView(cRect, "", "") );
+  pcSVAdaptor->SetMinPreferredSize(10);
+  if (pcAdaptor->bEnabled) {
+    pcSVAdaptor->SetString("(Enabled)");
+  } else {
+    pcSVAdaptor->SetString("(Disabled)");
+  }
   pcHLDesc->AddChild( new os::HLayoutSpacer("") );
   pcVLRoot->AddChild( pcHLDesc );
   pcVLRoot->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
-			     
-  // Show connection on/off controls
-  if (bRoot) {
-    pcVLRoot->AddChild( pcCBConnection = new os::CheckBox(cRect, "CBConnection", "Connection Enabled", new os::Message(M_MC_CONNECTIONENABLE)) );
-  } else {
-    if (pcAdaptor->bEnabled) {
-      pcVLRoot->AddChild( new os::StringView(cRect, "", "Interface Enabled") );
-    } else {
-      pcVLRoot->AddChild( new os::StringView(cRect, "", "Interface Disabled") );
-    }
-  }
-  pcVLRoot->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
   
-  // Show DHCP on/off controls (Note this is disables until we get DHCP support)
+  // Show DHCP on/off controls (Note this is disabled until we get DHCP support, hopefully soon!)
   /*
   pcVLRoot->AddChild( pcRBDHCPOn = new os::RadioButton(cRect, "RBDHCPOn", "Enable DHCP", new os::Message(M_MC_DHCPON)) );
   pcVLRoot->AddChild( pcRBDHCPOff = new os::RadioButton(cRect, "RBDHCPOff", "Disable DHCP", new os::Message(M_MC_DHCPOFF)) );
@@ -75,7 +71,7 @@ ModifyConnectionWindow::ModifyConnectionWindow(const os::Rect& cFrame, AdaptorCo
   // Create IP Address layout
   pcHLIP = new os::HLayoutNode("HLIP");
   pcHLIP->AddChild( new os::HLayoutSpacer("") );
-  pcHLIP->AddChild( pcSVIPAddr = new os::StringView(cRect, "SVIPAddr", "IP Address") );
+  pcHLIP->AddChild( new os::StringView(cRect, "SVIPAddr", "IP Address") );
   pcHLIP->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLIP->AddChild( pcTVIPAddr = new os::TextView(cRect, "TVIPAddr", "") );
   pcHLIP->AddChild( new os::HLayoutSpacer("") );
@@ -87,7 +83,7 @@ ModifyConnectionWindow::ModifyConnectionWindow(const os::Rect& cFrame, AdaptorCo
   // Create Subnet mask layout
   pcHLSN = new os::HLayoutNode("HLSN");
   pcHLSN->AddChild( new os::HLayoutSpacer("") );
-  pcHLSN->AddChild( pcSVSubNet = new os::StringView(cRect, "SVSubNet", "Subnet Mask") );
+  pcHLSN->AddChild( new os::StringView(cRect, "SVSubNet", "Subnet Mask") );
   pcHLSN->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLSN->AddChild( pcTVSubNet = new os::TextView(cRect, "TVSubNet", "") );
   pcHLSN->AddChild( new os::HLayoutSpacer("") );
@@ -99,7 +95,7 @@ ModifyConnectionWindow::ModifyConnectionWindow(const os::Rect& cFrame, AdaptorCo
   // Create gateway layout
   pcHLGW = new os::HLayoutNode("HLGW");
   pcHLGW->AddChild( new os::HLayoutSpacer("") );
-  pcHLGW->AddChild( pcSVGateway = new os::StringView(cRect, "SVGateway", "Gateway Address") );
+  pcHLGW->AddChild( new os::StringView(cRect, "SVGateway", "Gateway Address") );
   pcHLGW->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLGW->AddChild( pcTVGateway = new os::TextView(cRect, "TVGateway", "") );
   pcHLGW->AddChild( new os::HLayoutSpacer("") );
@@ -114,27 +110,45 @@ ModifyConnectionWindow::ModifyConnectionWindow(const os::Rect& cFrame, AdaptorCo
   pcFVSettings->SetRoot(pcVLSettings);
   pcVLRoot->AddChild(pcFVSettings);
  
-  // Add a spacer
-  pcVLRoot->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f) );
+  // Add buttons to enable/disable
+  pcHLButtons = new os::HLayoutNode("HLButtons");
+  pcHLButtons->AddChild( new os::HLayoutSpacer("") );
+  if (bRoot) {
+    pcVLRoot->AddChild( new os::VLayoutSpacer("", 10.0f, 10.0f));
+    pcHLButtons = new os::HLayoutNode("HLButtons");
+    pcHLButtons->AddChild( pcBEnable = new os::Button(cRect, "BEnable", "Enable", new os::Message(M_MC_ENABLE)) );
+    pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
+    pcHLButtons->AddChild( pcBDisable = new os::Button(cRect, "BDisable", "Disable", new os::Message(M_MC_DISABLE)) );
+    pcHLButtons->SameWidth( "BEnable", "BDisable", NULL );
+    pcVLRoot->AddChild(pcHLButtons);
+  }
 
   // Set the root 
   pcLRoot->SetRoot(pcVLRoot);
   AddChild(pcLRoot);
 
+  // Set initial focus (if root)
+  if (bRoot) {
+    pcTVIPAddr->MakeFocus();
+  }
+
   // Set tab order
   int iTabOrder = 0;
-  pcCBConnection->SetTabOrder(iTabOrder++);
   pcTVIPAddr->SetTabOrder(iTabOrder++);
   pcTVSubNet->SetTabOrder(iTabOrder++);
   pcTVGateway->SetTabOrder(iTabOrder++);
+  if (bRoot) {
+    pcBEnable->SetTabOrder(iTabOrder++);
+    pcBDisable->SetTabOrder(iTabOrder++);
+  }
 
   // Set read only if not root
   if (!bRoot) {
     SetTitle("Modify - Network (View)");
     //pcCBConnection->SetEnable(false);
-    pcTVIPAddr->SetReadOnly(true);
-    pcTVSubNet->SetReadOnly(true);
-    pcTVGateway->SetReadOnly(true);
+    pcTVIPAddr->SetEnable(false);
+    pcTVSubNet->SetEnable(false);
+    pcTVGateway->SetEnable(false);
   }
 
   // Show data
@@ -143,14 +157,20 @@ ModifyConnectionWindow::ModifyConnectionWindow(const os::Rect& cFrame, AdaptorCo
 
 ModifyConnectionWindow::~ModifyConnectionWindow()
 {
-  SaveValues();
+  // If root,
+  if (bRoot) {
+    SaveValues();
+  }
 }
 
 void ModifyConnectionWindow::ShowData() 
 {
   // Load in values for controls
-  pcCBConnection->SetValue( pcAdaptor->bEnabled, false );
+  if (bRoot) {
+    pcBEnable->SetEnable( !pcAdaptor->bEnabled );
+    pcBDisable->SetEnable( pcAdaptor->bEnabled );
   //  pcRBDHCPOff->SetValue( true, false );
+  }
   
   // IP Info
   pcTVIPAddr->Set( pcAdaptor->pzIP );
@@ -160,7 +180,7 @@ void ModifyConnectionWindow::ShowData()
 
 void ModifyConnectionWindow::SaveValues()
 {
-  pcAdaptor->bEnabled = pcCBConnection->GetValue().AsBool();
+  pcAdaptor->bEnabled = !pcBEnable->IsEnabled();
   strcpy( pcAdaptor->pzIP, pcTVIPAddr->GetBuffer()[0].c_str());
   strcpy( pcAdaptor->pzSN, pcTVSubNet->GetBuffer()[0].c_str());
   strcpy( pcAdaptor->pzGW, pcTVGateway->GetBuffer()[0].c_str());
@@ -171,9 +191,18 @@ void ModifyConnectionWindow::HandleMessage(os::Message* pcMessage)
   // Get message code and act on it
   switch(pcMessage->GetCode()) {
 
-  case M_MC_CONNECTIONENABLE: 
+  case M_MC_ENABLE:
+    pcBEnable->SetEnable(false);
+    pcBDisable->SetEnable(true);
+    pcSVAdaptor->SetString("(Enabled)");
     break;
-  
+
+  case M_MC_DISABLE:
+    pcBEnable->SetEnable(true);
+    pcBDisable->SetEnable(false);
+    pcSVAdaptor->SetString("(Disabled)");
+    break;
+
   case M_MC_DHCPON:
     pcFVSettings->Show(false); break;
 
@@ -188,29 +217,31 @@ void ModifyConnectionWindow::HandleMessage(os::Message* pcMessage)
 
 bool ModifyConnectionWindow::OkToQuit()
 {
-  // If error window open, dont close
-  if (bErrorWindowOpen) 
+  // If not root, just close the window, dont check values
+  if (!bRoot) {
+    bModifyOpen[iAdaptorID] = false;
+    return true;
+  }
+
+  // Check everything is valid (if root)
+  if (ValidateIP(pcTVIPAddr->GetBuffer()[0].c_str())!=0) {
+    
+    os::Alert *pcError = new os::Alert("Invalid - Network", "The value entered in IP Address is invalid", os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, "OK", NULL);
+    pcError->Go();
+    return false;
+    
+  } else if(ValidateIP(pcTVSubNet->GetBuffer()[0].c_str())!=0) {
+
+    os::Alert *pcError = new os::Alert("Invalid - Network", "The value entered in Subnet Mask is invalid", os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, "OK", NULL);
+    pcError->Go();
     return false;
 
-  // Check everything is valid
-  os::Rect wPos = this->GetFrame();
-  wPos.left-=30; wPos.right=wPos.left+370; wPos.top+=30; wPos.bottom=wPos.top+55;
-  
-  if (ValidateIP(pcTVIPAddr->GetBuffer()[0].c_str())!=0) {
-    ErrorWindow *pcError = new ErrorWindow("The value entered in IP Address is not valid, can not save", wPos);
-    pcError->Show();
-    pcError->MakeFocus();
-    return false;
-  } else if(ValidateIP(pcTVSubNet->GetBuffer()[0].c_str())!=0) {
-    ErrorWindow *pcError = new ErrorWindow("The value entered in Subnet Mask is not valid, can not save", wPos);
-    pcError->Show();
-    pcError->MakeFocus();
-    return false;
   } else if(ValidateIP(pcTVGateway->GetBuffer()[0].c_str())!=0) {
-    ErrorWindow *pcError = new ErrorWindow("The value entered in Gateway is not valid, can not save", wPos);
-    pcError->Show();
-    pcError->MakeFocus();
+
+    os::Alert *pcError = new os::Alert("Invalid - Network","The value entered in Gateway is invalid", os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, "OK", NULL);
+    pcError->Go();
     return false;
+
   } else {
     bModifyOpen[iAdaptorID] = false;
     return true;

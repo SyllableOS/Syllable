@@ -1,4 +1,4 @@
-// Network Preferences :: (C)opyright Daryl Dudey 2002
+// Screen Preferences :: (C)opyright Daryl Dudey 2002
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -20,11 +20,14 @@
 #include <gui/window.h>
 #include <gui/layoutview.h>
 #include <gui/frameview.h>
-#include <gui/listview.h>
 #include <gui/button.h>
 #include <gui/stringview.h>
+#include <gui/dropdownmenu.h>
+#include <gui/slider.h>
 
-#include "modifyconnection.h"
+// This is the number of depths, I am only using RGB ones
+const int MAX_DEPTH_COUNT = 7;
+const int MAX_RES_COUNT = 40;
 
 class MainWindow : public os::Window {
 public:
@@ -36,20 +39,33 @@ public:
 
 private:
   void ShowData();
-  void ShowList();
   void Apply();
+  void Undo();
+  void Default();
+  void ColourChange();
+  void ResolutionChange();
+  void RefreshChange();
+
+  // Default mode
+  os::screen_mode cCurrent;
+  os::screen_mode cUndo;
+  os::screen_mode cUndo2;
+
+  // Available colour depths table
+  int iDepths[MAX_DEPTH_COUNT];
+
+  // Resolutions, slightly hacked, but works
+  int iScrWidth[MAX_RES_COUNT];
+  int iScrHeight[MAX_RES_COUNT];
+
+  // Refresh flag/custom or not
 
   os::LayoutView *pcLRoot;
-  os::VLayoutNode *pcVLRoot;
-  os::HLayoutNode *pcHLHost, *pcHLDomain, *pcHLName1, *pcHLName2, *pcHLConnection, *pcHLButtons;
-  os::VLayoutNode *pcVLNames, *pcVLConnectionList, *pcVLConnectionButtons;
-  os::FrameView *pcFVNames, *pcFVConnections;
-  os::ListView *pcLVConnections;
-  os::TextView *pcTVHost, *pcTVDomain, *pcTVName1, *pcTVName2;
-  os::Button *pcBModify, *pcBApply, *pcBRevert, *pcBClose;
-
-  ModifyConnectionWindow *pcModifyWindow[C_CO_MAXADAPTORS];
-
+  os::VLayoutNode *pcVLRoot, *pcVLSettings;
+  os::HLayoutNode *pcHLWorkspace, *pcHLButtons, *pcHLResolution, *pcHLColour, *pcHLRefresh;
+  os::FrameView *pcFVSettings, *pcFVAppearance;
+  os::Button *pcBDefault, *pcBApply, *pcBUndo;
+  os::DropdownMenu *pcDDMWorkspace, *pcDDMResolution, *pcDDMColour, *pcDDMRefresh;
 };
 
 #endif /* __MAINWINDOW_H_ */

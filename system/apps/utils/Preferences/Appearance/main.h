@@ -1,4 +1,4 @@
-// Network Preferences :: (C)opyright Daryl Dudey 2002
+// Appearance Preferences :: (C)opyright 2002 Daryl Dudey
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -14,19 +14,26 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-#ifndef __MESSAGES_H_
-#define __MESSAGES_H_
+#ifndef __MAIN_H_
+#define __MAIN_H_
 
-enum Messages {
-  M_MW_MODIFY,
-  M_MW_APPLY,
-  M_MW_REVERT,
-  M_MW_CLOSE,
-  M_MC_CONNECTIONENABLE,
-  M_MC_DHCPON,
-  M_MC_DHCPOFF,
-  M_DM_OK,
-  M_EW_OK
+#include <util/application.h>
+#include "mainwindow.h"
+
+class PrefsAppearanceApp : public os::Application {
+public:
+  PrefsAppearanceApp();
+  ~PrefsAppearanceApp();
+   
+private:
+  MainWindow* pcWindow;
 };
 
-#endif /* __MESSAGES_H */
+extern bool bRoot;
+
+#endif
+
+
+
+
+

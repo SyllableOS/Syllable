@@ -22,13 +22,12 @@
 Configuration *pcConfig;
 bool bRoot;
 bool bDetectMsg = false;
-bool bErrorWindowOpen = false;
 
 int main(int argc, char* argv[]) 
 {
   PrefsNetApp* pcPrefsNetApp;
   bool bRunApp = true;
-  bool bActivate = true;
+  bool bActivate = false;
 
   if ((getuid()==0)) {
     bRoot = true;
@@ -58,30 +57,7 @@ int main(int argc, char* argv[])
       fprintf(stdout, "Creating network interface activation files\n");
       // Don't show gui, just activate on exit
       bRunApp = false;
-
-    } else if (strcmp(argv[1], "--version")==0) {
-      
-      // Display version information
-      fprintf(stdout, "Syllable network preferences app, Version: ");
-      fprintf(stdout, C_MA_VERSION);
-      fprintf(stdout, "\n(C) Daryl Dudey 2002 (daryl.dudey@ntlworld.com)\n");
-      bRunApp = false;
-      bActivate = false;
-
-    } else if (strcmp(argv[1], "--help")==0) {
-
-      // Display help
-      fprintf(stdout, "--activate\t\tCreate activation files\n");
-      fprintf(stdout, "--detect\t\tDetect changes in interfaces\n");
-      fprintf(stdout, "--version\t\tDisplay version information\n");
-      bRunApp = false;
-      bActivate = false;
-    } else {
-      
-      // Unrecognised
-      fprintf(stdout, "Sorry, unrecognised command\n");
-      bRunApp = false;
-      bActivate = false;
+      bActivate = true;
     }
   }
   
@@ -104,7 +80,7 @@ int main(int argc, char* argv[])
   return(0);
 }
 
-PrefsNetApp::PrefsNetApp() : os::Application("application/x-PreferencesNetwork")
+PrefsNetApp::PrefsNetApp() : os::Application("application/x-vnd-NetworkPreferences")
 {
   // Get screen width and height to centre the window
   os::Desktop *pcDesktop = new os::Desktop();
@@ -113,11 +89,15 @@ PrefsNetApp::PrefsNetApp() : os::Application("application/x-PreferencesNetwork")
 
   // See if we want the full window or just the new network interfaces window
   if (!bDetectMsg) {
-    int iLeft = (iWidth-310)/2;
-    int iTop = (iHeight-270)/2;
+    int iLeft = (iWidth-300)/2;
+    int iTop = (iHeight-260)/2;
 
     // Now show the main window
-    pcWindow = new MainWindow(os::Rect(iLeft, iTop, iLeft+310, iTop+270));
+    if (bRoot) {
+      pcWindow = new MainWindow(os::Rect(iLeft, iTop, iLeft+300, iTop+260));
+    } else {
+      pcWindow = new MainWindow(os::Rect(iLeft, iTop, iLeft+300, iTop+230));
+    }
     pcWindow->Show();
     pcWindow->MakeFocus();
   } else {

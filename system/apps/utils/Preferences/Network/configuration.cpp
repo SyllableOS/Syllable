@@ -286,7 +286,7 @@ int Configuration::Detect() {
     sFlags = sReq.ifr_flags;
 
     // We are not interested in loopbacks
-    if ( !(sFlags & IFF_LOOPBACK)) {
+    if (!(sFlags & IFF_LOOPBACK)) {
       
       // Mark the adaptor as existing
       pcAdap->bExists = true;

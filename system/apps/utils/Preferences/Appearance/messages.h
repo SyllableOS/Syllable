@@ -1,4 +1,4 @@
-// Network Preferences :: (C)opyright 2002 Daryl Dudey
+// Appearance Preferences :: (C)opyright Daryl Dudey 2002
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -14,35 +14,20 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-#ifndef __MAIN_H_
-#define __MAIN_H_
+#ifndef __MESSAGES_H_
+#define __MESSAGES_H_
 
-#include <util/application.h>
-#include "mainwindow.h"
-#include "configuration.h"
-#include "detectmsgwindow.h"
-
-#define C_MA_VERSION  "0.5b (Pre-Release)"
-
-class PrefsNetApp : public os::Application {
-public:
-  PrefsNetApp();
-  ~PrefsNetApp();
-   
-private:
-  MainWindow *pcWindow;
-  DetectMsgWindow *pcMsgWindow;
-
-  // Network configuration data
-  Configuration *pcConfig;
+enum Messages {
+  M_MW_DECOR,
+  M_MW_THEME,
+  M_MW_ITEM,
+  M_MW_SLRED,
+  M_MW_SLGREEN,
+  M_MW_SLBLUE,
+  M_MW_DELETE,
+  M_MW_SAVE,
+  M_MW_APPLY,
+  M_MW_DEFAULT
 };
 
-extern bool bRoot;
-extern bool bErrorWindowOpen;
-
-#endif
-
-
-
-
-
+#endif /* __MESSAGES_H */

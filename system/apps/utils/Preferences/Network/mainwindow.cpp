@@ -18,8 +18,8 @@
 #include <stdio.h>
 #include <util/application.h>
 #include <util/message.h>
+#include <gui/requesters.h>
 #include "mainwindow.h"
-#include "errorwindow.h"
 #include "messages.h"
 #include "main.h"
 #include "validator.h"
@@ -32,11 +32,11 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   // Create the layouts/views
   pcLRoot = new os::LayoutView(cBounds, "L", NULL, os::CF_FOLLOW_ALL);
   pcVLRoot = new os::VLayoutNode("VL");
-  pcVLRoot->SetBorders( os::Rect(10,10,10,10) );
+  pcVLRoot->SetBorders( os::Rect(10,5,10,5) );
   
   // Create the names frameview and contents
   pcVLNames = new os::VLayoutNode("VLNames");
-  pcVLNames->SetBorders( os::Rect(10,10,10,10) );
+  pcVLNames->SetBorders( os::Rect(5,5,5,5) );
 
   pcHLHost = new os::HLayoutNode("HLHost");
   pcHLHost->AddChild( new os::HLayoutSpacer("") );
@@ -93,7 +93,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   // Create the connections frameview and contents
   pcVLConnectionList =new os::VLayoutNode("VLConnectionList");
   pcVLConnectionList->SetBorders( os::Rect(5,5,5,5) );
-  pcLVConnections = new os::ListView(cRect, "LVConnections", os::ListView::F_RENDER_BORDER, os::CF_FOLLOW_ALL);
+  pcLVConnections = new os::ListView(cRect, "LVConnections", os::ListView::F_RENDER_BORDER | os::ListView::F_NO_HEADER, os::CF_FOLLOW_ALL);
   pcLVConnections->InsertColumn("Interfaces",1);
   pcVLConnectionList->AddChild(pcLVConnections); 
   pcVLConnectionButtons = new os::VLayoutNode("VLConnectionButton"); 
@@ -112,25 +112,27 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcFVConnections->SetRoot(pcHLConnection);
   pcVLRoot->AddChild(pcFVConnections);
   
-  // Bit of padding
-  pcVLRoot->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f) );
-
-  // Set frameviews to same width
-  //pcVLRoot->SameWidth( "FVNames", "FVConnections", NULL );
-
   // Create apply/revert/close buttons
-  pcHLButtons = new os::HLayoutNode("HLButtons");
-  pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", "Apply", new os::Message(M_MW_APPLY)) );
-  pcHLButtons->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f) );
-  pcHLButtons->AddChild( pcBRevert = new os::Button(cRect, "BRevert", "Revert", new os::Message(M_MW_REVERT)) );
-  pcHLButtons->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f) );
-  pcHLButtons->AddChild( pcBClose = new os::Button(cRect, "BClose", "Close", new os::Message(M_MW_CLOSE)) );
-  pcHLButtons->SameWidth( "BApply", "BRevert", "BClose", NULL );
-  pcVLRoot->AddChild(pcHLButtons);
+  if (bRoot) {
+    pcVLRoot->AddChild( new os::VLayoutSpacer("", 10.0f, 10.0f));
+    pcHLButtons = new os::HLayoutNode("HLButtons");
+    pcHLButtons->AddChild( new os::HLayoutSpacer(""));
+    pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", "Apply", new os::Message(M_MW_APPLY)) );
+    pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f));
+    pcHLButtons->AddChild( pcBRevert = new os::Button(cRect, "BRevert", "Revert", new os::Message(M_MW_REVERT)) );
+    pcHLButtons->SameWidth( "BApply", "BRevert", NULL );
+    pcVLRoot->AddChild(pcHLButtons);
+  }
 
   // Set root and add to window
   pcLRoot->SetRoot(pcVLRoot);
   AddChild(pcLRoot);
+
+  // Set default button and initial focus (if root)
+  if (bRoot) {
+    this->SetDefaultButton(pcBApply);
+    pcTVHost->MakeFocus();
+  }
 
   // Set tab order
   int iTabOrder = 0;
@@ -141,23 +143,19 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
     pcTVName2->SetTabOrder(iTabOrder++);
     pcLVConnections->SetTabOrder(iTabOrder++);
     pcBModify->SetTabOrder(iTabOrder++);
-    pcBApply->SetTabOrder(iTabOrder++);
     pcBRevert->SetTabOrder(iTabOrder++);
-    pcBClose->SetTabOrder(iTabOrder++);
+    pcBApply->SetTabOrder(iTabOrder++);
   } else {
     pcBModify->SetTabOrder(iTabOrder++);
-    pcBClose->SetTabOrder(iTabOrder++);
   }
 
   // If non-root, only allow view
   if (!bRoot) {
     SetTitle("Network (View)");
-    pcTVHost->SetReadOnly(true);
-    pcTVDomain->SetReadOnly(true);
-    pcTVName1->SetReadOnly(true);
-    pcTVName2->SetReadOnly(true);
-    pcBApply->SetEnable(false);
-    pcBRevert->SetEnable(false);
+    pcTVHost->SetEnable(false);
+    pcTVDomain->SetEnable(false);
+    pcTVName1->SetEnable(false);
+    pcTVName2->SetEnable(false);
   }
 
   // Set modify window to null, so syllable doesnt try and release them and set all to not visible
@@ -199,10 +197,10 @@ void MainWindow::ShowList()
       pcLVRow = new os::ListViewStringRow;
       strcpy( pzScratch, pcConfig->pcAdaptors[i].pzDescription );
       if (pcConfig->pcAdaptors[i].bEnabled) {
-	strcat( pzScratch, " : Enabled");
+	strcat( pzScratch, " (Enabled)");
 	pcLVRow->AppendString( pzScratch );
       } else {
-	strcat (pzScratch, ": Disabled");
+	strcat (pzScratch, " (Disabled)");
 	pcLVRow->AppendString( pzScratch );
       }
       pcLVConnections->InsertRow(pcLVRow, true);
@@ -213,18 +211,17 @@ void MainWindow::ShowList()
 
 void MainWindow::Apply() 
 {
-  os::Rect wPos = this->GetFrame();
-  wPos.left-=30; wPos.right=wPos.left+370; wPos.top+=30; wPos.bottom=wPos.top+55;
-
   // Check data is valid first
   if (ValidateIP((char *)pcTVName1->GetBuffer()[0].c_str())!=0) {
-    ErrorWindow *pcError = new ErrorWindow("The value entered in Primary DNS is not valid, can not apply", wPos);
-    pcError->Show();
-    pcError->MakeFocus();
+
+    os::Alert *pcError = new os::Alert("Invalid - Network", "The value entered in Primary DNS is invalid", os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, "OK", NULL);
+    pcError->Go();
+
   } else if(ValidateIP((char *)pcTVName2->GetBuffer()[0].c_str())!=0) {
-    ErrorWindow *pcError = new ErrorWindow("The value entered in Secondary DNS is not valid, can not apply", wPos);
-    pcError->Show();
-    pcError->MakeFocus();
+
+    os::Alert *pcError = new os::Alert("Invalid - Network", "The value entered in Secondary DNS is invalid", os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, "OK", NULL);
+    pcError->Go();
+
   } else {
     // Save data 
     strcpy(pcConfig->pzHost, (char *)pcTVHost->GetBuffer()[0].c_str());
@@ -232,7 +229,9 @@ void MainWindow::Apply()
     strcpy(pcConfig->pzName1, (char *)pcTVName1->GetBuffer()[0].c_str());
     strcpy(pcConfig->pzName2, (char *)pcTVName2->GetBuffer()[0].c_str());
     pcConfig->Save();
+    pcConfig->Activate();
   }
+  ShowList();
 }
 
 void MainWindow::HandleMessage(os::Message* pcMessage)
@@ -243,40 +242,33 @@ int iAdaptorID;
   switch(pcMessage->GetCode()) {
 
   case M_MW_MODIFY:
-    if (!bErrorWindowOpen) {
-      if ((iAdaptorID = pcLVConnections->GetFirstSelected())>=0) {
-	if (!bModifyOpen[iAdaptorID]) { 
-	  bModifyOpen[iAdaptorID]=true;
-	  os::Rect wPos = this->GetFrame();
-	  wPos.left+=50; wPos.right=wPos.left+250; wPos.top+=30; wPos.bottom=wPos.top+145;
-	  pcModifyWindow[iAdaptorID] = new ModifyConnectionWindow( wPos, &(pcConfig->pcAdaptors[iAdaptorID]), iAdaptorID );
-	  pcModifyWindow[iAdaptorID]->Show();
-	  pcModifyWindow[iAdaptorID]->MakeFocus();
+    if ((iAdaptorID = pcLVConnections->GetFirstSelected())>=0) {
+      if (!bModifyOpen[iAdaptorID]) { 
+	bModifyOpen[iAdaptorID]=true;
+	os::Rect wPos = this->GetFrame();
+	
+	if (bRoot) {
+	  wPos.left+=50; wPos.right=wPos.left+250; wPos.top+=30; wPos.bottom=wPos.top+140;
 	} else {
-	  pcModifyWindow[iAdaptorID]->MakeFocus();
+	  wPos.left+=50; wPos.right=wPos.left+250; wPos.top+=30; wPos.bottom=wPos.top+110;
 	}
+	pcModifyWindow[iAdaptorID] = new ModifyConnectionWindow(wPos, &(pcConfig->pcAdaptors[iAdaptorID]), iAdaptorID);
+	pcModifyWindow[iAdaptorID]->Show();
+	pcModifyWindow[iAdaptorID]->MakeFocus();
+      } else {
+	pcModifyWindow[iAdaptorID]->MakeFocus();
       }
     }
     break;
 
   case M_MW_APPLY:
-    if (!bErrorWindowOpen) {
-      Apply();
-    }
+    Apply();
     break;
 
   case M_MW_REVERT:
-    if (!bErrorWindowOpen) {
-      pcConfig->Load();
-      pcConfig->Detect();
-      ShowData();
-    }
-    break;
-
-  case M_MW_CLOSE:
-    if (!bErrorWindowOpen) {
-      OkToQuit();
-    }
+    pcConfig->Load();
+    pcConfig->Detect();
+    ShowData();
     break;
 
   default:
@@ -295,10 +287,6 @@ bool MainWindow::OkToQuit()
       bCanClose = false; break;
     }
   }
-
-  // And no error windows are open
-  if (bErrorWindowOpen)
-    bCanClose = false;
 
   if (bCanClose) {
     os::Application::GetInstance()->PostMessage(os::M_QUIT);

@@ -43,12 +43,11 @@ private:
   os::VLayoutNode *pcVLRoot;
   os::FrameView *pcFVSettings;
   os::VLayoutNode *pcVLSettings;
-  os::HLayoutNode *pcHLDesc, *pcHLIP, *pcHLSN, *pcHLGW;
+  os::HLayoutNode *pcHLDesc, *pcHLIP, *pcHLSN, *pcHLGW, *pcHLButtons;
   os::TextView *pcTVIPAddr,*pcTVSubNet, *pcTVGateway;
-  os::StringView *pcSVIPAddr, *pcSVSubNet, *pcSVGateway;
-  os::CheckBox *pcCBConnection;
+  os::StringView *pcSVAdaptor;
   os::RadioButton *pcRBDHCPOn, *pcRBDHCPOff;
-  os::Button *pcBApply, *pcBRevert, *pcBClose;
+  os::Button *pcBEnable, *pcBDisable;
 
   AdaptorConfiguration *pcAdaptor;
   int iAdaptorID;
