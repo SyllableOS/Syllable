@@ -24,18 +24,6 @@
 	
 	.global	_start
 	.global _C_SYM( g_anKernelStackEnd )
-	.global	_C_SYM( exc1 )
-	.global	_C_SYM( exc2 )
-	.global	_C_SYM( exc3 )
-	.global	_C_SYM( exc4 )
-	.global	_C_SYM( exc5 )
-	.global	_C_SYM( exc8 )
-	.global	_C_SYM( exc9 )
-	.global	_C_SYM( exca )
-	.global	_C_SYM( excb )
-	.global	_C_SYM( excc )
-	.global _C_SYM( exc11 )
-	.global _C_SYM( exc12 )
 
 	.global	_C_SYM( irq0 )
 
@@ -155,98 +143,7 @@ _C_SYM( v86Stack_off ):
 .long	0xfff0
 
 
-EBX		= 0x00
-ECX		= 0x04
-EDX		= 0x08
-ESI		= 0x0c
-EDI		= 0x10
-EBP		= 0x14
-EAX		= 0x18
-DS		= 0x1c
-ES		= 0x20
-FS		= 0x24
-GS		= 0x28
-ORIG_EAX	= 0x2c
-EIP		= 0x30
-CS		= 0x34
-EFLAGS		= 0x38
-OLDESP		= 0x3c
-OLDSS		= 0x40
-
-	
-_C_SYM( exc1 ):            # Exceptions
-	pushl	$0	# pseudo error code
-	pushl	$0x01
-	jmp	exc
-_C_SYM( exc2 ):
-	pushl	$0	# pseudo error code
-	pushl	$0x02
-	jmp	exc
-_C_SYM( exc3 ):
-	pushl	$0	# pseudo error code
-	pushl	$0x03
-	jmp	exc
-_C_SYM( exc4 ):
-	pushl	$0	# pseudo error code
-	pushl	$0x04
-	jmp	exc
-_C_SYM( exc5 ):
-	pushl	$0	# pseudo error code
-	pushl	$0x05
-	jmp	exc
-_C_SYM( exc8 ):
-	pushl	$0x08
-	jmp	exc
-_C_SYM( exc9 ):
-	pushl	$0	# pseudo error code
-	pushl	$0x09
-	jmp	exc
-_C_SYM( exca ):
-	pushl	$0x0a
-	jmp	exc
-_C_SYM( excb ):
-	pushl	$0x0b
-	jmp	exc
-_C_SYM( excc ):
-	pushl	$0x0c
-	jmp	exc
-_C_SYM( exc11 ):
-	pushl	$0x11
-	jmp	exc
-_C_SYM( exc12 ):
-	pushl	$0	# pseudo error code
-	pushl	$0x12
-	jmp	exc
-_C_SYM( unexp ):                                  # Unexpected interrupt
-	push	$0	# pseudo error code
-        pushl	$0xff
-exc:
-	pushal
-	pushl	%ds
-	pushl	%es
-	pushl	%fs
-	pushl	%gs
-	pushl	%ss
-
-	call	_GETDS
-
-	mov	%ds,%ax
-	mov	%ax,%es
-	mov	%ax,%fs
-#	mov	%ax,%gs
-
-	cld
-	call	_C_SYM( ExceptionHand )
-
-	popl	%ss
-	popl	%gs
-	popl	%fs
-	popl	%es
-	popl	%ds
-	popal
-
-	add	$4,%esp	# remove error code
-	iret
+# Exception handlers moved to syscall.s.
 
 
 _C_SYM( irq0 ):                             # Do IRQs

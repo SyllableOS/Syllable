@@ -52,11 +52,23 @@
 
 	.global	_C_SYM( TSIHand )
 	.global	_C_SYM( exc0 )
+	.global	_C_SYM( exc1 )
+	.global	_C_SYM( exc2 )
+	.global	_C_SYM( exc3 )
+	.global	_C_SYM( exc4 )
+	.global	_C_SYM( exc5 )
 	.global	_C_SYM( exc6 )
 	.global	_C_SYM( exc7 )
+	.global	_C_SYM( exc8 )
+	.global	_C_SYM( exc9 )
+	.global	_C_SYM( exca )
+	.global	_C_SYM( excb )
+	.global	_C_SYM( excc )
 	.global	_C_SYM( excd )
 	.global	_C_SYM( exce )
 	.global	_C_SYM( exc10 )
+	.global	_C_SYM( exc11 )
+	.global	_C_SYM( exc12 )
 	.global	_C_SYM( exc13 )
 
 _C_SYM( g_nDisableTS ):
@@ -451,6 +463,88 @@ error_code:
 	addl	$8,%esp
 	jmp	ret_from_sys_call1
 
+
+_C_SYM( exc1 ):            # Exceptions
+	pushl	$0	# pseudo error code
+	pushl	$0x01
+	jmp	exc
+_C_SYM( exc2 ):
+	pushl	$0	# pseudo error code
+	pushl	$0x02
+	jmp	exc
+_C_SYM( exc3 ):
+	pushl	$0	# pseudo error code
+	pushl	$0x03
+	jmp	exc
+_C_SYM( exc4 ):
+	pushl	$0	# pseudo error code
+	pushl	$0x04
+	jmp	exc
+_C_SYM( exc5 ):
+	pushl	$0	# pseudo error code
+	pushl	$0x05
+	jmp	exc
+_C_SYM( exc8 ):
+	pushl	$0x08
+	jmp	exc
+_C_SYM( exc9 ):
+	pushl	$0	# pseudo error code
+	pushl	$0x09
+	jmp	exc
+_C_SYM( exca ):
+	pushl	$0x0a
+	jmp	exc
+_C_SYM( excb ):
+	pushl	$0x0b
+	jmp	exc
+_C_SYM( excc ):
+	pushl	$0x0c
+	jmp	exc
+_C_SYM( exc11 ):
+	pushl	$0x11
+	jmp	exc
+_C_SYM( exc12 ):
+	pushl	$0	# pseudo error code
+	pushl	$0x12
+	jmp	exc
+_C_SYM( unexp ):                                  # Unexpected interrupt
+	push	$0	# pseudo error code
+        pushl	$0xff
+exc:
+	push	%fs
+	push	%es
+	push	%ds
+	pushl	%eax
+	xorl	%eax,%eax
+	pushl	%ebp
+	pushl	%edi
+	pushl	%esi
+	pushl	%edx
+	decl	%eax			# eax = -1
+	pushl	%ecx
+	pushl	%ebx
+	cld
+	xorl	%ebx,%ebx		# zero ebx
+	xchgl	%eax, ORIG_EAX(%esp)	# orig_eax (get the error code. )
+	mov	%gs,%bx			# get the lower order bits of gs
+	
+	movl	%esp,%edx
+	xchgl	%ebx, GS(%esp)		# get the exception number and save gs.
+	pushl	%eax			# push the error code
+	pushl	%ebx			# push the exception number
+	pushl	%edx			# push pointer to stack frame
+
+	movl	$0x23,%edx
+	mov	%dx,%ds
+	mov	%dx,%es
+	mov	%dx,%fs
+#	mov	%dx,%gs
+	
+#	movl	%db6,%edx
+#	movl	%edx,dbgreg6(%eax)  # save current hardware debugging status
+	call	_C_SYM( ExceptionHand )
+	addl	$12,%esp
+	jmp	ret_from_sys_call1
 
 
 _sys_nosys:

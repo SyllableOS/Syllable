@@ -387,8 +387,9 @@ static void ap_entry_proc( void )
 	printk( "CPU %d joins the party.\n", nProcessor );
 
 	// Workaround for lazy bios'es that forget to enable the cache on AP processors.
+	// Also set NE and MP flags and clear EM flag for x87 native mode
 	__asm__( "movl %%cr0,%0":"=r"( nCR0 ) );
-	__asm__ __volatile__( "movl %0,%%cr0"::"r"( nCR0 & 0x9fffffff ) );
+	__asm__ __volatile__( "movl %0,%%cr0"::"r"( ( nCR0 & 0x9ffffffb ) | 0x22 ) );
 
 	// Enable SSE support
 	if ( g_bHasFXSR )

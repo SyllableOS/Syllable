@@ -198,7 +198,7 @@ void print_registers( SysCallRegs_s * psRegs )
 
 void handle_general_protection( SysCallRegs_s * psRegs, int nErrorCode )
 {
-	Process_s *psProc = CURRENT_PROC;
+	Thread_s *psThread = CURRENT_THREAD;
 	if ( psRegs->eflags & EFLG_VM )
 	{
 		handle_v86_fault( ( Virtual86Regs_s * ) psRegs, nErrorCode );
@@ -210,7 +210,7 @@ void handle_general_protection( SysCallRegs_s * psRegs, int nErrorCode )
 	print_registers( psRegs );
 	printk( "\n" );
 
-	sys_kill_proc( psProc->tc_hProcID, SIGSEGV );
+	sys_kill( psThread->tr_hThreadID, SIGSEGV );
 
 //	do_exit( 12 << 8 );
 }
@@ -224,7 +224,7 @@ void handle_general_protection( SysCallRegs_s * psRegs, int nErrorCode )
 
 void handle_divide_exception( SysCallRegs_s * psRegs, int nErrorCode )
 {
-	Process_s *psProc = CURRENT_PROC;
+	Thread_s *psThread = CURRENT_THREAD;
 	if ( psRegs->eflags & EFLG_VM )
 	{
 		handle_v86_divide_exception( ( Virtual86Regs_s * ) psRegs, nErrorCode );
@@ -239,7 +239,7 @@ void handle_divide_exception( SysCallRegs_s * psRegs, int nErrorCode )
 //  printk( "Areas :\n" );
 //  list_areas( CURRENT_PROC->tc_psMemSeg );
 
-	sys_kill_proc( psProc->tc_hProcID, SIGFPE );
+	sys_kill( psThread->tr_hThreadID, SIGFPE );
 
 //	do_exit( 12 << 8 );
 }
@@ -254,19 +254,15 @@ void handle_divide_exception( SysCallRegs_s * psRegs, int nErrorCode )
 void handle_fpu_exception( SysCallRegs_s * psRegs, int nErrorCode )
 {
 	Thread_s *psThread = CURRENT_THREAD;
-	Process_s *psProc = psThread->tr_psProcess;
 	printk( "**Floating-point error**\n" );
 	printk( "ERROR CODE = %08x\n", nErrorCode );
 	print_registers( psRegs );
 	printk( "\n" );
 
-	save_fpu_state( &psThread->tc_FPUState );
-	stts();
-
 //  printk( "Areas :\n" );
 //  list_areas( CURRENT_PROC->tc_psMemSeg );
 
-	sys_kill_proc( psProc->tc_hProcID, SIGFPE );
+	sys_kill( psThread->tr_hThreadID, SIGFPE );
 
 //	do_exit( 12 << 8 );
 }
@@ -317,7 +313,7 @@ void math_state_restore( SysCallRegs_s * psRegs, int nErrorCode )
 
 void handle_sse_exception( SysCallRegs_s * psRegs, int nErrorCode )
 {
-	Process_s *psProc = CURRENT_PROC;
+	Thread_s *psThread = CURRENT_THREAD;
 	printk( "**SSE floating-point error**\n" );
 	printk( "ERROR CODE = %08x\n", nErrorCode );
 	print_registers( psRegs );
@@ -326,7 +322,7 @@ void handle_sse_exception( SysCallRegs_s * psRegs, int nErrorCode )
 //  printk( "Areas :\n" );
 //  list_areas( CURRENT_PROC->tc_psMemSeg );
 
-	sys_kill_proc( psProc->tc_hProcID, SIGFPE );
+	sys_kill( psThread->tr_hThreadID, SIGFPE );
 
 //	do_exit( 12 << 8 );
 }
@@ -340,16 +336,16 @@ void handle_sse_exception( SysCallRegs_s * psRegs, int nErrorCode )
 
 void handle_illegal_inst_exception( SysCallRegs_s * psRegs, int nErrorCode )
 {
-	Process_s *psProc = CURRENT_PROC;
+	Thread_s *psThread = CURRENT_THREAD;
 	printk( "**Illegal instruction**\n" );
 	printk( "ERROR CODE = %08x\n", nErrorCode );
 	print_registers( psRegs );
 	printk( "\n" );
 
-	printk( "Areas :\n" );
-	list_areas( CURRENT_PROC->tc_psMemSeg );
+//	printk( "Areas :\n" );
+//	list_areas( CURRENT_PROC->tc_psMemSeg );
 
-	sys_kill_proc( psProc->tc_hProcID, SIGILL );
+	sys_kill( psThread->tr_hThreadID, SIGILL );
 
 //	do_exit( 12 << 8 );
 }
@@ -391,14 +387,17 @@ void TrackStack( uint32 *esp )
  * SEE ALSO:
  ****************************************************************************/
 
-void ExceptionHand( uint16 r_ss, uint16 r_gs, uint16 r_fs, uint16 r_es, uint16 r_ds, uint32 r_edi, uint32 r_esi, uint32 r_ebp, uint32 r_esp, uint32 r_ebx, uint32 r_edx, uint32 r_ecx, uint32 r_eax, uint32 num, uint32 ecode, uint32 r_eip, uint32 r_cs, uint32 r_eflags )
+void ExceptionHand( SysCallRegs_s * psRegs, int nException, int nErrorCode )
 {
-	printk( "Error: Exception %lx (%08lx,%04lx:%08lx)\n", num, ecode, r_cs, r_eip );
-	list_areas( CURRENT_PROC->tc_psMemSeg );
+	printk( "Error: Exception %x (%08x,%04x:%08lx)\n", nException, nErrorCode, psRegs->cs, psRegs->eip );
+	print_registers( psRegs );
+	printk( "\n" );
+//	list_areas( CURRENT_PROC->tc_psMemSeg );
 
 	if ( CURRENT_THREAD != NULL )
 	{
-		do_exit( 1 );
+		sys_kill( CURRENT_THREAD->tr_hThreadID, SIGSEGV );
+//		do_exit( 1 );
 	}
 	else
 	{

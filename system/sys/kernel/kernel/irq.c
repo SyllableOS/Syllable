@@ -352,6 +352,14 @@ void handle_irq( SysCallRegs_s * psRegs, int nIrqNum )
 			outb_p( n & ~0x80, 0x61 );
 			enable_8259A_irq( nIrqNum );
 		}
+		else if ( nIrqNum == 13 )
+		{
+			// reset FPU busy latch
+			mask_and_ack_8259A( nIrqNum );
+			outb( 0, 0xF0 );
+			enable_8259A_irq( nIrqNum );
+			printk( "IRQ13 received!\n" );
+		}
 		else
 		{
 			reflect_irq_to_realmode( psRegs, nIrqNum + ( ( nIrqNum < 8 ) ? 0x08 : 0x68 ) );
