@@ -49,8 +49,7 @@ void DeskSettings::SaveSettings(Message* pcMessage)
         delete pcConfig;
         free( pBuffer );
     }
-
-    system("mv -f /tmp/desktop.cfg ~/config/desktop/config/");
+  
 }
 
 Message* DeskSettings::GetSettings()
@@ -162,6 +161,7 @@ int32 DeskSettings::GetImageSize()
 {
 	return (nSizeImage);
 }
+
 
 
 
