@@ -65,7 +65,9 @@ typedef unsigned char			uchar;
 
 #ifndef __cplusplus
 typedef char	bool;
+#if !defined(false) && !defined(true)
 enum {false,true};
+#endif
 #endif
 
 typedef	int	status_t;
