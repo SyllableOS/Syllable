@@ -1,3 +1,9 @@
+* Aug 10th 2002, Kristian Van Der Vliet *
+
+The CheckMark for CheckMenus has been moved to the left of the label.
+In order for all Menu labels to align, menu labels are now offset to the right,
+which leaves a space to the left of the menu.
+
 * Aug 4th 2002, Kristian Van Der Vliet *
 
 Added the CheckMenu class.
