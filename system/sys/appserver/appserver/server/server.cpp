@@ -1044,7 +1044,7 @@ int main( int argc, char **argv )
 	{
 		dbprintf( "Error: failed to open appserver configuration file: /system/config/appserver" );
 	}
-	dbprintf( "Start keybord thread\n" );
+	dbprintf( "Start keyboard thread\n" );
 
 	InitKeyboard();
 
@@ -1054,9 +1054,4 @@ int main( int argc, char **argv )
 	dbprintf( "WARNING : layers.device failed to initiate itself!!!\n" );
 	return ( 0 );
 }
-
-
-
-
-
 

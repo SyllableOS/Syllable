@@ -717,7 +717,7 @@ status_t device_init( int nDeviceID )
     g_nKbdLedStatus = 0;
   
     if ( g_sVolume.nIrqHandle < 0 ) {
-	printk( "ERROR : Failed to initiate keybord interrupt handler\n" );
+	printk( "ERROR : Failed to initiate keyboard interrupt handler\n" );
 	return( g_sVolume.nIrqHandle );
     }
     
