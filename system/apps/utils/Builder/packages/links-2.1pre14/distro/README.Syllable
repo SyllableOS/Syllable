@@ -1,0 +1,185 @@
+Links for Syllable
+==================
+
+30-Jun-2004
+
+1 Introduction
+==============
+
+This is a binary distribution of version 2.1pre14 of the Links web
+browser for the Syllable operating system. This distribution was
+optimized for a Pentium CPU. It should run on different versions of
+Syllable, but this has not been tested.
+
+If you encounter problems or have any other interesting observations,
+I would be interested to hear about them (see contact information).
+
+See the file README for more information on Links.
+
+2 How to install Links on Syllable
+==================================
+
+2.1 
+----
+
+2.1.1 
+------
+
+Please note that Links needs the ZLib library. ZLib is not included
+in this distribution, so you may have to get that package and install
+it first, if it is not already installed on your system. ZLib is
+included in the base Syllable system in Syllable 0.4.5 and up. You
+need ZLib as a shared library. The ZLib packages for Syllable are
+distributed in this form from version 1.1.4 onwards.
+
+Now for the Links installation. You may have to become the root user
+to perform the following operations:
+
+    su
+
+You should have unpacked this file with
+
+    tar -xpz
+
+or something equivalent. The 'p' option to tar is important: it
+preserves permissions on the extracted files. Without the proper file
+permissions, the installation will be broken.
+
+Unpacking produces the directory links. This should be installed
+under /usr. If you unpacked it somewhere else, do:
+
+    mv links /usr
+
+Then run:
+
+    pkgmanager -a /usr/links
+
+This creates links in Syllable to enable it to find Links' files.
+
+You should now be able to use Links. It works in text mode when you
+start it as
+
+    links
+
+and in graphics mode when you start it as
+
+    links -g
+
+Please note that graphics mode only seems to work when Syllable is
+set to a color depth of 16 bits (65536 colors).
+
+You may want to run Links' monitor calibration, like this:
+
+    links -g /usr/links/doc/calibration.html
+
+2.1.2 Installing with the Syllable build system
+-----------------------------------------------
+
+If you have the Syllable build system installed, it can do the above
+steps for you. Just do:
+
+    su
+    build install links-2.1pre14.bin.1.tgz
+
+2.2 Uninstalling & upgrading Links
+----------------------------------
+
+2.2.1 
+------
+
+If you ever want to remove Links, follow these steps. For example,
+you should do this before you install a new version of Links. Again,
+you may have to become root first:
+
+    su
+
+Then you should remove the links to Links - if you know what I mean
+:-) - from Syllable. You should even do this when you want to upgrade
+Links, because the links will most likely have changed for the new
+version.
+
+    pkgmanager -r /usr/links
+
+To delete the files belonging to Links, run:
+
+    rm -r /usr/links
+
+2.2.2 Uninstalling & upgrading with the Syllable build system
+-------------------------------------------------------------
+
+If you install a package with the Syllable build system, it will
+check if the package was already installed and remove the previous
+version automatically.
+
+If you just want to uninstall Links, do:
+
+    su
+    build uninstall links
+
+3 Building Links on Syllable
+============================
+
+Normally you don't have to, but if you want to build Links yourself,
+you need to get the source distribution. You can get the Links
+distribution through its home page:
+
+    http://atrey.karlin.mff.cuni.cz/~clock/twibright/links/
+
+See the file README for details. Furthermore, for maximum features,
+you will need to have the ZLib, LibPNG, LibJPEG, LibUnGIF, LibTIFF
+and OpenSSL libraries installed. Additionally, you need patches to
+the source that are specific to Syllable. These patches are kept in
+the Syllable build system. The build system also knows all other
+specifics for building Links.
+
+When you have the build system installed, you should first provide it
+with the Links source package:
+
+    cp links-2.1pre14.tar.bz2 /usr/Builder/sources
+
+You may alternatively use a GZipped package, if you have that.
+
+To configure and compile Links, do
+
+    build links-2.1pre14
+
+from your work directory. If that succeeds, you can optionally run
+the testsuite:
+
+    build test links-2.1pre14
+
+To install and register the package, become root first:
+
+    su
+
+then do:
+
+    build install links-2.1pre14
+
+After the installation, you could even create a distribution package:
+
+    build distro links-2.1pre14
+
+4 Known problems and limitations
+================================
+
+The Syllable build system has a patch for this version of Links, but
+since Syllable 0.5.3, more changes are needed to adapt the
+Syllable-specific code in Links to GCC 3.x and to changes made to the
+Syllable APIs. The changes are small, but they need some attention.
+If you think you can compile Links on a newer version of Syllable,
+please do and let us know!
+
+5 Contact information
+=====================
+
+This version of Links was built and packed for Syllable by Kaj de
+Vos. You can send me problem reports, fixes and the like at
+
+    links@syllable.info
+
+This distribution can be found in the download section of the
+Syllable web site:
+
+    http://syllable.org
+
