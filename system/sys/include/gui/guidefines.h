@@ -302,6 +302,14 @@ enum {
 
 struct screen_mode
 {
+	screen_mode() { }
+	screen_mode( int nWidth, int nHeight, int nBytesPerLine, color_space eColorSpc, float vRefreshRate ) {
+		m_nWidth = nWidth;
+		m_nHeight = nHeight;
+		m_nBytesPerLine = nBytesPerLine;
+		m_eColorSpace = eColorSpc;
+		m_vRefreshRate = vRefreshRate;
+	}
     int		     m_nWidth;
     int		     m_nHeight;
     int		     m_nBytesPerLine;
@@ -318,5 +326,6 @@ struct screen_mode
 #endif
 
 #endif	// __F_GUI_GUIDEFS_H__
+
 
 
