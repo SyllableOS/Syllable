@@ -17,8 +17,8 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef	__F_GUI_WINDOW_H
-#define	__F_GUI_WINDOW_H
+#ifndef	__F_GUI_WINDOW_H__
+#define	__F_GUI_WINDOW_H__
 
 #include <gui/bitmap.h>
 #include <gui/view.h>
@@ -32,6 +32,7 @@ namespace os
 
 class Menu;
 class View;
+class ShortcutKey;
 struct WR_Render_s;
 
 enum
@@ -136,7 +137,7 @@ public:
     void		MoveTo( float x, float y );
 
     void		CenterInWindow( Window* pcWin );
-	 void		CenterInScreen();
+	void		CenterInScreen();
 	 
     void		ResizeBy( const Point& cDelta );
     void		ResizeBy( float vDeltaW, float vDeltaH );
@@ -148,6 +149,10 @@ public:
   
     bool		IsActive() const;
     int			ToggleDepth();
+
+	void		AddShortcut( const ShortcutKey& cKey, Message* pcMsg );
+	void		AddShortcut( const ShortcutKey& cKey, View* pcView );
+	void		RemoveShortcut( const ShortcutKey& cKey );
 
       //	From Looper:
 
@@ -178,11 +183,14 @@ private:
     View*	_GetTopView() const;
     port_id	_GetAppserverPort() const;
 
+	void	_HandleShortcuts( const char* pzString, const char* pzRawString, uint32 nQualifiers );
+
     class Private;
     Private* m;
 };
 
 } // end of namespace
 
-#endif	// __F_GUI_WINDOW_H
+#endif	// __F_GUI_WINDOW_H__
+
 
