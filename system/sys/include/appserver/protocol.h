@@ -56,6 +56,7 @@ enum
     DR_SET_DEFAULT_FONT,
     DR_ADD_DEFAULT_FONT,
     DR_RESCAN_FONTS,
+    DR_SET_DESKTOP,
     
     AR_OPEN_WINDOW = 10000,
     AR_CLOSE_WINDOW,
@@ -507,4 +508,5 @@ struct WR_GetPenPositionReply_s
 
 }
 #endif	//	DEVICES_DISPLAY_PACKETS_H
+
 

@@ -134,6 +134,7 @@ private:
     
     int   LockDesktop( int nDesktop, Message* pcDesktopParams );
     int	  UnlockDesktop( int nCookie );
+    int   SwitchDesktop( int nDesktop );
     void  SetScreenMode( int nDesktop, uint32 nValidityMask, screen_mode* psMode );
   
     int CreateBitmap( int nWidth, int nHeight, color_space eColorSpc,
@@ -158,4 +159,6 @@ private:
 }
 
 #endif	// __F_UTIL_APPLICATION_H__
+
+
 
