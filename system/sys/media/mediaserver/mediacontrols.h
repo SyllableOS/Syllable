@@ -39,12 +39,15 @@ public:
 	void SetMasterValue( float vValue );
 	void StreamChanged( uint32 nNum );
 	void SetStreamValue( uint32 nNum, float vValue );
-	
+
+	int FindMixers( const char *pzPath );
+
 private:
 	MediaServer*	m_pcServer;
-	int 			m_hMixerDev;
+	MediaMixer_s	m_pcMixerDev[MEDIA_MAX_DSPS];
+	int				m_nMixerCount;
 	TabView*		m_pcTabs;
-	MixerChannel*	m_pcMixerChannel[SOUND_MIXER_NRDEVICES];
+	MixerChannel*	m_pcMixerChannel[MEDIA_MAX_DSPS][SOUND_MIXER_NRDEVICES];
 	bool			m_bStreamActive[MEDIA_MAX_AUDIO_STREAMS];
 	BarView*		m_pcStreamBar;
 };

@@ -11,7 +11,7 @@
 class MixerChannel : public os::View
 {
 public:
-	MixerChannel( const os::Rect &cFrame, const std::string &cTitle, os::Window* pcTarget, int nChannel );
+	MixerChannel( const os::Rect &cFrame, const std::string &cTitle, os::Window* pcTarget, int nChannel, int nMixer );
 	~MixerChannel();
 	int GetLeftValue();
 	int GetRightValue();
@@ -27,6 +27,7 @@ private:
 	os::Slider* m_pcRight;
 	os::CheckBox *m_pcLock;
 	int m_nChannel;
+	int m_nMixer;
 };
 
 #endif

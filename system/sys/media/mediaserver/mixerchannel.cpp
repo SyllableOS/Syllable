@@ -32,14 +32,15 @@
 
 using namespace os;
 
-MixerChannel::MixerChannel( const Rect &cFrame, const std::string &cTitle, Window *pcTarget, int nChannel )
+MixerChannel::MixerChannel( const Rect &cFrame, const std::string &cTitle, Window *pcTarget, int nChannel, int nMixer )
 				:View( cFrame, cTitle )
 {
 	
 	Message *pcMsgLeft = new Message( MESSAGE_CHANNEL_CHANGED );
 	pcMsgLeft->AddInt8( "channel", nChannel );
 	pcMsgLeft->AddBool( "left", true );
-	
+	pcMsgLeft->AddInt8( "mixer", nMixer );
+
 	
 	m_zLabel = cTitle;
 	m_pcString = new StringView( Rect( 5, 0, 40, 32 ), "label", m_zLabel.c_str() );
@@ -60,7 +61,8 @@ MixerChannel::MixerChannel( const Rect &cFrame, const std::string &cTitle, Windo
 	Message *pcMsgRight = new Message( MESSAGE_CHANNEL_CHANGED );
 	pcMsgRight->AddInt8( "channel", nChannel );
 	pcMsgRight->AddBool( "left", false );
-	
+	pcMsgRight->AddInt8( "mixer", nMixer );
+
 	m_pcRight = new Slider( Rect( 40, 20, 180, 40 ), "right", pcMsgRight, 
 		Slider::TICKS_BELOW, 10, Slider::KNOB_SQUARE, HORIZONTAL );
 	
@@ -74,11 +76,13 @@ MixerChannel::MixerChannel( const Rect &cFrame, const std::string &cTitle, Windo
 	
 	Message *pcMsgLock = new Message( MESSAGE_LOCK_CHANGED );
 	pcMsgLock->AddInt8( "channel", nChannel );
-	
+	pcMsgLock->AddInt8( "mixer", nMixer );
+
 	m_pcLock = new CheckBox( Rect( 185, 10, 240, 25 ), "lock", "Lock", 
 		pcMsgLock, 0, 0 ); 
 	
 	m_nChannel = nChannel;
+	m_nMixer = nMixer;
 
 	AddChild( m_pcLeft );
 	AddChild( m_pcRight );

@@ -47,6 +47,7 @@ MediaServer::MediaServer()
 		m_zDefaultAudioOutput = pcSettings->GetString( "default_audio_output", "Media Server Audio Output" );
 		m_zDefaultVideoOutput = pcSettings->GetString( "default_video_output", "Video Overlay Output" );
 		m_zStartupSound = pcSettings->GetString( "startup_sound", "startup.wav" );
+		m_nDefaultDsp = pcSettings->GetInt32( "default_dsp", 0 );
 	}
 	delete( pcSettings );
 	
@@ -54,6 +55,12 @@ MediaServer::MediaServer()
 	m_hLock = create_semaphore( "media_server_lock", 1, 0 );
 	m_hClearLock = create_semaphore( "media_server_clear_lock", 1, 0 );
 	
+	/* Find available DSP devices */
+	m_nDspCount = FindDsps( "/dev/sound/" );
+	cout<<"Found "<<m_nDspCount<<" DSP's"<<endl;
+	if( m_nDspCount < 0 )
+		m_nDefaultDsp = -1;
+
 	/* Create mix buffer */
 	m_pMixBuffer = ( signed int* )malloc( MEDIA_SERVER_AUDIO_BUFFER * 2 );
 	memset( m_pMixBuffer, 0, MEDIA_SERVER_AUDIO_BUFFER * 2 );
@@ -85,7 +92,7 @@ MediaServer::MediaServer()
 	m_nMasterVolume = 100;
 	
 	/* Create controls window */
-	m_pcControls = new MediaControls( this, Rect( 50, 50, 300, 400 ) );
+	m_pcControls = new MediaControls( this, Rect( 50, 50, 350, 400 ) );
 	m_cControlsFrame = m_pcControls->GetFrame();
 	m_bControlsShown = false;
 }
@@ -112,14 +119,108 @@ void MediaServer::SaveSettings()
 	pcSettings->SetString( "default_audio_output", m_zDefaultAudioOutput );
 	pcSettings->SetString( "default_video_output", m_zDefaultVideoOutput );
 	pcSettings->SetString( "startup_sound", m_zStartupSound );
+	pcSettings->SetInt32( "default_dsp", m_nDefaultDsp );
 	pcSettings->Save();
 	delete( pcSettings );
 }
 
-bool MediaServer::OpenSoundCard()
+int MediaServer::FindDsps( const char *pzPath )
+{
+	int nRet = 0, nDspCount = 0;
+	DIR *hAudioDir, *hDspDir;
+	struct dirent *hAudioDev, *hDspNode;
+	char *zCurrentPath = NULL;
+
+	hAudioDir = opendir( pzPath );
+	if( hAudioDir == NULL )
+	{
+		cout<<"Unable to open"<<pzPath<<endl;
+		return nRet;
+	}
+
+	while( (hAudioDev = readdir( hAudioDir )) )
+	{
+		if( !strcmp( hAudioDev->d_name, "." ) || !strcmp( hAudioDev->d_name, ".." ) )
+			continue;
+
+		cout<<"Found audio device "<<hAudioDev->d_name<<endl;
+		zCurrentPath = (char*)calloc( 1, strlen( pzPath ) + strlen( hAudioDev->d_name ) + 5 );
+		if( zCurrentPath == NULL )
+		{
+			cout<<"Out of memory"<<endl;
+			closedir( hAudioDir );
+			return nRet;
+		}
+
+		zCurrentPath = strcpy( zCurrentPath, pzPath );
+		zCurrentPath = strcat( zCurrentPath, hAudioDev->d_name );
+		zCurrentPath = strcat( zCurrentPath, "/dsp" );
+
+		/* Look for DSP device nodes for this device */
+		hDspDir = opendir( zCurrentPath );
+		if( hDspDir == NULL )
+		{
+			cout<<"Unable to open"<<zCurrentPath<<endl;
+			free( zCurrentPath );
+			continue;
+		}
+
+		while( (hDspNode = readdir( hDspDir )) )
+		{
+			char *zDspPath = NULL;
+
+			if( !strcmp( hDspNode->d_name, "." ) || !strcmp( hDspNode->d_name, ".." ) )
+				continue;
+
+			/* We have found a DSP device node */
+			++nDspCount;
+
+			zDspPath = (char*)calloc( 1, strlen( zCurrentPath ) + strlen( hDspNode->d_name ) + 1 );
+			if( zDspPath == NULL )
+			{
+				printf( "Out of memory\n" );
+				closedir( hDspDir );
+				free( zCurrentPath );
+				closedir( hAudioDir );
+				return nRet;
+			}
+
+			zDspPath = strcpy( zDspPath, zCurrentPath );
+			zDspPath = strcat( zDspPath, "/" );
+			zDspPath = strcat( zDspPath, hDspNode->d_name );
+
+			/* Find next free sound card handle */
+			for( int i=0; i<MEDIA_MAX_DSPS; i++ )
+			{
+				if( m_sDsps[i].bUsed )
+					continue;
+
+				m_sDsps[i].bUsed = true;
+				sprintf( m_sDsps[i].zName, "%s - %s", hAudioDev->d_name, hDspNode->d_name );
+				strcpy( m_sDsps[i].zPath, zDspPath );
+
+				cout<<"Added "<<zDspPath<<" with handle #"<<i<<endl;
+				break;
+			}
+			free( zDspPath );
+		}
+
+		closedir( hDspDir );
+		free( zCurrentPath );
+	}
+
+	nRet = nDspCount;
+	closedir( hAudioDir );
+	return nRet;
+}
+
+bool MediaServer::OpenSoundCard( int nDevice )
 {
 	/* Try to open the soundcard device */
-	m_hOSS = open( "/dev/sound/dsp", O_RDWR );
+	if( nDevice < 0 || nDevice > MEDIA_MAX_DSPS )
+		return( false );
+
+	m_hOSS = open( m_sDsps[nDevice].zPath, O_RDWR );
 	if( m_hOSS >= 0 )
 		cout<<"Soundcard detected"<<endl;	
 	else
@@ -391,7 +492,7 @@ void MediaServer::CreateAudioStream( Message* pcMessage )
 	
 	/* Open soundcard */
 	if( m_nActiveStreamCount == 0 )
-		if( !OpenSoundCard() ) {
+		if( !OpenSoundCard( m_nDefaultDsp ) ) {
 			/* No soundcard found */
 			pcMessage->SendReply( MEDIA_SERVER_ERROR );
 			return;
@@ -717,6 +818,67 @@ void MediaServer::Start( Message* pcMessage )
 	}
 }
 
+void MediaServer::GetDspCount( Message* pcMessage )
+{
+	Message cReply( MEDIA_SERVER_OK );
+	cReply.AddInt32( "dsp_count", m_nDspCount );
+	pcMessage->SendReply( &cReply );
+}
+
+void MediaServer::GetDspInfo( Message* pcMessage )
+{
+	int32 nHandle;
+	std::string cName, cPath;
+	Message cReply( MEDIA_SERVER_OK );
+
+	if( pcMessage->FindInt32( "handle", &nHandle ) != 0 ) {
+		pcMessage->SendReply( MEDIA_SERVER_ERROR );
+		return;
+	}
+
+	if( nHandle < 0 || nHandle > m_nDspCount ) {
+		pcMessage->SendReply( MEDIA_SERVER_ERROR );
+		return;
+	}
+
+	cName = m_sDsps[nHandle].zName;
+	cReply.AddString( "name", cName );
+	cPath = m_sDsps[nHandle].zPath;
+	cReply.AddString( "path", cPath );
+	pcMessage->SendReply( &cReply );
+}
+
+void MediaServer::GetDefaultDsp( Message* pcMessage )
+{
+	Message cReply( MEDIA_SERVER_OK );
+
+	if( m_nDefaultDsp < 0 )
+		pcMessage->SendReply( MEDIA_SERVER_ERROR );
+
+	cReply.AddInt32( "handle", m_nDefaultDsp );
+	pcMessage->SendReply( &cReply );
+}
+
+void MediaServer::SetDefaultDsp( Message* pcMessage )
+{
+	int32 nHandle;
+	Message cReply( MEDIA_SERVER_OK );
+
+	if( pcMessage->FindInt32( "handle", &nHandle ) != 0 ) {
+		pcMessage->SendReply( MEDIA_SERVER_ERROR );
+		return;
+	}
+
+	if( nHandle < 0 || nHandle > MEDIA_MAX_DSPS ) {
+		pcMessage->SendReply( MEDIA_SERVER_ERROR );
+		return;
+	}
+	
+	lock_semaphore( m_hLock );
+	m_nDefaultDsp = nHandle;
+	unlock_semaphore( m_hLock );
+	pcMessage->SendReply( &cReply );
+}
 
 void MediaServer::HandleMessage( Message* pcMessage )
 {
@@ -789,6 +951,21 @@ void MediaServer::HandleMessage( Message* pcMessage )
 			}
 			m_pcControls->MakeFocus();
 			m_bControlsShown = true;
+		break;
+		case MEDIA_SERVER_GET_DSP_COUNT:
+			if( pcMessage->IsSourceWaiting() )
+				GetDspCount( pcMessage );
+		break;
+		case MEDIA_SERVER_GET_DSP_INFO:
+			if( pcMessage->IsSourceWaiting() )
+				GetDspInfo( pcMessage );
+		break;
+		case MEDIA_SERVER_GET_DEFAULT_DSP:
+			if( pcMessage->IsSourceWaiting() )
+				GetDefaultDsp( pcMessage );
+		break;
+		case MEDIA_SERVER_SET_DEFAULT_DSP:
+			SetDefaultDsp( pcMessage );
 		break;
 		default:
 			Looper::HandleMessage( pcMessage );

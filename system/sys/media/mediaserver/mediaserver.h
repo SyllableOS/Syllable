@@ -55,6 +55,7 @@ namespace os
 
 #define MEDIA_MAX_AUDIO_STREAMS 64
 #define MEDIA_MAX_STREAM_PACKETS 10
+#define MEDIA_MAX_DSPS 8
 
 struct MediaPlugin_s {
 	String zFileName;
@@ -74,6 +75,19 @@ struct MediaAudioStream_s {
 	uint32 nValueCount;
 	float vValue;
 	bigtime_t nBufferPlayed;
+};
+
+struct MediaDSP_s {
+	bool bUsed;
+	char zName[MAXNAMLEN];
+	char zPath[4096];
+};
+
+struct MediaMixer_s {
+	bool bUsed;
+	char zPath[4096];
+	int hMixerDev;
+	View* pcFrame;
 };
 
 class MediaControls;
@@ -105,7 +119,9 @@ public:
 private:
 	void SaveSettings();
 	
-	bool OpenSoundCard();
+	int FindDsps( const char *pzPath );
+
+	bool OpenSoundCard( int nDevice );
 	void CloseSoundCard();
 	
 	void GetDefaultInput( Message* pcMessage );
@@ -126,6 +142,11 @@ private:
 	void Start( Message* pcMessage );
 	
 	uint32 Resample( os::MediaFormat_s sFormat, uint16* pDst, uint16* pSrc, uint32 nLength );
+
+	void GetDspCount( Message* pcMessage );
+	void GetDspInfo( Message* pcMessage );
+	void GetDefaultDsp( Message* pcMessage );
+	void SetDefaultDsp( Message* pcMessage );
 	
 	String 			m_zDefaultInput;
 	String 			m_zDefaultAudioOutput;
@@ -134,6 +155,9 @@ private:
 	MediaAudioStream_s m_sAudioStream[MEDIA_MAX_AUDIO_STREAMS];
 	os::MediaPacket_s* m_psPacket[MEDIA_MAX_AUDIO_STREAMS][MEDIA_MAX_STREAM_PACKETS];
 	uint32			m_nQueuedPackets[MEDIA_MAX_AUDIO_STREAMS];
+	MediaDSP_s		m_sDsps[MEDIA_MAX_DSPS];
+	int				m_nDspCount;
+	int				m_nDefaultDsp;
 	int				m_hOSS;
 	int				m_nBufferSize;
 	sem_id			m_hLock;
