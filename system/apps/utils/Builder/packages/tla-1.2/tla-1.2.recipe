@@ -1,0 +1,24 @@
+authors				Kaj de Vos
+status				testing
+notes				Waiting for ftruncate implementation in AFS
+
+name				arch
+licenses			GPL GFDL
+
+;build-needs
+;	gawk
+;	grep
+run-needs
+	diffutils
+	patch
+	tar
+run-recommends
+	openssh
+
+patch-config		src/build-tools/gnu
+configure-cmd		src/configure
+;configure-options	--yes ssh-is-lsh
+test-targets		test
+documentation
+	=ARCH-USERS-README COPYING
+	src/tla/ChangeLog src/tla/=TODO src/tla/=THANKS src/docs-tla/HOWTO.crypto src/docs-tla/html

@@ -1,5 +1,5 @@
 authors			Kaj de Vos
-status			testing
+status			deprecated
 notes			Waiting for ftruncate implementation in AFS
 
 name			arch
