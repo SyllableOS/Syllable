@@ -1,3 +1,4 @@
+
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -25,9 +26,10 @@
 #include <macros.h>
 
 #ifdef __cplusplus
-extern "C" {
-#if 0  
-} /*make emacs indention work */
+extern "C"
+{
+#if 0
+}				/*make emacs indention work */
 #endif
 #endif
 
@@ -41,19 +43,19 @@ extern "C" {
 
 #include "i82489.h"
 
-extern int		g_pAPICPageDir;
+extern int g_pAPICPageDir;
 
 #define SMP_MAGIC_IDENT	(('_'<<24)|('P'<<16)|('M'<<8)|'_')
 
 
 typedef struct
 {
-  uint32 tc_nJmpInstr;
-  uint32 tc_nKernelEntry;
-  uint32 tc_nKernelStack;
-  uint32 tc_nKernelDS;
-  uint32 tc_nKernelCS;
-  uint32 tc_nGdt;	  /* Pointer to global descriptor table */
+	uint32 tc_nJmpInstr;
+	uint32 tc_nKernelEntry;
+	uint32 tc_nKernelStack;
+	uint32 tc_nKernelDS;
+	uint32 tc_nKernelCS;
+	uint32 tc_nGdt;		/* Pointer to global descriptor table */
 } SmpTrampolineCfg_s;
 
 
@@ -62,29 +64,29 @@ typedef struct
 
 typedef struct
 {
-    char   mpc_anSignature[4];
-    uint16 mpc_nSize;	/* Size of table */
-    char   mpc_nVersion;	/* Table version (0x01 or 0x04) */
-    char   mpc_checksum;
-    char   mpc_anOEMString[8];
-    char   mpc_anProductID[12];
-    void*  mpc_pOEMPointer;	/* 0 if not present */
-    uint16 mpc_nOEMSize;	/* 0 if not present */
-    uint16 mpc_nOEMCount;
-    uint32 mpc_nAPICAddress;	/* APIC address */
-    uint32 mpc_reserved;
+	char mpc_anSignature[4];
+	uint16 mpc_nSize;	/* Size of table */
+	char mpc_nVersion;	/* Table version (0x01 or 0x04) */
+	char mpc_checksum;
+	char mpc_anOEMString[8];
+	char mpc_anProductID[12];
+	void *mpc_pOEMPointer;	/* 0 if not present */
+	uint16 mpc_nOEMSize;	/* 0 if not present */
+	uint16 mpc_nOEMCount;
+	uint32 mpc_nAPICAddress;	/* APIC address */
+	uint32 mpc_reserved;
 } MpConfigTable_s;
 
 typedef struct
 {
-    char   	     mpf_anSignature[4];	/* "_MP_" 				*/
-    MpConfigTable_s* mpf_psConfigTable;		/* Configuration table address		*/
-    uint8	     mpf_nLength;		/* Length of struct in paragraphs	*/
-    uint8	     mpf_nVersion;		/* Specification version		*/
-    uint8	     mpf_nChecksum;		/* Checksum (makes sum 0)		*/
-    uint8	     mpf_nFeature1;		/* Standard or configuration ? 		*/
-    uint8	     mpf_nFeature2;		/* Bit7 set for IMCR|PIC		*/
-    uint8	     mpf_unused[3];		/* Unused (0)				*/
+	char mpf_anSignature[4];	/* "_MP_"                               */
+	MpConfigTable_s *mpf_psConfigTable;	/* Configuration table address          */
+	uint8 mpf_nLength;	/* Length of struct in paragraphs       */
+	uint8 mpf_nVersion;	/* Specification version                */
+	uint8 mpf_nChecksum;	/* Checksum (makes sum 0)               */
+	uint8 mpf_nFeature1;	/* Standard or configuration ?          */
+	uint8 mpf_nFeature2;	/* Bit7 set for IMCR|PIC                */
+	uint8 mpf_unused[3];	/* Unused (0)                           */
 } MpFloatingPointer_s;
 
 /* Followed by entries */
@@ -106,27 +108,27 @@ typedef struct
 
 typedef struct
 {
-  uint8  mpc_nType;
-  uint8  mpc_nAPICID;	/* Local APIC number */
-  uint8  mpc_nAPICVer;	/* Its versions */
-  uint8  mpc_cpuflag;
-  uint32 mpc_cpufeature;		
-  uint32 mpc_featureflag;	/* CPUID feature value */
-  uint32 mpc_reserved[2];
+	uint8 mpc_nType;
+	uint8 mpc_nAPICID;	/* Local APIC number */
+	uint8 mpc_nAPICVer;	/* Its versions */
+	uint8 mpc_cpuflag;
+	uint32 mpc_cpufeature;
+	uint32 mpc_featureflag;	/* CPUID feature value */
+	uint32 mpc_reserved[2];
 } MpConfigProcessor_s;
 
 typedef struct
 {
-  uint8 mpc_nType;
-  uint8 mpc_busid;
-  uint8 mpc_bustype[6] __attribute((packed));
+	uint8 mpc_nType;
+	uint8 mpc_busid;
+	uint8 mpc_bustype[6] __attribute( ( packed ) );
 } MpConfigBus_s;
 
 #define BUSTYPE_EISA	"EISA"
 #define BUSTYPE_ISA	"ISA"
 #define BUSTYPE_INTERN	"INTERN"	/* Internal BUS */
 #define BUSTYPE_MCA	"MCA"
-#define BUSTYPE_VL	"VL"		/* Local bus */
+#define BUSTYPE_VL	"VL"	/* Local bus */
 #define BUSTYPE_PCI	"PCI"
 #define BUSTYPE_PCMCIA	"PCMCIA"
 
@@ -136,22 +138,22 @@ typedef struct
 
 typedef struct
 {
-  uint8  mpc_nType;
-  uint8  mpc_nAPICID;
-  uint8  mpc_nAPICVer;
-  uint8  mpc_nFlags;
-  uint32 mpc_nAPICAddress;
+	uint8 mpc_nType;
+	uint8 mpc_nAPICID;
+	uint8 mpc_nAPICVer;
+	uint8 mpc_nFlags;
+	uint32 mpc_nAPICAddress;
 } MpConfigIOAPIC_s;
 
 typedef struct
 {
-  uint8  mpc_nType;
-  uint8  mpc_nIRQType;
-  uint16 mpc_nIRQFlags;
-  uint8  mpc_nSrcBusID;
-  uint8  mpc_nSrcBusIRQ;
-  uint8  mpc_nDstAPIC;
-  uint8  mpc_nDstIRQ;
+	uint8 mpc_nType;
+	uint8 mpc_nIRQType;
+	uint16 mpc_nIRQFlags;
+	uint8 mpc_nSrcBusID;
+	uint8 mpc_nSrcBusIRQ;
+	uint8 mpc_nDstAPIC;
+	uint8 mpc_nDstIRQ;
 } MpConfigIntSrc_s;
 
 #define MP_INT_VECTORED		0
@@ -168,13 +170,13 @@ typedef struct
 
 typedef struct
 {
-    uint8  mpc_nType;
-    uint8  mpc_nIRQType;
-    uint16 mpc_nIRQFlags;
-    uint8  mpc_nSrcBusID;
-    uint8  mpc_nSrcBusIRQ;
-    uint8  mpc_nDstAPIC;
-    uint8  mpc_nDstAPICLocalInt;
+	uint8 mpc_nType;
+	uint8 mpc_nIRQType;
+	uint16 mpc_nIRQFlags;
+	uint8 mpc_nSrcBusID;
+	uint8 mpc_nSrcBusIRQ;
+	uint8 mpc_nDstAPIC;
+	uint8 mpc_nDstAPICLocalInt;
 } MpConfigIntLocal_s;
 
 
@@ -192,32 +194,32 @@ typedef struct
 
 typedef struct
 {
-    char      pi_anVendorID[16];
-    char      pi_zName[255];
-    uint32    pi_nCoreSpeed;
-    uint32    pi_nBusSpeed;
-    uint32    pi_nDelayCount;
-    uint32    pi_nGS;		/* GS segment, used for thread specific data */
-    int	      pi_nFamily;
-    int	      pi_nModel;
-    int	      pi_nAPICVersion;
-    Thread_s* pi_psCurrentThread;
-    Thread_s* pi_psIdleThread;
-    bigtime_t pi_nIdleTime;
-    bool      pi_bIsPresent;
-    bool      pi_bIsRunning;
-    bool      pi_bHaveCPUID;
-    bool      pi_bHavePERFCnt;
-    bool      pi_bHaveAPIC; 
-    uint32    pi_nFeatures;
+	char pi_anVendorID[16];
+	char pi_zName[255];
+	uint32 pi_nCoreSpeed;
+	uint32 pi_nBusSpeed;
+	uint32 pi_nDelayCount;
+	uint32 pi_nGS;		/* GS segment, used for thread specific data */
+	int pi_nFamily;
+	int pi_nModel;
+	int pi_nAPICVersion;
+	Thread_s *pi_psCurrentThread;
+	Thread_s *pi_psIdleThread;
+	bigtime_t pi_nIdleTime;
+	bool pi_bIsPresent;
+	bool pi_bIsRunning;
+	bool pi_bHaveCPUID;
+	bool pi_bHavePERFCnt;
+	bool pi_bHaveAPIC;
+	uint32 pi_nFeatures;
 } ProcessorInfo_s;
 
 
-extern bool		g_bAPICPresent;
-extern int		g_nActiveCPUCount;
-extern int		g_nBootCPU;
-extern ProcessorInfo_s	g_asProcessorDescs[MAX_CPU_COUNT];
-extern uint32 		g_nVirtualAPICAddr;
+extern bool g_bAPICPresent;
+extern int g_nActiveCPUCount;
+extern int g_nBootCPU;
+extern ProcessorInfo_s g_asProcessorDescs[MAX_CPU_COUNT];
+extern uint32 g_nVirtualAPICAddr;
 
 
 /*
@@ -230,26 +232,26 @@ extern uint32 		g_nVirtualAPICAddr;
 
 extern __inline void apic_write( uint32 nReg, uint32 nValue )
 {
-  kassertw( g_bAPICPresent );
-  *((vuint32*)(g_nVirtualAPICAddr + nReg)) = nValue;
+	kassertw( g_bAPICPresent );
+	*( ( vuint32 * )( g_nVirtualAPICAddr + nReg ) ) = nValue;
 }
 
-extern __inline unsigned long apic_read( uint32 nReg)
+extern __inline unsigned long apic_read( uint32 nReg )
 {
-  return( *((vuint32*)(g_nVirtualAPICAddr + nReg)) );
+	return ( *( ( vuint32 * )( g_nVirtualAPICAddr + nReg ) ) );
 }
 
 #ifdef __BUILD_KERNEL__
-extern __inline int get_processor_id(void)
+extern __inline int get_processor_id( void )
 {
-  return( GET_APIC_ID(apic_read(APIC_ID)) );
+	return ( GET_APIC_ID( apic_read( APIC_ID ) ) );
 }
 #endif
 
 int logig_to_physical_cpu_id( int nLogicID );
 
 
-#define NO_PROC_ID		0xFF		/* No processor magic marker */
+#define NO_PROC_ID		0xFF	/* No processor magic marker */
 
 
 bool init_smp( bool bInitSMP );
@@ -257,7 +259,7 @@ void boot_ap_processors( void );
 
 void forward_irq( int nTarget, int nIrqNum );
 
-#define MSG_ALL_BUT_SELF	0x8000		/* Assume < 32768 CPU's */
+#define MSG_ALL_BUT_SELF	0x8000	/* Assume < 32768 CPU's */
 #define MSG_ALL			0x8001
 
 #endif /* __KERNEL__ */

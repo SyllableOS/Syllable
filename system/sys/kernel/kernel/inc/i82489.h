@@ -1,3 +1,4 @@
+
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -21,14 +22,15 @@
 #define __F_ATHEOS_I82489_H__
 
 #ifdef __cplusplus
-extern "C" {
-#if 0  
-} /*make emacs indention work */
+extern "C"
+{
+#if 0
+}				/*make emacs indention work */
 #endif
 #endif
 
 /*** 82489 and Pentium integrated APIC register layout ***/
- 
+
 #define	APIC_ID			0x20
 #define	GET_APIC_ID(x)		(((x)>>24)&0x0F)
 #define	SET_APIC_ID(x)		((x)<<24)
@@ -38,7 +40,7 @@ extern "C" {
 #define	APIC_ARBPRI		0x90
 #define	APIC_PROCPRI		0xA0
 #define	APIC_EOI		0xB0
-#define	APIC_EIO_ACK		0x0		/* Write this to the EOI register */
+#define	APIC_EIO_ACK		0x0	/* Write this to the EOI register */
 #define	APIC_RRR		0xC0
 #define	APIC_LDR		0xD0
 #define	GET_APIC_LOGICAL_ID(x)	(((x)>>24)&0xFF)
@@ -47,7 +49,7 @@ extern "C" {
 #define	GET_APIC_DFR(x)		(((x)>>28)&0x0F)
 #define	SET_APIC_DFR(x)		((x)<<28)
 
-#define	APIC_SPIV		0xF0		/* Spurious interupt vector	*/
+#define	APIC_SPIV		0xF0	/* Spurious interupt vector     */
 #define	APIC_ISR		0x100
 #define	APIC_TMR		0x180
 #define	APIC_IRR		0x200
@@ -119,4 +121,4 @@ extern "C" {
 }
 #endif
 
-#endif /* __F_ATHEOS_I82489_H__ */
+#endif				/* __F_ATHEOS_I82489_H__ */

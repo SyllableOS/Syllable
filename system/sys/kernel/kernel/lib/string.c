@@ -1,3 +1,4 @@
+
 /*
  *  linux/lib/string.c
  *
@@ -17,49 +18,49 @@
 #include <atheos/string.h>
 #include <macros.h>
 
-char * ___strtok = NULL;
+char *___strtok = NULL;
 
-void*	malloc( size_t nSize )
+void *malloc( size_t nSize )
 {
-	return( kmalloc( nSize, MEMF_KERNEL ) );
+	return ( kmalloc( nSize, MEMF_KERNEL ) );
 }
 
-void	free( void* pBuf )
+void free( void *pBuf )
 {
 	kfree( pBuf );
 }
 
 #ifndef __HAVE_ARCH_STRCPY
-char * strcpy(char * dest,const char *src)
+char *strcpy( char *dest, const char *src )
 {
 	char *tmp = dest;
 
-	while ((*dest++ = *src++) != '\0')
-		/* nothing */;
+	while ( ( *dest++ = *src++ ) != '\0' )
+		/* nothing */ ;
 	return tmp;
 }
 #endif
 
 #ifndef __HAVE_ARCH_STRNCPY
-char * strncpy(char * dest,const char *src,size_t count)
+char *strncpy( char *dest, const char *src, size_t count )
 {
 	char *tmp = dest;
 
-	while (count-- && (*dest++ = *src++) != '\0')
-		/* nothing */;
+	while ( count-- && ( *dest++ = *src++ ) != '\0' )
+		/* nothing */ ;
 
 	return tmp;
 }
 #endif
 
 #ifndef __HAVE_ARCH_STRCAT
-char * strcat(char * dest, const char * src)
+char *strcat( char *dest, const char *src )
 {
 	char *tmp = dest;
 
-	while (*dest)
+	while ( *dest )
 		dest++;
-	while ((*dest++ = *src++) != '\0')
+	while ( ( *dest++ = *src++ ) != '\0' )
 		;
 
 	return tmp;
@@ -67,15 +68,18 @@ char * strcat(char * dest, const char * src)
 #endif
 
 #ifndef __HAVE_ARCH_STRNCAT
-char * strncat(char *dest, const char *src, size_t count)
+char *strncat( char *dest, const char *src, size_t count )
 {
 	char *tmp = dest;
 
-	if (count) {
-		while (*dest)
+	if ( count )
+	{
+		while ( *dest )
 			dest++;
-		while ((*dest++ = *src++)) {
-			if (--count == 0) {
+		while ( ( *dest++ = *src++ ) )
+		{
+			if ( --count == 0 )
+			{
 				*dest = '\0';
 				break;
 			}
@@ -87,12 +91,13 @@ char * strncat(char *dest, const char *src, size_t count)
 #endif
 
 #ifndef __HAVE_ARCH_STRCMP
-int strcmp(const char * cs,const char * ct)
+int strcmp( const char *cs, const char *ct )
 {
 	register signed char __res;
 
-	while (1) {
-		if ((__res = *cs - *ct++) != 0 || !*cs++)
+	while ( 1 )
+	{
+		if ( ( __res = *cs - *ct++ ) != 0 || !*cs++ )
 			break;
 	}
 
@@ -100,12 +105,13 @@ int strcmp(const char * cs,const char * ct)
 }
 #endif
 
-int stricmp(const char * cs,const char * ct)
+int stricmp( const char *cs, const char *ct )
 {
 	register signed char __res;
 
-	while (1) {
-		if ((__res = toupper( *cs ) - toupper( *ct++ )) != 0 || !*cs++)
+	while ( 1 )
+	{
+		if ( ( __res = toupper( *cs ) - toupper( *ct++ ) ) != 0 || !*cs++ )
 			break;
 	}
 
@@ -113,12 +119,13 @@ int stricmp(const char * cs,const char * ct)
 }
 
 #ifndef __HAVE_ARCH_STRNCMP
-int strncmp(const char * cs,const char * ct,size_t count)
+int strncmp( const char *cs, const char *ct, size_t count )
 {
 	register signed char __res = 0;
 
-	while (count) {
-		if ((__res = *cs - *ct++) != 0 || !*cs++)
+	while ( count )
+	{
+		if ( ( __res = *cs - *ct++ ) != 0 || !*cs++ )
 			break;
 		count--;
 	}
@@ -128,12 +135,13 @@ int strncmp(const char * cs,const char * ct,size_t count)
 #endif
 
 
-int strnicmp(const char * cs,const char * ct,size_t count)
+int strnicmp( const char *cs, const char *ct, size_t count )
 {
 	register signed char __res = 0;
 
-	while (count) {
-		if ((__res = toupper( *cs ) - toupper( *ct++ ) ) != 0 || !*cs++)
+	while ( count )
+	{
+		if ( ( __res = toupper( *cs ) - toupper( *ct++ ) ) != 0 || !*cs++ )
 			break;
 		count--;
 	}
@@ -143,62 +151,67 @@ int strnicmp(const char * cs,const char * ct,size_t count)
 
 
 #ifndef __HAVE_ARCH_STRCHR
-char * strchr(const char * s, int c)
+char *strchr( const char *s, int c )
 {
-	for(; *s != (char) c; ++s)
-		if (*s == '\0')
+	for ( ; *s != ( char )c; ++s )
+		if ( *s == '\0' )
 			return NULL;
-	return (char *) s;
+	return ( char * )s;
 }
 #endif
 
 #ifndef __HAVE_ARCH_STRRCHR
-char * strrchr(const char * s, int c)
+char *strrchr( const char *s, int c )
 {
-       const char *p = s + strlen(s);
-       do {
-           if (*p == (char)c)
-               return (char *)p;
-       } while (--p >= s);
-       return NULL;
+	const char *p = s + strlen( s );
+
+	do
+	{
+		if ( *p == ( char )c )
+			return ( char * )p;
+	}
+	while ( --p >=s );
+	return NULL;
 }
 #endif
 
 #ifndef __HAVE_ARCH_STRLEN
-size_t strlen(const char * s)
+size_t strlen( const char *s )
 {
 	const char *sc;
 
-	for (sc = s; *sc != '\0'; ++sc)
-		/* nothing */;
+	for ( sc = s; *sc != '\0'; ++sc )
+		/* nothing */ ;
 	return sc - s;
 }
 #endif
 
 #ifndef __HAVE_ARCH_STRNLEN
-size_t strnlen(const char * s, size_t count)
+size_t strnlen( const char *s, size_t count )
 {
 	const char *sc;
 
-	for (sc = s; count-- && *sc != '\0'; ++sc)
-		/* nothing */;
+	for ( sc = s; count-- && *sc != '\0'; ++sc )
+		/* nothing */ ;
 	return sc - s;
 }
 #endif
 
 #ifndef __HAVE_ARCH_STRSPN
-size_t strspn(const char *s, const char *accept)
+size_t strspn( const char *s, const char *accept )
 {
 	const char *p;
 	const char *a;
 	size_t count = 0;
 
-	for (p = s; *p != '\0'; ++p) {
-		for (a = accept; *a != '\0'; ++a) {
-			if (*p == *a)
+	for ( p = s; *p !='\0'; ++p )
+	{
+		for ( a = accept; *a != '\0'; ++a )
+		{
+			if ( *p == *a )
 				break;
 		}
-		if (*a == '\0')
+		if ( *a == '\0' )
 			return count;
 		++count;
 	}
@@ -208,14 +221,16 @@ size_t strspn(const char *s, const char *accept)
 #endif
 
 #ifndef __HAVE_ARCH_STRPBRK
-char * strpbrk(const char * cs,const char * ct)
+char *strpbrk( const char *cs, const char *ct )
 {
-	const char *sc1,*sc2;
+	const char *sc1, *sc2;
 
-	for( sc1 = cs; *sc1 != '\0'; ++sc1) {
-		for( sc2 = ct; *sc2 != '\0'; ++sc2) {
-			if (*sc1 == *sc2)
-				return (char *) sc1;
+	for ( sc1 = cs; *sc1 != '\0'; ++sc1 )
+	{
+		for ( sc2 = ct; *sc2 != '\0'; ++sc2 )
+		{
+			if ( *sc1 == *sc2 )
+				return ( char * )sc1;
 		}
 	}
 	return NULL;
@@ -223,34 +238,36 @@ char * strpbrk(const char * cs,const char * ct)
 #endif
 
 #ifndef __HAVE_ARCH_STRTOK
-char * strtok(char * s,const char * ct)
+char *strtok( char *s, const char *ct )
 {
 	char *sbegin, *send;
 
-	sbegin  = s ? s : ___strtok;
-	if (!sbegin) {
+	sbegin = s ? s : ___strtok;
+	if ( !sbegin )
+	{
 		return NULL;
 	}
-	sbegin += strspn(sbegin,ct);
-	if (*sbegin == '\0') {
+	sbegin += strspn( sbegin, ct );
+	if ( *sbegin == '\0' )
+	{
 		___strtok = NULL;
-		return( NULL );
+		return ( NULL );
 	}
-	send = strpbrk( sbegin, ct);
-	if (send && *send != '\0')
+	send = strpbrk( sbegin, ct );
+	if ( send && *send != '\0' )
 		*send++ = '\0';
 	___strtok = send;
-	return (sbegin);
+	return ( sbegin );
 }
 #endif
 
 
 #ifndef __HAVE_ARCH_MEMSET
-void * memset( void* s, int c, size_t count)
+void *memset( void *s, int c, size_t count )
 {
-	char *xs = (char *) s;
+	char *xs = ( char * )s;
 
-	while (count--)
+	while ( count-- )
 		*xs++ = c;
 
 	return s;
@@ -259,12 +276,12 @@ void * memset( void* s, int c, size_t count)
 
 
 #ifndef __HAVE_ARCH_BCOPY
-void * bcopy(const void * src, void * dest, size_t count)
+void *bcopy( const void *src, void *dest, size_t count )
 {
 	char *tmp = dest;
-	const char *tsrc	= src;
+	const char *tsrc = src;
 
-	while (count--)
+	while ( count-- )
 		*tmp++ = *tsrc++;
 
 	return dest;
@@ -272,11 +289,11 @@ void * bcopy(const void * src, void * dest, size_t count)
 #endif
 
 #ifndef __HAVE_ARCH_MEMCPY
-void * memcpy(void * dest,const void *src,size_t count)
+void *memcpy( void *dest, const void *src, size_t count )
 {
-	char *tmp = (char *) dest, *s = (char *) src;
+	char *tmp = ( char * )dest, *s = ( char * )src;
 
-	while (count--)
+	while ( count-- )
 		*tmp++ = *s++;
 
 	return dest;
@@ -284,35 +301,37 @@ void * memcpy(void * dest,const void *src,size_t count)
 #endif
 
 #ifndef __HAVE_ARCH_MEMMOVE
-void * memmove(void * dest,const void *src,size_t count)
+void *memmove( void *dest, const void *src, size_t count )
 {
 	char *tmp, *s;
 
-	if (dest <= src) {
-		tmp = (char *) dest;
-		s = (char *) src;
-		while (count--)
+	if ( dest <= src )
+	{
+		tmp = ( char * )dest;
+		s = ( char * )src;
+		while ( count-- )
 			*tmp++ = *s++;
-		}
-	else {
-		tmp = (char *) dest + count;
-		s = (char *) src + count;
-		while (count--)
+	}
+	else
+	{
+		tmp = ( char * )dest + count;
+		s = ( char * )src + count;
+		while ( count-- )
 			*--tmp = *--s;
-		}
+	}
 
 	return dest;
 }
 #endif
 
 #ifndef __HAVE_ARCH_MEMCMP
-int memcmp(const void * cs,const void * ct,size_t count)
+int memcmp( const void *cs, const void *ct, size_t count )
 {
 	const unsigned char *su1, *su2;
 	signed char res = 0;
 
-	for( su1 = cs, su2 = ct; 0 < count; ++su1, ++su2, count--)
-		if ((res = *su1 - *su2) != 0)
+	for ( su1 = cs, su2 = ct; 0 < count; ++su1, ++su2, count-- )
+		if ( ( res = *su1 - *su2 ) != 0 )
 			break;
 	return res;
 }
@@ -322,33 +341,36 @@ int memcmp(const void * cs,const void * ct,size_t count)
  * find the first occurrence of byte 'c', or 1 past the area if none
  */
 #ifndef __HAVE_ARCH_MEMSCAN
-void * memscan(void * addr, int c, size_t size)
+void *memscan( void *addr, int c, size_t size )
 {
-	unsigned char * p = (unsigned char *) addr;
+	unsigned char *p = ( unsigned char * )addr;
 
-	while (size) {
-		if (*p == c)
-			return (void *) p;
-		p++;
+	while ( size )
+	{
+		if ( *p == c )
+			return ( void * )p;
+		p ++;
+
 		size--;
 	}
-  	return (void *) p;
+	return ( void * )p;
 }
 #endif
 
 #ifndef __HAVE_ARCH_STRSTR
-char * strstr(const char * s1,const char * s2)
+char *strstr( const char *s1, const char *s2 )
 {
 	int l1, l2;
 
-	l2 = strlen(s2);
-	if (!l2)
-		return (char *) s1;
-	l1 = strlen(s1);
-	while (l1 >= l2) {
+	l2 = strlen( s2 );
+	if ( !l2 )
+		return ( char * )s1;
+	l1 = strlen( s1 );
+	while ( l1 >= l2 )
+	{
 		l1--;
-		if (!memcmp(s1,s2,l2))
-			return (char *) s1;
+		if ( !memcmp( s1, s2, l2 ) )
+			return ( char * )s1;
 		s1++;
 	}
 	return NULL;
@@ -358,119 +380,145 @@ char * strstr(const char * s1,const char * s2)
 
 #include <posix/limits.h>
 
-static const char* parse_num_prefix( const char* pzString, bool* pbIsNegative, int *pnBase )
+static const char *parse_num_prefix( const char *pzString, bool *pbIsNegative, int *pnBase )
 {
-    while( isspace( *pzString ) ) pzString++;
+	while ( isspace( *pzString ) )
+		pzString++;
 
-    if ( *pzString == '-' ) {
-	*pbIsNegative = true;
-	pzString++;
-    } else if ( *pzString == '+' ) {
-	pzString++;
-    }
-    if ( *pnBase == 0 || *pnBase == 16 ) {
-	if ( pzString[0] == '0' && (pzString[1] == 'x' || pzString[1] == 'X') ) {
-	    *pnBase = 16;
-	    pzString += 2;
+	if ( *pzString == '-' )
+	{
+		*pbIsNegative = true;
+		pzString++;
 	}
-    }
-    if ( *pnBase == 0 ) {
-	*pnBase = (*pzString == '0') ? 8 : 10;
-    }
-    return( pzString );
+	else if ( *pzString == '+' )
+	{
+		pzString++;
+	}
+	if ( *pnBase == 0 || *pnBase == 16 )
+	{
+		if ( pzString[0] == '0' && ( pzString[1] == 'x' || pzString[1] == 'X' ) )
+		{
+			*pnBase = 16;
+			pzString += 2;
+		}
+	}
+	if ( *pnBase == 0 )
+	{
+		*pnBase = ( *pzString == '0' ) ? 8 : 10;
+	}
+	return ( pzString );
 }
 
-const char* do_parse_num( const char* pzString, int nBase, unsigned long nMaxValue, int nMaxDigit, int* pnAnyConsumed, unsigned long* pnValue )
+const char *do_parse_num( const char *pzString, int nBase, unsigned long nMaxValue, int nMaxDigit, int *pnAnyConsumed, unsigned long *pnValue )
 {
-    unsigned long nValue = 0;
-    int 	  nAnyConsumed = 0;
-    
-    for (;;) {
-	int c = *pzString++;
-	if ( isdigit(c) ) {
-	    c -= '0';
-	} else if ( isalpha(c) ) {
-	    c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-	} else {
-	    break;
+	unsigned long nValue = 0;
+	int nAnyConsumed = 0;
+
+	for ( ;; )
+	{
+		int c = *pzString++;
+
+		if ( isdigit( c ) )
+		{
+			c -= '0';
+		}
+		else if ( isalpha( c ) )
+		{
+			c -= isupper( c ) ? 'A' - 10 : 'a' - 10;
+		}
+		else
+		{
+			break;
+		}
+		if ( c >= nBase )
+		{
+			break;
+		}
+		if ( nAnyConsumed < 0 || nValue > nMaxValue || ( nValue == nMaxValue && c > nMaxDigit ) )
+		{
+			nAnyConsumed = -1;
+		}
+		else
+		{
+			nAnyConsumed = 1;
+			nValue *= nBase;
+			nValue += c;
+		}
 	}
-	if (c >= nBase) {
-	    break;
-	}
-	if (nAnyConsumed < 0 || nValue > nMaxValue || (nValue == nMaxValue && c > nMaxDigit)) {
-	    nAnyConsumed = -1;
-	} else {
-	    nAnyConsumed = 1;
-	    nValue *= nBase;
-	    nValue += c;
-	}
-    }
-    *pnValue = nValue;
-    *pnAnyConsumed = nAnyConsumed;
-    return( pzString - 1 );
+	*pnValue = nValue;
+	*pnAnyConsumed = nAnyConsumed;
+	return ( pzString - 1 );
 }
 
 long strtol( const char *a_pzString, char **ppzEndPtr, int nBase )
 {
-    const char *pzString;
-    unsigned long nValue = 0;
-    unsigned long nMaxValue;
-    int		  nMaxDigit;
-    int 	  nAnyConsumed = 0;
-    bool	  bIsNegative = false;
+	const char *pzString;
+	unsigned long nValue = 0;
+	unsigned long nMaxValue;
+	int nMaxDigit;
+	int nAnyConsumed = 0;
+	bool bIsNegative = false;
 
-    pzString = parse_num_prefix( a_pzString, &bIsNegative, &nBase );
+	pzString = parse_num_prefix( a_pzString, &bIsNegative, &nBase );
 
-    nMaxValue = bIsNegative ? -((unsigned long)LONG_MIN) : LONG_MAX;
-    nMaxDigit = nMaxValue % nBase;
-    nMaxValue /= nBase;
+	nMaxValue = bIsNegative ? -( ( unsigned long )LONG_MIN ) : LONG_MAX;
+	nMaxDigit = nMaxValue % nBase;
+	nMaxValue /= nBase;
 
-    pzString = do_parse_num( pzString, nBase, nMaxValue, nMaxDigit, &nAnyConsumed, &nValue );
-    
-    if (nAnyConsumed < 0)  {
-	nValue = (bIsNegative) ? LONG_MIN : LONG_MAX;
+	pzString = do_parse_num( pzString, nBase, nMaxValue, nMaxDigit, &nAnyConsumed, &nValue );
+
+	if ( nAnyConsumed < 0 )
+	{
+		nValue = ( bIsNegative ) ? LONG_MIN : LONG_MAX;
 //    errno = ERANGE;
-    } else if (bIsNegative) {
-	nValue = -nValue;
-    }
-  
-    if (ppzEndPtr != 0) {
-	*ppzEndPtr = nAnyConsumed ? ((char*)pzString) : ((char*) a_pzString);
-    }
-    return nValue;
+	}
+	else if ( bIsNegative )
+	{
+		nValue = -nValue;
+	}
+
+	if ( ppzEndPtr != 0 )
+	{
+		*ppzEndPtr = nAnyConsumed ? ( ( char * )pzString ) : ( ( char * )a_pzString );
+	}
+	return nValue;
 }
 
 long strtoul( const char *a_pzString, char **ppzEndPtr, int nBase )
 {
-    const char *pzString;
-    unsigned long nValue = 0;
-    unsigned long nMaxValue;
-    int		  nMaxDigit;
-    int 	  nAnyConsumed = 0;
-    bool	  bIsNegative = false;
+	const char *pzString;
+	unsigned long nValue = 0;
+	unsigned long nMaxValue;
+	int nMaxDigit;
+	int nAnyConsumed = 0;
+	bool bIsNegative = false;
 
-    pzString = parse_num_prefix( a_pzString, &bIsNegative, &nBase );
+	pzString = parse_num_prefix( a_pzString, &bIsNegative, &nBase );
 
-    nMaxValue = ULONG_MAX;
-    nMaxDigit = nMaxValue % nBase;
-    nMaxValue /= nBase;
+	nMaxValue = ULONG_MAX;
+	nMaxDigit = nMaxValue % nBase;
+	nMaxValue /= nBase;
 
-    pzString = do_parse_num( pzString, nBase, nMaxValue, nMaxDigit, &nAnyConsumed, &nValue );
-    
-    if (nAnyConsumed < 0)  {
-	nValue = (bIsNegative) ? 0 : ULONG_MAX;
+	pzString = do_parse_num( pzString, nBase, nMaxValue, nMaxDigit, &nAnyConsumed, &nValue );
+
+	if ( nAnyConsumed < 0 )
+	{
+		nValue = ( bIsNegative ) ? 0 : ULONG_MAX;
 //    errno = ERANGE;
-    } else if (bIsNegative) {
-	nValue = -nValue;
-    }
-  
-    if (ppzEndPtr != 0) {
-	*ppzEndPtr = nAnyConsumed ? ((char*)pzString) : ((char*) a_pzString);
-    }
-    return nValue;
+	}
+	else if ( bIsNegative )
+	{
+		nValue = -nValue;
+	}
+
+	if ( ppzEndPtr != 0 )
+	{
+		*ppzEndPtr = nAnyConsumed ? ( ( char * )pzString ) : ( ( char * )a_pzString );
+	}
+	return nValue;
 }
 
-long atol(const char *str)
+long atol( const char *str )
 {
-  return strtol(str, 0, 10);
+	return strtol( str, 0, 10 );
 }

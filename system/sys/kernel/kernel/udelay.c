@@ -1,3 +1,4 @@
+
 /*
  *	Precise Delay Loops for i386
  *
@@ -18,29 +19,21 @@
 #include "inc/smp.h"
 
 
-void __delay(unsigned long loops)
+void __delay( unsigned long loops )
 {
-  int d0;
-  __asm__ __volatile__(
-    "\tjmp 1f\n"
-    ".align 16\n"
-    "1:\tjmp 2f\n"
-    ".align 16\n"
-    "2:\tdecl %0\n\tjns 2b"
-    :"=&a" (d0)
-    :"0" (loops));
+	int d0;
+	__asm__ __volatile__( "\tjmp 1f\n" ".align 16\n" "1:\tjmp 2f\n" ".align 16\n" "2:\tdecl %0\n\tjns 2b":"=&a"( d0 ):"0"( loops ) );
 }
 
-inline void __const_udelay(unsigned long xloops)
+inline void __const_udelay( unsigned long xloops )
 {
-  int d0;
-  __asm__("mull %0"
-	  :"=d" (xloops), "=&a" (d0)
-	  :"1" (xloops),"0" (g_asProcessorDescs[get_processor_id()].pi_nDelayCount));
-  __delay(xloops);
+	int d0;
+
+      __asm__( "mull %0": "=d"( xloops ), "=&a"( d0 ):"1"( xloops ), "0"( g_asProcessorDescs[get_processor_id()].pi_nDelayCount ) );
+	__delay( xloops );
 }
 
-void __udelay(unsigned long usecs)
+void __udelay( unsigned long usecs )
 {
-  __const_udelay(usecs * 0x000010c6);  /* 2**32 / 1000000 */
+	__const_udelay( usecs * 0x000010c6 );	/* 2**32 / 1000000 */
 }

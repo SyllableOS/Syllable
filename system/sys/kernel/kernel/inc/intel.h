@@ -1,3 +1,4 @@
+
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -21,10 +22,11 @@
 #define	EXEC_INTEL_H
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 #if 0
-}	/* Make Emacs auto-indent work */
+}				/* Make Emacs auto-indent work */
 #endif
 
 #include <atheos/types.h>
@@ -34,17 +36,17 @@ extern "C" {
 #define	EFLG_AUX_CARRY	0x00000010
 #define	EFLG_ZERO	0x00000040
 #define	EFLG_SIGN	0x00000080
-#define	EFLG_TRAP	0x00000100	/* Trap (Single step)		*/
-#define	EFLG_IF		0x00000200	/* Interrupt enable		*/
-#define	EFLG_DF		0x00000400	/* Direction (String ops.)	*/
-#define	EFLG_OF		0x00000800	/* Overflow			*/
-#define	EFLG_IOPL	0x00003000	/* I/O Privilege level		*/
-#define	EFLG_NT		0x00004000	/* Nested task 			*/
+#define	EFLG_TRAP	0x00000100	/* Trap (Single step)           */
+#define	EFLG_IF		0x00000200	/* Interrupt enable             */
+#define	EFLG_DF		0x00000400	/* Direction (String ops.)      */
+#define	EFLG_OF		0x00000800	/* Overflow                     */
+#define	EFLG_IOPL	0x00003000	/* I/O Privilege level          */
+#define	EFLG_NT		0x00004000	/* Nested task                  */
 #define	EFLG_RESUME	0x00010000
-#define	EFLG_VM		0x00020000	/* Virtual 86 mode		*/
+#define	EFLG_VM		0x00020000	/* Virtual 86 mode              */
 #define EFLG_AC		0x00040000
-#define EFLG_VIF	0x00080000	/* Virtual interrupt flag 	*/
-#define EFLG_VIP	0x00100000	/* Virtual interrupt pending 	*/
+#define EFLG_VIF	0x00080000	/* Virtual interrupt flag       */
+#define EFLG_VIP	0x00100000	/* Virtual interrupt pending    */
 #define EFLG_ID		0x00200000
 
 /*
@@ -62,97 +64,97 @@ extern "C" {
 #define VM86_TYPE(retval)	((retval) & 0xff)
 #define VM86_ARG(retval)	((retval) >> 8)
 
-#define VM86_SIGNAL	0		/* return due to signal */
+#define VM86_SIGNAL	0	/* return due to signal */
 #define VM86_UNKNOWN	1	/* unhandled GP fault - IO-instruction or similar */
-#define VM86_INTx	2			/* int3/int x instruction (ARG = x) */
-#define VM86_STI	3			/* sti/popf/iret instruction enabled virtual interrupts */
+#define VM86_INTx	2	/* int3/int x instruction (ARG = x) */
+#define VM86_STI	3	/* sti/popf/iret instruction enabled virtual interrupts */
 
 /**** END OF VM86 STUFF ***************************************/
 
 
-typedef	struct	i3Task
+typedef struct i3Task
 {
-  uint16	previous;
-  uint16	r1;
-  uint32*	esp0;
-  uint16	ss0;
-  uint16	r2;
-  uint32*	esp1;
-  uint16	ss1;
-  uint16	r3;
-  uint32*	esp2;
-  uint16	ss2;
-  uint16	r4;
-  uint32*	cr3;
-  void*		eip;
-  uint32	eflags;
-  uint32	eax;
-  uint32	ecx;
-  uint32	edx;
-  uint32	ebx;
-  uint32*	esp;
-  uint32	ebp;
-  uint32	esi;
-  uint32	edi;
-  uint16	es;
-  uint16	r5;
-  uint16	cs;
-  uint16	r6;
-  uint16	ss;
-  uint16	r7;
-  uint16	ds;
-  uint16	r8;
-  uint16	fs;
-  uint16	r9;
-  uint16	gs;
-  uint16	r10;
-  uint16	ldt;
-  uint16	r11;
-  uint16	ctrl;
-  uint16	IOMapBase;
-  uint8		IOMap[8192];
+	uint16 previous;
+	uint16 r1;
+	uint32 *esp0;
+	uint16 ss0;
+	uint16 r2;
+	uint32 *esp1;
+	uint16 ss1;
+	uint16 r3;
+	uint32 *esp2;
+	uint16 ss2;
+	uint16 r4;
+	uint32 *cr3;
+	void *eip;
+	uint32 eflags;
+	uint32 eax;
+	uint32 ecx;
+	uint32 edx;
+	uint32 ebx;
+	uint32 *esp;
+	uint32 ebp;
+	uint32 esi;
+	uint32 edi;
+	uint16 es;
+	uint16 r5;
+	uint16 cs;
+	uint16 r6;
+	uint16 ss;
+	uint16 r7;
+	uint16 ds;
+	uint16 r8;
+	uint16 fs;
+	uint16 r9;
+	uint16 gs;
+	uint16 r10;
+	uint16 ldt;
+	uint16 r11;
+	uint16 ctrl;
+	uint16 IOMapBase;
+	uint8 IOMap[8192];
 } TaskStateSeg_s;
 
 
-typedef struct	i3DescrTable
+typedef struct i3DescrTable
 {
-  uint16 Limit	__attribute__((packed));
-  uint32 Base	__attribute__((packed));
+	uint16 Limit __attribute__ ( ( packed ) );
+	uint32 Base __attribute__ ( ( packed ) );
 } DescriptorTable_s;
 
-struct	i3IntrGate
+struct i3IntrGate
 {
-  uint16	igt_offl;	/* 0-15 of base		*/
-  uint16	igt_sel;	/* selector				*/
-  uint16	igt_ctrl;	/* P/DPL					*/
-  uint16	igt_offh;	/* 16-31 of base	*/
+	uint16 igt_offl;	/* 0-15 of base         */
+	uint16 igt_sel;		/* selector                             */
+	uint16 igt_ctrl;	/* P/DPL                                        */
+	uint16 igt_offh;	/* 16-31 of base        */
 };
 
-struct	i3Desc
+struct i3Desc
 {
-  uint16	desc_lml;		/* limit 0-15		*/
-  uint16	desc_bsl;		/* base 0-15		*/
-  uint8		desc_bsm;		/* base 16-23		*/
-  uint8		desc_acc;		/* type/dpl/p		*/
-  uint8		desc_lmh;		/* limit 16-19	*/
-  uint8		desc_bsh;		/* base 24-31		*/
+	uint16 desc_lml;	/* limit 0-15           */
+	uint16 desc_bsl;	/* base 0-15            */
+	uint8 desc_bsm;		/* base 16-23           */
+	uint8 desc_acc;		/* type/dpl/p           */
+	uint8 desc_lmh;		/* limit 16-19  */
+	uint8 desc_bsh;		/* base 24-31           */
 };
 
-#define	PTE_PRESENT	0x001	/* dir/page is present/valid			*/
-#define	PTE_WRITE	0x002	/* dir/page is writeable			*/
-#define	PTE_USER	0x004	/* only accessible by supervisor		*/
-#define	PTE_ACCESSED	0x020	/* the page has been accessed (R or W)		*/
-#define	PTE_DIRTY	0x040	/* the page has been written to			*/
-#define	PTE_AVAILABLE	0xE00	/* free for system use (NOT APPLICATIONS)	*/
+#define	PTE_PRESENT	0x001	/* dir/page is present/valid                    */
+#define	PTE_WRITE	0x002	/* dir/page is writeable                        */
+#define	PTE_USER	0x004	/* only accessible by supervisor                */
+#define	PTE_ACCESSED	0x020	/* the page has been accessed (R or W)          */
+#define	PTE_DIRTY	0x040	/* the page has been written to                 */
+#define	PTE_AVAILABLE	0xE00	/* free for system use (NOT APPLICATIONS)       */
 
 	/*
-	 *	Bit definitions in the exception error code generated by a page fault
+	 *      Bit definitions in the exception error code generated by a page fault
 	 */
 
 #define	PFE_PROTVIOL	0x0001	/* if set, the page-fault was caused by a protection
 				 * violation, othervise by a not present page
 				 */
-#define	PFE_WRITE	0x0002	/* if set fault caused by a write, othervise by a read	*/
+#define	PFE_WRITE	0x0002	/* if set fault caused by a write, othervise by a read  */
 #define	PFE_USER	0x0004	/* if set fault caused in user-mode othervise in supervisor-mode */
 
 /*
@@ -167,48 +169,48 @@ struct	i3Desc
 /*void	sys_FlushCaches( void );*/
 
 
-void 	set_page_directory_base_reg( void* pPageTable );
-void*	get_page_directory_base_reg( void );
+void set_page_directory_base_reg( void *pPageTable );
+void *get_page_directory_base_reg( void );
 
-void	load_fpu_state( void* pState );
-void	save_fpu_state( void* pState );
+void load_fpu_state( void *pState );
+void save_fpu_state( void *pState );
 
 
 
-void	GetIDT( DescriptorTable_s* psTable );
-void	SetIDT( DescriptorTable_s* psTable );
-void	GetGDT( DescriptorTable_s* psTable );
-void	SetGDT( DescriptorTable_s* psTable );
+void GetIDT( DescriptorTable_s * psTable );
+void SetIDT( DescriptorTable_s * psTable );
+void GetGDT( DescriptorTable_s * psTable );
+void SetGDT( DescriptorTable_s * psTable );
 
-void	SetTR( int nTaskReg );
+void SetTR( int nTaskReg );
 
-void	SetupDataSelectors( void );
-void	enable_mmu( void );
+void SetupDataSelectors( void );
+void enable_mmu( void );
 
-void 	InitIDT( void );
-bool 	Desc_SetBase( uint16   desc, uint32 base );
-uint32	Desc_GetBase( uint16 desc );
-bool 	Desc_SetLimit( uint16  desc, uint32 limit );
-uint32	Desc_GetLimit( uint16  desc );
-bool 	Desc_SetAccess( uint16 desc, uint8 acc );
-uint8	Desc_GetAccess( uint16 desc );
-uint16	Desc_Alloc( int32      table );
-void 	Desc_Free( uint16 desc );
+void InitIDT( void );
+bool Desc_SetBase( uint16 desc, uint32 base );
+uint32 Desc_GetBase( uint16 desc );
+bool Desc_SetLimit( uint16 desc, uint32 limit );
+uint32 Desc_GetLimit( uint16 desc );
+bool Desc_SetAccess( uint16 desc, uint8 acc );
+uint8 Desc_GetAccess( uint16 desc );
+uint16 Desc_Alloc( int32 table );
+void Desc_Free( uint16 desc );
 #endif /* __KERNEL__ */
 
 
 static inline uint64 read_pentium_clock( void )
 {
-  register uint32 nLow;
-  register uint32 nHigh;
-  
-  __asm__ __volatile__ ("rdtsc" : "=a" (nLow), "=d" (nHigh) );
-  
-  return( ((uint64) nHigh) << 32 | nLow );
+	register uint32 nLow;
+	register uint32 nHigh;
+
+	__asm__ __volatile__( "rdtsc":"=a"( nLow ), "=d"( nHigh ) );
+
+	return ( ( ( uint64 )nHigh ) << 32 | nLow );
 }
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /*	EXEC_INTEL_H	*/
+#endif /*       EXEC_INTEL_H    */

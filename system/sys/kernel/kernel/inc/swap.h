@@ -1,3 +1,4 @@
+
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -23,9 +24,10 @@
 #include <atheos/types.h>
 
 #ifdef __cplusplus
-extern "C" {
-#if 0  
-} /*make emacs indention work */
+extern "C"
+{
+#if 0
+}				/*make emacs indention work */
 #endif
 #endif
 
@@ -36,16 +38,16 @@ extern "C" {
 
 typedef struct
 {
-  uint32	si_nTotSize;
-  uint32	si_nFreeSize;
-  int		si_nPageIn;
-  int		si_nPageOut;
+	uint32 si_nTotSize;
+	uint32 si_nFreeSize;
+	int si_nPageIn;
+	int si_nPageOut;
 } SwapInfo_s;
 
 void register_swap_page( uint32 nAddress );
 void unregister_swap_page( uint32 nAddress );
 
-int get_swap_info( SwapInfo_s* psInfo );
+int get_swap_info( SwapInfo_s * psInfo );
 
 #ifdef __cplusplus
 }

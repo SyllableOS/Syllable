@@ -1,3 +1,4 @@
+
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -23,45 +24,46 @@
 #include <atheos/types.h>
 
 #ifdef __cplusplus
-extern "C" {
-#if 0  
-} /*make emacs indention work */
+extern "C"
+{
+#if 0
+}				/*make emacs indention work */
 #endif
 #endif
 
 typedef struct _Semaphore Semaphore_s;
 struct _Semaphore
 {
-    char	 ss_zName[OS_NAME_LENGTH];
-    sem_id	 ss_hSemaID;
-    int32	 ss_lNestCount;
-    uint32	 ss_nFlags;
-    WaitQueue_s* ss_psWaitQueue;
-    thread_id	 ss_hHolder;	/* Last thread holding the semaphore		*/
-    proc_id	 ss_hOwner;	/* The process that created the semaphore	*/
-    int		 ss_nDeadLockDetectRun;
-    Semaphore_s* ss_psNext;	/* Next in process */
-    Semaphore_s* ss_psPrev;	/* Previous in process */
-//  int32		ss_anLockers[16];
-//  int		ss_nLockBufPos;
+	char ss_zName[OS_NAME_LENGTH];
+	sem_id ss_hSemaID;
+	int32 ss_lNestCount;
+	uint32 ss_nFlags;
+	WaitQueue_s *ss_psWaitQueue;
+	thread_id ss_hHolder;	/* Last thread holding the semaphore            */
+	proc_id ss_hOwner;	/* The process that created the semaphore       */
+	int ss_nDeadLockDetectRun;
+	Semaphore_s *ss_psNext;	/* Next in process */
+	Semaphore_s *ss_psPrev;	/* Previous in process */
+//  int32               ss_anLockers[16];
+//  int         ss_nLockBufPos;
 };
 
 typedef struct
 {
-    Semaphore_s** sc_apsSemaphores;
-    uint32*	  sc_pnAllocMap;
-    int		  sc_nAllocCount;
-    int		  sc_nMaxCount;
-    int		  sc_nLastID;
+	Semaphore_s **sc_apsSemaphores;
+	uint32 *sc_pnAllocMap;
+	int sc_nAllocCount;
+	int sc_nMaxCount;
+	int sc_nLastID;
 } SemContext_s;
 
-SemContext_s* create_semaphore_context();
-SemContext_s* clone_semaphore_context( SemContext_s* psOrig, proc_id hNewOwner );
-void update_semaphore_context( SemContext_s* psCtx, proc_id hOwner );
-void exit_free_semaphores( Process_s* psProc );
-void exec_free_semaphores( Process_s* psProc );
+SemContext_s *create_semaphore_context();
+SemContext_s *clone_semaphore_context( SemContext_s * psOrig, proc_id hNewOwner );
+void update_semaphore_context( SemContext_s * psCtx, proc_id hOwner );
+void exit_free_semaphores( Process_s *psProc );
+void exec_free_semaphores( Process_s *psProc );
 
-Semaphore_s* get_semaphore_by_handle( proc_id hProcess, sem_id hSema );
+Semaphore_s *get_semaphore_by_handle( proc_id hProcess, sem_id hSema );
 
 #define SEM_TYPE_MASK	0xff000000
 #define SEM_ID_MASK	0x00ffffff
@@ -74,4 +76,4 @@ Semaphore_s* get_semaphore_by_handle( proc_id hProcess, sem_id hSema );
 #endif
 
 
-#endif	/* __F_INC_SEMAPHORES_H__ */
+#endif /* __F_INC_SEMAPHORES_H__ */

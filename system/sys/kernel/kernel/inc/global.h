@@ -1,3 +1,4 @@
+
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -21,9 +22,10 @@
 #define __F_ATHEOS_GLOBAL_H__
 
 #ifdef __cplusplus
-extern "C" {
-#if 0  
-} /*make emacs indention work */
+extern "C"
+{
+#if 0
+}				/*make emacs indention work */
 #endif
 #endif
 

@@ -1,3 +1,4 @@
+
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001  Kurt Skauen
@@ -39,89 +40,96 @@
  * SEE ALSO:
  ****************************************************************************/
 
-static uint32 find_clean_page( MemArea_s* psArea, pte_t* pDstPte, iaddr_t nAddress,
-			       off_t nOffset, bool bWriteAccess )
+static uint32 find_clean_page( MemArea_s *psArea, pte_t * pDstPte, iaddr_t nAddress, off_t nOffset, bool bWriteAccess )
 {
-    MemArea_s* psSrcArea;
-  
-    for ( psSrcArea = psArea->a_psNextShared ; psSrcArea != psArea ; psSrcArea = psSrcArea->a_psNextShared )
-    {
-	uint64 nSrcAddress = psSrcArea->a_nStart + nOffset - psSrcArea->a_nFileOffset;
-	pgd_t* pPgd;
-	pte_t* pSrcPte;
-	pte_t  sOrigPte;
-    
-	if ( psSrcArea->a_psFile == NULL ) {
-	    printk( "Panic: find_clean_page() found area in share-list not associated with a file!\n" );
-	    continue;
-	}
-	kassertw( psSrcArea->a_psFile->f_psInode->i_nInode == psArea->a_psFile->f_psInode->i_nInode );
+	MemArea_s *psSrcArea;
 
-	if ( psArea->a_nFileOffset != psSrcArea->a_nFileOffset || psArea->a_nFileLength != psSrcArea->a_nFileLength ) {
-	    continue;
-	}
-	
-	  // Verify that the page resist within the intersection of the two areas.
-	if ( nSrcAddress < psSrcArea->a_nStart || nSrcAddress > (psSrcArea->a_nStart + psSrcArea->a_nFileLength - 1) ) {
-	    continue;
-	}
+	for ( psSrcArea = psArea->a_psNextShared; psSrcArea != psArea; psSrcArea = psSrcArea->a_psNextShared )
+	{
+		uint64 nSrcAddress = psSrcArea->a_nStart + nOffset - psSrcArea->a_nFileOffset;
+		pgd_t *pPgd;
+		pte_t *pSrcPte;
+		pte_t sOrigPte;
 
-	  // Make sure noting is mapped in or out while we investigate the area
-    
-	lock_area( psSrcArea, LOCK_AREA_READ );
-    
-	pPgd     = pgd_offset( psSrcArea->a_psContext, nSrcAddress );
-	pSrcPte  = pte_offset( pPgd, nSrcAddress );
+		if ( psSrcArea->a_psFile == NULL )
+		{
+			printk( "Panic: find_clean_page() found area in share-list not associated with a file!\n" );
+			continue;
+		}
+		kassertw( psSrcArea->a_psFile->f_psInode->i_nInode == psArea->a_psFile->f_psInode->i_nInode );
+
+		if ( psArea->a_nFileOffset != psSrcArea->a_nFileOffset || psArea->a_nFileLength != psSrcArea->a_nFileLength )
+		{
+			continue;
+		}
+
+		// Verify that the page resist within the intersection of the two areas.
+		if ( nSrcAddress < psSrcArea->a_nStart || nSrcAddress > ( psSrcArea->a_nStart + psSrcArea->a_nFileLength - 1 ) )
+		{
+			continue;
+		}
+
+		// Make sure noting is mapped in or out while we investigate the area
+
+		lock_area( psSrcArea, LOCK_AREA_READ );
+
+		pPgd = pgd_offset( psSrcArea->a_psContext, nSrcAddress );
+		pSrcPte = pte_offset( pPgd, nSrcAddress );
 
 
-	  // Make sure it don't get dirty between our test and the COW
-	sOrigPte = *pSrcPte;
-	PTE_VALUE( *pSrcPte ) &= ~PTE_WRITE; 
-	flush_tlb_global();
+		// Make sure it don't get dirty between our test and the COW
+		sOrigPte = *pSrcPte;
+		PTE_VALUE( *pSrcPte ) &= ~PTE_WRITE;
+		flush_tlb_global();
 
-	if ( (PTE_VALUE( *pSrcPte ) & PTE_PRESENT) == 0 || (PTE_VALUE( *pSrcPte ) & PTE_DIRTY) ) {
-	    PTE_VALUE( *pSrcPte ) |= PTE_VALUE( sOrigPte ) & PTE_WRITE;
-	    flush_tlb_global();
-	    unlock_area( psSrcArea, LOCK_AREA_READ );
-	    continue;
-	}
-    
-	  // If we are about to write to the page we copy it now, else we make a COW sharing
-	  // and delay the copy til the page is actually written to.
+		if ( ( PTE_VALUE( *pSrcPte ) & PTE_PRESENT ) == 0 || ( PTE_VALUE( *pSrcPte ) & PTE_DIRTY ) )
+		{
+			PTE_VALUE( *pSrcPte ) |= PTE_VALUE( sOrigPte ) & PTE_WRITE;
+			flush_tlb_global();
+			unlock_area( psSrcArea, LOCK_AREA_READ );
+			continue;
+		}
 
-	if ( bWriteAccess ) {
-	    iaddr_t nPageAddr = PTE_PAGE( *pSrcPte );
-	    iaddr_t nNewPage;
+		// If we are about to write to the page we copy it now, else we make a COW sharing
+		// and delay the copy til the page is actually written to.
 
-	    if ( nPageAddr == (iaddr_t)g_sSysBase.ex_pNullPage ) {
-		printk( "Panic: file-mapped area reference the global null-page for address %08lx (%08lx)!\n",
-			(iaddr_t)nSrcAddress, nAddress );
+		if ( bWriteAccess )
+		{
+			iaddr_t nPageAddr = PTE_PAGE( *pSrcPte );
+			iaddr_t nNewPage;
+
+			if ( nPageAddr == ( iaddr_t )g_sSysBase.ex_pNullPage )
+			{
+				printk( "Panic: file-mapped area reference the global null-page for address %08lx (%08lx)!\n", ( iaddr_t )nSrcAddress, nAddress );
+				unlock_area( psSrcArea, LOCK_AREA_READ );
+				return ( 0 );
+			}
+
+			nNewPage = get_free_page( GFP_CLEAR );
+			if ( nNewPage == 0 )
+			{
+				unlock_area( psSrcArea, LOCK_AREA_READ );
+				return ( -ENOMEM );
+			}
+			memcpy( ( void * )nNewPage, ( void * )nPageAddr, PAGE_SIZE );
+
+			register_swap_page( nNewPage );
+
+			set_pte_address( pDstPte, nNewPage );
+			PTE_VALUE( *pDstPte ) |= PTE_WRITE | PTE_DIRTY | PTE_PRESENT | PTE_USER;
+
+			PTE_VALUE( *pSrcPte ) |= PTE_VALUE( sOrigPte ) & PTE_WRITE;
+		}
+		else
+		{
+			clone_page_pte( pDstPte, pSrcPte, true );
+		}
+		flush_tlb_global();
 		unlock_area( psSrcArea, LOCK_AREA_READ );
-		return( 0 );
-	    }
-	  
-	    nNewPage = get_free_page( GFP_CLEAR );
-	    if ( nNewPage == 0 ) {
-		unlock_area( psSrcArea, LOCK_AREA_READ );
-		return( -ENOMEM );
-	    }
-	    memcpy( (void*) nNewPage, (void*) nPageAddr, PAGE_SIZE );
 
-	    register_swap_page( nNewPage );
-
-	    set_pte_address( pDstPte, nNewPage );
-	    PTE_VALUE( *pDstPte ) |= PTE_WRITE | PTE_DIRTY | PTE_PRESENT | PTE_USER;
-      
-	    PTE_VALUE( *pSrcPte ) |= PTE_VALUE( sOrigPte ) & PTE_WRITE;
-	} else {
-	    clone_page_pte( pDstPte, pSrcPte, true );
+		return ( PTE_VALUE( *pSrcPte ) & PAGE_MASK );
 	}
-	flush_tlb_global();
-	unlock_area( psSrcArea, LOCK_AREA_READ );
-	  
-	return( PTE_VALUE( *pSrcPte ) & PAGE_MASK );
-    }
-    return( 0 );
+	return ( 0 );
 }
 
 /*****************************************************************************
@@ -131,97 +139,105 @@ static uint32 find_clean_page( MemArea_s* psArea, pte_t* pDstPte, iaddr_t nAddre
  * SEE ALSO:
  ****************************************************************************/
 
-uint32 memmap_no_page( MemArea_s* psArea, iaddr_t nAddress, bool bWriteAccess )
+uint32 memmap_no_page( MemArea_s *psArea, iaddr_t nAddress, bool bWriteAccess )
 {
-    Process_s*	psProc 	= CURRENT_PROC;
-    pgd_t*	pPgd	= pgd_offset( psProc->tc_psMemSeg, nAddress );
-    pte_t*	pPte  	= pte_offset( pPgd, nAddress );
-    iaddr_t 	nNewPage;
-    off_t	nFileOffset;
-    int		nSize;
-    size_t   	nBytesRead;
-    Page_s*	psPage;
+	Process_s *psProc = CURRENT_PROC;
+	pgd_t *pPgd = pgd_offset( psProc->tc_psMemSeg, nAddress );
+	pte_t *pPte = pte_offset( pPgd, nAddress );
+	iaddr_t nNewPage;
+	off_t nFileOffset;
+	int nSize;
+	size_t nBytesRead;
+	Page_s *psPage;
 
-    kassertw( psArea->a_psFile != NULL );
-  
-    nAddress &= PAGE_MASK;
+	kassertw( psArea->a_psFile != NULL );
 
-    nFileOffset = ((off_t)nAddress) - ((off_t)psArea->a_nStart) + psArea->a_nFileOffset;
-    nSize = min( PAGE_SIZE, psArea->a_nFileLength - (nFileOffset - psArea->a_nFileOffset) );
+	nAddress &= PAGE_MASK;
 
-    nNewPage = find_clean_page( psArea, pPte, nAddress, nFileOffset, bWriteAccess );
+	nFileOffset = ( ( off_t )nAddress ) - ( ( off_t )psArea->a_nStart ) + psArea->a_nFileOffset;
+	nSize = min( PAGE_SIZE, psArea->a_nFileLength - ( nFileOffset - psArea->a_nFileOffset ) );
 
-    if ( nNewPage != 0 ) {
+	nNewPage = find_clean_page( psArea, pPte, nAddress, nFileOffset, bWriteAccess );
+
+	if ( nNewPage != 0 )
+	{
+		unlock_area( psArea, LOCK_AREA_WRITE );
+		return ( 0 );
+	}
+
+	nNewPage = get_free_page( GFP_CLEAR );
+
+	if ( nNewPage == 0 )
+	{
+		return ( -ENOMEM );
+	}
+
+	psPage = &g_psFirstPage[nNewPage >> PAGE_SHIFT];
+	psPage->p_nFlags |= PF_BUSY;
+
+	set_pte_address( pPte, nNewPage );
+	PTE_VALUE( *pPte ) |= PTE_WRITE | PTE_USER;
+
+	register_swap_page( nNewPage );
+
+	// Should not be needed, but I'm not sure so...
+	if ( bWriteAccess )
+	{
+		PTE_VALUE( *pPte ) |= PTE_DIRTY;
+	}
+
+	if ( nSize <= 0 )
+	{
+		psPage->p_nFlags &= ~PF_BUSY;
+		PTE_VALUE( *pPte ) |= PTE_PRESENT;
+
+		if ( psArea->a_nProtection & AREA_UNMAP_PHYS )
+		{
+			protect_phys_pages( nNewPage, 1 );
+		}
+
+		flush_tlb_global();
+		return ( 0 );
+	}
+
+	atomic_add( &psArea->a_nIOPages, 1 );
+
+
+	UNLOCK( g_hAreaTableSema );
+	kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
+	nBytesRead = read_pos_p( psArea->a_psFile, nFileOffset, ( void * )nNewPage, nSize );
 	unlock_area( psArea, LOCK_AREA_WRITE );
-	return( 0 );
-    }
+	LOCK( g_hAreaTableSema );
 
-    nNewPage = get_free_page( GFP_CLEAR );
+	if ( psArea->a_nProtection & AREA_UNMAP_PHYS )
+	{
+		protect_phys_pages( nNewPage, 1 );
+	}
 
-    if ( nNewPage == 0 ) {
-	return( -ENOMEM );
-    }
-
-    psPage = &g_psFirstPage[ nNewPage >> PAGE_SHIFT ];
-    psPage->p_nFlags |= PF_BUSY;
-    
-    set_pte_address( pPte, nNewPage );
-    PTE_VALUE( *pPte ) |= PTE_WRITE | PTE_USER;
-
-    register_swap_page( nNewPage );
-  
-      // Should not be needed, but I'm not sure so...
-    if ( bWriteAccess ) {
-	PTE_VALUE( *pPte ) |= PTE_DIRTY;
-    }
-
-    if ( nSize <= 0 ) {
 	psPage->p_nFlags &= ~PF_BUSY;
 	PTE_VALUE( *pPte ) |= PTE_PRESENT;
 
-	if ( psArea->a_nProtection & AREA_UNMAP_PHYS ) {
-	    protect_phys_pages( nNewPage, 1 );
-	}
-	
 	flush_tlb_global();
-	return( 0 );
-    }
-    
-    atomic_add( &psArea->a_nIOPages, 1 );
-  
 
-    UNLOCK( g_hAreaTableSema );
-    kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
-    nBytesRead = read_pos_p( psArea->a_psFile, nFileOffset, (void*) nNewPage, nSize );
-    unlock_area( psArea, LOCK_AREA_WRITE );
-    LOCK( g_hAreaTableSema );
+	atomic_add( &psArea->a_nIOPages, -1 );
 
-    if ( psArea->a_nProtection & AREA_UNMAP_PHYS ) {
-	protect_phys_pages( nNewPage, 1 );
-    }
-    
-    psPage->p_nFlags &= ~PF_BUSY;
-    PTE_VALUE( *pPte ) |= PTE_PRESENT;
-    
-    flush_tlb_global();
+	// Wake up threads bumping into the page while we was loading it.
+	if ( psPage->p_psIOThreads != NULL )
+	{
+		wake_up_queue( psPage->p_psIOThreads, 0, true );
+	}
+	if ( psArea->a_psIOThreads != NULL )
+	{
+		wake_up_queue( psArea->a_psIOThreads, 0, true );
+	}
 
-    atomic_add( &psArea->a_nIOPages, -1 );
-
-      // Wake up threads bumping into the page while we was loading it.
-    if ( psPage->p_psIOThreads != NULL ) {
-	wake_up_queue( psPage->p_psIOThreads, 0, true );
-    }
-    if ( psArea->a_psIOThreads != NULL ) {
-	wake_up_queue( psArea->a_psIOThreads, 0, true );
-    }
-    
-    if ( nBytesRead != nSize ) {
-	printk( "Error : memmap_no_page() failed to read page from disk %Ld - %d (%d)\n",
-		nFileOffset, nSize, nBytesRead );
+	if ( nBytesRead != nSize )
+	{
+		printk( "Error : memmap_no_page() failed to read page from disk %Ld - %d (%d)\n", nFileOffset, nSize, nBytesRead );
 //    do_exit( SIGBUS );
-	return( -EIO );
-    }
-    return( 0 );
+		return ( -EIO );
+	}
+	return ( 0 );
 }
 
 /*****************************************************************************
@@ -231,91 +247,102 @@ uint32 memmap_no_page( MemArea_s* psArea, iaddr_t nAddress, bool bWriteAccess )
  * SEE ALSO:
  ****************************************************************************/
 
-int handle_copy_on_write( MemArea_s* psArea, pte_t* pPte, iaddr_t nVirtualAddress )
+int handle_copy_on_write( MemArea_s *psArea, pte_t * pPte, iaddr_t nVirtualAddress )
 {
-    int	  nPageAddr = PTE_PAGE( *pPte );
-    Page_s* psPage = &g_psFirstPage[ nPageAddr >> PAGE_SHIFT ];
-    iaddr_t  nNewPage;
+	int nPageAddr = PTE_PAGE( *pPte );
+	Page_s *psPage = &g_psFirstPage[nPageAddr >> PAGE_SHIFT];
+	iaddr_t nNewPage;
 
-      // COW of the global NULL page is very common, so we handles it specialy.
-    if ( nPageAddr == (iaddr_t) g_sSysBase.ex_pNullPage ) {
-	Page_s* psNewPage;
+	// COW of the global NULL page is very common, so we handles it specialy.
+	if ( nPageAddr == ( iaddr_t )g_sSysBase.ex_pNullPage )
+	{
+		Page_s *psNewPage;
+
+		nNewPage = get_free_page( GFP_CLEAR );
+		psNewPage = &g_psFirstPage[nNewPage >> PAGE_SHIFT];
+
+		if ( nNewPage == 0 )
+		{
+			return ( -ENOMEM );
+		}
+
+		set_pte_address( pPte, nNewPage );
+		PTE_VALUE( *pPte ) |= PTE_WRITE;
+
+		if ( psArea->a_nProtection & AREA_SHARED )
+		{
+			MemArea_s *psTmp;
+			uint32 nOffset = nVirtualAddress - psArea->a_nStart;
+
+			for ( psTmp = psArea->a_psNextShared; psTmp != psArea; psTmp = psTmp->a_psNextShared )
+			{
+				iaddr_t nAddr = psTmp->a_nStart + nOffset;
+				pgd_t *pClPgd = pgd_offset( psTmp->a_psContext, nAddr );
+				pte_t *pClPte = pte_offset( pClPgd, nAddr );
+
+				kassertw( PTE_ISWRITE( *pClPte ) == false );
+				*pClPte = *pPte;
+				atomic_add( &psNewPage->p_nCount, 1 );
+			}
+		}
+
+		if ( psArea->a_nProtection & AREA_UNMAP_PHYS )
+		{
+			protect_phys_pages( nNewPage, 1 );
+		}
+
+		flush_tlb_global();
+		register_swap_page( nNewPage );
+		return ( 0 );
+	}
+
+	if ( psPage->p_nCount < 0 )
+	{
+		printk( "PANIC: handle_copy_on_write()  Page at %08x got ref count of %d!\n", nPageAddr, psPage->p_nCount );
+		psPage->p_nCount = 100;
+	}
+
+	kassertw( ( psArea->a_nProtection & AREA_SHARED ) == 0 );
+
+//  nFlags = cli();
+//  lock_pagelist();
+	if ( psPage->p_nCount == 1 )
+	{
+		PTE_VALUE( *pPte ) |= PTE_WRITE;
+//    unlock_pagelist();
+//    put_cpu_flags( nFlags );
+		return ( 0 );
+	}
+//  unlock_pagelist();
+//  put_cpu_flags( nFlags );
 
 	nNewPage = get_free_page( GFP_CLEAR );
-	psNewPage = &g_psFirstPage[ nNewPage >> PAGE_SHIFT ];
-    
-	if ( nNewPage == 0 ) {
-	    return( -ENOMEM );
+
+	if ( nNewPage == 0 )
+	{
+		return ( -ENOMEM );
+	}
+
+	register_swap_page( nNewPage );
+	memcpy( ( void * )nNewPage, ( void * )nPageAddr, PAGE_SIZE );
+
+	if ( psArea->a_nProtection & AREA_UNMAP_PHYS )
+	{
+		protect_phys_pages( nNewPage, 1 );
 	}
 
 	set_pte_address( pPte, nNewPage );
 	PTE_VALUE( *pPte ) |= PTE_WRITE;
 
-	if ( psArea->a_nProtection & AREA_SHARED ) {
-	    MemArea_s* psTmp;
-	    uint32     nOffset = nVirtualAddress - psArea->a_nStart;
+	atomic_add( &psPage->p_nCount, -1 );
 
-	    for ( psTmp = psArea->a_psNextShared ; psTmp != psArea ; psTmp = psTmp->a_psNextShared ) {
-		iaddr_t nAddr = psTmp->a_nStart + nOffset;
-		pgd_t*	pClPgd	= pgd_offset( psTmp->a_psContext, nAddr );
-		pte_t*	pClPte 	= pte_offset( pClPgd, nAddr );
-		kassertw( PTE_ISWRITE( *pClPte ) == false );
-		*pClPte = *pPte;
-		atomic_add( &psNewPage->p_nCount, 1 );
-	    }
+	if ( psPage->p_nCount == 1 )
+	{
+		register_swap_page( nPageAddr );
 	}
-
-	if ( psArea->a_nProtection & AREA_UNMAP_PHYS ) {
-	    protect_phys_pages( nNewPage, 1 );
-	}
-	
-	flush_tlb_global();
-	register_swap_page( nNewPage );
-	return( 0 );
-    }
-  
-    if ( psPage->p_nCount < 0 ) {
-	printk( "PANIC: handle_copy_on_write()  Page at %08x got ref count of %d!\n", nPageAddr, psPage->p_nCount );
-	psPage->p_nCount = 100;
-    }
-
-    kassertw( (psArea->a_nProtection & AREA_SHARED) == 0 );
-  
-//  nFlags = cli();
-//  lock_pagelist();
-    if ( psPage->p_nCount == 1 ) {
-	PTE_VALUE( *pPte ) |= PTE_WRITE;
-//    unlock_pagelist();
-//    put_cpu_flags( nFlags );
-	return( 0 );
-    }
-//  unlock_pagelist();
-//  put_cpu_flags( nFlags );
-  
-    nNewPage = get_free_page( GFP_CLEAR );
-
-    if ( nNewPage == 0 ) {
-	return( -ENOMEM );
-    }
-
-    register_swap_page( nNewPage );
-    memcpy( (void*) nNewPage, (void*) nPageAddr, PAGE_SIZE );
-
-    if ( psArea->a_nProtection & AREA_UNMAP_PHYS ) {
-	protect_phys_pages( nNewPage, 1 );
-    }
-    
-    set_pte_address( pPte, nNewPage );
-    PTE_VALUE( *pPte ) |=  PTE_WRITE;
-
-    atomic_add( &psPage->p_nCount, -1 );
-
-    if ( psPage->p_nCount == 1 ) {
-	register_swap_page( nPageAddr );
-    }
 //  flush_tlb_page( nVirtualAddress );
-    flush_tlb_global();
-    return( 0 );
+	flush_tlb_global();
+	return ( 0 );
 }
 
 /*****************************************************************************
@@ -325,60 +352,69 @@ int handle_copy_on_write( MemArea_s* psArea, pte_t* pPte, iaddr_t nVirtualAddres
  * SEE ALSO:
  ****************************************************************************/
 
-static MemArea_s* lookup_area( MemContext_s* psCtx, iaddr_t nAddress )
+static MemArea_s *lookup_area( MemContext_s *psCtx, iaddr_t nAddress )
 {
-    MemArea_s* psArea;
-    int	     nIndex;
+	MemArea_s *psArea;
+	int nIndex;
 
-    if ( nAddress < AREA_FIRST_USER_ADDRESS ) {
-	psCtx = g_psKernelSeg;
-    }
-  
-    kassertw( is_semaphore_locked( g_hAreaTableSema ) );
-    for (;;)
-    {
-	nIndex = find_area( psCtx, nAddress );
-	if ( nIndex >= 0 ) {
-	    psArea = psCtx->mc_apsAreas[ nIndex ];
-	    atomic_add( &psArea->a_nRefCount, 1 );
-	    break;
-	} else {
-	    psArea = NULL;
-	    break;
+	if ( nAddress < AREA_FIRST_USER_ADDRESS )
+	{
+		psCtx = g_psKernelSeg;
 	}
-    }
-    return( psArea );
+
+	kassertw( is_semaphore_locked( g_hAreaTableSema ) );
+	for ( ;; )
+	{
+		nIndex = find_area( psCtx, nAddress );
+		if ( nIndex >= 0 )
+		{
+			psArea = psCtx->mc_apsAreas[nIndex];
+			atomic_add( &psArea->a_nRefCount, 1 );
+			break;
+		}
+		else
+		{
+			psArea = NULL;
+			break;
+		}
+	}
+	return ( psArea );
 }
 
-static int handle_not_present( MemArea_s* psArea, pte_t* pPte, iaddr_t nAddress, bool bWriteAccess )
+static int handle_not_present( MemArea_s *psArea, pte_t * pPte, iaddr_t nAddress, bool bWriteAccess )
 {
-    int nError;
-    
-    if ( PTE_ISPRESENT( *pPte ) ) {
-	printk( "handle_page_fault() not-present page at %08lx loaded by another thread\n", nAddress );
-	return( 0 );
-    }
-    if ( PTE_PAGE( *pPte ) != 0 ) {
-	int	nPage = PTE_PAGE( *pPte );
-	Page_s* psPage  = &g_psFirstPage[ nPage >> PAGE_SHIFT ];
+	int nError;
 
-	if ( psPage->p_nFlags & PF_BUSY ) {
-	    Thread_s*	psThread = CURRENT_THREAD;
-	    WaitQueue_s sWaitNode;
-	    int nFlg;
-	    printk( "Wait for page to be loaded by another thread\n" );
-	    sWaitNode.wq_hThread = psThread->tr_hThreadID;
-
-	    nFlg = cli(); // Make sure we are not pre-empted until we are added to the waitlist
-	    add_to_waitlist( &psPage->p_psIOThreads, &sWaitNode );
-	    psThread->tr_nState = TS_WAIT;
-	    UNLOCK( g_hAreaTableSema );
-	    put_cpu_flags( nFlg );
-	    Schedule();
-	    LOCK( g_hAreaTableSema );
-	    remove_from_waitlist( &psPage->p_psIOThreads, &sWaitNode );
+	if ( PTE_ISPRESENT( *pPte ) )
+	{
+		printk( "handle_page_fault() not-present page at %08lx loaded by another thread\n", nAddress );
+		return ( 0 );
 	}
-	return( -EAGAIN );
+	if ( PTE_PAGE( *pPte ) != 0 )
+	{
+		int nPage = PTE_PAGE( *pPte );
+		Page_s *psPage = &g_psFirstPage[nPage >> PAGE_SHIFT];
+
+		if ( psPage->p_nFlags & PF_BUSY )
+		{
+			Thread_s *psThread = CURRENT_THREAD;
+			WaitQueue_s sWaitNode;
+			int nFlg;
+
+			printk( "Wait for page to be loaded by another thread\n" );
+			sWaitNode.wq_hThread = psThread->tr_hThreadID;
+
+			nFlg = cli();	// Make sure we are not pre-empted until we are added to the waitlist
+			add_to_waitlist( &psPage->p_psIOThreads, &sWaitNode );
+			psThread->tr_nState = TS_WAIT;
+			UNLOCK( g_hAreaTableSema );
+			put_cpu_flags( nFlg );
+			Schedule();
+			LOCK( g_hAreaTableSema );
+			remove_from_waitlist( &psPage->p_psIOThreads, &sWaitNode );
+		}
+		return ( -EAGAIN );
+
 /*	
 	panic( "Swapping mecanisem is currently broken, and disabled."
 	       "Newer the less someone pretends to have swapped out a page at %08lx\n", nAddress );
@@ -406,22 +442,24 @@ static int handle_not_present( MemArea_s* psArea, pte_t* pPte, iaddr_t nAddress,
 	return( -EFAULT );
 //	goto bad_pf;
 */
-    }
-    if ( psArea->a_psFile == NULL ) {
-	printk( "Error: Not present page in area '%s' and the area is not mapped to a file\n", psArea->a_zName );
-	return( -EFAULT );
-    }
-    nError = memmap_no_page( psArea, nAddress, bWriteAccess );
-    return( nError );
+	}
+	if ( psArea->a_psFile == NULL )
+	{
+		printk( "Error: Not present page in area '%s' and the area is not mapped to a file\n", psArea->a_zName );
+		return ( -EFAULT );
+	}
+	nError = memmap_no_page( psArea, nAddress, bWriteAccess );
+	return ( nError );
 }
 
-static int handle_write_prot( MemArea_s* psArea, pte_t* pPte, iaddr_t nAddress )
+static int handle_write_prot( MemArea_s *psArea, pte_t * pPte, iaddr_t nAddress )
 {
-    if  ( PTE_ISWRITE( *pPte ) ) {
+	if ( PTE_ISWRITE( *pPte ) )
+	{
 //      printk( "handle_page_fault() page %08lx was COW'ed by another thread\n" );
-	return( 0 );
-    }
-    return( handle_copy_on_write( psArea, pPte, nAddress ) );
+		return ( 0 );
+	}
+	return ( handle_copy_on_write( psArea, pPte, nAddress ) );
 }
 
 /** 
@@ -438,49 +476,54 @@ static int handle_write_prot( MemArea_s* psArea, pte_t* pPte, iaddr_t nAddress )
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-int load_area_page( MemArea_s* psArea, iaddr_t nAddress, bool bWriteAccess )
+int load_area_page( MemArea_s *psArea, iaddr_t nAddress, bool bWriteAccess )
 {
-    MemContext_s* psCtx = psArea->a_psContext;
-    pgd_t*        pPgd;
-    pte_t*        pPte;
-    int	          nError;
+	MemContext_s *psCtx = psArea->a_psContext;
+	pgd_t *pPgd;
+	pte_t *pPte;
+	int nError;
 
 
-    pPgd  = pgd_offset( psCtx, nAddress );
-    pPte  = pte_offset( pPgd, nAddress );
-    
-    kassertw( is_semaphore_locked( g_hAreaTableSema ) );
+	pPgd = pgd_offset( psCtx, nAddress );
+	pPte = pte_offset( pPgd, nAddress );
 
-    lock_area( psArea, LOCK_AREA_WRITE );
-  
-    if ( PTE_ISPRESENT( *pPte ) ) {
-	nError = handle_write_prot( psArea, pPte, nAddress );
-    } else {
-	nError = handle_not_present( psArea, pPte, nAddress, bWriteAccess );
-    }
-    unlock_area( psArea, LOCK_AREA_WRITE );
-    return( nError );
+	kassertw( is_semaphore_locked( g_hAreaTableSema ) );
+
+	lock_area( psArea, LOCK_AREA_WRITE );
+
+	if ( PTE_ISPRESENT( *pPte ) )
+	{
+		nError = handle_write_prot( psArea, pPte, nAddress );
+	}
+	else
+	{
+		nError = handle_not_present( psArea, pPte, nAddress, bWriteAccess );
+	}
+	unlock_area( psArea, LOCK_AREA_WRITE );
+	return ( nError );
 }
 
-void handle_page_fault( SysCallRegs_s* psRegs, int nErrorCode )
+void handle_page_fault( SysCallRegs_s * psRegs, int nErrorCode )
 {
-    MemContext_s* psCtx;
-    pgd_t*        pPgd;
-    pte_t*        pPte;
-    MemArea_s*    psArea = NULL;
-    iaddr_t       nFaultAddr;
-    bool	  bWriteAccess = (nErrorCode & PFE_WRITE) != 0;
-    int	          nError;
+	MemContext_s *psCtx;
+	pgd_t *pPgd;
+	pte_t *pPte;
+	MemArea_s *psArea = NULL;
+	iaddr_t nFaultAddr;
+	bool bWriteAccess = ( nErrorCode & PFE_WRITE ) != 0;
+	int nError;
 
-    if ( psRegs->eflags & EFLG_VM ) {
-	if ( (psRegs->cs & 0xffff) == 0xffff && (psRegs->eip & 0xffff) == 0xffff ) {
-	    handle_v86_pagefault( (Virtual86Regs_s*) psRegs, 0 );
-	    return;
+	if ( psRegs->eflags & EFLG_VM )
+	{
+		if ( ( psRegs->cs & 0xffff ) == 0xffff && ( psRegs->eip & 0xffff ) == 0xffff )
+		{
+			handle_v86_pagefault( ( Virtual86Regs_s * ) psRegs, 0 );
+			return;
+		}
 	}
-    }
-    
-      // Get the fault address
-    __asm__("movl %%cr2,%0":"=r" (nFaultAddr) );
+
+	// Get the fault address
+      __asm__( "movl %%cr2,%0":"=r"( nFaultAddr ) );
 
 /*
     if ( (nErrorCode & PFE_USER) == 0 ) {
@@ -489,111 +532,127 @@ void handle_page_fault( SysCallRegs_s* psRegs, int nErrorCode )
 		(nErrorCode & PFE_WRITE)    ? "WRITE" : "READ",
 		(nErrorCode & PFE_USER)     ? "USER"  : "SUPER" );
     }
-    */    
-    
-again:
-    kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
-    LOCK( g_hAreaTableSema );
+    */
 
-    if ( nFaultAddr < PAGE_SIZE ) {
-	goto bad_pf;
-    }
-    
-    if ( nFaultAddr < AREA_FIRST_USER_ADDRESS ) {
-	psCtx = g_psKernelSeg;
-    } else {
-	psCtx = CURRENT_PROC->tc_psMemSeg;
-    }
-
-    atomic_add( &g_sSysBase.ex_nPageFaultCount, 1 );
-  
-    pPgd  = pgd_offset( psCtx, nFaultAddr );
-    pPte  = pte_offset( pPgd, nFaultAddr );
-
-    if ( nFaultAddr < AREA_FIRST_USER_ADDRESS ) {
-	kassertw( pPte == pte_offset( pgd_offset( psCtx, nFaultAddr ), nFaultAddr ) );
-    }
-
-    if ( nErrorCode & PFE_PROTVIOL ) { // Page is present but not accessible by us
-	  // If it is a write access it might be a COW if not it is an access violation
-	if ( bWriteAccess == false ) {
-	    printk( "*** PROTECTION VIOLATION WHILE ACCESSING ADDRESS %08lx ***\n", nFaultAddr );
-	    goto bad_pf;
-	}
-    }
-    
-    psArea = lookup_area( psCtx, nFaultAddr );
-
-    if ( psArea == NULL ) {
-	printk( "*** NO AREA FOR ADDRESS %08lx ***\n", nFaultAddr );
-	goto bad_pf;
-    }
-    if ( psArea->a_nEnd < nFaultAddr ) {
-	printk( "*** NO AREA FOR ADDRESS %08lx ***\n", nFaultAddr );
-	goto bad_pf;
-    }
-    if ((nErrorCode & PFE_USER) && (psArea->a_nProtection & AREA_KERNEL) ) {
-	printk( "*** KERNEL AREA FOR ADDRESS %08lx ACCESSED FROM USER-SPACE\n", nFaultAddr );
-	goto bad_pf;
-    }
-    if ( psArea->a_bDeleted ) {
-	printk( "*** DELETED AREA %s ACCESSED AT ADDRESS %08lx\n", psArea->a_zName, nFaultAddr );
-	goto bad_pf;
-    }
-    
-    kassertw( psArea->a_psContext == psCtx );
-    nError = load_area_page( psArea, nFaultAddr, bWriteAccess );
-
-    put_area( psArea );
-    psArea = NULL;
-    UNLOCK( g_hAreaTableSema );
-    if ( nError == -EAGAIN ) {
-	goto again;
-    }
-    if ( nError == -ENOMEM ) {
-	if ( shrink_caches( PAGE_SIZE ) <= 0 ) {
-	    printk( "Error: handle_page_fault() run out of memory!\n" );
-	    kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
-	    LOCK( g_hAreaTableSema );
-	    goto bad_pf;
-	} else {
-	    goto again;
-	}
-    }
-    if ( nError < 0 ) {
+      again:
 	kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
 	LOCK( g_hAreaTableSema );
-	goto bad_pf;
-    }
-    return;
 
-bad_pf:
-    if ( psArea != NULL ) {
-	unlock_area( psArea, LOCK_AREA_WRITE );
+	if ( nFaultAddr < PAGE_SIZE )
+	{
+		goto bad_pf;
+	}
+
+	if ( nFaultAddr < AREA_FIRST_USER_ADDRESS )
+	{
+		psCtx = g_psKernelSeg;
+	}
+	else
+	{
+		psCtx = CURRENT_PROC->tc_psMemSeg;
+	}
+
+	atomic_add( &g_sSysBase.ex_nPageFaultCount, 1 );
+
+	pPgd = pgd_offset( psCtx, nFaultAddr );
+	pPte = pte_offset( pPgd, nFaultAddr );
+
+	if ( nFaultAddr < AREA_FIRST_USER_ADDRESS )
+	{
+		kassertw( pPte == pte_offset( pgd_offset( psCtx, nFaultAddr ), nFaultAddr ) );
+	}
+
+	if ( nErrorCode & PFE_PROTVIOL )
+	{			// Page is present but not accessible by us
+		// If it is a write access it might be a COW if not it is an access violation
+		if ( bWriteAccess == false )
+		{
+			printk( "*** PROTECTION VIOLATION WHILE ACCESSING ADDRESS %08lx ***\n", nFaultAddr );
+			goto bad_pf;
+		}
+	}
+
+	psArea = lookup_area( psCtx, nFaultAddr );
+
+	if ( psArea == NULL )
+	{
+		printk( "*** NO AREA FOR ADDRESS %08lx ***\n", nFaultAddr );
+		goto bad_pf;
+	}
+	if ( psArea->a_nEnd < nFaultAddr )
+	{
+		printk( "*** NO AREA FOR ADDRESS %08lx ***\n", nFaultAddr );
+		goto bad_pf;
+	}
+	if ( ( nErrorCode & PFE_USER ) && ( psArea->a_nProtection & AREA_KERNEL ) )
+	{
+		printk( "*** KERNEL AREA FOR ADDRESS %08lx ACCESSED FROM USER-SPACE\n", nFaultAddr );
+		goto bad_pf;
+	}
+	if ( psArea->a_bDeleted )
+	{
+		printk( "*** DELETED AREA %s ACCESSED AT ADDRESS %08lx\n", psArea->a_zName, nFaultAddr );
+		goto bad_pf;
+	}
+
+	kassertw( psArea->a_psContext == psCtx );
+	nError = load_area_page( psArea, nFaultAddr, bWriteAccess );
+
 	put_area( psArea );
-    }
+	psArea = NULL;
+	UNLOCK( g_hAreaTableSema );
+	if ( nError == -EAGAIN )
+	{
+		goto again;
+	}
+	if ( nError == -ENOMEM )
+	{
+		if ( shrink_caches( PAGE_SIZE ) <= 0 )
+		{
+			printk( "Error: handle_page_fault() run out of memory!\n" );
+			kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
+			LOCK( g_hAreaTableSema );
+			goto bad_pf;
+		}
+		else
+		{
+			goto again;
+		}
+	}
+	if ( nError < 0 )
+	{
+		kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
+		LOCK( g_hAreaTableSema );
+		goto bad_pf;
+	}
+	return;
 
-    printk( "Invalid pagefault at %08lx (%s:%s:%s)\n", nFaultAddr,
-	    (nErrorCode & PFE_PROTVIOL) ? "PROTV" : "NOTP",
-	    (nErrorCode & PFE_WRITE) 		? "WRITE" : "READ",
-	    (nErrorCode & PFE_USER) 		? "USER"  : "SUPER" );
+      bad_pf:
+	if ( psArea != NULL )
+	{
+		unlock_area( psArea, LOCK_AREA_WRITE );
+		put_area( psArea );
+	}
 
-    UNLOCK( g_hAreaTableSema );
-    print_registers( psRegs );
-    printk( "\n" );
-    kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
-    LOCK( g_hAreaTableSema );
+	printk( "Invalid pagefault at %08lx (%s:%s:%s)\n", nFaultAddr, ( nErrorCode & PFE_PROTVIOL ) ? "PROTV" : "NOTP", ( nErrorCode & PFE_WRITE ) ? "WRITE" : "READ", ( nErrorCode & PFE_USER ) ? "USER" : "SUPER" );
 
-    printk( "Areas :\n" );
-    list_areas( CURRENT_PROC->tc_psMemSeg );
-  
-    UNLOCK( g_hAreaTableSema );
+	UNLOCK( g_hAreaTableSema );
+	print_registers( psRegs );
+	printk( "\n" );
+	kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
+	LOCK( g_hAreaTableSema );
 
-    if ( nErrorCode & PFE_USER ) {
-	sys_kill( CURRENT_THREAD->tr_hThreadID, SIGSEGV );
-    } else {
-	do_exit( SIGSEGV );
-    }
+	printk( "Areas :\n" );
+	list_areas( CURRENT_PROC->tc_psMemSeg );
+
+	UNLOCK( g_hAreaTableSema );
+
+	if ( nErrorCode & PFE_USER )
+	{
+		sys_kill( CURRENT_THREAD->tr_hThreadID, SIGSEGV );
+	}
+	else
+	{
+		do_exit( SIGSEGV );
+	}
 }
-
-

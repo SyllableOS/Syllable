@@ -1,3 +1,4 @@
+
 /*
  *  The Syllable kernel
  *  Copyright (C) 2002 Kristian Van Der Vliet
@@ -25,10 +26,10 @@
 static int64 kseed = 0x12345678;
 
 /* a is the lower half, b is the upper half */
-static int32 *a = (int32 *) &kseed;
-static int32 *b = (int32 *) &kseed + 1; 
+static int32 *a = ( int32 * )&kseed;
+static int32 *b = ( int32 * )&kseed + 1;
 
-void seed(int32 seed_val)
+void seed( int32 seed_val )
 {
 	kseed ^= seed_val;
 
@@ -39,11 +40,11 @@ void seed(int32 seed_val)
 	return;
 }
 
-uint32 rand(void)
+uint32 rand( void )
 {
 	/* a condition where 'a' topmost two bits are set */
-	if(!(*a & 0xC000000))
-		seed(get_system_time()>>8); /* Reinitialize */
+	if ( !( *a & 0xC000000 ) )
+		seed( get_system_time() >> 8 );	/* Reinitialize */
 
 	/* To avoid zero value after the shift also to give the strengthen no1 */
 	*a ^= *b;
@@ -52,12 +53,11 @@ uint32 rand(void)
 	kseed *= *a;
 
 	/* Shift ... the strengthen no3 */
-	kseed <<= ((*a % 3) + 4);
+	kseed <<= ( ( *a % 3 ) + 4 );
 
 	/* Avoid zero value */
-	if(*b == 0) 
-		seed(get_system_time()>>8); /* Reinitialize */
+	if ( *b == 0 )
+		seed( get_system_time() >> 8 );	/* Reinitialize */
 
-	return(*b);
+	return ( *b );
 }
-

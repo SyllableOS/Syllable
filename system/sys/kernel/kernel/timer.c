@@ -1,3 +1,4 @@
+
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -37,9 +38,9 @@
 
 #define	INT_FREQ	1000
 
-extern	void (*TSIHand)(void);
+extern void ( *TSIHand ) ( void );
 
-int g_bNeedSchedule;	/* If true the scheduler will be called when returning from syscall	*/
+int g_bNeedSchedule;		/* If true the scheduler will be called when returning from syscall     */
 
 SPIN_LOCK( g_sTimerSpinLock, "timer_slock" );
 
@@ -53,13 +54,13 @@ SPIN_LOCK( g_sTimerSpinLock, "timer_slock" );
 
 bigtime_t get_system_time( void )
 {
-    bigtime_t nTime;
-    uint32    nFlags;
+	bigtime_t nTime;
+	uint32 nFlags;
 
-    nFlags = spinlock_disable( &g_sTimerSpinLock );
-    nTime = g_sSysBase.ex_nRealTime - g_sSysBase.ex_nBootTime;
-    spinunlock_enable( &g_sTimerSpinLock, nFlags );
-    return( nTime );
+	nFlags = spinlock_disable( &g_sTimerSpinLock );
+	nTime = g_sSysBase.ex_nRealTime - g_sSysBase.ex_nBootTime;
+	spinunlock_enable( &g_sTimerSpinLock, nFlags );
+	return ( nTime );
 }
 
 /*****************************************************************************
@@ -71,14 +72,14 @@ bigtime_t get_system_time( void )
 
 bigtime_t get_real_time( void )
 {
-    bigtime_t nTime;
-    uint32    nFlags;
+	bigtime_t nTime;
+	uint32 nFlags;
 
-    nFlags = spinlock_disable( &g_sTimerSpinLock );
-    nTime = g_sSysBase.ex_nRealTime;
-    spinunlock_enable( &g_sTimerSpinLock, nFlags );
-    
-    return( nTime );
+	nFlags = spinlock_disable( &g_sTimerSpinLock );
+	nTime = g_sSysBase.ex_nRealTime;
+	spinunlock_enable( &g_sTimerSpinLock, nFlags );
+
+	return ( nTime );
 }
 
 /*****************************************************************************
@@ -90,10 +91,11 @@ bigtime_t get_real_time( void )
 
 bigtime_t get_idle_time( int nProcessor )
 {
-    if ( nProcessor < 0 || nProcessor >= g_nActiveCPUCount ) {
-	return( 0 );
-    }
-    return( g_asProcessorDescs[logig_to_physical_cpu_id(nProcessor)].pi_nIdleTime );
+	if ( nProcessor < 0 || nProcessor >= g_nActiveCPUCount )
+	{
+		return ( 0 );
+	}
+	return ( g_asProcessorDescs[logig_to_physical_cpu_id( nProcessor )].pi_nIdleTime );
 }
 
 /*****************************************************************************
@@ -103,19 +105,19 @@ bigtime_t get_idle_time( int nProcessor )
  * SEE ALSO:
  ****************************************************************************/
 
-int sys_get_raw_system_time( bigtime_t* pRes )
+int sys_get_raw_system_time( bigtime_t *pRes )
 {
-    int nError = 0;
+	int nError = 0;
 
-    if ( nError >= 0 )
-    {
+	if ( nError >= 0 )
+	{
 //    nError = validate_area( pRes, sizeof( bigtime_t ), TRUE );
 
 //    if ( 0 == nError ) {
-	*pRes = get_system_time();
+		*pRes = get_system_time();
 //    }
-    }
-    return( nError );
+	}
+	return ( nError );
 }
 
 /*****************************************************************************
@@ -125,19 +127,19 @@ int sys_get_raw_system_time( bigtime_t* pRes )
  * SEE ALSO:
  ****************************************************************************/
 
-int sys_get_raw_real_time( bigtime_t* pRes )
+int sys_get_raw_real_time( bigtime_t *pRes )
 {
-    int nError = 0;
-	
-    if ( nError >= 0 )
-    {
+	int nError = 0;
+
+	if ( nError >= 0 )
+	{
 //    nError = validate_area( pRes, sizeof( bigtime_t ), TRUE );
 
 //    if ( 0 == nError ) {
-	*pRes = get_real_time();
+		*pRes = get_real_time();
 //    }
-    }
-    return( nError );
+	}
+	return ( nError );
 }
 
 /*****************************************************************************
@@ -147,30 +149,30 @@ int sys_get_raw_real_time( bigtime_t* pRes )
  * SEE ALSO:
  ****************************************************************************/
 
-int sys_get_raw_idle_time( bigtime_t* pRes, int nProcessor )
+int sys_get_raw_idle_time( bigtime_t *pRes, int nProcessor )
 {
-    int nError = 0;
+	int nError = 0;
 
-    if ( nError >= 0 )
-    {
+	if ( nError >= 0 )
+	{
 //    nError = validate_area( pRes, sizeof( bigtime_t ), TRUE );
 
 //    if ( 0 == nError ) {
-	*pRes = get_idle_time( nProcessor );
+		*pRes = get_idle_time( nProcessor );
 //    }
-    }
-    return( nError );
+	}
+	return ( nError );
 }
 
 int sys_set_real_time( bigtime_t nTime )
 {
-    uint32    nFlags;
+	uint32 nFlags;
 
-    nFlags = spinlock_disable( &g_sTimerSpinLock );
-    g_sSysBase.ex_nBootTime += nTime - g_sSysBase.ex_nRealTime;
-    g_sSysBase.ex_nRealTime = nTime;
-    spinunlock_enable( &g_sTimerSpinLock, nFlags );
-    return( 0 );
+	nFlags = spinlock_disable( &g_sTimerSpinLock );
+	g_sSysBase.ex_nBootTime += nTime - g_sSysBase.ex_nRealTime;
+	g_sSysBase.ex_nRealTime = nTime;
+	spinunlock_enable( &g_sTimerSpinLock, nFlags );
+	return ( 0 );
 }
 
 /*****************************************************************************
@@ -182,11 +184,12 @@ int sys_set_real_time( bigtime_t nTime )
 
 void starttimer1()
 {
-  int	speed = PIT_TICKS_PER_SEC / INT_FREQ;
-/*	outb_p( 0x30, 0x43 );	*/	/*	One shot mode	*/
-  outb_p( 0x34, 0x43 );				/* Loop mode	*/
-  outb_p( speed & 0xff, 0x40 );
-  outb_p( speed >> 8, 0x40 );
+	int speed = PIT_TICKS_PER_SEC / INT_FREQ;
+
+	/*	outb_p( 0x30, 0x43 );	*//*      One shot mode   */
+	outb_p( 0x34, 0x43 );	/* Loop mode    */
+	outb_p( speed & 0xff, 0x40 );
+	outb_p( speed >> 8, 0x40 );
 }
 
 /*****************************************************************************
@@ -196,11 +199,11 @@ void starttimer1()
  * SEE ALSO:
  ****************************************************************************/
 
-void starttimer2(void)
+void starttimer2( void )
 {
-  outb_p( 0xB4, 0x43 );
-  outb_p( 0, 0x42 );
-  outb_p( 0, 0x42 );
+	outb_p( 0xB4, 0x43 );
+	outb_p( 0, 0x42 );
+	outb_p( 0, 0x42 );
 }
 
 /*****************************************************************************
@@ -210,13 +213,14 @@ void starttimer2(void)
  * SEE ALSO:
  ****************************************************************************/
 
-static uint16 readtimer1(void)
+static uint16 readtimer1( void )
 {
-  uint16 n;
-  outb_p( 0, 0x43 );
-  n = inb_p( 0x40 );
-  n += inb_p( 0x40 ) << 8;
-  return 0x10000L - n;
+	uint16 n;
+
+	outb_p( 0, 0x43 );
+	n = inb_p( 0x40 );
+	n += inb_p( 0x40 ) << 8;
+	return 0x10000L - n;
 }
 
 /******************************************************************************
@@ -224,8 +228,9 @@ static uint16 readtimer1(void)
 		This function must be called 18.2 times or more per second
  ******************************************************************************/
 #if 0
-uint32 readtimer2(void)
+uint32 readtimer2( void )
 {
+
 /*
 	uint16 n;
 	static	uint16	Last=0;
@@ -240,7 +245,7 @@ uint32 readtimer2(void)
 
 	Last = n;
 */
-	return( g_sSysBase.ex_lTicksElapsed );
+	return ( g_sSysBase.ex_lTicksElapsed );
 }
 #endif
 
@@ -253,29 +258,32 @@ uint32 readtimer2(void)
 
 void TimerInterrupt( int dummy )
 {
-    bigtime_t nCurTime;
-    uint32       nFlg;
-    nFlg = cli();
+	bigtime_t nCurTime;
+	uint32 nFlg;
 
-    if ( get_processor_id() != g_nBootCPU ) {
-	printk( "Got timer IRQ to CPU %d (Booted on %d)\n", get_processor_id(), g_nBootCPU );
-	return;
-    }
+	nFlg = cli();
 
-    outb( 0x20, 0x20 );	/* Give handshake to interupt controller	*/
+	if ( get_processor_id() != g_nBootCPU )
+	{
+		printk( "Got timer IRQ to CPU %d (Booted on %d)\n", get_processor_id(), g_nBootCPU );
+		return;
+	}
 
-    spinlock( &g_sTimerSpinLock );
-    g_sSysBase.ex_nRealTime += (uint64) (1000000 / INT_FREQ);
-    nCurTime = g_sSysBase.ex_nRealTime - g_sSysBase.ex_nBootTime;
-    spinunlock( &g_sTimerSpinLock );
-  
-    send_alarm_signals( nCurTime );
-    wake_up_sleepers( nCurTime );
-    if ( g_bAPICPresent == false ) {
-	Schedule();
-    }
-	
-    put_cpu_flags( nFlg );
+	outb( 0x20, 0x20 );	/* Give handshake to interupt controller        */
+
+	spinlock( &g_sTimerSpinLock );
+	g_sSysBase.ex_nRealTime += ( uint64 )( 1000000 / INT_FREQ );
+	nCurTime = g_sSysBase.ex_nRealTime - g_sSysBase.ex_nBootTime;
+	spinunlock( &g_sTimerSpinLock );
+
+	send_alarm_signals( nCurTime );
+	wake_up_sleepers( nCurTime );
+	if ( g_bAPICPresent == false )
+	{
+		Schedule();
+	}
+
+	put_cpu_flags( nFlg );
 }
 
 /*****************************************************************************
@@ -285,14 +293,14 @@ void TimerInterrupt( int dummy )
  * SEE ALSO:
  ****************************************************************************/
 
-bool StartTimerInt(void)
+bool StartTimerInt( void )
 {
-  outb_p( inb_p( 0x61 ) | 1, 0x61 );
+	outb_p( inb_p( 0x61 ) | 1, 0x61 );
 
-  starttimer1();
-  starttimer2();
+	starttimer1();
+	starttimer2();
 
-  return( TRUE );
+	return ( TRUE );
 }
 
 /*****************************************************************************
@@ -302,11 +310,11 @@ bool StartTimerInt(void)
  * SEE ALSO:
  ****************************************************************************/
 
-void StopTimerInt(void)
+void StopTimerInt( void )
 {
-  outb_p( 0x34, 0x43 );
-  outb_p( 0, 0x40 );
-  outb_p( 0, 0x40 );
+	outb_p( 0x34, 0x43 );
+	outb_p( 0, 0x40 );
+	outb_p( 0, 0x40 );
 }
 
 
@@ -328,19 +336,16 @@ void StopTimerInt(void)
 
 
 
-static inline uint32 maketime( uint32 year, uint32 mon,	uint32 day, uint32 hour, uint32 min, uint32 sec )
+static inline uint32 maketime( uint32 year, uint32 mon, uint32 day, uint32 hour, uint32 min, uint32 sec )
 {
-  if (0 >= (int) (mon -= 2))	/* 1..12 -> 11,12,1..10 */
-  {
-    mon += 12;	/* Puts Feb last since it has leap day */
-    year -= 1;
-  }
-  return (((
-    (uint32) (year/4 - year/100 + year/400 + 367*mon/12 + day) +
-             year*365 - 719499
-             )*24 + hour	/* now have hours */
-	     )*60 + min		/* now have minutes */
-	     )*60 + sec;	/* finally seconds */
+	if ( 0 >= ( int )( mon -= 2 ) )	/* 1..12 -> 11,12,1..10 */
+	{
+		mon += 12;	/* Puts Feb last since it has leap day */
+		year -= 1;
+	}
+	return ( ( ( ( uint32 )( year / 4 - year / 100 + year / 400 + 367 * mon / 12 + day ) + year * 365 - 719499 ) * 24 + hour	/* now have hours */
+		 ) * 60 + min	/* now have minutes */
+		 ) * 60 + sec;	/* finally seconds */
 }
 
 /*****************************************************************************
@@ -352,86 +357,90 @@ static inline uint32 maketime( uint32 year, uint32 mon,	uint32 day, uint32 hour,
 
 uint32 GetCMOSTime( void )
 {
-  ClockTime_s	sTime;
-  uint32	year, mon, day, hour, min, sec;
-  int		i;
-  uint64	a,b,c;
-	
-	
-    /* The AtheOS interpretation of the CMOS clock register contents:
-     * When the Update-In-Progress (UIP) flag goes from 1 to 0, the
-     * RTC registers show the second which has precisely just started.
-     * Let's hope other operating systems interpret the RTC the same way.
-     */
-
-    /* read RTC exactly on falling edge of update flag */
-
-  for (i = 0 ; i < 1000000 ; i++)	/* may take up to 1 second... */
-  {
-    if ( CMOS_READ( RTC_FREQ_SELECT ) & RTC_UIP )	{
-      break;
-    }
-  }
-
-  for (i = 0 ; i < 1000000 ; i++)	/* must try at least 2.228 ms */
-  {
-    if ( !( CMOS_READ( RTC_FREQ_SELECT ) & RTC_UIP ) )	{
-      break;
-    }
-  }
-
-  do { /* Isn't this overkill ? UIP above should guarantee consistency */
-    sec		= CMOS_READ( RTC_SECONDS );
-    min		= CMOS_READ( RTC_MINUTES );
-    hour	= CMOS_READ( RTC_HOURS );
-    day		= CMOS_READ( RTC_DAY_OF_MONTH );
-    mon		= CMOS_READ( RTC_MONTH );
-    year	= CMOS_READ( RTC_YEAR );
-  } while (sec != CMOS_READ( RTC_SECONDS ) );
-
-  if ( !( CMOS_READ( RTC_CONTROL ) & RTC_DM_BINARY ) || RTC_ALWAYS_BCD )
-  {
-    BCD_TO_BIN( sec );
-    BCD_TO_BIN( min );
-    BCD_TO_BIN( hour );
-    BCD_TO_BIN( day );
-    BCD_TO_BIN( mon );
-    BCD_TO_BIN( year );
-  }
-  if ( (year += 1900) < 1970 ) {
-    year += 100;
-  }
-
-  sTime.tm_sec	=	sec;
-  sTime.tm_min	= min;
-  sTime.tm_hour	= hour;
-  sTime.tm_mday	= day - 1;
-  sTime.tm_mon	= mon - 1;
-  sTime.tm_year	= year - 1900;
-
-  sys_SetTime( &sTime );
-  g_sSysBase.ex_nBootTime = g_sSysBase.ex_nRealTime;
-
-  printk( "TIME : %ld-%ld-%ld %ld:%ld:%ld\n", day, mon, year, hour, min, sec );
+	ClockTime_s sTime;
+	uint32 year, mon, day, hour, min, sec;
+	int i;
+	uint64 a, b, c;
 
 
-  a = 10000000000LL;
-  b = 10000000001LL;
+	/* The AtheOS interpretation of the CMOS clock register contents:
+	 * When the Update-In-Progress (UIP) flag goes from 1 to 0, the
+	 * RTC registers show the second which has precisely just started.
+	 * Let's hope other operating systems interpret the RTC the same way.
+	 */
 
-  kassertw( a < b );
-  kassertw( b > a );
+	/* read RTC exactly on falling edge of update flag */
 
-  b--;
+	for ( i = 0; i < 1000000; i++ )	/* may take up to 1 second... */
+	{
+		if ( CMOS_READ( RTC_FREQ_SELECT ) & RTC_UIP )
+		{
+			break;
+		}
+	}
 
-  kassertw( a == b );
+	for ( i = 0; i < 1000000; i++ )	/* must try at least 2.228 ms */
+	{
+		if ( !( CMOS_READ( RTC_FREQ_SELECT ) & RTC_UIP ) )
+		{
+			break;
+		}
+	}
 
-  c = 100;
+	do
+	{			/* Isn't this overkill ? UIP above should guarantee consistency */
+		sec = CMOS_READ( RTC_SECONDS );
+		min = CMOS_READ( RTC_MINUTES );
+		hour = CMOS_READ( RTC_HOURS );
+		day = CMOS_READ( RTC_DAY_OF_MONTH );
+		mon = CMOS_READ( RTC_MONTH );
+		year = CMOS_READ( RTC_YEAR );
+	}
+	while ( sec != CMOS_READ( RTC_SECONDS ) );
 
-  a += c * 2;
-  b += c;
-  b += c;
-  kassertw( a == b );
-	
-  return( (uint32) (g_sSysBase.ex_nRealTime / 1000000) );
+	if ( !( CMOS_READ( RTC_CONTROL ) & RTC_DM_BINARY ) || RTC_ALWAYS_BCD )
+	{
+		BCD_TO_BIN( sec );
+		BCD_TO_BIN( min );
+		BCD_TO_BIN( hour );
+		BCD_TO_BIN( day );
+		BCD_TO_BIN( mon );
+		BCD_TO_BIN( year );
+	}
+	if ( ( year += 1900 ) < 1970 )
+	{
+		year += 100;
+	}
+
+	sTime.tm_sec = sec;
+	sTime.tm_min = min;
+	sTime.tm_hour = hour;
+	sTime.tm_mday = day - 1;
+	sTime.tm_mon = mon - 1;
+	sTime.tm_year = year - 1900;
+
+	sys_SetTime( &sTime );
+	g_sSysBase.ex_nBootTime = g_sSysBase.ex_nRealTime;
+
+	printk( "TIME : %ld-%ld-%ld %ld:%ld:%ld\n", day, mon, year, hour, min, sec );
+
+
+	a = 10000000000LL;
+	b = 10000000001LL;
+
+	kassertw( a < b );
+	kassertw( b > a );
+
+	b--;
+
+	kassertw( a == b );
+
+	c = 100;
+
+	a += c * 2;
+	b += c;
+	b += c;
+	kassertw( a == b );
+
+	return ( ( uint32 )( g_sSysBase.ex_nRealTime / 1000000 ) );
 }
-

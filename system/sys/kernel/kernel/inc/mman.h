@@ -1,3 +1,4 @@
+
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -21,10 +22,11 @@
 #define	_EXEC_MMAN_H_
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 #if 0
-}  /* Make emacs auto-indent work. */
+}				/* Make emacs auto-indent work. */
 #endif
 
 //#include <atheos/swap.h>
@@ -35,42 +37,48 @@ extern "C" {
 
 extern MultiArray_s g_sAreas;
 
-#define AREA_MUTEX_COUNT	100000 /* Maximum simultanous read-only area table locks */
+#define AREA_MUTEX_COUNT	100000	/* Maximum simultanous read-only area table locks */
 
 
 
-typedef	struct	MemChunk MemChunk_s;
+typedef struct MemChunk MemChunk_s;
 
-struct	MemChunk
+struct MemChunk
 {
-  MemChunk_s* mc_Next;
-  uint32      mc_Bytes;
+	MemChunk_s *mc_Next;
+	uint32 mc_Bytes;
 };
 
-typedef	struct	MemHeader
+typedef struct MemHeader
 {
-  MemChunk_s* mh_First;
-  void*	      mh_Lower;
-  void*	      mh_Upper;
-  uint32      mh_Free;
+	MemChunk_s *mh_First;
+	void *mh_Lower;
+	void *mh_Upper;
+	uint32 mh_Free;
 } MemHeader_s;
 
 
 
 
-typedef	struct	_MemContext	MemContext_s;
-typedef	struct	Page		Page_s;
-typedef	struct	MemAreaOps	MemAreaOps_s;
+typedef struct _MemContext MemContext_s;
+typedef struct Page Page_s;
+typedef struct MemAreaOps MemAreaOps_s;
 
-typedef	struct {uint32 _pte; }	pte_t;
-typedef	struct {uint32 _pgd; }	pgd_t;
+typedef struct
+{
+	uint32 _pte;
+} pte_t;
+typedef struct
+{
+	uint32 _pgd;
+} pgd_t;
 
 
 
 
-extern Page_s*	g_psFirstPage;
-extern Page_s*	g_psFirstFreePage;
-extern sem_id	g_hAreaTableSema;
+extern Page_s *g_psFirstPage;
+extern Page_s *g_psFirstFreePage;
+extern sem_id g_hAreaTableSema;
 
 
 
@@ -79,6 +87,7 @@ extern sem_id	g_hAreaTableSema;
 #define	PGD_VALUE( pgd )	((pgd)._pgd)
 
 #define	PTE_PAGE( pte )	(PTE_VALUE(pte) & PAGE_MASK)
+
 /*#define	MK_PTE( uint32 page, uint32 prot )	((pte_t)((page) | MKPROT(prot) ))*/
 #define	MK_PGDIR( addr )		((addr) | PTE_PRESENT | PTE_WRITE | PTE_USER )
 #define	PGD_TABLE( pgd ) 	((pte_t*)((PGD_VALUE( pgd )) & PAGE_MASK))
@@ -96,39 +105,39 @@ extern sem_id	g_hAreaTableSema;
 // Bit patterns for the p_nFlags member of Page_s
 #define PF_BUSY 0x0001
 
-struct	Page
+struct Page
 {
-    Page_s*  	 p_psNext;
-    Page_s*  	 p_psPrev;
-    int	     	 p_nAge;
-    atomic_t 	 p_nCount;
-    uint32   	 p_nFlags;
-    int	     	 p_nPageNum;	
-    WaitQueue_s* p_psIOThreads;	// Threads waiting for this page to be loaded.
+	Page_s *p_psNext;
+	Page_s *p_psPrev;
+	int p_nAge;
+	atomic_t p_nCount;
+	uint32 p_nFlags;
+	int p_nPageNum;
+	WaitQueue_s *p_psIOThreads;	// Threads waiting for this page to be loaded.
 };
 
 
-int32	get_free_page( int nFlags );
-uint32	get_free_pages( int nPageCount, int nFlags );
-void	free_pages( uint32 nPages, int nCount );
+int32 get_free_page( int nFlags );
+uint32 get_free_pages( int nPageCount, int nFlags );
+void free_pages( uint32 nPages, int nCount );
 
-int		clone_page_pte( pte_t* pDst, pte_t* pSrc, bool bCow );
+int clone_page_pte( pte_t * pDst, pte_t * pSrc, bool bCow );
 
 
-Page_s*  get_page_desc( int nPageNum );
+Page_s *get_page_desc( int nPageNum );
 
-void	 list_areas( MemContext_s* psSeg );
+void list_areas( MemContext_s *psSeg );
 
 int shrink_caches( int nBytesNeeded );
 
 void init_swapper();
 void dup_swap_page( int nPage );
 void free_swap_page( int nPage );
-int swap_in( pte_t* pPte );
+int swap_in( pte_t * pPte );
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /*	_EXEC_MMAN_H_ */
+#endif /*       _EXEC_MMAN_H_ */

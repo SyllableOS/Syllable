@@ -1,3 +1,4 @@
+
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -21,7 +22,7 @@
 #define __F_ATHEOS_KSYMS_H__
 
 int ksym_get_symbol_count();
-const char* ksym_get_symbol( int nIndex, void** ppValue );
+const char *ksym_get_symbol( int nIndex, void **ppValue );
 
 
 

@@ -1,3 +1,4 @@
+
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2000 Kurt Skauen
@@ -23,33 +24,34 @@
 #include <atheos/types.h>
 
 #ifdef __cplusplus
-extern "C" {
-#if 0  
-} /*make emacs indention work */
+extern "C"
+{
+#if 0
+}				/*make emacs indention work */
 #endif
 #endif
 
-typedef	struct
+typedef struct
 {
-  int     nLastID;
-  int     nTabCount;
-  int	  nMaxCount;
-  int     nAvgCount;
-  void*** pArray[ 256 ];
+	int nLastID;
+	int nTabCount;
+	int nMaxCount;
+	int nAvgCount;
+	void ***pArray[256];
 
 } MultiArray_s;
 
 
-void	MArray_Init( MultiArray_s* psArray );
-void	MArray_Destroy( MultiArray_s* psArray );
-int	MArray_Insert( MultiArray_s* psArray, void* pObject, bool bNoBlock );
-void	MArray_Remove( MultiArray_s* psArray, int nIndex );
-void*	MArray_GetObj( const MultiArray_s* psArray, int nIndex );
-int	MArray_GetNextIndex( MultiArray_s* psArray, int nIndex );
-int	MArray_GetPrevIndex( MultiArray_s* psArray, int nIndex );
+void MArray_Init( MultiArray_s * psArray );
+void MArray_Destroy( MultiArray_s * psArray );
+int MArray_Insert( MultiArray_s * psArray, void *pObject, bool bNoBlock );
+void MArray_Remove( MultiArray_s * psArray, int nIndex );
+void *MArray_GetObj( const MultiArray_s * psArray, int nIndex );
+int MArray_GetNextIndex( MultiArray_s * psArray, int nIndex );
+int MArray_GetPrevIndex( MultiArray_s * psArray, int nIndex );
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif	/* __ATHEOS_ARRAY_H__ */
+#endif /* __ATHEOS_ARRAY_H__ */

@@ -1,3 +1,4 @@
+
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -22,54 +23,63 @@
 
 static int g_nCsrX = 0;
 static int g_nCsrY = 0;
-static int g_nWidth  = 80;
+static int g_nWidth = 80;
 static int g_nHeight = 25;
-static char* g_pFrameBuffer = (char*)0xb8000;
+static char *g_pFrameBuffer = ( char * )0xb8000;
 
 
 static void dbcon_scroll()
 {
-    int i;
-    memmove( g_pFrameBuffer, g_pFrameBuffer + g_nWidth * 2, g_nWidth * g_nHeight * 2 - g_nWidth * 2 );
-    for ( i = 0 ; i < g_nWidth ; ++i ) {
-	g_pFrameBuffer[ g_nWidth * (g_nHeight - 1) * 2 + i * 2] = 0x20;
-    }
-    g_nCsrY--;
+	int i;
+
+	memmove( g_pFrameBuffer, g_pFrameBuffer + g_nWidth * 2, g_nWidth * g_nHeight * 2 - g_nWidth * 2 );
+	for ( i = 0; i < g_nWidth; ++i )
+	{
+		g_pFrameBuffer[g_nWidth * ( g_nHeight - 1 ) * 2 + i * 2] = 0x20;
+	}
+	g_nCsrY--;
 }
 
-void dbcon_write( const char* pData, int nSize )
+void dbcon_write( const char *pData, int nSize )
 {
-    int i;
-    for ( i = 0 ; i < nSize ; ++i )
-    {
-	if ( pData[i] == '\n' ) {
-	    g_nCsrY++;
-	    g_nCsrX = 0;
-	    if ( g_nCsrY >= g_nHeight ) {
-		dbcon_scroll();
-	    }
-	    continue;
+	int i;
+
+	for ( i = 0; i < nSize; ++i )
+	{
+		if ( pData[i] == '\n' )
+		{
+			g_nCsrY++;
+			g_nCsrX = 0;
+			if ( g_nCsrY >= g_nHeight )
+			{
+				dbcon_scroll();
+			}
+			continue;
+		}
+		if ( pData[i] == '\r' )
+		{
+			continue;
+		}
+		if ( g_nCsrX >= g_nWidth )
+		{
+			g_nCsrX = 0;
+			g_nCsrY++;
+			if ( g_nCsrY >= g_nHeight )
+			{
+				dbcon_scroll();
+			}
+		}
+		g_pFrameBuffer[( g_nCsrY * g_nWidth + g_nCsrX ) * 2] = pData[i];
+		g_nCsrX++;
 	}
-	if ( pData[i] == '\r' ) {
-	    continue;
-	}
-	if ( g_nCsrX >= g_nWidth ) {
-	    g_nCsrX = 0;
-	    g_nCsrY++;
-	    if ( g_nCsrY >= g_nHeight ) {
-		dbcon_scroll();
-	    }
-	}
-	g_pFrameBuffer[ (g_nCsrY * g_nWidth + g_nCsrX) * 2 ] = pData[i];
-	g_nCsrX++;
-    }
 }
 
 void dbcon_clear()
 {
-    int i;
-    
-    for ( i = 0 ; i < g_nWidth * g_nHeight ; ++i ) {
-	((uint16*)g_pFrameBuffer)[i] = 0x1720;
-    }
+	int i;
+
+	for ( i = 0; i < g_nWidth * g_nHeight; ++i )
+	{
+		( ( uint16 * )g_pFrameBuffer )[i] = 0x1720;
+	}
 }
