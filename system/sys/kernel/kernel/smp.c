@@ -196,6 +196,118 @@ static void calibrate_delay(void)
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/
+static void read_cpu_id( unsigned int nReg, unsigned int *pData )
+{
+	/* Read CPU ID */
+	__asm __volatile
+	("movl %%ebx, %%esi\n\t"
+         "cpuid\n\t"
+         "xchgl %%ebx, %%esi"
+         : "=a" (pData[0]), "=S" (pData[1]), 
+           "=c" (pData[2]), "=d" (pData[3])
+         : "0" (nReg));
+}
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+ 
+#include "inc/cputable.h" 
+
+static void set_cpu_features()
+{
+	/* Save cpu name and features ( from mplayer ) */
+	unsigned int nRegs[4];
+	unsigned int nRegs2[4];
+	char zVendor[17];
+	int i;
+	
+	g_asProcessorDescs[g_nBootCPU].pi_nFeatures = CPU_FEATURE_NONE;
+	
+	/* Warning : We do not check if the CPU supports CPUID
+				( Not a problem because all CPUs > 486 support it ) */
+	read_cpu_id( 0x00000000, nRegs );
+	if( nRegs[0] >= 0x00000001 )
+	{
+		read_cpu_id( 0x00000001, nRegs2 );
+		if( nRegs2[3] & (1 << 23 ) )
+			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_MMX;
+		if( nRegs2[3] & (1 << 25 ) )
+			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_SSE;
+			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_MMX2;
+		if( nRegs2[3] & (1 << 26 ) ) {
+			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_SSE2;
+		}
+		if( nRegs2[3] & (1 << 9 ) ) {
+			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_APIC;
+		}
+		
+		#define CPUID_FAMILY	( ( nRegs2[0] >> 8 ) & 0x0F )
+		#define CPUID_MODEL		( ( nRegs2[0] >> 4 ) & 0x0F )
+		
+		/* Find out CPU name */
+		strcpy( g_asProcessorDescs[g_nBootCPU].pi_zName, "Unknown" );
+		sprintf(zVendor,"%.4s%.4s%.4s",(char*)(nRegs + 1),(char*)(nRegs + 3),(char*)(nRegs + 2));
+		for( i = 0; i < MAX_VENDORS; i++ )
+		{
+			if( !strcmp( cpuvendors[i].string, zVendor ) ) {
+				if( cpuname[i][CPUID_FAMILY][CPUID_MODEL] ) {
+					sprintf( g_asProcessorDescs[g_nBootCPU].pi_zName, "%s %s",
+							cpuvendors[i].name, cpuname[i][CPUID_FAMILY][CPUID_MODEL] );
+				}
+			}
+		}
+	}
+	read_cpu_id( 0x80000000, nRegs );
+	if( nRegs[0] >= 0x80000001 ) {
+		read_cpu_id( 0x80000001, nRegs2 );
+		if( nRegs2[3] & (1 << 23 ) )
+			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_MMX;
+		if( nRegs2[3] & (1 << 22 ) )
+			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_MMX2;
+		if( nRegs2[3] & (1 << 31 ) )
+			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_3DNOW;
+		if( nRegs2[3] & (1 << 30 ) )
+			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_3DNOWEX;
+	}
+	/* Copy this information to all other CPUs */
+	for( i = 0; i < MAX_CPU_COUNT; i++ )
+	{
+		if( i == g_nBootCPU )
+			continue;
+		strcpy( g_asProcessorDescs[i].pi_zName, g_asProcessorDescs[g_nBootCPU].pi_zName );
+		g_asProcessorDescs[i].pi_nFeatures = g_asProcessorDescs[g_nBootCPU].pi_nFeatures;
+	}
+	printk( "CPU: %s\n", g_asProcessorDescs[g_nBootCPU].pi_zName );
+	if( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_MMX )
+		printk( "MMX supported\n" );
+	if( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_MMX2 )
+		printk( "MMX2 supported\n" );
+	if( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_3DNOW )
+		printk( "3DNOW supported\n" );
+	if( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_3DNOWEX )
+		printk( "3DNOWEX supported\n" );
+	if( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_SSE ) {
+		/* Set default SSE state ( from linux kernel ) DOES NOT WORK YET */
+		//unsigned long nReg = ( ( unsigned long )( 0x1f80 ) & 0xffbf );
+		//asm volatile( "ldmxcsr %0" : : "m" ( nReg ) );
+		printk( "SSE supported\n" );
+	}
+	if( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_SSE2 )
+		printk( "SSE2 supported\n" );
+	if( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_APIC )
+		printk( "APIC present\n" );
+}
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
 
 static void calibrate_apic_timer( int nProcessor )
 {
@@ -948,39 +1060,56 @@ bool init_smp( bool bInitSMP )
     int	 i;
 
     if ( bInitSMP ) {
-	uint32 anConfigAreas[] = {
-	    0x0,       0x400,	// Bottom 1k of base memory
-	    639*0x400, 0x400,	// Top 1k of base memory (FIXME: Should first verify that we have 640kb!!!)
-	    0xF0000,   0x10000,	// 64k of bios
-	    0,0
-	};
+		uint32 anConfigAreas[] = {
+		    0x0,       0x400,	// Bottom 1k of base memory
+		    639*0x400, 0x400,	// Top 1k of base memory (FIXME: Should first verify that we have 640kb!!!)
+	 	   0xF0000,   0x10000,	// 64k of bios
+	 	   0,0
+		};
   
-	printk( "Scan memory for SMP config tables...\n" );
+		printk( "Scan memory for SMP config tables...\n" );
 
-	for ( i = 0 ; bFound == false && anConfigAreas[i+1] > 0 ; i+=2 ) {
-	    bFound = smp_scan_config( (void*) anConfigAreas[i], anConfigAreas[i+1] );
-	}
+		for ( i = 0 ; bFound == false && anConfigAreas[i+1] > 0 ; i+=2 ) {
+		    bFound = smp_scan_config( (void*) anConfigAreas[i], anConfigAreas[i+1] );
+		}
     }
 
+	set_cpu_features();
     calibrate_delay();
-    if ( bFound ) {
-	g_nVirtualAPICAddr = 0;
-	g_hAPICArea = create_area( "apic_registers", (void**)&g_nVirtualAPICAddr,
+    if ( ( bFound || ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_APIC ) ) && bInitSMP ) {
+    	/* Map APIC registers */
+		g_nVirtualAPICAddr = 0;
+		g_hAPICArea = create_area( "apic_registers", (void**)&g_nVirtualAPICAddr,
 				   PAGE_SIZE, PAGE_SIZE, AREA_ANY_ADDRESS | AREA_KERNEL, AREA_FULL_LOCK );
 
-	if ( g_hAPICArea < 0 ) {
-	    printk( "Error: init_smp() failed to create APIC register area\n" );
-	    return( false );
-	}
+		if ( g_hAPICArea < 0 ) {
+		    printk( "Error: init_smp() failed to create APIC register area\n" );
+		    return( false );
+		}
 
-#ifdef SMP_DEBUG
-	printk( "Map in local APIC (%08x) to %08x\n", g_nPhysAPICAddr, g_nVirtualAPICAddr );
-#endif
-	remap_area( g_hAPICArea, (void*) g_nPhysAPICAddr );
-    } else {
-	g_asProcessorDescs[g_nBootCPU].pi_bIsPresent = true;
-	g_asProcessorDescs[g_nBootCPU].pi_bIsRunning = true;
-	g_anLogicToRealID[0] = g_nBootCPU;
+		#ifdef SMP_DEBUG
+		printk( "Map in local APIC (%08x) to %08x\n", g_nPhysAPICAddr, g_nVirtualAPICAddr );
+		#endif
+		remap_area( g_hAPICArea, (void*) g_nPhysAPICAddr );
+		
+    } 
+    if( !bFound ) {
+    	/* Set default values for non-SMP machines */
+    	if( ( ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_APIC ) ) && bInitSMP ) {
+    		/* Identify as a smp system */
+    		g_nBootCPU = GET_APIC_ID( *((vuint32*)(g_nVirtualAPICAddr + APIC_ID)) );
+			g_nFakeCPUID = SET_APIC_ID( g_nBootCPU );
+			g_bAPICPresent = true;
+			bFound = true;
+    	} else {
+    		/* No speed detection for non-SMP machine with no APIC yet */
+    		g_nVirtualAPICAddr  = ((uint32)&g_nFakeCPUID)-APIC_ID;
+    		g_asProcessorDescs[g_nBootCPU].pi_nBusSpeed = 0;
+    		g_asProcessorDescs[g_nBootCPU].pi_nCoreSpeed = 0;
+    	}
+		g_asProcessorDescs[g_nBootCPU].pi_bIsPresent = true;
+		g_asProcessorDescs[g_nBootCPU].pi_bIsRunning = true;
+		g_anLogicToRealID[0] = g_nBootCPU;	
     }
     return( bFound );
 }

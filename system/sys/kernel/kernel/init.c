@@ -391,6 +391,7 @@ static int kernel_init()
 	printk( "Init PCI module\n" );
 	init_pci_module();
     }
+    
 
     unprotect_dos_mem();
 
@@ -418,7 +419,7 @@ static int kernel_init()
     protect_dos_mem();
 
     sti();
-  
+    
     return( 0 );
 }
 
@@ -534,6 +535,7 @@ void SysInit( void )
 		    g_apzEnviron[i+1] = NULL;
 		}
 	    }
+	      
 	    printk( "start init...\n" );
 	    execve( "/boot/atheos/sys/bin/init", apzBootShellArgs, g_apzEnviron );
 	    printk( "Failed to load boot-shell\n" );
@@ -609,7 +611,7 @@ int init_kernel( char* pRealMemBase, int nKernelSize )
 
     pRealMemBase += 65536;
 
-    printk( "Initialize the AtheOS kernel\n" );
+    printk( "Initialize the Syllable kernel\n" );
   
     IDT.Base  = (uint32) g_sSysBase.ex_IDT;
     IDT.Limit = 0x7ff;
@@ -676,7 +678,7 @@ int init_kernel( char* pRealMemBase, int nKernelSize )
 	}
     }
     memset( g_psFirstPage, 0, g_sSysBase.ex_nTotalPageCount * sizeof(Page_s) );
-
+   
     for ( i = 0 ; i < (KERNEL_LOAD_ADDR + nKernelSize) / PAGE_SIZE ; ++i ) {
 	kassertw( g_psFirstPage[i].p_nCount == 0 );
 	g_psFirstPage[i].p_nCount = 1;
@@ -723,8 +725,8 @@ int init_kernel( char* pRealMemBase, int nKernelSize )
     printk( "  MemSize:          %ld\n", g_nMemSize );
     printk( "  UAS start:        %08lx\n", g_sSysBase.sb_nFirstUserAddress );
     printk( "  UAS end:          %08lx\n", g_sSysBase.sb_nLastUserAddress );
-    printk( "  PCI scan is %s\n", ((g_bDisablePCI) ? "disabled" : "enabled" ) );
-    printk( "  SMP scan is %s\n", ((g_bDisableSMP) ? "disabled" : "enabled" ) );
+    printk( "  PCI  scan is %s\n", ((g_bDisablePCI) ? "disabled" : "enabled" ) );
+    printk( "  SMP  scan is %s\n", ((g_bDisableSMP) ? "disabled" : "enabled" ) );
 
     printk( "Loaded kernel modules:\n" );
     for ( i = 0 ; i < g_sSysBase.ex_nBootModuleCount ; ++i ) {
@@ -780,13 +782,18 @@ int init_kernel( char* pRealMemBase, int nKernelSize )
     g_sSysBase.ex_sRealMemHdr.mh_First->mc_Bytes = g_sSysBase.ex_sRealMemHdr.mh_Free;
 
     g_sSysBase.ex_bSingleUserMode = false;
-  
+    
     InitSemaphores();
     InitMsgPorts();
     InitProcesses();
     InitThreads();
     InitAreaManager();
-
+    
+   
+    for( i = 0; i < MAX_CPU_COUNT; i++ ) {
+    	strcpy( g_asProcessorDescs[i].pi_zName, "Unknown" );
+    	g_asProcessorDescs[i].pi_nFeatures = 0;
+    }
     g_bFoundSmpConfig = init_smp( g_bDisableSMP == false );
   
     g_psKernelSeg->mc_hSema = create_semaphore( "krn_seg_lock", 1, SEM_REQURSIVE );
@@ -872,8 +879,8 @@ static void parse_kernel_params( char* pzParams )
 	get_num_arg( &g_nDebugBaudRate, "debug_baudrate=", pzArg, nLen );
 	get_num_arg( &g_nDebugSerialPort, "debug_port=", pzArg, nLen );
 	get_bool_arg( &g_bPlainTextDebug, "debug_plaintext=", pzArg, nLen );
-        get_bool_arg( &g_bDisablePCI, "disable_pci=", pzArg, nLen );
-        get_bool_arg( &g_bDisableSMP, "disable_smp=", pzArg, nLen );
+	get_bool_arg( &g_bDisablePCI, "disable_pci=", pzArg, nLen );
+	get_bool_arg( &g_bDisableSMP, "disable_smp=", pzArg, nLen );
 
 	get_num_arg( &g_sSysBase.sb_nFirstUserAddress, "uspace_start=", pzArg, nLen );
 	get_num_arg( &g_sSysBase.sb_nLastUserAddress, "uspace_end=", pzArg, nLen );
