@@ -1,3 +1,16 @@
+* April 30th 2004, Rick Caudill *
+	- Almost all apps have been fixed to work with GCC 3
+	
+	- Archiver has seen some updates
+	
+	- AView has seen some updates
+		o Code Cleanup
+		o Start of moving AView towards using the Image Class
+	
+	- Dlogin
+		o Code Cleanup
+		o Saves last user as attribute
+
 * April 2nd 2004, Kristian Van Der Vliet *
 
 	- dhcpc
