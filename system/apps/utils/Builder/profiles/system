@@ -67,6 +67,8 @@ distro-tree
 
 	atheos/sys/translators
 
+	atheos/sys/drivers/media
+
 	atheos/tmp
 
 	atheos/var
