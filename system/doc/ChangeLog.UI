@@ -1,3 +1,11 @@
+* March 12 2005, Henrik Isaksson *
+
+ Applied a some patches from Vanders:
+ - ListView
+	o Added Set/GetCookie().
+ - TreeView
+	o Added Set/GetCookie().
+
 * March 9 2005, Henrik Isaksson *
 
  Applied a bunch of patches from Vanders:
