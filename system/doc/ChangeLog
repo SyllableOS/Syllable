@@ -1,3 +1,10 @@
+!!! Note to Vanders: Your dates are off by one year... It's 2003 now! ;-)
+
+
+* Apr 01 2003, Henrik Isaksson *
+
+Updated emu10k1 driver for Audigy support, and finally, got rid of the Bad Noise(tm)!!!
+
 * Mar 29 2002, Kristian Van Der Vliet *
 
 Two more patchs from Arno Klenke<arno_klenke@yahoo.de> for the ATA[PI] driver which fixes some
