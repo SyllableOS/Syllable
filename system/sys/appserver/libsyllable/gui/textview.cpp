@@ -1057,6 +1057,15 @@ TextEdit::~TextEdit()
 
 		m_cUndoStack.erase( m_cUndoStack.begin() );
 	}
+
+	if( m_pcBackBuffer != NULL )
+	{
+		m_pcBackBuffer->RemoveChild( m_pcBgView );
+		delete m_pcBackBuffer;
+
+		m_pcBackBuffer = NULL;
+	}
+	delete( m_pcBgView );
 }
 
 void TextEdit::UpdateBackBuffer()
@@ -2960,4 +2969,3 @@ void TextView::__TV_reserved3__()
 void TextView::__TV_reserved4__()
 {
 }
-
