@@ -127,9 +127,9 @@ void MemMeter::AddValue( float vTotMem, float vCacheSize, float vDirtyCache )
     m_avDirtyCacheSize[ i ] = m_avDirtyCacheSize[ i - 1 ];
   }
 
-   m_avTotUsedMem[ 0 ]     = min( 1.0f, vTotMem );
-  m_avCacheSize[ 0 ]      = min( 1.0f, vCacheSize );
-  m_avDirtyCacheSize[ 0 ] = min( 1.0f, vDirtyCache );
+   m_avTotUsedMem[ 0 ]     = std::min( 1.0f, vTotMem );
+  m_avCacheSize[ 0 ]      = std::min( 1.0f, vCacheSize );
+  m_avDirtyCacheSize[ 0 ] = std::min( 1.0f, vDirtyCache );
 
   Rect cBounds = GetBounds();
   

@@ -18,7 +18,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/$(EXE): $(OBJS) Makefile
-	g++ $(OBJS) -o $(OBJDIR)/$(EXE) -latheos
+	g++ $(OBJS) -o $(OBJDIR)/$(EXE) -lsyllable
 
 install: $(OBJDIR)/$(EXE)
 	cp -af $(OBJDIR)/$(EXE) /bin/$(EXE)
@@ -32,3 +32,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d $(OBJDIR)/$(EXE)
 
 -include $(OBJDIR)/*.d
+

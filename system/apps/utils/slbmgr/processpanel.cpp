@@ -83,7 +83,7 @@ ProcessPanel::ProcessPanel( const Rect& cFrame ) : LayoutView( cFrame, "", NULL,
 
     SetThreadCount( ThreadCount() );
    
-    m_pcEndProcBut     = new Button( Rect( 0, 0, 0, 0 ), "endproc_but", "End Process", new Message( ID_ENDPROC ), CF_FOLLOW_NONE );
+    m_pcEndProcBut     = new Button( Rect( 0, 0, 0, 0 ), "endproc_but", "_End Process", new Message( ID_ENDPROC ), CF_FOLLOW_NONE );
     m_pcProcessList    = new ListView( Rect(0 ,0, 0, 0 ), "proc_list", ListView::F_RENDER_BORDER | ListView::F_NO_AUTO_SORT );
    
     m_pcProcessList->InsertColumn( "PId", 30 );
@@ -93,8 +93,10 @@ ProcessPanel::ProcessPanel( const Rect& cFrame ) : LayoutView( cFrame, "", NULL,
     m_pcProcessList->InsertColumn( "State", 120 );
  
     pcRoot->AddChild( m_pcProcessList, 1.0f );
-    pcRoot->AddChild( m_pcEndProcBut, 2.0f );
+    pcRoot->AddChild( m_pcEndProcBut, 0.0f );
    
+	m_pcProcessList->SetTabOrder();
+	m_pcEndProcBut->SetTabOrder();
    
     pcRoot->SetBorders( Rect(10.0f,10.0f,10.0f,10.0f), "proc_list", NULL );
     pcRoot->SetBorders( Rect(10.0f,5.0f,10.0f,5.0f), "endproc_but", NULL );
@@ -249,7 +251,7 @@ void ProcessPanel::HandleMessage( Message* pcMessage )
 
         int nSelection = m_pcProcessList->GetFirstSelected();
         if ( nSelection < 0 ) {
-          cout << "nSelection < 0" << endl;
+          //std::cout << "nSelection < 0" << std::endl;
 	  break;
 	}
 
@@ -282,8 +284,3 @@ void ProcessPanel::SetThreadCount( int nVal ){
 int ProcessPanel::GetThreadCount(){
   return nThreads;
 }
-
-
-
-
-

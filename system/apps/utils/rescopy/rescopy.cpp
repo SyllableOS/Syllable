@@ -87,7 +87,7 @@ static void list_resources( const std::string& cPath )
 	    }
 	    std::sort( cList.begin(), cList.end() );
 	    for ( uint i = 0 ; i < cList.size() ; ++i ) {
-		write( 1, cList[i].begin(), cList[i].size() );
+		write( 1, cList[i].c_str(), cList[i].size() );
 	    }
 	} catch( errno_exception& cExc ) {
 	    if ( cExc.error() == ENOENT ) {
@@ -189,15 +189,15 @@ static status_t create_resource_file( SeekableIO* pcFile, const std::vector<Reso
     return( 0 );
 }
 
-static void add_resources( const std::vector<std::string>& cFiles, bool bForce, bool bReplace )
+static void add_resources( const std::vector<os::String>& cFiles, bool bForce, bool bReplace )
 {
     std::string cTargetPath = cFiles[0];
 
     std::vector<ResourceDesc> cResList;
     for ( uint i = 1 ; i < cFiles.size() ; ++i ) {
 	ResourceDesc sEntry;
-	int o1 = cFiles[i].find( '=' );
-	uint o2 = cFiles[i].find( ':' );
+	int o1 = cFiles[i].const_str().find( '=' );
+	uint o2 = cFiles[i].const_str().find( ':' );
 
 	sEntry.m_cType = "application/octet-stream";
 	if ( uint(o1) == std::string::npos ) {
@@ -222,7 +222,7 @@ static void add_resources( const std::vector<std::string>& cFiles, bool bForce, 
 	}
 	cResList.push_back( sEntry );
     }
-    struct ::stat sStat;
+    struct stat sStat;
 
     if ( bForce ) {
 	if ( unlink( cTargetPath.c_str() ) < 0 ) {
@@ -293,7 +293,7 @@ static void add_resources( const std::vector<std::string>& cFiles, bool bForce, 
     }
 }
 
-static status_t extract_resources( const std::vector<std::string>& cFiles, bool bPrint )
+static status_t extract_resources( const std::vector<os::String>& cFiles, bool bPrint )
 {
     std::string cSourcePath = cFiles[0];
     status_t    nError = 0;
@@ -303,7 +303,7 @@ static status_t extract_resources( const std::vector<std::string>& cFiles, bool 
 	cRes.DetachStream();
 	
 	for ( uint i = 1 ; i < cFiles.size() ; ++i ) {
-	    uint o1 = cFiles[i].find( '=' );
+	    uint o1 = cFiles[i].const_str().find( '=' );
 
 	    std::string cName;
 	    std::string cPath;
@@ -434,3 +434,4 @@ int main( int argc, char** argv )
     
     return( 0 );
 }
+

@@ -58,7 +58,7 @@ DevicesPanel::DevicesPanel( const Rect & cFrame ):LayoutView( cFrame, "", NULL, 
 	VLayoutNode *pcRoot = new VLayoutNode( "root" );
 
 
-	m_pcRefreshBut = new Button( Rect( 0, 0, 0, 0 ), "refresh_but", "Refresh", new Message( ID_REFRESH ), CF_FOLLOW_NONE );
+	m_pcRefreshBut = new Button( Rect( 0, 0, 0, 0 ), "refresh_but", "_Refresh", new Message( ID_REFRESH ), CF_FOLLOW_NONE );
 	m_pcDevicesList = new TreeView( Rect( 0, 0, 0, 0 ), "devices_list", ListView::F_RENDER_BORDER | ListView::F_NO_AUTO_SORT );
 
 
@@ -67,8 +67,10 @@ DevicesPanel::DevicesPanel( const Rect & cFrame ):LayoutView( cFrame, "", NULL, 
 	
 
 	pcRoot->AddChild( m_pcDevicesList, 1.0f );
-	pcRoot->AddChild( m_pcRefreshBut, 2.0f );
+	pcRoot->AddChild( m_pcRefreshBut, 0.0f );
 
+	m_pcDevicesList->SetTabOrder();
+	m_pcRefreshBut->SetTabOrder();
 
 	pcRoot->SetBorders( Rect( 10.0f, 10.0f, 10.0f, 10.0f ), "devices_list", NULL );
 	pcRoot->SetBorders( Rect( 10.0f, 5.0f, 10.0f, 5.0f ), "refresh_but", NULL );
@@ -181,14 +183,4 @@ void DevicesPanel::HandleMessage( Message * pcMessage )
 		break;
 	}
 }
-
-
-
-
-
-
-
-
-
-
 
