@@ -1,13 +1,28 @@
-* August 15/16, 2002, Rick Caudil *
+* May 19,       2003, Rick Caudill *
+	* Changes(There has been so many since August) *
+	
+	* Icons load almost 3 times faster.
+
+	* Fixed major bugs in the desktop.
+	
+	* Added a drive settings window.
+	
+	* Added icon background transparency.
+
+	* Added Partition information to the specfic drive dialog.
+
+	* Many! Many other changes!
+   
+* August 15/16, 2002, Rick Caudill *
 	* Changes *
 
 	* Fixed a bug that was caused when moving all of the files around.
 	
 	* ReImplemented the "Mounted Drives" menu.  It shows all partitons now :).
 	
-	* Moved over to Henriks latest menuitem code(he gave it to me a while ago and I just 		never got around to it).
+	* Moved over to Henriks latest menuitem code(he gave it to me a while ago and I just never got around to it).
 	
-	*  Added SubMenu arrow to imageitem code.
+	* Added SubMenu arrow to imageitem code.
 
 	* Shrunk all context menu images down from 16x16 to 10x10.
 
