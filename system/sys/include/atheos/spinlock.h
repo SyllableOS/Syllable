@@ -27,6 +27,9 @@
 
 #include <atheos/smp.h>
 
+#ifdef __KERNEL__
+#include "inc/smp.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -69,10 +72,13 @@ extern inline int spinlock( SpinLock_s* psLock )
     while( atomic_swap( &psLock->sl_nLocked, 1 ) == 1 ) {
 	if ( psLock->sl_nProc == nProcID ) {
 	    atomic_inc( &psLock->sl_nNest );
+#ifdef DEBUG_SPINLOCKS
 	    if ( atomic_read( &psLock->sl_nNest ) > 50 ) {
-		printk( "panic: spinlock %s nested too deep: %d\n", psLock->sl_pzName, atomic_read( &psLock->sl_nNest ) );
+		printk( "panic: spinlock %s nested too deep: %d\n",
+			psLock->sl_pzName, atomic_read( &psLock->sl_nNest ) );
 		return( -1 );
 	    }
+#endif
 	    return( 0 );
 	}
 	do {

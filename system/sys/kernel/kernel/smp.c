@@ -840,7 +840,8 @@ static int smp_scan_acpi_config( void *pBase, uint nSize )
 	AcpiRsdp_s *psRsdp = NULL;
 	int nProcessorCount = 0;
 
-	for ( psRsdp = ( AcpiRsdp_s * ) pBase; nSize > 0; ( (uint8*)psRsdp) += 16, nSize -= 16 )
+	for ( psRsdp = ( AcpiRsdp_s * ) pBase; nSize > 0;
+	      psRsdp = ( AcpiRsdp_s * )( ((uint8*)psRsdp) + 16 ), nSize -= 16 )
 	{
 		if ( strncmp( ( char* )psRsdp->ar_anSignature, ACPI_RSDP_SIGNATURE, 8 ) )
 		{

@@ -299,11 +299,11 @@ void *kmalloc( size_t size, int priority )
 		unsigned int realsize = size + sizeof( struct block_header );
 
 		// kmalloc() is inefficient for allocations >= 128K
-		if ( realsize > BLOCKSIZE( 12 ) )
-		{
-			printk( "Warning: kmalloc() of oversized block (%d bytes). Could cause fragmentation problems\n", size );
-			trace_stack( 0, NULL );
-		}
+		//if ( realsize > BLOCKSIZE( 12 ) )
+		//{
+		//	printk( "Warning: kmalloc() of oversized block (%d bytes). Could cause fragmentation problems\n", size );
+		//	trace_stack( 0, NULL );
+		//}
 
 		for ( ;; )
 		{

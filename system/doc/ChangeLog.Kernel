@@ -1,3 +1,28 @@
+* February 4 2005, Jake Hamby *
+
+Updated to Build 0005.  The kernel now builds w/o warnings on GCC 3.4.3 and
+appears to work when compiled with it!  However, the eth_if module doesn't
+yet build due to missing "-lgcc_static" (apparently a bug in the GCC 3.4.3
+port).
+
+List of fixes:
+    * Fixed "use of cast expressions as lvalues is deprecated" warning
+	in smp.c by rewriting the expression with "+" instead of "+=".
+    * Added include to <atheos/spinlock.h> so that the get_processor_id()
+	inline function is available (GCC 3.4.3 gives a warning about this).
+    * Commented out "spinlock nested too deep" check in spinlock() unless
+	DEBUG_SPINLOCKS is defined.
+    * Commented out "Warning: kmalloc() of oversized block" message in
+	kmalloc.c that was scaring a lot of users.
+    * Removed "-mcpu=i586" from CFLAGS; GCC 3.4.3 gives a warning about this
+	and it's implied by "-march=i586".
+    * Moved some "__attribute__ ((packed))" before the type names in acpi.h;
+	GCC 3.4.3 gives a warning that the attribute is ignored if placed
+	at the end of the typedef.
+    * Added a new file "lib/gcc34_strcpy.c" with non-inline definitions of
+	strcpy() and memcpy().  GCC 3.4.3 generates some code which requires
+	these functions.  On other versions of GCC this is #ifdef'd out.
+
 * February 3 2005, Jake Hamby *
 
 Updated to Build 0004.  Integrated Daniel's scheduler cleanup patches.

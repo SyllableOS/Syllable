@@ -38,13 +38,13 @@ typedef struct
 	uint32	ath_nOemRevision;
 	char	ath_AslCompilerId[4];
 	uint32	ath_AslCompilerRevision;
-} AcpiTableHeader_s __attribute__ ((packed));
+} __attribute__ ((packed)) AcpiTableHeader_s;
 
 typedef struct 
 {
 	AcpiTableHeader_s ar_sHeader __attribute__ ((packed));
 	uint32 ar_nEntry[8];
-} AcpiRsdt_s __attribute__ ((packed));
+} __attribute__ ((packed)) AcpiRsdt_s;
  
 typedef struct
 {
@@ -53,7 +53,7 @@ typedef struct
 	char	ar_anOemId[6]; /* OEM identification */
 	uint8	ar_nRevision; /* Must be 0 for 1.0, 2 for 2.0 */
 	uint32	ar_nRsdt; /* 32-bit physical address of RSDT */
-} AcpiRsdp_s __attribute__ ((packed));
+} __attribute__ ((packed)) AcpiRsdp_s;
 
 typedef struct
 {
@@ -70,7 +70,7 @@ typedef struct
 {
 	uint8 ame_nType;
 	uint8 ame_nLength;
-} AcpiMadtEntry_s __attribute__ ((packed));
+} __attribute__ ((packed)) AcpiMadtEntry_s;
 
 #define ACPI_MADT_CPU_ENABLED 1
 
@@ -80,7 +80,7 @@ typedef struct
 	uint8 amp_nAcpiId;
 	uint8 amp_nApicId;
 	uint32 amp_nFlags;
-} AcpiMadtProcessor_s __attribute__ ((packed));
+} __attribute__ ((packed)) AcpiMadtProcessor_s;
 
 
 typedef struct
@@ -90,6 +90,6 @@ typedef struct
 	uint8 ami_nReserved;
 	uint32 ami_nAddr;
 	uint32 ami_nReserved2;
-} AcpiMadtIoApic_s __attribute__ ((packed));
+} __attribute__ ((packed)) AcpiMadtIoApic_s;
 
 #endif
