@@ -1,7 +1,0 @@
-#! /bin/sh
-
-if [ "$1" = '-y' ]; then
-	shift
-fi
-
-exec /usr/bin/yacc ${1+"$@"}
