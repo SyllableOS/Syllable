@@ -1,3 +1,9 @@
+* January 29 2005, Kristian Van Der Vliet *
+
+Added a National Semiconductor DP8381x based NIC driver, ported from Linux 2.6 (natsemi.c)
+The driver is suitable for dp83810, dp83815 and dp83816 based NICs E.g. the Netgear FA311
+and FA312.  The driver was tested on a Netgear FA311 (dp83816).
+
 * January 10 2005, Kaj de Vos
 
 Over the past days, pulled several more parts from the current distribution into the
