@@ -20,19 +20,44 @@
 
 /*
 
- To do:
- 
- Add support for T_COLOR32, T_VARIANT and T_MESSAGE.
+	Type code     Alloc type    Storage
+	=========     ==========    =======
+    T_ANY_TYPE    none          none
+    T_POINTER     aggregate     m_uData.pData
+    T_INT8        aggregate     m_uData.nInt32
+    T_INT16       aggregate     m_uData.nInt32
+    T_INT32       aggregate     m_uData.nInt32
+    T_INT64       aggregate     m_uData.nInt64
+    T_BOOL        aggregate     m_uData.bBool
+    T_FLOAT       aggregate     m_uData.vFloat
+    T_DOUBLE      aggregate     m_uData.vDouble
+    T_STRING      heap          m_uData.pzString
+    T_IRECT       heap          m_uData.sBuffer.pBuffer / m_uData.sBuffer.nSize
+    T_IPOINT      heap          m_uData.sBuffer.pBuffer / m_uData.sBuffer.nSize
+    T_MESSAGE     heap          m_uData.sBuffer.pBuffer / m_uData.sBuffer.nSize
+    T_COLOR32     heap          m_uData.sBuffer.pBuffer / m_uData.sBuffer.nSize
+    T_RECT        heap          m_uData.sBuffer.pBuffer / m_uData.sBuffer.nSize
+    T_POINT       heap          m_uData.sBuffer.pBuffer / m_uData.sBuffer.nSize
+    T_VARIANT     invalid       invalid
+    T_RAW         heap          m_uData.sBuffer.pBuffer / m_uData.sBuffer.nSize
 
 */
 
 #include <stdio.h>
 #include <util/variant.h>
 #include <util/message.h>
+#include <iostream>
 
+#define HEAP_ALLOC(type, var)		m_eType = type;	\
+									m_uData.sBuffer.nSize = sizeof( var ); \
+									m_uData.sBuffer.pBuffer = new int8[m_uData.sBuffer.nSize]; \
+									memcpy( m_uData.sBuffer.pBuffer, &var, m_uData.sBuffer.nSize );
 
 using namespace os;
 
+/**************************************************************************/
+/*** CONSTRUCTORS *********************************************************/
+/**************************************************************************/
 
 Variant::Variant()
 {
@@ -79,38 +104,22 @@ Variant::Variant( const String &cString )
 
 Variant::Variant( const Point & cValue )
 {
-	m_eType = T_POINT;
-	m_uData.sBuffer.nSize = sizeof( cValue );
-	m_uData.sBuffer.pBuffer = new int8[m_uData.sBuffer.nSize];
-
-	memcpy( m_uData.sBuffer.pBuffer, &cValue, m_uData.sBuffer.nSize );
+	HEAP_ALLOC( T_POINT, cValue );
 }
 
 Variant::Variant( const IPoint & cValue )
 {
-	m_eType = T_IPOINT;
-	m_uData.sBuffer.nSize = sizeof( cValue );
-	m_uData.sBuffer.pBuffer = new int8[m_uData.sBuffer.nSize];
-
-	memcpy( m_uData.sBuffer.pBuffer, &cValue, m_uData.sBuffer.nSize );
+	HEAP_ALLOC( T_IPOINT, cValue );
 }
 
 Variant::Variant( const Rect & cValue )
 {
-	m_eType = T_RECT;
-	m_uData.sBuffer.nSize = sizeof( cValue );
-	m_uData.sBuffer.pBuffer = new int8[m_uData.sBuffer.nSize];
-
-	memcpy( m_uData.sBuffer.pBuffer, &cValue, m_uData.sBuffer.nSize );
+	HEAP_ALLOC( T_RECT, cValue );
 }
 
 Variant::Variant( const IRect & cValue )
 {
-	m_eType = T_IRECT;
-	m_uData.sBuffer.nSize = sizeof( cValue );
-	m_uData.sBuffer.pBuffer = new int8[m_uData.sBuffer.nSize];
-
-	memcpy( m_uData.sBuffer.pBuffer, &cValue, m_uData.sBuffer.nSize );
+	HEAP_ALLOC( T_IRECT, cValue );
 }
 
 Variant::Variant( const Message & cValue )
@@ -122,13 +131,9 @@ Variant::Variant( const Message & cValue )
 	cValue.Flatten( ( uint8 * )m_uData.sBuffer.pBuffer, m_uData.sBuffer.nSize );
 }
 
-Variant::Variant( Color32_s cValue )
+Variant::Variant( const Color32_s& cValue )
 {
-	m_eType = T_COLOR32;
-	m_uData.sBuffer.nSize = sizeof( cValue );
-	m_uData.sBuffer.pBuffer = new int8[m_uData.sBuffer.nSize];
-
-	memcpy( m_uData.sBuffer.pBuffer, &cValue, m_uData.sBuffer.nSize );
+	HEAP_ALLOC( T_COLOR32, cValue );
 }
 
 Variant::Variant( void *pValue )
@@ -157,6 +162,10 @@ Variant::~Variant()
 	_Clear();
 }
 
+/**************************************************************************/
+/*** PRIVATE METHODS ******************************************************/
+/**************************************************************************/
+
 void Variant::_Clear()
 {
 	switch ( m_eType )
@@ -167,14 +176,12 @@ void Variant::_Clear()
 	case T_MESSAGE:
 	case T_VARIANT:
 	case T_RAW:
-
-/*	case T_RECT:	// HI 020327: Added T_(I)RECT, T_(I)POINT and T_COLOR32
+	case T_RECT:
 	case T_IRECT:
 	case T_POINT:
 	case T_IPOINT:
-	case T_COLOR32:*/
+	case T_COLOR32:
 		delete[]reinterpret_cast < int8 *>( m_uData.sBuffer.pBuffer );
-
 		break;
 	default:
 		break;
@@ -182,6 +189,9 @@ void Variant::_Clear()
 	m_eType = T_ANY_TYPE;
 }
 
+/**************************************************************************/
+/*** SET METHODS **********************************************************/
+/**************************************************************************/
 
 void Variant::SetInt8( int8 nValue )
 {
@@ -238,38 +248,27 @@ void Variant::SetString( const String &cValue )
 void Variant::SetPoint( const Point & cValue )
 {
 	_Clear();
-	m_eType = T_POINT;
-	m_uData.sBuffer.nSize = sizeof( cValue );
-	m_uData.sBuffer.pBuffer = new int8[m_uData.sBuffer.nSize];
-
-	memcpy( m_uData.sBuffer.pBuffer, &cValue, m_uData.sBuffer.nSize );
+	HEAP_ALLOC( T_POINT, cValue );
 }
 void Variant::SetIPoint( const IPoint & cValue )
 {
 	_Clear();
-	m_eType = T_IPOINT;
-	m_uData.sBuffer.nSize = sizeof( cValue );
-	m_uData.sBuffer.pBuffer = new int8[m_uData.sBuffer.nSize];
-
-	memcpy( m_uData.sBuffer.pBuffer, &cValue, m_uData.sBuffer.nSize );
+	HEAP_ALLOC( T_IPOINT, cValue );
 }
 void Variant::SetRect( const Rect & cValue )
 {
 	_Clear();
-	m_eType = T_RECT;
-	m_uData.sBuffer.nSize = sizeof( cValue );
-	m_uData.sBuffer.pBuffer = new int8[m_uData.sBuffer.nSize];
-
-	memcpy( m_uData.sBuffer.pBuffer, &cValue, m_uData.sBuffer.nSize );
+	HEAP_ALLOC( T_RECT, cValue );
 }
 void Variant::SetIRect( const IRect & cValue )
 {
 	_Clear();
-	m_eType = T_IRECT;
-	m_uData.sBuffer.nSize = sizeof( cValue );
-	m_uData.sBuffer.pBuffer = new int8[m_uData.sBuffer.nSize];
-
-	memcpy( m_uData.sBuffer.pBuffer, &cValue, m_uData.sBuffer.nSize );
+	HEAP_ALLOC( T_IRECT, cValue );
+}
+void Variant::SetColor32( const Color32 & cValue )
+{
+	_Clear();
+	HEAP_ALLOC( T_COLOR32, cValue );
 }
 
 void Variant::SetPointer( void *pValue )
@@ -289,30 +288,10 @@ void Variant::SetRaw( const void *pData, int nSize )
 	memcpy( m_uData.sBuffer.pBuffer, pData, nSize );
 }
 
-/*
-    switch( m_eType )
-    {
-	case T_ANY_TYPE:
-	case T_POINTER:
-	case T_INT8:
-	case T_INT16:
-	case T_INT32:
-	case T_INT64:
-	case T_BOOL:
-	case T_FLOAT:
-	case T_DOUBLE:
-	case T_STRING:
-	case T_IRECT:
-	case T_IPOINT:
-	case T_MESSAGE:
-	case T_COLOR32:
-	case T_RECT:
-	case T_POINT:
-	case T_VARIANT:
-	case T_RAW:
-    }	
-  
- */
+/**************************************************************************/
+/*** GET METHODS **********************************************************/
+/**************************************************************************/
+
 int8 Variant::AsInt8() const
 {
 
@@ -345,7 +324,6 @@ int8 Variant::AsInt8() const
 				return ( 0 );
 			}
 		}
-//      case T_COLOR32:
 	default:
 		return ( 0 );
 	}
@@ -382,7 +360,6 @@ int16 Variant::AsInt16() const
 				return ( 0 );
 			}
 		}
-//      case T_COLOR32:
 	default:
 		return ( 0 );
 	}
@@ -399,13 +376,13 @@ int32 Variant::AsInt32() const
 	case T_INT32:
 		return ( m_uData.nInt32 );
 	case T_INT64:
-		return ( int ( m_uData.nInt64 ) );
+		return ( int32 ( m_uData.nInt64 ) );
 	case T_BOOL:
-		return ( int ( m_uData.bBool ) );
+		return ( int32 ( m_uData.bBool ) );
 	case T_FLOAT:
-		return ( int ( m_uData.vFloat ) );
+		return ( int32 ( m_uData.vFloat ) );
 	case T_DOUBLE:
-		return ( int ( m_uData.vDouble ) );
+		return ( int32 ( m_uData.vDouble ) );
 	case T_STRING:
 		{
 			int nValue;
@@ -419,7 +396,8 @@ int32 Variant::AsInt32() const
 				return ( 0 );
 			}
 		}
-//      case T_COLOR32:
+    case T_COLOR32:
+		return ( uint32 ( *reinterpret_cast < Color32 * >( m_uData.sBuffer.pBuffer ) ) );
 	default:
 		return ( 0 );
 	}
@@ -456,7 +434,8 @@ int64 Variant::AsInt64() const
 				return ( 0LL );
 			}
 		}
-//      case T_COLOR32:
+    case T_COLOR32:
+		return ( uint32 ( *reinterpret_cast < Color32 * >( m_uData.sBuffer.pBuffer ) ) );
 	default:
 		return ( 0 );
 	}
@@ -493,7 +472,6 @@ float Variant::AsFloat() const
 				return ( 0.0f );
 			}
 		}
-//      case T_COLOR32:
 	default:
 		return ( 0 );
 	}
@@ -530,7 +508,6 @@ double Variant::AsDouble() const
 				return ( 0.0 );
 			}
 		}
-//      case T_COLOR32:
 	default:
 		return ( 0 );
 	}
@@ -575,7 +552,6 @@ bool Variant::AsBool() const
 				return ( false );
 			}
 		}
-//      case T_COLOR32:
 	default:
 		return ( false );
 	}
@@ -609,7 +585,7 @@ String Variant::AsString() const
 	case T_STRING:
 		cValue = m_uData.pzString;
 		break;
-	case T_RECT:		// HI 020327: Added T_(I)RECT, T_(I)POINT and T_COLOR32
+	case T_RECT:
 		{
 			const Rect *r = ( Rect * ) m_uData.sBuffer.pBuffer;
 
@@ -677,7 +653,7 @@ IPoint Variant::AsIPoint() const
 	case T_IRECT:
 		return ( reinterpret_cast < IRect * >( m_uData.sBuffer.pBuffer )->LeftTop() );
 	default:
-		return ( IPoint( 0.0f, 0.0f ) );
+		return ( IPoint( 0, 0 ) );
 	}
 }
 Rect Variant::AsRect() const
@@ -714,6 +690,21 @@ IRect Variant::AsIRect() const
 	}
 }
 
+Color32 Variant::AsColor32() const
+{
+	switch ( m_eType )
+	{
+	case T_INT32:
+		return ( Color32( m_uData.nInt32 ) );
+	case T_INT64:
+		return ( Color32( uint32( m_uData.nInt64 ) ) );
+	case T_COLOR32:
+		return ( *reinterpret_cast < Color32 * >( m_uData.sBuffer.pBuffer ) );
+	default:
+		return ( 0 );
+	}
+}
+
 void *Variant::AsPointer() const
 {
 	if( m_eType == T_POINTER )
@@ -739,6 +730,10 @@ void *Variant::AsRaw( size_t *pnSize )
 	}
 }
 
+/**************************************************************************/
+/*** OPERATORS ************************************************************/
+/**************************************************************************/
+
 Variant & Variant::operator=( const Variant & cOther )
 {
 	_Clear();
@@ -755,9 +750,13 @@ Variant & Variant::operator=( const Variant & cOther )
 	case T_MESSAGE:
 	case T_VARIANT:
 	case T_RAW:
+	case T_POINT:
+	case T_IPOINT:
+	case T_RECT:
+	case T_IRECT:
+	case T_COLOR32:
 		m_uData.sBuffer.nSize = cOther.m_uData.sBuffer.nSize;
 		m_uData.sBuffer.pBuffer = new int8[m_uData.sBuffer.nSize];
-
 		memcpy( m_uData.sBuffer.pBuffer, cOther.m_uData.sBuffer.pBuffer, m_uData.sBuffer.nSize );
 		break;
 	default:
@@ -839,6 +838,11 @@ Variant & Variant::operator=( const IRect & cValue )
 	return ( *this );
 }
 
+Variant & Variant::operator=( const Color32 & cValue )
+{
+	SetColor32( cValue );
+	return ( *this );
+}
 
 Variant::operator  int ()
     const
@@ -888,6 +892,11 @@ Variant::operator  IRect() const
 	return ( AsIRect() );
 }
 
+Variant::operator  Color32() const
+{
+	return ( AsColor32() );
+}
+
 bool Variant::operator==( const Variant & cOther ) const
 {
 	switch ( m_eType )
@@ -917,7 +926,7 @@ bool Variant::operator==( const Variant & cOther ) const
 	case T_MESSAGE:
 		return ( false );
 	case T_COLOR32:
-		return ( false );
+		return ( ( cOther.m_eType == T_COLOR32 ) && (int32)(AsColor32()) == (int32)(cOther.AsColor32()) );
 	case T_RECT:
 		return ( ( cOther.m_eType == T_RECT || cOther.m_eType == T_IRECT ) && AsRect() == cOther.AsRect(  ) );
 	case T_POINT:
@@ -933,6 +942,10 @@ bool Variant::operator!=( const Variant & cValue ) const
 {
 	return ( !( *this == cValue ) );
 }
+
+/**************************************************************************/
+/*** FLATTEN/UNFLATTEN METHODS ********************************************/
+/**************************************************************************/
 
 size_t Variant::GetFlattenedSize() const
 {
@@ -1003,7 +1016,7 @@ status_t Variant::Flatten( void *pBuffer, size_t nBufSize ) const
 			memcpy( pBuffer, m_uData.pzString, nLen );
 			break;
 		}
-	case T_RECT:		// HI 020327: Added T_RECT through T_COLOR32
+	case T_RECT:
 	case T_IRECT:
 	case T_POINT:
 	case T_IPOINT:
@@ -1023,8 +1036,6 @@ status_t Variant::Flatten( void *pBuffer, size_t nBufSize ) const
 
 status_t Variant::Unflatten( const void *pBuffer, size_t nBufSize )
 {
-	printf( "Variant::Unflatten\n" );
-
 	switch ( m_eType )
 	{
 	case T_STRING:
@@ -1233,3 +1244,4 @@ status_t Variant::Unflatten( const void *pBuffer, size_t nBufSize )
 		return ( 0 );
 	}
 }
+
