@@ -3,7 +3,7 @@ dbterm 8 >>/var/log/kernel &
 
 # Mount any additional drives
 #mkdir /windows
-#mount /dev/disk/ide/hda/0 /windows
+#mount /dev/disk/ata/hda/0 /windows
 
 ln -s home/root /root
 
