@@ -1,3 +1,6 @@
-authors Kaj de Vos
-configure-options --enable-rubyinterp
-documentation README.txt
+authors
+	Rodrigo Parra Novo
+	Kaj de Vos
+maintainers			Kaj de Vos
+configure-options	--enable-rubyinterp
+documentation		README.txt
