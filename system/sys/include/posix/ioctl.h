@@ -1,6 +1,7 @@
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2002 Kristian Van Der Vliet
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -62,7 +63,11 @@ extern "C"{
 #define IOCTL_DIR( num )  (((num)&_IOCTL_DIR_MASK)>>_IOCTL_DIR_SHIFT)
 #define IOCTL_SIZE( num ) (((num)&_IOCTL_SIZE_MASK)>>_IOCTL_SIZE_SHIFT)
 
-
+/* Keyboard */
+#define IOCTL_KBD_LEDRST		0x00	/* Reset & clear all LED's */
+#define IOCTL_KBD_NUMLOC		0x01	/* Toggle NumLock LED */
+#define IOCTL_KBD_CAPLOC		0x02	/* Toggle CapsLock LED */
+#define IOCTL_KBD_SCRLOC		0x03	/* Toggle ScrollLock LED */
 
 #ifdef __KERNEL__
 int ioctl( int fd, int cmd, ...);
