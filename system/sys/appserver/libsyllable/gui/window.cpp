@@ -1116,7 +1116,7 @@ void Window::Sync()
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-void *Window::_AllocRenderCmd( uint32 nCmd, View * pcView, uint32 nSize )
+void *Window::_AllocRenderCmd( uint32 nCmd, const View * pcView, uint32 nSize )
 {
 	void *pObj = NULL;
 

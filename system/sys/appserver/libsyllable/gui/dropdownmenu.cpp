@@ -536,6 +536,22 @@ void DropdownMenu::MouseDown( const Point & cPosition, uint32 nButton )
 	}
 }
 
+void DropdownMenu::WheelMoved( const Point& cDelta )
+{
+	if( !m_bMenuOpen ) {
+		m_bMenuOpen = true;
+		MakeFocus();
+		Invalidate( GetBounds() );
+		Flush();
+		OpenMenu();
+	} else {
+		Message* pcMsg = new Message( M_WHEEL_MOVED );
+		pcMsg->AddPointer( "_widget", m_pcMenuWindow->FindView( "drop_down_view" ) );
+		pcMsg->AddPoint( "delta_move", cDelta );
+		m_pcMenuWindow->PostMessage( pcMsg );
+	}
+}
+
 void DropdownMenu::KeyDown( const char *pzString, const char *pzRawString, uint32 nQualifiers )
 {
 	if( IsEnabled() == false )
@@ -896,6 +912,19 @@ void DropdownMenu::DropdownView::MouseMove( const Point & cPosition, int nCode, 
 	}
 }
 
+void DropdownMenu::DropdownView::WheelMoved( const Point& cDelta )
+{
+	char bfr[2];
+	bfr[1] = 0;
+	if( cDelta.y > 0 ) {
+		bfr[0] = VK_UP_ARROW;
+		KeyDown( bfr, "", 0 );
+	} else if( cDelta.y < 0 ) {
+		bfr[0] = VK_DOWN_ARROW;
+		KeyDown( bfr, "", 0 );
+	}
+}
+
 void DropdownMenu::DropdownView::KeyDown( const char *pzString, const char *pzRawString, uint32 nQualifiers )
 {
 	switch ( pzString[0] )
@@ -1121,5 +1150,5 @@ void DropdownMenu::DropdownView::HandleMessage( Message * pcMessage )
 			break;
 		}
 	}
-
 }
+
