@@ -1,0 +1,17 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			gcc-3.3.4
+
+headline			"Cross-compiler for Syllable"
+packages			gcc-3.3.4
+
+configure-options
+	--enable-languages=c,c++,f77
+	--target=i586-pc-syllable
+	--with-arch=i586
+	--enable-sjlj-exceptions
+	--enable-shared
+	--enable-threads
+	--with-system-zlib
+
