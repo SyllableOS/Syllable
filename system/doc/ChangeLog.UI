@@ -1,3 +1,9 @@
+* February 27 2004, Arno Klenke *
+ - Added GetWindowIcon() method to the os::Desktop class
+ - Added support for 32bit mouse cursors in libsyllable
+ - Fixed a return value in the os::FileReference class
+ 
+
 * February 23 2004, Henrik Isaksson *
 
  Applied patches from Arno:
@@ -558,4 +564,6 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
+
 

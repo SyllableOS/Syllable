@@ -1,3 +1,8 @@
+* February 27 2004, Arno Klenke *
+ - Performance improvements in the DisplayDriver class
+ - GFX driver updates for 32bit mouse cursors
+ - Added support for 32bit mouse cursors in the appserver
+
 * Feb 15 2004, Henrik Isaksson *
 
  translators:
@@ -477,4 +482,5 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
 
