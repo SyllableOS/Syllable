@@ -11,6 +11,7 @@ modules
 	sys/kernel/drivers/disk/usb
 	sys/kernel/drivers/graphics/geforcefx
 	sys/kernel/drivers/graphics/mga
+	sys/kernel/drivers/hcd/ata_pci
 	sys/kernel/drivers/hcd/usb_ehci
 	sys/kernel/drivers/hcd/usb_ohci
 	sys/kernel/drivers/hcd/usb_uhci
@@ -20,6 +21,8 @@ modules
 	sys/kernel/drivers/misc/w8378x
 	sys/kernel/drivers/net/3c509
 	sys/kernel/drivers/net/eepro100
+	sys/kernel/drivers/net/nvidia
+	sys/kernel/drivers/net/sis
 	sys/kernel/drivers/sound/emu10k1
 	sys/kernel/drivers/sound/es1370
 	sys/kernel/drivers/sound/es1371
@@ -34,9 +37,12 @@ modules
 	sys/kernel/fs/iso9660
 	sys/appserver/libsyllable
 	sys/appserver/appserver/server
+	sys/appserver/appserver/drivers/decorators/warpspeed
 	sys/appserver/appserver/drivers/video/mga
 	sys/appserver/appserver/drivers/video/radeon
 	sys/appserver/appserver/drivers/video/s3
 	sys/appserver/appserver/drivers/video/vmware
+	apps/utils/Albert
+	apps/utils/aterm
 	apps/utils/bzoom
 
