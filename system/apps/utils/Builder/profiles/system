@@ -95,8 +95,10 @@ tree
 	atheos/Documentation
 
 resources
-	boot/grub			GrUB-binaries-0.95
-	atheos/sys/libs		GCC-libraries-3.3.4
+	boot/grub				GrUB-binaries-0.95
+	atheos/sys/libs			GCC-libraries-3.3.4
+	atheos/Documentation	documentation/Welcome
+	atheos/Documentation	documentation/Copyrights
 
 modules
 ;	Hangs during configuring:
