@@ -15,6 +15,14 @@
 # define rand_0_to(n)	(rand() % (n))
 #endif
 
+#ifndef TRUE
+#define TRUE true
+#endif
+
+#ifndef FALSE
+#define FALSE false
+#endif
+
 typedef int gint;
 typedef uint guint;
 typedef int32 gint32;

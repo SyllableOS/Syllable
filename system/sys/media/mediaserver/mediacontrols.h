@@ -37,6 +37,7 @@ public:
 	virtual void HandleMessage( Message* pcMessage );
 	
 	void SetMasterValue( float vValue );
+	void SetMasterVolume( int nValue );
 	void StreamChanged( uint32 nNum );
 	void SetStreamValue( uint32 nNum, float vValue );
 

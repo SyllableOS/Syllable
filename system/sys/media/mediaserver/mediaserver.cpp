@@ -989,6 +989,29 @@ void MediaServer::HandleMessage( Message* pcMessage )
 		case MEDIA_SERVER_SET_DEFAULT_DSP:
 			SetDefaultDsp( pcMessage );
 		break;
+		case MEDIA_SERVER_SET_MASTER_VOLUME:
+		{
+			int32 nVolume;
+			if( pcMessage->FindInt32( "volume", &nVolume ) == 0 ) {
+				if( nVolume < 0 )
+					nVolume = 0;
+				if( nVolume > 100 )
+					nVolume = 100;
+				m_nMasterVolume = nVolume;
+				m_pcControls->SetMasterVolume( m_nMasterVolume );
+			}
+		}
+		break;
+		case MEDIA_SERVER_GET_MASTER_VOLUME:
+		{
+			os::Message cReply( MEDIA_SERVER_GET_MASTER_VOLUME );
+			if( pcMessage->IsSourceWaiting() )
+			{
+				cReply.AddInt32( "volume", m_nMasterVolume );
+				pcMessage->SendReply( &cReply );
+			}
+		}
+		break;
 		default:
 			Looper::HandleMessage( pcMessage );
 		break;

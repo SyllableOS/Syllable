@@ -58,7 +58,7 @@ FontNode::~FontNode()
 
 Glyph *FontNode::GetGlyph( int nChar )
 {
-	if( m_pcFont != NULL )
+	if( m_pcFont != NULL && m_pcInstance != NULL )
 	{
 		return ( m_pcInstance->GetGlyph( m_pcInstance->CharToUnicode( nChar ) ) );
 	}

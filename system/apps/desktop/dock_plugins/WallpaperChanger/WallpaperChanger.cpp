@@ -50,6 +50,26 @@ DockWallpaperChanger::DockWallpaperChanger( os::Path cPath, os::Looper* pcDock )
 	cm_pcBitmap = 0;
 	pcPrefsWin = NULL;
 	
+	
+}
+
+
+/*************************************************
+* Description: Destructor for plugin... gets called when dock exits
+* Author: Rick Caudill
+* Date: Thu Mar 18 20:17:32 2004
+**************************************************/
+DockWallpaperChanger::~DockWallpaperChanger( )
+{
+}
+
+/*************************************************
+* Description: Makes sure that the plugin is attached to the window, so we can pass messages
+* Author: Rick Caudill
+* Date: Thu Mar 18 20:17:32 2004
+**************************************************/
+void DockWallpaperChanger::AttachedToWindow()
+{
 	/* Load default icons */
 	pcFile = new os::File( m_cPath );
 	os::Resources cCol( pcFile );
@@ -69,30 +89,15 @@ DockWallpaperChanger::DockWallpaperChanger( os::Path cPath, os::Looper* pcDock )
 	pcContextMenu->AddItem(new MenuSeparator());	
 	pcContextMenu->AddItem("About WallpaperChanger...",new Message(M_WALLPAPERCHANGER_ABOUT));
 	pcContextMenu->SetTargetForItems(this);
+	View::AttachedToWindow();
+	pcContextMenu->SetTargetForItems(this);
 }
 
-
-/*************************************************
-* Description: Destructor for plugin... gets called when dock exits
-* Author: Rick Caudill
-* Date: Thu Mar 18 20:17:32 2004
-**************************************************/
-DockWallpaperChanger::~DockWallpaperChanger( )
+void DockWallpaperChanger::DetachedFromWindow()
 {
 	SaveSettings();  //make sure to save the settings :)
 	if (m_pcIcon) delete m_pcIcon;
 	if (pcPaint)delete pcPaint;
-}
-
-/*************************************************
-* Description: Makes sure that the plugin is attached to the window, so we can pass messages
-* Author: Rick Caudill
-* Date: Thu Mar 18 20:17:32 2004
-**************************************************/
-void DockWallpaperChanger::AttachedToWindow()
-{
-	View::AttachedToWindow();
-	pcContextMenu->SetTargetForItems(this);
 }
 
 /*************************************************

@@ -6,7 +6,7 @@ DRIVERBIN = /system/drivers/media
 
 VPATH = ./
 
-OBJS	= prefs.o server_output.o
+OBJS	= server_output.o
 
 OBJDIR	:= objs
 

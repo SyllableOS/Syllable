@@ -36,8 +36,10 @@ void DockClockSettings::LoadSettings()
 		pcDateDrop->SetSelection(1);
 	else if(cFormat == "e %b %Y")
 		pcDateDrop->SetSelection(2);
-	else
+	else if(cFormat == "%m/%e/%Y")
 		pcDateDrop->SetSelection(3);
+	else
+		pcDateDrop->SetSelection(4);
 		
 	pcSendMessage->FindString("font",&cFormat);
 	
@@ -68,7 +70,7 @@ void DockClockSettings::LoadSettings()
 bool DockClockSettings::OkToQuit()
 {
 	pcParentPlugin->GetLooper()->PostMessage(new Message(M_CANCEL),pcParentPlugin);
-	return true;
+	return false;
 }
 
 void DockClockSettings::Layout()
@@ -212,6 +214,9 @@ void DockClockSettings::LoadDates()
 	cDate = String(bfr);
 	pcDateDrop->AppendItem(cDate);
 
+	strftime( bfr, sizeof( bfr ), "%e.%m.%Y", pstm );
+	cDate = String(bfr);
+	pcDateDrop->AppendItem(cDate);
 }
 
 void DockClockSettings::HandleMessage(Message* pcMessage)
@@ -319,6 +324,9 @@ String DockClockSettings::GetDateFormat()
 		case 3:
 			cReturn = "%m/%e/%Y";
 			break;
+		case 4:
+			cReturn = "%e.%m.%Y";
+			break;
 	}
 	return cReturn;
 }
@@ -341,8 +349,10 @@ void DockClockSettings::SetFontTypes()
 			
 				for (int j=0; j<nStyleCount; j++)
 				{
-					if (Font::GetStyleInfo(zFontFamily,j,zFontStyle,&nFlags) == 0 && strcmp(zFontStyle,"Regular") == 0)
+					if (Font::GetStyleInfo(zFontFamily,j,zFontStyle,&nFlags) == 0 && ( ( strcmp(zFontStyle,"Regular") == 0 ) || ( strcmp(zFontStyle,"Roman") == 0 ) ) )
+					{
 						pcFontTypeDrop->AppendItem(zFontFamily);
+					}
 				}
 			}
 		}

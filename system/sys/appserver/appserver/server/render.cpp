@@ -485,6 +485,10 @@ void Layer::DrawString( const char *pzString, int nLength )
 	{
 		return;
 	}
+	if( m_pcFont->GetInstance() == NULL )
+	{
+		return;
+	}
 	Region *pcReg = GetRegion();
 
 	if( NULL == pcReg )
@@ -673,7 +677,7 @@ int _FindEndOfLine( const char *pzStr, int nLen )
 
 void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uint32 nFlags )
 {
-	if( m_pcBitmap == NULL || m_pcFont == NULL )
+	if( m_pcBitmap == NULL || m_pcFont == NULL || m_pcFont->GetInstance() == NULL )
 		return;
 
 	Region *pcReg = GetRegion();

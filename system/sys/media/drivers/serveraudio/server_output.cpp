@@ -26,7 +26,7 @@
 #include <atheos/msgport.h>
 #include <atheos/areas.h>
 #include <iostream>
-#include "prefs.h"
+
 
 class ServerOutput : public os::MediaOutput
 {

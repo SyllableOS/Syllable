@@ -225,6 +225,11 @@ void MediaControls::SetMasterValue( float vValue )
 	m_pcStreamBar->SetStreamValue( 0, sin( vValue * M_PI / 2 ) );
 }
 
+void MediaControls::SetMasterVolume( int nValue )
+{
+	m_pcStreamBar->SetStreamVolume( 0, nValue );
+}
+
 void MediaControls::SetStreamValue( uint32 nNum, float vValue )
 {
 	m_pcStreamBar->SetStreamValue( nNum + 1, sin( vValue * M_PI / 2 ) );

@@ -301,7 +301,7 @@ MPApp::MPApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::App
 	m_bFullScreen = false;
 
 	/* Create media manager */
-	m_pcManager = new os::MediaManager();
+	m_pcManager = os::MediaManager::Get();
 
 	if ( !m_pcManager->IsValid() )
 	{
@@ -337,7 +337,7 @@ MPApp::~MPApp()
 	{
 		Close();
 	}
-	delete( m_pcManager );
+	m_pcManager->Put();
 }
 
 class AVSyncTime : public os::MediaTimeSource

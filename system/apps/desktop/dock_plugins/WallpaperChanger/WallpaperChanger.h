@@ -55,6 +55,7 @@ class DockWallpaperChanger : public DockPlugin
 		
         virtual void Paint( const Rect &cUpdateRect );
 		virtual void AttachedToWindow();
+		virtual void DetachedFromWindow();
 		virtual void MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData );
 		virtual void MouseUp( const os::Point & cPosition, uint32 nButton, os::Message * pcData );
 		virtual void MouseDown( const os::Point& cPosition, uint32 nButtons );

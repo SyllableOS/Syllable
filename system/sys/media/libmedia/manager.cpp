@@ -43,7 +43,58 @@ typedef struct MediaPlugin
 class MediaManager::Private
 {
 public:
+	void LoadPlugins()
+	{
+		if( m_bPluginsLoaded )
+			return;
+		
+		/* Open all media plugins in /system/media */
+		Directory *pcDirectory = new Directory();
+		if( pcDirectory->SetTo( "/system/drivers/media" ) != 0 )
+			return;
+	
+		String zFileName;
+		String zPath;
+		pcDirectory->GetPath( &zPath );
+	
+		std::cout<<"Start plugin scan.."<<std::endl;
+		m_nPlugins.clear();
+	
+		while( pcDirectory->GetNextEntry( &zFileName ) )
+		{
+			/* Load image */
+			if( zFileName == "." || zFileName == ".." )
+				continue;
+			zFileName = zPath + String( "/" ) + zFileName;
+		
+			image_id nID = load_library( zFileName.c_str(), 0 );
+			if( nID >= 0 ) {
+				init_media_addon *pInit;
+				/* Call init_media_addon() */
+				if( get_symbol_address( nID, "init_media_addon",
+				-1, (void**)&pInit ) == 0 ) {
+					MediaAddon* pcAddon = pInit();
+					if( pcAddon ) {
+						if( pcAddon->Initialize() != 0 )
+						{
+							std::cout<<pcAddon->GetIdentifier().c_str()<<" failed to initialize"<<std::endl;
+						} else {
+							std::cout<<pcAddon->GetIdentifier().c_str()<<" initialized"<<std::endl;
+							m_nPlugins.push_back( MediaPlugin( nID, pcAddon ) );
+						}
+					}
+				} else {
+					std::cout<<zFileName.c_str()<<" does not export init_media_addon()"<<std::endl;
+				}
+			}
+		}
+		m_bPluginsLoaded = true;
+		std::cout<<"Plugin scan finished"<<std::endl;
+	}
+	
+	int 			m_nRefCount;
 	bool			m_bValid;
+	bool			m_bPluginsLoaded;
 	Messenger		m_cMediaServerLink;
 	std::vector<MediaPlugin> m_nPlugins;
 };
@@ -56,7 +107,7 @@ MediaManager* MediaManager::s_pcInstance = NULL;
  * \par Description:
  * Constructs a new media manager and loads all plugins.
  * \par Note:
- * Never create two media managers, use the GetInstance() method instead.
+ * Should never be called! Use the Get() method instead.
  * \author	Arno Klenke
  *****************************************************************************/
 MediaManager::MediaManager()
@@ -67,6 +118,8 @@ MediaManager::MediaManager()
 	assert( NULL == s_pcInstance );
 	
 	m = new Private;
+	m->m_nRefCount = 1;
+	m->m_bPluginsLoaded = false;
 	
 	std::cout<<"Trying to connect to media server..."<<std::endl;
 	if( ( nPort = find_port( "l:media_server" ) ) < 0 ) {
@@ -86,74 +139,78 @@ MediaManager::MediaManager()
 	std::cout<<"Connected to media server at port "<<nPort<<std::endl;
 	
 	s_pcInstance = this;
-	
-	/* Open all media plugins in /system/media */
-	Directory *pcDirectory = new Directory();
-	if( pcDirectory->SetTo( "/system/drivers/media" ) != 0 )
-		return;
-	
-	String zFileName;
-	String zPath;
-	pcDirectory->GetPath( &zPath );
-	
-	std::cout<<"Start plugin scan.."<<std::endl;
-	m->m_nPlugins.clear();
-	
-	while( pcDirectory->GetNextEntry( &zFileName ) )
-	{
-		/* Load image */
-		if( zFileName == "." || zFileName == ".." )
-			continue;
-		zFileName = zPath + String( "/" ) + zFileName;
-		
-		image_id nID = load_library( zFileName.c_str(), 0 );
-		if( nID >= 0 ) {
-			init_media_addon *pInit;
-			/* Call init_media_addon() */
-			if( get_symbol_address( nID, "init_media_addon",
-			-1, (void**)&pInit ) == 0 ) {
-				MediaAddon* pcAddon = pInit();
-				if( pcAddon ) {
-					if( pcAddon->Initialize() != 0 )
-					{
-						std::cout<<pcAddon->GetIdentifier().c_str()<<" failed to initialize"<<std::endl;
-					} else {
-						std::cout<<pcAddon->GetIdentifier().c_str()<<" initialized"<<std::endl;
-						m->m_nPlugins.push_back( MediaPlugin( nID, pcAddon ) );
-					}
-				}
-			} else {
-				std::cout<<zFileName.c_str()<<" does not export init_media_addon()"<<std::endl;
-			}
-			
-		}
-	}
-	std::cout<<"Plugin scan finished"<<std::endl;
-	
 }
 
 
 /** Destruct one media manager.
  * \par Description:
  * Destructs a media manager and unloads all plugins.
- *
+ * WARNING: This call is deprecated. Always use the Get() and Put() methods!
  * \author	Arno Klenke
  *****************************************************************************/
 MediaManager::~MediaManager()
 {
-	for( uint32 i = 0; i < m->m_nPlugins.size(); i++ ) {
-		delete( m->m_nPlugins[i].mp_pcAddon );
-		unload_library( m->m_nPlugins[i].mp_hImage );
+	if( m->m_bPluginsLoaded )
+	{
+		for( uint32 i = 0; i < m->m_nPlugins.size(); i++ ) {
+			delete( m->m_nPlugins[i].mp_pcAddon );
+			unload_library( m->m_nPlugins[i].mp_hImage );
+		}
+		std::cout<<"All plugins unloaded"<<std::endl;
 	}
 	s_pcInstance = NULL;
 	delete( m );
 }
 
 
+void MediaManager::AddRef()
+{
+	m->m_nRefCount++;
+}
+
+/** Provides access to the MediaManager class.
+ * \par Description:
+ *  Creates a new media manager if it does not exist. Otherwise return a pointer
+ * to the current one.
+ * \par Note:
+ * Make sure you call Put() afterwards. If the creation fails, an exception will
+ * be thrown.
+ * \sa Put()
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+MediaManager* MediaManager::Get()
+{
+	MediaManager* pcManager = s_pcInstance;
+	if( pcManager == NULL ) {
+		pcManager = new MediaManager();
+	} else
+		pcManager->AddRef();
+	return( pcManager );
+}
+
+
+/** Decrements the reference counter of the instance.
+ * \par Description:
+ * Decrements the reference counter of the instance.
+ * \par Note:
+ * Make sure that you do one call to this method for every Get() call in your
+ * appliction.
+ * \sa Get()
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+void MediaManager::Put()
+{
+	m->m_nRefCount--;
+	if( m->m_nRefCount <= 0 ) {
+		delete( this );
+	}
+}
+
 /** Return instance.
  * \par Description:
  * Returns the current instance of the media manager.
- *
+ * WARNING: This call is deprecated. Always use the Get() and Put() methods!
+ * \sa Get(), Put()
  * \author	Arno Klenke
  *****************************************************************************/
 MediaManager* MediaManager::GetInstance()
@@ -200,6 +257,7 @@ Messenger MediaManager::GetServerLink()
 MediaInput* MediaManager::GetBestInput( String zFileName )
 {
 	/* Look through all plugins for the init_media_demuxer symbol */
+	m->LoadPlugins();
 	for( uint32 i = 0; i < m->m_nPlugins.size(); i++ )
 	{
 		for( uint32 j = 0; j < m->m_nPlugins[i].mp_pcAddon->GetInputCount(); j++ )
@@ -232,6 +290,7 @@ MediaInput* MediaManager::GetDefaultInput()
 	if( !m->m_bValid )
 		return( NULL );
 	/* Ask media server */
+	m->LoadPlugins();
 	m->m_cMediaServerLink.SendMessage( MEDIA_SERVER_GET_DEFAULT_INPUT, &cReply );
 	if( !( cReply.GetCode() == MEDIA_SERVER_OK && cReply.FindString( "input", &zPlugin.str() ) == 0 ) )
 		return( NULL );
@@ -286,6 +345,7 @@ void MediaManager::SetDefaultInput( os::String zIdentifier )
 MediaInput* MediaManager::GetInput( uint32 nIndex )
 {
 	uint32 nCount = 0;
+	m->LoadPlugins();
 	for( uint32 i = 0; i < m->m_nPlugins.size(); i++ )
 	{
 		for( uint32 j = 0; j < m->m_nPlugins[i].mp_pcAddon->GetInputCount(); j++ )
@@ -315,6 +375,7 @@ MediaInput* MediaManager::GetInput( uint32 nIndex )
 MediaCodec* MediaManager::GetBestCodec( MediaFormat_s sInternal, MediaFormat_s sExternal, bool bEncode )
 {
 	/* Look through all plugins for the init_media_codec symbol */
+	m->LoadPlugins();
 	for( uint32 i = 0; i < m->m_nPlugins.size(); i++ )
 	{
 		for( uint32 j = 0; j < m->m_nPlugins[i].mp_pcAddon->GetCodecCount(); j++ )
@@ -347,6 +408,7 @@ MediaCodec* MediaManager::GetBestCodec( MediaFormat_s sInternal, MediaFormat_s s
 MediaCodec* MediaManager::GetCodec( uint32 nIndex )
 {
 	uint32 nCount = 0;
+	m->LoadPlugins();
 	for( uint32 i = 0; i < m->m_nPlugins.size(); i++ )
 	{
 		for( uint32 j = 0; j < m->m_nPlugins[i].mp_pcAddon->GetCodecCount(); j++ )
@@ -377,6 +439,7 @@ MediaCodec* MediaManager::GetCodec( uint32 nIndex )
 MediaOutput* MediaManager::GetBestOutput( String zFileName, String zIdentifier )
 {
 	/* Look through all plugins for the init_media_output symbol */
+	m->LoadPlugins();
 	for( uint32 i = 0; i < m->m_nPlugins.size(); i++ )
 	{
 		for( uint32 j = 0; j < m->m_nPlugins[i].mp_pcAddon->GetOutputCount(); j++ )
@@ -411,6 +474,7 @@ MediaOutput* MediaManager::GetDefaultAudioOutput()
 	if( !m->m_bValid )
 		return( NULL );
 	/* Ask media server */
+	m->LoadPlugins();
 	m->m_cMediaServerLink.SendMessage( MEDIA_SERVER_GET_DEFAULT_AUDIO_OUTPUT, &cReply );
 	if( !( cReply.GetCode() == MEDIA_SERVER_OK && cReply.FindString( "output", &zPlugin.str() ) == 0 ) )
 		return( NULL );
@@ -465,6 +529,7 @@ MediaOutput* MediaManager::GetDefaultVideoOutput()
 	if( !m->m_bValid )
 		return( NULL );
 	/* Ask media server */
+	m->LoadPlugins();
 	m->m_cMediaServerLink.SendMessage( MEDIA_SERVER_GET_DEFAULT_VIDEO_OUTPUT, &cReply );
 	if( !( cReply.GetCode() == MEDIA_SERVER_OK && cReply.FindString( "output", &zPlugin.str() ) == 0 ) )
 		return( NULL );
@@ -517,6 +582,7 @@ void MediaManager::SetDefaultVideoOutput( os::String zIdentifier )
 MediaOutput* MediaManager::GetOutput( uint32 nIndex )
 {
 	uint32 nCount = 0;
+	m->LoadPlugins();
 	for( uint32 i = 0; i < m->m_nPlugins.size(); i++ )
 	{
 		for( uint32 j = 0; j < m->m_nPlugins[i].mp_pcAddon->GetOutputCount(); j++ )

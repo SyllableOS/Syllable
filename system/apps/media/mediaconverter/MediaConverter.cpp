@@ -323,7 +323,7 @@ MCApp::MCApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::App
 	m_bEncode = false;
 
 	/* Create media manager */
-	m_pcManager = new os::MediaManager();
+	m_pcManager = os::MediaManager::Get();
 
 	if ( !m_pcManager->IsValid() )
 	{
@@ -360,7 +360,7 @@ MCApp::MCApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::App
 MCApp::~MCApp()
 {
 	/* Close and delete everything */
-	delete( m_pcManager );
+	m_pcManager->Put();
 }
 
 void MCApp::Open( os::String zFile, os::String zInput )

@@ -237,7 +237,7 @@ void DockClock::HandleMessage(Message* pcMessage)
 			pcMessage->FindString("font",&m_cFontType);
 			pcMessage->FindFloat("size",&m_vFontSize);
 						
-			pcClockSettingsWindow->Close();
+			pcClockSettingsWindow->PostMessage( os::M_TERMINATE );
 			pcClockSettingsWindow = NULL;
 			SaveSettings();
 			UpdateFont();
@@ -247,7 +247,7 @@ void DockClock::HandleMessage(Message* pcMessage)
 		
 		case M_CANCEL:
 		{
-			pcClockSettingsWindow->Close();
+			pcClockSettingsWindow->PostMessage( os::M_TERMINATE );
 			pcClockSettingsWindow = NULL;
 			break;
 		}		
@@ -353,9 +353,16 @@ void DockClock::SaveSettings()
 void DockClock::UpdateFont()
 {
 	Font *font = new Font();
-	font->SetFamilyAndStyle(m_cFontType.c_str(),"Regular");
+	if( font->SetFamilyAndStyle(m_cFontType.c_str(),"Regular") != 0 )
+		if( font->SetFamilyAndStyle(m_cFontType.c_str(),"Roman") != 0 )
+		{
+			printf( "Unknown font!\n" );
+			font->SetProperties( DEFAULT_FONT_REGULAR );
+		}
+	font->SetFlags( FPF_SMOOTHED );
 	font->SetSize(m_vFontSize);
 	SetFont(font);
+	font->Release();
 }
 	
 

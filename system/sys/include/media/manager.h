@@ -52,7 +52,12 @@ public:
 	MediaManager();
 	virtual ~MediaManager();
 	
+	void AddRef();
+	
 	static MediaManager* GetInstance();
+	
+	static MediaManager* Get();
+	void Put();
 	
 	bool			IsValid();
 	Messenger		GetServerLink();

@@ -190,6 +190,7 @@ class DockCamera : public DockPlugin
 		
         virtual void Paint( const Rect &cUpdateRect );
 		virtual void AttachedToWindow();
+		virtual void DetachedFromWindow();
 		virtual void MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData );
 		virtual void MouseUp( const os::Point & cPosition, uint32 nButton, os::Message * pcData );
 		virtual void MouseDown( const os::Point& cPosition, uint32 nButtons );
@@ -491,6 +492,33 @@ DockCamera::DockCamera( os::Path cPath, os::Looper* pcDock ) : DockPlugin()
 	cm_pcBitmap = 0;
 	m_nHitTime = 0;
 	
+	
+}
+
+
+
+DockCamera::~DockCamera( )
+{
+	
+}
+
+void DockCamera::OnDoubleClick()
+{
+	if ((int)vClick==0)
+	{
+		pcCameraDelayedLooper->AddTimer(pcCameraDelayedLooper,123,0);
+	}
+	
+	else
+	{
+		int nTime = (vDelayTime)*1000000;
+		pcCameraDelayedLooper->AddTimer(pcCameraDelayedLooper,123,nTime);
+	}	
+	return;
+}
+
+void DockCamera::AttachedToWindow()
+{
 	pcCameraDelayedLooper = new CameraDelayedLooper();
 	pcCameraDelayedLooper->Run();
 	
@@ -512,36 +540,15 @@ DockCamera::DockCamera( os::Path cPath, os::Looper* pcDock ) : DockPlugin()
 	pcContextMenu->AddItem(new MenuSeparator());	
 	pcContextMenu->AddItem("About Camera...",new Message(M_CAMERA_ABOUT));
 	pcContextMenu->SetTargetForItems(this);
+	View::AttachedToWindow();
+	pcContextMenu->SetTargetForItems(this);
 }
 
-
-
-DockCamera::~DockCamera( )
+void DockCamera::DetachedFromWindow()
 {
 	SaveSettings();
 	if (m_pcIcon) delete m_pcIcon;
 	if (pcPaint)delete pcPaint;
-}
-
-void DockCamera::OnDoubleClick()
-{
-	if ((int)vClick==0)
-	{
-		pcCameraDelayedLooper->AddTimer(pcCameraDelayedLooper,123,0);
-	}
-	
-	else
-	{
-		int nTime = (vDelayTime)*1000000;
-		pcCameraDelayedLooper->AddTimer(pcCameraDelayedLooper,123,nTime);
-	}	
-	return;
-}
-
-void DockCamera::AttachedToWindow()
-{
-	View::AttachedToWindow();
-	pcContextMenu->SetTargetForItems(this);
 }
 
 String DockCamera::GetIdentifier()

@@ -94,6 +94,8 @@ int atapi_drive_read( void* pNode, void* pCookie, off_t nPos, void* pBuf, size_t
 	
 	nBytesLeft = nLen;
 	nPos += psDev->nStart;
+	
+	LOCK( psDev->hLock );
 
 	/* The iso9660 fs requires this workaround... */
 	if( nLen < psDev->nSectorSize )
@@ -122,6 +124,8 @@ int atapi_drive_read( void* pNode, void* pCookie, off_t nPos, void* pBuf, size_t
 		nBytesLeft -= nCurSize;
 	}
 	nError = nLen;
+	
+	UNLOCK( psDev->hLock );
 
 	kerndbg( KERN_DEBUG, "atapi_drive_read() completed\n");
 
@@ -175,6 +179,8 @@ int atapi_drive_readv( void* pNode, void* pCookie, off_t nPos, const struct iove
 	pCurVecPtr = psVector[0].iov_base;
 	nCurVecLen = psVector[0].iov_len;
 	nCurVec = 1;
+	
+	LOCK( psDev->hLock );
 
 	while ( nBytesLeft > 0 )
 	{
@@ -218,6 +224,8 @@ int atapi_drive_readv( void* pNode, void* pCookie, off_t nPos, const struct iove
 		}
 	}
 	nError = nLen;
+	
+	UNLOCK( psDev->hLock );
 
 	kerndbg( KERN_DEBUG, "atapi_drive_readv() completed\n");
 
@@ -403,7 +411,7 @@ void atapi_drive_add( ATA_port_s* psPort )
 	
 	strcpy( psDev->zName, zName );
 	psDev->psPort = psPort;
-	psDev->hLock = create_semaphore( "atapi_drive_lock", 1, 0 );
+	psDev->hLock = create_semaphore( "atapi_drive_lock", 1, SEM_RECURSIVE );
 	psDev->nStart = 0;
 	psDev->nSize = 0;
 	psDev->nSectorSize = 0;

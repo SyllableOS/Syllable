@@ -371,7 +371,7 @@ CFApp::CFApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::App
 	} catch( ... ) {}
 
 	/* Create media manager */
-	m_pcManager = new os::MediaManager();
+	m_pcManager = os::MediaManager::Get();
 	if ( !m_pcManager->IsValid() )
 	{
 		std::cout << "Media server is not running" << std::endl;
@@ -417,7 +417,7 @@ CFApp::~CFApp()
 	{
 		CloseCurrentFile();
 	}
-	delete( m_pcManager );
+	m_pcManager->Put();
 
 	if( m_pcRegManager )
 	{

@@ -1142,7 +1142,7 @@ retry:
 	LOCK( sCmd.hWait );
 	ata_cmd_free( &sCmd );
 
-	UNLOCK( psDev->hLock );
+	
 
 	psRawCmd->nError = sCmd.nStatus;
 	psRawCmd->nSense = SENSE_OK;
@@ -1184,9 +1184,12 @@ retry:
 	if( psRawCmd->nSense == SENSE_OK &&	psRawCmd->nDirection == READ && psRawCmd->nDataLength > 0 )
 		memcpy_to_user( psRawCmd->pnData, psDev->psPort->pDataBuf, psRawCmd->nDataLength );
 
+	UNLOCK( psDev->hLock );
+
 	return 0;
 
 error:
+	UNLOCK( psDev->hLock );
 	return( -EIO );
 }
 
