@@ -1,5 +1,12 @@
 * October 6th 2004, Kristian Van Der Vliet *
 
+	- Matrox driver
+		o Recognise 0x2537 PCI ID for G550
+		o Properly detect a G450
+		o Fall back to Vesa BIOS for Gx50 DAC cards E.g. G450, 550 and Parhaliea
+
+* October 6th 2004, Kristian Van Der Vliet *
+
 Better handling of multiple mixer devices for Trident audio cards.  Patch from
 Colin Phipps <cph@cph.demon.co.uk>
 
