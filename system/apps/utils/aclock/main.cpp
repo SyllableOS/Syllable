@@ -82,7 +82,6 @@ MyWindow::MyWindow( const Rect& cFrame) : Window( cFrame, "main_window", "Clock"
 
 MyWindow::~MyWindow()
 {
-    delete m_pcDisplay;
 }
 
 bool MyWindow::OkToQuit( void )
@@ -177,7 +176,6 @@ MyApp::MyApp() : Application( "application/x-vnd-RGC-" APP_NAME )
 
 MyApp::~MyApp()
 {
-    delete m_pcMainWindow;
 }
 
 bool MyApp::LoadSettings()
@@ -230,10 +228,4 @@ int main( int argc, char** argv )
 }
 
 // ---------------------------------------------------------------------------
-
-
-
-
-
-
 
