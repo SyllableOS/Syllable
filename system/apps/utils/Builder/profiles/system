@@ -181,7 +181,7 @@ modules
 	sys/media/libmedia
 	sys/media/mediaserver
 	sys/media/drivers/cdrom
-	sys/media/drivers/ffmpeg/ffmpeg
+;	sys/media/drivers/ffmpeg/ffmpeg
 	sys/media/drivers/ffmpeg
 	sys/media/drivers/oss
 	sys/media/drivers/raw

@@ -16,10 +16,17 @@ modules
 	apps/gnu/less-382
 	apps/gnu/sed-4.1
 	apps/gnu/tar-1.14
+	apps/media/coldfish
+	apps/media/mediaplayer
+	apps/utils/CodeEdit
 	apps/utils/DiskManager
 	apps/utils/Preferences/Locale
 	apps/utils/Preferences/Network
+	apps/utils/aclock
+	apps/utils/aedit
 	apps/utils/aterm
+	apps/utils/bzoom
 	apps/utils/catalog
 	apps/utils/charmap
 	apps/utils/pkgmanager
+	apps/utils/slbmgr
