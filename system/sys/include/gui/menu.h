@@ -24,6 +24,7 @@
 #include <gui/window.h>
 #include <util/invoker.h>
 #include <util/locker.h>
+#include <gui/bitmap.h>
 
 namespace os
 {
@@ -73,6 +74,8 @@ private:
     char*		m_pzLabel;
 
     bool		m_bIsHighlighted;
+
+    static Bitmap* s_pcSubMenuBitmap;
 };
 
 /** Menu separator item.
