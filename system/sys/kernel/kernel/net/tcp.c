@@ -1,7 +1,7 @@
-
 /*
- *  The AtheOS kernel
+ *  The Syllable kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 Kristian Van Der Vliet
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -562,6 +562,118 @@ static int tcp_accept( Socket_s *psSocket, struct sockaddr *psAddr, int *pnSize 
 	return ( nError );
 }
 
+/*****************************************************************************
+ * NAME: tcp_peekmsg
+ * DESC: read one buffer from a TCP connection but do not remove the
+ *       data from the buffer
+ * NOTE:
+ * BUGS: Does not wait for data to arrive when reading 0 bytes as required
+ *       by 1003.1g
+ * SEE ALSO: tcp_recvmsg
+ ****************************************************************************/
+
+static ssize_t tcp_peekmsg( Socket_s *psSocket, struct msghdr *psMsg )
+{
+	TCPCtrl_s *psTCPCtrl = psSocket->sk_psTCPCtrl;
+	int nError, nRcvCount, nRcvBufStart;
+	int nBytesRead = 0;
+	int i;
+
+	retry:
+	LOCK( psTCPCtrl->tcb_hMutex );
+
+	if ( psTCPCtrl->tcb_nError != 0 )
+	{
+		nError = -psTCPCtrl->tcb_nError;
+		goto error;
+	}
+	if ( psTCPCtrl->tcb_rcvbuf == NULL )
+	{
+		printk( "Error: tcp_peekmsg() no receive buffer\n" );
+		nError = -ENOTCONN;
+		goto error;
+	}
+
+	if ( psTCPCtrl->tcb_nState == TCPS_CLOSED || psTCPCtrl->tcb_nState == TCPS_LISTEN )
+	{			// Is this enough???
+		nError = -ENOTCONN;
+		goto error;
+	}
+
+	if ( psTCPCtrl->tcb_nRcvCount == 0 && ( psTCPCtrl->tcb_flags & TCBF_RDONE ) )
+	{
+		nError = 0;
+		goto error;
+	}
+
+	if ( psTCPCtrl->tcb_nRcvCount == 0 )
+	{
+		if ( psTCPCtrl->tcb_bNonBlock )
+		{
+			nError = -EWOULDBLOCK;
+			goto error;
+		}
+		else
+		{
+			nError = unlock_and_suspend( psTCPCtrl->tcb_hRecvQueue, psTCPCtrl->tcb_hMutex );
+			if ( nError >= 0 )
+			{
+				goto retry;
+			}
+			else
+			{
+				LOCK( psTCPCtrl->tcb_hMutex );
+				goto error;
+			}
+		}
+	}
+	kassertw( psTCPCtrl->tcb_nRcvCount > 0 );
+
+	nRcvCount = psTCPCtrl->tcb_nRcvCount;
+	nRcvBufStart = psTCPCtrl->tcb_nRcvBufStart;
+
+	for ( i = 0; i < psMsg->msg_iovlen; ++i )
+	{
+		char *pBuffer = psMsg->msg_iov[i].iov_base;
+		int nSize = psMsg->msg_iov[i].iov_len;
+
+		while ( nSize > 0 && nRcvCount > 0 )
+		{
+			int nCurSize = min( nSize, nRcvCount );
+
+			if ( nRcvBufStart + nCurSize <= psTCPCtrl->tcb_rbsize )
+			{
+				memcpy( pBuffer, psTCPCtrl->tcb_rcvbuf + nRcvBufStart, nCurSize );
+				nRcvBufStart += nCurSize;
+			}
+			else
+			{
+				int nLeft = psTCPCtrl->tcb_rbsize - nRcvBufStart;
+
+				memcpy( pBuffer, psTCPCtrl->tcb_rcvbuf +nRcvBufStart, nLeft );
+				memcpy( pBuffer + nLeft, psTCPCtrl->tcb_rcvbuf, nCurSize - nLeft );
+				nRcvBufStart = nCurSize - nLeft;
+			}
+			pBuffer += nCurSize;
+			nRcvCount -= nCurSize;
+			nSize -= nCurSize;
+			nBytesRead += nCurSize;
+		}
+		if ( nRcvCount == 0 )
+		{
+			break;
+		}
+	}
+
+	UNLOCK( psTCPCtrl->tcb_hMutex );
+	psMsg->msg_flags = 0;
+	return ( nBytesRead );
+
+	error:
+	tcp_wakeup( READERS, psTCPCtrl );	// Tell the next guy to give up.
+	UNLOCK( psTCPCtrl->tcb_hMutex );
+	return ( nError );
+}
 
 /*****************************************************************************
  * NAME: tcp_recvmsg
@@ -584,10 +696,6 @@ static ssize_t tcp_recvmsg( Socket_s *psSocket, struct msghdr *psMsg, int nFlags
 	{
 		printk( "Warning: tcp_recvmsg() Dont understand MSG_OOB\n" );
 	}
-	if ( nFlags & MSG_PEEK )
-	{
-		printk( "Warning: tcp_recvmsg() Dont understand MSG_PEEK\n" );
-	}
 	if ( nFlags & MSG_DONTROUTE )
 	{
 		printk( "Warning: tcp_recvmsg() Dont understand MSG_DONTROUTE\n" );
@@ -596,9 +704,6 @@ static ssize_t tcp_recvmsg( Socket_s *psSocket, struct msghdr *psMsg, int nFlags
 	{
 		printk( "Warning: tcp_recvmsg() Dont understand MSG_PROXY\n" );
 	}
-//  if ( nFlags & MSG_WAITALL ) {
-//    printk( "Warning: tcp_recvmsg() Dont understand MSG_WAITALL\n" );
-//  }
 
       retry:
 	LOCK( psTCPCtrl->tcb_hMutex );
