@@ -2,79 +2,7 @@
 #include "iconmenu_messages.h"
 #include "login.h"
 //#include "drives.h"
-
-/*
-** name:       UpdateLoginConfig
-** purpose:    Updates /system/config/login.cfg with the newest person who loggd in.
-** parameters: A string that represents the newest person
-** returns:
-*/
-/*void UpdateLoginConfig(string zName)
-{
-    char junk[1024];
-    char login_info[1024];
-    char login_name[1024];
-
-    ifstream filRead;
-    filRead.open("/boot/atheos/sys/config/login.cfg");
-
-    filRead.getline(junk,1024);
-    filRead.getline((char*)login_info,1024);
-    filRead.getline(junk,1024);
-    filRead.getline(junk,1024);
-    filRead.getline((char*)login_name,1024);
-    filRead.close();
-
-
-    FILE* fin;
-    fin = fopen("/boot/atheos/sys/config/login.cfg","w");
-
-    fprintf(fin,"<Login Name Option>\n");
-    fprintf(fin, login_info);
-    fprintf(fin, "\n\n<Login Name>\n");
-    fprintf(fin,zName.c_str());
-    fprintf(fin,"\n");
-    fclose(fin);
-}*/
-
-
-
-
-
-/*
-** name:       WriteConfigFile
-** purpose:    Writes a flatten message to pzConfigFile.  Used when the file is non-exsistant
-** parameters: 
-** returns:    
-*/
-/*void WriteConfigFile()
-{
-    Color32_s bColor(255,160,100,255);
-    Color32_s fColor(0,0,0,0);
-
-    Message *pcPrefs = new Message( );
-    pcPrefs->AddColor32( "BackGround", bColor );
-    pcPrefs->AddColor32( "IconText",   fColor );
-    pcPrefs->AddString ( "DeskImage",  "logo_atheos.jpg"  );
-    pcPrefs->AddBool   ( "ShowVer",    false);
-    pcPrefs->AddInt32  ( "SizeImage",    0);
-    pcPrefs->AddBool    ( "Alphabet",   false);
-
-
-    File *pcConfig = new File(pzConfigFile, O_WRONLY | O_CREAT );
-    if( pcConfig )
-    {
-        uint32 nSize = pcPrefs->GetFlattenedSize( );
-        void *pBuffer = malloc( nSize );
-        pcPrefs->Flatten( (uint8 *)pBuffer, nSize );
-
-        pcConfig->Write( pBuffer, nSize );
-
-        delete pcConfig;
-        free( pBuffer );
-    }
-}*/
-
+#include "debug.h"
 
 /*
 ** name:       LaunchFiles
@@ -93,7 +21,7 @@ void LaunchFiles()
     {
         pcDir->GetPath(&zName);
         while (pcDir->GetNextEntry(&zName))
-            if ( (zName.find( ".",0,1)==string::npos) && (zName.find( "Disabled",0)==string::npos))
+            if ( (zName.find( "..",0,1)==string::npos) && (zName.find( "Disabled",0)==string::npos))
             {
 
                 launch_files.push_back(zName);
@@ -297,6 +225,9 @@ BitmapView::BitmapView( const Rect& cFrame ) :
 	SetIcons();   
 	m_nHitTime = 0;
 	pzSyllableVer = SyllableInfo();
+	
+	
+	LaunchFiles();
 
 }
 
@@ -413,7 +344,7 @@ void BitmapView::Paint( const Rect& cUpdateRect)
     Rect cBounds = GetBounds();
     SetDrawingMode( DM_COPY );
     Font* pcFont = GetFont();
-
+    
     Erase( cUpdateRect );
     
     for ( uint i = 0 ; i < m_cIcons.size() ; ++i )
@@ -791,7 +722,7 @@ void BitmapView::ReadPrefs(void)
  	//pcSetPrefs->FindInt32  ( "SizeImage",  &nSizeImage);
    	pcSetPrefs->FindBool   ( "Alphabet",   &bAlphbt);
    	
-   	m_pcBitmap = NULL;
+   	Debug(zDImage.c_str());
 	m_pcBitmap = ReadBitmap(zDImage.c_str());
     
 }
@@ -914,6 +845,9 @@ void BitmapWindow::HandleMessage(Message* pcMessage)
     	break;
     }
 }
+
+
+
 
 
 
