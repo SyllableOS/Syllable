@@ -3,6 +3,9 @@
   Updated freetype.makefile to Freetype 2.1.5. I didn't import the sources,
   because they're supposed to be installed by the new build system now.
 
+  Added a -lz flag to all decorator Makefiles to make them build with the
+  shared Zlib library.
+
 * September 19 2003, Henrik Isaksson *
 
  LibSyllable
