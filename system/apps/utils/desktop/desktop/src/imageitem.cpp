@@ -1,4 +1,6 @@
-#include "imageitem.h"
+#include "ImageItem.h"
+
+using namespace os;
 
 #include <stdio.h>
 
@@ -110,7 +112,7 @@ uint8 nSubMenuArrowData[]={
                           };
 
 
-ImageItem::ImageItem( Menu* pcMenu, Message* pcMsg, Bitmap* bmap, float nNumber )
+ImageItem::ImageItem( Menu* pcMenu, Message* pcMsg, BitmapImage* bmap, float nNumber )
         :MenuItem(pcMenu, pcMsg)
 {
     nDivNum = nNumber;
@@ -123,7 +125,7 @@ ImageItem::ImageItem( Menu* pcMenu, Message* pcMsg, Bitmap* bmap, float nNumber 
         cSubMenuBitmapRect.right = SUB_MENU_ARROW_W;
         cSubMenuBitmapRect.bottom = SUB_MENU_ARROW_H;
 
-        s_pcMenuBitmap = new Bitmap( cSubMenuBitmapRect.Width(), cSubMenuBitmapRect.Height(), CS_RGBA32 , Bitmap::SHARE_FRAMEBUFFER);
+        s_pcMenuBitmap = new Bitmap( (int)cSubMenuBitmapRect.Width(), (int)cSubMenuBitmapRect.Height(), CS_RGBA32 , Bitmap::SHARE_FRAMEBUFFER);
         memcpy( s_pcMenuBitmap->LockRaster(), nSubMenuArrowData, (unsigned int) ( cSubMenuBitmapRect.Width() * cSubMenuBitmapRect.Height() * 4 ) );
     }
 
@@ -131,7 +133,7 @@ ImageItem::ImageItem( Menu* pcMenu, Message* pcMsg, Bitmap* bmap, float nNumber 
     SetBitmap(bmap);
 }
 
-ImageItem::ImageItem( const char* pzLabel, Message* pcMsg, const char *shortcut, Bitmap *bmap, float nNumber )
+ImageItem::ImageItem( const char* pzLabel, Message* pcMsg, const char *shortcut, BitmapImage *bmap, float nNumber )
         :MenuItem(pzLabel, pcMsg)
 {
 
@@ -145,7 +147,7 @@ ImageItem::ImageItem( const char* pzLabel, Message* pcMsg, const char *shortcut,
         cSubMenuBitmapRect.right = SUB_MENU_ARROW_W;
         cSubMenuBitmapRect.bottom = SUB_MENU_ARROW_H;
 
-        s_pcMenuBitmap = new Bitmap( cSubMenuBitmapRect.Width(), cSubMenuBitmapRect.Height(), CS_RGBA32 , Bitmap::SHARE_FRAMEBUFFER);
+        s_pcMenuBitmap = new Bitmap( (int)cSubMenuBitmapRect.Width(), (int)cSubMenuBitmapRect.Height(), CS_RGBA32 , Bitmap::SHARE_FRAMEBUFFER);
         memcpy( s_pcMenuBitmap->LockRaster(), nSubMenuArrowData, (unsigned int) ( cSubMenuBitmapRect.Width() * cSubMenuBitmapRect.Height() * 4 ) );
     }
     Init();
@@ -156,8 +158,8 @@ ImageItem::ImageItem( const char* pzLabel, Message* pcMsg, const char *shortcut,
 void ImageItem::Init()
 {
     m_Highlighted = false;
-    m_IconWidth = 18;
-    m_IconHeight = 18;
+    m_IconWidth = 26;
+    m_IconHeight = 26;
     m_Enabled = true;
     m_HasIcon = false;
     m_Bitmap = NULL;
@@ -172,7 +174,7 @@ ImageItem::~ImageItem()
         delete m_Shortcut;
 }
 
-void ImageItem::SetBitmap(Bitmap *bm)
+void ImageItem::SetBitmap(BitmapImage *bm)
 {
     if(m_Bitmap)
         delete m_Bitmap;
@@ -234,7 +236,7 @@ void ImageItem::Draw()
     m->GetFontHeight(&fh);
 
     float x = textrect.left + 2;
-    float y = textrect.top + 2 + textrect.Height()/2 - (fh.ascender + fh.descender)/2 + fh.ascender;
+    float y = textrect.top + 1 + textrect.Height()/2 - (fh.ascender + fh.descender)/2 + fh.ascender;
 
     m->MovePenTo(x, y);
     if(label)
@@ -246,20 +248,20 @@ void ImageItem::Draw()
         m->MovePenTo(x, y);
         m->DrawString(m_Shortcut);
     }
-
     if(m_HasIcon && m_Bitmap)
     {
+    	
         m->SetEraseColor(get_default_color(COL_MENU_BACKGROUND));
         Rect bmrect(m_Bitmap->GetBounds());
         bounds.right = bounds.left + m_IconWidth;
 
         bmrect.left = bounds.left + bounds.Width()/2 - bmrect.Width()/2;
         bmrect.right += bmrect.left;
-        bmrect.top = bounds.top + bounds.Height()/2 - bmrect.Height()/2;
+        bmrect.top = bounds.top + bounds.Height()/2 - bmrect.Height()/2 + 1;
         bmrect.bottom += bmrect.top;
 
         m->SetDrawingMode(DM_BLEND);
-        m->DrawBitmap(m_Bitmap, m_Bitmap->GetBounds(), bmrect);
+        m->DrawBitmap(m_Bitmap->LockBitmap(), m_Bitmap->LockBitmap()->GetBounds(), bmrect);
     }
 
     if (GetSubMenu())
@@ -269,13 +271,12 @@ void ImageItem::Draw()
         Rect cTargetRect;
 
         if (m_HasIcon)
-            cTargetRect = cSourceRect.Bounds() + Point( m->GetBounds().right - SUB_MENU_ARROW_W - m_Bitmap->GetBounds().Width() + 9, m->GetBounds().top + ( m->GetBounds().Height() / nDivNum) - 4.0f);
+            cTargetRect = cSourceRect.Bounds() + Point( GetFrame().right - SUB_MENU_ARROW_W, GetFrame().top + GetFrame().Height()/2 - cSourceRect.Height()/2 );
 
 
 
         else
-            cTargetRect = cSourceRect.Bounds() + Point( m->GetBounds().right - SUB_MENU_ARROW_W, m->GetBounds().top + ( m->GetBounds().Height() / nDivNum) - 4.0f);
-
+            cTargetRect = cSourceRect.Bounds() + Point( GetFrame().right - SUB_MENU_ARROW_W, GetFrame().top + GetFrame().Height()/2 - cSourceRect.Height()/2 );
 
         m->SetDrawingMode( DM_OVER );
         m->DrawBitmap(s_pcMenuBitmap,cSourceRect,cTargetRect);
@@ -294,11 +295,30 @@ void ImageItem::Draw()
 void ImageItem::DrawContent()
 {}
 
-void ImageItem::Highlight(bool bHighlight)
+void ImageItem::SetHighlighted(bool bHighlight)
 {
     m_Highlighted = bHighlight;
-    MenuItem::Highlight(bHighlight);
+    MenuItem::SetHighlighted(bHighlight);
 }
+
+void ImageItem::SetEnable()
+{
+    //this->SetBgColor(get_default_color(COL_NORMAL));
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
