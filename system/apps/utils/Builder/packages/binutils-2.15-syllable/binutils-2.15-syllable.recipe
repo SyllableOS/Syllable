@@ -1,5 +1,5 @@
 authors				Kaj de Vos
-status				developing
+status				testing
 
 inherits			binutils-2.15
 
@@ -15,6 +15,6 @@ configure-options
 ;	This would be for a 64-bits port:
 ;	--enable-64-bit-bfd
 
-; Avoid linking cross-assembling parts into the host system:
+; The normal links are not relevant. Cross-assembling binaries don't have the same names:
 links
 

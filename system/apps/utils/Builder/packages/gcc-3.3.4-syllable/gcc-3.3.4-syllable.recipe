@@ -1,7 +1,8 @@
 authors				Kaj de Vos
-status				developing
-notes
-	Configure options and patches need to be split between those for the build host and those for the target platform, Syllable
+status				testing
+warnings
+	/ainc needs to be linked to the Syllable system headers.
+	The path to the Syllable GLibC headers needs to be defined.
 
 inherits			gcc-3.3.4
 
@@ -13,20 +14,25 @@ packages
 
 configure-options
 	--target=i586-pc-syllable
-;	GLibC headers for Syllable, if building in the system directory of the source tree:
-;	--with-headers=../libs/glibc/include
+;	GLibC headers for Syllable:
+	--with-headers=$PWD/system/libs/glibc/include
 	--enable-languages=c,c++
 	--with-arch=i586
 	--enable-sjlj-exceptions
-	--enable-shared
+	--disable-shared
 	--enable-threads
 	--with-system-zlib
 ;	May be needed for porting a limited cross-compiler:
 ;	--without-headers
-;	--disable-shared
 ;	--disable-nls
 
-; For porting a limited cross-compiler:
-;make-targets		all-gcc
-;install-targets		install-gcc
+; Requires super-user access:
+;pre-make			ln -snf $PWD/system/sys/include /ainc
+
+make-env			C_INCLUDE_PATH /ainc:$C_INCLUDE_PATH
+make-targets		all-gcc
+
+install-targets		install-gcc
+; The normal links are not relevant:
+links
 
