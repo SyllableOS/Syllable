@@ -1,6 +1,6 @@
 COPTS	= -Wall -c -o3
 
-OBJS	= ../objs/main.o ../objs/mainapp.o ../objs/appwindow.o ../objs/bitmapview.o ../objs/loadbitmap.o ../objs/statusbar.o
+OBJS	= ../objs/main.o ../objs/mainapp.o ../objs/appwindow.o ../objs/bitmapview.o ../objs/loadbitmap.o ../objs/statusbar.o ../objs/settingswindow.o
 EXE	= ../objs/aview
 
 CC	= g++
@@ -9,13 +9,17 @@ LL	= g++
 $(EXE) : $(OBJS)
 	@echo Building : $(EXE)
 	@g++ $(OBJS) -latheos -o $(EXE)
+	@echo Adding images into : $(EXE)
+	@rescopy -r ../objs/aview ./images/*.png
 
 clean:
-	-rm $(OBJS)
-	-rm $(EXE)
+	@echo Removing all objects and the executable
+	@rm $(OBJS)
+	@-rm $(EXE)
 
-deps:
-	mkdir ../objs
+deps:	
+	@echo Making $(OBJDIR) directory
+	@mkdir ../objs
 
 dist:
 	mkdir $(DIST_DIR)/Applications/AView
@@ -23,8 +27,9 @@ dist:
 	cp -f  $(EXE) $(DIST_DIR)/Applications/AView/bin/$(EXE)
 
 astyle:
-	astyle --style=ansi  *.cpp *.h
-	rm -rf *.orig
+	@echo Cleaning up all the source
+	@astyle --style=ansi  *.cpp *.h
+	@rm -rf *.orig
 
 .cpp.o:
 	$(CC) $(COPTS) $< -o $@
@@ -52,6 +57,13 @@ astyle:
 ../objs/loadbitmap.o : loadbitmap.cpp
 	@echo Compiling : $<
 	@$(CC) $(COPTS) $< -o $@
+
+../objs/settingswindow.o: settingswindow.cpp
+	@echo Compiling : $<
+	@$(CC) $(COPTS) $< -o $@
+
+
+
 
 
 

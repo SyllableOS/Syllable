@@ -53,3 +53,4 @@ void BitmapView::ScrollBack(float nPosWidth, float nPosHeight)
 
 
 
+

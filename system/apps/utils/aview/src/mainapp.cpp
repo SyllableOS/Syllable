@@ -1,50 +1,102 @@
 #include "mainapp.h"
-
+#include "appwindow.h"
+#include "messages.h"
 ImageApp::ImageApp(char *fileName) : Application( "application/x-wnd-RGC-"APP_NAME)
 {
-    //settings = new Settings();
-    //loadSettings();
-
-    m_pcMainWindow = new AppWindow(CRect(400,400),sFileRequester);
-
+    r = CRect(400,400);
+    bSaveSize = false;
+    settings = new Settings();
+    loadSettings();
+    Rect SRect = CRect(r.Width(),r.Height());
+    AppWindow* pcAppWindow =  new AppWindow(this,SRect,sFileRequester);
     if (fileName!=NULL)
-        m_pcMainWindow->Load(fileName);
+        pcAppWindow->Load(fileName);
 
-    m_pcMainWindow->Show();
-    m_pcMainWindow->MakeFocus();
+    pcAppWindow->Show();
+    pcAppWindow->MakeFocus();
+    pcWin = pcAppWindow;
+}
 
+bool ImageApp::OkToQuit()
+{
+    storeSettings();
+    return true;
+}
+
+bool ImageApp::getSize()
+{
+    return bSaveSize;
+}
+
+std::string ImageApp::getFilePath()
+{
+    return sFileRequester;
 }
 
 ImageApp::~ImageApp()
 {
-    //storeSettings();
-    //delete settings;
+    delete pcWin;
 }
 
-/*bool ImageApp::loadSettings()
+void ImageApp::HandleMessage(Message* pcMessage)
 {
-	
-	bool bFlag = false;
+    switch (pcMessage->GetCode())
+    {
+    case M_MESSAGE_PASSED:
+        pcMessage->FindBool("savesize",&bSaveSize);
+        pcMessage->FindString("dirname",&sFileRequester);
+        break;
+    }
+}
+
+bool ImageApp::loadSettings()
+{
+
+    bool bFlag = false;
     if(settings->Load() != 0)
-    	loadDefaults();
-      
-    else{
-    		if(settings->FindString("dirname",&sFileRequester)==0)
-    			bFlag = true;
-    	}
+        loadDefaults();
+
+    else
+    {
+        if(settings->FindString("dirname",&sFileRequester)!=0)
+            sFileRequester = getenv("HOME");
+
+        if(settings->FindBool("savesize",&bSaveSize)!=0)
+            bSaveSize = false;
+        else
+            settings->FindRect("rectsize",&r);
+
+        bFlag = true;
+    }
+
     return bFlag;
 }
- 
+
 bool ImageApp::storeSettings()
 {
-	settings->RemoveName("dirname");
-	settings->AddString("dirname","me");
-	settings->Save();
-	return false;
+    settings->RemoveName("dirname");
+    settings->RemoveName("savesize");
+    settings->RemoveName("rectsize");
+    settings->AddString("dirname",sFileRequester);
+    settings->AddBool("savesize",bSaveSize);
+    if (bSaveSize)
+        settings->AddRect("rectsize",pcWin->GetBounds());
+    settings->Save();
+    return true;
 }
- 
+
 void ImageApp::loadDefaults()
 {
-	sFileRequester = getenv("HOME");
-}*/
+    sFileRequester = getenv("HOME");
+    bSaveSize = false;
+}
+
+
+
+
+
+
+
+
+
 

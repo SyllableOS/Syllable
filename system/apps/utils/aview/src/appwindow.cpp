@@ -1,8 +1,10 @@
 #include "appwindow.h"
 #include "messages.h"
+#include "settingswindow.h"
 
-AppWindow::AppWindow(const Rect& cFrame, std::string& sFile) : Window(cFrame, "main_window", "AView 0.3 Beta",WND_NOT_RESIZABLE)
+AppWindow::AppWindow(ImageApp* App,const Rect& cFrame, std::string& sFile) : Window(cFrame, "main_window", "AView 0.4")
 {
+    pcApp = App;
     sFileRequester = sFile;
     m_pcLoadRequester=NULL;
     g_pcHScrollBar = NULL;
@@ -53,14 +55,15 @@ void AppWindow::SetupMenus()
 
     // Create the menus within the bar
     Menu* pcAppMenu = new Menu(Rect(0,0,0,0),"Application",ITEMS_IN_COLUMN);
-    pcAppMenu->AddItem("Settings...", NULL);
+    pcAppMenu->AddItem("Settings...",new Message(ID_SETTINGS));
     pcAppMenu->AddItem(new MenuSeparator());
     pcAppMenu->AddItem("About...", new Message(ID_ABOUT));
     pcAppMenu->AddItem(new MenuSeparator());
     pcAppMenu->AddItem("Quit", new Message (ID_EXIT));
 
     Menu* pcFileMenu = new Menu(Rect(0,0,1,1),"File", ITEMS_IN_COLUMN);
-    pcFileMenu->AddItem("Open...", new Message( ID_FILE_LOAD));
+    MenuItem* pcItem = new MenuItem("Open...",new Message(ID_FILE_LOAD));
+    pcFileMenu->AddItem(pcItem);
 
     Menu* pcViewMenu = new Menu(Rect(0,0,0,0),"View",ITEMS_IN_COLUMN);
     pcSizeFitAll = new CheckMenu("Fit to screen",NULL,true);
@@ -86,9 +89,8 @@ void AppWindow::SetupMenus()
 void AppWindow::SetupStatusBar()
 {
     pcStatusBar = new StatusBar(Rect(0,GetBounds().Height()-24,GetBounds().Width(), GetBounds().Height()-(-1)),"status_bar",3 );
-    pcStatusBar->configurePanel(0, StatusBar::CONSTANT,150);
-    pcStatusBar->configurePanel(1, StatusBar::CONSTANT, 100);
-    pcStatusBar->configurePanel(2,StatusBar::FILL, 100);
+    pcStatusBar->configurePanel(0, StatusBar::CONSTANT,330);
+    pcStatusBar->configurePanel(1, StatusBar::FILL, 120);
 
     pcStatusBar->setText("No files open!", 0,100);
 
@@ -108,7 +110,7 @@ void AppWindow::HandleMessage(Message* pcMessage)
     case ID_FILE_LOAD:
         {
             if (m_pcLoadRequester==NULL)
-                m_pcLoadRequester = new FileRequester(FileRequester::LOAD_REQ, new Messenger(this),getenv("$HOME"));
+                m_pcLoadRequester = new FileRequester(FileRequester::LOAD_REQ, new Messenger(this),sFileRequester.c_str());
             m_pcLoadRequester->CenterInWindow(this);
             m_pcLoadRequester->Show();
             m_pcLoadRequester->MakeFocus();
@@ -164,7 +166,7 @@ void AppWindow::HandleMessage(Message* pcMessage)
 
     case ID_ABOUT:
         {
-            Alert* pcAbout = new Alert("About AView","AView 0.3  Beta\n\nImage Viewer for Syllable    \nCopyright 2002 - 2003 Syllable Desktop Team\n\nAView is released under the GNU General\nPublic License. Please go to www.gnu.org\nmore information.\n",  Alert::ALERT_INFO, 0x00, "OK", NULL);
+            Alert* pcAbout = new Alert("About AView","AView 0.4\n\nImage Viewer for Syllable    \nCopyright 2002 - 2003 Syllable Desktop Team\n\nAView is released under the GNU General\nPublic License. Please go to www.gnu.org\nmore information.\n",  Alert::ALERT_INFO, 0x00, "OK", NULL);
             pcAbout->CenterInWindow(this);
             pcAbout->Go(new Invoker());
             break;
@@ -176,6 +178,23 @@ void AppWindow::HandleMessage(Message* pcMessage)
             pcHelp->CenterInWindow(this);
             pcHelp->Go(new Invoker());
         }
+        break;
+
+    case ID_SETTINGS:
+        {
+            SettingsWindow* pcSettingsWindow = new SettingsWindow(pcApp,this);
+            pcSettingsWindow->CenterInWindow(this);
+            pcSettingsWindow->Show();
+            pcSettingsWindow->MakeFocus();
+        }
+        break;
+
+    case M_MESSAGE_PASSED:
+        pcMessage->FindString("dirname",&sFileRequester);
+        m_pcLoadRequester = NULL;
+        //m_pcLoadRequester->SetPath(sFileRequester);
+        break;
+
     default:
         Window::HandleMessage( pcMessage);
         break;
@@ -265,12 +284,12 @@ void AppWindow::Load(const char *cFileName)
                 main_bitmap_view->SetFrame(Rect(0,22,GetBounds().right-15, GetBounds().bottom-39));
                 AddChild( main_bitmap_view );
 
-                g_pcVScrollBar = new  ScrollBar(Rect(cScrollRect.Width()+1,22, GetBounds().Width(),GetBounds().Height()-(pcStatusBar->GetBounds().top+pcStatusBar->GetBounds().bottom+13)),"sc",new Message(ID_SCROLL_VERTICAL),CF_FOLLOW_ALL);
+                g_pcVScrollBar = new  ScrollBar(Rect(cScrollRect.Width()+1,22, GetBounds().Width(),GetBounds().Height()-(pcStatusBar->GetBounds().top+pcStatusBar->GetBounds().bottom+13)),"sc",new Message(ID_SCROLL_VERTICAL),0,FLT_MAX,VERTICAL,CF_FOLLOW_RIGHT|CF_FOLLOW_TOP|CF_FOLLOW_BOTTOM);
                 g_pcVScrollBar->SetScrollTarget(main_bitmap_view);
 
                 AddChild(g_pcVScrollBar);
 
-                g_pcHScrollBar = new ScrollBar(Rect(0,GetBounds().Height()-39,GetBounds().Width(),GetBounds().Height()-24), "sc2",new Message(ID_SCROLL_HORIZONTAL),0,FLT_MAX,HORIZONTAL, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT);
+                g_pcHScrollBar = new ScrollBar(Rect(0,GetBounds().Height()-39,GetBounds().Width(),GetBounds().Height()-24), "sc2",new Message(ID_SCROLL_HORIZONTAL),0,FLT_MAX,HORIZONTAL, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT |CF_FOLLOW_BOTTOM);
                 g_pcHScrollBar->SetScrollTarget(main_bitmap_view);
 
                 AddChild(g_pcHScrollBar);
@@ -283,9 +302,9 @@ void AppWindow::Load(const char *cFileName)
 
             if(bSetTitle==true)
             {
-                string sTitle = (string)"AView 0.3 Beta- " + (string)cFileName;
+                string sTitle = (string)"AView 0.4- " + (string)cFileName;
                 char sRes[1024];
-                sprintf((char*)sRes,"%.0fx%.0f",main_bitmap->GetBounds().Width(), main_bitmap->GetBounds().Height());
+                sprintf((char*)sRes,"%.0fx%.0f",main_bitmap->GetBounds().Width()+1, main_bitmap->GetBounds().Height()+1);
 
                 SetTitle(sTitle.c_str());
                 pcStatusBar->setText(cFileName,0,0);
@@ -379,6 +398,16 @@ void AppWindow::BuildDirList(const char* pzFPath)
 
 
 }
+
+
+
+
+
+
+
+
+
+
 
 
 

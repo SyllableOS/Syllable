@@ -6,7 +6,7 @@
 #include "loadbitmap.h"
 #include "bitmapview.h"
 #include "statusbar.h"
-
+#include "mainapp.h"
 #include <gui/view.h>
 #include <gui/desktop.h>
 #include <gui/requesters.h>
@@ -28,7 +28,7 @@ using namespace os;
 class AppWindow : public Window
 {
 public:
-    AppWindow(const Rect& cFrame, std::string&);
+    AppWindow(ImageApp*,const Rect& cFrame, std::string&);
     void AddItems();
     void DispatchMessage(Message* pcMsg, Handler* pcHandler);
     virtual void HandleMessage(Message* pcMessage);
@@ -65,7 +65,12 @@ private:
     int nKeyCode;
     bool bSetTitle;
     std::string sFileRequester;
+    ImageApp* pcApp;
 };
+
+
+
+
 
 
 
