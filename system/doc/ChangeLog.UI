@@ -1,3 +1,8 @@
+* June 30 2003, Henrik Isaksson *
+
+Applied screenshot date+time patch from Rick. (Names screenshot files with date
+& time, instead of just "screenshot.png".)
+
 * June 14 2003, Kaj de Vos *
 
 Imported Bitstream Vera fonts 1.10.
