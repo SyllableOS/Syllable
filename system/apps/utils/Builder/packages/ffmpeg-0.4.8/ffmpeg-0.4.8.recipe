@@ -1,16 +1,20 @@
 authors
 	Arno Klenke
 	Kaj de Vos
-status		developing
-licenses	LGPL GPL
+status			developing
+
+licenses		LGPL GPL
+
 configure-options
 	--extra-cflags="-DPIC -fomit-frame-pointer"
 	--extra-libs="-lm -ldl"
-	--disable-mmx
+;	--disable-mmx
 	--disable-v4l
 	--disable-audio-oss
 	--disable-vhook
 	--disable-dv1394
 	--disable-risky
-;install-files libavcodec/libavcodec.a libavformat/libavformat.a
-documentation README COPYING Changelog CREDITS doc/TODO doc/*.html
+install-files
+	libavcodec/libavcodec.a		lib
+	libavformat/libavformat.a	lib
+documentation	README COPYING Changelog CREDITS doc/TODO doc/*.html

@@ -6,7 +6,7 @@ configure-options
 	--source-path=$PWD
 	--extra-cflags="-DPIC -fomit-frame-pointer"
 	--extra-libs="-lm -ldl"
-	--disable-mmx
+;	--disable-mmx
 	--disable-v4l
 	--disable-audio-oss
 	--disable-vhook
