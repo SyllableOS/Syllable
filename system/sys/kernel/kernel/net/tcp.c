@@ -705,6 +705,11 @@ static ssize_t tcp_recvmsg( Socket_s *psSocket, struct msghdr *psMsg, int nFlags
 		printk( "Warning: tcp_recvmsg() Dont understand MSG_PROXY\n" );
 	}
 
+	if( nFlags & MSG_PEEK )
+	{
+		return( tcp_peekmsg( psSocket, psMsg ) );
+	}
+
       retry:
 	LOCK( psTCPCtrl->tcb_hMutex );
 
