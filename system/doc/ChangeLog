@@ -1,3 +1,40 @@
+* Jul 5 2002, Kristian Van Der Vliet *
+
+Added apm_poweroff() function from a patch Anthony Morphett < tonymorph@yahoo.com >
+in kernel.c
+
+* Jul 5 2002, Kristian Van Der Vliet *
+
+Added shutdown.c to apps/utils/sysutils
+
+* Jul 4 2002, Kristian Van Der Vliet *
+
+Added the following drivers:
+
+	Network Interface Cards:
+		3c509
+		3c59x
+		pcnet32
+		tulip
+
+	Sound:
+		emu10k1
+		es1371
+		sbpro
+		via686a
+
+	Video:
+		mach64
+		trident
+
+* Jul 4 2002, Kristian Van Der Vliet *
+
+Added apps/utils/mixer
+
+* Jul 4 2002, Kristian Van Der Vliet *
+
+Updated build-tools/mkdisttree.sh
+
 * Jul 2 2002, Kristian Van Der Vliet *
 
 Added the following Window Decorators:
@@ -17,4 +54,5 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
 
