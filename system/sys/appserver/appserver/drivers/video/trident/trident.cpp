@@ -367,7 +367,7 @@ TridentDriver::TridentDriver( int nFd )
 
   if ( ! bFound ) {
     dbprintf( "No Trident video card found\n" );
-    throw exception();
+    throw std::exception();
   }
 
   // From here, we are sure to have at least one Trident Card.
@@ -416,13 +416,13 @@ TridentDriver::TridentDriver( int nFd )
                                       AREA_FULL_ACCESS, AREA_NO_LOCK );
     if ( m_hFrameBufferArea <= 0 ) {
       dbprintf("Unable to create Frame Buffer area\n");
-      throw exception();
+      throw std::exception();
     }
     remap_area( m_hFrameBufferArea, (void*) m_pFrameBufferBase );
     dbprintf("Frame Buffer set to 0x%lx.\n", m_pFrameBufferBase );
   } else {
     dbprintf("No Frame Buffer Address defined. Must Stop.\n");
-    throw exception();
+    throw std::exception();
   }
 
   if ( m_pMMIOBase != 0 ) {
@@ -431,7 +431,7 @@ TridentDriver::TridentDriver( int nFd )
                                AREA_FULL_ACCESS, AREA_NO_LOCK );
     if ( m_hMMIOArea <= 0 ) {
       dbprintf("Unable to create MMIO area\n");
-      throw exception();
+      throw std::exception();
     }
     remap_area( m_hMMIOArea, (void*) m_pMMIOBase );
     dbprintf("MMIO address set to 0x%lx.\n", m_pMMIOBase );
@@ -563,13 +563,7 @@ extern "C" DisplayDriver* init_gfx_driver( int nFd )
 	DisplayDriver* pcDriver = new TridentDriver( nFd );
 	return( pcDriver );
   }
-  catch( exception&  cExc ) {
+  catch( std::exception&  cExc ) {
 	return( NULL );
   }
 }
-
-
-
-
-
-
