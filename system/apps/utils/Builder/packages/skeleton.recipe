@@ -1,18 +1,32 @@
-package-name		<Deviating tarball name>
 authors				
 maintainers			
+package-name		<Deviating tarball name>
+;
 ; Patching options:
 patch-config		[<Directory>]
 patch-legacy-config
+;
+; Configuring:
+; [<configure-vars>] <configure-cmd> [<configure-args>] [<configure-options>]
+;
 ; Extra variables for configure:
 configure-vars		VAR="value"
 ; Non-standard configure command:
 configure-cmd		configure
+; Non-standard prefix argument:
+configure-args		--prefix=/usr/foo
 ; Extra configure options:
 configure-options	
+;
+; Installing:
+; make install [<install-prefix>]
+;
 ; Non-standard install prefix option:
 install-prefix		prefix=
+;
 ; Extra files to install:
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
 ; Extra files to pack:
 distro-files		
+
+
