@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -22,8 +23,8 @@
 
 #include <storage/file.h>
 #include <atheos/image.h>
+#include <util/string.h>
 
-#include <string>
 #include <vector>
 
 namespace os {
@@ -68,32 +69,30 @@ public:
     };
 public:
     RegExp();
-    RegExp( const std::string& cExpression, bool bNoCase = false, bool bExtended = false );
+    RegExp( const String& cExpression, bool bNoCase = false, bool bExtended = false );
     ~RegExp();
 
-    status_t Compile( const std::string& cExpression, bool bNoCase = false, bool bExtended = false );
+    status_t Compile( const String& cExpression, bool bNoCase = false, bool bExtended = false );
     int	     GetSubExprCount() const;
     bool IsValid() const;
     
-    bool Search( const std::string& cString );
-    bool Search( const std::string& cString, int nStart, int nLen = -1 );
-    bool Match( const std::string& cString );
-    bool Match( const std::string& cString, int nStart, int nLen = -1 );
+    bool Search( const String& cString );
+    bool Search( const String& cString, int nStart, int nLen = -1 );
+    bool Match( const String& cString );
+    bool Match( const String& cString, int nStart, int nLen = -1 );
 
-    std::string Expand( const std::string& cPattern ) const;
+    String Expand( const String& cPattern ) const;
     
     int GetStart() const;
     int GetEnd() const;
     
-    const std::string& GetSubString( uint nIndex ) const;
+    const String& GetSubString( uint nIndex ) const;
     bool	       GetSubString( uint nIndex, int* pnStart, int* pnEnd ) const;
-    const std::vector<std::string>& GetSubStrList() const;
+    const std::vector<String>& GetSubStrList() const;
 private:
     class Private;
     Private* m;
 };
-
-
 
 } // end of namespace
 

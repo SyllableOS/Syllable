@@ -40,8 +40,8 @@ struct ResourceDesc
 	off_t m_nFileOffset;
 	ssize_t m_nHeaderSize;
 	ssize_t m_nSize;
-	  std::string m_cName;
-	  std::string m_cType;
+	  String m_cName;
+	  String m_cType;
 };
 
 /** \internal */
@@ -63,13 +63,13 @@ class ResStream::Private
 	SeekableIO * m_pcStream;
 	off_t m_nImageOffset;
 	ssize_t m_nSize;
-	std::string m_cName;
-	std::string m_cType;
+	String m_cName;
+	String m_cType;
 	off_t m_nCurOffset;
 	bool m_bReadOnly;
 };
 
-ResStream::ResStream( SeekableIO * pcFile, off_t nOffset, const std::string & cName, const std::string & cType, ssize_t nSize, bool bReadOnly )
+ResStream::ResStream( SeekableIO * pcFile, off_t nOffset, const String & cName, const String & cType, ssize_t nSize, bool bReadOnly )
 {
 	m = new Private;
 
@@ -95,7 +95,7 @@ ResStream::~ResStream()
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-std::string ResStream::GetName() const
+String ResStream::GetName() const
 {
 	return ( m->m_cName );
 }
@@ -108,7 +108,7 @@ std::string ResStream::GetName() const
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-std::string ResStream::GetType() const
+String ResStream::GetType() const
 {
 	return ( m->m_cType );
 }
@@ -594,7 +594,7 @@ int Resources::GetResourceCount() const
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-std::string Resources::GetResourceName( uint nIndex ) const
+String Resources::GetResourceName( uint nIndex ) const
 {
 	if( nIndex < m->m_cResources.size() )
 	{
@@ -617,7 +617,7 @@ std::string Resources::GetResourceName( uint nIndex ) const
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-std::string Resources::GetResourceType( uint nIndex ) const
+String Resources::GetResourceType( uint nIndex ) const
 {
 	if( nIndex < m->m_cResources.size() )
 	{
@@ -681,7 +681,7 @@ ssize_t Resources::GetResourceSize( uint nIndex ) const
  *****************************************************************************/
 
 
-ssize_t Resources::ReadResource( const std::string & cResName, void *pBuffer, std::string * pcResType, ssize_t nSize )
+ssize_t Resources::ReadResource( const String & cResName, void *pBuffer, String * pcResType, ssize_t nSize )
 {
 	ResStream *pcStream = GetResourceStream( cResName );
 
@@ -730,7 +730,7 @@ ssize_t Resources::ReadResource( const std::string & cResName, void *pBuffer, st
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-ResStream *Resources::GetResourceStream( const std::string & cName )
+ResStream *Resources::GetResourceStream( const String & cName )
 {
 	for( uint i = 0; i < m->m_cResources.size(); ++i )
 	{
@@ -758,10 +758,10 @@ ResStream *Resources::GetResourceStream( const std::string & cName )
 /** Get a seekable-data stream referencing a resource's data.
  * \par Description:
  *	GetResourceStream(uint) have the same functionality as
- *	GetResourceStream(const std::string&) except that the resource is
+ *	GetResourceStream(const String&) except that the resource is
  *	identified by an index instead of the resource name. This can be
  *	useful when for example iterating over all the resources in an
- *	archive. Look at GetResourceStream(const std::string&) for a more
+ *	archive. Look at GetResourceStream(const String&) for a more
  *	detailed description of the functionality.
  * \note
  *	It is your responsibility to delete the returned stream object
@@ -775,7 +775,7 @@ ResStream *Resources::GetResourceStream( const std::string & cName )
  * \return Pointer to a os::ResStream object or NULL if the index was out
  *	   of range or if something whent wrong during creation of the
  *	   stream object.
- * \sa GetResourceStream(const std::string&)
+ * \sa GetResourceStream(const String&)
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
@@ -831,7 +831,7 @@ ResStream *Resources::GetResourceStream( uint nIndex )
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-ResStream *Resources::CreateResource( const std::string & cName, const std::string & cType, ssize_t nSize )
+ResStream *Resources::CreateResource( const String & cName, const String & cType, ssize_t nSize )
 {
 	ResourceDesc sDesc;
 
@@ -990,3 +990,4 @@ status_t Resources::FindExecutableResource( SeekableIO * pcStream, off_t *pnOffs
 	errno = ENOENT;
 	return ( -1 );
 }
+

@@ -64,12 +64,12 @@ void TranslatorFactory::LoadAll()
     try {
 	Directory cDir( "/system/translators" );
 
-	std::string cName;
+	String cName;
 	while( cDir.GetNextEntry( &cName ) == 1 ) {
 	    if ( cName == "." || cName == ".." ) {
 		continue;
 	    }
-	    std::string cPath( "/system/translators/" );
+	    String cPath( "/system/translators/" );
 	    cPath += cName;
 
 	    int nLib = load_library( cPath.c_str(), 0 );
@@ -115,7 +115,7 @@ void TranslatorFactory::LoadAll()
     }
 }
 
-status_t TranslatorFactory::FindTranslator( const std::string& cSrcType, const std::string& cDstType,
+status_t TranslatorFactory::FindTranslator( const String& cSrcType, const String& cDstType,
 					    const void* pData, size_t nLen, Translator** ppcTrans )
 {
     float vBestQuality = -1000.0f;
@@ -280,4 +280,5 @@ TranslatorNode::TranslatorNode()
 TranslatorNode::~TranslatorNode()
 {
 }
+
 

@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -22,6 +23,7 @@
 
 #include <string.h>
 #include <errno.h>
+#include <util/string.h>
 
 #include <exception>
 
@@ -33,17 +35,18 @@ namespace os {
 class errno_exception : public exception
 {
 public:
-    errno_exception( const std::string& cMessage, int nErrorCode ) : m_cMessage(cMessage) {
+    errno_exception( const String& cMessage, int nErrorCode ) : m_cMessage(cMessage) {
 	m_nErrorCode = nErrorCode;
     }
-    errno_exception( const std::string& cMessage ) : m_cMessage(cMessage) {
+    errno_exception( const String& cMessage ) : m_cMessage(cMessage) {
 	m_nErrorCode = errno;
     }
+
     virtual const char* what () const { return( m_cMessage.c_str() ); }
     char* error_str() const { return( strerror( m_nErrorCode ) ); }
     int error() const { return( m_nErrorCode ); }
 private:
-    std::string m_cMessage;
+    String m_cMessage;
     int		m_nErrorCode;
 };
 
@@ -51,3 +54,5 @@ private:
 } // end of namespace
 
 #endif // __UTIL_EXCEPTIONS_H__
+
+

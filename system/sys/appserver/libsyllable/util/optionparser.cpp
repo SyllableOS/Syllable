@@ -4,20 +4,20 @@
 #include <termios.h>
 
 #include <util/optionparser.h>
-//#include <util/string.h>
+#include <util/string.h>
 
 
 using namespace os;
 
 struct OptionDesc
 {
-	OptionDesc( char nOption, const std::string & cLongName, const std::string & cDesc ):m_nOption( nOption ), m_cLongName( cLongName ), m_cDescription( cDesc )
+	OptionDesc( char nOption, const String & cLongName, const String & cDesc ):m_nOption( nOption ), m_cLongName( cLongName ), m_cDescription( cDesc )
 	{
 	}
 	char m_nOption;
 
-	std::string m_cLongName;
-	std::string m_cDescription;
+	String m_cLongName;
+	String m_cDescription;
 };
 
 class OptionParser::Private
@@ -25,8 +25,8 @@ class OptionParser::Private
       public:
 	int m_nCurrentOption;
 	std::vector < OptionDesc > m_cOptionMap;
-	std::vector < std::string > m_cArgs;
-	std::vector < std::string > m_cFileArgs;
+	std::vector < String > m_cArgs;
+	std::vector < String > m_cFileArgs;
 	std::vector < option > m_cOptionList;
 };
 
@@ -45,7 +45,7 @@ OptionParser::~OptionParser()
 	delete m;
 }
 
-void OptionParser::AddArgMap( const std::string & cLongArg, char nShortArg, const std::string & cDescription )
+void OptionParser::AddArgMap( const String & cLongArg, char nShortArg, const String & cDescription )
 {
 	m->m_cOptionMap.push_back( OptionDesc( nShortArg, cLongArg, cDescription ) );
 }
@@ -68,7 +68,7 @@ void OptionParser::ParseOptions( const char *pzOptions )
 
 	for( uint i = 1; i < m->m_cArgs.size(); ++i )
 	{
-		const std::string & cArg = m->m_cArgs[i];
+		const String & cArg = m->m_cArgs[i];
 
 		if( bDoParse == false )
 		{
@@ -116,9 +116,9 @@ void OptionParser::ParseOptions( const char *pzOptions )
 		}
 		else if( cArg[1] == '-' )
 		{
-			uint nOffset = cArg.find( '=' );
+			int nOffset = cArg.const_str().find( '=' );
 
-			if( nOffset == std::string::npos )
+			if( nOffset == String::npos )
 			{
 				sOption.long_name = cArg.c_str() + 2;
 				sOption.opt = _MapLongOpt( sOption.long_name );
@@ -127,9 +127,9 @@ void OptionParser::ParseOptions( const char *pzOptions )
 			}
 			else
 			{
-				sOption.long_name = std::string( cArg.begin() + 2, cArg.begin(  ) + nOffset );
+				sOption.long_name = String( cArg.begin() + 2, cArg.begin(  ) + nOffset );
 				sOption.opt = _MapLongOpt( sOption.long_name );
-				sOption.value = std::string( cArg.begin() + nOffset + 1, cArg.end(  ) );
+				sOption.value = String( cArg.begin() + nOffset + 1, cArg.end(  ) );
 				sOption.raw_opt = cArg;
 				sOption.has_value = true;
 			}
@@ -164,7 +164,7 @@ const OptionParser::option * OptionParser::FindOption( char nOpt ) const
 	return ( NULL );
 }
 
-const OptionParser::option * OptionParser::FindOption( const std::string & cLongName ) const
+const OptionParser::option * OptionParser::FindOption( const String & cLongName ) const
 {
 	for( uint i = 0; i < m->m_cOptionList.size(); ++i )
 	{
@@ -205,23 +205,23 @@ const OptionParser::option * OptionParser::GetOption( uint nIndex ) const
 	}
 }
 
-std::string OptionParser::operator[]( int nIndex )
+String OptionParser::operator[]( int nIndex )
     const
     {
 	    return ( m->m_cFileArgs[nIndex] );
     }
 
-    const std::vector < std::string > &OptionParser::GetArgs() const
+    const std::vector < String > &OptionParser::GetArgs() const
 {
 	return ( m->m_cArgs );
 }
 
-const std::vector < std::string > &OptionParser::GetFileArgs() const
+const std::vector < String > &OptionParser::GetFileArgs() const
 {
 	return ( m->m_cFileArgs );
 }
 
-std::string OptionParser::GetHelpText( int nWidth ) const
+String OptionParser::GetHelpText( int nWidth ) const
 {
 	if( nWidth == 0 )
 	{
@@ -253,11 +253,11 @@ std::string OptionParser::GetHelpText( int nWidth ) const
 	{
 		bToSmall = true;
 	}
-	std::string cBuffer;
+	String cBuffer;
 
 	for( uint i = 0; i < m->m_cOptionMap.size(); ++i )
 	{
-		std::string cLine = "  ";
+		String cLine = "  ";
 		if( m->m_cOptionMap[i].m_nOption != 0 )
 		{
 			cLine += "-";
@@ -299,7 +299,7 @@ std::string OptionParser::GetHelpText( int nWidth ) const
 				cLine += "\n";
 			}
 		}
-		std::string cDesc( m->m_cOptionMap[i].m_cDescription );
+		String cDesc( m->m_cOptionMap[i].m_cDescription );
 		uint nSegLen = nWidth - nTotArgLen;
 
 		if( bToSmall )
@@ -383,8 +383,8 @@ std::string OptionParser::GetHelpText( int nWidth ) const
 					nLen = nWidth;
 					nEraseLen = nWidth;
 				}
-				cLine.insert( cLine.end(), cDesc.begin(  ), cDesc.begin(  ) + nLen );
-				cDesc.erase( cDesc.begin(), cDesc.begin(  ) + nEraseLen );
+				cLine.str().insert( cLine.end(), cDesc.begin(  ), cDesc.begin(  ) + nLen );
+				cDesc.str().erase( cDesc.begin(), cDesc.begin(  ) + nEraseLen );
 				cLine += "\n";
 			}
 		}
@@ -404,7 +404,7 @@ void OptionParser::PrintHelpText( FILE *hStream, int nWidth ) const
 	fprintf( hStream, "%s", GetHelpText( nWidth ).c_str() );
 }
 
-char OptionParser::_MapLongOpt( const std::string & cOpt ) const
+char OptionParser::_MapLongOpt( const String & cOpt ) const
 {
 	for( uint i = 0; i < m->m_cOptionMap.size(); ++i )
 	{
@@ -415,3 +415,4 @@ char OptionParser::_MapLongOpt( const std::string & cOpt ) const
 	}
 	return ( 0 );
 }
+

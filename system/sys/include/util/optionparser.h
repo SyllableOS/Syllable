@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -22,8 +23,8 @@
 
 #include <stdio.h>
 #include <atheos/types.h>
+#include <util/string.h>
 
-#include <string>
 #include <vector>
 
 namespace os {
@@ -61,46 +62,46 @@ class OptionParser
 {
 public:
     struct option {
-	char 	    opt;
-	std::string long_name;
-	std::string raw_opt;
-	std::string value;
-	bool	    has_value;
+		char 	    opt;
+		String long_name;
+		String raw_opt;
+		String value;
+		bool	    has_value;
     };
     struct argmap {
-	const char* long_name;
-	char	    opt;
-	const char* desc;
+		const char* long_name;
+		char	    opt;
+		const char* desc;
     };
 
     OptionParser( int argc, const char * const * argv );
     ~OptionParser();
 
     void AddArgMap( const argmap* pasMap );
-    void AddArgMap( const std::string& cLongArg, char nShortArg, const std::string& cDesc );
+    void AddArgMap( const String& cLongArg, char nShortArg, const String& cDesc );
     void ParseOptions( const char* pzOptions );
 
     int  GetOptionCount() const;
     int	 GetFileCount() const;
     
     const option* FindOption( char nOpt ) const;
-    const option* FindOption( const std::string& cLongName ) const;
+    const option* FindOption( const String& cLongName ) const;
     
     const option* GetNextOption();
     void	  RewindOptions();
     const option* GetOption( uint nIndex ) const;
     
     
-    const std::vector<std::string>& GetArgs() const;
-    const std::vector<std::string>& GetFileArgs() const;
+    const std::vector<String>& GetArgs() const;
+    const std::vector<String>& GetFileArgs() const;
 
-    std::string GetHelpText( int nWidth = 0 ) const;
+    String GetHelpText( int nWidth = 0 ) const;
     void	PrintHelpText( int nWidth = 0 ) const;
     void	PrintHelpText( FILE* hStream, int nWidth = 0 ) const;
     
-    std::string operator[](int nIndex) const;
+    String operator[](int nIndex) const;
 private:
-    char _MapLongOpt( const std::string& cOpt ) const;
+    char _MapLongOpt( const String& cOpt ) const;
     class Private;
     Private* m;
 };

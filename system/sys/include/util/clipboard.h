@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -22,8 +23,7 @@
 
 #include <util/message.h>
 #include <util/locker.h>
-
-#include <string>
+#include <util/string.h>
 
 namespace os
 {
@@ -43,7 +43,7 @@ class Clipboard
 {
 public:
     Clipboard();
-    Clipboard( const char* pzName );
+    Clipboard( const String& cName );
     ~Clipboard();
 
     bool	Lock();
@@ -57,14 +57,12 @@ public:
   
 private:
     Locker	m_cMutex;
-    std::string	m_cName;
+    String	m_cName;
     port_id	m_hServerPort;
     port_id	m_hReplyPort;
     Message	m_cBuffer;
     bool		m_bCleared;
 };
-
-
 
 }
 #endif // __F_GUI_CLIPBOARD_H__

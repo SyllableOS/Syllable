@@ -1,3 +1,23 @@
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 Syllable Team
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of version 2 of the GNU Library
+ *  General Public License as published by the Free Software
+ *  Foundation.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Library General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Library General Public
+ *  License along with this library; if not, write to the Free
+ *  Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+ *  MA 02111-1307, USA
+ */
+
 #ifndef __F_TRANSLATION_TRANSLATOR_H__
 #define __F_TRANSLATION_TRANSLATOR_H__
 
@@ -6,7 +26,7 @@
 #include <gui/rect.h>
 #include <gui/guidefines.h>
 
-#include <string>
+#include <util/string.h>
 
 namespace os
 {
@@ -88,8 +108,8 @@ private:
 
 struct TranslatorInfo
 {
-    std::string source_type;
-    std::string dest_type;
+    String source_type;
+    String dest_type;
     float	quality;
 };
 
@@ -99,7 +119,7 @@ public:
     TranslatorNode();
     virtual ~TranslatorNode();
 
-    virtual int Identify( const std::string& cSrcType, const std::string& cDstType, const void* pData, int nLen ) = 0;
+    virtual int Identify( const String& cSrcType, const String& cDstType, const void* pData, int nLen ) = 0;
     virtual TranslatorInfo GetTranslatorInfo() = 0;
     virtual Translator*	   CreateTranslator() = 0;
 private:
@@ -120,7 +140,7 @@ public:
     
     void LoadAll();
 
-    status_t FindTranslator( const std::string& cSrcType, const std::string& cDstType,
+    status_t FindTranslator( const String& cSrcType, const String& cDstType,
 			     const void* pData, size_t nLen, Translator** ppcTrans );
 
     int             GetTranslatorCount();
@@ -135,9 +155,5 @@ private:
 
     
 } // end of namespace
-
-
-
-
 
 #endif // __F_TRANSLATION_TRANSLATOR_H__

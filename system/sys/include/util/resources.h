@@ -48,8 +48,8 @@ class ResStream : public SeekableIO
 public:
     ~ResStream();
     
-    std::string GetName() const;
-    std::string GetType() const;
+    String GetName() const;
+    String GetType() const;
     ssize_t	GetSize() const;
 
       // From StreamableIO
@@ -62,7 +62,7 @@ public:
     virtual off_t   Seek( off_t nPos, int nMode );
 private:
     friend class Resources;
-    ResStream( SeekableIO* pcFile, off_t nOffset, const std::string& cName, const std::string& cType, ssize_t nSize, bool bReadOnly );
+    ResStream( SeekableIO* pcFile, off_t nOffset, const String& cName, const String& cType, ssize_t nSize, bool bReadOnly );
 
     class Private;
     Private* m;
@@ -115,14 +115,14 @@ public:
 
     void	DetachStream();
     int		GetResourceCount() const;
-    std::string GetResourceName( uint nIndex ) const;
-    std::string GetResourceType( uint nIndex ) const;
+    String GetResourceName( uint nIndex ) const;
+    String GetResourceType( uint nIndex ) const;
     ssize_t 	GetResourceSize( uint nIndex ) const;
     
-    ssize_t	ReadResource( const std::string& cResName, void* pBuffer, std::string* pzResType, ssize_t nSize );
-    ResStream*	GetResourceStream( const std::string& cName );
+    ssize_t	ReadResource( const String& cResName, void* pBuffer, String* pzResType, ssize_t nSize );
+    ResStream*	GetResourceStream( const String& cName );
     ResStream*	GetResourceStream( uint nIndex );
-    ResStream*	CreateResource( const std::string& cName, const std::string& cType, ssize_t nSize );
+    ResStream*	CreateResource( const String& cName, const String& cType, ssize_t nSize );
 
     status_t	FindExecutableResource( SeekableIO* pcStream, off_t* pnOffset, ssize_t* pnSize, const char* pzSectionName = NULL );
 private:
@@ -135,3 +135,4 @@ private:
 } // end of namespace
 
 #endif // __F_UTIL_RESOURCES_H__
+

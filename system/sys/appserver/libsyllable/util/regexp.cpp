@@ -1,6 +1,6 @@
-
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -35,7 +35,7 @@ class RegExp::Private
       public:
 	regex_t m_sRegex;
 	regmatch_t *m_pasMatches;
-	std::vector < std::string > m_cSubStrings;
+	std::vector < String > m_cSubStrings;
 	int m_nStartPos;
 	bool m_bValid;
 };
@@ -108,7 +108,7 @@ RegExp::RegExp()
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-RegExp::RegExp( const std::string & cExpression, bool bNoCase, bool bExtended )
+RegExp::RegExp( const String & cExpression, bool bNoCase, bool bExtended )
 {
 	m = new Private;
 	m->m_pasMatches = NULL;
@@ -189,7 +189,7 @@ RegExp::~RegExp()
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-status_t RegExp::Compile( const std::string & cExpression, bool bNoCase, bool bExtended )
+status_t RegExp::Compile( const String & cExpression, bool bNoCase, bool bExtended )
 {
 	if( m->m_bValid )
 	{
@@ -282,11 +282,11 @@ bool RegExp::IsValid() const
  * \return Returns \b true if the pattern was found or false if no
  *	   match was found or if the os::RegExp object don't contain a
  *	   valid regular expression.
- * \sa Search(const std::string&,int,int), Match()
+ * \sa Search(const String&,int,int), Match()
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-bool RegExp::Search( const std::string & cString )
+bool RegExp::Search( const String & cString )
 {
 	if( m->m_bValid == false )
 	{
@@ -301,11 +301,11 @@ bool RegExp::Search( const std::string & cString )
 	{
 		if( m->m_pasMatches[i].rm_so != -1 )
 		{
-			m->m_cSubStrings.push_back( std::string( cString.begin() + m->m_pasMatches[i].rm_so, cString.begin(  ) + m->m_pasMatches[i].rm_eo ) );
+			m->m_cSubStrings.push_back( String( cString.begin() + m->m_pasMatches[i].rm_so, cString.begin(  ) + m->m_pasMatches[i].rm_eo ) );
 		}
 		else
 		{
-			m->m_cSubStrings.push_back( std::string() );
+			m->m_cSubStrings.push_back( String() );
 		}
 	}
 	return ( bResult );
@@ -313,7 +313,7 @@ bool RegExp::Search( const std::string & cString )
 
 /** Search for the previously compiled regular expression.
  * \par Description:
- *	Same as Search(const std::string&) except that you can specify
+ *	Same as Search(const String&) except that you can specify
  *	a range within the string that should be searched.
  * \param cString
  *	The string to search.
@@ -324,17 +324,17 @@ bool RegExp::Search( const std::string & cString )
  * \return Returns \b true if the pattern was found or false if no
  *	   match was found or if the os::RegExp object don't contain a
  *	   valid regular expression.
- * \sa Search(const std::string&)
+ * \sa Search(const String&)
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-bool RegExp::Search( const std::string & cString, int nStart, int nLen = -1 )
+bool RegExp::Search( const String & cString, int nStart, int nLen = -1 )
 {
 	if( nLen == -1 )
 	{
-		nLen = std::string::npos;
+		nLen = String::npos;
 	}
-	bool bResult = Search( std::string( cString, nStart, nLen ) );
+	bool bResult = Search( String( cString, nStart, nLen ) );
 
 	m->m_nStartPos = nStart;
 	return ( bResult );
@@ -342,7 +342,7 @@ bool RegExp::Search( const std::string & cString, int nStart, int nLen = -1 )
 
 /** Compare the regular expression to a string.
  * \par Description:
- *	Same as Search(const std::string&) except that the expression must
+ *	Same as Search(const String&) except that the expression must
  *	match the entire string to be successfull.
  * \param cString
  *	The string that should be compared to the regular expression.
@@ -354,7 +354,7 @@ bool RegExp::Search( const std::string & cString, int nStart, int nLen = -1 )
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-bool RegExp::Match( const std::string & cString )
+bool RegExp::Match( const String & cString )
 {
 	if( m->m_bValid == false )
 	{
@@ -372,11 +372,11 @@ bool RegExp::Match( const std::string & cString )
 	{
 		if( m->m_pasMatches[i].rm_so != -1 )
 		{
-			m->m_cSubStrings.push_back( std::string( cString.begin() + m->m_pasMatches[i].rm_so, cString.begin(  ) + m->m_pasMatches[i].rm_eo ) );
+			m->m_cSubStrings.push_back( String( cString.begin() + m->m_pasMatches[i].rm_so, cString.begin(  ) + m->m_pasMatches[i].rm_eo ) );
 		}
 		else
 		{
-			m->m_cSubStrings.push_back( std::string() );
+			m->m_cSubStrings.push_back( String() );
 		}
 	}
 	return ( bResult );
@@ -384,7 +384,7 @@ bool RegExp::Match( const std::string & cString )
 
 /** Compare the regular expression to a string.
  * \par Description:
- *	Same as Search(const std::string&,int,int) except that the expression must
+ *	Same as Search(const String&,int,int) except that the expression must
  *	match the entire sub-string to be successfull.
  * \param cString
  *	The string that should be compared to the regular expression.
@@ -395,17 +395,17 @@ bool RegExp::Match( const std::string & cString )
  * \return Returns \b true if the pattern matched or false if no
  *	   match was found or if the os::RegExp object don't contain a
  *	   valid regular expression.
- * \sa Match(const string&), Search(const std::string&,int,int)
+ * \sa Match(const string&), Search(const String&,int,int)
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-bool RegExp::Match( const std::string & cString, int nStart, int nLen = -1 )
+bool RegExp::Match( const String & cString, int nStart, int nLen = -1 )
 {
 	if( nLen == -1 )
 	{
-		nLen = std::string::npos;
+		nLen = String::npos;
 	}
-	bool bResult = Match( std::string( cString, nStart, nLen ) );
+	bool bResult = Match( String( cString, nStart, nLen ) );
 
 	m->m_nStartPos = nStart;
 	return ( bResult );
@@ -416,7 +416,7 @@ bool RegExp::Match( const std::string & cString, int nStart, int nLen = -1 )
  *	Expand a string using substrings from the previous search.
  *	Expand() will substitute "\%n" and "\%<nn>" constructs from
  *	\p cPattern with the string yielded by the referenced
- *	sub-expression and return the result in a new std::string object.
+ *	sub-expression and return the result in a new String object.
  * \par
  *	A substitution is initiated with a '\%' followed by a single
  *	digit or a single/multi-digit number within a <> construct.
@@ -441,9 +441,9 @@ bool RegExp::Match( const std::string & cString, int nStart, int nLen = -1 )
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-std::string RegExp::Expand( const std::string & cPattern ) const
+String RegExp::Expand( const String & cPattern ) const
 {
-	std::string cBuffer;
+	String cBuffer;
 	uint nStart = 0;
 	uint i;
 
@@ -453,7 +453,7 @@ std::string RegExp::Expand( const std::string & cPattern ) const
 		{
 			if( cPattern[i + 1] == '%' )
 			{
-				cBuffer.insert( cBuffer.end(), cPattern.begin(  ) + nStart, cPattern.begin(  ) + i );
+				cBuffer.str().insert( cBuffer.end(), cPattern.begin(  ) + nStart, cPattern.begin(  ) + i );
 				nStart = i + 1;
 				i++;
 			}
@@ -480,7 +480,7 @@ std::string RegExp::Expand( const std::string & cPattern ) const
 				}
 				if( nLen > 0 && nIndex > 0 && nIndex <= m->m_cSubStrings.size() )
 				{
-					cBuffer.insert( cBuffer.end(), cPattern.begin(  ) + nStart, cPattern.begin(  ) + i );
+					cBuffer.str().insert( cBuffer.end(), cPattern.begin(  ) + nStart, cPattern.begin(  ) + i );
 					cBuffer += m->m_cSubStrings[nIndex - 1];
 					i += nLen;
 					nStart = i + nLen;
@@ -490,7 +490,7 @@ std::string RegExp::Expand( const std::string & cPattern ) const
 	}
 	if( nStart < cPattern.size() )
 	{
-		cBuffer.insert( cBuffer.end(), cPattern.begin(  ) + nStart, cPattern.end(  ) );
+		cBuffer.str().insert( cBuffer.end(), cPattern.begin(  ) + nStart, cPattern.end(  ) );
 	}
 	return ( cBuffer );
 }
@@ -566,9 +566,9 @@ int RegExp::GetEnd() const
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-const std::string & RegExp::GetSubString( uint nIndex ) const
+const String & RegExp::GetSubString( uint nIndex ) const
 {
-	static std::string cEmpty;
+	static String cEmpty;
 
 	if( nIndex >= m->m_cSubStrings.size() )
 	{
@@ -642,7 +642,7 @@ bool RegExp::GetSubString( uint nIndex, int *pnStart, int *pnEnd ) const
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-const std::vector < std::string > &RegExp::GetSubStrList() const
+const std::vector < String > &RegExp::GetSubStrList() const
 {
 	return ( m->m_cSubStrings );
 }

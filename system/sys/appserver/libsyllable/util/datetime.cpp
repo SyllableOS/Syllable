@@ -5,6 +5,8 @@
 
 #include <util/datetime.h>
 
+using namespace os;
+
 const static int days_elapsed[13] = {	0, 306, 337, 0, 31, 61, 92, 122, 153, 184, 214, 245, 275 };
 const static int days_in_month[13] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
@@ -126,10 +128,10 @@ DateTime::DateTime( const DateTime& cDateTime)
  *			Creates a DateTime object from a string.
  * \author Henrik Isaksson (henrik@isaksson.tk)
  *****************************************************************************/
-DateTime::DateTime( const char *pzDate )
+DateTime::DateTime( const String& cDate )
 {
 	m = new Private;
-	SetDate( pzDate );
+	SetDate( cDate );
 }
 
 /** Constructor: struct tm
@@ -549,7 +551,7 @@ void DateTime::SetDate( int nYear, int nMonth, int nDay )
 	m->m_nDay = nDay;
 }
 
-bool DateTime::SetDate( const char *pzDate )
+bool DateTime::SetDate( const String& cDate )
 {
 	int y, m, d;
 	int h, mi, s;
@@ -559,7 +561,7 @@ bool DateTime::SetDate( const char *pzDate )
 	h = mi = s = 0;
 	
 	// First, try parsing as an ISO 8601 date
-	p = sscanf( pzDate, "%d-%d-%d %d:%d:%d", &y, &m, &d, &h, &mi, &s );
+	p = sscanf( cDate.c_str(), "%d-%d-%d %d:%d:%d", &y, &m, &d, &h, &mi, &s );
 	if( p > 2 ) {
 		if( y < 100 ) {
 			y = y + ( ( y > 50 ) ? 1900 : 2000 );	// This is the Y2k050 bug :o)
@@ -572,7 +574,7 @@ bool DateTime::SetDate( const char *pzDate )
 		return true;
 	} else {
 		// That didn't work, let's see if it's time only
-		p = sscanf( pzDate, "%d:%d:%d", &h, &mi, &s );
+		p = sscanf( cDate.c_str(), "%d:%d:%d", &h, &mi, &s );
 		if( p > 1 ) {
 			if( p < 3 ) s = 0;
 			SetTime( h, mi, s, 0 );
@@ -614,7 +616,7 @@ bool DateTime::SetDate( const char *pzDate )
 	return false;
 }
 
-std::string DateTime::GetDate() const
+String DateTime::GetDate() const
 {
 	char bfr[256];
 	struct tm *pstm;
@@ -624,7 +626,7 @@ std::string DateTime::GetDate() const
 
 	strftime( bfr, sizeof( bfr ), "%c", pstm );
 
-	return (std::string)bfr;
+	return (String)bfr;
 }
 
 int DateTime::GetDayOfWeek() const
