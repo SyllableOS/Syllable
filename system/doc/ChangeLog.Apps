@@ -1,3 +1,8 @@
+* June 24 2003, Kristian Van Der Vliet *
+	* Bug fixes to dhcpc
+		* Send & recieve on same port (BOOTPC, UDP 68)
+		* Seed RNG in dhcp_init() so that we get a unique XID
+
 * June 18 2003, Kristian Van Der Vliet *
 	* Add man2html scripts & source
 	* pkgmanager -a now calls the manaddpackage.sh script if a "man" directory exists
