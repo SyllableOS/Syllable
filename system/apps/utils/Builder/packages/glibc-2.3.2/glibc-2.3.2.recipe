@@ -36,10 +36,10 @@ configure-options
 ;	--disable-profile
 	--without-cvs
 
-make
+pre-make
 	mv /usr/gcc/lib/gcc-lib/i586-pc-syllable/3.3.4/specs /usr/gcc/lib/gcc-lib/i586-pc-syllable/3.3.4/specs.original
 	mv ../glibc-2.3.2/syllable/specs /usr/gcc/lib/gcc-lib/i586-pc-syllable/3.3.4
-	make
+post-make
 	mv /usr/gcc/lib/gcc-lib/i586-pc-syllable/3.3.4/specs.original /usr/gcc/lib/gcc-lib/i586-pc-syllable/3.3.4/specs
 
 ;make-targets
@@ -53,3 +53,4 @@ system-files
 documentation
 	README BUGS INSTALL COPYING.LIB COPYING LICENSES NEWS ChangeLog FAQ INTERFACE CONFORMANCE README.libm PROJECTS NOTES NAMESPACE
 	manual/examples
+

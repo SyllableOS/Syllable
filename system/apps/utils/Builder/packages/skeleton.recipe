@@ -67,8 +67,11 @@ configure-args		--prefix=/usr/foo
 configure-options	--with-option
 
 ; Building:
-; [<make-env>] make [<make-vars>] [<make-options>] <make-targets>
+; [<pre-make>]
+; [<make-env>] <make> [<make-vars>] [<make-options>] <make-targets>
+; [<post-make>]
 
+pre-make			<Commands preceding make>
 ; Extra environment variables for make:
 make-env
 	VAR 'value'
@@ -79,9 +82,10 @@ make-vars
 make-options		-option
 ; Non-standard make targets:
 ;make-targets		all
+post-make			<Commands following make>
 
 ; Testing:
-; make [<test-options>] <test-targets>
+; <make> [<test-options>] <test-targets>
 
 ; Extra test options:
 test-options		-k
@@ -92,7 +96,7 @@ install-tree		<Extra subdirectories to create>
 
 ; Installing:
 ; <install>
-; [<install-env>] make [<install-prefix-var>=<Installation path>] [<install-vars>] <install-targets>
+; [<install-env>] <make> [<install-prefix-var>=<Installation path>] [<install-vars>] <install-targets>
 
 install				<Installation commands>
 
