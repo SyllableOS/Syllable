@@ -12,4 +12,5 @@ install-tree
 	lib
 	man
 	man/man1
-documentation		README install.doc usage.doc wizard.doc change.log libjpeg.doc example.c structure.doc coderules.doc
+documentation		README install.doc usage.doc wizard.doc change.log libjpeg.doc example.c
+; jconfig.doc structure.doc coderules.doc
