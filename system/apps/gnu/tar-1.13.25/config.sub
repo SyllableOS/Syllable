@@ -217,6 +217,10 @@ case $os in
 		basic_machine=m68k-atari
 		os=-mint
 		;;
+	-atheos)
+		os=-atheos
+		basic_machine=`echo $1 | sed -e 's/86-.*/86-pc/'`
+		;;
 esac
 
 # Decode aliases for certain CPU-COMPANY combinations.
@@ -1069,7 +1073,7 @@ case $os in
 	      | -interix* | -uwin* | -rhapsody* | -darwin* | -opened* \
 	      | -openstep* | -oskit* | -conix* | -pw32* | -nonstopux* \
 	      | -storm-chaos* | -tops10* | -tenex* | -tops20* | -its* \
-	      | -os2* | -vos*)
+	      | -os2* | -vos* | -atheos*)
 	# Remember, each alternative MUST END IN *, to match a version number.
 		;;
 	-qnx*)
@@ -1169,6 +1173,9 @@ case $os in
 		;;
         -*mint | -mint[0-9]* | -*MiNT | -MiNT[0-9]*)
 	        os=-mint
+		;;
+	-atheos*)
+		os=-atheos
 		;;
 	-none)
 		;;
