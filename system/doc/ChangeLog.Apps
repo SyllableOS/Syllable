@@ -1,3 +1,9 @@
+* November 21th 2004, Henrik Isaksson *
+
+	- ATerm
+		o Improved dead key support
+		o Fixed compile warning ("int format int32 arg")
+
 * October 6th 2004, Kristian Van Der Vliet *
 
 	- ColdFish & MediaPlayer
