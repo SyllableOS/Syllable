@@ -28,7 +28,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Win98: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/Win98 /system/appserver -latheos -lstdc++
+	gcc $(OBJS) -o $(OBJDIR)/Win98 /system/appserver -latheos -lstdc++ -lz
 	gcc -plugin $(OBJS) -o $(OBJDIR)/Win98 -latheos -lstdc++
 
 install: $(OBJDIR)/Win98

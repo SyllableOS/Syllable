@@ -28,7 +28,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/drow: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/drow /system/appserver -latheos -lstdc++
+	gcc $(OBJS) -o $(OBJDIR)/drow /system/appserver -latheos -lstdc++ -lz
 	gcc -plugin $(OBJS) -o $(OBJDIR)/drow -latheos -lstdc++
 
 install: $(OBJDIR)/drow

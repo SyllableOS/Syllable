@@ -26,7 +26,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/amiga: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/amiga /system/appserver -latheos -lstdc++
+	gcc $(OBJS) -o $(OBJDIR)/amiga /system/appserver -latheos -lstdc++ -lz
 	gcc -plugin $(OBJS) -o $(OBJDIR)/amiga -latheos -lstdc++
 
 deps:

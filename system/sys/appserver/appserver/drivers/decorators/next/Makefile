@@ -26,7 +26,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/next: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/next /system/appserver -latheos -lstdc++
+	gcc $(OBJS) -o $(OBJDIR)/next /system/appserver -latheos -lstdc++ -lz
 	gcc -plugin $(OBJS) -o $(OBJDIR)/next -latheos -lstdc++
 
 deps:

@@ -28,7 +28,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Red: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/Red /system/appserver -latheos -lstdc++
+	gcc $(OBJS) -o $(OBJDIR)/Red /system/appserver -latheos -lstdc++ -lz
 	gcc -plugin $(OBJS) -o $(OBJDIR)/Red -latheos -lstdc++
 
 install: $(OBJDIR)/Red

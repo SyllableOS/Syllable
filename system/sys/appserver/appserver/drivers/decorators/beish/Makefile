@@ -28,7 +28,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/beish: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/beish /system/appserver -latheos -lstdc++
+	gcc $(OBJS) -o $(OBJDIR)/beish /system/appserver -latheos -lstdc++ -lz
 	gcc -plugin $(OBJS) -o $(OBJDIR)/beish -latheos -lstdc++
 
 install: $(OBJDIR)/beish

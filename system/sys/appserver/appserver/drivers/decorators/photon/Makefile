@@ -28,7 +28,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Photon: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/Photon /system/appserver -latheos -lstdc++
+	gcc $(OBJS) -o $(OBJDIR)/Photon /system/appserver -latheos -lstdc++ -lz
 	gcc -plugin $(OBJS) -o $(OBJDIR)/Photon -latheos -lstdc++
 
 install: $(OBJDIR)/Photon

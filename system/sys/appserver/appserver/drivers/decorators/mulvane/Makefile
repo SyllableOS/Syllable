@@ -28,7 +28,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Mulvane: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/Mulvane /system/appserver -latheos -lstdc++
+	gcc $(OBJS) -o $(OBJDIR)/Mulvane /system/appserver -latheos -lstdc++ -lz
 	gcc -plugin $(OBJS) -o $(OBJDIR)/Mulvane -latheos -lstdc++
 
 install: $(OBJDIR)/Mulvane
