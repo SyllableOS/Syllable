@@ -21,7 +21,11 @@
 
 #include <vector>
 
-#include "image_button.h"
+#include <gui/imagebutton.h>
+#include <gui/image.h>
+#include <storage/memfile.h>
+#include <iostream>
+#include <stdio.h>
 
 #define BUTTON_WIDTH 30
 #define BUTTON_HEIGHT 30
@@ -32,21 +36,26 @@ typedef vector<ImageButton*> t_Buttons;
 
 class ButtonBar : public View
 {
-	public:
-		ButtonBar(const Rect &cFrame, const char* zName);
-		~ButtonBar();
-		virtual Point GetPreferredSize(bool bLargest) const;
-		virtual void FrameSized(const Point &cDelta);
-		virtual void AttachedToWindow(void);
-		void AddButton(uint8* pnData, uint nNumBytes, const char* pzName, Message* pcMessage);
+public:
+    ButtonBar(const Rect &cFrame, const char* zName);
+    ~ButtonBar();
+    virtual Point GetPreferredSize(bool bLargest) const;
+    virtual void FrameSized(const Point &cDelta);
+    virtual void AttachedToWindow(void);
+    void AddButton(const void* pnData, const char* pzName, Message* pcMessage);
 
-	private:
-		Point cPrefSize;
-		bool bIsAttached;
+private:
+    Point cPrefSize;
+    bool bIsAttached;
 
-		int nNumButtons;
-		t_Buttons vButtons;
+    int nNumButtons;
+    t_Buttons vButtons;
 };
 
 #endif
+
+
+
+
+
 

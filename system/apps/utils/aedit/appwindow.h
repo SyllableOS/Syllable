@@ -42,6 +42,7 @@ class AEditWindow : public Window
 		void LoadOnStart(char* pzFilename);
 
 	private:
+		void SetupMenus();
 		void Load(char* pzFileName);
 		void Save(const char* pzFileName);
 
@@ -88,4 +89,5 @@ class AEditWindow : public Window
 };
 
 #endif /* __APPWINDOW_H_ */
+
 

@@ -21,7 +21,7 @@
 
 #include <gui/textview.h>
 
-EditView::EditView(const Rect& cFrame) : TextView(cFrame,"edit_view","",CF_FOLLOW_ALL,WID_WILL_DRAW)
+EditView::EditView(const Rect& cFrame) : TextView(cFrame,"edit_view","",CF_FOLLOW_BOTTOM | CF_FOLLOW_TOP |  CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT)//,WID_WILL_DRAW)
 {
 	// Create a context menu
 	pcContextMenu=new Menu(Rect(0,0,10,10),"",ITEMS_IN_COLUMN);
@@ -197,5 +197,9 @@ std::string EditView::GetLine(int32 nLineNo)
 {
 	return TextView::GetBuffer()[nLineNo];
 }
+
+
+
+
 
 

@@ -34,7 +34,7 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", "AE
 {
 	Rect cWinSize;
 	pcSettings=new AEditSettings();
-
+	
 	if((pcSettings->Load())==EOK)
 	{
 		cWinSize=pcSettings->GetWindowPos();
@@ -43,48 +43,76 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", "AE
 		MoveTo(cWinSize.left,cWinSize.top);
 	}
 
+	SetupMenus();
 	Rect cBounds=GetBounds();
-	cBounds.top+=16;
-
-	// We use a single layoutview
-	pcAppWindowLayout=new LayoutView(cBounds, "", NULL, CF_FOLLOW_ALL);
-	pcVLayoutRoot=new VLayoutNode("appwindow_root");
+	cBounds.top =pcMenuBar->GetBounds().bottom +1.0f;
+	cBounds.bottom = BUTTON_HEIGHT + 4 + cBounds.top;
 
 	// Create & attach the button bar
-	pcButtonBar=new ButtonBar(Rect(0,0,0,0),"button_bar");
-	pcVLayoutRoot->AddChild(pcButtonBar);
+	pcButtonBar=new ButtonBar(Rect(0,cBounds.top,GetBounds().Width(),cBounds.bottom),"button_bar");
+	AddChild(pcButtonBar);
 
 	// Attach the buttons to the button bar
-	pcButtonBar->AddButton(ImageFileNew,sizeof(ImageFileNew),"appwindow_filenew",new Message(M_BUT_FILE_NEW));
-	pcButtonBar->AddButton(ImageFileOpen,sizeof(ImageFileOpen),"appwindow_fileopen",new Message(M_BUT_FILE_OPEN));
-	pcButtonBar->AddButton(ImageFileSave,sizeof(ImageFileSave),"appwindow_filesave",new Message(M_BUT_FILE_SAVE));
-	pcButtonBar->AddButton(ImageEditCut,sizeof(ImageEditCut),"appwindow_editcut",new Message(M_BUT_EDIT_CUT));
-	pcButtonBar->AddButton(ImageEditCopy,sizeof(ImageEditCopy),"appwindow_editcopy",new Message(M_BUT_EDIT_COPY));
-	pcButtonBar->AddButton(ImageEditPaste,sizeof(ImageEditPaste),"appwindow_editpaste",new Message(M_BUT_EDIT_PASTE));
-	pcButtonBar->AddButton(ImageFindFind,sizeof(ImageFindFind),"appwindow_find",new Message(M_BUT_FIND_FIND));
+	pcButtonBar->AddButton(ImageFileNew,"appwindow_filenew",new Message(M_BUT_FILE_NEW));
+	pcButtonBar->AddButton(ImageFileOpen,"appwindow_fileopen",new Message(M_BUT_FILE_OPEN));
+	pcButtonBar->AddButton(ImageFileSave,"appwindow_filesave",new Message(M_BUT_FILE_SAVE));
+	pcButtonBar->AddButton(ImageEditCut,"appwindow_editcut",new Message(M_BUT_EDIT_CUT));
+	pcButtonBar->AddButton(ImageEditCopy,"appwindow_editcopy",new Message(M_BUT_EDIT_COPY));
+	pcButtonBar->AddButton(ImageEditPaste,"appwindow_editpaste",new Message(M_BUT_EDIT_PASTE));
+	pcButtonBar->AddButton(ImageFindFind,"appwindow_find",new Message(M_BUT_FIND_FIND));
 #ifdef ENABLE_UNDO
-	pcButtonBar->AddButton(ImageUndo,sizeof(ImageUndo),"appwindow_undo",new Message(M_BUT_EDIT_UNDO));
-	pcButtonBar->AddButton(ImageRedo,sizeof(ImageRedo),"appwindow_redo",new Message(M_BUT_EDIT_REDO));
+	pcButtonBar->AddButton(ImageUndo,"appwindow_undo",new Message(M_BUT_EDIT_UNDO));
+	pcButtonBar->AddButton(ImageRedo,"appwindow_redo",new Message(M_BUT_EDIT_REDO));
 #endif
 
-	// Create & attach EditView
-	pcEditView=new EditView(Rect(0,0,0,0));
+		// Create & attach EditView
+	pcEditView=new EditView(Rect(0,cBounds.bottom+1.0f,GetBounds().Width(),GetBounds().Height()));
 	pcEditView->SetTarget(this);
 	pcEditView->SetMessage(new Message(M_EDITOR_INVOKED));
 	pcEditView->SetEventMask(TextView::EI_CONTENT_CHANGED | TextView::EI_CURSOR_MOVED);
 	pcEditView->SetMultiLine(true);
+	AddChild(pcEditView);
+	
+	#if 1
+	Font *font = new Font();
+	font_properties cProperties;
 
-	pcVLayoutRoot->AddChild(pcEditView);
+	font->GetDefaultFont( DEFAULT_FONT_FIXED, &cProperties );
 
-	// Attach the completed LayoutViews to the window
-	pcAppWindowLayout->SetRoot(pcVLayoutRoot);
-	AddChild(pcAppWindowLayout);
+	zFamily=cProperties.m_cFamily;
+	zStyle=cProperties.m_cStyle;
+	vSize=cProperties.m_vSize;
+	nFlags=cProperties.m_nFlags;
 
-	// Create the menu bar
-	cBounds=GetBounds();
-	cBounds.bottom=16;
+	font->SetProperties( cProperties );
+	pcEditView->SetFont(font);
+	font->Release();
+#endif
+	
+	// Set the window title etc.
+	zWindowTitle=AEDIT_RELEASE_STRING;
+	zWindowTitle+=" : New File";
 
-	pcMenuBar=new Menu(cBounds, "main_menu", ITEMS_IN_ROW, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT, WID_FULL_UPDATE_ON_H_RESIZE);
+	SetTitle(zWindowTitle);
+	SetSizeLimits(Point(300,250),Point(4096,4096));
+
+	// Create the file requesters
+	pcLoadRequester = new FileRequester(FileRequester::LOAD_REQ, new Messenger(this), getenv("$HOME"));
+	pcSaveRequester = new FileRequester(FileRequester::SAVE_REQ, new Messenger(this), getenv("$HOME"));
+
+	// Reset the changed flag
+	bContentChanged=false;
+
+	// Set the focus
+	pcEditView->MakeFocus();
+}
+
+void AEditWindow::SetupMenus()
+{
+	Rect cMenuFrame = GetBounds();
+    Rect cMainFrame = cMenuFrame;
+    cMenuFrame.bottom = 18;
+	pcMenuBar=new Menu(cMenuFrame, "main_menu", ITEMS_IN_ROW, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT | CF_FOLLOW_TOP);
 
 	// Create the menus
 	pcAppMenu=new Menu(Rect(0,0,1,1),"Application",ITEMS_IN_COLUMN);
@@ -109,6 +137,7 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", "AE
 	pcEditMenu->AddItem("Undo",new Message(M_MENU_EDIT_UNDO));
 	pcEditMenu->AddItem("Redo",new Message(M_MENU_EDIT_REDO));
 #endif
+	
 
 	pcFindMenu=new Menu(Rect(0,0,1,1),"Find",ITEMS_IN_COLUMN);
 	pcFindMenu->AddItem("Find",new Message(M_MENU_FIND_FIND));
@@ -180,21 +209,7 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", "AE
 
 	bSaveOnExit=pcSettings->GetSaveOnExit();
 
-#if 1
-	Font *font = new Font();
-	font_properties cProperties;
 
-	font->GetDefaultFont( DEFAULT_FONT_FIXED, &cProperties );
-
-	zFamily=cProperties.m_cFamily;
-	zStyle=cProperties.m_cStyle;
-	vSize=cProperties.m_vSize;
-	nFlags=cProperties.m_nFlags;
-
-	font->SetProperties( cProperties );
-	pcEditView->SetFont(font);
-	font->Release();
-#endif
 
 	// Create the Settings menu
 	pcSettingsMenu=new Menu(Rect(0,0,1,1),"Settings",ITEMS_IN_COLUMN);
@@ -215,28 +230,13 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", "AE
 	pcMenuBar->AddItem(pcFontMenu);
 	pcMenuBar->AddItem(pcSettingsMenu);
 	pcMenuBar->AddItem(pcHelpMenu);
-
+	
+	cMenuFrame.bottom = pcMenuBar->GetPreferredSize( true ).y-2.0f;
+    cMainFrame.top = cMenuFrame.bottom + 1;
+    pcMenuBar->SetFrame( cMenuFrame );
 	pcMenuBar->SetTargetForItems(this);
 	AddChild(pcMenuBar);
-
-	// Set the window title etc.
-	zWindowTitle=AEDIT_RELEASE_STRING;
-	zWindowTitle+=" : New File";
-
-	SetTitle(zWindowTitle);
-	SetSizeLimits(Point(300,250),Point(4096,4096));
-
-	// Create the file requesters
-	pcLoadRequester = new FileRequester(FileRequester::LOAD_REQ, new Messenger(this), getenv("$HOME"));
-	pcSaveRequester = new FileRequester(FileRequester::SAVE_REQ, new Messenger(this), getenv("$HOME"));
-
-	// Reset the changed flag
-	bContentChanged=false;
-
-	// Set the focus
-	pcEditView->MakeFocus();
 }
-
 void AEditWindow::HandleMessage(Message* pcMessage)
 {
 	switch(pcMessage->GetCode())	//Get the message code from the message
@@ -255,7 +255,8 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 			std::string zAboutText=AEDIT_RELEASE_STRING;
 			zAboutText+="\n\nText Editor for Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit is released under the GNU General\nPublic License.  Please see the file COPYING,\ndistributed with AEdit, or http://www.gnu.org\nfor more information.";
 
-			Alert* pcAboutAlert=new Alert(zAboutTitle,zAboutText,0x00,"O.K",NULL);
+			Alert* pcAboutAlert=new Alert(zAboutTitle,zAboutText,Alert::ALERT_INFO,0x00,"O.K",NULL);
+			pcAboutAlert->CenterInWindow(this);
 			pcAboutAlert->Go(new Invoker());
 
 			break;
@@ -288,6 +289,7 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 		case M_MENU_FILE_OPEN:
 		case M_BUT_FILE_OPEN:
 		{
+			pcLoadRequester->CenterInWindow(this);
 			pcLoadRequester->Show();
 			pcLoadRequester->MakeFocus();
 
@@ -334,6 +336,7 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 
 		case M_MENU_FILE_SAVE_AS:
 		{
+			pcSaveRequester->CenterInWindow(this);
 			pcSaveRequester->Show();
 			pcSaveRequester->MakeFocus();
 
@@ -407,6 +410,7 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 		case M_BUT_FIND_FIND:
 		{
 			pcFindDialog=new FindDialog(Rect(200,200,450,310),this);
+			pcFindDialog->CenterInWindow(this);
 			pcFindDialog->Show();
 			pcFindDialog->MakeFocus();
 
@@ -484,6 +488,7 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 		case M_MENU_FIND_REPLACE:
 		{
 			pcReplaceDialog=new ReplaceDialog(Rect(200,200,450,310),this);
+			pcReplaceDialog->CenterInWindow(this);
 			pcReplaceDialog->Show();
 			pcReplaceDialog->MakeFocus();
 
@@ -524,6 +529,7 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 		case M_MENU_FIND_GOTO:
 		{
 			pcGotoDialog=new GotoDialog(Rect(200,200,450,250),this);
+			pcGotoDialog->CenterInWindow(this);
 			pcGotoDialog->Show();
 			pcGotoDialog->MakeFocus();
 
@@ -726,7 +732,7 @@ void AEditWindow::Load(char* pzFileName)
 		else
 		{
 			// Pop error window, file is not a "regular" file
-			Alert* pcFileAlert = new Alert("AEdit", "Unable to open file", 0x00, "O.K", NULL);
+			Alert* pcFileAlert = new Alert("AEdit", "Unable to open file", Alert::ALERT_WARNING, 0x00, "O.K", NULL);
 			pcFileAlert->Go();
 		}
 	}
@@ -755,4 +761,9 @@ void AEditWindow::Save(const char* pzFileName)
 	hFile.close();
 
 }
+
+
+
+
+
 
