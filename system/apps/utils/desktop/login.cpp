@@ -1,112 +1,163 @@
-#include <stdio.h>
-#include <atheos/kernel.h>
+#include "login.h"
 
-#include <gui/window.h>
-#include <gui/view.h>
-#include <gui/tableview.h>
-#include <gui/textview.h>
-#include <gui/stringview.h>
-#include <gui/button.h>
-#include <gui/desktop.h>
-#include <util/message.h>
+void WriteLoginConfigFile()
+{
+    FILE* fin;
+    fin = fopen("/boot/atheos/sys/config/login.cfg","w");
+    
+    fprintf(fin,"<Login Name Option>\n");
+    fprintf(fin,"false\n\n");
+    fprintf(fin, "<Login Name>\n");
+    fprintf(fin,"\n");
+    fclose(fin);
+}
 
-using namespace os;
 
-#define ID_OK 1
-#define ID_CANCEL 2
 
-static bool g_bRun      = true;
-static bool g_bSelected = false;
 
-static std::string g_cName;
-static std::string g_cPassword;
+void CheckLoginConfig()
+{
+	ifstream filestr;
+    filestr.open("/boot/atheos/sys/config/login.cfg");
+
+    if(filestr == NULL)
+    {
+        filestr.close();
+        WriteLoginConfigFile();
+    }
+
+    else
+    {
+        filestr.close();
+    }
+}
+
+const char* ReadLoginOption()
+{
+    char junk[1024];
+    char login_info[1024];
+    char login_name[1024];
+    const char* return_name;
+    
+    ifstream filRead;
+    filRead.open("/boot/atheos/sys/config/login.cfg");
+    
+    filRead.getline(junk,1024);
+    filRead.getline((char*)login_info,1024);
+    filRead.getline(junk,1024);
+    filRead.getline(junk,1024);
+    filRead.getline((char*)login_name,1024);
+    
+    filRead.close();
+    
+   if (strcmp(login_info,"true") == 0){
+   	return_name = login_name;
+   	}
+   	
+   	else{return_name = "\n";}
+   			
+   return (return_name);
+}
+
 
 class LoginView : public View
 {
 public:
     LoginView( const Rect& cFrame );
     ~LoginView();
-  
+
     virtual void AllAttached();
     virtual void FrameSized( const Point& cDelta );
-  
-private:
-    void Layout();
-
     TextView*	m_pcNameView;
     StringView*	m_pcNameLabel;
     TextView*	m_pcPasswordView;
     StringView*	m_pcPasswordLabel;
-    Button*	m_pcOkBut;
-//    Button*	m_pcCancelBut;
-};
+    ColorButton*	m_pcOkBut;
+    
 
-class LoginWindow : public Window
-{
-public:
-    LoginWindow( const Rect& cFrame );
-
-  
-    virtual bool	OkToQuit() { g_bRun = false; return( true ); }
-    virtual void	HandleMessage( Message* pcMessage );
 private:
-    LoginView* m_pcView;
+    void Layout();
+    virtual void Paint(const Rect& cUpdate);
+    bool          Read();
+    void          LoadImages();
+    Bitmap*       pcLoginImage;
+    Bitmap*		  pcAtheImage;
+   
 };
 
-LoginWindow::LoginWindow( const Rect& cFrame ) : Window( cFrame, "login_window", "Login:", WND_NO_CLOSE_BUT )
-{
-    m_pcView = new LoginView( GetBounds() );
-    AddChild( m_pcView );
 
-}
-
-void LoginWindow::HandleMessage( Message* pcMsg )
+LoginView::LoginView( const Rect& cFrame ) : View( cFrame, "password_view", CF_FOLLOW_NONE )
 {
-  switch( pcMsg->GetCode() )
-  {
-    case ID_OK:
-      g_bSelected = true;
-    case ID_CANCEL:
-      PostMessage( M_QUIT );
-      break;
-    default:
-      Window::HandleMessage( pcMsg );
-      break;
-  }
-}
-
-LoginView::LoginView( const Rect& cFrame ) : View( cFrame, "password_view", CF_FOLLOW_ALL )
-{
-    m_pcOkBut        = new Button( Rect( 0, 0, 0, 0 ), "ok_but", "Login", new Message( ID_OK ), CF_FOLLOW_NONE );
-//    m_pcCancelBut    = new Button( Rect( 0, 0, 0, 0 ), "cancel_but", "Cancel", new Message( ID_CANCEL ), CF_FOLLOW_NONE );
+    Color32_s bg(239,236,231,255);
+    //Color32_s fg(0,0,0,255);     
+    m_pcOkBut        = new ColorButton( Rect( 0, 0, 0, 0 ),"ok", "Login", new Message( ID_OK ),bg);
     m_pcNameView     = new TextView( Rect( 0, 0, 0, 0 ), "name_view", "", CF_FOLLOW_NONE );
     m_pcPasswordView = new TextView( Rect( 0, 0, 0, 0 ), "pasw_view", "", CF_FOLLOW_NONE );
 
-    m_pcNameLabel	   = new StringView( Rect(0,0,1,1), "string", "Login name:", ALIGN_RIGHT );
-    m_pcPasswordLabel= new StringView( Rect(0,0,1,1), "string", "Password:", ALIGN_RIGHT );
+	
 
     m_pcPasswordView->SetPasswordMode( true );
-  
+
+    //m_pcOkBut->SetFgColor(0,0,0);
+    //m_pcOkBut->SetBgColor(239,236,231);
+
     AddChild( m_pcNameView, true );
-    AddChild( m_pcNameLabel );
     AddChild( m_pcPasswordView, true );
-    AddChild( m_pcPasswordLabel );
     AddChild( m_pcOkBut, true );
-//    AddChild( m_pcCancelBut, true );
+
 
     Layout();
+    LoadImages();
+    Paint(GetBounds());
+    Invalidate();
+    
+    m_pcNameView->SetTabOrder(0);
+    m_pcPasswordView->SetTabOrder(1);
+    m_pcOkBut->SetTabOrder(2);
+    
+    
+    
+    
+}
+
+
+
+void LoginView::Paint(const Rect & cUpdate)
+{
+    FillRect(cUpdate, Color32_s(239,236,231,0));
+    SetFgColor(0,0,0);
+
+    String sLogin = "Login Name:";
+    String sPass = "Password:";
+    String sWarning = "Hint: Hitting Ctrl-Alt-Delete will reboot the machine";
+    font_height sHight;
+
+    float vStrWidth = GetStringWidth(sLogin);
+    float f_warning, f_login;
+    GetFontHeight(&sHight);
+
+    f_warning = GetBounds().Width() -250.0f - vStrWidth;
+    f_login = GetBounds().Width() - 190 - vStrWidth;
+
+
+    DrawString(sLogin, Point(f_login, (GetBounds().Height()-100.0f)/2 - (sHight.ascender + sHight.descender)/2 + sHight.ascender) );
+    DrawString(sPass, Point(f_login, (GetBounds().Height()-0.0f)/2 - (sHight.ascender + sHight.descender)/2 + sHight.ascender) );
+    DrawString(sWarning, Point(f_warning, (GetBounds().Height()+180.0f) /2 - (sHight.ascender - sHight.descender)/2 + sHight.ascender));
+
+    DrawBitmap(pcLoginImage,pcLoginImage->GetBounds(),Rect(0,0,380,45));
+    DrawBitmap(pcAtheImage,pcAtheImage->GetBounds(),Rect(45,0,164,140));
 }
 
 LoginView::~LoginView()
 {
-  g_cName     = m_pcNameView->GetBuffer()[0];
-  g_cPassword = m_pcPasswordView->GetBuffer()[0];
+    g_cName     = m_pcNameView->GetBuffer()[0];
+    g_cPassword = m_pcPasswordView->GetBuffer()[0];
 }
 
 void LoginView::AllAttached()
 {
-  m_pcNameView->MakeFocus();
-  GetWindow()->SetDefaultButton( m_pcOkBut );
+    m_pcNameView->MakeFocus();
+    GetWindow()->SetDefaultButton( m_pcOkBut );
 }
 
 
@@ -118,64 +169,132 @@ void LoginView::FrameSized( const Point& cDelta )
 
 void LoginView::Layout()
 {
-    Rect cBounds = GetBounds();
-
-    Rect cButFrame(0,0,0,0);
-    Rect cLabelFrame(0,0,0,0);
-  
-    Point cButSize   = m_pcOkBut->GetPreferredSize( false );
-    Point cLabelSize = m_pcNameLabel->GetPreferredSize( false );
-    Point cEditSize  = m_pcNameView->GetPreferredSize( false );
-
-    if ( cEditSize.y > cLabelSize.y ) {
-	cLabelSize.y = cEditSize.y;
-    }
-  
-    cButFrame.right = cButSize.x - 1;
-    cButFrame.bottom = cButSize.y - 1;
-
-    cLabelFrame.right = cLabelSize.x - 1;
-    cLabelFrame.bottom = cLabelSize.y - 1;
-
-    Rect cEditFrame( cLabelFrame.right + 10, cLabelFrame.top, cBounds.right - 20, cLabelFrame.bottom );
-
-    m_pcNameLabel->SetFrame( cLabelFrame + Point( 10, 20 ) );
-    m_pcNameView->SetFrame( cEditFrame + Point( 10, 20 ) );
-
-    m_pcPasswordLabel->SetFrame( cLabelFrame + Point( 10, 50 + cLabelSize.y  ) );
-    m_pcPasswordView->SetFrame( cEditFrame + Point( 10, 50 + cLabelSize.y ) );
-  
-    m_pcOkBut->SetFrame( cButFrame + Point( cBounds.right - cButSize.x - 15, cBounds.bottom - cButSize.y - 10 ) );
-//    m_pcCancelBut->SetFrame( cButFrame + Point( cBounds.right - cButSize.x*2 - 30, cBounds.bottom - cButSize.y - 10 ) );
+    m_pcNameView->SetFrame(Rect(0,0,170,25) + Point(290,35));
+    m_pcPasswordView->SetFrame(Rect(0,0,170,25) + Point(290,85));
+    m_pcOkBut->SetFrame(Rect(0,0,60,25) + Point(400,120));
+    
+    
+    m_pcNameView->Set(ReadLoginOption(),true);
 }
+
+void LoginView::LoadImages()
+{
+    FILE* f_uname = popen("uname -v 2>&1", "r");
+    char pzUname[1024];
+    const char* pzUnamePrint = fgets(pzUname, sizeof(pzUname),f_uname);
+
+    if( strstr(pzUnamePrint, "0.3.7")){
+        pcLoginImage = LoadBitmapFromResource("atheos_0.3.7.jpg");
+    }
+
+    else if (strstr(pzUnamePrint, "0.3.6"))
+    {
+        pcLoginImage = LoadBitmapFromResource("atheos_0.3.6.jpg");
+    }
+
+    else if(strstr(pzUnamePrint, "0.3.5"))
+    {
+        pcLoginImage = LoadBitmapFromResource("atheos_0.3.5.jpg");
+    }
+
+    else
+    {
+        pcLoginImage = LoadBitmapFromResource("atheos_0.undetermined.jpg");
+    }
+
+    pcAtheImage = LoadBitmapFromResource("logo_atheos.jpg");
+}
+
+class LoginWindow : public Window
+{
+public:
+    LoginWindow( const Rect& cFrame );
+    virtual bool	OkToQuit() { g_bRun = false; return( true ); }
+    virtual void	HandleMessage( Message* pcMessage );
+private:
+    LoginView* m_pcView;
+};
+
+LoginWindow::LoginWindow( const Rect& cFrame ) : Window( cFrame, "login_window", "Login:", WND_NO_BORDER )
+{
+    m_pcView = new LoginView( GetBounds() );
+    m_pcView->FillRect(cFrame, Color32_s(239,236,231));
+    AddChild( m_pcView );
+    
+    CheckLoginConfig();
+    
+   
+    if (!strcmp(ReadLoginOption(),"\n") == 0)
+    	SetFocusChild(m_pcView->m_pcPasswordView);
+    	
+    	
+    else
+    	SetFocusChild(m_pcView->m_pcNameView);
+    	
+    	
+}
+
+void LoginWindow::HandleMessage( Message* pcMsg )
+{
+    switch( pcMsg->GetCode() )
+    {
+    case ID_OK:
+        g_bSelected = true;
+    case ID_CANCEL:
+        PostMessage( M_QUIT );
+        break;
+    default:
+        Window::HandleMessage( pcMsg );
+        break;
+    }
+}
+
 
 
 bool get_login( std::string* pcName, std::string* pcPassword )
 {
     g_bRun = true;
     g_bSelected = false;
-
-    Rect cFrame( 0, 0, 249, 129 );
+    Rect cFrame( 0, 0,470,195 );  //470 195
 
     IPoint cScreenRes;
 
-      // Need a new scope to reduce the time the desktop is locked.
+    // Need a new scope to reduce the time the desktop is locked.
     { cScreenRes = Desktop().GetResolution();  }
-  
+
     cFrame += Point( cScreenRes.x / 2 - (cFrame.Width()+1.0f) / 2, cScreenRes.y / 2 - (cFrame.Height()+1.0f) / 2 );
-    
+
     Window* pcWnd = new LoginWindow( cFrame );
 
     pcWnd->Show();
     pcWnd->MakeFocus();
 
     while( g_bRun ) {
-	snooze( 20000 );
+        snooze( 20000 );
     }
     *pcName     = g_cName;
     *pcPassword = g_cPassword;
     return( g_bSelected );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
