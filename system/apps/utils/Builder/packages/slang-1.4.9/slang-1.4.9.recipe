@@ -1,0 +1,5 @@
+authors			Kaj de Vos
+patch-config	autoconf
+;test-targets	runtests
+;install			make install && make elf && make install-elf && make install-links
+documentation	README INSTALL.unx UPGRADE.txt NEWS examples
