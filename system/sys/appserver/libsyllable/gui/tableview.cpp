@@ -243,7 +243,7 @@ TableView::TableView( const Rect& cFrame, const String& cName, const String& cTi
 		      int nNumCols, int nNumRows, uint32 nResizeMask )
     : View( cFrame, cName, nResizeMask, WID_WILL_DRAW )
 {
-    if ( !cTitle.empty() )
+    if ( !cTitle.empty() && !( cTitle == "" ) )
     {
 	m_cTitle = cTitle;
 	m_nLeftBorder = m_nRightBorder = m_nBottomBorder = 4;
@@ -252,8 +252,9 @@ TableView::TableView( const Rect& cFrame, const String& cName, const String& cTi
     else
     {
 	m_nLeftBorder = m_nRightBorder = m_nTopBorder = m_nBottomBorder = 0;
+	m_cTitle.str().clear();
     }
-
+    
     m_pacCells	  = new TableCell[ nNumCols * nNumRows ];
     m_panMinWidths  = new float[ nNumCols ];
     m_panMaxWidths  = new float[ nNumCols ];
@@ -301,7 +302,7 @@ void TableView::AttachedToWindow( void )
 
     SetBgColor( get_default_color( COL_NORMAL ) );
 
-    if ( !m_cTitle.empty() ) {
+    if ( m_cTitle.empty() ) {
 	    m_nTopBorder = m_nBottomBorder;
 	} else {
 	    font_height sHeight;
@@ -344,6 +345,7 @@ void TableView::AllAttached( void )
 void TableView::FrameSized( const Point& cDelta )
 {
     Layout( GetBounds() );
+    Invalidate( GetBounds() );
 }
 
 //----------------------------------------------------------------------------
@@ -639,14 +641,14 @@ Point TableView::GetPreferredSize( bool bLargest ) const
 
 void TableView::Paint( const Rect& cUpdateRect )
 {
-    Window*	pcWindow = GetWindow();
+	Window*	pcWindow = GetWindow();
 
-    if ( NULL != pcWindow )
-    {
-	Rect	cBounds	=	GetBounds();
+	if ( NULL != pcWindow )
+	{
+		Rect	cBounds	=	GetBounds();
 
-	SetFgColor( get_default_color( COL_NORMAL ) );
-	FillRect( GetBounds() );
+		SetFgColor( get_default_color( COL_NORMAL ) );
+		FillRect( GetBounds() );
 
 	    SetFgColor( 0, 0, 0, 0 );
 
@@ -654,59 +656,57 @@ void TableView::Paint( const Rect& cUpdateRect )
 
 	    if ( NULL != pcFont )
 	    {
-		float	x = 20.0f;
-		float	vStrWidth = 0.0f;
+			float	x = 20.0f;
+			float	vStrWidth = 0.0f;
 
-		if (  !m_cTitle.empty() ) {
-		    font_height sHeight;
+			if (  !m_cTitle.empty() ) {
+				font_height sHeight;
 
-		    pcFont->GetHeight( &sHeight );
-		    float vStrHeight = sHeight.ascender + sHeight.descender;
+				pcFont->GetHeight( &sHeight );
+				float vStrHeight = sHeight.ascender + sHeight.descender;
+				
+				vStrWidth = pcFont->GetStringWidth( m_cTitle );
+				
+				cBounds.top = vStrHeight / 2.0f;
+				DrawString( Point( x, sHeight.ascender ), m_cTitle );
+			}
 
-		    vStrWidth = pcFont->GetStringWidth( m_cTitle );
+			// Left
+			DrawLine( Point( cBounds.left, cBounds.bottom ), Point( cBounds.left, cBounds.top ) );
 
-		    cBounds.top = vStrHeight / 2.0f;
-		    DrawString( Point( x, sHeight.ascender ), m_cTitle );
+			// Top
+			if ( m_cTitle.empty() )
+			{
+				DrawLine( Point( cBounds.left, cBounds.top ), Point( cBounds.right, cBounds.top ) );
+			}
+			else
+			{
+				DrawLine( Point( cBounds.left, cBounds.top ), Point( x - 3, cBounds.top ) );
+				DrawLine( Point( x + vStrWidth + 3.0f, cBounds.top ), Point( cBounds.right, cBounds.top ) );
+			}
+			// Right
+			DrawLine( Point( cBounds.right - 1, cBounds.top ), Point( cBounds.right - 1, cBounds.bottom ) );
+			// Bottom
+			DrawLine( Point( cBounds.left + 2, cBounds.bottom - 1 ), Point( cBounds.right - 1, cBounds.bottom - 1 ) );
+
+
+			SetFgColor( 255, 255, 255 );
+			// Left
+			DrawLine( Point( cBounds.left + 1, cBounds.bottom ), Point( cBounds.left + 1, cBounds.top + 1 ) );
+			// Top
+			if ( m_cTitle.empty() )
+			{
+				DrawLine( Point( 1, cBounds.top + 1 ), Point( cBounds.right, cBounds.top + 1 ) );
+			}
+			else
+			{
+				DrawLine( Point( 1, cBounds.top + 1 ), Point( x - 3, cBounds.top + 1 ) );
+				DrawLine( Point( x + vStrWidth + 3.0f, cBounds.top + 1 ), Point( cBounds.right, cBounds.top + 1 ) );
+			}
+			// Right
+			DrawLine( Point( cBounds.right, cBounds.top + 1 ), Point( cBounds.right, cBounds.bottom ) );
+			// Bottom
+			DrawLine( Point( cBounds.left + 1, cBounds.bottom ), Point( cBounds.right, cBounds.bottom ) );
 		}
-		  // Left
-		DrawLine( Point( cBounds.left, cBounds.bottom ), Point( cBounds.left, cBounds.top ) );
-		  // Top
-		if ( !m_cTitle.empty() )
-		{
-		    DrawLine( Point( cBounds.left, cBounds.top ), Point( cBounds.right, cBounds.top ) );
-		}
-		else
-		{
-		    DrawLine( Point( cBounds.left, cBounds.top ), Point( x - 3, cBounds.top ) );
-		    DrawLine( Point( x + vStrWidth + 3.0f, cBounds.top ), Point( cBounds.right, cBounds.top ) );
-		}
-		  // Right
-		DrawLine( Point( cBounds.right - 1, cBounds.top ), Point( cBounds.right - 1, cBounds.bottom ) );
-		  // Bottom
-		DrawLine( Point( cBounds.left + 2, cBounds.bottom - 1 ), Point( cBounds.right - 1, cBounds.bottom - 1 ) );
-
-
-		SetFgColor( 255, 255, 255 );
-		  // Left
-		DrawLine( Point( cBounds.left + 1, cBounds.bottom ), Point( cBounds.left + 1, cBounds.top + 1 ) );
-		  // Top
-		if ( !m_cTitle.empty() )
-		{
-		    DrawLine( Point( 1, cBounds.top + 1 ), Point( cBounds.right, cBounds.top + 1 ) );
-		}
-		else
-		{
-		    DrawLine( Point( 1, cBounds.top + 1 ), Point( x - 3, cBounds.top + 1 ) );
-		    DrawLine( Point( x + vStrWidth + 3.0f, cBounds.top + 1 ), Point( cBounds.right, cBounds.top + 1 ) );
-		}
-		  // Right
-		DrawLine( Point( cBounds.right, cBounds.top + 1 ), Point( cBounds.right, cBounds.bottom ) );
-		  // Bottom
-		DrawLine( Point( cBounds.left + 1, cBounds.bottom ), Point( cBounds.right, cBounds.bottom ) );
-	    }
 	}
 }
-
-
-
-
