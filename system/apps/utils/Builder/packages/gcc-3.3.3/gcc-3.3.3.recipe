@@ -80,8 +80,10 @@ documentation
 	README FAQ faq.html BUGS bugs.html COPYING COPYING.LIB ChangeLog MAINTAINERS
 	gcc/ABOUT-NLS gcc/ABOUT-GCC-NLS gcc/NEWS
 links
-	gcc					bin/cc
-	libgcc.a			lib/gcc-lib/i586-pc-syllable/3.3.3/libgcc_static.a
-	lib/libgcc_s.so.1	/system/libs/libgcc_s.so
-	lib/libstdc++.so.5	/system/libs/libstdc++.so.5
-	libstdc++.so.5		/system/libs/libstdc++.so
+	gcc						bin/cc
+	libgcc.a				lib/gcc-lib/i586-pc-syllable/3.3.3/libgcc_static.a
+	lib/libgcc_s.so.1		/system/libs/libgcc_s.so.1
+	libgcc_s.so.1			/system/libs/libgcc_s.so
+	lib/libstdc++.so.5.0.5	/system/libs/libstdc++.so.5.0.5
+	libstdc++.so.5.0.5		/system/libs/libstdc++.so.5
+	libstdc++.so.5			/system/libs/libstdc++.so
