@@ -1,0 +1,11 @@
+authors				Kaj de Vos
+status				testing
+licenses			custom
+home				www.tcl.tk
+packages			tcl8.4.5-src
+configure-cmd		unix/configure
+configure-options
+	--enable-man-symlinks
+;	--enable-threads
+test-targets		test
+documentation		README license.terms changes ChangeLog
