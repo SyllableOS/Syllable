@@ -87,9 +87,10 @@ private:
 class LString : public String
 {
 	public:
-	LString( uint32 nID, const char* pzDefault );
+	LString( uint32 nID );
 };
 
 } // end of namespace
 
 #endif // __F_UTIL_CATALOG_H__
+
