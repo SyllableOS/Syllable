@@ -10,6 +10,7 @@
 #include "settings.h"
 using namespace os;
 
+
 typedef vector <ListViewStringRow*> t_ListRows;
 typedef vector <std::string> t_List;
 
@@ -21,6 +22,7 @@ class MiscView : public View
         MiscView(const Rect & cFrame);
         CheckBox* pcLoginCheck;
         CheckBox* pcShowVerCheck;
+        CheckBox* pcTransCheck;
 };
 
 
@@ -96,14 +98,18 @@ class PropWin : public Window
         void SaveLoginConfig(bool b_Login, const char* zName);
         bool OkToQuit();
         void LoadPrefs();
-        void SavePrefs(bool bShow, bool bLogin, string zPic, int32 nNewImageSize);
+        void SavePrefs(bool bShow,bool bTran, string zPic, int32 nNewImageSize);
 		DeskSettings* pcSettings;
         bool bShwVr;
+        bool bTrans;
         const char* dImage;
         string zImage;
 };
 
 #endif
+
+
+
 
 
 

@@ -1,7 +1,7 @@
 #include "properties.h"
 #include <unistd.h>
 #include <sys/stat.h>
-char pzCgFile[1024];
+
 char junk2[1024];
 Color32_s c_bgColor, c_fgColor;
 int32 nImageSize = 0;
@@ -9,9 +9,9 @@ int32 nImageSize = 0;
 
 MiscView::MiscView(const Rect & cFrame) : View(cFrame, "MiscView")
 {
-    char pzName[1024];
+    //char pzName[1024];
     pcLoginCheck = new CheckBox(Rect(0,0,0,0),"login_check","Remember the last user that logged in",NULL);
-    pcLoginCheck->SetFrame(Rect(0,0,220,15) + Point(20,10));
+    pcLoginCheck->SetFrame(Rect(0,0,GetBounds().Width(),15) + Point(20,10));
     AddChild(pcLoginCheck);
 
 	if (getuid()==0)
@@ -23,6 +23,10 @@ MiscView::MiscView(const Rect & cFrame) : View(cFrame, "MiscView")
 	pcShowVerCheck = new CheckBox(Rect(0,0,0,0),"ver_check","Show Version on the Desktop",NULL);
     pcShowVerCheck->SetFrame(Rect(0,0,220,15) + Point(20,45));
     AddChild(pcShowVerCheck);
+    
+    pcTransCheck = new CheckBox(Rect(0,0,0,0),"trans","Make icon background transparent",NULL);
+    pcTransCheck->SetFrame(Rect(0,0,GetBounds().Width(),15) + Point (20,80));
+    AddChild(pcTransCheck);
 }
 
 
@@ -146,8 +150,6 @@ ColorView::ColorView(const Rect & cFrame) : View(cFrame, "ColorView",CF_FOLLOW_A
     Paint(GetBounds());
 
     pcColorDrop->SetSelection(0);
-
-	 ListFiles();
 }
 
 
@@ -232,7 +234,6 @@ PropTab::PropTab(const Rect & cFrame) : TabView(cFrame, "MiscView",CF_FOLLOW_ALL
 
 PropWin::PropWin() : Window(CRect(400,395), "Desktop Properties", "Desktop Properties", WND_NOT_RESIZABLE)
 {
-	//sleep(500);
 	pcSettings = new DeskSettings();
     LoadPrefs();
 
@@ -354,6 +355,7 @@ void PropWin::Defaults()
     SetDefaultButton(pcSave);
 
     pcPropTab->pcMisc->pcShowVerCheck->SetValue(bShwVr);
+    pcPropTab->pcMisc->pcTransCheck->SetValue(pcSettings->GetTrans());
 
 	string kImage = pcSettings->GetImageDir() + zImage;
 	FSNode *pcNode = new FSNode();
@@ -435,6 +437,7 @@ void PropWin::Save()
 {
     bool bShowVer = pcPropTab->pcMisc->pcShowVerCheck->GetValue();
     bool bLogin = pcPropTab->pcMisc->pcLoginCheck->GetValue();
+    bool bTransPar = pcPropTab->pcMisc->pcTransCheck->GetValue();
     string zPicSave;
     int32 nNewImageSize = pcPropTab->pcBack->pcSizeDrop->GetSelection();
 
@@ -444,12 +447,12 @@ void PropWin::Save()
     else
         zPicSave = pcPropTab->pcBack->ImageList()[pcPropTab->pcBack->pcList->GetLastSelected()];
 
-    SavePrefs(bShowVer,bLogin,zPicSave, nNewImageSize);
+    SavePrefs(bShowVer,bTransPar, zPicSave, nNewImageSize);
     SaveLoginConfig(bLogin, zLoginName);
 }
 
 
-void PropWin::SavePrefs(bool bShow, bool bLogin, string zPic, int32 nNewImageSize )
+void PropWin::SavePrefs(bool bShow,bool bTran, string zPic, int32 nNewImageSize )
 {
     switch(pcPropTab->pcColor->pcColorDrop->GetSelection())
     {
@@ -467,28 +470,23 @@ void PropWin::SavePrefs(bool bShow, bool bLogin, string zPic, int32 nNewImageSiz
     pcPrefs->AddString ( "DeskImage",  zPic  );
     pcPrefs->AddBool   ( "ShowVer",    bShow   );
     pcPrefs->AddInt32  ( "SizeImage",  nNewImageSize);
-
+	pcPrefs->AddBool   ( "Transparent", bTran);
 	pcSettings->SaveSettings(pcPrefs);
-	
-	  
-    system("/usr/bin/mv -f /tmp/desktop.cfg ~/Settings/Desktop/desktop.cfg");   
-
-   
-
 }
 
 void PropWin::LoadPrefs(void)
 {
-	Message* pcPrefs = pcSettings->GetSettings();
-	
-	pcPrefs->FindColor32( "Back_Color", &c_bgColor );
-	pcPrefs->FindColor32( "Icon_Color",   &c_fgColor );
-	pcPrefs->FindString ( "DeskImage",  &zImage  );
-	pcPrefs->FindBool   ( "ShowVer",    &bShwVr   );
-	pcPrefs->FindInt32   ("SizeImage",   &nImageSize);
-    
-
+    c_bgColor  = pcSettings->GetBgColor();
+    c_fgColor  = pcSettings->GetFgColor();
+    zImage     = pcSettings->GetImageName();
+    bShwVr     = pcSettings->GetVersion();
+    nImageSize = pcSettings->GetImageSize();
+    bTrans     = pcSettings->GetTrans();
 }
+
+
+
+
 
 
 

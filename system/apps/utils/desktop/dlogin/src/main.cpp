@@ -4,16 +4,15 @@
 
 /*Thank you Will for the help :) */
 int Become_User( struct passwd *psPwd, LoginWindow* pcWindow ) {
+  
   int nStatus;
   pid_t nError = waitpid(-1, &nStatus, WNOHANG);
   
-
   switch( (nError = fork()) ) {
     case -1:
       break;
 
     case 0: /* child process */
-    	
       setuid( psPwd->pw_uid );
       setgid( psPwd->pw_gid );
       chdir( psPwd->pw_dir );
@@ -22,8 +21,6 @@ int Become_User( struct passwd *psPwd, LoginWindow* pcWindow ) {
       setenv( "SHELL", psPwd->pw_shell,true );
       setenv( "PATH", "/bin:/atheos/autolnk/bin",true);
       execl( "/bin/desktop", "desktop", NULL );
-      
-      
       break;
      
     	
@@ -32,30 +29,24 @@ int Become_User( struct passwd *psPwd, LoginWindow* pcWindow ) {
        pcWindow->Hide();
        pcWindow->m_pcView->m_pcPasswordView->Clear();
        int nDesktopPid, nExitStatus;
-     
-      nDesktopPid = nError;
-     
-      nError = waitpid( nDesktopPid, &nExitStatus, 0 );
+       nDesktopPid = nError;
+       nError = waitpid( nDesktopPid, &nExitStatus, 0 );
      
       if( nError < 0 || nError != nDesktopPid ) // Something went wrong ;-)
          break;
-     
-      // Show the login window again
+         
       sleep(1);
       pcWindow->Show();
       pcWindow->MakeFocus();
       return 0;
-      //return nError;
-      
-  	}
- 
- return -errno;
+	}
+ 	return -errno;
 }
 
 
 /*
 ** name:       UpdateLoginConfig
-** purpose:    Updates /system/config/login.cfg with the newest person who loggd in.
+** purpose:    Updates /system/config/login.cfg with the newest person who logged in.
 ** parameters: A string that represents the newest person
 ** returns:
 */
@@ -116,22 +107,19 @@ const char* ReadLoginOption()
 {
     char junk[1024];
     char login_info[1024];
-    char login_name[1024];
-    const char* return_name;
-
-    ifstream filRead;
+	ifstream filRead;
+    
     filRead.open("/boot/atheos/sys/config/login.cfg");
-
+	filRead.getline(junk,1024);
+    filRead.getline(login_info,1024);
+    filRead.getline(junk, 1024);
+    filRead.getline(junk, 1024);
     filRead.getline(junk,1024);
-    filRead.getline((char*)login_info,1024);
-    filRead.getline(junk,1024);
-    filRead.getline(junk,1024);
-    filRead.getline((char*)login_name,1024);
+ 	filRead.close();
 
-    filRead.close();
-
-    if (!strcmp(login_info,"true"))
-    	return(login_name);
+    if (strcmp(login_info,"true")==0){
+    	cout << "name is:" << junk << endl;
+    	return(junk);}
     else
     	return ("\n");
 }
@@ -219,6 +207,7 @@ void LoginView::Paint(const Rect & cUpdate)
 LoginView::~LoginView()
 {
 	delete pcLoginImage;
+	delete m_pcPasswordView;
 }
 
 
@@ -324,6 +313,11 @@ void LoginWindow::HandleMessage( Message* pcMsg )
     case ID_CANCEL:
         PostMessage( M_QUIT );
         break;
+        
+    case M_BAD_PASS:
+    	m_pcView->m_pcPasswordView->Clear();
+    	SetFocusChild(m_pcView->m_pcPasswordView);
+    	break;
     default:
         Window::HandleMessage( pcMsg );
         break;
@@ -373,15 +367,15 @@ void LoginWindow::Authorize( const char* pzLoginName )
                 }
                 else
                 {
-                    Alert* pcAlert = new Alert( "Login failed:",  "Incorrect password!!!\n",Alert::ALERT_WARNING,0, "Sorry", NULL );
-                    pcAlert->Go(new Invoker());
+                    Alert* pcAlert = new Alert( "Login failed",  "Incorrect password!!!\n",Alert::ALERT_WARNING,0, "Sorry", NULL );
+                    pcAlert->Go(new Invoker(new Message (M_BAD_PASS), this));
                 }
                 break;
             }
             else
             {
 
-                Alert* pcAlert = new Alert( "Login failed:",  "Please be advised!!!\n\nNo such user is\nregistered to use\nthis computer!!!\n",Alert::ALERT_WARNING, 0, "OK", NULL );
+                Alert* pcAlert = new Alert( "Login failed",  "Please be advised!!!\n\nNo such user is\nregistered to use\nthis computer!!!\n",Alert::ALERT_WARNING, 0, "OK", NULL );
                 pcAlert->Go(new Invoker());
             }
         	break;
@@ -407,6 +401,11 @@ int main()
 	thisApp->Run();
 	
 }
+
+
+
+
+
 
 
 

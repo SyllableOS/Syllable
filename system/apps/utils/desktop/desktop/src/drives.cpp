@@ -1,4 +1,5 @@
 #include "drives.h"
+//#include <storage/volume,h>  // working on a volume class that will aid the mount menu
 #include "messages.h"
 
 #include <gui/checkmenu.h>
@@ -89,26 +90,23 @@ void Drives::GetDrivesInfo()
             
                
         }       
-        
-        //printf("%s\n",fsInfo.fi_dev);
         human( zSize, fsInfo.fi_total_blocks * fsInfo.fi_block_size );
         human( zUsed, (fsInfo.fi_total_blocks - fsInfo.fi_free_blocks) *fsInfo.fi_block_size );
         human( zAvail, fsInfo.fi_free_blocks * fsInfo.fi_block_size );
      	sprintf(zPer,"%.1f%%", ((double)fsInfo.fi_free_blocks / ((double)fsInfo.fi_total_blocks)) * 100.0);
-     
-		
+       
 		char  pzInfo[2048];
-		sprintf(pzInfo, "FileSystem Type:      %s  \n\nSize of Partition:      %s  \n\nAmount Used:          %s  \n\nAmount Available:   %s  \n\nDevice Path:             %s \n",fsInfo.fi_driver_name,zSize, zUsed,zAvail,fsInfo.fi_device_path);  
+		sprintf(pzInfo, "FileSystem Type:      %s  \n\nSize of Partition:      %s  \n\nAmount Used:          %s  \n\nAmount Available:   %s  \n\nDevice Path:             %s   \n",fsInfo.fi_driver_name,zSize, zUsed,zAvail,fsInfo.fi_device_path);  
          
         Message *pcMsg = new Message(M_SHOW_DRIVE_INFO);
         pcMsg->AddString("Alert_Name",fsInfo.fi_volume_name);
         pcMsg->AddString("Alert_Info",pzInfo);
         pcMsg->AddString("Alert_Devuce",fsInfo.fi_device_path);
         
-        
 		Menu* pcMenu = new Menu(Rect(0,0,0,0),fsInfo.fi_volume_name,ITEMS_IN_COLUMN);
 		pcMenu->AddItem(new MenuItem("Show Info...",pcMsg));
 		AddItem(pcMenu);
+		
 		
 }
 }
@@ -123,8 +121,15 @@ void Drives::Mount()
 
 void Drives::TimerTick(int nID)
 {
-	printf("hi\n");
+	
 }
+
+
+
+
+
+
+
 
 
 

@@ -17,8 +17,9 @@ install: $(EXE)
 	strip --strip-all /bin/$(EXE)
 
 clean:  
-	-rm -f $(OBJS)
-	-rm -f $(EXE)
+	@echo Removing all objects and executables.
+	@rm -f $(OBJS)
+	@rm -f $(EXE)
 
 dist:
 	@echo Copying $(EXE) to $(DIST_DIR)/atheos/sys/bin
@@ -75,4 +76,5 @@ dist:
 ../objs/drives_settings.o : drives_settings.cpp
 	@echo Compiling : $<
 	@$(CC) $(COPTS) $< -o $@ 
+
 

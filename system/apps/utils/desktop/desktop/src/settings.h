@@ -19,15 +19,18 @@ public:
 	const char* GetSetDir();
 	const char* GetConfigFile();
 	const char* GetImageDir();
+	bool GetVersion();
 	Color32_s GetBgColor();
 	Color32_s GetFgColor();
 	int32 GetImageSize();
-	
+	bool GetTrans();
+	string GetImageName();
 	
 private:
 	string zDeskImage;
 	bool   bShowVer;
 	bool   bAlpha;
+	bool   bTrans;
 	Color32_s cBgColor;
 	Color32_s cFgColor;
 	Message* pcReturnMessage;
@@ -42,6 +45,10 @@ private:
 };
 	
 #endif
+
+
+
+
 
 
 

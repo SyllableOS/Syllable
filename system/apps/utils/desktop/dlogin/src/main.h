@@ -18,6 +18,7 @@ static std::string cPassword;
 
 #define ID_OK 1
 #define ID_CANCEL 2
+#define M_BAD_PASS 3
 
 static bool g_bRun      = true;
 //static bool g_bSelected = false;
@@ -78,6 +79,8 @@ class LoginApp : public Application
 };
 
 #endif
+
+
 
 
 

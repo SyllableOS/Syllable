@@ -8,6 +8,7 @@
 #include <gui/dropdownmenu.h>
 #include <gui/stringview.h>
 #include <util/message.h>
+#include <gui/checkbox.h>
 #include "drives_messages.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,7 +34,7 @@ class DiskInfo;
 class DriveWindow : public Window
 {
 public:
-	DriveWindow(Window* pcWindow);
+	DriveWindow(Window* pcWindow, float fIcon);
 	~DriveWindow();
 	
 	
@@ -49,10 +50,13 @@ private:
 	void HandleMessage(Message* pcMessage);
 	char pzDriveDevice[20][200];
 	char pzDriveMount[20][200];
+	char pzDriveIcon[20][200];
 	void SaveInit();
+	void SaveDesktop();
 	void Add();
 	FILE* fout;
 	Window* pcAddWindow;
+	float fIconPoint;
 };
 
 
@@ -64,6 +68,7 @@ public:
 
 private:
 	DropdownMenu* pcDeviceDrop;
+	CheckBox* pcDriveIcon;
 	Button* pcOk;
 	Button* pcCancel;
 	TextView* pcText;
@@ -85,6 +90,8 @@ struct DiskInfo
 };
 	
 #endif
+
+
 
 
 

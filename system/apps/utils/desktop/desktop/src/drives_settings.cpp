@@ -62,11 +62,13 @@ static void find_drives( std::vector<DiskInfo>* pcList, const std::string& cPath
 ** parameters: Window* pcWindow
 ** returns:  
 */
-DriveWindow::DriveWindow(Window* pcWindow):Window(CRect(350,300), "Drive_Settings", "Mount Drives at Startup", WND_NOT_RESIZABLE)
+DriveWindow::DriveWindow(Window* pcWindow, float fIcon):Window(CRect(400,300), "Drive_Settings", "Mount Drives at Startup", WND_NOT_RESIZABLE)
 {
+	fIconPoint = fIcon;
 	pcList = new ListView(Rect(0,0,400,275),"layout_list_view",ListView::F_MULTI_SELECT,CF_FOLLOW_ALL);
-	pcList->InsertColumn("Device",175,0);
-	pcList->InsertColumn("Mount Point", 175,1);
+	pcList->InsertColumn("Device",150,0);
+	pcList->InsertColumn("Mount Point", 150,1);
+	pcList->InsertColumn("Desktop Icon", 100,2);
 	AddChild(pcList); 
 	
 	pcOk = new Button(Rect(25,279,75,300), "Ok_but", "OK", new Message(D_DRIVE_OK));
@@ -117,11 +119,12 @@ void DriveWindow::HandleMessage(Message* pcMessage)
 {
 	switch (pcMessage->GetCode())	
 	{
-		case D_DRIVE_OK:
+		case D_DRIVE_OK:{
 			SaveInit();
+			SaveDesktop();
 			Close();
 			break;
-			
+			}
 		case D_DRIVE_CANCEL:
 			Close();
 			break;
@@ -139,12 +142,14 @@ void DriveWindow::HandleMessage(Message* pcMessage)
 			
 		case D_ADD_PASS:{
 			pcAddWindow->Hide();
-			const char *cString, *zString;
+			const char *cString, *zString, *iString;
 			pcMessage->FindString("pass_device",&cString);
 			pcMessage->FindString("pass_mount", &zString);
+			pcMessage->FindString("pass_icon",&iString);
 			ListViewStringRow* pcRow = new ListViewStringRow();
 			pcRow->AppendString(cString);
 			pcRow->AppendString(zString);
+			pcRow->AppendString(iString);
 			pcList->InsertRow(pcRow);
 			pcAddWindow->Close();
 			break;
@@ -169,15 +174,20 @@ void DriveWindow::SetupDrives()
 	char pzFileName[200];
 	sprintf(pzFileName,"%s/Settings/Desktop/config/drives.cfg",getenv("HOME"));
 	fin = fopen(pzFileName,"r+");
+	if(!fin);
+	else{
 	int j =0;
-	while(fscanf(fin, "%s %s", pzDriveDevice[j], pzDriveMount[j]) !=EOF){
+	while(fscanf(fin, "%s %s %s", pzDriveDevice[j], pzDriveMount[j], pzDriveIcon[j]) !=EOF){
 		ListViewStringRow* pcRow = new ListViewStringRow();
 		pcRow->AppendString((string)pzDriveDevice[j]);
 		pcRow->AppendString((string)pzDriveMount[j]);
+		pcRow->AppendString((string)pzDriveIcon[j]);
 		pcList->InsertRow(pcRow);
 		j++;
 		}
+	
 	fclose(fin);
+	}
 } /*end DriveWindow::SetupDrives*/ 
 
 /*
@@ -219,7 +229,7 @@ void DriveWindow::SaveInit()
 	char pzFileName[200];
 	sprintf(pzFileName,"%s/Settings/Desktop/config/drives.cfg",getenv("HOME"));
 	char* pzText = GetInit();
-	fout = fopen("/atheos/sys/user_init.sh","w+");
+	fout = fopen("/atheos/sys/user_init.sh","w");
 	fprintf(fout,pzText);
 	fprintf(fout,"\n\n#This is from the mount menu");
 	for (i=0; i< pcList->GetRowCount();i++)
@@ -233,10 +243,35 @@ void DriveWindow::SaveInit()
 	for (i=0; i< pcList->GetRowCount();i++)
 	{
 		ListViewStringRow* pcRow =  (ListViewStringRow*)pcList->GetRow(i);
-		fprintf(fout,"%s %s\n", pcRow->GetString(0).c_str(),pcRow->GetString(1).c_str());
+		fprintf(fout,"%s %s %s\n", pcRow->GetString(0).c_str(),pcRow->GetString(1).c_str(), pcRow->GetString(2).c_str());
 	}
 	fclose(fout);
 } /*end SaveInit()*/
+
+
+void DriveWindow::SaveDesktop()
+{
+	uint i;
+	char pzFileName[200];
+	int nPoint = (int)fIconPoint;
+	for (i=0; i< pcList->GetRowCount();i++)
+	{
+		sprintf(pzFileName, "%s/Desktop/Drive[%d].desktop", getenv("HOME"),i);
+		ListViewStringRow* pcRow =  (ListViewStringRow*)pcList->GetRow(i);
+		fprintf(fout,"%s %s\n", pcRow->GetString(0).c_str(),pcRow->GetString(1).c_str());
+		
+		FILE* fout = fopen(pzFileName, "w");
+		fprintf(fout, "[Icon Name]\n");
+		fprintf(fout, "Drive [%d]\n",i);
+		fprintf(fout,"\n[Icon Picture]\n");
+		fprintf(fout,"/system/icons/drive.icon\n");
+		fprintf(fout,"\n[Execute]\n");
+		fprintf(fout, "LBrowser %s\n",pcRow->GetString(1).c_str());
+		fprintf(fout, "\n[Icon Position]\n");
+		fprintf(fout, "36 %d",nPoint+=53);
+		fclose(fout);
+}
+}
 
 /*
 ** name:       AddWindow()
@@ -252,10 +287,13 @@ AddWindow::AddWindow(Window* pcWindow) : Window(Rect(0,0,308,100),"add_window", 
 	pcWin = pcWindow;
 	CenterInWindow(pcWin);
 	
-	pcOk = new Button(Rect(10,80,50,98),"ok_but", "Ok",new Message(D_ADD_OK));
+	pcDriveIcon = new CheckBox(Rect(5,60,GetBounds().Width(),75), "drive_icon","Create icon on Desktop", NULL); 
+	AddChild(pcDriveIcon);
+	
+	pcOk = new Button(Rect(10,80,50,100),"ok_but", "Ok",new Message(D_ADD_OK));
 	AddChild(pcOk);
 	
-	pcCancel = new Button(Rect(60,80,100,98),"can_but","Cancel",new Message(D_ADD_CANCEL));
+	pcCancel = new Button(Rect(60,80,100,100),"can_but","Cancel",new Message(D_ADD_CANCEL));
 	AddChild(pcCancel);
 	
 	pcDeviceDrop = new DropdownMenu(Rect(80,8,285,25),"");
@@ -264,13 +302,13 @@ AddWindow::AddWindow(Window* pcWindow) : Window(Rect(0,0,308,100),"add_window", 
 	pcDeviceString = new StringView(Rect(5,5,75,30),"","Device:");
 	AddChild(pcDeviceString);
 	
-	pcMountString = new StringView(Rect(5,50,75,75),"mount_string","Mount Point:");
+	pcMountString = new StringView(Rect(5,30,75,55),"mount_string","Mount Point:");
 	AddChild(pcMountString);
 	
-	pcText = new TextView(Rect(80,55,285,73),"mount_text","");
+	pcText = new TextView(Rect(80,35,285,53),"mount_text","");
 	AddChild(pcText);
 	
-	ImageButton* pcImageBut = new ImageButton(Rect(290,53,306,69),"blah","open",new Message(D_ADD_OPEN),GetImage("up.png"),ImageButton::IB_TEXT_BOTTOM,false, false, false, CF_FOLLOW_NONE);
+	ImageButton* pcImageBut = new ImageButton(Rect(290,33,306,49),"blah","open",new Message(D_ADD_OPEN),GetImage("up.png"),ImageButton::IB_TEXT_BOTTOM,false, false, false, CF_FOLLOW_NONE);
 	AddChild(pcImageBut);
 	
     find_drives( &cDiskInfoList, "/dev/disk/" );
@@ -326,9 +364,15 @@ void AddWindow::HandleMessage(Message* pcMessage)
 	switch (pcMessage->GetCode())
 	{
 		case D_ADD_OK:{
+			bool bDriveIcon = pcDriveIcon->GetValue().AsBool();
 			Message* pcMsg = new Message(D_ADD_PASS);
 			pcMsg->AddString("pass_device", pcDeviceDrop->GetCurrentString());
 			pcMsg->AddString("pass_mount",pcText->GetBuffer()[0]);
+			if (bDriveIcon == true)
+				pcMsg->AddString("pass_icon","true");
+			else
+				pcMsg->AddString("pass_icon", "false");
+				
 			DispatchMessage(pcMsg, pcWin);
 		}
 			break;
@@ -368,6 +412,13 @@ void AddWindow::HandleMessage(Message* pcMessage)
 		}
 	}
 } /*end AddWindow::HandleMessage()*/
+
+
+
+
+
+
+
 
 
 

@@ -1,6 +1,6 @@
 #include "iconmenu_prop.h"
 #include "iconmenu_messages.h"
-
+#include <gui/imagebutton.h>
 
 /*
 ** name:       IconProp Constructor
@@ -8,12 +8,12 @@
 ** parameters: String(contains the icon name)
 ** returns:   
 */
-IconProp::IconProp(string cIconName, string cExec, Bitmap* cIconPic) : Window(CRect(250,100), "Icon_Properties", "Icon Properties", WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_RESIZABLE)
+IconProp::IconProp(string cIconName, string cExec, Bitmap* cIconPic) : Window(CRect(250,150), "Icon_Properties", "Icon Properties", WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_RESIZABLE)
 {
    	
    	/* For The Icon Name. */
-	 pcIconNameString = new StringView(Rect(0,0,0,0),"Icon_Name", "Icon Name:");
-    pcIconNameString->SetFrame(Rect(0,0,70,20) + Point(10,10));
+	 pcIconNameString = new StringView(Rect(0,0,0,0),"Icon_Name", "Name:");
+    pcIconNameString->SetFrame(Rect(0,0,50,20) + Point(10,10));
     AddChild(pcIconNameString);
 
     pcIconNameText = new TextView(Rect(0,0,0,0),"Icon_NAME_TEXT",cIconName.c_str());
@@ -41,13 +41,16 @@ IconProp::IconProp(string cIconName, string cExec, Bitmap* cIconPic) : Window(CR
 	pcIconExecStr->SetFrame(Rect(0,0,50,20) + Point(10,40));
 	AddChild(pcIconExecStr);
 	
-    pcIconOkBut = new Button(Rect(0,0,0,0),"Icon_OK","OK",new Message(ID_ICON_PROP_OK) );
-    pcIconOkBut->SetFrame(Rect(0,0,40,25) + Point (GetBounds().Width() /2 - 25, GetBounds().Height() - 30) );
-    AddChild(pcIconOkBut);
+	ImageButton* pcImageBut = new ImageButton(Rect(0,0,0,0), "IMAGE_CHANGE", "Change", NULL, NULL, ImageButton::IB_TEXT_BOTTOM, true,true);
+    pcImageBut->SetFrame(Rect(0,0,46,40) + Point(GetBounds().Width() /2 - 25, GetBounds().Height() - 80) );
+    AddChild(pcImageBut);
+    /*pcIconOkBut = new Button(Rect(0,0,0,0),"Icon_OK","OK",new Message(ID_ICON_PROP_OK) );
+    pcIconOkBut->SetFrame(Rect(0,0,40,) + Point (GetBounds().Width() /2 - 25, GetBounds().Height() - 30) );
+    AddChild(pcIconOkBut);*/
     
-    View* pcView = new View(Rect(00,10,32,32),"");
+    /*View* pcView = new View(Rect(00,10,32,32),"");
     pcView->DrawBitmap(cIconPic, cIconPic->GetBounds(), pcView->GetBounds());
-    AddChild(pcView);
+    AddChild(pcView);*/
     
     
 }
@@ -93,6 +96,8 @@ void IconProp::HandleMessage(Message* pcMessage)
         break;
     }
 }
+
+
 
 
 

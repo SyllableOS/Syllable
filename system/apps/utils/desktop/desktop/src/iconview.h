@@ -14,7 +14,7 @@ class Icon
         const Point& GetPosition() const {return(m_cPosition);}
         Rect 		     GetBounds( Font* pcFont );
         Rect 		     GetFrame( Font* pcFont );
-        void 		     Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendText, Color32_s bClr, Color32_s fClr );
+        void 		     Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendText, bool bTrans, Color32_s bClr, Color32_s fClr );
         void 		     Select( BitmapView* pcView, bool bSelected );
         void 		     Select( IconView* pcView, bool bSelected );
         bool		     IsSelected() const { return( m_bSelected ); }
@@ -87,6 +87,7 @@ class IconView : public View, public Invoker
         void ReadPrefs();
         Color32_s BgColor, FgColor;
 };
+
 
 
 

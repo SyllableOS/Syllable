@@ -83,6 +83,7 @@ void DeskSettings::ReadSettings()
         pcPrefs->FindBool   ( "ShowVer",    &bShowVer   );
         pcPrefs->FindInt32  ( "SizeImage",  &nSizeImage);
         pcPrefs->FindBool   ( "Alphabet",   &bAlpha);
+        pcPrefs->FindBool   ("Transparent", &bTrans);
         
     
     }else {
@@ -157,6 +158,23 @@ int32 DeskSettings::GetImageSize()
 {
 	return (nSizeImage);
 }
+
+bool DeskSettings::GetTrans()
+{
+	return (bTrans);
+}
+
+string DeskSettings::GetImageName()
+{
+	return( zDeskImage);
+}
+
+bool DeskSettings::GetVersion()
+{
+	return (bShowVer);
+}
+
+
 
 
 

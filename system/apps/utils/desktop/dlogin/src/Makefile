@@ -15,8 +15,9 @@ $(EXE) : $(OBJS)
 
 
 clean:
-	-rm -f $(OBJS)
-	-rm -f $(EXE)
+	@echo Removing all objects and executables 
+	@rm -f $(OBJS)
+	@rm -f $(EXE)
 
 
 dist:
@@ -35,6 +36,8 @@ dist:
 ../objs/colorbutton.o : colorbutton.cpp
 	@echo Compiling : $<
 	@$(CC) $(COPTS) $< -o $@
+
+
 
 
 

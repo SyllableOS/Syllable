@@ -4,6 +4,7 @@
 Bitmap* Icon::s_pcBitmap[20] = {NULL,};
 int	Icon::s_nCurBitmap = 0;
 Color32_s fgColor, bgColor;
+bool bTransParent;
 
 /*
 ** name:       Icon Constructor
@@ -95,7 +96,7 @@ void Icon::Select( IconView* pcView, bool bSelected )
 
     pcView->Erase( GetFrame( pcView->GetFont() ) );
 
-    Paint( pcView, Point(0,0), true, true, bgColor,fgColor );
+    Paint( pcView, Point(0,0), true, true, bTransParent, bgColor,fgColor );
 }
 
 /*
@@ -156,10 +157,12 @@ Rect Icon::GetFrame( Font* pcFont )
 ** parameters: View, Point, bool, bool, Color32_s, Color32_s
 ** returns:	   
 */
-void Icon::Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendText, Color32_s bClr,Color32_s fClr )
+void Icon::Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendText, bool bTrans, Color32_s bClr,Color32_s fClr )
 {
+	bTransParent = bTrans;
     bgColor = bClr;
     fgColor = fClr;
+    bool bSelectColor = false;
     Point cPosition = m_cPosition + cOffset;
     if ( bLarge )
     {
@@ -193,25 +196,44 @@ void Icon::Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendTe
         }
         if ( m_bSelected && bBlendText )
         {
+            if (!bTrans){
             pcView->SetFgColor(bClr);
-            Rect cRect( x - 2, y - sHeight.ascender,
-                        x + vStrWidth + 1, y + sHeight.descender );
+            Rect cRect( x - 2, y - sHeight.ascender,x + vStrWidth + 1, y + sHeight.descender );
             pcView->FillRect( cRect );
+            }
+            else;
+            //pcView->SetFgColor(255,255,255,0xff); // this one is for setting highlight
+            
+          
         }
 
-            pcView->SetFgColor( fClr );
+         pcView->SetFgColor( fClr );
         if ( bBlendText )
         {
+        	if (!bTrans)
             pcView->SetFgColor( fClr );
+            
+            else{
+            if (m_bSelected)
+            pcView->SetFgColor(fClr);
+            //pcView->SetFgColor(255,255,255,0xff);
+            
+            else
+            pcView->SetFgColor(0,0,0,0xff);
+            
+            }
         }
         else
         {
             pcView->SetFgColor( 255,255,255, 0xff );
         }
 
+		
+        	
+        	
+        	
         pcView->DrawString( m_cTitle.c_str(), m_nMaxStrLen );
-
-        pcView->SetDrawingMode( DM_BLEND );  //DM_BLEND
+		pcView->SetDrawingMode( DM_BLEND );  //DM_BLEND
 
         if ( s_nCurBitmap == 20 )
         {
@@ -319,7 +341,7 @@ void IconView::LayoutIcons()
             cPos.x = 20;
             cPos.y += 50;
         }
-        m_cIcons[i]->Paint( this, Point(0,0), true, true, bgColor,fgColor  );
+        m_cIcons[i]->Paint( this, Point(0,0), true, true, bTransParent, bgColor,fgColor  );
     }
     Flush();
 }
@@ -434,7 +456,7 @@ void IconView::Paint( const Rect& cUpdateRect )
     {
         if ( m_cIcons[i]->GetFrame( pcFont ).DoIntersect( cUpdateRect ) )
         {
-            m_cIcons[i]->Paint( this, Point(0,0), true, true, bgColor,fgColor  );
+            m_cIcons[i]->Paint( this, Point(0,0), true, true, bTransParent, bgColor,fgColor  );
         }
     }
 }
@@ -674,7 +696,7 @@ void IconView::MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData
             {
                 m_cIcons[i]->m_cPosition += cPosition - m_cDragStartPos;
             }
-            m_cIcons[i]->Paint( this, Point(0,0), true, true, bgColor,fgColor  );
+            m_cIcons[i]->Paint( this, Point(0,0), true, true, bTransParent, bgColor,fgColor  );
         }
         Flush();
     }
@@ -769,7 +791,7 @@ void IconView::MouseMove( const Point& cNewPos, int nCode, uint32 nButtons, Mess
                 {
                     if ( m_cIcons[i]->m_bSelected )
                     {
-                        m_cIcons[i]->Paint( pcView, -cSelFrame.LeftTop(), true, false, bgColor,fgColor  );
+                        m_cIcons[i]->Paint( pcView, -cSelFrame.LeftTop(), true, false, bTransParent, bgColor,fgColor  );
                     }
                 }
 
@@ -868,6 +890,9 @@ void IconView::DirChanged( const std::string& cNewPath )
     }
 
 }
+
+
+
 
 
 

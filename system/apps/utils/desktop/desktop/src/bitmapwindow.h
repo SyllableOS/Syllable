@@ -39,6 +39,7 @@ class BitmapView : public View
         virtual void	MouseMove( const Point& cNewPos, int nCode, uint32 nButtons, Message* pcData );
         virtual void	Paint( const Rect& cUpdateRect);
         void ReadPrefs();
+        DeskSettings* pcSettings;
         Color32_s zBgColor, zFgColor;
         void 			 SetIcons();
         void              RemoveIcons();
@@ -66,7 +67,7 @@ class BitmapView : public View
         Bitmap*          cIconPic;
         t_Icon 			 IconList();
         bool             bAlphbt;
-        DeskSettings* pcSettings;
+        float            fIconPoint;
         Message* pcSetPrefs;
         
         
@@ -87,6 +88,8 @@ class BitmapWindow : public Window
 };
 
 #endif
+
+
 
 
 

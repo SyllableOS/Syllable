@@ -52,7 +52,13 @@ void LaunchFiles()
 string SyllableInfo()
 {
     string return_version;
-    return_version = "Syllable 0.4.3, Desktop V0.5";
+    char zTmp[6];
+    
+    FILE* fin = popen("/usr/bin/uname -v 2>&1","r");
+    fgets(zTmp, sizeof(zTmp),fin);
+    pclose(fin);
+    
+    return_version = "Syllable " + (string)zTmp + ", " + "Desktop V0.5";
     return (return_version);
 }
 
@@ -162,7 +168,7 @@ void Icon::Select( BitmapView* pcView, bool bSelected )
 
     pcView->Erase( GetFrame( pcView->GetFont() ) );
 
-    Paint( pcView, Point(0,0), true, true, pcView->zBgColor, pcView->zFgColor );
+    Paint( pcView, Point(0,0), true, true,pcView->pcSettings->GetTrans(), pcView->zBgColor, pcView->zFgColor );
 }
 
 
@@ -267,7 +273,7 @@ void BitmapView::SetIcons()
     Point zIconPoint;
     uint iconExec = 0;
     Point cPos( 20, 20 );
-   
+    float fyPoint = 0;
 	for (iconExec = 0; iconExec < IconList().size(); iconExec++)
     {
         ifstream filRead;
@@ -284,7 +290,10 @@ void BitmapView::SetIcons()
         filRead.close();
 
         sscanf(zPos,"%f %f\n",&zIconPoint.x,&zIconPoint.y);
-
+		
+		if (zIconPoint.y > fyPoint)
+			fyPoint = zIconPoint.y;
+			
         m_cIcons.push_back(new Icon(zIconName, zIconImage,zIconExec, zIconPoint,sStat));
     }
     
@@ -297,11 +306,12 @@ void BitmapView::SetIcons()
             cPos.y = 20;
             cPos.x += 50;
 
-            m_cIcons[i]->Paint( this, Point(0,0), true, true, zBgColor, zFgColor );
+            m_cIcons[i]->Paint( this, Point(0,0), true, true, pcSettings->GetTrans(), zBgColor, zFgColor );
 
         }
-        
+        fIconPoint = fyPoint;
         Paint(GetBounds());
+        
     }
 
 }
@@ -326,7 +336,7 @@ void BitmapView::Paint( const Rect& cUpdateRect)
     {
         if ( m_cIcons[i]->GetFrame( pcFont ).DoIntersect( cUpdateRect ) )
         {
-            m_cIcons[i]->Paint( this, Point(0,0), true, true, zBgColor, zFgColor );
+            m_cIcons[i]->Paint( this, Point(0,0), true, true, pcSettings->GetTrans(), zBgColor, zFgColor );
         }
     }
 
@@ -423,9 +433,18 @@ void BitmapView::MouseDown( const Point& cPosition, uint32 nButtons )
                     if ( nPid == 0 )
                     {
                         set_thread_priority( -1, 0 );
-                        execlp( pcIcon->GetExecName().c_str(), pcIcon->GetExecName().c_str(), NULL );
+                        std::string pzExec = pcIcon->GetExecName();
+                        int nPos = pzExec.find(' ');
+                        
+                        if (nPos == string::npos){
+                        execlp(pzExec.c_str(), pzExec.c_str(), NULL );
                         exit( 1 );
-
+                        }
+						else{
+							 
+							execlp(pzExec.substr(0,nPos).c_str(), pzExec.substr(0,nPos).c_str(),pzExec.substr(nPos+1).c_str(), NULL);
+							exit(1);
+							}
                     }
                 }
                else
@@ -495,9 +514,7 @@ void BitmapView::RemoveIcons()
 	    m_cIcons.pop_back();
 		}
 	
-	Erase(this->GetBounds());
-	Flush();	
-	
+	Erase(this->GetBounds());		
 }
 
 /*
@@ -555,7 +572,7 @@ void BitmapView::MouseUp( const Point& cPosition, uint32 nButtons, Message* pcDa
             {
                 m_cIcons[i]->m_cPosition += cPosition - m_cDragStartPos;
             }
-            m_cIcons[i]->Paint( this, Point(0,0), true, true, zBgColor, zFgColor );
+            m_cIcons[i]->Paint( this, Point(0,0), true, true, pcSettings->GetTrans(), zBgColor, zFgColor );
         }
         Flush();
     }
@@ -649,7 +666,7 @@ void BitmapView::MouseMove( const Point& cNewPos, int nCode, uint32 nButtons, Me
                 {
                     if ( m_cIcons[i]->m_bSelected )
                     {
-                        m_cIcons[i]->Paint( pcView, -cSelFrame.LeftTop(), true, false, zBgColor, zFgColor );
+                        m_cIcons[i]->Paint( pcView, -cSelFrame.LeftTop(), true, false,pcSettings->GetTrans(), zBgColor, zFgColor );
                     }
                 }
                 cDragBitmap.Sync();
@@ -736,7 +753,6 @@ void BitmapView::HandleMessage(Message* pcMessage)
     		pcMessage->FindInt32( "which", &nAlertBut );
     		
     		if ( nAlertBut == 0){
-    		printf("%d\n", getsid(0));
     		GetWindow()->OkToQuit();
     		
     		}
@@ -755,10 +771,8 @@ void BitmapView::HandleMessage(Message* pcMessage)
     	{
 		string zAlertInfo;
 		string zAlertName;
-		string zDevice;
 		pcMessage->FindString("Alert_Name", &zAlertName);
 		pcMessage->FindString("Alert_Info",  &zAlertInfo);
-		pcMessage->FindString("Alert_Device",&zDevice);
 		(new Alert (zAlertName.c_str(),zAlertInfo.c_str(),Alert::ALERT_INFO,0,"Ok",NULL))->Go(new Invoker());
         break;
 		}
@@ -772,11 +786,31 @@ void BitmapView::HandleMessage(Message* pcMessage)
 
 	case M_SHOW_DRIVE_SETTINGS:
 		{
-		Window* pcDrives = new DriveWindow(GetWindow());
-		pcDrives->Show();
-		pcDrives->MakeFocus();
-		}
+			Window* pcDrives = new DriveWindow(GetWindow(), fIconPoint);
+			if (getuid() == 0){
+				
+				pcDrives->Show();
+				pcDrives->MakeFocus();
+				
+			} else{
+					Alert* pcAlert = new Alert("Warning", "Only root can open this dialog.\n\nHowever, would you like to place the\ndrive icons on your desktop?\n", Alert::ALERT_INFO,0, "Yes","No",NULL);
+					pcAlert->Go(new Invoker(new Message (M_DRIVE_ICON), this));
+				}
+			}
 		break;
+		
+	case M_DRIVE_ICON:
+		{
+			int32 nAlertBut;
+    		pcMessage->FindInt32( "which", &nAlertBut );
+    		
+    		if ( nAlertBut == 0){
+    		
+    		break;
+    		}
+    		
+    		break;
+    	}
     default:
         View::HandleMessage(pcMessage);
         break;
@@ -794,7 +828,7 @@ BitmapWindow::BitmapWindow() : Window(Rect( 0, 0, 1599, 1199 ), "_bitmap_window"
 {
    
    DeskSettings* pcSet = new DeskSettings();
-   pcConfigChange = new NodeMonitor(pcSet->GetSetDir(),NWATCH_DIR,this);
+   pcConfigChange = new NodeMonitor(pcSet->GetSetDir(),NWATCH_DIR,this); /*note must work on NodeMonitor*/
    pcIconChange = new NodeMonitor(pcSet->GetIconDir(),NWATCH_DIR,this);
   
    pcBitmapView = new BitmapView( GetBounds());
@@ -814,15 +848,21 @@ void BitmapWindow::HandleMessage(Message* pcMessage)
     {
     case M_CONFIG_CHANGE:
         pcBitmapView->ReadPrefs();
-        pcBitmapView->Paint(pcBitmapView->GetBounds());
-        pcBitmapView->Flush();
+        pcBitmapView->RemoveIcons();
+        //pcBitmapView->Paint(pcBitmapView->GetBounds());
+        pcBitmapView->SetIcons();
+        //pcBitmapView->Flush();
         pcBitmapView->Sync();
-        
-    case M_DESKTOP_CHANGE:
-    	pcBitmapView->RemoveIcons();
-    	pcBitmapView->SetIcons();
-    	pcBitmapView->Flush();
+       
+        //break;
+    /*case M_DESKTOP_CHANGE:
+    	pcBitmapView->ReadPrefs();
+    	
     	pcBitmapView->Paint(pcBitmapView->GetBounds());
+    	
+    	pcBitmapView->Flush();
+    	pcBitmapView->Sync();
+    	*/
     	break;
     }
 } /*end of HandleMessage()*/
@@ -833,6 +873,18 @@ bool BitmapWindow::OkToQuit(void)
     Application::GetInstance()->PostMessage(M_QUIT );
   	return (true);
 } /*end of OkToQuit()*/
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
