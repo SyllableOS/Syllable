@@ -30,7 +30,7 @@ clean:
 	-rm $(EXE)
 
 mixer: $(OBJS)
-	g++ $(OBJS) -o $(EXE) -latheos
+	g++ $(OBJS) -o $(EXE) -lsyllable
 
 install: objs mixer
 	cp -f $(EXE) $(DEVBIN)/$(EXE)

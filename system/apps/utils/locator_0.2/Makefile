@@ -16,15 +16,15 @@ LL	= g++
 all	: dirs $(EXE1) $(EXE2) $(EXE3)
 
 $(EXE1) : $(OBJS1)
-	$(LL) $(OBJS1) -latheos -lstdc++ -lm -o $@
+	$(LL) $(OBJS1) -lsyllable -lstdc++ -lm -o $@
 
 
 $(EXE2) : $(OBJS2)
-	$(LL) $(OBJS2) -latheos -lstdc++ -lm -o $@
+	$(LL) $(OBJS2) -lsyllable -lstdc++ -lm -o $@
 
 
 $(EXE3) : $(OBJS3)
-	$(LL) $(OBJS3) -latheos -lstdc++ -lm -o $@
+	$(LL) $(OBJS3) -lsyllable -lstdc++ -lm -o $@
 
 dirs:
 	-mkdir objs bin

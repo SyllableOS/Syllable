@@ -7,7 +7,7 @@ CC	= g++
 LL	= g++
 
 $(EXE) : $(OBJS)
-	$(LL) $(OBJS) -latheos -o $@
+	$(LL) $(OBJS) -lsyllable -o $@
 
 install: $(EXE)
 	strip --strip-all $(EXE)

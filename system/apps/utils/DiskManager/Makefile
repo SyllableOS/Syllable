@@ -18,7 +18,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/$(EXE): $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/$(EXE) -latheos -lstdc++
+	gcc $(OBJS) -o $(OBJDIR)/$(EXE) -lsyllable -lstdc++
 
 install: $(OBJDIR)/$(EXE)
 	install -s $(OBJDIR)/$(EXE) /bin/$(EXE)

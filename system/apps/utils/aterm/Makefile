@@ -7,7 +7,7 @@ CC	= gcc
 LL	= gcc
 
 $(EXE): $(OBJS)
-	$(CC) $(OBJS) -latheos -lstdc++ -o $(EXE)
+	$(CC) $(OBJS) -lsyllable -lstdc++ -o $(EXE)
 
 install: $(EXE)
 	cp -f $(EXE) /bin/aterm
