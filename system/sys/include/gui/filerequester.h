@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 1999 - 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -59,16 +60,16 @@ public:
 		   FileFilter* pcFilter = NULL,
 		   bool  bModal = false,
 		   bool bHideWhenDone = true,
-		   const char* pzOkLabel = NULL,
-		   const char* pzCancelLabel = NULL );
+		   String cOkLabel = "",
+		   String cCancelLabel = "" );
 	virtual ~FileRequester();
 
     virtual void	HandleMessage( Message* pcMessage );
     virtual void	FrameSized( const Point& cDelta );
 	virtual bool FileRequester::OkToQuit(void);
 
-    void	SetPath( const std::string& cPath );
-    std::string GetPath() const;
+    void	SetPath( const String& cPath );
+    String GetPath() const;
     
 
 private:
@@ -86,7 +87,5 @@ private:
 }
 
 #endif // __F_GUI_FILEREQUESTER_H__
-
-
 
 
