@@ -1,5 +1,12 @@
 * November 7 2004, Jake Hamby *
 
+Fixed a bug in restoring the FPU registers on returning from a signal
+handler.  Also, if the process hasn't used the FPU, save_i387() will
+return 0, causing AddSigHandlerFrame() to clear the FPU state pointer so
+that on returning from the signal, restore_i387() isn't called.
+
+* November 7 2004, Jake Hamby *
+
 Update sys_kill() to verify that the real or effective user ID of the
 calling process matches either the real or saved user ID of the receiving
 process, or the caller is root, or the calling process is sending SIGCONT to
