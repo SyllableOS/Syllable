@@ -1,14 +1,14 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.3.6+
+# Version 0.3.7
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
 
 # Set environment variables
 
-ENV['CFLAGS']		= "-march=i586 -O2 -pipe"
+ENV['CFLAGS']	= "-march=i586 -O2 -pipe"
 ENV['CXXFLAGS']	= "-march=i586 -O2 -pipe"
 
 # Define paths
@@ -38,7 +38,7 @@ else
 	ENV['DIST_VER']  = "0.5.2+"
 	ENV['DIST_NAME'] = "base-syllable-0.5.2+.tgz"
 
-	ENV['ATHEOS_SRC']				= @workDir
+	ENV['ATHEOS_SRC']			= @workDir
 	ENV['ATHEOS_INCLUDE_PATH']	= File.join @workDir, "sys/include"
 	ENV['ATHEOS_LIB_PATH']		= File.join @workDir, "libs"
 	ENV['BUILD_TOOLS']			= File.join @workDir, "build-tools"
@@ -167,13 +167,13 @@ def configurePackage target
 
 		true  # Continue building even if dependencies failed
 	else
-		unless exists? "configure"
+		unless exists? cmd = ((cmd = recipe(package = fullName(target))["configure-cmd"]) ? cmd : "configure")
 			true
 		else
 			logHeader "Configuring"
 			action "rm config.cache" if exists? "config.cache"
-			name = shortName package = fullName(target)
-			if action "./configure" +
+			name = shortName package
+			if action "./" + cmd +
 				(name == "man" || name == "grub" ? "" :
 					" --prefix=" + prefix(package)
 				) +
@@ -492,7 +492,10 @@ def uninstall target
 
 	for package in profile target
 		logEntry package
+
+		Dir.chdir package
 		uninstallPackage package
+		Dir.chdir @workDir
 	end
 end
 
@@ -515,7 +518,7 @@ def makeDistro target
 		if  # Tar it up
 			if action "tar cvf #{file}.tar" +
 				" -C #{@installRoot} " +
-					(profile.collect {|package| installName package}).join(" ") +
+				(profile.collect {|package| installName package}).join(" ") +
 				(files = recipe(target)["distro-files"] ? " " + files : "")
 			then
 				if profile.is_a? Array and exists? distroDir = File.join(@packagesPath, name, "distro")
@@ -609,8 +612,8 @@ def parseValues text  # Load key/value pairs into a hash table
 end
 
 def thirdParty?
-	exists? "configure" or
-		shortName(Dir.getwd) == "bzip2"
+	exists? ((cmd = recipe(dir = Dir.getwd)["configure-cmd"]) ? cmd : "configure") or
+		shortName(dir) == "bzip2"
 # Currently conflicts with Ffmpeg:
 #		exists? File.join(@packagesPath, package = fullName(Dir.getwd), package + ".recipe")
 end
@@ -663,7 +666,7 @@ def recipe package  # Load the key/value pairs of a recipe into a hash table
 	end
 end
 
-def action command
+def action command  # Return the output of the shell command, or false if unsuccessful
 	logAction command
 	stdout = `#{command}`
 	if (status = $? >> 8) == 0  # OK
@@ -751,7 +754,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.3.6+",
+	puts "Syllable Build System 0.3.7",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
@@ -807,9 +810,9 @@ else
 		when "distclean"	then distclean arg2
 		when "clean"		then clean arg2
 		when "configure"	then configure arg2
-		when "make"		then make arg2
-		when "test"		then test arg2
-		when "install"	then install arg2
+		when "make"			then make arg2
+		when "test"			then test arg2
+		when "install"		then install arg2
 		when "uninstall"	then uninstall arg2
 		when "distro"		then makeDistro arg2
 		else
@@ -835,3 +838,6 @@ else
 
 	closeLogs
 end
+
+
+
