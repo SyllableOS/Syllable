@@ -29,6 +29,7 @@
 #include <atheos/spinlock.h>
 #include <atheos/kdebug.h>
 #include <atheos/time.h>
+#include <atheos/strace.h>
 
 #include <macros.h>
 
@@ -107,7 +108,7 @@ void ExitSyscall( int dummy )
 	{
 		printk( "PANIC : return from syscall whith interrupts disabled!! I turn them on again.\n" );
 		psRegs->eflags |= EFLG_IF;
-		psThread->tr_nSysTraceLevel = 999;	/* Temporary strace (this function only) */
+		psThread->tr_nSysTraceMask = SYSC_GROUP_ALL;	/* Temporary strace (this function only) */
 	}
 }
 

@@ -1,6 +1,9 @@
 #ifndef	_POSIX_ERRNO_H_
 #define	_POSIX_ERRNO_H_
 
+/* Total number of errno's  *Always* update this if you add or remove anything! */
+#define __NUM_ERRNOS	133
+
 /* Should never be seen by user programs */
 #define ERESTARTSYS	512
 #define ERESTARTNOINTR	513
@@ -11,10 +14,10 @@
 #define	EBADINDEX	130
 #define	ENOSYM		131	/* Image symbol not found	*/
 #define	EINITFAILED	132	/* Library's init function failed	*/
-#define ENOADDRSPC	133	/* Out of virtual address space	*/
-#define EUNKNOWNFS	134	/* No FS driver found in mount()/probe_fs() */
+#define	ENOADDRSPC	133	/* Out of virtual address space	*/
+#define	EUNKNOWNFS	134	/* No FS driver found in mount()/probe_fs() */
 
-#define EOK		0	/* No error */
+#define	EOK		0	/* No error */
 #define	EPERM		1	/* Operation not permitted */
 #define	ENOENT		2	/* No such file or directory */
 #define	ESRCH		3	/* No such process */
@@ -139,6 +142,5 @@
 #define	EISNAM		120	/* Is a named type file */
 #define	EREMOTEIO	121	/* Remote I/O error */
 #define	EDQUOT		122	/* Quota exceeded */
-
 
 #endif	/*	_POSIX_ERRNO_H_ */

@@ -142,7 +142,7 @@
 #define __NR_ioctl			116
 #define __NR_pipe			117
 #define __NR_access			118
-#define __NR_set_strace_level		119
+/*#define __NR_set_strace_level		119*/
 #define	__NR_symlink			120
 #define	__NR_readlink			121
 #define	__NR_call_v86			122
@@ -242,7 +242,17 @@
 #define __NR_make_port_private		207
 #define __NR_find_port				208
 
-#define	__NR_SysCallCount			209
+#define __NR_strace					209
+#define __NR_strace_exclude			210
+#define __NR_strace_include			211
+#define __NR_ptrace					212
+
+#define	__NR_SysCallCount			213
+#define	__NR_DeprecatedSysCallCount		11	/* Obsolete syscalls */
+
+/* The TRUE number of ACTIVE syscalls E.g. __NR_SysCallCount minus the number of
+   deprecated syscalls */
+#define	__NR_TrueSysCallCount ( __NR_SysCallCount - __NR_DeprecatedSysCallCount )
 
 
 #endif /* _F_SYSCALL_H_ */

@@ -1,7 +1,7 @@
-
 /*
- *  The AtheOS kernel
- *  Copyright (C) 1999  Kurt Skauen
+ *  The Syllable kernel
+ *  Copyright (C) 1999 Kurt Skauen
+ *  Copyright (C) 2004 Kristian Van Der Vliet
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -18,518 +18,381 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <atheos/types.h>
 #include <atheos/kernel.h>
+#include <atheos/spinlock.h>
+#include <atheos/types.h>
+#include <atheos/strace.h>
 #include <atheos/syscall.h>
-#include <atheos/smp.h>
-#include <posix/signal.h>
+#include <posix/errno.h>
 
-#include "inc/scheduler.h"
+#include <inc/scheduler.h>
 
-const char *sys_siglist[] = {
-	"INVALID",
-	"HUP",
-	"INT",
-	"QUIT",
-	"ILL",
-	"TRAP",
-	"ABRT",			/*    "SIGIOT", */
-	"BUS",
-	"FPE",
-	"KILL",
-	"USR1",
-	"SEGV",
-	"USR2",
-	"PIPE",
-	"ALRM",
-	"TERM",
-	"STKFLT",
-	"CHLD",
-	"CONT",
-	"STOP",
-	"TSTP",
-	"TTIN",
-	"TTOU",
-	"URG",
-	"XCPU",
-	"XFSZ",
-	"VTALRM",
-	"PROF",
-	"WINCH",
-	"IO",
-	"PWR",
-	"UNUSED1",
-	"UNUSED2"
-};
+/* HandleSTrace needs to be able to print several different strings, but for them to appear
+   as a single contigous string in the kernel log; printk() and derivitives always prefix
+   the CPU #, thread name etc. to the output, which ruins the text. This macro doesn't do
+   that. */
+#define strace_print( fmt, arg... ); {uint8 zBuffer[1024]; sprintf( zBuffer, fmt, ## arg ); debug_write( zBuffer, strlen( zBuffer ) ); }
 
-/****** exec.library/ *************************************************
- *
- *   NAME
- *
- *   SYNOPSIS
- *
- *   FUNCTION
- *
- *   NOTE
- *
- *   INPUTS
- *
- *   RESULT
- *
- *   SEE ALSO
- *
- ****************************************************************************/
+/*
+	The registers are used as per. the IA32 ELF ABI:
 
-void strsigset( int nSigMask, char *pzBuf )
+	psRegs->eax - Return value
+
+	psRegs->ebx - Arg #1
+	psRegs->ecx - Arg #2
+	psRegs->edx - Arg #3
+	psRegs->esi - Arg #4
+	psRegs->edi - Arg #5
+*/
+
+static void strace_print_args( int nSyscall, SysCallRegs_s *psRegs )
 {
-	int i;
+	int nArg, nType;
+	long nVal;
 
-	if ( ~0 == nSigMask )
+	nType = g_sSysCallTable[ nSyscall ].nArg1Type;
+	nVal = psRegs->ebx;
+
+	/* Print each syscall argument in turn, using the correct format */
+	for( nArg = 1; nArg <= g_sSysCallTable[ nSyscall ].nNumArgs; nArg++ )
 	{
-		strcpy( pzBuf, "ALL_SIGNALS" );
-	}
-	else
-	{
-		if ( 0 != nSigMask )
+		switch( nType )
 		{
-			pzBuf[0] = '\0';
-
-			for ( i = 0; i < NSIG; ++i )
+			case SYSC_ARG_T_INT:
 			{
-				if ( nSigMask & ( 1L << i ) )
-				{
-					if ( pzBuf[0] != '\0' )
-					{
-						strcat( pzBuf, "|" );
-					}
-					if ( ( strlen( pzBuf ) + strlen( sys_siglist[i + 1] ) ) > 480 )
-					{
-						strcat( pzBuf, " ..." );
-						return;
-					}
-					else
-					{
-						strcat( pzBuf, sys_siglist[i + 1] );
-					}
-				}
+				strace_print( "%d", (int)nVal );
+				break;
 			}
+
+			case SYSC_ARG_T_LONG_INT:
+			{
+				strace_print( "%ld", nVal );
+				break;
+			}
+
+			case SYSC_ARG_T_HEX:
+			{
+				strace_print( "0x%x", (int)nVal );
+				break;
+			}
+
+			case SYSC_ARG_T_LONG_HEX:
+			{
+				strace_print( "0x%lx", nVal );
+				break;
+			}
+
+			case SYSC_ARG_T_STRING:
+			{
+				strace_print( "\"%s\"", (char*)nVal );
+				break;
+			}
+
+			case SYSC_ARG_T_POINTER:
+			{
+				strace_print( "%p", (void*)nVal );
+				break;
+			}
+
+			case SYSC_ARG_T_BOOL:
+			{
+				strace_print( "%s", (bool)nVal ? "true" : "false" );
+				break;
+			}
+
+			case SYSC_ARG_T_VOID:
+			{
+				strace_print( "(void)" );
+				break;
+			}
+
+			case SYSC_ARG_T_NONE:
+			{
+				strace_print( "(none)" );
+				break;
+			}
+
+			case SYSC_ARG_T_SPECIAL:
+			default:
+			{
+				strace_print( "(? %ld)", nVal );
+				break;
+			}
+		}
+
+		if( nArg == 1 )
+		{
+			nType = g_sSysCallTable[ nSyscall ].nArg2Type;
+			nVal = psRegs->ecx;
+		}
+		else if( nArg == 2 )
+		{
+			nType = g_sSysCallTable[ nSyscall ].nArg3Type;
+			nVal = psRegs->edx;
+		}
+		else if( nArg == 3 )
+		{
+			nType = g_sSysCallTable[ nSyscall ].nArg4Type;
+			nVal = psRegs->esi;
+		}
+		else if( nArg == 4 )
+		{
+			nType = g_sSysCallTable[ nSyscall ].nArg5Type;
+			nVal = psRegs->edi;
+		}
+		else if( nArg >= 5 )	/* Too many arguments.  There are currently no syscalls
+							       with more than 5 arguments, but you never know.  */
+		{
+			strace_print( ", ... )\n");
+			break;
+		}
+
+		/* Print a seperator if there are more args to follow */
+		if( nArg < g_sSysCallTable[ nSyscall ].nNumArgs )
+		{
+			strace_print( ", " );
 		}
 		else
 		{
-			strcpy( pzBuf, "0" );
+			strace_print( ")\n" );
 		}
 	}
 }
 
+/* Print a human-readable string for the errno value nReturnVal */
+static void strace_print_errno( long nReturnVal )
+{
+	int nErrno;
 
+	if( nReturnVal < 0 )
+	{
+		strace_print( "-" );
+	}
+
+	for( nErrno = 0; nErrno < __NUM_ERRNOS; nErrno++ )
+	{
+		if( g_sErrnoTable[nErrno].nErrno == nErrno )
+		{
+			strace_print( "%s", g_sErrnoTable[nErrno].zName );
+			break;
+		}
+	}
+}
+
+/* HandleSTrace() is *always* called at the end of *every* syscall by
+   EXIT_SYSCALL in syscall.s  HandleSTrace therefore must always check
+   if the current process is being traced before doing anything else,
+   and the codepath is optimised for the most common case of STRACE_DISABLED */
 void HandleSTrace( int dummy )
 {
 	Thread_s *psThread = CURRENT_THREAD;
+	SysCallRegs_s *psRegs = ( SysCallRegs_s* ) &dummy;
+	SyscallExc_s *psExc;
+	bool bExcluded = false;
+	int nSyscall;
 
-	if ( psThread->tr_nSysTraceLevel > 0 )
+	if( STRACE_DISABLED == psThread->tr_nSysTraceMask )
+		return;
+
+	/* Syscall tracing is enabled for this process */
+	if( psThread->tr_nSysTraceMask < 0 && psRegs->eax >= 0 )
+		return;
+
+	for( nSyscall=0; nSyscall < __NR_TrueSysCallCount; nSyscall++ )
 	{
-		SysCallRegs_s *psRegs = ( SysCallRegs_s * ) & dummy;
-
-		if ( psThread->tr_nSysTraceLevel < 0 && psRegs->eax >= 0 )
+		if( g_sSysCallTable[ nSyscall ].nNumber == psRegs->orig_eax )
 		{
-			return;
-		}
-
-		switch ( abs( psThread->tr_nSysTraceLevel ) )
-		{
-		default:
+			if( g_sSysCallTable[ nSyscall ].nGroup & psThread->tr_nSysTraceMask )
 			{
-				switch ( psRegs->orig_eax )
+				/* Walk the exclusions list to ensure this syscall is not excluded */
+				psExc = psThread->psExc;
+				while( psExc != NULL )
 				{
-
-/*					
-					case __NR_AllocVec:
-					printk( "---->>%p = AllocVec(%d, %x)\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-					break;
-					case __NR_FreeVec:
-					printk( "---->>%d = FreeVec(%p)\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-					break;
-					*/
-				case __NR_sbrk:
-					printk( "---->>%ld = sbrk(%ld)\n", psRegs->eax, psRegs->ebx );
-					break;
-				}
-			}
-		case 3:
-			{
-				switch ( psRegs->orig_eax )
-				{
-				case __NR_read:
-					printk( "---->>%ld = read(%ld, %p, %ld)\n", psRegs->eax, psRegs->ebx, ( void * )psRegs->ecx, psRegs->edx );
-					break;
-				case __NR_write:
-					printk( "---->>%ld = write(%ld, %p, %ld)\n", psRegs->eax, psRegs->ebx, ( void * )psRegs->ecx, psRegs->edx );
-					break;
-				case __NR_sigaction:
-					printk( "---->>%ld = sigaction(%ld, %p, %p)\n", psRegs->eax, psRegs->ebx, ( void * )psRegs->ecx, ( void * )psRegs->edx );
-					break;
-				}
-			}
-		case 2:
-			{
-				switch ( psRegs->orig_eax )
-				{
-//        case __NR_idle:
-//          break;
-				case __NR_open:
-					printk( "---->>%ld = open( '%s', %lx, %ld )\n", psRegs->eax, ( char * )psRegs->ebx, psRegs->ecx, psRegs->edx );
-					break;
-				case __NR_close:
-					printk( "---->>%ld = close( %ld )\n", psRegs->eax, psRegs->ebx );
-					break;
-				case __NR_Fork:
-					printk( "---->>%ld = Fork(%s)\n", psRegs->eax, ( char * )psRegs->ebx );
-					break;
-				case __NR_exit:
-					printk( "---->>%ld = exit( %ld )\n", psRegs->eax, psRegs->ebx );
-					break;
-				case __NR_rename:
-					printk( "---->>%ld = rename('%s', '%s')\n", psRegs->eax, ( char * )psRegs->ebx, ( char * )psRegs->ecx );
-					break;
-				case __NR_getdents:
-					printk( "---->>%ld = getdents(%ld, %p, %ld)\n", psRegs->eax, psRegs->ebx, ( void * )psRegs->ecx, psRegs->edx );
-					break;
-				case __NR_alarm:
-					printk( "---->>%ld = alarm(%ld)\n", psRegs->eax, psRegs->ebx );
-					break;
-				case __NR_wait4:
-					printk( "---->>%ld = wait4(%ld, %p, %ld, %p)\n", psRegs->eax, psRegs->ebx, ( void * )psRegs->ecx, psRegs->edx, ( void * )psRegs->esi );
-					break;
-				case __NR_fstat:
-					printk( "---->>%ld = fstat(%ld, %p)\n", psRegs->eax, psRegs->ebx, ( void * )psRegs->ecx );
-					break;
-				case __NR_FileLength:
-					printk( "-*-->>%ld = FileLength()\n", psRegs->eax );
-					break;
-				case __NR_mkdir:
-					printk( "---->>%ld = mkdir('%s', %ld)\n", psRegs->eax, ( char * )psRegs->ebx, psRegs->ecx );
-					break;
-				case __NR_rmdir:
-					printk( "---->>%ld = rmdir('%s')\n", psRegs->eax, ( char * )psRegs->ebx );
-					break;
-				case __NR_dup:
-					printk( "---->>%ld = dup(%ld)\n", psRegs->eax, psRegs->ebx );
-					break;
-				case __NR_dup2:
-					printk( "---->>%ld = dup2(%ld, %ld)\n", psRegs->eax, psRegs->ebx, psRegs->ecx );
-					break;
-				case __NR_fchdir:
-					printk( "---->>%ld = fchdir(%ld)\n", psRegs->eax, psRegs->ebx );
-					break;
-				case __NR_chdir:
-					printk( "---->>%ld = chdir('%s')\n", psRegs->eax, ( char * )psRegs->ebx );
-					break;
-				case __NR_unlink:
-					printk( "---->>%ld = unlink('%s')\n", psRegs->eax, ( char * )psRegs->ebx );
-					break;
-				case __NR_get_thread_info:
-					printk( "-*-->>%ld = get_thread_info()\n", psRegs->eax /*, psRegs->ebx, psRegs->ecx, psRegs->edx */  );
-					break;
-				case __NR_get_thread_proc:
-					printk( "-*-->>%ld = get_thread_proc()\n", psRegs->eax /*, psRegs->ebx, psRegs->ecx, psRegs->edx */  );
-					break;
-				case __NR_get_next_thread_info:
-					printk( "-*-->>%ld = get_next_thread_info(%ld)\n", psRegs->eax, psRegs->ebx );
-					break;
-				case __NR_get_thread_id:
-					printk( "-*-->>%ld = get_thread_info()\n", psRegs->eax /*, psRegs->ebx, psRegs->ecx, psRegs->edx */  );
-					break;
-				case __NR_send_data:
-					printk( "-*-->>%ld = send_data()\n", psRegs->eax /*, psRegs->ebx, psRegs->ecx, psRegs->edx */  );
-					break;
-				case __NR_receive_data:
-					printk( "-*-->>%ld = read_data()\n", psRegs->eax /*, psRegs->ebx, psRegs->ecx, psRegs->edx */  );
-					break;
-				case __NR_thread_data_size:
-					printk( "-*-->>%ld = thread_data_size()\n", psRegs->eax /*, psRegs->ebx, psRegs->ecx, psRegs->edx */  );
-					break;
-				case __NR_has_data:
-					printk( "-*-->>%ld = has_data()\n", psRegs->eax /*, psRegs->ebx, psRegs->ecx, psRegs->edx */  );
-					break;
-				case __NR_SetThreadExitCode:
-					printk( "-*-->>%ld = SetThreadExitCode(%ld)\n", psRegs->eax, psRegs->ebx );
-					break;
-				case __NR_spawn_thread:
-					printk( "-*-->>%ld = spawn_thread()\n", psRegs->eax /*, psRegs->ebx, psRegs->ecx, psRegs->edx */  );
-					break;
-				case __NR_GetToken:
-					printk( "---->>%ld = GetToken()\n", psRegs->eax );
-					break;
-
-/*						
-						case __NR_GetSymAddress:
-						printk( "-*-->>%d = GetSymAddress()\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-						break;
-						case __NR_FindImageSymbol:
-						printk( "-*-->>%d = FindImageSymbol()\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-						break;
-						case __NR_LoadImage:
-						printk( "-*-->>%d = LoadImage()\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-						break;
-						case __NR_CloseImage:
-						printk( "-*-->>%d = CloseImage()\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-						break;
-						*/
-				case __NR_DebugPrint:
-					break;
-				case __NR_realint:
-					printk( "---->>%ld = realint(%ld, %p)\n", psRegs->eax, psRegs->ebx, ( void * )psRegs->ecx );
-					break;
-				case __NR_get_system_path:
-					printk( "---->>%ld = get_system_path( %s, %ld )\n", psRegs->eax, ( char * )psRegs->ebx, psRegs->ecx );
-					break;
-				case __NR_get_app_server_port:
-					printk( "---->>%ld = get_app_server_port()\n", psRegs->eax );
-					break;
-				case __NR_create_area:
-					printk( "-*-->>%ld = CreateArea()\n", psRegs->eax /*, psRegs->ebx, psRegs->ecx, psRegs->edx */  );
-					break;
-				case __NR_remap_area:
-					printk( "-*-->>%ld = RemapArea()\n", psRegs->eax /*, psRegs->ebx, psRegs->ecx, psRegs->edx */  );
-					break;
-				case __NR_get_area_info:
-					printk( "-*-->>%ld = GetAreaAddress()\n", psRegs->eax /*, psRegs->ebx, psRegs->ecx, psRegs->edx */  );
-					break;
-
-/*						
-	  case __NR_TranslatePortID:
-	    printk( "-*-->>%d = TranslatePortID()\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-	    break;
-	  case __NR_FindThreadPort:
-	    printk( "-*-->>%d = FindThreadPort()\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-	    break;
-						case __NR_SetPortSig:
-						printk( "-*-->>%d = SetPortSig()\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-						break;
-						case __NR_GetPortSig:
-						printk( "-*-->>%d = GetPortSig()\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-						break;
-						*/
-
-				case __NR_create_port:
-					printk( "---->>%ld = create_port( '%s', %ld)\n", psRegs->eax, ( char * )psRegs->ebx, psRegs->ecx );
-					break;
-				case __NR_delete_port:
-					printk( "---->>%ld = delete_port( %ld )\n", psRegs->eax, psRegs->ebx );
-					break;
-
-/*	    
-	  case __NR_send_msg:
-	    printk( "---->>%d = send_msg( %d, %d, %p, %d )\n", psRegs->eax,
-		      psRegs->ebx, psRegs->ecx, psRegs->edx, psRegs->esi );
-	    break;
-	  case __NR_raw_send_msg_x:
-	    printk( "---->>%d = raw_send_msg_x( %d, %d, %p, %d, %p )\n", psRegs->eax,
-		      psRegs->ebx, psRegs->ecx, psRegs->edx, psRegs->esi, psRegs->edi );
-	    break;
-	  case __NR_get_msg:
-	    if ( 0 != psRegs->ecx ) {
-	      printk( "---->>%d = get_msg( %d, %d, %p, %d )\n", psRegs->eax,
-			psRegs->ebx, *((uint32*)psRegs->ecx), psRegs->edx, psRegs->esi );
-	    } else {
-	      printk( "---->>%d = get_msg( %d, %s, %p, %d )\n", psRegs->eax,
-			psRegs->ebx, "NULL", psRegs->edx, psRegs->esi );
-	    }
-	    break;
-	  case __NR_raw_get_msg_x:
-	    if ( 0 != psRegs->ecx ) {
-	      printk( "---->>%d = raw_get_msg_x( %d, %d, %p, %d )\n", psRegs->eax,
-			psRegs->ebx, *((uint32*)psRegs->ecx), psRegs->edx, psRegs->esi, psRegs->edi );
-	    } else {
-	      printk( "---->>%d = raw_get_msg_x( %d, %s, %p, %d )\n", psRegs->eax,
-			psRegs->ebx, "NULL", psRegs->edx, psRegs->esi, psRegs->edi );
-	    }
-	    break;
-						
-						
-	  case __NR_create_semaphore:
-	    printk( "-*-->>%d = create_semaphore()\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-	    break;
-	  case __NR_delete_semaphore:
-	    printk( "-*-->>%d = delete_semaphore()\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-	    break;
-	  case __NR_lock_semaphore:
-	    printk( "-*-->>%d = lock_semaphore()\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-	    break;
-	  case __NR_raw_lock_semaphore_x:
-	    printk( "-*-->>%d = raw_lock_semaphore_x()\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-	    break;
-	  case __NR_unlock_semaphore_x:
-	    printk( "-*-->>%d = unlock_semaphore_x()\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-	    break;
-	  case __NR_get_semaphore_info:
-	    printk( "-*-->>%d = get_semaphore_info()\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-	    break;
-	    */
-
-/*						
-						case __NR_Exit:
-						printk( "---->>%d = Exit(%d)\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-						break;
-						*/
-				case __NR_execve:
-					printk( "---->>%ld = execve('%s', %p, %p)\n", psRegs->eax, ( char * )psRegs->ebx, ( void * )psRegs->ecx, ( void * )psRegs->edx );
-					break;
-
-/*	    
-	  case __NR_GetProcArgLen:
-	    printk( "-*-->>%d = GetProcArgLen()\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-	    break;
-	  case __NR_GetProcArgs:
-	    printk( "-*-->>%d = GetProcArgs()\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-	    break;
-	  case __NR_SetProcArgs:
-	    printk( "-*-->>%d = SetProcArgs()\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-	    break;
-	    */
-				case __NR_GetTime:
-					printk( "-*-->>%ld = GetTime()\n", psRegs->eax /*, psRegs->ebx, psRegs->ecx, psRegs->edx */  );
-					break;
-				case __NR_SetTime:
-					printk( "-*-->>%ld = SetTime()\n", psRegs->eax /*, psRegs->ebx, psRegs->ecx, psRegs->edx */  );
-					break;
-
-/*						
-						case __NR_AllocSignal:
-						break;
-						case __NR_FreeSignal:
-						break;
-						case __NR_WaitSigSet:
-						break;
-						case __NR_WaitSigNum:
-						break;
-						case __NR_SendSigNum:
-						break;
-						*/
-				case __NR_raw_read_pci_config:
-					printk( "-*-->>%ld = raw_read_pci_config()\n", psRegs->eax /*, psRegs->ebx, psRegs->ecx, psRegs->edx */  );
-					break;
-				case __NR_raw_write_pci_config:
-					printk( "-*-->>%ld = raw_write_pci_config()\n", psRegs->eax /*, psRegs->ebx, psRegs->ecx, psRegs->edx */  );
-					break;
-				case __NR_get_pci_info:
-					printk( "-*-->>%ld = get_pci_info()\n", psRegs->eax /*, psRegs->ebx, psRegs->ecx, psRegs->edx */  );
-					break;
-				case __NR_sig_return:
-					break;
-				case __NR_kill:
-					printk( "---->>%ld = kill(%ld, %ld)\n", psRegs->eax, psRegs->ebx, psRegs->ecx );
-					break;
-				case __NR_sigpending:
-					break;
-				case __NR_sigprocmask:
+					if( psRegs->orig_eax == psExc->nSyscall )
 					{
-						char *pzHow;
-						char zBuf[512];
-
-						switch ( psRegs->ebx )
-						{
-						case SIG_BLOCK:
-							pzHow = "SIG_BLOCK";
-							break;
-						case SIG_UNBLOCK:
-							pzHow = "SIG_UNBLOCK";
-							break;
-						case SIG_SETMASK:
-							pzHow = "SIG_SETMASK";
-							break;
-						default:
-							pzHow = "INVALID";
-						}
-						strsigset( *( ( uint32 * )psRegs->ecx ), zBuf );
-
-						printk( "---->>%ld = sigprocmask( %s, %s, %lx )\n", psRegs->eax, pzHow, zBuf, psRegs->edx );
+						bExcluded = true;
 						break;
 					}
-				case __NR_sigsuspend:
-					break;
-				case __NR_set_thread_priority:
-					printk( "---->>%ld = set_thread_priority(%ld, %ld)\n", psRegs->eax, psRegs->ebx, psRegs->ecx );
-					break;
-				case __NR_suspend_thread:
-					{
-						char *pzName;
-						Thread_s *psThread = get_thread_by_handle( psRegs->eax );
-
-						if ( NULL != psThread )
-						{
-							pzName = psThread->tr_zName;
-						}
-						else
-						{
-							pzName = "INVALID";
-						}
-
-						printk( "---->>%ld = suspend_thread(%ld (%s))\n", psRegs->eax, psRegs->ebx, pzName );
-						break;
-					}
-				case __NR_resume_thread:
-					{
-						char *pzName;
-						Thread_s *psThread = get_thread_by_handle( psRegs->eax );
-
-						if ( NULL != psThread )
-						{
-							pzName = psThread->tr_zName;
-						}
-						else
-						{
-							pzName = "INVALID";
-						}
-
-						printk( "---->>%ld = resume_thread(%ld (%s))\n", psRegs->eax, psRegs->ebx, pzName );
-						break;
-					}
-				case __NR_wait_for_thread:
-					printk( "---->>%ld = wait_for_thread(%ld)\n", psRegs->eax, psRegs->ebx );
-					break;
-
-/*						
-	  case __NR_Forbid:
-	    printk( "---->>%d = Forbid()\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-	    break;
-	  case __NR_Permit:
-	    printk( "---->>%d = Permit()\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-	    break;
-						case __NR_Disable:
-						printk( "---->>%d = Disable()\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-						break;
-						case __NR_Enable:
-						printk( "---->>%d = Enable()\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-						break;
-						*/
-				case __NR_get_process_id:
-					printk( "-*-->>%ld = GetProcID()\n", psRegs->eax /*, psRegs->ebx, psRegs->ecx, psRegs->edx */  );
-					break;
-				case __NR_isatty:
-					printk( "---->>%ld = isatty(%ld)\n", psRegs->eax, psRegs->ebx );
-					break;
-				case __NR_fcntl:
-					printk( "---->>%ld = fcntl(%ld, %ld, %ld)\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-					break;
-				case __NR_ioctl:
-					printk( "---->>%ld = ioctl(%ld, %ld, %ld)\n", psRegs->eax, psRegs->ebx, psRegs->ecx, psRegs->edx );
-					break;
-				case __NR_pipe:
-					printk( "---->>%ld = pipe(%p)\n", psRegs->eax, ( void * )psRegs->ebx );
-					break;
-				case __NR_access:
-					printk( "---->>%ld = access('%s', %ld)\n", psRegs->eax, ( char * )psRegs->ebx, psRegs->ecx );
-					break;
-
-/*
-  default:
-  printk( "---->> ERROR : Unknown syscall %d returned %d\n", psRegs->orig_eax, psRegs->eax );
-  break;
-  */
+					psExc = psExc->psPrev;
 				}
-				break;
+
+				if( bExcluded )
+					break;	/* Break from the for() and return */
+
+				/* Print a leader, which also happens to print the CPU #, process and
+				   thread name for us */
+				printk( "---->> " );
+
+				/* Return types are limited to a handful of possible types */
+				switch( g_sSysCallTable[ nSyscall ].nReturnType )
+				{
+					case SYSC_ARG_T_STATUS_T:
+					{
+						strace_print_errno( psRegs->eax );
+						strace_print( " = %s(", g_sSysCallTable[ nSyscall ].zName );
+						break;
+					}
+
+					case SYSC_ARG_T_INT:
+					{
+						strace_print( "%d = %s(", (int)psRegs->eax, g_sSysCallTable[ nSyscall ].zName );
+						break;
+					}
+
+					case SYSC_ARG_T_LONG_INT:
+					{
+						strace_print( "%ld = %s(", psRegs->eax, g_sSysCallTable[ nSyscall ].zName );
+						break;
+					}
+
+					case SYSC_ARG_T_BOOL:
+					{
+						strace_print( "%s = %s(", (bool)psRegs->eax ? "true" : "false", g_sSysCallTable[ nSyscall ].zName );
+						break;
+					}
+					
+					case SYSC_ARG_T_NONE:
+					case SYSC_ARG_T_VOID:
+					{
+						strace_print( "(void) %s(", g_sSysCallTable[ nSyscall ].zName );
+						break;
+					}
+
+					case SYSC_ARG_T_SPECIAL:
+					default:
+					{
+						strace_print( "? = %s(", g_sSysCallTable[ nSyscall ].zName );
+						break;
+					}
+				}
+
+				/* Print any arguments to the syscall */
+				if( g_sSysCallTable[ nSyscall ].nNumArgs > 0 )
+				{
+					strace_print_args( nSyscall, psRegs );
+				}
+				else
+				{
+					strace_print( "void)\n" );
+				}
 			}
+
+			/* Syscall found, stop looking */
+			break;
 		}
 	}
+}
+
+/* Enable or disable syscall tracing for the given thread.
+   This new interface superseeds the old sys_set_strace_level()
+   nTraceFlags is currently unused. */
+int sys_strace( thread_id hThread, int nTraceMask, int nTraceFlags )
+{
+	int nError, nCpuFlags;
+	Thread_s *psThread;
+
+	nCpuFlags = cli();
+	sched_lock();
+
+	psThread = get_thread_by_handle( hThread );
+	if( NULL != psThread )
+	{
+		psThread->tr_nSysTraceMask = nTraceMask;
+		nError = EOK;
+	}
+	else
+	{
+		nError = -ESRCH;
+	}
+
+	sched_unlock();
+	put_cpu_flags( nCpuFlags );
+	return nError;
+}
+
+/* Exclude a specific syscall from being traced for the given thread */
+int sys_strace_exclude( thread_id hThread, int nSyscall )
+{
+	int nError, nCpuFlags;
+	Thread_s *psThread;
+	SyscallExc_s *psExcNew;
+
+	nCpuFlags = cli();
+	sched_lock();
+
+	psThread = get_thread_by_handle( hThread );
+	if( NULL != psThread )
+	{
+		psExcNew = kmalloc( sizeof( SyscallExc_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
+		if( NULL == psExcNew )
+		{
+			nError = -ENOMEM;
+		}
+		else
+		{
+			psExcNew->nSyscall = nSyscall;
+			
+			psExcNew->psNext = NULL;
+			psExcNew->psPrev = psThread->psExc;
+			
+			if( NULL != psThread->psExc )
+				psThread->psExc->psNext = psExcNew;
+			
+			psThread->psExc = psExcNew;
+			nError = EOK;
+		}
+	}
+	else
+	{
+		nError = -ESRCH;
+	}
+
+	sched_unlock();
+	put_cpu_flags( nCpuFlags );
+	return nError;
+}
+
+/* "Un-exclude" a previously excluded syscall for the given thread */
+int sys_strace_include( thread_id hThread, int nSyscall )
+{
+	int nError, nCpuFlags;
+	Thread_s *psThread;
+	SyscallExc_s *psExc;
+
+	nCpuFlags = cli();
+	sched_lock();
+
+	psThread = get_thread_by_handle( hThread );
+	if( NULL != psThread )
+	{
+		nError = -ESRCH;
+		psExc = psThread->psExc;
+
+		while( psExc != NULL )
+		{
+			if( nSyscall == psExc->nSyscall )
+			{
+				if( psExc->psPrev )
+					psExc->psPrev->psNext = psExc->psNext;
+				if( psExc->psNext )
+					psExc->psNext->psPrev = psExc->psPrev;
+				else
+					psThread->psExc = psExc->psPrev;
+
+				kfree( psExc );
+				nError = EOK;
+				break;
+			}
+
+			psExc = psExc->psPrev;
+		}
+	}
+	else
+	{
+		nError = -ESRCH;
+	}
+
+	sched_unlock();
+	put_cpu_flags( nCpuFlags );
+	return nError;
 }

@@ -667,6 +667,8 @@ Thread_s *Thread_New( Process_s *psProc )
 
 	strcpy( psThread->tr_zName, "AtheOS" );
 
+	psThread->tr_nSysTraceMask = STRACE_DISABLED;
+	psThread->psExc = NULL;
 
 	tss->esp = psThread->tc_plKStack;
 	tss->esp0 = psThread->tc_plKStack;
@@ -745,6 +747,27 @@ void Thread_Delete( Thread_s *psThread )
 	if ( psThread->tr_nStackArea != -1 )
 	{
 		delete_area( psThread->tr_nStackArea );
+	}
+
+	if( psThread->psExc != NULL )
+	{
+		SyscallExc_s *psExc;
+
+		psExc = psThread->psExc;
+
+		while( psExc != NULL )
+		{
+			if( psExc->psPrev )
+				psExc->psPrev->psNext = psExc->psNext;
+			if( psExc->psNext )
+				psExc->psNext->psPrev = psExc->psPrev;
+			else
+				psThread->psExc = psExc->psPrev;
+
+			kfree( psExc );
+
+			psExc = psExc->psPrev;
+		}
 	}
 
 	atomic_add( &psProc->pr_nThreadCount, -1 );
@@ -845,7 +868,7 @@ thread_id sys_spawn_thread( const char *const pzName, void *const pfEntry, const
 		goto error2;
 	}
 
-	psNewThread->tr_nSysTraceLevel = psParentThread->tr_nSysTraceLevel;
+	psNewThread->tr_nSysTraceMask = psParentThread->tr_nSysTraceMask;
 	psNewThread->tr_nUMask = psParentThread->tr_nUMask;
 	psNewThread->tr_nUStackSize = nStackSize;
 	psNewThread->tr_pUserStack = NULL;
@@ -1019,38 +1042,6 @@ thread_id spawn_kernel_thread( const char *const pzName, void *const pfEntry, co
  * SEE ALSO:
  ****************************************************************************/
 
-int sys_set_strace_level( thread_id hThread, int nLevel )
-{
-	int nError;
-	int nOldFlg = cli();
-	Thread_s *psThread;
-
-	sched_lock();
-
-	psThread = get_thread_by_handle( hThread );
-
-	if ( psThread != NULL )
-	{
-		psThread->tr_nSysTraceLevel = nLevel;
-		nError = 0;
-	}
-	else
-	{
-		nError = -ESRCH;
-	}
-
-	sched_unlock();
-	put_cpu_flags( nOldFlg );
-	return ( nError );
-}
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
 static void db_dump_thread( int argc, char **argv )
 {
 	thread_id hThread;
@@ -1127,7 +1118,7 @@ static void db_dump_thread( int argc, char **argv )
 	dbprintf( DBP_DEBUGGER, "SigBlock     = %08lx\n", psThread->tr_nSigBlock );
 
 //  SigAction_s  tr_apsSigHandlers[ NSIG ];
-	dbprintf( DBP_DEBUGGER, "SysTraceLevel   = %d\n", psThread->tr_nSysTraceLevel );
+	dbprintf( DBP_DEBUGGER, "SysTraceMask   = %d\n", psThread->tr_nSysTraceMask );
 //  dbprintf( DBP_DEBUGGER, "NewRetValMethod = %d\n", psThread->tr_bNewRetValMethode );
 
 }

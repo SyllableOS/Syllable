@@ -132,8 +132,6 @@ int	  has_data( const thread_id hThread );
 thread_id spawn_thread( const char* const pzName, void* const pfEntry,
 			const int nPri, int nStackSize, void* const pData );
 
-int 	  set_strace_level( thread_id hThread, int nLevel );
-
 int	  set_thread_priority( const thread_id hThread, const int nPriority );
 status_t  suspend_thread( const thread_id hThread );
 status_t  resume_thread( const thread_id hThread );

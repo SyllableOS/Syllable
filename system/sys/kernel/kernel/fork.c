@@ -483,7 +483,7 @@ thread_id sys_Fork( const char *const pzName )
 	}
 
 	psNewThread->tr_hParent = psParentThread->tr_hThreadID;
-	psNewThread->tr_nSysTraceLevel = psParentThread->tr_nSysTraceLevel;
+	psNewThread->tr_nSysTraceMask = psParentThread->tr_nSysTraceMask;
 	psNewThread->tr_nUMask = psParentThread->tr_nUMask;
 	psNewThread->tr_pThreadData = psParentThread->tr_pThreadData;
 	psNewThread->tr_nUStackSize = psParentThread->tr_nUStackSize;

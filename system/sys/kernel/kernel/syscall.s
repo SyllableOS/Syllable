@@ -566,7 +566,7 @@ SysCallTable:
 .long	_C_SYM( sys_ioctl )
 .long	_C_SYM( sys_pipe )
 .long	_C_SYM( sys_access )
-.long	_C_SYM( sys_set_strace_level )
+.long	_sys_nosys			/* C_SYM( sys_set_strace_level ) */
 .long	_C_SYM( sys_symlink )		/* 120 */
 .long	_C_SYM( sys_readlink )
 .long	_C_SYM( sys_call_v86 )
@@ -662,4 +662,10 @@ SysCallTable:
 
 .long	_C_SYM( sys_make_port_public )
 .long	_C_SYM( sys_make_port_private )
-.long	_C_SYM( sys_find_port )		/* 208 */
+.long	_C_SYM( sys_find_port )
+
+.long	_C_SYM( sys_strace )
+.long	_C_SYM( sys_strace_exclude )
+.long	_C_SYM( sys_strace_include )
+.long	_C_SYM( sys_ptrace )		/* 212 */
+

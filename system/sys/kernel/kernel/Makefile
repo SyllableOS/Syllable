@@ -20,7 +20,7 @@ OBJS :=intel.o kernel.o dbconsole.o ksyms.o init.o fork.o syscall.o 	  		\
 	smp.o udelay.o fault.o exec.o pci.o pgroup.o kmalloc.o swap.o dma.o	\
 	elf.o timecalc.o virt86.o irq.o array.o schedule.o psignals.o mman.o	\
 	areas.o vmalloc.o pagefault.o bcache.o bcalloc.o vesa_gfx.o random.o	\
-	devices.o config.o \
+	devices.o config.o ptrace.o \
 	$(VFSOBJS) $(NETOBJS) $(LIBOBJS)
 
 IF_OBJS := eth_interface.o arp.o

@@ -28,6 +28,7 @@
 #include <posix/stat.h>
 
 #include <atheos/kernel.h>
+//#include <atheos/kdebug.h>
 #include <atheos/syscall.h>
 #include <atheos/smp.h>
 #include <atheos/irq.h>
@@ -312,6 +313,9 @@ int get_kernel_arguments( int *argc, const char *const **argv )
 #include <atheos/kdebug.h>
 #include <atheos/udelay.h>
 
+#undef DEBUG_LIMIT
+#define DEBUG_LIMIT	KERN_DEBUG_LOW
+
 static int find_boot_dev()
 {
 	int nBaseDir;
@@ -378,12 +382,47 @@ static int find_boot_dev()
 
 				kerndbg( KERN_INFO, "Checking for boot disk in %s\n", pzDiskPathBuf );
 
-				/* Try to mount the disk */
+				/* Attempt to open & read 512 bytes from the disk */
+				/* FIXME: Work around a bug with the ATA driver & some very slow CD-ROM drives
+				   which causes the ATA driver to fail to read the capacity instead of waiting
+				   for them to spin up */
+				for ( nAttempt = 0; nAttempt < 5; nAttempt++ )
+				{
+					nError = open( pzDiskPathBuf, O_RDONLY );
+					if ( nError >= 0 )
+						break;
+
+					udelay( 2000000 );	/* 5 seconds.  My ancient 32x CD-ROM takes about this long(!) to spin up.. */
+				}
+
+				if ( nError < 0 )
+				{
+					kerndbg( KERN_DEBUG_LOW, "Could not open %s\n", pzDiskPathBuf );
+					continue;	/* No disk in that drive */
+				}
+
+				hDisk = nError;
+
+				kerndbg( KERN_DEBUG_LOW, "Opened %s\n", pzDiskPathBuf );
+
+				/* Attempt the read */
+				nError = read( hDisk, pnHeaderBuf, 512 );
+
+				/* Close the device so that we can access it later if we need to */
+				close( hDisk );
+
+				if ( nError < 512 )
+				{
+					kerndbg( KERN_DEBUG_LOW, "Read %i bytes from %s but I wanted 512 (Not fair!)\n", nError, pzDiskPathBuf );
+					continue;
+				}
+
+				/* There is a disk in the drive, so lets try to mount it */
 				nError = sys_mount( pzDiskPathBuf, "/boot", g_zBootFS, MNTF_SLOW_DEVICE, g_zBootFSArgs );
 
 				if ( nError < 0 )
 				{
-					kerndbg( KERN_INFO, "Unable to mount %s\n", pzDiskPathBuf );
+					kerndbg( KERN_WARNING, "Unable to mount %s\n", pzDiskPathBuf );
 					continue;
 				}
 
