@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.56
+# Version 0.5.57
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -220,6 +220,7 @@ def configurePackage target
 											' --prefix='
 										) + prefix(target)
 									) +
+									(@crossCompile ? ' --host=i586-pc-syllable' : '') +
 									((options = recipe['configure-options']) ? ' ' + toString(options) : '')
 								)
 							end
@@ -1153,9 +1154,12 @@ end
 @includeVersion = @settings['include-version']
 
 unless @systemBuild = File.basename(@workDir) == 'system'
+	@crossCompile = false
 	@systemRoot = '/'
 	@stage = File.join @workDir, 'stage'
 else
+	# System build; assume we're building Syllable for now
+	@crossCompile = ! @syllable
 	@systemRoot = File.join @stage, 'atheos'
 
 	@stage = File.join @workDir, 'dist-root'
@@ -1183,7 +1187,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.56',
+	puts 'Syllable Build System 0.5.57',
 		'Copyright (c) 2002-2004 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1251,7 +1255,7 @@ else
 
 				# Pick up executables from the staging area
 
-				ENV['PATH'] =
+				unless @crossCompile then ENV['PATH'] =
 					(File.join @stage, 'atheos/sys/bin') +
 #					Executables may not be position-independent:
 #					':' + (File.join @stage, 'atheos/usr/glibc2/bin') +
@@ -1264,6 +1268,7 @@ else
 #					':' + (File.join @stage, 'atheos/usr/bin') +
 #					':' + (File.join @stage, 'atheos/usr/sbin') +
 					':' + ENV['PATH']
+				end
 
 				# Pick up headers from the staging area and system repository
 
@@ -1282,8 +1287,10 @@ else
 #					':' + (File.join @stage, 'atheos/usr/include')
 
 				ENV['ATHEOS_INCLUDE_PATH'] = File.join @workDir, 'sys/include'
-				ENV['C_INCLUDE_PATH'] = headers + (var = ENV['C_INCLUDE_PATH']) ? ':' + var : ''
-				ENV['CPLUS_INCLUDE_PATH'] = headers + (var = ENV['CPLUS_INCLUDE_PATH']) ? ':' + var : ''
+				ENV['C_INCLUDE_PATH'] = headers +
+					(var = ENV['C_INCLUDE_PATH']) && !@crossCompile ? ':' + var : ''
+				ENV['CPLUS_INCLUDE_PATH'] = headers +
+					(var = ENV['CPLUS_INCLUDE_PATH']) && !@crossCompile ? ':' + var : ''
 
 				# Pick up libraries from the staging area
 
@@ -1292,7 +1299,7 @@ else
 					(File.join @stage, 'atheos/sys/libs') +
 					':' + (File.join @stage, 'atheos/sys') +
 #					':' + (File.join @stage, 'atheos/autolnk/lib') +
-					((var = ENV['DLL_PATH']) ? ':' + var : '')
+					((var = ENV['DLL_PATH']) && !@crossCompile ? ':' + var : '')
 				ENV[name = (@syllable ? '' : 'LD_') + 'LIBRARY_PATH'] =
 					(File.join @stage, 'atheos/sys/libs') +
 					':' + (@syllable ? '' : ':' + File.join(@stage, 'atheos/sys')) +
@@ -1300,7 +1307,7 @@ else
 #					':' + (File.join @stage, 'atheos/autolnk/lib') +
 #					':' + (File.join @stage, 'atheos/usr/local/lib') +
 #					':' + (File.join @stage, 'atheos/usr/lib') +
-					':' + ENV[name]
+					(@crossCompile ? '' : ':' + ENV[name])
 
 				prepare target unless exists? @stage
 			end
