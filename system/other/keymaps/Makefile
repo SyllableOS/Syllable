@@ -1,8 +1,4 @@
-# Blank Makefile for non-compilable items (I.E Fonts, Icons etc.)
-# Just set DIST_TARGET_PATH below & copy this into
-# the directory you are adding.
-# REMEMBER: Add the new directory to the Makefile in the parent
-# directory!
+# Makefile for keymaps.
 
 DIST_TARGET_PATH := $(DIST_DIR)/atheos/sys/keymaps/
 
@@ -17,7 +13,11 @@ doc:
 install-doc:
 
 dist:
-	@cp -pr * $(DIST_TARGET_PATH)
+	@for keymap in *.map; do\
+		destname=`basename $$keymap .map`;\
+		rm -f $(DIST_TARGET_PATH)$$destname;\
+		keymapconv $$destname.map $(DIST_TARGET_PATH)$$destname;\
+        done
 
 clean:
 
