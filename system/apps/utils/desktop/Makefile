@@ -15,7 +15,7 @@ $(OBJDIR)/%.o : %.cpp
 	$(CC) $(OPTS) $< -o $@
 
 
-OBJS := main.o settings.o login.o bitmapwindow.o iconview.o iconmenu.o iconmenu_prop.o loadbitmap.o imageitem.o properties.o colorbutton.o coloredit.o bitmapscale.o disabled_textview.o drives.o
+OBJS := main.o settings.o login.o bitmapwindow.o iconview.o iconmenu.o iconmenu_prop.o loadbitmap.o imageitem.o properties.o colorbutton.o coloredit.o bitmapscale.o disabled_textview.o drives.o debug.o
 OBJS := $(addprefix $(OBJDIR)/,$(OBJS))
 
 
