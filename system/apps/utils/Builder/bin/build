@@ -1,8 +1,8 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.2.5+
-# Copyright (c) 2002, 2003 Kaj de Vos
+# Version 0.2.6
+# Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
 
@@ -589,8 +589,10 @@ end
 def profile target  # Return the list of packages for the build target
 	if target["/"]  # A single directory
 		target[-1, 1] == "/" ? target.chop : target
-	else  # A profile
-		load File.join(@profilesDir, target)
+	elsif exists? file = File.join(@profilesDir, target)  # A profile
+		load file
+	else
+		target
 	end
 end
 
@@ -691,8 +693,8 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.2.5+",
-		"Copyright (c) 2002, 2003 Kaj de Vos",
+	puts "Syllable Build System 0.2.6",
+		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
 	puts "Usage: build [<command>] [<package> | <profile> | <log>]",
@@ -769,6 +771,8 @@ else
 			File.delete "/ainc"
 			action "ln -s /system/include /ainc"
 		end
+
+		action "sync"
 	end
 
 	closeLogs
