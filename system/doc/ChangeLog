@@ -1,3 +1,9 @@
+* May 22 2003, Henrik Isaksson *
+
+Fixed a bug in CodeView, concerning backspace at the beginning of a line. (It did not
+delete the newline character on the line above, but instead the first character of the
+line above.)
+
 * May 17 2003, Kristian Van Der Vliet *
 
 The BIOS and ATA drivers now check for kernel parameters that indicate which drives and
