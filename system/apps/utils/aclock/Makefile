@@ -13,9 +13,15 @@ install: $(EXE)
 	cp -f $(EXE) /system/bin/$(EXE)
 	cp lcd2n.ttf /system/fonts/
 	strip --strip-all /system/bin/$(EXE)
+
 upgrade: $(EXE)
 	rfs $(EXE) /system/bin/$(EXE)
 deps:
+
+dist: $(EXE)
+	cp -f $(EXE) $(DIST_DIR)/atheos/sys/bin/$(EXE)
+	strip --strip-all $(DIST_DIR)/atheos/sys/bin/$(EXE)
+
 clean:
 	-rm $(OBJS)
 #.c.o :
