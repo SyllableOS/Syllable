@@ -17,8 +17,8 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef __UTIL_STRING_H__
-#define __UTIL_STRING_H__
+#ifndef __F_UTIL_STRING_H__
+#define __F_UTIL_STRING_H__
 
 #include <string>
 #include <stdarg.h>
@@ -51,6 +51,7 @@ public:
     enum { npos = -1 };
 public:
     String();
+//    String( uint32 nID, Catalog *pcCatalog = NULL );
     String( int nLen, char nFiller );
     String( const char* pzString );
     String( const char* pzString, int nLen );
@@ -90,10 +91,12 @@ public:
     String& operator=( const String& cString );
     
     String& operator+=( const char* pzString );
+    String& operator+=( const char nChar );
     String& operator+=( const std::string& cString );
     String& operator+=( const String& cString );
     
     String operator+( const char* pzString );
+	String operator+( const char nChar );
     String operator+( const std::string& cString );
     String operator+( const String& cString );
 
@@ -114,7 +117,7 @@ public:
     
     operator const std::string&() const;
     std::string& str();
-//    operator std::string&();
+    const std::string& const_str() const;
 
 public: // std::string proxys    
     const char* c_str() const;
@@ -135,8 +138,6 @@ public: // std::string proxys
 private:
     std::string m_cString;
 };
-
-
 
 }
 

@@ -242,6 +242,12 @@ String &String::operator+=( const char *pzString )
 	return ( *this );
 }
 
+String &String::operator+=( const char nChar )
+{
+	m_cString += nChar;
+	return ( *this );
+}
+
 String &String::operator+=( const std::string & cString )
 {
 	m_cString += cString;
@@ -259,6 +265,14 @@ String String::operator+( const char *pzString )
 	String cStr( *this );
 
 	cStr += pzString;
+	return ( cStr );
+}
+
+String String::operator+( const char nChar )
+{
+	String cStr( *this );
+
+	cStr += nChar;
 	return ( cStr );
 }
 
@@ -340,18 +354,20 @@ String::operator std::string&()
     return( m_cString );
 }
 */
-String::operator  const std::string & ()
-    const
-    {
-	    return ( m_cString );
-    }
+String::operator  const std::string & () const
+{
+    return ( m_cString );
+}
 
-    std::string & String::str()
+std::string & String::str()
 {
 	return ( m_cString );
 }
 
-
+const std::string & String::const_str() const
+{
+	return ( m_cString );
+}
 
 String::iterator String::begin()
 {
@@ -413,3 +429,4 @@ String::iterator String::erase( iterator cFirst, iterator cLast )
 {
 	return ( m_cString.erase( cFirst, cLast ) );
 }
+
