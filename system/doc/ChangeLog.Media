@@ -1,3 +1,8 @@
+* July 24 2004, Arno Klenke *
+
+Timestamped audio and video playback
+Updated to a newer ffmpeg version
+GUI updates in the MediaPlayer and ColdFish
 
 ---- 0.5.3 Released -------------------------------------------------------------------
 
