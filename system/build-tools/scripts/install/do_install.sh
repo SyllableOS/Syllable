@@ -104,7 +104,7 @@ sync
 
 clear
 echo "Syllable has now been installed!  Please press (R) to reboot your computer (Please remember to install Grub)  Press any other key to exit this installation script."
-read OPTION
+read ANSWER
 
 if [[ $ANSWER = 'R' || $ANSWER = 'r' ]];then
 	reboot
