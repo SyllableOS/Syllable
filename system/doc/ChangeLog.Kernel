@@ -1,3 +1,24 @@
+* November 6 2004, Jake Hamby *
+
+Implement lazy FPU save/restore for faster context switching and save the
+state of XMM registers on Pentium3 and above for SSE support.  Exception
+handlers in fault.c send signals (SIGSEGV, SIGFPE, SIGILL) rather than
+exiting the process.  Spelling fixes in comments.  The function
+is_signals_pending() is now correctly spelled is_signal_pending(). The new
+SeqLock_s type from Linux is used in timer.c for reading the timer
+registers without disabling interrupts, and the "inc/io_ports.h" header
+defines constants for the PIC I/O ports, which are used for readability in
+irq.c, smp.c and timer.c.  Other minor cleanups include removing useless
+statistical counters from array.c, adding a warning to kmalloc() when 128K
+or larger allocations are made, modifying bcache.c to use an area instead
+of kmalloc() for its hashtable, using g_sSemListSpinLock instead of
+g_sSchedSpinLock in sema.c, a new do_free_pages() function in mman.c that
+doesn't call flush_tlb_global() (used in loops by areas.c), inlined asm
+functions in "inc/intel.h" and atheos/kernel.h, and updated macros from
+Linux for atheos/isa_io.h.  "macros.h" now uses a macro called __likely()
+on GCC 3.0 and above as a hint to the compiler in kassertw() that the
+expression asserted is expected to be true.
+
 * October 24 2004, Kristian Van Der Vliet *
 
 A series of patches from Jake Hamby <jhamby@anobject.com> which changes the
