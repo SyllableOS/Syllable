@@ -1,4 +1,7 @@
 * June 10 2003, Kristian Van Der Vliet *
+	* Import of Date/Time preferences application from the last version (0.4alpha) released by Daryl Dudey.
+
+* June 10 2003, Kristian Van Der Vliet *
 	* Better font handling in AEdit
 
 * June 9 2003, Rick Caudill    *
@@ -66,5 +69,6 @@
 		* Added SlbMgr(AtheMgr renamed).
 		* Patches by Vanders for AEdit.
 	
+
 
 
