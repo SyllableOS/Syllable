@@ -23,6 +23,7 @@ configure-options
 	--with-system-zlib
 ;	May be needed for porting a limited cross-compiler:
 ;	--without-headers
+;	--disable-shared
 ;	--disable-nls
 
 ; For porting a limited cross-compiler:

@@ -10,7 +10,9 @@ configure-options
 	--target=i586-pc-syllable
 ;	--enable-shared
 ;	May be needed for porting a limited cross-assembler:
+;	--disable-shared
 ;	--disable-nls
 
+; Avoid linking cross-assembling parts into the host system:
 links
 
