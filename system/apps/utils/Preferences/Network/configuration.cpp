@@ -54,6 +54,7 @@ Configuration::Configuration()
     pcAdaptors[i].pzIP = new char[C_CO_IPLEN+1];
     pcAdaptors[i].pzSN = new char[C_CO_IPLEN+1];
     pcAdaptors[i].pzGW = new char[C_CO_IPLEN+1];
+    pcAdaptors[i].bUseDHCP = false;
   }
 }
 
@@ -96,6 +97,7 @@ void Configuration::Load()
       strcpy(pcAdaptors[i].pzIP, "0.0.0.0");
       strcpy(pcAdaptors[i].pzSN, "0.0.0.0");
       strcpy(pcAdaptors[i].pzGW, "");
+      pcAdaptors[i].bUseDHCP = false;
     }
     
   } else {
@@ -137,10 +139,22 @@ void Configuration::Load()
       // Next line is mac address
       fsIn.getline (pcAdaptors[i].pzMac, C_CO_MACLEN+1, '\n');
 
-      // Next three are IP/SN/GW
-      fsIn.getline (pcAdaptors[i].pzIP, C_CO_IPLEN+1, '\n');
-      fsIn.getline (pcAdaptors[i].pzSN, C_CO_IPLEN+1, '\n');
-      fsIn.getline (pcAdaptors[i].pzGW, C_CO_IPLEN+1, '\n');
+      // Either the IP address or "DHCP" is next
+      // Indicate if DHCP is used for this adaptor
+      fsIn.getline( pzScratch, C_SCRATCHLEN, '\n' );
+      if( strcmp( pzScratch, "DHCP") == 0 )
+      {
+        pcAdaptors[i].bUseDHCP = true;
+      }
+      else
+      {
+        pcAdaptors[i].bUseDHCP = false;
+        // Next three are IP/SN/GW
+        //fsIn.getline (pcAdaptors[i].pzIP, C_CO_IPLEN+1, '\n');
+        strncpy( pcAdaptors[i].pzIP, pzScratch, C_CO_IPLEN+1 );
+        fsIn.getline (pcAdaptors[i].pzSN, C_CO_IPLEN+1, '\n');
+        fsIn.getline (pcAdaptors[i].pzGW, C_CO_IPLEN+1, '\n');
+      }
     }
     
   }
@@ -183,11 +197,18 @@ void Configuration::Save()
       // Mac address
       fsOut << pcAdaptors[i].pzMac << newl;
 
-      // And IP/SN/GW
-      fsOut << pcAdaptors[i].pzIP << newl;
-      fsOut << pcAdaptors[i].pzSN << newl;
-      fsOut << pcAdaptors[i].pzGW << newl;
-
+	  if( pcAdaptors[i].bUseDHCP )
+      {
+        // Use DHCP
+        fsOut << "DHCP" << newl;
+      }
+      else
+      {
+        // IP/SN/GW
+        fsOut << pcAdaptors[i].pzIP << newl;
+        fsOut << pcAdaptors[i].pzSN << newl;
+        fsOut << pcAdaptors[i].pzGW << newl;
+      }
     }
   }
   
@@ -236,12 +257,19 @@ void Configuration::Activate()
   
   // Next job, create the init_net.sh file containing initialise information
   fsOut.open("/system/net_init.sh", _IO_OUTPUT);
-  fsOut << "#!sh" << newl;
+  fsOut << "#!/bin/sh" << newl;
   for (i=0;i<C_CO_MAXADAPTORS;i++) {
     if (pcAdaptors[i].bEnabled) {
-      fsOut << "ifconfig " << pcAdaptors[i].pzDescription << " " << pcAdaptors[i].pzIP << " " << pcAdaptors[i].pzSN << newl;
-      if (strlen(pcAdaptors[i].pzGW)>0 && strcmp(pcAdaptors[i].pzGW, "0.0.0.0")!=0) 
-	fsOut << "route add -i " << pcAdaptors[i].pzDescription << " -g " << pcAdaptors[i].pzGW << " " << pcAdaptors[i].pzIP << " " << pcAdaptors[i].pzSN << newl;
+      if( pcAdaptors[i].bUseDHCP )
+      {
+        fsOut << "dhcp -d " << pcAdaptors[i].pzDescription << " 2>>/var/log/dhcpc" << newl;
+      }
+      else
+      {
+       fsOut << "ifconfig " << pcAdaptors[i].pzDescription << " inet " << pcAdaptors[i].pzIP << " netmask " << pcAdaptors[i].pzSN << newl;
+       if (strlen(pcAdaptors[i].pzGW)>0 && strcmp(pcAdaptors[i].pzGW, "0.0.0.0")!=0) 
+         fsOut << "route add " << pcAdaptors[i].pzIP << " netmask " << pcAdaptors[i].pzSN << " gateway " << pcAdaptors[i].pzGW << newl;
+      }
     }
   }
   fsOut.close();

@@ -32,6 +32,7 @@ public:
   bool bExists;
   bool bEnabled;
   char *pzIP, *pzSN, *pzGW;
+  bool bUseDHCP;
 };
 
 class Configuration {

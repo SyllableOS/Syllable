@@ -248,9 +248,9 @@ int iAdaptorID;
 	os::Rect wPos = this->GetFrame();
 	
 	if (bRoot) {
-	  wPos.left+=50; wPos.right=wPos.left+250; wPos.top+=30; wPos.bottom=wPos.top+140;
+	  wPos.left+=50; wPos.right=wPos.left+250; wPos.top+=30; wPos.bottom=wPos.top+180;	// 140
 	} else {
-	  wPos.left+=50; wPos.right=wPos.left+250; wPos.top+=30; wPos.bottom=wPos.top+110;
+	  wPos.left+=50; wPos.right=wPos.left+250; wPos.top+=30; wPos.bottom=wPos.top+150;	// 110
 	}
 	pcModifyWindow[iAdaptorID] = new ModifyConnectionWindow(wPos, &(pcConfig->pcAdaptors[iAdaptorID]), iAdaptorID);
 	pcModifyWindow[iAdaptorID]->Show();

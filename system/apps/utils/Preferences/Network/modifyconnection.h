@@ -46,7 +46,7 @@ private:
   os::HLayoutNode *pcHLDesc, *pcHLIP, *pcHLSN, *pcHLGW, *pcHLButtons;
   os::TextView *pcTVIPAddr,*pcTVSubNet, *pcTVGateway;
   os::StringView *pcSVAdaptor;
-  os::RadioButton *pcRBDHCPOn, *pcRBDHCPOff;
+  os::CheckBox *pcCBDhcp;
   os::Button *pcBEnable, *pcBDisable;
 
   AdaptorConfiguration *pcAdaptor;

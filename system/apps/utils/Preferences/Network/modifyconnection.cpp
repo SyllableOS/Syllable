@@ -57,12 +57,6 @@ ModifyConnectionWindow::ModifyConnectionWindow(const os::Rect& cFrame, AdaptorCo
   pcHLDesc->AddChild( new os::HLayoutSpacer("") );
   pcVLRoot->AddChild( pcHLDesc );
   pcVLRoot->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
-  
-  // Show DHCP on/off controls (Note this is disabled until we get DHCP support, hopefully soon!)
-  /*
-  pcVLRoot->AddChild( pcRBDHCPOn = new os::RadioButton(cRect, "RBDHCPOn", "Enable DHCP", new os::Message(M_MC_DHCPON)) );
-  pcVLRoot->AddChild( pcRBDHCPOff = new os::RadioButton(cRect, "RBDHCPOff", "Disable DHCP", new os::Message(M_MC_DHCPOFF)) );
-  */
 
   // Create Vertical layout for settings
   pcVLSettings = new os::VLayoutNode("VLSettings");
@@ -102,13 +96,17 @@ ModifyConnectionWindow::ModifyConnectionWindow(const os::Rect& cFrame, AdaptorCo
   pcTVGateway->SetMinPreferredSize( 12,1 );
   pcTVGateway->SetMaxLength( C_CO_IPLEN );
   pcVLSettings->AddChild( pcHLGW );
-  
+
   // Make sure all controls are same width
   pcVLSettings->SameWidth("TVIPAddr", "TVSubNet", "TVGateway", NULL);
   pcVLSettings->SameWidth("SVIPAddr", "SVSubNet", "SVGateway", NULL);
   pcFVSettings = new os::FrameView(cBounds, "FVSettings", "Settings", os::CF_FOLLOW_ALL);
   pcFVSettings->SetRoot(pcVLSettings);
   pcVLRoot->AddChild(pcFVSettings);
+
+  // Allow the user to switch DHCP On or Off
+  pcCBDhcp = new os::CheckBox( os::Rect( 0,0,0,0 ), "CBDhcp", "Use DHCP", new os::Message( M_MC_DHCP ) );
+  pcVLRoot->AddChild( pcCBDhcp );
  
   // Add buttons to enable/disable
   pcHLButtons = new os::HLayoutNode("HLButtons");
@@ -122,7 +120,7 @@ ModifyConnectionWindow::ModifyConnectionWindow(const os::Rect& cFrame, AdaptorCo
     pcHLButtons->SameWidth( "BEnable", "BDisable", NULL );
     pcVLRoot->AddChild(pcHLButtons);
   }
-
+  
   // Set the root 
   pcLRoot->SetRoot(pcVLRoot);
   AddChild(pcLRoot);
@@ -137,6 +135,7 @@ ModifyConnectionWindow::ModifyConnectionWindow(const os::Rect& cFrame, AdaptorCo
   pcTVIPAddr->SetTabOrder(iTabOrder++);
   pcTVSubNet->SetTabOrder(iTabOrder++);
   pcTVGateway->SetTabOrder(iTabOrder++);
+  pcCBDhcp->SetTabOrder(iTabOrder++);
   if (bRoot) {
     pcBEnable->SetTabOrder(iTabOrder++);
     pcBDisable->SetTabOrder(iTabOrder++);
@@ -149,6 +148,7 @@ ModifyConnectionWindow::ModifyConnectionWindow(const os::Rect& cFrame, AdaptorCo
     pcTVIPAddr->SetEnable(false);
     pcTVSubNet->SetEnable(false);
     pcTVGateway->SetEnable(false);
+    pcCBDhcp->SetEnable(false);
   }
 
   // Show data
@@ -169,7 +169,7 @@ void ModifyConnectionWindow::ShowData()
   if (bRoot) {
     pcBEnable->SetEnable( !pcAdaptor->bEnabled );
     pcBDisable->SetEnable( pcAdaptor->bEnabled );
-  //  pcRBDHCPOff->SetValue( true, false );
+    pcCBDhcp->SetValue( pcAdaptor->bUseDHCP );
   }
   
   // IP Info
@@ -181,6 +181,7 @@ void ModifyConnectionWindow::ShowData()
 void ModifyConnectionWindow::SaveValues()
 {
   pcAdaptor->bEnabled = !pcBEnable->IsEnabled();
+  pcAdaptor->bUseDHCP = pcCBDhcp->GetValue().AsBool();
   strcpy( pcAdaptor->pzIP, pcTVIPAddr->GetBuffer()[0].c_str());
   strcpy( pcAdaptor->pzSN, pcTVSubNet->GetBuffer()[0].c_str());
   strcpy( pcAdaptor->pzGW, pcTVGateway->GetBuffer()[0].c_str());
@@ -203,11 +204,22 @@ void ModifyConnectionWindow::HandleMessage(os::Message* pcMessage)
     pcSVAdaptor->SetString("(Disabled)");
     break;
 
-  case M_MC_DHCPON:
-    pcFVSettings->Show(false); break;
-
-  case M_MC_DHCPOFF:
-    pcFVSettings->Show(true); break;
+  case M_MC_DHCP:
+  {
+    if( pcCBDhcp->GetValue().AsBool() )	// DHCP enabled
+    {
+      pcTVIPAddr->SetEnable(false);
+      pcTVSubNet->SetEnable(false);
+      pcTVGateway->SetEnable(false);
+    }
+    else		// DHCP disabled
+    {
+      pcTVIPAddr->SetEnable(true);
+      pcTVSubNet->SetEnable(true);
+      pcTVGateway->SetEnable(true);
+    }
+    break;
+  }
 
   default:
     os::Window::HandleMessage(pcMessage); break;
