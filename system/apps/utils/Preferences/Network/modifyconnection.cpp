@@ -105,7 +105,7 @@ ModifyConnectionWindow::ModifyConnectionWindow(const os::Rect& cFrame, AdaptorCo
   pcVLRoot->AddChild(pcFVSettings);
 
   // Allow the user to switch DHCP On or Off
-  pcCBDhcp = new os::CheckBox( os::Rect( 0,0,0,0 ), "CBDhcp", "Use DHCP", new os::Message( M_MC_DHCP ) );
+  pcCBDhcp = new os::CheckBox( os::Rect( 0,0,0,0 ), "CBDhcp", "_Use DHCP", new os::Message( M_MC_DHCP ) );
   pcVLRoot->AddChild( pcCBDhcp );
  
   // Add buttons to enable/disable
@@ -114,9 +114,9 @@ ModifyConnectionWindow::ModifyConnectionWindow(const os::Rect& cFrame, AdaptorCo
   if (bRoot) {
     pcVLRoot->AddChild( new os::VLayoutSpacer("", 10.0f, 10.0f));
     pcHLButtons = new os::HLayoutNode("HLButtons");
-    pcHLButtons->AddChild( pcBEnable = new os::Button(cRect, "BEnable", "Enable", new os::Message(M_MC_ENABLE)) );
+    pcHLButtons->AddChild( pcBEnable = new os::Button(cRect, "BEnable", "_Enable", new os::Message(M_MC_ENABLE)) );
     pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
-    pcHLButtons->AddChild( pcBDisable = new os::Button(cRect, "BDisable", "Disable", new os::Message(M_MC_DISABLE)) );
+    pcHLButtons->AddChild( pcBDisable = new os::Button(cRect, "BDisable", "_Disable", new os::Message(M_MC_DISABLE)) );
     pcHLButtons->SameWidth( "BEnable", "BDisable", NULL );
     pcVLRoot->AddChild(pcHLButtons);
   }
@@ -238,19 +238,19 @@ bool ModifyConnectionWindow::OkToQuit()
   // Check everything is valid (if root)
   if (ValidateIP(pcTVIPAddr->GetBuffer()[0].c_str())!=0) {
     
-    os::Alert *pcError = new os::Alert("Invalid - Network", "The value entered in IP Address is invalid", os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, "OK", NULL);
+    os::Alert *pcError = new os::Alert("Invalid - Network", "The value entered in IP Address is invalid", os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, "_OK", NULL);
     pcError->Go();
     return false;
     
   } else if(ValidateIP(pcTVSubNet->GetBuffer()[0].c_str())!=0) {
 
-    os::Alert *pcError = new os::Alert("Invalid - Network", "The value entered in Subnet Mask is invalid", os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, "OK", NULL);
+    os::Alert *pcError = new os::Alert("Invalid - Network", "The value entered in Subnet Mask is invalid", os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, "_OK", NULL);
     pcError->Go();
     return false;
 
   } else if(ValidateIP(pcTVGateway->GetBuffer()[0].c_str())!=0) {
 
-    os::Alert *pcError = new os::Alert("Invalid - Network","The value entered in Gateway is invalid", os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, "OK", NULL);
+    os::Alert *pcError = new os::Alert("Invalid - Network","The value entered in Gateway is invalid", os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, "_OK", NULL);
     pcError->Go();
     return false;
 
@@ -259,6 +259,7 @@ bool ModifyConnectionWindow::OkToQuit()
     return true;
   }
 }
+
 
 
 

@@ -91,15 +91,15 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcVLRoot->AddChild( new os::VLayoutSpacer( "", 10.0f, 10.0f) );
 
   // Create the connections frameview and contents
-  pcVLConnectionList =new os::VLayoutNode("VLConnectionList");
+  pcVLConnectionList =new os::VLayoutNode("VLConnectionList", 100.0f);
   pcVLConnectionList->SetBorders( os::Rect(5,5,5,5) );
   pcLVConnections = new os::ListView(cRect, "LVConnections", os::ListView::F_RENDER_BORDER | os::ListView::F_NO_HEADER, os::CF_FOLLOW_ALL);
   pcLVConnections->InsertColumn("Interfaces",1);
   pcVLConnectionList->AddChild(pcLVConnections); 
-  pcVLConnectionButtons = new os::VLayoutNode("VLConnectionButton"); 
+  pcVLConnectionButtons = new os::VLayoutNode("VLConnectionButton", 1.0f); 
   pcVLConnectionButtons->SetBorders( os::Rect(5,5,5,5) );
   pcVLConnectionButtons->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f) );
-  pcVLConnectionButtons->AddChild( pcBModify = new os::Button(cRect, "BModify", "Modify", new os::Message(M_MW_MODIFY)) );
+  pcVLConnectionButtons->AddChild( pcBModify = new os::Button(cRect, "BModify", "_Modify", new os::Message(M_MW_MODIFY)) );
   if (!bRoot) {
     pcBModify->SetLabel("View");
   }
@@ -117,9 +117,9 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
     pcVLRoot->AddChild( new os::VLayoutSpacer("", 10.0f, 10.0f));
     pcHLButtons = new os::HLayoutNode("HLButtons");
     pcHLButtons->AddChild( new os::HLayoutSpacer(""));
-    pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", "Apply", new os::Message(M_MW_APPLY)) );
+    pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", "_Apply", new os::Message(M_MW_APPLY)) );
     pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f));
-    pcHLButtons->AddChild( pcBRevert = new os::Button(cRect, "BRevert", "Revert", new os::Message(M_MW_REVERT)) );
+    pcHLButtons->AddChild( pcBRevert = new os::Button(cRect, "BRevert", "_Revert", new os::Message(M_MW_REVERT)) );
     pcHLButtons->SameWidth( "BApply", "BRevert", NULL );
     pcVLRoot->AddChild(pcHLButtons);
   }
@@ -214,12 +214,12 @@ void MainWindow::Apply()
   // Check data is valid first
   if (ValidateIP((char *)pcTVName1->GetBuffer()[0].c_str())!=0) {
 
-    os::Alert *pcError = new os::Alert("Invalid - Network", "The value entered in Primary DNS is invalid", os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, "OK", NULL);
+    os::Alert *pcError = new os::Alert("Invalid - Network", "The value entered in Primary DNS is invalid", os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, "_OK", NULL);
     pcError->Go();
 
   } else if(ValidateIP((char *)pcTVName2->GetBuffer()[0].c_str())!=0) {
 
-    os::Alert *pcError = new os::Alert("Invalid - Network", "The value entered in Secondary DNS is invalid", os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, "OK", NULL);
+    os::Alert *pcError = new os::Alert("Invalid - Network", "The value entered in Secondary DNS is invalid", os::Alert::ALERT_WARNING, os::WND_NOT_RESIZABLE || os::WND_MODAL, "_OK", NULL);
     pcError->Go();
 
   } else {
@@ -295,7 +295,5 @@ bool MainWindow::OkToQuit()
 
   return false;
 }
-
-
 
 
