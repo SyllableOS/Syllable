@@ -35,6 +35,9 @@
 #define ICON_TO_TEXT_SPACE		4		// Space between icon and text
 #define TITLE_TO_SHORTCUT_SPACE	16		// Space between text and shortcut
 #define H_ROW_SPACE				2		// Space to the left/right of text in a menu bar
+#define STICKY_THRESHOLD		5.0f	// If mouse button is released outside a STICKY_THRESHOLD
+										// pixels radius from where it was pressed, the menu enters
+										// "sticky mode".
 
 #define SUB_MENU_ARROW_W 5
 #define SUB_MENU_ARROW_H 8
@@ -117,6 +120,7 @@ public:
     MenuLayout_e  	m_eLayout;
     Point	  		m_cSize;
 	Rect	  		m_cItemBorders;
+	Point			m_cMouseHitPos;
     
     bool	  		m_bIsTracking;
     bool	  		m_bHasOpenChilds;
@@ -356,7 +360,6 @@ Point MenuItem::GetContentSize()
 			cContentSize.x += m->GetImage( 0 )->GetSize().x+1;
 		}
 		cContentSize.x += H_ROW_SPACE*2;
-		cContentSize.y += 2;
 	}
 	return ( cContentSize );
 }
@@ -1577,9 +1580,9 @@ MenuItem *Menu::GetSuperItem()
 Point Menu::GetPreferredSize( bool bLargest ) const
 {
 	if( !bLargest ) {
-		return ( m->m_cSize + Point( 2.0f, 2.0f ) );
+		return ( m->m_cSize + Point( 2.0f, 1.0f ) );
 	} else {
-		return Point( COORD_MAX, m->m_cSize.y + 2.0f );
+		return Point( COORD_MAX, m->m_cSize.y + 1.0f );
 	}
 }
 
@@ -1605,14 +1608,14 @@ void Menu::InvalidateLayout()
 			{
 				Point cSize = pcItem->GetContentSize();
 	
-				pcItem->_SetFrame( Rect( m->m_cSize.x + m->m_cItemBorders.left + 1, m->m_cItemBorders.top + 1, m->m_cSize.x + cSize.x + m->m_cItemBorders.left - 1, cSize.y + m->m_cItemBorders.bottom - 1 ) );
+				pcItem->_SetFrame( Rect( m->m_cSize.x + m->m_cItemBorders.left, m->m_cItemBorders.top, m->m_cSize.x + cSize.x + m->m_cItemBorders.left, cSize.y + m->m_cItemBorders.bottom ) );
 	
 				m->m_cSize.x += cSize.x + m->m_cItemBorders.left + m->m_cItemBorders.right;
 	
 				if( cSize.y > m->m_cSize.y )
 					m->m_cSize.y = cSize.y;
 			}
-			m->m_cSize.y += m->m_cItemBorders.top + m->m_cItemBorders.bottom;
+			m->m_cSize.y += m->m_cItemBorders.top + m->m_cItemBorders.bottom - 1.0f;
 	
 			break;
 	
@@ -1814,6 +1817,8 @@ void Menu::MouseDown( const Point & cPosition, uint32 nButtons )
 {
 	AutoLocker __lock__( &m->m_pcRoot->m->m_cMutex );
 
+	m->m_cMouseHitPos = cPosition;
+
 	if( GetBounds().DoIntersect( cPosition ) )
 	{
 		MenuItem *pcItem = GetItemAt( cPosition );
@@ -1838,7 +1843,6 @@ void Menu::MouseDown( const Point & cPosition, uint32 nButtons )
 		}
 		_OpenSelection();
 	}
-
 	else
 	{
 		if( m->m_bHasOpenChilds == false )
@@ -1850,7 +1854,7 @@ void Menu::MouseDown( const Point & cPosition, uint32 nButtons )
 
 				if( send_msg( m->m_hTrackPort, 1, &pcItem, sizeof( pcItem ) ) < 0 )
 				{
-					dbprintf( "Error: Menu::WindowActivated() failed to send message to m_hTrackPort\n" );
+					dbprintf( "Error: Menu::MouseDown() failed to send message to m_hTrackPort\n" );
 				}
 			}
 		}
@@ -1913,7 +1917,15 @@ void Menu::MouseMove( const Point & cPosition, int nCode, uint32 nButtons, Messa
 
 	if( nButtons & 0x01 )
 	{
-		_SetCloseOnMouseUp( true );
+		if( !m->m_bCloseOnMouseUp ) {
+			Point cDistance;
+			cDistance.x = cPosition.x - m->m_cMouseHitPos.x;
+			cDistance.y = cPosition.y - m->m_cMouseHitPos.y;
+			float vDist = sqrt( cDistance.x * cDistance.x + cDistance.y * cDistance.y );
+			if( vDist > STICKY_THRESHOLD ) {
+				_SetCloseOnMouseUp( true );
+			}
+		}
 	}
 	if( GetBounds().DoIntersect( cPosition ) == false )
 	{
@@ -2546,6 +2558,4 @@ MenuWindow::~MenuWindow()
 	}
 }
 /************************end of MenuWindow**************************************/
-
-
 
