@@ -79,16 +79,17 @@ tree
 	atheos/var/log
 
 	atheos/usr
+	atheos/usr/bin
 	atheos/usr/etc
 	atheos/usr/include
-	atheos/usr/bin
+	atheos/usr/info
 	atheos/usr/lib
 	atheos/usr/local
 	atheos/usr/man
 	atheos/usr/sbin
 	atheos/usr/share
-	atheos/usr/share/terminfo
-	atheos/usr/share/terminfo/x
+;	atheos/usr/share/terminfo
+;	atheos/usr/share/terminfo/x
 
 	atheos/Applications					applications.png
 	atheos/Applications/Preferences		settings.png
