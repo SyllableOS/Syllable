@@ -2218,7 +2218,7 @@ bool TextEdit::HandleKeyDown( const char* pzString, const char* pzRawString, uin
 	    SetCursor( IPoint( -1, -1 ), (nQualifiers & QUAL_SHIFT) != 0 );
 	    return( true );
 	} else if( strlen( pzRawString ) == 1 ) {
-	    switch( pzRawString[0] ) {
+	    switch( tolower( pzRawString[0] ) ) {
 		case 'x':
 			if( !m_bReadOnly ) {
 				std::string cBuffer;
@@ -2500,6 +2500,7 @@ void TextView::__TV_reserved2__() {}
 void TextView::__TV_reserved3__() {}
 /** \internal */
 void TextView::__TV_reserved4__() {}
+
 
 
 
