@@ -96,6 +96,13 @@ PCI_bus_s* g_psPCIBus;
 static ATA_bus_s* g_psBus;
 
 
+/* Initialize the controllers first and put them into this list and then add
+   them to the ata busmanager. This is necessary because some mainboards seem to
+   map their pata and sata controllers at the same port to support older ata drivers. */
+#define ATA_PCI_CONTROLLERS 8
+static ATA_controller_s* g_apsControllers[ATA_PCI_CONTROLLERS];
+static int g_nControllers = 0;
+
 #define ATA_CMD_DELAY 500
 #define ATA_CMD_TIMEOUT 315000
 
@@ -419,7 +426,8 @@ status_t ata_pci_add_controller( int nDeviceID, PCI_Info_s sDevice, init_ata_con
 	if( psInit && bDMAPossible )
 		psInit( sDevice, psCtrl );
 	
-	g_psBus->add_controller( psCtrl );
+	/* Put the controller into the list */
+	g_apsControllers[g_nControllers++] = psCtrl;
 	
 	
 	return( 0 );
@@ -617,6 +625,12 @@ status_t device_init( int nDeviceID )
 				bControllerFound = true;
 		}
 	}
+	
+	printk( "Detected %i ATA PCI controllers\n", g_nControllers );
+	
+	/* Register the controllers */
+	for( i = 0; i < g_nControllers; i++ )
+		g_psBus->add_controller( g_apsControllers[i] );
 	
 	return( bControllerFound ? 0 : -ENODEV );
 }
