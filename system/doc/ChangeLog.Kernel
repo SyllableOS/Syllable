@@ -1,3 +1,34 @@
+* Sept 13 2003, Kristian Van Der Vliet *
+
+Combined networking patch from William Rose <wrose@zip-it.org>
+
+This patch comes in a few parts:
+  o reader-writer locks
+  o network utility updates
+    o changed command-line syntax of ifconfig and route to support CIDR
+    o changed output of both to be clearer (IMO) and support new networking features
+
+  o networking patches
+    o changes to implement reader-writer locking on network interface and route table
+       (also includes garbage collection for these structures).
+    o implement adding and deleting interfaces
+    o introduce automatic local network routes for interfaces
+    o add support for binding to a specific device to bypass routing
+
+dhcpc has been updated to reflect the changes.
+
+* Sept 13 2003, Kristian Van Der Vliet *
+
+select() patch from William Rose <wrose@zip-it.org>  This patch updates the VFS code to
+add a cookie parameter to the add_select_req and rem_select_req primitives.  It breaks binary
+compatibility with filesystems that support these primitives.  The only ones to date are special
+filesystems: e.g. dev, fifo, pty and socket  Corrections for these are included in the patch.  AFS
+et al are not affected.
+
+Once installed, using select() on the file descriptor obtained using open() on a device node
+will now correctly pass through the select request to the underlying driver, rather than just
+returning instantly.  This can be used to implement non-blocking device I/O.
+
 * Sept 11 2003, Kristian Van Der Vliet *
 
 Add support for the MSG_PEEK flag in tcp.c tcp_recvmsg()
@@ -118,4 +149,5 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
 
