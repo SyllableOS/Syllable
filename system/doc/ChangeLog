@@ -4,6 +4,8 @@ First check-in of the new build system.
 Recipes for third-party software packages will follow,
 and also tweaking to many native packages to make them comply.
 
+Removed sed 4.0.7 because it didn't build after going through CVS.
+
 * Oct 3 2003, Kristian Van Der Vliet *
 
 Patch Savage driver to fix problems with 16bit modes from Hilary Cheng
