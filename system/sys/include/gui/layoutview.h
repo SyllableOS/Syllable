@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libatheos.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001  Kurt Skauen
+ *  Copyright (C) 2003  The Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -35,18 +36,40 @@ namespace os
 
 class LayoutView;
 
-/** 
+/** Layout node
  * \ingroup gui
  * \par Description:
+ *	This class is a base class for those classes that arrange GUI items by
+ *	a specific algorithm, such as horizontal layout or vertical layout.
+ *	Unless you intend to create such an algorithm yourself, you will not use
+ *	this class directly, but instead one of its subclasses (HLayoutNode or
+ *	VLayoutNode).
+ * \par Example:
+ * \code
+ *	HLayoutNode* pcRoot = HLayoutNode( "pcRoot" );
  *
- * \sa
+ *	pcRoot->AddChild( new Button( Rect(), "Button1", "One", new Message( ID_ONE ) ), 2.0 );
+ *	pcRoot->AddChild( new HLayoutSpacer( "Spacer" ) );
+ *	pcRoot->AddChild( new Button( Rect(), "Button2", "Two", new Message( ID_TWO ) ), 1.0 );
+ *
+ *	LayoutView* pcLayoutView = new LayoutView( pcMyWindow->GetBounds(), "pcLayoutView" );
+ *	pcLayoutView->SetRoot( pcRoot );
+ *	pcMyWindow->AddChild( pcLayoutView );
+ * \endcode
+ *	This example will result in a layout like this:\n
+ *	[One][Two]\n
+ *	If the window is made larger, the weights and the spacer will cause the
+ *	layout to look like this:\n
+ *	[  One  ]   [Two]\n
+ *	That is, "One" has twice the weight of the two others, thus it will get
+ *	twice the amount of exess screen space.
+ * \sa VLayoutNode, HLayoutNode, LayoutSpacer, SameWidth, SameHeight
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
-
 class LayoutNode
 {
 public:
-    LayoutNode( const std::string& cName, float vWheight = 1.0f, LayoutNode* pcParent = NULL, View* pcView = NULL );
+    LayoutNode( const std::string& cName, float vWeight = 1.0f, LayoutNode* pcParent = NULL, View* pcView = NULL );
     virtual ~LayoutNode();
 
     virtual void		    SetView( View* pcView );
@@ -55,8 +78,8 @@ public:
     virtual void		    SetBorders( const Rect& cBorder );
     virtual Rect		    GetBorders() const;
 
-    float			    GetWheight() const;
-    void			    SetWheight( float vWheight );
+    float			    GetWeight() const;
+    void			    SetWeight( float vWeight );
     virtual void 		    SetFrame( const Rect& cFrame );
     virtual Rect		    GetFrame() const;
     virtual Rect		    GetBounds() const;
@@ -74,7 +97,7 @@ public:
     void			    AdjustPrefSize( Point* pcMinSize, Point* pcMaxSize );
     virtual Point		    GetPreferredSize( bool bLargest );
     void			    AddChild( LayoutNode* pcChild );
-    LayoutNode*			    AddChild( View* pcChild, float vWheight = 1.0f );
+    LayoutNode*			    AddChild( View* pcChild, float vWeight = 1.0f );
     void			    RemoveChild( LayoutNode* pcChild );
     void			    RemoveChild( View* pcChild );
 
@@ -88,7 +111,7 @@ public:
     void SameHeight( const char* pzName1, ... );
     
     void SetBorders( const Rect& cBorders, const char* pzFirstName, ... );
-    void SetWheights( float vWheight, const char* pzFirstName, ... );
+    void SetWeights( float vWeight, const char* pzFirstName, ... );
     void SetHAlignments( alignment eAlign, const char* pzFirstName, ... );
     void SetVAlignments( alignment eAlign, const char* pzFirstName, ... );
 
@@ -114,7 +137,7 @@ private:
     LayoutNode*		     m_pcParent;
     LayoutView*		     m_pcLayoutView;
     std::vector<LayoutNode*> m_cChildList;
-    float		     m_vWheight;
+    float		     m_vWeight;
     Point		     m_cMinSize;
     Point		     m_cMaxSizeExtend;
     Point		     m_cMaxSizeLimit;
@@ -126,7 +149,7 @@ private:
     ShareNode		     m_sHeightRing;
 };
 
-/** 
+/** Layout spacer
  * \ingroup gui
  * \par Description:
  *
@@ -137,7 +160,7 @@ private:
 class LayoutSpacer : public LayoutNode
 {
 public:
-    LayoutSpacer( const std::string& cName, float vWheight = 1.0f, LayoutNode* pcParent = NULL,
+    LayoutSpacer( const std::string& cName, float vWeight = 1.0f, LayoutNode* pcParent = NULL,
 		  const Point& cMinSize = Point(0.0f,0.0f), const Point& cMaxSize = Point(MAX_SIZE,MAX_SIZE) );
 
     void SetMinSize( const Point& cSize );
@@ -150,10 +173,10 @@ private:
     Point m_cMaxSize;
 };
 
-/** 
+/** Vertical layout spacer
  * \ingroup gui
  * \par Description:
- *
+ *	Creates a blank space in a vertical layout.
  * \sa
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
@@ -162,15 +185,15 @@ class VLayoutSpacer : public LayoutSpacer
 {
 public:
     VLayoutSpacer( const std::string& cName, float vMinHeight = 0.0f, float vMaxHeight = MAX_SIZE,
-		   LayoutNode* pcParent = NULL, float vWheight = 1.0f ) :
-	    LayoutSpacer( cName, vWheight, pcParent, Point( 0.0f, vMinHeight ), Point( 0.0f, vMaxHeight ) )
+		   LayoutNode* pcParent = NULL, float vWeight = 1.0f ) :
+	    LayoutSpacer( cName, vWeight, pcParent, Point( 0.0f, vMinHeight ), Point( 0.0f, vMaxHeight ) )
     {}
 };
 
-/** 
+/** Horizontal layout spacer
  * \ingroup gui
  * \par Description:
- *
+ *	Creates a blank space in a horizontal layout.
  * \sa
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
@@ -179,41 +202,43 @@ class HLayoutSpacer : public LayoutSpacer
 {
 public:
     HLayoutSpacer( const std::string& cName, float vMinWidth = 0.0f, float vMaxWidth = MAX_SIZE,
-		   LayoutNode* pcParent = NULL, float vWheight = 1.0f ) :
-	    LayoutSpacer( cName, vWheight, pcParent, Point( vMinWidth, 0.0f ), Point( vMaxWidth, 0.0f ) )
+		   LayoutNode* pcParent = NULL, float vWeight = 1.0f ) :
+	    LayoutSpacer( cName, vWeight, pcParent, Point( vMinWidth, 0.0f ), Point( vMaxWidth, 0.0f ) )
     {}
 };
 
-/** 
+/** Horizontal Layout class
  * \ingroup gui
  * \par Description:
- *
- * \sa
+ *	This class is used whenever GUI elements are to be laid out alongside each
+ *	other (in a horizontal faishon).
+ * \sa LayoutNode
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
 class HLayoutNode : public LayoutNode
 {
 public:
-    HLayoutNode( const std::string& cName, float vWheight = 1.0f, LayoutNode* pcParent = NULL, View* pcView = NULL );
+    HLayoutNode( const std::string& cName, float vWeight = 1.0f, LayoutNode* pcParent = NULL, View* pcView = NULL );
 //    virtual Point GetPreferredSize( bool bLargest );
     virtual void  Layout();
 private:
     virtual Point    CalculatePreferredSize( bool bLargest );
 };
 
-/** 
+/** Vertical Layout class
  * \ingroup gui
  * \par Description:
- *
- * \sa
+ *	This class is used whenever GUI elements are to be laid out on top of each
+ *	other (in a vertical faishon).
+ * \sa LayoutNode
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
 class VLayoutNode : public LayoutNode
 {
 public:
-    VLayoutNode( const std::string& cName, float vWheight = 1.0f, LayoutNode* pcParent = NULL, View* pcView = NULL );
+    VLayoutNode( const std::string& cName, float vWeight = 1.0f, LayoutNode* pcParent = NULL, View* pcView = NULL );
 //    virtual Point GetPreferredSize( bool bLargest );
     virtual void  Layout();
 
@@ -222,9 +247,13 @@ protected:
 private:
 };
 
-/** Main class in the AtheOS dynamic layout system
+/** Main class in the Syllable dynamic layout system
  * \ingroup gui
  * \par Description:
+ *	This is the main layout class, to which a tree of LayoutNodes are added,
+ *	using SetRoot().
+ *	The LayoutView itself is added to a Window, or another
+ *	View, and will display its contents in that Window or View.
  *
  * \sa
  * \author	Kurt Skauen (kurt@atheos.cx)
@@ -239,7 +268,7 @@ public:
     LayoutNode* GetRoot() const;
     void	SetRoot( LayoutNode* pcRoot );
 
-    LayoutNode* FindNode( const std::string& cName, bool bRequrcive = true );
+    LayoutNode* FindNode( const std::string& cName, bool bRecursive = true );
 
     void	InvalidateLayout();
     
@@ -256,3 +285,5 @@ private:
 
 
 #endif // __F_GUI_LAYOUTVIEW_H__
+
+
