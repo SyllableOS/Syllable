@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.4.4
+# Version 0.4.5
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -209,14 +209,15 @@ def configurePackage target
 					Dir.chdir dir unless noBuildDir
 					action "rm config.cache" if exists? "config.cache"
 
-					name = shortName target
 					action((cmdLine = recipe["configure"]) ? toString(cmdLine) :
 						((vars = recipe["configure-vars"]) ? toString(vars) + " " : "") +
 						File.join("..", fullName(target), cmd) +
-#						(name == "man" || name == "grub" ? "" :
 						((args = recipe["configure-args"]) ?
 							" " + toString(args) :
-							" --prefix=" + prefix(target)
+							((p = recipe["configure-prefix"]) ?
+								" " + p :
+								" --prefix="
+							) + prefix(target)
 						) +
 						((options = recipe["configure-options"]) ? " " + toString(options) : "")
 					)
@@ -899,7 +900,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.4.4",
+	puts "Syllable Build System 0.4.5",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"

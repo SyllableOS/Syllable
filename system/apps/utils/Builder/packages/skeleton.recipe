@@ -37,7 +37,7 @@ no-build-dir
 
 ; Configuring:
 ; <configure>
-; [<configure-vars>] <configure-cmd> [<configure-args>] [<configure-options>]
+; [<configure-vars>] <configure-cmd> ([<configure-prefix>] | [<configure-args>]) [<configure-options>]
 
 configure			<Configuration commands>
 
@@ -45,7 +45,9 @@ configure			<Configuration commands>
 configure-vars		VAR='value'
 ; Non-standard configure command:
 configure-cmd		configure
-; Non-standard prefix argument:
+; Non-standard prefix option:
+configure-prefix	--prefix=
+; Arguments overriding prefix:
 configure-args		--prefix=/usr/foo
 ; Extra configure options:
 configure-options	--with-option
