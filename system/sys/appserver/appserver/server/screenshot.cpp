@@ -20,15 +20,20 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <malloc.h>
-
+#include <cstdlib>
 #include "ddriver.h"
 #include "bitmap.h"
 #include "layer.h"
 #include "server.h"
+#include <ctime>
 
 extern "C" {
 #include <png.h>
 }
+
+/*static variables, so that you can keep track of the number of screenshots per minute*/
+static int nScreenShotNum = -1;
+static long nMinCounter;
 
 #if 1
 static void write_png( const char *file_name, SrvBitmap* pcBitmap )
@@ -315,13 +320,43 @@ static void write_png( const char *file_name, SrvBitmap* pcBitmap )
 void ScreenShot()
 {
 #if 1
+	
+	char zTemp[1024];	//this variable holds the name of the screenhot
     g_cLayerGate.Close();
     if ( g_pcTopView != NULL && g_pcTopView->GetBitmap() != NULL ) {
-	write_png( "/tmp/screenshot.png", g_pcTopView->GetBitmap() );
-	printf( "Done\n" );
+ 	
+ 	/*This is probably the best way to trap time. I saw it in Lancher's Clock code and I think it is a good way to do it*/
+ 	long nCurSysTime = get_real_time( ) / 1000000;
+	struct tm *psTime = gmtime( &nCurSysTime );
+	long anTimes[] = 
+    { 
+      psTime->tm_mday,
+      psTime->tm_hour,
+      (psTime->tm_hour > 12) ? psTime->tm_hour - 12 : psTime->tm_hour,
+      psTime->tm_mon + 1,
+      psTime->tm_min,
+      psTime->tm_sec,
+      psTime->tm_year - 100
+    };
+    
+    /*if the minute counter is not the same as the current time we must reset the screenshot number*/
+    if (nMinCounter != anTimes[4])
+    	nScreenShotNum = -1;
+    
+    /*make sure that the minute variable equals the current min.  In theory this could cause a little problem, but very unlikely*/
+    nMinCounter = anTimes[4]; 
+ 	
+ 	/*make sure you increment the screenshot counter*/
+	nScreenShotNum++;
+	
+	/*must create the filename*/
+	sprintf(zTemp,"/tmp/Screenshot-200%ld.%ld.%ld-%ld:%ld.%d.png", anTimes[6],anTimes[3],anTimes[0],anTimes[2],anTimes[4],nScreenShotNum);
+	
+	/*write the png already*/
+	write_png( zTemp, g_pcTopView->GetBitmap() );
+	
     }
     g_cLayerGate.Open();
 #endif
 }
 
- 
