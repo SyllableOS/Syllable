@@ -98,6 +98,7 @@ void WriteConfigFile()
     pcPrefs->AddString ( "DeskImage",  "logo_atheos.jpg"  );
     pcPrefs->AddBool   ( "ShowVer",    false);
     pcPrefs->AddInt32  ( "SizeImage",    0);
+    pcPrefs->AddBool    ( "Alphabet",   false);
 
 
     File *pcConfig = new File(pzConfigFile, O_WRONLY | O_CREAT );
@@ -207,13 +208,13 @@ mounted_drives mounteddrives()
     {
         if ( get_mount_point( i, szTmp, PATH_MAX ) < 0 )
         {
-
+			
             continue;
         }
 
         int nFD = open( szTmp, O_RDONLY );
         if ( nFD < 0 )
-        {
+        {	
             continue;
         }
 
@@ -395,30 +396,13 @@ BitmapView::BitmapView( const Rect& cFrame ) :
     m_bCanDrag = false;
     m_bSelRectActive = false;
 
-    Point cPos( 20, 20 );
 
 
     ReadPrefs();
-
-    SetIcons();
-
-    for ( uint i = 0 ; i < m_cIcons.size() ; ++i )
-    {
-        cPos.y += 50;
-        if ( cPos.y > 500 )
-        {
-            cPos.y = 20;
-            cPos.x += 50;
-
-            m_cIcons[i]->Paint( this, Point(0,0), true, true, zBgColor, zFgColor );
-
-        }
-    }
-    m_nHitTime = 0;
-
-
-
-    pzSyllableVer = SyllableInfo();
+	SetIcons();
+    
+	m_nHitTime = 0;
+	pzSyllableVer = SyllableInfo();
 
 }
 
@@ -446,6 +430,7 @@ t_Icon BitmapView::IconList()
     string zName;
     t_Icon t_icon;
     Directory *pcDir = new Directory( );
+    
 
     if( pcDir->SetTo( pzIconDir ) == 0 )
     {
@@ -479,7 +464,10 @@ void BitmapView::SetIcons()
     struct stat sStat;
     Point zIconPoint;
     uint iconExec = 0;
-
+    Point cPos( 20, 20 );
+    
+    //RemoveIcons();
+    
     for (iconExec = 0; iconExec < IconList().size(); iconExec++)
     {
         ifstream filRead;
@@ -498,6 +486,22 @@ void BitmapView::SetIcons()
         sscanf(zPos,"%f %f\n",&zIconPoint.x,&zIconPoint.y);
 
         m_cIcons.push_back(new Icon(zIconName, zIconImage,zIconExec, zIconPoint,sStat));
+    }
+    
+    
+       for ( uint i = 0 ; i < m_cIcons.size() ; ++i )
+    {
+        cPos.y += 50;
+        if ( cPos.y > 500 )
+        {
+            cPos.y = 20;
+            cPos.x += 50;
+
+            m_cIcons[i]->Paint( this, Point(0,0), true, true, zBgColor, zFgColor );
+
+        }
+        
+        Paint(GetBounds());
     }
 
 }
@@ -526,7 +530,6 @@ void BitmapView::Paint( const Rect& cUpdateRect)
             m_cIcons[i]->Paint( this, Point(0,0), true, true, zBgColor, zFgColor );
         }
     }
-
 
     if (bShow == true)
     {
@@ -613,7 +616,7 @@ void BitmapView::MouseDown( const Point& cPosition, uint32 nButtons )
         if ( pcIcon != NULL )
         {
             if (  pcIcon->m_bSelected )
-            {
+            	{
                 if ( m_nHitTime + 500000 >= get_system_time() )
                 {
                     pid_t nPid = fork();
@@ -625,7 +628,7 @@ void BitmapView::MouseDown( const Point& cPosition, uint32 nButtons )
 
                     }
                 }
-                else
+               else
                 {
                     m_bCanDrag = true;
                 }
@@ -681,6 +684,18 @@ void BitmapView::MouseDown( const Point& cPosition, uint32 nButtons )
         }
 
     }
+}
+
+
+void BitmapView::RemoveIcons()
+{
+	for (uint i=m_cIcons.size(); i>0; i--){
+	    m_cIcons.pop_back();
+		}
+	
+	Erase(this->GetBounds());
+	Flush();	
+	
 }
 
 /*
@@ -886,7 +901,8 @@ void BitmapView::ReadPrefs(void)
         pcPrefs->FindColor32( "IconText",   &zFgColor );
         pcPrefs->FindString ( "DeskImage",  &zDImage  );
         pcPrefs->FindBool   ( "ShowVer",    &bShow   );
-        pcPrefs->FindInt32    ( "SizeImage",  &nSizeImage);
+        pcPrefs->FindInt32  ( "SizeImage",  &nSizeImage);
+        pcPrefs->FindBool   ( "Alphabet",   &bAlphbt);
 
         m_pcBitmap = ReadBitmap(zDImage.c_str());
     }
@@ -1038,6 +1054,8 @@ BitmapWindow::BitmapWindow() : Window(Rect( 0, 0, 1599, 1199 ), "_bitmap_window"
     pcBitmapView = new BitmapView( Rect( 0, 0, 1599, 1199 ) );
     AddChild( pcBitmapView );
     pcConfigChange = new NodeMonitor(pzConfigDir,NWATCH_ALL,this);
+    pcIconChange = new NodeMonitor(pzIconDir,NWATCH_ALL,this);
+    
 }
 
 /*
@@ -1055,7 +1073,13 @@ void BitmapWindow::HandleMessage(Message* pcMessage)
         pcBitmapView->Paint(pcBitmapView->GetBounds());
         pcBitmapView->Flush();
         pcBitmapView->Sync();
-        break;
+        
+    case M_DESKTOP_CHANGE:
+    	pcBitmapView->RemoveIcons();
+    	pcBitmapView->SetIcons();
+    	pcBitmapView->Flush();
+    	pcBitmapView->Paint(pcBitmapView->GetBounds());
+    	break;
     }
 }
 
@@ -1090,6 +1114,18 @@ int main( int argc, char** argv )
 
     return( 0 );
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -29,12 +29,33 @@ struct mounted_drives
 drives;
 
 #define M_CONFIG_CHANGE 20000019
+#define M_DESKTOP_CHANGE 25005
 
 char pzConfigFile[1024];
 char pzConfigDir[1024];
 char pzImageDir[1024];
 char pzIconDir[1024];
 int32   nSizeImage;
+
+/*
+#define PREFS_DIR  "~/config/Launcher"
+#define PREFS_FILE "~/config/Launcher/Launcher1.cfg"
+
+class Launcher : public Application
+{
+
+    std::vector<LauncherWindow *>m_apcWindow;
+
+  public:
+    Launcher( );
+    ~Launcher( );
+    bool OkToQuit( void );
+    void HandleMessage( Message *pcMessage );
+    
+  private:
+  	void PositionWindow( void );
+	void SavePrefs( void );
+};*/
 
 
 class BitmapView : public View
@@ -52,7 +73,9 @@ class BitmapView : public View
         virtual void	Paint( const Rect& cUpdateRect);
         void ReadPrefs();
         Color32_s zBgColor, zFgColor;
-
+        void 			 SetIcons();
+        void              RemoveIcons();
+   
     private:
         Point		     m_cLastPos;
         Point		     m_cDragStartPos;
@@ -74,7 +97,8 @@ class BitmapView : public View
         IconMenu* 		 pcIconMenu;
         string 			 cIconName;
         t_Icon 			 IconList();
-        void 			 SetIcons();
+        bool             bAlphbt;
+        
 
 };
 
@@ -88,10 +112,15 @@ class BitmapWindow : public Window
     private:
         virtual void HandleMessage(Message* pcMessage);
         NodeMonitor*     pcConfigChange;
+        NodeMonitor*     pcIconChange;
         BitmapView*		 pcBitmapView;
 };
 
 #endif
+
+
+
+
 
 
 
