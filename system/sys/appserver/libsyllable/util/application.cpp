@@ -109,18 +109,21 @@ Application::Application( const char *pzName ):Looper( pzName )
 
 Application::~Application()
 {
+	int timeout = 1000;
 	Lock();
-	for( uint i = 0; i < m->m_cWindows.size(); ++i )
+	
+	while( m->m_cWindows.size() > 0 && --timeout > 0 )
 	{
-		m->m_cWindows[i]->PostMessage( M_QUIT );
-	}
-	while( m->m_cWindows.size() > 0 )
-	{
+		Window* w = m->m_cWindows[0];
 		Unlock();
-		// Give the window's some time to get rid of them self.
-		snooze( 20000 );
+		w->Terminate();
+		// Give the windows some time to get rid of themselves.
+		snooze( 10000 );	// Usually a context switch is enough
 		Lock();
 	}
+
+	// If all windows aren't gone in 10 secs, we'll simply let the AppServer take care of them
+	
 	if( send_msg( m->m_hSrvAppPort, M_QUIT, NULL, 0 ) < 0 )
 	{
 		dbprintf( "Error: Application::~Application() failed to send M_QUIT request to server\n" );
@@ -182,6 +185,7 @@ bool Application::SetCatalog( const String& cCatalogName )
 		SetCatalog( pcCat );
 		return true;
 	} else {
+		dbprintf( "Catalog '%s' not found\n", cCatalogName.c_str() );
 		return false;
 	}
 }
@@ -948,6 +952,9 @@ thread_id Application::Run()
 	_SetThread( hThread );
 	Unlock();
 	_Loop();
+
+	delete this;
+
 	return ( hThread );
 }
 
@@ -1021,8 +1028,4 @@ void Application::__reserved9__()
 void Application::__reserved10__()
 {
 }
-
-
-
-
 
