@@ -1,3 +1,7 @@
+* Okt 29 2003, Arno Klenke *
+
+Updated device driver documentation.
+
 * Okt 28 2003, Arno Klenke *
 
 Fixed some bugs in the USB busmanager & in the USB UHCI driver.
