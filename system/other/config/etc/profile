@@ -1,6 +1,6 @@
 export PWD
 
-export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:~/bin:/atheos/autolnk/bin:/atheos/autolnk/sbin:/usr/jed/bin:/usr/inetutils/bin
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:~/bin:/atheos/autolnk/bin:/atheos/autolnk/sbin
 export MANPATH=/system/docs/man:/usr/man:/usr/local/man:/atheos/autolnk/man:/atheos/man
 export INFOPATH=/usr/local/info:/atheos/autolnk/info
 export LIBRARY_PATH=/system/libs:/usr/glibc2/lib/:/atheos/autolnk/lib
