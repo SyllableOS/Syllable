@@ -1,0 +1,171 @@
+BinUtils for Syllable
+=====================
+
+9-Jun-2004
+
+1 Introduction
+==============
+
+This is a binary distribution of version 2.15 of the GNU BinUtils
+collection of binary tools for the Syllable operating system. This
+distribution was built on Syllable 0.5.3 with GCC 3.3.3, and was
+optimized for a Pentium CPU. It requires version 0.5.3 of Syllable,
+or newer.
+
+If you encounter problems or have any other interesting observations,
+I would be interested to hear about them (see contact information).
+
+See the file README for more information on BinUtils.
+
+2 How to install BinUtils on Syllable
+=====================================
+
+2.1 
+----
+
+2.1.1 
+------
+
+You may have to become the root user to perform the following
+operations:
+
+    su
+
+You should have unpacked this file with
+
+    tar -xpPz
+
+or something equivalent. The 'p' option to Tar is important: it
+preserves permissions on the extracted files. Without the proper file
+permissions, the installation will be broken.
+
+Unpacking produces the directory binutils. This should be installed
+under /usr. If you unpacked it somewhere else, do:
+
+    mv binutils /usr
+
+Then run:
+
+    pkgmanager -a /usr/binutils
+
+This creates links in Syllable to enable it to find BinUtils' files.
+You should now be able to use the BinUtils.
+
+2.1.2 Installing with the Syllable build system
+-----------------------------------------------
+
+If you have the Syllable build system installed, it can do the above
+steps for you. Just do:
+
+    su
+    build install binutils-2.15.bin.1.tgz
+
+2.2 Uninstalling & upgrading BinUtils
+-------------------------------------
+
+2.2.1 
+------
+
+If you ever want to remove BinUtils, follow these steps. For example,
+you should do this before you install a new version of BinUtils.
+Again, you may have to become root first:
+
+    su
+
+Then you should remove the links to BinUtils from Syllable. You
+should even do this when you want to upgrade BinUtils, because the
+links will most likely have changed for the new version.
+
+    pkgmanager -r /usr/binutils
+
+To delete the files belonging to BinUtils, run:
+
+    rm -r /usr/binutils
+
+2.2.2 Uninstalling & upgrading with the Syllable build system
+-------------------------------------------------------------
+
+If you install a package with the Syllable build system, it will
+check if the package was already installed and remove the previous
+version automatically.
+
+If you just want to uninstall BinUtils, do:
+
+    su
+    build uninstall binutils
+
+3 Building BinUtils on Syllable
+===============================
+
+Normally you don't have to, but if you want to build BinUtils
+yourself, you need to get the source distribution. You can get the
+BinUtils distribution through its home page:
+
+    http://www.gnu.org/software/binutils/
+
+Additionally, you need patches to the source that are specific to
+Syllable. These patches are kept in the Syllable build system. The
+build system also knows all other specifics for building BinUtils.
+
+When you have the build system installed, you should first provide it
+with the BinUtils source package:
+
+    cp binutils-2.15.tar.bz2 /usr/Builder/sources
+
+You may alternatively use a GZipped package, if you have that.
+
+To configure and compile BinUtils, do
+
+    build binutils-2.15
+
+from your work directory. If that succeeds, you can optionally run
+the testsuite:
+
+    build test binutils-2.15
+
+To install and register the package, you need to have another
+BinUtils installed in a different place than the new package, because
+BinUtils needs itself to install itself. The new package will be
+installed in /usr/binutils, so the old one should have been installed
+someplace else. Become root first:
+
+    su
+
+Then to install the new package from your work directory:
+
+    cd binutils-2.15
+    make install
+
+Then you have to remove the registration of the old package and add
+the new package, in that order. Supposing the old package is
+installed in /usr/binutils-2.10:
+
+    pkgmanager -r /usr/binutils-2.10
+    pkgmanager -a /usr/binutils
+
+After the installation, you could even create a distribution package:
+
+    build distro binutils-2.15
+
+4 Known problems and limitations
+================================
+
+BinUtils has not yet been ported to use shared libraries internally
+on Syllable.
+
+5 Contact information
+=====================
+
+BinUtils was originally ported to AtheOS by Kurt Skauen. Additional
+adaptation to Syllable for this version was done by Arno Klenke,
+Kristian Van Der Vliet and Kaj de Vos. This distribution was built
+and packed for Syllable by Kaj de Vos. You can send me problem
+reports, fixes and the like at
+
+    binutils@syllable.info
+
+This distribution can be found in the download section of the
+Syllable web site:
+
+    http://syllable.org
+

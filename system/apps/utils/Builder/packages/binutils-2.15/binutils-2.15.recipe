@@ -1,0 +1,37 @@
+authors
+	Kurt Skauen
+	Kaj de Vos
+	Arno Klenke
+	Kristian Van Der Vliet
+maintainers			Kaj de Vos
+status				testing
+
+licenses			GPL LGPL
+home				www.gnu.org/software/binutils/
+
+build-needs
+	binutils
+	automake < 1.5
+	autoconf >= 2.58
+
+patch
+	cd ld
+	automake
+	cd ../gas
+	autoconf
+
+;configure-options	--enable-shared
+
+documentation
+	README COPYING COPYING.LIB
+	binutils/NEWS binutils/ChangeLog binutils/MAINTAINERS
+links
+;	Optimize wasteful duplicates:
+	../../bin/ar		i586-pc-syllable/bin/ar
+	../../bin/as		i586-pc-syllable/bin/as
+	../../bin/ld		i586-pc-syllable/bin/ld
+	../../bin/nm		i586-pc-syllable/bin/nm
+	../../bin/ranlib	i586-pc-syllable/bin/ranlib
+	../../bin/strip		i586-pc-syllable/bin/strip
+;	For OpenSSL:
+	bin/ranlib			/usr/bin/ranlib

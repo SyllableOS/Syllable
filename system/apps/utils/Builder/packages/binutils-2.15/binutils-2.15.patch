@@ -1,0 +1,82 @@
+diff -ru binutils-2.15.original/bfd/config.bfd binutils-2.15/bfd/config.bfd
+--- binutils-2.15.original/bfd/config.bfd	2004-05-17 19:35:57.000000000 +0000
++++ binutils-2.15/bfd/config.bfd	2004-06-10 11:53:46.000000000 +0000
+@@ -544,6 +544,9 @@
+     targ_defvec=bfd_elf32_i386_vec
+     targ_selvecs="i386pe_vec i386pei_vec"
+     ;;
++  i[3-7]86-*-syllable*)
++    targ_defvec=bfd_elf32_i386_vec
++    ;;
+   i[3-7]86-*-interix*)
+     targ_defvec=i386pei_vec
+     targ_selvecs="i386pe_vec"
+diff -ru binutils-2.15.original/binutils/strings.c binutils-2.15/binutils/strings.c
+--- binutils-2.15.original/binutils/strings.c	2003-11-07 12:19:35.000000000 +0000
++++ binutils-2.15/binutils/strings.c	2004-06-10 11:42:49.000000000 +0000
+@@ -97,6 +97,10 @@
+ /* The BFD section flags that identify an initialized data section.  */
+ #define DATA_FLAGS (SEC_ALLOC | SEC_LOAD | SEC_HAS_CONTENTS)
+ 
++#if defined __ATHEOS__ || defined __SYLLABLE__
++typedef off_t file_off;
++#define file_open(s,m) fopen(s, m)
++#else
+ #ifdef HAVE_FOPEN64
+ typedef off64_t file_off;
+ #define file_open(s,m) fopen64(s, m)
+@@ -104,6 +108,7 @@
+ typedef off_t file_off;
+ #define file_open(s,m) fopen(s, m)
+ #endif
++#endif
+ 
+ /* Radix for printing addresses (must be 8, 10 or 16).  */
+ static int address_radix;
+diff -ru binutils-2.15.original/gas/configure.in binutils-2.15/gas/configure.in
+--- binutils-2.15.original/gas/configure.in	2004-05-17 19:36:08.000000000 +0000
++++ binutils-2.15/gas/configure.in	2004-06-10 11:42:49.000000000 +0000
+@@ -263,6 +263,7 @@
+       i386-sequent-bsd*)		fmt=aout em=dynix ;;
+       i386-*-beospe*)			fmt=coff em=pe ;;
+       i386-*-beos*)			fmt=elf ;;
++      i386-*-syllable* )		fmt=elf bfd_gas=yes ;;
+       i386-*-coff)			fmt=coff ;;
+       i386-*-elf)			fmt=elf ;;
+       i386-*-kaos*)			fmt=elf ;;
+diff -ru binutils-2.15.original/ld/Makefile.am binutils-2.15/ld/Makefile.am
+--- binutils-2.15.original/ld/Makefile.am	2004-05-17 19:36:16.000000000 +0000
++++ binutils-2.15/ld/Makefile.am	2004-06-10 12:03:35.000000000 +0000
+@@ -182,6 +182,8 @@
+ 	eelf32xtensa.o \
+ 	eelf_i386.o \
+ 	eelf_i386_be.o \
++	eelf_i386_atheos.o \
++	eelf_i386_syllable.o \
+ 	eelf_i386_chaos.o \
+ 	eelf_i386_fbsd.o \
+ 	eelf_i386_ldso.o \
+@@ -814,6 +816,12 @@
+ eelf_i386_be.c: $(srcdir)/emulparams/elf_i386_be.sh \
+   $(srcdir)/emultempl/elf32.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
+ 	${GENSCRIPTS} elf_i386_be "$(tdir_elf_i386_be)"
++eelf_i386_atheos.c: $(srcdir)/emulparams/elf_i386_atheos.sh \
++  $(srcdir)/emultempl/elf32.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
++	${GENSCRIPTS} elf_i386_atheos "$(tdir_elf_i386_atheos)"
++eelf_i386_syllable.c: $(srcdir)/emulparams/elf_i386_syllable.sh \
++  $(srcdir)/emultempl/elf32.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
++	${GENSCRIPTS} elf_i386_syllable "$(tdir_elf_i386_syllable)"
+ eelf_i386_chaos.c: $(srcdir)/emulparams/elf_i386_chaos.sh \
+   $(srcdir)/emultempl/elf32.em $(srcdir)/scripttempl/elf_chaos.sc ${GEN_DEPENDS}
+ 	${GENSCRIPTS} elf_i386_chaos "$(tdir_elf_i386_chaos)"
+diff -ru binutils-2.15.original/ld/configure.tgt binutils-2.15/ld/configure.tgt
+--- binutils-2.15.original/ld/configure.tgt	2004-05-17 19:36:16.000000000 +0000
++++ binutils-2.15/ld/configure.tgt	2004-06-10 12:05:51.000000000 +0000
+@@ -230,6 +230,7 @@
+  			targ_extra_ofiles="deffilep.o pe-dll.o" ;;
+ i[3-7]86-*-beospe*)	targ_emul=i386beos ;;
+ i[3-7]86-*-beos*)	targ_emul=elf_i386_be ;;
++i[3-7]86-*-syllable*)	targ_emul=elf_i386_syllable; targ_extra_emuls=elf_i386_atheos ;;
+ i[3-7]86-*-vxworks*)	targ_emul=elf_i386 ;;
+ i[3-7]86-*-chaos)	targ_emul=elf_i386_chaos ;;
+ m8*-*-*)		targ_emul=m88kbcs ;;

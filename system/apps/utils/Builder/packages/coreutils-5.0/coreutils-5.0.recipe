@@ -11,6 +11,8 @@ documentation	README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS THANKS
 links
 ;	For she-bang lines:
 	bin/env		/usr/bin
+;	For GLibC:
+	bin/pwd		/bin
 ;	For JEd, S-Lang:
 	bin/cp		/bin
 	bin/rm		/bin
