@@ -17,6 +17,14 @@
  *  MA 02111-1307, USA
  */
 
+/*
+ * Changes:
+ *
+ * 02-07-24: Added Flush() call to SetEnable(). (So it is rendered in disabled
+ *           state immediately.)
+ *
+ */
+
 #include <stdio.h>
 
 #include <gui/dropdownmenu.h>
@@ -109,6 +117,7 @@ void DropdownMenu::SetEnable( bool bEnable )
     m_bIsEnabled = bEnable;
     m_pcEditBox->SetEnable( bEnable );
     Invalidate();
+    Flush();
 }
 
 bool DropdownMenu::IsEnabled() const
@@ -729,3 +738,5 @@ void DropdownMenu::DropdownView::AllAttached()
   
       pcWindow->SetFrame( m_pcParent->ConvertToScreen( cMenuRect ) );
 }
+
+

@@ -17,6 +17,14 @@
  *  MA 02111-1307, USA
  */
 
+/*
+ * Changes:
+ *
+ * 02-07-24: Added code for disabling. The disabled look may need more work
+ *           (right now it's just made grey).
+ *
+ */
+
 #include <assert.h>
 #include <atheos/types.h>
 
@@ -239,6 +247,8 @@ void ScrollBar::LabelChanged( const std::string& cNewLabel )
 
 void ScrollBar::EnableStatusChanged( bool bIsEnabled )
 {
+    Invalidate();
+    Flush();
 }
 
 bool ScrollBar::Invoked( Message* pcMessage )
@@ -285,6 +295,11 @@ void ScrollBar::TimerTick( int nID )
 
 void ScrollBar::MouseDown( const Point& cPosition, uint32 nButtons )
 {
+    if ( IsEnabled() == false ) {
+	View::MouseDown( cPosition, nButtons );
+	return;
+    }
+
     MakeFocus( true );
     m->m_nHitState  = HIT_NONE;
     m->m_bChanged = false;
@@ -341,6 +356,11 @@ void ScrollBar::MouseDown( const Point& cPosition, uint32 nButtons )
 
 void ScrollBar::MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData )
 {
+    if ( IsEnabled() == false ) {
+	View::MouseUp( cPosition, nButtons, pcData );
+	return;
+    }
+
     if ( m->m_nHitState == HIT_ARROW ) {
 	float vValue = GetValue();
 	bool bChanged = false;
@@ -393,6 +413,11 @@ void ScrollBar::MouseUp( const Point& cPosition, uint32 nButtons, Message* pcDat
 
 void ScrollBar::MouseMove( const Point& cNewPos, int nCode, uint32 nButtons, Message* pcData )
 {
+    if ( IsEnabled() == false ) {
+	View::MouseMove( cNewPos, nCode, nButtons, pcData );
+	return;
+    }
+
     if ( m->m_nHitState == HIT_ARROW ) {
 	int i;
 	for ( i = 0 ; i < 4 ; ++i ) {
@@ -425,6 +450,11 @@ void ScrollBar::WheelMoved( const Point& cDelta )
 {
     float vValue = GetValue();
 
+    if ( IsEnabled() == false ) {
+	View::WheelMoved( cDelta );
+	return;
+    }
+
     if ( m->m_nOrientation == VERTICAL && cDelta.y != 0.0f ) {
 	vValue += cDelta.y * m->m_vSmallStep;
     } else if ( m->m_nOrientation == HORIZONTAL && cDelta.x != 0.0f ) {
@@ -455,7 +485,13 @@ void ScrollBar::Paint( const Rect& cUpdateRect )
 
 //    DrawFrame( cBounds, FRAME_RECESSED | FRAME_TRANSPARENT | FRAME_THIN );
 
-    SetEraseColor( get_default_color( COL_SCROLLBAR_KNOB ) );
+    if( IsEnabled() ) {
+	SetEraseColor( get_default_color( COL_SCROLLBAR_KNOB ) );
+    } else {
+	SetEraseColor( get_default_color( COL_NORMAL ) );
+    }
+
+
     DrawFrame( cKnobFrame, FRAME_RAISED );
 
     if ( m->m_nOrientation == HORIZONTAL ) {
@@ -489,8 +525,12 @@ void ScrollBar::Paint( const Rect& cUpdateRect )
 	    DrawLine( Point( cKnobFrame.left + 4.0f, vCenter + vDist ), Point( cKnobFrame.right - 4.0f, vCenter + vDist ) );
 	}
     }
-    
-    SetFgColor( get_default_color( COL_SCROLLBAR_BG ) );
+
+    if( IsEnabled() ) {
+	SetFgColor( get_default_color( COL_SCROLLBAR_BG ) );
+    } else {
+    	SetFgColor( get_default_color( COL_NORMAL ) );
+    }
 
     cBounds.left   += 1;
     cBounds.top    += 1;
@@ -686,4 +726,10 @@ Rect ScrollBar::GetKnobFrame( void ) const
     }
     return( cRect & m->m_cKnobArea );
 }
+
+
+
+
+
+
 

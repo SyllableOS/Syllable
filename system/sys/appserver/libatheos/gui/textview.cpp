@@ -17,6 +17,13 @@
  *  MA 02111-1307, USA
  */
 
+/*
+ * Changes:
+ *
+ * 02-07-23: Fixed disable in MultiLine mode.
+ *
+ */
+
 #include <stdio.h>
 #include <assert.h>
 #include <ctype.h>
@@ -998,7 +1005,9 @@ void TextEdit::SetEnable( bool bEnabled )
 	    m_sCurFgColor = Color32_s( 100, 100, 100 );
 	    m_sCurBgColor = get_default_color( COL_NORMAL );
 	}
-	InvalidateLines( m_cCsrPos.y, m_cCsrPos.y );
+
+	Invalidate( GetBounds() );
+	//InvalidateLines( m_cCsrPos.y, m_cCsrPos.y );
 	Flush();
     }
 }
@@ -2350,3 +2359,7 @@ void TextView::__TV_reserved2__() {}
 void TextView::__TV_reserved3__() {}
 /** \internal */
 void TextView::__TV_reserved4__() {}
+
+
+
+

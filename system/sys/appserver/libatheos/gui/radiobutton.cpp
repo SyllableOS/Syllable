@@ -16,6 +16,23 @@
  *  Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
  *  MA 02111-1307, USA
  */
+ 
+/*
+ * Changes:
+ *
+ * 02-07-23: Added code for disabling (Paint, MouseDown).
+ *           MouseUp, MouseDown passes the event on to the super class now (if it's
+ *           not used).
+ *           Does only react on LMB clicks now.
+ *           Gets focus on clicks, and underlines the text (like os::Button).
+ *
+ * Keyboard control will require us to break binary compatibility.
+ *
+ * Greying out the image will have to wait for the Image class... (only text is
+ * greyed out for now.)
+ *
+ */
+
 
 #include <gui/radiobutton.h>
 
@@ -26,6 +43,8 @@ using namespace os;
 
 Bitmap* RadioButton::s_pcBitmap = NULL;
 
+
+// TODO: Replace this with something a little less hard-coded!
 
 static uint8 g_anImage[] = {
     0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
@@ -302,7 +321,15 @@ void RadioButton::SetValue( int nValue )
 
 void RadioButton::MouseDown( const Point& cPosition, uint32 nButtons )
 {
-    if ( GetValue().AsBool() == false ) {
+
+    if ( nButtons != 1 || IsEnabled() == false ) {
+	View::MouseDown( cPosition, nButtons );
+	return;
+    }
+    
+    MakeFocus( true );
+
+    if ( GetBounds().DoIntersect( cPosition ) && GetValue().AsBool() == false ) {
 	SetValue( true );
     }
 }
@@ -316,6 +343,7 @@ void RadioButton::MouseDown( const Point& cPosition, uint32 nButtons )
 
 void RadioButton::MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData )
 {
+    View::MouseUp( cPosition, nButtons, pcData );
 }
 
 //----------------------------------------------------------------------------
@@ -335,11 +363,41 @@ void RadioButton::Paint( const Rect& cUpdateRect )
     std::string cLabel = GetLabel();
 
     if ( cLabel.empty() == false ) {
-	font_height sHeight;
+    	font_height sHeight;
+	float vStrWidth;
 
+	vStrWidth = GetStringWidth( cLabel );
 	GetFontHeight( &sHeight );
-	MovePenTo( 14, (cBounds.Height()+1.0f) * 0.5f - (sHeight.ascender + sHeight.descender) * 0.5f + sHeight.ascender );
+	
+	float x = 14.0f;
+	float y = (cBounds.Height()+1.0f) * 0.5f - (sHeight.ascender + sHeight.descender + 1.0f) * 0.5f + sHeight.ascender;
+
+	MovePenTo( x, y );
+
+	if ( IsEnabled() ) {
+	    SetFgColor( 0, 0, 0 );
+	} else {
+	    SetFgColor( 255, 255, 255 );
+	}
+
+	SetBgColor( get_default_color( COL_NORMAL ) );
 	DrawString( cLabel );
+
+	if ( IsEnabled() == false ) {
+	    SetFgColor( 100, 100, 100 );
+	    MovePenTo( x - 1.0f, y - 1.0f );
+	    SetDrawingMode( DM_OVER );
+	    DrawString( GetLabel() );
+	    SetDrawingMode( DM_COPY );
+	}
+
+	// For this to work, we need the FocusChanged callback => breaking binary compatibilty
+
+/*	if ( IsEnabled() && HasFocus() ) {
+	    DrawLine( Point( x, y + sHeight.descender - sHeight.line_gap / 2 - 1.0f ),
+		      Point( x + vStrWidth, y + sHeight.descender - sHeight.line_gap / 2 - 1.0f ) );
+	}*/
+
     }
     
     SetDrawingMode( DM_OVER );
@@ -349,3 +407,8 @@ void RadioButton::Paint( const Rect& cUpdateRect )
 	DrawBitmap( s_pcBitmap, Rect( 2, 16.0f, 13.0f, 29.0f ), Rect( 0, 0, 11.0f, 13.0f ) + Point( 0, (cBounds.Height()+1.0f) / 2 - 8 ) );
     }
 }
+
+
+
+
+

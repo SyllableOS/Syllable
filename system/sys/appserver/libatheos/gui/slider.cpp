@@ -17,6 +17,15 @@
  *  MA 02111-1307, USA
  */
 
+/*
+ * Changes:
+ *
+ * 02-07-24: Added code for disabling. (not greying though)
+ *           Added _ResfreshDisplay() call to AttachedToWindow() (slider was
+ *           initially rendered as a black box)
+ *
+ */
+
 #include <assert.h>
 #include <stdio.h>
 
@@ -101,6 +110,7 @@ Slider::~Slider()
 void Slider::AttachedToWindow()
 {
     SetBgColor( GetParent()->GetBgColor() );
+    _RefreshDisplay();
 }
 
 void Slider::FrameSized( const Point& cDelta )
@@ -521,6 +531,8 @@ void Slider::GetLimitLabels( std::string* pcMinLabel, std::string* pcMaxLabel )
 
 void Slider::EnableStatusChanged( bool bIsEnabled )
 {
+    Invalidate();
+    Flush();
 }
 
 //----------------------------------------------------------------------------
@@ -532,6 +544,11 @@ void Slider::EnableStatusChanged( bool bIsEnabled )
 
 void Slider::MouseDown( const Point& cPosition, uint32 nButtons )
 {
+    if ( nButtons != 1 || IsEnabled() == false ) {
+	View::MouseDown( cPosition, nButtons );
+	return;
+    }
+
     m_cHitPos	= cPosition - ValToPos( GetValue() );;
     m_bTrack	= true;
     m_bChanged	= false;
@@ -547,6 +564,11 @@ void Slider::MouseDown( const Point& cPosition, uint32 nButtons )
 
 void Slider::MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData )
 {
+    if ( nButtons != 1 || IsEnabled() == false ) {
+	View::MouseUp( cPosition, nButtons, pcData );
+	return;
+    }
+
     m_bTrack = false;
     if ( m_bChanged )
     {
@@ -565,6 +587,11 @@ void Slider::MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData )
 
 void Slider::MouseMove( const Point& cNewPos, int nCode, uint32 nButtons, Message* pcData )
 {
+    if ( IsEnabled() == false ) {
+	View::MouseMove( cNewPos, nCode, nButtons, pcData );
+	return;
+    }
+
     if ( m_bTrack ) {
 	SetValue( PosToVal( cNewPos - m_cHitPos ) );
     }
@@ -889,4 +916,8 @@ void Slider::_RefreshDisplay()
     Invalidate();
     Flush();
 }
+
+
+
+
 
