@@ -51,6 +51,7 @@ MPWindow::MPWindow( const os::Rect & cFrame, const std::string & cName, const st
 	
 	os::Menu* pcFileMenu = new os::Menu( os::Rect(), "File", os::ITEMS_IN_COLUMN );
 	pcFileMenu->AddItem( "Open...", new os::Message( MP_GUI_OPEN ) );
+	pcFileMenu->AddItem( "Open Input...", new os::Message( MP_GUI_OPEN_INPUT ) );
 	pcFileMenu->AddItem( new os::MenuSeparator() );
 	pcFileMenu->AddItem( "Fullscreen", new os::Message( MP_GUI_FULLSCREEN ) );
 	m_pcMenuBar->AddItem( pcFileMenu );
@@ -98,10 +99,15 @@ MPWindow::MPWindow( const os::Rect & cFrame, const std::string & cName, const st
 	
 	AddChild( m_pcMenuBar );
 	AddChild( m_pcControls );
+	
+	/* Create file selector */
+	m_pcFileDialog = new os::FileRequester( os::FileRequester::LOAD_REQ, new os::Messenger( os::Application::GetInstance() ), NULL, os::FileRequester::NODE_FILE, false );
+	
 }
 
 MPWindow::~MPWindow()
 {
+	m_pcFileDialog->Close();
 }
 
 void MPWindow::HandleMessage( os::Message * pcMessage )
@@ -125,9 +131,16 @@ void MPWindow::HandleMessage( os::Message * pcMessage )
 		os::Application::GetInstance()->PostMessage( MP_GUI_FULLSCREEN, os::Application::GetInstance(  ) );
 		break;
 	case MP_GUI_OPEN:
-		/* Forward message to the MPApp class */
-		os::Application::GetInstance()->PostMessage( MP_GUI_OPEN, os::Application::GetInstance(  ) );
+		/* Open file selector */
+		os::Application::GetInstance()->PostMessage( MP_GUI_STOP, os::Application::GetInstance(  ) );
+		m_pcFileDialog->Show();
+		m_pcFileDialog->MakeFocus( true );
 		break;
+	case MP_GUI_OPEN_INPUT:
+		/* Forward message to the MPApp class */
+		os::Application::GetInstance()->PostMessage( MP_GUI_OPEN_INPUT, os::Application::GetInstance(  ) );
+		break;
+	
 	case MP_GUI_QUIT:
 		/* Quit */
 		os::Application::GetInstance()->PostMessage( os::M_QUIT );
@@ -621,14 +634,13 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 					m_pcVideoCodec = NULL;
 				}
 		}
-		if ( m_pcVideoCodec == NULL )
+		if ( m_pcVideoCodec == NULL || m_pcVideoOutput->AddStream( os::String( os::Path( zFileName.c_str() ).GetLeaf() ), m_pcVideoCodec->GetExternalFormat() ) != 0 )
 		{
 			m_bVideo = false;
 			m_pcVideoOutput->Close();
 		}
 		else
 		{
-			m_pcVideoOutput->AddStream( os::String( os::Path( zFileName.c_str() ).GetLeaf() ), m_pcVideoCodec->GetExternalFormat() );
 			cout << "Using Video codec " << m_pcVideoCodec->GetIdentifier().c_str(  ) << endl;
 		}
 	}
@@ -646,14 +658,13 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 					m_pcAudioCodec = NULL;
 				}
 		}
-		if ( m_pcAudioCodec == NULL )
+		if ( m_pcAudioCodec == NULL || m_pcAudioOutput->AddStream( os::String( os::Path( zFileName.c_str() ).GetLeaf() ), m_pcAudioCodec->GetExternalFormat() ) != 0 )
 		{
 			m_bAudio = false;
 			m_pcAudioOutput->Close();
 		}
 		else
 		{
-			m_pcAudioOutput->AddStream( os::String( os::Path( zFileName.c_str() ).GetLeaf() ), m_pcAudioCodec->GetExternalFormat() );
 			cout << "Using Audio codec " << m_pcAudioCodec->GetIdentifier().c_str(  ) << endl;
 		}
 	}
@@ -822,6 +833,7 @@ void MPApp::HandleMessage( os::Message * pcMessage )
 				m_bPlayThread = false;
 				wait_for_thread( m_hPlayThread );
 			}
+			m_nLastPosition = m_pcWin->GetSlider()->GetValue(  ).AsInt32(  ) * m_pcInput->GetLength(  ) / 1000;
 			m_hPlayThread = spawn_thread( "play_thread", play_thread_entry, 0, 0, this );
 			resume_thread( m_hPlayThread );
 		}
@@ -843,7 +855,7 @@ void MPApp::HandleMessage( os::Message * pcMessage )
 			m_pcWin->GetSlider()->SetValue( os::Variant( 0 ) );
 		}
 		break;
-	case MP_GUI_OPEN:
+	case MP_GUI_OPEN_INPUT:
 		/* Open ( sent by the MPWindow class ) */
 		if ( m_nState != MP_STATE_STOPPED )
 		{
@@ -946,6 +958,21 @@ void MPApp::HandleMessage( os::Message * pcMessage )
 		if ( m_bVideo && m_pcVideoOutput )
 			m_pcVideoOutput->UpdateView( 0 );
 		break;
+	case os::M_LOAD_REQUESTED:
+		/* Open file ( sent by the filerequester ) */
+		{
+			os::String zFile;
+			if( pcMessage->FindString( "file/path", &zFile.str() ) == 0 ) {
+		
+				os::MediaInput * pcInput = m_pcManager->GetBestInput( zFile );
+				if ( pcInput != NULL )
+				{
+					Open( zFile, pcInput->GetIdentifier() );
+					delete( pcInput );
+				}
+			}
+		}
+		break;
 	default:
 		os::Application::HandleMessage( pcMessage );
 		break;
@@ -980,6 +1007,10 @@ int main( int argc, char *argv[] )
 	pcApp->Run();
 	return ( 0 );
 }
+
+
+
+
 
 
 

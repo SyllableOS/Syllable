@@ -27,6 +27,7 @@
 #include <gui/requesters.h>
 #include <gui/menu.h>
 #include <gui/desktop.h>
+#include <gui/filerequester.h>
 #include <util/application.h>
 #include <atheos/threads.h>
 #include <storage/path.h>
@@ -50,6 +51,7 @@ enum {
 	MP_GUI_ABOUT,
 	MP_GUI_QUIT,
 	MP_GUI_OPEN,
+	MP_GUI_OPEN_INPUT,
 		
 	/* Input selector messages */
 	MP_IS_OPEN,
@@ -93,6 +95,7 @@ private:
 	os::ImageButton* m_pcStop;
 	os::ImageButton* m_pcFullScreen;
 	os::SeekSlider* m_pcSlider;
+	os::FileRequester* m_pcFileDialog;
 };
 
 class MPApp : public os::Application
@@ -134,9 +137,12 @@ private:
 	bool m_bPlayThread;
 	thread_id m_hPlayThread;
 	uint64 m_nLastPosition;
+	
 };
 
 #endif
+
+
 
 
 

@@ -30,6 +30,7 @@
 #include <gui/desktop.h>
 #include <gui/layoutview.h>
 #include <gui/listview.h>
+#include <gui/filerequester.h>
 #include <util/application.h>
 #include <util/settings.h>
 #include <atheos/threads.h>
@@ -83,6 +84,10 @@ class CFWindow:public os::Window
 	{
 		return ( m_pcSlider );
 	}
+	os::Menu * GetMenuBar()
+	{
+		return ( m_pcMenuBar );
+	}
 	void SetState( uint8 nState )
 	{
 		m_nState = nState;
@@ -92,17 +97,16 @@ class CFWindow:public os::Window
 
 	os::LayoutView * m_pcRoot;
 	os::HLayoutNode * m_pcControls;
-
+	os::Menu* m_pcMenuBar;
 	os::Lcd * m_pcLCD;
 	os::ImageButton * m_pcPlay;
 	os::ImageButton * m_pcPause;
 	os::ImageButton * m_pcStop;
 	os::SeekSlider * m_pcSlider;
-	os::ImageButton * m_pcRemove;
-	os::ImageButton * m_pcSelectList;
 	os::ImageButton * m_pcShowList;
 
 	CFPlaylist *m_pcPlaylist;
+	os::FileRequester* m_pcFileDialog;
 };
 
 class CFApp:public os::Application
@@ -148,6 +152,9 @@ class CFApp:public os::Application
 };
 
 #endif
+
+
+
 
 
 

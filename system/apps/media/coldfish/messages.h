@@ -25,14 +25,17 @@
 /* Messages */
 enum
 {
-	/* Button messages */
+	/* Button / menu messages */
 	CF_GUI_PLAY,
 	CF_GUI_PAUSE,
 	CF_GUI_STOP,
 	CF_GUI_SEEK,
 	CF_GUI_SELECT_LIST,
 	CF_GUI_SHOW_LIST,
+	CF_GUI_ADD_FILE,
 	CF_GUI_REMOVE_FILE,
+	CF_GUI_QUIT,
+	CF_GUI_ABOUT,
 	
 	CF_GUI_LIST_INVOKED,
 	CF_GUI_LIST_SELECTED,
@@ -44,4 +47,5 @@ enum
 };
 
 #endif
+
 

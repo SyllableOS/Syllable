@@ -54,7 +54,7 @@ void CFPlaylist::MouseUp( const os::Point & cPos, uint32 nButtons, os::Message *
 	}
 	/* Tell CFApp class */
 	os::Message * pcMsg = new os::Message( CF_ADD_FILE );
-	pcMsg->AddString( "file", zFile );
+	pcMsg->AddString( "file/path", zFile );
 	os::Application::GetInstance()->PostMessage( pcMsg, os::Application::GetInstance(  ) );
 }
 
@@ -65,8 +65,34 @@ void CFPlaylist::MouseUp( const os::Point & cPos, uint32 nButtons, os::Message *
 CFWindow::CFWindow( const os::Rect & cFrame, const std::string & cName, const std::string & cTitle, uint32 nFlags ):os::Window( cFrame, cName, cTitle, nFlags )
 {
 	m_nState = CF_STATE_STOPPED;
-
 	os::Rect cNewFrame = GetBounds();
+	
+	/* Create menubar */
+	m_pcMenuBar = new os::Menu( os::Rect( 0, 0, 1, 1 ), "cf_menu_bar", os::ITEMS_IN_ROW );
+	
+	os::Menu* pcAppMenu = new os::Menu( os::Rect(), "Application", os::ITEMS_IN_COLUMN );
+	pcAppMenu->AddItem( "About...", new os::Message( CF_GUI_ABOUT ) );
+	pcAppMenu->AddItem( new os::MenuSeparator() );
+	pcAppMenu->AddItem( "Quit", new os::Message( CF_GUI_QUIT ) );
+	m_pcMenuBar->AddItem( pcAppMenu );
+	
+	os::Menu* pcPlaylistMenu = new os::Menu( os::Rect(), "Playlist", os::ITEMS_IN_COLUMN );
+	pcPlaylistMenu->AddItem( "Select...", new os::Message( CF_GUI_SELECT_LIST ) );
+	m_pcMenuBar->AddItem( pcPlaylistMenu );
+	
+	os::Menu* pcFileMenu = new os::Menu( os::Rect(), "File", os::ITEMS_IN_COLUMN );
+	pcFileMenu->AddItem( "Add...", new os::Message( CF_GUI_ADD_FILE ) );
+	pcFileMenu->AddItem( "Remove", new os::Message( CF_GUI_REMOVE_FILE ) );
+	m_pcMenuBar->AddItem( pcFileMenu );
+	
+	cNewFrame = m_pcMenuBar->GetFrame();
+	cNewFrame.right = GetBounds().Width();
+	cNewFrame.bottom = cNewFrame.top + m_pcMenuBar->GetPreferredSize( false ).y;
+	m_pcMenuBar->SetFrame( cNewFrame );
+	m_pcMenuBar->SetTargetForItems( this );
+
+	cNewFrame = GetBounds();
+	cNewFrame.top += m_pcMenuBar->GetPreferredSize( false ).y + 1;
 	cNewFrame.bottom = cNewFrame.top + 70;
 
 	/* Create root view */
@@ -86,12 +112,7 @@ CFWindow::CFWindow( const os::Rect & cFrame, const std::string & cName, const st
 	m_pcStop = new os::ImageButton( os::Rect( 0, 0, 1, 1 ), "cf_stop", "Stop", new os::Message( CF_GUI_STOP ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, true, true );
 	m_pcStop->SetImageFromResource( "stop.png" );
 
-	m_pcRemove = new os::ImageButton( os::Rect( 0, 0, 1, 1 ), "cf_remove_file", "Remove", new os::Message( CF_GUI_REMOVE_FILE ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, true, true );
-	m_pcRemove->SetImageFromResource( "delete.png" );
-
-	m_pcSelectList = new os::ImageButton( os::Rect( 0, 0, 1, 1 ), "cf_select_list", "Select", new os::Message( CF_GUI_SELECT_LIST ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, true, true );
-	m_pcSelectList->SetImageFromResource( "new.png" );
-
+	
 	m_pcShowList = new os::ImageButton( os::Rect( 0, 0, 1, 1 ), "cf_show_list", "Playlist", new os::Message( CF_GUI_SHOW_LIST ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, true, true );
 	m_pcShowList->SetImageFromResource( "list.png" );
 
@@ -115,26 +136,15 @@ CFWindow::CFWindow( const os::Rect & cFrame, const std::string & cName, const st
 	m_pcControls->AddChild( m_pcPause );
 	m_pcControls->AddChild( m_pcStop );
 	m_pcControls->AddChild( pcCenter );
-	m_pcControls->AddChild( m_pcRemove );
-	m_pcControls->AddChild( m_pcSelectList );
 	m_pcControls->AddChild( m_pcShowList );
 
-	m_pcControls->SameWidth( "cf_play", "cf_pause", "cf_stop", "cf_remove_file", "cf_select_list", "cf_show_list", NULL );
+	m_pcControls->SameWidth( "cf_play", "cf_pause", "cf_stop", "cf_show_list", NULL );
 
 	m_pcRoot->SetRoot( m_pcControls );
 
-	/* Create "Note:..." string */
-	cNewFrame = GetBounds();
-
-	os::StringView * pcNote = new os::StringView( os::Rect( 0, 0, 1, 1 ), "cf_note", "Note: You can add files to the playlist" " by dragging them from the filemanager", os::ALIGN_CENTER, os::CF_FOLLOW_LEFT | os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_BOTTOM );
-	cNewFrame.top = cNewFrame.bottom - pcNote->GetPreferredSize( true ).y - 5;;
-	pcNote->SetFrame( cNewFrame );
-	AddChild( pcNote );
-
 	/* Create playlist */
 	cNewFrame = GetBounds();
-	cNewFrame.top = 71;
-	cNewFrame.bottom -= pcNote->GetPreferredSize( true ).y + 6;
+	cNewFrame.top = 71 + m_pcMenuBar->GetPreferredSize( false ).y + 1;
 	m_pcPlaylist = new CFPlaylist( cNewFrame );
 	m_pcPlaylist->SetInvokeMsg( new os::Message( CF_GUI_LIST_INVOKED ) );
 	m_pcPlaylist->SetTarget( this );
@@ -145,8 +155,11 @@ CFWindow::CFWindow( const os::Rect & cFrame, const std::string & cName, const st
 	m_pcPlaylist->InsertColumn( "Stream", 50 );
 	m_pcPlaylist->InsertColumn( "Length", 50 );
 	AddChild( m_pcPlaylist );
-
+	AddChild( m_pcMenuBar );
 	AddChild( m_pcRoot );
+	
+	/* Create file selector */
+	m_pcFileDialog = new os::FileRequester( os::FileRequester::LOAD_REQ, new os::Messenger( os::Application::GetInstance() ), NULL, os::FileRequester::NODE_FILE, false );
 }
 
 CFWindow::~CFWindow()
@@ -173,6 +186,11 @@ void CFWindow::HandleMessage( os::Message * pcMessage )
 		/* Forward message to the CFApp class */
 		os::Application::GetInstance()->PostMessage( CF_GUI_SEEK, os::Application::GetInstance(  ) );
 		break;
+	case CF_GUI_ADD_FILE:
+		/* Open file selector */
+		m_pcFileDialog->Show();
+		m_pcFileDialog->MakeFocus( true );
+		break;
 	case CF_GUI_REMOVE_FILE:
 		/* Forward message to the CFApp class */
 		os::Application::GetInstance()->PostMessage( CF_GUI_REMOVE_FILE, os::Application::GetInstance(  ) );
@@ -180,6 +198,20 @@ void CFWindow::HandleMessage( os::Message * pcMessage )
 	case CF_GUI_SELECT_LIST:
 		/* Forward message to the CFApp class */
 		os::Application::GetInstance()->PostMessage( CF_GUI_SELECT_LIST, os::Application::GetInstance(  ) );
+		break;
+	case CF_GUI_QUIT:
+		/* Quit */
+		os::Application::GetInstance()->PostMessage( os::M_QUIT );
+		break;
+	case CF_GUI_ABOUT:
+		{
+		/* Show about alert */
+		os::Alert* pcAbout = new os::Alert( "About ColdFish", "ColdFish 1.0 Beta\n\nA Music Player\nCopyright 2003 Arno Klenke\n"
+										"Copyright 2003 Kristian Van Der Vliet\n\n"
+										"ColdFish is released under the LGPL.", os::Alert::ALERT_INFO, 
+										os::WND_NOT_RESIZABLE, "O.K.", NULL );
+		pcAbout->Go( new os::Invoker( 0 ) ); 
+		}
 		break;
 	case CF_GUI_SHOW_LIST:
 		/* Forward message to the CFApp class */
@@ -262,7 +294,7 @@ CFApp::CFApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::App
 	}
 
 	/* Create window */
-	m_pcWin = new CFWindow( os::Rect( 50, 100, 590, 350 ), "cf_window", "Default Playlist.plst - ColdFish", os::WND_NO_ZOOM_BUT | os::WND_NO_DEPTH_BUT | os::WND_NOT_H_RESIZABLE );
+	m_pcWin = new CFWindow( os::Rect( 50, 100, 500, 350 ), "cf_window", "Default Playlist.plst - ColdFish", os::WND_NO_ZOOM_BUT | os::WND_NO_DEPTH_BUT | os::WND_NOT_H_RESIZABLE );
 	m_pcWin->Show();
 	m_pcWin->MakeFocus( true );
 
@@ -716,7 +748,7 @@ int CFApp::OpenFile( os::String zFileName, uint32 nTrack, uint32 nStream )
 				m_pcAudioCodec = NULL;
 			}
 	}
-	if ( m_pcAudioCodec == NULL )
+	if ( m_pcAudioCodec == NULL || m_pcAudioOutput->AddStream( os::String ( os::Path( zFileName.c_str() ).GetLeaf(  ) ), m_pcAudioCodec->GetExternalFormat(  ) ) != 0 )
 	{
 		cout << "Cannot open audio codec!" << endl;
 		CloseCurrentFile();
@@ -724,8 +756,6 @@ int CFApp::OpenFile( os::String zFileName, uint32 nTrack, uint32 nStream )
 	}
 	else
 	{
-		m_pcAudioOutput->AddStream( os::String ( os::Path( zFileName.c_str() ).GetLeaf(  ) ), m_pcAudioCodec->GetExternalFormat(  ) );
-
 		cout << "Using Audio codec " << m_pcAudioCodec->GetIdentifier().c_str(  ) << endl;
 	}
 
@@ -863,6 +893,7 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 			m_nState = CF_STATE_PLAYING;
 			m_pcWin->SetState( CF_STATE_PLAYING );
 			m_pcWin->PostMessage( CF_STATE_CHANGED, m_pcWin );
+			m_nLastPosition = m_pcWin->GetSlider()->GetValue(  ).AsInt32(  ) * m_pcInput->GetLength(  ) / 1000;
 			m_hPlayThread = spawn_thread( "play_thread", play_thread_entry, 0, 0, this );
 			resume_thread( m_hPlayThread );
 		}
@@ -982,7 +1013,7 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 			else
 			{
 				os::Rect cFrame = m_pcWin->GetFrame();
-				cFrame.bottom = cFrame.top + 70;
+				cFrame.bottom = cFrame.top + 70 + m_pcWin->GetMenuBar()->GetBounds().Height();
 				m_pcWin->SetFrame( cFrame );
 				m_pcWin->SetFlags( m_pcWin->GetFlags() | os::WND_NOT_V_RESIZABLE );
 			}
@@ -1073,12 +1104,13 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 			}
 		}
 		break;
+	case os::M_LOAD_REQUESTED:
 	case CF_ADD_FILE:
 		{
-			/* Add one file ( sent by the CFWindow class ) */
+			/* Add one file ( sent by the CFWindow class or the filerequester ) */
 			os::String zFile;
 
-			if ( pcMessage->FindString( "file", &zFile.str() ) == 0 )
+			if ( pcMessage->FindString( "file/path", &zFile.str() ) == 0 )
 			{
 				AddFile( zFile );
 			}
@@ -1123,6 +1155,10 @@ int main( int argc, char *argv[] )
 	pcApp->Run();
 	return ( 0 );
 }
+
+
+
+
 
 
 
