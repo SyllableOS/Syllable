@@ -1,5 +1,10 @@
 * Oct 21 2003, Kristian Van Der Vliet *
 
+Changes to libpthread to fix an issue when GCC 3.x includes pthreadtypes.h;
+__thread is a reserved keyword in GCC 3.x
+
+* Oct 21 2003, Kristian Van Der Vliet *
+
 Implement SNDCTL_DSP_GETOSPACE & SNDCTL_DSP_GETODELAY ioctl's in the
 emu10k1 driver.
 
