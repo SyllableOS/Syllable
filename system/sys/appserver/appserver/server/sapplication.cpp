@@ -83,7 +83,7 @@ SrvApplication::SrvApplication( const char *pzName, proc_id hOwner, port_id hEve
 
 	m_hReqPort = create_port( "srvapp", DEFAULT_PORT_SIZE );
 
-	thread_id hThread = spawn_thread( "app_thread", Entry, DISPLAY_PRIORITY, 0, this );
+	thread_id hThread = spawn_thread( "app_thread", (void*)Entry, DISPLAY_PRIORITY, 0, this );
 
 	if( hThread != -1 )
 	{
@@ -1518,7 +1518,7 @@ bool SrvApplication::DispatchMessage( const void *pMsg, int nCode )
 	case WR_RENDER:
 	case WR_GET_PEN_POSITION:
 		{
-			WR_Request_s *psReq = static_cast < WR_Request_s * >( pMsg );
+			const WR_Request_s *psReq = static_cast < const WR_Request_s * >( pMsg );
 
 			g_cLayerGate.Lock();
 
@@ -1612,3 +1612,5 @@ SrvApplication *get_active_app()
 		return ( pcWnd->GetApp() );
 	}
 }
+
+

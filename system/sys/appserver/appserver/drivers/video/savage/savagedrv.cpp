@@ -1083,7 +1083,7 @@ extern "C" DisplayDriver* init_gfx_driver( int nFd )
 	DisplayDriver* pcDriver = new SavageDriver( nFd );
 	return( pcDriver );
     }
-    catch( exception&  cExc ) {
+    catch( std::exception&  cExc ) {
 	return( NULL );
     }
 }

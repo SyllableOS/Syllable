@@ -139,7 +139,11 @@ static inline Rect RectToClient( const Rect & cRect, WindowDecorator * pcDecorat
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-WndBorder::WndBorder( SrvWindow * pcWindow, Layer * pcParent, const char *pzName, bool bBackdrop ):Layer( pcWindow, pcParent, pzName, Rect( 0, 0, 0, 0 ), 0, NULL ), m_cMinSize( 0.0f, 0.0f ), m_cMaxSize( INT_MAX, INT_MAX ), m_cAlignSize( 1, 1 ), m_cAlignSizeOff( 0, 0 ), m_cAlignPos( 1, 1 ), m_cAlignPosOff( 0, 0 )
+WndBorder::WndBorder( SrvWindow * pcWindow, Layer * pcParent, const char *pzName, bool bBackdrop )
+:Layer( pcWindow, pcParent, pzName, Rect( 0, 0, 0, 0 ), 0, NULL ),
+m_cMinSize( 0, 0 ), m_cMaxSize( INT_MAX, INT_MAX ),
+m_cAlignSize( 1, 1 ), m_cAlignSizeOff( 0, 0 ),
+m_cAlignPos( 1, 1 ), m_cAlignPosOff( 0, 0 )
 {
 	m_eHitItem = WindowDecorator::HIT_NONE;
 	m_eCursorHitItem = WindowDecorator::HIT_NONE;
@@ -292,31 +296,31 @@ IPoint WndBorder::GetHitPointBase() const
 	switch ( m_eHitItem )
 	{
 	case WindowDecorator::HIT_SIZE_LEFT:
-		return ( IPoint( 0.0f, 0.0f ) );
+		return ( IPoint( 0, 0 ) );
 		break;
 	case WindowDecorator::HIT_SIZE_RIGHT:
-		return ( IPoint( m_cRawFrame.Width() + m_cDeltaSize.x, 0.0f ) );
+		return ( IPoint( m_cRawFrame.Width() + m_cDeltaSize.x, 0 ) );
 		break;
 	case WindowDecorator::HIT_SIZE_TOP:
-		return ( IPoint( 0.0f, 0.0f ) );
+		return ( IPoint( 0, 0 ) );
 		break;
 	case WindowDecorator::HIT_SIZE_BOTTOM:
-		return ( IPoint( 0.0f, m_cRawFrame.Height() + m_cDeltaSize.y ) );
+		return ( IPoint( 0, m_cRawFrame.Height() + m_cDeltaSize.y ) );
 		break;
 	case WindowDecorator::HIT_SIZE_LT:
-		return ( IPoint( 0.0f, 0.0f ) );
+		return ( IPoint( 0, 0 ) );
 		break;
 	case WindowDecorator::HIT_SIZE_RT:
-		return ( IPoint( m_cRawFrame.Width() + m_cDeltaSize.x, 0.0f ) );
+		return ( IPoint( m_cRawFrame.Width() + m_cDeltaSize.x, 0 ) );
 		break;
 	case WindowDecorator::HIT_SIZE_RB:
 		return ( IPoint( m_cRawFrame.Width() + m_cDeltaSize.x, m_cRawFrame.Height(  ) + m_cDeltaSize.y ) );
 		break;
 	case WindowDecorator::HIT_SIZE_LB:
-		return ( IPoint( 0.0f, m_cRawFrame.Height() + m_cDeltaSize.y ) );
+		return ( IPoint( 0, m_cRawFrame.Height() + m_cDeltaSize.y ) );
 		break;
 	default:
-		return ( IPoint( 0.0f, 0.0f ) );
+		return ( IPoint( 0, 0 ) );
 		break;
 	}
 }

@@ -796,7 +796,7 @@ DisplayDriver* init_gfx_driver( int nFd ) {
 			delete pcDriver;
 			return NULL ;
 		}
-	} catch (exception&  cExc) {
+	} catch (std::exception&  cExc) {
 		dbprintf( "Mach64:: Got exception\n" );
 		return NULL ;
 	}
@@ -804,10 +804,3 @@ DisplayDriver* init_gfx_driver( int nFd ) {
 
 //-----------------------------------------------------------------------------
 // *** end of file ***
-
-
-
-
-
-
-

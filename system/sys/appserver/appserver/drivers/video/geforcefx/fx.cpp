@@ -484,7 +484,7 @@ int FX::SetScreenMode( os::screen_mode sMode )
 	SetupAccel();
 	
 	m_bSwap = true;
-	m_hSwapThread = spawn_thread( "geforcefx_swap_thread", fx_swap_entry, 0, 0, this );
+	m_hSwapThread = spawn_thread( "geforcefx_swap_thread", (void*)fx_swap_entry, 0, 0, this );
 	resume_thread( m_hSwapThread );
 
 	return 0;
@@ -1618,116 +1618,9 @@ extern "C" DisplayDriver * init_gfx_driver( int nFd )
 		}
 		return NULL;
 	}
-	catch( exception & cExc )
+	catch( std::exception & cExc )
 	{
 		dbprintf( "Got exception\n" );
 		return NULL;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

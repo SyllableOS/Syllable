@@ -24,7 +24,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/usbmouse: $(OBJS)
-	gcc -plugin $(OBJS) -o $(OBJDIR)/usbmouse -latheos -lstdc++
+	gcc -plugin $(OBJS) -o $(OBJDIR)/usbmouse -lsyllable -lstdc++
 
 deps:
 
@@ -36,5 +36,4 @@ dist: $(OBJDIR)/usbmouse
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/usbmouse
-
 

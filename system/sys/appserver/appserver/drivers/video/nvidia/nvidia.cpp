@@ -1296,28 +1296,8 @@ extern "C" DisplayDriver* init_gfx_driver( int nFd )
 	    }
 	    return NULL;
     }
-    catch (exception& cExc) {
+    catch (std::exception& cExc) {
 	    dbprintf("Got exception\n");
 	    return NULL;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

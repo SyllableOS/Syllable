@@ -457,6 +457,6 @@ void InitKeyboard( void )
 
 	SetKeymap( AppserverConfig::GetInstance()->GetKeymapPath(  ) );
 
-	hKbdThread = spawn_thread( "keyb_thread", HandleKeyboard, 120, 0, NULL );
+	hKbdThread = spawn_thread( "keyb_thread", (void*)HandleKeyboard, 120, 0, NULL );
 	resume_thread( hKbdThread );
 }

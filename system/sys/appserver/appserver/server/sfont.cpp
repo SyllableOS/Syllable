@@ -24,6 +24,7 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <math.h>
+#include <assert.h>
 
 #include <gui/guidefines.h>
 #include <util/locker.h>

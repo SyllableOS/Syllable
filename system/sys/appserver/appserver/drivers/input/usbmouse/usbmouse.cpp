@@ -221,7 +221,7 @@ int32 USBMouseDriver::EventLoopEntry( void* pData )
 bool USBMouseDriver::Start()
 {
     thread_id hEventThread;
-    hEventThread = spawn_thread( "usbmouse_event_thread", EventLoopEntry, 120, 0, this );
+    hEventThread = spawn_thread( "usbmouse_event_thread", (void*)EventLoopEntry, 120, 0, this );
     resume_thread( hEventThread );
     return( true );
 }
@@ -289,13 +289,3 @@ extern "C" InputNode* get_input_node( int nIndex )
     }
     return( new USBMouseDriver() );
 }
-
-
-
-
-
-
-
-
-
-

@@ -24,7 +24,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/sermouse: $(OBJS)
-	gcc -plugin $(OBJS) -o $(OBJDIR)/sermouse -latheos -lstdc++
+	gcc -plugin $(OBJS) -o $(OBJDIR)/sermouse -lsyllable -lstdc++
 
 deps:
 
@@ -36,3 +36,4 @@ dist: $(OBJDIR)/sermouse
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/sermouse
+

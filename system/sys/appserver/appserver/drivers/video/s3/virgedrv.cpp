@@ -1458,8 +1458,7 @@ extern "C" DisplayDriver* init_gfx_driver( int nFd )
 	DisplayDriver* pcDriver = new VirgeDriver( nFd );
 	return( pcDriver );
     }
-    catch( exception&  cExc ) {
+    catch( std::exception&  cExc ) {
 	return( NULL );
     }
 }
-

@@ -314,6 +314,6 @@ void InitInputSystem()
 		dbprintf( "No mouse input node found!\n" );
 	}
 
-	g_hEventThread = spawn_thread( "input_thread", InputNode::EventLoopEntry, DISPLAY_PRIORITY, 0, NULL );
+	g_hEventThread = spawn_thread( "input_thread", (void*)InputNode::EventLoopEntry, DISPLAY_PRIORITY, 0, NULL );
 	resume_thread( g_hEventThread );
 }

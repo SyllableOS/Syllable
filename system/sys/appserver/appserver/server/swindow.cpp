@@ -1630,7 +1630,7 @@ bool SrvWindow::DispatchMessage( const void *psMsg, int nCode )
 		break;
 	case WR_GET_PEN_POSITION:
 		{
-			WR_GetPenPosition_s *psReq = static_cast < WR_GetPenPosition_s * >( psMsg );
+			const WR_GetPenPosition_s *psReq = static_cast < const WR_GetPenPosition_s * >( psMsg );
 			WR_GetPenPositionReply_s sReply;
 
 			Layer *pcView = FindLayer( psReq->m_hViewHandle );
@@ -1754,7 +1754,7 @@ uint32 SrvWindow::Entry( void *pData )
 
 thread_id SrvWindow::Run()
 {
-	thread_id hThread = spawn_thread( String ().Format( "W:%.62s", m_cTitle.c_str(  ) ).c_str(  ), Entry, DISPLAY_PRIORITY, 0, this );
+	thread_id hThread = spawn_thread( String ().Format( "W:%.62s", m_cTitle.c_str(  ) ).c_str(  ), (void*)Entry, DISPLAY_PRIORITY, 0, this );
 
 	if( hThread != -1 )
 	{

@@ -686,7 +686,7 @@ void AppServer::DispatchMessage( Message * pcReq )
 	case DR_CLOSE_WINDOWS:
 		{
 			g_cLayerGate.Close();
-			thread_id hCloseThread = spawn_thread( "close_thread", AppServer::CloseWindows, 0, 0, NULL );
+			thread_id hCloseThread = spawn_thread( "close_thread", (void*)AppServer::CloseWindows, 0, 0, NULL );
 
 			resume_thread( hCloseThread );
 			g_cLayerGate.Open();
@@ -963,4 +963,3 @@ int main( int argc, char **argv )
 	dbprintf( "WARNING : layers.device failed to initiate itself!!!\n" );
 	return ( 0 );
 }
-
