@@ -24,7 +24,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
-
+#include <assert.h>
 #include <termios.h>
 
 #include <util/application.h>
@@ -502,7 +502,7 @@ void TermView::AttachedToWindow( void )
     GetFontHeight( &m_sFontHeight );
 
     m_cCharSize.x = GetStringWidth( "M" );
-    m_cCharSize.y = m_sFontHeight.ascender + m_sFontHeight.descender + m_sFontHeight.line_gap;
+    m_cCharSize.y = m_sFontHeight.ascender + m_sFontHeight.descender + m_sFontHeight.line_gap+1;
 
     g_pcScrollBar->SetSteps( 2, GetBounds().Height() / m_cCharSize.y - 1.0f );
     

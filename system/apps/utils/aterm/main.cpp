@@ -348,7 +348,7 @@ int main( int argc, char** argv )
 	}
     }
     if ( g_nShowVersion ) {
-	printf( "AtheOS virtual terminal V0.1.1\n" );
+	printf( "Syllable virtual terminal V0.1.1\n" );
 	exit( 0 );
     }
     if ( g_nShowHelp ) {
@@ -442,10 +442,10 @@ int main( int argc, char** argv )
 
 	OpenWindow();
 
-	g_hUpdateThread = spawn_thread( "update", RefreshThread, 5, 0, NULL );
+	g_hUpdateThread = spawn_thread( "update", (void*)RefreshThread, 5, 0, NULL );
 	resume_thread( g_hUpdateThread );
 
-	g_hReadThread = spawn_thread( "read", ReadPTY, 10, 0, NULL );
+	g_hReadThread = spawn_thread( "read", (void*)ReadPTY, 10, 0, NULL );
 	resume_thread( g_hReadThread );
 	
 	
