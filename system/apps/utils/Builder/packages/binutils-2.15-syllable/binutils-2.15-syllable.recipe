@@ -12,6 +12,8 @@ configure-options
 ;	May be needed for porting a limited cross-assembler:
 ;	--disable-shared
 ;	--disable-nls
+;	This would be for a 64-bits port:
+;	--enable-64-bit-bfd
 
 ; Avoid linking cross-assembling parts into the host system:
 links
