@@ -1,3 +1,7 @@
+* September 17th 2004, Kristian Van Der Vliet *
+
+Added Turkish "F" and "Q" keymaps from Truva <truva@hotpop.com>
+
 * September 17th 2004, Arno Klenke *
 	-Makefile fixes
 		o sys/kernel/drivers/bus/Makefile
