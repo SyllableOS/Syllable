@@ -49,13 +49,13 @@ typedef struct
 #define __GTHREAD_MUTEX_INIT_FUNCTION(lock) do { atomic_set( &(lock)->count, 0 ); (lock)->mutex = create_semaphore( "gcc_mutex", 0, 0 ); } while(0)
 
 static inline int
-__gthread_active_p ()
+__gthread_active_p (void)
 {
   return 1;
 }
 
 static inline int
-__gthread_once (__gthread_once_t *once, void (*func) ())
+__gthread_once (__gthread_once_t *once, void (*func) (void))
 {
   if (__gthread_active_p ()) {
     if ( atomic_swap( once, 1 ) == 0 ) {
@@ -106,7 +106,7 @@ __gthread_getspecific (__gthread_key_t key)
 static inline int
 __gthread_setspecific (__gthread_key_t key, const void *ptr)
 {
-  set_tld (key, (void*)ptr);
+  set_tld (key, ptr);
   return 0;
 }
 
