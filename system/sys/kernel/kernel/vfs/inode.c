@@ -1065,7 +1065,7 @@ int get_inode_deleted_flag( int nDev, ino_t nInode )
  * SEE ALSO:
  ****************************************************************************/
 
-FileSysDesc_s *register_file_system( const char *pzName, FSOperations_s * psOps )
+FileSysDesc_s *register_file_system( const char *pzName, FSOperations_s * psOps, int nAPIVersion )
 {
 	FileSysDesc_s *psDesc;
 
@@ -1081,6 +1081,7 @@ FileSysDesc_s *register_file_system( const char *pzName, FSOperations_s * psOps 
 	psDesc->fs_psOperations = psOps;
 	atomic_set( &psDesc->fs_nRefCount, 1 );
 	psDesc->fs_nImage = -1;
+	psDesc->fs_nAPIVersion = nAPIVersion;
 
 	psDesc->fs_psNext = g_psFileSystems;
 	g_psFileSystems = psDesc;
@@ -1107,7 +1108,7 @@ static void release_fs( FileSysDesc_s *psDesc )
 	}
 	if ( psDesc->fs_nImage < 0 )
 	{
-		printk( "Painc: attempt to unload builtin filesystem %s\n", psDesc->fs_zName );
+		printk( "Panic: attempt to unload builtin filesystem %s\n", psDesc->fs_zName );
 		return;
 	}
 
@@ -1134,6 +1135,13 @@ static void release_fs( FileSysDesc_s *psDesc )
 	}
 	unload_kernel_driver( psDesc->fs_nImage );
 	UNLOCK( g_hFSListSema );
+
+	/* If we allocated a patched operations struct, free it here.  */
+	if ( psDesc->fs_nAPIVersion != FSDRIVER_API_VERSION )
+	{
+		kfree( psDesc->fs_psOperations );
+	}
+
 	kfree( psDesc );
 }
 
@@ -1158,18 +1166,29 @@ static FileSysDesc_s *init_fs_driver( int nDriver, const char *pzName )
 		goto error1;
 	}
 
-	if ( nError != FSDRIVER_API_VERSION )
+	if ( nError == 1 )	// API version 1 has no op_truncate
 	{
-		printk( "Error: Filesystem driver '%s' have unknown version number %d\n", pzName, nError );
+		// Allocate new operations struct of the correct size.
+		FSOperations_s *psOps2 = kmalloc( sizeof( FSOperations_s ), MEMF_KERNEL | MEMF_CLEAR );
+		if ( psOps2 == NULL )
+		{
+			goto error1;
+		}
+		memcpy( psOps2, psOps, ( sizeof( FSOperations_s ) - 4 ) );
+		psOps = psOps2;
+	}
+	else if ( nError != FSDRIVER_API_VERSION )
+	{
+		printk( "Error: Filesystem driver '%s' has unknown version number %d\n", pzName, nError );
 		goto error1;
 	}
 
 	if ( psOps == NULL )
 	{
-		printk( "Painc: load_filesystem() filesystem init function did not set the function table pointer\n" );
+		printk( "Panic: load_filesystem() filesystem init function did not set the function table pointer\n" );
 		goto error1;
 	}
-	psDesc = register_file_system( pzName, psOps );
+	psDesc = register_file_system( pzName, psOps, nError );
 	psDesc->fs_nImage = nDriver;
 	return ( psDesc );
       error1:
@@ -1981,7 +2000,7 @@ int sys_unmount( const char *pzPath, bool bForce )
 		goto error2;
 	}
 
-	psVol->v_bUnmounted = true;	// make sure nobody loades more inodes from this file system
+	psVol->v_bUnmounted = true;	// make sure nobody loads more inodes from this file system
 	psInode->i_bBusy = true;	// make sure nobody follows the mount-point when we unlock.
 
 	UNLOCK( g_hInodeHashSem );
@@ -2002,7 +2021,7 @@ int sys_unmount( const char *pzPath, bool bForce )
 	if ( bForce == false && bHasOpenFiles )
 	{
 		nError = -EBUSY;
-		printk( "sys_unmount() Filesystem has open files, cant unmount\n" );
+		printk( "sys_unmount() Filesystem has open files, can't unmount\n" );
 		UNLOCK( g_hInodeHashSem );
 		goto error4;
 	}

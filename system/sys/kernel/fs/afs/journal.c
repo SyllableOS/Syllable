@@ -953,7 +953,7 @@ static void afs_validate_transaction( AfsVolume_s * psVolume, AfsTransaction_s *
  * NAME:
  * DESC:
  *	Merge the blocks touched during the previous transaction
- *	(recorded in the volume struct) whith the current "super" transaction.
+ *	(recorded in the volume struct) with the current "super" transaction.
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/
@@ -970,7 +970,7 @@ static int afs_merge_transactions( AfsVolume_s * psVolume )
 
 	if( psTrans == NULL )
 	{
-		panic( "afs_merge_transactions() someting whent terribly wrong! psTrans ended up as a NULL pointer\n" );
+		panic( "afs_merge_transactions() something went terribly wrong! psTrans ended up as a NULL pointer\n" );
 		return( -EINVAL );
 	}
 	if( psTrans->at_bWrittenToLog )
@@ -1259,8 +1259,8 @@ int afs_wait_for_block_to_leave_log( AfsVolume_s * psVolume, off_t nBlock )
  *	operation, but is only performed at times where a half finished
  *	operation won't threathen the integrity of the file-system.
  *	One example where this can happen is when deleting a file with lot's
- *	of attributes. If the entire deletion whould be performed in one
- *	transaction, the blocks touched by both the file, and all it's
+ *	of attributes. If the entire deletion would be performed in one
+ *	transaction, the blocks touched by both the file, and all its
  *	attributes might exceed the size of the log. By allowing the journaling
  *	system to start a new transaction between every attribute, we avoid
  *	overflowing the log, but risk that a crash will leave the file with

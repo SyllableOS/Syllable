@@ -772,5 +772,7 @@ SysCallTable:
 .long	_C_SYM( sys_strace )
 .long	_C_SYM( sys_strace_exclude )
 .long	_C_SYM( sys_strace_include )
-.long	_C_SYM( sys_ptrace )		/* 212 */
-
+.long	_C_SYM( sys_ptrace )
+.long	_C_SYM( sys_ftruncate )
+.long	_C_SYM( sys_truncate )
+.long	_C_SYM( sys_sigaltstack )	/* 215 */

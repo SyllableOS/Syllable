@@ -140,7 +140,7 @@ skip_jis_escape(
 inline uint16
 sjis_to_u(uint16 s)
 {
-	if ((s >= 0x0000) && (s <= 0x00FF))
+	if (/* (s >= 0x0000) && */ (s <= 0x00FF))
 		return (sjis00tou[s - 0x0000]);
 	else if ((s >= 0xE000) && (s <= 0xF000))
 		return (sjise0tou[s - 0xE000]);

@@ -110,7 +110,7 @@
 #define	__NR_fchown			86
 #define	__NR_raw_read_pci_config	87
 #define	__NR_raw_write_pci_config	88
-#define	__NR_get_pci_info			89
+#define	__NR_get_pci_info		89
 /*#define	__NR_signal			90*/
 #define	__NR_sig_return			91
 #define	__NR_kill			92
@@ -136,13 +136,13 @@
 #define	__NR_kill_proc			110
 #define	__NR_get_process_id		111
 #define	__NR_sync			112
-#define	__NR_fsync_bad			113
+#define	__NR_fsync			113
 #define	__NR_isatty			114
 #define	__NR_fcntl			115
 #define __NR_ioctl			116
 #define __NR_pipe			117
 #define __NR_access			118
-/*#define __NR_set_strace_level		119*/
+/*#define __NR_set_strace_level			119*/
 #define	__NR_symlink			120
 #define	__NR_readlink			121
 #define	__NR_call_v86			122
@@ -168,92 +168,93 @@
 #define	__NR_get_mount_point		141
 #define	__NR_get_fs_info		142
 
-#define	__NR_open_attrdir			143
-#define	__NR_close_attrdir			144
-#define	__NR_rewind_attrdir			145
-#define	__NR_read_attrdir			146
-#define	__NR_remove_attr			147
+#define	__NR_open_attrdir		143
+#define	__NR_close_attrdir		144
+#define	__NR_rewind_attrdir		145
+#define	__NR_read_attrdir		146
+#define	__NR_remove_attr		147
 /*#define __NR_rename_attr			148*/
-#define	__NR_stat_attr				149
-#define	__NR_write_attr				150
-#define	__NR_read_attr				151
-#define __NR_get_image_info			152
-#define __NR_freadlink				153
-#define __NR_get_directory_path			154
-#define __NR_socket				155
-#define __NR_closesocket			156
-#define __NR_bind				157
-#define __NR_sendmsg				158
-#define __NR_recvmsg				159
-#define __NR_connect				160
-#define __NR_listen				161
-#define __NR_accept				162
-#define __NR_setsockopt				163
-#define __NR_getsockopt				164
-#define __NR_getpeername			165
-#define __NR_shutdown				166
-#define __NR_based_open				167
-#define __NR_getsockname			168
-#define __NR_setregid				169
-#define __NR_setgroups				170
-#define __NR_setreuid				171
-#define __NR_setresuid				172
-#define __NR_getresuid				173
-#define __NR_setresgid				174
-#define __NR_getresgid				175
-#define __NR_setfsuid				176
-#define __NR_setfsgid				177
-#define __NR_chroot				178
+#define	__NR_stat_attr			149
+#define	__NR_write_attr			150
+#define	__NR_read_attr			151
+#define __NR_get_image_info		152
+#define __NR_freadlink			153
+#define __NR_get_directory_path		154
+#define __NR_socket			155
+#define __NR_closesocket		156
+#define __NR_bind			157
+#define __NR_sendmsg			158
+#define __NR_recvmsg			159
+#define __NR_connect			160
+#define __NR_listen			161
+#define __NR_accept			162
+#define __NR_setsockopt			163
+#define __NR_getsockopt			164
+#define __NR_getpeername		165
+#define __NR_shutdown			166
+#define __NR_based_open			167
+#define __NR_getsockname		168
+#define __NR_setregid			169
+#define __NR_setgroups			170
+#define __NR_setreuid			171
+#define __NR_setresuid			172
+#define __NR_getresuid			173
+#define __NR_setresgid			174
+#define __NR_getresgid			175
+#define __NR_setfsuid			176
+#define __NR_setfsgid			177
+#define __NR_chroot			178
 
-#define __NR_open_indexdir			179
-#define __NR_rewind_indexdir			180
-#define __NR_read_indexdir			181
-#define __NR_create_index			182
-#define __NR_remove_index			183
-#define __NR_stat_index				184
-#define __NR_probe_fs				185
-#define __NR_get_next_semaphore_info		186
-#define __NR_get_port_info			187
-#define	__NR_get_next_port_info			188
+#define __NR_open_indexdir		179
+#define __NR_rewind_indexdir		180
+#define __NR_read_indexdir		181
+#define __NR_create_index		182
+#define __NR_remove_index		183
+#define __NR_stat_index			184
+#define __NR_probe_fs			185
+#define __NR_get_next_semaphore_info	186
+#define __NR_get_port_info		187
+#define	__NR_get_next_port_info		188
 
-#define	__NR_read_pos				189
-#define	__NR_readv				190
-#define	__NR_readv_pos				191
-#define	__NR_write_pos				192
-#define	__NR_writev				193
-#define	__NR_writev_pos				194
+#define	__NR_read_pos			189
+#define	__NR_readv			190
+#define	__NR_readv_pos			191
+#define	__NR_write_pos			192
+#define	__NR_writev			193
+#define	__NR_writev_pos			194
 
-#define	__NR_alloc_tld				195
-#define	__NR_free_tld				196
+#define	__NR_alloc_tld			195
+#define	__NR_free_tld			196
 
-#define	__NR_watch_node				197
-#define	__NR_delete_node_monitor		198
+#define	__NR_watch_node			197
+#define	__NR_delete_node_monitor	198
 
-#define __NR_open_image_file			199
-#define __NR_find_module_by_address		200
-#define __NR_based_mkdir			201
-#define __NR_based_rmdir			202
-#define __NR_based_unlink			203
-#define __NR_based_symlink			204
+#define __NR_open_image_file		199
+#define __NR_find_module_by_address	200
+#define __NR_based_mkdir		201
+#define __NR_based_rmdir		202
+#define __NR_based_unlink		203
+#define __NR_based_symlink		204
 
-#define __NR_apm_poweroff			205
+#define __NR_apm_poweroff		205
 
 #define __NR_make_port_public		206
 #define __NR_make_port_private		207
-#define __NR_find_port				208
+#define __NR_find_port			208
 
-#define __NR_strace					209
-#define __NR_strace_exclude			210
-#define __NR_strace_include			211
-#define __NR_ptrace					212
+#define __NR_strace			209
+#define __NR_strace_exclude		210
+#define __NR_strace_include		211
+#define __NR_ptrace			212
+#define __NR_ftruncate			213
+#define __NR_truncate			214
+#define __NR_sigaltstack		215
 
-#define	__NR_SysCallCount			213
-#define	__NR_DeprecatedSysCallCount		11	/* Obsolete syscalls */
+#define	__NR_SysCallCount		216
+#define	__NR_DeprecatedSysCallCount	11	/* Obsolete syscalls */
 
 /* The TRUE number of ACTIVE syscalls E.g. __NR_SysCallCount minus the number of
    deprecated syscalls */
 #define	__NR_TrueSysCallCount ( __NR_SysCallCount - __NR_DeprecatedSysCallCount )
 
-
 #endif /* _F_SYSCALL_H_ */
-

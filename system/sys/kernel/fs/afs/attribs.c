@@ -132,7 +132,7 @@ static int afs_sd_create_attribute( char *pInode, int nBlockSize, int nType, con
 
 				if( nTotSize + nMoveSize + nDeltaSize > nBlockSize )
 				{
-//        printk( "Cant insert %d extra bytes. Block is full %d(%d)\n", nDeltaSize, nTotSize + nMoveSize, nBlockSize );
+//        printk( "Can't insert %d extra bytes. Block is full %d(%d)\n", nDeltaSize, nTotSize + nMoveSize, nBlockSize );
 					return( -ENOSPC );
 				}
 				memmove(( ( char * )NEXT_SD( psEntry ) ) + nDeltaSize, NEXT_SD( psEntry ), nMoveSize );
@@ -466,7 +466,7 @@ static int afs_do_remove_attr( AfsVolume_s * psVolume, AfsInode_s * psInode, con
 
 				if( nError < 0 )
 				{
-					printk( "PANIC : afs_do_remove_attr() Something whent wrong during file truncation! Err = %d\n", nError );
+					printk( "PANIC : afs_do_remove_attr() Something went wrong during file truncation! Err = %d\n", nError );
 				}
 				psAttrInode->ai_nFlags &= ~INF_WAS_WRITTEN;	// Make sure afs_put_inode don't write to the released block
 
@@ -586,7 +586,7 @@ int afs_delete_file_attribs( AfsVolume_s * psVolume, AfsInode_s * psInode )
 
 	if( nError < 0 )
 	{
-		printk( "PANIC : afs_delete_file_attribs() Something whent wrong during file truncation! Err = %d\n", nError );
+		printk( "PANIC : afs_delete_file_attribs() Something went wrong during file truncation! Err = %d\n", nError );
 	}
 	afs_free_blocks( psVolume, &psAttrDirInode->ai_sInodeNum );
 	psAttrDirInode->ai_nFlags &= ~INF_WAS_WRITTEN;	// Make sure afs_put_inode don't write to the released block

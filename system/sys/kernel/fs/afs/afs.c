@@ -242,7 +242,7 @@ static int afs_initialize( const char *pzDevPath, const char *pzVolName, void *p
 	nNumBlocks /= nBlockSize;
 	if( nNumBlocks < 3000 )
 	{
-		printk( "Error: afs_initialize() Disk to small, cant initialize\n" );
+		printk( "Error: afs_initialize() Disk too small, can't initialize\n" );
 		close( nDev );
 		return ( -EINVAL );
 	}
@@ -351,10 +351,10 @@ static int afs_initialize( const char *pzDevPath, const char *pzVolName, void *p
 		psSuperBlock->as_sDeletedFiles.len = 1;
 	}
 	printk( "NumBlocks         = %Ld\n", psSuperBlock->as_nNumBlocks );
-	printk( "Block shift       = %ld\n", psSuperBlock->as_nBlockShift );
-	printk( "Blocks per group  = %ld\n", psSuperBlock->as_nBlockPerGroup );
-	printk( "Alloc group shift = %ld\n", psSuperBlock->as_nAllocGrpShift );
-	printk( "Alloc group count = %ld\n", psSuperBlock->as_nAllocGroupCount );
+	printk( "Block shift       = %d\n", psSuperBlock->as_nBlockShift );
+	printk( "Blocks per group  = %d\n", psSuperBlock->as_nBlockPerGroup );
+	printk( "Alloc group shift = %d\n", psSuperBlock->as_nAllocGrpShift );
+	printk( "Alloc group count = %d\n", psSuperBlock->as_nAllocGroupCount );
 	printk( "Bitmap block count= %d\n", nBitmapBlkCnt );
 	printk( "Prealloc super block, bitmap and root inode\n" );
 
@@ -422,63 +422,63 @@ static bool afs_validate_superblock( AfsSuperBlock_s * psSuperBlock, bool bQuiet
 	{
 		if( bQuiet )
 			return ( false );
-		printk( "Invalid super block magic1 = %lx\n", psSuperBlock->as_nMagic1 );
+		printk( "Invalid super block magic1 = %x\n", psSuperBlock->as_nMagic1 );
 		bResult = false;
 	}
 	if( psSuperBlock->as_nMagic2 != SUPER_BLOCK_MAGIC2 )
 	{
 		if( bQuiet )
 			return ( false );
-		printk( "Invalid super block magic2 = %lx\n", psSuperBlock->as_nMagic2 );
+		printk( "Invalid super block magic2 = %x\n", psSuperBlock->as_nMagic2 );
 		bResult = false;
 	}
 	if( psSuperBlock->as_nMagic3 != SUPER_BLOCK_MAGIC3 )
 	{
 		if( bQuiet )
 			return ( false );
-		printk( "Invalid super block magic3 = %lx\n", psSuperBlock->as_nMagic3 );
+		printk( "Invalid super block magic3 = %x\n", psSuperBlock->as_nMagic3 );
 		bResult = false;
 	}
 	if( psSuperBlock->as_nByteOrder != BO_LITTLE_ENDIAN && psSuperBlock->as_nByteOrder != BO_BIG_ENDIAN )
 	{
 		if( bQuiet )
 			return ( false );
-		printk( "Bad value in super block byte-order field %ld\n", psSuperBlock->as_nByteOrder );
+		printk( "Bad value in super block byte-order field %d\n", psSuperBlock->as_nByteOrder );
 		bResult = false;
 	}
 	if( 1 << psSuperBlock->as_nBlockShift != psSuperBlock->as_nBlockSize )
 	{
 		if( bQuiet )
 			return ( false );
-		printk( "Inconsistent values in block-shift, and block-size values of superblock (sh=%ld/si=%ld)\n", psSuperBlock->as_nBlockShift, psSuperBlock->as_nBlockSize );
+		printk( "Inconsistent values in block-shift and block-size values of superblock (sh=%d/si=%d)\n", psSuperBlock->as_nBlockShift, psSuperBlock->as_nBlockSize );
 		bResult = false;
 	}
 	if( psSuperBlock->as_nUsedBlocks > psSuperBlock->as_nNumBlocks )
 	{
 		if( bQuiet )
 			return ( false );
-		printk( "Super block has more free blocks than actual block (%Ld - %Ld)\n", psSuperBlock->as_nUsedBlocks, psSuperBlock->as_nNumBlocks );
+		printk( "Super block has more free blocks than actual blocks (%Ld - %Ld)\n", psSuperBlock->as_nUsedBlocks, psSuperBlock->as_nNumBlocks );
 		bResult = false;
 	}
 	if( psSuperBlock->as_nInodeSize != psSuperBlock->as_nBlockSize )
 	{
 		if( bQuiet )
 			return ( false );
-		printk( "Inconsistency between block-size (%ld) and inode-size (%ld)\n", psSuperBlock->as_nBlockSize, psSuperBlock->as_nInodeSize );
+		printk( "Inconsistency between block-size (%d) and inode-size (%d)\n", psSuperBlock->as_nBlockSize, psSuperBlock->as_nInodeSize );
 		bResult = false;
 	}
 	if( 0 == psSuperBlock->as_nBlockSize || ( 1 << psSuperBlock->as_nAllocGrpShift ) / psSuperBlock->as_nBlockSize != psSuperBlock->as_nBlockPerGroup )
 	{
 		if( bQuiet )
 			return ( false );
-		printk( "Inconsistency between blocks per ag (%ld) and ag shift count (%ld)\n", psSuperBlock->as_nBlockPerGroup, psSuperBlock->as_nAllocGrpShift );
+		printk( "Inconsistency between blocks per ag (%d) and ag shift count (%d)\n", psSuperBlock->as_nBlockPerGroup, psSuperBlock->as_nAllocGrpShift );
 		bResult = false;
 	}
 	if( psSuperBlock->as_nAllocGroupCount * psSuperBlock->as_nBlockPerGroup < psSuperBlock->as_nNumBlocks )
 	{
 		if( bQuiet )
 			return ( false );
-		printk( "Alloc group count (%ld) does not cower entire disk (%Ld)\n", psSuperBlock->as_nAllocGroupCount, psSuperBlock->as_nNumBlocks );
+		printk( "Alloc group count (%d) does not cower entire disk (%Ld)\n", psSuperBlock->as_nAllocGroupCount, psSuperBlock->as_nNumBlocks );
 		bResult = false;
 	}
 	if( psSuperBlock->as_sLogBlock.len != psSuperBlock->as_nLogSize )
@@ -578,8 +578,8 @@ static int afs_empty_delme_dir( AfsVolume_s * psVolume )
 		if( atomic_read( &psInode->ai_nLinkCount ) != 0 )
 		{
 			printk( "PANIC: Inode has link count of %d\n", atomic_read( &psInode->ai_nLinkCount ) );
-			printk( "PANIC: Parent is %ld:%d:%d\n", psInode->ai_sParent.group, psInode->ai_sParent.start, psInode->ai_sParent.len );
-			printk( "PANIC: UID=%ld GID=%ld mode=%08lx\n", psInode->ai_nUID, psInode->ai_nGID, psInode->ai_nMode );
+			printk( "PANIC: Parent is %d:%d:%d\n", psInode->ai_sParent.group, psInode->ai_sParent.start, psInode->ai_sParent.len );
+			printk( "PANIC: UID=%d GID=%d mode=%08x\n", psInode->ai_nUID, psInode->ai_nGID, psInode->ai_nMode );
 			afs_end_transaction( psVolume, false );
 			kfree( psInode );
 			break;
@@ -688,7 +688,7 @@ static int afs_probe( const char *pzDevPath, fs_info * psInfo )
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/
-static int afs_mount( kdev_t nFsID, const char *pzDevPath, uint32 nFlags, void *pArgs, int nArgLen, void **ppVolData, ino_t *pnRootIno )
+static int afs_mount( kdev_t nFsID, const char *pzDevPath, uint32 nFlags, const void *pArgs, int nArgLen, void **ppVolData, ino_t *pnRootIno )
 {
 	AfsVolume_s * psVolume;
 	AfsSuperBlock_s * psSuperBlock;
@@ -1442,6 +1442,7 @@ static int afs_read( void *pVolume, void *pNode, void *pCookie, off_t nPos, void
 	AFS_UNLOCK( psInode->ai_psVNode );
 	return ( nError );
 }
+
 static int afs_readv( void *pVolume, void *pNode, void *pCookie, off_t nPos, const struct iovec *psVector, size_t nCount )
 {
 	AfsInode_s * psInode = ( ( AfsVNode_s * )pNode )->vn_psInode;
@@ -1472,8 +1473,6 @@ static int afs_readv( void *pVolume, void *pNode, void *pCookie, off_t nPos, con
 	AFS_UNLOCK( psInode->ai_psVNode );
 	return ( ( nError < 0 ) ? nError : nBytesRead );
 }
-
-
 
 /*****************************************************************************
  * NAME:
@@ -1584,7 +1583,7 @@ static int afs_write( void *pVolume, void *pNode, void *pCookie, off_t nPos, con
 	}
 	if( S_ISREG( psInode->ai_nMode ) == false )
 	{
-		printk( "Error: afs_write() attempt to write to non-file (%08lx)\n", psInode->ai_nMode );
+		printk( "Error: afs_write() attempt to write to non-file (%08x)\n", psInode->ai_nMode );
 		return ( -EINVAL );
 	}
 	if( psVolume->av_nFlags & FS_IS_READONLY )
@@ -1626,7 +1625,7 @@ static int afs_writev( void *pVolume, void *pNode, void *pCookie, off_t nPos, co
 	}
 	if( S_ISREG( psInode->ai_nMode ) == false )
 	{
-		printk( "Error: afs_writev() attempt to write to non-file (%08lx)\n", psInode->ai_nMode );
+		printk( "Error: afs_writev() attempt to write to non-file (%08x)\n", psInode->ai_nMode );
 		return ( -EINVAL );
 	}
 	if( psVolume->av_nFlags & FS_IS_READONLY )
@@ -2660,63 +2659,71 @@ int afsi_get_stream_blocks( void *pVolume, void *pNode, off_t nPos, int nBlockCo
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/
-static FSOperations_s g_sOperations = { afs_probe,	// op_probe
+static FSOperations_s g_sOperations =
+{
+	afs_probe,		// op_probe
 	afs_mount,		// op_mount
 	afs_unmount,		// op_unmount
 	afs_read_inode,		// op_read_inode
 	afs_write_inode,	// op_write_inode
 	afs_lookup,		// op_locate_inode
 	NULL,			// op_access
-	afs_create, afs_make_dir, afs_mknod, afs_symlink, /* op_symlink           */
-		NULL, /* op_link              */
-		afs_rename, /* op_rename            */
-		afs_unlink, /* op_unlink            */
-		afs_rmdir, /* op_rmdir             */
-		afs_read_link, /* op_readlink          */
-		NULL, /* op_open_dir          */
-		NULL, /* op_CloseDir          */
-		afs_rewinddir, /* op_rewinddir         */
-		afs_read_dir, afs_open, afs_close, NULL,	// op_free_cookie
+	afs_create,		// op_create
+	afs_make_dir,		// op_mkdir
+	afs_mknod,		// op_mknod
+	afs_symlink,		// op_symlink
+	NULL,			// op_link
+	afs_rename,		// op_rename
+	afs_unlink,		// op_unlink
+	afs_rmdir,		// op_rmdir
+	afs_read_link,		// op_readlink
+	NULL,			// op_opendir
+	NULL,			// op_closedir
+	afs_rewinddir,		// op_rewinddir
+	afs_read_dir,		// op_readdir
+	afs_open,		// op_open
+	afs_close,		// op_close
+	NULL,			// op_free_cookie
 	afs_read,		// op_read
 	afs_write,		// op_write
 	afs_readv,		// op_readv
 	afs_writev,		// op_writev
-	NULL, /* op_ioctl             */
-		NULL, /* op_setflags          */
-		afs_rstat, /* op_rstat             */
-		afs_wstat, /* op_wstat             */
-		NULL, /* op_fsync             */
-		afs_initialize, /* op_initialize        */
-		afs_sync, /* op_sync              */
-		afs_rfsstat, /* op_rfsstat           */
-		NULL, /* op_wfsstat           */
-		NULL, /* op_isatty            */
-		NULL, /* op_add_select_req    */
-		NULL, /* op_rem_select_req    */
-		afs_open_attrdir, /* op_open_attrdir      */
-		afs_close_attrdir, /* op_close_attrdir     */
-		afs_rewind_attrdir, /* op_rewind_attrdir    */
-		afs_read_attrdir, /* op_read_attrdir      */
-		afs_remove_attr, /* op_remove_attr       */
-		NULL, /* op_rename_attr       */
-		afs_stat_attr, /* op_stat_attr         */
-		afs_write_attr, /* op_write_attr        */
-		afs_read_attr, /* op_read_attr         */
-		afs_open_indexdir, /* op_open_indexdir     */
-		afs_close_indexdir, /* op_close_indexdir    */
-		afs_rewind_indexdir, /* op_rewind_indexdir   */
-		afs_read_indexdir, /* op_read_indexdir     */
-		afs_create_index, /* op_create_index      */
-		afs_remove_index, /* op_remove_index      */
-		NULL, /* op_rename_index      */
-		afs_stat_index, /* op_stat_index        */
-	afsi_get_stream_blocks
+	NULL,			// op_ioctl
+	NULL,			// op_setflags
+	afs_rstat,		// op_rstat
+	afs_wstat,		// op_wstat
+	NULL,			// op_fsync
+	afs_initialize,		// op_initialize
+	afs_sync,		// op_sync
+	afs_rfsstat,		// op_rfsstat
+	NULL,			// op_wfsstat
+	NULL,			// op_isatty
+	NULL,			// op_add_select_req
+	NULL,			// op_rem_select_req
+	afs_open_attrdir,	// op_open_attrdir
+	afs_close_attrdir,	// op_close_attrdir
+	afs_rewind_attrdir,	// op_rewind_attrdir
+	afs_read_attrdir,	// op_read_attrdir
+	afs_remove_attr,	// op_remove_attr
+	NULL,			// op_rename_attr
+	afs_stat_attr,		// op_stat_attr
+	afs_write_attr,		// op_write_attr
+	afs_read_attr,		// op_read_attr
+	afs_open_indexdir,	// op_open_indexdir
+	afs_close_indexdir,	// op_close_indexdir
+	afs_rewind_indexdir,	// op_rewind_indexdir
+	afs_read_indexdir,	// op_read_indexdir
+	afs_create_index,	// op_create_index
+	afs_remove_index,	// op_remove_index
+	NULL,			// op_rename_index
+	afs_stat_index,		// op_stat_index
+	afsi_get_stream_blocks,	// op_get_file_blocks
+	NULL			// op_truncate
 };
+
 int fs_init( const char *pzName, FSOperations_s ** ppsOps )
 {
 	printk( "initialize_fs called in afs\n" );
 	*ppsOps = &g_sOperations;
 	return ( FSDRIVER_API_VERSION );
 }
-
-

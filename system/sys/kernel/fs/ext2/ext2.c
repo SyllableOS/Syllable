@@ -195,7 +195,7 @@ static int ext2_probe(const char * dev, fs_info * fsinfo) {
 	}
 }
 
-static int ext2_mount(kdev_t nsid, const char * dev, uint32 flags, void * _params, int len, void ** _data, ino_t * vnid) {
+static int ext2_mount(kdev_t nsid, const char * dev, uint32 flags, const void * _params, int len, void ** _data, ino_t * vnid) {
 	ext2_vol * vol;
 	if(ext2_create_volume(dev, &vol) == -EOK) {
 		int error;

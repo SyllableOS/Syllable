@@ -77,6 +77,7 @@ struct _FileSysDesc
 	FSOperations_s *fs_psOperations;
 	atomic_t fs_nRefCount;
 	int fs_nImage;		/* Handle to the elf-image if loaded from disk. */
+	int fs_nAPIVersion;	/* Version of filesystem driver API.  */
 	char fs_zName[32];
 };
 
@@ -205,7 +206,7 @@ struct _NodeMonitor
 #define UNLOCK_INODE_RW( psInode ) unlock_semaphore_ex( psInode->i_psVolume->v_hMutex, VOLUME_MUTEX_COUNT )
 
 
-FileSysDesc_s *register_file_system( const char *pzName, FSOperations_s * psOps );
+FileSysDesc_s *register_file_system( const char *pzName, FSOperations_s * psOps, int nAPIVersion );
 
 /* Only called when mounting the virtual root file system and register the FIFO filesystem */
 void add_mount_point( Volume_s *psVol );

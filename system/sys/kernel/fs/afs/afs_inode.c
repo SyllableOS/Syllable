@@ -72,7 +72,7 @@ int afs_validate_inode( const AfsVolume_s * psVolume, const AfsInode_s * psInode
 
 	if( psInode->ai_nMagic1 != INODE_MAGIC )
 	{
-		printk( "Inode %Ld has bad magic %ld\n", nInoNum, psInode->ai_nMagic1 );
+		printk( "Inode %Ld has bad magic %d\n", nInoNum, psInode->ai_nMagic1 );
 		nError = -EINVAL;
 	}
 	if( psInode->ai_sInodeNum.len != 1 )
@@ -103,7 +103,7 @@ int afs_validate_inode( const AfsVolume_s * psVolume, const AfsInode_s * psInode
 
 	if( S_ISDIR( psInode->ai_nMode ) && psInode->ai_nIndexType != e_KeyTypeString )
 	{
-		printk( "Inode %Ld has is a directory, but is not keyed on strings(%ld)\n", nInoNum, psInode->ai_nIndexType );
+		printk( "Inode %Ld is a directory, but is not keyed on strings(%d)\n", nInoNum, psInode->ai_nIndexType );
 		nError = -EINVAL;
 	}
 	if( 0 )
@@ -117,7 +117,7 @@ int afs_validate_inode( const AfsVolume_s * psVolume, const AfsInode_s * psInode
 		case e_KeyTypeString:
 			break;
 		default:
-			printk( "Inode %Ld has is an index, has invalid key type %ld\n", nInoNum, psInode->ai_nIndexType );
+			printk( "Inode %Ld is an index, has invalid key type %d\n", nInoNum, psInode->ai_nIndexType );
 			nError = -EINVAL;
 			break;
 		}
@@ -125,7 +125,7 @@ int afs_validate_inode( const AfsVolume_s * psVolume, const AfsInode_s * psInode
 
 	if( psInode->ai_nInodeSize != psVolume->av_psSuperBlock->as_nBlockSize )
 	{
-		printk( "Inode %Ld has mismatch between size in inode(%ld), and inode size in super block (%ld)\n", nInoNum, psInode->ai_nInodeSize, psVolume->av_psSuperBlock->as_nBlockSize );
+		printk( "Inode %Ld has mismatch between size in inode (%d), and inode size in super block (%d)\n", nInoNum, psInode->ai_nInodeSize, psVolume->av_psSuperBlock->as_nBlockSize );
 		nError = -EINVAL;
 	}
 	if( afs_get_inode_block_count( psInode ) * psVolume->av_psSuperBlock->as_nBlockSize < psInode->ai_sData.ds_nSize )
@@ -291,7 +291,7 @@ int afs_delete_inode( AfsVolume_s * psVolume, AfsInode_s * psInode )
 	if( nError < 0 )
 	{
 		psInode->ai_sData.ds_nSize = nOldSize;
-		printk( "Error: afs_delete_inode() Something whent wrong during file truncation! Err = %d\n", nError );
+		printk( "Error: afs_delete_inode() Something went wrong during file truncation! Err = %d\n", nError );
 		return( nError );
 	}
 	nError = afs_free_blocks( psVolume, &psInode->ai_sInodeNum );
@@ -393,7 +393,7 @@ status_t afs_do_read_inode( AfsVolume_s * psVolume, BlockRun_s * psInodePtr, Afs
 
 	if( psInode->ai_sInodeNum.group != psInodePtr->group || psInode->ai_sInodeNum.start != psInodePtr->start || psInode->ai_sInodeNum.len != psInodePtr->len )
 	{
-		printk( "Error : afs_do_read_inode() mismatch betwen loaded block ptr " "and inode ptr in inode(%ld:%d:%d) (%ld:%d:%d)\n", psInodePtr->group, psInodePtr->start, psInodePtr->len, psInode->ai_sInodeNum.group, psInode->ai_sInodeNum.start, psInode->ai_sInodeNum.len );
+		printk( "Error : afs_do_read_inode() mismatch betwen loaded block ptr and inode ptr in inode(%d:%d:%d) (%d:%d:%d)\n", psInodePtr->group, psInodePtr->start, psInodePtr->len, psInode->ai_sInodeNum.group, psInode->ai_sInodeNum.start, psInode->ai_sInodeNum.len );
 
 		nError = -EINVAL;
 		goto error2;

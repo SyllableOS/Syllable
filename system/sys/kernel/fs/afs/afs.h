@@ -103,7 +103,7 @@ typedef struct
 } AfsSuperBlock_s;
 
 
-#define JOURNAL_SIZE 256
+#define JOURNAL_SIZE	256
 
 struct _AfsJournalBlock
 {
@@ -112,8 +112,6 @@ struct _AfsJournalBlock
 	void *jb_pData;
 	void *jb_pNewBuffer;
 };
-
-
 
 
 struct _AfsTransBuffer
@@ -134,7 +132,7 @@ struct _AfsTransaction
 	off_t at_nLogStart;	// Absolute start block in the log(disk address)
 	int at_nBlockCount;	// Number of blocks in the transaction including index blocks
 	atomic_t at_nPendingLogBlocks;	// Blocks written to the cache but not yet flushed.
-	atomic_t at_nWrittenBlocks;	// Number of blocks written to it's final destination.
+	atomic_t at_nWrittenBlocks;	// Number of blocks written to their final destinations.
 	AfsTransBuffer_s *at_psFirstBuffer;	// Single linked list of 128K transaction buffers
 	bool at_bWrittenToLog;	// true if the transaction is written to the log
 	bool at_bWrittenToDisk;
@@ -198,7 +196,7 @@ typedef struct
 } AfsVolume_s;
 
 
-#define	INODE_MAGIC	0x64358428
+#define	INODE_MAGIC	    0x64358428
 
 #define	INF_USED	    0x00000001
 #define	INF_ATTRIBUTES	    0x00000002
@@ -210,7 +208,7 @@ typedef struct
 #define	INF_WAS_WRITTEN	    0x00020000
 #define	INF_NO_TRANSACTION  0x00040000
 #define	INF_NOT_IN_DELME    0x00080000	/* The file is scheduled for deletion, but not moved into
-					 * the "delete-me" directory. This is propably due to the
+					 * the "delete-me" directory. This is probably due to the
 					 * disk getting full during the attempt to move it.
 					 */
 #define INF_STAT_CHANGED    0x00100000
@@ -270,7 +268,7 @@ struct _AfsVNode
 	AfsInode_s *vn_psInode;
 	sem_id vn_hMutex;
 	int vn_nBTreeVersion;	/* Increased each time a node is inserted or deleted from a b+tree
-				 * Used to invalidate iterator's
+				 * Used to invalidate iterators
 				 */
 };
 
@@ -285,8 +283,8 @@ static inline off_t __afs_run_to_num( const AfsSuperBlock_s * psSuperBlock, cons
 
 	if( nNum < 0 || nNum >= psSuperBlock->as_nNumBlocks )
 	{
-		printk( "PANIC : afs_run_to_num() called whith run %ld %d %d that gives a blocknum of %Ld.\n", psRun->group, psRun->start, psRun->len, nNum );
-		printk( "PANIC : The drive only contain %Ld blocks!!\n", psSuperBlock->as_nNumBlocks );
+		printk( "PANIC : afs_run_to_num() called with run %d %d %d which gives a blocknum of %Ld.\n", psRun->group, psRun->start, psRun->len, nNum );
+		printk( "PANIC : The drive only contains %Ld blocks!!\n", psSuperBlock->as_nNumBlocks );
 		printk( "Called from file: %s func: %s line %d\n", pzFile, pzFunction, nLine );
 	}
 

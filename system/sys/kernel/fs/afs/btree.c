@@ -44,7 +44,7 @@ bool bt_validate_tree_header( BTree_s * psTree )
 	if( psTree->bt_nMagic != BTREE_MAGIC )
 	{
 		bResult = false;
-		printk( "Error: bt_validate_tree_header() bad magic: %08lx(Should be %08x)\n", psTree->bt_nMagic, BTREE_MAGIC );
+		printk( "Error: bt_validate_tree_header() bad magic: %08x (Should be %08x)\n", psTree->bt_nMagic, BTREE_MAGIC );
 	}
 	return( bResult );
 }
@@ -992,7 +992,7 @@ status_t bt_append_key( BNode_s *psNode, const void *pKey, int nKeySize, bvalue_
 
 	if( bt_will_key_fit( psNode, nKeySize ) == false )
 	{
-		panic( "bt_append_key() key wont fit in node(%d)\n", nKeySize );
+		panic( "bt_append_key() key won't fit in node(%d)\n", nKeySize );
 		return( -EINVAL );
 	}
 
@@ -1626,7 +1626,7 @@ status_t bt_add_key_to_node( AfsVolume_s * psVolume, AfsInode_s * psInode, BTran
 			{
 				if( bt_will_key_fit( psNewNode2, nKeyLen ) == false )
 				{
-					panic( "bt_add_key_to_node() Key wont fit: %d\n", nKeyLen );
+					panic( "bt_add_key_to_node() Key won't fit: %d\n", nKeyLen );
 					return( -EINVAL );
 				}
 				bt_append_key( psNewNode2, pKey, nKeyLen, psValue );
@@ -1635,7 +1635,7 @@ status_t bt_add_key_to_node( AfsVolume_s * psVolume, AfsInode_s * psInode, BTran
 
 			// pParentKey may point into psNode, so we must make a backup before we
 			// change psNode. Also note that pKey may point to anParentKey, so we
-			// cant overwrite it until we are finished using pKey
+			// can't overwrite it until we are finished using pKey.
 
 			memcpy( anParentKey, pParentKey, nParentKeyLen );
 

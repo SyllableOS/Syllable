@@ -877,7 +877,7 @@ int afs_trunc_indirect( AfsVolume_s * psVolume, DataStream_s * psStream, off_t n
 	int i;
 
 	if( nDeltaSize == 0 )
-	{			// Seems like someting whent wrong during an allocation.
+	{			// Seems like something went wrong during an allocation.
 		if( psStream->ds_sIndirect.len == 0 )
 		{
 			afs_free_blocks( psVolume, &psStream->ds_sIndirect );
@@ -886,7 +886,7 @@ int afs_trunc_indirect( AfsVolume_s * psVolume, DataStream_s * psStream, off_t n
 		}
 		else
 		{
-			printk( "Error: Request for removeing 0 bytes from indirect range but there is no indirect block!\n" );
+			printk( "Error: Request for removing 0 bytes from indirect range but there is no indirect block!\n" );
 		}
 		return( 0 );
 	}

@@ -130,6 +130,13 @@ typedef struct libc_sigaction
   void 		(*sa_restorer)(void);
 };
 
+typedef struct sigaltstack
+{
+  void*		ss_sp;
+  size_t	ss_size;
+  int		ss_flags;
+} stack_t;
+
 /* Values returned from GetSignalMode() */
 
 #define SIG_HANDLED	1

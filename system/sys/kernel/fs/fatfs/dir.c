@@ -76,7 +76,7 @@ static status_t _next_dirent_(struct diri *iter, struct _dirent_info_ *oinfo,
 	buffer = iter->current_block + ((iter->current_index) % (iter->csi.vol->bytes_per_sector / 0x20)) * 0x20;
 
 	for (;buffer != NULL;buffer = diri_next_entry(iter)) {
-		DPRINTF(2, ("_next_dirent_: %lx/%lx/%lx\n", iter->csi.cluster, iter->csi.sector, iter->current_index));
+		DPRINTF(2, ("_next_dirent_: %x/%x/%x\n", iter->csi.cluster, iter->csi.sector, iter->current_index));
 		if (buffer[0] == 0) { // quit if at end of table
 			if (start_index != 0xffff) {
 				printk("lfn entry (%s) with no alias\n", filename);
@@ -352,7 +352,7 @@ status_t erase_dir_entry(nspace *vol, vnode *node)
 	struct _dirent_info_ info;
 	struct diri diri;
 	
-	DPRINTF(0, ("erasing directory entries %lx through %lx\n", node->sindex, node->eindex));
+	DPRINTF(0, ("erasing directory entries %x through %x\n", node->sindex, node->eindex));
 	buffer = diri_init(vol,VNODE_PARENT_DIR_CLUSTER(node), node->sindex, &diri);
 
 	// first pass: check if the entry is still valid
@@ -425,7 +425,7 @@ status_t compact_directory(nspace *vol, vnode *dir)
 			if (clusters == 0) clusters = 1;
 
 			if (clusters * vol->bytes_per_sector * vol->sectors_per_cluster < dir->st_size) {
-				DPRINTF(0, ("shrinking directory to %lx clusters\n", clusters));
+				DPRINTF(0, ("shrinking directory to %x clusters\n", clusters));
 				error = set_fat_chain_length(vol, dir, clusters, true);
 				dir->st_size = clusters*vol->bytes_per_sector*vol->sectors_per_cluster;
 				dir->iteration++;
@@ -509,7 +509,7 @@ static status_t _create_dir_entry_(nspace *vol, vnode *dir, struct _entry_info_ 
 	}
 
 	if ((info->cluster != 0) && !IS_DATA_CLUSTER(info->cluster)) {
-		printk("_create_dir_entry_ for bad cluster (%lx)\n", info->cluster);
+		printk("_create_dir_entry_ for bad cluster (%x)\n", info->cluster);
 		return -EINVAL;
 	}
 
@@ -552,7 +552,7 @@ static status_t _create_dir_entry_(nspace *vol, vnode *dir, struct _entry_info_ 
 
 	*ne = *ns + required_entries - 1;
 
-	DPRINTF(0, ("directory entry runs from %lx to %lx (dirsize = %Lx) (is%s last entry)\n", *ns, *ne, dir->st_size, last_entry ? "" : "n't"));
+	DPRINTF(0, ("directory entry runs from %x to %x (dirsize = %Lx) (is%s last entry)\n", *ns, *ne, dir->st_size, last_entry ? "" : "n't"));
 
 	// check if the directory needs to be expanded
 	if (*ne * 0x20 >= dir->st_size) {
@@ -569,7 +569,7 @@ static status_t _create_dir_entry_(nspace *vol, vnode *dir, struct _entry_info_ 
 			vol->bytes_per_sector*vol->sectors_per_cluster - 1) /
 			vol->bytes_per_sector / vol->sectors_per_cluster;
 
-		DPRINTF(0, ("expanding directory from %Lx to %lx clusters\n", dir->st_size/vol->bytes_per_sector/vol->sectors_per_cluster, clusters_needed));
+		DPRINTF(0, ("expanding directory from %Lx to %x clusters\n", dir->st_size/vol->bytes_per_sector/vol->sectors_per_cluster, clusters_needed));
 		if ((error = set_fat_chain_length(vol, dir, clusters_needed, true)) < 0)
 			return error;
 		dir->st_size = vol->bytes_per_sector*vol->sectors_per_cluster*clusters_needed;
@@ -770,7 +770,7 @@ int dosfs_read_vnode(void *_vol, ino_t vnid/*, char reenter*/, void **_node)
     }
 
     if ((dir_vnid = dlist_find(vol, DIR_OF_VNID(loc))) == -1LL) {
-	DPRINTF(0, ("dosfs_read_vnode: unknown directory at cluster %lx\n", DIR_OF_VNID(loc)));
+	DPRINTF(0, ("dosfs_read_vnode: unknown directory at cluster %x\n", DIR_OF_VNID(loc)));
 	result = -ENOENT;
 	goto bi;
     }
@@ -1007,7 +1007,7 @@ int dosfs_readdir( void *_vol, void *_dir, void *_cookie, int nPos, struct kerne
 	return -EINVAL;
     }
 
-    DPRINTF(0, ("dosfs_readdir: vnode id %Lx, index %lx\n", dir->vnid, cookie->current_index));
+    DPRINTF(0, ("dosfs_readdir: vnode id %Lx, index %x\n", dir->vnid, cookie->current_index));
 
       // simulate '.' and '..' entries for root directory
     if (dir->vnid == vol->root_vnode.vnid) {

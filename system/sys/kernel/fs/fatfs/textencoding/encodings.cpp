@@ -74,7 +74,7 @@ status_t unicode_to_utf8(const uchar *uni, uint32 unilen, uint8 *utf8,
 			(int32 *)&unilen, (char *)utf8, (int32 *)&utf8len, &state);
 
 	if (unilen < origlen) {
-		printk("Name is too long (%lx < %lx)\n", unilen, origlen);
+		printk("Name is too long (%x < %x)\n", unilen, origlen);
 		return -ENAMETOOLONG;
 	}
 
@@ -148,7 +148,7 @@ status_t utf8_to_unicode(const char *utf8, uchar *uni, uint32 unilen)
 	}
 
 	if (origlen < utf8len) {
-		printk("Name is too long (%lx < %lx)\n", unilen, origlen);
+		printk("Name is too long (%x < %x)\n", unilen, origlen);
 		return -ENAMETOOLONG;
 	}
 

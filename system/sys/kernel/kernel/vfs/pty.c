@@ -2141,8 +2141,27 @@ static FSOperations_s g_sOperations = {
 	NULL,			/* rfsstat      */
 	NULL,			/* wfsstat      */
 	pty_isatty,		/* isatty       */
-	pty_add_select_req,
-	pty_rem_select_req
+	pty_add_select_req,	/* add_select_req     */
+	pty_rem_select_req,	/* rem_select_req     */
+	NULL,			/* open_attrdir       */
+	NULL,			/* close_attrdir      */
+	NULL,			/* rewind_attrdir     */
+	NULL,			/* read_attrdir       */
+	NULL,			/* remove_attr        */
+	NULL,			/* rename_attr        */
+	NULL,			/* stat_attr          */
+	NULL,			/* write_attr         */
+	NULL,			/* read_attr          */
+	NULL,			/* open_indexdir      */
+	NULL,			/* close_indexdir     */
+	NULL,			/* rewind_indexdir    */
+	NULL,			/* read_indexdir      */
+	NULL,			/* create_index       */
+	NULL,			/* remove_index       */
+	NULL,			/* rename_index       */
+	NULL,			/* stat_index         */
+	NULL,			/* get_file_blocks    */
+	NULL			/* truncate           */
 };
 
 /*****************************************************************************
@@ -2155,5 +2174,5 @@ static FSOperations_s g_sOperations = {
 void init_pty( void )
 {
 	g_hCTTYMutex = create_semaphore( "ctty_mutex", 1, SEM_RECURSIVE );
-	register_file_system( "_pty_device_", &g_sOperations );
+	register_file_system( "_pty_device_", &g_sOperations, FSDRIVER_API_VERSION );
 }

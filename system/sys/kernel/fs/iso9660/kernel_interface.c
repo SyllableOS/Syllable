@@ -29,7 +29,7 @@ static int iso_probe( const char* devicePath, fs_info* filesystemInfo );
 // Start of fundamental (read-only) required functions
 
 static int		iso_mount(kdev_t nsid, const char *device, uint32 flags,
-						void *parms, int len, void **data, ino_t *vnid);
+						const void *parms, int len, void **data, ino_t *vnid);
 static int		iso_unmount(void *_ns);
 static int		iso_walk( void * ns, void * parentNode, const char * name,
 						int name_len, ino_t * inode );
@@ -77,72 +77,69 @@ static int		iso_sync(void *ns);
 static int     	iso_initialize(const char *devname, void *parms, size_t len);
 #endif 
 
-
-
 // NOTE!!! The commented out functions do not exist in dosfs or afs
 // Are they even implemented in the vfs? 
 // dosfs: open and close handle both dirs and files + freeing the cookies
 static FSOperations_s iso_operations =  {
-	iso_probe,							// probe
-	iso_mount,							// mount 
-	iso_unmount,							// unmount 
-	iso_read_vnode,							// read_vnode 
-	iso_write_vnode,						// write_vnode 
-	iso_walk, 							// locate_inode
-	iso_access,							// access 
-	NULL,								// create
-	NULL,								// mkdir
-	NULL,								// mknod
-	NULL,								// symlink
-	NULL,								// link
-	NULL,								// rename
-	NULL,								// unlink
-	NULL,								// rmdir
-	iso_read_link,							// readlink
-	NULL, /*iso_opendir,*/						// opendir - is this used for syllable???
-	NULL, /*iso_closedir,*/						// closedir  - is this used for syllable???
-	iso_rewind_dir,							// rewinddir
-	iso_read_dir,							// readdir 
-	iso_open,							// open file
-	iso_close,							// close file
-	NULL, /*iso_free_cookie,*/					// free cookie 
-	iso_read,							// read file 
-	NULL, 								// write file 
-	NULL, 								// readv
-	NULL, 								// writev
-	NULL,								// ioctl 
-	NULL,								// setflags file 
-	iso_read_stat,							// rstat 
-	NULL, 								// wstat 
-	NULL,								// fsync 
-	NULL,								// initialize
-	NULL,								// sync
-	iso_read_fs_stat,						// rfsstat 
-	NULL,								// wfsstat 
-	NULL,								// isatty;
-	NULL,								// add_select_req;
-	NULL,								// rem_select_req;
-// Attributes
-	NULL,								// open_attrdir;
-	NULL,								// close_attrdir;
-	NULL,								// rewind_attrdir;
-	NULL,								// read_attrdir;
-	NULL,								// remove_attr;
-	NULL,								// rename_attr;
-	NULL,								// stat_attr;
-	NULL,								// write_attr;
-	NULL,								// read_attr;
-// Index
-	NULL,								// open_indexdir;
-	NULL,								// close_indexdir;
-	NULL,								// rewind_indexdir;
-	NULL,								// read_indexdir;
-	NULL,								// create_index;
-	NULL,								// remove_index;
-	NULL,								// rename_index;
-	NULL,								// stat_index;
-	NULL								// get_file_blocks;
-	};
+	iso_probe,		// probe
+	iso_mount,		// mount 
+	iso_unmount,		// unmount 
+	iso_read_vnode,		// read_vnode 
+	iso_write_vnode,	// write_vnode 
+	iso_walk, 		// locate_inode
+	iso_access,		// access 
+	NULL,			// create
+	NULL,			// mkdir
+	NULL,			// mknod
+	NULL,			// symlink
+	NULL,			// link
+	NULL,			// rename
+	NULL,			// unlink
+	NULL,			// rmdir
+	iso_read_link,		// readlink
+	NULL,			// opendir - is this used for syllable???
+	NULL,			// closedir  - is this used for syllable???
+	iso_rewind_dir,		// rewinddir
+	iso_read_dir,		// readdir 
+	iso_open,		// open file
+	iso_close,		// close file
+	NULL,			// free cookie 
+	iso_read,		// read file 
+	NULL, 			// write file 
+	NULL, 			// readv
+	NULL, 			// writev
+	NULL,			// ioctl 
+	NULL,			// setflags file 
+	iso_read_stat,		// rstat 
+	NULL, 			// wstat 
+	NULL,			// fsync 
+	NULL,			// initialize
+	NULL,			// sync
+	iso_read_fs_stat,	// rfsstat 
+	NULL,			// wfsstat 
+	NULL,			// isatty
+	NULL,			// add_select_req
+	NULL,			// rem_select_req
+	NULL,			// open_attrdir
+	NULL,			// close_attrdir
+	NULL,			// rewind_attrdir
+	NULL,			// read_attrdir
+	NULL,			// remove_attr
+	NULL,			// rename_attr
+	NULL,			// stat_attr
+	NULL,			// write_attr
+	NULL,			// read_attr
+	NULL,			// open_indexdir
+	NULL,			// close_indexdir
+	NULL,			// rewind_indexdir
+	NULL,			// read_indexdir
+	NULL,			// create_index
+	NULL,			// remove_index
+	NULL,			// rename_index
+	NULL,			// stat_index
+	NULL,			// get_file_blocks
+	NULL			// truncate
+};
 
 int32		api_version = FSDRIVER_API_VERSION;
 static char* 	gFSName = "ISO9660\0";
@@ -229,7 +226,7 @@ iso_probe( const char* devicePath, fs_info* info )
 
 
 static int 
-iso_mount( kdev_t volumeID, const char *devicePath, uint32 flags, void *parameters,
+iso_mount( kdev_t volumeID, const char *devicePath, uint32 flags, const void *parameters,
 		int len, void **data, ino_t *rootNodeID)
 {	
 	int 		result = -EINVAL;
@@ -548,7 +545,7 @@ iso_read_vnode(void *_ns, ino_t vnid, void **node)
 					newNode->id = vnid;
 					kerndbg( KERN_DEBUG_LOW, "iso_read_vnode - init result is %d\n", result );
 					*node = (void*)newNode;
-					kerndbg( KERN_DEBUG_LOW, "iso_read_vnode - new file %s, size %ld\n", newNode->fileIDString, newNode->dataLen[FS_DATA_FORMAT]);
+					kerndbg( KERN_DEBUG_LOW, "iso_read_vnode - new file %s, size %d\n", newNode->fileIDString, newNode->dataLen[FS_DATA_FORMAT]);
 					release_cache_block(ns->fd, cachedBlock);
 				}
 				else
@@ -706,7 +703,7 @@ iso_read(void *_ns, void *_node, void *cookie, off_t pos, void *buf,
 		{
 			off_t	cachedBlock = startBlock;
 			char*		blockData = (char*)get_cache_block(ns->fd, startBlock, blockSize);
-			kerndbg( KERN_DEBUG_LOW, "iso_read - getting block %lu\n", startBlock );
+			kerndbg( KERN_DEBUG_LOW, "iso_read - getting block %u\n", startBlock );
 			if (blockData != NULL)
 			{
 				kerndbg( KERN_DEBUG_LOW, "iso_read - copying first block, len is %d.\n", startLen);

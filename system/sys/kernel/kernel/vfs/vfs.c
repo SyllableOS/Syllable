@@ -337,6 +337,27 @@ static int cfs_rem_select_request( File_s *psFile, SelectRequest_s *psReq )
 	return ( nError );
 }
 
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+
+static int cfs_truncate( Inode_s *psInode, off_t nLength )
+{
+	int nError = -ENOSYS;
+
+	LOCK_INODE_RO( psInode );
+	if ( NULL != psInode->i_psOperations->truncate )
+	{
+		kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
+		nError = psInode->i_psOperations->truncate( psInode->i_psVolume->v_pFSData, psInode->i_pFSData, nLength );
+	}
+	UNLOCK_INODE_RO( psInode );
+
+	return ( nError );
+}
 
 /*****************************************************************************
  * NAME:
@@ -846,7 +867,102 @@ int new_fd( bool bKernel, int nNewFile, int nBase, File_s *psFile, bool bCloseOn
 
 int sys_fsync( int nFile )
 {
-	return ( 0 );
+	File_s *psFile;
+	int nError;
+
+	printk( "sys_fsync( %d ) stub called!\n", nFile );
+
+	psFile = get_fd( false, nFile );
+
+	if ( NULL == psFile )
+	{
+		printk( "Error: sys_fsync() invalid file descriptor %d\n", nFile );
+		return ( -EBADF );
+	}
+
+	Inode_s *psInode = psFile->f_psInode;
+
+	LOCK_INODE_RO( psInode );
+	if ( NULL != psInode->i_psOperations->fsync )
+	{
+		kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
+		nError = psInode->i_psOperations->fsync( psInode->i_psVolume->v_pFSData, psInode->i_pFSData );
+	}
+	else
+	{
+		nError = ( -ENOSYS );
+	}
+	UNLOCK_INODE_RO( psInode );
+
+	put_fd( psFile );
+
+	return ( nError );
+}
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+
+int sys_truncate( const char *a_pzPath, off_t nLength )
+{
+	Inode_s *psInode;
+	char *pzPath;
+	int nError;
+
+	printk( "sys_truncate( %s, %Ld ) stub called!\n", a_pzPath, nLength );
+
+	nError = strndup_from_user( a_pzPath, PATH_MAX, &pzPath );
+	if ( nError < 0 )
+	{
+		printk( "Error: sys_truncate() failed to dup source path\n" );
+		return ( nError );
+	}
+
+	nError = get_named_inode( NULL, pzPath, &psInode, true, true );
+
+	if ( nError < 0 )
+	{
+		goto error1;
+	}
+
+	nError = cfs_truncate( psInode, nLength );
+
+	put_inode( psInode );
+      error1:
+	kfree( pzPath );
+	return ( nError );
+}
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+
+int sys_ftruncate( int nFile, off_t nLength )
+{
+	File_s *psFile;
+	int nError;
+
+	printk( "sys_ftruncate( %d, %Ld ) stub called!\n", nFile, nLength );
+
+	psFile = get_fd( false, nFile );
+
+	if ( NULL == psFile )
+	{
+		printk( "Error: sys_ftruncate() invalid file descriptor %d\n", nFile );
+		return ( -EBADF );
+	}
+
+	nError = cfs_truncate( psFile->f_psInode, nLength );
+
+	put_fd( psFile );
+
+	return ( nError );
 }
 
 /*****************************************************************************
@@ -3576,7 +3692,6 @@ int do_fstat( bool bKernel, int nFile, struct stat *psStat )
 		return ( -EBADF );
 	}
 
-
 	nError = cfs_rstat( psFile->f_psInode, &sStat, false );
 
 	if ( 0 == nError )
@@ -5092,19 +5207,6 @@ int get_file_blocks_p( File_s *psFile, off_t nPos, int nBlockCount, off_t *pnSta
 	UNLOCK_INODE_RO( psInode );
 	return ( nError );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /*****************************************************************************
  * NAME:

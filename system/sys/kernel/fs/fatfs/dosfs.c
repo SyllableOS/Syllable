@@ -91,7 +91,7 @@ static status_t mount_fat_disk(const char *path, fs_id nsid,
 	}
     }
     if ((geo.bytes_per_sector != 0x200) && (geo.bytes_per_sector != 0x400) && (geo.bytes_per_sector != 0x800)) {
-	printk("dosfs: unsupported device block size (%lu)\n", geo.bytes_per_sector );
+	printk("dosfs: unsupported device block size (%u)\n", geo.bytes_per_sector );
 	goto error0;
     }
     if (geo.removable) {
@@ -129,7 +129,7 @@ static status_t mount_fat_disk(const char *path, fs_id nsid,
       // first fill in the universal fields from the bpb
     vol->bytes_per_sector = read16(buf,0xb);
     if ((vol->bytes_per_sector != 0x200) && (vol->bytes_per_sector != 0x400) && (vol->bytes_per_sector != 0x800)) {
-	printk("dosfs error: unsupported bytes per sector (%lu)\n",
+	printk("dosfs error: unsupported bytes per sector (%u)\n",
 	       vol->bytes_per_sector);
 	goto error;
     }
@@ -145,7 +145,7 @@ static status_t mount_fat_disk(const char *path, fs_id nsid,
 
     vol->fat_count = buf[0x10];
     if ((vol->fat_count == 0) || (vol->fat_count > 8)) {
-	printk("dosfs: unreasonable fat count (%lu)\n", vol->fat_count);
+	printk("dosfs: unreasonable fat count (%u)\n", vol->fat_count);
 	goto error;
     }
 
@@ -182,13 +182,13 @@ static status_t mount_fat_disk(const char *path, fs_id nsid,
 
 	vol->root_vnode.cluster = read32(buf,0x2c);
 	if (vol->root_vnode.cluster >= vol->total_clusters) {
-	    printk("dosfs: root vnode cluster too large (%lx)\n", vol->root_vnode.cluster);
+	    printk("dosfs: root vnode cluster too large (%x)\n", vol->root_vnode.cluster);
 	    goto error;
 	}
     } else {
 	  // fat12 & fat16
 	if (vol->fat_count != 2) {
-	    printk("dosfs error: claims %ld fat tables\n", vol->fat_count);
+	    printk("dosfs error: claims %d fat tables\n", vol->fat_count);
 	    goto error;
 	}
 
@@ -281,15 +281,15 @@ static status_t mount_fat_disk(const char *path, fs_id nsid,
 	uint8 buf2[512];
 	for (i=0;i<vol->fat_count;i++) {
 	    if (i != vol->active_fat) {
-		DPRINTF(1, ("checking fat #%ld\n", i));
+		DPRINTF(1, ("checking fat #%d\n", i));
 		buf2[0] = ~buf[0];
 		if ((err = read_pos(vol->fd, vol->bytes_per_sector*(vol->reserved_sectors + vol->sectors_per_fat*i), (void *)buf2, 0x200)) != 0x200) {
-		    printk("dosfs: error reading FAT %ld\n", i);
+		    printk("dosfs: error reading FAT %d\n", i);
 		    goto error;
 		}
 
 		if (buf2[0] != vol->media_descriptor) {
-		    printk("dosfs error: media descriptor mismatch in fat # %ld (%x != %x)\n", i, buf2[0], vol->media_descriptor);
+		    printk("dosfs error: media descriptor mismatch in fat # %d (%x != %x)\n", i, buf2[0], vol->media_descriptor);
 		    goto error;
 		}
 #if 0			
@@ -345,13 +345,13 @@ static status_t mount_fat_disk(const char *path, fs_id nsid,
 
     DPRINTF(0, ("built at %s on %s\n", build_time, build_date));
     DPRINTF(0, ("mounting %s (id %x, device %x, media descriptor %x)\n", vol->device, vol->id, vol->fd, vol->media_descriptor));
-    DPRINTF(0, ("%lx bytes/sector, %lx sectors/cluster\n", vol->bytes_per_sector, vol->sectors_per_cluster));
-    DPRINTF(0, ("%lx reserved sectors, %lx total sectors\n", vol->reserved_sectors, vol->total_sectors));
-    DPRINTF(0, ("%lx %d-bit fats, %lx sectors/fat, %lx root entries\n", vol->fat_count, vol->fat_bits, vol->sectors_per_fat, vol->root_entries_count));
-    DPRINTF(0, ("root directory starts at sector %lx (cluster %lx), data at sector %lx\n", vol->root_start, vol->root_vnode.cluster, vol->data_start));
-    DPRINTF(0, ("%lx total clusters, %lx free\n", vol->total_clusters, vol->free_clusters));
+    DPRINTF(0, ("%x bytes/sector, %x sectors/cluster\n", vol->bytes_per_sector, vol->sectors_per_cluster));
+    DPRINTF(0, ("%x reserved sectors, %x total sectors\n", vol->reserved_sectors, vol->total_sectors));
+    DPRINTF(0, ("%x %d-bit fats, %x sectors/fat, %x root entries\n", vol->fat_count, vol->fat_bits, vol->sectors_per_fat, vol->root_entries_count));
+    DPRINTF(0, ("root directory starts at sector %x (cluster %x), data at sector %x\n", vol->root_start, vol->root_vnode.cluster, vol->data_start));
+    DPRINTF(0, ("%x total clusters, %x free\n", vol->total_clusters, vol->free_clusters));
     DPRINTF(0, ("fat mirroring is %s, fs info sector at sector %x\n", (vol->fat_mirrored) ? "on" : "off", vol->fsinfo_sector));
-    DPRINTF(0, ("last allocated cluster = %lx\n", vol->last_allocated));
+    DPRINTF(0, ("last allocated cluster = %x\n", vol->last_allocated));
 
     if (vol->fat_bits == 32) {
 	  // now that the block cache has been initialised, we can figure
@@ -385,7 +385,7 @@ static status_t mount_fat_disk(const char *path, fs_id nsid,
     }
 
     DPRINTF(0, ("root vnode id = %Lx\n", vol->root_vnode.vnid));
-    DPRINTF(0, ("volume label [%11.11s] (%lx)\n", vol->vol_label, vol->vol_entry));
+    DPRINTF(0, ("volume label [%11.11s] (%x)\n", vol->vol_label, vol->vol_entry));
 
       // steal a trick from bfs
     if (!memcmp(vol->vol_label, "__RO__     ", 11)) {
@@ -539,7 +539,7 @@ error:
 
 
 
-static int fatfs_mount( kdev_t nFsID, const char* pzDevPath, uint32 nFlags, void* pArgs, int nArgLen,
+static int fatfs_mount( kdev_t nFsID, const char* pzDevPath, uint32 nFlags, const void* pArgs, int nArgLen,
 			void** ppVolData, ino_t* pnRootIno )
 
 {
@@ -810,21 +810,21 @@ static int fatfs_ioctl(void *_vol, void *_node, void *cookie, int code,
 	case 100000 :
 	    printk("built at %s on %s\n", build_time, build_date);
 	    printk("vol info: %s (device %x, media descriptor %x)\n", vol->device, vol->fd, vol->media_descriptor);
-	    printk("%lx bytes/sector, %lx sectors/cluster\n", vol->bytes_per_sector, vol->sectors_per_cluster);
-	    printk("%lx reserved sectors, %lx total sectors\n", vol->reserved_sectors, vol->total_sectors);
-	    printk("%lx %d-bit fats, %lx sectors/fat, %lx root entries\n", vol->fat_count, vol->fat_bits, vol->sectors_per_fat, vol->root_entries_count);
-	    printk("root directory starts at sector %lx (cluster %lx), data at sector %lx\n", vol->root_start, vol->root_vnode.cluster, vol->data_start);
-	    printk("%lx total clusters, %lx free\n", vol->total_clusters, vol->free_clusters);
+	    printk("%x bytes/sector, %x sectors/cluster\n", vol->bytes_per_sector, vol->sectors_per_cluster);
+	    printk("%x reserved sectors, %x total sectors\n", vol->reserved_sectors, vol->total_sectors);
+	    printk("%x %d-bit fats, %x sectors/fat, %x root entries\n", vol->fat_count, vol->fat_bits, vol->sectors_per_fat, vol->root_entries_count);
+	    printk("root directory starts at sector %x (cluster %x), data at sector %x\n", vol->root_start, vol->root_vnode.cluster, vol->data_start);
+	    printk("%x total clusters, %x free\n", vol->total_clusters, vol->free_clusters);
 	    printk("fat mirroring is %s, fs info sector at sector %x\n", (vol->fat_mirrored) ? "on" : "off", vol->fsinfo_sector);
-	    printk("last allocated cluster = %lx\n", vol->last_allocated);
+	    printk("last allocated cluster = %x\n", vol->last_allocated);
 	    printk("root vnode id = %Lx\n", vol->root_vnode.vnid);
 	    printk("volume label [%11.11s]\n", vol->vol_label);
 	    break;
 			
 	case 100001 :
 	    printk("vnode id %Lx, dir vnid = %Lx\n", node->vnid, node->dir_vnid);
-	    printk("si = %lx, ei = %lx\n", node->sindex, node->eindex);
-	    printk("cluster = %lx (%lx), mode = %lx, size = %Lx\n", node->cluster, vol->data_start + vol->sectors_per_cluster * (node->cluster - 2), node->fn_nMode, node->st_size);
+	    printk("si = %x, ei = %x\n", node->sindex, node->eindex);
+	    printk("cluster = %x (%x), mode = %x, size = %Lx\n", node->cluster, vol->data_start + vol->sectors_per_cluster * (node->cluster - 2), node->fn_nMode, node->st_size);
 	    printk("mime = %s\n", node->mime ? node->mime : "(null)");
 	    dump_fat_chain(vol, node->cluster);
 	    break;
@@ -835,7 +835,7 @@ static int fatfs_ioctl(void *_vol, void *_node, void *cookie, int code,
 	uint32 i;
 	for (i=0,buffer=diri_init(vol,node->cluster, 0, &diri);buffer;buffer=diri_next_entry(&diri),i++) {
 	    if (buffer[0] == 0) break;
-	    printk("entry %lx:\n", i);
+	    printk("entry %x:\n", i);
 	    dump_directory(buffer);
 	}
 	diri_free(&diri);}
@@ -921,65 +921,63 @@ int fatfs_close( void* pVolume, void* pNode, void* pCookie )
 static FSOperations_s	g_sOperations =
 {
     fatfs_probe,		// op_probe
-    fatfs_mount,
-    fatfs_unmount,
-    dosfs_read_vnode,
-    dosfs_write_vnode,
-    fatfs_locate_inode,
-    NULL,			/* op_access 		*/
-    dosfs_create,
-    dosfs_mkdir,
-    NULL/*afs_mknod*/,
-    NULL/*afs_symlink*/,		/* op_symlink 		*/
-    NULL,			/* op_link 		*/
-    dosfs_rename, 		/* op_rename 		*/
-    dosfs_unlink,		/* op_unlink		*/
-    dosfs_rmdir, 		/* op_rmdir		*/
-    NULL/*afs_read_link*/,	/* op_readlink 		*/
-    NULL, 			/* op_open_dir 		*/
-    NULL,			/* op_CloseDir 		*/
-    dosfs_rewinddir, 		/* op_rewinddir 	*/
-    dosfs_readdir,
-    fatfs_open,
-    fatfs_close,
-    NULL, 			/* op_free_cookie 	*/
-    dosfs_read,
-    dosfs_write,
-    NULL,
-    NULL,
-    fatfs_ioctl,		/* op_ioctl 		*/
-    NULL, 			/* op_setflags		*/
-    dosfs_rstat, 		/* op_rstat		*/
-    dosfs_wstat,		/* op_wstat		*/
-    NULL,			/* op_fsync		*/
-    NULL/*afs_initialize*/, 	/* op_initialize	*/
-    fatfs_sync,			/* op_sync		*/
-    dosfs_rfsstat, 		/* op_rfsstat		*/
-    dosfs_wfsstat,		/* op_wfsstat		*/
-    NULL,			/* op_isatty		*/
-
-    NULL,    			/* op_add_select_req	*/
-    NULL,    			/* op_rem_select_req	*/
-  
-    NULL/*dosfs_open_attrdir*/,			/* op_open_attrdir 	*/
-    NULL/*dosfs_close_attrdir*/,			/* op_close_attrdir 	*/
-    NULL/*dosfs_rewind_attrdir*/,    			/* op_rewind_attrdir 	*/
-    NULL/*dosfs_read_attrdir*/,			/* op_read_attrdir 	*/
-    NULL,			/* op_remove_attr 	*/
-    NULL,    			/* op_rename_attr 	*/
-    NULL/*dosfs_stat_attr*/,			/* op_stat_attr 	*/
-    NULL,			/* op_write_attr 	*/
-    NULL/*dosfs_read_attr*/,			/* op_read_attr 	*/
-  
-    NULL,    			/* op_open_indexdir 	*/
-    NULL,    			/* op_close_indexdir 	*/
-    NULL,    			/* op_rewind_indexdir 	*/
-    NULL,    			/* op_read_indexdir 	*/
-    NULL,    			/* op_create_index 	*/
-    NULL,    			/* op_remove_index 	*/
-    NULL,    			/* op_rename_index 	*/
-    NULL,    			/* op_stat_index 	*/
-    NULL			/* op_get_stream_blocks */
+    fatfs_mount,		// op_mount
+    fatfs_unmount,		// op_unmount
+    dosfs_read_vnode,		// op_read_inode
+    dosfs_write_vnode,		// op_write_inode
+    fatfs_locate_inode,		// op_locate_inode
+    NULL,			// op_access
+    dosfs_create,		// op_create
+    dosfs_mkdir,		// op_mkdir
+    NULL,			// op_mknod
+    NULL,			// op_symlink
+    NULL,			// op_link
+    dosfs_rename, 		// op_rename
+    dosfs_unlink,		// op_unlink
+    dosfs_rmdir, 		// op_rmdir
+    NULL,			// op_readlink
+    NULL, 			// op_opendir
+    NULL,			// op_closedir
+    dosfs_rewinddir, 		// op_rewinddir
+    dosfs_readdir,		// op_readdir
+    fatfs_open,			// op_open
+    fatfs_close,		// op_close
+    NULL, 			// op_free_cookie
+    dosfs_read,			// op_read
+    dosfs_write,		// op_write
+    NULL,			// op_readv
+    NULL,			// op_writev
+    fatfs_ioctl,		// op_ioctl
+    NULL, 			// op_setflags
+    dosfs_rstat, 		// op_rstat
+    dosfs_wstat,		// op_wstat
+    NULL,			// op_fsync
+    NULL,		 	// op_initialize
+    fatfs_sync,			// op_sync
+    dosfs_rfsstat, 		// op_rfsstat
+    dosfs_wfsstat,		// op_wfsstat
+    NULL,			// op_isatty
+    NULL,    			// op_add_select_req
+    NULL,    			// op_rem_select_req
+    NULL,			// op_open_attrdir
+    NULL,			// op_close_attrdir
+    NULL,    			// op_rewind_attrdir
+    NULL,			// op_read_attrdir
+    NULL,			// op_remove_attr
+    NULL,    			// op_rename_attr
+    NULL,			// op_stat_attr
+    NULL,			// op_write_attr
+    NULL,			// op_read_attr
+    NULL,    			// op_open_indexdir
+    NULL,    			// op_close_indexdir
+    NULL,    			// op_rewind_indexdir
+    NULL,    			// op_read_indexdir
+    NULL,    			// op_create_index
+    NULL,    			// op_remove_index
+    NULL,    			// op_rename_index
+    NULL,    			// op_stat_index
+    NULL,			// op_get_stream_blocks
+    NULL			// op_truncate
 };
 
 int fs_init( const char* pzName, FSOperations_s** ppsOps )
@@ -987,73 +985,3 @@ int fs_init( const char* pzName, FSOperations_s** ppsOps )
   *ppsOps = &g_sOperations;
   return( FSDRIVER_API_VERSION );
 }
-
-
-#if 0
-vnode_ops fs_entry =  {
-	&dosfs_read_vnode,
-	&dosfs_write_vnode,
-	&dosfs_remove_vnode,
-	NULL,
-	&dosfs_walk,
-	&dosfs_access,
-	&dosfs_create,
-	&dosfs_mkdir,
-	NULL,
-	NULL,
-	&dosfs_rename,
-	&dosfs_unlink,
-	&dosfs_rmdir,
-	&dosfs_readlink,
-	&dosfs_opendir,
-	&dosfs_closedir,
-	&dosfs_free_dircookie,
-	&dosfs_rewinddir,
-	&dosfs_readdir,
-	&dosfs_open,
-	&dosfs_close,
-	&dosfs_free_cookie,
-	&dosfs_read,
-	&dosfs_write,
-	NULL,
-	NULL,
-	&dosfs_ioctl,
-	NULL,
-	&dosfs_rstat,
-	&dosfs_wstat,
-	NULL,
-	NULL,
-	&dosfs_mount,
-	&dosfs_unmount,
-	&dosfs_sync,
-	&dosfs_rfsstat,
-	&dosfs_wfsstat,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	&dosfs_open_attrdir,
-	&dosfs_close_attrdir,
-	&dosfs_free_attrcookie,
-	&dosfs_rewind_attrdir,
-	&dosfs_read_attrdir,
-	&dosfs_write_attr,
-	&dosfs_read_attr,
-	NULL,
-	NULL,
-	&dosfs_stat_attr,
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-int32	api_version = B_CUR_FS_API_VERSION;
-#endif

@@ -154,7 +154,7 @@ static int afs_mark_blocks_used( AfsVolume_s * psVolume, const BlockRun_s * psRu
 			{
 				if( panBlock[nWord] != 0 )
 				{
-					panic( "Attempt to alloc used block! %ld:%d:%d", psRun->group, nBlock, nWord );
+					panic( "Attempt to alloc used block! %d:%d:%d", psRun->group, nBlock, nWord );
 				}
 				panBlock[nWord] = ~0;
 				nSize -= 32;
@@ -164,7 +164,7 @@ static int afs_mark_blocks_used( AfsVolume_s * psVolume, const BlockRun_s * psRu
 			{
 				if( ( nMask & panBlock[nWord] ) != 0 )
 				{
-					panic( "Attempt to alloc used block! %ld:%d:%d:%d Mask = %08lx", psRun->group, nBlock, nWord, nBit, nMask );
+					panic( "Attempt to alloc used block! %d:%d:%d:%d Mask = %08x", psRun->group, nBlock, nWord, nBit, nMask );
 				}
 				panBlock[nWord] |= nMask;
 				nSize--;
@@ -215,7 +215,7 @@ int afs_free_blocks( AfsVolume_s * psVolume, const BlockRun_s * psRun )
 
 	if( psRun->start + psRun->len > psSuperBlock->as_nBlockPerGroup )
 	{
-		panic( "afs_free_blocks() Attempt to free invalid run %ld , %d , %d\n", psRun->group, psRun->start, psRun->len );
+		panic( "afs_free_blocks() Attempt to free invalid run %d, %d, %d\n", psRun->group, psRun->start, psRun->len );
 		return( -EINVAL );
 	}
 
@@ -245,7 +245,7 @@ int afs_free_blocks( AfsVolume_s * psVolume, const BlockRun_s * psRun )
 			{
 				if( panBlock[nWord] != ~0 )
 				{
-					panic( "Attempt to free unused block! %ld:%d:%d", psRun->group, nBlock, nWord );
+					panic( "Attempt to free unused block! %d:%d:%d", psRun->group, nBlock, nWord );
 				}
 				panBlock[nWord] = 0;
 				nSize -= 32;
@@ -255,7 +255,7 @@ int afs_free_blocks( AfsVolume_s * psVolume, const BlockRun_s * psRun )
 			{
 				if( ( nMask & panBlock[nWord] ) != nMask )
 				{
-					panic( "Attempt to free unused block! %ld:%d:%d:%d Mask = %08lx", psRun->group, nBlock, nWord, nBit, nMask );
+					panic( "Attempt to free unused block! %d:%d:%d:%d Mask = %08x", psRun->group, nBlock, nWord, nBit, nMask );
 				}
 				panBlock[nWord] &= ~nMask;
 				nSize--;

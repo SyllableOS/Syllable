@@ -66,7 +66,7 @@ static int32 _fat_ioctl_(nspace *vol, uint32 action, uint32 cluster, int32 N)
 
     if (check_nspace_magic(vol, "_fat_ioctl_")) return -EINVAL;
 
-    DPRINTF(3, ("_fat_ioctl_: action %lx, cluster %lx, N %lx\n", action, cluster, N));
+    DPRINTF(3, ("_fat_ioctl_: action %x, cluster %x, N %x\n", action, cluster, N));
 
     if (action == _IOCTL_COUNT_FREE_)
 	cluster = 2;
@@ -76,7 +76,7 @@ static int32 _fat_ioctl_(nspace *vol, uint32 action, uint32 cluster, int32 N)
 
     if (action != _IOCTL_COUNT_FREE_) {
 	if (!IS_DATA_CLUSTER(cluster)) {
-	    DPRINTF(0, ("_fat_ioctl_ called with invalid cluster (%lx)\n", cluster));
+	    DPRINTF(0, ("_fat_ioctl_ called with invalid cluster (%x)\n", cluster));
 	    return -EINVAL;
 	}
     }
@@ -87,7 +87,7 @@ static int32 _fat_ioctl_(nspace *vol, uint32 action, uint32 cluster, int32 N)
     off %= vol->bytes_per_sector;
 
     if ((block1 = (uint8 *)get_cache_block(vol->fd, sector, vol->bytes_per_sector)) == NULL) {
-	DPRINTF(0, ("_fat_ioctl_: error reading fat (sector %lx)\n", sector));
+	DPRINTF(0, ("_fat_ioctl_: error reading fat (sector %x)\n", sector));
 	return -EIO;
     }
 
@@ -98,7 +98,7 @@ static int32 _fat_ioctl_(nspace *vol, uint32 action, uint32 cluster, int32 N)
 	if (vol->fat_bits == 12) {
 	    if (off == vol->bytes_per_sector - 1) {
 		if ((block2 = (uint8 *)get_cache_block(vol->fd, ++sector, vol->bytes_per_sector)) == NULL) {
-		    DPRINTF(0, ("_fat_ioctl_: error reading fat (sector %lx)\n", sector));
+		    DPRINTF(0, ("_fat_ioctl_: error reading fat (sector %x)\n", sector));
 		    result = -EIO;
 		    goto bi;
 		}
@@ -228,7 +228,7 @@ static int32 _fat_ioctl_(nspace *vol, uint32 action, uint32 cluster, int32 N)
 	}
 		
 	if (block1 == NULL) {
-	    DPRINTF(0, ("_fat_ioctl_: error reading fat (sector %lx)\n", sector));
+	    DPRINTF(0, ("_fat_ioctl_: error reading fat (sector %x)\n", sector));
 	    result = -EIO;
 	    goto bi;
 	}
@@ -239,10 +239,10 @@ bi:
 
     if (action == _IOCTL_ALLOCATE_N_ENTRIES_) {
 	if (result < 0) {
-	    DPRINTF(0, ("pooh. there is a problem. clearing chain (%lx)\n", first));
+	    DPRINTF(0, ("pooh. there is a problem. clearing chain (%x)\n", first));
 	    if (first != 0) clear_fat_chain(vol, first);
 	} else if (n != N) {
-	    DPRINTF(0, ("not enough free entries (%lx/%lx found)\n", n, N));
+	    DPRINTF(0, ("not enough free entries (%x/%x found)\n", n, N));
 	    if (first != 0) clear_fat_chain(vol, first);
 	    result = -ENOSPC;
 	} else if (result == 0) {
@@ -253,7 +253,7 @@ bi:
     }
 
     if (result < B_OK)
-	DPRINTF(0, ("_fat_ioctl_ error: action = %lx cluster = %lx N = %lx (%s)\n", action, cluster, N, strerror(result)));
+	DPRINTF(0, ("_fat_ioctl_ error: action = %x cluster = %x N = %x (%s)\n", action, cluster, N, strerror(result)));
 
     return result;
 }
@@ -279,7 +279,7 @@ static int32 get_fat_entry(nspace *vol, uint32 cluster)
 	if (value > 0x0ffffff0)
 		return BAD_FAT_ENTRY;
 
-	DPRINTF(0, ("invalid fat entry: %lx\n", value));
+	DPRINTF(0, ("invalid fat entry: %x\n", value));
 	return BAD_FAT_ENTRY;
 }
 
@@ -312,13 +312,13 @@ uint32 count_clusters(nspace *vol, int32 cluster)
 {
 	int32 count = 0;
 
-	DPRINTF(2, ("count_clusters %lx\n", cluster));
+	DPRINTF(2, ("count_clusters %x\n", cluster));
 	
 	if (check_nspace_magic(vol, "count_clusters")) return 0;
 
 	// not intended for use on root directory
 	if (!IS_DATA_CLUSTER(cluster)) {
-		DPRINTF(0, ("count_clusters called on invalid cluster (%lx)\n", cluster));
+		DPRINTF(0, ("count_clusters called on invalid cluster (%x)\n", cluster));
 		return 0;
 	}
 
@@ -332,12 +332,12 @@ uint32 count_clusters(nspace *vol, int32 cluster)
 		cluster = get_fat_entry(vol, cluster);
 	}
 
-	DPRINTF(2, ("count_clusters %lx = %lx\n", cluster, count));
+	DPRINTF(2, ("count_clusters %x = %x\n", cluster, count));
 
 	if (cluster == END_FAT_ENTRY)
 		return count;
 
-	printk("cluster = %lx\n", cluster);
+	printk("cluster = %x\n", cluster);
 	ASSERT(0);
 
 	return 0;
@@ -349,30 +349,30 @@ status_t clear_fat_chain(nspace *vol, uint32 cluster)
 	status_t result;
 
 	if (!IS_DATA_CLUSTER(cluster)) {
-		DPRINTF(0, ("clear_fat_chain called on invalid cluster (%lx)\n", cluster));
+		DPRINTF(0, ("clear_fat_chain called on invalid cluster (%x)\n", cluster));
 		return -EINVAL;
 	}
 
 	ASSERT(count_clusters(vol, cluster) != 0);
 
-	DPRINTF(2, ("clearing fat chain: %lx", cluster));
+	DPRINTF(2, ("clearing fat chain: %x", cluster));
 	while (IS_DATA_CLUSTER(cluster)) {
 		if ((c = get_fat_entry(vol, cluster)) < 0) {
-			DPRINTF(0, ("clear_fat_chain: error clearing fat entry for cluster %lx (%s)\n", cluster, strerror(c)));
+			DPRINTF(0, ("clear_fat_chain: error clearing fat entry for cluster %x (%s)\n", cluster, strerror(c)));
 			return c;
 		}
 		if ((result = set_fat_entry(vol, cluster, 0)) != B_OK) {
-			DPRINTF(0, ("clear_fat_chain: error clearing fat entry for cluster %lx (%s)\n", cluster, strerror(result)));
+			DPRINTF(0, ("clear_fat_chain: error clearing fat entry for cluster %x (%s)\n", cluster, strerror(result)));
 			return result;
 		}
 		vol->free_clusters++;
 		cluster = c;
-		DPRINTF(2, (", %lx", cluster));
+		DPRINTF(2, (", %x", cluster));
 	}
 	DPRINTF(2, ("\n"));
 
 	if (cluster != END_FAT_ENTRY)
-		printk("clear_fat_chain: fat chain terminated improperly with %lx\n", cluster);
+		printk("clear_fat_chain: fat chain terminated improperly with %x\n", cluster);
 
 	return 0;
 }
@@ -383,7 +383,7 @@ status_t allocate_n_fat_entries(nspace *vol, int32 n, int32 *start)
 
 	ASSERT(n > 0);
 
-	DPRINTF(2, ("allocating %lx fat entries\n", n));
+	DPRINTF(2, ("allocating %x fat entries\n", n));
 
 	c = _fat_ioctl_(vol, _IOCTL_ALLOCATE_N_ENTRIES_, 0, n);
 	if (c < 0)
@@ -392,7 +392,7 @@ status_t allocate_n_fat_entries(nspace *vol, int32 n, int32 *start)
 	ASSERT(IS_DATA_CLUSTER(c));
 	ASSERT(count_clusters(vol, c) == n);
 
-	DPRINTF(2, ("allocated %lx fat entries at %lx\n", n, c));
+	DPRINTF(2, ("allocated %x fat entries at %x\n", n, c));
 
 	*start = c;
 	return 0;
@@ -404,10 +404,10 @@ status_t set_fat_chain_length(nspace *vol, vnode *node, uint32 clusters,
 	status_t result;
 	int32 i, c, n;
 
-	DPRINTF(1, ("set_fat_chain_length: %Lx to %lx clusters (%lx)\n", node->vnid, clusters, node->cluster));
+	DPRINTF(1, ("set_fat_chain_length: %Lx to %x clusters (%x)\n", node->vnid, clusters, node->cluster));
 	
 	if (IS_FIXED_ROOT(node->cluster) || (!IS_DATA_CLUSTER(node->cluster) && (node->cluster != 0))) {
-		DPRINTF(0, ("set_fat_chain_length called on invalid cluster (%lx)\n", node->cluster));
+		DPRINTF(0, ("set_fat_chain_length called on invalid cluster (%x)\n", node->cluster));
 		return -EINVAL;
 	}
 
@@ -431,7 +431,7 @@ status_t set_fat_chain_length(nspace *vol, vnode *node, uint32 clusters,
 	}
 
 	if (node->cluster == 0) {
-		DPRINTF(1, ("node has no clusters. adding %lx clusters\n", clusters));
+		DPRINTF(1, ("node has no clusters. adding %x clusters\n", clusters));
 
 		if ((result = allocate_n_fat_entries(vol, clusters, &n)) != B_OK)
 			return result;
@@ -454,7 +454,7 @@ status_t set_fat_chain_length(nspace *vol, vnode *node, uint32 clusters,
 
 	if (clusters > i) {
 		// add new fat entries
-		DPRINTF(1, ("adding %lx new fat entries\n", clusters - i));
+		DPRINTF(1, ("adding %x new fat entries\n", clusters - i));
 		if ((result = allocate_n_fat_entries(vol, clusters - i, &n)) != B_OK)
 			return result;
 
@@ -492,10 +492,10 @@ status_t set_fat_chain_length(nspace *vol, vnode *node, uint32 clusters,
 
 void dump_fat_chain(nspace *vol, uint32 cluster)
 {
-	printk("fat chain: %lx", cluster);
+	printk("fat chain: %x", cluster);
 	while (IS_DATA_CLUSTER(cluster)) {
 		cluster = get_fat_entry(vol, cluster);
-		printk(" %lx", cluster);
+		printk(" %x", cluster);
 	}
 	printk("\n");
 }

@@ -795,7 +795,7 @@ static int rfs_parse_image( RDVolume_s* psVolume, FileNode_s* psParent, uint8* p
  ****************************************************************************/
 
 static int rfs_mount( kdev_t nDevNum, const char* pzDevPath,
-		      uint32 nFlags, void* pArgs, int nArgLen, void** ppVolData, ino_t* pnRootIno )
+		      uint32 nFlags, const void* pArgs, int nArgLen, void** ppVolData, ino_t* pnRootIno )
 {
     RDVolume_s* psVolume = kmalloc( sizeof( RDVolume_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
     FileNode_s*	psRootNode;

@@ -67,7 +67,7 @@ status_t write_vnode_entry(nspace *vol, vnode *node)
 	// though we do the node->deleted check above
 
 	if ((node->cluster != 0) && !IS_DATA_CLUSTER(node->cluster)) {
-		printk("write_vnode_entry called on invalid cluster (%lx)\n", node->cluster);
+		printk("write_vnode_entry called on invalid cluster (%x)\n", node->cluster);
 		return -EINVAL;
 	}
 
@@ -215,7 +215,7 @@ int dosfs_wstat(void *_vol, void *_node, const struct stat *st, uint32 mask)
 			err = E2BIG;
 		} else {
 			uint32 clusters = (st->st_size + vol->bytes_per_sector*vol->sectors_per_cluster - 1) / vol->bytes_per_sector / vol->sectors_per_cluster;
-			DPRINTF(0, ("setting fat chain length to %lx clusters\n", clusters));
+			DPRINTF(0, ("setting fat chain length to %x clusters\n", clusters));
 			if ((err = set_fat_chain_length(vol, node, clusters, true)) == B_OK) {
 				node->st_size = st->st_size;
 				node->iteration++;
@@ -371,7 +371,7 @@ int dosfs_read(void *_vol, void *_node, void *_cookie, off_t pos,
     diff /= vol->bytes_per_sector; /* convert to sectors */
 
     if ((result = init_csi(vol, cluster1, 0, &iter)) != B_OK) {
-	printk("dosfs_read: invalid starting cluster (%lx)\n", cluster1);
+	printk("dosfs_read: invalid starting cluster (%x)\n", cluster1);
 	goto bi;
     }
 	
@@ -388,7 +388,7 @@ int dosfs_read(void *_vol, void *_node, void *_cookie, off_t pos,
 	size_t amt;
 	buffer = csi_get_block(&iter);
 	if (buffer == NULL) {
-	    printk("dosfs_read: error reading cluster %lx, sector %lx\n", iter.cluster, iter.sector);
+	    printk("dosfs_read: error reading cluster %x, sector %x\n", iter.cluster, iter.sector);
 	    result = -EIO;
 	    goto bi;
 	}
@@ -425,7 +425,7 @@ int dosfs_read(void *_vol, void *_node, void *_cookie, off_t pos,
 
 	buffer = csi_get_block(&iter);
 	if (buffer == NULL) {
-	    printk("dosfs_read: error reading cluster %lx, sector %lx\n", iter.cluster, iter.sector);
+	    printk("dosfs_read: error reading cluster %x, sector %x\n", iter.cluster, iter.sector);
 	    result = -EIO;
 	    goto bi;
 	}
@@ -489,7 +489,7 @@ int dosfs_write(void *_vol, void *_node, void *_cookie, off_t pos,
 		
     }
 
-    DPRINTF(0, ("dosfs_write called %x bytes at %Lx from buffer at %lx (vnode id %Lx)\n", len, pos, (uint32)buf, node->vnid));
+    DPRINTF(0, ("dosfs_write called %x bytes at %Lx from buffer at %x (vnode id %Lx)\n", len, pos, (uint32)buf, node->vnid));
 
     if ((cookie->mode & O_RWMASK) == O_RDONLY) {
 	printk("dosfs_write: called on file opened as read-only\n");
@@ -540,7 +540,7 @@ int dosfs_write(void *_vol, void *_node, void *_cookie, off_t pos,
 	   */
 	write_vnode_entry(vol, node);
 
-	DPRINTF(0, ("setting file size to %Lx (%lx clusters)\n", node->st_size, clusters));
+	DPRINTF(0, ("setting file size to %Lx (%x clusters)\n", node->st_size, clusters));
     }
 
     if (cluster1 == 0xffffffff) {
@@ -550,7 +550,7 @@ int dosfs_write(void *_vol, void *_node, void *_cookie, off_t pos,
     diff /= vol->bytes_per_sector; /* convert to sectors */
 
     if ((result = init_csi(vol, cluster1, 0, &iter)) != B_OK) {
-	printk("dosfs_write: invalid starting cluster (%lx)\n", cluster1);
+	printk("dosfs_write: invalid starting cluster (%x)\n", cluster1);
 	goto bi;
     }
 	
@@ -567,7 +567,7 @@ int dosfs_write(void *_vol, void *_node, void *_cookie, off_t pos,
 	size_t amt;
 	buffer = csi_get_block(&iter);
 	if (buffer == NULL) {
-	    printk("dosfs_write: error writing cluster %lx, sector %lx\n", iter.cluster, iter.sector);
+	    printk("dosfs_write: error writing cluster %x, sector %x\n", iter.cluster, iter.sector);
 	    result = -EIO;
 	    goto bi;
 	}
@@ -605,7 +605,7 @@ int dosfs_write(void *_vol, void *_node, void *_cookie, off_t pos,
 
 	buffer = csi_get_block(&iter);
 	if (buffer == NULL) {
-	    printk("error writing cluster %lx, sector %lx\n", iter.cluster, iter.sector);
+	    printk("error writing cluster %x, sector %x\n", iter.cluster, iter.sector);
 	    result = -EIO;
 	    goto bi;
 	}

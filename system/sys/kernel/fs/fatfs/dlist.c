@@ -73,7 +73,7 @@ static status_t dlist_realloc(nspace *vol, uint32 allocate)
 {
 	ino_t *vnid_list;
 
-	DPRINTF(0, ("dlist_realloc %lx -> %lx\n", vol->dlist.allocated, allocate));
+	DPRINTF(0, ("dlist_realloc %x -> %x\n", vol->dlist.allocated, allocate));
 
 	ASSERT(allocate != vol->dlist.allocated);
 	ASSERT(allocate > vol->dlist.entries);
@@ -136,7 +136,7 @@ ino_t dlist_find(nspace *vol, uint32 cluster)
 {
 	int i;
 
-	DPRINTF(1, ("dlist_find cluster %lx\n", cluster));
+	DPRINTF(1, ("dlist_find cluster %x\n", cluster));
 
 	ASSERT(((cluster >= 2) && (cluster < vol->total_clusters + 2)) || (cluster == 1));
 
@@ -144,7 +144,7 @@ ino_t dlist_find(nspace *vol, uint32 cluster)
 		if (CLUSTER_OF_DIR_CLUSTER_VNID(vol->dlist.vnid_list[i]) == cluster)
 			return vol->dlist.vnid_list[i];
 
-	DPRINTF(1, ("dlist_find cluster %lx not found\n", cluster));
+	DPRINTF(1, ("dlist_find cluster %x not found\n", cluster));
 
 	return -1LL;
 }
@@ -153,7 +153,7 @@ void dlist_dump(nspace *vol)
 {
 	int i;
 
-	printk("%lx/%lx dlist entries filled, QUANTUM = %x\n", vol->dlist.entries,
+	printk("%x/%x dlist entries filled, QUANTUM = %x\n", vol->dlist.entries,
 		vol->dlist.allocated, DLIST_ENTRY_QUANTUM);
 
 	for (i=0;i<vol->dlist.entries;i++)

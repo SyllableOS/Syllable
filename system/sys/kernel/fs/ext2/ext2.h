@@ -197,7 +197,7 @@ typedef struct {
 	
 
 static int ext2_probe(const char * dev, fs_info * fsinfo);
-static int ext2_mount(kdev_t nsid, const char * dev, uint32 flags, void * _params, int len, void ** _data, ino_t * vnid);
+static int ext2_mount(kdev_t nsid, const char * dev, uint32 flags, const void * _params, int len, void ** _data, ino_t * vnid);
 static int ext2_unmount(void * _vol);
 static int ext2_walk(void * _vol, void * _parent, const char * name, int name_len, ino_t * inode);
 static int ext2_read_inode(void * _vol, ino_t inid, void ** _node);
@@ -270,6 +270,6 @@ static FSOperations_s ext2_operations =  {
 	NULL,
 	NULL,
 	NULL,
+	NULL,
 	NULL
 };
-

@@ -1378,6 +1378,7 @@ static FSOperations_s g_sOperations = {
 	NULL,			/* rename_index       */
 	NULL,			/* stat_index         */
 	NULL,			/* get_file_blocks    */
+	NULL			/* truncate           */
 };
 
 
@@ -1620,7 +1621,7 @@ int create_device_node( int nDeviceID, int nDeviceHandle, const char *pzPath, co
 		psDevice = find_device_by_id( nDeviceID );
 		if ( psDevice == NULL )
 		{
-			printk( "create_device_node() cant find device %d\n", nDeviceID );
+			printk( "create_device_node() can't find device %d\n", nDeviceID );
 			return ( -EINVAL );
 		}
 	}
@@ -2083,7 +2084,7 @@ bool init_dev_fs( void )
 {
 	g_hMutex = create_semaphore( "devfs_lock", 1, 0 );
 	kassertw( g_hMutex >= 0 );
-	register_file_system( "_device_fs", &g_sOperations );
+	register_file_system( "_device_fs", &g_sOperations, FSDRIVER_API_VERSION );
 
 	load_dev_fs_config();
 

@@ -77,7 +77,7 @@ void dump_vcache(nspace *vol)
 {
 	int i;
 	struct vcache_entry *c;
-	printk("vnid cache size %lx, cur vnid = %Lx\n"
+	printk("vnid cache size %x, cur vnid = %Lx\n"
 			"vnid             loc\n", 
 			vol->vcache.cache_size, vol->vcache.cur_vnid);
 	for (i=0;i<vol->vcache.cache_size;i++)
@@ -118,7 +118,7 @@ status_t init_vcache(nspace *vol)
 		return vol->vcache.vc_sem;
 	}
 
-	DPRINTF(0, ("init_vcache: initialized vnid cache with %lx entries\n", vol->vcache.cache_size));
+	DPRINTF(0, ("init_vcache: initialized vnid cache with %x entries\n", vol->vcache.cache_size));
 
 	return 0;
 }
@@ -330,7 +330,7 @@ status_t vcache_vnid_to_loc(nspace *vol, ino_t vnid, ino_t *loc)
 {
 	struct vcache_entry *e;
 
-	DPRINTF(1, ("vcache_vnid_to_loc %Lx %lx\n", vnid, (uint32)loc));
+	DPRINTF(1, ("vcache_vnid_to_loc %Lx %x\n", vnid, (uint32)loc));
 
 	LOCK_CACHE_R;
 	e = _find_vnid_in_vcache_(vol, vnid);
@@ -345,7 +345,7 @@ status_t vcache_loc_to_vnid(nspace *vol, ino_t loc, ino_t *vnid)
 {
 	struct vcache_entry *e;
 
-	DPRINTF(1, ("vcache_loc_to_vnid %Lx %lx\n", loc, (uint32)vnid));
+	DPRINTF(1, ("vcache_loc_to_vnid %Lx %x\n", loc, (uint32)vnid));
 
 	LOCK_CACHE_R;
 	e = _find_loc_in_vcache_(vol, loc);

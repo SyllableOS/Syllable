@@ -525,13 +525,13 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 		buf += 4;
 		rec->startLBN[MSB_DATA] = *(uint32*)(buf);
 		buf += 4;
-		kerndbg( KERN_DEBUG_LOW, "InitNode - data start LBN is %ld\n", rec->startLBN[FS_DATA_FORMAT]);
+		kerndbg( KERN_DEBUG_LOW, "InitNode - data start LBN is %d\n", rec->startLBN[FS_DATA_FORMAT]);
 		
 		rec->dataLen[LSB_DATA] = *(uint32*)(buf);
 		buf += 4;
 		rec->dataLen[MSB_DATA] = *(uint32*)(buf);
 		buf += 4;
-		kerndbg( KERN_DEBUG_LOW, "InitNode - data length is %ld\n", rec->dataLen[FS_DATA_FORMAT]);
+		kerndbg( KERN_DEBUG_LOW, "InitNode - data length is %d\n", rec->dataLen[FS_DATA_FORMAT]);
 		
 		InitRecDate(&(rec->recordDate), buf);
 		buf += 7;
@@ -550,7 +550,7 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 
 		rec->volSeqNum = *(uint32*)(buf);
 		buf += 4;
-		kerndbg( KERN_DEBUG_LOW, "InitNode - volume seq num is %ld\n", rec->volSeqNum);
+		kerndbg( KERN_DEBUG_LOW, "InitNode - volume seq num is %d\n", rec->volSeqNum);
 			
 		rec->fileIDLen = *(uint8*)(buf);
 		buf ++;

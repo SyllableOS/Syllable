@@ -282,7 +282,7 @@ int dosfs_read_attr(void *_vol, void *_node, const char *name, int namelen, int 
 {
 	nspace *vol = (nspace *)_vol;
 	vnode *node = (vnode *)_node;
-	int attrib_len = node->mime ? strlen( node->mime ) : NULL;
+	int attrib_len = node->mime ? strlen( node->mime ) : 0;
 
 	DPRINTF(0, ("dosfs_read_attr (%s)\n", name));
 

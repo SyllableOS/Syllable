@@ -1144,3 +1144,16 @@ int sys_sigsuspend( unsigned long int nSetHigh, unsigned long int nSetMid,
 
 	return ( 0 );
 }
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+
+int sys_sigaltstack( const stack_t *__restrict ss, stack_t *__restrict oss )
+{
+	printk( "sys_sigaltstack( %p, %p ) stub called\n", ss, oss );
+	return ( -ENOSYS );
+}

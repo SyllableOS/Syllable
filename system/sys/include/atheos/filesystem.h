@@ -257,6 +257,8 @@ typedef int op_stat_index( void* pVolume, const char* pzName, int nNameLen, stru
 typedef int op_get_file_blocks( void* pVolume, void* pNode, off_t nPos, int nBlockCount,
 				off_t* pnStart, int* pnActualCount );
 
+typedef int op_truncate( void* pVolume, void* pNode, off_t nLen );
+
 typedef	struct
 {
     op_probe*		probe;
@@ -317,11 +319,12 @@ typedef	struct
     op_rename_index*	rename_index;
     op_stat_index*	stat_index;
     op_get_file_blocks*	get_file_blocks;
+    op_truncate*	truncate;		// API version 2
 } FSOperations_s;
 
 
   /* Current filesystem driver API version */
-#define FSDRIVER_API_VERSION	1
+#define FSDRIVER_API_VERSION	2
 
   /* Prototype for the fs-driver init function.
    * The init function should be named fs_init() and should
