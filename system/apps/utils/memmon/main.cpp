@@ -32,6 +32,8 @@
 
 #include <util/application.h>
 #include <util/message.h>
+#include <util/exceptions.h>
+#include <gui/exceptions.h>
 
 using namespace os;
 
@@ -171,13 +173,13 @@ MonWindow::MonWindow( const Rect& cFrame ) :
     Window( cFrame, "sysmon_wnd", "Memory usage", 0 )
 {
     Lock();
+
     Rect	  cWndBounds = GetBounds();
     m_nUpdateCount = 0;
-  
-    m_pcTableView   = new TableView( cWndBounds, "_cpumon_table", NULL, 1, 2, CF_FOLLOW_ALL );
+
+    m_pcTableView   = new TableView( cWndBounds, "_cpumon_table", "", 1, 2, CF_FOLLOW_ALL );
     m_pcMemUsage    = new MultiMeter( Rect( 0, 0, 1, 1 ), "Mem usage", WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
     m_pcMemUsageStr = new StringView( Rect( 0, 0, 1, 1 ), "mem_usage_str", "100", ALIGN_CENTER, WID_WILL_DRAW );
-
   
     m_pcTableView->SetChild( m_pcMemUsageStr, 0, 0 );
     m_pcTableView->SetChild( m_pcMemUsage, 0, 1 );
@@ -193,7 +195,7 @@ MonWindow::MonWindow( const Rect& cFrame ) :
 	char	zPath[ 256 ];
 			
 	strcpy( zPath, pzHome );
-	strcat( zPath, "/config/sysmon.cfg" );
+	strcat( zPath, "/Settings/sysmon.cfg" );
 
 	hFile = fopen( zPath, "rb" );
 
@@ -203,6 +205,7 @@ MonWindow::MonWindow( const Rect& cFrame ) :
 				
 	    fread( &cNewFrame, sizeof( cNewFrame ), 1, hFile );
 	    fclose( hFile );
+
 	    Lock();
 	    SetFrame( cNewFrame );
 	    Unlock();
@@ -425,9 +428,9 @@ void MultiMeter::AddValue( float vTotMem, float vCacheSize, float vDirtyCache )
     m_avDirtyCacheSize[ i ] = m_avDirtyCacheSize[ i - 1 ];
   }
 
-  m_avTotUsedMem[ 0 ]     = min( 1.0f, vTotMem );
-  m_avCacheSize[ 0 ]      = min( 1.0f, vCacheSize );
-  m_avDirtyCacheSize[ 0 ] = min( 1.0f, vDirtyCache );
+  m_avTotUsedMem[ 0 ]     = std::min( 1.0f, vTotMem );
+  m_avCacheSize[ 0 ]      = std::min( 1.0f, vCacheSize );
+  m_avDirtyCacheSize[ 0 ] = std::min( 1.0f, vDirtyCache );
 
   Rect cBounds = GetBounds();
   
@@ -498,8 +501,17 @@ void MultiMeter::MouseUp( const Point& cPosition, uint32 nButtons, Message* pcDa
 int main()
 {
   Application* pcMyApp;
-  pcMyApp = new MyApp( "application/x-vnd.KHS-atheos_memory_monitor" );
+  
+  try {
+	  pcMyApp = new MyApp( "application/x-vnd.KHS-atheos_memory_monitor" );
  
-  pcMyApp->Run();
+	  pcMyApp->Run();
+  } catch( errno_exception &e ) {
+  	printf( "Unhandled exception: %s\n", e.what() );
+  } catch( GeneralFailure &e ) {
+  	printf( "Unhandled exception: %s\n", e.what() );
+  } catch( ... ) {
+  	printf( "Unhandled exception!\n" );
+  }
   return( 0 );
 }
