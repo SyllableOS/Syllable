@@ -1,13 +1,39 @@
 * December 1 2003, Henrik Isaksson *
 
  Applied Arno's patches:
- - The UploadVideoData() method has been removed from the DisplayDriver
-   class. There will probably a more general solution for this in the future.
  - The window buttons have changed: Clicking on the zoom button will
    maximize the window and clicking on the toggle button will minimize the
    window.
+ - Caching of the converted font palette.
+ - The appserver can close all opened windows on the screen if it receives
+   the DR_CLOSE_WINDOWS message. This still needs some more testing with
+   applications until we use this call.
+ - Window class:
+    * Added a SetIcon() and GetIcon() method.
+    * Implemented ScreenModeChanged() and DesktopActivated().
+    * Added a WindowsChanged() method that is called if the windows on
+      the desktop change. (e.g. new ones appear, their icons or titles change)
+ - Desktop class:
+    * Moved the private class members into a private class.
+    * Added a GetWindows() and ActivateWindow() method.
 
- [ more info to follow ]
+ - Video driver API:
+
+	* The drivers have been splitted into a kernel and an appserver driver.
+	  The kernel drivers are really generic for now. They scan for supported
+	  cards and create device nodes for them in /dev/graphics. The kernel
+	  drivers have to implement the IOCTL_GET_APPSERVER_DRIVER ioctl, that is
+	  used by the appserver to find out what appserver driver belongs to the
+	  kernel driver. Although the implementation of other ioctls is private to
+	  the appserver and kernel driver, I have predefined some for pci graphics
+	  cards in a header file called "pci_graphics.h" in /ainc/appserver.
+	* The appserver iterates through the /dev/graphics directory. For now it
+	  only uses the first node it finds. Then it opens the device, gets the
+	  name of the appserver driver, loads the appserver driver and calls the
+	  init_gfx_driver() function of it with the filedescriptor of the opened
+	  device node.
+	* The RenderGlyph() methods have been moved into the DisplayDriver class
+	  to avoid accesses to the framebuffer from outside this class.
 
 * November 30 2003, Henrik Isaksson *
 
@@ -286,6 +312,8 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
+
 
 
 

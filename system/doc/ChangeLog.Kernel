@@ -1,3 +1,29 @@
+* Dec 1 2003, Henrik Isaksson *
+
+Applied Arno's patches:
+
+Kernel:
+
+o Added a get_area_physical_address() function that returns the physical
+  start address of one area.
+o A lock for protecting the devices list has been added.
+o Fixed the remove_driver() function in the USB busmanager.
+
+GeForce FX driver:
+
+o Ported the GeForce FX specific code of the current XFree86 driver into
+  a Syllable GeForce FX driver. This was necessary, because the access to
+  the engine registers using the fifo, that is used in the current
+  Syllable nvidia driver does not work anymore. You have to use a command
+  buffer instead.
+o The driver supports all accelerated functions (BltBitmap, FillRect,
+  DrawLine, hardware cursor, video overlays ).
+o All drawing operations and framebuffer accesses are first done in an
+  offscreen buffer. A seperate driver thread copies this data into the
+  visible area on v-blank. This  seems to make scrolling a lot smoother.
+o I tried to implement DMA copies to the overlay memory, but this caused
+  problems and so this code is disabled for now.
+
 * Nov 30 2003, Henrik Isaksson *
 
 o Public/private state for message ports is now represented by one bit only.
@@ -196,6 +222,7 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
 
 
 
