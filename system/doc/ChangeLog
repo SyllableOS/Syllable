@@ -1,3 +1,27 @@
+* September 17th 2004, Arno Klenke *
+	-Makefile fixes
+		o sys/kernel/drivers/bus/Makefile
+		o sys/kernel/drivers/disk/Makefile
+		o sys/kernel/fs/Makefile
+
+	-afs, fatfs, ramfs
+		o Changed SEM_REQURSIVE to SEM_RECURSIVE
+
+	-ext2
+		o Fixed directory listening and reading of files
+
+	-ata busmanager
+		o Do not show the capacity for atapi drives
+
+	-ata pci driver
+		o Added support for legacy isa mode
+
+	-usb mass storage driver
+		o Makefile fix
+
+	-usb ehci driver
+		o Do not segfault if the initilization fails
+
 * September 11th 2004, Arno Klenke *
 
 Fixed i810 sound driver

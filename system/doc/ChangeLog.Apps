@@ -1,3 +1,10 @@
+* September 17th 2004, Arno Klenke *
+	-Aedit, AView, memmon, cpumon
+		o Bugfix: Make it work with the new libsyllable
+
+	-DiskManager
+		o Bugfix: Layout
+
 * August 31st 2004, Kristian Van Der Vliet *
 	-pkgmanager
 		o Call manmanager -a instead of manaddpackage.sh
