@@ -1,19 +1,16 @@
 authors				Kaj de Vos
 status				testing
-notes				Waiting for ftruncate implementation in AFS
+notes				Waiting for ftruncate() implementation in AFS
 
-name				arch
+;name				arch
 licenses			GPL GFDL
 
-;build-needs
-;	gawk
-;	grep
+;build-needs		gawk
 run-needs
 	diffutils
 	patch
 	tar
-run-recommends
-	openssh
+run-recommends		openssh
 
 patch-config		src/build-tools/gnu
 configure-cmd		src/configure
