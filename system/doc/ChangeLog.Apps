@@ -1,3 +1,11 @@
+* April 2nd 2004, Kristian Van Der Vliet *
+
+	- dhcpc
+		o Get and use a DHCP relay agent if one is in use on the network.
+		o Always send client ID to server
+		o Append missing OPTION_END's
+		o Other misc. fixes.  All from Ross Schulman
+
 * February 24 2004, Henrik Isaksson *
 
 	- Prefs/Date-Time
