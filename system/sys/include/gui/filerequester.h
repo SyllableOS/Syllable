@@ -23,6 +23,7 @@
 
 #include <sys/stat.h>
 #include <gui/window.h>
+#include <util/string.h>
 namespace os
 {
 class DirectoryView;
@@ -34,14 +35,20 @@ class DropdownMenu;
 class FileFilter
 {
 public:
-  virtual bool FileOk( const char* pzPath, const struct stat* psStat ) = 0;
+  virtual bool FileOk( String pzPath, const struct stat* psStat ) = 0;
 };
 
 /** Generic file requester.
  * \ingroup gui
  * \par Description:
- *
- * \sa os::DirectoryView
+ * The filerequester is a seperate window that lets the user select files
+ * that should be opened/saved. Please note that reading the selected
+ * directory starts when the window is first shown. The following messages
+ * are sent to the given message target:
+ * M_FILE_REQUESTER_CANCELED - If the filerequester is closed without any action.
+ * M_LOAD_REQUESTED - If a file has been selected to be loaded.
+ * M_SAVE_REQUESTED - If a file has been selected to be saved.
+ * \sa os::IconDirectoryView
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
@@ -53,7 +60,7 @@ public:
   
     FileRequester( file_req_mode_t nMode = LOAD_REQ,
 		   Messenger* pcTarget = NULL,
-		   const char* pzPath = NULL,
+		   String cStartPath = "",
 		   uint32 nNodeType = NODE_FILE,
 		   bool bMultiSelect = true,
 		   Message* pcMessage = NULL,
@@ -63,6 +70,8 @@ public:
 		   String cOkLabel = "",
 		   String cCancelLabel = "" );
 	virtual ~FileRequester();
+	
+	void Show( bool bMakeVisible = true );
 
     virtual void	HandleMessage( Message* pcMessage );
     virtual void	FrameSized( const Point& cDelta );
@@ -73,7 +82,6 @@ public:
     
 
 private:
-    void Layout();
 
 	enum
 	{ ID_PATH_CHANGED = 1, ID_SEL_CHANGED, ID_INVOKED, ID_CANCEL, ID_OK, ID_ALERT, ID_DROP_CHANGE, ID_UP_BUT = 0x55, ID_HOME_BUT = 0x56, ID_BACK_BUT = 0x57, ID_FORWARD_BUT = 0x58 };

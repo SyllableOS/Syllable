@@ -50,7 +50,6 @@ typedef int dev_t;
 # define __dev_t_defined
 #endif
 
-#ifdef __KERNEL__
 
 #ifndef mode_t
 typedef unsigned int mode_t;
@@ -66,6 +65,10 @@ typedef long long ino_t;
 typedef long long int off_t;
 #define off_t off_t
 #endif
+
+
+
+#ifdef __KERNEL__
 
 #ifndef nlink_t
 typedef int nlink_t;

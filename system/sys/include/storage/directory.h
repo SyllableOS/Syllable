@@ -32,6 +32,9 @@ namespace os {
 class FileReference;
 class File;
 class SymLink;
+class Window;
+class Messenger;
+class Message;
 
 /** Filesystem directory class
  * \ingroup storage
@@ -66,6 +69,7 @@ public:
     status_t CreateFile( const String& cName, os::File* pcFile, int nAccessMode = S_IRWXU);
     status_t CreateDirectory( const String& cName, os::Directory* pcDir, int nAccessMode = S_IRWXU );
     status_t CreateSymlink( const String& cName, const String& cDestination, os::SymLink* pcLink );
+    Window*  CreateDirectoryDialog( const Messenger & cMsgTarget, Message* pcCreateMsg, String cDefaultName );
     status_t GetPath( String* pcPath ) const;
     
 private:

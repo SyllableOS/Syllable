@@ -32,6 +32,11 @@ namespace os {
 } // Fool Emacs autoindent
 #endif
 
+
+class Window;
+class Messenger;
+
+
 /** Semi persistent reference to a file
  * \ingroup storage
  * \par Description:
@@ -73,6 +78,8 @@ public:
 
     int	     Rename( const String& cNewName );
     status_t Delete();
+    Window*  RenameDialog( const Messenger & cMsgTarget, Message* pcChangeMsg );
+    Window*  InfoDialog( const Messenger & cMsgTarget, Message* pcChangeMsg );
 
     status_t GetStat( struct stat* psStat ) const;
 

@@ -30,7 +30,7 @@ namespace os {
 #endif
 
 /** Virtual stream object.
- * \ingroup gui
+ * \ingroup storage
  * \par Description:
  *	This class simulates a SeekableIO object in memory. It may be used to
  *	capture data that would normally be sent to a file, or it may be used
