@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.3.12
+# Version 0.3.13
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -176,18 +176,20 @@ def configurePackage target
 
 		true  # Continue building even if dependencies failed
 	else
-		unless exists? cmd = ((cmd = recipe(package = fullName(target))["configure-cmd"]) ? cmd : "configure")
+		unless exists? cmd = (cmd = (recipe = recipe(package = fullName(target)))["configure-cmd"]) ? cmd : "configure"
 			true
 		else
 			logHeader "Configuring"
 			action "rm config.cache" if exists? "config.cache"
 			name = shortName package
-			if action ((vars = recipe(package)["configure-vars"]) ? vars + " " : "") +
+			if action ((vars = recipe["configure-vars"]) ? vars + " " : "") +
 				"./" + cmd +
-				(name == "man" || name == "grub" ? "" :
+#				(name == "man" || name == "grub" ? "" :
+				((args = recipe["configure-args"]) ?
+					" " + args :
 					" --prefix=" + prefix(package)
 				) +
-				((options = recipe(package)["configure-options"]) ? " " + toString(options) : "")
+				((options = recipe["configure-options"]) ? " " + toString(options) : "")
 			then true
 			else
 				logFailure target
@@ -790,7 +792,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.3.12",
+	puts "Syllable Build System 0.3.13",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
