@@ -5,6 +5,9 @@
 **		2003 - Ported to Atheos/Syllable by Ville Kallioniemi (ville.kallioniemi@abo.fi)
 */
 
+#include "iso.h"
+
+
 // SYLLABLE
 #include <atheos/stdlib.h>
 #include <atheos/string.h>
@@ -20,7 +23,7 @@
 #include <atheos/bcache.h>
 #include <macros.h>
 
-#include "iso.h"
+
 
 
 // Probe is called if you don't provide the fs type when you mount a volume
@@ -232,8 +235,8 @@ iso_mount( kdev_t volumeID, const char *devicePath, uint32 flags, void *paramete
 	int 		result = -EINVAL;
 	nspace*		volume;
 	
-	dprintf("iso_mount - ENTER\n");	
-	dprintf("%s: volumeID: %d device paht: %s\n",gFSName, volumeID, devicePath);
+	kerndbg( KERN_DEBUG, "iso_mount - ENTER\n");	
+	kerndbg( KERN_DEBUG, "%s: volumeID: %d device paht: %s\n",gFSName, volumeID, devicePath);
 	
 	//printk("iso_mount - Parameters(%d): %s\n", len, (char*)parameters );
 
@@ -254,21 +257,21 @@ iso_mount( kdev_t volumeID, const char *devicePath, uint32 flags, void *paramete
 		*rootNodeID = volume->rootDirRec.id;
 		*data = (void*)volume;
 		volume->id = volumeID;
-		// initialize the cache
-		dprintf("iso_mount - cache init: dev %d, max blocks %ld\n", volume->fd, volumeSize );
+
+		kerndbg( KERN_DEBUG_LOW, "iso_mount - cache init: dev %d, max blocks %ld\n", volume->fd, volumeSize );
 				
 		// setup_device_cache expects the number of blocks on the device
 		error = setup_device_cache(volume->fd, volume->id, volumeSize );
 		if (  error < 0 )
 		{
-			dprintf( "iso_mount - failed to setup device cache.\n" );
+			kerndbg( KERN_WARNING, "iso_mount - failed to setup device cache.\n" );
 			result = error;
 			close( volume->fd );
 			free( volume );
 		}
 	}	
 
-	dprintf("iso_mount - EXIT, result code is %d\n", result );
+	kerndbg( KERN_DEBUG, "iso_mount - EXIT, result code is %d\n", result );
 	return result;
 }
 
@@ -298,7 +301,13 @@ iso_read_fs_stat(void *_volume,  fs_info * fsInfo)
 	nspace* volume = (nspace*)_volume;
 	int i;
 	
-	dprintf("iso_read_fs_stat - ENTER\n");
+	kerndbg( KERN_DEBUG, "iso_read_fs_stat - ENTER\n");
+	
+	// Device ID
+	fsInfo->fi_dev = volume->id;
+	
+	// Root inode number
+    fsInfo->fi_root = volume->rootDirRec.id;
 	
 	// File system flags.
 	fsInfo->fi_flags = FS_IS_PERSISTENT | FS_IS_READONLY | FS_IS_BLOCKBASED | FS_IS_REMOVABLE;
@@ -314,6 +323,16 @@ iso_read_fs_stat(void *_volume,  fs_info * fsInfo)
 	
 	// Free blocks = 0, read only
 	fsInfo->fi_free_blocks = 0;
+	
+	// Number of blocks available for non-root users
+	fsInfo->fi_free_user_blocks = 0;
+
+	// Total number of inodes (-1 if inodes are allocated dynamically)
+    fsInfo->fi_total_inodes = -1;
+	
+	// Number of free inodes (-1 if inodes are allocated dynamically)
+    fsInfo->fi_free_inodes = -1;
+	
 	
 	// Device name.
 	strncpy(fsInfo->fi_device_path, volume->devicePath, sizeof(fsInfo->fi_device_path));
@@ -333,8 +352,8 @@ iso_read_fs_stat(void *_volume,  fs_info * fsInfo)
 	// File system name
 	strcpy( fsInfo->fi_driver_name, gFSName );
 	
-	dprintf("iso_read_fs_stat - EXIT\n");
-	return 0;
+	kerndbg( KERN_DEBUG, "iso_read_fs_stat - EXIT\n");
+	return -EOK;
 }
 
 static int	iso_walk( void * _volume, void * _baseNode, const char * _fileName
@@ -344,7 +363,7 @@ static int	iso_walk( void * _volume, void * _baseNode, const char * _fileName
 	vnode	*	baseNode = (vnode*)_baseNode;
 	size_t		nameLength = _nameLength;
 	ino_t*	vNodeID = _vNodeID;
-	vnode	*	newNode = NULL;
+	//vnode	*	newNode = NULL;
 	char		fileName[nameLength+1];
 	bool		done = false;
 	int			result = -ENOENT;
@@ -372,18 +391,20 @@ static int	iso_walk( void * _volume, void * _baseNode, const char * _fileName
 	}
 	else
 	{
-		strncpy( fileName, _fileName, nameLength );
+		strncpy( fileName, _fileName, nameLength+1 );
 		fileName[nameLength] = '\0';
 		dprintf( "iso_walk - In directory: %s\n", directoryName );
+		/*
 		if( fileName[nameLength] == '/' )
 		{
 			fileName[nameLength] = '\0';
 			nameLength--;
 			dprintf( "iso_walk - deleted trailing '/'\n" );
 		}
+		*/
 		dprintf( "iso_walk - Looking for file: %s of length: %d \n", fileName, nameLength );
 	}
-	
+
 	// ok, we'll have to actually walk the directory
 	if( !done )
 	{
@@ -459,9 +480,26 @@ static int	iso_walk( void * _volume, void * _baseNode, const char * _fileName
 							release_cache_block( volume->fd, block );
 							blockReleased = true;
 							dprintf("iso_walk - success, found vnode at block %Ld, pos %Ld\n", block, blockBytesRead);
-							//was: blockBytesRead & 0xFFFFFFFF
 							*vNodeID = (( block << 30 ) + ( blockBytesRead & 0x3FFFFFFF ));
 							dprintf( "iso_walk - New vnode id is %Ld\n", *vNodeID );
+
+							if( fileName[0] == '.' && fileName[1] == '.' )
+							{
+								vnode *parentNode;
+								iso_read_vnode( volume, *vNodeID, (void**)&parentNode );
+
+								if( parentNode->startLBN[FS_DATA_FORMAT] == volume->rootBlock )
+								{
+									dprintf("(grep)iso_walk : Directory entry for volume root\n");
+									*vNodeID = volume->rootDirRec.id;
+								}
+								else
+								{
+									dprintf("(grep)iso_walk : Directory entry for non volume root\n");
+									*vNodeID = BLOCK_TO_INO(parentNode->startLBN[FS_DATA_FORMAT], 0);
+								}
+							}
+
 							result = -EOK;
 						}
 						else
@@ -487,15 +525,6 @@ static int	iso_walk( void * _volume, void * _baseNode, const char * _fileName
 		dprintf( "iso_walk - read a total of %d / %d\n", totalBytesRead, directoryLength );
 	} // traversing the dir
 	
-
-	if (newNode != NULL)
-	{ 
-		if (S_ISLNK(newNode->attr.stat[FS_DATA_FORMAT].st_mode))
-		{ 
-			dprintf( "fs_walk - symbolic link file \'%s\' requested.\n", newNode->attr.slName ); 	
-			// Should we do something here ??? FIXME!!!
-		} 
-	} 
 
 	dprintf( "iso_walk - Done, return: %d.\n", result );
 	return result;
@@ -609,10 +638,17 @@ iso_read_stat(void *_volume, void *_node, struct stat *st)
 	vnode*	node = (vnode*)_node;
 	int 	result = -EOK;
 	time_t	time;
+
+	vnode *parentNode;
 	
 	dprintf("iso_rstat - ENTER\n");
 	st->st_dev = volume->id;
-	st->st_ino = node->id;
+//	st->st_ino = node->id;
+
+	// KV
+	iso_read_vnode( volume, node->id, (void**)&parentNode );
+	st->st_ino = BLOCK_TO_INO(parentNode->startLBN[FS_DATA_FORMAT], 0);
+
 	st->st_nlink = node->attr.stat[FS_DATA_FORMAT].st_nlink;
 	st->st_uid = node->attr.stat[FS_DATA_FORMAT].st_uid;
 	st->st_gid = node->attr.stat[FS_DATA_FORMAT].st_gid;
@@ -852,7 +888,7 @@ iso_read_link(void *_volume, void *_node, char *buffer, size_t bufferSize)
 	int		result = -EINVAL;
 	vnode*	node = (vnode*)_node;
 	size_t	length = 0;
-	dprintf( "iso_readlink - ENTER\n" );	
+	kerndbg( KERN_DEBUG, "iso_readlink - ENTER\n" );	
 
 	if (S_ISLNK(node->attr.stat[FS_DATA_FORMAT].st_mode))
 	{
@@ -860,7 +896,7 @@ iso_read_link(void *_volume, void *_node, char *buffer, size_t bufferSize)
 		if (length > bufferSize)
 		{
 			// bufsize was length which seems to be a bug..
-			dprintf( "iso_read_link - The provided buffer is smaller than the filename length!!!\n" );
+			kerndbg( KERN_WARNING, "iso_read_link - The provided buffer is smaller than the filename length!!!\n" );
 			memcpy(buffer, node->attr.slName, bufferSize);
 		}
 		else
@@ -870,9 +906,11 @@ iso_read_link(void *_volume, void *_node, char *buffer, size_t bufferSize)
 		result = -EOK;
 	}
 	
+	kerndbg( KERN_DEBUG, "iso_read_link: %s\n", buffer );
+	
 	if ( result == -EOK )
 		result = length;
-	dprintf( "iso_readlink - EXIT (%d)\n", result );	
+	kerndbg( KERN_DEBUG, "iso_readlink - EXIT (%d)\n", result );	
 	return result;
 }
 
@@ -885,16 +923,16 @@ iso_open_dir(void *_volume, void *_node, void **cookie)
 	int						result = -EOK;
 	dircookie* 				dirCookie = (dircookie*)malloc(sizeof(dircookie));
 
-	dprintf("iso_opendir - ENTER, node is %p\n", node); 
+	kerndbg( KERN_DEBUG, "iso_opendir - ENTER, node is %p\n", node ); 
 	if (!(node->flags & ISO_ISDIR))
 	{
-		dprintf("iso_opendir - What we have here is a file...\n" );
+		kerndbg( KERN_WARNING, "iso_opendir - What we have here is a file...\n" );
 		return( -EMFILE );
 	}
 	
 	if ( NULL != dirCookie )
 	{
-		dprintf("iso_opendir - filling in the dircookie...\n" );
+		kerndbg( KERN_DEBUG_LOW, "iso_opendir - filling in the dircookie...\n" );
 		dirCookie->startBlock = node->startLBN[FS_DATA_FORMAT];
 		dirCookie->block = node->startLBN[FS_DATA_FORMAT];
 		dirCookie->totalSize = node->dataLen[FS_DATA_FORMAT];
@@ -904,11 +942,11 @@ iso_open_dir(void *_volume, void *_node, void **cookie)
 	}
 	else
 	{
-		dprintf( "iso_opendir - Could not locate memory for dircookie.\n" );
+		kerndbg( KERN_WARNING, "iso_opendir - Could not locate memory for dircookie.\n" );
 		result = -ENOMEM;
 	}
 	
-	dprintf("iso_opendir - EXIT\n");
+	kerndbg( KERN_DEBUG, "iso_opendir - EXIT\n");
 	return result;
 }
 
@@ -919,6 +957,8 @@ iso_read_dir(void *_volume, void *_node, void *_cookie, int position, struct ker
 //	vnode* 		node = (vnode*)_node;
 	nspace* 	volume = (nspace*)_volume;
 	dircookie* 	dirCookie = (dircookie*)_cookie;
+
+	vnode *parentNode;
 	
 	dprintf("iso_readdir - ENTER\n");
 	
@@ -933,7 +973,11 @@ iso_read_dir(void *_volume, void *_node, void *_cookie, int position, struct ker
 	}
 	
 	result = ISOReadDirEnt( volume, dirCookie, buf, bufsize);
-	
+
+	// KV
+	iso_read_vnode( volume, buf->d_ino, (void**)&parentNode );
+	buf->d_ino = BLOCK_TO_INO(parentNode->startLBN[FS_DATA_FORMAT], 0);
+
 	// If we succeeded, return 1, the number of dirents we read
 	if (result == -EOK)
 	{
@@ -999,6 +1043,12 @@ int fs_init( const char* name, FSOperations_s** ppsOps )
 	*ppsOps = &iso_operations;
 	return( api_version );
 }
+
+
+
+
+
+
 
 
 

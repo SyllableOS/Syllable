@@ -12,13 +12,17 @@
 **
 */
 
-#include <atheos/bcache.h>
-#include <atheos/device.h>
-#include <atheos/kernel.h>
-#include <macros.h>
 
 #include "rock.h"
 #include "iso.h"
+
+
+#include <atheos/bcache.h>
+#include <atheos/device.h>
+#include <atheos/kdebug.h>
+#include <atheos/kernel.h>
+
+#include <macros.h>
 
 // Size of primary volume descriptor for ISO9660
 #define ISO_PVD_SIZE 882
@@ -249,7 +253,7 @@ ISOMount(const char *path, const int flags, nspace** newVol)
 				
 				dprintf("deviceBlockSize = %d\n", deviceBlockSize );
 				dprintf("0x8000 = %d\n", 0x8000 );
-				dprintf("ISOMount - Data Area starts at %Ld: %d\n", dataAreaOffset, (uint8)*buf );
+				//dprintf("ISOMount - Data Area starts at %Ld: %d\n", dataAreaOffset, (uint8)*buf );
 				
 				// Check which kind of a volume descriptor we have:
 				
@@ -512,9 +516,22 @@ InitVolDesc(nspace* _vol, char* buf)
 	node->attr.slName = calloc( ISO_MAX_FILENAME_LENGTH, 1);
 	InitNode(_vol,&(vol->rootDirRec), buf, NULL);
 
+#if 0
+	{
+		ino_t foo;
+		foo = BLOCK_TO_INO( vol->rootDirRec.startLBN[FS_DATA_FORMAT], 0 );
+
+		dprintf("(grep) Root directory LBN is %ld\n", vol->rootDirRec.startLBN[FS_DATA_FORMAT] );
+		dprintf("(grep) Root directory vnid is %Ld\n", foo );
+	}
+#endif
 	// error checking...FIXME!!!
 
-	vol->rootDirRec.id = ISO_ROOTNODE_ID;
+	//vol->rootDirRec.id = ISO_ROOTNODE_ID;
+	vol->rootDirRec.id = BLOCK_TO_INO( vol->rootDirRec.startLBN[FS_DATA_FORMAT], 0 );
+	//vol->rootDirRec.id = BLOCK_TO_INO( 910, 102 );
+	vol->rootBlock = vol->rootDirRec.startLBN[FS_DATA_FORMAT];
+
 	//vol->rootDirRec.parID = ISO_ROOTNODE_ID;// Not sure about this ??? FIXME!!!
 	buf += 34;
 	
@@ -568,6 +585,268 @@ InitVolDesc(nspace* _vol, char* buf)
 	vol->fileStructVers = *(uint8*)buf;
 	return 0;
 }
+
+// ReadRockRige tries to read a rock ridge extension fron the provided buffer.
+// If it succeeds it returns the number of bytes read, otherwise a negative error code
+// 
+int
+ReadRockRidge( char * buffer, RRAttr * attributes )
+{
+	char	alternativeName[ISO_MAX_FILENAME_LENGTH];
+	char	slName[ISO_MAX_FILENAME_LENGTH]; 
+ 	uint16	alternativeNameSize = 0; 
+	uint16	slNameSize = 0; 
+	uint8	slFlags = 0;
+	uint8	length = 0;
+	int		result = 0;
+	bool 	done = false;
+	
+	kerndbg( KERN_DEBUG, "ReadRockRidge - ENTER\n" );
+	kerndbg( KERN_DEBUG_LOW, " Buffer starts at %p\n", buffer );
+	
+	while (!done)
+	{
+		buffer+= length;
+		length = *(uint8*)(buffer + 2);
+		switch ( 0x100 * buffer[0] + buffer[1] )
+		{
+			// Posix attributes
+			case 'PX':
+			{
+				uint8 bytePos = 3;
+				kerndbg( KERN_DEBUG_LOW, "RR: found PX, length %u\n", length);
+				attributes->pxVer = *(uint8*)( buffer+bytePos++ );
+				
+				// st_mode
+				attributes->stat[LSB_DATA].st_mode = *(mode_t*)(buffer + bytePos);
+				bytePos += 4;
+				attributes->stat[MSB_DATA].st_mode = *(mode_t*)(buffer + bytePos);
+				bytePos += 4;
+				
+				// st_nlink
+				attributes->stat[LSB_DATA].st_nlink = *(nlink_t*)(buffer+bytePos);
+				bytePos += 4;
+				attributes->stat[MSB_DATA].st_nlink = *(nlink_t*)(buffer + bytePos);
+				bytePos += 4;
+				
+				// st_uid
+				attributes->stat[LSB_DATA].st_uid = *(uid_t*)(buffer + bytePos);
+				bytePos += 4;
+				attributes->stat[MSB_DATA].st_uid = *(uid_t*)(buffer+bytePos);
+				bytePos += 4;
+				
+				// st_gid
+				attributes->stat[LSB_DATA].st_gid = *(gid_t*)(buffer+bytePos);
+				bytePos += 4;
+				attributes->stat[MSB_DATA].st_gid = *(gid_t*)(buffer+bytePos);
+				bytePos += 4;
+			}	
+			break;
+			
+			// ???
+			case 'PN':
+				kerndbg( KERN_DEBUG_LOW, "RR: found PN, length %u\n", length);
+			break;
+			
+			// Symbolic link info
+			case 'SL':
+			{
+				uint8	bytePos = 3;
+				uint8	lastCompFlag = 0;
+				uint8	addPos = 0;
+				bool	slDone = false;
+				bool	useSeparator = true;
+				
+				kerndbg( KERN_DEBUG_LOW, "RockRidge: found SL, length %u\n", length);
+				kerndbg( KERN_DEBUG_LOW, "Buffer is at %p\n", buffer );
+				kerndbg( KERN_DEBUG_LOW, "Current length is %u\n", slNameSize);
+
+				attributes->slVer = *(uint8*)(buffer + bytePos++);
+				slFlags = *(uint8*)(buffer + bytePos++);
+				
+				kerndbg( KERN_DEBUG_LOW, "sl flags are %u\n", slFlags );
+				
+				
+				while (!slDone && bytePos < length)
+				{
+					// The extension is saved as components, each having an identifying flag
+					// and length
+					uint8 compFlag = *(uint8*)(buffer + bytePos++);
+					uint8 compLen = *(uint8*)(buffer + bytePos++);
+					
+					//if ( slName == NULL ) useSeparator = false; this worked when memory was located dynamically
+					// make sure that we don't make everything relative to /
+					if ( slNameSize == 0 ) useSeparator = false;
+					
+					// addPos is relative to the tail of the symbolic link name
+					addPos = slNameSize;
+					
+					kerndbg( KERN_DEBUG_LOW, "RockRidge: addPos= %d\n", addPos );
+					
+					dprintf("sl comp flags are %u, length is %u\n", compFlag, compLen);
+					kerndbg( KERN_DEBUG_LOW, "Current name size is %u\n", slNameSize);
+					switch (compFlag)
+					{
+						case SLCP_CONTINUE:
+							kerndbg( KERN_DEBUG_LOW, "SLCP_CONTINUE\n" );
+							useSeparator = false;
+						default:
+							// Add the component to the total path.
+							kerndbg( KERN_DEBUG_LOW, "default\n" );
+							slNameSize += compLen;
+						
+							//if ( useSeparator && addPos != 0 )
+							//	slNameSize++;
+						
+							// the separator is added here only after a directory/file name
+							
+							if ( useSeparator )
+							{							// KV: Don't add the seperator to the begining
+								kerndbg( KERN_DEBUG_LOW, "Adding separator\n");	// of a link, as this incorrectly forces all symlinks
+								slName[addPos++] = '/';		// to become relative to /, which is certainly not
+								slNameSize++;				// --- now handled in the beginning of  the while loop
+							}							
+								
+							useSeparator = true;
+							
+							
+							kerndbg( KERN_DEBUG_LOW, "doing memcopy of %u bytes at offset %d\n", compLen, addPos );
+							memcpy((slName + addPos), (buffer + bytePos), compLen);
+							
+							addPos += compLen;
+							
+						break;
+						
+						case SLCP_CURRENT:
+							kerndbg( KERN_DEBUG_LOW, "RockRidge - found link to current directory\n");
+							slNameSize += 2;
+							memcpy(slName + addPos, "./", 2);
+							useSeparator = false;
+						break;
+						
+						case SLCP_PARENT:
+							kerndbg( KERN_DEBUG_LOW, "RockRidge - found link to parent\n");
+							slNameSize += 3;
+							memcpy(slName + addPos, "../", 3);
+							useSeparator = false;
+						break;
+						
+						case SLCP_ROOT:
+							kerndbg( KERN_DEBUG_LOW, "RockRidge -  found link to root directory\n");
+							slNameSize += 1;
+							memcpy(slName + addPos, "/", 1);
+							useSeparator = false;
+						break;
+						
+						case SLCP_VOLROOT:
+							kerndbg( KERN_DEBUG_LOW, "RockRidge - SLCP_VOLROOT\n" );
+							slDone = true;
+						break;
+						
+						case SLCP_HOST:
+							kerndbg( KERN_DEBUG_LOW, "RockRidge - SLCP_HOST\n" );
+							slDone = true;
+						break;
+					}
+					slName[slNameSize] = '\0';
+					lastCompFlag = compFlag;
+					bytePos += compLen;
+			
+				}
+			}
+			
+			// copy the name to the node structure
+			strncpy( attributes->slName, slName, slNameSize );
+			kerndbg( KERN_DEBUG_LOW, "RockRidge - symlink name is \'%s\', length:%d\n", slName, slNameSize);
+			
+			break;
+			// Alternative name
+			case 'NM':
+			{
+				kerndbg( KERN_DEBUG, "ReadRockRidge - Alternative name NOT IMPLEMENTED!!!\n" );
+				/*
+				uint8	bytePos = 3;
+				uint8	flags = 0;
+				uint16	oldEnd = altNameSize;
+				
+				
+				altNameSize += length - 5;
+				dprintf("RR: found NM, length %u\n", length);
+				// Read flag and version.
+				attributes->nmVer = *(uint8*)(buffer + bytePos++);
+				flags = *(uint8*)(buffer + bytePos++);
+			
+				dprintf("RR: nm buf is %s, start at %p\n", (buf + bytePos), buf+bytePos);
+
+				// Build the file name.
+				memcpy(altName + oldEnd, buffer + bytePos, length - 5);
+				altName[altNameSize] = '\0';
+				kerndbg( KERN_DEBUG_LOW, "RR: alternative name is %s\n", altName);
+				
+				// If the name is not continued in another record, update
+				// the record name.
+				if (! (flags & NM_CONTINUE))
+				{
+					// Get rid of the ISO name, replace with RR name.
+//									if (rec->fileIDString != NULL) free(rec->fileIDString);
+					memcpy( attribute->altName, altName, ISO_MAX_FILENAME_LENGTH );
+					attributes->altNameSize = altNameSize;
+				}
+				*/
+			}
+			break;
+			
+			// Deep directory record masquerading as a file.
+			case 'CL':
+			
+				kerndbg( KERN_DEBUG_LOW, "RR: found CL, length %u\n", length);
+				kerndbg( KERN_DEBUG, "ReadRockRidge - CL NOT IMPLEMENTED\n" );
+				
+				/*
+				rec->flags |= ISO_ISDIR;
+				rec->startLBN[LSB_DATA] = *(uint32*)(buf+4);
+				rec->startLBN[MSB_DATA] = *(uint32*)(buf+8);
+				*/
+				break;
+			
+			case 'PL':
+				dprintf("RR: found PL, length %u\n", length);
+				kerndbg( KERN_DEBUG, "ReadRockRidge - PL NOT IMPLEMENTED!\n" );
+				break;
+			
+			// Relocated directory, we should skip.
+			case 'RE':
+				result = -EINVAL;
+				kerndbg( KERN_DEBUG, "ReadRockRidge - RE (Relocated Directory) NOT IMPLEMENTED!\n" );
+				dprintf("RR: found RE, length %u\n", length);
+				break;
+			
+			case 'TF':
+				kerndbg( KERN_DEBUG, "ReadRockRidge - TF NOT IMPLEMENTED!\n" );
+				dprintf("RR: found TF, length %u\n", length);
+				break;
+			
+			case 'RR':
+				dprintf("RR: found RR, length %u\n", length);
+				break;
+			
+			default:
+				kerndbg( KERN_DEBUG_LOW, "RockRidge: End of extensions.\n");
+				done = true;
+				break;
+		} // switch ( extension component )
+	} // while ( !done )
+	
+	if ( result == -EOK )
+		result = length;
+	
+	kerndbg( KERN_DEBUG, "ReadRockRidge - EXIT ( %d )\n", result );
+	
+	return result;
+}
+
+
+
 
 int
 InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
@@ -692,6 +971,8 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 
 					dprintf("RR: Start of extensions, but at %p\n", buf);
 					
+					
+					
 					while (!done)
 					{
 						buf+= length;
@@ -702,9 +983,10 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 							case 'PX':
 							{
 								uint8 bytePos = 3;
-								dprintf("RR: found PX, length %u\n", length);
+								kerndbg( KERN_DEBUG_LOW, "RR: found PX, length %u\n", length);
 								rec->attr.pxVer = *(uint8*)(buf+bytePos++);
                                 no_rock_ridge_stat_struct = false;
+                                memset(&(rec->attr.stat), 0, 2 * sizeof(struct stat)); 
 								
 								// st_mode
 								rec->attr.stat[LSB_DATA].st_mode = *(mode_t*)(buf + bytePos);
@@ -746,7 +1028,7 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 								bool	slDone = false;
 								bool	useSeparator = true;
 								
-								dprintf("RR: found SL, length %u\n", length);
+								kerndbg( KERN_DEBUG_LOW, "RockRidge: found SL, length %u\n", length);
 								dprintf("Buffer is at %p\n", buf);
 								dprintf("Current length is %u\n", slNameSize);
 	
@@ -759,26 +1041,34 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 									uint8 compFlag = *(uint8*)(buf + bytePos++);
 									uint8 compLen = *(uint8*)(buf + bytePos++);
 									
-									if (slName == NULL) useSeparator = false;
+									// this doesn't make sense anymore(wirh stack allocation)
+									//if (slName == NULL) useSeparator = false;
+									if ( slNameSize == 0 ) useSeparator = false;
 									
 									addPos = slNameSize;
 									
+									kerndbg( KERN_DEBUG_LOW, "RockRidge: addPos= %d\n", addPos );
+									
 									dprintf("sl comp flags are %u, length is %u\n", compFlag, compLen);
-									dprintf("Current name size is %u\n", slNameSize);
+									kerndbg( KERN_DEBUG_LOW, "Current name size is %u\n", slNameSize);
 									switch (compFlag)
 									{
 										case SLCP_CONTINUE:
+											kerndbg( KERN_DEBUG_LOW, "SLCP_CONTINUE\n" );
 											useSeparator = false;
 										default:
 											// Add the component to the total path.
+											kerndbg( KERN_DEBUG_LOW, "default\n" );
 											slNameSize += compLen;
-											if ( useSeparator )
-												slNameSize++;
+									//		
+											//if ( useSeparator && addPos != 0 )
+											//	slNameSize++;
 										
-											if (useSeparator  && addPos != 0 )
+											if (useSeparator /*&& addPos != 0*/ )
 											{							// KV: Don't add the seperator to the begining
-												dprintf("Adding separator\n");	// of a link, as this incorrectly forces all symlinks
+												kerndbg( KERN_DEBUG_LOW, "Adding separator\n");	// of a link, as this incorrectly forces all symlinks
 												slName[addPos++] = '/';		// to become relative to /, which is certainly not
+												slNameSize++;
 											}							// what we want!
 											
 											dprintf("doing memcopy of %u bytes at offset %d\n", compLen, addPos );
@@ -789,30 +1079,33 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 										break;
 										
 										case SLCP_CURRENT:
-											dprintf("InitNode - found link to current directory\n");
+											kerndbg( KERN_DEBUG_LOW, "RockRidge - found link to current directory\n");
 											slNameSize += 2;
 											memcpy(slName + addPos, "./", 2);
 											useSeparator = false;
 										break;
 										
 										case SLCP_PARENT:
+											kerndbg( KERN_DEBUG_LOW, "RockRidge - found link to parent\n");
 											slNameSize += 3;
 											memcpy(slName + addPos, "../", 3);
 											useSeparator = false;
 										break;
 										
 										case SLCP_ROOT:
-											dprintf("InitNode - found link to root directory\n");
+											kerndbg( KERN_DEBUG_LOW, "RockRidge -  found link to root directory\n");
 											slNameSize += 1;
 											memcpy(slName + addPos, "/", 1);
 											useSeparator = false;
 										break;
 										
 										case SLCP_VOLROOT:
+											kerndbg( KERN_DEBUG_LOW, "RockRidge - SLCP_VOLROOT\n" );
 											slDone = true;
 										break;
 										
 										case SLCP_HOST:
+											kerndbg( KERN_DEBUG_LOW, "RockRidge - SLCP_HOST\n" );
 											slDone = true;
 										break;
 									}
@@ -825,7 +1118,7 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 							
 							// copy the name to the node structure
 							strncpy( rec->attr.slName, slName, slNameSize );
-							dprintf("InitNode - symlink name is \'%s\'\n", slName);
+							kerndbg( KERN_DEBUG_LOW, "RockRidge - symlink name is \'%s\'\n", slName);
 							dprintf("InitNode - name length is %d\n", slNameSize );
 							break;
 							// Altername name
@@ -846,7 +1139,7 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 								// Build the file name.
 								memcpy(altName + oldEnd, buf + bytePos, length - 5);
 								altName[altNameSize] = '\0';
-								dprintf("RR: alt name is %s\n", altName);
+								kerndbg( KERN_DEBUG_LOW, "RR: alternative name is %s\n", altName);
 								
 								// If the name is not continued in another record, update
 								// the record name.
@@ -863,7 +1156,7 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 							// Deep directory record masquerading as a file.
 							case 'CL':
 							
-								dprintf("RR: found CL, length %u\n", length);
+								kerndbg( KERN_DEBUG_LOW, "RR: found CL, length %u\n", length);
 								rec->flags |= ISO_ISDIR;
 								rec->startLBN[LSB_DATA] = *(uint32*)(buf+4);
 								rec->startLBN[MSB_DATA] = *(uint32*)(buf+8);
@@ -889,7 +1182,7 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 								break;
 							
 							default:
-								dprintf("RR: End of extensions.\n");
+								kerndbg( KERN_DEBUG_LOW, "RockRidge: End of extensions.\n");
 								done = true;
 								break;
 						}
@@ -908,7 +1201,16 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 	dprintf("InitNode - EXIT, result is %d name is \'%s\'\n", result /*strerror(result)*/,rec->fileIDString );
 	
 	
-	if (no_rock_ridge_stat_struct) {
+						
+			// Set defaults, in case there is no RR stuff.
+			//rec->attr.stat[FS_DATA_FORMAT].st_mode = (S_IRUSR | S_IRGRP | S_IROTH);
+	
+	
+	if ( no_rock_ridge_stat_struct ) 
+	{
+		// Set defaults, in case there is no RR stuff.
+		memset(&(rec->attr.stat), 0, 2*sizeof(struct stat));
+		rec->attr.stat[FS_DATA_FORMAT].st_mode = (S_IRUSR | S_IRGRP | S_IROTH);
 		if (rec->flags & ISO_ISDIR)
 			rec->attr.stat[FS_DATA_FORMAT].st_mode |= (S_IFDIR|S_IXUSR|S_IXGRP|S_IXOTH);
 		else
@@ -974,6 +1276,13 @@ ConvertRecDate(ISORecDate* inDate, time_t* outDate)
 	*outDate = time;
 	return 0;
 }
+
+
+
+
+
+
+
 
 
 

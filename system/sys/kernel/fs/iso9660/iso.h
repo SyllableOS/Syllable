@@ -14,6 +14,9 @@
 #ifndef _ISO_H
 #define _ISO_H
 
+//#define __ENABLE_DEBUG__
+//#define DEBUG_LIMIT KERN_DEBUG_LOW 
+
 #include <atheos/types.h> // uints
 #include <posix/stat.h> // stat
 #include <posix/errno.h>
@@ -22,7 +25,7 @@
 // This should be long enough for rock ridge and joliet extensions
 #define ISO_MAX_FILENAME_LENGTH 256
 
-// #define __ENABLE_DEBUG__
+
 #ifdef __ENABLE_DEBUG__
   #define dprintf printk
 #else
@@ -135,8 +138,10 @@ typedef struct vnode
 	RRAttr		attr;
 }vnode;
 
-
-
+// Convert a block number & offset within the block to a virtual node ID (vnid)
+#define BLOCK_TO_INO( block, pos )	(((off_t)block << 30) + ((off_t)pos & 0x3FFFFFFF))
+#define INO_TO_BLOCK( vnid )		((ino_t)vnid >> 30 )
+#define INO_TO_POS( vnid )			((ino_t)vnid & 0x3FFFFFFF)
 
 // These go with the flags member of the nspace struct.
 enum
@@ -227,6 +232,9 @@ typedef struct nspace
 	uint16			mPathTblLoc[2];		// Loc (Logical block #) of "Type M" path table		byte149-152
 	uint16			optMPathTblLoc[2];		// Loc (Logical block #) of optional Type M path tbl	byte153-156
 	vnode			rootDirRec;			// Directory record for root directory					byte157-190
+
+	off_t	rootBlock;		// Block number of the start of the root directory entry
+
 	char			volSetIDString[29];	// Name of multi-volume set where vol is member		byte191-318
 	char			pubIDString[129];	// Name of publisher									byte319-446
 	char			dataPreparer[129];	// Name of data preparer								byte447-574
@@ -249,6 +257,9 @@ int	InitNode( nspace * volume, vnode* rec, char* buf, int* bytesRead);
 int	ConvertRecDate(ISORecDate* inDate, time_t* outDate);
 
 #endif
+
+
+
 
 
 
