@@ -164,7 +164,7 @@ public:
     virtual Point	GetSize( void ) const;
 
 	// From BitmapImage
-    void		SetBitmapData( const uint8 *pData, const IPoint &cSize, color_space eColorSpace, uint32 nFlags = Bitmap::SHARE_FRAMEBUFFER );
+    void			SetBitmapData( const uint8 *pData, const IPoint &cSize, color_space eColorSpace, uint32 nFlags = Bitmap::SHARE_FRAMEBUFFER );
 
     color_space		GetColorSpace() const;
     virtual status_t	SetColorSpace( color_space eColorSpace );
@@ -173,6 +173,12 @@ public:
     virtual void	UnlockBitmap( void );
 
     virtual BitmapImage& operator=( const BitmapImage& cSource );
+
+	virtual View* GetView();
+	virtual void ResizeCanvas( const Point& cSize );
+	virtual uint32* operator[]( int row );
+	void Sync();
+	void Flush();
 
 	// Filter functions
 

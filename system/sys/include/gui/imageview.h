@@ -67,6 +67,8 @@ class ImageView : public View
 	void SetImage( Image *pcImage );
 	Image *GetImage( void ) const;
 
+	void Refresh();
+
 	private:
 	class Private;
 	Private*	m;

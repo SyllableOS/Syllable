@@ -161,8 +161,32 @@ Point ImageButton::GetPreferredSize( bool bLargest ) const
 	if( bLargest )
 	{
 		return Point( COORD_MAX, COORD_MAX );
-	}
+	} else {
+		Point cSize;
+/*		if( !( GetLabel() == "" ) ) {
+			cSize = GetTextExtent( GetLabel() );
+			cSize.x += 16;
+			cSize.y += 8;
+		}*/
+		if( m->m_pcBitmap ) {
+			Point cImgSize( m->m_pcBitmap->GetSize() );
 
+			if( cSize.x > 0 ) {
+				if( ( m->m_nTextPosition == IB_TEXT_RIGHT ) || ( m->m_nTextPosition == IB_TEXT_LEFT ) ) {
+					cSize.x += cImgSize.x + 2;
+					cSize.y = std::max( cSize.y, cImgSize.y );
+				} else {
+					cSize.y += cImgSize.y + 2;
+					cSize.x = std::max( cSize.x, cImgSize.x );
+				}
+			} else {
+				cSize.x = cImgSize.x + 4;
+				cSize.y = cImgSize.y + 4;
+			}
+		}
+		return cSize;
+	}
+/*
 	font_height sHeight;
 
 	GetFontHeight( &sHeight );
@@ -196,7 +220,7 @@ Point ImageButton::GetPreferredSize( bool bLargest ) const
 		}
 	}
 
-	return Point( x, y );
+	return Point( x, y );*/
 }				/*end GetPreferredSize() */
 
 /** Gets the text postion...
@@ -462,3 +486,5 @@ void ImageButton::_reserved10()
 }
 
 /*end of file*/
+
+

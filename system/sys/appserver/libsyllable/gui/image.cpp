@@ -124,21 +124,34 @@ class BitmapImage::Private
 	Private()
 	{
 		m_pcBitmap = NULL;
+		m_pcView = NULL;
+		m_nBitmapFlags = 0;
 	}
 
 	~Private()
 	{
+		if( !m_pcBitmap && m_pcView ) {
+			// The view will be deleted when deleting the bitmap,
+			// unless, of course, there is no bitmap to delete.
+			delete m_pcView;
+		}			
 		SetBitmap( NULL );
 	}
 
 	/** Set the bitmap pointer, delete old bitmap, if any */
 	void SetBitmap( Bitmap * pcBitmap )
 	{
-		if( m_pcBitmap )
-		{
+		if( m_pcBitmap ) {
+			if( m_pcView ) {
+				m_pcBitmap->RemoveChild( m_pcView );
+			}
 			delete m_pcBitmap;
 		}
 		m_pcBitmap = pcBitmap;
+		if( m_pcBitmap && m_pcView ) {
+			m_pcView->SetFrame( m_pcBitmap->GetBounds() );
+			m_pcBitmap->AddChild( m_pcView );
+		}
 	}
 
 	/** Make sure that we have a bitmap */
@@ -148,11 +161,32 @@ class BitmapImage::Private
 			throw errno_exception( "Empty bitmap" );
 	}
 
+	/** Make sure that the bitmap was allocated with the right flags, change otherwise */
+	void AssertBitmapFlags( uint32 nFlags )
+	{
+		AssertBitmap();
+		if( ( m_nBitmapFlags & nFlags ) != nFlags ) {
+			Rect cBounds( m_pcBitmap->GetBounds() );
+			Bitmap* pcNew = new Bitmap( int(cBounds.Width() + 1), int(cBounds.Height() + 1), m_pcBitmap->GetColorSpace(), m_nBitmapFlags | nFlags );
+			if( pcNew ) {
+				m_nBitmapFlags |= nFlags;
+				memcpy( pcNew->LockRaster(), m_pcBitmap->LockRaster(), m_pcBitmap->GetBytesPerRow() * int( cBounds.Height() + 1 ) );
+				delete m_pcBitmap;
+				m_pcBitmap = pcNew;
+			} else {
+				throw errno_exception( "" );
+			}
+		}
+	}
+
 	/** Pointer to the Bitmap */
-	Bitmap *m_pcBitmap;
+	Bitmap*	m_pcBitmap;
 
 	/** Bitmap Flags (see os::Bitmap) */
-	uint32 m_nBitmapFlags;
+	uint32	m_nBitmapFlags;
+
+	/** View for rendering to the bitmap */
+	View*	m_pcView;
 };
 
 /**
@@ -483,7 +517,7 @@ void BitmapImage::Draw( const Rect & cSource, const Rect & cDest, View * pcView 
  *		is optimized for speed rather than quality.
  *		The image will remain unchanged if memory allocation fails.
  * \param	cSize The new size.
- * \sa GetSize()
+ * \sa GetSize(), ResizeCanvas()
  * \bug		Works only with CS_RGB(A)32
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
@@ -517,6 +551,87 @@ Point BitmapImage::GetSize( void ) const
 		return Point( m->m_pcBitmap->GetBounds().Width(  ) + 1, m->m_pcBitmap->GetBounds(  ).Height(  ) + 1 );
 	else
 		return Point( 0, 0 );
+}
+
+/** Obtain a View for rendering into the bitmap
+ * \par		Description:
+ *		Returns a pointer to a View, that can be used for rendering into the
+ *		bitmap. This is useful for double buffering.
+ * \note	When finished drawing to the View, you need to call Sync(). The
+ *	drawing operations might not take place until you have done so.
+ * \note	The BitmapImage should be initialized with the flag ACCEPT_VIEWS.
+ * If it isn't, GetView() will try to re-allocate the bitmap, changing this flag.
+ * \author Henrik Isaksson (henrik@isaksson.tk)
+ *****************************************************************************/
+View* BitmapImage::GetView()
+{
+	if( !m->m_pcView ) {
+		m->AssertBitmapFlags( Bitmap::ACCEPT_VIEWS );
+		m->m_pcView = new View( m->m_pcBitmap->GetBounds(), "BitmapImage::m::m_pcView" );
+		m->m_pcBitmap->AddChild( m->m_pcView );
+	}
+
+	return m->m_pcView;
+}
+
+/** Change the size of the bitmap
+ * \par		Description:
+ *		Changes the size of the bitmap to the specified size. Returns an error
+ *		if memory for a new bitmap can not be allocated.
+ *		Note that the image data is lost. To change the size of the image, use
+ *		SetSize() instead.
+ * \param	cSize The new size.
+ * \sa SetSize(), GetSize()
+ * \author Henrik Isaksson (henrik@isaksson.tk)
+ *****************************************************************************/
+void BitmapImage::ResizeCanvas( const Point& cSize )
+{
+	Bitmap *bmap = new Bitmap( (int)cSize.x, (int)cSize.y, GetColorSpace(), m->m_nBitmapFlags );
+
+	if( bmap )
+	{
+		m->SetBitmap( bmap );
+	}
+}
+
+/** Direct access to pixels
+ * \par		Description:
+ *		Returns a pointer to a row of raw pixel data. 
+ * \note	The BitmapImage should be initialized with the flag SHARE_FRAMEBUFFER.
+ * If it isn't, this method will try to re-allocate the bitmap, changing this flag.
+ * \author Henrik Isaksson (henrik@isaksson.tk)
+ *****************************************************************************/
+uint32* BitmapImage::operator[]( int row )
+{
+	m->AssertBitmapFlags( Bitmap::SHARE_FRAMEBUFFER );
+	return (uint32*)( m->m_pcBitmap->LockRaster() + m->m_pcBitmap->GetBytesPerRow() * row );
+}
+
+/** Flush the render queue, and wait til the rendering is done.
+ * \par Description:
+ *	Call this method before accessing bitmap data that you have created by
+ *	rendering to the View associated with this BitmapImage.
+ * \sa Window::Sync(), Bitmap::Sync(), GetView()
+ * \author	Henrik Isaksson
+ *****************************************************************************/
+void BitmapImage::Sync()
+{
+	if( m->m_pcBitmap ) {
+		m->m_pcBitmap->Sync();
+	}
+}
+
+/** Flush the render queue.
+ * \par Description:
+ * See Window::Sync().
+ * \sa Window::Sync(), Bitmap::Sync(), GetView()
+ * \author	Henrik Isaksson
+ *****************************************************************************/
+void BitmapImage::Flush()
+{
+	if( m->m_pcBitmap ) {
+		m->m_pcBitmap->Flush();
+	}
 }
 
 /** Get bitmap colour space
@@ -1333,4 +1448,3 @@ static float Filter_Mitchell( float t )
 }
 
 //-----------------------------------------------------------------------------
-
