@@ -237,7 +237,7 @@ void ProcessPanel::UpdateProcessList()
         sprintf( zBuf, "%18s", pzState);
 	pcRow->AppendString( zBuf );
 	  
-	m_pcProcessList->InsertRow( pcRow );
+	m_pcProcessList->InsertRow( pcRow, false );
 					
     }
 }
@@ -282,5 +282,8 @@ void ProcessPanel::SetThreadCount( int nVal ){
 int ProcessPanel::GetThreadCount(){
   return nThreads;
 }
+
+
+
 
 

@@ -358,3 +358,5 @@ void PerformancePanel::HandleMessage( Message* pcMessage )
 	    break;
     }
 }
+
+

@@ -1,3 +1,4 @@
+
 /*
  *  AtheMgr - System Manager for AtheOS
  *  Copyright (C) 2001 John Hall
@@ -23,10 +24,12 @@
 
 #include <gui/window.h>
 #include <gui/menu.h>
+#include <gui/checkmenu.h>
 #include <gui/requesters.h>
 
 #include <util/application.h>
 #include <util/message.h>
+#include <util/settings.h>
 
 #include <atheos/time.h>
 #include <atheos/kernel.h>
@@ -41,234 +44,252 @@ using namespace os;
 
 enum
 {
-  ID_QUIT,
-  ID_SPEED_LOW,
-  ID_SPEED_MEDIUM,
-  ID_SPEED_HIGH,
-  ID_SPEED_PAUSE,
-  ID_INFO_SIMPLE,
-  ID_INFO_DETAIL,
-  ID_ABOUT
+	ID_QUIT,
+	ID_SPEED_LOW,
+	ID_SPEED_MEDIUM,
+	ID_SPEED_HIGH,
+	ID_SPEED_PAUSE,
+	ID_INFO_SIMPLE,
+	ID_INFO_DETAIL,
+	ID_ABOUT,
+	ID_UPDATE,
+	ID_SAVE_WINFRAME
 };
 
-class MyWindow : public os::Window
+class MyWindow:public os::Window
 {
-public:
-    MyWindow( const Rect& cFrame );
-    ~MyWindow();
+	public:
+	MyWindow();
+	~MyWindow();
 
-    // From Window:
-    bool    OkToQuit();
-    virtual void TimerTick( int nID );
+	// From Window:
+	bool OkToQuit();
+	virtual void TimerTick( int nID );
 
-    //void SetInfoDetail( bool bVal );
-    void ShowAbout();
-   
-    bigtime_t m_nDelay;
-   
-private:
-    int	m_nUpdateCount;
+	//void SetInfoDetail( bool bVal );
+	void ShowAbout();
+	void CheckSpeedMenuItem( int nItem );
+	virtual void HandleMessage( Message * pcMsg );
 
-    void SetupMenus();
+	void SetDelay( bigtime_t nDelay );
 
-    Menu* m_pcMenu;
-    TabView*          m_pcView;
-    ProcessPanel*     pcProcessPanel;
-    SysInfoPanel*     pcSysInfoPanel;
-    PerformancePanel* pcPerformancePanel;
+	void DoUpdate();
+
+	private:
+	void SetupMenus();
+
+	int m_nUpdateCount;
+	bigtime_t m_nDelay;
+	Menu *m_pcMenu;
+	TabView *m_pcView;
+	ProcessPanel *pcProcessPanel;
+	SysInfoPanel *pcSysInfoPanel;
+	PerformancePanel *pcPerformancePanel;
+	CheckMenu*	m_pcMenuMedium;
+	CheckMenu*	m_pcMenuLow;
+	CheckMenu*	m_pcMenuHigh;
+	CheckMenu*	m_pcMenuPause;
+	Settings*	m_pcSettings;
 };
 
-class	MyApp : public Application
+class MyApp:public Application
 {
-public:
-  MyApp( const char* pzName );
-  ~MyApp();
+	public:
+	MyApp( const char *pzName );
+	 ~MyApp();
 
-    // From Handler:
-  virtual void HandleMessage( Message* pcMsg );
-          void SetDelay( bigtime_t nDelay );
+	// From Handler:
+	virtual void HandleMessage( Message * pcMsg );
 
-private:
-  MyWindow* m_pcWindow;
-  bigtime_t m_nDelay;
+	private:
+	MyWindow * m_pcWindow;
 };
 
-MyApp::MyApp( const char* pzName ) : Application( pzName )
+MyApp::MyApp( const char *pzName ):Application( pzName )
 {
-  m_pcWindow = new MyWindow( Rect( 0, 0, 250 - 1, 300 - 1 ) + Point( 50, 25 ) );
-  SetDelay( 500000 );
-  m_pcWindow->Show();
+	m_pcWindow = new MyWindow();
+	m_pcWindow->SetDelay( 500000 );
+	m_pcWindow->Show();
 }
 
 //----------------------------------------------------------------------------
 MyApp::~MyApp()
 {
-  m_pcWindow->Quit();
+	m_pcWindow->Quit();
 }
-
-void MyApp::SetDelay( bigtime_t nDelay)
-{
-  m_nDelay = nDelay;
-  m_pcWindow->m_nDelay = nDelay;
-}
-
 
 
 //----------------------------------------------------------------------------
-void MyApp::HandleMessage( Message* pcMsg )
+void MyApp::HandleMessage( Message * pcMsg )
 {
-    switch( pcMsg->GetCode() )
-    {
-	case ID_QUIT:{
-	    Message cMsg( M_QUIT );
-	    m_pcWindow->PostMessage( &cMsg );
-	    return;
+	switch ( pcMsg->GetCode() )
+	{
+		default:
+			Application::HandleMessage( pcMsg );
+			return;
 	}
-	case ID_SPEED_LOW:     SetDelay( 1000000 );  break;
-    	case ID_SPEED_MEDIUM:  SetDelay( 500000  );  break;
-    	case ID_SPEED_HIGH:    SetDelay( 250000  );  break;
-    	case ID_SPEED_PAUSE:   SetDelay( 1000001 );  break;
+}
 
-        /*  DEPRECATED:  8/18/2001  */
-        //case ID_INFO_SIMPLE:   m_pcWindow->SetInfoDetail( false ); break;
-    	//case ID_INFO_DETAIL:   m_pcWindow->SetInfoDetail( true ); break;
-        case ID_ABOUT:         m_pcWindow->ShowAbout(); break;
-       
-	default:
-	    Application::HandleMessage( pcMsg );
-	    return;
-    }
+void MyWindow::SetDelay( bigtime_t nDelay )
+{
+	m_nDelay = nDelay;
+	AddTimer( this, 0, nDelay, false );
+}
 
-    m_pcWindow->Lock();
-    m_pcWindow->AddTimer( m_pcWindow, 0, m_nDelay, false );
-    m_pcWindow->Unlock();
+void MyWindow::CheckSpeedMenuItem( int nItem )
+{
+	m_pcMenuLow->SetChecked( nItem == 1 );
+	m_pcMenuMedium->SetChecked( nItem == 2 );
+	m_pcMenuHigh->SetChecked( nItem == 3 );
+	m_pcMenuPause->SetChecked( nItem == 4 );
+}
+
+void MyWindow::HandleMessage( Message * pcMsg )
+{
+	switch ( pcMsg->GetCode() )
+	{
+		case ID_QUIT:
+			Application::GetInstance()->PostMessage( M_QUIT );
+			break;
+		case ID_SPEED_LOW:
+			CheckSpeedMenuItem( 1 );
+			SetDelay( 1000000 );
+			break;
+		case ID_SPEED_MEDIUM:
+			CheckSpeedMenuItem( 2 );
+			SetDelay( 500000 );
+			break;
+		case ID_SPEED_HIGH:
+			CheckSpeedMenuItem( 3 );
+			SetDelay( 250000 );
+			break;
+		case ID_SPEED_PAUSE:
+			CheckSpeedMenuItem( 4 );
+			SetDelay( 1000001 );
+			break;
+		case ID_SAVE_WINFRAME:
+			m_pcSettings->SetRect( "windowFrame", GetFrame() );
+			m_pcSettings->Save();
+			break;
+		case ID_ABOUT:
+			ShowAbout();
+			break;
+		case ID_UPDATE:
+			DoUpdate();
+			break;
+		default:
+			Window::HandleMessage( pcMsg );
+			return;
+	}
 }
 
 //void MyWindow::SetInfoDetail( bool bVal ){
 //  pcSysInfoPanel->SetDetail( bVal );  
 //}
 
-void MyWindow::ShowAbout(){
-  char szTitle[128];
-  char szMessage[1024];
-  
-  sprintf( szTitle,   "About Syllable Manager v.%s", APP_VERSION );
-  sprintf( szMessage, "SLBMgr v.%s\n\nResource Manager For Syllable\nJohn Hall, 2001\n\nAtheMgr is released under the GNU Public License (GPL)\n\nAtheMgr: http://www.triumvirate.net/athemgr.htm\nGNU: http://www.gnu.org/", APP_VERSION );
+void MyWindow::ShowAbout()
+{
+	char szTitle[128];
+	char szMessage[1024];
 
-  Alert* sAbout = new Alert( szTitle, szMessage, 0x00, "O.K", NULL);
-  sAbout->Go();
+	sprintf( szTitle, "About Syllable Manager v.%s", APP_VERSION );
+	sprintf( szMessage, "SLBMgr v.%s\n\nResource Manager For Syllable\nJohn Hall, 2001\n\nAtheMgr is released under the GNU Public License (GPL)\n\nAtheMgr: http://www.triumvirate.net/athemgr.htm\nGNU: http://www.gnu.org/", APP_VERSION );
+
+	Alert *sAbout = new Alert( szTitle, szMessage, 0x00, "O.K", NULL );
+
+	sAbout->Go( new Invoker(NULL) );
 }
 
 //----------------------------------------------------------------------------
 void MyWindow::SetupMenus()
 {
-  Rect cMenuFrame = GetBounds();
-  Rect cMainFrame = cMenuFrame;
-  cMenuFrame.bottom = 16;
-  
-  m_pcMenu = new Menu( cMenuFrame, "Menu", ITEMS_IN_ROW,
-		       CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT | CF_FOLLOW_TOP, WID_FULL_UPDATE_ON_H_RESIZE );
- 
-  Menu*	pcFile	 = new Menu( Rect( 0, 0, 100, 20 ), "File", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
-    pcFile->AddItem( "Quit", new Message( ID_QUIT ) );
-  Menu*	pcOption = new Menu( Rect( 0, 0, 100, 20 ), "Options", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
-    Menu*  pcSpeed = new Menu( Rect( 0, 0, 100, 20 ),  "Speed", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
-      pcSpeed->AddItem( new MenuItem( "Low",       new Message( ID_SPEED_LOW    ) ) );
-      pcSpeed->AddItem( new MenuItem( "Medium",    new Message( ID_SPEED_MEDIUM ) ) );
-      pcSpeed->AddItem( new MenuItem( "High",      new Message( ID_SPEED_HIGH   ) ) );
-      pcSpeed->AddItem( new MenuItem( "Pause",     new Message( ID_SPEED_PAUSE  ) ) );
-    pcOption->AddItem( pcSpeed );
+	Rect cMenuFrame = GetBounds();
+	Rect cMainFrame = cMenuFrame;
 
-    /* DEPRECATED:  John Hall 8/17/2001
+	cMenuFrame.bottom = 16;
 
-    Menu*  pcDetail = new Menu( Rect( 0, 0, 100, 20 ), "* System Info", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
-      pcDetail->AddItem( new MenuItem( "Simple",   new Message( ID_INFO_SIMPLE ) ) );
-      pcDetail->AddItem( new MenuItem( "Detailed", new Message( ID_INFO_DETAIL ) ) );
-    pcOption->AddItem( pcDetail );
+	m_pcMenu = new Menu( cMenuFrame, "Menu", ITEMS_IN_ROW, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT | CF_FOLLOW_TOP, WID_FULL_UPDATE_ON_H_RESIZE );
 
-    */
-  Menu*	pcHelp = new Menu( Rect( 0, 0, 100, 20 ), "Help", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
-    pcHelp->AddItem( new MenuItem( "About",        new Message( ID_ABOUT  ) ) );
+	Menu *pcFile = new Menu( Rect(), "File", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
 
-  m_pcMenu->AddItem( pcFile   );
-  m_pcMenu->AddItem( pcOption );
-  m_pcMenu->AddItem( pcHelp   );
-   
-  cMenuFrame.bottom = m_pcMenu->GetPreferredSize( false ).y - 1;
-  cMainFrame.top = cMenuFrame.bottom + 1;
-  
-  m_pcMenu->SetFrame( cMenuFrame );
-  
-  m_pcMenu->SetTargetForItems( Application::GetInstance() );
-  
-  AddChild( m_pcMenu );
+	pcFile->AddItem( "Quit", new Message( ID_QUIT ) );
+	Menu *pcOption = new Menu( Rect(), "Options", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
+	Menu *pcSpeed = new Menu( Rect(), "Speed", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
+
+	pcSpeed->AddItem( m_pcMenuLow = new CheckMenu( "Low", new Message( ID_SPEED_LOW ), false ) );
+	pcSpeed->AddItem( m_pcMenuMedium = new CheckMenu( "Medium", new Message( ID_SPEED_MEDIUM ), true ) );
+	pcSpeed->AddItem( m_pcMenuHigh = new CheckMenu( "High", new Message( ID_SPEED_HIGH ), false ) );
+	pcSpeed->AddItem( m_pcMenuPause = new CheckMenu( "Pause", new Message( ID_SPEED_PAUSE ), false ) );
+	pcOption->AddItem( pcSpeed );
+
+	pcOption->AddItem( "Save Window Position", new Message( ID_SAVE_WINFRAME ) );
+
+
+	/* DEPRECATED:  John Hall 8/17/2001
+
+	   Menu*  pcDetail = new Menu( Rect( 0, 0, 100, 20 ), "* System Info", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
+	   pcDetail->AddItem( new MenuItem( "Simple",   new Message( ID_INFO_SIMPLE ) ) );
+	   pcDetail->AddItem( new MenuItem( "Detailed", new Message( ID_INFO_DETAIL ) ) );
+	   pcOption->AddItem( pcDetail );
+
+	 */
+	Menu *pcHelp = new Menu( Rect(), "Help", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
+
+	pcHelp->AddItem( new MenuItem( "About", new Message( ID_ABOUT ) ) );
+
+	m_pcMenu->AddItem( pcFile );
+	m_pcMenu->AddItem( pcOption );
+	m_pcMenu->AddItem( pcHelp );
+
+	cMenuFrame.bottom = m_pcMenu->GetPreferredSize( false ).y - 1;
+	cMainFrame.top = cMenuFrame.bottom + 1;
+
+	m_pcMenu->SetFrame( cMenuFrame );
+
+	m_pcMenu->SetTargetForItems( this );
+
+	AddChild( m_pcMenu );
 }
 
 //----------------------------------------------------------------------------
-MyWindow::MyWindow( const Rect& cFrame ) :
-    Window( cFrame, "athe_wnd", APP_WINDOW_TITLE, 0 )
+MyWindow::MyWindow():Window( Rect(), "athe_wnd", APP_WINDOW_TITLE, 0 )
 {
-    m_nUpdateCount  = 0;
+	m_nUpdateCount = 0;
 
-    SetupMenus();
+	SetupMenus();
 
-    Rect cMainFrame = GetBounds();
-    Rect cMenuFrame = m_pcMenu->GetFrame();
+	Rect cMainFrame = GetBounds();
+	Rect cMenuFrame = m_pcMenu->GetFrame();
 
-    cMainFrame.top = cMenuFrame.bottom + 1.0f;
+	cMainFrame.top = cMenuFrame.bottom + 1.0f;
 
-    /* Border for actual panel */
-    cMainFrame.Resize( 5, 5, -5, -5 );
-  
-    m_pcView = new TabView( cMainFrame, "main_tab", CF_FOLLOW_ALL, WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
-    pcProcessPanel     = new ProcessPanel( cMainFrame );
-    pcSysInfoPanel     = new SysInfoPanel( cMainFrame );
-    pcPerformancePanel = new PerformancePanel( cMainFrame );
+	/* Border for actual panel */
+	cMainFrame.Resize( 5, 5, -5, -5 );
 
-    m_pcView->AppendTab( "System Info", pcSysInfoPanel );
-    m_pcView->AppendTab( "Processes", pcProcessPanel );
-    m_pcView->AppendTab( "Performance", pcPerformancePanel );
-  
-    AddChild( m_pcView );
-    MakeFocus( true );
-    //pcSysInfoPanel->MakeFocus( true );
-    pcProcessPanel->MakeFocus( true );
-    Point cMinSize = m_pcView->GetPreferredSize(false) + Point( 150.0f, cMenuFrame.bottom + 200.0f );
-    Point cMaxSize = m_pcView->GetPreferredSize(false) + Point( 800.0f, cMenuFrame.bottom + 900.0f );
+	m_pcView = new TabView( cMainFrame, "main_tab", CF_FOLLOW_ALL, WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
+	pcProcessPanel = new ProcessPanel( cMainFrame );
+	pcSysInfoPanel = new SysInfoPanel( cMainFrame );
+	pcPerformancePanel = new PerformancePanel( cMainFrame );
 
-    /* Uncomment this next line when done with testing */
-    ResizeTo( cMinSize );
-    SetSizeLimits( cMinSize, cMaxSize );
-
-    char* pzHome = getenv( "HOME" );
-    if ( NULL != pzHome )
-    {
-	FILE*	hFile;
-	char	zPath[ PATH_MAX ];
-	struct stat sStat;
-	Message	cArchive;
+	m_pcView->AppendTab( "System Info", pcSysInfoPanel );
+	m_pcView->AppendTab( "Processes", pcProcessPanel );
+	m_pcView->AppendTab( "Performance", pcPerformancePanel );
 	
-	strcpy( zPath, pzHome );
-	strcat( zPath, "/config/nSysPanel.cfg" );
+	m_pcView->SetMessage( new Message( ID_UPDATE ) );
+	m_pcView->SetTarget( this );
 
-	if ( stat( zPath, &sStat ) >= 0 ) {
-	    hFile = fopen( zPath, "rb" );
-	    if ( NULL != hFile ) {
-		uint8* pBuffer = new uint8[sStat.st_size];
-		fread( pBuffer, sStat.st_size, 1, hFile );
-		fclose( hFile );
-		cArchive.Unflatten( pBuffer );
-		
-		Rect cFrame;
-		if ( cArchive.FindRect( "window_frame", &cFrame ) == 0 ) {
-		    SetFrame( cFrame );
-		}
-	    }
-	}
-    }
-  
-  AddTimer( this, 0, 500000, false );
-  Unlock();
+	AddChild( m_pcView );
+
+	Point cMinSize = m_pcView->GetPreferredSize( false ) + Point( 150.0f, cMenuFrame.bottom + 200.0f );
+	Point cMaxSize = m_pcView->GetPreferredSize( false ) + Point( 800.0f, cMenuFrame.bottom + 900.0f );
+	SetSizeLimits( cMinSize, cMaxSize );
+
+	m_pcSettings = new Settings();
+	m_pcSettings->Load();
+
+	SetFrame( m_pcSettings->GetRect( "windowFrame", Rect( 0, 0, cMinSize.x, cMinSize.y ) + Point( 50, 25 ) ) );
+
+	AddTimer( this, 0, 500000, false );
 }
 
 //----------------------------------------------------------------------------
@@ -279,67 +300,50 @@ MyWindow::~MyWindow()
 //----------------------------------------------------------------------------
 bool MyWindow::OkToQuit()
 {
-/*
-   Commented this section out until I can decide if I want the
-   program to have a saved location or not...
-*/
-
-/*    char* pzHome = getenv( "HOME" );
-    if ( NULL != pzHome )
-    {
-	FILE*	hFile;
-	char	zPath[ PATH_MAX ];
-	Message	cArchive;
-	
-	strcpy( zPath, pzHome );
-	strcat( zPath, "/config/nSysPanel.cfg" );
-
-	hFile = fopen( zPath, "wb" );
-
-	if ( NULL != hFile ) {
-	    cArchive.AddRect( "window_frame", GetFrame() );
-
-	    int nSize = cArchive.GetFlattenedSize();
-	    uint8* pBuffer = new uint8[nSize];
-	    cArchive.Flatten( pBuffer, nSize );
-	    fwrite( pBuffer, nSize, 1, hFile );
-	    fclose( hFile );
-	}
-    }*/
-    
-    Application::GetInstance()->PostMessage( M_QUIT );
-    return( true );
+	Application::GetInstance()->PostMessage( M_QUIT );
+	return ( true );
 }
+
+void MyWindow::DoUpdate()
+{
+	pcPerformancePanel->UpdatePerformanceList();
+	pcSysInfoPanel->UpdateSysInfoPanel();
+	int	nCount = pcProcessPanel->ThreadCount();
+	if( pcProcessPanel->GetThreadCount() != nCount )
+	{
+		pcProcessPanel->UpdateProcessList();
+		pcProcessPanel->SetThreadCount( nCount );
+	}
+}
+
 
 void MyWindow::TimerTick( int nID )
 {
-  int nCount;
-   
-  if ( (m_nUpdateCount++ % 2) == 0 ) {
-    if(m_nDelay <= 1000000){
-      pcPerformancePanel->UpdatePerformanceList();
-      pcSysInfoPanel->UpdateSysInfoPanel();
-    }
-     
-    nCount = pcProcessPanel->ThreadCount();
-     
-    if( pcProcessPanel->GetThreadCount() != nCount ){
-      pcProcessPanel->UpdateProcessList();
-      pcProcessPanel->SetThreadCount( nCount );
-    }
-  }
+	int nCount;
+	
+	if( ( m_nUpdateCount++ % 2 ) == 0 )
+	{
+		if( m_nDelay <= 1000000 )
+		{
+			pcPerformancePanel->UpdatePerformanceList();
+			pcSysInfoPanel->UpdateSysInfoPanel();
+		}
+
+		nCount = pcProcessPanel->ThreadCount();
+
+		if( pcProcessPanel->GetThreadCount() != nCount )
+		{
+			pcProcessPanel->UpdateProcessList();
+			pcProcessPanel->SetThreadCount( nCount );
+		}
+	}
 }
 
 //----------------------------------------------------------------------------
 int main()
 {
-  Application* pcMyApp;
-  pcMyApp = new MyApp( "application/x-vnd.JMH-Syllable Manager" );
-  pcMyApp->Run();
+	Application *pcMyApp;
+
+	pcMyApp = new MyApp( "application/x-vnd.JMH-Syllable Manager" );
+	pcMyApp->Run();
 }
-
-
-
-
-
-

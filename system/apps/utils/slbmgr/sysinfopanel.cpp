@@ -1,3 +1,4 @@
+
 /*
  *  AtheMgr - System Manager for AtheOS
  *  Copyright (C) 2001 John Hall
@@ -54,130 +55,148 @@ using namespace os;
 
 enum
 {
-  ID_END
+	ID_END
 };
 
-const char* gApp_Date = __DATE__;
+const char *gApp_Date = __DATE__;
 
-void human( char* pzBuffer, off_t nValue )
+void human( char *pzBuffer, off_t nValue )
 {
-    if ( nValue > (1024*1024*1024) ) {
-	sprintf( pzBuffer, "%.1f Gb", ((double)nValue) / (1024.0*1024.0*1024.0) );
-    } else if ( nValue > (1024*1024) ) {
-	sprintf( pzBuffer, "%.1f Mb", ((double)nValue) / (1024.0*1024.0) );
-    } else if ( nValue > 1024 ) {
-	sprintf( pzBuffer, "%.1f Kb", ((double)nValue) / 1024.0 );
-    } else {
-	sprintf( pzBuffer, "%.1f b", ((double)nValue) );
-    }
+	if( nValue > ( 1024 * 1024 * 1024 ) )
+	{
+		sprintf( pzBuffer, "%.1f Gb", ( ( double )nValue ) / ( 1024.0 * 1024.0 * 1024.0 ) );
+	}
+	else if( nValue > ( 1024 * 1024 ) )
+	{
+		sprintf( pzBuffer, "%.1f Mb", ( ( double )nValue ) / ( 1024.0 * 1024.0 ) );
+	}
+	else if( nValue > 1024 )
+	{
+		sprintf( pzBuffer, "%.1f Kb", ( ( double )nValue ) / 1024.0 );
+	}
+	else
+	{
+		sprintf( pzBuffer, "%.1f b", ( ( double )nValue ) );
+	}
 }
 
 //---------------------------------------------------------------------------
-SysInfoPanel::SysInfoPanel( const Rect& cFrame ) : LayoutView( cFrame, "", NULL, CF_FOLLOW_NONE )
+SysInfoPanel::SysInfoPanel( const Rect & cFrame ):LayoutView( cFrame, "", NULL, CF_FOLLOW_NONE )
 {
-    VLayoutNode* pcRoot  = new VLayoutNode( "root" );
+	VLayoutNode *pcRoot = new VLayoutNode( "root" );
 
-    //HLayoutNode* pcTime  = new HLayoutNode( "time" );
-   
-   
-    pcRoot->ExtendMaxSize( Point( 0.0f, MAX_SIZE ) );
+	//HLayoutNode* pcTime  = new HLayoutNode( "time" );
 
-    m_pcVersionView  = new ListView( Rect( 0, 0, 0, 0 ), "version_info", ListView::F_RENDER_BORDER | ListView::F_NO_AUTO_SORT );
-    m_pcCPUView      = new ListView( Rect( 0, 0, 0, 0 ), "cpu_info", ListView::F_RENDER_BORDER | ListView::F_NO_AUTO_SORT );
-    m_pcMemoryView   = new ListView( Rect( 0, 0, 0, 0 ), "mem_info", ListView::F_RENDER_BORDER | ListView::F_NO_AUTO_SORT );
-    m_pcHDView       = new ListView( Rect( 0, 0, 0, 0 ), "hd_info",  ListView::F_RENDER_BORDER | ListView::F_NO_AUTO_SORT );
-    m_pcAdditionView = new ListView( Rect( 0, 0, 0, 0 ), "add_info", ListView::F_RENDER_BORDER | ListView::F_NO_AUTO_SORT );
-   
-    
-    m_pcUptimeView = new TextView( Rect( 0, 0, 0, 0 ), "uptime_view", "Test string", CF_FOLLOW_LEFT | CF_FOLLOW_TOP, WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
 
-    m_pcUptime = new StringView( Rect( 0, 0, 0, 0 ), "tm" , "Uptime: DDD:HH:MM:SS", ALIGN_LEFT, WID_WILL_DRAW );
+	pcRoot->ExtendMaxSize( Point( 0.0f, MAX_SIZE ) );
 
-    /* Configuring m_pcTestView */
-    m_pcUptimeView->SetMultiLine( false );
-    m_pcUptimeView->SetReadOnly( true );
-    //m_pcTestView->SetMinPreferredSize ( 225.0f, 250.0f );
-    //m_pcTestView->SetMaxPreferredSize ( 800.0f, 900.0f );
+	m_pcVersionView = new ListView( Rect( 0, 0, 0, 0 ), "version_info", ListView::F_RENDER_BORDER | ListView::F_NO_AUTO_SORT );
+	m_pcCPUView = new ListView( Rect( 0, 0, 0, 0 ), "cpu_info", ListView::F_RENDER_BORDER | ListView::F_NO_AUTO_SORT );
+	m_pcMemoryView = new ListView( Rect( 0, 0, 0, 0 ), "mem_info", ListView::F_RENDER_BORDER | ListView::F_NO_AUTO_SORT );
+	m_pcHDView = new ListView( Rect( 0, 0, 0, 0 ), "hd_info", ListView::F_RENDER_BORDER | ListView::F_NO_AUTO_SORT );
+	m_pcAdditionView = new ListView( Rect( 0, 0, 0, 0 ), "add_info", ListView::F_RENDER_BORDER | ListView::F_NO_AUTO_SORT );
+
+
+	m_pcUptimeView = new TextView( Rect( 0, 0, 0, 0 ), "uptime_view", "Test string", CF_FOLLOW_LEFT | CF_FOLLOW_TOP, WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
+
+	m_pcUptime = new StringView( Rect( 0, 0, 0, 0 ), "tm", "Uptime: DDD:HH:MM:SS", ALIGN_LEFT, WID_WILL_DRAW );
+
+	/* Configuring m_pcTestView */
+	m_pcUptimeView->SetMultiLine( false );
+	m_pcUptimeView->SetReadOnly( true );
+	//m_pcTestView->SetMinPreferredSize ( 225.0f, 250.0f );
+	//m_pcTestView->SetMaxPreferredSize ( 800.0f, 900.0f );
+
     /****************************/
-  
-    pcRoot->AddChild( m_pcVersionView , 2.0f );
-    pcRoot->AddChild( m_pcCPUView     , 1.0f );
-    pcRoot->AddChild( m_pcMemoryView  , 3.0f );
-    pcRoot->AddChild( m_pcHDView      , 1.0f );
-    pcRoot->AddChild( m_pcAdditionView, 3.0f );
-  
-    pcRoot->AddChild( m_pcUptime );
- 
-    //pcRoot->AddChild( m_pcUptimeView );
- 
-    SetUpVersionView();
-    SetUpCPUView();
-    SetUpMemoryView();
-    SetUpHDView();
-    SetUpAdditionView();
-   
-    pcRoot->SetBorders( Rect(5.0f, 5.0f, 5.0f, 5.0f), "version_info","cpu_info","mem_info",
-		                                      "hd_info","add_info", "uptime_view", NULL );
-    SetRoot( pcRoot );
 
-    //m_bDetail = false;
+	pcRoot->AddChild( m_pcVersionView, 2.0f );
+	pcRoot->AddChild( m_pcCPUView, 1.0f );
+	pcRoot->AddChild( m_pcMemoryView, 3.0f );
+	pcRoot->AddChild( m_pcHDView, 1.0f );
+	pcRoot->AddChild( m_pcAdditionView, 3.0f );
+
+	pcRoot->AddChild( m_pcUptime );
+
+	//pcRoot->AddChild( m_pcUptimeView );
+
+	SetUpVersionView();
+	SetUpCPUView();
+	SetUpMemoryView();
+	SetUpHDView();
+	SetUpAdditionView();
+
+	pcRoot->SetBorders( Rect( 5.0f, 5.0f, 5.0f, 5.0f ), "version_info", "cpu_info", "mem_info", "hd_info", "add_info", "uptime_view", NULL );
+	SetRoot( pcRoot );
+
+	//m_bDetail = false;
 }
 
-void SysInfoPanel::SetUpVersionView(){
-    m_pcVersionView->InsertColumn( "Name", 100 );
-    m_pcVersionView->InsertColumn( "Number", 80 );
-    m_pcVersionView->InsertColumn( "Build Date", 80 );
+void SysInfoPanel::SetUpVersionView()
+{
+	m_pcVersionView->InsertColumn( "Name", 100 );
+	m_pcVersionView->InsertColumn( "Number", 80 );
+	m_pcVersionView->InsertColumn( "Build Date", 80 );
 }
+
 /**
  *  Quick hack.  Need to make it more useable in the future:  John Hall 8/18/2001
  **/
-ListViewStringRow* SysInfoPanel::AddRow( char* pzCol1, char* pzCol2, char* pzCol3, int nRows ){
-    ListViewStringRow* pcRow = new ListViewStringRow();
-    
-    if( nRows >= 1 )
-      pcRow->AppendString( pzCol1 );
-    if( nRows >= 2 )
-      pcRow->AppendString( pzCol2 );
-    if( nRows >= 3 )
-      pcRow->AppendString( pzCol3 );
-   
-    return( pcRow );
-}
-				       
-void SysInfoPanel::SetUpCPUView(){
-    m_pcCPUView->InsertColumn( "CPU", 40 );
-    m_pcCPUView->InsertColumn( "Core Speed", 80 );
-    m_pcCPUView->InsertColumn( "Bus Speed" , 80 );
-    m_pcCPUView->InsertColumn( "Features" , 100 );
+ListViewStringRow *SysInfoPanel::AddRow( char *pzCol1, char *pzCol2, char *pzCol3, int nRows )
+{
+	ListViewStringRow *pcRow = new ListViewStringRow();
+
+	if( nRows >= 1 )
+		pcRow->AppendString( pzCol1 );
+	if( nRows >= 2 )
+		pcRow->AppendString( pzCol2 );
+	if( nRows >= 3 )
+		pcRow->AppendString( pzCol3 );
+
+	return ( pcRow );
 }
 
-void SysInfoPanel::SetUpMemoryView(){
-    m_pcMemoryView->InsertColumn( "Memory Type", 120 );
-    m_pcMemoryView->InsertColumn( "Amount", 100 );
-}
-void SysInfoPanel::SetUpHDView(){
-    m_pcHDView->InsertColumn( "Volume", 78 );
-    m_pcHDView->InsertColumn( "Type",   50 );
-    m_pcHDView->InsertColumn( "Size",   62 );
-    m_pcHDView->InsertColumn( "Used",   75 );
-    m_pcHDView->InsertColumn( "Avail",  58 );
-    m_pcHDView->InsertColumn( "Percent Free", 80 );
-}
-void SysInfoPanel::SetUpAdditionView(){
-    m_pcAdditionView->InsertColumn( "Additional Info", 150 );
-    m_pcAdditionView->InsertColumn( "Amount", 100 );
+void SysInfoPanel::SetUpCPUView()
+{
+	m_pcCPUView->InsertColumn( "CPU", 40 );
+	m_pcCPUView->InsertColumn( "Core Speed", 80 );
+	m_pcCPUView->InsertColumn( "Bus Speed", 80 );
+	m_pcCPUView->InsertColumn( "Features", 100 );
 }
 
-void SysInfoPanel::UpdateHDInfo( bool bUpdate ){
-    fs_info     fsInfo;
-   
-    int		 nMountCount;
+void SysInfoPanel::SetUpMemoryView()
+{
+	m_pcMemoryView->InsertColumn( "Memory Type", 120 );
+	m_pcMemoryView->InsertColumn( "Amount", 100 );
+}
 
-    char        szTmp[1024];  char zSize[64];
-    char        zUsed[64];   char zAvail[64];
-   
-    char        szRow1[128],szRow2[128],szRow3[128],szRow4[128],
-                szRow5[128],szRow6[128];
+void SysInfoPanel::SetUpHDView()
+{
+	m_pcHDView->InsertColumn( "Volume", 78 );
+	m_pcHDView->InsertColumn( "Type", 50 );
+	m_pcHDView->InsertColumn( "Size", 62 );
+	m_pcHDView->InsertColumn( "Used", 75 );
+	m_pcHDView->InsertColumn( "Avail", 58 );
+	m_pcHDView->InsertColumn( "Percent Free", 80 );
+}
+
+void SysInfoPanel::SetUpAdditionView()
+{
+	m_pcAdditionView->InsertColumn( "Additional Info", 150 );
+	m_pcAdditionView->InsertColumn( "Amount", 100 );
+}
+
+void SysInfoPanel::UpdateHDInfo( bool bUpdate )
+{
+	fs_info fsInfo;
+
+	int nMountCount;
+
+	char szTmp[1024];
+	char zSize[64];
+	char zUsed[64];
+	char zAvail[64];
+
+	char szRow1[128], szRow2[128], szRow3[128], szRow4[128], szRow5[128], szRow6[128];
 
     /*********************************************************************** 
      * Adding drive information:  John Hall:  May 4, 2001
@@ -185,358 +204,197 @@ void SysInfoPanel::UpdateHDInfo( bool bUpdate ){
      * IDE drives (CD-ROMs included) found through the BIOS or just what 
      * AtheOS considers "mountable."
      ***********************************************************************/
-    int x = get_mount_point_count();
-    nMountCount = 0;
-    for( int i = 0; i < x; i++ ){
-      if( get_mount_point( i, szTmp, PATH_MAX ) < 0 )
-	continue;
-       
-      int nFD = open( szTmp, O_RDONLY );
-      if( nFD < 0 )
-        continue;
-      
-      if( get_fs_info( nFD, &fsInfo ) >= 0 )
-	nMountCount++;
-       
-      close( nFD );
-    }
-   
-    for ( int i = 0 ; i < nMountCount ; ++i ) {
-      if ( get_mount_point( i, szTmp, PATH_MAX ) < 0 ) {
-        continue;
-      }
- 
-      int nFD = open( szTmp, O_RDONLY );
-      if ( nFD < 0 ) {
-        continue;
-      }
-  
-      if ( get_fs_info( nFD, &fsInfo ) >= 0 ) {
-        human( zSize, fsInfo.fi_total_blocks * fsInfo.fi_block_size );
-        human( zUsed, (fsInfo.fi_total_blocks - fsInfo.fi_free_blocks) *fsInfo.fi_block_size );
-        human( zAvail, fsInfo.fi_free_blocks * fsInfo.fi_block_size );
+/*	int x = get_mount_point_count();
 
-	ListViewStringRow* pcRow = new ListViewStringRow();
+	nMountCount = 0;
+	for( int i = 0; i < x; i++ )
+	{
+		if( get_mount_point( i, szTmp, PATH_MAX ) < 0 )
+			continue;
+
+		int nFD = open( szTmp, O_RDONLY );
+
+		if( nFD < 0 )
+			continue;
+
+		if( get_fs_info( nFD, &fsInfo ) >= 0 )
+			nMountCount++;
+
+		close( nFD );
+	}*/
 	
-	sprintf( szRow1, "%s", fsInfo.fi_volume_name );
-	sprintf( szRow2, "%s", fsInfo.fi_driver_name );
-	sprintf( szRow3, "%s", zSize  );
-	sprintf( szRow4, "%s", zUsed  );
-	sprintf( szRow5, "%s", zAvail );
-	sprintf( szRow6, "%.1f%%", ((double)fsInfo.fi_free_blocks / ((double)fsInfo.fi_total_blocks)) * 100.0 );
+	nMountCount = get_mount_point_count();
 
-        pcRow->AppendString( szRow1 );
-	pcRow->AppendString( szRow2 );
-	pcRow->AppendString( szRow3 );
-	pcRow->AppendString( szRow4 );
-	pcRow->AppendString( szRow5 );
-	pcRow->AppendString( szRow6 );
+	for( int i = 0; i < nMountCount; ++i )
+	{
+		if( get_mount_point( i, szTmp, PATH_MAX ) < 0 )
+		{
+			continue;
+		}
 
-        off_tHDSize[i][NEW_VALUE] = fsInfo.fi_free_blocks;
-	
-        if( !bUpdate ){	
-          m_pcHDView->InsertRow( pcRow );
-          off_tHDSize[i][OLD_VALUE] = off_tHDSize[i][NEW_VALUE];
-        }
-        else{
-          if( off_tHDSize[i][OLD_VALUE] != off_tHDSize[i][NEW_VALUE] ){
-            delete m_pcHDView->RemoveRow( i ); // Remove & delete this row
-            m_pcHDView->InsertRow( i, pcRow ); // Insert the row thus updating it
-            m_pcHDView->InvalidateRow( i, ListView::INV_VISUAL );  
+		int nFD = open( szTmp, O_RDONLY );
 
-            off_tHDSize[i][OLD_VALUE] = off_tHDSize[i][NEW_VALUE];
-          }
-        }
-          
-      }
-      close( nFD );
-    }
+		if( nFD < 0 )
+		{
+			continue;
+		}
+
+		if( get_fs_info( nFD, &fsInfo ) >= 0 )
+		{
+			if( ( off_tHDSize[i] != fsInfo.fi_free_blocks ) || !bUpdate ) {
+				off_tHDSize[i] = fsInfo.fi_free_blocks;
+
+				human( zSize, fsInfo.fi_total_blocks * fsInfo.fi_block_size );
+				human( zUsed, ( fsInfo.fi_total_blocks - fsInfo.fi_free_blocks ) * fsInfo.fi_block_size );
+				human( zAvail, fsInfo.fi_free_blocks * fsInfo.fi_block_size );
+
+				sprintf( szRow1, "%s", fsInfo.fi_volume_name );
+				sprintf( szRow2, "%s", fsInfo.fi_driver_name );
+				sprintf( szRow3, "%s", zSize );
+				sprintf( szRow4, "%s", zUsed );
+				sprintf( szRow5, "%s", zAvail );
+				sprintf( szRow6, "%.1f%%", ( ( double )fsInfo.fi_free_blocks / ( ( double )fsInfo.fi_total_blocks ) ) * 100.0 );
+
+				if( !bUpdate )
+				{
+					ListViewStringRow *pcRow = new ListViewStringRow();
+		
+					pcRow->AppendString( szRow1 );
+					pcRow->AppendString( szRow2 );
+					pcRow->AppendString( szRow3 );
+					pcRow->AppendString( szRow4 );
+					pcRow->AppendString( szRow5 );
+					pcRow->AppendString( szRow6 );
+
+					m_pcHDView->InsertRow( pcRow );
+				} else {
+					ListViewStringRow* pcRow = dynamic_cast<ListViewStringRow*>( m_pcHDView->GetRow( i ) );
+
+					if( pcRow ) {
+						pcRow->SetString( 0, szRow1 );
+						pcRow->SetString( 1, szRow2 );
+						pcRow->SetString( 2, szRow3 );
+						pcRow->SetString( 3, szRow4 );
+						pcRow->SetString( 4, szRow5 );
+						pcRow->SetString( 5, szRow6 );
+							
+						m_pcHDView->InvalidateRow( i, ListView::INV_VISUAL );
+					}
+				}
+			}
+
+		}
+		close( nFD );
+	}
 }
 
-void SysInfoPanel::UpdateAdditionalInfo( bool bUpdate ) {
-     char szRow1[128],szRow2[128],szRow3[128];
+void SysInfoPanel::UpdateAdditionalInfo( bool bUpdate )
+{
+	char szBfr[128];
 
-     system_info	sSysInfo;
-     get_system_info( &sSysInfo );
+	static struct SlbMgrAdditionalInfo {
+		char	*pzName;
+		char	*pzFormat;
+		int		*pnArg;
+		int		nOld;
+	} addinfo[] = {
+		{ "Page Faults",		"%d",	&m_sSysInfo.nPageFaults,		0 },
+		{ "Used Semaphores",	"%d",	&m_sSysInfo.nUsedSemaphores,	0 },
+		{ "Used Ports",			"%d",	&m_sSysInfo.nUsedPorts,			0 },
+		{ "Used Threads",		"%d",	&m_sSysInfo.nUsedThreads,		0 },
+		{ "Used Processes",		"%d",	&m_sSysInfo.nUsedProcesses,		0 },
+		{ "Open File Count",	"%d",	&m_sSysInfo.nOpenFileCount,		0 },
+		{ "Allocated INodes",	"%d",	&m_sSysInfo.nAllocatedInodes,	0 },
+		{ "Loaded INodes",		"%d",	&m_sSysInfo.nLoadedInodes,		0 },
+		{ "Used INodes",		"%d",	&m_sSysInfo.nUsedInodes,		0 },
+	};
 
-     for( int x = 0; x < NUM_OF_ADDITIONAL_ROWS; x++ ){
-	ListViewStringRow* pcRow = new ListViewStringRow();
+	for( int x = 0; x < NUM_OF_ADDITIONAL_ROWS; x++ )
+	{
+		if( !bUpdate || ( (*(addinfo[x].pnArg)) != addinfo[x].nOld ) ) {
+			addinfo[x].nOld = *(addinfo[x].pnArg);
 
-        switch( x ){
-          case 0:
-            sprintf( szRow1, "Pagefaults" );
-            sprintf( szRow2, "%d", sSysInfo.nPageFaults );
-       
-            pcRow = AddRow( szRow1, szRow2, szRow3, 2 );
+			sprintf( szBfr, addinfo[x].pzFormat, addinfo[x].nOld );
 
-            nAddInfo[x][NEW_VALUE] = sSysInfo.nPageFaults;
+			ListViewStringRow *pcRow;
 
-            break;
-          case 1:
-            sprintf( szRow1, "Used Semaphores" );
-            sprintf( szRow2, "%d", sSysInfo.nUsedSemaphores );
-       
-            pcRow = AddRow( szRow1, szRow2, szRow3, 2 );
+			if( !bUpdate ) {
+				pcRow = new ListViewStringRow();
+		
+				pcRow->AppendString( addinfo[x].pzName );
+				pcRow->AppendString( szBfr );
 
-            nAddInfo[x][NEW_VALUE] = sSysInfo.nPageFaults;
+				m_pcAdditionView->InsertRow( pcRow );
+			} else {
+				ListViewStringRow* pcRow = dynamic_cast<ListViewStringRow*>( m_pcAdditionView->GetRow( x ) );
 
-            break;
-          case 2:
-            sprintf( szRow1, "Used Ports" );
-            sprintf( szRow2, "%d", sSysInfo.nUsedPorts );
-       
-            pcRow = AddRow( szRow1, szRow2, szRow3, 2 );
-
-            nAddInfo[x][NEW_VALUE] = sSysInfo.nPageFaults;
-
-            break;
-          case 3:
-            sprintf( szRow1, "Used Threads" );
-            sprintf( szRow2, "%d", sSysInfo.nUsedThreads );
-       
-            pcRow = AddRow( szRow1, szRow2, szRow3, 2 );
-
-            nAddInfo[x][NEW_VALUE] = sSysInfo.nPageFaults;
-
-            break;
-          case 4:
-            sprintf( szRow1, "Used Processes" );
-            sprintf( szRow2, "%d", sSysInfo.nUsedProcesses );
-       
-            pcRow = AddRow( szRow1, szRow2, szRow3, 2 );
-
-            nAddInfo[x][NEW_VALUE] = sSysInfo.nPageFaults;
-
-            break;
-          case 5:
-            sprintf( szRow1, "Open File Count" );
-            sprintf( szRow2, "%d", sSysInfo.nOpenFileCount );
-       
-            pcRow = AddRow( szRow1, szRow2, szRow3, 2 );
-
-            nAddInfo[x][NEW_VALUE] = sSysInfo.nPageFaults;
-
-            break;
-          case 6:
-            sprintf( szRow1, "Allocated Inodes" );
-            sprintf( szRow2, "%d", sSysInfo.nAllocatedInodes );
-       
-            pcRow = AddRow( szRow1, szRow2, szRow3, 2 );
-
-            nAddInfo[x][NEW_VALUE] = sSysInfo.nPageFaults;
-
-            break;
-          case 7:
-            sprintf( szRow1, "Loaded Inodes" );
-            sprintf( szRow2, "%d", sSysInfo.nLoadedInodes );
-       
-            pcRow = AddRow( szRow1, szRow2, szRow3, 2 );
-
-            nAddInfo[x][NEW_VALUE] = sSysInfo.nPageFaults;
-
-            break;
-          case 8:
-            sprintf( szRow1, "Used Inodes" );
-            sprintf( szRow2, "%d", sSysInfo.nUsedInodes );
-       
-            pcRow = AddRow( szRow1, szRow2, szRow3, 2 );
-
-            nAddInfo[x][NEW_VALUE] = sSysInfo.nPageFaults;
-
-            break;
-        }
-
-        if( !bUpdate ){	
-          m_pcAdditionView->InsertRow( pcRow );
-          nAddInfo[x][OLD_VALUE] = nAddInfo[x][NEW_VALUE];
-        }
-        else{
-          if( nAddInfo[x][OLD_VALUE] != nAddInfo[x][NEW_VALUE] ){
-            delete m_pcAdditionView->RemoveRow( x ); // Remove & delete this row
-            m_pcAdditionView->InsertRow( x, pcRow ); // Insert the row thus updating it
-            m_pcAdditionView->InvalidateRow( x, ListView::INV_VISUAL );  
-
-            nAddInfo[x][OLD_VALUE] = nAddInfo[x][NEW_VALUE];
-          }
-        }
-
-        
-      } /* end of for( int x = 0; x < 9; x++ ) */
-       
+				if( pcRow ) {				
+					pcRow->SetString( 0, addinfo[x].pzName );
+					pcRow->SetString( 1, szBfr );
+	
+					m_pcAdditionView->InvalidateRow( x, ListView::INV_VISUAL );
+				}
+			}
+		}
+	}
 }
 
-void SysInfoPanel::UpdateMemoryInfo( bool bUpdate ) {
-    system_info sSysInfo;
-    get_system_info( &sSysInfo );
-   
-    char szRow1[128],szRow2[128],szRow3[128];
+void SysInfoPanel::UpdateMemoryInfo( bool bUpdate )
+{
+	static struct SlbMgrMemoryInfo {
+		char	*pzName;
+		int		*pnArg;
+		bool	bInPages;
+		long	nOld;
+	} meminfo[] = {
+		{ "Max. Memory",		&m_sSysInfo.nMaxPages,			true,	0	},
+		{ "Free Memory",		&m_sSysInfo.nFreePages,			true,	0	},
+		{ "Kernel Memory",		&m_sSysInfo.nKernelMemSize,		false,	0	},
+		{ "Block Cache",		&m_sSysInfo.nBlockCacheSize,	false,	0	},
+		{ "Dirty Cache",		&m_sSysInfo.nDirtyCacheSize,	false,	0	},
+	};
 
-    char        *pzMaxMem;
-    char        *pzFreeMem;
-    char        *pzKernel;
-    char        *pzBlockCache;
-    char        *pzDirtyCache;  
+	char szBfr[128];
 
-    float       vMaxMem  = float(sSysInfo.nMaxPages      * PAGE_SIZE);
-    float       vFreeMem = float(sSysInfo.nFreePages     * PAGE_SIZE);
-    float       vKernel  = float(sSysInfo.nKernelMemSize);
-    float       vBlock   = float(sSysInfo.nBlockCacheSize);
-    float       vDirty   = float(sSysInfo.nDirtyCacheSize);
+	for( int x = 0; x < NUM_OF_MEMORY_ROWS; x++ )
+	{
+		if( !bUpdate || ( meminfo[x].nOld != *(meminfo[x].pnArg) ) ) {
+			meminfo[x].nOld = *(meminfo[x].pnArg);
+			human( szBfr, ( meminfo[x].bInPages ? PAGE_SIZE : 1 ) * meminfo[x].nOld );
+			
+			ListViewStringRow *pcRow;
 
-    if( vDirty > 1000000.0f ){
-      vDirty  /= 1000000.0f;
-      pzDirtyCache = "Mb";
-    }
-    else if( vDirty > 1000.0f ){
-      vDirty  /= 1000.0f;
-      pzDirtyCache = "Kb";
-    }
-    else
-      pzDirtyCache = "b";
-   
-    if( vBlock > 1000000.0f ){
-      vBlock  /= 1000000.0f;
-      pzBlockCache = "Mb";
-    }
-    else if( vBlock > 1000.0f ){
-      vBlock  /= 1000.0f;
-      pzBlockCache = "Kb";
-    }
-    else
-      pzBlockCache = "b";
-   
-    if(vMaxMem > 1000000.0f){
-      vMaxMem /= 1000000.0f;
-      pzMaxMem = "Mb";
-    }
-    else if(vMaxMem > 1000.0f){
-      vMaxMem /= 1000.0f;
-      pzMaxMem = "Kb";
-    }
-    else
-      pzMaxMem = "b";
-   
-    if(vFreeMem > 1000000.0f){
-      vFreeMem /= 1000000.f;
-      pzFreeMem = "Mb";
-    }
-    else if(vFreeMem > 1000.0f){
-      vFreeMem /= 1000.f;
-      pzFreeMem = "Kb";
-    }
-    else
-      pzFreeMem = "b";
-      
-    if(vKernel > 1000000.0f){
-      vKernel /= 1000000.f;
-      pzKernel = "Mb";
-    }
-    else if(vKernel > 1000.0f){
-      vKernel /= 1000.0f;
-      pzKernel = "Kb";
-    }
-    else
-      pzKernel = "b";
+			if( !bUpdate ) {
+				pcRow = new ListViewStringRow();
+		
+				pcRow->AppendString( meminfo[x].pzName );
+				pcRow->AppendString( szBfr );
 
-    for( int x = 0; x < NUM_OF_MEMORY_ROWS; x++ ){
-	ListViewStringRow* pcRow = new ListViewStringRow();
+				m_pcMemoryView->InsertRow( pcRow );
+			} else {
+				ListViewStringRow* pcRow = dynamic_cast<ListViewStringRow*>( m_pcMemoryView->GetRow( x ) );
 
-        switch( x ){
-          case 0:
-            sprintf( szRow1, "Max. Memory"   );
-            sprintf( szRow2, "%.2f %s", vMaxMem, pzMaxMem );
-       
-            pcRow = AddRow( szRow1, szRow2, szRow3, 2 );
-
-            /****
-             *  Getting the memory for this round...
-             ****/
-            fMemory[x][NEW_VALUE] = vMaxMem;
-
-            break;
-          case 1:
-            sprintf( szRow1, "Free memory"    );
-            sprintf( szRow2, "%.2f %s", vFreeMem, pzFreeMem );
-       
-            pcRow = AddRow( szRow1, szRow2, szRow3, 2 );
-
-            /****
-             *  Getting the memory for this round...
-             ****/
-            fMemory[x][NEW_VALUE] = vFreeMem;
-
-            break;
-          case 4:
-            sprintf( szRow1, "Kernel Memory" );
-            sprintf( szRow2, "%.2f %s", vKernel, pzKernel );
-       
-            pcRow = AddRow( szRow1, szRow2, szRow3, 2 );
-
-            /****
-             *  Getting the memory for this round...
-             ****/
-            fMemory[x][NEW_VALUE] = vKernel;
-
-            break;
-          case 2:
-            sprintf( szRow1, "Block Cache"   );
-            sprintf( szRow2, "%.2f %s", vBlock, pzBlockCache );
-       
-            pcRow = AddRow( szRow1, szRow2, szRow3, 2 );
-
-            /****
-             *  Getting the memory for this round...
-             ****/
-            fMemory[x][NEW_VALUE] = vBlock;
-
-            break;
-          case 3:
-            sprintf( szRow1, "Dirty Cache"   );
-            sprintf( szRow2, "%.2f %s", vDirty, pzDirtyCache );
-       
-            pcRow = AddRow( szRow1, szRow2, szRow3, 2 );
-
-            /****
-             *  Getting the memory for this round...
-             ****/
-            fMemory[x][NEW_VALUE] = vDirty;
-
-            break;
-        }
-
-        if( !bUpdate ){	
-          m_pcMemoryView->InsertRow( pcRow );
-
-          /***
-           *  Store this value...
-           ***/
-          fMemory[x][OLD_VALUE] = fMemory[x][NEW_VALUE];
-        }
-        else{
-          if( fMemory[x][NEW_VALUE] != fMemory[x][OLD_VALUE] ){
-            delete m_pcMemoryView->RemoveRow( x ); // Remove & delete this row
-            m_pcMemoryView->InsertRow( x, pcRow ); // Insert the row thus updating it
-            //m_pcMemoryView->InvalidateRow( x, ListView::INV_VISUAL );  
-
-            /***
-             *  Store this value...
-             ***/
-            fMemory[x][OLD_VALUE] = fMemory[x][NEW_VALUE];
-          }
-        }  
-     } /* end of for( int x = 0; x < 9; x++ ) */     
+				if( pcRow ) {				
+					pcRow->SetString( 0, meminfo[x].pzName );
+					pcRow->SetString( 1, szBfr );
+	
+					m_pcMemoryView->InvalidateRow( x, ListView::INV_VISUAL );
+				}
+			}					
+		}
+	}
 }
 
 //----------------------------------------------------------------------------
 void SysInfoPanel::AllAttached()
 {
-    SetupPanel();
+	SetupPanel();
 }
 
 //----------------------------------------------------------------------------
-void SysInfoPanel::FrameSized( const Point& cDelta )
+void SysInfoPanel::FrameSized( const Point & cDelta )
 {
-    LayoutView::FrameSized( cDelta );
+	LayoutView::FrameSized( cDelta );
 }
 
 /*
@@ -560,55 +418,56 @@ void SysInfoPanel::SetDetail(bool bVal)
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-void SysInfoPanel::KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers )
+/*void SysInfoPanel::KeyDown( const char *pzString, const char *pzRawString, uint32 nQualifiers )
 {
-    switch( pzString[0] )
-    {
+	switch ( pzString[0] )
+	{
 	case VK_UP_ARROW:
-	    break;
+		break;
 	case VK_DOWN_ARROW:
-	    break;
+		break;
 	case VK_SPACE:
-	    break;
+		break;
 	default:
-	    View::KeyDown( pzString, pzRawString, nQualifiers );
-	    break;
-    }
-}
+		View::KeyDown( pzString, pzRawString, nQualifiers );
+		break;
+	}
+}*/
 
 //----------------------------------------------------------------------------
-void SysInfoPanel::Paint( const Rect& cUpdateRect )
+/*void SysInfoPanel::Paint( const Rect & cUpdateRect )
 {
-    Rect cBounds = GetBounds();
+	Rect cBounds = GetBounds();
 
-    SetFgColor( get_default_color( COL_NORMAL ) );
-    FillRect( cBounds );
-}
+	SetFgColor( get_default_color( COL_NORMAL ) );
+	FillRect( cBounds );
+}*/
 
-void SysInfoPanel::UpdateUptime( bool bUpdate ){
-  int  nDays, nHour, nMin, nSec;
-  char szTmp[1024];
+void SysInfoPanel::UpdateUptime( bool bUpdate )
+{
+	int nDays, nHour, nMin, nSec;
+	char szTmp[1024];
 
-  bigtime_t nUpTime;
-   
-  nUpTime = get_system_time();
+	bigtime_t nUpTime;
 
-  nDays    = nUpTime / (1000000LL * 60LL * 60LL * 24LL);
-  nUpTime -= nDays * (1000000LL * 60LL * 60LL * 24LL);
+	nUpTime = get_system_time();
 
-  nHour    = nUpTime / (1000000LL * 60LL * 60LL);
-  nUpTime -= nHour * (1000000LL * 60LL * 60LL); 
-  nMin     = nUpTime / (1000000LL * 60LL);
-  nUpTime -= nMin * (1000000LL * 60LL);
-  nSec     = nUpTime / 1000000LL;
+	nDays = nUpTime / ( 1000000LL * 60LL * 60LL * 24LL );
+	nUpTime -= nDays * ( 1000000LL * 60LL * 60LL * 24LL );
+
+	nHour = nUpTime / ( 1000000LL * 60LL * 60LL );
+	nUpTime -= nHour * ( 1000000LL * 60LL * 60LL );
+	nMin = nUpTime / ( 1000000LL * 60LL );
+	nUpTime -= nMin * ( 1000000LL * 60LL );
+	nSec = nUpTime / 1000000LL;
 
  /*** SETTING THE UPTIME ***/
-  sprintf( szTmp, "Running For: %3d days, %2d hrs, %2d mins, %2d secs", 
-                   nDays, nHour, nMin, nSec );
+	sprintf( szTmp, "Running For: %3d days, %2d hrs, %2d mins, %2d secs", nDays, nHour, nMin, nSec );
 
-  m_pcUptime->SetString( szTmp );
-  //m_pcUptimeView->Clear();
-  //m_pcUptimeView->Insert( szTmp );
+	m_pcUptime->SetString( szTmp );
+	//m_pcUptimeView->Clear();
+	//m_pcUptimeView->Insert( szTmp );
+
  /**************************/
 }
 
@@ -621,120 +480,57 @@ void SysInfoPanel::UpdateUptime( bool bUpdate ){
 
 void SysInfoPanel::SetupPanel()
 {
-    system_info	sSysInfo;
-    utsname     uInfo;
-    //myCPUInfo   CPUInfo;
-   
-    get_system_info( &sSysInfo );
-    ListViewStringRow* pcRow = new ListViewStringRow();
-   
-    int		x, nCPUCount;
+	system_info sSysInfo;
+	utsname uInfo;
 
-    char        szTmp[512];
-   
-    char        szRow1[128],szRow2[128],szRow3[128], szRow4[128];
+	//myCPUInfo   CPUInfo;
 
-/*
-   Quote From Kurt Skauen in an email to the list:
-   RE: [Atheos-developer] Kernel Version Info from 05/01/2001 12:37:47 
+	get_system_info( &sSysInfo );
+	ListViewStringRow *pcRow = new ListViewStringRow();
 
-   "All released kernels [upto 0.3.4] will return 0x10001 so it is not possible to
-   convert the number into a reasonable version-string. I have updated
-   the kernel now so the next release will have a sane version-number."
+	int x, nCPUCount;
 
-   In the next release [after 0.3.4] you can print the version [in the same manner
-   as the else( uname != "0.1.1" || uname != "0.3.4")]"
+	char szRow1[128], szRow2[128], szRow3[128], szRow4[128];
 
-   John Hall, May 4, 2001
-*/
+	uname( &uInfo );
 
-    uname( &uInfo );
+	sprintf( szRow1, "Syllable" );
+	sprintf( szRow3, "%s", sSysInfo.zKernelBuildDate );
 
-    sprintf( szRow1, "Syllable" );
-    sprintf( szRow3, "%s", sSysInfo.zKernelBuildDate );
-   
-    /*****************************************************************************
-     * No AtheOS version number shown for versions before 0.3.4 since there is no 
-     * reliable data within the kernel or uname(). 
-     *****************************************************************************/
-    if( strcmp( uInfo.version, "0.1.1") == 0 || strcmp( uInfo.version, "1.1.1" ) == 0 )
-      sprintf( szRow2, " " );
-
-    /*****************************************************************************
-     *  Since the kernel version number is "sane", I'm using only it, since this
-     *  format will also support "special" releases (e.g. 0.3.3b).
-     * 
-     *  Additional note:  I was having one heck of time trying to figure out how
-     *                    to differiate from 0.3.4 and 0.3.5 since the uInfo.version
-     *                    number is the same, and since the nKernelVersion wasn't
-     *                    actually being used until 0.3.6, I had to rely on the
-     *                    uInfo.version.  My solution?  0.3.5 was built on
-     *                    "Jun 23 2001" where as 0.3.4 was built earlier, obviously.
-     *
-     *                    John Hall 8/18/2001
-     *****************************************************************************/
-    else if( strcmp( uInfo.version, "0.3.4" ) == 0 && 
-	     strcmp( sSysInfo.zKernelBuildDate, "Jun 23 2001" ) == 0 ){
-      if ( sSysInfo.nKernelVersion & 0xffff000000000000LL ) {
-      	sprintf( szRow2, "%d.%d.%d%c",
-		(int)((sSysInfo.nKernelVersion >> 32) & 0xffff),
-		(int)((sSysInfo.nKernelVersion >> 16) & 0xffff),
-		(int)(sSysInfo.nKernelVersion & 0xffff), 'a' + (int)(sSysInfo.nKernelVersion >> 48) );
-      } 
-      else {
-	sprintf( szRow2, "%d.%d.%d",
-		(int)((sSysInfo.nKernelVersion >> 32) & 0xffff),
-		(int)((sSysInfo.nKernelVersion >> 16) & 0xffff),
-		(int)(sSysInfo.nKernelVersion & 0xffff) );
-      }
-    }
-    
-    /*****************************************************************************
-     *  if uname() returns "0.3.4", use it.  It is being used in this case because
-     *  the kernel version number is not "sane".
-     *****************************************************************************/
-    else if( strcmp( uInfo.version, "0.3.4" ) == 0 )
-      sprintf( szRow2,  "%s", uInfo.version );
-    else{
-      if( sSysInfo.nKernelVersion & 0xffff000000000000LL ){
-	sprintf( szRow2, "%d.%d.%d%c",
-		  (int)((sSysInfo.nKernelVersion >> 32) & 0xffff),
-		  (int)((sSysInfo.nKernelVersion >> 16) & 0xffff),
-		  (int)(sSysInfo.nKernelVersion & 0xffff), 'a' + (int)(sSysInfo.nKernelVersion >> 48) );
-      }
-      else{
-	sprintf( szRow2, "%d.%d.%d",
-		  (int)((sSysInfo.nKernelVersion >> 32) & 0xffff),
-		  (int)((sSysInfo.nKernelVersion >> 16) % 0xffff),
-		  (int)(sSysInfo.nKernelVersion & 0xffff) );
-      }
-    }
+	if( sSysInfo.nKernelVersion & 0xffff000000000000LL )
+	{
+		sprintf( szRow2, "%d.%d.%d%c", ( int )( ( sSysInfo.nKernelVersion >> 32 ) & 0xffff ), ( int )( ( sSysInfo.nKernelVersion >> 16 ) & 0xffff ), ( int )( sSysInfo.nKernelVersion & 0xffff ), 'a' + ( int )( sSysInfo.nKernelVersion >> 48 ) );
+	}
+	else
+	{
+		sprintf( szRow2, "%d.%d.%d", ( int )( ( sSysInfo.nKernelVersion >> 32 ) & 0xffff ), ( int )( ( sSysInfo.nKernelVersion >> 16 ) % 0xffff ), ( int )( sSysInfo.nKernelVersion & 0xffff ) );
+	}
 
     /*********************************************
      *  Done with adding AtheOS's information
      *********************************************/
-    pcRow = AddRow( szRow1, szRow2, szRow3, 3 );
-   
-    m_pcVersionView->InsertRow( pcRow );
+	pcRow = AddRow( szRow1, szRow2, szRow3, 3 );
+
+	m_pcVersionView->InsertRow( pcRow );
 
     /*********************************************
      *  Done with adding AtheMgr's Information
      *********************************************/
-    
-    sprintf( szRow1, "SlbMgr" );
-    sprintf( szRow2, "%s", APP_VERSION );
-    sprintf( szRow3, "%s", gApp_Date   );
-   
-    pcRow = AddRow( szRow1, szRow2, szRow3, 3 );
-   
-    m_pcVersionView->InsertRow( pcRow );
+
+	sprintf( szRow1, "SlbMgr" );
+	sprintf( szRow2, "%s", APP_VERSION );
+	sprintf( szRow3, "%s", gApp_Date );
+
+	pcRow = AddRow( szRow1, szRow2, szRow3, 3 );
+
+	m_pcVersionView->InsertRow( pcRow );
 
     /*********************************************************************** 
      * Adding CPU information since I just found out that that information
      * is currently available through the kernel:  John Hall:  May 4, 2001
      ***********************************************************************/
-    nCPUCount = sSysInfo.nCPUCount;
-    
+	nCPUCount = sSysInfo.nCPUCount;
+
 
     /*******************************************************************************
      * As it stands now, Kurt only gets CPU info (and stores it in the system_info
@@ -742,71 +538,75 @@ void SysInfoPanel::SetupPanel()
      * this limitation or Kurt adds single CPU data to the system_info, I will
      * use this if():  John Hall (5/9/01)
      *******************************************************************************/
-   
-  
-      
-      for( x=0; x < nCPUCount; x++ ){
-	ListViewStringRow* pcRow = new ListViewStringRow();
-	 
-        
-	sprintf( szRow1, "%d", x );
-	sprintf( szRow2, "%lld MHz", ( sSysInfo.asCPUInfo[x].nCoreSpeed + 500000) / 1000000 );
-	sprintf( szRow3, "%lld MHz", ( sSysInfo.asCPUInfo[x].nBusSpeed + 500000) / 1000000 );
-	strcpy( szRow4, "" );
-	
-	if( sSysInfo.nCPUType & CPU_FEATURE_MMX )
-		 strcat( szRow4, "MMX " );
-	if( sSysInfo.nCPUType & CPU_FEATURE_MMX2 )
-		 strcat( szRow4, "MMX2 " );
-	if( sSysInfo.nCPUType & CPU_FEATURE_3DNOW )
-		 strcat( szRow4, "3DNow " );
-	if( sSysInfo.nCPUType & CPU_FEATURE_3DNOWEX )
-		 strcat( szRow4, "3DNowEx " );
-	if( sSysInfo.nCPUType & CPU_FEATURE_SSE )
-		 strcat( szRow4, "SSE " );
-	if( sSysInfo.nCPUType & CPU_FEATURE_SSE2 )
-		 strcat( szRow4, "SSE2 " );
-       
-    pcRow->AppendString( szRow1 );
-    pcRow->AppendString( szRow2 );
-    pcRow->AppendString( szRow3 );
-    pcRow->AppendString( szRow4 ); 
-	
-	//pcRow = AddRow( szRow1, szRow2, szRow3, "", 4 );
-	 
-	m_pcCPUView->InsertRow( pcRow );
-      }
 
-    //cout << "HERE\n";
-    UpdateMemoryInfo( false );
-    //cout << "HERE2\n";
-    UpdateHDInfo( false );
-    //cout << "HERE3\n";
-    UpdateAdditionalInfo( false );
-    UpdateUptime( false );      
 
-    //sprintf( szTmp,  "Running For: %d days %d hours % d mins %d secs",
-    //                  nDays, nHour, nMin, nSec );
 
-    //m_pcUptimeView->Clear();
-    //m_pcUptimeView->Insert( szTmp );
+	for( x = 0; x < nCPUCount; x++ )
+	{
+		ListViewStringRow *pcRow = new ListViewStringRow();
+
+
+		sprintf( szRow1, "%d", x );
+		sprintf( szRow2, "%lld MHz", ( sSysInfo.asCPUInfo[x].nCoreSpeed + 500000 ) / 1000000 );
+		sprintf( szRow3, "%lld MHz", ( sSysInfo.asCPUInfo[x].nBusSpeed + 500000 ) / 1000000 );
+		strcpy( szRow4, "" );
+
+		if( sSysInfo.nCPUType & CPU_FEATURE_MMX )
+			strcat( szRow4, "MMX " );
+		if( sSysInfo.nCPUType & CPU_FEATURE_MMX2 )
+			strcat( szRow4, "MMX2 " );
+		if( sSysInfo.nCPUType & CPU_FEATURE_3DNOW )
+			strcat( szRow4, "3DNow " );
+		if( sSysInfo.nCPUType & CPU_FEATURE_3DNOWEX )
+			strcat( szRow4, "3DNowEx " );
+		if( sSysInfo.nCPUType & CPU_FEATURE_SSE )
+			strcat( szRow4, "SSE " );
+		if( sSysInfo.nCPUType & CPU_FEATURE_SSE2 )
+			strcat( szRow4, "SSE2 " );
+
+		pcRow->AppendString( szRow1 );
+		pcRow->AppendString( szRow2 );
+		pcRow->AppendString( szRow3 );
+		pcRow->AppendString( szRow4 );
+
+		//pcRow = AddRow( szRow1, szRow2, szRow3, "", 4 );
+
+		m_pcCPUView->InsertRow( pcRow );
+	}
+
+	get_system_info( &m_sSysInfo );
+
+	//cout << "HERE\n";
+	UpdateMemoryInfo( false );
+	//cout << "HERE2\n";
+	UpdateHDInfo( false );
+	//cout << "HERE3\n";
+	UpdateAdditionalInfo( false );
+	UpdateUptime( false );
+
+	//m_pcUptimeView->Clear();
+	//m_pcUptimeView->Insert( szTmp );
 }
 
-void SysInfoPanel::UpdateSysInfoPanel(){
-  UpdateMemoryInfo( true );
-  UpdateHDInfo( true );
-  UpdateAdditionalInfo( true );
-  UpdateUptime( true );
-}
-
-void SysInfoPanel::HandleMessage( Message* pcMessage )
+void SysInfoPanel::UpdateSysInfoPanel()
 {
-    switch( pcMessage->GetCode() )
-    {
-	//case ID_END:   break;
-	default:
-	    View::HandleMessage( pcMessage );
-	    break;
-    }
+	if( !IsVisible() )
+		return;
+
+	get_system_info( &m_sSysInfo );
+	UpdateMemoryInfo( true );
+	UpdateHDInfo( true );
+	UpdateAdditionalInfo( true );
+	UpdateUptime( true );
 }
 
+void SysInfoPanel::HandleMessage( Message * pcMessage )
+{
+	switch ( pcMessage->GetCode() )
+	{
+		//case ID_END:   break;
+	default:
+		View::HandleMessage( pcMessage );
+		break;
+	}
+}
