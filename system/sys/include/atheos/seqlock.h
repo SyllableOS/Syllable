@@ -37,8 +37,8 @@
 #define smp_wmb() __asm__ __volatile__( "" : : : "memory" )
 
 typedef struct {
-	uint32 sequence;
-	SpinLock_s lock;
+	uint32 sl_nSequence;
+	SpinLock_s sl_sLock;
 } SeqLock_s;
 
 /*
@@ -50,7 +50,7 @@ typedef struct {
 
 static inline void seqlock_init( SeqLock_s *psLock, const char *pzName )
 {
-	psLock->sequence = 0;
+	psLock->sl_nSequence = 0;
 	spinlock_init( psLock, pzName );
 }
 
@@ -60,24 +60,24 @@ static inline void seqlock_init( SeqLock_s *psLock, const char *pzName )
  */
 static inline void write_seqlock(SeqLock_s *sl)
 {
-	spinlock( &sl->lock );
-	++sl->sequence;
+	spinlock( &sl->sl_sLock );
+	++sl->sl_nSequence;
 	smp_wmb();			
 }	
 
 static inline void write_sequnlock(SeqLock_s *sl) 
 {
 	smp_wmb();
-	sl->sequence++;
-	spinunlock( &sl->lock );
+	sl->sl_nSequence++;
+	spinunlock( &sl->sl_sLock );
 }
 
 static inline int write_tryseqlock(SeqLock_s *sl)
 {
-	int ret = spin_trylock(&sl->lock);
+	int ret = spin_trylock(&sl->sl_sLock);
 
 	if ( ret == 0 ) {
-		++sl->sequence;
+		++sl->sl_nSequence;
 		smp_wmb();			
 	}
 	return ret;
@@ -86,7 +86,7 @@ static inline int write_tryseqlock(SeqLock_s *sl)
 /* Start of read calculation -- fetch last complete writer token */
 static inline uint32 read_seqbegin(const SeqLock_s *sl)
 {
-	uint32 ret = sl->sequence;
+	uint32 ret = sl->sl_nSequence;
 	smp_rmb();
 	return ret;
 }
@@ -102,7 +102,7 @@ static inline uint32 read_seqbegin(const SeqLock_s *sl)
 static inline int read_seqretry(const SeqLock_s *sl, uint32 iv)
 {
 	smp_rmb();
-	return (iv & 1) | (sl->sequence ^ iv);
+	return (iv & 1) | (sl->sl_nSequence ^ iv);
 }
 
 
@@ -114,7 +114,7 @@ static inline int read_seqretry(const SeqLock_s *sl, uint32 iv)
  */
 
 typedef struct seqcount {
-	uint32 sequence;
+	uint32 sc_nSequence;
 } seqcount_t;
 
 #define SEQCNT_ZERO { 0 }
@@ -123,7 +123,7 @@ typedef struct seqcount {
 /* Start of read using pointer to a sequence counter only.  */
 static inline uint32 read_seqcount_begin(const seqcount_t *s)
 {
-	uint32 ret = s->sequence;
+	uint32 ret = s->sc_nSequence;
 	smp_rmb();
 	return ret;
 }
@@ -136,7 +136,7 @@ static inline uint32 read_seqcount_begin(const seqcount_t *s)
 static inline int read_seqcount_retry(const seqcount_t *s, uint32 iv)
 {
 	smp_rmb();
-	return (iv & 1) | (s->sequence ^ iv);
+	return (iv & 1) | (s->sc_nSequence ^ iv);
 }
 
 
@@ -146,14 +146,14 @@ static inline int read_seqcount_retry(const seqcount_t *s, uint32 iv)
  */
 static inline void write_seqcount_begin(seqcount_t *s)
 {
-	s->sequence++;
+	s->sc_nSequence++;
 	smp_wmb();
 }
 
 static inline void write_seqcount_end(seqcount_t *s)
 {
 	smp_wmb();
-	s->sequence++;
+	s->sc_nSequence++;
 }
 
 /*

@@ -34,62 +34,11 @@
 Page_s *g_psFirstPage;
 Page_s *g_psFirstFreePage = NULL;
 
-//spinlock_t  g_nPageListSpinLock = 0;
 SPIN_LOCK( g_sPageListSpinLock, "page_list_slock" );
 
-//extern sem_id g_hAreaTableSema;
 
 int g_nAllocatedPages = 0;
 
-/*
-void lock_pagelist( void )
-{
-	spinlock( &g_sPageListSpinLock );
-}
-
-void unlock_pagelist( void )
-{
-	spinunlock( &g_sPageListSpinLock );
-}
-
-uint32	get_free_pages( int nPageCount, int nFlags )
-{
-  int i = 0;
-  int j = 0;
-  int nStart = -1;
-  
-  for ( ; i < g_sSysBase.ex_nTotalPageCount / 32 ;  ) {
-    
-    if ( g_panMemPageBitmap[i] == ~0 ) {
-      continue;
-    }
-    uint32 nMask = 1;
-    for ( ; j < 32 ; ++j, nMask <<= 1 ) {
-      if ( (g_panMemPageBitmap[i] & nMask) == 0 ) {
-	nStart = i * 32 + j;
-	goto find_end;
-      }
-    }
-    j = 0;
-  }
-  return( 0 );
-find_end:
-  for ( ; i < g_sSysBase.ex_nTotalPageCount / 32 && nSize < nPageCount ;  ) {
-
-    if ( g_panMemPageBitmap[i] == 0 ) {
-      nSize += 32;
-      continue;
-    }
-    uint32 nMask = 1 << j;
-    for ( ; j < 32 ; ++j, nMask <<= 1 ) {
-      if ( (g_panMemPageBitmap[i] & nMask) ) {
-	break;
-      }
-      nSize++;
-    }
-  }
-}
-*/
 
 /*****************************************************************************
  * NAME:
@@ -171,6 +120,56 @@ void unprotect_phys_pages( iaddr_t nAddress, int nCount )
 		PTE_VALUE( *pPte ) |= PTE_PRESENT;
 		nAddress += PAGE_SIZE;
 	}
+}
+
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+
+void protect_dos_mem( void )
+{
+	int i;
+
+	for ( i = 0; i < 256; ++i )
+	{
+		pgd_t *pPgd = pgd_offset( g_psKernelSeg, i * PAGE_SIZE );
+		pte_t *pPte = pte_offset( pPgd, i * PAGE_SIZE );
+
+		if ( i == 0 )
+		{
+			PTE_VALUE( *pPte ) = ( i * PAGE_SIZE );
+		}
+		else
+		{
+			PTE_VALUE( *pPte ) = ( i * PAGE_SIZE ) | PTE_PRESENT | PTE_WRITE;
+		}
+	}
+	flush_tlb();
+}
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+
+void unprotect_dos_mem( void )
+{
+	int i;
+
+	for ( i = 0; i < 256; ++i )
+	{
+		pgd_t *pPgd = pgd_offset( g_psKernelSeg, i * PAGE_SIZE );
+		pte_t *pPte = pte_offset( pPgd, i * PAGE_SIZE );
+
+		PTE_VALUE( *pPte ) = ( i * PAGE_SIZE ) | PTE_PRESENT | PTE_WRITE | PTE_USER;
+	}
+	flush_tlb();
 }
 
 /*****************************************************************************
@@ -353,3 +352,75 @@ int shrink_caches( int nBytesNeeded )
 {
 	return ( shrink_block_cache( nBytesNeeded ) );
 }
+
+
+
+//****************************************************************************/
+/** Initializes the structures necessary for allocating pages.
+ * Called by init_kernel() (init.c).
+ * \internal
+ * \ingroup Memory
+ * \param nFirstUsablePage - The address of the first usable page. This parameter
+ * is set to the end of the kernel image.
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
+void init_pages( uint32 nFirstUsablePage )
+{
+	int i;
+	
+	/* First usable page is just behind the kernel image */
+	g_psFirstPage = ( Page_s * )( nFirstUsablePage );
+
+	/* Move the first page behind the bootmodules */
+	for ( i = 0; i < g_sSysBase.ex_nBootModuleCount; ++i )
+	{
+		char *pModEnd = ( char * )g_sSysBase.ex_asBootModules[i].bm_pAddress + ( ( g_sSysBase.ex_asBootModules[i].bm_nSize + PAGE_SIZE - 1 ) & PAGE_MASK );
+
+		if ( pModEnd > ( ( char * )g_psFirstPage ) )
+		{
+			g_psFirstPage = ( Page_s * )pModEnd;
+		}
+	}
+	memset( g_psFirstPage, 0, g_sSysBase.ex_nTotalPageCount * sizeof( Page_s ) );
+
+	/* Mark kernel image pages as used */
+	for ( i = 0; i < ( nFirstUsablePage ) / PAGE_SIZE; ++i )
+	{
+		kassertw( atomic_read(&g_psFirstPage[i].p_nCount) == 0 );
+		atomic_set( &g_psFirstPage[i].p_nCount, 1 );
+	}
+	/* Mark the page management pages as used */
+	for ( i = ( ( int )g_psFirstPage ) / PAGE_SIZE; i < ( ( ( int )( g_psFirstPage + g_sSysBase.ex_nTotalPageCount ) ) + PAGE_SIZE - 1 ) / PAGE_SIZE; ++i )
+	{
+		kassertw( atomic_read(&g_psFirstPage[i].p_nCount) == 0 );
+		atomic_set( &g_psFirstPage[i].p_nCount, 1 );
+	}
+	/* Mark the bootmodule pages as used */
+	for ( i = 0; i < g_sSysBase.ex_nBootModuleCount; ++i )
+	{
+		int32 nFirst = ( ( uint32 )g_sSysBase.ex_asBootModules[i].bm_pAddress ) / PAGE_SIZE;
+		int32 nLast = ( ( uint32 )g_sSysBase.ex_asBootModules[i].bm_pAddress ) + ( ( g_sSysBase.ex_asBootModules[i].bm_nSize + PAGE_SIZE - 1 ) & PAGE_MASK );
+		int j;
+
+		nLast /= PAGE_SIZE;
+		for ( j = nFirst; j < nLast; ++j )
+		{
+			kassertw( atomic_read(&g_psFirstPage[j].p_nCount) == 0 );
+			atomic_set( &g_psFirstPage[j].p_nCount, 1 );
+		}
+	}
+	
+	/* Create freelist */
+	g_psFirstFreePage = 0;
+	for ( i = g_sSysBase.ex_nTotalPageCount - 1; i >= 0; --i )
+	{
+		g_psFirstPage[i].p_nPageNum = i;
+		if ( atomic_read(&g_psFirstPage[i].p_nCount) == 0 )
+		{
+			g_psFirstPage[i].p_psNext = g_psFirstFreePage;
+			g_psFirstFreePage = &g_psFirstPage[i];
+			atomic_inc( &g_sSysBase.ex_nFreePageCount );
+		}
+	}
+}
+

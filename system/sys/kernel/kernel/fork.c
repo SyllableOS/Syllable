@@ -37,7 +37,7 @@
 extern MultiArray_s g_sProcessTable;
 extern MultiArray_s g_sThreadTable;	// Global thread table
 
-void SysInit( void );
+void system_init( void );
 void idle_loop( void );
 
 /*****************************************************************************
@@ -383,7 +383,7 @@ thread_id create_init_proc( const char *Name )
 
 		psProc->pr_psIoContext = fs_alloc_ioctx( FD_SETSIZE );
 
-		tss->eip = SysInit;
+		tss->eip = system_init;
 	}
 	printk( "Start init thread\n" );
 	Schedule();

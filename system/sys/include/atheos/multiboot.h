@@ -24,19 +24,21 @@ typedef struct
  *  map has been reached.
  */
 
-struct AddrRangeDesc
+typedef struct
 {
-    uint32 size;
-    uint64 BaseAddr;
-    uint64 Length;
-    uint32 Type;
+    uint32 mm_nSize;
+    uint64 mm_nBaseAddr;
+    uint64 mm_nLength;
+    uint32 mm_nType;
 
       /* unspecified optional padding... */
-};
+} MBMemoryMapEntry_s;
 
 /* usable memory "Type", all others are reserved.  */
-#define MB_ARD_MEMORY       1
-
+#define MB_MM_MEMORY	1
+#define MB_MM_RESERVED	2
+#define MB_MM_ACPI_DATA	3
+#define MB_MM_ACPI_NVS	4
 
 /*
  *  MultiBoot Info description
@@ -71,8 +73,8 @@ typedef struct
     uint32 shndx;
 
     /* Memory Mapping buffer */
-    uint32 mmap_length;
-    uint32 mmap_addr;
+    uint32 mbh_nMemoryMapLength;
+    uint32 mbh_nMemoryMapAddr;
 } MultiBootHeader_s;
 
 /*

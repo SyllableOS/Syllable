@@ -40,6 +40,14 @@ static void dbcon_scroll( void )
 	g_nCsrY--;
 }
 
+void dbcon_set_color( int Color, int R, int G, int B )
+{
+	isa_writeb( 0x3c8, Color );
+	isa_writeb( 0x3c9, R >> 2 );
+	isa_writeb( 0x3c9, G >> 2 );
+	isa_writeb( 0x3c9, B >> 2 );
+}
+
 void dbcon_write( const char *pData, int nSize )
 {
 	int i;

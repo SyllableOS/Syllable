@@ -25,12 +25,8 @@
 #include <atheos/irq.h>
 #include <macros.h>
 
-#ifdef __BUILD_KERNEL__
-#include "inc/smp.h"
-#include "inc/intel.h"
-#else
 #include <atheos/smp.h>
-#endif
+
 
 #ifdef __cplusplus
 extern "C" {

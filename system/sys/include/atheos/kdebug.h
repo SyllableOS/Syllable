@@ -60,6 +60,8 @@ int  register_debug_cmd( const char* pzName, const char* pzDesc, dbg_fnc* pFunc 
 
 void dbcon_write( const char* pData, int nSize );
 void dbcon_clear( void );
+void dbcon_set_color( int nColor, int nR, int nG, int nB );
+
 
 enum debug_level{
 	KERN_DEBUG_LOW,

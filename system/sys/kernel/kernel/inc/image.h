@@ -21,12 +21,12 @@
 #ifndef __F_ELF_H__
 #define __F_ELF_H__
 
-#include <atheos/typedefs.h>
 #include <atheos/filesystem.h>
 #include <atheos/elf.h>
 #include <atheos/image.h>
 #include <atheos/bootmodules.h>
 
+#include "typedefs.h"
 #include "../vfs/vfs.h"
 
 #ifdef __cplusplus

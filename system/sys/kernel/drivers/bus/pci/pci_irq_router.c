@@ -36,9 +36,6 @@
 
 #include <macros.h>
 
-#undef DEBUG_LIMIT
-#define DEBUG_LIMIT KERN_DEBUG
-
 struct RoutingIRQEntry_t {
 
 	uint8 nLink;

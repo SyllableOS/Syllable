@@ -189,20 +189,7 @@ static inline void  isa_writew( int nPort, int nValue )	{ outw( nValue, nPort );
 static inline void  isa_writel( int nPort, int nValue )	{ outl( nValue, nPort ); }
 
 
-uint32	GetCMOSTime( void );
-//void	SetColor( int Color, int R, int G, int B );
-
-void	InitSemaphores( void );
-void	InitMsgPorts( void );
-void	InitProcesses( void );
-void	InitThreads( void );
-void	InitAreas( void );
-void	InitTimer( void );
-void	init_pci_module( void );
-
 void	SwitchCont( int nDesc );
-
-uint32	old_Delay( const uint32 nMicros );
 
 status_t snooze( bigtime_t nTimeout );
 
@@ -247,7 +234,6 @@ void	free_real( void* Block );
 status_t alloc_physical( uint32* pnAddress, bool bExactAddress, uint32 nSize );
 void     free_physical( uint32 nAddress );
 
-//int	Fork( const char* pzName );
 int	reboot( void );
 void    hard_reset( void );
 int apm_poweroff( void );
@@ -255,12 +241,6 @@ int apm_poweroff( void );
 int	sys_exit( int nCode );
 int	exit_thread( int nCode );
 int	do_exit( int nCode );
-
-void	SetColor( int Color, int R, int G, int B );
-
-int	get_area_for( MemArea_s** ppsArea, const void* pAddress, uint32 nSize );
-void	release_area( MemArea_s* psArea );
-
 
 thread_id	create_init_proc( const char* pzName );
 void	init_kmalloc( void );

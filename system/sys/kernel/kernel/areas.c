@@ -2627,6 +2627,37 @@ void *sys_sbrk( int nDelta )
 	return ( pOldBrk );
 }
 
+
+//****************************************************************************/
+/** Creates the memory context for the kernel. This context holds all kernel
+ * areas below AREA_FIRST_USER_ADDRESS.
+ * \internal
+ * \ingroup Areas
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
+void init_kernel_mem_context()
+{
+	int i;
+	g_psKernelSeg = ( MemContext_s * )get_free_page( GFP_CLEAR );
+
+	g_psKernelSeg->mc_pPageDir = ( pgd_t * ) get_free_page( GFP_CLEAR );
+
+	for ( i = 0; i < ( ( ( g_sSysBase.ex_nTotalPageCount * PAGE_SIZE ) + PGDIR_SIZE - 1 ) / PGDIR_SIZE ); ++i )
+	{
+		PGD_VALUE( g_psKernelSeg->mc_pPageDir[i] ) = MK_PGDIR( get_free_page( GFP_CLEAR ) );
+	}
+
+	for ( i = 0; i < g_sSysBase.ex_nTotalPageCount; ++i )
+	{
+		pgd_t *pPgd = pgd_offset( g_psKernelSeg, i * PAGE_SIZE );
+		pte_t *pPte = pte_offset( pPgd, i * PAGE_SIZE );
+
+		PTE_VALUE( *pPte ) = ( i * PAGE_SIZE ) | PTE_PRESENT | PTE_WRITE;
+	}
+	g_psKernelSeg->mc_psNext = g_psKernelSeg;
+
+}
+
 //****************************************************************************/
 /** Print all areas in psCtx to the debug console.
  * \internal
@@ -2696,7 +2727,7 @@ static void db_list_areas( int argc, char **argv )
  * \ingroup Areas
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
-void InitAreaManager( void )
+void init_areas( void )
 {
 	register_debug_cmd( "ls_area", "list all memory areas created by a given process.", db_list_areas );
 	MArray_Init( &g_sAreas );

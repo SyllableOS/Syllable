@@ -30,16 +30,8 @@ extern "C"
 #endif
 
 //#include <atheos/swap.h>
-#include <atheos/typedefs.h>
-#include <atheos/filesystem.h>
-
-#include "array.h"
-
-extern MultiArray_s g_sAreas;
-
-#define AREA_MUTEX_COUNT	100000	/* Maximum simultanous read-only area table locks */
-
-
+#include <atheos/multiboot.h>
+#include "typedefs.h"
 
 typedef struct MemChunk MemChunk_s;
 
@@ -57,11 +49,6 @@ typedef struct MemHeader
 	uint32 mh_nTotalSize;
 } MemHeader_s;
 
-
-
-
-typedef struct _MemContext MemContext_s;
-typedef struct Page Page_s;
 typedef struct MemAreaOps MemAreaOps_s;
 
 typedef struct
@@ -105,7 +92,7 @@ extern sem_id g_hAreaTableSema;
 // Bit patterns for the p_nFlags member of Page_s
 #define PF_BUSY 0x0001
 
-struct Page
+struct _Page
 {
 	Page_s *p_psNext;
 	Page_s *p_psPrev;
@@ -117,26 +104,20 @@ struct Page
 };
 
 
+void init_pages( uint32 nFirstUsablePage );
 int32 get_free_page( int nFlags );
 uint32 get_free_pages( int nPageCount, int nFlags );
 void free_pages( uint32 nPages, int nCount );
 void do_free_pages( uint32 nPages, int nCount );	// doesn't call flush_tlb_global()
 
-int clone_page_pte( pte_t * pDst, pte_t * pSrc, bool bCow );
-
+void protect_phys_pages( iaddr_t nAddress, int nCount );
+void unprotect_phys_pages( iaddr_t nAddress, int nCount );
 
 Page_s *get_page_desc( int nPageNum );
 
-void list_areas( MemContext_s *psSeg );
-
 int shrink_caches( int nBytesNeeded );
 
-void init_swapper( void );
-void dup_swap_page( int nPage );
-void free_swap_page( int nPage );
-int swap_in( pte_t * pPte );
-int swap_out_pages( int nCount );
-
+void init_memory_pools( char* pRealMemBase, MultiBootHeader_s* psHeader );
 
 #ifdef __cplusplus
 }

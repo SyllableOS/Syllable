@@ -3915,7 +3915,7 @@ static void db_lock_sema( int argc, char **argv )
  * SEE ALSO:
  ****************************************************************************/
 
-void InitSemaphores( void )
+void init_semaphores( void )
 {
 	MArray_Init( &g_sSemaphores );
 

@@ -1,7 +1,8 @@
 
 /*
- *  The AtheOS kernel
- *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  The Syllable kernel
+ *  Copyright (C) 1999 - 2000 Kurt Skauen
+ *  Copyright (C) 2004 The Syllable Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -18,13 +19,15 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <atheos/types.h>
+#ifndef __TYPEDEFS_H__
+#define __TYPEDEFS_H__
 
 
-extern const int64 g_nKernelVersion;
-extern const char *g_pzKernelName;
-extern const char *g_pzBuildData;
-extern const char *g_pzBuildTime;
-extern const char *g_pzCpuArch;
-extern const char *g_pzSystem;
-extern const char *g_pzBuildVersion;
+typedef struct _MemContext MemContext_s;
+typedef struct _MemArea MemArea_s;
+typedef struct _WaitQueue WaitQueue_s;
+typedef struct _Thread Thread_s;
+typedef struct _Process Process_s;
+typedef struct _Page Page_s;
+
+#endif /* __TYPEDEFS_H__ */

@@ -22,6 +22,7 @@
 #define	EXEC_INTEL_H
 
 #include "inc/smp.h"
+#include "inc/virt86.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -271,12 +272,6 @@ static inline void SetTR( int nTaskReg )
 	__asm__ __volatile__( "ltr %%ax" : : "a" (nTaskReg) );
 }
 
-static inline void enable_mmu( void )
-{
-	unsigned int dummy;
-	__asm__ __volatile__( "movl %%cr0,%0; orl $0x80010000,%0; movl %0,%%cr0" : "=r" (dummy) );	// set PG & WP bit in cr0
-}
-
 #define X86_CR4_VME		0x0001	// enable vm86 extensions
 #define X86_CR4_PVI		0x0002	// enable virtual interrupts flag
 #define X86_CR4_TSD		0x0004	// disable time stamp at ipl 3
@@ -296,6 +291,9 @@ static inline void set_in_cr4( unsigned int nFlags )
 	__asm__ __volatile__( "movl %0,%%cr4" : : "r" ( nCR4 | nFlags ) );
 }
 
+void init_cpuid( void );
+
+void init_descriptors( void );
 bool Desc_SetBase( uint16 desc, uint32 base );
 uint32 Desc_GetBase( uint16 desc );
 bool Desc_SetLimit( uint16 desc, uint32 limit );

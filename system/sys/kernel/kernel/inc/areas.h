@@ -26,6 +26,7 @@
 
 #include "../vfs/vfs.h"
 #include "mman.h"
+#include "array.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -35,6 +36,10 @@ extern "C"
 #endif
 #endif
 
+
+extern MultiArray_s g_sAreas;
+
+#define AREA_MUTEX_COUNT	100000	/* Maximum simultanous read-only area table locks */
 
 
 struct _MemContext
@@ -122,7 +127,9 @@ struct MemAreaOps
  * Private functions for the memory managment system
  */
 
-void InitAreaManager( void );
+void init_areas( void );
+
+void init_kernel_mem_context( void );
 MemContext_s *clone_mem_context( MemContext_s *psOrig );
 void empty_mem_context( MemContext_s *psCtx );
 void delete_mem_context( MemContext_s *psCtx );
@@ -144,6 +151,10 @@ MemArea_s *get_area_from_handle( area_id hArea );
 MemArea_s *verify_area( const void *pAddr, uint32 nSize, bool bWrite );
 int put_area( MemArea_s *psArea );
 
+int clone_page_pte( pte_t * pDst, pte_t * pSrc, bool bCow );
+void list_areas( MemContext_s *psSeg );
+
+
 int map_area_to_file( area_id hArea, File_s *psFile, uint32 nProt, off_t nOffset, size_t nLength );
 
 
@@ -164,11 +175,6 @@ extern inline void set_pte_address( pte_t * psPte, iaddr_t nAddress )
 
 
 extern MemContext_s *g_psKernelSeg;
-
-
-void protect_phys_pages( iaddr_t nAddress, int nCount );
-void unprotect_phys_pages( iaddr_t nAddress, int nCount );
-
 
 #ifdef __cplusplus
 }

@@ -36,9 +36,7 @@
 
 static uint32 g_nIoAPICAddr = 0xFEC00000;	// Address of the I/O apic (not yet used)
 bool g_bAPICPresent = false;
-static bool g_bSmpActivated = false;
-bool g_bHasFXSR = false;
-bool g_bHasXMM = false;
+static bool g_bFoundSmpConfig = false;
 int g_nActiveCPUCount = 1;
 int g_nBootCPU = 0;
 ProcessorInfo_s g_asProcessorDescs[MAX_CPU_COUNT];
@@ -51,6 +49,11 @@ static uint32 g_nFakeCPUID = 0;
 uint32 g_nVirtualAPICAddr = ( ( uint32 )&g_nFakeCPUID ) - APIC_ID;
 static area_id g_hAPICArea;
 static int g_anLogicToRealID[MAX_CPU_COUNT] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+
+
+extern bool g_bHasFXSR;
+extern bool g_bHasXMM;
+
 
 /*
  * This is the number of bits of precision for pi_nDelayCount.  Each
@@ -155,7 +158,7 @@ static void wait_pit_wrap( void )
  * SEE ALSO:
  ****************************************************************************/
 
-static void calibrate_delay( void )
+void calibrate_delay( void )
 {
 	unsigned long loops_per_jiffy = ( 1 << 12 );	// start at 2 BogoMips
 	unsigned long loopbit;
@@ -211,129 +214,6 @@ static void calibrate_delay( void )
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/
-static void read_cpu_id( unsigned int nReg, unsigned int *pData )
-{
-	/* Read CPU ID */
-	__asm __volatile( "cpuid" : "=a"( pData[0] ), "=b"( pData[1] ), "=c"( pData[2] ), "=d"( pData[3] ):"0"( nReg ) );
-}
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
-#include "inc/cputable.h"
-
-static void set_cpu_features( void )
-{
-	/* Save cpu name and features ( from mplayer ) */
-	unsigned int nRegs[4];
-	unsigned int nRegs2[4];
-	char zVendor[17];
-	int i;
-	uint nCPUid = 0;
-
-	g_asProcessorDescs[g_nBootCPU].pi_nFeatures = CPU_FEATURE_NONE;
-
-	/* Warning : We do not check if the CPU supports CPUID
-	   ( Not a problem because all CPUs > 486 support it ) */
-	read_cpu_id( 0x00000000, nRegs );
-	if ( nRegs[0] >= 0x00000001 )
-	{
-		read_cpu_id( 0x00000001, nRegs2 );
-		if ( nRegs2[3] & ( 1 << 23 ) )
-			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_MMX;
-		if ( nRegs2[3] & ( 1 << 24 ) )
-			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_FXSAVE;
-		if ( nRegs2[3] & ( 1 << 25 ) )
-			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_SSE;
-		g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_MMX2;
-		if ( nRegs2[3] & ( 1 << 26 ) )
-		{
-			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_SSE2;
-		}
-		if ( nRegs2[3] & ( 1 << 9 ) )
-		{
-			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_APIC;
-		}
-
-#define CPUID_FAMILY	( ( nRegs2[0] >> 8 ) & 0x0F )
-#define CPUID_MODEL		( ( nRegs2[0] >> 4 ) & 0x0F )
-
-		/* Find out CPU name */
-		strcpy( g_asProcessorDescs[g_nBootCPU].pi_zName, "Unknown" );
-		sprintf( zVendor, "%.4s%.4s%.4s", ( char * )( nRegs + 1 ), ( char * )( nRegs + 3 ), ( char * )( nRegs + 2 ) );
-		for ( i = 0; i < MAX_VENDORS; i++ )
-		{
-			if ( !strcmp( cpuvendors[i].string, zVendor ) )
-			{
-				if ( cpuname[i][CPUID_FAMILY][CPUID_MODEL] )
-				{
-					nCPUid = ( CPUID_FAMILY << 4 ) | CPUID_MODEL;
-					sprintf( g_asProcessorDescs[g_nBootCPU].pi_zName, "%s %s", cpuvendors[i].name, cpuname[i][CPUID_FAMILY][CPUID_MODEL] );
-				}
-			}
-		}
-	}
-	read_cpu_id( 0x80000000, nRegs );
-	if ( nRegs[0] >= 0x80000001 )
-	{
-		read_cpu_id( 0x80000001, nRegs2 );
-		if ( nRegs2[3] & ( 1 << 23 ) )
-			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_MMX;
-		if ( nRegs2[3] & ( 1 << 22 ) )
-			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_MMX2;
-		if ( nRegs2[3] & ( 1 << 31 ) )
-			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_3DNOW;
-		if ( nRegs2[3] & ( 1 << 30 ) )
-			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_3DNOWEX;
-	}
-	/* Copy this information to all other CPUs */
-	for ( i = 0; i < MAX_CPU_COUNT; i++ )
-	{
-		if ( i == g_nBootCPU )
-			continue;
-		strcpy( g_asProcessorDescs[i].pi_zName, g_asProcessorDescs[g_nBootCPU].pi_zName );
-		g_asProcessorDescs[i].pi_nFeatures = g_asProcessorDescs[g_nBootCPU].pi_nFeatures;
-	}
-	printk( "CPU: %s (0x%x)\n", g_asProcessorDescs[g_nBootCPU].pi_zName, nCPUid );
-	if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_MMX )
-		printk( "MMX supported\n" );
-	if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_MMX2 )
-		printk( "MMX2 supported\n" );
-	if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_3DNOW )
-		printk( "3DNOW supported\n" );
-	if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_3DNOWEX )
-		printk( "3DNOWEX supported\n" );
-	if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_FXSAVE )
-	{
-		// enable fast FPU save and restore
-		g_bHasFXSR = g_asProcessorDescs[g_nBootCPU].pi_bHaveFXSR = true;
-		set_in_cr4( X86_CR4_OSFXSR );
-		printk( "FXSAVE supported\n" );
-
-		if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_SSE )
-		{
-			// enable SSE support
-			g_bHasXMM = g_asProcessorDescs[g_nBootCPU].pi_bHaveXMM = true;
-			set_in_cr4( X86_CR4_OSXMMEXCPT );
-			printk( "SSE supported\n" );
-		}
-		if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_SSE2 )
-			printk( "SSE2 supported\n" );
-	}
-	if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_APIC )
-		printk( "APIC present\n" );
-}
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
 
 static void calibrate_apic_timer( int nProcessor )
 {
@@ -381,9 +261,10 @@ static void ap_entry_proc( void )
 	uint32 nReg;
 	int nProcessor;
 	uint32 nCR0;
+	unsigned int nDummy;
 
 	set_page_directory_base_reg( g_psKernelSeg->mc_pPageDir );
-	enable_mmu();
+	__asm__ __volatile__( "movl %%cr0,%0; orl $0x80010000,%0; movl %0,%%cr0" : "=r" (nDummy) );	// set PG & WP bit in cr0
 
 	nProcessor = get_processor_id();
 
@@ -717,7 +598,7 @@ static void init_default_config( int nConfig )
  * SEE ALSO:
  ****************************************************************************/
 
-static int smp_scan_config( void *pBase, uint nSize )
+static int smp_scan_mpc_config( void *pBase, uint nSize )
 {
 	MpFloatingPointer_s *mpf;
 	int nProcessorCount = 0;
@@ -775,6 +656,212 @@ static int smp_scan_config( void *pBase, uint nSize )
 		printk( "Processors: %d\n", nProcessorCount );
 		// Only use the first configuration found.
 		return ( 1 );
+	}
+
+	return ( 0 );
+}
+
+
+
+//****************************************************************************/
+/** Parses the ACPI RSDT table to find the ACPI MADT table. This table contains
+ * information about the installed processors and is similiar to the MPC table
+ * on SMP systems.
+ * \param nRsdt - Physical address of the rsdt.
+ * \internal
+ * \ingroup CPU
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+
+static int smp_read_acpi_rsdt( uint32 nRsdt )
+{
+	uint32 nTableEnt;
+	int nApics = 0;
+	int nProcessorCount = 0;
+	uint32 i;
+	area_id hRsdtArea;
+	AcpiRsdt_s* psRsdt = NULL;
+	
+	/* Late compile-time check... */
+	if ( sizeof( *psRsdt ) > PAGE_SIZE )
+	{
+		printk( "Error: smp_read_acpi_rsdt() wrong RSDT size %d\n", sizeof( *psRsdt ) );
+	}
+	
+	/* Map the rsdt because it is outside the accessible memory */
+	hRsdtArea = create_area( "acpi_rsdt", ( void ** )&psRsdt, PAGE_SIZE, PAGE_SIZE, AREA_ANY_ADDRESS | AREA_KERNEL, AREA_FULL_LOCK );
+	if( hRsdtArea < 0 )
+	{
+		printk( "Error: smp_read_acpi_rsdt() failed to map the acpi rsdt table\n" );
+		return( 1 );
+	}
+	remap_area( hRsdtArea, (void*)nRsdt );
+	
+	/* Check signature and checksum */
+	if ( strncmp( psRsdt->ar_sHeader.ath_anSignature, ACPI_RSDT_SIGNATURE, 4 ) )
+	{
+		printk( "Bad signature [%c%c%c%c].\n", psRsdt->ar_sHeader.ath_anSignature[0], psRsdt->ar_sHeader.ath_anSignature[1], psRsdt->ar_sHeader.ath_anSignature[2], psRsdt->ar_sHeader.ath_anSignature[3] );
+		delete_area( hRsdtArea );
+		return ( 1 );
+	}
+	
+	if ( mpf_checksum( ( unsigned char * )psRsdt, psRsdt->ar_sHeader.ath_nLength ) != 0 )
+	{
+		printk( "Checksum error.\n" );
+		delete_area( hRsdtArea );
+		return ( 1 );
+	}
+
+	printk( "OEM ID: %.6s Product ID: %.8s\n", psRsdt->ar_sHeader.ath_anOemId, psRsdt->ar_sHeader.ath_anOemTableId );
+
+	/* Calculate number of table entries */
+	nTableEnt = ( psRsdt->ar_sHeader.ath_nLength - sizeof( AcpiTableHeader_s ) ) >> 2;
+	if( nTableEnt > 8 )
+		nTableEnt = 8;
+	
+	for( i = 0; i < nTableEnt; i++ )
+	{
+		/* Map entries */
+		area_id hEntry;
+		AcpiTableHeader_s* psHeader = NULL;
+		
+		
+		/* Map the rsdt entries. We map only one page (+1 for alignment) because we only read the table header
+		   or the madt table and both are smaller than one page */
+		hEntry = create_area( "acpi_rsdt_entry", ( void ** )&psHeader, 2 * PAGE_SIZE, 2 * PAGE_SIZE, AREA_ANY_ADDRESS | AREA_KERNEL, AREA_FULL_LOCK );
+		if( hEntry < 0 )
+		{
+			printk( "Error: smp_read_acpi_rsdt() failed to map a rsdt entry\n" );
+			return( 1 );
+		}
+		
+		remap_area( hEntry, (void*)( psRsdt->ar_nEntry[i] & PAGE_MASK ) );
+		psHeader = (AcpiTableHeader_s*)( (uint32)psHeader + ( psRsdt->ar_nEntry[i] - ( psRsdt->ar_nEntry[i] & PAGE_MASK ) ) );
+#ifdef SMP_DEBUG
+		printk( "%.4s %.6s %.8s\n", psHeader->ath_anSignature, psHeader->ath_anOemId, psHeader->ath_anOemTableId );
+#endif
+		if( !strncmp( psHeader->ath_anSignature, ACPI_MADT_SIGNATURE, 4 ) )
+		{
+			/* Found the madt */
+			area_id hMadt;
+			AcpiMadt_s* psMadt = NULL;
+			AcpiMadtEntry_s* psEntry = NULL;
+			uint32 nMadtSize = PAGE_ALIGN( psHeader->ath_nLength ) + PAGE_SIZE;
+			uint32 nMadtEnd;
+			
+			/* Map the madt and its entries */
+			hMadt = create_area( "acpi_madt", ( void ** )&psMadt, nMadtSize, nMadtSize, AREA_ANY_ADDRESS | AREA_KERNEL, AREA_FULL_LOCK );
+			if( hMadt < 0 )
+			{
+				printk( "Error: smp_read_acpi_rsdt() failed to map the madt table\n" );
+				return( 1 );
+			}
+			remap_area( hMadt, (void*)( psRsdt->ar_nEntry[i] & PAGE_MASK ) );
+			psMadt = (AcpiMadt_s*)( (uint32)psMadt + ( psRsdt->ar_nEntry[i] - ( psRsdt->ar_nEntry[i] & PAGE_MASK ) ) );
+			
+			/* Set the local APIC address */
+			g_bAPICPresent = true;
+			g_nPhysAPICAddr = psMadt->am_nApicAddr;
+#ifdef SMP_DEBUG
+			printk( "APIC at: 0x%lX\n", psMadt->am_nApicAddr );
+#endif
+			nMadtEnd = (uint32)psMadt + psHeader->ath_nLength;
+			psEntry = ( AcpiMadtEntry_s* )( (uint32)psMadt + sizeof( AcpiMadt_s ) );
+			
+			/* Parse the madt entries */
+			while( ( (uint32)psEntry ) < nMadtEnd )
+			{
+				switch( psEntry->ame_nType )
+				{
+					case ACPI_MADT_PROCESSOR:
+					{
+						AcpiMadtProcessor_s *psP = ( AcpiMadtProcessor_s * )psEntry;
+
+						if ( psP->amp_nFlags & ACPI_MADT_CPU_ENABLED )
+						{
+							nProcessorCount++;
+							printk( "Processor %d\n", psP->amp_nApicId );
+							
+							/* There does not seem to be any information in the madt table
+							   about the bootup cpu, so we just use the cpu with the apic
+							   id 0 */
+							if( psP->amp_nApicId == 0 )
+							{
+								printk( "    Bootup CPU\n" );
+								g_nBootCPU = psP->amp_nApicId;
+								g_nFakeCPUID = SET_APIC_ID( g_nBootCPU );
+							}
+					
+							g_asProcessorDescs[psP->amp_nApicId].pi_bIsPresent = true;
+							g_asProcessorDescs[psP->amp_nApicId].pi_nAPICVersion = 0x10;
+						}
+					}	
+					break;
+			
+		
+					case ACPI_MADT_IOAPIC:
+					{
+						AcpiMadtIoApic_s *psP = ( AcpiMadtIoApic_s * )psEntry;
+						nApics++;
+						printk( "I/O APIC %d at 0x%08lX.\n", psP->ami_nId, psP->ami_nAddr );
+						g_nIoAPICAddr = psP->ami_nAddr;
+					}
+					break;
+				}
+				psEntry = ( AcpiMadtEntry_s* )( (uint32)psEntry + psEntry->ame_nLength );
+			}
+			delete_area( hMadt );
+		}
+		delete_area( hEntry );	
+	}
+	
+	delete_area( hRsdtArea );
+	
+	if ( nApics > 1 )
+	{
+		printk( "Warning: Multiple APIC's not supported.\n" );
+	}
+
+	return ( nProcessorCount );
+}
+
+
+//****************************************************************************/
+/** Tries to find the ACPI RSDP table in the system memory.
+ * \param pBase - First base address pointer.
+ * \param nSize - Size of the memory region.
+ * \internal
+ * \ingroup CPU
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+
+static int smp_scan_acpi_config( void *pBase, uint nSize )
+{
+	AcpiRsdp_s *psRsdp = NULL;
+	int nProcessorCount = 0;
+
+	for ( psRsdp = ( AcpiRsdp_s * ) pBase; nSize > 0; ( (uint8*)psRsdp) += 16, nSize -= 16 )
+	{
+		if ( strncmp( ( char* )psRsdp->ar_anSignature, ACPI_RSDP_SIGNATURE, 8 ) )
+		{
+			continue;
+		}
+		
+		if ( mpf_checksum( ( uint8 * )psRsdp, sizeof( AcpiRsdp_s ) ) != 0 )
+		{
+			continue;
+		}
+		
+		if ( psRsdp->ar_nRevision >= 2 )
+		{
+			continue;
+		}
+
+		nProcessorCount = smp_read_acpi_rsdt( psRsdp->ar_nRsdt );
+
+		printk( "Processors: %d\n", nProcessorCount );
+
+		return( 1 );
 	}
 
 	return ( 0 );
@@ -1047,7 +1134,6 @@ void smp_boot_cpus( void )
 		}
 	}
 	printk( "Total of %d processors activated (%lu.%02lu BogoMIPS).\n", nCPUCount + 1, nBogoSum / ( 500000 / INT_FREQ ), ( nBogoSum / ( 5000 / INT_FREQ ) ) % 100 );
-	g_bSmpActivated = true;
 	g_nActiveCPUCount = nCPUCount + 1;
 }
 
@@ -1134,10 +1220,12 @@ void do_smp_preempt( SysCallRegs_s * psRegs, int nIrqNum )
  * SEE ALSO:
  ****************************************************************************/
 
-bool init_smp( bool bInitSMP )
+void init_smp( bool bInitSMP )
 {
 	bool bFound = false;
 	int i;
+	
+	calibrate_delay();
 
 	if ( bInitSMP )
 	{
@@ -1147,17 +1235,36 @@ bool init_smp( bool bInitSMP )
 			0xF0000, 0x10000,	// 64k of bios
 			0, 0
 		};
+		
+		uint32 anAcpiConfigAreas[] = {
+			0x0, 0x400,	// Bottom 1k of base memory
+			0xe0000, 0x20000,	// 64k of bios
+			0, 0
+		};
 
-		printk( "Scan memory for SMP config tables...\n" );
-
-		for ( i = 0; bFound == false && anConfigAreas[i + 1] > 0; i += 2 )
+		printk( "Scan memory for ACPI SMP config tables...\n" );
+		
+		for ( i = 0; bFound == false && anAcpiConfigAreas[i + 1] > 0; i += 2 )
 		{
-			bFound = smp_scan_config( ( void * )anConfigAreas[i], anConfigAreas[i + 1] );
+			bFound = smp_scan_acpi_config( ( void * )anAcpiConfigAreas[i], anAcpiConfigAreas[i + 1] );
+			if( bFound )
+				break;
+		}
+		
+		if( !bFound )
+		{
+				
+			printk( "Scan memory for MPC SMP config tables...\n" );
+		
+			for ( i = 0; bFound == false && anConfigAreas[i + 1] > 0; i += 2 )
+			{
+				bFound = smp_scan_mpc_config( ( void * )anConfigAreas[i], anConfigAreas[i + 1] );
+				if( bFound )
+					break;
+			}	
 		}
 	}
 
-	set_cpu_features();
-	calibrate_delay();
 	if ( ( bFound || ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_APIC ) ) && bInitSMP )
 	{
 		/* Map APIC registers */
@@ -1167,7 +1274,7 @@ bool init_smp( bool bInitSMP )
 		if ( g_hAPICArea < 0 )
 		{
 			printk( "Error: init_smp() failed to create APIC register area\n" );
-			return ( false );
+			return;
 		}
 
 #ifdef SMP_DEBUG
@@ -1198,7 +1305,8 @@ bool init_smp( bool bInitSMP )
 		g_asProcessorDescs[g_nBootCPU].pi_bIsRunning = true;
 		g_anLogicToRealID[0] = g_nBootCPU;
 	}
-	return ( bFound );
+	
+	g_bFoundSmpConfig = bFound;
 }
 
 /*****************************************************************************
@@ -1211,14 +1319,32 @@ bool init_smp( bool bInitSMP )
 void boot_ap_processors( void )
 {
 	int nFlg;
+	int i;
+	
+	if ( g_bFoundSmpConfig )
+	{
 
-	printk( "Untie AP processors...\n" );
+		printk( "Untie AP processors...\n" );
 
-	nFlg = cli();
-	calibrate_apic_timer( get_processor_id() );
-	smp_boot_cpus();
-	put_cpu_flags( nFlg );
+		nFlg = cli();
+		calibrate_apic_timer( get_processor_id() );
+		smp_boot_cpus();
+		put_cpu_flags( nFlg );
+	}
+	
+	for ( i = 0; i < MAX_CPU_COUNT; ++i )
+	{
+		if ( g_asProcessorDescs[i].pi_bIsPresent && g_asProcessorDescs[i].pi_bIsRunning )
+		{
+			g_asProcessorDescs[i].pi_nGS = Desc_Alloc( 0 );
+			Desc_SetLimit( g_asProcessorDescs[i].pi_nGS, TLD_SIZE );
+			Desc_SetBase( g_asProcessorDescs[i].pi_nGS, 0 );
+			Desc_SetAccess( g_asProcessorDescs[i].pi_nGS, 0xf2 );
+			printk( "CPU #%d got GS=%ld\n", i, g_asProcessorDescs[i].pi_nGS );
+		}
+	}
 }
+
 
 int logical_to_physical_cpu_id( int nLogicalID )
 {

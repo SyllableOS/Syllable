@@ -27,10 +27,7 @@ extern "C" {
 #endif
 #endif
 
-typedef struct _WaitQueue WaitQueue_s;
-typedef	struct _Thread	Thread_s;
-typedef struct _Process	Process_s;
-typedef struct _MemArea MemArea_s;
+/* TODO: Remove this file */
 
 #ifdef __cplusplus
 }

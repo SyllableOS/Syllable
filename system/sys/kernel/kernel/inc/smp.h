@@ -37,13 +37,13 @@ extern "C"
 
 #ifdef __KERNEL__
 
-#include <atheos/typedefs.h>
 #include <atheos/kdebug.h>
 #include <atheos/kernel.h>
 
-#include "i82489.h"
 
-extern int g_pAPICPageDir;
+#include "typedefs.h"
+#include "i82489.h"
+#include "acpi.h"
 
 #define SMP_MAGIC_IDENT	(('_'<<24)|('P'<<16)|('M'<<8)|'_')
 
@@ -261,10 +261,8 @@ int logical_to_physical_cpu_id( int nLogicalID );
 #define NO_PROC_ID		0xFF	/* No processor magic marker */
 
 
-bool init_smp( bool bInitSMP );
+void init_smp( bool bInitSMP );
 void boot_ap_processors( void );
-
-void forward_irq( int nTarget, int nIrqNum );
 
 #define MSG_ALL_BUT_SELF	0x8000	/* Assume < 32768 CPU's */
 #define MSG_ALL			0x8001

@@ -26,4 +26,7 @@
 
 #define	INT_FREQ		1000
 
+void start_timer_int( void );
+uint32 get_cmos_time( void );
+
 #endif /* __F_ATHEOS_PIT_TIMER_H__ */

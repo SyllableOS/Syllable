@@ -59,9 +59,6 @@ struct SystemBase
 	struct i3Desc ex_GDT[8192];	/* Global Descriptor Table      */
 	uint8 ex_DTAllocList[8192];	/* array describing whitch descriptors allocated in the different tables */
 
-	MemHeader_s ex_sRealMemHdr;	/* Real memory  (mem below 1M)          */
-	MemHeader_s ex_sPhysicalMemHdr;	/* Physical memory ( RAM, PCI... )          */
-
 	char *ex_pNullPage;
 
 	thread_id ex_hInitProc;

@@ -31,3 +31,9 @@ const char *g_pzBuildTime = __TIME__;
 const char *g_pzCpuArch = "i586";
 const char *g_pzSystem = "syllable";
 
+/* Anyone checking a kernel revision into CVS must remember to bump this
+ * build number.  For private branches or patches backported to older versions
+ * of Syllable, add a letter and revision number; for example a patch to
+ * Build 1023 becomes Build 1023r1.
+ */
+const char *g_pzBuildVersion = "0001";

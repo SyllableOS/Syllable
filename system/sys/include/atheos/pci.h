@@ -48,6 +48,7 @@ typedef struct
     uint8	nLatencyTimer;
     uint8	nHeaderType;
     uint8	nSelfTestResult;
+    uint32	nAGPMode;
 
     union
     {
@@ -68,6 +69,8 @@ typedef struct
 	    uint8	nInterruptPin;
 	    uint8	nMinDMATime;
 	    uint8	nMaxDMALatency;
+	    uint8	nAGPStatus;
+	    uint8	nAGPCommand;
 	} h0;
     } u;
     int nHandle;
@@ -107,6 +110,12 @@ typedef struct
   int		nHandle;
 } PCI_Info_s;
 
+typedef struct
+{
+	uint32 ai_nAGPStatus;
+	uint32 ai_nAGPMode;
+} AGP_Info_s;
+
 /* PCI bus */
 
 #define PCI_BUS_NAME "pci"
@@ -120,7 +129,9 @@ typedef struct
 									int nSize, uint32 nValue );
 	void (*enable_pci_master)( int nBusNum, int nDevNum, int nFncNum );
 	void (*set_pci_latency)( int nBusNum, int nDevNum, int nFncNum, uint8 nLatency );
+	uint8 (*get_pci_capability)( int nBusNum, int nDevNum, int nFncNum, uint8 nCapID );
 	
+	status_t (*get_agp_info)( int nBusNum, int nDevNum, int nFncNum, AGP_Info_s* psAGPInfo );
 } PCI_bus_s;
 
 #define PCI_VENDOR_ID	0x00		/* (2 byte) vendor id */
@@ -364,6 +375,7 @@ typedef struct
 
 /***	masks for status register bits ***/
 
+#define PCI_STATUS_CAP_LIST				0x0010	/* Support Capability List */
 #define PCI_STATUS_66_MHZ_CAPABLE		0x0020	/* 66 Mhz capable */
 #define PCI_STATUS_UDF_SUPPORTED		0x0040	/* user-definable-features (udf) supported */
 #define PCI_STATUS_FASTBACK			0x0080	/* fast back-to-back capable */
@@ -401,6 +413,54 @@ typedef struct
 #define PCI_BIST_START		0x40		/* 1 = start self-test */
 #define PCI_BIST_CAPABLE	0x80		/* 1 = self-test capable */
 
+
+/***	masks for the capability register ***/
+
+#define PCI_CAP_LIST_ID		0x000000ff	/* Capability ID */
+#define PCI_CAP_LIST_NEXT	0x0000ff00	/* Next capability in the list */
+#define PCI_CAP_FLAGS		0xffff0000	/* Capability defined flags (16 bits) */
+
+/***	masks for the capability id register ***/
+
+#define PCI_CAP_ID_PM		0x01		/* Power Management */
+#define PCI_CAP_ID_AGP		0x02		/* Accelerated Graphics Port */
+#define PCI_CAP_ID_VPD		0x03		/* Vital Product Data */
+#define PCI_CAP_ID_SLOTID	0x04		/* Slot Identification */
+#define PCI_CAP_ID_MSI		0x05		/* Message Signalled Interrupts */
+#define PCI_CAP_ID_CHSWP	0x06		/* CompactPCI HotSwap */
+#define PCI_CAP_ID_PCIX		0x07		/* PCI-X */
+
+
+/***	offsets for the agp capability flags ***/
+
+#define PCI_AGP_VERSION		2	/* BCD version number */
+#define PCI_AGP_RFU			3	/* Rest of capability flags */
+#define PCI_AGP_STATUS		4	/* Status register */
+#define PCI_AGP_COMMAND		8	/* Control register */
+
+/***	masks for the agp status register ***/
+
+#define PCI_AGP_STATUS_RQ_MASK	0xff000000	/* Maximum number of requests - 1 */
+#define PCI_AGP_STATUS_SBA		0x0200		/* Sideband addressing supported */
+#define PCI_AGP_STATUS_64BIT	0x0020		/* 64-bit addressing supported */
+#define PCI_AGP_STATUS_FW		0x0010		/* FW transfers supported */
+#define PCI_AGP_STATUS_3_0		0x0008		/* AGP 3.0 supported */
+#define PCI_AGP_STATUS_RATE4	0x0004		/* 4x transfer rate supported */
+#define PCI_AGP_STATUS_RATE2	0x0002		/* 2x transfer rate supported */
+#define PCI_AGP_STATUS_RATE1	0x0001		/* 1x transfer rate supported */
+
+
+/***	masks for the agp command register ***/
+
+#define PCI_AGP_COMMAND_RQ_MASK 0xff000000	/* Master: Maximum number of requests */
+#define PCI_AGP_COMMAND_SBA		0x0200		/* Sideband addressing enabled */
+#define PCI_AGP_COMMAND_AGP		0x0100		/* Allow processing of AGP transactions */
+#define PCI_AGP_COMMAND_64BIT	0x0020		/* Allow processing of 64-bit addresses */
+#define PCI_AGP_COMMAND_FW		0x0010		/* Force FW transfers */
+#define PCI_AGP_COMMAND_3_0		0x0008		/* Use AGP 3.0 */
+#define PCI_AGP_COMMAND_RATE4	0x0004		/* Use 4x rate */
+#define PCI_AGP_COMMAND_RATE2	0x0002		/* Use 2x rate */
+#define PCI_AGP_COMMAND_RATE1	0x0001		/* Use 1x rate */
 
 /***	masks for flags in the various base address registers ***/
 

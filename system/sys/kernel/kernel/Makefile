@@ -15,7 +15,7 @@ VFSOBJS := vfs.o inode.o nodemonitor.o attributes.o flock.o root.o dev.o fifo.o 
 NETOBJS := core.o interface.o route.o ip.o udp.o tcp.o tcp_input.o tcp_output.o socket.o packets.o raw.o
 LIBOBJS := ct_flags.o ct_upper.o ct_lower.o vsprintf.o string.o strstr.o qsort.o
 
-OBJS :=intel.o kernel.o dbconsole.o ksyms.o init.o fork.o syscall.o 	  		\
+OBJS := intel.o cpuid.o descriptors.o kernel.o dbconsole.o ksyms.o init.o fork.o syscall.o 	  		\
 	debug.o timer.o process.o threads.o sema.o msgport.o memory.o strace.o	\
 	smp.o udelay.o fault.o exec.o pci.o pgroup.o kmalloc.o swap.o dma.o	\
 	elf.o timecalc.o virt86.o irq.o array.o schedule.o psignals.o mman.o	\

@@ -302,15 +302,13 @@ void TimerInterrupt( int dummy )
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/
-
-bool StartTimerInt( void )
+void start_timer_int( void )
 {
 	outb_p( inb_p( 0x61 ) | 1, 0x61 );
 
 	starttimer1();
 	starttimer2();
 
-	return ( TRUE );
 }
 
 /*****************************************************************************
@@ -320,7 +318,7 @@ bool StartTimerInt( void )
  * SEE ALSO:
  ****************************************************************************/
 
-void StopTimerInt( void )
+void stop_timer_int( void )
 {
 	outb_p( 0x34, PIT_MODE );
 	outb_p( 0, PIT_CH0 );
@@ -365,7 +363,7 @@ static inline uint32 maketime( uint32 year, uint32 mon, uint32 day, uint32 hour,
  * SEE ALSO:
  ****************************************************************************/
 
-uint32 GetCMOSTime( void )
+uint32 get_cmos_time( void )
 {
 	ClockTime_s sTime;
 	uint32 year, mon, day, hour, min, sec;

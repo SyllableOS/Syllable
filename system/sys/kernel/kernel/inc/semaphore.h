@@ -22,6 +22,7 @@
 #define	__F_INC_SEMAPHORES_H__
 
 #include <atheos/types.h>
+#include "typedefs.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -82,6 +83,7 @@ typedef struct
 	int sc_nLastID;
 } SemContext_s;
 
+void init_semaphores( void );
 SemContext_s *create_semaphore_context( void );
 SemContext_s *clone_semaphore_context( SemContext_s * psOrig, proc_id hNewOwner );
 void release_thread_semaphores( thread_id hThread );

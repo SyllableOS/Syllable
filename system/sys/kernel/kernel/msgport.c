@@ -810,7 +810,7 @@ static void db_list_public_ports( int argc, char **argv )
  * SEE ALSO:
  ****************************************************************************/
 
-void InitMsgPorts( void )
+void init_msg_ports( void )
 {
 	register_debug_cmd( "ls_pubports", "list all public message ports.", db_list_public_ports );
 	g_hPortListSema = create_semaphore( "port_list__bad1", 1, 0 );

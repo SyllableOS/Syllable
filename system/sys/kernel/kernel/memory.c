@@ -37,6 +37,9 @@
 SPIN_LOCK( g_sRealPoolLock, "real_pool_slock" );
 SPIN_LOCK( g_sPhysicalPoolLock, "physical_pool_slock" );
 
+static MemHeader_s g_sRealMemHdr;	/* Real memory  (mem below 1M)          */
+static MemHeader_s g_sPhysicalMemHdr;	/* Physical memory ( RAM, PCI... )          */
+
 
 //****************************************************************************/
 /** Allocates memory for a new memory heap.
@@ -286,7 +289,7 @@ void *alloc_real( uint32 nSize, uint32 nFlags )
 
 	nSize = ( nSize + 0x07 ) & ~0x07;
 
-	nReturn = AllocateHeapMem( &g_sSysBase.ex_sRealMemHdr, &nMemAddr, false, false, nSize );
+	nReturn = AllocateHeapMem( &g_sRealMemHdr, &nMemAddr, false, false, nSize );
 
 	spinunlock_enable( &g_sRealPoolLock, nFlg );
 
@@ -331,7 +334,7 @@ void free_real( void *pAddress )
 
 
 	nFlg = spinlock_disable( &g_sRealPoolLock );
-	nReturn = FreeHeapMem( &g_sSysBase.ex_sRealMemHdr, nMemAddr );
+	nReturn = FreeHeapMem( &g_sRealMemHdr, nMemAddr );
 
 	spinunlock_enable( &g_sRealPoolLock, nFlg );
 
@@ -362,7 +365,7 @@ status_t alloc_physical( uint32 *pnAddress, bool bExactAddress, uint32 nSize )
 
 	nFlg = spinlock_disable( &g_sPhysicalPoolLock );
 
-	nReturn = AllocateHeapMem( &g_sSysBase.ex_sPhysicalMemHdr, pnAddress, bExactAddress, true, nSize );
+	nReturn = AllocateHeapMem( &g_sPhysicalMemHdr, pnAddress, bExactAddress, true, nSize );
 
 	spinunlock_enable( &g_sPhysicalPoolLock, nFlg );
 
@@ -393,7 +396,7 @@ void free_physical( uint32 nAddress )
 	status_t nReturn;
 
 	nFlg = spinlock_disable( &g_sPhysicalPoolLock );
-	nReturn = FreeHeapMem( &g_sSysBase.ex_sPhysicalMemHdr, nAddress );
+	nReturn = FreeHeapMem( &g_sPhysicalMemHdr, nAddress );
 
 	spinunlock_enable( &g_sPhysicalPoolLock, nFlg );
 
@@ -407,3 +410,67 @@ void sys_MemClear( void *LinAddr, uint32 Size )
 {
 	memset( LinAddr, 0, Size );
 }
+
+
+void init_memory_pools( char* pRealMemBase, MultiBootHeader_s* psHeader )
+{
+	/* Create real memory pool */
+	g_sRealMemHdr.mh_nTotalSize = 0xa0000 - 1 - ( uint )pRealMemBase;
+	g_sRealMemHdr.mh_psFirst = kmalloc( sizeof( MemChunk_s ), MEMF_KERNEL );
+	memset( g_sRealMemHdr.mh_psFirst, 0, sizeof( MemChunk_s ) );
+	g_sRealMemHdr.mh_psFirst->mc_nAddress = ( uint )pRealMemBase;
+	g_sRealMemHdr.mh_psFirst->mc_nSize = g_sRealMemHdr.mh_nTotalSize;
+
+	/* Create physical memory pool and reserve RAM region 
+	 * The other regions ( e.g PCI ) will be reserved later
+	 */
+	g_sPhysicalMemHdr.mh_nTotalSize = 0xffffffff;
+	g_sPhysicalMemHdr.mh_psFirst = kmalloc( sizeof( MemChunk_s ), MEMF_KERNEL );
+	memset( g_sPhysicalMemHdr.mh_psFirst, 0, sizeof( MemChunk_s ) );
+	g_sPhysicalMemHdr.mh_psFirst->mc_nAddress = 0;
+	g_sPhysicalMemHdr.mh_psFirst->mc_nSize = g_sPhysicalMemHdr.mh_nTotalSize;
+	{
+		uint32 nAddress = 0;
+
+		if ( alloc_physical( &nAddress, true, g_sSysBase.ex_nTotalPageCount * PAGE_SIZE ) != 0 )
+			printk( "Error: Failed to reserve RAM region\n" );
+	}
+	
+	/* Parse the multiboot memory map */
+	if( psHeader && psHeader->mbh_nFlags & MB_INFO_MEM_MAP )
+	{
+		printk( "Multiboot memory map:\n" );
+		uint32 nAddr;
+		const char *pzType;
+		for( nAddr = psHeader->mbh_nMemoryMapAddr; nAddr < psHeader->mbh_nMemoryMapAddr +
+			psHeader->mbh_nMemoryMapLength; nAddr += *( ( unsigned long* )nAddr ) + 4 )
+		{
+			MBMemoryMapEntry_s* psEntry = ( MBMemoryMapEntry_s* )nAddr;
+			
+			alloc_physical( &nAddr, true, ( uint32 )psEntry->mm_nLength );
+
+			switch ( psEntry->mm_nType )
+			{
+				case MB_MM_MEMORY:
+					pzType = "(usable)";
+					break;
+				case MB_MM_RESERVED:
+					pzType = "(reserved)";
+					break;
+				case MB_MM_ACPI_DATA:
+					pzType = "(ACPI data)";
+					break;
+				case MB_MM_ACPI_NVS:
+					pzType = "(ACPI NVS)";
+					break;
+				default:
+					pzType = "(unknown)";
+					break;
+			}
+			
+			printk( "  %016Lx - %016Lx %s\n", psEntry->mm_nBaseAddr,
+			psEntry->mm_nBaseAddr + psEntry->mm_nLength, pzType );
+		}
+	}
+}
+

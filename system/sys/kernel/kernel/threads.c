@@ -1258,7 +1258,7 @@ void db_list_threads( int argc, char **argv )
  * SEE ALSO:
  ****************************************************************************/
 
-void InitThreads( void )
+void init_threads( void )
 {
 	MArray_Init( &g_sThreadTable );
 	register_debug_cmd( "ps", "list all threads.", db_list_threads );

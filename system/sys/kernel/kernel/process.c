@@ -416,7 +416,7 @@ int get_tld( int nHandle )
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/ 
-void InitProcesses( void ) 
+void init_processes( void ) 
 {
 	MArray_Init( &g_sProcessTable );
 } 

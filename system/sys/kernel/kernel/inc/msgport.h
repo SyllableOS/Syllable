@@ -27,7 +27,7 @@ extern "C"
 #endif
 
 #include <atheos/types.h>
-#include <atheos/typedefs.h>
+#include "typedefs.h"
 
 
 
@@ -66,6 +66,8 @@ extern "C"
 		PublicPort_s *pp_psNext;
 		PublicPort_s *pp_psPrev;
 	};
+	
+	void init_msg_ports( void );
 
 	MsgPort_s *get_port_from_handle( port_id hPort );
 	void exit_free_ports( Process_s *psProc );

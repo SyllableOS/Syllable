@@ -23,13 +23,14 @@
 
 #include <atheos/types.h>
 #include <atheos/atomic.h>
-#include <atheos/typedefs.h>
 
 #include <posix/types.h>
 #include <posix/stat.h>
 #include <posix/dirent.h>
 #include <posix/fcntl.h>
 #include <posix/uio.h>
+
+#include "../inc/typedefs.h"
 
 #ifdef __cplusplus
 extern "C"

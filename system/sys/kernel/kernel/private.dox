@@ -302,6 +302,7 @@ FILE_PATTERNS          = *.c \
                          *.cpp \
                          *.h   \
 			 Areas.doxmod \
+			 Cpu.doxmod \
 			 Devices.doxmod \
 			 Memory.doxmod \
 			 Processes.doxmod
