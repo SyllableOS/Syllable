@@ -2,6 +2,9 @@
 
 Updated libpthread with a simple implementation of pthread_kill().
 
+Moved the system call table into a new header file, <atheos/syscalltable.h>,
+so that both the kernel and the strace utility can include it.
+
 * March 24 2005, Henrik Isaksson *
 
 Added warpspeed to decorators Makefile.
