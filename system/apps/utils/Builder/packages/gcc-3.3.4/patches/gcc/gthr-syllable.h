@@ -45,7 +45,7 @@ typedef struct
   sem_id   mutex;
 } __gthread_mutex_t;
 
-#define __GTHREAD_ONCE_INIT 0
+#define __GTHREAD_ONCE_INIT ATOMIC_INIT(0)
 #define __GTHREAD_MUTEX_INIT_FUNCTION(lock) do { atomic_set( &(lock)->count, 0 ); (lock)->mutex = create_semaphore( "gcc_mutex", 0, 0 ); } while(0)
 
 static inline int
