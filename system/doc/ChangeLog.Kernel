@@ -1,1 +1,3 @@
+* Sep 15 2002, Kristian Van Der Vliet *
 
+Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command now works as expected.
