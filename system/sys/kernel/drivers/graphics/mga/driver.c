@@ -63,6 +63,7 @@ struct gfx_device g_sDevices[] = {
 	{0x102b, 0x0525, "Matrox", "G400"},
 	{0x102b, 0x2007, "Matrox", "Mistral"},
 	{0x102b, 0x2527, "Matrox", "G550"},
+	{0x102b, 0x2537, "Matrox", "G550"},
 	{0x102b, 0x0527, "Matrox", "Parhelia"},
 };
 
