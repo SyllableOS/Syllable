@@ -1,3 +1,7 @@
+* March 9 2005, Henrik Isaksson *
+
+Changed makefile.rules; CPPFLAGS -> CXXFLAGS
+
 * March 1 2005, Arno Klenke *
 
 Updated sis3xx driver
