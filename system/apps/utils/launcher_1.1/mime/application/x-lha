@@ -1,0 +1,4 @@
+DefaultIcon=/Applications/Launcher/icons/file-manager.png
+DefaultCommand=/usr/archiver/bin/archiver -o %f
+Match=\.lha$
+

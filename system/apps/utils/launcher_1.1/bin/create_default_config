@@ -1,0 +1,111 @@
+#!/bin/sh
+#
+# This script will install some default items in the launcher
+#
+
+DIR=$HOME/config/Launcher
+
+mkdir $DIR
+mkdir $DIR/Editors
+/Applications/Launcher/bin/AddLauncherIcon $DIR/Editors /Applications/Launcher/icons/editor.png > /dev/null
+mkdir $DIR/Games
+/Applications/Launcher/bin/AddLauncherIcon $DIR/Games /Applications/Launcher/icons/game.png > /dev/null
+mkdir $DIR/Net
+/Applications/Launcher/bin/AddLauncherIcon $DIR/Net /Applications/Launcher/icons/network.png > /dev/null
+mkdir $DIR/System
+/Applications/Launcher/bin/AddLauncherIcon $DIR/System /Applications/Launcher/icons/system.png > /dev/null
+mkdir $DIR/Utilities
+/Applications/Launcher/bin/AddLauncherIcon $DIR/Utilities /Applications/Launcher/icons/utility.png > /dev/null
+
+ln -s /Applications/Launcher/bin/LBrowser $DIR/Utilities/LBrowser
+/Applications/Launcher/bin/AddLauncherIcon $DIR/Utilities/LBrowser /Applications/Launcher/icons/file-manager.png > /dev/null
+
+if [ -e /atheos/Applications/ABrowse/ABrowse ]; then
+  ln -s /atheos/Applications/ABrowse/ABrowse $DIR/Net/ABrowse
+  /Applications/Launcher/bin/AddLauncherIcon $DIR/Net/ABrowse /Applications/Launcher/icons/www.png > /dev/null
+fi
+
+if [ -e /usr/Whisper/bin/whisper ]; then
+  ln -s /usr/Whisper/bin/whisper $DIR/Net/Whisper
+  /Applications/Launcher/bin/AddLauncherIcon $DIR/Net/Whisper /Applications/Launcher/icons/mail.png > /dev/null
+fi
+
+if [ -e /usr/aedit/bin/aedit ]; then
+  ln -s /usr/aedit/bin/aedit $DIR/Editors/AEdit
+  /Applications/Launcher/bin/AddLauncherIcon $DIR/Editors/AEdit /Applications/Launcher/icons/editor.png > /dev/null
+fi
+
+if [ -e /usr/emacs/bin/emacs ]; then
+  ln -s /usr/emacs/bin/emacs $DIR/Editors/Emacs
+  /Applications/Launcher/bin/AddLauncherIcon $DIR/Editors/Emacs /Applications/Launcher/icons/gnu.png > /dev/null
+fi
+
+if [ -e /bin/iconedit ]; then
+  ln -s /bin/iconedit $DIR/Editors/IconEdit
+  /Applications/Launcher/bin/AddLauncherIcon $DIR/Editors/IconEdit /Applications/Launcher/icons/graphics.png > /dev/null
+fi
+
+if [ -e /Applications/CodeEdit/CodeEdit ]; then
+  ln -s /Applications/CodeEdit/CodeEdit $DIR/Editors/CodeEdit
+  /Applications/Launcher/bin/AddLauncherIcon $DIR/Editors/CodeEdit /Applications/Launcher/icons/editor.png > /dev/null
+fi
+
+if [ -e /usr/lincity/bin/lincity ]; then
+  ln -s /usr/lincity/bin/lincity $DIR/Games/Lincity
+  /Applications/Launcher/bin/AddLauncherIcon $DIR/Games/Lincity /Applications/Launcher/icons/amusement.png > /dev/null
+fi
+
+if [ -e /usr/xgalaga/bin/xgalaga ]; then
+  ln -s /usr/xgalaga/bin/xgalaga $DIR/Games/XGalaga
+  /Applications/Launcher/bin/AddLauncherIcon $DIR/Games/XGalaga /Applications/Launcher/icons/amusement.png > /dev/null
+fi
+
+
+if [ -e /bin/cpu ]; then
+  ln -s /bin/cpu $DIR/System/CpuUsage
+  /Applications/Launcher/bin/AddLauncherIcon $DIR/System/CpuUsage /Applications/Launcher/icons/development.png > /dev/null
+fi
+
+if [ -e /bin/pulse ]; then
+  ln -s /bin/pulse $DIR/System/Pulse
+  /Applications/Launcher/bin/AddLauncherIcon $DIR/System/Pulse /Applications/Launcher/icons/development.png > /dev/null
+fi
+
+if [ -e /bin/memmon ]; then
+  ln -s /bin/memmon $DIR/System/MemUsage
+  /Applications/Launcher/bin/AddLauncherIcon $DIR/System/CpuUsage /Applications/Launcher/icons/modules.png > /dev/null
+fi
+
+if [ -e /bin/guiprefs ]; then
+  ln -s /bin/guiprefs $DIR/System/Prefs
+  /Applications/Launcher/bin/AddLauncherIcon $DIR/System/Prefs /Applications/Launcher/icons/configuration.png > /dev/null
+fi
+
+if [ -e /Applications/Users/bin/Users ]; then
+  ln -s /Applications/Users/bin/Users $DIR/System/Users
+  /Applications/Launcher/bin/AddLauncherIcon $DIR/System/Users /Applications/Launcher/icons/system.png > /dev/null
+fi
+
+
+if [ -e /bin/aview ]; then
+  ln -s /bin/aview $DIR/Utilities/AView
+  /Applications/Launcher/bin/AddLauncherIcon $DIR/Utilities/AView /Applications/Launcher/icons/display.png > /dev/null
+fi
+
+if [ -e /usr/Albert/Albert ]; then
+  ln -s /usr/Albert/Albert $DIR/Utilities/Albert
+  /Applications/Launcher/bin/AddLauncherIcon $DIR/Utilities/Albert /Applications/Launcher/icons/calculator.png > /dev/null
+fi
+
+if [ -e /usr/archiver/bin/archiver ]; then
+  ln -s /usr/archiver/bin/archiver $DIR/Utilities/Archiver
+  /Applications/Launcher/bin/AddLauncherIcon $DIR/Utilities/Archiver /Applications/Launcher/icons/themes.png > /dev/null
+fi
+
+if [ -e /Applications/Locator/Locator ]; then
+  ln -s /Applications/Locator/bin/Locator $DIR/Utilities/Locator
+  /Applications/Launcher/bin/AddLauncherIcon $DIR/Utilities/Locator /Applications/Launcher/icons/information.png > /dev/null
+fi
+
+
+

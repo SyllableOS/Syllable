@@ -1,0 +1,297 @@
+
+Developers wishing to write their own plugins should read this poorly written document as well as the source code for the supplied plugins. I'll try to make this understandable.
+
+
+
+Plugins
+-------
+
+A plugin is a shared object (.so) which is loaded when the plugin is added to a window. 
+
+The .so must export a number of functions and also be able to keep track of each instance of the plugin. Each instance of the plugin should be assigned an ID number.
+
+It also needs to give each View belonging to a plugin a unique name (ie MyPlugin_0, MyPlugin_1...)
+
+These are the functions that need to be present in a plugin:
+
+  int             init( LauncherMessage *pcPrefs );                      // Initialises the plugin
+  void            finish( int nId );                                     // Deletes the plugin
+  LauncherMessage *get_info( void );                                     // Returns info about the plugin
+  View            *get_view( int nId );                                  // Returns a View to display
+  void            remove_view( int nId );                                // Removes the View from it's Window
+  LauncherMessage *get_prefs( int nId );                                 // Returns Prefs info for the plugin
+  void            set_prefs( int nId, LauncherMessage *pcPrefs );        // Sets Prefs info
+  void            handle_message( int nId, LauncherMessage *pcMessage ); // For passing Messages to the plugin
+  View            *get_prefs_view( int nId );                            // Returns a View for changing preferences
+
+When a plugin is added to a window the LauncherPlugin class will first load the .so and, if it finds all the required functions, call "init" with a Message containing preferences info as a parameter. Init should return the ID number of the plugin or INIT_FAIL if the plugin cannot initialise. Most of the other functions are called with the ID as a parameter.
+
+When a plugin is being deleted it will call the "finish" function.
+
+The "get_info" function should return a message containing 4 strings. The strings must be called Name, Author, Version and Description. They are used to give information about a plugin to the user.
+
+"get_view" returns the plugin's View. This View is added to the LauncherWindow. It should be reasonably compact so that the Window doesn't take up too much screen space.
+
+The "remove_view" function is called when the Window wants the plugin's View removed. I have done it this way (instead of just calling RemoveChild) in case there are other things the plugin needs to do before the View is removed from the Window. At the very least you should call RemoveThis() on the View.
+
+When Launcher is exiting it will call the "get_prefs" function. This should return a Message containing the settings for the plugin. This Message is flattened and saved to disk. When Launcher is started again the plugin is recreated and that Message is passed back to it when "init" is called.
+
+"set_prefs" is not used yet but it may be in the future.
+
+When the Launcher Window wants to send a Message to a plugin the "handle_message" function is called. The Messages you are most likely to need to look out for are LW_PLUGIN_PREFS_BTN_OK, LW_PLUGIN_PREFS_BTN_CANCEL, LW_PLUGIN_TIMER and LW_WINDOW_PREFS_CHANGED. 
+
+If you want to use the Window's Handler to send Messages to the plugin you should create a LauncherMessage like this:
+
+  LauncherMessage *pcMyMessage = new LauncherMessage( nMyMessageId, pcPlugin );
+
+pcPlugin is a pointer to the LauncherPlugin. It is passed to the plugin in the prefs Message. You can get it by calling the GetPlugin() method of the LauncherMessage supplied when your plugin is initialised.
+
+"get_prefs_view" is called when the user requests to alter the preferences for a plugin. It should return either a View (most likely a LayoutView) or NULL. It will be displayed in a Window with OK and Cancel buttons as well as a checkbox for setting the plugin's visibility.
+
+
+The plugin should also provide the user with a right-click popup menu with About, Preferences, Move Up, Move Down and Delete options.
+
+Creating the Menu goes something like this:
+
+	m_pcMenu = new Menu( Rect( ), "PopUp", ITEMS_IN_COLUMN );
+	m_pcMenu->AddItem( "About My Plugin",   new LauncherMessage( LW_PLUGIN_OPEN_ABOUT, m_pcPlugin ) );
+	m_pcMenu->AddItem( "Preferences",       new LauncherMessage( LW_PLUGIN_OPEN_PREFS, m_pcPlugin ) );
+	m_pcMenu->AddItem( new MenuSeparator( ) );
+	m_pcMenu->AddItem( "Move Up",           new LauncherMessage( LW_PLUGIN_MOVE_UP,    m_pcPlugin ) );
+	m_pcMenu->AddItem( "Move Down",         new LauncherMessage( LW_PLUGIN_MOVE_DOWN,  m_pcPlugin ) );
+	m_pcMenu->AddItem( new MenuSeparator( ) );
+	m_pcMenu->AddItem( "Delete",            new LauncherMessage( LW_PLUGIN_DELETE,     m_pcPlugin ) );
+	Message cCloseMessage( LW_ZOOM_UNLOCK );
+	m_pcMenu->SetCloseMessage( cCloseMessage );
+
+Then, in the View's MouseDown method, have something like this:
+
+	if( nButtons == 2) {
+	                                                                                                                                                                                                        
+			// Lock the parent window.
+		m_pcPlugin->LockWindow( );
+	
+			// Open the menu
+		Point cPos = ConvertToScreen( cPosition );
+		Point cSize = m_pcMenu->GetPreferredSize( false );
+		Rect cFrame = frame_in_screen( Rect( cPos.x, cPos.y, cPos.x + cSize.x, cPos.y + cSize.y ) );
+		m_pcMenu->Open( Point( cFrame.left, cFrame.top) );
+	}
+
+
+
+The LauncherMessage class
+-------------------------
+
+A LauncherMessage is a subclass of Message which makes it easy to store a pointer to a plugin. If the LauncherWindow receives a message with a code it does not recognise but contains a pointer to a plugin it will send the message on to that plugin.
+
+Internally the plugin pointer is stored as a pointer called __LM_PLUGIN which is set with AddPointer and retrieved with FindPointer. This makes the LauncherMessage class interchangeable with the normal Message class.
+
+The constructor for a LauncherMessage can take an extra parameter of a plugin pointer like so:
+
+LauncherMessage *pcMessage = new LauncherMessage( nMyCode, pcPluginPointer );
+
+The class has two extra methods:
+
+void LauncherMessage::SetPlugin( LauncherPlugin *pcPlugin );
+LauncherPlugin *LauncherMessage::GetPlugin( void );
+
+This class must be used if you want to send Messages to your plugin through the Window's Handler.
+
+
+
+The LauncherPlugin class
+------------------------
+
+The LauncherPlugin class has the following public methods:
+
+    LauncherPlugin( string zName, LauncherMessage *pcPrefs );
+    ~LauncherPlugin( );
+    View    *GetView( void );                                // *
+    void    RemoveView( void );                              // *
+    LauncherMessage *GetInfo( void );                        // *
+    int     GetHideStatus( void );                           // Returns the visibility of the plugin
+    void    SetHideStatus( int nHideStatus );                // *
+    LauncherMessage *GetPrefs( void );                       // *
+    void    SetPrefs( LauncherMessage *pcPrefs );            // *
+    void    SetWindowPos( int nPos );  	                     // *
+    int     GetWindowPos( void );                            // Returns the window position of the plugin
+    int     GetId( void );                                   // Returns the ID number given by "init"
+    void    HandleMessage( LauncherMessage *pcMessage );     // *
+    void    AddTimer( int nTimeOut, bool bOneShot = true );  // Adds a timer to the LauncherWindow
+    void    RemoveTimer( void );                             // Removes a timer from the LauncherWindow
+    void    TimerTick( void );                               // *
+    View    *GetPrefsView( void );                           // *
+    string  GetName( void );                                 // Returns the name of the plugin
+    void    RequestWindowRefresh( void );                    // Sends an LW_REQUEST_REFRESH message to the window.
+    void    LockWindow( void );                              // Sends an LW_ZOOM_LOCK message to the Window
+    void    UnlockWindow( void );                            // Sends an LW_ZOOM_UNLOCK message to the Window
+
+  * These methods should not be called from your plugin. They are meant for the LauncherWindow and most correspond to functions implemented in the plugin.
+
+- HideStatus: A plugin can have a HideStatus of always visible (LW_VISIBLE_ALWAYS) or visible only when the window is maximised (LW_VISIBLE_WHEN_ZOOMED)
+  The HideStatus is normally set by a checkbox in the plugin's preferences window.
+
+- WindowPos: The WindowPos stores where in the Window the plugin is placed. 
+  Position 0 is at the top or left of the Window. It can be changed by sending a LauncherMessage of LW_PLUGIN_MOVE_UP or LW_PLUGIN_MOVE_DOWN to the Window.
+
+- Timers: A plugin can set one Timer in the LauncherWindow. The Timer's ID number is the same as the plugin's WindowPos so if the plugin is moved any active Timer will be cancelled. 
+  When the Timer ticks your plugin will receive an LW_PLUGIN_TIMER Message.
+
+- Window Locking: If the LauncherWindow is set to Auto Hide it will minimise whenever the mouse leaves it's boundaries. 
+  If you do not wish this to happen you can send an LW_ZOOM_LOCK Message to the Window which is what the LockWindow method will do. When you are done you can reverse it with UnlockWindow which sends an LW_ZOOM_UNLOCK Message.
+
+
+
+Launcher Events
+---------------
+
+There are a number of events your plugin can send to or receive from the LauncherWindow:
+
+Sent to a plugin from a Window:
+
+  LW_WINDOW_PREFS_CHANGED       // Sent to each plugin when the LauncherWindow's prefs change 
+  LW_PLUGIN_PREFS_BTN_OK        // Sent to the plugin when OK is clicked in the prefs window
+  LW_PLUGIN_PREFS_BTN_CANCEL    // Send to the plugin when Cancel is clicked in the prefs window
+  LW_PLUGIN_TIMER               // Sent when a plugins timer expires
+  LW_PLUGIN_WINDOW_POS_CHANGED  // Sent when a plugins position in the window changes.
+  LW_PLUGIN_INVOKED             // General use "this plugin has been manipulated" message.
+
+Sent to a Window from a plugin:
+
+  LW_ZOOM_LOCK                  // Used by plugins to prevent or enable auto-hide/show of the LauncherWindow
+  LW_ZOOM_UNLOCK
+  LW_PLUGIN_OPEN_PREFS          // Sent by a plugin wishing to open a prefs window
+  LW_PLUGIN_MOVE_UP             // Sent by a plugin wishing to move up or left
+  LW_PLUGIN_MOVE_DOWN           // Sent by a plugin wishing to move down or right
+  LW_PLUGIN_DELETE              // Delete a plugin
+  LW_PLUGIN_OPEN_ABOUT          // Message to open an About requester for a plugin.
+  LW_REQUEST_REFRESH            // Sent by a plugin wishing to get the Window display updated.
+
+
+
+Preference Values
+-----------------
+
+The LauncherWindow informs the plugins of it's settings with these #defines:
+
+Window Position:
+
+  LW_VPOS_TOP
+  LW_VPOS_BOTTOM
+  LW_HPOS_LEFT
+  LW_HPOS_RIGHT
+  
+Window alignment:
+
+  LW_ALIGN_VERTICAL
+  LW_ALIGN_HORIZONTAL
+ 
+Plugin visibility options:
+
+  LW_VISIBLE_ALWAYS
+  LW_VISIBLE_WHEN_ZOOMED
+
+
+
+Extra Stuff
+-----------
+
+The Launcher library provides a couple of extra functions:
+
+os::Rect center_frame( os::Rect &cFrame )
+
+This function will take a Rect as an arguement and center it on the desktop. It's handy for opening a window in the center of the screen.
+
+os::Rect frame_in_screen( os::Rect &cFrame )
+
+frame_in_screen will try to make sure that a Rect is entirely visible on the current desktop. If the Rect is larger than the desktop some of it will obviously not fit. It is very useful for ensuring your popup menu is not half off the screen.
+
+	  // Convert a path with ~ or ^ in it to an absolute.
+std::string convert_path( std::string zPath );
+
+convert_path will easily expand a path containing ~ or ^
+
+std::string get_icon( std::string zPath );
+
+get_icon returns the path to an icon for the given file.
+
+std::string get_launcher_path( void );
+
+get_launcher_path returns the path to the directory Launcher lives in. It's usually /Applications/Launcher/
+
+
+
+Mime Types
+----------
+
+Support for mime-types is a new feature in Launcher 1.1. 
+
+Information about the types are stored in <LauncherDir>/mime. There is a sub directory for each type of data, audio, image, text and video. Within these directories is a file for each recognised file type. This file looks like this:
+
+	DefaultCommand=/usr/aedit/bin/aedit %f
+	DefaultIcon=/Applications/Launcher/icons/file.png
+	Match=\.txt$
+	Match=\.text$
+	Match=^README
+
+This is the information for text/plain. 
+
+The DefaultCommand line is the command to use when opening the file. %f is replaced with that full path to the file.
+
+DefaultIcon is the path of an icon to use for the file if it does not already have one set.
+
+The Match lines contain regexps for matching the file.
+
+The lines in the file are duplicated in attributes. If the modification time of the file is more recent than the creation time of the attributes the attributes will be rewritten.
+
+The process for identifying a file goes like this:
+
+  Does the file already have a mime-type attribute?
+    - yes. Return the type.
+    - no. Compare the file to the known types.
+  Does the file match a known type?
+    - yes. Write the mime-type attribute of the file and return the type.
+    - no. Too bad. Figure it out for yourself.
+
+
+There are two classes for handling mime-types:
+
+MimeInfo - does the work of identifying files. It has the following public methods:
+
+		MimeInfo( );											// Initialises the class with a type of application/octet-stream
+		MimeInfo( const std::string &cMimeType );				// Initialises the class with the given type
+		std::string GetMimeType( void );						// Returns the current type
+		void SetMimeType( const std::string &cMimeType );		// Sets the mime-type
+		std::string GetDefaultCommand( void );					// Returns the default command line of the mime type.
+		void SetDefaultCommand( const std::string &cCommand );	// Sets the default command line of the type.
+		std::string GetDefaultIcon( void );						// Returns the default icon of the type.
+		void SetDefaultIcon( const std::string &cIcon );		// Sets the default icon of the type.
+		int FindMimeType( const std::string &cFile );			// Attempts to identify the type of a file. Returns -1 on success.
+		void AddNameMatch( const std::string &cRegex );			// Adds a regexp to the list of possible matches.
+		void DelNameMatch( const std::string &cRegex );			// Removes a regexp from the list of matches.
+		std::vector<std::string> GetNameMatches( void );		// Returns the list of regexp matches.
+
+
+MimeNode - Subclassed from os::FSNode. 
+
+		MimeNode( );
+		MimeNode( const std::string &cPath, int nOpenMode = O_RDONLY );
+		~MimeNode( );
+		int SetTo( const std::string &cPath );
+		const std::string GetMimeType( void );				// Returns the mime-type of the node.
+		void SetMimeType( const std::string &cMimeType );	// Sets the mime type of the node.
+		const std::string GetDefaultCommand( void );		// Returns the default command line for the node.
+		const std::string GetDefaultIcon( void );			// Returns the icon of the node.
+		MimeInfo *GetMimeInfo( void );						// Returns the MimeInfo object for the node.
+		void Launch( void );								// Launches the default command for the node.
+
+
+
+The End
+-------
+
+If you have any questions or grievances you can email me at bewilder@stresscow.org. I also follow the atheos-developers mailing list.
+
+Andrew Kennan
+8 June 2002

@@ -1,0 +1,103 @@
+
+Launcher 1.1 (Rolling Down The Stairs Too Drunk To...)
+
+Copyright (C) 2002 Andrew Kennan
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+Please see the file "COPYING" for more information.
+
+
+About
+-----
+
+This version of Launcher is a complete departure from the 0.x versions. It is build around a Plugin system where all the items visible in the Window are loadable modules that can be added, deleted and moved about at will.
+
+Currently there are 5 plugins:
+
+	LauncherBar: A box full of buttons that do the actual "launching" - it looks like the original Launcher.
+    LauncherIcon: Similar to the LauncherBar but it simply displays an icon in the LauncherWindow.
+    Clock: A clock.
+    CPU: A CPU load meter.
+    Mem: A Memory usage meter.
+
+The default config has most of them installed. Try right-clicking on stuff to see what it does.
+
+If you are interested in writing your own plugin please read the file Developers and have a look the the source code to the existing plugins as well as liblauncher.
+
+This package includes the following programs:
+
+	launcher - The actual Launcher program.
+	LBrowser - A simple file manager.
+	AddLauncherIcon - a CLI tool for setting the LAUNCHER_ICON attribute of a file or directory.
+
+
+Installation
+------------
+
+make
+make install
+pkgmanager -a /Applications/Launcher
+
+
+Configuration
+-------------
+
+The config information is stored in ~/config/Launcher/Launcher1.cfg. Unlike earlier versions, which used a plain text file, this file is a flattened Message and cannot be edited by hand.
+
+To change the preferences of a Window right-click on it's arrow and select Preferences from the menu. The preferences window contains two tabs - Position and Plugins.
+
+The Position tab displays a widget for setting the position and alignment of the Window on the screen as well as two checkboxes that set the automatic hide/show behaviour of the Window.
+
+The Plugins tab contains a list of the available plugins. Clicking on one will display some information about it. The Add button will add a new instance of the currently selected plugins to the Window.
+
+
+Icons
+-----
+
+The LauncherBar and LauncherIcon plugins look for an attribute called LAUNCHER_ICON in each of the files or directories they try to list. This attribute is expected to be a string containing the name of an image file. 
+
+The icon can be set with either the AddLauncherIcon program or the LBrowser file manager.
+
+
+Mime Types
+----------
+
+Support for mime-types is a new feature in Launcher 1.1. 
+
+Information about the types are stored in <LauncherDir>/mime. There is a sub directory for each type of data, audio, image, text and video. Within these directories is a file for each recognised file type. This file looks like this:
+
+	DefaultCommand=/usr/aedit/bin/aedit %f
+	DefaultIcon=/Applications/Launcher/icons/file.png
+	Match=\.txt$
+	Match=\.text$
+	Match=^README$
+
+This is the information for text/plain. 
+
+The DefaultCommand line is the command to use when opening the file. %f is replaced with that full path to the file.
+
+DefaultIcon is the path of an icon to use for the file if it does not already have one set.
+
+The Match lines contain regexps for matching the file.
+
+
+The End
+-------
+
+If you have any questions or grievances you can email me at bewilder@stresscow.org. I also follow the atheos-developers mailing list.
+
+Andrew Kennan
+9 July 2002

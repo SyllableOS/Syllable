@@ -1,0 +1,6 @@
+DefaultCommand=/usr/aedit/bin/aedit %f
+DefaultIcon=/Applications/Launcher/icons/file.png
+Match=\.txt$
+Match=\.text$
+Match=^README
+

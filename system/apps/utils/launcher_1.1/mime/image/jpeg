@@ -1,0 +1,5 @@
+DefaultCommand=/bin/bmview %f
+DefaultIcon=/Applications/Launcher/icons/graphics.png
+Match=\.jpg$
+Match=\.jpeg$
+

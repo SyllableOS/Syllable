@@ -1,0 +1,5 @@
+DefaultCommand=/Applications/ABrowse/ABrowse
+DefaultIcon=/Applications/Launcher/icons/www.png
+Match=\.html$
+Match=\.htm$
+
