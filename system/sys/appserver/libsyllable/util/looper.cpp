@@ -66,7 +66,6 @@ class Looper::Private
 	Looper *m_pcNextLooper;
 	bigtime_t m_nNextEvent;
 	std::list <MessageFilter * >m_cCommonFilterList;
-
 };
 
 //-------------------- Static members   --------------------------------------
@@ -662,7 +661,7 @@ bool Looper::IsLocked() const
 	return ( m->m_pcMutex->IsLocked() );
 }
 
-/** Obtaine the message currently being processed.
+/** Obtain the message currently being processed.
  * \par Description:
  *	This member can be called from within os::Looper::DispatchMessage() or the
  *	active handlers os::Handler::HandleMessage() to learn whitch message is
@@ -1130,36 +1129,63 @@ bool Looper::OkToQuit()
 
 /** Unconditionally terminate the looper.
  * \par Description:
- *	Calling quit will unconditionally terminates the looper (As opposed to
- *	post an M_QUIT message that will politly call OkToQuit() before terminating
+ *	Calling quit will unconditionally terminate the looper (As opposed to
+ *	posting an M_QUIT message that will politly call OkToQuit() before terminating
  *	the looper). If the call is made by the looper thread itself this member
  *	will delete the looper object, and call exit_thread(). If an external thread
- *	made the call, a M_TERMINATE message is sendt, and the caller thread is
- *	blocked until the looper thread is dead. In eighter way the looper object
+ *	made the call, a M_TERMINATE message is sent, and the caller thread is
+ *	blocked until the looper thread is dead. Either way the looper object
  *	gets deleted, and the looper thread dies.
+ * \deprecated Use Terminate() instead.
  * \sa OkToQuit(), PostMessage()
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
-
 void Looper::Quit()
 {
-	if( get_thread_id( NULL ) == m->m_hThread )
-	{
-		delete this;
+	Terminate();
+}
 
-		exit_thread( 0 );
-	}
-	else
-	{
-		Message cMsg( M_TERMINATE );
 
-		PostMessage( &cMsg );
-
-		while( wait_for_thread( m->m_hThread ) < 0 )
+/** Unconditionally terminate the looper.
+ * \par Description:
+ *	Calling quit will unconditionally terminate the looper (As opposed to
+ *	posting an M_QUIT message that will politly call OkToQuit() before terminating
+ *	the looper). If the call is made by the looper thread itself this member
+ *	will delete the looper object, and call exit_thread(). If an external thread
+ *	made the call, a M_TERMINATE message is sent, and the caller thread is
+ *	blocked until the looper thread is dead. Either way the looper object
+ *	gets deleted, and the looper thread dies.
+ * \note The Looper is checked for validity, so it IS safe to call Terminate()
+ *	on an invalid pointer.
+ * \sa OkToQuit(), PostMessage()
+ *****************************************************************************/
+void Looper::Terminate()
+{
+	if( SafeLock() == 0 ) {
+		if( get_thread_id( NULL ) == m->m_hThread )
 		{
-			if( errno != EINTR )
-			{
-				break;
+			delete this;
+	
+			exit_thread( 0 );
+		}
+		else
+		{
+			if( m->m_hThread != -1 ) {
+				Message cMsg( M_TERMINATE );
+		
+				PostMessage( &cMsg );
+				
+				Unlock();
+				
+				while( wait_for_thread( m->m_hThread ) < 0 )
+				{
+					if( errno != EINTR )
+					{
+						break;
+					}
+				}
+			} else {
+				delete this;
 			}
 		}
 	}
@@ -1193,7 +1219,7 @@ void Looper::SpoolMessages()
  *	there and the looper is locked. Calling Run() will spawn a new thread
  *	to run the message loop, and unlock the looper.
  * \par Note:
- *	Not all loopers will spawn a new thread. F.eks. the Application class
+ *	Not all loopers will spawn a new thread. Ie. the Application class
  *	will overload the Run() member and lead the calling thread into the
  *	message loop. This means that when calling Run() on an application object
  *	it will not return until the loop terminates.
@@ -1833,12 +1859,3 @@ void Looper::__LO_reserved7__()
 void Looper::__LO_reserved8__()
 {
 }
-
-
-
-
-
-
-
-
-

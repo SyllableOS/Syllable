@@ -98,6 +98,8 @@ public:
 
     virtual bool	OkToQuit();
     virtual void	Quit();
+
+    void			Terminate();
 private:
     virtual void	__LO_reserved1__();
     virtual void	__LO_reserved2__();
@@ -174,3 +176,4 @@ private:
 }
 
 #endif	// __F_UTIL_LOOPER_H__
+
