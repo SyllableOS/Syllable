@@ -1,5 +1,5 @@
 authors 
-maintainer 
+maintainers 
 ; Patching options:
 patch-config
 patch-legacy-config
