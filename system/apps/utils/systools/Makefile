@@ -4,7 +4,7 @@ OBJDIR = objs
 
 EXES	= $(OBJDIR)/init $(OBJDIR)/ps $(OBJDIR)/ls_ports $(OBJDIR)/ls_sema	\
 	  $(OBJDIR)/top $(OBJDIR)/reboot $(OBJDIR)/nice $(OBJDIR)/semctl	\
-	  $(OBJDIR)/strace $(OBJDIR)/sysinfo
+	  $(OBJDIR)/shutdown $(OBJDIR)/strace $(OBJDIR)/sysinfo
 
 init_OBJS     = init.o
 ps_OBJS       = ps.o
@@ -14,6 +14,7 @@ top_OBJS      = top.o
 reboot_OBJS   = reboot.o
 nice_OBJS     = nice.o
 semctl_OBJS   = semctl.o
+shutdown_OBJS = shutdown.o
 strace_OBJS   = strace.o
 sysinfo_OBJS  = sysinfo.o
 
@@ -25,6 +26,7 @@ top_OBJS	:= $(addprefix $(OBJDIR)/,$(top_OBJS))
 reboot_OBJS	:= $(addprefix $(OBJDIR)/,$(reboot_OBJS))
 nice_OBJS	:= $(addprefix $(OBJDIR)/,$(nice_OBJS))
 semctl_OBJS	:= $(addprefix $(OBJDIR)/,$(semctl_OBJS))
+shutdown_OBJS	:= $(addprefix $(OBJDIR)/,$(shutdown_OBJS))
 strace_OBJS	:= $(addprefix $(OBJDIR)/,$(strace_OBJS))
 sysinfo_OBJS	:= $(addprefix $(OBJDIR)/,$(sysinfo_OBJS))
 
@@ -55,6 +57,8 @@ $(OBJDIR)/nice: $(nice_OBJS)
 	$(CC) $(nice_OBJS) -o $@
 $(OBJDIR)/semctl: $(semctl_OBJS)
 	$(CC) $(semctl_OBJS) -o $@
+$(OBJDIR)/shutdown: $(shutdown_OBJS)
+	$(CC) $(shutdown_OBJS) -o $@
 $(OBJDIR)sysinfo: $(sysinfo_OBJS)
 	$(CC) $(sysinfo_OBJS) -o $@
 $(OBJDIR)/strace: $(strace_OBJS)
