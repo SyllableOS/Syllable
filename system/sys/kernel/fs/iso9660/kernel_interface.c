@@ -728,7 +728,7 @@ iso_read(void *_ns, void *_node, void *cookie, off_t pos, void *buf,
 			if (blockData != NULL)
 			{
 				dprintf("iso_read - copying first block, len is %d.\n", startLen);
-				memcpy_to_user(buf, blockData+blockPos, startLen);
+				memcpy(buf, blockData+blockPos, startLen);
 				bytesRead += startLen;
 				release_cache_block(ns->fd, cachedBlock);
 				startBlock++;	
@@ -760,7 +760,7 @@ iso_read(void *_ns, void *_node, void *cookie, off_t pos, void *buf,
 			{
 				char* endBuf = ((char*)buf) + (reqLen - endLen);
 				
-				memcpy_to_user(endBuf, endBlockData, endLen);
+				memcpy(endBuf, endBlockData, endLen);
 				release_cache_block(ns->fd, endBlock);
 				bytesRead += endLen;
 			}
@@ -875,11 +875,11 @@ iso_read_link(void *_volume, void *_node, char *buffer, size_t bufferSize)
 		{
 			// bufsize was length which seems to be a bug..
 			dprintf( "iso_read_link - The provided buffer is smaller than the filename length!!!\n" );
-			memcpy_to_user(buffer, node->attr.slName, bufferSize);
+			memcpy(buffer, node->attr.slName, bufferSize);
 		}
 		else
 		{
-			memcpy_to_user(buffer, node->attr.slName, length);
+			memcpy(buffer, node->attr.slName, length);
 		}
 		result = -EOK;
 	}
