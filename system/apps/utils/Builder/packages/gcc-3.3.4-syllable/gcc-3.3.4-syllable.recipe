@@ -3,11 +3,12 @@ authors
 	Andy Wang
 status					developing
 warnings
-	Works, on Linux, without GLibC headers, for cross-compiling kernel-space, but not yet for user-land.
-	The Syllable source tree "system" directory needs to be in your working directory.
-	/ainc needs to be linked to the Syllable system headers.
+;	Works, on Linux, with the right (TM) library versions, without GLibC headers, for cross-compiling kernel-space, but not yet for user-land.
 	The Syllable base distribution package needs to be in Builder/sources, so the "atheos" directory will be unpacked into your working directory.
 	To use the static GCC libraries from Syllable, the GCC binary package needs to be in Builder/sources.
+;	The Syllable source tree "system" directory needs to be in your working directory.
+;	/ainc needs to be linked to the Syllable system headers.
+	Wants to write to the installation directory during configure! May need to run as super user.
 
 inherits				gcc-3.3.4
 
@@ -27,6 +28,7 @@ patch
 	cd ..
 	mkdir stage
 	cp -r atheos/sys/include			stage
+;	cp -r system/sys/include			stage
 	cp -r atheos/usr/glibc2/include/*	stage/include
 	mkdir stage/lib
 	cp atheos/sys/libs/*				stage/lib
@@ -51,10 +53,14 @@ configure-options
 ;	--without-headers
 ;	--disable-nls
 
-; Requires super-user access:
-;pre-make				ln -snf $PWD/../stage/include /ainc
+; Requires super-user access.
+; Seems to be unnecessary when setting C_INCLUDE_PATH:
+;pre-make
+;	ln -snf $PWD/../atheos/sys/include
+;	ln -snf $PWD/../stage/include /ainc
 
 make-env
+;	C_INCLUDE_PATH		$PWD/../atheos/sys/include:$PWD/../atheos/usr/glibc2/include
 	C_INCLUDE_PATH		$PWD/../stage/include
 ;	CPLUS_INCLUDE_PATH	$PWD/../stage/include
 ;	The cross-assembling toolchain:
@@ -66,4 +72,3 @@ make-targets
 install-targets			install-gcc
 ; The normal links are not relevant:
 links
-
