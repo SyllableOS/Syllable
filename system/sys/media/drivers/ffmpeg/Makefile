@@ -21,7 +21,7 @@ all :	$(OBJDIR) $(OBJS) $(OBJDIR)/ffmpeg.so
 $(OBJDIR):
 	mkdir $(OBJDIR)
 
-$(OBJDIR)/ffmpeg.so: $(OBJS) $(LIBS)
+$(OBJDIR)/ffmpeg.so: $(OBJS)
 	gcc -shared -Xlinker "-soname=ffmpeg.so" $(OBJS) -lm -lz -lstdc++ -lsyllable -lmedia -lavformat -Lffmpeg/libavcodec -Lffmpeg/libavformat -lavcodec -L/usr/lib/ -o $(OBJDIR)/ffmpeg.so
 
 ffmpeg/libavcodec/libavcodec.a:
@@ -31,7 +31,7 @@ ffmpeg/libavformat/libavformat.a:
 	make -C ffmpeg
 
 
-deps:
+deps: $(LIBS)
 
 install:  $(OBJDIR)/ffmpeg.so
 	
