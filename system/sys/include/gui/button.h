@@ -69,6 +69,10 @@ public:
     virtual void LabelChanged( const String& cNewLabel );
     virtual void EnableStatusChanged( bool bIsEnabled );
     virtual bool Invoked( Message* pcMessage );
+    
+	void SetToggleMode( bool bToggle );
+	bool GetToggleMode() const;
+
 
 private:
     Button& operator=( const Button& );

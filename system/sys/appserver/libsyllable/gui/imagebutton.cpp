@@ -303,7 +303,7 @@ void ImageButton::Paint( const Rect & cUpdateRect )
 	}
 	else
 	{
-		if( m->bMouseOver == false || ( m->bMouseTwo == true && IsEnabled() ) )
+		if( m->bMouseOver == false || ( ( m->bMouseTwo == true || GetValue().AsBool( ) ) && IsEnabled() ) )
 		{
 			uint32 nFrameFlags = ( GetValue().AsBool(  ) && IsEnabled(  ) )? FRAME_RECESSED : FRAME_RAISED;
 

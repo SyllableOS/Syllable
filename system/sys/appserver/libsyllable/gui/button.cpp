@@ -34,6 +34,7 @@ using namespace os;
 class Button::Private {
 	public:
 	bool m_bClicked;
+	bool m_bIsToggle;
 };
 
 //----------------------------------------------------------------------------
@@ -48,6 +49,7 @@ Button::Button( Rect cFrame, const String& cName, const String& cLabel, Message 
 {
 	m = new Private;
 	m->m_bClicked = false;
+	m->m_bIsToggle = false;
 }
 
 //----------------------------------------------------------------------------
@@ -123,12 +125,16 @@ void Button::KeyDown( const char *pzString, const char *pzRawString, uint32 nQua
 	if( ( pzString[1] == '\0' && ( pzString[0] == VK_ENTER || pzString[0] == ' ' ) ) ||
 		( GetShortcut() == ShortcutKey( pzRawString, nQualifiers ) ) )
 	{
-		SetValue( 1, false );
+		if( m->m_bIsToggle ) {
+			SetValue( GetValue().AsBool() ? 0 : 1, false );
+		} else {
+			SetValue( 1, false );
+		}
 		MakeFocus();
 	}
 	else
 	{
-		SetValue( 0, false );
+		if( !m->m_bIsToggle ) SetValue( 0, false );
 		Control::KeyDown( pzString, pzRawString, nQualifiers );
 	}
 }
@@ -143,7 +149,7 @@ void Button::KeyUp( const char *pzString, const char *pzRawString, uint32 nQuali
 	if( ( pzString[1] == '\0' && ( pzString[0] == VK_ENTER || pzString[0] == ' ' ) ) ||
 		( GetShortcut() == ShortcutKey( pzRawString, nQualifiers ) ) )
 	{
-		if( GetValue().AsBool(  ) == true )
+		if( !m->m_bIsToggle && GetValue().AsBool(  ) == true )
 		{
 			SetValue( false );
 		}
@@ -172,7 +178,13 @@ void Button::MouseDown( const Point & cPosition, uint32 nButton )
 	MakeFocus( true );
 
 	m->m_bClicked = GetBounds().DoIntersect( cPosition );
-	SetValue( m->m_bClicked, false );
+	if( m->m_bIsToggle ) {
+		if( m->m_bClicked ) {
+			SetValue( GetValue().AsBool() ? 0 : 1 );
+		}
+	} else {
+		SetValue( m->m_bClicked, false );
+	}
 }
 
 //----------------------------------------------------------------------------
@@ -189,9 +201,11 @@ void Button::MouseUp( const Point & cPosition, uint32 nButton, Message * pcData 
 		View::MouseUp( cPosition, nButton, pcData );
 		return;
 	}
-	if( GetValue().AsBool(  ) != false )
-	{
-		SetValue( false );
+	if( !m->m_bIsToggle ) {
+		if( GetValue().AsBool(  ) != false )
+		{
+			SetValue( false );
+		}
 	}
 	m->m_bClicked = false;
 }
@@ -211,7 +225,7 @@ void Button::MouseMove( const Point & cPosition, int nCode, uint32 nButtons, Mes
 		return;
 	}
 
-	if( m->m_bClicked )
+	if( m->m_bClicked && !m->m_bIsToggle)
 	{
 		uint32 nButtons;
 
@@ -288,3 +302,15 @@ void Button::Paint( const Rect & cUpdateRect )
 		SetDrawingMode( DM_COPY );
 	}
 }
+
+void Button::SetToggleMode(bool bToggle)
+{
+	m->m_bIsToggle = bToggle;
+	Flush();
+}
+
+bool Button::GetToggleMode() const
+{
+	return m->m_bIsToggle;
+}
+
