@@ -1,11 +1,22 @@
-authors				
-maintainers			
+authors				<Recipe authors>
+maintainers			<Recipe maintainers>
 status				testing | developing | incomplete | broken
-licenses			gpl | lgpl | bsd | mit | freeware | pd
+licenses			gpl | lgpl | bsd | mit | pd | freeware | commercial
+;
+home				syllable.sf.net
 packages			<Deviating tarball name>
+;mirrors				<Download locations>
+;archives			<Arch archives>
+;
+; Dependencies (unimplemented):
+;needs				<Build- and run-time Dependencies>
+;build-needs			<Build-time dependencies>
+;test-needs			<Test-time dependencies>
+;run-needs			<Run-time dependencies>
+;suggests				<Optional dependencies>
 ;
 ; Patching options:
-patch-config		[<Directory>]
+patch-config		[<Directories>]
 patch-legacy-config
 ;
 ; Configuring:
@@ -18,7 +29,7 @@ configure-cmd		configure
 ; Non-standard prefix argument:
 configure-args		--prefix=/usr/foo
 ; Extra configure options:
-configure-options	
+configure-options	--with-option
 ;
 ; Building:
 ; make <make-targets>
@@ -43,4 +54,4 @@ install-targets		install
 ; Extra files to install:
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
 ; Extra files to pack:
-distro-files		
+distro-files		/bin/link
