@@ -1,3 +1,9 @@
+* March 25 2005, Henrik Isaksson *
+
+ - ColorSelector
+	o Bugfix: Set brightness slider correctly from SetValue.
+	o Compile warning fixed.
+
 * March 24 2005, Henrik Isaksson *
 
  - Button
