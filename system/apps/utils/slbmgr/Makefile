@@ -3,11 +3,8 @@ COPTS	= -Wall -c
 OBJS	= main.o sysinfopanel.o drivespanel.o processpanel.o memview.o cpuview.o performancepanel.o devicespanel.o
 EXE	= SlbMgr
 
-CC	= g++
-LL	= g++
-
 $(EXE) : $(OBJS)
-	$(LL) $(OBJS) -lsyllable -o $@
+	$(CXX) $(OBJS) -lsyllable -o $@
 
 dist: $(EXE)
 	cp -f $(EXE) $(DIST_DIR)/atheos/sys/bin/$(EXE)
@@ -39,8 +36,4 @@ cpuview.o : cpuview.cpp
 
 devicespanel.o : devicespanel.cpp
 	$(CC) $(COPTS) $< -o $@
-
-
-
-
 

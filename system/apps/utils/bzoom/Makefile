@@ -3,11 +3,8 @@ COPTS	= -Wall -c
 OBJS	= main.o gui/zoomview.o
 EXE	= BZoom
 
-CC	= gcc
-LL	= gcc
-
 $(EXE) : $(OBJS)
-	$(LL) $(OBJS) -lsyllable -lstdc++ -lm -o $@
+	$(CXX) $(OBJS) -lsyllable -lm -o $@
 
 dist: $(EXE)
 	mkdir $(DIST_DIR)/atheos/Applications/BZoom
@@ -24,6 +21,4 @@ clean:
 	$(CC) $(COPTS) $< -o $@
 
 main.o:		main.cpp mywindow.h gui/zoomview.h
-
-
 

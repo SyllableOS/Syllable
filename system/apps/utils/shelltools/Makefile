@@ -1,6 +1,5 @@
 OPTS   = -c -Wall --no-warn
 
-CC	= g++
 EXE	= objs/alert
 
 OBJDIR	:= objs
@@ -20,7 +19,7 @@ OBJS := ./objs/alert.o
 
 $(EXE): objs $(OBJS)
 	@echo Building : $(EXE)
-	@g++ $(OBJS) -lsyllable -o $(EXE)
+	@$(CXX) $(OBJS) -lsyllable -o $(EXE)
 
 
 $(OBJDIR):

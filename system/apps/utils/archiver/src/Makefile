@@ -1,6 +1,5 @@
 OPTS   = -Wall -c --no-warn
 
-CC	= g++
 EXE	= ../objs/Archiver
 
 OBJDIR	:= ../objs
@@ -12,7 +11,7 @@ OBJS := ../objs/main.o ../objs/toolbar.o ../objs/archiver.o ../objs/new.o ../obj
 
 $(EXE): $(OBJS)
 	@echo Building : $(EXE)
-	@g++ $(OBJS) -lsyllable -o $(EXE)
+	@$(CXX) $(OBJS) -lsyllable -o $(EXE)
 	@echo Adding images into : $(EXE)
 	@rescopy -r $(EXE) ./images/*.png
 

@@ -1,4 +1,3 @@
-
 #SRCS= dosfs.c attr.c dir.c dlist.c fat.c file.c iter.c util.c vcache.c \
 #	textencoding/encodings.cpp \
 #	textencoding/EncodingConversions.cpp \
@@ -6,17 +5,8 @@
 #	version.c
 
 
-
-
-
-
-
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall -Wno-multichar -fno-strict-aliasing -Itextencoding -I../
 AFLAGS   = -c
-
-OLD_INCLUDE_PATH:=$(C_INCLUDE_PATH)
-C_INCLUDE_PATH=/ainc
-CPLUS_INCLUDE_PATH=/ainc
 
 #OBJS := afs.o balloc.o afs_inode.o attribs.o journal.o stream.o btree.o bt_delete.o
 
@@ -56,7 +46,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/fatfs: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/fatfs
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/fatfs
 
 deps:
 

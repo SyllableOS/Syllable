@@ -1,5 +1,5 @@
 #Makefile for Dock
-COPTS = -Wall -c -O4 -pipe -fexceptions -march=i586 -mcpu=i586 -ffast-math -fomit-frame-pointer
+COPTS = -Wall -c -O3 -pipe -fexceptions -ffast-math -fomit-frame-pointer
 
 APPBIN = /system/bin
 OBJS = Dock.o DirMenu.o
@@ -27,7 +27,7 @@ objs:
 
 Dock: $(OBJS)
 	@echo Linking...
-	@gcc $(OBJS) -o Dock  -lstdc++ -lsyllable
+	@$(CXX) $(OBJS) -o Dock -lsyllable
 	@echo Adding resources...
 	@rescopy Dock -r logout.png syllable.png window.png 
 

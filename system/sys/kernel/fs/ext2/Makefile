@@ -1,10 +1,6 @@
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall -Wno-multichar -I../
 AFLAGS   = -c
 
-OLD_INCLUDE_PATH:=$(C_INCLUDE_PATH)
-C_INCLUDE_PATH=/ainc
-CPLUS_INCLUDE_PATH=/ainc
-
 FS		:= ext2
 OBJS	:= ext2.o
 
@@ -36,7 +32,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/ext2: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/ext2
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/ext2
 
 install: all
 	cp -f $(OBJDIR)/ext2 /system/drivers/fs/ext2
@@ -46,10 +42,4 @@ dist: all
 
 clean:
 	rm $(OBJS) $(OBJDIR)/ext2
-
-
-
-
-
-
 

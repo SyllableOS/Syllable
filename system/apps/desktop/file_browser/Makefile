@@ -1,5 +1,5 @@
 #Makefile for FileBrowser
-COPTS = -Wall -c -O4 -pipe -fexceptions -march=i586 -mcpu=i586 -ffast-math -fomit-frame-pointer
+COPTS = -Wall -c -O3 -pipe -fexceptions -ffast-math -fomit-frame-pointer
 
 APPBIN = /system/bin
 OBJS = main.o application.o mainwindow.o toolbar.o
@@ -27,7 +27,7 @@ objs:
 
 FileBrowser: $(OBJS)
 	@echo Linking...
-	@gcc $(OBJS) -o FileBrowser  -lstdc++ -lsyllable
+	@$(CXX) $(OBJS) -o FileBrowser -lsyllable
 	@echo Adding resources...
 	@rescopy FileBrowser -r home.png up.png breaker.png view.png icon24x24.png icon48x48.png reload.png back.png 
 

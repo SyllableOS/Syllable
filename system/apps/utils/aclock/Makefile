@@ -3,11 +3,8 @@ COPTS	= -Wall -c
 OBJS	= main.o gui/clockview.o
 EXE	= aclock
 
-CC	= gcc
-LL	= gcc
-
 $(EXE) : $(OBJS)
-	$(LL) $(OBJS) -lsyllable -lstdc++ -lm -o $@
+	$(CXX) $(OBJS) -lsyllable -lm -o $@
 
 install: $(EXE)
 	cp -f $(EXE) /system/bin/$(EXE)

@@ -35,7 +35,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/i810_audio: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/i810_audio
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/i810_audio
 
 install: all
 	cp -f $(OBJDIR)/$(DRIVER) /system/drivers/dev/sound/$(DRIVER)

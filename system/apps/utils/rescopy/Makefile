@@ -1,10 +1,7 @@
 CFLAGS   = -pipe -O2 -c -Wall
-CPPFLAGS= $(CFLAGS)
+CXXFLAGS= $(CFLAGS)
 
 EXE = rescopy
-
-CC	= g++
-LL	= g++
 
 OBJS = rescopy.o
 
@@ -18,7 +15,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/$(EXE): $(OBJS) Makefile
-	g++ $(OBJS) -o $(OBJDIR)/$(EXE) -lsyllable
+	$(CXX) $(OBJS) -o $(OBJDIR)/$(EXE) -lsyllable
 
 install: $(OBJDIR)/$(EXE)
 	cp -af $(OBJDIR)/$(EXE) /bin/$(EXE)

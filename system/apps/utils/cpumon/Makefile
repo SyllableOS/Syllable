@@ -3,11 +3,8 @@ COPTS	= -Wall -c -I../../kernel/drivers/misc/w8378x/
 OBJS	= main.o graphview.o barview.o
 EXE	= cpu
 
-CC	= g++
-LL	= g++
-
 $(EXE) : $(OBJS)
-	$(LL) $(OBJS) -lsyllable -o $@
+	$(CXX) $(OBJS) -lsyllable -o $@
 
 install: $(EXE)
 	strip --strip-all $(EXE)
@@ -30,3 +27,4 @@ barview.o : barview.cpp barview.h
 	$(CC) $(COPTS) $< -o $@
 graphview.o : graphview.cpp graphview.h
 	$(CC) $(COPTS) $< -o $@
+

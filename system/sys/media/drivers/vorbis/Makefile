@@ -1,13 +1,10 @@
-CFLAGS   = -Wall -c -O4 -pipe -fexceptions -march=i586 -mcpu=i586 -ffast-math -fomit-frame-pointer
-CPPFLAGS = $(CFLAGS)
+CFLAGS   = -Wall -c -O3 -pipe -fexceptions -ffast-math -fomit-frame-pointer
+CXXFLAGS = $(CFLAGS)
 AOPTS   = -c
 
 DRIVERBIN = /system/drivers/media
 
 VPATH = ./
-
-CC	= gcc
-LL	= ld
 
 OBJS	= vorbis_input.o vorbis_codec.o
 
@@ -21,7 +18,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/vorbis.so: $(OBJS)
-	gcc -shared -Xlinker "-soname=vorbis.so" $(OBJS) -lstdc++ -lsyllable -lmedia -lvorbisfile -lvorbis -logg -lm -o $(OBJDIR)/vorbis.so
+	$(CXX) -shared -Xlinker "-soname=vorbis.so" $(OBJS) -lsyllable -lmedia -lvorbisfile -lvorbis -logg -lm -o $(OBJDIR)/vorbis.so
 
 
 deps:
@@ -39,44 +36,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*
 
 -include $(OBJDIR)/*.d
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

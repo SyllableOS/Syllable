@@ -1,13 +1,10 @@
 CFLAGS   = -Wall -c -O2 -pipe -fexceptions
-CPPFLAGS = $(CFLAGS)
+CXXFLAGS = $(CFLAGS)
 AOPTS   = -c
 
 APPBIN = /system
 
 VPATH = ./
-
-CC	= gcc
-LL	= ld
 
 OBJS = mediaserver.o mediacontrols.o mixerchannel.o barview.o
 
@@ -21,7 +18,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/mediaserver: $(OBJS)
-	gcc  $(OBJS) -lstdc++ -lsyllable -lmedia -o mediaserver
+	$(CXX) $(OBJS) -lsyllable -lmedia -o mediaserver
 	rescopy mediaserver -r *.png
 
 deps:
@@ -39,34 +36,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d mediaserver
 
 -include $(OBJDIR)/*.d
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -3,11 +3,8 @@ COPTS	= -Wall -c
 OBJS	= main.o
 EXE	= memmon
 
-CC	= g++
-LL	= g++
-
 $(EXE) : $(OBJS)
-	$(LL) $(OBJS) -lsyllable -o $@
+	$(CXX) $(OBJS) -lsyllable -o $@
 
 deps:
 
@@ -27,3 +24,4 @@ clean:
 
 main.o : main.cpp
 	$(CC) $(COPTS) $< -o $@
+

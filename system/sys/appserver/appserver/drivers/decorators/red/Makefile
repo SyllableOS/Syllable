@@ -26,8 +26,8 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Red: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/Red /system/appserver -latheos -lstdc++ -lz
-	gcc -plugin $(OBJS) -o $(OBJDIR)/Red -latheos -lstdc++
+	$(CXX) $(OBJS) -o $(OBJDIR)/Red /system/appserver -lsyllable -lz
+	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/Red -lsyllable
 
 install: $(OBJDIR)/Red
 	cp -f $(OBJDIR)/Red $(DEVBIN)/Red
@@ -37,3 +37,4 @@ dist: $(OBJDIR)/Red
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/Red
+

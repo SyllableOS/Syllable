@@ -33,7 +33,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/vt82xx: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/vt82xx
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/vt82xx
 
 install: all
 	mkdir -p /system/drivers/dev/sound/
@@ -46,12 +46,4 @@ dist: all
 clean:
 	rm -f $(OBJS)
 	rm -f objs/vt82xx
-
-
-
-
-
-
-
-
 

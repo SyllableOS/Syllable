@@ -1,18 +1,15 @@
 COPTS	= -Wall -c -fPIC
 
-CC	= gcc
-LL	= gcc
-
 all: route ifconfig ping
 
 ifconfig: ifconfig.o
-	$(LL) ifconfig.o -o $@
+	$(CC) ifconfig.o -o $@
 
 route: route.o
-	$(LL) route.o -o $@
+	$(CC) route.o -o $@
 
 ping: ping.o
-	$(LL) ping.o -o $@
+	$(CC) ping.o -o $@
 
 deps:
 

@@ -1,7 +1,4 @@
-
 CFLAGS   = -kernel -fno-PIC -c -O3
-
-C_INCLUDE_PATH=/ainc
 
 OBJS := pcnet32.o
 DRIVER := pcnet32
@@ -31,7 +28,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/pcnet32: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/pcnet32
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/pcnet32
 
 install: all
 	cp -f $(OBJDIR)/pcnet32 /system/drivers/dev/net/eth/pcnet32
@@ -42,5 +39,4 @@ dist: all
 clean:
 	-rm -f $(OBJS)
 	-rm -f $(OBJDIR)/$(DRIVER)
-
 

@@ -1,6 +1,3 @@
-CC := gcc
-LL := gcc
-
 COPTS := -Wall -O3 -c
 LOPTS :=
 
@@ -25,7 +22,7 @@ COPTS += -DENABLE_DEBUG -DDEBUG_LEVEL=0
 #COPTS += -DPKT_TRACE
 
 all: $(OBJDIR) $(OBJS)
-	$(LL) $(LOPTS) $(OBJS) -o $(EXE)
+	$(CC) $(LOPTS) $(OBJS) -o $(EXE)
 
 install: all
 	cp -f $(EXE) /system/bin/

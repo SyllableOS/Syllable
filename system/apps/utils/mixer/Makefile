@@ -29,7 +29,7 @@ clean:
 	-rm $(EXE) $(PLUGIN)
 
 $(EXE): $(OBJS)
-	g++ $(OBJS) -o $(EXE) -lsyllable -lmedia
+	$(CXX) $(OBJS) -o $(EXE) -lsyllable -lmedia
 	strip --strip-all $(EXE)
 	rescopy $(EXE) -r *.png
 

@@ -24,7 +24,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/i855: $(OBJS)
-	gcc -plugin $(OBJS) -o $(OBJDIR)/i855 -lsyllable -lstdc++
+	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/i855 -lsyllable
 
 deps:
 
@@ -36,3 +36,4 @@ dist: $(OBJDIR)/i855
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/i855
+

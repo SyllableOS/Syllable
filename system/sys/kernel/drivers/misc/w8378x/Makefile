@@ -1,4 +1,3 @@
-
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
 AFLAGS   = -c
 
@@ -35,7 +34,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/w8378x: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/w8378x
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/w8378x
 
 install: all
 	cp -f $(OBJDIR)/w8378x /system/drivers/dev/misc/w8378x
@@ -45,5 +44,4 @@ dist: all
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/w8378x
-
 

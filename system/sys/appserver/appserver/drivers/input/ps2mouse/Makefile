@@ -24,7 +24,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/ps2mouse: $(OBJS)
-	gcc -plugin $(OBJS) -o $(OBJDIR)/ps2mouse -lsyllable -lstdc++
+	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/ps2mouse -lsyllable
 
 deps:
 
@@ -36,3 +36,4 @@ dist: $(OBJDIR)/ps2mouse
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/ps2mouse
+

@@ -1,4 +1,3 @@
-
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
 AFLAGS   = -c
 
@@ -35,7 +34,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/tdfx: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/tdfx
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/tdfx
 
 install: all
 	mkdir -p /system/drivers/dev/graphics

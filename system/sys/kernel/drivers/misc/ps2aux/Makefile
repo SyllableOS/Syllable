@@ -1,4 +1,3 @@
-
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
 AFLAGS   = -c
 
@@ -35,7 +34,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/ps2aux: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/ps2aux
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/ps2aux
 
 install: all
 	cp -f $(OBJDIR)/ps2aux /system/drivers/dev/misc/ps2aux
@@ -45,5 +44,4 @@ dist: all
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/ps2aux
-
 

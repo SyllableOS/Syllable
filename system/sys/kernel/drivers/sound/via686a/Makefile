@@ -35,7 +35,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/via686a: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/via686a
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/via686a
 
 install: all
 	cp -f $(OBJDIR)/$(DRIVER) /system/drivers/dev/sound/$(DRIVER)
@@ -46,5 +46,4 @@ dist: all
 clean:
 	-rm -f $(OBJS)
 	-rm -f $(OBJDIR)/$(DRIVER)
-
 

@@ -24,7 +24,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/usbmouse: $(OBJS)
-	gcc -plugin $(OBJS) -o $(OBJDIR)/usbmouse -lsyllable -lstdc++
+	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/usbmouse -lsyllable
 
 deps:
 

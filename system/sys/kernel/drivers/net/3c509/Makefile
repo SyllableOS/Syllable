@@ -1,7 +1,4 @@
-
 CFLAGS   = -D__KERNEL__ -fno-PIC -c -O3 -Wall
-
-C_INCLUDE_PATH=/system/include
 
 OBJS := 3c509.o
 
@@ -32,7 +29,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/$(DRIVER): $(OBJS) Makefile
-	gcc -nostdlib $(OBJS) -lkernel -o $(OBJDIR)/$(DRIVER)
+	$(CC) -nostdlib $(OBJS) -lkernel -o $(OBJDIR)/$(DRIVER)
 
 install: all
 	cp -f $(OBJDIR)/$(DRIVER) /system/drivers/dev/net/eth/$(DRIVER)
@@ -43,5 +40,4 @@ dist: all
 clean:
 	-rm -f $(OBJS)
 	-rm -f $(OBJDIR)/$(DRIVER)
-
 

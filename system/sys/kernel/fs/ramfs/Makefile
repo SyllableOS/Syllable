@@ -1,4 +1,3 @@
-
 CFLAGS   = -c -kernel -O2 -Wall
 AFLAGS   = -c
 
@@ -35,7 +34,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/$(FS): $(OBJS) Makefile
-	gcc $(OBJS) -kernel -o $(OBJDIR)/$(FS)
+	$(CC) $(OBJS) -kernel -o $(OBJDIR)/$(FS)
 
 $(OBJDIR)/ramfs.o: ramfs.c
 	$(CC) $(CFLAGS) -fno-PIC $< -o $@

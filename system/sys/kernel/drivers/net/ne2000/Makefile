@@ -1,7 +1,4 @@
-
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
-
-C_INCLUDE_PATH=/ainc
 
 OBJS := ne2000.o
 
@@ -29,7 +26,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/ne2000: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/ne2000
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/ne2000
 
 install: all
 	cp -f $(OBJDIR)/ne2000 /system/drivers/dev/net/eth/8390
@@ -39,5 +36,4 @@ dist: all
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/ne2000
-
 

@@ -1,4 +1,3 @@
-
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
 AFLAGS   = -c
 
@@ -35,7 +34,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/geforcefx: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/geforcefx
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/geforcefx
 
 install: all
 	mkdir -p /system/drivers/dev/graphics
@@ -47,10 +46,4 @@ dist: all
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/geforcefx
-
-
-
-
-
-
 

@@ -1,13 +1,10 @@
-CFLAGS   = -Wall -c -O4 -pipe -fexceptions -march=i586 -mcpu=i586 -ffast-math -fomit-frame-pointer -Iffmpeg/libavcodec -Iffmpeg/libavformat
-CPPFLAGS = $(CFLAGS)
+CFLAGS   = -Wall -c -O3 -pipe -fexceptions -ffast-math -fomit-frame-pointer -Iffmpeg/libavcodec -Iffmpeg/libavformat
+CXXFLAGS = $(CFLAGS)
 AOPTS   = -c
 
 DRIVERBIN = /system/drivers/media
 
 VPATH = ./
-
-CC	= gcc
-LL	= ld
 
 OBJS	= ffmpeg_demux.o ffmpeg_output.o ffmpeg_codec.o ffmpeg_addon.o
 OBJDIR	:= objs
@@ -20,7 +17,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/ffmpeg.so: $(OBJS)
-	gcc -shared -Xlinker "-soname=ffmpeg.so" $(OBJS) -lm -lz -lstdc++ -lsyllable -lmedia -lavformat -Lffmpeg/libavcodec -Lffmpeg/libavformat -lavcodec -L/usr/lib/ -o $(OBJDIR)/ffmpeg.so
+	$(CXX) -shared -Xlinker "-soname=ffmpeg.so" $(OBJS) -lm -lz -lsyllable -lmedia -lavformat -Lffmpeg/libavcodec -Lffmpeg/libavformat -lavcodec -o $(OBJDIR)/ffmpeg.so
 
 
 deps: $(LIBS)

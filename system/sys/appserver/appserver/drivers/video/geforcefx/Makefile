@@ -24,7 +24,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/geforcefx: $(OBJS)
-	gcc -plugin $(OBJS) -o $(OBJDIR)/geforcefx -lsyllable -lstdc++
+	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/geforcefx -lsyllable
 
 deps:
 
@@ -36,5 +36,4 @@ dist: $(OBJDIR)/geforcefx
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/geforcefx
-
 

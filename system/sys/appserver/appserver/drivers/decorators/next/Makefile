@@ -24,8 +24,8 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Next: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/Next /system/appserver -lsyllable -lstdc++ -lz
-	gcc -plugin $(OBJS) -o $(OBJDIR)/Next -lsyllable -lstdc++
+	$(CXX) $(OBJS) -o $(OBJDIR)/Next /system/appserver -lsyllable -lz
+	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/Next -lsyllable
 
 deps:
 

@@ -37,7 +37,7 @@ objs:
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/$(DRIVER): $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $@
+	$(CC) -kernel $(OBJS) -o $@
 
 install: all
 	cp -f $(OBJDIR)/$(DRIVER) /system/drivers/dev/sound/$(DRIVER)

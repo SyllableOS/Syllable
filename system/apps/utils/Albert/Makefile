@@ -3,11 +3,8 @@ COPTS	= -Wall -c
 OBJS	= calc.o calculator.o stack.o calcbuttons.o calcdisplay.o togglebutton.o remsa.o base-n.o postoffice.o aboutwin.o
 EXE	= Albert
 
-CC	= gcc
-LL	= gcc
-
 $(EXE) : $(OBJS)
-	$(LL) $(OBJS) -lsyllable -lstdc++ -lm -o $@
+	$(CXX) $(OBJS) -lsyllable -lm -o $@
 	rescopy -r $(EXE) *.png
 
 clean:
@@ -40,3 +37,4 @@ togglebutton.o:	togglebutton.cpp togglebutton.h
 base-n.o:			base-n.cpp base-n.h
 postoffice.o:		postoffice.cpp postoffice.h
 aboutwin.o:		aboutwin.cpp aboutwin.h
+

@@ -1,4 +1,3 @@
-
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
 AFLAGS   = -c
 
@@ -35,7 +34,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/mga: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/mga
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/mga
 
 install: all
 	mkdir -p /system/drivers/dev/graphics
@@ -47,9 +46,4 @@ dist: all
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/mga
-
-
-
-
-
 

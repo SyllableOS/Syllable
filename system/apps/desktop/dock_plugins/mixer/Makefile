@@ -1,5 +1,5 @@
 #Makefile for Mixer.so
-COPTS = -Wall -c -O4 -pipe -fexceptions -march=i586 -mcpu=i586 -ffast-math -fomit-frame-pointer
+COPTS = -Wall -c -O3 -pipe -fexceptions -ffast-math -fomit-frame-pointer
 
 APPBIN = /system/drivers/dock
 OBJS = Mixer.o
@@ -27,7 +27,7 @@ objs:
 
 Mixer.so: $(OBJS)
 	@echo Linking...
-	@gcc -shared -Xlinker -soname=Mixer.so $(OBJS) -o Mixer.so  -lstdc++ -lsyllable -lmedia
+	@$(CXX) -shared -Xlinker -soname=Mixer.so $(OBJS) -o Mixer.so -lsyllable -lmedia
 	@echo Adding resources...
 	@rescopy Mixer.so -r *.png 
 

@@ -1,13 +1,10 @@
-CFLAGS   = -Wall -c -O4 -pipe -fexceptions -march=i586 -mcpu=i586 -ffast-math -fomit-frame-pointer
-CPPFLAGS = $(CFLAGS)
+CFLAGS   = -Wall -c -O3 -pipe -fexceptions -ffast-math -fomit-frame-pointer
+CXXFLAGS = $(CFLAGS)
 AOPTS   = -c
 
 APPBIN = /Applications/Media
 
 VPATH = ./
-
-CC	= gcc
-LL	= ld
 
 OBJS = MediaConverter.o
 
@@ -21,7 +18,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/MediaConverter: $(OBJS)
-	gcc  $(OBJS) -lstdc++ -lsyllable -lmedia -o MediaConverter
+	$(CXX) $(OBJS) -lsyllable -lmedia -o MediaConverter
 
 deps:
 
@@ -39,33 +36,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d MediaConverter
 
 -include $(OBJDIR)/*.d
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

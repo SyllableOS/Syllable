@@ -27,7 +27,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/radeon: $(OBJS)
-	g++ -plugin $(OBJS) -o $(OBJDIR)/radeon -lsyllable
+	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/radeon -lsyllable
 
 install: $(OBJDIR)/radeon radeon.cfg
 	cp -f $(OBJDIR)/radeon $(DEVBIN)/radeon
@@ -38,3 +38,4 @@ dist: $(OBJDIR)/radeon
 
 clean:
 	-rm $(OBJDIR)/*
+

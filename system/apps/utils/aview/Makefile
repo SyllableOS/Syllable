@@ -1,6 +1,3 @@
-CC = g++
-LL = g++
-
 COPTS = -Wall -c -O2
 
 OBJDIR = objs/
@@ -9,7 +6,7 @@ OBJS = $(OBJDIR)main.o $(OBJDIR)appwindow.o $(OBJDIR)iview.o $(OBJDIR)statusbar.
 EXE = AView
 
 all: $(OBJDIR) $(OBJS)
-	$(LL) $(OBJS) -lsyllable -o $(EXE)
+	$(CXX) $(OBJS) -lsyllable -o $(EXE)
 	strip --strip-all $(EXE)
 	rescopy -r $(EXE) *.png
 

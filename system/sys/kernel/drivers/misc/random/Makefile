@@ -34,7 +34,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/random: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/random
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/random
 
 install: all
 	cp -f $(OBJDIR)/random /system/drivers/dev/random
@@ -44,5 +44,4 @@ dist: all
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/random
-
 

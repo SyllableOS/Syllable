@@ -1,12 +1,9 @@
 SCREENSHOT = y
 
-CFLAGS   = -Wall -c -O3 -pipe -fexceptions -march=i586 -mcpu=i586 -ffast-math -fomit-frame-pointer $(shell freetype-config --cflags)
-CPPFLAGS= $(CFLAGS)
+CFLAGS   = -Wall -c -O3 -pipe -fexceptions -ffast-math -fomit-frame-pointer $(shell freetype-config --cflags)
+CXXFLAGS= $(CFLAGS)
 AOPTS   = -c
 LIBS    = -lsyllable
-
-CC	= gcc
-LL	= ld
 
 OBJS =  ddriver.o ddline.o vesadrv.o server.o input.o			\
 	config.o keyboard.o keymap.o defaultkeymap.o			\
@@ -33,10 +30,10 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/appserver: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/appserver $(shell freetype-config --libs) $(LIBS) -lstdc++ -lm
+	$(CXX) $(OBJS) -o $(OBJDIR)/appserver $(shell freetype-config --libs) $(LIBS) -lm
 
 $(OBJDIR)/mini_appserver: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/appserver $(shell freetype-config --libs) $(LIBS) -lstdc++ -lm
+	$(CXX) $(OBJS) -o $(OBJDIR)/appserver $(shell freetype-config --libs) $(LIBS) -lm
 
 install: $(OBJDIR)/appserver
 	cp -f $(OBJDIR)/appserver /system/appserver
@@ -50,3 +47,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d $(OBJDIR)/appserver
 
 -include $(OBJDIR)/*.d
+

@@ -34,7 +34,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/ata: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/ata
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/ata
 
 install: all
 	cp -f $(OBJDIR)/ata /system/drivers/bus/ata

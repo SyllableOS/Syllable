@@ -1,11 +1,9 @@
-CC = g++
-LL = g++
-COPTS = -Wall -c -O3
+COPTS = -Wall -c
 OBJS = main.o mainwindow.o datepicker.o timepicker.o
 EXE = DateTime
 
 $(EXE): $(OBJS)
-	$(LL) $(OBJS) -lsyllable -o $(EXE)
+	$(CXX) $(OBJS) -lsyllable -o $(EXE)
 	rescopy -r $(EXE) timezone.png timezone.info *.png
 
 dist: $(EXE)
@@ -17,8 +15,4 @@ clean:
 
 .cpp.o:
 	$(CC) $(COPTS) $< -o $@
-
-
-
-
 

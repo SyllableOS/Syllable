@@ -1,13 +1,10 @@
-CFLAGS   = -Wall -c -O4 -pipe -fexceptions -march=i586 -mcpu=i586 -ffast-math -fomit-frame-pointer
-CPPFLAGS = $(CFLAGS)
+CFLAGS   = -Wall -c -O3 -pipe -fexceptions -ffast-math -fomit-frame-pointer
+CXXFLAGS = $(CFLAGS)
 AOPTS   = -c
 
 DRIVERBIN = /system/drivers/media
 
 VPATH = ./
-
-CC	= gcc
-LL	= ld
 
 OBJS	= videobitmap.o rgb2rgb.o yuv2rgb.o
 
@@ -21,7 +18,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/videobitmap.so: $(OBJS)
-	gcc -shared -Xlinker "-soname=videobitmap.so" $(OBJS) -lstdc++ -lsyllable -lmedia -L/usr/lib/ -o $(OBJDIR)/videobitmap.so
+	$(CXX) -shared -Xlinker "-soname=videobitmap.so" $(OBJS) -lsyllable -lmedia -o $(OBJDIR)/videobitmap.so
 
 
 deps:
@@ -39,34 +36,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*
 
 -include $(OBJDIR)/*.d
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

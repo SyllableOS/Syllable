@@ -35,7 +35,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/trident: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/trident
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/trident
 
 install: all
 	cp -f $(OBJDIR)/$(DRIVER) /system/drivers/dev/sound/$(DRIVER)
@@ -46,5 +46,4 @@ dist: all
 clean:
 	-rm -f $(OBJS)
 	-rm -f $(OBJDIR)/$(DRIVER)
-
 

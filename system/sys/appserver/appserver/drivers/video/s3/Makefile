@@ -24,7 +24,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/s3_virge: $(OBJS)
-	gcc -plugin $(OBJS) -o $(OBJDIR)/s3_virge -lsyllable -lstdc++
+	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/s3_virge -lsyllable
 
 deps:
 
@@ -36,3 +36,4 @@ dist: $(OBJDIR)/s3_virge
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/s3_virge
+

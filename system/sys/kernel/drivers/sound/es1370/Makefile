@@ -35,7 +35,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/es1370: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/es1370
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/es1370
 
 install: all
 	cp -f $(OBJDIR)/es1370 /system/drivers/dev/sound/es1370
@@ -46,10 +46,4 @@ dist: all
 clean:
 	-rm -f $(OBJS)
 	-rm -f $(OBJDIR)/$(DRIVER)
-
-
-
-
-
-
 

@@ -1,5 +1,5 @@
 #Makefile for Desktop
-COPTS = -Wall -c -O4 -pipe -fexceptions -march=i586 -mcpu=i586 -ffast-math -fomit-frame-pointer
+COPTS = -Wall -c
 
 APPBIN = /atheos/Applications/Preferences
 OBJS = Prefs.o
@@ -27,7 +27,7 @@ objs:
 
 Desktop: $(OBJS)
 	@echo Linking...
-	@gcc $(OBJS) -o Desktop  -lstdc++ -lsyllable
+	@$(CXX) $(OBJS) -o Desktop -lsyllable
 	@echo Adding resources...
 	@rescopy Desktop -r icon48x48.png icon24x24.png 
 

@@ -1,13 +1,10 @@
 CFLAGS   = -c -O2 -pipe -fexceptions
-CPPFLAGS = $(CFLAGS)
+CXXFLAGS = $(CFLAGS)
 AOPTS   = -c
 
 DRIVERBIN = /Applications/Media/Plugins
 
 VPATH = ./
-
-CC	= gcc
-LL	= ld
 
 OBJS	= bitmap.o blur.o color.o config.o img.o loop.o paste.o render.o text.o blursk.o
 
@@ -21,7 +18,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/Blur: $(OBJS)
-	gcc -shared -Xlinker "-soname=Blur" $(OBJS) -lstdc++ -lsyllable -L/usr/lib/ -o $(OBJDIR)/Blur
+	$(CXX) -shared -Xlinker "-soname=Blur" $(OBJS) -lsyllable -o $(OBJDIR)/Blur
 
 deps:
 
@@ -39,30 +36,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*
 
 -include $(OBJDIR)/*.d
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

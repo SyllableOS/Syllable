@@ -1,6 +1,5 @@
 OPTS   = -c -Wall
 
-CC	= gcc
 EXE	= CharMap
 
 OBJDIR	:= objs
@@ -15,7 +14,7 @@ $(OBJDIR)/%.o : %.cpp
 OBJS := ./objs/main.o ./objs/mainwin.o ./objs/charmap.o
 
 $(EXE): objs $(OBJS)
-	g++ $(OBJS) -lstdc++ -lsyllable -o $(EXE)
+	$(CXX) $(OBJS) -lsyllable -o $(EXE)
 	-rescopy -r $(EXE) ./images/*.png
 deps:
 	mkdir objs

@@ -34,7 +34,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/$(FS): $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/$(FS)
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/$(FS)
 
 deps:
 

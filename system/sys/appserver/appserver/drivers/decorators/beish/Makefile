@@ -26,8 +26,8 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Beish: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/Beish /system/appserver -lsyllable -lstdc++ -lz
-	gcc -plugin $(OBJS) -o $(OBJDIR)/Beish -lsyllable -lstdc++
+	$(CXX) $(OBJS) -o $(OBJDIR)/Beish /system/appserver -lsyllable -lz
+	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/Beish -lsyllable
 
 install: $(OBJDIR)/Beish
 	cp -f $(OBJDIR)/Beish $(DEVBIN)/Beish

@@ -1,4 +1,3 @@
-
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall -D__ENABLE_DEBUG__
 AFLAGS   = -c
 
@@ -35,7 +34,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/usb_ohci: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/usb_ohci
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/usb_ohci
 
 install: all
 	mkdir -p /system/drivers/dev/hcd

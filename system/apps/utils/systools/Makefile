@@ -1,5 +1,5 @@
 CFLAGS	= -O3 -c
-CPPFLAGS= -O3 -c
+CXXFLAGS= -O3 -c
 OBJDIR = objs
 
 EXES	= $(OBJDIR)/init $(OBJDIR)/ps $(OBJDIR)/ls_ports $(OBJDIR)/ls_sema	\
@@ -30,9 +30,6 @@ shutdown_OBJS	:= $(addprefix $(OBJDIR)/,$(shutdown_OBJS))
 strace_OBJS	:= $(addprefix $(OBJDIR)/,$(strace_OBJS))
 sysinfo_OBJS	:= $(addprefix $(OBJDIR)/,$(sysinfo_OBJS))
 
-CC	= gcc
-LL	= gcc
-
 include $(ATHEOS_SRC)/makefile.rules
 
 all:  $(OBJDIR) $(EXES)
@@ -46,9 +43,9 @@ $(OBJDIR)/init: $(init_OBJS)
 $(OBJDIR)/ps: $(ps_OBJS)
 	$(CC) $(ps_OBJS) -o $@
 $(OBJDIR)/ls_ports: $(ls_ports_OBJS)
-	g++ $(ls_ports_OBJS) -lsyllable -o $@
+	$(CXX) $(ls_ports_OBJS) -lsyllable -o $@
 $(OBJDIR)/ls_sema: $(ls_sema_OBJS)
-	g++ $(ls_sema_OBJS) -lsyllable -o $@
+	$(CXX) $(ls_sema_OBJS) -lsyllable -o $@
 $(OBJDIR)/top: $(top_OBJS)
 	$(CC) $(top_OBJS) -o $@
 $(OBJDIR)/reboot: $(reboot_OBJS)
@@ -74,6 +71,4 @@ dist:
 
 clean:
 	-rm -Rv $(OBJDIR)
-
-
 

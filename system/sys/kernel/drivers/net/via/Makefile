@@ -1,8 +1,5 @@
-
 CFLAGS   = -kernel -fno-PIC -c -O3
 # -Wall
-
-C_INCLUDE_PATH=/ainc
 
 OBJS := via.o
 
@@ -30,7 +27,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/via: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/via
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/via
 
 install: all
 	cp -f $(OBJDIR)/via /system/drivers/dev/net/eth/via
@@ -40,6 +37,4 @@ dist: all
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/via
-
-
 

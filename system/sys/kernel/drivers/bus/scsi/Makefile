@@ -1,4 +1,3 @@
-
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
 AFLAGS   = -c
 
@@ -35,7 +34,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/scsi: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/scsi
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/scsi
 
 install: all
 	mkdir -p /system/drivers/bus
@@ -47,12 +46,4 @@ dist: all
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/scsi
-
-
-
-
-
-
-
-
 

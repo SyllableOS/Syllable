@@ -2,14 +2,12 @@ OBJS = ../objs/App.o ../objs/EditWin.o ../objs/StatusBar.o ../objs/KeyMap.o ../o
 
 COPTS = -Wall --no-warn
 LOPTS = -lsyllable -lcodeview
-CC= g++
-LL = g++
 
 EXE = ../objs/CodeEdit
 
 $(EXE): $(OBJS)
 	@echo Building : $(EXE)
-	@$(LL) $(OBJS) $(LOPTS) -o $(EXE)
+	@$(CXX) $(OBJS) $(LOPTS) -o $(EXE)
 	@echo Adding images into : $(EXE)
 	@rescopy -r $(EXE) ./images/*.png
 
@@ -52,22 +50,4 @@ astyle:
 ../objs/ImageItem: ImageItem.cpp ImageItem.h
 ../objs/LoadBitmap.o: LoadBitmap.cpp LoadBitmap.h
 ../objs/SettingsTab_Font.o:  SettingsTab_Font.h SettingsTab_Font.cpp App.h
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

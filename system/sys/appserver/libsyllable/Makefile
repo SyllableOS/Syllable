@@ -1,5 +1,5 @@
 CFLAGS   = -Wall -c -O2 -pipe -fexceptions
-CPPFLAGS = $(CFLAGS)
+CXXFLAGS = $(CFLAGS)
 AOPTS   = -c
 
 LIBBIN = /system/libs
@@ -7,9 +7,6 @@ LIBBIN = /system/libs
 LIBNAME = libsyllable.so.6
 
 VPATH = ./ gui storage util translation gui/colorselector
-
-CC	= gcc
-LL	= ld
 
 OBJS	= rect.o region.o desktop.o bitmap.o view.o tabview.o			\
 	  window.o slider.o scrollbar.o spinner.o frameview.o			\
@@ -42,7 +39,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/$(LIBNAME): $(OBJS)
-	gcc -shared -Xlinker "-soname=$(LIBNAME)" $(OBJS) -lstdc++ -lm -L/usr/lib/ -o $(OBJDIR)/$(LIBNAME)
+	$(CXX) -shared -Xlinker "-soname=$(LIBNAME)" $(OBJS) -lm -o $(OBJDIR)/$(LIBNAME)
 
 deps:
 
@@ -69,5 +66,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d
 
 -include $(OBJDIR)/*.d
-
 

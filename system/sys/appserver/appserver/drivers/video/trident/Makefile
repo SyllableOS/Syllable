@@ -26,7 +26,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/trident: $(OBJS)
-	gcc -plugin $(OBJS) -o $(OBJDIR)/trident -lsyllable -lstdc++
+	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/trident -lsyllable
 
 install: $(OBJDIR)/trident
 	cp -f $(OBJDIR)/trident $(DEVBIN)/trident
@@ -36,3 +36,4 @@ dist: $(OBJDIR)/trident
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/trident
+

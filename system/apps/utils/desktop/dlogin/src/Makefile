@@ -4,9 +4,6 @@ OBJDIR	:= ../objs
 OBJS	= ../objs/main.o ../objs/commonfuncs.o ../objs/mainwindow.o ../objs/colorbutton.o ../objs/imagebutton.o
 EXE		= $(OBJDIR)/dlogin
 
-CC	= g++
-LL	= g++
-
 all: $(OBJDIR) $(EXE)
 
 $(OBJDIR):
@@ -14,7 +11,7 @@ $(OBJDIR):
 
 $(EXE): $(OBJS)
 	@echo Building : $(EXE)
-	@$(LL) $(OBJS) -lsyllable -lcrypt -o $@
+	@$(CXX) $(OBJS) -lsyllable -lcrypt -o $@
 	@echo Adding images to : $(EXE)
 	@rescopy -r $(EXE) ./images/*.gif ./images/*.png
 
@@ -52,3 +49,4 @@ astyle:
 ../objs/imagebutton.o : imagebutton.cpp
 	@echo Compiling : $<
 	@$(CC) $(COPTS) $< -o $@
+

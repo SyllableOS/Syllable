@@ -1,13 +1,10 @@
-CFLAGS   = -Wall -c -O4 -pipe -fexceptions -march=i586 -mcpu=i586 -ffast-math -fomit-frame-pointer
-CPPFLAGS = $(CFLAGS)
+CFLAGS   = -Wall -c -O3 -pipe -fexceptions -ffast-math -fomit-frame-pointer
+CXXFLAGS = $(CFLAGS)
 AOPTS   = -c
 
 DRIVERBIN = /system/drivers/media
 
 VPATH = ./
-
-CC	= gcc
-LL	= ld
 
 OBJS	= yuv2rgb.o rgb2rgb.o videooverlay.o
 
@@ -21,7 +18,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/videooverlay.so: $(OBJS)
-	gcc -shared -Xlinker "-soname=videooverlay.so" $(OBJS) -lstdc++ -lsyllable -lmedia -L/usr/lib/ -o $(OBJDIR)/videooverlay.so
+	$(CXX) -shared -Xlinker "-soname=videooverlay.so" $(OBJS) -lsyllable -lmedia -o $(OBJDIR)/videooverlay.so
 
 
 deps:
@@ -39,29 +36,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*
 
 -include $(OBJDIR)/*.d
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

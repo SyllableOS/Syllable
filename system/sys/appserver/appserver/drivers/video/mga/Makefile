@@ -25,7 +25,7 @@ objs:
 	mkdir objs
 
 $(DRIVER): $(OBJS)
-	g++ -plugin -lsyllable $(OBJS) -o $(DRIVER)
+	$(CXX) -plugin -lsyllable $(OBJS) -o $(DRIVER)
 
 deps:
 

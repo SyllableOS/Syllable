@@ -24,7 +24,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/tdfx: $(OBJS)
-	gcc -plugin $(OBJS) -o $(OBJDIR)/tdfx -lsyllable -lstdc++
+	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/tdfx -lsyllable
 
 deps:
 

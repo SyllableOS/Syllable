@@ -2,8 +2,6 @@ CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
 
 SOURCE_DIR=.
 
-C_INCLUDE_PATH=/system/include
-
 OBJS := eepro100.o
 DRIVER := eepro100
 
@@ -32,7 +30,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/eepro100: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/eepro100
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/eepro100
 
 install: all
 	cp -f $(OBJDIR)/eepro100 /system/drivers/dev/net/eth/eepro100

@@ -1,10 +1,7 @@
 CFLAGS   = -pipe -O2 -c -Wall
-CPPFLAGS= $(CFLAGS)
+CXXFLAGS= $(CFLAGS)
 
 EXE = DiskManager
-
-CC	= gcc
-LL	= ld
 
 OBJS =	main.o diskview.o partitionview.o
 
@@ -18,7 +15,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/$(EXE): $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/$(EXE) -lsyllable -lstdc++
+	$(CXX) $(OBJS) -o $(OBJDIR)/$(EXE) -lsyllable
 
 install: $(OBJDIR)/$(EXE)
 	install -s $(OBJDIR)/$(EXE) /bin/$(EXE)
@@ -32,3 +29,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d $(OBJDIR)/$(EXE)
 
 -include $(OBJDIR)/*.d
+

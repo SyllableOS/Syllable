@@ -24,7 +24,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/riva: $(OBJS)
-	gcc -plugin $(OBJS) -o $(OBJDIR)/riva -lsyllable -lstdc++
+	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/riva -lsyllable
 
 deps:
 
@@ -36,3 +36,4 @@ dist: $(OBJDIR)/riva
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/riva
+

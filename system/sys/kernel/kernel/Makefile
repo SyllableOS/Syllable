@@ -1,14 +1,11 @@
-CFLAGS   = -D__KERNEL__ -D__BUILD_KERNEL__ -no-fPIC -c -g -O2 -mpreferred-stack-boundary=2 -fno-strict-aliasing -Wall -Wstrict-prototypes -march=i586 -I./
-CPPFLAGS = $(CFLAGS)
+CFLAGS   = -D__KERNEL__ -D__BUILD_KERNEL__ -no-fPIC -c -g -O2 -mpreferred-stack-boundary=2 -fno-strict-aliasing -Wall -Wstrict-prototypes -I./
 AFLAGS   = -c
 
 OLD_INCLUDE_PATH:=$(C_INCLUDE_PATH)
 C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
-CPLUS_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
 
 VPATH =	./ lib vfs net ../devices ../drivers/disk/bios ../fs/lfndos ../fs/afs
 
-CC	= gcc
 CP	= cp -f
 
 VFSOBJS := vfs.o inode.o nodemonitor.o attributes.o flock.o root.o dev.o fifo.o pty.o
@@ -42,16 +39,16 @@ $(OBJDIR):
 
 
 $(OBJDIR)/kernel.so: $(OBJDIR)/version.o
-	ld -m elf_i386_atheos -Tkernel.lnk $(OBJS) $(OBJDIR)/version.o -o \
-	   $(OBJDIR)/kernel.so `gcc -kernel -print-libgcc-file-name`
-	gcc -nostdlib -w $(OBJDIR)/kernel.exports.c -o $(OBJDIR)/libkernel.so
+	$(LD) -m elf_i386_syllable -Tkernel.lnk $(OBJS) $(OBJDIR)/version.o -o \
+	   $(OBJDIR)/kernel.so `$CC -kernel -print-libgcc-file-name`
+	$(CC) -nostdlib -w $(OBJDIR)/kernel.exports.c -o $(OBJDIR)/libkernel.so
 
 
 $(OBJDIR)/eth_if: $(IF_OBJS) $(OBJDIR)/kernel.so
-	gcc -kernel $(IF_OBJS) -L$(OBJDIR) -o $(OBJDIR)/eth_if
+	$(CC) -kernel $(IF_OBJS) -L$(OBJDIR) -o $(OBJDIR)/eth_if
 
 $(OBJDIR)/bintohex: bintohex.c
-	export C_INCLUDE_PATH=$(OLD_INCLUDE_PATH) ; gcc bintohex.c -o $(OBJDIR)/bintohex
+	export C_INCLUDE_PATH=$(OLD_INCLUDE_PATH) ; $(CC) bintohex.c -o $(OBJDIR)/bintohex
 
 $(OBJDIR)/kernel.exports.c: ksyms.c
 	grep '^[[:space:]]\+KSYMBOL' ksyms.c | \
@@ -109,3 +106,4 @@ clean:
 	rm -f $(OBJS) $(DEPS) $(IF_OBJS) $(OBJDIR)/version.o $(OBJDIR)/kernel.so $(OBJDIR)/libkernel.so $(OBJDIR)/eth_if $(OBJDIR)/kernel.exports.c
 
 -include $(OBJDIR)/*.d
+

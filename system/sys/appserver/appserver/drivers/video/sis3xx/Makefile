@@ -24,7 +24,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/sis3xx: $(OBJS)
-	gcc -plugin $(OBJS) -o $(OBJDIR)/sis3xx -lsyllable -lstdc++
+	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/sis3xx -lsyllable
 
 install: $(OBJDIR)/sis3xx
 	cp -f $(OBJDIR)/sis3xx $(DEVBIN)/sis3xx

@@ -1,13 +1,10 @@
 CFLAGS   = -Wall -c -O2 -pipe -fexceptions
-CPPFLAGS = $(CFLAGS)
+CXXFLAGS = $(CFLAGS)
 AOPTS   = -c
 
 DRIVERBIN = /Applications/Media/Plugins
 
 VPATH = ./
-
-CC	= gcc
-LL	= ld
 
 OBJS	= Remote.o
 
@@ -21,7 +18,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/Remote: $(OBJS)
-	gcc -shared -Xlinker "-soname=Remote" $(OBJS) -lstdc++ -lsyllable -L/usr/lib/ -o $(OBJDIR)/Remote
+	$(CXX) -shared -Xlinker "-soname=Remote" $(OBJS) -lsyllable -o $(OBJDIR)/Remote
 
 deps:
 
@@ -39,30 +36,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*
 
 -include $(OBJDIR)/*.d
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

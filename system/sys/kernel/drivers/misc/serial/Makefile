@@ -1,4 +1,3 @@
-
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
 AFLAGS   = -c
 
@@ -35,7 +34,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/serial: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/serial
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/serial
 
 install: all
 	cp -f $(OBJDIR)/serial /system/drivers/dev/misc/serial
@@ -45,5 +44,4 @@ dist: all
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/serial
-
 

@@ -1,3 +1,28 @@
+* February 27 2005, Kaj de Vos *
+
+Sanitized some aspects of the makefiles. Fixed bugs and parameterized hardcoded tool calls
+to allow compilation with GCC 3.4 and with cross-compilers. From now on, please keep in
+mind that compilation can be relative to a staging area instead of the running system
+(managed by Builder). Use
+	$(CC)
+	$(CXX)
+	$(AS)
+	$(LD)
+instead of
+	gcc
+	g++
+	as
+	ld
+to allow cross-compilation. Use
+	$(CXX)
+instead of
+	gcc -lstdc++
+to allow compilation with GCC 3.4.x.
+
+Changed occurrences of O4 to O3. Higher than O3 doesn't exist as an optimization option
+for GCC. Replaced a lot of occurrences of CPPLAGS with CXXFLAGS. CPPFLAGS is for the
+preprocesser, not for C++. This probably means that the media framework was never optimized.
+
 * January 29 2005, Jake Hamby *
 
 Removed binary keymap files from CVS and replaced them with their ASCII

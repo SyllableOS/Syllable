@@ -2,8 +2,6 @@ CFLAGS   = -kernel -fno-PIC -c -O3 -Wall -D__ENABLE_DEBUG__
 
 SOURCE_DIR=.
 
-C_INCLUDE_PATH=/system/include
-
 OBJS := dp83815.o
 DRIVER := dp83815
 
@@ -32,7 +30,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/dp83815: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/dp83815
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/dp83815
 
 install: all
 	cp -f $(OBJDIR)/$(DRIVER) /system/drivers/dev/net/eth/$(DRIVER)

@@ -25,9 +25,6 @@ mkindex_OBJS	:= $(addprefix $(OBJDIR)/,$(mkindex_OBJS))
 devstat_OBJS	:= $(addprefix $(OBJDIR)/,$(devstat_OBJS))
 dumpattrib_OBJS	:= $(addprefix $(OBJDIR)/,$(dumpattrib_OBJS))
 
-CC	= gcc
-LL	= gcc
-
 include $(ATHEOS_SRC)/makefile.rules
 
 all:  $(OBJDIR) $(EXES)
@@ -66,3 +63,4 @@ dist: all
 
 clean:
 	-rm -Rv $(OBJDIR)
+

@@ -1,4 +1,3 @@
-
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
 AFLAGS   = -c
 
@@ -35,7 +34,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/apm: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/apm
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/apm
 
 install: all
 	cp -f $(OBJDIR)/apm /system/drivers/dev/apm
@@ -45,7 +44,4 @@ dist: all
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/apm
-
-
-
 

@@ -35,7 +35,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/sbpro: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/sbpro
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/sbpro
 
 install: all
 	cp -f $(OBJDIR)/sbpro /system/drivers/dev/sound/sbpro
@@ -46,5 +46,4 @@ dist: all
 clean:
 	-rm -f $(OBJS)
 	-rm -f $(OBJDIR)/$(DRIVER)
-
 

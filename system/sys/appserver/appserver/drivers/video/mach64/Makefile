@@ -26,7 +26,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/mach64: $(OBJS)
-	g++ -plugin $(OBJS) -o $(OBJDIR)/mach64 -lsyllable
+	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/mach64 -lsyllable
 
 install: $(OBJDIR)/mach64
 	cp -f $(OBJDIR)/mach64 $(DEVBIN)/mach64
@@ -36,6 +36,4 @@ dist: $(OBJDIR)/mach64
 
 clean:
 	-rm $(OBJDIR)/*
-
-
 

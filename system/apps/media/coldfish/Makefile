@@ -1,13 +1,10 @@
-CFLAGS   = -Wall -c -O4 -pipe -fexceptions -march=i586 -mcpu=i586 -ffast-math -fomit-frame-pointer
-CPPFLAGS = $(CFLAGS)
+CFLAGS   = -Wall -c -O3 -pipe -fexceptions -ffast-math -fomit-frame-pointer
+CXXFLAGS = $(CFLAGS)
 AOPTS   = -c
 
 APPBIN = /Applications/Media
 
 VPATH = ./
-
-CC	= gcc
-LL	= ld
 
 OBJS = lcd.o SelectWin.o ColdFish.o cimagebutton.o
 
@@ -21,7 +18,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/ColdFish: $(OBJS)
-	gcc  $(OBJS) -lstdc++ -lsyllable -lmedia -o ColdFish
+	$(CXX) $(OBJS) -lsyllable -lmedia -o ColdFish
 	rescopy -r ColdFish *.png
 	rescopy -a ColdFish resources/coldfish.catalog
 	rescopy -a ColdFish sv/coldfish.catalog=resources/sv/coldfish.catalog
@@ -43,39 +40,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d ColdFish
 
 -include $(OBJDIR)/*.d
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

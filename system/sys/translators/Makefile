@@ -1,12 +1,9 @@
 CFLAGS   = -Wall -c -g -O3 -pipe
-CPPFLAGS = $(CFLAGS)
+CXXFLAGS = $(CFLAGS)
 
 TRANSDIR = /system/drivers/translators
 
 VPATH = ./
-
-CC	= gcc
-LL	= ld
 
 JPGOBJS = jpegtrans.o
 PNGOBJS = pngtrans.o
@@ -26,19 +23,19 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/jpegtrans.so: $(JPGOBJS)
-	g++ -shared $(JPGOBJS) -lsyllable -ljpeg -L/usr/lib/ -o $(OBJDIR)/jpegtrans.so
+	$(CXX) -shared $(JPGOBJS) -lsyllable -ljpeg -o $(OBJDIR)/jpegtrans.so
 
 $(OBJDIR)/pngtrans.so: $(PNGOBJS)
-	g++ -shared $(PNGOBJS) -lsyllable -lpng -lz -L/usr/lib/ -o $(OBJDIR)/pngtrans.so
+	$(CXX) -shared $(PNGOBJS) -lsyllable -lpng -lz -o $(OBJDIR)/pngtrans.so
 
 $(OBJDIR)/giftrans.so: $(GIFOBJS)
-	g++ -shared $(GIFOBJS) -lsyllable -lungif -lz -L/usr/lib/ -o $(OBJDIR)/giftrans.so
+	$(CXX) -shared $(GIFOBJS) -lsyllable -lungif -lz -o $(OBJDIR)/giftrans.so
 
 $(OBJDIR)/icontrans.so: $(ICONOBJS)
-	g++ -shared $(ICONOBJS) -lsyllable -L/usr/lib/ -o $(OBJDIR)/icontrans.so
+	$(CXX) -shared $(ICONOBJS) -lsyllable -o $(OBJDIR)/icontrans.so
 
 $(OBJDIR)/winicontrans.so: $(WINICONOBJS)
-	g++ -shared $(WINICONOBJS) -lsyllable -L/usr/lib/ -o $(OBJDIR)/winicontrans.so
+	$(CXX) -shared $(WINICONOBJS) -lsyllable -o $(OBJDIR)/winicontrans.so
 
 install: $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so $(OBJDIR)/icontrans.so $(OBJDIR)/winicontrans.so
 	install -s $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so $(OBJDIR)/icontrans.so $(OBJDIR)/winicontrans.so $(TRANSDIR)/

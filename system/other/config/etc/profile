@@ -15,13 +15,17 @@ INFOPATH=$INFOPATH:/usr/info
 
 export ATHEOS_SRC=/atheos/src
 
+export TERMINFO=/usr/share/terminfo
+export COLORTERM=xterm
+export LS_COLORS="ex=35:ln=4;35:di=31;1:*.c=36:*.cpp=34:*.h=34:*.hpp=34:*.c=34"
 export PAGER=less
 export LESSCHARSET=latin1
 export EDITOR=vi
-export COLORTERM=xterm
-export LS_COLORS="ex=35:ln=4;35:di=31;1:*.c=36:*.cpp=34:*.h=34:*.hpp=34:*.c=34"
+
 export CC=gcc
-export TERMINFO=/usr/share/terminfo
+export CXX=g++
+export AS=as
+export LD=ld
 
 case $TERM in 
     xterm | xterm-color)

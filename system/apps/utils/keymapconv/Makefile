@@ -3,11 +3,8 @@ COPTS	= -Wall -c
 OBJS	= keymapconv.o
 EXE	= keymapconv
 
-CC	= gcc
-LL	= g++
-
 $(EXE) : $(OBJS)
-	$(LL) $(OBJS) -latheos -o $@
+	$(CXX) $(OBJS) -lsyllable -o $@
 
 deps:
 
@@ -27,3 +24,4 @@ clean:
 
 main.o : main.cpp
 	$(CC) $(COPTS) $< -o $@
+

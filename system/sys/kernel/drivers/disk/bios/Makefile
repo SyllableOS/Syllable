@@ -1,4 +1,3 @@
-
 CFLAGS   = -kernel -D__BDD_EXTERNAL -fno-PIC -c -O3 -Wall
 AFLAGS   = -c
 
@@ -35,7 +34,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/bios: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/bios
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/bios
 
 install: all
 	cp -f $(OBJDIR)/bios /system/drivers/dev/disk/bios
@@ -45,6 +44,4 @@ dist: all
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/bios
-
-
 

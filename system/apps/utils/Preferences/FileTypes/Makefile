@@ -1,5 +1,5 @@
 #Makefile for FileTypes
-COPTS = -Wall -c -O4 -pipe -fexceptions -march=i586 -mcpu=i586 -ffast-math -fomit-frame-pointer
+COPTS = -Wall -c
 
 APPBIN = /atheos/Applications/Preferences/
 OBJS = main.o application.o mainwindow.o newtype.o
@@ -27,7 +27,7 @@ objs:
 
 FileTypes: $(OBJS)
 	@echo Linking...
-	@gcc $(OBJS) -o FileTypes  -lstdc++ -lsyllable
+	@$(CXX) $(OBJS) -o FileTypes -lsyllable
 	@echo Adding resources...
 	@rescopy FileTypes -r icon48x48.png icon24x24.png 
 

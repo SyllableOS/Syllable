@@ -2,8 +2,6 @@ CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
 
 SOURCE_DIR=.
 
-C_INCLUDE_PATH=/system/include
-
 OBJS := sis900.o
 DRIVER := sis900
 
@@ -32,7 +30,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/sis900: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/sis900
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/sis900
 
 install: all
 	cp -f $(OBJDIR)/sis900 /system/drivers/dev/net/eth/sis900

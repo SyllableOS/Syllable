@@ -1,13 +1,10 @@
 CFLAGS   = -Wall -c -O2 -pipe -fexceptions
-CPPFLAGS = $(CFLAGS)
+CXXFLAGS = $(CFLAGS)
 AOPTS   = -c
 
 DRIVERBIN = /system/drivers/media
 
 VPATH = ./
-
-CC	= gcc
-LL	= ld
 
 OBJS	= prefs.o server_output.o
 
@@ -21,7 +18,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/serveraudio.so: $(OBJS)
-	gcc -shared -Xlinker "-soname=serveraudio.so" $(OBJS) -lstdc++ -lsyllable -lmedia -L/usr/lib/ -o $(OBJDIR)/serveraudio.so
+	$(CXX) -shared -Xlinker "-soname=serveraudio.so" $(OBJS) -lsyllable -lmedia -o $(OBJDIR)/serveraudio.so
 
 
 deps:
@@ -39,28 +36,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*
 
 -include $(OBJDIR)/*.d
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

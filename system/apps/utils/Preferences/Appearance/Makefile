@@ -1,11 +1,9 @@
-CC = g++
-LL = g++
-COPTS = -Wall -c -O3
+COPTS = -Wall -c
 OBJS = main.o mainwindow.o
 EXE = Appearance
 
 $(EXE): $(OBJS)
-	$(LL) $(OBJS) -lsyllable -o $(EXE)
+	$(CXX) $(OBJS) -lsyllable -o $(EXE)
 	strip --strip-all $(EXE)
 	rescopy $(EXE) -r *.png
 
@@ -19,9 +17,4 @@ clean:
 
 .cpp.o:
 	$(CC) $(COPTS) $< -o $@
-
-
-
-
-
 

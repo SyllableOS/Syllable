@@ -1,10 +1,6 @@
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall -Wno-multichar -fno-strict-aliasing -I../
 AFLAGS   = -c
 
-OLD_INCLUDE_PATH:=$(C_INCLUDE_PATH)
-C_INCLUDE_PATH=/ainc
-CPLUS_INCLUDE_PATH=/ainc
-
 
 FS		:= iso9660
 OBJS	:= iso.o kernel_interface.o
@@ -37,7 +33,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/iso9660: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/iso9660
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/iso9660
 
 install: all
 	cp -f $(OBJDIR)/iso9660 /system/drivers/fs/iso9660
@@ -47,10 +43,4 @@ dist: all
 
 clean:
 	rm $(OBJS) $(OBJDIR)/iso9660
-
-
-
-
-
-
 

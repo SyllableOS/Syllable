@@ -26,8 +26,8 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Mulvane: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/Mulvane /system/appserver -lsyllable -lstdc++ -lz
-	gcc -plugin $(OBJS) -o $(OBJDIR)/Mulvane -lsyllable -lstdc++
+	$(CXX) $(OBJS) -o $(OBJDIR)/Mulvane /system/appserver -lsyllable -lz
+	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/Mulvane -lsyllable
 
 install: $(OBJDIR)/Mulvane
 	cp -f $(OBJDIR)/Mulvane $(DEVBIN)/Mulvane
@@ -37,5 +37,4 @@ dist: $(OBJDIR)/Mulvane
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/Mulvane
-
 

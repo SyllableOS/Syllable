@@ -1,4 +1,3 @@
-
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall -fno-strict-aliasing -Wno-trigraphs -fno-common -D__ENABLE_DEBUG__ -Wstrict-prototypes -fomit-frame-pointer
 AFLAGS   = -c
 
@@ -35,7 +34,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/pci: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/pci
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/pci
 
 install: all
 	mkdir -p /system/drivers/bus
@@ -47,11 +46,4 @@ dist: all
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/pci
-
-
-
-
-
-
-
 

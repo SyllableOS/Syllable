@@ -2,8 +2,6 @@ CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
 
 SOURCE_DIR=.
 
-C_INCLUDE_PATH=/system/include
-
 OBJS := forcedeth.o
 DRIVER := forcedeth
 
@@ -32,7 +30,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/forcedeth: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/forcedeth
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/forcedeth
 
 install: all
 	cp -f $(OBJDIR)/forcedeth /system/drivers/dev/net/eth/forcedeth

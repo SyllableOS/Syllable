@@ -26,8 +26,8 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Drow: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/Drow /system/appserver -lsyllable -lstdc++ -lz
-	gcc -plugin $(OBJS) -o $(OBJDIR)/Drow -lsyllable -lstdc++
+	$(CXX) $(OBJS) -o $(OBJDIR)/Drow /system/appserver -lsyllable -lz
+	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/Drow -lsyllable
 
 install: $(OBJDIR)/Drow
 	cp -f $(OBJDIR)/Drow $(DEVBIN)/Drow

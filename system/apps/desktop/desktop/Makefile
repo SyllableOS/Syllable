@@ -1,5 +1,5 @@
 #Makefile for desktop
-COPTS = -Wall -c -O4 -pipe -fexceptions -march=i586 -mcpu=i586 -ffast-math -fomit-frame-pointer
+COPTS = -Wall -c -O3 -pipe -fexceptions -ffast-math -fomit-frame-pointer
 
 APPBIN = /system/bin
 OBJS = main.o application.o desktop.o
@@ -27,7 +27,7 @@ objs:
 
 desktop: $(OBJS)
 	@echo Linking...
-	@gcc $(OBJS) -o desktop  -lstdc++ -lsyllable
+	@$(CXX) $(OBJS) -o desktop -lsyllable
 	@echo Adding resources...
 	@rescopy desktop -r icon48x48.png background.jpg 
 

@@ -1,13 +1,10 @@
 CFLAGS   = -Wall -c -O2 -pipe -fexceptions
-CPPFLAGS = $(CFLAGS)
+CXXFLAGS = $(CFLAGS)
 AOPTS   = -c
 
 APPBIN = /system
 
 VPATH = ./
-
-CC	= gcc
-LL	= ld
 
 OBJS = registrar.o
 
@@ -21,7 +18,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/registrar: $(OBJS)
-	gcc  $(OBJS) -lstdc++ -lsyllable -o registrar
+	$(CXX) $(OBJS) -lsyllable -o registrar
 #	rescopy mediaserver -r *.png
 
 deps:
@@ -39,5 +36,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d registrar
 
 -include $(OBJDIR)/*.d
-
 

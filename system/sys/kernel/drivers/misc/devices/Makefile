@@ -1,4 +1,3 @@
-
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
 AFLAGS   = -c
 
@@ -35,7 +34,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/devices: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/devices
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/devices
 
 install: all
 	cp -f $(OBJDIR)/devices /system/drivers/dev/devices
@@ -45,7 +44,4 @@ dist: all
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/devices
-
-
-
 

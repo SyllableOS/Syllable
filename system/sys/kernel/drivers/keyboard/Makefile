@@ -1,4 +1,3 @@
-
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
 AFLAGS   = -c
 
@@ -35,7 +34,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/keybd: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/keybd
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/keybd
 
 install: all
 	cp -f $(OBJDIR)/keybd /system/drivers/dev/keybd
@@ -45,5 +44,4 @@ dist: all
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/keybd
-
 

@@ -2,8 +2,6 @@ CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
 
 SOURCE_DIR=.
 
-C_INCLUDE_PATH=/system/include
-
 OBJS := 3c59x.o
 DRIVER := 3c59x
 
@@ -32,7 +30,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/3c59x: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/3c59x
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/3c59x
 
 install: all
 	cp -f $(OBJDIR)/3c59x /system/drivers/dev/net/eth/3c59x
@@ -43,5 +41,4 @@ dist: all
 clean:
 	-rm -f $(OBJS)
 	-rm -f $(OBJDIR)/$(DRIVER)
-
 

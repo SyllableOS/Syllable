@@ -1,5 +1,5 @@
-CFLAGS   = -Wall -c -O4 -pipe -fexceptions -march=i586 -mcpu=i586 -ffast-math -fomit-frame-pointer
-CPPFLAGS = $(CFLAGS)
+CFLAGS   = -Wall -c -O3 -pipe -fexceptions -ffast-math -fomit-frame-pointer
+CXXFLAGS = $(CFLAGS)
 AOPTS   = -c
 
 LIBBIN = /system/libs
@@ -7,9 +7,6 @@ LIBBIN = /system/libs
 LIBNAME = libmedia.so.1
 
 VPATH = ./
-
-CC	= gcc
-LL	= ld
 
 OBJS	= codec.o input.o output.o manager.o inputselector.o soundplayer.o
 
@@ -23,7 +20,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/$(LIBNAME): $(OBJS)
-	gcc -shared -Xlinker "-soname=$(LIBNAME)" $(OBJS) -lstdc++ -lm -lsyllable -o $(OBJDIR)/$(LIBNAME)
+	$(CXX) -shared -Xlinker "-soname=$(LIBNAME)" $(OBJS) -lm -lsyllable -o $(OBJDIR)/$(LIBNAME)
 
 deps:
 
@@ -53,26 +50,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d $(OBJDIR)/$(LIBNAME)
 
 -include $(OBJDIR)/*.d
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

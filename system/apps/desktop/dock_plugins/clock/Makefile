@@ -1,5 +1,5 @@
 #Makefile for Clock.so
-COPTS = -Wall -c -O4 -pipe -fexceptions -march=i586 -mcpu=i586 -ffast-math -fomit-frame-pointer
+COPTS = -Wall -c -O3 -pipe -fexceptions -ffast-math -fomit-frame-pointer
 
 APPBIN = /system/drivers/dock
 OBJS = Clock.o
@@ -27,7 +27,7 @@ objs:
 
 Clock.so: $(OBJS)
 	@echo Linking...
-	@gcc -shared -Xlinker -soname=Clock.so $(OBJS) -o Clock.so  -lstdc++ -lsyllable
+	@$(CXX) -shared -Xlinker -soname=Clock.so $(OBJS) -o Clock.so -lsyllable
 	@echo Adding resources...
 	@rescopy Clock.so -r icon48x48.png 
 

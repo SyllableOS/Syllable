@@ -34,7 +34,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/vmware: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/vmware
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/vmware
 
 install: all
 	mkdir -p /system/drivers/dev/graphics
@@ -46,3 +46,4 @@ dist: all
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/vmware
+

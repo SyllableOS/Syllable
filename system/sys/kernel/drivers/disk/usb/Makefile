@@ -1,4 +1,3 @@
-
 CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
 AFLAGS   = -c
 
@@ -35,7 +34,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/usb: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/usb
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/usb
 
 install: all
 	mkdir -p /system/drivers/dev/disk
@@ -47,16 +46,4 @@ dist: all
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/usb
-
-
-
-
-
-
-
-
-
-
-
-
 

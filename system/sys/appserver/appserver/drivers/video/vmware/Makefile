@@ -13,7 +13,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/vmware: $(OBJS)
-	gcc -plugin $(OBJS) -o $(OBJDIR)/vmware -lsyllable -lstdc++
+	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/vmware -lsyllable
 
 $(OBJDIR)/vmware.o: vmware.cpp vmware.h
 	$(CC) $(COPTS) vmware.cpp -o $@

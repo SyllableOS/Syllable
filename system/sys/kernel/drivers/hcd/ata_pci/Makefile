@@ -34,7 +34,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/ata_pci: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/ata_pci
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/ata_pci
 
 install: all
 	cp -f $(OBJDIR)/ata_pci /system/drivers/dev/hcd/ata_pci
@@ -45,33 +45,4 @@ dist: all
 clean:
 	-rm -f $(OBJS)
 	-rm -f $(OBJDIR)/ata_pci
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -1,6 +1,3 @@
-CC = g++
-LL = g++
-
 COPTS = -Wall -c -O3 -DENABLE_UNDO
 
 OBJSDIR = objs/
@@ -14,7 +11,7 @@ $(OBJSDIR):
 	mkdir $(OBJSDIR)
 
 $(EXE): $(OBJS)
-	$(LL) $(OBJS) -lsyllable -o $(EXE)
+	$(CXX) $(OBJS) -lsyllable -o $(EXE)
 	strip --strip-all $(EXE)
 	rescopy -r $(EXE) icon24x24.png icon48x48.png
 	rescopy -a $(EXE) resources/aedit.catalog
