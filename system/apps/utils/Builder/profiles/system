@@ -112,6 +112,7 @@ modules
 	sys/kernel/drivers/graphics/s3_virge
 	sys/kernel/drivers/graphics/sis3xx
 	sys/kernel/drivers/graphics/trident
+	sys/kernel/drivers/graphics/vmware
 	sys/kernel/drivers/hcd/ata_pci
 	sys/kernel/drivers/hcd/usb_uhci
 	sys/kernel/drivers/input/usb_mouse
@@ -174,6 +175,7 @@ modules
 	sys/appserver/appserver/drivers/video/savage
 	sys/appserver/appserver/drivers/video/sis3xx
 	sys/appserver/appserver/drivers/video/trident
+	sys/appserver/appserver/drivers/video/vmware
 	sys/media/libmedia
 	sys/media/mediaserver
 	sys/media/drivers/cdrom
