@@ -1,5 +1,6 @@
-/*  The AtheOS application server
- *  Copyright (C) 1999 - 2001  Kurt Skauen
+/*  The Syllable Application Server (AppServer)
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 The Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -94,6 +95,7 @@ enum
     AR_GET_IDLE_TIME,
     AR_GET_FONT_SIZES,
 
+    AR_GET_TEXT_EXTENTS,
     
     WR_GET_VIEW_FRAME = 20000,
     WR_SET_SIZE_LIMITS,
@@ -145,7 +147,8 @@ enum
     DRC_INVALIDATE_VIEW,
     DRC_INVALIDATE_RECT,
     DRC_SET_DRAW_REGION,
-    DRC_SET_SHAPE_REGION
+    DRC_SET_SHAPE_REGION,
+    DRC_DRAW_TEXT
 };
 
 typedef	struct
@@ -231,6 +234,15 @@ typedef	struct
     int		nLength;
     char		zString[1];	/* String of nLength characters, or null terminated if nLength == -1	*/
 } GRndDrawString_s;
+
+typedef	struct
+{
+    GRndHeader_s	sHdr;				/* Render header */
+	Rect			cPos;
+	uint32			nFlags;				/* Flags */
+    int				nLength;			/* Length of the string, or -1 if null terminated */
+    char			zString[1];			/* String of nLength characters, or null terminated if nLength == -1	*/
+} GRndDrawText_s;
 
 struct GRndScrollView_s : GRndHeader_s
 {
@@ -361,6 +373,25 @@ typedef struct
     int	anLengths[1];
       /*** nStringCount - 1, lengths follow	***/
 } AR_GetStringLengthsReply_s;
+
+
+typedef struct
+{
+    port_id	 hReply;			/* Reply port handle */
+    int		 hFontToken;		/* Font handle */
+    int		 nStringCount;		/* Number of strings to measure */
+	uint32   nFlags;			/* Flags */
+    StringHeader_s sFirstHeader;
+      /*** nStringCount - 1, string headers follows	***/
+} AR_GetTextExtents_s;
+
+typedef struct
+{
+    int		nError;
+    IPoint	acExtent[1];
+      /*** nStringCount - 1 follow	***/
+} AR_GetTextExtentsReply_s;
+
 
 /***	Bitmap messages	***/
 
@@ -495,5 +526,7 @@ struct WR_GetPenPositionReply_s
 
 }
 #endif	//	DEVICES_DISPLAY_PACKETS_H
+
+
 
 
