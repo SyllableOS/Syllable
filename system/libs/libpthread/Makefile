@@ -6,12 +6,11 @@ OBJS := attr.o cond.o mutex.o pthread.o rwlock.o bits.o
 
 include makefile.rules
 
-VER := 0
+VER := 1
 LIB := libpthread.so.$(VER)
-SON := libpthread.so
 
 all: $(OBJDIR) $(OBJS)
-	$(CC) -shared -Xlinker "-soname=$(SON)" $(OBJS) -o $(OBJDIR)/$(LIB)
+	$(CC) -shared -Xlinker "-soname=$(LIB)" $(OBJS) -o $(OBJDIR)/$(LIB)
 
 clean:
 	-rm $(OBJS)
@@ -19,14 +18,14 @@ clean:
 
 install: all
 	cp -f $(OBJDIR)/$(LIB) /system/libs/
-	if [ ! -e /system/libs/$(SON) ];then \
-		ln -s /system/libs/$(LIB) /system/libs/$(SON); \
+	if [ ! -e /system/libs/libpthread.so ];then \
+		ln -s /system/libs/$(LIB) /system/libs/libpthread.so; \
 	fi
 
 dist: all
 	cp -f $(OBJDIR)/$(LIB) $(DIST_DIR)/atheos/sys/libs/
-	if [ ! -e $(DIST_DIR)/atheos/sys/libs/$(SON) ];then \
-		ln -s $(LIB) $(DIST_DIR)/atheos/sys/libs/$(SON); \
+	if [ ! -e $(DIST_DIR)/atheos/sys/libs/libpthread.so ];then \
+		ln -s $(LIB) $(DIST_DIR)/atheos/sys/libs/libpthread.so; \
 	fi
 
 $(OBJDIR):
