@@ -1,3 +1,10 @@
+* Dec 4 2002, Henrik Isaksson *
+
+Applied Andrew Kennans patches to Menu and DropdownMenu. DropdownMenus
+will now get a scrollbar if they have more than 12 entries. Limited
+keyboard control were added to DropdownMenus.
+The Menu patch ensures that menus no longer open off screen.
+
 * Oct 6 2002, Henrik Isaksson *
 
 Added the new Thread class.
