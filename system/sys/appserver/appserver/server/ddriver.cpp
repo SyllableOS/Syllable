@@ -1680,40 +1680,43 @@ void DisplayDriver::RenderGlyph( SrvBitmap * pcBitmap, Glyph * pcGlyph, const IP
 	{
 		int nDstModulo = pcBitmap->m_nBytesPerLine / 2 - nWidth;
 		uint16 *pDst = ( uint16 * )pcBitmap->m_pRaster + cRect.left + cRect.top * pcBitmap->m_nBytesPerLine / 2;
+		bool bAddLast = false;
+		if( nWidth & 1 )
+		{
+			bAddLast = true;
+			nWidth -= 1;
+		}
 
 		for( int y = 0; y < nHeight; ++y )
 		{
-			if( ( nWidth & 1 ) == 0 )
+			
+			for( int x = 0; x < nWidth / 2; ++x )
 			{
-				for( int x = 0; x < nWidth / 2; ++x )
-				{
-					int nAlpha1 = *pSrc++;
-					int nAlpha2 = *pSrc++;
+				int nAlpha1 = *pSrc++;
+				int nAlpha2 = *pSrc++;
 				
-					if( nAlpha1 > 0 && nAlpha2 > 0 )
-					{
-						uint32* pDstConvert = (uint32*)pDst;
-						*pDstConvert = anPallette[nAlpha2] << 16 | anPallette[nAlpha1];
-						pDst += 2;
-					} else 
-					{
-						if( nAlpha1 > 0 )
-							*pDst = anPallette[nAlpha1];
-						pDst++;
-						if( nAlpha2 > 0 )
-							*pDst = anPallette[nAlpha2];
-						pDst++;
-					}	
-				}
-			} else {
-				for( int x = 0; x < nWidth; ++x )
+				if( nAlpha1 > 0 && nAlpha2 > 0 )
 				{
-					int nAlpha = *pSrc++;
-
-					if( nAlpha > 0 )
-						*pDst = anPallette[nAlpha];
+					uint32* pDstConvert = (uint32*)pDst;
+					*pDstConvert = anPallette[nAlpha2] << 16 | anPallette[nAlpha1];
+					pDst += 2;
+				} else 
+				{
+					if( nAlpha1 > 0 )
+						*pDst = anPallette[nAlpha1];
 					pDst++;
-				}
+					if( nAlpha2 > 0 )
+						*pDst = anPallette[nAlpha2];
+					pDst++;
+				}	
+			}
+			if( bAddLast )
+			{
+				int nAlpha = *pSrc++;
+
+				if( nAlpha > 0 )
+					*pDst = anPallette[nAlpha];
+				pDst++;
 			}
 			pSrc += nSrcModulo;
 			pDst += nDstModulo;
