@@ -9,7 +9,7 @@ notes				<Internal notes>
 name				<Display name of the package, if different from the file name>
 headline			<Brief description>
 description			<Full description>
-licenses			GPL LGPL GFDL BSD MIT ISC Apache Artistic Python MPL QPL OSI other PD freeware commercial
+licenses			GPL LGPL GFDL GPL+exception BSD MIT ISC Apache Artistic Python MPL QPL OSI other PD freeware commercial
 
 home				syllable.org
 packages

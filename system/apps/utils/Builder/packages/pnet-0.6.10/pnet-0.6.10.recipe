@@ -1,0 +1,28 @@
+authors				Kaj de Vos
+status				broken
+notes				LibGC and LibFFI need to be ported
+
+licenses			GPL
+
+home				www.dotgnu.org/pnet.html
+locations
+	ftp://ftp.gnu.org/gnu/dotgnu/pnet/
+	http://www.southern-storm.com.au/download/
+
+build-needs
+	treecc
+
+patch-config		. libgc
+
+no-build-dir
+
+configure-options
+;	--enable-threads=none
+	--enable-threads=posix
+	--with-profile=tiny
+	--without-libgc
+	--without-libffi
+documentation
+	README COPYING NEWS ChangeLog AUTHORS
+;	doc samples HACKING
+

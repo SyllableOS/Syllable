@@ -1,0 +1,20 @@
+authors				Kaj de Vos
+status				developing
+
+licenses			GPL
+
+home				www.southern-storm.com.au/libjit/
+locations
+	ftp://ftp.gnu.org/gnu/dotgnu/pnet/
+	http://www.southern-storm.com.au/download/
+
+build-needs
+	flex
+	bison
+
+patch-config
+
+documentation
+	README COPYING NEWS ChangeLog AUTHORS
+;	doc tutorial
+

@@ -1,0 +1,19 @@
+authors				Kaj de Vos
+status				developing
+
+licenses			GPL
+
+home				www.dotgnu.org/pnet.html
+locations
+	ftp://ftp.gnu.org/gnu/dotgnu/pnet/
+	http://www.southern-storm.com.au/download/
+
+needs
+	pnet | mono
+
+patch-config
+
+documentation
+	README COPYING NEWS ChangeLog AUTHORS
+;	doc
+

@@ -1,0 +1,22 @@
+authors				Kaj de Vos
+status				developing
+
+licenses			GPL+exception
+
+home				www.dotgnu.org/pnet.html
+locations
+	ftp://ftp.gnu.org/gnu/dotgnu/pnet/
+	http://www.southern-storm.com.au/download/
+
+needs
+	pnet
+build-needs
+	treecc
+build-recommends
+	gnutls
+	openssl
+
+documentation
+	README COPYING NEWS ChangeLog AUTHORS
+;	doc samples HACKING
+

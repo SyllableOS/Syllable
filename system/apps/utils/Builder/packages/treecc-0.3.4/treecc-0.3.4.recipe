@@ -1,0 +1,16 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			GPL
+
+home				www.southern-storm.com.au/treecc/
+locations
+	ftp://ftp.gnu.org/gnu/dotgnu/pnet/
+	http://www.southern-storm.com.au/download/
+
+patch-config
+
+documentation
+	README COPYING NEWS ChangeLog AUTHORS
+	doc/*.txt doc/*.html examples
+
