@@ -3,6 +3,8 @@ authors				Kaj de Vos
 licenses			GPL
 home				www.gnu.org/software/wget/
 
+build-recommends	openssl
+
 patch-config
 ;configure-options
 ;	--with-ssl=
