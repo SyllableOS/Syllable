@@ -1,4 +1,10 @@
+* Jun 26 2003, Kristian Van Der Vliet *
+
+ISO9660 filesystem updates from Ville Kallioniemi <festivus@mbnet.fi>.  Better
+RockRidge handling.
+
 * June 17 2003, Rick Caudill *
+
 Added some of the headers for libDesktop.  You can find them in system/libs/desktop
 
 * June 14 2003, Kaj de Vos *
