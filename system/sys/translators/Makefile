@@ -25,16 +25,16 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/jpegtrans.so: $(JPGOBJS)
-	g++ -shared $(JPGOBJS) -latheos -ljpeg -L/usr/lib/ -o $(OBJDIR)/jpegtrans.so
+	g++ -shared $(JPGOBJS) -lsyllable -ljpeg -L/usr/lib/ -o $(OBJDIR)/jpegtrans.so
 
 $(OBJDIR)/pngtrans.so: $(PNGOBJS)
-	g++ -shared $(PNGOBJS) -latheos -lpng -lz -L/usr/lib/ -o $(OBJDIR)/pngtrans.so
+	g++ -shared $(PNGOBJS) -lsyllable -lpng -lz -L/usr/lib/ -o $(OBJDIR)/pngtrans.so
 
 $(OBJDIR)/giftrans.so: $(GIFOBJS)
-	g++ -shared $(GIFOBJS) -latheos -lungif -lz -L/usr/lib/ -o $(OBJDIR)/giftrans.so
+	g++ -shared $(GIFOBJS) -lsyllable -lungif -lz -L/usr/lib/ -o $(OBJDIR)/giftrans.so
 
 $(OBJDIR)/icontrans.so: $(ICONOBJS)
-	g++ -shared $(ICONOBJS) -latheos -L/usr/lib/ -o $(OBJDIR)/icontrans.so
+	g++ -shared $(ICONOBJS) -lsyllable -L/usr/lib/ -o $(OBJDIR)/icontrans.so
 
 install: $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so $(OBJDIR)/icontrans.so
 	install -s $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so $(OBJDIR)/icontrans.so $(TRANSDIR)/
