@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.1.1
+# Version 0.1.2
 # Copyright (c) 2002, 2003 Kaj de Vos
 # License: GPL 2
 
@@ -28,17 +28,19 @@
 
 # Set environment variables
 
-ENV['DIST_VER']  = "0.5.0x"
-ENV['DIST_NAME'] = "base-syllable-0.5.0x.tgz"
-
-ENV['ATHEOS_SRC']			= @workDir
-ENV['ATHEOS_INCLUDE_PATH']	= File.join @workDir, "sys/include"
-ENV['ATHEOS_LIB_PATH']		= File.join @workDir, "libs"
-ENV['BUILD_TOOLS']			= File.join @workDir, "build-tools"
-ENV['DIST_DIR']				= @distroRoot
-
 ENV['CFLAGS']	= "-march=i586 -O2 -pipe"
 ENV['CXXFLAGS']	= "-march=i586 -O2 -pipe"
+
+if @systemBuild
+	ENV['DIST_VER']  = "0.5.1x"
+	ENV['DIST_NAME'] = "base-syllable-0.5.1x.tgz"
+
+	ENV['ATHEOS_SRC']			= @workDir
+	ENV['ATHEOS_INCLUDE_PATH']	= File.join @workDir, "sys/include"
+	ENV['ATHEOS_LIB_PATH']		= File.join @workDir, "libs"
+	ENV['BUILD_TOOLS']			= File.join @workDir, "build-tools"
+	ENV['DIST_DIR']				= @distroRoot
+end
 
 
 # Functions for single packages
@@ -51,25 +53,29 @@ def unpackPackage target
 	if exists file = (base = File.join @sourcesDir, fullName target) + ".tar.bz2" or
 		exists file = base + ".tbz2"
 	then
-		return false unless action "bzcat #{file} | tar x"
+		action "bzcat #{file} | tar x"
 	elsif exists file = base + ".tar.gz" or exists file = base + ".tgz"
-		return false unless action "tar xzf " + file
+		action "tar xzf " + file
 	else
 		logError "Source not found"
-		return false
+		false
 	end
+end
 
+def patchPackage target
 	if exists dir = patchesDir(target)
 		logHeader "Patching source"
-		return false unless action "cp -a #{File.join dir, "*"} " + fullName(target)
+		return false unless action "cp -a #{File.join dir, "*"} ."
 	end
 
-	if (recipe = recipe target)["patch-config"]
+	if dir = (recipe = recipe target)["patch-config"]
 		logHeader "Patching configuration"
-		action "cp -a #{File.join @sourcesDir, "config/config.*"} " + fullName(target)
-	elsif recipe["patch-legacy-config"]
+		action "cp -a #{File.join @sourcesDir, "config/config.*"} " +
+			(dir == "" ? "." : dir)
+	elsif dir = recipe["patch-legacy-config"]
 		logHeader "Patching configuration"
-		action "cp -a #{File.join @sourcesDir, "config/legacy/*"} " + fullName(target)
+		action "cp -a #{File.join @sourcesDir, "config/legacy/*"} " +
+			(dir == "" ? "." : dir)
 	else
 		true
 	end
@@ -78,7 +84,15 @@ end
 def getPackage target
 	if	unless exists target
 			logHeader "Installing source"
-			unpackPackage target
+
+			if unpackPackage target
+				Dir.chdir @workDir
+				Dir.chdir target
+
+				patchPackage target
+			else
+				false
+			end
 		else
 			unless exists File.join target, "CVS"
 				# Source already prepared
@@ -90,7 +104,14 @@ def getPackage target
 					logHeader "Replacing source"
 
 					if action "rm -r " + target
-						unpackPackage target
+						if unpackPackage target
+							Dir.chdir @workDir
+							Dir.chdir target
+
+							patchPackage target
+						else
+							false
+						end
 					else
 						logError "Failed to delete source"
 						false
@@ -228,20 +249,7 @@ def doPackages command, target
 	end
 end
 
-def get target
-	logHeader "Fetching " + target
-
-	# Fetch all directories
-
-	for package in profile target
-		logEntry package
-		getPackage package
-	end
-end
-
-def prepare target  # Ignored for now
-#	deleteCVSData
-
+def prepare
 	if @systemBuild
 		logHeader "Creating extra directories"
 
@@ -262,6 +270,34 @@ def prepare target  # Ignored for now
 		for dir in load File.join(@builderDir, "distro-dirs")
 			Dir.mkdir dir unless exists dir
 		end
+	end
+end
+
+def patch target
+	logHeader "Patching " + target
+
+	# Patch all directories
+
+	for package in profile target
+		logEntry package
+
+		Dir.chdir package
+		unless patchPackage package
+			logError "Source not patched"
+			logFailure target
+		end
+		Dir.chdir @workDir
+	end
+end
+
+def get target
+	logHeader "Fetching " + target
+
+	# Fetch all directories
+
+	for package in profile target
+		logEntry package
+		getPackage package
 	end
 end
 
@@ -409,9 +445,7 @@ def deleteCVSData
 	# Delete all CVS dirs
 	# (They would trigger some packages to reconfigure themselves.)
 
-	print "\nCleaning out CVS dirs\n"
-	@log		<< "Cleaning out CVS dirs:\n"
-	@summary	<< "Cleaning out CVS dirs"
+	logHeader "Cleaning out CVS dirs"
 
 	Dir["**/CVS"].each do |dir|
 		@log << dir + "\n"
@@ -443,12 +477,20 @@ def load file  # Load the lines of a file into an array, leaving out comments
 	lines
 end
 
+def save data, file  # Write an array to a text file
+	File.open file, "w" do |file|
+		for line in data
+			file << line + "\n"
+		end
+	end
+end
+
 def parseValues text  # Load key/value pairs into a hash table
 	hash = {}
 
 	for line in text
-		if i = line.index(" ")
-			hash[line[0, i]] = line[i + 1 .. line.length - 1]
+		if i = line.index(/\s/)
+			hash[line[0, i]] = line[i + 1 .. line.length - 1].strip
 		else
 			hash[line] = ""
 		end
@@ -513,15 +555,17 @@ def action command
 end
 
 def openLogs
+	@failures = []
+
 	Dir.mkdir @logDir unless exists @logDir
 
 	@log		= File.new File.join(@logDir, "last-stdout"), "w"
 	@summary	= File.new File.join(@logDir, "last-summary"), "w"
-	@failures		= File.new File.join(@logDir, "last-failures"), "w"
- 
+	@failLog		= File.new File.join(@logDir, "last-failures"), "w"
+
 	@log		<< s = "Building in root directory #{@workDir}\n"
 	@summary	<< s
-	@failures		<< s
+	@failLog		<< s
 end
 
 def closeLogs
@@ -530,35 +574,35 @@ def closeLogs
 
 	@log.close
 	@summary.close
-	@failures.close
- end
+	@failLog.close
+end
 
 def logHeader header
-	print			s = "\n#{header}\n"
-	@log		<< s + "\n"
+	print			"\n" + s = header + "\n"
+	@log		<< "\n#{s}\n"
 	@summary	<< s
 end
 
 def logSubheader header
-	print			s = "\n#{header}\n"
-	@log		<< s
+	print			"\n" + s = header + "\n"
+	@log		<< "\n" + s
 	@summary	<< s
 end
 
 def logEntry entry
-	print			"\n" + s = entry + "\n"
+	print			s = "\n#{entry}\n"
 	@log		<< s
-	@summary	<< "\n" + s
+	@summary	<< s
 end
 
 def logAction action
-	print			"\n#{action}\n\n"
+	puts			"\n#{action}\n"
 	@log		<< action + ": "
 	@summary	<< action
 end
 
 def logError error
-	print			"\n" + (s = "Error: #{error}") + "\n"
+	puts			"\n" + s = "Error: #{error}"
 	@log		<< s + ":"
 	@summary	<< ": " + s
 end
@@ -569,7 +613,8 @@ def logResult result
 end
 
 def logFailure target
-	@failures << target + "\n"
+	@failLog << target + "\n"
+	@failures << target
 end
 
 
@@ -579,7 +624,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "--version"
-	puts "Syllable Build System 0.1.1",
+	puts "Syllable Build System 0.1.2",
 		"Copyright (c) 2002, 2003 Kaj de Vos",
 		"License: GPL 2"
 when "--help"
@@ -587,36 +632,45 @@ when "--help"
 		"<command>:",
 		"  --version",
 		"  --help",
-		"  prepare:   Initialize distribution tree",
-		"  get:       Fetch and patch sources",
+		"  prepare:       Initialize source and distribution trees",
+		"  get:           Fetch and patch sources",
+		"  patch:         Patch sources",
 		"  distclean",
 		"  clean",
 		"  configure",
 		"  make",
 		"  test",
-		"  install:   Run as super-user",
-		"  uninstall: Run as super-user",
+		"  install:       Run as super-user",
+		"  uninstall:     Run as super-user",
 		"  distro",
 		"  log",
 		"  summary",
 		"  failures",
-		"<package>:   Package subdirectory",
-		"<profile>:   Profile name"
+		"<package>:       Package subdirectory",
+		"<profile>:       Profile name",
+		"  last:          Last used profile",
+		"  last-failures: Profile for last failures"
 when "log"		then print IO.readlines(File.join(@logDir, "last-stdout"))
 when "summary"	then print IO.readlines(File.join(@logDir, "last-summary"))
 when "failures"	then print IO.readlines(File.join(@logDir, "last-failures"))
 else
-	target = arg2 ? arg2 : "default"
+	target = arg2 ? arg2 : arg1 ? arg1 : "default"
 
 	openLogs
+
+	save profile(target), File.join(@profilesDir, "last")
+
 	if @systemBuild
-#		File.delete "/ainc"
+#		File.delete "/ainc" if exists "/ainc"
 #		action "ln -s #{File.join @workDir, "sys/include"} /ainc"
+
+		prepare unless exists @distroRoot
 	end
 
 	case arg1
-	when "prepare"	then prepare target
+	when "prepare"	then prepare
 	when "get"		then get target
+	when "patch"		then patch target
 	when "distclean"	then distclean target
 	when "clean"		then clean target
 	when "configure"	then configure target
@@ -628,9 +682,12 @@ else
 	else build arg1 ? arg1 : "default"
 	end
 
+	save @failures, File.join(@profilesDir, "last-failures")
+
 	if @systemBuild
 #		File.delete "/ainc"
 #		action "ln -s /system/include /ainc"
 	end
+
 	closeLogs
 end
