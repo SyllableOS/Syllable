@@ -1,6 +1,6 @@
 /*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
- *  Copyright (C) 2003 Syllable Team
+ *  Copyright (C) 2003 - 2005 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -81,12 +81,9 @@ public:
     virtual Variant GetValue() const;
     
     const View* GetEditor() const;
-
-//    void   SetEnable( bool bEnabled = true );
-//    bool   IsEnabled() const;
-    
+   
     void  SetMultiLine( bool bMultiLine = true );
-    bool  GetMultiLine();
+    bool  GetMultiLine() const;
 
     void  SetPasswordMode( bool bPassword = true );
     bool  GetPasswordMode() const;
@@ -104,7 +101,7 @@ public:
     uint32 GetEventMask() const;
     void   SetEventMask( uint32 nMask );
     
-    void  GetRegion( String* pcBuffer );
+    void  GetRegion( String* pcBuffer ) const;
 
     void   SetMinPreferredSize( int nWidthChars, int nHeightChars );
     IPoint GetMinPreferredSize() const;
@@ -117,12 +114,10 @@ public:
     void Insert( const char* pzBuffer, bool bSendNotify = true );
     void Insert( const IPoint& cPos, const char* pzBuffer, bool bSendNotify = true );
 
-
-
     void	Select( const IPoint& cStart, const IPoint& cEnd, bool bSendNotify = true );
     void	SelectAll( bool bSendNotify = true );
     void	ClearSelection( bool bSendNotify = true );
-    bool	GetSelection( IPoint* pcStart = NULL, IPoint* pcEnd = NULL );
+    bool	GetSelection( IPoint* pcStart = NULL, IPoint* pcEnd = NULL ) const;
     void	SetCursor( int x, int y, bool bSelect = false, bool bSendNotify = true );
     void	SetCursor( const IPoint& cPos, bool bSelect = false, bool bSendNotify = true  );
     void	GetCursor( int* x, int* y ) const;
@@ -150,12 +145,17 @@ public:
     virtual void	FrameSized( const Point& cDelta );
     virtual void	Paint( const Rect& cUpdateRect );
 
+private:
     virtual void __TV_reserved1__();
     virtual void __TV_reserved2__();
     virtual void __TV_reserved3__();
     virtual void __TV_reserved4__();
-    
+    virtual void __TV_reserved5__();
+
 private:
+    TextView& operator=( const TextView& );
+    TextView( const TextView& );
+
     void	AdjustScrollbars( bool bDoScroll = true, float vDeltaX = 0.0f, float vDeltaY = 0.0f );
     friend class TextEdit;
     TextEdit* m_pcEditor;

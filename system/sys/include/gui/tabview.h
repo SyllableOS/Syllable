@@ -39,7 +39,7 @@ namespace os
 class TabView;
 
 class TabViewTab {
-	public:
+public:
 	TabViewTab( const String& cTitle, View* pcView = NULL );
 	virtual ~TabViewTab();
 	
@@ -54,7 +54,17 @@ class TabViewTab {
 	
 	virtual void Paint( View* pcView, const Rect& cBounds, int nIndex );
 
-	private:
+private:
+    virtual void	__TABT_reserved1__();
+    virtual void	__TABT_reserved2__();
+    virtual void	__TABT_reserved3__();
+    virtual void	__TABT_reserved4__();
+    virtual void	__TABT_reserved5__();
+
+private:
+    TabViewTab& operator=( const TabViewTab& );
+    TabViewTab( const TabViewTab& );
+
 	class Private;
 	Private* m;
 };
@@ -87,7 +97,7 @@ public:
     int			SetTabTitle( uint nIndex, const String& cTitle );
     const String&	GetTabTitle( uint nIndex ) const;
 
-    uint		GetSelection();
+    uint		GetSelection() const;
     void		SetSelection( uint nIndex, bool bNotify = true );
 
     virtual void	FrameSized( const Point& cDelta );
@@ -100,7 +110,18 @@ public:
     virtual void	Paint( const Rect& cUpdateRect );
     virtual void	AllAttached();
 
+
 private:
+    virtual void	__TABV_reserved1__();
+    virtual void	__TABV_reserved2__();
+    virtual void	__TABV_reserved3__();
+    virtual void	__TABV_reserved4__();
+    virtual void	__TABV_reserved5__();
+
+private:
+    TabView& operator=( const TabView& );
+    TabView( const TabView& );
+
 	class TopView : public View
 	{
 		public:

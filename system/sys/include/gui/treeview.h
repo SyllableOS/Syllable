@@ -1,5 +1,5 @@
 /*  TreeView
- *  Copyright (C) 2003 - 2004 Syllable Team
+ *  Copyright (C) 2003 - 2005 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -66,7 +66,11 @@ public:
 	
 	TreeView*			GetOwner() const;
 	bool				IsLastSibling() const;
-	
+
+private:
+    virtual void		__TVN_reserved1__();
+    virtual void		__TVN_reserved2__();
+
 protected:
 	// Rendering support functions
 	void				_DrawExpanderCross( View *pcView, const Rect& cRect );
@@ -82,6 +86,9 @@ protected:
 	void				_SetLastSibling( bool bIsLast );
 
 private:
+    TreeViewNode& operator=( const TreeViewNode& );
+    TreeViewNode( const TreeViewNode& );
+
 	class Private;
 	Private *m;
 };
@@ -122,6 +129,13 @@ public:
 	void				SetTextFlags( uint32 nTextFlags ) const;
 
 private:
+    virtual void		__TVS_reserved1__();
+    virtual void		__TVS_reserved2__();
+
+private:
+    TreeViewStringNode& operator=( const TreeViewStringNode& );
+    TreeViewStringNode( const TreeViewStringNode& );
+
 	class Private;
 	Private *m;
 };
@@ -184,6 +198,15 @@ public:
     virtual void	Paint( const Rect& cUpdateRect );
 
 private:
+    virtual void		__TVW_reserved1__();
+    virtual void		__TVW_reserved2__();
+    virtual void		__TVW_reserved3__();
+    virtual void		__TVW_reserved4__();
+    virtual void		__TVW_reserved5__();
+
+private:
+    TreeView& operator=( const TreeView& );
+    TreeView( const TreeView& );
 
 	// It would not be a good idea to add ListViewRows to our tree, so we'll disable these methods:
     void			InsertRow( int nPos, ListViewRow* pcRow, bool bUpdate = true );
