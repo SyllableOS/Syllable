@@ -52,6 +52,7 @@ public:
 		if (m_pcGrayIcon) delete m_pcGrayIcon;
 		if (m_pcHoverArrow) delete m_pcHoverArrow;
 		if (m_pcGrayArrow) delete m_pcGrayArrow;
+		if (m_pcMenu) delete m_pcMenu;
 	}
 	
 	Image* GetIcon()
@@ -385,13 +386,13 @@ void PopupMenu::Paint(const Rect& cRect)
 	if (GetIcon())
 	{
 		SetDrawingMode(DM_BLEND);
-		cImgPos = Point(0,cRect.Height()/2 - pcIcon->GetSize().y/2 + cRect.top );
+		cImgPos = Point(0,cBounds.Height()/2 - pcIcon->GetSize().y/2 + cBounds.top );
         pcIcon->Draw( cImgPos,this);
     }
     if (m->IsArrow())
     {
     	SetDrawingMode(DM_BLEND);
-    	cImgPos = Point(x+vStrWidth,cRect.Height()/2 - pcArrow->GetSize().y/2 + cRect.top );
+    	cImgPos = Point(x+vStrWidth,cBounds.Height()/2 - pcArrow->GetSize().y/2 + cBounds.top );
        	pcArrow->Draw( cImgPos,this);
     }
 } /*end Paint() */
