@@ -451,7 +451,7 @@ int get_drive_params( int nDrive, DriveParams_s* psParams )
 	/* Get drive size etc. */
 	int ret, controller = get_controller( nDrive );
 	ata_identify_info_t *info = NULL; 
-	char name[40];
+	char name[41];
 
 	/* Get the ID data direct from the drive */
 	if( !wait_for_status( controller, STATUS_BSY, 0 ) )
