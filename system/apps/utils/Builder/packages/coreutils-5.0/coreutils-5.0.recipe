@@ -1,5 +1,5 @@
 authors			Kaj de Vos
 patch-config	config
 documentation	README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS THANKS-to-translators
-; For S-Lang
-distro-files	/bin/ln
+; For JEd, S-Lang
+distro-files	/bin/cp /bin/ln
