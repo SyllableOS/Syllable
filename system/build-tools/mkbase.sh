@@ -176,7 +176,17 @@ cp objs/syllable2.img $ROOT/Packages/base/
 cp objs/syllable3.img $ROOT/Packages/base/
 
 echo "Copying installation scripts"
-cp scripts/install/* $ROOT/Install/
+cp -dpr scripts/install/* $ROOT/Install/
+
+NET=""
+
+echo -n "Enter the path to the Syllable-Net directory:"
+read NET
+
+if [ ! -e "$NET" ]; then
+	echo "$NET does not exist.  Stoping."
+	exit 1;
+fi;
 
 echo "Building ISO image"
 ./mkiso.sh $ROOT $VER

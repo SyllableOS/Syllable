@@ -1,0 +1,3 @@
+Syllable uses the AtheOS File System to store its data.  You must now format
+the partition that you wish to use for Syllable.
+

@@ -1,0 +1,9 @@
+This will add a menu entry titled BeOS that will boot the OS
+found on the fourth partition on the first disk.
+
+You can also set a timeout for when to boot the first OS in the list
+(or the default as set by the "default" command) with the "timeout"
+command:
+
+     timeout 5
+

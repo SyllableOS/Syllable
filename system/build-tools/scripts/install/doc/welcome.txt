@@ -1,0 +1,8 @@
+			   Syllable 0.4.4
+			   ==============
+
+Welcome to the Syllable 0.4.4 installation CD.  This script will
+take you through the installation process of configuring your
+computer, installing Syllable and any additional software packages
+that you require.
+

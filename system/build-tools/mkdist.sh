@@ -56,9 +56,6 @@ echo "Building floppy images"
 echo "Building CD image"
 ./mkbase.sh $BASE $TARBALL $VER
 
-echo "Building large CD image"
-./mkbase-large.sh $VER
-
 echo "Done!"
 exit 0
 

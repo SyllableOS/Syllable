@@ -1,0 +1,19 @@
+This will tell GRUB to boot partition number 2 on the first drive
+through the "root (hd0,1)" command and where to find the kernel, the
+boot block-device driver and the boot-FS driver on that partition. The
+"root=/dev/disk/bios/hda/1" string after the kernel-path is a parameter
+that is passed to the kernel and tells what partition to mount as
+/boot/ before continue to boot. The kernel can also take a number of
+other parameters (listed below) that are given in the same manner after
+the "root" param.
+
+If you install Syllable on the second partition on the first drive the
+default config-file is ok. otherwise you must edit the "root (disk,partition)
+line to fit your setup. If you want to boot other OS's with GRUB you
+must add them to the config file as well. For example to boot BeOS, or
+Windows, or most other OS's that have a bootblock you can use the
+"chainloader" command like this:
+
+     title BeOS
+     chainloader (hd0,3)+1
+
