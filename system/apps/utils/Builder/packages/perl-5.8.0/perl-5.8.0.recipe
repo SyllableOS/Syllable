@@ -34,5 +34,6 @@ documentation		README README.Y2K INSTALL Artistic Copying AUTHORS
 ;	Too huge:
 ;	Changes
 links
+	bin/perl bin/perl5.8.0
 	bin/perl /usr/bin/perl
 ;	bin/perl /usr/local/bin/perl
