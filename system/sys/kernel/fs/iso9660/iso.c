@@ -12,10 +12,9 @@
 **
 */
 
-
+#include "SUSP.h"
 #include "rock.h"
 #include "iso.h"
-
 
 #include <atheos/bcache.h>
 #include <atheos/device.h>
@@ -28,15 +27,10 @@
 #define ISO_PVD_SIZE 882
 
 // ISO9660 should start with this string
-const char* 	kISO9660IDString = "CD001";
+const char* 		kISO9660IDString = "CD001";
 // We don't handle the following formats
 const char*		kHighSierraIDString = "CDROM";
 const char*		kCompactDiscInteractiveIDString = "CD-I";
-
-#if 0
-static int   	GetLogicalBlockSize(int fd);
-static off_t 	GetNumDeviceBlocks(int fd, int block_size);
-#endif
 
 static int   	GetDeviceBlockSize(int fd);
 
@@ -50,69 +44,6 @@ static int		InitVolDesc(nspace* vol, char* buf);
 static status_t unicode_to_utf8(const char        *src, int32     *srcLen, char *dst, int32 *dstLen); 
 #endif
 
-#if 0 // currently unused
-static int
-GetLogicalBlockSize(int fd)
-{
-// grepping trough the source, can't find where this would be used.
-
-    partition_info  p_info;
-
-	dprintf( "GetLogicalBlockSize - ENTER \n" );
-    if (ioctl(fd, B_GET_PARTITION_INFO, &p_info) == B_NO_ERROR)
-    {
-    	dprintf("GetLogicalBlockSize: ioctl succeed\n");
-		return p_info.logical_block_size;
-	}
-    else 
-    dprintf("GetLogicalBlockSize = ioctl returned error\n")
-
-	
-	dprintf( "GetLogicalBlockSize - EXIT - NOT IMPLEMENTED\n" );
-	return 0;
-}
-
-static int
-GetDeviceBlockSize(int fd)
-{
-    struct stat     st;
-    device_geometry dg;
-	
-	dprintf( "GetDeviceBlockSize - ENTER\n" );
-    if (ioctl(fd, IOCTL_GET_DEVICE_GEOMETRY, &dg) < 0) 
-    {
-		if (fstat(fd, &st) < 0 || S_ISDIR(st.st_mode) )
-	    	return 0;
-		return 512;   // just assume it's a plain old file or something
-    }
-    dprintf( "GetDeviceBlockSize - block size: %d\n", dg.bytes_per_sector );
-    dprintf( "GetDeviceBlockSize - EXIT\n" );
-    return dg.bytes_per_sector;
-}
-#endif
-
-#if 0 
-// This is the old version...
-static off_t
-GetNumDeviceBlocks(int fd, int block_size)
-{
-    struct stat			st;
-    device_geometry		dg;
-
-    if (ioctl(fd, IOCTL_GET_DEVICE_GEOMETRY, &dg) > 0) 
-    {
-		return (off_t)dg.cylinder_count *
-	       (off_t)dg.sectors_per_track *
-	       (off_t)dg.head_count;
-    }
-
-    /* if the ioctl fails, try just stat'ing in case it's a regular file */
-    if (fstat(fd, &st) < 0)
-	return 0;
-
-    return st.st_size / block_size;
-}
-#endif
 
 
 static int 
@@ -121,7 +52,7 @@ GetDeviceBlockSize(int fd)
 	struct stat     st; 
 	device_geometry dg; 
 
-	dprintf( "GetDeviceBlockSize( int fd = %d )\n", fd );
+	kerndbg( KERN_DEBUG_LOW, "GetDeviceBlockSize( int fd = %d )\n", fd );
 	if ( ioctl(fd, IOCTL_GET_DEVICE_GEOMETRY, &dg) != -EOK )  
 	{ 
 		if (fstat(fd, &st) < 0 || S_ISDIR(st.st_mode)) 
@@ -209,14 +140,13 @@ ISOMount(const char *path, const int flags, nspace** newVol)
 	nspace*		vol = NULL;
 	int 		result = -EOK;
 	
-	dprintf("ISOMount - ENTER\n");
+	kerndbg( KERN_DEBUG, "ISOMount - ENTER\n");
 	
 	vol = (nspace*)calloc(sizeof(nspace), 1);
 	if (vol == NULL)
 	{
-		/// error.
 		result = -ENOMEM;
-		dprintf("ISOMount - mem error \n");
+		kerndbg( KERN_WARNING, "ISOMount - mem error \n" );
 	}
 	else
 	{		
@@ -230,8 +160,7 @@ ISOMount(const char *path, const int flags, nspace** newVol)
 			deviceBlockSize = GetDeviceBlockSize(vol->fd);
 			if (deviceBlockSize == 0) 
 			{
-				// Error
-				dprintf("ISO9660 ERROR - device block size is 0\n");
+				kerndbg( KERN_WARNING, "ISO9660 ERROR - device block size is 0\n");
 				if (vol->fd >= 0) close(vol->fd);
 				result = -EINVAL;
 				free(vol);
@@ -243,7 +172,7 @@ ISOMount(const char *path, const int flags, nspace** newVol)
 //				uint32	sizeInSectors = 0;
 				// ecma:"The System Area shall occupy the Logical... Sector Numbers 0-15"
 				// It seems that the standard allows the logical sector size to vary (>2048),
-				// bu does it ever?
+				// but does it ever?
 				
 				//off_t dataAreaOffset = 16 * deviceBlockSize;
 				uint8 volumeDescriptorType = 0;
@@ -251,83 +180,84 @@ ISOMount(const char *path, const int flags, nspace** newVol)
 				
 				read_pos (vol->fd, 0x8000, (void*)buf, ISO_PVD_SIZE);
 				
-				dprintf("deviceBlockSize = %d\n", deviceBlockSize );
-				dprintf("0x8000 = %d\n", 0x8000 );
-				//dprintf("ISOMount - Data Area starts at %Ld: %d\n", dataAreaOffset, (uint8)*buf );
+				kerndbg( KERN_DEBUG_LOW, "deviceBlockSize = %d\n", deviceBlockSize );
+				//kerndbg( KERN_DEBUG_LOW, "ISOMount - Data Area starts at %Ld: %d\n", dataAreaOffset, (uint8)*buf );
 				
 				// Check which kind of a volume descriptor we have:
 				
 				volumeDescriptorType = (uint8)(*buf);
-				dprintf( "ISOMount - The volume descriptor is of type: \n" );
+				kerndbg( KERN_DEBUG_LOW, "ISOMount - The volume descriptor is of type: \n" );
 				switch ( volumeDescriptorType )
 				{
 					case 0:
-						dprintf( "Boot Record\n" );
+						kerndbg( KERN_DEBUG_LOW, "Boot Record\n" );
 						break;
 					case 1:
-						dprintf( "Primary Volume Descriptor\n" );
+						kerndbg( KERN_DEBUG_LOW, "Primary Volume Descriptor\n" );
 						break;
 					case 2:
-						dprintf( "Supplementary Volume Descriptor\n" );
+						kerndbg( KERN_DEBUG_LOW, "Supplementary Volume Descriptor\n" );
 						break;
 					case 3:
-						dprintf( "Volume Partition Descriptor\n" );
+						kerndbg( KERN_DEBUG_LOW, "Volume Partition Descriptor\n" );
 						break;
 					case 255:
-						dprintf( "Volume Descriptor Set Terminator\n" );
+						kerndbg( KERN_DEBUG_LOW, "Volume Descriptor Set Terminator\n" );
 						break;
 					default:
-						if ( volumeDescriptorType >=4 && volumeDescriptorType <=254 )
-							dprintf( " %d, reserved for future standardization\n", volumeDescriptorType );
-						else
-							dprintf( "error\n" );	
+						kerndbg( KERN_DEBUG_LOW, " %d, reserved for future standardization\n", volumeDescriptorType );	
 				}
 					
 				memcpy( standardIdentifier, buf+1, 5 );
 				standardIdentifier[5] = '\0';
-				dprintf( "\nStandard Identifier: %s\n", standardIdentifier );
+				kerndbg( KERN_DEBUG_LOW, "\nStandard Identifier: %s\n", standardIdentifier );
 				
 				// if it is an ISO volume, initialize the volume descriptor
 				if (!strncmp(buf+1, kISO9660IDString, 5))
 				{
-					dprintf("ISOMount: Is an ISO9660 volume, initting rec\n");
+					kerndbg( KERN_DEBUG_LOW, "ISOMount: Is an ISO9660 volume, initting rec\n" );
 					InitVolDesc( vol, buf );
 					strncpy(vol->devicePath,path,127);
 					vol->id = vol->rootDirRec.id;
-					dprintf("ISO9660: vol->blockSize = %d\n",vol->logicalBlkSize[FS_DATA_FORMAT]); 
+					kerndbg( KERN_DEBUG_LOW,"ISO9660: vol->blockSize = %d\n",vol->logicalBlkSize[FS_DATA_FORMAT]); 
 					multiplier = deviceBlockSize / vol->logicalBlkSize[FS_DATA_FORMAT];
-					dprintf("ISOMount: block size multiplier is %d\n", multiplier);
+					kerndbg( KERN_DEBUG_LOW, "ISOMount: block size multiplier is %d\n", multiplier );
 				}
 				else
 				{
 					// It isn't an ISO disk.
-					dprintf( "ISOMount - tried to mount a cd of type:\n" );
+					kerndbg( KERN_DEBUG_LOW, "ISOMount - tried to mount a cd of type:\n" );
 					if ( !strncmp(buf+1, kCompactDiscInteractiveIDString, 3) )
-						dprintf( "Compact Disc Interactive\n" );
-					else 
-						if ( !strncmp( buf+1, kHighSierraIDString, 5 ) )
-							dprintf( "High Sierra" );
-						else
-						 	dprintf( "UNKNOWN type\n" );
-						 	
+					{
+						kerndbg( KERN_DEBUG_LOW, "Compact Disc Interactive\n" );
+					}
+					else if ( !strncmp( buf+1, kHighSierraIDString, 5 ) )
+					{
+						kerndbg( KERN_DEBUG_LOW, "High Sierra\n" );
+					}
+					else
+					{
+						kerndbg( KERN_DEBUG_LOW, "UNKNOWN type\n" );
+					}
+					
 					if (vol->fd >= 0) close(vol->fd);
 					free(vol);
 					vol = NULL;
 					result = -EINVAL;
-					dprintf("ISOMount: Not an ISO9660 volume!\n");
+					kerndbg( KERN_DEBUG, "ISOMount: Not an ISO9660 volume!\n" );
 				}
 			}
 		}
 		else
 		{
-			dprintf("ISO9660 ERROR - Unable to open <%s>\n", path);
+			kerndbg( KERN_WARNING, "ISO9660 ERROR - Unable to open <%s>\n", path);
 			free(vol);
 			vol = NULL;
 			result = -EINVAL;
 		}
 	}
 	
-	dprintf("ISOMount - EXIT, result %d, returning %p\n", result/*strerror(result)*/, vol);
+	kerndbg( KERN_DEBUG_LOW, "ISOMount - EXIT (%d)\n", result );
 	*newVol = vol;
 	return result;
 }
@@ -355,16 +285,16 @@ ISOReadDirEnt(nspace* volume, dircookie* cookie, struct kernel_dirent* buf, size
 	int 			bytesRead = 0;
 	bool			blockOut = false;
 
-	dprintf("ISOReadDirEnt - ENTER\n");
+	kerndbg( KERN_DEBUG, "ISOReadDirEnt - ENTER\n" );
 	
 	totalRead = cookie->pos + ( (cookie->block - cookie->startBlock) *
 				volume->logicalBlkSize[FS_DATA_FORMAT] );
 	
-	dprintf("ISOReadDirEnt - total read set to %Ld", totalRead );
+	kerndbg( KERN_DEBUG_LOW, "ISOReadDirEnt - total read set to %Ld", totalRead );
 	// If we're at the end of the data in a block, move to the next block.	
 	while (1)
 	{
-		dprintf( "ISOReadDirEnt - read a block\n" );
+		//kerndbg( KERN_DEBUG_LOW, "ISOReadDirEnt - read a block\n" );
 		blockData = (char*)get_cache_block(volume->fd, cookie->block,
 							volume->logicalBlkSize[FS_DATA_FORMAT]);
 		blockOut = true;
@@ -372,7 +302,7 @@ ISOReadDirEnt(nspace* volume, dircookie* cookie, struct kernel_dirent* buf, size
 		if (blockData != NULL && *(blockData + cookie->pos) == 0)
 		{
 			//NULL data, move to next block.
-			dprintf("ISOReadDirEnt - at the end of a block");
+			//kerndbg( KERN_DEBUG_LOW, "ISOReadDirEnt - at the end of a block");
 			release_cache_block(volume->fd, cookie->block);
 			blockOut = false;
 			totalRead += volume->logicalBlkSize[FS_DATA_FORMAT] - cookie->pos;
@@ -400,18 +330,17 @@ ISOReadDirEnt(nspace* volume, dircookie* cookie, struct kernel_dirent* buf, size
 			int nameBufSize = (bufsize - (2 * sizeof(dev_t) + 2* sizeof(ino_t) +
 					sizeof(unsigned short)));
 
-			// 0x3FFFFFFF was 0xFFFFFFFF
 			buf->d_ino = (cookie->block << 30) + (cookie->pos & 0x3FFFFFFF);
 			buf->d_namlen = node.fileIDLen;
 			if (node.fileIDLen <= nameBufSize)
 			{
 				// need to do some size checking here.
 				strncpy(buf->d_name, node.fileIDString, node.fileIDLen +1);
-				dprintf("ISOReadDirEnt  - success, name is %s\n", buf->d_name);
+				kerndbg( KERN_DEBUG_LOW, "ISOReadDirEnt  - success, name is %s\n", buf->d_name );
 			}
 			else
 			{
-				dprintf("ISOReadDirEnt - ERROR, name %s does not fit in buffer of size %d\n", node.fileIDString, nameBufSize);
+				kerndbg( KERN_WARNING, "ISOReadDirEnt - ERROR, name %s does not fit in buffer of size %d\n", node.fileIDString, nameBufSize);
 				result = -EINVAL;
 			}
 			cookie->pos += bytesRead;
@@ -429,7 +358,7 @@ ISOReadDirEnt(nspace* volume, dircookie* cookie, struct kernel_dirent* buf, size
 	if ( blockOut )
 		release_cache_block(volume->fd, cacheBlock);
 	
-	dprintf("ISOReadDirEnt - EXIT, result is %d, vnid is %Lu\n", result,buf->d_ino);
+	kerndbg( KERN_DEBUG, "ISOReadDirEnt - EXIT (%d), vnid is %Lu\n", result,buf->d_ino );
 	return result;
 }
 
@@ -442,7 +371,7 @@ InitVolDesc(nspace* _vol, char* buf)
 //	char * fileName;
 	vnode * node;
 	
-	dprintf("InitVolDesc - ENTER\n");
+	kerndbg( KERN_DEBUG, "InitVolDesc - ENTER\n");
 
 	
 	vol->volDescType = *(uint8*)buf++;
@@ -457,12 +386,12 @@ InitVolDesc(nspace* _vol, char* buf)
 	vol->systemIDString[32] = '\0';
 	strncpy(vol->systemIDString, buf, 32);
 	buf += 32;
-	dprintf("InitVolDesc - system id string is %s\n", vol->systemIDString);
+	kerndbg( KERN_DEBUG_LOW, "InitVolDesc - system id string is %s\n", vol->systemIDString);
 	
 	vol->volIDString[32] = '\0';
 	strncpy(vol->volIDString, buf, 32);
 	buf += (32 + 80-73 + 1);	// bytes 80-73 unused
-	dprintf("InitVolDesc - volume id string is %s\n", vol->volIDString);
+	kerndbg( KERN_DEBUG_LOW, "InitVolDesc - volume id string is %s\n", vol->volIDString);
 	
 	vol->volSpaceSize[LSB_DATA] = *(uint32*)buf;
 	buf += 4;
@@ -509,66 +438,54 @@ InitVolDesc(nspace* _vol, char* buf)
 	vol->optMPathTblLoc[MSB_DATA] = *(uint16*)buf;
 	buf += 2;
 	
-	dprintf( "Filling in the directory record...\n" );
-	// Fill in directory record.
+	// Read the volume root node
 	node = &(vol->rootDirRec);
 	node->fileIDString = calloc( ISO_MAX_FILENAME_LENGTH, 1 );
 	node->attr.slName = calloc( ISO_MAX_FILENAME_LENGTH, 1);
 	InitNode(_vol,&(vol->rootDirRec), buf, NULL);
 
-#if 0
-	{
-		ino_t foo;
-		foo = BLOCK_TO_INO( vol->rootDirRec.startLBN[FS_DATA_FORMAT], 0 );
-
-		dprintf("(grep) Root directory LBN is %ld\n", vol->rootDirRec.startLBN[FS_DATA_FORMAT] );
-		dprintf("(grep) Root directory vnid is %Ld\n", foo );
-	}
-#endif
 	// error checking...FIXME!!!
 
-	//vol->rootDirRec.id = ISO_ROOTNODE_ID;
 	vol->rootDirRec.id = BLOCK_TO_INO( vol->rootDirRec.startLBN[FS_DATA_FORMAT], 0 );
-	//vol->rootDirRec.id = BLOCK_TO_INO( 910, 102 );
 	vol->rootBlock = vol->rootDirRec.startLBN[FS_DATA_FORMAT];
 
-	//vol->rootDirRec.parID = ISO_ROOTNODE_ID;// Not sure about this ??? FIXME!!!
+	//vol->rootDirRec.parID = ???
 	buf += 34;
 	
 	vol->volSetIDString[128] = '\0';
 	strncpy(vol->volSetIDString, buf, 128);
 	buf += 128;
-	dprintf("InitVolDesc - volume set id string is %s\n", vol->volSetIDString);
+	kerndbg( KERN_DEBUG_LOW, "InitVolDesc - volume set id string is %s\n", vol->volSetIDString);
 	
 	vol->pubIDString[128] = '\0';
 	strncpy(vol->pubIDString, buf, 128);
 	buf +=128;
-	dprintf("InitVolDesc - volume publisher id string is %s\n", vol->pubIDString);
+	kerndbg( KERN_DEBUG_LOW, "InitVolDesc - volume publisher id string is %s\n", vol->pubIDString);
 	
 	vol->dataPreparer[128] = '\0';
 	strncpy(vol->dataPreparer, buf, 128);
 	buf += 128;
-	dprintf("InitVolDesc - volume dataPreparer string is %s\n", vol->dataPreparer);
+	kerndbg( KERN_DEBUG_LOW, "InitVolDesc - volume dataPreparer string is %s\n", vol->dataPreparer);
 	
 	vol->appIDString[128] = '\0';
 	strncpy(vol->appIDString, buf, 128);
 	buf += 128;
-	dprintf("InitVolDesc - volume application id string is %s\n", vol->appIDString);
+	kerndbg( KERN_DEBUG_LOW, "InitVolDesc - volume application id string is %s\n", vol->appIDString);
 	
 	vol->copyright[38] = '\0';
 	strncpy(vol->copyright, buf, 38);
 	buf += 38;
-	dprintf("InitVolDesc - copyright is %s\n", vol->copyright);
+	kerndbg( KERN_DEBUG_LOW, "InitVolDesc - copyright is %s\n", vol->copyright);
 	
 	vol->abstractFName[38] = '\0';
 	strncpy(vol->abstractFName, buf, 38);
 	buf += 38;
-	dprintf("InitVolDesc - abstract file id string is %s\n", vol->abstractFName );
+	kerndbg( KERN_DEBUG_LOW, "InitVolDesc - abstract file id string is %s\n", vol->abstractFName );
 	
 	vol->biblioFName[38] = '\0';
 	strncpy(vol->biblioFName, buf, 38);
 	buf += 38;
-	dprintf("InitVolDesc - bibliographic file identifier: %s\n", vol->biblioFName );
+	kerndbg( KERN_DEBUG_LOW, "InitVolDesc - bibliographic file identifier: %s\n", vol->biblioFName );
 	
 	InitVolDate(&(vol->createDate), buf);
 	buf += 17;
@@ -586,266 +503,6 @@ InitVolDesc(nspace* _vol, char* buf)
 	return 0;
 }
 
-// ReadRockRige tries to read a rock ridge extension fron the provided buffer.
-// If it succeeds it returns the number of bytes read, otherwise a negative error code
-// 
-int
-ReadRockRidge( char * buffer, RRAttr * attributes )
-{
-	char	alternativeName[ISO_MAX_FILENAME_LENGTH];
-	char	slName[ISO_MAX_FILENAME_LENGTH]; 
- 	uint16	alternativeNameSize = 0; 
-	uint16	slNameSize = 0; 
-	uint8	slFlags = 0;
-	uint8	length = 0;
-	int		result = 0;
-	bool 	done = false;
-	
-	kerndbg( KERN_DEBUG, "ReadRockRidge - ENTER\n" );
-	kerndbg( KERN_DEBUG_LOW, " Buffer starts at %p\n", buffer );
-	
-	while (!done)
-	{
-		buffer+= length;
-		length = *(uint8*)(buffer + 2);
-		switch ( 0x100 * buffer[0] + buffer[1] )
-		{
-			// Posix attributes
-			case 'PX':
-			{
-				uint8 bytePos = 3;
-				kerndbg( KERN_DEBUG_LOW, "RR: found PX, length %u\n", length);
-				attributes->pxVer = *(uint8*)( buffer+bytePos++ );
-				
-				// st_mode
-				attributes->stat[LSB_DATA].st_mode = *(mode_t*)(buffer + bytePos);
-				bytePos += 4;
-				attributes->stat[MSB_DATA].st_mode = *(mode_t*)(buffer + bytePos);
-				bytePos += 4;
-				
-				// st_nlink
-				attributes->stat[LSB_DATA].st_nlink = *(nlink_t*)(buffer+bytePos);
-				bytePos += 4;
-				attributes->stat[MSB_DATA].st_nlink = *(nlink_t*)(buffer + bytePos);
-				bytePos += 4;
-				
-				// st_uid
-				attributes->stat[LSB_DATA].st_uid = *(uid_t*)(buffer + bytePos);
-				bytePos += 4;
-				attributes->stat[MSB_DATA].st_uid = *(uid_t*)(buffer+bytePos);
-				bytePos += 4;
-				
-				// st_gid
-				attributes->stat[LSB_DATA].st_gid = *(gid_t*)(buffer+bytePos);
-				bytePos += 4;
-				attributes->stat[MSB_DATA].st_gid = *(gid_t*)(buffer+bytePos);
-				bytePos += 4;
-			}	
-			break;
-			
-			// ???
-			case 'PN':
-				kerndbg( KERN_DEBUG_LOW, "RR: found PN, length %u\n", length);
-			break;
-			
-			// Symbolic link info
-			case 'SL':
-			{
-				uint8	bytePos = 3;
-				uint8	lastCompFlag = 0;
-				uint8	addPos = 0;
-				bool	slDone = false;
-				bool	useSeparator = true;
-				
-				kerndbg( KERN_DEBUG_LOW, "RockRidge: found SL, length %u\n", length);
-				kerndbg( KERN_DEBUG_LOW, "Buffer is at %p\n", buffer );
-				kerndbg( KERN_DEBUG_LOW, "Current length is %u\n", slNameSize);
-
-				attributes->slVer = *(uint8*)(buffer + bytePos++);
-				slFlags = *(uint8*)(buffer + bytePos++);
-				
-				kerndbg( KERN_DEBUG_LOW, "sl flags are %u\n", slFlags );
-				
-				
-				while (!slDone && bytePos < length)
-				{
-					// The extension is saved as components, each having an identifying flag
-					// and length
-					uint8 compFlag = *(uint8*)(buffer + bytePos++);
-					uint8 compLen = *(uint8*)(buffer + bytePos++);
-					
-					//if ( slName == NULL ) useSeparator = false; this worked when memory was located dynamically
-					// make sure that we don't make everything relative to /
-					if ( slNameSize == 0 ) useSeparator = false;
-					
-					// addPos is relative to the tail of the symbolic link name
-					addPos = slNameSize;
-					
-					kerndbg( KERN_DEBUG_LOW, "RockRidge: addPos= %d\n", addPos );
-					
-					dprintf("sl comp flags are %u, length is %u\n", compFlag, compLen);
-					kerndbg( KERN_DEBUG_LOW, "Current name size is %u\n", slNameSize);
-					switch (compFlag)
-					{
-						case SLCP_CONTINUE:
-							kerndbg( KERN_DEBUG_LOW, "SLCP_CONTINUE\n" );
-							useSeparator = false;
-						default:
-							// Add the component to the total path.
-							kerndbg( KERN_DEBUG_LOW, "default\n" );
-							slNameSize += compLen;
-						
-							//if ( useSeparator && addPos != 0 )
-							//	slNameSize++;
-						
-							// the separator is added here only after a directory/file name
-							
-							if ( useSeparator )
-							{							// KV: Don't add the seperator to the begining
-								kerndbg( KERN_DEBUG_LOW, "Adding separator\n");	// of a link, as this incorrectly forces all symlinks
-								slName[addPos++] = '/';		// to become relative to /, which is certainly not
-								slNameSize++;				// --- now handled in the beginning of  the while loop
-							}							
-								
-							useSeparator = true;
-							
-							
-							kerndbg( KERN_DEBUG_LOW, "doing memcopy of %u bytes at offset %d\n", compLen, addPos );
-							memcpy((slName + addPos), (buffer + bytePos), compLen);
-							
-							addPos += compLen;
-							
-						break;
-						
-						case SLCP_CURRENT:
-							kerndbg( KERN_DEBUG_LOW, "RockRidge - found link to current directory\n");
-							slNameSize += 2;
-							memcpy(slName + addPos, "./", 2);
-							useSeparator = false;
-						break;
-						
-						case SLCP_PARENT:
-							kerndbg( KERN_DEBUG_LOW, "RockRidge - found link to parent\n");
-							slNameSize += 3;
-							memcpy(slName + addPos, "../", 3);
-							useSeparator = false;
-						break;
-						
-						case SLCP_ROOT:
-							kerndbg( KERN_DEBUG_LOW, "RockRidge -  found link to root directory\n");
-							slNameSize += 1;
-							memcpy(slName + addPos, "/", 1);
-							useSeparator = false;
-						break;
-						
-						case SLCP_VOLROOT:
-							kerndbg( KERN_DEBUG_LOW, "RockRidge - SLCP_VOLROOT\n" );
-							slDone = true;
-						break;
-						
-						case SLCP_HOST:
-							kerndbg( KERN_DEBUG_LOW, "RockRidge - SLCP_HOST\n" );
-							slDone = true;
-						break;
-					}
-					slName[slNameSize] = '\0';
-					lastCompFlag = compFlag;
-					bytePos += compLen;
-			
-				}
-			}
-			
-			// copy the name to the node structure
-			strncpy( attributes->slName, slName, slNameSize );
-			kerndbg( KERN_DEBUG_LOW, "RockRidge - symlink name is \'%s\', length:%d\n", slName, slNameSize);
-			
-			break;
-			// Alternative name
-			case 'NM':
-			{
-				kerndbg( KERN_DEBUG, "ReadRockRidge - Alternative name NOT IMPLEMENTED!!!\n" );
-				/*
-				uint8	bytePos = 3;
-				uint8	flags = 0;
-				uint16	oldEnd = altNameSize;
-				
-				
-				altNameSize += length - 5;
-				dprintf("RR: found NM, length %u\n", length);
-				// Read flag and version.
-				attributes->nmVer = *(uint8*)(buffer + bytePos++);
-				flags = *(uint8*)(buffer + bytePos++);
-			
-				dprintf("RR: nm buf is %s, start at %p\n", (buf + bytePos), buf+bytePos);
-
-				// Build the file name.
-				memcpy(altName + oldEnd, buffer + bytePos, length - 5);
-				altName[altNameSize] = '\0';
-				kerndbg( KERN_DEBUG_LOW, "RR: alternative name is %s\n", altName);
-				
-				// If the name is not continued in another record, update
-				// the record name.
-				if (! (flags & NM_CONTINUE))
-				{
-					// Get rid of the ISO name, replace with RR name.
-//									if (rec->fileIDString != NULL) free(rec->fileIDString);
-					memcpy( attribute->altName, altName, ISO_MAX_FILENAME_LENGTH );
-					attributes->altNameSize = altNameSize;
-				}
-				*/
-			}
-			break;
-			
-			// Deep directory record masquerading as a file.
-			case 'CL':
-			
-				kerndbg( KERN_DEBUG_LOW, "RR: found CL, length %u\n", length);
-				kerndbg( KERN_DEBUG, "ReadRockRidge - CL NOT IMPLEMENTED\n" );
-				
-				/*
-				rec->flags |= ISO_ISDIR;
-				rec->startLBN[LSB_DATA] = *(uint32*)(buf+4);
-				rec->startLBN[MSB_DATA] = *(uint32*)(buf+8);
-				*/
-				break;
-			
-			case 'PL':
-				dprintf("RR: found PL, length %u\n", length);
-				kerndbg( KERN_DEBUG, "ReadRockRidge - PL NOT IMPLEMENTED!\n" );
-				break;
-			
-			// Relocated directory, we should skip.
-			case 'RE':
-				result = -EINVAL;
-				kerndbg( KERN_DEBUG, "ReadRockRidge - RE (Relocated Directory) NOT IMPLEMENTED!\n" );
-				dprintf("RR: found RE, length %u\n", length);
-				break;
-			
-			case 'TF':
-				kerndbg( KERN_DEBUG, "ReadRockRidge - TF NOT IMPLEMENTED!\n" );
-				dprintf("RR: found TF, length %u\n", length);
-				break;
-			
-			case 'RR':
-				dprintf("RR: found RR, length %u\n", length);
-				break;
-			
-			default:
-				kerndbg( KERN_DEBUG_LOW, "RockRidge: End of extensions.\n");
-				done = true;
-				break;
-		} // switch ( extension component )
-	} // while ( !done )
-	
-	if ( result == -EOK )
-		result = length;
-	
-	kerndbg( KERN_DEBUG, "ReadRockRidge - EXIT ( %d )\n", result );
-	
-	return result;
-}
-
-
 
 
 int
@@ -858,7 +515,7 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 	if (bytesRead != NULL) 
 		*bytesRead = recLen;
 
-	dprintf("InitNode - ENTER, bufstart is %p, record length is %d bytes\n", buf, recLen);
+	kerndbg( KERN_DEBUG, "InitNode - ENTER\n" );
 
 	if (recLen > 0)
 	{
@@ -868,36 +525,36 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 		buf += 4;
 		rec->startLBN[MSB_DATA] = *(uint32*)(buf);
 		buf += 4;
-		dprintf("InitNode - data start LBN is %ld\n", rec->startLBN[FS_DATA_FORMAT]);
+		kerndbg( KERN_DEBUG_LOW, "InitNode - data start LBN is %ld\n", rec->startLBN[FS_DATA_FORMAT]);
 		
 		rec->dataLen[LSB_DATA] = *(uint32*)(buf);
 		buf += 4;
 		rec->dataLen[MSB_DATA] = *(uint32*)(buf);
 		buf += 4;
-		dprintf("InitNode - data length is %ld\n", rec->dataLen[FS_DATA_FORMAT]);
+		kerndbg( KERN_DEBUG_LOW, "InitNode - data length is %ld\n", rec->dataLen[FS_DATA_FORMAT]);
 		
 		InitRecDate(&(rec->recordDate), buf);
 		buf += 7;
 		
 		rec->flags = *(uint8*) (buf );
 		buf++;
-		dprintf("InitNode - flags are %d\n", rec->flags);
+		kerndbg( KERN_DEBUG_LOW, "InitNode - flags are %d\n", rec->flags);
 		
 		rec->fileUnitSize = *(uint8*)(buf);
 		buf++;
-		dprintf("InitNode - fileUnitSize is %d\n", rec->fileUnitSize);
+		kerndbg( KERN_DEBUG_LOW, "InitNode - fileUnitSize is %d\n", rec->fileUnitSize);
 		
 		rec->interleaveGapSize = *(uint8*)(buf);
 		buf ++;
-		dprintf("InitNode - interleave gap size = %d\n", rec->interleaveGapSize);
+		kerndbg( KERN_DEBUG_LOW, "InitNode - interleave gap size = %d\n", rec->interleaveGapSize);
 
 		rec->volSeqNum = *(uint32*)(buf);
 		buf += 4;
-		dprintf("InitNode - volume seq num is %ld\n", rec->volSeqNum);
+		kerndbg( KERN_DEBUG_LOW, "InitNode - volume seq num is %ld\n", rec->volSeqNum);
 			
 		rec->fileIDLen = *(uint8*)(buf);
 		buf ++;
-		dprintf("InitNode - file id length is %d\n", rec->fileIDLen);
+		kerndbg( KERN_DEBUG_LOW, "InitNode - file id length is %d\n", rec->fileIDLen);
 		
 		if (rec->fileIDLen > 0)
 		{
@@ -905,7 +562,7 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 			// these in iso.
 			if (buf[0] == 0)
 			{
-				dprintf( "InitNode - dir: . \n" );
+				kerndbg( KERN_DEBUG_LOW, "InitNode - dir: . \n" );
 				strncpy( rec->fileIDString , ".", 2 );
 				rec->fileIDLen = 1;
 				rec->fileIDString[rec->fileIDLen] = '\0';
@@ -913,7 +570,7 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 			}
 			else if (buf[0] == 1)
 			{
-				dprintf( "InitNode - dir: .. \n" );
+				kerndbg( KERN_DEBUG_LOW, "InitNode - dir: .. \n" );
 
 				strncpy( rec->fileIDString , "..", 3 );
 				rec->fileIDLen = 2;
@@ -922,9 +579,9 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 			else
 			{	
 
-					memset( rec->fileIDString, '\0', ISO_MAX_FILENAME_LENGTH );
-					strncpy(rec->fileIDString, buf, rec->fileIDLen );
-					rec->fileIDString[rec->fileIDLen] = '\0';
+				memset( rec->fileIDString, '\0', ISO_MAX_FILENAME_LENGTH );
+				strncpy(rec->fileIDString, buf, rec->fileIDLen );
+				rec->fileIDString[rec->fileIDLen] = '\0';
 
 			}
 			
@@ -937,22 +594,21 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 				}
 			
 			}
-			dprintf("DirRec ID String is: %s\n", rec->fileIDString);
-			dprintf("DirRec ID String length is: %d\n", rec->fileIDLen );
+			kerndbg( KERN_DEBUG_LOW, "DirRec ID String is: %s\n", rec->fileIDString);
+			kerndbg( KERN_DEBUG_LOW, "DirRec ID String length is: %d\n", rec->fileIDLen );
 
 
 			memset(&(rec->attr.stat), 0, 2*sizeof(struct stat));			
 			// Set defaults, in case there is no RR stuff.
 			rec->attr.stat[FS_DATA_FORMAT].st_mode = (S_IRUSR | S_IRGRP | S_IROTH);
 
-			dprintf( "checking if we support rock ridge\n" );
 			if ( volume->rockRidge == false )
 			{
-				dprintf( "ROCK RIDGE extensions DISABLED\n" );
+				kerndbg( KERN_DEBUG_LOW, "ROCK RIDGE extensions DISABLED\n" );
 			}
 			else
 			{
-				dprintf( "ROCK RIDGE extensions ENABLED\n" );
+				kerndbg( KERN_DEBUG_LOW, "ROCK RIDGE extensions ENABLED\n" );
 			if (result == -EOK)
 			{
 				buf += rec->fileIDLen;
@@ -969,7 +625,7 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 					uint8	length = 0;
 					bool 	done = false;
 
-					dprintf("RR: Start of extensions, but at %p\n", buf);
+					kerndbg( KERN_DEBUG_LOW, "RR: Start of extensions, but at %p\n", buf);
 					
 					
 					
@@ -979,14 +635,14 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 						length = *(uint8*)(buf + 2);
 						switch (0x100 * buf[0] + buf[1])
 						{
-							// Posix attributes
+							// POSIX file attributes
 							case 'PX':
 							{
 								uint8 bytePos = 3;
 								kerndbg( KERN_DEBUG_LOW, "RR: found PX, length %u\n", length);
 								rec->attr.pxVer = *(uint8*)(buf+bytePos++);
-                                no_rock_ridge_stat_struct = false;
-                                memset(&(rec->attr.stat), 0, 2 * sizeof(struct stat)); 
+                              					  no_rock_ridge_stat_struct = false;
+                               					 memset(&(rec->attr.stat), 0, 2 * sizeof(struct stat)); 
 								
 								// st_mode
 								rec->attr.stat[LSB_DATA].st_mode = *(mode_t*)(buf + bytePos);
@@ -1014,12 +670,12 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 							}	
 							break;
 							
-							// ???
+							// POSIX Device Number
 							case 'PN':
-								dprintf("RR: found PN, length %u\n", length);
+								kerndbg( KERN_DEBUG, "RR: found PN, length %u - NOT IMPLEMENTED\n", length);
 							break;
 							
-							// Symbolic link info
+							// Symbolic link
 							case 'SL':
 							{
 								uint8	bytePos = 3;
@@ -1028,14 +684,10 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 								bool	slDone = false;
 								bool	useSeparator = true;
 								
-								kerndbg( KERN_DEBUG_LOW, "RockRidge: found SL, length %u\n", length);
-								dprintf("Buffer is at %p\n", buf);
-								dprintf("Current length is %u\n", slNameSize);
-	
+								kerndbg( KERN_DEBUG_LOW, "RockRidge: found SL, length %u\n", length);	
 								rec->attr.slVer = *(uint8*)(buf + bytePos++);
 								slFlags = *(uint8*)(buf + bytePos++);
 								
-								dprintf("sl flags are %u\n", slFlags);
 								while (!slDone && bytePos < length)
 								{
 									uint8 compFlag = *(uint8*)(buf + bytePos++);
@@ -1048,8 +700,6 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 									addPos = slNameSize;
 									
 									kerndbg( KERN_DEBUG_LOW, "RockRidge: addPos= %d\n", addPos );
-									
-									dprintf("sl comp flags are %u, length is %u\n", compFlag, compLen);
 									kerndbg( KERN_DEBUG_LOW, "Current name size is %u\n", slNameSize);
 									switch (compFlag)
 									{
@@ -1071,7 +721,7 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 												slNameSize++;
 											}							// what we want!
 											
-											dprintf("doing memcopy of %u bytes at offset %d\n", compLen, addPos );
+											//kerndbg( KERN_DEBUG_LOW, "doing memcopy of %u bytes at offset %d\n", compLen, addPos );
 											memcpy((slName + addPos), (buf + bytePos), compLen);
 											
 											addPos += compLen;
@@ -1119,9 +769,10 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 							// copy the name to the node structure
 							strncpy( rec->attr.slName, slName, slNameSize );
 							kerndbg( KERN_DEBUG_LOW, "RockRidge - symlink name is \'%s\'\n", slName);
-							dprintf("InitNode - name length is %d\n", slNameSize );
+							kerndbg( KERN_DEBUG_LOW, "InitNode - name length is %d\n", slNameSize );
 							break;
-							// Altername name
+							
+							// Alternate name
 							case 'NM':
 							{
 								uint8	bytePos = 3;
@@ -1129,24 +780,21 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 								uint16	oldEnd = altNameSize;
 								
 								altNameSize += length - 5;
-								dprintf("RR: found NM, length %u\n", length);
+								kerndbg( KERN_DEBUG_LOW, "RR: found NM, length %u\n", length);
 								// Read flag and version.
 								rec->attr.nmVer = *(uint8*)(buf + bytePos++);
 								flags = *(uint8*)(buf + bytePos++);
 							
-								dprintf("RR: nm buf is %s, start at %p\n", (buf + bytePos), buf+bytePos);
-	
 								// Build the file name.
 								memcpy(altName + oldEnd, buf + bytePos, length - 5);
 								altName[altNameSize] = '\0';
-								kerndbg( KERN_DEBUG_LOW, "RR: alternative name is %s\n", altName);
+								kerndbg( KERN_DEBUG_LOW, "RR: alternate name is %s\n", altName);
 								
 								// If the name is not continued in another record, update
 								// the record name.
 								if (! (flags & NM_CONTINUE))
 								{
 									// Get rid of the ISO name, replace with RR name.
-//									if (rec->fileIDString != NULL) free(rec->fileIDString);
 									memcpy( rec->fileIDString, altName, ISO_MAX_FILENAME_LENGTH );
 									rec->fileIDLen = altNameSize;
 								}
@@ -1154,6 +802,7 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 							break;
 							
 							// Deep directory record masquerading as a file.
+							// Child Link
 							case 'CL':
 							
 								kerndbg( KERN_DEBUG_LOW, "RR: found CL, length %u\n", length);
@@ -1163,22 +812,35 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 								
 								break;
 							
+							// Parent Link
 							case 'PL':
-								dprintf("RR: found PL, length %u\n", length);
+								kerndbg( KERN_DEBUG, "RR: found PL, length %u - NOT IMPLEMENTED\n", length);
 								break;
 							
 							// Relocated directory, we should skip.
 							case 'RE':
 								result = -EINVAL;
-								dprintf("RR: found RE, length %u\n", length);
+								kerndbg( KERN_DEBUG ,"RR: found RE, length %u - NOT IMPLEMENTED\n", length);
 								break;
 							
+							// Time Stamp
 							case 'TF':
-								dprintf("RR: found TF, length %u\n", length);
+								kerndbg( KERN_DEBUG, "RR: found TF, length %u - NOT IMPLEMENTED\n", length);
+								break;
+							// File data in sparse file format
+							case 'SF':
+								result = -EINVAL;
+								kerndbg( KERN_DEBUG ,"RR: found SF, length %u - NOT IMPLEMENTED\n", length);
 								break;
 							
+							// Extension Reference - for the purpose of identifying discs with RR
+							case 'ER':
+								kerndbg( KERN_DEBUG ,"RR: found ER, length %u - NOT IMPLEMENTED\n", length);
+								break;
+								
+							// Cant find this in the spec (v.1.12)
 							case 'RR':
-								dprintf("RR: found RR, length %u\n", length);
+								kerndbg( KERN_DEBUG, "RR: found RR, length %u - WHAT'S THIS??\n", length);
 								break;
 							
 							default:
@@ -1193,19 +855,18 @@ InitNode(nspace * volume, vnode* rec, char* buf, int* bytesRead)
 		}
 		else
 		{
-			dprintf("InitNode - File ID String is 0 length\n");
+			kerndbg( KERN_DEBUG_LOW, "InitNode - File ID String is 0 length\n");
 			result = -ENOENT;
 		}
 	}
-	else result = -ENOENT;
-	dprintf("InitNode - EXIT, result is %d name is \'%s\'\n", result /*strerror(result)*/,rec->fileIDString );
+	else
+	{
+		result = -ENOENT;
+	}
 	
+	kerndbg( KERN_DEBUG, "InitNode - EXIT (%d),  name is \'%s\'\n", result, rec->fileIDString );
 	
-						
-			// Set defaults, in case there is no RR stuff.
-			//rec->attr.stat[FS_DATA_FORMAT].st_mode = (S_IRUSR | S_IRGRP | S_IROTH);
-	
-	
+	// "A "PX" System Use Entry shall be recorded in each Directory Record -> move this to RR DISABLED
 	if ( no_rock_ridge_stat_struct ) 
 	{
 		// Set defaults, in case there is no RR stuff.
@@ -1276,28 +937,6 @@ ConvertRecDate(ISORecDate* inDate, time_t* outDate)
 	*outDate = time;
 	return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

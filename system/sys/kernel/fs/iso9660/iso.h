@@ -14,8 +14,8 @@
 #ifndef _ISO_H
 #define _ISO_H
 
-//#define __ENABLE_DEBUG__
-//#define DEBUG_LIMIT KERN_DEBUG_LOW 
+#define __ENABLE_DEBUG__
+#define DEBUG_LIMIT KERN_WARNING
 
 #include <atheos/types.h> // uints
 #include <posix/stat.h> // stat
@@ -26,11 +26,13 @@
 #define ISO_MAX_FILENAME_LENGTH 256
 
 
-#ifdef __ENABLE_DEBUG__
-  #define dprintf printk
-#else
-  #define dprintf( format, arg... )
-#endif
+
+
+//#ifdef __ENABLE_DEBUG__
+//  #define dprintf printk
+//#else
+#define dprintf( format, arg... )
+//#endif
 
 #define calloc(a,b)  kmalloc( (a)*(b), MEMF_KERNEL | MEMF_OKTOFAILHACK | MEMF_CLEAR )
 #define free kfree
@@ -257,6 +259,14 @@ int	InitNode( nspace * volume, vnode* rec, char* buf, int* bytesRead);
 int	ConvertRecDate(ISORecDate* inDate, time_t* outDate);
 
 #endif
+
+
+
+
+
+
+
+
 
 
 

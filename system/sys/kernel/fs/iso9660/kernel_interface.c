@@ -7,7 +7,6 @@
 
 #include "iso.h"
 
-
 // SYLLABLE
 #include <atheos/stdlib.h>
 #include <atheos/string.h>
@@ -24,9 +23,7 @@
 #include <macros.h>
 
 
-
-
-// Probe is called if you don't provide the fs type when you mount a volume
+// Probe is called _only_ if you don't provide the fs type when you mount a volume,
 static int iso_probe( const char* devicePath, fs_info* filesystemInfo );
 
 // Start of fundamental (read-only) required functions
@@ -89,7 +86,7 @@ static FSOperations_s iso_operations =  {
 	iso_probe,							// probe
 	iso_mount,							// mount 
 	iso_unmount,							// unmount 
-	iso_read_vnode,						// read_vnode 
+	iso_read_vnode,							// read_vnode 
 	iso_write_vnode,						// write_vnode 
 	iso_walk, 							// locate_inode
 	iso_access,							// access 
@@ -101,52 +98,53 @@ static FSOperations_s iso_operations =  {
 	NULL,								// rename
 	NULL,								// unlink
 	NULL,								// rmdir
-	iso_read_link,						// readlink
+	iso_read_link,							// readlink
 	NULL, /*iso_opendir,*/						// opendir - is this used for syllable???
 	NULL, /*iso_closedir,*/						// closedir  - is this used for syllable???
-	iso_rewind_dir,						// rewinddir
+	iso_rewind_dir,							// rewinddir
 	iso_read_dir,							// readdir 
 	iso_open,							// open file
 	iso_close,							// close file
-	NULL, /*iso_free_cookie,*/						// free cookie 
+	NULL, /*iso_free_cookie,*/					// free cookie 
 	iso_read,							// read file 
 	NULL, 								// write file 
 	NULL, 								// readv
 	NULL, 								// writev
 	NULL,								// ioctl 
 	NULL,								// setflags file 
-	iso_read_stat,						// rstat 
+	iso_read_stat,							// rstat 
 	NULL, 								// wstat 
 	NULL,								// fsync 
 	NULL,								// initialize
 	NULL,								// sync
-	iso_read_fs_stat,							// rfsstat 
+	iso_read_fs_stat,						// rfsstat 
 	NULL,								// wfsstat 
 	NULL,								// isatty;
-    NULL,								// add_select_req;
-    NULL,								// rem_select_req;
-
-    NULL,								// open_attrdir;
-    NULL,								// close_attrdir;
-    NULL,								// rewind_attrdir;
-    NULL,								// read_attrdir;
-    NULL,								// remove_attr;
-    NULL,								// rename_attr;
-    NULL,								// stat_attr;
-    NULL,								// write_attr;
-    NULL,								// read_attr;
-    NULL,								// open_indexdir;
-    NULL,								// close_indexdir;
-    NULL,								// rewind_indexdir;
+	NULL,								// add_select_req;
+	NULL,								// rem_select_req;
+// Attributes
+	NULL,								// open_attrdir;
+	NULL,								// close_attrdir;
+	NULL,								// rewind_attrdir;
+	NULL,								// read_attrdir;
+	NULL,								// remove_attr;
+	NULL,								// rename_attr;
+	NULL,								// stat_attr;
+	NULL,								// write_attr;
+	NULL,								// read_attr;
+// Index
+	NULL,								// open_indexdir;
+	NULL,								// close_indexdir;
+	NULL,								// rewind_indexdir;
 	NULL,								// read_indexdir;
-    NULL,								// create_index;
+	NULL,								// create_index;
 	NULL,								// remove_index;
-    NULL,								// rename_index;
-    NULL,								// stat_index;
-    NULL								// get_file_blocks;
-};
+	NULL,								// rename_index;
+	NULL,								// stat_index;
+	NULL								// get_file_blocks;
+	};
 
-int32			api_version = FSDRIVER_API_VERSION;
+int32		api_version = FSDRIVER_API_VERSION;
 static char* 	gFSName = "ISO9660\0";
 
 static int
@@ -156,25 +154,25 @@ iso_probe( const char* devicePath, fs_info* info )
 	int error = -1;
 	nspace * vol = 0;
 	int i;
-	dprintf( "%s: probe( %s , %p )\n", gFSName, devicePath, info );
+	kerndbg( KERN_DEBUG,  "%s: probe( %s , %p )\n", gFSName, devicePath, info );
 	
 	device = open( devicePath, O_RDONLY );
 	if ( device < 0 )
 	{
-		printk( "iso_probe failed to open device %s\n", devicePath );
-		return ( device );
+		kerndbg( KERN_WARNING, "iso_probe failed to open device %s\n", devicePath );
+		return ( device ); 
 	}
 
 	error = ISOMount( devicePath, 0, &vol );
 	if ( error < 0 )
 	{
-		printk( "iso_probe - failed to mount device %s\n -> not an iso volume", devicePath );
+		kerndbg( KERN_DEBUG_LOW, "iso_probe - failed to mount device %s\n -> not an iso volume", devicePath );
 		close( device );
 		return ( error );
 	} 
 	else 
 	{
-		dprintf( "iso_probe - mount suceeded: %s\n is an ISO volume", devicePath );
+		kerndbg( KERN_DEBUG, "iso_probe - mount suceeded: %s\n is an ISO volume", devicePath );
 	}
 
 	// Fill in device id.
@@ -188,7 +186,7 @@ iso_probe( const char* devicePath, fs_info* info )
 	
 	// FS block size.
 	info->fi_block_size = vol->logicalBlkSize[FS_DATA_FORMAT];
-	dprintf( "iso_probe set the logical block size to %d\n", info->fi_block_size );
+	kerndbg( KERN_DEBUG_LOW, "iso_probe set the logical block size to %d\n", info->fi_block_size );
 	
 	// IO size - specifies buffer size for file copying
 	info->fi_io_size = 65536;
@@ -222,6 +220,8 @@ iso_probe( const char* devicePath, fs_info* info )
 	// free the resources
 	close( device );
 	free( vol );
+	
+	kerndbg( KERN_DEBUG, "iso_probe - EXIT" );
 	
 	return 0;
 }
@@ -271,7 +271,7 @@ iso_mount( kdev_t volumeID, const char *devicePath, uint32 flags, void *paramete
 		}
 	}	
 
-	kerndbg( KERN_DEBUG, "iso_mount - EXIT, result code is %d\n", result );
+	kerndbg( KERN_DEBUG, "iso_mount - EXIT ( %d )\n", result );
 	return result;
 }
 
@@ -281,16 +281,16 @@ iso_unmount(void * _volume)
 	int result = -EOK;
 	
 	nspace* volume = (nspace*)_volume;
-	dprintf("iso_unmount - ENTER\n");
-	dprintf("iso_unmount - flush the device cache\n");
+	kerndbg( KERN_DEBUG, "iso_unmount - ENTER\n");
+	kerndbg( KERN_DEBUG_LOW, "iso_unmount - flush the device cache\n");
 	flush_device_cache( volume->fd, false );
-	dprintf("iso_unmount - shutdown device cache\n" );
+	kerndbg( KERN_DEBUG_LOW, "iso_unmount - shutdown device cache\n" );
 	shutdown_device_cache( volume->fd );
-	dprintf("iso_unmount - closing volume\n");
+	kerndbg( KERN_DEBUG_LOW, "iso_unmount - closing volume\n");
 	result = close( volume->fd );
-	dprintf("iso_unmount - freeing volume data\n");
+	kerndbg( KERN_DEBUG_LOW, "iso_unmount - freeing volume data\n");
 	free( volume );
-	dprintf("iso_unmount - EXIT, result is %d\n", result );
+	kerndbg( KERN_DEBUG, "iso_unmount - EXIT ( %d )\n", result );
 	return result;
 }
 
@@ -307,7 +307,7 @@ iso_read_fs_stat(void *_volume,  fs_info * fsInfo)
 	fsInfo->fi_dev = volume->id;
 	
 	// Root inode number
-    fsInfo->fi_root = volume->rootDirRec.id;
+	fsInfo->fi_root = volume->rootDirRec.id;
 	
 	// File system flags.
 	fsInfo->fi_flags = FS_IS_PERSISTENT | FS_IS_READONLY | FS_IS_BLOCKBASED | FS_IS_REMOVABLE;
@@ -328,10 +328,10 @@ iso_read_fs_stat(void *_volume,  fs_info * fsInfo)
 	fsInfo->fi_free_user_blocks = 0;
 
 	// Total number of inodes (-1 if inodes are allocated dynamically)
-    fsInfo->fi_total_inodes = -1;
+	fsInfo->fi_total_inodes = -1;
 	
 	// Number of free inodes (-1 if inodes are allocated dynamically)
-    fsInfo->fi_free_inodes = -1;
+	fsInfo->fi_free_inodes = -1;
 	
 	
 	// Device name.
@@ -368,44 +368,32 @@ static int	iso_walk( void * _volume, void * _baseNode, const char * _fileName
 	bool		done = false;
 	int			result = -ENOENT;
 
-#ifdef __ENABLE_DEBUG__
 	char	*	directoryName = baseNode->fileIDString;
-#endif
+
 	
-	dprintf( "iso_walk - NEW - Enter\n" );
-	
-	dprintf( "iso_walk - _fileName = %s\n", _fileName );
+	kerndbg( KERN_DEBUG,  "iso_walk - Enter\n" );
 	
 	if ( volume == NULL || baseNode == NULL )
 	{
 		done = true;
-		dprintf( "iso_walk - ERROR!\n" );
-		dprintf( "iso_walk - volume = %p , baseNode = %p!!\n", volume, baseNode );	
+		kerndbg( KERN_WARNING, "iso_walk - ERROR!\n" );
+		kerndbg( KERN_WARNING, "iso_walk - volume = %p , baseNode = %p!!\n", volume, baseNode );	
 	}
 
 	if( !done && (nameLength > ISO_MAX_FILENAME_LENGTH) )
 	{
 		done = true;
 		result = -ENAMETOOLONG;
-		dprintf( "iso_walk - fileName length (%d) too long!\n", nameLength );
+		kerndbg( KERN_WARNING, "iso_walk - fileName length (%d) too long!\n", nameLength );
 	}
 	else
 	{
 		strncpy( fileName, _fileName, nameLength+1 );
 		fileName[nameLength] = '\0';
-		dprintf( "iso_walk - In directory: %s\n", directoryName );
-		/*
-		if( fileName[nameLength] == '/' )
-		{
-			fileName[nameLength] = '\0';
-			nameLength--;
-			dprintf( "iso_walk - deleted trailing '/'\n" );
-		}
-		*/
-		dprintf( "iso_walk - Looking for file: %s of length: %d \n", fileName, nameLength );
+		kerndbg( KERN_DEBUG, "iso_walk - In directory: %s\n", directoryName );
+		kerndbg( KERN_DEBUG, "iso_walk - Looking for file: %s of length: %d \n", fileName, nameLength );
 	}
 
-	// ok, we'll have to actually walk the directory
 	if( !done )
 	{
 		size_t		totalBytesRead = 0;
@@ -413,18 +401,13 @@ static int	iso_walk( void * _volume, void * _baseNode, const char * _fileName
 		off_t	block = baseNode->startLBN[FS_DATA_FORMAT];
 		size_t		blockSize = volume->logicalBlkSize[FS_DATA_FORMAT];
 		
-		dprintf( "iso_walk - Inside %s.\n", directoryName );	
-		dprintf( "iso_walk - directory length: %d\n", directoryLength );
-		dprintf( "iso_walk - starting at block #%d\n", (int)block );
-		dprintf( "iso_walk - block size: %d\n", blockSize );
-		
 		// read in blocks until the file is found or we've reached the end of the directory
 		while( !done && (totalBytesRead < directoryLength) )
 		{
 			bool	blockReleased = false;
 			char	*blockData = get_cache_block( volume->fd, block, blockSize ); 
 			
-			dprintf( "iso_walk - read %d / %d of directory %s\n", totalBytesRead, directoryLength, directoryName ); 
+			kerndbg( KERN_DEBUG_LOW, "iso_walk - read %d / %d of directory %s\n", totalBytesRead, directoryLength, directoryName ); 
 			
 			if ( blockData == NULL )
 			{
@@ -441,11 +424,11 @@ static int	iso_walk( void * _volume, void * _baseNode, const char * _fileName
 				// ECMA:"Unused byte positions after the last Directory Record in a Logical Sector
 				//       shall be set to (00)."
 				
-				while ( !done && 
+				while ( 	!done && 
 						(blockData[0] != 0) && 
 						((totalBytesRead+blockBytesRead) < directoryLength) &&
 						(blockBytesRead < blockSize)
-					  )
+				      )
 				{ 
 					size_t	nodeBytesRead = 0;
 					vnode	node;
@@ -461,17 +444,10 @@ static int	iso_walk( void * _volume, void * _baseNode, const char * _fileName
 					{
 						done = true;
 						result = -ENOENT;
-						dprintf( "iso_walk - couldn't initialize a node\n" );
+						kerndbg( KERN_DEBUG, "iso_walk - couldn't initialize a node\n" );
 					}
 					else
 					{
-						dprintf( "iso_walk - InitVnode read %d bytes\n", nodeBytesRead );
-						dprintf( "iso_walk - file searched: %s\n", fileName );
-						dprintf( "iso_walk - filename length %d\n", nameLength );
-						dprintf( "iso_walk - strlen( file searched ) = %d\n", strlen( fileName ) );
-						dprintf( "iso_walk - strlen( node.fileIDString ) = %d\n", strlen( node.fileIDString ) );
-						dprintf( "iso_walk - strncmp( node.fileIDString, fileName, strlen( fileName ) ) = %d \n", strncmp( node.fileIDString, fileName, strlen( fileName ) ) ); 
-						
 						if ( (strlen( node.fileIDString ) == strlen( fileName ) ) &&
 							 (strncmp( node.fileIDString, fileName, strlen( fileName ) ) == 0)
 						   )
@@ -479,9 +455,9 @@ static int	iso_walk( void * _volume, void * _baseNode, const char * _fileName
 							done = true;
 							release_cache_block( volume->fd, block );
 							blockReleased = true;
-							dprintf("iso_walk - success, found vnode at block %Ld, pos %Ld\n", block, blockBytesRead);
+							kerndbg( KERN_DEBUG_LOW, "iso_walk - success, found vnode at block %Ld, pos %Ld\n", block, blockBytesRead);
 							*vNodeID = (( block << 30 ) + ( blockBytesRead & 0x3FFFFFFF ));
-							dprintf( "iso_walk - New vnode id is %Ld\n", *vNodeID );
+							kerndbg( KERN_DEBUG_LOW, "iso_walk - New vnode id is %Ld\n", *vNodeID );
 
 							if( fileName[0] == '.' && fileName[1] == '.' )
 							{
@@ -490,12 +466,12 @@ static int	iso_walk( void * _volume, void * _baseNode, const char * _fileName
 
 								if( parentNode->startLBN[FS_DATA_FORMAT] == volume->rootBlock )
 								{
-									dprintf("(grep)iso_walk : Directory entry for volume root\n");
+									kerndbg( KERN_DEBUG, "(grep)iso_walk : Directory entry for volume root\n");
 									*vNodeID = volume->rootDirRec.id;
 								}
 								else
 								{
-									dprintf("(grep)iso_walk : Directory entry for non volume root\n");
+									kerndbg( KERN_DEBUG_LOW, "(grep)iso_walk : Directory entry for non volume root\n");
 									*vNodeID = BLOCK_TO_INO(parentNode->startLBN[FS_DATA_FORMAT], 0);
 								}
 							}
@@ -504,17 +480,12 @@ static int	iso_walk( void * _volume, void * _baseNode, const char * _fileName
 						}
 						else
 						{
-							dprintf( "iso_walk - Not the file we're looking for\n" );
+							kerndbg( KERN_DEBUG_LOW, "iso_walk - Not the file we're looking for\n" );
 							result = -ENOENT;
 						}
 					} // InitNode
 					blockData 		+= nodeBytesRead;
 					blockBytesRead 	+= nodeBytesRead;
-					
-					dprintf( "iso_walk - PROGRESS***************************\n" );
-					dprintf( "iso_walk - read %Ld / %d of block # %Ld\n", blockBytesRead, blockSize, block );
-					dprintf( "iso_walk - total %d  / %d of directory %s\n", totalBytesRead, directoryLength, directoryName );
-					dprintf( "iso_walk - ***********************************\n" );
 				} // while inside a block
 				if ( blockReleased == false ) 
 					release_cache_block( volume->fd, block );
@@ -522,11 +493,11 @@ static int	iso_walk( void * _volume, void * _baseNode, const char * _fileName
 				block++;
 			} // cacheBlock != NULL
 		} // while inside a directory
-		dprintf( "iso_walk - read a total of %d / %d\n", totalBytesRead, directoryLength );
+		kerndbg( KERN_DEBUG_LOW, "iso_walk - read a total of %d / %d\n", totalBytesRead, directoryLength );
 	} // traversing the dir
 	
 
-	dprintf( "iso_walk - Done, return: %d.\n", result );
+	kerndbg( KERN_DEBUG,  "iso_walk - EXIT (%d)\n", result );
 	return result;
 }
 
@@ -543,15 +514,15 @@ iso_read_vnode(void *_ns, ino_t vnid, void **node)
 	pos = (vnid & 0x3FFFFFFF); 
 	block = (vnid >> 30);
 	
-	dprintf("iso_read_vnode - ENTER\n" );
-	dprintf("iso_read_vnode - block = %Ld, pos = %Ld, raw = %Ld node %p\n", block, pos, vnid, newNode);
+	kerndbg( KERN_DEBUG, "iso_read_vnode - ENTER\n" );
+	kerndbg( KERN_DEBUG_LOW, "iso_read_vnode - block = %Ld, pos = %Ld, raw = %Ld node %p\n", block, pos, vnid, newNode);
 	
 	if (newNode != NULL)
 	{
 		// root node is stored in the volume struct
 		if (vnid == ns->rootDirRec.id )
 		{
-			dprintf("iso_read_vnode - root node requested.\n");
+			kerndbg( KERN_DEBUG, "iso_read_vnode - root node requested.\n");
 			memcpy(newNode, &(ns->rootDirRec), sizeof(vnode));
 			*node = (void*)newNode;
 		}
@@ -561,7 +532,7 @@ iso_read_vnode(void *_ns, ino_t vnid, void **node)
 			// check that the position makes sense
 			if (pos > ns->logicalBlkSize[FS_DATA_FORMAT]) 
 			{
-				dprintf("iso_read_vnode - position is outside of the block!\n" );
+				kerndbg( KERN_WARNING, "iso_read_vnode - position is outside of the block!\n" );
 				result = -EINVAL;
 		 	}
 		 	else
@@ -575,9 +546,9 @@ iso_read_vnode(void *_ns, ino_t vnid, void **node)
 		 		{
 					result = InitNode(ns, newNode, (blockData + pos), NULL);
 					newNode->id = vnid;
-					dprintf("iso_read_vnode - init result is %d\n", result );
+					kerndbg( KERN_DEBUG_LOW, "iso_read_vnode - init result is %d\n", result );
 					*node = (void*)newNode;
-					dprintf("iso_read_vnode - new file %s, size %ld\n", newNode->fileIDString, newNode->dataLen[FS_DATA_FORMAT]);
+					kerndbg( KERN_DEBUG_LOW, "iso_read_vnode - new file %s, size %ld\n", newNode->fileIDString, newNode->dataLen[FS_DATA_FORMAT]);
 					release_cache_block(ns->fd, cachedBlock);
 				}
 				else
@@ -585,7 +556,7 @@ iso_read_vnode(void *_ns, ino_t vnid, void **node)
 					free( newNode->fileIDString );
 					free( newNode->attr.slName );
 					free( newNode );
-					dprintf( "iso_read_vnode - Could not read the block!\n" );
+					kerndbg( KERN_DEBUG, "iso_read_vnode - Could not read the block!\n" );
 					return ( -EIO ); // is this the right error code ??? FIXME
 				}
 			}
@@ -596,7 +567,7 @@ iso_read_vnode(void *_ns, ino_t vnid, void **node)
 		result = -ENOMEM;
 	}
 	
-	dprintf( "iso_read_vnode - EXIT, result is %d\n", result );
+	kerndbg( KERN_DEBUG,  "iso_read_vnode - EXIT (%d)\n", result );
 	return result;
 }
 
@@ -610,7 +581,7 @@ iso_write_vnode(void *_volume, void *_node )
 	nspace*	vol = (nspace*)_volume;
 	
 	// free the resources owned by the vnode
-	dprintf("iso_write_vnode - ENTER \n" );
+	kerndbg( KERN_DEBUG, "iso_write_vnode - ENTER \n" );
 
 	if ( node != NULL )
 	{ 
@@ -624,9 +595,9 @@ iso_write_vnode(void *_volume, void *_node )
 	}
 	else
 	{
-		dprintf( "iso_write_vnode - called with node = NULL!!!\n" );
+		kerndbg( KERN_WARNING, "iso_write_vnode - called with node = NULL!!!\n" );
 	}
-	dprintf("iso_write_vnode - EXIT\n");
+	kerndbg( KERN_DEBUG, "iso_write_vnode - EXIT (%d)\n", result );
 	return result;
 }
 
@@ -638,10 +609,10 @@ iso_read_stat(void *_volume, void *_node, struct stat *st)
 	vnode*	node = (vnode*)_node;
 	int 	result = -EOK;
 	time_t	time;
-
 	vnode *parentNode;
 	
-	dprintf("iso_rstat - ENTER\n");
+	kerndbg( KERN_DEBUG, "iso_rstat - ENTER\n");
+	
 	st->st_dev = volume->id;
 //	st->st_ino = node->id;
 
@@ -658,7 +629,8 @@ iso_read_stat(void *_volume, void *_node, struct stat *st)
 	st->st_size = node->dataLen[FS_DATA_FORMAT];
 	if (ConvertRecDate(&(node->recordDate), &time) == -EOK) 
 		st->st_ctime = st->st_mtime = st->st_atime = time;
-	dprintf("iso_rstat - EXIT, result is %d\n", result );
+	
+	kerndbg( KERN_DEBUG, "iso_rstat - EXIT (%d)\n", result );
 	
 	return result;
 }
@@ -682,24 +654,23 @@ iso_read(void *_ns, void *_node, void *cookie, off_t pos, void *buf,
 	size_t		startLen =  0;
 	size_t		bytesRead = 0;
 
-	dprintf( "iso_read - ENTER\n" );
+	kerndbg( KERN_DEBUG,  "iso_read - ENTER\n" );
 	if ( (node->flags & ISO_ISDIR) )
 	{
-		dprintf( "iso_read - tried to read  a directory\n" );		
+		kerndbg( KERN_WARNING, "iso_read - tried to read  a directory\n" );	
 		return ( -EISDIR );
 	}
 
 	if (pos < 0)
 		pos = 0;
 
-	// If passed-in requested length is bigger than file size, change it to
-	// file size.
+	// If passed-in requested length is bigger than file size, change it to file size.
 	if ( (reqLen + pos) > dataLen )
 	{
 		reqLen = dataLen - pos;
 	}
-	// Compute the length of the partial start-block read, if any.
 	
+	// Compute the length of the partial start-block read, if any.
 	if ( (blockPos + reqLen) <= blockSize )
 	{
 		startLen = reqLen;
@@ -711,7 +682,7 @@ iso_read(void *_ns, void *_node, void *cookie, off_t pos, void *buf,
 
 	if (blockPos == 0 && reqLen >= blockSize)
 	{
-		dprintf("Setting startLen to 0, even block read\n");
+		kerndbg( KERN_DEBUG_LOW, "Setting startLen to 0, even block read\n" );
 		startLen = 0;
 	}
 	// Compute the length of the partial end-block read, if any.
@@ -723,21 +694,10 @@ iso_read(void *_ns, void *_node, void *cookie, off_t pos, void *buf,
 	// Compute the number of middle blocks to read.
 	numBlocks = ((reqLen - endLen - startLen) /  blockSize);
 	
-	
-	dprintf("iso_read - ENTER, pos is %Ld, reqLen is %d\n", pos, reqLen);
-	dprintf("iso_read - filename is %s\n", node->fileIDString);
-	dprintf("iso_read - total file length is %lu\n", dataLen);
-	dprintf("iso_read - start block of file is %lu\n", node->startLBN[FS_DATA_FORMAT]);
-	dprintf("iso_read - block pos is %Lu\n", blockPos);
-	dprintf("iso_read - read block will be %lu\n", startBlock);
-	dprintf("iso_read - startLen is %d\n", startLen);
-	dprintf("iso_read - endLen is %d\n", endLen);
-	dprintf("iso_read - num blocks to read is %Ld\n", numBlocks);
-	
 	// If pos >= file length, return length of 0.
 	if (pos >= dataLen)
 	{
-		dprintf("iso_read - End of file reached\n");
+		kerndbg( KERN_DEBUG_LOW, "iso_read - End of file reached\n");
 	}
 	else
 	{
@@ -746,10 +706,10 @@ iso_read(void *_ns, void *_node, void *cookie, off_t pos, void *buf,
 		{
 			off_t	cachedBlock = startBlock;
 			char*		blockData = (char*)get_cache_block(ns->fd, startBlock, blockSize);
-			dprintf("iso_read - getting block %lu\n", startBlock);
+			kerndbg( KERN_DEBUG_LOW, "iso_read - getting block %lu\n", startBlock );
 			if (blockData != NULL)
 			{
-				dprintf("iso_read - copying first block, len is %d.\n", startLen);
+				kerndbg( KERN_DEBUG_LOW, "iso_read - copying first block, len is %d.\n", startLen);
 				memcpy(buf, blockData+blockPos, startLen);
 				bytesRead += startLen;
 				release_cache_block(ns->fd, cachedBlock);
@@ -761,7 +721,7 @@ iso_read(void *_ns, void *_node, void *cookie, off_t pos, void *buf,
 		// Read in the middle blocks. (Should read to a buffer and copied to uspace?)
 		if (numBlocks > 0 && result == -EOK)
 		{
-			dprintf("iso_read - getting middle blocks\n");
+			kerndbg( KERN_DEBUG_LOW, "iso_read - getting middle blocks\n");
 			result = cached_read(ns->fd, startBlock, 
 						((char*)buf) + startLen, 
 						numBlocks, 
@@ -777,7 +737,7 @@ iso_read(void *_ns, void *_node, void *cookie, off_t pos, void *buf,
 		{
 			off_t	endBlock = startBlock + numBlocks;
 			char*		endBlockData = (char*)get_cache_block(ns->fd, endBlock, blockSize);
-			dprintf("iso_read - getting end block\n");
+			kerndbg( KERN_DEBUG_LOW, "iso_read - getting end block\n");
 			if (endBlockData != NULL)
 			{
 				char* endBuf = ((char*)buf) + (reqLen - endLen);
@@ -789,8 +749,8 @@ iso_read(void *_ns, void *_node, void *cookie, off_t pos, void *buf,
 			else result = -EIO;
 		}
 	}
-	dprintf("iso_read - read %d bytes\n", bytesRead );
-	dprintf("iso_read - EXIT, result is %d\n", result );
+	kerndbg( KERN_DEBUG_LOW, "iso_read - read %d bytes\n", bytesRead );
+	kerndbg( KERN_DEBUG, "iso_read - EXIT (%d)\n", result );
 	if ( result == -EOK )
 		result = bytesRead; 
 	return result;
@@ -802,10 +762,10 @@ iso_open(void *_volume, void *_node, int omode, void **cookie)
 	int		result = -EOK;
 	vnode	*node = (vnode*) _node;
 	
-	dprintf("iso_open - ENTER\n");
+	kerndbg( KERN_DEBUG, "iso_open - ENTER\n");
 
 	if ( _volume == NULL )
-		dprintf( "iso_open - called with volume == NULL\n" );
+		kerndbg( KERN_WARNING, "iso_open - called with volume == NULL\n" );
 	
 	//afs returns -EISDIR when trying to open a dir, but doesn't have a opendir call...
 	//FIXME!!!
@@ -820,13 +780,12 @@ iso_open(void *_volume, void *_node, int omode, void **cookie)
 
 	if ((node->flags & ISO_ISDIR))
 	{
-		dprintf( "iso_open - tried to open a directory\n" );
-		dprintf( "iso_open - call iso_opendir\n" );
+		kerndbg( KERN_DEBUG_LOW, "iso_open - tried to open a directory -> calling iso_open_dir\n" );
 		result = iso_open_dir( _volume, _node, cookie );
 	}
 
 	// No cookie info needed for files, just return.
-	dprintf("iso_open - EXIT\n");
+	kerndbg( KERN_DEBUG, "iso_open - EXIT (%d)\n", result );
 
 	return result;
 }
@@ -838,10 +797,11 @@ iso_close(void *_volume, void *_node, void *cookie)
 	vnode * node = (vnode*)_node;
 	nspace* volume = (nspace*)_volume;
 	
-	dprintf("iso_close - ENTER\n");
+	kerndbg( KERN_DEBUG, "iso_close - ENTER\n");
+	
 	if ( (node->flags & ISO_ISDIR) )
 	{
-		dprintf( "iso_close - this is a directory...\n" );
+		kerndbg( KERN_DEBUG_LOW, "iso_close - this is a directory...\n" );
 		result = iso_close_dir( volume, node, cookie );
 		iso_free_dircookie( volume, node, cookie );
 	}
@@ -850,7 +810,7 @@ iso_close(void *_volume, void *_node, void *cookie)
 		iso_free_cookie( volume, node, cookie );
 	}
 
-	dprintf("iso_close - EXIT\n");
+	kerndbg( KERN_DEBUG, "iso_close - EXIT (%d)\n", result );
 	return result;
 }
 
@@ -858,13 +818,13 @@ static int
 iso_free_cookie(void *ns, void *node, void *cookie)
 {
 
-	dprintf("iso_free_cookie - ENTER\n");
+	kerndbg( KERN_DEBUG, "iso_free_cookie - ENTER\n");
 	if (cookie != NULL) 
 	{
-		dprintf("iso_free_cookie - aha! a directory, let's take away it's cookie...\n" );
+		kerndbg( KERN_DEBUG_LOW, "iso_free_cookie - aha! a directory, let's take away it's cookie...\n" );
 		iso_free_dircookie( ns, node, cookie );
 	}
-	dprintf("iso_free_cookie - EXIT\n");
+	kerndbg( KERN_DEBUG, "iso_free_cookie - EXIT\n");
 	return 0;
 }
 
@@ -876,8 +836,8 @@ iso_access(void *volume, void *node, int mode)
 	(void)node;
 	(void)mode;
 	
-	dprintf("iso_access - ENTER\n");
-	dprintf("iso_access - EXIT\n");
+	kerndbg( KERN_DEBUG, "iso_access - ENTER\n");
+	kerndbg( KERN_DEBUG, "iso_access - EXIT\n");
 
 	return -EOK;
 }
@@ -890,10 +850,10 @@ iso_read_link(void *_volume, void *_node, char *buffer, size_t bufferSize)
 	size_t	length = 0;
 	kerndbg( KERN_DEBUG, "iso_readlink - ENTER\n" );	
 
-	if (S_ISLNK(node->attr.stat[FS_DATA_FORMAT].st_mode))
+	if ( S_ISLNK(node->attr.stat[FS_DATA_FORMAT].st_mode) )
 	{
 		length = strlen(node->attr.slName);
-		if (length > bufferSize)
+		if ( length > bufferSize )
 		{
 			// bufsize was length which seems to be a bug..
 			kerndbg( KERN_WARNING, "iso_read_link - The provided buffer is smaller than the filename length!!!\n" );
@@ -946,7 +906,7 @@ iso_open_dir(void *_volume, void *_node, void **cookie)
 		result = -ENOMEM;
 	}
 	
-	kerndbg( KERN_DEBUG, "iso_opendir - EXIT\n");
+	kerndbg( KERN_DEBUG, "iso_opendir - EXIT (%d)\n", result );
 	return result;
 }
 
@@ -960,15 +920,15 @@ iso_read_dir(void *_volume, void *_node, void *_cookie, int position, struct ker
 
 	vnode *parentNode;
 	
-	dprintf("iso_readdir - ENTER\n");
+	kerndbg( KERN_DEBUG, "iso_readdir - ENTER\n");
 	
-	dprintf("iso_readdir - position = %d\n", position );
+	kerndbg( KERN_DEBUG_LOW, "iso_readdir - position = %d\n", position );
 	
 	// what should we do with the position argument
 	
 	if ( dirCookie == NULL )
 	{
-		dprintf( "iso_readdir - Called with cookie == NULL!\n" );
+		kerndbg( KERN_WARNING, "iso_readdir - Called with cookie == NULL!\n" );
 		return -EINVAL;
 	}
 	
@@ -988,7 +948,7 @@ iso_read_dir(void *_volume, void *_node, void *_cookie, int position, struct ker
 		result = 0;
 	}
 	
-	dprintf("iso_readdir - EXIT, result is %d\n", result);
+	kerndbg( KERN_DEBUG, "iso_readdir - EXIT (%d)\n", result);
 	return result;
 }
 
@@ -997,7 +957,7 @@ iso_rewind_dir(void *_volume, void *_node, void* _cookie)
 {
 	int			result = -EINVAL;
 	dircookie*	cookie = (dircookie*)_cookie;
-	dprintf("iso_rewinddir - ENTER\n");
+	kerndbg( KERN_DEBUG, "iso_rewinddir - ENTER\n");
 	
 	if (cookie != NULL)
 	{
@@ -1007,10 +967,10 @@ iso_rewind_dir(void *_volume, void *_node, void* _cookie)
 	} 
 	else
 	{
-		dprintf( "iso_rewinddir - dircookie pointer is NULL\n" );
+		kerndbg( KERN_WARNING, "iso_rewinddir - dircookie pointer is NULL\n" );
 	}
 	
-	dprintf( "iso_rewinddir - EXIT, result is %d\n", result );
+	kerndbg( KERN_DEBUG,  "iso_rewinddir - EXIT (%d)\n", result );
 	return result;
 }
 
@@ -1018,31 +978,32 @@ iso_rewind_dir(void *_volume, void *_node, void* _cookie)
 static int		
 iso_close_dir(void *_volume, void *_node, void *_cookie)
 {
-	dprintf( "iso_closedir - ENTER\n" );
-	dprintf( "iso_closedir - EXIT\n" );
+	kerndbg( KERN_DEBUG,  "iso_closedir - ENTER\n" );
+	kerndbg( KERN_DEBUG,  "iso_closedir - EXIT\n" );
 	return -EOK;
 }
 
 static int		
 iso_free_dircookie(void *_volume, void *_node, void *_cookie)
 {
-	dprintf("iso_free_dircookie - ENTER\n");
+	kerndbg( KERN_DEBUG, "iso_free_dircookie - ENTER\n");
 	
 	if ( _cookie != NULL )
 	{
 		free(_cookie);
 	}
-	dprintf("iso_free_dircookie - EXIT\n");
+	kerndbg( KERN_DEBUG, "iso_free_dircookie - EXIT\n");
 	return 0;
 }
 
 int fs_init( const char* name, FSOperations_s** ppsOps )
 {
-	dprintf( "Initializing %s filesystem\n", gFSName );
-	dprintf( "name = %s\n", name );
+	kerndbg( KERN_DEBUG,  "Initializing %s filesystem\n", gFSName );
+	kerndbg( KERN_DEBUG_LOW, "name = %s\n", name );
 	*ppsOps = &iso_operations;
 	return( api_version );
 }
+
 
 
 
