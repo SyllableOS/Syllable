@@ -1,6 +1,6 @@
 
-COPTS   = -c -O3 -Wall -g
-#OPTS   = -c -O -Wall
+#COPTS   = -c -O3 -Wall -g
+OPTS   = -c -O -Wall
 
 CC	= gcc
 EXE	= desktop
@@ -25,8 +25,11 @@ $(EXE): objs $(OBJS)
 objs:
 	mkdir objs
 
+deps:
+
 install:
 	cp -f desktop /bin/
 	strip --strip-all /bin/desktop
 clean:
 	-rm $(OBJS)
+
