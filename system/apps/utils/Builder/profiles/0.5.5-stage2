@@ -2,6 +2,7 @@
 
 modules
 	sys/include
+;	Should all drivers be rebuilt for the new kernel headers?
 	sys/kernel/drivers/bus/ata
 	sys/kernel/drivers/bus/pci
 	sys/kernel/drivers/bus/scsi
@@ -34,6 +35,7 @@ modules
 	sys/appserver/libsyllable
 	sys/appserver/appserver/server
 	sys/appserver/appserver/drivers/video/mga
+	sys/appserver/appserver/drivers/video/radeon
 	sys/appserver/appserver/drivers/video/s3
 	sys/appserver/appserver/drivers/video/vmware
 	apps/utils/bzoom
