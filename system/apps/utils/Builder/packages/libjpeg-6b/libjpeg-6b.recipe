@@ -1,0 +1,15 @@
+authors				Kaj de Vos
+status				testing
+licenses			custom
+packages			jpegsrc.v6b
+locations			ftp://ftp.uu.net/graphics/jpeg/
+patch-config
+configure-options	--enable-shared --enable-static
+test-targets		test
+install-tree
+	bin
+	include
+	lib
+	man
+	man/man1
+documentation		README install.doc usage.doc wizard.doc change.log libjpeg.doc example.c structure.doc coderules.doc
