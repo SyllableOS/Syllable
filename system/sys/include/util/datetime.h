@@ -21,7 +21,11 @@
 #define	__F_UTIL_DATETIME_H__
 
 #include <atheos/types.h>
+#include <util/string.h>
 #include <string>
+
+namespace os
+{
 
 /** Abstract datatype for date and time
  * \ingroup util
@@ -42,7 +46,7 @@ class DateTime {
 	public:
 	DateTime();
 	DateTime( const DateTime& cDateTime );
-	DateTime( const char *pzTime );
+	DateTime( const String& cTime );
 	DateTime( struct tm* psTime );
 	DateTime( int nTime );
 	DateTime( int nYear, int nMonth, int nDay );
@@ -61,11 +65,11 @@ class DateTime {
 	double	GetDaycount() const;
 	double	GetJulianDate() const;
 	time_t	GetEpoch() const;
-	std::string	GetDate() const;
+	String	GetDate() const;
 	
 	void	SetTime( int nHour, int nMin, int nSec, int nUSec );
 	void	SetDate( int nYear, int nMonth, int nDay );
-	bool	SetDate( const char *pzDate );
+	bool	SetDate( const String& cDate );
 	
 	bool	IsValid() const;
 
@@ -86,6 +90,7 @@ class DateTime {
 	int			operator>( const DateTime& cTime ) const;
 	inline		operator time_t() const;
 	inline		operator std::string() const;
+	inline		operator os::String() const;
 	
 	private:
 	class Private;
@@ -99,7 +104,14 @@ DateTime::operator time_t() const
 
 DateTime::operator std::string() const
 {
+	return GetDate().c_str();
+}
+
+DateTime::operator os::String() const
+{
 	return GetDate();
 }
+
+};
 
 #endif // __F_UTIL_DATETIME_H__
