@@ -1,3 +1,16 @@
+* Jul 19 2003, Kristian Van Der Vliet *
+
+More Matrox driver changes.
+	* Split off the DAC control code from the rest of the CRTC code
+	* Support for older Matrox cards with Texas Instruments TVP3026 DACs
+	* Bug fixes for the Millenium I
+	* The driver does not export 15bit or very-high resolution video modes
+	  for TVP3026 DACs
+
+Hardware cursor code has been disabled and the driver has been "hardwired" to
+never use Vesa mode-switching, which means it can detect but not work with newer
+Matrox cards (E.g. the Gx50 & Parhalea cards)
+
 * Jul 14 2003, Kristian Van Der Vliet *
 
 Fixes to the nVidia, Mach64 & SiS3xx video drivers from Arno Klenke <arno_klenke@yahoo.de>
