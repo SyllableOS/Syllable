@@ -25,3 +25,6 @@ extern const int64 g_nKernelVersion;
 extern const char *g_pzKernelName;
 extern const char *g_pzBuildData;
 extern const char *g_pzBuildTime;
+extern const char *g_pzCpuArch;
+extern const char *g_pzSystem;
+

@@ -1,7 +1,7 @@
-
 /*
- *  The AtheOS kernel
+ *  The Syllable kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 Kristian Van Der Vliet
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -149,7 +149,7 @@ status_t sys_get_system_info( system_info * psInfo, int nVersion )
 		}
 	case 2:
 		{
-			system_info sInfo;
+			system_info_v2 sInfo;
 			int i;
 
 			sInfo.nBootTime = g_sSysBase.ex_nBootTime;	/* time of boot (# usec since 1/1/70) */
@@ -180,6 +180,55 @@ status_t sys_get_system_info( system_info * psInfo, int nVersion )
 			strcpy( sInfo.zKernelName, g_pzKernelName );	/* Name of kernel image                */
 			strcpy( sInfo.zKernelBuildDate, g_pzBuildData );	/* Date of kernel built            */
 			strcpy( sInfo.zKernelBuildTime, g_pzBuildTime );	/* Time of kernel built            */
+
+			for ( i = 0; i < g_nActiveCPUCount; ++i )
+			{
+				int nID = logig_to_physical_cpu_id( i );
+
+				sInfo.asCPUInfo[i].nCoreSpeed = g_asProcessorDescs[nID].pi_nCoreSpeed;
+				sInfo.asCPUInfo[i].nBusSpeed = g_asProcessorDescs[nID].pi_nBusSpeed;
+				sInfo.asCPUInfo[i].nActiveTime = get_system_time();
+				sInfo.asCPUInfo[i].nActiveTime -= g_asProcessorDescs[nID].pi_psIdleThread->tr_nCPUTime;
+			}
+
+			sInfo.nKernelVersion = g_nKernelVersion;
+			return ( memcpy_to_user( psInfo, &sInfo, sizeof( sInfo ) ) );
+		}
+	case 3:
+		{
+			system_info sInfo;
+			int i;
+
+			sInfo.nBootTime = g_sSysBase.ex_nBootTime;	/* time of boot (# usec since 1/1/70) */
+			sInfo.nCPUCount = g_nActiveCPUCount;
+			sInfo.nCPUType = g_asProcessorDescs[g_nBootCPU].pi_nFeatures;
+			sInfo.nMaxPages = g_sSysBase.ex_nTotalPageCount;	/* total # physical pages               */
+			sInfo.nFreePages = g_sSysBase.ex_nFreePageCount;	/* Number of free physical pages        */
+			sInfo.nCommitedPages = g_sSysBase.ex_nCommitPageCount;	/* Total number of allocated pages      */
+			sInfo.nKernelMemSize = g_sSysBase.ex_nKernelMemSize;
+
+			sInfo.nPageFaults = g_sSysBase.ex_nPageFaultCount;	/* Number of page faults                */
+			sInfo.nUsedSemaphores = g_sSysBase.ex_nSemaphoreCount;	/* Number of semaphores in use          */
+			sInfo.nUsedPorts = g_sSysBase.ex_nMessagePortCount;	/* Number of message ports in use       */
+			sInfo.nUsedThreads = g_sSysBase.ex_nThreadCount;	/* Number of living threads             */
+			sInfo.nUsedProcesses = g_sSysBase.ex_nProcessCount;	/* Number of living processes           */
+
+			sInfo.nLoadedImageCount = g_sSysBase.ex_nLoadedImageCount;
+			sInfo.nImageInstanceCount = g_sSysBase.ex_nImageInstanceCount;
+
+			sInfo.nOpenFileCount = g_sSysBase.ex_nOpenFileCount;
+			sInfo.nAllocatedInodes = g_sSysBase.ex_nAllocatedInodeCount;
+			sInfo.nLoadedInodes = g_sSysBase.ex_nLoadedInodeCount;
+			sInfo.nUsedInodes = g_sSysBase.ex_nUsedInodeCount;
+			sInfo.nBlockCacheSize = g_sSysBase.ex_nBlockCacheSize;
+			sInfo.nDirtyCacheSize = g_sSysBase.ex_nDirtyCacheSize;
+			sInfo.nLockedCacheBlocks = g_sSysBase.ex_nLockedCacheBlocks;
+
+			strcpy( sInfo.zKernelName, g_pzKernelName );		/* Name of kernel image            */
+			strcpy( sInfo.zKernelBuildDate, g_pzBuildData );	/* Date of kernel built            */
+			strcpy( sInfo.zKernelBuildTime, g_pzBuildTime );	/* Time of kernel built            */
+			strcpy( sInfo.zKernelCpuArch, g_pzCpuArch );		/* CPU this kernel is running on   */
+			strcpy( sInfo.zKernelSystem, g_pzSystem );			/* OS name (E.g. "Syllable")       */
 
 			for ( i = 0; i < g_nActiveCPUCount; ++i )
 			{

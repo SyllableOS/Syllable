@@ -1,7 +1,7 @@
-
 /*
- *  The AtheOS kernel
+ *  The Syllable kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 Kristian Van Der Vliet
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -21,10 +21,13 @@
 #include "version.h"
 
 #define MAJOR	0LL
-#define MINOR	4LL
-#define SUB	5LL
+#define MINOR	5LL
+#define RELEASE	0LL
 
-const int64 g_nKernelVersion = ( MAJOR << 32 ) | ( MINOR << 16 ) | ( SUB );
+const int64 g_nKernelVersion = ( MAJOR << 32 ) | ( MINOR << 16 ) | ( RELEASE );
 const char *g_pzKernelName = "kernel.so";
 const char *g_pzBuildData = __DATE__;
 const char *g_pzBuildTime = __TIME__;
+const char *g_pzCpuArch = "i586";
+const char *g_pzSystem = "syllable";
+
