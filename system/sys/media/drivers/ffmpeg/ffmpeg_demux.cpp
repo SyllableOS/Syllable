@@ -111,10 +111,13 @@ status_t FFMpegDemuxer::Open( os::String zFileName )
 		{
 			m_bStream = true;
 		} else {
-			m_nLength = lseek( hFile, 0, SEEK_END ) * 8 / m_nBitRate;	
 			close( hFile );
 			m_bStream = false;
 		}
+		m_nLength = (int)m_psContext->duration / AV_TIME_BASE;
+		
+		if( !m_bStream && m_psContext->start_time != AV_NOPTS_VALUE )
+			av_seek_frame( m_psContext, -1, m_psContext->start_time );
 		
 		m_nCurrentPosition = 0;
 		
@@ -156,8 +159,11 @@ status_t FFMpegDemuxer::ReadPacket( os::MediaPacket_s* psPacket )
 {
 	AVPacket sPacket;
 	
-	if( av_read_packet( m_psContext, &sPacket ) < 0 )
+	if( av_read_frame( m_psContext, &sPacket ) < 0 )
+	{
+		printf("Read packet error!\n" );
 		return( -1 );
+	}
 	
 	AVPacket* psSavePacket = ( AVPacket* )malloc( sizeof( AVPacket ) );
 	*psSavePacket = sPacket;
@@ -166,7 +172,26 @@ status_t FFMpegDemuxer::ReadPacket( os::MediaPacket_s* psPacket )
 	psPacket->nSize[0] = sPacket.size;
 	psPacket->pPrivate = ( void* )psSavePacket;
 	
-	m_nCurrentPosition = m_psContext->pb.pos * 8 / m_nBitRate;
+	if( sPacket.dts == AV_NOPTS_VALUE )
+	{
+		m_nCurrentPosition = m_psContext->pb.pos * 8 / m_nBitRate;
+		psPacket->nTimeStamp = ~0;
+	}
+	else if( m_psContext->start_time == AV_NOPTS_VALUE )
+	{
+		m_nCurrentPosition = ( sPacket.dts ) / AV_TIME_BASE;
+		psPacket->nTimeStamp = ( sPacket.dts ) / 1000;
+	}
+	else
+	{
+		m_nCurrentPosition = ( sPacket.dts - m_psContext->start_time ) / AV_TIME_BASE;
+		psPacket->nTimeStamp = ( sPacket.dts - m_psContext->streams[sPacket.stream_index]->start_time ) / 1000;
+	}
+	
+	
+	//std::cout<<"Stream "<<sPacket.stream_index<<" Start "<<m_psContext->streams[sPacket.stream_index]->start_time<<" DTS "<<sPacket.dts<<" PTS "<<sPacket.pts<<" STAMP "<<
+		//psPacket->nTimeStamp<<std::endl;
+	//printf("Read packet %i\n", (int)m_nCurrentPosition );
 		
 	return( 0 );
 }
@@ -190,8 +215,13 @@ uint64 FFMpegDemuxer::GetCurrentPosition()
 
 uint64 FFMpegDemuxer::Seek( uint64 nPosition )
 {
-	m_nCurrentPosition = url_fseek( &m_psContext->pb, nPosition * m_nBitRate / 8, SEEK_SET ) * 8 / m_nBitRate;
-	return( m_nCurrentPosition );
+	nPosition *= AV_TIME_BASE;
+	if( m_psContext->start_time != AV_NOPTS_VALUE )
+		nPosition += m_psContext->start_time;
+	av_seek_frame( m_psContext, -1, nPosition );
+	
+//	m_nCurrentPosition = url_fseek( &m_psContext->pb, nPosition * m_nBitRate / 8, SEEK_SET ) * 8 / m_nBitRate;
+	return( nPosition );
 }
 
 uint32 FFMpegDemuxer::GetStreamCount()
@@ -217,6 +247,9 @@ os::MediaFormat_s FFMpegDemuxer::GetStreamFormat( uint32 nIndex )
 		case CODEC_ID_MPEG1VIDEO:
 			sFormat.zName = "MPEG1 Video";
 		break;
+		case CODEC_ID_MPEG2VIDEO:
+			sFormat.zName = "MPEG2 Video";
+		break;
 		case CODEC_ID_H263:
 			sFormat.zName = "H263 Video";
 		break;
@@ -233,7 +266,7 @@ os::MediaFormat_s FFMpegDemuxer::GetStreamFormat( uint32 nIndex )
 			sFormat.zName = "MJPEG Video";
 		break;
 		case CODEC_ID_MPEG4:
-			sFormat.zName = "MPEG4 Audio";
+			sFormat.zName = "MPEG4 Video";
 		break;
 		case CODEC_ID_MSMPEG4V1:
 			sFormat.zName = "MS MPEG4V1 Video";
@@ -335,14 +368,31 @@ os::MediaFormat_s FFMpegDemuxer::GetStreamFormat( uint32 nIndex )
 	return( sFormat );
 }
 
-extern "C"
+os::MediaInput* init_ffmpeg_input()
 {
-	os::MediaInput* init_media_input()
-	{
-		return( new FFMpegDemuxer() );
-	}
-
+	return( new FFMpegDemuxer() );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -92,6 +92,8 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 	CodecID id;
 	if( sFormat.zName == "MPEG1 Video" )
 		id = CODEC_ID_MPEG1VIDEO;
+	else if( sFormat.zName == "MPEG2 Video" )
+		id = CODEC_ID_MPEG2VIDEO;
 	else if( sFormat.zName == "H263 Video" )
 		id = CODEC_ID_H263;
 	else if( sFormat.zName == "RV10 Video" )
@@ -205,6 +207,12 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 	if( m_bEncode && sFormat.nType == os::MEDIA_TYPE_AUDIO ) 
 	{
 		/* Prepare stream for the ffmpeg output */
+		m_sEncodeStream.start_time = AV_NOPTS_VALUE;
+		m_sEncodeStream.duration = AV_NOPTS_VALUE;
+		m_sEncodeStream.cur_dts = AV_NOPTS_VALUE;
+		av_set_pts_info( &m_sEncodeStream, 33, 1, 90000 );
+	    m_sEncodeStream.last_IP_pts = AV_NOPTS_VALUE;
+		
 		AVCodecContext *sEnc = &m_sEncodeStream.codec;
 		memset( sEnc, 0, sizeof( AVCodecContext ) );
 		avcodec_get_context_defaults( &m_sEncodeStream.codec );
@@ -217,6 +225,8 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 		else
 			sEnc->bit_rate = sFormat.nBitRate;
 		sEnc->sample_rate = sExternal.nSampleRate;
+		sEnc->strict_std_compliance = 1;
+		sEnc->thread_count = 1;
 		
 		/* Always do channel conversion for now */
 		
@@ -242,6 +252,12 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 	if( m_bEncode && sFormat.nType == os::MEDIA_TYPE_VIDEO )
 	{
 		/* Prepare stream for the ffmpeg output */
+		m_sEncodeStream.start_time = AV_NOPTS_VALUE;
+		m_sEncodeStream.duration = AV_NOPTS_VALUE;
+		m_sEncodeStream.cur_dts = AV_NOPTS_VALUE;
+		av_set_pts_info( &m_sEncodeStream, 33, 1, 90000 );
+	    m_sEncodeStream.last_IP_pts = AV_NOPTS_VALUE;
+		
 		AVCodecContext *sEnc = &m_sEncodeStream.codec;
 		memset( sEnc, 0, sizeof( AVCodecContext ) );
 		avcodec_get_context_defaults( &m_sEncodeStream.codec );
@@ -255,15 +271,17 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 		sEnc->bit_rate_tolerance = 400*1000;
 		
 		/* No variable framerates supported for now */
+		#if 0
 		if( sExternal.bVFR ) {
 			std::cout<<"Cannot encode video with variable framerate!"<<std::endl;
 			return( -1 );
 		}
+		#endif
 		sEnc->frame_rate = (int)sExternal.vFrameRate;
 		sEnc->frame_rate_base = 1;
 		sEnc->width = sExternal.nWidth;
 		sEnc->height = sExternal.nHeight;
-		sEnc->aspect_ratio = sExternal.nWidth / sExternal.nHeight;
+//		sEnc->aspect_ratio = sExternal.nWidth / sExternal.nHeight;
 	
 		sEnc->gop_size = 12;
 		sEnc->qmin = 2;
@@ -421,6 +439,7 @@ status_t FFMpegCodec::DecodePacket( os::MediaPacket_s* psPacket, os::MediaPacket
 		psOutput->nSize[0] = 0;
 	
 		while( nSize > 0 ) {
+			
 			int nLen = avcodec_decode_audio( &m_sDecodeContext, (short *)pOut, &nOutSize, 
         	                              pInput, nSize);
 			if( nLen < 0 ) {
@@ -434,6 +453,9 @@ status_t FFMpegCodec::DecodePacket( os::MediaPacket_s* psPacket, os::MediaPacket
 			nSize -= nLen;
 			pInput += nLen;
 		}
+		
+		if( psOutput->nSize[0] > 0 )
+			psOutput->nTimeStamp = psPacket->nTimeStamp;
 	} 
 	else 
 	{
@@ -447,10 +469,14 @@ status_t FFMpegCodec::DecodePacket( os::MediaPacket_s* psPacket, os::MediaPacket
 			int nLen = avcodec_decode_video( &m_sDecodeContext, &sFrame, &bDecoded, 
    	                                   pInput, nSize );                      
 			if( bDecoded > 0 ) {
+				//std::cout<<"DECODED "<<psPacket->nTimeStamp<<std::endl;
+				psOutput->nTimeStamp = psPacket->nTimeStamp;
 				for( int i = 0; i < 4; i++ ) {
 					psOutput->pBuffer[i] = sFrame.data[i];
 					psOutput->nSize[i] = sFrame.linesize[i];
 				}
+			} else {
+				//std::cout<<"NOT DECODED "<<psPacket->nTimeStamp<<std::endl;
 			}
 			if( nLen < 0 ) {
 				return( -1 );
@@ -511,6 +537,8 @@ uint32 FFMpegCodec::Resample( uint16* pDst, uint16* pSrc, uint32 nLength )
 
 status_t FFMpegCodec::EncodePacket( os::MediaPacket_s* psPacket, os::MediaPacket_s* psOutput )
 {
+	psOutput->nTimeStamp = psPacket->nTimeStamp;
+	
 	if( m_sExternalFormat.nType == os::MEDIA_TYPE_AUDIO )
 	{
 		int nSize = psPacket->nSize[0];
@@ -518,6 +546,7 @@ status_t FFMpegCodec::EncodePacket( os::MediaPacket_s* psPacket, os::MediaPacket
 		psOutput->nSize[0] = 0;
 		AVCodecContext *sEnc = &m_sEncodeStream.codec;
 	
+		//std::cout<<m_sEncodeStream.pts.num<<" "<<m_sEncodeStream.pts.den<<std::endl;
 	
 		if( sEnc->frame_size == 1 ) {
 			switch( m_sEncodeStream.codec.codec_id ) {
@@ -601,142 +630,9 @@ status_t FFMpegCodec::EncodePacket( os::MediaPacket_s* psPacket, os::MediaPacket
 		return( 0 );
 	}
 }
-extern "C"
+
+os::MediaCodec* init_ffmpeg_codec()
 {
-	os::MediaCodec* init_media_codec()
-	{
-		return( new FFMpegCodec() );
-	}
-
+	return( new FFMpegCodec() );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -59,8 +59,9 @@ private:
 	int				m_nVideoStream;
 	int				m_nAudioStream;
 	int				m_nCurrentStream;
-	AVFormatContext m_sContext;
+	AVFormatContext* m_psContext;
 	AVStream*		m_sStream[FFMPEG_MAX_STREAMS];
+	os::String		m_zFileName;
 };
 
 
@@ -103,15 +104,19 @@ status_t FFMpegOutput::Open( os::String zFileName )
 		return( -1 );
 	}
 	
-	if( psOutputFormat->video_codec == CODEC_ID_NONE || psOutputFormat->audio_codec == CODEC_ID_NONE ) {
+	m_zFileName = zFileName;
+	
+	m_psContext = av_alloc_format_context();
+	
+	if( psOutputFormat->video_codec == CODEC_ID_NONE && psOutputFormat->audio_codec == CODEC_ID_NONE ) {
 		std::cout<<"Format does not support video and audio!"<<std::endl;
 		return( -1 );
 	}
 	
-	m_sContext.oformat = psOutputFormat;
+	m_psContext->oformat = psOutputFormat;
 	
 	/* Open file */
-	if( url_fopen( &m_sContext.pb, zFileName.c_str(), URL_WRONLY ) < 0 )
+	if( url_fopen( &m_psContext->pb, zFileName.c_str(), URL_WRONLY ) < 0 )
 		return( -1 );
 		
 	
@@ -126,10 +131,11 @@ void FFMpegOutput::Close()
 {
 	if( m_bStarted ) {
 		/* Write trailer */
-		av_write_trailer( &m_sContext );
+		av_write_trailer( m_psContext );
 		std::cout<<"Trailer written"<<std::endl;
 	}
-	url_fclose( &m_sContext.pb );
+	url_fclose( &m_psContext->pb );
+	av_free( m_psContext );
 }
 
 void FFMpegOutput::StartEncoding()
@@ -140,23 +146,27 @@ void FFMpegOutput::StartEncoding()
 	
 	
 	/* Set streams */
-	m_sContext.nb_streams = m_nCurrentStream;
+	m_psContext->nb_streams = m_nCurrentStream;
+	
 	for( int i = 0; i < m_nCurrentStream; i++ ) {
-		m_sContext.streams[i] = m_sStream[i];
+		m_psContext->streams[i] = m_sStream[i];
 	}
 	std::cout<<m_nCurrentStream<<" Streams added"<<std::endl;
+	
+	m_psContext->timestamp = 0;
+	strcpy( m_psContext->filename, m_zFileName.c_str() );
 	
 	/* Set parameters */
 	AVFormatParameters sParams;
 	memset( &sParams, 0, sizeof( sParams ) );
 	sParams.image_format = NULL;
-	if( av_set_parameters( &m_sContext, &sParams ) < 0 ) {
+	if( av_set_parameters( m_psContext, &sParams ) < 0 ) {
 		std::cout<<"Could not set parameters"<<std::endl;
 		return;
 	}
 	
 	/* Writing header */
-	if( av_write_header( &m_sContext ) < 0 ) {
+	if( av_write_header( m_psContext ) < 0 ) {
 		std::cout<<"Could not write file header"<<std::endl;
 		return;
 	} 
@@ -231,6 +241,8 @@ status_t FFMpegOutput::AddStream( os::String zName, os::MediaFormat_s sFormat )
 		
 	}
 	m_sStream[m_nCurrentStream] = ( ( AVStream * ) sFormat.pPrivate );
+	m_sStream[m_nCurrentStream]->id = m_nCurrentStream;
+	m_sStream[m_nCurrentStream]->index = m_nCurrentStream;
 	m_nCurrentStream++;
 	
 	return( 0 );
@@ -258,8 +270,17 @@ status_t FFMpegOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket )
 	
 		while( psFrames != NULL )
 		{
+			AVPacket sPacket;
+			av_init_packet( &sPacket );
+			sPacket.stream_index = nIndex;
+			sPacket.data = pBuffer;
+			sPacket.size = psFrames->nSize;
+			if( m_sStream[nIndex]->codec.coded_frame )
+				sPacket.pts = m_sStream[nIndex]->codec.coded_frame->pts;
+			sPacket.flags |= PKT_FLAG_KEY;
+			
 		//cout<<"Write :"<<psFrames->nSize<<endl;
-			av_write_frame( &m_sContext, nIndex, pBuffer, psFrames->nSize );
+			av_interleaved_write_frame( m_psContext, &sPacket );
 			pBuffer += psFrames->nSize;
 			ffmpeg_frame* psOldFrame = psFrames;
 			psFrames = psFrames->pNext;
@@ -268,7 +289,12 @@ status_t FFMpegOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket )
 	}
 	else 
 	{
-		av_write_frame( &m_sContext, nIndex, psPacket->pBuffer[0], psPacket->nSize[0] );
+		AVPacket sPacket;
+		av_init_packet( &sPacket );
+		sPacket.stream_index = nIndex;
+		sPacket.data = psPacket->pBuffer[0];
+		sPacket.size = psPacket->nSize[0];
+		av_interleaved_write_frame( m_psContext, &sPacket );
 	}
 	
 	
@@ -286,14 +312,16 @@ uint32 FFMpegOutput::GetUsedBufferPercentage()
 	return( 0 );
 }
 
-extern "C"
+os::MediaOutput* init_ffmpeg_output()
 {
-	os::MediaOutput* init_media_output()
-	{
-		return( new FFMpegOutput() );
-	}
-
+	return( new FFMpegOutput() );
 }
+
+
+
+
+
+
 
 
 
