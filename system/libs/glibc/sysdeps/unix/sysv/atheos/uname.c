@@ -18,8 +18,9 @@
 
 #include <errno.h>
 #include <string.h>
-#include <sys/utsname.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <sys/utsname.h>
 #include <atheos/kernel.h>
 
 /* Put information about the system in NAME.  */
@@ -50,22 +51,15 @@ int uname( struct utsname *name )
     if ( get_system_info( &sSysInfo ) < 0 ) {
 	return -1;
     }
-    strcpy( name->sysname, "atheos" );
-    strcpy( name->release, "13" );
 
-    if ( ((sSysInfo.nKernelVersion >> 48) & 0xffff) > 0 && ((sSysInfo.nKernelVersion >> 48) & 0xffff) < 26 ) {
-	sprintf( name->version, "%d.%d.%d%c",
+    strcpy( name->sysname, sSysInfo.zKernelSystem );
+    strcpy( name->machine, sSysInfo.zKernelCpuArch );
+
+	sprintf( name->version, "%d.%d",
 		 (int)((sSysInfo.nKernelVersion >> 32) & 0xffff),
-		 (int)((sSysInfo.nKernelVersion >> 16) & 0xffff),
-		 (int)(sSysInfo.nKernelVersion & 0xffff),
-		 'a' + (int)((sSysInfo.nKernelVersion >> 48) & 0xffff) );
-    } else {
-	sprintf( name->version, "%d.%d.%d",
-		 (int)((sSysInfo.nKernelVersion >> 32) & 0xffff),
-		 (int)((sSysInfo.nKernelVersion >> 16) & 0xffff),
-		 (int)(sSysInfo.nKernelVersion & 0xffff) );
-    }
-    strcpy( name->machine, "i386" );
+		 (int)((sSysInfo.nKernelVersion >> 16) & 0xffff) );
+
+	sprintf( name->release, "%d", (int)(sSysInfo.nKernelVersion & 0xffff) );
 
     return 0;
 }
