@@ -149,7 +149,7 @@ struct ac97_codec {
 	int id;
 	int dev_mixer; 
 	int type;
-
+	
 	/* codec specific init/reset routines, used mainly for 4 or 6 channel support */
 	int  (*codec_init)  (struct ac97_codec *codec);
 

@@ -107,7 +107,7 @@ static inline void *pci_alloc_consistent(PCI_Info_s *hwdev, size_t size,
 					 dma_addr_t *dma_handle)
 {
 	void *virt_ptr;
-	virt_ptr = kmalloc(size, MEMF_KERNEL);
+	virt_ptr = kmalloc(size, MEMF_KERNEL|MEMF_CLEAR);
 	*dma_handle = virt_to_bus(virt_ptr);
 	return virt_ptr;
 }

@@ -91,6 +91,9 @@
 #include "linuxcomp.h"
 #include "ac97_codec.h"
 
+/* Syllable 0.5.2 and higher uses a new device node structure */
+#define ENABLE_DEVNODE_052
+
 #ifndef PCI_DEVICE_ID_INTEL_82801
 #define PCI_DEVICE_ID_INTEL_82801	0x2415
 #endif
@@ -131,6 +134,8 @@
 #define PCI_DEVICE_ID_AMD_8111_AC97	0x746d
 #endif
 
+#define MODULOP2(a, b) ((a) & ((b) - 1))
+#define MASKP2(a, b) ((a) & ~((b) - 1))
 
 static int strict_clocking=0;
 static unsigned int clocking=0;
@@ -189,8 +194,9 @@ struct i810_channel
  * via mmio access instead of pio access.
  */
 
-#define ENUM_ENGINE(PRE,DIG) 									\
-enum {												\
+#define ENUM_ENGINE(PRE,DIG) \
+enum { \
+	PRE##_BASE =	0x##DIG##0,		/* Base Address */ \
 	PRE##_BDBAR =	0x##DIG##0,		/* Buffer Descriptor list Base Address */	\
 	PRE##_CIV =	0x##DIG##4,		/* Current Index Value */			\
 	PRE##_LVI =	0x##DIG##5,		/* Last Valid Index */				\
@@ -240,16 +246,16 @@ enum {
 #define INT_MASK (INT_SEC|INT_PRI|INT_MC|INT_PO|INT_PI|INT_MO|INT_NI|INT_GPI)
 
 
-#define DRIVER_VERSION "0.2" /* based on Linux driver version 0.24 */
+#define DRIVER_VERSION "0.3" /* based on Linux driver version 0.25 */
 
 /* magic numbers to protect our data structures */
 #define I810_CARD_MAGIC		0x5072696E /* "Prin" */
 #define I810_STATE_MAGIC	0x63657373 /* "cess" */
 #define I810_DMA_MASK		0xffffffff /* DMA buffer mask for pci_alloc_consistent */
-#define NR_HW_CH		3
+#define NR_HW_CH		2
 
 /* maxinum number of AC97 codecs connected, AC97 2.0 defined 4 */
-#define NR_AC97		4
+#define NR_AC97		2
 
 /* minor number of /dev/dspW */
 #define SND_DEV_DSP8	1
@@ -400,6 +406,7 @@ struct i810_card {
 	unsigned long ac97base;
 	unsigned long iobase;
 	u32 irq;
+	int irq_handle;
 	
 	/* Function support */
 	struct i810_channel *(*alloc_pcm_channel)(struct i810_card *);
@@ -414,9 +421,14 @@ struct i810_card {
 
 /* extract register offset from codec struct */
 #define IO_REG_OFF(codec) (((struct i810_card *) codec->private_data)->ac97_id_map[codec->id])
+#define GET_CIV(port) MODULOP2(inb((port) + OFF_CIV), SG_LEN)
+#define GET_LVI(port) MODULOP2(inb((port) + OFF_LVI), SG_LEN)
 
 /* set LVI from CIV */
-#define CIV_TO_LVI(port, off) outb((inb(port+OFF_CIV)+off) & 31, port+OFF_LVI)
+#define CIV_TO_LVI(port, off) \
+	outb(MODULOP2(GET_CIV((port)) + (off), SG_LEN), (port) + OFF_LVI)
+ 
+static PCI_bus_s *g_psBus;
 
 static struct i810_card *devs = NULL;
 
@@ -627,7 +639,7 @@ static inline unsigned i810_get_dma_addr(struct i810_state *state, int rec)
 		port_picb = port + OFF_PICB;
 
 	do {
-		civ = inb(port + OFF_CIV) & 31;
+		civ = GET_CIV(port);
 		offset = inw(port_picb);
 		/* Must have a delay here! */ 
 		if(offset == 0)
@@ -647,7 +659,7 @@ static inline unsigned i810_get_dma_addr(struct i810_state *state, int rec)
 		 * that we won't have to worry about the chip still being
 		 * out of sync with reality ;-)
 		 */
-	} while (civ != (inb(port+OFF_CIV) & 31) || offset != inw(port_picb));
+	} while (civ != GET_CIV(port) || offset != inw(port_picb));
 		 
 	return (((civ + 1) * dmabuf->fragsize - (bytes * offset))
 		% dmabuf->dmasize);
@@ -849,6 +861,7 @@ static int prog_dmabuf(struct i810_state *state, unsigned rec)
 	dmabuf->numfrag = SG_LEN;
 	dmabuf->fragsize = dmabuf->dmasize/dmabuf->numfrag;
 	dmabuf->fragsamples = dmabuf->fragsize >> 1;
+	dmabuf->fragshift = ffs(dmabuf->fragsize) - 1;
 	dmabuf->userfragsize = dmabuf->ossfragsize;
 	dmabuf->userfrags = dmabuf->dmasize/dmabuf->ossfragsize;
 
@@ -856,16 +869,12 @@ static int prog_dmabuf(struct i810_state *state, unsigned rec)
 
 	if(dmabuf->ossmaxfrags == 4) {
 		fragint = 8;
-		dmabuf->fragshift = 2;
 	} else if (dmabuf->ossmaxfrags == 8) {
 		fragint = 4;
-		dmabuf->fragshift = 3;
 	} else if (dmabuf->ossmaxfrags == 16) {
 		fragint = 2;
-		dmabuf->fragshift = 4;
 	} else {
 		fragint = 1;
-		dmabuf->fragshift = 5;
 	}
 	/*
 	 *	Now set up the ring 
@@ -929,12 +938,27 @@ static void __i810_update_lvi(struct i810_state *state, int rec)
 {
 	struct dmabuf *dmabuf = &state->dmabuf;
 	int x, port;
+	int trigger;
+	int count, fragsize;
+	void (*start)(struct i810_state *);
 	
+	count = dmabuf->count;
 	port = state->card->iobase;
-	if(rec)
+	if (rec) {
 		port += dmabuf->read_channel->port;
-	else
+		trigger = PCM_ENABLE_INPUT;
+		start = __start_adc;
+		count = dmabuf->dmasize - count;
+	} else {
 		port += dmabuf->write_channel->port;
+		trigger = PCM_ENABLE_OUTPUT;
+		start = __start_dac;
+	}
+	
+	/* Do not process partial fragments */
+	fragsize = dmabuf->fragsize;
+	if (count < fragsize)
+		return;
 
 	/* if we are currently stopped, then our CIV is actually set to our
 	 * *last* sg segment and we are ready to wrap to the next.  However,
@@ -945,25 +969,17 @@ static void __i810_update_lvi(struct i810_state *state, int rec)
 	 * we call start_{dac,adc}, things will operate properly
 	 */
 	if (!dmabuf->enable && dmabuf->ready) {
-		if(rec && dmabuf->count < dmabuf->dmasize &&
-		   (dmabuf->trigger & PCM_ENABLE_INPUT))
-		{
-			CIV_TO_LVI(port, 1);
-			__start_adc(state);
-			while( !(inb(port + OFF_CR) & ((1<<4) | (1<<2))) ) ;
-		} else if (!rec && dmabuf->count &&
-			   (dmabuf->trigger & PCM_ENABLE_OUTPUT))
-		{
-			CIV_TO_LVI(port, 1);
-			__start_dac(state);
-			while( !(inb(port + OFF_CR) & ((1<<4) | (1<<2))) ) ;
-		}
+		if (!(dmabuf->trigger & trigger))
+			return;
+		start(state);
+		while (!(inb(port + OFF_CR) & ((1<<4) | (1<<2))))
+			;
 	}
 
-	/* swptr - 1 is the tail of our transfer */
-	x = (dmabuf->dmasize + dmabuf->swptr - 1) % dmabuf->dmasize;
-	x /= dmabuf->fragsize;
-	outb(x, port+OFF_LVI);
+	/* MASKP2(swptr, fragsize) - 1 is the tail of our transfer */
+	x = MODULOP2(MASKP2(dmabuf->swptr, fragsize) - 1, dmabuf->dmasize);
+	x >>= dmabuf->fragshift;
+	outb(x, port + OFF_LVI);
 }
 
 static void i810_update_lvi(struct i810_state *state, int rec)
@@ -983,13 +999,17 @@ static void i810_update_ptr(struct i810_state *state)
 {
 	struct dmabuf *dmabuf = &state->dmabuf;
 	unsigned hwptr;
+	unsigned fragmask, dmamask;
 	int diff;
+
+	fragmask = MASKP2(~0, dmabuf->fragsize);
+	dmamask = MODULOP2(~0, dmabuf->dmasize);
 
 	/* error handling and process wake up for DAC */
 	if (dmabuf->enable == ADC_RUNNING) {
 		/* update hardware pointer */
-		hwptr = i810_get_dma_addr(state, 1);
-		diff = (dmabuf->dmasize + hwptr - dmabuf->hwptr) % dmabuf->dmasize;
+		hwptr = i810_get_dma_addr(state, 1) & fragmask;
+		diff = (dmabuf->dmasize + hwptr) & dmamask;
 #if defined(DEBUG_INTERRUPTS) || defined(DEBUG_MMAP)
 		printk("ADC HWP %d,%d,%d\n", hwptr, dmabuf->hwptr, diff);
 #endif
@@ -1001,13 +1021,13 @@ static void i810_update_ptr(struct i810_state *state)
 			/* this is normal for the end of a read */
 			/* only give an error if we went past the */
 			/* last valid sg entry */
-			if((inb(state->card->iobase + PI_CIV) & 31) !=
-			   (inb(state->card->iobase + PI_LVI) & 31)) {
+			if (GET_CIV(state->card->iobase + PO_BASE) !=
+				GET_LVI(state->card->iobase + PO_BASE)) {
 				printk(KERN_WARNING "i810_audio: DMA overrun on read\n");
 				dmabuf->error++;
 			}
 		}
-		if (dmabuf->count > dmabuf->userfragsize)
+		if (diff)
 			wakeup_sem(dmabuf->wait, true);
 	}
 	/* error handling and process wake up for DAC */
@@ -1031,8 +1051,8 @@ static void i810_update_ptr(struct i810_state *state)
 				printk(KERN_WARNING "i810_audio: DMA overrun on write\n");
 				printk("i810_audio: CIV %d, LVI %d, hwptr %x, "
 					"count %d\n",
-					inb(state->card->iobase + PO_CIV) & 31,
-					inb(state->card->iobase + PO_LVI) & 31,
+					GET_CIV(state->card->iobase + PO_BASE),
+					GET_LVI(state->card->iobase + PO_BASE),
 					dmabuf->hwptr, dmabuf->count);
 				dmabuf->error++;
 			}
@@ -1054,7 +1074,6 @@ static inline int i810_get_free_write_space(struct i810_state *state)
 		dmabuf->swptr = dmabuf->hwptr;
 	}
 	free = dmabuf->dmasize - dmabuf->count;
-	free -= (dmabuf->hwptr % dmabuf->fragsize);
 	if(free < 0)
 		return(0);
 	return(free);
@@ -1072,10 +1091,25 @@ static inline int i810_get_available_read_data(struct i810_state *state)
 		dmabuf->swptr = dmabuf->hwptr;
 	}
 	avail = dmabuf->count;
-	avail -= (dmabuf->hwptr % dmabuf->fragsize);
 	if(avail < 0)
 		return(0);
 	return(avail);
+}
+
+static inline void fill_partial_frag(struct dmabuf *dmabuf)
+{
+	unsigned fragsize;
+	unsigned swptr, len;
+
+	fragsize = dmabuf->fragsize;
+	swptr = dmabuf->swptr;
+	len = fragsize - MODULOP2(dmabuf->swptr, fragsize);
+	if (len == fragsize)
+		return;
+
+	memset(dmabuf->rawbuf + swptr, '\0', len);
+	dmabuf->swptr = MODULOP2(swptr + len, dmabuf->dmasize);
+	dmabuf->count += len;
 }
 
 static int drain_dac(struct i810_state *state, int signals_allowed)
@@ -1091,6 +1125,22 @@ static int drain_dac(struct i810_state *state, int signals_allowed)
 		stop_dac(state);
 		return 0;
 	}
+
+	spin_lock_irqsave(&state->card->lock, flags);
+
+	fill_partial_frag(dmabuf);
+	
+	/* 
+	 * This will make sure that our LVI is correct, that our
+	 * pointer is updated, and that the DAC is running.  We
+	 * have to force the setting of dmabuf->trigger to avoid
+	 * any possible deadlocks.
+	 */
+	dmabuf->trigger = PCM_ENABLE_OUTPUT;
+	i810_update_lvi(state,0);
+
+	spin_unlock_irqrestore(&state->card->lock, flags);
+
 	for (;;) {
 
 		spin_lock_irqsave(&state->card->lock, flags);
@@ -1100,17 +1150,6 @@ static int drain_dac(struct i810_state *state, int signals_allowed)
 
 		if (count <= 0)
 			break;
-
-		/* 
-		 * This will make sure that our LVI is correct, that our
-		 * pointer is updated, and that the DAC is running.  We
-		 * have to force the setting of dmabuf->trigger to avoid
-		 * any possible deadlocks.
-		 */
-		if(!dmabuf->enable) {
-			dmabuf->trigger = PCM_ENABLE_OUTPUT;
-			i810_update_lvi(state,0);
-		}
 
 		/*
 		 * set the timeout to significantly longer than it *should*
@@ -1184,11 +1223,10 @@ static void i810_channel_interrupt(struct i810_card *card)
 			if(status & DMA_INT_DCH)
 				printk("DCH -");
 #endif
-			if(dmabuf->enable & DAC_RUNNING)
-				count = dmabuf->count;
-			else
-				count = dmabuf->dmasize - dmabuf->count;
-			if(count > 0) {
+			count = dmabuf->count;
+			if(dmabuf->enable & ADC_RUNNING)
+				count = dmabuf->dmasize - count;
+			if(count > (int)dmabuf->fragsize) {
 				outb(inb(port+OFF_CR) | 1, port+OFF_CR);
 #ifdef DEBUG_INTERRUPTS
 				printk(" CONTINUE ");
@@ -1271,6 +1309,7 @@ static int i810_dsp_read(void *node, void *cookie, off_t ppos, void *buffer, siz
 	unsigned long flags;
 	unsigned int swptr;
 	int cnt;
+	int pending;
         //DECLARE_WAITQUEUE(waita, current);
 
 #ifdef DEBUG2
@@ -1291,12 +1330,13 @@ static int i810_dsp_read(void *node, void *cookie, off_t ppos, void *buffer, siz
 	if (!dmabuf->ready && (ret = prog_dmabuf(state, 1)))
 		return ret;
 	ret = 0;
+	pending = 0;
 
 	while (count > 0) {
 		spin_lock_irqsave(&card->lock, flags);
 
-		swptr = dmabuf->swptr;
 		cnt = i810_get_available_read_data(state);
+		swptr = dmabuf->swptr;
 		// this is to make the copy_to_user simpler below
 		if(cnt > (dmabuf->dmasize - swptr))
 			cnt = dmabuf->dmasize - swptr;
@@ -1312,7 +1352,7 @@ static int i810_dsp_read(void *node, void *cookie, off_t ppos, void *buffer, siz
 		 * a portion was, resulting in odd sound and stereo
 		 * hysteresis.
 		 */
-		cnt &= ~0x3;
+		//cnt &= ~0x3;
 		if (cnt <= 0) {
 			unsigned long tmo;
 			/*
@@ -1358,12 +1398,12 @@ static int i810_dsp_read(void *node, void *cookie, off_t ppos, void *buffer, siz
 			goto done;
 		}
 
-		swptr = (swptr + cnt) % dmabuf->dmasize;
+		swptr = MODULOP2(swptr + cnt, dmabuf->dmasize);
 
 		spin_lock_irqsave(&card->lock, flags);
 
 		dmabuf->swptr = swptr;
-		dmabuf->count -= cnt;
+		pending = dmabuf->count -= cnt;
 		spin_unlock_irqrestore(&card->lock, flags);
 
 		count -= cnt;
@@ -1371,8 +1411,9 @@ static int i810_dsp_read(void *node, void *cookie, off_t ppos, void *buffer, siz
 		ret += cnt;
 	}
  done:
-	i810_update_lvi(state,1);
-
+	pending = dmabuf->dmasize - pending;
+	if (dmabuf->enable || pending >= dmabuf->userfragsize)
+		i810_update_lvi(state, 1);
 	return ret;
 }
 
@@ -1387,7 +1428,8 @@ int i810_dsp_write(void *node, void *cookie, off_t ppos, const void *buffer, siz
 	ssize_t ret;
 	unsigned long flags;
 	unsigned int swptr = 0;
-	int cnt, x;
+	int cnt;
+	int pending;
         //DECLARE_WAITQUEUE(waita, current);
 
 #ifdef DEBUG2
@@ -1407,12 +1449,13 @@ int i810_dsp_write(void *node, void *cookie, off_t ppos, const void *buffer, siz
 	if (!dmabuf->ready && (ret = prog_dmabuf(state, 0)))
 		return ret;
 	ret = 0;
+	pending = 0;
 
 	while (count > 0) {
 		spin_lock_irqsave(&state->card->lock, flags);
 
-		swptr = dmabuf->swptr;
 		cnt = i810_get_free_write_space(state);
+		swptr = dmabuf->swptr;
 		/* Bound the maximum size to how much we can copy to the
 		 * dma buffer before we hit the end.  If we have more to
 		 * copy then it will get done in a second pass of this
@@ -1435,7 +1478,7 @@ int i810_dsp_write(void *node, void *cookie, off_t ppos, const void *buffer, siz
 		 * a portion was, resulting in odd sound and stereo
 		 * hysteresis.
 		 */
-		cnt &= ~0x3;
+		//cnt &= ~0x3;
 		if (cnt <= 0) {
 			unsigned long tmo;
 			// There is data waiting to be played
@@ -1472,24 +1515,21 @@ int i810_dsp_write(void *node, void *cookie, off_t ppos, const void *buffer, siz
 			goto ret;
 		}
 
-		swptr = (swptr + cnt) % dmabuf->dmasize;
+		swptr = MODULOP2(swptr + cnt, dmabuf->dmasize);
 
 		spin_lock_irqsave(&state->card->lock, flags);
 
 		dmabuf->swptr = swptr;
-		dmabuf->count += cnt;
+		pending = dmabuf->count += cnt;
 
 		count -= cnt;
 		buffer += cnt;
 		ret += cnt;
 		spin_unlock_irqrestore(&state->card->lock, flags);
 	}
-	if (swptr % dmabuf->fragsize) {
-		x = dmabuf->fragsize - (swptr % dmabuf->fragsize);
-		memset(dmabuf->rawbuf + swptr, '\0', x);
-	}
 ret:
-	i810_update_lvi(state,0);
+	if (dmabuf->enable || pending >= dmabuf->userfragsize)
+		i810_update_lvi(state, 0);
 
 	return ret;
 }
@@ -1803,8 +1843,9 @@ int i810_dsp_ioctl(void *node, void *cookie, uint32 cmd, void *args, bool b_from
 				dmabuf->swptr = (dmabuf->swptr + dmabuf->count) % dmabuf->dmasize;
 				__i810_update_lvi(state, 0);
 				spin_unlock_irqrestore(&state->card->lock, flags);
-			} else
-				start_dac(state);
+			}
+			i810_update_lvi(state, 0);
+			start_dac(state);
 		}
 		return 0;
 
@@ -1908,9 +1949,9 @@ found_virt:
 	state->virt = i;
 	state->card = card;
 	state->magic = I810_STATE_MAGIC;
-	state->open_sem = create_semaphore("i810_open_sem", 2, 0); 
+	state->open_sem = create_semaphore("i810_open_sem", 1, 0); 
 	i810_state_data = state; /* Therefore only one card is supported! */
-	dmabuf->wait = create_semaphore("i810_wait", 3, 0);
+	dmabuf->wait = create_semaphore("i810_wait", 1, 0);
 	dmabuf->trigger = 0;
 
 	/* allocate hardware channels */
@@ -2054,6 +2095,26 @@ static inline int i810_ac97_enable_variable_rate(struct ac97_codec *codec)
 	return (i810_ac97_get(codec, AC97_EXTENDED_STATUS)&1);
 }
 
+static int i810_ac97_probe_and_powerup(struct i810_card *card, struct ac97_codec *codec)
+{
+	/* Returns 0 on failure */
+	int i;
+
+	//if (ac97_probe_codec(codec) == 0) return 0;
+	
+	/* power it all up */
+	i810_ac97_set(codec, AC97_POWER_CONTROL,
+		      i810_ac97_get(codec, AC97_POWER_CONTROL) & ~0x7f00);
+
+	/* wait for analog ready */
+	for (i=100; i && ((i810_ac97_get(codec, AC97_POWER_CONTROL) & 0xf) != 0xf); i--)
+	{
+		//set_current_state(TASK_UNINTERRUPTIBLE);
+		//schedule_timeout(HZ/20);
+		udelay(5000);
+	} 
+	return i;
+}
 
 /* AC97 codec initialisation. */
 static int i810_ac97_init(struct i810_card *card)
@@ -2083,14 +2144,14 @@ static int i810_ac97_init(struct i810_card *card)
 		udelay(100000);
 		i++;
 	}
-	if(i==10)
+	if(i==20)
 	{
 		printk(KERN_ERR "i810_audio: AC'97 reset failed.\n");
 		return 0;
 	}
 
 	//schedule_timeout(HZ/5);
-	udelay(300000);
+	udelay(500000);
 	
 	inw(card->ac97base);
 	
@@ -2111,6 +2172,12 @@ static int i810_ac97_init(struct i810_card *card)
 		if (ac97_probe_codec(codec) == 0)
 			break;
 
+		if(!i810_ac97_probe_and_powerup(card,codec)) {
+			printk(KERN_ERR "i810_audio: timed out waiting for codec analog ready.\n");
+			kfree(codec);
+			break;	/* it didn't work */
+		}
+
 		/* Now check the codec for useful features to make up for 
 		   the dumbness of the 810 hardware engine */
 
@@ -2122,7 +2189,7 @@ static int i810_ac97_init(struct i810_card *card)
 			kfree(codec);
 			break;
 		}
-		
+
 		card->ac97_features = eid;
 
 		if(!(eid&0x0001))
@@ -2136,7 +2203,11 @@ static int i810_ac97_init(struct i810_card *card)
 		}	
 	
 		if( create_device_node( card->nDeviceID, card->pci_dev->nHandle, 
-				"sound/i810/mixer/0", &i810_mixer_fops, codec ) < 0 ) {
+#ifdef ENABLE_DEVNODE_052
+			"sound/i810/mixer/0", &i810_mixer_fops, codec ) < 0 ) {
+#else
+			"sound/mixer", &i810_mixer_fops, codec ) < 0 ) {
+#endif
 			printk( "i810_audio: failed to create mixer node \n");
 			kfree(codec);
 			break;
@@ -2169,18 +2240,17 @@ static void i810_configure_clocking (void)
 	 */
 	if(card != NULL) {
 		state = card->states[0] = (struct i810_state *)
-					kmalloc(sizeof(struct i810_state), MEMF_KERNEL);
+					kmalloc(sizeof(struct i810_state), MEMF_KERNEL|MEMF_CLEAR);
 		if (state == NULL)
 			return;
-		memset(state, 0, sizeof(struct i810_state));
 		dmabuf = &state->dmabuf;
 
 		dmabuf->write_channel = card->alloc_pcm_channel(card);
 		state->virt = 0;
 		state->card = card;
 		state->magic = I810_STATE_MAGIC;
-		state->open_sem = create_semaphore("i810_open_sem", 2, 0); 
-		dmabuf->wait = create_semaphore("i810_wait", 3, 0); 
+		state->open_sem = create_semaphore("i810_open_sem", 1, 0); 
+		dmabuf->wait = create_semaphore("i810_wait", 1, 0); 
 		dmabuf->fmt = I810_FMT_STEREO | I810_FMT_16BIT;
 		dmabuf->trigger = PCM_ENABLE_OUTPUT;
 		i810_set_dac_channels(state, 2);
@@ -2192,7 +2262,7 @@ static void i810_configure_clocking (void)
 			goto config_out;
 		}
 		dmabuf->count = dmabuf->dmasize;
-		CIV_TO_LVI(card->iobase+dmabuf->write_channel->port, 31);
+		CIV_TO_LVI(card->iobase+dmabuf->write_channel->port, -1);
 		flags = get_cpu_flags();
 		cli();
 		start_dac(state);
@@ -2232,9 +2302,10 @@ static int i810_probe(PCI_Info_s *pci_dev, int pci_id, int nDeviceID, struct pci
 	u16 pci_command, new_command;
 	unsigned char pci_latency;
 
-	PCI_bus_s *psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+	g_psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
 
-	if ((card = kmalloc(sizeof(struct i810_card), MEMF_KERNEL)) == NULL) {
+	if ((card = kmalloc(sizeof(struct i810_card),
+	    MEMF_KERNEL | MEMF_CLEAR)) == NULL) {
 		printk(KERN_ERR "i810_audio: out of memory\n");
 		return -ENOMEM;
 	}
@@ -2246,8 +2317,8 @@ static int i810_probe(PCI_Info_s *pci_dev, int pci_id, int nDeviceID, struct pci
 	card->pci_dev = pci_dev;
 	card->pci_id = pci_dev->nDeviceID;
 	card->pci_id_internal = pci_info->driver_data;
-	card->ac97base = pci_dev->u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK;
-	card->iobase = pci_dev->u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK;
+	card->ac97base = pci_dev->u.h0.nBase0 & PCI_ADDRESS_IO_MASK;
+	card->iobase = pci_dev->u.h0.nBase1 & PCI_ADDRESS_IO_MASK;
 	card->irq = pci_dev->u.h0.nInterruptLine;
 	card->next = devs;
 	card->magic = I810_CARD_MAGIC;
@@ -2256,7 +2327,7 @@ static int i810_probe(PCI_Info_s *pci_dev, int pci_id, int nDeviceID, struct pci
 	i810_card_data = card;
 
 	/* Get and check the bus-master and latency values. */
-   	pci_command = psBus->read_pci_config( pci_dev->nBus, pci_dev->nDevice,
+   	pci_command = g_psBus->read_pci_config( pci_dev->nBus, pci_dev->nDevice,
                                   	pci_dev->nFunction, PCI_COMMAND, 2 );
    new_command = pci_command | PCI_COMMAND_MASTER | PCI_COMMAND_IO;
    if (pci_command != new_command)
@@ -2265,20 +2336,21 @@ static int i810_probe(PCI_Info_s *pci_dev, int pci_id, int nDeviceID, struct pci
                	    "at %d/%d/%d!    Updating PCI command %4.4x->%4.4x.\n",
                    	pci_dev->nBus, pci_dev->nDevice, pci_dev->nFunction,
                    	pci_command, new_command);
-				psBus->write_pci_config( pci_dev->nBus, pci_dev->nDevice, pci_dev->nFunction,
+				g_psBus->write_pci_config( pci_dev->nBus, pci_dev->nDevice, pci_dev->nFunction,
 					PCI_COMMAND, 2, new_command);
    }
 
-	pci_latency = psBus->read_pci_config( pci_dev->nBus, pci_dev->nDevice,
+	pci_latency = g_psBus->read_pci_config( pci_dev->nBus, pci_dev->nDevice,
                                         	pci_dev->nFunction, PCI_LATENCY, 1 );
 	if (pci_latency < 32)
    {
 		printk("i810_audio: PCI latency timer (CFLT) is unreasonably low at %d."
 					   "  Setting to 64 clocks.\n", pci_latency);
-				psBus->write_pci_config( pci_dev->nBus, pci_dev->nDevice, pci_dev->nFunction,
+				g_psBus->write_pci_config( pci_dev->nBus, pci_dev->nDevice, pci_dev->nFunction,
 					PCI_LATENCY, 1, 64);
 	
 	}
+
 	printk(KERN_INFO "i810: %s found at IO 0x%04lx and 0x%04lx, "
 	       "IRQ %d\n",
 	       card->pci_info->name, card->iobase, card->ac97base, (int) card->irq);
@@ -2297,6 +2369,7 @@ static int i810_probe(PCI_Info_s *pci_dev, int pci_id, int nDeviceID, struct pci
 		goto out_mem;
 	}
 
+	printk("##1##");
 	{ /* We may dispose of this altogether some time soon, so... */
 		struct i810_channel *cp = card->channel;
 
@@ -2311,11 +2384,13 @@ static int i810_probe(PCI_Info_s *pci_dev, int pci_id, int nDeviceID, struct pci
 		cp[2].num = 2;
 	}
 
-	if (request_irq(card->irq, i810_interrupt, NULL, SA_SHIRQ, 
-				card->pci_info->name, card) < 0) {
+	if (request_irq(card->irq, i810_interrupt, NULL,
+		    SA_SHIRQ, card->pci_info->name, card) < 0) {
 		printk(KERN_ERR "i810_audio: unable to allocate irq %d\n",(int) card->irq);
 		goto out_pio;
 	}
+
+	printk("##2##");
 
 	/* initialize AC97 codec and register /dev/mixer */
 	if (i810_ac97_init(card) <= 0) {
@@ -2323,6 +2398,8 @@ static int i810_probe(PCI_Info_s *pci_dev, int pci_id, int nDeviceID, struct pci
 		goto out_iospace;
 	}
 
+	udelay(100000);
+	
 	if(clocking == 0) {
 		clocking = 48000;
 		i810_configure_clocking();
@@ -2330,11 +2407,15 @@ static int i810_probe(PCI_Info_s *pci_dev, int pci_id, int nDeviceID, struct pci
 
 	/* register /dev/dsp */
 	//if ((card->dev_audio = register_sound_dsp(&i810_audio_fops, -1)) < 0) {
+#ifdef ENABLE_DEVNODE_052
 	if( create_device_node( nDeviceID, pci_dev->nHandle,"sound/i810/dsp/0",
+#else
+	if( create_device_node( nDeviceID, pci_dev->nHandle,"sound/dsp",
+#endif
 			&i810_dsp_fops, i810_card_data ) < 0 ) {
 		int i;
 		printk(KERN_ERR "i810_audio: couldn't register DSP node!\n");
-		release_irq(card->irq, 0);
+		release_irq(card->irq, card->irq_handle);
 		for (i = 0; i < NR_AC97; i++)
 		if (card->ac97_codec[i] != NULL) {
 			kfree (card->ac97_codec[i]);
@@ -2343,7 +2424,8 @@ static int i810_probe(PCI_Info_s *pci_dev, int pci_id, int nDeviceID, struct pci
 	}
 
 	printk("i810_audio: Card initialization successful.\n");
- 	card->initializing = 0;
+	udelay(50000);
+	card->initializing = 0;
 	return 1;
 
 out_iospace:
