@@ -66,19 +66,16 @@ PrefsView::PrefsView( os::Rect cFrame )
 
 	// Create Apply button
 	m_pcButtons = new os::HLayoutNode( "HLButtons" );
-	m_pcButtons->AddChild( m_pcApply = new os::Button( os::Rect(), "BApply", "Apply", new os::Message( M_MW_APPLY ) ) );
+	m_pcButtons->AddChild( m_pcApply = new os::Button( os::Rect(), "BApply", "Apply", 
+							new os::Message( M_MW_APPLY ) ) )->LimitMaxSize( m_pcApply->GetPreferredSize( false ) );
 	m_pcButtons->AddChild( new os::HLayoutSpacer( "" ) );
 	m_pcVLRoot->AddChild( m_pcButtons );
+	
 	
 	m_pcLRoot->SetRoot( m_pcVLRoot );
 	AddChild( m_pcLRoot );
 	m_pcSoundcard->MakeFocus();
 	
-	// Set tab order
-	int iTabOrder = 0;
-
-	m_pcSoundcard->SetTabOrder( iTabOrder++ );
-	m_pcApply->SetTabOrder( iTabOrder++ );
 	
 	// Default Soundcard
 	os::Message cReply;
@@ -159,4 +156,17 @@ void PrefsView::HandleMessage( os::Message* pcMessage)
 			os::View::HandleMessage( pcMessage );
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
