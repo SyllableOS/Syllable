@@ -1,0 +1,7 @@
+authors			Kaj de Vos
+notes			See file PACKAGING to split off a developer package
+licenses		GPL
+home			www.gnu.org/software/gettext/
+patch-config	config
+;configure-vars	LINGUAS="de fr nl"
+documentation	README COPYING NEWS ChangeLog AUTHORS THANKS
