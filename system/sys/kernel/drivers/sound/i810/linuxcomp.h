@@ -34,8 +34,12 @@ typedef u32					dma_addr_t;
 #define copy_to_user(x, y, z) 	memcpy_to_user(x, y, z)
 #define copy_from_user(x, y, z) memcpy_from_user(x, y, z)
 
+
 #define put_user(x, y) 			do { *y = x; } while(0)
 #define get_user(x, y) 			do { x = *y; } while(0)
+
+
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
 #define KERN_INFO			
 #define KERN_ERR		

@@ -1,6 +1,7 @@
 #ifndef _AC97_CODEC_H_
 #define _AC97_CODEC_H_
 
+#include <atheos/list.h>
 
 /* AC97 1.0 */
 #define  AC97_RESET               0x0000      //
@@ -30,11 +31,14 @@
 #define AC97_PCM_FRONT_DAC_RATE   0x002C       /* PCM Front DAC Rate */
 #define AC97_PCM_SURR_DAC_RATE    0x002E       /* PCM Surround DAC Rate */
 #define AC97_PCM_LFE_DAC_RATE     0x0030       /* PCM LFE DAC Rate */
-#define AC97_PCM_LR_DAC_RATE      0x0032       /* PCM LR DAC Rate */
+#define AC97_PCM_LR_ADC_RATE      0x0032       /* PCM LR ADC Rate */
 #define AC97_PCM_MIC_ADC_RATE     0x0034       /* PCM MIC ADC Rate */
 #define AC97_CENTER_LFE_MASTER    0x0036       /* Center + LFE Master Volume */
 #define AC97_SURROUND_MASTER      0x0038       /* Surround (Rear) Master Volume */
-#define AC97_RESERVED_3A          0x003A       /* Reserved */
+#define AC97_RESERVED_3A          0x003A       /* Reserved in AC '97 < 2.2 */
+
+/* AC'97 2.2 */
+#define AC97_SPDIF_CONTROL        0x003A       /* S/PDIF Control */
 
 /* range 0x3c-0x58 - MODEM */
 #define AC97_EXTENDED_MODEM_ID    0x003C
@@ -85,6 +89,40 @@
 #define AC97_GP_ST                0x4000       /* Stereo Enhancement 1=on */
 #define AC97_GP_POP               0x8000       /* Pcm Out Path, 0=pre 3D, 1=post 3D */
 
+/* extended audio status and control bit defines */
+#define AC97_EA_VRA               0x0001       /* Variable bit rate enable bit */
+#define AC97_EA_DRA               0x0002       /* Double-rate audio enable bit */
+#define AC97_EA_SPDIF             0x0004       /* S/PDIF Enable bit */
+#define AC97_EA_VRM               0x0008       /* Variable bit rate for MIC enable bit */
+#define AC97_EA_CDAC              0x0040       /* PCM Center DAC is ready (Read only) */
+#define AC97_EA_SDAC              0x0040       /* PCM Surround DACs are ready (Read only) */
+#define AC97_EA_LDAC              0x0080       /* PCM LFE DAC is ready (Read only) */
+#define AC97_EA_MDAC              0x0100       /* MIC ADC is ready (Read only) */
+#define AC97_EA_SPCV              0x0400       /* S/PDIF configuration valid (Read only) */
+#define AC97_EA_PRI               0x0800       /* Turns the PCM Center DAC off */
+#define AC97_EA_PRJ               0x1000       /* Turns the PCM Surround DACs off */
+#define AC97_EA_PRK               0x2000       /* Turns the PCM LFE DAC off */
+#define AC97_EA_PRL               0x4000       /* Turns the MIC ADC off */
+#define AC97_EA_SLOT_MASK         0xffcf       /* Mask for slot assignment bits */
+#define AC97_EA_SPSA_3_4          0x0000       /* Slot assigned to 3 & 4 */
+#define AC97_EA_SPSA_7_8          0x0010       /* Slot assigned to 7 & 8 */
+#define AC97_EA_SPSA_6_9          0x0020       /* Slot assigned to 6 & 9 */
+#define AC97_EA_SPSA_10_11        0x0030       /* Slot assigned to 10 & 11 */
+
+/* S/PDIF control bit defines */
+#define AC97_SC_PRO               0x0001       /* Professional status */
+#define AC97_SC_NAUDIO            0x0002       /* Non audio stream */
+#define AC97_SC_COPY              0x0004       /* Copyright status */
+#define AC97_SC_PRE               0x0008       /* Preemphasis status */
+#define AC97_SC_CC_MASK           0x07f0       /* Category Code mask */
+#define AC97_SC_L                 0x0800       /* Generation Level status */
+#define AC97_SC_SPSR_MASK         0xcfff       /* S/PDIF Sample Rate bits */
+#define AC97_SC_SPSR_44K          0x0000       /* Use 44.1kHz Sample rate */
+#define AC97_SC_SPSR_48K          0x2000       /* Use 48kHz Sample rate */
+#define AC97_SC_SPSR_32K          0x3000       /* Use 32kHz Sample rate */
+#define AC97_SC_DRS               0x4000       /* Double Rate S/PDIF */
+#define AC97_SC_V                 0x8000       /* Validity status */
+
 /* powerdown control and status bit defines */
 
 /* status */
@@ -103,6 +141,39 @@
 #define AC97_PWR_PR5              0x2000       /* Internal Clk disable */
 #define AC97_PWR_PR6              0x4000       /* HP amp powerdown */
 #define AC97_PWR_PR7              0x8000       /* Modem off - if supported */
+
+/* extended audio ID register bit defines */
+#define AC97_EXTID_VRA            0x0001
+#define AC97_EXTID_DRA            0x0002
+#define AC97_EXTID_SPDIF          0x0004
+#define AC97_EXTID_VRM            0x0008
+#define AC97_EXTID_DSA0           0x0010
+#define AC97_EXTID_DSA1           0x0020
+#define AC97_EXTID_CDAC           0x0040
+#define AC97_EXTID_SDAC           0x0080
+#define AC97_EXTID_LDAC           0x0100
+#define AC97_EXTID_AMAP           0x0200
+#define AC97_EXTID_REV0           0x0400
+#define AC97_EXTID_REV1           0x0800
+#define AC97_EXTID_ID0            0x4000
+#define AC97_EXTID_ID1            0x8000
+
+/* extended status register bit defines */
+#define AC97_EXTSTAT_VRA          0x0001
+#define AC97_EXTSTAT_DRA          0x0002
+#define AC97_EXTSTAT_SPDIF        0x0004
+#define AC97_EXTSTAT_VRM          0x0008
+#define AC97_EXTSTAT_SPSA0        0x0010
+#define AC97_EXTSTAT_SPSA1        0x0020
+#define AC97_EXTSTAT_CDAC         0x0040
+#define AC97_EXTSTAT_SDAC         0x0080
+#define AC97_EXTSTAT_LDAC         0x0100
+#define AC97_EXTSTAT_MADC         0x0200
+#define AC97_EXTSTAT_SPCV         0x0400
+#define AC97_EXTSTAT_PRI          0x0800
+#define AC97_EXTSTAT_PRJ          0x1000
+#define AC97_EXTSTAT_PRK          0x2000
+#define AC97_EXTSTAT_PRL          0x4000
 
 /* useful power states */
 #define AC97_PWR_D0               0x0000      /* everything on */
@@ -142,6 +213,9 @@
                                     (CODEC)->supported_mixers & (1<<FOO) )
 
 struct ac97_codec {
+	/* Linked list of codecs */
+	struct list_head list;
+
 	/* AC97 controller connected with */
 	void *private_data;
 
@@ -149,26 +223,39 @@ struct ac97_codec {
 	int id;
 	int dev_mixer; 
 	int type;
-	
-	/* codec specific init/reset routines, used mainly for 4 or 6 channel support */
-	int  (*codec_init)  (struct ac97_codec *codec);
+	u32 model;
 
-	/* controller specific lower leverl ac97 accessing routines */
+	int modem:1;
+
+	struct ac97_ops *codec_ops;
+
+	/* controller specific lower leverl ac97 accessing routines.
+	   must be re-entrant safe */
 	u16  (*codec_read)  (struct ac97_codec *codec, u8 reg);
 	void (*codec_write) (struct ac97_codec *codec, u8 reg, u16 val);
 
 	/* Wait for codec-ready.  Ok to sleep here.  */
 	void  (*codec_wait)  (struct ac97_codec *codec);
 
-
+	/* callback used by helper drivers for interesting ac97 setups */
+	void  (*codec_unregister) (struct ac97_codec *codec);
+	
+	struct ac97_driver *driver;
+	void *driver_private;	/* Private data for the driver */
+	
+	SpinLock_s lock;
+	
 	/* OSS mixer masks */
 	int modcnt;
 	int supported_mixers;
 	int stereo_mixers;
 	int record_sources;
 
+	/* Property flags */
+	int flags;
+
 	int bit_resolution;
-	
+
 	/* OSS mixer interface */
 	int  (*read_mixer) (struct ac97_codec *codec, int oss_channel);
 	void (*write_mixer)(struct ac97_codec *codec, int oss_channel,
@@ -183,8 +270,48 @@ struct ac97_codec {
 	int  (*modem_ioctl)(struct ac97_codec *codec, unsigned int cmd, unsigned long arg);
 };
 
+/*
+ *	Operation structures for each known AC97 chip
+ */
+ 
+struct ac97_ops
+{
+	/* Initialise */
+	int (*init)(struct ac97_codec *c);
+	/* Amplifier control */
+	int (*amplifier)(struct ac97_codec *codec, int on);
+	/* Digital mode control */
+	int (*digital)(struct ac97_codec *codec, int slots, int rate, int mode);
+#define AUDIO_DIGITAL		0x8000
+#define AUDIO_PRO		0x4000
+#define AUDIO_DRS		0x2000
+#define AUDIO_CCMASK		0x003F
+	
+#define AC97_DELUDED_MODEM	1	/* Audio codec reports its a modem */
+#define AC97_NO_PCM_VOLUME	2	/* Volume control is missing 	   */
+};
+
+
 extern int ac97_probe_codec(struct ac97_codec *);
 extern unsigned int ac97_set_adc_rate(struct ac97_codec *codec, unsigned int rate);
 extern unsigned int ac97_set_dac_rate(struct ac97_codec *codec, unsigned int rate);
+extern int ac97_save_state(struct ac97_codec *codec);
+extern int ac97_restore_state(struct ac97_codec *codec);
+
+extern struct ac97_codec *ac97_alloc_codec(void);
+extern void ac97_release_codec(struct ac97_codec *codec);
+
+struct ac97_driver {
+	struct list_head list;
+	char *name;
+	u32 codec_id;
+	u32 codec_mask;
+	int (*probe) (struct ac97_codec *codec, struct ac97_driver *driver);
+	void (*remove) (struct ac97_codec *codec, struct ac97_driver *driver);
+};
+
+extern int ac97_register_driver(struct ac97_driver *driver);
+extern void ac97_unregister_driver(struct ac97_driver *driver);
+extern void ac97_init();
 
 #endif /* _AC97_CODEC_H_ */
