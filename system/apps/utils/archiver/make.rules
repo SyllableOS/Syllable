@@ -3,6 +3,11 @@ all:
 		if ! $(MAKE) -C $$PWD/$$subdir; then exit 1; fi;\
 	done
 
+deps:
+	@for subdir in $(SUBDIRS); do\
+		if ! $(MAKE) -C $$PWD/$$subdir deps; then exit 1; fi;\
+	done
+
 dist:
 	@for subdir in $(SUBDIRS); do\
 		if ! $(MAKE) -C $$PWD/$$subdir dist; then exit 1; fi;\
