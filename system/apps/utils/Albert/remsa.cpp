@@ -39,9 +39,7 @@ void Remsa::HandleMessage(Message *msg)
 	switch(msg->GetCode()) {
 		case 1:
 			msg->FindString("text", &str);
-			if(str) {
-				m_TextView->Insert(str, false);
-			}
+			_AddText( str );
 			break;
 		case ID_COPY:
 			m_TextView->SelectAll();
@@ -71,13 +69,12 @@ Remsa::Remsa(const Rect & r)
 
 	m_Visible = false;
 
-	m_TextView = new PaperRoll(bounds, "tv", "", CF_FOLLOW_ALL, /*WID_FULL_UPDATE_ON_RESIZE|*/WID_WILL_DRAW);
+	m_TextView = new PaperRoll(bounds, "tv", "", CF_FOLLOW_ALL, WID_FULL_UPDATE_ON_RESIZE | WID_WILL_DRAW);
 	
 	m_TextView->SetMultiLine(true);
 	m_TextView->SetReadOnly(true);
 
-	Font* pcAppFont = new Font ( );
-	pcAppFont->SetFamilyAndStyle( "Lucida Sans Typewriter", "Regular" );
+	Font* pcAppFont = new Font ( DEFAULT_FONT_FIXED );
 	pcAppFont->SetSize( 8 );
 
 	m_TextView->SetFont(pcAppFont);
@@ -98,8 +95,9 @@ bool Remsa::OkToQuit(void)
 	return true;
 }
 
-void Remsa::AddText(char *txt)
+void Remsa::_AddText( const char *txt )
 {
-	m_TextView->Insert(txt, false);
+	if( txt ) {
+		m_TextView->Insert(txt, false);
+	}
 }
-

@@ -44,14 +44,15 @@ BaseN::BaseN(const Rect & r)
 
 	TableView	*table = new TableView(bounds, "tv", "", 2, 6, CF_FOLLOW_ALL);
 
-	table->SetChild(new StringView(bounds, "s1", "Binary"), 0, 0);
-	table->SetChild(new StringView(bounds, "s2", "Octal"), 0, 1);
-	table->SetChild(new StringView(bounds, "s3", "Decimal"), 0, 2);
-	table->SetChild(new StringView(bounds, "s4", "Hexadecimal"), 0, 3);
-	table->SetChild(new StringView(bounds, "s5", "Base-64"), 0, 4);
-	table->SetChild(new StringView(bounds, "s6", "Roman"), 0, 5);
+	table->SetChild(new StringView(bounds, "s1", "Binary"), 0, 0, 0.0f);
+	table->SetChild(new StringView(bounds, "s2", "Octal"), 0, 1, 0.0f);
+	table->SetChild(new StringView(bounds, "s3", "Decimal"), 0, 2, 0.0f);
+	table->SetChild(new StringView(bounds, "s4", "Hexadecimal"), 0, 3, 0.0f);
+	table->SetChild(new StringView(bounds, "s5", "Base-64"), 0, 4, 0.0f);
+	table->SetChild(new StringView(bounds, "s6", "Roman"), 0, 5, 0.0f);
 
 	m_Bin = new TextView(bounds, "bin", "");
+	m_Bin->SetMinPreferredSize( 10, 1 );
 	m_Bin->SetReadOnly(true);
 	table->SetChild(m_Bin, 1, 0);
 
@@ -75,69 +76,7 @@ BaseN::BaseN(const Rect & r)
 	m_Roman->SetReadOnly(true);
 	table->SetChild(m_Roman, 1, 5);
 
-
 	AddChild(table);
-
-//	m_TextView = new TextView(bounds, "tv", "", CF_FOLLOW_ALL, /*WID_FULL_UPDATE_ON_RESIZE|*/WID_WILL_DRAW);
-	
-//	m_TextView->SetMultiLine(true);
-//	m_TextView->SetReadOnly(true);
-
-//	AddChild(m_TextView);
-
-
-/*	Rect bound = GetBounds();
-	LayoutView *view = new LayoutView(GetBounds(), "", NULL, CF_FOLLOW_ALL);
-	VLayoutNode *root = new VLayoutNode("root");
-	LayoutView *buttonview = new LayoutView(Rect(0, 0, 100, 20), "", NULL, CF_FOLLOW_ALL);
-	HLayoutNode *buttons = new HLayoutNode("buttons");
-
-	buttons->AddChild(
-		new Button(Rect(0, 0, 0, 0), "knapp", "<", new Message(15)),
-		1.0f
-		);
-
-
-	buttons->AddChild(
-		new Button(Rect(0, 0, 0, 0), "knap2", ">", new Message(15)),
-		1.0f
-		);
-
-
-	buttons->AddChild(
-		new Button(Rect(0, 0, 0, 0), "knapp3", "Index", new Message(15)),
-		1.0f
-		);
-
-//	buttons->AddChild(new LayoutSpacer("", 100.0f), 1.0f);
-
-	buttonview->SetRoot(buttons);
-
-	root->AddChild(buttonview, 1.0f);
-
-	listview = new ListView(Rect(bound.left, bound.top+25, bound.right, bound.bottom), "List",
-		ListView::F_RENDER_BORDER, CF_FOLLOW_LEFT|CF_FOLLOW_TOP, WID_WILL_DRAW);
-
-	//row = new ListViewStringRow();
-	//row->AppendString("Mipp mapp mupp");
-
-	listview->InsertRow(100, new AGViewRow("@{u}Knarkrecept@{uu}"));
-	listview->InsertRow(100, new AGViewRow(""));
-	listview->InsertRow(100, new AGViewRow("1 tsk hasch"));
-	listview->InsertRow(100, new AGViewRow("2 msk heroin"));
-	listview->InsertRow(100, new AGViewRow("4 tsk salt"));
-
-	//listview->SetFont(font);
-	//font->Release();
-
-	listview->InsertColumn("Mipp", -1);
-	listview->SetHasColumnHeader(false);
-
-	root->AddChild(listview, 100.0f);
-
-	view->SetRoot(root);
-
-	AddChild(view);*/
 
 	AddMailbox("Base-N");
 }

@@ -40,18 +40,3 @@ togglebutton.o:	togglebutton.cpp togglebutton.h
 base-n.o:			base-n.cpp base-n.h
 postoffice.o:		postoffice.cpp postoffice.h
 aboutwin.o:		aboutwin.cpp aboutwin.h
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -20,9 +20,10 @@
 
 #include "calc.h"
 
-#include <iostream.h>
+#include <iostream>
 
 using namespace os;
+using namespace std;
 
 class CalcDisplay : public View
 {
@@ -48,5 +49,6 @@ class CalcDisplay : public View
 	bool	m_Hyp;
 	int		m_Par;
 };
+
 
 

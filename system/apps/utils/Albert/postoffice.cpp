@@ -22,8 +22,10 @@
 
 #include "postoffice.h"
 #include <string.h>
-#include <iostream.h>
+#include <iostream>
 #include <unistd.h>
+
+using namespace std;
 
 Mailbox::Mailbox()
 {
@@ -329,3 +331,4 @@ bool PostOffice::CheckUnique(const char *name, bool unique)
 
 	return true;
 }
+

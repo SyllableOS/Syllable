@@ -1,5 +1,5 @@
 /*
- * Albert 0.4 * Copyright (C)2002 Henrik Isaksson
+ * Albert 0.5 * Copyright (C)2002-2004 Henrik Isaksson
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by
@@ -20,10 +20,9 @@
 #define ABOUTWIN_H
 
 #include <gui/window.h>
-#include <gui/bitmap.h>
+#include <gui/image.h>
 #include <util/message.h>
 #include <util/settings.h>
-#include <translation/translator.h>
 #include <atheos/time.h>
 #include <gui/bitmap.h>
 #include <gui/guidefines.h>
@@ -46,12 +45,7 @@ class AboutWindow: public Window {
 	void HandleMessage(Message *);
 
 	private:
-	Translator	*m_Translator;
-	Bitmap		*m_Bitmap;
+	Image		*m_pcImage;
 };
 
 #endif
-
-
-
-

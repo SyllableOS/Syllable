@@ -31,26 +31,27 @@
 
 class BitmapView : public View {
 	public:
-	BitmapView(const Rect &cFrame, const char *cName, Bitmap *bitmap)
+	BitmapView(const Rect &cFrame, const char *cName, Image *img)
 		: View(cFrame, cName, CF_FOLLOW_NONE, WID_WILL_DRAW)
 	{
-		m_Bitmap = bitmap;
+		m_pcImage = img;
 		m_Font = new Font;
-		m_Font->SetFamilyAndStyle("Lucida Sans", "Regular");
+		m_Font->SetFamilyAndStyle(DEFAULT_FONT_REGULAR, "Regular");
 		m_Font->SetSize(7);
 	}
 
 	~BitmapView()
 	{
 		m_Font->Release();
+		delete m_pcImage;
 	}
 
 	void Paint(const Rect &cUpdateRect)
 	{
-		char *text1 = "Albert V0.4 2002-07-04 Copyright (C) 2002 Henrik Isaksson.";
+		char *text1 = "Albert V0.5 2004-02-07 Copyright (C) 2002-2004 Henrik Isaksson.";
 		char *text2 = "Albert is released under the GNU General Public License.";
 		SetDrawingMode(DM_COPY);
-		DrawBitmap(m_Bitmap, cUpdateRect, cUpdateRect);
+		m_pcImage->Draw( Point( 0, 0 ), this  );
 
 		SetDrawingMode(DM_OVER);
 		SetFont(m_Font);
@@ -67,7 +68,7 @@ class BitmapView : public View {
 	}
 
 	private:
-	Bitmap		*m_Bitmap;
+	Image		*m_pcImage;
 	Font		*m_Font;
 };
 
@@ -78,34 +79,29 @@ AboutWindow::AboutWindow(const Rect & r)
 	WND_NOT_RESIZABLE,
 	CURRENT_DESKTOP)
 {
-
     os::Resources cRes(get_image_id());
 	os::ResStream* pcStream = cRes.GetResourceStream("albert.png");
-	if(pcStream == NULL) {
-		throw(os::errno_exception(""));
-    } else {
-		m_Bitmap = LoadImage( pcStream );
-		if(m_Bitmap) {
-			Rect	frame = m_Bitmap->GetBounds();
-			Desktop	desktop;
+	if(pcStream == NULL)
+		throw(os::errno_exception("Can't find resource albert.png!"));
 
-			BitmapView *bmv = new BitmapView(frame, "bitmap", m_Bitmap);
-			AddChild(bmv);
+	m_pcImage = new BitmapImage( pcStream );
+	BitmapView* imv = new BitmapView( m_pcImage->GetBounds(), "bitmap", m_pcImage );
+	AddChild(imv);
 
-			Point offset(desktop.GetResolution());
+	Rect	frame = m_pcImage->GetBounds();
+	Desktop	desktop;
+	Point offset(desktop.GetResolution());
+
+	offset.x = offset.x/2 - frame.Width()/2;
+	offset.y = offset.y/2 - frame.Height()/2;
+
+	SetFrame(frame + offset);
 	
-			offset.x = offset.x/2 - frame.Width()/2;
-			offset.y = offset.y/2 - frame.Height()/2;
-
-			SetFrame(frame + offset);
-		}
-		delete pcStream;
-    }
+	delete pcStream;
 }
 
 AboutWindow::~AboutWindow()
 {
-	delete m_Bitmap;
 }
 
 bool AboutWindow::OkToQuit()
@@ -117,138 +113,6 @@ void AboutWindow::HandleMessage(Message *msg)
 {
 	Window::HandleMessage(msg);
 }
-
-Bitmap* AboutWindow::LoadImage(StreamableIO* pcStream)
-{
-    os::Translator* pcTrans = NULL;
-
-    os::TranslatorFactory* pcFactory = new os::TranslatorFactory;
-    pcFactory->LoadAll();
-    
-    os::Bitmap* pcBitmap = NULL;
-    
-    try {
-	uint8  anBuffer[8192];
-	uint   nFrameSize = 0;
-	int    x = 0;
-	int    y = 0;
-	
-	os::BitmapFrameHeader sFrameHeader;
-	for (;;) {
-	    int nBytesRead = pcStream->Read( anBuffer, sizeof(anBuffer) );
-
-	    if (nBytesRead == 0 ) {
-		break;
-	    }
-
-	    if ( pcTrans == NULL ) {
-		int nError = pcFactory->FindTranslator( "", os::TRANSLATOR_TYPE_IMAGE, anBuffer, nBytesRead, &pcTrans );
-		if ( nError < 0 ) {
-		    return( NULL );
-		}
-	    }
-	    
-	    pcTrans->AddData( anBuffer, nBytesRead, nBytesRead != sizeof(anBuffer) );
-
-	    while( true ) {
-	    if ( pcBitmap == NULL ) {
-		os::BitmapHeader sBmHeader;
-		if ( pcTrans->Read( &sBmHeader, sizeof(sBmHeader) ) != sizeof( sBmHeader ) ) {
-		    break;
-		}
-		pcBitmap = new os::Bitmap( sBmHeader.bh_bounds.Width() + 1, sBmHeader.bh_bounds.Height() + 1, os::CS_RGB32 );
-	    }
-	    if ( nFrameSize == 0 ) {
-		if ( pcTrans->Read( &sFrameHeader, sizeof(sFrameHeader) ) != sizeof( sFrameHeader ) ) {
-		    break;
-		}
-		x = sFrameHeader.bf_frame.left * 4;
-		y = sFrameHeader.bf_frame.top;
-		nFrameSize = sFrameHeader.bf_data_size;
-	    }
-	    uint8 pFrameBuffer[8192];
-	    nBytesRead = pcTrans->Read( pFrameBuffer, min( nFrameSize, sizeof(pFrameBuffer) ) );
-	    if ( nBytesRead <= 0 ) {
-		break;
-	    }
-	    nFrameSize -= nBytesRead;
-	    uint8* pDstRaster = pcBitmap->LockRaster();
-	    int nSrcOffset = 0;
-	    for ( ; y <= sFrameHeader.bf_frame.bottom && nBytesRead > 0 ; ) {
-		int nLen = min( nBytesRead, sFrameHeader.bf_bytes_per_row - x );
-		memcpy( pDstRaster + y * pcBitmap->GetBytesPerRow() + x, pFrameBuffer + nSrcOffset, nLen );
-		if ( x + nLen == sFrameHeader.bf_bytes_per_row ) {
-		    x = 0;
-		    y++;
-		} else {
-		    x += nLen;
-		}
-		nBytesRead -= nLen;
-		nSrcOffset += nLen;
-	    }
-	    }
-	}
-	return( pcBitmap );
-    }
-    catch( ... ) {
-	return( NULL );
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -1,5 +1,5 @@
 /*
- * Albert 0.4 * Copyright (C)2002 Henrik Isaksson
+ * Albert 0.5 * Copyright (C)2002-2004 Henrik Isaksson
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by
@@ -43,10 +43,3 @@ void Stack::Clear(void)
 
 	m_pTop = NULL;
 }
-
-
-
-
-
-
-

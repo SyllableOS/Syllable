@@ -53,15 +53,13 @@ class Remsa: public Window {
 
 	void HandleMessage(Message *);
 
-	void AddText(char *);
-
 	void Show(void);
 
 	private:
+	void _AddText( const char * );
+
 	TextView	*m_TextView;
 	bool		m_Visible;
 };
 
 #endif
-
-

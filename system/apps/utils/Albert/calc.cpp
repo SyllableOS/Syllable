@@ -1,5 +1,5 @@
 /*
- * Albert 0.4 * Copyright (C)2002 Henrik Isaksson
+ * Albert 0.5 * Copyright (C)2002-2004 Henrik Isaksson
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by
@@ -45,7 +45,9 @@ using namespace os;
 #define __USE_ISOC9X
 #include <stdlib.h>
 #include <math.h>
-#include <iostream.h>
+#include <iostream>
+
+using namespace std;
 
 class CalcApp:public Application
 {
@@ -85,36 +87,34 @@ enum MenuIDs {
 	ID_SHOW_KEYS
 };
 
-#define ALBERT_VERSION "0.4"
-
-const unsigned int MENU_OFFSET=15;
+#define ALBERT_VERSION "0.5"
 
 void CalcWindow::BuildMenus(void)
 {
 	// Create a menu bar
 
 	Rect sMenuBounds = GetBounds();
-	sMenuBounds.bottom = MENU_OFFSET;
+	sMenuBounds.bottom = 0;
 
-	Menu* pcMenuBar = new Menu(sMenuBounds, "main_menu", ITEMS_IN_ROW, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT, WID_FULL_UPDATE_ON_H_RESIZE);
+	m_pcMenuBar = new Menu(sMenuBounds, "main_menu", ITEMS_IN_ROW, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT, WID_FULL_UPDATE_ON_H_RESIZE);
 
 	// Create the menus within the bar
 
 	Menu* pcFileMenu = new Menu(Rect(0,0,1,1),"File", ITEMS_IN_COLUMN);
-	pcFileMenu->AddItem("Clear All", new Message('a'));
+	pcFileMenu->AddItem("Clear All", new Message('a'), "CTRL+C");
 //	pcFileMenu->AddItem(new MenuSeparator);
-	pcFileMenu->AddItem("Exit", new Message('q'));
+	pcFileMenu->AddItem("Exit", new Message('q'), "CTRL+Q" );
 
-	pcMenuBar->AddItem(pcFileMenu);
+	m_pcMenuBar->AddItem(pcFileMenu);
 
 	Menu* pcBaseMenu = new Menu(Rect(0,0,1,1),"Base", ITEMS_IN_COLUMN);
-	pcBaseMenu->AddItem("Binary (2)", new Message(ID_BASE_2));
-	pcBaseMenu->AddItem("Octal (8)", new Message(ID_BASE_8));
-	pcBaseMenu->AddItem("Decimal (10)", new Message(ID_BASE_10));
-	pcBaseMenu->AddItem("Hexadecimal (16)", new Message(ID_BASE_16));
+	pcBaseMenu->AddItem("Binary (2)", new Message(ID_BASE_2), "CTRL+B" );
+	pcBaseMenu->AddItem("Octal (8)", new Message(ID_BASE_8), "CTRL+O");
+	pcBaseMenu->AddItem("Decimal (10)", new Message(ID_BASE_10), "CTRL+D");
+	pcBaseMenu->AddItem("Hexadecimal (16)", new Message(ID_BASE_16), "CTRL+H");
 
 
-	pcMenuBar->AddItem(pcBaseMenu);
+	m_pcMenuBar->AddItem(pcBaseMenu);
 
 	Menu* pcConstMenu = new Menu(Rect(0,0,1,1),"Constants", ITEMS_IN_COLUMN);
 	pcConstMenu->AddItem("Pi", new Message(ID_CONSTANT_PI));
@@ -132,26 +132,29 @@ void CalcWindow::BuildMenus(void)
 	pcConstMenu->AddItem("Permeability of free space", new Message(ID_CONSTANT_PERME));
 	pcConstMenu->AddItem("Permittivity of free space", new Message(ID_CONSTANT_PERMI));
 
-	pcMenuBar->AddItem(pcConstMenu);
+	m_pcMenuBar->AddItem(pcConstMenu);
 
 	Menu* pcWinMenu = new Menu(Rect(0,0,1,1),"Windows", ITEMS_IN_COLUMN);
-	pcWinMenu->AddItem("Paper Roll", new Message(ID_WINDOW_PAPER));
-	pcWinMenu->AddItem("Base-N", new Message(ID_WINDOW_BASEN));
+	pcWinMenu->AddItem("Paper Roll", new Message(ID_WINDOW_PAPER), "CTRL+P");
+	pcWinMenu->AddItem("Base-N", new Message(ID_WINDOW_BASEN), "CTRL+N");
 
-	pcMenuBar->AddItem(pcWinMenu);
+	m_pcMenuBar->AddItem(pcWinMenu);
 
 	Menu* pcHelpMenu = new Menu(Rect(0,0,1,1),"Help", ITEMS_IN_COLUMN);
 	pcHelpMenu->AddItem("About", new Message('?'));
 	pcHelpMenu->AddItem("Keyboard", new Message(ID_SHOW_KEYS));
 
-	pcMenuBar->AddItem(pcHelpMenu);
+	m_pcMenuBar->AddItem(pcHelpMenu);
 
 
-	pcMenuBar->SetTargetForItems(this);
+	m_pcMenuBar->SetTargetForItems(this);
 
 	// Add the menubar to the window
 
-	m_CalcView->AddChild(pcMenuBar);
+	m_CalcView->AddChild(m_pcMenuBar);
+
+	sMenuBounds.bottom = sMenuBounds.top + m_pcMenuBar->GetPreferredSize(false).y;
+	m_pcMenuBar->SetFrame( sMenuBounds );
 }
 
 void CalcWindow::UpdateDisplay(long double value)
@@ -465,7 +468,7 @@ CalcWindow::CalcWindow(const Rect & r)
 
 	BuildMenus();
 
-	bounds.top += MENU_OFFSET+1;
+	bounds.top += m_pcMenuBar->GetBounds().bottom + 1;
 
 	strcpy(bfr, "0");
 
@@ -581,6 +584,7 @@ void CalcView::KeyDown( const char * pzString,  const char * pzRawString,  uint3
 		        case 52:	msg->SetCode( CB_CLEAR_ALL );	break;
         		default:
         			//cout << z << endl;
+        			View::KeyDown( pzString,  pzRawString, nQualifiers );
 	        		msg->SetCode( 0 );
         	}
 			break;
@@ -590,7 +594,7 @@ void CalcView::KeyDown( const char * pzString,  const char * pzRawString,  uint3
 
 void CalcView::KeyUp( const char * pzString,  const char * pzRawString,  uint32 nQualifiers )
 {
-
+	View::KeyUp( pzString,  pzRawString, nQualifiers );
 }
 
 bool CalcWindow::OkToQuit(void)
@@ -623,25 +627,4 @@ int main(void)
 
 	return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

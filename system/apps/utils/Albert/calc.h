@@ -54,9 +54,11 @@ class CalcWindow: public Window {
 	char					m_LastOp[16];
 	CalcView				*m_CalcView;
 	Settings				*m_Settings;
+	Menu*					m_pcMenuBar;
 };
 
 #endif
+
 
 
 
