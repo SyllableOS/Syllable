@@ -1,3 +1,26 @@
+* August 15, 2002, Rick Caudill *
+	* Changes *
+	
+		* Fixed a bug that was causing the desktop to segfault if there wasn't any config 			file.
+
+		* The desktop now creates ~/Trash, which will be used for trash files down the 			road.
+
+		* If the background image is not found, a ^(carot) will appear in the config file. 			This gives me options like error control and now the "Background Pictures" 			dialog will be able to display the last image used in the listview.
+
+		* Everything in the icon properties dialog is greyed out at first now :).
+	
+		* The desktop is now split up into two programs(dlogin/desktop).  DLogin controls
+			the login process and Desktop is the actual desktop
+
+		* Removed all debug information
+
+		* Images for the login has change.
+
+		* Change all alerts to the new alert code(images).
+	
+	
+
+
 * August 4, 2002, Rick Caudill *
 	
 	* Changes since Syllable 0.4.0(a)
@@ -7,7 +30,7 @@
 		* Started merger with Launcher(It is getting there).
 		* Fixed a major bug that was causing the properties dialog to segfault.
 		* Moved code around.  It makes the code easier to read.
-		* Added error testing for scaling images.  If the image is not bigger than the 			screen resolution, the desktop will not scale the image.
+		* Added error testing for scaling images.  If the image is not bigger than the 				screen resolution, the desktop will not scale the image.
 		* Fixed icon text color problems.
 
 		 
