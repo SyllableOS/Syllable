@@ -6,19 +6,24 @@ authors
 maintainers			Kaj de Vos
 status				broken
 warning				Hangs during configure!
+notes				AutoMake warns about bad substitution, and stage2/Makefile.in is not regenerated
 
 licenses			GPL
 home				www.gnu.org/software/grub/
 locations			ftp://alpha.gnu.org/gnu/grub/
 
 build-needs
+;	For autoreconf:
+;	perl 5.0
 	automake >= 1.7
 	autoconf >= 2.57
 build-recommends	texinfo >= 4.0
 
 patch-config
 patch
-	automake
+;	autoreconf --force
+;	aclocal
+	automake Makefile
 	autoconf
 
 configure-args		--prefix=/boot/boot/grub
