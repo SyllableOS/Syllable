@@ -302,6 +302,7 @@ enum {
 
 struct screen_mode
 {
+#ifdef __cplusplus
 	screen_mode() { }
 	screen_mode( int nWidth, int nHeight, int nBytesPerLine, color_space eColorSpc, float vRefreshRate ) {
 		m_nWidth = nWidth;
@@ -310,6 +311,8 @@ struct screen_mode
 		m_eColorSpace = eColorSpc;
 		m_vRefreshRate = vRefreshRate;
 	}
+#endif
+
     int		     m_nWidth;
     int		     m_nHeight;
     int		     m_nBytesPerLine;
