@@ -30,6 +30,7 @@ class Locale::Private
 	public:
 
 	Private() {
+		m_pcCol = NULL;
 	}
 
 	~Private() {
@@ -164,3 +165,4 @@ Catalog* Locale::GetLocalizedCatalog( const String& cName )
 		return NULL;
 	}
 }
+
