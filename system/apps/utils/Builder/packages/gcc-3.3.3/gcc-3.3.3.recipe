@@ -38,13 +38,13 @@ patch-config		. boehm-gc
 ;	autoconf
 
 ; When compiling with GCC 2.95.x:
-configure-vars		CXXFLAGS='-march=i586 -O2 -pipe -lstdc++'
+;configure-vars		CXXFLAGS='-march=i586 -O2 -pipe -lstdc++'
 configure-options
 	--enable-languages=c,c++
-;,treelang
-; Won't do --enable-shared:
-;,objc
-;,java,f77,ada
+;		,treelang
+;		Won't do --enable-shared:
+;		,objc
+;		,java,f77,ada
 	--with-arch=i586
 	--enable-sjlj-exceptions
 	--enable-shared
@@ -60,9 +60,9 @@ configure-options
 ;	LIBCXXFLAGS='-march=i586 -O2 -pipe'
 ;		GCC seems to set this automatically:
 ;		' -fno-implicit-templates'
-;make-targets
+make-targets
 ;	When compiling with GCC 3.x:
-;	bootstrap
+	bootstrap
 ;	For printed documentation:
 ;	dvi
 

@@ -205,7 +205,7 @@ Boston, MA 02111-1307, USA.  */
    done.
 
    On Syllable -shared is always passed due to %{!r:-shared}  This will go
-   away in future versions but is currently needed for backwards compatability.
+   away in future versions but is currently needed for backwards compatibility.
 */
 
 #undef	LINK_SPEC
