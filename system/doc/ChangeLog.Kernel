@@ -1,3 +1,9 @@
+* November 14 2004, Jake Hamby *
+
+  fatfs:
+    Display short filenames correctly as upper- or lowercase using flags set
+    by Windows.  All filenames should now display with the correct case.
+
 * November 7 2004, Jake Hamby *
 
 Fixed a bug in restoring the FPU registers on returning from a signal
