@@ -529,6 +529,7 @@ status_t Resources::_LoadResourceList()
 		{
 			char *pzBfr = new char[ nNameLen + 1 ];
 			nError = m->m_pcStream->Read( pzBfr, nNameLen );
+			pzBfr[ nNameLen ] = 0;
 			sDesc.m_cName = pzBfr;
 			delete []pzBfr;
 		}
@@ -555,6 +556,7 @@ status_t Resources::_LoadResourceList()
 		{
 			char *pzBfr = new char[ nNameLen + 1 ];
 			nError = m->m_pcStream->Read( pzBfr, nNameLen );
+			pzBfr[ nNameLen ] = 0;
 			sDesc.m_cType = pzBfr;
 			delete []pzBfr;
 		}
