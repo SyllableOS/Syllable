@@ -19,8 +19,16 @@
 
 /*
  * Changes:
- *
- * 02-07-23: Fixed disable in MultiLine mode.
+ * * Added keyboard shortcuts:
+ *   CTRL+C - Copy
+ *   CTRL+V - Paste
+ *   CTRL+X - Cut
+ *   CTRL+Z - Undo
+ *   CTRL+Y - Redo
+ * * Copying now works when read-only
+ * * Implemented redo
+ * * Fixed GetValue() compile warning
+ * * Fixed GetValue()/GetRegion() crash
  *
  */
 
@@ -160,6 +168,7 @@ namespace os
 	void   RecalcPrefWidth();
 	void   AddUndoNode( UndoNode* psNode );
 	void   Undo();
+	void   Redo();
 	void   InvalidateLines( int nFirst, int nLast );
 
 	uint32			m_nEventMask;
@@ -185,6 +194,7 @@ namespace os
 	TextView*		m_pcParent;
 	Point			m_cPreferredSize;
 	std::list<UndoNode*>	m_cUndoStack;
+	std::list<UndoNode*>::iterator	m_iUndoIterator;
 	int			m_nUndoMemSize;
 	int			m_nMaxUndoSize;
 	IPoint			m_cMinPreferredSize;
@@ -296,7 +306,8 @@ Variant TextView::GetValue() const
 {
     std::string cBuffer;
     m_pcEditor->GetRegion( IPoint(0, 0), IPoint( -1, -1 ), &cBuffer, false );
-    return( Variant( cBuffer ) );
+    Variant	cVariant( cBuffer );
+    return( cVariant );
 }
 
 void TextView::MouseMove( const Point& cNewPos, int nCode, uint32 nButtons, Message* pcData )
@@ -938,6 +949,7 @@ TextEdit::~TextEdit()
     if ( m_bIBeamActive ) {
 	Application::GetInstance()->PopCursor();
     }
+
     while( m_cUndoStack.empty() == false ) {
 	delete m_cUndoStack.front();
 	m_cUndoStack.erase( m_cUndoStack.begin() );
@@ -1459,6 +1471,7 @@ void TextEdit::InsertString( IPoint* pcPos, const char* pzBuffer, bool bMakeUndo
 	UndoNode* psNode = new UndoNode( UNDO_INSERT );
 	psNode->m_cPos = cStartPos;
 	psNode->m_cEndPos = *pcPos;
+	psNode->m_cText = pzBuffer;
 	AddUndoNode( psNode );
     }
     
@@ -1485,7 +1498,7 @@ void TextEdit::GetRegion( IPoint cStart, IPoint cEnd, std::string* pcBuffer, boo
 {
     IPoint cRegStart;
     IPoint cRegEnd;
-  
+
     if ( cStart < cEnd ) {
 	cRegStart = cStart;
 	cRegEnd   = cEnd;
@@ -1493,9 +1506,21 @@ void TextEdit::GetRegion( IPoint cStart, IPoint cEnd, std::string* pcBuffer, boo
 	cRegStart = cEnd;
 	cRegEnd   = cStart;
     }
-    
+
     if ( cRegStart.y == cRegEnd.y ) {
 	*pcBuffer = std::string( m_cBuffer[cRegStart.y].begin() + cRegStart.x, m_cBuffer[cRegStart.y].begin() + cRegEnd.x );
+    } else if( cStart == IPoint( 0 , 0 ) && cEnd == IPoint( -1, -1 ) ) {
+	TextView::buffer_type::iterator iBfr = m_cBuffer.begin();
+	*pcBuffer = std::string("");
+	bool first = true;
+	while( iBfr != m_cBuffer.end() ) {
+		if( !first ) {
+			*pcBuffer += '\n';
+		}
+		*pcBuffer += *iBfr;
+		first = false;
+		iBfr ++;
+	}
     } else {
 	*pcBuffer = std::string( m_cBuffer[cRegStart.y].begin() + cRegStart.x, m_cBuffer[cRegStart.y].end() );
 	for ( int i = cRegStart.y + 1 ; i < cRegEnd.y ; ++i ) {
@@ -1568,39 +1593,77 @@ void TextEdit::AddUndoNode( UndoNode* psNode )
     if ( m_nMaxUndoSize == 0 ) {
 	return;
     }
+
+    while( m_cUndoStack.size() != 0 && (m_iUndoIterator) != m_cUndoStack.begin() )
+    {
+    	UndoNode *psTmpNode = m_cUndoStack.front();
+    	m_nUndoMemSize -= sizeof( UndoNode ) + psTmpNode->m_cText.size();
+	delete psTmpNode;
+	m_cUndoStack.erase( m_cUndoStack.begin() );
+    }
+
     m_nUndoMemSize += sizeof( UndoNode ) + psNode->m_cText.size();
     m_cUndoStack.push_front( psNode );
+  
     if ( m_cUndoStack.size() > 5 && m_nUndoMemSize > m_nMaxUndoSize ) {
 	psNode = m_cUndoStack.back();
 	m_nUndoMemSize -= sizeof( UndoNode ) + psNode->m_cText.size();
 	delete psNode;
 	m_cUndoStack.erase( --m_cUndoStack.end() );
     }
-    
+
+    m_iUndoIterator = m_cUndoStack.begin();
 }
 
 void TextEdit::Undo()
 {
-    if ( m_cUndoStack.size() == 0 ) {
+    if ( m_cUndoStack.size() == 0 || m_iUndoIterator == m_cUndoStack.end() ) {
+//    	dbprintf("UNDO: END\n");
 	return;
     }
     m_bRegionActive = false;
-    
-    UndoNode* psNode = m_cUndoStack.front();
-    m_cUndoStack.erase( m_cUndoStack.begin() );
-    m_nUndoMemSize -= sizeof( UndoNode ) + psNode->m_cText.size();
+
+//    UndoNode* psNode = m_cUndoStack.front();
+//    m_cUndoStack.erase( m_cUndoStack.begin() );
+//    m_nUndoMemSize -= sizeof( UndoNode ) + psNode->m_cText.size();
+    UndoNode *psNode = *(m_iUndoIterator++);
     
     switch( psNode->m_nMode )
     {
 	case UNDO_DELETE:
 	    m_cCsrPos = psNode->m_cPos;
 	    InsertString( NULL, psNode->m_cText.c_str(), false );
+//	    dbprintf("UNDO: UNDO_DELETE %s\n", psNode->m_cText.c_str() );
 	    break;
 	case UNDO_INSERT:
 	    Delete( psNode->m_cPos, psNode->m_cEndPos, false );
+//	    dbprintf("UNDO: UNDO_INSERT %s\n", psNode->m_cText.c_str() );
 	    break;
     }
-    delete psNode;
+}
+
+void TextEdit::Redo()
+{
+    if ( m_cUndoStack.size() == 0 || m_iUndoIterator == m_cUndoStack.begin() ) {
+//    	dbprintf("REDO: END\n");
+	return;
+    }
+    m_bRegionActive = false;
+
+    UndoNode* psNode = *(--m_iUndoIterator);
+
+    switch( psNode->m_nMode )
+    {
+	case UNDO_INSERT:
+	    m_cCsrPos = psNode->m_cPos;
+	    InsertString( NULL, psNode->m_cText.c_str(), false );
+//	    dbprintf("REDO: UNDO_INSERT %s\n", psNode->m_cText.c_str() );
+	    break;
+	case UNDO_DELETE:
+	    Delete( psNode->m_cPos, psNode->m_cEndPos, false );
+//	    dbprintf("REDO: UNDO_DELETE %s %d %d\n", psNode->m_cText.c_str(), psNode->m_cPos.x, psNode->m_cEndPos.x );
+	    break;
+    }
 }
 
 void TextEdit::Delete( IPoint cStart, IPoint cEnd, bool bMakeUndo )
@@ -1656,6 +1719,7 @@ void TextEdit::Delete( IPoint cStart, IPoint cEnd, bool bMakeUndo )
 	UndoNode* psUndoNode = new UndoNode( UNDO_DELETE );
 	GetRegion( cRegStart, cRegEnd, &psUndoNode->m_cText, false );
 	psUndoNode->m_cPos = cRegStart;
+	psUndoNode->m_cEndPos = cRegEnd;
 	AddUndoNode( psUndoNode );
     }
 
@@ -2123,13 +2187,15 @@ bool TextEdit::HandleMouseUp( const Point& cPosition, uint32 nButtons, Message* 
 
 bool TextEdit::HandleKeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers )
 {
-    bool bExpBlock = false;
+    bool bShift = nQualifiers & QUAL_SHIFT;
+    bool bAlt = nQualifiers & QUAL_ALT;
+    bool bCtrl = nQualifiers & QUAL_CTRL;
 
-    if ( m_bReadOnly || m_bEnabled == false ) {
+    if ( m_bEnabled == false ) {
 	return( false );
     }
-  
-    if ( nQualifiers & QUAL_CTRL ) {
+
+    if( bCtrl && !bAlt && !bShift ) {	// If CTRL is held down
 	if ( pzString[0] == VK_INSERT ) {
 	    std::string cBuffer;
 	    GetRegion( &cBuffer );
@@ -2140,7 +2206,78 @@ bool TextEdit::HandleKeyDown( const char* pzString, const char* pzRawString, uin
 	} else if ( pzString[0] == VK_END ) {
 	    SetCursor( IPoint( -1, -1 ), (nQualifiers & QUAL_SHIFT) != 0 );
 	    return( true );
+	} else if( strlen( pzRawString ) == 1 ) {
+	    switch( pzRawString[0] ) {
+		case 'x':
+			if( !m_bReadOnly ) {
+				std::string cBuffer;
+				GetRegion( &cBuffer );
+				Delete();
+				CommitEvents();
+				return true;
+			}
+			return false;
+		case 'v':
+			if( !m_bReadOnly ) {
+				const char* pzBuffer;
+				int nError;
+				Clipboard cClipboard;
+				cClipboard.Lock();
+				Message* pcData = cClipboard.GetData();
+				nError = pcData->FindString( "text/plain", &pzBuffer );
+				if ( nError == 0 ) {
+					if ( m_bRegionActive ) {
+						Delete();
+					}
+					InsertString( NULL, pzBuffer );
+				}
+				cClipboard.Unlock();
+				CommitEvents();
+				return true;
+			}
+			return false;
+		case 'c':
+			{
+				std::string cBuffer;
+				GetRegion( &cBuffer );
+			}
+			return true;
+		case 'y':
+			Redo();
+			return true;
+		case 'z':
+			Undo();
+			return true;
+	    }
 	}
+    }
+    if( !bCtrl && !bAlt && bShift ) {	// If SHIFT is held down
+	if ( pzString[0] == VK_INSERT ) {
+	    if( !m_bReadOnly ) {
+		const char* pzBuffer;
+		int nError;
+		Clipboard cClipboard;
+		cClipboard.Lock();
+		Message* pcData = cClipboard.GetData();
+		nError = pcData->FindString( "text/plain", &pzBuffer );
+		if ( nError == 0 ) {
+			if ( m_bRegionActive ) {
+				Delete();
+			}
+			InsertString( NULL, pzBuffer );
+		}
+		cClipboard.Unlock();
+		CommitEvents();
+		return true;
+	    }
+	}
+    }
+
+    if( m_bReadOnly )
+	return false;
+
+  /*  if ( nQualifiers & QUAL_CTRL ) {
+ else if ( pzString[0] == 'c' ) {
     }
     if ( nQualifiers & QUAL_SHIFT ) {
 	if ( pzString[0] == VK_INSERT ) {
@@ -2160,9 +2297,9 @@ bool TextEdit::HandleKeyDown( const char* pzString, const char* pzRawString, uin
 	    CommitEvents();
 	    return( true );
 	}
-	bExpBlock = true;
+	
     }
-    
+    */
     switch( pzString[0] ) {
 	case 0:
 	    break;
@@ -2195,32 +2332,32 @@ bool TextEdit::HandleKeyDown( const char* pzString, const char* pzRawString, uin
 		}
 		nDelta--;
 	    }
-	    MoveHoriz( nDelta, bExpBlock );
+	    MoveHoriz( nDelta, bShift );
 	    m_vCsrGfxPos = -1.0f;
 	    break;
 	}
 	case VK_RIGHT_ARROW:
-	    MoveHoriz( utf8_char_length( m_cBuffer[m_cCsrPos.y][m_cCsrPos.x] ), bExpBlock );
+	    MoveHoriz( utf8_char_length( m_cBuffer[m_cCsrPos.y][m_cCsrPos.x] ), bShift );
 	    m_vCsrGfxPos = -1.0f;
 	    break;
 	case VK_UP_ARROW:
-	    MoveVert( -1, bExpBlock );
+	    MoveVert( -1, bShift );
 	    break;
 	case VK_DOWN_ARROW:
-	    MoveVert( 1, bExpBlock );
+	    MoveVert( 1, bShift );
 	    break;
 	case VK_PAGE_UP:
-	    MoveVert( -((GetBounds().Height()+1.0f) / m_vGlyphHeight - 1), bExpBlock );
+	    MoveVert( -((GetBounds().Height()+1.0f) / m_vGlyphHeight - 1), bShift );
 	    break;
 	case VK_PAGE_DOWN:
-	    MoveVert( (GetBounds().Height()+1.0f) / m_vGlyphHeight - 1, bExpBlock );
+	    MoveVert( (GetBounds().Height()+1.0f) / m_vGlyphHeight - 1, bShift );
 	    break;
 	case VK_HOME:
-	    MoveHoriz( -m_cCsrPos.x, bExpBlock );
+	    MoveHoriz( -m_cCsrPos.x, bShift );
 	    m_vCsrGfxPos = -1.0f;
 	    break;
 	case VK_END:
-	    MoveHoriz( m_cBuffer[m_cCsrPos.y].size() - m_cCsrPos.x, bExpBlock );
+	    MoveHoriz( m_cBuffer[m_cCsrPos.y].size() - m_cCsrPos.x, bShift );
 	    m_vCsrGfxPos = -1.0f;
 	    break;
 	case VK_BACKSPACE:
@@ -2359,6 +2496,28 @@ void TextView::__TV_reserved2__() {}
 void TextView::__TV_reserved3__() {}
 /** \internal */
 void TextView::__TV_reserved4__() {}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
