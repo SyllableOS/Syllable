@@ -1,15 +1,17 @@
 authors
 	Arno Klenke
 	Kaj de Vos
+
 no-build-dir
 configure-options
 	--source-path=$PWD
 	--extra-cflags="-DPIC -fomit-frame-pointer"
 	--extra-libs="-lm -ldl"
-;	--disable-mmx
+	--disable-mmx
 	--disable-v4l
 	--disable-audio-oss
 	--disable-vhook
 	--disable-dv1394
 	--disable-risky
+
 documentation README VERSION COPYING ChangeLog CREDITS doc/TODO doc/*.html
