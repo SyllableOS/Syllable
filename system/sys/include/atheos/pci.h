@@ -144,8 +144,8 @@ typedef struct
 
 	/*** NOTE : The next two registers are swapped in ralf-brown's interrupt list!!! Dont know what is right	***/
 	
-#define PCI_SUBSYSTEM_ID				0x2c	/* (2 bytes) subsystem (add-in card) id */
-#define PCI_SUBSYSTEM_VENDOR_ID	0x2e	/* (2 bytes) subsystem (add-in card) vendor id */
+#define PCI_SUBSYSTEM_VENDOR_ID	0x2c	/* (2 bytes) subsystem (add-in card) vendor id */
+#define PCI_SUBSYSTEM_ID				0x2e	/* (2 bytes) subsystem (add-in card) id */
 
 
 	
