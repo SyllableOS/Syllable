@@ -194,10 +194,12 @@ modules
 	apps/utils/Preferences/DateTime
 	apps/utils/Preferences/Font
 	apps/utils/Preferences/Keyboard
+	apps/utils/Preferences/Locale
 	apps/utils/Preferences/Media
 	apps/utils/Preferences/Network
 	apps/utils/Preferences/Screen
 	apps/utils/aterm
+	apps/utils/catalog
 	apps/utils/debug
 	apps/utils/desktop
 	apps/utils/dhcpc
