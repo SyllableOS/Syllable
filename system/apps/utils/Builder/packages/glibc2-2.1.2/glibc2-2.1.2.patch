@@ -1184,6 +1184,21 @@ diff -ru glibc-2.1.2/nss/nsswitch.h glibc2-2.1.2/nss/nsswitch.h
    /* And the link to the next entry.  */
    struct service_library *next;
  } service_library;
+diff -ru glibc2-2.1.2.syllable/sunrpc/Makefile glibc2-2.1.2/sunrpc/Makefile
+--- glibc2-2.1.2.syllable/sunrpc/Makefile	1999-05-03 08:45:26.000000000 +0000
++++ glibc2-2.1.2/sunrpc/Makefile	2004-04-28 14:45:26.000000000 +0000
+@@ -124,8 +124,9 @@
+ 	$(+link)
+ 
+ # Tell rpcgen where to find the C preprocessor.
+-rpcgen-cmd = $(built-program-cmd) -Y `$(CC) -print-file-name=cpp | \
+-				      sed "s|/cpp$$||"`
++rpcgen-cmd = $(built-program-cmd) -Y /atheos/autolnk/bin
++#`$(CC) -print-file-name=cpp | \
++#				      sed "s|/cpp$$||"`
+ 
+ # Install the rpc data base file.
+ $(inst_sysconfdir)/rpc: etc.rpc $(+force)
 diff -ru glibc-2.1.2/sysdeps/generic/dl-sysdep.c glibc2-2.1.2/sysdeps/generic/dl-sysdep.c
 --- glibc-2.1.2/sysdeps/generic/dl-sysdep.c	1998-09-22 12:54:54.000000000 +0000
 +++ glibc2-2.1.2/sysdeps/generic/dl-sysdep.c	2004-04-27 12:12:53.000000000 +0000

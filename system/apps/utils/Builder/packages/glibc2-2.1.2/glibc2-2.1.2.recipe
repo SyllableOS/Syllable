@@ -3,7 +3,7 @@ authors
 	Kristian Van Der Vliet
 	Kaj de Vos
 maintainers			Kaj de Vos
-status				broken
+status				testing
 
 licenses			LGPL
 home				www.gnu.org/software/libc/
@@ -45,5 +45,6 @@ install-env			CFLAGS '-D__SYLLABLE__ -march=i586 -O2 -pipe'
 system-files
 	lib/*.so	system/libs
 	lib/*.so.*	system/libs
-documentation		README BUGS INSTALL COPYING COPYING.LIB NEWS ChangeLog FAQ INTERFACE CONFORMANCE README.libm PROJECTS NOTES
-;	manual
+documentation
+	README BUGS INSTALL COPYING COPYING.LIB NEWS ChangeLog FAQ INTERFACE CONFORMANCE README.libm PROJECTS NOTES
+	manual/examples
