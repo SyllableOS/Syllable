@@ -1,5 +1,7 @@
 authors				Kaj de Vos
-status				testing
+status				developing
+notes
+	Configure options and patches need to be split between those for the build host and those for the target platform, Syllable
 
 inherits			gcc-3.3.4
 
