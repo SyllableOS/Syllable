@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.74
+# Version 0.5.75
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -1310,7 +1310,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.74',
+	puts 'Syllable Build System 0.5.75',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1400,10 +1400,8 @@ else
 				headers =
 					# New C library if it's there
 					(File.join @stage, 'atheos/usr/glibc/include') +
-					':' + (File.join @workDir, 'libs/glibc-2.3.3/include') +
 					# C library headers
 					':' + (File.join @stage, 'atheos/usr/glibc2/include') +
-#					':' + (File.join @workDir, 'libs/glibc/include') +
 					# For GoboLinux
 					':' + 'Programs/Glibc/Current/include' +
 					# System headers
