@@ -44,6 +44,8 @@ public:
     ProgressBar( const Rect& cFrame, const String& cTitle, orientation eOrientation = HORIZONTAL,
 	  uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP,
 	  uint32 nFlags = WID_WILL_DRAW | WID_CLEAR_BACKGROUND );
+	  
+	virtual ~ProgressBar();
 
     void SetProgress( float vValue );
     float GetProgress() const;
@@ -54,11 +56,19 @@ public:
     virtual void Paint( const Rect& cUpdateRect );
     virtual void FrameSized( const Point& cDelta );
     
-    
 private:
-    float 	m_vProgress;
-    orientation m_eOrientation;
-    int32	__reserver[16];
+    virtual void	__PB_reserved1__();
+    virtual void	__PB_reserved2__();
+    virtual void	__PB_reserved3__();
+    virtual void	__PB_reserved4__();
+    virtual void	__PB_reserved5__();
+
+private:
+    ProgressBar& operator=( const ProgressBar& );
+    ProgressBar( const ProgressBar& );
+
+	class Private;
+	Private *m;
 };
 
 

@@ -71,16 +71,24 @@ public:
     void		SetIsVisible( bool bVisible );
     bool		IsVisible() const;
 private:
+    virtual void	__LVR_reserved_1__();
+    virtual void	__LVR_reserved_2__();
+
+private:
+    ListViewRow& operator=( const ListViewRow& );
+    ListViewRow( const ListViewRow& );
+
     friend class ListView;
     friend class ListViewContainer;
     friend class ListViewCol;
     friend class std::vector<ListViewRow>;
     friend struct RowPosPred;
-    float	m_vYPos;
-    float	m_vHeight;
 
 	void		SetHighlighted( bool bHigh );
 	void		SetSelected( bool bSel );
+
+    float	m_vYPos;
+    float	m_vHeight;
 
 	enum LVRFlags {
 		F_SELECTABLE	= 0x01,
@@ -90,10 +98,8 @@ private:
 	};
 
     uint16	m_nFlags;
-    uint8	m_nReserved;
-/*    bool	m_bIsSelectable;
-    bool	m_bSelected;
-    bool	m_bHighlighted;*/
+    uint16	m_nReserved1;
+    uint32	m_nReserved2[4];
 };
 
 /** 
@@ -122,7 +128,15 @@ public:
     virtual bool	     IsLessThan( const ListViewRow* pcOther, uint nColumn ) const;
   
 private:
+    virtual void	__LVSR_reserved_1__();
+    virtual void	__LVSR_reserved_2__();
+
+private:
+    ListViewStringRow& operator=( const ListViewStringRow& );
+    ListViewStringRow( const ListViewStringRow& );
+
     std::vector< std::pair<String,float> > m_cStrings;
+    uint32	m_nReserved[4];
 };
 
 
@@ -165,12 +179,7 @@ public:
     virtual void		Invoked( int nFirstRow, int nLastRow );
     virtual void		SelectionChanged( int nFirstRow, int nLastRow );
     virtual bool		DragSelection( const Point& cPos );
-
-    virtual void __reserved1__();
-    virtual void __reserved2__();
-    virtual void __reserved3__();
-    virtual void __reserved4__();
-    
+   
     void			StartScroll( scroll_direction eDirection, bool bSelect );
     void			StopScroll();
 
@@ -236,18 +245,23 @@ public:
     void RefreshLayout();
    
 private:
+    virtual void	__LV_reserved_1__();
+    virtual void	__LV_reserved_2__();
+    virtual void	__LV_reserved_3__();
+    virtual void	__LV_reserved_4__();
+    virtual void	__LV_reserved_5__();
+    
+private:
+    ListView& operator=( const ListView& );
+    ListView( const ListView& );
+
     friend class ListViewContainer;
     friend class ListViewHeader;
     void	Layout();
     void  	AdjustScrollBars( bool bOkToHScroll = true );
-  
-    ListViewContainer* m_pcMainView;
-    ListViewHeader*    m_pcHeaderView;
-    ScrollBar*	       m_pcVScroll;
-    ScrollBar*	       m_pcHScroll;
-    Message*	       m_pcSelChangeMsg;
-    Message*	       m_pcInvokeMsg;
-//    uint32	       m_nModeFlags;
+
+	class Private;
+	Private* m;
 };
 
 } // end of namespace

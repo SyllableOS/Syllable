@@ -77,20 +77,23 @@ public:
 	virtual void DetachedFromWindow();
 	virtual void Paint( const Rect& cUpdateRect );
     
-	/** Return the current memory address of the overlay.
-	* \author Arno Klenke (arno_klenke@yahoo.de)
-	*****************************************************************************/
-	uint8* GetRaster() { return( m_sOverlay.m_pAddress ); }
-	
-	/** Return the current physical memory area of the overlay.
-	* \author Arno Klenke (arno_klenke@yahoo.de)
-	*****************************************************************************/
-	area_id GetPhysicalArea() { return( m_sOverlay.m_hPhysArea ); }
+	uint8* GetRaster() const;
+	area_id GetPhysicalArea() const;
+
 private:
-	
+    virtual void	__VOV_reserved1__();
+    virtual void	__VOV_reserved2__();
+    virtual void	__VOV_reserved3__();
+    virtual void	__VOV_reserved4__();
+    virtual void	__VOV_reserved5__();
+private:
+    VideoOverlayView& operator=( const VideoOverlayView& );
+    VideoOverlayView( const VideoOverlayView& );
+
 	void Recreate( const IPoint& cSrcSize, const IRect& cDstRect );
-    video_overlay 	m_sOverlay;
-    Rect			m_cCurrentFrame;
+
+	class Private;
+	Private *m;
 };
 
 

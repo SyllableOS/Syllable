@@ -72,39 +72,39 @@ public:
     LayoutNode( const String& cName, float vWeight = 1.0f, LayoutNode* pcParent = NULL, View* pcView = NULL );
     virtual ~LayoutNode();
 
-    virtual void		    SetView( View* pcView );
-    virtual void		    Layout();
+    virtual void SetView( View* pcView );
+    virtual void Layout();
     
-    virtual void		    SetBorders( const Rect& cBorder );
-    virtual Rect		    GetBorders() const;
+    virtual void SetBorders( const Rect& cBorder );
+    virtual Rect GetBorders() const;
 
-    float			    GetWeight() const;
-    void			    SetWeight( float vWeight );
-    virtual void 		    SetFrame( const Rect& cFrame );
-    virtual Rect		    GetFrame() const;
-    virtual Rect		    GetBounds() const;
-    Rect		    	    GetAbsFrame() const;
+    float GetWeight() const;
+    void SetWeight( float vWeight );
+    virtual void SetFrame( const Rect& cFrame );
+    virtual Rect GetFrame() const;
+    virtual Rect GetBounds() const;
+    Rect GetAbsFrame() const;
 
-    void			    ExtendMinSize( const Point& cMinSize );
-    void			    LimitMaxSize( const Point& cMaxSize );
-    void			    ExtendMaxSize( const Point& cMaxSize );
+    void ExtendMinSize( const Point& cMinSize );
+    void LimitMaxSize( const Point& cMaxSize );
+    void ExtendMaxSize( const Point& cMaxSize );
 
-    void			    SetHAlignment( alignment eAlignment );
-    void			    SetVAlignment( alignment eAlignment );
-    alignment			    GetHAlignment() const;
-    alignment			    GetVAlignment() const;
+    void SetHAlignment( alignment eAlignment );
+    void SetVAlignment( alignment eAlignment );
+    alignment GetHAlignment() const;
+    alignment GetVAlignment() const;
     
-    void			    AdjustPrefSize( Point* pcMinSize, Point* pcMaxSize );
-    virtual Point		    GetPreferredSize( bool bLargest );
-    void			    AddChild( LayoutNode* pcChild );
-    LayoutNode*			    AddChild( View* pcChild, float vWeight = 1.0f );
-    void			    RemoveChild( LayoutNode* pcChild );
-    void			    RemoveChild( View* pcChild );
+    void AdjustPrefSize( Point* pcMinSize, Point* pcMaxSize );
+    virtual Point GetPreferredSize( bool bLargest );
+    void AddChild( LayoutNode* pcChild );
+    LayoutNode* AddChild( View* pcChild, float vWeight = 1.0f );
+    void RemoveChild( LayoutNode* pcChild );
+    void RemoveChild( View* pcChild );
 
-    String			    GetName() const;
+    String GetName() const;
     const std::vector<LayoutNode*>& GetChildList() const;
-    LayoutNode*			    GetParent() const;
-    LayoutView*			    GetLayoutView() const;
+    LayoutNode*	GetParent() const;
+    LayoutView* GetLayoutView() const;
     LayoutNode* FindNode( const String& cName, bool bRecursive = true, bool bIncludeSelf = false );
 
     void SameWidth( const char* pzName1, ... );
@@ -121,33 +121,23 @@ public:
 protected:    
     virtual Point    CalculatePreferredSize( bool bLargest );
 private:
+    virtual void	__LYN_reserved1__();
+    virtual void	__LYN_reserved2__();
+    virtual void	__LYN_reserved3__();
+    virtual void	__LYN_reserved4__();
+    virtual void	__LYN_reserved5__();
+private:
+    LayoutNode& operator=( const LayoutNode& );
+    LayoutNode( const LayoutNode& );
+
     friend class LayoutView;
     void	_AddedToView( LayoutView* pcView );
     void	_AddedToParent( LayoutNode* pcParent );
     void	_RemovedFromParent();
 	void	_RemovedFromView();
-
-    struct ShareNode {
-	LayoutNode* m_pcNext;
-	LayoutNode* m_pcPrev;
-    };
-    String		     m_cName;
-    Rect		     m_cFrame;
-    Rect		     m_cBorders;
-    View*		     m_pcView;
-    LayoutNode*		     m_pcParent;
-    LayoutView*		     m_pcLayoutView;
-    std::vector<LayoutNode*> m_cChildList;
-    float		     m_vWeight;
-    Point		     m_cMinSize;
-    Point		     m_cMaxSizeExtend;
-    Point		     m_cMaxSizeLimit;
-
-    alignment		     m_eHAlign;
-    alignment		     m_eVAlign;
-    
-    ShareNode		     m_sWidthRing;
-    ShareNode		     m_sHeightRing;
+	
+	class Private;
+	Private *m;
 };
 
 /** Layout spacer
@@ -168,10 +158,14 @@ public:
     void SetMaxSize( const Point& cSize );
 
 private:
+    LayoutSpacer& operator=( const LayoutSpacer& );
+    LayoutSpacer( const LayoutSpacer& );
+
     virtual Point    CalculatePreferredSize( bool bLargest );
 
     Point m_cMinSize;
     Point m_cMaxSize;
+    uint32 _reserved[4];
 };
 
 /** Vertical layout spacer
@@ -189,6 +183,10 @@ public:
 		   LayoutNode* pcParent = NULL, float vWeight = 1.0f ) :
 	    LayoutSpacer( cName, vWeight, pcParent, Point( 0.0f, vMinHeight ), Point( 0.0f, vMaxHeight ) )
     {}
+
+private:
+    VLayoutSpacer& operator=( const VLayoutSpacer& );
+    VLayoutSpacer( const VLayoutSpacer& );
 };
 
 /** Horizontal layout spacer
@@ -206,6 +204,10 @@ public:
 		   LayoutNode* pcParent = NULL, float vWeight = 1.0f ) :
 	    LayoutSpacer( cName, vWeight, pcParent, Point( vMinWidth, 0.0f ), Point( vMaxWidth, 0.0f ) )
     {}
+
+private:
+    HLayoutSpacer& operator=( const HLayoutSpacer& );
+    HLayoutSpacer( const HLayoutSpacer& );
 };
 
 /** Horizontal Layout class
@@ -223,8 +225,19 @@ public:
     HLayoutNode( const String& cName, float vWeight = 1.0f, LayoutNode* pcParent = NULL, View* pcView = NULL );
 //    virtual Point GetPreferredSize( bool bLargest );
     virtual void  Layout();
-private:
+
+protected:
     virtual Point    CalculatePreferredSize( bool bLargest );
+
+private:
+    virtual void	__LHLN_reserved1__();
+    virtual void	__LHLN_reserved2__();
+    virtual void	__LHLN_reserved3__();
+private:
+    HLayoutNode& operator=( const HLayoutNode& );
+    HLayoutNode( const HLayoutNode& );
+
+	uint32	_reserved[4];
 };
 
 /** Vertical Layout class
@@ -245,7 +258,16 @@ public:
 
 protected:
     virtual Point    CalculatePreferredSize( bool bLargest );
+
 private:
+    virtual void	__LVLN_reserved1__();
+    virtual void	__LVLN_reserved2__();
+    virtual void	__LVLN_reserved3__();
+private:
+    VLayoutNode& operator=( const VLayoutNode& );
+    VLayoutNode( const VLayoutNode& );
+
+	uint32	_reserved[4];
 };
 
 /** Main class in the Syllable dynamic layout system
@@ -265,7 +287,8 @@ class LayoutView : public View
 public:
     LayoutView( const Rect& cFrame, const String& cTitle, LayoutNode* pcRoot = NULL,
 		uint32 nResizeMask = CF_FOLLOW_ALL, uint32 nFlags = WID_WILL_DRAW | WID_CLEAR_BACKGROUND );
-
+	virtual ~LayoutView();
+	
     LayoutNode* GetRoot() const;
     void	SetRoot( LayoutNode* pcRoot );
 
@@ -276,8 +299,21 @@ public:
     virtual Point	GetPreferredSize( bool bLargest ) const;
     virtual void	AllAttached();
     virtual void	FrameSized( const Point& cDelta );
+
 private:
-    LayoutNode* m_pcRoot;
+    virtual void	__LYV_reserved1__();
+    virtual void	__LYV_reserved2__();
+    virtual void	__LYV_reserved3__();
+    virtual void	__LYV_reserved4__();
+    virtual void	__LYV_reserved5__();
+
+private:
+    LayoutView& operator=( const LayoutView& );
+    LayoutView( const LayoutView& );
+
+	class Private;
+	Private *m;
+
 };
 
 

@@ -30,10 +30,11 @@ namespace os
 }
 #endif
 
-/** 
+/**
  * \ingroup gui
  * \par Description:
- *
+ * A view with a border surrounding it, and an optional title. Use this when
+ * grouping items that belong together.
  * \sa
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
@@ -55,7 +56,13 @@ public:
     virtual void  FontChanged( Font* pcNewFont );
     virtual void  Paint( const Rect& cUpdateRect );
     virtual Point GetPreferredSize( bool bLargest ) const;
-    
+
+private:
+    virtual void	__FV_reserved1__();
+    virtual void	__FV_reserved2__();
+    virtual void	__FV_reserved3__();
+    virtual void	__FV_reserved4__();
+    virtual void	__FV_reserved5__();
 private:
     void _CalcStringLabelSize();
 

@@ -58,8 +58,17 @@ public:
     virtual void LabelChanged( const String& cNewLabel );
     virtual void EnableStatusChanged( bool bIsEnabled );
     virtual bool Invoked( Message* pcMessage );
-    
 private:
+    virtual void	__RB_reserved1__();
+    virtual void	__RB_reserved2__();
+    virtual void	__RB_reserved3__();
+    virtual void	__RB_reserved4__();
+    virtual void	__RB_reserved5__();
+
+private:
+    RadioButton& operator=( const RadioButton& );
+    RadioButton( const RadioButton& );
+
     static Bitmap* s_pcBitmap;
     
     class Private;

@@ -32,7 +32,7 @@ public:
 	void			SetLabel(const String&);
     bool			IsEnabled();
     void			SetEnabled(bool,bool bValidate=false);
-    void			DrawArrow(bool);
+    void			SetDrawArrow( bool bArrow );
     
     //methods inherited from os::View		
 	virtual void 	Paint(const Rect&);
@@ -41,6 +41,7 @@ public:
 	virtual void 	MouseMove( const Point & cPosition, int nCode, uint32 nButtons, Message * pcData );
 	Point			GetPreferredSize( bool bLargest ) const;
 
+private:
     virtual void	__pm_reserved1();
     virtual void	__pm_reserved2();
     virtual void	__pm_reserved3();
@@ -53,6 +54,9 @@ public:
     virtual void 	__pm_reserved10();
 
 private:
+    PopupMenu& operator=( const PopupMenu& );
+    PopupMenu( const PopupMenu& );
+
 	class Private;
 	Private* m;
 	

@@ -53,6 +53,10 @@ struct	ClipRect
     ClipRect* m_pcPrev;
     IRect     m_cBounds;
     IPoint    m_cMove;	// Used to sort rectangles, so no blits destroy needed areas
+
+private:
+    ClipRect& operator=( const ClipRect& );
+    ClipRect( const ClipRect& );
 };
 
 /** 
@@ -82,6 +86,10 @@ public:
     ClipRect*	m_pcFirst;
     ClipRect*	m_pcLast;
     int		m_nCount;
+
+private:
+    ClipRectList& operator=( const ClipRectList& );
+    ClipRectList( const ClipRectList& );
 };
 
 /** 
@@ -125,6 +133,8 @@ public:
     IRect		GetBounds() const;
     ClipRectList	m_cRects;
 private:
+    Region& operator=( const Region& );
+
     static void** s_pFirstClip;
     static Locker s_cClipListMutex;
   

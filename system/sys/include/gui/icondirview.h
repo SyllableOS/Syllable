@@ -101,7 +101,13 @@ public:
     virtual void  MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData );
 	virtual void  MouseMove( const Point& cNewPos, int nCode, uint32 nButtons, Message* pcData );
     virtual void  KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
-private:	
+private:
+    virtual void	__IDV_reserved1__();
+    virtual void	__IDV_reserved2__();
+    virtual void	__IDV_reserved3__();
+    virtual void	__IDV_reserved4__();
+    virtual void	__IDV_reserved5__();
+private:
 	enum { M_ADD_ENTRY, M_UPDATE_ENTRY, M_REMOVE_ENTRY, M_LAYOUT, M_REREAD, M_MOUNT = 100, M_UNMOUNT, 
     		M_NEW_DIR, M_DELETE, M_RENAME, M_OPEN_WITH, M_INFO, M_MOVE_TO_TRASH, M_EMPTY_TRASH, M_JOB_END, M_JOB_END_REREAD };
 

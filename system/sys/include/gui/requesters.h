@@ -53,6 +53,9 @@ public:
     virtual void	 AllAttached();
   
 private:
+    AlertView& operator=( const AlertView& );
+    AlertView( const AlertView& );
+
     friend class Alert;
     class Private;
     Private *m; 
@@ -96,6 +99,9 @@ public:
 	int  Go();
 	void Go( Invoker* pcInvoker );
 private:
+    Alert& operator=( const Alert& );
+    Alert( const Alert& );
+
 	class Private;
 	Private *m;
 
@@ -115,6 +121,9 @@ public:
     virtual void	FrameSized( const Point& cDelta );
   
 private:
+    ProgressView& operator=( const ProgressView& );
+    ProgressView( const ProgressView& );
+
     friend class ProgressRequester;
 	class Private;
 	Private *m;
@@ -137,6 +146,9 @@ public:
     bool DoSkip();
 
 private:
+    ProgressRequester& operator=( const ProgressRequester& );
+    ProgressRequester( const ProgressRequester& );
+
 	class Private;
 	Private *m;
 };

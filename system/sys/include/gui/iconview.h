@@ -131,6 +131,12 @@ public:
 	virtual os::Message* GetSelChangeMsg();
 	virtual os::Message* GetInvokeMsg();
 private:
+	virtual void __ICV_reserved1__();
+	virtual void __ICV_reserved2__();
+	virtual void __ICV_reserved3__();
+	virtual void __ICV_reserved4__();
+	virtual void __ICV_reserved5__();
+private:
 	IconView& operator=( const IconView& );
 	IconView( const IconView& );
 

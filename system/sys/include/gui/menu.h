@@ -81,14 +81,18 @@ public:
 	void 				SetShortcut( const String& cShortcut );
 	const 				String& GetShortcut() const;
 
-	virtual	bool		IsSelectable();
+	virtual	bool		IsSelectable() const;
+
 private:
-	virtual void		_reserved_1_();
-	virtual void		_reserved_2_();
-	virtual void		_reserved_3_();
-	virtual void		_reserved_4_();
-	virtual void		_reserved_5_();
+	virtual void		__MI_reserved_1__();
+	virtual void		__MI_reserved_2__();
+	virtual void		__MI_reserved_3__();
+	virtual void		__MI_reserved_4__();
+	virtual void		__MI_reserved_5__();
 private:
+    MenuItem& operator=( const MenuItem& );
+    MenuItem( const MenuItem& );
+
     friend class Menu;
     class Private;
     
@@ -120,8 +124,15 @@ public:
     virtual void  Draw();
     virtual void  DrawContent();
     virtual void  SetHighlighted( bool bHighlight );
-	virtual bool  IsSelectable() {return false;}
+	virtual bool  IsSelectable() const {return false;}
+
 private:
+	virtual void		__MS_reserved_1__();
+	virtual void		__MS_reserved_2__();
+
+private:
+    MenuSeparator& operator=( const MenuSeparator& );
+    MenuSeparator( const MenuSeparator& );
 };
 
 /** The menuing system for Syllable
@@ -203,6 +214,15 @@ public:
     bool 				IsEnabled();
 
 private:
+	virtual void		__ME_reserved_1__();
+	virtual void		__ME_reserved_2__();
+	virtual void		__ME_reserved_3__();
+	virtual void		__ME_reserved_4__();
+	virtual void		__ME_reserved_5__();
+private:
+    Menu& operator=( const Menu& );
+    Menu( const Menu& );
+
     friend	class MenuItem;
 
     void				_SetRoot( Menu* pcRoot );

@@ -40,6 +40,10 @@ namespace os
  *	The ImageView class allows you to display Image objects of any kind
  *	on screen. Simply attach an Image object to the ImageView, and attach
  *	the ImageView to a Window.
+ * \note ImageView does not delete the delete the image, so you must delete it
+ * yourself. This also means that it is possible to display the same Image in two
+ * or more ImageViews, but care should be taken not to share the same image
+ * between multiple threads.
  *
  * \sa os::Image, os::BitmapImage, os::VectorImage, os::View
  * \author	Henrik Isaksson (henrik@boing.nu)
@@ -68,6 +72,13 @@ class ImageView : public View
 	Image *GetImage( void ) const;
 
 	void Refresh();
+
+	private:
+    virtual void	__IV_reserved1__();
+    virtual void	__IV_reserved2__();
+    virtual void	__IV_reserved3__();
+    virtual void	__IV_reserved4__();
+    virtual void	__IV_reserved5__();
 
 	private:
 	ImageView& operator=( const ImageView& );
