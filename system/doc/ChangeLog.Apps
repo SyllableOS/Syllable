@@ -1,3 +1,11 @@
+* October 9 2003. Kristian Van Der Vliet *
+
+Network Preferences
+	* Fixed the syntax for ifconfig & route in net_init.sh
+	* Changed the output for the route command.  If a Gateway is specified by the user
+	  then the mask is set to 0.0.0.0 to indicate a default route.  This will not work
+	  if you require multiple gateways to be configured, as only one route can be default.
+
 * October 3 2003. Kristian Van Der Vliet *
 
 Network Preferences
