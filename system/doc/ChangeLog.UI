@@ -1,3 +1,13 @@
+* May 22, Henrik Isaksson *
+
+ - AppServer
+	o Ready for freetype-2.1.8
+	o Support for italics softstyle (emboldening will have to wait due to bugs in ft)
+	o AR_GET_FONT_CHARACTERS added to appserver protocol
+ - Font
+	o New method: GetSupportedCharacters(), returns a vector of characters supported
+	  by a certain font.
+
 * May 10, Henrik Isaksson *
 
  - Color32
@@ -665,8 +675,4 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
-
-
-
-
 
