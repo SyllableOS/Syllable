@@ -43,6 +43,7 @@ $(OBJDIR)/$(LIBNAME): $(OBJS)
 deps:
 
 install: $(OBJDIR)/$(LIBNAME)
+	strip --strip-all $(OBJDIR)/$(LIBNAME)
 	install -s $(OBJDIR)/$(LIBNAME) $(LIBBIN)/$(LIBNAME)
 	ln -sf $(LIBNAME) $(LIBBIN)/libsyllable.so
 
