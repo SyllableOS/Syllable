@@ -256,7 +256,8 @@ public:
     void	    SetFace( uint16 nFace );
     void	    SetFlags( uint32 nFlags );
 
-    void	    GetFamilyAndStyle( const char* pzFamily, const char* pzStyle ) const;
+    String	    GetStyle() const;
+    String	    GetFamily() const;
     float	    GetSize() const;
     float	    GetShear() const;
     float	    GetRotation() const;
@@ -338,3 +339,4 @@ private:
 }
 
 #endif	// __F_GUI_FONT_H__
+
