@@ -49,7 +49,8 @@ public:
     explicit inline Point( const IPoint& cPnt );
     Point( float nX, float nY ) { x = nX; y = nY;	}
 
-    Point	 operator-( void ) const 		{ return( Point( -x, -y ) ); }
+    Point	 operator*( const Point& cPoint ) const  { return( Point( x * cPoint.x, y * cPoint.y ) ); }
+    Point	 operator-( void ) const 		 { return( Point( -x, -y ) ); }
     Point	 operator+( const Point& cPoint ) const  { return( Point( x + cPoint.x, y + cPoint.y ) ); }
     Point	 operator-( const Point& cPoint ) const  { return( Point( x - cPoint.x, y - cPoint.y ) ); }
     const Point& operator+=( const Point& cPoint )	 {  x += cPoint.x; y += cPoint.y; return( *this ); }
