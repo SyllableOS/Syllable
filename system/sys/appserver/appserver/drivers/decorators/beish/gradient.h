@@ -33,4 +33,4 @@ class Gradient
 };
 
 
-#endif _GRADIENT_H_
+#endif // _GRADIENT_H_

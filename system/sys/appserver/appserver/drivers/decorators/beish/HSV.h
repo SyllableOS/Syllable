@@ -55,10 +55,10 @@ struct HSV
       float f,p,q,t;
       if (saturation == 0)
       {//achromatic
-	 return os::Color32_s(value,value,value);
+	 return os::Color32_s((int)value,(int)value,(int)value);
       }
       float h = hue/60;
-      i = floor(h);
+      i = (int)floor(h);
       f = h - i;
       p = value * (1 - saturation);
       q = value * (1 - saturation * f);
@@ -66,21 +66,20 @@ struct HSV
       switch(i)
       {
        case 0:
-	 return os::Color32_s(value,t,p);
+	 return os::Color32_s((int)value,(int)t,(int)p);
        case 1:
-	 return os::Color32_s(q,value,p);
+	 return os::Color32_s((int)q,(int)value,(int)p);
        case 2:
-	 return os::Color32_s(p,value,t);
+	 return os::Color32_s((int)p,(int)value,(int)t);
        case 3:
-	 return os::Color32_s(p,q,value);
+	 return os::Color32_s((int)p,(int)q,(int)value);
        case 4:
-	 return os::Color32_s(t,p,value);
+	 return os::Color32_s((int)t,(int)p,(int)value);
        default:
-	 return os::Color32_s(value,p,q);
+	 return os::Color32_s((int)value,(int)p,(int)q);
       }
       
    }
 };
+#endif // HSV_H_
 
-
-#endif HSV_H_

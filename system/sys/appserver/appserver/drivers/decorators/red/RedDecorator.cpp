@@ -219,7 +219,7 @@ void RedDecorator::FrameSized( const Rect& cFrame )
 	if ( cDelta.y != 0.0f )
 	{
 		Rect cDamage = m_cBounds;
-		cDamage.top = cDamage.bottom - max( m_vBottomBorder, m_vBottomBorder + cDelta.y ) - 1.0f;
+		cDamage.top = cDamage.bottom - std::max( m_vBottomBorder, m_vBottomBorder + cDelta.y ) - 1.0f;
 		pcView->Invalidate( cDamage );
 	}
 }
@@ -606,8 +606,3 @@ extern "C" WindowDecorator* create_decorator( Layer* pcLayer, uint32 nFlags )
 {
     return( new RedDecorator( pcLayer, nFlags ) );
 }
-
-
-
-
-

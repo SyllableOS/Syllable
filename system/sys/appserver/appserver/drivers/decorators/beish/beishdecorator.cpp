@@ -191,7 +191,7 @@ void BeIshDecorator::DrawGradientRect(const Rect& r,const Color32_s& sHighlight,
 {
    Layer *pcView = GetLayer();
    Rect rGradient(r.left + 2.0,r.top + 2.0,r.right - 2.0,r.bottom - 2.0);
-   int height = floor(rGradient.bottom - rGradient.top);
+   int height = (int)floor(rGradient.bottom - rGradient.top);
    Gradient gradientHN(sHighlight,sNormal,height);
    Gradient gradientSN(sShadow,sNormal,height);
    for (int i = 0; i < height; i++)
@@ -261,7 +261,7 @@ void BeIshDecorator::FrameSized( const Rect& cFrame )
     {
 	Rect cDamage = m_cBounds;
 
-	cDamage.top = cDamage.bottom - max( m_vBottomBorder, m_vBottomBorder + cDelta.y ) - 1.0f;
+	cDamage.top = cDamage.bottom - std::max( m_vBottomBorder, m_vBottomBorder + cDelta.y ) - 1.0f;
 	pcView->Invalidate( cDamage );
     }
 }
@@ -720,9 +720,9 @@ void BeIshDecorator::Render( const Rect& cUpdateRect )
        
         pcView->SetFgColor(sHighlight);
         pcView->DrawLine(Point(m_cDragRect.left,m_cDragRect.top),Point(m_cDragRect.right,m_cDragRect.top));
-        int rightside = m_cDragRect.left + 36 + titlewidth;
+        int rightside = (int)(m_cDragRect.left + 36 + titlewidth);
         if (rightside > m_cDragRect.right)
-	 rightside = m_cDragRect.right;
+	 rightside = (int)m_cDragRect.right;
         //pcView->DrawLine(Point(rightside,m_cDragRect.top),Point(rightside,m_cDragRect.bottom));
 	//pcView->DrawFrame( m_cDragRect, FRAME_RAISED | FRAME_TRANSPARENT );
     } else 
@@ -748,6 +748,3 @@ extern "C" WindowDecorator* create_decorator( Layer* pcLayer, uint32 nFlags )
 {
     return( new BeIshDecorator( pcLayer, nFlags ) );
 }
-
-
-
