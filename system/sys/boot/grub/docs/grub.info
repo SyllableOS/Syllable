@@ -1,0 +1,187 @@
+This is grub.info, produced by makeinfo version 4.1 from grub.texi.
+
+INFO-DIR-SECTION Kernel
+START-INFO-DIR-ENTRY
+* GRUB: (grub).                 The GRand Unified Bootloader
+* grub-install: (grub)Invoking grub-install.    Install GRUB on your drive
+* grub-md5-crypt: (grub)Invoking grub-md5-crypt.        Encrypt a password
+                                                        in MD5 format
+* mbchk: (grub)Invoking mbchk.  Check for the format of a Multiboot kernel
+END-INFO-DIR-ENTRY
+
+   Copyright (C) 1999,2000,2001,2002 Free Software Foundation, Inc.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided also
+that the entire resulting derived work is distributed under the terms
+of a permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions.
+
+
+Indirect:
+grub.info-1: 1130
+grub.info-2: 50373
+grub.info-3: 100111
+
+Tag Table:
+(Indirect)
+Node: Top1130
+Node: Introduction2840
+Node: Overview3213
+Node: Overview-Footnotes5170
+Ref: Overview-Footnote-15231
+Node: History5392
+Node: Features6508
+Node: Features-Footnotes12277
+Ref: Features-Footnote-112338
+Node: Role of a boot loader12483
+Node: Role of a boot loader-Footnotes13816
+Ref: Role of a boot loader-Footnote-113903
+Node: Naming convention13982
+Node: Installation16898
+Node: Creating a GRUB boot floppy18194
+Node: Installing GRUB natively19009
+Node: Installing GRUB natively-Footnotes21160
+Ref: Installing GRUB natively-Footnote-121253
+Node: Installing GRUB using grub-install21438
+Node: Booting24227
+Node: General boot methods24632
+Node: Loading an operating system directly25363
+Node: Chain-loading26661
+Node: Chain-loading-Footnotes27957
+Ref: Chain-loading-Footnote-128028
+Node: OS-specific notes28100
+Node: GNU/Hurd28429
+Node: GNU/Linux29039
+Node: FreeBSD30283
+Node: NetBSD30787
+Node: OpenBSD31435
+Node: DOS/Windows31626
+Node: SCO UnixWare33443
+Node: Configuration33840
+Node: Network38268
+Node: General usage of network support38761
+Node: General usage of network support-Footnotes40623
+Ref: General usage of network support-Footnote-140732
+Node: Diskless40799
+Node: Serial terminal42979
+Node: Preset Menu45211
+Node: Security47573
+Node: Images50373
+Node: Filesystem52602
+Node: Device syntax53282
+Node: File name syntax54658
+Node: Block list syntax55394
+Node: Interface56120
+Node: Command-line interface56994
+Node: Command-line interface-Footnotes58848
+Ref: Command-line interface-Footnote-158937
+Node: Menu interface59032
+Node: Menu entry editor60035
+Node: Hidden menu interface61107
+Node: Commands61679
+Node: Menu-specific commands62231
+Node: default63394
+Node: fallback63857
+Node: hiddenmenu64335
+Node: timeout64808
+Node: title65071
+Node: General commands65327
+Node: bootp66558
+Node: color67022
+Node: device68491
+Node: dhcp69048
+Node: hide69619
+Node: ifconfig69981
+Node: pager70542
+Node: partnew70861
+Node: parttype71301
+Node: password71653
+Node: rarp72456
+Node: serial72740
+Node: setkey73988
+Node: terminal76133
+Node: tftpserver77433
+Node: unhide77962
+Node: Command-line and menu entry commands78320
+Node: blocklist80843
+Node: boot81070
+Node: cat81373
+Node: chainloader81662
+Node: cmp82263
+Node: configfile82799
+Node: debug82998
+Node: displayapm83367
+Node: displaymem83563
+Node: embed84250
+Node: embed-Footnotes84767
+Ref: embed-Footnote-184822
+Node: find84879
+Node: fstest85230
+Node: geometry85898
+Node: halt86500
+Node: help86810
+Node: impsprobe87414
+Node: initrd87764
+Node: install88086
+Node: install-Footnotes90903
+Ref: install-Footnote-190962
+Node: ioprobe91059
+Node: kernel91367
+Node: lock92410
+Node: makeactive92968
+Node: map93263
+Node: md5crypt93813
+Node: module94143
+Node: modulenounzip94704
+Node: pause94980
+Node: quit95377
+Node: reboot95636
+Node: read95800
+Node: root96025
+Node: rootnoverify96885
+Node: savedefault97423
+Node: setup98114
+Node: testload99163
+Node: testvbe99757
+Node: uppermem100111
+Node: vbeprobe100676
+Node: Troubleshooting101042
+Node: Stage1 errors101577
+Node: Stage1.5 errors102947
+Node: Stage2 errors103378
+Node: Invoking the grub shell110921
+Node: Basic usage111671
+Node: Installation under UNIX113920
+Node: Device map115598
+Node: Invoking grub-install116755
+Node: Invoking grub-md5-crypt118328
+Node: Invoking mbchk118965
+Node: FAQ119450
+Node: FAQ-Footnotes126615
+Ref: FAQ-Footnote-1126666
+Node: Obtaining and Building GRUB126730
+Node: Reporting bugs128382
+Node: Future130834
+Node: Internals131275
+Node: Memory map132479
+Node: Embedded data133952
+Node: Filesystem interface135964
+Node: Command interface139392
+Node: Bootstrap tricks140702
+Node: I/O ports detection142846
+Node: Memory detection143113
+Node: Low-level disk I/O143400
+Node: MBR143664
+Node: Partition table143856
+Node: Submitting patches144122
+Node: Index145603
+
+End Tag Table
