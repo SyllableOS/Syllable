@@ -29,9 +29,9 @@ int32 Thread::_Entry( void *pvoid )
  * \sa Start()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-Thread::Thread( const char *pzName, int nPriority = NORMAL_PRIORITY )
+Thread::Thread( const char *pzName, int nPriority = NORMAL_PRIORITY, int nStackSize = 0 )
 {
-	Initialize( pzName, nPriority );
+	Initialize( pzName, nPriority, nStackSize );
 }
 
 Thread::~Thread( void )
@@ -116,17 +116,19 @@ void Thread::Terminate( void )
  * \param	nPriority Thread priority (IDLE_PRIORITY, LOW_PRIORITY,
  *		NORMAL_PRIORITY, DISPLAY_PRIORITY, URGENT_DISPLAY_PRIORITY or
  *		REALTIME_PRIORITY).
+ * \param	nStackSize Stack size, 0 means default (currently 128k). Minimum
+ *		stack size is currently 32k.
  * \sa Terminate()
  * \note	The thread is reset to a suspended state. To start a thread's
  *		execution, call Start().
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-void Thread::Initialize( const char *pzName, int nPriority = NORMAL_PRIORITY )
+void Thread::Initialize( const char *pzName, int nPriority = NORMAL_PRIORITY, int nStackSize = 0 )
 {
 	if( m_iThread >= 0 )
 		Terminate();
 
-	m_iThread = spawn_thread( pzName, _Entry, nPriority, 0, this );
+	m_iThread = spawn_thread( pzName, _Entry, nPriority, nStackSize, this );
 	if( m_iThread < 0 )
 		throw ThreadException ( "spawn_thread() failed", errno );
 }
@@ -200,3 +202,4 @@ proc_id Thread::GetProcessId()
 		return -1;
 	return get_thread_proc( m_iThread );
 }
+

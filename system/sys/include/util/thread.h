@@ -80,7 +80,7 @@ class Thread
     Thread& operator=( const Thread& );
 
     public:
-    Thread( const char *pzName, int nPriority = NORMAL_PRIORITY );
+    Thread( const char *pzName, int nPriority = NORMAL_PRIORITY, int nStackSize = 0 );
     virtual ~Thread();
 
     void		Start();
@@ -89,7 +89,7 @@ class Thread
     void		WaitFor();
 
     void		Terminate();
-    void		Initialize( const char *pzName, int nPriority = NORMAL_PRIORITY ) ;
+    void		Initialize( const char *pzName, int nPriority = NORMAL_PRIORITY, int nStackSize = 0 ) ;
 
     void		SetPriority( int nPriority = IDLE_PRIORITY );
     int			GetPriority();
@@ -120,4 +120,5 @@ typedef errno_exception ThreadException;
 } // end of namespace
 
 #endif // __F_UTIL_THREAD_H__
+
 
