@@ -1,3 +1,8 @@
+* June 1, Henrik Isaksson *
+
+ - Locale
+	o Bugfix: uninitialized member variable (could cause segfaults)
+
 * May 22, Henrik Isaksson *
 
  - AppServer
