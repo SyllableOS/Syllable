@@ -7,7 +7,7 @@ notes				<Internal notes>
 ; Package information
 summary				<Brief headline>
 description			<Full description>
-licenses			GPL | LGPL | BSD | MIT | PD | freeware | commercial
+licenses			GPL | LGPL | GFDL | BSD | MIT | custom | PD | freeware | commercial
 ;
 home				syllable.sf.net
 packages			<Deviating tarball name>
@@ -15,11 +15,16 @@ packages			<Deviating tarball name>
 ;archives			<Arch archives>
 ;
 ; Dependencies (unimplemented):
-;needs				<Build- and run-time Dependencies>
-;build-needs			<Build-time dependencies>
-;test-needs			<Test-time dependencies>
-;run-needs			<Run-time dependencies>
-;recommends			<Optional dependencies>
+;needs
+;	<Build- and run-time Dependencies>
+;build-needs
+;	<Build-time dependencies>
+;test-needs
+;	<Test-time dependencies>
+;run-needs
+;	<Run-time dependencies>
+;recommends
+;	<Optional dependencies>
 ;
 ; Patching options:
 patch-config		[<Directories>]
