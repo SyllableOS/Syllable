@@ -83,6 +83,8 @@ public:
     
     port_id m_hWndReplyPort;
 private:
+	void RescanFonts(void);
+	void SwitchDesktop(int nDesktop);
     int	LoadDecorator( const std::string& cPath, op_create_decorator** ppfCreate );
 
     void	DispatchMessage( Message* pcReq );
@@ -96,6 +98,9 @@ private:
 
     FontNode*		m_pcWindowTitleFont;
     FontNode*		m_pcToolWindowTitleFont;
+    
+    int nWatchNode;
 };
 
 #endif	/*	INTERFACE_SERVER_HPP	*/
+

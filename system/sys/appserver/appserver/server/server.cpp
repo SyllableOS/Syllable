@@ -38,6 +38,7 @@
 #include <gui/guidefines.h>
 #include <util/locker.h>
 #include <appserver/protocol.h>
+#include <atheos/filesystem.h>
 
 #include "ddriver.h"
 #include "server.h"
@@ -280,25 +281,7 @@ void AppServer::SendKeyCode( int nKeyCode, int nQual )
     {
 	if ( nKeyCode >= 0x02 && nKeyCode <= 0x0d ) // F1-F12
 	{
-	    g_cLayerGate.Close();
-
-	    int nDesktop = nKeyCode - 0x02;
-	    SrvWindow* pcActiveWnd = get_active_window(false);
-	    SrvSprite::Hide();
-	    set_desktop( nDesktop );
-	    if ( pcActiveWnd != NULL && (InputNode::GetMouseButtons() & 0x01 ) )
-	    {
-		uint32 nNewMask = 1 << nDesktop;
-
-		if ( InputNode::GetMouseButtons() & 0x02 ) {
-		    nNewMask |= pcActiveWnd->GetDesktopMask();
-		}
-		pcActiveWnd->SetDesktopMask( nNewMask );
-		set_active_window( pcActiveWnd );
-	    }
-	    g_pcTopView->UpdateRegions();
-	    SrvSprite::Unhide();
-	    g_cLayerGate.Open();
+		SwitchDesktop( nKeyCode - 0x02 );
 	    return;
 	}
 	if ( nKeyCode == 17 ) {
@@ -523,7 +506,15 @@ void AppServer::DispatchMessage( Message* pcReq )
 	    pcReq->SendReply( &cReply );
 	    break;
 	}
-	
+			case DR_SET_DESKTOP:
+				{
+					int nDesktop;
+					pcReq->FindInt("desktop",&nDesktop);
+					if (nDesktop < 32 && nDesktop >= 0)
+						SwitchDesktop(nDesktop);
+				}
+				break;
+
     }
 }
 
@@ -549,6 +540,12 @@ void AppServer::Run( void )
     InitInputSystem();
 
     set_app_server_port( m_hRequestPort );
+
+	int nFile = open("/system/fonts/", O_RDONLY | O_NOTRAVERSE);
+	if( nFile > -1 ) {
+		watch_node(nFile, m_hRequestPort,NWATCH_DIR,(void*)NULL);   // (void*)NULL = userdata, not used since we only have one node monitor
+	}
+
   
     for(;;)
     {
@@ -580,6 +577,7 @@ void AppServer::Run( void )
 		case DR_ADD_DEFAULT_FONT:
 		case DR_SET_APPSERVER_CONFIG:
 		case DR_GET_APPSERVER_CONFIG:
+		case DR_SET_DESKTOP:
 		{
 		    try {
 			Message cReq( pBuffer );
@@ -628,12 +626,41 @@ void AppServer::Run( void )
 		    AppserverConfig::GetInstance()->SetWindowDecoratorPath( psReq->m_zDecoratorPath );
 		    break;
 		}
+		case M_NODE_MONITOR:
+		{
+			dbprintf( "Font directory has changed, scanning font directory!\n" );
+			FontServer::GetInstance()->ScanDirectory( "/system/fonts/" );
+			break;
+		}
 		default:
 		    dbprintf( "WARNING : AppServer::Run() Unknown command %ld\n", nCode );
 		    break;
 	    }
 	}
     }
+}
+
+void AppServer::SwitchDesktop(int nDesktop)
+{
+	g_cLayerGate.Close();
+
+	SrvWindow *pcActiveWnd = get_active_window( false );
+	SrvSprite::Hide();
+	set_desktop( nDesktop );
+	if ( pcActiveWnd != NULL && ( InputNode::GetMouseButtons() & 0x01 ) )
+	{
+		uint32 nNewMask = 1 << nDesktop;
+
+		if ( InputNode::GetMouseButtons() & 0x02 )
+		{
+			nNewMask |= pcActiveWnd->GetDesktopMask();
+		}
+		pcActiveWnd->SetDesktopMask( nNewMask );
+		set_active_window( pcActiveWnd );
+	}
+	g_pcTopView->UpdateRegions();
+	SrvSprite::Unhide();
+	g_cLayerGate.Open();
 }
 
 //----------------------------------------------------------------------------
@@ -691,8 +718,5 @@ int main( int argc, char** argv )
     dbprintf( "WARNING : layers.device failed to initiate itself!!!\n" );
     return( 0 );
 }
-
-
-
 
 

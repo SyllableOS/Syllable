@@ -37,6 +37,8 @@ public:
     void UpdateWinList( bool bMoveToFront, bool bSetFocus );
     void Paint( const IRect& cUpdateRect, bool bUpdate );
     void Step( bool bForward );
+    
+    std::vector<SrvWindow*> GetWindows();
   
 private:
     int	m_nCurSelect;
@@ -47,3 +49,4 @@ private:
 
 
 #endif // __F_WINSELECT_H__
+
