@@ -1,0 +1,20 @@
+authors				Kaj de Vos
+status				testing
+notes				Using Samba is in the documentation twice
+
+licenses			GPL
+home				samba.org
+
+recommends			libiconv
+
+patch-config		source
+
+configure-cmd		source/configure
+configure-options
+	--with-static-modules=charset,vfs
+;	--with-manpages-langs=
+
+documentation
+	README COPYING Manifest WHATSNEW.txt Roadmap
+	docs/README.ldap docs/THANKS docs/history docs/roadmap-3.html docs/Samba-HOWTO-Collection.pdf
+	docs/faq docs/htmldocs examples
