@@ -180,6 +180,7 @@ modules
 	sys/appserver/appserver/drivers/video/vmware
 	sys/media/libmedia
 	sys/media/mediaserver
+	sys/media/drivers/cdda
 	sys/media/drivers/cdrom
 	sys/media/drivers/ffmpeg
 	sys/media/drivers/oss
