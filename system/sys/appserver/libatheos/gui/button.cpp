@@ -221,8 +221,8 @@ void Button::Paint( const Rect& cUpdateRect )
     font_height sHeight;
     GetFontHeight( &sHeight );
 
-    float vCharHeight = sHeight.ascender + sHeight.descender/* + sHeight.line_gap*/;
-    float y = floor( 2.0f + (cBounds.Height()+1.0f)*0.5f - vCharHeight*0.5f + sHeight.ascender /*+ sHeight.line_gap / 2*/ );
+    float vCharHeight = sHeight.ascender/* + sHeight.descender*/;
+    float y = floor( cBounds.Height()*0.5f - vCharHeight*0.5f + sHeight.ascender );
     float x = floor((cBounds.Width()+1.0f) / 2.0f - vStrWidth / 2.0f);
 
     if ( GetValue().AsBool() ) {
@@ -272,3 +272,4 @@ void Button::Paint( const Rect& cUpdateRect )
 		  Point( (cBounds.Width()+1.0f)*0.5f + vStrWidth*0.5f, y + sHeight.descender - sHeight.line_gap / 2 - 1.0f ) );
     }
 }
+
