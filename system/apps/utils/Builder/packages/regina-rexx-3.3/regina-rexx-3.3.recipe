@@ -1,0 +1,13 @@
+authors				Kaj de Vos
+status				broken
+notes				AtheOS support needs to be converted to Syllable support
+
+licenses			LGPL
+home				regina-rexx.sf.net
+packages			Regina-REXX-3.3
+
+patch-config
+configure-options	--disable-posix-threads
+documentation
+	README.Unix README.33 README_SAFE INSTALL BUGS COPYING-LIB TODO
+	README.STATIC HACKERS.txt
