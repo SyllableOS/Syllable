@@ -6,6 +6,9 @@
  *                               and others.
  *               Port to AtheOS  Sergio Lopez (xatann@gmx.net) 
  *
+ *      Default setting for playback changed from 8 KHz mono to 44.1 KHz stereo.
+ *          29 August 2003, Kaj de Vos
+ *
  *      This program is free software; you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
  *      the Free Software Foundation; either version 2 of the License, or
@@ -1109,9 +1112,9 @@ status_t es1371_open (void* pNode, uint32 nFlags, void **pCookie)
 	LOCK(s->sem);
 	s->dma_dac2.ossfragshift = s->dma_dac2.ossmaxfrags = s->dma_dac2.subdivision = 0;
 	s->dma_dac2.enabled = 1;
-	set_dac2_rate(s, 8000);
+	set_dac2_rate(s, 44100);
 	spin_lock_irqsave(&s->lock, flags);
-	s->sctrl |= ES1371_FMT_S16_MONO << SCTRL_SH_P2FMT;
+	s->sctrl |= ES1371_FMT_S16_STEREO << SCTRL_SH_P2FMT;
 	outl(s->sctrl, s->io+ES1371_REG_SERIAL_CONTROL);
 	spin_unlock_irqrestore(&s->lock, flags);
 	s->open = true;
