@@ -13,6 +13,7 @@ modules
 	sys/translators
 	sys/appserver/libsyllable
 	sys/appserver/appserver/server
+	sys/appserver/appserver/drivers/decorators/photon
 	sys/media/mediaserver
 	sys/media/drivers/ffmpeg
 	sys/media/drivers/oss
@@ -44,5 +45,6 @@ modules
 	apps/utils/catalog
 	apps/utils/charmap
 	apps/utils/dhcpc
+	apps/utils/man2html
 	apps/utils/pkgmanager
 	apps/utils/slbmgr
