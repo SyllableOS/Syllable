@@ -57,7 +57,7 @@ Bitmap* MenuItem::s_pcSubMenuBitmap = NULL;
 #define SUB_MENU_ARROW_W 10
 #define SUB_MENU_ARROW_H 10
 
-uint8 pnSubMenuArrowData[]={
+uint8 nSubMenuArrowData[]={
 	0x00, 0x00, 0x00, 0x00,
 	0xff, 0xff, 0xff, 0xff,
 	0xff, 0xff, 0xff, 0xff,
@@ -208,7 +208,7 @@ MenuItem::MenuItem( const char* pzLabel, Message* pcMsg ) : Invoker( pcMsg, NULL
 		cSubMenuBitmapRect.bottom = SUB_MENU_ARROW_H;
 
 		s_pcSubMenuBitmap = new Bitmap( cSubMenuBitmapRect.Width(), cSubMenuBitmapRect.Height(), CS_RGBA32 , Bitmap::SHARE_FRAMEBUFFER);
-		memcpy( s_pcSubMenuBitmap->LockRaster(), pnSubMenuArrowData, (unsigned int) ( cSubMenuBitmapRect.Width() * cSubMenuBitmapRect.Height() * 4 ) );
+		memcpy( s_pcSubMenuBitmap->LockRaster(), nSubMenuArrowData, (unsigned int) ( cSubMenuBitmapRect.Width() * cSubMenuBitmapRect.Height() * 4 ) );
 	}
 }
 
@@ -395,8 +395,6 @@ void MenuItem::Draw()
 		pcMenu->SetFgColor( get_default_color( COL_MENU_BACKGROUND ) );
 	}
 
-	float vStrWidth = pcMenu->GetStringWidth( pzLabel );
-
 	pcMenu->FillRect( GetFrame() );
 
 	if ( m_bIsHighlighted )
@@ -422,7 +420,7 @@ void MenuItem::Draw()
 		Rect cSourceRect = s_pcSubMenuBitmap->GetBounds();
 		Rect cTargetRect;
 
-		cTargetRect = cSourceRect.Bounds() + Point( m_cFrame.right - 6.0f, m_cFrame.top + ( m_cFrame.Height() / 2) - 4.0f);
+		cTargetRect = cSourceRect.Bounds() + Point( m_cFrame.right - SUB_MENU_ARROW_W, m_cFrame.top + ( m_cFrame.Height() / 2) - 4.0f);
 
 		pcMenu->SetDrawingMode( DM_OVER );
 		pcMenu->DrawBitmap( s_pcSubMenuBitmap, cSourceRect, cTargetRect );
@@ -439,7 +437,6 @@ void MenuItem::Draw()
 
 void MenuItem::DrawContent()
 {
-
 }
 
 void MenuItem::Highlight( bool bHighlight )
