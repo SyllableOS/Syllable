@@ -1,3 +1,9 @@
+* March 19 2005, Henrik Isaksson *
+
+ Yet another Vanders-patch:
+ - Settings
+	o Added SetFile().
+
 * March 12 2005, Henrik Isaksson *
 
  Applied a some patches from Vanders:
