@@ -19,7 +19,7 @@ doc:
 install-doc:
 
 dist:
-	@-cp -r base/* vera/*.ttf $(DIST_TARGET_PATH)
+	@cp -r base/* vera/*.ttf $(DIST_TARGET_PATH)
 
 clean:
 

@@ -17,7 +17,7 @@ doc:
 install-doc:
 
 dist:
-	@-cp -pr * $(DIST_TARGET_PATH)
+	@cp -pr * $(DIST_TARGET_PATH)
 
 clean:
 

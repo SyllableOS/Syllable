@@ -17,7 +17,7 @@ doc:
 install-doc:
 
 dist:
-	@-cp -dpr * $(DIST_TARGET_PATH)
+	@cp -a * $(DIST_TARGET_PATH)
 	@cd default_user/;\
 	cp -p .profile $(DIST_TARGET_PATH)/default_user/.profile;\
 	cp -p .profile $(DIST_DIR)/atheos/home/root/.profile;\
