@@ -246,20 +246,23 @@ void release_device( int nHandle )
 status_t get_device_info( DeviceInfo_s * psInfo, int nIndex )
 {
 	DeviceHandle_s *psDevice = g_psFirstDevice;
+	int nCount = 0;
 
 	if ( nIndex < 0 )
 		return ( -1 );
 
 	while ( psDevice != NULL )
 	{
-		if ( psDevice->d_nHandle == nIndex )
+		if ( nCount == nIndex )
 		{
+			psInfo->di_nHandle = psDevice->d_nHandle;
 			strcpy( psInfo->di_zOriginalName, psDevice->d_zOriginalName );
 			strcpy( psInfo->di_zName, psDevice->d_zName );
 			strcpy( psInfo->di_zBus, psDevice->d_zBus );
 			psInfo->di_eType = psDevice->d_eType;
 			return ( 0 );
 		}
+		nCount++;
 		psDevice = psDevice->d_psNext;
 	}
 	return ( -1 );

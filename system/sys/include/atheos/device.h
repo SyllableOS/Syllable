@@ -58,6 +58,7 @@ enum device_type {
 
 typedef struct
 {
+	int              di_nHandle;	
 	char             di_zOriginalName[MAX_DEVICE_NAME_LENGTH];
 	char             di_zName[MAX_DEVICE_NAME_LENGTH];
 	char             di_zBus[MAX_BUSMANAGER_NAME_LENGTH];
