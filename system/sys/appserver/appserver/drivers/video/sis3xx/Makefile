@@ -1,7 +1,7 @@
 COPTS   = -I$(TOP)/src  -c -O2 -Wall
 
 DEVBIN = /system/drivers/appserver/video
-OBJS = init301.o init.o sis.o sis3xx.o
+OBJS = init301.o init.o sis_video.o sis.o sis3xx.o
 
 OBJDIR	:= objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
