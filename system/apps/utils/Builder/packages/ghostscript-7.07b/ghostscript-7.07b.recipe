@@ -1,0 +1,13 @@
+authors			Kaj de Vos
+status			broken
+notes			Needs source for Jpeg, LibPNG and ZLib!
+licenses		GPL
+home			www.gnu.org/software/ghostscript/
+;packages		ghostscript-7.07b jpeg libpng zlib
+;build-needs
+;	jpeg
+;	libpng
+;	zlib
+;make-targets	so debug pg
+;install-targets	soinstall
+documentation	README LICENSE
