@@ -53,7 +53,9 @@ $(OBJDIR)/bintohex: bintohex.c
 	export C_INCLUDE_PATH=$(OLD_INCLUDE_PATH) ; gcc bintohex.c -o $(OBJDIR)/bintohex
 
 $(OBJDIR)/kernel.exports.c: ksyms.c
-	cat ksyms.c | sed -n "s/\(^[ \t]\+KSYMBOL(\)\(.*\)\()[ \t]*\,\)/void \2() {}/w $(OBJDIR)/kernel.exports.c"
+	grep '^[[:space:]]\+KSYMBOL' ksyms.c | \
+	sed -e 's/^[[:space:]]\+KSYMBOL( *\([^ )]*\) *).*$$/void \1() {}/' \
+	> $(OBJDIR)/kernel.exports.c
 
 smp.c:	$(OBJDIR)/smp_entry.hex
 
