@@ -1,3 +1,8 @@
+* Dec 2 2003, Kaj de Vos *
+
+Fixed and cleaned up many build problems of several sorts all over the system
+over the past few days. See commit messages for details.
+
 * Nov 30 2003, Henrik Isaksson *
 
 Added some command line options to ls_ports, and made it recognize the new
