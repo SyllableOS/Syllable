@@ -3,6 +3,8 @@
 	- Replaced the old standalone mixer utility with a stub application which calls
 	  the Media Server to display the mixer/streams control window.
 
+	- Added Application and Dock icons for AEdit and aterm.  More to follow.
+
 ---- 0.5.5 Released -------------------------------------------------------------------
 
 * December 2nd 2004, Henrik Isaksson *
