@@ -800,7 +800,7 @@ bool TDFX::CreateOverlayCommon( const os::IPoint & cSize,
                                 const os::IRect & cDst, area_id *pBuffer )
 {
 	// calculate position of overlay buffer in offscreen memory
-	uint32 pitch = ( ( cSize.x * 2 ) + 3 ) & ~3;
+	uint32 pitch = ( ( cSize.x * 2 ) + 0xff ) & ~0xff;
 	uint32 totalSize = pitch * cSize.y;
 
 	uint32 offset = ( m_nFbSize - totalSize - 1024 ) & 0xfffff000;

@@ -150,11 +150,6 @@ static const struct chip_info asChipInfos[] = {
 };
 
 
-enum
-{
-	FX_GET_DMA_ADDRESS = PCI_GFX_LAST_IOCTL
-};
-
 #undef ENABLE_DOUBLEBUFFER	// Enable doublebuffering
 
 inline uint32 pci_size( uint32 base, uint32 mask )
@@ -1027,14 +1022,15 @@ bool FX::BltBitmap( SrvBitmap * pcDstBitMap, SrvBitmap * pcSrcBitMap, IRect cSrc
 
 bool FX::CreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst, os::color_space eFormat, os::Color32_s sColorKey, area_id *pBuffer )
 {
-	if ( ( eFormat == CS_YUV422 ) && !m_bVideoOverlayUsed )
+	if ( eFormat == CS_YUV422 && !m_bVideoOverlayUsed )
 	{
 		/* Calculate offset */
 		uint32 pitch = 0;
 		uint32 totalSize = 0;
 
-		pitch = ( ( cSize.x << 1 ) + 3 ) & ~3;
-		totalSize = pitch * cSize.y;
+		
+		pitch = ( ( cSize.x << 1 ) + 0xff ) & ~0xff;
+		totalSize = pitch * cSize.y; 
 		
 
 		uint32 offset = PAGE_ALIGN( m_sHW.ScratchBufferStart - totalSize - PAGE_SIZE );
@@ -1067,14 +1063,6 @@ bool FX::CreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst, o
 		m_sHW.PMC[0x00008b00 / 4] = m_nColorKey & 0xffffff;
 
 		m_sHW.PMC[0x8900 / 4] = offset;
-		m_sHW.PMC[0x8908 / 4] = offset + totalSize;
-
-
-		m_sHW.PMC[0x8800 / 4] = offset;
-		m_sHW.PMC[0x8808 / 4] = offset + totalSize;
-
-		m_sHW.PMC[0x8920 / 4] = 0;
-
 		m_sHW.PMC[0x8928 / 4] = ( cSize.y << 16 ) | cSize.x;
 		m_sHW.PMC[0x8930 / 4] = 0;
 		m_sHW.PMC[0x8938 / 4] = ( cSize.x << 20 ) / cDst.Width();
@@ -1110,15 +1098,14 @@ bool FX::CreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst, o
 bool FX::RecreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst, os::color_space eFormat, area_id *pBuffer )
 {
 
-	if ( eFormat == CS_YUV422 )
+	if ( eFormat == CS_YUV422  )
 	{
 		delete_area( *pBuffer );
 		/* Calculate offset */
 		uint32 pitch = 0;
 		uint32 totalSize = 0;
 
-		
-		pitch = ( ( cSize.x << 1 ) + 3 ) & ~3;
+		pitch = ( ( cSize.x << 1 ) + 0xff ) & ~0xff;
 		totalSize = pitch * cSize.y;
 
 		uint32 offset = PAGE_ALIGN( m_sHW.ScratchBufferStart - totalSize - PAGE_SIZE );
@@ -1133,14 +1120,6 @@ bool FX::RecreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst,
 		m_sHW.PMC[0x00008b00 / 4] = m_nColorKey & 0xffffff;
 
 		m_sHW.PMC[0x8900 / 4] = offset;
-		m_sHW.PMC[0x8908 / 4] = offset + totalSize;
-
-
-		m_sHW.PMC[0x8800 / 4] = offset;
-		m_sHW.PMC[0x8808 / 4] = offset + totalSize;
-
-		m_sHW.PMC[0x8920 / 4] = 0;
-
 		m_sHW.PMC[0x8928 / 4] = ( cSize.y << 16 ) | cSize.x;
 		m_sHW.PMC[0x8930 / 4] = 0;
 		m_sHW.PMC[0x8938 / 4] = ( cSize.x << 20 ) / cDst.Width();
@@ -1153,8 +1132,7 @@ bool FX::RecreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst,
 			dstPitch |= 1 << 16;
 
 		m_sHW.PMC[0x8958 / 4] = dstPitch;
-		m_sHW.PMC[0x00008704 / 4] = 0;
-		m_sHW.PMC[0x8704 / 4] = 0xfffffffe;
+		m_sHW.PMC[0x8704 / 4] = 0;
 		m_sHW.PMC[0x8700 / 4] = 1;
 
 

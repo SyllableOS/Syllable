@@ -324,10 +324,9 @@ bool i855::SetupVideo( const os::IPoint & cSize, const os::IRect & cDst, os::col
 	int nDestHeight = cDest.Height() + 1;
 
 	if( eFormat == os::CS_YUV12 ) {
-		pitch = ( ( cSize.x << 1 ) + 255 ) & ~255;
-		totalSize = pitch * cSize.y;
-		pitch = ( ( cSize.x >> 1 ) + 31 ) & ~31;
-		//totalSize = pitch * cSize.y * 4;
+		pitch = ( ( cSize.x + 0x1ff ) & ~0x1ff ) << 1;
+		totalSize = pitch * cSize.y;	
+		pitch = ( ( cSize.x ) + 0x1ff ) & ~0x1ff;
 	} else {
 		pitch = ( ( cSize.x << 1 ) + 255 ) & ~255;
 		totalSize = pitch * cSize.y;
@@ -355,29 +354,16 @@ bool i855::SetupVideo( const os::IPoint & cSize, const os::IRect & cDst, os::col
 	}
 	
 	m_psVidRegs->OBUF_0Y = offset;
-	m_psVidRegs->OBUF_0U = offset + ( cSize.x * cSize.y );
-	m_psVidRegs->OBUF_0V = offset + ( cSize.y * cSize.y * 5 / 4 );
+	m_psVidRegs->OBUF_0U = offset + ( pitch * cSize.y * 5 / 4 );
+	m_psVidRegs->OBUF_0V = offset + ( pitch * cSize.y );
 	
-	//nUOffset = m_psVidRegs->OBUF_0U = m_psVidRegs->OBUF_0V = offset;
 	
 	if( eFormat == os::CS_YUV12 ) {
-		/*unsigned int nSWidth = ( ( cSize.x + 1 ) & ~1 ) & 0xfff;
-		m_psVidRegs->SWIDTH = nSWidth;
-		nSWidth /= 2;
-		m_psVidRegs->SWIDTH |= ( ( nSWidth ) & 0x7ff ) << 16;
-		
-		nSWidth = ( ( offset + cSize.x + 0x1f ) >> 5 ) -
-					( offset >> 5 ) - 1;
-		m_psVidRegs->SWIDTHSW = nSWidth << 2;
-		nSWidth = ( ( m_psVidRegs->OBUF_0U + ( cSize.x / 2 ) + 0x1f ) >> 5 ) -
-					( m_psVidRegs->OBUF_0U >> 5 ) - 1;
-		
-		m_psVidRegs->SWIDTHSW |= nSWidth << 18;*/
-		unsigned int nSWidth = ( ( cSize.x + 7 ) & ~7 );
+		unsigned int nSWidth = ( ( cSize.x + 0x1ff ) & ~0x1ff );
 		m_psVidRegs->SWIDTH = ( nSWidth << 15 ) | nSWidth;
 		m_psVidRegs->SWIDTHSW = ( nSWidth << 12 ) | ( nSWidth >> 3 );
 	} else {
-		unsigned int nSWidth = ( ( cSize.x + 31 ) & ~31 ) << 1;
+		unsigned int nSWidth = ( ( cSize.x << 1 ) + 255 ) & ~255;
 
 		m_psVidRegs->SWIDTH = nSWidth;
 		m_psVidRegs->SWIDTHSW = ( nSWidth ) >> 3;
@@ -510,12 +496,12 @@ bool i855::SetupVideo( const os::IPoint & cSize, const os::IRect & cDst, os::col
 	}
 	
 	if( eFormat == os::CS_YUV12 ) {
-		m_psVidRegs->OSTRIDE = ( pitch * 2 ) | ( ( ( pitch ) ) << 16 );
+		m_psVidRegs->OSTRIDE = ( pitch ) | ( ( ( pitch / 2 ) ) << 16 );
 		m_psVidRegs->OCMD &= ~SOURCE_FORMAT;
 		m_psVidRegs->OCMD &= ~OV_BYTE_ORDER;
 		m_psVidRegs->OCMD |= YUV_420;
 	} else {
-		m_psVidRegs->OSTRIDE = cSize.x << 1;
+		m_psVidRegs->OSTRIDE = pitch;
 		m_psVidRegs->OCMD &= ~SOURCE_FORMAT;
 		m_psVidRegs->OCMD |= YUV_422;
 		m_psVidRegs->OCMD &= ~OV_BYTE_ORDER;
@@ -582,7 +568,7 @@ void i855::SetupVideoOneLine()
 
 bool i855::CreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst, os::color_space eFormat, os::Color32_s sColorKey, area_id *pBuffer )
 {
-	if ( eFormat == os::CS_YUV422 /*|| eFormat == os::CS_YUV12*/  && !m_bVideoOverlayUsed)
+	if ( ( eFormat == os::CS_YUV422 || eFormat == os::CS_YUV12 ) && !m_bVideoOverlayUsed)
 	{
 		/* Start video */
 		switch ( os::BitsPerPixel( GetCurrentScreenMode().m_eColorSpace ) )
@@ -617,7 +603,7 @@ bool i855::CreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst,
 bool i855::RecreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst, os::color_space eFormat, area_id *pBuffer )
 {
 
-	if ( eFormat == os::CS_YUV422 /*|| eFormat == os::CS_YUV12*/ )
+	if ( eFormat == os::CS_YUV422 || eFormat == os::CS_YUV12 )
 	{
 		delete_area( *pBuffer );
 		return ( SetupVideo( cSize, cDst, eFormat, pBuffer ) );

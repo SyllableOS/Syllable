@@ -517,7 +517,7 @@ bool Riva::CreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst,
     	uint32 pitch = 0; 
     	uint32 totalSize = 0;
     	
-    	pitch = ( ( cSize.x << 1 ) + 3 )  & ~3;
+    	pitch = ( ( cSize.x << 1 ) + 0xff )  & ~0xff;
     	totalSize = pitch * cSize.y;
     	
     	uint32 offset = PAGE_ALIGN( ( m_sHW.RamAmountKBytes - 128 ) * 1024 - totalSize - PAGE_SIZE );
@@ -590,7 +590,7 @@ bool Riva::RecreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst,
     	uint32 pitch = 0; 
     	uint32 totalSize = 0;
     	
-    	pitch = ( ( cSize.x << 1 ) + 3 )  & ~3;
+    	pitch = ( ( cSize.x << 1 ) + 0xff )  & ~0xff;
     	totalSize = pitch * cSize.y;
     	
     	uint32 offset = PAGE_ALIGN( ( m_sHW.RamAmountKBytes - 128 ) * 1024 - totalSize - PAGE_SIZE );

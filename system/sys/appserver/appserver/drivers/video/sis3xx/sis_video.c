@@ -947,7 +947,7 @@ area_id SISStartVideo( short src_x, short src_y,
    switch(id){
      case PIXEL_FMT_YV12:
      case PIXEL_FMT_I420:
-       si.video_port.srcPitch = (width + 7) & ~7;
+       si.video_port.srcPitch = (width + 0x1ff) & ~0x1ff;
        /* Size = width * height * 3 / 2 */
        totalSize = (si.video_port.srcPitch * height * 3) >> 1; /* Verified */
        break;
@@ -956,7 +956,7 @@ area_id SISStartVideo( short src_x, short src_y,
      case PIXEL_FMT_RGB6:
      case PIXEL_FMT_RGB5:
      default:
-       si.video_port.srcPitch = ((width << 1) + 3) & ~3;	/* Verified */
+       si.video_port.srcPitch = ((width << 1) + 0xff) & ~0xff;	/* Verified */
        /* Size = width * 2 * height */
        totalSize = si.video_port.srcPitch * height;
    }

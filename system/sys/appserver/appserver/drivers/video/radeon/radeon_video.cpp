@@ -483,7 +483,7 @@ bool ATIRadeon::CreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cD
 			break;
 		}
 
-		bytes_per_row = (cSize.x * bpp + 0xf) & ~0xf;
+		bytes_per_row = (cSize.x * bpp + 0xff) & ~0xff;
 		totalsize = bytes_per_row * cSize.y;
     	offset1 = PAGE_ALIGN( rinfo.video_ram - totalsize - PAGE_SIZE );
 
