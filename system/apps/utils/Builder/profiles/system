@@ -105,7 +105,6 @@ resources
 modules
 ;	Hangs during configuring:
 ;	sys/boot/grub-0.95
-	other/config/grub
 	other/config/default
 	other/config/etc
 	other/fonts
@@ -168,10 +167,11 @@ modules
 	sys/kernel/fs/fatfs
 	sys/kernel/fs/iso9660
 	sys/kernel/fs/ramfs
-	libs/glibc2-2.1.2
+	libs/libdl
 	libs/libpthread
-	libs/ncurses-5.4
+	libs/glibc2-2.1.2
 	libs/zlib-1.2.1
+	libs/ncurses-5.4
 	sys/appserver/libsyllable
 	sys/appserver/appserver/server
 	sys/appserver/appserver/drivers/decorators/amiga
