@@ -287,6 +287,21 @@ Glyph *SFontInstance::GetGlyph( int nIndex )
 		FT_Set_Transform( psSize->face, &transform, NULL );
 	}
 
+	if( m_cInstanceProperties.m_nFlags & FPF_ITALIC )
+	{
+//		FT_GlyphSlot_Oblique( glyph );
+
+		FT_Matrix transform;
+
+		transform.xx = ( FT_Fixed )( 0x10000L );
+		transform.yx = ( FT_Fixed )( 0x00000L );
+		transform.xy = ( FT_Fixed )( 0x06000L );
+		transform.yy = ( FT_Fixed )( 0x10000L );
+
+		FT_Set_Transform( psSize->face, &transform, NULL );
+	//	dbprintf( "Oblique\n" );
+	}
+
 	nError = FT_Load_Glyph( psSize->face, nIndex, FT_LOAD_DEFAULT );
 
 	if( nError != 0 )
@@ -305,16 +320,8 @@ Glyph *SFontInstance::GetGlyph( int nIndex )
 
 	if( m_cInstanceProperties.m_nFlags & FPF_BOLD )
 	{
-
-/*	FT_GlyphSlot_Embolden( glyph );	*/
-		dbprintf( "Embolden\n" );
-	}
-
-	if( m_cInstanceProperties.m_nFlags & FPF_ITALIC )
-	{
-
-/*	FT_GlyphSlot_Oblique( glyph ); */
-		dbprintf( "Oblique\n" );
+		//FT_GlyphSlot_Embolden( glyph );
+		//dbprintf( "Embolden\n" );
 	}
 
 
@@ -447,6 +454,35 @@ Glyph *SFontInstance::GetGlyph( int nIndex )
 		}
 	}
 	return ( m_ppcGlyphTable[nIndex] );
+}
+
+bool SFontInstance::GetFirstSupportedChar( uint32* pnChar )
+{
+	FT_ULong	nCharCode;
+	FT_UInt		nGIndex;
+	FT_Face psFace = m_pcFont->GetTTFace();
+
+	nCharCode = FT_Get_First_Char( psFace, &nGIndex );
+	if( nGIndex ) {
+		dbprintf("s: %d\n", nCharCode);
+		*pnChar = nCharCode;
+		return true;
+	}
+	return false;
+}
+
+bool SFontInstance::GetNextSupportedChar( uint32* pnLastChar )
+{
+	FT_ULong	nCharCode;
+	FT_UInt		nGIndex;
+	FT_Face psFace = m_pcFont->GetTTFace();
+
+	nCharCode = FT_Get_Next_Char( psFace, *pnLastChar, &nGIndex );
+	if( nGIndex ) {
+		*pnLastChar = nCharCode;
+		return true;
+	}
+	return false;
 }
 
 //----------------------------------------------------------------------------
@@ -1308,3 +1344,4 @@ SFont *FontServer::OpenFont( const std::string & cFamily, const std::string & cS
 	}
 	return ( pcFont );
 }
+

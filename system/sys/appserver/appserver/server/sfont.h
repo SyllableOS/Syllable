@@ -29,10 +29,12 @@
 #include <util/resource.h>
 #include <util/locker.h>
 
-#include <freetype/freetype.h>
-#include <freetype/ftsynth.h>
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include FT_SYNTHESIS_H
 
 #include <map>
+#include <vector>
 #include <string>
 
 class	FontFamily;
@@ -152,6 +154,9 @@ public:
     int		GetStringWidth( const char* pzString, int nLength );
     int		GetStringLength( const char* pzString, int nLength, int nWidth, bool bIncludeLast );
     os::IPoint	GetTextExtent( const char* pzString, int nLength, uint32 nFlags );
+	bool	GetNextSupportedChar( uint32* pnLastChar );
+	bool	GetFirstSupportedChar( uint32* pnChar );
+	
 private:
     ~SFontInstance();
     friend	class	SFont;
@@ -230,4 +235,3 @@ private:
 };
 
 #endif	// __F_SFONT_H__
-
