@@ -1,7 +1,7 @@
 The Syllable Build System
 =========================
 
-17 November 2003
+25 November 2003
 
 Contents
 ========
@@ -30,7 +30,8 @@ Contents
         3.7.1 
         3.7.2 Writing a profile
         3.7.3 Predefined profiles
-    3.8 Building the Syllable base system
+    3.8 Building a compound package
+    3.9 Building the Syllable base system
 4 Developing your own packages
 5 Known problems and limitations
 6 Contact information
@@ -38,7 +39,7 @@ Contents
 1 Introduction
 ==============
 
-This documentation applies to version 0.1.4 of the build system for
+This documentation applies to version 0.2.2 of the build system for
 the Syllable operating system. If you encounter problems or have any
 other interesting observations, I would be interested to hear about
 them (see contact information).
@@ -172,13 +173,13 @@ log of the last build operation performed, do
 pager such as "less".) If you are building multiple modules, you may
 want to have a summary of the results, without all the process output:
 
-    build summary
+    build log summary
 
 When building multiple modules, the build system doesn't stop at a
 module that won't build successfully. To see a list of only those
 modules that didn't build, do:
 
-    build failures
+    build log failures
 
 3.4 Building a single native application
 ----------------------------------------
@@ -419,10 +420,6 @@ will install the module in the staging area where a directory tree is
 built for a Syllable distribution. The staging area is located in the
 subdirectory "dist-root" within the "system" directory.
 
-The installation can be deleted with
-
-    build uninstall example/
-
 3.7 Building multiple modules
 -----------------------------
 
@@ -431,7 +428,8 @@ The installation can be deleted with
 
 More than one module can be handled in one go by the operations of
 the build system. This is done by passing a profile name to the build
-command, instead of a module path:
+command, instead of a module path. For example, to build a number of
+modules, enter:
 
     build example-profile
 
@@ -441,9 +439,31 @@ a list of modules. All the modules in the profile will be acted on
 sequentially. The logs will contain all the actions on all modules,
 even if one or more of the modules failed.
 
+You can get a list of the modules in a profile by entering
+
+    build list example-profile
+
+You can test all the modules in a profile in one go:
+
+    build test example-profile
+
+And you can install them all at once:
+
+    build install example-profile
+
 A profile can contain both native and third-party modules. The way
 they are handled corresponds to what was described earlier in their
-respective sections.
+respective sections. Because of that, the
+
+    build uninstall example-profile
+
+command and the
+
+    build distro example-profile
+
+command will have different effects, depending on what modules are in
+the profile and whether you are building stand-alone applications or
+part of the Syllable base system.
 
 3.7.2 Writing a profile
 -----------------------
@@ -461,37 +481,65 @@ should start with a semicolon (';') in the first position.
 
 The build system contains some predefined profiles that can be
 useful. As a special case, the profile named "default" is used when
-you specify neither a profile name nor a module path. For example,
-just giving the command
+you specify neither a profile name nor a module path. Just giving the
+command
 
     build
 
 by itself will build the modules in the default profile.
 
 In addition, some profiles are generated automatically by the build
-system itself. After a build operation, the profile named
-"last-failures" will contain a list of the modules that failed. This
-is very handy if you are building a long list of modules where some
-of them have errors. You can use
+system itself. After a build operation, the profile named "failures"
+will contain a list of the modules that failed. This is very handy if
+you are building a long list of modules where some of them have
+errors. You can use
 
-    build failures
+    build log failures
 
 to be shown the log of failing modules from your last operation.
 After making fixes, using
 
-    build last-failures
+    build failures
 
 will rerun the build procedure on only those packages that weren't
 built successfully yet. This will even work if you invoked the build
 command on single modules inbetween while making fixes, because the
-profile "last-failures" is only updated when working with a profile.
-The procedure can be repeated until all modules are repaired.
+profile "failures" is only updated when working with a profile. The
+procedure can be repeated until all modules are repaired.
 
 Another auto-generated profile that you can use is named "last". This
 profile always contains the last profile that the build command was
 used with.
 
-3.8 Building the Syllable base system
+3.8 Building a compound package
+-------------------------------
+
+The build system is capable of producing distribution packages
+consisting of multiple third-party packages. For example, the build
+system contains a profile named "dev-pack", for the Developer Pack.
+This is a collection of third-party packages commonly used by
+developers. You can build all those packages with:
+
+    build dev-pack
+
+To install such a list of packages, you would normally do:
+
+    build install dev-pack
+
+(In this case, it's more complicated than that, because the Developer
+Pack contains several packages that need themselves to build and
+sometimes even to install themselves, like Make, Binutils and GCC.
+You would have to replace these packages carefully and individually.)
+
+When the packages are installed,
+
+    build distro dev-pack
+
+will create one distribution package in your working directory that
+contains all the packages from the profile, and optionally extra
+files like documentation.
+
+3.9 Building the Syllable base system
 -------------------------------------
 
 At the time of writing, it is not possible to build the entire
@@ -526,8 +574,9 @@ that matches the software you are building.
 6 Contact information
 =====================
 
-The Syllable build system was created by Kaj de Vos. You can send me
-problem reports, fixes and the like at
+The Syllable build system was created by Kaj de Vos, and started from
+the work of Kristian Van Der Vliet. You can send me problem reports,
+fixes and the like at
 
     builder@syllable.info
 
