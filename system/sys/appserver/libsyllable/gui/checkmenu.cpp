@@ -272,18 +272,6 @@ void CheckMenu::Draw()
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-void CheckMenu::DrawContent()
-{
-
-}
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
 void CheckMenu::SetHighlighted( bool bHighlighted )
 {
 	m_Highlighted = bHighlighted;

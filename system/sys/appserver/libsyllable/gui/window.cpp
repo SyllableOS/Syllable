@@ -927,6 +927,17 @@ void Window::_ViewDeleted( View * pcView )
 	}
 }
 
+/** Add a keyboard shortcut
+ * \par Description:
+ *	Adds a keyboard shortcut to this window. When the keyboard event occurs,
+ *	a message is sent to the window's message handler. Normally you should not
+ *	need to use this method directly, menus and widgets will automatically
+ *	register their shortcuts.
+ * \param cKey - The keyboard event that triggers the shortcut.
+ * \param pcMsg - Message to send to this window (automatically deleted).
+ * \sa RemoveShortcut()
+ * \author	Henrik Isaksson (henrik@isaksson.tk)
+ *****************************************************************************/
 void Window::AddShortcut( const ShortcutKey& cKey, Message* pcMsg )
 {
 	if( cKey.IsValid() ) {
@@ -935,6 +946,17 @@ void Window::AddShortcut( const ShortcutKey& cKey, Message* pcMsg )
 	}
 }
 
+/** Add a keyboard shortcut
+ * \par Description:
+ *	Adds a keyboard shortcut to this window. When the keyboard event occurs,
+ *	the assigned View's KeyDown event handler is called. Normally you should not
+ *	need to use this method directly, menus and widgets will automatically
+ *	register their shortcuts.
+ * \param cKey - The keyboard event that triggers the shortcut.
+ * \param pcView - View to send the shortcut to.
+ * \sa RemoveShortcut()
+ * \author	Henrik Isaksson (henrik@isaksson.tk)
+ *****************************************************************************/
 void Window::AddShortcut( const ShortcutKey& cKey, View* pcView )
 {
 	if( cKey.IsValid() ) {
@@ -943,6 +965,16 @@ void Window::AddShortcut( const ShortcutKey& cKey, View* pcView )
 	}
 }
 
+/** Remove a keyboard shortcut
+ * \par Description:
+ *	Remove a keyboard shortcut previously added by one of the AddShortcut()
+ *	methods. Normally you should not
+ *	need to use this method directly, menus and widgets will automatically
+ *	unregister their shortcuts.
+ * \param cKey - The keyboard event that triggers the shortcut.
+ * \sa AddShortcut()
+ * \author	Henrik Isaksson (henrik@isaksson.tk)
+ *****************************************************************************/
 void Window::RemoveShortcut( const ShortcutKey& cKey )
 {
 	if( cKey.IsValid() ) {
@@ -1773,7 +1805,7 @@ void Window::_DeleteViewFromServer( View * pcView )
 void Window::_HandleShortcuts( const char* pzString, const char* pzRawString, uint32 nQualifiers )
 {
 	ShortcutKey cKey( pzRawString, nQualifiers );
-	
+
 	if( !cKey.IsValid() ) return;
 	
 //	shortcut_map::iterator cItem = m->m_cShortcuts.find( cKey );
@@ -1789,7 +1821,7 @@ void Window::_HandleShortcuts( const char* pzString, const char* pzRawString, ui
 	if( cItem != m->m_cShortcuts.end() ) {
 		if( (*cItem).second.m_pcMessage ) {
 			if( (*cItem).second.m_nFlags & SDF_MESSAGE ) {
-				PostMessage( (*cItem).second.m_pcMessage );
+				PostMessage( (*cItem).second.m_pcMessage, this );
 			} else if( (*cItem).second.m_nFlags & SDF_VIEW ) {
 				(*cItem).second.m_pcView->KeyDown( pzString, pzRawString, nQualifiers );
 			}
@@ -1938,8 +1970,3 @@ void Window::__WI_reserved5__()
 void Window::__WI_reserved6__()
 {
 }
-
-
-
-
-

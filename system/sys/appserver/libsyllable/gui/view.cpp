@@ -582,7 +582,13 @@ uint32 View::GetResizeMask() const
 
 Point View::GetPreferredSize( bool bLargest ) const
 {
-	return ( ( bLargest ) ? Point( 1000.0f, 1000.0f ) : Point( 50.0f, 20.0f ) );
+	if( bLargest ) {
+		return Point( COORD_MAX, COORD_MAX );
+	} else {
+		return Point( 10.0f, 10.0f );
+	}
+	/*
+	return ( ( bLargest ) ? Point( COORD_MAX, COORD_MAX ) : Point( 50.0f, 20.0f ) );*/
 }
 
 Point View::GetContentSize() const
@@ -3660,5 +3666,3 @@ void View::__VW_reserved19__()
 void View::__VW_reserved20__()
 {
 }
-
-

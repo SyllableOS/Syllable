@@ -27,6 +27,20 @@
 
 using namespace os;
 
+class StringView::Private
+{
+	public:
+	Private() {
+		m_cMinSize = IPoint( 0, 0 );
+		m_cMaxSize = IPoint( 0, 0 );
+	}
+
+	String		m_cString;
+	IPoint		m_cMinSize;
+	IPoint		m_cMaxSize;
+    alignment	m_eAlign;
+};
+
 //----------------------------------------------------------------------------
 // NAME:
 // DESC:
@@ -36,10 +50,8 @@ using namespace os;
 
 StringView::StringView( Rect cFrame, const String& cName, const String& cString, alignment eAlign, uint32 nResizeMask, uint32 nFlags ):View( cFrame, cName, nResizeMask, nFlags )
 {
-	m = new data;
-	m->m_nMinSize = 0;
-	m->m_nMaxSize = 0;
-	m_eAlign = eAlign;
+	m = new Private;
+	m->m_eAlign = eAlign;
 	SetFgColor( 0, 0, 0 );
 	SetString( cString );
 }
@@ -82,14 +94,16 @@ const String& StringView::GetString( void ) const
 	return ( m->m_cString );
 }
 
-void StringView::SetMinPreferredSize( int nWidthChars )
+void StringView::SetMinPreferredSize( int nWidthChars, int nHeightChars )
 {
-	m->m_nMinSize = nWidthChars;
+	m->m_cMinSize.x = nWidthChars;
+	m->m_cMinSize.y = nHeightChars;
 }
 
-void StringView::SetMaxPreferredSize( int nWidthChars )
+void StringView::SetMaxPreferredSize( int nWidthChars, int nHeightChars )
 {
-	m->m_nMaxSize = nWidthChars;
+	m->m_cMaxSize.x = nWidthChars;
+	m->m_cMaxSize.y = nHeightChars;
 }
 
 //----------------------------------------------------------------------------
@@ -105,25 +119,17 @@ Point StringView::GetPreferredSize( bool bLargest ) const
 
 	if( bLargest )
 	{
-		if( m->m_nMaxSize > 0 )
-		{
-			return ( Point( float ( m->m_nMaxSize ) * GetStringWidth( "M" ), cExt.y ) );
-		}
-		else
-		{
-			return ( Point( cExt.x, cExt.y ) );
-		}
+		return ( Point(
+			( ( m->m_cMaxSize.x > 0 ) ? float ( m->m_cMaxSize.x ) * GetStringWidth( "M" ) : COORD_MAX ),
+			( ( m->m_cMaxSize.y > 0 ) ? float ( m->m_cMaxSize.y ) * GetStringWidth( "M" ) : COORD_MAX ) ) );
+		/* FIXME: This code assumes that M is the widest character. */
 	}
 	else
 	{
-		if( m->m_nMinSize > 0 )
-		{
-			return ( Point( float ( m->m_nMinSize ) * GetStringWidth( "M" ), cExt.y ) );
-		}
-		else
-		{
-			return ( Point( cExt.x, cExt.y ) );
-		}
+		return ( Point(
+			( ( m->m_cMinSize.x > 0 ) ? float ( m->m_cMinSize.x ) * GetStringWidth( "M" ) : cExt.x ),
+			( ( m->m_cMinSize.y > 0 ) ? float ( m->m_cMinSize.y ) * GetStringWidth( "M" ) : cExt.y ) ) );
+		/* FIXME: This code assumes that M is the widest character. */
 	}
 }
 
@@ -150,11 +156,11 @@ void StringView::Paint( const Rect & cUpdateRect )
 
 	FillRect( cBounds, get_default_color( COL_NORMAL ) );
 
-	if( m_eAlign == ALIGN_LEFT )
+	if( m->m_eAlign == ALIGN_LEFT )
 	{
 		DrawText( cBounds, m->m_cString );
 	}
-	else if( m_eAlign == ALIGN_RIGHT )
+	else if( m->m_eAlign == ALIGN_RIGHT )
 	{
 		DrawText( cBounds, m->m_cString, DTF_ALIGN_RIGHT );
 	}
