@@ -1,0 +1,71 @@
+//
+// AEdit string catalog
+//
+
+MSG_APPWND_TITLE					AEdit
+MSG_APPWND_TITLE_NEW_FILE			Nuovo
+
+MSG_MENU_APPLICATION=100			Applicazione
+MSG_MENU_APPLICATION_QUIT			Esci
+MSG_MENU_APPLICATION_ABOUT			Informazioni su...
+
+MSG_MENU_FILE=200					File
+MSG_MENU_FILE_NEW					Nuovo
+MSG_MENU_FILE_OPEN					Apri
+MSG_MENU_FILE_SAVE					Salva
+MSG_MENU_FILE_SAVE_AS				Salva con nome...
+
+MSG_MENU_EDIT=300					Modifica
+MSG_MENU_EDIT_CUT					Taglia
+MSG_MENU_EDIT_COPY					Copia
+MSG_MENU_EDIT_PASTE					Incolla
+MSG_MENU_EDIT_SELECT_ALL			Seleziona tutto
+MSG_MENU_EDIT_UNDO					Annulla
+MSG_MENU_EDIT_REDO					Ripeti
+
+MSG_MENU_FIND=400					Trova
+MSG_MENU_FIND_FIND					Trova
+MSG_MENU_FIND_REPLACE				Sostituisci
+MSG_MENU_FIND_GOTO_LINE				Vai a...
+
+MSG_MENU_FONT=500					Carattere
+MSG_MENU_FONT_SIZE					Dimensione
+
+MSG_MENU_SETTINGS=600				Impostazioni
+MSG_MENU_SETTINGS_SAVE_ON_CLOSE		Salva impostazioni quando esci
+MSG_MENU_SETTINGS_SAVE_NOW			Salva impostazioni adesso
+MSG_MENU_SETTINGS_RESET				Configurazione originale
+
+MSG_MENU_HELP=700					Aiuto
+MSG_MENU_HELP_TABLE_OF_CONTENTS		Sommario e indice
+MSG_MENU_HELP_HOMEPAGE				AEdit Homepage
+
+MSG_ABOUT_TITLE=800					Informazioni su...
+MSG_ABOUT_TEXT						\n\nEditor di testo per Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit è distribuito in base alla licenza GNU General\nPublic License.  Prego leggere il file COPYING,\ndistribuito con AEdit, o visita http://www.gnu.org\nper maggiori informazioni.
+MSG_ABOUT_CLOSE						O.K
+
+MSG_ERROR_TITLE=900					AEdit
+MSG_ERROR_CANT_SAVE					Impossibile salvare il file
+MSG_ERROR_CLOSE						O.K
+
+MSG_FIND_TITLE=1000					Trova
+MSG_FIND_FIND_LABEL					Trova
+MSG_FIND_CASE_SENSITIVE				Maiuscole/minuscole
+MSG_FIND_FIND						_Trova
+MSG_FIND_FIND_NEXT					Trova _Prossimo
+MSG_FIND_CLOSE						_Annulla
+
+MSG_GOTO_TITLE=1100					Vai a
+MSG_GOTO_GOTO						Vai a
+MSG_GOTO_CLOSE						Annulla
+
+MSG_REPLACE_TITLE=1200				Sostituisci
+MSG_REPLACE_LBLFIND					Trova
+MSG_REPLACE_WITH					Sostituisci con
+MSG_REPLACE_CASE_SENSITIVE			_Maiuscole/minuscole
+MSG_REPLACE_FIND					_Trova
+MSG_REPLACE_FIND_NEXT				Trova _Prossimo
+MSG_REPLACE_REPLACE					_Sostituisci
+MSG_REPLACE_CLOSE					_Annulla
+
+
