@@ -35,10 +35,10 @@ all :	objs $(EXENAME)
 objs:
 	mkdir objs
 dist:
-	mkdir $(DIST_DIR) /Applications/Users
-	mkdir $(DIST_DIR) /Applications/Users/share
-	cp -f Users $(DIST_DIR) /Applications/Users
-	cp -f keys.png $(DIST_DIR) /Applications/Users/share
+	mkdir $(DIST_DIR)/Applications/Users
+	mkdir $(DIST_DIR)/Applications/Users/share
+	cp -f Users $(DIST_DIR)/Applications/Users
+	cp -f keys.png $(DIST_DIR)/Applications/Users/share
 
 deps:
 	mkdir objs
