@@ -1,3 +1,5 @@
+* September 18 2003, Rick Caudill *
+	* Added VirtualDesktop.cpp to launcher/plugins/src.  It is a virtual desktop manager.
 * September 7 2003, Rick Caudill *
 	* Added a slew of updates to Syllable Manager from Henrik
 		* Better listview updates (no flickering text anymore). 
