@@ -64,9 +64,9 @@ void VideoOverlayView::Update()
 	}
 	
 	/* Check if the position of the overlay has changed */
-	if( ConvertToScreen( GetFrame() ) != m_cCurrentFrame ) 
+	if( ConvertToScreen( GetBounds() ) != m_cCurrentFrame ) 
 	{
-		m_cCurrentFrame = ConvertToScreen( GetFrame() );
+		m_cCurrentFrame = ConvertToScreen( GetBounds() );
 		Recreate( IPoint( m_sOverlay.m_nSrcWidth, m_sOverlay.m_nSrcHeight ), 
 		Rect( m_cCurrentFrame.left, m_cCurrentFrame.top, m_cCurrentFrame.right + 1, m_cCurrentFrame.bottom + 1 ) );
 	}
@@ -82,7 +82,7 @@ void VideoOverlayView::Update()
 void VideoOverlayView::AttachedToWindow()
 {
 	/* Save information */
-	m_cCurrentFrame = ConvertToScreen( GetFrame() );
+	m_cCurrentFrame = ConvertToScreen( GetBounds() );
 	m_sOverlay.m_nDstX = (int)m_cCurrentFrame.left;
 	m_sOverlay.m_nDstY = (int)m_cCurrentFrame.top;
 	m_sOverlay.m_nDstWidth = (int)m_cCurrentFrame.Width();
