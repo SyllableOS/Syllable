@@ -3,12 +3,14 @@ authors
 	Sebastien Keim
 	Kaj de Vos
 maintainers		Kaj de Vos
+licenses		GPL
 patch-config	config
 documentation	README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS THANKS-to-translators
 links
-; For JEd, S-Lang:
-	bin/cp
-	bin/rm
-	bin/ln
-; For NcFTP:
-	bin/ls
+	/bin
+;		For JEd, S-Lang:
+		bin/cp
+		bin/rm
+		bin/ln
+;		For NcFTP:
+		bin/ls

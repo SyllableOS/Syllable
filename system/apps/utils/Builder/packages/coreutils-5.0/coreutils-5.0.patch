@@ -17,28 +17,28 @@ diff -ru coreutils-5.0.orig/lib/fsusage.c coreutils-5.0/lib/fsusage.c
  get_fs_usage (const char *path, const char *disk, struct fs_usage *fsp)
  {
 +#ifdef __SYLLABLE__
-+  {
-+    fs_info info;
-+    int mnt;
++  {
++    fs_info info;
++    int mnt;
 +
-+    mnt = open( path, O_RDONLY );
-+    if ( mnt < 0 ) {
-+      return( -1 );
-+    }
-+    if ( get_fs_info( mnt, &info ) < 0 ) {
-+      close( mnt );
-+      return( -1 );
-+    }
-+    close( mnt );
-+    fsp->fsu_blocksize = info.fi_block_size;
-+    fsp->fsu_blocks = PROPAGATE_ALL_ONES (info.fi_total_blocks);
-+    fsp->fsu_bfree = PROPAGATE_ALL_ONES (info.fi_free_blocks);
-+    fsp->fsu_bavail = PROPAGATE_TOP_BIT (info.fi_free_user_blocks);
-+    fsp->fsu_bavail_top_bit_set = EXTRACT_TOP_BIT (info.fi_free_user_blocks) != 0;
-+    fsp->fsu_files = PROPAGATE_ALL_ONES (info.fi_total_inodes);
-+    fsp->fsu_ffree = PROPAGATE_ALL_ONES (info.fi_free_inodes);
-+    return( 0 );
-+  }
++    mnt = open( path, O_RDONLY );
++    if ( mnt < 0 ) {
++      return( -1 );
++    }
++    if ( get_fs_info( mnt, &info ) < 0 ) {
++      close( mnt );
++      return( -1 );
++    }
++    close( mnt );
++    fsp->fsu_blocksize = info.fi_block_size;
++    fsp->fsu_blocks = PROPAGATE_ALL_ONES (info.fi_total_blocks);
++    fsp->fsu_bfree = PROPAGATE_ALL_ONES (info.fi_free_blocks);
++    fsp->fsu_bavail = PROPAGATE_TOP_BIT (info.fi_free_user_blocks);
++    fsp->fsu_bavail_top_bit_set = EXTRACT_TOP_BIT (info.fi_free_user_blocks) != 0;
++    fsp->fsu_files = PROPAGATE_ALL_ONES (info.fi_total_inodes);
++    fsp->fsu_ffree = PROPAGATE_ALL_ONES (info.fi_free_inodes);
++    return( 0 );
++  }
 +#endif
 +
  #ifdef STAT_STATFS3_OSF1

@@ -22,17 +22,17 @@ configure-options
 ;	--with-cpu=pentium
 ;	--enable-languages=c,c++,java,objc,f77,chill
 ;	--enable-shared
-; Seems to affect only libobjc:
+;	Seems to affect only libobjc:
 	--enable-threads
 ; A fix that doesn't seem to make a difference:
 ;post-configure		cp ../gcc-2.95.3/gcc/fixinc/inclhack.sh gcc/fixinc.sh
 
-;make-vars			BOOT_CFLAGS='-march=i586 -O2'
+make-vars			BOOT_CFLAGS='-D__SYLLABLE__ -march=i586 -O'
 make-options
 	CFLAGS='-march=i586 -O'
 	LIBCFLAGS='-march=i586 -O2'
 ;	LIBCXXFLAGS='-march=i586 -O2'
-; GCC seems to set this automatically:
+;		GCC seems to set this automatically:
 ;		' -fno-implicit-templates'
 make-targets		bootstrap
 
