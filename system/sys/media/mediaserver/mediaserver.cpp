@@ -304,7 +304,7 @@ void MediaServer::FlushThread()
 			{
 				if( m_sAudioStream[i].bUsed && m_sAudioStream[i].bActive && m_nQueuedPackets[i] > 0 ) {
 					psNextPacket = m_psPacket[i][0];
-					//cout<<"Flushing data of Stream "<<i<<" of "<<psNextPacket->nSize[0]<<endl;
+					//std::cout<<"Flushing data of Stream "<<i<<" of "<<psNextPacket->nSize[0]<<std::endl;
 					
 					/* Write packet into mix buffer */
 					signed short *pData = ( signed short* )psNextPacket->pBuffer[0];
@@ -342,13 +342,13 @@ void MediaServer::FlushThread()
 						{
 							m_psPacket[i][j] = m_psPacket[i][j+1];
 						}
-						//cout<<"Audio :"<<m_nQueuedPackets[i]<<" packets left"<<endl;
+						//std::cout<<"Audio :"<<m_nQueuedPackets[i]<<" packets left"<<std::endl;
 					} else {
 						/* Split packet */
 						psNextPacket->nSize[0] -= nSize;
 						memcpy( psNextPacket->pBuffer[0], psNextPacket->pBuffer[0] + nSize, psNextPacket->nSize[0] );
 					}
-					m_sAudioStream[i].nBufferPlayed = get_system_time() + nSize * 10 * 1000 / 441 / 2 / 2;
+					m_sAudioStream[i].nBufferPlayed = get_system_time() + nSize * 10 * 1000 / 441 / 2 / 2 + 1000 * 1000;
 				}
 			}
 			
@@ -719,8 +719,8 @@ void MediaServer::FlushAudioStream( Message* pcMessage )
 	m_psPacket[nHandle][m_nQueuedPackets[nHandle]] = psQueuePacket;
 	m_nQueuedPackets[nHandle]++;
 	unlock_semaphore( m_hLock );
-	//cout<<"Packet queued at position "<<m_nQueuedPackets[nHandle] - 1<<"( "<<
-		//m_nQueuedPackets[nHandle] * 100 / MEDIA_MAX_STREAM_PACKETS<<"% of the buffer used )"<<endl;
+	//std::cout<<"Packet queued at position "<<m_nQueuedPackets[nHandle] - 1<<"( "<<
+		//m_nQueuedPackets[nHandle] * 100 / MEDIA_MAX_STREAM_PACKETS<<"% of the buffer used )"<<std::endl;
 	pcMessage->SendReply( MEDIA_SERVER_OK );
 }
 
@@ -734,6 +734,7 @@ void MediaServer::GetDelay( Message* pcMessage )
 	Message cReply( MEDIA_SERVER_OK );
 	
 	if( pcMessage->FindInt32( "handle", &nHandle ) != 0 ) {
+		printf("Could not find stream\n" );
 		pcMessage->SendReply( MEDIA_SERVER_ERROR );
 		return;
 	}
@@ -1029,6 +1030,10 @@ int main()
 		pcServer->Start();
 	}
 }
+
+
+
+
 
 
 
