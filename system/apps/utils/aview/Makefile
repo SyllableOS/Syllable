@@ -18,6 +18,11 @@ install: $(EXE)
 	-cp -pf $(EXE) /Applications/AView/
 	-ln -sf /Applications/AView/$(EXE) /system/bin/aview
 
+dist: $(EXE)
+	-mkdir -p $(DIST_DIR)/atheos/Applications/AView
+	-cp -pf $(EXE) $(DIST_DIR)/atheos/Applications/AView/
+	-ln -sf /Applications/AView/$(EXE) $(DIST_DIR)/atheos/sys/bin/aview
+
 clean:
 	-rm $(OBJS)
 	-rm $(EXE)
