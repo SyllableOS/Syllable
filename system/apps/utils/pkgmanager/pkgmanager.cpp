@@ -94,10 +94,6 @@ static status_t link_directory( const std::string& cSrc, const std::string& cDst
 	    return( -1 );
 	}
     } 
-#if 0
-
-// This is great...except FSNode::IsLink() doesn't exist in the current
-// codebase.  Seems this code is from the future, but libatheos is not...
 
 else {
 	if ( cDstNode.IsLink() ) {
@@ -128,7 +124,6 @@ else {
 	    }
 	}
     }
-#endif
 
     if ( create_dir( cDst ) < 0 ) {
 	return( -1 );

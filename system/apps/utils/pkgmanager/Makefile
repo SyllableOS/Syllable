@@ -12,7 +12,7 @@ OBJDIR	:= objs
 
 include $(ATHEOS_SRC)/makefile.rules
 
-all :	$(OBJDIR)/$(EXE) $(OBJDIR)
+all :	$(OBJDIR) $(OBJDIR)/$(EXE)
 
 $(OBJDIR):
 	mkdir $(OBJDIR)
