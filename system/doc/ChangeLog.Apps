@@ -1,3 +1,11 @@
+* June 12th 2004, Henrik Isaksson *
+
+	- CodeView:
+		o Added line numbers.
+		o Added line highlight (Rick).
+		o Added context menu (Rick).
+		o Code clean-up.
+
 * June 6th 2004, Henrik Isaksson *
 
 	- Applied GCC3 patches from Damien.
