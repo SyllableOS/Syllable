@@ -1,3 +1,10 @@
+* July 29th 2004, Kristian Van Der Vliet *
+	-man2html/manmanager
+		o Removed the old man2html scripts
+		o Checked in a new script "manmanager" which performs the same function
+		  as the old "man2html" scripts
+		o -r/--remove now works
+
 * July 25th 2004, Arno Klenke */
 	-Preferences applications
 		o Some smaller GUI updates
