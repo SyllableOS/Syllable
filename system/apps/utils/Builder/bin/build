@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.44
+# Version 0.5.45
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -741,7 +741,7 @@ def deleteCVSData
 
 	# Delete all CVS dirs
 	# (They would trigger some packages to reconfigure themselves.)
-	@log.header 'Cleaning out CVS dirs'
+	@log.header 'Cleaning out CVS directories'
 
 	Dir['**/CVS'].each do |dir|
 		@log.detail dir
@@ -1082,7 +1082,7 @@ end
 
 # Define settings
 
-@syllable = exists? '/ainc'  # ENV['OSTYPE'] == 'syllable'
+@syllable = ENV['OSTYPE'] == 'syllable'
 
 @settings = parseDictionary loadFile(File.join(@builderPath, 'settings'))
 
@@ -1120,7 +1120,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
- puts 'Syllable Build System 0.5.44',
+ puts 'Syllable Build System 0.5.45',
   'Copyright (c) 2002-2004 Kaj de Vos',
   'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1233,3 +1233,4 @@ else
  action 'sync'
  @log.close
 end
+

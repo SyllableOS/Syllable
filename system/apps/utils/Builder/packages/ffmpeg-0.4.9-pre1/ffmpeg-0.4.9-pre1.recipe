@@ -1,0 +1,41 @@
+authors
+	Arno Klenke
+	Kaj de Vos
+status			testing
+
+licenses		LGPL GPL
+
+; For MMX:
+build-needs		make >= 3.80
+
+no-build-dir
+configure-options
+	--extra-cflags='-DPIC -fomit-frame-pointer'
+	--extra-libs='-ldl'
+;	--enable-shared
+;	--enable-pthreads
+	--disable-debug
+;	--enable-gpl
+;	MMX fails assertion in Make 3.79.x:
+;	--disable-mmx
+	--disable-v4l
+	--disable-audio-oss
+;	--disable-audio-beos
+	--disable-vhook
+	--disable-dv1394
+;	--disable-risky
+;	--enable-mp3lame
+;	--enable-vorbis
+;	--disable-ffserver
+;	--disable-ffplay
+
+install-tree	include lib
+install-files
+	libavcodec/avcodec.h		include
+	libavformat/avformat.h		include
+	libavcodec/libavcodec.a		lib
+	libavformat/libavformat.a	lib
+documentation
+	README COPYING Changelog CREDITS doc/TODO
+;	doc/*.txt
+

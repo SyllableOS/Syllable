@@ -1,7 +1,7 @@
 ; Libraries to install or (re)build for Syllable 0.5.4
 
 modules
-	libs/ffmpeg-0.4.8
+	libs/ffmpeg-0.4.9-pre1
 	libs/freetype-2.1.9
 	sys/appserver/libsyllable
 	libs/codeview
