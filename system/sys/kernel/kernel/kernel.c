@@ -249,7 +249,8 @@ int printk( const char *fmt, ... )
 	sprintf( String, "%d : %s", get_processor_id(), fmt );
     }
     put_cpu_flags( nFlg );
-    sprintf( zBuffer, String, ((uint32*)(&fmt))[1], ((uint32*)(&fmt))[2], ((uint32*)(&fmt))[3], ((uint32*)(&fmt))[4],
+    sprintf( zBuffer, String, ((uint32*)(&fmt))[1], ((uint32*)(&fmt))[2], ((uint32*)(&fmt))[3], 
+((uint32*)(&fmt))[4],
 	     ((uint32*)(&fmt))[5], ((uint32*)(&fmt))[6], ((uint32*)(&fmt))[7], ((uint32*)(&fmt))[8],
 	     ((uint32*)(&fmt))[9], ((uint32*)(&fmt))[10], ((uint32*)(&fmt))[11], ((uint32*)(&fmt))[12]);
     debug_write( zBuffer, strlen( zBuffer ) );
@@ -288,7 +289,8 @@ void	sys_dbprintf( const char *fmt, ... )
 	    sprintf( String, "%d : %s", get_processor_id(), fmt );
 	}
 	put_cpu_flags( nFlg );
-	sprintf( zBuffer, String, ((uint32*)(&fmt))[1], ((uint32*)(&fmt))[2], ((uint32*)(&fmt))[3], ((uint32*)(&fmt))[4],
+	sprintf( zBuffer, String, ((uint32*)(&fmt))[1], ((uint32*)(&fmt))[2], ((uint32*)(&fmt))[3], 
+((uint32*)(&fmt))[4],
 		 ((uint32*)(&fmt))[5], ((uint32*)(&fmt))[6], ((uint32*)(&fmt))[7], ((uint32*)(&fmt))[8],
 		 ((uint32*)(&fmt))[9], ((uint32*)(&fmt))[10], ((uint32*)(&fmt))[11], ((uint32*)(&fmt))[12]);
 	debug_write( zBuffer, strlen( zBuffer ) );
@@ -600,6 +602,108 @@ int reboot( void )
 }
 
 /*****************************************************************************
+ * NAME: sys_apm_poweroff
+ * DESC: Powers down a system using the APM BIOS
+ * NOTE: by Anthony Morphett < tonymorph@yahoo.com >
+ * SEE ALSO: apm_poweroff(), sys_reboot()
+ ****************************************************************************/
+
+int sys_apm_poweroff( void )
+{
+    struct RMREGS rm;
+
+    /* this part copied from sys_reboot */
+    thread_id   hThread;
+    int         i;
+
+	// Since we (hopefully) wont be killed by the signal we must close our files manually.
+    for ( i = 0 ; i < 256 ; ++i ) {
+	    sys_close( i );
+    }
+  
+
+    printk( "Send TERM signals\n" );
+
+    for ( hThread = get_prev_thread( - 1 ) ; -1 != hThread ; hThread = get_prev_thread( hThread ) ) {
+        if ( hThread > 1 ) {
+	        sys_kill( hThread, SIGTERM );
+        }
+    }
+
+    snooze( 2000000 );
+    printk( "Send KILL signals\n" );
+
+    for ( hThread = get_prev_thread( -1 ) ; -1 != hThread ; hThread = get_prev_thread( hThread ) ) {
+        if ( hThread > 1 ) {
+	        sys_kill( hThread, SIGKILL );
+        }
+    }
+    
+    snooze( 1000000 );
+
+    printk( "Flush block cache()\n" );
+    flush_block_cache();
+    printk( "Shut down VFS\n" );
+    shutdown_vfs();
+    printk( "shut down block cache()\n" );
+    shutdown_block_cache();
+
+    /* end copied from sys_reboot */
+    
+    
+    printk( "APM power down...\n" );
+
+      // Just to be sure :)
+    snooze( 1000000 );
+
+    unprotect_dos_mem();    // hard_reset does this, probably doesn't hurt
+
+    memset( &rm, 0, sizeof(rm) );
+
+    rm.EAX = 0x5304;
+    realint( 0x15, &rm );
+
+    rm.EAX = 0x5302;
+    rm.EBX = 0;
+    realint( 0x15, &rm );
+
+    rm.EAX = 0x5308;
+    rm.EBX = 1;
+    rm.ECX = 1;
+    realint( 0x15, &rm );
+
+    rm.EAX = 0x530d;
+    rm.EAX = 1;
+    rm.ECX = 1;
+    realint( 0x15, &rm );
+
+    rm.EAX = 0x530f;
+    rm.EBX = 1;
+    rm.ECX = 1;
+    realint( 0x15, &rm );
+
+    rm.EAX = 0x530e;
+    rm.EBX = 0;
+    rm.ECX = 0x102;
+    realint( 0x15, &rm );
+    
+    rm.EAX = 0x5307;
+    rm.EBX = 1;
+    rm.ECX = 3;
+    realint( 0x15, &rm );
+
+    printk( "APM Poweroff failed... :(\n" );
+
+    return( 0 );
+}
+
+int apm_poweroff( void )
+{
+	sys_apm_poweroff();
+	return( -EINVAL );
+}
+
+/*****************************************************************************
  * NAME:
  * DESC:
  * NOTE:
@@ -752,4 +856,5 @@ void Desc_Free( uint16 desc )
     sched_unlock();
     put_cpu_flags( nFlg );
 }
+
 

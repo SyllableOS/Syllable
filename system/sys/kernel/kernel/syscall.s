@@ -661,3 +661,4 @@ SysCallTable:
 .long	_C_SYM( sys_set_tld )
 .long	_C_SYM( sys_get_tld )
 
+.long   _C_SYM( apm_poweroff )		/* 207 */

@@ -239,7 +239,10 @@
 #define __NR_set_tld				205
 #define __NR_get_tld				206
 
-#define	__NR_SysCallCount			207
+#define __NR_apm_poweroff			207
+
+#define	__NR_SysCallCount			208
 
 
 #endif /* _F_SYSCALL_H_ */
+

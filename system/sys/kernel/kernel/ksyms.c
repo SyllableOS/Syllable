@@ -267,8 +267,9 @@ static KernelSymbol_s g_asKernelSymbols[] =
   KSYMBOL(get_semaphore_count),
   KSYMBOL(get_semaphore_owner),
   KSYMBOL(is_semaphore_locked),
+  KSYMBOL(apm_poweroff),
 
-    // TLD functions
+  // TLD functions
   KSYMBOL(alloc_tld),
   KSYMBOL(free_tld),
   KSYMBOL(set_tld),
@@ -413,3 +414,4 @@ static KernelSymbol_s g_asKernelSymbols[] =
   
   {NULL, NULL}
 };
+

@@ -191,6 +191,7 @@ void	free_real( void* Block );
 int	Fork( const char* pzName );
 int	reboot( void );
 void    hard_reset( void );
+int apm_poweroff( void );
 
 int	sys_exit( int nCode );
 int	exit_thread( int nCode );
@@ -212,12 +213,14 @@ int	sys_kill_proc( proc_id hProcess, int nSigNum );
 int	killpg( pid_t nGrp, int nSigNum );
 int	kill_proc( proc_id hProcess, int nSigNum );
 
-int 	initialize_fs( const char* pzDevPath, const char* pzFsType, const char* pzVolName, void* pArgs, int nArgLen );
+int 	initialize_fs( const char* pzDevPath, const char* pzFsType, const char* pzVolName, void* pArgs, int nArgLen 
+);
 int 	mount( const char* pzDevName, const char* pzDirName,
 	   const char* pzFSName, int nFlags, void* pData );
 int	sys_unmount( const char* pzPath, bool bForce );
 
-int	sys_initialize_fs( const char* pzDevPath, const char* pzFsType, const char* pzVolName, void* pArgs, int nArgLen );
+int	sys_initialize_fs( const char* pzDevPath, const char* pzFsType, const char* pzVolName, void* pArgs, int 
+nArgLen );
 
 int	sys_mount( const char* pzDevName, const char* pzDirName,
 		   const char* pzFSName, int nFlags, void* pData );
@@ -260,4 +263,5 @@ bool get_num_arg( uint32* pnValue, const char* pzName, const char* pzArg, int nA
 #endif
 
 #endif	/* __ATHEOS_KERNEL_H__	*/
+
 
