@@ -20,6 +20,8 @@
 #include "messages.h"
 #include "version.h"
 
+#include "resources/aedit.h"
+
 #include <fstream.h>
 
 #include <gui/window.h>
@@ -115,41 +117,41 @@ void AEditWindow::SetupMenus()
 	pcMenuBar=new Menu(cMenuFrame, "main_menu", ITEMS_IN_ROW, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT | CF_FOLLOW_TOP);
 
 	// Create the menus
-	pcAppMenu=new Menu(Rect(0,0,1,1),"Application",ITEMS_IN_COLUMN);
-	pcAppMenu->AddItem("Quit",new Message(M_MENU_APP_QUIT));
+	pcAppMenu=new Menu(Rect(0,0,1,1),MSG_MENU_APPLICATION,ITEMS_IN_COLUMN);
+	pcAppMenu->AddItem(MSG_MENU_APPLICATION_QUIT,new Message(M_MENU_APP_QUIT));
 	pcAppMenu->AddItem(new MenuSeparator());
-	pcAppMenu->AddItem("About",new Message(M_MENU_APP_ABOUT));
+	pcAppMenu->AddItem(MSG_MENU_APPLICATION_ABOUT,new Message(M_MENU_APP_ABOUT));
 
-	pcFileMenu=new Menu(Rect(0,0,1,1),"File",ITEMS_IN_COLUMN);
-	pcFileMenu->AddItem("New",new Message(M_MENU_FILE_NEW));
-	pcFileMenu->AddItem("Open",new Message(M_MENU_FILE_OPEN));
-	pcFileMenu->AddItem("Save",new Message(M_MENU_FILE_SAVE));
-	pcFileMenu->AddItem("Save as...",new Message(M_MENU_FILE_SAVE_AS));
+	pcFileMenu=new Menu(Rect(0,0,1,1),MSG_MENU_FILE,ITEMS_IN_COLUMN);
+	pcFileMenu->AddItem(MSG_MENU_FILE_NEW,new Message(M_MENU_FILE_NEW));
+	pcFileMenu->AddItem(MSG_MENU_FILE_OPEN,new Message(M_MENU_FILE_OPEN));
+	pcFileMenu->AddItem(MSG_MENU_FILE_SAVE,new Message(M_MENU_FILE_SAVE));
+	pcFileMenu->AddItem(MSG_MENU_FILE_SAVE_AS,new Message(M_MENU_FILE_SAVE_AS));
 
-	pcEditMenu=new Menu(Rect(0,0,1,1),"Edit",ITEMS_IN_COLUMN);
-	pcEditMenu->AddItem("Cut",new Message(M_MENU_EDIT_CUT));
-	pcEditMenu->AddItem("Copy",new Message(M_MENU_EDIT_COPY));
-	pcEditMenu->AddItem("Paste",new Message(M_MENU_EDIT_PASTE));
+	pcEditMenu=new Menu(Rect(0,0,1,1),MSG_MENU_EDIT,ITEMS_IN_COLUMN);
+	pcEditMenu->AddItem(MSG_MENU_EDIT_CUT,new Message(M_MENU_EDIT_CUT));
+	pcEditMenu->AddItem(MSG_MENU_EDIT_COPY,new Message(M_MENU_EDIT_COPY));
+	pcEditMenu->AddItem(MSG_MENU_EDIT_PASTE,new Message(M_MENU_EDIT_PASTE));
 	pcEditMenu->AddItem(new MenuSeparator());
-	pcEditMenu->AddItem("Select all",new Message(M_MENU_EDIT_SELECT_ALL));
+	pcEditMenu->AddItem(MSG_MENU_EDIT_SELECT_ALL,new Message(M_MENU_EDIT_SELECT_ALL));
 #ifdef ENABLE_UNDO
 	pcEditMenu->AddItem(new MenuSeparator());
-	pcEditMenu->AddItem("Undo",new Message(M_MENU_EDIT_UNDO));
-	pcEditMenu->AddItem("Redo",new Message(M_MENU_EDIT_REDO));
+	pcEditMenu->AddItem(MSG_MENU_EDIT_UNDO,new Message(M_MENU_EDIT_UNDO));
+	pcEditMenu->AddItem(MSG_MENU_EDIT_REDO,new Message(M_MENU_EDIT_REDO));
 #endif
 	
 
-	pcFindMenu=new Menu(Rect(0,0,1,1),"Find",ITEMS_IN_COLUMN);
-	pcFindMenu->AddItem("Find",new Message(M_MENU_FIND_FIND));
-	pcFindMenu->AddItem("Replace",new Message(M_MENU_FIND_REPLACE));
+	pcFindMenu=new Menu(Rect(0,0,1,1),MSG_MENU_FIND,ITEMS_IN_COLUMN);
+	pcFindMenu->AddItem(MSG_MENU_FIND_FIND,new Message(M_MENU_FIND_FIND));
+	pcFindMenu->AddItem(MSG_MENU_FIND_REPLACE,new Message(M_MENU_FIND_REPLACE));
 	pcFindMenu->AddItem(new MenuSeparator());
-	pcFindMenu->AddItem("Goto line...",new Message(M_MENU_FIND_GOTO));
+	pcFindMenu->AddItem(MSG_MENU_FIND_GOTO_LINE,new Message(M_MENU_FIND_GOTO));
 
 	// Create Font Menu
-	pcFontMenu = new Menu(Rect(0,0,1,1), "Font", ITEMS_IN_COLUMN);
+	pcFontMenu = new Menu(Rect(0,0,1,1), MSG_MENU_FONT, ITEMS_IN_COLUMN);
 
 	// Add Size Submenu
-	Menu* pcSizeMenu = new Menu(Rect(0,0,1,1), "Size", ITEMS_IN_COLUMN);
+	Menu* pcSizeMenu = new Menu(Rect(0,0,1,1), MSG_MENU_FONT_SIZE, ITEMS_IN_COLUMN);
 
 	float sz,del=1.0;
 
@@ -212,15 +214,15 @@ void AEditWindow::SetupMenus()
 
 
 	// Create the Settings menu
-	pcSettingsMenu=new Menu(Rect(0,0,1,1),"Settings",ITEMS_IN_COLUMN);
-	pcSettingsMenu->AddItem(new CheckMenu("Save settings on Close",new Message(M_MENU_SETTINGS_SAVE_ON_CLOSE), bSaveOnExit));
+	pcSettingsMenu=new Menu(Rect(0,0,1,1),MSG_MENU_SETTINGS,ITEMS_IN_COLUMN);
+	pcSettingsMenu->AddItem(new CheckMenu(MSG_MENU_SETTINGS_SAVE_ON_CLOSE,new Message(M_MENU_SETTINGS_SAVE_ON_CLOSE), bSaveOnExit));
 	pcSettingsMenu->AddItem(new MenuSeparator());
-	pcSettingsMenu->AddItem("Save settings now",new Message(M_MENU_SETTINGS_SAVE_NOW));
-	pcSettingsMenu->AddItem("Reset settings", new Message(M_MENU_SETTINGS_RESET));
+	pcSettingsMenu->AddItem(MSG_MENU_SETTINGS_SAVE_NOW, new Message(M_MENU_SETTINGS_SAVE_NOW));
+	pcSettingsMenu->AddItem(MSG_MENU_SETTINGS_RESET, new Message(M_MENU_SETTINGS_RESET));
 
-	pcHelpMenu=new Menu(Rect(0,0,1,1),"Help",ITEMS_IN_COLUMN);
-	pcHelpMenu->AddItem("Table of Contents",new Message(M_MENU_HELP_TOC));
-	pcHelpMenu->AddItem("AEdit Homepage",new Message(M_MENU_HELP_HOMEPAGE));
+	pcHelpMenu=new Menu(Rect(0,0,1,1),MSG_MENU_HELP,ITEMS_IN_COLUMN);
+	pcHelpMenu->AddItem(MSG_MENU_HELP_TABLE_OF_CONTENTS,new Message(M_MENU_HELP_TOC));
+	pcHelpMenu->AddItem(MSG_MENU_HELP_HOMEPAGE,new Message(M_MENU_HELP_HOMEPAGE));
 
 	// Attach the menus.  Attach the menu bar to the window
 	pcMenuBar->AddItem(pcAppMenu);
@@ -249,13 +251,13 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 
 		case M_MENU_APP_ABOUT:
 		{
-			std::string zAboutTitle="About ";
+			String zAboutTitle = MSG_ABOUT_TITLE + " ";
 			zAboutTitle+=AEDIT_RELEASE_STRING;
 
-			std::string zAboutText=AEDIT_RELEASE_STRING;
-			zAboutText+="\n\nText Editor for Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit is released under the GNU General\nPublic License.  Please see the file COPYING,\ndistributed with AEdit, or http://www.gnu.org\nfor more information.";
+			String zAboutText=AEDIT_RELEASE_STRING;
+			zAboutText+=MSG_ABOUT_TEXT;
 
-			Alert* pcAboutAlert=new Alert(zAboutTitle,zAboutText,Alert::ALERT_INFO,0x00,"O.K",NULL);
+			Alert* pcAboutAlert=new Alert(zAboutTitle,zAboutText,Alert::ALERT_INFO,0x00,MSG_ABOUT_CLOSE.c_str(),NULL);
 			pcAboutAlert->CenterInWindow(this);
 			pcAboutAlert->Go(new Invoker());
 
@@ -761,9 +763,3 @@ void AEditWindow::Save(const char* pzFileName)
 	hFile.close();
 
 }
-
-
-
-
-
-

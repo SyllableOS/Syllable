@@ -17,6 +17,10 @@
 #include "main.h"
 #include "settings.h"
 
+#include <iostream>
+
+using namespace std;
+
 int main(int argc, char* argv[]);
 
 int main(int argc, char* argv[])
@@ -37,6 +41,12 @@ int main(int argc, char* argv[])
 
 AEditApp::AEditApp(char* pzFilename, bool bLoad) : Application("application/x-VND.Vanders-AEdit")
 {
+	try {
+	SetCatalog( "aedit.catalog" );
+	} catch( errno_exception &e ) {
+		cout << e.what() << endl;
+	}
+
 	pcMainWindow = new AEditWindow(Rect(100,125,700,500));
 
 	if(bLoad)
@@ -47,4 +57,5 @@ AEditApp::AEditApp(char* pzFilename, bool bLoad) : Application("application/x-VN
 	pcMainWindow->Show();
 	pcMainWindow->MakeFocus();
 }
+
 

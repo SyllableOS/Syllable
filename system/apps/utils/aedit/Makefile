@@ -15,6 +15,7 @@ $(OBJSDIR):
 
 $(EXE): $(OBJS)
 	$(LL) $(OBJS) -lsyllable -o $(EXE)
+	rescopy -r $(EXE) resources/aedit.catalog
 
 deps:
 
@@ -52,6 +53,7 @@ $(OBJSDIR)replacedialog.o: replacedialog.cpp replacedialog.cpp
 
 $(OBJSDIR)settings.o: settings.cpp settings.h
 	$(CC) $(COPTS) settings.cpp -o $@
+
 
 
 

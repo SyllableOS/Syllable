@@ -16,10 +16,11 @@
 
 #include "gotodialog.h"
 #include "messages.h"
+#include "resources/aedit.h"
 
 #include <util/message.h>
 
-GotoDialog::GotoDialog(const Rect& cFrame, Window* pcParent) : Window(cFrame, "goto_dialog", "Goto Line", WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_RESIZABLE)
+GotoDialog::GotoDialog(const Rect& cFrame, Window* pcParent) : Window(cFrame, "goto_dialog", MSG_GOTO_TITLE, WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_RESIZABLE)
 {
 	pcParentWindow=pcParent;		// We need to know the parent window so we can send messages back to it
 
@@ -48,12 +49,12 @@ GotoDialog::GotoDialog(const Rect& cFrame, Window* pcParent) : Window(cFrame, "g
 	// Create the ButtonNode
 	pcButtonNode= new VLayoutNode("button_layout_node");
 
-	pcGotoButton=new Button(Rect(0,0,0,0), "goto_button", "Goto Line", new Message(M_BUT_GOTO_GOTO), CF_FOLLOW_NONE);
+	pcGotoButton=new Button(Rect(0,0,0,0), "goto_button", MSG_GOTO_GOTO, new Message(M_BUT_GOTO_GOTO), CF_FOLLOW_NONE);
 	pcButtonNode->AddChild(pcGotoButton);
 
 	pcButtonNode->AddChild(new VLayoutSpacer("spacer", 5.0f, 5.0f, pcButtonNode, 1.0f ) );
 
-	pcCloseButton=new Button(Rect(0,0,0,0), "close_button", "Close", new Message(M_BUT_GOTO_CLOSE), CF_FOLLOW_NONE);
+	pcCloseButton=new Button(Rect(0,0,0,0), "close_button", MSG_GOTO_CLOSE, new Message(M_BUT_GOTO_CLOSE), CF_FOLLOW_NONE);
 	pcButtonNode->AddChild(pcCloseButton);
 
 	pcButtonNode->SameWidth("goto_button","close_button", NULL);
@@ -95,4 +96,3 @@ void GotoDialog::HandleMessage(Message* pcMessage)
 		}
 	}
 }
-

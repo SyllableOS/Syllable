@@ -16,11 +16,12 @@
 
 #include "finddialog.h"
 #include "messages.h"
+#include "resources/aedit.h"
 
 #include <gui/window.h>
 #include <util/message.h>
 
-FindDialog::FindDialog(const Rect& cFrame, Window* pcParent) : Window(cFrame, "find_dialog", "Find", WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_RESIZABLE)
+FindDialog::FindDialog(const Rect& cFrame, Window* pcParent) : Window(cFrame, "find_dialog", MSG_FIND_TITLE, WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_RESIZABLE)
 {
 	pcParentWindow=pcParent;		// We need to know the parent window so we can send messages back to it
 
@@ -35,7 +36,7 @@ FindDialog::FindDialog(const Rect& cFrame, Window* pcParent) : Window(cFrame, "f
 
 	pcInputNode->AddChild(new VLayoutSpacer("spacer", 5.0f, 5.0f, pcInputNode, 1.0f));
 
-	pcFindLabel=new StringView(Rect(0,0,0,0),"find_label","Find",ALIGN_LEFT,CF_FOLLOW_NONE,WID_WILL_DRAW);
+	pcFindLabel=new StringView(Rect(0,0,0,0),"find_label",MSG_FIND_FIND_LABEL,ALIGN_LEFT,CF_FOLLOW_NONE,WID_WILL_DRAW);
 	pcInputNode->AddChild(pcFindLabel);
 	
 	pcFindTextView= new TextView(Rect(0,0,0,0), "find_text_view", NULL, CF_FOLLOW_NONE);
@@ -43,7 +44,7 @@ FindDialog::FindDialog(const Rect& cFrame, Window* pcParent) : Window(cFrame, "f
 
 	pcInputNode->AddChild(new VLayoutSpacer("spacer", 5.0f, 5.0f, pcInputNode, 1.0f));
 
-	pcCaseCheckBox=new CheckBox(Rect(0,0,0,0),"case_checkbox", "Case Sensitive Search", new Message(M_VOID), CF_FOLLOW_NONE, WID_WILL_DRAW);
+	pcCaseCheckBox=new CheckBox(Rect(0,0,0,0),"case_checkbox", MSG_FIND_CASE_SENSITIVE, new Message(M_VOID), CF_FOLLOW_NONE, WID_WILL_DRAW);
 	pcInputNode->AddChild(pcCaseCheckBox);
 
 	pcInputNode->SameWidth("find_label","find_text_view","case_checkbox",NULL);
@@ -62,15 +63,15 @@ FindDialog::FindDialog(const Rect& cFrame, Window* pcParent) : Window(cFrame, "f
 	// Create the ButtonNode
 	pcButtonNode= new VLayoutNode("button_layout_node");
 
-	pcFindButton=new Button(Rect(0,0,0,0), "find_button", "Find", new Message(M_BUT_FIND_GO), CF_FOLLOW_NONE);
+	pcFindButton=new Button(Rect(0,0,0,0), "find_button", MSG_FIND_FIND, new Message(M_BUT_FIND_GO), CF_FOLLOW_NONE);
 	pcButtonNode->AddChild(pcFindButton);
 	pcButtonNode->AddChild(new VLayoutSpacer("spacer", 5.0f, 5.0f, pcButtonNode, 1.0f ) );
 
-	pcNextButton=new Button(Rect(0,0,0,0), "find_next_button", "Find Next", new Message(M_BUT_FIND_NEXT), CF_FOLLOW_NONE);
+	pcNextButton=new Button(Rect(0,0,0,0), "find_next_button", MSG_FIND_FIND_NEXT, new Message(M_BUT_FIND_NEXT), CF_FOLLOW_NONE);
 	pcButtonNode->AddChild(pcNextButton);
 	pcButtonNode->AddChild(new VLayoutSpacer("spacer", 5.0f, 5.0f, pcButtonNode, 1.0f ) );
 
-	pcCloseButton=new Button(Rect(0,0,0,0), "close_button", "Close", new Message(M_BUT_FIND_CLOSE), CF_FOLLOW_NONE);
+	pcCloseButton=new Button(Rect(0,0,0,0), "close_button", MSG_FIND_CLOSE, new Message(M_BUT_FIND_CLOSE), CF_FOLLOW_NONE);
 	pcButtonNode->AddChild(pcCloseButton);
 	pcButtonNode->AddChild(new VLayoutSpacer("spacer", 5.0f, 5.0f, pcButtonNode, 1.0f ) );
 
@@ -111,4 +112,5 @@ void FindDialog::HandleMessage(Message* pcMessage)
 		}
 	}
 }
+
 

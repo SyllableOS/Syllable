@@ -31,6 +31,7 @@
 #define BUTTON_HEIGHT 30
 
 using namespace os;
+using namespace std;
 
 typedef vector<ImageButton*> t_Buttons;
 
@@ -53,9 +54,3 @@ private:
 };
 
 #endif
-
-
-
-
-
-

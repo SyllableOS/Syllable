@@ -20,7 +20,9 @@
 #include <gui/window.h>
 #include <util/message.h>
 
-ReplaceDialog::ReplaceDialog(const Rect& cFrame, Window* pcParent) : Window(cFrame, "replace_dialog", "Replace", WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_RESIZABLE)
+#include "resources/aedit.h"
+
+ReplaceDialog::ReplaceDialog(const Rect& cFrame, Window* pcParent) : Window(cFrame, "replace_dialog", MSG_REPLACE_TITLE, WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_RESIZABLE)
 {
 	pcParentWindow=pcParent;		// We need to know the parent window so we can send messages back to it
 
@@ -35,7 +37,7 @@ ReplaceDialog::ReplaceDialog(const Rect& cFrame, Window* pcParent) : Window(cFra
 
 	pcInputNode->AddChild(new VLayoutSpacer("spacer", 5.0f, 5.0f, pcInputNode, 1.0f));
 
-	pcFindLabel=new StringView(Rect(0,0,0,0),"find_label","Find",ALIGN_LEFT,CF_FOLLOW_NONE,WID_WILL_DRAW);
+	pcFindLabel=new StringView(Rect(0,0,0,0),"find_label",MSG_REPLACE_LBLFIND,ALIGN_LEFT,CF_FOLLOW_NONE,WID_WILL_DRAW);
 	pcInputNode->AddChild(pcFindLabel);
 
 	pcFindTextView= new TextView(Rect(0,0,0,0), "find_text_view", NULL, CF_FOLLOW_NONE);
@@ -43,7 +45,7 @@ ReplaceDialog::ReplaceDialog(const Rect& cFrame, Window* pcParent) : Window(cFra
 
 	pcInputNode->AddChild(new VLayoutSpacer("spacer", 5.0f, 5.0f, pcInputNode, 1.0f));
 
-	pcReplaceLabel=new StringView(Rect(0,0,0,0),"replace_label","Replace with",ALIGN_LEFT,CF_FOLLOW_NONE,WID_WILL_DRAW);
+	pcReplaceLabel=new StringView(Rect(0,0,0,0),"replace_label",MSG_REPLACE_WITH,ALIGN_LEFT,CF_FOLLOW_NONE,WID_WILL_DRAW);
 	pcInputNode->AddChild(pcReplaceLabel);
 
 	pcReplaceTextView= new TextView(Rect(0,0,0,0), "replace_text_view", NULL, CF_FOLLOW_NONE);
@@ -51,7 +53,7 @@ ReplaceDialog::ReplaceDialog(const Rect& cFrame, Window* pcParent) : Window(cFra
 
 	pcInputNode->AddChild(new VLayoutSpacer("spacer", 5.0f, 5.0f, pcInputNode, 1.0f));
 
-	pcCaseCheckBox=new CheckBox(Rect(0,0,0,0),"case_checkbox", "Case Sensitive Search", new Message(M_VOID), CF_FOLLOW_NONE, WID_WILL_DRAW);
+	pcCaseCheckBox=new CheckBox(Rect(0,0,0,0),"case_checkbox", MSG_REPLACE_CASE_SENSITIVE, new Message(M_VOID), CF_FOLLOW_NONE, WID_WILL_DRAW);
 	pcInputNode->AddChild(pcCaseCheckBox);
 
 	pcInputNode->SameWidth("find_label","find_text_view","replace_label","replace_text_view","case_checkbox",NULL);
@@ -69,19 +71,19 @@ ReplaceDialog::ReplaceDialog(const Rect& cFrame, Window* pcParent) : Window(cFra
 	// Create the ButtonNode
 	pcButtonNode= new VLayoutNode("button_layout_node");
 
-	pcFindButton=new Button(Rect(0,0,0,0), "find_button", "Find", new Message(M_BUT_FIND_GO), CF_FOLLOW_NONE);
+	pcFindButton=new Button(Rect(0,0,0,0), "find_button", MSG_REPLACE_FIND, new Message(M_BUT_FIND_GO), CF_FOLLOW_NONE);
 	pcButtonNode->AddChild(pcFindButton);
 	pcButtonNode->AddChild(new VLayoutSpacer("spacer", 5.0f, 5.0f, pcButtonNode, 1.0f ) );
 
-	pcNextButton=new Button(Rect(0,0,0,0), "find_next_button", "Find Next", new Message(M_BUT_FIND_NEXT), CF_FOLLOW_NONE);
+	pcNextButton=new Button(Rect(0,0,0,0), "find_next_button", MSG_REPLACE_FIND_NEXT, new Message(M_BUT_FIND_NEXT), CF_FOLLOW_NONE);
 	pcButtonNode->AddChild(pcNextButton);
 	pcButtonNode->AddChild(new VLayoutSpacer("spacer", 5.0f, 5.0f, pcButtonNode, 1.0f ) );
 
-	pcReplaceButton=new Button(Rect(0,0,0,0), "replace_button", "Replace", new Message(M_BUT_REPLACE_DO), CF_FOLLOW_NONE);
+	pcReplaceButton=new Button(Rect(0,0,0,0), "replace_button", MSG_REPLACE_REPLACE, new Message(M_BUT_REPLACE_DO), CF_FOLLOW_NONE);
 	pcButtonNode->AddChild(pcReplaceButton);
 	pcButtonNode->AddChild(new VLayoutSpacer("spacer", 5.0f, 5.0f, pcButtonNode, 1.0f ) );
 
-	pcCloseButton=new Button(Rect(0,0,0,0), "close_button", "Close", new Message(M_BUT_REPLACE_CLOSE), CF_FOLLOW_NONE);
+	pcCloseButton=new Button(Rect(0,0,0,0), "close_button", MSG_REPLACE_CLOSE, new Message(M_BUT_REPLACE_CLOSE), CF_FOLLOW_NONE);
 	pcButtonNode->AddChild(pcCloseButton);
 	pcButtonNode->AddChild(new VLayoutSpacer("spacer", 5.0f, 5.0f, pcButtonNode, 1.0f ) );
 
@@ -133,4 +135,3 @@ void ReplaceDialog::HandleMessage(Message* pcMessage)
 	}
 
 }
-
