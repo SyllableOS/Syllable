@@ -94,7 +94,7 @@ apps/gnu/gzip-1.3.5
 apps/gnu/inetutils-1.4.2
 apps/gnu/less-381
 apps/gnu/sed-4.0.9
-apps/gnu/tar-1.13
+apps/gnu/tar-1.13.92
 ;apps/other/man-1.5m2
 apps/media/coldfish
 apps/media/mediaconverter
