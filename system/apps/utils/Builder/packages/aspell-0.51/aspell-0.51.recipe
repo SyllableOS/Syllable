@@ -1,0 +1,13 @@
+authors			Kaj de Vos
+status			developing
+warning			Our GCC 3 doesn't work with this yet
+
+licenses		LGPL
+
+home			aspell.net
+; Beta version:
+packages		aspell-0.51-20040227
+
+patch-config
+
+documentation	README COPYING ABOUT-NLS ChangeLog TODO
