@@ -223,12 +223,12 @@ NodeMonitor::NodeMonitor( const FSNode * pcNode, uint32 nFlags, const Messenger 
 
 NodeMonitor::~NodeMonitor()
 {
-	delete m;
-
 	if( m->m_nMonitor >= 0 )
 	{
 		delete_node_monitor( m->m_nMonitor );
 	}
+
+	delete m;
 }
 
 status_t NodeMonitor::Unset()
@@ -345,5 +345,3 @@ int NodeMonitor::GetMonitor() const
 {
 	return ( m->m_nMonitor );
 }
-
-
