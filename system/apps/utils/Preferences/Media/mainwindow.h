@@ -50,6 +50,7 @@ class MainWindow:public os::Window
 	void Default();
 	void Plugins();
 	void OutputChange();
+	void DspChange();
 
 	// Default outputs
 	os::String cCurrentVideo;
@@ -61,14 +62,19 @@ class MainWindow:public os::Window
 	os::String cCurrentStartupSound;
 	os::String cUndoStartupSound;
 
+	int32 hCurrentDsp;
+	int32 hUndoDsp;
+
+	int32 nDspCount;
+
 	// Refresh flag/custom or not
 
 	os::LayoutView * pcLRoot;
 	os::VLayoutNode * pcVLRoot, *pcVLSettings, *pcVLSounds;
-	os::HLayoutNode * pcHLButtons, *pcHLVideoOutput, *pcHLAudioOutput, *pcHLStartupSound;
+	os::HLayoutNode * pcHLButtons, *pcHLVideoOutput, *pcHLAudioOutput, *pcHLDefaultDSP, *pcHLStartupSound;
 	os::FrameView * pcFVSettings, *pcFVSounds;
 	os::Button * pcBDefault, *pcBApply, *pcBUndo, *pcBPlugins, *pcBControls;
-	os::DropdownMenu * pcDDMVideoOutput, *pcDDMAudioOutput, *pcDDMStartupSound;
+	os::DropdownMenu * pcDDMVideoOutput, *pcDDMAudioOutput, *pcDDMDefaultDsp, *pcDDMStartupSound;
 
 };
 

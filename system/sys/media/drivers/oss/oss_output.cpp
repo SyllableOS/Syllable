@@ -18,12 +18,15 @@
  */
 
 #include <media/output.h>
+#include <media/server.h>
 #include <atheos/soundcard.h>
 #include <atheos/threads.h>
 #include <atheos/semaphore.h>
 #include <atheos/time.h>
 #include <atheos/kernel.h>
 #include <atheos/threads.h>
+#include <atheos/msgport.h>
+#include <util/message.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -70,6 +73,7 @@ private:
 	sem_id			m_hLock;
 	os::MediaFormat_s m_sFormat;
 	bool			m_bResample;
+	os::Messenger	m_cMediaServerLink;
 };
 
 
@@ -156,9 +160,43 @@ int flush_thread_entry( void* pData )
 
 status_t OSSOutput::Open( os::String zFileName )
 {
+	/* Look for media manager port */	
+	port_id nPort;
+	os::Message cReply;
+	int32 hDefaultDsp;
+	std::string cDspPath;
+
+	if( ( nPort = find_port( "l:media_server" ) ) < 0 ) {
+		cout<<"Could not connect to media server!"<<endl;
+		return( -1 );
+	}
+	m_cMediaServerLink = os::Messenger( nPort );
+	m_cMediaServerLink.SendMessage( os::MEDIA_SERVER_PING, &cReply );
+	if( cReply.GetCode() != os::MEDIA_SERVER_OK ) {
+		return( -1 );
+	}
+
+	/* Find soundcard */
+	os::Message cMsg( os::MEDIA_SERVER_GET_DEFAULT_DSP );
+	m_cMediaServerLink.SendMessage( &cMsg, &cReply );
+	if( cReply.GetCode() != os::MEDIA_SERVER_OK )
+		return( -1 );
+
+	if( cReply.FindInt32( "handle", &hDefaultDsp ) != 0 )
+		return( -1 );
+
+	cMsg.SetCode( os::MEDIA_SERVER_GET_DSP_INFO );
+	cMsg.AddInt32( "handle", hDefaultDsp );
+	m_cMediaServerLink.SendMessage( &cMsg, &cReply );
+	if( cReply.GetCode() != os::MEDIA_SERVER_OK )
+		return( -1 );
+
+	if( cReply.FindString( "path", &cDspPath ) )
+		return( -1 );
+
 	/* Open soundcard */
 	Close();
-	m_hOSS = open( "/dev/sound/dsp", O_WRONLY );
+	m_hOSS = open( cDspPath.c_str(), O_WRONLY );
 	if( m_hOSS < 0 )
 		return( -1 );
 	

@@ -77,11 +77,23 @@ MainWindow::MainWindow( const os::Rect & cFrame ):os::Window( cFrame, "MainWindo
 	pcVLSettings->AddChild( pcHLAudioOutput );
 	pcVLSettings->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
 
+	// Default DSP
+	pcHLDefaultDSP = new os::HLayoutNode( "HLDefaultDsp" );
+	pcHLDefaultDSP->AddChild( new os::StringView( cRect, "SVDefaultDSP", "Default DSP" ) );
+	pcHLDefaultDSP->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
+	pcHLDefaultDSP->AddChild( pcDDMDefaultDsp = new os::DropdownMenu( cRect, "DDMDefaultDSP" ) );
+	pcDDMDefaultDsp->SetMinPreferredSize( 22 );
+	pcDDMDefaultDsp->SetMaxPreferredSize( 22 );
+	pcDDMDefaultDsp->SetReadOnly( true );
+	pcDDMDefaultDsp->SetSelectionMessage( new os::Message( M_MW_DEFAULTDSP ) );
+	pcDDMDefaultDsp->SetTarget( this );
+	pcVLSettings->AddChild( pcHLDefaultDSP );
+	pcVLSettings->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
+
 	// Startup Sound
 	pcHLStartupSound = new os::HLayoutNode( "HLStartupSound" );
 	pcHLStartupSound->AddChild( new os::StringView( cRect, "SVStartupSound", "Start" ) );
-	pcHLStartupSound->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
-	pcHLStartupSound->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
+	pcHLStartupSound->AddChild( new os::HLayoutSpacer( "", 45.0f, 45.0f ) );
 	pcHLStartupSound->AddChild( pcDDMStartupSound = new os::DropdownMenu( cRect, "DDMStartupSound" ) );
 	pcDDMStartupSound->SetMinPreferredSize( 22 );
 	pcDDMStartupSound->SetMaxPreferredSize( 22 );
@@ -92,8 +104,8 @@ MainWindow::MainWindow( const os::Rect & cFrame ):os::Window( cFrame, "MainWindo
 	pcVLSounds->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
 
 	// Align the controls
-	pcVLSettings->SameWidth( "SVVideoOutput", "SVAudioOutput", NULL );
-	pcVLSettings->SameWidth( "DDMVideoOutput", "DDMAudioOutput", NULL );
+	pcVLSettings->SameWidth( "SVVideoOutput", "SVAudioOutput", "SVDefaultDSP", NULL );
+	pcVLSettings->SameWidth( "DDMVideoOutput", "DDMAudioOutput", "DDMDefaultDSP", NULL );
 	pcVLSounds->SameWidth( "SVStartupSound", NULL );
 	pcVLSounds->SameWidth( "DDMStartupSound", NULL );
 
@@ -140,6 +152,7 @@ MainWindow::MainWindow( const os::Rect & cFrame ):os::Window( cFrame, "MainWindo
 
 	pcDDMVideoOutput->SetTabOrder( iTabOrder++ );
 	pcDDMAudioOutput->SetTabOrder( iTabOrder++ );
+	pcDDMDefaultDsp->SetTabOrder( iTabOrder++ );
 	pcDDMStartupSound->SetTabOrder( iTabOrder++ );
 	pcBDefault->SetTabOrder( iTabOrder++ );
 	pcBUndo->SetTabOrder( iTabOrder++ );
@@ -163,7 +176,31 @@ MainWindow::MainWindow( const os::Rect & cFrame ):os::Window( cFrame, "MainWindo
 		delete( pcDefaultVideo );
 	}
 
+	// Default DSP
 	os::Message cReply;
+	os::MediaManager::GetInstance()->GetServerLink().SendMessage( os::MEDIA_SERVER_GET_DSP_COUNT, &cReply );
+	int32 nCount, hDefault;
+
+	if ( cReply.GetCode() == os::MEDIA_SERVER_OK && cReply.FindInt32( "dsp_count", &nCount ) == 0 )
+	{
+		nDspCount = nCount;
+
+		os::MediaManager::GetInstance()->GetServerLink().SendMessage( os::MEDIA_SERVER_GET_DEFAULT_DSP, &cReply );
+		if ( cReply.GetCode() == os::MEDIA_SERVER_OK && cReply.FindInt32( "handle", &hDefault ) == 0 )
+		{
+			hCurrentDsp = hDefault;
+		}
+		else
+			hCurrentDsp = 0;
+	}
+	else	// No DSP's have been found by the server
+	{
+		nDspCount = 0;
+		hCurrentDsp = 0;
+		pcDDMDefaultDsp->SetEnable( false );
+	}
+
+	// Startup sound
 	os::MediaManager::GetInstance()->GetServerLink().SendMessage( os::MEDIA_SERVER_GET_STARTUP_SOUND, &cReply );
 	os::String zTemp;
 
@@ -175,6 +212,7 @@ MainWindow::MainWindow( const os::Rect & cFrame ):os::Window( cFrame, "MainWindo
 
 	cUndoVideo = cCurrentVideo;
 	cUndoAudio = cCurrentAudio;
+	hUndoDsp = hCurrentDsp;
 	cUndoStartupSound = cCurrentStartupSound;
 
 	// Show data
@@ -194,6 +232,7 @@ void MainWindow::ShowData()
 
 	pcDDMVideoOutput->Clear();
 	pcDDMAudioOutput->Clear();
+	pcDDMDefaultDsp->Clear();
 	while ( ( pcOutput = os::MediaManager::GetInstance()->GetOutput( nIndex ) ) != NULL )
 	{
 		if ( !pcOutput->FileNameRequired() )
@@ -228,10 +267,31 @@ void MainWindow::ShowData()
 		delete( pcOutput );
 		nIndex++;
 	}
+	// Fill in DSP entries
+	if( nDspCount > 0 )
+	{
+		std::string cName;
+
+		for( int32 j=0; j < nDspCount; j++ )
+		{
+			os::Message cReply;
+			os::Message cMsg( os::MEDIA_SERVER_GET_DSP_INFO );
+			cMsg.AddInt32( "handle", j );
+			os::MediaManager::GetInstance()->GetServerLink().SendMessage( &cMsg, &cReply );
+
+			if ( cReply.GetCode() == os::MEDIA_SERVER_OK && cReply.FindString( "name", &cName ) == 0 )
+				pcDDMDefaultDsp->AppendItem( cName.c_str() );
+		}
+	}
+
 	if ( pcDDMVideoOutput->GetItemCount() == 0 )
 		pcDDMVideoOutput->SetEnable( false );
 	if ( pcDDMAudioOutput->GetItemCount() == 0 )
 		pcDDMAudioOutput->SetEnable( false );
+	if ( pcDDMDefaultDsp->GetItemCount() == 0 )
+		pcDDMDefaultDsp->SetEnable( false );
+	else
+		pcDDMDefaultDsp->SetSelection( hCurrentDsp, false );
 
 	// Add Sounds
 	pcDDMStartupSound->Clear();
@@ -262,9 +322,12 @@ void MainWindow::Apply()
 {
 	os::MediaManager::GetInstance()->SetDefaultAudioOutput( cCurrentAudio );
 	os::MediaManager::GetInstance()->SetDefaultVideoOutput( cCurrentVideo );
-	os::Message cMsg( os::MEDIA_SERVER_SET_STARTUP_SOUND );
-	cMsg.AddString( "sound", cCurrentStartupSound );
-	os::MediaManager::GetInstance()->GetServerLink(  ).SendMessage( &cMsg );
+	os::Message cSoundMsg( os::MEDIA_SERVER_SET_STARTUP_SOUND );
+	cSoundMsg.AddString( "sound", cCurrentStartupSound );
+	os::MediaManager::GetInstance()->GetServerLink(  ).SendMessage( &cSoundMsg );
+	os::Message cDspMsg( os::MEDIA_SERVER_SET_DEFAULT_DSP );
+	cDspMsg.AddInt32( "handle", hCurrentDsp );
+	os::MediaManager::GetInstance()->GetServerLink(  ).SendMessage( &cDspMsg );
 }
 
 void MainWindow::Undo()
@@ -273,6 +336,7 @@ void MainWindow::Undo()
 	cCurrentVideo = cUndoVideo;
 	cCurrentAudio = cUndoAudio;
 	cCurrentStartupSound = cUndoStartupSound;
+	hCurrentDsp = hUndoDsp;
 
 	// Update controls
 	ShowData();
@@ -285,6 +349,7 @@ void MainWindow::Default()
 	cCurrentVideo = cUndoVideo;
 	cCurrentAudio = cUndoAudio;
 	cCurrentStartupSound = cUndoStartupSound;
+	hCurrentDsp = 0;
 
 	// Update controls
 	ShowData();
@@ -306,6 +371,11 @@ void MainWindow::OutputChange()
 	cCurrentStartupSound = pcDDMStartupSound->GetItem( pcDDMStartupSound->GetSelection() );
 }
 
+void MainWindow::DspChange()
+{
+	hCurrentDsp = pcDDMDefaultDsp->GetSelection();
+}
+
 void MainWindow::HandleMessage( os::Message * pcMessage )
 {
 	// Get message code and act on it
@@ -316,6 +386,10 @@ void MainWindow::HandleMessage( os::Message * pcMessage )
 	case M_MW_AUDIOOUTPUT:
 	case M_MW_STARTUPSOUND:
 		OutputChange();
+		break;
+
+	case M_MW_DEFAULTDSP:
+		DspChange();
 		break;
 
 	case M_MW_APPLY:
