@@ -24,20 +24,21 @@
 #include <util/message.h>
 #include <gui/button.h>
 #include "gui/clockview.h"
-
+#include <util/settings.h>
 
 using namespace os;
 
 
 
 const unsigned int MENU_OFFSET = 15;
-
+#define APP_NAME "Clock"
+#define M_MESSAGE_PASSED 1001
 
 /** Container for the component */
 class MyWindow : public Window
 {
   public:
-    MyWindow( const Rect& cFrame );
+    MyWindow( const Rect& cFrame);
     ~MyWindow();
     void HandleMessage( Message* pcMessage );   // virtual.
     bool OkToQuit( void );                      // virtual.
@@ -46,9 +47,13 @@ class MyWindow : public Window
     enum mymenus { ID_FILE_EXIT,
                    ID_VIEW_SECONDS, ID_VIEW_SECONDS_ON, ID_VIEW_SECONDS_OFF,
                    ID_VIEW_DIGITAL, ID_VIEW_DIGITAL_ON, ID_VIEW_DIGITAL_OFF,
-                   ID_HELP_ABOUT };
+                   ID_HELP_ABOUT, ID_WHITE, ID_BLACK };
    
     ClockView* m_pcDisplay;                     // The embedded visual component.
+    Color32_s sColor;
+    bool bDigital;
+    bool bSec;
+    Settings* settings;
 };
 
 class MyApp : public Application
@@ -56,6 +61,20 @@ class MyApp : public Application
   public:
     MyApp();
     ~MyApp();
+    
   private:
+  	bool LoadSettings();
+  	void LoadDefaults();
+  	bool StoreSettings();
     MyWindow* m_pcMainWindow;                   // The frame window.
+    Settings* settings;
+    Color32_s sColor;
+    bool bDigital;
+    bool bSec;
+    Message* pcMsg;
 };
+
+
+
+
+

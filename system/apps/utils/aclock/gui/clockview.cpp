@@ -21,17 +21,19 @@
 #include "clockview.h"
 
 
-ClockView::ClockView( Rect cFrame ) : LayoutView( cFrame, "my_view" )
+ClockView::ClockView( Rect cFrame, Color32_s sColor, bool bShowSeconds, bool bDigital  ) : LayoutView( cFrame, "my_view" )
 {
-    Font* f = new Font();
-    f->SetFamilyAndStyle("LCD2", "Normal" );  f->SetSize( 15 );
+
+    Font* f = new Font(DEFAULT_FONT_BOLD);
+    f->SetSize( 15 );
     SetFont( f );
     f->Release();    // Decrease reference count.   // delete f;
-
-						      m_bIsFirst = true;
-    m_bShowSec = true;
+	
+	sBackColor = sColor;
+    m_bShowSec = bShowSeconds;
+    m_bShowDigital = bDigital;
     m_nHour = -1;  m_nMin = -1;  m_nSec = -1;
-    m_bShowDigital = false;
+	m_bIsFirst = true;
 }
 
 void ClockView::Paint( const Rect& cUpdateRect )
@@ -42,7 +44,7 @@ void ClockView::Paint( const Rect& cUpdateRect )
     }
     else
     {
-        draw( cUpdateRect );
+        draw( GetBounds() );
     }
 }
 
@@ -104,8 +106,29 @@ void ClockView::showSeconds( bool bShow )
 void ClockView::showDigital( bool bShow )
 {
     m_bShowDigital = bShow;
-    Invalidate( true );                             // Force full refresh.
+	Invalidate( true );                             // Force full refresh.
 }
+
+bool ClockView::GetDigital()
+{
+	return m_bShowDigital;
+}
+
+bool ClockView::GetShowSeconds()
+{
+	return m_bShowSec;
+}
+
+void ClockView::SetBackColor(Color32_s s_BackColor)
+{
+	sBackColor = s_BackColor;
+}
+
+Color32_s ClockView::GetBackColor()
+{
+	return sBackColor;
+}
+
 
 void ClockView::draw( const Rect& cUpdateRect )
 {
@@ -115,8 +138,8 @@ void ClockView::draw( const Rect& cUpdateRect )
        GetWindow()->AddTimer( this, 0, 5000, false );
     }
     if( m_nHour < 0 )  return;                      // Not initialised yet.
-//  SetEraseColor( 255, 255, 255 );
-    SetFgColor( 255, 255, 255 );
+
+    SetFgColor( sBackColor);
     FillRect( cUpdateRect );
 
     if( ! m_bShowDigital )
@@ -154,7 +177,7 @@ void ClockView::draw( const Rect& cUpdateRect )
     SetFgColor( 0, 0, 255 );
     MovePenTo( x0 , y0 );
     DrawLine(Point( x0 + r*sin(alpha) , y0 - r*cos(alpha) ) );
-    
+
     if( m_bShowSec )
     {
         // --- Draw seconds ---
@@ -185,8 +208,14 @@ void ClockView::draw( const Rect& cUpdateRect )
         struct font_height fh;
         GetFont()->GetHeight( &fh );
         SetFgColor( 0, 0, 255 );
+        SetBgColor( sBackColor );
+
         DrawString( s, Point(x0-l/2,y0+(fh.ascender-fh.descender)/2) );
     }
    
     Flush();
 }
+
+
+
+

@@ -21,50 +21,63 @@
 
 // ---------------------------------------------------------------------------
 
-MyWindow::MyWindow( const Rect& cFrame ) : Window( cFrame, "main_window", "Clock" )
+MyWindow::MyWindow( const Rect& cFrame) : Window( cFrame, "main_window", "Clock", WND_NO_ZOOM_BUT )
 {
-   // Create a menu bar.
-   Rect cMenuBounds = GetBounds();
-   cMenuBounds.bottom = MENU_OFFSET;
-   
-   Menu* pcMenuBar = new Menu( cMenuBounds, "main_menu", ITEMS_IN_ROW, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT, WID_FULL_UPDATE_ON_H_RESIZE );
+    settings = new Settings();
+    settings->Load();
 
-   // Create the menus within the bar.
-   Menu* pcFileMenu = new Menu( Rect(0,0,1,1), "File", ITEMS_IN_COLUMN );
-   pcFileMenu->AddItem( "Exit", new Message (ID_FILE_EXIT) );
-   
-   pcMenuBar->AddItem( pcFileMenu );
-   
-   Menu* pcViewMenu = new Menu( Rect(0,0,1,1), "View", ITEMS_IN_COLUMN );
+    settings->FindColor32("backcolor", &sColor);
+    settings->FindBool("showdigital",&bDigital);
+    settings->FindBool("showsec", &bSec);
 
-   Menu* pcScaleMenu = new Menu( Rect(0,0,1,1), "Seconds  >>", ITEMS_IN_COLUMN );   
-   pcScaleMenu->AddItem( "On", new Message( ID_VIEW_SECONDS_ON ) );   
-   pcScaleMenu->AddItem( "Off", new Message( ID_VIEW_SECONDS_OFF ) );
-   pcViewMenu->AddItem( pcScaleMenu );
-   
-   Menu* pcModeMenu = new Menu( Rect(0,0,1,1), "Mode  >>", ITEMS_IN_COLUMN );
-   pcModeMenu->AddItem( "Digital", new Message( ID_VIEW_DIGITAL_ON ) );   
-   pcModeMenu->AddItem( "Analog", new Message( ID_VIEW_DIGITAL_OFF ) );
-   pcViewMenu->AddItem( pcModeMenu );
+    // Create a menu bar.
+    Rect cMenuBounds = GetBounds();
+    cMenuBounds.bottom = MENU_OFFSET;
 
-   pcMenuBar->AddItem( pcViewMenu );
-   
-//   Menu* pcHelpMenu = new Menu( Rect(0,0,1,1), "Help", ITEMS_IN_COLUMN );
-//   pcHelpMenu->AddItem( "About", new Message( ID_HELP_ABOUT ) );
-//   pcMenuBar->AddItem( pcHelpMenu );
+    Menu* pcMenuBar = new Menu( cMenuBounds, "main_menu", ITEMS_IN_ROW, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT, WID_FULL_UPDATE_ON_H_RESIZE );
 
-   pcMenuBar->SetTargetForItems( this );
-   
-   // Add the menubar to the window.
-   AddChild( pcMenuBar );
-   
-   Rect cWindowBounds = GetBounds();
-   cWindowBounds.left = 0;
-   cWindowBounds.top = MENU_OFFSET + 1;
-   
-   // Add the component to the window.
-   m_pcDisplay = new ClockView( cWindowBounds );
-   AddChild( m_pcDisplay );
+    // Create the menus within the bar.
+    Menu* pcFileMenu = new Menu( Rect(0,0,1,1), "File", ITEMS_IN_COLUMN );
+    pcFileMenu->AddItem( "Exit", new Message (ID_FILE_EXIT) );
+
+    pcMenuBar->AddItem( pcFileMenu );
+
+    Menu* pcViewMenu = new Menu( Rect(0,0,1,1), "View", ITEMS_IN_COLUMN );
+
+    Menu* pcScaleMenu = new Menu( Rect(0,0,1,1), "Seconds", ITEMS_IN_COLUMN );
+    pcScaleMenu->AddItem( "On", new Message( ID_VIEW_SECONDS_ON ) );
+    pcScaleMenu->AddItem( "Off", new Message( ID_VIEW_SECONDS_OFF ) );
+    pcViewMenu->AddItem( pcScaleMenu );
+
+    Menu* pcModeMenu = new Menu( Rect(0,0,1,1), "Mode", ITEMS_IN_COLUMN );
+    pcModeMenu->AddItem( "Digital", new Message( ID_VIEW_DIGITAL_ON ) );
+    pcModeMenu->AddItem( "Analog", new Message( ID_VIEW_DIGITAL_OFF ) );
+    pcViewMenu->AddItem( pcModeMenu );
+
+    Menu* pcColorMenu = new Menu( Rect(0,0,1,1), "Color", ITEMS_IN_COLUMN );
+    pcColorMenu->AddItem( "White", new Message( ID_WHITE ) );
+    pcColorMenu->AddItem( "Black", new Message( ID_BLACK ) );
+    pcViewMenu->AddItem( pcColorMenu );
+
+    pcMenuBar->AddItem( pcViewMenu );
+    cMenuBounds.bottom = pcMenuBar->GetPreferredSize( true ).y + -4.0f;  //Sizes the menu.  The higher the negative, the smaller the menu.
+    pcMenuBar->SetFrame( cMenuBounds);
+
+    pcMenuBar->SetTargetForItems( this );
+
+    // Add the menubar to the window.
+    AddChild( pcMenuBar );
+
+    Rect cWindowBounds = GetBounds();
+    cWindowBounds.left = 0;
+    cWindowBounds.top = cMenuBounds.bottom + 1;
+
+    // Add the component to the window.
+
+    m_pcDisplay = new ClockView( cWindowBounds,sColor, bSec,bDigital );
+    m_pcDisplay->showSeconds(bSec);
+    m_pcDisplay->showDigital(bDigital);
+    AddChild( m_pcDisplay );
 }
 
 MyWindow::~MyWindow()
@@ -74,6 +87,18 @@ MyWindow::~MyWindow()
 
 bool MyWindow::OkToQuit( void )
 {
+    settings->RemoveName("backcolor");
+    settings->RemoveName("showdigital");
+    settings->RemoveName("showsec");
+	
+	sColor = m_pcDisplay->GetBackColor();
+	
+    settings->AddColor32("backcolor", sColor);
+    settings->AddBool("showdigital",bDigital);
+    settings->AddBool("showsec", bSec);
+
+    settings->Save();
+
     Application::GetInstance()->PostMessage( M_QUIT );
     return( false );
 }
@@ -82,22 +107,53 @@ void MyWindow::HandleMessage( Message* pcMessage )
 {
     switch( pcMessage->GetCode() ) //Get the custom message code.
     {
-      case ID_FILE_EXIT:
-        OkToQuit();
+    case ID_FILE_EXIT:
+        {
+            OkToQuit();
+        }
         break;
-      case ID_VIEW_SECONDS_ON:
-        m_pcDisplay->showSeconds(true);
+
+    case ID_VIEW_SECONDS_ON:
+        {
+            m_pcDisplay->showSeconds(true);
+            bSec = true;
+        }
         break;
-      case ID_VIEW_SECONDS_OFF:
-        m_pcDisplay->showSeconds(false);
+
+    case ID_VIEW_SECONDS_OFF:
+        {
+            m_pcDisplay->showSeconds(false);
+            bSec = false;
+        }
         break;
-      case ID_VIEW_DIGITAL_ON:
-        m_pcDisplay->showDigital(true);
+
+    case ID_VIEW_DIGITAL_ON:
+        {
+            m_pcDisplay->showDigital(true);
+            bDigital = true;
+        }
         break;
-      case ID_VIEW_DIGITAL_OFF:
-        m_pcDisplay->showDigital(false);
+
+    case ID_VIEW_DIGITAL_OFF:
+        {
+            m_pcDisplay->showDigital(false);
+            bDigital = false;
+        }
         break;
-      default:
+
+    case ID_BLACK:
+        {
+            m_pcDisplay->SetBackColor(Color32_s (0,0,0,0));
+        }
+        break;
+
+    case ID_WHITE:
+        {
+            m_pcDisplay->SetBackColor(Color32_s (255,255,255,255));
+        }
+        break;
+
+    default:
         Window::HandleMessage( pcMessage );
         break;
     }
@@ -105,26 +161,80 @@ void MyWindow::HandleMessage( Message* pcMessage )
 
 // ---------------------------------------------------------------------------
 
-MyApp::MyApp() : Application( "application/x-VND.KHS-Clock" )
+MyApp::MyApp() : Application( "application/x-vnd-RGC-" APP_NAME )
 {
-    m_pcMainWindow = new MyWindow( Rect(150,150,270,270) );
+    settings = new Settings();
+    LoadSettings();
+
+
+    m_pcMainWindow = new MyWindow( Rect(150,150,270,270));
+    m_pcMainWindow->CenterInScreen();
     m_pcMainWindow->Show();
     m_pcMainWindow->MakeFocus();
+
+
 }
 
 MyApp::~MyApp()
 {
-   delete m_pcMainWindow;
+    delete m_pcMainWindow;
 }
+
+bool MyApp::LoadSettings()
+{
+    bool bFlag = false;
+
+    if(settings->Load() != 0)
+    {
+        cout << "must load defaults" << endl;
+        LoadDefaults();
+    }
+    else
+    {
+        settings->FindColor32("backcolor", &sColor);
+
+        if (settings->FindBool("showdigital",&bDigital) != 0)
+            bDigital = true;
+
+        if (settings->FindBool("showsec",&bSec)!= 0)
+            bSec = true;
+
+        bFlag = true;
+    }
+    return bFlag;
+}
+
+
+
+
+void MyApp::LoadDefaults()
+{
+    sColor = Color32_s(255,255,255,255);
+    bDigital = false;
+    bSec = true;
+}
+
+
+
+
+
+
 
 // ---------------------------------------------------------------------------
 
 int main( int argc, char** argv )
 {
     MyApp* pcApp = new MyApp();
-    
+
     pcApp->Run();                               // Enter main GUI loop.
     return( 0 );
 }
 
 // ---------------------------------------------------------------------------
+
+
+
+
+
+
+
