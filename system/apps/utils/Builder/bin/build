@@ -1179,26 +1179,26 @@ else
 
     ENV['ATHEOS_INCLUDE_PATH'] = File.join @workDir, 'sys/include'
     ENV['C_INCLUDE_PATH'] =
-     (File.join @workDir, 'libs/glibc/include') +
-     ':' + (File.join @workDir, 'sys/include') +
+#     (File.join @workDir, 'libs/glibc/include') + ':' +
+     (File.join @workDir, 'sys/include') +
 #     ':' + (File.join @stage, 'atheos/autolnk/include') +
      ((var = ENV['C_INCLUDE_PATH']) ? ':' + var : '')
     ENV['CPLUS_INCLUDE_PATH'] =
-     (File.join @workDir, 'libs/glibc/include') +
-     ':' + (File.join @workDir, 'sys/include') +
+#     (File.join @workDir, 'libs/glibc/include') + ':' +
+     (File.join @workDir, 'sys/include') +
 #     ':' + (File.join @stage, 'atheos/autolnk/include') +
      ((var = ENV['CPLUS_INCLUDE_PATH']) ? ':' + var : '')
 
     ENV['ATHEOS_LIB_PATH'] = File.join @stage, 'atheos/sys/libs'
     ENV['DLL_PATH'] =
-     (File.join @stage, 'atheos/usr/glibc2/lib') +
-     ':' + (File.join @stage, 'atheos/sys/libs') +
+#     (File.join @stage, 'atheos/usr/glibc2/lib') + ':' +
+     (File.join @stage, 'atheos/sys/libs') +
      ':' + (File.join @stage, 'atheos/sys') +
 #     ':' + (File.join @stage, 'atheos/autolnk/lib') +
      ((var = ENV['DLL_PATH']) ? ':' + var : '')
     ENV[name = (@syllable ? '' : 'LD_') + 'LIBRARY_PATH'] =
-     (File.join @stage, 'atheos/usr/glibc2/lib') +
-     ':' + (File.join @stage, 'atheos/sys/libs') +
+#     (File.join @stage, 'atheos/usr/glibc2/lib') + ':' +
+     (File.join @stage, 'atheos/sys/libs') +
      (@syllable ? '' : ':' + File.join(@stage, 'atheos/sys')) +
 #     ':' + (File.join @stage, 'atheos/autolnk/lib') +
      ((var = ENV[name]) ? ':' + var : '')

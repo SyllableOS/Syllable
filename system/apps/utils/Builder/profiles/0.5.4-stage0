@@ -2,6 +2,6 @@
 
 modules
 	sys/kernel/kernel
-;	The one from CVS:
+;	The one from CVS - but this one is not buildable anymore?:
 	libs/glibc
 
