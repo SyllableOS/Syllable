@@ -28,12 +28,13 @@ namespace os
 }
 #endif // Fool Emacs auto-indent
 
-/** 
+/** Colour datatype
  * \ingroup gui
  * \par Description:
+ *	Datatype for colour information, used by many parts of the OS.
  *
  * \sa
- * \author	Kurt Skauen (kurt@atheos.cx)
+ * \author	Kurt Skauen (kurt@atheos.cx), Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
 
 struct Color32_s
@@ -42,12 +43,21 @@ struct Color32_s
     Color32_s( int r, int g, int b, int a=255 ) {
 	red = r; green = g; blue=b; alpha=a;
     }
+    Color32_s( uint32 c ) {
+    	red = (uint8)(c >> 16);
+       	green = (uint8)(c >> 8);
+       	blue = (uint8)(c);
+       	alpha = (uint8)(c >> 24);
+    }
     uint8 red;
     uint8 green;
     uint8 blue;
     uint8 alpha;
 };
 
+typedef Color32_s Color32;
+
 } // end of namespace
 
 #endif	/*	_GFX_TYPES_H	*/
+
