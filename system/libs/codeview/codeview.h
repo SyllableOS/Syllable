@@ -22,6 +22,7 @@
 #define F_CODEVIEW_CODEVIEW_H
 
 #include <gui/control.h>
+#include <gui/menu.h>
 
 namespace cv
 {
@@ -155,6 +156,11 @@ public:
 
     void ClearEvents();
 
+	void SetHighlightColor(os::Color32_s);
+	os::Color32_s GetHighlightColor();
+	os::Font* GetEditorFont() const;
+	void SetContextMenu( os::Menu * pcMenu );
+
 private:
     InnerEdit* edit;
     os::ScrollBar *vScroll, *hScroll;
@@ -163,4 +169,3 @@ private:
 } /* namespace cv */
 
 #endif /* F_CODEVIEW_CODEVIEW_H */
-

@@ -65,7 +65,8 @@ format(0), backBM(0), backView(0),
 maxWidth(0), cursorX(0), cursorY(0), old_cursorX(0), old_cursorY(0), tabSize(4), useTab(true),
 selectionValid(false),
 enabled(true), readOnly(false),
-maxUndo(1000), undoCount(0), redoCount(0), undoHead(0), undoTail(0), undoCurrent(0)
+maxUndo(1000), undoCount(0), redoCount(0), undoHead(0), undoTail(0), undoCurrent(0),
+m_pcContextMenu( NULL ), sHighlight(0,0,0,0)
 {
 	SetBgColor(255, 255, 255);
 	SetFgColor(0, 0, 0);
@@ -91,6 +92,11 @@ InnerEdit::~InnerEdit()
 
 	if(IcursorActive)
 		os::Application::GetInstance()->PopCursor();
+}
+
+void InnerEdit::SetContextMenu( os::Menu * pcMenu )
+{
+	m_pcContextMenu = pcMenu;
 }
 
 void InnerEdit::SetShowLineNumbers( bool bShowLineNumbers )
@@ -156,6 +162,7 @@ void InnerEdit::Paint(const os::Rect &r)
 	uint32 nVisibleLine = nTopLine;
 	uint32 nBufferIndex = _TranslateBufferIndex( nVisibleLine );
 	float y = nVisibleLine * lineHeight;
+
 	while( nBufferIndex <= nBotLine && nBufferIndex < buffer.size() ) {
 		os::String& pcLineText = buffer[ nBufferIndex ].text;
 		uint invStart=0, invEnd=0;
@@ -208,7 +215,10 @@ void InnerEdit::Paint(const os::Rect &r)
 					backView->FillRect(os::Rect( m_nMargin + xOff + f1, 0, w, lineHeight), dim(GetBgColor()));
 		} else {
 			if(enabled) {
-				backView->FillRect( os::Rect( m_nMargin + xOff, 0, w, lineHeight ), GetBgColor());
+				if ( ( nVisibleLine == cursorY ) &&  ( sHighlight.alpha != 0 ) )
+					backView->FillRect( os::Rect( m_nMargin + xOff, 0, w, lineHeight ), GetHighlightColor() );
+				else
+					backView->FillRect( os::Rect( m_nMargin + xOff, 0, w, lineHeight ), GetBgColor() );
 			} else {
 				backView->FillRect( os::Rect( m_nMargin + xOff, 0, w, lineHeight ), dim(GetBgColor()));
 			}
@@ -217,15 +227,19 @@ void InnerEdit::Paint(const os::Rect &r)
 		os::Color32_s fg=GetFgColor();
 		os::Color32_s bg=GetBgColor();
 
+		if ( (nVisibleLine == cursorY) && (sHighlight.alpha != 0))
+			backView->SetBgColor( GetHighlightColor() );
+		else
+			backView->SetBgColor(bg);
+		
 		backView->SetFgColor(fg);
-		backView->SetBgColor(bg);
 
 		backView->MovePenTo( m_nMargin + xOff, lineBase );
 
 		for( uint a = 0; a < pcLineText.size(); ) {
 			char chr = pcLineText[a];
 
-			if(chr=='\t'){
+			if(chr=='\t') {
 				backView->Sync();//need this to get correct pen pos
 				float tab=spaceWidth*tabSize;
 				float x=backView->GetPenPosition().x-xOff;
@@ -238,7 +252,7 @@ void InnerEdit::Paint(const os::Rect &r)
 				}
 				
 				backView->MovePenTo( xOff + x, lineBase );
-			}else{
+			} else {
 				os::Color32_s nfg, nbg;
 
 				if(a>=invStart && a<invEnd){
@@ -275,6 +289,7 @@ void InnerEdit::Paint(const os::Rect &r)
 		
 		if( bIsFolded ) {
 			backView->SetFgColor( os::Color32_s( 200, 50,  50 ) );
+			backView->SetBgColor( bg );
 			backView->DrawString( " (...)" );
 		}
 
@@ -867,8 +882,8 @@ void InnerEdit::MouseDown(const os::Point &p, uint32 but)
 	if(!HasFocus())
 		MakeFocus();
 
-	if(but&1){
-		mousePressed=true;
+	if( but & 1 ) {
+		mousePressed = true;
 
 		ClearSelection();
 
@@ -884,6 +899,11 @@ void InnerEdit::MouseDown(const os::Point &p, uint32 but)
 		Flush();
 
 		CommitEvents();
+	}
+
+	if( but & 2 && m_pcContextMenu )
+	{
+		m_pcContextMenu->Open( ConvertToScreen( p ) );
 	}
 }
 

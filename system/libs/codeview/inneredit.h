@@ -25,6 +25,7 @@
 #include <gui/view.h>
 #include <gui/control.h>
 #include <gui/bitmap.h>
+#include <gui/menu.h>
 #include <util/looper.h>
 #include <util/message.h>
 
@@ -170,6 +171,10 @@ private:
 	UndoNode	*undoHead,
 			*undoTail,
 			*undoCurrent;
+
+	os::Menu* m_pcContextMenu;
+	os::Color32_s sHighlight;
+
 public:
 
 	InnerEdit(os::Control* c);
@@ -284,9 +289,27 @@ public:
 	virtual void WheelMoved(const os::Point&);
 
 	void FoldSection( uint nFirst, uint nLast );
+
+	void SetContextMenu( os::Menu* );
+	os::Menu* GetContextMenu()
+	{
+		return m_pcContextMenu;
+	}
+
+	void SetHighlightColor(os::Color32_s sHigh)
+	{
+		sHighlight = sHigh;
+	}
+
+	os::Color32_s GetHighlightColor()
+	{
+		return sHighlight;
+	}
+
 };
 
 } /* namespace cv */
 
 #endif
+
 

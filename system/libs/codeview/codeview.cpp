@@ -497,3 +497,33 @@ bool CodeView::GetShowLineNumbers()
 	return edit->GetShowLineNumbers();
 }
 
+/**Sets the highlight color.
+ *
+ * \sa GetHighlightColor()
+ */
+void CodeView::SetHighlightColor(os::Color32_s c)
+{
+	edit->SetHighlightColor(c);
+}
+
+/**Gets the highlight color.
+ *
+ * \sa SetHighlightColor()
+ */
+os::Color32_s CodeView::GetHighlightColor()
+{
+	return edit->GetHighlightColor();
+}
+
+/*Gets the editors font*/
+os::Font* CodeView::GetEditorFont() const
+{
+	return edit->GetFont();
+}
+
+/*Sets the editors context menu*/
+void CodeView::SetContextMenu( os::Menu * pcMenu )
+{
+	edit->SetContextMenu( pcMenu );
+}
+
