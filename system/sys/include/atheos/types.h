@@ -99,7 +99,9 @@ typedef int	fs_id;
 typedef void (*sighandler_t)(int);
 #endif
 
+#ifndef __KERNEL__
 #include <atheos/pthreadtypes.h>
+#endif
 
 #ifdef __cplusplus
 }
