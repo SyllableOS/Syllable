@@ -75,7 +75,6 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", AED
 	pcEditView->SetMultiLine(true);
 	AddChild(pcEditView);
 	
-	#if 1
 	Font *font = new Font();
 	font_properties cProperties;
 
@@ -89,7 +88,6 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", AED
 	font->SetProperties( cProperties );
 	pcEditView->SetFont(font);
 	font->Release();
-#endif
 	
 	// Set the window title etc.
 	zWindowTitle=AEDIT_RELEASE_STRING;
@@ -103,6 +101,12 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", AED
 	pcLoadRequester->Start();
 	pcSaveRequester = new FileRequester(FileRequester::SAVE_REQ, new Messenger(this));
 	pcSaveRequester->Start();
+
+	// Set an application icon for Dock
+	os::BitmapImage *pcImage = new os::BitmapImage();
+	os::Resources cRes( get_image_id() );
+	pcImage->Load( cRes.GetResourceStream( "icon24x24.png" ) );
+	SetIcon(pcImage->LockBitmap());
 
 	// Reset the changed flag
 	bContentChanged=false;

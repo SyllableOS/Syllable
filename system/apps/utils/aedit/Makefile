@@ -15,7 +15,9 @@ $(OBJSDIR):
 
 $(EXE): $(OBJS)
 	$(LL) $(OBJS) -lsyllable -o $(EXE)
-	rescopy -r $(EXE) resources/aedit.catalog
+	strip --strip-all $(EXE)
+	rescopy -r $(EXE) icon24x24.png icon48x48.png
+	rescopy -a $(EXE) resources/aedit.catalog
 	rescopy -a $(EXE) sv/aedit.catalog=resources/sv/aedit.catalog
 	rescopy -a $(EXE) de/aedit.catalog=resources/de/aedit.catalog
 	rescopy -a $(EXE) nl/aedit.catalog=resources/nl/aedit.catalog
@@ -27,7 +29,6 @@ $(EXE): $(OBJS)
 deps:
 
 install: all
-	strip --strip-all $(EXE)
 	cp $(EXE) /system/bin/
 
 dist: all
