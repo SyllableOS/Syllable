@@ -1,75 +1,55 @@
 /*!
- * \defgroup DriverAPI AtheOS Device Driver API
+ * \defgroup DriverAPI Syllable Device Driver API
  */
 
 
-/*! \mainpage Documentation of the AtheOS kernel driver API
+/*! \mainpage Documentation of the Syllable device driver API
 
-This documentation is very far from compleate but I am trying to
-document new functionality as I write it, and are also slowly
-documenting the existing functionality.
+Note: This documentation is very far from being complete.
 
 \ref intro "Introduction"
 
-\ref generic_drivers "Writing regular device drivers"
+\ref kernel_drivers "Writing kernel device drivers"
+
+\ref busmanager_drivers "Writing busmanagers"
 
 \ref filesystem_drivers "Writing file-system drivers"
 
 \ref network_drivers "Writing network drivers"
 
-\ref DriverAPI "API documentation"
+\ref appserver_video_drivers "Writing appserver video drivers"
+
+\ref DriverAPI "Kernel API documentation"
 
 */
 
+/*! \page intro Introduction to the various driver types
 
-/*! \page intro Brief introduction to the AtheOS kernel land
+If we speak about writing drivers, we have to divide between kernel 
+drivers and appserver drivers. Kernel drivers are used for hardware
+like soundcards, networkcards and also for file-system addons. Graphics
+drivers and the highlevel part of input drivers are handled by the
+appserver. While kernel drivers are written in C, appserver addons are
+written in C++. Common to both is that they are simple ELF modules, which are
+loaded if necessary. Unlike some UNIX systems, Syllable has a defined 
+interface between the drivers and the kernel/appserver, which is not
+changed very often.
 
-The AtheOS kernel have a very modular design where as much work as
-possible is delegated to dynamically loaded device drivers. Writing
-device drivers for the AtheOS kernel very much resemble normal
-application development. A driver is not a tightly integrated part of
-the kernel (like for example a Linux driver) but is more loosly tied
-to the kernel through a API exported by the kernel and a well defined
-interface exported by the device driver.
-
-The driver API offer much of the same functionality as the "C" library
-offers to applications. You will find that many of the low-level
-functions you know from user-space applications are also available
-when working with device drivers. If you are familiar with C
-programming and know how to deal with multithreaded programming you
-should have no problem developing device drivers for AtheOS.
-
-There is more than one type of kernel drivers. Currently 3 distinct
-interfaces are defined:
-
-	- Regular device drivers.
-	- File system drivers.
-	- Network interface drivers.
-
-Common to all drivers is that they are linked to libkernel.so that is
-a "fake" DLL who export all the functions available to the device
-driver and that they export most of their functionality to the kernel
-through function pointers.
-
-Most driver entry points are passed to the kernel through structures
-containing nothing but a list of correctly prototyped function
-pointers. For device drivers a distinct set of functions can be
-associated with each "node" it export in the /dev/ device hierarchy.
-
-Filesystem only have one function-pointer table that will be
-associated by all files (or inodes) that lives in the FS.
+Please note that you have to be careful when writing drivers because
+a bug in a driver can cause the system to lock up and make it 
+completely unusable. If you can, you should have a second Syllable
+installation, which you can use to remove invalid drivers.
 
 */
 
-
-/*! \page generic_drivers
+/*! \page kernel_drivers
 
 \section sec1 Basic description
-Device drivers in AtheOS is abstractet through the filesystem in much
-the same way as in UNIX. All device drivers exports their
+Device drivers in Syllable are abstracted through the filesystem in much
+the same way as in UNIX. All device drivers export their
 functionality through special files inside the /dev/ directory or a
 sub-directory of /dev/. Unlike in traditional UNIXes the /dev/
-directory in AtheOS is hierarchial and is very dynamic in that device
+directory in Syllable is hierarchial and is very dynamic in that device
 drivers can add and remove nodes at runtime if it for example controll
 a removable device that might be added or removed after the driver is
 initialized.
@@ -87,20 +67,20 @@ Just before the driver is unloaded the kernel will look for a global
 function named "device_uninit()" and if found it will be called to
 allow the driver to clean up.
 
-This device_init() and device_uninit() is the only functions that will
+This device_init() and device_uninit() are the only functions that will
 be called directly by the kernel. For the driver to do any usefull
-work it must export one or more device-nodes through the AtheOS Device
-FS (ADFS). ADFS is a logical file system that is mounted at "/dev/"
+work it must export one or more device-nodes through the Syllable Device
+FS. This is a logical file system that is mounted at "/dev/"
 and controll all devices. Each device is present as a magic file
 located in "/dev/" or a sub-directory of "/dev/". Initially "/dev/"
-only contain "/dev/null" and "/dev/zero" which is controlled by ADFS
-itself. All other directory and device-nodes are created by device
+only contain "/dev/null" and "/dev/zero" which is controlled by the Syllable
+VFS itself. All other directory and device-nodes are created by device
 drivers. A device driver can create a device-node with
 create_device_node() and remove it with delete_device_node().  When
 creating a device node the driver must provide a function pointer
 table with entry points to the drivers functionality. The functions in
-the table will be called by the ADFS to controll the device. The most
-important functions is read(), write() and ioctl() but there is also
+the table will be called by the Syllable VFS to controll the device. The most
+important functions are read(), write() and ioctl() but there are also
 functions to open/close the device aswell as functions called by
 select() to make it possible for one thread to wait for IO on multiple
 devices.
@@ -113,7 +93,7 @@ int g_nMyDeviceNode = -1;
 status_t device_init( int nDeviceID )
 {
 	struct MyDeviceNode sNode;
-	g_nMyDeviceNode = create_device_node( nDeviceID, "misc/mydevice", &g_sOperations, &sNode );
+	g_nMyDeviceNode = create_device_node( nDeviceID, -1, "misc/mydevice", &g_sOperations, &sNode );
 	
 	if ( g_nMyDeviceNode < 0 ) {
 		return( g_nMyDeviceNode ); /* Failed to create the device node */
@@ -131,9 +111,9 @@ status_t device_uninit( int nDeviceID )
 
 \section sec3 How a driver is located
 
-Since the nodes inside /dev/ is created by the device drivers themself
-and not the kernel it is not directly obvious what driver should be
-loaded if a application tries to open for example
+Since the nodes inside /dev/ are created by the device drivers themself
+and not by the kernel it is not directly obvious what driver should be
+loaded if an application tries to open for example
 "/dev/video/cpia".
 
 If this is the first time someone attempts to open the CPiA device the
@@ -147,10 +127,10 @@ similar to the resulting tree inside /dev/. For example the CPiA
 driver from the above example whould be located in
 "/system/drivers/dev/video/cpia".
 
-If the kernel is asked to open for example "/dev/video/cpia" it whould
-start by opening the "/dev" directory which whould cause the
+If the kernel is asked to open for example "/dev/video/cpia" it would
+start by opening the "/dev" directory which would cause the
 "/system/drivers/dev" directory to be iterated. During the iteration
-all drivers found will be attempted loaded and initiated and all
+all drivers found will be attempted to load and initiate and all
 directories will be replicated inside /dev/. Since
 "/system/drivers/dev" contains a directory named "video" this will
 cause "/dev/video" to be created.  When "/dev/" is successfully opened
@@ -170,32 +150,143 @@ disks. The device-tree exported by a IDE driver might look something
 like this:
 
 <pre>
-/dev/disk/ide/bus1/master/raw
-/dev/disk/ide/bus1/master/0
-/dev/disk/ide/bus1/master/1
-/dev/disk/ide/bus1/slave/raw
-/dev/disk/ide/bus2/master/raw
-/dev/disk/ide/bus2/master/0
+/dev/disk/hda/raw
+/dev/disk/hda/0
+/dev/disk/hda/1
+/dev/disk/hdb/raw
+/dev/disk/hdc/raw
+/dev/disk/hdc/0
 </pre>
 
 In this case the ide driver should be located in
-"/system/drivers/dev/disk/ide/ide". If someone attempts to open the
+"/system/drivers/dev/disk/ide". If someone attempts to open the
 first partition on the master disk connected to the first controller
-it whould have to open "/dev/disk/ide/bus1/master/0".
+it whould have to open "/dev/disk/ide/hda/0".
 
 When descending the path the kernel will first create the "/dev/disk"
 and the "/dev/disk/ide" directory. Then it will load the ide-driver
-which will detect that there is 3 disks connected to the two
+which will detect that there are 3 disks connected to the two
 controllers before decoding the partition tables and add all the nodes
-listed above. At his point "/dev/disk/ide/bus1/master/0" already
+listed above. At his point "/dev/disk/ide/hda/0" already
 exists and no other drivers need to be loaded to fullfill the request.
 
+\section sec4 Using busmanagers
+
+To keep the kernel small and avoid recompiling when adding support for new 
+hardware technology, the management code for busses like PCI and USB lives
+in kernel modules called busmanagers. These busmanagers are loaded by the
+bootmanager if they are necessary for loading the system ( e.g. the PCI busmanager
+is necessary for the IDE driver ) or later after the root disk is mounted. Using
+busmanagers from drivers is really easy: You just have to ask the kernel to give
+you access to a busmanager with a specific name and the API version you support.
+If you would like to access the PCI bus, maybe to scan for supported devices, you
+would do something like this:
+
+\code
+
+PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+if( psBus == NULL )
+{
+	// handle error
+}
+
+\endcode
+
+You would now have a pointer to a PCI_bus_s structure, which is defined in the PCI
+busmanager header file and contains pointers to the busmanager's functions. Access to
+the USB bus works similar, alhough of course the functions in the USB_bus_s structure
+are different.
+
+\section sec5 Device management
+
+Although the Syllable kernel driver interface is easy to use, it has one problem:
+It is possible that two device drivers try to access one device. Also, the kernel
+does not know what devices are supported by the drivers and so cannot show a list
+of the supported/not supported hardware to the user. To solve this problems, the kernel
+contains a special device manager. A device can be registered by any device driver or 
+busmanager and is later claimed by the driver that wants to access the device. All later
+tries by other drivers to claim the device will fail, and so the driver knows that it
+should not use this device. If you write a PCI or USB device driver, the busmanager can
+give you the handles to the devices it knows. All you have to do is to call the 
+claim_device() function:
+
+\code
+
+int nHandle = sMyDevice.nHandle // get Handle from the busmanager
+if( claim_device( nDeviceID, // device ID of the driver
+                  nHandle,
+                  "My device", // name for the device
+                  DEVICE_AUDIO ) // type of the device
+    != 0 ) {
+	// handle error
+}
+
+\endcode
+
+Please note that if you support hardware that can be removed while the computer is running
+( e.g. USB devices ) you have to call release_device( nHandle ) if the busmanager informs
+you about the removal. 
+
+If you want to support hardware, which is not managed by any busmanager, you can
+do a register_device() call yourself:
+
+\code
+
+int nHandle = register_device( "My device", // name
+                               "isa" ); // busname
+claim_device( nDeviceID, nHandle, "My device", DEVICE_AUDIO );
+
+\endcode
+
+This will not prevent two drivers to access one device, but it will show some
+nice information to the user.
+
+
+\section sec6 Reducing boottime by disabling PCI device drivers.
+
+To avoid unnecessary tries to load drivers, it is possible to disable device
+drivers. This feature is only available for pure PCI device drivers. If you did not
+find any supported hardware, you should call disable_device( nDeviceID ). This will
+disable the device driver until the PCI busmanager detects a hardware change.
+
+*/
+
+
+/*! \page busmanager_drivers
+
+\section sec_bus_1 Structure of a busmanager
+
+A busmanager is a normal kernel module that is located in the /system/drivers/bus 
+directory . Unlike the kernel device drivers it does not export device_init() and 
+device_uninit(). Instead, the following functions need to be implemented:
+
+\code
+status_t bus_init();
+void     bus_uninit();
+void*    bus_get_hooks( int nVersion );
+
+\endcode
+
+The bus_init() function should initialize the busmanager and do a device scan on the
+bus if possible. Then register_device() should be called for the found devices. If the
+bus does not support hotplugging, the busmanager should also load a previously saved list
+of the attached devices and compare it with the current configuration. If it detects any
+change the busmanager should call enable_all_devices() so that device drivers, which use
+this busmanager, can safely disable themselves. If the initialisation of the bus fails, 
+bus_init() should return a value != 0.
+
+bus_uninit() is called during shutdown. The busmanager can save a list of the currently
+attached devices here using the write_config_entry...() functions of the kernel.
+
+Finally bus_get_hooks() returns a pointer to a private structure, that will probably
+contain pointers to the busmanager's functions. The busmanager should respect the nVersion
+flags  to keep backward compatibility with older drivers.
 
 */
 
 /*! \page filesystem_drivers
 
-FS stuff
+TODO: FS stuff
 
 */
 
@@ -204,4 +295,188 @@ FS stuff
 network stuff.
 
 */
+
+
+/*! \page appserver_video_drivers
+
+\section sec_gfx_start Basic description
+
+The Syllable Video Driver API is unique to Syllable, and may at first appear to be a little confusing. 
+This guide tries to explain the basic structure of a video driver and how the appserver handles video drivers and drawing functions. 
+
+
+\section sec_gfx_1 The basic driver model
+
+Syllable Video Drivers are written in C++ and provide methods required to open a video framebuffer, 
+accelerated drawing functions and video overlay controls.
+
+The DisplayDriver base class provides unacclerated software rendering functions which can draw a line between 
+two points, or Blit a bitmap into the video framebuffer. The VesaDriver class is a fully functional VESA 2.0 
+display driver, and is the default display driver which Syllable will attempt to use if no accelerated display 
+driver can be found for the installed hardware. Most video drivers generally inherit from the DisplayDriver 
+base class, but some may choose to inherit from the VesaDriver class. The VesaDriver provides additional 
+VESA mode switching functions which may be used for certain hardware E.g. the Mach64 accelerated driver inherits 
+from the VesaDriver in order to use the VESA mode switching functions for some chipsets. 
+
+
+\section sec_gfx_2 Functionality
+
+Because the DisplayDriver base class provides basic software rendering functions, an unaccelerated or partially 
+accelerated video driver does not have to offer hardware drawing for all functions. The most basic display driver 
+can implement only the required functions to detect and initialise the video hardware and allow the appserver to 
+handle all of the video drawing in software. A more complete display driver can implement hardware accelerated 
+drawing functions by overriding the various drawing methods in the DisplayDriver class. This generally provides 
+much faster video drawing. A complete video driver would also implement the various Video Overlay functions which 
+can be used by the Media Framework to display accelerated video playback. 
+
+\section sec_gfx_3 The basic API
+
+For the purposes of this guide we'll pretend we have some video hardware called "Fire", and assume we are writing 
+a display driver for that hardware. 
+
+The most basic video driver for any hardware must provide the following functions and methods.
+
+\code
+Fire::Fire( void );
+Fire::~Fire( void );
+bool Fire::IsInitiated( void ) const;
+area_id Fire::Open( void );
+int GetFramebufferOffset();
+int Fire::GetScreenModeCount( void );
+bool Fire::GetScreenModeDesc( int nIndex, os::screen_mode* psMode );
+int Fire::SetScreenMode( os::screen_mode sMode );
+extern "C" DisplayDriver* init_gfx_driver( void );
+\endcode
+
+The last function in that list is not a C++ method, but instead a C style function. This function is called when 
+the display driver is initialised. Most display drivers simply implement init_gfx_driver(); to create a new instance 
+of their display driver class, and then do the actual hardware detection and initialisation in the class constructor. 
+The constructor and destructor should be fairly obvious. Generally the constructor will probe for the video hardware 
+using the usual pci_* functions. If supported hardware is found then generally the hardware must be initialised, 
+although this is an internal function of the display driver and will differ between different video hardware. 
+What your initialisation code must do however is create and remap an area over the video framebuffer. This area 
+is returned to the appserver later in the initialisation process and is the only way in which the DisplayDriver 
+base class can access the video framebuffer. 
+
+Unless your hardware has a functional VESA BIOS and you have inherited from the VesaDriver class, you will have 
+to provide three methods which are used by the appserver to set the correct video mode. GetScreenModeCount(); 
+should simply return the total number of valid screenmodes. GetScreenModeDesc(); returns a structure which 
+contains the display mode information for the requested display mode. Finally, SetScreenMode(); is used to 
+actually set the desired video mode. GetScreenModeCount(); & GetScreenModeDesc(); are generally implemented in a 
+similiar maner in any display driver as they are hardware independent. SetScreenMode(); is obviously extremely 
+hardware dependent, and how you implement this will depend on your hardware. 
+
+IsInitiated(); simply returns true if the driver was able to detect and initialise the video hardware, or false 
+otherwise.
+
+GetFramebufferOffset(); should almost always return 0.
+
+The Open(); method is the last peice of the puzzle. All it does it is return the area ID of the previously created
+framebuffer area. The appserver can then find the video framebuffer base address from this area and use it to access 
+the video framebuffer to perform drawing functions. 
+
+\section sec_gfx_4 Accelerated Drawing
+
+An accelerated video driver will also provide methods which override the DisplayDriver software rendering methods. 
+There implementation is highly hardware dependent, but most drivers implement methods to accelerate Line drawing, 
+rectangular Fills and Bitmap Blits. The methods are: 
+
+\code
+bool Fire::DrawLine( SrvBitmap* pcBitMap, const IRect& cClipRect, const IPoint& cPnt1, const IPoint& cPnt2, const Color32_s& sColor, int nMode );
+bool Fire::FillRect( SrvBitmap* pcBitMap, const IRect& cRect, const Color32_s& sColor );
+bool Fire::BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap, IRect cSrcRect, IPoint cDstPos, int nMode );
+\endcode
+
+All of these methods receive a pointer to a SrvBitmap class. This class is the internal bitmap which is being 
+rendered too. SrvBitmaps can either be in video memory or user memory, depending on wether they are on screen 
+or off screen. Generally, video hardware cannot perform rendering operations on memory which is not in its own 
+video framebuffer, so you must first check to ensure that the bitmap you are rendering to exists in video memory[1]. 
+If not, you should pass the rendering request down to your base class, which will use the software rendering methods 
+in DisplayDriver.[2] 
+
+DrawLine(); and FillRect(); recieve Color information which indicates the color that the line or fill should be 
+drawn in. You may need to convert the RGBA information contained in the Color32_s class to information which can be 
+used by your video hardware, but this is hardware dependent. 
+
+Drawline(); and BltBitmap(); recieve the nMode argument, which indicates the drawing mode which should be used to 
+perform the operation. This argument will specify DM_COPY (A stright drawing operation), DM_OVER 
+(An alpha transparent "stamp" operation where the transparency is either "On" or "Off") or DM_BLEND 
+(An alpha blending operation). DM_COPY and DM_OVER operations are the most common, and you may choose not to support 
+hardware accelerated DM_OVER and DM_BLEND operations. Generally, passing this drawing operations down to the 
+DisplayDriver methods does not noticably slow down rendering[3]. 
+
+\section sec_gfx_5 Video Overlays
+
+If your hardware supports Video Overlays you may wish to support this functionality in your display driver. 
+There are four methods which you must provide in order to support Video Overalys correctly. They are: 
+
+\code
+bool Fire::CreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, os::color_space eFormat, os::Color32_s sColorKey, area_id *pBuffer );
+bool Fire::RecreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, os::color_space eFormat, area_id *pBuffer );
+void Fire::UpdateVideoOverlay( area_id *pBuffer );
+void Fire::DeleteVideoOverlay( area_id *pBuffer );
+\endcode
+
+Unlike the rendering functions, these functions do not have a software implementation in the DisplayDriver class. 
+Your video driver must either support Video Overlays or the user will not be able to use them at all.[4] 
+
+CreateVideoOverlay(); and DeleteVideoOverlay(); are self explanitory. UpdateVideoOverlay(); is actually not used by 
+any DisplayDriver at this point, so the implementation of this method will be empty. RecreateVideoOverlay(); is 
+used to resize a current Video Overlay or to change the current color space of a Video Overlay. 
+
+All of these functions will be highly hardware specific and the functionality is complex. You should refer to 
+actual driver implementations of these methods if you wish to understand how they work.[5]
+
+\section sec_gfx_6 Hardware Cursor
+
+Supporting the hardware cursor can be a bit tricky, because you have to convert the syllable cursor format into
+the native hardware format. In general these methods need to be implemented:
+
+\code
+void Fire::SetCursorBitmap( os::mouse_ptr_mode eMode, const os::IPoint& cHotSpot, const void* pRaster, int nWidth, int nHeight );
+void Fire::MouseOn();
+void Fire::MouseOff();
+void Fire::SetMousePos( os::IPoint cNewPos );
+bool Fire::IntersectWithMouse( const os::IRect& cRect );
+\endcode
+
+IntersectWithMouse() returns false in all drivers and what MouseOn(), MouseOff(), SetMousePos() do should be obvious.
+SetCursorBitmap() is the most difficult method. At the moment Syllable only supports mono cursors, so eMode will 
+be MPTR_MONO ( but you should fall back to software cursor if eMode is != MPTR_MONO ). pRaster is a pointer to a buffer
+with 8bit values. The values mean:
+
+\code
+0 - Transparent
+1 - Black
+2 - Black
+3 - White
+\endcode
+
+You should probably look into the drivers that implement hardware cursors to understand everything.[6]
+
+\section sec_gfx_7 Footnotes
+
+[1]: SrvBitmap contains a public member called m_bVideoMem which is true if the SrvBitmap exists within the video framebuffer.
+
+[2]: E.g:
+if( pcBitMap->m_bVideoMem == false )
+{   return( DisplayDriver::FillRect( pcBitMap, cRect, sColor ) );
+}
+
+[3]: The DisplayDriver class now also supports MMX accelerated functions on hardware which supports MMX. This generally provides quite fast software rendering on most systems. 
+
+[4]: Users can instead use the slower Bitmap rendering output provided by the Media Framework.
+
+[5]: At the time of writing the nVidia, Mach64 and SiS drivers implement Video Overlays.
+
+[6]: At the time of writing the Mach64 and SiS drivers implement Hardware Cursors.
+
+*/
+
+
+
+
+
+
+
 
