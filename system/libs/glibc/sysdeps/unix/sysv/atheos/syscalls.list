@@ -86,7 +86,9 @@ delete_node_monitor	EXTRA	delete_node_monitor	1	__delete_node_monitor	delete_nod
 set_app_server_port	EXTRA	set_app_server_port	1	__set_app_server_port	set_app_server_port
 get_app_server_port	EXTRA	get_app_server_port	0	__get_app_server_port	get_app_server_port
 
-set_strace_level	EXTRA	set_strace_level	2	__set_strace_level	set_strace_level
+strace	EXTRA	strace	3	__strace	strace
+strace_exclude	EXTRA	strace_exclude	2	__strace_exclude	strace_exclude
+strace_include	EXTRA	strace_include	2	__strace_include	strace_include
 
 suspend_thread		EXTRA	suspend_thread		1	__suspend_thread	suspend_thread
 resume_thread		EXTRA	resume_thread		1	__resume_thread		resume_thread

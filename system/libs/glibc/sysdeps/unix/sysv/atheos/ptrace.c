@@ -29,10 +29,6 @@ extern long int __syscall_ptrace (int, pid_t, void *, void *);
 long int
 ptrace (enum __ptrace_request request, ...)
 {
-  dbprintf( "ptrace() not implemented\n" );
-  errno = ENOSYS;
-  return( -1 );
-#if 0
   long int res, ret;
   va_list ap;
   pid_t pid;
@@ -55,5 +51,4 @@ ptrace (enum __ptrace_request request, ...)
     }
 
   return res;
-#endif
 }
