@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999  Kurt Skauen
+ *  Copyright (C) 2005  The Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -41,6 +42,9 @@ public:
     void MoveTo( const Point& cNewPos );
   
 private:
+    Sprite& operator=( const Sprite& );
+    Sprite( const Sprite& );
+
     uint32 m_nHandle;
     Point m_cPosition;
 };

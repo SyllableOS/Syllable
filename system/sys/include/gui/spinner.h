@@ -1,6 +1,6 @@
 /*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
- *  Copyright (C) 2003 - 2004 Syllable Team
+ *  Copyright (C) 2003 - 2005 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -87,12 +87,22 @@ public:
     virtual void  KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
     virtual void  KeyUp( const char* pzString, const char* pzRawString, uint32 nQualifiers );
 
+private:
+    virtual void	__SP_reserved1__();
+    virtual void	__SP_reserved2__();
+    virtual void	__SP_reserved3__();
+    virtual void	__SP_reserved4__();
+    virtual void	__SP_reserved5__();
+
 protected:
     virtual String	FormatString( double vValue );
   
 private:
+    Spinner& operator=( const Spinner& );
+    Spinner( const Spinner& );
+
     void UpdateEditBox();
-    
+
     class Private;
     Private *m;    
 };

@@ -1,6 +1,6 @@
 /*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
- *  Copyright (C) 2003 - 2004 Syllable Team
+ *  Copyright (C) 2003 - 2005 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -87,12 +87,11 @@ public:
     void		GetLimitLabels( String* pcMinLabel, String* pcMaxLabel );
     
     virtual void	SetSteps( float vSmall, float vBig );
-    virtual void	GetSteps( float* pvSmall, float* pvBig ) const ;
+    virtual void	GetSteps( float* pvSmall, float* pvBig ) const;
 
     virtual void	SetMinMax( float vMin, float vMax );
     
-      // From Control:
-
+    // From Control:
     virtual void PostValueChange( const Variant& cNewValue );
     virtual void EnableStatusChanged( bool bIsEnabled );
     
@@ -101,8 +100,7 @@ public:
 //    virtual void	SetCurValue( float nValue, bool bInvoke );
 //    virtual float	GetCurValue() const;
 
-      //	From View
-
+    //	From View:
     virtual void  AttachedToWindow();
     virtual void  MouseMove( const Point& cNewPos, int nCode, uint32 nButtons, Message* pcData );
     virtual void  MouseDown( const Point& cPosition, uint32 nButtons );
@@ -114,6 +112,16 @@ public:
    	virtual void Activated( bool bIsActive );
 
 private:
+    virtual void	__SL_reserved1__();
+    virtual void	__SL_reserved2__();
+    virtual void	__SL_reserved3__();
+    virtual void	__SL_reserved4__();
+    virtual void	__SL_reserved5__();
+
+private:
+    Slider& operator=( const Slider& );
+    Slider( const Slider& );
+
     void _RefreshDisplay();
 
 	class Private;
@@ -123,5 +131,3 @@ private:
 }
 
 #endif	// __F_GUI_SLIDER_H__
-
-

@@ -1,6 +1,6 @@
 /*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
- *  Copyright (C) 2003 - 2004 Syllable Team
+ *  Copyright (C) 2003 - 2005 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -31,13 +31,7 @@ namespace os
 #if 0
 }
 #endif // Fool Emacs auto-indent
-/*
-enum
-{
-    O_HORIZONTAL,
-    O_VERTICAL
-};
-*/
+
 enum	{ SB_MINSIZE = 12 };
 
 /** 
@@ -59,15 +53,13 @@ public:
     View* GetScrollTarget( void );
 
 
-      // From Control:
-
+    // From Control:
     virtual void PostValueChange( const Variant& cNewValue );
     virtual void LabelChanged( const String& cNewLabel );
     virtual void EnableStatusChanged( bool bIsEnabled );
     virtual bool Invoked( Message* pcMessage );
     
-      // From View
-
+    // From View:
     virtual void	FrameSized( const Point& cDelta );
     
     virtual void	MouseMove( const Point& cNewPos, int nCode, uint32 nButtons, Message* pcData );
@@ -83,8 +75,7 @@ public:
 
     virtual void TimerTick( int nID );
     
-      // From ScrollBar:
-
+    // From ScrollBar:
     void	SetSteps( float vSmall, float vBig );
     void	GetSteps( float* pvSmall, float* pvBig ) const;
 
@@ -95,6 +86,16 @@ public:
 
 
 private:
+    virtual void	__SB_reserved1__();
+    virtual void	__SB_reserved2__();
+    virtual void	__SB_reserved3__();
+    virtual void	__SB_reserved4__();
+    virtual void	__SB_reserved5__();
+
+private:
+    ScrollBar& operator=( const ScrollBar& );
+    ScrollBar( const ScrollBar& );
+
     Rect	GetKnobFrame() const;
     float	_PosToVal( Point cPos ) const;
 
@@ -104,4 +105,4 @@ private:
 
 }
 
-#endif	// __F_GUI_SLIDER_H__
+#endif	// __F_GUI_SCROLLBAR_H__

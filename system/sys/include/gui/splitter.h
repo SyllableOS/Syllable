@@ -1,6 +1,6 @@
 /*  Splitter class
  *  Copyright (C) 2002  Sebastien Keim
- *  Copyright (C) 2003 - 2004  Syllable Team
+ *  Copyright (C) 2003 - 2005  Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -17,7 +17,6 @@
  *  Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
  *  MA 02111-1307, USA
  */
-
 
 #ifndef	__F_GUI_SPLITTER_H__
 #define	__F_GUI_SPLITTER_H__
@@ -82,9 +81,9 @@ public:
 	void SetSplitLimits(float fMinSize1=0, float fMinSize2=0);
 	void SetOrientation(os::orientation eOrientation);
 
-	View* SeparatorView();
-	float GetSplitPosition();
-	float GetSeparatorWidth();
+	View* SeparatorView() const;
+	float GetSplitPosition() const;
+	float GetSeparatorWidth() const;
 	void  SetSeparatorWidth(float fWidth);
 
 	void AdjustLayout();
@@ -99,8 +98,18 @@ public:
 	virtual void FrameSized(const Point& cDelta);
 
 	virtual os::Point GetPreferredSize(bool bLargest) const;
-  
+
 private:
+    virtual void	__SS_reserved1__();
+    virtual void	__SS_reserved2__();
+    virtual void	__SS_reserved3__();
+    virtual void	__SS_reserved4__();
+    virtual void	__SS_reserved5__();
+
+private:
+    Splitter& operator=( const Splitter& );
+    Splitter( const Splitter& );
+
 	void StartTracking(Point position); 
 	friend class os_priv::SplitterSeparator;
 
@@ -111,4 +120,3 @@ private:
 } //namespace os
 
 #endif //ndef __F_GUI_SPLITTER_H__
-

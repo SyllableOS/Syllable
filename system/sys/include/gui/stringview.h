@@ -1,6 +1,6 @@
 /*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
- *  Copyright (C) 2003 Syllable Team
+ *  Copyright (C) 2003 - 2005 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -33,8 +33,8 @@ namespace os
 /** 
  * \ingroup gui
  * \par Description:
- *
- * \sa
+ * Display a non-editable text string (text label)-
+ * \sa TextView
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
@@ -54,8 +54,7 @@ public:
 
     virtual void  Paint( const Rect& cUpdateRect );
 
-      // From StringView:
-
+    // From StringView:
     void	 SetString( const String& cString );
     const String& GetString( void ) const;
 
@@ -64,6 +63,16 @@ public:
     virtual void AttachedToWindow();
 
 private:
+    virtual void	__SV_reserved1__();
+    virtual void	__SV_reserved2__();
+    virtual void	__SV_reserved3__();
+    virtual void	__SV_reserved4__();
+    virtual void	__SV_reserved5__();
+
+private:
+    StringView& operator=( const StringView& );
+    StringView( const StringView& );
+
 	class Private;
 	Private* m;
 };
@@ -71,5 +80,3 @@ private:
 }
 
 #endif	//	__F_GUI_STRINGVIEW_H__
-
-
