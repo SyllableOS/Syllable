@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.5.1
+# Version 0.5.2
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -49,104 +49,6 @@ else
 	ENV['ATHEOS_LIB_PATH']		= File.join @workDir, 'libs'
 	ENV['BUILD_TOOLS']			= File.join @workDir, 'build-tools'
 	ENV['DIST_DIR']				= @distroRoot
-end
-
-
-# Main function
-
-arg1, arg2 = ARGV[0], ARGV[1]
-
-case arg1
-when '-v', '--version'
-	puts 'Syllable Build System 0.5.1',
-		'Copyright (c) 2002-2004 Kaj de Vos',
-		'License: GPL 2'
-when '?', '-?', '-h', '-help', '--help'
-	puts 'Usage: build [<command>] [<module> | <profile> | <distribution> | <log>]',
-		'<command>:',
-		'  -h, --help,   Show this help information',
-		'    -help, ?, -?',
-		'  -v, --version Show version information',
-		'  scrub         Delete CVS control files recursively from the current directory',
-		'  prepare       Initialize system distribution tree',
-		'  get           Fetch and patch sources',
-		'  patch         Patch sources',
-		'  distclean',
-		'  clean',
-		'  configure',
-		'  make',
-		'  test',
-		'  install       (Run as super-user)',
-		'  uninstall     (Run as super-user)',
-		'  distro        Build a distribution package or a system distribution',
-		'  profile       List a profile',
-		'  recipe        List a recipe',
-		'  log           Show the last log',
-		'<module>:       Package subdirectory',
-		'<profile>:      Profile name',
-		'  last          Last used profile',
-		'  failures      Profile for last failures',
-		'<distribution>: Distribution package ((un)install command only)',
-		'<log>:          Log name',
-		'  summary       Summarized log',
-		'  failures      Log of failed modules'
-when 'profile'	then puts loadProfile arg2
-when 'recipe'	then puts loadRecipe arg2
-when 'log'		then print IO.readlines(File.join(@logsPath, arg2 ? 'last-' + arg2 : 'last-stdout'))
-else
-	openLogs
-
-	if arg1 == 'scrub'
-		deleteCVSData
-	else
-		profile = loadProfile target = arg2 ? arg2 : arg1 ? arg1 : 'default'
-
-		save profile, File.join(@profilesPath, 'last') if profile  # Not a single module
-
-		if @systemBuild
-			logHeader 'Temporarily replacing system headers'
-			File.delete '/ainc' if exists? '/ainc'
-			action "ln -s #{File.join @workDir, 'sys/include'} /ainc"
-
-			prepare target unless exists? @distroRoot
-		end
-
-		case arg1
-		when 'prepare'		then prepare arg2
-		when 'get'			then get arg2
-		when 'patch'		then patch arg2
-		when 'distclean'	then distclean arg2
-		when 'clean'		then clean arg2
-		when 'configure'	then configure arg2
-		when 'make'			then make arg2
-		when 'test'			then test arg2
-		when 'install'		then install arg2
-		when 'uninstall'	then uninstall arg2
-		when 'distro'		then makeDistro arg2
-		else
-			if arg2
-				logError 'Unrecognized command'
-				exit
-			else
-				build target
-			end
-		end
-
-		if profile  # Not a single module
-			save ['modules'] + @failures.collect {|line| "\t" + line},
-				File.join(@profilesPath, 'failures')
-		end
-
-		if @systemBuild
-			logHeader 'Restoring system headers'
-			File.delete '/ainc'
-			action 'ln -s /system/include /ainc'
-		end
-
-		action 'sync'
-	end
-
-	closeLogs
 end
 
 
@@ -1049,4 +951,102 @@ end
 def logFailure target
 	@failLog	<< target + "\n"
 	@failures	<< target
+end
+
+
+# Main function
+
+arg1, arg2 = ARGV[0], ARGV[1]
+
+case arg1
+when '-v', '--version'
+	puts 'Syllable Build System 0.5.2',
+		'Copyright (c) 2002-2004 Kaj de Vos',
+		'License: GPL 2'
+when '?', '-?', '-h', '-help', '--help'
+	puts 'Usage: build [<command>] [<module> | <profile> | <distribution> | <log>]',
+		'<command>:',
+		'  -h, --help,   Show this help information',
+		'    -help, ?, -?',
+		'  -v, --version Show version information',
+		'  scrub         Delete CVS control files recursively from the current directory',
+		'  prepare       Initialize system distribution tree',
+		'  get           Fetch and patch sources',
+		'  patch         Patch sources',
+		'  distclean',
+		'  clean',
+		'  configure',
+		'  make',
+		'  test',
+		'  install       (Run as super-user)',
+		'  uninstall     (Run as super-user)',
+		'  distro        Build a distribution package or a system distribution',
+		'  profile       List a profile',
+		'  recipe        List a recipe',
+		'  log           Show the last log',
+		'<module>:       Package subdirectory',
+		'<profile>:      Profile name',
+		'  last          Last used profile',
+		'  failures      Profile for last failures',
+		'<distribution>: Distribution package ((un)install command only)',
+		'<log>:          Log name',
+		'  summary       Summarized log',
+		'  failures      Log of failed modules'
+when 'profile'	then puts loadProfile arg2
+when 'recipe'	then puts loadRecipe arg2
+when 'log'		then print IO.readlines(File.join(@logsPath, arg2 ? 'last-' + arg2 : 'last-stdout'))
+else
+	openLogs
+
+	if arg1 == 'scrub'
+		deleteCVSData
+	else
+		profile = loadProfile target = arg2 ? arg2 : arg1 ? arg1 : 'default'
+
+		save profile, File.join(@profilesPath, 'last') if profile  # Not a single module
+
+		if @systemBuild
+			logHeader 'Temporarily replacing system headers'
+			File.delete '/ainc' if exists? '/ainc'
+			action "ln -s #{File.join @workDir, 'sys/include'} /ainc"
+
+			prepare target unless exists? @distroRoot
+		end
+
+		case arg1
+		when 'prepare'		then prepare arg2
+		when 'get'			then get arg2
+		when 'patch'		then patch arg2
+		when 'distclean'	then distclean arg2
+		when 'clean'		then clean arg2
+		when 'configure'	then configure arg2
+		when 'make'			then make arg2
+		when 'test'			then test arg2
+		when 'install'		then install arg2
+		when 'uninstall'	then uninstall arg2
+		when 'distro'		then makeDistro arg2
+		else
+			if arg2
+				logError 'Unrecognized command'
+				exit
+			else
+				build target
+			end
+		end
+
+		if profile  # Not a single module
+			save ['modules'] + @failures.collect {|line| "\t" + line},
+				File.join(@profilesPath, 'failures')
+		end
+
+		if @systemBuild
+			logHeader 'Restoring system headers'
+			File.delete '/ainc'
+			action 'ln -s /system/include /ainc'
+		end
+
+		action 'sync'
+	end
+
+	closeLogs
 end
