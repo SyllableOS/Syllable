@@ -1,3 +1,8 @@
+* Aug 7 2003, Kristian Van Der Vliet *
+
+Patch from William Rose for the nVidia driver which fixes problems when the driver is used
+on some PC's with the new PCI module.
+
 * Jul 19 2003, Kristian Van Der Vliet *
 
 More Matrox driver changes.

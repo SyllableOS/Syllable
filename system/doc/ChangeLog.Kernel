@@ -1,3 +1,9 @@
+* Aug 7 2003, Kristian Van Der Vliet *
+
+Applied the GNU Indent styleguide script to all of the kernel source files and applied
+a patch to the Makefile which fixes subsequent problems with generating the
+kernel.exports.c file with the GNU Indent changes applied.
+
 * Jul 16 2003, Kristian Van Der Vliet *
 
 Patches from Arno Klenke <arno_klenke@yahoo.de>
