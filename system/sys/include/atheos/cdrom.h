@@ -50,6 +50,10 @@ extern "C" {
 #define CD_READ_TOC			MKCDIOCTL(0x3001)	/* Read the Table of Contents */
 #define CD_READ_TOC_ENTRY	MKCDIOCTL(0x3002)	/* Read an entry of the Table of Contents */
 
+/* CD-DA */
+#define CD_READ_CDDA		MKCDIOCTL(0x4001)	/* Toggle CD-DA read mode on */
+#define CD_READ_DATA		MKCDIOCTL(0x4002)	/* Toggle CD-DA read mode off (E.g. normal data reading) */
+
 /* Disc specific */
 
 /* The leadout track is always 0xAA, regardless of # of tracks on disc */
