@@ -1,3 +1,6 @@
+* June 17 2003, Rick Caudill *
+Added some of the headers for libDesktop.  You can find them in system/libs/desktop
+
 * June 14 2003, Kaj de Vos *
 
 Imported tar 1.13.25 and coreutils 5.0.
