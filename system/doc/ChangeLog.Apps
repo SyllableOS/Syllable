@@ -1,3 +1,9 @@
+* February 6th, Henrik Isaksson
+
+	- BZoom
+		o Applied patch from Jake to fix problems with modes where bytes per line is
+		  not equal to width * depth.
+
 * January 29th 2005, Kristian Van Der Vliet
 
 	- Total re-write of AView.  AView 0.4 has been removed and replaced with AView 1.1,
