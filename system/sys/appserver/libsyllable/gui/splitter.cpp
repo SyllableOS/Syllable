@@ -232,14 +232,16 @@ static uint8 g_anMouseImgV[]=
 
 class Splitter::Private
 {
-      public:
-	View * m_pView1;
-	View *m_pView2;
+    public:
+	View*	m_pView1;
+	View*	m_pView2;
+	float m_vLimit1;
+	float m_vLimit2;
 	bool m_Tracking;
 	Point m_OldPosition;
-	float m_fLimit1;
-	float m_fLimit2;
 	float m_SeparatorWidth;
+
+	float m_vSplitPos;
 
 	orientation m_eOrientation;
 	os_priv::SplitterSeparator * m_pSeparator;
@@ -268,12 +270,12 @@ Splitter::Splitter( const Rect & cFrame, const std::string & cTitle, View * pVie
 	m = new Private;
 	m->m_pView1 = pView1;
 	m->m_pView2 = pView2;
-	m->m_fLimit1 = 0.0;
-	m->m_fLimit2 = 0.0;
+	m->m_vLimit1 = 0.0;
+	m->m_vLimit2 = 0.0;
+	m->m_vSplitPos = 0.5;
 
 	m->m_SeparatorWidth = SEPARATOR_WIDTH;
 	m->m_Tracking = false;
-	m->m_eOrientation = eOrientation;
 
 	// place the first view
 	m->m_pView1->SetResizeMask( CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT | CF_FOLLOW_TOP );
@@ -289,16 +291,18 @@ Splitter::Splitter( const Rect & cFrame, const std::string & cTitle, View * pVie
 	m->m_pView2->SetResizeMask( CF_FOLLOW_ALL );
 	AddChild( m->m_pView2 );
 
+	SetOrientation( eOrientation );
+
 	AdjustLayout();
 }
 
 /** Refresh the layout of the splitter.
 * 
 * \par Description:
-* This method refresh the subviews position. It try to place to keep
+* This method refreshes the subviews' positions. It tries to keep
 * the relative sizes of the subviews when the separator position is computed.
 * \par Notes:
-* You should call this method when you change the subviews frame.
+* You should call this method when you change the subviews' frames.
 * \par Warning:
 * \param  
 * \return
@@ -312,50 +316,40 @@ void Splitter::AdjustLayout()
 	Rect r = GetBounds();
 	Rect f1 = m->m_pView1->GetFrame();
 	Rect f2 = m->m_pView2->GetFrame();
+	Rect rs;
 
-	float k = 0.5;
+	float k = m->m_vSplitPos;
 
-	if( m->m_eOrientation == HORIZONTAL )
+	if( m->m_eOrientation == VERTICAL )
 	{
-		if( ( f1.bottom - f1.top ) + ( f2.bottom - f2.top ) )
-		{
-			k = ( r.bottom - r.top - m->m_SeparatorWidth ) / ( ( f1.bottom - f1.top ) + ( f2.bottom - f2.top ) );
-		}
-		float height = ( f1.bottom - f1.top ) * k;
+		float	vLimit1 = max( m->m_vLimit1, m->m_pView1->GetPreferredSize( false ).y );
+		float	vLimit2 = max( m->m_vLimit2, m->m_pView2->GetPreferredSize( false ).y );
+		float	vMinSpace = vLimit1 + vLimit2 + m->m_SeparatorWidth;
+		float	vFreeSpace = r.Height() - vMinSpace;
+		float	vSize1 = vLimit1 + k * vFreeSpace;
 
-		// place the first view
-		f1.top = r.top;
-		f1 = Rect( r.left, r.top, r.right, r.top + height );
-		m->m_pView1->SetFrame( f1 );
-
-		//place the separator
-		Rect rs = Rect( r.left, f1.bottom + 1, r.right, f1.bottom + m->m_SeparatorWidth );
-
-		m->m_pSeparator->SetFrame( rs );
-
-		// place the second view
+		f1 = Rect( r.left, r.top, r.right, r.top + vSize1 );
+		rs = Rect( r.left, f1.bottom + 1, r.right, f1.bottom + m->m_SeparatorWidth );
 		f2 = Rect( r.left, rs.bottom + 1, r.right, r.bottom );
+
+		m->m_pView1->SetFrame( f1 );
+		m->m_pSeparator->SetFrame( rs );
 		m->m_pView2->SetFrame( f2 );
 	}
 	else
 	{
-		if( ( f1.right - f1.left ) + ( f2.right - f2.left ) )
-		{
-			k = ( r.right - r.left - m->m_SeparatorWidth ) / ( ( f1.right - f1.left ) + ( f2.right - f2.left ) );
-		}
-		// place the first view
-		float width = ( f1.right - f1.left ) * k;
+		float	vLimit1 = max( m->m_vLimit1, m->m_pView1->GetPreferredSize( false ).x );
+		float	vLimit2 = max( m->m_vLimit2, m->m_pView2->GetPreferredSize( false ).x );
+		float	vMinSpace = vLimit1 + vLimit2 + m->m_SeparatorWidth;
+		float	vFreeSpace = r.Width() - vMinSpace;
+		float	vSize1 = vLimit1 + k * vFreeSpace;
 
-		f1 = Rect( r.left, r.top, r.left + width, r.bottom );
-		m->m_pView1->SetFrame( f1 );
-
-		//place the separator
-		Rect rs = Rect( f1.right + 1, r.top, f1.right + m->m_SeparatorWidth, r.bottom );
-
-		m->m_pSeparator->SetFrame( rs );
-
-		// place the second view
+		f1 = Rect( r.left, r.top, r.left + vSize1, r.bottom );
+		rs = Rect( f1.right + 1, r.top, f1.right + m->m_SeparatorWidth, r.bottom );
 		f2 = Rect( rs.right + 1, r.top, r.right, r.bottom );
+
+		m->m_pView1->SetFrame( f1 );
+		m->m_pSeparator->SetFrame( rs );
 		m->m_pView2->SetFrame( f2 );
 	}
 }
@@ -382,13 +376,16 @@ void Splitter::SplitBy( float fValue )
 	Rect f1 = m->m_pView1->GetFrame();
 	Rect f2 = m->m_pView2->GetFrame();
 
-	if( m->m_eOrientation == HORIZONTAL )
+	if( m->m_eOrientation == VERTICAL )
 	{
 		if( fValue < 0 )
 		{
-			if( f1.bottom - f1.top + fValue < m->m_fLimit1 )
+			float	vLimit = m->m_pView1->GetPreferredSize( false ).y;
+			vLimit = max( m->m_vLimit1, vLimit );
+			
+			if( f1.bottom - f1.top + fValue < vLimit )
 			{
-				fValue = m->m_fLimit1 - f1.bottom + f1.top;
+				fValue = vLimit - f1.bottom + f1.top;
 				m->m_Tracking = false;
 			}
 			m->m_pView1->ResizeBy( Point( 0, fValue ) );
@@ -398,9 +395,12 @@ void Splitter::SplitBy( float fValue )
 		}
 		else if( fValue > 0 )
 		{
-			if( f2.bottom - f2.top - fValue < m->m_fLimit2 )
+			float	vLimit = m->m_pView2->GetPreferredSize( false ).y;
+			vLimit = max( m->m_vLimit2, vLimit );
+			
+			if( f2.bottom - f2.top - fValue < vLimit )
 			{
-				fValue = -m->m_fLimit2 + f2.bottom - f2.top;
+				fValue = -vLimit + f2.bottom - f2.top;
 				m->m_Tracking = false;
 			}
 			f2.top += fValue;
@@ -408,14 +408,21 @@ void Splitter::SplitBy( float fValue )
 			m->m_pSeparator->MoveBy( Point( 0, fValue ) );
 			m->m_pView1->ResizeBy( Point( 0, fValue ) );
 		}
+
+		float	vLimit1 = max( m->m_vLimit1, m->m_pView1->GetPreferredSize( false ).y );
+		float	vLimit2 = max( m->m_vLimit2, m->m_pView2->GetPreferredSize( false ).y );
+		m->m_vSplitPos = (f1.Height() - vLimit1) / (GetBounds().Height() - vLimit1 - vLimit2 - m->m_SeparatorWidth);
 	}
 	else
 	{
 		if( fValue < 0 )
 		{
-			if( f1.right - f1.left + fValue < m->m_fLimit1 )
+			float	vLimit = m->m_pView1->GetPreferredSize( false ).x;
+			vLimit = max( m->m_vLimit1, vLimit );
+
+			if( f1.right - f1.left + fValue < vLimit )
 			{
-				fValue = m->m_fLimit1 - f1.right + f1.left;
+				fValue = vLimit - f1.right + f1.left;
 				m->m_Tracking = false;
 			}
 			m->m_pView1->ResizeBy( Point( fValue, 0 ) );
@@ -425,9 +432,12 @@ void Splitter::SplitBy( float fValue )
 		}
 		else if( fValue > 0 )
 		{
-			if( f2.right - f2.left - fValue < m->m_fLimit2 )
+			float	vLimit = m->m_pView2->GetPreferredSize( false ).x;
+			vLimit = max( m->m_vLimit2, vLimit );
+			
+			if( f2.right - f2.left - fValue < vLimit )
 			{
-				fValue = -m->m_fLimit2 + f2.right - f2.left;
+				fValue = -vLimit + f2.right - f2.left;
 				m->m_Tracking = false;
 			}
 			f2.left += fValue;
@@ -435,6 +445,10 @@ void Splitter::SplitBy( float fValue )
 			m->m_pSeparator->MoveBy( Point( fValue, 0 ) );
 			m->m_pView1->ResizeBy( Point( fValue, 0 ) );
 		}
+
+		float	vLimit1 = max( m->m_vLimit1, m->m_pView1->GetPreferredSize( false ).x );
+		float	vLimit2 = max( m->m_vLimit2, m->m_pView2->GetPreferredSize( false ).x );
+		m->m_vSplitPos = (f1.Width() - vLimit1) / (GetBounds().Width() - vLimit1 - vLimit2 - m->m_SeparatorWidth);
 	}
 	Flush();
 }
@@ -455,7 +469,7 @@ void Splitter::SplitTo( float fValue )
 {
 	Rect f1 = m->m_pView1->GetFrame();
 
-	if( m->m_eOrientation == HORIZONTAL )
+	if( m->m_eOrientation == VERTICAL )
 		SplitBy( fValue - f1.bottom + f1.top );
 	else
 		SplitBy( fValue - f1.right + f1.left );
@@ -480,16 +494,16 @@ void Splitter::SetOrientation( orientation eOrientation )
 	if( eOrientation != m->m_eOrientation )
 	{
 		m->m_eOrientation = eOrientation;
-		m->m_pSeparator->SetOrientation( eOrientation );
 
 		Rect f1 = m->m_pView1->GetFrame();
 		Rect f2 = m->m_pView2->GetFrame();
 
-		if( eOrientation == VERTICAL )
+		if( eOrientation == HORIZONTAL )
 		{
 			f1.right = f1.left + f1.bottom - f1.top;
 			f2.right = f2.left + f2.bottom - f2.top;
 			m->m_pView1->SetResizeMask( CF_FOLLOW_LEFT | CF_FOLLOW_BOTTOM | CF_FOLLOW_TOP );
+			m->m_pSeparator->SetOrientation( VERTICAL );
 			m->m_pSeparator->SetResizeMask( CF_FOLLOW_LEFT | CF_FOLLOW_BOTTOM | CF_FOLLOW_TOP );
 		}
 		else
@@ -497,30 +511,13 @@ void Splitter::SetOrientation( orientation eOrientation )
 			f1.bottom = f1.top + f1.right - f1.left;
 			f2.bottom = f2.top + f2.right - f2.left;
 			m->m_pView1->SetResizeMask( CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT | CF_FOLLOW_TOP );
+			m->m_pSeparator->SetOrientation( HORIZONTAL );
 			m->m_pSeparator->SetResizeMask( CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT | CF_FOLLOW_TOP );
 		}
 		m->m_pView1->SetFrame( f1 );
 		m->m_pView2->SetFrame( f2 );
 		AdjustLayout();
 	}
-}
-
-/** Set limits in the position of the split bar
-* \par Description:
-* By default the split bar can be moved to the boders of the splitter.
-* this method allow to limit the range of the split bar moves.
-* \par Notes: 
-* \par Warning:
-* This limits are only used for user interaction. They are never checked
-* when you change the layout programaticaly.
-* \param nMinSize1 minimal size that can take the top(left) view
-* \param nMinSize2 minimal size that can take the bottom(right) view
-* \author Sebastien Keim (s.keim@laposte.net)
-*/
-void Splitter::SetSplitLimits( float fMinSize1 = 0, float fMinSize2 = 0 )
-{
-	m->m_fLimit1 = fMinSize1;
-	m->m_fLimit2 = fMinSize2;
 }
 
 /** Get the separator view.
@@ -557,7 +554,7 @@ float Splitter::GetSplitPosition()
 {
 	Rect f1 = m->m_pView1->GetFrame();
 
-	if( m->m_eOrientation == HORIZONTAL )
+	if( m->m_eOrientation == VERTICAL )
 		return f1.bottom - f1.top;
 	else
 		return f1.right - f1.left;
@@ -579,6 +576,23 @@ float Splitter::GetSeparatorWidth()
 	return m->m_SeparatorWidth;
 }
 
+/** Set limits in the position of the split bar
+* \par Description:
+* By default the split bar can be moved to the boders of the splitter.
+* this method allow to limit the range of the split bar moves.
+* \par Notes: 
+* \par Warning:
+* This limits are only used for user interaction. They are never checked
+* when you change the layout programaticaly.
+* \param nMinSize1 minimal size that can take the top(left) view
+* \param nMinSize2 minimal size that can take the bottom(right) view
+* \author Sebastien Keim (s.keim@laposte.net)
+*/
+void Splitter::SetSplitLimits( float fMinSize1 = 0, float fMinSize2 = 0 )
+{
+	m->m_vLimit1 = fMinSize1;
+	m->m_vLimit2 = fMinSize2;
+}
 
 /** Set the separator width.
 *
@@ -615,26 +629,9 @@ void Splitter::SplitChanged()
 {
 }
 
-
-
 void Splitter::FrameSized( const Point & cDelta )
 {
-	Rect r = GetBounds();
-	Rect f2 = m->m_pView2->GetFrame();
-	float d = 0;
-
-	if( m->m_eOrientation == HORIZONTAL )
-	{
-		d = r.bottom - f2.top;
-	}
-	else
-	{
-		d = r.right - f2.left;
-	}
-	if( d < 0 )
-	{
-		SplitBy( d );
-	}
+	AdjustLayout();
 	View::FrameSized( cDelta );
 }
 
@@ -666,7 +663,7 @@ void Splitter::MouseMove( const Point & cNewPos, int nCode, uint32 nButtons, Mes
 	{
 		float delta;
 
-		if( m->m_eOrientation == HORIZONTAL )
+		if( m->m_eOrientation == VERTICAL )
 			delta = cNewPos.y - m->m_OldPosition.y;
 		else
 			delta = cNewPos.x - m->m_OldPosition.x;
@@ -689,7 +686,7 @@ Point Splitter::GetPreferredSize( bool bLargest ) const
 	Point p1 = m->m_pView1->GetPreferredSize( bLargest );
 	Point p2 = m->m_pView2->GetPreferredSize( bLargest );
 
-	if( m->m_eOrientation == HORIZONTAL )
+	if( m->m_eOrientation == VERTICAL )
 		return Point( p1.x + p2.x, p1.y + p2.y + m->m_SeparatorWidth );
 	else
 		return Point( p1.x + p2.x + m->m_SeparatorWidth, p1.y + p2.y );
@@ -726,3 +723,7 @@ void Splitter::KeyDown( const char *pzString, const char *pzRawString, uint32 nQ
 	}
 	View::KeyDown( pzString, pzRawString, nQualifiers );
 }
+
+
+
+
