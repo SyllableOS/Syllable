@@ -5,7 +5,7 @@ authors
 	Kaj de Vos
 maintainers			Kaj de Vos
 status				broken
-warning				Hangs during configure!
+warning				Hangs during configure on Syllable!
 notes				AutoMake warns about bad substitution, and stage2/Makefile.in is not regenerated
 
 licenses			GPL
@@ -22,7 +22,10 @@ build-recommends	texinfo >= 4.0
 patch-config
 patch
 ;	autoreconf --force
-;	aclocal
+;	Makes it work on Linux:
+	aclocal
+;	Suffices on Linux:
+;	automake
 	automake Makefile
 	autoconf
 

@@ -1,4 +1,4 @@
-#! ruby
+#!/usr/bin/env ruby
 
 # Syllable Build System
 # Version 0.5.20
