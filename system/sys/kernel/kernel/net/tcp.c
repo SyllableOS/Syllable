@@ -71,10 +71,12 @@ void tcp_dump_packet( PacketBuf_s* psPkt )
     if ( psTCPHdr->tcp_code & TCPF_SYN )	strcat( zFlags, "S" );
     if ( psTCPHdr->tcp_code & TCPF_FIN )	strcat( zFlags, "F" );
   
+#if 0
     printk( "%s:%d -> %s:%d %ld:%ld W=%d O=%d %s\n",
 	    zSrcAddr, ntohs( psTCPHdr->tcp_sport ), zDstAddr, ntohs( psTCPHdr->tcp_dport ),
 	    ntohl( psTCPHdr->tcp_seq ), ntohl( psTCPHdr->tcp_ack ), ntohs( psTCPHdr->tcp_window ),
 	    psTCPHdr->tcp_offset, zFlags );
+#endif
 }
 
 static bool tcp_set_close_state( TCPCtrl_s* psTCPCtrl, bool bDead )
