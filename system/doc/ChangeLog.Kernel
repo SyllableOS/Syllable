@@ -1,3 +1,6 @@
+* August 4 2004, Kristian Van Der Vliet *
+
+Streamlined find_boot_dev() which doesn't need to be so complex with the new ATAPI stuff.
 
 ---- 0.5.3 Released -------------------------------------------------------------------
 
