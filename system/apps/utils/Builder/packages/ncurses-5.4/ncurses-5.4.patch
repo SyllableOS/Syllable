@@ -1,0 +1,24 @@
+--- ncurses-5.4/aclocal.m4.orig	2004-01-30 20:59:57.000000000 +0000
++++ ncurses-5.4/aclocal.m4	2005-03-28 02:26:57.000000000 +0000
+@@ -3667,6 +3667,9 @@
+ solaris*) #(vi
+ 	CPPFLAGS="$CPPFLAGS -D__EXTENSIONS__"
+ 	;;
++syllable*) #(vi
++	CPPFLAGS="$CPPFLAGS -D_XOPEN_SOURCE=500 -D_POSIX_C_SOURCE=199506L"
++	;;
+ *)
+ 	AC_CACHE_CHECK(if we should define _XOPEN_SOURCE,cf_cv_xopen_source,[
+ 	AC_TRY_COMPILE([#include <sys/types.h>],[
+--- ncurses-5.4/configure.orig	2004-02-01 01:03:43.000000000 +0000
++++ ncurses-5.4/configure	2005-03-28 02:27:05.000000000 +0000
+@@ -6305,6 +6305,9 @@
+ solaris*) #(vi
+ 	CPPFLAGS="$CPPFLAGS -D__EXTENSIONS__"
+ 	;;
++syllable*) #(vi
++	CPPFLAGS="$CPPFLAGS -D_XOPEN_SOURCE=500 -D_POSIX_C_SOURCE=199506L"
++	;;
+ *)
+ 	echo "$as_me:6309: checking if we should define _XOPEN_SOURCE" >&5
+ echo $ECHO_N "checking if we should define _XOPEN_SOURCE... $ECHO_C" >&6
