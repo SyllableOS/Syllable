@@ -24,7 +24,7 @@
 #include <gui/bitmap.h>
 #include <gui/font.h>
 
-using namespace os;
+namespace os;
 
 class CheckMenu : public MenuItem
 {
