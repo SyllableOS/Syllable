@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+// Changes
+//
+// 1.0.1 : Vanders -:- Fixed a braindead-ism in get_mac_address() and setup_interface()
+//
 
 #include "interface.h"
 #include "dhcp.h"
@@ -38,10 +43,7 @@ extern DHCPSessionInfo_s* info;
 int get_mac_address( char* if_name )
 {
 	int if_socket;
-	int interface_count, current_interface;
 	struct ifreq sReq;
-	struct ifreq *sIFReqs = NULL;
-	struct ifconf sIFConf;
 
 	debug(INFO,__FUNCTION__,"looking up hardware address of interface %s\n",if_name);
 
@@ -52,50 +54,25 @@ int get_mac_address( char* if_name )
 		return( EINVAL );
 	}
 
-	// Get the number of adaptors.  We loop through them all until we
-	// find the one we want.
+	memset( &sReq, 0, sizeof( sReq ) );
+	strcpy( sReq.ifr_name, if_name );
 
-	interface_count = ioctl(if_socket, SIOCGIFCOUNT, NULL);
-	if( interface_count < 1 )
+	info->if_hwaddress = malloc(6);
+	if( info->if_hwaddress == NULL )
 	{
-		debug(PANIC,__FUNCTION__,"this computer does not have any network interfaces!\n");
+		debug(PANIC,__FUNCTION__,"unable to malloc space for hardware address\n");
+		close( if_socket );
+		return( ENOMEM );
+	}
+
+	if( ioctl(if_socket, SIOCGIFHWADDR, &sReq) < 0 )
+	{
+		debug( PANIC,__FUNCTION__,"failed to read HW address for interface %s\n",if_name);
+		close( if_socket );
 		return( EINVAL );
 	}
 
-	sIFReqs = (struct ifreq*)calloc(interface_count, sizeof(struct ifreq));
-
-	sIFConf.ifc_len = interface_count * sizeof(struct ifreq);
-	sIFConf.ifc_req = sIFReqs;
-
-	// Get the list of available network interfaces
-	ioctl(if_socket, SIOCGIFCONF, &sIFConf);
-
-	// Loop through every network interface until we find the one we want
-	for( current_interface=0; current_interface < interface_count; current_interface++)
-	{
-		memcpy(&sReq,&(sIFConf.ifc_req[current_interface]),sizeof(sReq));
-		ioctl(if_socket, SIOCGIFFLAGS, &sReq);
-
-		debug(INFO,__FUNCTION__,"checking interface %s\n",sReq.ifr_name);
-
-		if(!strcmp(sReq.ifr_name,if_name))
-		{
-			// Found it.  Now get the hardware address
-			info->if_hwaddress = malloc(6);
-			if( info->if_hwaddress == NULL )
-			{
-				debug(PANIC,__FUNCTION__,"unable to malloc space for hardware address\n");
-				close( if_socket );
-				return( ENOMEM );
-			}
-
-			ioctl(if_socket, SIOCGIFHWADDR, &sReq);
-			info->if_hwaddress = memcpy( info->if_hwaddress, sReq.ifr_hwaddr.sa_data,6);
-
-			// Stop looking
-			break;
-		}
-	}
+	info->if_hwaddress = memcpy( info->if_hwaddress, sReq.ifr_hwaddr.sa_data,6);
 
 	close( if_socket );
 
@@ -170,10 +147,8 @@ int bringup_interface( char* if_name )
 int setup_interface( void )
 {
 	int if_socket;
-	int interface_count, current_interface;
-	struct ifreq sReq;
-	struct ifreq *sIFReqs = NULL;
-	struct ifconf sIFConf;
+	struct ifreq sIFReq;
+	char* ip;
 
 	if_socket = socket(AF_INET,SOCK_STREAM,0);
 	if( if_socket < 0 )
@@ -182,72 +157,44 @@ int setup_interface( void )
 		return( EINVAL );
 	}
 
-	// Get the number of adaptors.  We loop through them all until we
-	// find the one we want.
+	ip = format_ip( info->yiaddr );
+	debug(INFO,__FUNCTION__,"setting if %s IP %s\n", info->if_name, ip);
+	free(ip);
 
-	interface_count = ioctl(if_socket, SIOCGIFCOUNT, NULL);
-	if( interface_count < 1 )
+	memset( &sIFReq, 0, sizeof( sIFReq ) );
+	strcpy( sIFReq.ifr_name, info->if_name );
+
+	// Set the IP address & netmask
+	memset( &sIFReq, 0, sizeof( sIFReq ) );
+	strcpy( sIFReq.ifr_name, info->if_name );
+	memcpy( &(((struct sockaddr_in*)&sIFReq.ifr_addr))->sin_addr, &info->yiaddr, 4 );
+
+	if ( ioctl( if_socket, SIOCSIFADDR, &sIFReq ) < 0 )
 	{
-		debug(PANIC,__FUNCTION__,"this computer does not have any network interfaces!\n");
+		ip = format_ip(info->yiaddr);
+
+		debug(PANIC,__FUNCTION__,"failed to set interface %s address %s\n",info->if_name, ip);
+		debug(PANIC,__FUNCTION__,"%s\n",strerror( errno ));
+
+		close( if_socket );
+		free(ip);
 		return( EINVAL );
 	}
-
-	sIFReqs = (struct ifreq*)calloc(interface_count, sizeof(struct ifreq));
-
-	sIFConf.ifc_len = interface_count * sizeof(struct ifreq);
-	sIFConf.ifc_req = sIFReqs;
-
-	// Get the list of available network interfaces
-	ioctl(if_socket, SIOCGIFCONF, &sIFConf);
-
-	// Loop through every network interface until we find the one we want
-	for( current_interface=0; current_interface < interface_count; current_interface++)
-	{
-		memcpy(&sReq,&(sIFConf.ifc_req[current_interface]),sizeof(sReq));
-		ioctl(if_socket, SIOCGIFFLAGS, &sReq);
-
-		debug(INFO,__FUNCTION__,"checking interface %s\n",sReq.ifr_name);
-
-		if(!strcmp(sReq.ifr_name,info->if_name))
-		{
-			struct ifreq sIFReq;
-
-			// Found it.  Now set the IP address & netmask
-			memset( &sIFReq, 0, sizeof( sIFReq ) );
-			strcpy( sIFReq.ifr_name, info->if_name );
-			memcpy( &(((struct sockaddr_in*)&sIFReq.ifr_addr))->sin_addr, &info->yiaddr, 4 );
-
-			if ( ioctl( if_socket, SIOCSIFADDR, &sIFReq ) < 0 )
-			{
-				char* ip = format_ip(info->yiaddr);
-
-				debug(PANIC,__FUNCTION__,"failed to set interface %s address %s\n",info->if_name, ip);
-				debug(PANIC,__FUNCTION__,"%s\n",strerror( errno ));
-
-				close( if_socket );
-				free(ip);
-				return( EINVAL );
-			}
     
-			memset( &sIFReq, 0, sizeof( sIFReq ) );
-			strcpy( sIFReq.ifr_name, info->if_name );
-			memcpy( &(((struct sockaddr_in*)&sIFReq.ifr_addr))->sin_addr, &info->subnetmask, 4 );
+	memset( &sIFReq, 0, sizeof( sIFReq ) );
+	strcpy( sIFReq.ifr_name, info->if_name );
+	memcpy( &(((struct sockaddr_in*)&sIFReq.ifr_addr))->sin_addr, &info->subnetmask, 4 );
 
-			if ( ioctl( if_socket, SIOCSIFNETMASK, &sIFReq ) < 0 )
-			{
-				char* mask = format_ip(info->subnetmask);
+	if ( ioctl( if_socket, SIOCSIFNETMASK, &sIFReq ) < 0 )
+	{
+		char* mask = format_ip(info->subnetmask);
 
-				debug(PANIC,__FUNCTION__,"failed to set interface %s netmask %s\n",info->if_name, mask);
-				debug(PANIC,__FUNCTION__,"%s\n",strerror( errno ));
+		debug(PANIC,__FUNCTION__,"failed to set interface %s netmask %s\n",info->if_name, mask);
+		debug(PANIC,__FUNCTION__,"%s\n",strerror( errno ));
 
-				close( if_socket );
-				free(mask);
-				return( EINVAL );
-			}
-
-			// Stop looking
-			break;
-		}
+		close( if_socket );
+		free(mask);
+		return( EINVAL );
 	}
 
 	// Add gateway routes, if we have any
