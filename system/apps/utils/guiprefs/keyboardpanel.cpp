@@ -219,7 +219,7 @@ void KeyboardPanel::UpdateResList()
     if ( pDir == NULL ) {
 	return;
     }
-    std::string cKeymap;
+    String cKeymap;
     Application::GetInstance()->GetKeyboardConfig( &cKeymap, NULL, NULL );
 
     m_pcKeymapList->Clear();
@@ -279,3 +279,4 @@ void KeyboardPanel::HandleMessage( Message* pcMessage )
 	    break;
     }
 }
+
