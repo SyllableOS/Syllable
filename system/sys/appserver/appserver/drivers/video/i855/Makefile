@@ -1,0 +1,38 @@
+COPTS   = -I$(TOP)/src $(shell freetype-config --cflags) -c -O2 -Wall
+
+DEVBIN = /system/drivers/appserver/video
+OBJS =	i855.o i855_video.o
+
+OBJDIR	:= objs
+OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
+
+
+#
+#	rules
+#
+
+$(OBJDIR)/%.o : %.c
+	$(CC) $(COPTS) $< -o $@
+
+$(OBJDIR)/%.o : %.cpp
+	$(CC) $(COPTS) $< -o $@
+
+
+all :	objs $(OBJDIR)/i855
+
+objs:
+	mkdir objs
+
+$(OBJDIR)/i855: $(OBJS)
+	gcc -plugin $(OBJS) -o $(OBJDIR)/i855 -lsyllable -lstdc++
+
+deps:
+
+install: $(OBJDIR)/i855
+	cp -f $(OBJDIR)/i855 $(DEVBIN)/i855
+
+dist: $(OBJDIR)/i855
+	cp -f $(OBJDIR)/i855 $(DIST_DIR)/atheos/sys/drivers/appserver/video/i855
+
+clean:
+	-rm $(OBJS) $(OBJDIR)/i855

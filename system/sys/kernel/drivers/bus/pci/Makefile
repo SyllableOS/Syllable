@@ -1,9 +1,9 @@
 
-CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
+CFLAGS   = -kernel -fno-PIC -c -O3 -Wall -fno-strict-aliasing -Wno-trigraphs -fno-common -D__ENABLE_DEBUG__ -Wstrict-prototypes -fomit-frame-pointer
 AFLAGS   = -c
 
 
-OBJS := pci.o
+OBJS := pci.o pci_irq_router.o
 
 
 OBJDIR	:= objs

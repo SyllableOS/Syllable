@@ -1,0 +1,946 @@
+/*
+
+The Syllable application server
+Intel i855 graphics driver  
+Copyright 1998-1999 Precision Insight, Inc., Cedar Park, Texas.
+Copyright 2002 by David Dawes.
+Copyright 2004 Arno Klenke
+
+All Rights Reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sub license, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice (including the
+next paragraph) shall be included in all copies or substantial portions
+of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT.
+IN NO EVENT SHALL THE COPYRIGHT HOLDERS AND/OR THEIR SUPPLIERS BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+*/
+
+ 
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+#include <atheos/types.h>
+#include <atheos/pci.h>
+#include <atheos/kernel.h>
+#include <atheos/isa_io.h>
+#include <atheos/vesa_gfx.h>
+#include <atheos/udelay.h>
+#include <atheos/time.h>
+#include <appserver/pci_graphics.h>
+
+#include "../../../server/bitmap.h"
+#include "../../../server/sprite.h"
+
+#include <gui/bitmap.h>
+
+#include "i855.h"
+
+
+
+using namespace os;
+
+#define	MAX_MODEINFO_NAME			79
+#define RING_BUFFER_SIZE ( 8 * 1024 )
+
+#define I855_GET_CURSOR_ADDRESS 100
+
+inline uint32 pci_size(uint32 base, uint32 mask)
+{
+	uint32 size = base & mask;
+	return size & ~(size-1);
+}
+
+static uint32 get_pci_memory_size(int nFd, const PCI_Info_s *pcPCIInfo, int nResource)
+{
+	int nBus = pcPCIInfo->nBus;
+	int nDev = pcPCIInfo->nDevice;
+	int nFnc = pcPCIInfo->nFunction;
+	int nOffset = PCI_BASE_REGISTERS + nResource*4;
+	uint32 nBase = pci_gfx_read_config(nFd, nBus, nDev, nFnc, nOffset, 4);
+	
+	pci_gfx_write_config(nFd, nBus, nDev, nFnc, nOffset, 4, ~0);
+	uint32 nSize = pci_gfx_read_config(nFd, nBus, nDev, nFnc, nOffset, 4);
+	pci_gfx_write_config(nFd, nBus, nDev, nFnc, nOffset, 4, nBase);
+	if (!nSize || nSize == 0xffffffff) return 0;
+	if (nBase == 0xffffffff) nBase = 0;
+	if (!(nSize & PCI_ADDRESS_SPACE)) {
+		return pci_size(nSize, PCI_ADDRESS_MEMORY_32_MASK);
+	} else {
+		return pci_size(nSize, PCI_ADDRESS_IO_MASK & 0xffff);
+	}
+}
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
+i855::i855(  int nFd ) :
+	m_cGELock( "i855_engine_lock" ),
+	m_hRegisterArea(-1),
+	m_hFrameBufferArea(-1)
+{
+	m_bIsInitiated = false;
+	m_pRegisterBase = m_pFrameBufferBase = m_pRingBase = m_pCursorBase = NULL;
+	char nBiosVersion[5];
+	m_nRingSize = RING_BUFFER_SIZE;
+	m_nRingMask = m_nRingSize - 1;
+	m_nFrameBufferOffset = m_nRingSize;
+	m_bMobileCursor = false;
+	m_bTwoPipes = false;
+	
+	/* Get Info */
+	if( ioctl( nFd, PCI_GFX_GET_PCI_INFO, &m_cPCIInfo ) != 0 )
+	{
+		dbprintf( "Error: Failed to call PCI_GFX_GET_PCI_INFO\n" );
+		return;
+	}
+	
+	/* Print gpu type */
+	char zGPUName[30];
+	switch( m_cPCIInfo.nDeviceID )
+	{
+		case 0x3577:
+			m_bMobileCursor = true;
+			m_bTwoPipes = true;
+			strcpy( zGPUName, "i830M" );
+		break;
+		case 0x2562:
+			strcpy( zGPUName, "i845G" );
+		break;
+		case 0x3582:
+		{
+			m_bMobileCursor = true;
+			m_bTwoPipes = true;
+			uint32 nVariant = pci_gfx_read_config(nFd, m_cPCIInfo.nBus, m_cPCIInfo.nDevice,
+												m_cPCIInfo.nFunction, I85X_CAPID, 4);
+			nVariant = ( nVariant >> I85X_VARIANT_SHIFT) & I85X_VARIANT_MASK;
+			switch( nVariant )
+			{
+				case I855_GM:
+					strcpy( zGPUName, "i855GM" );
+				break;
+				case I855_GME:
+					strcpy( zGPUName, "i855GME" );
+				break;
+				case I852_GM:
+					strcpy( zGPUName, "i852GM" );
+				break;
+				case I852_GME:
+					strcpy( zGPUName, "i852GME" );
+				break;
+				default:
+					strcpy( zGPUName, "i852GM/i855GM (unknown variant)" );
+				break;
+			}
+			break;
+		}
+		case 0x2572:
+			strcpy( zGPUName, "i865G" );
+		break;
+		case 0x2582:
+			m_bMobileCursor = true;
+			m_bTwoPipes = true;
+			strcpy( zGPUName, "i915G" );
+		break;
+		default:
+			strcpy( zGPUName, "Unknown" );
+	}
+	
+	dbprintf( "i855:: Intel %s detected\n", zGPUName );
+	
+	/* Create mmio and framebuffer area */
+	int nIoSize = get_pci_memory_size(nFd, &m_cPCIInfo, 1); 
+	m_hRegisterArea = create_area("i855_regs", (void**)&m_pRegisterBase, nIoSize,
+	                              AREA_FULL_ACCESS, AREA_NO_LOCK);
+	remap_area(m_hRegisterArea, (void*)(m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK));
+	
+	dbprintf( "i855:: MMIO @ 0x%x mapped to 0x%x size 0x%x\n", (uint)(m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK),
+													(uint)m_pRegisterBase, (uint)nIoSize );
+	
+	int nMemSize = get_pci_memory_size(nFd, &m_cPCIInfo, 0) - m_nRingSize;
+	m_hFrameBufferArea = create_area("i855_framebuffer", (void**)&m_pFrameBufferBase,
+	                                 nMemSize, AREA_FULL_ACCESS, AREA_NO_LOCK);
+	remap_area(m_hFrameBufferArea, (void*)( ( m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK ) + m_nFrameBufferOffset ));
+	dbprintf( "i855:: Framebuffer @ 0x%x mapped to 0x%x size 0x%x\n", (uint)(( m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK ) + m_nFrameBufferOffset),
+													(uint)m_pFrameBufferBase, (uint)nMemSize );
+	
+	/* Create command ring area */
+	m_hRingArea = create_area("i855_cmd_ring", (void**)&m_pRingBase,
+	                                 m_nRingSize, AREA_FULL_ACCESS, AREA_NO_LOCK);
+	remap_area(m_hRingArea, (void*)(m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK));
+	
+	dbprintf( "i855:: Ringbuffer @ 0x%x mapped to 0x%x size 0x%x\n", (uint)(m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK),
+													(uint)m_pRingBase, (uint)m_nRingSize );
+	/* Initialize the cursor */
+	/* The last 10 pages of the video memory are allocated as linear memory */
+	m_bUsingHWCursor = false;
+	m_bCursorIsOn = false;
+	m_cCursorPos = os::IPoint( 0, 0 );
+	memset( m_anCursorShape, 0x00, sizeof( m_anCursorShape ) );
+	m_nCursorOffset = ( 8192 - 10 ) * PAGE_SIZE;
+	m_pCursorBase = m_pFrameBufferBase + m_nCursorOffset - m_nFrameBufferOffset;
+	if( ioctl( nFd, I855_GET_CURSOR_ADDRESS, &m_nCursorAddress ) != 0 )
+	{
+		dbprintf( "i855:: Could not get cursor address from kernel driver\n" );
+		return;
+	}
+	dbprintf( "i855:: Cursor @ 0x%x mapped to offset 0x%x\n", (uint)m_nCursorAddress,
+															(uint)m_nCursorOffset );
+	
+
+	/* Initialize the video overlay */
+	m_bVideoOverlayUsed = m_bVideoIsOn = false;
+	m_psVidRegs = (i855VideoRegs_s*)(m_pCursorBase + PAGE_SIZE * 4);
+	m_nVideoAddress = m_nCursorAddress + PAGE_SIZE * 4;
+	m_nVideoEnd = m_nCursorOffset;
+	dbprintf( "i855:: Video @ 0x%x end 0x%x\n", (uint)m_nVideoAddress,
+															(uint)m_nVideoEnd );
+	
+
+	/* Get BIOS version */
+	m_nBIOSVersion = 0;
+	struct RMREGS rm;
+	memset( &rm, 0, sizeof( struct RMREGS ) );
+	rm.EAX = 0x5f01;
+	realint( 0x10, &rm );
+	
+	if( rm.EAX == 0x005f )
+	{
+		uint32 nVer = rm.EBX;
+		memset( nBiosVersion, 0, 5 );
+		nBiosVersion[0] = (nVer & 0xff000000) >> 24;
+		nBiosVersion[1] = (nVer & 0x00ff0000) >> 16;
+		nBiosVersion[2] = (nVer & 0x0000ff00) >> 8;
+		nBiosVersion[3] = (nVer & 0x000000ff) >> 0;
+		m_nBIOSVersion = atoi( nBiosVersion );
+		dbprintf( "i855:: BIOS version %d\n", (uint)m_nBIOSVersion );
+	}
+		
+	/* Get the active pipe */
+	m_nDisplayPipe = 0;
+	if( m_bTwoPipes )
+	{
+		memset( &rm, 0, sizeof( struct RMREGS ) );
+		rm.EAX = 0x5f1c;
+		rm.EBX = 0x100;
+		realint( 0x10, &rm );
+	
+		if( rm.EAX == 0x005f )
+		{
+			if( m_nBIOSVersion >= 3062 )
+				m_nDisplayPipe = rm.EBX & 0x1;
+			else
+				m_nDisplayPipe = ( rm.ECX & 0100 ) >> 8;
+		}
+	}
+	dbprintf( "i855:: Active display pipe %i\n", m_nDisplayPipe + 1 );
+	
+	/* Get the connected devices */
+	m_nDisplayInfo = 0;
+	memset( &rm, 0, sizeof( struct RMREGS ) );
+	rm.EAX = 0x5f64;
+	rm.EBX = 0x100;
+	realint( 0x10, &rm );
+	
+	if( rm.EAX == 0x005f )
+	{
+		m_nDisplayInfo = rm.ECX & 0xffff;
+	}
+	
+	
+	/* Initialize the screenmodes */
+	
+	if( !InitModes() )
+	{
+		dbprintf( "i855:: Could not find vesa modes!\n" );
+		return;
+	}
+	
+	/* Itialize command ringbuffer */
+	OUTREG( LP_RING + RING_LEN, 0 );
+	OUTREG( LP_RING + RING_TAIL, 0 );
+	OUTREG( LP_RING + RING_HEAD, 0 );
+	OUTREG( LP_RING + RING_START, 0 );
+	m_nRingPos = 0;
+	m_nRingSpace = m_nRingSize - 8;
+	
+	m_bIsInitiated = true;
+}
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
+i855::~i855()
+{
+	if (m_hRegisterArea != -1) {
+		delete_area(m_hRegisterArea);
+	}
+	if (m_hRingArea != -1) {
+		delete_area(m_hRingArea);
+	}
+	if (m_hFrameBufferArea != -1) {
+		delete_area(m_hFrameBufferArea);
+	}
+}
+
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
+bool i855::InitModes( void )
+{
+	Vesa_Info_s sVesaInfo;
+	VESA_Mode_Info_s sModeInfo;
+	uint16 anModes[1024];
+	int nModeCount;
+
+	int i = 0;
+
+	strcpy( sVesaInfo.VesaSignature, "VBE2" );
+
+	nModeCount = get_vesa_info( &sVesaInfo, anModes, 1024 );
+
+	if( nModeCount <= 0 )
+	{
+		dbprintf( "Error: i855::InitModes() no VESA20 modes found\n" );
+		return ( false );
+	}
+
+//    dbprintf( "Found %d vesa modes\n", nModeCount );
+
+	int nPagedCount = 0;
+	int nPlanarCount = 0;
+	int nBadCount = 0;
+
+	for( i = 0; i < nModeCount; ++i )
+	{
+		get_vesa_mode_info( &sModeInfo, anModes[i] );
+
+		if( sModeInfo.PhysBasePtr == 0 )
+		{		// We must have linear frame buffer
+			nPagedCount++;
+			continue;
+		}
+		if( sModeInfo.BitsPerPixel < 8 )
+		{
+			nPlanarCount++;
+			continue;
+		}
+		if( sModeInfo.NumberOfPlanes != 1 )
+		{
+			nPlanarCount++;
+			continue;
+		}
+
+		if( sModeInfo.BitsPerPixel != 15 && sModeInfo.BitsPerPixel != 16 && sModeInfo.BitsPerPixel != 32 )
+		{
+			nBadCount++;
+			continue;
+		}
+
+		if( sModeInfo.RedMaskSize == 0 && sModeInfo.GreenMaskSize == 0 && sModeInfo.BlueMaskSize == 0 && sModeInfo.RedFieldPosition == 0 && sModeInfo.GreenFieldPosition == 0 && sModeInfo.BlueFieldPosition == 0 )
+		{
+			m_cModeList.push_back( i855Mode( sModeInfo.XResolution, sModeInfo.YResolution, sModeInfo.BytesPerScanLine, CS_CMAP8, 60.0f, anModes[i] | 0x4000, sModeInfo.PhysBasePtr ) );
+		}
+		else if( sModeInfo.RedMaskSize == 5 && sModeInfo.GreenMaskSize == 5 && sModeInfo.BlueMaskSize == 5 && sModeInfo.RedFieldPosition == 10 && sModeInfo.GreenFieldPosition == 5 && sModeInfo.BlueFieldPosition == 0 )
+		{
+			m_cModeList.push_back( i855Mode( sModeInfo.XResolution, sModeInfo.YResolution, sModeInfo.BytesPerScanLine, CS_RGB15, 60.0f, anModes[i] | 0x4000, sModeInfo.PhysBasePtr ) );
+		}
+		else if( sModeInfo.RedMaskSize == 5 && sModeInfo.GreenMaskSize == 6 && sModeInfo.BlueMaskSize == 5 && sModeInfo.RedFieldPosition == 11 && sModeInfo.GreenFieldPosition == 5 && sModeInfo.BlueFieldPosition == 0 )
+		{
+			m_cModeList.push_back( i855Mode( sModeInfo.XResolution, sModeInfo.YResolution, sModeInfo.BytesPerScanLine, CS_RGB16, 60.0f, anModes[i] | 0x4000, sModeInfo.PhysBasePtr ) );
+		}
+		else if( sModeInfo.BitsPerPixel == 32 && sModeInfo.RedMaskSize == 8 && sModeInfo.GreenMaskSize == 8 && sModeInfo.BlueMaskSize == 8 && sModeInfo.RedFieldPosition == 16 && sModeInfo.GreenFieldPosition == 8 && sModeInfo.BlueFieldPosition == 0 )
+		{
+			m_cModeList.push_back( i855Mode( sModeInfo.XResolution, sModeInfo.YResolution, sModeInfo.BytesPerScanLine, CS_RGB32, 60.0f, anModes[i] | 0x4000, sModeInfo.PhysBasePtr ) );
+		}
+		else
+		{
+			dbprintf( "i855:: Found unsupported video mode: %dx%d %d BPP %d BPL - %d:%d:%d, %d:%d:%d\n", sModeInfo.XResolution, sModeInfo.YResolution, sModeInfo.BitsPerPixel, sModeInfo.BytesPerScanLine, sModeInfo.RedMaskSize, sModeInfo.GreenMaskSize, sModeInfo.BlueMaskSize, sModeInfo.RedFieldPosition, sModeInfo.GreenFieldPosition, sModeInfo.BlueFieldPosition );
+		}
+//#if 0
+		dbprintf( "i855:: Mode %04x: %dx%d %d BPP %d BPL - %d:%d:%d, %d:%d:%d (%p)\n", anModes[i], sModeInfo.XResolution, sModeInfo.YResolution, sModeInfo.BitsPerPixel, sModeInfo.BytesPerScanLine, sModeInfo.RedMaskSize, sModeInfo.GreenMaskSize, sModeInfo.BlueMaskSize, sModeInfo.RedFieldPosition, sModeInfo.GreenFieldPosition, sModeInfo.BlueFieldPosition, ( void * )sModeInfo.PhysBasePtr );
+//#endif
+	}
+	dbprintf( "i855:: Found total of %d VESA modes. Valid: %d, Paged: %d, Planar: %d, Bad: %d\n", nModeCount, m_cModeList.size(), nPagedCount, nPlanarCount, nBadCount );
+	return ( true );
+}
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
+area_id i855::Open( void )
+{
+	return( m_hFrameBufferArea );
+}
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
+void i855::Close( void )
+{
+}
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
+int i855::GetScreenModeCount()
+{
+	return ( m_cModeList.size() );
+}
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
+bool i855::GetScreenModeDesc( int nIndex, screen_mode * psMode )
+{
+	if( nIndex >= 0 && nIndex < int ( m_cModeList.size() ) )
+	{
+		*psMode = m_cModeList[nIndex];
+		return ( true );
+	}
+	else
+	{
+		return ( false );
+	}
+}
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
+int i855::SetScreenMode( screen_mode sMode )
+{
+	m_nCurrentMode = -1;
+
+	for( int i = GetScreenModeCount() - 1; i >= 0; --i )
+	{
+		if( m_cModeList[i].m_nWidth == sMode.m_nWidth && m_cModeList[i].m_nHeight == sMode.m_nHeight && m_cModeList[i].m_eColorSpace == sMode.m_eColorSpace )
+		{
+			m_nCurrentMode = i;
+			break;
+		}
+
+	}
+
+	if( m_nCurrentMode >= 0 )
+	{
+		/* Stop video overlay */
+		if ( m_bVideoOverlayUsed )
+		{
+			m_psVidRegs->OCMD &= ~OVERLAY_ENABLE;
+			UpdateVideo();
+			VideoOff();
+			WaitForIdle();
+		}
+			
+		/* Set screenmode */
+		if( SetVesaMode( m_cModeList[m_nCurrentMode].m_nVesaMode ) )
+		{
+			
+			/* Reinitialize command ringbuffer */
+			OUTREG( LP_RING + RING_LEN, 0 );
+			OUTREG( LP_RING + RING_TAIL, 0 );
+			OUTREG( LP_RING + RING_HEAD, 0 );
+			OUTREG( LP_RING + RING_START, 0 );
+			OUTREG( LP_RING + RING_LEN, ( ( m_nRingSize - 4096 ) & I830_RING_NR_PAGES ) | RING_NO_REPORT | RING_VALID );
+			m_nRingPos = 0;
+			
+			/* Put the framebuffer behind the ringbuffer */
+			
+			OUTREG( DSPASTRIDE, m_cModeList[m_nCurrentMode].m_nBytesPerLine );
+			OUTREG( DSPABASE, m_nFrameBufferOffset );
+			if( m_bTwoPipes ) {
+				OUTREG( DSPBSTRIDE, m_cModeList[m_nCurrentMode].m_nBytesPerLine );
+				OUTREG( DSPBBASE, m_nFrameBufferOffset );
+			}
+			
+			/* Initialize the hardware cursor */
+			if( m_bMobileCursor )
+			{
+				uint32 nTemp = INREG( CURSOR_A_CONTROL );
+				nTemp &= ~(CURSOR_MODE | MCURSOR_GAMMA_ENABLE | MCURSOR_MEM_TYPE_LOCAL |
+				MCURSOR_PIPE_SELECT);
+				nTemp |= CURSOR_MODE_DISABLE;
+				nTemp |= (m_nDisplayPipe << 28);
+      
+				OUTREG(CURSOR_A_CONTROL, nTemp);
+				OUTREG(CURSOR_A_BASE, m_nCursorAddress);
+				
+				if( m_bTwoPipes )
+				{
+					nTemp &= ~MCURSOR_PIPE_SELECT;
+					nTemp |= (!m_nDisplayPipe << 28);
+					OUTREG(CURSOR_B_CONTROL, nTemp);
+					OUTREG(CURSOR_B_BASE, m_nCursorAddress);
+				}
+			}		
+			/* Load the hardware cursor */
+			if ( m_bUsingHWCursor )
+			{
+				uint32 *pnSrc = ( uint32 * )m_anCursorShape;
+				volatile uint32 *pnDst = ( uint32 * )m_pCursorBase;
+
+				for ( int i = 0; i < 64 * 64; i++ )
+				{
+					*pnDst++ = *pnSrc++;
+				}
+
+				SetMousePos( m_cCursorPos );
+				if ( m_bCursorIsOn )
+				{
+					MouseOn();
+				}
+			}
+			
+			WaitForIdle();
+			#if 0
+			dbprintf( "%x %x\n", (uint)INREG( DSPACNTR ), (uint)INREG( DSPBCNTR ) );
+			dbprintf( "%x %x\n", (uint)INREG( PIPEACONF ), (uint)INREG( PIPEBCONF ) );
+			dbprintf( "%x\n", (uint)INREG( LP_RING + RING_LEN ) );
+			dbprintf( "BASE %x %x %x %x\n", (uint)INREG( DSPABASE ), (uint)( DSPASTRIDE ),
+											(uint)INREG( DSPBBASE ), (uint)( DSPBSTRIDE ) );
+			#endif
+			return ( 0 );
+		}
+		
+		/* Reenable video overlay */
+		if ( m_bVideoOverlayUsed )
+		{
+			SetupVideoOneLine();
+			UpdateVideo();
+		}
+	}
+	return ( -1 );
+}
+
+screen_mode i855::GetCurrentScreenMode()
+{
+	return ( m_cModeList[m_nCurrentMode] );
+}
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
+bool i855::IntersectWithMouse( const IRect & cRect )
+{
+	return ( false );
+}
+
+
+//-----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//-----------------------------------------------------------------------------
+
+void i855::SetCursorBitmap( os::mouse_ptr_mode eMode, const os::IPoint & cHotSpot, const void *pRaster, int nWidth, int nHeight )
+{
+	m_cCursorHotSpot = cHotSpot;
+	if ( !m_bMobileCursor || ( eMode != MPTR_MONO && eMode != MPTR_RGB32 ) || nWidth > 64 || nHeight > 64 )
+	{
+		if( m_bUsingHWCursor && m_bCursorIsOn )
+		{
+			MouseOff();
+			m_bUsingHWCursor = false;
+			MouseOn();
+		}
+		m_bUsingHWCursor = false;
+		return DisplayDriver::SetCursorBitmap( eMode, cHotSpot, pRaster, nWidth, nHeight );
+	}
+	
+	const uint8 *pnSrcMono = ( const uint8 * )pRaster;
+	const uint32 *pnSrcRgb = ( const uint32 * )pRaster;
+	volatile uint32 *pnDst = ( uint32 * )m_pCursorBase;
+	uint32 *pnSaved = m_anCursorShape;
+	uint32 *pnSaved32 = ( uint32 * )m_anCursorShape;
+	static uint32 anPalette[] = { 0x00000000, 0xff000000, 0xff000000, 0xffffffff };
+
+	for ( int y = 0; y < 64; y++ )
+	{
+		for ( int x = 0; x < 64; x++, pnSaved++ )
+		{
+			if ( y >= nHeight || x >= nWidth )
+			{
+				*pnSaved = 0x00000000;
+			}
+			else
+			{
+				if( eMode == MPTR_RGB32 )
+					*pnSaved = *pnSrcRgb++;
+				else
+					*pnSaved = anPalette[*pnSrcMono++];
+			}
+		}
+	}
+
+	for ( int i = 0; i < 64 * 64; i++ )
+	{
+		*pnDst++ = *pnSaved32++;
+	}
+	
+	if( !m_bUsingHWCursor && m_bCursorIsOn ) {
+		MouseOff();
+		m_bUsingHWCursor = true;
+		MouseOn();
+	}
+	m_bUsingHWCursor = true;
+	SetMousePos( m_cCursorPos );
+}
+
+//-----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//-----------------------------------------------------------------------------
+
+
+void i855::SetMousePos( os::IPoint cNewPos )
+{
+	m_cCursorPos = cNewPos;
+	if ( !m_bUsingHWCursor )
+	{
+		return DisplayDriver::SetMousePos( cNewPos );
+	}
+	int x = (int)cNewPos.x - (int)m_cCursorHotSpot.x;
+	int y = (int)cNewPos.y - (int)m_cCursorHotSpot.y;
+	bool bHide = false;
+	uint32 nTemp = 0;
+	
+	if( x >= GetCurrentScreenMode().m_nWidth ||
+       y >= GetCurrentScreenMode().m_nHeight ||
+       x <= -64 || y <= -64 )
+		bHide = true;
+		
+	nTemp |= ((x & CURSOR_POS_MASK) << CURSOR_X_SHIFT);
+	nTemp |= ((y & CURSOR_POS_MASK) << CURSOR_Y_SHIFT);
+	
+	if( y < 0 ) {
+		nTemp |= (CURSOR_POS_SIGN << CURSOR_Y_SHIFT);
+		y = -y;
+	}
+	
+	if( x < 0 ) {
+		nTemp |= (CURSOR_POS_SIGN << CURSOR_X_SHIFT);
+		x = -x;
+	}
+
+	OUTREG(CURSOR_A_POSITION, nTemp);
+	if( m_bTwoPipes )
+		OUTREG(CURSOR_B_POSITION, nTemp);
+	if( m_bCursorIsOn )
+	{
+		nTemp = INREG(CURSOR_A_CONTROL);
+		nTemp &= ~(CURSOR_MODE | MCURSOR_PIPE_SELECT);
+		if( bHide )
+			nTemp |= CURSOR_MODE_DISABLE;
+		else
+			nTemp |= CURSOR_MODE_64_ARGB_AX;
+		nTemp |= (m_nDisplayPipe << 28); /* Connect to correct pipe */
+		
+		OUTREG(CURSOR_A_CONTROL, nTemp);
+		if( m_bTwoPipes )
+		{
+			nTemp &= ~MCURSOR_PIPE_SELECT;
+			nTemp |= (!m_nDisplayPipe << 28);	
+			OUTREG(CURSOR_B_CONTROL, nTemp);
+		}
+	}
+	OUTREG(CURSOR_A_BASE, m_nCursorAddress);
+	if( m_bTwoPipes )
+		OUTREG(CURSOR_B_BASE, m_nCursorAddress);
+}
+
+
+//-----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//-----------------------------------------------------------------------------
+
+
+void i855::MouseOn()
+{
+	m_bCursorIsOn = true;
+	if ( !m_bUsingHWCursor )
+	{
+		return DisplayDriver::MouseOn();
+	}
+	SetMousePos( m_cCursorPos );
+}
+
+//-----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//-----------------------------------------------------------------------------
+
+
+void i855::MouseOff()
+{
+	m_bCursorIsOn = false;
+	if ( !m_bUsingHWCursor )
+	{
+		return DisplayDriver::MouseOff();
+	}
+	uint32 nTemp = INREG(CURSOR_A_CONTROL);
+	nTemp &= ~(CURSOR_MODE | MCURSOR_PIPE_SELECT);
+	nTemp |= CURSOR_MODE_DISABLE;
+	nTemp |= (m_nDisplayPipe << 28); /* Connect to correct pipe */
+	OUTREG(CURSOR_A_CONTROL, nTemp);
+	OUTREG(CURSOR_A_BASE, m_nCursorAddress);
+	if( m_bTwoPipes )
+	{
+		nTemp &= ~MCURSOR_PIPE_SELECT;
+		nTemp |= (!m_nDisplayPipe << 28);	
+		OUTREG(CURSOR_B_CONTROL, nTemp);
+		OUTREG(CURSOR_B_BASE, m_nCursorAddress);
+	}
+}
+
+//-----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//-----------------------------------------------------------------------------
+
+
+bool i855::DrawLine(SrvBitmap* pcBitMap, const IRect& cClipRect,
+                      const IPoint& cPnt1, const IPoint& cPnt2, const Color32_s& sColor, int nMode)
+{
+	return DisplayDriver::DrawLine(pcBitMap, cClipRect, cPnt1, cPnt2, sColor, nMode);
+	
+}
+
+//-----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//-----------------------------------------------------------------------------
+
+bool i855::FillRect(SrvBitmap *pcBitMap, const IRect& cRect, const Color32_s& sColor)
+{
+	if ( pcBitMap->m_bVideoMem == false ) {
+		return DisplayDriver::FillRect(pcBitMap, cRect, sColor);
+	}
+	
+	m_cGELock.Lock();
+	
+	os::screen_mode sMode = GetCurrentScreenMode();
+	
+	uint32 nBR13 = sMode.m_nBytesPerLine | ( 0xF0 << 16 );
+	int nSize = cRect.Width() + 1;
+	int nBpp;
+	uint32 nColor;
+	
+	BEGIN_RING( 6 );
+	if( GetCurrentScreenMode().m_eColorSpace == os::CS_RGB32 ) {
+		nBR13 |= ((1 << 25) | (1 << 24));
+		OUTRING( COLOR_BLT_CMD | COLOR_BLT_WRITE_ALPHA |
+		  COLOR_BLT_WRITE_RGB );
+		 nSize *= 4;
+		 nBpp = 4;
+		 nColor = COL_TO_RGB32(sColor);
+	} else {
+		nBR13 |= (1 << 24);
+		OUTRING(COLOR_BLT_CMD);
+		nSize *= 2;
+		nBpp = 2;
+		nColor = COL_TO_RGB16(sColor);
+	}
+	OUTRING( nBR13 );
+	OUTRING(((cRect.Height()+1) << 16) | (nSize & 0xffff));
+	OUTRING(m_nFrameBufferOffset + cRect.top * sMode.m_nBytesPerLine + cRect.left * nBpp );
+	OUTRING(nColor);
+	OUTRING(0);
+	FLUSH_RING();
+	
+	WaitForIdle();
+	m_cGELock.Unlock();
+
+	return( true );
+}
+
+//-----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//-----------------------------------------------------------------------------
+
+bool i855::BltBitmap(SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap,
+                       IRect cSrcRect, IPoint cDstPos, int nMode)
+{
+	if (pcDstBitMap->m_bVideoMem == false || pcSrcBitMap->m_bVideoMem == false || nMode != DM_COPY ) {
+		return DisplayDriver::BltBitmap(pcDstBitMap, pcSrcBitMap, cSrcRect, cDstPos, nMode);
+	}
+	
+	m_cGELock.Lock();
+	
+	os::screen_mode sMode = GetCurrentScreenMode();
+	
+	uint32 nBR13 = sMode.m_nBytesPerLine | ( 0xCC << 16 );
+	int nDstX2 = cDstPos.x + cSrcRect.Width() + 1;
+	int nDstY2 = cDstPos.y + cSrcRect.Height() + 1;
+	
+	BEGIN_RING( 8 );
+	if( GetCurrentScreenMode().m_eColorSpace == os::CS_RGB32 ) {
+		nBR13 |= ((1 << 25) | (1 << 24));
+		OUTRING( XY_SRC_COPY_BLT_CMD | XY_SRC_COPY_BLT_WRITE_ALPHA |
+		  XY_SRC_COPY_BLT_WRITE_RGB );
+	} else {
+		nBR13 |= (1 << 24);
+		OUTRING(XY_SRC_COPY_BLT_CMD);
+	}
+	OUTRING( nBR13 );
+	OUTRING((cDstPos.y << 16) | (cDstPos.x & 0xffff));
+	OUTRING((nDstY2 << 16) | (nDstX2 & 0xffff));
+	OUTRING(m_nFrameBufferOffset);
+	OUTRING((cSrcRect.top << 16) | (cSrcRect.left & 0xffff));
+	OUTRING( nBR13 & 0xFFFF );
+	OUTRING(m_nFrameBufferOffset);
+	FLUSH_RING();
+	
+	WaitForIdle();
+	m_cGELock.Unlock();
+	
+	return( true );
+}
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
+bool i855::SetVesaMode( uint32 nMode )
+{
+	struct RMREGS rm;
+
+	memset( &rm, 0, sizeof( struct RMREGS ) );
+
+	rm.EAX = 0x4f02;
+	rm.EBX = nMode;
+
+	realint( 0x10, &rm );
+	int nResult = rm.EAX & 0xffff;
+
+	memset( &rm, 0, sizeof( struct RMREGS ) );
+	rm.EBX = 0x01;		// Get display offset.
+	rm.EAX = 0x4f07;
+	realint( 0x10, &rm );
+
+	memset( &rm, 0, sizeof( struct RMREGS ) );
+	rm.EBX = 0x00;
+	rm.EAX = 0x4f07;
+	realint( 0x10, &rm );
+
+	memset( &rm, 0, sizeof( struct RMREGS ) );
+	rm.EBX = 0x01;		// Get display offset.
+	rm.EAX = 0x4f07;
+	realint( 0x10, &rm );
+
+	return ( nResult );
+}
+
+void i855::WaitForIdle()
+{
+	/* Put flush commands */
+	BEGIN_RING( 2 );
+	OUTRING( MI_FLUSH | MI_WRITE_DIRTY_STATE | MI_INVALIDATE_MAP_CACHE );
+	OUTRING( MI_NOOP );
+    FLUSH_RING();
+	
+	/* Wait for the commands to be processed */
+	int nHead = 0;
+	int nTail = 0;
+	bool bTimeout = false;
+	bigtime_t nLastTime = get_system_time();
+	do {
+		nHead = INREG( LP_RING + RING_HEAD ) & I830_HEAD_MASK;
+		nTail = INREG( LP_RING + RING_TAIL ) & I830_TAIL_MASK;
+		if( get_system_time() - nLastTime > 1000000 ) {
+			dbprintf( "i855:: Engine timed out! %i %i\n", nHead, nTail );	
+			bTimeout = true;
+			OUTREG( LP_RING + RING_HEAD, 0 );
+			OUTREG( LP_RING + RING_TAIL, 0 );
+			m_nRingPos = 0;
+		}
+	} while( ( nHead != nTail ) && !bTimeout );
+}
+
+//-----------------------------------------------------------------------------
+
+extern "C" DisplayDriver* init_gfx_driver( int nFd )
+{
+    dbprintf("i855 attempts to initialize\n");
+    
+    try {
+	    i855 *pcDriver = new i855( nFd );
+	    if (pcDriver->IsInitiated()) {
+		    return pcDriver;
+	    }
+	    return NULL;
+    }
+    catch (std::exception& cExc) {
+	    dbprintf("Got exception\n");
+	    return NULL;
+    }
+}

@@ -58,6 +58,9 @@ PCI_Bus_s *g_apsPCIBus[MAX_PCI_BUSSES];
 PCI_Entry_s *g_apsPCIDevice[MAX_PCI_DEVICES];
 SpinLock_s g_sPCILock = INIT_SPIN_LOCK( "pci_lock" );
 
+extern void init_pci_irq_routing( void );
+extern int lookup_irq( PCI_Entry_s* psDevice, bool bAssign );
+
 /** 
  * \par Description: Checks wether a PCI bus is present and selects the access ethod
  * \par Note:
@@ -80,7 +83,7 @@ static void pci_inst_check( void )
 	if ( inb( 0x0cf8 ) == 0x0 && inb( 0x0cfa ) == 0x0 )
 	{
 		g_nPCIMethod = PCI_METHOD_2;
-		printk( "PCI: Using access method 2\n" );
+		kerndbg( KERN_DEBUG, "PCI: Using access method 2\n" );
 		return;
 	}
 
@@ -92,7 +95,7 @@ static void pci_inst_check( void )
 		if ( inl( 0x0cf8 ) == 0x0 )
 		{
 			g_nPCIMethod = PCI_METHOD_1;
-			printk( "PCI: Using access method 1\n" );
+			kerndbg( KERN_DEBUG, "PCI: Using access method 1\n" );
 			return;
 		}
 	}
@@ -105,7 +108,7 @@ static void pci_inst_check( void )
 		if ( inl( 0x0cf8 ) == 0x80000000 )
 		{
 			g_nPCIMethod = PCI_METHOD_1;
-			printk( "PCI: Detected Virtual PC, using access method 1\n" );
+			kerndbg( KERN_DEBUG, "PCI: Detected Virtual PC, using access method 1\n" );
 			return;
 		}
 	}
@@ -157,7 +160,7 @@ uint32 read_pci_config( int nBusNum, int nDevNum, int nFncNum, int nOffset, int 
 		{
 			if ( nDevNum >= 16 )
 			{
-				printk( "PCI: read_pci_config() with an invalid device number\n" );
+				kerndbg( KERN_WARNING, "PCI: read_pci_config() with an invalid device number\n" );
 			}
 			spinlock_cli( &g_sPCILock, nFlags );
 			outb( ( 0xf0 | ( nFncNum << 1 ) ), 0x0cf8 );
@@ -183,12 +186,12 @@ uint32 read_pci_config( int nBusNum, int nDevNum, int nFncNum, int nOffset, int 
 		}
 		else
 		{
-			printk( "PCI: read_pci_config() called without PCI present\n" );
+			kerndbg( KERN_WARNING, "PCI: read_pci_config() called without PCI present\n" );
 		}
 	}
 	else
 	{
-		printk( "PCI: Invalid size %d passed to read_pci_config()\n", nSize );
+		kerndbg( KERN_WARNING, "PCI: Invalid size %d passed to read_pci_config()\n", nSize );
 	}
 	return ( 0 );
 }
@@ -241,7 +244,7 @@ status_t write_pci_config( int nBusNum, int nDevNum, int nFncNum, int nOffset, i
 		{
 			if ( nDevNum >= 16 )
 			{
-				printk( "PCI: write_pci_config() with an invalid device number\n" );
+				kerndbg( KERN_WARNING, "PCI: write_pci_config() with an invalid device number\n" );
 			}
 			spinlock_cli( &g_sPCILock, nFlags );
 			outb( ( 0xf0 | ( nFncNum << 1 ) ), 0x0cf8 );
@@ -267,12 +270,12 @@ status_t write_pci_config( int nBusNum, int nDevNum, int nFncNum, int nOffset, i
 		}
 		else
 		{
-			printk( "PCI: write_pci_config() called without PCI present\n" );
+			kerndbg( KERN_WARNING, "PCI: write_pci_config() called without PCI present\n" );
 		}
 	}
 	else
 	{
-		printk( "PCI: Invalid size %d passed to write_pci_config()\n", nSize );
+		kerndbg( KERN_WARNING, "PCI: Invalid size %d passed to write_pci_config()\n", nSize );
 	}
 	return ( -1 );
 }
@@ -358,6 +361,8 @@ static int read_pci_header( PCI_Entry_s * psInfo, int nBusNum, int nDevNum, int 
 	psInfo->u.h0.nExpROMAddr = read_pci_config( nBusNum, nDevNum, nFncNum, PCI_ROM_BASE, 4 );
 	psInfo->u.h0.nCapabilityList = read_pci_config( nBusNum, nDevNum, nFncNum, PCI_CAPABILITY_LIST, 1 );
 	psInfo->u.h0.nInterruptLine = read_pci_config( nBusNum, nDevNum, nFncNum, PCI_INTERRUPT_LINE, 1 );
+	if( psInfo->u.h0.nInterruptLine >= 16 )
+		psInfo->u.h0.nInterruptLine = 0;
 	psInfo->u.h0.nInterruptPin = read_pci_config( nBusNum, nDevNum, nFncNum, PCI_INTERRUPT_PIN, 1 );
 	psInfo->u.h0.nMinDMATime = read_pci_config( nBusNum, nDevNum, nFncNum, PCI_MIN_GRANT, 1 );
 	psInfo->u.h0.nMaxDMALatency = read_pci_config( nBusNum, nDevNum, nFncNum, PCI_MAX_LATENCY, 1 );
@@ -490,7 +495,7 @@ void pci_scan_bus( int nBusNum, int nBridgeFrom, int nBusDev )
 	psBus->nPrimaryBus = nBridgeFrom;
 	psBus->nSecondaryBus = nBusNum;
 
-	printk( "PCI: Scanning Bus %i\n", nBusNum );
+	kerndbg( KERN_INFO, "PCI: Scanning Bus %i\n", nBusNum );
 
 	/* Look for devices on this bus */
 	for ( nDev = 0; nDev < nDeviceNumberPerBus; nDev++ )
@@ -523,11 +528,14 @@ void pci_scan_bus( int nBusNum, int nBridgeFrom, int nBusDev )
 					{
 						g_apsPCIDevice[g_nPCINumDevices++] = psInfo;
 
-						printk( "PCI: Device %i VendorID: %04x DeviceID: %04x at %i:%i:%i\n", g_nPCINumDevices - 1, psInfo->nVendorID, psInfo->nDeviceID, nBusNum, nDev, nFnc );
+						kerndbg( KERN_INFO, "PCI: Device %i VendorID: %04x DeviceID: %04x at %i:%i:%i\n", g_nPCINumDevices - 1, psInfo->nVendorID, psInfo->nDeviceID, nBusNum, nDev, nFnc );
+					
+						/* Try to lookup the irq using the pci routing table instead of the BIOS */
+						lookup_irq( psInfo, true );
 					}
 					else
 					{
-						printk( "WARNING : To many PCI devices!\n" );
+						kerndbg( KERN_WARNING, "WARNING : To many PCI devices!\n" );
 					}
 				}
 
@@ -565,6 +573,10 @@ void pci_scan_bus( int nBusNum, int nBridgeFrom, int nBusDev )
 						claim_device( -1, psInfo->nHandle, "PCI Host Bridge", DEVICE_SYSTEM );
 					else if ( psInfo->nClassBase == PCI_BRIDGE && psInfo->nClassSub == PCI_ISA )
 						claim_device( -1, psInfo->nHandle, "PCI->ISA Bridge", DEVICE_SYSTEM );
+					else if( psInfo->nClassBase == PCI_BRIDGE && psInfo->nClassSub == PCI_CARDBUS )
+					{
+						claim_device( -1, psInfo->nHandle, "PCI->CardBus Bridge", DEVICE_SYSTEM );
+					}
 					else if ( psInfo->nClassBase == PCI_BRIDGE )
 						claim_device( -1, psInfo->nHandle, "PCI Bridge", DEVICE_SYSTEM );
 
@@ -573,7 +585,7 @@ void pci_scan_bus( int nBusNum, int nBridgeFrom, int nBusDev )
 			}
 		}
 	}
-	printk( "PCI: Scan of bus finished\n" );
+	kerndbg( KERN_INFO, "PCI: Scan of bus finished\n" );
 }
 
 /** 
@@ -585,7 +597,7 @@ void pci_scan_bus( int nBusNum, int nBridgeFrom, int nBusDev )
  * \sa
  * \author	Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
-void pci_scan_all()
+void pci_scan_all( void )
 {
 	uint8 *pBuffer;
 	size_t nSize;
@@ -601,7 +613,7 @@ void pci_scan_all()
 		return;
 	/* Scan first bus */
 	pci_scan_bus( 0, -1, -1 );
-	printk( "PCI: %i devices detected\n", g_nPCINumDevices );
+	kerndbg( KERN_INFO, "PCI: %i devices detected\n", g_nPCINumDevices );
 
 
 	/* Now load configuration */
@@ -621,7 +633,7 @@ void pci_scan_all()
 			if ( bDeviceID )
 			{
 				/* Something went wrong */
-				printk( "PCI: Configuration corrupted!\n" );
+				kerndbg( KERN_WARNING, "PCI: Configuration corrupted!\n" );
 				enable_all_devices();	/* Maybe configuration has changed */
 				return;
 			}
@@ -637,7 +649,7 @@ void pci_scan_all()
 			if ( !bDeviceID )
 			{
 				/* Something went wrong */
-				printk( "PCI: Configuration corrupted!\n" );
+				kerndbg( KERN_WARNING, "PCI: Configuration corrupted!\n" );
 				enable_all_devices();	/* Maybe configuration has changed */
 				return;
 			}
@@ -650,7 +662,7 @@ void pci_scan_all()
 
 			if ( nDevice >= g_nPCINumDevices )
 			{
-				printk( "PCI: Configuration change\n" );
+				kerndbg( KERN_WARNING, "PCI: Configuration change\n" );
 				enable_all_devices();
 				nSize = 0;
 				break;
@@ -659,7 +671,7 @@ void pci_scan_all()
 			/* Compare with the current config */
 			if ( g_apsPCIDevice[nDevice]->nVendorID != nVendorID || g_apsPCIDevice[nDevice]->nDeviceID != nDeviceID )
 			{
-				printk( "PCI: Configuration change\n" );
+				kerndbg( KERN_INFO, "PCI: Configuration change\n" );
 				enable_all_devices();
 			}
 
@@ -677,7 +689,7 @@ void pci_scan_all()
 	}
 	if ( nDevice < g_nPCINumDevices )
 	{
-		printk( "PCI: Configuration change\n" );
+		kerndbg( KERN_INFO,  "PCI: Configuration change\n" );
 		enable_all_devices();
 	}
 
@@ -717,13 +729,14 @@ bool get_bool_arg( bool *pbValue, const char *pzName, const char *pzArg, int nAr
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-status_t bus_init()
+status_t bus_init( void )
 {
 	/* Check if the use of the bus is disabled */
 	int i;
 	int argc;
 	const char *const *argv;
 	bool bDisablePCI = false;
+	bool bDisableIRQRouting = false;
 
 	get_kernel_arguments( &argc, &argv );
 
@@ -732,8 +745,13 @@ status_t bus_init()
 		if ( get_bool_arg( &bDisablePCI, "disable_pci=", argv[i], strlen( argv[i] ) ) )
 			if ( bDisablePCI )
 			{
-				printk( "PCI bus disabled by user\n" );
+				kerndbg( KERN_INFO, "PCI bus disabled by user\n" );
 				return ( -1 );
+			}
+		if ( get_bool_arg( &bDisableIRQRouting, "disable_pci_irq_routing=", argv[i], strlen( argv[i] ) ) )
+			if ( bDisableIRQRouting )
+			{
+				kerndbg( KERN_INFO, "PCI IRQ routing disabled\n" );
 			}
 	}
 
@@ -741,18 +759,20 @@ status_t bus_init()
 	pci_inst_check();
 	if ( g_nPCIMethod == 0 )
 	{
-		printk( "No PCI bus found\n" );
+		kerndbg( KERN_INFO, "No PCI bus found\n" );
 		return ( -1 );
 	}
 	else
 	{
+		if( !bDisableIRQRouting )
+			init_pci_irq_routing();		
 		pci_scan_all();
 	}
 	return ( 0 );
 }
 
 
-void bus_uninit()
+void bus_uninit( void )
 {
 	int i;
 	char zTemp[255];

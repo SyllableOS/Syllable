@@ -7,9 +7,13 @@ extern "C" {
 
 #include <atheos/types.h>
 #include <atheos/isa_io.h>
+#include <atheos/kdebug.h>
+#include <appserver/pci_graphics.h>
 
-#define NV_ARCH_30 0x30
-
+#define NV_ARCH_10  0x10
+#define NV_ARCH_20  0x20
+#define NV_ARCH_30  0x30
+#define NV_ARCH_40  0x40
 
 /* Little macro to construct bitmask for contiguous ranges of bits */
 #define BITMASK(t,b) (((unsigned)(1U << (((t)-(b)+1)))-1)  << (b))
@@ -91,6 +95,8 @@ typedef struct _riva_hw_state
     U032 horiz;
     U032 arbitration0;
     U032 arbitration1;
+    U032 pll;
+    U032 pllB;
     U032 vpll;
     U032 vpll2;
     U032 vpllB;
@@ -105,11 +111,15 @@ typedef struct _riva_hw_state
     U032 cursor0;
     U032 cursor1;
     U032 cursor2;
+    U032 timingH;
+    U032 timingV;
+    U032 displayV;
 } FX_HW_STATE, *FXRegPtr;
 
 
 
 typedef struct {
+	int					Fd;
     FX_HW_STATE	        ModeReg;
     FX_HW_STATE*        CurrentState;
     uint32              Architecture;
@@ -161,6 +171,11 @@ typedef struct {
     bool                alphaCursor;
     unsigned char       DDCBase;
     bool                twoHeads;
+    bool                twoStagePLL;
+    bool				fpScaler;
+    int                 fpWidth;
+    int                 fpHeight;
+    uint32              fpSyncs;
 
     uint32              dmaPut;
     uint32				dmaCurrent;
@@ -210,23 +225,6 @@ void NVSetStartAddress (
 #endif
 
 #endif /* __FX_HW_H__ */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

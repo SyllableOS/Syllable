@@ -1,7 +1,7 @@
 
 /*
  *  The Syllable kernel
- *	nVIDIA GeForce FX graphics kernel driver
+ *	nVIDIA Riva graphics kernel driver
  *	Copyright (C) 2003 Arno Klenke
  *  Copyright (C) 1999 - 2001 Kurt Skauen
  *
@@ -44,113 +44,17 @@ struct gfx_node
 	char zName[255];
 };
 
-enum {
-	FX_GET_DMA_ADDRESS = PCI_GFX_LAST_IOCTL
-};
-
-#define APPSERVER_DRIVER "geforcefx"
+#define APPSERVER_DRIVER "riva"
 
 struct gfx_device g_sDevices[] = {
-	{0x10de, 0x0100, "nVidia", "GeForce 256"},
-	{0x10de, 0x0101, "nVidia", "GeForce DDR"},
-	{0x10de, 0x0103, "nVidia", "Quadro"},
-	{0x10de, 0x0110, "nVidia", "GeForce2 MX/MX 400"},
-	{0x10de, 0x0111, "nVidia", "GeForce2 MX 100/200"},
-	{0x10de, 0x0112, "nVidia", "GeForce2 Go"},
-	{0x10de, 0x0113, "nVidia", "Quadro2 MXR/EX/Go"},
-	{0x10de, 0x01a0, "nVidia", "GeForce2 Integrated"},
-	{0x10de, 0x0150, "nVidia", "GeForce2 GTS"},
-	{0x10de, 0x0151, "nVidia", "GeForce2 Ti"},
-	{0x10de, 0x0152, "nVidia", "GeForce2 Ultra"},
-	{0x10de, 0x0153, "nVidia", "Quadro2 Pro"},
-	{0x10de, 0x0170, "nVidia", "GeForce4 MX460"},
-	{0x10de, 0x0171, "nVidia", "GeForce4 MX440"},
-	{0x10de, 0x0172, "nVidia", "GeForce4 MX420"},
-	{0x10de, 0x0173, "nVidia", "GeForce4 MX440SE"},
-	{0x10de, 0x0174, "nVidia", "GeForce4 440 Go"},
-	{0x10de, 0x0175, "nVidia", "GeForce4 420 Go"},
-	{0x10de, 0x0176, "nVidia", "GeForce4 420 Go 32M"},
-	{0x10de, 0x0177, "nVidia", "GeForce4 460 Go"},
-	{0x10de, 0x0179, "nVidia", "GeForce4 440 Go 64M"},
-	{0x10de, 0x017D, "nVidia", "GeForce4 410 Go 16M"},
-	{0x10de, 0x017C, "nVidia", "Quadro4 550 GoGL"},
-	{0x10de, 0x0178, "nVidia", "Quadro4 550 XGL"},
-	{0x10de, 0x017a, "nVidia", "Quadro4 NVS"},
-	{0x10de, 0x0181, "nVidia", "GeForce4 MX 440 AGP8X"},
-	{0x10de, 0x0182, "nVidia", "GeForce4 MX 440SE AGP8X"},
-	{0x10de, 0x0183, "nVidia", "GeForce4 MX 420 AGP8X"},
-	{0x10de, 0x0186, "nVidia", "GeForce4 448 Go"},
-	{0x10de, 0x0187, "nVidia", "GeForce4 488 Go"},
-	{0x10de, 0x0188, "nVidia", "Quadro4 580 XGL"},
-	{0x10de, 0x018a, "nVidia", "Quadro4 280 NVS"},
-	{0x10de, 0x018b, "nVidia", "Quadro4 380 XGL"},
-	{0x10de, 0x01f0, "nVidia", "GeForce4 MX Integrated"},
-	{0x10de, 0x0200, "nVidia", "GeForce3"},
-	{0x10de, 0x0201, "nVidia", "GeForce3 Ti 200"},
-	{0x10de, 0x0202, "nVidia", "GeForce3 Ti 500"},
-	{0x10de, 0x0203, "nVidia", "Quadro DCC"},
-	{0x10de, 0x0250, "nVidia", "GeForce4 Ti 4600"},
-	{0x10de, 0x0251, "nVidia", "GeForce4 Ti 4400"},
-	{0x10de, 0x0252, "nVidia", "NV25"},
-	{0x10de, 0x0253, "nVidia", "GeForce4 Ti 4200"},
-	{0x10de, 0x0258, "nVidia", "Quadro4 900 XGL"},
-	{0x10de, 0x0259, "nVidia", "Quadro4 750 XGL"},
-	{0x10de, 0x025b, "nVidia", "Quadro4 700 XGL"},
-	{0x10de, 0x0280, "nVidia", "GeForce4 Ti 4800"},
-	{0x10de, 0x0281, "nVidia", "GeForce4 Ti 4200 AGP8X"},
-	{0x10de, 0x0282, "nVidia", "GeForce4 Ti 4800 SE"},
-	{0x10de, 0x0286, "nVidia", "GeForce4 Ti 4200 Go"},
-	{0x10de, 0x028C, "nVidia", "Quadro4 700 GoGL"},
-	{0x10de, 0x0288, "nVidia", "Quadro4 980 XGL"},
-	{0x10de, 0x0289, "nVidia", "Quadro4 780 XGL"},
-	{0x10de, 0x0300, "nVidia", "NV30"},
-	{0x10de, 0x0301, "nVidia", "GeForce FX 5800 Ultra"},
-	{0x10de, 0x0302, "nVidia", "GeForce FX 5800"},
-	{0x10de, 0x0308, "nVidia", "Quadro FX 2000"},
-	{0x10de, 0x0309, "nVidia", "Quadro FX 1000"},
-	{0x10de, 0x0311, "nVidia", "GeForce FX 5600 Ultra"},
-	{0x10de, 0x0312, "nVidia", "GeForce FX 5600"},
-	{0x10de, 0x0314, "nVidia", "GeForce FX 5600SE"},
-	{0x10de, 0x031a, "nVidia", "GeForce FX Go5600"},
-	{0x10de, 0x031b, "nVidia", "GeForce FX Go5650"},
-	{0x10de, 0x031c, "nVidia", "Quadro FX Go700"},
-	{0x10de, 0x0320, "nVidia", "GeForce FX 5200"},
-	{0x10de, 0x0321, "nVidia", "GeForce FX 5200 Ultra"},
-	{0x10de, 0x0322, "nVidia", "GeForce FX 5200"},
-	{0x10de, 0x0323, "nVidia", "GeForce FX 5200SE"},
-	{0x10de, 0x0324, "nVidia", "GeForce FX Go5200"},
-	{0x10de, 0x0325, "nVidia", "GeForce FX Go5250"},
-	{0x10de, 0x0326, "nVidia", "GeForce FX 5500"},
-	{0x10de, 0x0327, "nVidia", "GeForce FX 5100"},
-	{0x10de, 0x0328, "nVidia", "GeForce FX Go5200 32M/64M"},
-	{0x10de, 0x032a, "nVidia", "Quadro NVS 280 PCI"},
-	{0x10de, 0x032b, "nVidia", "Quadro FX 500/600 PCI"},
-	{0x10de, 0x032c, "nVidia", "Quadro FX Go53xx Series"},
-	{0x10de, 0x032d, "nVidia", "Quadro FX Go5100"},
-	{0x10de, 0x0330, "nVidia", "GeForce FX 5900 Ultra"},
-	{0x10de, 0x0331, "nVidia", "GeForce FX 5900"},
-	{0x10de, 0x0332, "nVidia", "GeForce FX 5900"},
-	{0x10de, 0x0333, "nVidia", "GeForce FX 5950 Ultra"},
-	{0x10de, 0x033F, "nVidia", "Quadro FX 700"},
-	{0x10de, 0x0334, "nVidia", "GeForce FX 5950ZT"},
-	{0x10de, 0x0338, "nVidia", "Quadro FX 3000"},
-	{0x10de, 0x0341, "nVidia", "GeForce FX 5700 Ultra"},
-	{0x10de, 0x0342, "nVidia", "GeForce FX 5700"},
-	{0x10de, 0x0343, "nVidia", "GeForce FX 5700LE"},
-	{0x10de, 0x0344, "nVidia", "GeForce FX 5700VE"},
-	{0x10de, 0x0347, "nVidia", "GeForce FX Go5700"},
-	{0x10de, 0x0348, "nVidia", "GeForce FX Go5700"},
-	{0x10de, 0x034C, "nVidia", "Quadro FX Go1000"},
-	{0x10de, 0x034E, "nVidia", "Quadro FX 1100"},
-	{0x10de, 0x0040, "nVidia", "GeForce FX 6800 Ultra"},
-	{0x10de, 0x0041, "nVidia", "GeForce FX 6800"},
-	{0x10de, 0x0042, "nVidia", "GeForce FX 6800 LE"},
-	{0x10de, 0x0045, "nVidia", "GeForce FX 6800 GT"},
-	{0x10de, 0x004E, "nVidia", "Quadro FX 4000"},
-	{0x10de, 0x0140, "nVidia", "GeForce FX 6600 GT"},
-	{0x10de, 0x0141, "nVidia", "GeForce FX 6600"},
-	{0x10de, 0x0145, "nVidia", "GeForce FX 6610 XL"},
-	{0x10de, 0x014E, "nVidia", "Quadro FX 540"}
+	{0x12d2, 0x0018, "nVidia/SGS", "Riva 128"},
+	{0x10de, 0x0020, "nVidia", "Riva TNT"},
+	{0x10de, 0x0028, "nVidia", "Riva TNT2"},
+	{0x10de, 0x002a, "nVidia", "Riva TNT2"},
+	{0x10de, 0x002c, "nVidia", "Riva Vanta"},
+	{0x10de, 0x0029, "nVidia", "Riva TNT2 Ultra"},
+	{0x10de, 0x002d, "nVidia", "Riva TNT2 M64"},
+	{0x10de, 0x00a0, "nVidia", "Aladdin TNT2"},
 };
 
 /*****************************************************************************
@@ -241,19 +145,6 @@ status_t gfx_ioctl( void *pNode, void *pCookie, uint32 nCommand, void *pArgs, bo
 			}
 		}
 		break;
-	case FX_GET_DMA_ADDRESS:
-		{
-			area_id hArea;
-			iaddr_t nAddress;
-			
-			memcpy_from_user( &hArea, pArgs, sizeof( hArea ) );
-			if( get_area_physical_address( hArea, &nAddress ) != 0 )
-				nError = -EINVAL;
-				
-			memcpy_to_user( pArgs, &nAddress, sizeof( nAddress ) );
-			
-		}
-		break;
 	default:
 		nError = -ENOIOCTLCMD;
 	}
@@ -320,7 +211,7 @@ status_t device_init( int nDeviceID )
 				strcpy( psNode->zName, zTemp );
 
 				/* Create node path */
-				sprintf( zNodePath, "graphics/geforcefx_%i_0x%x_0x%x", nPCINum, ( uint )sInfo.nVendorID, ( uint )sInfo.nDeviceID );
+				sprintf( zNodePath, "graphics/riva_%i_0x%x_0x%x", nPCINum, ( uint )sInfo.nVendorID, ( uint )sInfo.nDeviceID );
 
 				if ( create_device_node( nDeviceID, sInfo.nHandle, zNodePath, &g_sOperations, psNode ) < 0 )
 				{
@@ -353,8 +244,6 @@ status_t device_uninit( int nDeviceID )
 {
 	return ( 0 );
 }
-
-
 
 
 

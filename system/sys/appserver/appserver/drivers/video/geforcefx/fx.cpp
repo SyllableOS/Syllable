@@ -41,46 +41,121 @@
 #include "fx.h"
 #include "fx_dma.h"
 
-static const struct chip_info asChipInfos[] = { 
-	{0x10DE0300, NV_ARCH_30, "0x0300"}, 
-	{0x10DE0301, NV_ARCH_30, "GeForce FX 5800 Ultra"}, 
-	{0x10DE0302, NV_ARCH_30, "GeForce FX 5800"}, 
-	{0x10DE0308, NV_ARCH_30, "Quadro FX 2000"}, 
-	{0x10DE0309, NV_ARCH_30, "Quadro FX 1000"}, 
-	{0x10DE0311, NV_ARCH_30, "GeForce FX 5600 Ultra"}, 
-	{0x10DE0312, NV_ARCH_30, "GeForce FX 5600"}, 
-	{0x10DE0314, NV_ARCH_30, "GeForce FX 5600SE"}, 
-	{0x10DE0316, NV_ARCH_30, "0x0316"}, 
-	{0x10DE0317, NV_ARCH_30, "0x0317"}, 
-	{0x10DE0318, NV_ARCH_30, "0x0318"}, 
-	{0x10DE0319, NV_ARCH_30, "0x0319"}, 
-	{0x10DE031A, NV_ARCH_30, "GeForce FX Go5600"}, 
-	{0x10DE031B, NV_ARCH_30, "GeForce FX Go5650"}, 
-	{0x10DE031C, NV_ARCH_30, "Quadro FX Go700"}, 
-	{0x10DE031D, NV_ARCH_30, "0x031D"}, 
-	{0x10DE031E, NV_ARCH_30, "0x031E"}, 
-	{0x10DE031F, NV_ARCH_30, "0x031F"}, 
-	{0x10DE0321, NV_ARCH_30, "GeForce FX 5200 Ultra"}, 
-	{0x10DE0322, NV_ARCH_30, "GeForce FX 5200"}, 
-	{0x10DE0323, NV_ARCH_30, "GeForce FX 5200SE"}, 
-	{0x10DE0324, NV_ARCH_30, "GeForce FX Go5200"}, 
-	{0x10DE0325, NV_ARCH_30, "GeForce FX Go5250"}, 
+static const struct chip_info asChipInfos[] = {
+	{0x10DE0100, NV_ARCH_10, "GeForce 256"},
+	{0x10DE0101, NV_ARCH_10, "GeForce DDR"},
+	{0x10DE0103, NV_ARCH_10, "Quadro"},
+	{0x10DE0110, NV_ARCH_10, "GeForce2 MX/MX 400"},
+	{0x10DE0111, NV_ARCH_10, "GeForce2 MX 100/200"},
+	{0x10DE0112, NV_ARCH_10, "GeForce2 Go"},
+	{0x10DE0113, NV_ARCH_10, "Quadro2 MXR/EX/Go"},
+	{0x10DE01A0, NV_ARCH_10, "GeForce2 Integrated GPU"},
+	{0x10DE0150, NV_ARCH_10, "GeForce2 GTS"},
+	{0x10DE0151, NV_ARCH_10, "GeForce2 Ti"},
+	{0x10DE0152, NV_ARCH_10, "GeForce2 Ultra"},
+	{0x10DE0153, NV_ARCH_10, "Quadro2 Pro"},
+	{0x10DE0170, NV_ARCH_10, "GeForce4 MX 460"},
+	{0x10DE0171, NV_ARCH_10, "GeForce4 MX 440"},
+	{0x10DE0172, NV_ARCH_10, "GeForce4 MX 420"},
+	{0x10DE0173, NV_ARCH_10, "GeForce4 MX 440-SE"},
+	{0x10DE0174, NV_ARCH_10, "GeForce4 440 Go"},
+	{0x10DE0175, NV_ARCH_10, "GeForce4 420 Go"},
+	{0x10DE0176, NV_ARCH_10, "GeForce4 420 Go 32M"},
+	{0x10DE0177, NV_ARCH_10, "GeForce4 460 Go"},
+	{0x10DE0179, NV_ARCH_10, "GeForce4 440 Go 64M"},
+	{0x10DE017D, NV_ARCH_10, "GeForce4 410 Go 16M"},
+	{0x10DE017C, NV_ARCH_10, "Quadro4 500 GoGL"},
+	{0x10DE0178, NV_ARCH_10, "Quadro4 550 XGL"},
+	{0x10DE017A, NV_ARCH_10, "Quadro4 NVS"},
+	{0x10DE0181, NV_ARCH_10, "GeForce4 MX 440 with AGP8X"},
+	{0x10DE0182, NV_ARCH_10, "GeForce4 MX 440SE with AGP8X"},
+	{0x10DE0183, NV_ARCH_10, "GeForce4 MX 420 with AGP8X"},
+	{0x10DE0186, NV_ARCH_10, "GeForce4 448 Go"},
+	{0x10DE0187, NV_ARCH_10, "GeForce4 488 Go"},
+	{0x10DE0188, NV_ARCH_10, "Quadro4 580 XGL"},
+	{0x10DE018A, NV_ARCH_10, "Quadro4 280 NVS"},
+	{0x10DE018B, NV_ARCH_10, "Quadro4 380 XGL"},
+	{0x10DE01F0, NV_ARCH_10, "GeForce4 MX Integrated GPU"},
+	{0x10DE0200, NV_ARCH_20, "GeForce3"},
+	{0x10DE0201, NV_ARCH_20, "GeForce3 Ti 200"},
+	{0x10DE0202, NV_ARCH_20, "GeForce3 Ti 500"},
+	{0x10DE0203, NV_ARCH_20, "Quadro DCC"},
+	{0x10DE0250, NV_ARCH_20, "GeForce4 Ti 4600"},
+	{0x10DE0251, NV_ARCH_20, "GeForce4 Ti 4400"},
+	{0x10DE0252, NV_ARCH_20, "0x0252"},
+	{0x10DE0253, NV_ARCH_20, "GeForce4 Ti 4200"},
+	{0x10DE0258, NV_ARCH_20, "Quadro4 900 XGL"},
+	{0x10DE0259, NV_ARCH_20, "Quadro4 750 XGL"},
+	{0x10DE025B, NV_ARCH_20, "Quadro4 700 XGL"},
+	{0x10DE0280, NV_ARCH_20, "GeForce4 Ti 4800"},
+	{0x10DE0281, NV_ARCH_20, "GeForce4 Ti 4200 with AGP8X"},
+	{0x10DE0282, NV_ARCH_20, "GeForce4 Ti 4800 SE"},
+	{0x10DE0286, NV_ARCH_20, "GeForce4 4200 Go"},
+	{0x10DE028C, NV_ARCH_20, "Quadro4 700 GoGL"},
+	{0x10DE0288, NV_ARCH_20, "Quadro4 980 XGL"},
+	{0x10DE0289, NV_ARCH_20, "Quadro4 780 XGL"},
+	{0x10DE0301, NV_ARCH_30, "GeForce FX 5800 Ultra"},
+	{0x10DE0302, NV_ARCH_30, "GeForce FX 5800"},
+	{0x10DE0308, NV_ARCH_30, "Quadro FX 2000"},
+	{0x10DE0309, NV_ARCH_30, "Quadro FX 1000"},
+	{0x10DE0311, NV_ARCH_30, "GeForce FX 5600 Ultra"},
+	{0x10DE0312, NV_ARCH_30, "GeForce FX 5600"},
+	{0x10DE0314, NV_ARCH_30, "GeForce FX 5600SE"},
+	{0x10DE0316, NV_ARCH_30, "0x0316"},
+	{0x10DE0317, NV_ARCH_30, "0x0317"},
+	{0x10DE031A, NV_ARCH_30, "GeForce FX Go5600"},
+	{0x10DE031B, NV_ARCH_30, "GeForce FX Go5650"},
+	{0x10DE031C, NV_ARCH_30, "Quadro FX Go700"},
+	{0x10DE031D, NV_ARCH_30, "0x031D"},
+	{0x10DE031E, NV_ARCH_30, "0x031E"},
+	{0x10DE031F, NV_ARCH_30, "0x031F"},
+	{0x10DE0320, NV_ARCH_30, "GeForce FX 5200"},
+	{0x10DE0321, NV_ARCH_30, "GeForce FX 5200 Ultra"},
+	{0x10DE0322, NV_ARCH_30, "GeForce FX 5200"},
+	{0x10DE0323, NV_ARCH_30, "GeForce FX 5200SE"},
+	{0x10DE0324, NV_ARCH_30, "GeForce FX Go5200"},
+	{0x10DE0325, NV_ARCH_30, "GeForce FX Go5250"},
+	{0x10DE0326, NV_ARCH_30, "GeForce FX 5500"},
+	{0x10DE0327, NV_ARCH_30, "GeForce FX 5100"},
 	{0x10DE0328, NV_ARCH_30, "GeForce FX Go5200 32M/64M"},
-	{0x10DE032A, NV_ARCH_30, "0x032A"}, 
-	{0x10DE032B, NV_ARCH_30, "Quadro FX 500"}, 
-	{0x10DE032C, NV_ARCH_30, "Quadro FX Go5300"}, 
-	{0x10DE032D, NV_ARCH_30, "Quadro FX Go5100"}, 
-	{0x10DE032F, NV_ARCH_30, "0x032F"}, 
-	{0x10DE0330, NV_ARCH_30, "GeForce FX 5900 Ultra"}, 
-	{0x10DE0331, NV_ARCH_30, "GeForce FX 5900"}, 
-	{0x10DE0333, NV_ARCH_30, "GeForce FX 5950 Ultra"}, 
-	{0x10DE0333, NV_ARCH_30, "Quadro FX 3000"}
+	{0x10DE032A, NV_ARCH_30, "Quadro NVS 280 PCI"},
+	{0x10DE032B, NV_ARCH_30, "Quadro FX 500/600 PCI"},
+	{0x10DE032C, NV_ARCH_30, "Quadro FX Go53xx Series"},
+	{0x10DE032D, NV_ARCH_30, "Quadro FX Go5100"},
+	{0x10DE032F, NV_ARCH_30, "0x032F"},
+	{0x10DE0330, NV_ARCH_30, "GeForce FX 5900 Ultra"},
+	{0x10DE0331, NV_ARCH_30, "GeForce FX 5900"},
+	{0x10DE0332, NV_ARCH_30, "GeForce FX 5900"},
+	{0x10DE0333, NV_ARCH_30, "GeForce FX 5950 Ultra"},
+	{0x10DE033F, NV_ARCH_30, "Quadro FX 700"},
+	{0x10DE0334, NV_ARCH_30, "GeForce FX 5950ZT"},
+	{0x10DE0338, NV_ARCH_30, "Quadro FX 3000"},
+	{0x10DE0341, NV_ARCH_30, "GeForce FX 5700 Ultra"},
+	{0x10DE0342, NV_ARCH_30, "GeForce FX 5700"},
+	{0x10DE0343, NV_ARCH_30, "GeForce FX 5700LE"},
+	{0x10DE0344, NV_ARCH_30, "GeForce FX 5700VE"},
+	{0x10DE0347, NV_ARCH_30, "GeForce FX Go5700"},
+	{0x10DE0348, NV_ARCH_30, "GeForce FX Go5700"},
+	{0x10DE034C, NV_ARCH_30, "Quadro FX Go1000"},
+	{0x10DE034E, NV_ARCH_30, "Quadro FX 1100"},
+	{0x10DE0040, NV_ARCH_40, "GeForce FX 6800 Ultra"},
+	{0x10DE0041, NV_ARCH_40, "GeForce FX 6800"},
+	{0x10DE0042, NV_ARCH_40, "GeForce FX 6800 LE"},
+	{0x10DE0045, NV_ARCH_40, "GeForce FX 6800 GT"},
+	{0x10DE004E, NV_ARCH_40, "Quadro FX 4000"},
+	{0x10DE0140, NV_ARCH_40, "GeForce FX 6600 GT"},
+	{0x10DE0141, NV_ARCH_40, "GeForce FX 6600"},
+	{0x10DE0145, NV_ARCH_40, "GeForce FX 6610 XL"},
+	{0x10DE014E, NV_ARCH_40, "Quadro FX 540"}
 };
 
 
-enum {
+enum
+{
 	FX_GET_DMA_ADDRESS = PCI_GFX_LAST_IOCTL
 };
+
+#undef ENABLE_DOUBLEBUFFER	// Enable doublebuffering
 
 inline uint32 pci_size( uint32 base, uint32 mask )
 {
@@ -169,9 +244,10 @@ FX::FX( int nFd ):m_cGELock( "fx_ge_lock" ), m_hRegisterArea( -1 ), m_hFrameBuff
 
 	memset( &m_sHW, 0, sizeof( m_sHW ) );
 
+	m_sHW.Fd = nFd;
 	m_sHW.Chipset = asChipInfos[j].nDeviceId;
-	m_sHW.alphaCursor = ( ( m_sHW.Chipset & 0x0ff0 ) >= 0x0110 );
-	m_sHW.Architecture = ( m_sHW.Chipset & 0x0f00 ) >> 4;
+	m_sHW.alphaCursor = ( ( m_sHW.Chipset & 0x0ff0 ) != 0x0100 );
+	m_sHW.Architecture = asChipInfos[j].nArchRev;
 	m_sHW.FbAddress = m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK;
 	m_sHW.IOAddress = m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK;
 	m_sHW.FbBase = ( uint8 * )m_pFrameBufferBase;
@@ -210,8 +286,8 @@ FX::FX( int nFd ):m_cGELock( "fx_ge_lock" ), m_hRegisterArea( -1 ), m_hFrameBuff
 	m_bSwap = false;
 	m_bVideoOverlayUsed = false;
 	m_bIsInitiated = true;
-	
-	
+
+
 }
 
 FX::~FX()
@@ -271,11 +347,12 @@ bool FX::GetScreenModeDesc( int nIndex, os::screen_mode * psMode )
 	return true;
 }
 
-int fx_swap_entry( void* data )
+int fx_swap_entry( void *data )
 {
-	FX* pcFX = (FX*)data;
+	FX *pcFX = ( FX * ) data;
+
 	pcFX->SwapThread();
-	return( 0 );
+	return ( 0 );
 }
 
 //-----------------------------------------------------------------------------
@@ -290,31 +367,44 @@ int FX::SetScreenMode( os::screen_mode sMode )
 	vga_regs newmode;
 	FXRegPtr nvReg = &m_sHW.ModeReg;
 	memset( &newmode, 0, sizeof( struct vga_regs ) );
-	
+
+#ifdef ENABLE_DOUBLEBUFFER
 	/* Stop swap thread */
-	if( m_hSwapThread > -1 )
+	if ( m_hSwapThread > -1 )
 	{
 		m_bSwap = false;
 		wait_for_thread( m_hSwapThread );
 		m_hSwapThread = -1;
 	}
+#endif
 
+	float vHPeriodEst = ( ( ( 1.0 / sMode.m_vRefreshRate ) - ( 550.0 / 1000000.0 ) ) / ( ( float )sMode.m_nHeight + 1 ) * 1000000.0 );
+	float vVSyncPlusBp = rint( 550.0 / vHPeriodEst );
+	float vVTotal = ( float )sMode.m_nHeight + vVSyncPlusBp + 1;
+	float vVFieldRateEst = 1.0 / vHPeriodEst / vVTotal * 1000000.0;
+	float vHPeriod = vHPeriodEst / ( sMode.m_vRefreshRate / vVFieldRateEst );
+
+	//float vVFieldRate = 1.0 / vHPeriod / vVTotal * 1000000.0;
+	//float vVFrameRate = vVFieldRate;
+	float vIdealDutyCycle = ( ( ( 40.0 - 20.0 ) * 128.0 / 256.0 ) + 20.0 ) - ( ( 128.0 / 256.0 * 600.0 ) * vHPeriod / 1000.0 );
+	float vHBlank = rint( ( float )sMode.m_nWidth * vIdealDutyCycle / ( 100.0 - vIdealDutyCycle ) / ( 2.0 * 8 ) ) * ( 2.0 * 8 );
+	float vHTotal = ( float )sMode.m_nWidth + vHBlank;
+	float vPixClock = vHTotal / vHPeriod;
+	float vHSync = rint( 8.0 / 100.0 * vHTotal / 8 ) * 8;
+	float vHFrontPorch = ( vHBlank / 2.0 ) - vHSync;
+	float vVOddFrontPorchLines = 1;
+	
 	int nBpp = ( sMode.m_eColorSpace == CS_RGB32 ) ? 4 : 2;
-	int nHTotal = int ( sMode.m_nWidth * 1.3 );
-	int nVTotal = int ( sMode.m_nHeight * 1.1 );
-	int nHFreq = int ( ( sMode.m_vRefreshRate + 0.2 ) * nVTotal );
-	int nPixClock = nHFreq * nHTotal / 1000;
-	int nHSyncLength = ( nHTotal - sMode.m_nWidth ) / 2;
-	int nRightBorder = ( nHTotal - sMode.m_nWidth - nHSyncLength ) / 3;
-	int nVSyncLength = 2;
-	int nBottomBorder = ( nVTotal - sMode.m_nHeight - nVSyncLength ) / 3;
 
-	int nHSyncStart = sMode.m_nWidth + nRightBorder;
-	int nVSyncStart = sMode.m_nHeight + nBottomBorder;
-	int nHSyncEnd = nHSyncStart + nHSyncLength;
-	int nVSyncEnd = nVSyncStart + nVSyncLength;
+	int nHTotal = ( int )rint( vHTotal );
+	int nVTotal = ( int )rint( vVTotal );
+	int nPixClock = ( int )rint( vPixClock ) * 1000;
+	int nHSyncStart = sMode.m_nWidth + ( int )rint( vHFrontPorch );
+	int nHSyncEnd = nHSyncStart + ( int )rint( vHSync );
+	int nVSyncStart = sMode.m_nHeight + ( int )rint( vVOddFrontPorchLines );
+	int nVSyncEnd = ( int )nVSyncStart + 3;
 
-	int horizTotal = ( nHTotal / 8 - 1 ) - 4;
+	int horizTotal = nHTotal / 8 - 5;
 	int horizDisplay = sMode.m_nWidth / 8 - 1;
 	int horizStart = nHSyncStart / 8 - 1;
 	int horizEnd = nHSyncEnd / 8 - 1;
@@ -325,14 +415,14 @@ int FX::SetScreenMode( os::screen_mode sMode )
 	int vertStart = nVSyncStart - 1;
 	int vertEnd = nVSyncEnd - 1;
 	int vertBlankStart = sMode.m_nHeight - 1;
-	int vertBlankEnd = ( nVTotal - 2 ) + 1;
+	int vertBlankEnd = nVTotal - 1;
 
 	if ( m_sHW.FlatPanel == 1 )
 	{
 		vertStart = vertTotal - 3;
 		vertEnd = vertTotal - 2;
 		vertBlankStart = vertStart;
-		horizStart = horizTotal - 3;
+		horizStart = horizTotal - 5;
 		horizEnd = horizTotal - 2;
 		horizBlankEnd = horizTotal + 4;
 	}
@@ -341,14 +431,14 @@ int FX::SetScreenMode( os::screen_mode sMode )
 	newmode.crtc[0x00] = Set8Bits( horizTotal );
 	newmode.crtc[0x01] = Set8Bits( horizDisplay );
 	newmode.crtc[0x02] = Set8Bits( horizBlankStart );
-	newmode.crtc[0x03] = SetBitField( horizBlankEnd, 4: 0, 4:0 ) | SetBit( 7 );
+      newmode.crtc[0x03] = SetBitField( horizBlankEnd, 4: 0, 4:0 ) | SetBit( 7 );
 	newmode.crtc[0x04] = Set8Bits( horizStart );
-	newmode.crtc[0x05] = SetBitField( horizBlankEnd, 5: 5, 7: 7 ) | SetBitField( horizEnd, 4: 0, 4:0 );
-	newmode.crtc[0x06] = SetBitField( vertTotal, 7: 0, 7:0 );
-	newmode.crtc[0x07] = SetBitField( vertTotal, 8: 8, 0: 0 ) | SetBitField( vertDisplay, 8: 8, 1: 1 ) | SetBitField( vertStart, 8: 8, 2: 2 ) | SetBitField( vertBlankStart, 8: 8, 3: 3 ) | SetBit( 4 ) | SetBitField( vertTotal, 9: 9, 5: 5 ) | SetBitField( vertDisplay, 9: 9, 6: 6 ) | SetBitField( vertStart, 9: 9, 7:7 );
-	newmode.crtc[0x09] = SetBitField( vertBlankStart, 9: 9, 5:5 ) | SetBit( 6 );
+      newmode.crtc[0x05] = SetBitField( horizBlankEnd, 5: 5, 7: 7 ) | SetBitField( horizEnd, 4: 0, 4:0 );
+      newmode.crtc[0x06] = SetBitField( vertTotal, 7: 0, 7:0 );
+      newmode.crtc[0x07] = SetBitField( vertTotal, 8: 8, 0: 0 ) | SetBitField( vertDisplay, 8: 8, 1: 1 ) | SetBitField( vertStart, 8: 8, 2: 2 ) | SetBitField( vertBlankStart, 8: 8, 3: 3 ) | SetBit( 4 ) | SetBitField( vertTotal, 9: 9, 5: 5 ) | SetBitField( vertDisplay, 9: 9, 6: 6 ) | SetBitField( vertStart, 9: 9, 7:7 );
+      newmode.crtc[0x09] = SetBitField( vertBlankStart, 9: 9, 5:5 ) | SetBit( 6 );
 	newmode.crtc[0x10] = Set8Bits( vertStart );
-	newmode.crtc[0x11] = SetBitField( vertEnd, 3: 0, 3:0 ) | SetBit( 5 );
+      newmode.crtc[0x11] = SetBitField( vertEnd, 3: 0, 3:0 ) | SetBit( 5 );
 	newmode.crtc[0x12] = Set8Bits( vertDisplay );
 	newmode.crtc[0x13] = Set8Bits( ( sMode.m_nWidth / 8 ) * nBpp );
 	newmode.crtc[0x15] = Set8Bits( vertBlankStart );
@@ -365,7 +455,7 @@ int FX::SetScreenMode( os::screen_mode sMode )
 	{
 		newmode.attr[i] = ( uint8 )i;
 	}
-	newmode.attr[0x10] = 0x41;
+	newmode.attr[0x10] = 0x01;
 	newmode.attr[0x11] = 0xff;
 	newmode.attr[0x12] = 0x0f;
 	newmode.attr[0x13] = 0x00;
@@ -382,12 +472,12 @@ int FX::SetScreenMode( os::screen_mode sMode )
 	nvReg->width = sMode.m_nWidth;
 	nvReg->height = sMode.m_nHeight;
 
-     
-	nvReg->screen = SetBitField( horizBlankEnd, 6: 6, 4: 4 ) | SetBitField( vertBlankStart, 10: 10, 3: 3 ) | SetBitField( vertStart, 10: 10, 2: 2 ) | SetBitField( vertDisplay, 10: 10, 1: 1 ) | SetBitField( vertTotal, 10: 10, 0:0 );
 
-	nvReg->horiz = SetBitField( horizTotal, 8: 8, 0: 0 ) | SetBitField( horizDisplay, 8: 8, 1: 1 ) | SetBitField( horizBlankStart, 8: 8, 2: 2 ) | SetBitField( horizStart, 8: 8, 3:3 );
+      nvReg->screen = SetBitField( horizBlankEnd, 6: 6, 4: 4 ) | SetBitField( vertBlankStart, 10: 10, 3: 3 ) | SetBitField( vertStart, 10: 10, 2: 2 ) | SetBitField( vertDisplay, 10: 10, 1: 1 ) | SetBitField( vertTotal, 10: 10, 0:0 );
 
-	nvReg->extra = SetBitField( vertTotal, 11: 11, 0: 0 ) | SetBitField( vertDisplay, 11: 11, 2: 2 ) | SetBitField( vertStart, 11: 11, 4: 4 ) | SetBitField( vertBlankStart, 11: 11, 6:6 );
+      nvReg->horiz = SetBitField( horizTotal, 8: 8, 0: 0 ) | SetBitField( horizDisplay, 8: 8, 1: 1 ) | SetBitField( horizBlankStart, 8: 8, 2: 2 ) | SetBitField( horizStart, 8: 8, 3:3 );
+
+      nvReg->extra = SetBitField( vertTotal, 11: 11, 0: 0 ) | SetBitField( vertDisplay, 11: 11, 2: 2 ) | SetBitField( vertStart, 11: 11, 4: 4 ) | SetBitField( vertBlankStart, 11: 11, 6:6 );
 
 	nvReg->interlace = 0xff;	/* interlace off */
 
@@ -401,38 +491,59 @@ int FX::SetScreenMode( os::screen_mode sMode )
 	if ( m_sHW.FlatPanel == 1 )
 	{
 		nvReg->pixel |= ( 1 << 7 );
-		nvReg->scale |= ( 1 << 8 );
+		if ( !m_sHW.fpScaler || ( m_sHW.fpWidth <= sMode.m_nWidth ) || ( m_sHW.fpHeight <= sMode.m_nHeight ) )
+		{
+			nvReg->scale |= ( 1 << 8 );
+		}
 	}
+
+	nvReg->vpll = nvReg->pll;
+	nvReg->vpll2 = nvReg->pll;
+	nvReg->vpllB = nvReg->pllB;
+	nvReg->vpll2B = nvReg->pllB;
+
 	if ( m_sHW.CRTCnumber )
 	{
 		nvReg->head = m_sHW.PCRTC0[0x00000860 / 4] & ~0x00001000;
 		nvReg->head2 = m_sHW.PCRTC0[0x00002860 / 4] | 0x00001000;
 		nvReg->crtcOwner = 3;
 		nvReg->pllsel |= 0x20000800;
-		nvReg->vpll2 = nvReg->vpll;
+		nvReg->vpll = m_sHW.PRAMDAC0[0x0508 / 4];
+		if ( m_sHW.twoStagePLL )
+			nvReg->vpllB = m_sHW.PRAMDAC0[0x0578 / 4];
 	}
-	else
-	if ( m_sHW.twoHeads )
+	else if ( m_sHW.twoHeads )
 	{
 		nvReg->head = m_sHW.PCRTC0[0x00000860 / 4] | 0x00001000;
 		nvReg->head2 = m_sHW.PCRTC0[0x00002860 / 4] & ~0x00001000;
 		nvReg->crtcOwner = 0;
 		nvReg->vpll2 = m_sHW.PRAMDAC0[0x00000520 / 4];
+		if ( m_sHW.twoStagePLL )
+			nvReg->vpll2B = m_sHW.PRAMDAC0[0x057C / 4];
 	}
 	nvReg->cursorConfig = 0x00000100;
-	if ( 1 /*m_sHW.alphaCursor */  )
+	if ( m_sHW.alphaCursor )
 	{
-		nvReg->cursorConfig |= 0x04011000;
+		if ( ( m_sHW.Chipset & 0x0ff0 ) != 0x0110 )
+			nvReg->cursorConfig |= 0x04011000;
+		else
+			nvReg->cursorConfig |= 0x14011000;
 		nvReg->general |= ( 1 << 29 );
-		nvReg->dither = m_sHW.PRAMDAC[0x083C/4] & ~1;
-		nvReg->cursorConfig |= ( 1 << 28 );
 	}
 	else
 		nvReg->cursorConfig |= 0x02000000;
 
-	nvReg->vpllB = 0;
-	nvReg->vpll2B = 0;
+	if ( m_sHW.twoHeads )
+	{
+		if ( ( m_sHW.Chipset & 0x0ff0 ) == 0x0110 )
+			nvReg->dither = m_sHW.PRAMDAC[0x0528 / 4] & ~0x00010000;
+		else
+			nvReg->dither = m_sHW.PRAMDAC[0x083C / 4] & ~1;
+	}
 
+	nvReg->timingH = 0;
+	nvReg->timingV = 0;
+	nvReg->displayV = sMode.m_nHeight;
 
 	NVLockUnlock( &m_sHW, 0 );
 	if ( m_sHW.twoHeads )
@@ -478,15 +589,17 @@ int FX::SetScreenMode( os::screen_mode sMode )
 
 	m_sCurrentMode = sMode;
 	m_sCurrentMode.m_nBytesPerLine = sMode.m_nWidth * nBpp;
-	
-	NVSetStartAddress( &m_sHW, m_sCurrentMode.m_nBytesPerLine * m_sCurrentMode.m_nHeight );
-	
+
+	NVSetStartAddress( &m_sHW, 0 /*m_sCurrentMode.m_nBytesPerLine * m_sCurrentMode.m_nHeight */  );
+
 	/* Init acceleration */
 	SetupAccel();
-	
+
+#ifdef ENABLE_DOUBLEBUFFER
 	m_bSwap = true;
-	m_hSwapThread = spawn_thread( "geforcefx_swap_thread", (void*)fx_swap_entry, 0, 0, this );
+	m_hSwapThread = spawn_thread( "geforcefx_swap_thread", ( void * )fx_swap_entry, 100, 0, this );
 	resume_thread( m_hSwapThread );
+#endif
 
 	return 0;
 }
@@ -527,23 +640,24 @@ void FX::SetCursorBitmap( os::mouse_ptr_mode eMode, const os::IPoint & cHotSpot,
 {
 #ifndef DISABLE_HW_CURSOR
 	m_cCursorHotSpot = cHotSpot;
-	if ( ( eMode != MPTR_MONO && eMode != MPTR_RGB32 ) || nWidth > MAX_CURS || nHeight > MAX_CURS )
+	if ( ( eMode != MPTR_MONO && eMode != MPTR_RGB32 ) || nWidth > MAX_CURS || nHeight > MAX_CURS || !m_sHW.alphaCursor )
 	{
 #endif
-		if( m_bUsingHWCursor )
+		if ( m_bUsingHWCursor )
 			NVShowHideCursor( &m_sHW, 0 );
 		m_bUsingHWCursor = false;
 		return DisplayDriver::SetCursorBitmap( eMode, cHotSpot, pRaster, nWidth, nHeight );
 #ifndef DISABLE_HW_CURSOR
 	}
-	
-	if( !m_bUsingHWCursor ) {
+
+	if ( !m_bUsingHWCursor )
+	{
 		DisplayDriver::MouseOff();
 		NVShowHideCursor( &m_sHW, 1 );
 	}
-	
+
 	m_bUsingHWCursor = true;
-	
+
 	const uint8 *pnSrcMono = ( const uint8 * )pRaster;
 	const uint32 *pnSrcRgb = ( const uint32 * )pRaster;
 	volatile uint32 *pnDst = ( uint32 * )m_sHW.CURSOR;
@@ -561,7 +675,7 @@ void FX::SetCursorBitmap( os::mouse_ptr_mode eMode, const os::IPoint & cHotSpot,
 			}
 			else
 			{
-				if( eMode == MPTR_RGB32 )
+				if ( eMode == MPTR_RGB32 )
 					*pnSaved = *pnSrcRgb++;
 				else
 					*pnSaved = anPalette[*pnSrcMono++];
@@ -598,7 +712,7 @@ void FX::SetMousePos( os::IPoint cNewPos )
 	int x = cNewPos.x - m_cCursorHotSpot.x;
 	int y = cNewPos.y - m_cCursorHotSpot.y;
 
-	m_sHW.PRAMDAC[0x0000300/4] = ( y << 16 ) | ( x & 0xffff );
+	m_sHW.PRAMDAC[0x0000300 / 4] = ( y << 16 ) | ( x & 0xffff );
 #endif
 }
 
@@ -652,7 +766,7 @@ void FX::MouseOff()
 //                          DMA Functions
 //-----------------------------------------------------------------------------
 
-void  DmaKickoff( NVPtr pNv ) 
+void DmaKickoff( NVPtr pNv )
 {
 	if ( pNv->dmaCurrent != pNv->dmaPut )
 	{
@@ -660,7 +774,14 @@ void  DmaKickoff( NVPtr pNv )
 		WRITE_PUT( pNv, pNv->dmaPut );
 	}
 }
-void  DmaWait(  NVPtr pNv,  uint32 size  )
+
+/* There is a HW race condition with videoram command buffers.
+   You can't jump to the location of your put offset.  We write put
+   at the jump offset + SKIPS dwords with noop padding in between
+   to solve this problem */
+#define SKIPS  8
+
+void DmaWait( NVPtr pNv, uint32 size )
 {
 	uint32 dmaGet;
 
@@ -674,20 +795,19 @@ void  DmaWait(  NVPtr pNv,  uint32 size  )
 			if ( pNv->dmaFree < size )
 			{
 				DmaNext( pNv, 0x20000000 );
-				if ( !dmaGet )
+				if ( dmaGet <= SKIPS )
 				{
-					if ( !pNv->dmaPut )	/* corner case - idle */
-						DmaKickoff( pNv );
-					
+					if ( pNv->dmaPut <= SKIPS )	/* corner case - idle */
+						WRITE_PUT( pNv, SKIPS + 1 );
 					do
 					{
 						dmaGet = READ_GET( pNv );
 					}
-					while ( !dmaGet );
+					while ( dmaGet <= SKIPS );
 				}
-				WRITE_PUT( pNv, 0 );
-				pNv->dmaCurrent = pNv->dmaPut = 0;
-				pNv->dmaFree = dmaGet - 1;
+				WRITE_PUT( pNv, SKIPS );
+				pNv->dmaCurrent = pNv->dmaPut = SKIPS;
+				pNv->dmaFree = dmaGet - ( SKIPS + 1 );
 			}
 		}
 		else
@@ -704,14 +824,15 @@ void  DmaWait(  NVPtr pNv,  uint32 size  )
 void FX::WaitForIdle()
 {
 	bigtime_t nTimeOut = get_system_time() + 5000;
-	while(READ_GET(&m_sHW) != m_sHW.dmaPut && ( get_system_time() < nTimeOut ) );
 
-    while(m_sHW.PGRAPH[0x0700/4] && ( get_system_time() < nTimeOut ) );
-   
-    /*if( get_system_time() > nTimeOut ) {
-    	dbprintf( "GeForce FX :: Error: Engine timed out\n" );
-    	
-    }*/
+	while ( READ_GET( &m_sHW ) != m_sHW.dmaPut && ( get_system_time() < nTimeOut ) );
+
+	while ( m_sHW.PGRAPH[0x0700 / 4] && ( get_system_time() < nTimeOut ) );
+
+	/*if( get_system_time() > nTimeOut ) {
+	   dbprintf( "GeForce FX :: Error: Engine timed out\n" );
+
+	   } */
 }
 
 
@@ -724,45 +845,45 @@ void FX::WaitForIdle()
 void FX::SwapThread()
 {
 	/* Enable interrupts on V-Blank */
-	m_sHW.PCRTC[0x140/4] = 0x1;
-	
-	
-	while( m_bSwap )
+	m_sHW.PCRTC[0x140 / 4] = 0x1;
+
+
+	while ( m_bSwap )
 	{
 		m_cGELock.Lock();
-		
+
 		DmaStart( &m_sHW, SURFACE_OFFSET_SRC, 2 );
-		
+
 		DmaNext( &m_sHW, 0 );
 		DmaNext( &m_sHW, m_sCurrentMode.m_nBytesPerLine * m_sCurrentMode.m_nHeight );
-		DmaKickoff(&m_sHW);
-		
-		WaitForIdle();
-
-		DmaStart(&m_sHW, BLIT_POINT_SRC, 3);
-		DmaNext (&m_sHW, ( ( 0 << 16 ) | 0 ) );
-		DmaNext (&m_sHW, ( (0  << 16 ) | 0));
-		DmaNext (&m_sHW, (( m_sCurrentMode.m_nHeight << 16 ) | m_sCurrentMode.m_nWidth ));
-		DmaKickoff(&m_sHW);
+		DmaKickoff( &m_sHW );
 
 		WaitForIdle();
-		
+
+		DmaStart( &m_sHW, BLIT_POINT_SRC, 3 );
+		DmaNext( &m_sHW, ( ( 0 << 16 ) | 0 ) );
+		DmaNext( &m_sHW, ( ( 0 << 16 ) | 0 ) );
+		DmaNext( &m_sHW, ( ( m_sCurrentMode.m_nHeight << 16 ) | m_sCurrentMode.m_nWidth ) );
+		DmaKickoff( &m_sHW );
+
+		WaitForIdle();
+
 		DmaStart( &m_sHW, SURFACE_OFFSET_SRC, 2 );
 		DmaNext( &m_sHW, 0 );
 		DmaNext( &m_sHW, 0 );
-		DmaKickoff(&m_sHW);
-		
+		DmaKickoff( &m_sHW );
+
 		WaitForIdle();
-		
+
 		m_cGELock.Unlock();
-		
+
 		/* Wait for the next V-Blank event */
-		while( !( m_sHW.PCRTC[0x100/4] & 0x1 ) )
+		while ( !( m_sHW.PCRTC[0x100 / 4] & 0x1 ) )
 		{
 			snooze( 1000 );
 		}
 		/* Clear interrupt */
-		m_sHW.PCRTC[0x100/4] = 0x1;
+		m_sHW.PCRTC[0x100 / 4] = 0x1;
 	}
 }
 
@@ -803,15 +924,15 @@ bool FX::DrawLine( SrvBitmap * pcBitMap, const IRect & cClipRect, const IPoint &
 	}
 
 	m_cGELock.Lock();
-	
-	DmaStart(&m_sHW, LINE_COLOR, 1);
-	DmaNext (&m_sHW, nColor);
-	DmaStart(&m_sHW, LINE_LINES(0), 4);
-	DmaNext (&m_sHW, (( y1 << 16 ) | ( x1 & 0xffff )));
-	DmaNext (&m_sHW, (( y2 << 16 ) | ( x2 & 0xffff )));
-	DmaNext (&m_sHW, (( y2 << 16 ) | ( x2 & 0xffff )));
-	DmaNext (&m_sHW, ((( y2 + 1 ) << 16 ) | ( x2 & 0xffff )));
-	DmaKickoff(&m_sHW);
+
+	DmaStart( &m_sHW, LINE_COLOR, 1 );
+	DmaNext( &m_sHW, nColor );
+	DmaStart( &m_sHW, LINE_LINES( 0 ), 4 );
+	DmaNext( &m_sHW, ( ( y1 << 16 ) | ( x1 & 0xffff ) ) );
+	DmaNext( &m_sHW, ( ( y2 << 16 ) | ( x2 & 0xffff ) ) );
+	DmaNext( &m_sHW, ( ( y2 << 16 ) | ( x2 & 0xffff ) ) );
+	DmaNext( &m_sHW, ( ( ( y2 + 1 ) << 16 ) | ( x2 & 0xffff ) ) );
+	DmaKickoff( &m_sHW );
 
 	WaitForIdle();
 	m_cGELock.Unlock();
@@ -848,14 +969,14 @@ bool FX::FillRect( SrvBitmap * pcBitMap, const IRect & cRect, const Color32_s & 
 	}
 
 	m_cGELock.Lock();
-	
-	DmaStart(&m_sHW, RECT_SOLID_COLOR, 1);
-	DmaNext (&m_sHW, nColor);
-	DmaStart(&m_sHW, RECT_SOLID_RECTS(0), 2);
-	DmaNext (&m_sHW, (( cRect.left << 16 ) | cRect.top));
-	DmaNext (&m_sHW, (( nWidth << 16 ) | nHeight));
-	DmaKickoff(&m_sHW);
-	
+
+	DmaStart( &m_sHW, RECT_SOLID_COLOR, 1 );
+	DmaNext( &m_sHW, nColor );
+	DmaStart( &m_sHW, RECT_SOLID_RECTS( 0 ), 2 );
+	DmaNext( &m_sHW, ( ( cRect.left << 16 ) | cRect.top ) );
+	DmaNext( &m_sHW, ( ( nWidth << 16 ) | nHeight ) );
+	DmaKickoff( &m_sHW );
+
 	WaitForIdle();
 	m_cGELock.Unlock();
 	return true;
@@ -881,11 +1002,11 @@ bool FX::BltBitmap( SrvBitmap * pcDstBitMap, SrvBitmap * pcSrcBitMap, IRect cSrc
 
 	m_cGELock.Lock();
 
-	DmaStart(&m_sHW, BLIT_POINT_SRC, 3);
-	DmaNext (&m_sHW, (( cSrcRect.top << 16 ) | cSrcRect.left));
-	DmaNext (&m_sHW, (( cDstPos.y << 16 ) | cDstPos.x));
-	DmaNext (&m_sHW, (( nHeight << 16 ) | nWidth));
-	DmaKickoff(&m_sHW);
+	DmaStart( &m_sHW, BLIT_POINT_SRC, 3 );
+	DmaNext( &m_sHW, ( ( cSrcRect.top << 16 ) | cSrcRect.left ) );
+	DmaNext( &m_sHW, ( ( cDstPos.y << 16 ) | cDstPos.x ) );
+	DmaNext( &m_sHW, ( ( nHeight << 16 ) | nWidth ) );
+	DmaKickoff( &m_sHW );
 
 	WaitForIdle();
 	m_cGELock.Unlock();
@@ -906,7 +1027,7 @@ bool FX::BltBitmap( SrvBitmap * pcDstBitMap, SrvBitmap * pcSrcBitMap, IRect cSrc
 
 bool FX::CreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst, os::color_space eFormat, os::Color32_s sColorKey, area_id *pBuffer )
 {
-	if ( eFormat == CS_YUV422 && !m_bVideoOverlayUsed )
+	if ( ( eFormat == CS_YUV422 ) && !m_bVideoOverlayUsed )
 	{
 		/* Calculate offset */
 		uint32 pitch = 0;
@@ -914,6 +1035,7 @@ bool FX::CreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst, o
 
 		pitch = ( ( cSize.x << 1 ) + 3 ) & ~3;
 		totalSize = pitch * cSize.y;
+		
 
 		uint32 offset = PAGE_ALIGN( m_sHW.ScratchBufferStart - totalSize - PAGE_SIZE );
 
@@ -961,6 +1083,8 @@ bool FX::CreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst, o
 		m_sHW.PMC[0x8950 / 4] = ( cDst.Height() << 16 ) | cDst.Width(  );
 
 		uint32 dstPitch = ( pitch ) | 1 << 20;
+		if( eFormat == CS_YUV12 )
+			dstPitch |= 1 << 16;
 
 		m_sHW.PMC[0x8958 / 4] = dstPitch;
 		m_sHW.PMC[0x8704 / 4] = 0;
@@ -969,7 +1093,7 @@ bool FX::CreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst, o
 		m_bVideoOverlayUsed = true;
 		m_cVideoSize = cSize;
 		m_nVideoOffset = offset;
-		
+
 		return ( true );
 	}
 	return ( false );
@@ -993,6 +1117,7 @@ bool FX::RecreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst,
 		uint32 pitch = 0;
 		uint32 totalSize = 0;
 
+		
 		pitch = ( ( cSize.x << 1 ) + 3 ) & ~3;
 		totalSize = pitch * cSize.y;
 
@@ -1023,7 +1148,9 @@ bool FX::RecreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst,
 		m_sHW.PMC[0x8948 / 4] = ( cDst.top << 16 ) | cDst.left;
 		m_sHW.PMC[0x8950 / 4] = ( cDst.Height() << 16 ) | cDst.Width(  );
 
-		uint32 dstPitch = ( ( ( cSize.x << 1 ) + 63 ) & ~63 ) | 1 << 20;
+		uint32 dstPitch = ( pitch ) | 1 << 20;
+		if( eFormat == CS_YUV12 )
+			dstPitch |= 1 << 16;
 
 		m_sHW.PMC[0x8958 / 4] = dstPitch;
 		m_sHW.PMC[0x00008704 / 4] = 0;
@@ -1039,141 +1166,6 @@ bool FX::RecreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst,
 	return ( false );
 }
 
-
-
-typedef volatile struct {
-	uint64 timeStamp; /* nanoseconds since Jan. 1, 1970 */
-	uint32 returnVal; /* NVX				 */
-	uint16 errorCode; /* NVX				 */
-	uint8  reserved;  /* zero				 */
-	uint8  status;    /* NV_NOTIFICATION_STATUS_*	 */
-} NvNotification;
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-bool FX::UploadVideoData( area_id *phArea, area_id hSrcArea, uint32 nBytesPerRow )
-{
-	
-	/* DOES NOT WORK YET! */
-	return( false );
-	#if 0
-	/* Create notification pointer */
-	NvNotification* pNotify = NULL;
-	area_id hNotifyArea = create_area( "geforcefx_notify", (void**)&pNotify, PAGE_ALIGN( sizeof( NvNotification ) ), AREA_FULL_ACCESS, AREA_NO_LOCK );
-	area_id hArea = hNotifyArea;
-	memset( (void*)pNotify, 0, sizeof( NvNotification ) );
-		
-	
-	/*uint8* pMem = NULL;
-	area_id hMem = create_area( "geforcefx_notify", (void**)&pMem, PAGE_ALIGN( 100 * 100 * 4 ), AREA_FULL_ACCESS, AREA_NO_LOCK );
-	memset( (void*)pMem, 0, 100 * 100 * 4 );
-	*/
-	area_id hAreaMem = hSrcArea;
-	
-	/* Get address of the source area */
-		
-	if( ioctl( m_nFd, FX_GET_DMA_ADDRESS, &hArea ) == 0 &&
-		ioctl( m_nFd, FX_GET_DMA_ADDRESS, &hAreaMem ) == 0 )
-	{
-		//dbprintf( "%x\n", (uint)hArea );
-		//dbprintf( "%x\n", (uint)hAreaMem );
-		
-		
-		/* Update notifier object */		
-		m_sHW.PRAMIN[0x0828] = 0x0002303e;
-		m_sHW.PRAMIN[0x0829] = 0x000000ff;
-		m_sHW.PRAMIN[0x082a] = (uint32)hArea | 0x00000002;
-    	m_sHW.PRAMIN[0x082b] = 0x00000002;
-    
-		m_sHW.PRAMIN[0x0010] = 0x80000018;
-	    m_sHW.PRAMIN[0x0011] = 0x8000120a;
-    
-   		/* Update source object */
-		m_sHW.PRAMIN[0x0830] = 0x0002303e;
-		m_sHW.PRAMIN[0x0831] = ( 720 * 576 * 4 );
-		m_sHW.PRAMIN[0x0832] = (uint32)hAreaMem | 0x00000002;
-		m_sHW.PRAMIN[0x0833] = 0x00000002;
-    
-	    m_sHW.PRAMIN[0x0014] = 0x8000001a;
-    	m_sHW.PRAMIN[0x0015] = 0x8000120c;
-    	
-    	/* Update dest object */
-		m_sHW.PRAMIN[0x082c] = 0x0000303d;
-		m_sHW.PRAMIN[0x082d] = ( 720 * 576 * 4 );
-		m_sHW.PRAMIN[0x082e] = m_nVideoOffset | 0x00000002;
-		m_sHW.PRAMIN[0x082f] = 0xffffffff;
-		
-		m_sHW.PRAMIN[0x0012] = 0x80000019;
-    m_sHW.PRAMIN[0x0013] = 0x8000120b;
-    
-		pNotify->status = 0xff;
-		
-		
-	
-		/* Enable notifier */
-		m_cGELock.Lock();	
-		DmaStart(&m_sHW, 0xe104, 1);
-		DmaNext (&m_sHW, 0x0);
-		DmaKickoff(&m_sHW);
-		m_cGELock.Unlock();
-		WaitForIdle();
-			
-		//dbprintf( "Get: %x Put: %x\n", READ_GET(&m_sHW), m_sHW.dmaPut );
-		//dbprintf("Starting...\n" );
-		
-		/* Set transfer parameters */
-		m_cGELock.Lock();		
-		DmaStart(&m_sHW, 0xe30c, 0x7);
-		DmaNext (&m_sHW, 0x0); /* source offset */
-		DmaNext (&m_sHW, 0x0 ); /* dest offset */
-		DmaNext (&m_sHW, m_cVideoSize.x * 2 ); /* source pitch */
-		DmaNext (&m_sHW, m_cVideoSize.x * 2 ); /* dest pitch */
-		DmaNext (&m_sHW, m_cVideoSize.x * 2 ); /* linesize */
-		DmaNext (&m_sHW, m_cVideoSize.y ); /* rows */
-		DmaNext (&m_sHW, 0x101); /* 1 byte format */
-		DmaKickoff(&m_sHW);
-			
-		WaitForIdle();
-		
-		
-		/* Start transfer */	
-		DmaStart(&m_sHW, 0xe328, 0x1);
-		DmaNext (&m_sHW, 0x0);
-		DmaKickoff(&m_sHW);
-		
-/*		DmaStart(&m_sHW, 0xe100, 0x1);
-		DmaNext (&m_sHW, 0x0);
-		DmaKickoff(&m_sHW);*/
-			
-		m_cGELock.Unlock();
-		
-		int i = 100000;
-		while( pNotify->status && i-- ) {};
-			
-			
-		//dbprintf( "Get: %x Put: %x\n", READ_GET(&m_sHW), m_sHW.dmaPut );
-			
-		dbprintf( "%x\n", pNotify->status );
-	
-		WaitForIdle();
-			
-		dbprintf( "%x\n", pNotify->status );
-			
-		//dbprintf( "Get: %x Put: %x\n", READ_GET(&m_sHW), m_sHW.dmaPut );
-			
-		delete_area( hNotifyArea );
-		return( true );
-	} else {
-		delete_area( hNotifyArea );
-		return( false );
-	}
-	#endif
-}
 
 //-----------------------------------------------------------------------------
 // NAME:
@@ -1249,29 +1241,30 @@ void FX::SetupAccel()
 	uint32 surfaceFormat, patternFormat, rectFormat, lineFormat;
 	int pitch = m_sCurrentMode.m_nWidth * ( BitsPerPixel( m_sCurrentMode.m_eColorSpace ) >> 3 );
 
-	
+	for ( uint i = 0; i < SKIPS; i++ )
+		m_sHW.dmaBase[i] = 0x00000000;
+
 	/* Initialize engine objects */
-	m_sHW.dmaBase[0x0] = 0x00040000;
-	m_sHW.dmaBase[0x1] = 0x80000010;
-	m_sHW.dmaBase[0x2] = 0x00042000;
-	m_sHW.dmaBase[0x3] = 0x80000011;
-	m_sHW.dmaBase[0x4] = 0x00044000;
-	m_sHW.dmaBase[0x5] = 0x80000012;
-	m_sHW.dmaBase[0x6] = 0x00046000;
-	m_sHW.dmaBase[0x7] = 0x80000013;
-	m_sHW.dmaBase[0x8] = 0x00048000;
-	m_sHW.dmaBase[0x9] = 0x80000014;
-	m_sHW.dmaBase[0xA] = 0x0004A000;
-	m_sHW.dmaBase[0xB] = 0x80000015;
-	m_sHW.dmaBase[0xC] = 0x0004C000;
-	m_sHW.dmaBase[0xD] = 0x80000016;
-	m_sHW.dmaBase[0xE] = 0x0004E000;
-	//m_sHW.dmaBase[0xF] = 0x80000017;
-	m_sHW.dmaBase[0xF] = 0x8000001b;
+	m_sHW.dmaBase[0x0 + SKIPS] = 0x00040000;
+	m_sHW.dmaBase[0x1 + SKIPS] = 0x80000010;
+	m_sHW.dmaBase[0x2 + SKIPS] = 0x00042000;
+	m_sHW.dmaBase[0x3 + SKIPS] = 0x80000011;
+	m_sHW.dmaBase[0x4 + SKIPS] = 0x00044000;
+	m_sHW.dmaBase[0x5 + SKIPS] = 0x80000012;
+	m_sHW.dmaBase[0x6 + SKIPS] = 0x00046000;
+	m_sHW.dmaBase[0x7 + SKIPS] = 0x80000013;
+	m_sHW.dmaBase[0x8 + SKIPS] = 0x00048000;
+	m_sHW.dmaBase[0x9 + SKIPS] = 0x80000014;
+	m_sHW.dmaBase[0xA + SKIPS] = 0x0004A000;
+	m_sHW.dmaBase[0xB + SKIPS] = 0x80000015;
+	m_sHW.dmaBase[0xC + SKIPS] = 0x0004C000;
+	m_sHW.dmaBase[0xD + SKIPS] = 0x80000016;
+	m_sHW.dmaBase[0xE + SKIPS] = 0x0004E000;
+	m_sHW.dmaBase[0xF + SKIPS] = 0x80000017;
 	m_sHW.dmaPut = 0;
-	m_sHW.dmaCurrent = 16;
+	m_sHW.dmaCurrent = 16 + SKIPS;
 	m_sHW.dmaMax = 8191;
-	m_sHW.dmaFree = 8175;
+	m_sHW.dmaFree = m_sHW.dmaMax - m_sHW.dmaCurrent;
 	switch ( BitsPerPixel( m_sCurrentMode.m_eColorSpace ) )
 	{
 	case 32:
@@ -1307,9 +1300,9 @@ void FX::SetupAccel()
 	DmaStart( &m_sHW, LINE_FORMAT, 1 );
 	DmaNext( &m_sHW, lineFormat );
 	m_sHW.currentRop = ~0;	/* set to something invalid */
-	
-		/* Set solid color mode */
-		DmaStart( &m_sHW, PATTERN_COLOR_0, 4 );
+
+	/* Set solid color mode */
+	DmaStart( &m_sHW, PATTERN_COLOR_0, 4 );
 	DmaNext( &m_sHW, ~0 );
 	DmaNext( &m_sHW, ~0 );
 	DmaNext( &m_sHW, ~0 );
@@ -1322,7 +1315,7 @@ void FX::SetupAccel()
 
 //-----------------------------------------------------------------------------
 
-bool FX::IsConnected( int output ) 
+bool FX::IsConnected( int output )
 {
 	volatile U032 *PRAMDAC = m_sHW.PRAMDAC0;
 	CARD32 reg52C, reg608;
@@ -1343,7 +1336,7 @@ bool FX::IsConnected( int output )
 	present = ( PRAMDAC[0x0608 / 4] & ( 1 << 28 ) ) ? true : false;
 	if ( present )
 		dbprintf( "GeForce FX ::  ...found one\n" );
-	
+
 	else
 		dbprintf( "GeForce FX ::  ...can't find one\n" );
 	m_sHW.PRAMDAC0[0x0608 / 4] &= 0x0000EFFF;
@@ -1382,10 +1375,26 @@ void FX::CommonSetup()
 	m_sHW.PDIO0 = ( U008 * )( m_pRegisterBase + 0x00681000 );
 	m_sHW.PVIO = ( U008 * )( m_pRegisterBase + 0x000C0000 );
 
-	m_sHW.twoHeads = ( nImplementation >= 0x0110 ) && ( nImplementation != 0x0150 ) && ( nImplementation != 0x01A0 ) && ( nImplementation != 0x0200 );
+	m_sHW.twoHeads = ( nImplementation != 0x0100 ) && ( nImplementation != 0x0150 ) && ( nImplementation != 0x01A0 ) && ( nImplementation != 0x0200 );
+	m_sHW.fpScaler = ( m_sHW.twoHeads && ( nImplementation != 0x0110 ) );
+
+	m_sHW.twoStagePLL = ( nImplementation == 0x0310 ) || ( nImplementation == 0x0340 ) || ( m_sHW.Architecture >= NV_ARCH_40 );
 
 	switch ( m_sHW.Chipset )
 	{
+	case 0x0112:
+	case 0x0174:
+	case 0x0175:
+	case 0x0176:
+	case 0x0177:
+	case 0x0179:
+	case 0x017C:
+	case 0x017D:
+	case 0x0186:
+	case 0x0187:
+	case 0x0189:
+	case 0x0286:
+	case 0x028C:
 	case 0x0316:
 	case 0x0317:
 	case 0x031A:
@@ -1405,25 +1414,52 @@ void FX::CommonSetup()
 	case 0x0349:
 	case 0x034B:
 	case 0x034C:
+	case 0x0160:
+	case 0x0166:
+	case 0x00C8:
+	case 0x00C9:
+	case 0x00CC:
+	case 0x0147:
+	case 0x0148:
+	case 0x0149:
+	case 0x014C:
 		bMobile = true;
 		break;
 	default:
 		break;
 	}
 
-	
-		/* Get memory size */
+
+	/* Get memory size */
+	if ( nImplementation == 0x01a0 )
+	{
+		int nAmt = pci_gfx_read_config( m_sHW.Fd, 0, 0, 1, 0x7C, 4 );
+
+		m_sHW.RamAmountKBytes = ( ( ( nAmt >> 6 ) & 31 ) + 1 ) * 1024;
+	}
+	else if ( nImplementation == 0x01f0 )
+	{
+		int nAmt = pci_gfx_read_config( m_sHW.Fd, 0, 0, 1, 0x84, 4 );
+
+		m_sHW.RamAmountKBytes = ( ( ( nAmt >> 4 ) & 127 ) + 1 ) * 1024;
+	}
+	else
+	{
 		m_sHW.RamAmountKBytes = ( m_sHW.PFB[0x020C / 4] & 0xFFF00000 )>>10;
+	}
 	m_sHW.CrystalFreqKHz = ( m_sHW.PEXTDEV[0x0000 / 4] & ( 1 << 6 ) ) ? 14318 : 13500;
-	if ( m_sHW.PEXTDEV[0x0000 / 4] & ( 1 << 22 ) )
-		m_sHW.CrystalFreqKHz = 27000;
+	if ( m_sHW.twoHeads && ( nImplementation != 0x0110 ) )
+	{
+		if ( m_sHW.PEXTDEV[0x0000 / 4] & ( 1 << 22 ) )
+			m_sHW.CrystalFreqKHz = 27000;
+	}
 	m_sHW.CursorStart = ( m_sHW.RamAmountKBytes - 96 ) * 1024;
 	m_sHW.CURSOR = NULL;	/* can't set this here */
 	m_sHW.MinVClockFreqKHz = 12000;
-	m_sHW.MaxVClockFreqKHz = 350000;
-	
-		/* Select first head */
-		m_sHW.PCIO = m_sHW.PCIO0;
+	m_sHW.MaxVClockFreqKHz = m_sHW.twoStagePLL ? 400000 : 350000;
+
+	/* Select first head */
+	m_sHW.PCIO = m_sHW.PCIO0;
 	m_sHW.PCRTC = m_sHW.PCRTC0;
 	m_sHW.PRAMDAC = m_sHW.PRAMDAC0;
 	m_sHW.PDIO = m_sHW.PDIO0;
@@ -1434,6 +1470,7 @@ void FX::CommonSetup()
 
 	if ( !m_sHW.twoHeads )
 	{
+		m_sHW.CRTCnumber = 0;
 		VGA_WR08( m_sHW.PCIO, 0x03D4, 0x28 );
 		if ( VGA_RD08( m_sHW.PCIO, 0x03D5 ) & 0x80 )
 		{
@@ -1463,12 +1500,10 @@ void FX::CommonSetup()
 		{
 			if ( m_sHW.PRAMDAC0[0x0000052C / 4] & 0x100 )
 				outputAfromCRTC = 1;
-			
 			else
 				outputAfromCRTC = 0;
 			if ( m_sHW.PRAMDAC0[0x0000252C / 4] & 0x100 )
 				outputBfromCRTC = 1;
-			
 			else
 				outputBfromCRTC = 0;
 			analog_on_A = IsConnected( 0 );
@@ -1484,13 +1519,14 @@ void FX::CommonSetup()
 		VGA_WR08( m_sHW.PCIO, 0x03D4, 0x44 );
 		cr44 = VGA_RD08( m_sHW.PCIO, 0x03D5 );
 		VGA_WR08( m_sHW.PCIO, 0x03D5, 3 );
-		
-			/* Select second head */
-			m_sHW.PCIO = m_sHW.PCIO0 + 0x2000;
+
+		/* Select second head */
+		m_sHW.PCIO = m_sHW.PCIO0 + 0x2000;
 		m_sHW.PCRTC = m_sHW.PCRTC0 + 0x800;
 		m_sHW.PRAMDAC = m_sHW.PRAMDAC0 + 0x800;
 		m_sHW.PDIO = m_sHW.PDIO0 + 0x2000;
 		NVLockUnlock( &m_sHW, 0 );
+
 		VGA_WR08( m_sHW.PCIO, 0x03D4, 0x28 );
 		slaved_on_B = VGA_RD08( m_sHW.PCIO, 0x03D5 ) & 0x80;
 		if ( slaved_on_B )
@@ -1500,13 +1536,14 @@ void FX::CommonSetup()
 		}
 		VGA_WR08( m_sHW.PCIO, 0x03D4, 0x44 );
 		VGA_WR08( m_sHW.PCIO, 0x03D5, 0 );
-		
-			/* Select first head */
-			m_sHW.PCIO = m_sHW.PCIO0;
+
+		/* Select first head */
+		m_sHW.PCIO = m_sHW.PCIO0;
 		m_sHW.PCRTC = m_sHW.PCRTC0;
 		m_sHW.PRAMDAC = m_sHW.PRAMDAC0;
 		m_sHW.PDIO = m_sHW.PDIO0;
 		NVLockUnlock( &m_sHW, 0 );
+
 		VGA_WR08( m_sHW.PCIO, 0x03D4, 0x28 );
 		slaved_on_A = VGA_RD08( m_sHW.PCIO, 0x03D5 ) & 0x80;
 		if ( slaved_on_A )
@@ -1516,34 +1553,44 @@ void FX::CommonSetup()
 		}
 		oldhead = m_sHW.PCRTC0[0x00000860 / 4];
 		m_sHW.PCRTC0[0x00000860 / 4] = oldhead | 0x00000010;
-		if ( slaved_on_A )
+
+		if ( slaved_on_A && !tvA )
 		{
 			CRTCnumber = 0;
 			FlatPanel = 1;
-			Television = tvA;
-			dbprintf( "GeForce FX :: CRTC 0 is currently programmed for %s\n", Television ? "TV" : "DFP" );
+			dbprintf( "GeForce FX :: CRTC 0 is currently programmed for DFP\n" );
 		}
-		else
-		if ( slaved_on_B )
+		else if ( slaved_on_B && !tvB )
 		{
 			CRTCnumber = 1;
 			FlatPanel = 1;
-			Television = tvB;
-			dbprintf( "GeForce FX :: CRTC 1 is currently programmed for %s\n", Television ? "TV" : "DFP" );
+			dbprintf( "GeForce FX :: CRTC 1 is currently programmed for DFP\n" );
 		}
-		else
-		if ( analog_on_A )
+		else if ( analog_on_A )
 		{
 			CRTCnumber = outputAfromCRTC;
 			FlatPanel = 0;
 			dbprintf( "GeForce FX :: CRTC %i appears to have a CRT attached\n", CRTCnumber );
 		}
-		else
-		if ( analog_on_B )
+		else if ( analog_on_B )
 		{
 			CRTCnumber = outputBfromCRTC;
 			FlatPanel = 0;
 			dbprintf( "GeForce FX :: CRTC %i appears to have a CRT attached\n", CRTCnumber );
+		}
+		else if ( slaved_on_A )
+		{
+			CRTCnumber = 0;
+			FlatPanel = 1;
+			Television = 1;
+			dbprintf( "GeForce FX :: CRTC 0 is currently programmed for TV\n" );
+		}
+		else if ( slaved_on_B )
+		{
+			CRTCnumber = 1;
+			FlatPanel = 1;
+			Television = 1;
+			dbprintf( "GeForce FX :: CRTC 1 is currently programmed for TV\n" );
 		}
 		if ( m_sHW.FlatPanel == -1 )
 		{
@@ -1571,13 +1618,13 @@ void FX::CommonSetup()
 		{
 			if ( CRTCnumber != -1 )
 				m_sHW.CRTCnumber = CRTCnumber;
-			
+
 			else
 			{
 				dbprintf( "GeForce FX :: Unable to detect which CRTCNumber...\n" );
 				if ( m_sHW.FlatPanel )
 					m_sHW.CRTCnumber = 1;
-				
+
 				else
 					m_sHW.CRTCnumber = 0;
 				dbprintf( "GeForce FX ::...Defaulting to CRTCNumber %i\n", m_sHW.CRTCnumber );
@@ -1612,6 +1659,15 @@ void FX::CommonSetup()
 	}
 
 	dbprintf( "Using %s on CRTC %i\n", m_sHW.FlatPanel ? ( m_sHW.Television ? "TV" : "DFP" ) : "CRT", m_sHW.CRTCnumber );
+
+	if ( m_sHW.FlatPanel && !m_sHW.Television )
+	{
+		m_sHW.fpWidth = m_sHW.PRAMDAC[0x0820 / 4] + 1;
+		m_sHW.fpHeight = m_sHW.PRAMDAC[0x0800 / 4] + 1;
+		m_sHW.fpSyncs = m_sHW.PRAMDAC[0x0848 / 4] & 0x30000033;
+		dbprintf( "GeForce FX :: Panel size is %i x %i\n", m_sHW.fpWidth, m_sHW.fpHeight );
+	}
+
 	m_sHW.FPDither = FALSE;
 }
 
@@ -1637,127 +1693,3 @@ extern "C" DisplayDriver * init_gfx_driver( int nFd )
 		return NULL;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
