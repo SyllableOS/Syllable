@@ -1,4 +1,3 @@
-
 /*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
  *  Copyright (C) 2003 The Syllable Team
@@ -27,6 +26,7 @@
 #include <gui/scrollbar.h>
 #include <util/application.h>
 #include <util/message.h>
+#include <util/string.h>
 
 #include <gui/font.h>
 #include <gui/bitmap.h>
@@ -130,7 +130,7 @@ class View::Private
 	ScrollBar *m_pcVScrollBar;
 	Rect m_cFrame;
 	Point m_cScrollOffset;
-	std::string m_cTitle;
+	String m_cTitle;
 
 	drawing_mode m_eDrawingMode;
 	Color32_s m_sFgColor;
@@ -149,6 +149,8 @@ class View::Private
 	int m_nMouseMode;	/* Record wether the mouse was inside or outside
 				 * the bounding box during the last mouse event */
 	int m_nTabOrder;	// Sorting order for keyboard manouvering
+
+	ShortcutKey	m_cKey;	// Keyboard shortcut
 };
 
 
@@ -166,7 +168,7 @@ class View::Private
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-View::View( const Rect & cFrame, const std::string & cTitle, uint32 nResizeMask, uint32 nFlags ):Handler( cTitle )	//, m_cFrame( cFrame ), m_cTitle( cTitle ), m_nResizeMask( nResizeMask ), m_nFlags( nFlags )
+View::View( const Rect & cFrame, const String & cTitle, uint32 nResizeMask, uint32 nFlags ):Handler( cTitle )	//, m_cFrame( cFrame ), m_cTitle( cTitle ), m_nResizeMask( nResizeMask ), m_nFlags( nFlags )
 {
 	m = new Private;
 
@@ -297,6 +299,33 @@ int View::GetTabOrder()
 void View::SetTabOrder( int nOrder )
 {
 	m->m_nTabOrder = nOrder;
+}
+
+const ShortcutKey& View::GetShortcut() const
+{
+	return ( m->m_cKey );
+}
+
+void View::SetShortcut( const ShortcutKey& cShortcut )
+{
+	if( m->m_cKey.IsValid() && GetWindow() ) {
+		GetWindow()->RemoveShortcut( m->m_cKey );
+	}
+	m->m_cKey = cShortcut;
+	if( m->m_cKey.IsValid() && GetWindow() ) {
+		GetWindow()->AddShortcut( m->m_cKey, this );
+	}
+}
+
+void View::SetShortcutFromLabel( const String& cLabel )
+{
+	if( m->m_cKey.IsValid() && GetWindow() ) {
+		GetWindow()->RemoveShortcut( m->m_cKey );
+	}
+	m->m_cKey.SetFromLabel( cLabel );
+	if( m->m_cKey.IsValid() && GetWindow() ) {
+		GetWindow()->AddShortcut( m->m_cKey, this );
+	}
 }
 
 /** \internal
@@ -2013,8 +2042,8 @@ void View::MovePenBy( const Point & cPos )
  *	is necessary to read the old pixels from the frame-buffer and this is
  *	a very slow operations.
  *
- * \param pString
- *	Pointer to the UTF-8 encoded string to render.
+ * \param cString
+ *	UTF-8 encoded string to render.
  * \param nLength
  *	Number of bytes to render from pString. If the string is NULL
  *	terminated a length of -1 can be used to render the entire
@@ -2023,17 +2052,31 @@ void View::MovePenBy( const Point & cPos )
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-void View::DrawString( const char *pString, int nLength )
+void View::DrawString( const String& cString )
 {
-	if( nLength == -1 )
-	{
-		nLength = strlen( pString );
-	}
-	if( nLength <= 0 )
+	Window *pcWindow = GetWindow();
+
+	if( pcWindow == NULL )
 	{
 		return;
 	}
+	GRndDrawString_s *psCmd = static_cast < GRndDrawString_s * >( pcWindow->_AllocRenderCmd( DRC_DRAW_STRING, this,
+			sizeof( GRndDrawString_s ) + cString.size() - 1 ) );
+
+	if( psCmd != NULL )
+	{
+		psCmd->nLength = cString.size();
+		memcpy( psCmd->zString, cString.c_str(), psCmd->nLength );
+	}
+}
+
+void View::DrawString( const char *pzString, int nLength = -1 )
+{
 	Window *pcWindow = GetWindow();
+
+	if( nLength == -1 ) {
+		nLength = strlen( pzString );
+	}
 
 	if( pcWindow == NULL )
 	{
@@ -2045,61 +2088,86 @@ void View::DrawString( const char *pString, int nLength )
 	if( psCmd != NULL )
 	{
 		psCmd->nLength = nLength;
-		memcpy( psCmd->zString, pString, nLength );
+		memcpy( psCmd->zString, pzString, psCmd->nLength );
 	}
 }
 
-/** 
+/** Render a text-string in a specified rectangle.
  * \par Description:
- *	This is the same as void DrawString( const char* pString, int nLength )
- *	except that it assumes the string is NULL terminated and will always
- *	render the entire string.
- * \param pzString
- *	The NULL terminated string to render
- * \sa void DrawString( const char* pString, int nLength )
- * \author Kurt Skauen (kurt@atheos.cx)
+ *	DrawText() renders a UTF-8 encoded character string inside the
+ *	rectangle specified, using the current font, pen color and drawing
+ *	mode.
+ * \par
+ *	DrawText() parses the specified text string for the following
+ *	formatting codes:
+ * \par
+ *	\\n = newline
+ * \par
+ *	_ = underscore next character
+ * \par
+ *	ESCc = center text
+ * \par
+ *	ESCl = left align text
+ * \par
+ *	ESCr = right align text
+ * \par
+ *	There is a few issues you should be aware of when rendering text.
+ *	Since Syllable antialiases the glyphs to improve the quality and
+ *	readability of the text, it needs a bit more information than just
+ *	a pen color. If the drawing mode is DM_COPY the text will be
+ *	antialiased against the colour of the current background pen (as
+ *	set by SetBgColor()). If it is DM_OVER the text will be antialiased
+ *	against the existing graphics under the text. If the drawing mode
+ *	is DM_BLEND the antialiazing is written to the alpha channel of the
+ *	destination bitmap. This is useful when you render text into a
+ *	transparent bitmap that will later be rendered on top of a background
+ *	with unknown color. One examaple of this is when you create a bitmap
+ *	that will be used as a drag and drop image. This mode only works when
+ *	rendering into 32-bit bitmaps.
+ * \par
+ *	You should always use the DM_COPY mode when rendering against a static
+ *	background where you know the background color. When using DM_OVER it
+ *	is necessary to read the old pixels from the frame-buffer and this is
+ *	a very slow operations.
+ *
+ * \param cPos
+ *	Rectangle to render the text in, the text may be centred, left or right aligned
+ *	inside this rectangle.
+ * \param cString
+ *	UTF-8 encoded string to render.
+ * \param nLength
+ *	Number of bytes to render from pString. If the string is NULL
+ *	terminated a length of -1 can be used to render the entire
+ *	string.
+ * \param nFlags
+ *	Flags that control how the text is rendered.
+ * \sa SetFont(), os::Font, SetDrawingMode(), SetFgColor(), SetBgColor()
+ * \author Henrik Isaksson (henrik@isaksson.tk)
  *****************************************************************************/
-
-void View::DrawString( const char *pzString )
+void View::DrawText( const Rect& cPos, const String& cString, uint32 nFlags = 0 )
 {
-	DrawString( pzString, strlen( pzString ) );
+	Window *pcWindow = GetWindow();
+
+	if( pcWindow == NULL )
+	{
+		return;
+	}
+	GRndDrawText_s *psCmd = static_cast < GRndDrawText_s * >( pcWindow->_AllocRenderCmd( DRC_DRAW_TEXT, this,
+			sizeof( GRndDrawText_s ) + cString.size() - 1 ) );
+
+	if( psCmd != NULL )
+	{
+		psCmd->nLength = cString.size();
+		psCmd->nFlags = nFlags;
+		psCmd->cPos = cPos;
+		memcpy( psCmd->zString, cString.c_str(), psCmd->nLength );
+	}
 }
 
-void View::DrawString( const std::string & cString )
-{
-	DrawString( cString.c_str(), cString.size(  ) );
-}
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-void View::DrawString( const char *pzString, const Point & cPos )
+void View::DrawString( const Point & cPos, const String& cString )
 {
 	MovePenTo( cPos );
-	DrawString( pzString, strlen( pzString ) );
-}
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-void View::DrawString( const char *pzString, int nLength, const Point & cPos )
-{
-	MovePenTo( cPos );
-	DrawString( pzString, nLength );
-}
-
-void View::DrawString( const std::string & cString, const Point & cPos )
-{
-	MovePenTo( cPos );
-	DrawString( cString.c_str(), cString.size(  ) );
+	DrawString( cString );
 }
 
 //----------------------------------------------------------------------------
@@ -2763,34 +2831,7 @@ void View::ScrollRect( const Rect & cSrcRect, const Rect & cDstRect )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-float View::GetStringWidth( const char *pzString ) const
-{
-	if( m->m_pcFont == NULL )
-	{
-		dbprintf( "Warning: %s() View %s has no font\n", __FUNCTION__, m->m_cTitle.c_str() );
-		return ( 0 );
-	}
-	return ( m->m_pcFont->GetStringWidth( pzString ) );
-}
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-float View::GetStringWidth( const char *pzString, int nLength ) const
-{
-	if( m->m_pcFont == NULL )
-	{
-		dbprintf( "Warning: %s() View %s has no font\n", __FUNCTION__, m->m_cTitle.c_str() );
-		return ( 0 );
-	}
-	return ( m->m_pcFont->GetStringWidth( pzString, nLength ) );
-}
-
-float View::GetStringWidth( const std::string & cString ) const
+float View::GetStringWidth( const String & cString ) const
 {
 	if( m->m_pcFont == NULL )
 	{
@@ -2798,6 +2839,16 @@ float View::GetStringWidth( const std::string & cString ) const
 		return ( 0 );
 	}
 	return ( m->m_pcFont->GetStringWidth( cString ) );
+}
+
+float View::GetStringWidth( const char* pzString, int nLen ) const
+{
+	if( m->m_pcFont == NULL )
+	{
+		dbprintf( "Warning: %s() View %s has no font\n", __FUNCTION__, m->m_cTitle.c_str() );
+		return ( 0 );
+	}
+	return ( m->m_pcFont->GetStringWidth( pzString, nLen ) );
 }
 
 //----------------------------------------------------------------------------
@@ -2817,21 +2868,14 @@ void View::GetStringWidths( const char *apzStringArray[], const int *anLengthArr
 	m->m_pcFont->GetStringWidths( apzStringArray, anLengthArray, nStringCount, avWidthArray );
 }
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-int View::GetStringLength( const char *pzString, float vWidth, bool bIncludeLast = false ) const
+Point View::GetTextExtent( const String & cString, uint32 nFlags = 0 ) const
 {
 	if( m->m_pcFont == NULL )
 	{
 		dbprintf( "Warning: %s() View %s has no font\n", __FUNCTION__, m->m_cTitle.c_str() );
-		return ( 0 );
+		return Point();
 	}
-	return ( m->m_pcFont->GetStringLength( pzString, vWidth, bIncludeLast ) );
+	return ( m->m_pcFont->GetTextExtent( cString, nFlags ) );
 }
 
 //----------------------------------------------------------------------------
@@ -2841,17 +2885,7 @@ int View::GetStringLength( const char *pzString, float vWidth, bool bIncludeLast
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-int View::GetStringLength( const char *pzString, int nLength, float vWidth, bool bIncludeLast = false ) const
-{
-	if( m->m_pcFont == NULL )
-	{
-		dbprintf( "Warning: %s() View %s has no font\n", __FUNCTION__, m->m_cTitle.c_str() );
-		return ( 0 );
-	}
-	return ( m->m_pcFont->GetStringLength( pzString, nLength, vWidth, bIncludeLast ) );
-}
-
-int View::GetStringLength( const std::string & cString, float vWidth, bool bIncludeLast = false ) const
+int View::GetStringLength( const String & cString, float vWidth, bool bIncludeLast = false ) const
 {
 	if( m->m_pcFont == NULL )
 	{
@@ -2859,6 +2893,16 @@ int View::GetStringLength( const std::string & cString, float vWidth, bool bIncl
 		return ( 0 );
 	}
 	return ( m->m_pcFont->GetStringLength( cString, vWidth, bIncludeLast ) );
+}
+
+int View::GetStringLength( const char* pzString, int nLen, float vWidth, bool bIncludeLast = false ) const
+{
+	if( m->m_pcFont == NULL )
+	{
+		dbprintf( "Warning: %s() View %s has no font\n", __FUNCTION__, m->m_cTitle.c_str() );
+		return ( 0 );
+	}
+	return ( m->m_pcFont->GetStringLength( pzString, nLen, vWidth, bIncludeLast ) );
 }
 
 //----------------------------------------------------------------------------
@@ -3350,7 +3394,7 @@ Point View::GetLeftTop() const
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-std::string View::GetTitle() const
+String View::GetTitle() const
 {
 	return ( m->m_cTitle );
 }
@@ -3364,6 +3408,9 @@ std::string View::GetTitle() const
 
 void View::AttachedToWindow()
 {
+	if( m->m_cKey.IsValid() ) {
+		GetWindow()->AddShortcut( m->m_cKey, this );
+	}
 }
 
 //----------------------------------------------------------------------------
@@ -3386,6 +3433,9 @@ void View::AllAttached()
 
 void View::DetachedFromWindow()
 {
+	if( m->m_cKey.IsValid() ) {
+		GetWindow()->RemoveShortcut( m->m_cKey );
+	}
 }
 
 //----------------------------------------------------------------------------
