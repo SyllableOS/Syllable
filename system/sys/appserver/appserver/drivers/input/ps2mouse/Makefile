@@ -24,7 +24,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/ps2mouse: $(OBJS)
-	gcc -plugin $(OBJS) -o $(OBJDIR)/ps2mouse -latheos -lstdc++
+	gcc -plugin $(OBJS) -o $(OBJDIR)/ps2mouse -lsyllable -lstdc++
 
 deps:
 
