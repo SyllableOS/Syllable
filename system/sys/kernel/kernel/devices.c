@@ -112,10 +112,10 @@ int register_device( const char *pzName, const char *pzBus )
 	psDevice->d_nDeviceID = -1;
 	psDevice->d_bClaimed = false;
 	psDevice->d_eType = DEVICE_UNKNOWN;
-	psDevice->d_psNext = g_psFirstDevice;
-	
+
 	LOCK( g_hDeviceListLock );
 
+	psDevice->d_psNext = g_psFirstDevice;
 	g_psFirstDevice = psDevice;
 
 	//printk( "New device %s (Bus: %s)\n", psDevice->d_zName, psDevice->d_zBus );
