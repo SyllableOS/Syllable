@@ -41,7 +41,7 @@ install: $(EXE1) $(EXE2) $(EXE3)
 	cp -f $(EXE1) $(INSTDIR)/bin
 	cp -f $(EXE2) $(INSTDIR)/bin
 	cp -f $(EXE3) $(INSTDIR)/bin
-	cp -f icons/* $(INSTDIR)/icons
+	cp -f icons/*.png $(INSTDIR)/icons
 	cp -f README $(INSTDIR)
 	cp -f COPYING $(INSTDIR)
 
@@ -54,7 +54,7 @@ dist: $(EXE1) $(EXE2) $(EXE3)
 	cp -f $(EXE1) $(DIST_DIR)/atheos$(INSTDIR)/bin
 	cp -f $(EXE2) $(DIST_DIR)/atheos$(INSTDIR)/bin
 	cp -f $(EXE3) $(DIST_DIR)/atheos$(INSTDIR)/bin
-	cp -f icons/* $(DIST_DIR)/atheos$(INSTDIR)/icons
+	cp -f icons/*.png $(DIST_DIR)/atheos$(INSTDIR)/icons
 	cp -f README $(DIST_DIR)/atheos$(INSTDIR)
 	cp -f COPYING $(DIST_DIR)/atheos$(INSTDIR)
 
