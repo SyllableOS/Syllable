@@ -28,20 +28,26 @@ namespace os {
 class ShortcutKey {
 	public:
 	ShortcutKey( const char* pzKey, uint32 nQualifiers = 0 );
-	ShortcutKey( const char cKey, uint32 nQualifiers = 0 );
+	ShortcutKey( const uint32 nKey, uint32 nQualifiers = 0 );
 	ShortcutKey( const ShortcutKey& cShortcut );
 	ShortcutKey();
 	~ShortcutKey();
 
+	void SetFromLabel( const char* pzLabel );
+	
+	bool IsValid() const;
+
 	bool operator<( const ShortcutKey& c ) const;
 	bool operator==( const ShortcutKey& c ) const;
-
+	
 	private:
-	char*		m_pzKey;
+	uint32		m_nKey;
 	uint32		m_nQualifiers;
 
 	uint32		m_nReserved1;
 	uint32		m_nReserved2;
+
+	void _SetKey( const char* pzKey );
 };
 
 } // end of namespace
