@@ -1,5 +1,8 @@
 * February 14 2004, Henrik Isaksson *
 
+	- aedit
+		o Updated for GCC3 and libsyllable changes.
+		o Localised and translated to Swedish.
 	- guiprefs
 		o Corrected typo.
 	- keymapconv
@@ -207,3 +210,4 @@ Network Preferences
 		* Added NetworkPreferences from Daryl Dudey(daryl.dudey@ntlworld.com).
 		* Added SlbMgr(AtheMgr renamed).
 		* Patches by Vanders for AEdit.
+
