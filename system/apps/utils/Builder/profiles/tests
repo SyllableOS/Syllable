@@ -1,0 +1,32 @@
+; Test cases to run when making important changes to Syllable
+
+modules
+	sys/kernel/kernel
+	sys/kernel/drivers/bus/ata
+	sys/kernel/drivers/disk/usb
+	sys/kernel/drivers/graphics/geforcefx
+	sys/kernel/drivers/hcd/ata_pci
+	sys/kernel/drivers/net/3c509
+	sys/kernel/drivers/sound/emu10k1
+	sys/kernel/fs/afs
+	libs/libdl
+	libs/libpthread
+	libs/ncurses-5.4
+	sys/appserver/libsyllable
+	sys/appserver/appserver/server
+	sys/appserver/appserver/drivers/decorators/amiga
+	sys/appserver/appserver/drivers/input/usbmouse
+	sys/appserver/appserver/drivers/video/geforcefx
+	sys/appserver/registrar
+	sys/translators
+	sys/media/libmedia
+	sys/media/mediaserver
+	sys/media/drivers/ffmpeg
+	apps/utils/desktop/dlogin
+	apps/desktop/desktop
+	apps/desktop/dock
+	apps/desktop/dock_plugins/clock
+	apps/desktop/file_browser
+	apps/utils/Preferences/Appearance
+	apps/utils/systools
+
