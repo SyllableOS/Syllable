@@ -130,7 +130,8 @@ public:
     void		MoveTo( float x, float y );
 
     void		CenterInWindow( Window* pcWin );
-
+	 void		CenterInScreen();
+	 
     void		ResizeBy( const Point& cDelta );
     void		ResizeBy( float vDeltaW, float vDeltaH );
     void		ResizeTo( const Point& cSize );
@@ -178,3 +179,4 @@ private:
 } // end of namespace
 
 #endif	// __F_GUI_WINDOW_H
+

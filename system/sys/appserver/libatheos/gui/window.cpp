@@ -30,6 +30,7 @@
 #include <gui/menu.h>
 #include <gui/exceptions.h>
 #include <macros.h>
+#include <gui/desktop.h>
 
 
 using namespace os;
@@ -600,6 +601,21 @@ void Window::CenterInWindow( Window* pcWin )
 
     MoveTo( cR.left + ( cR.Width() - cBounds.Width() ) / 2,
     	    cR.top  + ( cR.Height() - cBounds.Height() ) / 2 );
+}
+
+/** Move the window to the center of the screen
+ * \par Description:
+ * This method moves the window to the center of the screen.
+ * \sa MoveTo(), MoveBy(), ResizeBy(), ResizeTo(), SetFrame()
+ * \author	Rick Caudill
+  *****************************************************************************/
+void Window::CenterInScreen()
+{
+	Rect cBounds = GetBounds();
+	Desktop cDesktop;
+	IPoint cPoint = cDesktop.GetResolution() ;
+	MoveTo(cPoint.x/2 - cBounds.Width()/2,
+    	    cPoint.y/2 - cBounds.Height()/2  );
 }
 
 /** Resize the window relative to it's current size
@@ -1484,3 +1500,4 @@ void Window::__WI_reserved3__() {}
 void Window::__WI_reserved4__() {}
 void Window::__WI_reserved5__() {}
 void Window::__WI_reserved6__() {}
+
