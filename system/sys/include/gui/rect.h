@@ -35,6 +35,10 @@ namespace os
 
 class IRect;
 
+#define	DM_CM		Point(0.3937, 0.3937)
+#define DM_INCH		Point(1.0, 1.0)
+#define DM_PIXEL	Point(1.0, 1.0)
+
 /** 
  * \ingroup gui
  * \par Description:
@@ -58,6 +62,8 @@ public:
 
     ~Rect() {}
 
+    inline Rect	Scale( const Point& cFromScale, const Point& cToScale );
+
     bool	IsValid() const	{ return( left <= right && top <= bottom );	 }
     void	Invalidate( void ) { left = top = 999999.0f; right = bottom = -999999.0f;	}
     bool	DoIntersect( const Point& cPoint ) const
@@ -79,6 +85,12 @@ public:
 	left += nLeft; top += nTop; right += nRight; bottom += nBottom;
 	return( *this );
     }
+
+	Rect& MoveTo( float nLeft, float nTop ) {
+		left += nLeft; top += nTop; right += nLeft; bottom += nTop;
+		return( *this );
+	}
+
     Rect operator+( const Point&	cPoint ) const
     { return( Rect( left + cPoint.x, top + cPoint.y, right + cPoint.x, bottom + cPoint.y ) ); }
     Rect operator-( const Point&	cPoint ) const
@@ -202,6 +214,16 @@ Rect::Rect( const IRect& cRect )
     bottom = float(cRect.bottom);
 }
 
+Rect Rect::Scale( const Point& cFromScale, const Point& cToScale )
+{
+	Rect r;
+	r.left = left*cFromScale.x/cToScale.x;
+	r.top = top*cFromScale.y/cToScale.y;
+	r.right = right*cFromScale.x/cToScale.x;
+	r.bottom = bottom*cFromScale.y/cToScale.y;
+	return r;
+}
+
 IRect::IRect( const Rect& cRect )
 {
     left   = int(cRect.left);
@@ -214,3 +236,4 @@ IRect::IRect( const Rect& cRect )
 } // End of namespace
 
 #endif // __F_GUI_RECT_H__
+
