@@ -1,3 +1,7 @@
+* September 11th 2004, Arno Klenke *
+
+Fixed i810 sound driver
+
 * September 6th 2004, Kristian Van Der Vliet *
 
 Removed ATERM_ATTR from setup_environ.sh; no longer required with the updated
