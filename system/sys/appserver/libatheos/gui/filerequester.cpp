@@ -24,6 +24,7 @@
 #include <gui/requesters.h>
 #include <util/message.h>
 #include <util/application.h>
+#include <gui/dropdownmenu.h>
 
 #include <strstream>
 
@@ -39,7 +40,7 @@ FileRequester::FileRequester( file_req_mode_t	nMode,
 			      bool		bModal,
 			      bool		bHideWhenDone,
 			      const char*	pzOkLabel,
-			      const char*	pzCancelLabel ) : Window( Rect(0,0,1,1), "file_requester", "" )
+			      const char*	pzCancelLabel ) : Window( Rect(0,0,1,1), "file_requester", "",WND_NOT_RESIZABLE )
 
 {
     Lock();
@@ -107,26 +108,58 @@ FileRequester::FileRequester( file_req_mode_t	nMode,
 	    }
 	}
     }
+    
+    string cRootName = getenv("HOME") + (string) "/";
+    
     m_pcDirView	     = new DirectoryView( GetBounds(), cPath );
     m_pcPathView     = new TextView( Rect(0,0,1,1), "path_edit", cFile.c_str() );
     m_pcCancelButton = new Button( Rect(0,0,1,1), "cancel", pzCancelLabel, new Message( ID_CANCEL ) );
     m_pcOkButton     = new Button( Rect(0,0,1,1), "ok", pzOkLabel, new Message( ID_OK ) );
-
+    m_pcFileString   = new StringView(Rect(0,0,1,1),"string","File Name:");
+    m_pcTypeString   = new StringView(Rect(0,0,1,1),"string_1","Look in:");
+    m_pcTypeDrop     = new DropdownMenu(Rect(0,0,0,0),"Drop");
+    
     AddChild( m_pcDirView );
-    AddChild( m_pcPathView );
     AddChild( m_pcCancelButton );
     AddChild( m_pcOkButton );
-
+    AddChild( m_pcTypeString);
+    AddChild( m_pcTypeDrop);
+    AddChild( m_pcPathView );
+    AddChild( m_pcFileString);
+    
+    if (nMode == 1){
+    m_pcTypeString->SetString("Save in:");
+    
+   }
+   
+    m_pcTypeDrop->SetReadOnly(true);
+    m_pcTypeDrop->AppendItem("/atheos/");
+    m_pcTypeDrop->AppendItem("/bin/");
+    m_pcTypeDrop->AppendItem(cRootName.c_str());
+    m_pcTypeDrop->AppendItem("/system/");
+    m_pcTypeDrop->AppendItem("/usr/");
+    
+    
+    m_pcTypeDrop->SetSelection(0,true);
+    m_pcTypeDrop->SetSelectionMessage(new Message(ID_DROP_CHANGE));
+	m_pcTypeDrop->SetTarget(this);
+	
     m_pcDirView->SetMultiSelect( bMultiSelect );
     m_pcDirView->SetSelChangeMsg( new Message( ID_SEL_CHANGED ) );
     m_pcDirView->SetInvokeMsg( new Message( ID_INVOKED ) );
     m_pcDirView->SetDirChangeMsg( new Message( ID_PATH_CHANGED ) );
     m_pcDirView->MakeFocus();
-    SetTitle( m_pcDirView->GetPath().c_str() );
+    
+    string cTitlePath = (string)"Searching in: " + m_pcDirView->GetPath(); 
+    SetTitle( cTitlePath.c_str() );
 
-    Rect cFrame( 250, 150, 699, 499 );
+    Rect cFrame( 250, 150, 699, 400 );
     SetFrame( cFrame );
+    SetDefaultButton(m_pcOkButton);
     Unlock();
+    
+    
+    
 }
 
 void FileRequester::Layout()
@@ -140,35 +173,79 @@ void FileRequester::Layout()
 	cSize1 = cSize2;
     }
 
+	Point cSize = m_pcPathView->GetPreferredSize( false );
+	
     Rect cOkRect = cBounds;
-
-    cOkRect.bottom -= 5;
+	cOkRect.bottom -= 5;
     cOkRect.top = cOkRect.bottom - cSize1.y;
-    cOkRect.right -= 10;
+    cOkRect.right -= 70;
     cOkRect.left = cOkRect.right - cSize1.x;
   
-    Rect cCancelRect = cOkRect;
-    cCancelRect.left -= cSize1.x + 15;
-    cCancelRect.right -= cSize1.x + 15;
-
-    Point cSize = m_pcPathView->GetPreferredSize( false );
-    Rect cPathFrame = cBounds;
-
-    cPathFrame.bottom = cOkRect.top - 10;
-    cPathFrame.top = cPathFrame.bottom - cSize.y;
-    cPathFrame.left += 10;
-    cPathFrame.right -= 10;
+    Rect cCancelRect = cBounds;
+    cCancelRect.bottom -= 5;
+    cCancelRect.top = cCancelRect.bottom + - cSize2.y;
+    cCancelRect.right -= 10;
+    cCancelRect.left = cCancelRect.right - cSize2.x;
   
+	Rect cFileFrame = cBounds;
+    cFileFrame.bottom =  cOkRect.bottom;
+    cFileFrame.top = cFileFrame.bottom - cSize.y;
+    cFileFrame.left = 10;
+    cFileFrame.right = 65;
+    
+    Rect cPathFrame = cBounds;
+	cPathFrame.bottom = cOkRect.bottom;
+    cPathFrame.top = cPathFrame.bottom - cSize.y;
+    cPathFrame.left  = cFileFrame.right + 10;
+    cPathFrame.right -= 130;
+    
+    Rect cFile2Frame = cBounds;
+    cFile2Frame.bottom =  cCancelRect.bottom;
+    cFile2Frame.top = cCancelRect.top; //ggere
+    cFile2Frame.left = cFileFrame.right + 10;
+    cFile2Frame.right -= 160;
+    
     Rect cDirFrame = cBounds;
     cDirFrame.bottom = cPathFrame.top - 10;
-    cDirFrame.top += 10;
+    cDirFrame.top += 25;
     cDirFrame.left += 10;
     cDirFrame.right -= 10;
-  
-    m_pcPathView->SetFrame( cPathFrame );
+    
+    Rect cTypeFrame = cBounds;
+    cTypeFrame.bottom = cDirFrame.top - 5;
+    cTypeFrame.top =  10;
+    cTypeFrame.left = cBounds.right /2 - 25;
+    cTypeFrame.right = cTypeFrame.left + 50;
+    
+    Rect cDropFrame = cBounds;
+    cDropFrame.bottom =  cTypeFrame.bottom -2;
+    cDropFrame.top = cTypeFrame.top - 10;
+    cDropFrame.left = cTypeFrame.right + 10;
+    cDropFrame.right -= 100;
+    
+    Rect cOkFrame = cBounds;
+    cOkFrame.bottom = cPathFrame.bottom;
+    cOkFrame.top = cOkFrame.bottom - cSize.y;
+    cOkFrame.left = cPathFrame.right + 10;
+    cOkFrame.right = 20;
+    
+    
+
+    m_pcPathView->SetFrame( cFile2Frame );
     m_pcDirView->SetFrame( cDirFrame );
-    m_pcOkButton->SetFrame( cOkRect );
+    m_pcOkButton->SetFrame(cOkRect);
     m_pcCancelButton->SetFrame( cCancelRect );
+    m_pcFileString->SetFrame( cFileFrame + Point(0,-2));
+    m_pcTypeString->SetFrame(cTypeFrame);
+    m_pcTypeDrop->SetFrame(cDropFrame + Point(0,5));
+    
+    m_pcTypeDrop->SetTabOrder(0);
+    m_pcDirView->SetTabOrder(1);
+    m_pcPathView->SetTabOrder(2);
+    m_pcOkButton->SetTabOrder(3);
+    m_pcCancelButton->SetTabOrder(4);
+    SetFocusChild(m_pcPathView);
+    
 }
 
 
@@ -181,9 +258,26 @@ void FileRequester::HandleMessage( Message* pcMessage )
 {
     switch( pcMessage->GetCode() )
     {
+    	
+    case ID_DROP_CHANGE:
+    	{
+    		uint32 nSwitch = m_pcTypeDrop->GetSelection();
+    		std::string c_ChangePath = m_pcTypeDrop->GetItem(nSwitch);
+    	    SetPath(c_ChangePath);
+    		m_pcDirView->Clear();
+    		m_pcDirView->ReRead();
+    		
+    		string cTitlePath = (string)"Searching in: " + m_pcDirView->GetPath(); 
+    		SetTitle( cTitlePath.c_str() );
+    	break;
+    	} 
+    		
 	case ID_PATH_CHANGED:
-	    SetTitle( m_pcDirView->GetPath().c_str() );
+		{
+    	string cTitlePath = (string)"Searching in: " + m_pcDirView->GetPath(); 
+    	SetTitle( cTitlePath.c_str() );
 	    break;
+	    }
 	case ID_SEL_CHANGED:
 	{
 	    int nSel = m_pcDirView->GetFirstSelected();
@@ -304,3 +398,24 @@ std::string FileRequester::GetPath() const
 {
     return( m_pcDirView->GetPath() );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
