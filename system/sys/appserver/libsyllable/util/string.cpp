@@ -260,7 +260,7 @@ String &String::operator+=( const String &cString )
 	return ( *this );
 }
 
-String String::operator+( const char *pzString )
+String String::operator+( const char *pzString ) const
 {
 	String cStr( *this );
 
@@ -268,7 +268,7 @@ String String::operator+( const char *pzString )
 	return ( cStr );
 }
 
-String String::operator+( const char nChar )
+String String::operator+( const char nChar ) const
 {
 	String cStr( *this );
 
@@ -276,7 +276,7 @@ String String::operator+( const char nChar )
 	return ( cStr );
 }
 
-String String::operator+( const std::string & cString )
+String String::operator+( const std::string & cString ) const
 {
 	String cStr( *this );
 
@@ -284,7 +284,7 @@ String String::operator+( const std::string & cString )
 	return ( cStr );
 }
 
-String String::operator+( const String &cString )
+String String::operator+( const String &cString ) const
 {
 	String cStr( *this );
 
@@ -439,4 +439,3 @@ size_t	String::find( const String& cStr, size_t nPos ) const
 {
 	return ( m_cString.find( cStr, nPos ) );
 }
-

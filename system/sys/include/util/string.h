@@ -95,10 +95,10 @@ public:
     String& operator+=( const std::string& cString );
     String& operator+=( const String& cString );
     
-    String operator+( const char* pzString );
-	String operator+( const char nChar );
-    String operator+( const std::string& cString );
-    String operator+( const String& cString );
+    String operator+( const char* pzString ) const;
+	String operator+( const char nChar ) const;
+    String operator+( const std::string& cString ) const;
+    String operator+( const String& cString ) const;
 
     bool operator==( const char* pzString ) const;
     bool operator==( const std::string& cString ) const;
