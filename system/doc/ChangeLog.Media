@@ -1,0 +1,12 @@
+* Nov 18 2003, Kristian Van Der Vliet *
+
+Added multiple soundcard support to the media server
+	o Scan /dev/sound/ for all available DSP & mixer devices
+	o Allow the user to select their prefered DSP device via. the Media Preferences.
+	  Currently only one DSP can be used at any one time
+	o The Media Controls window displays one tab per. mixer device
+	o The OSS output driver will query the Media Server to find the default DSP
+
+* Nov 18 2003, Kristian Van Der Vliet *
+
+Created this ChangeLog for changes specific to the media framework.
