@@ -1,3 +1,8 @@
+* March 24 2004, Kaj de Vos *
+
+Adapted the decorators to the new FreeType configuration as well,
+which I missed before.
+
 * March 5 2004, Kaj de Vos *
 
 Changed the makefiles for the AppServer and the video drivers
