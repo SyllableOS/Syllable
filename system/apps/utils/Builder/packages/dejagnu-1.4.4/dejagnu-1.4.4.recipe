@@ -1,0 +1,20 @@
+authors				Jake Hamby
+status				testing
+
+licenses			GPL
+home				www.gnu.org/software/dejagnu
+locations			ftp://ftp.gnu.org/gnu/dejagnu/
+
+needs
+	tcl >= 8.4.6
+	expect >= 5.42.1
+
+patch-config
+configure-options
+;	--with-tclinclude=../tcl-8.4.9/generic
+;	--with-tcl=/usr/tcl/lib
+
+no-build-dir
+
+test-targets		check
+documentation		README AUTHORS COPYING ChangeLog ChangeLog.0 MAINTAINERS NEWS TODO
