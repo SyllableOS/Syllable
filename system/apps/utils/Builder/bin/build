@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.38
+# Version 0.5.39
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -1022,7 +1022,7 @@ attr_reader :failures
 
 	def subheader header
 		print		"\n" + s = header + "\n"
-		@log		<< "\n{s}\n"
+		@log		<< "\n#{s}\n"
 		@summary	<< s
 	end
 
@@ -1112,7 +1112,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.38',
+	puts 'Syllable Build System 0.5.39',
 		'Copyright (c) 2002-2004 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
