@@ -6,8 +6,8 @@ diff -ruN gcc-2.95.3.orig/Makefile.in gcc-2.95.3/Makefile.in
  	$(SET_LIB_PATH) \
  	echo "$$msg"; \
 -	cd gcc; $(MAKE) $(GCC_FLAGS_TO_PASS) $$compare
-+	cd gcc; $(MAKE)
-+# $(GCC_FLAGS_TO_PASS) $$compare
++	cd gcc;
++# $(MAKE) $(GCC_FLAGS_TO_PASS) $$compare
  	@r=`pwd`; export r; \
  	s=`cd $(srcdir); pwd` ; export s; \
  	$(SET_LIB_PATH) \
