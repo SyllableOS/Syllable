@@ -1,0 +1,22 @@
+GLIBC_PROVIDES dnl See aclocal.m4 in the top level source directory.
+# Local configure fragment for sysdeps/unix/sysv/syllable.
+
+# Don't bother trying to generate any glue code to be compatible with the
+# existing system library, because we are the only system library.
+inhibit_glue=yes
+
+#Compiling libc for Syllable without thread support whould be a crime.
+DEFINES="$DEFINES -D_LIBC_REENTRANT -D_THREAD_SAFE"
+
+#KV: Just in case the GCC specs is missing this one
+DEFINES="$DEFINES -D__SYLLABLE__"
+
+#Syllable has a 64 bit native file-system, and off_t is 64 bit
+#KV: Note this was originally commented out in the AtheOS configure script,
+#so until I'm sure it stays commented out here, too.
+#DEFINES="$DEFINES -D_FILE_OFFSET_BITS=64"
+#KV: Not until we're building on a real Syllable system
+#SYSINCLUDES="-I/ainc/"
+static=no
+profile=no
+

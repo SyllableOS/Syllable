@@ -1,0 +1,686 @@
+# Copyright (C) 1995-2002, 2003 Free Software Foundation, Inc.
+# This file is part of the GNU C Library.
+
+# The GNU C Library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+
+# The GNU C Library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+
+# You should have received a copy of the GNU Lesser General Public
+# License along with the GNU C Library; if not, write to the Free
+# Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+# 02111-1307 USA.
+
+# Makefile for elf subdirectory of GNU C Library.
+
+subdir		:= elf
+
+headers		= elf.h bits/elfclass.h link.h
+#routines	= $(dl-routines) dl-open dl-close dl-support dl-iteratephdr \
+#		  dl-iteratephdr-static dl-addr enbl-secure dl-profstub \
+#		  dl-origin dl-libc dl-sym dl-tsd
+
+routines	= $(dl-routines) dl-support dl-iteratephdr \
+		  dl-iteratephdr-static enbl-secure dl-profstub \
+		  dl-origin dl-libc dl-tsd
+
+# The core dynamic linking functions are in libc for the static and
+# profiled libraries.
+#dl-routines	= $(addprefix dl-,load cache lookup object reloc deps \
+#			          runtime error init fini debug misc \
+#				  version profile conflict tls origin)
+
+dl-routines	= $(addprefix dl-,cache object reloc \
+			          runtime init fini \
+				  version profile conflict tls origin)
+
+all-dl-routines = $(dl-routines) $(sysdep-dl-routines)
+# But they are absent from the shared libc, because that code is in ld.so.
+elide-routines.os = $(all-dl-routines) dl-support enbl-secure \
+		    dl-iteratephdr-static dl-origin
+
+# ld.so uses those routines, plus some special stuff for being the program
+# interpreter and operating independent of libc.
+#rtld-routines	:= rtld $(dl-routines) dl-sysdep dl-environ dl-minimal
+rtld-routines	:= $(dl-routines) dl-sysdep dl-environ
+all-rtld-routines = $(rtld-routines) $(sysdep-rtld-routines)
+
+#distribute	:= rtld-Rules \
+#		   $(rtld-routines:=.c) dynamic-link.h do-rel.h dl-machine.h \
+#		   dl-cache.h dl-hash.h soinit.c sofini.c ldd.bash.in \
+#		   genrtldtbl.awk atomicity.h dl-procinfo.h ldsodefs.h \
+#		   dl-librecon.h interp.c sln.c dl-dst.h hp-timing.h \
+#		   do-lookup.h dl-lookupcfg.h sprof.c gen-trusted-dirs.awk \
+#		   testobj1.c testobj2.c testobj3.c testobj4.c testobj5.c \
+#		   testobj6.c testobj1_1.c failobj.c unloadmod.c \
+#		   ldconfig.h ldconfig.c cache.c readlib.c readelflib.c \
+#		   chroot_canon.c gccframe.h \
+#		   dep1.c dep2.c dep3.c dep4.c dl-dtprocnum.h unsecvars.h \
+#		   vismain.c vismod1.c vismod2.c vismod3.c \
+#		   constload2.c constload3.c filtmod1.c filtmod2.c \
+#		   nodlopenmod.c nodelete.c nodelmod1.c nodelmod2.c \
+#		   nodelmod3.c nodelmod4.c nodlopen.c dl-osinfo.h \
+#		   reldepmod1.c reldepmod2.c reldepmod3.c reldepmod4.c \
+#		   reldepmod5.c reldepmod6.c \
+#		   reldep4mod1.c reldep4mod2.c reldep4mod3.c reldep4mod4.c \
+#		   nextmod1.c nextmod2.c pathoptobj.c tst-pathopt.sh \
+#		   neededobj1.c neededobj2.c neededobj3.c neededobj4.c \
+#		   neededobj5.c neededobj6.c firstobj.c \
+#		   unload2mod.c unload2dep.c ltglobmod1.c ltglobmod2.c \
+#		   testobj.h vismod.h globalmod1.c \
+#		   dblloadmod1.c dblloadmod2.c dblloadmod3.c \
+#		   reldep6mod4.c reldep6mod3.c reldep6mod2.c reldep6mod1.c \
+#		   reldep6mod0.c reldep7mod1.c reldep7mod2.c \
+#		   unwind-dw2.c unwind-dw2-fde.c unwind.h unwind-pe.h \
+#		   unwind-dw2-fde.h dwarf2.h dl-procinfo.c tls.h dl-tls.h \
+#		   tst-tlsmod1.c tst-tlsmod2.c tst-tlsmod3.c tst-tlsmod4.c \
+#		   tst-tlsmod5.c tst-tlsmod6.c \
+#		   circlemod1.c circlemod1a.c circlemod2.c circlemod2a.c \
+#		   circlemod3.c circlemod3a.c nodlopenmod2.c \
+#		   tls-macros.h \
+#		   reldep8mod1.c reldep8mod2.c reldep8mod3.c \
+#		   nodel2mod1.c nodel2mod2.c nodel2mod3.c \
+#		   reldep9.c reldep9mod1.c reldep9mod2.c reldep9mod3.c \
+#		   tst-array1.exp tst-array2.exp tst-array4.exp \
+#		   tst-array2dep.c \
+#		   check-textrel.c dl-sysdep.h
+
+distribute	:= $(rtld-routines:=.c) dynamic-link.h do-rel.h dl-machine.h \
+		   dl-cache.h dl-hash.h soinit.c sofini.c ldd.bash.in \
+		   genrtldtbl.awk atomicity.h dl-procinfo.h ldsodefs.h \
+		   dl-librecon.h sln.c dl-dst.h hp-timing.h \
+		   do-lookup.h dl-lookupcfg.h sprof.c gen-trusted-dirs.awk \
+		   testobj1.c testobj2.c testobj3.c testobj4.c testobj5.c \
+		   testobj6.c testobj1_1.c failobj.c unloadmod.c \
+		   ldconfig.h ldconfig.c cache.c readlib.c readelflib.c \
+		   chroot_canon.c gccframe.h \
+		   dep1.c dep2.c dep3.c dep4.c dl-dtprocnum.h unsecvars.h \
+		   vismain.c vismod1.c vismod2.c vismod3.c \
+		   constload2.c constload3.c filtmod1.c filtmod2.c \
+		   nodlopenmod.c nodelete.c nodelmod1.c nodelmod2.c \
+		   nodelmod3.c nodelmod4.c nodlopen.c dl-osinfo.h \
+		   reldepmod1.c reldepmod2.c reldepmod3.c reldepmod4.c \
+		   reldepmod5.c reldepmod6.c \
+		   reldep4mod1.c reldep4mod2.c reldep4mod3.c reldep4mod4.c \
+		   nextmod1.c nextmod2.c pathoptobj.c tst-pathopt.sh \
+		   neededobj1.c neededobj2.c neededobj3.c neededobj4.c \
+		   neededobj5.c neededobj6.c firstobj.c \
+		   unload2mod.c unload2dep.c ltglobmod1.c ltglobmod2.c \
+		   testobj.h vismod.h globalmod1.c \
+		   dblloadmod1.c dblloadmod2.c dblloadmod3.c \
+		   reldep6mod4.c reldep6mod3.c reldep6mod2.c reldep6mod1.c \
+		   reldep6mod0.c reldep7mod1.c reldep7mod2.c \
+		   unwind-dw2.c unwind-dw2-fde.c unwind.h unwind-pe.h \
+		   unwind-dw2-fde.h dwarf2.h dl-procinfo.c tls.h dl-tls.h \
+		   tst-tlsmod1.c tst-tlsmod2.c tst-tlsmod3.c tst-tlsmod4.c \
+		   tst-tlsmod5.c tst-tlsmod6.c \
+		   circlemod1.c circlemod1a.c circlemod2.c circlemod2a.c \
+		   circlemod3.c circlemod3a.c nodlopenmod2.c \
+		   tls-macros.h \
+		   reldep8mod1.c reldep8mod2.c reldep8mod3.c \
+		   nodel2mod1.c nodel2mod2.c nodel2mod3.c \
+		   reldep9.c reldep9mod1.c reldep9mod2.c reldep9mod3.c \
+		   tst-array1.exp tst-array2.exp tst-array4.exp \
+		   tst-array2dep.c \
+		   check-textrel.c dl-sysdep.h
+
+include ../Makeconfig
+
+ifeq ($(unwind-find-fde),yes)
+routines += unwind-dw2-fde-glibc
+shared-only-routines = unwind-dw2-fde-glibc
+endif
+
+before-compile  = $(objpfx)trusted-dirs.h
+generated	:= trusted-dirs.h trusted-dirs.st for-renamed/renamed.so
+generated-dirs	:= for-renamed
+
+ifeq ($(versioning),yes)
+ld-map		= $(common-objpfx)ld.map
+endif
+
+ifeq (yes,$(build-shared))
+extra-objs	= $(all-rtld-routines:%=%.os) soinit.os sofini.os interp.os
+generated	+= librtld.os dl-allobjs.os ld.so ldd
+install-others	= $(inst_slibdir)/$(rtld-installed-name)
+install-bin-script = ldd
+endif
+
+#others		= sprof sln
+#install-bin	= sprof
+#others-static   = sln
+#install-rootsbin = sln
+
+ifeq (yes,$(use-ldconfig))
+ifeq (yes,$(build-shared))
+others-static	+= ldconfig
+others		+= ldconfig
+install-rootsbin += ldconfig
+
+ldconfig-modules := cache readlib xmalloc xstrdup chroot_canon
+extra-objs	+= $(ldconfig-modules:=.o)
+
+# To find xmalloc.c and xstrdup.c
+vpath %.c ../locale/programs
+
+endif
+endif
+
+tests = tst-tls1 tst-tls2 tst-tls9
+ifeq (yes,$(have-initfini-array))
+tests += tst-array1 tst-array2 tst-array3 tst-array4
+endif
+ifeq (yes,$(build-static))
+tests-static = tst-tls1-static tst-tls2-static
+ifeq (yesyesyes,$(build-static)$(build-shared)$(elf))
+tests-static += tst-tls9-static
+tst-tls9-static-ENV = \
+	LD_LIBRARY_PATH=$(objpfx):$(common-objpfx):$(common-objpfx)dlfcn
+endif
+tests += $(tests-static)
+endif
+ifeq (yes,$(build-shared))
+tests += loadtest restest1 preloadtest loadfail multiload origtest resolvfail \
+	 constload1 order $(tests-vis-$(have-protected)) noload filter unload \
+	 reldep reldep2 reldep3 reldep4 $(tests-nodelete-$(have-z-nodelete)) \
+	 $(tests-nodlopen-$(have-z-nodlopen)) neededtest neededtest2 \
+	 neededtest3 neededtest4 unload2 lateglobal initfirst global \
+	 restest2 next dblload dblunload reldep5 reldep6 reldep7 reldep8 \
+	 circleload1 tst-tls3 tst-tls4 tst-tls5 tst-tls6 tst-tls7 tst-tls8
+#	 reldep9
+test-srcs = tst-pathopt
+tests-vis-yes = vismain
+tests-nodelete-yes = nodelete nodelete2
+tests-nodlopen-yes = nodlopen nodlopen2
+endif
+modules-names = testobj1 testobj2 testobj3 testobj4 testobj5 testobj6 \
+		testobj1_1 failobj constload2 constload3 unloadmod \
+		dep1 dep2 dep3 dep4 $(modules-vis-$(have-protected)) \
+		$(modules-nodelete-$(have-z-nodelete)) \
+		$(modules-nodlopen-$(have-z-nodlopen)) filtmod1 filtmod2 \
+		reldepmod1 reldepmod2 reldepmod3 reldepmod4 nextmod1 nextmod2 \
+		reldep4mod1 reldep4mod2 reldep4mod3 reldep4mod4 \
+		neededobj1 neededobj2 neededobj3 neededobj4 \
+		neededobj5 neededobj6 firstobj globalmod1 \
+		unload2mod unload2dep ltglobmod1 ltglobmod2 pathoptobj \
+		dblloadmod1 dblloadmod2 dblloadmod3 reldepmod5 reldepmod6 \
+	        reldep6mod0 reldep6mod1 reldep6mod2 reldep6mod3 reldep6mod4 \
+		reldep7mod1 reldep7mod2 \
+		tst-tlsmod1 tst-tlsmod2 tst-tlsmod3 tst-tlsmod4 \
+		tst-tlsmod5 tst-tlsmod6 \
+		circlemod1 circlemod1a circlemod2 circlemod2a \
+		circlemod3 circlemod3a \
+		reldep8mod1 reldep8mod2 reldep8mod3 \
+		reldep9mod1 reldep9mod2 reldep9mod3
+ifeq (yes,$(have-initfini-array))
+modules-names += tst-array2dep
+endif
+modules-vis-yes = vismod1 vismod2 vismod3
+modules-nodelete-yes = nodelmod1 nodelmod2 nodelmod3 nodelmod4 \
+		       nodel2mod1 nodel2mod2 nodel2mod3
+modules-nodlopen-yes = nodlopenmod nodlopenmod2
+extra-objs += $(addsuffix .os,$(strip $(modules-names)))
+# We need this variable to be sure the test modules get the right CPPFLAGS.
+test-extras += $(modules-names)
+
+include ../Rules
+symbolic-link-prog = $(LN_S)
+
+ifeq (yes,$(build-shared))
+# Make sure these things are built in the `make lib' pass so they can be used
+# to run programs during the `make others' pass.
+lib-noranlib: $(objpfx)$(rtld-installed-name) \
+	      $(addprefix $(objpfx),$(extra-objs))
+endif
+
+# Command to link into a larger single relocatable object.
+reloc-link = $(LINK.o) -nostdlib -nostartfiles -r
+
+$(objpfx)dl-allobjs.os: $(all-rtld-routines:%=$(objpfx)%.os)
+	$(reloc-link) -o $@ $^
+
+# Link together the dynamic linker into a single relocatable object.
+# First we do a link against libc_pic.a just to get a link map,
+# and discard the object produced by that link.  From the link map
+# we can glean all the libc modules that need to go into the dynamic
+# linker.  Then we do a recursive make that goes into all the subdirs
+# those modules come from and builds special rtld-foo.os versions that
+# are compiled with special flags, and puts these modules into rtld-libc.a
+# for us.  Then we do the real link using rtld-libc.a instead of libc_pic.a.
+
+$(objpfx)librtld.map: $(objpfx)dl-allobjs.os $(common-objpfx)libc_pic.a
+	@-rm -f $@T
+	$(reloc-link) -o $@.o '-Wl,-(' $^ -lgcc '-Wl,-)' -Wl,-Map,$@T
+	rm -f $@.o
+	mv -f $@T $@
+
+$(objpfx)librtld.mk: $(objpfx)librtld.map Makefile
+	sed -n 's@^$(common-objpfx)\([^(]*\)(\([^)]*\.os\))$$@\1 \2@p' $< | \
+	while read lib file; do \
+	  case $$lib in \
+	  libc_pic.a) \
+	    fgrep -l /$$file \
+		  $(common-objpfx)stamp.os $(common-objpfx)*/stamp.os | \
+	    sed 's@^$(common-objpfx)\([^/]*\)/stamp\.os$$@rtld-\1'" +=$$file@"\
+	    ;; \
+	  */*.a) \
+	    echo rtld-$${lib%%/*} += $$file ;; \
+	  *) echo "Wasn't expecting $$lib($$file)" >&2; exit 1 ;; \
+	  esac; \
+	done > $@T
+	echo rtld-subdirs = `sed 's/^rtld-\([^ ]*\).*$$/\1/' $@T \
+			     | sort -u` >> $@T
+	mv -f $@T $@
+
+$(objpfx)rtld-libc.a: $(objpfx)librtld.mk FORCE
+	touch $@
+#	$(MAKE) -f $< -f rtld-Rules
+
+generated += librtld.map librtld.mk rtld-libc.a
+
+#$(objpfx)librtld.os: $(objpfx)dl-allobjs.os $(objpfx)rtld-libc.a
+#	$(LINK.o) -nostdlib -nostartfiles -r -o $@ '-Wl,-(' $^ -lgcc '-Wl,-)'
+$(objpfx)librtld.os: $(objpfx)dl-allobjs.os $(objpfx)rtld-libc.a
+	touch $@
+
+#$(objpfx)ld.so: $(objpfx)librtld.os $(ld-map)
+#	@rm -f $@.lds
+#	$(LINK.o) -nostdlib -nostartfiles -shared			\
+#		  $(LDFLAGS-rtld) -Wl,-z,defs -Wl,--verbose 2>&1 |	\
+#		  sed -e '/^=========/,/^=========/!d;/^=========/d'	\
+#		      -e 's/\. = 0 + SIZEOF_HEADERS;/& _begin = . - SIZEOF_HEADERS;/' \
+#		  > $@.lds
+#	$(LINK.o) -nostdlib -nostartfiles -shared -o $@			\
+#		  $(LDFLAGS-rtld) -Wl,-z,defs				\
+#		  $(filter-out $(map-file),$^) $(load-map-file)		\
+#		  -Wl,-soname=$(rtld-installed-name) -T $@.lds
+#	rm -f $@.lds
+
+$(objpfx)ld.so: $(objpfx)librtld.os $(ld-map)
+	touch $@
+#	@rm -f $@.lds
+#	$(LINK.o) -nostdlib -nostartfiles -shared			\
+#		  $(LDFLAGS-rtld) -Wl,-z,defs -Wl,--verbose 2>&1 |	\
+#		  sed -e '/^=========/,/^=========/!d;/^=========/d'	\
+#		      -e 's/\. = 0 + SIZEOF_HEADERS;/& _begin = . - SIZEOF_HEADERS;/' \
+#		  > $@.lds
+#	$(LINK.o) -nostdlib -nostartfiles -shared -o $@			\
+#		  $(LDFLAGS-rtld) -Wl,-z,defs				\
+#		  $(filter-out $(map-file),$^) $(load-map-file)		\
+#		  -Wl,-soname=$(rtld-installed-name) -T $@.lds
+#	rm -f $@.lds
+
+# interp.c exists just to get this string into the libraries.
+CFLAGS-interp.c = -D'RUNTIME_LINKER="$(slibdir)/$(rtld-installed-name)"'
+$(objpfx)interp.os: $(common-objpfx)config.make
+
+ifneq (ld.so,$(rtld-installed-name))
+# Make sure ld.so.1 exists in the build directory so we can link
+# against it.
+$(objpfx)$(rtld-installed-name): $(objpfx)ld.so
+	rm -f $@
+	ln -s $(<F) $@
+generated += $(rtld-installed-name)
+endif
+
+# Build a file mentioning all trustworthy directories to look for shared
+# libraries when using LD_LIBRARY_PATH in a setuid program.  The user can
+# add directories to the list by defining $(user-defined-trusted-dirs)
+# before starting make.
+$(objpfx)trusted-dirs.h: $(objpfx)trusted-dirs.st; @:
+$(objpfx)trusted-dirs.st: Makefile $(..)Makeconfig
+	$(make-target-directory)
+	echo "$(subst :, ,$(default-rpath) $(user-defined-trusted-dirs))"    \
+	| $(AWK) -f gen-trusted-dirs.awk > ${@:st=T};
+	echo '#define DL_DST_LIB "$(notdir $(slibdir))"' >> ${@:st=T}
+	$(move-if-change) ${@:st=T} ${@:st=h}
+	touch $@
+CPPFLAGS-dl-load.c = -I$(objpfx). -I$(csu-objpfx).
+
+ifeq (yes,$(build-shared))
+$(inst_slibdir)/$(rtld-version-installed-name): $(objpfx)ld.so $(+force)
+	$(make-target-directory)
+	$(do-install-program)
+
+$(inst_slibdir)/$(rtld-installed-name): \
+  $(inst_slibdir)/$(rtld-version-installed-name) \
+  $(inst_slibdir)/libc-$(version).so
+	$(make-shlib-link)
+
+# Special target called by parent to install just the dynamic linker.
+.PHONY: ldso_install
+ldso_install: $(inst_slibdir)/$(rtld-installed-name)
+endif
+
+
+common-ldd-rewrite = -e 's%@RTLD@%$(slibdir)/$(rtld-installed-name)%g' \
+		     -e 's%@VERSION@%$(version)%g'
+sh-ldd-rewrite = $(common-ldd-rewrite) -e 's%@BASH@%/bin/sh%g;s/\$$"/"/g'
+bash-ldd-rewrite = $(common-ldd-rewrite) -e 's%@BASH@%$(BASH)%g' \
+		   -e 's%@TEXTDOMAINDIR@%$(msgcatdir)%g'
+
+ifneq ($(have-bash2),yes)
+ldd-shell = sh
+else
+ldd-shell = bash
+endif
+
+ifeq ($(ldd-rewrite-script),no)
+define gen-ldd
+sed $($(ldd-shell)-ldd-rewrite) < $< > $@.new
+endef
+else
+define gen-ldd
+sed $($(ldd-shell)-ldd-rewrite) < $< | sed -f $(ldd-rewrite-script) > $@.new
+endef
+endif
+
+$(objpfx)ldd: ldd.bash.in $(common-objpfx)soversions.mk \
+	      $(common-objpfx)config.make
+	$(gen-ldd)
+	chmod 555 $@.new
+	mv -f $@.new $@
+
+$(objpfx)sprof: $(libdl)
+
+$(objpfx)ldconfig: $(ldconfig-modules:%=$(objpfx)%.o)
+SYSCONF-FLAGS := -D'SYSCONFDIR="$(sysconfdir)"'
+CFLAGS-ldconfig.c = $(SYSCONF-FLAGS) -D'LIBDIR="$(libdir)"' -D'SLIBDIR="$(slibdir)"'
+CFLAGS-dl-cache.c = $(SYSCONF-FLAGS)
+CFLAGS-cache.c = $(SYSCONF-FLAGS)
+
+CPPFLAGS-.os += $(if $(filter $(@F),$(patsubst %,%.os,$(all-rtld-routines))),-DNOT_IN_libc=1 -DIS_IN_rtld=1)
+
+test-modules = $(addprefix $(objpfx),$(addsuffix .so,$(strip $(modules-names))))
+generated += $(addsuffix .so,$(strip $(modules-names)))
+
+ifeq (yes,$(build-shared))
+ifeq ($(cross-compiling),no)
+tests: $(objpfx)tst-pathopt.out
+endif
+endif
+
+$(objpfx)testobj1.so: $(libdl)
+$(objpfx)testobj1_1.so: $(objpfx)testobj1.so $(libdl)
+$(objpfx)testobj2.so: $(objpfx)testobj1.so $(libdl)
+$(objpfx)testobj3.so: $(libdl)
+$(objpfx)testobj4.so: $(libdl)
+$(objpfx)testobj5.so: $(libdl)
+$(objpfx)testobj6.so: $(objpfx)testobj1.so $(objpfx)testobj2.so $(libdl)
+$(objpfx)failobj.so: $(objpfx)testobj6.so
+$(objpfx)dep1.so: $(objpfx)dep2.so $(objpfx)dep4.so
+$(objpfx)dep2.so: $(objpfx)dep3.so $(objpfx)dep4.so
+$(objpfx)dep4.so: $(objpfx)dep3.so
+$(objpfx)nodelmod3.so: $(objpfx)nodelmod4.so
+$(objpfx)nextmod1.so: $(libdl)
+$(objpfx)neededobj1.so: $(libdl)
+$(objpfx)neededobj2.so: $(objpfx)neededobj1.so $(libdl)
+$(objpfx)neededobj3.so: $(objpfx)neededobj1.so $(objpfx)neededobj2.so $(libdl)
+$(objpfx)neededobj4.so: $(objpfx)neededobj1.so $(objpfx)neededobj2.so \
+			$(objpfx)neededobj3.so $(libdl)
+$(objpfx)neededobj6.so: $(objpfx)neededobj5.so
+$(objpfx)unload2mod.so: $(objpfx)unload2dep.so
+$(objpfx)ltglobmod2.so: $(libdl)
+$(objpfx)firstobj.so: $(shared-thread-library)
+$(objpfx)globalmod1.so: $(libdl)
+$(objpfx)reldep4mod1.so: $(objpfx)reldep4mod3.so
+$(objpfx)reldep4mod2.so: $(objpfx)reldep4mod4.so
+$(objpfx)dblloadmod1.so: $(objpfx)dblloadmod3.so
+$(objpfx)dblloadmod2.so: $(objpfx)dblloadmod3.so
+$(objpfx)reldepmod5.so: $(objpfx)reldepmod2.so
+$(objpfx)reldepmod6.so: $(objpfx)reldepmod2.so
+$(objpfx)reldep6mod1.so: $(objpfx)reldep6mod0.so
+$(objpfx)reldep6mod2.so: $(objpfx)reldep6mod1.so
+$(objpfx)reldep6mod3.so: $(objpfx)reldep6mod2.so
+$(objpfx)reldep6mod4.so: $(objpfx)reldep6mod1.so
+$(objpfx)tst-tlsmod3.so: $(objpfx)tst-tlsmod2.so
+# For tst-tls9-static, make sure the modules it dlopens have libc.so in DT_NEEDED
+$(objpfx)tst-tlsmod5.so: $(common-objpfx)libc.so
+$(objpfx)tst-tlsmod6.so: $(common-objpfx)libc.so
+$(objpfx)reldep8mod3.so: $(objpfx)reldep8mod1.so $(objpfx)reldep8mod2.so
+$(objpfx)nodel2mod3.so: $(objpfx)nodel2mod1.so $(objpfx)nodel2mod2.so
+$(objpfx)reldep9mod2.so: $(objpfx)reldep9mod1.so
+$(objpfx)reldep9mod3.so: $(objpfx)reldep9mod1.so $(objpfx)reldep9mod2.so
+
+LDFLAGS-tst-tlsmod5.so = -nostdlib
+LDFLAGS-tst-tlsmod6.so = -nostdlib
+
+# filtmod1.so has a special rule
+$(filter-out $(objpfx)filtmod1.so, $(test-modules)): $(objpfx)%.so: $(objpfx)%.os
+	$(build-module)
+
+$(objpfx)loadtest: $(libdl)
+LDFLAGS-loadtest = -rdynamic
+
+$(objpfx)loadtest.out: $(test-modules)
+
+$(objpfx)neededtest: $(libdl)
+$(objpfx)neededtest.out: $(objpfx)neededobj1.so $(objpfx)neededobj2.so \
+			 $(objpfx)neededobj3.so
+
+$(objpfx)neededtest2: $(libdl)
+$(objpfx)neededtest2.out: $(objpfx)neededobj1.so $(objpfx)neededobj2.so \
+			  $(objpfx)neededobj3.so
+
+$(objpfx)neededtest3: $(libdl)
+$(objpfx)neededtest3.out: $(objpfx)neededobj1.so $(objpfx)neededobj2.so \
+			  $(objpfx)neededobj3.so $(objpfx)neededobj4.so
+
+neededtest4-ENV = LC_ALL=C LANGUAGE=C
+$(objpfx)neededtest4: $(libdl) $(objpfx)neededobj1.so
+$(objpfx)neededtest4.out: $(objpfx)neededobj5.so $(objpfx)neededobj6.so
+
+$(objpfx)restest1: $(objpfx)testobj1.so $(objpfx)testobj1_1.so $(libdl)
+LDFLAGS-restest1 = -rdynamic
+
+$(objpfx)restest2: $(libdl)
+LDFLAGS-restest2 = -rdynamic
+
+$(objpfx)restest1.out: $(test-modules)
+
+preloadtest-preloads = testobj1 testobj2 testobj3 testobj4 testobj5
+$(objpfx)preloadtest: $(objpfx)testobj6.so
+LDFLAGS-preloadtest = -rdynamic
+$(objpfx)preloadtest.out: $(preloadtest-preloads:%=$(objpfx)%.so)
+preloadtest-ENV = \
+  LD_PRELOAD=$(subst $(empty) ,:,$(strip $(preloadtest-preloads:=.so)))
+
+$(objpfx)loadfail: $(libdl)
+LDFLAGS-loadfail = -rdynamic
+
+$(objpfx)loadfail.out: $(objpfx)failobj.so
+
+$(objpfx)multiload: $(libdl)
+LDFLAGS-multiload = -rdynamic
+CFLAGS-multiload.c = -DOBJDIR=\"$(elf-objpfx)\"
+
+$(objpfx)multiload.out: $(objpfx)testobj1.so
+
+$(objpfx)origtest: $(libdl)
+LDFLAGS-origtest = -rdynamic
+$(objpfx)origtest.out: $(objpfx)testobj1.so
+
+ifeq ($(have-thread-library),yes)
+$(objpfx)resolvfail: $(libdl) $(shared-thread-library)
+else
+$(objpfx)resolvfail: $(libdl)
+endif
+
+$(objpfx)constload1: $(libdl)
+$(objpfx)constload1.out: $(objpfx)constload2.so $(objpfx)constload3.so
+
+$(objpfx)circleload1: $(libdl)
+$(objpfx)circleload1.out: $(objpfx)circlemod1.so \
+			  $(objpfx)circlemod1a.so
+
+$(objpfx)circlemod1.so: $(objpfx)circlemod2.so
+$(objpfx)circlemod2.so: $(objpfx)circlemod3.so
+$(objpfx)circlemod1a.so: $(objpfx)circlemod2a.so
+$(objpfx)circlemod2a.so: $(objpfx)circlemod3a.so
+
+$(objpfx)order: $(addprefix $(objpfx),dep4.so dep3.so dep2.so dep1.so)
+
+$(objpfx)order.out: $(objpfx)order
+	$(elf-objpfx)$(rtld-installed-name) \
+	  --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)) \
+	  $(objpfx)order > $@
+	(echo "0123456789" | cmp $@ -) > /dev/null
+
+$(objpfx)vismain: $(addprefix $(objpfx),vismod1.so vismod2.so)
+$(objpfx)vismain.out: $(addprefix $(objpfx),vismod3.so)
+vismain-ENV = LD_PRELOAD=$(addprefix $(objpfx),vismod3.so)
+
+$(objpfx)noload: $(objpfx)testobj1.so
+LDFLAGS-noload = -rdynamic
+$(objpfx)noload.out: $(objpfx)testobj5.so
+
+LDFLAGS-nodelete = -rdynamic
+LDFLAGS-nodelmod1.so = -Wl,--enable-new-dtags,-z,nodelete
+LDFLAGS-nodelmod4.so = -Wl,--enable-new-dtags,-z,nodelete
+$(objpfx)nodelete: $(libdl)
+$(objpfx)nodelete.out: $(objpfx)nodelmod1.so $(objpfx)nodelmod2.so \
+		       $(objpfx)nodelmod3.so
+
+LDFLAGS-nodlopenmod.so = -Wl,--enable-new-dtags,-z,nodlopen
+$(objpfx)nodlopen: $(libdl)
+$(objpfx)nodlopen.out: $(objpfx)nodlopenmod.so
+
+$(objpfx)nodlopenmod2.so: $(objpfx)nodlopenmod.so
+$(objpfx)nodlopen2: $(libdl)
+$(objpfx)nodlopen2.out: $(objpfx)nodlopenmod2.so
+
+$(objpfx)filtmod1.so: $(objpfx)filtmod1.os $(objpfx)filtmod2.so
+	$(LINK.o) -shared -o $@ -B$(csu-objpfx) $(LDFLAGS.so) \
+		  -L$(subst :, -L,$(rpath-link)) \
+		  -Wl,-rpath-link=$(rpath-link) \
+		  $< -Wl,-F,$(objpfx)filtmod2.so
+$(objpfx)filter: $(objpfx)filtmod1.so
+
+$(objpfx)unload: $(libdl)
+$(objpfx)unload.out: $(objpfx)unloadmod.so
+
+$(objpfx)reldep: $(libdl)
+$(objpfx)reldep.out: $(objpfx)reldepmod1.so $(objpfx)reldepmod2.so
+
+$(objpfx)reldep2: $(libdl)
+$(objpfx)reldep2.out: $(objpfx)reldepmod1.so $(objpfx)reldepmod3.so
+
+$(objpfx)reldep3: $(libdl)
+$(objpfx)reldep3.out: $(objpfx)reldepmod1.so $(objpfx)reldepmod4.so
+
+$(objpfx)reldep4: $(libdl)
+$(objpfx)reldep4.out: $(objpfx)reldep4mod1.so $(objpfx)reldep4mod2.so
+
+$(objpfx)next: $(objpfx)nextmod1.so $(objpfx)nextmod2.so $(libdl)
+
+$(objpfx)unload2: $(libdl)
+$(objpfx)unload2.out: $(objpfx)unload2mod.so $(objpfx)unload2dep.so
+
+$(objpfx)lateglobal: $(libdl)
+$(objpfx)lateglobal.out: $(objpfx)ltglobmod1.so $(objpfx)ltglobmod2.so
+
+$(objpfx)tst-pathopt: $(libdl)
+$(objpfx)tst-pathopt.out: tst-pathopt.sh $(objpfx)tst-pathopt \
+			  $(objpfx)pathoptobj.so
+	$(SHELL) -e $< $(common-objpfx)
+
+$(objpfx)initfirst: $(libdl)
+$(objpfx)initfirst.out: $(objpfx)firstobj.so
+
+$(objpfx)global: $(objpfx)globalmod1.so
+$(objpfx)global.out: $(objpfx)reldepmod1.so
+
+$(objpfx)dblload: $(libdl)
+$(objpfx)dblload.out: $(objpfx)dblloadmod1.so $(objpfx)dblloadmod2.so
+
+$(objpfx)dblunload: $(libdl)
+$(objpfx)dblunload.out: $(objpfx)dblloadmod1.so $(objpfx)dblloadmod2.so
+
+$(objpfx)reldep5: $(libdl)
+$(objpfx)reldep5.out: $(objpfx)reldepmod5.so $(objpfx)reldepmod5.so
+
+$(objpfx)reldep6: $(libdl)
+$(objpfx)reldep6.out: $(objpfx)reldep6mod3.so $(objpfx)reldep6mod4.so
+
+$(objpfx)reldep7: $(libdl)
+$(objpfx)reldep7.out: $(objpfx)reldep7mod1.so $(objpfx)reldep7mod2.so
+
+$(objpfx)reldep8: $(libdl)
+$(objpfx)reldep8.out: $(objpfx)reldep8mod3.so
+
+LDFLAGS-nodel2mod2.so = -Wl,--enable-new-dtags,-z,nodelete
+$(objpfx)nodelete2: $(libdl)
+$(objpfx)nodelete2.out: $(objpfx)nodel2mod3.so
+
+$(objpfx)reldep9: $(libdl)
+$(objpfx)reldep9.out: $(objpfx)reldep9mod3.so
+
+$(objpfx)tst-tls3: $(objpfx)tst-tlsmod1.so
+
+$(objpfx)tst-tls4: $(libdl)
+$(objpfx)tst-tls4.out: $(objpfx)tst-tlsmod2.so
+
+$(objpfx)tst-tls5: $(libdl)
+$(objpfx)tst-tls5.out: $(objpfx)tst-tlsmod2.so
+
+$(objpfx)tst-tls6: $(libdl)
+$(objpfx)tst-tls6.out: $(objpfx)tst-tlsmod2.so
+
+$(objpfx)tst-tls7: $(libdl)
+$(objpfx)tst-tls7.out: $(objpfx)tst-tlsmod3.so
+
+$(objpfx)tst-tls8: $(libdl)
+$(objpfx)tst-tls8.out: $(objpfx)tst-tlsmod3.so $(objpfx)tst-tlsmod4.so
+
+$(objpfx)tst-tls9: $(libdl)
+$(objpfx)tst-tls9.out: $(objpfx)tst-tlsmod5.so $(objpfx)tst-tlsmod6.so
+
+ifdef libdl
+$(objpfx)tst-tls9-static: $(common-objpfx)dlfcn/libdl.a
+$(objpfx)tst-tls9-static.out: $(objpfx)tst-tlsmod5.so $(objpfx)tst-tlsmod6.so
+endif
+
+$(objpfx)tst-array1.out: $(objpfx)tst-array1
+	$(elf-objpfx)$(rtld-installed-name) \
+	  --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)) \
+	  $(objpfx)tst-array1 > $@
+	cmp $@ tst-array1.exp > /dev/null
+
+$(objpfx)tst-array2: $(objpfx)tst-array2dep.so
+$(objpfx)tst-array2.out: $(objpfx)tst-array2
+	$(elf-objpfx)$(rtld-installed-name) \
+	  --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)) \
+	  $(objpfx)tst-array2 > $@
+	cmp $@ tst-array2.exp > /dev/null
+
+$(objpfx)tst-array3.out: $(objpfx)tst-array3
+	$(elf-objpfx)$(rtld-installed-name) \
+	  --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)) \
+	  $(objpfx)tst-array3 > $@
+	cmp $@ tst-array1.exp > /dev/null
+
+$(objpfx)tst-array4: $(libdl)
+$(objpfx)tst-array4.out: $(objpfx)tst-array4 $(objpfx)tst-array2dep.so
+	$(elf-objpfx)$(rtld-installed-name) \
+	  --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)) \
+	  $< > $@
+	cmp $@ tst-array4.exp > /dev/null
+
+check-textrel-CFLAGS = -O -Wall -D_XOPEN_SOURCE=600 -D_BSD_SOURCE
+$(objpfx)check-textrel: check-textrel.c
+	$(native-compile)
+
+ifeq (yes,$(build-shared))
+tests: $(objpfx)check-textrel.out
+
+$(objpfx)check-textrel.out: $(objpfx)check-textrel
+	$(dir $<)$(notdir $<) $(common-objpfx)libc.so \
+	  $(sort $(wildcard $(common-objpfx)*/lib*.so \
+			    $(common-objpfx)iconvdata/*.so)) > $@
+generated += check-textrel check-textrel.out
+endif

@@ -1,0 +1,71 @@
+libc {
+  # The comment lines with "#errlist-compat" are magic; see errlist-compat.awk.
+  # When you get an error from errlist-compat.awk, you need to add a new
+  # version here.  Don't do this blindly, since this means changing the ABI.
+
+  GLIBC_2.3 {
+
+    # helper functions
+    __errno_location;
+
+    # a
+    alloc_tld; apm_poweroff;
+
+    # b
+    bdflush; based_open; based_mkdir; based_rmdir; based_unlink; based_symlink;
+
+    # c
+    create_index; create_semaphore; clone_area; create_port;
+
+    # d
+    dbprintf; deinit_library; debug_write; debug_read; delete_node_monitor; delete_semaphore;
+    delete_area; delete_port;
+
+    # f
+    free_tld; freadlink; find_port; find_module_by_address;
+
+    # g
+    get_real_time; get_system_time; get_system_info; get_image_id; get_tld;
+    get_kernel_syms; get_system_path; get_vesa_mode_info; get_vesa_info; get_pci_info;
+    get_mount_point_count; get_mount_point; get_directory_path; get_app_server_port;
+    get_thread_info; get_next_thread_info; get_thread_proc; get_semaphore_info;
+    get_next_semaphore_info; get_area_info; get_msg; get_port_info; get_next_port_info;
+    get_image_info; get_symbol_address;
+
+    # h
+    has_data;
+
+    # i
+    init_library; initialize_fs;
+
+    # k
+    kill_proc;
+
+    # l
+    load_library; lock_semaphore;
+
+    # m
+    mount; make_port_public; make_port_private;
+
+    # o
+    open_image_file;
+
+    # r
+    realint; reboot; remove_attr; remove_index; resume_thread; rename_thread; receive_data;
+    remap_area; read_pos; readv_pos;
+
+    # s
+    set_tld; sendfile; setfsgid; setfsuid; sysinfo; set_real_time; stat_attr; stat_index;
+    set_app_server_port; set_strace_level; suspend_thread; send_data; set_thread_priority;
+    snooze; send_msg;
+
+    # t
+    thread_data_size;
+
+    # u
+    unload_library; unlock_semaphore; uselib; unmount; unlock_semaphore_x;
+
+    # w
+    watch_node; wait_for_thread; write_pos; writev_pos;
+  }
+}

@@ -1,0 +1,12 @@
+libc {
+  # The comment lines with "#errlist-compat" are magic; see errlist-compat.awk.
+  # When you get an error from errlist-compat.awk, you need to add a new
+  # version here.  Don't do this blindly, since this means changing the ABI.
+
+  GLIBC_2.3 {
+
+    # m
+    modify_ldt;
+  }
+}
+

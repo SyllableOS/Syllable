@@ -1,0 +1,241 @@
+Glibc-2.3.2 Syllable Changelog
+
+* March 25th 2004 *
+
+	o Syllable has its own, non-standard ELF ABI, so sysdeps/i386/elf/start.S has
+	  been modified with a couple of #ifdef'd blocks of code.  I originally wanted
+	  to keep this totally seperate from the standard i386 ELF start.S but the
+	  current Makefile make that problematic.
+	o Makerules: Make symbolic-link-prog use ln -s rather than elf/sln as we
+	  currently cannot build sln properly.
+
+* March 19th 2004 *
+
+	o malloc/Makefile & debug/Makefile: Do not build anything for target
+	  others:
+	o timezone/Makefile: Dont try to install the timezone files; we can't
+	  process them with ld.so.1 as it doesn't exist.
+	o sunrpc/Makefile: Dont build librpcsvc and dont bother trying to run
+	  rpcgen during subdir_install
+	o Removed dlsym.c
+	o Make targets subdir_lib, other, subdir_install now work
+
+* March 18th 2004 *
+
+	o Added dlsym.c which provides a stub for libmemusage.so
+	o malloc/Makefile: Do not require ld.so for libmemusage.so
+	o bits/fcntl.h: Define O_RSYNC & O_DSYNC
+
+* February 14th 2004 *
+
+	o Added Versions entries for every EXTRA symbol in syscalls.list
+
+* January 30th 2004 *
+
+	o Started a major overhaul of Syllable sources
+	  Correct incorrect use of libc_hidden() macros
+	  Add external symbols to Versions
+
+* January 29th 2004 *
+
+	o i386/fork.c: Add libc_hidden_def(__fork)
+	o Add Versions file
+	o Set dlfcn & libdl in Makeconfig empty if building on Syllable
+
+* January 28th 2004 *
+
+	o Add image.c & sys/image.h
+	o Bug fixes to i386/setresgid.c & i386/setresuid.c
+	o Remove i386/Makefile (Do not build setresuid & setresgid twice)
+	o Include tls.h & add #if ! USE__THREAD gaurds in errno-loc.c
+	o Patch sysdeps/posix/pwrite64.c: Do not libc_hidden_def()
+	o Remove CFLAGS-init-first.c for subdir csu from the Makefile
+
+* January 27th 2004 *
+
+	o Add specific patterns for Syllable in shlib-versions
+	o Change atexit() to __cxa_atexit() in libc-start.c
+	o Add fsync.c & ftruncate.c
+
+* January 24th 2004 *
+
+	o Add empty sys/klog.h sys/mount.h sys/quota.h sys/timex.h files to keep bp-thunks.h happy
+	o Change definition of libc-link in syllable/Makefile to bring it into line with the standard
+	  definition
+	o Add rpath-dirs to Makefile in addition to setting libc-link
+
+* January 20th 2004 *
+
+	o Add -D__SYLLABLE__ to CFLAGS
+	o Updated the following files to latest CVS versions
+	  stdio-common/sscanf.c
+	  include/ctype.h
+	  csu/elf-init.c
+
+* January 18th 2004 *
+
+	o Add sa_len.c  Only recognise AF_INET, AF_INET6 & AF_LOCAL  All other types return 0
+	  lengths.  This is opposed the original implementation, which added headers & returned
+	  values for types the kernel does not support.
+
+* January 17th 2004 *
+
+	o Re-wrote and hacked on libc-start.c to bring it closer to the Generic libc-start.c.
+	  Removed call to __getopt_clean_enviroment() & __libc_init()  Added call to atexit() for
+	  the fini section and a call to the init section.  Added #ifndef SHARED around the call to
+	  __libc_init_first();
+	o Add $(common-objpfx)libc.so: in Makerules  This is identical to the non-Syllable one but
+	  does not include ld.so  This gives us soinit.os & sofini.os when linking for Syllable
+	o Add dl-stubs.c to provide dynamic linker stub functions
+	o Add #ifndef __SYLLABLE__ around body of elf/dl-profstub.c & provided stub implementations
+	  in dl-stub.c
+
+* January 15th 2004 *
+
+	o Copied struct rtld_global from elf/rtld.c to init-first.c
+	o Removed the ._dl_load_lock field from struct rtld_global
+	o Add #ifdef USE_NONOPTION_FLAGS around getopt_clean_enviroment() call in libc-start.c
+	o Added temporary #if 0 around __libc_enable_secure in sysdeps/generic/dl-sysdep.c
+
+* January 2nd 2004 *
+
+	o Added i386/syscall.S & defined ENTER_KERNEL in i386/sysdep.h
+	o Added getdents.c & getdents64.c
+	o Added getdirentriess.c & getdirentries64.c
+
+* January 1st 2004 *
+
+	o Added tld.c: alloc_tld, free_tld, set_tld & get_tld.  alloc_tld & free_tld have been
+	  heavily modified from the original AtheOS code to fix some massive bugs in the list
+	  handling.
+
+* December 31st 2003 *
+
+	o Re-wrote time.c using sysdeps/unix/time.c; this ensures I really do have the included
+	  headers correct..
+	o Added unlock_semaphore.c
+
+* December 30th 2003 *
+
+	o bits/libc-lock.h: Define _LIBC_LOCK_RECURSIVE_INITIALIZER
+	o Added errno-loc.c
+
+* December 29th 2003 *
+
+	o Added get_real_time.c
+	o Copy generic/setrlimit.c to setrlimit.c  The function is defined as __setrlimit &
+	  weak_alias'd to setrlimit
+	o Added i386/brk.c: include generic/brk.c stub version
+	o Define howmany(), roundup() & powerof2() macros in sys/param.h
+	o Added configure.in/configure fragment; mostly define macros which make libc thread safe.
+	o Add libc_hidden_proto to time.c
+
+* December 28th 2003 *
+
+	o Added definination for link-libc in Makefile; do not pass -Wl,--rpath-link=$(rpath-link) to
+	  the linker & add -Xlinker --whole-archive $(gnulib)  This effectively stops the dynamic
+	  linker being linked into libc.
+	o Added i386/atomicity.h  Based on sysdeps/i386/i486/atomicity.h but include atheos/atomic.h
+	  instead of defining atomic_add()
+	o Change #if defined(LLL_LOCK_INITIALIZER) && !defined(NOT_IN_libc) to
+	  #if (defined(LLL_LOCK_INITIALIZER) && !defined(NOT_IN_libc)) || defined __SYLLABLE__
+	  in malloc/thread-m.h  This causes malloc to use NPTL, which in turn uses the functions from
+	  libc_lock.c
+	o atheos/atomic.h: typedef atomic_t before we include types.h so that pthreadtypes.h does not
+	  cause problems when it typedef's pthread_once_t
+	o elf/dl-profile.c: Cast &fromp->here->count to (uint32_t*): stops compiler warnings when
+	  using Syllable atomic_add
+
+* December 24th 2003 *
+
+	o Added time.c, get_system_time.c  Moved declarations for __get_system_time into sys/systime.h
+	o Added i386/fork.c
+	o Added bits/libc-lock.h with macros for __libc functions, but no R/W lock or RTLD lock macros
+	  have been completed yet.
+	o Added i386/libc_lock.c
+
+* December 15th 2003 *
+
+	o Copy ulimit.c from linux/ulimit.c
+	o Define int __libc_enable_secure; in libc-start.c
+	o Added signal.c
+	o Copy bits/sigset.h from linux/bits/sigset.h
+	o Copy sigset-cvt-mask.h from linux/sigset-cvt-mask.h
+	o Copy sigsuspend.c from linux/sigsuspend.c  Removed some #ifdef'd code which dealt with
+	  realtime signals to bring the code closer to the original AtheOS implementation.
+	o Added vfork.c
+	o Added wait.c
+	o Added dbprintf.c; added sys/debug.h, but changed the original AtheOS use of the _P macro
+	  to __THROW
+	o Added setrlimit.c; simply include the generic/setrlimit.c stub
+
+* December 13th 2003 *
+
+	o Removed the quick test code from libc-start.c & unistd.h  This works, so why then do we get
+	  errors about __libc_enable_secure being undefined in libc-start.c?
+
+* December 12th 2003 *
+
+	o All sorts of nasty hacks in elf/Makefile in an attempt to stop almost all of it being built.
+	  This seems to have cleared up a load of "undefined symbol" errors where things like dl-open.c
+	  are no longer linked, but I don't have much faith in the modifications.
+
+	o Quick test in libc-start.c & unistd.h  Define unistd_test & trap this in unistd.h to see if
+	  the header is being included & __libc_enable_secure is available.
+
+* December 10th 2003 *
+
+	o Added declaration of __time_t_defined and __pid_t_defined for pid_t & time_t in posix/types.h
+
+* December 8th 2003 *
+
+	o Removed setresuid & setresgid from syscalls.list, added i386/setresuid.c &
+	  i386/setresgid.c
+	o Created i386/Makefile
+
+* December 7th 2003 *
+
+	o Amended syscalls.list & i386/syscalls.list with new arg format
+
+* November 29th 2003 *
+
+	o Undo changes to binfmt-subdir made on October 25th  We now build everything in elf/
+	o Comment out (Apparently buggy) __rtld_lock_define_initialized_recursive (, _dl_load_lock)
+	  in elf/dl-support.c
+
+* November 26th 2003 *
+
+	o Declare __libc_stack_end in libc-start.c as we do not have dl-sysdeps.c to declare it.
+
+* October 30th 2003 *
+
+	o Changed the libc_hidden* & weak_alias macros inet_system_info.h, get_system_info.c,
+	  xget_system_info.c, sys/sysinfo.h to more suitable
+	  versions.  This appears to work and	  should be the final version.
+
+* October 26th 2003 *
+
+	o posix/types.h: typedef time_t & pid_t only if we're not compiling with __KERNEL__
+	  Should probably split types.h into types.h (libc & kernel safe
+	  types) & kernel_types.h (Kernel only types).
+	o Add i386/sysdep.h & i386/sysdep.S  These are the Linux versions with a few
+	  small changes.
+	o Move xget_system_info.h to get_system_info.h
+	o get_system_info.h, get_system_info.c, xget_system_info.c: Add libc_hidden()
+	  macros according to info in include/libc-symbols.h
+	o Move get_system_info.h to sys/sysinfo.h & add a few more prototypes.
+
+* October 25th 2003 *
+
+	o Makerules: Do not build ld.so stuff (soinit.c, sofini.c, interp.c) if the OS
+	  is Syllable.
+	o Makeconfig: Do not add interp.os to dependencies list if we are building on
+	  Syllable.
+
+* October 24th 2003 *
+
+	o Removed IBAUD0 from tcsetattr.c
+	o Removed IBAUD0 from speed.c
+	o Removed CALL_SIGHANDLER macro from i386/sigcontext.h
+	o Makeconfig: Do not set binfmt-subdir for Syllable (Do not build anything in
+	  elf/)
