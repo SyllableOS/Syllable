@@ -1,7 +1,6 @@
-
 /*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001  Kurt Skauen
- *  Copyright (C) 2003  The Syllable Team
+ *  Copyright (C) 2003 - 2004  The Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -78,26 +77,26 @@ class FileRequester::Private
 	ImageButton *m_pcBackButton;
 };
 
-FileRequester::FileRequester( file_req_mode_t nMode, Messenger * pcTarget, const char *pzPath, uint32 nNodeType, bool bMultiSelect, Message * pcMessage, FileFilter * pcFilter, bool bModal, bool bHideWhenDone, const char *pzOkLabel, const char *pzCancelLabel ):Window( Rect( 0, 0, 1, 1 ), "file_requester", "", WND_NOT_RESIZABLE )
+FileRequester::FileRequester( file_req_mode_t nMode, Messenger * pcTarget, const char *pzPath, uint32 nNodeType, bool bMultiSelect, Message * pcMessage, FileFilter * pcFilter, bool bModal, bool bHideWhenDone, String cOkLabel, String cCancelLabel ):Window( Rect( 0, 0, 1, 1 ), "file_requester", "", WND_NOT_RESIZABLE )
 {
 	Lock();		// Why ??
 
 	m = new Private;
 
-	if( pzOkLabel == NULL )
+	if( cOkLabel.empty() )
 	{
 		if( nMode == LOAD_REQ )
 		{
-			pzOkLabel = "Load";
+			cOkLabel = "_Load";
 		}
 		else
 		{
-			pzOkLabel = "Save";
+			cOkLabel = "_Save";
 		}
 	}
-	if( pzCancelLabel == NULL )
+	if( cCancelLabel.empty() )
 	{
-		pzCancelLabel = "Cancel";
+		cCancelLabel = "_Cancel";
 	}
 
 
@@ -181,8 +180,8 @@ FileRequester::FileRequester( file_req_mode_t nMode, Messenger * pcTarget, const
 
 	m->m_pcDirView = new DirectoryView( GetBounds(), cPath );
 	m->m_pcPathView = new TextView( Rect( 0, 0, 1, 1 ), "path_edit", cFile.c_str() );
-	m->m_pcCancelButton = new Button( Rect( 0, 0, 1, 1 ), "cancel", pzCancelLabel, new Message( ID_CANCEL ) );
-	m->m_pcOkButton = new Button( Rect( 0, 0, 1, 1 ), "ok", pzOkLabel, new Message( ID_OK ) );
+	m->m_pcCancelButton = new Button( Rect( 0, 0, 1, 1 ), "cancel", cCancelLabel, new Message( ID_CANCEL ) );
+	m->m_pcOkButton = new Button( Rect( 0, 0, 1, 1 ), "ok", cOkLabel, new Message( ID_OK ) );
 	m->m_pcFileString = new StringView( Rect( 0, 0, 1, 1 ), "string", "File Name:" );
 	m->m_pcTypeString = new StringView( Rect( 0, 0, 1, 1 ), "string_1", "Look in:" );
 	m->m_pcTypeDrop = new DropdownMenu( Rect( 0, 0, 0, 0 ), "Drop" );
@@ -244,8 +243,8 @@ FileRequester::FileRequester( file_req_mode_t nMode, Messenger * pcTarget, const
 	m->m_pcDirView->SetDirChangeMsg( new Message( ID_PATH_CHANGED ) );
 	m->m_pcDirView->MakeFocus();
 
-	std::string cTitlePath = ( std::string ) "Searching in: " + m->m_pcDirView->GetPath();
-	SetTitle( cTitlePath.c_str() );
+	String cTitlePath = ( String ) "Searching in: " + m->m_pcDirView->GetPath();
+	SetTitle( cTitlePath );
 
 	Rect cFrame( 250, 150, 699, 400 );
 
@@ -396,8 +395,8 @@ void FileRequester::HandleMessage( Message * pcMessage )
 
 	case ID_PATH_CHANGED:
 		{
-			std::string cTitlePath = ( std::string ) "Searching in: " + m->m_pcDirView->GetPath();
-			SetTitle( cTitlePath.c_str() );
+			String cTitlePath = ( String ) "Searching in: " + m->m_pcDirView->GetPath();
+			SetTitle( cTitlePath );
 
 			if( m->m_pcTypeDrop->GetItemCount() >= 5 )
 			{
@@ -570,7 +569,7 @@ void FileRequester::HandleMessage( Message * pcMessage )
 	}
 }
 
-void FileRequester::SetPath( const std::string & a_cPath )
+void FileRequester::SetPath( const String & a_cPath )
 {
 	std::string cPath = a_cPath;
 	std::string cFile;
@@ -621,7 +620,7 @@ void FileRequester::SetPath( const std::string & a_cPath )
 	m->m_pcDirView->SetPath( cPath );
 }
 
-std::string FileRequester::GetPath() const
+String FileRequester::GetPath() const
 {
 	return ( m->m_pcDirView->GetPath() );
 }
