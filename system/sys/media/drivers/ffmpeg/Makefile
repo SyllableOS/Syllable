@@ -10,8 +10,6 @@ CC	= gcc
 LL	= ld
 
 OBJS	= ffmpeg_demux.o ffmpeg_output.o ffmpeg_codec.o ffmpeg_addon.o
-LIBS	:= ffmpeg/libavcodec/libavcodec.a ffmpeg/libavformat/libavformat.a
-
 OBJDIR	:= objs
 
 include $(ATHEOS_SRC)/makefile.rules
@@ -23,12 +21,6 @@ $(OBJDIR):
 
 $(OBJDIR)/ffmpeg.so: $(OBJS)
 	gcc -shared -Xlinker "-soname=ffmpeg.so" $(OBJS) -lm -lz -lstdc++ -lsyllable -lmedia -lavformat -Lffmpeg/libavcodec -Lffmpeg/libavformat -lavcodec -L/usr/lib/ -o $(OBJDIR)/ffmpeg.so
-
-ffmpeg/libavcodec/libavcodec.a:
-	make -C ffmpeg
-
-ffmpeg/libavformat/libavformat.a:
-	make -C ffmpeg
 
 
 deps: $(LIBS)
@@ -46,35 +38,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*
 
 -include $(OBJDIR)/*.d
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
