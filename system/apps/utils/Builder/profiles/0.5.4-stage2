@@ -19,5 +19,6 @@ modules
 	apps/utils/DiskManager
 	apps/utils/Preferences/Locale
 	apps/utils/Preferences/Network
+	apps/utils/aterm
 	apps/utils/catalog
 	apps/utils/pkgmanager
