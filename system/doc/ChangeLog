@@ -6,6 +6,10 @@ and also tweaking to many native packages to make them comply.
 
 Removed sed 4.0.7 because it didn't build after going through CVS.
 
+Removed sh-utils and textutils. They were replaced by coreutils,
+and sh-utils didn't build, anyway. I left fileutils in there
+for reference to the patch it contains.
+
 * Oct 3 2003, Kristian Van Der Vliet *
 
 Patch Savage driver to fix problems with 16bit modes from Hilary Cheng
