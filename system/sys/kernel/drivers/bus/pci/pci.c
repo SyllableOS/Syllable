@@ -438,8 +438,9 @@ status_t get_pci_info( PCI_Info_s * psInfo, int nIndex )
  *****************************************************************************/
 void enable_pci_master( int nBusNum, int nDevNum, int nFncNum )
 {
-	write_pci_config( nBusNum, nDevNum, nFncNum, PCI_COMMAND, read_pci_config( nBusNum, nDevNum,
-						nFncNum, PCI_COMMAND, 2 ) | PCI_COMMAND_MASTER, 2 );
+  write_pci_config( nBusNum, nDevNum, nFncNum, PCI_COMMAND, 2,
+                    read_pci_config( nBusNum, nDevNum, nFncNum, PCI_COMMAND, 2 )
+                    | PCI_COMMAND_MASTER);
 }
 
 void set_pci_latency( int nBusNum, int nDevNum, int nFncNum, uint8 nLatency )
