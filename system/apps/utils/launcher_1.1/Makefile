@@ -39,7 +39,7 @@ install: $(EXE)
 	cp bin/AddLauncherIcon $(INSTDIR)/bin
 	cp bin/LBrowser $(INSTDIR)/bin
 	cp default.cfg $(INSTDIR)/default.cfg
-	cp icons/* $(INSTDIR)/icons/
+	cp README icons/*.png $(INSTDIR)/icons/
 	cp -r mime/* $(INSTDIR)/mime/
 	(cd plugins && $(MAKE) install)
 
@@ -63,7 +63,7 @@ dist: $(EXE)
 	cp bin/AddLauncherIcon $(DIST_DIR)/atheos$(INSTDIR)/bin
 	cp bin/LBrowser $(DIST_DIR)/atheos$(INSTDIR)/bin
 	cp default.cfg $(DIST_DIR)/atheos$(INSTDIR)/default.cfg
-	cp icons/* $(DIST_DIR)/atheos$(INSTDIR)/icons/
+	cp README icons/*.png $(DIST_DIR)/atheos$(INSTDIR)/icons/
 	cp -r mime/* $(DIST_DIR)/atheos$(INSTDIR)/mime/
 	(cd plugins && $(MAKE) dist)
 
