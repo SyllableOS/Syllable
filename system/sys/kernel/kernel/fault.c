@@ -281,22 +281,22 @@ void math_state_restore( SysCallRegs_s * psRegs, int nErrorCode )
 	if ( ( psThread->tr_nFlags & TF_FPU_USED ) == 0 )
 	{
 		// Initialize the FPU state
-		if ( g_bHasFXSR )
+		if ( get_processor()->pi_bHaveFXSR )
 		{
-			memset( &psThread->tc_FPUState.fxsave, 0, sizeof( struct i387_fxsave_struct ) );
-			psThread->tc_FPUState.fxsave.cwd = 0x37f;
-			if ( g_bHasXMM )
+			memset( &psThread->tc_FPUState.fpu_sFXSave, 0, sizeof( struct i3FXSave_t ) );
+			psThread->tc_FPUState.fpu_sFXSave.cwd = 0x37f;
+			if ( get_processor()->pi_bHaveXMM )
 			{
-				psThread->tc_FPUState.fxsave.mxcsr = 0x1f80;
+				psThread->tc_FPUState.fpu_sFXSave.mxcsr = 0x1f80;
 			}
 		}
 		else
 		{
-			memset( &psThread->tc_FPUState.fsave, 0, sizeof( struct i387_fsave_struct ) );
-			psThread->tc_FPUState.fsave.cwd = 0xffff037fu;
-			psThread->tc_FPUState.fsave.swd = 0xffff0000u;
-			psThread->tc_FPUState.fsave.twd = 0xffffffffu;
-			psThread->tc_FPUState.fsave.fos = 0xffff0000u;
+			memset( &psThread->tc_FPUState.fpu_sFSave, 0, sizeof( struct i3FSave_t ) );
+			psThread->tc_FPUState.fpu_sFSave.cwd = 0xffff037fu;
+			psThread->tc_FPUState.fpu_sFSave.swd = 0xffff0000u;
+			psThread->tc_FPUState.fpu_sFSave.twd = 0xffffffffu;
+			psThread->tc_FPUState.fpu_sFSave.fos = 0xffff0000u;
 		}
 		psThread->tr_nFlags |= TF_FPU_USED;
 	}

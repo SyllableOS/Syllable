@@ -35,7 +35,7 @@
  * SEE ALSO:
  ****************************************************************************/
 
-static inline unsigned long twd_fxsr_to_i387( struct i387_fxsave_struct *fxsave )
+static inline unsigned long twd_fxsr_to_i387( struct i3FXSave_t *fxsave )
 {
 	struct _fpxreg *st = NULL;
 	unsigned long twd = (unsigned long)fxsave->twd;
@@ -91,7 +91,7 @@ static inline unsigned long twd_fxsr_to_i387( struct i387_fxsave_struct *fxsave 
 	return ret;
 }
 
-static inline void convert_fxsr_to_user( struct _fpstate *buf, struct i387_fxsave_struct *fxsave )
+static inline void convert_fxsr_to_user( struct _fpstate *buf, struct i3FXSave_t *fxsave )
 {
 	unsigned long env[7];
 	struct _fpreg *to;
@@ -122,16 +122,16 @@ static inline void convert_fxsr_to_user( struct _fpstate *buf, struct i387_fxsav
 
 static inline void save_i387_fxsave( struct _fpstate *buf, Thread_s *psThread )
 {
-	convert_fxsr_to_user( buf, &psThread->tc_FPUState.fxsave );
-	buf->status = psThread->tc_FPUState.fxsave.swd;
+	convert_fxsr_to_user( buf, &psThread->tc_FPUState.fpu_sFXSave );
+	buf->status = psThread->tc_FPUState.fpu_sFXSave.swd;
 	buf->magic = X86_FXSR_MAGIC;
-	memcpy_to_user( &buf->_fxsr_env[0], &psThread->tc_FPUState.fxsave, sizeof( struct i387_fxsave_struct ) );
+	memcpy_to_user( &buf->_fxsr_env[0], &psThread->tc_FPUState.fpu_sFXSave, sizeof( struct i3FXSave_t ) );
 }
 
 static inline void save_i387_fsave( struct _fpstate *buf, Thread_s *psThread )
 {
-	psThread->tc_FPUState.fsave.status = psThread->tc_FPUState.fsave.swd;
-	memcpy_to_user( buf, &psThread->tc_FPUState.fsave, sizeof( struct i387_fsave_struct ) );
+	psThread->tc_FPUState.fpu_sFSave.status = psThread->tc_FPUState.fpu_sFSave.swd;
+	memcpy_to_user( buf, &psThread->tc_FPUState.fpu_sFSave, sizeof( struct i3FSave_t ) );
 }
 
 int save_i387( struct _fpstate *buf )
@@ -153,7 +153,7 @@ int save_i387( struct _fpstate *buf )
 		stts();
 	}
 
-	if ( g_bHasFXSR )
+	if ( get_processor()->pi_bHaveFXSR )
 		save_i387_fxsave( buf, psThread );
 	else
 		save_i387_fsave( buf, psThread );
@@ -183,7 +183,7 @@ static inline unsigned short twd_i387_to_fxsr( unsigned short twd )
 	return tmp;
 }
 
-static inline void convert_fxsr_from_user( struct i387_fxsave_struct *fxsave, struct _fpstate *buf )
+static inline void convert_fxsr_from_user( struct i3FXSave_t *fxsave, struct _fpstate *buf )
 {
 	unsigned long env[7];
 	struct _fpxreg *to;
@@ -215,15 +215,15 @@ static inline void convert_fxsr_from_user( struct i387_fxsave_struct *fxsave, st
 
 static inline void restore_i387_fxsave( struct _fpstate *buf, Thread_s *psThread )
 {
-	memcpy_from_user( &psThread->tc_FPUState.fxsave, &buf->_fxsr_env[0], sizeof( struct i387_fxsave_struct ) );
+	memcpy_from_user( &psThread->tc_FPUState.fpu_sFXSave, &buf->_fxsr_env[0], sizeof( struct i3FXSave_t ) );
 	// mxcsr reserved bits must be masked to zero for security reasons
-	psThread->tc_FPUState.fxsave.mxcsr &= 0x0000ffbf;
-	convert_fxsr_from_user( &psThread->tc_FPUState.fxsave, buf );
+	psThread->tc_FPUState.fpu_sFXSave.mxcsr &= 0x0000ffbf;
+	convert_fxsr_from_user( &psThread->tc_FPUState.fpu_sFXSave, buf );
 }
 
 static inline void restore_i387_fsave( struct _fpstate *buf, Thread_s *psThread )
 {
-	memcpy_from_user( &psThread->tc_FPUState.fsave, buf, sizeof( struct i387_fsave_struct ) );
+	memcpy_from_user( &psThread->tc_FPUState.fpu_sFSave, buf, sizeof( struct i3FSave_t ) );
 }
 
 void restore_i387( struct _fpstate *buf )
@@ -236,7 +236,7 @@ void restore_i387( struct _fpstate *buf )
 		stts();
 	}
 
-	if ( g_bHasFXSR )
+	if ( get_processor()->pi_bHaveFXSR )
 		restore_i387_fxsave( buf, psThread );
 	else
 		restore_i387_fsave( buf, psThread );

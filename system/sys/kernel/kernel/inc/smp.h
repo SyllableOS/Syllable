@@ -211,6 +211,8 @@ typedef struct
 	bool pi_bHaveCPUID;
 	bool pi_bHavePERFCnt;
 	bool pi_bHaveAPIC;
+	bool pi_bHaveFXSR; // CPU has fast FPU save and restore
+	bool pi_bHaveXMM; // CPU has SSE extensions
 	uint32 pi_nFeatures;
 } ProcessorInfo_s;
 
@@ -247,6 +249,11 @@ extern __inline int get_processor_id( void )
 	return ( GET_APIC_ID( apic_read( APIC_ID ) ) );
 }
 #endif
+
+extern __inline ProcessorInfo_s* get_processor( void )
+{
+	return( &g_asProcessorDescs[get_processor_id()] );
+}
 
 int logical_to_physical_cpu_id( int nLogicalID );
 

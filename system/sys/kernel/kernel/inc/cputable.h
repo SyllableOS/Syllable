@@ -94,7 +94,7 @@ static const char *cpuname
 					/* 6 */ "Celeron A Mendocino/Pentium II Dixon",
 					/* 7 */ "Pentium III Katmai/Pentium III Xeon Tanner",
 					/* 8 */ "Celeron 2/Pentium III Coppermine,Geyserville",
-					/* 9 */ N_UNKNOWN,
+					/* 9 */ "Celeron M/Pentium M",
 					/* A */ "Pentium III Xeon Cascades",
 					/* B */ "Celeron 2/Pentium III Tualatin",
 					/* C */ N_UNKNOWN,

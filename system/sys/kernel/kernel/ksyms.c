@@ -176,6 +176,7 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	KSYMBOL( strstr ),
 	KSYMBOL( strtok ),
 	KSYMBOL( strtol ),
+	KSYMBOL( strtoul ),
 	KSYMBOL( suspend ),
 	KSYMBOL( snooze ),
 //  KSYMBOL(get_next_thread),

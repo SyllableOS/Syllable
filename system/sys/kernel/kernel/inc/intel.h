@@ -21,6 +21,8 @@
 #ifndef	EXEC_INTEL_H
 #define	EXEC_INTEL_H
 
+#include "inc/smp.h"
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -140,7 +142,7 @@ struct i3Desc
 	uint8 desc_bsh;		/* base 24-31           */
 };
 
-struct i387_fsave_struct
+struct i3FSave_t
 {
 	long cwd;
 	long swd;
@@ -153,7 +155,7 @@ struct i387_fsave_struct
 	long status;		/* software status information		 */
 };
 
-struct i387_fxsave_struct
+struct i3FXSave_t
 {
 	unsigned short cwd;
 	unsigned short swd;
@@ -170,10 +172,10 @@ struct i387_fxsave_struct
 	long padding[56];
 }; // __attribute__ ((aligned (16)));
 
-union i387_union
+union i3FPURegs_u
 {
-	struct i387_fsave_struct	fsave;
-	struct i387_fxsave_struct	fxsave;
+	struct i3FSave_t	fpu_sFSave;
+	struct i3FXSave_t	fpu_sFXSave;
 };
 
 #define	PTE_PRESENT	0x001	/* dir/page is present/valid                    */
@@ -204,45 +206,42 @@ union i387_union
 
 /*void	sys_FlushCaches( void );*/
 
-extern bool g_bHasFXSR;		// CPU has fast FPU save and restore
-extern bool g_bHasXMM;		// CPU has SSE extensions
-
 static inline void set_page_directory_base_reg( void *pPageTable )
 {
 	__asm__ __volatile__( "movl %0,%%cr3" : : "r" (pPageTable) );
 }
 
-static inline void load_fpu_state( union i387_union *pState )
+static inline void load_fpu_state( union i3FPURegs_u *pState )
 {
-	if ( g_bHasFXSR )
+	if ( get_processor()->pi_bHaveFXSR )
 	{
-		if ( ( ( unsigned int )&pState->fxsave & 0x0000000f ) != 0 )
+		if ( ( ( unsigned int )&pState->fpu_sFXSave & 0x0000000f ) != 0 )
 		{
-			printk( "Panic: fxsave struct is misaligned: %p\n", &pState->fxsave );
+			printk( "Panic: fxsave struct is misaligned: %p\n", &pState->fpu_sFXSave );
 			return;
 		}
-		__asm__ __volatile__( "fxrstor %0" : : "m" ( pState->fxsave ) );
+		__asm__ __volatile__( "fxrstor %0" : : "m" ( pState->fpu_sFXSave ) );
 	}
 	else
 	{
-		__asm__ __volatile__( "frstor %0" : : "m" ( pState->fsave ) );
+		__asm__ __volatile__( "frstor %0" : : "m" ( pState->fpu_sFSave ) );
 	}
 }
 
-static inline void save_fpu_state( union i387_union *pState )
+static inline void save_fpu_state( union i3FPURegs_u *pState )
 {
-	if ( g_bHasFXSR )
+	if ( get_processor()->pi_bHaveFXSR )
 	{
-		if ( ( ( unsigned int )&pState->fxsave & 0x0000000f ) != 0 )
+		if ( ( ( unsigned int )&pState->fpu_sFXSave & 0x0000000f ) != 0 )
 		{
-			printk( "Panic: fxsave struct is misaligned: %p\n", &pState->fxsave );
+			printk( "Panic: fxsave struct is misaligned: %p\n", &pState->fpu_sFXSave );
 			return;
 		}
-		__asm__ __volatile__( "fxsave %0; fnclex" : "=m" ( pState->fxsave ) );
+		__asm__ __volatile__( "fxsave %0; fnclex" : "=m" ( pState->fpu_sFXSave ) );
 	}
 	else
 	{
-		__asm__ __volatile__( "fnsave %0; fwait" : "=m" ( pState->fsave ) );
+		__asm__ __volatile__( "fnsave %0; fwait" : "=m" ( pState->fpu_sFSave ) );
 	}
 }
 

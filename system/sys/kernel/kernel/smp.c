@@ -310,14 +310,14 @@ static void set_cpu_features( void )
 	if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_FXSAVE )
 	{
 		// enable fast FPU save and restore
-		g_bHasFXSR = true;
+		g_bHasFXSR = g_asProcessorDescs[g_nBootCPU].pi_bHaveFXSR = true;
 		set_in_cr4( X86_CR4_OSFXSR );
 		printk( "FXSAVE supported\n" );
 
 		if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_SSE )
 		{
 			// enable SSE support
-			g_bHasXMM = true;
+			g_bHasXMM = g_asProcessorDescs[g_nBootCPU].pi_bHaveXMM = true;
 			set_in_cr4( X86_CR4_OSXMMEXCPT );
 			printk( "SSE supported\n" );
 		}
@@ -423,6 +423,8 @@ static void ap_entry_proc( void )
 	flush_tlb();
 
 	g_asProcessorDescs[nProcessor].pi_bIsRunning = true;
+	g_asProcessorDescs[nProcessor].pi_bHaveFXSR = g_bHasFXSR;
+	g_asProcessorDescs[nProcessor].pi_bHaveXMM = g_bHasXMM;
 
 	create_idle_thread( "idle" );
 

@@ -174,7 +174,7 @@ struct _Thread
 	// Hack alert!  kmalloc() alignment is off by 8 due to block_header,
 	// and we need 16 byte alignment in order to use fxsave.
 	long padding[2] __attribute__(( aligned(16) ));
-	union i387_union tc_FPUState;	/* Intel 387 specific FPU state buffer  */
+	union i3FPURegs_u tc_FPUState;	/* Intel 387 specific FPU state buffer  */
 	int32 tr_nState;	/* Current task state.                  */
 	uint32 tr_nFlags;
 

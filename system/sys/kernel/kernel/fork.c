@@ -608,7 +608,7 @@ thread_id sys_Fork( const char *const pzName )
 			psParentThread->tr_nFlags &= ~TF_FPU_DIRTY;
 			stts();
 		}
-		memcpy( &psNewThread->tc_FPUState, &psParentThread->tc_FPUState, sizeof( union i387_union ) );
+		memcpy( &psNewThread->tc_FPUState, &psParentThread->tc_FPUState, sizeof( union i3FPURegs_u ) );
 	}
 	psNewThread->tr_nFlags = psParentThread->tr_nFlags;
 
