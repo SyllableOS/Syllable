@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.3.11
+# Version 0.3.12
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -187,10 +187,7 @@ def configurePackage target
 				(name == "man" || name == "grub" ? "" :
 					" --prefix=" + prefix(package)
 				) +
-				((options = recipe(package)["configure-options"]) ? " " + toString(options) : "") +
-				(name != "ffmpeg" ? "" :
-					" --source-path=" + Dir.getwd
-				)
+				((options = recipe(package)["configure-options"]) ? " " + toString(options) : "")
 			then true
 			else
 				logFailure target
@@ -793,7 +790,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.3.11",
+	puts "Syllable Build System 0.3.12",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
