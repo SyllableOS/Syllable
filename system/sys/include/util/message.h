@@ -214,7 +214,7 @@ private:
     int		 _GetStaticSize( void ) const { return( sizeof(m_nCode) + sizeof(m_nFlags) + sizeof(m_nTargetToken) + sizeof(m_nReplyToken) + sizeof(m_hReplyProc) + sizeof(m_hReplyPort) + sizeof( int ) ); }
 
       // Definitions for m_nFlags
-    enum { REPLY_REQUIRED = 0x01, IS_REPLY = 0x02, WAS_DELIVERED = 0x04, REPLY_SENDT = 0x00010000 };
+    enum { REPLY_REQUIRED = 0x01, IS_REPLY = 0x02, WAS_DELIVERED = 0x04, REPLY_SENT = 0x00010000 };
 
     Message*	 m_pcNext;
 
@@ -233,3 +233,4 @@ private:
 }
 
 #endif	// __F_UTIL_MESSAGE_H__
+

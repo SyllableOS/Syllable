@@ -229,7 +229,7 @@ status_t Message::Flatten( uint8 *pBuffer, size_t nSize ) const
 	( ( int32 * )pBuffer )[3] = m_nReplyToken;
 	( ( int32 * )pBuffer )[4] = m_hReplyPort;
 	( ( int32 * )pBuffer )[5] = m_hReplyProc;
-	( ( int32 * )pBuffer )[6] = m_nFlags & ~REPLY_SENDT;
+	( ( int32 * )pBuffer )[6] = m_nFlags & ~REPLY_SENT;
 
 	for( psArray = m_psFirstArray; psArray != NULL; psArray = psArray->psNext )
 	{
@@ -277,7 +277,7 @@ status_t Message::Unflatten( const uint8 *pBuffer )
 	m_nReplyToken = ( ( int32 * )pBuffer )[3];
 	m_hReplyPort = ( ( int32 * )pBuffer )[4];
 	m_hReplyProc = ( ( int32 * )pBuffer )[5];
-	m_nFlags = ( ( int32 * )pBuffer )[6] & ~REPLY_SENDT;
+	m_nFlags = ( ( int32 * )pBuffer )[6] & ~REPLY_SENT;
 
 	size_t nPos = _GetStaticSize();	// Position start after size, and code
 
@@ -1680,7 +1680,7 @@ bool Message::WasDelivered( void ) const
 
 bool Message::IsSourceWaiting( void ) const
 {
-	return ( WasDelivered() && ( m_nFlags & REPLY_REQUIRED ) && ( m_nFlags & REPLY_SENDT ) == 0 );
+	return ( WasDelivered() && ( m_nFlags & REPLY_REQUIRED ) && ( m_nFlags & REPLY_SENT ) == 0 );
 }
 
 //----------------------------------------------------------------------------
@@ -1755,7 +1755,7 @@ status_t Message::SendReply( Message * pcTheReply, Handler * pcReplyHandler, uin
 		return ( -1 );
 	}
 
-	m_nFlags |= REPLY_SENDT;
+	m_nFlags |= REPLY_SENT;
 
 	Looper *pcLooper = NULL;
 	port_id hReplyPort = -1;
@@ -1823,7 +1823,7 @@ status_t Message::SendReply( Message * pcTheReply, Message * pcReplyToReply, int
 		return ( -1 );
 	}
 
-	m_nFlags |= REPLY_SENDT;
+	m_nFlags |= REPLY_SENT;
 
 	port_id hReplyPort = -1;
 
@@ -1964,3 +1964,4 @@ status_t Message::_ReadPort( port_id hPort )
 
 	return ( nError );
 }
+
