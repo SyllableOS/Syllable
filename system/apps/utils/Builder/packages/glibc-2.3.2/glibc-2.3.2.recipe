@@ -3,7 +3,9 @@ authors
 	Kaj de Vos
 maintainers			Kaj de Vos
 status				developing
-warnings			Temporarily modifies the GCC specs file!
+warnings
+	Temporarily modifies the GCC specs file!
+	GLibC has a circular dependency on the LibGCC library in GCC.
 
 licenses			LGPL BSD other
 home				www.gnu.org/software/libc/

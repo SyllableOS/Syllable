@@ -4,7 +4,9 @@ authors
 	Arno Klenke
 	Kristian Van Der Vliet
 maintainers			Kaj de Vos
-status				testing
+warnings
+	GCC has a circular dependency on GLibC.
+	LibIberty is both in BinUtils and in GCC.
 
 licenses			GPL LGPL GFDL
 home				gcc.gnu.org
@@ -33,6 +35,7 @@ build-needs
 ;	gnat >= 3.13 | gcc >= 3.1
 	gawk
 test-needs			dejagnu >= 1.4.1
+conflicts			binutils
 
 patch-config		. boehm-gc
 ;patch

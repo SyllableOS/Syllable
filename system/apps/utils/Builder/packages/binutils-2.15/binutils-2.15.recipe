@@ -2,6 +2,7 @@ authors
 	Kaj de Vos
 	Arno Klenke
 	Kristian Van Der Vliet
+warnings			LibIberty is both in BinUtils and in GCC.
 
 licenses			GPL LGPL
 home				www.gnu.org/software/binutils/
@@ -13,6 +14,7 @@ build-needs
 	perl 5.0
 	automake < 1.5
 	autoconf >= 2.58
+conflicts			gcc
 
 patch
 	cd ld
