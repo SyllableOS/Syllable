@@ -287,7 +287,7 @@ struct device
   /* For  load balancing driver pair support */
   NetQueue_s*   packet_queue;
   volatile bool run_timer;
-  thread_id     timer_thread;
+  ktimer_t     timer;
   int irq_handle; /* IRQ handler handle */
 };
 
@@ -981,7 +981,7 @@ static struct device *tulip_probe1(int pci_bus, int pci_devfn, int pci_func,
     tp->csr0 |= 0x2000;
   
 //#define TULIP_FULL_DUPLEX
-#define TULIP_DEFAULT_MEDIA       3
+#define TULIP_DEFAULT_MEDIA       0
 //#define TULIP_NO_MEDIA_SWITCH
   
 #ifdef TULIP_FULL_DUPLEX
@@ -2097,6 +2097,9 @@ static void tulip_timer(unsigned long data)
     if (tp->medialock) break;
     switch (dev->if_port) {
     case 0: case 3: case 4:
+#if 0	/* KV : This seems to cause detection of 10BaseT to always fail, although
+		   10Base2 will work without it. */
+
       if (csr12 & 0x0004) { /*LnkFail */
         /* 10baseT is dead.  Check for activity on alternate port. */
         tp->mediasense = 1;
@@ -2112,6 +2115,7 @@ static void tulip_timer(unsigned long data)
         outl(t21041_csr13[dev->if_port], ioaddr + CSR13);
         next_tick = 10*HZ;			/* 2.4 sec. */
       } else
+#endif
         next_tick = 30*HZ;
       break;
     case 1:					/* 10base2 */
@@ -3589,20 +3593,17 @@ static status_t tulip_ioctl( void* pNode, void* pCookie, uint32 nCommand, void* 
       {
 	struct tulip_private *tp = (struct tulip_private*) psDev->priv;
         psDev->packet_queue = pArgs;
-	//printk(KERN_DEBUG "recv SIOC_ETH_START, will open device!\n");
         tulip_open( psDev );
         psDev->run_timer = true;
-        psDev->timer_thread = spawn_kernel_thread( "tulip_timer", 
-			tulip_tbl[tp->chip_id].media_timer, NORMAL_PRIORITY, 0, psDev );
-        wakeup_thread( psDev->timer_thread, true );
+		 psDev->timer = create_timer();
+		 start_timer( psDev->timer, (timer_callback*)tulip_tbl[tp->chip_id].media_timer, (void*)psDev, 60, false );
         break;
       }
     case SIOC_ETH_STOP:
       {
         if ( psDev->run_timer ) {
           psDev->run_timer = false;
-          wakeup_thread( psDev->timer_thread, true );
-          while( sys_wait_for_thread( psDev->timer_thread ) == -EINTR );
+ 			delete_timer( psDev->timer );
         }
         tulip_close( psDev );
         psDev->packet_queue = NULL;
