@@ -409,17 +409,50 @@ void ListViewStringRow::Paint( const Rect & cFrame, View * pcView, uint nColumn,
 	float vFontHeight = sHeight.ascender + sHeight.descender;
 	float vBaseLine = cFrame.top + ( cFrame.Height() + 1.0f ) / 2 - vFontHeight / 2 + sHeight.ascender;
 
-	pcView->MovePenTo( cFrame.left + 3.0f, vBaseLine );
+		
+	if( bSelected || bHighlighted )
+	{
+		Rect cSelectFrame = cFrame;
+		if( nColumn == 0 ) {
+			cSelectFrame.left += 2;
+			cSelectFrame.top += 2;
+			cSelectFrame.bottom -= 2;
+		}
+		if( bSelected )
+			pcView->SetFgColor( 186, 199, 227 );
+		else
+			pcView->SetFgColor( 0, 50, 200 );
+		pcView->FillRect( cSelectFrame );
+	
+		/* Round edges */
+		if( nColumn == 0 )
+		{
+			pcView->DrawLine( os::Point( cSelectFrame.left + 2, cSelectFrame.top - 2 ), 
+								os::Point( cSelectFrame.right, cSelectFrame.top - 2 ) );
+			pcView->DrawLine( os::Point( cSelectFrame.left, cSelectFrame.top - 1 ), 
+								os::Point( cSelectFrame.right, cSelectFrame.top - 1 ) );
+			
+			pcView->DrawLine( os::Point( cSelectFrame.left - 2, cSelectFrame.top + 2 ), 
+								os::Point( cSelectFrame.left - 2, cSelectFrame.bottom - 2 ) );
+			pcView->DrawLine( os::Point( cSelectFrame.left - 1, cSelectFrame.top ), 
+								os::Point( cSelectFrame.left - 1, cSelectFrame.bottom ) );
+								
+			pcView->DrawLine( os::Point( cSelectFrame.left + 2, cSelectFrame.bottom + 2 ), 
+								os::Point( cSelectFrame.right, cSelectFrame.bottom + 2 ) );
+			pcView->DrawLine( os::Point( cSelectFrame.left, cSelectFrame.bottom + 1 ), 
+								os::Point( cSelectFrame.right, cSelectFrame.bottom + 1 ) );
+		} 
+	}
 
-	if( bHighlighted && nColumn == 0 )
+	if( bHighlighted )
 	{
 		pcView->SetFgColor( 255, 255, 255 );
 		pcView->SetBgColor( 0, 50, 200 );
 	}
-	else if( bSelected && nColumn == 0 )
+	else if( bSelected )
 	{
-		pcView->SetFgColor( 255, 255, 255 );
-		pcView->SetBgColor( 0, 0, 0 );
+		pcView->SetFgColor( 0, 0, 0 );
+		pcView->SetBgColor( 186, 199, 227 );
 	}
 	else
 	{
@@ -427,15 +460,7 @@ void ListViewStringRow::Paint( const Rect & cFrame, View * pcView, uint nColumn,
 		pcView->SetFgColor( 0, 0, 0 );
 	}
 
-	if( bSelected && nColumn == 0 )
-	{
-		Rect cRect = cFrame;
-
-		cRect.right = cRect.left + pcView->GetStringWidth( m_cStrings[nColumn].first.c_str() ) + 4;
-		cRect.top = vBaseLine - sHeight.ascender - 1;
-		cRect.bottom = vBaseLine + sHeight.descender + 1;
-		pcView->FillRect( cRect, Color32_s( 0, 0, 0, 0 ) );
-	}
+	pcView->MovePenTo( cFrame.left + 3.0f, vBaseLine );
 	pcView->DrawString( m_cStrings[nColumn].first );
 }
 

@@ -371,23 +371,58 @@ void TreeViewStringNode::Paint( const Rect& cFrame, View* pcView, uint nColumn,
 	if( GetIcon() && nColumn == 0 ) {
 		vTextPos += GetIcon()->GetSize().x + 5;
 	}
+	
+	if( bSelected || bHighlighted )
+	{
+		Rect cSelectFrame = cFrame;
+		cSelectFrame.left = cItemRect.left;
+		if( nColumn == 0 ) {
+			cSelectFrame.left += 2;
+			cSelectFrame.top += 2;
+			cSelectFrame.bottom -= 2;
+		}
+		if( bSelected )
+			pcView->SetFgColor( 186, 199, 227 );
+		else
+			pcView->SetFgColor( 0, 50, 200 );
+		pcView->FillRect( cSelectFrame );
+	
+		/* Round edges */
+		if( nColumn == 0 )
+		{
+			pcView->DrawLine( os::Point( cSelectFrame.left + 2, cSelectFrame.top - 2 ), 
+								os::Point( cSelectFrame.right, cSelectFrame.top - 2 ) );
+			pcView->DrawLine( os::Point( cSelectFrame.left, cSelectFrame.top - 1 ), 
+								os::Point( cSelectFrame.right, cSelectFrame.top - 1 ) );
+			
+			pcView->DrawLine( os::Point( cSelectFrame.left - 2, cSelectFrame.top + 2 ), 
+								os::Point( cSelectFrame.left - 2, cSelectFrame.bottom - 2 ) );
+			pcView->DrawLine( os::Point( cSelectFrame.left - 1, cSelectFrame.top ), 
+								os::Point( cSelectFrame.left - 1, cSelectFrame.bottom ) );
+								
+			pcView->DrawLine( os::Point( cSelectFrame.left + 2, cSelectFrame.bottom + 2 ), 
+								os::Point( cSelectFrame.right, cSelectFrame.bottom + 2 ) );
+			pcView->DrawLine( os::Point( cSelectFrame.left, cSelectFrame.bottom + 1 ), 
+								os::Point( cSelectFrame.right, cSelectFrame.bottom + 1 ) );
+		} 
+	}
  
-    if ( bHighlighted && nColumn == 0 ) {
+    if ( bHighlighted ) {
 		pcView->SetFgColor( 255, 255, 255 );
 		pcView->SetBgColor( 0, 50, 200 );
-    } else if ( bSelected && nColumn == 0 ) {
-		pcView->SetFgColor( 255, 255, 255 );
-		pcView->SetBgColor( 0, 0, 0 );
+    } else if ( bSelected ) {
+		pcView->SetFgColor( 0, 0, 0 );
+		pcView->SetBgColor( 186, 199, 227 );
     } else {
 		pcView->SetBgColor( 255, 255, 255 );
 		pcView->SetFgColor( 0, 0, 0 );
     }
-
+/*
     if ( bSelected && nColumn == 0 ) {
 		Rect cRect = cItemRect;
 		cRect.right  = vTextPos + cTextSize.x + 1;
 		pcView->FillRect( cRect, Color32_s( 0, 0, 0, 0 ) );
-    }
+    }*/
 
 	if( nColumn <= m->m_cStrings.size() ) {
 		Rect cTextRect( vTextPos, cItemRect.top, cItemRect.right, cItemRect.bottom );

@@ -779,7 +779,7 @@ public:
 	{
 		
 		if( m->m_bMouseDown && m->m_bMouseDownOverIcon && nButtons == 1 && !m->m_bDragging && !m->m_bSelecting
-			&& m->m_bSingleClick )
+			&& m->m_bSingleClick && !( GetQualifiers() & ( os::QUAL_CTRL | os::QUAL_SHIFT ) ) )
 		{
 			int nIcon = m->HitTest( cPosition );
 			
