@@ -1,3 +1,6 @@
+
+---- 0.5.3 Released -------------------------------------------------------------------
+
 * April 24 2004, Arno Klenke *
 
 The plugins are now handled using the new MediaAddon class
@@ -32,6 +35,4 @@ Added multiple soundcard support to the media server
 * Nov 18 2003, Kristian Van Der Vliet *
 
 Created this ChangeLog for changes specific to the media framework.
-
-
 

@@ -13,6 +13,8 @@ installed from the original tarballs by Builder.
   GZip
 For historical reference, some packages that have patches remain.
 
+---- 0.5.3 Released -------------------------------------------------------------------
+
 * April 29 2004. Kristian Van Der Vliet *
 
 VMWare video driver from James Hayhurst <james_hayhurst@hotmail.com>
@@ -552,5 +554,4 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
-
 

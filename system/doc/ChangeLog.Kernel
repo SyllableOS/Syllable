@@ -1,3 +1,6 @@
+
+---- 0.5.3 Released -------------------------------------------------------------------
+
 * April 25 2004, Kristian Van Der Vliet *
 
 Public Message Ports list handling fixes by Arno.
@@ -262,11 +265,4 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
-
-
-
-
-
-
-
 
