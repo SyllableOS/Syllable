@@ -1,3 +1,8 @@
+* October 13 2004, Kristian Van Der Vliet *
+
+Fixed a possible race condition in devices.c/register_device()  Spotted by
+Peter Skerl <skerl@chello.at>
+
 * October 10 2004, Kristian Van Der Vliet *
 
 A whole bunch of patches from Jack Hamby <jhamby@anobject.com>
