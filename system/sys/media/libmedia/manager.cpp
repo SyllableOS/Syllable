@@ -80,12 +80,12 @@ MediaManager::MediaManager()
 	
 	String zFileName;
 	String zPath;
-	pcDirectory->GetPath( &zPath.str() );
+	pcDirectory->GetPath( &zPath );
 	
 	std::cout<<"Start plugin scan.."<<std::endl;
 	m->m_nPlugins.clear();
 	
-	while( pcDirectory->GetNextEntry( &zFileName.str() ) )
+	while( pcDirectory->GetNextEntry( &zFileName ) )
 	{
 		if( zFileName == "." || zFileName == ".." )
 			continue;
@@ -519,6 +519,7 @@ void MediaManager::_reserved7() {}
 void MediaManager::_reserved8() {}
 void MediaManager::_reserved9() {}
 void MediaManager::_reserved10() {}
+
 
 
 

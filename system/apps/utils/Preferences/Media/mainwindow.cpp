@@ -153,6 +153,7 @@ OutputPrefs::OutputPrefs( os::MediaOutput* pcOutput, bool bDefaultVideo, bool bD
 	SetHAlignment( os::ALIGN_LEFT );
 	
 	SameWidth( "DefaultVideo", "DefaultAudio", NULL );
+	SameHeight( "DefaultVideo", "DefaultAudio", NULL );
 }
 OutputPrefs::~OutputPrefs()
 {
@@ -259,6 +260,7 @@ MainWindow::MainWindow( const os::Rect & cFrame ):os::Window( cFrame, "MainWindo
 	pcHLButtons->AddChild( pcBDefault = new os::Button( cRect, "BDefault", "Default", new os::Message( M_MW_DEFAULT ) ) );
 	pcHLButtons->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
 	pcHLButtons->SameWidth( "BControls", "BApply", "BUndo", "BDefault", NULL );
+	pcHLButtons->SameHeight( "BControls", "BApply", "BUndo", "BDefault", NULL );
 	pcVLRoot->AddChild( pcHLButtons );
 
 	// Set root and add to window
@@ -277,6 +279,7 @@ MainWindow::MainWindow( const os::Rect & cFrame ):os::Window( cFrame, "MainWindo
 	pcBUndo->SetTabOrder( iTabOrder++ );
 	pcBApply->SetTabOrder( iTabOrder++ );
 	pcBControls->SetTabOrder( iTabOrder++ );
+	pcBApply->MakeFocus();
 
 	// Set default outputs 
 	os::MediaOutput * pcDefaultVideo = os::MediaManager::GetInstance()->GetDefaultVideoOutput(  );
@@ -586,6 +589,7 @@ bool MainWindow::OkToQuit()
 	os::Application::GetInstance()->PostMessage( os::M_QUIT );
 	return true;
 }
+
 
 
 

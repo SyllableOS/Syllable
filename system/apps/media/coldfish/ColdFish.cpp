@@ -213,7 +213,7 @@ void CFWindow::HandleMessage( os::Message * pcMessage )
 	case CF_GUI_ABOUT:
 		{
 		/* Show about alert */
-		os::Alert* pcAbout = new os::Alert( "About ColdFish", "ColdFish 1.0 Beta\n\nA Music Player\nCopyright 2003 Arno Klenke\n"
+		os::Alert* pcAbout = new os::Alert( "About ColdFish", "ColdFish 1.0\n\nA Music Player\nCopyright 2003 Arno Klenke\n"
 										"Copyright 2003 Kristian Van Der Vliet\n\n"
 										"ColdFish is released under the LGPL.", os::Alert::ALERT_INFO, 
 										os::WND_NOT_RESIZABLE, "O.K.", NULL );
@@ -1162,6 +1162,8 @@ int main( int argc, char *argv[] )
 	pcApp->Run();
 	return ( 0 );
 }
+
+
 
 
 
