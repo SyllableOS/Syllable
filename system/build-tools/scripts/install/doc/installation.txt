@@ -1,4 +1,0 @@
-Syllable will now be installed onto your hard drive.  This will take a few
-minutes.  Once the installation is complete, you will be asked a few more
-questions so that your Syllable installation can be correctly configured.
-

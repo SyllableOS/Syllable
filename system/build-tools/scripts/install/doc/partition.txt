@@ -1,8 +1,0 @@
-Before you can install Syllable you must first create and then format a 
-partition on your harddrive.  If you have already created a partition for
-Syllable then you may skip that step but you must still format it.
-
-WARNING: Partitioning a drive which already contains data may destroy
-the contents of that drive!  Ensure that you have backed up any data that
-you wish to keep before you proceed to partition and format your hard drive.
-
