@@ -80,10 +80,12 @@ install-tree		<Extra subdirectories to create>
 
 ; Installing:
 ; <install>
-; make [<install-prefix-var>] <install-targets>
+; [<install-env>] make [<install-prefix-var>] <install-targets>
 
 install				<Installation commands>
 
+; Extra environment variables for make install:
+install-env			VAR='value'
 ; Non-standard install prefix variable:
 ;install-prefix-var	prefix
 ; Non-standard install targets:

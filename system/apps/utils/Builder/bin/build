@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.5.17
+# Version 0.5.18
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -304,14 +304,19 @@ def installPackage target
 
 					if exists? dir = buildDir(target) then Dir.chdir dir end
 
-					if not action((cmdLine = recipe['install']) ? toCommand(cmdLine) :
-						'make' +
-						(	(var = recipe['install-prefix-var']) ? " #{var}=" + root :
-							@systemBuild ? ' prefix=' + root :
-							''
-						) +
-						' install'
-#						' install-strip'
+					if not action (
+						if cmdLine = recipe['install']
+							toCommand cmdLine
+						else
+							((vars = recipe['install-env']) ? toVariables(vars) + ' ' : '') +
+							'make' +
+							(	(var = recipe['install-prefix-var']) ? " #{var}=" + root :
+								@systemBuild ? ' prefix=' + root :
+								''
+							) +
+							' install'
+#							' install-strip'
+						end
 					)
 						false
 					elsif files = recipe['documentation'] and not
@@ -1044,7 +1049,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.17',
+	puts 'Syllable Build System 0.5.18',
 		'Copyright (c) 2002-2004 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
