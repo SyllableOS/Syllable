@@ -50,23 +50,23 @@ typedef int dev_t;
 # define __dev_t_defined
 #endif
 
-
-#ifndef mode_t
+#if !defined __mode_t_defined && !defined mode_t
 typedef unsigned int mode_t;
-#define mode_t mode_t
+# define mode_t mode_t
+# define __mode_t_defined
 #endif
 
-#ifndef ino_t
+#if !defined __ino_t_defined && !defined ino_t
 typedef long long ino_t;
-#define ino_t ino_t
+# define ino_t ino_t
+# define __ino_t_defined
 #endif
 
-#ifndef off_t
-typedef long long int off_t;
-#define off_t off_t
+#if !defined __off_t_defined && !defined off_t
+typedef long long off_t;
+# define off_t off_t
+# define __off_t_defined
 #endif
-
-
 
 #ifdef __KERNEL__
 

@@ -22,12 +22,7 @@ struct __atomic_fool_gcc_struct { unsigned long a[100]; };
 #define LOCK_ ""
 #endif
 
-/*
- * Make sure gcc doesn't try to be clever and move things around
- * on us. We need to use _exactly_ the address the user gave us,
- * not some alias that contains the same information.
- */
-typedef struct { volatile int counter; } atomic_t;
+#include <atheos/types.h>
 
 #define ATOMIC_INIT(i)	{ (i) }
 
@@ -260,3 +255,5 @@ static __inline__ int atomic_swap( volatile void *v, int i )
 #endif
 
 #endif /* __ATHEOS_ATOMIC_H__ */
+
+

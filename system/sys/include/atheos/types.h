@@ -81,6 +81,13 @@ typedef	int	timer_id;
 typedef	int	image_id;
 typedef int	fs_id;
 
+/*
+ * Make sure gcc doesn't try to be clever and move things around
+ * on us. We need to use _exactly_ the address the user gave us,
+ * not some alias that contains the same information.
+ */
+typedef struct { volatile int counter; } atomic_t;
+
 #define	OS_NAME_LENGTH	64
 
 #define INFINITE_TIMEOUT		(9223372036854775807LL)
@@ -110,3 +117,4 @@ typedef void (*sighandler_t)(int);
 #endif
 
 #endif	/* __F_ATHEOS_TYPES_H__ */
+

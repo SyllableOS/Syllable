@@ -2,7 +2,7 @@
 #define	_POSIX_ERRNO_H_
 
 /* Total number of errno's  *Always* update this if you add or remove anything! */
-#define __NUM_ERRNOS	133
+#define __NUM_ERRNOS	134
 
 /* Should never be seen by user programs */
 #define ERESTARTSYS	512
@@ -16,6 +16,7 @@
 #define	EINITFAILED	132	/* Library's init function failed	*/
 #define	ENOADDRSPC	133	/* Out of virtual address space	*/
 #define	EUNKNOWNFS	134	/* No FS driver found in mount()/probe_fs() */
+#define ESYSCFAILED	135	/* Syscall failed but no reason given */
 
 #define	EOK		0	/* No error */
 #define	EPERM		1	/* Operation not permitted */
@@ -144,3 +145,4 @@
 #define	EDQUOT		122	/* Quota exceeded */
 
 #endif	/*	_POSIX_ERRNO_H_ */
+

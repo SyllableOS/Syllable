@@ -24,7 +24,6 @@
 extern "C"{
 #endif
 
-#include <atheos/atomic.h>
 #include <atheos/semaphore.h>	/* Semaphores and mutexes */
 #include <sched.h>				/* struct sched_param */
 
