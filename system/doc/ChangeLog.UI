@@ -1,3 +1,29 @@
+* September 19, Arno Klenk *
+ - New classes
+	o IconView
+	o IconDirectoryView
+	o RegistrarManager
+	o Volumes
+
+ - New methods
+	o FileReference::RenameDialog()
+	o FileReference::InfoDialog()
+	o Directory::CreateDialog()
+
+ - FileRequester
+	o Uses the IconDirectoryView class and the layout system
+	o New icons
+
+ - ImageButton
+	o Fixed GetPreferredSize() and Paint() to render labels correctly
+	o Support for multiline labels
+
+ - MemFile
+	o Delete the list of blocks in the destructor
+
+ - Application
+	o Added locking
+
 * August 08, Henrik Isaksson *
 
  - Decorators

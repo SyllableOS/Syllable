@@ -1,3 +1,9 @@
+* September 19th 2004, Arno Klenke *
+	-Archiver
+		o GUI updates
+	-Preferences
+		o The new FileTypes, Dock and Desktop preferences
+
 * September 17th 2004, Arno Klenke *
 	-Aedit, AView, memmon, cpumon
 		o Bugfix: Make it work with the new libsyllable
