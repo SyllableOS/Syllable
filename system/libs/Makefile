@@ -16,18 +16,21 @@
 #
 # 090602 - Initial Version 								- Kristian Van Der Vliet
 # 160602 - Test for Glibc, we normally don't want to
-# 		   build Glibc from source!						- Kristian Van Der Vliet
+# 			 build Glibc from source!					- Kristian Van Der Vliet
 # 230602 - Comment out Glibc from deps: rule for now	- Kristian Van Der Vliet
 # 290602 - Fix directory names (CVS doesn't liike
-		   symlinks!)									- Vanders
+#			 symlinks!)									- Vanders
+#
+# 180802 - Put Glibc back.  Still some more work		- Vanders
+#			 to be done for the Glibc "dist" target.
 
 SUBDIRS = compat-1.0 ncurses-5.2
 
 GLIBC_DIR := glibc
 
-#ifeq ($(BUILD_LIBC),y)
-#	SUBDIRS += $(GLIBC_DIR)
-#endif
+ifeq ($(BUILD_LIBC),y)
+	SUBDIRS += $(GLIBC_DIR)
+endif
 
 all:
 	@for subdir in $(SUBDIRS); do\
@@ -44,11 +47,11 @@ deps:
 	./configure --prefix=$(DIST_DIR)/atheos/usr; \
 	cd ..;
 
-#	if test $$BUILD_LIBC='y' ;then\
-#		cd $(PWD)/$(GLIBC_DIR); \
-#		./configure --prefix=$(DIST_DIR)/atheos/usr/glibc2 --build=i386-atheos --with-headers=$(ATHEOS_INCLUDE_PATH)/atheos; \
-#		cd ..;\
-#	fi;
+	if test $$BUILD_LIBC='y' ;then\
+		cd $(PWD)/$(GLIBC_DIR); \
+		./configure --prefix=$(DIST_DIR)/atheos/usr/glibc2 --disable-versioning; \
+		cd ..;\
+	fi;
 
 install:
 	@echo Nothing to be done for $(PWD)
@@ -73,6 +76,12 @@ dist:
 	cd $(PWD)/ncurses-5.2; \
 	$(MAKE) install; \
 	cd ..;
+
+	if test $$BUILD_LIBC='y' ;then\
+		cd $(PWD)/$(GLIBC_DIR); \
+		$(MAKE) install; \
+		cd ..;\
+	fi;
 
 distclean:
 	@for subdir in $(SUBDIRS); do\
