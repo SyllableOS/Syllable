@@ -1,5 +1,10 @@
 * Sep 22 2003, Kristian Van Der Vliet *
 
+Removed the get_bios_params() function from the ATA driver.  This function was
+un-needed and causing a crash when running Syllable on Virtual PC.
+
+* Sep 22 2003, Kristian Van Der Vliet *
+
 i810 (Intel ICH) audio driver and Intel EtherExpressPro 100 (Speedo3) NIC drivers
 from Michael Krueger <invenies@web.de>
 
