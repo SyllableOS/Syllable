@@ -19,8 +19,11 @@ $(EXE): $(OBJS)
 deps:
 
 install: all
-	-strip --strip-all $(EXE)
-	-cp $(EXE) /system/bin/
+	strip --strip-all $(EXE)
+	cp $(EXE) /system/bin/
+
+dist: all
+	install -s $(EXE) $(DIST_DIR)/atheos/sys/bin/$(EXE)
 
 clean:
 	-rm $(OBJS)
