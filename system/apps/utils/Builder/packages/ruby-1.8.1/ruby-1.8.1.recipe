@@ -1,9 +1,13 @@
 authors			Kaj de Vos
-status			broken
-notes			Waiting for ftruncate implementation in AFS
+status			testing
+
 licenses		GPL LGPL BSD Artistic custom PD
 home			www.ruby-lang.org
 locations		ftp://ftp.ruby-lang.org/pub/ruby/
+
+; Syllable's GCC 3 doesn't work yet:
+build-needs		gcc < 3
+
 patch-config
 ;configure-options
 ;	--disable-ipv6
@@ -11,4 +15,4 @@ patch-config
 ;	--enable-shared
 ;	--enable-pthread
 test-targets	test
-documentation	README README.EXT COPYING LEGAL GPL LGPL ChangeLog ToDo
+documentation	README README.EXT COPYING LEGAL GPL LGPL ChangeLog ToDo sample

@@ -1,0 +1,26 @@
+diff -ru ruby-1.8.1.orig/instruby.rb ruby-1.8.1/instruby.rb
+--- ruby-1.8.1.orig/instruby.rb	2003-08-21 12:36:28.000000000 +0000
++++ ruby-1.8.1/instruby.rb	2004-05-02 04:16:24.000000000 +0000
+@@ -131,16 +131,16 @@
+ 
+   shebang = ''
+   body = ''
+-  open(dest, "r+") { |f|
++  open(dest, "r") { |f|
+     shebang = f.gets
+     body = f.read
++  }
+ 
+-    if shebang.sub!(/^\#!.*?ruby\b/) {"#!" + ruby_shebang}
+-      f.rewind
++  if shebang.sub!(/^\#!.*?ruby\b/) {"#!" + ruby_shebang}
++    open(dest, "w") { |f|
+       f.print shebang, body
+-      f.truncate(f.pos)
+-    end
+-  }
++    }
++  end
+ 
+   if RUBY_PLATFORM =~ /mswin32|mingw|bccwin32/
+     ruby_bin_dosish = ruby_bin.gsub(Regexp.compile(File::SEPARATOR), File::ALT_SEPARATOR)
