@@ -1,3 +1,11 @@
+* Aug 11 2002, Kristian Van Der Vliet *
+
+Updated the Trident video driver, which fixes a bug with PCI Trident cards.
+
+* Aug 11 2002, Kristian Van Der Vliet *
+
+Added an es1370 (SoundBlaster 64/128) driver, from Henrik Isaksson < henrik@boing.nu >
+
 * Aug 6 2002, Kristian Van Der Vliet *
 
 Made a small amendment to du.c from fileutils-4.1; this may fix the problem with "du" showing 0 bytes for all

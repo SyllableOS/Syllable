@@ -1,3 +1,10 @@
+* Aug 11 2002, Kristian Van Der Vliet *
+
+Applied a patch to the appserver, from Henrik Isaksson (henrik@boing.nu)
+The patch removes "hidden" windows (E.g. a File Requester which has been
+canceled) from the focus stack, which stops hidden windows from being given
+focus.
+
 * Aug 10th 2002, Kristian Van Der Vliet *
 
 The CheckMark for CheckMenus has been moved to the left of the label.
