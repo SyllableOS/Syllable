@@ -264,7 +264,7 @@ status_t Settings::Save( void ) const
  * \par		Description:
  *		Returns the directory path to the settings file, excluding the
  *		file itself.
- * \sa GetFile()
+ * \sa GetFile(), SetFile(), SetPath()
  * \author Kristian Van Der Vliet (vanders@liqwyd.com)
  *****************************************************************************/
 Path Settings::GetPath() const
@@ -278,6 +278,7 @@ Path Settings::GetPath() const
  *		Returns the name of the settings file, excluding path.
  * \sa GetPath()
  * \author Kristian Van Der Vliet (vanders@liqwyd.com)
+ * \sa SetFile(), GetPath(), SetPath()
  *****************************************************************************/
 File Settings::GetFile() const
 {
@@ -290,23 +291,37 @@ File Settings::GetFile() const
  *		Set directory path.
  * \param pcPath The new path.
  * \author Kristian Van Der Vliet (vanders@liqwyd.com)
+ * \sa GetFile(), SetFile(), GetPath()
  *****************************************************************************/
 void Settings::SetPath( Path* pcPath )
 {
 	if( pcPath )
-		m->SetPath( m->m_cFile, pcPath->GetPath() );
+		m->SetPath( m->m_cFile, pcPath->GetPath() + String( "/" ) );
 }
 
-/** Set filename.
+/** Set file.
  * \par		Description:
  *		Change the file which should be used to save and load Settings.
  * \param pcFile The new file.
  * \author Kristian Van Der Vliet (vanders@liqwyd.com)
+ * \sa GetFile(), GetPath(), SetPath()
  *****************************************************************************/
 void Settings::SetFile( SeekableIO* pcFile )
 {
 	if( pcFile )
 		m->SetIO( pcFile );
+}
+
+/** Set filename.
+ * \par		Description:
+ *		Change the filename which should be used to save and load Settings.
+ * \param cFilename The new filename.  The filename will be appended to the current path.
+ * \author Kristian Van Der Vliet (vanders@liqwyd.com)
+ * \sa GetFile(), GetPath(), SetPath()
+ *****************************************************************************/
+void Settings::SetFile( String cFilename )
+{
+	m->SetPath( cFilename, m->m_cPath );
 }
 
 /** Copy a Settings object.

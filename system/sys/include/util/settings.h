@@ -62,6 +62,7 @@ public:
 	File	GetFile() const;
 	void	SetPath( Path* pcPath );
 	void	SetFile( SeekableIO* pcFile );
+	void	SetFile( String cFilename );
 
     String	GetString( const char* pzName, const char* pzDefault = "", int nIndex = 0 ) const;
     int8	GetInt8( const char* pzName, int8 nDefault, int nIndex = 0 ) const;
