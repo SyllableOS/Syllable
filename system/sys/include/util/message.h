@@ -40,6 +40,7 @@ class Looper;
 class Handler;
 class Messenger;
 class Variant;
+class Settings;
 struct Color32_s;
 
 
@@ -177,6 +178,7 @@ private:
     friend class MessageQueue;
     friend class Messenger;
     friend class View;
+    friend class Settings;
 
     struct DataArray_s
     {
