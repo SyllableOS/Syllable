@@ -6,6 +6,8 @@
 #include <storage/directory.h>
 #include <storage/symlink.h>
 
+#include <iostream>
+
 using namespace os;
 
 static bool g_bVerbose    = false;
@@ -293,79 +295,108 @@ status_t add_packages( OptionParser& cOpts )
     return( 0 );
 }
 
-static status_t unlink_directory( const std::string& cPath, const std::string& cBasePath )
+static status_t unlink_directory( const std::string& cPackagePath, const std::string& cDirectory )
 {
-    try {
-	Directory cDir( cPath, O_RDONLY | O_NOTRAVERSE );
-	os::String cName;
+	try
+	{
+		Directory cPackageDir( cPackagePath + cDirectory, O_RDONLY | O_NOTRAVERSE );
+		Directory cLinkDir( g_pzLinkDir, O_RDONLY | O_NOTRAVERSE );
+		String cEntry;
+		std::vector <String> cFiles;
+		bool bLinksRemoved = false;
 
-	std::vector<os::String> cFiles;
-	
-	while( cDir.GetNextEntry( &cName ) == 1 ) {
-	    if ( cName == "." || cName == ".." ) {
-		continue;
-	    }
-	    cFiles.push_back( cName );
-	}
-	bool bLinksRemoved = false;
-	for ( uint i = 0 ; i < cFiles.size() ; ++i ) {
-	    cName = cFiles[i];
-	    struct stat sStat;
-	    try {
-		FSNode cNode( cDir, cName, O_RDONLY | O_NONBLOCK | O_NOTRAVERSE );
-		cNode.GetStat( &sStat, false );
-	    } catch( os::errno_exception& cExc ) {
-		fprintf( stderr, "Error: failed to open file %s : %s\n", (cPath + "/" + cName.str()).c_str(), cExc.error_str() );
-		continue;
-	    } catch(...) {
-		fprintf( stderr, "Error: failed to open file %s : unknown error\n", (cPath + "/" + cName.str()).c_str() );
-		continue;
-	    }
-	    std::string cDstPath = cPath + "/" + cName.str();
-	    if ( S_ISDIR( sStat.st_mode ) ) {
-		unlink_directory( cDstPath, cBasePath );
-	    }  else if ( S_ISLNK( sStat.st_mode ) ) {
-		try {
-		    SymLink cLink( cDstPath );
-		    std::string cLnkPath = cLink.ReadLink();
-		    if ( strncmp( cBasePath.c_str(), cLnkPath.c_str(), cBasePath.size() ) == 0 ) {
-			if ( g_bQuiet == false ) {
-			    printf( "Remove link %s (%s)\n", cDstPath.c_str(), cLnkPath.c_str() );
+		// Construct a list of files & directories in the directory
+		while( cPackageDir.GetNextEntry( &cEntry ) == 1 )
+		{
+			if( cEntry == "." || cEntry == ".." )
+				continue;
+			cFiles.push_back( cEntry );
+		}
+
+		// Check each entry in the list.  If it is a directory, call this method again
+		// recursively for the new directory.
+		// If it is not a directory, check if a link for it exists in the autolnk directory.
+		// If a link exists, remove it.
+		for( uint i = 0; i < cFiles.size(); i++ )
+		{
+			struct stat sEntryStat;
+			cEntry = cFiles[i];
+
+			try
+			{
+				FSNode cPackageNode( cPackageDir, cEntry, O_RDONLY | O_NOTRAVERSE | O_NONBLOCK );
+				cPackageNode.GetStat( &sEntryStat, false );
 			}
-			if ( unlink( cDstPath.c_str() ) < 0 ) {
-			    fprintf( stderr, "Error: failed to remove old link %s : %s\n", cDstPath.c_str(), strerror(errno) );
-			    continue;
+			catch(...)
+			{
+				std::cerr << "Unable to stat " << cEntry.str() << std::endl;
+				continue;
 			}
-			bLinksRemoved = true;
-		    }
-		} catch( os::errno_exception& cExc ) {
-		    fprintf( stderr, "Error: failed to open symlink %s : %s\n", cDstPath.c_str(), cExc.error_str() );
-		} catch(...) {
-		    fprintf( stderr, "Error: failed to open symlink %s : unknown error\n", cDstPath.c_str() );
+		
+			// Is the entry a directory?
+			if( S_ISDIR( sEntryStat.st_mode ) )
+			{
+				String cNewDirectory = cDirectory;
+				cNewDirectory += "/";
+				cNewDirectory += cEntry;
+				unlink_directory( cPackagePath, cNewDirectory );
+				bLinksRemoved = true;
+				continue;
+			}
+
+			// This is a normal file, or a symlink.  Check to see if a link exists in autolnk
+			String cLinkPath = String( g_pzLinkDir ) + "/" + cDirectory + "/" + cEntry;
+			struct stat sLinkStat;
+
+			try
+			{
+				FSNode cLinkNode( cLinkDir, cLinkPath, O_RDONLY | O_NOTRAVERSE | O_NONBLOCK );
+				cLinkNode.GetStat( &sLinkStat, false );
+			}
+			catch(...)
+			{
+				std::cerr << "No symlink \"" << cLinkPath.str() << "\"" << std::endl;
+				continue;
+			}
+
+			if( S_ISLNK( sLinkStat.st_mode ) )
+			{
+				// This is a symlink.  Remove it.
+				if( unlink( cLinkPath.c_str() ) < 0 )
+				{
+					std::cerr << "Failed to remove " << cLinkPath.str() << ": " << strerror(errno) << std::endl;
+					continue;
+				}
+				bLinksRemoved = true;
+			}
+			else
+			{
+				// Not a symlink; could be an errant directory or other file the user has added.
+				// Just report it and leave it intact.
+				std::cerr << cLinkPath.str() << " is not a symlink." << std::endl;
+				continue;
+			}
 		}
-	    } else {
-		fprintf( stderr, "Warning: %s is not a symbolic link or directory. Not removing\n", cDstPath.c_str() );
-	    }
+
+		// If any symlinks were removed we should also try to remove the directory they were in.
+		if( bLinksRemoved )
+		{
+			String cLinkDirectory = String( g_pzLinkDir ) + "/" + cDirectory;
+
+			if( rmdir( cLinkDirectory.c_str() ) < 0 )
+			{
+				if( errno != ENOTEMPTY )
+					std::cerr << "Unable to remove directory " << cLinkDirectory.str() << ": " << strerror(errno) << std::endl;
+			}
+		}
 	}
-	if ( bLinksRemoved ) {
-	    if ( rmdir( cPath.c_str() ) < 0 ) {
-		if ( errno != ENOTEMPTY ) {
-		    fprintf( stderr, "Error: failed to remove directory %s : %s\n", cPath.c_str(), strerror(errno) );
-		}
-	    } else {
-		if ( g_bQuiet == false ) {
-		    printf( "Remove directory %s\n", cPath.c_str() );
-		}
-	    }
+	catch(...)
+	{
+		std::cerr << "Failed to open directory " << cPackagePath << std::endl;
+		return -1;
 	}
-    } catch( os::errno_exception& cExc ) {
-	fprintf( stderr, "Error: failed to open directory %s : %s\n", cPath.c_str(), cExc.error_str() );
-	return( -1 );
-    } catch(...) {
-	fprintf( stderr, "Error: failed to open directory %s : unknown error\n", cPath.c_str() );
-	return( -1 );
-    }
-    return( 0 );
+
+	return 0;
 }
 
 status_t remove_packages( OptionParser& cOpts )
@@ -401,7 +432,7 @@ status_t remove_packages( OptionParser& cOpts )
 	    }
 	    continue;
 	}
-	if ( unlink_directory( g_pzLinkDir, cPath ) >= 0 ) {
+	if ( unlink_directory( cPath, "" ) >= 0 ) {
 	    if ( g_bRunScripts ) {
 		std::string cScriptArgs = cPath;
 		cScriptArgs += "pkgcleanup.sh";
