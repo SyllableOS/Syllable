@@ -1,3 +1,21 @@
+* November 16 2003, Henrik Isaksson *
+
+ Thread
+ - Stack size can now be set when a thread is created.
+
+ Menu
+ - Menu::GetPreferredSize() now returns correct maximum value.
+
+ Splitter
+ - Changed the meaning of VERTICAL and HORIZONTAL orientation. Orientation
+ - now refers to how the children are displayed, not how the splitter
+ - separator is rendered.
+ - The Splitter now resizes its children when it is resized.
+ - The Splitter separator is now drawn correctly.
+ - Fixed misspelled variable nFalgs -> nFlags.
+ - Splitter will now respect Views' minimum sizes as returned by GetPreferredSize(false).
+ - Relative sizes of Views are now retained when resizing.
+
 * November 16 2003, Kaj de Vos *
 
   Updated freetype.makefile to Freetype 2.1.5. I didn't import the sources,
@@ -241,6 +259,7 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
 
 
