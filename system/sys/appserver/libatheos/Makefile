@@ -1,4 +1,4 @@
-CFLAGS   = -Wall -c -g -O2 -pipe -fexceptions
+CFLAGS   = -Wall -c -O2 -pipe -fexceptions
 CPPFLAGS = $(CFLAGS)
 AOPTS   = -c
 
