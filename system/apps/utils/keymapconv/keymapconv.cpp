@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <malloc.h>
 #include <string.h>
+#include <stdlib.h>
 #include <sys/stat.h>
 
 #include <appserver/keymap.h>
@@ -521,12 +522,3 @@ int main( int argc, char** argv )
     }
     return( 0 );
 }
-
-
-
-
-
-
-
-
-
