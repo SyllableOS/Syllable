@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.21
+# Version 0.5.22
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -792,7 +792,7 @@ end
 
 def toCommand value  # Join list value into a semicolon-separated shell command string
 	if value.is_a? Array
-		value.join('; ')
+		value.join(' && ')
 	else  # Assume it's already a string, or nil
 		value
 	end
@@ -1057,7 +1057,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.21',
+	puts 'Syllable Build System 0.5.22',
 		'Copyright (c) 2002-2004 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
