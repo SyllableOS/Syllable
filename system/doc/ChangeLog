@@ -3,6 +3,9 @@
 Over the past days, pulled several more parts from the current distribution into the
 repository. Several went into a new resources facility that I implemented in Builder.
 
+User documentation was in the repository, but was not being installed by the Makefiles.
+Moved it to Builder/resources, also.
+
 * January 6 2005, Kaj de Vos
 
 Updated default AppServer configuration. The currently distributed configuration
