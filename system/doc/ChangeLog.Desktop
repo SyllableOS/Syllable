@@ -1,3 +1,10 @@
+* March 15 2005,    Rick Caudill
+	*Added Meter(William Hogarth) dock plugin which displays useful system information
+	*Added WallpaperChanger(Rick Caudill) dock plugin which gives options like time intervals to wallpapers
+	*Added Camera(Rick Caudill) dock plugin which is a screenshot plugin for dock
+	*Updated clock dock plugin(Rick Caudill), this update features a slew of features including changing the time, opening of DateTime,...
+	
+	
 * January 9th 2005, Kristian Van Der Vliet
 
 	* Added a simple Mixer dock plugin which calls the Media Server to display the mixer/stream controls window.
