@@ -413,7 +413,7 @@ void select_drive( int nDrive )
 	int controller = get_controller( nDrive );
 	int drive = get_drive( nDrive );
 
-	ata_outb( ATA_LDH,  LDH_DEFAULT & (drive << 4) );
+	ata_outb( ATA_LDH,  LDH_DEFAULT | (drive << 4) );
 	udelay( DELAY );
 }
 
@@ -512,6 +512,8 @@ int atapi_packet_command( AtapiInode_s *psInode, atapi_packet_s *command )
 {
 	/* Send an Atapi Packet Command */
 	ktimer_t timer;
+	int len;
+	int total;
 
 	int drive = psInode->bi_nDriveNum;
 	int controller = get_controller( drive );
@@ -586,6 +588,9 @@ int atapi_packet_command( AtapiInode_s *psInode, atapi_packet_s *command )
 			timer = create_timer();
 			start_timer( timer, timeout, (void*)&g_nControllers[controller].state, ATAPI_CMD_TIMEOUT, true);
 
+			offset = (uint16*)g_nControllers[controller].data_buffer;
+			total = command->count;
+
 			while( g_nControllers[controller].state == BUSY )
 			{
 				command->status = ata_inb( REG_ALT_STATUS );
@@ -597,16 +602,18 @@ int atapi_packet_command( AtapiInode_s *psInode, atapi_packet_s *command )
 					/* FIXME: We can overflow the data buffer here with a sufficently
 					large drive buffer.  This should probably be re-written as a "gather"
 					style function that can handle buffer fragmentation */
-
 					int current_word;
-					offset = (uint16*)g_nControllers[controller].data_buffer;
 
 					kerndbg( KERN_DEBUG, "Reading ATAPI response data\n");
 
-					for( current_word = 0; current_word < ( command->count / 2 ); current_word++, offset++ )
+					len = ata_inb( ATAPI_CNT_LO) + 256 * ata_inb( ATAPI_CNT_HI );
+
+					for( current_word = 0; current_word < ( len / 2 ); current_word++, offset++ )
 						*offset = ata_inw( ATA_DATA );
 
-					break;
+					total -= len;
+					if( total <= 0 )
+						break;
 				}
 
 				if( command->status & STATUS_ERR )
@@ -672,4 +679,5 @@ int atapi_packet_command( AtapiInode_s *psInode, atapi_packet_s *command )
 
 	return(0);
 }
+
 
