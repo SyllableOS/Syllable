@@ -1,3 +1,18 @@
+* March 21 2005, Jake Hamby *
+
+Updated to Build 0011.  List of fixes:
+
+    * Added checks to load_image() and sys_execve() to return EISDIR if the
+	caller attempts to execute a directory, or EINVAL if the caller
+	attempts to execute anything else besides a regular file.
+    * Added strlcat() and strlcpy() functions from OpenBSD and exported
+	them to kernel modules.  Currently nothing is using these functions
+	but the plan is to convert all uses of strcat(), strcpy(), strncat(),
+	and strncpy() to use these safer and less error-prone routines.  See:
+	http://www.courtesan.com/todd/papers/strlcpy.html
+    * Updated <atheos/tld.h> to fix a warning when building GCC.
+    * Updated <posix/types.h> to fix an error when building glibc 2.1.2.
+
 * March 19 2005, Jake Hamby *
 
 Updated to Build 0010.  List of fixes:
