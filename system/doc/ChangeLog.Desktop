@@ -1,1 +1,13 @@
+* August 4, 2002, Rick Caudill *
+	
+	* Changes since Syllable 0.4.0(a)
+		* Changed login process.
+		* Added Logout code(Still needs code to kill user apps before logging out).
+		* Added a new Settings class.
+		* Started merger with Launcher(It is getting there).
+		* Fixed a major bug that was causing the properties dialog to segfault.
+		* Moved code around.  It makes the code easier to read.
+		* Added error testing for scaling images.  If the image is not bigger than the 			screen resolution, the desktop will not scale the image.
+		* Fixed icon text color problems.
 
+		 
