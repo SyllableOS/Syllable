@@ -257,6 +257,19 @@ status_t add_packages( OptionParser& cOpts )
 		    Directory( cSource ).GetPath( &cSource );
 
 		    link_directory( cSource, cDest );
+
+			if( cName == "man" )
+			{
+				std::string cScriptArgs = "manaddpackage.sh ";
+				cScriptArgs += cPath;
+				cScriptArgs += "/man";
+
+				if( g_bQuiet == false )
+					printf( "Adding manual pages: %s\n", cScriptArgs.c_str() );
+
+				system( cScriptArgs.c_str() );
+			}
+
 //		}
 	    }
 	    if ( g_bRunScripts ) {
