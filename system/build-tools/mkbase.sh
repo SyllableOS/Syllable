@@ -71,6 +71,7 @@ mkdir $ROOT/atheos/sys/drivers/dev/disk
 mkdir $ROOT/atheos/sys/drivers/dev/misc
 
 mkdir $ROOT/atheos/sys/drivers/fs
+mkdir $ROOT/atheos/sys/drivers/bus
 
 mkdir $ROOT/atheos/usr
 mkdir $ROOT/atheos/usr/bin
@@ -103,6 +104,8 @@ cp -p $BASE/atheos/sys/drivers/dev/misc/ps2aux $ROOT/atheos/sys/drivers/dev/misc
 
 cp -p $BASE/atheos/sys/drivers/fs/afs $ROOT/atheos/sys/drivers/fs/
 cp -p $BASE/atheos/sys/drivers/fs/fatfs $ROOT/atheos/sys/drivers/fs/
+
+cp -p $BASE/atheos/sys/drivers/bus/pci $ROOT/atheos/sys/drivers/bus/
 
 cp -dpr $BASE/atheos/sys/libs/* $ROOT/atheos/sys/libs/
 cp -dpr $BASE/atheos/usr/zlib/lib/* $ROOT/atheos/sys/libs/
