@@ -46,6 +46,9 @@ DeviceOperations_s g_sAtapiOperations = {
 	NULL	/* dop_rem_select_req */
 };
 
+#undef DEBUG_LIMIT
+#define DEBUG_LIMIT KERN_DEBUG_LOW
+
 int atapi_open( void* pNode, uint32 nFlags, void **ppCookie )
 {
 	AtapiInode_s* psInode = pNode;
@@ -59,11 +62,24 @@ int atapi_open( void* pNode, uint32 nFlags, void **ppCookie )
 	nError = cdrom_test_unit_ready( psInode );
 	if( nError == 0 )
 	{
+		unsigned long capacity;
+
 		kerndbg( KERN_DEBUG, "Unit ready, starting\n");
 
 		nError = cdrom_start_stop( psInode, true );
 		if( nError == 0 )
 		{
+			nError = cdrom_read_capacity( psInode, &capacity );
+			if( nError == 0 )
+			{
+				psInode->bi_nSize = capacity;
+				psInode->bi_nSize *= CD_FRAMESIZE;
+
+				kerndbg( KERN_DEBUG, "Capacity %Ld\n", psInode->bi_nSize );
+			}
+			else
+				kerndbg( KERN_WARNING, "Could not read capacity");
+
 			udelay( 200 );	/* FIXME: Should send another TEST UNIT READY to ensure the disc has spun up */
 			kerndbg( KERN_DEBUG, "Unit started\n");
 		}
@@ -99,10 +115,16 @@ int atapi_read( void* pNode, void* pCookie, off_t nPos, void* pBuf, size_t nLen 
 	int controller = get_controller( drive );
 	int nError = 0;
 	uint64 block_lba, block_count;
+	size_t nLenSave = nLen;
+
+	kerndbg( KERN_DEBUG_LOW, "atapi_read() nPos = %Li, nLen = %i\n", nPos, nLen);
 
 	/* Ensure sensible values */
 	if( nPos > psInode->bi_nSize || nPos + nLen > psInode->bi_nSize )
+	{
+		kerndbg( KERN_DEBUG_LOW, "atapi_read() nPos out of range\n");
 		return( -EINVAL );
+	}
 
 	if( nLen < CD_FRAMESIZE )
 		nLen = CD_FRAMESIZE;
@@ -112,7 +134,10 @@ int atapi_read( void* pNode, void* pCookie, off_t nPos, void* pBuf, size_t nLen 
 
 	/* Data comes in as words, so we have to enforce even byte counts. */
 	if ( nLen & 1)
+	{
+		kerndbg( KERN_DEBUG_LOW, "atapi_read() nLen is not an even value\n");
 		return( -EINVAL );
+	}
 
 	kerndbg( KERN_DEBUG, "Reading %Li blocks from %Li\n", block_count, block_lba );
 
@@ -120,12 +145,13 @@ int atapi_read( void* pNode, void* pCookie, off_t nPos, void* pBuf, size_t nLen 
 
 	command.count = nLen;
 	command.packet[0] = GPCMD_READ_10;
-	command.packet[2] = ( block_lba >> 24 ) &0xff;
-	command.packet[3] = ( block_lba >> 16 ) &0xff;
-	command.packet[4] = ( block_lba >> 8 ) &0xff;
-	command.packet[5] = ( block_lba >> 0 ) &0xff;
-	command.packet[6] = ( block_count >> 8 ) &0xff;
-	command.packet[7] = ( block_count >> 0 ) &0xff;
+	command.packet[2] = ( block_lba >> 24 ) & 0xff;
+	command.packet[3] = ( block_lba >> 16 ) & 0xff;
+	command.packet[4] = ( block_lba >> 8 ) & 0xff;
+	command.packet[5] = ( block_lba >> 0 ) & 0xff;
+	command.packet[6] = ( block_count >> 16 ) & 0xff;
+	command.packet[7] = ( block_count >> 8 ) & 0xff;
+	command.packet[8] = ( block_count >> 0 ) & 0xff;
 
 	LOCK( g_nControllers[controller].buf_lock );
 
@@ -136,9 +162,9 @@ int atapi_read( void* pNode, void* pCookie, off_t nPos, void* pBuf, size_t nLen 
 	if( nError == 0 )
 	{
 		if( pBuf != NULL )	/* If called from atapi_readv() then pBuf is NULL */
-			memcpy( pBuf, g_nControllers[controller].data_buffer, nLen );
+			memcpy( pBuf, g_nControllers[controller].data_buffer, nLenSave );
 
-		nError = nLen;
+		nError = nLenSave;
 	}
 
 	UNLOCK( g_nControllers[controller].buf_lock );
@@ -206,10 +232,9 @@ int atapi_readv( void* pNode, void* pCookie, off_t nPos, const struct iovec* psV
 			kassertw(0);
 		}
 
-		LOCK( g_nControllers[controller].buf_lock );
+		nError = atapi_read( psInode, NULL, nPos, NULL, nCurSize );
 
-		nError = atapi_read( psInode, NULL, nPos, NULL, nCurSize / CD_FRAMESIZE );
-		nCurSize = nError * CD_FRAMESIZE;
+		LOCK( g_nControllers[controller].buf_lock );
 
 		if ( nError < 0 )
 		{
@@ -245,7 +270,6 @@ int atapi_readv( void* pNode, void* pCookie, off_t nPos, const struct iovec* psV
 error:
 	return( nLen );
 }
-
 
 int atapi_request_sense( AtapiInode_s *psInode, request_sense_s *psSense )
 {
@@ -589,7 +613,7 @@ status_t cdrom_read_toc( AtapiInode_s *psInode, cdrom_toc_s *toc )
 	if (stat)
 		toc->capacity = 0x1fffff;
 
-	psInode->bi_nSize = toc->capacity * SECTORS_PER_FRAME;
+	psInode->bi_nSize = toc->capacity * CD_FRAMESIZE;
 
 	return( 0 );
 }

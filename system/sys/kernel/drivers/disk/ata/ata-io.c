@@ -586,7 +586,12 @@ int atapi_packet_command( AtapiInode_s *psInode, atapi_packet_s *command )
 
 			/* Create a new timer, as this is a seperate operation */
 			timer = create_timer();
-			start_timer( timer, timeout, (void*)&g_nControllers[controller].state, ATAPI_CMD_TIMEOUT, true);
+
+			/* Give read packets more time to finish */
+			if( command->packet[0] == GPCMD_READ_10 ) 
+				start_timer( timer, timeout, (void*)&g_nControllers[controller].state, ATAPI_CMD_TIMEOUT * 50, true);
+			else
+				start_timer( timer, timeout, (void*)&g_nControllers[controller].state, ATAPI_CMD_TIMEOUT, true);
 
 			offset = (uint16*)g_nControllers[controller].data_buffer;
 			total = command->count;
@@ -607,6 +612,9 @@ int atapi_packet_command( AtapiInode_s *psInode, atapi_packet_s *command )
 					kerndbg( KERN_DEBUG, "Reading ATAPI response data\n");
 
 					len = ata_inb( ATAPI_CNT_LO) + 256 * ata_inb( ATAPI_CNT_HI );
+
+					if( len > total )
+						len = total;
 
 					for( current_word = 0; current_word < ( len / 2 ); current_word++, offset++ )
 						*offset = ata_inw( ATA_DATA );
@@ -644,7 +652,7 @@ int atapi_packet_command( AtapiInode_s *psInode, atapi_packet_s *command )
 			while( g_nControllers[controller].state == BUSY )
 			{
 				command->status = ata_inb( REG_ALT_STATUS );
-				if( !( command->status & STATUS_DRQ ) && !( command->status & STATUS_ERR ) )
+				if( command->status & STATUS_BSY )
 					continue;
 
 				command->error = ata_inb( ATA_ERROR );
