@@ -1124,3 +1124,23 @@ void Slider::Activated( bool bIsActive )
 {
 	_RefreshDisplay();
 }
+
+void Slider::__SL_reserved1__()
+{
+}
+
+void Slider::__SL_reserved2__()
+{
+}
+
+void Slider::__SL_reserved3__()
+{
+}
+
+void Slider::__SL_reserved4__()
+{
+}
+
+void Slider::__SL_reserved5__()
+{
+}

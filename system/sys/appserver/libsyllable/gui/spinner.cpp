@@ -684,3 +684,22 @@ void Spinner::Paint( const os::Rect & cUpdateRect )
 }
 
 
+void Spinner::__SP_reserved1__()
+{
+}
+
+void Spinner::__SP_reserved2__()
+{
+}
+
+void Spinner::__SP_reserved3__()
+{
+}
+
+void Spinner::__SP_reserved4__()
+{
+}
+
+void Spinner::__SP_reserved5__()
+{
+}

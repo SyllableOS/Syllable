@@ -534,7 +534,7 @@ void Splitter::SetOrientation( orientation eOrientation )
 * \bug
 * \author Sebastien Keim (s.keim@laposte.net)
 */
-View *Splitter::SeparatorView()
+View *Splitter::SeparatorView() const
 {
 	return m->m_pSeparator;
 }
@@ -551,7 +551,7 @@ View *Splitter::SeparatorView()
 * \bug
 * \author Sebastien Keim (s.keim@laposte.net)
 */
-float Splitter::GetSplitPosition()
+float Splitter::GetSplitPosition() const
 {
 	Rect f1 = m->m_pView1->GetFrame();
 
@@ -572,7 +572,7 @@ float Splitter::GetSplitPosition()
 * \bug
 * \author Sebastien Keim (s.keim@laposte.net)
 */
-float Splitter::GetSeparatorWidth()
+float Splitter::GetSeparatorWidth() const
 {
 	return m->m_SeparatorWidth;
 }
@@ -755,3 +755,24 @@ float Splitter::GetSplitRatio() const
 {
 	return m->m_vSplitPos;
 }
+
+void Splitter::__SS_reserved1__()
+{
+}
+
+void Splitter::__SS_reserved2__()
+{
+}
+
+void Splitter::__SS_reserved3__()
+{
+}
+
+void Splitter::__SS_reserved4__()
+{
+}
+
+void Splitter::__SS_reserved5__()
+{
+}
+

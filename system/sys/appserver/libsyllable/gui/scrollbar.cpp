@@ -907,3 +907,23 @@ Rect ScrollBar::GetKnobFrame( void ) const
 	}
 	return ( cRect & m->m_cKnobArea );
 }
+
+void ScrollBar::__SB_reserved1__()
+{
+}
+
+void ScrollBar::__SB_reserved2__()
+{
+}
+
+void ScrollBar::__SB_reserved3__()
+{
+}
+
+void ScrollBar::__SB_reserved4__()
+{
+}
+
+void ScrollBar::__SB_reserved5__()
+{
+}

@@ -169,3 +169,23 @@ void StringView::Paint( const Rect & cUpdateRect )
 		DrawText( cBounds, m->m_cString, DTF_CENTER );
 	}
 }
+
+void StringView::__SV_reserved1__()
+{
+}
+
+void StringView::__SV_reserved2__()
+{
+}
+
+void StringView::__SV_reserved3__()
+{
+}
+
+void StringView::__SV_reserved4__()
+{
+}
+
+void StringView::__SV_reserved5__()
+{
+}
