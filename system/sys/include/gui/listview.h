@@ -63,10 +63,12 @@ public:
     virtual bool  HitTest( View* pcView, const Rect& cFrame, int nColumn, Point cPos );
     virtual bool  IsLessThan( const ListViewRow* pcOther, uint nColumn ) const = 0;
     
-    void    	  SetIsSelectable( bool bSelectable );
-    bool	  IsSelectable() const;
-    bool	  IsSelected() const;
-    bool	  IsHighlighted() const;
+    void		SetIsSelectable( bool bSelectable );
+    bool		IsSelectable() const;
+    bool		IsSelected() const;
+    bool		IsHighlighted() const;
+    void		SetIsVisible( bool bVisible );
+    bool		IsVisible() const;
 private:
     friend class ListView;
     friend class ListViewContainer;
@@ -75,9 +77,22 @@ private:
     friend struct RowPosPred;
     float	m_vYPos;
     float	m_vHeight;
-    bool	m_bIsSelectable;
+
+	void		SetHighlighted( bool bHigh );
+	void		SetSelected( bool bSel );
+
+	enum LVRFlags {
+		F_SELECTABLE	= 0x01,
+		F_SELECTED		= 0x02,
+		F_HIGHLIGHTED	= 0x04,
+		F_VISIBLE		= 0x08
+	};
+
+    uint16	m_nFlags;
+    uint8	m_nReserved;
+/*    bool	m_bIsSelectable;
     bool	m_bSelected;
-    bool	m_bHighlighted;
+    bool	m_bHighlighted;*/
 };
 
 /** 
@@ -208,10 +223,14 @@ public:
     virtual void		AllAttached();
     virtual bool		HasFocus( void ) const;
 
+    virtual void		SortRows( std::vector<ListViewRow*>* pcRows, int nColumn );
+
       // STL iterator interface to the rows.
     const_iterator begin() const;
     const_iterator end() const;
     
+    void RefreshLayout();
+   
 private:
     friend class ListViewContainer;
     friend class ListViewHeader;
