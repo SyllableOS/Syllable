@@ -45,14 +45,14 @@
 #include "nv_type.h"
 
 static const struct chip_info asChipInfos[] = {
-  { 0x12D20018, NV_ARCH_03,"RIVA 128" },
-  { 0x10DE0020, NV_ARCH_04,"RIVA TNT" },
-  { 0x10DE0028, NV_ARCH_04,"RIVA TNT2" },
-  { 0x10DE002A, NV_ARCH_04,"Unknown TNT2" },
-  { 0x10DE002C, NV_ARCH_04,"Vanta" },
-  { 0x10DE0029, NV_ARCH_04,"RIVA TNT2 Ultra" },
-  { 0x10DE002D, NV_ARCH_04,"RIVA TNT2 Model 64" },
-  { 0x10DE00A0, NV_ARCH_04,"Aladdin TNT2" },
+  { 0x12D20018, NV_ARCH_03, "RIVA 128" },
+  { 0x10DE0020, NV_ARCH_04, "RIVA TNT" },
+  { 0x10DE0028, NV_ARCH_04, "RIVA TNT2" },
+  { 0x10DE002A, NV_ARCH_04, "Unknown TNT2" },
+  { 0x10DE002C, NV_ARCH_04, "Vanta" },
+  { 0x10DE0029, NV_ARCH_04, "RIVA TNT2 Ultra" },
+  { 0x10DE002D, NV_ARCH_04, "RIVA TNT2 Model 64" },
+  { 0x10DE00A0, NV_ARCH_04, "Aladdin TNT2" },
   { 0x10DE0100, NV_ARCH_10, "GeForce 256" },
   { 0x10DE0101, NV_ARCH_10, "GeForce DDR" },
   { 0x10DE0103, NV_ARCH_10, "Quadro" },
@@ -75,7 +75,7 @@ static const struct chip_info asChipInfos[] = {
   { 0x10DE0177, NV_ARCH_10, "GeForce4 460 Go" },
   { 0x10DE0179, NV_ARCH_10, "GeForce4 440 Go 64M" },
   { 0x10DE017D, NV_ARCH_10, "GeForce4 410 Go 16M" },
-  { 0x10DE017C,NV_ARCH_10,  "Quadro4 500 GoGL" },
+  { 0x10DE017C, NV_ARCH_10, "Quadro4 500 GoGL" },
   { 0x10DE0178, NV_ARCH_10, "Quadro4 550 XGL" },
   { 0x10DE017A, NV_ARCH_10, "Quadro4 NVS" },
   { 0x10DE0181, NV_ARCH_10, "GeForce4 MX 440 with AGP8X" },
@@ -87,24 +87,24 @@ static const struct chip_info asChipInfos[] = {
   { 0x10DE018A, NV_ARCH_10, "Quadro4 280 NVS" },
   { 0x10DE018B, NV_ARCH_10, "Quadro4 380 XGL" },
   { 0x10DE01F0, NV_ARCH_10, "GeForce4 MX Integrated GPU" },
-  { 0x10DE0200, NV_ARCH_20,"GeForce3" },
-  { 0x10DE0201, NV_ARCH_20,"GeForce3 Ti 200" },
-  { 0x10DE0202, NV_ARCH_20,"GeForce3 Ti 500" },
-  { 0x10DE0203,NV_ARCH_20, "Quadro DCC" },
-  { 0x10DE0250, NV_ARCH_20,"GeForce4 Ti 4600" },
-  { 0x10DE0251, NV_ARCH_20,"GeForce4 Ti 4400" },
-  { 0x10DE0252,NV_ARCH_20, "0x0252" },
-  { 0x10DE0253, NV_ARCH_20,"GeForce4 Ti 4200" },
-  { 0x10DE0258, NV_ARCH_20,"Quadro4 900 XGL" },
-  { 0x10DE0259, NV_ARCH_20,"Quadro4 750 XGL" },
-  { 0x10DE025B, NV_ARCH_20,"Quadro4 700 XGL" },
-  { 0x10DE0280, NV_ARCH_20,"GeForce4 Ti 4800" },
-  { 0x10DE0281, NV_ARCH_20,"GeForce4 Ti 4200 with AGP8X" },
-  { 0x10DE0282, NV_ARCH_20,"GeForce4 Ti 4800 SE" },
-  { 0x10DE0286, NV_ARCH_20,"GeForce4 4200 Go" },
-  { 0x10DE028C, NV_ARCH_20,"Quadro4 700 GoGL" },
-  { 0x10DE0288,NV_ARCH_20, "Quadro4 980 XGL" },
-  { 0x10DE0289,NV_ARCH_20, "Quadro4 780 XGL" },
+  { 0x10DE0200, NV_ARCH_20, "GeForce3" },
+  { 0x10DE0201, NV_ARCH_20, "GeForce3 Ti 200" },
+  { 0x10DE0202, NV_ARCH_20, "GeForce3 Ti 500" },
+  { 0x10DE0203, NV_ARCH_20, "Quadro DCC" },
+  { 0x10DE0250, NV_ARCH_20, "GeForce4 Ti 4600" },
+  { 0x10DE0251, NV_ARCH_20, "GeForce4 Ti 4400" },
+  { 0x10DE0252, NV_ARCH_20, "0x0252" },
+  { 0x10DE0253, NV_ARCH_20, "GeForce4 Ti 4200" },
+  { 0x10DE0258, NV_ARCH_20, "Quadro4 900 XGL" },
+  { 0x10DE0259, NV_ARCH_20, "Quadro4 750 XGL" },
+  { 0x10DE025B, NV_ARCH_20, "Quadro4 700 XGL" },
+  { 0x10DE0280, NV_ARCH_20, "GeForce4 Ti 4800" },
+  { 0x10DE0281, NV_ARCH_20, "GeForce4 Ti 4200 with AGP8X" },
+  { 0x10DE0282, NV_ARCH_20, "GeForce4 Ti 4800 SE" },
+  { 0x10DE0286, NV_ARCH_20, "GeForce4 4200 Go" },
+  { 0x10DE028C, NV_ARCH_20, "Quadro4 700 GoGL" },
+  { 0x10DE0288, NV_ARCH_20, "Quadro4 980 XGL" },
+  { 0x10DE0289, NV_ARCH_20, "Quadro4 780 XGL" },
 };
 
 
@@ -235,39 +235,24 @@ NVidia::NVidia( int nFd )
 	m_sRiva.FlatPanel = -1;   /* autodetect later */
 	m_sRiva.forceCRTC = -1;
 
-     switch (m_sRiva.Chipset & 0x0ff0) {
-        case 0x0010:
+	switch (m_sRiva.riva.Architecture) {
+		case NV_ARCH_03:
             NV3Setup();
             break;
-        case 0x0020:
-        case 0x00A0:
-            NV4Setup();
-            break;
-        case 0x0100:
-        case 0x0110:
-        case 0x0150:
-        case 0x0170:
-        case 0x01A0:
-        case 0x01F0:
-            NV10Setup();
+		case NV_ARCH_04:
+			NV4Setup();
 			break;
-		case 0x0200:
-		case 0x0250:
-		case 0x0280:
-            NV20Setup();
-            break;
-        case 0x0300:
-		case 0x0310:
-		case 0x0320:
-		case 0x0330:
-		case 0x0340:
-			NV30Setup();
-            break;
-        default:
-        	dbprintf("nVidia :: No chipset has been set - this is BAD. Exiting.\n");
+		case NV_ARCH_10:
+			NV10Setup();
+			break;
+		case NV_ARCH_20:
+			NV20Setup();
+			break;
+		default:
+			dbprintf("nVidia :: No chipset has been set - this is BAD. Exiting.\n");
         	return;
-    }
-	
+	}
+
 	os::color_space colspace[] = {CS_RGB16, CS_RGB32};
 	int bpp[] = {2, 4};
 	float rf[] = { 60.0f, 75.0f, 85.0f, 100.0f };
@@ -1268,16 +1253,6 @@ void NVidia::NV20Setup()
 {
 	dbprintf("nVidia :: NV20Setup\n");
 	m_sRiva.riva.Architecture = NV_ARCH_20;
-	m_sRiva.riva.PRAMIN = (unsigned	*)(m_pRegisterBase+0x00710000);
-	m_sRiva.riva.PCRTC0 = (unsigned	*)(m_pRegisterBase+0x00600000);
-	NVCommonSetup();
-}
-
-
-void NVidia::NV30Setup()
-{
-	dbprintf("nVidia :: NV30Setup\n");
-	m_sRiva.riva.Architecture = NV_ARCH_30;
 	m_sRiva.riva.PRAMIN = (unsigned	*)(m_pRegisterBase+0x00710000);
 	m_sRiva.riva.PCRTC0 = (unsigned	*)(m_pRegisterBase+0x00600000);
 	NVCommonSetup();

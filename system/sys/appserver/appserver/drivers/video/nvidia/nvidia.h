@@ -212,7 +212,6 @@ private:
 	void		NV4Setup();
 	void		NV10Setup();
 	void		NV20Setup();
-	void		NV30Setup();
 };
 
 #endif // __NVIDIA_H__
