@@ -2064,7 +2064,7 @@ static int trident_ac97_init(struct trident_card *card)
 		if (ac97_probe_codec(codec) == 0)
 			break;
 
-		if( create_device_node( card->nDeviceID, card->pci_dev->nHandle, "sound/mixer", &trident_mixer_fops, codec ) < 0 ) {
+		if( create_device_node( card->nDeviceID, card->pci_dev->nHandle, "sound/trident/mixer/0", &trident_mixer_fops, codec ) < 0 ) {
 			printk( "trident: failed to create mixer node \n");
 			kfree(codec);
 			break;
@@ -2143,7 +2143,7 @@ static int trident_probe(PCI_Info_s *pci_dev, int pci_id, int nDeviceID, struct 
 		return -ENODEV;
 	}
 	/* register /dev/dsp */
-	if( create_device_node( nDeviceID, pci_dev->nHandle, "sound/dsp", &trident_dsp_fops, trident_card_data ) < 0 ) {
+	if( create_device_node( nDeviceID, pci_dev->nHandle, "sound/trident/dsp/0", &trident_dsp_fops, trident_card_data ) < 0 ) {
 		printk(KERN_ERR "trident: failed to create DSP node \n");
 		release_irq(card->irq, 0);
 		kfree(card);

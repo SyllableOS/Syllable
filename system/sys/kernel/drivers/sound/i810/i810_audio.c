@@ -2136,7 +2136,7 @@ static int i810_ac97_init(struct i810_card *card)
 		}	
 	
 		if( create_device_node( card->nDeviceID, card->pci_dev->nHandle, 
-				"sound/mixer", &i810_mixer_fops, codec ) < 0 ) {
+				"sound/i810/mixer/0", &i810_mixer_fops, codec ) < 0 ) {
 			printk( "i810_audio: failed to create mixer node \n");
 			kfree(codec);
 			break;
@@ -2330,7 +2330,7 @@ static int i810_probe(PCI_Info_s *pci_dev, int pci_id, int nDeviceID, struct pci
 
 	/* register /dev/dsp */
 	//if ((card->dev_audio = register_sound_dsp(&i810_audio_fops, -1)) < 0) {
-	if( create_device_node( nDeviceID, pci_dev->nHandle,"sound/dsp",
+	if( create_device_node( nDeviceID, pci_dev->nHandle,"sound/i810/dsp/0",
 			&i810_dsp_fops, i810_card_data ) < 0 ) {
 		int i;
 		printk(KERN_ERR "i810_audio: couldn't register DSP node!\n");

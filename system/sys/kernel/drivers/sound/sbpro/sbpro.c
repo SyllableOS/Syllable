@@ -493,7 +493,7 @@ device_init( int nDeviceID )
 	if( sb_dsp_init() ) {
 		nHandle = register_device( "", "isa" );
 		claim_device( nDeviceID, nHandle, "Soundblaster Pro", DEVICE_AUDIO );
-		nError = nDeviceNode = create_device_node( nDeviceID, nHandle, "sound/dsp", &dsp_ops, NULL );
+		nError = nDeviceNode = create_device_node( nDeviceID, nHandle, "sound/sbpro/dsp/0", &dsp_ops, NULL );
 	}
 	if ( nError < 0 )
 		DEBUG( "Failed to create 1 node %d\n", nError );

@@ -142,7 +142,7 @@ extern int emu10k1_interrupt(int irq, void *pdata, SysCallRegs_s* regs);
 
 static int emu10k1_audio_init(struct emu10k1_card *card, int nHandle)
 {
-	card->audio_dev = create_device_node(card->dev_id, nHandle, "sound/dsp", &emu10k1_audio_fops, card);
+	card->audio_dev = create_device_node(card->dev_id, nHandle, "sound/emu10k1/dsp/0", &emu10k1_audio_fops, card);
 	if (card->audio_dev < 0)
 	{
 		printk("emu10k1: cannot register first audio device!\n");
@@ -206,7 +206,7 @@ static void emu10k1_audio_cleanup(struct emu10k1_card *card)
 static int emu10k1_mixer_init(struct emu10k1_card *card, int nHandle)
 {
 	struct ac97_codec *codec = &card->ac97;
-	card->ac97.dev_mixer = create_device_node(card->dev_id, nHandle, "sound/mixer", &emu10k1_mixer_fops, card);
+	card->ac97.dev_mixer = create_device_node(card->dev_id, nHandle, "sound/emu10k1/mixer/0", &emu10k1_mixer_fops, card);
 
 	if (card->ac97.dev_mixer < 0)
 	{

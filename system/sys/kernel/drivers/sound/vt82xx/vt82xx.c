@@ -1367,12 +1367,12 @@ status_t device_init( int nDeviceID )
     }
     if(found) {
     	/* create DSP node */
-		if( create_device_node( nDeviceID, pci.nHandle, "sound/dsp", &via_dsp_fops, via_driver_data ) < 0 ) {
+		if( create_device_node( nDeviceID, pci.nHandle, "sound/vt82xx/dsp/0", &via_dsp_fops, via_driver_data ) < 0 ) {
 			printk( "Failed to create 1 node \n");
 			return ( -EINVAL );
 		}
 		/* create mixer node */
-		if( create_device_node( nDeviceID, pci.nHandle, "sound/mixer", &via_mixer_fops, via_driver_data ) < 0 ) {
+		if( create_device_node( nDeviceID, pci.nHandle, "sound/vt82xx/mixer/0", &via_mixer_fops, via_driver_data ) < 0 ) {
 			printk( "Failed to create 1 node \n");
 			return ( -EINVAL );
 		}
