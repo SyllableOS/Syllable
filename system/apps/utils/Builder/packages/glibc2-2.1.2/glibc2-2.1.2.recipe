@@ -13,13 +13,16 @@ packages
 ;	glibc-crypt-2.1.2
 ;locations			ftp://ftp.gwdg.de/pub/linux/glibc/
 
-build-needs			gettext >= 0.10.35
+build-needs
+	autoconf 2.13
+	gettext >= 0.10.35
+;build-recommends	texinfo <
 test-needs
 	bash <> 2.03
 	perl
-;build-recommends	texinfo <
 
 patch-config		scripts
+patch				autoconf
 
 no-build-dir
 

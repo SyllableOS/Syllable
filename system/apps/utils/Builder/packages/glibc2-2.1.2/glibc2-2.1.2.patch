@@ -1,6 +1,6 @@
-diff -ru glibc-2.1.2.orig/Makerules glibc-2.1.2/Makerules
---- glibc-2.1.2.orig/Makerules	1999-08-01 22:12:24.000000000 +0000
-+++ glibc-2.1.2/Makerules	2004-02-23 12:00:19.000000000 +0000
+diff -ru glibc-2.1.2/Makerules glibc2-2.1.2/Makerules
+--- glibc-2.1.2/Makerules	1999-08-01 22:12:24.000000000 +0000
++++ glibc2-2.1.2/Makerules	2004-04-27 12:12:53.000000000 +0000
 @@ -416,10 +416,18 @@
  	$(LINK.o) -nostdlib -nostartfiles -r -o $@ \
  	-Wl,-d -Wl,--whole-archive $^
@@ -20,9 +20,9 @@ diff -ru glibc-2.1.2.orig/Makerules glibc-2.1.2/Makerules
  	$(build-shlib)
  ifeq ($(versioning),yes)
  $(common-objpfx)libc.so: $(common-objpfx)libc.map
-diff -ru glibc-2.1.2.orig/abi-tags glibc-2.1.2/abi-tags
---- glibc-2.1.2.orig/abi-tags	1998-09-21 14:31:07.000000000 +0000
-+++ glibc-2.1.2/abi-tags	2004-02-23 12:00:19.000000000 +0000
+diff -ru glibc-2.1.2/abi-tags glibc2-2.1.2/abi-tags
+--- glibc-2.1.2/abi-tags	1998-09-21 14:31:07.000000000 +0000
++++ glibc2-2.1.2/abi-tags	2004-04-27 12:12:53.000000000 +0000
 @@ -22,5 +22,7 @@
  
  .*-sun-solaris2.*	2	2.0.0	# just an arbitrary value
@@ -31,48 +31,9 @@ diff -ru glibc-2.1.2.orig/abi-tags glibc-2.1.2/abi-tags
 +
  # There is no catch-all default here because every supported OS that uses
  # ELF must have its own unique ABI tag.
-diff -ru glibc-2.1.2.orig/configure glibc-2.1.2/configure
---- glibc-2.1.2.orig/configure	1999-08-30 19:36:00.000000000 +0000
-+++ glibc-2.1.2/configure	2004-02-23 12:00:19.000000000 +0000
-@@ -841,7 +841,7 @@
- 
- # Some configurations imply other options.
- case "$host_os" in
--gnu* | linux* | bsd4.4* | netbsd* | freebsd*)
-+gnu* | linux* | bsd4.4* | netbsd* | freebsd* | syllable*)
-   # These systems always use GNU tools.
-   gnu_ld=yes gnu_as=yes ;;
- esac
-@@ -849,7 +849,7 @@
- # i586-linuxaout is mangled into i586-pc-linux-gnuaout
- linux*ecoff* | linux*aout* | gnu*aout* | gnu*ecoff*)
-   ;;
--gnu* | linux* | sysv4* | solaris2* | irix6*)
-+gnu* | linux* | sysv4* | solaris2* | irix6* | syllable*)
-   # These systems (almost) always use the ELF format.
-   elf=yes
-   ;;
-@@ -869,7 +869,7 @@
- ###
- if test -z "$enable_hacker_mode"; then
-   case "$machine-$host_os" in
--  *-linux* | *-gnu* | arm*-none*)
-+  *-linux* | *-gnu* | arm*-none* | *-syllable*)
-     ;;
-   *)
-     echo "*** The GNU C library is currently not available for this platform."
-@@ -936,7 +936,7 @@
-   base_os=unix/bsd/bsd4.4 ;;
- osf* | sunos* | ultrix* | newsos* | dynix* | *bsd*)
-   base_os=unix/bsd ;;
--sysv* | isc* | esix* | sco* | minix* | irix4* | linux*)
-+sysv* | isc* | esix* | sco* | minix* | irix4* | linux* | syllable*)
-   base_os=unix/sysv ;;
- irix6*)
-   base_os=unix/sysv/irix6/$os ;;
-diff -ru glibc-2.1.2.orig/configure.in glibc-2.1.2/configure.in
---- glibc-2.1.2.orig/configure.in	1999-08-30 19:16:05.000000000 +0000
-+++ glibc-2.1.2/configure.in	2004-02-23 12:00:19.000000000 +0000
+diff -ru glibc-2.1.2/configure.in glibc2-2.1.2/configure.in
+--- glibc-2.1.2/configure.in	1999-08-30 19:16:05.000000000 +0000
++++ glibc2-2.1.2/configure.in	2004-04-27 12:12:53.000000000 +0000
 @@ -155,7 +155,7 @@
  
  # Some configurations imply other options.
@@ -109,9 +70,9 @@ diff -ru glibc-2.1.2.orig/configure.in glibc-2.1.2/configure.in
    base_os=unix/sysv ;;
  irix6*)
    base_os=unix/sysv/irix6/$os ;;
-diff -ru glibc-2.1.2.orig/csu/Makefile glibc-2.1.2/csu/Makefile
---- glibc-2.1.2.orig/csu/Makefile	1999-04-10 12:43:03.000000000 +0000
-+++ glibc-2.1.2/csu/Makefile	2004-02-23 12:00:19.000000000 +0000
+diff -ru glibc-2.1.2/csu/Makefile glibc2-2.1.2/csu/Makefile
+--- glibc-2.1.2/csu/Makefile	1999-04-10 12:43:03.000000000 +0000
++++ glibc2-2.1.2/csu/Makefile	2004-04-27 12:12:53.000000000 +0000
 @@ -133,7 +133,7 @@
  # source file `start.c' and copy to the installed name after compiling.
  $(objpfx)$(start-installed-name): $(objpfx)start.o
@@ -121,9 +82,9 @@ diff -ru glibc-2.1.2.orig/csu/Makefile glibc-2.1.2/csu/Makefile
  endif
  endif
  
-diff -ru glibc-2.1.2.orig/debug/Makefile glibc-2.1.2/debug/Makefile
---- glibc-2.1.2.orig/debug/Makefile	1999-03-20 17:07:47.000000000 +0000
-+++ glibc-2.1.2/debug/Makefile	2004-02-23 12:00:19.000000000 +0000
+diff -ru glibc-2.1.2/debug/Makefile glibc2-2.1.2/debug/Makefile
+--- glibc-2.1.2/debug/Makefile	1999-03-20 17:07:47.000000000 +0000
++++ glibc2-2.1.2/debug/Makefile	2004-04-27 12:12:53.000000000 +0000
 @@ -57,4 +57,8 @@
  # Depend on libc.so so a DT_NEEDED is generated in the shared objects.
  # This ensures they will load libc.so for needed symbols if loaded by
@@ -133,9 +94,9 @@ diff -ru glibc-2.1.2.orig/debug/Makefile glibc-2.1.2/debug/Makefile
 +else
  $(objpfx)libSegFault.so: $(common-objpfx)libc.so $(common-objpfx)elf/ld.so
 +endif
-diff -ru glibc-2.1.2.orig/dirent/dirent.h glibc-2.1.2/dirent/dirent.h
---- glibc-2.1.2.orig/dirent/dirent.h	1999-08-20 17:34:37.000000000 +0000
-+++ glibc-2.1.2/dirent/dirent.h	2004-02-23 12:00:19.000000000 +0000
+diff -ru glibc-2.1.2/dirent/dirent.h glibc2-2.1.2/dirent/dirent.h
+--- glibc-2.1.2/dirent/dirent.h	1999-08-20 17:34:37.000000000 +0000
++++ glibc2-2.1.2/dirent/dirent.h	2004-04-27 12:12:53.000000000 +0000
 @@ -186,6 +186,11 @@
  #  define dirfd(dirp)	_DIR_dirfd (dirp)
  # endif
@@ -148,9 +109,9 @@ diff -ru glibc-2.1.2.orig/dirent/dirent.h glibc-2.1.2/dirent/dirent.h
  # ifndef MAXNAMLEN
  /* Get the definitions of the POSIX.1 limits.  */
  #  include <bits/posix1_lim.h>
-diff -ru glibc-2.1.2.orig/elf/Makefile glibc-2.1.2/elf/Makefile
---- glibc-2.1.2.orig/elf/Makefile	1999-05-17 17:58:06.000000000 +0000
-+++ glibc-2.1.2/elf/Makefile	2004-02-23 12:00:19.000000000 +0000
+diff -ru glibc-2.1.2/elf/Makefile glibc2-2.1.2/elf/Makefile
+--- glibc-2.1.2/elf/Makefile	1999-05-17 17:58:06.000000000 +0000
++++ glibc2-2.1.2/elf/Makefile	2004-04-27 12:12:53.000000000 +0000
 @@ -67,9 +67,10 @@
  generated      += ldd
  endif
@@ -207,9 +168,9 @@ diff -ru glibc-2.1.2.orig/elf/Makefile glibc-2.1.2/elf/Makefile
 +LDFLAGS-dl.so =
 +# (Removed by KHS) -Wl,-dynamic-linker,$(slibdir)/$(rtld-installed-name)
  $(objpfx)libdl.so: $(objpfx)eval.os
-diff -ru glibc-2.1.2.orig/elf/dl-addr.c glibc-2.1.2/elf/dl-addr.c
---- glibc-2.1.2.orig/elf/dl-addr.c	1999-02-20 14:41:28.000000000 +0000
-+++ glibc-2.1.2/elf/dl-addr.c	2004-02-23 12:00:19.000000000 +0000
+diff -ru glibc-2.1.2/elf/dl-addr.c glibc2-2.1.2/elf/dl-addr.c
+--- glibc-2.1.2/elf/dl-addr.c	1999-02-20 14:41:28.000000000 +0000
++++ glibc2-2.1.2/elf/dl-addr.c	2004-04-27 12:12:53.000000000 +0000
 @@ -17,10 +17,12 @@
     write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.  */
@@ -239,9 +200,9 @@ diff -ru glibc-2.1.2.orig/elf/dl-addr.c glibc-2.1.2/elf/dl-addr.c
 +}
 +
 +#endif /* __SYLLABLE__ */
-diff -ru glibc-2.1.2.orig/elf/dl-close.c glibc-2.1.2/elf/dl-close.c
---- glibc-2.1.2.orig/elf/dl-close.c	1999-05-17 09:56:55.000000000 +0000
-+++ glibc-2.1.2/elf/dl-close.c	2004-02-23 12:00:19.000000000 +0000
+diff -ru glibc-2.1.2/elf/dl-close.c glibc2-2.1.2/elf/dl-close.c
+--- glibc-2.1.2/elf/dl-close.c	1999-05-17 09:56:55.000000000 +0000
++++ glibc2-2.1.2/elf/dl-close.c	2004-04-27 12:12:53.000000000 +0000
 @@ -17,6 +17,7 @@
     write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.  */
@@ -274,9 +235,9 @@ diff -ru glibc-2.1.2.orig/elf/dl-close.c glibc-2.1.2/elf/dl-close.c
 +}
 +
 +#endif /* __SYLLABLE__ */
-diff -ru glibc-2.1.2.orig/elf/dl-debug.c glibc-2.1.2/elf/dl-debug.c
---- glibc-2.1.2.orig/elf/dl-debug.c	1998-04-02 12:43:15.000000000 +0000
-+++ glibc-2.1.2/elf/dl-debug.c	2004-02-23 12:00:19.000000000 +0000
+diff -ru glibc-2.1.2/elf/dl-debug.c glibc2-2.1.2/elf/dl-debug.c
+--- glibc-2.1.2/elf/dl-debug.c	1998-04-02 12:43:15.000000000 +0000
++++ glibc2-2.1.2/elf/dl-debug.c	2004-04-27 12:12:53.000000000 +0000
 @@ -17,6 +17,8 @@
     write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.  */
@@ -291,9 +252,9 @@ diff -ru glibc-2.1.2.orig/elf/dl-debug.c glibc-2.1.2/elf/dl-debug.c
  {
  }
 +#endif /* __SYLLABLE__ */
-diff -ru glibc-2.1.2.orig/elf/dl-deps.c glibc-2.1.2/elf/dl-deps.c
---- glibc-2.1.2.orig/elf/dl-deps.c	1999-06-27 01:19:53.000000000 +0000
-+++ glibc-2.1.2/elf/dl-deps.c	2004-02-23 12:00:19.000000000 +0000
+diff -ru glibc-2.1.2/elf/dl-deps.c glibc2-2.1.2/elf/dl-deps.c
+--- glibc-2.1.2/elf/dl-deps.c	1999-06-27 01:19:53.000000000 +0000
++++ glibc2-2.1.2/elf/dl-deps.c	2004-04-27 12:12:53.000000000 +0000
 @@ -17,6 +17,8 @@
     write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.  */
@@ -308,9 +269,9 @@ diff -ru glibc-2.1.2.orig/elf/dl-deps.c glibc-2.1.2/elf/dl-deps.c
    return to_add;
  }
 +#endif /* __SYLLABLE__ */
-diff -ru glibc-2.1.2.orig/elf/dl-error.c glibc-2.1.2/elf/dl-error.c
---- glibc-2.1.2.orig/elf/dl-error.c	1999-02-22 18:04:03.000000000 +0000
-+++ glibc-2.1.2/elf/dl-error.c	2004-02-23 12:00:19.000000000 +0000
+diff -ru glibc-2.1.2/elf/dl-error.c glibc2-2.1.2/elf/dl-error.c
+--- glibc-2.1.2/elf/dl-error.c	1999-02-22 18:04:03.000000000 +0000
++++ glibc2-2.1.2/elf/dl-error.c	2004-04-27 12:12:53.000000000 +0000
 @@ -17,6 +17,7 @@
     write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.  */
@@ -338,9 +299,9 @@ diff -ru glibc-2.1.2.orig/elf/dl-error.c glibc-2.1.2/elf/dl-error.c
      }
  }
  
-diff -ru glibc-2.1.2.orig/elf/dl-load.c glibc-2.1.2/elf/dl-load.c
---- glibc-2.1.2.orig/elf/dl-load.c	1999-08-10 05:13:23.000000000 +0000
-+++ glibc-2.1.2/elf/dl-load.c	2004-02-23 12:00:19.000000000 +0000
+diff -ru glibc-2.1.2/elf/dl-load.c glibc2-2.1.2/elf/dl-load.c
+--- glibc-2.1.2/elf/dl-load.c	1999-08-10 05:13:23.000000000 +0000
++++ glibc2-2.1.2/elf/dl-load.c	2004-04-27 12:12:53.000000000 +0000
 @@ -17,6 +17,8 @@
     write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.  */
@@ -355,9 +316,9 @@ diff -ru glibc-2.1.2.orig/elf/dl-load.c glibc-2.1.2/elf/dl-load.c
    return _dl_map_object_from_fd (name, fd, realname, loader, type);
  }
 +#endif /* __SYLLABLE__ */
-diff -ru glibc-2.1.2.orig/elf/dl-lookup.c glibc-2.1.2/elf/dl-lookup.c
---- glibc-2.1.2.orig/elf/dl-lookup.c	1999-02-22 18:04:23.000000000 +0000
-+++ glibc-2.1.2/elf/dl-lookup.c	2004-02-23 12:00:19.000000000 +0000
+diff -ru glibc-2.1.2/elf/dl-lookup.c glibc2-2.1.2/elf/dl-lookup.c
+--- glibc-2.1.2/elf/dl-lookup.c	1999-02-22 18:04:23.000000000 +0000
++++ glibc2-2.1.2/elf/dl-lookup.c	2004-04-27 12:12:53.000000000 +0000
 @@ -17,6 +17,7 @@
     write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.  */
@@ -386,9 +347,9 @@ diff -ru glibc-2.1.2.orig/elf/dl-lookup.c glibc-2.1.2/elf/dl-lookup.c
  }
 +
 +#endif /* __SYLLABLE__ */
-diff -ru glibc-2.1.2.orig/elf/dl-minimal.c glibc-2.1.2/elf/dl-minimal.c
---- glibc-2.1.2.orig/elf/dl-minimal.c	1998-04-21 18:02:23.000000000 +0000
-+++ glibc-2.1.2/elf/dl-minimal.c	2004-02-23 12:00:19.000000000 +0000
+diff -ru glibc-2.1.2/elf/dl-minimal.c glibc2-2.1.2/elf/dl-minimal.c
+--- glibc-2.1.2/elf/dl-minimal.c	1998-04-21 18:02:23.000000000 +0000
++++ glibc2-2.1.2/elf/dl-minimal.c	2004-04-27 12:12:53.000000000 +0000
 @@ -17,6 +17,8 @@
     write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.  */
@@ -403,9 +364,9 @@ diff -ru glibc-2.1.2.orig/elf/dl-minimal.c glibc-2.1.2/elf/dl-minimal.c
    return (unsigned long int) __strtoul_internal (nptr, endptr, base, 0);
  }
 +#endif /* __SYLLABLE__ */
-diff -ru glibc-2.1.2.orig/elf/dl-misc.c glibc-2.1.2/elf/dl-misc.c
---- glibc-2.1.2.orig/elf/dl-misc.c	1998-06-29 10:47:27.000000000 +0000
-+++ glibc-2.1.2/elf/dl-misc.c	2004-02-23 12:00:19.000000000 +0000
+diff -ru glibc-2.1.2/elf/dl-misc.c glibc2-2.1.2/elf/dl-misc.c
+--- glibc-2.1.2/elf/dl-misc.c	1998-06-29 10:47:27.000000000 +0000
++++ glibc2-2.1.2/elf/dl-misc.c	2004-04-27 12:12:53.000000000 +0000
 @@ -17,6 +17,8 @@
     write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.  */
@@ -420,9 +381,9 @@ diff -ru glibc-2.1.2.orig/elf/dl-misc.c glibc-2.1.2/elf/dl-misc.c
    va_end (ap);
  }
 +#endif /* __SYLLABLE__ */
-diff -ru glibc-2.1.2.orig/elf/dl-open.c glibc-2.1.2/elf/dl-open.c
---- glibc-2.1.2.orig/elf/dl-open.c	1999-05-11 12:58:25.000000000 +0000
-+++ glibc-2.1.2/elf/dl-open.c	2004-02-23 12:00:19.000000000 +0000
+diff -ru glibc-2.1.2/elf/dl-open.c glibc2-2.1.2/elf/dl-open.c
+--- glibc-2.1.2/elf/dl-open.c	1999-05-11 12:58:25.000000000 +0000
++++ glibc2-2.1.2/elf/dl-open.c	2004-04-27 12:12:53.000000000 +0000
 @@ -17,6 +17,7 @@
     write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.  */
@@ -519,9 +480,9 @@ diff -ru glibc-2.1.2.orig/elf/dl-open.c glibc-2.1.2/elf/dl-open.c
 +#endif
 +
 +#endif /* __SYLLABLE__ */
-diff -ru glibc-2.1.2.orig/elf/dl-profile.c glibc-2.1.2/elf/dl-profile.c
---- glibc-2.1.2.orig/elf/dl-profile.c	1998-06-07 13:35:49.000000000 +0000
-+++ glibc-2.1.2/elf/dl-profile.c	2004-02-23 12:00:19.000000000 +0000
+diff -ru glibc-2.1.2/elf/dl-profile.c glibc2-2.1.2/elf/dl-profile.c
+--- glibc-2.1.2/elf/dl-profile.c	1998-06-07 13:35:49.000000000 +0000
++++ glibc2-2.1.2/elf/dl-profile.c	2004-04-27 12:12:53.000000000 +0000
 @@ -540,3 +540,7 @@
   done:
    state = GMON_PROF_ON;
@@ -530,9 +491,9 @@ diff -ru glibc-2.1.2.orig/elf/dl-profile.c glibc-2.1.2/elf/dl-profile.c
 +#ifdef __SYLLABLE__
 +struct link_map *_dl_profile_map;
 +#endif
-diff -ru glibc-2.1.2.orig/elf/dl-symbol.c glibc-2.1.2/elf/dl-symbol.c
---- glibc-2.1.2.orig/elf/dl-symbol.c	1998-09-06 09:08:05.000000000 +0000
-+++ glibc-2.1.2/elf/dl-symbol.c	2004-02-23 12:00:19.000000000 +0000
+diff -ru glibc-2.1.2/elf/dl-symbol.c glibc2-2.1.2/elf/dl-symbol.c
+--- glibc-2.1.2/elf/dl-symbol.c	1998-09-06 09:08:05.000000000 +0000
++++ glibc2-2.1.2/elf/dl-symbol.c	2004-04-27 12:12:53.000000000 +0000
 @@ -17,6 +17,8 @@
     write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.  */
@@ -548,41 +509,169 @@ diff -ru glibc-2.1.2.orig/elf/dl-symbol.c glibc-2.1.2/elf/dl-symbol.c
  }
 +
 +#endif /* __SYLLABLE__ */
-diff -ru glibc-2.1.2.orig/elf/dlsym.c glibc-2.1.2/elf/dlsym.c
---- glibc-2.1.2.orig/elf/dlsym.c	1999-02-03 10:29:23.000000000 +0000
-+++ glibc-2.1.2/elf/dlsym.c	2004-02-23 12:00:19.000000000 +0000
-@@ -17,11 +17,14 @@
+diff -ru glibc-2.1.2/elf/dlclose.c glibc2-2.1.2/elf/dlclose.c
+--- glibc-2.1.2/elf/dlclose.c	1998-03-24 00:26:55.000000000 +0000
++++ glibc2-2.1.2/elf/dlclose.c	2004-04-27 12:15:37.000000000 +0000
+@@ -17,6 +17,8 @@
     write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.  */
  
++#ifndef __SYLLABLE__
++
+ #include <dlfcn.h>
+ #include <elf/ldsodefs.h>
+ 
+@@ -31,3 +33,29 @@
+ {
+   return _dlerror_run (dlclose_doit, handle) ? -1 : 0;
+ }
++
++#else	/* __SYLLABLE__ */
++
++#include <dlfcn.h>
++#include <stdlib.h>
++#include <atheos/image.h>
++
++int
++dlclose(void *handle)
++{
++	int ret;
++	int* lib_handle;
++
++	lib_handle = (int*)handle;
++
++	ret = unload_library( *lib_handle );
++	free( *lib_handle );
++
++	if( ret < 0 )
++		return( NULL );	/* FIXME: We do not set an error for dlerror() */
++
++	return( ret );
++}
++
++#endif	/* __SYLLABLE__ */
++
+diff -ru glibc-2.1.2/elf/dlerror.c glibc2-2.1.2/elf/dlerror.c
+--- glibc-2.1.2/elf/dlerror.c	1999-08-01 21:55:06.000000000 +0000
++++ glibc2-2.1.2/elf/dlerror.c	2004-04-27 12:15:37.000000000 +0000
+@@ -17,6 +17,8 @@
+    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.  */
+ 
++#ifndef __SYLLABLE__
++
+ #include <dlfcn.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+@@ -150,3 +152,16 @@
+   free (mem);
+   __libc_setspecific (key, NULL);
+ }
++
++#else	/* __SYLLABLE__ */
++
++#include <dlfcn.h>
++
++char *
++dlerror(void)
++{
++	return("An error occured\0");
++}
++
++#endif	/* __SYLLABLE__ */
++
+diff -ru glibc-2.1.2/elf/dlopen.c glibc2-2.1.2/elf/dlopen.c
+--- glibc-2.1.2/elf/dlopen.c	1999-05-05 23:24:44.000000000 +0000
++++ glibc2-2.1.2/elf/dlopen.c	2004-04-27 12:15:37.000000000 +0000
+@@ -17,6 +17,8 @@
+    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.  */
+ 
++#ifndef __SYLLABLE__
++
+ #include <dlfcn.h>
+ #include <stddef.h>
+ #include <elf/ldsodefs.h>
+@@ -57,3 +59,36 @@
+ #else
+ weak_alias (__dlopen_check, dlopen)
+ #endif
++
++#else	/* __SYLLABLE__ */
++
++#include <dlfcn.h>
++#include <stdlib.h>
++#include <atheos/image.h>
++
++void *
++__dlopen(const char *file, int mode)
++{
++	int flags=0;
++	int* handle;
++
++	if( file == 0 )
++		return( NULL );	/* FIXME: We do not set an error for dlerror() */
++
++	handle = malloc( sizeof( int ) );
++
++	/* FIXME: mode is currently ignored; we should attempt to */
++	/* map mode onto flags...                                 */
++
++	*handle = load_library( file, flags );
++	return( (void*)handle );
++}
++
++#if defined PIC && defined DO_VERSIONING
++default_symbol_version (__dlopen, dlopen, GLIBC_2.1);
++#else
++weak_alias (__dlopen, dlopen)
++#endif
++
++#endif	/* __SYLLABLE__ */
++
+diff -ru glibc-2.1.2/elf/dlsym.c glibc2-2.1.2/elf/dlsym.c
+--- glibc-2.1.2/elf/dlsym.c	1999-02-03 10:29:23.000000000 +0000
++++ glibc2-2.1.2/elf/dlsym.c	2004-04-27 12:15:37.000000000 +0000
+@@ -17,6 +17,8 @@
+    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.  */
+ 
++#ifndef __SYLLABLE__
 +
  #include <dlfcn.h>
  #include <setjmp.h>
  #include <stddef.h>
- #include <elf/ldsodefs.h>
- 
-+#ifndef __SYLLABLE__
-+
- struct dlsym_args
- {
-   /* The arguments to dlsym_doit.  */
-@@ -97,3 +100,13 @@
+@@ -97,3 +99,27 @@
    return (_dlerror_run (dlsym_doit, &args)
  	  ? NULL : (void *) (args.loadbase + args.ref->st_value));
  }
 +
 +#else /* __SYLLABLE__ */
 +
++#include <dlfcn.h>
++#include <atheos/image.h>
++
 +void *
 +dlsym (void *handle, const char *name)
 +{
-+  return( 0 );
++	void* func;
++	int ret;
++	int* lib_handle;
++
++	lib_handle = (int*)handle;
++
++	ret = get_symbol_address( *lib_handle, name, -1, &func );
++
++	if( ret < 0 )
++		return( NULL );	/* FIXME: We do not set an error for dlerror() */
++
++	return( func );
 +}
 +
 +#endif /* __SYLLABLE__ */
-diff -ru glibc-2.1.2.orig/elf/dlvsym.c glibc-2.1.2/elf/dlvsym.c
---- glibc-2.1.2.orig/elf/dlvsym.c	1999-02-03 10:29:40.000000000 +0000
-+++ glibc-2.1.2/elf/dlvsym.c	2004-02-23 12:00:19.000000000 +0000
+diff -ru glibc-2.1.2/elf/dlvsym.c glibc2-2.1.2/elf/dlvsym.c
+--- glibc-2.1.2/elf/dlvsym.c	1999-02-03 10:29:40.000000000 +0000
++++ glibc2-2.1.2/elf/dlvsym.c	2004-04-27 12:12:53.000000000 +0000
 @@ -24,6 +24,8 @@
  
  #include <dl-hash.h>
@@ -598,9 +687,9 @@ diff -ru glibc-2.1.2.orig/elf/dlvsym.c glibc-2.1.2/elf/dlvsym.c
  weak_alias (__dlvsym, dlvsym)
 +
 +#endif /* __SYLLABLE__ */
-diff -ru glibc-2.1.2.orig/elf/interp.c glibc-2.1.2/elf/interp.c
---- glibc-2.1.2.orig/elf/interp.c	1998-05-08 20:40:55.000000000 +0000
-+++ glibc-2.1.2/elf/interp.c	2004-02-23 12:00:19.000000000 +0000
+diff -ru glibc-2.1.2/elf/interp.c glibc2-2.1.2/elf/interp.c
+--- glibc-2.1.2/elf/interp.c	1998-05-08 20:40:55.000000000 +0000
++++ glibc2-2.1.2/elf/interp.c	2004-04-27 12:12:53.000000000 +0000
 @@ -17,5 +17,7 @@
     write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.  */
@@ -609,9 +698,9 @@ diff -ru glibc-2.1.2.orig/elf/interp.c glibc-2.1.2/elf/interp.c
  const char __invoke_dynamic_linker__[] __attribute__ ((section (".interp")))
    = RUNTIME_LINKER;
 +#endif
-diff -ru glibc-2.1.2.orig/elf/rtld.c glibc-2.1.2/elf/rtld.c
---- glibc-2.1.2.orig/elf/rtld.c	1999-08-20 17:34:39.000000000 +0000
-+++ glibc-2.1.2/elf/rtld.c	2004-02-23 12:00:20.000000000 +0000
+diff -ru glibc-2.1.2/elf/rtld.c glibc2-2.1.2/elf/rtld.c
+--- glibc-2.1.2/elf/rtld.c	1999-08-20 17:34:39.000000000 +0000
++++ glibc2-2.1.2/elf/rtld.c	2004-04-27 12:12:53.000000000 +0000
 @@ -16,7 +16,7 @@
     License along with the GNU C Library; see the file COPYING.LIB.  If not,
     write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
@@ -626,30 +715,18 @@ diff -ru glibc-2.1.2.orig/elf/rtld.c glibc-2.1.2/elf/rtld.c
      }
  }
 +#endif
-diff -ru glibc-2.1.2.orig/elf/soinit.c glibc-2.1.2/elf/soinit.c
---- glibc-2.1.2.orig/elf/soinit.c	1997-12-22 17:15:11.000000000 +0000
-+++ glibc-2.1.2/elf/soinit.c	2004-02-23 12:00:20.000000000 +0000
-@@ -44,7 +44,7 @@
- void
- __libc_global_ctors (void)
- {
--  /* Call constructor functions.  */
-+    /* Call constructor functions.  */
-   run_hooks (__CTOR_LIST__);
- #ifdef HAVE_DWARF2_UNWIND_INFO
- # ifdef HAVE_DWARF2_UNWIND_INFO_STATIC
-diff -ru glibc-2.1.2.orig/gmon/Makefile glibc-2.1.2/gmon/Makefile
---- glibc-2.1.2.orig/gmon/Makefile	1997-08-20 03:29:11.000000000 +0000
-+++ glibc-2.1.2/gmon/Makefile	2004-02-23 12:00:20.000000000 +0000
+diff -ru glibc-2.1.2/gmon/Makefile glibc2-2.1.2/gmon/Makefile
+--- glibc-2.1.2/gmon/Makefile	1997-08-20 03:29:11.000000000 +0000
++++ glibc2-2.1.2/gmon/Makefile	2004-04-27 12:12:53.000000000 +0000
 @@ -42,4 +42,4 @@
  
  $(noprof:%=$(objpfx)%.op): %.op: %.o
  	rm -f $@
 -	ln $< $@
 +	cp $< $@
-diff -ru glibc-2.1.2.orig/login/openpty.c glibc-2.1.2/login/openpty.c
---- glibc-2.1.2.orig/login/openpty.c	1999-05-24 18:18:45.000000000 +0000
-+++ glibc-2.1.2/login/openpty.c	2004-02-23 12:00:20.000000000 +0000
+diff -ru glibc-2.1.2/login/openpty.c glibc2-2.1.2/login/openpty.c
+--- glibc-2.1.2/login/openpty.c	1999-05-24 18:18:45.000000000 +0000
++++ glibc2-2.1.2/login/openpty.c	2004-04-27 12:12:53.000000000 +0000
 @@ -17,6 +17,10 @@
     write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.  */
@@ -666,9 +743,9 @@ diff -ru glibc-2.1.2.orig/login/openpty.c glibc-2.1.2/login/openpty.c
    return -1;
  }
 +#endif /* __SYLLABLE__ */
-diff -ru glibc-2.1.2.orig/malloc/malloc.c glibc-2.1.2/malloc/malloc.c
---- glibc-2.1.2.orig/malloc/malloc.c	1999-08-30 19:19:16.000000000 +0000
-+++ glibc-2.1.2/malloc/malloc.c	2004-02-23 12:00:20.000000000 +0000
+diff -ru glibc-2.1.2/malloc/malloc.c glibc2-2.1.2/malloc/malloc.c
+--- glibc-2.1.2/malloc/malloc.c	1999-08-30 19:19:16.000000000 +0000
++++ glibc2-2.1.2/malloc/malloc.c	2004-04-27 12:12:53.000000000 +0000
 @@ -515,6 +515,11 @@
  # endif
  #endif
@@ -881,9 +958,9 @@ diff -ru glibc-2.1.2.orig/malloc/malloc.c glibc-2.1.2/malloc/malloc.c
  
  
  #ifdef _LIBC
-diff -ru glibc-2.1.2.orig/malloc/thread-m.h glibc-2.1.2/malloc/thread-m.h
---- glibc-2.1.2.orig/malloc/thread-m.h	1998-12-31 18:08:28.000000000 +0000
-+++ glibc-2.1.2/malloc/thread-m.h	2004-02-23 12:00:20.000000000 +0000
+diff -ru glibc-2.1.2/malloc/thread-m.h glibc2-2.1.2/malloc/thread-m.h
+--- glibc-2.1.2/malloc/thread-m.h	1998-12-31 18:08:28.000000000 +0000
++++ glibc2-2.1.2/malloc/thread-m.h	2004-04-27 12:12:53.000000000 +0000
 @@ -54,6 +54,42 @@
  #define thread_atfork(prepare, parent, child) \
     (__pthread_atfork != NULL ? __pthread_atfork(prepare, parent, child) : 0)
@@ -949,9 +1026,9 @@ diff -ru glibc-2.1.2.orig/malloc/thread-m.h glibc-2.1.2/malloc/thread-m.h
  #endif /* defined(_LIBC) */
  
  #ifdef NO_THREADS /* No threads, provide dummy macros */
-diff -ru glibc-2.1.2.orig/misc/syslog.c glibc-2.1.2/misc/syslog.c
---- glibc-2.1.2.orig/misc/syslog.c	1999-04-28 22:07:58.000000000 +0000
-+++ glibc-2.1.2/misc/syslog.c	2004-02-23 12:00:20.000000000 +0000
+diff -ru glibc-2.1.2/misc/syslog.c glibc2-2.1.2/misc/syslog.c
+--- glibc-2.1.2/misc/syslog.c	1999-04-28 22:07:58.000000000 +0000
++++ glibc2-2.1.2/misc/syslog.c	2004-04-27 12:12:53.000000000 +0000
 @@ -30,6 +30,9 @@
   * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
   * SUCH DAMAGE.
@@ -968,9 +1045,9 @@ diff -ru glibc-2.1.2.orig/misc/syslog.c glibc-2.1.2/misc/syslog.c
  }
 +
 +#endif /* __SYLLABLE__ */
-diff -ru glibc-2.1.2.orig/nss/nsswitch.c glibc-2.1.2/nss/nsswitch.c
---- glibc-2.1.2.orig/nss/nsswitch.c	1999-05-14 00:27:00.000000000 +0000
-+++ glibc-2.1.2/nss/nsswitch.c	2004-02-23 12:00:20.000000000 +0000
+diff -ru glibc-2.1.2/nss/nsswitch.c glibc2-2.1.2/nss/nsswitch.c
+--- glibc-2.1.2/nss/nsswitch.c	1999-05-14 00:27:00.000000000 +0000
++++ glibc2-2.1.2/nss/nsswitch.c	2004-04-27 12:12:53.000000000 +0000
 @@ -26,7 +26,9 @@
  #include <stdio.h>
  #include <stdlib.h>
@@ -1074,9 +1151,9 @@ diff -ru glibc-2.1.2.orig/nss/nsswitch.c glibc-2.1.2/nss/nsswitch.c
        library = library->next;
        free (oldl);
      }
-diff -ru glibc-2.1.2.orig/nss/nsswitch.h glibc-2.1.2/nss/nsswitch.h
---- glibc-2.1.2.orig/nss/nsswitch.h	1999-02-18 22:26:46.000000000 +0000
-+++ glibc-2.1.2/nss/nsswitch.h	2004-02-23 12:00:20.000000000 +0000
+diff -ru glibc-2.1.2/nss/nsswitch.h glibc2-2.1.2/nss/nsswitch.h
+--- glibc-2.1.2/nss/nsswitch.h	1999-02-18 22:26:46.000000000 +0000
++++ glibc2-2.1.2/nss/nsswitch.h	2004-04-27 12:12:53.000000000 +0000
 @@ -26,8 +26,16 @@
  #include <nss.h>
  #include <resolv.h>
@@ -1107,9 +1184,9 @@ diff -ru glibc-2.1.2.orig/nss/nsswitch.h glibc-2.1.2/nss/nsswitch.h
    /* And the link to the next entry.  */
    struct service_library *next;
  } service_library;
-diff -ru glibc-2.1.2.orig/sysdeps/generic/dl-sysdep.c glibc-2.1.2/sysdeps/generic/dl-sysdep.c
---- glibc-2.1.2.orig/sysdeps/generic/dl-sysdep.c	1998-09-22 12:54:54.000000000 +0000
-+++ glibc-2.1.2/sysdeps/generic/dl-sysdep.c	2004-02-23 12:00:20.000000000 +0000
+diff -ru glibc-2.1.2/sysdeps/generic/dl-sysdep.c glibc2-2.1.2/sysdeps/generic/dl-sysdep.c
+--- glibc-2.1.2/sysdeps/generic/dl-sysdep.c	1998-09-22 12:54:54.000000000 +0000
++++ glibc2-2.1.2/sysdeps/generic/dl-sysdep.c	2004-04-27 12:12:53.000000000 +0000
 @@ -17,6 +17,7 @@
     write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.  */
@@ -1123,9 +1200,9 @@ diff -ru glibc-2.1.2.orig/sysdeps/generic/dl-sysdep.c glibc-2.1.2/sysdeps/generi
    return result;
  }
 +#endif /* __SYLLABLE__ */
-diff -ru glibc-2.1.2.orig/sysdeps/gnu/errlist.c glibc-2.1.2/sysdeps/gnu/errlist.c
---- glibc-2.1.2.orig/sysdeps/gnu/errlist.c	1999-07-18 23:50:46.000000000 +0000
-+++ glibc-2.1.2/sysdeps/gnu/errlist.c	2004-02-23 12:00:20.000000000 +0000
+diff -ru glibc-2.1.2/sysdeps/gnu/errlist.c glibc2-2.1.2/sysdeps/gnu/errlist.c
+--- glibc-2.1.2/sysdeps/gnu/errlist.c	1999-07-18 23:50:46.000000000 +0000
++++ glibc2-2.1.2/sysdeps/gnu/errlist.c	2004-04-27 12:12:53.000000000 +0000
 @@ -835,6 +835,22 @@
  /* */
      [ERR_REMAP (EMEDIUMTYPE)] = N_("Wrong medium type"),
@@ -1149,9 +1226,9 @@ diff -ru glibc-2.1.2.orig/sysdeps/gnu/errlist.c glibc-2.1.2/sysdeps/gnu/errlist.
    };
  
  const int SYS_NERR = sizeof SYS_ERRLIST / sizeof SYS_ERRLIST [0];
-diff -ru glibc-2.1.2.orig/sysdeps/i386/elf/start.S glibc-2.1.2/sysdeps/i386/elf/start.S
---- glibc-2.1.2.orig/sysdeps/i386/elf/start.S	1998-06-18 17:29:00.000000000 +0000
-+++ glibc-2.1.2/sysdeps/i386/elf/start.S	2004-02-23 12:00:20.000000000 +0000
+diff -ru glibc-2.1.2/sysdeps/i386/elf/start.S glibc2-2.1.2/sysdeps/i386/elf/start.S
+--- glibc-2.1.2/sysdeps/i386/elf/start.S	1998-06-18 17:29:00.000000000 +0000
++++ glibc2-2.1.2/sysdeps/i386/elf/start.S	2004-04-27 12:12:53.000000000 +0000
 @@ -38,6 +38,7 @@
  
  	.text
@@ -1208,9 +1285,9 @@ diff -ru glibc-2.1.2.orig/sysdeps/i386/elf/start.S glibc-2.1.2/sysdeps/i386/elf/
  /* To fulfill the System V/i386 ABI we need this symbol.  Yuck, it's so
     meaningless since we don't support machines < 80386.  */
  	.section .rodata
-diff -ru glibc-2.1.2.orig/sysdeps/unix/configure glibc-2.1.2/sysdeps/unix/configure
---- glibc-2.1.2.orig/sysdeps/unix/configure	1999-07-19 01:54:45.000000000 +0000
-+++ glibc-2.1.2/sysdeps/unix/configure	2004-02-23 12:00:20.000000000 +0000
+diff -ru glibc-2.1.2/sysdeps/unix/configure glibc2-2.1.2/sysdeps/unix/configure
+--- glibc-2.1.2/sysdeps/unix/configure	1999-07-19 01:54:45.000000000 +0000
++++ glibc2-2.1.2/sysdeps/unix/configure	2004-04-27 12:12:53.000000000 +0000
 @@ -33,7 +33,7 @@
  
  ; return 0; }
@@ -1220,9 +1297,9 @@ diff -ru glibc-2.1.2.orig/sysdeps/unix/configure glibc-2.1.2/sysdeps/unix/config
    rm -rf conftest*
    eval "ac_cv_func_$ac_func=yes"
  else
-diff -ru glibc-2.1.2.orig/time/time.h glibc-2.1.2/time/time.h
---- glibc-2.1.2.orig/time/time.h	1999-02-16 09:49:32.000000000 +0000
-+++ glibc-2.1.2/time/time.h	2004-02-23 12:00:20.000000000 +0000
+diff -ru glibc-2.1.2/time/time.h glibc2-2.1.2/time/time.h
+--- glibc-2.1.2/time/time.h	1999-02-16 09:49:32.000000000 +0000
++++ glibc2-2.1.2/time/time.h	2004-04-27 12:12:53.000000000 +0000
 @@ -68,7 +68,10 @@
  # include <bits/types.h>
  
@@ -1234,9 +1311,9 @@ diff -ru glibc-2.1.2.orig/time/time.h glibc-2.1.2/time/time.h
  
  #endif /* time_t not defined and <time.h> or need time_t.  */
  #undef	__need_time_t
-diff -ru glibc-2.1.2.orig/time/tzset.c glibc-2.1.2/time/tzset.c
---- glibc-2.1.2.orig/time/tzset.c	1999-04-28 23:11:37.000000000 +0000
-+++ glibc-2.1.2/time/tzset.c	2004-02-23 12:00:20.000000000 +0000
+diff -ru glibc-2.1.2/time/tzset.c glibc2-2.1.2/time/tzset.c
+--- glibc-2.1.2/time/tzset.c	1999-04-28 23:11:37.000000000 +0000
++++ glibc2-2.1.2/time/tzset.c	2004-04-27 12:12:53.000000000 +0000
 @@ -38,7 +38,7 @@
  weak_alias (__timezone, timezone)
  
