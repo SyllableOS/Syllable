@@ -63,25 +63,6 @@ private:
     static uint32	      s_nMouseButtons;
 };
 
-
-class DosMouseDriver : public InputNode
-{
-public:
-    DosMouseDriver();
-    ~DosMouseDriver();
-
-    virtual bool Start();
-    virtual int  GetType() { return( IN_MOUSE ); }
-  
-private:
-    static int32 EventLoopEntry( void* pData );
-    void EventLoop();
-    void DispatchEvent( MouseEvent_s* psEvent );
-  
-    thread_id m_hThread;
-    int	    m_nMouseDevice;
-};
-
 void InitInputSystem();
 
 typedef bool in_init();

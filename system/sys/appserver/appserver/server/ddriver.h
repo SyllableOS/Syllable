@@ -45,27 +45,34 @@ public:
 
     virtual area_id   	Open() = 0;
     virtual void	Close() = 0;
-
+    
     virtual int	    	GetScreenModeCount() = 0;
     virtual bool    	GetScreenModeDesc( int nIndex, os::screen_mode* psMode ) = 0;
     virtual int	    	SetScreenMode( os::screen_mode sMode ) = 0;
     virtual os::screen_mode GetCurrentScreenMode() = 0; 
 
     virtual int		GetFramebufferOffset();
-
+    
     virtual void	SetCursorBitmap( os::mouse_ptr_mode eMode, const os::IPoint& cHotSpot, const void* pRaster, int nWidth, int nHeight );
     
     virtual void	MouseOn();
     virtual void	MouseOff();
     virtual void	SetMousePos( os::IPoint cNewPos );
     virtual bool	IntersectWithMouse( const os::IRect& cRect ) = 0;
-
+    
     virtual bool	DrawLine( SrvBitmap* psBitMap, const os::IRect& cClipRect,
 				  const os::IPoint& cPnt1, const os::IPoint& cPnt2, const os::Color32_s& sColor, int nMode );
     virtual bool	FillRect( SrvBitmap* psBitMap, const os::IRect& cRect, const os::Color32_s& sColor );
     virtual bool	BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap, os::IRect cSrcRect, os::IPoint cDstPos, int nMode );
 
     static bool	ClipLine( const os::IRect& cRect, int* x1, int* y1, int* x2, int* y2 );
+
+	virtual void 	RenderGlyph( SrvBitmap *pcBitmap, Glyph* pcGlyph,
+			 const os::IPoint& cPos, const os::IRect& cClipRect, const os::Color32_s& sFgColor ); 
+	virtual void	RenderGlyphBlend( SrvBitmap *pcBitmap, Glyph* pcGlyph,
+			      const os::IPoint& cPos, const os::IRect& cClipRect, const os::Color32_s& sFgColor );      
+	virtual void	RenderGlyph( SrvBitmap *pcBitmap, Glyph* pcGlyph,
+			 const os::IPoint& cPos, const os::IRect& cClipRect, const uint32* anPallette );
 
     virtual bool	CreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, os::color_space eFormat, os::Color32_s sColorKey, area_id *phArea );
     virtual bool	RecreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, os::color_space eFormat, area_id *phArea );
@@ -77,8 +84,8 @@ private:
     void	FillBlit16( uint16 *pDst, int nMod, int W, int H, uint32 nColor );
     void	FillBlit24( uint8* pDst, int nMod, int W, int H, uint32 nColor );
     void	FillBlit32( uint32 *pDst, int nMod, int W, int H, uint32 nColor );
-
-    virtual void	__VW_reserved1__();
+private:
+	virtual void	__VW_reserved1__();
     virtual void	__VW_reserved2__();
     virtual void	__VW_reserved3__();
     virtual void	__VW_reserved4__();
@@ -98,7 +105,7 @@ private:
     os::IRect		  m_pcOverlayRect;
 };
 
-typedef DisplayDriver* gfxdrv_init_func();
+typedef DisplayDriver* gfxdrv_init_func( int nFd );
 
 
 #endif	//	INTERFACE_DDRIVER_HPP

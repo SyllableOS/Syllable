@@ -1386,6 +1386,215 @@ bool DisplayDriver::BltBitmap( SrvBitmap *dstbm, SrvBitmap *srcbm, IRect cSrcRec
 }
 
 
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
+void DisplayDriver::RenderGlyph( SrvBitmap *pcBitmap, Glyph* pcGlyph,
+			 const IPoint& cPos, const IRect& cClipRect, const Color32_s& sFgColor )
+{
+    IRect	cBounds	= pcGlyph->m_cBounds + cPos;
+    IRect	cRect 	= cBounds & cClipRect;
+
+    if ( cRect.IsValid() == false ) {
+	return;
+    }
+    int sx = cRect.left - cBounds.left;
+    int sy = cRect.top - cBounds.top;
+
+    int nWidth	= cRect.Width()+1;
+    int nHeight	= cRect.Height()+1;
+
+    int	nSrcModulo = pcGlyph->m_nBytesPerLine - nWidth;
+
+    uint8*  pSrc = pcGlyph->m_pRaster + sx + sy * pcGlyph->m_nBytesPerLine;
+
+    Color32_s	sCurCol;
+    Color32_s	sBgColor;
+  
+    if ( pcBitmap->m_eColorSpc == CS_RGB15 ) {
+	int	nDstModulo = pcBitmap->m_nBytesPerLine / 2 - nWidth;
+	uint16* pDst = (uint16*)pcBitmap->m_pRaster + cRect.left + (cRect.top * pcBitmap->m_nBytesPerLine / 2);
+
+	int nFgClut = COL_TO_RGB15( sFgColor );
+
+	for ( int y = 0 ; y < nHeight ; ++y ) {
+	    for ( int x = 0 ; x < nWidth ; ++x ) {
+		int nAlpha = *pSrc++;
+
+		if ( nAlpha > 0 ) {
+		    if ( nAlpha == NUM_FONT_GRAYS - 1 ) {
+			*pDst = nFgClut;
+		    } else {
+			int	nClut = *pDst;
+
+			sBgColor = RGB16_TO_COL( nClut );
+
+
+			sCurCol.red   = sBgColor.red   + (sFgColor.red   - sBgColor.red)   * nAlpha / (NUM_FONT_GRAYS-1);
+			sCurCol.green = sBgColor.green + (sFgColor.green - sBgColor.green) * nAlpha / (NUM_FONT_GRAYS-1);
+			sCurCol.blue  = sBgColor.blue  + (sFgColor.blue  - sBgColor.blue)  * nAlpha / (NUM_FONT_GRAYS-1);
+	    
+			*pDst = COL_TO_RGB15( sCurCol );
+		    }
+		}
+		pDst++;
+	    }
+	    pSrc += nSrcModulo;
+	    pDst += nDstModulo;
+	}
+    } else if ( pcBitmap->m_eColorSpc == CS_RGB16 ) {
+	int	nDstModulo = pcBitmap->m_nBytesPerLine / 2 - nWidth;
+	uint16* pDst = (uint16*)pcBitmap->m_pRaster + cRect.left + cRect.top * pcBitmap->m_nBytesPerLine / 2;
+
+	int nFgClut = COL_TO_RGB16( sFgColor );
+
+	for ( int y = 0 ; y < nHeight ; ++y ) {
+	    for ( int x = 0 ; x < nWidth ; ++x ) {
+		int nAlpha = *pSrc++;
+
+		if ( nAlpha > 0 ) {
+		    if ( nAlpha == NUM_FONT_GRAYS - 1 ) {
+			*pDst = nFgClut;
+		    } else {
+			int	nClut = *pDst;
+
+			sBgColor = RGB16_TO_COL( nClut );
+
+			sCurCol.red   = sBgColor.red   + int(sFgColor.red   - sBgColor.red)   * nAlpha / (NUM_FONT_GRAYS-1);
+			sCurCol.green = sBgColor.green + int(sFgColor.green - sBgColor.green) * nAlpha / (NUM_FONT_GRAYS-1);
+			sCurCol.blue  = sBgColor.blue  + int(sFgColor.blue  - sBgColor.blue)  * nAlpha / (NUM_FONT_GRAYS-1);
+	    
+			*pDst = COL_TO_RGB16( sCurCol );
+		    }
+		}
+		pDst++;
+	    }
+	    pSrc += nSrcModulo;
+	    pDst += nDstModulo;
+	}
+    } else if ( pcBitmap->m_eColorSpc == CS_RGB32 ) {
+	int	nDstModulo = pcBitmap->m_nBytesPerLine / 4 - nWidth;
+	uint32* pDst = (uint32*)pcBitmap->m_pRaster + cRect.left + cRect.top * pcBitmap->m_nBytesPerLine / 4;
+
+	int nFgClut = COL_TO_RGB32( sFgColor );
+
+	for ( int y = 0 ; y < nHeight ; ++y ) {
+	    for ( int x = 0 ; x < nWidth ; ++x ) {
+		int nAlpha = *pSrc++;
+
+		if ( nAlpha > 0 ) {
+		    if ( nAlpha == NUM_FONT_GRAYS - 1 ) {
+			*pDst = nFgClut;
+		    } else {
+			int	nClut = *pDst;
+
+			sBgColor = RGB32_TO_COL( nClut );
+
+			sCurCol.red   = sBgColor.red   + (sFgColor.red   - sBgColor.red)   * nAlpha / (NUM_FONT_GRAYS-1);
+			sCurCol.green = sBgColor.green + (sFgColor.green - sBgColor.green) * nAlpha / (NUM_FONT_GRAYS-1);
+			sCurCol.blue  = sBgColor.blue  + (sFgColor.blue  - sBgColor.blue)  * nAlpha / (NUM_FONT_GRAYS-1);
+	    
+			*pDst = COL_TO_RGB32( sCurCol );
+		    }
+		}
+		pDst++;
+	    }
+	    pSrc += nSrcModulo;
+	    pDst += nDstModulo;
+	}
+    }
+}
+
+void DisplayDriver::RenderGlyphBlend( SrvBitmap *pcBitmap, Glyph* pcGlyph,
+			      const IPoint& cPos, const IRect& cClipRect, const Color32_s& sFgColor )
+{
+    IRect	cBounds	= pcGlyph->m_cBounds + cPos;
+    IRect	cRect 	= cBounds & cClipRect;
+
+    if ( cRect.IsValid() == false ) {
+	return;
+    }
+    int sx = cRect.left - cBounds.left;
+    int sy = cRect.top - cBounds.top;
+
+    int nWidth	= cRect.Width()+1;
+    int nHeight	= cRect.Height()+1;
+
+    int	nSrcModulo = pcGlyph->m_nBytesPerLine - nWidth;
+
+    uint8*  pSrc = pcGlyph->m_pRaster + sx + sy * pcGlyph->m_nBytesPerLine;
+
+    int	nDstModulo = pcBitmap->m_nBytesPerLine / 4 - nWidth;
+    uint32* pDst = (uint32*)pcBitmap->m_pRaster + cRect.left + cRect.top * pcBitmap->m_nBytesPerLine / 4;
+
+    for ( int y = 0 ; y < nHeight ; ++y ) {
+	for ( int x = 0 ; x < nWidth ; ++x ) {
+	    int nAlpha = *pSrc++;
+	    *pDst++ = COL_TO_RGB32( Color32_s( sFgColor.red, sFgColor.green, sFgColor.blue, int(sFgColor.alpha * nAlpha) / 255 ) );
+	}
+	pSrc += nSrcModulo;
+	pDst += nDstModulo;
+    }
+    
+}
+
+void DisplayDriver::RenderGlyph( SrvBitmap *pcBitmap, Glyph* pcGlyph,
+			 const IPoint& cPos, const IRect& cClipRect, const uint32* anPallette )
+{
+    IRect cBounds = pcGlyph->m_cBounds + cPos;
+    IRect cRect   = cBounds & cClipRect;
+
+    if ( cRect.IsValid() == false ) {
+	return;
+    }
+    int sx = cRect.left - cBounds.left;
+    int sy = cRect.top - cBounds.top;
+
+    int nWidth	= cRect.Width()+1;
+    int nHeight	= cRect.Height()+1;
+
+    int	nSrcModulo = pcGlyph->m_nBytesPerLine - nWidth;
+
+    uint8*  pSrc = pcGlyph->m_pRaster + sx + sy * pcGlyph->m_nBytesPerLine;
+
+    if ( pcBitmap->m_eColorSpc == CS_RGB16 || pcBitmap->m_eColorSpc == CS_RGB15 ) {
+	int	nDstModulo = pcBitmap->m_nBytesPerLine / 2 - nWidth;
+	uint16* pDst = (uint16*)pcBitmap->m_pRaster + cRect.left + cRect.top * pcBitmap->m_nBytesPerLine / 2;
+
+	for ( int y = 0 ; y < nHeight ; ++y ) {
+	    for ( int x = 0 ; x < nWidth ; ++x ) {
+		int nAlpha = *pSrc++;
+		if ( nAlpha > 0 ) {
+		    *pDst = anPallette[nAlpha];
+		}
+		pDst++;
+	    }
+	    pSrc += nSrcModulo;
+	    pDst += nDstModulo;
+	}
+    } else if ( pcBitmap->m_eColorSpc == CS_RGB32 ) {
+	int	nDstModulo = pcBitmap->m_nBytesPerLine / 4 - nWidth;
+	uint32* pDst = (uint32*)pcBitmap->m_pRaster + cRect.left + cRect.top * pcBitmap->m_nBytesPerLine / 4;
+
+	for ( int y = 0 ; y < nHeight ; ++y ) {
+	    for ( int x = 0 ; x < nWidth ; ++x ) {
+		int nAlpha = *pSrc++;
+
+		if ( nAlpha > 0 ) {
+		    *pDst = anPallette[nAlpha];
+		}
+		pDst++;
+	    }
+	    pSrc += nSrcModulo;
+	    pDst += nDstModulo;
+	}
+    }
+    return;
+}
 
 /** Create a new Video overlay.
  * \par Description:

@@ -325,8 +325,9 @@ void SrvApplication::CreateBitmap( port_id hReply, int nWidth, int nHeight,
 	    return;
 	}
     }
-    SrvBitmap* pcBitmap = new SrvBitmap( nWidth, nHeight, eColorSpc, (uint8*)pRaster );
+    SrvBitmap* pcBitmap  = new SrvBitmap( nWidth, nHeight, eColorSpc, (uint8*)pRaster );
     pcBitmap->m_hArea    = hArea;
+    pcBitmap->m_nFlags   = nFlags;
     pcBitmap->m_pcDriver = g_pcDispDrv;
   
     BitmapNode* pcNode = new BitmapNode( pcBitmap );

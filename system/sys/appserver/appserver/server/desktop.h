@@ -31,8 +31,11 @@ void set_desktop_screenmode( int nDesktop, const os::screen_mode& sMode );
 
 int get_active_desktop();
 
+SrvWindow* get_first_window( int nDesktop );
 SrvWindow* get_active_window( bool bIgnoreSystemWindows );
 void set_active_window( SrvWindow* pcWindow, bool bNotifyPrevious = true );
+
+void desktop_windows_changed();
 
 void add_window_to_desktop( SrvWindow* pcWindow );
 void remove_window_from_desktop( SrvWindow* pcWindow );

@@ -36,6 +36,7 @@
 #include <macros.h>
 
 #include <gui/guidefines.h>
+#include <gui/window.h>
 #include <util/locker.h>
 #include <appserver/protocol.h>
 #include <atheos/filesystem.h>
@@ -54,6 +55,7 @@
 #include "config.h"
 #include "sprite.h"
 #include "defaultdecorator.h"
+#include "wndborder.h"
 
 void  ScreenShot();
 
@@ -506,15 +508,108 @@ void AppServer::DispatchMessage( Message* pcReq )
 	    pcReq->SendReply( &cReply );
 	    break;
 	}
-			case DR_SET_DESKTOP:
+	case DR_SET_DESKTOP:
+	{
+		int nDesktop;
+		pcReq->FindInt("desktop",&nDesktop);
+		if (nDesktop < 32 && nDesktop >= 0)
+			SwitchDesktop(nDesktop);
+		break;
+	}
+	case DR_GET_WINDOW_LIST:
+	{
+		int32 nCount = 0;
+		Message cReply;
+		int nDesktop;
+		
+		if( pcReq->FindInt( "desktop" , &nDesktop ) != 0 ) {
+			cReply.AddInt32( "count", 0 );
+			pcReq->SendReply( &cReply );
+		}
+		
+		/* Interate through the windows of the desktop and add all their attributes to the message */
+		SrvWindow* pcWindow;
+		g_cLayerGate.Close();
+	    for( pcWindow = get_first_window( nDesktop ); pcWindow != NULL ; pcWindow = pcWindow->m_asDTState[nDesktop].m_pcNextWindow )
+		{
+			if( ( pcWindow->GetTopView()->IsVisible() || ( pcWindow->GetTopView()->m_nHideCount == 1 && 
+			pcWindow->IsMinimized() ) ) && !pcWindow->GetTopView()->IsBackdrop()
+				&& !( pcWindow->GetFlags() & WND_NO_BORDER ) )
+			{
+				
+				cReply.AddString( "title", pcWindow->GetTitle() );
+				cReply.AddBool( "minimized", pcWindow->IsMinimized() );
+				cReply.AddBool( "icon_present", pcWindow->GetIcon() != NULL );
+				if( pcWindow->GetIcon() != NULL )
 				{
-					int nDesktop;
-					pcReq->FindInt("desktop",&nDesktop);
-					if (nDesktop < 32 && nDesktop >= 0)
-						SwitchDesktop(nDesktop);
+					/* Add bitmap values */
+					cReply.AddInt32( "icon_width", pcWindow->GetIcon()->m_nWidth );
+					cReply.AddInt32( "icon_height", pcWindow->GetIcon()->m_nHeight );
+					cReply.AddInt32( "icon_colorspace", pcWindow->GetIcon()->m_eColorSpc );
+					cReply.AddInt32( "icon_area", pcWindow->GetIcon()->m_hArea );
+				} else {
+					/* Add dummy values */
+					cReply.AddInt32( "icon_width", -1 );
+					cReply.AddInt32( "icon_height", -1 );
+					cReply.AddInt32( "icon_colorspace", -1 );
+					cReply.AddInt32( "icon_area", -1 );
 				}
-				break;
+				nCount++;
+			}
+		}
+		g_cLayerGate.Open();
+    	
+		cReply.AddInt32( "count", nCount );
+		pcReq->SendReply( &cReply );
+		break;
+	}	
+	case DR_ACTIVATE_WINDOW:
+	{
 
+		int32 nWindow = 0;
+		int32 nCount = 0;
+		
+		int nDesktop;
+		
+		if( pcReq->FindInt( "desktop" , &nDesktop ) != 0 )
+			break;
+		
+		if( pcReq->FindInt32( "window", &nWindow ) != 0 )
+			break;
+		
+		/* Interate through the windows of the desktop */
+		SrvWindow* pcWindow;
+		g_cLayerGate.Close();
+	  
+	    for( pcWindow = get_first_window( nDesktop ); pcWindow != NULL ; pcWindow = pcWindow->m_asDTState[nDesktop].m_pcNextWindow )
+		{
+			if( ( pcWindow->GetTopView()->IsVisible() || ( pcWindow->GetTopView()->m_nHideCount == 1 && 
+			pcWindow->IsMinimized() ) ) && !pcWindow->GetTopView()->IsBackdrop()
+				&& !( pcWindow->GetFlags() & WND_NO_BORDER ) )
+			{
+				if( nWindow == nCount )
+				{
+					/* Got it! */
+	    			pcWindow->MakeFocus( true );
+		    		pcWindow->GetTopView()->MoveToFront();
+	    			pcWindow->GetTopView()->GetParent()->UpdateRegions( false );
+		   			
+	   				SrvWindow::HandleMouseTransaction();
+				}
+				nCount++;
+			}
+		}
+		g_cLayerGate.Open();
+		break;
+	}
+	case DR_CLOSE_WINDOWS:
+	{
+		g_cLayerGate.Close();
+		thread_id hCloseThread = spawn_thread( "close_thread", AppServer::CloseWindows, 0, 0, NULL );
+		resume_thread( hCloseThread );
+		g_cLayerGate.Open();
+		break;
+	}
     }
 }
 
@@ -578,6 +673,9 @@ void AppServer::Run( void )
 		case DR_SET_APPSERVER_CONFIG:
 		case DR_GET_APPSERVER_CONFIG:
 		case DR_SET_DESKTOP:
+		case DR_GET_WINDOW_LIST:
+		case DR_ACTIVATE_WINDOW:
+		case DR_CLOSE_WINDOWS:
 		{
 		    try {
 			Message cReq( pBuffer );
@@ -638,6 +736,47 @@ void AppServer::Run( void )
 	    }
 	}
     }
+}
+
+/** Close all opened windows.
+ * \par		Description:
+ *		Called after receiving a DR_CLOSE_WINDOWS message. The method
+ *		will close all windows. It will run in its own thread.
+ * \author Arno Klenke
+ *****************************************************************************/
+int32 AppServer::CloseWindows( void* pcData )
+{
+	SrvWindow* pcWindow;
+	for( int i = 0; i < 32; i++ )
+	{
+		restart:
+		snooze( 100000 );
+		g_cLayerGate.Close();
+		pcWindow = get_first_window( i );
+		while( pcWindow != NULL )
+		{
+			if( pcWindow->GetTopView()->IsVisible() && !pcWindow->GetTopView()->IsBackdrop() 
+				&& !( pcWindow->GetFlags() & WND_NO_CLOSE_BUT ) && !( pcWindow->GetFlags() & WND_SYSTEM )
+				&& !pcWindow->IsClosing() )
+			{
+				pcWindow->SetClosing( true );
+				Message cMsg( M_QUIT );
+	    		pcWindow->PostUsrMessage( &cMsg );
+			}
+			if( pcWindow->IsClosing() )
+			{
+				g_cLayerGate.Open();
+				goto restart;
+			}
+			pcWindow = pcWindow->m_asDTState[i].m_pcNextWindow;
+		}	
+		g_cLayerGate.Open();
+	}
+
+	
+	g_pcTopView->UpdateRegions();
+	SrvWindow::HandleMouseTransaction();
+	return( 0 );
 }
 
 void AppServer::SwitchDesktop(int nDesktop)

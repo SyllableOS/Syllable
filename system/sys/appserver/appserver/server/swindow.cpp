@@ -90,6 +90,10 @@ SrvWindow::SrvWindow( const char* pzTitle, void* pTopView, uint32 nFlags, uint32
     m_pcDecorator->SetTitle( pzTitle );
   
     m_bBorderHit = false;
+    
+    m_pcIcon = NULL;
+    m_bClosing = false;
+    m_bMinimized = false;
 
     if ( nDesktopMask == 0 ) {
 	m_nDesktopMask = 1 << get_active_desktop();
@@ -150,6 +154,10 @@ SrvWindow::SrvWindow( SrvApplication* pcApp, SrvBitmap* pcBitmap ) : m_cMutex( "
     m_bOffscreen  = true;
     m_nDesktopMask= ~0;
   
+	m_pcIcon = NULL;
+    m_bClosing = false;
+    m_bMinimized = false;
+  
     m_bBorderHit = false;
     
     m_pcTopView = new Layer( NULL, NULL, "bitmap_layer",
@@ -199,11 +207,12 @@ bool SrvWindow::HasFocus() const
     return( this == get_active_window(true) );
 }
 
-void SrvWindow::DesktopActivated( int nNewDesktop, const IPoint cNewRes, color_space eColorSpace )
+void SrvWindow::DesktopActivated( int nNewDesktop, bool bActivated, const IPoint cNewRes, color_space eColorSpace )
 {
     if ( m_pcAppTarget != NULL ) {
 	Message cMsg( M_DESKTOP_ACTIVATED );
 	cMsg.AddInt32( "_new_desktop", nNewDesktop );
+	cMsg.AddBool( "_activated", bActivated );
 	cMsg.AddIPoint( "_new_resolution", cNewRes );
 	cMsg.AddInt32( "_new_color_space", eColorSpace );
 	if ( m_pcAppTarget->SendMessage( &cMsg ) < 0 ) {
@@ -220,6 +229,19 @@ void SrvWindow::ScreenModeChanged( const IPoint cNewRes, color_space eColorSpace
 	cMsg.AddInt32( "_new_color_space", eColorSpace );
 	if ( m_pcAppTarget->SendMessage( &cMsg ) < 0 ) {
 	    dbprintf( "Error: SrvWindow::ScreenModeChanged() failed to send message to target %s\n", m_cTitle.c_str() );
+	}
+    }
+}
+
+/** Called whenever the windows on the screen change.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+void SrvWindow::WindowsChanged()
+{
+    if ( m_pcAppTarget != NULL ) {
+	Message cMsg( M_WINDOWS_CHANGED );
+	if ( m_pcAppTarget->SendMessage( &cMsg ) < 0 ) {
+	    dbprintf( "Error: SrvWindow::WindowsChanged() failed to send message to target %s\n", m_cTitle.c_str() );
 	}
     }
 }
@@ -381,6 +403,8 @@ void SrvWindow::Show( bool bShow )
     if ( m_pcWndBorder != NULL ) {
 	m_pcWndBorder->Show( bShow );
     }
+    
+ 	desktop_windows_changed();   
 }
 
 //----------------------------------------------------------------------------
@@ -392,6 +416,15 @@ void SrvWindow::Show( bool bShow )
 
 void SrvWindow::MakeFocus( bool bFocus )
 {
+	if( IsMinimized() )
+	{
+		/* Show window */
+		Lock();
+		SetMinimized( false );
+		Show( true );
+		Unlock();
+	}
+	
     if ( bFocus ) {
 	set_active_window( this );
     } else {
@@ -579,6 +612,7 @@ void SrvWindow::R_Render( WR_Render_s* psPkt )
 			m_pcWndBorder->Show( psMsg->bVisible );
 			if ( psMsg->bVisible ) {
 				m_pcWndBorder->MoveToFront();
+				desktop_windows_changed();
 			} else {
 				remove_from_focusstack( this );
 			}
@@ -1127,7 +1161,8 @@ bool SrvWindow::DispatchMessage( Message* pcReq )
 		m_pcDecorator->SetTitle( m_cTitle.c_str() );
 	    }
 	    rename_thread( -1, String().Format( "W:%.62s", pzTitle ).c_str() );
-	    g_cLayerGate.Open();
+		desktop_windows_changed();
+		g_cLayerGate.Open();
 	    break;
 	}
 	case WR_SET_FLAGS:
@@ -1288,6 +1323,32 @@ bool SrvWindow::DispatchMessage( Message* pcReq )
 	    }
 	    break;
 	}
+	case WR_SET_ICON:
+	{
+		int hHandle;
+		
+		if ( pcReq->FindInt( "handle", &hHandle ) == 0 ) {
+			if( hHandle == -1 ) {
+				g_cLayerGate.Close();
+				/* Remove icon */
+				SetIcon( NULL );
+				g_cLayerGate.Open();
+			} else {
+				/* Get bitmap object */
+				BitmapNode*	pcNode = g_pcBitmaps->GetObj( hHandle );
+				if( pcNode != NULL )
+				{
+					g_cLayerGate.Close();
+					/* Set icon only if it shares the framebuffer with the application */
+					if( pcNode->m_pcBitmap->m_nFlags & Bitmap::SHARE_FRAMEBUFFER )
+						SetIcon( pcNode->m_pcBitmap );
+					desktop_windows_changed();
+					g_cLayerGate.Open();
+				}
+			}
+		}
+		break;
+    }
     }
     return( true );
 }
@@ -1316,6 +1377,7 @@ bool SrvWindow::DispatchMessage( const void* psMsg, int nCode )
 	case WR_BEGIN_DRAG:
 	case WR_GET_MOUSE:
 	case WR_SET_MOUSE_POS:
+	case WR_SET_ICON:
 	{
 	    try {
 		Message cReq( psMsg );

@@ -115,6 +115,8 @@ public:
     void		MarkModified( const os::IRect& cRect ); // Invalidate the region of views below us, inside the rectangle
     void		BeginUpdate( void );
     void		EndUpdate( void );
+    
+  	void		ScreenModeChanged();
 
       // Render functions:
     virtual void	Paint( const os::IRect& cUpdateRect, bool bUpdate = false );
@@ -228,6 +230,7 @@ public:
     os::Color32_s	m_sBgColor;
     os::Color32_s	m_sEraseColor;
     os::Color32_s	m_asFontPallette[NUM_FONT_GRAYS];
+	uint32 			m_anFontPalletteConverted[NUM_FONT_GRAYS];
     int		m_nDrawingMode;
     int		m_nRegionUpdateCount;
     int		m_nMouseOffCnt;

@@ -63,15 +63,17 @@ public:
     bool	HasFocus() const;
     void	SetBitmap( SrvBitmap* pcBitmap ) { m_pcTopView->SetBitmap( pcBitmap ); }
 
-    void	DesktopActivated( int nNewDesktop, const os::IPoint cNewRes, os::color_space eColorSpace );
+    void	DesktopActivated( int nNewDesktop, bool bActivated, const os::IPoint cNewRes, os::color_space eColorSpace );
     void	WindowActivated( bool bActive );
     void	ScreenModeChanged( const os::IPoint cNewRes, os::color_space eColorSpace );
+    void	WindowsChanged();
   
     void	SetFrame( const os::Rect& cFrame );
     os::Rect	GetFrame( bool bClient = true ) const;
   
     Layer*	GetTopView() const;
     Layer*	GetClientView() const { return( m_pcTopView ); }
+    
     uint32	GetDesktopMask() const;
     void	SetDesktopMask( uint32 nMask );
   
@@ -91,6 +93,15 @@ public:
     static void SendKbdEvent( int nKeyCode, uint32 nQual, const char* pzConvString, const char* zRawString );
     static void HandleInputEvent( os::Message* pcEvent );
     static void HandleMouseTransaction();
+    
+    void	SetIcon( SrvBitmap* pcIcon ) { m_pcIcon = pcIcon; }
+	SrvBitmap* GetIcon() { return( m_pcIcon ); }
+    
+    bool	IsClosing() { return( m_bClosing ); }
+    void	SetClosing( bool bClosing ) { m_bClosing = bClosing; }
+    
+    bool	IsMinimized() { return( m_bMinimized ); }
+    void	SetMinimized( bool bMinimized ) { m_bMinimized = bMinimized; }
     
     struct DeskTopState_s
     {
@@ -141,6 +152,9 @@ private:
     port_id		m_hEventPort;	// Events to application
     os::Locker		m_cMutex;
     os::Messenger*	m_pcAppTarget;
+    bool			m_bClosing;
+    SrvBitmap*		m_pcIcon;
+    bool			m_bMinimized;
 };
 
 #endif	//	INTERFACE_SLAYER_HPP

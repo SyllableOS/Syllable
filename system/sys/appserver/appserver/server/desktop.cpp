@@ -23,12 +23,17 @@
 
 #include <atheos/areas.h>
 #include <atheos/image.h>
+#include <atheos/device.h>
 
 #include <gui/desktop.h>
 #include <gui/window.h>
 
 #include <util/message.h>
 #include <util/messenger.h>
+
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
 
 #include "swindow.h"
 #include "layer.h"
@@ -105,6 +110,11 @@ int  get_desktop_config( int* pnActiveDesktop, screen_mode* psMode, std::string*
 	*pcBackdropPath = g_asDesktops[*pnActiveDesktop].m_cBackdropPath;
     }
     return( 0 );
+}
+
+SrvWindow* get_first_window( int nDesktop )
+{
+	return( g_asDesktops[nDesktop].m_pcFirstWindow );
 }
 
 SrvWindow* get_active_window( bool bIgnoreSystemWindows )
@@ -268,15 +278,47 @@ static bool setup_screenmode( int nDesktop, bool bForce )
 void set_desktop_screenmode( int nDesktop, const screen_mode& sMode )
 {
     assert( nDesktop >= 0 && nDesktop < 32 );
+    SrvWindow* pcWindow;
 
     g_asDesktops[nDesktop].m_sScreenMode = sMode;
 
     if ( nDesktop == g_nActiveDesktop ) {
 	setup_screenmode( nDesktop, true );
+	g_pcTopView->ScreenModeChanged();
 	g_pcTopView->Invalidate( true );
 	g_pcTopView->SetDirtyRegFlags();
 	g_pcTopView->UpdateRegions();
+	
+	/* Tell the windows about the screenmode change */
+    for ( pcWindow = g_asDesktops[g_nActiveDesktop].m_pcFirstWindow ;
+	  pcWindow != NULL ;
+	  pcWindow = pcWindow->m_asDTState[g_nActiveDesktop].m_pcNextWindow )
+    {
+	
+	    pcWindow->ScreenModeChanged( IPoint( g_pcScreenBitmap->m_nWidth, g_pcScreenBitmap->m_nHeight ),
+					 g_pcScreenBitmap->m_eColorSpc );
     }
+    }
+}
+
+
+/** Called whenenever the windows on the desktop change. Calling this function
+ * will go through all windows on the desktop and call their WindowsChanged() method.
+ * \par Note: g_cLayerGate has to be opened.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+void desktop_windows_changed()
+{
+    /* Inform windows about the change */
+    Layer* pcLayer;
+	for ( pcLayer = g_pcTopView->GetTopChild(); pcLayer != NULL; pcLayer = pcLayer->GetLowerSibling(  ) )
+	{
+		SrvWindow * pcSWindow = pcLayer->GetWindow();
+		if ( pcSWindow != NULL && ( pcSWindow->GetFlags() & WND_SEND_WINDOWS_CHANGED ) )
+		{
+			pcSWindow->WindowsChanged();
+		}
+	}
 }
 
 //----------------------------------------------------------------------------
@@ -305,6 +347,9 @@ void add_window_to_desktop( SrvWindow* pcWindow )
 	    }
 	}
     }
+    
+    desktop_windows_changed();
+  
 }
 
 //----------------------------------------------------------------------------
@@ -361,6 +406,8 @@ void remove_window_from_desktop( SrvWindow* pcWindow )
     if ( pcWindow == get_active_window(true) ) {
 	set_active_window( NULL, false );
     }
+    
+    desktop_windows_changed();
   
 }
 
@@ -391,6 +438,8 @@ void remove_from_focusstack( SrvWindow* pcWindow )
     if ( pcWindow == get_active_window(true) ) {
 	set_active_window( NULL, false );
     }
+    
+    desktop_windows_changed();
 }
 
 //----------------------------------------------------------------------------
@@ -419,6 +468,9 @@ void set_desktop( int nNum )
 	{
 	    SrvWindow* pcWindow = pcLayer->GetWindow();
 	    __assertw( pcWindow != NULL );
+	    
+	    pcWindow->DesktopActivated( g_nPrevDesktop, false, IPoint( g_pcScreenBitmap->m_nWidth, g_pcScreenBitmap->m_nHeight ),
+				    g_pcScreenBitmap->m_eColorSpc );
 
 	    if ( pcPrev == NULL ) {
 		g_asDesktops[g_nActiveDesktop].m_pcFirstWindow = pcWindow;
@@ -459,7 +511,7 @@ void set_desktop( int nNum )
 		}
 	    }
 	}
-	pcWindow->DesktopActivated( nNum, IPoint( g_pcScreenBitmap->m_nWidth, g_pcScreenBitmap->m_nHeight ),
+	pcWindow->DesktopActivated( nNum, true, IPoint( g_pcScreenBitmap->m_nWidth, g_pcScreenBitmap->m_nHeight ),
 				    g_pcScreenBitmap->m_eColorSpc );
 	if ( bScreenModeChanged ) {
 	    pcWindow->ScreenModeChanged( IPoint( g_pcScreenBitmap->m_nWidth, g_pcScreenBitmap->m_nHeight ),
@@ -498,55 +550,76 @@ bool init_desktops()
     g_pcScreenBitmap->m_bVideoMem	= true;
 
 
-    dbprintf( "Initialize display driver\n" );
-
-    char zVideoDrvPath[1024] = "/system/drivers/appserver/video/";
-    int  nPathLen = strlen( zVideoDrvPath );
-
-    g_pcDispDrv = NULL;
-    DIR*	pDir = opendir( zVideoDrvPath );
-
-    if ( pDir != NULL )
+    dbprintf( "Initialize graphics driver...\n" );
+    
+    /* Iterate through the graphics driver nodes in /dev/graphics */
+    DIR* pKernelDriverDir = opendir( "/dev/graphics" );
+    if( pKernelDriverDir != NULL )
     {
-	struct dirent* psEntry;
+    	struct dirent* psEntry;
 
-	while( (psEntry = readdir( pDir )) != NULL ) {
-	    if ( strcmp( psEntry->d_name, "." ) == 0 || strcmp( psEntry->d_name, ".." ) == 0 ) {
-		continue;
-	    }
-	    dbprintf( "Probe graphices driver %s\n", psEntry->d_name );
-	    zVideoDrvPath[nPathLen] = '\0';
-	    strcat( zVideoDrvPath, psEntry->d_name );
-	    int nLib = load_library( zVideoDrvPath, 0 );
-	    if ( nLib < 0 ) {
-		dbprintf( "failed to load video driver %s\n", zVideoDrvPath );
-		continue;
-	    }
-	    gfxdrv_init_func* pInitFunc;
-      
-	    int nError = get_symbol_address( nLib, "init_gfx_driver", -1, (void**) &pInitFunc );
-	    if ( nError < 0 ) {
-		dbprintf( "Video driver %s does not export entry point init_gfx_driver()\n", psEntry->d_name );
-		unload_library( nLib );
-		continue;
-	    }
-      
-	    try {
-	       g_pcDispDrv = pInitFunc();
+		while( (psEntry = readdir( pKernelDriverDir )) != NULL ) {
+	    	if ( strcmp( psEntry->d_name, "." ) == 0 || strcmp( psEntry->d_name, ".." ) == 0 ) {
+				continue;
+			}
+			
+			/* Build complete path */
+			char zDevPath[PATH_MAX] = "/dev/graphics/";
+			strcat( zDevPath, psEntry->d_name );
+	    
+	    	/* Try to open the node */
+	    	int nFd = open( zDevPath, O_RDWR );
+	    	if( nFd < 0 ) {
+	    		dbprintf( "Error: Failed to open graphics driver node %s\n", zDevPath );
+	    		continue;
+	    	}
+	    	
+	    	/* Get appserver driver */
+	    	char zAppserverDriverPath[PATH_MAX] = "/system/drivers/appserver/video/";
+	    	char zDriverPath[PATH_MAX];
+	    	memset( zDriverPath, 0, PATH_MAX );
+	    	
+	    	if( ioctl( nFd, IOCTL_GET_APPSERVER_DRIVER, &zDriverPath[0] ) != 0 )
+	    	{
+	    		dbprintf( "Error: Failed to get the appserver driver for %s\n", zDevPath );
+	    	}
+	    	strcat( zAppserverDriverPath, zDriverPath );
+	    	
+	    	
+	    	dbprintf( "Using appserver driver %s\n", zDriverPath );
+	    	
+	    	/* Open the appserver driver */
+	    	int nLib = load_library( zAppserverDriverPath, 0 );
+	    	if ( nLib < 0 ) {
+				dbprintf( "Error: Failed to load graphics driver %s\n", zAppserverDriverPath );
+				close( nFd );
+				continue;
+	    	}
+			gfxdrv_init_func* pInitFunc;
+			
+			/* Get graphics driver init symbol */
+			int nError = get_symbol_address( nLib, "init_gfx_driver", -1, (void**) &pInitFunc );
+			if ( nError < 0 ) {
+				dbprintf( "Error: Graphics driver %s does not export entry point init_gfx_driver()\n", zDriverPath );
+				unload_library( nLib );
+				close( nFd );
+				continue;
+	    	}
+			/* Try to initialize the driver */
+	    	try {
+	    		g_pcDispDrv = pInitFunc( nFd );
 	   
-	    if ( g_pcDispDrv != NULL ) {
-		g_nFrameBufferArea = g_pcDispDrv->Open();
-		if ( g_nFrameBufferArea >= 0 ) {
-		    dbprintf( "Using video driver %s\n", psEntry->d_name );
-		    break;
-		}
+	   			if ( g_pcDispDrv != NULL ) {
+					g_nFrameBufferArea = g_pcDispDrv->Open();
+					if ( g_nFrameBufferArea >= 0 ) {
+						dbprintf( "Using graphics driver %s\n", zDriverPath );
+						break;
+					}
+				}
+			} catch(...) {
+	    	}
+			unload_library( nLib );
 	    }
-	    } catch(...) {
-	    }
-	    unload_library( nLib );
-	}
-    } else {
-	dbprintf( "Error: failed to open gfx driver directory\n" );
     }
 
     if ( g_pcDispDrv == NULL ) {

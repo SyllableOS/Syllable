@@ -89,6 +89,7 @@ void Layer::Init()
     m_bBackdrop = false;
   
     memset( m_asFontPallette, 255, sizeof( m_asFontPallette ) );
+    memset( m_anFontPalletteConverted, NUM_FONT_GRAYS, sizeof( uint32 ) );
 }
 
 //----------------------------------------------------------------------------
@@ -847,6 +848,22 @@ void Layer::Invalidate( bool bReqursive )
 	    }
 	}
     }
+}
+
+/** Called when the screenmode has changed.
+ * \par Description:
+ * Invalidates the font palette.
+ * \par
+ * \sa
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+void Layer::ScreenModeChanged()
+{
+	m_bFontPalletteValid = false;
+	
+	for( Layer* pcChild = m_pcBottomChild ; NULL != pcChild ; pcChild = pcChild->m_pcHigherSibling ) {
+		pcChild->ScreenModeChanged();
+	}
 }
 
 

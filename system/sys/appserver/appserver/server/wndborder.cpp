@@ -25,6 +25,7 @@
 #include "windowdecorator.h"
 #include "sapplication.h"
 #include "inputnode.h"
+#include "bitmap.h"
 
 #include <util/locker.h>
 #include <util/message.h>
@@ -579,11 +580,62 @@ void WndBorder::MouseUp( Messenger* pcAppTarget, const Point& cPos, int nButton 
 	    }
 	}
     } else if ( m_nToggleDown == 1 ) {
-	ToggleDepth();
+    if( m_pcWindow != NULL && !m_pcWindow->IsMinimized() )
+    {
+    	m_pcWindow->SetMinimized( true );
+    	Show( false );
+    	remove_from_focusstack( m_pcWindow );
+    }
+	//ToggleDepth();
 	if ( m_pcParent != NULL ) {
 	    m_pcParent->UpdateRegions( false );
 	}
 	SrvWindow::HandleMouseTransaction();
+    } else if( m_nZoomDown == 1 ) {
+    	/* Maximize window */
+    	uint32 nFlags = m_pcWindow->GetFlags();
+    	if ( (nFlags & WND_NOT_RESIZABLE) != WND_NOT_RESIZABLE ) {
+    		
+    		IRect cBorders(0,0,0,0);
+   
+			if ( m_pcDecorator != NULL ) {
+				cBorders = static_cast<IRect>(m_pcDecorator->GetBorderSize());
+		    }
+	    	os::Rect cMaxFrame = os::Rect( 0, 0, m_pcBitmap->m_nWidth - 1, m_pcBitmap->m_nHeight - 1 );
+    	
+			if ( nFlags & WND_NOT_H_RESIZABLE ) {
+			    cMaxFrame.right = GetFrame().Width();
+			}
+			if ( nFlags & WND_NOT_V_RESIZABLE ) {
+	    		cMaxFrame.bottom = GetFrame().Height();
+			} 
+		
+			if( cMaxFrame.right > m_cMaxSize.x )
+				cMaxFrame.right = m_cMaxSize.x - 1;
+			if( cMaxFrame.bottom > m_cMaxSize.y )
+				cMaxFrame.bottom = m_cMaxSize.y - 1;
+		
+			IRect cAlignedFrame = AlignRect( cMaxFrame, cBorders );
+
+			if ( m_bWndMovePending == false ) {
+		    	Message cMsg( M_WINDOW_FRAME_CHANGED );
+
+			    cMsg.AddRect( "_new_frame", RectToClient( cAlignedFrame, m_pcDecorator ) );
+    
+			    if ( pcAppTarget->SendMessage( &cMsg ) < 0 ) {
+					dbprintf( "WndBorder::MouseMoved() failed to send M_WINDOW_FRAME_CHANGED message to window\n" );
+		    	}
+			    m_bFrameUpdated = false;
+			} else {
+			    m_bFrameUpdated = true;
+			}
+			SetFrame( cAlignedFrame );
+			SrvSprite::Hide();
+			m_pcParent->UpdateRegions( false );
+			SrvSprite::Unhide();
+
+			m_bWndMovePending = true;
+		}
     }
 
     m_eHitItem = WindowDecorator::HIT_NONE;

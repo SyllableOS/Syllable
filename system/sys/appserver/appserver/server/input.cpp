@@ -199,115 +199,6 @@ int32 InputNode::EventLoopEntry( void* pData )
     return( 0 );
 }
 
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-DosMouseDriver::DosMouseDriver()
-{
-}
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-DosMouseDriver::~DosMouseDriver()
-{
-}
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-void DosMouseDriver::DispatchEvent( MouseEvent_s* psEvent )
-{
-    Point cDeltaMove( psEvent->me_nDeltaX, psEvent->me_nDeltaY );
-
-    if ( psEvent->me_nButton != 0 ) {
-	if (psEvent->me_nButton & 0x80) {
-	    Message* pcEvent = new Message( M_MOUSE_UP );
-	    pcEvent->AddInt32( "_button", psEvent->me_nButton & 0x7f );
-	    pcEvent->AddInt32( "_buttons", psEvent->me_nButton & 0x7f ); // To be removed
-	    EnqueueEvent( pcEvent );
-	} else {
-	    Message* pcEvent = new Message( M_MOUSE_DOWN );
-	    pcEvent->AddInt32( "_button", psEvent->me_nButton );
-	    pcEvent->AddInt32( "_buttons", psEvent->me_nButton ); // To be removed
-	    EnqueueEvent( pcEvent );
-	}
-    }
-    if ( psEvent->me_nDeltaX != 0 || psEvent->me_nDeltaY != 0 ) {
-	Message* pcEvent = new Message( M_MOUSE_MOVED );
-	pcEvent->AddPoint( "delta_move", cDeltaMove );
-	EnqueueEvent( pcEvent );
-    }
-}
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-void DosMouseDriver::EventLoop()
-{
-    int nMouseDev = open( "/dev/mouse", O_RDONLY );
-    if ( nMouseDev < 0 ) {
-	dbprintf( "ERROR : Failed to open mouse device\n" );
-    }
-    for (;;)
-    {
-	MouseEvent_s ie;
-    
-	if ( read( nMouseDev, &ie, sizeof( ie ) ) == sizeof( ie ) ) {
-	    DispatchEvent( &ie );
-	} else {
-	    snooze( 15000 );
-	}
-    }
-}
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-int32 DosMouseDriver::EventLoopEntry( void* pData )
-{
-    DosMouseDriver* pcThis = (DosMouseDriver*) pData;
-  
-    pcThis->EventLoop();
-    return( 0 );
-}
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-bool DosMouseDriver::Start()
-{
-    thread_id hEventThread;
-    hEventThread = spawn_thread( "mouse_event_thread", EventLoopEntry, DISPLAY_PRIORITY, 0, this );
-    resume_thread( hEventThread );
-    return( true );
-}
-
 //----------------------------------------------------------------------------
 // NAME:
 // DESC:
@@ -385,9 +276,7 @@ void InitInputSystem()
     }
 
     if ( bMouseFound == false ) {
-	dbprintf( "No mouse input node found! Try to find a DOS driver\n" );
-	InputNode* pcNode = new DosMouseDriver();
-	pcNode->Start();
+	dbprintf( "No mouse input node found!\n" );
     }
 
     g_hEventThread = spawn_thread( "input_thread", InputNode::EventLoopEntry, DISPLAY_PRIORITY, 0, NULL );

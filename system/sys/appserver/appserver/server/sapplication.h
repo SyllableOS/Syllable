@@ -55,10 +55,11 @@ public:
     static void NotifyColorCfgChanged();
     static void SetCursor( mouse_ptr_mode eMode, const IPoint& cHotSpot, const void* pImage, int nWidth, int nHeight );
     static void RestoreCursor();
+    
 private:
     void CreateBitmap( port_id hReply, int nWidth, int nHeight, color_space eColorSpc, uint32 nFlags );
     void DeleteBitmap( int hHandle );
-  
+
     static SrvApplication* s_pcFirstApp;
     static Locker	   s_cAppListLock;
   

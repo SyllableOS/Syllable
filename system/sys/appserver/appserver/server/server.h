@@ -68,6 +68,7 @@ public:
     os::WindowDecorator*  CreateWindowDecorator( Layer* pcView, uint32 nFlags );
   
     void		Run( void );
+    static int32 CloseWindows( void* pcData );
     DisplayDriver*	GetDisplayDriver( int nIndex )	{ return( m_pcDispDriver ); }
 
     void 		SendKeyCode( int nKeyCode, int nQualifiers );
