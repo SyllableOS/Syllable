@@ -331,39 +331,35 @@ int get_kernel_arguments( int *argc, const char *const **argv )
 
 static int find_boot_dev( void )
 {
-	int nBaseDir;
+	int hBaseDir;
 	struct kernel_dirent sDevDirEnt;
 	char *pzDevPathBuf, *pzDiskPathBuf;
-	uint8 *pnHeaderBuf;
 	bool bFound = false;
 
 	pzDevPathBuf = kmalloc( 4096, MEMF_KERNEL );
 	pzDiskPathBuf = kmalloc( 4096, MEMF_KERNEL );
-	pnHeaderBuf = kmalloc( 512, MEMF_KERNEL );
 
-	if ( NULL == pzDevPathBuf || NULL == pzDiskPathBuf || NULL == pnHeaderBuf )
+	if ( NULL == pzDevPathBuf || NULL == pzDiskPathBuf )
 	{
 		kerndbg( KERN_PANIC, "Unable to allocate buffer memory.\n" );
 		if ( NULL != pzDevPathBuf )
 			kfree( pzDevPathBuf );
 		if ( NULL != pzDiskPathBuf )
 			kfree( pzDiskPathBuf );
-		if ( NULL != pnHeaderBuf )
-			kfree( pnHeaderBuf );
 
-		return ( ENOMEM );
+		return ( -ENOMEM );
 	}
 
-	nBaseDir = open( "/dev/disk", O_RDONLY );
-	if ( nBaseDir < 0 )
+	hBaseDir = open( "/dev/disk", O_RDONLY );
+	if ( hBaseDir < 0 )
 	{
 		kerndbg( KERN_PANIC, "Unable to open directory /dev/disk\n" );
-		return ( nBaseDir );
+		return ( hBaseDir );
 	}
 
-	while ( getdents( nBaseDir, &sDevDirEnt, sizeof( sDevDirEnt ) ) == 1 && bFound == false )
+	while ( getdents( hBaseDir, &sDevDirEnt, sizeof( sDevDirEnt ) ) == 1 && bFound == false )
 	{
-		int nDevDir, nError = 0;
+		int hDevDir, nError = 0;
 
 		if ( strcmp( sDevDirEnt.d_name, "." ) == 0 || strcmp( sDevDirEnt.d_name, ".." ) == 0 )
 			continue;
@@ -372,15 +368,13 @@ static int find_boot_dev( void )
 		strcat( pzDevPathBuf, "/" );
 		strcat( pzDevPathBuf, sDevDirEnt.d_name );
 
-		nDevDir = open( pzDevPathBuf, O_RDONLY );
-		if ( nDevDir < 0 )
+		hDevDir = open( pzDevPathBuf, O_RDONLY );
+		if ( hDevDir < 0 )
 			continue;
 		else
 		{
 			struct kernel_dirent sDiskDirEnt;
-			int hDisk, nAttempt;
-
-			while ( getdents( nDevDir, &sDiskDirEnt, sizeof( sDiskDirEnt ) ) == 1 && bFound == false )
+			while ( getdents( hDevDir, &sDiskDirEnt, sizeof( sDiskDirEnt ) ) == 1 && bFound == false )
 			{
 				if ( strcmp( sDiskDirEnt.d_name, "." ) == 0 || strcmp( sDiskDirEnt.d_name, ".." ) == 0 )
 					continue;
@@ -393,66 +387,30 @@ static int find_boot_dev( void )
 				strcat( pzDiskPathBuf, sDiskDirEnt.d_name );
 				strcat( pzDiskPathBuf, "/raw" );
 
-				kerndbg( KERN_INFO, "Checking for boot disk in %s\n", pzDiskPathBuf );
+				kerndbg( KERN_INFO, "Checking for disk in %s\n", pzDiskPathBuf );
 
-				/* Attempt to open & read 512 bytes from the disk */
-				/* FIXME: Work around a bug with the ATA driver & some very slow CD-ROM drives
-				   which causes the ATA driver to fail to read the capacity instead of waiting
-				   for them to spin up */
-				for ( nAttempt = 0; nAttempt < 5; nAttempt++ )
-				{
-					nError = open( pzDiskPathBuf, O_RDONLY );
-					if ( nError >= 0 )
-						break;
-
-					udelay( 2000000 );	/* 5 seconds.  My ancient 32x CD-ROM takes about this long(!) to spin up.. */
-				}
-
-				if ( nError < 0 )
-				{
-					kerndbg( KERN_DEBUG_LOW, "Could not open %s\n", pzDiskPathBuf );
-					continue;	/* No disk in that drive */
-				}
-
-				hDisk = nError;
-
-				kerndbg( KERN_DEBUG_LOW, "Opened %s\n", pzDiskPathBuf );
-
-				/* Attempt the read */
-				nError = read( hDisk, pnHeaderBuf, 512 );
-
-				/* Close the device so that we can access it later if we need to */
-				close( hDisk );
-
-				if ( nError < 512 )
-				{
-					kerndbg( KERN_DEBUG_LOW, "Read %i bytes from %s but I wanted 512 (Not fair!)\n", nError, pzDiskPathBuf );
-					continue;
-				}
-
-				/* There is a disk in the drive, so lets try to mount it */
+				/* Try to mount the disk */
 				nError = sys_mount( pzDiskPathBuf, "/boot", g_zBootFS, MNTF_SLOW_DEVICE, g_zBootFSArgs );
 
 				if ( nError < 0 )
 				{
-					kerndbg( KERN_WARNING, "Unable to mount %s\n", pzDiskPathBuf );
+					kerndbg( KERN_INFO, "Unable to mount %s\n", pzDiskPathBuf );
 					continue;
 				}
 
-				kerndbg( KERN_INFO, "Found boot disk in %s\n", pzDiskPathBuf );
+				kerndbg( KERN_INFO, "Found disk in %s\n", pzDiskPathBuf );
 				strcpy( g_zBootDev, pzDiskPathBuf );
 				bFound = true;
 			}
 
-			close( nDevDir );
+			close( hDevDir );
 		}
 	}
 
-	close( nBaseDir );
+	close( hBaseDir );
 
 	kfree( pzDevPathBuf );
 	kfree( pzDiskPathBuf );
-	kfree( pnHeaderBuf );
 
 	return ( bFound ? 0 : -1 );
 }
@@ -538,8 +496,6 @@ void init_e820_memory_map( void )
 
 static int kernel_init( void )
 {
-	int nError = -1;
-
 	g_sSysBase.ex_hInitProc = sys_get_thread_id( NULL );
 
 	init_scheduler();
@@ -562,8 +518,7 @@ static int kernel_init( void )
 
 	if ( strcmp( g_zBootDev, "@boot" ) == 0 )
 	{
-		nError = find_boot_dev();
-		if ( nError < 0 )
+		if ( find_boot_dev() < 0 )
 		{
 			printk( "Unable to find boot device\n" );
 		}
