@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.3.23
+# Version 0.3.24
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -60,8 +60,10 @@ def unpackPackage target
 #	case File.basename file
 	unless
 		if exists? file = base + ".tar.bz2" or exists? file = base + ".tbz2"
+			gzip = false
 			action "bzcat #{file} | tar x"
 		elsif exists? file = base + ".tar.gz" or exists? file = base + ".tgz"
+			gzip = true
 			action "tar xzf " + file
 		else
 			logError "Source package #{base}.* not found"
@@ -73,9 +75,9 @@ def unpackPackage target
 		if exists? dir = fullName(target)
 			true
 		else  # Tarball content has a deviating name
-			logSubheader "Moving source"
+			logSubheader "Renaming source"
 
-			unless result = (action "tar tzf " + file)  # Bzip to be implemented
+			unless result = action(gzip ? "tar tzf " + file : "bzcat #{file} | tar t")
 				false
 			else
 				action "mv #{File.dirname result.split[0]} " + dir
@@ -193,7 +195,7 @@ def configurePackage target
 			logHeader "Configuring"
 			action "rm config.cache" if exists? "config.cache"
 			name = shortName package
-			if action (cmdLine = recipe["configure"]) ? toString(cmdLine) :
+			if action((cmdLine = recipe["configure"]) ? toString(cmdLine) :
 				((vars = recipe["configure-vars"]) ? toString(vars) + " " : "") +
 				"./" + cmd +
 #				(name == "man" || name == "grub" ? "" :
@@ -202,7 +204,8 @@ def configurePackage target
 					" --prefix=" + prefix(package)
 				) +
 				((options = recipe["configure-options"]) ? " " + toString(options) : "")
-			then true
+			)
+				true
 			else
 				logFailure target
 				false
@@ -221,9 +224,9 @@ def cleanPackage target
 end
 
 def makePackage target
-	unless action ((vars = recipe(target)["make-vars"]) ? toString(vars) + " " : "") +
+	unless action(((vars = recipe(target)["make-vars"]) ? toString(vars) + " " : "") +
 		"make"
-	then
+	)
 		logFailure target
 		false
 	else
@@ -282,7 +285,7 @@ def installPackage target
 						end
 					end
 
-					if not action (cmdLine = (recipe = recipe target)["install"]) ? toString(cmdLine) :
+					if not action((cmdLine = (recipe = recipe target)["install"]) ? toString(cmdLine) :
 						"make" +
 						(	(arg = recipe["install-prefix"]) ? " " + arg + root :
 							@systemBuild ? " prefix=" + root :
@@ -290,7 +293,7 @@ def installPackage target
 						) +
 						" install"
 #						" install-strip"
-					then
+					)
 						false
 					elsif files = recipe["documentation"] and not
 						begin
@@ -848,7 +851,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.3.23",
+	puts "Syllable Build System 0.3.24",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
