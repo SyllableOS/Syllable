@@ -1,3 +1,8 @@
+* September 5th 2004, Kristian Van Der Vliet *
+
+Updated Danish keymap with Greenland support and a new Faeroese keymap, both from
+Flemming "BurningShadow" H. Sørensen
+
 * August 4 2004, Kristian Van Der Vliet *
 
 Updated the ATAPI part of the ATA driver.  It works much better and now supports
