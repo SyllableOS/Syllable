@@ -29,10 +29,68 @@
 #include <gui/stringview.h>
 #include <gui/dropdownmenu.h>
 #include <gui/slider.h>
+#include <gui/splitter.h>
+#include <gui/treeview.h>
+#include <gui/checkbox.h>
 #include <media/output.h>
 #include <media/manager.h>
 #include <media/server.h>
-#include <vector.h>
+#include <vector>
+
+class SettingsTree : public os::TreeView
+{
+public:
+	SettingsTree();
+	~SettingsTree();
+	os::Point GetPreferredSize( bool bLargets ) const; 
+};
+
+
+class InputPrefs : public os::VLayoutNode
+{
+public:
+	InputPrefs( os::MediaInput* pcInput );
+	~InputPrefs();
+private:
+	os::View* m_pcConfigView;
+	os::MediaInput* m_pcInput;
+};
+
+
+class CodecPrefs : public os::VLayoutNode
+{
+public:
+	CodecPrefs( os::MediaCodec* pcCodec );
+	~CodecPrefs();
+private:
+	os::View* m_pcConfigView;
+	os::MediaCodec* m_pcCodec;
+};
+
+
+class OutputPrefs : public os::VLayoutNode
+{
+public:
+	OutputPrefs( os::MediaOutput* pcOutput, bool bDefaultVideo, bool bDefaultAudio );
+	~OutputPrefs();
+private:
+	os::CheckBox* m_pcDefaultVideo;
+	os::CheckBox* m_pcDefaultAudio;
+	os::View* m_pcConfigView;
+	os::MediaOutput* m_pcOutput;
+};
+
+
+class SoundPrefs : public os::VLayoutNode
+{
+public:
+	SoundPrefs( os::Window* pcParent,os::String zCurrentStartup );
+	~SoundPrefs();
+	os::String GetString() { return( m_pcStartupSound->GetCurrentString() ); }
+private:
+	os::DropdownMenu* m_pcStartupSound;
+	
+};
 
 class MainWindow:public os::Window
 {
@@ -42,15 +100,17 @@ class MainWindow:public os::Window
 	virtual void HandleMessage( os::Message * pcMessage );
 
 	bool OkToQuit( void );
+	
 
       private:
 	void ShowData();
 	void Apply();
 	void Undo();
 	void Default();
-	void Plugins();
-	void OutputChange();
-	void DspChange();
+	void Treeview();
+	void VideoOutputChange();
+	void AudioOutputChange();
+	void StartupSoundChange();
 
 	// Default outputs
 	os::String cCurrentVideo;
@@ -62,21 +122,27 @@ class MainWindow:public os::Window
 	os::String cCurrentStartupSound;
 	os::String cUndoStartupSound;
 
-	int32 hCurrentDsp;
-	int32 hUndoDsp;
-
-	int32 nDspCount;
-
 	// Refresh flag/custom or not
 
 	os::LayoutView * pcLRoot;
-	os::VLayoutNode * pcVLRoot, *pcVLSettings, *pcVLSounds;
-	os::HLayoutNode * pcHLButtons, *pcHLVideoOutput, *pcHLAudioOutput, *pcHLDefaultDSP, *pcHLStartupSound;
-	os::FrameView * pcFVSettings, *pcFVSounds;
-	os::Button * pcBDefault, *pcBApply, *pcBUndo, *pcBPlugins, *pcBControls;
-	os::DropdownMenu * pcDDMVideoOutput, *pcDDMAudioOutput, *pcDDMDefaultDsp, *pcDDMStartupSound;
+	os::VLayoutNode * pcVLRoot;
+	os::HLayoutNode* pcHLSettings;
+	os::Splitter *pcSplitter;
+	SettingsTree* m_pcTree;
+	os::VLayoutNode* m_pcPrefs;
+	os::HLayoutNode * pcHLButtons;
+	os::Button * pcBDefault, *pcBApply, *pcBUndo, *pcBControls;
+	
+	// State
+	
+	int m_nTreeSelect;
+	
+	int m_nOutputStart;
+	int m_nInputStart;
+	int m_nCodecStart;
 
 };
 
 #endif /* __MAINWINDOW_H_ */
+
 

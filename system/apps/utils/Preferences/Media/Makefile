@@ -9,7 +9,7 @@ VPATH = ./
 CC	= gcc
 LL	= ld
 
-OBJS = main.o pluginwindow.o mainwindow.o
+OBJS = main.o mainwindow.o
 
 OBJDIR	:= objs
 
@@ -22,6 +22,7 @@ $(OBJDIR):
 
 $(OBJDIR)/Prefs-Media: $(OBJS)
 	gcc  $(OBJS) -lstdc++ -lsyllable -lmedia -o Prefs-Media
+	rescopy Prefs-Media -r *.png
 	
 deps:
 
@@ -30,6 +31,7 @@ install:  $(OBJDIR)/Prefs-Media
 	install -s Prefs-Media $(APPBIN)/Prefs-Media
 
 dist:  $(OBJDIR)/Prefs-Media
+	mkdir -p $(DIST_DIR)/atheos/Applications/Preferences
 	install -s Prefs-Media $(DIST_DIR)/atheos/Applications/Preferences/Prefs-Media
 
 deps: $(OBJDIR) $(DEPS)

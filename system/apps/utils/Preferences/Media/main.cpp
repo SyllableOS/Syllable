@@ -20,7 +20,7 @@
  */
 
 #include <unistd.h>
-#include <iostream.h>
+#include <iostream>
 #include <gui/desktop.h>
 #include "main.h"
 
@@ -38,21 +38,21 @@ PrefsMediaApp::PrefsMediaApp():os::Application( "application/x-vnd-MediaPreferen
 	os::Desktop * pcDesktop = new os::Desktop();
 	int iWidth = pcDesktop->GetScreenMode().m_nWidth;
 	int iHeight = pcDesktop->GetScreenMode().m_nHeight;
-	int iLeft = ( iWidth - 250 ) / 2;
-	int iTop = ( iHeight - 17 ) / 2;
+	int iLeft = ( iWidth - 500 ) / 2;
+	int iTop = ( iHeight - 350 ) / 2;
 
 	// Create media manager 
 	m_pcManager = new os::MediaManager();
 
 	if ( !m_pcManager->IsValid() )
 	{
-		cout << "Media server not running" << endl;
+		std::cout << "Media server not running" << std::endl;
 		PostMessage( os::M_QUIT );
 		return;
 	}
 
 	// Show main window
-	pcWindow = new MainWindow( os::Rect( iLeft, iTop, iLeft + 350, iTop + 150 ) );
+	pcWindow = new MainWindow( os::Rect( iLeft, iTop, iLeft + 520, iTop + 350 ) );
 	pcWindow->Show();
 	pcWindow->MakeFocus();
 }
@@ -67,6 +67,7 @@ PrefsMediaApp::~PrefsMediaApp()
 {
 
 }
+
 
 
 
