@@ -1,3 +1,8 @@
+* February 24 2004, Henrik Isaksson *
+
+	- Prefs/Date-Time
+		o Fixed for GCC3 and libsyllable changes.
+
 * February 15 2004, Henrik Isaksson *
 
 	- aedit
@@ -215,3 +220,4 @@ Network Preferences
 		* Added NetworkPreferences from Daryl Dudey(daryl.dudey@ntlworld.com).
 		* Added SlbMgr(AtheMgr renamed).
 		* Patches by Vanders for AEdit.
+
