@@ -296,7 +296,7 @@ void GIFTrans::Reset()
 class GIFTransNode : public TranslatorNode
 {
 public:
-    virtual int Identify( const std::string& cSrcType, const std::string& cDstType, const void* pData, int nLen ) {
+    virtual int Identify( const String& cSrcType, const String& cDstType, const void* pData, int nLen ) {
 	if ( nLen < 3 ) {
 	    return( TranslatorFactory::ERR_NOT_ENOUGH_DATA );
 	}

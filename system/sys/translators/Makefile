@@ -1,7 +1,7 @@
 CFLAGS   = -Wall -c -g -O3 -pipe
 CPPFLAGS = $(CFLAGS)
 
-TRANSDIR = /system/translators
+TRANSDIR = /system/drivers/translators
 
 VPATH = ./
 

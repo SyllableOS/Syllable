@@ -45,7 +45,7 @@ private:
     } m_eState;
 };
 
-IconTrans::IconTrans( bool bWriteMode = false )
+IconTrans::IconTrans( bool bWriteMode )
 {
 	m_bWriteMode = bWriteMode;
 	m_eState = STATE_INIT;
@@ -197,7 +197,7 @@ void IconTrans::Reset()
 class IconReaderNode : public TranslatorNode
 {
 public:
-    virtual int Identify( const std::string& cSrcType, const std::string& cDstType, const void* pData, int nLen ) {
+    virtual int Identify( const String& cSrcType, const String& cDstType, const void* pData, int nLen ) {
 	if ( nLen < 4 ) {
 	    return( TranslatorFactory::ERR_NOT_ENOUGH_DATA );
 	}
@@ -219,8 +219,7 @@ public:
 class IconWriterNode : public TranslatorNode
 {
 public:
-    virtual int Identify( const std::string& cSrcType, const std::string& cDstType, const void* pData, int nLen ) {
-    	dbprintf("Identify: %s, %s\n", cSrcType.c_str(), cDstType.c_str());
+    virtual int Identify( const String& cSrcType, const String& cDstType, const void* pData, int nLen ) {
     	if( cSrcType == TRANSLATOR_TYPE_IMAGE && cDstType == "image/atheos-icon" ) {
 		return( 0 );
 	}
@@ -259,36 +258,3 @@ TranslatorNode* get_translator_node( int nIndex )
 }
     
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

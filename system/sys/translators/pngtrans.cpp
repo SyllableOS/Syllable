@@ -130,7 +130,7 @@ static void end_callback(png_structp png_ptr, png_infop info)
 
 
 
-PNGTrans::PNGTrans( bool bWriteMode = false )
+PNGTrans::PNGTrans( bool bWriteMode )
 {
 	m_eState		= STATE_INIT;
 	m_bIsInterlaced		= false;
@@ -436,7 +436,7 @@ void PNGTrans::Reset()
 class PNGReaderNode : public TranslatorNode
 {
 public:
-    virtual int Identify( const std::string& cSrcType, const std::string& cDstType, const void* pData, int nLen ) {
+    virtual int Identify( const String& cSrcType, const String& cDstType, const void* pData, int nLen ) {
 	if ( nLen < 4 ) {
 	    return( TranslatorFactory::ERR_NOT_ENOUGH_DATA );
 	}
@@ -458,7 +458,7 @@ public:
 class PNGWriterNode : public TranslatorNode
 {
 public:
-    virtual int Identify( const std::string& cSrcType, const std::string& cDstType, const void* pData, int nLen ) {
+    virtual int Identify( const String& cSrcType, const String& cDstType, const void* pData, int nLen ) {
 	if ( cSrcType == TRANSLATOR_TYPE_IMAGE && cDstType == "image/png" ) {
 	    return( 0 );
 	}
