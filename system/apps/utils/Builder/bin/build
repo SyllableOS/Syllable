@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.2.0
+# Version 0.2.1
 # Copyright (c) 2002, 2003 Kaj de Vos
 # License: GPL 2
 
@@ -596,11 +596,11 @@ def openLogs
 
 	@log		= File.new File.join(@logDir, "last-stdout"), "w"
 	@summary	= File.new File.join(@logDir, "last-summary"), "w"
-	@failLog		= File.new File.join(@logDir, "last-failures"), "w"
+	@failLog	= File.new File.join(@logDir, "last-failures"), "w"
 
 	@log		<< s = "Building in root directory #{@workDir}\n"
 	@summary	<< s
-	@failLog		<< s
+	@failLog	<< s
 end
 
 def closeLogs
@@ -613,36 +613,36 @@ def closeLogs
 end
 
 def logHeader header
-	print			"\n" + s = header + "\n"
+	print		"\n" + s = header + "\n"
 	@log		<< "\n#{s}\n"
 	@summary	<< s
 end
 
 def logSubheader header
-	print			"\n" + s = header + "\n"
+	print		"\n" + s = header + "\n"
 	@log		<< "\n" + s
 	@summary	<< s
 end
 
 def logEntry entry
-	print			s = "\n#{entry}\n"
+	print		s = "\n#{entry}\n"
 	@log		<< s
 	@summary	<< s
 end
 
 def logDetail detail
-	puts			detail
+	puts		detail
 	@log		<< detail + "\n"
 end
 
 def logAction action
-	puts			"\n#{action}\n"
+	puts		"\n#{action}\n"
 	@log		<< action + ": "
 	@summary	<< action
 end
 
 def logError error
-	puts			"\n" + s = "Error: #{error}"
+	puts		"\n" + s = "Error: #{error}"
 	@log		<< s + ":"
 	@summary	<< ": " + s
 end
@@ -653,19 +653,18 @@ def logResult result
 end
 
 def logFailure target
-	@failLog << target + "\n"
-	@failures << target
+	@failLog	<< target + "\n"
+	@failures	<< target
 end
 
 
 # Main function
 
 arg1, arg2 = ARGV[0], ARGV[1]
-target = arg2 ? arg2 : arg1 ? arg1 : "default"
 
 case arg1
 when "--version"
-	puts "Syllable Build System 0.2.0",
+	puts "Syllable Build System 0.2.1",
 		"Copyright (c) 2002, 2003 Kaj de Vos",
 		"License: GPL 2"
 when "--help"
@@ -693,18 +692,17 @@ when "--help"
 		"<log>:           Log name",
 		"  summary        Summarized log",
 		"  failures       Log of failed packages"
-when "list" then print IO.readlines(File.join(@profilesDir, target))
-when "log"
-	print IO.readlines(File.join(@logDir,
-		target == "default" ? "last-stdout" : "last-" + target
-	))
+when "list" then print IO.readlines(File.join(@profilesDir, arg2))
+when "log"  then print IO.readlines(File.join(@logDir, arg2 ? "last-" + arg2 : "last-stdout"))
 else
 	openLogs
 
 	if arg1 == "prepare"
 		prepare
 	else
-		if (profile = profile target).is_a? Array  # Not a single package
+		profile = profile target = arg2 ? arg2 : arg1 ? arg1 : "default"
+
+		if profile.is_a? Array  # Not a single package
 			save profile, File.join(@profilesDir, "last")
 		end
 
@@ -716,17 +714,23 @@ else
 		end
 
 		case arg1
-		when "get"			then get target
-		when "patch"		then patch target
-		when "distclean"	then distclean target
-		when "clean"		then clean target
-		when "configure"	then configure target
-		when "make"		then make target
-		when "test"		then test target
-		when "install"	then install target
-		when "uninstall"	then uninstall target
-		when "distro"		then makeDistro target
-		else build arg1 ? arg1 : "default"
+		when "get"			then get arg2
+		when "patch"		then patch arg2
+		when "distclean"	then distclean arg2
+		when "clean"		then clean arg2
+		when "configure"	then configure arg2
+		when "make"		then make arg2
+		when "test"		then test arg2
+		when "install"	then install arg2
+		when "uninstall"	then uninstall arg2
+		when "distro"		then makeDistro arg2
+		else
+			if arg2
+				logError "Unrecognized command"
+				exit
+			else
+				build target
+			end
 		end
 
 		if profile.is_a? Array  # Not a single package
