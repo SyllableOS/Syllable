@@ -1,3 +1,19 @@
+* November 7 2004, Jake Hamby *
+
+Fix fault.c to send SIGSEGV, SIGFPE, and SIGILL signals to the faulting thread
+instead of to all threads.  Fixed ExceptionHand() to kill the thread causing
+the exception with SIGSEGV (this required moving the exception handler stubs
+exc1(), exc2(), etc. from intel.s to syscall.s).
+
+Apparently Intel processors generate an external IRQ 13 *in addition to*
+the native INT 16 math error reporting mechanism (even though I set the NE
+bit in CR0 in both intel.s and ap_entry_proc()) so I had to add an IRQ 13
+handler in irq.c to clear the 8259A.  The proper fix is to mask IRQ 13 in
+the 8259A but I don't know enough about the 8259A code to do this.  This
+only affects programs which explicitly enable exceptions for divide-by-zero
+or other errors, e.g. with the feenableexcept() function that is currently
+missing from Syllable's math library anyway.
+
 * November 6 2004, Jake Hamby *
 
 Implement lazy FPU save/restore for faster context switching and save the
