@@ -121,6 +121,7 @@ cp -p $BASE/atheos/sys/bin/reboot $ROOT/atheos/sys/bin/
 cp -p $BASE/atheos/sys/bin/unmount $ROOT/atheos/sys/bin/
 
 cp -p $BASE/atheos/usr/bin/bash $ROOT/atheos/usr/bin/
+cp -p $BASE/atheos/usr/bin/cat $ROOT/atheos/usr/bin/
 cp -p $BASE/atheos/usr/bin/clear $ROOT/atheos/usr/bin/
 cp -p $BASE/atheos/usr/bin/cp $ROOT/atheos/usr/bin/
 cp -p $BASE/atheos/usr/bin/cut $ROOT/atheos/usr/bin/
@@ -196,4 +197,5 @@ mv $VER.iso.gz objs/$VER-basic.iso.gz
 
 echo "Done!"
 exit 0
+
 
