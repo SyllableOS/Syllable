@@ -1,0 +1,9 @@
+authors			Kaj de Vos
+
+licenses		GPL
+home			www.gnu.org/software/tar/
+
+Needs a patch to glibc/include/sys/mtio.h:
+build-needs		syllable >= 0.5.3
+
+documentation	README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
