@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.55
+# Version 0.5.56
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -39,7 +39,7 @@ def unpackPackage target
     break
    end
 
-   files << file
+   files << [file, type]
    action 'sync'
   end
  then
@@ -50,7 +50,7 @@ def unpackPackage target
   else  # Source package content has a deviating subdirectory name
    @log.subheader 'Renaming source'
 
-   file = files.first
+   file, type = files.first
    result = `#{case type
     when :zip  then 'unzip -lqq ' + file
     when :bzip then "bzcat #{file} | tar --list"
@@ -1183,7 +1183,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
- puts 'Syllable Build System 0.5.55',
+ puts 'Syllable Build System 0.5.56',
   'Copyright (c) 2002-2004 Kaj de Vos',
   'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1346,4 +1346,5 @@ else
  action 'sync'
  @log.close
 end
+
 
