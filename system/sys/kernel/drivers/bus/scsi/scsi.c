@@ -174,7 +174,7 @@ static int scsi_open( void *pNode, uint32 nFlags, void **ppCookie )
 
 	printk( "SCSI: %i sectors of %i bytes\n", ( int )psDevice->nSectors, ( int )psDevice->nSectorSize );
 
-	atomic_add( &psDevice->nOpenCount, 1 );
+	atomic_inc( &psDevice->nOpenCount );
 	UNLOCK( psDevice->hLock );
 
 	return ( 0 );
@@ -186,7 +186,7 @@ static int scsi_close( void *pNode, void *pCookie )
 	SCSI_device_s *psDevice = pNode;
 
 	LOCK( psDevice->hLock );
-	atomic_add( &psDevice->nOpenCount, -1 );
+	atomic_dec( &psDevice->nOpenCount );
 	UNLOCK( psDevice->hLock );
 	//printk( "scsi_close() called\n" );
 	return ( 0 );
@@ -583,7 +583,7 @@ static int scsi_decode_partitions( SCSI_device_s * psInode )
 				break;
 			}
 		}
-		if ( bFound == false && psPartition->nOpenCount > 0 )
+		if ( bFound == false && atomic_read( &psPartition->nOpenCount ) > 0 )
 		{
 			printk( "scsi_decode_partitions() Error: Open partition %s on %s has changed\n", psPartition->zName, psInode->zName );
 			nError = -EBUSY;
@@ -784,7 +784,7 @@ SCSI_device_s *scsi_scan_device( SCSI_host_s * psHost, int nChannel, int nDevice
 	memset( psDevice, 0, sizeof( SCSI_device_s ) );
 
 	psDevice->nID = scsi_get_next_id();
-	psDevice->nOpenCount = 0;
+	atomic_set( &psDevice->nOpenCount, 0 );
 	psDevice->psHost = psHost;
 	psDevice->psRawDevice = psDevice;
 	psDevice->hLock = create_semaphore( "scsi_disk_lock", 1, 0 );
@@ -914,7 +914,7 @@ void scsi_remove_host( SCSI_host_s * psHost )
 			for ( psPartition = psDevice->psFirstPartition; psPartition != NULL; psPartition = psPartition->psNext )
 			{
 				printk( "SCSI: Removing partition %s\n", psPartition->zName );
-				if ( psPartition->nOpenCount > 0 )
+				if ( atomic_read( &psPartition->nOpenCount ) > 0 )
 				{
 					printk( "SCSI: Warning: Device still opened\n" );
 				}
@@ -922,7 +922,7 @@ void scsi_remove_host( SCSI_host_s * psHost )
 			}
 			/* Then the raw device */
 			printk( "SCSI: Removing device %s\n", psDevice->zName );
-			if ( psDevice->nOpenCount > 0 )
+			if ( atomic_read( &psDevice->nOpenCount ) > 0 )
 			{
 				printk( "SCSI: Warning: Device still opened\n" );
 			}

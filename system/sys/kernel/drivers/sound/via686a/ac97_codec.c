@@ -132,6 +132,7 @@ static const struct {
 	{0,}
 };
 
+#if 0
 static const char *ac97_stereo_enhancements[] =
 {
 	/*   0 */ "No 3D Stereo Enhancement",
@@ -167,6 +168,7 @@ static const char *ac97_stereo_enhancements[] =
 	/*  30 */ "Reserved 30",
 	/*  31 */ "Reserved 31"
 };
+#endif
 
 /* this table has default mixer values for all OSS mixers. */
 struct mixer_defaults_struct {
@@ -824,7 +826,7 @@ static int pt101_init(struct ac97_codec * codec)
 }
 #endif
 	
-
+#if 0
 static int sigmatel_init(struct ac97_codec * codec)
 {
 	if(codec->id == 0)
@@ -849,4 +851,4 @@ static int sigmatel_init(struct ac97_codec * codec)
 
 	return 1;
 }
-
+#endif

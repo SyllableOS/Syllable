@@ -63,7 +63,7 @@ static const unsigned dac1_samplerate[] = { 5512, 11025, 22050, 44100 };
  * so that it cannot wreak havoc. The attribute makes sure it doesn't
  * cross a page boundary and ensures dword alignment for the DMA engine
  */
-static unsigned char bugbuf[16] __attribute__ ((aligned (16)));
+//static unsigned char bugbuf[16] __attribute__ ((aligned (16)));
 
 /* --------------------------------------------------------------------- */
 
@@ -144,6 +144,7 @@ static inline void stop_dac2(struct es1370_state *s)
 	spin_unlock_irqrestore(&s->lock, flags);
 }	
 
+#if 0
 static void start_dac1(struct es1370_state *s)
 {
 	unsigned long flags;
@@ -165,6 +166,7 @@ static void start_dac1(struct es1370_state *s)
 	}
 	spin_unlock_irqrestore(&s->lock, flags);
 }	
+#endif
 
 static void start_dac2(struct es1370_state *s)
 {
@@ -191,6 +193,7 @@ static void start_dac2(struct es1370_state *s)
 	spin_unlock_irqrestore(&s->lock, flags);
 }	
 
+#if 0
 static void start_adc(struct es1370_state *s)
 {
 	unsigned long flags;
@@ -212,6 +215,7 @@ static void start_adc(struct es1370_state *s)
 	}
 	spin_unlock_irqrestore(&s->lock, flags);
 }	
+#endif
 
 /* --------------------------------------------------------------------- */
 
@@ -390,7 +394,7 @@ void es1370_update_ptr(struct es1370_state *s)
 
 status_t es1370_open_mixdev(void* pNode, uint32 nFlags, void **pCookie)
 {
-	struct es1370_state *s = (struct es1370_state *)pNode;
+//	struct es1370_state *s = (struct es1370_state *)pNode;
        	return 0;
       /*
 	int minor = MINOR(inode->i_rdev);
@@ -411,7 +415,7 @@ status_t es1370_open_mixdev(void* pNode, uint32 nFlags, void **pCookie)
 
 status_t es1370_release_mixdev(void* pNode, uint32 nFlags, void **pCookie)
 {
-	struct es1370_state *s = (struct es1370_state *)pNode;
+//	struct es1370_state *s = (struct es1370_state *)pNode;
 	
 
 	return 0;
@@ -519,7 +523,7 @@ int es1370_interrupt(int irq, void *dev_id, SysCallRegs_s *regs)
 	/* fastpath out, to ease interrupt sharing */
 	intsrc = inl(s->io+ES1370_REG_STATUS);
 	if (!(intsrc & 0x80000000))
-		return;
+		return 0;
 	spin_lock(&s->lock);
 	/* clear audio interrupts first */
 	sctl = s->sctrl;
@@ -533,6 +537,7 @@ int es1370_interrupt(int irq, void *dev_id, SysCallRegs_s *regs)
 	outl(s->sctrl, s->io+ES1370_REG_SERIAL_CONTROL);
 	es1370_update_ptr(s);
 	spin_unlock(&s->lock);
+	return 0;
 }
 
 status_t es1370_open (void* pNode, uint32 nFlags, void **pCookie)
@@ -541,7 +546,7 @@ status_t es1370_open (void* pNode, uint32 nFlags, void **pCookie)
 	unsigned long flags;
 	struct es1370_state *s = (struct es1370_state *) pNode;
 
-	printk("es1370_open: %lx\n", s);
+	printk("es1370_open: %p\n", s);
 
 
 /*        if (s->open == true) {
@@ -583,6 +588,7 @@ status_t es1370_open (void* pNode, uint32 nFlags, void **pCookie)
 
         UNLOCK(s->sem);
 	printk("es1370_open: EXIT\n");
+	return 0;
 }
 
 
@@ -624,7 +630,7 @@ status_t es1370_ioctl (void *node, void *cookie, uint32 cmd, void *arg, bool frk
 	unsigned long flags;
 	int val, ret;
    
-        printk("es1370_ioctl: ENTER, Command: %d\n", cmd);
+        printk("es1370_ioctl: ENTER, Command: %u\n", (unsigned int)cmd);
 
   	switch (cmd) {
 	case OSS_GETVERSION:
@@ -800,33 +806,5 @@ status_t es1370_ioctl (void *node, void *cookie, uint32 cmd, void *arg, bool frk
 		
 	}
 	//return mixdev_ioctl(&s->codec, cmd, (unsigned long) &arg);
+	return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

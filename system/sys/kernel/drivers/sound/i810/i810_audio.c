@@ -137,10 +137,10 @@
 #define MODULOP2(a, b) ((a) & ((b) - 1))
 #define MASKP2(a, b) ((a) & ~((b) - 1))
 
-static int ftsodell;
+//static int ftsodell;
 static int strict_clocking;
 static unsigned int clocking;
-static int spdif_locked;
+//static int spdif_locked;
 
 #define ADC_RUNNING	1
 #define DAC_RUNNING	2
@@ -483,6 +483,7 @@ static void i810_free_pcm_channel(struct i810_card *card, int channel)
 	card->channel[channel].used=0;
 }
 
+#if 0
 static int i810_valid_spdif_rate ( struct ac97_codec *codec, int rate )
 {
 	unsigned long id = 0L;
@@ -506,6 +507,7 @@ static int i810_valid_spdif_rate ( struct ac97_codec *codec, int rate )
 	}
 	return (0);
 }
+#endif
 
 /* i810_set_dac_channels
  *
@@ -597,6 +599,7 @@ static unsigned int i810_set_dac_rate(struct i810_state * state, unsigned int ra
 	return dmabuf->rate;
 }
 
+#if 0
 /* set recording sample rate */
 static unsigned int i810_set_adc_rate(struct i810_state * state, unsigned int rate)
 {
@@ -637,6 +640,7 @@ static unsigned int i810_set_adc_rate(struct i810_state * state, unsigned int ra
 #endif
 	return dmabuf->rate;
 }
+#endif
 
 
 /* get current playback/recording dma buffer pointer (byte offset from LBA),
@@ -727,6 +731,7 @@ static inline void __start_adc(struct i810_state *state)
 		outb(0x10 | 0x04 | 0x01, state->card->iobase + PI_CR);
 	}
 }
+#if 0
 static void start_adc(struct i810_state *state)
 {
 	struct i810_card *card = state->card;
@@ -736,6 +741,7 @@ static void start_adc(struct i810_state *state)
 	__start_adc(state);
 	spin_unlock_irqrestore(&card->lock, flags);
 }
+#endif
 
 /* stop playback (lock held) */
 static inline void __stop_dac(struct i810_state *state)

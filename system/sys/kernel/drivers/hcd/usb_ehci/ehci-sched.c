@@ -275,7 +275,7 @@ static void intr_deschedule (
 
 	kerndbg( KERN_DEBUG, "descheduled qh %p, period = %d frame = %d count = %d, urbs = %d\n",
 		qh, qh->period, frame,
-		atomic_add(&qh->refcount, 0), ehci->periodic_sched);
+		atomic_read(&qh->refcount), ehci->periodic_sched);
 }
 
 static int check_period (

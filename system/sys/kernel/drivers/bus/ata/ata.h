@@ -316,7 +316,7 @@ struct ATA_device_t
 	sem_id			hLock;
 	int 			nDeviceHandle;
 	char 			zName[16];
-	int				nOpenCount;
+	atomic_t			nOpenCount;
 	int 			nNodeHandle;
 	int				nPartitionType;
 	int				nSectorSize;
@@ -335,7 +335,7 @@ typedef struct
 	sem_id			hLock;
 	int				nDeviceHandle;
 	char			zName[16];
-	int				nOpenCount;
+	atomic_t			nOpenCount;
 	int				nNodeHandle;
 	off_t			nStart;
 	off_t			nSize;

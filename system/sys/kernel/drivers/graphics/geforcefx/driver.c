@@ -174,7 +174,7 @@ status_t gfx_ioctl( void *pNode, void *pCookie, uint32 nCommand, void *pArgs, bo
 			if( get_area_physical_address( hArea, &nAddress ) != 0 )
 				nError = -EINVAL;
 				
-			printk( "%x\n", (uint32)nAddress );
+			printk( "%lx\n", nAddress );
 			
 			memcpy_to_user( pArgs, &nAddress, sizeof( nAddress ) );
 			

@@ -755,14 +755,14 @@ void usb_stor_CBI_irq( USB_packet_s * urb )
 	}
 
 	/* was this a wanted interrupt? */
-	if ( !atomic_add( &psDisk->ip_wanted, 0 ) )
+	if ( !atomic_read( &psDisk->ip_wanted ) )
 	{
 		printk( "ERROR: Unwanted interrupt received!\n" );
 		return;
 	}
 
 	/* adjust the flag */
-	atomic_and( &psDisk->ip_wanted, 0 );
+	atomic_set( &psDisk->ip_wanted, 0 );
 
 	/* copy the valid data */
 	psDisk->irqdata[0] = psDisk->irqbuf[0];
@@ -777,8 +777,7 @@ int usb_stor_CBI_transport( SCSI_cmd_s * srb, USB_disk_s * psDisk )
 	int result;
 
 	/* Set up for status notification */
-	atomic_and( &psDisk->ip_wanted, 0 );
-	atomic_add( &psDisk->ip_wanted, 1 );
+	atomic_set( &psDisk->ip_wanted, 1 );
 
 
 	/* COMMAND STAGE */
@@ -790,7 +789,7 @@ int usb_stor_CBI_transport( SCSI_cmd_s * srb, USB_disk_s * psDisk )
 	if ( result < 0 )
 	{
 		/* Reset flag for status notification */
-		atomic_and( &psDisk->ip_wanted, 0 );
+		atomic_set( &psDisk->ip_wanted, 0 );
 
 		/* if the command was aborted, indicate that */
 		if ( result == -ENOENT )
@@ -829,10 +828,10 @@ int usb_stor_CBI_transport( SCSI_cmd_s * srb, USB_disk_s * psDisk )
 	sleep_on_sem( psDisk->ip_waitq, INFINITE_TIMEOUT );
 
 	/* if we were woken up by an abort instead of the actual interrupt */
-	if ( atomic_add( &psDisk->ip_wanted, 0 ) )
+	if ( atomic_read( &psDisk->ip_wanted ) )
 	{
 		printk( "Did not get interrupt on CBI\n" );
-		atomic_and( &psDisk->ip_wanted, 0 );
+		atomic_set( &psDisk->ip_wanted, 0 );
 		return USB_STOR_TRANSPORT_ABORTED;
 	}
 

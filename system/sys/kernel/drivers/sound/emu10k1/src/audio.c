@@ -126,7 +126,7 @@ int emu10k1_audio_write(void *node, void *cookie, off_t ppos, const void *buffer
 	return ret;
 }
 
-status_t emu10k1_audio_ioctl(void *node, void *cookie, uint32 cmd, void *arg, size_t len)
+status_t emu10k1_audio_ioctl(void *node, void *cookie, uint32 cmd, void *arg, bool bFromKernel)
 {
 	struct emu10k1_wavedevice *wave_dev = (struct emu10k1_wavedevice *)cookie;
 	struct woinst *woinst = NULL;

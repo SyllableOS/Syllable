@@ -198,6 +198,7 @@ static const struct {
 	{0x57454301, "Winbond 83971D",		&null_ops},
 };
 
+#if 0
 static const char *ac97_stereo_enhancements[] =
 {
 	/*   0 */ "No 3D Stereo Enhancement",
@@ -233,6 +234,7 @@ static const char *ac97_stereo_enhancements[] =
 	/*  30 */ "Reserved 30",
 	/*  31 */ "Reserved 31"
 };
+#endif
 
 /* this table has default mixer values for all OSS mixers. */
 static struct mixer_defaults {

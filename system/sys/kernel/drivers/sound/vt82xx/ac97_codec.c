@@ -825,7 +825,7 @@ static int pt101_init(struct ac97_codec * codec)
 }
 #endif
 	
-
+#if 0
 static int sigmatel_init(struct ac97_codec * codec)
 {
 	if(codec->id == 0)
@@ -850,7 +850,4 @@ static int sigmatel_init(struct ac97_codec * codec)
 
 	return 1;
 }
-
-
-
-
+#endif

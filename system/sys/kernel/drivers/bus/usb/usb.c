@@ -237,8 +237,7 @@ USB_bus_driver_s* usb_alloc_bus()
 	
 	/* Set default values */
 	psBus->nBusNum = -1;
-	atomic_and( &psBus->nRefCount, 0 );
-	atomic_add( &psBus->nRefCount, 1 );
+	atomic_set( &psBus->nRefCount, 1 );
 	
 	psBus->psRootHUB = NULL;
 	psBus->pHCPrivate = NULL;
@@ -259,8 +258,7 @@ USB_bus_driver_s* usb_alloc_bus()
  *****************************************************************************/
 void usb_free_bus( USB_bus_driver_s* psBus )
 {
-	atomic_add( &psBus->nRefCount, -1 );
-	if( psBus->nRefCount == 0 )
+	if ( atomic_dec_and_test( &psBus->nRefCount ) )
 		kfree( psBus );
 }
 
@@ -289,7 +287,7 @@ void usb_register_bus( USB_bus_driver_s* psBus )
 	g_bUSBBusMap[i] = true;
 	g_psUSBBus[i] = psBus;
 	psBus->nBusNum = i;
-	atomic_add( &psBus->nRefCount, 1 );
+	atomic_inc( &psBus->nRefCount );
 	USB_UNLOCK;
 	
 	kerndbg( KERN_INFO, "USB: Bus %i registered\n", (int)i );
@@ -313,8 +311,7 @@ void usb_deregister_bus( USB_bus_driver_s* psBus )
 			g_bUSBBusMap[i] = false;
 			g_psUSBBus[i] = NULL;
 			
-			atomic_add( &psBus->nRefCount, -1 );
-			if( psBus->nRefCount == 0 )
+			if( atomic_dec_and_test( &psBus->nRefCount ) )
 				kfree( psBus );
 			USB_UNLOCK;
 			return;
@@ -596,12 +593,11 @@ USB_device_s* usb_alloc_device( USB_device_s* psParent, USB_bus_driver_s* psBus 
 	psDevice = ( USB_device_s* )kmalloc( sizeof( USB_device_s ), MEMF_KERNEL | MEMF_NOBLOCK );
 	memset( psDevice, 0, sizeof( USB_device_s ) );
 	
-	atomic_add( &psBus->nRefCount, 1 );
+	atomic_inc( &psBus->nRefCount );
 	
 	psDevice->psBus = psBus;
 	psDevice->psParent = psParent;
-	atomic_and( &psDevice->nRefCount, 0 );
-	atomic_add( &psDevice->nRefCount, 1 );
+	atomic_set( &psDevice->nRefCount, 1 );
 	
 	psDevice->hLock = create_semaphore( "usb_device_lock", 1, 0 );
 	
@@ -619,11 +615,10 @@ USB_device_s* usb_alloc_device( USB_device_s* psParent, USB_bus_driver_s* psBus 
  *****************************************************************************/
 void usb_free_device( USB_device_s* psDevice )
 {
-	atomic_add( &psDevice->nRefCount, -1 );
-	if( psDevice->nRefCount == 0 ) {
+	if( atomic_dec_and_test( &psDevice->nRefCount ) ) {
 		psDevice->psBus->RemoveDevice( psDevice );
 		
-		atomic_add( &psDevice->psBus->nRefCount, -1 );
+		atomic_dec( &psDevice->psBus->nRefCount );
 		kfree( psDevice );
 		
 		//printk( "USB: TODO: usb_free_device()\n" );

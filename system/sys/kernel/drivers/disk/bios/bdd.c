@@ -101,7 +101,7 @@ struct _BddInode
     BddInode_s*	bi_psNext;
     int		bi_nDeviceHandle;
     char	bi_zName[16];
-    int		bi_nOpenCount;
+    atomic_t	bi_nOpenCount;
     int		bi_nDriveNum;	/* The bios drive number (0x80-0xff) */
     int		bi_nNodeHandle;
     int		bi_nPartitionType;
@@ -554,7 +554,7 @@ static int bdd_open( void* pNode, uint32 nFlags, void **ppCookie )
     BddInode_s* psInode = pNode;
 
     LOCK( g_hRelBufLock );
-    atomic_add( &psInode->bi_nOpenCount, 1 );
+    atomic_inc( &psInode->bi_nOpenCount );
     UNLOCK( g_hRelBufLock );
     return( 0 );
 }
@@ -571,7 +571,7 @@ static int bdd_close( void* pNode, void* pCookie )
     BddInode_s* psInode = pNode;
 
     LOCK( g_hRelBufLock );
-    atomic_add( &psInode->bi_nOpenCount, -1 );
+    atomic_dec( &psInode->bi_nOpenCount );
     UNLOCK( g_hRelBufLock );
     return( 0 );
 }
@@ -970,7 +970,7 @@ static int bdd_decode_partitions( BddInode_s* psInode )
 		break;
 	    }
 	}
-	if ( bFound == false && psPartition->bi_nOpenCount > 0 ) {
+	if ( bFound == false && atomic_read( &psPartition->bi_nOpenCount ) > 0 ) {
 	    printk( "bdd_decode_partitions() Error: Open partition %s on %s has changed\n", psPartition->bi_zName, psInode->bi_zName );
 	    nError = -EBUSY;
 	    goto error;

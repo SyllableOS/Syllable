@@ -207,7 +207,7 @@ static void urb_rm_priv_locked (USB_packet_s * urb)
 		}
 
 		urb_free_priv ((struct ohci *)urb->psDevice->psBus->pHCPrivate, urb_priv);
-		atomic_add( &urb->psDevice->nRefCount, -1 );
+		atomic_dec( &urb->psDevice->nRefCount );
 		//usb_dec_dev_use (urb->psDevice);
 		urb->psDevice = NULL;
 	}
@@ -569,7 +569,7 @@ static int sohci_submit_urb (USB_packet_s * urb)
 //	if(usb_endpoint_halted (urb->psDevice, usb_pipeendpoint (pipe), usb_pipeout (pipe))) 
 //		return -EPIPE;
 	
-	atomic_add( &urb->psDevice->nRefCount, 1 );
+	atomic_inc( &urb->psDevice->nRefCount );
 	//usb_inc_dev_use (urb->psDevice);
 	ohci = (ohci_t *) urb->psDevice->psBus->pHCPrivate;
 	
@@ -584,14 +584,14 @@ static int sohci_submit_urb (USB_packet_s * urb)
 	/* when controller's hung, permit only roothub cleanup attempts
 	 * such as powering down ports */
 	if (ohci->disabled) {
-		atomic_add( &urb->psDevice->nRefCount, -1 );
+		atomic_dec( &urb->psDevice->nRefCount );
 		//usb_dec_dev_use (urb->psDevice);	
 		return -ESHUTDOWN;
 	}
 
 	/* every endpoint has a ed, locate and fill it */
 	if (!(ed = ep_add_ed (urb->psDevice, pipe, urb->nInterval, 1, mem_flags))) {
-		atomic_add( &urb->psDevice->nRefCount, -1 );
+		atomic_dec( &urb->psDevice->nRefCount );
 		//usb_dec_dev_use (urb->psDevice);	
 		return -ENOMEM;
 	}
@@ -613,7 +613,7 @@ static int sohci_submit_urb (USB_packet_s * urb)
 		case USB_PIPE_ISOCHRONOUS: /* number of packets from URB */
 			size = urb->nPacketNum;
 			if (size <= 0) {
-				atomic_add( &urb->psDevice->nRefCount, -1 );
+				atomic_dec( &urb->psDevice->nRefCount );
 				//usb_dec_dev_use (urb->psDevice);	
 				return -EINVAL;
 			}
@@ -635,7 +635,7 @@ static int sohci_submit_urb (USB_packet_s * urb)
 	urb_priv = kmalloc (sizeof (urb_priv_t) + size * sizeof (td_t *), 
 							MEMF_KERNEL);
 	if (!urb_priv) {
-		atomic_add( &urb->psDevice->nRefCount, -1 );
+		atomic_dec( &urb->psDevice->nRefCount );
 		//usb_dec_dev_use (urb->psDevice);	
 		return -ENOMEM;
 	}
@@ -653,7 +653,7 @@ static int sohci_submit_urb (USB_packet_s * urb)
 			urb_priv->length = i;
 			urb_free_priv (ohci, urb_priv);
 			spin_unlock_irqrestore (&usb_ed_lock, flags);
-			atomic_add( &urb->psDevice->nRefCount, -1 );
+			atomic_dec( &urb->psDevice->nRefCount );
 			
 			//usb_dec_dev_use (urb->psDevice);	
 			return -ENOMEM;
@@ -664,7 +664,7 @@ static int sohci_submit_urb (USB_packet_s * urb)
 		urb_free_priv (ohci, urb_priv);
 		spin_unlock_irqrestore (&usb_ed_lock, flags);
 		//usb_dec_dev_use (urb->psDevice);	
-		atomic_add( &urb->psDevice->nRefCount, -1 );
+		atomic_dec( &urb->psDevice->nRefCount );
 		return -EINVAL;
 	}
 	
@@ -686,7 +686,7 @@ static int sohci_submit_urb (USB_packet_s * urb)
 			if (bustime < 0) {
 				urb_free_priv (ohci, urb_priv);
 				spin_unlock_irqrestore (&usb_ed_lock, flags);
-				atomic_add( &urb->psDevice->nRefCount, -1 );
+				atomic_dec( &urb->psDevice->nRefCount );
 				//usb_dec_dev_use (urb->psDevice);	
 				return bustime;
 			}
@@ -2151,7 +2151,7 @@ static int rh_submit_urb (USB_packet_s * urb)
 #endif
 
 	urb->pHCPrivate = NULL;
-	atomic_add( &usb_dev->nRefCount, -1 );
+	atomic_dec( &usb_dev->nRefCount );
 //	usb_dec_dev_use (usb_dev);
 	urb->psDevice = NULL;
 	if (urb->pComplete)
@@ -2171,7 +2171,7 @@ static int rh_unlink_urb (USB_packet_s * urb)
 		ohci->rh.urb = NULL;
 
 		urb->pHCPrivate = NULL;
-		atomic_add( &urb->psDevice->nRefCount, -1 );
+		atomic_dec( &urb->psDevice->nRefCount );
 		//usb_dec_dev_use(urb->psDevice);
 		urb->psDevice = NULL;
 		if (urb->nTransferFlags & USB_ASYNC_UNLINK) {

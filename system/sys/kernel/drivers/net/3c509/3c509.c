@@ -170,7 +170,7 @@ enum RxFilter {
 /* function definitions */
 static int el3_init(el3Dev_s* dev);
 static unsigned short id_read_eeprom(int index);
-static unsigned short read_eeprom(int ioaddr, int index);
+//static unsigned short read_eeprom(int ioaddr, int index);
 static void update_stats(el3Dev_s* dev);
 
 
@@ -701,6 +701,7 @@ int el3_probe(el3Dev_s* dev)
 /* Read a word from the EEPROM using the regular EEPROM access register.
    Assume that we are in register window zero.
  */
+#if 0
 static unsigned short read_eeprom(int ioaddr, int index)
 {
     outw(EEPROM_READ + index, ioaddr + 10);
@@ -708,6 +709,7 @@ static unsigned short read_eeprom(int ioaddr, int index)
     udelay (500);
     return inw(ioaddr + 12);
 }
+#endif
 
 /* Read a word from the EEPROM when in the ISA ID probe state. */
 static unsigned short id_read_eeprom(int index)
@@ -958,7 +960,7 @@ int  el3_write( void* pNode, void* pCookie, off_t nPosition, const void* pBuffer
 }
 
 
-status_t el3_ioctl( void* pNode, void* pCookie, uint32 nCommand, void* pArgs, size_t nLen )
+status_t el3_ioctl( void* pNode, void* pCookie, uint32 nCommand, void* pArgs, bool bFromKernel )
 {
     el3Dev_s* psDev = pNode;
     int nError = 0;

@@ -683,6 +683,7 @@ static unsigned int trident_set_dac_rate(struct trident_state * state, unsigned 
 }
 
 /* set recording sample rate */
+#if 0
 static unsigned int trident_set_adc_rate(struct trident_state * state, unsigned int rate)
 {
 	struct dmabuf *dmabuf = &state->dmabuf;
@@ -702,6 +703,7 @@ static unsigned int trident_set_adc_rate(struct trident_state * state, unsigned 
 #endif
 	return rate;
 }
+#endif
 
 /* prepare channel attributes for playback */ 
 static void trident_play_setup(struct trident_state *state)

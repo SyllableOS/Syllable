@@ -110,8 +110,7 @@ static struct ehci_qh *ehci_qh_alloc (struct ehci_hcd *ehci, int flags)
 
 	memset (qh, 0, sizeof *qh);
 	
-	atomic_and(&qh->refcount, 0);
-	atomic_add(&qh->refcount, 1);
+	atomic_set(&qh->refcount, 1);
 	qh->qh_real = real;
 	// INIT_LIST_HEAD (&qh->qh_list);
 	INIT_LIST_HEAD (&qh->qtd_list);
@@ -130,7 +129,7 @@ static struct ehci_qh *ehci_qh_alloc (struct ehci_hcd *ehci, int flags)
 /* to share a qh (cpu threads, or hc) */
 static inline struct ehci_qh *qh_get (/* ehci, */ struct ehci_qh *qh)
 {
-	atomic_add(&qh->refcount, 1);
+	atomic_inc(&qh->refcount);
 	return qh;
 }
 

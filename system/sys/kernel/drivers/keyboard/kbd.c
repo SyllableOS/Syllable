@@ -411,10 +411,10 @@ typedef struct
 {
     thread_id hWaitThread;
     char	    zBuffer[ 256 ];
-    int	    nOutPos;
-    int	    nInPos;
-    int	    nBytesReceived;
-    int	    nOpenCount;
+    atomic_t	    nOutPos;
+    atomic_t	    nInPos;
+    atomic_t	    nBytesReceived;
+    atomic_t	    nOpenCount;
     int	    nDevNum;
     int	    nIrqHandle;
 } KbdVolume_s;
@@ -433,7 +433,7 @@ static int kbd_open( void* pNode, uint32 nFlags, void **ppCookie )
 {
     int	nError;
 	
-    if ( 0 != g_sVolume.nOpenCount )
+    if ( 0 != atomic_read( &g_sVolume.nOpenCount ) )
     {
 	nError = -EBUSY;
 	printk( "ERROR : Attempt to reopen keyboard device\n" );
@@ -447,7 +447,7 @@ static int kbd_open( void* pNode, uint32 nFlags, void **ppCookie )
 	    *ppCookie = psCookie;
 	    psCookie->nFlags = nFlags;
 		
-	    g_sVolume.nOpenCount++;
+	    atomic_inc( &g_sVolume.nOpenCount );
 	    nError = 0;
 	}
 	else
@@ -471,7 +471,7 @@ static int kbd_close( void* pNode, void* pCookie )
 	
     kassertw( NULL != psCookie );
 	
-    g_sVolume.nOpenCount--;
+    atomic_dec( &g_sVolume.nOpenCount );
 
     kfree( psCookie );
 	
@@ -544,16 +544,16 @@ static int kbd_read( void* pNode, void* pCookie, off_t nPos, void* pBuf, size_t 
 	
     for ( ;; )
     {
-	if ( psVolume->nBytesReceived > 0 )
+	if ( atomic_read( &psVolume->nBytesReceived ) > 0 )
 	{
-	    int	nSize = min( nLen, psVolume->nBytesReceived );
+	    int	nSize = min( nLen, atomic_read( &psVolume->nBytesReceived ) );
 	    int	i;
 	    char*	pzBuf = pBuf;
 
 	    for ( i = 0 ; i < nSize ; ++i ) {
-		pzBuf[ i ] = psVolume->zBuffer[ atomic_add( &psVolume->nOutPos, 1 ) & 0xff ];
+		pzBuf[ i ] = psVolume->zBuffer[ atomic_inc_and_read( &psVolume->nOutPos ) & 0xff ];
 	    }
-	    atomic_add( &g_sVolume.nBytesReceived, -nSize );
+	    atomic_sub( &g_sVolume.nBytesReceived, nSize );
 			
 	    nError = nSize;
 	}
@@ -682,9 +682,9 @@ static int kbd_irq( int nIrqNum, void* pData, SysCallRegs_s* psRegs )
 
     if ( 0 != nCode )
     {
-	g_sVolume.zBuffer[ atomic_add( &g_sVolume.nInPos, 1 ) & 0xff ] = nCode;
+	g_sVolume.zBuffer[ atomic_inc_and_read( &g_sVolume.nInPos ) & 0xff ] = nCode;
     
-	atomic_add( &g_sVolume.nBytesReceived, 1 );
+	atomic_inc( &g_sVolume.nBytesReceived );
 
 	if ( -1 != g_sVolume.hWaitThread ) {
 	    wakeup_thread( g_sVolume.hWaitThread, false );
@@ -708,10 +708,10 @@ status_t device_init( int nDeviceID )
     printk( "Keyboard device: device_init() called\n" );
 
     g_sVolume.hWaitThread    = -1;
-    g_sVolume.nInPos 	   = 0;
-    g_sVolume.nOutPos 	   = 0;
-    g_sVolume.nBytesReceived = 0;
-    g_sVolume.nOpenCount 	   = 0;
+    atomic_set( &g_sVolume.nInPos, 0 );
+    atomic_set( &g_sVolume.nOutPos, 0 );
+    atomic_set( &g_sVolume.nBytesReceived, 0 );
+    atomic_set( &g_sVolume.nOpenCount, 0 );
     g_sVolume.nIrqHandle	   = request_irq( 1, kbd_irq, NULL, 0, "keyboard_device", NULL );
 
     g_nKbdLedStatus = 0;

@@ -148,6 +148,7 @@ uint32 read_pci_config( int nBusNum, int nDevNum, int nFncNum, int nOffset, int 
 				nValue = inl( 0x0cfc );
 				break;
 			default:
+				break;
 			}
 			spinunlock_restore( &g_sPCILock, nFlags );
 			return ( nValue );
@@ -173,6 +174,7 @@ uint32 read_pci_config( int nBusNum, int nDevNum, int nFncNum, int nOffset, int 
 				nValue = inl( ( 0xc000 | ( nDevNum << 8 ) | nOffset ) );
 				break;
 			default:
+				break;
 			}
 			outb( 0x0, 0x0cf8 );
 			spinunlock_restore( &g_sPCILock, nFlags );

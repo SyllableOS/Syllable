@@ -72,12 +72,12 @@ static SpinLock_s g_sSPinLock = INIT_SPIN_LOCK( "ps2aux_slock" );
 #define AUX_IRQ	12
 #define AUX_BUF_SIZE	2048
 
-static int aux_count = 0;
+static atomic_t aux_count = ATOMIC_INIT(0);
 
 static char   g_anReceiveBuffer[AUX_BUF_SIZE];
-static int    g_nRecvSize = 0;
-static int    g_nRecvInPos  = 0;
-static int    g_nRecvOutPos = 0;
+static atomic_t    g_nRecvSize = ATOMIC_INIT(0);
+static atomic_t    g_nRecvInPos  = ATOMIC_INIT(0);
+static atomic_t    g_nRecvOutPos = ATOMIC_INIT(0);
 static sem_id g_hRecvWaitQueue = -1;
 static sem_id g_hRecvMutex     = -1;
 static int    g_nIRQHandle     = -1;
@@ -171,9 +171,9 @@ static int aux_interrupt( int nIrqNum, void* pData, SysCallRegs_s* psRegs )
 	return(0);
     }
     nData = inb(AUX_INPUT_PORT);
-    if ( g_nRecvSize < AUX_BUF_SIZE ) {
-	g_anReceiveBuffer[ atomic_add( &g_nRecvInPos, 1 ) % AUX_BUF_SIZE ] = nData;
-	atomic_add( &g_nRecvSize, 1 );;
+    if ( atomic_read( &g_nRecvSize ) < AUX_BUF_SIZE ) {
+	g_anReceiveBuffer[ atomic_inc_and_read( &g_nRecvInPos ) % AUX_BUF_SIZE ] = nData;
+	atomic_inc( &g_nRecvSize );;
 	wakeup_sem( g_hRecvWaitQueue, false );
     }
     spinunlock_enable( &g_sSPinLock, nFlg );
@@ -191,16 +191,16 @@ status_t ps2_open( void* pNode, uint32 nFlags, void **pCookie )
 {
     uint32 nFlg;
   
-    if ( atomic_add( &aux_count, 1 ) > 0 ) {
+    if ( atomic_inc_and_read( &aux_count ) > 0 ) {
 	return( 0 );
     }
     if (!poll_aux_status()) {
-	atomic_add( &aux_count, -1 );
+	atomic_dec( &aux_count );
 	return -EBUSY;
     }
     g_nIRQHandle = request_irq( AUX_IRQ, aux_interrupt, NULL, 0, "auxps2_device", NULL );
     if ( g_nIRQHandle < 0 ) {
-	atomic_add( &aux_count, -1 );
+	atomic_dec( &aux_count );
 	return( -EBUSY );
     }
     nFlg = spinlock_disable( &g_sSPinLock );
@@ -215,9 +215,9 @@ status_t ps2_open( void* pNode, uint32 nFlags, void **pCookie )
 //  enable_bh(KEYBOARD_BH);
   
 //  aux_ready = 0;
-    g_nRecvSize = 0;
-    g_nRecvInPos  = 0;
-    g_nRecvOutPos = 0;
+    atomic_set( &g_nRecvSize, 0 );
+    atomic_set( &g_nRecvInPos, 0 );
+    atomic_set( &g_nRecvOutPos, 0 );
     
     spinunlock_enable( &g_sSPinLock, nFlg );
   
@@ -235,7 +235,7 @@ status_t ps2_close( void* pNode, void* pCookie )
 {
     uint32 nFlg;
   
-    if ( atomic_add( &aux_count, -1 ) == 1 ) {
+    if ( atomic_dec_and_test( &aux_count ) ) {
 	release_irq( AUX_IRQ, g_nIRQHandle );
 	nFlg = spinlock_disable( &g_sSPinLock );
 	spinunlock_enable( &g_sSPinLock, nFlg );
@@ -272,7 +272,7 @@ int  ps2_read( void* pNode, void* pCookie, off_t nPosition, void* pBuffer, size_
 again:
     nFlg = spinlock_disable( &g_sSPinLock );
   
-    if ( g_nRecvSize == 0 ) {
+    if ( atomic_read( &g_nRecvSize ) == 0 ) {
 //    if ( g_nOpenFlags & O_NONBLOCK ) {
 //      nError = -EWOULDBLOCK;
 //    } else {
@@ -286,9 +286,9 @@ again:
 	}
 	goto again;
     }
-    while( g_nRecvSize > 0 && nBytesReceived < nSize ) {
-	((char*)pBuffer)[nBytesReceived++] = g_anReceiveBuffer[g_nRecvOutPos++ % AUX_BUF_SIZE ];
-	atomic_add( &g_nRecvSize, -1 );
+    while( atomic_read( &g_nRecvSize ) > 0 && nBytesReceived < nSize ) {
+	((char*)pBuffer)[nBytesReceived++] = g_anReceiveBuffer[ atomic_inc_and_read( &g_nRecvOutPos ) % AUX_BUF_SIZE ];
+	atomic_dec( &g_nRecvSize );
     }
     spinunlock_enable( &g_sSPinLock, nFlg );
     UNLOCK( g_hRecvMutex );

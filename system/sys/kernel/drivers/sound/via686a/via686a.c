@@ -313,7 +313,7 @@ status_t via_mixer_release(void* pNode, void* pCookie)
 	return 0;
 }
 
-status_t via_mixer_ioctl (void *node, void *cookie, uint32 cmd, void *args, size_t len)
+status_t via_mixer_ioctl (void *node, void *cookie, uint32 cmd, void *args, bool bFromKernel)
 {
 	struct ac97_codec *codec;
 	struct via_info *card = node;
@@ -905,7 +905,7 @@ int via_dsp_ioctl_trigger (struct via_channel *chan, int val)
 }
 
 
-int via_dsp_ioctl (void *node, void *cookie, uint32 cmd, void *args, size_t len)
+status_t via_dsp_ioctl (void *node, void *cookie, uint32 cmd, void *args, bool bFromKernel)
 {
 	int rc, rd=0, wr=0, val=0;
 	struct via_info *card;

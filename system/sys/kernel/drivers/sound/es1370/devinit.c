@@ -5,7 +5,7 @@ static void *es1370_driver_data;
 int es1370_init(PCI_Info_s *pcidev)
 {
 	struct es1370_state *s;
-	int i, val, res = -1;
+//	int i, val, res = -1;
 	unsigned int cssr;
 	
 	if (!(s = kmalloc(sizeof(struct es1370_state), MEMF_KERNEL))) {
@@ -78,9 +78,9 @@ int es1370_init(PCI_Info_s *pcidev)
    
        	return 0;
 
- error:
+/* error:
 	kfree(s);
-	return res;
+	return res;*/
 }
 
 DeviceOperations_s es1370_dsp_fops = {

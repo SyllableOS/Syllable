@@ -9,7 +9,7 @@
 
 status_t w8378x_open( void* pNode, uint32 nFlags, void **pCookie );
 status_t w8378x_close( void* pNode, void* pCookie );
-status_t w8378x_control( void* pNode, void* pCookie, uint32 op, void* arg, size_t len );
+status_t w8378x_control( void* pNode, void* pCookie, uint32 op, void* arg, bool bFromKernel );
 
 int w8378x_type;
 
@@ -236,7 +236,7 @@ status_t w8378x_close( void* pNode, void* pCookie )
   return( 0 );
 }
 
-status_t w8378x_control( void* pNode, void* pCookie, uint32 op, void* arg, size_t len )
+status_t w8378x_control( void* pNode, void* pCookie, uint32 op, void* arg, bool bFromKernel )
 {
 	switch( op )
 	{

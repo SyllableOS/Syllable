@@ -76,15 +76,30 @@ static inline int pci_read_config_dword(PCI_Info_s *pdev, int where, uint32 *ptr
 	return EOK;
 }
 
-static inline void set_bit(int nr, void* addr)
+/* Taken from linux asm-i386/bitops.h
+ * Atomically set a bit in memory.
+ * Note that @nr may be almost arbitrarily large.
+ */
+static inline void set_bit(int nr, volatile void* addr)
 {
-	int val,bit=1;
-	unsigned long* address=(unsigned long*)addr;
+	__asm__ __volatile__(
+		"lock ; btsl %1,%0"
+		:"=m" (*(volatile long*)addr)
+		:"Ir" (nr));
+}
 
-	val = *address;
-	bit=bit << nr;
-	val |= bit;
-	*address=val;
+/* Taken from linux asm-i386/bitops.h
+ * Determine whether a bit is set.
+ */
+static inline int test_bit(int nr, volatile void* addr)
+{
+	int oldbit;
+	
+	__asm__ __volatile__(
+		"btl %2,%1\n\tsbbl %0,%0"
+		:"=r" (oldbit)
+		:"m" (*(volatile long*)addr), "Ir" (nr));
+	return oldbit;
 }
 
 /* Taken from linux/ioctls.h for ac97_codec.c */

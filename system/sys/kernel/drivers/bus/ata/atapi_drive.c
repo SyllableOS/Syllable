@@ -52,7 +52,7 @@ int atapi_drive_open( void* pNode, uint32 nFlags, void **ppCookie )
 	}
 
 	kerndbg( KERN_DEBUG, "Capacity %Ld\n", psDev->nSize );
-	atomic_add( &psDev->nOpenCount, 1 );
+	atomic_inc( &psDev->nOpenCount );
 
 	return( 0 );
 }
@@ -60,7 +60,7 @@ int atapi_drive_open( void* pNode, uint32 nFlags, void **ppCookie )
 int atapi_drive_close( void* pNode, void* pCookie )
 {
 	ATAPI_device_s* psDev = pNode;
-	atomic_add( &psDev->nOpenCount, -1 );
+	atomic_dec( &psDev->nOpenCount );
 
 	return( 0 );
 }

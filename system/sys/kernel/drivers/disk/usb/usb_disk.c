@@ -189,7 +189,7 @@ bool usbdisk_add( USB_device_s * psDevice, unsigned int nIfnum, void **pPrivate 
 		return ( false );
 	}
 
-	atomic_add( &psDevice->nRefCount, 1 );
+	atomic_inc( &psDevice->nRefCount );
 
 	/* Print information */
 	if ( psDevice->sDeviceDesc.nManufacturer )
@@ -207,7 +207,7 @@ bool usbdisk_add( USB_device_s * psDevice, unsigned int nIfnum, void **pPrivate 
 	psDisk = ( USB_disk_s * ) kmalloc( sizeof( USB_disk_s ), MEMF_KERNEL );
 	if ( !psDisk )
 	{
-		atomic_add( &psDevice->nRefCount, -1 );
+		atomic_dec( &psDevice->nRefCount );
 		printk( "Out of memory\n" );
 		return ( false );
 	}
@@ -218,7 +218,7 @@ bool usbdisk_add( USB_device_s * psDevice, unsigned int nIfnum, void **pPrivate 
 	if ( !psDisk->current_urb )
 	{
 		kfree( psDisk );
-		atomic_add( &psDevice->nRefCount, -1 );
+		atomic_dec( &psDevice->nRefCount );
 		printk( "Out of memory\n" );
 		return ( false );
 	}
@@ -298,7 +298,7 @@ bool usbdisk_add( USB_device_s * psDevice, unsigned int nIfnum, void **pPrivate 
 		psDisk->transport_name = "Unknown";
 		kfree( psDisk->current_urb );
 		kfree( psDisk );
-		atomic_add( &psDevice->nRefCount, -1 );
+		atomic_dec( &psDevice->nRefCount );
 		return ( false );
 		break;
 	}
@@ -342,7 +342,7 @@ bool usbdisk_add( USB_device_s * psDevice, unsigned int nIfnum, void **pPrivate 
 	default:
 		kfree( psDisk->current_urb );
 		kfree( psDisk );
-		atomic_add( &psDevice->nRefCount, -1 );
+		atomic_dec( &psDevice->nRefCount );
 		return ( false );
 		break;
 	}
@@ -351,7 +351,7 @@ bool usbdisk_add( USB_device_s * psDevice, unsigned int nIfnum, void **pPrivate 
 	/* allocate an IRQ callback if one is needed */
 	if ( ( psDisk->protocol == US_PR_CBI ) && usbdisk_allocate_irq( psDisk ) )
 	{
-		atomic_add( &psDevice->nRefCount, -1 );
+		atomic_dec( &psDevice->nRefCount );
 		return ( false );
 	}
 
@@ -401,7 +401,7 @@ void usbdisk_remove( USB_device_s * psDevice, void *pPrivate )
 
 	g_psSCSIBus->remove_host( psDisk->host );
 	release_device( psDevice->nHandle );
-	atomic_add( &psDevice->nRefCount, -1 );
+	atomic_dec( &psDevice->nRefCount );
 }
 
 status_t device_init( int nDeviceID )

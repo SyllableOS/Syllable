@@ -58,10 +58,10 @@ status_t devs_open( void* pNode, uint32 nFlags, void **pCookie )
   }
 
   printk("APM BIOS Version : %c%c %d.%d\n",
-	 (rm.EBX >> 8) & 0x00FF,
-	 rm.EBX & 0x00FF,
-	 (rm.EAX >> 8) & 0x00FF,
-	 (rm.EAX & 0x00FF));
+	 ( int )((rm.EBX >> 8) & 0x00FF),
+	 ( int )(rm.EBX & 0x00FF),
+	 ( int )((rm.EAX >> 8) & 0x00FF),
+	 ( int )(rm.EAX & 0x00FF));
 
   spinunlock_enable( &g_sSPinLock, nFlg );
     

@@ -64,7 +64,7 @@ int emu10k1_find_control_gpr(struct patch_manager *mgr, const char *patch_name, 
   match:
 	for (i = 0; i < NUM_GPRS; i++)
 		if (mgr->gpr[i].type == GPR_TYPE_CONTROL &&
-		    atomic_and((atomic_t*)gpr_used,(atomic_t)i) &&
+		    test_bit(i, gpr_used) &&
 		    !strcmp(mgr->gpr[i].name, gpr_name))
 			return i;
 

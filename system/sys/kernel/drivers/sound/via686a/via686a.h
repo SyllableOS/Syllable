@@ -276,7 +276,7 @@ void via_remove_one (PCI_Info_s *pdev);
 
 int via_dsp_read(void *node, void *cookie, off_t ppos, void *buffer, size_t count);
 int via_dsp_write(void *node, void *cookie, off_t ppos, const void *buffer, size_t count);
-status_t via_dsp_ioctl (void *node, void *cookie, uint32 cmd, void *args, size_t len);
+status_t via_dsp_ioctl (void *node, void *cookie, uint32 cmd, void *args, bool bFromKernel);
 status_t via_dsp_open (void* pNode, uint32 nFlags, void **pCookie );
 status_t via_dsp_release( void* pNode, void* pCookie);
 

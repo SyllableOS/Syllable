@@ -68,11 +68,6 @@ typedef u32					dma_addr_t;
 #define FMODE_READ				1	
 #define FMODE_WRITE				2
 
-#define atomic_read(x)			atomic_add(x, 0)
-#define atomic_set(x, y)		atomic_swap(x, y)
-#define atomic_inc(x)			atomic_add(x, 1)
-#define atomic_dec(x)			atomic_dec_and_test(x)
-
 #define spin_lock(x)			spinlock(x)
 #define spin_unlock(x)			spinunlock(x)
 

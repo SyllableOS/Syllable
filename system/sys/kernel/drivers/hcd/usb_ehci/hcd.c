@@ -695,7 +695,7 @@ static void urb_unlink (USB_packet_s *urb)
 	list_del_init (&urb->lPacketList);
 	dev = urb->psDevice;
 	urb->psDevice = NULL;
-	atomic_add( &dev->nRefCount, -1 );
+	atomic_dec( &dev->nRefCount );
 	spin_unlock_irqrestore (&hcd_data_lock, flags);
 }
 
@@ -907,7 +907,7 @@ static int hcd_submit_urb (USB_packet_s *urb)
 
 	spin_lock_irqsave (&hcd_data_lock, flags);
 	if (HCD_IS_RUNNING (hcd->state) && hcd->state != USB_STATE_QUIESCING) {
-		atomic_add( &urb->psDevice->nRefCount, 1);
+		atomic_inc( &urb->psDevice->nRefCount);
 		list_add (&urb->lPacketList, &dev->urb_list);
 		status = 0;
 	} else {

@@ -1181,7 +1181,7 @@ static int uhci_unlink_urb_sync (uhci_t *s, USB_packet_s *urb)
 			urb->psDevice = NULL;
 			urb->pComplete (urb);
 		}
-		atomic_add( &usb_dev->nRefCount, -1 );
+		atomic_dec( &usb_dev->nRefCount );
 		//usb_dec_dev_use (usb_dev);
 	}
 	else
@@ -1225,7 +1225,7 @@ static void uhci_cleanup_unlink(uhci_t *s, int force)
 				process_transfer (s, urb, CLEAN_TRANSFER_DELETION_MARK);  // don't unlink (already done)
 				break;
 			case USB_PIPE_BULK:
-				if (!s->avoid_bulk)
+				if (!atomic_read( &s->avoid_bulk ))
 					process_transfer (s, urb, CLEAN_TRANSFER_DELETION_MARK); // don't unlink (already done)
 				else
 					continue;
@@ -1265,7 +1265,7 @@ static void uhci_cleanup_unlink(uhci_t *s, int force)
 	
 			uhci_urb_dma_unmap(s, urb, urb_priv);
 
-			atomic_add( &dev->nRefCount, -1 );
+			atomic_dec( &dev->nRefCount );
 			//usb_dec_dev_use (dev);
 #ifdef DEBUG_SLAB
 			kmem_cache_free (urb_priv_kmem, urb_priv);
@@ -1620,7 +1620,7 @@ static int uhci_submit_urb (USB_packet_s *urb)
 	}
 	
 
-	atomic_add( &urb->psDevice->nRefCount, 1 );
+	atomic_inc( &urb->psDevice->nRefCount );
 	//usb_inc_dev_use (urb->dev);
 
 	spinlock_cli (&s->urb_list_lock, flags);
@@ -1635,7 +1635,7 @@ static int uhci_submit_urb (USB_packet_s *urb)
 		    ((type == USB_PIPE_BULK) &&
 		     (!(urb->nTransferFlags & USB_QUEUE_BULK) || !(queued_urb->nTransferFlags & USB_QUEUE_BULK)))) {
 			spinunlock_restore (&s->urb_list_lock, flags);
-			atomic_add( &urb->psDevice->nRefCount, -1 );
+			atomic_dec( &urb->psDevice->nRefCount );
 			//usb_dec_dev_use (urb->dev);
 			printk("UHCI: ENXIO %08x, flags %x, urb %p, burb %p\n",urb->nPipe,urb->nTransferFlags,urb,queued_urb);
 			return -ENXIO;	// urb already queued
@@ -1649,7 +1649,7 @@ static int uhci_submit_urb (USB_packet_s *urb)
 	urb_priv = kmalloc (sizeof (urb_priv_t), MEMF_KERNEL);
 #endif
 	if (!urb_priv) {
-		atomic_add( &urb->psDevice->nRefCount, -1 );
+		atomic_dec( &urb->psDevice->nRefCount );
 		spinunlock_restore (&s->urb_list_lock, flags);
 		return -ENOMEM;
 	}
@@ -1685,9 +1685,9 @@ static int uhci_submit_urb (USB_packet_s *urb)
 			
 			((urb_priv_t*)queued_urb->pHCPrivate)->next_queued_urb=urb;
 		}
-		atomic_add(&s->avoid_bulk, 1);
+		atomic_inc(&s->avoid_bulk);
 		ret = uhci_submit_bulk_urb (urb, queued_urb);
-		atomic_add (&s->avoid_bulk, -1);
+		atomic_dec(&s->avoid_bulk);
 		spinunlock_restore (&s->urb_list_lock, flags);
 	}
 	else {
@@ -1738,7 +1738,7 @@ static int uhci_submit_urb (USB_packet_s *urb)
 	
 	if (ret != 0) {
 		uhci_urb_dma_unmap(s, urb, urb_priv);
-		atomic_add( &urb->psDevice->nRefCount, -1 );
+		atomic_dec( &urb->psDevice->nRefCount );
 		//usb_dec_dev_use (urb->psDevice);
 #ifdef DEBUG_SLAB
 		kmem_cache_free(urb_priv_kmem, urb_priv);
@@ -2592,7 +2592,7 @@ static int process_urb (uhci_t *s, struct list_head *p)
 		ret = process_transfer (s, urb, CLEAN_TRANSFER_REGULAR);
 		break;
 	case USB_PIPE_BULK:
-		if (!s->avoid_bulk)
+		if (!atomic_read( &s->avoid_bulk ))
 			ret = process_transfer (s, urb, CLEAN_TRANSFER_REGULAR);
 		else
 			return 0;
@@ -2701,7 +2701,7 @@ static int process_urb (uhci_t *s, struct list_head *p)
 				}
 				spinlock(&s->urb_list_lock);
 			}
-			atomic_add( &usb_dev->nRefCount, -1 );
+			atomic_dec( &usb_dev->nRefCount );
 			//usb_dec_dev_use (usb_dev);
 		}
 	}
@@ -2885,7 +2885,7 @@ static int alloc_uhci ( int nDeviceID, PCI_Info_s dev, int irq, unsigned int io_
 	spinlock_init (&s->urb_list_lock, "urb_list_lock");
 	spinlock_init (&s->qh_lock, "qh_lock");
 	spinlock_init (&s->td_lock, "td_lock");
-	atomic_and(&s->avoid_bulk, 0);
+	atomic_set(&s->avoid_bulk, 0);
 	s->irq = -1;
 	s->io_addr = io_addr;
 	s->io_size = io_size;

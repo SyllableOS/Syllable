@@ -386,7 +386,7 @@ static int spdif[NR_DEVICE] = { 0, };
 static int nomix[NR_DEVICE] = { 0, };
 
 static unsigned int devindex = 0;
-static int amplifier = 0;
+//static int amplifier = 0;
 
 static const char invalid_magic[] = "invalid magic value\n";
 
@@ -746,6 +746,7 @@ static inline void stop_dac2(struct es1371_state *s)
 	spin_unlock_irqrestore(&s->lock, flags);
 }	
 
+#if 0
 static void start_dac1(struct es1371_state *s)
 {
 	unsigned long flags;
@@ -767,6 +768,7 @@ static void start_dac1(struct es1371_state *s)
 	}
 	spin_unlock_irqrestore(&s->lock, flags);
 }	
+#endif
 
 static void start_dac2(struct es1371_state *s)
 {
@@ -793,6 +795,7 @@ static void start_dac2(struct es1371_state *s)
 	spin_unlock_irqrestore(&s->lock, flags);
 }	
 
+#if 0
 static void start_adc(struct es1371_state *s)
 {
 	unsigned long flags;
@@ -814,6 +817,7 @@ static void start_adc(struct es1371_state *s)
 	}
 	spin_unlock_irqrestore(&s->lock, flags);
 }	
+#endif
 
 static int prog_dmabuf(struct es1371_state *s, struct dmabuf *db, unsigned rate, unsigned fmt, unsigned reg)
 {

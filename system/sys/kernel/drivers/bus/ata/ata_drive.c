@@ -201,7 +201,7 @@ int ata_drive_open( void* pNode, uint32 nFlags, void **ppCookie )
 {
 	ATA_device_s* psDev = pNode;
 	
-	atomic_add( &psDev->nOpenCount, 1 );
+	atomic_inc( &psDev->nOpenCount );
 	
 	return( 0 );
 }
@@ -211,7 +211,7 @@ int ata_drive_close( void* pNode, void* pCookie )
 {
 	ATA_device_s* psDev = pNode;
 	
-	atomic_add( &psDev->nOpenCount, -1 );
+	atomic_dec( &psDev->nOpenCount );
 	
 	return( 0 );	
 }
@@ -792,7 +792,7 @@ int ata_drive_partitions( ATA_device_s* psDev )
 			}
 		}
 
-		if ( bFound == false && psPartition->nOpenCount > 0 )
+		if ( bFound == false && atomic_read( &psPartition->nOpenCount ) > 0 )
 		{
 			kerndbg( KERN_FATAL, "ata_decode_partitions() Error: Open partition %s on %s has changed\n", psPartition->zName, psDev->zName );
 			nError = -EBUSY;

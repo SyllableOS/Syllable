@@ -46,7 +46,7 @@ static SpinLock_s spin_lock = INIT_SPIN_LOCK( "dsp_slock" );
 #define dsp_out( reg, val )	isa_writeb( (reg), (val) )
 #define dsp_in( reg ) 		isa_readb( (reg) )
 
-#define DEBUG( str... )		printk( __FUNCTION__": " str )
+#define DEBUG( str, ... )	printk( "%s: " str, __FUNCTION__, ## __VA_ARGS__ )
 
 #define DEV_READ	0
 #define DEV_WRITE	1
@@ -341,7 +341,7 @@ static status_t sb_write( void *node, void *cookie, off_t ps, const void *buffer
 	return(count);
 }
 
-static status_t sb_read( void *node, void *cookie, off_t ps, const void *buffer, size_t size )
+static int sb_read( void *node, void *cookie, off_t ps, void *buffer, size_t size )
 {
 	int count;
 
@@ -376,7 +376,7 @@ static status_t sb_read( void *node, void *cookie, off_t ps, const void *buffer,
 }
 
 static status_t 
-sb_ioctl( void *node, void *cookie, uint32 com, void *args, size_t len )
+sb_ioctl( void *node, void *cookie, uint32 com, void *args, bool bFromKernel )
 {
 	switch( com ) {
 		case SOUND_PCM_WRITE_RATE :

@@ -935,7 +935,7 @@ static int emu10k1_dsp_mixer(struct emu10k1_card *card, unsigned int oss_mixer, 
 	return 0;
 }
 
-status_t emu10k1_mixer_ioctl(void *node, void *cookie, uint32 cmd, void *arg, size_t len)
+status_t emu10k1_mixer_ioctl(void *node, void *cookie, uint32 cmd, void *arg, bool bFromKernel)
 {
 	int ret;
 	struct emu10k1_card *card = (struct emu10k1_card*)node;
