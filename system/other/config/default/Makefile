@@ -21,6 +21,8 @@ dist:
 	@cd default_user/;\
 	cp -p .profile $(DIST_TARGET_PATH)/default_user/.profile;\
 	cp -p .profile $(DIST_DIR)/atheos/home/root/.profile;\
+	cp -pR Desktop/ $(DIST_DIR)/atheos/home/root/;\
+	cp -pR Desktop/ $(DIST_DIR)/atheos/home/guest/;\
 	cp -p .profile $(DIST_DIR)/atheos/home/guest/.profile;\
 	cd ..;
 
