@@ -50,6 +50,9 @@ AViewApplication::AViewApplication( char **ppzArgv, int nArgc ) : Application( "
 		pcRegistrar->RegisterType( "image/jpeg", "JPEG Image" );
 		pcRegistrar->RegisterTypeExtension( "image/jpeg", "jpeg" );
 		pcRegistrar->RegisterTypeExtension( "image/jpeg", "jpg" );
+		pcRegistrar->RegisterTypeExtension( "image/jpeg", "jpe" );
+		pcRegistrar->RegisterTypeExtension( "image/jpeg", "jif" );
+		pcRegistrar->RegisterTypeExtension( "image/jpeg", "jfif" );
 		pcRegistrar->RegisterTypeIcon( "image/jpeg", Path( "/system/icons/filetypes/image_jpeg.png" ) );
 		pcRegistrar->RegisterAsTypeHandler( "image/jpeg" );
 
