@@ -1,3 +1,9 @@
+* July 1 2003, Henrik Isaksson *
+
+ImageButton fixed for 32 bit screen modes + SetImageFromMemory added
+
+Applied Rick's patches to window.cpp and window.h (adds CenterInScreen method)
+
 * June 30 2003, Henrik Isaksson *
 
 Applied screenshot date+time patch from Rick. (Names screenshot files with date
