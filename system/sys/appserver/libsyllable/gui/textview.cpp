@@ -1289,7 +1289,8 @@ Point TextEdit::GetPreferredSize( bool bLargest ) const
 		}
 		else
 		{
-			return ( m_cPreferredSize );
+			return Point( LEFT_BORDER + RIGHT_BORDER, m_vGlyphHeight + TOP_BORDER + BOTTOM_BORDER );
+//			return ( m_cPreferredSize );
 		}
 //      return( Point( GetStringWidth( m_cBuffer[0].c_str() ) + LEFT_BORDER + RIGHT_BORDER,
 //                      m_cBuffer.size() * m_vGlyphHeight + TOP_BORDER + BOTTOM_BORDER ) );
@@ -2960,4 +2961,8 @@ void TextView::__TV_reserved3__()
 void TextView::__TV_reserved4__()
 {
 }
+
+
+
+
 
