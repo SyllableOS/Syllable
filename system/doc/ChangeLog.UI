@@ -1,3 +1,9 @@
+* April 25 2004, Henrik Isaksson *
+
+ - Message
+	o Bugfix: AddVariant() used the wrong type identifier (ie. it wasn't possible to use
+	  Variants with Messages before).
+
 * April 25 2004, Kristian Van Der Vliet *
 
 Software rendering speed improvements in ddriver.cpp, by Arno.
