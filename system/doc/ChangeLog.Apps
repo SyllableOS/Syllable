@@ -1,3 +1,20 @@
+* July 20th 2004, Rick Caudill *
+	-CharMap
+		o Added Charmap Application
+	-Aterm
+		o Added Settings Dialog(Damien Daniels)
+		o Added -F switch(FullScreen Mode)
+		o Added -s switch(Switches to a specific desktop number)
+		o Added UTF8 Support
+		o Popup menu offers "copy", "paste", "about" and "settings" actions.
+		o Size and position of the terminal are saved when you save your settings.
+		o Use double-click to select words.
+		o Press Alt to make rectangular selections.
+		o ATERM_ATTR environnement variable is no longer used.
+		o Default colors are "white on black".
+		o When you close the terminal window, the shell process is killed.
+		o ...
+ 
 * June 19th 2004, Henrik Isaksson *
 
 	- AClock
