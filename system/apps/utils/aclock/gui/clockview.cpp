@@ -210,12 +210,8 @@ void ClockView::draw( const Rect& cUpdateRect )
         SetFgColor( 0, 0, 255 );
         SetBgColor( sBackColor );
 
-        DrawString( s, Point(x0-l/2,y0+(fh.ascender-fh.descender)/2) );
+        DrawString( Point(x0-l/2,y0+(fh.ascender-fh.descender)/2), s );
     }
    
     Flush();
 }
-
-
-
-
