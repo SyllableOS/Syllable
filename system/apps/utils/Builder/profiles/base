@@ -91,12 +91,11 @@ apps/gnu/bzip2-1.0.2
 apps/gnu/coreutils-5.0
 apps/gnu/findutils-4.1
 apps/gnu/grep-2.5.1
-apps/gnu/gzip-1.2.4a
+apps/gnu/gzip-1.3.5
 apps/gnu/inetutils-1.4.2
 apps/gnu/less-381
 apps/gnu/sed-4.0.8
 apps/gnu/tar-1.13
-;apps/gnu/tar-1.13.25
 ;apps/other/man-1.5m2
 apps/media/coldfish
 apps/media/mediaconverter
