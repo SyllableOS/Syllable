@@ -298,6 +298,11 @@ int View::GetTabOrder()
 
 void View::SetTabOrder( int nOrder )
 {
+	if( nOrder == NEXT_TAB_ORDER ) {
+		nOrder = s_nNextTabOrder++;
+	}
+
+	s_nNextTabOrder = nOrder + 1;
 	m->m_nTabOrder = nOrder;
 }
 
@@ -799,7 +804,7 @@ void View::AddChild( View * pcChild, bool bAssignTabOrder )
 
 	if( bAssignTabOrder )
 	{
-		pcChild->SetTabOrder( s_nNextTabOrder++ );
+		pcChild->SetTabOrder( NEXT_TAB_ORDER );
 	}
 
 	pcChild->_Attached( GetWindow(), this, -1, m->m_nHideCount );

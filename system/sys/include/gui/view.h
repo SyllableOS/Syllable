@@ -120,6 +120,17 @@ enum
     MOUSE_EXITED
 };
 
+/** \brief Tab order allocation
+ * \ingroup gui
+ * \sa os::View::SetTabOrder
+ *****************************************************************************/
+enum tab_order
+{
+	NO_TAB_ORDER = -1,
+	NEXT_TAB_ORDER = -2
+};
+
+
 /** \brief Flags controlling a View
  * \ingroup gui
  * \sa os::view_resize_flags, os::View
@@ -145,7 +156,7 @@ enum view_flags
 
 enum view_resize_flags
 {
-    CF_FOLLOW_NONE	= 0x0000, ///< Neighter the size nor the position is changed.
+    CF_FOLLOW_NONE	= 0x0000, ///< Neither the size nor the position is changed.
     CF_FOLLOW_LEFT	= 0x0001, ///< Left edge follows the parents left edge.
     CF_FOLLOW_RIGHT	= 0x0002, ///< Right edge follows the parents right edge.
     CF_FOLLOW_TOP	= 0x0004, ///< Top edge follows the parents top edge.
@@ -251,7 +262,7 @@ public:
     String		GetTitle() const;
 
     virtual int		GetTabOrder();
-    virtual void	SetTabOrder( int nOrder );
+    virtual void	SetTabOrder( int nOrder = NEXT_TAB_ORDER );
 
 	virtual const ShortcutKey& GetShortcut() const;
 	virtual void SetShortcut( const ShortcutKey& cShortcut );
@@ -440,3 +451,5 @@ private:
 } // end of namespace
 
 #endif	// __F_GUI_VIEW_H__
+
+
