@@ -17,19 +17,22 @@ static struct mounted_drives
     char zPer[1024];
 }drives;
 
-typedef vector <mounted_drives> t_Info;
+//typedef vector <mounted_drives> t_Info;
 
 
 
 class Drives : public Menu {
 	
 	public:
-		Drives();
+		Drives(View* pcView);
 		void Unmount(int32 nUnmount);
 		void Mount();
-		t_Info GetDrivesInfo();
+		void GetDrivesInfo();
 };
 #endif
+
+
+
 
 
 
