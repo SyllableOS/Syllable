@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.54
+# Version 0.5.55
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -11,29 +11,36 @@
 def unpackPackage target
  Dir.chdir File.dirname(target) if target['/']
 
+ files = []
+
  unless
   for pack in (packages = getRecipe(target)['packages']) ?
    parseList(packages) :
    [fullName(target)]
 
+   pack, dir = pack.split
    base = File.join @sourcesPath, pack
- 
+   option = dir ? ' --directory=' + dir : ''
+
 #   file = Dir[File.join(@sourcesPath, fullName target) + '.*'] [0]
 #   case File.basename file
- 
+
    if exists? file = base + '.zip'
     type = :zip
-    break unless action 'unzip ' + file
+    break unless action 'unzip ' + file + dir ? ' -d ' + dir : ''
    elsif exists? file = base + '.tar.bz2' or exists? file = base + '.tbz2'
     type = :bzip
-    break unless action "bzcat #{file} | tar x"
+    break unless action "bzcat #{file} | tar#{option} -x"
    elsif exists? file = base + '.tar.gz' or exists? file = base + '.tgz'
     type = :gzip
-    break unless action 'tar xzf ' + file
+    break unless action "tar#{option} -xzf " + file
    else
     @log.error "Source package #{base}.* not found"
     break
    end
+
+   files << file
+   action 'sync'
   end
  then
   false
@@ -43,6 +50,7 @@ def unpackPackage target
   else  # Source package content has a deviating subdirectory name
    @log.subheader 'Renaming source'
 
+   file = files.first
    result = `#{case type
     when :zip  then 'unzip -lqq ' + file
     when :bzip then "bzcat #{file} | tar --list"
@@ -1175,7 +1183,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
- puts 'Syllable Build System 0.5.54',
+ puts 'Syllable Build System 0.5.55',
   'Copyright (c) 2002-2004 Kaj de Vos',
   'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'

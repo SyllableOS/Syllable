@@ -13,8 +13,9 @@ licenses			GPL LGPL GFDL GPL+exception BSD MIT ISC Apache Artistic Python MPL QP
 
 home				syllable.org
 packages
-	<Tarball names, if different from the package file name.
-	Common tarball extensions (.tgz, .tar.gz, .tbz2, .tar.bz2) should not be mentioned.>
+	<Source package names, if different from the recipe name.
+	Common package extensions (.tgz, .tar.gz, .tbz2, .tar.bz2, .zip) should be left off.>
+	<Package> [<Subdirectory to unpack into (for packages after the first that should be unpacked inside the first)>]
 ;locations			<Download locations>
 ;archives			<Arch archives>
 
