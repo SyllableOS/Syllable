@@ -289,6 +289,16 @@ status_t Font::_SetProperties( float vSize, float vShear, float vRotation, uint3
 	return ( 0 );
 }
 
+String Font::GetFamily() const
+{
+	return ( m_cFamily );
+}
+
+String Font::GetStyle() const
+{
+	return ( m_cStyle );
+}
+
 float Font::GetSize() const
 {
 	return ( m_vSize );
@@ -791,3 +801,4 @@ bool Font::Rescan()
 		return ( false );
 	}
 }
+
