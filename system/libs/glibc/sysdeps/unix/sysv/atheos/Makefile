@@ -57,7 +57,7 @@ sysdep_routines += image get_image_info get_symbol_address libc_lock
 sysdep_headers += sys/image.h
 
 # Debugging API
-sysdep_routines += dbprintf set_strace_level debug_read debug_write
+sysdep_routines += dbprintf strace strace_exclude strace_include debug_read debug_write
 sysdep_headers += sys/debug.h
 
 
