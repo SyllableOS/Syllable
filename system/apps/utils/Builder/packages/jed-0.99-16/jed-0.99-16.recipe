@@ -1,0 +1,3 @@
+authors			Kaj de Vos
+;install			make install && jed -batch -n -l preparse.sl
+documentation	README INSTALL INSTALL.unx changes.txt COPYRIGHT COPYING
