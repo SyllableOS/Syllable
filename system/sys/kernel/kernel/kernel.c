@@ -150,7 +150,7 @@ status_t sys_get_system_info( system_info* psInfo, int nVersion )
   
 	    sInfo.nBootTime      = g_sSysBase.ex_nBootTime;		/* time of boot (# usec since 1/1/70) */
 	    sInfo.nCPUCount      = g_nActiveCPUCount;
-	    sInfo.nCPUType       = 0;
+	    sInfo.nCPUType       = g_asProcessorDescs[g_nBootCPU].pi_nFeatures;
 	    sInfo.nMaxPages      = g_sSysBase.ex_nTotalPageCount;	/* total # physical pages		*/
 	    sInfo.nFreePages     = g_sSysBase.ex_nFreePageCount;	/* Number of free physical pages	*/
 	    sInfo.nCommitedPages = g_sSysBase.ex_nCommitPageCount;	/* Total number of allocated pages	*/
@@ -188,6 +188,7 @@ status_t sys_get_system_info( system_info* psInfo, int nVersion )
 	    sInfo.nKernelVersion = g_nKernelVersion;
 	    return( memcpy_to_user( psInfo, &sInfo, sizeof( sInfo ) ) );
 	}
+	
 	default:
 	    printk( "Error: sys_get_system_info() invalid version %d\n", nVersion );
 	    return( -EINVAL );
