@@ -1,0 +1,14 @@
+authors
+	Kaj de Vos
+	Mike Saunders
+maintainers			Mike Saunders
+
+headline			Pico-like text editor
+licenses			GPL
+home				www.nano-editor.org
+locations			http://www.nano-editor.org/dist/v1.2/
+
+configure-options
+	--enable-all
+	--with-slang
+documentation		README BUGS UPGRADE COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS nanorc.sample
