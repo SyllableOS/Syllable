@@ -1,0 +1,8 @@
+authors				Kaj de Vos
+
+licenses			GPL BSD
+home				www.greenwoodsoftware.com/less/
+
+build-needs			binutils <> 2.14
+;configure-options	--with-editor=
+documentation		README LICENSE COPYING NEWS
