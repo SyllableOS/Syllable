@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.47
+# Version 0.5.48
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -159,7 +159,7 @@ end
 def configurePackage target
  if native?
   @log.header 'Building dependencies'
-  action 'make deps'
+  action makeCommand(target) + ' deps'
 
   true  # Continue building even if dependencies failed
  else
@@ -223,7 +223,7 @@ def cleanPackage target
    @log.header 'Deleting build directory'
    action 'rm --recursive --force ' + dir
   else
-   action 'make clean'
+   action makeCommand(target) + ' clean'
   end
  then
 #  @log.failure target
@@ -237,7 +237,7 @@ def makePackage target
  if exists? dir = buildDir(target) then Dir.chdir dir end
 
  unless action(((vars = (recipe = getRecipe(target))['make-env']) ? toVariables(vars) + ' ' : '') +
-  'make' +
+  makeCommand(target) +
   ((vars = recipe['make-vars']) ? ' ' + toVariables(vars) : '') +
   ((options = recipe['make-options']) ? ' ' + toString(options) : '') +
   ((targets = recipe['make-targets']) ? ' ' + toString(targets) : '')
@@ -252,7 +252,7 @@ end
 def testPackage target
  if exists? dir = buildDir(target) then Dir.chdir dir end
 
- unless action 'make ' +
+ unless action makeCommand(target) +
   ((options = (recipe = getRecipe(target))['test-options']) ? toString(options) + ' ' : '') +
   ((targets = recipe['test-targets']) ? toString(targets) : 'check')
  then
@@ -289,7 +289,7 @@ def installPackage target
 
    if native?
     if exists? dir = buildDir(target) then Dir.chdir dir end
-    action 'make install'
+    action makeCommand(target) + ' install'
    else
     root = installPath target
 
@@ -319,7 +319,7 @@ def installPackage target
        toCommand cmdLine
       else
        ((vars = recipe['install-env']) ? toVariables(vars) + ' ' : '') +
-       'make' +
+       makeCommand(target) +
        ( (var = recipe['install-prefix-var']) ? " #{var}=" + root :
         @systemBuild ? ' prefix=' + root :
         ''
@@ -416,7 +416,7 @@ def uninstallPackage target
    end
   then  # A native module
    if exists? dir = buildDir(target) then Dir.chdir dir end
-   action 'make uninstall'
+   action makeCommand(target) + ' uninstall'
   else
    dir = installPath target
    name = shortName target
@@ -455,12 +455,12 @@ def makeDistroPackage target  # Should only be called if it's a system build
    if exists? dir = buildDir(target) then Dir.chdir dir end
 
    unless
-    unless action 'make dist'
+    unless action makeCommand(target) + ' dist'
      false
     else
 #     @log.header 'Installing documentation'
-#     if action 'make doc'
-#      action 'make install-doc'
+#     if action makeCommand(target) + ' doc'
+#      action makeCommand(target) + ' install-doc'
 #     end
 
      true
@@ -563,7 +563,7 @@ end
 
 def distclean target
  @log.header 'Cleaning distribution ' + target.to_s
- doModules 'make distclean', target
+ doModules makeCommand(target) + ' distclean', target
 end
 
 def configure target
@@ -972,6 +972,10 @@ def overlayRecipe recipe, overlay
  recipe
 end
 
+def makeCommand package
+ 'make' + ((file = (getRecipe package)['makefile']) ? ' -f ' + file : '')
+end
+
 def action command  # Return the output of the shell command, or false if unsuccessful
  @log.action command
  stdout = `#{command}`
@@ -1120,7 +1124,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
- puts 'Syllable Build System 0.5.47',
+ puts 'Syllable Build System 0.5.48',
   'Copyright (c) 2002-2004 Kaj de Vos',
   'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1241,3 +1245,4 @@ else
  action 'sync'
  @log.close
 end
+

@@ -43,6 +43,9 @@ patch				<Extra patching commands>
 ; Don't use a separate build directory:
 no-build-dir
 
+; Makefile, if non-standard or in a non-standard location:
+makefile			Makefile
+
 ; Configuring:
 ; <configure>
 ; [<pre-configure>]
