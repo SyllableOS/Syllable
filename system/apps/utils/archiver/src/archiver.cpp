@@ -16,6 +16,7 @@
 */
 
 #include "archiver.h"
+#include "flowlayout.h"
 #include "settings.h"
 
 using namespace os;
@@ -99,43 +100,44 @@ void ArcWindow::SetupMenus()
 void ArcWindow::SetupToolBar()
 {
 
-	pcButtonBar = new ToolBar( Rect(), "" );
-	HLayoutNode *pcNode = new HLayoutNode( "" );
+	pcButtonBar = new ToolBar( Rect(), "",false );
+	FlowLayoutNode *pcNode = new FlowLayoutNode( "" );
 	pcNode->SetHAlignment( ALIGN_LEFT );
+	pcNode->AddChild( new HLayoutSpacer( "", 2, 2 ) );	// Looks better when resizing if they're fixed width... :o)
 
-	ImageButton *pcOpen = new ImageButton( Rect(), "imagebut1", "  Open", new Message( ID_OPEN ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	ImageButton *pcOpen = new ImageButton( Rect(), "imagebut1", "  Open", new Message( ID_OPEN ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, false );
 	pcOpen->SetImage( LoadImageFromResource( "open.png" ) );
 	pcNode->AddChild( pcOpen );
 	pcNode->AddChild( new HLayoutSpacer( "", 2, 2 ) );	// Looks better when resizing if they're fixed width... :o)
 
-	ImageButton *pcNew = new ImageButton( Rect(), "imagebut2", "   New", new Message( ID_NEW ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	ImageButton *pcNew = new ImageButton( Rect(), "imagebut2", "   New", new Message( ID_NEW ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, false );
 	pcNew->SetImage( LoadImageFromResource( "new.png" ) );
 	pcNode->AddChild( pcNew );
 	pcNode->AddChild( new HLayoutSpacer( "", 2, 2 ) );	// Looks better when resizing if they're fixed width... :o)
 
-	ImageButton *pcExtract = new ImageButton( Rect(), "imagebut3", "Extract", new Message( ID_EXTRACT ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	ImageButton *pcExtract = new ImageButton( Rect(), "imagebut3", "Extract", new Message( ID_EXTRACT ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, false );
 	pcExtract->SetImage( LoadImageFromResource( "extract.png" ) );
 	pcNode->AddChild( pcExtract );
 	pcNode->AddChild( new HLayoutSpacer( "", 2, 2 ) );	// Looks better when resizing if they're fixed width... :o)
 
-	ImageButton *pcExe = new ImageButton( Rect(), "imagebut4", "MakeSelf", new Message( ID_EXE ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	ImageButton *pcExe = new ImageButton( Rect(), "imagebut4", "MakeSelf", new Message( ID_EXE ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, false );
 	pcExe->SetImage( LoadImageFromResource( "exe.png" ) );
 	pcNode->AddChild( pcExe );
 	pcNode->AddChild( new HLayoutSpacer( "", 2, 2 ) );	// Looks better when resizing if they're fixed width... :o)
 
-	ImageButton *pcSettingsBut = new ImageButton( Rect(), "imagebut5", "Settings", new Message( ID_APP_SET ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	ImageButton *pcSettingsBut = new ImageButton( Rect(), "imagebut5", "Settings", new Message( ID_APP_SET ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, false );
 	pcSettingsBut->SetImage( LoadImageFromResource( "settings.png" ) );
 	pcNode->AddChild( pcSettingsBut );
 	pcNode->AddChild( new HLayoutSpacer( "", 2, 2 ) );	// Looks better when resizing if they're fixed width... :o)
 
-	ImageButton *pcAboutBut = new ImageButton( Rect(), "imagebut6", "About", new Message( ID_HELP_ABOUT ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	ImageButton *pcAboutBut = new ImageButton( Rect(), "imagebut6", "About", new Message( ID_HELP_ABOUT ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, false );
 	pcAboutBut->SetImage( LoadImageFromResource( "about.png" ) );
 	pcNode->AddChild( pcAboutBut );
 	pcNode->AddChild( new HLayoutSpacer( "", 0, COORD_MAX, NULL, 100.0f ) );
 
 	pcButtonBar->SetRoot( pcNode );
 	pcButtonBar->SetFrame( Rect( 0, m_pcMenu->GetFrame().bottom + 1, GetBounds(  ).Width(  ), m_pcMenu->GetFrame(  ).bottom + pcButtonBar->GetPreferredSize( false ).y + 4 ) );
-	pcNode->SameWidth( "imagebut4", "imagebut2", "imagebut3", "imagebut1", "imagebut5", "imagebut6", NULL );
+	//pcNode->SameWidth( "imagebut4", "imagebut2", "imagebut3", "imagebut1", "imagebut5", "imagebut6", NULL );
 	AddChild( pcButtonBar );
 }
 

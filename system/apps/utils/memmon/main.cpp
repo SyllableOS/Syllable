@@ -26,7 +26,7 @@
 #include <atheos/kernel.h>
 
 #include <gui/window.h>
-#include <gui/tableview.h>
+#include <gui/layoutview.h>
 #include <gui/stringview.h>
 #include <gui/menu.h>
 
@@ -83,7 +83,8 @@ public:
     virtual void TimerTick( int nID );
   
 private:
-    TableView*	m_pcTableView;
+    LayoutView*	m_pcLayoutView;
+    VLayoutNode* m_pcVLayout;
     StringView*	m_pcMemUsageStr;
     MultiMeter*	m_pcMemUsage;
     int		m_nUpdateCount;
@@ -177,15 +178,18 @@ MonWindow::MonWindow( const Rect& cFrame ) :
     Rect	  cWndBounds = GetBounds();
     m_nUpdateCount = 0;
 
-    m_pcTableView   = new TableView( cWndBounds, "_cpumon_table", "", 1, 2, CF_FOLLOW_ALL );
+    m_pcLayoutView   = new LayoutView( cWndBounds, "_cpumon_layout" );
     m_pcMemUsage    = new MultiMeter( Rect( 0, 0, 1, 1 ), "Mem usage", WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
     m_pcMemUsageStr = new StringView( Rect( 0, 0, 1, 1 ), "mem_usage_str", "100", ALIGN_CENTER, WID_WILL_DRAW );
-  
-    m_pcTableView->SetChild( m_pcMemUsageStr, 0, 0 );
-    m_pcTableView->SetChild( m_pcMemUsage, 0, 1 );
-    m_pcTableView->SetCellAlignment( 0, 0, ALIGN_CENTER, ALIGN_CENTER );
-
-    AddChild( m_pcTableView );
+    m_pcVLayout = new VLayoutNode( "_cpumon_vlayout" );
+   
+    m_pcVLayout->SetBorders( os::Rect( 5, 5, 5, 5 ) );
+    m_pcVLayout->AddChild( m_pcMemUsageStr, 0.0f )/*->LimitMaxSize( m_pcMemUsageStr->GetPreferredSize( false ) )*/;
+    m_pcVLayout->AddChild( m_pcMemUsage, 1.0f );
+    
+    m_pcLayoutView->SetRoot( m_pcVLayout );
+    AddChild( m_pcLayoutView );
+    
     m_pcMemUsageStr->SetFgColor( 0, 0, 0 );
     char*	pzHome = getenv( "HOME" );
 
@@ -319,7 +323,7 @@ void MonWindow::TimerTick( int nID )
 	float vDirtyPst = float(sInfo.nDirtyCacheSize) / float(sInfo.nMaxPages * PAGE_SIZE);
 
 	m_pcMemUsage->AddValue( vFreePst - vCachePst, vCachePst - vDirtyPst, vDirtyPst );
-	m_pcTableView->Layout();
+	m_pcVLayout->Layout();
     }
 }
 
