@@ -1,6 +1,12 @@
+; Recipe information
 authors				<Recipe authors>
 maintainers			<Recipe maintainers>
 status				testing | developing | incomplete | broken
+notes				<Internal notes>
+;
+; Package information
+summary				<Brief headline>
+description			<Full description>
 licenses			gpl | lgpl | bsd | mit | pd | freeware | commercial
 ;
 home				syllable.sf.net
@@ -13,7 +19,7 @@ packages			<Deviating tarball name>
 ;build-needs			<Build-time dependencies>
 ;test-needs			<Test-time dependencies>
 ;run-needs			<Run-time dependencies>
-;suggests				<Optional dependencies>
+;recommends			<Optional dependencies>
 ;
 ; Patching options:
 patch-config		[<Directories>]
