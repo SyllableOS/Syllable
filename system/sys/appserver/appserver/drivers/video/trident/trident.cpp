@@ -46,172 +46,172 @@
  */
 void TridentDriver::outl( uint32 nAddress, uint32 nValue ) const
 {
-    if ( m_bUseMMIO ) {
-      *((vuint32*)(m_pMMIOBase + nAddress)) = nValue;
-    } else {
-      outl_p( nValue, nAddress );
-    }
+  if ( m_bUseMMIO ) {
+    *((uint32*)(m_pMMIOBase + nAddress)) = nValue;
+  } else {
+    outl_p( nValue, nAddress );
+  }
 }
 
 void TridentDriver::outb( uint32 nAddress, uint8 nValue ) const
 {
-    if ( m_bUseMMIO ) {
-      *((vuint8*)(m_pMMIOBase + nAddress)) = nValue;
-    } else {
-      outb_p( nValue, nAddress );
-    }
+  if ( m_bUseMMIO ) {
+    *((uint8*)(m_pMMIOBase + nAddress)) = nValue;
+  } else {
+    outb_p( nValue, nAddress );
+  }
 }
 
 uint32 TridentDriver::inl( uint32 nAddress ) const
 {
-    if ( m_bUseMMIO ) {
-      return( *((vuint32*)(m_pMMIOBase + nAddress)) );
-    } else {
-      return inl_p( nAddress );
-    }
+  if ( m_bUseMMIO ) {
+    return( *((uint32*)(m_pMMIOBase + nAddress)) );
+  } else {
+    return inl_p( nAddress );
+  }
 }
 
 uint8  TridentDriver::inb( uint32 nAddress ) const
 {
-    if ( m_bUseMMIO ) {
-      return( *((vuint8*)(m_pMMIOBase + nAddress)) );
-    } else {
-      return inb_p( nAddress );
-    }
+  if ( m_bUseMMIO ) {
+    return( *((uint8*)(m_pMMIOBase + nAddress)) );
+  } else {
+    return inb_p( nAddress );
+  }
 }
 
 
 void TridentDriver::IdentifyChip()
 {
-    TridentID found = UNKNOWN_CHIP;
-    uint8 temp;
-    uint8 origVal;
-    uint8 newVal;
+  TridentID found = UNKNOWN_CHIP;
+  uint8 temp;
+  uint8 origVal;
+  uint8 newVal;
 
-    // Check first that we have a Trident card.
-    outb(0x3C4, 0x0B);
-    temp = inb(0x3C5);  // Save old value
-    outb(0x3C4, 0x0B);  // Switch to Old Mode
-    outb(0x3C5, 0x00);
-    inb(0x3C5);         // Now to New Mode
+  // Check first that we have a Trident card.
+  outb(0x3C4, 0x0B);
+  temp = inb(0x3C5);  // Save old value
+  outb(0x3C4, 0x0B);  // Switch to Old Mode
+  outb(0x3C5, 0x00);
+  inb(0x3C5);         // Now to New Mode
+  outb(0x3C4, 0x0E);
+  origVal = inb(0x3C5);
+  outb(0x3C5, 0x00);
+  newVal = inb(0x3C5) & 0x0F;
+  outb(0x3C5, (origVal ^ 0x02));
+
+  // If it is not a Trident card, quit.
+  if (newVal != 2) {
+    outb(0x3C4, 0x0B);  // Restore value of 0x0B
+    outb(0x3C5, temp);
     outb(0x3C4, 0x0E);
-    origVal = inb(0x3C5);
-    outb(0x3C5, 0x00);
-    newVal = inb(0x3C5) & 0x0F;
-    outb(0x3C5, (origVal ^ 0x02));
-
-    // If it is not a Trident card, quit.
-    if (newVal != 2) {
-      outb(0x3C4, 0x0B);  // Restore value of 0x0B
-      outb(0x3C5, temp);
-      outb(0x3C4, 0x0E);
-      outb(0x3C5, origVal);
-    } else {
-      // At this point, we are sure to have a trident card.
-      outb(0x3C4, 0x0B);
-      temp = inb(0x3C5);
-      switch (temp) {
-        // Unsupported chipsets :
-        // case 0x01:
-        //   found = TVGA8800BR;
-        //   break;
-        // case 0x02:
-        //   found = TVGA8800CS;
-        //   break;
-        // case 0x03:
-        //   found = TVGA8900B;
-        //   break;
-        // case 0x04:
-        // case 0x13:
-        //   found = TVGA8900C;
-        //   break;
-        // case 0x23:
-        //   found = TVGA9000;
-        //   break;
-        // case 0x33:
-        //   found = TVGA8900D;
-        //   break;
-        // case 0x43:
-        //   found = TVGA9000I;
-        //   break;
-        // case 0x53:
-        //   found = TVGA9200CXR;
-        //   break;
-        // case 0x63:
-        //   found = TVGA9100B;
-        //   break;
-        // case 0x83:
-        //   found = TVGA8200LX;
-        //   break;
-        // case 0x93:
-        //   found = TGUI9400CXI;
-        //   break;
-        //
-        // List of supported adapters (they provide linear framebuffer.):
-        case 0xA3:
-          found = CYBER9320;
-          break;
-        case 0x73:
-        case 0xC3:
-          found = TGUI9420DGI;
-          break;
-        case 0xD3:
-          found = TGUI9660;
-          break;
-        case 0xE3:
-          found = TGUI9440AGI;
-          break;
-        case 0xF3:
-          found = TGUI9430DGI;
-          break;
-        default:
-          dbprintf("Unrecognised Trident chipset : 0x%x.\n", temp );
-          break;
-      }
+    outb(0x3C5, origVal);
+  } else {
+    // At this point, we are sure to have a trident card.
+    outb(0x3C4, 0x0B);
+    temp = inb(0x3C5);
+    switch (temp) {
+      // Unsupported chipsets :
+      // case 0x01:
+      //   found = TVGA8800BR;
+      //   break;
+      // case 0x02:
+      //   found = TVGA8800CS;
+      //   break;
+      // case 0x03:
+      //   found = TVGA8900B;
+      //   break;
+      // case 0x04:
+      // case 0x13:
+      //   found = TVGA8900C;
+      //   break;
+      // case 0x23:
+      //   found = TVGA9000;
+      //   break;
+      // case 0x33:
+      //   found = TVGA8900D;
+      //   break;
+      // case 0x43:
+      //   found = TVGA9000I;
+      //   break;
+      // case 0x53:
+      //   found = TVGA9200CXR;
+      //   break;
+      // case 0x63:
+      //   found = TVGA9100B;
+      //   break;
+      // case 0x83:
+      //   found = TVGA8200LX;
+      //   break;
+      // case 0x93:
+      //   found = TGUI9400CXI;
+      //   break;
+      //
+      // List of supported adapters (they provide linear framebuffer.):
+      case 0xA3:
+        found = CYBER9320;
+        break;
+      case 0x73:
+      case 0xC3:
+        found = TGUI9420DGI;
+        break;
+      case 0xD3:
+        found = TGUI9660;
+        break;
+      case 0xE3:
+        found = TGUI9440AGI;
+        break;
+      case 0xF3:
+        found = TGUI9430DGI;
+        break;
+      default:
+        dbprintf("Unrecognised Trident chipset : 0x%x.\n", temp );
+        break;
     }
-    m_nChip = found;
+  }
+  m_nChip = found;
 }
 
 void TridentDriver::DetectVideoMemory()
 {
-    uint8 videorammask;
-    uint8 val;
-    uint8 chipID;
+  uint8 videorammask;
+  uint8 val;
+  uint8 chipID;
 
-    outb(0x3C4, 0x0B);
-    chipID = inb(0x3C5);
+  outb(0x3C4, 0x0B);
+  chipID = inb(0x3C5);
+  
+  if (chipID > 0 && chipID < 0xE3) {
+    videorammask = 0x07;
+  } else {
+    videorammask = 0x0F;
+  }
+
+  outb(0x3D4, 0x1F);
+  val = inb(0x3D5);
     
-    if (chipID > 0 && chipID < 0xE3) {
-      videorammask = 0x07;
-    } else {
-      videorammask = 0x0F;
-    }
+  switch (val & videorammask) {
+    case 3: m_nVideoMemory = 1024; break;
+    case 4: m_nVideoMemory = 4096; break;
+      // 8 MB really but only 4 MB are usable with HW cursor (?)
+    case 7: m_nVideoMemory = 2048; break;
+    case 15: m_nVideoMemory = 4096; break;
+      // real 4 MB
+    default: m_nVideoMemory = 1024; break;
+      // Defaulting to 1 MB when unknown
+  }
 
-    outb(0x3D4, 0x1F);
-    val = inb(0x3D5);
-    switch (val & videorammask) {
-      case 3: m_nVideoMemory = 1024; break;
-      case 4: m_nVideoMemory = 4096; break;
-        // 8 MB really but only 4 MB are usable with HW cursor (?)
-      case 7: m_nVideoMemory = 2048; break;
-      case 15: m_nVideoMemory = 4096; break;
-        // real 4 MB
-      default: m_nVideoMemory = 1024; break;
-        // Defaulting to 1 MB when unknown
-    }
-
-    dbprintf( "Available Video Memory: %ld\n", m_nVideoMemory );
-
+  dbprintf( "Available Video Memory: %ld\n", m_nVideoMemory );
 }
 
 const TridentCardDesc* TridentDriver::GetTridentCardDesc( TridentID chip ) const
 {
-    for ( int j = 0 ; TridentCardsDesc[j].CardName != NULL ; ++j ) {
-      if ( TridentCardsDesc[j].CardID == chip ) {
-        return &(TridentCardsDesc[j]);
-      }
+  for ( int j = 0 ; TridentCardsDesc[j].CardName != NULL ; ++j ) {
+    if ( TridentCardsDesc[j].CardID == chip ) {
+      return &(TridentCardsDesc[j]);
     }
-    return NULL;
+  }
+  return NULL;
 }
 
 
@@ -247,10 +247,10 @@ void TridentDriver::GetAddresses() {
   protect = inb(0x3D5);
   outb(0x3D5, protect | 0x80 );
 
-  m_pFrameBufferBase = (uint8*) addr;
+  m_pFrameBufferBase = addr;
 
   // Currently I have no information about MMIO...
-  m_pMMIOBase = NULL;
+  m_pMMIOBase = 0;
 }
 
 
@@ -294,6 +294,7 @@ bool TridentDriver::SetBIOSMode( uint16 num ) {
 
   rm.EAX = num;
   realint( 0x10, &rm );
+  
   if ( ! rm.EAX ) {
     dbprintf("Unable to call Vesa INT10 to set mode.\n");
     return false;
@@ -303,122 +304,138 @@ bool TridentDriver::SetBIOSMode( uint16 num ) {
 
 
 TridentDriver::TridentDriver()
+:m_cLock("TridentHWLock")
 {
-    const TridentCardDesc *pCardDesc;
-    bool bFound = false;
+  const TridentCardDesc *pCardDesc;
+  PCI_Info_s             pci;
+  bool                   bFound = false;
 
-    m_bUseMMIO = false;
-    m_nBusType = NONE;
+  m_bUseMMIO = false;
+  m_nBusType = NONE;
 
-    m_pFrameBufferBase = NULL;
-    m_pMMIOBase = NULL;
-    m_hFrameBufferArea = 0;
-    m_hMMIOArea = 0;
+  m_pFrameBufferBase = 0;
+  m_pMMIOBase = 0;
+  m_hFrameBufferArea = 0;
+  m_hMMIOArea = 0;
 
-    dbprintf("Starting probing Trident video cards...\n");
+  dbprintf("Starting probing Trident video cards...\n");
 
-    // First, check PCI bus
-    for ( int i = 0 ;  get_pci_info( &m_cCardInfo, i ) == 0 ; ++i )
-    {
-      dbprintf("PCI %d: Vendor: %x - Device: %x - Rev. %x.\n",
-        i, m_cCardInfo.nVendorID, m_cCardInfo.nDeviceID, m_cCardInfo.nRevisionID);
-      if ( m_cCardInfo.nVendorID == PCI_VENDOR_ID_TRIDENT )
-      {
-        for ( int j = 0 ; TridentCardsDesc[j].CardName != NULL ; ++j ) {
-          if ( m_cCardInfo.nDeviceID == TridentCardsDesc[j].PciDeviceID ) {
-            bFound = true;
-            m_nBusType = PCI;
-            m_nChip = TridentCardsDesc[j].CardID;
-            break;
-          }
+  // First, check PCI bus
+  for ( int i = 0 ;  get_pci_info( &pci, i ) == 0 ; ++i ) {
+    dbprintf("PCI %d: Vendor: %x - Device: %x - Rev. %x.\n",
+             i, pci.nVendorID, pci.nDeviceID, pci.nRevisionID);
+    if ( pci.nVendorID == PCI_VENDOR_ID_TRIDENT ) {
+      for ( int j = 0 ; TridentCardsDesc[j].CardName != NULL ; ++j ) {
+        if ( pci.nDeviceID == TridentCardsDesc[j].PciDeviceID ) {
+          bFound = true;
+          m_cCardInfo = pci;
+          m_nBusType = PCI;
+          m_nChip = TridentCardsDesc[j].CardID;
         }
       }
     }
+  }
 
-    if ( bFound ) {
-      // A PCI card has been found.
-      m_pFrameBufferBase = (uint8*) ( m_cCardInfo.u.h0.nBase0
-                           & PCI_ADDRESS_MEMORY_32_MASK );
-      m_pMMIOBase = (uint8*) (m_cCardInfo.u.h0.nBase1
-                    & PCI_ADDRESS_IO_MASK);
+  if ( bFound ) {
+    // A PCI card has been found.
+    m_pFrameBufferBase = m_cCardInfo.u.h0.nBase0
+                         & PCI_ADDRESS_MEMORY_32_MASK;
+    m_pMMIOBase = m_cCardInfo.u.h0.nBase1
+                  & PCI_ADDRESS_IO_MASK;
+  } else {
+    // Try to find an ISA/VLB card
+      
+    // ### LOCK
+    m_cLock.Lock();
+      
+    IdentifyChip();
+
+    if ( m_nChip == UNKNOWN_CHIP ) {
+      bFound = false;
     } else {
-      // Try to find an ISA/VLB card
-      IdentifyChip();
-
-      if ( m_nChip == UNKNOWN_CHIP ) {
-        bFound = false;
-      } else {
-        bFound = true;
-        m_nBusType = ISA;
-        // For ISA/VLB cards, we now need to detect the framebuffer base.
-        GetAddresses();
-      }
+      bFound = true;
+      m_nBusType = ISA;
+      // For ISA/VLB cards, we now need to detect the framebuffer base.
+      GetAddresses();
     }
+      
+    // ### UNLOCK
+    m_cLock.Unlock();
+  }
 
-    if ( ! bFound ) {
-      dbprintf( "No Trident video card found\n" );
+  if ( ! bFound ) {
+    dbprintf( "No Trident video card found\n" );
+    throw exception();
+  }
+
+  // From here, we are sure to have at least one Trident Card.
+
+  pCardDesc = GetTridentCardDesc( m_nChip );
+  if ( pCardDesc != NULL ) {
+    dbprintf("Found %s device : %s.\n",
+             (m_nBusType == ISA ? "ISA" : "PCI/AGP"),
+             pCardDesc->CardName);
+  } else {
+    dbprintf("Internal Driver Logic Error #1\n");
+  }
+
+  // We detect the size of the video memory.
+  // The value is stored in m_nVideoMemory
+
+  // ### LOCK
+  m_cLock.Lock();
+
+  DetectVideoMemory();
+
+  // ### UNLOCK
+  m_cLock.Unlock();
+
+  // We scan each mode defined in TridentModes to check
+  // if it is compatible with installed amount of video memory.
+  // If it is, we add it to the list of available modes : m_cModes
+
+  for ( int i = 0; TridentModes[i].ModeID > 0 ; ++i ) {
+    if ( ( TridentModes[i].BPL * TridentModes[i].Height ) / 1024u
+         <= m_nVideoMemory ) {
+      m_cModes.push_back( ScreenMode( TridentModes[i].Width,
+                                      TridentModes[i].Height,
+                                      TridentModes[i].BPL,
+                                      TridentModes[i].ColorSpace ) );
+    }
+  }
+
+  // How much memory is required to map the framebuffer and the registers ?
+  // We will set the framebuffer the same size as the real video memory.
+  // For the registers, I don't know... Anyway, they are not used (yet).
+
+  if ( m_pFrameBufferBase != 0 ) {
+    m_hFrameBufferArea = create_area( "trident_fb", NULL,
+                                      1024 * m_nVideoMemory,
+                                      AREA_FULL_ACCESS, AREA_NO_LOCK );
+    if ( m_hFrameBufferArea <= 0 ) {
+      dbprintf("Unable to create Frame Buffer area\n");
       throw exception();
     }
+    remap_area( m_hFrameBufferArea, (void*) m_pFrameBufferBase );
+    dbprintf("Frame Buffer set to 0x%lx.\n", m_pFrameBufferBase );
+  } else {
+    dbprintf("No Frame Buffer Address defined. Must Stop.\n");
+    throw exception();
+  }
 
-    // From here, we are sure to have at least one Trident Card.
-
-    pCardDesc = GetTridentCardDesc( m_nChip );
-    if ( pCardDesc != NULL ) {
-      dbprintf("Found device : %s.\n", pCardDesc->CardName);
-    } else {
-      dbprintf("Internal Driver Logic Error #1\n");
-    }
-
-    // We detect the size of the video memory.
-    // The value is stored in m_nVideoMemory
-
-    DetectVideoMemory();
-
-    // We scan each mode defined in TridentModes to check
-    // if it is compatible with installed amount of video memory.
-    // If it is, we add it to the list of available modes : m_cModes
-
-    for ( int i = 0; TridentModes[i].ModeID > 0 ; ++i ) {
-      if ( ( TridentModes[i].BPL * TridentModes[i].Height ) / 1024u
-           <= m_nVideoMemory ) {
-        m_cModes.push_back( ScreenMode( TridentModes[i].Width,
-                                        TridentModes[i].Height,
-                                        TridentModes[i].BPL,
-                                        TridentModes[i].ColorSpace ) );
-      }
-    }
-
-    // How much memory is required to map the framebuffer and the registers ?
-    // We will set the framebuffer the same size as the real video memory.
-    // For the registers, I don't know... Anyway, they are not used (yet).
-
-    if ( m_pFrameBufferBase != NULL ) {
-      m_hFrameBufferArea = create_area( "trident_fb", NULL,
-                                        1024 * m_nVideoMemory,
-                                        AREA_FULL_ACCESS, AREA_NO_LOCK );
-      if ( m_hFrameBufferArea <= 0 ) {
-        dbprintf("Unable to create Frame Buffer area\n");
-        throw exception();
-      }
-      remap_area( m_hFrameBufferArea, (void*) m_pFrameBufferBase );
-      dbprintf("Frame Buffer set to 0x%lx.\n", (uint32) m_pFrameBufferBase );
-    } else {
-      dbprintf("No Frame Buffer Address defined. Must Stop.\n");
+  if ( m_pMMIOBase != 0 ) {
+    m_hMMIOArea = create_area( "trident_io", NULL,
+                               1024 * 1024 * 1,
+                               AREA_FULL_ACCESS, AREA_NO_LOCK );
+    if ( m_hMMIOArea <= 0 ) {
+      dbprintf("Unable to create MMIO area\n");
       throw exception();
     }
+    remap_area( m_hMMIOArea, (void*) m_pMMIOBase );
+    dbprintf("MMIO address set to 0x%lx.\n", m_pMMIOBase );
+  }
 
-    if ( m_pMMIOBase != NULL ) {
-      m_hMMIOArea = create_area( "trident_io", NULL,
-                                 1024 * 1024 * 1,
-                                 AREA_FULL_ACCESS, AREA_NO_LOCK );
-      if ( m_hMMIOArea <= 0 ) {
-        dbprintf("Unable to create MMIO area\n");
-        throw exception();
-      }
-      remap_area( m_hMMIOArea, (void*) m_pMMIOBase );
-    }
-
-    dbprintf( "Trident video card successfully initialized.\n" );
+  dbprintf( "Trident video card successfully initialized.\n" );
 }
 
 TridentDriver::~TridentDriver()
@@ -427,7 +444,7 @@ TridentDriver::~TridentDriver()
 
 area_id TridentDriver::Open( void )
 {
-    return( m_hFrameBufferArea );
+  return( m_hFrameBufferArea );
 }
 
 void TridentDriver::Close( void )
@@ -474,8 +491,14 @@ int TridentDriver::SetScreenMode( int nWidth, int nHeight, color_space eColorSpc
   }
 
   if ( m_nCurrentMode != 0 ) {
+    // ### LOCK
+    m_cLock.Lock();
+
     SetBIOSMode( m_nCurrentMode );
     EnableFrameBuffer();
+    
+    // ### UNLOCK
+    m_cLock.Unlock();
     return 0;
   } else {
     dbprintf( "Invalid mode.\n" );
@@ -540,15 +563,21 @@ color_space TridentDriver::GetColorSpace()
 
 bool TridentDriver::IntersectWithMouse( const IRect& cRect )
 {
-    return( false );
+  return( false );
 }
 
 void TridentDriver::SetColor( int nIndex, const Color32_s& sColor )
 {
-    outb( 0x3c8, nIndex);
-    outb( 0x3c9, sColor.red >> 2);
-    outb( 0x3c9, sColor.green >> 2 );
-    outb( 0x3c9, sColor.blue >> 2 );
+  // ### LOCK
+  m_cLock.Lock();
+
+  outb( 0x3c8, nIndex);
+  outb( 0x3c9, sColor.red >> 2);
+  outb( 0x3c9, sColor.green >> 2 );
+  outb( 0x3c9, sColor.blue >> 2 );
+
+  // ### UNLOCK
+  m_cLock.Unlock();
 }
 
 bool TridentDriver::DrawLine( SrvBitmap* psBitMap, const IRect& cClipRect,
@@ -570,16 +599,20 @@ bool TridentDriver::BltBitmap( SrvBitmap* dstbm, SrvBitmap* srcbm, IRect cSrcRec
 
 extern "C" DisplayDriver* init_gfx_driver()
 {
-    dbprintf( "Trident video driver attempts to initialize\n" );
+  dbprintf( "Trident video driver (ver. %s) attempts to initialize...\n",
+           VERSION );
 
-    try {
+  try {
 	DisplayDriver* pcDriver = new TridentDriver();
 	return( pcDriver );
-    }
-    catch( exception&  cExc ) {
+  }
+  catch( exception&  cExc ) {
 	return( NULL );
-    }
+  }
 }
+
+
+
 
 
 

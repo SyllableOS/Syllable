@@ -23,6 +23,8 @@
 #ifndef _TRIDENT_H
 #define _TRIDENT_H
 
+#define VERSION "0.1a"
+
 #include <atheos/types.h>
 #include <atheos/pci.h>
 #include <gui/guidefines.h>
@@ -206,15 +208,16 @@ private:
     inline uint8  inb( uint32 nAddress ) const;
 
     std::vector<ScreenMode>	 m_cModes;
-
-// We really need this, isn't it ? :-/
-//    os::Locker  m_cLock;
+    
+    // As a rule, we will only lock and unlock in public methods
+    // of this driver because they are topmost and atomic functions
+    os::Locker  m_cLock;
 
     bool        m_bUseMMIO;
 
-    uint8*      m_pFrameBufferBase;
+    uint32      m_pFrameBufferBase;
     area_id     m_hFrameBufferArea;
-    uint8*      m_pMMIOBase;
+    uint32      m_pMMIOBase;
     area_id     m_hMMIOArea;
 
     PCI_Info_s  m_cCardInfo;
@@ -229,6 +232,9 @@ private:
 
 
 #endif // _TRIDENT_H
+
+
+
 
 
 
