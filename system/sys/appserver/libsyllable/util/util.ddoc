@@ -1,0 +1,20 @@
+/*!
+
+\defgroup util Various utillity classes.
+
+This part of libsyllable contains the Application class, which is a requirement for
+any class that talks to the AppServer. The Looper class and the Thread class are two
+important parts of the util group. A class based on one of them will be able to run
+code asynchronously.
+
+Other classes include IPC wrappers (Message, Messenger, MessageFilter, MessageQueue,
+Handler, Invoker etc.), general utility classes (Variant, String, RegExp etc.) and a
+number of special classes, such as Settings, which simplifies handling of
+applications' options and Clipboard, used to access clipboard data.
+
+For command line interface (CLI) applications, OptionParser is a very useful class,
+which simplifies, and standardizes, handling of CLI switches and arguments.
+
+
+*/
+
