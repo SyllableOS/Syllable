@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.3.14
+# Version 0.3.15
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -77,7 +77,7 @@ def unpackPackage target
 			unless result = (action "tar tzf " + file)  # Bzip to be implemented
 				false
 			else
-				action "mv #{result.split[0]} " + dir
+				action "mv #{File.dirname result.split[0]} " + dir
 			end
 		end
 	end
@@ -792,7 +792,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.3.14",
+	puts "Syllable Build System 0.3.15",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
