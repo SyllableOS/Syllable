@@ -1,3 +1,7 @@
+* Dec 23 2002, Kristian Van Der Vliet *
+
+Upgraded Grub to 0.92 with a patch from Jack Tonkin <lists@tonkin.org.uk> which adds AFS support from 0.53.  This version of Grub is reported NOT to compile on Syllable currently, although if you wish you can easily build and install it from Linux.
+
 * Nov 3 2002, Kristian Van Der Vliet *
 
 Fixed the keyboard driver and appserver.  The NumLock & CapsLock keys now function and are honored by the appserver.  All keymaps now set NumLock on by default.
@@ -130,6 +134,7 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
 
 
 
