@@ -1,7 +1,7 @@
 ; Network Necessities
 
 modules
-	network/openssh-3.7.1p2
+	network/openssh-3.8.1p1
 	network/rsync-2.6.0
 	network/samba-3.0.2a
 	network/wget-1.9.1
