@@ -1,3 +1,7 @@
+* June 18 2003, Kristian Van Der Vliet *
+	* Add man2html scripts & source
+	* pkgmanager -a now calls the manaddpackage.sh script if a "man" directory exists
+
 * June 10 2003, Kristian Van Der Vliet *
 	* Import of Date/Time preferences application from the last version (0.4alpha) released by Daryl Dudey.
 
