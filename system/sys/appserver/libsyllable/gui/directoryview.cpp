@@ -1450,7 +1450,7 @@ DirectoryView::State::State( ListView * pcView, const char *pzPath ):m_cPath( pz
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-DirectoryView::DirectoryView( const Rect & cFrame, const std::string & cPath, uint32 nModeFlags, uint32 nResizeMask, uint32 nViewFlags ):ListView( cFrame, "_list_view", nModeFlags, nResizeMask, nViewFlags ), m_cPath( cPath.c_str() )
+DirectoryView::DirectoryView( const Rect & cFrame, const String & cPath, uint32 nModeFlags, uint32 nResizeMask, uint32 nViewFlags ):ListView( cFrame, "_list_view", nModeFlags, nResizeMask, nViewFlags ), m_cPath( cPath.c_str() )
 {
 	m_pcCurReadDirSession = NULL;
 
@@ -1692,9 +1692,9 @@ void DirectoryView::ReRead()
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-std::string DirectoryView::GetPath() const
+String DirectoryView::GetPath() const
 {
-	return ( std::string( m_cPath.GetPath() ) );
+	return ( m_cPath.GetPath() );
 }
 
 //----------------------------------------------------------------------------
@@ -1704,7 +1704,7 @@ std::string DirectoryView::GetPath() const
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-void DirectoryView::SetPath( const std::string & cPath )
+void DirectoryView::SetPath( const String & cPath )
 {
 	while( m_cStack.size() > 0 )
 	{
@@ -1815,7 +1815,7 @@ void DirectoryView::SetDirChangeMsg( Message * pcMsg )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-void DirectoryView::DirChanged( const std::string & cNewPath )
+void DirectoryView::DirChanged( const String & cNewPath )
 {
 	if( m_pcDirChangeMsg != NULL )
 	{
@@ -2509,3 +2509,4 @@ bool FileRow::IsLessThan( const ListViewRow * pcOther, uint nColumn ) const
 		return ( false );
 	}
 }
+

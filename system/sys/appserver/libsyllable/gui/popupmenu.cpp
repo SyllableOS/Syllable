@@ -380,7 +380,7 @@ void PopupMenu::Paint(const Rect& cRect)
 	else
 		x = 0.0f;
 	
-	DrawString( GetLabel().c_str(), Point( x, ( cBounds.Height() + 1.0f ) / 2 - ( sHeight.ascender + sHeight.descender ) / 2 + sHeight.ascender ) );
+	DrawString( Point( x, ( cBounds.Height() + 1.0f ) / 2 - ( sHeight.ascender + sHeight.descender ) / 2 + sHeight.ascender ), GetLabel().c_str() );
 
 	if (GetIcon())
 	{
@@ -521,6 +521,7 @@ void PopupMenu::__pm_reserved9()
 void PopupMenu::__pm_reserved10()
 {
 }
+
 
 
 

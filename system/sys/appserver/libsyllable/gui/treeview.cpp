@@ -247,7 +247,7 @@ void TreeViewNode::_DrawExpanderCross( View *pcView, const Rect& cRect )
 class TreeViewStringNode::Private
 {
 	public:
-    std::vector< std::pair<std::string,float> > m_cStrings;
+    std::vector< std::pair<String,float> > m_cStrings;
     Image*	m_pcIcon;
     
     Private() {
@@ -281,17 +281,17 @@ void TreeViewStringNode::SetRect( const Rect& cRect, int nColumn )
 {
 }
 
-void TreeViewStringNode::AppendString( const std::string& cString )
+void TreeViewStringNode::AppendString( const String& cString )
 {
     m->m_cStrings.push_back( std::make_pair( cString, 0.0f ) );
 }
 
-void TreeViewStringNode::SetString( int nIndex, const std::string& cString )
+void TreeViewStringNode::SetString( int nIndex, const String& cString )
 {
     m->m_cStrings[nIndex].first = cString;
 }
 
-const std::string& TreeViewStringNode::GetString( int nIndex ) const
+const String& TreeViewStringNode::GetString( int nIndex ) const
 {
     return( m->m_cStrings[nIndex].first );
 }
@@ -506,10 +506,10 @@ class TreeView::Private
     }
 };
 
-TreeView::TreeView( const Rect& cFrame, const char* pzTitle, uint32 nModeFlags = F_MULTI_SELECT | F_RENDER_BORDER,
+TreeView::TreeView( const Rect& cFrame, const String& cName, uint32 nModeFlags = F_MULTI_SELECT | F_RENDER_BORDER,
                     uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP,
                     uint32 nFlags = WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE )
-        : ListView( cFrame, pzTitle, nModeFlags, nResizeMask, nFlags ) {
+        : ListView( cFrame, cName, nModeFlags, nResizeMask, nFlags ) {
     m = new Private;
 }
     
@@ -1156,4 +1156,5 @@ void TreeView::InsertRow( int nPos, ListViewRow* pcRow, bool bUpdate = true )
 void TreeView::InsertRow( ListViewRow* pcRow, bool bUpdate = true )
 {
 }
+
 

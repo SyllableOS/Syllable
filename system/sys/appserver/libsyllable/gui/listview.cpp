@@ -1,6 +1,6 @@
-
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -109,17 +109,22 @@ namespace os
 	class ListViewCol:public View
 	{
 	      public:
-		ListViewCol( ListViewContainer * pcParent, const Rect & cFrame, const std::string & cTitle );
+		ListViewCol( ListViewContainer * pcParent, const Rect & cFrame, const String & cTitle );
 		~ListViewCol();
 
 		virtual void Paint( const Rect & cUpdateRect );
 		void Refresh( const Rect & cUpdateRect );
+
+		virtual void MouseDown(const Point&, uint32);
+		virtual void MouseMove(const Point&,int,uint32,Message*);
+		virtual void MouseUp(const Point&,uint32, Message*);
+
 	      private:
 		  friend class ListViewHeader;
 		friend class ListViewContainer;
 
 		ListViewContainer *m_pcParent;
-		  std::string m_cTitle;
+		  String m_cTitle;
 		float m_vContentWidth;
 	};
 
@@ -338,17 +343,17 @@ void ListViewStringRow::SetRect( const Rect & cRect, int nColumn )
 {
 }
 
-void ListViewStringRow::AppendString( const std::string & cString )
+void ListViewStringRow::AppendString( const String & cString )
 {
 	m_cStrings.push_back( std::make_pair( cString, 0.0f ) );
 }
 
-void ListViewStringRow::SetString( int nIndex, const std::string & cString )
+void ListViewStringRow::SetString( int nIndex, const String & cString )
 {
 	m_cStrings[nIndex].first = cString;
 }
 
-const std::string & ListViewStringRow::GetString( int nIndex ) const
+const String & ListViewStringRow::GetString( int nIndex ) const
 {
 	return ( m_cStrings[nIndex].first );
 }
@@ -430,7 +435,7 @@ void ListViewStringRow::Paint( const Rect & cFrame, View * pcView, uint nColumn,
 		cRect.bottom = vBaseLine + sHeight.descender + 1;
 		pcView->FillRect( cRect, Color32_s( 0, 0, 0, 0 ) );
 	}
-	pcView->DrawString( m_cStrings[nColumn].first.c_str() );
+	pcView->DrawString( m_cStrings[nColumn].first );
 }
 
 //----------------------------------------------------------------------------
@@ -458,7 +463,7 @@ bool ListViewStringRow::IsLessThan( const ListViewRow * pcOther, uint nColumn ) 
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-ListViewCol::ListViewCol( ListViewContainer * pcParent, const Rect & cFrame, const std::string & cTitle ):
+ListViewCol::ListViewCol( ListViewContainer * pcParent, const Rect & cFrame, const String & cTitle ):
 View( cFrame, "_lv_column" ), m_cTitle( cTitle )
 {
 	m_pcParent = pcParent;
@@ -574,6 +579,21 @@ void ListViewCol::Paint( const Rect & cUpdateRect )
 		m_pcParent->DrawFrame( m_pcParent->m_cSelectRect, FRAME_TRANSPARENT | FRAME_THIN );
 		m_pcParent->SetDrawingMode( DM_COPY );
 	}
+}
+
+void ListViewCol::MouseDown(const Point& cPos, uint32 nButtons)
+{
+	m_pcParent->MouseDown(cPos,nButtons);
+}
+
+void ListViewCol::MouseUp(const Point& cPos, uint32 nButtons, Message* pcData)
+{
+	m_pcParent->MouseUp(cPos,nButtons,pcData);
+}
+
+void ListViewCol::MouseMove(const Point& cPos,int nCode,uint32 nButtons, Message* pcData)
+{
+	m_pcParent->MouseMove(cPos,nCode,nButtons,pcData);
 }
 
 //----------------------------------------------------------------------------
@@ -822,6 +842,7 @@ void ListViewContainer::MouseDown( const Point & cPosition, uint32 nButton )
 			SetDrawingMode( DM_COPY );
 		}
 	}
+	m_pcListView->MouseDown(cPosition, nButton);
 	Flush();
 }
 
@@ -862,7 +883,7 @@ void ListViewContainer::MouseUp( const Point & cPosition, uint32 nButton, Messag
 		View::MouseUp( cPosition, nButton, pcData );
 		return;
 	}
-
+	m_pcListView->MouseUp(cPosition,nButton,pcData);
 }
 
 //----------------------------------------------------------------------------
@@ -946,6 +967,7 @@ void ListViewContainer::MouseMove( const Point & cNewPos, int nCode, uint32 nBut
 			StopScroll();
 		}
 	}
+	m_pcListView->MouseMove( cNewPos, nCode, nButtons, pcData );
 }
 
 void ListViewContainer::WheelMoved( const Point & cDelta )
@@ -2201,7 +2223,9 @@ void ListViewHeader::DrawButton( const char *pzTitle, const Rect & cFrame, Font 
 
 	int nStrLen = pcFont->GetStringLength( pzTitle, cFrame.Width() - 9.0f );
 
-	DrawString( pzTitle, nStrLen, cFrame.LeftTop() + Point( 5, ( cFrame.Height(  ) + 1.0f ) / 2 - vFontHeight / 2 + psFontHeight->ascender ) );
+	MovePenTo(cFrame.LeftTop() + Point( 5, ( cFrame.Height(  ) + 1.0f ) / 2 - vFontHeight / 2 + psFontHeight->ascender ));
+
+	DrawString( pzTitle, nStrLen );
 }
 
 //----------------------------------------------------------------------------
@@ -2520,7 +2544,7 @@ void ListViewHeader::Layout()
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-ListView::ListView( const Rect & cFrame, const char *pzTitle, uint32 nModeFlags, uint32 nResizeMask, uint32 nFlags ):Control( cFrame, pzTitle, "", NULL, nResizeMask, nFlags )
+ListView::ListView( const Rect & cFrame, const String& cTitle, uint32 nModeFlags, uint32 nResizeMask, uint32 nFlags ):Control( cFrame, cTitle, "", NULL, nResizeMask, nFlags )
 {
 	m_pcHeaderView = new ListViewHeader( this, Rect( 0, 0, 1, 1 ), nModeFlags );
 	m_pcMainView = m_pcHeaderView->m_pcMainView;
@@ -2547,7 +2571,7 @@ ListView::~ListView()
 	delete m_pcInvokeMsg;
 }
 
-void ListView::LabelChanged( const std::string & cNewLabel )
+void ListView::LabelChanged( const String & cNewLabel )
 {
 }
 
@@ -3569,3 +3593,17 @@ void ListView::SortRows( std::vector < ListViewRow * >*pcRows, int nColumn )
 	std::sort( pcRows->begin(), pcRows->end(  ), RowContentPred( nColumn ) );
 }
 
+void ListView::MouseDown(const Point& cPos,uint32 nButtons)
+{
+	View::MouseDown(cPos,nButtons);
+}
+
+void ListView::MouseMove( const Point & cNewPos, int nCode, uint32 nButtons, Message * pcData )
+{
+	View::MouseMove(cNewPos,nCode,nButtons,pcData);
+}
+
+void ListView::MouseUp( const Point & cPosition, uint32 nButton, Message * pcData )
+{
+	View::MouseUp(cPosition,nButton,pcData);
+}

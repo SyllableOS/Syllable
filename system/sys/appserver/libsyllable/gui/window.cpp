@@ -1,4 +1,3 @@
-
 /*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
  *  Copyright (C) 2003 The Syllable Team
@@ -89,7 +88,7 @@ typedef std::map<ShortcutKey, ShortcutData> shortcut_map;
 class Window::Private
 {
       public:
-	Private( const std::string & cTitle ):m_cTitle( cTitle )
+	Private( const String & cTitle ):m_cTitle( cTitle )
 	{
 		m_psRenderPkt = NULL;
 		m_nRndBufSize = RENDER_BUFFER_SIZE;
@@ -112,7 +111,7 @@ class Window::Private
 		memset( m_apcFocusStack, 0, FOCUS_STACK_SIZE * sizeof( View * ) );
 	}
 
-	std::string m_cTitle;
+	String m_cTitle;
 	Bitmap* m_pcIcon;
 	WR_Render_s *m_psRenderPkt;
 	uint32 m_nRndBufSize;
@@ -214,7 +213,7 @@ void Window::_Cleanup()
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-Window::Window( const Rect & cFrame, const std::string & cName, const std::string & cTitle, uint32 nFlags, uint32 nDesktopMask ):Looper( cName, DISPLAY_PRIORITY )	//, m_cTitle( cTitle )
+Window::Window( const Rect & cFrame, const String & cName, const String & cTitle, uint32 nFlags, uint32 nDesktopMask ):Looper( cName, DISPLAY_PRIORITY )	//, m_cTitle( cTitle )
 {
 	assert( Application::GetInstance() != NULL );
 //    Init();
@@ -448,7 +447,7 @@ View *Window::SetFocusChild( View * pcView )
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-void Window::SetTitle( const std::string & cTitle )
+void Window::SetTitle( const String & cTitle )
 {
 	m->m_cTitle = cTitle;
 
@@ -582,7 +581,7 @@ void Window::SetAlignment( const IPoint & cSize, const IPoint & cSizeOffset, con
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-std::string Window::GetTitle( void ) const
+String Window::GetTitle( void ) const
 {
 	return ( m->m_cTitle );
 }
@@ -1256,18 +1255,23 @@ View *Window::_GetNextTabView( View * pcCurrent )
 	int nFocusOrder = pcCurrent->GetTabOrder();
 	const Looper::handler_map &cMap = GetHandlerMap();
 	Looper::handler_map::const_iterator i;
+//	int x = 0;	// debug
 
 	int nLowestOrder = INT_MAX;
 	int nClosest = INT_MAX;
 	View *pcClosest = NULL;
 	View *pcLowestOrder = NULL;
 
+//	dbprintf( "Window::_GetNextTabView( %ld ) : %s\n", nFocusOrder, pcCurrent->GetName().c_str() );
+
 	for( i = cMap.begin(); i != cMap.end(  ); ++i )
 	{
+//		x++;
 		View *pcView = dynamic_cast < View * >( ( *i ).second );
 
 		if( pcView == NULL || pcView == pcCurrent )
 		{
+//			dbprintf( "- %ld = pcCurrent or NULL\n", x );
 			continue;
 		}
 		int nOrder = pcView->GetTabOrder();
@@ -1278,6 +1282,7 @@ View *Window::_GetNextTabView( View * pcCurrent )
 		}
 		if( nOrder >= nFocusOrder )
 		{
+//			dbprintf( "- %ld = nOrder (%ld) >= nFocusOrder (%ld)\n", x, nOrder, nFocusOrder );
 			if( nOrder - nFocusOrder < nClosest - nFocusOrder )
 			{
 				pcClosest = pcView;
@@ -1286,6 +1291,7 @@ View *Window::_GetNextTabView( View * pcCurrent )
 		}
 		if( nOrder < nLowestOrder )
 		{
+//			dbprintf( "- %ld = nOrder (%ld) < nLowestOrder (%ld)\n", x, nOrder, nLowestOrder );
 			nLowestOrder = nOrder;
 			pcLowestOrder = pcView;
 		}
@@ -1476,6 +1482,10 @@ void Window::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 						break;
 					}
 					int nFocusOrder = pcFocusChild->GetTabOrder();
+
+/*					if( pzString[0] == '\t' ) {	// debug
+						dbprintf( "TAB! Focus order = %d\n", nFocusOrder );
+					}*/
 
 					if( nFocusOrder >= 0 && pzString[0] == '\t' )
 					{

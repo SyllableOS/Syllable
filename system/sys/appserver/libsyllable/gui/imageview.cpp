@@ -35,7 +35,7 @@ class ImageView::Private
  * \sa os::Image, os::View
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-ImageView::ImageView( Rect cFrame, const char *pzName, Image * pcImage, ImageMode eMode = DEFAULT, uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP, uint32 nFlags = WID_WILL_DRAW | WID_CLEAR_BACKGROUND | WID_FULL_UPDATE_ON_RESIZE ):View( cFrame, pzName, nResizeMask, nFlags )
+ImageView::ImageView( Rect cFrame, const String& cName, Image * pcImage, ImageMode eMode = DEFAULT, uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP, uint32 nFlags = WID_WILL_DRAW | WID_CLEAR_BACKGROUND | WID_FULL_UPDATE_ON_RESIZE ):View( cFrame, cName, nResizeMask, nFlags )
 {
 	m = new Private;
 	m->m_pcImage = pcImage;

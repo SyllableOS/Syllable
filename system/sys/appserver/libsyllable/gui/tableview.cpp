@@ -1,6 +1,6 @@
 /*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
- *  Copyright (C) 2003 The Syllable Team
+ *  Copyright (C) 2003 - 2004 The Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -239,21 +239,19 @@ void TableCell::Layout( void )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-TableView::TableView( const Rect& cFrame, const char* pzName, const char* pzTitle,
+TableView::TableView( const Rect& cFrame, const String& cName, const String& cTitle,
 		      int nNumCols, int nNumRows, uint32 nResizeMask )
-    : View( cFrame, pzName, nResizeMask, WID_WILL_DRAW )
+    : View( cFrame, cName, nResizeMask, WID_WILL_DRAW )
 {
-    if ( NULL != pzTitle )
+    if ( !cTitle.empty() )
     {
-	m_pzTitle = new char[ strlen( pzTitle ) + 1 ];
-	strcpy( m_pzTitle, pzTitle );
+	m_cTitle = cTitle;
 	m_nLeftBorder = m_nRightBorder = m_nBottomBorder = 4;
 	m_nTopBorder	=	14;	// Will be updated when added to window;
     }
     else
     {
 	m_nLeftBorder = m_nRightBorder = m_nTopBorder = m_nBottomBorder = 0;
-	m_pzTitle = NULL;
     }
 
     m_pacCells	  = new TableCell[ nNumCols * nNumRows ];
@@ -278,7 +276,6 @@ TableView::TableView( const Rect& cFrame, const char* pzName, const char* pzTitl
 
 TableView::~TableView()
 {
-    delete [] m_pzTitle;
     delete [] m_pacCells;
     delete [] m_panMinWidths;
     delete [] m_panMaxWidths;
@@ -304,14 +301,12 @@ void TableView::AttachedToWindow( void )
 
     SetBgColor( get_default_color( COL_NORMAL ) );
 
-    if ( NULL != m_pzTitle ) {
-	if ( '\0' == m_pzTitle[ 0 ] ) {
+    if ( !m_cTitle.empty() ) {
 	    m_nTopBorder = m_nBottomBorder;
 	} else {
 	    font_height sHeight;
 	    GetFontHeight( &sHeight );
 	    m_nTopBorder = sHeight.ascender + sHeight.descender + 2.0f;
-	}
     }
 }
 
@@ -653,8 +648,6 @@ void TableView::Paint( const Rect& cUpdateRect )
 	SetFgColor( get_default_color( COL_NORMAL ) );
 	FillRect( GetBounds() );
 
-	if ( NULL != m_pzTitle )
-	{
 	    SetFgColor( 0, 0, 0, 0 );
 
 	    Font*	pcFont	=	GetFont();
@@ -664,21 +657,21 @@ void TableView::Paint( const Rect& cUpdateRect )
 		float	x = 20.0f;
 		float	vStrWidth = 0.0f;
 
-		if ( '\0' != m_pzTitle[0] ) {
+		if (  !m_cTitle.empty() ) {
 		    font_height sHeight;
 
 		    pcFont->GetHeight( &sHeight );
 		    float vStrHeight = sHeight.ascender + sHeight.descender;
 
-		    vStrWidth = pcFont->GetStringWidth( m_pzTitle );
+		    vStrWidth = pcFont->GetStringWidth( m_cTitle );
 
 		    cBounds.top = vStrHeight / 2.0f;
-		    DrawString( m_pzTitle, Point( x, sHeight.ascender ) );
+		    DrawString( Point( x, sHeight.ascender ), m_cTitle );
 		}
 		  // Left
 		DrawLine( Point( cBounds.left, cBounds.bottom ), Point( cBounds.left, cBounds.top ) );
 		  // Top
-		if ( '\0' == m_pzTitle[0] )
+		if ( !m_cTitle.empty() )
 		{
 		    DrawLine( Point( cBounds.left, cBounds.top ), Point( cBounds.right, cBounds.top ) );
 		}
@@ -697,7 +690,7 @@ void TableView::Paint( const Rect& cUpdateRect )
 		  // Left
 		DrawLine( Point( cBounds.left + 1, cBounds.bottom ), Point( cBounds.left + 1, cBounds.top + 1 ) );
 		  // Top
-		if ( '\0' == m_pzTitle[0] )
+		if ( !m_cTitle.empty() )
 		{
 		    DrawLine( Point( 1, cBounds.top + 1 ), Point( cBounds.right, cBounds.top + 1 ) );
 		}
@@ -712,6 +705,8 @@ void TableView::Paint( const Rect& cUpdateRect )
 		DrawLine( Point( cBounds.left + 1, cBounds.bottom ), Point( cBounds.right, cBounds.bottom ) );
 	    }
 	}
-    }
 }
+
+
+
 

@@ -1,7 +1,6 @@
-
 /*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
- *  Copyright (C) 2003 The Syllable Team
+ *  Copyright (C) 2003 - 2004 The Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -101,7 +100,7 @@ static Color32_s Tint( const Color32_s & sColor, float vTint )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-ScrollBar::ScrollBar( const Rect & cFrame, const char *pzName, Message * pcMsg, float vMin, float vMax, int nOrientation, uint32 nResizeMask ):Control( cFrame, pzName, "", pcMsg, nResizeMask, WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE )
+ScrollBar::ScrollBar( const Rect & cFrame, const String& cName, Message * pcMsg, float vMin, float vMax, int nOrientation, uint32 nResizeMask ):Control( cFrame, cName, "", pcMsg, nResizeMask, WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE )
 {
 	m = new Private;
 	m->m_nOrientation = nOrientation;
@@ -265,7 +264,7 @@ void ScrollBar::PostValueChange( const Variant & cNewValue )
 	Flush();
 }
 
-void ScrollBar::LabelChanged( const std::string & cNewLabel )
+void ScrollBar::LabelChanged( const String & cNewLabel )
 {
 }
 

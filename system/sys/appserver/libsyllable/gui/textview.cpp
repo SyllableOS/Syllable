@@ -1,7 +1,6 @@
-
 /*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
- *  Copyright (C) 2003 The Syllable Team
+ *  Copyright (C) 2003 - 2004 The Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -17,21 +16,6 @@
  *  License along with this library; if not, write to the Free
  *  Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
  *  MA 02111-1307, USA
- */
-
-/*
- * Changes:
- * * Added keyboard shortcuts:
- *   CTRL+C - Copy
- *   CTRL+V - Paste
- *   CTRL+X - Cut
- *   CTRL+Z - Undo
- *   CTRL+Y - Redo
- * * Copying now works when read-only
- * * Implemented redo
- * * Fixed GetValue() compile warning
- * * Fixed GetValue()/GetRegion() crash
- *
  */
 
 #include <stdio.h>
@@ -80,7 +64,7 @@ namespace os
 	class TextEdit:public View
 	{
 	      public:
-		TextEdit( TextView * pcParent, const Rect & cFrame, const char *pzTitle, uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP, uint32 nFlags = WID_WILL_DRAW | WID_CLEAR_BACKGROUND );
+		TextEdit( TextView * pcParent, const Rect & cFrame, const String& cTitle, uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP, uint32 nFlags = WID_WILL_DRAW | WID_CLEAR_BACKGROUND );
 		 ~TextEdit();
 
 		void SetEnable( bool bEnabled = true );
@@ -124,8 +108,8 @@ namespace os
 		void SetMaxPreferredSize( int nWidthChars, int nHeightChars );
 		IPoint GetMaxPreferredSize() const;
 
-		void GetRegion( IPoint cStart, IPoint cEnd, std::string * pcBuffer, bool bAddToClipboard = true );
-		void GetRegion( std::string * pcBuffer, bool bAddToClipboard = true );
+		void GetRegion( IPoint cStart, IPoint cEnd, String * pcBuffer, bool bAddToClipboard = true );
+		void GetRegion( String * pcBuffer, bool bAddToClipboard = true );
 		void MakeCsrVisible();
 		void InsertString( IPoint * pcPos, const char *pzBuffer, bool bMakeUndo = true );
 		void Delete( IPoint cStart, IPoint cEnd, bool bMakeUndo = true );
@@ -176,7 +160,7 @@ namespace os
 			IPoint m_cPos;
 			IPoint m_cEndPos;
 
-			std::string m_cText;
+			String m_cText;
 		};
 
 		void DrawCursor( View * pcView = NULL, float vHOffset = 0.0f, float vVOffset = 0.0f );
@@ -262,7 +246,7 @@ using namespace os;
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-TextView::TextView( const Rect & cFrame, const char *pzTitle, const char *pzText, uint32 nResizeMask, uint32 nFlags ):Control( cFrame, pzTitle, "", NULL, nResizeMask, nFlags )
+TextView::TextView( const Rect & cFrame, const String& cTitle, const char *pzText, uint32 nResizeMask, uint32 nFlags ):Control( cFrame, cTitle, "", NULL, nResizeMask, nFlags )
 {
 	Rect cChildFrame = GetBounds();
 
@@ -283,7 +267,7 @@ TextView::~TextView()
 {
 }
 
-void TextView::LabelChanged( const std::string & cNewLabel )
+void TextView::LabelChanged( const String & cNewLabel )
 {
 }
 
@@ -334,7 +318,7 @@ void TextView::SetValue( Variant cValue, bool bInvoke )
 
 Variant TextView::GetValue() const
 {
-	std::string cBuffer;
+	String cBuffer;
 	m_pcEditor->GetRegion( IPoint( 0, 0 ), IPoint( -1, -1 ), &cBuffer, false );
 	Variant cVariant( cBuffer );
 
@@ -649,7 +633,7 @@ IPoint TextView::GetMaxPreferredSize() const
 	return ( m_pcEditor->GetMaxPreferredSize() );
 }
 
-void TextView::GetRegion( std::string * pcBuffer )
+void TextView::GetRegion( String * pcBuffer )
 {
 	m_pcEditor->GetRegion( pcBuffer );
 }
@@ -789,7 +773,7 @@ size_t TextView::GetCurrentLength() const
 
 void TextView::Cut( bool bSendNotify )
 {
-	std::string cBuffer;
+	String cBuffer;
 	m_pcEditor->GetRegion( &cBuffer );
 	m_pcEditor->Delete();
 	if( bSendNotify )
@@ -800,7 +784,7 @@ void TextView::Cut( bool bSendNotify )
 
 void TextView::Copy()
 {
-	std::string cBuffer;
+	String cBuffer;
 	m_pcEditor->GetRegion( &cBuffer );
 }
 
@@ -848,7 +832,7 @@ const TextView::buffer_type &TextView::GetBuffer() const
 	return ( m_pcEditor->GetBuffer() );
 }
 
-bool TextView::FilterKeyStroke( const std::string * pcString )
+bool TextView::FilterKeyStroke( const String * pcString )
 {
 	return ( true );
 }
@@ -1024,7 +1008,11 @@ void TextView::Redo( void )
 /////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-TextEdit::TextEdit( TextView * pcParent, const Rect & cFrame, const char *pzTitle, uint32 nResizeMask, uint32 nFlags ):View( cFrame, pzTitle, nResizeMask, nFlags ), m_cCsrPos( 0, 0 ), m_cPrevCursorPos( 0, 0 ), m_cPreferredSize( LEFT_BORDER + RIGHT_BORDER, TOP_BORDER + BOTTOM_BORDER ), m_cMinPreferredSize( 0, 0 ), m_cMaxPreferredSize( 0, 0 ), m_sCurFgColor( 0, 0, 0 ), m_sCurBgColor( 255, 255, 255 )
+TextEdit::TextEdit( TextView * pcParent, const Rect & cFrame, const String& cTitle,
+	uint32 nResizeMask, uint32 nFlags ):View( cFrame, cTitle, nResizeMask, nFlags ), 
+	m_cCsrPos( 0, 0 ), m_cPrevCursorPos( 0, 0 ), m_cPreferredSize( LEFT_BORDER + RIGHT_BORDER,
+	TOP_BORDER + BOTTOM_BORDER ), m_cMinPreferredSize( 0, 0 ), m_cMaxPreferredSize( 0, 0 ),
+	m_sCurFgColor( 0, 0, 0 ), m_sCurBgColor( 255, 255, 255 )
 {
 	m_pcParent = pcParent;
 	m_cBuffer.push_back( "" );
@@ -1732,7 +1720,7 @@ void TextEdit::InsertString( IPoint * pcPos, const char *pzBuffer, bool bMakeUnd
 	}
 }
 
-void TextEdit::GetRegion( IPoint cStart, IPoint cEnd, std::string * pcBuffer, bool bAddToClipboard )
+void TextEdit::GetRegion( IPoint cStart, IPoint cEnd, String * pcBuffer, bool bAddToClipboard )
 {
 	IPoint cRegStart;
 	IPoint cRegEnd;
@@ -1750,20 +1738,20 @@ void TextEdit::GetRegion( IPoint cStart, IPoint cEnd, std::string * pcBuffer, bo
 
 	if( cRegStart.y == cRegEnd.y )
 	{
-		*pcBuffer = std::string( m_cBuffer[cRegStart.y].begin() + cRegStart.x, m_cBuffer[cRegStart.y].begin(  ) + cRegEnd.x );
+		*pcBuffer = String( m_cBuffer[cRegStart.y].begin() + cRegStart.x, m_cBuffer[cRegStart.y].begin(  ) + cRegEnd.x );
 	}
 	else if( cStart == IPoint( 0, 0 ) && cEnd == IPoint( -1, -1 ) )
 	{
 		TextView::buffer_type::iterator iBfr = m_cBuffer.begin();
 
-		*pcBuffer = std::string( "" );
+		*pcBuffer = String( "" );
 		bool first = true;
 
 		while( iBfr != m_cBuffer.end() )
 		{
 			if( !first )
 			{
-				*pcBuffer += '\n';
+				*pcBuffer += "\n";
 			}
 			*pcBuffer += *iBfr;
 			first = false;
@@ -1772,14 +1760,14 @@ void TextEdit::GetRegion( IPoint cStart, IPoint cEnd, std::string * pcBuffer, bo
 	}
 	else
 	{
-		*pcBuffer = std::string( m_cBuffer[cRegStart.y].begin() + cRegStart.x, m_cBuffer[cRegStart.y].end(  ) );
+		*pcBuffer = String( m_cBuffer[cRegStart.y].begin() + cRegStart.x, m_cBuffer[cRegStart.y].end(  ) );
 		for( int i = cRegStart.y + 1; i < cRegEnd.y; ++i )
 		{
-			*pcBuffer += '\n';
+			*pcBuffer += "\n";
 			*pcBuffer += m_cBuffer[i];
 		}
-		*pcBuffer += '\n';
-		*pcBuffer += std::string( m_cBuffer[cRegEnd.y].begin(), m_cBuffer[cRegEnd.y].begin(  ) + cRegEnd.x );
+		*pcBuffer += "\n";
+		*pcBuffer += String( m_cBuffer[cRegEnd.y].begin(), m_cBuffer[cRegEnd.y].begin(  ) + cRegEnd.x );
 	}
 	if( m_bPassword == false && bAddToClipboard )
 	{
@@ -1795,7 +1783,7 @@ void TextEdit::GetRegion( IPoint cStart, IPoint cEnd, std::string * pcBuffer, bo
 	}
 }
 
-void TextEdit::GetRegion( std::string * pcBuffer, bool bAddToClipboard )
+void TextEdit::GetRegion( String * pcBuffer, bool bAddToClipboard )
 {
 	GetRegion( m_cRegionStart, m_cRegionEnd, pcBuffer, bAddToClipboard );
 }
@@ -2619,7 +2607,7 @@ bool TextEdit::HandleKeyDown( const char *pzString, const char *pzRawString, uin
 	{			// If CTRL is held down
 		if( pzString[0] == VK_INSERT )
 		{
-			std::string cBuffer;
+			String cBuffer;
 			GetRegion( &cBuffer );
 			return ( true );
 		}
@@ -2640,7 +2628,7 @@ bool TextEdit::HandleKeyDown( const char *pzString, const char *pzRawString, uin
 			case 'x':
 				if( !m_bReadOnly )
 				{
-					std::string cBuffer;
+					String cBuffer;
 					GetRegion( &cBuffer );
 					Delete();
 					CommitEvents();
@@ -2673,7 +2661,7 @@ bool TextEdit::HandleKeyDown( const char *pzString, const char *pzRawString, uin
 				return false;
 			case 'c':
 				{
-					std::string cBuffer;
+					String cBuffer;
 					GetRegion( &cBuffer );
 				}
 				return true;
@@ -2729,7 +2717,7 @@ bool TextEdit::HandleKeyDown( const char *pzString, const char *pzRawString, uin
 	case VK_ENTER:
 		if( m_bMultiLine )
 		{
-			std::string cStr( pzString );
+			String cStr( pzString );
 			if( m_pcParent->FilterKeyStroke( &cStr ) )
 			{
 				if( m_bRegionActive )
@@ -2824,14 +2812,14 @@ bool TextEdit::HandleKeyDown( const char *pzString, const char *pzRawString, uin
 	case VK_DELETE:
 		if( nQualifiers & QUAL_SHIFT )
 		{
-			std::string cBuffer;
+			String cBuffer;
 			GetRegion( &cBuffer );
 		}
 		Delete();
 		m_vCsrGfxPos = -1.0f;
 		break;
 	default:
-		std::string cStr( pzString );
+		String cStr( pzString );
 		if( m_pcParent->FilterKeyStroke( &cStr ) )
 		{
 			if( ( m_bMultiLine || m_bNumeric == false ) || isdigit( cStr[0] ) || ( cStr[0] == '.' && int ( m_cBuffer[0].str().find( '.' ) ) == -1 )||( toupper( cStr[0] ) == 'E' && int ( m_cBuffer[0].str(  ).find( 'e' ) ) == -1 && int ( m_cBuffer[0].str(  ).find( 'E' ) ) == -1 )||( ( m_cCsrPos.x == 0 || toupper( m_cBuffer[0][m_cCsrPos.x - 1] ) == 'E' ) && ( cStr[0] == '+' || cStr[0] == '-' ) ) )
@@ -2872,9 +2860,9 @@ bool TextEdit::HandleKeyDown( const char *pzString, const char *pzRawString, uin
 }
 
 /*
-static std::string get_flag_str( uint32 nFlags )
+static String get_flag_str( uint32 nFlags )
 {
-    std::string cStr;
+    String cStr;
     if ( nFlags & TextView::EI_CONTENT_CHANGED ) {
 	cStr += "EI_CONTENT_CHANGED, ";
     }
@@ -2972,3 +2960,4 @@ void TextView::__TV_reserved3__()
 void TextView::__TV_reserved4__()
 {
 }
+

@@ -223,9 +223,9 @@ BitmapImage::~BitmapImage()
  * \sa Image::ImageType()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-const string BitmapImage::ImageType( void ) const
+const String BitmapImage::ImageType( void ) const
 {
-	return string( "BitmapImage" );
+	return String( "BitmapImage" );
 }
 
 /** Find out if the bitmap object is valid.
@@ -258,7 +258,7 @@ bool BitmapImage::IsValid( void ) const
  * \sa Save(), os::File, os::StreamableIO, os::MemFile
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-status_t BitmapImage::Load( StreamableIO * pcSource, const string & cType = "" )
+status_t BitmapImage::Load( StreamableIO * pcSource, const String & cType = "" )
 {
 	Translator *trans = NULL;
 	TranslatorFactory *factory = new TranslatorFactory;
@@ -372,7 +372,7 @@ status_t BitmapImage::Load( StreamableIO * pcSource, const string & cType = "" )
  * \sa Load(), os::File, os::StreamableIO, os::MemFile
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
-status_t BitmapImage::Save( StreamableIO * pcDest, const string & cType )
+status_t BitmapImage::Save( StreamableIO * pcDest, const String & cType )
 {
 	Translator *trans = NULL;
 	TranslatorFactory *factory = new TranslatorFactory;
@@ -1324,3 +1324,4 @@ static float Filter_Mitchell( float t )
 }
 
 //-----------------------------------------------------------------------------
+

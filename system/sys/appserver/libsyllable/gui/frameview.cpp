@@ -1,6 +1,6 @@
-
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -24,7 +24,6 @@
 using namespace os;
 
 
-
 /** FrameView constructor
  * \par Description:
  * \par Note:
@@ -36,13 +35,13 @@ using namespace os;
  *****************************************************************************/
 
 
-FrameView::FrameView( const Rect & cFrame, const std::string & cName, const std::string & cLable, uint32 nResizeMask, uint32 nFlags ):LayoutView( cFrame, cName, NULL, nResizeMask, nFlags ), m_cLabelString( cLable )
+FrameView::FrameView( const Rect & cFrame, const String & cName, const String & cLabel, uint32 nResizeMask, uint32 nFlags ):LayoutView( cFrame, cName, NULL, nResizeMask, nFlags ), m_cLabelString( cLabel )
 {
 	m_pcLabelView = NULL;
 	_CalcStringLabelSize();
 }
 
-void FrameView::SetLabel( const std::string & cLabel )
+void FrameView::SetLabel( const String & cLabel )
 {
 	m_cLabelString = cLabel;
 	_CalcStringLabelSize();
@@ -77,7 +76,7 @@ View *FrameView::SetLabel( View * pcLabel, bool bResizeToPreferred )
 	return ( pcOldLabel );
 }
 
-std::string FrameView::GetLabelString() const
+String FrameView::GetLabelString() const
 {
 	return ( m_cLabelString );
 }
@@ -160,7 +159,7 @@ void FrameView::_CalcStringLabelSize()
 	}
 	GetFontHeight( &m_sFontHeight );
 
-	m_cLabelSize = Point( ceil( GetStringWidth( m_cLabelString.c_str(), m_cLabelString.size(  ) ) ), ceil( m_sFontHeight.ascender + m_sFontHeight.descender ) );
+	m_cLabelSize = GetTextExtent( m_cLabelString );
 }
 
 void FrameView::Paint( const Rect & cUpdateRect )
@@ -192,7 +191,8 @@ void FrameView::Paint( const Rect & cUpdateRect )
 
 	if( bHasStrLabel )
 	{
-		DrawString( m_cLabelString.c_str(), Point( x1 + 5.0f, m_sFontHeight.ascender ) );
+		DrawText( Rect( x1 + 5.0f, 0, m_cLabelSize.x, m_cLabelSize.y ), m_cLabelString );
+//		DrawString( m_cLabelString.c_str(), Point( x1 + 5.0f, m_sFontHeight.ascender ) );
 	}
 
 	Color32_s sFgCol = get_default_color( COL_SHINE );

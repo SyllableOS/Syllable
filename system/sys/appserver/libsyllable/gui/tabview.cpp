@@ -1,7 +1,6 @@
-
 /*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
- *  Copyright (C) 2003 The Syllable Team
+ *  Copyright (C) 2003 - 2004 The Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -43,7 +42,7 @@ using namespace os;
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-TabView::TabView( const Rect & cFrame, const char *pzTitle, uint32 nResizeMask, uint32 nFlags ):View( cFrame, pzTitle, nResizeMask, nFlags & ~WID_FULL_UPDATE_ON_RESIZE )
+TabView::TabView( const Rect & cFrame, const String& cName, uint32 nResizeMask, uint32 nFlags ):View( cFrame, cName, nResizeMask, nFlags & ~WID_FULL_UPDATE_ON_RESIZE )
 {
 	GetFontHeight( &m_sFontHeight );
 	m_vGlyphHeight = m_sFontHeight.ascender + m_sFontHeight.descender + m_sFontHeight.line_gap;
@@ -199,9 +198,9 @@ void TabView::AllAttached()
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-int TabView::AppendTab( const char *pzTitle, View * pcView )
+int TabView::AppendTab( const String& cTitle, View * pcView )
 {
-	return ( InsertTab( m_cTabList.size(), pzTitle, pcView ) );
+	return ( InsertTab( m_cTabList.size(), cTitle, pcView ) );
 }
 
 /** Insert tabs at a given position
@@ -224,9 +223,9 @@ int TabView::AppendTab( const char *pzTitle, View * pcView )
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-int TabView::InsertTab( uint nIndex, const char *pzTitle, View * pcView )
+int TabView::InsertTab( uint nIndex, const String& cTitle, View * pcView )
 {
-	m_cTabList.insert( m_cTabList.begin() + nIndex, Tab( pzTitle, pcView ) );
+	m_cTabList.insert( m_cTabList.begin() + nIndex, Tab( cTitle, pcView ) );
 	if( pcView != NULL && pcView->GetParent() != this )
 	{
 		AddChild( pcView );
@@ -240,7 +239,7 @@ int TabView::InsertTab( uint nIndex, const char *pzTitle, View * pcView )
 			pcView->Show( false );
 		}
 	}
-	m_cTabList[nIndex].m_vWidth = ceil( GetStringWidth( pzTitle ) * 1.1f ) + 4.0f;
+	m_cTabList[nIndex].m_vWidth = ceil( GetStringWidth( cTitle ) * 1.1f ) + 4.0f;
 	m_vTotalWidth += m_cTabList[nIndex].m_vWidth;
 	m_pcTopView->Invalidate( GetBounds() );
 	m_pcTopView->Flush();
@@ -350,13 +349,13 @@ View *TabView::GetTabView( uint nIndex ) const
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-const std::string & TabView::GetTabTitle( uint nIndex ) const
+const String & TabView::GetTabTitle( uint nIndex ) const
 {
 	return ( m_cTabList[nIndex].m_cTitle );
 }
 
 
-int TabView::SetTabTitle( uint nIndex, const std::string & cTitle )
+int TabView::SetTabTitle( uint nIndex, const String & cTitle )
 {
 	m_cTabList[nIndex].m_cTitle = cTitle;
 

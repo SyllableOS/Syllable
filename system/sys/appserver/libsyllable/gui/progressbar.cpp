@@ -1,6 +1,6 @@
-
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -23,8 +23,7 @@
 
 using namespace os;
 
-
-ProgressBar::ProgressBar( const Rect & cFrame, const std::string & cTitle, orientation eOrientation, uint32 nResizeMask, uint32 nFlags ):View( cFrame, cTitle, nResizeMask, nFlags )
+ProgressBar::ProgressBar( const Rect & cFrame, const String & cName, orientation eOrientation, uint32 nResizeMask, uint32 nFlags ):View( cFrame, cName, nResizeMask, nFlags )
 {
 	m_vProgress = 0.0f;
 	m_eOrientation = eOrientation;
@@ -160,3 +159,4 @@ void ProgressBar::FrameSized( const Point & cDelta )
 		Flush();
 	}
 }
+

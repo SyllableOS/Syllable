@@ -1,6 +1,6 @@
-
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -511,7 +511,7 @@ static const struct
  * \sa Go() 
  * \author	Kurt Skauen (kurt@atheos.cx) with modifications by Rick Caudill
  *****************************************************************************/
-Alert::Alert( const std::string & cTitle, const std::string & cText, int nFlags, ... ):Window( Rect( 100, 50, 100, 50 ), "alert_window", cTitle.c_str(), WND_NOT_RESIZABLE | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT )
+Alert::Alert( const String & cTitle, const String & cText, int nFlags, ... ):Window( Rect( 100, 50, 100, 50 ), "alert_window", cTitle.c_str(), WND_NOT_RESIZABLE | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT )
 {
 
 	va_list pArgs;
@@ -522,7 +522,7 @@ Alert::Alert( const std::string & cTitle, const std::string & cText, int nFlags,
 	m_pcView = new AlertView( cText, pArgs );
 	m_pcView->SetFgColor( 0, 0, 0 );
 	m_pcView->SetBgColor( get_default_color( COL_NORMAL ) );
-	Point cSize = m_pcView->GetPreferredSize( true );
+	Point cSize = m_pcView->GetPreferredSize( false );
 
 	m_pcView->ResizeTo( cSize );
 	ResizeTo( cSize );
@@ -558,7 +558,7 @@ Alert::Alert( const std::string & cTitle, const std::string & cText, int nFlags,
  * \sa Go() 
  * \author	Kurt Skauen (kurt@atheos.cx) with modifications by Rick Caudill
  *****************************************************************************/
-Alert::Alert( const std::string & cTitle, const std::string & cText, Bitmap * pcBitmap, int nFlags, ... ):Window( Rect( 100, 50, 100, 50 ), "alert_window", cTitle.c_str(), WND_NOT_RESIZABLE | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT )
+Alert::Alert( const String & cTitle, const String & cText, Bitmap * pcBitmap, int nFlags, ... ):Window( Rect( 100, 50, 100, 50 ), "alert_window", cTitle.c_str(), WND_NOT_RESIZABLE | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT )
 {
 	va_list pArgs;
 
@@ -575,7 +575,7 @@ Alert::Alert( const std::string & cTitle, const std::string & cText, Bitmap * pc
 	m_pcView->SetEraseColor( get_default_color( COL_NORMAL ) );
 	m_pcView->SetFgColor( 0, 0, 0 );
 	m_pcView->SetBgColor( get_default_color( COL_NORMAL ) );
-	Point cSize = m_pcView->GetPreferredSize( true );
+	Point cSize = m_pcView->GetPreferredSize( false );
 
 	m_pcView->ResizeTo( cSize );
 	ResizeTo( cSize );
@@ -610,7 +610,7 @@ Alert::Alert( const std::string & cTitle, const std::string & cText, Bitmap * pc
  * \sa Go() 
  * \author	Kurt Skauen (kurt@atheos.cx) with modifications by Rick Caudill
  *****************************************************************************/
-Alert::Alert( const std::string & cTitle, const std::string & cText, alert_icon nAlertNum, int nFlags, ... ):Window( Rect( 100, 50, 100, 50 ), "alert_window", cTitle.c_str(), WND_NOT_RESIZABLE | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT )
+Alert::Alert( const String & cTitle, const String & cText, alert_icon nAlertNum, int nFlags, ... ):Window( Rect( 100, 50, 100, 50 ), "alert_window", cTitle.c_str(), WND_NOT_RESIZABLE | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT )
 {
 	va_list pArgs;
 
@@ -645,7 +645,7 @@ Alert::Alert( const std::string & cTitle, const std::string & cText, alert_icon 
 	m_pcView->SetEraseColor( get_default_color( COL_NORMAL ) );
 	m_pcView->SetFgColor( 0, 0, 0 );
 	m_pcView->SetBgColor( get_default_color( COL_NORMAL ) );
-	Point cSize = m_pcView->GetPreferredSize( true );
+	Point cSize = m_pcView->GetPreferredSize( false );
 
 	m_pcView->ResizeTo( cSize );
 	ResizeTo( cSize );
@@ -684,7 +684,7 @@ Alert::Alert( const std::string & cTitle, const std::string & cText, alert_icon 
  * \sa Go() 
  * \author	Rick Caudill(cau0730@cup.edu)
  *****************************************************************************/
-Alert::Alert( const std::string & cTitle, os::View * pcView ):Window( Rect( 100, 50, pcView->GetBounds().Width(  ) + 100, pcView->GetBounds(  ).Height(  ) + 50 ), "alert_window", cTitle.c_str(  ), WND_NOT_RESIZABLE | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT )
+Alert::Alert( const String & cTitle, os::View * pcView ):Window( Rect( 100, 50, pcView->GetBounds().Width(  ) + 100, pcView->GetBounds(  ).Height(  ) + 50 ), "alert_window", cTitle.c_str(  ), WND_NOT_RESIZABLE | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT )
 {
 	m_pcInvoker = NULL;
 	m_hMsgPort = -1;
@@ -859,7 +859,7 @@ void Alert::SetImage( uint32 nWidth, uint32 nHeight, uint8 *pnBuffer )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-AlertView::AlertView( const std::string & cText, va_list pButtons, Bitmap * pcBitmap ):View( Rect( 0, 0, 1, 1 ), "alert", CF_FOLLOW_ALL )
+AlertView::AlertView( const String & cText, va_list pButtons, Bitmap * pcBitmap ):View( Rect( 0, 0, 1, 1 ), "alert", CF_FOLLOW_ALL )
 {
 	const char *pzButName;
 
@@ -873,7 +873,7 @@ AlertView::AlertView( const std::string & cText, va_list pButtons, Bitmap * pcBi
 		m_cButtons.push_back( pcButton );
 		AddChild( pcButton );
 
-		Point cSize = pcButton->GetPreferredSize( true );
+		Point cSize = pcButton->GetPreferredSize( false );
 
 		if( cSize.x > m_cButtonSize.x )
 		{
@@ -895,9 +895,9 @@ AlertView::AlertView( const std::string & cText, va_list pButtons, Bitmap * pcBi
 		{
 			int nLen = i - nStart;
 
-			std::string cLine( cText, nStart, nLen );
+			String cLine( cText, nStart, nLen );
 			m_cLines.push_back( cLine );
-			float nStrLen = GetStringWidth( cLine.c_str() ) + 20;
+			float nStrLen = GetStringWidth( cLine ) + 20;
 
 			if( nStrLen > nWidth )
 			{
@@ -1041,7 +1041,7 @@ void AlertView::Paint( const Rect & cUpdateRect )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-ProgressRequester::ProgressRequester( const Rect & cFrame, const char *pzName, const char *pzTitle, bool bCanSkip ):Window( cFrame, pzName, pzTitle )
+ProgressRequester::ProgressRequester( const Rect & cFrame, const String& cName, const String& cTitle, bool bCanSkip ):Window( cFrame, cName, cTitle )
 {
 	Lock();
 	m_bDoCancel = false;
@@ -1256,3 +1256,4 @@ void ProgressView::Layout( const Rect & cBounds )
 	}
 	Flush();
 }
+

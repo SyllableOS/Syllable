@@ -1,6 +1,6 @@
-
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -190,7 +190,7 @@ class Menu::Private
 	Private():m_cMutex( "menu_mutex" )
 	{
 	}
-	std::string m_cTitle;
+	String m_cTitle;
 	Message m_cCloseMsg;
 	Messenger m_cCloseMsgTarget;
 	Locker m_cMutex;
@@ -207,12 +207,9 @@ class MenuItem::Private
 		m_pcSubMenu = NULL;
 		m_bIsHighlighted = false;
 		m_bIsEnabled = true;
-		m_pzLabel = NULL;
 	}
 	~Private()
 	{
-		if( m_pzLabel )
-			delete[]m_pzLabel;
 		if( m_pcSubMenu )
 			delete m_pcSubMenu;
 	}
@@ -222,7 +219,7 @@ class MenuItem::Private
 	Menu *m_pcSubMenu;
 	Rect m_cFrame;
 
-	char *m_pzLabel;
+	String m_cLabel;
 
 	bool m_bIsHighlighted;
 	bool m_bIsEnabled;
@@ -236,16 +233,11 @@ class MenuItem::Private
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-MenuItem::MenuItem( const char *pzLabel, Message * pcMsg ):Invoker( pcMsg, NULL, NULL )
+MenuItem::MenuItem( const String& cLabel, Message * pcMsg ):Invoker( pcMsg, NULL, NULL )
 {
 	m = new Private;
 
-	if( NULL != pzLabel )
-	{
-		m->m_pzLabel = new char[strlen( pzLabel ) + 1];
-
-		strcpy( m->m_pzLabel, pzLabel );
-	}
+	m->m_cLabel = cLabel;
 
 	if( s_pcSubMenuBitmap == NULL )
 	{
@@ -274,18 +266,7 @@ MenuItem::MenuItem( Menu * pcMenu, Message * pcMsg ):Invoker( pcMsg, NULL, NULL 
 	m->m_pcSubMenu = pcMenu;
 	pcMenu->m_pcSuperItem = this;
 
-	std::string cLabel = pcMenu->GetLabel();
-
-	if( cLabel.empty() == false )
-	{
-		m->m_pzLabel = new char[cLabel.size() + 1];
-
-		strcpy( m->m_pzLabel, cLabel.c_str() );
-	}
-	else
-	{
-		m->m_pzLabel = NULL;
-	}
+	m->m_cLabel = pcMenu->GetLabel();
 }
 
 //----------------------------------------------------------------------------
@@ -375,7 +356,7 @@ Point MenuItem::GetContentSize()
 	Menu *pcMenu = GetSuperMenu();
 
 	// Are we a super-menu?  If so, we need to make room for the sub-menu arrow
-	if( m->m_pzLabel != NULL && pcMenu != NULL && GetSubMenu() != NULL && m->m_pcSuperMenu->GetLayout(  ) == ITEMS_IN_COLUMN )
+	if( pcMenu != NULL && GetSubMenu() != NULL && m->m_pcSuperMenu->GetLayout(  ) == ITEMS_IN_COLUMN )
 	{
 		font_height sHeight;
 
@@ -385,7 +366,7 @@ Point MenuItem::GetContentSize()
 	}
 
 	// Are we a "normal" menu, in a column of other menus?  If so, we need to allow for a gap on the left
-	if( m->m_pzLabel != NULL && pcMenu != NULL && m->m_pcSuperMenu->GetLayout() != ITEMS_IN_ROW )
+	if( pcMenu != NULL && m->m_pcSuperMenu->GetLayout() != ITEMS_IN_ROW )
 	{
 		font_height sHeight;
 
@@ -396,7 +377,7 @@ Point MenuItem::GetContentSize()
 	}
 
 	// We are a menu which is in a row of menus, I.e. a menu bar.  We don't need a gap, and we can't have a sub-menu
-	if( m->m_pzLabel != NULL && pcMenu != NULL )
+	if( pcMenu != NULL )
 	{
 		font_height sHeight;
 
@@ -417,9 +398,9 @@ Point MenuItem::GetContentSize()
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-const char *MenuItem::GetLabel() const
+const String& MenuItem::GetLabel() const
 {
-	return ( m->m_pzLabel );
+	return ( m->m_cLabel );
 }
 
 //----------------------------------------------------------------------------
@@ -450,12 +431,7 @@ void MenuItem::Draw()
 		return;
 	}
 
-	const char *pzLabel = GetLabel();
-
-	if( pzLabel == NULL )
-	{
-		return;
-	}
+	const String& cLabel = GetLabel();
 
 	Rect cFrame = GetFrame();
 
@@ -501,7 +477,7 @@ void MenuItem::Draw()
 	float x = cFrame.left + ( ( m->m_pcSuperMenu->GetLayout() == ITEMS_IN_COLUMN ) ? 16 : 2 );
 
 	pcMenu->MovePenTo( x, y );
-	pcMenu->DrawString( pzLabel );
+	pcMenu->DrawString( cLabel );
 
 	if( IsEnabled() == false )
 	{
@@ -573,7 +549,7 @@ void MenuItem::SetNext( MenuItem * pcItem )
 
 
 
-MenuSeparator::MenuSeparator():MenuItem( static_cast < char *>( NULL ), NULL )
+MenuSeparator::MenuSeparator():MenuItem( "", NULL )
 {
 }
 
@@ -700,7 +676,7 @@ MenuWindow::~MenuWindow()
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-Menu::Menu( Rect cFrame, const char *pzTitle, MenuLayout_e eLayout, uint32 nResizeMask, uint32 nFlags ):View( cFrame, "_menu_", nResizeMask, nFlags & ~WID_FULL_UPDATE_ON_RESIZE )
+Menu::Menu( Rect cFrame, const String& cTitle, MenuLayout_e eLayout, uint32 nResizeMask, uint32 nFlags ):View( cFrame, "_menu_", nResizeMask, nFlags & ~WID_FULL_UPDATE_ON_RESIZE )
 {
 	m = new Private;
 	m_bIsTracking = false;
@@ -715,13 +691,7 @@ Menu::Menu( Rect cFrame, const char *pzTitle, MenuLayout_e eLayout, uint32 nResi
 	m_hTrackPort = -1;
 	m_bEnabled = true;
 
-	if( NULL != pzTitle )
-	{
-		m->m_cTitle = pzTitle;
-	}
-	else
-	{
-	}
+	m->m_cTitle = cTitle;
 	m_pcRoot = this;
 }
 
@@ -754,7 +724,7 @@ void Menu::Unlock() const
 	m_pcRoot->m->m_cMutex.Unlock();
 }
 
-std::string Menu::GetLabel() const
+String Menu::GetLabel() const
 {
 	return ( m->m_cTitle );
 }
@@ -1511,9 +1481,9 @@ void Menu::Paint( const Rect & cUpdateRect )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-bool Menu::AddItem( const char *pzLabel, Message * pcMessage )
+bool Menu::AddItem( const String& cLabel, Message * pcMessage )
 {
-	return ( AddItem( new MenuItem( pzLabel, pcMessage ) ) );
+	return ( AddItem( new MenuItem( cLabel, pcMessage ) ) );
 }
 
 //----------------------------------------------------------------------------
@@ -1954,7 +1924,7 @@ void Menu::SetCloseOnMouseUp( bool bFlag )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-MenuItem *Menu::FindItem( const char *pzName ) const
+MenuItem *Menu::FindItem( const String& cName ) const
 {
 	MenuItem *pcItem;
 
@@ -1962,7 +1932,7 @@ MenuItem *Menu::FindItem( const char *pzName ) const
 	{
 		if( pcItem->GetSubMenu() != NULL )
 		{
-			MenuItem *pcTmp = pcItem->GetSubMenu()->FindItem( pzName );
+			MenuItem *pcTmp = pcItem->GetSubMenu()->FindItem( cName );
 
 			if( pcTmp != NULL )
 			{
@@ -1971,7 +1941,7 @@ MenuItem *Menu::FindItem( const char *pzName ) const
 		}
 		else
 		{
-			if( NULL != pcItem->GetLabel() && strcmp( pcItem->GetLabel(  ), pzName ) == 0 )
+			if( pcItem->GetLabel() == cName )
 			{
 				break;
 			}

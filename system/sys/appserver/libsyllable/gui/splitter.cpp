@@ -1,6 +1,6 @@
-
-/*  
+/*  Splitter class
  *  Copyright (C) 2002 Sebastien Keim
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -18,7 +18,6 @@
  *  MA 02111-1307, USA
  */
 
-
 #include <gui/view.h>
 #include <gui/rect.h>
 #include <gui/splitter.h>
@@ -31,8 +30,6 @@
 #define POINTERH_HEIGHT 14
 #define POINTERV_WIDTH  14
 #define POINTERV_HEIGHT 7
-
-
 
 using namespace os;
 using namespace std;
@@ -127,7 +124,7 @@ static uint8 g_anMouseImgV[]=
 		Splitter *m_pSplitter;
 
 	      public:
-	        SplitterSeparator( const Rect & cFrame, const std::string & cName, Splitter * splitter, uint32 nResizeMask = CF_FOLLOW_TOP | CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT ):View( cFrame, cName, nResizeMask ), m_eOrientation( HORIZONTAL ), m_pSplitter( splitter )
+	        SplitterSeparator( const Rect & cFrame, const String & cName, Splitter * splitter, uint32 nResizeMask = CF_FOLLOW_TOP | CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT ):View( cFrame, cName, nResizeMask ), m_eOrientation( HORIZONTAL ), m_pSplitter( splitter )
 		{
 		}
 
@@ -265,7 +262,7 @@ class Splitter::Private
 * \bug
 * \author Sebastien Keim (s.keim@laposte.net)
 */
-Splitter::Splitter( const Rect & cFrame, const std::string & cTitle, View * pView1, View * pView2, orientation eOrientation, uint32 nResizeMask, uint32 nFlags ):View( cFrame, cTitle, nResizeMask, nFlags )
+Splitter::Splitter( const Rect & cFrame, const String & cTitle, View * pView1, View * pView2, orientation eOrientation, uint32 nResizeMask, uint32 nFlags ):View( cFrame, cTitle, nResizeMask, nFlags )
 {
 
 	m = new Private;
@@ -725,6 +722,3 @@ void Splitter::KeyDown( const char *pzString, const char *pzRawString, uint32 nQ
 	}
 	View::KeyDown( pzString, pzRawString, nQualifiers );
 }
-
-
-

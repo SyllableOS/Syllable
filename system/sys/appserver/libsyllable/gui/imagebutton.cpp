@@ -1,6 +1,6 @@
-
 /*  libatheos.so - the highlevel API library for Syllable
  *  Copyright (C) 2002 - 2003 Rick Caudill
+ *  Copyright (C) 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -99,7 +99,7 @@ class ImageButton::Private
  * \author	Rick Caudill (cau0730@cup.edu) based on Andrew Keenan's ImageButton class
  *****************************************************************************/
 
-ImageButton::ImageButton( Rect cFrame, const char *pzName, const char *pzLabel, Message * pcMessage, Image * pcBitmap, uint32 nTextPosition, bool bShowFrames, bool bShowText, bool bMouse, uint32 nResizeMask, uint32 nFlags ):Button( cFrame, pzName, pzLabel, pcMessage, nResizeMask, nFlags )
+ImageButton::ImageButton( Rect cFrame, const String& cName, const String& cLabel, Message * pcMessage, Image * pcBitmap, uint32 nTextPosition, bool bShowFrames, bool bShowText, bool bMouse, uint32 nResizeMask, uint32 nFlags ):Button( cFrame, cName, cLabel, pcMessage, nResizeMask, nFlags )
 {
 	m = new Private;
 
@@ -108,8 +108,7 @@ ImageButton::ImageButton( Rect cFrame, const char *pzName, const char *pzLabel, 
 	m->bMouseOver = bMouse;
 
 	if( bShowText == true )
-		SetLabel( pzLabel );
-
+		SetLabel( cLabel );
 	else
 	{
 		SetLabel( "" );
@@ -344,7 +343,7 @@ void ImageButton::Paint( const Rect & cUpdateRect )
 		cBounds.bottom -= 1;
 	}
 
-	if( GetLabel() != "" )
+	if( !GetLabel().empty() )
 	{
 		if( IsEnabled() )
 		{

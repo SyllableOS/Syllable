@@ -1,6 +1,6 @@
-
-/*  libatheos.so - the highlevel API library for Syllable
- *  Copyright (C) 2002 Kristian Van Der Vliet
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -138,7 +138,7 @@ static uint8 nCheckData[] = {
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-CheckMenu::CheckMenu( const char *pzLabel, Message * pcMsg, bool bChecked = false ):MenuItem( pzLabel, pcMsg )
+CheckMenu::CheckMenu( const String& cLabel, Message * pcMsg, bool bChecked = false ):MenuItem( cLabel, pcMsg )
 {
 	m_Highlighted = false;
 	m_Enabled = true;
@@ -213,12 +213,7 @@ void CheckMenu::Draw()
 		return;
 	}
 
-	const char *pzLabel = GetLabel();
-
-	if( pzLabel == NULL )
-	{
-		return;
-	}
+	const String& cLabel = GetLabel();
 
 	Rect cFrame = GetFrame();
 
@@ -251,7 +246,7 @@ void CheckMenu::Draw()
 	float vCharHeight = sHeight.ascender + sHeight.descender + sHeight.line_gap;
 	float y = cFrame.top + ( cFrame.Height() + 1.0f ) / 2 - vCharHeight / 2 + sHeight.ascender + sHeight.line_gap * 0.5f;
 
-	pcMenu->DrawString( pzLabel, Point( cFrame.left + 16, y ) );
+	pcMenu->DrawString( Point( cFrame.left + 16, y ), cLabel );
 
 	// If the menu is checked, draw the checkmark glyph on the right of the label
 	if( m_IsChecked )
@@ -304,7 +299,7 @@ Point CheckMenu::GetContentSize()
 {
 	Menu *pcMenu = GetSuperMenu();
 
-	if( GetLabel() != NULL && pcMenu != NULL )
+	if( pcMenu != NULL )
 	{
 		font_height sHeight;
 
@@ -360,3 +355,5 @@ bool CheckMenu::Invoked( Message * pcMessage )
 	pcMessage->AddBool( "status", m_IsChecked );
 	return true;
 }
+
+

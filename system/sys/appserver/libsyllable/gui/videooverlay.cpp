@@ -1,4 +1,3 @@
-
 /*  Video Overlay class
  *  Copyright (C) 2003 Arno Klenke
  *
@@ -36,7 +35,7 @@ using namespace os;
  * \param   sColorKey ColorKey color.
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
-VideoOverlayView::VideoOverlayView( const Rect & cFrame, const std::string & cTitle, uint32 nResizeMask, const IPoint & cSrcSize, color_space eFormat, Color32_s sColorKey ):View( cFrame, cTitle, nResizeMask )
+VideoOverlayView::VideoOverlayView( const Rect & cFrame, const String & cTitle, uint32 nResizeMask, const IPoint & cSrcSize, color_space eFormat, Color32_s sColorKey ):View( cFrame, cTitle, nResizeMask )
 {
 	m_sOverlay.m_pAddress = NULL;
 	m_sOverlay.m_hArea = -1;
@@ -216,3 +215,4 @@ void VideoOverlayView::Recreate( const IPoint & cSrcSize, const IRect & cDstRect
 	m_sOverlay.m_hArea = clone_area( "video_overlay", &pAddress, AREA_FULL_ACCESS, AREA_NO_LOCK, hArea );
 	m_sOverlay.m_pAddress = ( uint8 * )pAddress;
 }
+

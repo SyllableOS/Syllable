@@ -1,6 +1,6 @@
-
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 The Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -74,7 +74,7 @@ Font::Font( const Font & cOrig )
 	_SetProperties( cOrig.m_vSize, cOrig.m_vShear, cOrig.m_vRotation, cOrig.m_nFlags );
 }
 
-Font::Font( const std::string & cConfigName )
+Font::Font( const String & cConfigName )
 {
 	_CommonInit();
 	font_properties sProps;
@@ -144,7 +144,7 @@ void Font::Release()
 	}
 }
 
-status_t Font::SetProperties( const std::string & cConfigName )
+status_t Font::SetProperties( const String & cConfigName )
 {
 	status_t nError;
 	font_properties sProps;
@@ -325,22 +325,19 @@ font_direction Font::GetDirection() const
 	return ( FONT_LEFT_TO_RIGHT );
 }
 
-float Font::GetStringWidth( const char *pzString ) const
-{
-	return ( GetStringWidth( pzString, strlen( pzString ) ) );
-}
-
 float Font::GetStringWidth( const char *pzString, int nLength ) const
 {
 	const char *apzStrPtr[] = { pzString };
 	float vWidth;
+
+	if( nLength == -1 ) nLength = strlen( pzString );
 
 	GetStringWidths( apzStrPtr, &nLength, 1, &vWidth );
 
 	return ( vWidth );
 }
 
-float Font::GetStringWidth( const std::string & cString ) const
+float Font::GetStringWidth( const String & cString ) const
 {
 	return ( GetStringWidth( cString.c_str(), cString.size(  ) ) );
 }
@@ -405,6 +402,88 @@ void Font::GetStringWidths( const char **apzStringArray, const int *anLengthArra
 	delete[]pBuffer;
 }
 
+Point Font::GetTextExtent( const char *pzString, int nLength, uint32 nFlags ) const
+{
+	const char *apzStrPtr[] = { pzString };
+	Point cExt;
+
+	if( nLength == -1 ) nLength = strlen( pzString );
+
+	GetTextExtents( apzStrPtr, &nLength, 1, &cExt, nFlags );
+
+	return ( cExt );
+}
+
+Point Font::GetTextExtent( const String & cString, uint32 nFlags ) const
+{
+	return ( GetTextExtent( cString.c_str(), cString.size(), nFlags ) );
+}
+
+void Font::GetTextExtents( const char **apzStringArray, const int *anLengthArray, int nStringCount, Point *acExtentArray, uint32 nFlags ) const
+{
+	int i;
+
+	// The first string size, and one byte of the first string is already included
+	int nBufSize = sizeof( AR_GetTextExtents_s ) - sizeof( int ) - 1;
+
+	for( i = 0; i < nStringCount; ++i )
+	{
+		nBufSize += anLengthArray[i] + sizeof( int );
+	}
+
+	AR_GetTextExtents_s *psReq;
+
+	char *pBuffer = new char[nBufSize+50];
+
+	psReq = ( AR_GetTextExtents_s * ) pBuffer;
+
+	psReq->hReply = m_hReplyPort;
+	psReq->hFontToken = m_hFontHandle;
+	psReq->nStringCount = nStringCount;
+	psReq->nFlags = nFlags;
+
+	int *pnLen = &psReq->sFirstHeader.nLength;
+
+	for( i = 0; i < nStringCount; ++i )
+	{
+		int nLen = anLengthArray[i];
+
+		*pnLen = nLen;
+		pnLen++;
+
+		memcpy( pnLen, apzStringArray[i], nLen );
+		pnLen = ( int * )( ( ( uint8 * )pnLen ) + nLen );
+	}
+
+	if( send_msg( Application::GetInstance()->GetAppPort(  ), AR_GET_TEXT_EXTENTS, psReq, nBufSize ) == 0 )
+	{
+		AR_GetTextExtentsReply_s *psReply = ( AR_GetTextExtentsReply_s * ) pBuffer;
+
+		if( get_msg( m_hReplyPort, NULL, psReply, nBufSize ) == 0 )
+		{
+			if( 0 == psReply->nError )
+			{
+				for( i = 0; i < nStringCount; ++i )
+				{
+					acExtentArray[i] = Point(psReply->acExtent[i].x, psReply->acExtent[i].y);
+				}
+			}
+		}
+		else
+		{
+			dbprintf( "Error: Font::GetStringExtents() failed to get reply from %d (%p) (%p)\n", m_hReplyPort, &m_hReplyPort, this );
+		}
+	}
+	else
+	{
+		dbprintf( "Error: Font::GetStringExtents() failed to send AR_GET_STRING_EXTENTS to server\n" );
+	}
+	
+
+	delete[]pBuffer;
+
+}
+
 int Font::GetStringLength( const char *pzString, float vWidth, bool bIncludeLast ) const
 {
 	return ( GetStringLength( pzString, strlen( pzString ), vWidth, bIncludeLast ) );
@@ -415,12 +494,14 @@ int Font::GetStringLength( const char *pzString, int nLength, float vWidth, bool
 	const char *apzStrPtr[] = { pzString };
 	int nMaxLength;
 
+	if( nLength == -1 ) nLength = strlen( pzString );
+
 	GetStringLengths( apzStrPtr, &nLength, 1, vWidth, &nMaxLength, bIncludeLast );
 
 	return ( nMaxLength );
 }
 
-int Font::GetStringLength( const std::string & cString, float vWidth, bool bIncludeLast ) const
+int Font::GetStringLength( const String & cString, float vWidth, bool bIncludeLast ) const
 {
 	const char *apzStrPtr[] = { cString.c_str() };
 	int nMaxLength;
@@ -505,7 +586,7 @@ void Font::GetStringLengths( const char **apzStringArray, const int *anLengthArr
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-status_t Font::GetConfigNames( std::vector < string > *pcTable )
+status_t Font::GetConfigNames( std::vector < String > *pcTable )
 {
 	return ( Application::GetInstance()->GetFontConfigNames( pcTable ) );
 }
@@ -520,7 +601,7 @@ status_t Font::GetConfigNames( std::vector < string > *pcTable )
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-status_t Font::GetDefaultFont( const std::string & cName, font_properties * psProps )
+status_t Font::GetDefaultFont( const String & cName, font_properties * psProps )
 {
 	return ( Application::GetInstance()->GetDefaultFont( cName, psProps ) );
 }
@@ -535,7 +616,7 @@ status_t Font::GetDefaultFont( const std::string & cName, font_properties * psPr
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-status_t Font::SetDefaultFont( const std::string & cName, const font_properties & sProps )
+status_t Font::SetDefaultFont( const String & cName, const font_properties & sProps )
 {
 	return ( Application::GetInstance()->SetDefaultFont( cName, sProps ) );
 }
@@ -550,7 +631,7 @@ status_t Font::SetDefaultFont( const std::string & cName, const font_properties 
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-status_t Font::AddDefaultFont( const std::string & cName, const font_properties & sProps )
+status_t Font::AddDefaultFont( const String & cName, const font_properties & sProps )
 {
 	return ( Application::GetInstance()->AddDefaultFont( cName, sProps ) );
 }
@@ -615,7 +696,7 @@ status_t Font::GetStyleInfo( const char *pzFamily, int nIndex, char *pzStyle, ui
 	return ( Application::GetInstance()->GetFontStyle( pzFamily, nIndex, pzStyle, pnFlags ) );
 }
 
-status_t Font::GetBitmapSizes( const std::string & cFamily, const std::string & cStyle, Font::size_list_t *pcList )
+status_t Font::GetBitmapSizes( const String & cFamily, const String & cStyle, Font::size_list_t *pcList )
 {
 	Message cReq( AR_GET_FONT_SIZES );
 	Message cReply;
@@ -666,3 +747,4 @@ bool Font::Rescan()
 		return ( false );
 	}
 }
+

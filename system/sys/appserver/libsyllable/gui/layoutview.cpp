@@ -37,7 +37,7 @@ static void RemBorders( Rect * pcRect, const Rect & cBorders )
 	pcRect->Resize( cBorders.left, cBorders.top, -cBorders.right, -cBorders.bottom );
 }
 
-LayoutView::LayoutView( const Rect & cFrame, const std::string & cTitle, LayoutNode * pcRoot, uint32 nResizeMask, uint32 nFlags ):View( cFrame, cTitle, nResizeMask, nFlags )
+LayoutView::LayoutView( const Rect & cFrame, const String & cTitle, LayoutNode * pcRoot, uint32 nResizeMask, uint32 nFlags ):View( cFrame, cTitle, nResizeMask, nFlags )
 {
 	m_pcRoot = NULL;
 	SetRoot( pcRoot );
@@ -94,7 +94,7 @@ void LayoutView::InvalidateLayout()
  * \sa SetRoot()
  * \author Kurt Skauen
  *****************************************************************************/
-LayoutNode *LayoutView::FindNode( const std::string & cName, bool bRecursive )
+LayoutNode *LayoutView::FindNode( const String & cName, bool bRecursive )
 {
 	if( m_pcRoot == NULL )
 	{
@@ -140,7 +140,7 @@ void LayoutView::AllAttached()
 ///// LayoutNode ///////////////////////////////////////////////////////////////
 
 
-LayoutNode::LayoutNode( const std::string & cName, float vWeight, LayoutNode * pcParent, View * pcView ):m_cName( cName ), m_cBorders( 0.0f, 0.0f, 0.0f, 0.0f ), m_cMinSize( 0.0f, 0.0f ), m_cMaxSizeExtend( 0.0f, 0.0f ), m_cMaxSizeLimit( MAX_SIZE, MAX_SIZE )
+LayoutNode::LayoutNode( const String & cName, float vWeight, LayoutNode * pcParent, View * pcView ):m_cName( cName ), m_cBorders( 0.0f, 0.0f, 0.0f, 0.0f ), m_cMinSize( 0.0f, 0.0f ), m_cMaxSizeExtend( 0.0f, 0.0f ), m_cMaxSizeLimit( MAX_SIZE, MAX_SIZE )
 {
 	m_eHAlign = ALIGN_CENTER;
 	m_eVAlign = ALIGN_CENTER;
@@ -412,7 +412,7 @@ Point LayoutNode::GetPreferredSize( bool bLargest )
 	return ( cSize );
 }
 
-std::string LayoutNode::GetName() const
+String LayoutNode::GetName() const
 {
 	return ( m_cName );
 }
@@ -432,7 +432,7 @@ LayoutView *LayoutNode::GetLayoutView() const
 	return ( m_pcLayoutView );
 }
 
-LayoutNode *LayoutNode::FindNode( const std::string & cName, bool bRequrcive, bool bIncludeSelf )
+LayoutNode *LayoutNode::FindNode( const String & cName, bool bRequrcive, bool bIncludeSelf )
 {
 	if( bIncludeSelf && cName == m_cName )
 	{
@@ -667,7 +667,7 @@ static float SpaceOut( uint nCount, float vTotalSize, float vTotalMinSize, float
 
 ///// HLayoutNode //////////////////////////////////////////////////////////////
 
-HLayoutNode::HLayoutNode( const std::string & cName, float vWeight, LayoutNode * pcParent, View * pcView ):LayoutNode( cName, vWeight, pcParent, pcView )
+HLayoutNode::HLayoutNode( const String & cName, float vWeight, LayoutNode * pcParent, View * pcView ):LayoutNode( cName, vWeight, pcParent, pcView )
 {
 }
 
@@ -749,7 +749,7 @@ void HLayoutNode::Layout()
 
 ///// VLayoutNode //////////////////////////////////////////////////////////////
 
-VLayoutNode::VLayoutNode( const std::string & cName, float vWeight, LayoutNode * pcParent, View * pcView ):LayoutNode( cName, vWeight, pcParent, pcView )
+VLayoutNode::VLayoutNode( const String & cName, float vWeight, LayoutNode * pcParent, View * pcView ):LayoutNode( cName, vWeight, pcParent, pcView )
 {
 }
 
@@ -846,7 +846,7 @@ void VLayoutNode::Layout()
 }
 
 
-LayoutSpacer::LayoutSpacer( const std::string & cName, float vWeight, LayoutNode * pcParent, const Point & cMinSize, const Point & cMaxSize ):LayoutNode( cName, vWeight, pcParent )
+LayoutSpacer::LayoutSpacer( const String & cName, float vWeight, LayoutNode * pcParent, const Point & cMinSize, const Point & cMaxSize ):LayoutNode( cName, vWeight, pcParent )
 {
 	m_cMinSize = cMinSize;
 	m_cMaxSize = cMaxSize;
@@ -866,5 +866,6 @@ Point LayoutSpacer::CalculatePreferredSize( bool bLargest )
 {
 	return ( ( bLargest ) ? m_cMaxSize : m_cMinSize );
 }
+
 
 
