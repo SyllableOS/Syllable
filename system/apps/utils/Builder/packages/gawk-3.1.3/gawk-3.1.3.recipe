@@ -4,4 +4,8 @@ licenses		GPL
 home			www.gnu.org/software/gawk/
 
 patch-config
+;make-targets
+;	For printed documentation:
+;	dvi
+;	postscript
 documentation	README README_d/README.FIRST PROBLEMS LIMITATIONS POSIX.STD COPYING ABOUT-NLS NEWS ChangeLog FUTURES AUTHORS
