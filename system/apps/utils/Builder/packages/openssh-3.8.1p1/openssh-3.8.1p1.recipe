@@ -1,0 +1,17 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			BSD MIT ISC custom PD
+home				www.openssh.com
+
+build-needs
+	zlib >= 1.1.4
+	openssl >= 0.9.6
+build-recommends	pam
+
+patch-config
+configure-options
+;	--with-ssl-dir=/usr/local/ssl
+	--with-libs=-lcrypt
+
+documentation		README* INSTALL WARNING.RNG OVERVIEW RFC.nroff LICENCE ChangeLog TODO CREDITS

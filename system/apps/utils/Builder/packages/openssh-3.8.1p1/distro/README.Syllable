@@ -1,0 +1,160 @@
+OpenSSH for Syllable
+====================
+
+9-Jun-2004
+
+1 Introduction
+==============
+
+This is a binary distribution of version 3.8.1p1 of the OpenSSH
+remote access tool for the Syllable operating system. This
+distribution was built on Syllable 0.5.3 with GCC 3.3.3, and was
+optimized for a Pentium CPU. It should also run on other versions of
+Syllable, but this has not been tested.
+
+If you encounter problems or have any other interesting observations,
+I would be interested to hear about them (see contact information).
+
+See the file README for more information on OpenSSH.
+
+2 How to install OpenSSH on Syllable
+====================================
+
+2.1 
+----
+
+2.1.1 
+------
+
+You may have to become the root user to perform the following
+operations:
+
+    su
+
+You should have unpacked this file with
+
+    tar -xpz
+
+or something equivalent. The 'p' option to tar is important: it
+preserves permissions on the extracted files. Without the proper file
+permissions, the installation will be broken.
+
+Unpacking produces the directory openssh. This should be installed
+under /usr. If you unpacked it somewhere else, do:
+
+    mv openssh /usr
+
+Then run:
+
+    pkgmanager -a /usr/openssh
+
+This creates links in Syllable to enable it to find OpenSSH's files.
+You should now be able to start OpenSSH; for example:
+
+    ssh
+
+2.1.2 Installing with the Syllable build system
+-----------------------------------------------
+
+If you have the Syllable build system installed, it can do the above
+steps for you. Just do:
+
+    su
+    build install openssh-3.8.1p1.bin.1.tgz
+
+2.2 Uninstalling & upgrading OpenSSH
+------------------------------------
+
+2.2.1 
+------
+
+If you ever want to remove OpenSSH, follow these steps. For example,
+you should do this before you install a new version of OpenSSH.
+Again, you may have to become root first:
+
+    su
+
+Then you should remove the links to OpenSSH from Syllable. You should
+even do this when you want to upgrade OpenSSH, because the links will
+most likely have changed for the new version.
+
+    pkgmanager -r /usr/openssh
+
+To delete the files belonging to OpenSSH, run:
+
+    rm -r /usr/openssh
+
+2.2.2 Uninstalling & upgrading with the Syllable build system
+-------------------------------------------------------------
+
+If you install a package with the Syllable build system, it will
+check if the package was already installed and remove the previous
+version automatically.
+
+If you just want to uninstall OpenSSH, do:
+
+    su
+    build uninstall openssh
+
+3 Building OpenSSH on Syllable
+==============================
+
+Normally you don't have to, but if you want to compile OpenSSH
+yourself, you need to get the source distribution. You can get the
+OpenSSH distribution through its home page:
+
+    http://www.openssh.org
+
+Additionally, you need to have the OpenSSL library installed, which
+is a separate package. The Syllable build system knows all other
+specifics for building OpenSSH, so you should install that as well.
+Please refer to the respective installation instructions for these
+packages.
+
+When you have the build system installed, you should first provide it
+with the OpenSSH source package:
+
+    cp openssh-3.8.1p1.tar.gz /usr/Builder/sources
+
+To configure and compile OpenSSH, do
+
+    build openssh-3.8.1p1
+
+from your work directory. If that succeeds, you can optionally run
+the testsuite:
+
+    build test openssh-3.8.1p1
+
+To install and register the package, become root first:
+
+    su
+
+then do:
+
+    build install openssh-3.8.1p1
+
+After the installation, you could even create a distribution package:
+
+    build distro openssh-3.8.1p1
+
+4 Known problems and limitations
+================================
+
+The OpenSSH server sshd is not fully supported on Syllable, yet.
+Syllable user xsdg has reported that it works with key-based
+authentication. However, it doesn't currently support password-based
+authentication, so this should be disabled in the configuration file.
+
+5 Contact information
+=====================
+
+This version of OpenSSH was ported to Syllable by Kaj de Vos. You can
+send me problem reports, fixes and the like at
+
+    openssh@syllable.info
+
+This distribution can be found in the download section of the
+Syllable web site:
+
+    http://syllable.org
+
