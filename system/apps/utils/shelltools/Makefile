@@ -20,7 +20,7 @@ OBJS := ./objs/alert.o
 
 $(EXE): objs $(OBJS)
 	@echo Building : $(EXE)
-	@g++ $(OBJS) -latheos -o $(EXE)
+	@g++ $(OBJS) -lsyllable -o $(EXE)
 
 
 $(OBJDIR):
@@ -35,6 +35,4 @@ clean:
 	@echo Removing all objects and executable.
 	@rm $(OBJS)
 	@rm $(EXE)
-
-
 
