@@ -4,5 +4,6 @@ modules
 	sys/kernel/drivers/graphics/mga
 	sys/kernel/drivers/sound/trident
 	sys/appserver/appserver/drivers/video/mga
+	sys/appserver/appserver/drivers/video/vmware
 	apps/utils/bzoom
 
