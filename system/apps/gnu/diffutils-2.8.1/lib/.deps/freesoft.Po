@@ -1,5 +1,0 @@
-freesoft.o : \
- freesoft.c ../config.h freesoft.h
-freesoft.c :
-../config.h :
-freesoft.h :

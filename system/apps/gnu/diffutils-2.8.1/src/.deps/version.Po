@@ -1,4 +1,0 @@
-version.o : \
- version.c ../config.h
-version.c :
-../config.h :
