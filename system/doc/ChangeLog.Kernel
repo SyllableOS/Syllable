@@ -1,3 +1,7 @@
+* Sept 11 2003, Kristian Van Der Vliet *
+
+Add support for the MSG_PEEK flag in tcp.c tcp_recvmsg()
+
 * Sept 01 2003, Kristian Van Der Vliet *
 
 The kernel version information has now been changed.  The kernel itself now sets the
