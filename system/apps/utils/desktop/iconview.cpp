@@ -184,7 +184,7 @@ void Icon::Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendTe
 
         if ( bBlendText )
         {
-	    //pcView->SetDrawingMode( DM_OVER );
+	    pcView->SetDrawingMode( DM_OVER );
         }
         else
         {
@@ -199,7 +199,7 @@ void Icon::Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendTe
             pcView->FillRect( cRect );
         }
 
-            //pcView->SetFgColor( fClr );
+            pcView->SetFgColor( fClr );
         if ( bBlendText )
         {
             pcView->SetFgColor( fClr );
@@ -868,6 +868,7 @@ void IconView::DirChanged( const std::string& cNewPath )
     }
 
 }
+
 
 
 
