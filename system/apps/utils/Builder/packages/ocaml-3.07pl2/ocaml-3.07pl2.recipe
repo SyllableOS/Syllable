@@ -1,19 +1,24 @@
 authors			Kaj de Vos
-status			testing
-notes			Native code compiler not supported
+notes			Native code compiler not supported yet
+
 licenses		QPL LGPL custom
 home			caml.inria.fr
 locations		ftp://ftp.inria.fr/INRIA/caml-light
+
+no-build-dir
+
 patch-config	config/gnu
 configure-args
 	-prefix /usr/ocaml
 	-no-pthread
+
 make-targets
 ;	world.opt
 		world
 ;;	bootstrap
 ;		opt
 ;		opt.opt
+
 install
 ;	umask 022;
 	make install
