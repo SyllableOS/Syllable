@@ -37,7 +37,7 @@ modules
 	apps/desktop/desktop
 	apps/desktop/dock
 	apps/desktop/dock_plugins
-	apps/desktop/filebrowser
+	apps/desktop/file_browser
 	apps/gnu/coreutils-5.2.1
 	apps/gnu/less-382
 	apps/gnu/sed-4.1.1
