@@ -222,6 +222,7 @@ struct ATA_cmd_t
 	int nStatus;
 	int nError;
 	ATAPI_sense_s sSense; /* For atapi devices only */
+	bool bCanDMA;	/* Indicate if the command is DMA'able */
 	
 	uint8* pTransferBuffer;
 	uint32 nTransferLength;
@@ -343,6 +344,7 @@ typedef struct
 	bool			bMediaChanged;
 	bool			bTocValid;
 	cdrom_toc_s		sToc;
+	bool			bDoCDDA;
 } ATAPI_device_s;
 
 /* ATA busmanager */

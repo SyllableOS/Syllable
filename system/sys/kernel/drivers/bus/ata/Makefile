@@ -4,7 +4,7 @@ AFLAGS   = -c
 # Enable the following to enable debug output
 CFLAGS += -D__ENABLE_DEBUG__
 
-OBJS := ata.o ata_port.o ata_probe.o ata_io.o ata_command.o ata_drive.o atapi_drive.o
+OBJS := ata.o ata_port.o ata_probe.o ata_io.o ata_command.o ata_drive.o atapi_drive.o atapi.o
 
 OBJDIR	:= objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
@@ -46,31 +46,5 @@ clean:
 	-rm -f $(OBJS)
 	-rm -f $(OBJDIR)/ata
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+copy: all
+	cp -f $(OBJDIR)/ata /home/root/Build/

@@ -73,6 +73,7 @@ enum SATA_regs
 
 /* ATA_REG_STATUS */
 #define ATA_STATUS_BUSY			0x80 /* busy */
+#define ATA_STATUS_DRDY			0x40 /* data ready */
 #define ATA_STATUS_DRQ			0x08 /* data request */
 #define ATA_STATUS_ERROR		0x01 /* error */
 
