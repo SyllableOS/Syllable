@@ -31,7 +31,6 @@
 #include <util/application.h>
 
 
-
 DialogBase::DialogBase(const string& name, const string &title, int32 mode)
         : Window(os::Rect(), name, title, mode),
         KeyMap(),
@@ -268,10 +267,10 @@ void MsgView::Paint(const os::Rect& r)
 
 
 
-FileReq::FileReq(os::FileRequester::file_req_mode_t p0=os::FileRequester::LOAD_REQ,
-                 os::Messenger* p1=NULL, const char* p2=NULL, uint32 p3=os::FileRequester::NODE_FILE,
-                 bool p4=true, os::Message* p5=NULL, os::FileFilter* p6=NULL, bool p7=false,
-                 bool p8=true, const char* p9=NULL, const char* p10=NULL)
+FileReq::FileReq(os::FileRequester::file_req_mode_t p0,
+                 os::Messenger* p1, const char* p2, uint32 p3,
+                 bool p4, os::Message* p5, os::FileFilter* p6, bool p7,
+                 bool p8, String p9, String p10)
         : os::FileRequester(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10)
 {
     addMapping("0\e", ID_CANCEL);

@@ -21,6 +21,8 @@
 
 #include <gui/view.h>
 
+using namespace std;
+
 class StatusPanel;
 
 class StatusBar : public os::View

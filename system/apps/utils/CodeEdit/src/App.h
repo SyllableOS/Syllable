@@ -91,6 +91,8 @@ public:
           ID_WINDOW_CLOSING
         };
 
+    char *zCWD; // Initial working directory
+
     App();
     ~App();
 

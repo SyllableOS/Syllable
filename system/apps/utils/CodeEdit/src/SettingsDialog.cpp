@@ -32,7 +32,7 @@
 const float pageW=400;
 const float pageH=300;
 
-SettingsDialog::SettingsDialog(App* m, EditWin* code=NULL)
+SettingsDialog::SettingsDialog(App* m, EditWin* code)
         : os::Window(os::Rect(100, 100, 200,100), "SettingsDialog", APP_NAME " Common Settings"),
         app(m)
 {

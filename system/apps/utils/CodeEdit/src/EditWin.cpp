@@ -37,6 +37,7 @@
 #include <gui/tabview.h>
 #include <util/application.h>
 
+#include <assert.h>
 
 #include <fstream>
 #include <memory>
@@ -112,7 +113,7 @@ EditWin::~EditWin()
         saveRequester->Quit();
 }
 
-bool EditWin::load(const char* path=NULL, cv::CodeView* tEdit=NULL )
+bool EditWin::load(const char* path, cv::CodeView* tEdit )
 {
     if (path)
     {
@@ -147,7 +148,7 @@ bool EditWin::load(const char* path=NULL, cv::CodeView* tEdit=NULL )
     }
 }
 
-void EditWin::openTab(const char* path=NULL)
+void EditWin::openTab(const char* path)
 {
 
     os::Rect  r = pcTabView->GetBounds();
@@ -284,40 +285,42 @@ void EditWin::setupMenus()
 }
 void EditWin::setupToolbar()
 {
+	Resources res(get_image_id());
+
     pcToolBar = new ToolBar(os::Rect(0,20,GetBounds().Width(),46) ,"");
 
     pcBreaker = new os::ImageButton(os::Rect(2,3,11,19), "M_BUT_BREAKER", "",NULL,NULL, os::ImageButton::IB_TEXT_BOTTOM,false,false,false);
-    pcBreaker->SetImageFromResource("breaker.png");
+    pcBreaker->SetImage(res.GetResourceStream("breaker.png"));
     pcToolBar->AddChild(pcBreaker);
 
     pcNew = new os::ImageButton(os::Rect(15,3,32,22), "M_BUT_NEW", "New", new Message(M_BUT_NEW),NULL, os::ImageButton::IB_TEXT_BOTTOM,false,false,true);
-    pcNew->SetImageFromResource("new.png");
+    pcNew->SetImage(res.GetResourceStream("new.png"));
 
     pcOpen = new os::ImageButton(os::Rect(33,2,50,22), "M_BUT_OPEN", "Open", new Message(M_BUT_OPEN),NULL, os::ImageButton::IB_TEXT_BOTTOM,false,false,true);
-    pcOpen->SetImageFromResource("open.png");
+    pcOpen->SetImage(res.GetResourceStream("open.png"));
 
     pcSave = new os::ImageButton(os::Rect(55,3,72,22), "M_BUT_SAVE", "Save", new Message(M_BUT_SAVE),NULL, os::ImageButton::IB_TEXT_BOTTOM,false,false,true);
-    pcSave->SetImageFromResource("save.png");
+    pcSave->SetImage(res.GetResourceStream("save.png"));
 
     pcSaveAs = new os::ImageButton(os::Rect(73,2,90,22), "M_BUT_SAVE_AS", "Save As...", new Message(M_BUT_SAVE_AS),NULL, os::ImageButton::IB_TEXT_BOTTOM,false,false,true);
-    pcSaveAs->SetImageFromResource("saveas.png");
+    pcSaveAs->SetImage(res.GetResourceStream("saveas.png"));
 
     pcPrint =   new os::ImageButton(os::Rect(93,2,110,22), "M_BUT_SAVE_AS", "Save As...", new Message(M_BUT_SAVE_AS),NULL, os::ImageButton::IB_TEXT_BOTTOM,false,false,true);
-    pcPrint->SetImageFromResource("print.png");
+    pcPrint->SetImage(res.GetResourceStream("print.png"));
     pcPrint->SetEnable(false);
 
     pcBreaker = new os::ImageButton(os::Rect(112,3,121,19), "M_BUT_BREAKER", "",NULL,NULL, os::ImageButton::IB_TEXT_BOTTOM,false,false,false);
-    pcBreaker->SetImageFromResource("breaker.png");
+    pcBreaker->SetImage(res.GetResourceStream("breaker.png"));
     pcToolBar->AddChild(pcBreaker);
 
     pcSearch = new os::ImageButton(os::Rect(123,2,140,22), "M_BUT_FIND", "Find", new Message(M_BUT_FIND),NULL, os::ImageButton::IB_TEXT_BOTTOM,false,false,true);
-    pcSearch->SetImageFromResource("find.png");
+    pcSearch->SetImage(res.GetResourceStream("find.png"));
 
     pcUndo = new os::ImageButton(os::Rect(141,2,158,22), "M_BUT_UNDO", "undo", new Message(M_BUT_UNDO),NULL, os::ImageButton::IB_TEXT_BOTTOM,false,false,true);
-    pcUndo->SetImageFromResource("undo.png");
+    pcUndo->SetImage(res.GetResourceStream("undo.png"));
 
     pcRedo = new os::ImageButton(os::Rect(159,2,176,22), "M_BUT_REDO", "undo", new Message(M_BUT_REDO),NULL, os::ImageButton::IB_TEXT_BOTTOM,false,false,true);
-    pcRedo->SetImageFromResource("redo.png");
+    pcRedo->SetImage(res.GetResourceStream("redo.png"));
 
     pcToolBar->AddChild(pcNew);
     pcToolBar->AddChild(pcOpen);
@@ -369,7 +372,7 @@ void EditWin::fileNewWin()
     app->PostMessage(App::ID_NEW_FILE);
 }
 
-void EditWin::fileOpen(bool bOpenWin=false)
+void EditWin::fileOpen(bool bOpenWin)
 {
     os::Message* pcMsg = new os::Message(App::ID_OPEN_FILE);
     app->PostMessage(pcMsg, app);
@@ -402,7 +405,7 @@ bool EditWin::fileSave(const string &p)
 
             for(uint a=0;a<cEdit->GetLineCount();++a)
             {
-                out << cEdit->GetLine(a) << endl;
+                out << cEdit->GetLine(a).const_str() << endl;
             }
 
             title[pcTabView->GetSelection()]=path;
@@ -437,7 +440,7 @@ void EditWin::fileSaveAs(os::Message *parent)
             m->AddPointer("Parent", parent);
 
         saveRequester=new FileReq(os::FileRequester::SAVE_REQ,
-                                  new os::Messenger(this), "",
+                                  new os::Messenger(this), app->zCWD,
                                   os::FileRequester::NODE_FILE,
                                   false, m, NULL, true);
 
@@ -1015,7 +1018,7 @@ void EditWin::HandleMessage(os::Message* msg)
         else
         {
             //load selection
-            string tmp;
+            String tmp;
             cEdit->GetRegion(&tmp);
             if(!tmp.empty())
                 searchText=tmp;

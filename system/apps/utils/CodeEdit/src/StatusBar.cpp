@@ -122,7 +122,7 @@ void StatusBar::drawPanel(const string& str, float l, float t, float r, float b,
     DrawLine(os::Point(l+1, t), os::Point(r, t));
     DrawLine(os::Point(r, t), os::Point(r, b-1));
 
-    DrawString(str, os::Point(l+4, t+2+tbl));
+    DrawString(os::Point(l+4, t+2+tbl), str);
 }
 
 void StatusBar::setText(const string& s, int panel, bigtime_t timeout)

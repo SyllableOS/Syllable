@@ -108,7 +108,7 @@ public:
     FileReq(os::FileRequester::file_req_mode_t =os::FileRequester::LOAD_REQ,
             os::Messenger* =NULL, const char* =NULL, uint32 =os::FileRequester::NODE_FILE,
             bool =true, os::Message* =NULL, os::FileFilter* =NULL, bool =false,
-            bool =true, const char* =NULL, const char* =NULL);
+            bool =true, String ="", String ="");
 
     bool OkToQuit();
     void DispatchMessage(os::Message*, os::Handler*);

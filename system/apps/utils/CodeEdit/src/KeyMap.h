@@ -24,7 +24,9 @@
 #include <util/settings.h>
 #include <util/message.h>
 #include <stdio.h>
+
 using namespace os;
+using namespace std;
 
 class KeyMap
 {

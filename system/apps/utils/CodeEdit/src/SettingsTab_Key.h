@@ -19,6 +19,7 @@
 #ifndef _SETTINGSTAB_KEY_H_
 #define _SETTINGSTAB_KEY_H_
 
+using namespace std;
 
 namespace os
 {

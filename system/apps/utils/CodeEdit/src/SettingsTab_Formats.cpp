@@ -31,7 +31,10 @@
 #include <codeview/format_perl.h>
 #include <codeview/format_html.h>
 
+#include <iostream>
+
 using namespace cv;
+using namespace std;
 
 const float pageW=400;
 const float pageH=400;
@@ -328,7 +331,7 @@ void SettingsTab_Formats::HandleMessage(os::Message *m)
         loadValues(iFormat);
         break;
     case ID_REMOVE:
-        formatList.erase(&formatList[iFormat]);
+        formatList.erase(vector<FormatSet>::iterator(&formatList[iFormat]));
         iFormat=0;
         loadValues(0);
         break;

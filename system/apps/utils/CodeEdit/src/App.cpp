@@ -27,6 +27,8 @@
 #include <codeview/format_html.h>
 
 #include <memory>
+#include <iostream>
+#include <unistd.h> /* for get_current_dir_name() */
 
 #include <gui/filerequester.h>
 #include <util/messenger.h>
@@ -34,16 +36,24 @@
 #include <storage/directory.h>
 
 using namespace cv;
+using namespace std;
 
 App::App()
         : os::Application("application/x-wnd-nikrowd-" APP_NAME),
         options(NULL), loadRequester(NULL), loadRequesterVisible(false)
 {
-    loadSettings();
+	zCWD = get_current_dir_name();
+	zCWD = (char*) realloc(zCWD, strlen(zCWD) + 1);
+	zCWD[strlen(zCWD)+1] = '\0';
+	zCWD[strlen(zCWD)] = '/';
+	
+	loadSettings();
 }
 
 App::~App()
-{}
+{
+	if ( zCWD != NULL ) free(zCWD);
+}
 
 bool App::OkToQuit()
 {
@@ -279,7 +289,7 @@ void App::HandleMessage(os::Message *m)
             else
             {
                 loadRequester =new FileReq(os::FileRequester::LOAD_REQ,
-                                           new os::Messenger(this), "", os::FileRequester::NODE_FILE,
+                                           new os::Messenger(this), zCWD, os::FileRequester::NODE_FILE,
                                            true, new os::Message(ID_DO_OPEN_FILE), NULL, true);
 
                 loadRequester->Show();
@@ -329,7 +339,7 @@ void App::HandleMessage(os::Message *m)
     default:
         cout << "App: Unhandled Message: " << m->GetCode() << endl;
         for(int a=0;a<m->CountNames();++a)
-            cout << "\t" << m->GetName(a) << endl;
+            cout << "\t" << m->GetName(a).str() << endl;
 #endif
 
     }

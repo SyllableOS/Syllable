@@ -197,7 +197,7 @@ void ImageItem::SetShortcut(const char *shortcut)
 Point ImageItem::GetContentSize()
 {
     Menu *m = GetSuperMenu();
-    if(!m || !GetLabel())
+    if(!m || GetLabel().empty())
         return Point(0, 0);
     font_height fh;
     m->GetFontHeight(&fh);
@@ -216,7 +216,7 @@ void ImageItem::Draw()
     if(!m)
         return;
 
-    const char *label = GetLabel();
+    const char *label = GetLabel().c_str();
 
     Rect bounds = GetFrame();
 

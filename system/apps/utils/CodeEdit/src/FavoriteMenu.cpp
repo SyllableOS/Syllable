@@ -58,7 +58,7 @@ const char* FavoriteMenu::GetClicked(Message* pcMessage)
 
     pcMessage->FindPointer("source",&vMenuItem);
     m_pcRecent = static_cast <MenuItem*> (vMenuItem);
-    pzFileName = m_pcRecent->GetLabel();
+    pzFileName = m_pcRecent->GetLabel().c_str();
 
     return (pzFileName);
 }
