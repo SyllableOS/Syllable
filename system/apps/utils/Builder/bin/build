@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.5.16
+# Version 0.5.17
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -269,6 +269,7 @@ def installPackage target
 			then
 				false
 			else
+				@log.header 'Unpacking ' + target
 				action 'tar -C /usr -xpPzf ' + target and
 				begin
 					@log.header 'Registering ' + target
@@ -408,6 +409,7 @@ end
 
 def makeDistroPackage target  # Should only be called if it's a system build
 	if thirdParty?
+		Dir.chdir @workDir
 		installPackage target
 	else
 		if exists? dir = buildDir(target) then Dir.chdir dir end
@@ -1042,7 +1044,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.16',
+	puts 'Syllable Build System 0.5.17',
 		'Copyright (c) 2002-2004 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
