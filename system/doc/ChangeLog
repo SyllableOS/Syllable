@@ -1,3 +1,20 @@
+* December 10th 2004, Arno Klenke *
+
+- Appserver:
+	o Updated the GeForceFX driver to support older GeForce cards and the GeForce 6600/6800
+	o Moved the support for nVIDIA Riva cards from the now unused nvidia driver to a new dedicated riva driver
+	o Some speed improvements in the DisplayDriver class
+
+- PCI busmanager:
+	o Can use the routing table on via/sis/intel chipsets
+
+- ATA driver:
+	o 48bit lba support enabled by default
+	o The controllers are initialized before they are passed to the ATA busmanager
+
+- SCSI busmanager:
+	o scsi_readv() and scsi_writev() are implemented which improves the performance for usb devices
+
 * December 2nd 2004, Kristian Van Der Vliet *
 
 SiS 900 and nVidia "nForce" NIC drivers from from Michael Krueger <invenies@web.de>.
