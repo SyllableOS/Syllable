@@ -251,7 +251,7 @@ Point CheckMenu::GetContentSize()
 {
 	Menu* pcMenu = GetSuperMenu();
 
-	if ( GetLabel() != NULL && pcMenu != NULL && m_IsChecked )
+	if ( GetLabel() != NULL && pcMenu != NULL )
 	{
 		font_height sHeight;
 		pcMenu->GetFontHeight( &sHeight );
@@ -259,21 +259,12 @@ Point CheckMenu::GetContentSize()
 		return( Point( pcMenu->GetStringWidth( GetLabel() ) + 16, sHeight.ascender + sHeight.descender + sHeight.line_gap ) );
 	}
 
-	if ( GetLabel() != NULL && pcMenu != NULL )
-	{
-		font_height sHeight;
-		pcMenu->GetFontHeight( &sHeight );
-
-		return( Point( pcMenu->GetStringWidth( GetLabel() ) + 4, sHeight.ascender + sHeight.descender + sHeight.line_gap ) );
-
-	}
-
 	return( Point( 0.0f, 0.0f ) );
 }
 
 bool CheckMenu::IsChecked()
 {
-	return( m_IsChecked);
+	return(m_IsChecked);
 }
 
 void CheckMenu::SetChecked(bool bChecked)
