@@ -254,26 +254,34 @@ static int cfs_ioctl( File_s *psFile, int nCmd, void *pBuffer, bool bFromKernel 
 	return ( nError );
 }
 
-/*****************************************************************************
- * NAME:
-
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
-static int cfs_add_select_request( Inode_s *psInode, SelectRequest_s *psReq )
+/**
+ * \par Description:
+ * Adds a select request to a currently open file.
+ * 
+ * The file's inode is locked in this function and is unlocked by a matching
+ * call to cfs_rem_select_request().
+ */
+static int cfs_add_select_request( File_s *psFile, SelectRequest_s *psReq )
 {
 	int nError;
+	Inode_s *psInode;
 
-	kassertw( NULL != psInode );
+	kassertw( NULL != psFile );
+	kassertw( NULL != psFile->f_psInode );
+
+	if ( psFile == NULL || psReq == NULL )
+		return -EINVAL;
+
+	psInode = psFile->f_psInode;
+	if ( psInode == NULL || psInode->i_psVolume == NULL )
+		return -EINVAL;
 
 	LOCK_INODE_RO( psInode );
 
 	if ( NULL != psInode->i_psOperations->add_select_req )
 	{
 		kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
-		nError = psInode->i_psOperations->add_select_req( psInode->i_psVolume->v_pFSData, psInode->i_pFSData, psReq );
+		nError = psInode->i_psOperations->add_select_req( psInode->i_psVolume->v_pFSData, psInode->i_pFSData, psFile->f_pFSCookie, psReq );
 	}
 	else
 	{
@@ -282,9 +290,16 @@ static int cfs_add_select_request( Inode_s *psInode, SelectRequest_s *psReq )
 			psReq->sr_bReady = true;
 			UNLOCK( psReq->sr_hSema );
 		}
-//    printk( "Error: File system %x dont support add_select_req\n", psInode->i_psOperations );
+//    printk( "Error: File system %x doesn't support add_select_req\n",
+//            psInode->i_psOperations );
 		nError = 0;
 	}
+
+    /**
+     * We unlock the inode later when the select request is removed
+     * (see cfs_rem_select_req) unless an error occurs or the request
+     * was not queued.
+     */
 	if ( nError < 0 || psInode->i_psOperations->add_select_req == NULL )
 	{
 		UNLOCK_INODE_RO( psInode );
@@ -293,25 +308,31 @@ static int cfs_add_select_request( Inode_s *psInode, SelectRequest_s *psReq )
 	return ( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
-static int cfs_rem_select_request( Inode_s *psInode, SelectRequest_s *psReq )
+/**
+ * \par Description:
+ * Removes a select request from a currently open file.
+ * 
+ * The file's inode is unlocked in this function -- it was locked by a matching
+ * call to cfs_add_select_request().
+ */
+static int cfs_rem_select_request( File_s *psFile, SelectRequest_s *psReq )
 {
 	int nError = 0;
+	Inode_s *psInode;
 
-	kassertw( NULL != psInode );
+	kassertw( NULL != psFile );
+	kassertw( NULL != psFile->f_psInode );
+
+	psInode = psFile->f_psInode;
 
 	if ( psInode->i_psOperations->rem_select_req != NULL )
 	{
 		kassertw( is_semaphore_locked( g_hAreaTableSema ) == false );
-		nError = psInode->i_psOperations->rem_select_req( psInode->i_psVolume->v_pFSData, psInode->i_pFSData, psReq );
+		nError = psInode->i_psOperations->rem_select_req( psInode->i_psVolume->v_pFSData, psInode->i_pFSData, psFile->f_pFSCookie, psReq );
+
 		UNLOCK_INODE_RO( psInode );
 	}
+
 	return ( nError );
 }
 
@@ -4430,12 +4451,12 @@ int sys_based_unlink( int nDir, const char *a_pzPath )
 	return ( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/**
+ * \par Description:
+ * Sets the file flags (excluding any flags that are only pertinent at open).
+ * Note that the flag changes are recorded even if the file's inode's driver
+ * returns an error.
+ */
 
 static int set_file_flags( File_s *psFile, int nFlags )
 {
@@ -4865,7 +4886,7 @@ int sys_select( int nMaxCnt, fd_set *psReadSet, fd_set *psWriteSet, fd_set *psEx
 	{
 		kassertw( NULL != pasRequests[i].sr_pFile );
 
-		nError = cfs_add_select_request( ( ( File_s * )pasRequests[i].sr_pFile )->f_psInode, &pasRequests[i] );
+		nError = cfs_add_select_request( ( ( File_s * )pasRequests[i].sr_pFile ), &pasRequests[i] );
 
 		if ( nError < 0 )
 		{
@@ -4873,7 +4894,7 @@ int sys_select( int nMaxCnt, fd_set *psReadSet, fd_set *psWriteSet, fd_set *psEx
 			{
 				if ( pasRequests[i].sr_bSendt )
 				{
-					cfs_rem_select_request( ( ( File_s * )pasRequests[i].sr_pFile )->f_psInode, &pasRequests[i] );
+					cfs_rem_select_request( ( ( File_s * )pasRequests[i].sr_pFile ), &pasRequests[i] );
 				}
 			}
 			break;
@@ -4894,11 +4915,12 @@ int sys_select( int nMaxCnt, fd_set *psReadSet, fd_set *psWriteSet, fd_set *psEx
 //  printk( "select(): wait for selectors to become ready\n" );
 
 
-      /*** Wait for one, or more of the request's to be satisfied	***/
+    /*** Wait for one, or more of the request's to be satisfied	***/
 	if ( nRealCnt <= 0 && psTimeOut == NULL )
 	{
-		printk( "sys_select() got request for 0 of %d descriptors with infinit timeout (read=%p)\n", nMaxCnt, psReadSet );
+		kerndbg( KERN_WARNING, "sys_select(): Got request for 0 of %d descriptors with " "infinite timeout (read=%p)\n", nMaxCnt, psReadSet );
 	}
+
 	nError = lock_semaphore( hSyncSema, 0, nTimeOut );
 
 	if ( nError == -EWOULDBLOCK || nError == -ETIME )
@@ -4925,8 +4947,9 @@ int sys_select( int nMaxCnt, fd_set *psReadSet, fd_set *psWriteSet, fd_set *psEx
 
 	for ( i = 0; i < nRealCnt; ++i )
 	{
-//    printk( "Remove selector %d from fs %d\n", i, pasRequests[i].sr_psFile->f_psInode->i_psVolume->v_nDevNum );
-		cfs_rem_select_request( ( ( File_s * )pasRequests[i].sr_pFile )->f_psInode, &pasRequests[i] );
+//    printk( "Remove selector %d from fs %d\n", i,
+//            pasRequests[i].sr_psFile->f_psInode->i_psVolume->v_nDevNum );
+		cfs_rem_select_request( ( ( File_s * )pasRequests[i].sr_pFile ), &pasRequests[i] );
 //    printk( "Check if desc is ready %d\n", pasRequests[i].sr_bReady );
 		if ( pasRequests[i].sr_bReady && nError >= 0 )
 		{
@@ -4954,7 +4977,8 @@ int sys_select( int nMaxCnt, fd_set *psReadSet, fd_set *psWriteSet, fd_set *psEx
 			nReadyCount++;
 		}
 	}
-//  printk( "select(): found %d ready descriptors (%d)\n", nReadyCount, nError );
+//  printk( "select(): found %d ready descriptors (%d)\n",
+//          nReadyCount, nError );
 
 	if ( nError >= 0 /*nReadyCount > 0 */  )
 	{

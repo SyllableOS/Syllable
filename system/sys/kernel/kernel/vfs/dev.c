@@ -1099,7 +1099,6 @@ static int dfs_unlink( void *pVolData, void *pParentNode, const char *pzName, in
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/
-
 static int dfs_symlink( void *pVolume, void *pParentNode, const char *pzName, int nNameLen, const char *pzNewPath )
 {
 	FileNode_s *psParent = pParentNode;
@@ -1152,6 +1151,66 @@ static int dfs_readlink( void *pVolume, void *pNode, char *pzBuf, size_t nBufSiz
 	}
 }
 
+/**
+ * \par Description:
+ * Passes through the add select request message to the underlying device
+ * driver, if supported.  If the underlying device driver does not support
+ * adding select requests, then the select request signalled as completed and
+ * discarded.
+ */
+int dfs_add_select_req( void *pVolume, void *pNode, void *pCookie, SelectRequest_s *psRequest )
+{
+	FileNode_s *psNode = pNode;
+	int nError = 0;
+
+	kerndbg( KERN_DEBUG, "dfs_add_select_req( 0x%8.8lX, 0x%8.8lX, 0x%8.8lX, 0x%8.8lX )\n", ( uint32 )pVolume, ( uint32 )pNode, ( uint32 )pCookie, ( uint32 )psRequest );
+
+	if ( psNode->fn_nInodeNum == DEVFS_DEVNULL || psNode->fn_nInodeNum == DEVFS_DEVZERO || psNode->fn_psOps == NULL || psNode->fn_psOps->add_select_req == NULL )
+	{
+		kerndbg( KERN_DEBUG, "dfs_add_select_req(): Handling add_select_req internally.\n" );
+
+    /**
+     * Assume reads/writes will always be successful on special devices or
+     * those that don't support add_select_req.
+     */
+		if ( psRequest->sr_nMode == SELECT_READ || psRequest->sr_nMode == SELECT_WRITE )
+		{
+			psRequest->sr_bReady = true;
+			unlock_semaphore( psRequest->sr_hSema );
+		}
+	}
+	else
+	{
+		kerndbg( KERN_DEBUG, "dfs_add_select_req(): Passing add_select_req to node.\n" );
+
+		nError = psNode->fn_psOps->add_select_req( psNode->fn_pDevNode, pCookie, psRequest );
+	}
+
+	return ( nError );
+}
+
+/**
+ * \par Description:
+ * Pass through remove select request messages to the underlying driver
+ * where supported.
+ */
+int dfs_rem_select_req( void *pVolume, void *pNode, void *pCookie, SelectRequest_s *psRequest )
+{
+	FileNode_s *psNode = pNode;
+	int nError = 0;
+
+	kerndbg( KERN_INFO, "dfs_rem_select_req( 0x%8.8lX, 0x%8.8lX, 0x%8.8lX, 0x%8.8lX )\n", ( uint32 )pVolume, ( uint32 )pNode, ( uint32 )pCookie, ( uint32 )psRequest );
+
+	if ( psNode->fn_nInodeNum != DEVFS_DEVNULL && psNode->fn_nInodeNum != DEVFS_DEVZERO && psNode->fn_psOps != NULL && psNode->fn_psOps->rem_select_req != NULL )
+	{
+		kerndbg( KERN_DEBUG, "dfs_rem_select_req(): Passing rem_select_req to node.\n" );
+
+		nError = psNode->fn_psOps->rem_select_req( psNode->fn_pDevNode, pCookie, psRequest );
+	}
+
+	return ( nError );
+}
+
 /*****************************************************************************
  * NAME:
  * DESC:
@@ -1165,38 +1224,58 @@ static FSOperations_s g_sOperations = {
 	NULL,			// op_unmount
 	dfs_read_inode,
 	dfs_write_inode,
-	dfs_lookup,		/* Lookup               */
-	NULL,			/* access               */
-	NULL,			/* create,              */
-	dfs_mkdir,		/* mkdir                */
-	NULL,			/* mknod                */
-	dfs_symlink,		/* symlink              */
-	NULL,			/* link                 */
-	NULL,			/* rename               */
-	dfs_unlink,		/* unlink               */
-	dfs_rmdir,		/* rmdir                */
-	dfs_readlink,		/* readlink             */
-	NULL,			/* ppendir              */
-	NULL,			/* closedir             */
-	NULL,			/* RewindDir            */
-	dfs_read_dir,		/* ReadDir              */
-	dfs_open,		/* open                 */
-	dfs_Close,		/* close                */
-	NULL,			/* FreeCookie           */
-	dfs_read,		/* Read                 */
-	dfs_write,		/* Write                */
-	dfs_readv,		// op_readv
-	dfs_writev,		// op_writev
-	dfs_ioctl,		/* ioctl                */
-	NULL,			/* setflags             */
+	dfs_lookup,		/* Lookup             */
+	NULL,			/* access             */
+	NULL,			/* create,            */
+	dfs_mkdir,		/* mkdir              */
+	NULL,			/* mknod              */
+	dfs_symlink,		/* symlink            */
+	NULL,			/* link               */
+	NULL,			/* rename             */
+	dfs_unlink,		/* unlink             */
+	dfs_rmdir,		/* rmdir              */
+	dfs_readlink,		/* readlink           */
+	NULL,			/* ppendir            */
+	NULL,			/* closedir           */
+	NULL,			/* RewindDir          */
+	dfs_read_dir,		/* ReadDir            */
+	dfs_open,		/* open               */
+	dfs_Close,		/* close              */
+	NULL,			/* FreeCookie         */
+	dfs_read,		/* Read               */
+	dfs_write,		/* Write              */
+	dfs_readv,		/* op_readv           */
+	dfs_writev,		/* op_writev          */
+	dfs_ioctl,		/* ioctl              */
+	NULL,			/* setflags           */
 	dfs_rstat,
-	NULL,			/* wstat                */
-	NULL,			/* fsync                */
-	NULL,			/* initialize           */
-	NULL,			/* sync                 */
-	NULL,			/* rfsstat              */
-	NULL,			/* wfsstat              */
-	NULL			/* isatty               */
+	NULL,			/* wstat              */
+	NULL,			/* fsync              */
+	NULL,			/* initialize         */
+	NULL,			/* sync               */
+	NULL,			/* rfsstat            */
+	NULL,			/* wfsstat            */
+	NULL,			/* isatty             */
+	dfs_add_select_req,	/* add_select_req     */
+	dfs_rem_select_req,	/* rem_select_req     */
+	NULL,			/* open_attrdir       */
+	NULL,			/* close_attrdir      */
+	NULL,			/* rewind_attrdir     */
+	NULL,			/* read_attrdir       */
+	NULL,			/* remove_attr        */
+	NULL,			/* rename_attr        */
+	NULL,			/* stat_attr          */
+	NULL,			/* write_attr         */
+	NULL,			/* read_attr          */
+	NULL,			/* open_indexdir      */
+	NULL,			/* close_indexdir     */
+	NULL,			/* rewind_indexdir    */
+	NULL,			/* read_indexdir      */
+	NULL,			/* create_index       */
+	NULL,			/* remove_index       */
+	NULL,			/* rename_index       */
+	NULL,			/* stat_index         */
+	NULL,			/* get_file_blocks    */
 };
 
 

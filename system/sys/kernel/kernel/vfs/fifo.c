@@ -532,7 +532,7 @@ static int pi_setflags( void *pVolume, void *pNode, void *pCookie, uint32 nFlags
 	return ( 0 );
 }
 
-static int pi_add_select_req( void *pVolume, void *pNode, SelectRequest_s *psReq )
+static int pi_add_select_req( void *pVolume, void *pNode, void *pCookie, SelectRequest_s *psReq )
 {
 	PipeNode_s *psNode = pNode;
 	int nError = 0;
@@ -557,10 +557,13 @@ static int pi_add_select_req( void *pVolume, void *pNode, SelectRequest_s *psReq
 			pi_notify_write_select( psNode );
 		}
 		break;
+
 	case SELECT_EXCEPT:
 		break;
+
 	default:
-		printk( "ERROR : pi_add_select_req() unknown mode %d\n", psReq->sr_nMode );
+		kerndbg( KERN_WARNING, "pi_add_select_req(): Unknown mode %d\n", psReq->sr_nMode );
+
 		nError = -EINVAL;
 		break;
 	}
@@ -575,7 +578,7 @@ static int pi_add_select_req( void *pVolume, void *pNode, SelectRequest_s *psReq
  * SEE ALSO:
  ****************************************************************************/
 
-static int pi_rem_select_req( void *pVolume, void *pNode, SelectRequest_s *psReq )
+static int pi_rem_select_req( void *pVolume, void *pNode, void *pCookie, SelectRequest_s *psReq )
 {
 	PipeNode_s *psNode = pNode;
 	SelectRequest_s **ppsTmp = NULL;
@@ -588,11 +591,17 @@ static int pi_rem_select_req( void *pVolume, void *pNode, SelectRequest_s *psReq
 	case SELECT_READ:
 		ppsTmp = &psNode->pn_psFirstReadSelReq;
 		break;
+
 	case SELECT_WRITE:
 		ppsTmp = &psNode->pn_psFirstWriteSelReq;
 		break;
+
+	case SELECT_EXCEPT:
+		break;
+
 	default:
-		printk( "ERROR : pty_rem_select_req() unknown mode %d\n", psReq->sr_nMode );
+		kerndbg( KERN_WARNING, "pi_rem_select_req(): Unknown mode %d\n", psReq->sr_nMode );
+
 		nError = -EINVAL;
 		break;
 	}

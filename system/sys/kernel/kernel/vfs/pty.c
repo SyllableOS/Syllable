@@ -1815,7 +1815,7 @@ static void pty_notify_write_select( FileNode_s *psNode )
  * SEE ALSO:
  ****************************************************************************/
 
-static int pty_add_select_req( void *pVolume, void *pNode, SelectRequest_s *psReq )
+static int pty_add_select_req( void *pVolume, void *pNode, void *pCookie, SelectRequest_s *psReq )
 {
 	FileNode_s *psNode = pNode;
 
@@ -1831,6 +1831,7 @@ static int pty_add_select_req( void *pVolume, void *pNode, SelectRequest_s *psRe
 			pty_notify_read_select( psNode );
 		}
 		break;
+
 	case SELECT_WRITE:
 		psReq->sr_psNext = psNode->fn_psFirstWriteSelReq;
 		psNode->fn_psFirstWriteSelReq = psReq;
@@ -1839,13 +1840,16 @@ static int pty_add_select_req( void *pVolume, void *pNode, SelectRequest_s *psRe
 			pty_notify_write_select( psNode );
 		}
 		break;
+
 	case SELECT_EXCEPT:
 		break;
+
 	default:
-		printk( "ERROR : pty_add_select_req() unknown mode %d\n", psReq->sr_nMode );
+		kerndbg( KERN_DEBUG, "pty_add_select_req(): unknown mode %d\n", psReq->sr_nMode );
 		break;
 	}
 	UNLOCK( psNode->fn_hMutex );
+
 	return ( 0 );
 }
 
@@ -1856,7 +1860,7 @@ static int pty_add_select_req( void *pVolume, void *pNode, SelectRequest_s *psRe
  * SEE ALSO:
  ****************************************************************************/
 
-static int pty_rem_select_req( void *pVolume, void *pNode, SelectRequest_s *psReq )
+static int pty_rem_select_req( void *pVolume, void *pNode, void *pCookie, SelectRequest_s *psReq )
 {
 	FileNode_s *psNode = pNode;
 	SelectRequest_s **ppsTmp = NULL;
@@ -1868,15 +1872,19 @@ static int pty_rem_select_req( void *pVolume, void *pNode, SelectRequest_s *psRe
 	case SELECT_READ:
 		ppsTmp = &psNode->fn_psFirstReadSelReq;
 		break;
+
 	case SELECT_WRITE:
 		ppsTmp = &psNode->fn_psFirstWriteSelReq;
 		break;
+
 	case SELECT_EXCEPT:
 		break;
+
 	default:
-		printk( "ERROR : pty_rem_select_req() unknown mode %d\n", psReq->sr_nMode );
+		kerndbg( KERN_DEBUG, "pty_rem_select_req(): unknown mode %d\n", psReq->sr_nMode );
 		break;
 	}
+
 	if ( NULL != ppsTmp )
 	{
 		for ( ; NULL != *ppsTmp; ppsTmp = &( ( *ppsTmp )->sr_psNext ) )
@@ -1888,6 +1896,7 @@ static int pty_rem_select_req( void *pVolume, void *pNode, SelectRequest_s *psRe
 			}
 		}
 	}
+
 	UNLOCK( psNode->fn_hMutex );
 
 	return ( 0 );
