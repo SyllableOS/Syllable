@@ -1,4 +1,5 @@
 authors Kaj de Vos
+patch-config
 ;configure-options
 ; --enable-shared
 ; --norecursion
