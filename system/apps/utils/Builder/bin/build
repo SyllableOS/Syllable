@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.5.4
+# Version 0.5.5
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -231,7 +231,7 @@ def configurePackage target
 							if cmdLine = recipe['pre-configure'] and not action toCommand cmdLine
 								false
 							else
-								action(((vars = recipe['configure-vars']) ? toString(vars) + ' ' : '') +
+								action(((vars = recipe['configure-env']) ? toVariables(vars) + ' ' : '') +
 									File.join((noBuildDir ? '.' : cmdPath), File.basename cmd) +
 									((args = recipe['configure-args']) ?
 										' ' + toString(args) :
@@ -275,8 +275,9 @@ end
 def makePackage target
 	if exists? dir = buildDir(target) then Dir.chdir dir end
 
-	unless action(((vars = (recipe = getRecipe(target))['make-vars']) ? toString(vars) + ' ' : '') +
+	unless action(((vars = (recipe = getRecipe(target))['make-env']) ? toVariables(vars) + ' ' : '') +
 		'make' +
+		((vars = recipe['make-vars']) ? ' ' + toVariables(vars) : '') +
 		((options = recipe['make-options']) ? ' ' + toString(options) : '') +
 		((targets = recipe['make-targets']) ? ' ' + toString(targets) : '')
 	)
@@ -350,7 +351,7 @@ def installPackage target
 
 					if not action((cmdLine = recipe['install']) ? toCommand(cmdLine) :
 						'make' +
-						(	(arg = recipe['install-prefix']) ? ' ' + arg + root :
+						(	(var = recipe['install-prefix-var']) ? " #{var}=" + root :
 							@systemBuild ? ' prefix=' + root :
 							''
 						) +
@@ -751,15 +752,21 @@ def save data, file  # Write an array to a text file
 	end
 end
 
+def splitLine line
+	i = line.index(/\s/)  # First whitespace
+	[line[0, i], line[i + 1 .. line.length - 1].strip]
+end
+
 def parseDictionary text  # Load key/value pairs into a hash table
 	hash = {}
 
 	for line in text
 		if line !~ /^\s+/  # A key line
-			unless i = line.index(/\s/)  # A single key
+			unless line[/\s/]  # A single key
 				hash[lastKey = line] = ''
 			else  # A key with a single value
-				hash[line[0, i]] = line[i + 1 .. line.length - 1].strip
+				key, value = splitLine line
+				hash[key] = value
 			end
 		else  # Starts with whitespace, so it's a list value
 			if hash[lastKey] == ''
@@ -812,6 +819,13 @@ def toCommand value  # Join list value into a semicolon-separated shell command 
 	else  # Assume it's already a string, or nil
 		value
 	end
+end
+
+def toVariables value  # Join an array of environment variables into shell syntax
+	toString((parseList value).collect do |line|
+		var, value = splitLine line
+		var + '=' + value
+	end)
 end
 
 def thirdParty?
@@ -976,7 +990,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.4',
+	puts 'Syllable Build System 0.5.5',
 		'Copyright (c) 2002-2004 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
