@@ -11,11 +11,12 @@ EXE = aedit
 $(EXE): $(OBJS)
 	$(LL) $(OBJS) -latheos -lcodeview -o $(EXE)
 
-install: $(EXE)
-	-strip --strip-all $(EXE)
-	-mkdir /usr/aedit
-	-mkdir /usr/aedit/bin
-	-cp $(EXE) /usr/aedit/bin/
+
+install:
+	cp -f $(EXE) /bin/$(EXE)
+
+dist:
+	cp -f $(EXE) $(DIST_DIR)/atheos/sys/bin/$(EXE)
 
 deps:
 
