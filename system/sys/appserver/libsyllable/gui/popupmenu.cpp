@@ -305,20 +305,20 @@ void PopupMenu::DrawArrow(bool bArrow)
 } /*end DrawArrow() */
 
 /* GetPreferredSize() */
-Point PopupMenu::GetPreferredSize( bool bLargest)
+Point PopupMenu::GetPreferredSize( bool bLargest) const
 {
 	font_height sHeight;
 	float vWidth=0.0f;
 	float vHeight=0.0f;
 	Point cReturn;
-	float vStrWidth = GetStringWidth(GetLabel().c_str() );
+	float vStrWidth = GetStringWidth(m->GetLabel().c_str() );
 	GetFontHeight( &sHeight );
 	vHeight = sHeight.ascender + sHeight.descender;
-	if (GetIcon())
+	if (m->GetIcon())
 	{
-		vWidth = GetIcon()->GetSize().x+3;
-		if (vHeight < GetIcon()->GetSize().y)
-			vHeight = GetIcon()->GetSize().y;
+		vWidth = m->GetIcon()->GetSize().x+3;
+		if (vHeight < m->GetIcon()->GetSize().y)
+			vHeight = m->GetIcon()->GetSize().y;
 			
 	}
 	
@@ -326,9 +326,6 @@ Point PopupMenu::GetPreferredSize( bool bLargest)
 	{
 		Image* pcImage = m->GetArrow();
 		vWidth += pcImage->GetSize().x;
-		
-		if (vHeight < pcImage->GetSize().y);
-			vHeight = pcImage->GetSize().y;
 	}
 	
 	vWidth+= vStrWidth;
