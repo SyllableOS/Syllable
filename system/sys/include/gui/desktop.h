@@ -53,6 +53,7 @@ public:
     bool	SetResoulution( int nWidth, int nHeight );
     bool	SetColorSpace( color_space eColorSpace );
     bool	SetRefreshRate( float vRefreshRate );
+    bool	Activate();
   
 private:
     int		 m_nCookie;
@@ -67,6 +68,5 @@ private:
 
 }
 
-
-
 #endif // __F_GUI_DESKTOP_H__
+
