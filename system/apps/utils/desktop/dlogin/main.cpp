@@ -305,12 +305,12 @@ LoginWindow::LoginWindow( const Rect& cFrame ) : Window( cFrame, "login_window",
     CheckLoginConfig();
 
 
-    if (!strcmp(ReadLoginOption(),"\n") == 0)
+    //if (!strcmp(ReadLoginOption(),"\n") == 0)
         SetFocusChild(m_pcView->m_pcPasswordView);
 
 
-    else
-        SetFocusChild(m_pcView->m_pcNameView);
+    //else
+      //  SetFocusChild(m_pcView->m_pcNameView);
 
 
 }

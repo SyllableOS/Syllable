@@ -351,7 +351,7 @@ void PropWin::Defaults()
 	string kImage = pcSettings->GetImageDir() + zImage;
 	FSNode *pcNode = new FSNode();
     
-    if( pcNode->SetTo(kImage.c_str()) == 0 )
+   /* if( pcNode->SetTo(kImage.c_str()) == 0 )
     	{
    			do{
         		nImageList = nImageList + 1;
@@ -366,7 +366,7 @@ void PropWin::Defaults()
 	
 	else {
 			pcPropTab->pcBack->pcList->Select(0,true,true);
-		 }
+		 }*/
 
 }
 
