@@ -1,6 +1,6 @@
 include makefile.freetype
 
-SCREENSHOT = n
+SCREENSHOT = y
 
 CFLAGS   = -pipe -O2 -I./$(FREETYPE)/include -c -Wall
 CPPFLAGS= $(CFLAGS)
