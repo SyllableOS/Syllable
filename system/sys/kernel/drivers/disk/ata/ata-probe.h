@@ -31,7 +31,6 @@
 void ata_detect_pci_controllers( void );
 void ata_init_controllers( void );
 
-int get_bios_parameters( int nDrive, DriveParams_s* psParams );
 int get_drive_params( int nDrive, DriveParams_s* psParams );
 
 size_t ata_read_partition_data( void* pCookie, off_t nOffset, void* pBuffer, size_t nSize );

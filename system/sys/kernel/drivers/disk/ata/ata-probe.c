@@ -446,59 +446,12 @@ void ata_init_controllers( void )
 	}
 }
 
-int get_bios_parameters( int nDrive, DriveParams_s* psParams )
-{
-	struct RMREGS rm;
-	uint8 *pCmdBuffer;
-
-	pCmdBuffer = alloc_real( 512, 0 );
-
-	if ( pCmdBuffer == NULL )
-	{
-		kerndbg( KERN_PANIC, "get_bios_parameters() : Failed to allocate command buffer\n" );
-		return( -ENOMEM );
-	}
-
-
-	memset( &rm, 0, sizeof( rm ) );
-
-	rm.EAX = 0x4800;
-	rm.EDX = (0x80 + nDrive);
-	rm.DS = ((uint) (pCmdBuffer) ) >> 4;
-	rm.ESI = ((uint) (pCmdBuffer) ) & 0x0f;
-
-	((uint16*)(pCmdBuffer))[0] = 0x2c;	/* Size */
-
-	realint( 0x13, &rm );
-
-	psParams->nStructSize = ((uint16*)(pCmdBuffer + 0))[0];
-	psParams->nFlags = ((uint16*)(pCmdBuffer + 2))[0];
-	psParams->nCylinders = ((uint32*)(pCmdBuffer + 4))[0];
-	psParams->nHeads = ((uint32*)(pCmdBuffer + 8))[0];
-	psParams->nSectors = ((uint32*)(pCmdBuffer + 12))[0];
-	psParams->nTotSectors = ((uint64*)(pCmdBuffer + 16))[0];
-	psParams->nBytesPerSector = ((uint16*)(pCmdBuffer + 24))[0];
-
-	free_real( pCmdBuffer );
-
-	return( ( rm.flags & 0x01 ) ? -1 : 0 );
-}
-
 int get_drive_params( int nDrive, DriveParams_s* psParams )
 {
 	/* Get drive size etc. */
 	int controller = get_controller( nDrive );
 	ata_identify_info_t *info = NULL; 
 	char name[40];
-
-	if( ( nDrive < 5 ) && ( g_nDevices[nDrive] == DEVICE_ATA ) )
-	{
-		LOCK( g_nControllers[controller].buf_lock );
-		if( get_bios_parameters( nDrive, psParams ) < 0 )
-			kerndbg( KERN_INFO, "Unable to get drive BIOS parameters, will use drive ID parameters\n");
-
-		UNLOCK( g_nControllers[controller].buf_lock );
-	}
 
 	/* Get the ID data direct from the drive */
 	if( !wait_for_status( controller, STATUS_BSY, 0 ) )
