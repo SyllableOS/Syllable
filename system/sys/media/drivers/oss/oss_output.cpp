@@ -61,6 +61,8 @@ public:
 	uint32			GetSupportedStreamCount();
 	status_t		AddStream( os::String zName, os::MediaFormat_s sFormat );
 	
+	void			SetTimeSource( os::MediaTimeSource* pcSource );
+	
 	status_t		WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket );
 	uint64			GetDelay();
 	uint32			GetUsedBufferPercentage();
@@ -86,6 +88,7 @@ private:
 	os::Messenger	m_cMediaServerLink;
 	uint64			m_nFirstTimeStamp;
 	bigtime_t		m_nStartTime;
+	os::MediaTimeSource* m_pcTimeSource;
 };
 
 
@@ -102,6 +105,7 @@ OSSOutput::OSSOutput( os::String zDSPPath )
 	m_hThread = -1;
 	m_zDSPPath = zDSPPath;
 	m_nStartTime = 0;
+	m_pcTimeSource = NULL;
 }
 
 OSSOutput::~OSSOutput()
@@ -178,8 +182,13 @@ void OSSOutput::FlushThread()
 			
 				uint64 nCardDelay = (uint64)nDelay * 1000 / (uint64)m_nFactor;
 				uint64 nSampleLength = psNextPacket->nSize[0] * 1000 / (uint64)m_nFactor;	
-				uint64 nPacketPosition = psNextPacket->nTimeStamp - m_nFirstTimeStamp;
-				uint64 nRealPosition = ( get_system_time() - m_nStartTime ) / 1000 + nCardDelay;
+				uint64 nPacketPosition = psNextPacket->nTimeStamp/* - m_nFirstTimeStamp*/;
+				uint64 nRealPosition;
+				
+				if( m_pcTimeSource )
+					nRealPosition = m_pcTimeSource->GetCurrentTime();
+				else
+					nRealPosition = ( get_system_time() - m_nStartTime ) / 1000 + nCardDelay;
 			
 				#if 0
 				std::cout<<"Time "<<nRealPosition<<" Stamp "<<
@@ -349,7 +358,7 @@ status_t OSSOutput::AddStream( os::String zName, os::MediaFormat_s sFormat )
 	else
 		return( -1 );
 	
-	/* Set Media format ( TODO: Check if the soundcard accepts the values ) */
+	/* Set Media format */
 	m_sSrcFormat = sFormat;
 	int nVal = m_sSrcFormat.nSampleRate;
 	ioctl( m_hOSS, SNDCTL_DSP_SPEED, &nVal );
@@ -384,6 +393,11 @@ status_t OSSOutput::AddStream( os::String zName, os::MediaFormat_s sFormat )
 	return( 0 );
 }
 
+void OSSOutput::SetTimeSource( os::MediaTimeSource* pcSource )
+{
+	std::cout<<"Using timesource "<<pcSource->GetIdentifier().c_str()<<std::endl;
+	m_pcTimeSource = pcSource;
+}
 
 uint32 OSSOutput::Resample( os::MediaFormat_s sSrcFormat, os::MediaFormat_s sDstFormat, uint16* pDst, uint16* pSrc, uint32 nLength )
 {

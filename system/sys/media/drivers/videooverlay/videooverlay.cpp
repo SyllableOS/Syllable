@@ -63,6 +63,8 @@ public:
 	uint32			GetSupportedStreamCount();
 	status_t		AddStream( os::String zName, os::MediaFormat_s sFormat );
 	
+	void			SetTimeSource( os::MediaTimeSource* pcSource );
+	
 	os::View*		GetVideoView( uint32 nIndex );
 	void			UpdateView( uint32 nStream );
 	
@@ -74,13 +76,13 @@ private:
 	os::color_space m_eColorSpace;
 	os::VideoOverlayView* m_pcView;
 	os::MediaFormat_s	m_sFormat;
-	bool			m_bNoCache;
 	int				m_nQueuedFrames;
 	os::MediaPacket_s* m_psFrame[VIDEO_FRAME_NUMBER];
 	sem_id			m_hLock;
 	uint32			m_nCurrentFrame;
 	uint64			m_nFirstTimeStamp;
 	bigtime_t		m_nStartTime;
+	os::MediaTimeSource* m_pcTimeSource;
 };
 
 
@@ -92,6 +94,7 @@ VideoOverlayOutput::VideoOverlayOutput()
 	m_nStartTime = 0;
 	m_nCurrentFrame = 0;
 	m_hLock = create_semaphore( "overlay_lock", 1, 0 );
+	m_pcTimeSource = NULL;
 }
 
 VideoOverlayOutput::~VideoOverlayOutput()
@@ -149,13 +152,16 @@ void VideoOverlayOutput::Flush()
 			m_nStartTime = get_system_time();
 		}
 		
-		if( psFrame->nTimeStamp != nNoTimeStamp && !m_bNoCache )
+		if( psFrame->nTimeStamp != nNoTimeStamp )
 		{
 			/* Use the timestamp */
-			
-			uint64 nPacketPosition = psFrame->nTimeStamp - m_nFirstTimeStamp;
-			uint64 nRealPosition = ( get_system_time() - m_nStartTime ) / 1000;
 			uint64 nFrameLength = 1000 / (uint64)m_sFormat.vFrameRate;
+			uint64 nPacketPosition = psFrame->nTimeStamp + nFrameLength/*- m_nFirstTimeStamp*/;
+			uint64 nRealPosition;
+			if( m_pcTimeSource )
+				nRealPosition = m_pcTimeSource->GetCurrentTime();
+			else
+				nRealPosition = ( get_system_time() - m_nStartTime ) / 1000;
 			
 			//std::cout<<psFrame->nTimeStamp<<std::endl;
 			//std::cout<<"VIDEO Time "<<nRealPosition<<" Stamp "<<
@@ -180,13 +186,17 @@ void VideoOverlayOutput::Flush()
 			
 		} else {
 			/* Calculate time for the next frame */
-			bigtime_t nNextTime = m_nStartTime + ( bigtime_t )( (float)m_nCurrentFrame  / m_sFormat.vFrameRate * 1000000 );
+			bigtime_t nNextTime;
+			if( m_pcTimeSource )
+				nNextTime = ( bigtime_t )( (float)m_nCurrentFrame  / m_sFormat.vFrameRate * 1000000 );
+			else
+				nNextTime = m_nStartTime + ( bigtime_t )( (float)m_nCurrentFrame / m_sFormat.vFrameRate * 1000000 );
 
-			if( nNextTime < get_system_time() || m_bNoCache )
+			if( nNextTime < ( m_pcTimeSource ? m_pcTimeSource->GetCurrentTime() : get_system_time() ) )
 			{
 			
-				bigtime_t nNextNextTime = m_nStartTime + ( bigtime_t )( (float)( m_nCurrentFrame + 1 ) / m_sFormat.vFrameRate * 1000000 );
-				if( ( nNextNextTime >= nNextTime ) || m_bNoCache ) {
+				bigtime_t nNextNextTime = nNextTime + 1000000 / (bigtime_t)m_sFormat.vFrameRate * 1000000;
+				if( ( nNextNextTime >= nNextTime ) ) {
 					bDrawFrame = true;
 				} else {
 					std::cout<<"Framedrop"<<std::endl;
@@ -204,27 +214,31 @@ void VideoOverlayOutput::Flush()
 			if( m_eColorSpace == os::CS_YUV12 )
 			{
 				/* YV12 Overlay */
+				uint32 nDstPitch = ( ( m_sFormat.nWidth ) + 0x1ff ) & ~0x1ff;
 				for( int i = 0; i < m_sFormat.nHeight; i++ )
 				{
-					memcpy( m_pcView->GetRaster() + i * m_sFormat.nWidth, psFrame->pBuffer[0] + psFrame->nSize[0] * i, m_sFormat.nWidth );
+					memcpy( m_pcView->GetRaster() + i * nDstPitch, psFrame->pBuffer[0] + psFrame->nSize[0] * i, m_sFormat.nWidth );
 				}
 				for( int i = 0; i < m_sFormat.nHeight / 2; i++ )
 				{
-					memcpy( m_pcView->GetRaster() +  m_sFormat.nHeight * m_sFormat.nWidth * 5 / 4 + m_sFormat.nWidth * i / 2, 
+					memcpy( m_pcView->GetRaster() + m_sFormat.nHeight * nDstPitch * 5 / 4 + nDstPitch * i / 2, 
 						psFrame->pBuffer[1] + psFrame->nSize[1] * i, m_sFormat.nWidth / 2 );
 				}
 				for( int i = 0; i < m_sFormat.nHeight / 2; i++ )
 				{
-					memcpy( m_pcView->GetRaster() +  m_sFormat.nHeight * m_sFormat.nWidth + m_sFormat.nWidth * i / 2, 
+					memcpy( m_pcView->GetRaster() +  m_sFormat.nHeight * nDstPitch + nDstPitch * i / 2, 
 							psFrame->pBuffer[2] + psFrame->nSize[2] * i, m_sFormat.nWidth / 2 );
 				}
+				free( psFrame->pBuffer[1] );
+				free( psFrame->pBuffer[2] );
 			} 
 			else if( m_eColorSpace == os::CS_YUV422 )
 			{
 				/* UYVY Overlay */
+				uint32 nDstPitch = ( ( m_sFormat.nWidth * 2 ) + 0xff ) & ~0xff;
 				for( int i = 0; i < m_sFormat.nHeight; i++ )
 				{
-					memcpy( m_pcView->GetRaster() + i * m_sFormat.nWidth * 2, psFrame->pBuffer[0] + m_sFormat.nWidth * 2 * i, m_sFormat.nWidth * 2 );
+					memcpy( m_pcView->GetRaster() + i * nDstPitch, psFrame->pBuffer[0] + m_sFormat.nWidth * 2 * i, m_sFormat.nWidth * 2 );
 				}
 			} else {
 				/* RGB32 */
@@ -295,12 +309,6 @@ status_t VideoOverlayOutput::Open( os::String zFileName )
 	for( int i = 0; i < VIDEO_FRAME_NUMBER; i++ ) {
 		m_psFrame[i] = NULL;
 	}
-	if( zFileName == "-nocache" ) {
-		m_bNoCache = true;
-		std::cout<<"Video caching disabled"<<std::endl;
-	}
-	else 
-		m_bNoCache = false;
 		
 	/* Intialize cpu structure for mplayer code */
 	memset( &gCpuCaps, 0, sizeof( CpuCaps ) );
@@ -392,6 +400,13 @@ status_t VideoOverlayOutput::AddStream( os::String zName, os::MediaFormat_s sFor
 	if( m_pcView == NULL )
 		return( -1 );
 	return( 0 );
+}
+
+
+void VideoOverlayOutput::SetTimeSource( os::MediaTimeSource* pcSource )
+{
+	std::cout<< "Using timesource "<<pcSource->GetIdentifier().c_str()<<std::endl;
+	m_pcTimeSource = pcSource;
 }
 
 status_t VideoOverlayOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psFrame )

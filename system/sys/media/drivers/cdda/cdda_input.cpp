@@ -31,6 +31,8 @@
 #include <atheos/cdrom.h>
 
 #include <iostream>
+#include <vector>
+#include <sys/stat.h>
 
 #define NUM_BUFS		32
 #define OVERLAP			4
@@ -40,7 +42,7 @@
 class CddaInput : public os::MediaInput
 {
 public:
-	CddaInput();
+	CddaInput( os::String zDevicePath );
 	~CddaInput();
 	os::String 		GetIdentifier();
 	os::View*		GetConfigurationView();
@@ -70,6 +72,7 @@ private:
 	void			CreateBuffers();
 
 private:
+	os::String m_zDevicePath;
 	int				m_hCdrom;
 	cdrom_toc_s*	m_psToc;
 
@@ -85,10 +88,10 @@ private:
 	int				m_nOutBlock;
 };
 
-CddaInput::CddaInput()
+CddaInput::CddaInput( os::String zDevicePath )
 {
 	int i;
-
+	m_zDevicePath = zDevicePath;
 	m_hCdrom = 0;
 	m_psToc = NULL;
 
@@ -103,7 +106,7 @@ CddaInput::~CddaInput()
 
 os::String CddaInput::GetIdentifier()
 {
-	return( "CD Digital Audio" );
+	return( os::String( "CD Digital Audio (" ) + m_zDevicePath.substr( 14, 3 ) + os::String( ")" )  );
 }
 
 os::View* CddaInput::GetConfigurationView()
@@ -113,12 +116,12 @@ os::View* CddaInput::GetConfigurationView()
 
 bool CddaInput::FileNameRequired()
 {
-	return( true );
+	return( false );
 }
 
 status_t CddaInput::Open( os::String zFileName )
 {
-	m_hCdrom = open( zFileName.c_str(), O_RDONLY );
+	m_hCdrom = open( m_zDevicePath.c_str(), O_RDONLY );
 	if( m_hCdrom < 0 )
 		return -1;
 
@@ -400,12 +403,30 @@ void CddaInput::InvalidateBlockCache()
 class CddaAddon : public os::MediaAddon
 {
 public:
-	status_t Initialize() { return( 0 ); }
+	status_t Initialize()
+	{
+		m_cDrives.clear();
+		os::String zDrives[] = { "/dev/disk/ata/cda/raw",
+							"/dev/disk/ata/cdb/raw",
+							"/dev/disk/ata/cdc/raw",
+							"/dev/disk/ata/cdd/raw" };
+							
+		/* Try all cd drives */
+		for( int i = 0; i < 4; i++ )
+		{
+			struct stat sStat;
+			if( lstat( zDrives[i].c_str(), &sStat ) == 0 )
+				m_cDrives.push_back( zDrives[i] );
+		}
+		return( 0 );
+	}
 	os::String GetIdentifier() { return( "CD Digital Audio" ); }
 	uint32			GetCodecCount() { return( 0 ); }
 	os::MediaCodec*		GetCodec( uint32 nIndex ) { return( NULL ); }
-	uint32			GetInputCount() { return( 1 ); }
-	os::MediaInput*		GetInput( uint32 nIndex ) { return( new CddaInput() ); }
+	uint32			GetInputCount() { return( m_cDrives.size() ); }
+	os::MediaInput*		GetInput( uint32 nIndex ) { return( new CddaInput( m_cDrives[nIndex] ) ); }
+private:
+	std::vector<os::String> m_cDrives;
 };
 
 extern "C"

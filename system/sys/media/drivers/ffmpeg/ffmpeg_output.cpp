@@ -280,7 +280,7 @@ status_t FFMpegOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket )
 			sPacket.flags |= PKT_FLAG_KEY;
 			
 		//cout<<"Write :"<<psFrames->nSize<<endl;
-			av_interleaved_write_frame( m_psContext, &sPacket );
+			av_write_frame( m_psContext, &sPacket );
 			pBuffer += psFrames->nSize;
 			ffmpeg_frame* psOldFrame = psFrames;
 			psFrames = psFrames->pNext;
@@ -294,7 +294,7 @@ status_t FFMpegOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket )
 		sPacket.stream_index = nIndex;
 		sPacket.data = psPacket->pBuffer[0];
 		sPacket.size = psPacket->nSize[0];
-		av_interleaved_write_frame( m_psContext, &sPacket );
+		av_write_frame( m_psContext, &sPacket );
 	}
 	
 	

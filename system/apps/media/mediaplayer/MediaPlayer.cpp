@@ -340,6 +340,18 @@ MPApp::~MPApp()
 	delete( m_pcManager );
 }
 
+class AVSyncTime : public os::MediaTimeSource
+{
+public:
+	AVSyncTime( os::MediaOutput* pcOutput ) { m_pcOutput = pcOutput; m_nTime = 0; }
+	void SetTime( bigtime_t nTime ) { m_nTime = nTime; }
+	os::String GetIdentifier() { return( "Media Player AV Sync" ); }
+	bigtime_t GetCurrentTime() { return( m_nTime - m_pcOutput->GetDelay() ); }
+private:
+	os::MediaOutput* m_pcOutput;
+	bigtime_t m_nTime;
+};
+
 /* Thread which is responsible to play the file */
 void MPApp::PlayThread()
 {
@@ -360,7 +372,10 @@ void MPApp::PlayThread()
 	uint32 nGrabValue = 80;
 	bool bDoubleDraw = false;
 	bool bSkipFrame = false;
-
+	bigtime_t nLastVideo = 0;
+	bigtime_t nLastAudio = 0;
+	AVSyncTime cAVTime( m_pcAudioOutput ); 
+	
 	std::cout << "Play thread running" << std::endl;
 	/* Seek to last position */
 	if ( !m_bStream )
@@ -375,6 +390,9 @@ void MPApp::PlayThread()
 	{
 		m_pcVideoCodec->CreateVideoOutputPacket( &sVideoFrame );
 	}
+	/* Set sync object */
+	if( m_bVideo && m_bAudio )
+		m_pcVideoOutput->SetTimeSource( &cAVTime );
 	while ( m_bPlayThread )
 	{
 		if ( m_bPacket )
@@ -406,22 +424,29 @@ void MPApp::PlayThread()
 					/* Decode audio data */
 					if ( m_bAudio && sPacket.nStream == m_nAudioStream )
 					{
+						//std::cout<<"Audio "<<sPacket.nTimeStamp<<std::endl;
 						if ( m_pcAudioCodec->DecodePacket( &sPacket, &sAudioPacket ) == 0 )
 						{
 							if ( sAudioPacket.nSize[0] > 0 )
 							{
+								nLastAudio = sAudioPacket.nTimeStamp;
+								
+								sAudioPacket.nTimeStamp = ~0;
 								m_pcAudioOutput->WritePacket( 0, &sAudioPacket );
 								nAudioBytes += sAudioPacket.nSize[0];
+								cAVTime.SetTime( nLastAudio );
 							}
 						}
 					}
 					if ( m_bVideo && sPacket.nStream == m_nVideoStream )
 					{
+						//std::cout<<"Video "<<sPacket.nTimeStamp<<std::endl;
 						if ( m_pcVideoCodec->DecodePacket( &sPacket, &sVideoFrame ) == 0 )
 							if ( sVideoFrame.nSize[0] > 0 )
 							{
 								if ( !bSkipFrame )
 								{
+									nLastVideo = sVideoFrame.nTimeStamp;
 									m_pcVideoOutput->WritePacket( 0, &sVideoFrame );
 									if ( bDoubleDraw )
 									{
@@ -481,10 +506,11 @@ void MPApp::PlayThread()
 			//cout<<"Position "<<m_pcInput->GetCurrentPosition()<<endl;
 			if ( m_bPacket && m_bVideo && m_bAudio )
 			{
+#if 0				
 				uint64 nVideo = ( ( uint64 )nVideoFrames * 1000 / ( uint64 )m_sVideoFormat.vFrameRate - m_pcVideoOutput->GetDelay() );
 				uint64 nAudio = ( ( uint64 )nAudioBytes * 1000 / 2 / ( uint64 )m_sAudioFormat.nSampleRate  / m_sAudioFormat.nChannels - m_pcAudioOutput->GetDelay() );
 
-				std::cout<<"Video "<<nVideo<<" "<<m_pcVideoOutput->GetDelay()<<" Audio "<<nAudio<<" "<<m_pcAudioOutput->GetDelay()<<std::endl;
+				std::cout<<"Video "<<nVideo<<" "<<nLastVideo<<" Audio "<<nAudio<<" "<<nLastAudio<<std::endl;
 
 				if ( nVideo > nAudio )
 				{
@@ -504,8 +530,9 @@ void MPApp::PlayThread()
 						bSkipFrame = true;
 					}
 				}
-
+#endif
 			}
+
 			nTime = get_system_time();
 			/* For non packet based devices check if we have finished */
 			if ( !m_bPacket && m_nLastPosition == m_pcInput->GetCurrentPosition() )

@@ -238,6 +238,7 @@ uint64 ServerOutput::GetDelay()
 	m_cMediaServerLink.SendMessage( &cMsg, &cReply );
 	if( cReply.FindInt64( "delay", &nDelay ) != 0 )
 		return( 0 );
+	//std::cout<<"Delay "<<nDelay<<std::endl;
 	return( nDelay );
 }
 

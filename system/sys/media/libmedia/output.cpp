@@ -150,6 +150,17 @@ status_t MediaOutput::AddStream( os::String zName, MediaFormat_s sFormat )
 }
 
 
+/** Set the timesource.
+ * \par Description:
+ * Sets the timesource the output. The default is to use the system time.
+ * \param pcSource - The timesource.
+ * \author	Arno Klenke
+ *****************************************************************************/
+void MediaOutput::SetTimeSource( MediaTimeSource* pcSource )
+{
+}
+
+
 /** Return a view with the video.
  * \par Description:
  * Returns a view with the displayed video or NULL if this feature is not 

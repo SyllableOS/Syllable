@@ -43,18 +43,26 @@
 #include <media/packet.h>
 #include <media/inputselector.h>
 #include <storage/path.h>
+#include <storage/registrar.h>
+#include <storage/directory.h>
 #include "resources/coldfish.h"
 #include "messages.h"
 #include "lcd.h"
 #include "SelectWin.h"
 #include "cimagebutton.h"
+#include "CFPlugin.h"
 
 
-enum
+
+typedef struct CFPluginItem
 {
-	CF_STATE_STOPPED,
-	CF_STATE_PLAYING,
-	CF_STATE_PAUSED,
+	CFPluginItem( image_id hImage, ColdFishPlugin* pcPlugin )
+	{
+		pi_hImage = hImage;
+		pi_pcPlugin = pcPlugin;
+	}
+	image_id pi_hImage;
+	ColdFishPlugin* pi_pcPlugin;
 };
 
 class CFPlaylist:public os::ListView
@@ -77,6 +85,10 @@ class CFWindow:public os::Window
 	CFPlaylist *GetPlaylist()
 	{
 		return ( m_pcPlaylist );
+	}
+	os::View* GetVisView()
+	{
+		return( m_pcVisView );
 	}
 	os::Lcd * GetLCD()
 	{
@@ -103,6 +115,7 @@ class CFWindow:public os::Window
 	os::CImageButton * m_pcShowList;
 
 	CFPlaylist *m_pcPlaylist;
+	os::View* m_pcVisView;
 	os::FileRequester* m_pcFileDialog;
 };
 
@@ -113,31 +126,49 @@ class CFApp:public os::Application
 	 ~CFApp();
 	virtual void HandleMessage( os::Message * pcMessage );
 	virtual bool OkToQuit();
-
+	
+	void LoadPlugins();
+	void ActivateVisPlugin();
+	void DeactivateVisPlugin();
+	void UpdatePluginPlaylist();
+	
+	void SetState( uint8 nState );
+	void OpenInput( os::String zFileName, os::String zInput );
 	bool OpenList( os::String zFileName );
+	
 	void SaveList();
 
 	void AddFile( os::String zFileName );
 	int OpenFile( os::String zFileName, uint32 nTrack, uint32 nStream );
 	void CloseCurrentFile();
 
-
 	void PlayThread();
 	void PlayNext();
-      private:
-
+	
+	CFWindow* GetWindow();
+private:
+	
+	os::RegistrarManager* m_pcRegManager;
 	CFWindow * m_pcWin;
+	std::vector<CFPluginItem> m_cPlugins;
+	ColdFishPlugin* m_pcCurrentVisPlugin;
 	uint8 m_nState;
+	bool m_bListShown;
 	os::Rect m_cSavedFrame;
 
 	os::String m_zListName;
 
+	uint m_nPlaylistPosition;
+	os::String m_zAudioName;
 	os::String m_zAudioFile;
 	uint32 m_nAudioTrack;
 	uint32 m_nAudioStream;
 
 	os::MediaManager * m_pcManager;
+	os::MediaInputSelector* m_pcInputSelector;
 	os::MediaInput * m_pcInput;
+	bool m_bLockedInput;
+	
 	bool m_bPacket;
 	bool m_bStream;
 	os::MediaFormat_s m_sAudioFormat;

@@ -26,6 +26,7 @@
 #include <util/string.h>
 #include <media/packet.h>
 #include <media/format.h>
+#include <media/timesource.h>
 
 namespace os
 {
@@ -62,6 +63,8 @@ public:
 	virtual MediaFormat_s	GetOutputFormat( uint32 nIndex );
 	virtual uint32			GetSupportedStreamCount();
 	virtual status_t		AddStream( String zName, MediaFormat_s sFormat );
+	
+	virtual void			SetTimeSource( MediaTimeSource* pcSource );
 	
 	virtual View*			GetVideoView( uint32 nStream );
 	virtual void			UpdateView( uint32 nStream );

@@ -18,10 +18,15 @@ MSG_MAINWND_MENU_APPLICATION_QUIT			Beenden
 
 MSG_MAINWND_MENU_PLAYLIST=300				Abspielliste
 MSG_MAINWND_MENU_PLAYLIST_SELECT			Auswählen...
+MSG_MAINWND_MENU_PLAYLIST_INPUT				Eingang öffnen...
 
 MSG_MAINWND_MENU_FILE=400					Datei
 MSG_MAINWND_MENU_FILE_ADD					Hinzufügen...
 MSG_MAINWND_MENU_FILE_REMOVE				Entfernen
+
+
+MSG_MAINWND_MENU_VIEW=500					Anzeigen
+MSG_MAINWND_MENU_VIEW_PLAYLIST				Abspielliste
 
 MSG_ABOUTWND_TITLE=1000						Info ColdFish
 MSG_ABOUTWND_TEXT							\nEine Musikabspielsoftware\nCopyright 2003 Arno Klenke\nCopyright 2003 Kristian Van Der Vliet\n\nColdFish ist unter der LGPL veröffentlicht.

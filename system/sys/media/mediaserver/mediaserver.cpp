@@ -300,6 +300,8 @@ void MediaServer::FlushThread()
 		/* We have data to flush */
 		if( nSize > 0 ) 
 		{
+			lock_semaphore( m_hLock );
+
 			//cout<<"Flushing "<<nSize<<endl;
 			memset( m_pMixBuffer, 0, nSize * 2 );
 			memset( m_pValueBuffer, 0, nSize * 2 );
@@ -354,6 +356,8 @@ void MediaServer::FlushThread()
 					m_sAudioStream[i].nBufferPlayed = get_system_time() + nSize * 10 * 1000 / ( (uint64)m_sCardFormat.nSampleRate / 100 ) / 2 / 2 + 1000 * 1000;
 				}
 			}
+
+			unlock_semaphore( m_hLock );
 			
 			/* Do signed int -> signed short conversion and update stream bars */
 			signed int* pData = m_pMixBuffer;
