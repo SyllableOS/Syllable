@@ -1,3 +1,10 @@
+* June 11, Henrik Isaksson *
+
+ - ListView/TreeView
+	o Bugfix: Rendering problems when the last node was hidded are now fixed.
+	o Update: Updated TreeViewStringNode to use DrawText(), provides multi-line text
+	  display and future support for vertical scripts.
+
 * June 9, Henrik Isaksson *
 
  - Application
@@ -695,6 +702,4 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
-
-
 
