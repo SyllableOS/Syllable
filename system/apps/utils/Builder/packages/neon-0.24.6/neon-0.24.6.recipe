@@ -8,7 +8,7 @@ home				www.webdav.org/neon/
 locations			http://www.webdav.org/neon/
 
 needs				openssl
-;build-needs			expat | libxml2
+build-needs			expat | libxml2
 
 patch-config
 configure-options
@@ -17,6 +17,8 @@ configure-options
 ;	--with-expat
 	--with-ssl
 	--with-libs=/usr/local/ssl
+;	For Windows?
+;	--with-zlib
 documentation
 	README BUGS src/COPYING.LIB ChangeLog NEWS THANKS TODO AUTHORS
 ;	Mostly double:
