@@ -74,5 +74,7 @@ install-prefix		prefix=
 ;
 ; Extra files to install:
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
+; Links to create:
+	<Source> [<Destination (default /)>]
 ; Extra files to pack:
 distro-files		/bin/link

@@ -1,5 +1,10 @@
 authors			Kaj de Vos
 patch-config	config
 documentation	README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS THANKS-to-translators
-; For JEd, S-Lang
-distro-files	/bin/cp /bin/rm /bin/ln
+links
+; For JEd, S-Lang:
+	bin/cp
+	bin/rm
+	bin/ln
+; For NcFTP:
+	bin/ls

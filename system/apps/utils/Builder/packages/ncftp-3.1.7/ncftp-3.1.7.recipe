@@ -1,0 +1,9 @@
+authors			Kaj de Vos
+status			testing
+licenses		custom
+home			www.ncftp.com
+packages		ncftp-3.1.7-src
+patch			sed -i 's/ln /ln -s /' Makefile.in
+;make-targets	all shared
+;install-targets	install soinstall
+documentation	README.txt doc
