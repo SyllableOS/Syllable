@@ -1,3 +1,23 @@
+* March 30 2005, Jake Hamby *
+
+Updated to Build 0014.  The major change is mostly cosmetic:  I changed a
+number of simple "#define CONSTANT 123" macros into the form:
+
+static const uint32_t CONSTANT = 123;
+
+It takes up a bit more space but is a little more type-safe.  Unfortunately,
+C's implementation of "const" is much less powerful than C++'s, so you can't
+use const variables to set the sizes of arrays, in case statements, or as
+initialization values for other const variables.  I also changed a few macros
+to their equivalent static inline functions, which helps with readability as
+well as with type safety.
+
+Also, there's one bug fix, in vfs/fifo.c.  I added an additional check for a
+broken pipe immediately before writing to a pipe, because the existing check
+only happened if the buffer was full.  This fixes a unit test in the
+testsuite for TCL, io.test 29.27.  I also updated the write function in
+vfs/pty.c to match the ordering of the logic in vfs/fifo.c.
+
 * March 27 2005, Jake Hamby *
 
 Updated to Build 0013.  Added stubs for three new system calls:  ftruncate(),
