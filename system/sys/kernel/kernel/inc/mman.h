@@ -45,16 +45,16 @@ typedef struct MemChunk MemChunk_s;
 
 struct MemChunk
 {
-	MemChunk_s *mc_Next;
-	uint32 mc_Bytes;
+	MemChunk_s *mc_psNext;
+	bool mc_bUsed;
+	uint32 mc_nAddress;
+	uint32 mc_nSize;
 };
 
 typedef struct MemHeader
 {
-	MemChunk_s *mh_First;
-	void *mh_Lower;
-	void *mh_Upper;
-	uint32 mh_Free;
+	MemChunk_s *mh_psFirst;
+	uint32 mh_nTotalSize;
 } MemHeader_s;
 
 

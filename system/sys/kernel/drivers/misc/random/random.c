@@ -55,7 +55,7 @@ DeviceOperations_s random_ops =
 
 status_t device_init( int device_id )
 {
-	return( create_device_node( device_id, "random", &random_ops, NULL ) );
+	return( create_device_node( device_id, -1, "random", &random_ops, NULL ) );
 }
 
 status_t device_uninit( int device_id )

@@ -99,6 +99,7 @@ struct _BddInode
 {
     BddInode_s*	bi_psFirstPartition;
     BddInode_s*	bi_psNext;
+    int		bi_nDeviceHandle;
     char	bi_zName[16];
     int		bi_nOpenCount;
     int		bi_nDriveNum;	/* The bios drive number (0x80-0xff) */
@@ -1014,6 +1015,7 @@ static int bdd_decode_partitions( BddInode_s* psInode )
 	}
 
 	sprintf( psPartition->bi_zName, "%d", i );
+	psPartition->bi_nDeviceHandle  = psInode->bi_nDeviceHandle;
 	psPartition->bi_nDriveNum      = psInode->bi_nDriveNum;
 	psPartition->bi_nSectors       = psInode->bi_nSectors;
 	psPartition->bi_nCylinders     = psInode->bi_nCylinders;
@@ -1036,7 +1038,7 @@ static int bdd_decode_partitions( BddInode_s* psInode )
 	strcat( zNodePath, psPartition->bi_zName );
 	strcat( zNodePath, "_new" );
 
-	psPartition->bi_nNodeHandle = create_device_node( g_nDevID, zNodePath, &g_sOperations, psPartition );
+	psPartition->bi_nNodeHandle = create_device_node( g_nDevID, psPartition->bi_nDeviceHandle, zNodePath, &g_sOperations, psPartition );
     }
 
       /* We now have to rename nodes that might have moved around in the table and
@@ -1111,7 +1113,7 @@ static status_t bdd_ioctl( void* pNode, void* pCookie, uint32 nCommand, void* pA
     return( nError );
 }
 
-static int bdd_create_node( int nDevID, const char* pzPath, const char* pzHDName, int nDriveNum,
+static int bdd_create_node( int nDevID, int nDeviceHandle, const char* pzPath, const char* pzHDName, int nDriveNum,
 			    int nSec, int nCyl, int nHead, int nSecSize,
 			    off_t nStart, off_t nSize, bool bCSH )
 {
@@ -1136,7 +1138,7 @@ static int bdd_create_node( int nDevID, const char* pzPath, const char* pzHDName
 //	    psInode->bi_nDriveNum,  sDriveParams.nTotSectors, sDriveParams.nBytesPerSector,
 //	    psInode->bi_nHeads, psInode->bi_nCylinders, psInode->bi_nSectors );
 
-    nError = create_device_node( nDevID, pzPath, &g_sOperations, psInode );
+    nError = create_device_node( nDevID, nDeviceHandle, pzPath, &g_sOperations, psInode );
     psInode->bi_nNodeHandle = nError;
     if ( nError < 0 ) {
 	kfree( psInode );
@@ -1157,6 +1159,7 @@ static int bdd_scan_for_disks( int nDeviceID )
     int	      nError;
     int	      i;
     char	      zNodePath[128];
+    int       nHandle;
 
     const char* const * argv;
     int			argc;
@@ -1177,8 +1180,11 @@ static int bdd_scan_for_disks( int nDeviceID )
 	strcpy( zNodePath, "disk/bios/" );
 	strcat( zNodePath, zName );
 	strcat( zNodePath, "/raw" );
+	
+	nHandle = register_device( "", "bios" );
+	claim_device( nDeviceID, nHandle, "Floppy drive", DEVICE_DRIVE );
 
-	nError = bdd_create_node( nDeviceID, zNodePath, zName, i, sDriveParams.nSectors, sDriveParams.nCylinders, sDriveParams.nHeads,
+	nError = bdd_create_node( nDeviceID, nHandle, zNodePath, zName, i, sDriveParams.nSectors, sDriveParams.nCylinders, sDriveParams.nHeads,
 				  sDriveParams.nBytesPerSector, 0, sDriveParams.nTotSectors * sDriveParams.nBytesPerSector, true );
     }
 
@@ -1213,8 +1219,11 @@ static int bdd_scan_for_disks( int nDeviceID )
 
 	if( bForceBios == false )
 		continue;
-	else
+	else {
 		printk( "BIOS controller enabled for drive %s\n", zName );
+		nHandle = register_device( "", "bios" );
+		claim_device( nDeviceID, nHandle, "Harddisk", DEVICE_DRIVE );
+	}
 
 	strcpy( zArgName, "bdd_" );
 	strcat( zArgName, zName );
@@ -1252,6 +1261,7 @@ static int bdd_scan_for_disks( int nDeviceID )
 	    goto error;
 	}
 	strcpy( psInode->bi_zName, zName );
+	psInode->bi_nDeviceHandle  = nHandle;
 	psInode->bi_nDriveNum      = i;
 	psInode->bi_nSectors       = sDriveParams.nSectors;
 	psInode->bi_nCylinders     = sDriveParams.nCylinders;
@@ -1276,7 +1286,7 @@ static int bdd_scan_for_disks( int nDeviceID )
 	if ( psInode->bi_bRemovable ) {
 	    printk( "Drive %s is removable\n", zNodePath );
 	}
-	nError = create_device_node( nDeviceID, zNodePath, &g_sOperations, psInode );
+	nError = create_device_node( nDeviceID, nHandle, zNodePath, &g_sOperations, psInode );
 	psInode->bi_nNodeHandle = nError;
 	if ( nError >= 0 ) {
 	    bdd_decode_partitions( psInode );

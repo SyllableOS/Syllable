@@ -1215,7 +1215,7 @@ status_t via_dsp_release(void* pNode, void* pCookie)
  *
  */
 
-int via_init_one (PCI_Info_s *pdev)
+int via_init_one ( int nDeviceID, PCI_Info_s *pdev)
 {
 	int rc;
 	struct via_info *card;
@@ -1236,6 +1236,7 @@ int via_init_one (PCI_Info_s *pdev)
 
 	memset (card, 0, sizeof (*card));
 	card->pdev = pdev;
+	card->bus = ( PCI_bus_s* )get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
 	card->baseaddr = pdev->u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK;
 	card->card_num = via_num_cards++;
 	spinlock_init (&card->lock, "via-lock");
@@ -1281,6 +1282,11 @@ int via_init_one (PCI_Info_s *pdev)
 
 	printk (KERN_INFO PFX "board #%d at 0x%04lX, IRQ %d\n",
 		card->card_num + 1, card->baseaddr, pdev->u.h0.nInterruptLine);
+	
+	if( claim_device( nDeviceID, pdev->nHandle, "VIA VT82xx", DEVICE_AUDIO ) != 0 ) {
+		rc = -ENODEV;
+		goto err_out_have_dsp;
+	}
 	
 	DPRINTK ("EXIT, returning 0\n");
 	return 0;
@@ -1339,33 +1345,43 @@ status_t device_init( int nDeviceID )
 	int i;
 	bool found = false;
 	PCI_Info_s pci;
+	PCI_bus_s* psBus;
 	
 	DPRINTK("ENTER\n");
 	
 	printk (KERN_INFO "Via vt82xx audio driver " VIA_VERSION "\n");
 	
+	/* Get PCI busmanager */
+	psBus = ( PCI_bus_s* )get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+	if( psBus == NULL )
+		return( -EINVAL );
+	
 	/* scan all PCI devices */
-    for(i = 0 ;  get_pci_info( &pci, i ) == 0 ; ++i) {
+    for(i = 0 ;  psBus->get_pci_info( &pci, i ) == 0 ; ++i) {
         if (pci.nVendorID == PCI_VENDOR_ID_VIA && pci.nDeviceID == PCI_DEVICE_ID_VIA_VT82XX) {		
-			if(via_init_one(&pci) == 0)
+			if(via_init_one( nDeviceID, &pci ) == 0) {
 				found = true;
+				break;
+			}
         }
     }
     if(found) {
     	/* create DSP node */
-		if( create_device_node( nDeviceID, "sound/dsp", &via_dsp_fops, via_driver_data ) < 0 ) {
+		if( create_device_node( nDeviceID, pci.nHandle, "sound/dsp", &via_dsp_fops, via_driver_data ) < 0 ) {
 			printk( "Failed to create 1 node \n");
 			return ( -EINVAL );
 		}
 		/* create mixer node */
-		if( create_device_node( nDeviceID, "sound/mixer", &via_mixer_fops, via_driver_data ) < 0 ) {
+		if( create_device_node( nDeviceID, pci.nHandle, "sound/mixer", &via_mixer_fops, via_driver_data ) < 0 ) {
 			printk( "Failed to create 1 node \n");
 			return ( -EINVAL );
 		}
 	} else {
 		printk( "No device found\n" );
+		disable_device( nDeviceID );
 		return ( -EINVAL );
 	}
+	
 	return (0);	
 	
 	DPRINTK("EXIT\n");
@@ -1374,7 +1390,10 @@ status_t device_init( int nDeviceID )
  
 status_t device_uninit( int nDeviceID)
 {
+	printk("device_uninit()\n" );
 	DPRINTK("ENTER\n");
+	
+	release_device( via_pdev->nHandle );
 	
 	via_remove_one (via_pdev);
 	

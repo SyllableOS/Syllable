@@ -48,6 +48,7 @@ dist: all
 	cp -f $(OBJDIR)/ata $(DIST_DIR)/atheos/sys/drivers/dev/disk/ata
 
 clean:
-	-rm $(OBJS)
-	-rm $(OBJDIR)/ata
+	-rm -f $(OBJS)
+	-rm -f $(OBJDIR)/ata
+
 

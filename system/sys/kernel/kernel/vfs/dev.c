@@ -31,6 +31,7 @@
 #include <atheos/device.h>
 #include <atheos/image.h>
 #include <atheos/semaphore.h>
+#include <atheos/config.h>
 
 #include <macros.h>
 
@@ -63,6 +64,14 @@ struct _Device
 	FileNode_s *d_psFirstNode;
 };
 
+
+typedef struct _DisabledDevice DisabledDevice_s;
+struct _DisabledDevice
+{
+	DisabledDevice_s *dd_psNext;
+	char dd_zPath[512];
+};
+
 typedef struct
 {
 	uint8 p_nStatus;
@@ -83,6 +92,7 @@ struct FileNode
 	FileNode_s *fn_psNextInDevice;
 	FileNode_s *fn_psParent;
 	FileNode_s *fn_psFirstChild;
+	int fn_nDeviceHandle;
 	const DeviceOperations_s *fn_psOps;
 	void *fn_pDevNode;
 	Device_s *fn_psDevice;
@@ -109,6 +119,7 @@ typedef struct
 
 
 static Device_s *g_psFirstDevice = NULL;
+static DisabledDevice_s *g_psFirstDisabled = NULL;
 static DevVolume_s *g_psVolume = NULL;
 
 /*****************************************************************************
@@ -296,6 +307,19 @@ static int load_device( Device_s *psDevice )
 	struct stat sStat;
 
 	int nError;
+	DisabledDevice_s *psDisabled = g_psFirstDisabled;
+
+	/* Look if the device is disabled */
+	while ( psDisabled )
+	{
+		if ( strcmp( psDevice->d_zPath, psDisabled->dd_zPath ) == 0 )
+		{
+			/* Do not load it */
+			printk( "Device %s is disabled\n", psDevice->d_zPath );
+			return ( -1 );
+		}
+		psDisabled = psDisabled->dd_psNext;
+	}
 
 	if ( g_bRootFSMounted )
 	{
@@ -585,6 +609,8 @@ static int dfs_lookup( void *pVolume, void *pParent, const char *pzName, int nNa
 	FileNode_s *psNode;
 	char zPath[256];
 	int nPathLen;
+	bool bScan = true;
+	int nError;
 
 	*pnResInode = 0;
 	if ( nNameLen == 2 && '.' == pzName[0] && '.' == pzName[1] )
@@ -611,9 +637,44 @@ static int dfs_lookup( void *pVolume, void *pParent, const char *pzName, int nNa
 			zPath[nPathLen + 1] = '\0';
 		}
 
-		strcat( zPath, "sys/drivers/dev/" );
-		get_node_path( psParentNode, zPath );
-		scan_driver_dir( psParentNode, zPath, strlen( zPath ) );
+		/* Look if we already have a driver for this device */
+		for ( psNode = psParentNode->fn_psFirstChild; NULL != psNode; psNode = psNode->fn_psNextSibling )
+		{
+			if ( strlen( psNode->fn_zName ) == nNameLen && strncmp( psNode->fn_zName, pzName, nNameLen ) == 0 )
+			{
+				if ( psNode->fn_psDevice )
+				{
+
+					struct stat sStat;
+
+					nError = stat( psNode->fn_psDevice->d_zPath, &sStat );
+
+					if ( nError >= 0 )
+					{
+						if ( psNode->fn_psDevice->d_nOpenCount > 0 )
+						{
+							bScan = false;
+							goto checked;
+						}
+						else if ( psNode->fn_psDevice->d_nDriverImage >= 0 )
+						{
+							if ( psNode->fn_psDevice->d_nImgDeviceNum == sStat.st_dev && psNode->fn_psDevice->d_nImgInode == sStat.st_ino )
+							{
+								bScan = false;
+								goto checked;
+							}
+						}
+					}
+				}
+			}
+		}
+	      checked:
+		if ( bScan )
+		{
+			strcat( zPath, "sys/drivers/dev/" );
+			get_node_path( psParentNode, zPath );
+			scan_driver_dir( psParentNode, zPath, strlen( zPath ) );
+		}
 	}
 
 	for ( psNode = psParentNode->fn_psFirstChild; NULL != psNode; psNode = psNode->fn_psNextSibling )
@@ -806,6 +867,19 @@ static int dfs_ioctl( void *pVolume, void *pNode, void *pCookie, int nCmd, void 
 			}
 			break;
 		}
+	case IOCTL_GET_DEVICE_HANDLE:
+		{
+			if ( psNode->fn_nDeviceHandle < 0 )
+			{
+				nError = -EFAULT;
+			}
+			else
+			{
+				memcpy_to_user( pBuf, &psNode->fn_nDeviceHandle, sizeof( int ) );
+				nError = 0;
+			}
+			break;
+		}
 	default:
 		if ( psNode->fn_psOps != NULL && psNode->fn_psOps->ioctl != NULL )
 		{
@@ -926,6 +1000,8 @@ static int dfs_read_inode( void *pVolume, ino_t nInodeNum, void **ppNode )
 {
 	DevVolume_s *psVolume = pVolume;
 	FileNode_s *psNode;
+	bool bScan = true;
+	int nError;
 
 	switch ( nInodeNum )
 	{
@@ -970,7 +1046,33 @@ static int dfs_read_inode( void *pVolume, ino_t nInodeNum, void **ppNode )
 
 			strcat( zPath, "sys/drivers/dev/" );
 			get_node_path( psNode, zPath );
-			scan_driver_dir( psNode, zPath, strlen( zPath ) );
+			/* Check if already loaded */
+			if ( psNode->fn_psDevice )
+			{
+				struct stat sStat;
+
+				nError = stat( psNode->fn_psDevice->d_zPath, &sStat );
+
+				if ( nError >= 0 )
+				{
+					if ( psNode->fn_psDevice->d_nOpenCount > 0 )
+					{
+						bScan = false;
+						goto checked;
+					}
+					else if ( psNode->fn_psDevice->d_nDriverImage >= 0 )
+					{
+						if ( psNode->fn_psDevice->d_nImgDeviceNum == sStat.st_dev && psNode->fn_psDevice->d_nImgInode == sStat.st_ino )
+						{
+							bScan = false;
+							goto checked;
+						}
+					}
+				}
+			}
+		      checked:
+			if ( bScan )
+				scan_driver_dir( psNode, zPath, strlen( zPath ) );
 		}
 
 		kassertw( false == psNode->fn_bIsLoaded );
@@ -1279,6 +1381,76 @@ static FSOperations_s g_sOperations = {
 };
 
 
+/** Disable one device driver.
+ * \ingroup DriverAPI
+ * \par Description:
+ *	Disables one device driver. The driver will be loaded again if 
+ *  enable_device_on_bus() is called. Should be called by PCI device drivers if 
+ *  no supported device could be found.
+ *
+ * \param nDeviceID
+ *	Device id of the driver passed by device_init().
+ * \return
+ * \sa enable_all_devices()
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+void disable_device( int nDeviceID )
+{
+	Device_s *psDevice;
+	DisabledDevice_s *psDisabled = g_psFirstDisabled;
+
+	if ( nDeviceID == BUILTIN_DEVICE_ID )
+		return;
+	psDevice = find_device_by_id( nDeviceID );
+
+	if ( psDevice == NULL )
+		return;
+
+	/* Look if the device is already disabled */
+	while ( psDisabled )
+	{
+		if ( strcmp( psDevice->d_zPath, psDisabled->dd_zPath ) == 0 )
+			return;
+		psDisabled = psDisabled->dd_psNext;
+	}
+
+	/* Add */
+	psDisabled = kmalloc( sizeof( DisabledDevice_s ), MEMF_KERNEL | MEMF_CLEAR );
+	strcpy( psDisabled->dd_zPath, psDevice->d_zPath );
+	psDisabled->dd_psNext = g_psFirstDisabled;
+	g_psFirstDisabled = psDisabled;
+
+	printk( "Disabling device %s\n", psDisabled->dd_zPath );
+}
+
+
+/** Enable all device drivers.
+ * \ingroup DriverAPI
+ * \par Description:
+ *	Enables all drivers which have been disabled 
+ *  by calling disable_device().
+ *
+ * \return
+ * \sa disable_device()
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+void enable_all_devices()
+{
+	/* Delete list */
+	DisabledDevice_s *psDisabled = g_psFirstDisabled;
+
+	while ( psDisabled )
+	{
+		DisabledDevice_s *psPrev = psDisabled;
+
+		psDisabled = psDisabled->dd_psNext;
+		kfree( psPrev );
+	}
+	g_psFirstDisabled = NULL;
+
+	printk( "Enabling all devices\n" );
+}
+
 static int locate_parent_Node( const char *pzPath, bool bCreateDirs, const char **ppzName, int *pnNameLen, FileNode_s **ppsRes )
 {
 	FileNode_s *psParent = g_psVolume->psRootNode;
@@ -1401,6 +1573,11 @@ static int link_device_node( const char *pzPath, FileNode_s *psNode )
  *	This is the unique device ID passed to the driver in the "device_init()"
  *	funcion.
  *
+ * \param nDeviceHandle.
+ *  The device handle for your device. You can probably
+ *  ask the busmanager to get it. If you do not have a handle then you can also
+ *  pass -1.
+ *
  * \param pzPath
  *	The path is relative to /dev/ and can specify directories in addition
  *	to the node-name. For example "disk/scsi/hda/raw" will create a device
@@ -1430,7 +1607,7 @@ static int link_device_node( const char *pzPath, FileNode_s *psNode )
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-int create_device_node( int nDeviceID, const char *pzPath, const DeviceOperations_s * psOps, void *pCookie )
+int create_device_node( int nDeviceID, int nDeviceHandle, const char *pzPath, const DeviceOperations_s * psOps, void *pCookie )
 {
 	Device_s *psDevice;
 	FileNode_s *psTmp;
@@ -1469,6 +1646,7 @@ int create_device_node( int nDeviceID, const char *pzPath, const DeviceOperation
 	psTmp->fn_nMode = S_IFCHR | S_IRUGO | S_IWUGO;
 	psTmp->fn_nInodeNum = ( int )psTmp;
 
+	psTmp->fn_nDeviceHandle = nDeviceHandle;
 	psTmp->fn_psOps = psOps;
 	psTmp->fn_pDevNode = pCookie;
 
@@ -1818,6 +1996,81 @@ int decode_disk_partitions( device_geometry *psDiskGeom, Partition_s * pasPartit
 	}
 }
 
+/** Save configuration of the devfs ( called by config.c )
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+void write_dev_fs_config()
+{
+	int nSize = 0;
+	DisabledDevice_s *psDevice = g_psFirstDisabled;
+
+	/* Calculate size of disabled devices list */
+	while ( psDevice )
+	{
+		nSize += strlen( psDevice->dd_zPath ) + 1, psDevice = psDevice->dd_psNext;
+	}
+	/* Write header */
+	write_kernel_config_entry_header( "<DISABLED_DEVICES>", nSize );
+
+	psDevice = g_psFirstDisabled;
+	/* Write entries */
+	while ( psDevice )
+	{
+		const char *pzBreak = "\n";
+		DisabledDevice_s *psPrev = psDevice;
+
+		write_kernel_config_entry_data( &psDevice->dd_zPath[0], strlen( psDevice->dd_zPath ) );
+		write_kernel_config_entry_data( ( uint8 * )pzBreak, 1 );
+
+		psDevice = psDevice->dd_psNext;
+		kfree( psPrev );
+	}
+}
+
+
+/** Load configuration of the devfs ( called by config.c )
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+void load_dev_fs_config()
+{
+	uint8 *pBuffer;
+	size_t nSize;
+	char zTemp[512];
+	int nTempPtr = 0;
+	uint8 *pPtr;
+
+	if ( read_kernel_config_entry( "<DISABLED_DEVICES>", &pBuffer, &nSize ) != 0 )
+	{
+		return;
+	}
+
+	/* Parse config */
+	pPtr = pBuffer;
+	while ( nSize > 0 )
+	{
+		if ( *pPtr == '\n' )
+		{
+			/* Add */
+			DisabledDevice_s *psDevice = kmalloc( sizeof( DisabledDevice_s ), MEMF_KERNEL | MEMF_CLEAR );
+
+			psDevice->dd_psNext = g_psFirstDisabled;
+			zTemp[nTempPtr] = 0;
+			strcpy( psDevice->dd_zPath, zTemp );
+			g_psFirstDisabled = psDevice;
+			nTempPtr = 0;
+
+			//printk( "Disabled device %s\n", g_psFirstDisabled->dd_zPath );
+		}
+		else
+		{
+			zTemp[nTempPtr++] = *pPtr;
+		}
+		pPtr++;
+		nSize--;
+	}
+
+	kfree( pBuffer );
+}
 
 /*****************************************************************************
  * NAME:
@@ -1831,5 +2084,9 @@ bool init_dev_fs( void )
 	g_hMutex = create_semaphore( "devfs_lock", 1, 0 );
 	kassertw( g_hMutex >= 0 );
 	register_file_system( "_device_fs", &g_sOperations );
+
+	load_dev_fs_config();
+
 	return ( true );
 }
+

@@ -1023,6 +1023,7 @@ DeviceOperations_s g_sDevOps = {
 status_t device_init( int nDeviceID )
 {
     int nError;
+    int nHandle;
     el3Dev_s* psDev;
   
     printk( version );
@@ -1047,11 +1048,14 @@ status_t device_init( int nDeviceID )
           printk( "***NO 3c509 CARD FOUND***\n" );
           return( -ENOENT );
     }
+    
+    nHandle = register_device( "", "isa" );
+    claim_device( nDeviceID, nHandle, "3Com EtherLink III", DEVICE_NET );
 
 #if EL3_DEBUG    
     printk( "Creating device node: net/eth/3c509\n" );
 #endif    
-    psDev->el3_nInodeHandle = create_device_node( nDeviceID, "net/eth/3c509", &g_sDevOps, psDev );
+    psDev->el3_nInodeHandle = create_device_node( nDeviceID, nHandle, "net/eth/3c509", &g_sDevOps, psDev );
     nError = 0;
     if ( psDev->el3_nInodeHandle < 0 ) {
           printk( KERN_ERR "Failed to create device node %d\n", nError );

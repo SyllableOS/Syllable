@@ -44,5 +44,7 @@ dist: all
 	cp -f $(OBJDIR)/bios $(DIST_DIR)/atheos/sys/drivers/dev/disk/bios
 
 clean:
-	-rm $(OBJS)
+	-rm -f $(OBJS) $(OBJDIR)/bios
+
+
 

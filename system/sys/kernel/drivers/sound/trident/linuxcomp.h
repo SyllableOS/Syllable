@@ -102,8 +102,11 @@ static inline PCI_Info_s * pci_find_device(int vendor_id, int device_id, PCI_Inf
 {
 	int i;
 	static PCI_Info_s  sInfo;
+	PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+	if( psBus == NULL )
+		return( NULL );
 
-	for ( i = 0 ; get_pci_info( &sInfo, i ) == 0 ; ++i )
+	for ( i = 0 ; psBus->get_pci_info( &sInfo, i ) == 0 ; ++i )
 	{
 		if ( sInfo.nVendorID == vendor_id && sInfo.nDeviceID == device_id)
 		{
@@ -114,16 +117,16 @@ static inline PCI_Info_s * pci_find_device(int vendor_id, int device_id, PCI_Inf
 }
 
 #define pci_read_config_byte(dev, address, val) \
-	val = read_pci_config(dev->nBus, dev->nDevice, dev->nFunction,\
+	val = psBus->read_pci_config(dev->nBus, dev->nDevice, dev->nFunction,\
 	address, sizeof(val))
 #define pci_read_config_dword(dev, address, val) \
-	val = read_pci_config(dev->nBus, dev->nDevice, dev->nFunction,\
+	val = psBus->read_pci_config(dev->nBus, dev->nDevice, dev->nFunction,\
 	address, sizeof(val))
 #define pci_write_config_byte(dev, address, val) \
-	write_pci_config(dev->nBus, dev->nDevice, dev->nFunction,\
+	psBus->write_pci_config(dev->nBus, dev->nDevice, dev->nFunction,\
 	address, sizeof(val), (uint32)val)
 #define pci_write_config_dword(dev, address, val) \
-	write_pci_config(dev->nBus, dev->nDevice, dev->nFunction,\
+	psBus->write_pci_config(dev->nBus, dev->nDevice, dev->nFunction,\
 	address, sizeof(val), (uint32)val)
 
 #define pci_free_consistent(cookie, size, ptr, dma_ptr)	kfree(ptr)

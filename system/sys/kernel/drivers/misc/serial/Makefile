@@ -44,5 +44,6 @@ dist: all
 	cp -f $(OBJDIR)/serial $(DIST_DIR)/atheos/sys/drivers/dev/misc/serial
 
 clean:
-	-rm $(OBJS)
+	-rm -f $(OBJS) $(OBJDIR)/serial
+
 

@@ -2497,6 +2497,10 @@ static void init_boot_modules()
 	}
 	for ( i = 0; i < MAX_IMAGE_COUNT; ++i )
 	{
+		if ( g_psKernelCtx->ic_psInstances[i] != NULL && strstr( g_psKernelCtx->ic_psInstances[i]->ii_psImage->im_pzPath, "/drivers/" ) != NULL )
+		{
+			add_devices_bootmodule( g_psKernelCtx->ic_psInstances[i]->ii_psImage->im_pzPath );
+		}
 		if ( g_psKernelCtx->ic_psInstances[i] != NULL && strstr( g_psKernelCtx->ic_psInstances[i]->ii_psImage->im_pzPath, "/drivers/dev/" ) != NULL )
 		{
 			init_boot_device( g_psKernelCtx->ic_psInstances[i]->ii_psImage->im_pzPath );

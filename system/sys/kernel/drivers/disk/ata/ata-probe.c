@@ -51,6 +51,7 @@ void ata_detect_pci_controllers( void )
 	bool bPciFound = false;
 	const char* const *argv;
 	int argc;
+	PCI_bus_s* psBus;
 	
 	get_kernel_arguments( &argc, &argv );
 
@@ -103,27 +104,39 @@ void ata_detect_pci_controllers( void )
 			}
 		}
 	}
+	
+	/* Get PCI busmanager */
+	psBus = ( PCI_bus_s* )get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+	if( psBus == NULL ) {
+		printk( "Error: Could not get PCI busmanager!\n" );
+		goto nopci;
+	}
 
-	for(currentdev = 0;get_pci_info(&pcidevice,currentdev)==0;currentdev++)
+	for(currentdev = 0; psBus->get_pci_info(&pcidevice,currentdev)==0;currentdev++)
 	{
 		if( pcidevice.nClassBase == PCI_MASS_STORAGE && pcidevice.nClassSub == PCI_IDE )
 		{
+			
 			/* Ensure that the controller is enabled */
-			if( ( read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND, 2 ) & PCI_COMMAND_IO ) != PCI_COMMAND_IO )
+			if( ( psBus->read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND, 2 ) & PCI_COMMAND_IO ) != PCI_COMMAND_IO )
 			{
 				kerndbg( KERN_INFO, "ATA controller at bus %u, device %u, function %u is disabled by BIOS\n", pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction );
 				continue;
 			}
+			
+			/* Claim */
+			if( claim_device( g_nDevID, pcidevice.nHandle, "PCI IDE controller", DEVICE_CONTROLLER ) != 0 )
+				continue;
 
 			bPciFound = true;
 
 			if( bPrimaryEnabled )
 			{
 				/* Is the Primary channel in compatability or PCI native mode? */
-				if( ( read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1 ) & 0x01 ) != 0x00 )
+				if( ( psBus->read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1 ) & 0x01 ) != 0x00 )
 				{
 					/* The Primary channel is not in compatability mode; see if we can change it */
-					api = read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1 );
+					api = psBus->read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1 );
 					if( ( api & 0x02 ) != 0x02 )
 					{
 						kerndbg( KERN_INFO, "ATA controller at bus %u, device %u, function %u has a Primary channel that is native PCI only\n", pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction );
@@ -135,7 +148,7 @@ void ata_detect_pci_controllers( void )
 					else
 					{
 						/* Switch the channel to compatability mode */
-						write_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1, ( api & 0xFE ) );
+						psBus->write_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1, ( api & 0xFE ) );
 
 						g_nControllers[0].io_base = ATA_DEFAULT_PRIMARY_BASE;
 						g_nControllers[0].irq = ATA_DEFAULT_PRIMARY_IRQ;
@@ -151,7 +164,7 @@ void ata_detect_pci_controllers( void )
 				/* Enable Busmastering , save dma port and request irq */
 				if( g_nControllers[0].io_base != 0x00 && bPrimaryDmaEnabled )
 				{
-					write_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND, 2, read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND , 2 ) | PCI_COMMAND_MASTER | PCI_COMMAND_IO );
+					psBus->write_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND, 2, psBus->read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND , 2 ) | PCI_COMMAND_MASTER | PCI_COMMAND_IO );
 					g_nControllers[0].dma_base = pcidevice.u.h0.nBase4 & PCI_ADDRESS_IO_MASK;
 
 					/* Disable DMA transfers if the interrupt could not be requested */
@@ -170,10 +183,10 @@ void ata_detect_pci_controllers( void )
 			if( bSecondaryEnabled )
 			{
 				/* Is the Secondary channel in compatability or PCI native mode? */
-				if( ( read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1 ) & 0x04 ) != 0x00 )
+				if( ( psBus->read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1 ) & 0x04 ) != 0x00 )
 				{
 					/* The Primary channel is not in compatability mode; see if we can change it */
-					api = read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1 );
+					api = psBus->read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1 );
 					if( ( api & 0x08 ) != 0x08 )
 					{
 						kerndbg( KERN_INFO, "ATA controller at bus %u, device %u, function %u has a Secondary channel that is native PCI only\n", pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction );
@@ -185,7 +198,7 @@ void ata_detect_pci_controllers( void )
 					else
 					{
 						/* Switch the channel to compatability mode */
-						write_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1, ( api & 0xFB ) );
+						psBus->write_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1, ( api & 0xFB ) );
 
 						g_nControllers[1].io_base = ATA_DEFAULT_SECONDARY_BASE;
 						g_nControllers[1].irq = ATA_DEFAULT_SECONDARY_IRQ;
@@ -201,7 +214,7 @@ void ata_detect_pci_controllers( void )
 				/* Enable Busmastering, save dma port and request irq */
 				if( g_nControllers[1].io_base != 0x00 && bSecondaryDmaEnabled )
 				{
-					write_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND, 2, read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND , 2 ) | PCI_COMMAND_MASTER | PCI_COMMAND_IO );
+					psBus->write_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND, 2, psBus->read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND , 2 ) | PCI_COMMAND_MASTER | PCI_COMMAND_IO );
 					g_nControllers[1].dma_base = ( pcidevice.u.h0.nBase4 & PCI_ADDRESS_IO_MASK ) + 0x8;
 
 					/* Disable DMA transfers if the interrupt could not be requested */
@@ -214,10 +227,9 @@ void ata_detect_pci_controllers( void )
 						kerndbg( KERN_INFO, "DMA busmaster at 0x%x\n", g_nControllers[1].dma_base );
 				}
 			}
-
-			break;
 		}
 	}
+nopci:
 	
 	if( bPciFound == false )
 	{
@@ -230,6 +242,9 @@ void ata_detect_pci_controllers( void )
 		g_nControllers[1].io_base = ATA_DEFAULT_SECONDARY_BASE;
 		g_nControllers[1].irq = ATA_DEFAULT_SECONDARY_IRQ;
 		g_nControllers[1].dma_base = 0x0;
+		
+		/* Show some nice information */
+		claim_device( g_nDevID, register_device( "", "isa" ), "ISA IDE controller", DEVICE_CONTROLLER );
 	}
 
 	return;
@@ -563,6 +578,10 @@ int get_drive_params( int nDrive, DriveParams_s* psParams )
 	kerndbg( KERN_INFO, "ata%i %s : %.40s (%Li MB)\n", controller, get_drive(nDrive) ? "Slave" : "Master ", name, ( psParams->nTotSectors * psParams->nBytesPerSector )/ MiB );
 
 	UNLOCK( g_nControllers[controller].buf_lock );
+	
+	/* Register device */
+	psParams->nDeviceHandle = register_device( "", "ide" );
+	claim_device( g_nDevID, psParams->nDeviceHandle, name, DEVICE_DRIVE );
 
 	return( 0 );
 
@@ -684,6 +703,7 @@ int ata_decode_partitions( AtaInode_s* psInode )
 		}
 
 		sprintf( psPartition->bi_zName, "%d", i );
+		psPartition->bi_nDeviceHandle  = psInode->bi_nDeviceHandle;
 		psPartition->bi_nDriveNum      = psInode->bi_nDriveNum;
 		psPartition->bi_bDMA		= psInode->bi_bDMA;
 		psPartition->bi_nSectors       = psInode->bi_nSectors;
@@ -706,7 +726,7 @@ int ata_decode_partitions( AtaInode_s* psInode )
 		strcat( zNodePath, psPartition->bi_zName );
 		strcat( zNodePath, "_new" );
 
-		psPartition->bi_nNodeHandle = create_device_node( g_nDevID, zNodePath, &g_sAtaOperations, psPartition );
+		psPartition->bi_nNodeHandle = create_device_node( g_nDevID, psPartition->bi_nDeviceHandle, zNodePath, &g_sAtaOperations, psPartition );
 	}
 
 	/* We now have to rename nodes that might have moved around in the table and
@@ -745,7 +765,7 @@ error:
     return( nError );
 }
 
-int ata_create_node( int nDevID, const char* pzPath, const char* pzHDName, int nDriveNum, int nSec, int nCyl, int nHead, int nSecSize, off_t nStart, off_t nSize, bool bCSH )
+int ata_create_node( int nDevID, int nDeviceHandle, const char* pzPath, const char* pzHDName, int nDriveNum, int nSec, int nCyl, int nHead, int nSecSize, off_t nStart, off_t nSize, bool bCSH )
 {
 	AtaInode_s* psInode = kmalloc( sizeof( AtaInode_s ), MEMF_KERNEL | MEMF_CLEAR | MEMF_OKTOFAILHACK );
 	int		nError;
@@ -754,6 +774,7 @@ int ata_create_node( int nDevID, const char* pzPath, const char* pzHDName, int n
 		return( -ENOMEM );
 
 	strcpy( psInode->bi_zName, pzHDName );
+	psInode->bi_nDeviceHandle = nDeviceHandle;
 	psInode->bi_nDriveNum   = nDriveNum;
 	psInode->bi_nSectors    = nSec;
 	psInode->bi_nCylinders  = nCyl;
@@ -765,7 +786,7 @@ int ata_create_node( int nDevID, const char* pzPath, const char* pzHDName, int n
 	psInode->bi_bCSHAddressing = bCSH;
 #endif
 
-	nError = create_device_node( nDevID, pzPath, &g_sAtaOperations, psInode );
+	nError = create_device_node( nDevID, nDeviceHandle, pzPath, &g_sAtaOperations, psInode );
 
 	psInode->bi_nNodeHandle = nError;
 
@@ -820,6 +841,7 @@ int ata_scan_for_disks( int nDeviceID )
 				}
 
 				strcpy( psAtaInode->bi_zName, zName );
+				psAtaInode->bi_nDeviceHandle	= sDriveParams.nDeviceHandle;
 				psAtaInode->bi_nDriveNum		= i;
 				psAtaInode->bi_nSectors		= sDriveParams.nSectors;
 				psAtaInode->bi_nCylinders		= sDriveParams.nCylinders;
@@ -858,7 +880,7 @@ int ata_scan_for_disks( int nDeviceID )
 				if ( psAtaInode->bi_bLockable )
 				    kerndbg( KERN_INFO, "Drive %s is lockable\n", zNodePath );
 
-				nError = create_device_node( nDeviceID, zNodePath, &g_sAtaOperations, psAtaInode );
+				nError = create_device_node( nDeviceID, psAtaInode->bi_nDeviceHandle, zNodePath, &g_sAtaOperations, psAtaInode );
 
 				psAtaInode->bi_nNodeHandle = nError;
 
@@ -877,6 +899,7 @@ int ata_scan_for_disks( int nDeviceID )
 				}
 
 				strcpy( psAtapiInode->bi_zName, zName );
+				psAtapiInode->bi_nDeviceHandle	= sDriveParams.nDeviceHandle;
 				psAtapiInode->bi_nDriveNum		= i;
 				psAtapiInode->bi_nStart			= 0;
 				psAtapiInode->bi_nSize			= 0;
@@ -904,7 +927,7 @@ int ata_scan_for_disks( int nDeviceID )
 				if ( psAtapiInode->bi_bLockable )
 				    kerndbg( KERN_INFO, "Drive %s is lockable\n", zNodePath );
 
-				nError = create_device_node( nDeviceID, zNodePath, &g_sAtapiOperations, psAtapiInode );
+				nError = create_device_node( nDeviceID, psAtapiInode->bi_nDeviceHandle, zNodePath, &g_sAtapiOperations, psAtapiInode );
 				psAtapiInode->bi_nNodeHandle = nError;
 				atapi_reset( i );
 			}

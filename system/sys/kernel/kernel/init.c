@@ -35,6 +35,8 @@
 #include <atheos/semaphore.h>
 #include <atheos/bcache.h>
 #include <atheos/multiboot.h>
+#include <atheos/device.h>
+#include <atheos/config.h>
 
 #include <net/net.h>
 
@@ -66,10 +68,10 @@ static uint32 g_nDebugBaudRate = 0;	//115200;
 static uint32 g_nDebugSerialPort = 2;
 static bool g_bPlainTextDebug = false;
 static uint32 g_nMemSize = 64 * 1024 * 1024;
-static bool g_bDisablePCI = false;
 static bool g_bDisableSMP = false;
 static bool g_bFoundSmpConfig = false;
 static struct i3Task g_sInitialTSS;
+bool g_bDisableKernelConfig = false;
 
 bool g_bRootFSMounted = false;
 bool g_bKernelInitiated = false;
@@ -324,17 +326,17 @@ static int find_boot_dev()
 	pzDiskPathBuf = kmalloc( 4096, MEMF_KERNEL );
 	pnHeaderBuf = kmalloc( 512, MEMF_KERNEL );
 
-	if( NULL == pzDevPathBuf || NULL == pzDiskPathBuf || NULL == pnHeaderBuf )
+	if ( NULL == pzDevPathBuf || NULL == pzDiskPathBuf || NULL == pnHeaderBuf )
 	{
 		kerndbg( KERN_PANIC, "Unable to allocate buffer memory.\n" );
-		if( NULL != pzDevPathBuf )
+		if ( NULL != pzDevPathBuf )
 			kfree( pzDevPathBuf );
-		if( NULL != pzDiskPathBuf )
+		if ( NULL != pzDiskPathBuf )
 			kfree( pzDiskPathBuf );
-		if( NULL != pnHeaderBuf )
+		if ( NULL != pnHeaderBuf )
 			kfree( pnHeaderBuf );
 
-		return( ENOMEM );
+		return ( ENOMEM );
 	}
 
 	nBaseDir = open( "/dev/disk", O_RDONLY );
@@ -363,12 +365,12 @@ static int find_boot_dev()
 			struct kernel_dirent sDiskDirEnt;
 			int hDisk, nAttempt;
 
-			while( getdents( nDevDir, &sDiskDirEnt, sizeof( sDiskDirEnt ) ) == 1 && bFound == false )
+			while ( getdents( nDevDir, &sDiskDirEnt, sizeof( sDiskDirEnt ) ) == 1 && bFound == false )
 			{
-				if( strcmp( sDiskDirEnt.d_name, "." ) == 0 || strcmp( sDiskDirEnt.d_name, ".." ) == 0 )
+				if ( strcmp( sDiskDirEnt.d_name, "." ) == 0 || strcmp( sDiskDirEnt.d_name, ".." ) == 0 )
 					continue;
 
-				if( sDiskDirEnt.d_name[0] != 'c' )	/* Ignore any drives which are not CD's */
+				if ( sDiskDirEnt.d_name[0] != 'c' )	/* Ignore any drives which are not CD's */
 					continue;
 
 				strcpy( pzDiskPathBuf, pzDevPathBuf );
@@ -382,19 +384,19 @@ static int find_boot_dev()
 				/* FIXME: Work around a bug with the ATA driver & some very slow CD-ROM drives
 				   which causes the ATA driver to fail to read the capacity instead of waiting
 				   for them to spin up */
-				for( nAttempt = 0; nAttempt < 5; nAttempt++ )
+				for ( nAttempt = 0; nAttempt < 5; nAttempt++ )
 				{
 					nError = open( pzDiskPathBuf, O_RDONLY );
-					if( nError >= 0 )
+					if ( nError >= 0 )
 						break;
 
 					udelay( 2000000 );	/* 5 seconds.  My ancient 32x CD-ROM takes about this long(!) to spin up.. */
 				}
 
-				if( nError < 0 )
+				if ( nError < 0 )
 				{
 					kerndbg( KERN_DEBUG_LOW, "Could not open %s\n", pzDiskPathBuf );
-					continue;		/* No disk in that drive */
+					continue;	/* No disk in that drive */
 				}
 
 				hDisk = nError;
@@ -407,7 +409,7 @@ static int find_boot_dev()
 				/* Close the device so that we can access it later if we need to */
 				close( hDisk );
 
-				if( nError < 512 )
+				if ( nError < 512 )
 				{
 					kerndbg( KERN_DEBUG_LOW, "Read %i bytes from %s but I wanted 512 (Not fair!)\n", nError, pzDiskPathBuf );
 					continue;
@@ -440,6 +442,51 @@ static int find_boot_dev()
 	return ( bFound ? 0 : -1 );
 }
 
+/** Reserves memory using the e820 map.
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+void init_e820_memory_map()
+{
+	struct RMREGS rm;
+	typedef struct
+	{
+		unsigned long long nAddr;	/* start of memory segment */
+		unsigned long long nSize;	/* size of memory segment */
+		unsigned long nType;	/* type of memory segment */
+	} e820entry;
+
+	e820entry *psEntry = alloc_real( sizeof( e820entry ) * 32, MEMF_CLEAR );
+	uint32 nEntry = 0;
+	memset( &rm, 0, sizeof( struct RMREGS ) );
+
+	for ( nEntry = 0; nEntry < 32; nEntry++ )
+	{
+		uint32 nAddr;
+
+		rm.EAX = 0xe820;
+		rm.EDX = 0x534d4150;
+		rm.ECX = sizeof( e820entry );
+		rm.EDI = ( ( uint32 )&psEntry[nEntry] ) & 0x0f;
+		rm.ES = ( ( uint32 )&psEntry[nEntry] ) >> 4;
+
+		realint( 0x15, &rm );
+
+		nAddr = ( uint32 )psEntry[nEntry].nAddr;
+
+		if ( 0xffffffff - nAddr < ( uint32 )psEntry[nEntry].nSize )
+			psEntry[nEntry].nSize = 0xffffffff - nAddr;
+
+		alloc_physical( &nAddr, true, ( uint32 )psEntry[nEntry].nSize );
+
+		if ( rm.EAX != 0x534d4150 )
+			break;
+	}
+
+
+	free_real( psEntry );
+}
+
+
 /*****************************************************************************
  * NAME:
  * DESC:
@@ -455,17 +502,15 @@ static int kernel_init()
 
 	init_scheduler();
 
-	if ( g_bDisablePCI == false )
-	{
-		printk( "Init PCI module\n" );
-		init_pci_module();
-	}
+	init_e820_memory_map();	/* Try to get the memory map from the BIOS */
 
+	init_kernel_config();	/* Load kernel configuration */
 
 	unprotect_dos_mem();
 
 	init_debugger( g_nDebugBaudRate, g_nDebugSerialPort );
 	init_vfs_module();
+	init_devices_boot();	/* Initialize devices manager */
 	init_elf_loader();
 
 	init_block_cache();
@@ -477,17 +522,23 @@ static int kernel_init()
 	{
 		nError = find_boot_dev();
 		if ( nError < 0 )
+		{
 			printk( "Unable to find boot device\n" );
+		}
 		else
 			printk( "Found boot device\n" );
 	}
 	else if ( sys_mount( g_zBootDev, "/boot", g_zBootFS, 0, g_zBootFSArgs ) < 0 )
+	{
 		printk( "Error: failed to mount boot file system.\n" );
+	}
 
 	g_bRootFSMounted = true;
 	protect_dos_mem();
 
 	sti();
+
+	init_devices();	/* Load busmanagers */
 
 	return ( 0 );
 }
@@ -553,7 +604,7 @@ void SysInit( void )
 
 	/* Pass in the boot mode */
 	*ppzArg++ = g_zBootMode;
-	
+
 	*ppzArg = NULL;
 
 	chdir( "/" );
@@ -824,7 +875,6 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 	printk( "  MemSize:          %ld\n", g_nMemSize );
 	printk( "  UAS start:        %08lx\n", g_sSysBase.sb_nFirstUserAddress );
 	printk( "  UAS end:          %08lx\n", g_sSysBase.sb_nLastUserAddress );
-	printk( "  PCI  scan is %s\n", ( ( g_bDisablePCI ) ? "disabled" : "enabled" ) );
 	printk( "  SMP  scan is %s\n", ( ( g_bDisableSMP ) ? "disabled" : "enabled" ) );
 
 	printk( "Loaded kernel modules:\n" );
@@ -862,23 +912,34 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 
 	kassertw( ( get_cpu_flags() & EFLG_IF ) == 0 );
 
-      /*** enable MMU paging	***/
-
-
+	/*** enable MMU paging	***/
 	printk( "Enable MMU\n" );
 	set_page_directory_base_reg( g_psKernelSeg->mc_pPageDir );
 	enable_mmu();
 
 	kassertw( ( get_cpu_flags() & EFLG_IF ) == 0 );
 
+	/* Create real memory pool */
+	g_sSysBase.ex_sRealMemHdr.mh_nTotalSize = 0xa0000 - 1 - ( uint )pRealMemBase;
+	g_sSysBase.ex_sRealMemHdr.mh_psFirst = kmalloc( sizeof( MemChunk_s ), MEMF_KERNEL );
+	memset( g_sSysBase.ex_sRealMemHdr.mh_psFirst, 0, sizeof( MemChunk_s ) );
+	g_sSysBase.ex_sRealMemHdr.mh_psFirst->mc_nAddress = ( uint )pRealMemBase;
+	g_sSysBase.ex_sRealMemHdr.mh_psFirst->mc_nSize = g_sSysBase.ex_sRealMemHdr.mh_nTotalSize;
 
-	g_sSysBase.ex_sRealMemHdr.mh_First = ( void * )pRealMemBase;	// llfuncs->lomem_base;
-	g_sSysBase.ex_sRealMemHdr.mh_Lower = g_sSysBase.ex_sRealMemHdr.mh_First;
-	g_sSysBase.ex_sRealMemHdr.mh_Upper = ( void * )( 0xa0000 - 1 );	//(0xa0000 - (uint32)pRealMemBase - 1);
-	g_sSysBase.ex_sRealMemHdr.mh_Free = ( ( uint )g_sSysBase.ex_sRealMemHdr.mh_Upper ) - ( ( uint )g_sSysBase.ex_sRealMemHdr.mh_Lower );
+	/* Create physical memory pool and reserve RAM region 
+	 * The other regions ( e.g PCI ) will be reserved later
+	 */
+	g_sSysBase.ex_sPhysicalMemHdr.mh_nTotalSize = 0xffffffff;
+	g_sSysBase.ex_sPhysicalMemHdr.mh_psFirst = kmalloc( sizeof( MemChunk_s ), MEMF_KERNEL );
+	memset( g_sSysBase.ex_sPhysicalMemHdr.mh_psFirst, 0, sizeof( MemChunk_s ) );
+	g_sSysBase.ex_sPhysicalMemHdr.mh_psFirst->mc_nAddress = 0;
+	g_sSysBase.ex_sPhysicalMemHdr.mh_psFirst->mc_nSize = g_sSysBase.ex_sPhysicalMemHdr.mh_nTotalSize;
+	{
+		uint32 nAddress = 0;
 
-	g_sSysBase.ex_sRealMemHdr.mh_First->mc_Next = NULL;
-	g_sSysBase.ex_sRealMemHdr.mh_First->mc_Bytes = g_sSysBase.ex_sRealMemHdr.mh_Free;
+		if ( alloc_physical( &nAddress, true, g_nMemSize ) != 0 )
+			printk( "Error: Failed to reserve RAM region\n" );
+	}
 
 	g_sSysBase.ex_bSingleUserMode = false;
 
@@ -996,8 +1057,8 @@ static void parse_kernel_params( char *pzParams )
 		get_num_arg( &g_nDebugBaudRate, "debug_baudrate=", pzArg, nLen );
 		get_num_arg( &g_nDebugSerialPort, "debug_port=", pzArg, nLen );
 		get_bool_arg( &g_bPlainTextDebug, "debug_plaintext=", pzArg, nLen );
-		get_bool_arg( &g_bDisablePCI, "disable_pci=", pzArg, nLen );
 		get_bool_arg( &g_bDisableSMP, "disable_smp=", pzArg, nLen );
+		get_bool_arg( &g_bDisableKernelConfig, "disable_config=", pzArg, nLen );
 
 		get_num_arg( &g_sSysBase.sb_nFirstUserAddress, "uspace_start=", pzArg, nLen );
 		get_num_arg( &g_sSysBase.sb_nLastUserAddress, "uspace_end=", pzArg, nLen );

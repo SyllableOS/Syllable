@@ -57,19 +57,22 @@ static inline void* alloc_dma_mem(PCI_Info_s *pdev, size_t size, dma_addr_t *bus
 
 static inline int pci_read_config_byte(PCI_Info_s *pdev, int where, uint8 *ptr)
 {
-	*ptr=read_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, where, sizeof(uint8));
+	PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+	*ptr=psBus->read_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, where, sizeof(uint8));
 	return EOK;
 }
 
 static inline int pci_read_config_word(PCI_Info_s *pdev, int where, uint16 *ptr)
 {
-	*ptr=read_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, where, sizeof(uint16));
+	PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+	*ptr=psBus->read_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, where, sizeof(uint16));
 	return EOK;
 }
 
 static inline int pci_read_config_dword(PCI_Info_s *pdev, int where, uint32 *ptr)
 {
-	*ptr=read_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, where, sizeof(uint32));
+	PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+	*ptr=psBus->read_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, where, sizeof(uint32));
 	return EOK;
 }
 

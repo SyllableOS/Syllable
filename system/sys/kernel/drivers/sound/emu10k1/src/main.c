@@ -140,9 +140,9 @@ struct emu10k1_card* sblive_card;
 
 extern int emu10k1_interrupt(int irq, void *pdata, SysCallRegs_s* regs);
 
-static int emu10k1_audio_init(struct emu10k1_card *card)
+static int emu10k1_audio_init(struct emu10k1_card *card, int nHandle)
 {
-	card->audio_dev = create_device_node(card->dev_id, "sound/dsp", &emu10k1_audio_fops, card);
+	card->audio_dev = create_device_node(card->dev_id, nHandle, "sound/dsp", &emu10k1_audio_fops, card);
 	if (card->audio_dev < 0)
 	{
 		printk("emu10k1: cannot register first audio device!\n");
@@ -203,10 +203,10 @@ static void emu10k1_audio_cleanup(struct emu10k1_card *card)
 	delete_device_node(card->audio_dev);
 }
 
-static int emu10k1_mixer_init(struct emu10k1_card *card)
+static int emu10k1_mixer_init(struct emu10k1_card *card, int nHandle)
 {
 	struct ac97_codec *codec = &card->ac97;
-	card->ac97.dev_mixer = create_device_node(card->dev_id,"sound/mixer", &emu10k1_mixer_fops, card);
+	card->ac97.dev_mixer = create_device_node(card->dev_id, nHandle, "sound/mixer", &emu10k1_mixer_fops, card);
 
 	if (card->ac97.dev_mixer < 0)
 	{
@@ -1204,14 +1204,14 @@ static int emu10k1_probe(PCI_Info_s *pci_dev,int device_id)
 	card->open_wait=create_semaphore("emu10k1_wait_queue",1,SEM_RECURSIVE);
 	card->dev_id=device_id;
 
-	ret = emu10k1_audio_init(card);
+	ret = emu10k1_audio_init(card, pci_dev->nHandle);
 	if(ret < 0)
 	{
                 printk("emu10k1: cannot initialize audio devices\n");
                 goto err_audio;
 	}
 
-	ret = emu10k1_mixer_init(card);
+	ret = emu10k1_mixer_init(card, pci_dev->nHandle);
 	if(ret < 0)
 	{
 		printk("emu10k1: cannot initialize AC97 codec\n");
@@ -1264,8 +1264,11 @@ status_t device_init(int nDeviceID)
 	int currentdev;
 	int devfound=0;
 	PCI_Info_s pcidevice;
+	PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+	if( psBus == NULL )
+		return( -ENODEV );
 
-	for(currentdev=0;get_pci_info(&pcidevice,currentdev)==0;currentdev++)
+	for(currentdev=0;psBus->get_pci_info(&pcidevice,currentdev)==0;currentdev++)
 	{
 		if(pcidevice.nVendorID == PCI_VENDOR_ID_CREATIVE && ( pcidevice.nDeviceID == PCI_DEVICE_ID_CREATIVE_EMU10K1 || pcidevice.nDeviceID == PCI_DEVICE_ID_CREATIVE_AUDIGY ) )
 		{
@@ -1275,14 +1278,18 @@ status_t device_init(int nDeviceID)
 			}
 			else
 			{
-				printk("emu10k1: SBLive! initialised\n");
-				devfound=1;
+				if( claim_device( nDeviceID, pcidevice.nHandle, "EMU10K", DEVICE_AUDIO ) == 0 ) {
+					printk("emu10k1: SBLive! initialised\n");
+					devfound=1;
+				}
 			}
 		}
 	}
 
-	if(devfound==0)
+	if(devfound==0) {
+		disable_device( nDeviceID );
 		return -ENODEV;
+	}
 
 	return EOK;
 }

@@ -287,7 +287,7 @@ struct device
   /* For  load balancing driver pair support */
   NetQueue_s*   packet_queue;
   volatile bool run_timer;
-  ktimer_t     timer;
+  ktimer_t		timer;
   int irq_handle; /* IRQ handler handle */
 };
 
@@ -426,11 +426,11 @@ struct pci_id_info {
   u16	vendor_id, device_id, device_id_mask, flags;
   int io_size, min_latency;
   struct device *(*probe1)(int pci_bus, int pci_devfn, int function, int device_handle,
-                           long ioaddr, int irq, int chip_idx, int fnd_cnt);
+                           int nHandle, long ioaddr, int irq, int chip_idx, int fnd_cnt);
 };
 
 static struct device * tulip_probe1( int bus, int device, int function,
-                                     int device_handle, long ioaddr,
+                                     int device_handle, int nHandle, long ioaddr,
                                      int irq, int chp_idx, int fnd_cnt);
 
 static struct pci_id_info pci_tbl[] /* __initdata */ = {
@@ -737,9 +737,11 @@ int tulip_probe(int device_handle)
          
   int i;
   PCI_Info_s sInfo;
-      
+  PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+  if( !psBus )
+  	return( -ENODEV );
 
-  for ( i = 0 ; get_pci_info( &sInfo, i ) == 0 ; ++i ) {
+  for ( i = 0 ; psBus->get_pci_info( &sInfo, i ) == 0 ; ++i ) {
     uint32 chip_idx;
     uint32 ioaddr;
     uint32 irq;
@@ -771,21 +773,25 @@ int tulip_probe(int device_handle)
     ioaddr = sInfo.u.h0.nBase0 & PCI_ADDRESS_IO_MASK;
     irq = sInfo.u.h0.nInterruptLine;
 
-    pci_command = read_pci_config( sInfo.nBus, sInfo.nDevice, sInfo.nFunction, PCI_COMMAND, 2 );
+    pci_command = psBus->read_pci_config( sInfo.nBus, sInfo.nDevice, sInfo.nFunction, PCI_COMMAND, 2 );
     new_command = pci_command | (pci_tbl[chip_idx].flags & 7);
     if (pci_command != new_command) {
       printk(KERN_INFO "  The PCI BIOS has not enabled the"
              " device at %d/%d/%d!  Updating PCI command %4.4x->%4.4x.\n",
              sInfo.nBus, sInfo.nDevice, sInfo.nFunction, pci_command, new_command );
-      write_pci_config( sInfo.nBus, sInfo.nDevice, sInfo.nFunction, PCI_COMMAND, 2, new_command);
+      psBus->write_pci_config( sInfo.nBus, sInfo.nDevice, sInfo.nFunction, PCI_COMMAND, 2, new_command);
     }
 
     ioaddr = sInfo.u.h0.nBase0 & PCI_ADDRESS_IO_MASK;
     irq = sInfo.u.h0.nInterruptLine;
     printk("tulip_probe() with io_addr %8.8x and irq %d\n", ioaddr, irq);
 
+	if( claim_device( device_handle, sInfo.nHandle, pci_tbl[chip_idx].name, DEVICE_NET ) != 0 ) {
+		printk( "Could not claim device!\n" );
+		continue;
+	}
 
-    dev = pci_tbl[chip_idx].probe1( sInfo.nBus, sInfo.nDevice, sInfo.nFunction, device_handle, ioaddr,
+    dev = pci_tbl[chip_idx].probe1( sInfo.nBus, sInfo.nDevice, sInfo.nFunction, device_handle, sInfo.nHandle, ioaddr,
                                     irq, chip_idx, cards_found );
 
      if (tulip_debug > 2)
@@ -796,26 +802,28 @@ int tulip_probe(int device_handle)
     /* Get and check the bus-master and latency values. */
     if (dev  && (pci_tbl[chip_idx].flags & PCI_COMMAND_MASTER)) {
       uint8 pci_latency;
-      pci_latency = read_pci_config( sInfo.nBus, sInfo.nDevice, sInfo.nFunction, PCI_LATENCY_TIMER, 1 );
+      pci_latency = psBus->read_pci_config( sInfo.nBus, sInfo.nDevice, sInfo.nFunction, PCI_LATENCY_TIMER, 1 );
       if (pci_latency < 32) {
         printk(KERN_NOTICE "  PCI latency timer (CFLT) is "
                "unreasonably low at %d.  Setting to 64 clocks.\n",
                pci_latency);
-        write_pci_config( sInfo.nBus, sInfo.nDevice, sInfo.nFunction, PCI_LATENCY_TIMER, 1, 64 );
+        psBus->write_pci_config( sInfo.nBus, sInfo.nDevice, sInfo.nFunction, PCI_LATENCY_TIMER, 1, 64 );
       }
     }
 	   
-#endif	   
+#endif	  
+	
     dev = 0;
     cards_found++;
     break;
   }
-
+  if( !cards_found )
+  	disable_device( device_handle );
   return cards_found ? 0 : -ENODEV;
 }
 
 static struct device *tulip_probe1(int pci_bus, int pci_devfn, int pci_func,
-                                   int device_handle, long ioaddr, int irq,
+                                   int device_handle, int nHandle, long ioaddr, int irq,
                                    int chip_idx, int board_idx)
 {
   static int did_version = 0;			/* Already printed version info. */
@@ -830,6 +838,7 @@ static struct device *tulip_probe1(int pci_bus, int pci_devfn, int pci_func,
   u8 ee_data[EEPROM_SIZE];
   struct device* dev;
   char node_path[64];
+  PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
 
   if (tulip_debug > 0  &&  did_version++ == 0)
     printk(KERN_INFO "%s", version);
@@ -841,12 +850,12 @@ static struct device *tulip_probe1(int pci_bus, int pci_devfn, int pci_func,
   printk(KERN_INFO "%s: %s at %#lx, IRQ %d\n",
          dev->name, pci_tbl[chip_idx].name, ioaddr, irq);
   
-  chip_rev = read_pci_config(pci_bus, pci_devfn, pci_func, PCI_REVISION_ID, 1);
+  chip_rev = psBus->read_pci_config(pci_bus, pci_devfn, pci_func, PCI_REVISION_ID, 1);
 
   /* Bring the 21041/21143 out of sleep mode.
      Caution: Snooze mode does not work with some boards! */
   if (tulip_tbl[chip_idx].flags & HAS_PWRDWN)
-    write_pci_config(pci_bus, pci_devfn, pci_func, 0x40, 4, 0x00000000);
+    psBus->write_pci_config(pci_bus, pci_devfn, pci_func, 0x40, 4, 0x00000000);
 
   printk(KERN_INFO "%s: %s rev %d at %#3lx\n",
          dev->name, tulip_tbl[chip_idx].chip_name, chip_rev, ioaddr);
@@ -1160,7 +1169,7 @@ static struct device *tulip_probe1(int pci_bus, int pci_devfn, int pci_func,
   */
 
   sprintf( node_path, "net/eth/tulip-%d", board_idx );
-  create_device_node( device_handle, node_path, &g_sDevOps, dev );
+  create_device_node( device_handle, nHandle, node_path, &g_sDevOps, dev );
   printk( "tulip_probe1() Create node: %s\n", node_path );
 	
   return dev;
@@ -1592,11 +1601,12 @@ tulip_open(struct device *dev)
   long ioaddr = dev->base_addr;
   int next_tick = 3*HZ;
   int i;
+  PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
 
   /* Wake the chip from sleep/snooze mode. */
   printk(KERN_DEBUG "tulip_open() will wake up chip from sleep...\n");
   if (tp->flags & HAS_PWRDWN)
-    write_pci_config(tp->pci_bus, tp->pci_devfn, tp->pci_func, 0x40, 4, 0);
+    psBus->write_pci_config(tp->pci_bus, tp->pci_devfn, tp->pci_func, 0x40, 4, 0);
 
   /* On some chip revs we must set the MII/SYM port before the reset!? */
   if (tp->mii_cnt  ||  (tp->mtable  &&  tp->mtable->has_mii))
@@ -3184,6 +3194,7 @@ static int tulip_close(struct device *dev)
   long ioaddr = dev->base_addr;
   struct tulip_private *tp = (struct tulip_private *)dev->priv;
   int i;
+  PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
 
   dev->start = 0;
   dev->tbusy = 1;
@@ -3232,7 +3243,7 @@ static int tulip_close(struct device *dev)
 
   /* Leave the driver in snooze, not sleep, mode. */
   if (tp->flags & HAS_PWRDWN)
-    write_pci_config(tp->pci_bus, tp->pci_devfn, tp->pci_func, 0x40, 4,
+   psBus->write_pci_config(tp->pci_bus, tp->pci_devfn, tp->pci_func, 0x40, 4,
                      0x40000000);
 
   return 0;

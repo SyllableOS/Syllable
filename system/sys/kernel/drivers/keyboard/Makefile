@@ -44,5 +44,6 @@ dist: all
 	cp -f $(OBJDIR)/keybd $(DIST_DIR)/atheos/sys/drivers/dev/keybd
 
 clean:
-	-rm $(OBJS)
+	-rm -f $(OBJS) $(OBJDIR)/keybd
+
 

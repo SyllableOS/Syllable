@@ -186,6 +186,7 @@ typedef struct ata_controllers_s ata_controllers_t;
 
 typedef struct
 {
+	int    nDeviceHandle;
     uint16 nStructSize;
     uint16 nFlags;
     uint32 nCylinders;
@@ -200,6 +201,7 @@ struct _AtaInode
 {
     AtaInode_s*	bi_psFirstPartition;
     AtaInode_s*	bi_psNext;
+    int		bi_nDeviceHandle;
     char	bi_zName[16];
     int		bi_nOpenCount;
     int		bi_nDriveNum;	/* The drive number */
@@ -336,6 +338,7 @@ static inline void extract_model_id( char *buffer, char *string )
 			break;
 
 	strncpy( buffer, string, i+1 );
+	buffer[i+1] = 0;
 }
 
 #define get_controller( drive )	(drive / 2)	/* Each controller can have 2 drives */

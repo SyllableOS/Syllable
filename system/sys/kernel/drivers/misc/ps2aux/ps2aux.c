@@ -338,6 +338,7 @@ status_t device_init( int nDeviceID )
 {
     struct	RMREGS	rm;
     int nError;
+    int nHandle;
 
     memset( &rm, 0, sizeof( struct RMREGS ) );
     realint( 0x11, &rm );
@@ -357,7 +358,9 @@ status_t device_init( int nDeviceID )
 	delete_semaphore( g_hRecvWaitQueue );
 	return( g_hRecvMutex );
     }
-    nError = create_device_node( nDeviceID, "misc/ps2aux", &g_sOperations, NULL );
+    nHandle = register_device( "", "system" );
+    claim_device( nDeviceID, nHandle , "PS/2 port", DEVICE_PORT );
+    nError = create_device_node( nDeviceID, nHandle, "misc/ps2aux", &g_sOperations, NULL );
     if ( nError < 0 ) {
 	delete_semaphore( g_hRecvWaitQueue );
 	delete_semaphore( g_hRecvMutex );
@@ -368,6 +371,8 @@ status_t device_init( int nDeviceID )
     outb_p(AUX_CMD_WRITE,AUX_COMMAND);
     poll_aux_status_nosleep();             /* Disable interrupts */
     outb_p(AUX_INTS_OFF, AUX_OUTPUT_PORT); /*  on the controller */
+    
+    
   
     return( 0 );
 }

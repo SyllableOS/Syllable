@@ -61,6 +61,12 @@ int sys_get_vesa_mode_info( VESA_Mode_Info_s * psVesaModeInfo, uint32 nModeNr )
 	return ( 0 );
 }
 
+
+int get_vesa_mode_info( VESA_Mode_Info_s * psVesaModeInfo, uint32 nModeNr )
+{
+	return ( sys_get_vesa_mode_info( psVesaModeInfo, nModeNr ) );
+}
+
 /******************************************************************************
  ******************************************************************************/
 
@@ -100,4 +106,9 @@ int sys_get_vesa_info( Vesa_Info_s * psVesaInfo, uint16 *pnModeList, int nMaxMod
 	free_real( psTmp );
 
 	return ( i );
+}
+
+int get_vesa_info( Vesa_Info_s * psVesaInfo, uint16 *pnModeList, int nMaxModeCount )
+{
+	return ( sys_get_vesa_info( psVesaInfo, pnModeList, nMaxModeCount ) );
 }

@@ -1000,21 +1000,21 @@ int via_ac97_reset (struct via_info *card)
          * reset AC97 controller: enable, disable, enable
          * pause after each command for good luck
          */
-        write_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, VIA_ACLINK_CTRL,
+        card->bus->write_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, VIA_ACLINK_CTRL,
         	1, VIA_CR41_AC97_ENABLE | VIA_CR41_AC97_RESET | VIA_CR41_AC97_WAKEUP); 
         udelay (100);
  
-       write_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, VIA_ACLINK_CTRL,
+      card->bus->write_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, VIA_ACLINK_CTRL,
         	1, VIA_CR41_AC97_RESET | VIA_CR41_AC97_WAKEUP ); 
         udelay (100);
  
-       	write_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, VIA_ACLINK_CTRL,
+       	card->bus->write_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, VIA_ACLINK_CTRL,
         	1, VIA_CR41_AC97_ENABLE | VIA_CR41_PCM_ENABLE | VIA_CR41_VRA | VIA_CR41_AC97_RESET); 
         udelay (100);
 
 	/* select spdif */
-	write_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, 0x49, 1, 
-	read_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, 0x40, 1 ) & ~0x03 );
+	card->bus->write_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, 0x49, 1, 
+	card->bus->read_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, 0x40, 1 ) & ~0x03 );
  	
  	tmp16 = via_ac97_read_reg (&card->ac97, AC97_EXTENDED_STATUS);
  	tmp16 &= ( 0x03 << 4 );

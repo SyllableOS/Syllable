@@ -44,5 +44,6 @@ dist: all
 	cp -f $(OBJDIR)/ps2aux $(DIST_DIR)/atheos/sys/drivers/dev/misc/ps2aux
 
 clean:
-	-rm $(OBJS)
+	-rm -f $(OBJS) $(OBJDIR)/ps2aux
+
 

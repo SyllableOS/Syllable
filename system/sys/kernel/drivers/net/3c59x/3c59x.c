@@ -214,12 +214,12 @@ static int vortex_debug = 0;
 #include <atheos/kernel.h>
 #include <atheos/schedule.h>
 #include <atheos/string.h>
+#include <atheos/device.h>
 #include <atheos/pci.h>
 #include <atheos/irq.h>
 #include <atheos/time.h>
 #include <atheos/timer.h>
 #include <atheos/udelay.h>
-#include <atheos/device.h>
 #include <atheos/semaphore.h>
 #include <atheos/spinlock.h>
 #include <atheos/isa_io.h>
@@ -904,7 +904,7 @@ static struct media_table {
   { "Default",   0,         0xFF, XCVR_10baseT, 10000},
 };
 
-static struct device *vortex_probe1(int device_handle, PCI_Info_s *ppci_info,
+static struct device *vortex_probe1(int device_handle, int nHandle, PCI_Info_s *ppci_info,
                 long ioaddr, int irq, int chp_idx);
 static void vortex_up(struct device *dev);
 static void vortex_down(struct device *dev);
@@ -958,8 +958,12 @@ static void vortex_pci_probe( int device_handle )
 
     int i;
     PCI_Info_s sInfo;
+    PCI_bus_s* psBus  = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+	if( psBus == NULL ) {
+    	return;
+	}
 
-    for ( i = 0 ; get_pci_info( &sInfo, i ) == 0 ; ++i )
+    for ( i = 0 ; psBus->get_pci_info( &sInfo, i ) == 0 ; ++i )
     {
         int chip_idx;
         int ioaddr;
@@ -990,7 +994,7 @@ static void vortex_pci_probe( int device_handle )
         irq = sInfo.u.h0.nInterruptLine;
 
         vci = &vortex_info_tbl[chip_idx];
-        pci_command = read_pci_config( sInfo.nBus, sInfo.nDevice,
+        pci_command = psBus->read_pci_config( sInfo.nBus, sInfo.nDevice,
                                         sInfo.nFunction, PCI_COMMAND, 2 );
 
         //#warning & 7??? Check out.
@@ -1001,13 +1005,16 @@ static void vortex_pci_probe( int device_handle )
                     "at %d/%d/%d!    Updating PCI command %4.4x->%4.4x.\n",
                     sInfo.nBus, sInfo.nDevice, sInfo.nFunction,
                     pci_command, new_command);
-            write_pci_config( sInfo.nBus, sInfo.nDevice, sInfo.nFunction,
+            psBus->write_pci_config( sInfo.nBus, sInfo.nDevice, sInfo.nFunction,
                         PCI_COMMAND, 2, new_command);
         }
 
-        dev = vortex_probe1( device_handle, &sInfo, ioaddr, irq, chip_idx);
+        dev = vortex_probe1( device_handle, sInfo.nHandle, &sInfo, ioaddr, irq, chip_idx);
         if (!dev)
             printk (KERN_ERR PFX "vortex_pci_probe(): Error initializing device");
+       	else    
+        	if( claim_device( device_handle, sInfo.nHandle, "3Com EtherLink PCI III/XL", DEVICE_NET ) != 0 )
+        		printk( "Could not claim device!\n" );
     }
 }
 
@@ -1015,6 +1022,7 @@ static void vortex_eisa_probe( int device_handle )
 {
     long ioaddr;
     struct device *dev;
+    int nHandle;
 
     /* Now check all slots of the EISA bus. */
     if (!EISA_bus)
@@ -1039,7 +1047,9 @@ static void vortex_eisa_probe( int device_handle )
             continue;
         }
 
-        dev = vortex_probe1(device_handle, NULL, ioaddr, inw(ioaddr + 0xC88) >> 12,
+		nHandle = register_device( "", "isa" );
+		claim_device( device_handle, nHandle, "3Com EtherLink EISA III/XL", DEVICE_NET );
+        dev = vortex_probe1(device_handle, nHandle, NULL, ioaddr, inw(ioaddr + 0xC88) >> 12,
                    EISA_TBL_OFFSET);
         if (!dev)
             release_region (ioaddr, VORTEX_TOTAL_SIZE);
@@ -1051,7 +1061,7 @@ static void vortex_eisa_probe( int device_handle )
  * ppci_info can be NULL, for the case of an EISA card
  * returns NULL on failure
  */
-static struct device *vortex_probe1(int device_handle, PCI_Info_s *ppci_info,
+static struct device *vortex_probe1(int device_handle, int nHandle, PCI_Info_s *ppci_info,
                 long ioaddr, int irq, int chip_idx)
 {
     struct vortex_private *vp;
@@ -1065,6 +1075,10 @@ static struct device *vortex_probe1(int device_handle, PCI_Info_s *ppci_info,
 
     char node_path[64];
 
+	PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+    if( psBus == NULL ) {
+    	return( NULL );
+    }
 
     if (!printed_version) {
         printk( KERN_INFO "%s", version );
@@ -1118,7 +1132,7 @@ static struct device *vortex_probe1(int device_handle, PCI_Info_s *ppci_info,
 
         /* enable bus-mastering if necessary */     
         if (vci->flags & PCI_USES_MASTER)
-            pci_set_master (&vp->pci_dev);
+            pci_set_master (psBus, &vp->pci_dev);
 
         if (vci->drv_flags & IS_VORTEX) {
             uint32 pci_latency;
@@ -1128,13 +1142,13 @@ static struct device *vortex_probe1(int device_handle, PCI_Info_s *ppci_info,
                must be set to the maximum value to avoid data corruption that occurs
                when the timer expires during a transfer.  This bug exists the Vortex
                chip only. */
-            pci_latency = read_pci_config( vp->pci_dev.nBus, vp->pci_dev.nDevice,
+            pci_latency = psBus->read_pci_config( vp->pci_dev.nBus, vp->pci_dev.nDevice,
                         vp->pci_dev.nFunction, PCI_LATENCY, 1 );
             if (pci_latency < new_latency) {
                 printk(KERN_INFO "%s: Overriding PCI latency"
                         " timer (CFLT) setting of %d, new value is %d.\n",
                         dev->name, (int)pci_latency, (int)new_latency);
-                write_pci_config( vp->pci_dev.nBus, vp->pci_dev.nDevice,
+                psBus->write_pci_config( vp->pci_dev.nBus, vp->pci_dev.nDevice,
                             vp->pci_dev.nFunction, PCI_LATENCY, 1,
                             new_latency );
             }
@@ -1387,7 +1401,7 @@ static struct device *vortex_probe1(int device_handle, PCI_Info_s *ppci_info,
 
 
     sprintf( node_path, "net/eth/3c59x-%d", vortex_cards_found );
-    dev->node_handle = create_device_node( device_handle, node_path, &g_sDevOps, dev );
+    dev->node_handle = create_device_node( device_handle, nHandle, node_path, &g_sDevOps, dev );
     printk(KERN_INFO PFX "vortex_probe1() Create node: %s\n", node_path);
     vortex_cards_found++;
 
@@ -1442,9 +1456,11 @@ static void vortex_up(struct device *dev)
     struct vortex_private *vp = (struct vortex_private *)dev->priv;
     unsigned int config;
     int i;
+    
+    PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
 
     if (vp->is_pci && vp->enable_wol)         /* AKPM: test not needed? */
-        pci_set_power_state(&vp->pci_dev, &vp->pci_power_state, 0);   /* Go active */
+        pci_set_power_state(psBus, &vp->pci_dev, &vp->pci_power_state, 0);   /* Go active */
 
     /* Before initializing select the active media port. */
     EL3WINDOW(3);
@@ -1625,9 +1641,11 @@ static int vortex_open(struct device *dev)
     struct vortex_private *vp = (struct vortex_private *)dev->priv;
     int i;
     int retval;
+    
+	PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
 
     if (vp->is_pci && vp->enable_wol)            /* AKPM: test not needed? */
-        pci_set_power_state(&vp->pci_dev, &vp->pci_power_state, 0);       /* Go active */
+        pci_set_power_state(psBus, &vp->pci_dev, &vp->pci_power_state, 0);       /* Go active */
 
     /* Use the now-standard shared IRQ implementation. */
     if (vp->full_bus_master_rx)
@@ -2943,6 +2961,7 @@ static void acpi_set_WOL(struct device *dev)
 {
     struct vortex_private *vp = (struct vortex_private *)dev->priv;
     long ioaddr = dev->base_addr;
+    PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
 
     /* Power up on: 1==Downloaded Filter, 2==Magic Packets, 4==Link Status. */
     EL3WINDOW(7);
@@ -2952,7 +2971,7 @@ static void acpi_set_WOL(struct device *dev)
     outw(RxEnable, ioaddr + EL3_CMD);
 
     /* Change the power state to D3; RxEnable doesn't take effect. */
-    pci_set_power_state(&vp->pci_dev, &vp->pci_power_state, 0x8103);
+    pci_set_power_state(psBus, &vp->pci_dev, &vp->pci_power_state, 0x8103);
 }
 
 

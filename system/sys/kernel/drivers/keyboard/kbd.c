@@ -704,6 +704,7 @@ static int kbd_irq( int nIrqNum, void* pData, SysCallRegs_s* psRegs )
 status_t device_init( int nDeviceID )
 {
     int nError;
+    int nHandle;
     printk( "Keyboard device: device_init() called\n" );
 
     g_sVolume.hWaitThread    = -1;
@@ -719,9 +720,11 @@ status_t device_init( int nDeviceID )
 	printk( "ERROR : Failed to initiate keybord interrupt handler\n" );
 	return( g_sVolume.nIrqHandle );
     }
-  
-    nError = create_device_node( nDeviceID, "keybd", &g_sOperations, NULL );
-
+    
+	nHandle = register_device( "", "system" );
+	claim_device( nDeviceID, nHandle , "Keyboard", DEVICE_INPUT );
+    nError = create_device_node( nDeviceID, nHandle, "keybd", &g_sOperations, NULL );
+    
     return( nError );
 }
 

@@ -152,6 +152,7 @@ static DeviceOperations_s g_sOperations = {
 status_t device_init( int nDeviceID )
 {
 	int i, j;
+	int nHandle;
 
 	kprintf( "w8378x>init_driver()\n" );
 
@@ -206,7 +207,9 @@ status_t device_init( int nDeviceID )
 	kprintf( "%02X\n", i );
 	w8378x_writevalue( W8378x_REG_SCFG2, i );
 #endif
-	return( create_device_node( nDeviceID, "misc/w8378x", &g_sOperations, NULL ) );
+	nHandle = register_device( "", "system" );
+	claim_device( nDeviceID, nHandle, "W8378x", DEVICE_SYSTEM );
+	return( create_device_node( nDeviceID, nHandle, "misc/w8378x", &g_sOperations, NULL ) );
 	
 	return B_NO_ERROR;
 

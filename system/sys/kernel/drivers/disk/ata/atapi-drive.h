@@ -37,6 +37,7 @@ struct _AtapiInode
 {
 	AtapiInode_s*	bi_psFirstPartition;
 	AtapiInode_s*	bi_psNext;
+	int				bi_nDeviceHandle;
 	char			bi_zName[16];
 	bool			bi_bDMA;
 	int				bi_nOpenCount;

@@ -490,6 +490,7 @@ static int ser_irq( int nIrqNum, void* pData, SysCallRegs_s* psRegs )
 status_t device_init( int nDeviceID )
 {
     int nError;
+    int nHandle;
     printk( "Serial device: device_init() called\n" );
 
     g_nIRQHandle = request_irq( 4, ser_irq, NULL, 0, "ser_device", &g_asPorts[0] );
@@ -510,18 +511,24 @@ status_t device_init( int nDeviceID )
     g_asPorts[1].sp_nBaudRate = 1200;
     g_asPorts[1].sp_bOpen     = false;
   
-    g_asPorts[0].sp_nDevNode = create_device_node( nDeviceID, "misc/com/1", &g_sOperations, &g_asPorts[0] );
+  	nHandle = register_device( "", "system" );
+  	claim_device( nDeviceID, nHandle, "Serial port 1", DEVICE_PORT );
+    g_asPorts[0].sp_nDevNode = create_device_node( nDeviceID, nHandle, "misc/com/1", &g_sOperations, &g_asPorts[0] );
     if ( g_asPorts[0].sp_nDevNode < 0 ) {
 	nError = g_asPorts[0].sp_nDevNode;
 	printk( "Error: Serial device failet to create device node misc/com/1\n" );
 	goto error2;
     }
-    g_asPorts[1].sp_nDevNode = create_device_node( nDeviceID, "misc/com/2", &g_sOperations, &g_asPorts[1] );
+    nHandle = register_device( "", "system" );
+  	claim_device( nDeviceID, nHandle, "Serial port 2", DEVICE_PORT );
+    g_asPorts[1].sp_nDevNode = create_device_node( nDeviceID, nHandle, "misc/com/2", &g_sOperations, &g_asPorts[1] );
     if ( g_asPorts[1].sp_nDevNode < 0 ) {
 	nError = g_asPorts[1].sp_nDevNode;
 	printk( "Error: Serial device failet to create device node misc/com/1\n" );
 	goto error3;
     }
+    
+    
   
     return( 0 );
 error3:

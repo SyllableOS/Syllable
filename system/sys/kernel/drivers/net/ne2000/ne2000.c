@@ -127,6 +127,7 @@ pci_clone_list[] = {
 
 static int pci_irq_line = 0;
 static int g_nISAIRQ = 0;
+static int g_nHandle;
 /*****************************************************************************
  * NAME:
  * DESC:
@@ -1592,15 +1593,21 @@ static int ne_probe1( NE2Dev_s* psDev, int ioaddr)
 #endif
 
     NS8390_init(  psDev, 0);
+    
     return 0;
 }
 
-static int ne_probe_pci( NE2Dev_s* psDev )
+static int ne_probe_pci( int nDeviceID, NE2Dev_s* psDev )
 {
     int i;
     PCI_Info_s sInfo;
+    PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+    if( psBus == NULL ) 
+    {
+    	return( -ENODEV );
+    }
   
-    for ( i = 0 ; get_pci_info( &sInfo, i ) == 0 ; ++i ) {
+    for ( i = 0 ; psBus->get_pci_info( &sInfo, i ) == 0 ; ++i ) {
 	int j;
 	for (j = 0; pci_clone_list[j].vendor != 0; j++) {
 	    if ( sInfo.nVendorID == pci_clone_list[j].vendor && sInfo.nDeviceID == pci_clone_list[j].dev_id ) {
@@ -1624,6 +1631,11 @@ static int ne_probe_pci( NE2Dev_s* psDev )
 		    pci_irq_line = 0;
 		    return -ENXIO;
 		}
+		g_nHandle = sInfo.nHandle;
+		if( claim_device( nDeviceID, sInfo.nHandle, "NE2000 PCI", DEVICE_NET ) != 0 ) {
+        	printk( "Could not claim device!\n" );
+        	continue;
+        }
 		return( 0 ); // FIXME: Might more than one card out there
 	    }
 	}
@@ -1631,7 +1643,7 @@ static int ne_probe_pci( NE2Dev_s* psDev )
     return -ENODEV;
 }
 
-int ne_probe( NE2Dev_s* psDev )
+int ne_probe( int nDeviceID, NE2Dev_s* psDev )
 {
     int base_addr = 0; //dev ? dev->base_addr : 0;
     int i;
@@ -1644,12 +1656,14 @@ int ne_probe( NE2Dev_s* psDev )
 
     for ( i = 0 ; netcard_portlist[i] != 0 ; ++i ) {
 	if ( ne_probe1( psDev, netcard_portlist[i] ) == 0 ) {
+		g_nHandle = register_device( "", "isa" );
+    	claim_device( nDeviceID, g_nHandle, "NE2000 ISA", DEVICE_NET );
 	    return( 0 );
 	}
     }
     
       /* Then look for any installed PCI clones */
-    if ( ne_probe_pci(psDev) == 0 ) {
+    if ( ne_probe_pci( nDeviceID, psDev ) == 0 ) {
 	return 0;
     }
     return ENODEV;
@@ -1968,11 +1982,11 @@ status_t device_init( int nDeviceID )
     psDev->n2_hRxSem    = create_semaphore( "ne2_rx", 0, 0 );
     psDev->n2_hTxSem    = create_semaphore( "ne2_tx", 0, 0 );
 
-    if ( ne_probe( psDev ) != 0 ) {
+    if ( ne_probe( nDeviceID, psDev ) != 0 ) {
 	return( -ENOENT );
     }
 
-    psDev->ne_nInodeHandle = create_device_node( nDeviceID, "net/eth/8390-0", &g_sDevOps, psDev );
+    psDev->ne_nInodeHandle = create_device_node( nDeviceID, g_nHandle, "net/eth/8390-0", &g_sDevOps, psDev );
     nError = 0;
     if ( psDev->ne_nInodeHandle < 0 ) {
 	printk( "Failed to create device node %d\n", nError );

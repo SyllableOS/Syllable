@@ -290,8 +290,8 @@ void *kmalloc( size_t size, int priority )
 
 	if ( CURRENT_THREAD != NULL && CURRENT_THREAD->tr_nNumLockedCacheBlocks > 0 && ( priority & MEMF_NOBLOCK ) == 0 )
 	{
-		printk( "Error: kmalloc() attempt to alloc memory while holding %d cache blocks locked. Could may lead to deadlock\n", CURRENT_THREAD->tr_nNumLockedCacheBlocks );
-		trace_stack( 0, NULL );
+		//printk( "Error: kmalloc() attempt to alloc memory while holding %d cache blocks locked. Could may lead to deadlock\n", CURRENT_THREAD->tr_nNumLockedCacheBlocks );
+		//trace_stack( 0, NULL );
 	}
 	if ( size > PAGE_SIZE * 32 && ( priority & ( MEMF_NOBLOCK | MEMF_OKTOFAILHACK ) ) == 0 )
 	{

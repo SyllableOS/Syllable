@@ -2,7 +2,7 @@ CFLAGS   = -kernel -fno-PIC -O3 -c -Wall
 AFLAGS   = -c
 
 OBJS := ac97_codec.o vt82xx_io.o vt82xx.o
-
+DRIVER := vt82xx
 
 OBJDIR	:= objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
@@ -40,9 +40,16 @@ install: all
 	cp -f $(OBJDIR)/vt82xx /system/drivers/dev/sound/vt82xx
 
 
+dist: all
+	cp -f $(OBJDIR)/$(DRIVER) $(DIST_DIR)/atheos/sys/drivers/dev/sound/$(DRIVER)
+
 clean:
-	rm $(OBJS)
-	rm objs/vt82xx
+	rm -f $(OBJS)
+	rm -f objs/vt82xx
+
+
+
+
 
 
 

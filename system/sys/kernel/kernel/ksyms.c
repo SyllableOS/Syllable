@@ -29,8 +29,6 @@
 #include <atheos/bcache.h>
 #include <atheos/socket.h>
 #include <net/net.h>
-#include <net/if.h>
-#include <net/ip.h>
 #include <atheos/time.h>
 #include <atheos/irq.h>
 #include <atheos/device.h>
@@ -43,6 +41,7 @@
 #include <atheos/bootmodules.h>
 #include <atheos/tld.h>
 #include <atheos/random.h>
+#include <atheos/config.h>
 
 #include <posix/fcntl.h>
 #include <posix/unistd.h>
@@ -96,9 +95,6 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	KSYMBOL( MArray_Init ),
 	KSYMBOL( MArray_Insert ),
 	KSYMBOL( MArray_Remove ),
-	KSYMBOL( get_pci_info ),
-	KSYMBOL( read_pci_config ),
-	KSYMBOL( write_pci_config ),
 	KSYMBOL( Schedule ),
 	KSYMBOL( set_thread_priority ),
 	KSYMBOL( __kfree ),
@@ -106,6 +102,7 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	KSYMBOL( add_to_sleeplist ),
 	KSYMBOL( add_to_waitlist ),
 	KSYMBOL( alloc_real ),
+	KSYMBOL( alloc_physical ),
 	KSYMBOL( atol ),
 	KSYMBOL( atomic_add ),
 	KSYMBOL( atomic_swap ),
@@ -119,6 +116,7 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	KSYMBOL( format_ipaddress ),
 	KSYMBOL( free_pages ),
 	KSYMBOL( free_real ),
+	KSYMBOL( free_physical ),
 	KSYMBOL( free_swap_page ),
 	KSYMBOL( get_app_server_port ),
 	KSYMBOL( get_cpu_flags ),
@@ -481,6 +479,23 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 
 	KSYMBOL( seed ),
 	KSYMBOL( rand ),
+
+	// Configuration file access 
+	KSYMBOL( write_kernel_config_entry_header ),
+	KSYMBOL( write_kernel_config_entry_data ),
+	KSYMBOL( read_kernel_config_entry ),
+
+	// Devices & Busmanagers
+
+	KSYMBOL( register_device ),
+	KSYMBOL( unregister_device ),
+	KSYMBOL( claim_device ),
+	KSYMBOL( release_device ),
+	KSYMBOL( get_device_info ),
+	KSYMBOL( get_busmanager ),
+	KSYMBOL( disable_device ),
+	KSYMBOL( enable_all_devices ),
+
 
 	{NULL, NULL}
 };

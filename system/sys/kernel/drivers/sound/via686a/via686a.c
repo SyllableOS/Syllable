@@ -55,6 +55,9 @@ static unsigned via_num_cards;
 static void *via_driver_data;
 static PCI_Info_s *via_pdev;
 
+int g_hIRQ;
+int g_hDSPNode;
+int g_hMixerNode;
 /****************************************************************
  *
  * Interrupt-related code
@@ -190,6 +193,8 @@ void via_interrupt_disable (struct via_info *card)
 {
 	u8 tmp8;
 	unsigned long flags;
+	PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+	
 
 	DPRINTK ("ENTER\n");
 
@@ -198,12 +203,12 @@ void via_interrupt_disable (struct via_info *card)
 	spin_lock_irqsave (&card->lock, flags);
 
 	//pci_read_config_byte (card->pdev, VIA_FM_NMI_CTRL, &tmp8);
-	tmp8 = read_pci_config(card->pdev->nBus, card->pdev->nDevice, card->pdev->nFunction,
+	tmp8 = psBus->read_pci_config(card->pdev->nBus, card->pdev->nDevice, card->pdev->nFunction,
 							VIA_FM_NMI_CTRL, 1);
 	if ((tmp8 & VIA_CR48_FM_TRAP_TO_NMI) == 0) {
 		tmp8 |= VIA_CR48_FM_TRAP_TO_NMI;
 		//pci_write_config_byte (card->pdev, VIA_FM_NMI_CTRL, tmp8);
-		write_pci_config(card->pdev->nBus, card->pdev->nDevice, card->pdev->nFunction,
+		psBus->write_pci_config(card->pdev->nBus, card->pdev->nDevice, card->pdev->nFunction,
 						VIA_FM_NMI_CTRL, 1, tmp8);
 	}
 
@@ -246,7 +251,8 @@ int via_interrupt_init (struct via_info *card)
 		return -EIO;
 	}
 	
-	if (request_irq (card->pdev->u.h0.nInterruptLine, via_interrupt, NULL, SA_SHIRQ, VIA_MODULE_NAME, card)<0) {
+	g_hIRQ = request_irq (card->pdev->u.h0.nInterruptLine, via_interrupt, NULL, SA_SHIRQ, VIA_MODULE_NAME, card);
+	if ( g_hIRQ < 0) {
 		printk (KERN_ERR PFX "unable to obtain IRQ %d, aborting\n",
 			card->pdev->u.h0.nInterruptLine);
 		DPRINTK ("EXIT, returning -EBUSY\n");
@@ -276,8 +282,7 @@ void via_interrupt_cleanup (struct via_info *card)
 	assert (card->pdev != NULL);
 
 	via_interrupt_disable (card);
-
-	//free_irq (card->pdev->irq, card);
+	release_irq( card->pdev->u.h0.nInterruptLine, g_hIRQ );
 
 	DPRINTK ("EXIT\n");
 }
@@ -364,6 +369,7 @@ DeviceOperations_s via_dsp_fops = {
 static int via_dsp_init(struct via_info *card)
 {
 	u8 tmp8;
+	PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
 	
 	DPRINTK ("ENTER\n");
 
@@ -371,13 +377,13 @@ static int via_dsp_init(struct via_info *card)
 
 	/* turn off legacy features, if not already */
 	//pci_read_config_byte (card->pdev, VIA_FUNC_ENABLE, &tmp8);
-	tmp8 = read_pci_config(card->pdev->nBus, card->pdev->nDevice, card->pdev->nFunction,
+	tmp8 = psBus->read_pci_config(card->pdev->nBus, card->pdev->nDevice, card->pdev->nFunction,
 					VIA_FUNC_ENABLE, 1);
 	if (tmp8 & (VIA_CR42_SB_ENABLE | VIA_CR42_MIDI_ENABLE |
 		    VIA_CR42_FM_ENABLE)) {
 		tmp8 &= ~(VIA_CR42_SB_ENABLE | VIA_CR42_MIDI_ENABLE |
 			  VIA_CR42_FM_ENABLE);
-		write_pci_config(card->pdev->nBus, card->pdev->nDevice, card->pdev->nFunction, 
+		psBus->write_pci_config(card->pdev->nBus, card->pdev->nDevice, card->pdev->nFunction, 
 					VIA_FUNC_ENABLE, 1, tmp8);
 	}
 	
@@ -401,6 +407,7 @@ void via_dsp_cleanup (struct via_info *card)
 	assert (card->dev_dsp >= 0);
 
 	via_stop_everything (card);
+	delete_device_node( g_hDSPNode );
 
 //	unregister_sound_dsp (card->dev_dsp);
 
@@ -1495,6 +1502,7 @@ void via_remove_one (PCI_Info_s *pdev)
 	via_interrupt_cleanup (card);
 	via_dsp_cleanup (card);
 	via_ac97_cleanup (card);
+	delete_device_node( g_hMixerNode );
 
 /*	release_region (pci_resource_start (pdev, 0), pci_resource_len (pdev, 0));
 
@@ -1524,45 +1532,56 @@ status_t device_init( int nDeviceID )
 	int i;
 	bool found = false;
 	PCI_Info_s pci;
+	PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+	if( psBus == NULL )
+		return( -ENODEV );
 	
 	DPRINTK("ENTER\n");
 	
 	printk (KERN_INFO "Via 686a audio driver " VIA_VERSION "\n");
 	
 	/* scan all PCI devices */
-    for(i = 0 ;  get_pci_info( &pci, i ) == 0 ; ++i) {
+    for(i = 0 ;  psBus->get_pci_info( &pci, i ) == 0 ; ++i) {
         if (pci.nVendorID == PCI_VENDOR_ID_VIA && pci.nDeviceID == PCI_DEVICE_ID_VIA_82C686_5) {		
-			if(via_init_one(&pci) == 0)
+			if(via_init_one(&pci) == 0 && claim_device( nDeviceID, pci.nHandle, "VIA 686A", DEVICE_AUDIO ) == 0 ) {
 				found = true;
+				break;
+			}
         }
     }
     if(found) {
     	/* create DSP node */
-		if( create_device_node( nDeviceID, "sound/dsp", &via_dsp_fops, via_driver_data ) < 0 ) {
+		if( create_device_node( nDeviceID, pci.nHandle, "sound/dsp", &via_dsp_fops, via_driver_data ) < 0 ) {
 			printk( "Failed to create 1 node \n");
-			return ( -EINVAL );
+			goto error_dsp;
 		}
 		/* create mixer node */
-		if( create_device_node( nDeviceID, "sound/mixer", &via_mixer_fops, via_driver_data ) < 0 ) {
+		if( create_device_node( nDeviceID, pci.nHandle, "sound/mixer", &via_mixer_fops, via_driver_data ) < 0 ) {
 			printk( "Failed to create 1 node \n");
-			return ( -EINVAL );
+			goto error_mixer;
 		}
 	} else {
 		printk( "No device found\n" );
+		disable_device( nDeviceID );
 		return ( -EINVAL );
 	}
 	return (0);	
-	
-	DPRINTK("EXIT\n");
+
+error_mixer:
+	delete_device_node( g_hDSPNode );
+error_dsp:
+	release_irq( pci.u.h0.nInterruptLine, g_hIRQ );
+	return( -EINVAL );
 }
 
  
 status_t device_uninit( int nDeviceID)
 {
 	DPRINTK("ENTER\n");
-	
+
 	via_remove_one (via_pdev);
-	
+//	release_device( via_pdev->nHandle );
+
 	via_pdev = via_driver_data = NULL;
 
 	DPRINTK("EXIT\n");

@@ -2064,7 +2064,7 @@ static int trident_ac97_init(struct trident_card *card)
 		if (ac97_probe_codec(codec) == 0)
 			break;
 
-		if( create_device_node( card->nDeviceID, "sound/mixer", &trident_mixer_fops, codec ) < 0 ) {
+		if( create_device_node( card->nDeviceID, card->pci_dev->nHandle, "sound/mixer", &trident_mixer_fops, codec ) < 0 ) {
 			printk( "trident: failed to create mixer node \n");
 			kfree(codec);
 			break;
@@ -2088,7 +2088,7 @@ static int trident_probe(PCI_Info_s *pci_dev, int pci_id, int nDeviceID, struct 
 	//u16 w;
 	unsigned long iobase;
 	struct trident_card *card;
-
+	
 	iobase = pci_dev->u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK;
 
 	if ((card = kmalloc(sizeof(struct trident_card), MEMF_KERNEL)) == NULL) {
@@ -2119,6 +2119,9 @@ static int trident_probe(PCI_Info_s *pci_dev, int pci_id, int nDeviceID, struct 
 	
 	printk(KERN_INFO "trident: %s found at IO 0x%04lx, IRQ %d\n",
 	       card->pci_info->name, card->iobase, card->irq);
+	       
+	if( claim_device( nDeviceID, pci_dev->nHandle, card->pci_info->name, DEVICE_AUDIO ) != 0 )
+		return( -ENODEV );
 
 	if(card->pci_id == PCI_DEVICE_ID_ALI_5451) {
 		card->alloc_pcm_channel = ali_alloc_pcm_channel;
@@ -2140,7 +2143,7 @@ static int trident_probe(PCI_Info_s *pci_dev, int pci_id, int nDeviceID, struct 
 		return -ENODEV;
 	}
 	/* register /dev/dsp */
-	if( create_device_node( nDeviceID, "sound/dsp", &trident_dsp_fops, trident_card_data ) < 0 ) {
+	if( create_device_node( nDeviceID, pci_dev->nHandle, "sound/dsp", &trident_dsp_fops, trident_card_data ) < 0 ) {
 		printk(KERN_ERR "trident: failed to create DSP node \n");
 		release_irq(card->irq, 0);
 		kfree(card);
@@ -2179,8 +2182,10 @@ status_t device_init(int nDeviceID)
  		}
 	}
  
-	if (!foundone)
+	if (!foundone) {
+		disable_device( nDeviceID );
 		return -ENODEV;
+	}
 	return 0;
 }
 

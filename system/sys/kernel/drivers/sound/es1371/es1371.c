@@ -1525,32 +1525,37 @@ status_t device_init( int nDeviceID )
 	int i;
 	bool found = false;
 	PCI_Info_s pci;
+	PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+	
+	if( psBus == NULL )
+		return( -ENODEV );
 	
 	printk ("Ensoniq 1371 driver\n");
 	
 	/* scan all PCI devices */
-	for(i = 0 ;  get_pci_info( &pci, i ) == 0 && found != true ; ++i) {
+	for(i = 0 ;  psBus->get_pci_info( &pci, i ) == 0 && found != true ; ++i) {
 		if ( (pci.nVendorID == PCI_VENDOR_ID_ENSONIQ && pci.nDeviceID == PCI_DEVICE_ID_ENSONIQ_ES1371) ||
 		     (pci.nVendorID == PCI_VENDOR_ID_ENSONIQ && pci.nDeviceID == PCI_DEVICE_ID_ENSONIQ_CT5880) || 
 		     (pci.nVendorID == PCI_VENDOR_ID_ECTIVA && pci.nDeviceID == PCI_DEVICE_ID_ECTIVA_EV1938) ) {
-			if(es1371_init_one(&pci) == 0)
+			if(claim_device( nDeviceID, pci.nHandle, "Ensoniq 1371", DEVICE_AUDIO ) == 0 && es1371_init_one(&pci) == 0)
 				found = true;
         	}
 	}
     
 	if(found) {
     	/* create DSP node */
-		if( create_device_node( nDeviceID, "sound/dsp", &es1371_dsp_fops, es1371_driver_data ) < 0 ) {
+		if( create_device_node( nDeviceID, pci.nHandle, "sound/dsp", &es1371_dsp_fops, es1371_driver_data ) < 0 ) {
 			printk( "Failed to create dsp node \n");
 			return ( -EINVAL );
 		}
 	        /* create mixer node */
-		if( create_device_node( nDeviceID, "sound/mixer", &es1371_mixer_fops, es1371_driver_data ) < 0 ) {
+		if( create_device_node( nDeviceID, pci.nHandle, "sound/mixer", &es1371_mixer_fops, es1371_driver_data ) < 0 ) {
 			printk( "Failed to create mixer node \n");
 			return ( -EINVAL );
 		}
 		printk( "Found!\n" );
 	} else {
+		disable_device( nDeviceID );
 		printk( "No device found\n" );
 		return ( -EINVAL );
 	}

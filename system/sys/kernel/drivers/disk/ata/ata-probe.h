@@ -36,7 +36,7 @@ int get_drive_params( int nDrive, DriveParams_s* psParams );
 
 size_t ata_read_partition_data( void* pCookie, off_t nOffset, void* pBuffer, size_t nSize );
 int ata_decode_partitions( AtaInode_s* psInode );
-int ata_create_node( int nDevID, const char* pzPath, const char* pzHDName, int nDriveNum, int nSec, int nCyl, int nHead, int nSecSize, off_t nStart, off_t nSize, bool bCSH );
+int ata_create_node( int nDevID, int nDeviceHandle, const char* pzPath, const char* pzHDName, int nDriveNum, int nSec, int nCyl, int nHead, int nSecSize, off_t nStart, off_t nSize, bool bCSH );
 int ata_scan_for_disks( int nDeviceID );
 
 #endif

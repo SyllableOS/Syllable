@@ -195,6 +195,7 @@ struct via_channel {
 
 /* data stored for each chip */
 struct via_info {
+	PCI_bus_s* bus;
 	PCI_Info_s *pdev;
 	long baseaddr;
 	
@@ -250,7 +251,7 @@ void via_chan_maybe_start (struct via_channel *chan);
 
 
 
-int via_init_one (PCI_Info_s *dev);
+int via_init_one (int nDeviceID, PCI_Info_s *dev);
 void via_remove_one (PCI_Info_s *pdev);
 
 int via_dsp_read(void *node, void *cookie, off_t ppos, void *buffer, size_t count);

@@ -512,7 +512,7 @@ struct pcnet32_private
 };
 
 int pcnet32_probe( int );
-static struct device* pcnet32_probe1( int , long , int , int , int );
+static struct device* pcnet32_probe1( int , int, long , int , int , int );
 static int  pcnet32_open(struct device *);
 static int  pcnet32_init_ring(struct device *);
 static int  pcnet32_start_xmit(PacketBuf_s *, struct device *);
@@ -542,7 +542,7 @@ struct pcnet32_pci_id_info
    const char *name;
    uint16 vendor_id, device_id, svid, sdid, flags;
    int io_size;
-   struct device *(*probe1) ( int , long , int , int , int );
+   struct device *(*probe1) ( int , int, long , int , int , int );
 };
 
 static struct pcnet32_pci_id_info pcnet32_tbl[] =
@@ -695,10 +695,15 @@ int pcnet32_probe( int device_handle )
 
    int i;
    PCI_Info_s sInfo;
+   PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+   if( psBus == NULL ) 
+   {
+		return( -ENODEV );
+	}
 
    //   printk("pcnet32.c: PCI bios is present, checking for devices...\n");
 
-   for( i=0 ; get_pci_info( &sInfo, i)==0 ; i++ )
+   for( i=0 ; psBus->get_pci_info( &sInfo, i)==0 ; i++ )
      {
 	int chip_idx;
 	int ioaddr;
@@ -707,9 +712,9 @@ int pcnet32_probe( int device_handle )
 	int new_command;
 	int sdid, svid;
 
-	sdid = read_pci_config( sInfo.nBus, sInfo.nDevice, sInfo.nFunction,
+	sdid = psBus->read_pci_config( sInfo.nBus, sInfo.nDevice, sInfo.nFunction,
 			       PCI_SUBSYSTEM_VENDOR_ID, 2 );
-	svid = read_pci_config( sInfo.nBus, sInfo.nDevice, sInfo.nFunction,
+	svid = psBus->read_pci_config( sInfo.nBus, sInfo.nDevice, sInfo.nFunction,
 			       PCI_SUBSYSTEM_ID, 2 );
 
 	for ( chip_idx = 0 ; pcnet32_tbl[chip_idx].vendor_id ; chip_idx++ )
@@ -733,7 +738,7 @@ int pcnet32_probe( int device_handle )
 	  continue;
 #endif
 
-	pci_command = read_pci_config( sInfo.nBus, sInfo.nDevice, sInfo.nFunction,
+	pci_command = psBus->read_pci_config( sInfo.nBus, sInfo.nDevice, sInfo.nFunction,
 				      PCI_COMMAND, 2 );
 	new_command = pci_command | (pcnet32_tbl[chip_idx].flags & 7);
 
@@ -741,24 +746,29 @@ int pcnet32_probe( int device_handle )
 	  {
 	     printk("PCI Master Bit has not been set. Setting...\n");
 	     pci_command |= PCI_COMMAND_MASTER|PCI_COMMAND_IO;
-	     write_pci_config(sInfo.nBus, sInfo.nDevice, sInfo.nFunction,
+	     psBus->write_pci_config(sInfo.nBus, sInfo.nDevice, sInfo.nFunction,
 			      PCI_COMMAND, 2, pci_command );
 	  }
 	printk("Found PCnet/PCI at %#lx, irq %d.\n", ioaddr, irq);
-	dev = pcnet32_tbl[chip_idx].probe1(device_handle, ioaddr, irq, 1, cards_found);
+	if( claim_device( device_handle, sInfo.nHandle, "PCnet PCI", DEVICE_NET ) != 0 )
+        printk( "Could not claim device!\n" );
+    else
+		dev = pcnet32_tbl[chip_idx].probe1(device_handle, sInfo.nHandle, ioaddr, irq, 1, cards_found);
 
-	if ( dev == 0 )
+	if ( dev != NULL )
 	  {
+	  	
 	     cards_found++;
 	     dev = NULL;
 	  }
      }
-
+	if( !cards_found )
+		disable_device( device_handle );
    return cards_found ? 0: ENODEV;
 }
 
 static struct device*
-  pcnet32_probe1( int device_handle, long ioaddr, int irq, int shared, int cards_found)
+  pcnet32_probe1( int device_handle, int nHandle, long ioaddr, int irq, int shared, int cards_found)
 {
    struct pcnet32_private *lp;
    struct device* dev;
@@ -1023,7 +1033,7 @@ static struct device*
    //ether_setup(dev);
 
    sprintf( node_path, "net/eth/pcnet32-%d", cards_found );
-   create_device_node( device_handle, node_path, &g_sDevOps, dev );
+   create_device_node( device_handle, nHandle, node_path, &g_sDevOps, dev );
    if (pcnet32_debug>1)
      printk("pcnet32_probe1() Create node: %s\n", node_path);
 

@@ -38,5 +38,6 @@ dist: all
 	cp -f $(OBJDIR)/ne2000 $(DIST_DIR)/atheos/sys/drivers/dev/net/eth/8390
 
 clean:
-	-rm $(OBJS)
+	-rm -f $(OBJS) $(OBJDIR)/ne2000
+
 

@@ -62,7 +62,7 @@ static const char *version =
 
 extern DeviceOperations_s g_sDevOps;
 
-
+PCI_bus_s* g_psBus;
 
 
 /*
@@ -359,11 +359,11 @@ struct pci_id_info {
 	uint16	vendor_id, device_id, device_id_mask, flags;
 	int io_size;
 	struct device *(*probe1)( int bus, int device, int function, int device_handle,
-							 long ioaddr, int irq, int chip_idx, int fnd_cnt);
+							 int nHandle, long ioaddr, int irq, int chip_idx, int fnd_cnt);
 };
 
 static struct device * rtl8129_probe1( int bus, int device, int function,
-									   int device_handle, long ioaddr,
+									   int device_handle, int nHandle, long ioaddr,
 									   int irq, int chp_idx, int fnd_cnt);
 
 static struct pci_id_info pci_tbl[] =
@@ -520,8 +520,9 @@ int rtl8139_probe( int device_handle )
 	
     int i;
     PCI_Info_s sInfo;
+   
   
-    for ( i = 0 ; get_pci_info( &sInfo, i ) == 0 ; ++i ) {
+    for ( i = 0 ; g_psBus->get_pci_info( &sInfo, i ) == 0 ; ++i ) {
 		int chip_idx;
 		int ioaddr;
 		int irq;
@@ -537,21 +538,25 @@ int rtl8139_probe( int device_handle )
 		if (pci_tbl[chip_idx].vendor_id == 0) { 		/* Compiled out! */
 			continue;
 		}
+		
+		if( claim_device( device_handle, sInfo.nHandle, "Realtek 8139", DEVICE_NET ) != 0 )
+			continue;
+		
 		printk( "rtl8139_probe() found NIC\n" );
 		ioaddr = sInfo.u.h0.nBase0 & PCI_ADDRESS_IO_MASK;
 		irq = sInfo.u.h0.nInterruptLine;
 
-		pci_command = read_pci_config( sInfo.nBus, sInfo.nDevice, sInfo.nFunction, PCI_COMMAND, 2 );
+		pci_command = g_psBus->read_pci_config( sInfo.nBus, sInfo.nDevice, sInfo.nFunction, PCI_COMMAND, 2 );
 		new_command = pci_command | (pci_tbl[chip_idx].flags & 7);
 		if (pci_command != new_command) {
 			printk(KERN_INFO "  The PCI BIOS has not enabled the"
 				   " device at %d/%d/%d!  Updating PCI command %4.4x->%4.4x.\n",
 				   sInfo.nBus, sInfo.nDevice, sInfo.nFunction, pci_command, new_command );
-			write_pci_config( sInfo.nBus, sInfo.nDevice, sInfo.nFunction, PCI_COMMAND, 2, new_command);
+			g_psBus->write_pci_config( sInfo.nBus, sInfo.nDevice, sInfo.nFunction, PCI_COMMAND, 2, new_command);
 		}
 
-		dev = pci_tbl[chip_idx].probe1( sInfo.nBus, sInfo.nDevice, sInfo.nFunction, device_handle, ioaddr,
-										irq, chip_idx, cards_found );
+		dev = pci_tbl[chip_idx].probe1( sInfo.nBus, sInfo.nDevice, sInfo.nFunction, device_handle, sInfo.nHandle,
+										ioaddr,	irq, chip_idx, cards_found );
 
 #ifndef __ATHEOS__		
 		if (dev  && (pci_tbl[chip_idx].flags & PCI_COMMAND_MASTER)) {
@@ -569,11 +574,13 @@ int rtl8139_probe( int device_handle )
 		cards_found++;
 		break;
 	}
+	if( !cards_found )
+		disable_device( device_handle );
 	return cards_found ? 0 : -ENODEV;
 }
 
 static struct device * rtl8129_probe1( int pci_bus, int pci_device, int pci_func,
-									   int device_handle, long ioaddr,
+									   int device_handle, int nHandle, long ioaddr,
 									   int irq, int chip_idx, int found_cnt)
 {
 	static int did_version = 0;			/* Already printed version info. */
@@ -687,7 +694,7 @@ static struct device * rtl8129_probe1( int pci_bus, int pci_device, int pci_func
 	dev->do_ioctl = &mii_ioctl;
 	*/
 	sprintf( node_path, "net/eth/rtl8139-%d", found_cnt );
-	create_device_node( device_handle, node_path, &g_sDevOps, dev );
+	create_device_node( device_handle, nHandle, node_path, &g_sDevOps, dev );
 	printk( "rtl8129_probe1() Create node: %s\n", node_path );
 	return dev;
 }
@@ -1329,7 +1336,7 @@ static int rtl8129_interrupt(int irq, void *dev_instance, SysCallRegs_s* regs )
 			}
 			if (status & PCIErr) {
 				uint32 pci_cmd_status;
-				pci_cmd_status = read_pci_config( tp->pci_bus, tp->pci_device, tp->pci_function, PCI_COMMAND, 4 );
+				pci_cmd_status = g_psBus->read_pci_config( tp->pci_bus, tp->pci_device, tp->pci_function, PCI_COMMAND, 4 );
 
 				printk(KERN_ERR "%s: PCI Bus error %4.4x.\n",
 					   dev->name, pci_cmd_status);
@@ -1719,6 +1726,11 @@ static DeviceOperations_s g_sDevOps = {
 
 status_t device_init( int nDeviceID )
 {
+	/* Get PCI bus */
+    g_psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+    
+    if( g_psBus == NULL )
+    	return( -1 );
 	return( rtl8139_probe( nDeviceID ) );
 }
 

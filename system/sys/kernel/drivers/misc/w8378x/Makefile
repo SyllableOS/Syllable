@@ -44,5 +44,6 @@ dist: all
 	cp -f $(OBJDIR)/w8378x $(DIST_DIR)/atheos/sys/drivers/dev/misc/w8378x
 
 clean:
-	-rm $(OBJS)
+	-rm -f $(OBJS) $(OBJDIR)/w8378x
+
 

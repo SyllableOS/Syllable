@@ -27,6 +27,7 @@
 #include <atheos/bcache.h>
 #include <atheos/spinlock.h>
 #include <atheos/time.h>
+#include <atheos/config.h>
 
 #include <atheos/syscall.h>
 
@@ -224,11 +225,11 @@ status_t sys_get_system_info( system_info * psInfo, int nVersion )
 			sInfo.nDirtyCacheSize = g_sSysBase.ex_nDirtyCacheSize;
 			sInfo.nLockedCacheBlocks = g_sSysBase.ex_nLockedCacheBlocks;
 
-			strcpy( sInfo.zKernelName, g_pzKernelName );		/* Name of kernel image            */
+			strcpy( sInfo.zKernelName, g_pzKernelName );	/* Name of kernel image            */
 			strcpy( sInfo.zKernelBuildDate, g_pzBuildData );	/* Date of kernel built            */
 			strcpy( sInfo.zKernelBuildTime, g_pzBuildTime );	/* Time of kernel built            */
-			strcpy( sInfo.zKernelCpuArch, g_pzCpuArch );		/* CPU this kernel is running on   */
-			strcpy( sInfo.zKernelSystem, g_pzSystem );			/* OS name (E.g. "Syllable")       */
+			strcpy( sInfo.zKernelCpuArch, g_pzCpuArch );	/* CPU this kernel is running on   */
+			strcpy( sInfo.zKernelSystem, g_pzSystem );	/* OS name (E.g. "Syllable")       */
 
 			for ( i = 0; i < g_nActiveCPUCount; ++i )
 			{
@@ -625,6 +626,8 @@ int sys_reboot( void )
 	thread_id hThread;
 	int i;
 
+	write_kernel_config();
+
 	// Since we (hopefully) wont be killed by the signal we must close our files manually.
 	for ( i = 0; i < 256; ++i )
 	{
@@ -695,6 +698,8 @@ int sys_apm_poweroff( void )
 	/* this part copied from sys_reboot */
 	thread_id hThread;
 	int i;
+
+	write_kernel_config();
 
 	// Since we (hopefully) wont be killed by the signal we must close our files manually.
 	for ( i = 0; i < 256; ++i )

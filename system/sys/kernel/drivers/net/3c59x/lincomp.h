@@ -106,20 +106,20 @@ static inline void release_region(unsigned long start, unsigned long len) {
  * Enables bus-mastering on the device and calls pcibios_set_master()
  * to do the needed arch specific settings.
  */
-static void pci_set_master(PCI_Info_s *dev)
+static void pci_set_master(PCI_bus_s* psBus, PCI_Info_s *dev)
 {
     int cmd;
     int lat;
 
-    cmd = read_pci_config( dev->nBus, dev->nDevice, dev->nFunction, PCI_COMMAND, 2 );
+    cmd = psBus->read_pci_config( dev->nBus, dev->nDevice, dev->nFunction, PCI_COMMAND, 2 );
     if (! (cmd & PCI_COMMAND_MASTER)) {
         printk(KERN_DEBUG PFX "PCI: Enabling bus mastering\n");
         cmd |= PCI_COMMAND_MASTER;
-        write_pci_config( dev->nBus, dev->nDevice, dev->nFunction, PCI_COMMAND, 2, cmd );
+        psBus->write_pci_config( dev->nBus, dev->nDevice, dev->nFunction, PCI_COMMAND, 2, cmd );
     }
     
     /* pcibios_set_master() */
-    lat = read_pci_config( dev->nBus, dev->nDevice, dev->nFunction, PCI_LATENCY, 1);
+    lat = psBus->read_pci_config( dev->nBus, dev->nDevice, dev->nFunction, PCI_LATENCY, 1);
     if (lat < 16)
         lat = (64 <= PCIBIOS_MAX_LATENCY) ? 64 : PCIBIOS_MAX_LATENCY;
     else if (lat > PCIBIOS_MAX_LATENCY)
@@ -127,7 +127,7 @@ static void pci_set_master(PCI_Info_s *dev)
     else
         return;
     printk(KERN_DEBUG PFX "PCI: Setting latency timer to %d\n", lat);
-    write_pci_config( dev->nBus, dev->nDevice, dev->nFunction, PCI_LATENCY, 1, lat);
+    psBus->write_pci_config( dev->nBus, dev->nDevice, dev->nFunction, PCI_LATENCY, 1, lat);
 }
 
 
@@ -172,24 +172,24 @@ static void pci_set_master(PCI_Info_s *dev)
  *
  *  %PCI_CAP_ID_CHSWP        CompactPCI HotSwap 
  */
-static int pci_find_capability(PCI_Info_s *dev, int cap)
+static int pci_find_capability(PCI_bus_s* psBus, PCI_Info_s *dev, int cap)
 {
     int status;
     int pos, id;
     int ttl = 48;
 
-    status = read_pci_config( dev->nBus, dev->nDevice, dev->nFunction,
+    status = psBus->read_pci_config( dev->nBus, dev->nDevice, dev->nFunction,
                                 PCI_STATUS, 2 );
     if (!(status & PCI_STATUS_CAP_LIST))
         return 0;
     switch (dev->nHeaderType) {
     case PCI_HEADER_TYPE_NORMAL:
     case PCI_HEADER_TYPE_BRIDGE:
-        pos = read_pci_config( dev->nBus, dev->nDevice, dev->nFunction,
+        pos = psBus->read_pci_config( dev->nBus, dev->nDevice, dev->nFunction,
                                 PCI_CAPABILITY_LIST, 1 );
         break;
     case PCI_HEADER_TYPE_CARDBUS:
-        pos = read_pci_config( dev->nBus, dev->nDevice, dev->nFunction,
+        pos = psBus->read_pci_config( dev->nBus, dev->nDevice, dev->nFunction,
                                 PCI_CB_CAPABILITY_LIST, 1 );
         break;
     default:
@@ -197,13 +197,13 @@ static int pci_find_capability(PCI_Info_s *dev, int cap)
     }
     while (ttl-- && pos >= 0x40) {
         pos &= ~3;
-        id = read_pci_config( dev->nBus, dev->nDevice, dev->nFunction,
+        id = psBus->read_pci_config( dev->nBus, dev->nDevice, dev->nFunction,
                                 pos + PCI_CAP_LIST_ID, 1 );
         if (id == 0xff)
             break;
         if (id == cap)
             return pos;
-        pos = read_pci_config( dev->nBus, dev->nDevice, dev->nFunction,
+        pos = psBus->read_pci_config( dev->nBus, dev->nDevice, dev->nFunction,
                                 pos + PCI_CAP_LIST_NEXT, 1 );
     }
     return 0;
@@ -226,7 +226,7 @@ static int pci_find_capability(PCI_Info_s *dev, int cap)
  * -EIO if device does not support PCI PM.
  * 0 if we can successfully change the power state.
  */
-static int pci_set_power_state(PCI_Info_s *dev, int *current_state,
+static int pci_set_power_state(PCI_bus_s* psBus, PCI_Info_s *dev, int *current_state,
                                int state) {
     int pm;
     int pmcsr;
@@ -244,7 +244,7 @@ static int pci_set_power_state(PCI_Info_s *dev, int *current_state,
         return 0;        /* we're already there */
 
     /* find PCI PM capability in list */
-    pm = pci_find_capability(dev, PCI_CAP_ID_PM);
+    pm = pci_find_capability(psBus, dev, PCI_CAP_ID_PM);
     
     /* abort if the device doesn't support PM capabilities */
     if (!pm) return -EIO; 
@@ -252,7 +252,7 @@ static int pci_set_power_state(PCI_Info_s *dev, int *current_state,
     /* check if this device supports the desired state */
     if (state == 1 || state == 2) {
         uint16 pmc;
-        pmc = read_pci_config( dev->nBus, dev->nDevice, dev->nFunction,
+        pmc = psBus->read_pci_config( dev->nBus, dev->nDevice, dev->nFunction,
                                 pm + PCI_PM_PMC, 2 );
         if (state == 1 && !(pmc & PCI_PM_CAP_D1)) return -EIO;
         else if (state == 2 && !(pmc & PCI_PM_CAP_D2)) return -EIO;
@@ -265,14 +265,14 @@ static int pci_set_power_state(PCI_Info_s *dev, int *current_state,
     if (*current_state == 3)
         pmcsr = 0;
     else {
-        pmcsr = read_pci_config( dev->nBus, dev->nDevice, dev->nFunction,
+        pmcsr = psBus->read_pci_config( dev->nBus, dev->nDevice, dev->nFunction,
                                     pm + PCI_PM_CTRL, 2);
         pmcsr &= ~PCI_PM_CTRL_STATE_MASK;
         pmcsr |= state;
     }
 
     /* enter specified state */
-    write_pci_config( dev->nBus, dev->nDevice, dev->nFunction,
+    psBus->write_pci_config( dev->nBus, dev->nDevice, dev->nFunction,
                             pm + PCI_PM_CTRL, 2, pmcsr );
 
     *current_state = state;

@@ -39,5 +39,6 @@ dist: all
 	cp -f $(OBJDIR)/rtl8139 $(DIST_DIR)/atheos/sys/drivers/dev/net/eth/rtl8139
 
 clean:
-	-rm $(OBJS)
+	-rm -f $(OBJS) $(OBJDIR)/rtl8139
+
 

@@ -44,6 +44,7 @@ dist: all
 	cp -f $(OBJDIR)/$(DRIVER) $(DIST_DIR)/atheos/sys/drivers/dev/sound/$(DRIVER)
 
 clean:
-	-rm $(OBJS)
-	-rm $(OBJDIR)/$(DRIVER)
+	-rm -f $(OBJS)
+	-rm -f $(OBJDIR)/$(DRIVER)
+
 

@@ -954,6 +954,8 @@ int via_ac97_reset (struct via_info *card)
 {
 	PCI_Info_s* pdev = card->pdev;
 	u16 tmp16;
+	PCI_bus_s* psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+	
 	
 	DPRINTK ("ENTER\n");
 
@@ -966,26 +968,26 @@ int via_ac97_reset (struct via_info *card)
          */
       //  pci_write_config_byte (pdev, VIA_ACLINK_CTRL, VIA_CR41_AC97_ENABLE |
         //                       VIA_CR41_AC97_RESET | VIA_CR41_AC97_WAKEUP);
-        write_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, VIA_ACLINK_CTRL,
+        psBus->write_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, VIA_ACLINK_CTRL,
         	1, VIA_CR41_AC97_ENABLE | VIA_CR41_AC97_RESET | VIA_CR41_AC97_WAKEUP); 
         udelay (100);
  
        // pci_write_config_byte (pdev, VIA_ACLINK_CTRL, 0);
-       write_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, VIA_ACLINK_CTRL,
+       psBus->write_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, VIA_ACLINK_CTRL,
         	1, 0); 
         udelay (100);
  
        // pci_write_config_byte (pdev, VIA_ACLINK_CTRL,
 		//	       VIA_CR41_AC97_ENABLE | VIA_CR41_PCM_ENABLE |
           //                     VIA_CR41_VRA | VIA_CR41_AC97_RESET);
-       	write_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, VIA_ACLINK_CTRL,
+       	psBus->write_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, VIA_ACLINK_CTRL,
         	1, VIA_CR41_AC97_ENABLE | VIA_CR41_PCM_ENABLE | VIA_CR41_VRA | VIA_CR41_AC97_RESET); 
         udelay (100);
 
 
 	/* route FM trap to IRQ, disable FM trap */
 	//pci_write_config_byte (pdev, 0x48, 0x05);
-	write_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, 0x48, 1, 0x05); 
+	psBus->write_pci_config(pdev->nBus, pdev->nDevice, pdev->nFunction, 0x48, 1, 0x05); 
 	udelay(10);
 	
 	/* disable all codec GPI interrupts */

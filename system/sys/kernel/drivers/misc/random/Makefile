@@ -43,5 +43,6 @@ dist: all
 	cp -f $(OBJDIR)/random $(DIST_DIR)/atheos/sys/drivers/dev/random
 
 clean:
-	-rm $(OBJS)
+	-rm -f $(OBJS) $(OBJDIR)/random
+
 
