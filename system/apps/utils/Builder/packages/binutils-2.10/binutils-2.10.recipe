@@ -1,6 +1,8 @@
-authors Kaj de Vos
+authors			Kaj de Vos
 patch-config
 ;configure-options
 ; --enable-shared
 ; --norecursion
-documentation README COPYING COPYING.LIB binutils/NEWS binutils/ChangeLog
+documentation	README COPYING COPYING.LIB binutils/NEWS binutils/ChangeLog
+; For OpenSSL:
+distro-files	/usr/bin/ranlib
