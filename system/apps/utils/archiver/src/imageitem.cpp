@@ -291,7 +291,7 @@ void ImageItem::DrawContent()
 void ImageItem::Highlight(bool bHighlight)
 {
 	m_Highlighted = bHighlight;
-	MenuItem::Highlight(bHighlight);
+	MenuItem::SetHighlighted(bHighlight);
 }
 
 
