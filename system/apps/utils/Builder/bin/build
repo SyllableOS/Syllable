@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.4.1
+# Version 0.4.2
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -291,9 +291,9 @@ def installPackage target
 			end
 		else
 			Dir.chdir target
-			if exists? dir = buildDir(target) then Dir.chdir dir end
 
 			unless thirdParty?
+				if exists? dir = buildDir(target) then Dir.chdir dir end
 				action "make install"
 			else
 				if exists? root = installPath(target) and not
@@ -315,6 +315,8 @@ def installPackage target
 						end
 					end
 
+					if exists? dir = buildDir(target) then Dir.chdir dir end
+
 					if not action((cmdLine = (recipe = getRecipe target)["install"]) ? toString(cmdLine) :
 						"make" +
 						(	(arg = recipe["install-prefix"]) ? " " + arg + root :
@@ -328,6 +330,8 @@ def installPackage target
 					elsif files = recipe["documentation"] and not
 						begin
 							logHeader "Installing documentation"
+							Dir.chdir @workDir
+							Dir.chdir target
 							action "cp -a #{toString files} " + root
 						end
 					then
@@ -891,7 +895,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.4.1",
+	puts "Syllable Build System 0.4.2",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
