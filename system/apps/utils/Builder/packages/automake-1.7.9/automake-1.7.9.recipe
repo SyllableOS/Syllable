@@ -1,0 +1,8 @@
+authors			Kaj de Vos
+licenses		GPL
+home			sources.redhat.com/automake/
+build-needs		autoconf >= 2.54
+run-needs
+	perl
+;	m4
+documentation	README COPYING NEWS ChangeLog TODO AUTHORS THANKS
