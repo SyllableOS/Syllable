@@ -26,8 +26,8 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/next: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/next /system/appserver -latheos -lstdc++ -lz
-	gcc -plugin $(OBJS) -o $(OBJDIR)/next -latheos -lstdc++
+	gcc $(OBJS) -o $(OBJDIR)/next /system/appserver -lsyllable -lstdc++ -lz
+	gcc -plugin $(OBJS) -o $(OBJDIR)/next -lsyllable -lstdc++
 
 deps:
 
@@ -39,3 +39,4 @@ dist: $(OBJDIR)/next
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/next
+

@@ -28,8 +28,8 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Win98: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/Win98 /system/appserver -latheos -lstdc++ -lz
-	gcc -plugin $(OBJS) -o $(OBJDIR)/Win98 -latheos -lstdc++
+	gcc $(OBJS) -o $(OBJDIR)/Win98 /system/appserver -lsyllable -lstdc++ -lz
+	gcc -plugin $(OBJS) -o $(OBJDIR)/Win98 -lsyllable -lstdc++
 
 install: $(OBJDIR)/Win98
 	cp -f $(OBJDIR)/Win98 $(DEVBIN)/Win98
@@ -39,4 +39,5 @@ dist: $(OBJDIR)/Win98
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/Win98
+
 

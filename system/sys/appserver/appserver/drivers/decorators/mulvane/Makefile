@@ -28,8 +28,8 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Mulvane: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/Mulvane /system/appserver -latheos -lstdc++ -lz
-	gcc -plugin $(OBJS) -o $(OBJDIR)/Mulvane -latheos -lstdc++
+	gcc $(OBJS) -o $(OBJDIR)/Mulvane /system/appserver -lsyllable -lstdc++ -lz
+	gcc -plugin $(OBJS) -o $(OBJDIR)/Mulvane -lsyllable -lstdc++
 
 install: $(OBJDIR)/Mulvane
 	cp -f $(OBJDIR)/Mulvane $(DEVBIN)/Mulvane
@@ -39,4 +39,5 @@ dist: $(OBJDIR)/Mulvane
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/Mulvane
+
 

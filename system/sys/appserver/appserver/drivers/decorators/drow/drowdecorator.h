@@ -43,6 +43,7 @@ public:
     virtual void SetCloseButtonState( bool bPushed );
     virtual void SetZoomButtonState( bool bPushed );
     virtual void SetDepthButtonState( bool bPushed );
+    virtual void SetButtonState( uint32 nButton, bool bPushed );
     virtual void Render( const Rect& cUpdateRect );
 private:
     void CalculateBorderSizes();
@@ -74,3 +75,4 @@ private:
 };
 
 #endif // __F_DROWDECORATOR_H__
+

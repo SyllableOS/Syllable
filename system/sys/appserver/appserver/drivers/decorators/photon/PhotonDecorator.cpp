@@ -288,6 +288,22 @@ void PhotonDecorator::Layout()
 	m_cDragRect.bottom = 20 - 1;
 }
 
+void PhotonDecorator::SetButtonState( uint32 nButton, bool bPushed )
+{
+	switch( nButton )
+	{
+		case HIT_CLOSE:
+			SetCloseButtonState( bPushed );
+			break;
+		case HIT_ZOOM:
+			SetZoomButtonState( bPushed );
+			break;
+		case HIT_DEPTH:
+			SetDepthButtonState( bPushed );
+			break;
+	}
+}
+
 void PhotonDecorator::SetCloseButtonState( bool bPushed )
 {
 	m_bCloseState = bPushed;
@@ -595,6 +611,7 @@ extern "C" WindowDecorator* create_decorator( Layer* pcLayer, uint32 nFlags )
 {
     return( new PhotonDecorator( pcLayer, nFlags ) );
 }
+
 
 
 

@@ -28,8 +28,8 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Photon: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/Photon /system/appserver -latheos -lstdc++ -lz
-	gcc -plugin $(OBJS) -o $(OBJDIR)/Photon -latheos -lstdc++
+	gcc $(OBJS) -o $(OBJDIR)/Photon /system/appserver -lsyllable -lstdc++ -lz
+	gcc -plugin $(OBJS) -o $(OBJDIR)/Photon -lsyllable -lstdc++
 
 install: $(OBJDIR)/Photon
 	cp -f $(OBJDIR)/Photon $(DEVBIN)/Photon
@@ -39,4 +39,5 @@ dist: $(OBJDIR)/Photon
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/Photon
+
 

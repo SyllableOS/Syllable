@@ -351,6 +351,22 @@ void BeIshDecorator::Layout()
     m_cDragRect.bottom  = m_cDragRect.top + 20.0;
 }
 
+void BeIshDecorator::SetButtonState( uint32 nButton, bool bPushed )
+{
+	switch( nButton )
+	{
+		case HIT_CLOSE:
+			SetCloseButtonState( bPushed );
+			break;
+		case HIT_ZOOM:
+			SetZoomButtonState( bPushed );
+			break;
+		case HIT_DEPTH:
+			SetDepthButtonState( bPushed );
+			break;
+	}
+}
+
 void BeIshDecorator::SetCloseButtonState( bool bPushed )
 {
     m_bCloseState = bPushed;
@@ -732,5 +748,6 @@ extern "C" WindowDecorator* create_decorator( Layer* pcLayer, uint32 nFlags )
 {
     return( new BeIshDecorator( pcLayer, nFlags ) );
 }
+
 
 

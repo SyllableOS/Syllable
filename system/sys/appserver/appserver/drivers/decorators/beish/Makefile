@@ -28,8 +28,8 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/beish: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/beish /system/appserver -latheos -lstdc++ -lz
-	gcc -plugin $(OBJS) -o $(OBJDIR)/beish -latheos -lstdc++
+	gcc $(OBJS) -o $(OBJDIR)/beish /system/appserver -lsyllable -lstdc++ -lz
+	gcc -plugin $(OBJS) -o $(OBJDIR)/beish -lsyllable -lstdc++
 
 install: $(OBJDIR)/beish
 	cp -f $(OBJDIR)/beish $(DEVBIN)/beish
@@ -39,3 +39,4 @@ dist: $(OBJDIR)/beish
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/beish
+

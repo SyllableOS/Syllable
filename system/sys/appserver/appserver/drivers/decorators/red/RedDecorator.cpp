@@ -301,6 +301,13 @@ void RedDecorator::Layout()
     m_cDragRect.bottom = 15;
 }
 
+void RedDecorator::SetButtonState( uint32 nButton, bool bPushed )
+{
+	switch( nButton )
+	{
+	}
+}
+
 void RedDecorator::SetCloseButtonState( bool bPushed )
 {
 	m_bCloseState = bPushed;
@@ -311,6 +318,15 @@ void RedDecorator::SetCloseButtonState( bool bPushed )
 }
 
 void RedDecorator::SetZoomButtonState( bool bPushed )
+{
+	m_bZoomState = bPushed;
+	if ( (m_nFlags & WND_NO_ZOOM_BUT) == 0 )
+	{
+		DrawZoom( m_cZoomRect, m_bHasFocus, m_bZoomState == 1 );
+	}
+}
+
+void RedDecorator::SetMinimizeButtonState( bool bPushed )
 {
 	m_bZoomState = bPushed;
 	if ( (m_nFlags & WND_NO_ZOOM_BUT) == 0 )
@@ -590,6 +606,8 @@ extern "C" WindowDecorator* create_decorator( Layer* pcLayer, uint32 nFlags )
 {
     return( new RedDecorator( pcLayer, nFlags ) );
 }
+
+
 
 
 
