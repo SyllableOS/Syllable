@@ -61,34 +61,32 @@ public:
 		   bool bHideWhenDone = true,
 		   const char* pzOkLabel = NULL,
 		   const char* pzCancelLabel = NULL );
+	virtual ~FileRequester();
+
     virtual void	HandleMessage( Message* pcMessage );
     virtual void	FrameSized( const Point& cDelta );
+	virtual bool FileRequester::OkToQuit(void);
 
     void	SetPath( const std::string& cPath );
     std::string GetPath() const;
+    
+
 private:
     void Layout();
-    enum { ID_PATH_CHANGED = 1, ID_SEL_CHANGED, ID_INVOKED, ID_CANCEL, ID_OK, ID_ALERT, ID_DROP_CHANGE };
 
-    Message*	 m_pcMessage;
-    Messenger*	 m_pcTarget;
-  
-    file_req_mode_t m_nMode;
-    uint32	    m_nNodeType;
-    bool	    m_bHideWhenDone;
-    DirectoryView*  m_pcDirView;
-    TextView*	    m_pcPathView;
-    Button*	    m_pcOkButton;
-    Button*	    m_pcCancelButton;
-    StringView* m_pcFileString;
-    StringView* m_pcTypeString;
-    DropdownMenu* m_pcTypeDrop;
+	enum
+	{ ID_PATH_CHANGED = 1, ID_SEL_CHANGED, ID_INVOKED, ID_CANCEL, ID_OK, ID_ALERT, ID_DROP_CHANGE, ID_UP_BUT = 0x55, ID_HOME_BUT = 0x56, ID_BACK_BUT = 0x57, ID_FORWARD_BUT = 0x58 };
+	
+	class Private;
+	
+	Private *m;
     
 };
 
 }
 
 #endif // __F_GUI_FILEREQUESTER_H__
+
 
 
 
