@@ -294,10 +294,10 @@ void ImageItem::Draw()
 void ImageItem::DrawContent()
 {}
 
-void ImageItem::Highlight(bool bHighlight)
+void ImageItem::SetHighlighted(bool bHighlight)
 {
     m_Highlighted = bHighlight;
-    MenuItem::Highlight(bHighlight);
+    MenuItem::SetHighlighted(bHighlight);
 }
 
 void ImageItem::SetEnable()

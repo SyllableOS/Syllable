@@ -22,7 +22,7 @@ public:
 
     virtual void  Draw();
     virtual void  DrawContent();
-    virtual void  Highlight( bool bHighlight );
+    virtual void  SetHighlighted( bool bHighlight );
     virtual Point GetContentSize();
     void SetEnable();
     void SetBitmap(Bitmap *bm);

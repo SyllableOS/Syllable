@@ -28,6 +28,7 @@
 #include <gui/layoutview.h>
 #include <util/message.h>
 #include <gui/checkbox.h>
+#include <util/application.h>
 
 
 
@@ -275,6 +276,7 @@ FileReq::FileReq(os::FileRequester::file_req_mode_t p0=os::FileRequester::LOAD_R
 {
     addMapping("0\e", ID_CANCEL);
     addMapping("o\n", ID_OK);
+		 m_pcTarget = ( p1 != NULL ) ? p1 : new Messenger( Application::GetInstance() );
 }
 
 bool FileReq::OkToQuit()

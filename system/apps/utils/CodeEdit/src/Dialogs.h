@@ -113,6 +113,9 @@ public:
     bool OkToQuit();
     void DispatchMessage(os::Message*, os::Handler*);
     void HandleMessage(os::Message*);
+
+private:
+		 Messenger *m_pcTarget;
 };
 
 
