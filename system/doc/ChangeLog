@@ -1,3 +1,6 @@
+* Sep 21 2003, Kaj de Vos *
+Removed grep 2.5 because it was misconfigured in CVS.
+
 * Sep 2 2003, Kaj de Vos *
 Fixed several related bugs in the network preferences applet
 
