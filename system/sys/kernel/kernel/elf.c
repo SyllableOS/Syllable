@@ -920,6 +920,7 @@ static status_t memmap_instance( ElfImageInst_s *psInst, int nMode )
 	uint32 nFileDataSize;
 	uint32 nMemDataSize;
 	int nAllocMode;
+	int bData = 0;
 
 	int nLocking = AREA_NO_LOCK;
 	uint32 nAllocAddress;
@@ -956,7 +957,7 @@ static status_t memmap_instance( ElfImageInst_s *psInst, int nMode )
 		}
 		if ( psSection->sh_nFlags & SHF_ALLOC )
 		{
-			if ( ( psSection->sh_nFlags & SHF_WRITE ) == 0 )
+			if ( ( psSection->sh_nFlags & SHF_WRITE ) == 0 && bData == 0 )
 			{
 				if ( nTextStart == -1 )
 				{
@@ -971,6 +972,8 @@ static status_t memmap_instance( ElfImageInst_s *psInst, int nMode )
 				{
 					nDataStart = psSection->sh_nAddress;
 					nDataOffset = psSection->sh_nOffset;
+					bData = 1;	/* Ignore any non-data sections which might exist between
+								   the first & last data section */
 				}
 				if ( psSection->sh_nType == SHT_NOBITS )
 				{
