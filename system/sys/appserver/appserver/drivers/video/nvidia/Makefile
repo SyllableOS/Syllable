@@ -1,4 +1,6 @@
-COPTS   = -I$(TOP)/src  -c -O2 -Wall
+include ../freetype.makefile
+
+COPTS   = -I$(TOP)/src -I$(FREETYPEINCLUDE) -c -O2 -Wall
 
 DEVBIN = /system/drivers/appserver/video
 OBJS =	nvidia.o riva_hw.o

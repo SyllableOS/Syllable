@@ -1,4 +1,6 @@
-COPTS   = -I$(TOP)/src  -c -O2 -Wall -fexceptions
+include ../freetype.makefile
+
+COPTS   = -I$(TOP)/src -I$(FREETYPEINCLUDE) -c -O2 -Wall -fexceptions
 
 DEVBIN = /system/drivers/appserver/video
 OBJS =	mga.o gx00_crtc.o gx00_crtc1.o
