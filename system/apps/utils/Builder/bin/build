@@ -274,7 +274,7 @@ def installPackage target
 				action 'tar --directory=/usr -xpPzf ' + target and
 				begin
 					@log.header 'Registering ' + target
-					action 'pkgmanager -add ' + root
+					action 'pkgmanager --add ' + root
 				end
 			end
 		else
@@ -375,7 +375,7 @@ def installPackage target
 						@systemBuild or
 						begin
 							@log.header 'Registering ' + target
-							action 'pkgmanager -add ' + root
+							action 'pkgmanager --add ' + root
 						end
 					end
 				end
@@ -405,7 +405,7 @@ def uninstallPackage target
 			unless @systemBuild or
 				begin
 					@log.header 'Unregistering ' + name
-					action 'pkgmanager -remove ' + dir
+					action 'pkgmanager --remove ' + dir
 				end
 			then
 				false
