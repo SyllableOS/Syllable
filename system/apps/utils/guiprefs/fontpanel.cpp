@@ -123,7 +123,7 @@ FontPanel::FontPanel( const Rect& cFrame ) : LayoutView( cFrame, "", NULL, CF_FO
     m_pcFontList->SetSelChangeMsg( new Message( ID_SEL_CHANGED ) );
     m_pcFontList->SetInvokeMsg( new Message( ID_SELECTED ) );
     
-    std::vector<std::String> cConfigList;
+    std::vector<os::String> cConfigList;
 
     Font::GetConfigNames( &cConfigList );
 
@@ -400,4 +400,3 @@ void FontPanel::HandleMessage( Message* pcMessage )
 	    break;
     }
 }
-
