@@ -512,7 +512,8 @@ int sis_get_dram_size_315(void)
 	uint8  pci_data;
 	uint8  reg = 0;
 
-	if( si.chip == SIS_550 || si.chip == SIS_650 ) {
+	if( si.chip == SIS_550 || si.chip == SIS_650 || si.chip == SIS_740 ||
+		si.chip == SIS_660 || si.chip == 760 ) {
 		inSISIDXREG( SISSR, IND_SIS_DRAM_SIZE, reg );
 		switch( reg & SIS550_DRAM_SIZE_MASK ) {
 			case SIS550_DRAM_SIZE_4MB:
@@ -564,7 +565,7 @@ int sis_get_dram_size_315(void)
 		}
 		return 0;
 
-	} else {	/* 315 */
+	} else {	/* 315, 330 */
 		inSISIDXREG( SISSR, IND_SIS_DRAM_SIZE, reg );
 		switch( ( reg & SIS315_DRAM_SIZE_MASK ) >> 4 ) {
 			case SIS315_DRAM_SIZE_2MB:
@@ -947,14 +948,14 @@ char *sis_find_rom()
         char *sis_sig_300[4] = {
           "300", "540", "630", "730"
         };
-        char *sis_sig_310[6] = {
-          "315", "315", "315", "5315", "6325", "Xabre"
+        char *sis_sig_310[9] = {
+          "315", "315", "315", "5315", "6325", "6325", "Xabre", "6330", "6330"
         };
 	ushort sis_nums_300[4] = {
 	  SIS_300, SIS_540, SIS_630, SIS_730
 	};
-	unsigned short sis_nums_310[6] = {
-	  SIS_315PRO, SIS_315H, SIS_315, SIS_550, SIS_650, SIS_330
+	unsigned short sis_nums_310[9] = {
+	  SIS_315PRO, SIS_315H, SIS_315, SIS_550, SIS_650, SIS_740, SIS_330, SIS_660, SIS_760
 	};
 
         for(segstart=0x00000000; segstart<0x00030000; segstart+=0x00001000) {
@@ -989,7 +990,7 @@ char *sis_find_rom()
                     }
                 }
 		if(stage != 4) {
-                   for(i = 0;(i < 6) && (stage != 4); i++) {
+                   for(i = 0;(i < 9) && (stage != 4); i++) {
                       if(strncmp(sis_sig_310[i], rom, strlen(sis_sig_310[i])) == 0) {
 		          if(sis_nums_310[i] == si.chip) {
                              stage = 4;
@@ -1067,7 +1068,7 @@ int sis_init()
 			sis_set_reg4( 0xCF8, 0x80000000 );
 			reg32 = sis_get_reg3( 0xCFC );
 			if( reg32 == 0x07401039 ) {
-				si.chip = SIS_650;
+				si.chip = SIS_740;
 				strcpy( si.name, "740" );
 			}
 			else {
@@ -1082,6 +1083,19 @@ int sis_init()
 			si.vga_engine = SIS_315_VGA;
 			si.CRT2_enable = IND_SIS_CRT2_WRITE_ENABLE_315;
 			strcpy( si.name, "Xabre" );
+		break;
+		case 0x6330: /* SIS 660/760 */
+			reg32 = sis_get_reg3( 0xCFC );
+			if( reg32 == 0x07601039 ) {
+				si.chip = SIS_760;
+				strcpy( si.name, "760" );
+			}
+			else {
+				si.chip = SIS_660;
+				strcpy( si.name, "660" );
+			}
+			si.vga_engine = SIS_315_VGA;
+			si.CRT2_enable = IND_SIS_CRT2_WRITE_ENABLE_315;
 		break;
 		default:
 			return -1;
@@ -1104,10 +1118,14 @@ int sis_init()
 		switch( si.chip ) {
 			case SIS_315H:
 			case SIS_315:
+			case SIS_330:
 				sishw_ext.bIntegratedMMEnabled = TRUE;
 			break;
 			case SIS_550:
 			case SIS_650:
+			case SIS_740:
+			case SIS_660:
+			case SIS_760:
 				sishw_ext.bIntegratedMMEnabled = TRUE;
 			break;
 			default:
@@ -1304,6 +1322,8 @@ int sis_init()
 	}
 	return 0;
 }
+
+
 
 
 

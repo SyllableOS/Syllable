@@ -1,5 +1,37 @@
 /* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/sis/initdef.h,v 1.4 2000/12/02 01:16:17 dawes Exp $ */
-
+/*
+ * Global definitions for init.c and init301.c
+ *
+ * Copyright 2002, 2003 by Thomas Winischhofer, Vienna, Austria
+ *
+ * If distributed as part of the linux kernel, the contents of this file
+ * is entirely covered by the GPL.
+ *
+ * Otherwise, the following terms apply:
+ *
+ * Permission to use, copy, modify, distribute, and sell this software and its
+ * documentation for any purpose is hereby granted without fee, provided that
+ * the above copyright notice appear in all copies and that both that
+ * copyright notice and this permission notice appear in supporting
+ * documentation, and that the name of the copyright holder not be used in
+ * advertising or publicity pertaining to distribution of the software without
+ * specific, written prior permission.  The copyright holder makes no representations
+ * about the suitability of this software for any purpose.  It is provided
+ * "as is" without express or implied warranty.
+ *
+ * THE COPYRIGHT HOLDER DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+ * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
+ * EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+ * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
+ * DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+ * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ *
+ * Author: 	Thomas Winischhofer <thomas@winischhofer.net>
+ *
+ * Based on code by Silicon Intergrated Systems
+ *
+ */
 
 #ifndef _INITDEF_
 #define _INITDEF_
@@ -22,7 +54,19 @@
 #define VB_SIS301B302B          (VB_SIS301B|VB_SIS302B)
 #define VB_SIS301LV302LV        (VB_SIS301LV|VB_SIS302LV)
 
+#define IS_SIS650		(HwDeviceExtension->jChipType == SIS_650)
+#define IS_SIS740		(HwDeviceExtension->jChipType == SIS_740)
+#define IS_SIS330		(HwDeviceExtension->jChipType == SIS_330)
+#define IS_SIS550		(HwDeviceExtension->jChipType == SIS_550)
+#define IS_SIS651	        (SiS_Pr->SiS_SysFlags & (SF_Is651 | SF_Is652))
+#define IS_SISM650	        (SiS_Pr->SiS_SysFlags & (SF_IsM650 | SF_IsM652 | SF_IsM653))
+#define IS_SIS65x               (IS_SIS651 || IS_SISM650)
+#define IS_SIS660		(HwDeviceExtension->jChipType == SIS_660)
+#define IS_SIS760		(HwDeviceExtension->jChipType == SIS_760)
+#define IS_SIS650660            (IS_SIS650 || IS_SIS660)
 #define IS_SIS650740            ((HwDeviceExtension->jChipType >= SIS_650) && (HwDeviceExtension->jChipType < SIS_330))
+#define IS_SIS650740660         (IS_SIS650 || IS_SIS660 || IS_SIS740 || IS_SIS760)
+#define IS_SIS550650740660      (IS_SIS550 || IS_SIS650 || IS_SIS660 || IS_SIS740 || IS_SIS760)
 
 #define CRT1Len                 17
 #define LVDSCRT1Len             15
@@ -58,7 +102,7 @@
 #define SupportTV               0x0008
 #define SupportHiVisionTV       0x0010
 #define SupportLCD              0x0020
-#define SupportRAMDAC2          0x0040  
+#define SupportRAMDAC2          0x0040
 #define NoSupportTV             0x0070
 #define NoSupportHiVisionTV     0x0060
 #define NoSupportLCD            0x0058
@@ -100,6 +144,24 @@
 #define HotKeySwitch            0x8000  /* TW: ? */
 #define SetCRT2ToLCDA           0x8000
 
+/* SetFlag */
+#define ProgrammingCRT2         0x01
+#define TVSimuMode              0x02
+#define RPLLDIV2XO              0x04
+#define LCDVESATiming           0x08
+#define EnableLVDSDDA           0x10
+#define SetDispDevSwitchFlag    0x20
+#define CheckWinDos             0x40
+#define SetDOSMode              0x80
+
+/* SysFlags */
+#define SF_Is651                0x0001
+#define SF_IsM650               0x0002
+#define SF_Is652		0x0004
+#define SF_IsM652		0x0008
+#define SF_IsM653		0x0010
+#define SF_Is660		0x8000
+
 #define PanelRGB18Bit           0x0100
 #define PanelRGB24Bit           0x0000
 
@@ -107,7 +169,7 @@
 #define TVOverScanShift         4
 #define ClearBufferFlag         0x20
 
-/* CR32 (Newer 630, and 310/325 series)
+/* CR32 (Newer 630, and 315 series)
 
    [0]   VB connected with CVBS
    [1]   VB connected with SVHS
@@ -129,13 +191,13 @@
 	    011   LVDS + Tumpion Zurac
 	    100   LVDS + Chrontel 7005
 	    110   Chrontel 7005
-	  310/325 series
+	  315 series
 	    001   SiS30x (never seen)
 	    010   LVDS
 	    011   LVDS + Chrontel 7019
 	  All other combinations reserved
-   [4]    LVDS: Expanding(0)/Non-expanding(1) LCD display
-          30x:  SiS30x(0)/LCD monitor(1) scaling display
+   [4]    LVDS: 0: Panel Link expands / 1: Panel Link does not expand
+          30x:  0: Bridge scales      / 1: Bridge does not scale = Panel scales (if possible)
    [5]    LCD polarity select
           0: VESA DMT Standard
 	  1: EDID 2.x defined
@@ -147,14 +209,26 @@
 	  1: Low active
 */
 
-/* CR38 (310/325 series) */
+/* CR37: LCDInfo */
+#define LCDRGB18Bit           0x0001
+#define LCDNonExpanding       0x0010
+#define DontExpandLCD	      LCDNonExpanding
+#define LCDNonExpandingShift       4
+#define DontExpandLCDShift    LCDNonExpandingShift
+#define LCDSync               0x0020
+#define LCDPass11             0x0100 
+#define LCDSyncBit            0x00e0
+#define LCDSyncShift               6
+
+/* CR38 (315 series) */
 #define EnableDualEdge 		0x01   
 #define SetToLCDA		0x02   /* LCD channel A (302B/LV and 650+LVDS only) */
 #define EnableSiSHiVision       0x04   /* HiVision (HDTV) on SiS bridge */
 #define EnableLVDSScart         0x04   /* Scart on Ch7019 (unofficial definition - TW) */
 #define EnableLVDSHiVision      0x08   /* YPbPr color format (480i HDTV); only on 650/Ch7019 systems */
-#define SiSHiVision1            0x10   /* See SetHiVision() */
-#define SiSHiVision2            0x20
+#define EnableHiVision750       0x08   /* Enable 750P HiVision mode (30xLV only) */
+#define EnableHiVision525       0x10   /* Enable 525P HiVision mode (30xLV only) */
+#define SiSHiVision2            0x20   /* ? - |  --- mask 0x38 combinations have different meaning! */
 #define EnablePALM              0x40   /* 1 = Set PALM */
 #define EnablePALN              0x80   /* 1 = Set PALN */
 
@@ -168,7 +242,7 @@
 #define Enable302LV_DualLink    0x04   /* 30xNEW (302LV) only; set by mode switching function */
 
 
-/* CR79 (310/325 series only)
+/* CR79 (315 series only)
    [3-0] Notify driver
          0001 Mode Switch event (set by BIOS)
 	 0010 Epansion On/Off event
@@ -186,17 +260,6 @@
    [7]   TV UnderScan/OverScan (set by BIOS)
 */
 
-/* SetFlag */
-#define ProgrammingCRT2         0x01
-#define TVSimuMode              0x02
-#define RPLLDIV2XO              0x04
-#define LCDVESATiming           0x08
-#define EnableLVDSDDA           0x10
-#define SetDispDevSwitchFlag    0x20
-#define CheckWinDos             0x40
-#define SetJDOSMode             0x80
-#define CRT2IsVGA	        0x80  /* TW: Not sure about this name... */
-
 /* LCDResInfo */
 #define Panel300_800x600        0x01	/* CR36 */
 #define Panel300_1024x768       0x02
@@ -205,7 +268,10 @@
 #define Panel300_640x480        0x05
 #define Panel300_1024x600       0x06
 #define Panel300_1152x768       0x07
-#define Panel300_320x480        0x08 	/* fstn - TW: This is fake, can be any */
+#define Panel300_1280x768       0x0a
+#define Panel300_320x480        0x0e 	/* fstn - TW: This is fake, can be any */
+#define Panel300_Custom		0x0f
+#define Panel300_Barco1366      0x10
 
 #define Panel310_800x600        0x01
 #define Panel310_1024x768       0x02
@@ -216,9 +282,12 @@
 #define Panel310_1280x960       0x07
 #define Panel310_1152x768       0x08	/* LVDS only */
 #define Panel310_1400x1050      0x09
-#define Panel310_1280x768       0x0a    /* LVDS only */
+#define Panel310_1280x768       0x0a
 #define Panel310_1600x1200      0x0b
-#define Panel310_320x480        0x0c    /* fstn - TW: This is fake, can be any */
+#define Panel310_640x480_2      0x0c
+#define Panel310_640x480_3      0x0d
+#define Panel310_320x480        0x0e    /* fstn - TW: This is fake, can be any */
+#define Panel310_Custom		0x0f
 
 #define Panel_800x600           0x01	/* Unified values */
 #define Panel_1024x768          0x02
@@ -231,25 +300,52 @@
 #define Panel_1400x1050         0x09
 #define Panel_1280x768          0x0a    /* LVDS only */
 #define Panel_1600x1200         0x0b
-#define Panel_320x480           0x0c    /* fstn - TW: This is fake, can be any */
+#define Panel_640x480_2		0x0c
+#define Panel_640x480_3		0x0d
+#define Panel_320x480           0x0e    /* fstn - TW: This is fake, can be any */
+#define Panel_Custom		0x0f
+#define Panel_Barco1366         0x10
+#define Panel_848x480		0x11
+
+/* Index in ModeResInfo table */
+#define SIS_RI_320x200 0
+#define SIS_RI_320x240 1
+#define SIS_RI_320x400 2
+#define SIS_RI_400x300 3
+#define SIS_RI_512x384 4
+#define SIS_RI_640x400 5
+#define SIS_RI_640x480 6
+#define SIS_RI_800x600 7
+#define SIS_RI_1024x768 8
+#define SIS_RI_1280x1024 9
+#define SIS_RI_1600x1200 10
+#define SIS_RI_1920x1440 11
+#define SIS_RI_2048x1536 12
+#define SIS_RI_720x480 13
+#define SIS_RI_720x576 14
+#define SIS_RI_1280x960 15
+#define SIS_RI_800x480 16
+#define SIS_RI_1024x576 17
+#define SIS_RI_1280x720 18
+#define SIS_RI_856x480 19
+#define SIS_RI_1280x768 20
+#define SIS_RI_1400x1050 21
+#define SIS_RI_1152x864 22
+#define SIS_RI_848x480 23
+#define SIS_RI_1360x768 24
+#define SIS_RI_1024x600 25
+#define SIS_RI_1152x768 26
+#define SIS_RI_768x576 27
+#define SIS_RI_1360x1024 28
 
 #define ExtChipType             0x0e
 #define ExtChip301              0x02
 #define ExtChipLVDS             0x04
 #define ExtChipTrumpion         0x06
 #define ExtChipCH7005           0x08
-#define ExtChipMitacTV          0x0a            /* TW: Incorrect, 0x0a = Chrontel 7005 only */
+#define ExtChipMitacTV          0x0a    /* TW: Incorrect, 0x0a = Chrontel 7005 only */
 
-#define IsM650                  0x80   		/* TW: CR5F */
-
-/* LCDInfo */
-#define LCDRGB18Bit             0x01
-#define LCDNonExpanding         0x10
-#define LCDNonExpandingShift    4
-#define LCDSync                 0x20
-#define LCDPass11              0x100 
-#define LCDSyncBit              0xe0
-#define LCDSyncShift            6
+#define IsM650                  0x80   	/* TW: CR5F */
 
 #define LCDDataLen              8
 #define HiTVDataLen             12
@@ -272,15 +368,34 @@
 #define VCLKStartFreq           25
 #define SoftDramType            0x80
 
-#define VCLK40                  0x04   /* Index in VCLKData array */
-#define VCLK65                  0x09   /* Index in VCLKData array */
-#define VCLK108_2               0x14   /* Index in VCLKData array */
-#define TVVCLKDIV2              0x21   /* Indices in (VB)VCLKData arrays */
-#define TVVCLK                  0x22
-#define HiTVVCLKDIV2            0x23
-#define HiTVVCLK                0x24
-#define HiTVSimuVCLK            0x25
-#define HiTVTextVCLK            0x26
+/* Indices in (VB)VCLKData tables */
+
+#define VCLK28                  0x00   /* Index in VCLKData table (300 and 315) */
+#define VCLK40                  0x04   /* Index in VCLKData table (300 and 315) */
+#define VCLK65_300              0x09   /* Index in VCLKData table (300) */
+#define VCLK108_2_300           0x14   /* Index in VCLKData table (300) */
+#define VCLK81_300		0x3f   /* Index in VCLKData table (300) */
+#define VCLK108_3_300           0x42   /* Index in VCLKData table (300) */
+#define VCLK100_300             0x43   /* Index in VCLKData table (300) */
+#define VCLK34_300              0x3d   /* Index in VCLKData table (300) */
+#define VCLK65_315              0x0b   /* Index in (VB)VCLKData table (315) */
+#define VCLK108_2_315           0x19   /* Index in (VB)VCLKData table (315) */
+#define VCLK81_315		0x5b   /* Index in (VB)VCLKData table (315) */
+#define VCLK162_315             0x21   /* Index in (VB)VCLKData table (315) */
+#define VCLK108_3_315           0x45   /* Index in VBVCLKData table (315) */
+#define VCLK100_315             0x46   /* Index in VBVCLKData table (315) */
+#define VCLK34_315              0x55   /* Index in VBVCLKData table (315) */
+
+#define TVCLKBASE_300		0x21   /* Indices on TV clocks in VCLKData table (300) */
+#define TVCLKBASE_315	        0x3a   /* Indices on TV clocks in (VB)VCLKData table (315) */
+#define TVVCLKDIV2              0x00   /* Index relative to TVCLKBASE */
+#define TVVCLK                  0x01   /* Index relative to TVCLKBASE */
+#define HiTVVCLKDIV2            0x02   /* Index relative to TVCLKBASE */
+#define HiTVVCLK                0x03   /* Index relative to TVCLKBASE */
+#define HiTVSimuVCLK            0x04   /* Index relative to TVCLKBASE */
+#define HiTVTextVCLK            0x05   /* Index relative to TVCLKBASE */
+
+/* ------------------------------ */
 
 #define LoadDACFlag             0x1000
 #define AfterLockCRT2           0x4000
@@ -300,6 +415,8 @@
 #define HotPlugFunction         0x08
 #define StStructSize            0x06
 
+#define SIS_VIDEO_CAPTURE       0x00 - 0x30
+#define SIS_VIDEO_PLAYBACK      0x02 - 0x30
 #define SIS_CRT2_PORT_04        0x04 - 0x30
 #define SIS_CRT2_PORT_10        0x10 - 0x30
 #define SIS_CRT2_PORT_12        0x12 - 0x30
@@ -387,7 +504,7 @@
 
 /*
   =============================================================
-   			for 310/325 series
+   			  for 315 series
   =============================================================
 */
 #define SoftDRAMType        0x80

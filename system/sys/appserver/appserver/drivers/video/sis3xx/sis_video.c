@@ -933,7 +933,7 @@ area_id SISStartVideo( short src_x, short src_y,
 {
 	int totalSize=0;
 	area_id hArea;
-   
+    void* test;
    si.video_port.drw_x = drw_x;
    si.video_port.drw_y = drw_y;
    si.video_port.drw_w = drw_w;
@@ -973,11 +973,21 @@ area_id SISStartVideo( short src_x, short src_y,
    
    SISDisplayVideo() ;
    
-   hArea = create_area( "sis3xx_overlay", NULL, totalSize, AREA_FULL_ACCESS, AREA_NO_LOCK );
+  
+   hArea = create_area( "sis3xx_overlay", NULL, PAGE_ALIGN( totalSize ), AREA_FULL_ACCESS, AREA_NO_LOCK );
    remap_area( hArea, (void*)(( si.pci_dev.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK ) + si.video_port.bufAddr) );
    
    return( hArea );
 }
+
+
+
+
+
+
+
+
+
 
 
 
