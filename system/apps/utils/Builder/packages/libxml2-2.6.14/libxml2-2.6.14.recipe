@@ -1,0 +1,21 @@
+authors
+	Kaj de Vos
+	Jamie Clarkson
+status				testing
+
+licenses			MIT
+home				xmlsoft.org
+
+;build-recommends	libiconv
+
+patch-config
+
+configure-options
+;	--without-threads
+	--disable-ipv6
+test-targets		tests
+documentation
+	README Copyright NEWS ChangeLog TODO TODO_SCHEMAS AUTHORS
+;	Double:
+;	COPYING
+
