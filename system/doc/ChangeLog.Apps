@@ -1,3 +1,8 @@
+* January 29th 2005, Kristian Van Der Vliet
+
+	- Total re-write of AView.  AView 0.4 has been removed and replaced with AView 1.1,
+	  which is written around the Image family of classes now available in libsyllable.
+
 * January 9th 2005, Kristian Van Der Vliet
 
 	- Replaced the old standalone mixer utility with a stub application which calls
