@@ -31,11 +31,8 @@ test-targets		test
 ;install-prefix-var	DESTDIR
 ;install-targets		altinstall
 documentation
-	README LICENSE Misc/NEWS Misc/HISTORY Demo
+	README LICENSE Misc/NEWS Misc/HISTORY
+	Demo
+links				bin/python /usr/bin/python
+;post-install		rm -r /usr/python/lib/python2.3/test
 
-links
-	bin/python	/usr/bin/python
-
-; post-install not implemented yet in builder!
-post-install
-	rm -r /usr/python/lib/python2.3/test
