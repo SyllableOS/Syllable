@@ -1,3 +1,8 @@
+* Jul 5 2003, Kristian Van Der Vliet *
+
+A whole bunch of changes to the Matrox driver as part of an attempt to cleanup &
+improve the driver.
+
 * Jun 29 2003, Kristian Van Der Vliet *
 
 Finally fixed the bizarre Matrox video-offset bug.
