@@ -1,6 +1,7 @@
 ; Modules to (re)build for Syllable 0.5.5
 
 modules
+	sys/kernel/kernel
 	sys/kernel/drivers/graphics/mga
 	sys/kernel/drivers/sound/trident
 	sys/appserver/appserver/drivers/video/mga
