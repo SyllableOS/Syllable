@@ -1047,6 +1047,61 @@ bool SrvApplication::DispatchMessage( const void* pMsg, int nCode )
 	    g_cLayerGate.Open();
 	    return( true );
 	}
+	case AR_GET_TEXT_EXTENTS:
+	{
+		AR_GetTextExtents_s*      psReq = (AR_GetTextExtents_s*) pMsg;
+		AR_GetTextExtentsReply_s* psReply = (AR_GetTextExtentsReply_s*) pMsg;
+		int	nStrCount  = psReq->nStringCount;
+	    port_id	hReplyPort = psReq->hReply;
+		uint32 nFlags =  psReq->nFlags;
+
+		if ( m_cFontLock.Lock() == 0 ) {
+			std::set<FontNode*>::iterator i = m_cFonts.find( (FontNode*)psReq->hFontToken );
+
+			if ( i == m_cFonts.end() ) {
+			    psReply->nError = -ENOENT;
+			    dbprintf( "Error : GetTextExtent() called on invalid font ID %x\n", psReq->hFontToken );
+			    send_msg( hReplyPort, 0, psReply, sizeof(AR_GetTextExtentsReply_s) );
+			    m_cFontLock.Unlock();
+			    return( true );
+			}
+      
+			SFontInstance* pcFont = (*i)->GetInstance();
+
+			if ( NULL == pcFont ) {
+			    dbprintf( "Error : GetTextExtent() FontNode::GetInstance() returned NULL\n" );
+	
+			    psReply->nError = -ENOMEM;
+			    send_msg( hReplyPort, 0, psReply, sizeof(AR_GetTextExtentsReply_s) );
+			    m_cFontLock.Unlock();
+			    return( true );
+			}
+      
+			StringHeader_s*	psHdr = &psReq->sFirstHeader;
+
+			for ( int i = 0 ; i < nStrCount ; ++i )
+			{
+				if ( psHdr->zString + psHdr->nLength >= reinterpret_cast<const char*>(pMsg) + 8192 ) {
+					printf( "Error: GetTextExtents() invalid size %d\n", psHdr->nLength );
+					psReply->nError = -EINVAL;
+					break;
+				}
+
+				psReply->acExtent[i] = pcFont->GetTextExtent( psHdr->zString, psHdr->nLength, nFlags );
+				
+				int nHdrSize = psHdr->nLength + sizeof( int );
+				
+				psHdr = (StringHeader_s*) (((int8*) psHdr) + nHdrSize);
+			}
+
+			psReply->nError = 0;
+
+			send_msg( hReplyPort, 0, psReply, sizeof(AR_GetTextExtentsReply_s) );
+			m_cFontLock.Unlock();
+	    }
+
+	    return( true );
+	}
 	case AR_GET_STRING_WIDTHS:
 	{
 	    AR_GetStringWidths_s*      psReq = (AR_GetStringWidths_s*) pMsg;
@@ -1371,13 +1426,6 @@ SrvApplication* get_active_app()
 	return( pcWnd->GetApp() );
     }
 }
-
-
-
-
-
-
-
 
 
 

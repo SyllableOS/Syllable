@@ -24,6 +24,7 @@
 
 #include <gui/font.h>
 #include <gui/rect.h>
+#include <gui/point.h>
 #include <gui/guidefines.h>
 #include <util/resource.h>
 #include <util/locker.h>
@@ -42,7 +43,6 @@ extern os::Locker g_cFontLock;
 
 struct Glyph
 {
-    //int		   m_nAdvance;
     os::IPoint	   m_nAdvance;
     os::IRect	   m_cBounds;
     int		   m_nBytesPerLine;
@@ -151,6 +151,7 @@ public:
     int		GetAdvance() const		{ return( m_nAdvance ); 	}
     int		GetStringWidth( const char* pzString, int nLength );
     int		GetStringLength( const char* pzString, int nLength, int nWidth, bool bIncludeLast );
+    os::IPoint	GetTextExtent( const char* pzString, int nLength, uint32 nFlags );
 private:
     ~SFontInstance();
     friend	class	SFont;
@@ -228,20 +229,5 @@ private:
     std::map<std::string,FontFamily*> m_cFamilies;  // List of font families.
 };
 
-
-
 #endif	// __F_SFONT_H__
-
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -580,6 +580,12 @@ void SrvWindow::R_Render( WR_Render_s* psPkt )
 		pcView->DrawString( psMsg->zString, psMsg->nLength  );
 		break;
 	    }
+	    case DRC_DRAW_TEXT:
+	    {
+		GRndDrawText_s* psMsg = (GRndDrawText_s*) psHdr;
+		pcView->DrawText( psMsg->cPos, psMsg->zString, psMsg->nLength, psMsg->nFlags );
+		break;
+	    }
 	    case DRC_SET_FRAME:
 	    {
 		GRndSetFrame_s* psMsg = static_cast<GRndSetFrame_s*>(psHdr);
@@ -1517,5 +1523,4 @@ thread_id SrvWindow::Run()
     }
     return( hThread );
 }
-
 

@@ -26,6 +26,7 @@
 
 #include <gui/guidefines.h>
 #include <util/locker.h>
+#include <appserver/protocol.h>
 
 #include "server.h"
 #include "sfont.h"
@@ -398,6 +399,63 @@ int SFontInstance::GetStringWidth( const char* pzString, int nLength )
     }
     g_cFontLock.Unlock();
     return( nWidth );
+}
+
+IPoint SFontInstance::GetTextExtent( const char* pzString, int nLength, uint32 nFlags )
+{
+	IPoint	cExt( 0, m_nAscender - m_nDescender );
+	int nLineExtent = 0;
+
+	g_cFontLock.Lock();
+	while ( nLength > 0 )
+	{
+		if( ! ( nFlags & DTF_IGNORE_FMT ) ) {
+			bool bDone;
+			do {
+				bDone = false;
+				switch( *pzString ) {
+					case '_':
+						pzString++;
+						nLength--;
+						break;
+					case '\n':
+						pzString++;
+						nLength--;
+						cExt.y += m_nAscender - m_nDescender + m_nLineGap;
+						if( nLineExtent > cExt.x ) cExt.x = nLineExtent;
+						nLineExtent = 0;
+						break;
+					case 27:
+						pzString++;
+						nLength--;
+						if( nLength > 0 && *pzString != '[' ) {
+							pzString++;
+							nLength--;
+						}
+						break;
+					default:
+						bDone = true;
+				}
+			} while( nLength > 0 && !bDone );
+		}
+
+		int nCharLen = utf8_char_length( *pzString );
+		if ( nCharLen > nLength ) {
+			break;
+		}
+		Glyph*	pcGlyph = GetGlyph( FT_Get_Char_Index( m_pcFont->GetTTFace(), utf8_to_unicode( pzString ) ) );
+		pzString += nCharLen;
+		nLength  -= nCharLen;
+		if ( pcGlyph == NULL ) {
+			dbprintf( "Error: GetStringWidth() failed to load glyph\n" );
+			continue;
+		}
+		nLineExtent += pcGlyph->m_nAdvance.x;
+	}
+	if( nLineExtent > cExt.x ) cExt.x = nLineExtent;
+
+	g_cFontLock.Unlock();
+	return( cExt );
 }
 
 //----------------------------------------------------------------------------

@@ -140,6 +140,7 @@ public:
     void		DrawLine( const os::Point& cToPnt );
 
     void		DrawString( const char* pzString, int nLength );
+	void		DrawText( const os::Rect& cPos, const char *pzString, int nLength, uint32 nFlags );
 
     void		CopyRect( SrvBitmap* pcBitmap, os::GRndCopyRect_s* psCmd );
 
@@ -244,3 +245,4 @@ public:
 Layer* FindLayer( int nToken );
 
 #endif	//	__F_LAYER_H__
+
