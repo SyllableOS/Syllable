@@ -1155,6 +1155,15 @@ int ListViewContainer::InsertRow( int nPos, ListViewRow* pcRow, bool bUpdate )
 	    y = m_cRows[i-1]->m_vYPos + m_cRows[i-1]->m_vHeight + m_vVSpacing;
 	}
 	m_cRows[i]->m_vYPos = y;
+
+	Rect r;
+	r.top = y;
+	r.bottom = r.top + m_cRows[i]->m_vHeight + m_vVSpacing;
+	for ( uint j = 0 ; j < m_cCols.size() ; ++j ) {
+		r.left = m_cCols[j]->GetBounds().left;
+		r.right = m_cCols[j]->GetBounds().right; //m_cCols[j]->m_vContentWidth;
+		m_cRows[i]->SetRect( r, j );
+	}
     }
     if ( bUpdate ) {
 	Rect cBounds = GetBounds();
