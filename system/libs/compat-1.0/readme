@@ -1,21 +1,7 @@
-There are two tarballs in this directory.  Both are untarred into
-$DIST_DIR/atheos/sys/libs/ at build time, which is /atheos/sys/libs
-at runtime.
+sys-compat.bin.tgz contains older versions of libatheos required for binary
+compatibility with older software.
 
-sys-compat.bin.tgz contains older versions of libatheos and libgui, 
-required for binary compatibility with older software, while
-libc-compat.bin.tgz contains all of the binary libraries from glibc-2.1.2
-
-The files are stored within a tarball in order to preserve symlinks through
-the CVS Repository, which is important!  If you need to change either of
-these tarballs, untar into an empty directory on an AFS partition someplace
-with:
-
-$ tar -xzpf tarball.bin.tgz
-
-Make your changes, and then re-tar with:
-
-$ tar -czpf tarball.bin.tgz *
+The (Very old) libgui.0.1.7.so and libgui.0.2.0.so have now been removed.
 
 --
 Vanders
