@@ -1,4 +1,3 @@
-
 /*  libatheos.so - the highlevel API library for AtheOS
  *  Copyright (C) 2001  Kurt Skauen
  *
@@ -30,10 +29,18 @@
 
 using namespace os;
 
+class NodeMonitor::Private
+{
+	public:
+	Private() {
+		m_nMonitor = -1;
+	}
+
+    int	m_nMonitor;
+};
 
 
-
-int NodeMonitor::_CreateMonitor( const std::string & cPath, uint32 nFlags, const Messenger & cTarget )
+int NodeMonitor::_CreateMonitor( const String & cPath, uint32 nFlags, const Messenger & cTarget )
 {
 	int nFile = open( cPath.c_str(), O_RDONLY );
 
@@ -47,7 +54,7 @@ int NodeMonitor::_CreateMonitor( const std::string & cPath, uint32 nFlags, const
 	return ( nMonitor );
 }
 
-int NodeMonitor::_CreateMonitor( const Directory & cDir, const std::string & cPath, uint32 nFlags, const Messenger & cTarget )
+int NodeMonitor::_CreateMonitor( const Directory & cDir, const String & cPath, uint32 nFlags, const Messenger & cTarget )
 {
 	if( cDir.IsValid() == false )
 	{
@@ -99,48 +106,56 @@ int NodeMonitor::_CreateMonitor( const FSNode * pcNode, uint32 nFlags, const Mes
 
 NodeMonitor::NodeMonitor()
 {
-	m_nMonitor = -1;
+	m = new Private;
 }
 
-NodeMonitor::NodeMonitor( const std::string & cPath, uint32 nFlags, const Handler * pcHandler, const Looper * pcLooper )
+NodeMonitor::NodeMonitor( const String & cPath, uint32 nFlags, const Handler * pcHandler, const Looper * pcLooper )
 {
-	m_nMonitor = _CreateMonitor( cPath, nFlags, Messenger( pcHandler, pcLooper ) );
-	if( m_nMonitor < 0 )
+	m = new Private;
+
+	m->m_nMonitor = _CreateMonitor( cPath, nFlags, Messenger( pcHandler, pcLooper ) );
+	if( m->m_nMonitor < 0 )
 	{
 		throw errno_exception( "Failed to create monitor" );
 	}
 }
 
-NodeMonitor::NodeMonitor( const std::string & cPath, uint32 nFlags, const Messenger & cTarget )
+NodeMonitor::NodeMonitor( const String & cPath, uint32 nFlags, const Messenger & cTarget )
 {
-	m_nMonitor = _CreateMonitor( cPath, nFlags, cTarget );
-	if( m_nMonitor < 0 )
+	m = new Private;
+
+	m->m_nMonitor = _CreateMonitor( cPath, nFlags, cTarget );
+	if( m->m_nMonitor < 0 )
 	{
 		throw errno_exception( "Failed to create monitor" );
 	}
 }
 
-NodeMonitor::NodeMonitor( const Directory & cDir, const std::string & cPath, uint32 nFlags, const Handler * pcHandler, const Looper * pcLooper )
+NodeMonitor::NodeMonitor( const Directory & cDir, const String & cPath, uint32 nFlags, const Handler * pcHandler, const Looper * pcLooper )
 {
+	m = new Private;
+
 	if( cDir.IsValid() == false )
 	{
 		throw errno_exception( "Invalid directory", EINVAL );
 	}
-	m_nMonitor = _CreateMonitor( cDir, cPath, nFlags, Messenger( pcHandler, pcLooper ) );
-	if( m_nMonitor < 0 )
+	m->m_nMonitor = _CreateMonitor( cDir, cPath, nFlags, Messenger( pcHandler, pcLooper ) );
+	if( m->m_nMonitor < 0 )
 	{
 		throw errno_exception( "Failed to create monitor" );
 	}
 }
 
-NodeMonitor::NodeMonitor( const Directory & cDir, const std::string & cPath, uint32 nFlags, const Messenger & cTarget )
+NodeMonitor::NodeMonitor( const Directory & cDir, const String & cPath, uint32 nFlags, const Messenger & cTarget )
 {
+	m = new Private;
+
 	if( cDir.IsValid() == false )
 	{
 		throw errno_exception( "Invalid directory", EINVAL );
 	}
-	m_nMonitor = _CreateMonitor( cDir, cPath, nFlags, cTarget );
-	if( m_nMonitor < 0 )
+	m->m_nMonitor = _CreateMonitor( cDir, cPath, nFlags, cTarget );
+	if( m->m_nMonitor < 0 )
 	{
 		throw errno_exception( "Failed to create monitor" );
 	}
@@ -148,12 +163,14 @@ NodeMonitor::NodeMonitor( const Directory & cDir, const std::string & cPath, uin
 
 NodeMonitor::NodeMonitor( const FileReference & cRef, uint32 nFlags, const Handler * pcHandler, const Looper * pcLooper )
 {
+	m = new Private;
+
 	if( cRef.IsValid() == false )
 	{
 		throw errno_exception( "Invalid directory", EINVAL );
 	}
-	m_nMonitor = _CreateMonitor( cRef, nFlags, Messenger( pcHandler, pcLooper ) );
-	if( m_nMonitor < 0 )
+	m->m_nMonitor = _CreateMonitor( cRef, nFlags, Messenger( pcHandler, pcLooper ) );
+	if( m->m_nMonitor < 0 )
 	{
 		throw errno_exception( "Failed to create monitor" );
 	}
@@ -161,12 +178,14 @@ NodeMonitor::NodeMonitor( const FileReference & cRef, uint32 nFlags, const Handl
 
 NodeMonitor::NodeMonitor( const FileReference & cRef, uint32 nFlags, const Messenger & cTarget )
 {
+	m = new Private;
+
 	if( cRef.IsValid() == false )
 	{
 		throw errno_exception( "Invalid directory", EINVAL );
 	}
-	m_nMonitor = _CreateMonitor( cRef, nFlags, cTarget );
-	if( m_nMonitor < 0 )
+	m->m_nMonitor = _CreateMonitor( cRef, nFlags, cTarget );
+	if( m->m_nMonitor < 0 )
 	{
 		throw errno_exception( "Failed to create monitor" );
 	}
@@ -174,12 +193,14 @@ NodeMonitor::NodeMonitor( const FileReference & cRef, uint32 nFlags, const Messe
 
 NodeMonitor::NodeMonitor( const FSNode * pcNode, uint32 nFlags, const Handler * pcHandler, const Looper * pcLooper )
 {
+	m = new Private;
+
 	if( pcNode->IsValid() == false )
 	{
 		throw errno_exception( "Invalid node", EINVAL );
 	}
-	m_nMonitor = _CreateMonitor( pcNode, nFlags, Messenger( pcHandler, pcLooper ) );
-	if( m_nMonitor < 0 )
+	m->m_nMonitor = _CreateMonitor( pcNode, nFlags, Messenger( pcHandler, pcLooper ) );
+	if( m->m_nMonitor < 0 )
 	{
 		throw errno_exception( "Failed to create monitor" );
 	}
@@ -187,12 +208,14 @@ NodeMonitor::NodeMonitor( const FSNode * pcNode, uint32 nFlags, const Handler * 
 
 NodeMonitor::NodeMonitor( const FSNode * pcNode, uint32 nFlags, const Messenger & cTarget )
 {
+	m = new Private;
+
 	if( pcNode->IsValid() == false )
 	{
 		throw errno_exception( "Invalid node", EINVAL );
 	}
-	m_nMonitor = _CreateMonitor( pcNode, nFlags, cTarget );
-	if( m_nMonitor < 0 )
+	m->m_nMonitor = _CreateMonitor( pcNode, nFlags, cTarget );
+	if( m->m_nMonitor < 0 )
 	{
 		throw errno_exception( "Failed to create monitor" );
 	}
@@ -200,17 +223,19 @@ NodeMonitor::NodeMonitor( const FSNode * pcNode, uint32 nFlags, const Messenger 
 
 NodeMonitor::~NodeMonitor()
 {
-	if( m_nMonitor >= 0 )
+	delete m;
+
+	if( m->m_nMonitor >= 0 )
 	{
-		delete_node_monitor( m_nMonitor );
+		delete_node_monitor( m->m_nMonitor );
 	}
 }
 
 status_t NodeMonitor::Unset()
 {
-	if( m_nMonitor >= 0 )
+	if( m->m_nMonitor >= 0 )
 	{
-		return ( delete_node_monitor( m_nMonitor ) );
+		return ( delete_node_monitor( m->m_nMonitor ) );
 	}
 	else
 	{
@@ -220,7 +245,7 @@ status_t NodeMonitor::Unset()
 
 }
 
-status_t NodeMonitor::SetTo( const std::string & cPath, uint32 nFlags, const Messenger & cTarget )
+status_t NodeMonitor::SetTo( const String & cPath, uint32 nFlags, const Messenger & cTarget )
 {
 	int nNewMonitor = _CreateMonitor( cPath, nFlags, cTarget );
 
@@ -228,20 +253,20 @@ status_t NodeMonitor::SetTo( const std::string & cPath, uint32 nFlags, const Mes
 	{
 		return ( -1 );
 	}
-	if( m_nMonitor >= 0 )
+	if( m->m_nMonitor >= 0 )
 	{
-		delete_node_monitor( m_nMonitor );
+		delete_node_monitor( m->m_nMonitor );
 	}
-	m_nMonitor = nNewMonitor;
+	m->m_nMonitor = nNewMonitor;
 	return ( 0 );
 }
 
-status_t NodeMonitor::SetTo( const std::string & cPath, uint32 nFlags, const Handler * pcHandler, const Looper * pcLooper )
+status_t NodeMonitor::SetTo( const String & cPath, uint32 nFlags, const Handler * pcHandler, const Looper * pcLooper )
 {
 	return ( SetTo( cPath, nFlags, Messenger( pcHandler, pcLooper ) ) );
 }
 
-status_t NodeMonitor::SetTo( const Directory & cDir, const std::string & cPath, uint32 nFlags, const Messenger & cTarget )
+status_t NodeMonitor::SetTo( const Directory & cDir, const String & cPath, uint32 nFlags, const Messenger & cTarget )
 {
 	if( cDir.IsValid() == false )
 	{
@@ -253,15 +278,15 @@ status_t NodeMonitor::SetTo( const Directory & cDir, const std::string & cPath, 
 	{
 		return ( -1 );
 	}
-	if( m_nMonitor >= 0 )
+	if( m->m_nMonitor >= 0 )
 	{
-		delete_node_monitor( m_nMonitor );
+		delete_node_monitor( m->m_nMonitor );
 	}
-	m_nMonitor = nNewMonitor;
+	m->m_nMonitor = nNewMonitor;
 	return ( 0 );
 }
 
-status_t NodeMonitor::SetTo( const Directory & cDir, const std::string & cPath, uint32 nFlags, const Handler * pcHandler, const Looper * pcLooper )
+status_t NodeMonitor::SetTo( const Directory & cDir, const String & cPath, uint32 nFlags, const Handler * pcHandler, const Looper * pcLooper )
 {
 	return ( SetTo( cDir, cPath, nFlags, Messenger( pcHandler, pcLooper ) ) );
 }
@@ -278,11 +303,11 @@ status_t NodeMonitor::SetTo( const FileReference & cRef, uint32 nFlags, const Me
 	{
 		return ( -1 );
 	}
-	if( m_nMonitor >= 0 )
+	if( m->m_nMonitor >= 0 )
 	{
-		delete_node_monitor( m_nMonitor );
+		delete_node_monitor( m->m_nMonitor );
 	}
-	m_nMonitor = nNewMonitor;
+	m->m_nMonitor = nNewMonitor;
 	return ( 0 );
 }
 
@@ -303,11 +328,11 @@ status_t NodeMonitor::SetTo( const FSNode * pcNode, uint32 nFlags, const Messeng
 	{
 		return ( -1 );
 	}
-	if( m_nMonitor >= 0 )
+	if( m->m_nMonitor >= 0 )
 	{
-		delete_node_monitor( m_nMonitor );
+		delete_node_monitor( m->m_nMonitor );
 	}
-	m_nMonitor = nNewMonitor;
+	m->m_nMonitor = nNewMonitor;
 	return ( 0 );
 }
 
@@ -318,5 +343,7 @@ status_t NodeMonitor::SetTo( const FSNode * pcNode, uint32 nFlags, const Handler
 
 int NodeMonitor::GetMonitor() const
 {
-	return ( m_nMonitor );
+	return ( m->m_nMonitor );
 }
+
+

@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -17,20 +18,19 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef __STORAGE_FILEREFERENCE_H__
-#define __STORAGE_FILEREFERENCE_H__
+#ifndef __F_STORAGE_FILEREFERENCE_H__
+#define __F_STORAGE_FILEREFERENCE_H__
 
 #include <sys/stat.h>
 #include <storage/directory.h>
 #include <storage/path.h>
 
-#include <string>
+#include <util/string.h>
 
 namespace os {
 #if 0
 } // Fool Emacs autoindent
 #endif
-
 
 /** Semi persistent reference to a file
  * \ingroup storage
@@ -55,31 +55,31 @@ class FileReference
 {
 public:
     FileReference();
-    FileReference( const std::string& cPath, bool bFollowLinks = false );
-    FileReference( const Directory& cDir, const std::string& cName, bool bFollowLinks = false );
+    FileReference( const String& cPath, bool bFollowLinks = false );
+    FileReference( const Directory& cDir, const String& cName, bool bFollowLinks = false );
     FileReference( const FileReference& cRef );
     virtual ~FileReference();
 
     
-    status_t SetTo( const std::string& cPath, bool bFollowLinks = false );
-    status_t SetTo( const Directory& cDir, const std::string& cName, bool bFollowLinks = false );
+    status_t SetTo( const String& cPath, bool bFollowLinks = false );
+    status_t SetTo( const Directory& cDir, const String& cName, bool bFollowLinks = false );
     status_t SetTo( const FileReference& cRef );
     void Unset();
     
     bool IsValid() const;
     
-    std::string GetName() const;
-    status_t 	GetPath( std::string* pcPath ) const;
+    String GetName() const;
+    status_t 	GetPath( String* pcPath ) const;
 
-    int	     Rename( const std::string& cNewName );
+    int	     Rename( const String& cNewName );
     status_t Delete();
 
     status_t GetStat( struct ::stat* psStat ) const;
 
     const Directory& GetDirectory() const;
 private:
-    Directory	m_cDirectory;
-    std::string m_cName;
+	class Private;
+	Private *m;
 };
 
 

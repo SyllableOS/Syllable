@@ -1,6 +1,6 @@
-
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -32,7 +32,7 @@ SymLink::SymLink()
 {
 }
 
-SymLink::SymLink( const std::string & cPath, int nOpenMode ):FSNode( cPath, nOpenMode | O_NOTRAVERSE )
+SymLink::SymLink( const String & cPath, int nOpenMode ):FSNode( cPath, nOpenMode | O_NOTRAVERSE )
 {
 	if( S_ISLNK( GetMode( false ) ) == false )
 	{
@@ -40,7 +40,7 @@ SymLink::SymLink( const std::string & cPath, int nOpenMode ):FSNode( cPath, nOpe
 	}
 }
 
-SymLink::SymLink( const Directory & cDir, const std::string & cName, int nOpenMode ):FSNode( cDir, cName, nOpenMode | O_NOTRAVERSE )
+SymLink::SymLink( const Directory & cDir, const String & cName, int nOpenMode ):FSNode( cDir, cName, nOpenMode | O_NOTRAVERSE )
 {
 	if( S_ISLNK( GetMode( false ) ) == false )
 	{
@@ -72,7 +72,7 @@ SymLink::~SymLink()
 {
 }
 
-status_t SymLink::SetTo( const std::string & cPath, int nOpenMode )
+status_t SymLink::SetTo( const String & cPath, int nOpenMode )
 {
 	try
 	{
@@ -85,7 +85,7 @@ status_t SymLink::SetTo( const std::string & cPath, int nOpenMode )
 	}
 }
 
-status_t SymLink::SetTo( const Directory & cDir, const std::string & cPath, int nOpenMode )
+status_t SymLink::SetTo( const Directory & cDir, const String & cPath, int nOpenMode )
 {
 	try
 	{
@@ -126,9 +126,9 @@ status_t SymLink::SetTo( const SymLink & cLink )
 	return ( FSNode::SetTo( cLink ) );
 }
 
-status_t SymLink::ReadLink( std::string * pcBuffer )
+status_t SymLink::ReadLink( String * pcBuffer )
 {
-	std::string cBuffer;
+	String cBuffer;
 
 	cBuffer.resize( PATH_MAX );
 	for( ;; )
@@ -153,9 +153,9 @@ status_t SymLink::ReadLink( std::string * pcBuffer )
 	return ( 0 );
 }
 
-std::string SymLink::ReadLink()
+String SymLink::ReadLink()
 {
-	std::string cBuffer;
+	String cBuffer;
 	if( ReadLink( &cBuffer ) >= 0 )
 	{
 		return ( cBuffer );
@@ -166,9 +166,9 @@ std::string SymLink::ReadLink()
 	}
 }
 
-status_t SymLink::ConstructPath( const std::string & cParent, Path * pcPath )
+status_t SymLink::ConstructPath( const String & cParent, Path * pcPath )
 {
-	std::string cBuffer;
+	String cBuffer;
 	if( ReadLink( &cBuffer ) < 0 )
 	{
 		return ( -1 );
@@ -187,7 +187,7 @@ status_t SymLink::ConstructPath( const std::string & cParent, Path * pcPath )
 
 status_t SymLink::ConstructPath( const Directory & cParent, Path * pcPath )
 {
-	std::string cParentPath;
+	String cParentPath;
 	if( cParent.GetPath( &cParentPath ) < 0 )
 	{
 		return ( -1 );

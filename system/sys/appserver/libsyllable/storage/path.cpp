@@ -1,6 +1,6 @@
-
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 1999 - 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -26,60 +26,65 @@
 
 using namespace os;
 
+class Path::Private
+{
+	public:
+	Private() {
+		m_pzPath = NULL;
+		m_nMaxSize = 0;
+	}
+	~Private() {
+		delete[]m_pzPath;
+		m_pzPath = NULL;
+	}
+//    String m_cBuffer;
+    char*	m_pzPath;
+    uint	m_nMaxSize;
+};
+
 Path::Path()
 {
-	m_pzPath = NULL;
-	m_nMaxSize = 0;
+	m = new Private;
 }
 
 Path::Path( const Path & cPath )
 {
-	m_pzPath = NULL;
-	m_nMaxSize = 0;
-	SetTo( cPath.m_pzPath );
+	m = new Private;
+	SetTo( cPath.m->m_pzPath );
 }
 
-Path::Path( const char *pzPath )
+Path::Path( const String& cPath )
 {
-	m_pzPath = NULL;
-	m_nMaxSize = 0;
-	SetTo( pzPath );
-}
-
-Path::Path( const char *pzPath, int nLen )
-{
-	m_pzPath = NULL;
-	m_nMaxSize = 0;
-	SetTo( pzPath, nLen );
+	m = new Private;
+	SetTo( cPath );
 }
 
 Path::~Path()
 {
-	delete[]m_pzPath;
-	m_pzPath = NULL;
+	delete m;
 }
 
 void Path::operator =( const Path & cPath )
 {
-	SetTo( cPath.m_pzPath );
+	SetTo( cPath.m->m_pzPath );
 }
 
-void Path::operator =( const char *pzPath )
+void Path::operator =( const String& cPath )
 {
-	SetTo( pzPath );
+	SetTo( cPath );
 }
 
 bool Path::operator==( const Path & cPath ) const
 {
-	return ( strcmp( m_pzPath, cPath.m_pzPath ) == 0 );
+	return ( strcmp( m->m_pzPath, cPath.m->m_pzPath ) == 0 );
 }
 
-void Path::SetTo( const char *pzPath )
+void Path::SetTo( const String& cPath )
 {
-	SetTo( pzPath, strlen( pzPath ) );
+	_SetTo( cPath.c_str(), cPath.size() );
 }
 
-void Path::SetTo( const char *pzPath, int nLen )
+void Path::_SetTo( const char *pzPath, int nLen )
 {
 	char zCWD[4096];
 
@@ -99,90 +104,87 @@ void Path::SetTo( const char *pzPath, int nLen )
 	}
 	nMaxSize++;		// Zero terminator
 
-	if( nMaxSize > m_nMaxSize )
+	if( nMaxSize > m->m_nMaxSize )
 	{
-		delete[]m_pzPath;
-		m_pzPath = new char[nMaxSize];
+		delete[]m->m_pzPath;
+		m->m_pzPath = new char[nMaxSize];
 
-		m_nMaxSize = nMaxSize;
+		m->m_nMaxSize = nMaxSize;
 	}
-	strcpy( m_pzPath, zCWD );
-	memcpy( m_pzPath + strlen( zCWD ), pzPath, nLen );
-	( m_pzPath + strlen( zCWD ) + nLen )[0] = '\0';
+	strcpy( m->m_pzPath, zCWD );
+	memcpy( m->m_pzPath + strlen( zCWD ), pzPath, nLen );
+	( m->m_pzPath + strlen( zCWD ) + nLen )[0] = '\0';
 
-	assert( strlen( m_pzPath ) < m_nMaxSize );
+	assert( strlen( m->m_pzPath ) < m->m_nMaxSize );
 	_Normalize();
-	assert( strlen( m_pzPath ) < m_nMaxSize );
+	assert( strlen( m->m_pzPath ) < m->m_nMaxSize );
 }
 
-void Path::Append( const char *pzPath )
+void Path::Append( const String& cPath )
 {
-	if( pzPath == NULL )
-	{
-		return;
-	}
-	uint nNewLen = strlen( m_pzPath ) + strlen( pzPath ) + 2;
+	const char *pzPath = cPath.c_str();
+	uint nNewLen = strlen( m->m_pzPath ) + cPath.size() + 2;
 
-	if( nNewLen > m_nMaxSize )
+	if( nNewLen > m->m_nMaxSize )
 	{
 		char *pzNewBuf = new char[nNewLen];
 
-		strcpy( pzNewBuf, m_pzPath );
-		delete[]m_pzPath;
-		m_pzPath = pzNewBuf;
-		m_nMaxSize = nNewLen;
+		strcpy( pzNewBuf, m->m_pzPath );
+		delete[]m->m_pzPath;
+		m->m_pzPath = pzNewBuf;
+		m->m_nMaxSize = nNewLen;
 	}
-	strcat( m_pzPath, "/" );
-	strcat( m_pzPath, pzPath );
-	assert( strlen( m_pzPath ) < m_nMaxSize );
+	strcat( m->m_pzPath, "/" );
+	strcat( m->m_pzPath, pzPath );
+	assert( strlen( m->m_pzPath ) < m->m_nMaxSize );
 	_Normalize();
-	assert( strlen( m_pzPath ) < m_nMaxSize );
+	assert( strlen( m->m_pzPath ) < m->m_nMaxSize );
 }
 
 void Path::Append( const Path & cPath )
 {
-	Append( cPath.m_pzPath );
+	Append( cPath.m->m_pzPath );
 }
 
-const char *Path::GetLeaf() const
+String Path::GetLeaf() const
 {
-	char *pzLeaf = strrchr( m_pzPath, '/' );
+	char *pzLeaf = strrchr( m->m_pzPath, '/' );
 
 	if( pzLeaf == NULL )
 	{
-		pzLeaf = m_pzPath;
+		pzLeaf = m->m_pzPath;
 	}
 	return ( pzLeaf + 1 );
 }
 
 Path Path::GetDir() const
 {
-	char *pzLeaf = strrchr( m_pzPath, '/' );
+	char *pzLeaf = strrchr( m->m_pzPath, '/' );
 
 	if( pzLeaf == NULL )
 	{
 		return ( Path( "." ) );
 	}
-	else if( pzLeaf == m_pzPath )
+	else if( pzLeaf == m->m_pzPath )
 	{
-		return ( "/" );
+		return ( Path( "/" ) );
 	}
 	else
 	{
-		return ( Path( m_pzPath, pzLeaf - m_pzPath ) );
+		return ( Path( String( m->m_pzPath, pzLeaf - m->m_pzPath ) ) );
 	}
 }
 
-const char *Path::GetPath() const
+String Path::GetPath() const
 {
-	return ( m_pzPath );
+	return ( m->m_pzPath );
 }
 
 void Path::_Normalize()
 {
 	int i;
-	char *pzPath = m_pzPath;
-	char *pzDst = m_pzPath;
+	char *pzPath = m->m_pzPath;
+	char *pzDst = m->m_pzPath;
 	char *pzCurName;
 	char c;
 	int nLen;
@@ -256,14 +258,14 @@ void Path::_Normalize()
 	}
 }
 
-Path::operator  std::string() const
+Path::operator  String() const
 {
-	if( m_pzPath == NULL )
+	if( m->m_pzPath == NULL )
 	{
 		return ( "" );
 	}
 	else
 	{
-		return ( m_pzPath );
+		return ( m->m_pzPath );
 	}
 }

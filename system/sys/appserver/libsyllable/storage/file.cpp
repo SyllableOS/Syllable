@@ -30,14 +30,33 @@
 
 using namespace os;
 
+class File::Private
+{
+	public:
+	Private():m_cMutex( "os::File" ) {
+		m_pBuffer = NULL;
+		m_nBufferSize = DEFAULT_BUFFER_SIZE;
+		m_nValidBufSize = 0;
+		m_nPosition = 0;
+		m_nBufPos = 0;
+		m_bDirty = false;
+	}
+	
+	~Private() {
+	}
+
+    mutable Locker m_cMutex;
+    uint8* m_pBuffer;
+    int	   m_nBufferSize;
+    int	   m_nValidBufSize;
+    off_t  m_nPosition;
+    off_t  m_nBufPos;
+    bool   m_bDirty;
+};
+
 void File::_Init()
 {
-	m_pBuffer = NULL;
-	m_nBufferSize = DEFAULT_BUFFER_SIZE;
-	m_nValidBufSize = 0;
-	m_nPosition = 0;
-	m_nBufPos = 0;
-	m_bDirty = false;
+	m = new Private;
 }
 
 /** Default constructor
@@ -48,7 +67,7 @@ void File::_Init()
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-File::File():m_cMutex( "os::File" )
+File::File()
 {
 	_Init();
 }
@@ -80,13 +99,14 @@ File::File():m_cMutex( "os::File" )
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-File::File( const std::string & cPath, int nOpenMode ):FSNode( cPath, nOpenMode & ~O_NOTRAVERSE ), m_cMutex( "os::File" )
+File::File( const String & cPath, int nOpenMode ):FSNode( cPath, nOpenMode & ~O_NOTRAVERSE )
 {
+	_Init();
+
 	if( S_ISDIR( GetMode( false ) ) )
 	{
 		throw errno_exception( "Node not a file", EINVAL );
 	}
-	_Init();
 }
 
 /** Open a file addressed as a name inside a specified directory.
@@ -108,13 +128,14 @@ File::File( const std::string & cPath, int nOpenMode ):FSNode( cPath, nOpenMode 
  *****************************************************************************/
 
 
-File::File( const Directory & cDir, const std::string & cPath, int nOpenMode ):FSNode( cDir, cPath, nOpenMode & ~O_NOTRAVERSE ), m_cMutex( "os::File" )
+File::File( const Directory & cDir, const String & cPath, int nOpenMode ):FSNode( cDir, cPath, nOpenMode & ~O_NOTRAVERSE )
 {
+	_Init();
+
 	if( S_ISDIR( GetMode( false ) ) )
 	{
 		throw errno_exception( "Node not a file", EINVAL );
 	}
-	_Init();
 }
 
 /** Open a file referred to by a os::FileReference.
@@ -133,13 +154,13 @@ File::File( const Directory & cDir, const std::string & cPath, int nOpenMode ):F
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-File::File( const FileReference & cRef, int nOpenMode ):FSNode( cRef, nOpenMode & ~O_NOTRAVERSE ), m_cMutex( "os::File" )
+File::File( const FileReference & cRef, int nOpenMode ):FSNode( cRef, nOpenMode & ~O_NOTRAVERSE )
 {
+	_Init();
 	if( S_ISDIR( GetMode( false ) ) )
 	{
 		throw errno_exception( "Node not a file", EINVAL );
 	}
-	_Init();
 }
 
 /** Construct a file from a FSNode.
@@ -155,13 +176,14 @@ File::File( const FileReference & cRef, int nOpenMode ):FSNode( cRef, nOpenMode 
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-File::File( const FSNode & cNode ):FSNode( cNode ), m_cMutex( "os::File" )
+File::File( const FSNode & cNode ):FSNode( cNode )
 {
+	_Init();
+
 	if( S_ISDIR( GetMode( false ) ) || S_ISLNK( GetMode( false ) ) )
 	{
 		throw errno_exception( "Node not a file", EINVAL );
 	}
-	_Init();
 }
 
 /** Construct a file object from a open filedescriptor.
@@ -179,16 +201,17 @@ File::File( const FSNode & cNode ):FSNode( cNode ), m_cMutex( "os::File" )
  *****************************************************************************/
 
 
-File::File( int nFD ):FSNode( nFD ), m_cMutex( "os::File" )
+File::File( int nFD ):FSNode( nFD )
 {
+	_Init();
+
 	if( S_ISDIR( GetMode( false ) ) )
 	{
 		throw errno_exception( "Node not a file", EINVAL );
 	}
-	_Init();
 }
 
-/** Copy constructos.
+/** Copy constructor.
  * \par Description:
  *	This constructor will make an independent copy of \p cFile.
  *	The copy and original will have their own file pointers and
@@ -205,46 +228,47 @@ File::File( int nFD ):FSNode( nFD ), m_cMutex( "os::File" )
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-File::File( const File & cFile ):FSNode( cFile ), m_cMutex( "os::File" )
+File::File( const File & cFile ):FSNode( cFile )
 {
 	_Init();
-	m_nPosition = cFile.m_nPosition;
-	m_nBufferSize = cFile.m_nBufferSize;
+	m->m_nPosition = cFile.m->m_nPosition;
+	m->m_nBufferSize = cFile.m->m_nBufferSize;
 }
 
 File::~File()
 {
-	if( m_bDirty )
+	if( m->m_bDirty )
 	{
 		Flush();
 	}
-	delete[]m_pBuffer;
+	delete[]m->m_pBuffer;
+	delete m;
 }
 
 status_t File::FDChanged( int nNewFD, const struct::stat & sStat )
 {
-	if( m_bDirty && IsValid() )
+	if( m->m_bDirty && IsValid() )
 	{
 		Flush();
 	}
-	m_nValidBufSize = 0;
+	m->m_nValidBufSize = 0;
 	return ( 0 );
 }
 
 status_t File::_FillBuffer( off_t nPos )
 {
-	if( m_bDirty )
+	if( m->m_bDirty )
 	{
 		if( Flush() < 0 )
 		{
 			return ( -1 );
 		}
 	}
-	m_nBufPos = nPos;
+	m->m_nBufPos = nPos;
 
 	while( true )
 	{
-		ssize_t nLen = read_pos( GetFileDescriptor(), nPos, m_pBuffer, m_nBufferSize );
+		ssize_t nLen = read_pos( GetFileDescriptor(), nPos, m->m_pBuffer, m->m_nBufferSize );
 
 		if( nLen < 0 )
 		{
@@ -257,7 +281,7 @@ status_t File::_FillBuffer( off_t nPos )
 				return ( -1 );
 			}
 		}
-		m_nValidBufSize = nLen;
+		m->m_nValidBufSize = nLen;
 		return ( 0 );
 	}
 }
@@ -298,46 +322,46 @@ status_t File::_FillBuffer( off_t nPos )
 
 status_t File::SetBufferSize( int nBufferSize )
 {
-	AutoLocker cLock( &m_cMutex );
+	AutoLocker cLock( &m->m_cMutex );
 
-	if( nBufferSize == m_nBufferSize )
+	if( nBufferSize == m->m_nBufferSize )
 	{
 		return ( 0 );
 	}
 	if( nBufferSize == 0 )
 	{
-		if( m_bDirty )
+		if( m->m_bDirty )
 		{
 			if( Flush() < 0 )
 			{
 				return ( -1 );
 			}
 		}
-		m_nValidBufSize = 0;
-		m_nBufferSize = 0;
-		delete[]m_pBuffer;
-		m_pBuffer = NULL;
+		m->m_nValidBufSize = 0;
+		m->m_nBufferSize = 0;
+		delete[]m->m_pBuffer;
+		m->m_pBuffer = NULL;
 	}
 	else
 	{
 		try
 		{
-			if( m_pBuffer != NULL )
+			if( m->m_pBuffer != NULL )
 			{
 				uint8 *pNewBuffer = new uint8[nBufferSize];
 
-				if( m_nValidBufSize > nBufferSize )
+				if( m->m_nValidBufSize > nBufferSize )
 				{
-					m_nValidBufSize = nBufferSize;
+					m->m_nValidBufSize = nBufferSize;
 				}
-				if( m_nValidBufSize > 0 )
+				if( m->m_nValidBufSize > 0 )
 				{
-					memcpy( pNewBuffer, m_pBuffer, m_nValidBufSize );
+					memcpy( pNewBuffer, m->m_pBuffer, m->m_nValidBufSize );
 				}
-				delete[]m_pBuffer;
-				m_pBuffer = pNewBuffer;
+				delete[]m->m_pBuffer;
+				m->m_pBuffer = pNewBuffer;
 			}
-			m_nBufferSize = nBufferSize;
+			m->m_nBufferSize = nBufferSize;
 		}
 		catch( std::bad_alloc & cExc )
 		{
@@ -358,7 +382,7 @@ status_t File::SetBufferSize( int nBufferSize )
 
 int File::GetBufferSize() const
 {
-	return ( m_nBufferSize );
+	return ( m->m_nBufferSize );
 }
 
 /** Write unwritten data to the underlying file.
@@ -374,16 +398,16 @@ int File::GetBufferSize() const
 
 status_t File::Flush()
 {
-	AutoLocker cLock( &m_cMutex );
+	AutoLocker cLock( &m->m_cMutex );
 
-	if( m_bDirty )
+	if( m->m_bDirty )
 	{
-		ssize_t nSize = m_nValidBufSize;
+		ssize_t nSize = m->m_nValidBufSize;
 		int nOffset = 0;
 
 		while( nSize > 0 )
 		{
-			ssize_t nLen = write_pos( GetFileDescriptor(), m_nBufPos + nOffset, m_pBuffer + nOffset, nSize );
+			ssize_t nLen = write_pos( GetFileDescriptor(), m->m_nBufPos + nOffset, m->m_pBuffer + nOffset, nSize );
 
 			if( nLen < 0 )
 			{
@@ -399,48 +423,48 @@ status_t File::Flush()
 			nSize -= nLen;
 			nOffset += nLen;
 		}
-		m_bDirty = false;
+		m->m_bDirty = false;
 	}
 	return ( 0 );
 }
 
 ssize_t File::Read( void *pBuffer, ssize_t nSize )
 {
-	AutoLocker cLock( &m_cMutex );
-	ssize_t nLen = ReadPos( m_nPosition, pBuffer, nSize );
+	AutoLocker cLock( &m->m_cMutex );
+	ssize_t nLen = ReadPos( m->m_nPosition, pBuffer, nSize );
 
 	if( nLen > 0 )
 	{
-		m_nPosition += nLen;
+		m->m_nPosition += nLen;
 	}
 	return ( nLen );
 }
 
 ssize_t File::Write( const void *pBuffer, ssize_t nSize )
 {
-	AutoLocker cLock( &m_cMutex );
-	ssize_t nLen = WritePos( m_nPosition, pBuffer, nSize );
+	AutoLocker cLock( &m->m_cMutex );
+	ssize_t nLen = WritePos( m->m_nPosition, pBuffer, nSize );
 
 	if( nLen > 0 )
 	{
-		m_nPosition += nLen;
+		m->m_nPosition += nLen;
 	}
 	return ( nLen );
 }
 
 ssize_t File::ReadPos( off_t nPos, void *pBuffer, ssize_t nSize )
 {
-	AutoLocker cLock( &m_cMutex );
+	AutoLocker cLock( &m->m_cMutex );
 
-	if( m_nBufferSize == 0 )
+	if( m->m_nBufferSize == 0 )
 	{
 		return ( read_pos( GetFileDescriptor(), nPos, pBuffer, nSize ) );
 	}
-	if( m_pBuffer == NULL )
+	if( m->m_pBuffer == NULL )
 	{
 		try
 		{
-			m_pBuffer = new uint8[m_nBufferSize];
+			m->m_pBuffer = new uint8[m->m_nBufferSize];
 		} catch( std::bad_alloc & cExc )
 		{
 			errno = ENOMEM;
@@ -449,11 +473,11 @@ ssize_t File::ReadPos( off_t nPos, void *pBuffer, ssize_t nSize )
 	}
 	ssize_t nBytesRead = 0;
 
-	if( nSize > m_nBufferSize * 2 )
+	if( nSize > m->m_nBufferSize * 2 )
 	{
-		ssize_t nPreSize = nSize - m_nBufferSize;
+		ssize_t nPreSize = nSize - m->m_nBufferSize;
 
-		if( m_nValidBufSize == 0 || nPos + nPreSize <= m_nBufPos || nPos > m_nBufPos + m_nValidBufSize )
+		if( m->m_nValidBufSize == 0 || nPos + nPreSize <= m->m_nBufPos || nPos > m->m_nBufPos + m->m_nValidBufSize )
 		{
 			ssize_t nLen = read_pos( GetFileDescriptor(), nPos, pBuffer, nPreSize );
 
@@ -470,25 +494,25 @@ ssize_t File::ReadPos( off_t nPos, void *pBuffer, ssize_t nSize )
 
 	while( nSize > 0 )
 	{
-		if( nPos < m_nBufPos || nPos >= m_nBufPos + m_nValidBufSize )
+		if( nPos < m->m_nBufPos || nPos >= m->m_nBufPos + m->m_nValidBufSize )
 		{
 			if( _FillBuffer( nPos ) < 0 )
 			{
 				return ( ( nBytesRead > 0 ) ? nBytesRead : -1 );
 			}
-			else if( m_nValidBufSize == 0 )
+			else if( m->m_nValidBufSize == 0 )
 			{
 				return ( nBytesRead );
 			}
 		}
-		int nBufOffset = nPos - m_nBufPos;
-		ssize_t nCurLen = m_nValidBufSize - nBufOffset;
+		int nBufOffset = nPos - m->m_nBufPos;
+		ssize_t nCurLen = m->m_nValidBufSize - nBufOffset;
 
 		if( nCurLen > nSize )
 		{
 			nCurLen = nSize;
 		}
-		memcpy( pBuffer, m_pBuffer + nBufOffset, nCurLen );
+		memcpy( pBuffer, m->m_pBuffer + nBufOffset, nCurLen );
 		nBytesRead += nCurLen;
 		nPos += nCurLen;
 		nSize -= nCurLen;
@@ -499,17 +523,17 @@ ssize_t File::ReadPos( off_t nPos, void *pBuffer, ssize_t nSize )
 
 ssize_t File::WritePos( off_t nPos, const void *pBuffer, ssize_t nSize )
 {
-	AutoLocker cLock( &m_cMutex );
+	AutoLocker cLock( &m->m_cMutex );
 
-	if( m_nBufferSize == 0 )
+	if( m->m_nBufferSize == 0 )
 	{
 		return ( write_pos( GetFileDescriptor(), nPos, pBuffer, nSize ) );
 	}
-	if( m_pBuffer == NULL )
+	if( m->m_pBuffer == NULL )
 	{
 		try
 		{
-			m_pBuffer = new uint8[m_nBufferSize];
+			m->m_pBuffer = new uint8[m->m_nBufferSize];
 		} catch( std::bad_alloc & cExc )
 		{
 			errno = ENOMEM;
@@ -518,11 +542,11 @@ ssize_t File::WritePos( off_t nPos, const void *pBuffer, ssize_t nSize )
 	}
 	ssize_t nBytesWritten = 0;
 
-	if( nSize > m_nBufferSize * 2 )
+	if( nSize > m->m_nBufferSize * 2 )
 	{
-		ssize_t nPreSize = nSize - m_nBufferSize;
+		ssize_t nPreSize = nSize - m->m_nBufferSize;
 
-		if( m_nValidBufSize == 0 || nPos + nPreSize <= m_nBufPos || nPos > m_nBufPos + m_nValidBufSize )
+		if( m->m_nValidBufSize == 0 || nPos + nPreSize <= m->m_nBufPos || nPos > m->m_nBufPos + m->m_nValidBufSize )
 		{
 			ssize_t nLen = write_pos( GetFileDescriptor(), nPos, pBuffer, nPreSize );
 
@@ -536,61 +560,61 @@ ssize_t File::WritePos( off_t nPos, const void *pBuffer, ssize_t nSize )
 			pBuffer = ( ( const uint8 * )pBuffer ) + nLen;
 		}
 	}
-	if( nPos < m_nBufPos || nPos > m_nBufPos + m_nValidBufSize )
+	if( nPos < m->m_nBufPos || nPos > m->m_nBufPos + m->m_nValidBufSize )
 	{
-		if( m_bDirty )
+		if( m->m_bDirty )
 		{
 			if( Flush() < 0 )
 			{
 				return ( -1 );
 			}
 		}
-		m_nBufPos = nPos;
-		m_nValidBufSize = 0;
+		m->m_nBufPos = nPos;
+		m->m_nValidBufSize = 0;
 	}
 	while( nSize > 0 )
 	{
-		if( nPos >= m_nBufPos + m_nBufferSize )
+		if( nPos >= m->m_nBufPos + m->m_nBufferSize )
 		{
-			if( m_bDirty )
+			if( m->m_bDirty )
 			{
 				if( Flush() < 0 )
 				{
 					return ( -1 );
 				}
 			}
-			m_nBufPos = nPos;
-			m_nValidBufSize = 0;
+			m->m_nBufPos = nPos;
+			m->m_nValidBufSize = 0;
 		}
-		int nBufOffset = nPos - m_nBufPos;
-		ssize_t nCurLen = m_nBufferSize - nBufOffset;
+		int nBufOffset = nPos - m->m_nBufPos;
+		ssize_t nCurLen = m->m_nBufferSize - nBufOffset;
 
 		if( nCurLen > nSize )
 		{
 			nCurLen = nSize;
 		}
-		memcpy( m_pBuffer + nBufOffset, pBuffer, nCurLen );
-		if( nBufOffset + nCurLen > m_nValidBufSize )
+		memcpy( m->m_pBuffer + nBufOffset, pBuffer, nCurLen );
+		if( nBufOffset + nCurLen > m->m_nValidBufSize )
 		{
-			m_nValidBufSize = nBufOffset + nCurLen;
+			m->m_nValidBufSize = nBufOffset + nCurLen;
 		}
 		nBytesWritten += nCurLen;
 		nPos += nCurLen;
 		nSize -= nCurLen;
 		pBuffer = ( ( const uint8 * )pBuffer ) + nCurLen;
-		m_bDirty = true;
+		m->m_bDirty = true;
 	}
 	return ( nBytesWritten );
 }
 
 off_t File::GetSize( bool bUpdateCache ) const
 {
-	AutoLocker cLock( &m_cMutex );
+	AutoLocker cLock( &m->m_cMutex );
 	off_t nSize = FSNode::GetSize( bUpdateCache );
 
-	if( nSize != -1 && m_nValidBufSize > 0 && m_nBufPos + m_nValidBufSize > nSize )
+	if( nSize != -1 && m->m_nValidBufSize > 0 && m->m_nBufPos + m->m_nValidBufSize > nSize )
 	{
-		nSize = m_nBufPos + m_nValidBufSize;
+		nSize = m->m_nBufPos + m->m_nValidBufSize;
 	}
 	return ( nSize );
 }
@@ -609,7 +633,7 @@ off_t File::GetSize( bool bUpdateCache ) const
 
 off_t File::Seek( off_t nPos, int nMode )
 {
-	AutoLocker cLock( &m_cMutex );
+	AutoLocker cLock( &m->m_cMutex );
 
 	switch ( nMode )
 	{
@@ -619,16 +643,16 @@ off_t File::Seek( off_t nPos, int nMode )
 			errno = EINVAL;
 			return ( -1 );
 		}
-		m_nPosition = nPos;
-		return ( m_nPosition );
+		m->m_nPosition = nPos;
+		return ( m->m_nPosition );
 	case SEEK_CUR:
-		if( m_nPosition + nPos < 0 )
+		if( m->m_nPosition + nPos < 0 )
 		{
 			errno = EINVAL;
 			return ( -1 );
 		}
-		m_nPosition += nPos;
-		return ( m_nPosition );
+		m->m_nPosition += nPos;
+		return ( m->m_nPosition );
 	case SEEK_END:
 		{
 			off_t nSize = GetSize();
@@ -638,11 +662,15 @@ off_t File::Seek( off_t nPos, int nMode )
 				errno = EINVAL;
 				return ( -1 );
 			}
-			m_nPosition = nSize + nPos;
-			return ( m_nPosition );
+			m->m_nPosition = nSize + nPos;
+			return ( m->m_nPosition );
 		}
 	default:
 		errno = EINVAL;
 		return ( -1 );
 	}
 }
+
+
+
+

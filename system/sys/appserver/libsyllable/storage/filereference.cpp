@@ -1,6 +1,6 @@
-
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -30,16 +30,29 @@
 
 using namespace os;
 
+class FileReference::Private
+{
+	public:
+    Directory	m_cDirectory;
+    String	m_cName;
+};
+
 FileReference::FileReference()
 {
+	m = new Private;
 }
 
-FileReference::FileReference( const FileReference & cRef ):m_cDirectory( cRef.m_cDirectory ), m_cName( cRef.m_cName )
+FileReference::FileReference( const FileReference & cRef )
 {
+	m = new Private;
+	m->m_cDirectory = cRef.m->m_cDirectory;
+	m->m_cName = cRef.m->m_cName;
 }
 
-FileReference::FileReference( const std::string & a_cPath, bool bFollowLinks )
+FileReference::FileReference( const String & a_cPath, bool bFollowLinks )
 {
+	m = new Private;
+	
 	Path cPath( a_cPath.c_str() );
 
 	while( bFollowLinks )
@@ -60,25 +73,27 @@ FileReference::FileReference( const std::string & a_cPath, bool bFollowLinks )
 			break;
 		}
 	}
-	m_cName = cPath.GetLeaf();
-	if( m_cName.size() == 0 )
+	m->m_cName = cPath.GetLeaf();
+	if( m->m_cName.size() == 0 )
 	{
 		throw errno_exception( "Invalid path name", EINVAL );
 	}
 
-	if( m_cDirectory.SetTo( cPath.GetDir().GetPath(  ), O_RDONLY ) < 0 )
+	if( m->m_cDirectory.SetTo( cPath.GetDir().GetPath(  ), O_RDONLY ) < 0 )
 	{
 		throw errno_exception( "Failed to open directory" );
 	}
 }
 
-FileReference::FileReference( const Directory & cDir, const std::string & cName, bool bFollowLinks )
+FileReference::FileReference( const Directory & cDir, const String & cName, bool bFollowLinks )
 {
-	if( m_cDirectory.SetTo( cDir ) < 0 )
+	m = new Private;
+
+	if( m->m_cDirectory.SetTo( cDir ) < 0 )
 	{
 		throw errno_exception( "Failed to copy directory" );
 	}
-	m_cName = cName;
+	m->m_cName = cName;
 	if( bFollowLinks )
 	{
 		try
@@ -99,19 +114,20 @@ FileReference::FileReference( const Directory & cDir, const std::string & cName,
 
 FileReference::~FileReference()
 {
+	delete m;
 }
 
 status_t FileReference::SetTo( const FileReference & cRef )
 {
-	if( m_cDirectory.SetTo( cRef.m_cDirectory ) < 0 )
+	if( m->m_cDirectory.SetTo( cRef.m->m_cDirectory ) < 0 )
 	{
 		return ( -1 );
 	}
-	m_cName = cRef.m_cName;
+	m->m_cName = cRef.m->m_cName;
 	return ( 0 );
 }
 
-int FileReference::SetTo( const std::string & a_cPath, bool bFollowLinks )
+int FileReference::SetTo( const String & a_cPath, bool bFollowLinks )
 {
 	try
 	{
@@ -126,7 +142,7 @@ int FileReference::SetTo( const std::string & a_cPath, bool bFollowLinks )
 	}
 }
 
-int FileReference::SetTo( const Directory & cDir, const std::string & cName, bool bFollowLinks )
+int FileReference::SetTo( const Directory & cDir, const String & cName, bool bFollowLinks )
 {
 	try
 	{
@@ -143,46 +159,46 @@ int FileReference::SetTo( const Directory & cDir, const std::string & cName, boo
 
 void FileReference::Unset()
 {
-	m_cDirectory.Unset();
+	m->m_cDirectory.Unset();
 }
 
 bool FileReference::IsValid() const
 {
-	return ( m_cDirectory.IsValid() );
+	return ( m->m_cDirectory.IsValid() );
 }
 
-std::string FileReference::GetName() const
+String FileReference::GetName() const
 {
-	return ( m_cName );
+	return ( m->m_cName );
 }
 
-status_t FileReference::GetPath( std::string * pcPath ) const
+status_t FileReference::GetPath( String * pcPath ) const
 {
-	std::string cPath;
+	String cPath;
 
-	if( m_cDirectory.GetPath( &cPath ) < 0 )
+	if( m->m_cDirectory.GetPath( &cPath ) < 0 )
 	{
 		return ( -1 );
 	}
 	cPath += "/";
-	cPath += m_cName;
+	cPath += m->m_cName;
 	*pcPath = cPath;
 	return ( 0 );
 }
 
-status_t FileReference::Rename( const std::string & cNewName )
+status_t FileReference::Rename( const String & cNewName )
 {
-	std::string cOldPath;
+	String cOldPath;
 	status_t nError;
 
-	nError = m_cDirectory.GetPath( &cOldPath );
+	nError = m->m_cDirectory.GetPath( &cOldPath );
 	if( nError < 0 )
 	{
 		return ( nError );
 	}
 	cOldPath += "/";
-	std::string cNewPath( cOldPath );
-	cOldPath += m_cName;
+	String cNewPath( cOldPath );
+	cOldPath += m->m_cName;
 
 	if( cNewName[0] == '/' )
 	{
@@ -201,7 +217,7 @@ status_t FileReference::Rename( const std::string & cNewName )
 	{
 		if( strchr( cNewName.c_str(), '/' ) == NULL )
 		{
-			m_cName = cNewName;
+			m->m_cName = cNewName;
 		}
 		else
 		{
@@ -213,7 +229,7 @@ status_t FileReference::Rename( const std::string & cNewName )
 
 status_t FileReference::Delete()
 {
-	std::string cPath;
+	String cPath;
 	if( GetPath( &cPath ) < 0 )
 	{
 		return ( -1 );
@@ -223,7 +239,7 @@ status_t FileReference::Delete()
 
 status_t FileReference::GetStat( struct::stat * psStat ) const
 {
-	int nFD = based_open( m_cDirectory.GetFileDescriptor(), m_cName.c_str(  ), O_RDONLY );
+	int nFD = based_open( m->m_cDirectory.GetFileDescriptor(), m->m_cName.c_str(  ), O_RDONLY );
 
 	if( nFD < 0 )
 	{
@@ -243,5 +259,7 @@ status_t FileReference::GetStat( struct::stat * psStat ) const
 
 const Directory & FileReference::GetDirectory() const
 {
-	return ( m_cDirectory );
+	return ( m->m_cDirectory );
 }
+
+

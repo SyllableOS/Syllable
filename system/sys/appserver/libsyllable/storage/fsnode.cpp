@@ -1,6 +1,6 @@
-
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -26,8 +26,20 @@
 #include <storage/path.h>
 
 #include <util/exceptions.h>
+
 using namespace os;
 
+class FSNode::Private
+{
+	public:
+	Private() {
+		m_nFD = -1;
+		m_hAttrDir = NULL;
+	}
+
+    int  m_nFD;
+    DIR* m_hAttrDir;
+};
 
 /** Default contructor.
  * \par Description:
@@ -39,13 +51,12 @@ using namespace os;
 
 FSNode::FSNode()
 {
-	m_nFD = -1;
-	m_hAttrDir = NULL;
+	m = new Private;
 }
 
 /** Construct a FSNode from a file path.
  * \par Description:
- *	See: SetTo( const std::string& cPath, int nOpenMode )
+ *	See: SetTo( const String& cPath, int nOpenMode )
  * \par Note:
  *	Since constructors can't return error codes it will throw an
  *	os::errno_exception in the case of failure. The error code can
@@ -54,8 +65,10 @@ FSNode::FSNode()
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-FSNode::FSNode( const std::string & cPath, int nOpenMode )
+FSNode::FSNode( const String & cPath, int nOpenMode )
 {
+	m = new Private;
+
 	if( cPath.size() > 1 && cPath[0] == '~' && cPath[1] == '/' )
 	{
 		const char *pzHome = getenv( "HOME" );
@@ -64,9 +77,9 @@ FSNode::FSNode( const std::string & cPath, int nOpenMode )
 		{
 			throw( errno_exception( "HOME environment variable not set", ENOENT ) );
 		}
-		std::string cRealPath = pzHome;
-		cRealPath.insert( cRealPath.end(), cPath.begin(  ) + 1, cPath.end(  ) );
-		m_nFD = open( cRealPath.c_str(), nOpenMode );
+		String cRealPath = pzHome;
+		cRealPath.str().insert( cRealPath.end(), cPath.begin(  ) + 1, cPath.end(  ) );
+		m->m_nFD = open( cRealPath.c_str(), nOpenMode );
 	}
 	else if( cPath.size() > 1 && cPath[0] == '^' && cPath[1] == '/' )
 	{
@@ -76,34 +89,34 @@ FSNode::FSNode( const std::string & cPath, int nOpenMode )
 		{
 			throw errno_exception( "Failed to executable directory node" );
 		}
-		m_nFD = based_open( nDir, cPath.c_str() + 2, nOpenMode );
+		m->m_nFD = based_open( nDir, cPath.c_str() + 2, nOpenMode );
 		int nOldErr = errno;
 
 		close( nDir );
-		if( m_nFD < 0 )
+		if( m->m_nFD < 0 )
 		{
 			errno = nOldErr;
 		}
 	}
 	else
 	{
-		m_nFD = open( cPath.c_str(), nOpenMode );
+		m->m_nFD = open( cPath.c_str(), nOpenMode );
 	}
-	m_hAttrDir = NULL;
-	if( m_nFD < 0 )
+	m->m_hAttrDir = NULL;
+	if( m->m_nFD < 0 )
 	{
 		throw errno_exception( "Failed to open node" );
 	}
-	if( ::fstat( m_nFD, &m_sStatCache ) < 0 )
+	if( ::fstat( m->m_nFD, &m_sStatCache ) < 0 )
 	{
-		close( m_nFD );
+		close( m->m_nFD );
 		throw errno_exception( "Failed to stat node" );
 	}
 }
 
 /** Construct a FSNode from directory and a name inside that directory.
  * \par Description:
- *	See: SetTo( const Directory& cDir, const std::string& cPath, int nOpenMode )
+ *	See: SetTo( const Directory& cDir, const String& cPath, int nOpenMode )
  * \par Note:
  *	Since constructors can't return error codes it will throw an
  *	os::errno_exception in the case of failure. The error code can
@@ -112,21 +125,23 @@ FSNode::FSNode( const std::string & cPath, int nOpenMode )
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-FSNode::FSNode( const Directory & cDir, const std::string & cPath, int nOpenMode )
+FSNode::FSNode( const Directory & cDir, const String & cPath, int nOpenMode )
 {
+	m = new Private;
+
 	if( cDir.IsValid() == false )
 	{
 		throw errno_exception( "Invalid directory", EINVAL );
 	}
-	m_nFD = based_open( cDir.GetFileDescriptor(), cPath.c_str(  ), nOpenMode );
-	m_hAttrDir = NULL;
-	if( m_nFD < 0 )
+	m->m_nFD = based_open( cDir.GetFileDescriptor(), cPath.c_str(  ), nOpenMode );
+	m->m_hAttrDir = NULL;
+	if( m->m_nFD < 0 )
 	{
 		throw errno_exception( "Failed to open node" );
 	}
-	if( ::fstat( m_nFD, &m_sStatCache ) < 0 )
+	if( ::fstat( m->m_nFD, &m_sStatCache ) < 0 )
 	{
-		close( m_nFD );
+		close( m->m_nFD );
 		throw errno_exception( "Failed to stat node" );
 	}
 }
@@ -144,19 +159,21 @@ FSNode::FSNode( const Directory & cDir, const std::string & cPath, int nOpenMode
 
 FSNode::FSNode( const FileReference & cRef, int nOpenMode )
 {
+	m = new Private;
+
 	if( cRef.IsValid() == false )
 	{
 		throw errno_exception( "Invalid directory", EINVAL );
 	}
-	m_nFD = based_open( cRef.GetDirectory().GetFileDescriptor(  ), cRef.GetName(  ).c_str(  ), nOpenMode );
-	m_hAttrDir = NULL;
-	if( m_nFD < 0 )
+	m->m_nFD = based_open( cRef.GetDirectory().GetFileDescriptor(  ), cRef.GetName(  ).c_str(  ), nOpenMode );
+	m->m_hAttrDir = NULL;
+	if( m->m_nFD < 0 )
 	{
 		throw errno_exception( "Failed to open node" );
 	}
-	if( ::fstat( m_nFD, &m_sStatCache ) < 0 )
+	if( ::fstat( m->m_nFD, &m_sStatCache ) < 0 )
 	{
-		close( m_nFD );
+		close( m->m_nFD );
 		throw errno_exception( "Failed to stat node" );
 	}
 }
@@ -174,11 +191,13 @@ FSNode::FSNode( const FileReference & cRef, int nOpenMode )
 
 FSNode::FSNode( int nFD )
 {
-	m_nFD = nFD;
-	m_hAttrDir = NULL;
-	if( ::fstat( m_nFD, &m_sStatCache ) < 0 )
+	m = new Private;
+
+	m->m_nFD = nFD;
+	m->m_hAttrDir = NULL;
+	if( ::fstat( m->m_nFD, &m_sStatCache ) < 0 )
 	{
-		close( m_nFD );
+		close( m->m_nFD );
 		throw errno_exception( "Failed to stat node" );
 	}
 }
@@ -202,9 +221,11 @@ FSNode::FSNode( int nFD )
 
 FSNode::FSNode( const FSNode & cNode )
 {
-	m_nFD = fcntl( cNode.m_nFD, F_COPYFD, -1 );
-	m_hAttrDir = NULL;
-	if( m_nFD < 0 )
+	m = new Private;
+
+	m->m_nFD = fcntl( cNode.m->m_nFD, F_COPYFD, -1 );
+	m->m_hAttrDir = NULL;
+	if( m->m_nFD < 0 )
 	{
 		throw errno_exception( "Failed to duplicate FD" );
 	}
@@ -220,19 +241,21 @@ FSNode::FSNode( const FSNode & cNode )
 
 FSNode::~FSNode()
 {
-	if( m_hAttrDir != NULL )
+	if( m->m_hAttrDir != NULL )
 	{
-		close_attrdir( m_hAttrDir );
+		close_attrdir( m->m_hAttrDir );
 	}
-	if( m_nFD != -1 )
+	if( m->m_nFD != -1 )
 	{
-		close( m_nFD );
+		close( m->m_nFD );
 	}
+
+	delete m;
 }
 
 void FSNode::_SetFD( int nFD )
 {
-	m_nFD = nFD;
+	m->m_nFD = nFD;
 }
 
 /** Check if the node has been properly initialized.
@@ -250,7 +273,7 @@ void FSNode::_SetFD( int nFD )
 
 bool FSNode::IsValid() const
 {
-	return ( m_nFD >= 0 );
+	return ( m->m_nFD >= 0 );
 }
 
 /** Open a node using a path.
@@ -299,7 +322,7 @@ bool FSNode::IsValid() const
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-status_t FSNode::SetTo( const std::string & cPath, int nOpenMode )
+status_t FSNode::SetTo( const String & cPath, int nOpenMode )
 {
 	int nNewFD = -1;
 
@@ -312,8 +335,8 @@ status_t FSNode::SetTo( const std::string & cPath, int nOpenMode )
 			errno = ENOENT;
 			return ( -1 );
 		}
-		std::string cRealPath = pzHome;
-		cRealPath.insert( cRealPath.end(), cPath.begin(  ) + 1, cPath.end(  ) );
+		String cRealPath = pzHome;
+		cRealPath.str().insert( cRealPath.end(), cPath.begin(  ) + 1, cPath.end(  ) );
 		nNewFD = open( cRealPath.c_str(), nOpenMode );
 	}
 	else if( cPath.size() > 1 && cPath[0] == '^' && cPath[1] == '/' )
@@ -362,12 +385,12 @@ status_t FSNode::SetTo( const std::string & cPath, int nOpenMode )
 		errno = nSavedErrno;
 		return ( nError );
 	}
-	if( m_nFD >= 0 )
+	if( m->m_nFD >= 0 )
 	{
-		close( m_nFD );
+		close( m->m_nFD );
 	}
 	m_sStatCache = sStat;
-	m_nFD = nNewFD;
+	m->m_nFD = nNewFD;
 	return ( 0 );
 }
 
@@ -380,13 +403,13 @@ status_t FSNode::SetTo( const std::string & cPath, int nOpenMode )
  *	ignored) or it can be relative to \p cDir. This have much the
  *	same semantics as setting the current working directory to \p
  *	cDir and then open the node by calling SetTo( const
- *	std::string& cPath, int nOpenMode ) with the path. The main
+ *	String& cPath, int nOpenMode ) with the path. The main
  *	advantage with this function is that it is thread-safe. You
  *	don't get any races while temporarily changing the current
  *	working directory.
  *
  *	For a more detailed description look at:
- *	SetTo( const std::string& cPath, int nOpenMode )
+ *	SetTo( const String& cPath, int nOpenMode )
  *
  * \note
  *	If this call fail the old state of the FSNode will remain
@@ -399,7 +422,7 @@ status_t FSNode::SetTo( const std::string & cPath, int nOpenMode )
  *	be relative to \p cDir.
  * \param nOpenMode
  *	Flags controlling how to open the node. See
- *	SetTo( const std::string& cPath, int nOpenMode )
+ *	SetTo( const String& cPath, int nOpenMode )
  *	for a full description of the various flags.
  *
  * \return
@@ -408,11 +431,11 @@ status_t FSNode::SetTo( const std::string & cPath, int nOpenMode )
  *	The error code can be any of the errors returned by
  *	the open() POSIX function.
  *
- * \sa FSNode( const std::string& cPath, int nOpenMode )
+ * \sa FSNode( const String& cPath, int nOpenMode )
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-status_t FSNode::SetTo( const Directory & cDir, const std::string & cPath, int nOpenMode )
+status_t FSNode::SetTo( const Directory & cDir, const String & cPath, int nOpenMode )
 {
 	if( cDir.IsValid() == false )
 	{
@@ -445,18 +468,18 @@ status_t FSNode::SetTo( const Directory & cDir, const std::string & cPath, int n
 		errno = nSavedErrno;
 		return ( nError );
 	}
-	if( m_nFD >= 0 )
+	if( m->m_nFD >= 0 )
 	{
-		close( m_nFD );
+		close( m->m_nFD );
 	}
 	m_sStatCache = sStat;
-	m_nFD = nNewFD;
+	m->m_nFD = nNewFD;
 	return ( 0 );
 }
 
 /** Open the node referred to by the given os::FileReference.
  * \par Description:
- *	Same semantics SetTo( const std::string& cPath, int nOpenMode )
+ *	Same semantics SetTo( const String& cPath, int nOpenMode )
  *	except that the node to open is targeted by a file reference
  *	rather than a regular path.
  * \par Note:
@@ -467,7 +490,7 @@ status_t FSNode::SetTo( const Directory & cDir, const std::string & cPath, int n
  *	error code is assigned to the global variable "errno".
  *	The error code can be any of the errors returned by
  *	the open() POSIX function.
- * \sa SetTo( const std::string& cPath, int nOpenMode )
+ * \sa SetTo( const String& cPath, int nOpenMode )
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
@@ -505,12 +528,12 @@ status_t FSNode::SetTo( const FileReference & cRef, int nOpenMode )
 		errno = nSavedErrno;
 		return ( nError );
 	}
-	if( m_nFD >= 0 )
+	if( m->m_nFD >= 0 )
 	{
-		close( m_nFD );
+		close( m->m_nFD );
 	}
 	m_sStatCache = sStat;
-	m_nFD = nNewFD;
+	m->m_nFD = nNewFD;
 	return ( 0 );
 }
 
@@ -526,7 +549,7 @@ status_t FSNode::SetTo( const FileReference & cRef, int nOpenMode )
  *	The error code can be any of the errors returned by
  *	the open() POSIX function.
  * \since 0.3.7
- * \sa SetTo( const std::string& cPath, int nOpenMode )
+ * \sa SetTo( const String& cPath, int nOpenMode )
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
@@ -552,12 +575,12 @@ status_t FSNode::SetTo( int nNewFD )
 		errno = nSavedErrno;
 		return ( nError );
 	}
-	if( m_nFD >= 0 )
+	if( m->m_nFD >= 0 )
 	{
-		close( m_nFD );
+		close( m->m_nFD );
 	}
 	m_sStatCache = sStat;
-	m_nFD = nNewFD;
+	m->m_nFD = nNewFD;
 	return ( 0 );
 }
 
@@ -581,7 +604,7 @@ status_t FSNode::SetTo( int nNewFD )
 
 status_t FSNode::SetTo( const FSNode & cNode )
 {
-	int nNewFD = fcntl( cNode.m_nFD, F_COPYFD, -1 );
+	int nNewFD = fcntl( cNode.m->m_nFD, F_COPYFD, -1 );
 
 	if( nNewFD < 0 )
 	{
@@ -597,12 +620,12 @@ status_t FSNode::SetTo( const FSNode & cNode )
 		errno = nSavedErrno;
 		return ( nError );
 	}
-	if( m_nFD >= 0 )
+	if( m->m_nFD >= 0 )
 	{
-		close( m_nFD );
+		close( m->m_nFD );
 	}
 	m_sStatCache = cNode.m_sStatCache;
-	m_nFD = nNewFD;
+	m->m_nFD = nNewFD;
 	return ( 0 );
 }
 
@@ -618,16 +641,16 @@ status_t FSNode::SetTo( const FSNode & cNode )
 
 void FSNode::Unset()
 {
-	if( m_hAttrDir != NULL )
+	if( m->m_hAttrDir != NULL )
 	{
-		close_attrdir( m_hAttrDir );
-		m_hAttrDir = NULL;
+		close_attrdir( m->m_hAttrDir );
+		m->m_hAttrDir = NULL;
 	}
 	FDChanged( -1, m_sStatCache );
-	if( m_nFD != -1 )
+	if( m->m_nFD != -1 )
 	{
-		close( m_nFD );
-		m_nFD = -1;
+		close( m->m_nFD );
+		m->m_nFD = -1;
 	}
 }
 
@@ -638,14 +661,14 @@ status_t FSNode::FDChanged( int nNewFD, const struct::stat & sStat )
 
 status_t FSNode::GetStat( struct::stat * psStat, bool bUpdateCache ) const
 {
-	if( m_nFD < 0 )
+	if( m->m_nFD < 0 )
 	{
 		errno = EINVAL;
 		return ( -1 );
 	}
 	if( bUpdateCache )
 	{
-		status_t nError =::fstat( m_nFD, &m_sStatCache );
+		status_t nError =::fstat( m->m_nFD, &m_sStatCache );
 
 		if( nError < 0 )
 		{
@@ -661,7 +684,7 @@ status_t FSNode::GetStat( struct::stat * psStat, bool bUpdateCache ) const
 
 ino_t FSNode::GetInode() const
 {
-	if( m_nFD < 0 )
+	if( m->m_nFD < 0 )
 	{
 		errno = EINVAL;
 		return ( -1 );
@@ -671,7 +694,7 @@ ino_t FSNode::GetInode() const
 
 dev_t FSNode::GetDev() const
 {
-	if( m_nFD < 0 )
+	if( m->m_nFD < 0 )
 	{
 		errno = EINVAL;
 		return ( -1 );
@@ -681,14 +704,14 @@ dev_t FSNode::GetDev() const
 
 int FSNode::GetMode( bool bUpdateCache ) const
 {
-	if( m_nFD < 0 )
+	if( m->m_nFD < 0 )
 	{
 		errno = EINVAL;
 		return ( -1 );
 	}
 	if( bUpdateCache )
 	{
-		if( ::fstat( m_nFD, &m_sStatCache ) < 0 )
+		if( ::fstat( m->m_nFD, &m_sStatCache ) < 0 )
 		{
 			return ( -1 );
 		}
@@ -698,14 +721,14 @@ int FSNode::GetMode( bool bUpdateCache ) const
 
 off_t FSNode::GetSize( bool bUpdateCache ) const
 {
-	if( m_nFD < 0 )
+	if( m->m_nFD < 0 )
 	{
 		errno = EINVAL;
 		return ( -1 );
 	}
 	if( bUpdateCache )
 	{
-		if( ::fstat( m_nFD, &m_sStatCache ) < 0 )
+		if( ::fstat( m->m_nFD, &m_sStatCache ) < 0 )
 		{
 			return ( -1 );
 		}
@@ -715,14 +738,14 @@ off_t FSNode::GetSize( bool bUpdateCache ) const
 
 time_t FSNode::GetCTime( bool bUpdateCache ) const
 {
-	if( m_nFD < 0 )
+	if( m->m_nFD < 0 )
 	{
 		errno = EINVAL;
 		return ( -1 );
 	}
 	if( bUpdateCache )
 	{
-		if( ::fstat( m_nFD, &m_sStatCache ) < 0 )
+		if( ::fstat( m->m_nFD, &m_sStatCache ) < 0 )
 		{
 			return ( -1 );
 		}
@@ -732,14 +755,14 @@ time_t FSNode::GetCTime( bool bUpdateCache ) const
 
 time_t FSNode::GetMTime( bool bUpdateCache ) const
 {
-	if( m_nFD < 0 )
+	if( m->m_nFD < 0 )
 	{
 		errno = EINVAL;
 		return ( -1 );
 	}
 	if( bUpdateCache )
 	{
-		if( ::fstat( m_nFD, &m_sStatCache ) < 0 )
+		if( ::fstat( m->m_nFD, &m_sStatCache ) < 0 )
 		{
 			return ( -1 );
 		}
@@ -749,14 +772,14 @@ time_t FSNode::GetMTime( bool bUpdateCache ) const
 
 time_t FSNode::GetATime( bool bUpdateCache ) const
 {
-	if( m_nFD < 0 )
+	if( m->m_nFD < 0 )
 	{
 		errno = EINVAL;
 		return ( -1 );
 	}
 	if( bUpdateCache )
 	{
-		if( ::fstat( m_nFD, &m_sStatCache ) < 0 )
+		if( ::fstat( m->m_nFD, &m_sStatCache ) < 0 )
 		{
 			return ( -1 );
 		}
@@ -776,7 +799,7 @@ time_t FSNode::GetATime( bool bUpdateCache ) const
  *	StatAttr() member and the content of an attribute can be read with
  *	the ReadAttr() member.
  * \par Note:
- *	Currently only the AtheOS native filesystem (AFS) support
+ *	Currently only the Syllable native filesystem (AFS) support
  *	attributes so if the the file is not located on an AFS volume
  *	this member will fail.
  *
@@ -791,22 +814,22 @@ time_t FSNode::GetATime( bool bUpdateCache ) const
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-status_t FSNode::GetNextAttrName( std::string * pcName )
+status_t FSNode::GetNextAttrName( String * pcName )
 {
-	if( m_nFD < 0 )
+	if( m->m_nFD < 0 )
 	{
 		errno = EINVAL;
 		return ( -1 );
 	}
-	if( m_hAttrDir == NULL )
+	if( m->m_hAttrDir == NULL )
 	{
-		m_hAttrDir = open_attrdir( m_nFD );
-		if( m_hAttrDir == NULL )
+		m->m_hAttrDir = open_attrdir( m->m_nFD );
+		if( m->m_hAttrDir == NULL )
 		{
 			return ( -1 );
 		}
 	}
-	struct dirent *psEntry = read_attrdir( m_hAttrDir );
+	struct dirent *psEntry = read_attrdir( m->m_hAttrDir );
 
 	if( psEntry == NULL )
 	{
@@ -825,7 +848,7 @@ status_t FSNode::GetNextAttrName( std::string * pcName )
  *	return the name of the first attribute associated with this
  *	node.
  * \par Note:
- *	Currently only the AtheOS native filesystem (AFS) support
+ *	Currently only the Syllable native filesystem (AFS) support
  *	attributes so if the the file is not located on an AFS volume
  *	this member will fail.
  * \return
@@ -837,14 +860,14 @@ status_t FSNode::GetNextAttrName( std::string * pcName )
 
 status_t FSNode::RewindAttrdir()
 {
-	if( m_nFD < 0 )
+	if( m->m_nFD < 0 )
 	{
 		errno = EINVAL;
 		return ( -1 );
 	}
-	if( m_hAttrDir != NULL )
+	if( m->m_hAttrDir != NULL )
 	{
-		rewind_attrdir( m_hAttrDir );
+		rewind_attrdir( m->m_hAttrDir);
 	}
 	return ( 0 );
 }
@@ -864,10 +887,10 @@ status_t FSNode::RewindAttrdir()
  *	is to be able to make a search index that can be used to
  *	for efficient search for files based on their attributes.
  *	The indexing system is not fully implemented yet but will
- *	be part of AtheOS in the future.
+ *	be part of Syllable in the future.
  *
  * \par Note:
- *	Currently only the AtheOS native filesystem (AFS) support
+ *	Currently only the Syllable native filesystem (AFS) support
  *	attributes so if the the file is not located on an AFS volume
  *	this member will fail.
  * \param cAttrName
@@ -905,14 +928,14 @@ status_t FSNode::RewindAttrdir()
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-ssize_t FSNode::WriteAttr( const std::string & cAttrName, int nFlags, int nType, const void *pBuffer, off_t nPos, size_t nLen )
+ssize_t FSNode::WriteAttr( const String & cAttrName, int nFlags, int nType, const void *pBuffer, off_t nPos, size_t nLen )
 {
-	if( m_nFD < 0 )
+	if( m->m_nFD < 0 )
 	{
 		errno = EINVAL;
 		return ( -1 );
 	}
-	return ( write_attr( m_nFD, cAttrName.c_str(), nFlags, nType, pBuffer, nPos, nLen ) );
+	return ( write_attr( m->m_nFD, cAttrName.c_str(), nFlags, nType, pBuffer, nPos, nLen ) );
 }
 
 /** Read the data held by an attribute.
@@ -923,7 +946,7 @@ ssize_t FSNode::WriteAttr( const std::string & cAttrName, int nFlags, int nType,
  *	StatAttr() member.
  * 
  * \par Note:
- *	Currently only the AtheOS native filesystem (AFS) support
+ *	Currently only the Syllable native filesystem (AFS) support
  *	attributes so if the the file is not located on an AFS volume
  *	this member will fail.
  * \param cAttrName
@@ -943,14 +966,14 @@ ssize_t FSNode::WriteAttr( const std::string & cAttrName, int nFlags, int nType,
  *****************************************************************************/
 
 
-ssize_t FSNode::ReadAttr( const std::string & cAttrName, int nType, void *pBuffer, off_t nPos, size_t nLen )
+ssize_t FSNode::ReadAttr( const String & cAttrName, int nType, void *pBuffer, off_t nPos, size_t nLen )
 {
-	if( m_nFD < 0 )
+	if( m->m_nFD < 0 )
 	{
 		errno = EINVAL;
 		return ( -1 );
 	}
-	return ( read_attr( m_nFD, cAttrName.c_str(), nType, pBuffer, nPos, nLen ) );
+	return ( read_attr( m->m_nFD, cAttrName.c_str(), nType, pBuffer, nPos, nLen ) );
 
 }
 
@@ -960,7 +983,7 @@ ssize_t FSNode::ReadAttr( const std::string & cAttrName, int nType, void *pBuffe
  *	if the attribute has been indexed it will also be removed from
  *	the index.
  * \par Note:
- *	Currently only the AtheOS native filesystem (AFS) support
+ *	Currently only the Syllable native filesystem (AFS) support
  *	attributes so if the the file is not located on an AFS volume
  *	this member will fail.
  * \param cName
@@ -973,14 +996,14 @@ ssize_t FSNode::ReadAttr( const std::string & cAttrName, int nType, void *pBuffe
  *****************************************************************************/
 
 
-status_t FSNode::RemoveAttr( const std::string & cName )
+status_t FSNode::RemoveAttr( const String & cName )
 {
-	if( m_nFD < 0 )
+	if( m->m_nFD < 0 )
 	{
 		errno = EINVAL;
 		return ( -1 );
 	}
-	return ( remove_attr( m_nFD, cName.c_str() ) );
+	return ( remove_attr( m->m_nFD, cName.c_str() ) );
 }
 
 /** Get extended info about an attribute.
@@ -989,7 +1012,7 @@ status_t FSNode::RemoveAttr( const std::string & cName )
  *	attribute.  For a detailed description of the attribute type
  *	take a look at WriteAttr().
  * \par Note:
- *	Currently only the AtheOS native filesystem (AFS) support
+ *	Currently only the Syllable native filesystem (AFS) support
  *	attributes so if the the file is not located on an AFS volume
  *	this member will fail.
  * \param cName
@@ -1001,21 +1024,19 @@ status_t FSNode::RemoveAttr( const std::string & cName )
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-status_t FSNode::StatAttr( const std::string & cName, struct attr_info *psBuffer )
+status_t FSNode::StatAttr( const String & cName, struct attr_info *psBuffer )
 {
-	if( m_nFD < 0 )
+	if( m->m_nFD < 0 )
 	{
 		errno = EINVAL;
 		return ( -1 );
 	}
-	return ( stat_attr( m_nFD, cName.c_str(), psBuffer ) );
+	return ( stat_attr( m->m_nFD, cName.c_str(), psBuffer ) );
 }
-
-
-
-
 
 int FSNode::GetFileDescriptor() const
 {
-	return ( m_nFD );
+	return ( m->m_nFD );
 }
+
+

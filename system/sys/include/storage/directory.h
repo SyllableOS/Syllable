@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -17,8 +18,8 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef __STORAGE_DIRECTORY_H__
-#define __STORAGE_DIRECTORY_H__
+#ifndef __F_STORAGE_DIRECTORY_H__
+#define __F_STORAGE_DIRECTORY_H__
 
 #include <storage/fsnode.h>
 #include <storage/diriterator.h>
@@ -48,8 +49,8 @@ class Directory : public FSNode, public DirIterator
 {
 public:
     Directory();
-    Directory( const std::string& cPath, int nOpenMode = O_RDONLY );
-    Directory( const Directory& cDir, const std::string& cName, int nOpenMode = O_RDONLY );
+    Directory( const String& cPath, int nOpenMode = O_RDONLY );
+    Directory( const Directory& cDir, const String& cName, int nOpenMode = O_RDONLY );
     Directory( const FileReference& cRef, int nOpenMode = O_RDONLY );
     Directory( const FSNode& cNode );
     Directory( int nFD );
@@ -58,21 +59,21 @@ public:
 
     virtual status_t FDChanged( int nNewFD, const struct ::stat& sStat );
     
-    virtual status_t GetNextEntry( std::string* pcName );
+    virtual status_t GetNextEntry( String* pcName );
     virtual status_t GetNextEntry( FileReference* pcRef );
     virtual status_t Rewind();
 
-    status_t CreateFile( const std::string& cName, os::File* pcFile, int nAccessMode = S_IRWXU);
-    status_t CreateDirectory( const std::string& cName, os::Directory* pcDir, int nAccessMode = S_IRWXU );
-    status_t CreateSymlink( const std::string& cName, const std::string& cDestination, os::SymLink* pcLink );
-    status_t GetPath( std::string* pcPath ) const;
+    status_t CreateFile( const String& cName, os::File* pcFile, int nAccessMode = S_IRWXU);
+    status_t CreateDirectory( const String& cName, os::Directory* pcDir, int nAccessMode = S_IRWXU );
+    status_t CreateSymlink( const String& cName, const String& cDestination, os::SymLink* pcLink );
+    status_t GetPath( String* pcPath ) const;
     
 private:
-    std::string	   m_cPathCache;
-    DIR*	   m_hDirIterator;
+	class Private;
+	Private *m;
 };
 
 
 } // end of namespace
 
-#endif // __STORAGE_DIRECTORY_H__
+#endif // __F_STORAGE_DIRECTORY_H__

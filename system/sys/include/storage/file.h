@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -17,8 +18,8 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef __STORAGE_FILE_H__
-#define __STORAGE_FILE_H__
+#ifndef __F_STORAGE_FILE_H__
+#define __F_STORAGE_FILE_H__
 
 #include <storage/seekableio.h>
 #include <storage/fsnode.h>
@@ -42,8 +43,8 @@ class File : public SeekableIO, public FSNode
 public:
     enum { DEFAULT_BUFFER_SIZE=32768 };
     File();
-    File( const std::string& cPath, int nOpenMode = O_RDONLY );
-    File( const Directory& cDir, const std::string& cName, int nOpenMode = O_RDONLY );
+    File( const String& cPath, int nOpenMode = O_RDONLY );
+    File( const Directory& cDir, const String& cName, int nOpenMode = O_RDONLY );
     File( const FileReference& cRef, int nOpenMode = O_RDONLY );
     File( const FSNode& cNode );
     File( int nFD );
@@ -73,16 +74,11 @@ private:
     void _Init();
     status_t _FillBuffer( off_t nPos );
 
-    mutable Locker m_cMutex;
-    uint8* m_pBuffer;
-    int	   m_nBufferSize;
-    int	   m_nValidBufSize;
-    off_t  m_nPosition;
-    off_t  m_nBufPos;
-    bool   m_bDirty;
+	class Private;
+	Private *m;
 };
 
 
 } // end of namespace
 
-#endif // __STORAGE_FILE_H__
+#endif // __F_STORAGE_FILE_H__

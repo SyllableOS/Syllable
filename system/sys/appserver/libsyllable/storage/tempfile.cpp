@@ -26,20 +26,20 @@ using namespace os;
 
 class TempFile::Private
 {
-      public:
-	std::string m_cPath;
+	public:
+	String m_cPath;
 	bool m_bDeleteFile;
 };
 
 
-TempFile::TempFile( const char *pzPrefix = NULL, const char *pzPath = NULL, int nAccess = S_IRUSR | S_IWUSR ):
+TempFile::TempFile( const String& cPrefix = "", const String& cPath = "", int nAccess = S_IRUSR | S_IWUSR ):
 File()
 {
 	m = new Private;
 	m->m_bDeleteFile = true;
 	while( true )
 	{
-		m->m_cPath = tempnam( pzPath, pzPrefix );
+		m->m_cPath = tempnam( cPath.c_str(), cPrefix.c_str() );
 		if( SetTo( m->m_cPath, O_RDWR | O_CREAT | O_EXCL ) < 0 )
 		{
 			if( errno == EEXIST )
@@ -85,7 +85,8 @@ status_t TempFile::Unlink()
 	}
 }
 
-std::string TempFile::GetPath() const
+String TempFile::GetPath() const
 {
 	return ( m->m_cPath );
 }
+

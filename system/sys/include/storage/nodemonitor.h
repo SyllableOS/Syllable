@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -17,11 +18,11 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef __STORAGE_NODEMONITOR_H__
-#define __STORAGE_NODEMONITOR_H__
+#ifndef __F_STORAGE_NODEMONITOR_H__
+#define __F_STORAGE_NODEMONITOR_H__
 
 #include <atheos/filesystem.h>
-#include <string>
+#include <util/string.h>
 
 namespace os {
 #if 0
@@ -34,7 +35,6 @@ class Messenger;
 class FSNode;
 class Directory;
 class FileReference;
-
 
 
 /** Filesystem node monitor
@@ -246,10 +246,10 @@ class NodeMonitor
 {
 public:
     NodeMonitor();
-    NodeMonitor( const std::string& cPath, uint32 nFlags, const Handler* pcHandler, const Looper* pcLooper = NULL );
-    NodeMonitor( const std::string& cPath, uint32 nFlags, const Messenger& cTarget );
-    NodeMonitor( const Directory& cDir, const std::string& cPath, uint32 nFlags, const Handler* pcHandler, const Looper* pcLooper = NULL );
-    NodeMonitor( const Directory& cDir, const std::string& cPath, uint32 nFlags, const Messenger& cTarget );
+    NodeMonitor( const String& cPath, uint32 nFlags, const Handler* pcHandler, const Looper* pcLooper = NULL );
+    NodeMonitor( const String& cPath, uint32 nFlags, const Messenger& cTarget );
+    NodeMonitor( const Directory& cDir, const String& cPath, uint32 nFlags, const Handler* pcHandler, const Looper* pcLooper = NULL );
+    NodeMonitor( const Directory& cDir, const String& cPath, uint32 nFlags, const Messenger& cTarget );
     NodeMonitor( const FileReference& cRef, uint32 nFlags, const Handler* pcHandler, const Looper* pcLooper = NULL );
     NodeMonitor( const FileReference& cRef, uint32 nFlags, const Messenger& cTarget );
     NodeMonitor( const FSNode* pcNode, uint32 nFlags, const Handler* pcHandler, const Looper* pcLooper = NULL );
@@ -259,10 +259,10 @@ public:
     bool IsValid() const;
 
     status_t Unset();
-    status_t SetTo( const std::string& cPath, uint32 nFlags, const Handler* pcHandler, const Looper* pcLooper = NULL );
-    status_t SetTo( const std::string& cPath, uint32 nFlags, const Messenger& cTarget );
-    status_t SetTo( const Directory& cDir, const std::string& cPath, uint32 nFlags, const Handler* pcHandler, const Looper* pcLooper = NULL );
-    status_t SetTo( const Directory& cDir, const std::string& cPath, uint32 nFlags, const Messenger& cTarget );
+    status_t SetTo( const String& cPath, uint32 nFlags, const Handler* pcHandler, const Looper* pcLooper = NULL );
+    status_t SetTo( const String& cPath, uint32 nFlags, const Messenger& cTarget );
+    status_t SetTo( const Directory& cDir, const String& cPath, uint32 nFlags, const Handler* pcHandler, const Looper* pcLooper = NULL );
+    status_t SetTo( const Directory& cDir, const String& cPath, uint32 nFlags, const Messenger& cTarget );
     status_t SetTo( const FileReference& cRef, uint32 nFlags, const Handler* pcHandler, const Looper* pcLooper = NULL );
     status_t SetTo( const FileReference& cRef, uint32 nFlags, const Messenger& cTarget );
     status_t SetTo( const FSNode* pcNode, uint32 nFlags, const Handler* pcHandler, const Looper* pcLooper = NULL );
@@ -272,14 +272,15 @@ public:
     int	GetMonitor() const;
     
 private:
-    int _CreateMonitor( const std::string& cPath, uint32 nFlags, const Messenger& cTarget );
-    int _CreateMonitor( const Directory& cDir, const std::string& cPath, uint32 nFlags, const Messenger& cTarget );
+    int _CreateMonitor( const String& cPath, uint32 nFlags, const Messenger& cTarget );
+    int _CreateMonitor( const Directory& cDir, const String& cPath, uint32 nFlags, const Messenger& cTarget );
     int _CreateMonitor( const FileReference& cRef, uint32 nFlags, const Messenger& cTarget );
     int _CreateMonitor( const FSNode* pcNode, uint32 nFlags, const Messenger& cTarget );
-    
-    int	m_nMonitor;
+
+	class Private;
+	Private *m;
 };
 
 } // end of namespace
 
-#endif // __STORAGE_NODEMONITOR_H__
+#endif // __F_STORAGE_NODEMONITOR_H__

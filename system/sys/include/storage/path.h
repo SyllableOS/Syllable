@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 1999 - 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -17,13 +18,13 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef __F_GUI_PATH_H__
-#define __F_GUI_PATH_H__
+#ifndef __F_STORAGE_PATH_H__
+#define __F_STORAGE_PATH_H__
 
 #include <sys/types.h>
 #include <atheos/types.h>
 
-#include <string>
+#include <util/string.h>
 
 namespace os
 {
@@ -44,30 +45,28 @@ class Path
 public:
     Path();
     Path( const Path& cPath );
-    Path( const char* pzPath );
-    Path( const char* pzPath, int nLen );
+    Path( const String& cPath );
     ~Path();
     void operator =(const Path& cPath );
-    void operator =(const char* pzPath );
+    void operator =(const String& cPath );
     bool operator==(const Path& cPath) const;
-    void SetTo( const char* pzPath );
-    void SetTo( const char* pzPath, int nLen );
+    void SetTo( const String& cPath );
     void Append( const Path& cPath );
-    void Append( const char* pzName );
+    void Append( const String& cName );
   
-    const char* GetLeaf() const;
-    const char* GetPath() const;
+    String GetLeaf() const;
+    String GetPath() const;
     Path	GetDir() const;
 
-    operator std::string() const;
+    operator String() const;
 private:
     void _Normalize();
+	void _SetTo( const char *pzPath, int nLen );
 
-//    std::string m_cBuffer;
-    char*	m_pzPath;
-    uint	m_nMaxSize;
+	class Private;
+	Private *m;
 };
 
 } // End of namespace
 
-#endif // __F_GUI_PATH_H__
+#endif // __F_STORAGE_PATH_H__

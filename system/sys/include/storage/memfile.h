@@ -1,5 +1,6 @@
 /*  MemFile - Virtual file class for Syllable
- *  Copyright (C)2002 Henrik Isaksson
+ *  Copyright (C) 2002 Henrik Isaksson
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -17,8 +18,8 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef __STORAGE_MEMFILE_H__
-#define __STORAGE_MEMFILE_H__
+#ifndef __F_STORAGE_MEMFILE_H__
+#define __F_STORAGE_MEMFILE_H__
 
 #include <storage/seekableio.h>
 #include <util/locker.h>
@@ -69,13 +70,4 @@ class MemFile : public SeekableIO {
 
 } // end of namespace
 
-#endif // __STORAGE_MEMFILE_H__
-
-
-
-
-
-
-
-
-
+#endif // __F_STORAGE_MEMFILE_H__

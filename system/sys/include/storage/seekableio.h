@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -17,8 +18,8 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef __STORAGE_SEEKABLEIO_H__
-#define __STORAGE_SEEKABLEIO_H__
+#ifndef __F_STORAGE_SEEKABLEIO_H__
+#define __F_STORAGE_SEEKABLEIO_H__
 
 #include <storage/streamableio.h>
 
@@ -50,4 +51,5 @@ private:
 
 } // end of namespace
 
-#endif // __STORAGE_SEEKABLEIO_H__
+#endif // __F_STORAGE_SEEKABLEIO_H__
+

@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -17,8 +18,8 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef __STORAGE_FSNODE_H__
-#define __STORAGE_FSNODE_H__
+#ifndef __F_STORAGE_FSNODE_H__
+#define __F_STORAGE_FSNODE_H__
 
 #include <atheos/types.h>
 #include <sys/types.h>
@@ -27,7 +28,7 @@
 #include <fcntl.h>
 #include <dirent.h>
 
-#include <string>
+#include <util/string.h>
 
 #include <util/exceptions.h>
 
@@ -65,8 +66,8 @@ class FSNode
 {
 public:
     FSNode();
-    FSNode( const std::string& cPath, int nOpenMode = O_RDONLY );
-    FSNode( const Directory& cDir, const std::string& cName, int nOpenMode = O_RDONLY );
+    FSNode( const String& cPath, int nOpenMode = O_RDONLY );
+    FSNode( const Directory& cDir, const String& cName, int nOpenMode = O_RDONLY );
     FSNode( const FileReference& cRef, int nOpenMode = O_RDONLY );
     FSNode( int nFD );
     FSNode( const FSNode& cNode );
@@ -74,8 +75,8 @@ public:
 
     virtual status_t FDChanged( int nNewFD, const struct ::stat& sStat );
     
-    virtual status_t SetTo( const std::string& cPath, int nOpenMode = O_RDONLY );
-    virtual status_t SetTo( const Directory& cDir, const std::string& cPath, int nOpenMode = O_RDONLY );
+    virtual status_t SetTo( const String& cPath, int nOpenMode = O_RDONLY );
+    virtual status_t SetTo( const Directory& cDir, const String& cPath, int nOpenMode = O_RDONLY );
     virtual status_t SetTo( const FileReference& cRef, int nOpenMode = O_RDONLY );
     virtual status_t SetTo( int nFD );
     virtual status_t SetTo( const FSNode& cNode );
@@ -92,29 +93,23 @@ public:
     virtual time_t   GetMTime( bool bUpdateCache = true ) const;
     virtual time_t   GetATime( bool bUpdateCache = true ) const;
 
-      //! \since 0.3.8
     bool	     IsDir() const  { return( S_ISDIR( GetMode() ) != false ); }
-      //! \since 0.3.8
     bool	     IsLink() const { return( S_ISLNK( GetMode() ) != false ); }
-      //! \since 0.3.8
     bool	     IsFile() const { return( S_ISREG( GetMode() ) != false ); }
-      //! \since 0.3.8
     bool	     IsCharDev() const { return( S_ISCHR( GetMode() ) != false ); }
-      //! \since 0.3.8
     bool	     IsBlockDev() const { return( S_ISBLK( GetMode() ) != false ); }
-      //! \since 0.3.8
     bool	     IsFIFO() const { return( S_ISFIFO( GetMode() ) != false ); }
     
-    virtual status_t GetNextAttrName( std::string* pcName );
+    virtual status_t GetNextAttrName( String* pcName );
     virtual status_t RewindAttrdir();
 
-    virtual ssize_t  WriteAttr( const std::string& cAttrName, int nFlags, int nType,
+    virtual ssize_t  WriteAttr( const String& cAttrName, int nFlags, int nType,
 				const void* pBuffer, off_t nPos, size_t nLen );
-    virtual ssize_t  ReadAttr( const std::string& cAttrName, int nType,
+    virtual ssize_t  ReadAttr( const String& cAttrName, int nType,
 			       void* pBuffer, off_t nPos, size_t nLen );
 
-    virtual status_t RemoveAttr( const std::string& cName );
-    virtual status_t StatAttr( const std::string& cName, struct ::attr_info* psBuffer );
+    virtual status_t RemoveAttr( const String& cName );
+    virtual status_t StatAttr( const String& cName, struct ::attr_info* psBuffer );
 
     virtual int GetFileDescriptor() const;
     
@@ -122,13 +117,13 @@ private:
 friend class Directory;
     
     void _SetFD( int nFD );
-    int  m_nFD;
-    DIR* m_hAttrDir;
+
     mutable struct ::stat m_sStatCache;
+    
+    class Private;
+    Private *m;
 };
-
-
 
 } // end of namespace
 
-#endif // __STORAGE_FSNODE_H__
+#endif // __F_STORAGE_FSNODE_H__

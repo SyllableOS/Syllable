@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -17,12 +18,11 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef __STORAGE_SYMLINK_H__
-#define __STORAGE_SYMLINK_H__
+#ifndef __F_STORAGE_SYMLINK_H__
+#define __F_STORAGE_SYMLINK_H__
 
 #include <storage/fsnode.h>
-
-#include <string>
+#include <util/string.h>
 
 namespace os {
 #if 0
@@ -44,29 +44,27 @@ class SymLink : public FSNode
 {
 public:
     SymLink();
-    SymLink( const std::string& cPath, int nOpenMode = O_RDONLY );
-    SymLink( const Directory& cDir, const std::string& cName, int nOpenMode = O_RDONLY );
+    SymLink( const String& cPath, int nOpenMode = O_RDONLY );
+    SymLink( const Directory& cDir, const String& cName, int nOpenMode = O_RDONLY );
     SymLink( const FileReference& cRef, int nOpenMode = O_RDONLY );
     SymLink( const FSNode& cNode );
     SymLink( const SymLink& cNode );
     virtual ~SymLink();
 
-    virtual status_t SetTo( const std::string& cPath, int nOpenMode = O_RDONLY );
-    virtual status_t SetTo( const Directory& cDir, const std::string& cPath, int nOpenMode = O_RDONLY );
+    virtual status_t SetTo( const String& cPath, int nOpenMode = O_RDONLY );
+    virtual status_t SetTo( const Directory& cDir, const String& cPath, int nOpenMode = O_RDONLY );
     virtual status_t SetTo( const FileReference& cRef, int nOpenMode = O_RDONLY );
     virtual status_t SetTo( const FSNode& cNode );
     virtual status_t SetTo( const SymLink& cLink );
 
-    status_t 	ReadLink( std::string* pcBuffer );
-    std::string ReadLink();
+    status_t 	ReadLink( String* pcBuffer );
+    String ReadLink();
     status_t ConstructPath( const Directory& cParent, Path* pcBuffer );
-    status_t ConstructPath( const std::string& cParent, Path* pcBuffer );
-    
-    
+    status_t ConstructPath( const String& cParent, Path* pcBuffer );
 private:
 };
 
 
 } // end of namespace
 
-#endif // __STORAGE_SYMLINK_H__
+#endif // __F_STORAGE_SYMLINK_H__

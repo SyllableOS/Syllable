@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -17,8 +18,8 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef __STORAGE_DIRITERATOR_H__
-#define __STORAGE_DIRITERATOR_H__
+#ifndef __F_STORAGE_DIRITERATOR_H__
+#define __F_STORAGE_DIRITERATOR_H__
 
 #include <string>
 
@@ -42,7 +43,7 @@ class DirIterator
 public:
     virtual ~DirIterator() {}
 
-    virtual status_t GetNextEntry( std::string* pcName ) = 0;
+    virtual status_t GetNextEntry( String* pcName ) = 0;
     virtual status_t GetNextEntry( FileReference* pcRef ) = 0;
     virtual status_t Rewind() = 0;
 };
@@ -50,4 +51,4 @@ public:
 
 } // end of namespace
 
-#endif // __STORAGE_DIRITERATOR_H__
+#endif // __F_STORAGE_DIRITERATOR_H__

@@ -1,4 +1,3 @@
-
 /*  libatheos.so - the highlevel API library for AtheOS
  *  Copyright (C) 2001  Kurt Skauen
  *
@@ -31,6 +30,17 @@
 
 using namespace os;
 
+class Directory::Private {
+	public:
+	Private() {
+		m_hDirIterator = NULL;
+	}
+
+	String	   m_cPathCache;
+	DIR*	   m_hDirIterator;
+};
+
+
 /** Default contructor.
  * \par Description:
  *	Initiate the instance to a know but invalid state.
@@ -42,23 +52,25 @@ using namespace os;
 
 Directory::Directory()
 {
-	m_hDirIterator = NULL;
+	m = new Private;
 }
 
 /** Construct a directory from a path.
  * \par Description:
- * 	See: SetTo( const std::string& cPath, int nOpenMode )
+ * 	See: SetTo( const String& cPath, int nOpenMode )
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-Directory::Directory( const std::string & cPath, int nOpenMode ):FSNode( cPath, nOpenMode )
+Directory::Directory( const String & cPath, int nOpenMode ):FSNode( cPath, nOpenMode )
 {
+	m = new Private;
+
 	if( S_ISDIR( GetMode( false ) ) == false )
 	{
 		throw errno_exception( "Node is not a directory", ENOTDIR );
 	}
-	m_hDirIterator = fopendir( GetFileDescriptor() );
-	if( m_hDirIterator == NULL )
+	m->m_hDirIterator = fopendir( GetFileDescriptor() );
+	if( m->m_hDirIterator == NULL )
 	{
 		throw errno_exception( "Failed to create directory iterator" );
 	}
@@ -66,18 +78,20 @@ Directory::Directory( const std::string & cPath, int nOpenMode ):FSNode( cPath, 
 
 /** Construct a directory from a path.
  * \par Description:
- * 	See: ( const Directory& cDir, const std::string& cPath, int nOpenMode )
+ * 	See: ( const Directory& cDir, const String& cPath, int nOpenMode )
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-Directory::Directory( const Directory & cDir, const std::string & cPath, int nOpenMode ):FSNode( cDir, cPath, nOpenMode )
+Directory::Directory( const Directory & cDir, const String & cPath, int nOpenMode ):FSNode( cDir, cPath, nOpenMode )
 {
+	m = new Private;
+
 	if( S_ISDIR( GetMode( false ) ) == false )
 	{
 		throw errno_exception( "Node is not a directory", ENOTDIR );
 	}
-	m_hDirIterator = fopendir( GetFileDescriptor() );
-	if( m_hDirIterator == NULL )
+	m->m_hDirIterator = fopendir( GetFileDescriptor() );
+	if( m->m_hDirIterator == NULL )
 	{
 		throw errno_exception( "Failed to create directory iterator" );
 	}
@@ -91,12 +105,14 @@ Directory::Directory( const Directory & cDir, const std::string & cPath, int nOp
 
 Directory::Directory( const FileReference & cRef, int nOpenMode ):FSNode( cRef, nOpenMode )
 {
+	m = new Private;
+
 	if( S_ISDIR( GetMode( false ) ) == false )
 	{
 		throw errno_exception( "Node is not a directory", ENOTDIR );
 	}
-	m_hDirIterator = fopendir( GetFileDescriptor() );
-	if( m_hDirIterator == NULL )
+	m->m_hDirIterator = fopendir( GetFileDescriptor() );
+	if( m->m_hDirIterator == NULL )
 	{
 		throw errno_exception( "Failed to create directory iterator" );
 	}
@@ -110,12 +126,14 @@ Directory::Directory( const FileReference & cRef, int nOpenMode ):FSNode( cRef, 
 
 Directory::Directory( const FSNode & cNode ):FSNode( cNode )
 {
+	m = new Private;
+
 	if( S_ISDIR( GetMode( false ) ) == false )
 	{
 		throw errno_exception( "Node is not a directory", ENOTDIR );
 	}
-	m_hDirIterator = fopendir( GetFileDescriptor() );
-	if( m_hDirIterator == NULL )
+	m->m_hDirIterator = fopendir( GetFileDescriptor() );
+	if( m->m_hDirIterator == NULL )
 	{
 		throw errno_exception( "Failed to create directory iterator" );
 	}
@@ -137,8 +155,10 @@ Directory::Directory( const FSNode & cNode ):FSNode( cNode )
 
 Directory::Directory( const Directory & cDir ):FSNode( cDir )
 {
-	m_hDirIterator = fopendir( GetFileDescriptor() );
-	if( m_hDirIterator == NULL )
+	m = new Private;
+
+	m->m_hDirIterator = fopendir( GetFileDescriptor() );
+	if( m->m_hDirIterator == NULL )
 	{
 		throw errno_exception( "Failed to create directory iterator" );
 	}
@@ -158,12 +178,14 @@ Directory::Directory( const Directory & cDir ):FSNode( cDir )
 
 Directory::Directory( int nFD ):FSNode( nFD )
 {
+	m = new Private;
+
 	if( S_ISDIR( GetMode( false ) ) == false )
 	{
 		throw errno_exception( "Node is not a directory", ENOTDIR );
 	}
-	m_hDirIterator = fopendir( GetFileDescriptor() );
-	if( m_hDirIterator == NULL )
+	m->m_hDirIterator = fopendir( GetFileDescriptor() );
+	if( m->m_hDirIterator == NULL )
 	{
 		throw errno_exception( "Failed to create directory iterator" );
 	}
@@ -171,12 +193,14 @@ Directory::Directory( int nFD ):FSNode( nFD )
 
 Directory::~Directory()
 {
-	if( m_hDirIterator != NULL )
+	if( m->m_hDirIterator != NULL )
 	{
 		// the closedir() will close the FD so we must make sure ~FSNode() don't attempt to do the same.
 		_SetFD( -1 );
-		closedir( m_hDirIterator );
+		closedir( m->m_hDirIterator );
 	}
+	
+	delete m;
 }
 
 status_t Directory::FDChanged( int nNewFD, const struct::stat & sStat )
@@ -194,20 +218,20 @@ status_t Directory::FDChanged( int nNewFD, const struct::stat & sStat )
 		{
 			return ( -1 );
 		}
-		if( m_hDirIterator != NULL )
+		if( m->m_hDirIterator != NULL )
 		{
 			// the closedir() will close the FD so we must make sure FSNode don't attempt to do the same.
 			_SetFD( -1 );
-			closedir( m_hDirIterator );
+			closedir( m->m_hDirIterator );
 		}
-		m_hDirIterator = hNewIter;
+		m->m_hDirIterator = hNewIter;
 	}
-	else if( m_hDirIterator != NULL )
+	else if( m->m_hDirIterator != NULL )
 	{
 		// the closedir() will close the FD so we must make sure FSNode don't attempt to do the same.
 		_SetFD( -1 );
-		closedir( m_hDirIterator );
-		m_hDirIterator = NULL;
+		closedir( m->m_hDirIterator );
+		m->m_hDirIterator = NULL;
 	}
 	return ( 0 );
 }
@@ -215,17 +239,17 @@ status_t Directory::FDChanged( int nNewFD, const struct::stat & sStat )
 /*
 void Directory::Unset()
 {
-    if ( m_hDirIterator != NULL ) {
+    if ( m->m_hDirIterator != NULL ) {
 	  // the closedir() will close the FD so we must make sure FSNode::Unset() don't attempt to do the same.
 	_SetFD( -1 ); 
-	closedir( m_hDirIterator );
+	closedir( m->m_hDirIterator );
     }
     FSNode::Unset();
 }
 */
 
 /** Open a directory using a path.
- * \f status_t Directory::SetTo( const std::string& cPath, int nOpenMode = O_RDONLY )
+ * \f status_t Directory::SetTo( const String& cPath, int nOpenMode = O_RDONLY )
  * \par Description:
  *	Open the directory pointet to by \p cPath. The path must
  *	be valid and it must point to a directory.
@@ -254,7 +278,7 @@ void Directory::Unset()
  *****************************************************************************/
 
 
-status_t Directory::GetPath( std::string * pcPath ) const
+status_t Directory::GetPath( String * pcPath ) const
 {
 	char zBuffer[PATH_MAX];
 	status_t nError;
@@ -273,9 +297,9 @@ status_t Directory::GetPath( std::string * pcPath ) const
 	return ( 0 );
 }
 
-status_t Directory::GetNextEntry( std::string * pcName )
+status_t Directory::GetNextEntry( String * pcName )
 {
-	struct dirent *psEntry = readdir( m_hDirIterator );
+	struct dirent *psEntry = readdir( m->m_hDirIterator );
 
 	if( psEntry == NULL )
 	{
@@ -290,7 +314,7 @@ status_t Directory::GetNextEntry( std::string * pcName )
 
 status_t Directory::GetNextEntry( FileReference * pcRef )
 {
-	std::string cName;
+	String cName;
 	status_t nError = GetNextEntry( &cName );
 
 	if( nError != 1 )
@@ -307,13 +331,13 @@ status_t Directory::GetNextEntry( FileReference * pcRef )
 
 status_t Directory::Rewind()
 {
-	rewinddir( m_hDirIterator );
+	rewinddir( m->m_hDirIterator );
 	return ( 0 );
 }
 
 
 
-status_t Directory::CreateFile( const std::string & cName, File * pcFile, int nAccessMode )
+status_t Directory::CreateFile( const String & cName, File * pcFile, int nAccessMode )
 {
 	int nFile = based_open( GetFileDescriptor(), cName.c_str(  ), O_WRONLY | O_CREAT, nAccessMode );
 
@@ -325,7 +349,7 @@ status_t Directory::CreateFile( const std::string & cName, File * pcFile, int nA
 	return ( static_cast < FSNode * >( pcFile )->SetTo( *this, cName, O_RDWR ) );
 }
 
-status_t Directory::CreateDirectory( const std::string & cName, Directory * pcDir, int nAccessMode )
+status_t Directory::CreateDirectory( const String & cName, Directory * pcDir, int nAccessMode )
 {
 	int nError = based_mkdir( GetFileDescriptor(), cName.c_str(  ), nAccessMode );
 
@@ -336,7 +360,7 @@ status_t Directory::CreateDirectory( const std::string & cName, Directory * pcDi
 	return ( pcDir->SetTo( *this, cName, O_RDONLY ) );
 }
 
-status_t Directory::CreateSymlink( const std::string & cName, const std::string & cDestination, SymLink * pcLink )
+status_t Directory::CreateSymlink( const String & cName, const String & cDestination, SymLink * pcLink )
 {
 	int nError = based_symlink( GetFileDescriptor(), cDestination.c_str(  ), cName.c_str(  ) );
 
