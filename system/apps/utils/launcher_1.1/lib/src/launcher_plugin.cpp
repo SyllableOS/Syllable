@@ -695,9 +695,9 @@ bool ImageButton::SetImageFromFile( string zFile )
 	anBGPix[3] = cBGCol.alpha;
 		
 	uint8 *pDstRaster = pcBitmap->LockRaster();
-	
-	// Why are the first 32 bytes garbage?
-	pcTrans->Read(anBuf, 32 );
+
+	if( pcTrans->Read( &sFrameHeader, sizeof(sFrameHeader) ) != sizeof( sFrameHeader ) )
+		return false;
 	
 	uint32 nSize = (sBmHeader.bh_bounds.Width() + 1) * sBmHeader.bh_bounds.Height();
 	for( uint32 nPix = 0; nPix < nSize; nPix++ ) {
@@ -722,7 +722,7 @@ Point ImageButton::GetPreferredSize( bool bLargest ) const
 	
     font_height sHeight;
     GetFontHeight( &sHeight );
-    float vCharHeight = sHeight.ascender + sHeight.descender + 8;    
+    float vCharHeight = sHeight.descender /*+ sHeight.descender*/ + 8;    
 	float vStrWidth = GetStringWidth( GetLabel( ) ) + 16;
 	
 	float x = vStrWidth;
@@ -826,9 +826,9 @@ void ImageButton::Paint( const Rect &cUpdateRect )
 	
 	font_height sHeight;
 	GetFontHeight( &sHeight );
-	
-    float vCharHeight = sHeight.ascender + sHeight.descender;
-    float y = floor( 2.0f + (cTextBounds.Height()+1.0f)*0.5f - vCharHeight*0.5f + sHeight.ascender );
+
+    float vCharHeight = sHeight.descender ;// + sHeight.descender ;
+    float y = floor( 2.0f + (cTextBounds.Height()+1.0f) * 0.5f + vCharHeight * 0.5f);
     float x = floor((cTextBounds.Width()+1.0f) / 2.0f - vStrWidth / 2.0f);
 		
     if ( IsEnabled() ) {
