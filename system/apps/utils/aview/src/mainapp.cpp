@@ -37,7 +37,6 @@ String ImageApp::getFilePath()
 
 ImageApp::~ImageApp()
 {
-    delete pcWin;
 }
 
 void ImageApp::HandleMessage(Message* pcMessage)

@@ -234,8 +234,8 @@ DiskView::DiskView( const Rect& cFrame, const std::string& cName ) : LayoutView(
     m_pcPartitionButton->SetEnable( false );
 
     pcButtonFrame->AddChild( new LayoutSpacer( "space", 1.0f, NULL, Point(0.0f,0.0f), Point(0.0f,MAX_SIZE) ) );
-    pcButtonFrame->AddChild( m_pcPartitionButton );
-    pcButtonFrame->AddChild( m_pcQuitButton );
+    pcButtonFrame->AddChild( m_pcPartitionButton, 0.0f );
+    pcButtonFrame->AddChild( m_pcQuitButton, 0.0f );
 
     pcRoot->AddChild( m_pcDiskList );
     pcRoot->AddChild( pcButtonFrame );

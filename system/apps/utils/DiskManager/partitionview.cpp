@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <stdexcept>
+#include <cassert>
 
 #include "partitionview.h"
 #include "main.h"

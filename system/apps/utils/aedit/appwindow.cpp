@@ -22,7 +22,7 @@
 
 #include "resources/aedit.h"
 
-#include <fstream.h>
+#include <fstream>
 
 #include <gui/window.h>
 #include <gui/requesters.h>
@@ -99,8 +99,10 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", AED
 	SetSizeLimits(Point(300,250),Point(4096,4096));
 
 	// Create the file requesters
-	pcLoadRequester = new FileRequester(FileRequester::LOAD_REQ, new Messenger(this), getenv("$HOME"));
-	pcSaveRequester = new FileRequester(FileRequester::SAVE_REQ, new Messenger(this), getenv("$HOME"));
+	pcLoadRequester = new FileRequester(FileRequester::LOAD_REQ, new Messenger(this));
+	pcLoadRequester->Start();
+	pcSaveRequester = new FileRequester(FileRequester::SAVE_REQ, new Messenger(this));
+	pcSaveRequester->Start();
 
 	// Reset the changed flag
 	bContentChanged=false;
@@ -292,7 +294,9 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 		case M_BUT_FILE_OPEN:
 		{
 			pcLoadRequester->CenterInWindow(this);
+			pcLoadRequester->Lock();
 			pcLoadRequester->Show();
+			pcLoadRequester->Unlock();
 			pcLoadRequester->MakeFocus();
 
 			break;
@@ -339,7 +343,9 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 		case M_MENU_FILE_SAVE_AS:
 		{
 			pcSaveRequester->CenterInWindow(this);
+			pcSaveRequester->Lock();
 			pcSaveRequester->Show();
+			pcSaveRequester->Unlock();
 			pcSaveRequester->MakeFocus();
 
 			break;

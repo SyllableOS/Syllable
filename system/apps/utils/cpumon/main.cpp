@@ -319,6 +319,7 @@ int main( int argc, char ** argv )
     
     MyApp* pcApp = new MyApp;
     pcApp->Run();
-    delete pcApp;
 }
+
+
 

@@ -127,7 +127,6 @@ MyApp::MyApp( const char* pzName ) : Application( pzName )
 
 MyApp::~MyApp()
 {
-  m_pcWindow->Quit();
 }
 
 //----------------------------------------------------------------------------
