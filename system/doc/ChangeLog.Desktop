@@ -1,3 +1,16 @@
+* August 15/16, 2002, Rick Caudil *
+	* Changes *
+
+	* Fixed a bug that was caused when moving all of the files around.
+	
+	* ReImplemented the "Mounted Drives" menu.  It shows all partitons now :).
+	
+	* Moved over to Henriks latest menuitem code(he gave it to me a while ago and I just 		never got around to it).
+	
+	*  Added SubMenu arrow to imageitem code.
+
+	* Shrunk all context menu images down from 16x16 to 10x10.
+
 * August 15, 2002, Rick Caudill *
 	* Changes *
 	
