@@ -30,6 +30,8 @@
 
 #include "format.h"
 
+using namespace std;
+
 namespace cv
 {
 
@@ -48,6 +50,8 @@ public:
 
 	Line(): cookie(0), w(0){}
 };
+
+typedef vector<Line> buffer_type;
 
 /**
  * \internal
@@ -98,7 +102,7 @@ class InnerEdit : public os::View
 	friend class CodeView;
 private:
 	
-	vector<Line>	buffer;
+	buffer_type	buffer;
 	mutable list<Fold>	cFoldedSections;
 	/* Line index = visible line number */
 	/* Buffer index = index in buffer */
@@ -186,7 +190,7 @@ public:
 	}
 	const string& getLine(uint y)const { return buffer[y].text; }
 	void setLine(const string &, uint y, bool addUndo=true);
-	uint getLineCount() const{ return buffer.size(); }
+	uint getLineCount() const{ return buffer.size()-1; }
 
 	void setFormat(Format *);
 	Format* getFormat() const{ return format; }
@@ -237,7 +241,7 @@ public:
 	}
 	void selectAll(){
 		setSelectionStart(0,0);
-		setSelectionEnd(buffer.back().text.size(), buffer.size()-1);
+		setSelectionEnd(buffer.back().text.size(), buffer.size());
 	}
 	void clearSelection();
 
@@ -281,15 +285,3 @@ public:
 } /* namespace cv */
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-

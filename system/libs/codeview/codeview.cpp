@@ -23,6 +23,7 @@
 #include <gui/scrollbar.h>
 
 using namespace cv;
+using namespace std;
 
 /**Constructor
  * \par Description:
@@ -38,7 +39,7 @@ using namespace cv;
  * \param rm Passed on to the os::View constructor.
  * \param f Passed on to the os::View constructor.
  */
-CodeView::CodeView(const os::Rect &r, const string &s, const string &text, uint32 rm, uint32 f)
+CodeView::CodeView(const os::Rect &r, const os::String &s, const os::String &text, uint32 rm, uint32 f)
 : os::Control(r, s, "", NULL, rm, f){
 	
 	os::Rect bounds=GetBounds();
@@ -119,7 +120,7 @@ void CodeView::FontChanged(os::Font *f){
 /**Sets the readonly flag.
  * <p>Default: false
  */
-void CodeView::SetReadOnly(bool flag=true){
+void CodeView::SetReadOnly(bool flag){
 	edit->setReadOnly(flag); 
 }
 
@@ -166,7 +167,7 @@ void CodeView::SetEventMask(uint32 mask){
 /**Gets the currently selected region.
  * \param buffer The string to put the text into.
  */
-void CodeView::GetRegion(string *buffer){
+void CodeView::GetRegion(os::String *buffer){
 	if(!buffer)
 		return;
 
@@ -175,7 +176,7 @@ void CodeView::GetRegion(string *buffer){
 		return;
 	}
 
-	edit->getText(buffer, edit->selStart, edit->selEnd);
+	edit->getText(&buffer->str(), edit->selStart, edit->selEnd);
 }
 		
 //void CodeView::SetMinPreferredSize(int widthChars, int heightChars){ edit->setMinPreferredSize(widthChars, heightChars); }
@@ -191,7 +192,7 @@ void CodeView::MakeCsrVisible(){
 /**Removes all text from the view.
  * \param sendNotify Set to false if no event should be sent.
  */
-void CodeView::Clear(bool sendNotify=true){
+void CodeView::Clear(bool sendNotify){
 	edit->setText("");
 	if(sendNotify) edit->commitEvents();
 }
@@ -200,7 +201,7 @@ void CodeView::Clear(bool sendNotify=true){
  * \param text The text to set.
  * \param sendNotify Set to false if no event should be sent.
  */
-void CodeView::Set(const char *text, bool sendNotify=true){
+void CodeView::Set(const char *text, bool sendNotify){
 	edit->setText(text);
 	if(sendNotify) edit->commitEvents();
 }
@@ -210,7 +211,7 @@ void CodeView::Set(const char *text, bool sendNotify=true){
  * \param text The text to insert.
  * \param sendNotify Set to false if no event should be sent.
  */
-void CodeView::Insert(const char *text, bool sendNotify=true){
+void CodeView::Insert(const char *text, bool sendNotify){
 	edit->insertText(text, edit->getCursor());
 	if(sendNotify) edit->commitEvents();
 }			
@@ -220,7 +221,7 @@ void CodeView::Insert(const char *text, bool sendNotify=true){
  * \param text The text to insert.
  * \param sendNotify Set to false if no event should be sent.
  */
-void CodeView::Insert(const os::IPoint &pos, const char *text, bool sendNotify=true){
+void CodeView::Insert(const os::IPoint &pos, const char *text, bool sendNotify){
 	edit->insertText(text, pos);
 	if(sendNotify) edit->commitEvents();
 }	
@@ -230,7 +231,7 @@ void CodeView::Insert(const os::IPoint &pos, const char *text, bool sendNotify=t
  * \param end Where to end the selection.
  * \param sendNotify Set to false if no event should be sent.
  */
-void CodeView::Select(const os::IPoint &start, const os::IPoint &end, bool sendNotify=true){
+void CodeView::Select(const os::IPoint &start, const os::IPoint &end, bool sendNotify){
 	edit->setSelection(start, end);
 	if(sendNotify) edit->commitEvents();
 }
@@ -238,7 +239,7 @@ void CodeView::Select(const os::IPoint &start, const os::IPoint &end, bool sendN
 /**Select all text in the view.
  * \param sendNotify Set to false if no event should be sent.
  */
-void CodeView::SelectAll(bool sendNotify=true){
+void CodeView::SelectAll(bool sendNotify){
 	edit->selectAll();
 	if(sendNotify) edit->commitEvents();
 }
@@ -246,7 +247,7 @@ void CodeView::SelectAll(bool sendNotify=true){
 /**Unselects the current selection.
  * \param sendNotify Set to false if no event should be sent.
  */
-void CodeView::ClearSelection(bool sendNotify=true){
+void CodeView::ClearSelection(bool sendNotify){
 	edit->clearSelection();
 	if(sendNotify) edit->commitEvents();
 }
@@ -257,7 +258,7 @@ void CodeView::ClearSelection(bool sendNotify=true){
  * \param select Set to true if the move should select text.
  * \param sendNotify Set to false if no event should be sent.
  */
-void CodeView::SetCursor(int x, int y, bool select=false, bool sendNotify=true){
+void CodeView::SetCursor(int x, int y, bool select, bool sendNotify){
 	edit->setCursor(x, y, select);
 	if(sendNotify) edit->commitEvents();
 }
@@ -267,7 +268,7 @@ void CodeView::SetCursor(int x, int y, bool select=false, bool sendNotify=true){
  * \param select Set to true if the move should select text.
  * \param sendNotify Set to false if no event should be sent.
  */
-void CodeView::SetCursor(const os::IPoint &pos, bool select=false, bool sendNotify=true){
+void CodeView::SetCursor(const os::IPoint &pos, bool select, bool sendNotify){
 	edit->setCursor(pos, select);
 	if(sendNotify) edit->commitEvents();
 }
@@ -289,7 +290,7 @@ size_t CodeView::GetCurrentLength() const{
 /**Cut selected text, and put it on the ClipBoard.
  * \param sendNotify Set to false if no event should be sent.
  */		
-void CodeView::Cut(bool sendNotify=true){
+void CodeView::Cut(bool sendNotify){
 	edit->cut();
 	if(sendNotify) edit->commitEvents();
 }
@@ -303,7 +304,7 @@ void CodeView::Copy(){
 /**Paste the content of the ClipBoard into the view, replacing any selected text.
  * \param sendNotify Set to false if no event should be sent.
  */		
-void CodeView::Paste(bool sendNotify=true){
+void CodeView::Paste(bool sendNotify){
 	edit->paste();
 	if(sendNotify) edit->commitEvents();
 }
@@ -311,7 +312,7 @@ void CodeView::Paste(bool sendNotify=true){
 /**Delete the selected text, or current character.
  * \param sendNotify Set to false if no event should be sent.
  */		
-void CodeView::Delete(bool sendNotify=true){
+void CodeView::Delete(bool sendNotify){
 	edit->del();
 	if(sendNotify) edit->commitEvents();
 }
@@ -321,7 +322,7 @@ void CodeView::Delete(bool sendNotify=true){
  * \param end Where to end the deletion.
  * \param sendNotify Set to false if no event should be sent.
  */		
-void CodeView::Delete(const os::IPoint &start, const os::IPoint &end, bool sendNotify=true){
+void CodeView::Delete(const os::IPoint &start, const os::IPoint &end, bool sendNotify){
 	edit->removeText(start, end);
 	if(sendNotify) edit->commitEvents();
 }
@@ -397,16 +398,16 @@ uint CodeView::GetLineCount() const {
  * \param i The line to get
  * \return Const reference to the given line.
  */
-const string& CodeView::GetLine(uint i)const{
-	return edit->getLine(i); 
+const os::String& CodeView::GetLine(uint i)const{
+	return edit->getLine(i);
 }
 
 /**Sets a line.
  * \param text The text to set
  * \param line Which line to set.
  */
-void CodeView::SetLine(const string &text, uint line){
-	edit->setLine(text, line);
+void CodeView::SetLine(const os::String &text, uint line){
+	edit->setLine(text.const_str(), line);
 }
 
 /**Undoes a previous action - if possible.
@@ -414,7 +415,7 @@ void CodeView::SetLine(const string &text, uint line){
  * \return true if succesfull.
  * \sa UndoAvailable() Redo()
  */		
-bool CodeView::Undo(bool sendNotify=true){
+bool CodeView::Undo(bool sendNotify){
 	return edit->undo(); 
 	if(sendNotify) edit->commitEvents();
 }
@@ -424,7 +425,7 @@ bool CodeView::Undo(bool sendNotify=true){
  * \return true if succesfull.
  * \sa RedoAvailable() Undo()
  */		
-bool CodeView::Redo(bool sendNotify=true){
+bool CodeView::Redo(bool sendNotify){
 	return edit->redo(); 
 	if(sendNotify) edit->commitEvents();
 }
@@ -481,9 +482,3 @@ bool CodeView::GetUseTab(){
 void CodeView:: ClearEvents(){
 	edit->eventBuffer=0;
 }
-
-
-
-
-
-

@@ -26,6 +26,8 @@
 #include "inneredit.h"
 #include "codeview.h"
 
+#include <assert.h>
+
 #include <gui/font.h>
 #include <gui/scrollbar.h>
 #include <util/clipboard.h>
@@ -249,11 +251,11 @@ void InnerEdit::Paint(const os::Rect &r)
 				if(!enabled)
 					nbg=dim(nbg);
 
-				if(nfg!=fg){
+				if(!(nfg==fg)){
 					fg=nfg;
 					backView->SetFgColor(fg);
 				}
-				if(nbg!=bg){
+				if(!(nbg==bg)){
 					bg=nbg;
 					backView->SetBgColor(bg);
 				}
@@ -370,8 +372,11 @@ void InnerEdit::insertText(const string &str, uint x, uint y, bool addUndo)
 				buffer.back().text=list[a];
 			}
 		}else{
+			buffer_type::iterator iter;
 			for(uint a=1;a<list.size();++a){
-				buffer.insert(&buffer[nBufferIndex+a], Line());
+				//buffer.insert(&buffer[nBufferIndex+a], Line());
+				iter = buffer.begin() + nBufferIndex + a;
+				buffer.insert(iter, Line());
 				buffer[nBufferIndex+a].text=list[a];
 			}
 		}
@@ -495,7 +500,7 @@ void InnerEdit::removeText( uint nLeft, uint nTop, uint nRight, uint nBot, bool 
 					cUndoStr += buffer[ nBfrTop + 1 ].text.substr( 0, nRight );
 
 			//TODO: erase all lines at once - this is slow
-			buffer.erase( &buffer[ nBfrTop + 1 ] );
+			buffer.erase( buffer.begin() + nBfrTop + 1 );
 		}
 		updateAllWidths();
 		
@@ -1395,7 +1400,7 @@ void InnerEdit::updateBackBuffer()
 	if(!backView)
 		backView=new os::View(os::Rect(), "");
 
-	backBM=new os::Bitmap(Width(), lineHeight, os::CS_RGB16, os::Bitmap::ACCEPT_VIEWS);
+	backBM=new os::Bitmap((int)Width(), (int)lineHeight, os::CS_RGB16, os::Bitmap::ACCEPT_VIEWS);
 
 	backView->SetFrame(backBM->GetBounds());
 	os::Font* f=GetFont();
@@ -1426,7 +1431,7 @@ void InnerEdit::reformat(uint first, uint last)
 			newCookie = format->Parse(buffer[line].text, buffer[line].style, buffer[line-1].cookie);
 		buffer[line].cookie=newCookie;
 		++line;
-	}while(line<=max && (newCookie!=oldCookie || line<=last) );
+	}while(line<=max && (!(newCookie==oldCookie) || line<=last) );
 
 	invalidateLines(first, line);
 	Flush();
@@ -1953,17 +1958,3 @@ void InnerEdit::_AdjustFoldedSections( uint nStart, int nLen )
 //		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

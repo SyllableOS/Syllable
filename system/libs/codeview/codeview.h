@@ -62,7 +62,7 @@ public:
     };
 
 public:
-    CodeView( const os::Rect&, const string& name, const string& buffer, 
+    CodeView( const os::Rect&, const os::String& name, const os::String& buffer, 
 	uint32 resizeMask=os::CF_FOLLOW_LEFT||os::CF_FOLLOW_TOP, 
 	uint32 flags=os::WID_WILL_DRAW || os::WID_FULL_UPDATE_ON_RESIZE );
 
@@ -91,7 +91,7 @@ public:
     uint32 GetEventMask() const;
     void SetEventMask(uint32 mask);
 
-    void GetRegion(string *buffer);
+    void GetRegion(os::String *buffer);
 		
     //void SetMinPreferredSize(int widthChars, int heightChars);
     //os::IPoint GetMinPreferredSize();
@@ -137,8 +137,8 @@ public:
     os::Color32_s GetBackground();
 
     uint GetLineCount() const;
-    const string& GetLine(uint i) const;
-    void SetLine(const string &text, uint i);
+    const os::String& GetLine(uint i) const;
+    void SetLine(const os::String &text, uint i);
 
     bool Undo(bool sendNotify=true);
     bool Redo(bool sendNotify=true);
@@ -160,5 +160,3 @@ private:
 } /* namespace cv */
 
 #endif /* F_CODEVIEW_CODEVIEW_H */
-
-

@@ -1,4 +1,4 @@
-VERSION_MAJOR = 1
+VERSION_MAJOR = 2
 VERSION_MINOR = 0
 LOBJS = objs/inneredit.o objs/codeview.o objs/format_c.o objs/format_java.o objs/format_perl.o objs/format_html.o
 OBJS = objs/main.o

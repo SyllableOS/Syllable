@@ -26,6 +26,8 @@
 
 #include <string>
 
+using namespace std;
+
 namespace cv
 {
 
@@ -187,4 +189,3 @@ public:
 } /* end of namespace */
 
 #endif /* F_CODEVIEW_FORMAT_H */
-
