@@ -374,7 +374,7 @@ static void ap_entry_proc()
 
 	nProcessor = get_processor_id();
 
-	printk( "CPU %d joines the party.\n", nProcessor );
+	printk( "CPU %d joins the party.\n", nProcessor );
 
 	// Workaround for lazy bios'es that forget to enable the cache on AP processors.
       __asm__( "movl %%cr0,%0":"=r"( nCR0 ) );

@@ -880,7 +880,7 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 	printk( "  MemSize:          %ld\n", g_nMemSize );
 	printk( "  UAS start:        %08lx\n", g_sSysBase.sb_nFirstUserAddress );
 	printk( "  UAS end:          %08lx\n", g_sSysBase.sb_nLastUserAddress );
-	printk( "  SMP  scan is %s\n", ( ( g_bDisableSMP ) ? "disabled" : "enabled" ) );
+	printk( "  SMP scan is %s\n", ( ( g_bDisableSMP ) ? "disabled" : "enabled" ) );
 	printk( "  Swapping is %s\n", ( ( g_bSwapEnabled ) ? "enabled" : "disabled" ) );
 	printk( "Loaded kernel modules:\n" );
 	for ( i = 0; i < g_sSysBase.ex_nBootModuleCount; ++i )
