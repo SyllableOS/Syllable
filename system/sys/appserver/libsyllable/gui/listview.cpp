@@ -499,7 +499,17 @@ void ListViewCol::Refresh( const Rect & cUpdateRect )
 
 	Rect cBounds = GetBounds();
 
-	ListViewRow *pcLastRow = m_pcParent->m_cRows[m_pcParent->m_cRows.size() - 1];
+	std::vector < ListViewRow * >&cList = m_pcParent->m_cRows;
+	ListViewRow *pcLastRow = m_pcParent->m_cRows[0];
+
+	// Find the last visible row
+	for( int i = 0; i < int ( cList.size() ); ++i )
+	{
+		if( cList[i]->IsVisible() )
+		{
+			pcLastRow = cList[i];
+		}
+	}
 
 	if( cUpdateRect.top > pcLastRow->m_vYPos + pcLastRow->m_vHeight + m_pcParent->m_vVSpacing )
 	{
@@ -525,7 +535,6 @@ void ListViewCol::Refresh( const Rect & cUpdateRect )
 		}
 	}
 
-	std::vector < ListViewRow * >&cList = m_pcParent->m_cRows;
 	bool bHasFocus = m_pcParent->m_pcListView->HasFocus();
 
 	Rect cFrame( cBounds.left, 0.0f, cBounds.right, 0.0f );
@@ -1016,7 +1025,7 @@ int ListViewContainer::GetRowIndex( float y ) const
 */
 int ListViewContainer::GetRowIndex( float y ) const
 {
-	int nIndex = -1;
+	int nIndex = -1, i = 0;
 
 	if( y < 0.0f || m_cRows.empty() )
 	{
@@ -1025,11 +1034,11 @@ int ListViewContainer::GetRowIndex( float y ) const
 
 	std::vector < ListViewRow * >::const_iterator cIterator;
 
-	for( cIterator = m_cRows.begin(); cIterator != m_cRows.end(  ); cIterator++ )
+	for( cIterator = m_cRows.begin(); cIterator != m_cRows.end(  ); cIterator++, i++ )
 	{
 		if( ( *cIterator )->IsVisible() && y < ( *cIterator )->m_vYPos + ( *cIterator )->m_vHeight + m_vVSpacing )
 		{
-			nIndex = cIterator - m_cRows.begin();
+			nIndex = i; //cIterator - m_cRows.begin();
 			break;
 		}
 	}
