@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.32
+# Version 0.5.33
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -1095,7 +1095,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.32',
+	puts 'Syllable Build System 0.5.33',
 		'Copyright (c) 2002-2004 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1146,33 +1146,35 @@ else
 			prepare target
 		else
 			if @systemBuild
-				@log.header 'Temporarily replacing system headers'
-				action "ln -sf #{File.join @workDir, 'sys/include'} /ainc"
+				if exists? '/ainc'
+					@log.header 'Temporarily replacing system headers'
+					action "ln -sf #{File.join @workDir, 'sys/include'} /ainc"
+				end
 
 				ENV['ATHEOS_INCLUDE_PATH'] = File.join @workDir, 'sys/include'
 				ENV['C_INCLUDE_PATH'] =
 					(File.join @stage, 'boot/atheos/sys/include') + ':' +
-					(File.join @stage, 'boot/atheos/autolnk/include') + ':' +
-					ENV['C_INCLUDE_PATH']
+					(File.join @stage, 'boot/atheos/autolnk/include') +
+					((var = ENV['C_INCLUDE_PATH']) ? ':' + var : '')
 				ENV['CPLUS_INCLUDE_PATH'] =
 					(File.join @stage, 'boot/atheos/sys/include') + ':' +
-					(File.join @stage, 'boot/atheos/autolnk/include') + ':' +
-					ENV['CPLUS_INCLUDE_PATH']
+					(File.join @stage, 'boot/atheos/autolnk/include') +
+					((var = ENV['CPLUS_INCLUDE_PATH']) ? ':' + var : '')
 
 				ENV['ATHEOS_LIB_PATH'] = File.join @workDir, 'libs'
 				ENV['DLL_PATH'] =
 					(File.join @stage, 'boot/atheos/sys/libs') + ':' +
 					(File.join @stage, 'boot/atheos/sys') + ':' +
-					(File.join @stage, 'boot/atheos/autolnk/lib') + ':' +
-					ENV['DLL_PATH']
+					(File.join @stage, 'boot/atheos/autolnk/lib') +
+					((var = ENV['DLL_PATH']) ? ':' + var : '')
 				ENV['LIBRARY_PATH'] =
 					(File.join @stage, 'boot/atheos/sys/libs') + ':' +
-					(File.join @stage, 'boot/atheos/autolnk/lib') + ':' +
-					ENV['LIBRARY_PATH']
+					(File.join @stage, 'boot/atheos/autolnk/lib') +
+					((var = ENV['LIBRARY_PATH']) ? ':' + var : '')
 
 				prepare target unless exists? @stage
 			end
-	
+
 			case arg1
 			when 'get'			then get		target
 			when 'patch'		then patch		target
@@ -1192,12 +1194,12 @@ else
 					build target
 				end
 			end
-	
-			if @systemBuild
+
+			if @systemBuild and exists? '/ainc'
 				@log.header 'Restoring system headers'
 				action 'ln -sf /system/include /ainc'
 			end
-	
+
 			Profile.new('failures')['modules'] = @log.failures if profile  # Processing a profile
 		end
 	end
