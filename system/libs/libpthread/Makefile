@@ -26,7 +26,7 @@ install: all
 dist: all
 	cp -f $(OBJDIR)/$(LIB) $(DIST_DIR)/atheos/sys/libs/
 	if [ ! -e $(DIST_DIR)/atheos/sys/libs/$(SON) ];then \
-		ln -s $(DIST_DIR)/atheos/sys/libs/$(LIB) $(DIST_DIR)/atheos/sys/libs/$(SON); \
+		ln -s $(LIB) $(DIST_DIR)/atheos/sys/libs/$(SON); \
 	fi
 
 $(OBJDIR):
