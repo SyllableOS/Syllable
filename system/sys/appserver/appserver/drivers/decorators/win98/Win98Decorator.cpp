@@ -2,6 +2,9 @@
  *  "Win98" Window-Decorator
  *  Copyright (C) 2002 Iain Hutchison
  *
+ *  Updated Jul 2004 by Mike Saunders
+ *  (Added minimize; fixed resize; better buttons and icon; fixed glitches)
+ *
  *  Based on "Amiga" Window-Decorator
  *  Copyright (C) 1999 - 2001 Kurt Skauen
  *
@@ -56,6 +59,7 @@ Win98Decorator::Win98Decorator( Layer* pcLayer, uint32 nWndFlags )
     m_bCloseState = false;
     m_bZoomState  = false;
     m_bDepthState = false;
+    m_bMinimizeState = false;
 
     m_sFontHeight = pcLayer->GetFontHeight();
   
@@ -152,7 +156,18 @@ WindowDecorator::hit_item Win98Decorator::HitTest( const Point& cPosition )
 				return( HIT_SIZE_TOP );
 			}
 		}
-		else if ( cPosition.y > m_cBounds.bottom - BORDER_SIZE )
+		else if ( cPosition.y < BORDER_SIZE + 16 )
+		{
+			if ( cPosition.x < BORDER_SIZE + 2 )
+			{
+				return( HIT_SIZE_LT );
+			}
+			else if ( cPosition.x > m_cBounds.right - BORDER_SIZE - 1 )
+			{
+				return( HIT_SIZE_RT );
+			}
+		}
+		else if ( cPosition.y > m_cBounds.bottom - BORDER_SIZE - 2 )
 		{
 			if ( cPosition.x < 16 )
 			{
@@ -167,11 +182,26 @@ WindowDecorator::hit_item Win98Decorator::HitTest( const Point& cPosition )
 				return( HIT_SIZE_BOTTOM );
 			}
 		}
-		else if ( cPosition.x < BORDER_SIZE )
+		else if ( cPosition.y > m_cBounds.bottom - BORDER_SIZE - 18 )
+		{
+			if ( cPosition.x < BORDER_SIZE + 2 )
+			{
+				return( HIT_SIZE_LB );
+			}
+			else if ( cPosition.x > m_cBounds.right - 16 )
+			{
+				return( HIT_SIZE_RB );
+			}
+			else
+			{
+				return( HIT_SIZE_BOTTOM );
+			}
+		}
+		else if ( cPosition.x < BORDER_SIZE + 2 )
 		{
 			return( HIT_SIZE_LEFT );
 		}
-		else if ( cPosition.x > m_cBounds.right - BORDER_SIZE )
+		else if ( cPosition.x > m_cBounds.right - BORDER_SIZE - 2 )
 		{
 			return( HIT_SIZE_RIGHT );
 		}
@@ -185,9 +215,9 @@ WindowDecorator::hit_item Win98Decorator::HitTest( const Point& cPosition )
 	{
 		return( HIT_ZOOM );
 	}
-	else if ( m_cToggleRect.DoIntersect( cPosition ) )
+	else if ( m_cMinimizeRect.DoIntersect( cPosition ) )
 	{
-		return( HIT_DEPTH );
+		return( HIT_MINIMIZE );
 	}
 	else if ( m_cDragRect.DoIntersect( cPosition ) )
 	{
@@ -228,7 +258,7 @@ void Win98Decorator::FrameSized( const Rect& cFrame )
 	if ( cDelta.x != 0.0f )
 	{
 		Rect cDamage = m_cBounds;
-		cDamage.left = m_cZoomRect.left - fabs(cDelta.x)  - 2.0f;
+		cDamage.left = m_cMinimizeRect.left - fabs(cDelta.x)  - 2.0f;
 		pcView->Invalidate( cDamage );
 	}
 	if ( cDelta.y != 0.0f )
@@ -251,23 +281,11 @@ void Win98Decorator::Layout()
 	{
 		m_cCloseRect.right = vRight - 1;
 		m_cCloseRect.left  = m_cCloseRect.right - BUTTON_SIZE;
-		vRight = m_cCloseRect.left;
+		vRight = m_cCloseRect.left - 1;
 	}
-	m_cCloseRect.top    = BORDER_SIZE + (TITLE_HEIGHT - BUTTON_SIZE)/2;
-	m_cCloseRect.bottom = m_cCloseRect.top + BUTTON_SIZE - 1;
-	// Toggle-depth button
-	if ( m_nFlags & WND_NO_DEPTH_BUT )
-	{
-		m_cToggleRect.left = m_cToggleRect.right = 0;
-	}
-	else
-	{
-		m_cToggleRect.right = vRight - 1;
-		m_cToggleRect.left   = m_cToggleRect.right - BUTTON_SIZE;
-		vRight = m_cToggleRect.left;
-	}
-	m_cToggleRect.top    = m_cCloseRect.top;
-	m_cToggleRect.bottom = m_cCloseRect.bottom;
+	m_cCloseRect.top    = BORDER_SIZE + 1 + (TITLE_HEIGHT - BUTTON_SIZE)/2;
+	m_cCloseRect.bottom = m_cCloseRect.top + BUTTON_SIZE - 2;
+
 	// Zoom button
 	if ( m_nFlags & WND_NO_ZOOM_BUT )
 	{
@@ -279,13 +297,21 @@ void Win98Decorator::Layout()
 		m_cZoomRect.left  = m_cZoomRect.right - BUTTON_SIZE;
 		vRight = m_cZoomRect.left;
 	}
+
+	// Minimize button
+	m_cMinimizeRect.right = vRight;
+	m_cMinimizeRect.left  = m_cMinimizeRect.right - BUTTON_SIZE;
+	vRight = m_cMinimizeRect.left;
+
+	m_cMinimizeRect.top    = m_cCloseRect.top;
+	m_cMinimizeRect.bottom = m_cCloseRect.bottom;
 	m_cZoomRect.top    = m_cCloseRect.top;
 	m_cZoomRect.bottom = m_cCloseRect.bottom;
 	// Title area (dragable)
 	m_cDragRect.right  = vRight - 1;
 	m_cDragRect.left   = m_cBounds.left + BORDER_SIZE + TITLE_HEIGHT;
-    m_cDragRect.top    = BORDER_SIZE;
-    m_cDragRect.bottom = BORDER_SIZE + TITLE_HEIGHT - 1;
+	m_cDragRect.top    = BORDER_SIZE;
+	m_cDragRect.bottom = BORDER_SIZE + TITLE_HEIGHT - 1;
 }
 
 void Win98Decorator::SetButtonState( uint32 nButton, bool bPushed )
@@ -300,6 +326,9 @@ void Win98Decorator::SetButtonState( uint32 nButton, bool bPushed )
 			break;
 		case HIT_DEPTH:
 			SetDepthButtonState( bPushed );
+			break;
+		case HIT_MINIMIZE:
+			SetMinimizeButtonState( bPushed );
 			break;
 	}
 }
@@ -331,6 +360,12 @@ void Win98Decorator::SetDepthButtonState( bool bPushed )
 	}
 }
 
+void Win98Decorator::SetMinimizeButtonState( bool bPushed )
+{
+	m_bMinimizeState = bPushed;
+	DrawMinimize( m_cMinimizeRect, m_bHasFocus, m_bMinimizeState == 1 );
+}
+
 void Win98Decorator::DrawFrame(const Rect& cRect, bool bOuter)
 {
 	Rect		R = cRect;
@@ -340,9 +375,6 @@ void Win98Decorator::DrawFrame(const Rect& cRect, bool bOuter)
 	Color32_s	col_Normal = get_default_color(COL_NORMAL);
 	Color32_s	col_Light  = BlendColours(col_Normal, col_White, 0.5f);
 	Color32_s	col_Dark   = BlendColours(col_Normal, col_Black, 0.5f);
-
-	R.right  -= 1;
-	R.bottom -= 1;
 
 	if (bOuter)
 	{
@@ -365,6 +397,8 @@ void Win98Decorator::DrawFrame(const Rect& cRect, bool bOuter)
 		pcView->DrawLine( Point(R.left, R.top   ), Point(R.left   ,R.bottom-1) );
 		pcView->DrawLine( Point(R.left, R.bottom), Point(R.right,  R.bottom  ) );
 		pcView->DrawLine( Point(R.right,R.top   ), Point(R.right,  R.bottom  ) );
+		// Fix gap 1px to right of title-bar BG
+		pcView->DrawLine( Point(R.right-1,R.top+FRAME_SIZE), Point(R.right-1,  R.top+TITLE_HEIGHT ) );
 	}
 	else
 	{
@@ -485,44 +519,61 @@ void Win98Decorator::DrawZoom(  const Rect& cRect, bool bActive, bool bRecessed 
 	}
 
 	pcView->SetFgColor( 0, 0, 0, 255 );
-	pcView->DrawLine( Point(R.left+ 2,R.top+ 2), Point(R.left+13,R.top+ 2) );
-	pcView->DrawLine( Point(R.left+ 2,R.top+ 3), Point(R.left+13,R.top+ 3) );
-	pcView->DrawLine( Point(R.left+ 2,R.top+ 3), Point(R.left+ 2,R.top+11) );
-	pcView->DrawLine( Point(R.left+ 2,R.top+11), Point(R.left+13,R.top+11) );
-	pcView->DrawLine( Point(R.left+13,R.top+ 3), Point(R.left+13,R.top+11) );
-	pcView->DrawLine( Point(R.left+ 2,R.top+ 7), Point(R.left+ 9,R.top+ 7) );
-	pcView->DrawLine( Point(R.left+ 9,R.top+ 3), Point(R.left+ 9,R.top+ 7) );
+	pcView->DrawLine( Point(R.left+4,R.top+ 3), Point(R.left+11,R.top+3) );
+	pcView->DrawLine( Point(R.left+4,R.top+ 4), Point(R.left+11,R.top+4) );
+	pcView->DrawLine( Point(R.left+4,R.top+ 3), Point(R.left+4,R.top+10) );
+	pcView->DrawLine( Point(R.left+4,R.top+ 10), Point(R.left+11,R.top+10) );
+	pcView->DrawLine( Point(R.left+11,R.top+ 10), Point(R.left+11,R.top+3) );
+}
+
+void Win98Decorator::DrawMinimize(  const Rect& cRect, bool bActive, bool bRecessed )
+{
+	Rect   R      = cRect;
+	Layer* pcView = GetLayer();
+
+	DrawButton(cRect, bRecessed);
+
+	if (bRecessed)
+	{
+		R.left +=1; R.top += 1;
+	}
+
+	pcView->SetFgColor( 0, 0, 0, 255 );
+	pcView->DrawLine( Point(R.left+4,R.top+ 9), Point(R.left+9,R.top+9) );
+	pcView->DrawLine( Point(R.left+4,R.top+ 10), Point(R.left+9,R.top+10) );
 }
 
 void Win98Decorator::DrawIcon(const Rect& cRect)
 {
-	Rect		R			= cRect;
+	Rect		R		= cRect;
 	Layer*		pcView		= GetLayer();
-	Color32_s	col_Yellow	= Color32_s(255,203,65);
-	Color32_s	col_Orange	= Color32_s(255,122,61);
-	Color32_s	col_White	= Color32_s(255,255,255);
-	// Background
-	pcView->FillRect(R, col_White);
-	// Top Row
-	R.top = cRect.top + 1; R.bottom = R.top + 3;
-	R.left = cRect.left + 1; R.right = R.left + 5;
-	pcView->FillRect(R, col_Yellow);
-	R.left = cRect.left + 8; R.right = R.left + 6;
+	Color32_s	col_Orange	= Color32_s(224,171,74);
+	Color32_s	col_Blue	= Color32_s(120,149,191);
+
+	// Background oval...
+	pcView->SetFgColor(col_Orange);
+	R.top = cRect.top + 2; R.bottom = R.top + 11;
+	R.left = cRect.left + 4; R.right = R.left + 7;
 	pcView->FillRect(R, col_Orange);
-	// Middle Row
-	R.top = cRect.top + 6; R.bottom = R.top + 3;
-	R.left = cRect.left + 1; R.right = R.left + 3;
-	pcView->FillRect(R, col_Yellow);
-	R.left = cRect.left + 6; R.right = R.left + 3;
-	pcView->FillRect(R, col_Orange);
-	R.left = cRect.left + 11; R.right = R.left + 3;
-	pcView->FillRect(R, col_Yellow);
-	// Bottom Row
-	R.top = cRect.top + 11; R.bottom = R.top + 3;
-	R.left = cRect.left + 1; R.right = R.left + 5;
-	pcView->FillRect(R, col_Orange);
-	R.left = cRect.left + 8; R.right = R.left + 6;
-	pcView->FillRect(R, col_Yellow);
+	pcView->DrawLine( Point(cRect.left+6,cRect.top+1), Point(cRect.left+9,cRect.top+1) );
+	pcView->DrawLine( Point(cRect.left+6,cRect.top+14), Point(cRect.left+9,cRect.top+14) );
+	pcView->DrawLine( Point(cRect.left+2,cRect.top+5), Point(cRect.left+2,cRect.top+10) );
+	pcView->DrawLine( Point(cRect.left+3,cRect.top+3), Point(cRect.left+3,cRect.top+12) );
+	pcView->DrawLine( Point(cRect.left+12,cRect.top+3), Point(cRect.left+12,cRect.top+12) );
+	pcView->DrawLine( Point(cRect.left+13,cRect.top+5), Point(cRect.left+13,cRect.top+10) );
+
+	// And the famous blue S :-)
+	pcView->SetFgColor(col_Blue);
+	pcView->DrawLine( Point(cRect.left+6,cRect.top+3), Point(cRect.left+9,cRect.top+3) );
+	pcView->DrawLine( Point(cRect.left+5,cRect.top+4), Point(cRect.left+10,cRect.top+4) );
+	pcView->DrawLine( Point(cRect.left+4,cRect.top+5), Point(cRect.left+10,cRect.top+5) );
+	pcView->DrawLine( Point(cRect.left+4,cRect.top+6), Point(cRect.left+7,cRect.top+6) );
+	pcView->DrawLine( Point(cRect.left+5,cRect.top+7), Point(cRect.left+8,cRect.top+7) );
+	pcView->DrawLine( Point(cRect.left+6,cRect.top+8), Point(cRect.left+9,cRect.top+8) );
+	pcView->DrawLine( Point(cRect.left+7,cRect.top+9), Point(cRect.left+10,cRect.top+9) );
+	pcView->DrawLine( Point(cRect.left+8,cRect.top+10), Point(cRect.left+11,cRect.top+10) );
+	pcView->DrawLine( Point(cRect.left+4,cRect.top+11), Point(cRect.left+11,cRect.top+11) );
+	pcView->DrawLine( Point(cRect.left+5,cRect.top+12), Point(cRect.left+10,cRect.top+12) );
 }
 
 //----------------------------------------------------------------------------
@@ -545,10 +596,10 @@ void Win98Decorator::DrawClose(  const Rect& cRect, bool bActive, bool bRecessed
 	}
 
 	pcView->SetFgColor( 0, 0, 0, 255 );
-	pcView->DrawLine( Point(R.left+3,R.top+ 3), Point(R.left+10,R.top+10) );
-	pcView->DrawLine( Point(R.left+4,R.top+ 3), Point(R.left+11,R.top+10) );
-	pcView->DrawLine( Point(R.left+3,R.top+10), Point(R.left+10,R.top+ 3) );
-	pcView->DrawLine( Point(R.left+4,R.top+10), Point(R.left+11,R.top+ 3) );
+	pcView->DrawLine( Point(R.left+4,R.top+ 4), Point(R.left+10,R.top+10) );
+	pcView->DrawLine( Point(R.left+5,R.top+ 4), Point(R.left+11,R.top+10) );
+	pcView->DrawLine( Point(R.left+4,R.top+ 10), Point(R.left+10,R.top+ 4) );
+	pcView->DrawLine( Point(R.left+5,R.top+ 10), Point(R.left+11,R.top+ 4) );
 }
 
 void Win98Decorator::Render( const Rect& cUpdateRect )
@@ -575,10 +626,11 @@ void Win98Decorator::Render( const Rect& cUpdateRect )
 	{
 		cIBounds.top    += TITLE_HEIGHT;
 	}
+
 	// Draw outer frame
 	DrawFrame( cOBounds, true  );
 	// Fill the area between the inner and outer bounds (title BG)
-	Rect cTitleBG;;
+	Rect cTitleBG;
 	cTitleBG.left   = cIBounds.left;
 	cTitleBG.top    = cOBounds.top   + BORDER_SIZE;
 	cTitleBG.right  = cIBounds.right - 1;
@@ -611,20 +663,18 @@ void Win98Decorator::Render( const Rect& cUpdateRect )
 	{
 		pcView->SetFgColor( 255, 255, 255, 0 );
 		pcView->SetBgColor( sFillColor );
-		pcView->MovePenTo( m_cDragRect.left + 5,
+		pcView->MovePenTo( m_cDragRect.left + 2,
 			m_cDragRect.top + m_cDragRect.Height() / 2 -
 			(m_sFontHeight.ascender + m_sFontHeight.descender) / 2 + m_sFontHeight.ascender );
 		pcView->DrawString( m_cTitle.c_str(), -1 );
 	}
+
+	// Draw MINIMIZE button
+	DrawMinimize( m_cMinimizeRect, m_bHasFocus, m_bMinimizeState == 1 );
 	// Draw ZOOM button
 	if ( (m_nFlags & WND_NO_ZOOM_BUT) == 0 )
 	{
 		DrawZoom( m_cZoomRect, m_bHasFocus, m_bZoomState == 1 );
-	}
-	// Draw TOGGLE-DEPTH button
-	if ( (m_nFlags & WND_NO_DEPTH_BUT) == 0 )
-	{
-		DrawDepth( m_cToggleRect, m_bHasFocus, m_bDepthState == 1 );
 	}
 	// Draw CLOSE button
 	if ( (m_nFlags & WND_NO_CLOSE_BUT) == 0 )

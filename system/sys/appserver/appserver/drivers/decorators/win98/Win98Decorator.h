@@ -48,6 +48,7 @@ public:
     virtual void SetCloseButtonState( bool bPushed );
     virtual void SetZoomButtonState( bool bPushed );
     virtual void SetDepthButtonState( bool bPushed );
+    virtual void SetMinimizeButtonState( bool bPushed );
     virtual void SetButtonState( uint32 nButton, bool bPushed );
     virtual void Render( const Rect& cUpdateRect );
 private:
@@ -56,6 +57,7 @@ private:
     void DrawDepth (const Rect& cRect, bool bActive, bool bRecessed);
     void DrawZoom  (const Rect& cRect, bool bActive, bool bRecessed);
     void DrawClose (const Rect& cRect, bool bActive, bool bRecessed);
+    void DrawMinimize (const Rect& cRect, bool bActive, bool bRecessed);
     void DrawIcon  (const Rect& cRect);
 	void DrawFrame (const Rect& cRect, bool bOuter);
     void DrawButton(const Rect& cRect, bool bRecessed);
@@ -66,6 +68,7 @@ private:
 	uint32		m_nFlags;
 
     Rect   m_cCloseRect;
+    Rect   m_cMinimizeRect;
     Rect   m_cZoomRect;
     Rect   m_cToggleRect;
     Rect   m_cDragRect;
@@ -77,6 +80,7 @@ private:
 
     bool   m_bHasFocus;
     bool   m_bCloseState;
+    bool   m_bMinimizeState;
     bool   m_bZoomState;
     bool   m_bDepthState;
 };
