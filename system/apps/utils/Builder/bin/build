@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.3.4
+# Version 0.3.5
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -224,7 +224,7 @@ def installPackage target
 		else
 			if exists? dir = installPath(target) and not
 				begin
-					logHeader "Uninstalling " + target
+					logHeader "Uninstalling " + shortName(target)
 					uninstallPackage target  # Double failure logging!
 				end
 			then
@@ -278,13 +278,13 @@ def uninstallPackage target
 
 			unless @systemBuild or
 				begin
-					logHeader "Unregistering " + target
+					logHeader "Unregistering " + name = shortName(target)
 					action "pkgmanager -r " + dir
 				end
 			then
 				false
 			else
-				logHeader "Deleting " + target
+				logHeader "Deleting " + name
 				action "rm -r " + dir
 			end
 		end
@@ -750,7 +750,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.3.4",
+	puts "Syllable Build System 0.3.5",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
