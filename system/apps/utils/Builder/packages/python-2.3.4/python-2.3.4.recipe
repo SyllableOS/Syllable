@@ -1,0 +1,39 @@
+authors
+	Octavian Cerna
+	Kaj de Vos
+	Jamie Clarkson
+maintainers			Kaj de Vos
+status				testing
+notes				See README for GLibC issues
+
+licenses			OSI
+home				www.python.org
+packages			Python-2.3.4
+
+build-needs			autoconf >= 2.53
+build-recommends
+	readline
+	openssl
+	expat
+	db
+
+patch				autoconf
+
+; Help the blind:
+pre-configure
+	ln -s /usr/ncurses/include/ncurses/* .
+	ln -s /usr/db/include/* .
+configure-env		CPPFLAGS '-I/usr/ncurses/include/ncurses'
+;configure-options
+;	--with-threads=atheos
+;	--with-libs=
+;	--disable-ipv6
+
+test-targets		test
+
+;install-prefix-var	DESTDIR
+;install-targets		altinstall
+documentation
+	README LICENSE Misc/NEWS Misc/HISTORY
+;	Doc
+	Demo

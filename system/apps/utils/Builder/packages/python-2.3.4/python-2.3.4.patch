@@ -1,0 +1,97 @@
+diff -ru python-2.3.4.original/configure.in python-2.3.4/configure.in
+--- python-2.3.4.original/configure.in	2004-05-07 19:13:48.000000000 +0000
++++ python-2.3.4/configure.in	2004-07-08 12:10:54.000000000 +0000
+@@ -107,6 +107,11 @@
+ 	else
+ 		ac_sys_release=`uname -r`
+ 	fi
++	if test "$ac_sys_system" = "syllable"; then
++#      ac_sys_system = "atheos"
++		ac_sys_release=`uname -r`
++	fi
++
+ 	ac_md_system=`echo $ac_sys_system |
+ 			   tr -d '[/ ]' | tr '[[A-Z]]' '[[a-z]]'`
+ 	ac_md_release=`echo $ac_sys_release |
+@@ -117,6 +122,7 @@
+ 	cygwin*) MACHDEP="cygwin";;
+ 	darwin*) MACHDEP="darwin";;
+ 	atheos*) MACHDEP="atheos";;
++	syllable*) MACHDEP="atheos";;
+         irix646) MACHDEP="irix6";;
+ 	'')	MACHDEP="unknown";;
+ 	esac
+@@ -480,7 +486,7 @@
+ if test -z "$enable_shared"
+ then 
+   case $ac_sys_system in
+-  CYGWIN* | atheos*)
++  CYGWIN* | atheos* | syllable*)
+     enable_shared="yes";;
+   *)
+     enable_shared="no";;
+@@ -544,6 +550,11 @@
+ 	  BLDLIBRARY='-L. -lpython$(VERSION)'
+ 	  RUNSHARED=DLL_PATH=`pwd`:${DLL_PATH:-/atheos/sys/libs:/atheos/autolnk/lib}
+ 	  ;;
++    syllable*)
++	  LDLIBRARY='libpython$(VERSION).so'
++	  BLDLIBRARY='-L. -lpython$(VERSION)'
++	  RUNSHARED=DLL_PATH=`pwd`:${DLL_PATH:-/atheos/sys/libs:/atheos/autolnk/lib}
++	  ;;
+   esac
+   # DG/UX requires some fancy ld contortions to produce a .so from an .a
+   case $MACHDEP in
+@@ -577,6 +588,7 @@
+ 		BeOS*) LN="ln -s";;
+ 		CYGWIN*) LN="ln -s";;
+ 		atheos*) LN="ln -s";;
++		syllable*) LN="ln -s";;
+ 		*) LN=ln;;
+ 	esac
+ fi
+@@ -1297,6 +1309,7 @@
+ 	Monterey*) LDSHARED="cc -G -dy -Bdynamic -Bexport -L/usr/lib/ia64l64";;
+ 	CYGWIN*) LDSHARED="gcc -shared -Wl,--enable-auto-image-base";;
+ 	atheos*) LDSHARED="gcc -shared";;
++	syllable*) LDSHARED="gcc -shared";;
+ 	*)	LDSHARED="ld";;
+ 	esac
+ fi
+@@ -1334,6 +1347,7 @@
+ 		   *) CCSHARED="";;
+ 		   esac;;
+ 	atheos*) CCSHARED="-fPIC";;
++	syllable*) CCSHARED="-fPIC";;
+ 	esac
+ fi
+ AC_MSG_RESULT($CCSHARED)
+@@ -1633,7 +1647,7 @@
+     THREADOBJ="Python/thread.o"],[
+     AC_CHECK_HEADER(atheos/threads.h, [AC_DEFINE(WITH_THREAD)
+     AC_DEFINE(ATHEOS_THREADS, 1,
+-    [Define this if you have AtheOS threads.])
++    [Define this if you have AtheOS/Syllable threads.])
+     THREADOBJ="Python/thread.o"],[
+     AC_CHECK_HEADER(kernel/OS.h, [AC_DEFINE(WITH_THREAD)
+     AC_DEFINE(BEOS_THREADS, 1,
+@@ -2040,6 +2054,7 @@
+ 	hp*|HP*) DYNLOADFILE="dynload_hpux.o";;
+ 	Darwin/*) DYNLOADFILE="dynload_next.o";;
+ 	atheos*) DYNLOADFILE="dynload_atheos.o";;
++	syllable*) DYNLOADFILE="dynload_atheos.o";;
+ 	*)
+ 	# use dynload_shlib.c and dlopen() if we have it; otherwise stub
+ 	# out any dynamic loading
+diff -ru python-2.3.4.original/pyconfig.h.in python-2.3.4/pyconfig.h.in
+--- python-2.3.4.original/pyconfig.h.in	2004-03-22 20:20:33.000000000 +0000
++++ python-2.3.4/pyconfig.h.in	2004-07-08 12:10:54.000000000 +0000
+@@ -10,7 +10,7 @@
+ #undef AIX_GENUINE_CPLUSPLUS
+ 
+ /* Define this if you have AtheOS threads. */
+-#undef ATHEOS_THREADS
++#define ATHEOS_THREADS
+ 
+ /* Define if your <unistd.h> contains bad prototypes for exec*() (as it does
+    on SGI IRIX 4.x) */
