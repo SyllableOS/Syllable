@@ -279,6 +279,7 @@ int Application::GetDefaultFont( const std::string& cName, font_properties* psPr
 	    cReply.FindFloat( "size",     &psProps->m_vSize );
 	    cReply.FindFloat( "shear",    &psProps->m_vShear );
 	    cReply.FindFloat( "rotation", &psProps->m_vRotation );
+	    cReply.FindInt32( "flags",    (int32*)&psProps->m_nFlags );
 	}
 	return( 0 );
     } else {
@@ -299,6 +300,7 @@ int Application::SetDefaultFont( const std::string& cName, const font_properties
     cReq.AddFloat( "size",     sProps.m_vSize );
     cReq.AddFloat( "shear",    sProps.m_vShear );
     cReq.AddFloat( "rotation", sProps.m_vRotation );
+    cReq.AddInt32( "flags",    sProps.m_nFlags );
 
     if ( Messenger(m->m_hServerPort).SendMessage( &cReq, &cReply ) >= 0 ) {
 	int nError = -EINVAL;
@@ -326,6 +328,7 @@ int Application::AddDefaultFont( const std::string& cName, const font_properties
     cReq.AddFloat( "size",     sProps.m_vSize );
     cReq.AddFloat( "shear",    sProps.m_vShear );
     cReq.AddFloat( "rotation", sProps.m_vRotation );
+    cReq.AddInt32( "flags",    sProps.m_nFlags );
 
     if ( Messenger(m->m_hServerPort).SendMessage( &cReq, &cReply ) >= 0 ) {
 	int nError = -EINVAL;
@@ -854,5 +857,6 @@ void Application::__reserved7__() {}
 void Application::__reserved8__() {}
 void Application::__reserved9__() {}
 void Application::__reserved10__() {}
+
 
 
