@@ -195,7 +195,7 @@ void ImageItem::SetShortcut(const char *shortcut)
 Point ImageItem::GetContentSize()
 {
 	Menu *m = GetSuperMenu();
-	if(!m || !GetLabel()) return Point(0, 0);
+	if(!m || GetLabel() == "") return Point(0, 0);
 	font_height fh;
 	m->GetFontHeight(&fh);
 	float x = m->GetStringWidth(GetLabel()) + m_IconWidth + 5 + 2;
@@ -213,7 +213,7 @@ void ImageItem::Draw()
 	if(!m)
 		return;
 
-	const char *label = GetLabel();
+	const String& label = GetLabel();
 
 	Rect bounds = GetFrame();
 
@@ -234,7 +234,7 @@ void ImageItem::Draw()
 	float y = textrect.top + 2 + textrect.Height()/2 - (fh.ascender + fh.descender)/2 + fh.ascender;
 
 	m->MovePenTo(x, y);
-	if(label) m->DrawString(label);
+	m->DrawString(label);
 
 	if(m_Shortcut) {
 		x = textrect.right - 2 - m->GetStringWidth(m_Shortcut);
@@ -293,38 +293,4 @@ void ImageItem::Highlight(bool bHighlight)
 	m_Highlighted = bHighlight;
 	MenuItem::SetHighlighted(bHighlight);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
