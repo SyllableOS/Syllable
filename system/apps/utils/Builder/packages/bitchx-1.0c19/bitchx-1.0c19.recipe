@@ -1,4 +1,4 @@
 authors				Kaj de Vos
-package-name		ircii-pana-1.0c19
+packages			ircii-pana-1.0c19
 ;configure-options	--with-plugins --with-ssl
 documentation		README bugs Changelog

@@ -1,7 +1,7 @@
 authors				
 maintainers			
 status				testing | broken
-package-name		<Deviating tarball name>
+packages			<Deviating tarball name>
 ;
 ; Patching options:
 patch-config		[<Directory>]
