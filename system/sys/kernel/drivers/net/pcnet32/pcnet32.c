@@ -762,7 +762,7 @@ int pcnet32_probe( int device_handle )
 	     dev = NULL;
 	  }
      }
-	if( !cards_found )
+	if( !cards_found )
 		disable_device( device_handle );
    return cards_found ? 0: ENODEV;
 }

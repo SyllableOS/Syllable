@@ -229,7 +229,7 @@ struct es1370_state {
 		unsigned char obuf[MIDIOUTBUF];
 	} midi;
 
-	struct gameport gameport;*/
+	struct gameport gameport;*/
 	sem_id sem;
 };
 

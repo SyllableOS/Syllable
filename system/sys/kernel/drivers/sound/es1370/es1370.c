@@ -410,7 +410,7 @@ status_t es1370_open_mixdev(void* pNode, uint32 nFlags, void **pCookie)
 	}
 
 	file->private_data = s;
-	return 0;*/
+	return 0;*/
 }
 
 status_t es1370_release_mixdev(void* pNode, uint32 nFlags, void **pCookie)
@@ -552,7 +552,7 @@ status_t es1370_open (void* pNode, uint32 nFlags, void **pCookie)
 /*        if (s->open == true) {
 	           printk("es1370_open: Device already open\n");
 	           return -1;
-	}*/
+	}*/
 
 	LOCK(s->sem);
 	s->dma_dac2.ossfragshift = s->dma_dac2.ossmaxfrags = s->dma_dac2.subdivision = 0;
@@ -619,7 +619,7 @@ status_t es1370_release (void* pNode, void *pCookie)
 	s->open_mode &= (~file->f_mode) & (FMODE_READ|FMODE_WRITE);
 	wake_up(&s->open_wait);
 	up(&s->open_sem);
-	unlock_kernel(); */
+	unlock_kernel(); */
 	return 0;
 }
 
