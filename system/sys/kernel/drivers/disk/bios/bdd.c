@@ -1192,8 +1192,29 @@ static int bdd_scan_for_disks( int nDeviceID )
 	bool	      bForceLBA = false;
 	uint32	      nFlags;
 	int	      j;
+	bool		  bForceBios = false;
 	
 	sprintf( zName, "hd%c", 'a' + i - 0x80 );
+
+	strcpy( zArgName, zName );
+	strcat( zArgName, "=" );
+
+	for( j = 0; j < argc; ++j )
+	{
+		if( get_str_arg( zMode, zArgName, argv[j], strlen( argv[j] ) ) )
+		{
+			if( strcmp( zMode, "bios" ) == 0 )
+			{
+				bForceBios = true;
+				break;
+			}
+		}
+	}
+
+	if( bForceBios == false )
+		continue;
+	else
+		printk( "BIOS controller enabled for drive %s\n", zName );
 
 	strcpy( zArgName, "bdd_" );
 	strcat( zArgName, zName );
@@ -1261,6 +1282,7 @@ static int bdd_scan_for_disks( int nDeviceID )
 	    bdd_decode_partitions( psInode );
 	}
     }
+
     return( 0 );
 error:
     return( nError );
