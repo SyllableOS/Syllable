@@ -1,7 +1,7 @@
 CC = g++
 LL = g++
 
-COPTS = -Wall -c -O3
+COPTS = -Wall -c -O3 -DENABLE_UNDO
 
 OBJSDIR = objs/
 

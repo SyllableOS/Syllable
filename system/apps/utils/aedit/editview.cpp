@@ -59,24 +59,6 @@ void EditView::KeyDown(const char* pzString, const char* pzRawString, uint32 nQu
 
 			switch(*pzString)
 			{
-				case 24:	// Cut (Ctrl+X)
-				{
-					GetWindow()->HandleMessage(new Message(M_MENU_EDIT_CUT));
-					break;
-				}
-
-				case 3:	// Copy (Ctrl+C)
-				{
-					GetWindow()->HandleMessage(new Message(M_MENU_EDIT_COPY));
-					break;
-				}
-
-				case 22:	// Paste (Ctrl+V)
-				{
-					GetWindow()->HandleMessage(new Message(M_MENU_EDIT_PASTE));
-					break;
-				}
-
 				case 15:	// Open (Ctrl+O)
 				{
 					GetWindow()->HandleMessage(new Message(M_MENU_FILE_OPEN));
@@ -118,6 +100,9 @@ void EditView::KeyDown(const char* pzString, const char* pzRawString, uint32 nQu
 					GetWindow()->HandleMessage(new Message(M_MENU_APP_QUIT));
 					break;
 				}
+
+				default:
+					TextView::KeyDown(pzString,pzRawString,nQualifiers);
 
 			}	// End of switch() block
 
@@ -195,12 +180,12 @@ int EditView::Find(std::string zOriginal, std::string zFind, bool bCaseSensitive
 
 void EditView::Undo(void)
 {
-	return;
+	TextView::Undo();
 }
 
 void EditView::Redo(void)
 {
-	return;
+	TextView::Redo();
 }
 
 int EditView::GetLineCount(void)

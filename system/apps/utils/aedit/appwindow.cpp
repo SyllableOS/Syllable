@@ -30,7 +30,7 @@
 #include <util/invoker.h>
 #include <util/application.h>
 
-AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", "AEdit V0.6")
+AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", "AEdit V1.2")
 {
 	Rect cWinSize;
 	pcSettings=new AEditSettings();
@@ -74,6 +74,7 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", "AE
 	pcEditView->SetEventMask(TextView::EI_CONTENT_CHANGED | TextView::EI_CURSOR_MOVED);
 	pcEditView->SetMultiLine(true);
 
+#if 0
 	zFamily="Lucida Sans Typewriter";
 	zStyle="Regular";
 	vSize=8;
@@ -83,6 +84,7 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", "AE
 	font->SetSize(vSize);
 	pcEditView->SetFont(font);
 	font->Release();
+#endif
 
 	pcVLayoutRoot->AddChild(pcEditView);
 
@@ -246,7 +248,7 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 			zAboutTitle+=AEDIT_RELEASE_STRING;
 
 			std::string zAboutText=AEDIT_RELEASE_STRING;
-			zAboutText+="\n\nText Editor for Syllable\nCopyright 2000-2002 Kristian Van Der Vliet\n\nAEdit is released under the GNU General\nPublic License.  Please see the file COPYING,\ndistributed with AEdit, or http://www.gnu.org\nfor more information.";
+			zAboutText+="\n\nText Editor for Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit is released under the GNU General\nPublic License.  Please see the file COPYING,\ndistributed with AEdit, or http://www.gnu.org\nfor more information.";
 
 			Alert* pcAboutAlert=new Alert(zAboutTitle,zAboutText,0x00,"O.K",NULL);
 			pcAboutAlert->Go(new Invoker());
@@ -717,12 +719,6 @@ void AEditWindow::Load(char* pzFileName)
 			Alert* pcFileAlert = new Alert("AEdit", "Unable to open file", 0x00, "O.K", NULL);
 			pcFileAlert->Go();
 		}
-	}
-	else
-	{
-			// Pop an error window, file does not exist?
-			Alert* pcFileAlert = new Alert("AEdit", "Unable to open file", 0x00, "O.K", NULL);
-			pcFileAlert->Go();
 	}
 }
 
