@@ -1,3 +1,4 @@
-authors Kaj de Vos
-patch-config config
-documentation README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
+authors			Kaj de Vos
+status			broken
+patch-config	config
+documentation	README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
