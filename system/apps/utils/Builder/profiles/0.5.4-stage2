@@ -36,7 +36,7 @@ modules
 	sys/media/drivers/vorbis
 	apps/desktop/desktop
 	apps/desktop/dock
-	apps/desktop/dock_plugins
+	apps/desktop/dock_plugins/clock
 	apps/desktop/file_browser
 	apps/gnu/coreutils-5.2.1
 	apps/gnu/less-382
@@ -74,3 +74,4 @@ modules
 	apps/utils/pkgmanager
 	apps/utils/slbmgr
 	apps/utils/systools
+
