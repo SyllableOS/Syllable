@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.5
+# Version 0.6.6
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -698,6 +698,7 @@ def get targets
 	for target in targets.modules
 		@log.entry target
 		getModule target
+		Dir.chdir @workDir
 	end
 end
 
@@ -1366,7 +1367,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.5',
+	puts 'Syllable Build System 0.6.6',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
