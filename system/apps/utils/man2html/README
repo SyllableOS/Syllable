@@ -1,7 +1,7 @@
-man2html for Syllable
+man2html and manmanager for Syllable
 
 Rather than use a seperate "man" command for reading the traditional Unix style man pages
-(Manuals), man2html and the associated scripts convert these pages to HTML and provide an
+(Manuals), man2html and the manmanager script convert these pages to HTML and provide an
 automatic housekeeping of a main and individual manual section indexes.  You may then use
 a normal web browser (E.g ABrowse) to read the manual pages, with the benefit of clickable
 cross-references both internal and external to the manpages.
@@ -9,14 +9,8 @@ cross-references both internal and external to the manpages.
 The man2html application itself is taken from the Man 1.5l manual reader.  See the
 copyright notice below for more information.
 
-The shell scripts which wrap man2html are originally written by Kristian Van Der Vliet, and
+The shell script which wraps man2html are originally written by Kristian Van Der Vliet, and
 are released under the GNU General Public Licence.
-
-These scripts are shipped with Syllable from version 0.4.5 onwards.  If you wish to install
-them on an older version of Syllable, simply run the "install.sh" script.  This will build
-the man2html application, install everything in /usr/man2html, and then automatically convert
-your current manpages.  You may also wish to get the latest pkgmanager, which can also call
-the various shell scripts when installing or removing a package.
 
 The HTML manpages are placed in /atheos/Documentation/man  The URL is
 file:///atheos/Docuementation/man/index.html

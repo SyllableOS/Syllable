@@ -1,0 +1,394 @@
+#!/bin/bash
+#
+# manmanager : Copyright (C) 2003 - 2004 Kristian Van Der Vliet
+#
+# manmanager is a simple script which is used to automatically
+# convert and index UNIX man pages into HTML documents using the
+# man2html utility.  It is usually invoked with the path to a
+# directory of man pages, which are converted and placed in the
+# documentation location.
+#
+# manmanager will usually be invoked from pkgmanager during
+# installation and removal of POSIX packages.  You should
+# generally not need to use manmanager yourself.
+#
+# This script evolved from the earlier "man2html" collection of
+# scripts.  This version is better designed and more robust.
+
+# Global variables.  These can be changed if you know what you're
+# doing.
+
+HTML_DIR=/atheos/Documentation/man
+VERSION=0.1
+
+# function print_usage
+#
+# Prints usage information.  This function will cause the script
+# to exit with a return code of 1
+#
+# No arguments
+
+function print_usage()
+{
+  echo "USAGE : manmanager {--add|-a}|{--remove|-r}|{-R|--rebuild}|{-h|--help}|{-v|--version} [PATH]"
+  echo
+  echo "OPTIONS:"
+  echo "  -a, --add         Add a manual directory and all subdirectories."
+  echo "  -r, --remove      Remove a manual directory and all subdirectories."
+  echo "  -R, --rebuild     Rebuild the section indicies and main index."
+  echo "  -h, --help        Print this help screen and exit."
+  echo "  -v, --version     Print version information and exit."
+
+  exit 1
+}
+
+# function print_version
+#
+# Print version information.  This function will cause the script
+# to exit with a return code of 0
+#
+# No arguments
+
+function print_version()
+{
+  echo "manmanager version $VERSION"
+  exit 0
+}
+
+# function exit_with_usage
+#
+# Called by other functions when an abnormal exit is required.  Prints
+# an error and calls print_usage
+#
+# $1 error code
+# $2..$n extra information.  Error code specific
+
+function exit_with_usage()
+{
+  echo -n "Error: "
+
+  case $1 in
+
+    "1" )
+      # Not a man page directory
+      echo "The directory \"$2\" is not a man page directory."
+      ;;
+
+    "2" )
+      # Unknown option
+      echo "$2 unknown option."
+      ;;
+
+    "3" )
+      # Directory does not exist
+      echo "The directory \"$2\" does not exist."
+      ;;
+  esac
+
+  echo
+  print_usage
+}
+
+# function initialiase
+#
+# Perform basic checks, create the HTML directory if it doesn't
+# exist and sanity check the arguments.
+#
+# $1 - path to the directory containing the manual pages or directories
+
+function initialise()
+{
+  if [ -z $1 ]
+  then
+    print_usage
+  fi
+
+  if [ ! -e $1 ]
+  then
+    exit_with_usage 3 $1
+  fi
+
+  if [ `echo $1 | grep man` != $1 ]
+  then
+    exit_with_usage 1 $1
+  fi
+
+  if [ ! -e $HTML_DIR ]
+  then
+    mkdir -p $HTML_DIR
+  fi
+}
+
+# function rebuild_section_index
+#
+# Rebuilds the index page of the specified section, which adds links for all of 
+# the newly generated HTML pages
+#
+# $1 - the section to be rebuilt (E.g. 1, 2 etc.)
+
+function rebuild_section_index()
+{
+  SECTION_INDEX=$HTML_DIR/index$1.html
+  SECTION_DIR=man$1
+  SECTION_PATH=$HTML_DIR/$SECTION_DIR
+
+  # Remove any existing file
+  if [ -e $SECTION_INDEX ]
+  then
+    rm -f $SECTION_INDEX
+  fi
+
+  # HTML header
+  echo "<html><head><title>Manual section $1 index</title></head><body>" >> $SECTION_INDEX
+  echo "<h2>Manual section $1 index</h2><br>" >> $SECTION_INDEX
+  echo "<hr align=center><br>" >> $SECTION_INDEX
+
+  # Add link for each page within the section directory
+  for FILE in `ls -1 $SECTION_PATH`
+  do
+    PAGE=`echo $FILE | cut -d . -f 1`
+    echo "<a href=\"$SECTION_DIR/$FILE\">$PAGE</a><br>" >> $SECTION_INDEX
+  done
+
+  echo "<br><hr align=center>" >> $SECTION_INDEX
+  echo "<a href=\"$HTML_DIR/index.html\">Main index</a><br>" >> $SECTION_INDEX
+
+  # HTML footer
+  echo "<br><hr align=center>" >> $SECTION_INDEX
+  echo "</body></html>" >> $SECTION_INDEX
+}
+
+# function rebuild_main_index
+#
+# Rebuilds the main index.html index page, which adds links for the newly generated 
+# section index
+#
+# No arguments
+
+function rebuild_main_index()
+{
+  MAIN_INDEX=$HTML_DIR/index.html
+
+  # Remove any existing file
+  if [ -e $MAIN_INDEX ]
+  then
+    rm -f $MAIN_INDEX
+  fi
+
+  # HTML header
+  echo "<html><head><title>Manual index</title></head><body>" >> $MAIN_INDEX
+  echo "<h2>Manual index</h2><br>" >> $MAIN_INDEX
+  echo "<hr align=center><br>" >> $MAIN_INDEX
+
+  # Add a link for each section index
+  for SECTION_INDEX in `ls -1 $HTML_DIR`
+  do
+    # Discard anything that isn't a section index
+    if [ "`echo $SECTION_INDEX | grep -e index[0-9]`" == $SECTION_INDEX ]
+    then
+      SECTION=`echo $SECTION_INDEX | cut -d . -f 1 | sed -e s/index//`
+      echo "<a href=\"$HTML_DIR/$SECTION_INDEX\">Manual section $SECTION</a><br>" >> $MAIN_INDEX
+    fi
+  done
+
+  # HTML footer
+  echo "<br><hr align=center>" >> $MAIN_INDEX
+  echo "</body></html>" >> $MAIN_INDEX
+}
+
+# function add_section
+#
+# Convert all the manual pages within a directory
+#
+# $1 - full path the manual section containing the manual pages to be converted
+# $2 - the manual section currently being processed (E.g. "man1")
+
+function add_section()
+{
+  REBUILD_MAIN_INDEX=0
+  SECTION=`echo $2 | sed -e s/man//`
+  HTML_SECTION_DIR=$HTML_DIR/$2
+
+  if [ ! -e $HTML_SECTION_DIR ]
+  then
+    mkdir -p $HTML_SECTION_DIR
+    # We'll need to rebuild the main index.html page to include this new manual
+    # section
+    REBUILD_MAIN_INDEX=1
+  fi
+
+  # Convert all of the man pages within the directory
+  for PAGE in `ls -1 $1`
+  do
+    man2html -r -H "file://$HTML_DIR" -M "" $1/$PAGE | grep -v "Content-type:" | grep -v "man2html" > $HTML_SECTION_DIR/$PAGE.html 2>>/dev/null
+    if [ $? -ne 0 ]
+    then
+      echo "Error: Could not add $PAGE"
+      # Don't leave a page with the error output from man2html lying around
+      if [ -e $HTML_SECTION_DIR/$PAGE.html ]
+      then
+        rm -f $HTML_SECTION_DIR/$PAGE.html
+      fi
+    fi
+  done
+
+  # Rebuild the index for this section
+  rebuild_section_index $SECTION
+
+  # If we need to, rebuild the main index
+  if [ $REBUILD_MAIN_INDEX -eq 1 ]
+  then
+    rebuild_main_index
+  fi
+}
+
+# function add_all_sections
+#
+# Recursivly scans a directory for manual section directories
+# (E.g. man1, man2 etc.), calling add_section for each one
+#
+# $1 - path to the manual directory
+
+function add_all_sections()
+{
+  for DIR in `ls -1 $1`
+  do
+    # Discard anything which is not a "man" directory
+    if [ "`echo $DIR | grep man`" == $DIR ]
+    then
+      add_section $1/$DIR $DIR
+    fi
+  done
+
+  return
+}
+
+# function remove_section
+#
+# Remove all the HTML pages of the manual within a directory
+#
+# $1 - full path the manual section containing the manual pages to be removed
+# $2 - the manual section currently being processed (E.g. "man1")
+
+function remove_section()
+{
+  SECTION=`echo $2 | sed -e s/man//`
+
+  # Remove each HTML version of the manual pages from within the manual
+  # section
+  for PAGE in `ls -1 $1`
+  do
+    FILE=$HTML_DIR/$2/$PAGE.html
+    if [ -e $FILE ]
+    then
+      rm -f $FILE
+    fi
+  done
+
+  # If the section is now empty, remove the directory, the section index
+  # and rebuild the main index
+  if [ `ls $HTML_DIR/$2/* 2>>/dev/null` ]
+  then
+    # Directory is not empty, rebuild the index for this section
+    rebuild_section_index $SECTION
+  else
+    # Section is now empty, remove everything and rebuild the main index
+    rmdir $HTML_DIR/$2
+    rm -f $HTML_DIR/index$SECTION.html
+    rebuild_main_index
+  fi
+}
+
+# function remove_all_sections
+#
+# Recursivly scans a directory for manual section directories
+# (E.g. man1, man2 etc.), calling remove_section for each one
+#
+# $1 - path to the manual directory
+
+function remove_all_sections()
+{
+  for DIR in `ls -1 $1`
+  do
+    # Discard anything which is not a "man" directory
+    if [ "`echo $DIR | grep man`" == $DIR ]
+    then
+      remove_section $1/$DIR $DIR
+    fi
+  done
+}
+
+# function rebuild_indices
+#
+# Remove and recreate the section indices and the main index.
+#
+# No arguments
+
+function rebuild_indices()
+{
+  # Remove any existing files
+  for INDEX in `ls $HTML_DIR/index*.html 2>>/dev/null`
+  do
+    rm -f $INDEX
+  done
+
+  # Rebuild the section indices
+  for SECTION_DIR in `ls -1 $HTML_DIR`
+  do
+    # Discard anything which is not a "man" directory
+    if [ "`echo $SECTION_DIR | grep man`" == $SECTION_DIR ]
+    then
+      SECTION=`echo $SECTION_DIR | sed -e s/man//`
+      rebuild_section_index $SECTION
+    fi
+  done
+
+  # Rebuild the main index
+  rebuild_main_index
+}
+
+# manmanager script entry point
+#
+# $1 - action to take (option)
+# $2 - path to the manual page directory
+
+if [ -z $1 ]
+then
+  print_usage
+fi
+
+case $1 in
+  "-a" | "--add" )
+    # Add
+	initialise $2
+    add_all_sections $2
+    ;;
+
+  "-r" | "--remove" )
+    # Remove
+	initialise $2
+    remove_all_sections $2
+    ;;
+
+  "-R" | "--rebuild" )
+    # Rebuild all indices
+    rebuild_indices
+    ;;
+
+  "-h" | "--help" )
+    # Help
+    print_usage
+    ;;
+
+  "-v" | "--version" )
+    # Version
+    print_version
+    ;;
+
+  * )
+    # Unknown option
+    exit_with_usage 2 $1
+    ;;
+esac
+
+exit 0

@@ -1,11 +1,11 @@
-name				:= man2html
+name			:= man2html
 source-path		:= src/$(name)
-main				:= $(source-path)/$(name)
-scripts			:= rebuild_all.sh mksection.sh mkindex.sh addpage.sh manaddpackage.sh
+main			:= $(source-path)/$(name)
+scripts			:= manmanager
 posix-apps-path	:= /usr
 executables-dir	:= bin
-register			:= pkgmanager -a
-install-path		:= $(posix-apps-path)/$(name)
+register		:= pkgmanager -a
+install-path	:= $(posix-apps-path)/$(name)
 distro-path		:= $(DIST_DIR)/atheos$(install-path)
 
 .PHONY: all deps clean install dist
