@@ -1,0 +1,1248 @@
+diff -ru glibc-2.1.2.orig/Makerules glibc-2.1.2/Makerules
+--- glibc-2.1.2.orig/Makerules	1999-08-01 22:12:24.000000000 +0000
++++ glibc-2.1.2/Makerules	2004-02-23 12:00:19.000000000 +0000
+@@ -416,10 +416,18 @@
+ 	$(LINK.o) -nostdlib -nostartfiles -r -o $@ \
+ 	-Wl,-d -Wl,--whole-archive $^
+ # Use our own special initializer and finalizer files for libc.so.
++
++ifeq ($(syllable),yes)
++$(common-objpfx)libc.so: $(elfobjdir)/soinit.os \
++			 $(common-objpfx)libc_pic.os \
++			 $(elfobjdir)/sofini.os \
++			 $(elfobjdir)/interp.os
++else
+ $(common-objpfx)libc.so: $(elfobjdir)/soinit.os \
+ 			 $(common-objpfx)libc_pic.os \
+ 			 $(elfobjdir)/sofini.os \
+ 			 $(elfobjdir)/interp.os $(elfobjdir)/ld.so
++endif
+ 	$(build-shlib)
+ ifeq ($(versioning),yes)
+ $(common-objpfx)libc.so: $(common-objpfx)libc.map
+diff -ru glibc-2.1.2.orig/abi-tags glibc-2.1.2/abi-tags
+--- glibc-2.1.2.orig/abi-tags	1998-09-21 14:31:07.000000000 +0000
++++ glibc-2.1.2/abi-tags	2004-02-23 12:00:19.000000000 +0000
+@@ -22,5 +22,7 @@
+ 
+ .*-sun-solaris2.*	2	2.0.0	# just an arbitrary value
+ 
++.*-.*-syllable.*		3	2.0.0	# just an arbitrary value
++
+ # There is no catch-all default here because every supported OS that uses
+ # ELF must have its own unique ABI tag.
+diff -ru glibc-2.1.2.orig/configure glibc-2.1.2/configure
+--- glibc-2.1.2.orig/configure	1999-08-30 19:36:00.000000000 +0000
++++ glibc-2.1.2/configure	2004-02-23 12:00:19.000000000 +0000
+@@ -841,7 +841,7 @@
+ 
+ # Some configurations imply other options.
+ case "$host_os" in
+-gnu* | linux* | bsd4.4* | netbsd* | freebsd*)
++gnu* | linux* | bsd4.4* | netbsd* | freebsd* | syllable*)
+   # These systems always use GNU tools.
+   gnu_ld=yes gnu_as=yes ;;
+ esac
+@@ -849,7 +849,7 @@
+ # i586-linuxaout is mangled into i586-pc-linux-gnuaout
+ linux*ecoff* | linux*aout* | gnu*aout* | gnu*ecoff*)
+   ;;
+-gnu* | linux* | sysv4* | solaris2* | irix6*)
++gnu* | linux* | sysv4* | solaris2* | irix6* | syllable*)
+   # These systems (almost) always use the ELF format.
+   elf=yes
+   ;;
+@@ -869,7 +869,7 @@
+ ###
+ if test -z "$enable_hacker_mode"; then
+   case "$machine-$host_os" in
+-  *-linux* | *-gnu* | arm*-none*)
++  *-linux* | *-gnu* | arm*-none* | *-syllable*)
+     ;;
+   *)
+     echo "*** The GNU C library is currently not available for this platform."
+@@ -936,7 +936,7 @@
+   base_os=unix/bsd/bsd4.4 ;;
+ osf* | sunos* | ultrix* | newsos* | dynix* | *bsd*)
+   base_os=unix/bsd ;;
+-sysv* | isc* | esix* | sco* | minix* | irix4* | linux*)
++sysv* | isc* | esix* | sco* | minix* | irix4* | linux* | syllable*)
+   base_os=unix/sysv ;;
+ irix6*)
+   base_os=unix/sysv/irix6/$os ;;
+diff -ru glibc-2.1.2.orig/configure.in glibc-2.1.2/configure.in
+--- glibc-2.1.2.orig/configure.in	1999-08-30 19:16:05.000000000 +0000
++++ glibc-2.1.2/configure.in	2004-02-23 12:00:19.000000000 +0000
+@@ -155,7 +155,7 @@
+ 
+ # Some configurations imply other options.
+ case "$host_os" in
+-gnu* | linux* | bsd4.4* | netbsd* | freebsd*)
++gnu* | linux* | bsd4.4* | netbsd* | freebsd* | syllable*)
+   # These systems always use GNU tools.
+   gnu_ld=yes gnu_as=yes ;;
+ esac
+@@ -163,7 +163,7 @@
+ # i586-linuxaout is mangled into i586-pc-linux-gnuaout
+ linux*ecoff* | linux*aout* | gnu*aout* | gnu*ecoff*)
+   ;;
+-gnu* | linux* | sysv4* | solaris2* | irix6*)
++gnu* | linux* | sysv4* | solaris2* | irix6* | syllable*)
+   # These systems (almost) always use the ELF format.
+   elf=yes
+   ;;
+@@ -183,7 +183,7 @@
+ ###
+ if test -z "$enable_hacker_mode"; then
+   case "$machine-$host_os" in
+-  *-linux* | *-gnu* | arm*-none*)
++  *-linux* | *-gnu* | arm*-none* | *-syllable*)
+     ;;
+   *)
+     echo "*** The GNU C library is currently not available for this platform."
+@@ -251,7 +251,7 @@
+   base_os=unix/bsd/bsd4.4 ;;
+ osf* | sunos* | ultrix* | newsos* | dynix* | *bsd*)
+   base_os=unix/bsd ;;
+-sysv* | isc* | esix* | sco* | minix* | irix4* | linux*)
++sysv* | isc* | esix* | sco* | minix* | irix4* | linux* | syllable*)
+   base_os=unix/sysv ;;
+ irix6*)
+   base_os=unix/sysv/irix6/$os ;;
+diff -ru glibc-2.1.2.orig/csu/Makefile glibc-2.1.2/csu/Makefile
+--- glibc-2.1.2.orig/csu/Makefile	1999-04-10 12:43:03.000000000 +0000
++++ glibc-2.1.2/csu/Makefile	2004-02-23 12:00:19.000000000 +0000
+@@ -133,7 +133,7 @@
+ # source file `start.c' and copy to the installed name after compiling.
+ $(objpfx)$(start-installed-name): $(objpfx)start.o
+ 	rm -f $@
+-	ln $< $@
++	cp $< $@
+ endif
+ endif
+ 
+diff -ru glibc-2.1.2.orig/debug/Makefile glibc-2.1.2/debug/Makefile
+--- glibc-2.1.2.orig/debug/Makefile	1999-03-20 17:07:47.000000000 +0000
++++ glibc-2.1.2/debug/Makefile	2004-02-23 12:00:19.000000000 +0000
+@@ -57,4 +57,8 @@
+ # Depend on libc.so so a DT_NEEDED is generated in the shared objects.
+ # This ensures they will load libc.so for needed symbols if loaded by
+ # a statically-linked program that hasn't already loaded it.
++ifeq ($(syllable),yes)
++$(objpfx)libSegFault.so: $(common-objpfx)libc.so
++else
+ $(objpfx)libSegFault.so: $(common-objpfx)libc.so $(common-objpfx)elf/ld.so
++endif
+diff -ru glibc-2.1.2.orig/dirent/dirent.h glibc-2.1.2/dirent/dirent.h
+--- glibc-2.1.2.orig/dirent/dirent.h	1999-08-20 17:34:37.000000000 +0000
++++ glibc-2.1.2/dirent/dirent.h	2004-02-23 12:00:19.000000000 +0000
+@@ -186,6 +186,11 @@
+ #  define dirfd(dirp)	_DIR_dirfd (dirp)
+ # endif
+ 
++#ifdef __SYLLABLE__
++/* Create a dir-stream from an already open file descriptor */
++DIR* fopendir( int fd );
++#endif
++
+ # ifndef MAXNAMLEN
+ /* Get the definitions of the POSIX.1 limits.  */
+ #  include <bits/posix1_lim.h>
+diff -ru glibc-2.1.2.orig/elf/Makefile glibc-2.1.2/elf/Makefile
+--- glibc-2.1.2.orig/elf/Makefile	1999-05-17 17:58:06.000000000 +0000
++++ glibc-2.1.2/elf/Makefile	2004-02-23 12:00:19.000000000 +0000
+@@ -67,9 +67,10 @@
+ generated      += ldd
+ endif
+ 
+-others		= sprof sln
+-install-bin	+= sprof
+-others-static   = sln
++#others		= sprof sln
++others		= sln
++#install-bin	+= sprof
++#others-static   = sln
+ install-rootsbin = sln
+ 
+ ifeq (yes,$(has-ldconfig))
+@@ -109,7 +110,8 @@
+ 
+ # Link together the dynamic linker into a single relocatable object.
+ $(objpfx)librtld.os: $(objpfx)dl-allobjs.os $(common-objpfx)libc_pic.a
+-	$(reloc-link) '-Wl,-(' $^ -lgcc '-Wl,-)'
++	touch	$@
++#	$(reloc-link) '-Wl,-(' $^ -lgcc '-Wl,-)'
+ 
+ # Do we need a linker script?
+ rtld-ldscript-in := $(firstword $(wildcard $(+sysdep_dirs:%=%/rtld-ldscript.in)))
+@@ -133,9 +135,10 @@
+ 
+ $(objpfx)ld.so: $(objpfx)librtld.os $(addprefix $(objpfx),$(rtld-ldscript)) \
+ 		$(ld-map)
+-	$(LINK.o) -nostdlib -nostartfiles -shared -o $@ $(LDFLAGS-rtld) \
+-		  $(filter-out $(rtld-ldscript) $(map-file),$^)		\
+-		  $(load-map-file) -Wl,-soname=$(rtld-installed-name)
++	touch $@
++#	$(LINK.o) -nostdlib -nostartfiles -shared -o $@ $(LDFLAGS-rtld) \
++#		  $(filter-out $(rtld-ldscript) $(map-file),$^)		\
++#		  $(load-map-file) -Wl,-soname=$(rtld-installed-name)
+ 
+ # interp.c exists just to get this string into the libraries.
+ CFLAGS-interp.c = -D'RUNTIME_LINKER="$(slibdir)/$(rtld-installed-name)"'
+@@ -165,7 +168,8 @@
+ 
+ # Specify the dependencies of libdl.so; its commands come from the generic
+ # rule to build a shared library.
+-$(objpfx)libdl.so: $(objpfx)libdl_pic.a $(common-objpfx)libc.so $(objpfx)ld.so
++$(objpfx)libdl.so: $(objpfx)libdl_pic.a $(common-objpfx)libc.so
++# (Removed by KHS) $(objpfx)ld.so
+ 
+ ifeq (yes,$(build-shared))
+ $(inst_slibdir)/$(rtld-version-installed-name): $(objpfx)ld.so $(+force)
+@@ -260,5 +264,6 @@
+ 
+ # muwahaha
+ 
+-LDFLAGS-dl.so = -Wl,-dynamic-linker,$(slibdir)/$(rtld-installed-name)
++LDFLAGS-dl.so =
++# (Removed by KHS) -Wl,-dynamic-linker,$(slibdir)/$(rtld-installed-name)
+ $(objpfx)libdl.so: $(objpfx)eval.os
+diff -ru glibc-2.1.2.orig/elf/dl-addr.c glibc-2.1.2/elf/dl-addr.c
+--- glibc-2.1.2.orig/elf/dl-addr.c	1999-02-20 14:41:28.000000000 +0000
++++ glibc-2.1.2/elf/dl-addr.c	2004-02-23 12:00:19.000000000 +0000
+@@ -17,10 +17,12 @@
+    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.  */
+ 
++
+ #include <dlfcn.h>
+ #include <stddef.h>
+ #include <elf/ldsodefs.h>
+ 
++#ifndef __SYLLABLE__
+ 
+ int
+ internal_function
+@@ -90,3 +92,15 @@
+ 
+   return 1;
+ }
++
++#else
++
++int
++internal_function
++_dl_addr (const void *address, Dl_info *info)
++{
++  dbprintf( "_dl_addr() not implemented\n" );
++  return( 0 );
++}
++
++#endif /* __SYLLABLE__ */
+diff -ru glibc-2.1.2.orig/elf/dl-close.c glibc-2.1.2/elf/dl-close.c
+--- glibc-2.1.2.orig/elf/dl-close.c	1999-05-17 09:56:55.000000000 +0000
++++ glibc-2.1.2/elf/dl-close.c	2004-02-23 12:00:19.000000000 +0000
+@@ -17,6 +17,7 @@
+    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.  */
+ 
++
+ #include <assert.h>
+ #include <dlfcn.h>
+ #include <stdlib.h>
+@@ -27,6 +28,8 @@
+ #include <sys/mman.h>
+ 
+ 
++#ifndef __SYLLABLE__
++
+ /* During the program run we must not modify the global data of
+    loaded shared object simultanously in two threads.  Therefore we
+    protect `dlopen' and `dlclose' in dlclose.c.  */
+@@ -197,3 +200,14 @@
+   /* Release the lock.  */
+   __libc_lock_unlock (_dl_load_lock);
+ }
++
++#else /* __SYLLABLE__ */
++
++void
++internal_function
++_dl_close (struct link_map *map)
++{
++  dbprintf( "_dl_close() not implemented\n" );
++}
++
++#endif /* __SYLLABLE__ */
+diff -ru glibc-2.1.2.orig/elf/dl-debug.c glibc-2.1.2/elf/dl-debug.c
+--- glibc-2.1.2.orig/elf/dl-debug.c	1998-04-02 12:43:15.000000000 +0000
++++ glibc-2.1.2/elf/dl-debug.c	2004-02-23 12:00:19.000000000 +0000
+@@ -17,6 +17,8 @@
+    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.  */
+ 
++#ifndef __SYLLABLE__
++
+ #include <elf/ldsodefs.h>
+ 
+ /* This structure communicates dl state to the debugger.  The debugger
+@@ -55,3 +57,4 @@
+ _dl_debug_state (void)
+ {
+ }
++#endif /* __SYLLABLE__ */
+diff -ru glibc-2.1.2.orig/elf/dl-deps.c glibc-2.1.2/elf/dl-deps.c
+--- glibc-2.1.2.orig/elf/dl-deps.c	1999-06-27 01:19:53.000000000 +0000
++++ glibc-2.1.2/elf/dl-deps.c	2004-02-23 12:00:19.000000000 +0000
+@@ -17,6 +17,8 @@
+    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.  */
+ 
++#ifndef __SYLLABLE__
++
+ #include <assert.h>
+ #include <dlfcn.h>
+ #include <errno.h>
+@@ -553,3 +555,4 @@
+ 
+   return to_add;
+ }
++#endif /* __SYLLABLE__ */
+diff -ru glibc-2.1.2.orig/elf/dl-error.c glibc-2.1.2/elf/dl-error.c
+--- glibc-2.1.2.orig/elf/dl-error.c	1999-02-22 18:04:03.000000000 +0000
++++ glibc-2.1.2/elf/dl-error.c	2004-02-23 12:00:19.000000000 +0000
+@@ -17,6 +17,7 @@
+    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.  */
+ 
++
+ #include <setjmp.h>
+ #include <stdlib.h>
+ #include <string.h>
+@@ -87,6 +88,7 @@
+   else
+     {
+       /* Lossage while resolving the program's own symbols is always fatal.  */
++#ifndef __SYLLABLE__      
+       char buffer[1024];
+       _dl_sysdep_fatal (_dl_argv[0] ?: "<program name unknown>",
+ 			": error in loading shared libraries: ",
+@@ -95,6 +97,10 @@
+ 			(errcode
+ 			 ? __strerror_r (errcode, buffer, sizeof buffer)
+ 			 : ""), "\n", NULL);
++#else
++      dbprintf( "_dl_catch_error() Wierd: lcatch == NULL\n" );
++      abort();
++#endif      
+     }
+ }
+ 
+diff -ru glibc-2.1.2.orig/elf/dl-load.c glibc-2.1.2/elf/dl-load.c
+--- glibc-2.1.2.orig/elf/dl-load.c	1999-08-10 05:13:23.000000000 +0000
++++ glibc-2.1.2/elf/dl-load.c	2004-02-23 12:00:19.000000000 +0000
+@@ -17,6 +17,8 @@
+    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.  */
+ 
++#ifndef __SYLLABLE__
++
+ #include <elf.h>
+ #include <errno.h>
+ #include <fcntl.h>
+@@ -1402,3 +1404,4 @@
+ 
+   return _dl_map_object_from_fd (name, fd, realname, loader, type);
+ }
++#endif /* __SYLLABLE__ */
+diff -ru glibc-2.1.2.orig/elf/dl-lookup.c glibc-2.1.2/elf/dl-lookup.c
+--- glibc-2.1.2.orig/elf/dl-lookup.c	1999-02-22 18:04:23.000000000 +0000
++++ glibc-2.1.2/elf/dl-lookup.c	2004-02-23 12:00:19.000000000 +0000
+@@ -17,6 +17,7 @@
+    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.  */
+ 
++
+ #include <alloca.h>
+ #include <string.h>
+ #include <unistd.h>
+@@ -26,11 +27,13 @@
+ 
+ #include <assert.h>
+ 
++
+ #define VERSTAG(tag)	(DT_NUM + DT_PROCNUM + DT_VERSIONTAGIDX (tag))
+ 
+ /* We need this string more than once.  */
+ static const char undefined_msg[] = "undefined symbol: ";
+ 
++#ifndef __SYLLABLE__
+ 
+ struct sym_val
+   {
+@@ -328,3 +331,5 @@
+   hash += map->l_nbuckets;
+   map->l_chain = hash;
+ }
++
++#endif /* __SYLLABLE__ */
+diff -ru glibc-2.1.2.orig/elf/dl-minimal.c glibc-2.1.2/elf/dl-minimal.c
+--- glibc-2.1.2.orig/elf/dl-minimal.c	1998-04-21 18:02:23.000000000 +0000
++++ glibc-2.1.2/elf/dl-minimal.c	2004-02-23 12:00:19.000000000 +0000
+@@ -17,6 +17,8 @@
+    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.  */
+ 
++#ifndef __SYLLABLE__
++
+ #include <errno.h>
+ #include <limits.h>
+ #include <string.h>
+@@ -329,3 +331,4 @@
+ {
+   return (unsigned long int) __strtoul_internal (nptr, endptr, base, 0);
+ }
++#endif /* __SYLLABLE__ */
+diff -ru glibc-2.1.2.orig/elf/dl-misc.c glibc-2.1.2/elf/dl-misc.c
+--- glibc-2.1.2.orig/elf/dl-misc.c	1998-06-29 10:47:27.000000000 +0000
++++ glibc-2.1.2/elf/dl-misc.c	2004-02-23 12:00:19.000000000 +0000
+@@ -17,6 +17,8 @@
+    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.  */
+ 
++#ifndef __SYLLABLE__
++
+ #include <assert.h>
+ #include <fcntl.h>
+ #include <unistd.h>
+@@ -152,3 +154,4 @@
+   while (msg != NULL);
+   va_end (ap);
+ }
++#endif /* __SYLLABLE__ */
+diff -ru glibc-2.1.2.orig/elf/dl-open.c glibc-2.1.2/elf/dl-open.c
+--- glibc-2.1.2.orig/elf/dl-open.c	1999-05-11 12:58:25.000000000 +0000
++++ glibc-2.1.2/elf/dl-open.c	2004-02-23 12:00:19.000000000 +0000
+@@ -17,6 +17,7 @@
+    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.  */
+ 
++
+ #include <assert.h>
+ #include <dlfcn.h>
+ #include <errno.h>
+@@ -29,6 +30,7 @@
+ 
+ #include <dl-dst.h>
+ 
++#ifndef __SYLLABLE__
+ 
+ extern ElfW(Addr) _dl_sysdep_start (void **start_argptr,
+ 				    void (*dl_main) (const ElfW(Phdr) *phdr,
+@@ -291,3 +293,79 @@
+     }
+ }
+ #endif
++
++#else /* __SYLLABLE__ */
++
++#include <fpu_control.h>
++
++/* This is the map for the shared object we profile.  It is defined here
++   only because we test for this value being NULL or not.  */
++struct link_map *_dl_profile_map;
++const char *_dl_origin_path;
++/* This variable contains the lowest stack address ever used.  */
++void *__libc_stack_end;
++fpu_control_t _dl_fpu_control = _FPU_DEFAULT;
++int _dl_starting_up;
++
++struct link_map *
++internal_function
++_dl_open (const char *file, int mode, const void *caller)
++{
++  dbprintf( "_dl_open(%s) not implemented\n", file );
++  _dl_signal_error (EINVAL, file, _("dlopen() not implemented"));
++  return( 0 );
++}
++
++/*
++void
++_dl_mcount_wrapper (ElfW(Addr) selfpc)
++{
++  _dl_mcount ((ElfW(Addr)) __builtin_return_address (0), selfpc);
++}
++
++
++void
++_dl_mcount_wrapper_check (void *selfpc)
++{
++  if (_dl_profile_map != NULL)
++    _dl_mcount ((ElfW(Addr)) __builtin_return_address (0),
++		(ElfW(Addr)) selfpc);
++}
++*/
++void
++_dl_mcount (ElfW(Addr) frompc, ElfW(Addr) selfpc)
++{
++  dbprintf( "_dl_mcount() not implemented\n" );
++}
++
++ElfW(Addr)
++internal_function
++_dl_lookup_symbol (const char *undef_name, const ElfW(Sym) **ref,
++		   struct r_scope_elem *symbol_scope[],
++		   const char *reference_name,
++		   int reloc_type)
++{
++  dbprintf( "_dl_lookup_symbol(%s,%s) not implemented\n", undef_name, reference_name );
++  _dl_signal_cerror (0, (reference_name  && reference_name[0]
++			 ? reference_name
++			 : ("<dll>" ?: "<main program>")),
++		     "undefined symbol: " );
++  *ref = NULL;
++  return 0;
++}
++
++#include "dl-error.c"
++
++#if 0
++int
++internal_function
++_dl_catch_error (char **errstring,
++		 void (*operate) (void *),
++		 void *args)
++{
++  dbprintf( "_dl_catch_error() not implemented\n" );
++  return( 0 );
++}
++#endif
++
++#endif /* __SYLLABLE__ */
+diff -ru glibc-2.1.2.orig/elf/dl-profile.c glibc-2.1.2/elf/dl-profile.c
+--- glibc-2.1.2.orig/elf/dl-profile.c	1998-06-07 13:35:49.000000000 +0000
++++ glibc-2.1.2/elf/dl-profile.c	2004-02-23 12:00:19.000000000 +0000
+@@ -540,3 +540,7 @@
+  done:
+   state = GMON_PROF_ON;
+ }
++
++#ifdef __SYLLABLE__
++struct link_map *_dl_profile_map;
++#endif
+diff -ru glibc-2.1.2.orig/elf/dl-symbol.c glibc-2.1.2/elf/dl-symbol.c
+--- glibc-2.1.2.orig/elf/dl-symbol.c	1998-09-06 09:08:05.000000000 +0000
++++ glibc-2.1.2/elf/dl-symbol.c	2004-02-23 12:00:19.000000000 +0000
+@@ -17,6 +17,8 @@
+    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.  */
+ 
++#ifndef __SYLLABLE__
++
+ #include <stddef.h>
+ #include <elf/ldsodefs.h>
+ 
+@@ -32,3 +34,5 @@
+ 				0);
+   return loadbase + ref->st_value;
+ }
++
++#endif /* __SYLLABLE__ */
+diff -ru glibc-2.1.2.orig/elf/dlsym.c glibc-2.1.2/elf/dlsym.c
+--- glibc-2.1.2.orig/elf/dlsym.c	1999-02-03 10:29:23.000000000 +0000
++++ glibc-2.1.2/elf/dlsym.c	2004-02-23 12:00:19.000000000 +0000
+@@ -17,11 +17,14 @@
+    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.  */
+ 
++
+ #include <dlfcn.h>
+ #include <setjmp.h>
+ #include <stddef.h>
+ #include <elf/ldsodefs.h>
+ 
++#ifndef __SYLLABLE__
++
+ struct dlsym_args
+ {
+   /* The arguments to dlsym_doit.  */
+@@ -97,3 +100,13 @@
+   return (_dlerror_run (dlsym_doit, &args)
+ 	  ? NULL : (void *) (args.loadbase + args.ref->st_value));
+ }
++
++#else /* __SYLLABLE__ */
++
++void *
++dlsym (void *handle, const char *name)
++{
++  return( 0 );
++}
++
++#endif /* __SYLLABLE__ */
+diff -ru glibc-2.1.2.orig/elf/dlvsym.c glibc-2.1.2/elf/dlvsym.c
+--- glibc-2.1.2.orig/elf/dlvsym.c	1999-02-03 10:29:40.000000000 +0000
++++ glibc-2.1.2/elf/dlvsym.c	2004-02-23 12:00:19.000000000 +0000
+@@ -24,6 +24,8 @@
+ 
+ #include <dl-hash.h>
+ 
++#ifndef __SYLLABLE__
++
+ struct dlvsym_args
+ {
+   /* The arguments to dlvsym_doit.  */
+@@ -113,3 +115,5 @@
+ 	  ? NULL : (void *) (args.loadbase + args.ref->st_value));
+ }
+ weak_alias (__dlvsym, dlvsym)
++
++#endif /* __SYLLABLE__ */
+diff -ru glibc-2.1.2.orig/elf/interp.c glibc-2.1.2/elf/interp.c
+--- glibc-2.1.2.orig/elf/interp.c	1998-05-08 20:40:55.000000000 +0000
++++ glibc-2.1.2/elf/interp.c	2004-02-23 12:00:19.000000000 +0000
+@@ -17,5 +17,7 @@
+    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.  */
+ 
++#ifndef __SYLLABLE__
+ const char __invoke_dynamic_linker__[] __attribute__ ((section (".interp")))
+   = RUNTIME_LINKER;
++#endif
+diff -ru glibc-2.1.2.orig/elf/rtld.c glibc-2.1.2/elf/rtld.c
+--- glibc-2.1.2.orig/elf/rtld.c	1999-08-20 17:34:39.000000000 +0000
++++ glibc-2.1.2/elf/rtld.c	2004-02-23 12:00:20.000000000 +0000
+@@ -16,7 +16,7 @@
+    License along with the GNU C Library; see the file COPYING.LIB.  If not,
+    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.  */
+-
++#if 0
+ #include <fcntl.h>
+ #include <stdlib.h>
+ #include <string.h>
+@@ -1506,3 +1506,4 @@
+       _dl_debug_message (0, " (", buf, "%)\n", NULL);
+     }
+ }
++#endif
+diff -ru glibc-2.1.2.orig/elf/soinit.c glibc-2.1.2/elf/soinit.c
+--- glibc-2.1.2.orig/elf/soinit.c	1997-12-22 17:15:11.000000000 +0000
++++ glibc-2.1.2/elf/soinit.c	2004-02-23 12:00:20.000000000 +0000
+@@ -44,7 +44,7 @@
+ void
+ __libc_global_ctors (void)
+ {
+-  /* Call constructor functions.  */
++    /* Call constructor functions.  */
+   run_hooks (__CTOR_LIST__);
+ #ifdef HAVE_DWARF2_UNWIND_INFO
+ # ifdef HAVE_DWARF2_UNWIND_INFO_STATIC
+diff -ru glibc-2.1.2.orig/gmon/Makefile glibc-2.1.2/gmon/Makefile
+--- glibc-2.1.2.orig/gmon/Makefile	1997-08-20 03:29:11.000000000 +0000
++++ glibc-2.1.2/gmon/Makefile	2004-02-23 12:00:20.000000000 +0000
+@@ -42,4 +42,4 @@
+ 
+ $(noprof:%=$(objpfx)%.op): %.op: %.o
+ 	rm -f $@
+-	ln $< $@
++	cp $< $@
+diff -ru glibc-2.1.2.orig/login/openpty.c glibc-2.1.2/login/openpty.c
+--- glibc-2.1.2.orig/login/openpty.c	1999-05-24 18:18:45.000000000 +0000
++++ glibc-2.1.2/login/openpty.c	2004-02-23 12:00:20.000000000 +0000
+@@ -17,6 +17,10 @@
+    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.  */
+ 
++#ifdef __SYLLABLE__
++#include "../sysdeps/unix/sysv/syllable/openpty.c"
++#else /* __SYLLABLE__ */
++
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <limits.h>
+@@ -136,3 +140,4 @@
+   close (master);
+   return -1;
+ }
++#endif /* __SYLLABLE__ */
+diff -ru glibc-2.1.2.orig/malloc/malloc.c glibc-2.1.2/malloc/malloc.c
+--- glibc-2.1.2.orig/malloc/malloc.c	1999-08-30 19:19:16.000000000 +0000
++++ glibc-2.1.2/malloc/malloc.c	2004-02-23 12:00:20.000000000 +0000
+@@ -515,6 +515,11 @@
+ # endif
+ #endif
+ 
++#ifdef __SYLLABLE__
++#undef HAVE_MMAP
++#define NO_THREADS
++#endif
++  
+ /*
+   Define HAVE_MREMAP to make realloc() use mremap() to re-allocate
+   large blocks.  This is currently only possible on Linux with
+@@ -897,6 +902,25 @@
+ 
+ #ifdef _LIBC
+ 
++#ifdef __SYLLABLE__
++
++#define cALLOc          __a_libc_calloc
++#define fREe            __a_libc_free
++#define mALLOc          __a_libc_malloc
++#define mEMALIGn        __a_libc_memalign
++#define rEALLOc         __a_libc_realloc
++#define vALLOc          __a_libc_valloc
++#define pvALLOc         __a_libc_pvalloc
++#define mALLINFo        __a_libc_mallinfo
++#define mALLOPt         __a_libc_mallopt
++#define mALLOC_STATs    __a_malloc_stats
++#define mALLOC_USABLE_SIZe __a_malloc_usable_size
++#define mALLOC_TRIm     __a_malloc_trim
++#define mALLOC_GET_STATe __a_malloc_get_state
++#define mALLOC_SET_STATe __a_malloc_set_state
++
++#else /* __SYLLABLE__ */
++
+ #define cALLOc          __libc_calloc
+ #define fREe            __libc_free
+ #define mALLOc          __libc_malloc
+@@ -911,6 +935,7 @@
+ #define mALLOC_TRIm     __malloc_trim
+ #define mALLOC_GET_STATe __malloc_get_state
+ #define mALLOC_SET_STATe __malloc_set_state
++#endif /* __SYLLABLE__ */
+ 
+ #else
+ 
+@@ -981,11 +1006,11 @@
+ #ifdef __cplusplus
+ };  /* end of extern "C" */
+ #endif
+-
++#ifndef __SYLLABLE__
+ #if !defined(NO_THREADS) && !HAVE_MMAP
+ "Can't have threads support without mmap"
+ #endif
+-
++#endif
+ 
+ /*
+   Type declarations
+@@ -1668,9 +1693,12 @@
+ #endif
+ #ifdef _LIBC
+   /* Initialize the pthreads interface. */
++#ifndef __SYLLABLE__  
+   if (__pthread_initialize != NULL)
+     __pthread_initialize();
+ #endif
++  
++#endif
+   mutex_init(&main_arena.mutex);
+   mutex_init(&list_lock);
+   tsd_key_create(&arena_key, NULL);
+@@ -4635,6 +4663,138 @@
+ 
+ #endif /* defined _LIBC || defined MALLOC_HOOKS */
+ 
++#ifdef __SYLLABLE__
++
++static mutex_t malloc_lock = MUTEX_INITIALIZER;
++
++#define MLOCK()    (void)mutex_lock(&malloc_lock)
++#define MUNLOCK()  (void)mutex_unlock(&malloc_lock)
++
++
++Void_t*  __libc_calloc(size_t n, size_t elem_size)
++{
++  Void_t* p;
++  MLOCK();
++  p = __a_libc_calloc( n, elem_size );
++  MUNLOCK();
++  return( p );
++}
++
++void __libc_free(Void_t* mem)
++{
++  MLOCK();
++  __a_libc_free( mem );
++  MUNLOCK();
++}
++
++Void_t* __libc_malloc(size_t bytes)
++{
++  Void_t* p;
++  MLOCK();
++  p = __a_libc_malloc( bytes );
++  MUNLOCK();
++  return( p );
++}
++
++Void_t* __libc_memalign(size_t alignment, size_t bytes)
++{
++  Void_t* p;
++  MLOCK();
++  p = __a_libc_memalign( alignment, bytes );
++  MUNLOCK();
++  return(p);
++}
++
++Void_t* __libc_realloc( Void_t* oldmem, size_t bytes )
++{
++  Void_t* p;
++  MLOCK();
++  p = __a_libc_realloc( oldmem, bytes );
++  MUNLOCK();
++  return(p);
++}
++
++Void_t* __libc_valloc(size_t bytes)
++{
++  Void_t* p;
++  MLOCK();
++  p = __a_libc_valloc(bytes);
++  MUNLOCK();
++  return(p);
++}
++
++Void_t* __libc_pvalloc(size_t bytes)
++{
++  Void_t* p;
++  MLOCK();
++  p = __a_libc_pvalloc(bytes);
++  MUNLOCK();
++  return(p);
++}
++
++struct mallinfo __libc_mallinfo( void )
++{
++  struct mallinfo info;
++  MLOCK();
++  info = __a_libc_mallinfo();
++  MUNLOCK();
++  return(info);
++}
++
++int __libc_mallopt(int param_number, int value)
++{
++  int res;
++  MLOCK();
++  res = __a_libc_mallopt( param_number, value );
++  MUNLOCK();
++  return( res );
++}
++
++void __malloc_stats( void )
++{
++  MLOCK();
++  __a_malloc_stats();
++  MUNLOCK();
++}
++
++size_t __malloc_usable_size( Void_t* mem )
++{
++  size_t res;
++  MLOCK();
++  res = __a_malloc_usable_size( mem );
++  MUNLOCK();
++  return( res );
++}
++
++int __malloc_trim(size_t pad)
++{
++  int res;
++  MLOCK();
++  res = __a_malloc_trim(pad);
++  MUNLOCK();
++  return( res );
++}
++
++Void_t* __malloc_get_state( void )
++{
++  Void_t* res;
++  MLOCK();
++  res = __a_malloc_get_state();
++  MUNLOCK();
++  return( res );
++}
++
++int __malloc_set_state(Void_t* msptr)
++{
++  int res;
++  MLOCK();
++  res = __a_malloc_set_state(msptr);
++  MUNLOCK();
++  return( res );
++}
++
++#endif /* __SYLLABLE__ */
++
+ 
+ 
+ #ifdef _LIBC
+diff -ru glibc-2.1.2.orig/malloc/thread-m.h glibc-2.1.2/malloc/thread-m.h
+--- glibc-2.1.2.orig/malloc/thread-m.h	1998-12-31 18:08:28.000000000 +0000
++++ glibc-2.1.2/malloc/thread-m.h	2004-02-23 12:00:20.000000000 +0000
+@@ -54,6 +54,42 @@
+ #define thread_atfork(prepare, parent, child) \
+    (__pthread_atfork != NULL ? __pthread_atfork(prepare, parent, child) : 0)
+ 
++#elif defined(__SYLLABLE__)
++
++#include <atheos/semaphore.h>
++
++/*
++ * Hack for thread-specific data on Solaris.  We can't use thr_setspecific
++ * because that function calls malloc() itself.
++ */
++
++typedef __libc_lock_t mutex_t;
++
++typedef __libc_key_t tsd_key_t;
++
++#define tsd_key_create __libc_key_create
++#define tsd_setspecific(key, data) __libc_setspecific(key,data)
++#define tsd_getspecific(key, vptr) (vptr = __libc_getspecific(key))
++
++/*
++typedef void *tsd_key_t[256];
++#define tsd_key_create(key, destr) do { \
++  int i; \
++  for(i=0; i<256; i++) (*key)[i] = 0; \
++} while(0)
++
++#define thr_self getpid
++#define tsd_setspecific(key, data) (key[(unsigned)thr_self() % 256] = (data))
++#define tsd_getspecific(key, vptr) (vptr = key[(unsigned)thr_self() % 256])
++*/
++#define thread_atfork(prepare, parent, child) do {} while(0)
++
++#define mutex_init(m)              __libc_lock_init(*(m))
++#define mutex_lock(m)              __libc_lock_lock(*(m))
++#define mutex_trylock(m)           __libc_lock_trylock(*(m))
++#define mutex_unlock(m)            __libc_lock_unlock(*(m))
++
++
+ #elif defined(MUTEX_INITIALIZER)
+ /* Assume hurd, with cthreads */
+ 
+@@ -85,10 +121,10 @@
+ #else
+ 
+ #define NO_THREADS
+-
++#error 1111
+ #endif /* MUTEX_INITIALIZER && PTHREAD_MUTEX_INITIALIZER */
+ 
+-#ifndef NO_THREADS
++#if !defined(NO_THREADS) && !defined(__SYLLABLE__)
+ 
+ /* thread specific data for glibc */
+ 
+@@ -200,7 +236,7 @@
+ #else /* no _LIBC or USE_... are defined */
+ 
+ #define NO_THREADS
+-
++#error 2222
+ #endif /* defined(_LIBC) */
+ 
+ #ifdef NO_THREADS /* No threads, provide dummy macros */
+diff -ru glibc-2.1.2.orig/misc/syslog.c glibc-2.1.2/misc/syslog.c
+--- glibc-2.1.2.orig/misc/syslog.c	1999-04-28 22:07:58.000000000 +0000
++++ glibc-2.1.2/misc/syslog.c	2004-02-23 12:00:20.000000000 +0000
+@@ -30,6 +30,9 @@
+  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+  * SUCH DAMAGE.
+  */
++#ifdef __SYLLABLE__
++#include "../sysdeps/unix/sysv/syllable/syslog.c"
++#else /* __SYLLABLE__ */
+ 
+ #if defined(LIBC_SCCS) && !defined(lint)
+ static char sccsid[] = "@(#)syslog.c	8.4 (Berkeley) 3/18/94";
+@@ -357,3 +360,5 @@
+ 		LogMask = pmask;
+ 	return (omask);
+ }
++
++#endif /* __SYLLABLE__ */
+diff -ru glibc-2.1.2.orig/nss/nsswitch.c glibc-2.1.2/nss/nsswitch.c
+--- glibc-2.1.2.orig/nss/nsswitch.c	1999-05-14 00:27:00.000000000 +0000
++++ glibc-2.1.2/nss/nsswitch.c	2004-02-23 12:00:20.000000000 +0000
+@@ -26,7 +26,9 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
++#ifndef __SYLLABLE__
+ #include <ldsodefs.h>		/* We need some help from ld.so.  */
++#endif
+ 
+ #if !defined DO_STATIC_NSS || defined PIC
+ # include <gnu/lib-names.h>
+@@ -245,7 +247,7 @@
+ }
+ 
+ 
+-#if !defined DO_STATIC_NSS || defined PIC
++#if (!defined DO_STATIC_NSS || defined PIC) && !defined(__SYLLABLE__)
+ static int
+ nss_dlerror_run (void (*operate) (void *), void *args)
+ {
+@@ -370,6 +372,49 @@
+ 	    }
+ 
+ #if !defined DO_STATIC_NSS || defined PIC
++#ifdef __SYLLABLE__
++	  if ( ni->library->lib_handle < 0 ) {
++	    size_t shlen = (7 + strlen (ni->library->name) + 3
++			    + strlen (__nss_shlib_revision) + 1);
++	    int saved_errno = errno;
++	    char* shlib_name = __alloca (shlen);
++
++	      /* Construct shared object name.  */
++	      __stpcpy (__stpcpy (__stpcpy (__stpcpy (shlib_name,
++						      "libnss_"),
++					    ni->library->name),
++				  ".so"),
++			__nss_shlib_revision);
++
++	    
++	    ni->library->lib_handle = load_library( shlib_name, 0 );
++	    if ( ni->library->lib_handle < 0 ) {
++	      dbprintf( "__nss_lookup_function() failed to load library %s\n", shlib_name );
++	      __set_errno (saved_errno);
++	    }
++	  }
++	  if ( ni->library->lib_handle < 0 ) {
++	    result = NULL;
++	  } else {
++	      /* Get the desired function.  Again,  GNU ld.so magic ahead.  */
++	      size_t namlen = (5 + strlen (ni->library->name) + 1
++			       + strlen (fct_name) + 1);
++	      char* name;
++	      name = __alloca (namlen);
++
++	      /* Construct the function name.  */
++	      __stpcpy (__stpcpy (__stpcpy (__stpcpy (name, "_nss_"),
++					    ni->library->name),
++				  "_"),
++			fct_name);
++
++	      /* Look up the symbol.  */
++	      if ( get_symbol_address( ni->library->lib_handle, name, -1, &result ) < 0 ) {
++		dbprintf( "__nss_lookup_function() Failed to lookup symbol %s\n", name );
++		result = NULL;
++	      }
++	  }
++#else /* __SYLLABLE__ */
+ 	  if (ni->library->lib_handle == NULL)
+ 	    {
+ 	      /* Load the shared library.  */
+@@ -417,6 +462,8 @@
+ 	      result = (nss_dlerror_run (get_sym, &args) ? NULL
+ 			: (void *) (args.loadbase + args.ref->st_value));
+ 	    }
++#endif /* __SYLLABLE__ */
++	  
+ #else
+ 	  /* We can't get function address dynamically in static linking. */
+ 	  {
+@@ -748,7 +795,11 @@
+     return NULL;
+ 
+   (*currentp)->name = name;
++#ifdef __SYLLABLE__
++  (*currentp)->lib_handle = -1;
++#else
+   (*currentp)->lib_handle = NULL;
++#endif
+   (*currentp)->next = NULL;
+ 
+   return *currentp;
+@@ -796,8 +847,11 @@
+     {
+       service_library *oldl = library;
+ 
++#ifdef __SYLLABLE__
++      unload_library( library->lib_handle );
++#else
+       _dl_close (library->lib_handle);
+-
++#endif
+       library = library->next;
+       free (oldl);
+     }
+diff -ru glibc-2.1.2.orig/nss/nsswitch.h glibc-2.1.2/nss/nsswitch.h
+--- glibc-2.1.2.orig/nss/nsswitch.h	1999-02-18 22:26:46.000000000 +0000
++++ glibc-2.1.2/nss/nsswitch.h	2004-02-23 12:00:20.000000000 +0000
+@@ -26,8 +26,16 @@
+ #include <nss.h>
+ #include <resolv.h>
+ #include <search.h>
+-#include <ldsodefs.h>
+ 
++#ifdef __SYLLABLE__
++#include <atheos/image.h>
++
++/* NOTE: Does not call the nessesary profiler functions */
++#define _CALL_DL_FCT(fctp, args) (*fctp) args
++
++#else
++#include <ldsodefs.h>
++#endif
+ 
+ /* Actions performed after lookup finished.  */
+ typedef enum
+@@ -42,7 +50,11 @@
+   /* Name of service (`files', `dns', `nis', ...).  */
+   const char *name;
+   /* Pointer to the loaded shared library.  */
++#ifdef __SYLLABLE__
++  int lib_handle;
++#else
+   void *lib_handle;
++#endif
+   /* And the link to the next entry.  */
+   struct service_library *next;
+ } service_library;
+diff -ru glibc-2.1.2.orig/sysdeps/generic/dl-sysdep.c glibc-2.1.2/sysdeps/generic/dl-sysdep.c
+--- glibc-2.1.2.orig/sysdeps/generic/dl-sysdep.c	1998-09-22 12:54:54.000000000 +0000
++++ glibc-2.1.2/sysdeps/generic/dl-sysdep.c	2004-02-23 12:00:20.000000000 +0000
+@@ -17,6 +17,7 @@
+    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.  */
+ 
++#ifndef __SYLLABLE__
+ #include <elf.h>
+ #include <errno.h>
+ #include <fcntl.h>
+@@ -432,3 +433,4 @@
+ 
+   return result;
+ }
++#endif /* __SYLLABLE__ */
+diff -ru glibc-2.1.2.orig/sysdeps/gnu/errlist.c glibc-2.1.2/sysdeps/gnu/errlist.c
+--- glibc-2.1.2.orig/sysdeps/gnu/errlist.c	1999-07-18 23:50:46.000000000 +0000
++++ glibc-2.1.2/sysdeps/gnu/errlist.c	2004-02-23 12:00:20.000000000 +0000
+@@ -835,6 +835,22 @@
+ /* */
+     [ERR_REMAP (EMEDIUMTYPE)] = N_("Wrong medium type"),
+ #endif
++#ifdef EBADINDEX
++/* */
++    [ERR_REMAP (EBADINDEX)] = N_("Bad index"),
++#endif
++#ifdef ENOSYM
++/* */
++    [ERR_REMAP (ENOSYM)] = N_("Unresolved DLL symbol"),
++#endif
++#ifdef ENOADDRSPC
++/* */
++    [ERR_REMAP (ENOADDRSPC)] = N_("Out of address space"),
++#endif
++#ifdef EUNKNOWNFS
++/* */
++    [ERR_REMAP (EUNKNOWNFS)] = N_("Unknown filesystem"),
++#endif
+   };
+ 
+ const int SYS_NERR = sizeof SYS_ERRLIST / sizeof SYS_ERRLIST [0];
+diff -ru glibc-2.1.2.orig/sysdeps/i386/elf/start.S glibc-2.1.2/sysdeps/i386/elf/start.S
+--- glibc-2.1.2.orig/sysdeps/i386/elf/start.S	1998-06-18 17:29:00.000000000 +0000
++++ glibc-2.1.2/sysdeps/i386/elf/start.S	2004-02-23 12:00:20.000000000 +0000
+@@ -38,6 +38,7 @@
+ 
+ 	.text
+ 	.globl _start
++#ifndef __SYLLABLE__	
+ _start:
+ 	/* Clear the frame pointer.  The ABI suggests this be done, to mark
+ 	   the outermost frame obviously.  */
+@@ -77,7 +78,47 @@
+ 	call __libc_start_main
+ 
+ 	hlt			/* Crash if somehow `exit' does return.  */
++#else /* __SYLLABLE__ */
+ 
++	
++_start:
++	/* Clear the frame pointer.  The ABI suggests this be done, to mark
++	   the outermost frame obviously.  */
++	xorl %ebp, %ebp
++
++	/* Extract the arguments as encoded on the stack and set up
++	   the arguments for `main': argc, argv.  envp will be determined
++	   later in __libc_start_main.  */
++	movl 4(%esp),%esi	/* argv  */
++	movl 8(%esp),%ecx	/* envv  */
++
++	/* Before pushing the arguments align the stack to a double word
++	   boundary to avoid penalties from misaligned accesses.  Thanks
++	   to Edward Seidl <seidl@janed.com> for pointing this out.  */
++	andl $0xfffffff8, %esp
++	pushl %eax		/* Push garbage because we allocate
++				   28 more bytes.  */
++
++	/* Provide the highest stack address to the user code (for stacks
++	   which grow downwards).  */
++	pushl %esp
++
++	/* Push address of our own entry points to .fini and .init.  */
++	pushl $_fini
++	pushl $_init
++
++	pushl %ecx		/* Push second argument: envv.  */
++	pushl %esi		/* Push first argument: argv.  */
++
++	pushl $main
++
++	/* Call the user's main function, and exit with its value.
++	   But let the libc call main.    */
++	call __libc_start_main
++
++	hlt			/* Crash if somehow `exit' does return.  */
++		
++#endif /* __SYLLABLE__ */	
+ /* To fulfill the System V/i386 ABI we need this symbol.  Yuck, it's so
+    meaningless since we don't support machines < 80386.  */
+ 	.section .rodata
+diff -ru glibc-2.1.2.orig/sysdeps/unix/configure glibc-2.1.2/sysdeps/unix/configure
+--- glibc-2.1.2.orig/sysdeps/unix/configure	1999-07-19 01:54:45.000000000 +0000
++++ glibc-2.1.2/sysdeps/unix/configure	2004-02-23 12:00:20.000000000 +0000
+@@ -33,7 +33,7 @@
+ 
+ ; return 0; }
+ EOF
+-if { (eval echo configure:37: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
++if { (eval echo configure:37: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest; then
+   rm -rf conftest*
+   eval "ac_cv_func_$ac_func=yes"
+ else
+diff -ru glibc-2.1.2.orig/time/time.h glibc-2.1.2/time/time.h
+--- glibc-2.1.2.orig/time/time.h	1999-02-16 09:49:32.000000000 +0000
++++ glibc-2.1.2/time/time.h	2004-02-23 12:00:20.000000000 +0000
+@@ -68,7 +68,10 @@
+ # include <bits/types.h>
+ 
+ /* Returned by `time'.  */
++#ifndef time_t
+ typedef __time_t time_t;
++#define time_t time_t
++#endif
+ 
+ #endif /* time_t not defined and <time.h> or need time_t.  */
+ #undef	__need_time_t
+diff -ru glibc-2.1.2.orig/time/tzset.c glibc-2.1.2/time/tzset.c
+--- glibc-2.1.2.orig/time/tzset.c	1999-04-28 23:11:37.000000000 +0000
++++ glibc-2.1.2/time/tzset.c	2004-02-23 12:00:20.000000000 +0000
+@@ -38,7 +38,7 @@
+ weak_alias (__timezone, timezone)
+ 
+ /* This locks all the state variables in tzfile.c and this file.  */
+-__libc_lock_define (static, tzset_lock)
++__libc_lock_define_initialized (static, tzset_lock)
+ 
+ 
+ #define	min(a, b)	((a) < (b) ? (a) : (b))

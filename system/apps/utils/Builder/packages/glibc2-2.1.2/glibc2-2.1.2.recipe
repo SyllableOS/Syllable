@@ -1,0 +1,41 @@
+authors
+	Kurt Skauen
+	Kristian Van Der Vliet
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				testing
+
+licenses			LGPL
+
+home				www.gnu.org/software/libc/
+packages
+	glibc-2.1.2
+;	glibc-crypt-2.1.2
+;locations			ftp://ftp.gwdg.de/pub/linux/glibc/
+
+build-needs			gettext >= 0.10.35
+test-needs
+	bash <> 2.03
+	perl
+;build-recommends	texinfo <
+
+patch-config		scripts
+
+no-build-dir
+
+configure-options
+	--disable-versioning
+;	--enable-add-ons
+;	--with-headers=/usr/include
+;	--enable-libio
+;	--enable-bounded
+;	--disable-profile
+;	--without-cvs
+
+;make-targets
+;	For printed documentation:
+;	dvi
+
+;install-prefix-var	install_root
+documentation		README BUGS INSTALL COPYING COPYING.LIB NEWS ChangeLog FAQ INTERFACE CONFORMANCE README.libm PROJECTS NOTES
+;	manual
