@@ -1,3 +1,14 @@
+* Sept 27 2002, Henrik Isaksson *
+
+Added new classes: Image, BitmapImage, ImageView, MemFile, Settings and
+various image filter classes. (image.cpp, imageview.cpp, memfile.cpp and
+settings.cpp).
+Added header files for the classes above.
+Patched pngtrans.cpp for save support.
+Patched os::Message to be a friend class of Settings.
+Patched Color32_s and added a new constructor that takes an uint32
+(needed by os::BitmapImage).
+
 * Sept 15 2002, Henrik Isaksson *
 
 Patched listview.cpp and added calls to ListViewRow::SetRect() in
