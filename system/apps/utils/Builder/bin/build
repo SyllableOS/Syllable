@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.61
+# Version 0.5.62
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -565,7 +565,7 @@ def prepare target
 		if exists? @stage
 			action 'rm -r ' + File.join(@stage, '*')
 		else
-			Dir.mkdir @stage
+			action 'mkdir --parents ' + @stage
 		end
 		Dir.chdir @stage
 
@@ -1169,15 +1169,16 @@ end
 # Include version number on installed packages?
 @includeVersion = @settings['include-version']
 
+@stage = File.join @workDir, 'stage'
+
 unless @systemBuild = File.basename(@workDir) == 'system'
 	@crossCompile = false
 	@systemRoot = '/'
-	@stage = File.join @workDir, 'stage'
 else
 	# System build; assume we're building Syllable for now
 	@crossCompile = ! @syllable
 
-	@stage = File.join @workDir, 'dist-root'
+	@stage = File.join @stage, 'image'
 	@systemRoot = File.join @stage, 'atheos'
 
 #	@buildTools = File.join @workDir, 'build-tools'
@@ -1204,7 +1205,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.61',
+	puts 'Syllable Build System 0.5.62',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1342,7 +1343,7 @@ else
 				if exists? @stage or
 					begin
 						@log.header 'Creating staging area'
-						action 'mkdir ' + @stage
+						action 'mkdir --parents ' + @stage
 					end
 				then
 					build true, target
