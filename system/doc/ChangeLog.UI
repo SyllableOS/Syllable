@@ -1,3 +1,9 @@
+* Sept 15 2002, Henrik Isaksson *
+
+Patched listview.cpp and added calls to ListViewRow::SetRect() in
+InsertRow() so that rows  will know the available width. (Useful when
+adding controls to listview rows.)
+
 * Aug 25 2002, Kristian Van Der Vliet *
 
 Patched both the FileRequester & Alert dialogs
