@@ -1,2 +1,5 @@
-authors Kaj de Vos
-documentation README COPYING ABOUT-NLS NEWS ChangeLog AUTHORS THANKS
+authors			Kaj de Vos
+licenses		GPL
+locations		ftp://ftp.gnu.org/gnu/diffutils/
+patch-config	config
+documentation	README COPYING ABOUT-NLS NEWS ChangeLog AUTHORS THANKS
