@@ -5,6 +5,8 @@ OBJS =	vmware.o vmware_cursor.o vmware_fb.o vmware_fifo.o vmware_io.o
 OBJDIR	:= objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
 
+DRIVER := $(OBJDIR)/vmware
+
 all :	objs $(OBJDIR)/vmware
 
 objs:
@@ -29,6 +31,12 @@ $(OBJDIR)/vmware_io.o: vmware_io.cpp vmware.h
 	$(CC) $(COPTS) vmware_io.cpp -o $@
 
 deps:
+
+install: $(DRIVER)
+	cp -f $(DRIVER) /system/drivers/appserver/video/
+
+dist: $(DRIVER)
+	cp -f $(DRIVER) $(DIST_DIR)/atheos/sys/drivers/appserver/video/
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/vmware
