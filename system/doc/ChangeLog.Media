@@ -1,3 +1,14 @@
+* Dec 21 2003, Arno Klenke *
+
+Coldfish saves the size of the file list when you hide the list.
+The MediaPlayer grays out the fullscreen menu entry if no video is loaded
+A fix to the SoundPlayer class to avoid segfaults when no soundcard is installed
+Window icons for MediaPlayer, Coldfish and the media controls window have been added
+Fixed the volume controls of the oss output plugin
+Added a configuration view for the serveraudio output plugin to select the soundcard
+The announced media preferences gui update
+All code is gcc3 ready 
+
 * Nov 18 2003, Kristian Van Der Vliet *
 
 Added multiple soundcard support to the media server
