@@ -20,6 +20,9 @@
 #ifndef __F_ATHEOS_DEVICE_H__
 #define __F_ATHEOS_DEVICE_H__
 
+#ifndef __KERNEL__
+#include <sys/types.h>
+#endif
 #include <atheos/types.h>
 #include <posix/ioctl.h>
 #include <posix/limits.h>
