@@ -1,5 +1,11 @@
 * October 6th 2004, Kristian Van Der Vliet *
 
+	- ColdFish & MediaPlayer
+		o Pass an empty String instead of NULL as required by libsyllable.so.5 when
+		  creating a FileRequester
+
+* October 6th 2004, Kristian Van Der Vliet *
+
 	- BZoom
 		o Cleanup the GUI; removed "   >" from the Magnification menu and replaced
 		  the About window with a proper Alert dialog.
