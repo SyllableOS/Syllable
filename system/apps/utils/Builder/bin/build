@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.11
+# Version 0.6.12
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -352,7 +352,7 @@ end
 def testModule target
 	if exists? dir = buildDir(target) then Dir.chdir dir end
 
-	unless action makeCommand(target) +
+	unless action makeCommand(target) + ' ' +
 		((options = (recipe = getRecipe(target))['test-options']) ? toString(options) + ' ' : '') +
 		((targets = recipe['test-targets']) ? toString(targets) : 'check')
 	then
@@ -1375,7 +1375,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.11',
+	puts 'Syllable Build System 0.6.12',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
