@@ -1,3 +1,12 @@
+* June 19, Henrik Isaksson *
+
+ - Catalog
+	o Changed catalog file format to enable embedding of string metadata to aid
+	  translators.
+
+ - Locale
+	o Will now look for preferred languages in ~/Settings/System/Locale
+
 * June 11, Henrik Isaksson *
 
  - ListView/TreeView
@@ -702,4 +711,5 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 

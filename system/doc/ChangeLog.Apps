@@ -17,6 +17,9 @@
 		o Fixed crash when exiting
 		o Fixed layout to be font & translation sensitive
 
+	- Locale
+		o Initial check-in of Locale Prefs
+
 	- SlbMgr
 		o Moved drives to a separate panel (making the first panel readable)
 
@@ -291,6 +294,4 @@ Network Preferences
 		* Added NetworkPreferences from Daryl Dudey(daryl.dudey@ntlworld.com).
 		* Added SlbMgr(AtheMgr renamed).
 		* Patches by Vanders for AEdit.
-
-
 
