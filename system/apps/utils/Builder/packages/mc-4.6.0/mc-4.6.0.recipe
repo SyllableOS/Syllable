@@ -1,0 +1,6 @@
+authors				Kaj de Vos
+patch-config		config
+configure-vars		PKG_CONFIG_PATH="/usr/glib/lib/pkgconfig"
+configure-options	--without-subshell --with-mcfs
+; --with-samba --with-openssl=
+documentation		README INSTALL INSTALL.FAST COPYING ABOUT-NLS FAQ NEWS ChangeLog MAINTAINERS
