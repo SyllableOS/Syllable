@@ -1,0 +1,5 @@
+authors			Kaj de Vos
+patch-config
+	.
+	glib-1.2.8
+documentation	README COPYING NEWS ChangeLog AUTHORS
