@@ -13,7 +13,7 @@ if [ ! -e $1 ]; then
 	exit 1
 fi;
 
-set BASE=$1
+BASE=$1
 
 echo "Building floppy boot image"
 
@@ -29,12 +29,12 @@ fi;
 cp ../images/boot-floppy.img .
 mount -t fatfs boot-floppy.img disk
 
-cp $BASE/atheos/sys/kernel.so .
+cp ../$BASE/atheos/sys/kernel.so .
 gzip kernel.so
 
 cp kernel.so.gz disk/atheos/sys/
-cp $BASE/atheos/sys/drivers/fs/ramfs disk/atheos/sys/drivers/fs/
-cp $BASE/atheos/sys/drivers/dev/disk/bios disk/atheos/sys/drivers/dev/disk/
+cp ../$BASE/atheos/sys/drivers/fs/ramfs disk/atheos/sys/drivers/fs/
+cp ../$BASE/atheos/sys/drivers/dev/disk/bios disk/atheos/sys/drivers/dev/disk/
 
 unmount disk
 mv boot-floppy.img ../objs/syllable1.img
@@ -45,8 +45,8 @@ cp ../images/boot-cd.img .
 mount -t fatfs boot-cd.img disk
 
 mv kernel.so.gz disk/atheos/sys/
-cp $BASE/atheos/sys/drivers/fs/iso9660 disk/atheos/sys/drivers/fs/
-cp $BASE/atheos/sys/drivers/dev/disk/ata disk/atheos/sys/drivers/dev/disk/
+cp ../$BASE/atheos/sys/drivers/fs/iso9660 disk/atheos/sys/drivers/fs/
+cp ../$BASE/atheos/sys/drivers/dev/disk/ata disk/atheos/sys/drivers/dev/disk/
 
 unmount disk
 mv boot-cd.img ../objs/boot.img
