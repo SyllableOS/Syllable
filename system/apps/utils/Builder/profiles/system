@@ -106,12 +106,11 @@ modules
 	sys/kernel/drivers/disk/bios
 	sys/kernel/drivers/disk/usb
 	sys/kernel/drivers/graphics/geforcefx
+	sys/kernel/drivers/graphics/i855
 	sys/kernel/drivers/graphics/mach64
 	sys/kernel/drivers/graphics/mga
-	sys/kernel/drivers/graphics/nvidia
 	sys/kernel/drivers/graphics/radeon
-;	Dropped for now:
-;	sys/kernel/drivers/graphics/s3_savage
+	sys/kernel/drivers/graphics/riva
 	sys/kernel/drivers/graphics/s3_virge
 	sys/kernel/drivers/graphics/sis3xx
 	sys/kernel/drivers/graphics/tdfx
@@ -175,13 +174,12 @@ modules
 	sys/appserver/appserver/drivers/input/sermouse
 	sys/appserver/appserver/drivers/input/usbmouse
 	sys/appserver/appserver/drivers/video/geforcefx
+	sys/appserver/appserver/drivers/video/i855
 	sys/appserver/appserver/drivers/video/mach64
 	sys/appserver/appserver/drivers/video/mga
-	sys/appserver/appserver/drivers/video/nvidia
 	sys/appserver/appserver/drivers/video/radeon
+	sys/appserver/appserver/drivers/video/riva
 	sys/appserver/appserver/drivers/video/s3
-;	Dropped for now:
-;	sys/appserver/appserver/drivers/video/savage
 	sys/appserver/appserver/drivers/video/sis3xx
 	sys/appserver/appserver/drivers/video/tdfx
 	sys/appserver/appserver/drivers/video/trident
