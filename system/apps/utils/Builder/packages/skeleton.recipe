@@ -32,6 +32,8 @@ packages
 ;	<Run-time dependencies>
 ;recommends
 ;	<Optional dependencies>
+;conflicts
+;	<Not needed, and conflicts (as opposed to "needs <>")>
 
 ; Patching options:
 patch-config		[<Directories>]
@@ -123,3 +125,4 @@ links
 ;system-files
 ;	<Source> <Destination>
 ;post-install		<Commands after installation, before registration>
+
