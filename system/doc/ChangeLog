@@ -1,3 +1,9 @@
+* January 29 2005, Jake Hamby *
+
+Removed binary keymap files from CVS and replaced them with their ASCII
+equivalents.  Cleared the NumLock flag on all keymaps.  Updated Makefile
+to convert keymaps into binary during "make dist".
+
 * January 29 2005, Kristian Van Der Vliet *
 
 Added a National Semiconductor DP8381x based NIC driver, ported from Linux 2.6 (natsemi.c)
