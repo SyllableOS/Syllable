@@ -114,6 +114,8 @@ modules
 	sys/kernel/drivers/graphics/trident
 	sys/kernel/drivers/graphics/vmware
 	sys/kernel/drivers/hcd/ata_pci
+	sys/kernel/drivers/hcd/usb_ehci
+	sys/kernel/drivers/hcd/usb_ohci
 	sys/kernel/drivers/hcd/usb_uhci
 	sys/kernel/drivers/input/usb_mouse
 	sys/kernel/drivers/keyboard
