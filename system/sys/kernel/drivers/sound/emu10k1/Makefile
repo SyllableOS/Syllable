@@ -1,7 +1,7 @@
 DRIVER	:= emu10k1
 OBJDIR	:= objs
 
-all: $(OBJDIR) $(OBJDIR)/$(DRIVER)
+all: $(OBJDIR) $(DRIVER)
 
 deps:
 
