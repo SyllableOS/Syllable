@@ -3,44 +3,47 @@
 
 
 /*Thank you Will for the help :) */
-int Become_User( struct passwd *psPwd, LoginWindow* pcWindow ) {
-  
-  int nStatus;
-  pid_t nError = waitpid(-1, &nStatus, WNOHANG);
-  
-  switch( (nError = fork()) ) {
+int Become_User( struct passwd *psPwd, LoginWindow* pcWindow )
+{
+
+    int nStatus;
+    pid_t nError = waitpid(-1, &nStatus, WNOHANG);
+
+    switch( (nError = fork()) )
+    {
     case -1:
-      break;
+        break;
 
     case 0: /* child process */
-      setuid( psPwd->pw_uid );
-      setgid( psPwd->pw_gid );
-      chdir( psPwd->pw_dir );
-      setenv( "HOME", psPwd->pw_dir,true );
-      setenv( "USER", psPwd->pw_name,true );
-      setenv( "SHELL", psPwd->pw_shell,true );
-      setenv( "PATH", "/bin:/atheos/autolnk/bin",true);
-      execl( "/bin/desktop", "desktop", NULL );
-      break;
-     
-    	
+        setuid( psPwd->pw_uid );
+        setgid( psPwd->pw_gid );
+        chdir( psPwd->pw_dir );
+        setenv( "HOME", psPwd->pw_dir,true );
+        setenv( "USER", psPwd->pw_name,true );
+        setenv( "SHELL", psPwd->pw_shell,true );
+        setenv( "PATH", "/bin:/atheos/autolnk/bin",true);
+        UpdateLoginConfig(psPwd->pw_name);
+        execl( "/bin/desktop", "desktop", NULL );
+        break;
+
+
     default: /* parent process */
-      // hide login box
-       pcWindow->Hide();
-       pcWindow->m_pcView->m_pcPasswordView->Clear();
-       int nDesktopPid, nExitStatus;
-       nDesktopPid = nError;
-       nError = waitpid( nDesktopPid, &nExitStatus, 0 );
-     
-      if( nError < 0 || nError != nDesktopPid ) // Something went wrong ;-)
-         break;
-         
-      sleep(1);
-      pcWindow->Show();
-      pcWindow->MakeFocus();
-      return 0;
-	}
- 	return -errno;
+        // hide login box
+        pcWindow->Hide();
+        pcWindow->m_pcView->m_pcPasswordView->Clear();
+        int nDesktopPid, nExitStatus;
+        nDesktopPid = nError;
+        nError = waitpid( nDesktopPid, &nExitStatus, 0 );
+
+        if( nError < 0 || nError != nDesktopPid ) // Something went wrong ;-)
+            break;
+
+        sleep(1);
+        pcWindow->Show();
+        pcWindow->MakeFocus();
+        return 0;
+    }
+    return -errno;
 }
 
 
@@ -50,7 +53,7 @@ int Become_User( struct passwd *psPwd, LoginWindow* pcWindow ) {
 ** parameters: A string that represents the newest person
 ** returns:
 */
-void UpdateLoginConfig(string zName)
+void UpdateLoginConfig(std::string zName)
 {
     char junk[1024];
     char login_info[1024];
@@ -61,21 +64,21 @@ void UpdateLoginConfig(string zName)
 
     filRead.getline(junk,1024);
     filRead.getline((char*)login_info,1024);
-    filRead.getline(junk,1024);
-    filRead.getline(junk,1024);
-    filRead.getline((char*)login_name,1024);
     filRead.close();
 
 
+    cout << "zName is:  "  << zName << endl;
     FILE* fin;
-    fin = fopen("/boot/atheos/sys/config/login.cfg","w");
+    fin = fopen("/boot/atheos/sys/config/login.new","w");
 
     fprintf(fin,"<Login Name Option>\n");
     fprintf(fin, login_info);
-    fprintf(fin, "\n\n<Login Name>\n");
+    fprintf(fin, "\n<Login Name>\n");
     fprintf(fin,zName.c_str());
     fprintf(fin,"\n");
     fclose(fin);
+
+    rename("/boot/atheos/sys/config/login.new", "/boot/atheos/sys/config/login.cfg");
 }
 
 /*
@@ -107,21 +110,21 @@ const char* ReadLoginOption()
 {
     char junk[1024];
     char login_info[1024];
-	ifstream filRead;
-    
+    ifstream filRead;
+
     filRead.open("/boot/atheos/sys/config/login.cfg");
-	filRead.getline(junk,1024);
+    filRead.getline(junk,1024);
     filRead.getline(login_info,1024);
     filRead.getline(junk, 1024);
-    filRead.getline(junk, 1024);
     filRead.getline(junk,1024);
- 	filRead.close();
+    filRead.close();
 
-    if (strcmp(login_info,"true")==0){
-    	cout << "name is:" << junk << endl;
-    	return(junk);}
+    if (strcmp(login_info,"true")==0)
+    {
+        return(junk);
+    }
     else
-    	return ("\n");
+        return ("\n");
 }
 
 /*
@@ -135,18 +138,11 @@ void CheckLoginConfig()
 {
     ifstream filestr;
     filestr.open("/boot/atheos/sys/config/login.cfg");
-
-    /*if(filestr == NULL)
+    if (filestr)
     {
         filestr.close();
-        WriteLoginConfigFile();
-    }
-
-    else
-    {*/
-        filestr.close();
         ReadLoginOption();
-    //}
+    }
 }
 
 /*
@@ -169,7 +165,7 @@ LoginView::LoginView( const Rect& cFrame ) : View( cFrame, "password_view", CF_F
     AddChild( m_pcPasswordView, true );
     AddChild( m_pcOkBut, true );
 
-    
+
     Layout();
     LoadImages();
     Paint(GetBounds());
@@ -190,11 +186,15 @@ LoginView::LoginView( const Rect& cFrame ) : View( cFrame, "password_view", CF_F
 */
 void LoginView::Paint(const Rect & cUpdate)
 {
-    FillRect(cUpdate, Color32_s(239,236,231,0));
-    SetFgColor(0,0,0);
-    SetDrawingMode(DM_OVER);
+    std::string zInfo = SyllableInfo();
+    FillRect(cUpdate,get_default_color(COL_NORMAL));
+    SetDrawingMode(DM_BLEND);
     DrawBitmap(pcLoginImage,pcLoginImage->GetBounds(),Rect(0,0,pcLoginImage->GetBounds().Width(),pcLoginImage->GetBounds().Height()));
-    
+    SetFgColor(102,136,217,0);
+    SetDrawingMode(DM_OVER);
+    MovePenTo(470-GetStringWidth(zInfo.c_str()),40);
+    DrawString(zInfo.c_str());
+
 }
 
 
@@ -206,8 +206,8 @@ void LoginView::Paint(const Rect & cUpdate)
 */
 LoginView::~LoginView()
 {
-	delete pcLoginImage;
-	delete m_pcPasswordView;
+    delete pcLoginImage;
+    delete m_pcPasswordView;
 }
 
 
@@ -267,6 +267,19 @@ void LoginView::LoadImages()
 
 }
 
+std::string LoginView::SyllableInfo()
+{
+    std::string return_version;
+    char zTmp[6];
+
+    FILE* fin = popen("/usr/bin/uname -v 2>&1","r");
+    fgets(zTmp, sizeof(zTmp),fin);
+    pclose(fin);
+
+    return_version = "Syllable " + (string)zTmp;
+    return (return_version);
+}
+
 
 /*
 ** name:       LoginWindow Constructor
@@ -278,7 +291,6 @@ LoginWindow::LoginWindow( const Rect& cFrame ) : Window( cFrame, "login_window",
 {
     Rect cRect(0,0,500,300);
     m_pcView = new LoginView(cRect);
-    m_pcView->FillRect(cRect, Color32_s(239,236,231));
     AddChild( m_pcView );
 
     CheckLoginConfig();
@@ -313,11 +325,11 @@ void LoginWindow::HandleMessage( Message* pcMsg )
     case ID_CANCEL:
         PostMessage( M_QUIT );
         break;
-        
+
     case M_BAD_PASS:
-    	m_pcView->m_pcPasswordView->Clear();
-    	SetFocusChild(m_pcView->m_pcPasswordView);
-    	break;
+        m_pcView->m_pcPasswordView->Clear();
+        SetFocusChild(m_pcView->m_pcPasswordView);
+        break;
     default:
         Window::HandleMessage( pcMsg );
         break;
@@ -327,17 +339,16 @@ void LoginWindow::HandleMessage( Message* pcMsg )
 
 
 LoginWindow::~LoginWindow()
-{
-}
+{}
 
 void LoginWindow::Authorize( const char* pzLoginName )
 {
-	for (;;)
- 	{
- 		
- 		if (pzLoginName != NULL)
- 		 {
-          	struct passwd* psPass;
+    for (;;)
+    {
+
+        if (pzLoginName != NULL)
+        {
+            struct passwd* psPass;
 
             if ( pzLoginName != NULL )
             {
@@ -348,7 +359,7 @@ void LoginWindow::Authorize( const char* pzLoginName )
                 psPass = getpwnam( pzLoginName );
             }
 
-            if ( psPass != NULL ) 
+            if ( psPass != NULL )
             {
                 const char* pzPassWd = crypt(  cPassword.c_str(), "$1$" );
 
@@ -360,9 +371,10 @@ void LoginWindow::Authorize( const char* pzLoginName )
                 }
 
                 if (strcmp( pzPassWd, psPass->pw_passwd ) == 0 )
-                {	
-                	if (Become_User(psPass,this))
-                		UpdateLoginConfig(pzLoginName);
+                {
+                    if (Become_User(psPass,this))
+                        ;
+
                     break;
                 }
                 else
@@ -378,29 +390,30 @@ void LoginWindow::Authorize( const char* pzLoginName )
                 Alert* pcAlert = new Alert( "Login failed",  "Please be advised!!!\n\nNo such user is\nregistered to use\nthis computer!!!\n",Alert::ALERT_WARNING, 0, "OK", NULL );
                 pcAlert->Go(new Invoker());
             }
-        	break;
+            break;
         }
         pzLoginName = NULL;
-}
+    }
 }
 
 
 LoginApp::LoginApp() : Application("application./x-vnd.RGC-desktop-login")
 {
-	pcWindow = new LoginWindow(CRect(500,300));
-	pcWindow->Show();
+    pcWindow = new LoginWindow(CRect(500,300));
+    pcWindow->Show();
     pcWindow->MakeFocus();
 }
 
 
 int main()
 {
-	LoginApp* thisApp;
-	thisApp = new LoginApp();
-	
-	thisApp->Run();
-	
+    LoginApp* thisApp;
+    thisApp = new LoginApp();
+
+    thisApp->Run();
+
 }
+
 
 
 

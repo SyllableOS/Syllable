@@ -9,10 +9,6 @@
 #include "colorbutton.h"
 #include "loadbitmap.h"
 
-
-
-using namespace os;
-
 static std::string pzLogin;
 static std::string cPassword;
 
@@ -21,49 +17,57 @@ static std::string cPassword;
 #define M_BAD_PASS 3
 
 static bool g_bRun      = true;
-//static bool g_bSelected = false;
+void UpdateLoginConfig(std::string);
+
+using namespace os;
+
+
 
 
 
 
 class LoginView : public View
 {
-    public:
-        LoginView( const Rect& cFrame );
-        ~LoginView();
+public:
+    LoginView( const Rect& cFrame );
+    ~LoginView();
 
-        virtual void AllAttached();
-        virtual void FrameSized( const Point& cDelta );
-        TextView*	m_pcNameView;
-        StringView*	m_pcNameLabel;
-        TextView*	m_pcPasswordView;
-        StringView*	m_pcPasswordLabel;
-        ColorButton*	m_pcOkBut;
+    virtual void AllAttached();
+    virtual void FrameSized( const Point& cDelta );
+    TextView*	m_pcNameView;
+    StringView*	m_pcNameLabel;
+    TextView*	m_pcPasswordView;
+    StringView*	m_pcPasswordLabel;
+    ColorButton*	m_pcOkBut;
 
 
-    private:
-        void Layout();
-        virtual void Paint(const Rect& cUpdate);
-        bool          Read();
-        void          LoadImages();
-        Bitmap*       pcLoginImage;
-        Bitmap*		  pcAtheImage;
-		 
-       
+private:
+    void Layout();
+    virtual void Paint(const Rect& cUpdate);
+    bool          Read();
+    void          LoadImages();
+    Bitmap*       pcLoginImage;
+    Bitmap*		  pcAtheImage;
+    std::string    SyllableInfo();
+
 
 };
 
 class LoginWindow : public Window
 {
-    public:
-        LoginWindow( const Rect& cFrame );
-		 ~LoginWindow();
-        virtual bool	OkToQuit() {  Application::GetInstance()->PostMessage(M_QUIT ); return( true ); }
-        virtual void	HandleMessage( Message* pcMessage );
-		 LoginView* 	m_pcView;
-    private:
-        
-		 void       Authorize(const char* pzLoginName);
+public:
+    LoginWindow( const Rect& cFrame );
+    ~LoginWindow();
+    virtual bool	OkToQuit()
+    {
+        Application::GetInstance()->PostMessage(M_QUIT );
+        return( true );
+    }
+    virtual void	HandleMessage( Message* pcMessage );
+    LoginView* 	m_pcView;
+private:
+
+    void       Authorize(const char* pzLoginName);
 };
 
 
@@ -71,14 +75,16 @@ class LoginWindow : public Window
 
 class LoginApp : public Application
 {
-	public:
-		LoginApp();
-	
-	private:
-		LoginWindow* pcWindow;
+public:
+    LoginApp();
+
+private:
+    LoginWindow* pcWindow;
 };
 
 #endif
+
+
 
 
 
