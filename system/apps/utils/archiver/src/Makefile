@@ -25,8 +25,8 @@ dist:
 	@mkdir $(DIST_DIR)/Applications/Archiver
 	@echo Making $(DIST_DIR)/Applications/Archiver/bin
 	@mkdir $(DIST_DIR)/Applications/Archiver/bin
-	@echo Coping $(EXE) to $(DIST_DIR)/Applications/Archiver/bin
-	@cp -f ../objs/archiver $(DIST_DIR)/Applications/Archiver/bin
+	@echo Coping $(EXE) to $(DIST_DIR)/Applications/Archiver/
+	@cp -f ../objs/archiver $(DIST_DIR)/Applications/Archiver/
 
 clean:
 	@echo Removing all objects and executable.
