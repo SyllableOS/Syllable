@@ -130,6 +130,10 @@ get_msg			EXTRA	get_msg			4	__get_msg		get_msg
 get_port_info		EXTRA	get_port_info		2	__get_port_info		get_port_info
 get_next_port_info	EXTRA	get_next_port_info	1	__get_next_port_info	get_next_port_info
 
+make_port_public		EXTRA	make_port_public	1	__make_port_public	make_port_public
+make_port_private		EXTRA	make_port_private	1	__make_port_private	make_port_private
+find_port				EXTRA	find_port			1	__find_port			find_port
+
 get_image_info		EXTRA	get_image_info		3	__get_image_info	get_image_info
 get_symbol_address	EXTRA	get_symbol_address	4	__get_symbol_address	get_symbol_address
 open_image_file		EXTRA	open_image_file		1	__open_image_file open_image_file
