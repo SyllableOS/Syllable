@@ -1,0 +1,16 @@
+authors				Kaj de Vos
+licenses			custom
+home				www.swig.org
+locations			http://prdownloads.sourceforge.net/swig/
+build-recommends
+	ruby
+	python
+	tcl
+	perl
+	php
+patch-config		Tools/config
+configure-options	--with-tclconfig=/usr/tcl/lib
+;make-targets		-k runtime
+;test-targets		-k check
+;install-targets		install-runtime
+documentation		README ANNOUNCE LICENSE NEW CHANGES.current CHANGES TODO FUTURE Doc Examples
