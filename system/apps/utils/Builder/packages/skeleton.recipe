@@ -59,8 +59,7 @@ make-vars			VAR="value"
 ; Non-standard test targets:
 test-targets		check
 ;
-install-tree
-	<Extra subdirectories to create>
+install-tree		<Extra subdirectories to create>
 ;
 ; Installing:
 ; <install>

@@ -1,0 +1,14 @@
+authors				Kaj de Vos
+status				testing
+notes
+	The combination of --disable-debug and --disable-ipv6 hangs configure on a process named yes. It probably needs interactivity. Used by themselves, these switches don't seem to have an effect.
+licenses			GPL
+home				rsync.samba.org
+locations
+	ftp://rsync.samba.org/pub/rsync/
+	rsync://rsync.samba.org/rsyncftp/
+run-recommends
+	openssh
+patch-config
+;configure-options	--disable-debug --disable-ipv6
+documentation		README COPYING NEWS OLDNEWS csprotocol.txt TODO rsync3.txt
