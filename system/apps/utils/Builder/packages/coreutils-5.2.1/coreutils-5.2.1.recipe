@@ -3,12 +3,14 @@ authors
 	Sebastien Keim
 	Kaj de Vos
 maintainers		Kaj de Vos
-status			developing
+status			testing
 
 licenses		GPL
 home			www.gnu.org/software/coreutils/
 
-build-needs		perl
+build-needs
+	coreutils
+	perl
 
 documentation	README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS THANKS-to-translators
 links

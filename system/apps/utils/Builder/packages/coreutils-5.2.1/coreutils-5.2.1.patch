@@ -119,6 +119,20 @@ diff -ru coreutils-5.2.1.original/lib/mountlist.c coreutils-5.2.1/lib/mountlist.
  #ifdef MOUNTED_LISTMNTENT
    {
      struct tabmntent *mntlist, *p;
+diff -ru coreutils-5.2.1.original/man/Makefile.in coreutils-5.2.1/man/Makefile.in
+--- coreutils-5.2.1.original/man/Makefile.in	2004-03-11 08:58:01.000000000 +0000
++++ coreutils-5.2.1/man/Makefile.in	2004-06-29 00:30:34.000000000 +0000
+@@ -516,7 +516,9 @@
+ cut.1:		$(common_dep)	$(srcdir)/cut.x		../src/cut.c
+ date.1:		$(common_dep)	$(srcdir)/date.x	../src/date.c
+ dd.1:		$(common_dep)	$(srcdir)/dd.x		../src/dd.c
+-df.1:		$(common_dep)	$(srcdir)/df.x		../src/df.c
++df.1:
++# df is not built on Syllable.
++#		$(common_dep)	$(srcdir)/df.x		../src/df.c
+ 
+ # Note that dir depends on ls.c, since that's where it's --help text is.
+ dir.1:		$(common_dep)	$(srcdir)/dir.x		../src/ls.c
 diff -ru coreutils-5.2.1.original/src/copy.c coreutils-5.2.1/src/copy.c
 --- coreutils-5.2.1.original/src/copy.c	2004-03-12 11:49:00.000000000 +0000
 +++ coreutils-5.2.1/src/copy.c	2004-06-24 20:58:58.000000000 +0000
