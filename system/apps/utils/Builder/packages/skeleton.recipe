@@ -89,8 +89,11 @@ install-prefix		prefix=
 ;strip-files			<Binary files to strip>
 ; Documentation to install:
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
-; Links to create:
+; Links to create
+; The path of the original is relative to the path of the link in the case of
+; a link that's internal to the package, and relative to the package root
+; in the case of a system link.
 links
-	<Source> <Destination>
-;	<Destination>
-;		<Source>
+	<Original> <Link>
+;	<Links path>
+;		<Originals>

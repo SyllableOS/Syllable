@@ -42,5 +42,5 @@ documentation
 	README FAQ faq.html COPYING COPYING.LIB ChangeLog MAINTAINERS
 	gcc/ABOUT-NLS gcc/ABOUT-GCC-NLS gcc/NEWS gcc/BUGS gcc/TESTS.FLUNK gcc/README.DWARF
 links
-	bin/gcc bin/cc
-	lib/gcc-lib/i586-pc-syllable/2.95.3/libgcc.a lib/gcc-lib/i586-pc-syllable/2.95.3/libgcc_static.a
+	gcc			bin/cc
+	libgcc.a	lib/gcc-lib/i586-pc-syllable/2.95.3/libgcc_static.a
