@@ -4,7 +4,9 @@ modules
 ;	Requires Make 3.80 (which is otherwise unreliable):
 	libs/ffmpeg-0.4.9-pre1
 
+;	Warning: split this build, because Make 3.80 breaks anything FreeType:
 	libs/freetype-2.1.9
+
 	sys/appserver/libsyllable
 	libs/codeview
 
