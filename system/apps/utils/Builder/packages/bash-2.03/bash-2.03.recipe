@@ -1,3 +1,4 @@
-authors		Kaj de Vos
-patch-config	support
-documentation	README COPYING NEWS CHANGES COMPAT NOTES Y2K AUTHORS examples
+authors				Kaj de Vos
+patch-config		support
+configure-options	--without-gnu-malloc
+documentation		README COPYING NEWS CHANGES COMPAT NOTES Y2K AUTHORS doc/FAQ doc/INTRO examples
