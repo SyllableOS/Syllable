@@ -1,5 +1,9 @@
 * Apr 27 2003, Kristian Van Der Vliet *
 
+Fix compile errors when using pthread.h
+
+* Apr 27 2003, Kristian Van Der Vliet *
+
 Applied a bug-fix patch to the VT82xx audio driver from Arno Klenke<arno_klenke@yahoo.de>
 
 * Apr 27 2003, Kristian Van Der Vliet *
