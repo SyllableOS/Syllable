@@ -56,7 +56,7 @@ static AlarmNode_s *g_psFirstFreeAlarmNode = NULL;
 //static spinlock_t g_nAlarmListSpinLock = 0;
 SPIN_LOCK( g_sAlarmListSpinLock, "alarm_list_slock" );
 
-extern void save_i387( struct _fpstate *buf );
+extern int save_i387( struct _fpstate *buf );
 extern void restore_i387( struct _fpstate *buf );
 
 /*****************************************************************************
@@ -208,7 +208,8 @@ int sys_sig_return( const int dummy )
 	psRegs->edi = sContext.edi;
 	psRegs->esi = sContext.esi;
 
-	restore_i387( sContext.fpstate );
+	if ( sContext.fpstate )
+		restore_i387( sContext.fpstate );
 
 	psRegs->eflags = sContext.eflags;
 
@@ -270,7 +271,10 @@ void AddSigHandlerFrame( Thread_s *psThread, SysCallRegs_s * psRegs, SigAction_s
 	pCode[1] = 0x80cd0000;	/* int $0x80 */
 	( ( uint32 * )( ( ( uint32 )pCode ) + 2 ) )[0] = __NR_sig_return;
 
-	save_i387( (struct _fpstate * )pFpuState );
+	if ( save_i387( (struct _fpstate * )pFpuState ) == 0 )
+	{
+		pStack[19] = 0;		// FPU hasn't been used
+	}
 
 	psRegs->oldesp = ( uint32 )pStackTop;
 	psRegs->eip = ( uint32 )psHandler->sa_handler;

@@ -134,12 +134,12 @@ static inline void save_i387_fsave( struct _fpstate *buf, Thread_s *psThread )
 	memcpy_to_user( buf, &psThread->tc_FPUState.fsave, sizeof( struct i387_fsave_struct ) );
 }
 
-void save_i387( struct _fpstate *buf )
+int save_i387( struct _fpstate *buf )
 {
 	Thread_s *psThread = CURRENT_THREAD;
 	if ( ( psThread->tr_nFlags & TF_FPU_USED ) == 0 )
 	{
-		return;
+		return ( 0 );
 	}
 
 	// This will cause a "finit" to be triggered by the next
@@ -157,6 +157,8 @@ void save_i387( struct _fpstate *buf )
 		save_i387_fxsave( buf, psThread );
 	else
 		save_i387_fsave( buf, psThread );
+
+	return ( 1 );
 }
 
 
@@ -216,6 +218,7 @@ static inline void restore_i387_fxsave( struct _fpstate *buf, Thread_s *psThread
 	memcpy_from_user( &psThread->tc_FPUState.fxsave, &buf->_fxsr_env[0], sizeof( struct i387_fxsave_struct ) );
 	// mxcsr reserved bits must be masked to zero for security reasons
 	psThread->tc_FPUState.fxsave.mxcsr &= 0x0000ffbf;
+	convert_fxsr_from_user( &psThread->tc_FPUState.fxsave, buf );
 }
 
 static inline void restore_i387_fsave( struct _fpstate *buf, Thread_s *psThread )
