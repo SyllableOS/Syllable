@@ -1,0 +1,58 @@
+CodeView v0.5 Readme
+
+CodeView is a programmers editor widget for Atheos. It is released
+under the GNU General Public Licence (GPL). See the file COPYING
+for more information. 
+
+CodeView is Copyright 2001 Andreas Engh-Halstvedt - aeh@operamail.com
+
+
+
+CodeView has an interface mostly the same as Atheos os::TextView.
+If you miss a method, or one of the existing ones behave different
+from what you expected please tell me.
+
+
+Please report bugs to aeh@operamail.com
+
+
+Build commands
+--------------
+To make the shared library:
+	make lib
+
+To make the test program:
+	make
+
+to make the documentation: (requires doxygen installed)
+	make docs
+
+to install the lib: (not sure if this is the right way to do it...)
+	make install
+
+
+Some keyboard shortcuts
+-----------------------
+
+Cut
+	- SHIFT-DEL
+	- CTRL-X
+Copy
+	- CTRL-INS
+	- CTRL-C
+Paste
+	- SHIFT-INS
+	- CTRL-V
+Undo
+	- ALT-BACKSPACE
+	- CTRL-Z
+Redo
+	- CTRL-Y
+	- CTRL-SHIFT-Z
+Scroll view
+	- ALT- UP/DOWN/RIGHT/LEFT/PAGE_UP/PAGE_DOWN
+Move to word edge (if format set)
+	- CTRL- LEFT/RIGHT
+
+
+

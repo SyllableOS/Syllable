@@ -1,0 +1,10 @@
+- Find all the bugs :)
+
+- Streamline the parser interface
+
+- Add the the option of showing line numbers (low priority)
+
+- Add Code folding (collapse method bodies into a single line when not 
+  needed) (low priority)
+
+

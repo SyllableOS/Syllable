@@ -1,0 +1,28 @@
+Version 0.5
+	- Codeview should now handle non-proportional fonts
+	- Various minor changes
+	- Added a Java formater (a quick hack of the C formater)
+
+Version 0.4
+	- Added documentation
+	- Added a few methods that should have been there earlier.
+
+
+Version 0.3
+	- Removed a crash bug. (Thanks to Vanders for finding it)
+	- Made the horisontal scrollbar work
+
+Version 0.2
+	- CodeView is now built as a shared library - libcodeview.so
+	- Now released under the Gnu Public Licence
+	- Fixed a minor rendering bug
+	- Some code cleanup due to the shared library
+	- Changed the mouse pointer to an "I" when over the control
+	- Added selecting text with the mouse
+	
+	Thanks to Vanders for pointing out most of these items!
+
+Version 0.1
+	First Release
+
+	
