@@ -1,3 +1,14 @@
+* January 11 2002, Kristian Van Der Vliet *
+
+	* Added the dhcpc v1.0 DHCP client for Syllable
+
+* January 11 2002, Kristian Van Der Vliet *
+
+	* Brought AEdit upto V1.2 with the following changes
+		* Enable Undo/Redo Buttons, Menu items and Context Menu items.
+		* Do not display an error dialog if the file cannot be opened.
+		* Removed some keyboard shortcuts as they're now part of os::TextView
+		* Do not try to use the "Lucida Sans Typewriter" font at startup.
 
 * August 12 2002, Rick Caudill *
 	* Patched Launcher's clock to show American date(MM/DD/Y)

@@ -1,3 +1,7 @@
+* Jan 11 2002, Kristian Van Der Vliet *
+
+Removed the Lucida fonts from CVS due to licencing issues.  They have been replaced with the Lucidux fonts from XFree86, and the URW fonts taken fron GhostScript.  See the file Copyrights for full copyright and licencing information.
+
 * Dec 23 2002, Kristian Van Der Vliet *
 
 Upgraded Grub to 0.92 with a patch from Jack Tonkin <lists@tonkin.org.uk> which adds AFS support from 0.53.  This version of Grub is reported NOT to compile on Syllable currently, although if you wish you can easily build and install it from Linux.

@@ -1,0 +1,86 @@
+The Luxi TrueType fonts are taken without modification from the XFree86
+project at http://www.xfree86.org.
+
+Luxi fonts copyright (c) 2001 by Bigelow & Holmes Inc. Luxi font 
+instruction code copyright (c) 2001 by URW++ GmbH. All Rights 
+Reserved. Luxi is a registered trademark of Bigelow & Holmes Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining 
+a copy of these Fonts and associated documentation files (the "Font 
+Software"), to deal in the Font Software, including without 
+limitation the rights to use, copy, merge, publish, distribute, 
+sublicense, and/or sell copies of the Font Software, and to permit 
+persons to whom the Font Software is furnished to do so, subject to 
+the following conditions:
+
+The above copyright and trademark notices and this permission notice 
+shall be included in all copies of one or more of the Font Software.
+
+The Font Software may not be modified, altered, or added to, and in 
+particular the designs of glyphs or characters in the Fonts may not 
+be modified nor may additional glyphs or characters be added to the 
+Fonts. This License becomes null and void when the Fonts or Font 
+Software have been modified.
+
+THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF 
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT 
+OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT.  IN NO EVENT SHALL 
+BIGELOW & HOLMES INC. OR URW++ GMBH. BE LIABLE FOR ANY CLAIM, DAMAGES 
+OR OTHER LIABILITY, INCLUDING ANY GENERAL, SPECIAL, INDIRECT, 
+INCIDENTAL, OR CONSEQUENTIAL DAMAGES, WHETHER IN AN ACTION OF 
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF THE USE OR 
+INABILITY TO USE THE FONT SOFTWARE OR FROM OTHER DEALINGS IN THE FONT 
+SOFTWARE.
+
+Except as contained in this notice, the names of Bigelow & Holmes 
+Inc. and URW++ GmbH. shall not be used in advertising or otherwise to 
+promote the sale, use or other dealings in this Font Software without 
+prior written authorization from Bigelow & Holmes Inc. and URW++ GmbH.
+
+For further information, contact:
+
+info@urwpp.de
+or
+design@bigelowandholmes.com
+
+---------------------------------------------------------------------------------------------------------------------------------------
+The URW family of fonts are taken from the Aladdin Ghostscript project.
+
+The Syllable-Console font is Copyright URW Software, Copyright 1994 by URW
+and Copyright 2003 Kristian Van Der Vliet.  The Syllable-Console font is
+modified from the URW Nimbus Sans L-Regular font under the following terms.
+
+Copyright (C) 1996 Aladdin Enterprises.  All rights reserved.
+ 
+This file is part of Aladdin Ghostscript.
+ 
+Aladdin Ghostscript is distributed with NO WARRANTY OF ANY KIND.  No author
+or distributor accepts any responsibility for the consequences of using it,
+or for whether it serves any particular purpose or works at all, unless he
+or she says so in writing.  Refer to the Aladdin Ghostscript Free Public
+License (the "License") for full details.
+
+Every copy of Aladdin Ghostscript must include a copy of the License,
+normally in a plain ASCII text file named PUBLIC.  The License grants you
+the right to copy, modify and redistribute Aladdin Ghostscript, but only
+under certain conditions described in the License.  Among other things, the
+License requires that the copyright notice and this notice be preserved on
+all copies.
+  
+
+Fonts contributed by:
+	URW++ Design and Development Incorporated
+	Poppenbuetteler Bogen 29A
+	D-22399 Hamburg
+	Germany
+	tel. +49 (40) 60 60 50
+	fax +49 (40) 60 60 51 11
+for distribution under the GNU License and Aladdin Free Public License.
+See the notice at the head of this Fontmap file for licensing terms.
+Each of these fonts is individually covered by the license:
+for licensing purposes, they are not "part of" any larger entity.
+The following notice applies to these fonts:
+
+	Copyright URW Software, Copyright 1994 by URW.
+
