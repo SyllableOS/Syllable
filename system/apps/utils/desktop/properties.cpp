@@ -266,8 +266,8 @@ void PropWin::HandleMessage(Message* pcMessage)
 
 void PropWin::Defaults()
 {
-    int nImageList = -1;
-    t_List t_list = pcPropTab->pcBack->ImageList();
+    //int nImageList = -1;
+   // t_List t_list = pcPropTab->pcBack->ImageList();
 
     ReadLoginConfig();
 
@@ -275,13 +275,13 @@ void PropWin::Defaults()
 
     pcPropTab->pcMisc->pcShowVerCheck->SetValue(bShwVr);
 
-    do
-    {
-        nImageList = nImageList + 1;
-    }
-    while ( strcmp(t_list[nImageList].c_str(),zImage.c_str())!=0);
+    //do
+   // {
+    //    nImageList = nImageList + 1;
+   // }
+   // while ( strcmp(t_list[nImageList].c_str(),zImage.c_str())!=0);
 
-    pcPropTab->pcBack->pcList->Select(nImageList,true,true);
+   // pcPropTab->pcBack->pcList->Select(nImageList,true,true);
 
 }
 
