@@ -299,7 +299,7 @@ Image* PopupMenu::GetIcon()
  * \param bArrow - To enable the arrow icon set this to true(default) and to disable set this to false.
  * \author	Rick Caudill (syllable_desktop@hotpop.com)
  *****************************************************************************/
-void PopupMenu::DrawArrow(bool bArrow)
+void PopupMenu::SetDrawArrow(bool bArrow)
 {
 	m->DrawArrow(bArrow);
 } /*end DrawArrow() */

@@ -548,7 +548,7 @@ void MenuItem::SetShortcut( const String& cShortcut )
  *  Tells the system whether or not this item can be selected.
  * \author Rick Caudill(syllable@syllable-desk.tk)
  *****************************************************************************/
- bool MenuItem::IsSelectable()
+ bool MenuItem::IsSelectable() const
  {
  	return m->m_bIsSelectable;
  }
@@ -743,12 +743,6 @@ void MenuItem::_SetSubMenu( Menu* pcMenu )
 {
 	m->m_pcSubMenu = pcMenu;
 }
-
-void MenuItem::_reserved_1_() { }
-void MenuItem::_reserved_2_() { }
-void MenuItem::_reserved_3_() { }
-void MenuItem::_reserved_4_() { } 
-void MenuItem::_reserved_5_() { }
 
 /************************end of os::MenuItem***********************************/
 
@@ -2559,3 +2553,51 @@ MenuWindow::~MenuWindow()
 }
 /************************end of MenuWindow**************************************/
 
+
+void Menu::__ME_reserved_1__()
+{
+}
+
+void Menu::__ME_reserved_2__()
+{
+}
+
+void Menu::__ME_reserved_3__()
+{
+}
+
+void Menu::__ME_reserved_4__()
+{
+}
+
+void Menu::__ME_reserved_5__()
+{
+}
+
+void MenuSeparator::__MS_reserved_1__()
+{
+}
+
+void MenuSeparator::__MS_reserved_2__()
+{
+}
+
+void MenuItem::__MI_reserved_1__()
+{
+}
+
+void MenuItem::__MI_reserved_2__()
+{
+}
+
+void MenuItem::__MI_reserved_3__()
+{
+}
+
+void MenuItem::__MI_reserved_4__()
+{
+}
+
+void MenuItem::__MI_reserved_5__()
+{
+}

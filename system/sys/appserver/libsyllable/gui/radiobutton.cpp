@@ -423,3 +423,23 @@ void RadioButton::Paint( const Rect & cUpdateRect )
 		DrawBitmap( s_pcBitmap, Rect( 2, 16.0f, 13.0f, 29.0f ), Rect( 0, 0, 11.0f, 13.0f ) + Point( 0, ( cBounds.Height() + 1.0f ) / 2 - 8 ) );
 	}
 }
+
+void	RadioButton::__RB_reserved1__()
+{
+}
+
+void	RadioButton::__RB_reserved2__()
+{
+}
+
+void	RadioButton::__RB_reserved3__()
+{
+}
+
+void	RadioButton::__RB_reserved4__()
+{
+}
+
+void	RadioButton::__RB_reserved5__()
+{
+}

@@ -27,6 +27,56 @@
 
 using namespace os;
 
+class LayoutView::Private
+{
+	public:
+    LayoutNode* m_pcRoot;
+    
+    Private() {
+    	m_pcRoot = NULL;
+    }
+};
+
+struct ShareNode {
+	LayoutNode* m_pcNext;
+	LayoutNode* m_pcPrev;
+};
+
+class LayoutNode::Private
+{
+	public:
+    String		    m_cName;
+    Rect		    m_cFrame;
+    Rect		    m_cBorders;
+    View*		    m_pcView;
+    LayoutNode*		m_pcParent;
+    LayoutView*		m_pcLayoutView;
+    std::vector<LayoutNode*> m_cChildList;
+    float		    m_vWeight;
+    Point		    m_cMinSize;
+    Point		    m_cMaxSizeExtend;
+    Point		    m_cMaxSizeLimit;
+    alignment		m_eHAlign;
+    alignment	    m_eVAlign;
+    ShareNode	    m_sWidthRing;
+    ShareNode	    m_sHeightRing;
+    
+    Private() {
+    	m_eHAlign = ALIGN_CENTER;
+		m_eVAlign = ALIGN_CENTER;
+		m_pcView = NULL;
+		m_pcParent = NULL;
+		m_pcLayoutView = NULL;
+    }
+    
+    ~Private() {
+		for( uint i = 0; i < m_cChildList.size(); ++i )
+		{
+			delete m_cChildList[i];
+		}
+    }
+};
+
 #if 0
 static void AddBorders( Rect * pcRect, const Rect & cBorders )
 {
@@ -41,8 +91,14 @@ static void RemBorders( Rect * pcRect, const Rect & cBorders )
 
 LayoutView::LayoutView( const Rect & cFrame, const String & cTitle, LayoutNode * pcRoot, uint32 nResizeMask, uint32 nFlags ):View( cFrame, cTitle, nResizeMask, nFlags )
 {
-	m_pcRoot = NULL;
+	m = new Private;
+
 	SetRoot( pcRoot );
+}
+
+LayoutView::~LayoutView()
+{
+	delete m;
 }
 
 /** Get root layout
@@ -53,7 +109,7 @@ LayoutView::LayoutView( const Rect & cFrame, const String & cTitle, LayoutNode *
  *****************************************************************************/
 LayoutNode *LayoutView::GetRoot() const
 {
-	return ( m_pcRoot );
+	return ( m->m_pcRoot );
 }
 
 /** Set root layout
@@ -65,14 +121,14 @@ LayoutNode *LayoutView::GetRoot() const
  *****************************************************************************/
 void LayoutView::SetRoot( LayoutNode * pcRoot )
 {
-	if( m_pcRoot )
+	if( m->m_pcRoot )
 	{
-		m_pcRoot->_RemovedFromView();
+		m->m_pcRoot->_RemovedFromView();
 	}
-	m_pcRoot = pcRoot;
-	if( m_pcRoot )
+	m->m_pcRoot = pcRoot;
+	if( m->m_pcRoot )
 	{
-		m_pcRoot->_AddedToView( this );
+		m->m_pcRoot->_AddedToView( this );
 		FrameSized( Point( 0, 0 ) );
 	}
 }
@@ -84,9 +140,9 @@ void LayoutView::SetRoot( LayoutNode * pcRoot )
  *****************************************************************************/
 void LayoutView::InvalidateLayout()
 {
-	if( m_pcRoot != NULL )
+	if( m->m_pcRoot != NULL )
 	{
-		m_pcRoot->Layout();
+		m->m_pcRoot->Layout();
 	}
 }
 
@@ -100,21 +156,21 @@ void LayoutView::InvalidateLayout()
  *****************************************************************************/
 LayoutNode *LayoutView::FindNode( const String & cName, bool bRecursive )
 {
-	if( m_pcRoot == NULL )
+	if( m->m_pcRoot == NULL )
 	{
 		return ( NULL );
 	}
 	else
 	{
-		return ( m_pcRoot->FindNode( cName, true, true ) );
+		return ( m->m_pcRoot->FindNode( cName, true, true ) );
 	}
 }
 
 Point LayoutView::GetPreferredSize( bool bLargest ) const
 {
-	if( m_pcRoot != NULL )
+	if( m->m_pcRoot != NULL )
 	{
-		return ( m_pcRoot->GetPreferredSize( bLargest ) );
+		return ( m->m_pcRoot->GetPreferredSize( bLargest ) );
 	}
 	else
 	{
@@ -124,15 +180,15 @@ Point LayoutView::GetPreferredSize( bool bLargest ) const
 
 void LayoutView::FrameSized( const Point & cDelta )
 {
-	if( m_pcRoot != NULL )
+	if( m->m_pcRoot != NULL )
 	{
-		m_pcRoot->SetFrame( GetNormalizedBounds() );
+		m->m_pcRoot->SetFrame( GetNormalizedBounds() );
 	}
 }
 
 void LayoutView::AllAttached()
 {
-	if( m_pcRoot != NULL )
+	if( m->m_pcRoot != NULL )
 	{
 		FrameSized( Point( 0, 0 ) );
 	}
@@ -142,42 +198,42 @@ void LayoutView::AllAttached()
 ///// LayoutNode ///////////////////////////////////////////////////////////////
 
 
-LayoutNode::LayoutNode( const String & cName, float vWeight, LayoutNode * pcParent, View * pcView ):m_cName( cName ), m_cBorders( 0.0f, 0.0f, 0.0f, 0.0f ), m_cMinSize( 0.0f, 0.0f ), m_cMaxSizeExtend( 0.0f, 0.0f ), m_cMaxSizeLimit( MAX_SIZE, MAX_SIZE )
+LayoutNode::LayoutNode( const String & cName, float vWeight, LayoutNode * pcParent, View * pcView )
 {
-	m_eHAlign = ALIGN_CENTER;
-	m_eVAlign = ALIGN_CENTER;
+	m = new Private;
 
-	m_vWeight = vWeight;
+	m->m_cName = cName;
+	m->m_cBorders = Rect( 0.0f, 0.0f, 0.0f, 0.0f );
+	m->m_cMinSize = Point( 0.0f, 0.0f );
+	m->m_cMaxSizeExtend = Point( 0.0f, 0.0f );
+	m->m_cMaxSizeLimit = Point( MAX_SIZE, MAX_SIZE );
 
-	m_pcView = pcView;
+	m->m_vWeight = vWeight;
+	m->m_pcView = pcView;
 
-	m_pcParent = NULL;
-	m_pcLayoutView = NULL;
 	if( pcParent != NULL )
 	{
 		pcParent->AddChild( this );
 	}
-	m_sWidthRing.m_pcNext = this;
-	m_sWidthRing.m_pcPrev = this;
-	m_sHeightRing.m_pcNext = this;
-	m_sHeightRing.m_pcPrev = this;
+
+	m->m_sWidthRing.m_pcNext = this;
+	m->m_sWidthRing.m_pcPrev = this;
+	m->m_sHeightRing.m_pcNext = this;
+	m->m_sHeightRing.m_pcPrev = this;
 }
 
 LayoutNode::~LayoutNode()
 {
-	if( m_pcParent != NULL )
+   	if( m->m_pcParent != NULL )
 	{
-		m_pcParent->RemoveChild( this );
+		m->m_pcParent->RemoveChild( this );
 	}
-	for( uint i = 0; i < m_cChildList.size(); ++i )
-	{
-		delete m_cChildList[i];
-	}
+	delete m;
 }
 
 void LayoutNode::AddChild( LayoutNode * pcChild )
 {
-	m_cChildList.push_back( pcChild );
+	m->m_cChildList.push_back( pcChild );
 	pcChild->_AddedToParent( this );
 }
 
@@ -188,27 +244,27 @@ LayoutNode *LayoutNode::AddChild( View * pcChildView, float vWeight )
 
 void LayoutNode::RemoveChild( LayoutNode * pcChild )
 {
-	std::vector < LayoutNode * >::iterator i = std::find( m_cChildList.begin(), m_cChildList.end(  ), pcChild );
+	std::vector < LayoutNode * >::iterator i = std::find( m->m_cChildList.begin(), m->m_cChildList.end(  ), pcChild );
 
-	if( i == m_cChildList.end() )
+	if( i == m->m_cChildList.end() )
 	{
 		dbprintf( "Error: LayoutNode::RemoveChild() could not find children!\n" );
 		return;
 	}
-	m_cChildList.erase( i );
+	m->m_cChildList.erase( i );
 	pcChild->_RemovedFromParent();
 }
 
 void LayoutNode::RemoveChild( View * pcChildView )
 {
-	for( uint i = 0; i < m_cChildList.size(); ++i )
+	for( uint i = 0; i < m->m_cChildList.size(); ++i )
 	{
-		if( m_cChildList[i]->m_pcView == pcChildView )
+		if( m->m_cChildList[i]->m->m_pcView == pcChildView )
 		{
-			LayoutNode *pcChild = m_cChildList[i];
+			LayoutNode *pcChild = m->m_cChildList[i];
 
 			pcChild->SetView( NULL );
-			m_cChildList.erase( m_cChildList.begin() + i );
+			m->m_cChildList.erase( m->m_cChildList.begin() + i );
 			pcChild->_RemovedFromParent();
 			delete pcChild;
 		}
@@ -218,94 +274,94 @@ void LayoutNode::RemoveChild( View * pcChildView )
 
 void LayoutNode::SetView( View * pcView )
 {
-	if( m_pcView != NULL )
+	if( m->m_pcView != NULL )
 	{
-		if( m_pcLayoutView != NULL )
+		if( m->m_pcLayoutView != NULL )
 		{
-			m_pcLayoutView->RemoveChild( pcView );
+			m->m_pcLayoutView->RemoveChild( pcView );
 		}
 	}
-	m_pcView = pcView;
-	if( m_pcLayoutView != NULL && m_pcView != NULL )
+	m->m_pcView = pcView;
+	if( m->m_pcLayoutView != NULL && m->m_pcView != NULL )
 	{
-		m_pcLayoutView->AddChild( m_pcView );
-		m_pcView->SetFrame( GetAbsFrame() );
+		m->m_pcLayoutView->AddChild( m->m_pcView );
+		m->m_pcView->SetFrame( GetAbsFrame() );
 	}
 }
 
 void LayoutNode::Layout()
 {
-	Rect cFrame( m_cFrame );
+	Rect cFrame( m->m_cFrame );
 
-	cFrame.Resize( m_cBorders.left, m_cBorders.top, -m_cBorders.right, -m_cBorders.bottom );
+	cFrame.Resize( m->m_cBorders.left, m->m_cBorders.top, -m->m_cBorders.right, -m->m_cBorders.bottom );
 
-	for( uint i = 0; i < m_cChildList.size(); ++i )
+	for( uint i = 0; i < m->m_cChildList.size(); ++i )
 	{
-		m_cChildList[i]->SetFrame( cFrame );
+		m->m_cChildList[i]->SetFrame( cFrame );
 	}
 
 }
 
 void LayoutNode::SetBorders( const Rect & cBorder )
 {
-	m_cBorders = cBorder;
+	m->m_cBorders = cBorder;
 	Layout();
 }
 
 Rect LayoutNode::GetBorders() const
 {
-	return ( m_cBorders );
+	return ( m->m_cBorders );
 }
 
 float LayoutNode::GetWeight() const
 {
-	return ( m_vWeight );
+	return ( m->m_vWeight );
 }
 
 void LayoutNode::SetWeight( float vWeight )
 {
-	m_vWeight = vWeight;
+	m->m_vWeight = vWeight;
 }
 
 void LayoutNode::SetHAlignment( alignment eAlignment )
 {
-	m_eHAlign = eAlignment;
+	m->m_eHAlign = eAlignment;
 	Layout();
 }
 
 void LayoutNode::SetVAlignment( alignment eAlignment )
 {
-	m_eVAlign = eAlignment;
+	m->m_eVAlign = eAlignment;
 	Layout();
 }
 
 alignment LayoutNode::GetHAlignment() const
 {
-	return ( m_eHAlign );
+	return ( m->m_eHAlign );
 }
 
 alignment LayoutNode::GetVAlignment() const
 {
-	return ( m_eVAlign );
+	return ( m->m_eVAlign );
 }
 
 void LayoutNode::SetFrame( const Rect & cFrame )
 {
-	m_cFrame = cFrame;
-	if( m_pcView != NULL )
+	m->m_cFrame = cFrame;
+	if( m->m_pcView != NULL )
 	{
 		Rect cViewFrame = GetAbsFrame();
 
-		cViewFrame.Resize( m_cBorders.left, m_cBorders.top, -m_cBorders.right, -m_cBorders.bottom );
+		cViewFrame.Resize( m->m_cBorders.left, m->m_cBorders.top, -m->m_cBorders.right, -m->m_cBorders.bottom );
 		cViewFrame.Floor();
-		m_pcView->SetFrame( cViewFrame );
+		m->m_pcView->SetFrame( cViewFrame );
 	}
 	Layout();
 }
 
 Rect LayoutNode::GetFrame() const
 {
-	return ( m_cFrame );
+	return ( m->m_cFrame );
 }
 
 Rect LayoutNode::GetBounds() const
@@ -315,32 +371,32 @@ Rect LayoutNode::GetBounds() const
 
 Rect LayoutNode::GetAbsFrame() const
 {
-	if( m_pcParent != NULL )
+	if( m->m_pcParent != NULL )
 	{
-		return ( m_cFrame + m_pcParent->GetAbsFrame().LeftTop(  ) );
+		return ( m->m_cFrame + m->m_pcParent->GetAbsFrame().LeftTop(  ) );
 	}
 	else
 	{
-		return ( m_cFrame );
+		return ( m->m_cFrame );
 	}
 }
 
 void LayoutNode::AdjustPrefSize( Point * pcMinSize, Point * pcMaxSize )
 {
-	if( pcMinSize->x < m_cMinSize.x )
-		pcMinSize->x = m_cMinSize.x;
-	if( pcMinSize->y < m_cMinSize.y )
-		pcMinSize->y = m_cMinSize.y;
+	if( pcMinSize->x < m->m_cMinSize.x )
+		pcMinSize->x = m->m_cMinSize.x;
+	if( pcMinSize->y < m->m_cMinSize.y )
+		pcMinSize->y = m->m_cMinSize.y;
 
-	if( pcMaxSize->x < m_cMaxSizeExtend.x )
-		pcMaxSize->x = m_cMaxSizeExtend.x;
-	if( pcMaxSize->y < m_cMaxSizeExtend.y )
-		pcMaxSize->y = m_cMaxSizeExtend.y;
+	if( pcMaxSize->x < m->m_cMaxSizeExtend.x )
+		pcMaxSize->x = m->m_cMaxSizeExtend.x;
+	if( pcMaxSize->y < m->m_cMaxSizeExtend.y )
+		pcMaxSize->y = m->m_cMaxSizeExtend.y;
 
-	if( pcMaxSize->x > m_cMaxSizeLimit.x )
-		pcMaxSize->x = m_cMaxSizeLimit.x;
-	if( pcMaxSize->y > m_cMaxSizeLimit.y )
-		pcMaxSize->y = m_cMaxSizeLimit.y;
+	if( pcMaxSize->x > m->m_cMaxSizeLimit.x )
+		pcMaxSize->x = m->m_cMaxSizeLimit.x;
+	if( pcMaxSize->y > m->m_cMaxSizeLimit.y )
+		pcMaxSize->y = m->m_cMaxSizeLimit.y;
 
 	if( pcMaxSize->x < pcMinSize->x )
 		pcMaxSize->x = pcMinSize->x;
@@ -352,18 +408,18 @@ Point LayoutNode::CalculatePreferredSize( bool bLargest )
 {
 	Point cSize( 0.0f, 0.0f );
 
-	if( m_pcView != NULL )
+	if( m->m_pcView != NULL )
 	{
-		cSize = m_pcView->GetPreferredSize( bLargest );
+		cSize = m->m_pcView->GetPreferredSize( bLargest );
 		cSize.x = ceil( cSize.x );
 		cSize.y = ceil( cSize.y );
 	}
-	return ( cSize + Point( m_cBorders.left + m_cBorders.right, m_cBorders.top + m_cBorders.bottom ) );
+	return ( cSize + Point( m->m_cBorders.left + m->m_cBorders.right, m->m_cBorders.top + m->m_cBorders.bottom ) );
 }
 
 Point LayoutNode::GetPreferredSize( bool bLargest )
 {
-	if( m_sWidthRing.m_pcNext == this && m_sHeightRing.m_pcNext == this )
+	if( m->m_sWidthRing.m_pcNext == this && m->m_sHeightRing.m_pcNext == this )
 	{
 		return ( CalculatePreferredSize( bLargest ) );
 	}
@@ -371,7 +427,7 @@ Point LayoutNode::GetPreferredSize( bool bLargest )
 	Point cMinSize = CalculatePreferredSize( false );
 	Point cMaxSize;
 
-	if( m_sWidthRing.m_pcNext == this || m_sHeightRing.m_pcNext == this )
+	if( m->m_sWidthRing.m_pcNext == this || m->m_sHeightRing.m_pcNext == this )
 	{
 		cMaxSize = CalculatePreferredSize( true );
 	}
@@ -383,16 +439,16 @@ Point LayoutNode::GetPreferredSize( bool bLargest )
 
 	if( bLargest )
 	{
-		if( m_sWidthRing.m_pcNext == this )
+		if( m->m_sWidthRing.m_pcNext == this )
 		{
 			cSize.x = cMaxSize.x;
 		}
-		if( m_sHeightRing.m_pcNext == this )
+		if( m->m_sHeightRing.m_pcNext == this )
 		{
 			cSize.y = cMaxSize.y;
 		}
 	}
-	for( LayoutNode * pcNode = m_sWidthRing.m_pcNext; pcNode != this; pcNode = pcNode->m_sWidthRing.m_pcNext )
+	for( LayoutNode * pcNode = m->m_sWidthRing.m_pcNext; pcNode != this; pcNode = pcNode->m->m_sWidthRing.m_pcNext )
 	{
 		Point cSSize = pcNode->CalculatePreferredSize( false );
 
@@ -401,7 +457,7 @@ Point LayoutNode::GetPreferredSize( bool bLargest )
 			cSize.x = cSSize.x;
 		}
 	}
-	for( LayoutNode * pcNode = m_sHeightRing.m_pcNext; pcNode != this; pcNode = pcNode->m_sHeightRing.m_pcNext )
+	for( LayoutNode * pcNode = m->m_sHeightRing.m_pcNext; pcNode != this; pcNode = pcNode->m->m_sHeightRing.m_pcNext )
 	{
 		Point cSSize = pcNode->CalculatePreferredSize( false );
 
@@ -416,44 +472,44 @@ Point LayoutNode::GetPreferredSize( bool bLargest )
 
 String LayoutNode::GetName() const
 {
-	return ( m_cName );
+	return ( m->m_cName );
 }
 
 const std::vector < LayoutNode * >&LayoutNode::GetChildList() const
 {
-	return ( m_cChildList );
+	return ( m->m_cChildList );
 }
 
 LayoutNode *LayoutNode::GetParent() const
 {
-	return ( m_pcParent );
+	return ( m->m_pcParent );
 }
 
 LayoutView *LayoutNode::GetLayoutView() const
 {
-	return ( m_pcLayoutView );
+	return ( m->m_pcLayoutView );
 }
 
 LayoutNode *LayoutNode::FindNode( const String & cName, bool bRecursive, bool bIncludeSelf )
 {
-	if( bIncludeSelf && cName == m_cName )
+	if( bIncludeSelf && cName == m->m_cName )
 	{
 		return ( this );
 	}
-	for( uint i = 0; i < m_cChildList.size(); ++i )
+	for( uint i = 0; i < m->m_cChildList.size(); ++i )
 	{
 		if( bRecursive )
 		{
-			LayoutNode *pcChild = m_cChildList[i]->FindNode( cName, true );
+			LayoutNode *pcChild = m->m_cChildList[i]->FindNode( cName, true );
 
 			if( pcChild != NULL )
 			{
 				return ( pcChild );
 			}
 		}
-		if( m_cChildList[i]->m_cName == cName )
+		if( m->m_cChildList[i]->m->m_cName == cName )
 		{
-			return ( m_cChildList[i] );
+			return ( m->m_cChildList[i] );
 		}
 	}
 	return ( NULL );
@@ -496,33 +552,33 @@ void LayoutNode::SetVAlignments( alignment eAlign, const char *pzFirstName, ... 
 
 void LayoutNode::ExtendMinSize( const Point & cMinSize )
 {
-	m_cMinSize = cMinSize;
+	m->m_cMinSize = cMinSize;
 }
 
 void LayoutNode::LimitMaxSize( const Point & cMaxSize )
 {
-	m_cMaxSizeLimit = cMaxSize;
+	m->m_cMaxSizeLimit = cMaxSize;
 }
 
 void LayoutNode::ExtendMaxSize( const Point & cMaxSize )
 {
-	m_cMaxSizeExtend = cMaxSize;
+	m->m_cMaxSizeExtend = cMaxSize;
 }
 
 void LayoutNode::AddToWidthRing( LayoutNode * pcRing )
 {
-	m_sWidthRing.m_pcNext = pcRing;
-	m_sWidthRing.m_pcPrev = pcRing->m_sWidthRing.m_pcPrev;
-	pcRing->m_sWidthRing.m_pcPrev->m_sWidthRing.m_pcNext = this;
-	pcRing->m_sWidthRing.m_pcPrev = this;
+	m->m_sWidthRing.m_pcNext = pcRing;
+	m->m_sWidthRing.m_pcPrev = pcRing->m->m_sWidthRing.m_pcPrev;
+	pcRing->m->m_sWidthRing.m_pcPrev->m->m_sWidthRing.m_pcNext = this;
+	pcRing->m->m_sWidthRing.m_pcPrev = this;
 }
 
 void LayoutNode::AddToHeightRing( LayoutNode * pcRing )
 {
-	m_sHeightRing.m_pcNext = pcRing;
-	m_sHeightRing.m_pcPrev = pcRing->m_sHeightRing.m_pcPrev;
-	pcRing->m_sHeightRing.m_pcPrev->m_sHeightRing.m_pcNext = this;
-	pcRing->m_sHeightRing.m_pcPrev = this;
+	m->m_sHeightRing.m_pcNext = pcRing;
+	m->m_sHeightRing.m_pcPrev = pcRing->m->m_sHeightRing.m_pcPrev;
+	pcRing->m->m_sHeightRing.m_pcPrev->m->m_sHeightRing.m_pcNext = this;
+	pcRing->m->m_sHeightRing.m_pcPrev = this;
 }
 
 void LayoutNode::SameWidth( const char *pzName1, ... )
@@ -583,59 +639,65 @@ void LayoutNode::SameHeight( const char *pzName1, ... )
 
 void LayoutNode::_AddedToParent( LayoutNode * pcParent )
 {
-	if( m_pcView != NULL && m_pcLayoutView != NULL )
+	if( m->m_pcView != NULL && m->m_pcLayoutView != NULL )
 	{
-		m_pcLayoutView->AddChild( m_pcView );
+		m->m_pcLayoutView->AddChild( m->m_pcView );
 	}
 
-	m_pcParent = pcParent;
-	m_pcLayoutView = pcParent->m_pcLayoutView;
-	for( uint i = 0; i < m_cChildList.size(); ++i )
+	m->m_pcParent = pcParent;
+	m->m_pcLayoutView = pcParent->m->m_pcLayoutView;
+	for( uint i = 0; i < m->m_cChildList.size(); ++i )
 	{
-		m_cChildList[i]->_AddedToParent( this );
+		m->m_cChildList[i]->_AddedToParent( this );
 	}
 }
 
 void LayoutNode::_AddedToView( LayoutView * pcView )
 {
-	m_pcLayoutView = pcView;
+	m->m_pcLayoutView = pcView;
 
-	if( m_pcView != NULL )
+	if( m->m_pcView != NULL )
 	{
-		m_pcLayoutView->AddChild( m_pcView );
+		m->m_pcLayoutView->AddChild( m->m_pcView );
 	}
-	for( uint i = 0; i < m_cChildList.size(); ++i )
+	for( uint i = 0; i < m->m_cChildList.size(); ++i )
 	{
-		m_cChildList[i]->_AddedToView( pcView );
+		m->m_cChildList[i]->_AddedToView( pcView );
 	}
 }
 
 void LayoutNode::_RemovedFromParent()
 {
-	if( m_pcView != NULL && m_pcLayoutView != NULL )
+	if( m->m_pcView != NULL && m->m_pcLayoutView != NULL )
 	{
-		m_pcLayoutView->RemoveChild( m_pcView );
+		m->m_pcLayoutView->RemoveChild( m->m_pcView );
 	}
-	m_pcParent = NULL;
-	m_pcLayoutView = NULL;
-	for( uint i = 0; i < m_cChildList.size(); ++i )
+	m->m_pcParent = NULL;
+	m->m_pcLayoutView = NULL;
+	for( uint i = 0; i < m->m_cChildList.size(); ++i )
 	{
-		m_cChildList[i]->_RemovedFromParent();
+		m->m_cChildList[i]->_RemovedFromParent();
 	}
 }
 
 void LayoutNode::_RemovedFromView()
 {
-	if( m_pcView != NULL && m_pcLayoutView != NULL )
+	if( m->m_pcView != NULL && m->m_pcLayoutView != NULL )
 	{
-		m_pcLayoutView->RemoveChild( m_pcView );
+		m->m_pcLayoutView->RemoveChild( m->m_pcView );
 	}
-	m_pcLayoutView = NULL;
-	for( uint i = 0; i < m_cChildList.size(); ++i )
+	m->m_pcLayoutView = NULL;
+	for( uint i = 0; i < m->m_cChildList.size(); ++i )
 	{
-		m_cChildList[i]->_RemovedFromView();
+		m->m_cChildList[i]->_RemovedFromView();
 	}
 }
+
+void LayoutNode::__LYN_reserved1__() {}
+void LayoutNode::__LYN_reserved2__() {}
+void LayoutNode::__LYN_reserved3__() {}
+void LayoutNode::__LYN_reserved4__() {}
+void LayoutNode::__LYN_reserved5__() {}
 
 static float SpaceOut( uint nCount, float vTotalSize, float vTotalMinSize, float vTotalWeight, float *avMinSizes, float *avMaxSizes, float *avWeights, float *avFinalSizes )
 {
@@ -678,7 +740,6 @@ static float SpaceOut( uint nCount, float vTotalSize, float vTotalMinSize, float
 	}
 	return ( vTotalSize );
 }
-
 
 ///// HLayoutNode //////////////////////////////////////////////////////////////
 
@@ -761,6 +822,10 @@ void HLayoutNode::Layout()
 	}
 
 }
+
+void HLayoutNode::__LHLN_reserved1__() {}
+void HLayoutNode::__LHLN_reserved2__() {}
+void HLayoutNode::__LHLN_reserved3__() {}
 
 ///// VLayoutNode //////////////////////////////////////////////////////////////
 
@@ -860,6 +925,9 @@ void VLayoutNode::Layout()
 	}
 }
 
+void VLayoutNode::__LVLN_reserved1__() {}
+void VLayoutNode::__LVLN_reserved2__() {}
+void VLayoutNode::__LVLN_reserved3__() {}
 
 LayoutSpacer::LayoutSpacer( const String & cName, float vWeight, LayoutNode * pcParent, const Point & cMinSize, const Point & cMaxSize ):LayoutNode( cName, vWeight, pcParent )
 {
@@ -880,4 +948,25 @@ void LayoutSpacer::SetMaxSize( const Point & cSize )
 Point LayoutSpacer::CalculatePreferredSize( bool bLargest )
 {
 	return ( ( bLargest ) ? m_cMaxSize : m_cMinSize );
+}
+
+
+void LayoutView::__LYV_reserved1__()
+{
+}
+
+void LayoutView::__LYV_reserved2__()
+{
+}
+
+void LayoutView::__LYV_reserved3__()
+{
+}
+
+void LayoutView::__LYV_reserved4__()
+{
+}
+
+void LayoutView::__LYV_reserved5__()
+{
 }

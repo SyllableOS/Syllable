@@ -1577,7 +1577,8 @@ void IconView::OpenContextMenu( os::Point cPosition, bool bMouseOverIcon )
 {
 }
 
-
-
-
-
+void IconView::__ICV_reserved1__() {}
+void IconView::__ICV_reserved2__() {}
+void IconView::__ICV_reserved3__() {}
+void IconView::__ICV_reserved4__() {}
+void IconView::__ICV_reserved5__() {}

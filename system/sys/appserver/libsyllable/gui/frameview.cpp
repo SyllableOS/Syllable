@@ -246,3 +246,9 @@ Point FrameView::GetPreferredSize( bool bLargest ) const
 	cSize.y += m_cLabelSize.y + 1.0f + 3.0f;
 	return ( cSize );
 }
+
+void FrameView::__FV_reserved1__() {}
+void FrameView::__FV_reserved2__() {}
+void FrameView::__FV_reserved3__() {}
+void FrameView::__FV_reserved4__() {}
+void FrameView::__FV_reserved5__() {}

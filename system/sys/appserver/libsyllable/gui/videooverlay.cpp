@@ -26,6 +26,13 @@
 
 using namespace os;
 
+class VideoOverlayView::Private
+{
+	public:
+    video_overlay 	m_sOverlay;
+    Rect			m_cCurrentFrame;
+};
+
 /** Create the overlay.
  * \param	cFrame Size of the frame.
  * \param	cTitle Title of the view.
@@ -37,19 +44,37 @@ using namespace os;
  *****************************************************************************/
 VideoOverlayView::VideoOverlayView( const Rect & cFrame, const String & cTitle, uint32 nResizeMask, const IPoint & cSrcSize, color_space eFormat, Color32_s sColorKey ):View( cFrame, cTitle, nResizeMask )
 {
-	m_sOverlay.m_pAddress = NULL;
-	m_sOverlay.m_hArea = -1;
-	m_sOverlay.m_eFormat = eFormat;
-	m_sOverlay.m_nSrcWidth = cSrcSize.x;
-	m_sOverlay.m_nSrcHeight = cSrcSize.y;
-	m_sOverlay.m_sColorKey = sColorKey;
+	m = new Private;
+	m->m_sOverlay.m_pAddress = NULL;
+	m->m_sOverlay.m_hArea = -1;
+	m->m_sOverlay.m_eFormat = eFormat;
+	m->m_sOverlay.m_nSrcWidth = cSrcSize.x;
+	m->m_sOverlay.m_nSrcHeight = cSrcSize.y;
+	m->m_sOverlay.m_sColorKey = sColorKey;
 }
 
 
 VideoOverlayView::~VideoOverlayView()
 {
-	if( m_sOverlay.m_hArea > 0 )
-		delete_area( m_sOverlay.m_hArea );
+	if( m->m_sOverlay.m_hArea > 0 )
+		delete_area( m->m_sOverlay.m_hArea );
+	delete m;
+}
+
+/** Return the current memory address of the overlay.
+* \author Arno Klenke (arno_klenke@yahoo.de)
+*****************************************************************************/
+uint8* VideoOverlayView::GetRaster() const
+{
+	return( m->m_sOverlay.m_pAddress );
+}
+	
+/** Return the current physical memory area of the overlay.
+* \author Arno Klenke (arno_klenke@yahoo.de)
+*****************************************************************************/
+area_id VideoOverlayView::GetPhysicalArea() const
+{
+	return( m->m_sOverlay.m_hPhysArea );
 }
 
 /** Update the overlay content on the screen.
@@ -64,16 +89,16 @@ void VideoOverlayView::Update()
 	}
 
 	/* Check if the position of the overlay has changed */
-	if( ConvertToScreen( GetBounds() ) != m_cCurrentFrame )
+	if( ConvertToScreen( GetBounds() ) != m->m_cCurrentFrame )
 	{
-		m_cCurrentFrame = ConvertToScreen( GetBounds() );
-		Recreate( IPoint( m_sOverlay.m_nSrcWidth, m_sOverlay.m_nSrcHeight ), Rect( m_cCurrentFrame.left, m_cCurrentFrame.top, m_cCurrentFrame.right + 1, m_cCurrentFrame.bottom + 1 ) );
+		m->m_cCurrentFrame = ConvertToScreen( GetBounds() );
+		Recreate( IPoint( m->m_sOverlay.m_nSrcWidth, m->m_sOverlay.m_nSrcHeight ), Rect( m->m_cCurrentFrame.left, m->m_cCurrentFrame.top, m->m_cCurrentFrame.right + 1, m->m_cCurrentFrame.bottom + 1 ) );
 	}
 
 	/* Send update message */
 	Message cReq( WR_UPDATE_VIDEO_OVERLAY );
 
-	cReq.AddInt32( "area", m_sOverlay.m_hPhysArea );
+	cReq.AddInt32( "area", m->m_sOverlay.m_hPhysArea );
 	Application *pcApp = Application::GetInstance();
 
 	Messenger( pcApp->GetAppPort() ).SendMessage( &cReq );
@@ -82,13 +107,13 @@ void VideoOverlayView::Update()
 void VideoOverlayView::AttachedToWindow()
 {
 	/* Save information */
-	m_cCurrentFrame = ConvertToScreen( GetBounds() );
-	m_sOverlay.m_nDstX = ( int )m_cCurrentFrame.left;
-	m_sOverlay.m_nDstY = ( int )m_cCurrentFrame.top;
-	m_sOverlay.m_nDstWidth = ( int )m_cCurrentFrame.Width();
-	m_sOverlay.m_nDstHeight = ( int )m_cCurrentFrame.Height();
-	m_sOverlay.m_pAddress = NULL;
-	m_sOverlay.m_hArea = -1;
+	m->m_cCurrentFrame = ConvertToScreen( GetBounds() );
+	m->m_sOverlay.m_nDstX = ( int )m->m_cCurrentFrame.left;
+	m->m_sOverlay.m_nDstY = ( int )m->m_cCurrentFrame.top;
+	m->m_sOverlay.m_nDstWidth = ( int )m->m_cCurrentFrame.Width();
+	m->m_sOverlay.m_nDstHeight = ( int )m->m_cCurrentFrame.Height();
+	m->m_sOverlay.m_pAddress = NULL;
+	m->m_sOverlay.m_hArea = -1;
 
 	/* Check if the application object has been created */
 	if( Application::GetInstance() == NULL )
@@ -100,12 +125,12 @@ void VideoOverlayView::AttachedToWindow()
 	Message cReq( WR_CREATE_VIDEO_OVERLAY );
 	Message cReply;
 
-	int32 nFormat = static_cast < int32 >( m_sOverlay.m_eFormat );
+	int32 nFormat = static_cast < int32 >( m->m_sOverlay.m_eFormat );
 
-	cReq.AddIPoint( "size", IPoint( m_sOverlay.m_nSrcWidth, m_sOverlay.m_nSrcHeight ) );
-	cReq.AddRect( "dst", IRect( m_sOverlay.m_nDstX, m_sOverlay.m_nDstY, m_sOverlay.m_nDstX + m_sOverlay.m_nDstWidth + 1, m_sOverlay.m_nDstY + m_sOverlay.m_nDstHeight + 1 ) );
+	cReq.AddIPoint( "size", IPoint( m->m_sOverlay.m_nSrcWidth, m->m_sOverlay.m_nSrcHeight ) );
+	cReq.AddRect( "dst", IRect( m->m_sOverlay.m_nDstX, m->m_sOverlay.m_nDstY, m->m_sOverlay.m_nDstX + m->m_sOverlay.m_nDstWidth + 1, m->m_sOverlay.m_nDstY + m->m_sOverlay.m_nDstHeight + 1 ) );
 	cReq.AddInt32( "format", nFormat );
-	cReq.AddColor32( "color_key", m_sOverlay.m_sColorKey );
+	cReq.AddColor32( "color_key", m->m_sOverlay.m_sColorKey );
 
 	Application *pcApp = Application::GetInstance();
 
@@ -120,15 +145,15 @@ void VideoOverlayView::AttachedToWindow()
 	if( nError != 0 )
 	{
 		errno = nError;
-		m_sOverlay.m_pAddress = NULL;
+		m->m_sOverlay.m_pAddress = NULL;
 		return;
 	}
 
 	cReply.FindInt32( "area", ( int32 * )&hArea );
 
-	m_sOverlay.m_hPhysArea = hArea;
-	m_sOverlay.m_hArea = clone_area( "video_overlay", &pAddress, AREA_FULL_ACCESS, AREA_NO_LOCK, hArea );
-	m_sOverlay.m_pAddress = ( uint8 * )pAddress;
+	m->m_sOverlay.m_hPhysArea = hArea;
+	m->m_sOverlay.m_hArea = clone_area( "video_overlay", &pAddress, AREA_FULL_ACCESS, AREA_NO_LOCK, hArea );
+	m->m_sOverlay.m_pAddress = ( uint8 * )pAddress;
 }
 
 void VideoOverlayView::DetachedFromWindow()
@@ -141,11 +166,11 @@ void VideoOverlayView::DetachedFromWindow()
 
 	Message cReq( WR_DELETE_VIDEO_OVERLAY );
 
-	if( m_sOverlay.m_hArea > 0 )
-		delete_area( m_sOverlay.m_hArea );
-	m_sOverlay.m_hArea = -1;
+	if( m->m_sOverlay.m_hArea > 0 )
+		delete_area( m->m_sOverlay.m_hArea );
+	m->m_sOverlay.m_hArea = -1;
 		
-	cReq.AddInt32( "area", m_sOverlay.m_hPhysArea );
+	cReq.AddInt32( "area", m->m_sOverlay.m_hPhysArea );
 	Application *pcApp = Application::GetInstance();
 
 	Messenger( pcApp->GetAppPort() ).SendMessage( &cReq );
@@ -154,7 +179,7 @@ void VideoOverlayView::DetachedFromWindow()
 void VideoOverlayView::Paint( const Rect & cUpdateRect )
 {
 	/* Paint everything in the color key color */
-	SetFgColor( m_sOverlay.m_sColorKey );
+	SetFgColor( m->m_sOverlay.m_sColorKey );
 	FillRect( cUpdateRect );
 }
 
@@ -168,28 +193,28 @@ void VideoOverlayView::Recreate( const IPoint & cSrcSize, const IRect & cDstRect
 	}
 
 	/* Save information */
-	m_sOverlay.m_nSrcWidth = cSrcSize.x;
-	m_sOverlay.m_nSrcHeight = cSrcSize.y;
-	m_sOverlay.m_nDstX = cDstRect.left;
-	m_sOverlay.m_nDstY = cDstRect.top;
-	m_sOverlay.m_nDstWidth = cDstRect.Width();
-	m_sOverlay.m_nDstHeight = cDstRect.Height();
-	m_sOverlay.m_pAddress = NULL;
+	m->m_sOverlay.m_nSrcWidth = cSrcSize.x;
+	m->m_sOverlay.m_nSrcHeight = cSrcSize.y;
+	m->m_sOverlay.m_nDstX = cDstRect.left;
+	m->m_sOverlay.m_nDstY = cDstRect.top;
+	m->m_sOverlay.m_nDstWidth = cDstRect.Width();
+	m->m_sOverlay.m_nDstHeight = cDstRect.Height();
+	m->m_sOverlay.m_pAddress = NULL;
 
 	/* Send message */
 	Message cReq( WR_RECREATE_VIDEO_OVERLAY );
 	Message cReply;
 
-	if( m_sOverlay.m_hArea > 0 )
-		delete_area( m_sOverlay.m_hArea );
-	m_sOverlay.m_hArea = -1;
+	if( m->m_sOverlay.m_hArea > 0 )
+		delete_area( m->m_sOverlay.m_hArea );
+	m->m_sOverlay.m_hArea = -1;
 
-	int32 nFormat = static_cast < int32 >( m_sOverlay.m_eFormat );
+	int32 nFormat = static_cast < int32 >( m->m_sOverlay.m_eFormat );
 
-	cReq.AddIPoint( "size", IPoint( m_sOverlay.m_nSrcWidth, m_sOverlay.m_nSrcHeight ) );
-	cReq.AddRect( "dst", IRect( m_sOverlay.m_nDstX, m_sOverlay.m_nDstY, m_sOverlay.m_nDstX + m_sOverlay.m_nDstWidth, m_sOverlay.m_nDstY + m_sOverlay.m_nDstHeight ) );
+	cReq.AddIPoint( "size", IPoint( m->m_sOverlay.m_nSrcWidth, m->m_sOverlay.m_nSrcHeight ) );
+	cReq.AddRect( "dst", IRect( m->m_sOverlay.m_nDstX, m->m_sOverlay.m_nDstY, m->m_sOverlay.m_nDstX + m->m_sOverlay.m_nDstWidth, m->m_sOverlay.m_nDstY + m->m_sOverlay.m_nDstHeight ) );
 	cReq.AddInt32( "format", nFormat );
-	cReq.AddInt32( "area", m_sOverlay.m_hPhysArea );
+	cReq.AddInt32( "area", m->m_sOverlay.m_hPhysArea );
 
 	Application *pcApp = Application::GetInstance();
 
@@ -205,14 +230,34 @@ void VideoOverlayView::Recreate( const IPoint & cSrcSize, const IRect & cDstRect
 	if( nError != 0 )
 	{
 		errno = nError;
-		m_sOverlay.m_pAddress = NULL;
+		m->m_sOverlay.m_pAddress = NULL;
 		return;
 	}
 
 	cReply.FindInt32( "area", ( int32 * )&hArea );
 
-	m_sOverlay.m_hPhysArea = hArea;
-	m_sOverlay.m_hArea = clone_area( "video_overlay", &pAddress, AREA_FULL_ACCESS, AREA_NO_LOCK, hArea );
-	m_sOverlay.m_pAddress = ( uint8 * )pAddress;
+	m->m_sOverlay.m_hPhysArea = hArea;
+	m->m_sOverlay.m_hArea = clone_area( "video_overlay", &pAddress, AREA_FULL_ACCESS, AREA_NO_LOCK, hArea );
+	m->m_sOverlay.m_pAddress = ( uint8 * )pAddress;
+}
+
+void VideoOverlayView::__VOV_reserved1__()
+{
+}
+
+void VideoOverlayView::__VOV_reserved2__()
+{
+}
+
+void VideoOverlayView::__VOV_reserved3__()
+{
+}
+
+void VideoOverlayView::__VOV_reserved4__()
+{
+}
+
+void VideoOverlayView::__VOV_reserved5__()
+{
 }
 

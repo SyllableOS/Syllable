@@ -23,22 +23,34 @@
 
 using namespace os;
 
+class ProgressBar::Private {
+	public:
+    float		m_vProgress;
+    orientation	m_eOrientation;
+};
+
 ProgressBar::ProgressBar( const Rect & cFrame, const String & cName, orientation eOrientation, uint32 nResizeMask, uint32 nFlags ):View( cFrame, cName, nResizeMask, nFlags )
 {
-	m_vProgress = 0.0f;
-	m_eOrientation = eOrientation;
+	m = new Private;
+	m->m_vProgress = 0.0f;
+	m->m_eOrientation = eOrientation;
+}
+
+ProgressBar::~ProgressBar()
+{
+	delete m;
 }
 
 void ProgressBar::SetProgress( float vValue )
 {
-	m_vProgress = vValue;
+	m->m_vProgress = vValue;
 	Invalidate();
 	Flush();
 }
 
 float ProgressBar::GetProgress() const
 {
-	return ( m_vProgress );
+	return ( m->m_vProgress );
 }
 
 void ProgressBar::AttachedToWindow()
@@ -63,9 +75,9 @@ void ProgressBar::Paint( const Rect & cUpdateRect )
 
 	DrawFrame( cBounds, FRAME_RECESSED | FRAME_TRANSPARENT );
 
-	float vBarLength = ( m_eOrientation == HORIZONTAL ) ? cBounds.Width() : cBounds.Height(  );
+	float vBarLength = ( m->m_eOrientation == HORIZONTAL ) ? cBounds.Width() : cBounds.Height(  );
 
-	vBarLength = ceil( ( vBarLength - 3.0f ) * m_vProgress );
+	vBarLength = ceil( ( vBarLength - 3.0f ) * m->m_vProgress );
 
 	Rect cBarFrame = cBounds;
 
@@ -78,7 +90,7 @@ void ProgressBar::Paint( const Rect & cUpdateRect )
 	}
 	else
 	{
-		if( m_eOrientation == HORIZONTAL )
+		if( m->m_eOrientation == HORIZONTAL )
 		{
 			cBarFrame.right = cBarFrame.left + vBarLength;
 			if( cBarFrame.right > cBounds.right - 2.0f )
@@ -128,7 +140,7 @@ void ProgressBar::FrameSized( const Point & cDelta )
 	Rect cBounds( GetBounds() );
 	bool bNeedFlush = false;
 
-	if( ( m_eOrientation == HORIZONTAL && cDelta.x != 0.0f ) || ( m_eOrientation == VERTICAL && cDelta.y != 0.0f ) )
+	if( ( m->m_eOrientation == HORIZONTAL && cDelta.x != 0.0f ) || ( m->m_eOrientation == VERTICAL && cDelta.y != 0.0f ) )
 	{
 		Rect cDamage = cBounds;
 
@@ -159,3 +171,24 @@ void ProgressBar::FrameSized( const Point & cDelta )
 		Flush();
 	}
 }
+
+void ProgressBar::__PB_reserved1__()
+{
+}
+
+void ProgressBar::__PB_reserved2__()
+{
+}
+
+void ProgressBar::__PB_reserved3__()
+{
+}
+
+void ProgressBar::__PB_reserved4__()
+{
+}
+
+void ProgressBar::__PB_reserved5__()
+{
+}
+

@@ -34,7 +34,6 @@
 
 using namespace os;
 
-
 struct RowContentPred
 {				// : public binary_function<ListViewRow,ListViewRow, bool> {
 	RowContentPred( int nColumn )
@@ -105,6 +104,29 @@ namespace os
 
 namespace os
 {
+	class ListView::Private {
+		public:
+	    ListViewContainer* m_pcMainView;
+	    ListViewHeader*    m_pcHeaderView;
+	    ScrollBar*	       m_pcVScroll;
+	    ScrollBar*	       m_pcHScroll;
+	    Message*	       m_pcSelChangeMsg;
+	    Message*	       m_pcInvokeMsg;
+	    uint32 m_nModeFlags;
+	
+		Private() {
+			m_pcMainView = NULL;
+			m_pcHeaderView = NULL;
+			m_pcVScroll = NULL;
+			m_pcHScroll = NULL;
+			m_pcSelChangeMsg = NULL;
+			m_pcInvokeMsg = NULL;
+		}
+		~Private() {
+			delete m_pcSelChangeMsg;
+			delete m_pcInvokeMsg;
+		}
+	};
 
 	class ListViewCol:public View
 	{
@@ -334,6 +356,21 @@ void ListViewRow::SetSelected( bool bSel )
 		m_nFlags |= F_SELECTED;
 }
 
+void ListViewRow::__LVR_reserved_1__()
+{
+}
+
+void ListViewRow::__LVR_reserved_2__()
+{
+}
+
+void ListViewStringRow::__LVSR_reserved_1__()
+{
+}
+
+void ListViewStringRow::__LVSR_reserved_2__()
+{
+}
 
 void ListViewStringRow::AttachToView( View * pcView, int nColumn )
 {
@@ -2585,15 +2622,13 @@ void ListViewHeader::Layout()
 
 ListView::ListView( const Rect & cFrame, const String& cTitle, uint32 nModeFlags, uint32 nResizeMask, uint32 nFlags ):Control( cFrame, cTitle, "", NULL, nResizeMask, nFlags )
 {
-	m_pcHeaderView = new ListViewHeader( this, Rect( 0, 0, 1, 1 ), nModeFlags );
-	m_pcMainView = m_pcHeaderView->m_pcMainView;
-	m_pcVScroll = NULL;
-	m_pcHScroll = NULL;
-	m_pcSelChangeMsg = NULL;
-	m_pcInvokeMsg = NULL;
-//    m_nModeFlags     = nModeFlags;
+	m = new Private;
 
-	AddChild( m_pcHeaderView );
+	m->m_pcHeaderView = new ListViewHeader( this, Rect( 0, 0, 1, 1 ), nModeFlags );
+	m->m_pcMainView = m->m_pcHeaderView->m_pcMainView;
+	m->m_nModeFlags = nModeFlags;
+
+	AddChild( m->m_pcHeaderView );
 	Layout();
 }
 
@@ -2606,8 +2641,7 @@ ListView::ListView( const Rect & cFrame, const String& cTitle, uint32 nModeFlags
 
 ListView::~ListView()
 {
-	delete m_pcSelChangeMsg;
-	delete m_pcInvokeMsg;
+	delete m;
 }
 
 void ListView::LabelChanged( const String & cNewLabel )
@@ -2626,52 +2660,52 @@ bool ListView::Invoked( Message * pcMessage )
 
 bool ListView::IsMultiSelect() const
 {
-	return ( m_pcMainView->m_nModeFlags & F_MULTI_SELECT );
+	return ( m->m_pcMainView->m_nModeFlags & F_MULTI_SELECT );
 }
 
 void ListView::SetMultiSelect( bool bMulti )
 {
 	if( bMulti )
 	{
-		m_pcMainView->m_nModeFlags |= F_MULTI_SELECT;
+		m->m_pcMainView->m_nModeFlags |= F_MULTI_SELECT;
 	}
 	else
 	{
-		m_pcMainView->m_nModeFlags &= ~F_MULTI_SELECT;
+		m->m_pcMainView->m_nModeFlags &= ~F_MULTI_SELECT;
 	}
 }
 
 bool ListView::IsAutoSort() const
 {
-	return ( ( m_pcMainView->m_nModeFlags & F_NO_AUTO_SORT ) == 0 );
+	return ( ( m->m_pcMainView->m_nModeFlags & F_NO_AUTO_SORT ) == 0 );
 }
 
 void ListView::SetAutoSort( bool bAuto )
 {
 	if( bAuto )
 	{
-		m_pcMainView->m_nModeFlags &= ~F_NO_AUTO_SORT;
+		m->m_pcMainView->m_nModeFlags &= ~F_NO_AUTO_SORT;
 	}
 	else
 	{
-		m_pcMainView->m_nModeFlags |= F_NO_AUTO_SORT;
+		m->m_pcMainView->m_nModeFlags |= F_NO_AUTO_SORT;
 	}
 }
 
 bool ListView::HasBorder() const
 {
-	return ( m_pcMainView->m_nModeFlags & F_RENDER_BORDER );
+	return ( m->m_pcMainView->m_nModeFlags & F_RENDER_BORDER );
 }
 
 void ListView::SetRenderBorder( bool bRender )
 {
 	if( bRender )
 	{
-		m_pcMainView->m_nModeFlags |= F_RENDER_BORDER;
+		m->m_pcMainView->m_nModeFlags |= F_RENDER_BORDER;
 	}
 	else
 	{
-		m_pcMainView->m_nModeFlags &= ~F_RENDER_BORDER;
+		m->m_pcMainView->m_nModeFlags &= ~F_RENDER_BORDER;
 	}
 	Layout();
 	Flush();
@@ -2679,7 +2713,7 @@ void ListView::SetRenderBorder( bool bRender )
 
 bool ListView::HasColumnHeader() const
 {
-	return ( ( m_pcMainView->m_nModeFlags & F_NO_HEADER ) == 0 );
+	return ( ( m->m_pcMainView->m_nModeFlags & F_NO_HEADER ) == 0 );
 }
 
 /** Turn column header on or off
@@ -2693,11 +2727,11 @@ void ListView::SetHasColumnHeader( bool bFlag )
 {
 	if( bFlag )
 	{
-		m_pcMainView->m_nModeFlags &= ~F_NO_HEADER;
+		m->m_pcMainView->m_nModeFlags &= ~F_NO_HEADER;
 	}
 	else
 	{
-		m_pcMainView->m_nModeFlags |= F_NO_HEADER;
+		m->m_pcMainView->m_nModeFlags |= F_NO_HEADER;
 	}
 
 	Layout();
@@ -2717,7 +2751,7 @@ bool ListView::HasFocus( void ) const
 	{
 		return ( true );
 	}
-	return ( m_pcHeaderView->HasFocus() );
+	return ( m->m_pcHeaderView->HasFocus() );
 }
 
 //----------------------------------------------------------------------------
@@ -2742,7 +2776,7 @@ void ListView::AllAttached()
 
 void ListView::KeyDown( const char *pzString, const char *pzRawString, uint32 nQualifiers )
 {
-	if( m_pcMainView->HandleKey( pzString[0], nQualifiers ) == false )
+	if( m->m_pcMainView->HandleKey( pzString[0], nQualifiers ) == false )
 	{
 		View::KeyDown( pzString, pzRawString, nQualifiers );
 	}
@@ -2757,11 +2791,11 @@ void ListView::KeyDown( const char *pzString, const char *pzRawString, uint32 nQ
 
 void ListView::SetSelChangeMsg( Message * pcMsg )
 {
-	if( pcMsg != m_pcSelChangeMsg )
+	if( pcMsg != m->m_pcSelChangeMsg )
 	{
-		delete m_pcSelChangeMsg;
+		delete m->m_pcSelChangeMsg;
 
-		m_pcSelChangeMsg = pcMsg;
+		m->m_pcSelChangeMsg = pcMsg;
 	}
 }
 
@@ -2774,11 +2808,11 @@ void ListView::SetSelChangeMsg( Message * pcMsg )
 
 void ListView::SetInvokeMsg( Message * pcMsg )
 {
-	if( pcMsg != m_pcInvokeMsg )
+	if( pcMsg != m->m_pcInvokeMsg )
 	{
-		delete m_pcInvokeMsg;
+		delete m->m_pcInvokeMsg;
 
-		m_pcInvokeMsg = pcMsg;
+		m->m_pcInvokeMsg = pcMsg;
 	}
 }
 
@@ -2791,7 +2825,7 @@ void ListView::SetInvokeMsg( Message * pcMsg )
 
 Message *ListView::GetSelChangeMsg() const
 {
-	return ( m_pcSelChangeMsg );
+	return ( m->m_pcSelChangeMsg );
 }
 
 //----------------------------------------------------------------------------
@@ -2803,7 +2837,7 @@ Message *ListView::GetSelChangeMsg() const
 
 Message *ListView::GetInvokeMsg() const
 {
-	return ( m_pcInvokeMsg );
+	return ( m->m_pcInvokeMsg );
 }
 
 
@@ -2817,32 +2851,32 @@ Message *ListView::GetInvokeMsg() const
  *****************************************************************************/
 void ListView::AdjustScrollBars( bool bOkToHScroll )
 {
-	if( m_pcMainView->m_cRows.size() == 0 )
+	if( m->m_pcMainView->m_cRows.size() == 0 )
 	{
-		if( m_pcVScroll != NULL )
+		if( m->m_pcVScroll != NULL )
 		{
-			RemoveChild( m_pcVScroll );
-			delete m_pcVScroll;
+			RemoveChild( m->m_pcVScroll );
+			delete m->m_pcVScroll;
 		}
-		if( m_pcHScroll != NULL )
+		if( m->m_pcHScroll != NULL )
 		{
-			RemoveChild( m_pcHScroll );
-			delete m_pcHScroll;
+			RemoveChild( m->m_pcHScroll );
+			delete m->m_pcHScroll;
 		}
-		if( m_pcVScroll != NULL || m_pcHScroll != NULL )
+		if( m->m_pcVScroll != NULL || m->m_pcHScroll != NULL )
 		{
-			m_pcVScroll = NULL;
-			m_pcHScroll = NULL;
-			m_pcMainView->ScrollTo( 0, 0 );
-			m_pcHeaderView->ScrollTo( 0, 0 );
+			m->m_pcVScroll = NULL;
+			m->m_pcHScroll = NULL;
+			m->m_pcMainView->ScrollTo( 0, 0 );
+			m->m_pcHeaderView->ScrollTo( 0, 0 );
 			Layout();
 		}
 	}
 	else
 	{
-		float vViewHeight = m_pcMainView->GetBounds().Height(  ) + 1.0f;
-		float vViewWidth = m_pcHeaderView->GetBounds().Width(  ) + 1.0f;
-		float vContentHeight = m_pcMainView->m_vContentHeight;
+		float vViewHeight = m->m_pcMainView->GetBounds().Height(  ) + 1.0f;
+		float vViewWidth = m->m_pcHeaderView->GetBounds().Width(  ) + 1.0f;
+		float vContentHeight = m->m_pcMainView->m_vContentHeight;
 
 		float vProportion;
 
@@ -2856,109 +2890,109 @@ void ListView::AdjustScrollBars( bool bOkToHScroll )
 		}
 		if( vContentHeight > vViewHeight )
 		{
-			if( m_pcVScroll == NULL )
+			if( m->m_pcVScroll == NULL )
 			{
-				m_pcVScroll = new ScrollBar( Rect( -1, -1, 0, 0 ), "v_scroll", NULL, 0, 1000, VERTICAL );
-				AddChild( m_pcVScroll );
-				m_pcVScroll->SetScrollTarget( m_pcMainView );
+				m->m_pcVScroll = new ScrollBar( Rect( -1, -1, 0, 0 ), "v_scroll", NULL, 0, 1000, VERTICAL );
+				AddChild( m->m_pcVScroll );
+				m->m_pcVScroll->SetScrollTarget( m->m_pcMainView );
 				Layout();
 			}
 			else
 			{
-				m_pcVScroll->SetSteps( ceil( vContentHeight / float ( m_pcMainView->m_cRows.size() ) ), ceil( vViewHeight * 0.8f ) );
+				m->m_pcVScroll->SetSteps( ceil( vContentHeight / float ( m->m_pcMainView->m_cRows.size() ) ), ceil( vViewHeight * 0.8f ) );
 
-				m_pcVScroll->SetProportion( vProportion );
-				m_pcVScroll->SetMinMax( 0, std::max( vContentHeight - vViewHeight, 0.0f ) );
+				m->m_pcVScroll->SetProportion( vProportion );
+				m->m_pcVScroll->SetMinMax( 0, std::max( vContentHeight - vViewHeight, 0.0f ) );
 			}
 		}
 		else
 		{
-			if( m_pcVScroll != NULL )
+			if( m->m_pcVScroll != NULL )
 			{
-				RemoveChild( m_pcVScroll );
-				delete m_pcVScroll;
+				RemoveChild( m->m_pcVScroll );
+				delete m->m_pcVScroll;
 
-				m_pcVScroll = NULL;
-				m_pcMainView->ScrollTo( 0, 0 );
+				m->m_pcVScroll = NULL;
+				m->m_pcMainView->ScrollTo( 0, 0 );
 				Layout();
 			}
 		}
 
-		if( m_pcVScroll != NULL )
+		if( m->m_pcVScroll != NULL )
 		{
-			vViewWidth -= m_pcVScroll->GetFrame().Width(  );
+			vViewWidth -= m->m_pcVScroll->GetFrame().Width(  );
 		}
 
-		if( m_pcMainView->m_vTotalWidth > 0 && m_pcMainView->m_vTotalWidth > vViewWidth )
+		if( m->m_pcMainView->m_vTotalWidth > 0 && m->m_pcMainView->m_vTotalWidth > vViewWidth )
 		{
-			vProportion = vViewWidth / m_pcMainView->m_vTotalWidth;
+			vProportion = vViewWidth / m->m_pcMainView->m_vTotalWidth;
 		}
 		else
 		{
 			vProportion = 1.0f;
 		}
 
-		if( m_pcMainView->m_vTotalWidth > vViewWidth )
+		if( m->m_pcMainView->m_vTotalWidth > vViewWidth )
 		{
-			if( m_pcHScroll == NULL )
+			if( m->m_pcHScroll == NULL )
 			{
-				m_pcHScroll = new ScrollBar( Rect( -1, -1, 0, 0 ), "h_scroll", NULL, 0, 1000, HORIZONTAL );
-				AddChild( m_pcHScroll );
-				m_pcHScroll->SetScrollTarget( m_pcHeaderView );
+				m->m_pcHScroll = new ScrollBar( Rect( -1, -1, 0, 0 ), "h_scroll", NULL, 0, 1000, HORIZONTAL );
+				AddChild( m->m_pcHScroll );
+				m->m_pcHScroll->SetScrollTarget( m->m_pcHeaderView );
 				Layout();
 			}
 			else
 			{
-				m_pcHScroll->SetSteps( 15.0f, ceil( vViewWidth * 0.8f ) );
-				m_pcHScroll->SetProportion( vProportion );
-				m_pcHScroll->SetMinMax( 0, m_pcMainView->m_vTotalWidth - vViewWidth );
+				m->m_pcHScroll->SetSteps( 15.0f, ceil( vViewWidth * 0.8f ) );
+				m->m_pcHScroll->SetProportion( vProportion );
+				m->m_pcHScroll->SetMinMax( 0, m->m_pcMainView->m_vTotalWidth - vViewWidth );
 			}
 		}
 		else
 		{
-			if( m_pcHScroll != NULL )
+			if( m->m_pcHScroll != NULL )
 			{
-				RemoveChild( m_pcHScroll );
-				delete m_pcHScroll;
+				RemoveChild( m->m_pcHScroll );
+				delete m->m_pcHScroll;
 
-				m_pcHScroll = NULL;
-				m_pcHeaderView->ScrollTo( 0, 0 );
+				m->m_pcHScroll = NULL;
+				m->m_pcHeaderView->ScrollTo( 0, 0 );
 				Layout();
 			}
 		}
 		if( bOkToHScroll )
 		{
-			float nOff = m_pcHeaderView->GetScrollOffset().x;
+			float nOff = m->m_pcHeaderView->GetScrollOffset().x;
 
 			if( nOff < 0 )
 			{
-				vViewWidth = m_pcHeaderView->GetBounds().Width(  ) + 1.0f;
-				if( vViewWidth - nOff > m_pcMainView->m_vTotalWidth )
+				vViewWidth = m->m_pcHeaderView->GetBounds().Width(  ) + 1.0f;
+				if( vViewWidth - nOff > m->m_pcMainView->m_vTotalWidth )
 				{
-					float nDeltaScroll = std::min( ( vViewWidth - nOff ) - m_pcMainView->m_vTotalWidth, -nOff );
+					float nDeltaScroll = std::min( ( vViewWidth - nOff ) - m->m_pcMainView->m_vTotalWidth, -nOff );
 
-					m_pcHeaderView->ScrollBy( nDeltaScroll, 0 );
+					m->m_pcHeaderView->ScrollBy( nDeltaScroll, 0 );
 				}
-				else if( vViewWidth > m_pcMainView->m_vTotalWidth )
+				else if( vViewWidth > m->m_pcMainView->m_vTotalWidth )
 				{
-					m_pcHeaderView->ScrollBy( -nOff, 0 );
+					m->m_pcHeaderView->ScrollBy( -nOff, 0 );
 				}
 			}
 		}
-		float nOff = m_pcMainView->GetScrollOffset().y;
+		float nOff = m->m_pcMainView->GetScrollOffset().y;
 
 		if( nOff < 0 )
 		{
-			vViewHeight = m_pcMainView->GetBounds().Height(  ) + 1.0f;
+			vViewHeight = m->m_pcMainView->GetBounds().Height(  ) + 1.0f;
 			if( vViewHeight - nOff > vContentHeight )
 			{
 				float nDeltaScroll = std::min( ( vViewHeight - nOff ) - vContentHeight, -nOff );
 
-				m_pcMainView->ScrollBy( 0, nDeltaScroll );
+				m->m_pcMainView->ScrollBy( 0, nDeltaScroll );
 			}
 			else if( vViewHeight > vContentHeight )
 			{
-				m_pcMainView->ScrollBy( 0, -nOff );
+				m->m_pcMainView->ScrollBy( 0, -nOff );
 			}
 		}
 	}
@@ -2977,42 +3011,42 @@ void ListView::Layout()
 
 	GetFontHeight( &sHeight );
 
-	float nTopHeight = m_pcHeaderView->m_vHeaderHeight;
+	float nTopHeight = m->m_pcHeaderView->m_vHeaderHeight;
 
 	Rect cFrame( GetBounds().Bounds(  ) );
 
 	cFrame.Floor();
-	if( m_pcMainView->m_nModeFlags & F_RENDER_BORDER )
+	if( m->m_pcMainView->m_nModeFlags & F_RENDER_BORDER )
 	{
 		cFrame.Resize( 2.0f, 2.0f, -2.0f, -2.0f );
 	}
 
 	Rect cHeaderFrame( cFrame );
 
-	if( m_pcHScroll != NULL )
+	if( m->m_pcHScroll != NULL )
 	{
 		cHeaderFrame.bottom -= 16.0f;
 	}
-	if( m_pcVScroll != NULL )
+	if( m->m_pcVScroll != NULL )
 	{
 		Rect cVScrFrame( cFrame );
 
 		cVScrFrame.top += nTopHeight;
 		//      cVScrFrame.bottom -= 2.0f;
-		if( m_pcHScroll != NULL )
+		if( m->m_pcHScroll != NULL )
 		{
 			cVScrFrame.bottom -= 16.0f;
 		}
 		cVScrFrame.left = cVScrFrame.right - 16.0f;
 
-		m_pcVScroll->SetFrame( cVScrFrame );
+		m->m_pcVScroll->SetFrame( cVScrFrame );
 	}
-	if( m_pcHScroll != NULL )
+	if( m->m_pcHScroll != NULL )
 	{
 		Rect cVScrFrame( cFrame );
 
 		cHeaderFrame.bottom = floor( cHeaderFrame.bottom );
-		if( m_pcVScroll != NULL )
+		if( m->m_pcVScroll != NULL )
 		{
 			cVScrFrame.right -= 16.0f;
 		}
@@ -3021,11 +3055,11 @@ void ListView::Layout()
 		cVScrFrame.top = cVScrFrame.bottom - 16.0f;
 		cHeaderFrame.bottom = cVScrFrame.top;
 
-		m_pcHScroll->SetFrame( cVScrFrame );
+		m->m_pcHScroll->SetFrame( cVScrFrame );
 	}
 
-	m_pcHeaderView->SetFrame( cHeaderFrame );
-	m_pcHeaderView->Layout();
+	m->m_pcHeaderView->SetFrame( cHeaderFrame );
+	m->m_pcHeaderView->Layout();
 	AdjustScrollBars();
 }
 
@@ -3038,12 +3072,12 @@ void ListView::Layout()
 
 void ListView::FrameSized( const Point & cDelta )
 {
-	if( m_pcMainView->m_cColMap.empty() == false )
+	if( m->m_pcMainView->m_cColMap.empty() == false )
 	{
-		ListViewCol *pcCol = m_pcMainView->m_cCols[m_pcMainView->m_cColMap[m_pcMainView->m_cColMap.size() - 1]];
+		ListViewCol *pcCol = m->m_pcMainView->m_cCols[m->m_pcMainView->m_cColMap[m->m_pcMainView->m_cColMap.size() - 1]];
 		Rect cFrame = pcCol->GetFrame();
 
-		cFrame.right = GetBounds().right - m_pcHeaderView->GetScrollOffset(  ).x;
+		cFrame.right = GetBounds().right - m->m_pcHeaderView->GetScrollOffset(  ).x;
 
 		pcCol->SetFrame( cFrame );
 	}
@@ -3063,32 +3097,32 @@ void ListView::FrameSized( const Point & cDelta )
  *****************************************************************************/
 void ListView::Sort()
 {
-	if( uint ( m_pcMainView->m_nSortColumn ) >= m_pcMainView->m_cCols.size() )
+	if( uint ( m->m_pcMainView->m_nSortColumn ) >= m->m_pcMainView->m_cCols.size() )
 	{
 		return;
 	}
-	if( m_pcMainView->m_cRows.empty() )
+	if( m->m_pcMainView->m_cRows.empty() )
 	{
 		return;
 	}
 
-	SortRows( &m_pcMainView->m_cRows, m_pcMainView->m_nSortColumn );
+	SortRows( &m->m_pcMainView->m_cRows, m->m_pcMainView->m_nSortColumn );
 
-	if( m_pcMainView->m_nFirstSel != -1 )
+	if( m->m_pcMainView->m_nFirstSel != -1 )
 	{
-		for( uint i = 0; i < m_pcMainView->m_cRows.size(); ++i )
+		for( uint i = 0; i < m->m_pcMainView->m_cRows.size(); ++i )
 		{
-			if( m_pcMainView->m_cRows[i]->IsSelected() )
+			if( m->m_pcMainView->m_cRows[i]->IsSelected() )
 			{
-				m_pcMainView->m_nFirstSel = i;
+				m->m_pcMainView->m_nFirstSel = i;
 				break;
 			}
 		}
-		for( int i = m_pcMainView->m_cRows.size() - 1; i >= 0; --i )
+		for( int i = m->m_pcMainView->m_cRows.size() - 1; i >= 0; --i )
 		{
-			if( m_pcMainView->m_cRows[i]->IsSelected() )
+			if( m->m_pcMainView->m_cRows[i]->IsSelected() )
 			{
-				m_pcMainView->m_nLastSel = i;
+				m->m_pcMainView->m_nLastSel = i;
 				break;
 			}
 		}
@@ -3106,13 +3140,13 @@ void ListView::Sort()
  *****************************************************************************/
 void ListView::MakeVisible( int nRow, bool bCenter )
 {
-	m_pcMainView->MakeVisible( nRow, bCenter );
+	m->m_pcMainView->MakeVisible( nRow, bCenter );
 	Flush();
 }
 
 int ListView::InsertColumn( const char *pzTitle, int nWidth, int nPos )
 {
-	int nColumn = m_pcMainView->InsertColumn( pzTitle, nWidth, nPos );
+	int nColumn = m->m_pcMainView->InsertColumn( pzTitle, nWidth, nPos );
 
 	Layout();
 	Flush();
@@ -3121,31 +3155,31 @@ int ListView::InsertColumn( const char *pzTitle, int nWidth, int nPos )
 
 const std::vector < int >&ListView::GetColumnMapping() const
 {
-	return ( m_pcMainView->m_cColMap );
+	return ( m->m_pcMainView->m_cColMap );
 }
 
 void ListView::SetColumnMapping( const std::vector < int >&cMap )
 {
-	for( int i = 0; i < int ( m_pcMainView->m_cCols.size() ); ++i )
+	for( int i = 0; i < int ( m->m_pcMainView->m_cCols.size() ); ++i )
 	{
 		if( std::find( cMap.begin(), cMap.end(  ), i ) == cMap.end(  ) )
 		{
-			if( std::find( m_pcMainView->m_cColMap.begin(), m_pcMainView->m_cColMap.end(  ), i ) != m_pcMainView->m_cColMap.end(  ) )
+			if( std::find( m->m_pcMainView->m_cColMap.begin(), m->m_pcMainView->m_cColMap.end(  ), i ) != m->m_pcMainView->m_cColMap.end(  ) )
 			{
-				m_pcMainView->m_cCols[i]->Show( false );
+				m->m_pcMainView->m_cCols[i]->Show( false );
 			}
 		}
 		else
 		{
-			if( std::find( m_pcMainView->m_cColMap.begin(), m_pcMainView->m_cColMap.end(  ), i ) == m_pcMainView->m_cColMap.end(  ) )
+			if( std::find( m->m_pcMainView->m_cColMap.begin(), m->m_pcMainView->m_cColMap.end(  ), i ) == m->m_pcMainView->m_cColMap.end(  ) )
 			{
-				m_pcMainView->m_cCols[i]->Show( true );
+				m->m_pcMainView->m_cCols[i]->Show( true );
 			}
 		}
 	}
-	m_pcMainView->m_cColMap = cMap;
-	m_pcMainView->LayoutColumns();
-	m_pcHeaderView->Invalidate();
+	m->m_pcMainView->m_cColMap = cMap;
+	m->m_pcMainView->LayoutColumns();
+	m->m_pcHeaderView->Invalidate();
 }
 
 /** Insert a row
@@ -3158,7 +3192,7 @@ void ListView::SetColumnMapping( const std::vector < int >&cMap )
  *****************************************************************************/
 void ListView::InsertRow( int nPos, ListViewRow * pcRow, bool bUpdate )
 {
-	m_pcMainView->InsertRow( nPos, pcRow, bUpdate );
+	m->m_pcMainView->InsertRow( nPos, pcRow, bUpdate );
 	AdjustScrollBars();
 	if( bUpdate )
 	{
@@ -3189,7 +3223,7 @@ void ListView::InsertRow( ListViewRow * pcRow, bool bUpdate )
  *****************************************************************************/
 ListViewRow *ListView::RemoveRow( int nIndex, bool bUpdate )
 {
-	ListViewRow *pcRow = m_pcMainView->RemoveRow( nIndex, bUpdate );
+	ListViewRow *pcRow = m->m_pcMainView->RemoveRow( nIndex, bUpdate );
 
 	AdjustScrollBars();
 	if( bUpdate )
@@ -3208,7 +3242,7 @@ ListViewRow *ListView::RemoveRow( int nIndex, bool bUpdate )
  *****************************************************************************/
 void ListView::InvalidateRow( int nRow, uint32 nFlags )
 {
-	m_pcMainView->InvalidateRow( nRow, nFlags );
+	m->m_pcMainView->InvalidateRow( nRow, nFlags );
 	Flush();
 }
 
@@ -3219,7 +3253,7 @@ void ListView::InvalidateRow( int nRow, uint32 nFlags )
  *****************************************************************************/
 uint ListView::GetRowCount() const
 {
-	return ( m_pcMainView->m_cRows.size() );
+	return ( m->m_pcMainView->m_cRows.size() );
 }
 
 /** Get a row
@@ -3231,9 +3265,9 @@ uint ListView::GetRowCount() const
  *****************************************************************************/
 ListViewRow *ListView::GetRow( uint nIndex ) const
 {
-	if( nIndex < m_pcMainView->m_cRows.size() )
+	if( nIndex < m->m_pcMainView->m_cRows.size() )
 	{
-		return ( m_pcMainView->m_cRows[nIndex] );
+		return ( m->m_pcMainView->m_cRows[nIndex] );
 	}
 	else
 	{
@@ -3251,11 +3285,11 @@ ListViewRow *ListView::GetRow( uint nIndex ) const
  *****************************************************************************/
 ListViewRow *ListView::GetRow( const Point & cPos ) const
 {
-	int nHitRow = m_pcMainView->GetRowIndex( cPos.y );
+	int nHitRow = m->m_pcMainView->GetRowIndex( cPos.y );
 
 	if( nHitRow >= 0 )
 	{
-		return ( m_pcMainView->m_cRows[nHitRow] );
+		return ( m->m_pcMainView->m_cRows[nHitRow] );
 	}
 	else
 	{
@@ -3273,8 +3307,8 @@ ListViewRow *ListView::GetRow( const Point & cPos ) const
  *****************************************************************************/
 int ListView::HitTest( const Point & cPos ) const
 {
-	Point cParentPos = ConvertToScreen( m_pcMainView->ConvertFromScreen( cPos ) );
-	int nHitRow = m_pcMainView->GetRowIndex( cParentPos.y );
+	Point cParentPos = ConvertToScreen( m->m_pcMainView->ConvertFromScreen( cPos ) );
+	int nHitRow = m->m_pcMainView->GetRowIndex( cParentPos.y );
 
 	if( nHitRow >= 0 )
 	{
@@ -3296,9 +3330,9 @@ int ListView::HitTest( const Point & cPos ) const
  *****************************************************************************/
 float ListView::GetRowPos( int nRow )
 {
-	if( nRow >= 0 && nRow < int ( m_pcMainView->m_cRows.size() ) )
+	if( nRow >= 0 && nRow < int ( m->m_pcMainView->m_cRows.size() ) )
 	{
-		return ( m_pcMainView->m_cRows[nRow]->m_vYPos + m_pcMainView->GetFrame().top + m_pcMainView->GetScrollOffset(  ).y );
+		return ( m->m_pcMainView->m_cRows[nRow]->m_vYPos + m->m_pcMainView->GetFrame().top + m->m_pcMainView->GetScrollOffset(  ).y );
 	}
 	else
 	{
@@ -3315,26 +3349,26 @@ float ListView::GetRowPos( int nRow )
 
 void ListView::Select( int nFirst, int nLast, bool bReplace, bool bSelect )
 {
-	if( m_pcMainView->m_cRows.empty() )
+	if( m->m_pcMainView->m_cRows.empty() )
 	{
 		return;
 	}
-	if( ( bReplace || ( m_pcMainView->m_nModeFlags & F_MULTI_SELECT ) == 0 ) && m_pcMainView->m_nFirstSel != -1 )
+	if( ( bReplace || ( m->m_pcMainView->m_nModeFlags & F_MULTI_SELECT ) == 0 ) && m->m_pcMainView->m_nFirstSel != -1 )
 	{
-		for( int i = m_pcMainView->m_nFirstSel; i <= m_pcMainView->m_nLastSel; ++i )
+		for( int i = m->m_pcMainView->m_nFirstSel; i <= m->m_pcMainView->m_nLastSel; ++i )
 		{
-			if( m_pcMainView->m_cRows[i]->IsSelected() )
+			if( m->m_pcMainView->m_cRows[i]->IsSelected() )
 			{
-				m_pcMainView->m_cRows[i]->SetSelected( false );
-				m_pcMainView->InvalidateRow( i, INV_VISUAL );
+				m->m_pcMainView->m_cRows[i]->SetSelected( false );
+				m->m_pcMainView->InvalidateRow( i, INV_VISUAL );
 			}
 		}
-		m_pcMainView->m_nFirstSel = -1;
-		m_pcMainView->m_nLastSel = -1;
+		m->m_pcMainView->m_nFirstSel = -1;
+		m->m_pcMainView->m_nLastSel = -1;
 	}
-	if( m_pcMainView->SelectRange( nFirst, nLast, bSelect ) )
+	if( m->m_pcMainView->SelectRange( nFirst, nLast, bSelect ) )
 	{
-		SelectionChanged( m_pcMainView->m_nFirstSel, m_pcMainView->m_nLastSel );
+		SelectionChanged( m->m_pcMainView->m_nFirstSel, m->m_pcMainView->m_nLastSel );
 	}
 	Flush();
 }
@@ -3353,7 +3387,7 @@ void ListView::Select( int nRow, bool bReplace, bool bSelect )
 
 void ListView::ClearSelection()
 {
-	if( m_pcMainView->ClearSelection() )
+	if( m->m_pcMainView->ClearSelection() )
 	{
 		SelectionChanged( -1, -1 );
 	}
@@ -3376,25 +3410,25 @@ void ListView::Highlight( int nFirst, int nLast, bool bReplace, bool bHighlight 
 	{
 		nFirst = 0;
 	}
-	if( nFirst >= int ( m_pcMainView->m_cRows.size() ) )
+	if( nFirst >= int ( m->m_pcMainView->m_cRows.size() ) )
 	{
 		return;
 	}
-	if( nLast >= int ( m_pcMainView->m_cRows.size() ) )
+	if( nLast >= int ( m->m_pcMainView->m_cRows.size() ) )
 	{
-		nLast = m_pcMainView->m_cRows.size() - 1;
+		nLast = m->m_pcMainView->m_cRows.size() - 1;
 	}
 
 	if( bReplace )
 	{
-		for( int i = 0; i < int ( m_pcMainView->m_cRows.size() ); ++i )
+		for( int i = 0; i < int ( m->m_pcMainView->m_cRows.size() ); ++i )
 		{
 			bool bHigh = ( i >= nFirst && i <= nLast );
 
-			if( m_pcMainView->m_cRows[i]->IsHighlighted() != bHigh )
+			if( m->m_pcMainView->m_cRows[i]->IsHighlighted() != bHigh )
 			{
-				m_pcMainView->m_cRows[i]->SetHighlighted( bHigh );
-				m_pcMainView->InvalidateRow( i, ListView::INV_VISUAL );
+				m->m_pcMainView->m_cRows[i]->SetHighlighted( bHigh );
+				m->m_pcMainView->InvalidateRow( i, ListView::INV_VISUAL );
 			}
 		}
 	}
@@ -3402,10 +3436,10 @@ void ListView::Highlight( int nFirst, int nLast, bool bReplace, bool bHighlight 
 	{
 		for( int i = nFirst; i <= nLast; ++i )
 		{
-			if( m_pcMainView->m_cRows[i]->IsHighlighted() != bHighlight )
+			if( m->m_pcMainView->m_cRows[i]->IsHighlighted() != bHighlight )
 			{
-				m_pcMainView->m_cRows[i]->SetHighlighted( bHighlight );
-				m_pcMainView->InvalidateRow( i, ListView::INV_VISUAL );
+				m->m_pcMainView->m_cRows[i]->SetHighlighted( bHighlight );
+				m->m_pcMainView->InvalidateRow( i, ListView::INV_VISUAL );
 			}
 		}
 	}
@@ -3414,7 +3448,7 @@ void ListView::Highlight( int nFirst, int nLast, bool bReplace, bool bHighlight 
 
 void ListView::SetCurrentRow( int nRow )
 {
-	if( m_pcMainView->m_cRows.empty() )
+	if( m->m_pcMainView->m_cRows.empty() )
 	{
 		return;
 	}
@@ -3422,11 +3456,11 @@ void ListView::SetCurrentRow( int nRow )
 	{
 		nRow = 0;
 	}
-	else if( nRow >= int ( m_pcMainView->m_cRows.size() ) )
+	else if( nRow >= int ( m->m_pcMainView->m_cRows.size() ) )
 	{
-		nRow = m_pcMainView->m_cRows.size() - 1;
+		nRow = m->m_pcMainView->m_cRows.size() - 1;
 	}
-	m_pcMainView->m_nEndSel = nRow;
+	m->m_pcMainView->m_nEndSel = nRow;
 }
 
 void ListView::Highlight( int nRow, bool bReplace, bool bHighlight )
@@ -3442,9 +3476,9 @@ void ListView::Highlight( int nRow, bool bReplace, bool bHighlight )
  *****************************************************************************/
 bool ListView::IsSelected( uint nRow ) const
 {
-	if( nRow < m_pcMainView->m_cRows.size() )
+	if( nRow < m->m_pcMainView->m_cRows.size() )
 	{
-		return ( m_pcMainView->m_cRows[nRow]->IsSelected() );
+		return ( m->m_pcMainView->m_cRows[nRow]->IsSelected() );
 	}
 	else
 	{
@@ -3459,22 +3493,22 @@ bool ListView::IsSelected( uint nRow ) const
  *****************************************************************************/
 void ListView::Clear()
 {
-	m_pcMainView->Clear();
+	m->m_pcMainView->Clear();
 	AdjustScrollBars();
 	Flush();
 }
 
 void ListView::Paint( const Rect & cUpdateRect )
 {
-	if( m_pcVScroll != NULL && m_pcHScroll != NULL )
+	if( m->m_pcVScroll != NULL && m->m_pcHScroll != NULL )
 	{
-		Rect cHFrame = m_pcHScroll->GetFrame();
-		Rect cVFrame = m_pcVScroll->GetFrame();
+		Rect cHFrame = m->m_pcHScroll->GetFrame();
+		Rect cVFrame = m->m_pcVScroll->GetFrame();
 		Rect cFrame( cHFrame.right + 1, cVFrame.bottom + 1, cVFrame.right, cHFrame.bottom );
 
 		FillRect( cFrame, get_default_color( COL_NORMAL ) );
 	}
-	if( m_pcMainView->m_nModeFlags & F_RENDER_BORDER )
+	if( m->m_pcMainView->m_nModeFlags & F_RENDER_BORDER )
 	{
 		DrawFrame( Rect( GetBounds() ), FRAME_RECESSED | FRAME_TRANSPARENT );
 	}
@@ -3489,9 +3523,9 @@ void ListView::Paint( const Rect & cUpdateRect )
 
 void ListView::Invoked( int nFirstRow, int nLastRow )
 {
-	if( m_pcInvokeMsg != NULL )
+	if( m->m_pcInvokeMsg != NULL )
 	{
-		Invoke( m_pcInvokeMsg );
+		Invoke( m->m_pcInvokeMsg );
 	}
 }
 
@@ -3504,9 +3538,9 @@ void ListView::Invoked( int nFirstRow, int nLastRow )
 
 void ListView::SelectionChanged( int nFirstRow, int nLastRow )
 {
-	if( m_pcSelChangeMsg != NULL )
+	if( m->m_pcSelChangeMsg != NULL )
 	{
-		Invoke( m_pcSelChangeMsg );
+		Invoke( m->m_pcSelChangeMsg );
 	}
 }
 
@@ -3517,7 +3551,7 @@ void ListView::SelectionChanged( int nFirstRow, int nLastRow )
  *****************************************************************************/
 int ListView::GetFirstSelected() const
 {
-	return ( m_pcMainView->m_nFirstSel );
+	return ( m->m_pcMainView->m_nFirstSel );
 }
 
 //----------------------------------------------------------------------------
@@ -3529,7 +3563,7 @@ int ListView::GetFirstSelected() const
 
 void ListView::StartScroll( scroll_direction eDirection, bool bSelect )
 {
-	m_pcMainView->StartScroll( eDirection, bSelect );
+	m->m_pcMainView->StartScroll( eDirection, bSelect );
 }
 
 //----------------------------------------------------------------------------
@@ -3541,7 +3575,7 @@ void ListView::StartScroll( scroll_direction eDirection, bool bSelect )
 
 void ListView::StopScroll()
 {
-	m_pcMainView->StopScroll();
+	m->m_pcMainView->StopScroll();
 }
 
 //----------------------------------------------------------------------------
@@ -3553,7 +3587,7 @@ void ListView::StopScroll()
 
 int ListView::GetLastSelected() const
 {
-	return ( m_pcMainView->m_nLastSel );
+	return ( m->m_pcMainView->m_nLastSel );
 }
 
 bool ListView::DragSelection( const Point & cPos )
@@ -3569,7 +3603,7 @@ bool ListView::DragSelection( const Point & cPos )
  *****************************************************************************/
 ListView::const_iterator ListView::begin() const
 {
-	return ( m_pcMainView->m_cRows.begin() );
+	return ( m->m_pcMainView->m_cRows.begin() );
 }
 
 /** STL iterator interface
@@ -3579,19 +3613,22 @@ ListView::const_iterator ListView::begin() const
  *****************************************************************************/
 ListView::const_iterator ListView::end() const
 {
-	return ( m_pcMainView->m_cRows.end() );
+	return ( m->m_pcMainView->m_cRows.end() );
 }
 
-void ListView::__reserved1__()
+void ListView::__LV_reserved_1__()
 {
 }
-void ListView::__reserved2__()
+void ListView::__LV_reserved_2__()
 {
 }
-void ListView::__reserved3__()
+void ListView::__LV_reserved_3__()
 {
 }
-void ListView::__reserved4__()
+void ListView::__LV_reserved_4__()
+{
+}
+void ListView::__LV_reserved_5__()
 {
 }
 
@@ -3605,12 +3642,12 @@ void ListView::__reserved4__()
  *****************************************************************************/
 void ListView::RefreshLayout()
 {
-	m_pcMainView->LayoutRows();
+	m->m_pcMainView->LayoutRows();
 
-	for( uint i = 0; i < m_pcMainView->m_cColMap.size(); ++i )
+	for( uint i = 0; i < m->m_pcMainView->m_cColMap.size(); ++i )
 	{
-		m_pcMainView->GetColumn( i )->Invalidate();
-		m_pcMainView->GetColumn( i )->Flush();
+		m->m_pcMainView->GetColumn( i )->Invalidate();
+		m->m_pcMainView->GetColumn( i )->Flush();
 	}
 
 	AdjustScrollBars( false );

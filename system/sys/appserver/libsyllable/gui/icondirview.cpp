@@ -1991,6 +1991,8 @@ void IconDirectoryView::MouseMove( const Point & cNewPos, int nCode, uint32 nBut
 	SetIconSelected( 0, false );
 }
 
-
-
-
+void IconDirectoryView::__IDV_reserved1__() {}
+void IconDirectoryView::__IDV_reserved2__() {}
+void IconDirectoryView::__IDV_reserved3__() {}
+void IconDirectoryView::__IDV_reserved4__() {}
+void IconDirectoryView::__IDV_reserved5__() {}

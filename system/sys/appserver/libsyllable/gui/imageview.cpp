@@ -197,3 +197,10 @@ void ImageView::Refresh()
 	}
 }
 
+void ImageView::__IV_reserved1__() {}
+void ImageView::__IV_reserved2__() {}
+void ImageView::__IV_reserved3__() {}
+void ImageView::__IV_reserved4__() {}
+void ImageView::__IV_reserved5__() {}
+
+
