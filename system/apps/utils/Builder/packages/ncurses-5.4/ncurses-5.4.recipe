@@ -13,3 +13,5 @@ configure-options
 documentation
 	README INSTALL ANNOUNCE NEWS TO-DO
 	doc/html
+; For INetUtils:
+links				include/ncurses /usr/include
