@@ -11,8 +11,11 @@ modules
 	apps/other/unzip-5.51
 	apps/other/zip-2.3
 	apps/media/coldfish
+	apps/media/coldfish_plugins/blursk
+	apps/media/coldfish_plugins/remote
 	apps/media/mediaconverter
 	apps/media/mediaplayer
+	apps/utils/mixer
 	apps/utils/Albert
 ;	apps/utils/Builder
 	apps/utils/CodeEdit
@@ -27,8 +30,6 @@ modules
 	apps/utils/crypt
 	apps/utils/keymapconv
 	apps/utils/memmon
-	apps/utils/mixer
 	apps/utils/rescopy
 	apps/utils/shelltools
 	apps/utils/slbmgr
-
