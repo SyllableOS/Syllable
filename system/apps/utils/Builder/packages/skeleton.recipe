@@ -109,7 +109,7 @@ install-env
 install-vars
 	VAR 'value'
 ; Non-standard install targets:
-;install-targets		install
+install-targets		install
 
 ; Extra files to install:
 install-files
