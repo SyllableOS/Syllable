@@ -24,8 +24,8 @@
 #include <stdarg.h>
 
 #include <vector>
-#include <string>
-
+#include <gui/image.h>
+#include <util/string.h>
 #include <gui/window.h>
 #include <gui/bitmap.h>
 #include <gui/stringview.h>
@@ -46,21 +46,16 @@ class AlertView : public View
 {
 public:
     AlertView( const String& cText, va_list pButtons, Bitmap* pcBitmap = NULL );
+    //AlertView( const String, cText, va_list pButtons, BitmapImage pcImage=NULL);
+    virtual ~AlertView();
     virtual Point GetPreferredSize( bool bLargest );
     virtual void	 Paint( const Rect& cUpdateRect );
     virtual void	 AllAttached();
   
 private:
     friend class Alert;
-  
-    std::vector<String> m_cLines;
-    std::vector<Button*> 	   m_cButtons;
-    Point		   m_cButtonSize;
-    float		   m_vLineHeight;
-    Point		   m_cMinSize;
-    Bitmap*               pcBitmp;
-    
-  
+    class Private;
+    Private *m; 
 };
 
 /** 
@@ -74,25 +69,37 @@ private:
 class Alert : public Window
 {
 public:
-	enum alert_icon{ ALERT_WARNING = 0, ALERT_INFO = 1, ALERT_QUESTION = 2}; 
+	/** Icons
+	 *\par: Description:
+	 *    	These values are used to specify different icons in the Alert. */
+	enum alert_icon{
+			/** Warning Icon:  Use this when you want to flag an error Alert. */ 
+		ALERT_WARNING = 0,
+			/** Info Icon:     Use this when you want to flag information to the user. */  
+		ALERT_INFO = 1,
+			/** Question Icon: Use this when you want to ask the user a question. */ 
+		ALERT_QUESTION = 2,
+			/** Tip Icon:      Use this when you want to give the user a tip for something. */ 
+		ALERT_TIP = 3
+	}; 
+ 
+public:
     Alert( const String& cTitle, const String& cText, int nFlags, ... );
     Alert( const String& cTitle, const String& cText, Bitmap* pcBitmap, int nFlags, ... ); 
     Alert( const String& cTitle, const String& cText, alert_icon nAlertNum, int nFlags, ...);
+    //Alert( const String& cTitle, const String& cText, BitmapImage* pcBitmap, int nFlags, ... ); 
     Alert( const String& cTitle,View*);
    ~Alert();
   
    
-    virtual void	HandleMessage( Message* pcMessage );
-  
-    int  Go();
-    void Go( Invoker* pcInvoker );
+	virtual void	HandleMessage( Message* pcMessage );
+	int  Go();
+	void Go( Invoker* pcInvoker );
 private:
-    AlertView* m_pcView;
-    Invoker*   m_pcInvoker;
-    port_id    m_hMsgPort;
+	class Private;
+	Private *m;
+
     void SetImage(uint32 nWidth, uint32 nHeight, uint8* pnBuffer);
-	Bitmap * cm_pcBitmap;
-	int nImage;
 };
 
 
@@ -100,6 +107,8 @@ class ProgressView : public View
 {
 public:
     ProgressView( const Rect& cFrame, bool bCanSkip );
+    virtual ~ProgressView();
+
     void	Layout( const Rect& cBounds );
 
     virtual void	Paint( const Rect& cUpdateRect );
@@ -107,10 +116,8 @@ public:
   
 private:
     friend class ProgressRequester;
-    StringView* m_pcPathName;
-    StringView* m_pcFileName;
-    Button*     m_pcCancel;
-    Button*     m_pcSkip;
+	class Private;
+	Private *m;
 };
 
 class ProgressRequester : public Window
@@ -119,20 +126,20 @@ public:
     enum { IDC_CANCEL = 1, IDC_SKIP };
   
     ProgressRequester( const Rect& cFrame, const String& cName, const String& cTitle, bool bCanSkip );
+    virtual ~ProgressRequester();
 
     virtual void	HandleMessage( Message* pcMessage );
   
-    void SetPathName( const char* pzString );
-    void SetFileName( const char* pzString );
+    void SetPathName( const String& cString );
+    void SetFileName( const String& cString );
 
     bool DoCancel() const;
     bool DoSkip();
 
 private:
-    ProgressView*	m_pcProgView;
-    volatile bool m_bDoCancel;
-    volatile bool m_bDoSkip;
+	class Private;
+	Private *m;
 };
 
 }
-#endif // __F_REQUESTERS_H__
+#endif // __F_GUI_REQUESTERS_H__

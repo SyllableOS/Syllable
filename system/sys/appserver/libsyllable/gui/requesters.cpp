@@ -24,6 +24,196 @@
 
 using namespace os;
 
+static const struct {
+  unsigned int  	 width;
+  unsigned int  	 height;
+  unsigned int  	 bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
+  unsigned char 	 pixel_data[32 * 32 * 4 + 1];
+} nTip_Icon = {
+  32, 32, 4,
+  "\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\237\237\313\20\231\231\307a\225\225"
+  "\305\261\221\221\303\360\215\215\301\377\210\210\276\377\203\203\273\377"
+  "}}\271\377xx\265\360oo\255\264dd\241hHHx\27\0\0\0\2\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\0\377\377\377\0\377\377\377\0\377"
+  "\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\240\240\312q\234\234\311\360\230\230\307\377\234"
+  "\236\320\377\250\256\341\377\261\270\353\377\263\273\356\377\261\272\356"
+  "\377\253\263\350\377\233\241\331\377}\200\277\377hh\255\377bb\251\361TT\227"
+  "|\0\0\0\11\0\0\0\2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\0\377\377"
+  "\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377"
+  "\0\377\377\377\0\0\0\0\0\0\0\0\0\245\245\316\20\242\242\314\320\236\236\312"
+  "\377\251\255\335\377\275\306\370\377\331\340\377\377\350\354\377\377\360"
+  "\363\377\377\367\371\377\377\364\366\377\377\360\363\377\377\350\354\377"
+  "\377\325\335\377\377\266\300\364\377\204\210\310\377YY\244\377RR\235\326"
+  "++Q\40\0\0\0\4\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\0\377\377\377\0\377\377"
+  "\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377"
+  "\0\0\0\0\0\245\245\316\20\242\242\314\320\241\241\316\377\266\275\356\377"
+  "\335\343\377\377\373\374\377\377\377\377\377\377\377\377\377\377\377\377"
+  "\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377"
+  "\377\377\377\377\367\371\377\377\325\335\377\377\247\257\350\377\\]\250\377"
+  "QQ\233\330%%F%\0\0\0\5\0\0\0\0\0\0\0\0\377\377\377\0\377\377\377\0\377\377"
+  "\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377"
+  "\0\0\0\0\0\242\242\314\300\241\242\316\377\274\305\365\377\350\354\377\377"
+  "\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377"
+  "\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377"
+  "\377\377\377\377\377\377\377\377\377\377\377\377\350\354\377\377\256\267"
+  "\356\377\\]\250\377PP\230\313\0\0\0\25\0\0\0\4\0\0\0\0\377\377\377\0\377"
+  "\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377"
+  "\377\0\377\377\377\0\237\237\312A\237\237\313\377\271\300\356\377\342\350"
+  "\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377"
+  "\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377"
+  "\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377"
+  "\377\377\377\377\330\337\377\377\243\252\342\377UU\242\37788ka\0\0\0\16\0"
+  "\0\0\1\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377"
+  "\0\377\377\377\0\377\377\377\0\377\377\377\0\234\234\311\261\243\245\323"
+  "\377\311\323\377\377\372\373\377\377\376\376\377\377\376\376\377\377\376"
+  "\376\377\377\376\376\377\377\376\376\377\377\376\376\377\377\376\376\377"
+  "\377\376\376\377\377\376\376\377\377\376\376\377\377\376\376\377\377\376"
+  "\376\377\377\376\376\377\377\376\376\377\377\367\371\377\377\311\323\377"
+  "\377km\263\377MM\222\302\0\0\0\35\0\0\0\5\377\377\377\0\377\377\377\0\377"
+  "\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377"
+  "\377\0\232\232\310\377\265\272\346\377\327\337\377\377\371\373\377\377\371"
+  "\373\377\377\371\373\377\377\371\373\377\377\371\373\377\377\371\373\377"
+  "\377\371\373\377\377\371\373\377\377\371\373\377\377\371\373\377\377\371"
+  "\373\377\377\371\373\377\377\371\373\377\377\371\373\377\377\371\373\377"
+  "\377\371\373\377\377\321\332\377\377\230\235\326\377UU\242\377\0\0\0,\0\0"
+  "\0\14\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377"
+  "\0\377\377\377\0\377\377\377\0\377\377\377\0\225\225\306\377\300\307\360"
+  "\377\331\340\377\377\364\367\377\377\364\367\377\377\364\367\377\377\364"
+  "\367\377\377\364\367\377\377\364\367\377\377\364\367\377\377\364\367\377"
+  "\377\364\367\377\377\364\367\377\377\364\367\377\377\364\367\377\377\364"
+  "\367\377\377\364\367\377\377\364\367\377\377\364\367\377\377\327\336\377"
+  "\377\261\267\350\377UU\242\377\0\0\0""7\0\0\0\22\377\377\377\0\377\377\377"
+  "\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0"
+  "\377\377\377\0\220\220\303\377\301\307\360\377\326\336\377\377\357\363\377"
+  "\377\357\363\377\377\357\363\377\377\357\363\377\377\357\363\377\377\357"
+  "\363\377\377\357\363\377\377\357\363\377\377\357\363\377\377\357\363\377"
+  "\377\357\363\377\377\357\363\377\377\357\363\377\377\357\363\377\377\357"
+  "\363\377\377\357\363\377\377\323\332\377\377\263\271\350\377UU\242\377\0"
+  "\0\0:\0\0\0\23\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377"
+  "\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\213\213\300\377\263"
+  "\267\343\377\326\335\377\377\343\350\377\377\353\357\377\377\353\357\377"
+  "\377\353\357\377\377\353\357\377\377\353\357\377\377\353\357\377\377\353"
+  "\357\377\377\353\357\377\377\353\357\377\377\353\357\377\377\353\357\377"
+  "\377\353\357\377\377\353\357\377\377\353\357\377\377\342\347\377\377\326"
+  "\335\377\377\245\252\334\377UU\242\377\0\0\0:\0\0\0\23\377\377\377\0\377"
+  "\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377"
+  "\377\0\377\377\377\0\204\204\272\322\227\231\314\377\331\340\377\377\332"
+  "\341\377\377\344\351\377\377\346\353\377\377\346\353\377\377\346\353\377"
+  "\377\346\353\377\377\346\353\377\377\346\353\377\377\346\353\377\377\346"
+  "\353\377\377\346\353\377\377\346\353\377\377\346\353\377\377\346\353\377"
+  "\377\344\351\377\377\332\341\377\377\331\340\377\377vx\271\377PP\230\335"
+  "\0\0\0""8\0\0\0\22\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377"
+  "\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0uu\252i||\270\377"
+  "\303\307\355\377\334\342\377\377\334\342\377\377\340\346\377\377\341\347"
+  "\377\377\341\347\377\377\341\347\377\377\341\347\377\377\341\347\377\377"
+  "\341\347\377\377\341\347\377\377\341\347\377\377\341\347\377\377\341\347"
+  "\377\377\340\346\377\377\334\342\377\377\334\342\377\377\272\277\350\377"
+  "UU\242\377::o\215\0\0\0""0\0\0\0\16\377\377\377\0\377\377\377\0\377\377\377"
+  "\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0"
+  "\0\0\0\7tt\260\325\177\200\274\377\337\345\377\377\337\345\377\377\337\345"
+  "\377\377\337\345\377\377\336\344\377\377\334\343\377\377\334\343\377\377"
+  "\334\343\377\377\334\343\377\377\334\343\377\377\334\343\377\377\336\344"
+  "\377\377\337\345\377\377\337\345\377\377\337\345\377\377\337\345\377\377"
+  "fg\256\377PP\230\335\0\0\0?\0\0\0!\0\0\0\7\377\377\377\0\377\377\377\0\377"
+  "\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377"
+  "\377\0\0\0\0\2XX\212>mm\257\377\245\250\326\377\342\347\377\377\342\347\377"
+  "\377\342\347\377\377\342\347\377\377\342\347\377\377\341\346\377\377\340"
+  "\346\377\377\340\346\377\377\341\346\377\377\342\347\377\377\342\347\377"
+  "\377\342\347\377\377\342\347\377\377\342\347\377\377\233\236\321\377UU\242"
+  "\377..Xv\0\0\0""1\0\0\0\21\0\0\0\2\377\377\377\0\377\377\377\0\377\377\377"
+  "\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0"
+  "\0\0\0\0\0\0\0\5aa\241\252jj\257\377\335\341\372\377\345\352\377\377\345"
+  "\352\377\377\345\352\377\377\345\352\377\377\345\352\377\377\345\352\377"
+  "\377\345\352\377\377\345\352\377\377\345\352\377\377\345\352\377\377\345"
+  "\352\377\377\345\352\377\377\323\327\363\377^^\250\377HH\212\273\0\0\0<\0"
+  "\0\0\36\0\0\0\6\0\0\0\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377"
+  "\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\0\0\0\0\0"
+  "\0\0\1""99a\34\\\\\245\362\216\220\306\377\351\354\377\377\351\354\377\377"
+  "\351\354\377\377\351\354\377\377\351\354\377\377\351\354\377\377\351\354"
+  "\377\377\351\354\377\377\351\354\377\377\351\354\377\377\351\354\377\377"
+  "\351\354\377\377\214\216\305\377SS\237\364\21\21\40P\0\0\0*\0\0\0\15\0\0"
+  "\0\1\0\0\0\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377"
+  "\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\3QQ\227\213UU\242\377\331\334\363\377\354\357\377\377\354\357\377\377"
+  "\354\357\377\377\354\357\377\377\354\357\377\377\354\357\377\377\354\357"
+  "\377\377\354\357\377\377\354\357\377\377\354\357\377\377\342\345\371\377"
+  "UU\242\377BB~\245\0\0\0""7\0\0\0\27\0\0\0\3\0\0\0\0\0\0\0\0\377\377\377\0"
+  "\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377"
+  "\377\377\0\377\377\377\0\0\0\0\0\0\0\0\0\0\0\0\0""66h\31UU\242\377\242\243"
+  "\321\377\357\362\377\377\357\362\377\377\357\362\377\377\357\362\377\377"
+  "\357\362\377\377\357\362\377\377\357\362\377\377\357\362\377\377\357\362"
+  "\377\377\357\362\377\377\242\243\321\377UU\242\377\21\21!O\0\0\0'\0\0\0\12"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377"
+  "\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\3PP\231\250hi\256\377\362\364\377\377\362\364\377\377"
+  "\362\364\377\377\362\364\377\377\362\364\377\377\362\364\377\377\362\364"
+  "\377\377\362\364\377\377\362\364\377\377\362\364\377\377hi\256\377HH\212"
+  "\273\0\0\0""9\0\0\0\27\0\0\0\3\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\0\377"
+  "\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377"
+  "\377\0\377\377\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0LL\221YUU\242\377\327"
+  "\330\356\377\365\367\377\377\365\367\377\377\365\367\377\377\365\367\377"
+  "\377\365\367\377\377\365\367\377\377\365\367\377\377\365\367\377\377\327"
+  "\330\356\377UU\242\37755e\200\0\0\0,\0\0\0\15\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377"
+  "\0\377\377\377\0\377\377\377\0\377\377\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\6UU\242\377\273\274\334\377\370\371\377\377\370\371\377\377\370"
+  "\371\377\377\370\371\377\377\370\371\377\377\370\371\377\377\370\371\377"
+  "\377\370\371\377\377\273\274\334\377UU\242\377\0\0\0@\0\0\0\37\0\0\0\6\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\0\377\377\377\0\377\377\377\0"
+  "\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\2UU\242\377\250\250\321\377\373\374"
+  "\377\377\373\374\377\377\373\374\377\377\373\374\377\377\373\374\377\377"
+  "\373\374\377\377\373\374\377\377\373\374\377\377\250\250\321\377UU\242\377"
+  "\0\0\0;\0\0\0\26\0\0\0\2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\0\377"
+  "\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377"
+  "\377\0\377\377\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0SS\236\304\224"
+  "\224\305\377\376\376\377\377\376\376\377\377\376\376\377\377\376\376\377"
+  "\377\376\376\377\377\376\376\377\377\376\376\377\377\376\376\377\377\224"
+  "\224\305\377MM\223\322\0\0\0""7\0\0\0\22\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377"
+  "\377\0\377\377\377\0\377\377\377\0\377\377\377\0\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0QQ\232\207UU\242\377UU\242\377UU\242\377UU\242\377UU\242"
+  "\377UU\242\377UU\242\377UU\242\377UU\242\377UU\242\377BB~\244\0\0\0""0\0"
+  "\0\0\16\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\0\377\377\377"
+  "\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0"
+  "\377\377\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\10ww\216\326"
+  "ll\177\377UUh\377>>R\377((;\377\27\27*\377\26\26)\377\26\26)\377\26\26)\377"
+  "\31\31""0\335\0\0\0@\0\0\0#\0\0\0\10\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377"
+  "\0\377\377\377\0\377\377\377\0\377\377\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\204\204\204#\217\217\217\377\357\357\360\377\364\364\367\377"
+  "\356\356\362\377\351\351\355\377\343\343\351\377\335\335\344\377\327\327"
+  "\340\377\225\225\241\377\22\22\25\377\0\0\0R\0\0\0\27\0\0\0\3\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\0\377\377\377\0\377\377\377\0\377"
+  "\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0ggg\22ttt\377\302\302\304\377\350\350\355"
+  "\377\334\334\343\377\317\317\331\377\303\303\320\377\263\263\303\377\234"
+  "\234\261\377ccs\377\12\12\13\377\0\0\0E\0\0\0\25\0\0\0\2\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377"
+  "\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0ccc\22___\377\333\333\334\377\364\364\367\377"
+  "\356\356\362\377\351\351\355\377\343\343\351\377\332\332\342\377\234\234"
+  "\261\377ccs\377\12\12\13\377\0\0\0G\0\0\0\26\0\0\0\2\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377"
+  "\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0MMM\"XXX\377\315\315\317\377\344\344\352\377\325"
+  "\325\336\377\307\307\323\377\271\271\307\377\252\252\274\377\234\234\261"
+  "\377tt\207\377\22\22\25\377\0\0\0T\0\0\0\26\0\0\0\2\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377"
+  "\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\2(((\212\15\15\15\314444\364]]]\377BBB\377"
+  "\40\40\40\377\3\3\3\377\1\1\1\351\1\1\1\322\1\1\1\244\0\0\0""5\0\0\0\24\0"
+  "\0\0\2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\0\377\377\377"
+  "\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0"
+  "\377\377\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\1\0\0\0\13\0"
+  "\0\0\40\31\31\31r]]]\347NNN\377!!!\377\2\2\2\322\0\0\0h\0\0\0:\0\0\0""0\0"
+  "\0\0\40\0\0\0\13\0\0\0\1\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\377"
+  "\377\0\377\377\377\0\377\377\377\0",
+};
+
+
 static const struct
 {
 	uint width;
@@ -498,6 +688,91 @@ static const struct
 		"\34\243\243\241\34\243\243\241\32\243\242\240\23\243\243\242\14\251\251\250"
 		"\3\350\350\350\0\373\373\373\0\377\377\377\0\377\377\377\0\377\377\377\0" "\376\376\376\0\367\367\367\0\353\353\353\0\344\344\344\0\344\344\344\0\344" "\344\344\0\344\344\344\0\344\344\344\0\344\344\344\0\344\344\344\0\344\344" "\344\0\344\344\344\0\344\344\344\0\344\344\344\0\344\344\344\0\344\344\344" "\0\344\344\344\0\344\344\344\0\344\344\344\0\344\344\344\0\344\344\344\0" "\344\344\344\0\343\343\343\0\343\343\343\0\344\344\344\0\347\347\347\0\362" "\362\362\0\374\374\374\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377" "\377\0\377\377\377\0\377\377\377\0\377\377\377\0\376\376\376\0\376\376\376" "\0\376\376\376\0\376\376\376\0\376\376\376\0\376\376\376\0\376\376\376\0" "\376\376\376\0\376\376\376\0\376\376\376\0\376\376\376\0\376\376\376\0\376" "\376\376\0\376\376\376\0\376\376\376\0\376\376\376\0\376\376\376\0\376\376" "\376\0\376\376\376\0\376\376\376\0\376\376\376\0\376\376\376\0\376\376\376" "\0\377\377\377\0\377\377\377\0\377\377\377\0\377\377\377\0",};
 
+class AlertView::Private
+{
+	public:
+	Private() {
+		m_pcBitmap = NULL;
+		m_pcImage = NULL;
+	}
+	
+	~Private() {
+	}
+	
+	public:
+    std::vector<String> m_cLines;
+    std::vector<Button*> 	   m_cButtons;
+    Point		   m_cButtonSize;
+    float		   m_vLineHeight;
+    Point		   m_cMinSize;
+    Bitmap*        m_pcBitmap;
+	BitmapImage*   m_pcImage;
+};
+
+class Alert::Private
+{
+	public:
+	Private() {
+		m_pcBitmap = NULL;
+		m_hMsgPort = -1;
+		m_pcInvoker = NULL;
+		m_pcImage = NULL;
+	}
+
+	~Private() {
+		if( m_hMsgPort != -1 )
+		{
+			delete_port( m_hMsgPort );
+		}
+		if( m_pcInvoker )
+		{
+			delete m_pcInvoker;
+		}	
+		if( m_pcBitmap != NULL )
+		{
+			delete m_pcBitmap;
+		}
+	}
+	
+	public:
+    AlertView* m_pcView;
+    Invoker*   m_pcInvoker;
+    port_id    m_hMsgPort;
+	Bitmap* m_pcBitmap;
+	BitmapImage* m_pcImage;
+};
+
+class ProgressView::Private
+{
+	public:
+	Private() {
+	}
+	
+	~Private() {
+	}
+	
+	public:
+    StringView* m_pcPathName;
+    StringView* m_pcFileName;
+    Button*     m_pcCancel;
+    Button*     m_pcSkip;
+};
+
+class ProgressRequester::Private
+{
+	public:
+	Private() {
+	}
+	
+	~Private() {
+	}
+	
+	public:
+    ProgressView*	m_pcProgView;
+    volatile bool m_bDoCancel;
+    volatile bool m_bDoSkip;
+};
+
 /** Initialize the Alert.
  * \par Description:
  *	The Alert is like a Messagebox in windows.  It provides a way to show errors,
@@ -505,26 +780,26 @@ static const struct
  * \param cTitle - The title of the window.
  * \param cText  - The text that will be shown in the Alert.
    \param nFlags - The flags that will be passed to the appserver to tell the appserver what options
-   				   when creating this.
+   				   when creating this Alert.
  * \param ...    - The name of buttons to create(IE: would be like "ok" or "cancel").  You can create 
- 					more than one button(IE: new Alert("Title","Text",WND_NOT_RESIZABLE,"OK", "CANCEL");).  
+ 					more than one button(IE: new Alert("Title","Text",WND_NOT_RESIZABLE,"OK", "CANCEL",NULL);).  Caveat: Make sure to add "NULL" to the end of the of the constructor.
  * \sa Go() 
  * \author	Kurt Skauen (kurt@atheos.cx) with modifications by Rick Caudill
  *****************************************************************************/
 Alert::Alert( const String & cTitle, const String & cText, int nFlags, ... ):Window( Rect( 100, 50, 100, 50 ), "alert_window", cTitle.c_str(), WND_NOT_RESIZABLE | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT )
 {
+	m = new Private;
 
 	va_list pArgs;
 
 	va_start( pArgs, nFlags );
-	cm_pcBitmap = NULL;
 
-	m_pcView = new AlertView( cText, pArgs );
-	m_pcView->SetFgColor( 0, 0, 0 );
-	m_pcView->SetBgColor( get_default_color( COL_NORMAL ) );
-	Point cSize = m_pcView->GetPreferredSize( false );
+	m->m_pcView = new AlertView( cText, pArgs );
+	m->m_pcView->SetFgColor( 0, 0, 0 );
+	m->m_pcView->SetBgColor( get_default_color( COL_NORMAL ) );
+	Point cSize = m->m_pcView->GetPreferredSize( false );
 
-	m_pcView->ResizeTo( cSize );
+	m->m_pcView->ResizeTo( cSize );
 	ResizeTo( cSize );
 
 	if( nFlags > 0 )
@@ -535,10 +810,8 @@ Alert::Alert( const String & cTitle, const String & cText, int nFlags, ... ):Win
 
 	MoveTo( cDesktop.GetResolution().x / 2 - cSize.x / 2, cDesktop.GetResolution(  ).y / 2 - cSize.y / 2 );
 
-	AddChild( m_pcView );
+	AddChild( m->m_pcView );
 	va_end( pArgs );
-	m_pcInvoker = NULL;
-	m_hMsgPort = -1;
 
 	Flush();
 	Sync();
@@ -554,12 +827,14 @@ Alert::Alert( const String & cTitle, const String & cText, int nFlags, ... ):Win
    				     when creating this.
  * \param pcBitmap - Bitmap that will show up in the Alert Window. 
  * \param ...      - The name of buttons to create(IE: would be like "ok" or "cancel").  You can create 
- 					more than one button(IE: new Alert("Title","Text",WND_NOT_RESIZABLE,"OK", "CANCEL");).  
+ 					more than one button(IE: new Alert("Title","Text",WND_NOT_RESIZABLE,"OK", "CANCEL");).    Caveat: Make sure to add "NULL" to the end of the of the constructor.
  * \sa Go() 
  * \author	Kurt Skauen (kurt@atheos.cx) with modifications by Rick Caudill
  *****************************************************************************/
 Alert::Alert( const String & cTitle, const String & cText, Bitmap * pcBitmap, int nFlags, ... ):Window( Rect( 100, 50, 100, 50 ), "alert_window", cTitle.c_str(), WND_NOT_RESIZABLE | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT )
 {
+	m = new Private;
+
 	va_list pArgs;
 
 	va_start( pArgs, nFlags );
@@ -569,27 +844,24 @@ Alert::Alert( const String & cTitle, const String & cText, Bitmap * pcBitmap, in
 		SetFlags( nFlags );
 	}
 
-	cm_pcBitmap = NULL;
-	m_pcView = new AlertView( cText, pArgs, pcBitmap );
+	m->m_pcView = new AlertView( cText, pArgs, pcBitmap );
 
-	m_pcView->SetEraseColor( get_default_color( COL_NORMAL ) );
-	m_pcView->SetFgColor( 0, 0, 0 );
-	m_pcView->SetBgColor( get_default_color( COL_NORMAL ) );
-	Point cSize = m_pcView->GetPreferredSize( false );
+	m->m_pcView->SetEraseColor( get_default_color( COL_NORMAL ) );
+	m->m_pcView->SetFgColor( 0, 0, 0 );
+	m->m_pcView->SetBgColor( get_default_color( COL_NORMAL ) );
+	Point cSize = m->m_pcView->GetPreferredSize( false );
 
-	m_pcView->ResizeTo( cSize );
+	m->m_pcView->ResizeTo( cSize );
 	ResizeTo( cSize );
 
 	Desktop cDesktop;
 
 	MoveTo( cDesktop.GetResolution().x / 2 - cSize.x / 2, cDesktop.GetResolution(  ).y / 2 - cSize.y / 2 );
 
-	AddChild( m_pcView );
+	AddChild( m->m_pcView );
 	va_end( pArgs );
-	m_pcInvoker = NULL;
-	m_hMsgPort = -1;
 
-	m_pcView->Paint( GetBounds() );
+	m->m_pcView->Paint( GetBounds() );
 
 	Flush();
 	Sync();
@@ -604,28 +876,26 @@ Alert::Alert( const String & cTitle, const String & cText, Bitmap * pcBitmap, in
  * \param cText     - The text that will be shown in the Alert.
  * \param nFlags    - The flags that will be passed to the appserver to tell the appserver what options
    				       when creating this.
- * \param nAlertNum - Static icons that will show up when you call this constructor. To call the icons you would do something like this: (new Alert("Title","Text", Alert::ALERT_WARNING,0."OK",NULL);)
+ * \param nAlertNum - Static icons that will show up when you call this constructor. To call the icons you would do something like this: (new Alert("Title","Text", Alert::ALERT_WARNING,0,"OK",NULL);)
  * \param ...       - The name of buttons to create(IE: would be like "ok" or "cancel").  You can create 
- 					more than one button(IE: new Alert("Title","Text",WND_NOT_RESIZABLE,"OK", "CANCEL");).  
+ 					more than one button(IE: new Alert("Title","Text",WND_NOT_RESIZABLE,"OK", "CANCEL");).    Caveat: Make sure to add "NULL" to the end of the of the constructor.
  * \sa Go() 
  * \author	Kurt Skauen (kurt@atheos.cx) with modifications by Rick Caudill
  *****************************************************************************/
 Alert::Alert( const String & cTitle, const String & cText, alert_icon nAlertNum, int nFlags, ... ):Window( Rect( 100, 50, 100, 50 ), "alert_window", cTitle.c_str(), WND_NOT_RESIZABLE | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT )
 {
+	m = new Private;
+
 	va_list pArgs;
 
 	va_start( pArgs, nFlags );
-
-	nImage = nAlertNum;
 
 	if( nFlags > 0 )
 	{
 		SetFlags( nFlags );
 	}
 
-	cm_pcBitmap = 0;
-
-	switch ( nImage )
+	switch ( nAlertNum )
 	{
 
 	case ALERT_WARNING:
@@ -637,28 +907,29 @@ Alert::Alert( const String & cTitle, const String & cText, alert_icon nAlertNum,
 	case ALERT_QUESTION:
 		SetImage( nQuestion_Icon.width, nQuestion_Icon.height, ( uint8 * )nQuestion_Icon.pixel_data );
 		break;
+	case ALERT_TIP:
+		SetImage( nTip_Icon.width, nTip_Icon.height, ( uint8*)nTip_Icon.pixel_data );
+		break;
 	default:
 		break;
 	}
-	m_pcView = new AlertView( cText, pArgs, cm_pcBitmap );
+	m->m_pcView = new AlertView( cText, pArgs, m->m_pcBitmap );
 
-	m_pcView->SetEraseColor( get_default_color( COL_NORMAL ) );
-	m_pcView->SetFgColor( 0, 0, 0 );
-	m_pcView->SetBgColor( get_default_color( COL_NORMAL ) );
-	Point cSize = m_pcView->GetPreferredSize( false );
+	m->m_pcView->SetEraseColor( get_default_color( COL_NORMAL ) );
+	m->m_pcView->SetFgColor( 0, 0, 0 );
+	m->m_pcView->SetBgColor( get_default_color( COL_NORMAL ) );
+	Point cSize = m->m_pcView->GetPreferredSize( false );
 
-	m_pcView->ResizeTo( cSize );
+	m->m_pcView->ResizeTo( cSize );
 	ResizeTo( cSize );
 
 	Desktop cDesktop;
 
 	MoveTo( cDesktop.GetResolution().x / 2 - cSize.x / 2, cDesktop.GetResolution(  ).y / 2 - cSize.y / 2 );
 
-	AddChild( m_pcView );
+	AddChild( m->m_pcView );
 	va_end( pArgs );
-	m_pcInvoker = NULL;
-	m_hMsgPort = -1;
-	m_pcView->Paint( GetBounds() );
+	m->m_pcView->Paint( GetBounds() );
 
 	Flush();
 	Sync();
@@ -673,7 +944,7 @@ Alert::Alert( const String & cTitle, const String & cText, alert_icon nAlertNum,
  * \param cTitle    - The title of the window.
  * \param pcView -  The view that will be added to the Alert   
  * \par Example:  If the View that is added to the Alert has another control
- *  on it, you must invoke Control::SetTarget(Messenger*)
+ *                on it, you must invoke Control::SetTarget(Messenger*)
  * \code
  *  Window* pcWindow = new Window(Rect(100,100,500,500),"","Alert test")
  *  View* pcView = new View(Rect(),"");
@@ -686,8 +957,10 @@ Alert::Alert( const String & cTitle, const String & cText, alert_icon nAlertNum,
  *****************************************************************************/
 Alert::Alert( const String & cTitle, os::View * pcView ):Window( Rect( 100, 50, pcView->GetBounds().Width(  ) + 100, pcView->GetBounds(  ).Height(  ) + 50 ), "alert_window", cTitle.c_str(  ), WND_NOT_RESIZABLE | WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT )
 {
-	m_pcInvoker = NULL;
-	m_hMsgPort = -1;
+	m = new Private;
+
+	m->m_pcInvoker = NULL;
+	m->m_hMsgPort = -1;
 
 	AddChild( pcView );
 }
@@ -701,16 +974,7 @@ Alert::Alert( const String & cTitle, os::View * pcView ):Window( Rect( 100, 50, 
 
 Alert::~Alert()
 {
-	if( m_hMsgPort != -1 )
-	{
-		delete_port( m_hMsgPort );
-	}
-	delete m_pcInvoker;
-
-	if( cm_pcBitmap != NULL )
-	{
-		delete cm_pcBitmap;
-	}
+	delete m;
 }
 
 //----------------------------------------------------------------------------
@@ -722,17 +986,17 @@ Alert::~Alert()
 
 void Alert::HandleMessage( Message * pcMessage )
 {
-	if( pcMessage->GetCode() < int32 ( m_pcView->m_cButtons.size(  ) ) )
+	if( pcMessage->GetCode() < int32 ( m->m_pcView->m->m_cButtons.size(  ) ) )
 	{
-		if( m_hMsgPort >= 0 )
+		if( m->m_hMsgPort >= 0 )
 		{
-			send_msg( m_hMsgPort, pcMessage->GetCode(), NULL, 0 );
+			send_msg( m->m_hMsgPort, pcMessage->GetCode(), NULL, 0 );
 		}
 		else
 		{
-			if( m_pcInvoker != NULL )
+			if( m->m_pcInvoker != NULL )
 			{
-				Message *pcMsg = m_pcInvoker->GetMessage();
+				Message *pcMsg = m->m_pcInvoker->GetMessage();
 
 				if( pcMsg == NULL )
 				{
@@ -741,7 +1005,7 @@ void Alert::HandleMessage( Message * pcMessage )
 				else
 				{
 					pcMsg->AddInt32( "which", pcMessage->GetCode() );
-					m_pcInvoker->Invoke();
+					m->m_pcInvoker->Invoke();
 				}
 			}
 			PostMessage( M_QUIT );
@@ -765,17 +1029,17 @@ int Alert::Go()
 	uint32 nCode;
 	int nError;
 
-	m_hMsgPort = create_port( "alert_port", DEFAULT_PORT_SIZE );
+	m->m_hMsgPort = create_port( "alert_port", DEFAULT_PORT_SIZE );
 
 	Show();
 	MakeFocus();
-	if( m_hMsgPort < 0 )
+	if( m->m_hMsgPort < 0 )
 	{
 		dbprintf( "Alert::WaitForSelection() failed to create message port\n" );
 		PostMessage( M_QUIT );
 		return ( -1 );
 	}
-	nError = get_msg( m_hMsgPort, &nCode, NULL, 0 );
+	nError = get_msg( m->m_hMsgPort, &nCode, NULL, 0 );
 	if( nError < 0 )
 	{
 		PostMessage( M_QUIT );
@@ -800,7 +1064,7 @@ int Alert::Go()
 
 void Alert::Go( Invoker * pcInvoker )
 {
-	m_pcInvoker = pcInvoker;
+	m->m_pcInvoker = pcInvoker;
 	Show();
 	MakeFocus();
 }
@@ -817,16 +1081,16 @@ void Alert::Go( Invoker * pcInvoker )
 void Alert::SetImage( uint32 nWidth, uint32 nHeight, uint8 *pnBuffer )
 {
 
-	if( cm_pcBitmap != 0 )
-		delete cm_pcBitmap;
+	if( m->m_pcBitmap != 0 )
+		delete m->m_pcBitmap;
 
 	uint32 nBufferSize = nWidth * nHeight * 4;
 
-	cm_pcBitmap = new Bitmap( nWidth, nHeight, CS_RGB32 );
+	m->m_pcBitmap = new Bitmap( nWidth, nHeight, CS_RGB32 );
 
 	Color32_s cBGCol = get_default_color( COL_NORMAL );
 
-	uint8 *pnRaster = cm_pcBitmap->LockRaster();
+	uint8 *pnRaster = m->m_pcBitmap->LockRaster();
 
 	for( uint32 nByte = 0; nByte < nBufferSize; nByte += 4 )
 	{
@@ -847,45 +1111,40 @@ void Alert::SetImage( uint32 nWidth, uint32 nHeight, uint8 *pnBuffer )
 
 	}
 
-	cm_pcBitmap->UnlockRaster();
+	m->m_pcBitmap->UnlockRaster();
 
 	Flush();
 }
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
 AlertView::AlertView( const String & cText, va_list pButtons, Bitmap * pcBitmap ):View( Rect( 0, 0, 1, 1 ), "alert", CF_FOLLOW_ALL )
 {
+	m = new Private;
+
 	const char *pzButName;
 
-	pcBitmp = pcBitmap;
+	m->m_pcBitmap = pcBitmap;
 	uint i = 0;
 
 	while( ( pzButName = va_arg( pButtons, const char * ) ) != NULL )
 	{
 		Button *pcButton = new Button( Rect( 0, 0, 1, 1 ), pzButName, pzButName, new Message( i++ ) );
 
-		m_cButtons.push_back( pcButton );
+		m->m_cButtons.push_back( pcButton );
 		AddChild( pcButton );
 
 		Point cSize = pcButton->GetPreferredSize( false );
 
-		if( cSize.x > m_cButtonSize.x )
+		if( cSize.x > m->m_cButtonSize.x )
 		{
-			m_cButtonSize.x = (float)((uint)cSize.x);
+			m->m_cButtonSize.x = (float)((uint)cSize.x);
 		}
-		if( cSize.y > m_cButtonSize.y )
+		if( cSize.y > m->m_cButtonSize.y )
 		{
-			m_cButtonSize.y = (float)((uint)cSize.y);
+			m->m_cButtonSize.y = (float)((uint)cSize.y);
 		}
 	}
 
-	float nWidth = ( m_cButtonSize.x + 5 ) * m_cButtons.size();
+	float nWidth = ( m->m_cButtonSize.x + 5 ) * m->m_cButtons.size();
 
 	int nStart = 0;
 
@@ -896,7 +1155,7 @@ AlertView::AlertView( const String & cText, va_list pButtons, Bitmap * pcBitmap 
 			int nLen = i - nStart;
 
 			String cLine( cText, nStart, nLen );
-			m_cLines.push_back( cLine );
+			m->m_cLines.push_back( cLine );
 			float nStrLen = GetStringWidth( cLine ) + 20;
 
 			if( nStrLen > nWidth )
@@ -911,65 +1170,70 @@ AlertView::AlertView( const String & cText, va_list pButtons, Bitmap * pcBitmap 
 	font_height sFontHeight;
 
 	GetFontHeight( &sFontHeight );
-	m_vLineHeight = sFontHeight.ascender + sFontHeight.descender + sFontHeight.line_gap;
+	m->m_vLineHeight = sFontHeight.ascender + sFontHeight.descender + sFontHeight.line_gap;
 
-	float nHeight = m_cLines.size() * m_vLineHeight;
+	float nHeight = m->m_cLines.size() * m->m_vLineHeight;
 
-	nHeight += m_cButtonSize.y + 30;
+	nHeight += m->m_cButtonSize.y + 30;
 
-	float y = nHeight - m_cButtonSize.y - 5;
+	float y = nHeight - m->m_cButtonSize.y - 5;
 
 	if( pcBitmap != NULL )
 	{
-		x = nWidth - m_cButtons.size() * ( m_cButtonSize.x + 5 ) + pcBitmap->GetBounds(  ).Width(  );
+		x = nWidth - m->m_cButtons.size() * ( m->m_cButtonSize.x + 5 ) + pcBitmap->GetBounds(  ).Width(  );
 	}
 
 	else
 	{
-		x = nWidth - m_cButtons.size() * ( m_cButtonSize.x + 5 ) - 5;	// sets button placement
+		x = nWidth - m->m_cButtons.size() * ( m->m_cButtonSize.x + 5 ) - 5;	// sets button placement
 	}
-	for( i = 0; i < m_cButtons.size(); ++i )
+	for( i = 0; i < m->m_cButtons.size(); ++i )
 	{
 		if( pcBitmap != NULL )
 		{
 
-			m_cButtons[i]->SetFrame( Rect( x, y, x + m_cButtonSize.x, y + m_cButtonSize.y - 1 ) );	//look here for button position manip
-			x += m_cButtonSize.x + 5;
-			m_cButtons[i]->Flush();
-			m_cButtons[i]->Sync();
+			m->m_cButtons[i]->SetFrame( Rect( x, y, x + m->m_cButtonSize.x, y + m->m_cButtonSize.y - 1 ) );	//look here for button position manip
+			x += m->m_cButtonSize.x + 5;
+			m->m_cButtons[i]->Flush();
+			m->m_cButtons[i]->Sync();
 
 		}
 		else
 		{
 
-			m_cButtons[i]->SetFrame( Rect( x, y, x + m_cButtonSize.x + 5, y + m_cButtonSize.y - 1 ) );	//look here for button position manip
-			x += m_cButtonSize.x + 5;	// was 5
-			m_cButtons[i]->Flush();
-			m_cButtons[i]->Sync();
+			m->m_cButtons[i]->SetFrame( Rect( x, y, x + m->m_cButtonSize.x + 5, y + m->m_cButtonSize.y - 1 ) );	//look here for button position manip
+			x += m->m_cButtonSize.x + 5;	// was 5
+			m->m_cButtons[i]->Flush();
+			m->m_cButtons[i]->Sync();
 
 		}
 
 	}
 
-	if( pcBitmp != NULL )
+	if( m->m_pcBitmap != NULL )
 	{
-		m_cMinSize.x = nWidth + pcBitmp->GetBounds().Width(  ) + 5;
+		m->m_cMinSize.x = nWidth + m->m_pcBitmap->GetBounds().Width(  ) + 5;
 
 	}
 	else
 	{
-		m_cMinSize.x = nWidth;	//was 0
+		m->m_cMinSize.x = nWidth;	//was 0
 
 	}
-	m_cMinSize.y = nHeight + 4;
+	m->m_cMinSize.y = nHeight + 4;
 
 	Invalidate();
 
 }
 
+AlertView::~AlertView()
+{
+	delete m;
+}
+
 void AlertView::AllAttached()
 {
-	m_cButtons[0]->MakeFocus();
+	m->m_cButtons[0]->MakeFocus();
 }
 
 //----------------------------------------------------------------------------
@@ -981,7 +1245,7 @@ void AlertView::AllAttached()
 
 Point AlertView::GetPreferredSize( bool bLargest )
 {
-	return ( m_cMinSize );
+	return ( m->m_cMinSize );
 }
 
 //----------------------------------------------------------------------------
@@ -995,44 +1259,43 @@ void AlertView::Paint( const Rect & cUpdateRect )
 {
 	FillRect( GetBounds(), get_default_color( COL_NORMAL ) );
 
-	if( pcBitmp != NULL )
+	if( m->m_pcBitmap != NULL )
 	{
 		SetDrawingMode( DM_BLEND );
-		DrawBitmap( pcBitmp, pcBitmp->GetBounds(), Rect( 5, 5, pcBitmp->GetBounds(  ).Width(  ) + 1, pcBitmp->GetBounds(  ).Height(  ) ) );
+		DrawBitmap( m->m_pcBitmap, m->m_pcBitmap->GetBounds(), Rect( 5, 5, m->m_pcBitmap->GetBounds(  ).Width(  ) + 1, m->m_pcBitmap->GetBounds(  ).Height(  ) ) );
 		SetDrawingMode( DM_OVER );
 
 		float y = 20.0f;
 
-		for( uint i = 0; i < m_cLines.size(); ++i )
+		for( uint i = 0; i < m->m_cLines.size(); ++i )
 		{
-			MovePenTo( 20 + pcBitmp->GetBounds().Width(  ), y );
-			DrawString( m_cLines[i].c_str() );
-			y += m_vLineHeight;
+			MovePenTo( 20 + m->m_pcBitmap->GetBounds().Width(  ), y );
+			DrawString( m->m_cLines[i].c_str() );
+			y += m->m_vLineHeight;
 		}
 	}
 	else
 	{
 		float y = 20.0f;
 
-		for( uint i = 0; i < m_cLines.size(); ++i )
+		for( uint i = 0; i < m->m_cLines.size(); ++i )
 		{
-			if( pcBitmp != NULL )
+			if( m->m_pcBitmap != NULL )
 			{
-				MovePenTo( pcBitmp->GetBounds().Width(  ) / 2 + 2, pcBitmp->GetBounds(  ).Height(  ) / 2 + 7 );
+				MovePenTo( m->m_pcBitmap->GetBounds().Width(  ) / 2 + 2, m->m_pcBitmap->GetBounds(  ).Height(  ) / 2 + 7 );
 			}
 			else
 			{
 				MovePenTo( 10, y );
 			}
 
-			DrawString( m_cLines[i].c_str() );
-			y += m_vLineHeight;
+			DrawString( m->m_cLines[i].c_str() );
+			y += m->m_vLineHeight;
 		}
 	}
 
 	//Invalidate();
 }
-
 
 //----------------------------------------------------------------------------
 // NAME:
@@ -1043,13 +1306,20 @@ void AlertView::Paint( const Rect & cUpdateRect )
 
 ProgressRequester::ProgressRequester( const Rect & cFrame, const String& cName, const String& cTitle, bool bCanSkip ):Window( cFrame, cName, cTitle )
 {
-	Lock();
-	m_bDoCancel = false;
-	m_bDoSkip = false;
+	m = new Private;
 
-	m_pcProgView = new ProgressView( GetBounds(), bCanSkip );
-	AddChild( m_pcProgView );
+	Lock();
+	m->m_bDoCancel = false;
+	m->m_bDoSkip = false;
+
+	m->m_pcProgView = new ProgressView( GetBounds(), bCanSkip );
+	AddChild( m->m_pcProgView );
 	Unlock();
+}
+
+ProgressRequester::~ProgressRequester()
+{
+	delete m;
 }
 
 //----------------------------------------------------------------------------
@@ -1064,10 +1334,10 @@ void ProgressRequester::HandleMessage( Message * pcMessage )
 	switch ( pcMessage->GetCode() )
 	{
 	case IDC_CANCEL:
-		m_bDoCancel = true;
+		m->m_bDoCancel = true;
 		break;
 	case IDC_SKIP:
-		m_bDoSkip = true;
+		m->m_bDoSkip = true;
 		break;
 	default:
 		Handler::HandleMessage( pcMessage );
@@ -1084,7 +1354,7 @@ void ProgressRequester::HandleMessage( Message * pcMessage )
 
 bool ProgressRequester::DoCancel() const
 {
-	return ( m_bDoCancel );
+	return ( m->m_bDoCancel );
 }
 
 //----------------------------------------------------------------------------
@@ -1096,9 +1366,9 @@ bool ProgressRequester::DoCancel() const
 
 bool ProgressRequester::DoSkip()
 {
-	bool bSkip = m_bDoSkip;
+	bool bSkip = m->m_bDoSkip;
 
-	m_bDoSkip = false;
+	m->m_bDoSkip = false;
 	return ( bSkip );
 }
 
@@ -1109,10 +1379,10 @@ bool ProgressRequester::DoSkip()
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-void ProgressRequester::SetPathName( const char *pzString )
+void ProgressRequester::SetPathName( const String& cString )
 {
-	m_pcProgView->m_pcPathName->SetString( pzString );
-	m_bDoSkip = false;
+	m->m_pcProgView->m->m_pcPathName->SetString( cString );
+	m->m_bDoSkip = false;
 }
 
 //----------------------------------------------------------------------------
@@ -1122,10 +1392,10 @@ void ProgressRequester::SetPathName( const char *pzString )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-void ProgressRequester::SetFileName( const char *pzString )
+void ProgressRequester::SetFileName( const String& cString )
 {
-	m_pcProgView->m_pcFileName->SetString( pzString );
-	m_bDoSkip = false;
+	m->m_pcProgView->m->m_pcFileName->SetString( cString );
+	m->m_bDoSkip = false;
 }
 
 //----------------------------------------------------------------------------
@@ -1137,34 +1407,41 @@ void ProgressRequester::SetFileName( const char *pzString )
 
 ProgressView::ProgressView( const Rect & cFrame, bool bCanSkip ):View( cFrame, "progress_view", CF_FOLLOW_ALL )
 {
-	m_pcFileName = new StringView( Rect( 0, 0, 1, 1 ), "file_name", "" );
-	m_pcPathName = new StringView( Rect( 0, 0, 1, 1 ), "path_name", "" );
-	m_pcCancel = new Button( Rect( 0, 0, 1, 1 ), "cancel", "Cancel", new Message( ProgressRequester::IDC_CANCEL ) );
+	m = new Private;
+
+	m->m_pcFileName = new StringView( Rect( 0, 0, 1, 1 ), "file_name", "" );
+	m->m_pcPathName = new StringView( Rect( 0, 0, 1, 1 ), "path_name", "" );
+	m->m_pcCancel = new Button( Rect( 0, 0, 1, 1 ), "cancel", "Cancel", new Message( ProgressRequester::IDC_CANCEL ) );
 	if( bCanSkip )
 	{
-		m_pcSkip = new Button( Rect( 0, 0, 1, 1 ), "skip", "Skip", new Message( ProgressRequester::IDC_SKIP ) );
+		m->m_pcSkip = new Button( Rect( 0, 0, 1, 1 ), "skip", "Skip", new Message( ProgressRequester::IDC_SKIP ) );
 	}
 	else
 	{
-		m_pcSkip = NULL;
+		m->m_pcSkip = NULL;
 	}
 
-	AddChild( m_pcPathName );
-	AddChild( m_pcFileName );
-	AddChild( m_pcCancel );
+	AddChild( m->m_pcPathName );
+	AddChild( m->m_pcFileName );
+	AddChild( m->m_pcCancel );
 
-	if( m_pcSkip != NULL )
+	if( m->m_pcSkip != NULL )
 	{
-		AddChild( m_pcSkip );
+		AddChild( m->m_pcSkip );
 	}
 
-	m_pcPathName->SetBgColor( 220, 220, 220 );
-	m_pcPathName->SetFgColor( 0, 0, 0 );
+	m->m_pcPathName->SetBgColor( 220, 220, 220 );
+	m->m_pcPathName->SetFgColor( 0, 0, 0 );
 
-	m_pcFileName->SetBgColor( 220, 220, 220 );
-	m_pcFileName->SetFgColor( 0, 0, 0 );
+	m->m_pcFileName->SetBgColor( 220, 220, 220 );
+	m->m_pcFileName->SetFgColor( 0, 0, 0 );
 
 	Layout( GetBounds() );
+}
+
+ProgressView::~ProgressView()
+{
+	delete m;
 }
 
 //----------------------------------------------------------------------------
@@ -1201,19 +1478,19 @@ void ProgressView::FrameSized( const Point & cDelta )
 
 void ProgressView::Layout( const Rect & cBounds )
 {
-	Point cSize1 = m_pcCancel->GetPreferredSize( false );
+	Point cSize1 = m->m_pcCancel->GetPreferredSize( false );
 	Point cSize2;
 
-	if( m_pcSkip != NULL )
+	if( m->m_pcSkip != NULL )
 	{
-		cSize2 = m_pcSkip->GetPreferredSize( false );
+		cSize2 = m->m_pcSkip->GetPreferredSize( false );
 	}
 	else
 	{
 		cSize2 = cSize1;
 	}
 
-	Point cStrSize = m_pcFileName->GetPreferredSize( false );
+	Point cStrSize = m->m_pcFileName->GetPreferredSize( false );
 
 	cStrSize.x = cBounds.Width() - 9.0f;
 
@@ -1226,11 +1503,11 @@ void ProgressView::Layout( const Rect & cBounds )
 		cSize1.y = cSize2.y;
 	}
 
-	if( m_pcSkip != NULL )
+	if( m->m_pcSkip != NULL )
 	{
-		m_pcSkip->ResizeTo( cSize1 );
+		m->m_pcSkip->ResizeTo( cSize1 );
 	}
-	m_pcCancel->ResizeTo( cSize1 );
+	m->m_pcCancel->ResizeTo( cSize1 );
 
 	Point cPos1 = cBounds.RightBottom() - cSize1 - Point( 5, 5 );
 	Point cPos2 = cPos1;
@@ -1239,21 +1516,22 @@ void ProgressView::Layout( const Rect & cBounds )
 
 	float nCenter = ( ( cBounds.Height() + 1.0f ) - cSize1.y - 5.0f ) / 2.0f;
 
-	m_pcPathName->ResizeTo( cStrSize );
-	m_pcPathName->MoveTo( 5, nCenter - cStrSize.y / 2 - cStrSize.y );
+	m->m_pcPathName->ResizeTo( cStrSize );
+	m->m_pcPathName->MoveTo( 5, nCenter - cStrSize.y / 2 - cStrSize.y );
 
-	m_pcFileName->ResizeTo( cStrSize );
-	m_pcFileName->MoveTo( 5, nCenter - cStrSize.y / 2 + cStrSize.y );
+	m->m_pcFileName->ResizeTo( cStrSize );
+	m->m_pcFileName->MoveTo( 5, nCenter - cStrSize.y / 2 + cStrSize.y );
 
-	if( m_pcSkip != NULL )
+	if( m->m_pcSkip != NULL )
 	{
-		m_pcSkip->MoveTo( cPos1 );
-		m_pcCancel->MoveTo( cPos2 );
+		m->m_pcSkip->MoveTo( cPos1 );
+		m->m_pcCancel->MoveTo( cPos2 );
 	}
 	else
 	{
-		m_pcCancel->MoveTo( cPos1 );
+		m->m_pcCancel->MoveTo( cPos1 );
 	}
 	Flush();
 }
+
 
