@@ -1,3 +1,8 @@
+* March 16 2005, Jake Hamby *
+
+Updated to Build 0008.  Finished merging Arno's most recent set of SMP fixes,
+plus minor spelling corrections.
+
 * March 14 2005, Jake Hamby *
 
 Updated to Build 0007.  Commented out the microsecond precision code for
