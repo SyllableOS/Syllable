@@ -47,10 +47,12 @@ void ata_detect_pci_controllers( void )
 	PCI_Info_s pcidevice;
 	char zArg[32];
 	bool bPrimaryEnabled = true, bSecondaryEnabled = true;
-    const char* const *argv;
-    int argc;
-    
-    get_kernel_arguments( &argc, &argv );
+	bool bPrimaryDmaEnabled = true, bSecondaryDmaEnabled = true;
+	bool bPciFound = false;
+	const char* const *argv;
+	int argc;
+	
+	get_kernel_arguments( &argc, &argv );
 
 	/* See if any of controllers are disabled by the user */
 	for( i = 0; i < argc; ++i )
@@ -61,6 +63,12 @@ void ata_detect_pci_controllers( void )
 			{
 				kerndbg( KERN_INFO, "ata0 disabled by user\n" );
 				bPrimaryEnabled = false;
+				continue;
+			}
+			else if( strcmp( zArg, "nodma" ) == 0 )
+			{
+				kerndbg( KERN_INFO, "ata0 DMA disabled by user\n" );
+				bPrimaryDmaEnabled = false;
 				continue;
 			}
 			else	/* Assume that the argument given is the base address */
@@ -78,6 +86,12 @@ void ata_detect_pci_controllers( void )
 			{
 				kerndbg( KERN_INFO, "ata1 disabled by user\n" );
 				bSecondaryEnabled = false;
+				continue;
+			}
+			else if( strcmp( zArg, "nodma" ) == 0 )
+			{
+				kerndbg( KERN_INFO, "ata1 DMA disabled by user\n" );
+				bPrimaryDmaEnabled = false;
 				continue;
 			}
 			else	/* Assume that the argument given is the base address */
@@ -100,6 +114,8 @@ void ata_detect_pci_controllers( void )
 				kerndbg( KERN_INFO, "ATA controller at bus %u, device %u, function %u is disabled by BIOS\n", pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction );
 				continue;
 			}
+
+			bPciFound = true;
 
 			if( bPrimaryEnabled )
 			{
@@ -133,7 +149,7 @@ void ata_detect_pci_controllers( void )
 				}
 
 				/* Enable Busmastering , save dma port and request irq */
-				if( g_nControllers[0].io_base != 0x00 )
+				if( g_nControllers[0].io_base != 0x00 && bPrimaryDmaEnabled )
 				{
 					write_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND, 2, read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND , 2 ) | PCI_COMMAND_MASTER | PCI_COMMAND_IO );
 					g_nControllers[0].dma_base = pcidevice.u.h0.nBase4 & PCI_ADDRESS_IO_MASK;
@@ -147,6 +163,8 @@ void ata_detect_pci_controllers( void )
 					if( g_nControllers[0].dma_base != 0x0 )
 						kerndbg( KERN_INFO, "DMA busmaster at 0x%x\n", g_nControllers[0].dma_base );
 				}
+				else
+					g_nControllers[0].dma_base = 0x0;
 			}
 
 			if( bSecondaryEnabled )
@@ -181,7 +199,7 @@ void ata_detect_pci_controllers( void )
 				}
 
 				/* Enable Busmastering, save dma port and request irq */
-				if( g_nControllers[1].io_base != 0x00 )
+				if( g_nControllers[1].io_base != 0x00 && bSecondaryDmaEnabled )
 				{
 					write_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND, 2, read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND , 2 ) | PCI_COMMAND_MASTER | PCI_COMMAND_IO );
 					g_nControllers[1].dma_base = ( pcidevice.u.h0.nBase4 & PCI_ADDRESS_IO_MASK ) + 0x8;
@@ -199,6 +217,19 @@ void ata_detect_pci_controllers( void )
 
 			break;
 		}
+	}
+	
+	if( bPciFound == false )
+	{
+		kerndbg( KERN_INFO, "No PCI ATA controllers found.  Assuming EISA controller defaults.\n");
+
+		g_nControllers[0].io_base = ATA_DEFAULT_PRIMARY_BASE;
+		g_nControllers[0].irq = ATA_DEFAULT_PRIMARY_IRQ;
+		g_nControllers[0].dma_base = 0x0;
+
+		g_nControllers[1].io_base = ATA_DEFAULT_SECONDARY_BASE;
+		g_nControllers[1].irq = ATA_DEFAULT_SECONDARY_IRQ;
+		g_nControllers[1].dma_base = 0x0;
 	}
 
 	return;
