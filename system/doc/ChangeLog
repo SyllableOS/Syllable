@@ -1,3 +1,7 @@
+* Mar 23 2002, Kristian Van Der Vliet *
+
+Added an ATA/ATAPI driver, and removed the old "ide" driver under syllable/system/sys/kernel/driver/disk/
+
 * Feb 18 2002, Kristian Van Der Vliet *
 
 Patched the Mach64 driver so that it does not attempt to initialise Rage Mobility chipsets (Which do not work with the driver).  Patch from Michael Krueger <invenies@web.de>
