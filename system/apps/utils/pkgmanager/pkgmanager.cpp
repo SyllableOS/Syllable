@@ -262,7 +262,7 @@ status_t add_packages( OptionParser& cOpts )
 
 			if( cName == "man" )
 			{
-				std::string cScriptArgs = "manaddpackage.sh ";
+				std::string cScriptArgs = "manmanager -a ";
 				cScriptArgs += cPath;
 				cScriptArgs += "/man";
 
@@ -297,6 +297,18 @@ status_t add_packages( OptionParser& cOpts )
 
 static status_t unlink_directory( const std::string& cPackagePath, const std::string& cDirectory )
 {
+	if( cDirectory == "/man" )
+	{
+		std::string cScriptArgs = "manmanager -r ";
+		cScriptArgs += cPackagePath;
+		cScriptArgs += cDirectory;
+
+		if( g_bQuiet == false )
+			std::cout << "Removing manual pages: " << cScriptArgs.c_str() << std::endl;
+
+		system( cScriptArgs.c_str() );
+	}
+	
 	try
 	{
 		Directory cPackageDir( cPackagePath + cDirectory, O_RDONLY | O_NOTRAVERSE );
@@ -304,7 +316,7 @@ static status_t unlink_directory( const std::string& cPackagePath, const std::st
 		String cEntry;
 		std::vector <String> cFiles;
 		bool bLinksRemoved = false;
-
+		
 		// Construct a list of files & directories in the directory
 		while( cPackageDir.GetNextEntry( &cEntry ) == 1 )
 		{
@@ -432,6 +444,7 @@ status_t remove_packages( OptionParser& cOpts )
 	    }
 	    continue;
 	}
+	  
 	if ( unlink_directory( cPath, "" ) >= 0 ) {
 	    if ( g_bRunScripts ) {
 		std::string cScriptArgs = cPath;
