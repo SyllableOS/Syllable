@@ -46,6 +46,84 @@
 #include "same.h"
 #include "xreadlink.h"
 
+//
+// Syllable patch for extanded attributes handling
+// 2002 by Sebastien Keim
+//
+#include <atheos/fs_attribs.h>
+//
+// copy src_path attributes to dst_path
+//   dst_path must exist
+//   dst_path arguments are not removed
+#define CPATTR_BUF_SIZE  1024
+int cp_attribs(const char* src_path, const char* dst_path)
+{
+  int  nSrcFile = -1;
+  DIR* pSrcDir = NULL;
+  int  nDstFile = -1;
+  bool status = 1;
+   
+  struct dirent* psEntry;
+  
+  nSrcFile = open( src_path, O_RDWR );
+  nDstFile = open(dst_path, O_RDWR );
+  if ( nSrcFile<0 || nDstFile <0) {
+    goto END_CP;     // Failed to open source or dest file
+  }
+   
+  pSrcDir = open_attrdir( nSrcFile );
+  if ( NULL == pSrcDir ) {
+    goto END_CP; // Failed to open source attrib dir
+  }
+     
+  while( (psEntry = read_attrdir( pSrcDir )) )
+  {    
+    attr_info_s sInfo;
+    
+    if ( stat_attr( nSrcFile, psEntry->d_name, &sInfo ) == 0 )
+    {
+       char zBuffer[CPATTR_BUF_SIZE];
+       int index=0;
+       int length;
+       while(length=(index+CPATTR_BUF_SIZE<sInfo.ai_size ? 
+		                         CPATTR_BUF_SIZE : 
+		                       sInfo.ai_size-index))
+       {
+	 if ( read_attr(nSrcFile, psEntry->d_name, sInfo.ai_type, zBuffer, 
+			index, length ) != length )
+	 {	    
+	    goto END_CP; // failed to read attribute
+	 }      
+      
+	 write_attr(nDstFile, psEntry->d_name, O_TRUNC, sInfo.ai_type, 
+		    zBuffer, index, length);
+	 index+=length;
+      }
+    } 
+    else 
+    {
+      //Failed to stat attrib
+      goto END_CP;
+    }
+  }   
+  status = 0;
+
+END_CP:
+  close(nSrcFile);
+  close(nDstFile);
+  if(pSrcDir!=NULL) 
+     close_attrdir(pSrcDir);
+  return status;
+}
+
+//
+// end Syllable patch
+//
+
+
+
+
+
 #define DO_CHOWN(Chown, File, New_uid, New_gid)				\
   (Chown (File, New_uid, New_gid)					\
    /* If non-root uses -p, it's ok if we can't preserve ownership.	\
@@ -1534,6 +1612,14 @@ copy_internal (const char *src_path, const char *dst_path,
   }
 #endif
 
+    // Syllable patch
+    if(!delayed_fail){
+            cp_attribs(src_path, dst_path);
+    }
+    // end Syllable patch
+   
+   
+   
   /* Permissions of newly-created regular files were set upon `open' in
      copy_reg.  But don't return early if there were any special bits and
      we had to run chown, because the chown must have reset those bits.  */
