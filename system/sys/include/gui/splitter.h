@@ -64,48 +64,51 @@ namespace os
  * \author Sebastien Keim (s.keim@laposte.net)
  */
 class Splitter : public View
-{
+{ 
+public:	
+	Splitter(const Rect &cFrame, const String &cTitle, View* pView1, 
+		View* pView2, orientation eOrientation = HORIZONTAL,
+		uint32 nResizeMask = CF_FOLLOW_LEFT|CF_FOLLOW_TOP,
+		uint32 nFlags = WID_WILL_DRAW|WID_CLEAR_BACKGROUND|WID_DRAW_ON_CHILDREN);
    
- public:
- 	
-   Splitter(const Rect &cFrame, const String &cTitle, View* pView1, 
-	    View* pView2, orientation eOrientation = HORIZONTAL,
-	    uint32 nResizeMask = CF_FOLLOW_LEFT|CF_FOLLOW_TOP,
-   uint32 nFalgs = WID_WILL_DRAW|WID_CLEAR_BACKGROUND|WID_DRAW_ON_CHILDREN);
-   
-   virtual ~Splitter();
-   void SplitBy(float fValue);
-   void SplitTo(float fValue);
-   virtual void SplitChanged();
-   
-   void SetSplitLimits(float fMinSize1=0, float fMinSize2=0);
-   void SetOrientation(os::orientation eOrientation);
+	virtual ~Splitter();
 
-   View* SeparatorView();
-   float GetSplitPosition();
-   float GetSeparatorWidth();
-   void  SetSeparatorWidth(float fWidth);
+	// From Splitter:
+	virtual void SplitChanged();
 
-   void MouseMove(const Point &cNewPos, int nCode, uint32 nButtons,
-			Message *pcData);
-   void MouseUp(const Point &cPosition, uint32 nButtons, Message *pcData);
-   void AdjustLayout();
-   void FrameSized(const Point& cDelta);
+	void SetSplitRatio( float vRatio );
+	float GetSplitRatio() const;
+   
+	void SetSplitLimits(float fMinSize1=0, float fMinSize2=0);
+	void SetOrientation(os::orientation eOrientation);
 
-   os::Point GetPreferredSize(bool bLargest) const;
-   
-   
-   void KeyDown( const char* pzString, const char* pzRawString,
-		 uint32 nQualifiers );
-   
- private:
-   void StartTracking(Point position); 
-   friend class os_priv::SplitterSeparator;
+	View* SeparatorView();
+	float GetSplitPosition();
+	float GetSeparatorWidth();
+	void  SetSeparatorWidth(float fWidth);
 
-   class Private;
-   Private* m;
+	void AdjustLayout();
+
+	void SplitBy(float fValue);
+	void SplitTo(float fValue);
+
+	// From View:
+	virtual void MouseMove(const Point &cNewPos, int nCode, uint32 nButtons, Message *pcData);
+	virtual void MouseUp(const Point &cPosition, uint32 nButtons, Message *pcData);
+	virtual void KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
+	virtual void FrameSized(const Point& cDelta);
+
+	virtual os::Point GetPreferredSize(bool bLargest) const;
+  
+private:
+	void StartTracking(Point position); 
+	friend class os_priv::SplitterSeparator;
+
+	class Private;
+	Private* m;
 };
 
 } //namespace os
 
 #endif //ndef __F_GUI_SPLITTER_H__
+
