@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.4.3
+# Version 0.4.4
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -92,7 +92,7 @@ end
 def patchPackage target
 	if exists? file = File.join(recipePath(target), fullName(target) + ".patch")
 		logHeader "Applying delta"
-		return false unless action "patch -p1 < " + file
+		return false unless action "patch --strip=1 < " + file
 	end
 
 	if exists? dir = patchesPath(target)
@@ -197,7 +197,7 @@ def configurePackage target
 			true
 		else
 			unless
-				unless exists? dir = buildDir(target) or
+				unless noBuildDir = recipe["no-build-dir"] or exists? dir = buildDir(target) or
 					begin
 						logHeader "Creating build directory"
 						action "mkdir " + dir
@@ -206,7 +206,7 @@ def configurePackage target
 					false
 				else
 					logHeader "Configuring"
-					Dir.chdir dir
+					Dir.chdir dir unless noBuildDir
 					action "rm config.cache" if exists? "config.cache"
 
 					name = shortName target
@@ -681,13 +681,13 @@ def dir? file
 	FileTest.directory? file
 end
 
-def load file  # Load the lines of a file into an array, leaving out comments
+def load file  # Load the lines of a file into an array, discarding comments and empty lines
 	lines = []
 
 	File.open file do |file|
 		file.each do |line|
-			# Get rid of record delimiter and comments
-			lines += [line.chomp] unless line[0, 1] == ";"
+			# Get rid of record delimiter, comments and empty lines
+			lines += [line.chomp] unless line.chomp == "" or line[0, 1] == ";"
 		end
 	end
 
@@ -899,7 +899,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.4.3",
+	puts "Syllable Build System 0.4.4",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"

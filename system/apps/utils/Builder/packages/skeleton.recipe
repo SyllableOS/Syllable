@@ -1,20 +1,20 @@
 ; Recipe information
 authors				<Recipe and patches authors, in historical order>
 maintainers			<Recipe maintainers, if not first author>
-status				broken | deprecated | incomplete | developing | testing
+status				broken | unmaintained| deprecated | incomplete | developing | testing
 notes				<Internal notes>
-;
+
 ; Package information
 name				<Display name of the package, if different from the file name>
 headline			<Brief description>
 description			<Full description>
 licenses			GPL LGPL GFDL BSD MIT Apache Artistic Python MPL QPL OS custom PD freeware commercial
-;
+
 home				syllable.sf.net
 packages			<Tarball names, if different from the package file name>
 ;locations			<Download locations>
 ;archives			<Arch archives>
-;
+
 ; Dependencies (unimplemented):
 ;needs
 ;	<Build- and run-time Dependencies>
@@ -26,18 +26,21 @@ packages			<Tarball names, if different from the package file name>
 ;	<Run-time dependencies>
 ;recommends
 ;	<Optional dependencies>
-;
+
 ; Patching options:
 patch-config		[<Directories>]
 patch-legacy-config
 patch				<Extra patching command sequence>
-;
+
+; Don't use a separate build directory:
+no-build-dir
+
 ; Configuring:
 ; <configure>
 ; [<configure-vars>] <configure-cmd> [<configure-args>] [<configure-options>]
-;
+
 configure			<Configuration command sequence>
-;
+
 ; Extra variables for configure:
 configure-vars		VAR='value'
 ; Non-standard configure command:
@@ -46,38 +49,38 @@ configure-cmd		configure
 configure-args		--prefix=/usr/foo
 ; Extra configure options:
 configure-options	--with-option
-;
+
 ; Building:
 ; [<make-vars>] make [<make-options>] <make-targets>
-;
+
 ; Extra variables for make:
 make-vars			VAR='value'
 ; Extra make options:
 make-options		VAR='value'
 ; Non-standard make targets:
 ;make-targets		all
-;
+
 ; Testing:
 ; make [<test-options>] <test-targets>
-;
+
 ; Extra test options:
 test-options		-k
 ; Non-standard test targets:
 test-targets		check
-;
+
 install-tree		<Extra subdirectories to create>
-;
+
 ; Installing:
 ; <install>
 ; make [<install-prefix>] <install-targets>
-;
+
 install				<Installation command sequence>
-;
+
 ; Non-standard install prefix option:
 install-prefix		prefix=
 ; Non-standard install targets:
 ;install-targets		install
-;
+
 ; Extra files to install:
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
 ; Links to create:

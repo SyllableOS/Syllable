@@ -5,7 +5,7 @@
 # LIBIOSTREAM_DEP = $(LIBIOSTREAM_OBJECTS) stdio.list
 # LIBIOSTREAM_USE = $(LIBIOSTREAM_OBJECTS) `cat stdio.list`
 
-# Comment the above and uncomment the below to use the code in the AltOS libc:
+# Comment the above and uncomment the below to use the code in the Syllable libc:
 # We have _G_config.h in /usr/include.
 _G_CONFIG_H=
 
