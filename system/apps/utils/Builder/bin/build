@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.39
+# Version 0.5.40
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -60,7 +60,7 @@ def patchPackage target
 	if exists? dir = patchesPath(target)
 		@log.header 'Applying patches'
 		return false unless action "cp -a #{File.join dir, '*'} ." and
-			# Crude way to remove possible CVS dirs from patches - to be fixed
+			# FIXME: crude way to remove possible CVS dirs from patches
 			deleteCVSData
 	end
 
@@ -137,7 +137,7 @@ def getPackage target
 					end
 				else
 					Dir.chdir target
-					unless thirdParty?
+					if native?
 						true
 					else
 						deleteCVSData
@@ -156,7 +156,7 @@ def getPackage target
 end
 
 def configurePackage target
-	unless thirdParty?
+	if native?
 		@log.header 'Building dependencies'
 		action 'make deps'
 
@@ -271,7 +271,7 @@ def installPackage target
 			if exists? root and not
 				begin
 					@log.header 'Uninstalling ' + shortName(target)
-					uninstallPackage target  # Double failure logging!
+					uninstallPackage target  # FIXME: double failure logging!
 				end
 			then
 				false
@@ -286,7 +286,7 @@ def installPackage target
 		else
 			Dir.chdir target
 
-			unless thirdParty?
+			if native?
 				if exists? dir = buildDir(target) then Dir.chdir dir end
 				action 'make install'
 			else
@@ -295,7 +295,7 @@ def installPackage target
 				if exists? root and not
 					begin
 						@log.header 'Uninstalling ' + shortName(target)
-						uninstallPackage target  # Double failure logging!
+						uninstallPackage target  # FIXME: double failure logging!
 					end
 				then
 					false
@@ -354,7 +354,7 @@ def installPackage target
 							@log.header 'Installing extra files'
 							action "cp -a #{File.join filesPath, '*'} " + root and
 							begin
-								# Crude way to remove possible CVS dirs from files - to be fixed
+								# FIXME: crude way to remove possible CVS dirs from files
 								Dir.chdir root
 								deleteCVSData
 							end
@@ -408,10 +408,10 @@ end
 
 def uninstallPackage target
 	unless
-		if dir? target and not
+		if dir? target and
 			begin
 				Dir.chdir target
-				thirdParty?
+				native?
 			end
 		then  # A native module
 			if exists? dir = buildDir(target) then Dir.chdir dir end
@@ -447,7 +447,7 @@ def makeDistroPackage target  # Should only be called if it's a system build
 	else
 		Dir.chdir target
 
-		if thirdParty?
+		unless native?
 			Dir.chdir @workDir
 			installPackage target
 		else
@@ -900,8 +900,8 @@ def buildDir package
 	'../=' + fullName(package)
 end
 
-def thirdParty?
-	exists? 'configure' or
+def native?
+	not exists? 'configure' and not
 		# Currently look for a recipe to distinguish from meta-packages:
 		exists? File.join(@packagesPath, package = fullName(Dir.getwd), package + '.recipe')
 end
@@ -1065,7 +1065,8 @@ end
 
 @workDir		= Dir.getwd
 
-# Get the path to the application directory
+# Get the path to the application directory.
+# build should not be called from a relative path!
 @builderPath	= File.dirname(File.dirname(FileTest.symlink?($0) ?
 	File.readlink($0) :
 	$0
@@ -1112,7 +1113,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.39',
+	puts 'Syllable Build System 0.5.40',
 		'Copyright (c) 2002-2004 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
