@@ -1,3 +1,9 @@
+* October 24 2004, Kristian Van Der Vliet *
+
+As part of a series of patches from Jake Hamby <jhamby@anobject.com> which changes the
+atomic_t primitives:
+	o Inline the ddriver_mmx.c code into ddriver.cpp
+
 ---- 0.5.4 Released -------------------------------------------------------------------
 
 * September 19, Arno Klenk *

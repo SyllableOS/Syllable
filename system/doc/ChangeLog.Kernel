@@ -1,15 +1,63 @@
+* October 24 2004, Kristian Van Der Vliet *
+
+A series of patches from Jake Hamby <jhamby@anobject.com> which changes the
+atomic_t primitives:
+	o Replaced the primitives in atheos/atomic.h with versions based on Linux 
+	  2.6.8's include/asm-i386/atomic.h.
+	o Replaced occurrences of atomic_add(&foo, 1) and atomic_add(&foo, -1) with 
+	  atomic_inc(&foo) and atomic_dec(&foo), which are slightly faster and more
+	  self-explanatory.
+	o Many of the drivers were Linux ports that used the atomic_*() macros
+	  properly; comment out the compatibility macros in "linuxcomp.h"
+	o Fixed a few typos and changed kernel/debug.c to use ints instead 
+	  of floats.
+
+The following components are effected:
+
+* kernel
+* afs
+* fatfs
+* iso9660
+* libsyllable
+* appserver
+* bus/ata
+* bus/pci
+* bus/scsi
+* bus/usb
+* disk/bios
+* disk/usb
+* graphics/geforcefx
+* usb_ehci
+* usb_ohci
+* usb_uhci
+* keyboard driver (kbd)
+* ps2aux
+* apm
+* w8378x
+* net/3c509
+* net/eepro100
+* sound/emu10k1
+* sound/es1370
+* sound/es1371
+* sound/i810
+* sound/sbpro
+* sound/trident
+* sound/via686a
+* sound/vt82xx
+* sound/ymfpci
+
 * October 20 2004, Kristian Van Der Vliet *
 
 A minor patch to kernel/debug.c which fixes the code to work properly if
 your client sends <CR>, <CR><LF>, or <CR><NUL> for newline.  This patch is
 intended to allow the use of a Telnet client as a debug terminal in conjunction
 with VMWare.  See the VMWare FAQ for more information.  Patch from
-Jack Hamby <jhamby@anobject.com>
+Jake Hamby <jhamby@anobject.com>
 
 * October 20 2004, Kristian Van Der Vliet *
 
 read_cpu_id() was modifying %ebx but didn't tell GCC.  Patch from
-Jack Hamby <jhamby@anobject.com>
+Jake Hamby <jhamby@anobject.com>
 
 * October 13 2004, Kristian Van Der Vliet *
 
@@ -18,7 +66,7 @@ Peter Skerl <skerl@chello.at>
 
 * October 10 2004, Kristian Van Der Vliet *
 
-A whole bunch of patches from Jack Hamby <jhamby@anobject.com>
+A whole bunch of patches from Jake Hamby <jhamby@anobject.com>
 
 	o Minor stylistic fixes:
 		* Added "-Wstrict-prototypes" to the Makefile and corrected some warnings
