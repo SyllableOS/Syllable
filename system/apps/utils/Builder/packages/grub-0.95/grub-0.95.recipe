@@ -1,0 +1,36 @@
+authors
+	Kurt Skauen
+	Kristian Van Der Vliet
+	Jack Tonkin
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				broken
+warnings			Hangs during configure on Syllable!
+notes
+	Works on Linux.
+	AutoMake warns about bad substitution on Syllable.
+	Doesn't find NCurses on MEPIS Linux.
+
+licenses			GPL
+home				www.gnu.org/software/grub/
+locations			ftp://alpha.gnu.org/gnu/grub/
+
+build-needs
+;	automake >= 1.8.2
+	automake >= 1.7
+	autoconf >= 2.57
+build-recommends	texinfo >= 4.0
+
+patch
+;	autoreconf --force
+;	Makes it work on Linux, if our AutoMake is older than 1.8.2:
+	aclocal
+;	automake stage2/Makefile; automake Makefile; autoconf
+;	Suffices on Linux:
+	automake
+	autoconf
+
+documentation
+	README netboot/README.netboot INSTALL BUGS COPYING NEWS ChangeLog TODO AUTHORS THANKS
+	MAINTENANCE
+stage-files			share/grub/i386-pc/* /boot/grub/

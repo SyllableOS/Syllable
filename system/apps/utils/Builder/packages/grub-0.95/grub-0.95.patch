@@ -1,0 +1,178 @@
+diff -ru grub-0.95.original/configure.ac grub-0.95/configure.ac
+--- grub-0.95.original/configure.ac	2004-06-13 19:38:17.000000000 +0200
++++ grub-0.95/configure.ac	2004-07-11 21:43:47.000000000 +0200
+@@ -291,6 +291,13 @@
+   FSYS_CFLAGS="$FSYS_CFLAGS -DFSYS_ISO9660=1"
+ fi
+
++AC_ARG_ENABLE(afs,
++  [  --disable-afs           disable AtheOS AFS support in Stage 2])
++
++if test x"$enable_afs" != xno; then
++  FSYS_CFLAGS="$FSYS_CFLAGS -DFSYS_AFS=1"
++fi
++
+ dnl AC_ARG_ENABLE(tftp,
+ dnl [  --enable-tftp           enable TFTP support in Stage 2])
+ dnl
+diff -ru grub-0.95.original/stage2/builtins.c grub-0.95/stage2/builtins.c
+--- grub-0.95.original/stage2/builtins.c	2004-05-14 21:30:52.000000000 +0200
++++ grub-0.95/stage2/builtins.c	2004-07-11 21:43:47.000000000 +0200
+@@ -3754,7 +3754,8 @@
+     {"minix",    "/minix_stage1_5"},
+     {"reiserfs", "/reiserfs_stage1_5"},
+     {"vstafs",   "/vstafs_stage1_5"},
+-    {"xfs",      "/xfs_stage1_5"}
++    {"xfs",      "/xfs_stage1_5"},
++    {"afs",      "/afs_stage1_5"}
+   };
+
+   tmp_drive = saved_drive;
+diff -ru grub-0.95.original/stage2/disk_io.c grub-0.95/stage2/disk_io.c
+--- grub-0.95.original/stage2/disk_io.c	2004-05-23 18:35:24.000000000 +0200
++++ grub-0.95/stage2/disk_io.c	2004-07-11 21:43:47.000000000 +0200
+@@ -78,6 +78,9 @@
+ # ifdef FSYS_ISO9660
+   {"iso9660", iso9660_mount, iso9660_read, iso9660_dir, 0, 0},
+ # endif
++# ifdef FSYS_AFS
++  {"afs", afs_mount, afs_read, afs_dir, 0, afs_embed},
++# endif
+   /* XX FFS should come last as it's superblock is commonly crossing tracks
+      on floppies from track 1 to 2, while others only use 1.  */
+ # ifdef FSYS_FFS
+diff -ru grub-0.95.original/stage2/filesys.h grub-0.95/stage2/filesys.h
+--- grub-0.95.original/stage2/filesys.h	2004-05-14 21:36:43.000000000 +0200
++++ grub-0.95/stage2/filesys.h	2004-07-12 00:01:38.000000000 +0200
+@@ -105,6 +105,16 @@
+ #define FSYS_XFS_NUM 0
+ #endif
+
++#ifdef FSYS_AFS
++#define FSYS_AFS_NUM 1
++int afs_mount (void);
++int afs_read (char *buf, int len);
++int afs_dir (char *dirname);
++int afs_embed (int *start_sector, int needed_sectors );
++#else
++#define FSYS_AFS_NUM 0
++#endif
++
+ #ifdef FSYS_TFTP
+ #define FSYS_TFTP_NUM 1
+ int tftp_mount (void);
+@@ -128,7 +138,7 @@
+ #define NUM_FSYS	\
+   (FSYS_FFS_NUM + FSYS_FAT_NUM + FSYS_EXT2FS_NUM + FSYS_MINIX_NUM	\
+    + FSYS_REISERFS_NUM + FSYS_VSTAFS_NUM + FSYS_JFS_NUM + FSYS_XFS_NUM	\
+-   + FSYS_TFTP_NUM + FSYS_ISO9660_NUM + FSYS_UFS2_NUM)
++   + FSYS_AFS_NUM + FSYS_TFTP_NUM + FSYS_ISO9660_NUM + FSYS_UFS2_NUM)
+ #endif
+
+ /* defines for the block filesystem info area */
+diff -ru grub-0.95.original/stage2/Makefile.am grub-0.95/stage2/Makefile.am
+--- grub-0.95.original/stage2/Makefile.am	2004-06-13 19:57:27.000000000 +0200
++++ grub-0.95/stage2/Makefile.am	2004-07-11 23:47:23.000000000 +0200
+@@ -7,7 +7,7 @@
+         fat.h filesys.h freebsd.h fs.h hercules.h i386-elf.h \
+ 	imgact_aout.h iso9660.h jfs.h mb_header.h mb_info.h md5.h \
+ 	nbi.h pc_slice.h serial.h shared.h smp-imps.h term.h \
+-	terminfo.h tparm.h nbi.h ufs2.h vstafs.h xfs.h
++	terminfo.h tparm.h nbi.h ufs2.h vstafs.h xfs.h afs.h
+ EXTRA_DIST = setjmp.S apm.S $(noinst_SCRIPTS)
+
+ # For <stage1.h>.
+@@ -18,12 +18,12 @@
+ libgrub_a_SOURCES = boot.c builtins.c char_io.c cmdline.c common.c \
+ 	disk_io.c fsys_ext2fs.c fsys_fat.c fsys_ffs.c fsys_iso9660.c \
+ 	fsys_jfs.c fsys_minix.c fsys_reiserfs.c fsys_ufs2.c \
+-	fsys_vstafs.c fsys_xfs.c gunzip.c md5.c serial.c stage2.c \
+-	terminfo.c tparm.c
++	fsys_vstafs.c fsys_xfs.c fsys_afs.c gunzip.c md5.c serial.c \
++	stage2.c terminfo.c tparm.c
+ libgrub_a_CFLAGS = $(GRUB_CFLAGS) -I$(top_srcdir)/lib \
+ 	-DGRUB_UTIL=1 -DFSYS_EXT2FS=1 -DFSYS_FAT=1 -DFSYS_FFS=1 \
+ 	-DFSYS_ISO9660=1 -DFSYS_JFS=1 -DFSYS_MINIX=1 -DFSYS_REISERFS=1 \
+-	-DFSYS_UFS2=1 -DFSYS_VSTAFS=1 -DFSYS_XFS=1 \
++	-DFSYS_UFS2=1 -DFSYS_VSTAFS=1 -DFSYS_XFS=1 -DFSYS_AFS=1 \
+ 	-DUSE_MD5_PASSWORDS=1 -DSUPPORT_SERIAL=1 -DSUPPORT_HERCULES=1 \
+ 	-fwritable-strings
+
+@@ -36,23 +36,25 @@
+ pkgdata_DATA = stage2 stage2_eltorito e2fs_stage1_5 fat_stage1_5 \
+ 	ffs_stage1_5 iso9660_stage1_5 jfs_stage1_5 minix_stage1_5 \
+ 	reiserfs_stage1_5 ufs2_stage1_5 vstafs_stage1_5 xfs_stage1_5 \
+-	nbgrub pxegrub
++	afs_stage1_5 nbgrub pxegrub
+ noinst_DATA = pre_stage2 start start_eltorito nbloader pxeloader diskless
+ noinst_PROGRAMS = pre_stage2.exec start.exec start_eltorito.exec \
+ 	e2fs_stage1_5.exec fat_stage1_5.exec ffs_stage1_5.exec \
+ 	iso9660_stage1_5.exec jfs_stage1_5.exec minix_stage1_5.exec \
+ 	reiserfs_stage1_5.exec ufs2_stage1_5.exec vstafs_stage1_5.exec \
+-	xfs_stage1_5.exec nbloader.exec pxeloader.exec diskless.exec
++	xfs_stage1_5.exec afs_stage1_5.exec nbloader.exec pxeloader.exec \
++	diskless.exec
+ else
+ pkgdata_DATA = stage2 stage2_eltorito e2fs_stage1_5 fat_stage1_5 \
+ 	ffs_stage1_5 iso9660_stage1_5 jfs_stage1_5 minix_stage1_5 \
+-	reiserfs_stage1_5 ufs2_stage1_5 vstafs_stage1_5 xfs_stage1_5
++	reiserfs_stage1_5 ufs2_stage1_5 vstafs_stage1_5 xfs_stage1_5 \
++	afs_stage1_5
+ noinst_DATA = pre_stage2 start start_eltorito
+ noinst_PROGRAMS = pre_stage2.exec start.exec start_eltorito.exec \
+ 	e2fs_stage1_5.exec fat_stage1_5.exec ffs_stage1_5.exec \
+ 	iso9660_stage1_5.exec jfs_stage1_5.exec minix_stage1_5.exec \
+ 	reiserfs_stage1_5.exec ufs2_stage1_5.exec vstafs_stage1_5.exec \
+-	xfs_stage1_5.exec
++	xfs_stage1_5.exec afs_stage1_5.exec
+ endif
+ MOSTLYCLEANFILES = $(noinst_PROGRAMS)
+
+@@ -90,8 +92,9 @@
+ pre_stage2_exec_SOURCES = asm.S bios.c boot.c builtins.c char_io.c \
+ 	cmdline.c common.c console.c disk_io.c fsys_ext2fs.c \
+ 	fsys_fat.c fsys_ffs.c fsys_iso9660.c fsys_jfs.c fsys_minix.c \
+-	fsys_reiserfs.c fsys_ufs2.c fsys_vstafs.c fsys_xfs.c gunzip.c \
+-	hercules.c md5.c serial.c smp-imps.c stage2.c terminfo.c tparm.c
++	fsys_reiserfs.c fsys_ufs2.c fsys_vstafs.c fsys_xfs.c fsys_afs.c \
++	gunzip.c hercules.c md5.c serial.c smp-imps.c stage2.c terminfo.c \
++	tparm.c
+ pre_stage2_exec_CFLAGS = $(STAGE2_COMPILE) $(FSYS_CFLAGS)
+ pre_stage2_exec_CCASFLAGS = $(STAGE2_COMPILE) $(FSYS_CFLAGS)
+ pre_stage2_exec_LDFLAGS = $(PRE_STAGE2_LINK)
+@@ -227,6 +230,15 @@
+ 	-DNO_BLOCK_FILES=1
+ iso9660_stage1_5_exec_LDFLAGS = $(STAGE1_5_LINK)
+
++# For afs_stage1_5 target.
++afs_stage1_5_exec_SOURCES = start.S asm.S common.c char_io.c \
++	disk_io.c stage1_5.c fsys_afs.c bios.c
++afs_stage1_5_exec_CFLAGS = $(STAGE1_5_COMPILE) -DFSYS_AFS=1 \
++	-DNO_BLOCK_FILES=1
++afs_stage1_5_exec_CCASFLAGS = $(STAGE1_5_COMPILE) -DFSYS_AFS=1 \
++	-DNO_BLOCK_FILES=1
++afs_stage1_5_exec_LDFLAGS = $(STAGE1_5_LINK)
++
+ # For diskless target.
+ diskless_exec_SOURCES = $(pre_stage2_exec_SOURCES)
+ diskless_exec_CFLAGS = $(STAGE2_COMPILE) $(FSYS_CFLAGS) \
+diff -ru grub-0.95.original/stage2/shared.h grub-0.95/stage2/shared.h
+--- grub-0.95.original/stage2/shared.h	2004-05-14 21:38:37.000000000 +0200
++++ grub-0.95/stage2/shared.h	2004-07-12 00:07:08.000000000 +0200
+@@ -208,6 +208,7 @@
+ #define STAGE2_ID_XFS_STAGE1_5		8
+ #define STAGE2_ID_ISO9660_STAGE1_5	9
+ #define STAGE2_ID_UFS2_STAGE1_5		10
++#define STAGE2_ID_AFS_STAGE1_5		11
+
+ #ifndef STAGE1_5
+ # define STAGE2_ID	STAGE2_ID_STAGE2
+@@ -232,6 +233,8 @@
+ #  define STAGE2_ID	STAGE2_ID_ISO9660_STAGE1_5
+ # elif defined(FSYS_UFS2)
+ #  define STAGE2_ID	STAGE2_ID_UFS2_STAGE1_5
++# elif defined(FSYS_AFS)
++#  define STAGE2_ID	STAGE2_ID_AFS_STAGE1_5
+ # else
+ #  error "unknown Stage 2"
+ # endif
