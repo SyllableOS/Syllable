@@ -30,6 +30,7 @@ build-needs
 	gcc >= 2.95
 ;	For Ada:
 ;	gnat >= 3.13 | gcc >= 3.1
+	gawk
 test-needs			dejagnu >= 1.4.1
 
 patch-config		. boehm-gc
