@@ -236,12 +236,13 @@
 #define __NR_based_unlink			203
 #define __NR_based_symlink			204
 
-#define __NR_set_tld				205
-#define __NR_get_tld				206
+#define __NR_apm_poweroff			205
 
-#define __NR_apm_poweroff			207
+#define __NR_make_port_public		206
+#define __NR_make_port_private		207
+#define __NR_find_port				208
 
-#define	__NR_SysCallCount			208
+#define	__NR_SysCallCount			209
 
 
 #endif /* _F_SYSCALL_H_ */

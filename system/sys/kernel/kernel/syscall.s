@@ -658,7 +658,8 @@ SysCallTable:
 .long	_C_SYM( sys_based_unlink )
 .long	_C_SYM( sys_based_symlink )
 
-.long	_C_SYM( sys_set_tld )
-.long	_C_SYM( sys_get_tld )
+.long	_C_SYM( apm_poweroff )
 
-.long   _C_SYM( apm_poweroff )		/* 207 */
+.long	_C_SYM( sys_make_port_public )
+.long	_C_SYM( sys_make_port_private )
+.long	_C_SYM( sys_find_port )		/* 208 */

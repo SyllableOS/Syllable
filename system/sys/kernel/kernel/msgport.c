@@ -1,6 +1,7 @@
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2002 Kristian Van Der Vliet
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -33,6 +34,9 @@
 
 static	MultiArray_s	g_sMsgPorts;
 static	sem_id		g_hPortListSema;
+
+static PublicPort_s* g_psPubPortListHead;
+static sem_id		g_hPubPortListSema;
 
 #define lock_mutex( a, b ) LOCK(a)
 #define unlock_mutex(a) UNLOCK(a)
@@ -128,7 +132,7 @@ port_id	sys_create_port( const char* const pzName, int nMaxCount )
 	goto error3;
     }
     psPort->mp_nMaxCount = nMaxCount;
-    psPort->mp_nFlags    = 0;
+    psPort->mp_nFlags    = MSG_PORT_PRIVATE;
     strncpy_from_user( psPort->mp_zName, pzName, OS_NAME_LENGTH );
     psPort->mp_zName[OS_NAME_LENGTH-1] = '\0';
 
@@ -153,6 +157,13 @@ error1:
 
 static void do_delete_port( Process_s* psProc, MsgPort_s* psPort )
 {
+	if( psPort->mp_nFlags == MSG_PORT_PUBLIC )
+	{
+		unlock_mutex( g_hPortListSema );
+		make_port_private( psPort->mp_hPortID );
+		lock_mutex( g_hPortListSema, true );
+	}
+
     MArray_Remove( &g_sMsgPorts, psPort->mp_hPortID );
 
     delete_semaphore( psPort->mp_hSyncSema );
@@ -166,7 +177,7 @@ static void do_delete_port( Process_s* psProc, MsgPort_s* psPort )
     if ( psProc != NULL ) {
 	unlink_port( psProc, psPort );
     }
-    
+
     kfree( psPort );
     atomic_add( &g_sSysBase.ex_nMessagePortCount, -1 );
     
@@ -493,12 +504,243 @@ void exit_free_ports( Process_s* psProc )
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/
+status_t make_port_public( port_id hPort )
+{
+	MsgPort_s* psPort;
+	PublicPort_s* psPubPort;
+	int nError=EOK;
+
+	psPort = get_port_from_handle( hPort );
+
+	if( psPort == NULL )
+	{
+		printk( "Error: make_port_public() called with invalid message port %d\n", hPort);
+		nError = -EINVAL;
+		goto error;
+	}
+
+	/* Ensure that the port name does not already exist in the public ports list */
+	if( do_find_port( psPort->mp_zName ) >= 0 )
+	{
+		printk("make_port_public() : Attempt to make a duplicate port \"%s\" public\n",psPort->mp_zName);
+		nError = -EEXIST;
+		goto error;
+	}
+
+	psPubPort = kmalloc( sizeof( PublicPort_s ), MEMF_KERNEL | MEMF_LOCKED | MEMF_OKTOFAILHACK );
+
+	if( psPubPort == NULL )
+	{
+		printk( "Error: make_port_public() failed to alloc port struct\n" );
+		nError = -ENOMEM;
+		goto error;
+	}
+
+	psPubPort->pp_hPortID=psPort->mp_hPortID;
+	psPubPort->pp_pzName=psPort->mp_zName;
+
+	psPubPort->pp_psNext=psPubPort;
+	psPubPort->pp_psPrev=psPubPort;
+
+	lock_mutex( g_hPubPortListSema, true );
+
+	if( NULL==g_psPubPortListHead )
+		g_psPubPortListHead=psPubPort;
+
+	psPubPort->pp_psNext=g_psPubPortListHead;
+	psPubPort->pp_psPrev=g_psPubPortListHead->pp_psPrev;
+	psPubPort->pp_psPrev->pp_psNext=psPubPort;
+
+	unlock_mutex( g_hPubPortListSema );
+
+	lock_mutex( g_hPortListSema, true );
+
+	psPort->mp_nFlags=MSG_PORT_PUBLIC;
+
+	unlock_mutex( g_hPortListSema );
+
+error:
+	return(nError);
+}
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+status_t make_port_private( port_id hPort )
+{
+	MsgPort_s* psPort;
+	PublicPort_s* psPubPort;
+	int nError=-EINVAL;
+
+	psPort = get_port_from_handle( hPort );
+
+	if( psPort == NULL )
+	{
+		printk( "Error: make_port_private() called for invalid message port %d\n", hPort);
+		nError = -EINVAL;
+		goto error;
+	}
+
+	lock_mutex( g_hPubPortListSema, true );
+
+	psPubPort = g_psPubPortListHead;
+
+	do {
+
+		if( psPubPort->pp_hPortID == hPort )
+		{
+			if( psPubPort->pp_psPrev == psPubPort->pp_psNext )
+				g_psPubPortListHead=NULL;
+			else
+			{
+				psPubPort->pp_psPrev->pp_psNext=psPubPort->pp_psNext;
+				psPubPort->pp_psNext->pp_psPrev=psPubPort->pp_psPrev;
+			}
+
+			kfree(psPubPort);
+
+			lock_mutex( g_hPortListSema, true );
+
+			psPort->mp_nFlags=MSG_PORT_PRIVATE;
+
+			unlock_mutex( g_hPortListSema );
+
+			nError=EOK;
+			break;
+		}
+
+		psPubPort = psPubPort->pp_psNext;
+
+	} while( psPubPort != g_psPubPortListHead );
+
+	unlock_mutex( g_hPubPortListSema );
+
+	if( nError == -EINVAL )
+		printk("Error: make_port_private() called with a non public port id %d\n",hPort);
+
+error:
+	return(nError);
+}
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+port_id do_find_port( const char* pzPortname )
+{
+	PublicPort_s* psPubPort;
+	port_id hPort=-1;
+
+	if( NULL==g_psPubPortListHead )
+		goto error;
+
+	lock_mutex( g_hPubPortListSema, true );
+
+	psPubPort = g_psPubPortListHead;
+
+	do {
+
+		if( ! strcmp( psPubPort->pp_pzName, pzPortname ) )
+		{
+			hPort = psPubPort->pp_hPortID;
+			break;
+		}
+
+		psPubPort = psPubPort->pp_psNext;
+
+	} while( psPubPort != g_psPubPortListHead );
+
+	unlock_mutex( g_hPubPortListSema );
+
+error:
+	return( hPort );
+}
+
+port_id find_port( const char* pzPortname )
+{
+	port_id hPort=-1;
+	char* pzName;
+
+	pzName=kmalloc( OS_NAME_LENGTH, MEMF_KERNEL | MEMF_LOCKED | MEMF_OKTOFAILHACK );
+
+	if( pzName == NULL )
+	{
+		printk( "Error: find_port() failed to alloc memory\n" );
+		goto error;
+	}
+
+	strncpy_from_user( pzName, pzPortname, OS_NAME_LENGTH );
+	pzName[OS_NAME_LENGTH-1] = '\0';
+
+	hPort=do_find_port( pzName );
+
+	kfree( pzName );
+
+error:
+	return( hPort );
+}
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+status_t sys_make_port_public( port_id hPort )
+{
+	int nError;
+	nError = make_port_public( hPort );
+	return( nError );
+}
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+status_t sys_make_port_private( port_id hPort )
+{
+	int nError;
+	nError = make_port_private( hPort );
+	return( nError );
+}
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+port_id sys_find_port( const char* pzPortname )
+{
+	port_id hPort;
+	hPort = find_port( pzPortname );
+	return( hPort );
+}
+
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
 
 void InitMsgPorts( void )
 {
-    g_hPortListSema = create_semaphore( "port_list__bad1", 1, 0 );
-    g_hPortListSema = create_semaphore( "port_list__bad2", 1, 0 );
-    g_hPortListSema = create_semaphore( "port_list__bad3", 1, 0 );
-    g_hPortListSema = create_semaphore( "port_list", 1, 0 );
-    MArray_Init( &g_sMsgPorts );
+	g_hPortListSema = create_semaphore( "port_list__bad1", 1, 0 );
+	g_hPortListSema = create_semaphore( "port_list__bad2", 1, 0 );
+	g_hPortListSema = create_semaphore( "port_list__bad3", 1, 0 );
+	g_hPortListSema = create_semaphore( "port_list", 1, 0 );
+	MArray_Init( &g_sMsgPorts );
+
+	g_hPubPortListSema = create_semaphore( "public_port_list", 1, 0 );
+	g_psPubPortListHead = NULL;
+
 }

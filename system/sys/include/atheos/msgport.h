@@ -29,6 +29,9 @@ extern "C" {
 
 #define	DEFAULT_PORT_SIZE		15
 
+#define	MSG_PORT_PRIVATE	1
+#define	MSG_PORT_PUBLIC	1<<1
+
 #ifdef __KERNEL__
 
 port_id		sys_create_port( const char* const pzName, int nMaxCount );
@@ -43,6 +46,12 @@ status_t	sys_raw_send_msg_x( port_id hPort, uint32 nCode, const void* pBuffer,
 				    int nSize, const bigtime_t* pnTimeOut );
 status_t	sys_raw_get_msg_x( port_id hPort, uint32* pnCode, void* pBuffer,
 				   int nSize, const bigtime_t* pnTimeOut );
+
+status_t sys_make_port_public( port_id hPort );
+status_t sys_make_port_private( port_id hPort );
+
+port_id sys_find_port( const char* pzPortname );
+
 #endif /* __KERNEL__ */
 
 
@@ -76,6 +85,10 @@ status_t	raw_send_msg_x( port_id hPort, uint32 nCode, const void* pBuffer,
 status_t	raw_get_msg_x( port_id hPort, uint32* pnCode, void* pBuffer,
 			       int nSize, const bigtime_t* pnTimeOut );
 
+status_t make_port_public( port_id hPort );
+status_t make_port_private( port_id hPort );
+
+port_id find_port( const char* pzPortname );
 
 #ifdef __cplusplus
 }

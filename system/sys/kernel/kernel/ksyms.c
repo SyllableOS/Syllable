@@ -1,6 +1,7 @@
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2002 Kristian Van Der Vliet
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -272,10 +273,8 @@ static KernelSymbol_s g_asKernelSymbols[] =
   // TLD functions
   KSYMBOL(alloc_tld),
   KSYMBOL(free_tld),
-  KSYMBOL(set_tld),
-  KSYMBOL(get_tld),
 
-    // Memory-area functions:
+  // Memory-area functions:
   
   KSYMBOL(alloc_area_list),
   KSYMBOL(create_area),
@@ -411,7 +410,13 @@ static KernelSymbol_s g_asKernelSymbols[] =
   KSYMBOL(set_dma_page),
   KSYMBOL(set_dma_address),
   KSYMBOL(set_dma_count),
-  
+
+	// Public message port functions:
+
+  KSYMBOL(make_port_public),
+  KSYMBOL(make_port_private),
+  KSYMBOL(find_port),
+
   {NULL, NULL}
 };
 
