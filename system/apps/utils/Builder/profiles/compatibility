@@ -1,5 +1,7 @@
 ; Old libraries for compatibility with applications for older versions of Syllable
 
+resources		atheos/sys/libs GCC-libraries-2.95.2
+
 modules
 	libs/compat-1.0
 	libs/compatibility/libatheos-3
