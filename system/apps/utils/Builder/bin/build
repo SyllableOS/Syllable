@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.4
+# Version 0.6.5
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -26,10 +26,18 @@ def downloadModule target
 end
 
 def updateModule target
-#	if exists? 'CVS'
-	@log.subheader 'Updating sources from CVS repository'
+	unless
+		unless exists? target
+			@log.error 'Source not installed; unable to update'
+			false
+		else
+			Dir.chdir target
+#			if exists? 'CVS'
 
-	unless action 'cvs -q update -dP'
+			@log.subheader 'Updating sources from CVS repository'
+			action 'cvs -q update -dP'
+		end
+	then
 		@log.failure target
 		false
 	else
@@ -708,8 +716,6 @@ def update targets
 
 	for target in targets.modules
 		@log.entry target
-
-		Dir.chdir target
 		updateModule target
 		Dir.chdir @workDir
 	end
@@ -1360,7 +1366,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.4',
+	puts 'Syllable Build System 0.6.5',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
