@@ -2,7 +2,7 @@
 
 ; Root tree structure to build the distribution in
 
-distro-tree
+tree
 ;	Boot directory structure
 
 	boot
@@ -90,6 +90,10 @@ distro-tree
 	atheos/Applications					applications.png
 	atheos/Applications/Preferences		settings.png
 	atheos/Documentation
+
+resources
+	boot/grub			GrUB-binaries-0.95
+	atheos/sys/libs		GCC-libraries-3.3.4
 
 modules
 ;	Hangs during configuring:
