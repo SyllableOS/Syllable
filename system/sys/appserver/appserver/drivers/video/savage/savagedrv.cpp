@@ -495,7 +495,23 @@ int SavageDriver::SetScreenMode( os::screen_mode sMode )
 
     /* Set Color Mode */
     VGAOUT8(vgaCRIndex, 0x67);
-    VGAOUT8(vgaCRReg, 0xD0);
+    switch (sCardInfo.scrnColors) {
+    case 8:
+      VGAOUT8(vgaCRReg, 0x00);
+      break;
+    case 15:
+      VGAOUT8(vgaCRReg, 0x30);
+      break;
+    case 16:
+      VGAOUT8(vgaCRReg, 0x50);
+      break;
+    case 24:
+      VGAOUT8(vgaCRReg, 0x70);
+      break;
+    case 32:
+      VGAOUT8(vgaCRReg, 0xD0);
+      break;
+    }
 
     /* Make sure 16-bit memory access is enabled */
     VGAOUT16(vgaCRIndex, 0x0c31);
