@@ -224,7 +224,7 @@ status_t FileReference::Rename( const String & cNewName )
 			SetTo( cNewPath, false );
 		}
 	}
-	return ( -1 );
+	return ( 0 );
 }
 
 status_t FileReference::Delete()
@@ -261,3 +261,4 @@ const Directory & FileReference::GetDirectory() const
 {
 	return ( m->m_cDirectory );
 }
+

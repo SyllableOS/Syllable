@@ -357,10 +357,19 @@ void SiS3xx::SetCursorBitmap(os::mouse_ptr_mode eMode, const os::IPoint& cHotSpo
 	m_cCursorHotSpot = cHotSpot;
 	int maxcurs = ( m_pHw->vga_engine == SIS_315_VGA ) ? 64 : 32;
 	if (eMode != MPTR_MONO || nWidth > maxcurs || nHeight > maxcurs) {
+		if( m_bUsingHWCursor ) {
+			MouseOff();
+			m_bCursorIsOn = true;
+		}
 		m_bUsingHWCursor = false;
 		return DisplayDriver::SetCursorBitmap(eMode, cHotSpot, pRaster, nWidth, nHeight);
 	}
-	m_bUsingHWCursor = true;
+	
+	if( !m_bUsingHWCursor ) {
+		DisplayDriver::MouseOff();
+		m_bUsingHWCursor = true;
+		MouseOn();
+	}
 	
 	int nCurAddr = m_pHw->mem_size / 1024;
 	const uint8 *pnSrc = (const uint8*)pRaster;
@@ -494,7 +503,7 @@ void SiS3xx::MouseOn()
 			sis301EnableHWARGBCursor()
 		}
 	}
-	m_bCursorIsOn = false;
+	m_bCursorIsOn = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -853,3 +862,35 @@ extern "C" DisplayDriver* init_gfx_driver( int nFd )
 	    return NULL;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

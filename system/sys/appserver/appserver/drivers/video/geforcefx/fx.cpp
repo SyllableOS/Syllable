@@ -420,10 +420,11 @@ int FX::SetScreenMode( os::screen_mode sMode )
 		nvReg->vpll2 = m_sHW.PRAMDAC0[0x00000520 / 4];
 	}
 	nvReg->cursorConfig = 0x00000100;
-	if ( 0 /*m_sHW.alphaCursor */  )
+	if ( 1 /*m_sHW.alphaCursor */  )
 	{
 		nvReg->cursorConfig |= 0x04011000;
 		nvReg->general |= ( 1 << 29 );
+		nvReg->dither = m_sHW.PRAMDAC[0x083C/4] & ~1;
 		nvReg->cursorConfig |= ( 1 << 28 );
 	}
 	else
@@ -462,7 +463,7 @@ int FX::SetScreenMode( os::screen_mode sMode )
 		uint32 *pnSrc = ( uint32 * )m_anCursorShape;
 		volatile uint32 *pnDst = ( uint32 * )m_sHW.CURSOR;
 
-		for ( int i = 0; i < MAX_CURS * MAX_CURS / 2; i++ )
+		for ( int i = 0; i < MAX_CURS * MAX_CURS; i++ )
 		{
 			*pnDst++ = *pnSrc++;
 		}
@@ -526,19 +527,29 @@ void FX::SetCursorBitmap( os::mouse_ptr_mode eMode, const os::IPoint & cHotSpot,
 {
 #ifndef DISABLE_HW_CURSOR
 	m_cCursorHotSpot = cHotSpot;
-	if ( eMode != MPTR_MONO || nWidth > MAX_CURS || nHeight > MAX_CURS )
+	if ( ( eMode != MPTR_MONO && eMode != MPTR_RGB32 ) || nWidth > MAX_CURS || nHeight > MAX_CURS )
 	{
 #endif
+		if( m_bUsingHWCursor )
+			NVShowHideCursor( &m_sHW, 0 );
 		m_bUsingHWCursor = false;
 		return DisplayDriver::SetCursorBitmap( eMode, cHotSpot, pRaster, nWidth, nHeight );
 #ifndef DISABLE_HW_CURSOR
 	}
-
-	const uint8 *pnSrc = ( const uint8 * )pRaster;
+	
+	if( !m_bUsingHWCursor ) {
+		DisplayDriver::MouseOff();
+		NVShowHideCursor( &m_sHW, 1 );
+	}
+	
+	m_bUsingHWCursor = true;
+	
+	const uint8 *pnSrcMono = ( const uint8 * )pRaster;
+	const uint32 *pnSrcRgb = ( const uint32 * )pRaster;
 	volatile uint32 *pnDst = ( uint32 * )m_sHW.CURSOR;
-	uint16 *pnSaved = m_anCursorShape;
+	uint32 *pnSaved = m_anCursorShape;
 	uint32 *pnSaved32 = ( uint32 * )m_anCursorShape;
-	static uint16 anPalette[] = { CURS_TRANSPARENT, CURS_BLACK, CURS_BLACK, CURS_WHITE };
+	static uint32 anPalette[] = { CURS_TRANSPARENT, CURS_BLACK, CURS_BLACK, CURS_WHITE };
 
 	for ( int y = 0; y < MAX_CURS; y++ )
 	{
@@ -550,17 +561,19 @@ void FX::SetCursorBitmap( os::mouse_ptr_mode eMode, const os::IPoint & cHotSpot,
 			}
 			else
 			{
-				*pnSaved = anPalette[*pnSrc++];
+				if( eMode == MPTR_RGB32 )
+					*pnSaved = *pnSrcRgb++;
+				else
+					*pnSaved = anPalette[*pnSrcMono++];
 			}
 		}
 	}
 
-	for ( int i = 0; i < MAX_CURS * MAX_CURS / 2; i++ )
+	for ( int i = 0; i < MAX_CURS * MAX_CURS; i++ )
 	{
 		*pnDst++ = *pnSaved32++;
 	}
 
-	m_bUsingHWCursor = true;
 #endif
 }
 
@@ -635,7 +648,6 @@ void FX::MouseOff()
 }
 
 
-
 //-----------------------------------------------------------------------------
 //                          DMA Functions
 //-----------------------------------------------------------------------------
@@ -687,6 +699,7 @@ void  DmaWait(  NVPtr pNv,  uint32 size  )
 //-----------------------------------------------------------------------------
 //                          Accelerated Functions
 //-----------------------------------------------------------------------------
+
 
 void FX::WaitForIdle()
 {
@@ -1624,3 +1637,127 @@ extern "C" DisplayDriver * init_gfx_driver( int nFd )
 		return NULL;
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

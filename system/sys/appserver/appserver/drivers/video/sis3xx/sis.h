@@ -709,16 +709,16 @@ typedef struct
                                       __Temp = inb((base)+1)|(val); \
                                       outSISIDXREG(base,idx,__Temp); \
                                     } while (0)
-#define andSISIDXREG(base,idx,zand)  do { \
+#define andSISIDXREG(base,idx,a)  do { \
                                       unsigned char __Temp; \
                                       outb(idx,base);   \
-                                      __Temp = inb((base)+1)&(zand); \
+                                      __Temp = inb((base)+1)&(a); \
                                       outSISIDXREG(base,idx,__Temp); \
                                     } while (0)
-#define setSISIDXREG(base,idx,zand,zor)   do { \
+#define setSISIDXREG(base,idx,a,o)   do { \
                                           unsigned char __Temp; \
                                           outb(idx,base);   \
-                                          __Temp = (inb((base)+1)&(zand))|(zor); \
+                                          __Temp = (inb((base)+1)&(a))|(o); \
                                           outSISIDXREG(base,idx,__Temp); \
                                         } while (0)
       
@@ -736,3 +736,17 @@ int sis_init();
 extern BOOLEAN  SiSSetMode(SiS_Private *SiS_Pr, PSIS_HW_DEVICE_INFO HwDeviceExtension, USHORT ModeNo);
 
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+

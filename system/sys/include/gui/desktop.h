@@ -37,6 +37,7 @@ namespace os {
  *
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
+class Bitmap;
 
 class Desktop
 {
@@ -56,8 +57,9 @@ public:
     bool	SetRefreshRate( float vRefreshRate );
     bool	Activate();
     
-	int32 GetWindows( Message* pcMsg );
-	void ActivateWindow( int32 nWindow );
+	int32	GetWindows( Message* pcMsg );
+	void	ActivateWindow( int32 nWindow );
+	Bitmap*	GetWindowIcon( int32 nWindow );
 private:
 	class Private;
 	Private* m;
@@ -66,4 +68,5 @@ private:
 }
 
 #endif // __F_GUI_DESKTOP_H__
+
 

@@ -29,7 +29,10 @@
 #define	B_NO_ERROR 0
 #define	B_ERROR 	-1
 
-#define	__INTEL__
+#ifndef __INTEL__
+#define __INTEL__
+#endif
+
 
 static inline void noprint( char* pzFormat, ... ) {}
 
@@ -199,6 +202,8 @@ private:
 
 
 #endif
+
+
 
 
 

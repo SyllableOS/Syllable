@@ -1025,7 +1025,7 @@ int sis_init()
 			si.CRT2_enable = IND_SIS_CRT2_WRITE_ENABLE_300;
 			strcpy( si.name, "330" );
 		break; 
-		case 0x630: /* SIS 630/730 */
+		case 0x6300: /* SIS 630/730 */
 			sis_set_reg4( 0xCF8, 0x80000000 );
 			reg32 = sis_get_reg3( 0xCFC );
 			if( reg32 == 0x07301039 ) {
@@ -1322,6 +1322,7 @@ int sis_init()
 	}
 	return 0;
 }
+
 
 
 

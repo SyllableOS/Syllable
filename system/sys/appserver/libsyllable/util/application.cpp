@@ -229,8 +229,22 @@ bigtime_t Application::GetIdleTime()
 void Application::PushCursor( mouse_ptr_mode eMode, void *pImage, int nWidth, int nHeight, const IPoint & cHotSpot )
 {
 	Message cReq( WR_PUSH_CURSOR );
+	
+	/* Calculate size of the cursor bitmap */
+	switch( eMode )
+	{
+		case MPTR_MONO:
+		case MPTR_CMAP8:
+			cReq.AddData( "image", T_ANY_TYPE, pImage, nWidth * nHeight );
+			break;
+		case MPTR_RGB32:
+			cReq.AddData( "image", T_ANY_TYPE, pImage, nWidth * nHeight * 4 );
+			break;
+		default:
+			dbprintf( "Application::PushCursor() got cursor with invalid mode: %i\n", (int)eMode );
+			return;
+	}	
 
-	cReq.AddData( "image", T_ANY_TYPE, pImage, nWidth * nHeight );
 	cReq.AddIPoint( "size", IPoint( nWidth, nHeight ) );
 	cReq.AddInt32( "mode", eMode );
 	cReq.AddIPoint( "hot_spot", cHotSpot );
@@ -1007,5 +1021,8 @@ void Application::__reserved9__()
 void Application::__reserved10__()
 {
 }
+
+
+
 
 

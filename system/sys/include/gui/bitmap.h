@@ -85,6 +85,7 @@ private:
     friend class View;
     friend class Window;
     friend class Sprite;
+    friend class Desktop;
   
     Window* 	m_pcWindow;
     int	  	m_hHandle;
@@ -173,4 +174,5 @@ inline Color32_s RGBA15_TO_COL( uint16 pix ) {
 }
 
 #endif // __F_GUI_BITMAP_H__
+
 

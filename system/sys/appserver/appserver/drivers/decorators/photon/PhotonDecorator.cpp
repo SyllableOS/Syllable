@@ -54,7 +54,7 @@ PhotonDecorator::PhotonDecorator( Layer* pcLayer, uint32 nWndFlags )
     m_bHasFocus   = false;
     m_bCloseState = false;
     m_bZoomState  = false;
-    m_bDepthState = false;
+    m_bMinimizeState = false;
 
     m_sFontHeight = pcLayer->GetFontHeight();
   
@@ -123,7 +123,7 @@ Point PhotonDecorator::GetMinimumSize()
 	}
 	if ( (m_nFlags & WND_NO_DEPTH_BUT) == 0 )
 	{
-		cMinSize.x += m_cToggleRect.Width();
+		cMinSize.x += m_cMinimizeRect.Width();
 	}
 	if ( cMinSize.x < m_vLeftBorder + m_vRightBorder )
 	{
@@ -184,9 +184,9 @@ WindowDecorator::hit_item PhotonDecorator::HitTest( const Point& cPosition )
 	{
 		return( HIT_ZOOM );
 	}
-	else if ( m_cToggleRect.DoIntersect( cPosition ) )
+	else if ( m_cMinimizeRect.DoIntersect( cPosition ) )
 	{
-		return( HIT_DEPTH );
+		return( HIT_MINIMIZE );
 	}
 	else if ( m_cDragRect.DoIntersect( cPosition ) )
 	{
@@ -249,25 +249,25 @@ void PhotonDecorator::Layout()
 	}
 	else
 	{
-		m_cCloseRect.right = vRight-1;
+		m_cCloseRect.right = vRight;
 		m_cCloseRect.left  = m_cCloseRect.right - BUTTON_SIZE;
 		vRight = m_cCloseRect.left - 3;
 	}
-	m_cCloseRect.top    = 4;
-	m_cCloseRect.bottom = 15;
-	// Toggle-depth button
+	m_cCloseRect.top    = 5;
+	m_cCloseRect.bottom = 16;
+	// Minimize button
 	if ( m_nFlags & WND_NO_DEPTH_BUT )
 	{
-		m_cToggleRect.left = m_cToggleRect.right = 0;
+		m_cMinimizeRect.left = m_cMinimizeRect.right = 0;
 	}
 	else
 	{
-		m_cToggleRect.right = vRight - 1;
-		m_cToggleRect.left   = m_cToggleRect.right - 12;
-		vRight = m_cToggleRect.left - 3;
+		m_cMinimizeRect.right = vRight;
+		m_cMinimizeRect.left   = m_cMinimizeRect.right - 12;
+		vRight = m_cMinimizeRect.left - 3;
 	}
-	m_cToggleRect.top    = m_cCloseRect.top;
-	m_cToggleRect.bottom = m_cCloseRect.bottom;
+	m_cMinimizeRect.top    = m_cCloseRect.top;
+	m_cMinimizeRect.bottom = m_cCloseRect.bottom;
 	// Zoom button
 	if ( m_nFlags & WND_NO_ZOOM_BUT )
 	{
@@ -275,7 +275,7 @@ void PhotonDecorator::Layout()
 	}
 	else
 	{
-		m_cZoomRect.right = vRight - 1;
+		m_cZoomRect.right = vRight;
 		m_cZoomRect.left  = m_cZoomRect.right - 12;
 		vRight = m_cZoomRect.left - 3;
 	}
@@ -298,8 +298,8 @@ void PhotonDecorator::SetButtonState( uint32 nButton, bool bPushed )
 		case HIT_ZOOM:
 			SetZoomButtonState( bPushed );
 			break;
-		case HIT_DEPTH:
-			SetDepthButtonState( bPushed );
+		case HIT_MINIMIZE:
+			SetMinimizeButtonState( bPushed );
 			break;
 	}
 }
@@ -322,12 +322,12 @@ void PhotonDecorator::SetZoomButtonState( bool bPushed )
 	}
 }
 
-void PhotonDecorator::SetDepthButtonState( bool bPushed )
+void PhotonDecorator::SetMinimizeButtonState( bool bPushed )
 {
-	m_bDepthState = bPushed;
+	m_bMinimizeState = bPushed;
 	if ( (m_nFlags & WND_NO_DEPTH_BUT) == 0 )
 	{
-		DrawDepth( m_cToggleRect, m_bHasFocus, m_bDepthState == 1 );
+		DrawMinimize( m_cMinimizeRect, m_bHasFocus, m_bMinimizeState == 1 );
 	}
 }
 
@@ -488,12 +488,12 @@ void PhotonDecorator::DrawTitleBG( const Rect& cRect, bool bActive )
 	}
 }
 
-void PhotonDecorator::DrawDepth( const Rect& cRect, bool bActive, bool bRecessed )
+void PhotonDecorator::DrawMinimize( const Rect& cRect, bool bActive, bool bRecessed )
 {
 	Rect	R = cRect;
-	R.right-=5; R.bottom-=5;
+	
 	DrawFrame( R, true, bRecessed);
-	R = cRect; R.left+=4; R.top+=4;
+	R.left+=8; R.top+=8;
 	DrawFrame( R, true, bRecessed);
 }
 
@@ -549,9 +549,13 @@ void PhotonDecorator::Render( const Rect& cUpdateRect )
 		pcView->SetFgColor( 0, 0, 0, 255 );
 		pcView->DrawLine( Point( 15, cIBounds.bottom + 1 ), Point( 15, cOBounds.bottom - 1 ) );
 		pcView->DrawLine( Point( cOBounds.right - 16, cIBounds.bottom + 1 ), Point( cOBounds.right - 16, cOBounds.bottom - 1 ) );
+		pcView->DrawLine( Point( cIBounds.right + 1, cOBounds.bottom - 16 ), Point( cOBounds.right - 1, cOBounds.bottom - 16 ) );
+		pcView->DrawLine( Point( cIBounds.left - 1, cOBounds.bottom - 16 ), Point( cOBounds.left + 1, cOBounds.bottom - 16 ) );
 		pcView->SetFgColor( 255, 255, 255, 255 );
 		pcView->DrawLine( Point( 16, cIBounds.bottom + 1 ), Point( 16, cOBounds.bottom - 1 ) );
 		pcView->DrawLine( Point( cOBounds.right - 15, cIBounds.bottom + 1 ), Point( cOBounds.right - 15, cOBounds.bottom - 1 ) );
+		pcView->DrawLine( Point( cIBounds.right + 1, cOBounds.bottom - 15 ), Point( cOBounds.right - 1, cOBounds.bottom - 15 ) );
+		pcView->DrawLine( Point( cIBounds.left - 1, cOBounds.bottom - 15 ), Point( cOBounds.left + 1, cOBounds.bottom - 15 ) );
 	}
 
 	if ( (m_nFlags & WND_NO_TITLE) == 0 )
@@ -570,36 +574,49 @@ void PhotonDecorator::Render( const Rect& cUpdateRect )
 		// Fill in top border
 		DrawTitleBG(m_cDragRect, m_bHasFocus);
 	}
+
 	// Draw button area background
-	if ( (m_nFlags & (WND_NO_ZOOM_BUT|WND_NO_DEPTH_BUT|WND_NO_CLOSE_BUT)) != (WND_NO_ZOOM_BUT|WND_NO_DEPTH_BUT|WND_NO_CLOSE_BUT) )
+	if ( (m_nFlags & (WND_NO_ZOOM_BUT|WND_NO_CLOSE_BUT)) != (WND_NO_ZOOM_BUT|WND_NO_CLOSE_BUT) )
 	{
 		Color32_s	col_DShadow = BlendColours( get_default_color(COL_SHADOW), get_default_color(COL_NORMAL), 0.8f);
 		Rect		buttons;
-		buttons.left   = m_cDragRect.right + 1;
-		buttons.top    = cOBounds.top;
-		buttons.right  = cOBounds.right;
-		buttons.bottom = m_cDragRect.bottom;
+		buttons.left   = m_cDragRect.right;
+		buttons.top    = cOBounds.top + 1;
+		buttons.right  = cOBounds.right + 1;
+		buttons.bottom = m_cDragRect.bottom + 1;
+
 		pcView->FillRect( buttons, col_DShadow );
+
 		buttons.top+=1; buttons.left+=1; buttons.right-=1; buttons.bottom-=1;
 		pcView->DrawFrame( buttons, FRAME_RAISED | FRAME_THIN | FRAME_TRANSPARENT );
 		buttons.top+=1; buttons.left+=1; buttons.right-=1; buttons.bottom-=1;
 		pcView->FillRect( buttons, get_default_color(COL_NORMAL) );
+		buttons.top-=3; buttons.left-=2; buttons.right +=2; buttons.bottom = buttons.top;
+		
+		pcView->SetFgColor( BlendColours(get_default_color(COL_SHADOW), 
+						BlendColours(get_default_color(COL_SHADOW), 
+					BlendColours(get_default_color(COL_SHADOW), get_default_color(COL_SEL_WND_BORDER), 0.5f),    0.5f), 0.5f ) );
+		
+		
+		pcView->DrawLine( Point(buttons.left, buttons.top ), Point(buttons.right, buttons.bottom ) );
+
 	}
 	// Draw ZOOM button
 	if ( (m_nFlags & WND_NO_ZOOM_BUT) == 0 )
 	{
 		DrawZoom( m_cZoomRect, m_bHasFocus, m_bZoomState == 1 );
 	}
-	// Draw TOGGLE-DEPTH button
+	// Draw MINIMIZE button
 	if ( (m_nFlags & WND_NO_DEPTH_BUT) == 0 )
 	{
-		DrawDepth( m_cToggleRect, m_bHasFocus, m_bDepthState == 1 );
+		DrawMinimize( m_cMinimizeRect, m_bHasFocus, m_bMinimizeState == 1 );
 	}
 	// Draw CLOSE button
 	if ( (m_nFlags & WND_NO_CLOSE_BUT) == 0 )
 	{
 		DrawClose( m_cCloseRect, m_bHasFocus, m_bCloseState == 1 );
 	}
+
 }
 
 extern "C" int get_api_version()
@@ -611,3 +628,17 @@ extern "C" WindowDecorator* create_decorator( Layer* pcLayer, uint32 nFlags )
 {
     return( new PhotonDecorator( pcLayer, nFlags ) );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

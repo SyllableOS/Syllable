@@ -676,11 +676,88 @@ void AppServer::DispatchMessage( Message * pcReq )
 						pcWindow->GetTopView()->GetParent(  )->UpdateRegions( false );
 
 						SrvWindow::HandleMouseTransaction();
+						//g_cLayerGate.Open();
+						break;
 					}
 					nCount++;
 				}
 			}
 			g_cLayerGate.Open();
+			break;
+		}
+	case DR_GET_WINDOW_ICON:
+		{
+			int32 nWindow = 0;
+			int32 nCount = 0;
+			int hHandle = -1;
+			int32 nError = -EINVAL;
+			BitmapNode *pcNode = NULL;
+			SrvBitmap* pcDstBitmap;
+			SrvBitmap* pcSrcBitmap;
+			Message cReply;
+
+			int nDesktop;
+
+			if( pcReq->FindInt( "desktop", &nDesktop ) != 0 ) {
+				pcReq->SendReply( &cReply );
+				break;
+			}
+
+			if( pcReq->FindInt32( "window", &nWindow ) != 0 ) {
+				pcReq->SendReply( &cReply );
+				break;
+			}
+				
+			if( pcReq->FindInt( "handle", &hHandle ) != 0 ){
+				pcReq->SendReply( &cReply );
+				break;
+			}
+			
+			if( hHandle == -1 ){
+				pcReq->SendReply( &cReply );
+				break;
+			}
+					
+			/* Get bitmap object */
+			pcNode = g_pcBitmaps->GetObj( hHandle );
+			if( pcNode == NULL ) {
+				pcReq->SendReply( &cReply );
+				break;
+			}
+				
+			pcDstBitmap = pcNode->m_pcBitmap;
+
+			/* Interate through the windows of the desktop */
+			SrvWindow *pcWindow;
+
+			g_cLayerGate.Close();
+
+			for( pcWindow = get_first_window( nDesktop ); pcWindow != NULL; pcWindow = pcWindow->m_asDTState[nDesktop].m_pcNextWindow )
+			{
+				if( ( pcWindow->GetTopView()->IsVisible(  ) || ( pcWindow->GetTopView(  )->m_nHideCount == 1 && pcWindow->IsMinimized(  ) ) ) && !pcWindow->GetTopView(  )->IsBackdrop(  ) && !( pcWindow->GetFlags(  ) & WND_NO_BORDER ) )
+				{
+					if( nWindow == nCount )
+					{
+						/* Got it! Copy bitmap if possible */
+						if( pcWindow->GetIcon() == NULL )
+							break;
+						pcSrcBitmap = pcWindow->GetIcon();
+						if( pcSrcBitmap->m_nWidth == 24 && pcSrcBitmap->m_nHeight == 24
+							&& pcSrcBitmap->m_eColorSpc == CS_RGB32 ) {
+							for( int i = 0; i < 24; i++ )
+								memcpy( pcDstBitmap->m_pRaster + pcDstBitmap->m_nBytesPerLine * i,
+									pcSrcBitmap->m_pRaster + pcSrcBitmap->m_nBytesPerLine * i,
+									pcSrcBitmap->m_nBytesPerLine );
+							nError = 0;
+						}
+						break;
+					}
+					nCount++;
+				}
+			}
+			g_cLayerGate.Open();
+			cReply.AddInt32( "error", nError );
+			pcReq->SendReply( &cReply );
 			break;
 		}
 	case DR_CLOSE_WINDOWS:
@@ -763,6 +840,7 @@ void AppServer::Run( void )
 			case DR_SET_DESKTOP:
 			case DR_GET_WINDOW_LIST:
 			case DR_ACTIVATE_WINDOW:
+			case DR_GET_WINDOW_ICON:
 			case DR_CLOSE_WINDOWS:
 				{
 					try
@@ -963,3 +1041,9 @@ int main( int argc, char **argv )
 	dbprintf( "WARNING : layers.device failed to initiate itself!!!\n" );
 	return ( 0 );
 }
+
+
+
+
+
+

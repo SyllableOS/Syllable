@@ -61,6 +61,7 @@ enum
     DR_GET_WINDOW_LIST,
     DR_ACTIVATE_WINDOW,
     DR_CLOSE_WINDOWS,
+    DR_GET_WINDOW_ICON,
     
     AR_OPEN_WINDOW = 10000,
     AR_CLOSE_WINDOW,
@@ -526,6 +527,7 @@ struct WR_GetPenPositionReply_s
 
 }
 #endif	//	DEVICES_DISPLAY_PACKETS_H
+
 
 
 

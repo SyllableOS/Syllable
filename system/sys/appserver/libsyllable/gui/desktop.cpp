@@ -25,6 +25,7 @@
 #include <appserver/protocol.h>
 #include <gui/desktop.h>
 #include <gui/guidefines.h>
+#include <gui/bitmap.h>
 #include <util/application.h>
 #include <util/message.h>
 #include <util/messenger.h>
@@ -209,3 +210,42 @@ void Desktop::ActivateWindow( int32 nWindow )
 	cReq.AddInt32( "desktop", m->m_nDesktop );
 	Messenger( pcApp->GetServerPort() ).SendMessage( &cReq );
 }
+
+
+
+/** Return the icon of one window.
+ * \par Description:
+ * GetWindowIcon() returns the icon that has been set by the window. The iconsize
+ * is 24x24.
+ * \param nWindow - The window.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+Bitmap* Desktop::GetWindowIcon( int32 nWindow )
+{
+	Message cReply;
+	
+	Bitmap* pcBitmap = new Bitmap( 24, 24, os::CS_RGB32 );
+	memset( pcBitmap->LockRaster(), 0, pcBitmap->GetBytesPerRow() * 24 );
+	
+	Message cReq( DR_GET_WINDOW_ICON );
+	cReq.AddInt32( "window", nWindow );
+	cReq.AddInt32( "handle", pcBitmap->m_hHandle );
+				
+	Application* pcApp = Application::GetInstance();
+	cReq.AddInt32( "desktop", m->m_nDesktop );
+	Messenger( pcApp->GetServerPort() ).SendMessage( &cReq, &cReply );
+	
+	int32 nError;
+	
+	if( cReply.FindInt32( "error", &nError ) == 0 && nError == 0 )
+		return( pcBitmap );
+	
+	delete( pcBitmap );
+	return( NULL );
+}
+
+
+
+
+
+

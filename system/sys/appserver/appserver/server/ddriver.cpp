@@ -380,21 +380,29 @@ void DisplayDriver::SetCursorBitmap( mouse_ptr_mode eMode, const IPoint & cHotSp
 	{
 		m_pcMouseImage->Release();
 	}
-	m_pcMouseImage = new SrvBitmap( nWidth, nHeight, CS_CMAP8 );
-
-	uint8 *pDstRaster = m_pcMouseImage->m_pRaster;
-	const uint8 *pSrcRaster = static_cast < const uint8 *>( pRaster );
-
-	for( int i = 0; i < nWidth * nHeight; ++i )
+	if( eMode == MPTR_RGB32 ) 
 	{
-		uint8 anPalette[] = { 255, 0, 0, 63 };
-		if( pSrcRaster[i] < 4 )
+		m_pcMouseImage = new SrvBitmap( nWidth, nHeight, CS_RGB32 );
+		memcpy( m_pcMouseImage->m_pRaster, pRaster, nWidth * nHeight * 4 );
+	}
+	else
+	{
+		m_pcMouseImage = new SrvBitmap( nWidth, nHeight, CS_CMAP8 );
+
+		uint8 *pDstRaster = m_pcMouseImage->m_pRaster;
+		const uint8 *pSrcRaster = static_cast < const uint8 *>( pRaster );
+
+		for( int i = 0; i < nWidth * nHeight; ++i )
 		{
-			pDstRaster[i] = anPalette[pSrcRaster[i]];
-		}
-		else
-		{
-			pDstRaster[i] = 255;
+			uint8 anPalette[] = { 255, 0, 0, 63 };
+			if( pSrcRaster[i] < 4 )
+			{
+				pDstRaster[i] = anPalette[pSrcRaster[i]];
+			}
+			else
+			{
+				pDstRaster[i] = 255;
+			}
 		}
 	}
 	if( m_pcMouseImage != NULL )
@@ -1312,16 +1320,6 @@ static inline void blit_convert_over( SrvBitmap * pcDst, SrvBitmap * pcSrc, cons
 }
 
 
-
-
-
-
-
-
-
-
-
-
 //----------------------------------------------------------------------------
 // NAME:
 // DESC:
@@ -1341,28 +1339,34 @@ static inline void blit_convert_alpha( SrvBitmap * pcDst, SrvBitmap * pcSrc, con
 			uint16 *pDst = RAS_OFFSET16( pcDst->m_pRaster, cDstPos.x, cDstPos.y, pcDst->m_nBytesPerLine );
 			int nDstModulo = pcDst->m_nBytesPerLine - ( cSrcRect.Width() + 1 ) * 2;
 
+			nSrcModulo >>= 2;
+			nDstModulo >>= 1;
+
 			for( int y = cSrcRect.top; y <= cSrcRect.bottom; ++y )
 			{
 				for( int x = cSrcRect.left; x <= cSrcRect.right; ++x )
 				{
-					Color32_s sSrcColor = RGB32_TO_COL( *pSrc++ );
-
-					int nAlpha = sSrcColor.alpha;
-
-					if( nAlpha == 0xff )
-					{
-						*pDst = COL_TO_RGB16( sSrcColor );
+					
+					uint32 nSrcColor = *pSrc++;
+					unsigned nAlpha = nSrcColor >> 27;
+					
+					if( nAlpha == ( 0xff >> 3 ) ) {
+						*pDst = ( nSrcColor >> 8 & 0xf800 ) + ( nSrcColor >> 5 & 0x7e0 ) 
+								+ ( nSrcColor >> 3  & 0x1f );
+					} else {
+						uint32 nDstColor = *pDst;
+						nSrcColor = ( ( nSrcColor & 0xfc00 ) << 11 ) + ( nSrcColor >> 8 & 0xf800 )
+							      + ( nSrcColor >> 3 & 0x1f );
+						nDstColor = ( nDstColor | nDstColor << 16 ) & 0x07e0f81f;
+						nDstColor += ( nSrcColor - nDstColor ) * nAlpha >> 5;
+						nDstColor &= 0x07e0f81f;
+						*pDst = nDstColor | nDstColor >> 16;
 					}
-					else if( nAlpha != 0x00 )
-					{
-						Color32_s sDstColor = RGB16_TO_COL( *pDst );
-
-						*pDst = COL_TO_RGB16( Color32_s( sDstColor.red * ( 256 - nAlpha ) / 256 + sSrcColor.red * nAlpha / 256, sDstColor.green * ( 256 - nAlpha ) / 256 + sSrcColor.green * nAlpha / 256, sDstColor.blue * ( 256 - nAlpha ) / 256 + sSrcColor.blue * nAlpha / 256, 0 ) );
-					}
+					
 					pDst++;
 				}
-				pSrc = ( uint32 * )( ( ( uint8 * )pSrc ) + nSrcModulo );
-				pDst = ( uint16 * )( ( ( uint8 * )pDst ) + nDstModulo );
+				pSrc = pSrc + nSrcModulo;
+				pDst = pDst + nDstModulo;
 			}
 			break;
 		}
@@ -1401,45 +1405,42 @@ static inline void blit_convert_alpha( SrvBitmap * pcDst, SrvBitmap * pcSrc, con
 			uint32 *pDst = RAS_OFFSET32( pcDst->m_pRaster, cDstPos.x, cDstPos.y, pcDst->m_nBytesPerLine );
 			int nDstModulo = pcDst->m_nBytesPerLine - ( cSrcRect.Width() + 1 ) * 4;
 
+			nSrcModulo >>= 2;
+			nDstModulo >>= 2;
+
 			for( int y = cSrcRect.top; y <= cSrcRect.bottom; ++y )
 			{
 				for( int x = cSrcRect.left; x <= cSrcRect.right; ++x )
 				{
-					Color32_s sSrcColor = RGB32_TO_COL( *pSrc++ );
-
-					int nAlpha = sSrcColor.alpha;
-
+					uint32 nSrcColor = *pSrc++;
+					uint32 nAlpha = nSrcColor >> 24;
+					
 					if( nAlpha == 0xff )
 					{
-						*pDst = COL_TO_RGB32( sSrcColor );
-					}
-					else if( nAlpha != 0x00 )
-					{
-						Color32_s sDstColor = RGB32_TO_COL( *pDst );
-
-						*pDst = COL_TO_RGB32( Color32_s( sDstColor.red * ( 256 - nAlpha ) / 256 + sSrcColor.red * nAlpha / 256, sDstColor.green * ( 256 - nAlpha ) / 256 + sSrcColor.green * nAlpha / 256, sDstColor.blue * ( 256 - nAlpha ) / 256 + sSrcColor.blue * nAlpha / 256, 0 ) );
+						*pDst = nSrcColor;
+					} else {
+						uint32 nDstColor = *pDst;
+						uint32 nSrc1;
+						uint32 nDst1;
+						uint32 nDstAlpha = nDstColor & 0xff000000;
+						
+						nSrc1 = nSrcColor & 0xff00ff;
+						nDst1 = nDstColor & 0xff00ff;
+						nDst1 = ( nDst1 + ( ( nSrc1 - nDst1 ) * nAlpha >> 8 ) ) & 0xff00ff;
+						nSrcColor &= 0xff00;
+						nDstColor &= 0xff00;
+						nDstColor = ( nDstColor + ( ( nSrcColor - nDstColor ) * nAlpha >> 8)) & 0xff00;
+						*pDst = nDst1 | nDstColor | nDstAlpha;
 					}
 					pDst++;
 				}
-				pSrc = ( uint32 * )( ( ( uint8 * )pSrc ) + nSrcModulo );
-				pDst = ( uint32 * )( ( ( uint8 * )pDst ) + nDstModulo );
+				pSrc = pSrc + nSrcModulo;
+				pDst = pDst + nDstModulo;
 			}
 			break;
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //----------------------------------------------------------------------------
@@ -1547,31 +1548,30 @@ void DisplayDriver::RenderGlyph( SrvBitmap * pcBitmap, Glyph * pcGlyph, const IP
 		int nDstModulo = pcBitmap->m_nBytesPerLine / 2 - nWidth;
 		uint16 *pDst = ( uint16 * )pcBitmap->m_pRaster + cRect.left + cRect.top * pcBitmap->m_nBytesPerLine / 2;
 
-		int nFgClut = COL_TO_RGB16( sFgColor );
-
+		uint32 nFgColor = COL_TO_RGB16( sFgColor );
+	
 		for( int y = 0; y < nHeight; ++y )
 		{
 			for( int x = 0; x < nWidth; ++x )
 			{
 				int nAlpha = *pSrc++;
-
+			
 				if( nAlpha > 0 )
 				{
 					if( nAlpha == NUM_FONT_GRAYS - 1 )
 					{
-						*pDst = nFgClut;
+						*pDst = nFgColor;
 					}
 					else
 					{
-						int nClut = *pDst;
-
-						sBgColor = RGB16_TO_COL( nClut );
-
-						sCurCol.red = sBgColor.red + int ( sFgColor.red - sBgColor.red ) * nAlpha / ( NUM_FONT_GRAYS - 1 );
-						sCurCol.green = sBgColor.green + int ( sFgColor.green - sBgColor.green ) * nAlpha / ( NUM_FONT_GRAYS - 1 );
-						sCurCol.blue = sBgColor.blue + int ( sFgColor.blue - sBgColor.blue ) * nAlpha / ( NUM_FONT_GRAYS - 1 );
-
-						*pDst = COL_TO_RGB16( sCurCol );
+						nAlpha >>= 3;
+						
+						uint32 nDstColor = *pDst;
+						uint32 nSrcColor = ( nFgColor | nFgColor << 16 ) & 0x07e0f81f;
+						nDstColor = ( nDstColor | nDstColor << 16 ) & 0x07e0f81f;
+						nDstColor += ( nSrcColor - nDstColor ) * nAlpha >> 5;
+						nDstColor &= 0x07e0f81f;
+						*pDst = nDstColor | nDstColor >> 16;
 					}
 				}
 				pDst++;
@@ -1585,7 +1585,7 @@ void DisplayDriver::RenderGlyph( SrvBitmap * pcBitmap, Glyph * pcGlyph, const IP
 		int nDstModulo = pcBitmap->m_nBytesPerLine / 4 - nWidth;
 		uint32 *pDst = ( uint32 * )pcBitmap->m_pRaster + cRect.left + cRect.top * pcBitmap->m_nBytesPerLine / 4;
 
-		int nFgClut = COL_TO_RGB32( sFgColor );
+		uint32 nFgColor = COL_TO_RGB32( sFgColor );
 
 		for( int y = 0; y < nHeight; ++y )
 		{
@@ -1597,19 +1597,21 @@ void DisplayDriver::RenderGlyph( SrvBitmap * pcBitmap, Glyph * pcGlyph, const IP
 				{
 					if( nAlpha == NUM_FONT_GRAYS - 1 )
 					{
-						*pDst = nFgClut;
+						*pDst = nFgColor;
 					}
 					else
 					{
-						int nClut = *pDst;
-
-						sBgColor = RGB32_TO_COL( nClut );
-
-						sCurCol.red = sBgColor.red + ( sFgColor.red - sBgColor.red ) * nAlpha / ( NUM_FONT_GRAYS - 1 );
-						sCurCol.green = sBgColor.green + ( sFgColor.green - sBgColor.green ) * nAlpha / ( NUM_FONT_GRAYS - 1 );
-						sCurCol.blue = sBgColor.blue + ( sFgColor.blue - sBgColor.blue ) * nAlpha / ( NUM_FONT_GRAYS - 1 );
-
-						*pDst = COL_TO_RGB32( sCurCol );
+						
+						uint32 nDstColor = *pDst;
+						uint32 nSrcColor = nFgColor;
+						uint32 nSrc1 = nSrcColor & 0xff00ff;
+						uint32 nDst1 = nDstColor & 0xff00ff;
+						
+						nDst1 = ( nDst1 + ( ( nSrc1 - nDst1 ) * nAlpha >> 8 ) ) & 0xff00ff;
+						nSrcColor &= 0xff00;
+						nDstColor &= 0xff00;
+						nDstColor = ( nDstColor + ( ( nSrcColor - nDstColor ) * nAlpha >> 8 ) ) & 0xff00;
+						*pDst = nDst1 | nDstColor | 0xff000000;
 					}
 				}
 				pDst++;
@@ -1681,15 +1683,37 @@ void DisplayDriver::RenderGlyph( SrvBitmap * pcBitmap, Glyph * pcGlyph, const IP
 
 		for( int y = 0; y < nHeight; ++y )
 		{
-			for( int x = 0; x < nWidth; ++x )
+			if( ( nWidth & 1 ) == 0 )
 			{
-				int nAlpha = *pSrc++;
-
-				if( nAlpha > 0 )
+				for( int x = 0; x < nWidth / 2; ++x )
 				{
-					*pDst = anPallette[nAlpha];
+					int nAlpha1 = *pSrc++;
+					int nAlpha2 = *pSrc++;
+				
+					if( nAlpha1 > 0 && nAlpha2 > 0 )
+					{
+						uint32* pDstConvert = (uint32*)pDst;
+						*pDstConvert = anPallette[nAlpha2] << 16 | anPallette[nAlpha1];
+						pDst += 2;
+					} else 
+					{
+						if( nAlpha1 > 0 )
+							*pDst = anPallette[nAlpha1];
+						pDst++;
+						if( nAlpha2 > 0 )
+							*pDst = anPallette[nAlpha2];
+						pDst++;
+					}	
 				}
-				pDst++;
+			} else {
+				for( int x = 0; x < nWidth; ++x )
+				{
+					int nAlpha = *pSrc++;
+
+					if( nAlpha > 0 )
+						*pDst = anPallette[nAlpha];
+					pDst++;
+				}
 			}
 			pSrc += nSrcModulo;
 			pDst += nDstModulo;
@@ -1812,3 +1836,22 @@ void DisplayDriver::__VW_reserved8__()
 void DisplayDriver::__VW_reserved9__()
 {
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -22,7 +22,7 @@ extern "C" {
 #define SetBit(n) (1<<(n))
 #define Set8Bits(value) ((value)&0xff)
 
-#define MAX_CURS            32
+#define MAX_CURS            64
 
 enum {
 	V_DBLSCAN
@@ -210,6 +210,7 @@ void NVSetStartAddress (
 #endif
 
 #endif /* __FX_HW_H__ */
+
 
 
 

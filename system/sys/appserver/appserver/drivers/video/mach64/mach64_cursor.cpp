@@ -78,7 +78,6 @@ void ATImach64::SetCursorBitmap( mouse_ptr_mode eMode, const IPoint& cHotSpot, c
 	if( ( eMode != MPTR_MONO || nWidth > 64 || nHeight > 64 ) && HWcursor == true ) {
 		MouseOff();
 		HWcursor = false;
-		MouseOn();
 	}
 	
 	if( HWcursor == true ) {
@@ -213,3 +212,5 @@ void ATImach64::aty_hw_cursor_init()
 	dprintf("Mach64:: Hardware cursor enabled\n");
 	
 }
+
+

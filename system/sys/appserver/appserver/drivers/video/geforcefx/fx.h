@@ -7,10 +7,10 @@
 #include "../../../server/ddriver.h"
 #include "fx_hw.h"
 
-#define MAX_CURS		32
-#define CURS_WHITE		0xffff
-#define CURS_BLACK		0x8000
-#define CURS_TRANSPARENT	0x0000
+#define MAX_CURS		64
+#define CURS_WHITE		0xffffffff
+#define CURS_BLACK		0xff000000
+#define CURS_TRANSPARENT	0x00000000
 
 struct chip_info
 {
@@ -100,7 +100,7 @@ private:
 	bool		m_bCursorIsOn;
 	os::IPoint	m_cCursorPos;
 	os::IPoint	m_cCursorHotSpot;
-	uint16		m_anCursorShape[MAX_CURS*MAX_CURS];
+	uint32		m_anCursorShape[MAX_CURS*MAX_CURS];
 
 	uint32		m_nColorKey;
 	bool		m_bVideoOverlayUsed;
@@ -211,6 +211,9 @@ private:
 };
 
 #endif // __FX_H__
+
+
+
 
 
 

@@ -472,7 +472,7 @@ void Window::SetTitle( const String & cTitle )
  *	The Bitmap will be copied, so you can delete the bitmap
  *  afterwards,
  * \param pcIcon
- *	The new window icon.
+ *	The new window icon. The icon format is supposed to be 24x24 CS_RGB32.
  * \sa GetIcon(), SetTitle()
  * \author	Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
@@ -482,6 +482,13 @@ void Window::SetIcon( Bitmap* pcIcon )
 	if( pcIcon == NULL )
 	{
 		dbprintf( "Error: Window::SetIcon() called with empty icon\n" );
+		return;
+	}
+	
+	if( pcIcon->GetBounds() != Rect( 0, 0, 23, 23 ) ||
+		pcIcon->GetColorSpace() != CS_RGB32 )
+	{
+		dbprintf( "Error: Window::SetIcon() called with invalid icon\n" );
 		return;
 	}
 	
@@ -1931,4 +1938,8 @@ void Window::__WI_reserved5__()
 void Window::__WI_reserved6__()
 {
 }
+
+
+
+
 

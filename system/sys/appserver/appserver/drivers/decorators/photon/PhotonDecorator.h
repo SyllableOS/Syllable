@@ -47,13 +47,13 @@ public:
     virtual void SetFocusState( bool bHasFocus );
     virtual void SetCloseButtonState( bool bPushed );
     virtual void SetZoomButtonState( bool bPushed );
-    virtual void SetDepthButtonState( bool bPushed );
+    virtual void SetMinimizeButtonState( bool bPushed );
     virtual void SetButtonState( uint32 nButton, bool bPushed );
     virtual void Render( const Rect& cUpdateRect );
 private:
     void CalculateBorderSizes();
     void Layout();
-    void DrawDepth  ( const Rect& cRect, bool bActive, bool bRecessed );
+    void DrawMinimize  ( const Rect& cRect, bool bActive, bool bRecessed );
     void DrawZoom   ( const Rect& cRect, bool bActive, bool bRecessed );
     void DrawClose  ( const Rect& cRect, bool bActive, bool bRecessed );
     void DrawPanel  ( const Rect& cRect, bool bActive, bool bRecessed );
@@ -68,7 +68,7 @@ private:
 
     Rect   m_cCloseRect;
     Rect   m_cZoomRect;
-    Rect   m_cToggleRect;
+    Rect   m_cMinimizeRect;
     Rect   m_cDragRect;
   
     float  m_vLeftBorder;
@@ -79,10 +79,11 @@ private:
     bool   m_bHasFocus;
     bool   m_bCloseState;
     bool   m_bZoomState;
-    bool   m_bDepthState;
+    bool   m_bMinimizeState;
 };
 
 #endif // __F_PHOTONDECORATOR_H__
+
 
 
 
