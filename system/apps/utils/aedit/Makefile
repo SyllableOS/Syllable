@@ -8,12 +8,17 @@ OBJSDIR = objs/
 OBJS = $(OBJSDIR)main.o $(OBJSDIR)appwindow.o $(OBJSDIR)button_bar.o $(OBJSDIR)editview.o $(OBJSDIR)gotodialog.o $(OBJSDIR)finddialog.o $(OBJSDIR)replacedialog.o $(OBJSDIR)settings.o
 EXE = aedit
 
+all: $(OBJSDIR) $(EXE)
+
+$(OBJSDIR):
+	mkdir $(OBJSDIR)
+
 $(EXE): $(OBJS)
-	$(LL) $(OBJS) -latheos -o $(EXE)
+	$(LL) $(OBJS) -lsyllable -o $(EXE)
 
 deps:
 
-install: $(EXE)
+install: all
 	-strip --strip-all $(EXE)
 	-cp $(EXE) /system/bin/
 
