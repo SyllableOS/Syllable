@@ -1,0 +1,55 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				developing
+warnings			Temporarily modifies the GCC specs file!
+
+licenses			LGPL BSD other
+home				www.gnu.org/software/libc/
+;packages
+;	glibc-2.3.2
+
+build-needs
+;	autoconf 2.13
+	make >= 3.79
+	binutils >= 2.13
+	gcc >= 3
+	gawk
+	gettext >= 0.10.35
+;build-recommends	texinfo <
+test-needs
+	bash <> 2.03
+	perl
+
+patch-config		scripts
+patch
+	rm -f /system/libs/libgcc.so
+;	autoconf
+
+configure-options
+	--enable-hacker-mode
+;	--with-headers=../glibc-2.3.2/syllable/include
+;	--enable-add-ons
+;	--enable-libio
+;	--enable-bounded
+;	--disable-profile
+	--without-cvs
+
+make
+	mv /usr/gcc/lib/gcc-lib/i586-pc-syllable/3.3.4/specs /usr/gcc/lib/gcc-lib/i586-pc-syllable/3.3.4/specs.original
+	mv ../glibc-2.3.2/syllable/specs /usr/gcc/lib/gcc-lib/i586-pc-syllable/3.3.4
+	make
+	mv /usr/gcc/lib/gcc-lib/i586-pc-syllable/3.3.4/specs.original /usr/gcc/lib/gcc-lib/i586-pc-syllable/3.3.4/specs
+
+;make-targets
+;	For printed documentation:
+;	dvi
+
+;install-prefix-var	install_root
+system-files
+	lib/*.so	system/libs
+	lib/*.so.*	system/libs
+documentation
+	README BUGS INSTALL COPYING.LIB COPYING LICENSES NEWS ChangeLog FAQ INTERFACE CONFORMANCE README.libm PROJECTS NOTES NAMESPACE
+	manual/examples
