@@ -26,6 +26,8 @@
 
 #include "mga_crtc.h"
 #include "mga_regs.h"
+#include "mga_dac.h"
+#include "mga_tvp3026.h"
 
 #include "../../../server/vesadrv.h"
 
@@ -60,7 +62,8 @@ class Matrox : public VesaDriver
 		inline uint32 inl( uint32 nAddress ) const { return( *((vuint32*)(m_pRegisterBase + nAddress)) ); }
 		inline uint8  inb( uint32 nAddress ) const { return( *((vuint8*)(m_pRegisterBase + nAddress)) ); }
 
-		MgaCRTC *m_cCrtc;
+		MgaCRTC *m_pcCrtc;
+		MgaDac *m_pcDac;
 
 		os::Locker m_cGELock;
 

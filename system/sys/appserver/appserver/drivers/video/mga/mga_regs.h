@@ -123,22 +123,34 @@
 #define MGA_CRTCEXTD					0X1fdf
 
 // Gx00 DAC registers
-#define MGA_PALWTADD					0x3c00
-#define MGA_PALDATA					0x3c01
-#define MGA_XDATA						0x3c0a
+#define MGA_PALWTADD					0x00
+#define MGA_PALDATA					0x01
+#define MGA_XDATA						0x0a
+#define MGA_MISCCTRL					0x1e
+#define MGA_MULCTRL					0x19
 
 // TI TVP3026 DAC registers
-#define TVP3026_INDEX				0x3c00
-#define TVP3026_WADR_PAL				0x3c00
-#define TVP3026_CUR_COL_ADDR		0x3c04
-#define TVP3026_CUR_COL_DATA		0x3c05
-#define TVP3026_CURSOR_CTL			0x3c06
-#define TVP3026_DATA					0x3c0a
-#define TVP3026_CUR_XLOW				0x3c0c
-#define TVP3026_CUR_RAM				0x3c0b
-#define TVP3026_CUR_XHI				0x3c0d
-#define TVP3026_CUR_YLOW				0x3c0e
-#define TVP3026_CUR_YHI				0x3c0f
+#define TVP3026_INDEX				0x00
+#define TVP3026_WADR_PAL				0x00
+#define TVP3026_CUR_COL_ADDR		0x04
+#define TVP3026_CUR_COL_DATA		0x05
+#define TVP3026_CURSOR_CTL			0x06
+#define TVP3026_DATA					0x0a
+#define TVP3026_CUR_XLOW				0x0c
+#define TVP3026_CUR_RAM				0x0b
+#define TVP3026_CUR_XHI				0x0d
+#define TVP3026_CUR_YLOW				0x0e
+#define TVP3026_CUR_YHI				0x0f	// Hmmm,
+#define TVP3026_LATCHCTRL			0x0f	// are these correct?
+#define TVP3026_CLK_SEL				0x1a
+#define TVP3026_MISCCTRL				0x1e
+#define TVP3026_TCOLCTRL				0x18
+#define TVP3026_MULCTRL				0x19
+#define TVP3026_PLL_ADDR				0x2c
+#define TVP3026_PIX_CLK_DATA		0x2d
+#define TVP3026_MEM_CLK_DATA		0x2e
+#define TVP3026_LOAD_CLK_DATA		0x2f
+#define TVP3026_MCLK_CTL				0x39
 
 enum MGADACType
 {

@@ -2,6 +2,7 @@
  *  The Syllable application server
  *  Copyright (C) 1999 - 2001  Kurt Skauen
  *  Copyright (C) 2003  Kristian Van Der Vliet
+ *  Copyright 1994 by Robin Cutshaw <robin@XFree86.org>
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -18,12 +19,15 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "mga.h"
 #include "mga_crtc.h"
 #include "mga_regs.h"
 
-MgaCRTC::MgaCRTC( vuint8 *pRegisterBase )
+MgaCRTC::MgaCRTC( vuint8 *pRegisterBase, MgaDac *pcDac, PCI_Info_s cPCIInfo )
 {
 	m_pRegisterBase = pRegisterBase;
+	m_pcDac = pcDac;
+	m_cPCIInfo = cPCIInfo;
 }
 
 MgaCRTC::~MgaCRTC()
@@ -33,10 +37,10 @@ MgaCRTC::~MgaCRTC()
 
 bool MgaCRTC::SetMode( int nXRes, int nYRes, int nBPP, float vRefreshRate )
 {
-	Gx00CRTCRegs sRegs;
 	bool bRet;
+	struct CRTCModeData sModeData;
 
-	bRet = CalcMode( &sRegs, nXRes, nYRes, nBPP, vRefreshRate );
+	bRet = CalcMode( nXRes, nYRes, nBPP, vRefreshRate, &sModeData );
 
 	if( bRet )
 	{
@@ -45,80 +49,78 @@ bool MgaCRTC::SetMode( int nXRes, int nYRes, int nBPP, float vRefreshRate )
 		SetMGAMode();
 		CRTCWriteEnable();
 
-		//	Set up the registers calculated by CalcMode()
-		//
-		// FIXME: Change these to defined constants
-
+		// FIXME: Change these all to defined constants
 		outb( MGA_MISC, 0xef );
 		GCTLWrite( 0x06, 0x05 );
-		CRTCWrite( 0x00, sRegs.CRTC0 );
-		CRTCWrite( 0x01, sRegs.CRTC1 );
-		CRTCWrite( 0x02, sRegs.CRTC2 );
-		CRTCWrite( 0x03, sRegs.CRTC3 );
-		CRTCWrite( 0x04, sRegs.CRTC4 );
-		CRTCWrite( 0x05, sRegs.CRTC5 );
-		CRTCWrite( 0x06, sRegs.CRTC6 );
-		CRTCWrite( 0x07, sRegs.CRTC7 );
-		CRTCWrite( 0x08, sRegs.CRTC8 );
-		CRTCWrite( 0x09, sRegs.CRTC9 );
-		CRTCWrite( 0x0C, sRegs.CRTCC );
-		CRTCWrite( 0x0D, sRegs.CRTCD );
-		CRTCWrite( 0x10, sRegs.CRTC10 );
-		CRTCWrite( 0x11, sRegs.CRTC11 );
-		CRTCWrite( 0x12, sRegs.CRTC12 );
-		CRTCWrite( 0x13, sRegs.CRTC13 );
-		CRTCWrite( 0x14, sRegs.CRTC14 );
-		CRTCWrite( 0x15, sRegs.CRTC15 );
-		CRTCWrite( 0x16, sRegs.CRTC16 );
-		CRTCWrite( 0x17, sRegs.CRTC17 );
-		CRTCWrite( 0x18, sRegs.CRTC18 );
-		CRTCEXTWrite( 0x00, sRegs.CRTCEXT0 );
-		CRTCEXTWrite( 0x01, sRegs.CRTCEXT1 );
-		CRTCEXTWrite( 0x02, sRegs.CRTCEXT2 );
-		CRTCEXTWrite( 0x03, sRegs.CRTCEXT3 );
-		CRTCEXTWrite( 0x04, 0 );
-		SEQWrite( 0x01, sRegs.SEQ1 );
+
+		CRTCWrite( 0x00, uint8( sModeData.nHtotal ) );
+		CRTCWrite( 0x01, uint8( sModeData.nHdispend ) );
+		CRTCWrite( 0x02, uint8( sModeData.nHblkstr ) );
+		CRTCWrite( 0x03, uint8( sModeData.nHblkend & 0x1f ) );
+		CRTCWrite( 0x04, uint8( sModeData.nHsyncstr ) );
+		CRTCWrite( 0x05, uint8( ( sModeData.nHsyncend & 0x1f ) | ( ( sModeData.nHblkend & 0x20 ) << 2 ) ) );
+		CRTCWrite( 0x06, uint8( sModeData.nVtotal & 0xff ) );
+		CRTCWrite( 0x07, uint8( ( ( sModeData.nVtotal & 0x100 ) >> 8 ) | ( ( sModeData.nVtotal & 0x200 ) >> 4 ) | ( ( sModeData.nVdispend & 0x100 ) >> 7 ) | ( ( sModeData.nVdispend & 0x200 ) >> 3 ) | ( ( sModeData.nVblkstr & 0x100 ) >> 5 ) | ( ( sModeData.nVsyncstr & 0x100 ) >> 6 ) | ( ( sModeData.nVsyncstr & 0x200 ) >> 2 ) | ( ( sModeData.nLinecomp & 0x100 ) >> 4 ) ) );
+		CRTCWrite( 0x08, 0 );
+		CRTCWrite( 0x09, uint8( ( ( sModeData.nVblkstr & 0x200 ) >> 4 ) | ( ( sModeData.nLinecomp & 0x200 ) >> 3 ) | ( sModeData.nYShift & 0x1f ) ) );
+		CRTCWrite( 0x0C, 0 );
+		CRTCWrite( 0x0D, 0 );
+		CRTCWrite( 0x10, uint8( sModeData.nVsyncstr ) );
+		CRTCWrite( 0x11, uint8( ( sModeData.nVsyncend & 0x0f ) | 0x20 ) );
+		CRTCWrite( 0x12, uint8( sModeData.nVdispend ) );
+		CRTCWrite( 0x13, uint8( sModeData.nOffset ) );
+		CRTCWrite( 0x14, 0 );
+		CRTCWrite( 0x15, uint8( sModeData.nVblkstr ) );
+		CRTCWrite( 0x16, uint8( sModeData.nVblkend ) );
+		CRTCWrite( 0x17, 0xc3 );
+		CRTCWrite( 0x18, uint8( sModeData.nLinecomp ) );
+
+		CRTCEXTWrite( 0x00, uint8( ( sModeData.nOffset & 0x300 ) >> 4 ) );
+		CRTCEXTWrite( 0x01, uint8( ( ( sModeData.nHtotal & 0x100 ) >> 8 ) | ( ( sModeData.nHblkstr & 0x100 ) >> 7 ) | ( ( sModeData.nHsyncstr & 0x100 ) >> 6 ) | ( sModeData.nHblkend & 0x40 ) ) );
+		CRTCEXTWrite( 0x02, uint8( ( ( sModeData.nVtotal & 0xc00 ) >> 10 ) | ( ( sModeData.nVdispend & 0x400 ) >> 8 ) | ( ( sModeData.nVblkstr & 0xc00 ) >> 7 ) | ( ( sModeData.nVsyncstr & 0xc00 ) >> 5 ) | ( ( sModeData.nLinecomp & 0x400 ) >> 3 ) ) );
+		CRTCEXTWrite( 0x03, uint8( 0x80 | ( sModeData.nScale & 7 ) ) );
+
+		// FIXME: Document these mystery values
 		SEQWrite( 0x00, 0x03 );
+		SEQWrite( 0x01, 0x21 );
 		SEQWrite( 0x02, 0x0F );
 		SEQWrite( 0x03, 0x00 );
 		SEQWrite( 0x04, 0x0E );
 		SEQWrite( 0x04, 0x0E );
-		XWrite( 0x19, sRegs.XMULCTRL );
-		XWrite( 0x1E, sRegs.XMISCCTRL );
-		XWrite( 0x38, sRegs.XZOOMCTRL );
-		XWrite( 0x4C, sRegs.XPIXPLLM );
-		XWrite( 0x4D, sRegs.XPIXPLLN );
-		XWrite( 0x4E, sRegs.XPIXPLLP );
+
+		//	Convert the desired refreshrate to a pixelclock & set the PLL's & DAC dependent stuff
+		long vNormalPixelClock = ( ( sModeData.nHtotal + 5 ) << 3 ) * ( sModeData.nVtotal + 2 ) * (long)vRefreshRate;
+		dbprintf( "Desired pixelclock is %ld\n", vNormalPixelClock );
+
+		m_pcDac->SetPixPLL( vNormalPixelClock, nBPP );
+
+		XWrite( 0x38, uint8( sModeData.nXShift & 3 ) );
 
 		//	Set up the VGA LUT. We could implement a gamma for
 		//	15, 16, 24 and 32 bit if we wanted because they use the LUT
 
 		switch( nBPP )
 		{
-			case 4:	//	not implemented
-			case 8:	//	nothing to do
-				break;
-				
 			case 15:
 			{
-				outb( MGA_PALWTADD, 0 );
+				dac_outb( MGA_PALWTADD, 0 );
 				for( int i=0; i<256; i+=1 )
 				{
-					outb( MGA_PALDATA, i<<3 );
-					outb( MGA_PALDATA, i<<3 );
-					outb( MGA_PALDATA, i<<3 );
+					dac_outb( MGA_PALDATA, i<<3 );
+					dac_outb( MGA_PALDATA, i<<3 );
+					dac_outb( MGA_PALDATA, i<<3 );
 				}
 				break;
 			}
 
 			case 16:
 			{
-				outb( MGA_PALWTADD, 0 );
+				dac_outb( MGA_PALWTADD, 0 );
 				for( int i=0; i<256; i+=1 )
 				{
-					outb( MGA_PALDATA, i<<3 );
-					outb( MGA_PALDATA, i<<2 );
-					outb( MGA_PALDATA, i<<3 );
+					dac_outb( MGA_PALDATA, i<<3 );
+					dac_outb( MGA_PALDATA, i<<2 );
+					dac_outb( MGA_PALDATA, i<<3 );
 				}
 				break;
 			}
@@ -126,25 +128,34 @@ bool MgaCRTC::SetMode( int nXRes, int nYRes, int nBPP, float vRefreshRate )
 			case 24:
 			case 32:
 			{
-				outb( MGA_PALWTADD, 0 );
+				dac_outb( MGA_PALWTADD, 0 );
 				for( int i=0; i<256; i+=1 )
 				{
-					outb( MGA_PALDATA, i );
-					outb( MGA_PALDATA, i );
-					outb( MGA_PALDATA, i );
+					dac_outb( MGA_PALDATA, i );
+					dac_outb( MGA_PALDATA, i );
+					dac_outb( MGA_PALDATA, i );
 				}
 				break;
 			}
+		}
+
+		// Set the PCI OPTION register if required
+		if( m_pcDac->GetType() == TVP3026 )
+		{
+			uint32 nOption = 0x402C1100;	// Standard for 2064 and 2164, + interlaced
+
+			write_pci_config( m_cPCIInfo.nBus, m_cPCIInfo.nDevice, m_cPCIInfo.nFunction, 0x40, 4, nOption );
 		}
 
 		WaitVBlank();
 		DisplayUnBlank();
 	}
 
+	dbprintf("MgaCRTC::SetMode has completed\n");
 	return( bRet );
 }
 
-bool MgaCRTC::CalcMode( Gx00CRTCRegs *pDest, int nX, int nY, int nBPP, float vRefreshRate )
+bool MgaCRTC::CalcMode( int nX, int nY, int nBPP, float vRefreshRate, struct CRTCModeData *psModeData )
 {
 	if( nX == 0 || nY == 0 )
 	{
@@ -155,6 +166,10 @@ bool MgaCRTC::CalcMode( Gx00CRTCRegs *pDest, int nX, int nY, int nBPP, float vRe
 	//	Make this a possible resolution if x or y is below limits
 	//	by using the hardware zoom factors.
 	//	These limits are completely arbitrary, the doc is vague
+	//
+	// FIXME: Zooming will now never be used as we only support the lowest
+	// resolution of 640x480.  Remove all this code & hardcode the zoom
+	// register values
 
 	int nXRes=short(nX);
 	int	nXShift=0;
@@ -218,174 +233,54 @@ bool MgaCRTC::CalcMode( Gx00CRTCRegs *pDest, int nX, int nY, int nBPP, float vRe
 	int nVsyncend = ( nVsyncstr +2 ) & 0x0f;
 	int nLinecomp = 1023;
 
-	//
-	//	Set up bit depth dependant values
-	//
+	//	Set bit depth dependant values
 
 	int nScale = 0;
-	int nDepth = 0;
 	int nStartaddfactor = 0;
-	int nVga8bit = 0;
 
 	switch( nBPP )
 	{
-		case 8:
-			nScale = 0;
-			nDepth = 0;
-			nStartaddfactor = 3;
-			nVga8bit = 0;
-			break;
-
 		case 15:
-			nScale = 1; //doc says 0
-			nDepth = 1;
+			nScale = 1;	//doc says 0
 			nStartaddfactor = 3;
-			nVga8bit = 8;
 			break;
 
 		case 16:
 			nScale = 1;	//doc says 0
-			nDepth = 2;
 			nStartaddfactor = 3;
-			nVga8bit = 8;
 			break;
 
 		case 24:
 			nScale = 2;
-			nDepth = 3;
 			nStartaddfactor = 3;
-			nVga8bit = 8;
 			break;
 
 		case 32:
 			nScale = 3;	//doc says 1
-			nDepth = 7;
 			nStartaddfactor = 3;
-			nVga8bit = 8;
 			break;
 	}
 
-	//
-	//	Convert the desired refreshrate to a pixelclock.  Incidentally
-	//	this is also a VESA pixelclock, suitable for GTF calculations
-	//
+	psModeData->nHtotal = nHtotal;
+	psModeData->nHdispend = nHdispend;
+	psModeData->nHblkstr = nHblkstr;
+	psModeData->nHblkend = nHblkend;
+	psModeData->nHsyncstr = nHsyncstr;
+	psModeData->nHsyncend = nHsyncend;
 
-	long vNormalPixelClock = ( ( nHtotal + 5 ) << 3 ) * ( nVtotal + 2 ) * (long)vRefreshRate;
-	dbprintf( "Desired pixelclock is %ld\n", vNormalPixelClock );
+	psModeData->nVtotal = nVtotal;
+	psModeData->nVdispend = nVdispend;
+	psModeData->nVblkstr = nVblkstr;
+	psModeData->nVblkend = nVblkend;
+	psModeData->nVsyncstr = nVsyncstr;
+	psModeData->nVsyncend = nVsyncend;
 
-	short nBestN = 0, nBestM = 0, nBestP = 0;
-	CalcPixPLL( vNormalPixelClock, &nBestN, &nBestM, &nBestP );
+	psModeData->nOffset = short( ( nXRes * (( nBPP + 1 ) >> 3) + 15 ) >> 4 );
+	psModeData->nLinecomp = nLinecomp;
+	psModeData->nScale = nScale;
 
-	//
-	//	Now all we have to do is scatter all the bits out to the registers
-	//
-
-	short nBytedepth = short( ( nBPP + 1 ) >> 3 );
-	short nOffset = short( ( nXRes * nBytedepth + 15 ) >> 4 );
-
-	pDest->CRTC0 = uint8( nHtotal );
-	pDest->CRTC1 = uint8( nHdispend );
-	pDest->CRTC2 = uint8( nHblkstr );
-	pDest->CRTC3 = uint8( nHblkend & 0x1f );
-	pDest->CRTC4 = uint8( nHsyncstr );
-	pDest->CRTC5 = uint8( ( nHsyncend & 0x1f ) | ( ( nHblkend & 0x20 ) << 2 ) );
-	pDest->CRTC6 = uint8( nVtotal & 0xff );
-	pDest->CRTC7 = uint8( ( ( nVtotal & 0x100 ) >> 8 ) | ( ( nVtotal & 0x200 ) >> 4 ) | ( ( nVdispend & 0x100 ) >> 7 ) | ( ( nVdispend & 0x200 ) >> 3 ) | ( ( nVblkstr & 0x100 ) >> 5 ) | ( ( nVsyncstr & 0x100 ) >> 6 ) | ( ( nVsyncstr & 0x200 ) >> 2 ) | ( ( nLinecomp & 0x100 ) >> 4 ) );
-	pDest->CRTC8 = 0;
-	pDest->CRTC9 = uint8( ( ( nVblkstr & 0x200 ) >> 4 ) | ( ( nLinecomp & 0x200 ) >> 3 ) | ( nYShift & 0x1f ) );
-	pDest->CRTCC = 0;
-	pDest->CRTCD = 0;
-	pDest->CRTC10 = uint8( nVsyncstr );
-	pDest->CRTC11 = uint8( ( nVsyncend & 0x0f ) | 0x20 );
-	pDest->CRTC12 = uint8( nVdispend );
-	pDest->CRTC13 = uint8( nOffset );
-	pDest->CRTC14 = 0;
-	pDest->CRTC15 = uint8( nVblkstr );
-	pDest->CRTC16 = uint8( nVblkend );
-	pDest->CRTC17 = 0xc3;
-	pDest->CRTC18 = uint8( nLinecomp );
-
-	pDest->CRTCEXT0 = uint8( ( nOffset & 0x300 ) >> 4 );
-	pDest->CRTCEXT1 = uint8( ( ( nHtotal & 0x100 ) >> 8 ) | ( ( nHblkstr & 0x100 ) >> 7 ) | ( ( nHsyncstr & 0x100 ) >> 6 ) | ( nHblkend & 0x40 ) );
-	pDest->CRTCEXT2 = uint8( ( ( nVtotal & 0xc00 ) >> 10 ) | ( ( nVdispend & 0x400 ) >> 8 ) | ( ( nVblkstr & 0xc00 ) >> 7 ) | ( ( nVsyncstr & 0xc00 ) >> 5 ) | ( ( nLinecomp & 0x400 ) >> 3 ) );
-	pDest->CRTCEXT3 = uint8( 0x80 | ( nScale & 7 ) );
-
-	pDest->SEQ1 = 0x21;
-
-	pDest->XMULCTRL = uint8( nDepth & 7 );
-	pDest->XMISCCTRL = uint8( nVga8bit | 0x17 );
-	pDest->XZOOMCTRL = uint8( nXShift & 3 );
-	pDest->XPIXPLLM = uint8( nBestM );
-	pDest->XPIXPLLN = uint8( nBestN );
-	pDest->XPIXPLLP = uint8( nBestP );
-
-	return( true );
-}
-
-bool MgaCRTC::CalcPixPLL( long vTargetPixelClock, short *nN, short *nM, short *nP )
-{
-	//	Determine values for the clock circuitry that will produce
-	//	a pixelclock close enough to what we want
-
-	long nBestPixelClock=0;
-	short nBestN = 0, nBestM = 0, nBestP = 0, nBestS = 0;
-	short nPixN, nPixM, nPixP;
-	short i;
-
-	for( nPixM = 1; nPixM <= 31; nPixM++ )
-	{
-		for( i = 0; i <= 3; i++ )
-		{
-			nPixP = short( ( 1 << i ) - 1 );
-
-			long n;
-			n = ( nPixP + 1 ) * ( nPixM + 1 );
-			n = muldiv64( n, vTargetPixelClock, 27000000 );	// KV: 27000000 is the max pixel
-																	// clock of the G200 series, but check on this.
-			nPixN = short( n - 1 );
-
-			if( nPixN >= 7 && nPixN <= 127 )
-			{
-				long nVCO;
-
-				nVCO = muldiv64( 27000000, nPixN + 1, nPixM + 1 );	// KV: See note above about max clock
-				n = muldiv64( 1, nVCO, ( nPixP + 1 ) );
-
-				long best, d;
-
-				best = nBestPixelClock - vTargetPixelClock;
-				d = n - vTargetPixelClock;
-
-				if( best < 0 )
-					best = -best;
-
-				if( d < 0 )
-					d = -d;
-
-				if( d < best )
-				{
-					if( 50000000 <= nVCO && nVCO < 110000000 )
-						nBestS = 0;
-					else if( 110000000 <= nVCO && nVCO < 170000000 )
-						nBestS = 1;
-					else if( 170000000 <= nVCO && nVCO < 240000000 )
-						nBestS = 2;
-					else if( 240000000 <= nVCO && nVCO < 310000000 )
-						nBestS = 3;
-					else
-						continue;
-
-					nBestPixelClock = n;
-					*nN = nBestN = nPixN;
-					*nM = nBestM = nPixM;
-					*nP = nBestP = nPixP;
-				}
-			}
-		}
-	}
-
-	dbprintf( "N,M,P,S=%d,%d,%d,%d\n", nBestN, nBestM, nBestP, nBestS );
-	dbprintf( "Clock=%ld\n", nBestPixelClock );
+	psModeData->nXShift = nXShift;
+	psModeData->nYShift = nYShift;
 
 	return( true );
 }

@@ -24,6 +24,9 @@
 #include "mga.h"
 #include "mga_regs.h"
 #include "mga_crtc.h"
+#include "mga_gx00.h"
+#include "mga_tvp3026.h"
+
 #include "../../../server/bitmap.h"
 
 using namespace os;
@@ -77,6 +80,8 @@ Matrox::Matrox() : m_cGELock( "matrox_ge_lock" ), m_cCursorHotSpot(0,0)
 	m_bIsInitiated = false;
 	m_hRegisterArea = -1;
 	m_hFrameBufferArea = -1;
+	m_pcCrtc = NULL;
+	m_pcDac = NULL;
 
 	for( i = 0; get_pci_info( &m_cPCIInfo, i ) == 0; i++ )
 	{
@@ -136,24 +141,45 @@ Matrox::Matrox() : m_cGELock( "matrox_ge_lock" ), m_cCursorHotSpot(0,0)
 	else
 		remap_area( m_hRegisterArea, (void*) (m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK) );
 
-	// FIXME: Remove all hardware pointer code
+	// FIXME: Hardwire these in for now
+	m_nCRTCScheme = CRTC_GX00;
 	m_nPointerScheme = POINTER_SPRITE;
 
-	// FIXME: Re-write CRTC code
-	if(	m_sChip.nDeviceID == PCI_DEVICE_ID_MATROX_G100_PCI	||
-		m_sChip.nDeviceID == PCI_DEVICE_ID_MATROX_G100_AGP	||
-		m_sChip.nDeviceID == PCI_DEVICE_ID_MATROX_G200_PCI	||
-		m_sChip.nDeviceID == PCI_DEVICE_ID_MATROX_G200_AGP	||
-		m_sChip.nDeviceID == PCI_DEVICE_ID_MATROX_G400 )
+	// Use the correct DAC
+	switch( m_sChip.eDAC )
 	{
-		m_nCRTCScheme = CRTC_GX00;
-	}
-	else
-		m_nCRTCScheme = CRTC_VESA;
+		case TVP3026:
+		{
+			m_pcDac = new DacTVP3026( m_pRegisterBase );
+			break;
+		}
 
-	if( m_nCRTCScheme == CRTC_GX00 )
+		case MGAGx00:
+		{
+			m_pcDac = new DacGx00( m_pRegisterBase );
+			break;
+		}
+
+		case MGAGx50:
+		{
+			dbprintf("Gx50 DAC not supported\n");
+			m_pcDac = NULL;
+			return;
+			break;
+		}
+
+		default:
+		{
+			dbprintf("Unknown DAC not supported\n");
+			m_pcDac = NULL;
+			return;
+			break;
+		}
+	}
+
+	// FIXME: Find out if the actualy is ram for the resolution...
+	if( m_sChip.eDAC == MGAGx00 || m_sChip.eDAC == MGAGx50 )
 	{
-		// FIXME: Find out if the actualy is ram for the resolution...
 		color_space colspace[3] = { CS_RGB15, CS_RGB16, CS_RGB32 };
 		int bpp[3] = { 2, 2, 4 };
 		float rf[] = { 60.0f, 75.0f, 85.0f, 100.0f };
@@ -162,25 +188,54 @@ Matrox::Matrox() : m_cGELock( "matrox_ge_lock" ), m_cCursorHotSpot(0,0)
 		{
 			for( int j = 0; j < 4; j++ ) 
 			{
-	    		m_cScreenModeList.push_back( os::screen_mode(640, 480, (640*bpp[i]+15)&~15, colspace[i], rf[j]) );
-	    		m_cScreenModeList.push_back( os::screen_mode(800, 600, (800*bpp[i]+15)&~15, colspace[i], rf[j]) );
-	    		m_cScreenModeList.push_back( os::screen_mode(1024, 768, (1024*bpp[i]+15)&~15, colspace[i], rf[j]) );
-	    		m_cScreenModeList.push_back( os::screen_mode(1152, 864, (1152*bpp[i]+15)&~15, colspace[i], rf[j]) );
-	    		m_cScreenModeList.push_back( os::screen_mode(1280, 1024, (1280*bpp[i]+15)&~15, colspace[i], rf[j]) );
-	    		m_cScreenModeList.push_back( os::screen_mode(1376, 1068, (1376*bpp[i]+15)&~15, colspace[i], rf[j]) );
-	    		m_cScreenModeList.push_back( os::screen_mode(1440, 1112, (1440*bpp[i]+15)&~15, colspace[i], rf[j]) );
-	    		m_cScreenModeList.push_back( os::screen_mode(1536, 1156, (1536*bpp[i]+15)&~15, colspace[i], rf[j]) );
-	    		m_cScreenModeList.push_back( os::screen_mode(1600, 1200, (1600*bpp[i]+15)&~15, colspace[i], rf[j]) );
-	    		m_cScreenModeList.push_back( os::screen_mode(2048, 1536, (2048*bpp[i]+15)&~15, colspace[i], rf[j]) );
+				m_cScreenModeList.push_back( os::screen_mode(640, 480, (640*bpp[i]+15)&~15, colspace[i], rf[j]) );
+				m_cScreenModeList.push_back( os::screen_mode(800, 600, (800*bpp[i]+15)&~15, colspace[i], rf[j]) );
+				m_cScreenModeList.push_back( os::screen_mode(1024, 768, (1024*bpp[i]+15)&~15, colspace[i], rf[j]) );
+				m_cScreenModeList.push_back( os::screen_mode(1152, 864, (1152*bpp[i]+15)&~15, colspace[i], rf[j]) );
+				m_cScreenModeList.push_back( os::screen_mode(1280, 1024, (1280*bpp[i]+15)&~15, colspace[i], rf[j]) );
+				m_cScreenModeList.push_back( os::screen_mode(1376, 1068, (1376*bpp[i]+15)&~15, colspace[i], rf[j]) );
+				m_cScreenModeList.push_back( os::screen_mode(1440, 1112, (1440*bpp[i]+15)&~15, colspace[i], rf[j]) );
+				m_cScreenModeList.push_back( os::screen_mode(1536, 1156, (1536*bpp[i]+15)&~15, colspace[i], rf[j]) );
+				m_cScreenModeList.push_back( os::screen_mode(1600, 1200, (1600*bpp[i]+15)&~15, colspace[i], rf[j]) );
+				m_cScreenModeList.push_back( os::screen_mode(2048, 1536, (2048*bpp[i]+15)&~15, colspace[i], rf[j]) );
 			}
 		}
+	}
+	else
+	{
+		color_space colspace[2] = { CS_RGB16, CS_RGB32 };
+		int bpp[2] = { 2, 4 };
+		float rf[] = { 60.0f, 75.0f, 85.0f, 100.0f };
 
-		m_hFrameBufferArea = create_area( "matrox_framebuffer",(void**) &m_pFrameBufferBase, 32*1024*1024, AREA_FULL_ACCESS, AREA_NO_LOCK );
+		for( int i=0; i<2; i++ )
+		{
+			for( int j = 0; j < 4; j++ ) 
+			{
+				m_cScreenModeList.push_back( os::screen_mode(640, 480, (640*bpp[i]+15)&~15, colspace[i], rf[j]) );
+				m_cScreenModeList.push_back( os::screen_mode(800, 600, (800*bpp[i]+15)&~15, colspace[i], rf[j]) );
+				m_cScreenModeList.push_back( os::screen_mode(1024, 768, (1024*bpp[i]+15)&~15, colspace[i], rf[j]) );
+				m_cScreenModeList.push_back( os::screen_mode(1152, 864, (1152*bpp[i]+15)&~15, colspace[i], rf[j]) );
+				m_cScreenModeList.push_back( os::screen_mode(1280, 1024, (1280*bpp[i]+15)&~15, colspace[i], rf[j]) );
+				m_cScreenModeList.push_back( os::screen_mode(1376, 1068, (1376*bpp[i]+15)&~15, colspace[i], rf[j]) );
+				m_cScreenModeList.push_back( os::screen_mode(1440, 1112, (1440*bpp[i]+15)&~15, colspace[i], rf[j]) );
+	    		m_cScreenModeList.push_back( os::screen_mode(1536, 1156, (1536*bpp[i]+15)&~15, colspace[i], rf[j]) );
+				m_cScreenModeList.push_back( os::screen_mode(1600, 1200, (1600*bpp[i]+15)&~15, colspace[i], rf[j]) );
+			}
+		}
+	}
+
+	m_hFrameBufferArea = create_area( "matrox_framebuffer",(void**) &m_pFrameBufferBase, 32*1024*1024, AREA_FULL_ACCESS, AREA_NO_LOCK );
+
+	if( m_sChip.nDeviceID == PCI_DEVICE_ID_MATROX_MIL )
+	{
+		// The Millenium I is a bit special, the frame buffer, and the
+		// I/O area is swapped compared to the other Matrox boards...
+		remap_area( m_hFrameBufferArea, (void*) (m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK) );
+	}
+	else
 		remap_area( m_hFrameBufferArea, (void*) (m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK) );
 
-		m_cCrtc = new MgaCRTC( m_pRegisterBase );
-	}
-	// FIXME: Implement code for TVP3026 & Gx50 DAC types
+	m_pcCrtc = new MgaCRTC( m_pRegisterBase, m_pcDac, m_cPCIInfo );
 
 	if( m_nPointerScheme == POINTER_MILLENIUM )
 		m_cLastMousePosition = IPoint( 0, 0 );
@@ -191,8 +246,11 @@ Matrox::Matrox() : m_cGELock( "matrox_ge_lock" ), m_cCursorHotSpot(0,0)
 
 Matrox::~Matrox()
 {
-	if( m_cCrtc )
-		delete( m_cCrtc );
+	if( m_pcCrtc )
+		delete( m_pcCrtc );
+
+	if( m_pcDac )
+		delete( m_pcDac );
 
 	if( m_hRegisterArea != -1 )
 		delete_area( m_hRegisterArea );
@@ -252,9 +310,7 @@ int Matrox::SetScreenMode( os::screen_mode sMode )
 	int nError = -1;
 	bool bModeFound = false;
 
-	// Anti appserver hack 
-	if( sMode.m_vRefreshRate == 55 )
-		sMode.m_vRefreshRate = 70;
+	m_cGELock.Lock();
 
 	if( m_nCRTCScheme == CRTC_GX00 )
 	{
@@ -291,7 +347,7 @@ int Matrox::SetScreenMode( os::screen_mode sMode )
 					dbprintf("Unsupported colourspace %i requested\n", sMode.m_eColorSpace );
 			}
 
-			nError = m_cCrtc->SetMode( sMode.m_nWidth, sMode.m_nHeight, nBPP, sMode.m_vRefreshRate ) ? 0 : -1;
+			nError = m_pcCrtc->SetMode( sMode.m_nWidth, sMode.m_nHeight, nBPP, sMode.m_vRefreshRate ) ? 0 : -1;
 		}
 	}
 	else
@@ -310,6 +366,10 @@ int Matrox::SetScreenMode( os::screen_mode sMode )
 
 	m_sCurrentMode = sMode;
 	m_sCurrentMode.m_nBytesPerLine = sMode.m_nWidth * ( ( BitsPerPixel( sMode.m_eColorSpace ) + 1 ) / 8 );
+
+	dbprintf("Matrox::SetScreenMode has completed\n");
+
+	m_cGELock.Unlock();
 
 	return( nError );
 }
@@ -423,9 +483,13 @@ void Matrox::SetCursorBitmap( mouse_ptr_mode eMode, const IPoint& cHotSpot, cons
 bool Matrox::DrawLine( SrvBitmap* pcBitMap, const IRect& cClipRect,
 			   const IPoint& cPnt1, const IPoint& cPnt2, const Color32_s& sColor, int nMode )
 {
-    if ( pcBitMap->m_bVideoMem == false || nMode != DM_COPY ) {
-	return( VesaDriver::DrawLine( pcBitMap, cClipRect, cPnt1, cPnt2, sColor, nMode ) );
-    }
+	if(	 pcBitMap->m_bVideoMem == false ||
+		 nMode != DM_COPY ||
+		 ( m_sChip.nDeviceID < PCI_DEVICE_ID_MATROX_MIL_2 ) )
+	{
+		return( VesaDriver::DrawLine( pcBitMap, cClipRect, cPnt1, cPnt2, sColor, nMode ) );
+	}
+
     int nYDstOrg = 0; // Number of pixels (not bytes) from top of memory to frame buffer
     int nPitch = pcBitMap->m_nBytesPerLine ;
     uint32 nColor;
@@ -496,9 +560,12 @@ bool Matrox::DrawLine( SrvBitmap* pcBitMap, const IRect& cClipRect,
 
 bool Matrox::FillRect( SrvBitmap* pcBitMap, const IRect& cRect, const Color32_s& sColor )
 {
-    if ( pcBitMap->m_bVideoMem == false /*|| nMode != DM_COPY*/ ) {
-	return( VesaDriver::FillRect( pcBitMap, cRect, sColor ) );
-    }
+	if(	 pcBitMap->m_bVideoMem == false || 
+		 ( m_sChip.nDeviceID < PCI_DEVICE_ID_MATROX_MIL_2 ) )
+	{
+		return( VesaDriver::FillRect( pcBitMap, cRect, sColor ) );
+	}
+
       // Page 242
     int nHeight= cRect.Height() + 1;
     int nPitch = pcBitMap->m_nBytesPerLine;
@@ -573,9 +640,13 @@ bool Matrox::FillRect( SrvBitmap* pcBitMap, const IRect& cRect, const Color32_s&
 bool Matrox::BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap,
 			    IRect cSrcRect, IPoint cDstPos, int nMode )
 {
-    if ( pcDstBitMap->m_bVideoMem == false || pcSrcBitMap->m_bVideoMem == false || nMode != DM_COPY ) {
-	return( VesaDriver::BltBitmap( pcDstBitMap, pcSrcBitMap, cSrcRect, cDstPos, nMode ) );
-    }
+	if(	 pcDstBitMap->m_bVideoMem == false ||
+		 pcSrcBitMap->m_bVideoMem == false ||
+		 nMode != DM_COPY ||
+		 ( m_sChip.nDeviceID < PCI_DEVICE_ID_MATROX_MIL_2 ) )
+	{
+		return( VesaDriver::BltBitmap( pcDstBitMap, pcSrcBitMap, cSrcRect, cDstPos, nMode ) );
+	}
       // Page 242
     int nWidth = cSrcRect.Width() + 1;
     int nHeight= cSrcRect.Height() + 1;

@@ -3,7 +3,7 @@ include ../freetype.makefile
 COPTS   = -I$(TOP)/src -I$(FREETYPEINCLUDE) -c -O2 -Wall -fexceptions
 
 DEVBIN = /system/drivers/appserver/video
-OBJS =	mga.o mga_crtc.o
+OBJS =	mga.o mga_crtc.o mga_gx00.o mga_tvp3026.o
 
 OBJDIR	:= objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
