@@ -1,3 +1,18 @@
+* May 2 2004, Kaj de Vos *
+
+Spring cleaning. Now that Syllable 0.5.3 is out, I deleted most remaining
+third-party sources. In most cases we're now using newer versions, or the version
+in CVS didn't work anyway. In any case, they're not built from CVS anymore, but
+installed from the original tarballs by Builder.
+  Freetype
+  NCurses
+  ZLib
+  Bash
+  BZip2
+  FindUtils
+  GZip
+For historical reference, some packages that have patches remain.
+
 * April 29 2004. Kristian Van Der Vliet *
 
 VMWare video driver from James Hayhurst <james_hayhurst@hotmail.com>
