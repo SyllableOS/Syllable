@@ -1,6 +1,6 @@
-
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001  Kurt Skauen
+ *  Copyright (C) 2003 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -52,7 +52,7 @@ Messenger::Messenger()
  *	a default handler the message will be handled by the loopers own
  *	HandleMessage() member.
  * \par
- *	If \p pcHandler is non-NULL the message will always be sendt directly
+ *	If \p pcHandler is non-NULL the message will always be sent directly
  *	to this handler independent of which handler is active. In this case
  *	the target looper will be the looper \p pcHandler is a member of and the
  *	\p pcLooper parameter should be NULL. This means that only a handler
@@ -116,7 +116,7 @@ Messenger::Messenger( const Messenger & cMessenger )
 	m_bPreferredTarget = cMessenger.m_bPreferredTarget;
 }
 
-/** Construct a messanger from a loopers message port.
+/** Construct a messenger from a loopers message port.
  * \par Description:
  *	This constructor is mostly intended for internal usage by the toolkit
  *	but are made available to applications. It will construct a messenger
@@ -134,10 +134,27 @@ Messenger::Messenger( const Messenger & cMessenger )
  *	will primarily come from os::Looper::GetMsgPort().
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
-
 Messenger::Messenger( port_id hPort )
 {
 	m_hPort = hPort;
+	m_hHandlerID = -1;
+	m_hDestProc = -1;
+	m_bPreferredTarget = false;
+}
+
+/** Construct a messenger for a named message port.
+ * \par Description:
+ *	This constructor is used to target named message ports (public message
+ *	ports), and can be used for communication between processes.
+ * \note
+ *	Use IsValid() to check whether the message port was found.
+ * \param pzPort
+ *	The name of the message port this messenger should send messages through.
+ * \author Henrik Isaksson (henrik@isaksson.tk)
+ *****************************************************************************/
+Messenger::Messenger( const char* pzPort )
+{
+	m_hPort = find_port( pzPort );
 	m_hHandlerID = -1;
 	m_hDestProc = -1;
 	m_bPreferredTarget = false;
@@ -441,3 +458,5 @@ bool Messenger::operator ==( const Messenger & cMessenger ) const
 {
 	return ( m_hPort == cMessenger.m_hPort && m_hHandlerID == cMessenger.m_hHandlerID && m_bPreferredTarget == cMessenger.m_bPreferredTarget );
 }
+
+

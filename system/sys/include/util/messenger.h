@@ -17,8 +17,8 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef	GUI_MESSENGER_HPP
-#define	GUI_MESSENGER_HPP
+#ifndef	__F_UTIL_MESSENGER_H__
+#define	__F_UTIL_MESSENGER_H__
 
 #include <atheos/types.h>
 
@@ -52,6 +52,7 @@ public:
     Messenger( const Handler* pcHandler, const Looper* pcLooper = NULL );
     Messenger( const Messenger& cMessenger );
     Messenger( port_id hPort );
+    Messenger( const char *pzPort );
     ~Messenger();
 
     Handler*	GetTarget( Looper** ppcLooper ) const;
@@ -89,3 +90,4 @@ private:
 }
 
 #endif	//	GUI_MESSENGER_HPP
+
