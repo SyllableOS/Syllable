@@ -280,7 +280,8 @@ bool Slider::Invoked( Message * pcMsg )
 	{
 		pcMsg->AddBool( "final", true );
 	}
-	return ( true );
+	return ( Control::Invoked( pcMsg ) );
+//	return ( true );
 
 /*    
     if ( NULL == a_pcMessage ) {
@@ -1120,4 +1121,3 @@ void Slider::Activated( bool bIsActive )
 {
 	_RefreshDisplay();
 }
-
