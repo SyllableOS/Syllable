@@ -1,7 +1,7 @@
 ; Recipe information:
 authors				<Recipe and patches authors, in historical order>
 maintainers			<Recipe maintainers, if not first author>
-status				broken | unmaintained| deprecated | incomplete | developing | testing
+status				broken | deprecated | unmaintained | incomplete | developing | testing
 warnings			<Important notes>
 notes				<Internal notes>
 
@@ -9,7 +9,7 @@ notes				<Internal notes>
 name				<Display name of the package, if different from the file name>
 headline			<Brief description>
 description			<Full description>
-licenses			GPL LGPL GFDL BSD MIT ISC Apache Artistic Python MPL QPL OS custom PD freeware commercial
+licenses			GPL LGPL GFDL BSD MIT ISC Apache Artistic Python MPL QPL OSI custom PD freeware commercial
 
 home				syllable.sf.net
 packages			<Tarball names, if different from the package file name>
@@ -46,7 +46,8 @@ configure			<Configuration commands>
 
 pre-configure		<Commands preceding configuration>
 ; Extra environment variables for configure:
-configure-env		VAR='value'
+configure-env
+	VAR 'value'
 ; Non-standard configure command:
 configure-cmd		configure
 ; Non-standard prefix option:
@@ -60,9 +61,11 @@ configure-options	--with-option
 ; [<make-env>] make [<make-vars>] [<make-options>] <make-targets>
 
 ; Extra environment variables for make:
-make-env			VAR='value'
+make-env
+	VAR 'value'
 ; Extra variables for make:
-make-vars			VAR='value'
+make-vars
+	VAR 'value'
 ; Extra make options:
 make-options		-option
 ; Non-standard make targets:
@@ -73,19 +76,20 @@ make-options		-option
 
 ; Extra test options:
 test-options		-k
-; Non-standard test targets:
-test-targets		check
+; Non-standard test targets (default is check):
+test-targets		test
 
 install-tree		<Extra subdirectories to create>
 
 ; Installing:
 ; <install>
-; [<install-env>] make [<install-prefix-var>] <install-targets>
+; [<install-env>] make [<install-prefix-var>=<Installation path>] <install-targets>
 
 install				<Installation commands>
 
 ; Extra environment variables for make install:
-install-env			VAR='value'
+install-env
+	VAR 'value'
 ; Non-standard install prefix variable:
 ;install-prefix-var	prefix
 ; Non-standard install targets:
