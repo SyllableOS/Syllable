@@ -22,6 +22,7 @@
 
 #include <atheos/kernel.h>
 #include <gui/view.h>
+#include <gui/layoutview.h>
 
 namespace os {
     class TableView;
@@ -42,7 +43,8 @@ public:
     
     
 private:
-    os::TableView* 	m_pcTableView;
+    os::LayoutView*	m_pcLayoutView;
+    os::VLayoutNode* m_pcVLayout;
     MultiMeter*		m_apcMeters[MAX_CPU_COUNT];
     os::StringView*	m_apcTempViews[MAX_CPU_COUNT];
     int			m_nCPUCount;

@@ -145,6 +145,7 @@ MonWindow::MonWindow( const Rect& cFrame ) :
 	    }
 	}
     }
+    
     system_info sInfo;
 
     get_system_info( &sInfo );
@@ -155,6 +156,7 @@ MonWindow::MonWindow( const Rect& cFrame ) :
     cWndBounds.top = 2;
 
     uint32 nFlags = GetFlags();
+    
 
     if ( g_bBarView ) {
 	m_pcLoadView = new BarView( cWndBounds, m_nCPUCount );
@@ -168,6 +170,7 @@ MonWindow::MonWindow( const Rect& cFrame ) :
 	AddChild( m_pcLoadView );
     }
     SetFlags( nFlags );
+    
 
     Show();
   

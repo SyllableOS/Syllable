@@ -30,7 +30,7 @@
 
 #include <gui/window.h>
 #include <gui/stringview.h>
-#include <gui/tableview.h>
+#include <gui/layoutview.h>
 
 enum { TIMER_ID = 1 };
 
@@ -46,22 +46,26 @@ using namespace os;
 GraphView::GraphView( const os::Rect& cRect, int nCPUCount ) : View( cRect, "graph_view", CF_FOLLOW_ALL )
 {
     m_nW8378xDevice = open( "/dev/misc/w8378x", O_RDWR );
-
+	
     m_nCPUCount = nCPUCount;
-    m_pcTableView = new TableView( cRect.Bounds(), "_cpumon_table", NULL, m_nCPUCount, 2, CF_FOLLOW_ALL );
-    m_pcTableView->SetCellBorders( 2, 2, 2, 2 );
+
+    m_pcLayoutView = new LayoutView( cRect.Bounds(), "_cpumon_table" );
+    m_pcVLayout = new VLayoutNode( "_cpumon_vlayout" );
+   
+    m_pcVLayout->SetBorders( os::Rect( 5, 5, 5, 5 ) );
+    
     for ( int i = 0 ; i < m_nCPUCount ; ++i ) {
 	m_apcTempViews[i] = new StringView( Rect( 0, 0, 1, 1 ), "cpu_tmp",
 					    "50.0f/10.0f%", ALIGN_CENTER, WID_WILL_DRAW );
     
 	m_apcMeters[i] = new MultiMeter( Rect( 0, 0, 1, 1 ), "", 0 , WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
 	m_apcTempViews[i]->SetFgColor( 0, 0, 0 );
-	m_pcTableView->SetColAlignment( i, ALIGN_CENTER );
 
-	m_pcTableView->SetChild( m_apcTempViews[i], i, 0 );
-	m_pcTableView->SetChild( m_apcMeters[i], i, 1 );
+	m_pcVLayout->AddChild( m_apcTempViews[i], 0.0f );
+	m_pcVLayout->AddChild( m_apcMeters[i], 1.0f );
     }
-    AddChild( m_pcTableView );
+    m_pcLayoutView->SetRoot( m_pcVLayout );
+    AddChild( m_pcLayoutView );
   
 }
 
@@ -106,7 +110,7 @@ void GraphView::TimerTick( int nID )
 		sprintf( zTmp, "%.1f%%", avLoads[i] * 100.0 );
 	    }
 	    m_apcTempViews[i]->SetString( zTmp );
-	    m_pcTableView->Layout();
+	    m_pcVLayout->Layout();
 	}
     }
     nCnt++;
