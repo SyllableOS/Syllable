@@ -1,72 +1,112 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.1
+# Version 0.6.2
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
 
 # Functions for single modules
 
-def unpackModule target
-	Dir.chdir File.dirname(target) if target['/']
-
-	files = []
-
+def downloadModule target
 	unless
-		for package in (packages = getRecipe(target)['packages']) ?
-			parseList(packages) :
-			[fullName(target)]
+		(exists? dir = File.dirname(target) or action 'mkdir --parents ' + dir) and
+		begin  # We have a destination dir
+			Dir.chdir File.dirname(target)  # if target['/']
 
-			package, dir = package.split
-			base = File.join @sourcesPath, package
-			option = dir ? ' --directory=' + dir : ''
-
-#			file = Dir[File.join(@sourcesPath, fullName target) + '.*'] [0]
-#			case File.basename file
-
-			if exists? file = base + '.zip'
-				type = :zip
-				break unless action 'unzip ' + file + (dir ? ' -d ' + dir : '')
-			elsif exists? file = base + '.tar.bz2' or exists? file = base + '.tbz2'
-				type = :bzip
-				break unless action "bzcat #{file} | tar#{option} -x"
-			elsif exists? file = base + '.tar.gz' or exists? file = base + '.tgz'
-				type = :gzip
-				break unless action "tar#{option} -xzf " + file
-			else
-				@log.error "Source package #{base}.* not found"
-				break
-			end
-
-			files << [file, type]
-			action 'sync'
+			@log.subheader 'Checking out sources from CVS repository'
+			action "cvs checkout -d #{File.basename target} " + target
 		end
 	then
+		@log.failure target
 		false
 	else
-		if exists? dir = fullName(target)
-			true
-		else  # Source package content has a deviating subdirectory name
-			@log.subheader 'Renaming source'
+		action 'sync'
+	end
+end
 
-			file, type = files.first
-			result = `#{case type
-				when :zip  then 'unzip -lqq ' + file
-				when :bzip then "bzcat #{file} | tar --list"
-				when :gzip then 'tar tzf ' + file
+def updateModule target
+#	if exists? 'CVS'
+	@log.subheader 'Updating sources from CVS repository'
+
+	unless action 'cvs -q update -dP'
+		@log.failure target
+		false
+	else
+		action 'sync'
+	end
+end
+
+def unpackModule target
+	unless
+		unless exists? dir = File.dirname(target) or action 'mkdir --parents ' + dir
+			false
+		else  # We have a destination dir
+			Dir.chdir File.dirname(target)  # if target['/']
+		
+			files = []
+		
+			unless
+				for package in (packages = getRecipe(target)['packages']) ?
+					parseList(packages) :
+					[fullName(target)]
+		
+					package, dir = package.split
+					base = File.join @sourcesPath, package
+					option = dir ? ' --directory=' + dir : ''
+		
+#					file = Dir[File.join(@sourcesPath, fullName target) + '.*'] [0]
+#					case File.basename file
+		
+					if exists? file = base + '.zip'
+						type = :zip
+						break unless action 'unzip ' + file + (dir ? ' -d ' + dir : '')
+					elsif exists? file = base + '.tar.bz2' or exists? file = base + '.tbz2'
+						type = :bzip
+						break unless action "bzcat #{file} | tar#{option} -x"
+					elsif exists? file = base + '.tar.gz' or exists? file = base + '.tgz'
+						type = :gzip
+						break unless action "tar#{option} -xzf " + file
+					else
+						@log.error "Source package #{base}.* not found"
+						break
+					end
+		
+					files << [file, type]
+					action 'sync'
 				end
-			}`
-			unless (status = $? >> 8) == 0
-				@log.error status
+			then
 				false
-			else  # Get the directory name from the package listing
-				action "mv #{type == :zip ?
-					result.first.split.last :
-					result.split("/").first
-				} " + dir
+			else
+				if exists? dir = fullName(target)
+					true
+				else  # Source package content has a deviating subdirectory name
+					@log.subheader 'Renaming source'
+		
+					file, type = files.first
+					result = `#{case type
+						when :zip  then 'unzip -lqq ' + file
+						when :bzip then "bzcat #{file} | tar --list"
+						when :gzip then 'tar tzf ' + file
+						end
+					}`
+					unless (status = $? >> 8) == 0
+						@log.error status
+						false
+					else  # Get the directory name from the package listing
+						action "mv #{type == :zip ?
+							result.first.split.last :
+							result.split("/").first
+						} " + dir
+					end
+				end
 			end
 		end
+	then
+		@log.failure target
+		false
+	else
+		action 'sync'
 	end
 end
 
@@ -132,28 +172,32 @@ end
 def getModule target
 	unless
 		unless exists? target
-			@log.header 'Installing source'
+			@log.subheader 'Installing source'
 
-			unless exists? dir = File.dirname(target) or action 'mkdir --parents ' + dir
-				false
-			else  # We have a destination dir
-				unless unpackModule target
-					false
-				else
+			if Dir[File.join(@sourcesPath, fullName(target) + '.t*')] != []  # We have a tarball
+				unpackModule target
+			else
+				downloadModule target and
+				begin
+					# FIXME: crude way to remove CVS files
 					Dir.chdir @workDir
 					Dir.chdir target
-
-					patchModule target
+					deleteCVSData
 				end
+			end and
+			begin
+				Dir.chdir @workDir
+				Dir.chdir target
+				patchModule target
 			end
 		else
 			unless exists? File.join(target, 'CVS')
 				# Source already prepared
 				true
 			else
-				if Dir[File.join(@sourcesPath, fullName(target) + '.t*')] != []  # Some tarball
+				if Dir[File.join(@sourcesPath, fullName(target) + '.t*')] != []  # We have a tarball
 					puts "\nWARNING! If this is a CVS repository, it will be clobbered!"
-					@log.header 'Replacing source'
+					@log.subheader 'Replacing source'
 
 					unless action 'rm -r ' + target
 						@log.error 'Failed to delete source'
@@ -164,7 +208,6 @@ def getModule target
 						else
 							Dir.chdir @workDir
 							Dir.chdir target
-
 							patchModule target
 						end
 					end
@@ -193,8 +236,8 @@ def configureModule target
 	if native?
 		@log.header 'Building dependencies'
 		action makeCommand(target) + ' deps'
-
-		true  # Continue building even if dependencies failed
+		# Continue building even if dependencies failed
+		action 'sync'
 	else
 		unless
 			if cmdLine = (recipe = getRecipe target)['configure']
@@ -250,7 +293,7 @@ def configureModule target
 			@log.failure target
 			false
 		else
-			true
+			action 'sync'
 		end
 	end
 end
@@ -508,7 +551,7 @@ def uninstallModule staging, target
 	end
 end
 
-def makePackage target
+def buildPackage target
 	file = (name = fullName target) + '.bin.1.zip'
 
 	unless
@@ -641,6 +684,47 @@ def prepare targets
 	end
 end
 
+def get targets
+	@log.header 'Fetching ' + targets.to_s
+
+	for target in targets.modules
+		@log.entry target
+		getModule target
+	end
+end
+
+def download targets
+	@log.header 'Downloading ' + targets.to_s
+
+	for target in targets.modules
+		@log.entry target
+		downloadModule target
+		Dir.chdir @workDir
+	end
+end
+
+def update targets
+	@log.header 'Updating ' + targets.to_s
+
+	for target in targets.modules
+		@log.entry target
+
+		Dir.chdir target
+		updateModule target
+		Dir.chdir @workDir
+	end
+end
+
+def unpack targets
+	@log.header 'Unpacking ' + targets.to_s
+
+	for target in targets.modules
+		@log.entry target
+		unpackModule target
+		Dir.chdir @workDir
+	end
+end
+
 def patch targets
 	@log.header 'Patching ' + targets.to_s
 
@@ -653,15 +737,6 @@ def patch targets
 			@log.failure targets.to_s
 		end
 		Dir.chdir @workDir
-	end
-end
-
-def get targets
-	@log.header 'Fetching ' + targets.to_s
-
-	for target in targets.modules
-		@log.entry target
-		getModule target
 	end
 end
 
@@ -747,18 +822,18 @@ def uninstall targets
 	end
 end
 
-def makePackages targets
+def buildPackages targets
 	@log.header 'Making distribution packages ' + targets.to_s
 
 	for target in targets.modules
 		@log.entry target
 
-		makeDistroPackage target
+		buildPackage target
 		Dir.chdir @workDir
 	end
 end
 
-def makePack targets
+def buildPack targets
 	@log.header 'Making compound package ' + name = targets.to_s
 
 	unless
@@ -1282,7 +1357,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.1',
+	puts 'Syllable Build System 0.6.2',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1294,12 +1369,12 @@ when '?', '-?', '-h', '-help', '--help'
 		'    -help, ?, -?',
 		'  -v, --version Show version information',
 		'  scrub         Delete CVS control files recursively from the current directory',
-		'  prepare       Initialize system distribution tree in staging area',
+		'  prepare       Initialize project image tree in staging area',
 		'  get           Fetch and patch sources',
-#		'  download      Download sources',
-#		'  unpack        Unpack sources',
+		'  download      Download sources',
+		'  update        Update sources, or the build system itself, from repositories',
+		'  unpack        Unpack sources from source packages',
 		'  patch         Patch sources',
-#		'  update        Update sources, or the build system itself, from repositories',
 #		'  delete        Delete sources and build directories (or installation?)',
 		'  distclean',
 		'  clean',
@@ -1309,7 +1384,7 @@ when '?', '-?', '-h', '-help', '--help'
 		'  install       (Run as super user)',
 		'  uninstall     (Run as super user)',
 #		'  register      (Run as super user)',
-#		'  activate      (Run as super user)',
+#		'  activate/elect   (Run as super user)',
 #		'  unregister    (Run as super user)',
 		'  stage         Build and install in the staging area',
 		'  package       Build distribution package',
@@ -1334,6 +1409,11 @@ else
 
 	if arg1 == 'scrub'
 		deleteCVSData
+	elsif arg1 == 'update' and not arg2
+		@log.header 'Updating build system'
+
+		Dir.chdir @builderPath
+		action 'cvs -q update -dP'
 	else
 		target  = getTarget arg2 ? arg2 : arg1 ? arg1 : 'default'
 		profile = target.profile
@@ -1414,6 +1494,9 @@ else
 
 			case arg1
 			when 'get'			then get		target
+			when 'download'		then download	target
+			when 'update'		then update		target
+			when 'unpack'		then unpack		target
 			when 'patch'		then patch		target
 			when 'distclean'	then distclean	target
 			when 'clean'		then clean		target
@@ -1431,8 +1514,8 @@ else
 				then
 					build true, target
 				end
-			when 'package'		then makePackages target
-			when 'pack'			then makePack target
+			when 'package'		then buildPackages target
+			when 'pack'			then buildPack target
 			else
 				if arg2
 					@log.error 'Unrecognized command'
