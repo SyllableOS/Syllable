@@ -1,3 +1,8 @@
+* October 30th 2004, Kristian Van Der Vliet *
+
+Removed the S3 Savage IX/MX driver.  This driver was buggy and largly non-functional.
+S3 Savage IX/MX cards will work with the Vesa 2.0 driver.
+
 * October 13th 2004, Kristian Van Der Vliet *
 
 32bit "hardware" cursor support in the VMWare driver from James Hayhurst
