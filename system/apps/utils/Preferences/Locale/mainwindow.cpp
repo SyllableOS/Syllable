@@ -21,6 +21,7 @@
 #include <util/locale.h>
 #include <util/message.h>
 #include <util/settings.h>
+#include <util/resources.h>
 #include <storage/file.h>
 #include <gui/tabview.h>
 #include <gui/treeview.h>
@@ -272,6 +273,13 @@ MainWindow::MainWindow()
 		pcButtonsLayout->SameWidth( "m_pcApply", "m_pcRevert", "m_pcDefault", NULL );
 		pcRootLayout->AddChild( pcButtonsLayout );
 	}
+	
+	// Set Icon
+	os::Resources cCol( get_image_id() );
+	os::ResStream *pcStream = cCol.GetResourceStream( "icon24x24.png" );
+	os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
+	SetIcon( pcIcon->LockBitmap() );
+	delete( pcIcon );
 	
 	_LoadLanguages();
 	_ShowData();

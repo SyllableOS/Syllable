@@ -45,7 +45,7 @@ PrefsScreenApp::PrefsScreenApp() : os::Application("application/x-vnd-ScreenPref
 
   // Show main window
   if (bRoot) {
-    pcWindow = new MainWindow(os::Rect(iLeft, iTop, iLeft+280, iTop+145));
+    pcWindow = new MainWindow(os::Rect(iLeft, iTop, iLeft+280, iTop+165));
   } else {
     pcWindow = new MainWindow(os::Rect(iLeft, iTop, iLeft+280, iTop+115));
   }
@@ -56,6 +56,8 @@ PrefsScreenApp::PrefsScreenApp() : os::Application("application/x-vnd-ScreenPref
 PrefsScreenApp::~PrefsScreenApp()
 {
 }
+
+
 
 
 

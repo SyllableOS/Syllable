@@ -1,72 +1,23 @@
-CFLAGS   = -Wall -c -O4 -pipe -fexceptions -march=i586 -mcpu=i586 -ffast-math -fomit-frame-pointer
-CPPFLAGS = $(CFLAGS)
-AOPTS   = -c
-
-APPBIN = /Applications/Preferences
-
-VPATH = ./
-
-CC	= gcc
-LL	= ld
-
+CC = g++
+LL = g++
+COPTS = -Wall -c -O3
 OBJS = main.o mainwindow.o
+EXE = Media
 
-OBJDIR	:= objs
+$(EXE): $(OBJS)
+	$(LL) $(OBJS) -lsyllable -lmedia -o $(EXE)
+	strip --strip-all $(EXE)
+	rescopy $(EXE) -r *.png
 
-include $(ATHEOS_SRC)/makefile.rules
-
-all :	$(OBJDIR) $(OBJS) $(OBJDIR)/Prefs-Media
-
-$(OBJDIR):
-	mkdir $(OBJDIR)
-
-$(OBJDIR)/Prefs-Media: $(OBJS)
-	gcc  $(OBJS) -lstdc++ -lsyllable -lmedia -o Prefs-Media
-	rescopy Prefs-Media -r *.png
-	
-deps:
-
-install:  $(OBJDIR)/Prefs-Media
-	mkdir -p $(APPBIN)
-	install -s Prefs-Media $(APPBIN)/Prefs-Media
-
-dist:  $(OBJDIR)/Prefs-Media
-	mkdir -p $(DIST_DIR)/atheos/Applications/Preferences
-	install -s Prefs-Media $(DIST_DIR)/atheos/Applications/Preferences/Prefs-Media
-
-deps: $(OBJDIR) $(DEPS)
+dist: $(EXE)
+	install -s $(EXE) $(DIST_DIR)/atheos/Applications/Preferences/$(EXE)
 
 clean:
-	rm -f $(OBJS) $(OBJDIR)/*.d Prefs-Media
+	-rm $(OBJS)
+	-rm $(EXE)
 
--include $(OBJDIR)/*.d
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+.cpp.o:
+	$(CC) $(COPTS) $< -o $@
 
 
 

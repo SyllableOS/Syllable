@@ -16,6 +16,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string>
 #include "validator.h"
 
 unsigned int iPos;
@@ -85,5 +86,6 @@ int ValidateIP(const char *pzIPSrc)
 
   return 0;
 }
+
 
 

@@ -47,7 +47,7 @@ PrefsFontApp::PrefsFontApp() : os::Application("application/x-vnd-FontPreference
   if (bRoot) {
     pcWindow = new MainWindow(os::Rect(iLeft, iTop, iLeft+450, iTop+290));
   } else {
-    pcWindow = new MainWindow(os::Rect(iLeft, iTop, iLeft+450, iTop+150));
+    pcWindow = new MainWindow(os::Rect(iLeft, iTop, iLeft+450, iTop+170));
   }
   pcWindow->Show();
   pcWindow->MakeFocus();
@@ -56,4 +56,8 @@ PrefsFontApp::PrefsFontApp() : os::Application("application/x-vnd-FontPreference
 PrefsFontApp::~PrefsFontApp()
 {
 }
+
+
+
+
 

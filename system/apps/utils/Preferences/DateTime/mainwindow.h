@@ -33,11 +33,13 @@
 class CMainWindow : public os::Window {
 public:
   CMainWindow(const os::Rect& cFrame);
+  ~CMainWindow();
   virtual void HandleMessage(os::Message* pcMessage);
   bool OkToQuit(void);
 
 private:
   void TimerTick(int nID);
+  void GetLine( os::StreamableIO* pcIO, char* zBuffer, int nMaxLen, char zEnd );
   void AddTimeZones();
   void UpdateTimeZoneMap();
   void Apply();

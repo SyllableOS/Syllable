@@ -18,16 +18,15 @@
 #include <fstream>
 #include <util/application.h>
 #include <util/message.h>
+#include <util/resources.h>
 #include <gui/desktop.h>
 #include <gui/guidefines.h>
 #include <gui/requesters.h>
+#include <gui/image.h>
 #include <storage/filereference.h>
 #include "main.h"
 #include "mainwindow.h"
 #include "messages.h"
-
-using std::ifstream;
-using std::ofstream;
 
 MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow", "Appearance", os::WND_NOT_RESIZABLE)
 {
@@ -218,6 +217,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
     pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
     pcHLButtons->AddChild( pcBDefault = new os::Button(cRect, "BDefault", "_Default", new os::Message(M_MW_DEFAULT)) );
     pcHLButtons->SameWidth( "BApply", "BDefault", NULL );
+    pcHLButtons->SameHeight( "BApply", "BDefault", NULL );
     pcVLRoot->AddChild(pcHLButtons);
   }
 
@@ -238,6 +238,14 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
     pcBDefault->SetTabOrder(iTabOrder++);
     pcBApply->SetTabOrder(iTabOrder++);
   }
+  
+  
+  // Set Icon
+  os::Resources cCol( get_image_id() );
+  os::ResStream *pcStream = cCol.GetResourceStream( "icon24x24.png" );
+  os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
+  SetIcon( pcIcon->LockBitmap() );
+  delete( pcIcon );
 
   // Show data
   ShowData();
@@ -380,7 +388,7 @@ void MainWindow::Load()
   strcat(pzFilename, pcDDMTheme->GetCurrentString().c_str());
 
   // Open up for reading
-  ifstream fsIn;
+  std::ifstream fsIn;
   fsIn.open(pzFilename);
 
   // Read in magic number first
@@ -414,7 +422,7 @@ void MainWindow::Save()
   std::string zName = pcDDMTheme->GetCurrentString(); 
 
   // Open up file for writing
-  ofstream fsOut;
+  std::ofstream fsOut;
   fsOut.open(pzFilename);
   
   // Write out magic number
@@ -530,6 +538,11 @@ void ColourPreview::SetValue(int iRed, int iGreen, int iBlue)
   // And update control
   Paint(GetBounds());
 }
+
+
+
+
+
 
 
 

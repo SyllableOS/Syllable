@@ -32,8 +32,6 @@
 #include <sys/stat.h>
 #include "configuration.h"
 
-using namespace std;
-
 // Constants for stream output
 const char newl = '\n';
 
@@ -81,7 +79,7 @@ Configuration::~Configuration()
 void Configuration::Load()
 {
   // Attempt to open file
-  ifstream fsIn;
+  std::ifstream fsIn;
   //os::File
   fsIn.open("/system/config/net.cfg");
 
@@ -168,8 +166,8 @@ void Configuration::Load()
 void Configuration::Save() 
 {
   // Open file for write
-  ofstream fsOut;
-  fsOut.open("/system/config/net.cfg");
+  std::ofstream fsOut;
+  fsOut.open("/system/config/net.cfg" );
 
   // Host/Domain name first
   fsOut << pzHost << newl << pzDomain << newl;
@@ -229,8 +227,8 @@ void Configuration::Activate()
   int i;
 
   // Okay, first lets create the /etc/hostname file and assign permissions
-  ofstream fsOut;
-  fsOut.open("/etc/hostname");
+  std::ofstream fsOut;
+  fsOut.open("/etc/hostname" );
   fsOut << pzHost << "." << pzDomain << newl;
   fsOut.close();
   chmod("/etc/hostname", S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
@@ -387,6 +385,7 @@ bool Configuration::DetectInterfaceChanges()
 
   return bChanges;
 }
+
 
 
 

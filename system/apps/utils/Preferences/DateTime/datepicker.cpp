@@ -37,7 +37,8 @@ DatePicker::DatePicker(const os::Rect& cFrame, const char *pszName) :
   m_pcHLCurrentDate = new os::HLayoutNode("", 1.0f, m_pcVLRoot);
 
   // Month
-  m_pcHLCurrentDate->AddChild(m_pcDDMMonth = new os::DropdownMenu(cRect, "DDMMonth"));
+  m_pcHLCurrentDate->AddChild(m_pcDDMMonth = new os::DropdownMenu(cRect, "DDMMonth"), 1.0f);
+  m_pcDDMMonth->SetMinPreferredSize( 2 );
   m_pcDDMMonth->SetSelectionMessage(new os::Message(M_MONTHCHANGED));
   m_pcDDMMonth->AppendItem("January");
   m_pcDDMMonth->AppendItem("February");
@@ -54,11 +55,11 @@ DatePicker::DatePicker(const os::Rect& cFrame, const char *pszName) :
   m_pcHLCurrentDate->AddChild(new os::HLayoutSpacer("", 5.0f, 5.0f));
 
   // Year
-  m_pcHLCurrentDate->AddChild(m_pcSPYear = new os::Spinner(cRect, "SPYear", 0.0f, new os::Message(M_YEARCHANGED)));
+  m_pcHLCurrentDate->AddChild(m_pcSPYear = new os::Spinner(cRect, "SPYear", 0.0f, new os::Message(M_YEARCHANGED)), 1.0f);
   m_pcSPYear->SetMinMax(1900.0f, 2100.0f); // Sure this should futureproof for a while :]
   m_pcSPYear->SetStep(1.0f);
-  m_pcSPYear->SetMinPreferredSize(4);
-  m_pcSPYear->SetMaxPreferredSize(4);
+  m_pcSPYear->SetMinPreferredSize(5);
+  m_pcSPYear->SetMaxPreferredSize(5);
   m_pcSPYear->SetFormat("%0.f");
 
   // Create grid, spacing first
@@ -286,7 +287,7 @@ void DatePicker::FrameSized(const os::Point &cDelta)
 
 os::Point DatePicker::GetPreferredSize(bool bLargest) const
 {
-  return os::Point(150, 140);
+  return os::Point(160, 140);
 }
 
 void DatePicker::GetDate(int *iDay, int *iMonth, int *iYear, std::string *strFormatted)
@@ -382,9 +383,11 @@ void DatePickerDay::AttachedToWindow()
   GetFontHeight(&sHeight);
   m_fHeight = (sHeight.ascender + sHeight.descender);
   m_fAscender = sHeight.ascender;
-  SetFont(new os::Font("System/Bold"));
+  GetFont()->SetProperties( "System/Bold");
+  //SetFont(new os::Font("System/Bold"));
   m_fWidth = GetStringWidth("MM");
-  SetFont(new os::Font("System/Regular"));
+  GetFont()->SetProperties( "System/Regular");
+ // SetFont(new os::Font("System/Regular"));
 }
 
 void DatePickerDay::SetString(const char *pszString)
@@ -425,9 +428,9 @@ void DatePickerDay::Paint(const os::Rect &cUpdateRect)
 
   // And show text
   if (!m_bHeader) {
-    SetFont(new os::Font("System/Regular"));
+    GetFont()->SetProperties("System/Regular");
   } else {
-    SetFont(new os::Font("System/Bold"));
+    GetFont()->SetProperties("System/Bold");
   }
   DrawString(os::Point(x, y), m_strValue);
   SetBgColor(sSavedColor);
@@ -448,3 +451,5 @@ void DatePickerDay::MouseDown(const os::Point &cPosition, uint32 iButtons)
 {
   Invoke();
 }
+
+

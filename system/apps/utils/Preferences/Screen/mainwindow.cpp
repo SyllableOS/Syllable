@@ -14,12 +14,14 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-#include <cstdio>
+#include <stdio.h>
 #include <dirent.h>
 #include <util/application.h>
 #include <util/message.h>
+#include <util/resources.h>
 #include <gui/desktop.h>
 #include <gui/guidefines.h>
+#include <gui/image.h>
 #include "main.h"
 #include "mainwindow.h"
 #include "messages.h"
@@ -102,11 +104,11 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
     pcVLRoot->AddChild( new os::VLayoutSpacer("", 10.0f, 10.0f));
     pcHLButtons = new os::HLayoutNode("HLButtons");
     pcHLButtons->AddChild( new os::HLayoutSpacer(""));
-    pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", "_Apply", new os::Message(M_MW_APPLY)) );
+    pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", "Apply", new os::Message(M_MW_APPLY)) );
     pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
-    pcHLButtons->AddChild( pcBUndo = new os::Button(cRect, "BUndo", "_Undo", new os::Message(M_MW_UNDO)) );
+    pcHLButtons->AddChild( pcBUndo = new os::Button(cRect, "BUndo", "Undo", new os::Message(M_MW_UNDO)) );
     pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
-    pcHLButtons->AddChild( pcBDefault = new os::Button(cRect, "BDefault", "_Default", new os::Message(M_MW_DEFAULT)) );
+    pcHLButtons->AddChild( pcBDefault = new os::Button(cRect, "BDefault", "Default", new os::Message(M_MW_DEFAULT)) );
     pcHLButtons->SameWidth( "BApply", "BUndo", "BDefault", NULL );
     pcVLRoot->AddChild(pcHLButtons);
   }
@@ -151,6 +153,13 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   for( int i = 0; i < m_nModeCount; i++ ) {
   	os::Application::GetInstance()->GetScreenModeInfo( i, &m_pcModes[i] );
   }
+  
+  // Set Icon
+  os::Resources cCol( get_image_id() );
+  os::ResStream *pcStream = cCol.GetResourceStream( "icon24x24.png" );
+  os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
+  SetIcon( pcIcon->LockBitmap() );
+  delete( pcIcon );
 
   // Show data
   ShowData();
@@ -368,6 +377,7 @@ bool MainWindow::OkToQuit()
   os::Application::GetInstance()->PostMessage(os::M_QUIT);
   return true;
 }
+
 
 
 

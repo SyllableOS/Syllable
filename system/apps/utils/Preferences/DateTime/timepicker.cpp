@@ -100,7 +100,6 @@ TimePicker::~TimePicker()
   // Delete looper object
   m_pcLooper->RemoveTimer(this, 0);
   m_pcLooper->Quit();
-  delete m_pcLooper;
 }
 
 void TimePicker::AttachedToWindow()

@@ -16,8 +16,10 @@
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include <stdio.h>
+#include <gui/image.h>
 #include <util/application.h>
 #include <util/message.h>
+#include <util/resources.h>
 #include "main.h"
 #include "mainwindow.h"
 #include "messages.h"
@@ -132,7 +134,8 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcVLTypes->AddChild( new os::VLayoutSpacer("", 5.0f, 5.0f) );
   pcVLTypes->AddChild( pcHLTWindow);
   pcVLTypes->AddChild( new os::VLayoutSpacer("") );
-  pcVLTypes->AddChild( pcHLTAntiAliasing );
+  if (bRoot)
+	  pcVLTypes->AddChild( pcHLTAntiAliasing );
   pcVLTypes->AddChild( new os::VLayoutSpacer("") );
   pcFVTypes = new os::FrameView( cBounds, "FVTypes", "Font Selection", os::CF_FOLLOW_ALL);
   pcFVTypes->SetRoot(pcVLTypes);
@@ -170,6 +173,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
     pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
     pcHLButtons->AddChild( pcBDefault = new os::Button(cRect, "BDefault", "_Default", new os::Message(M_MW_DEFAULT) ));
     pcHLButtons->SameWidth( "BApply", "BRevert", "BDefault", NULL );
+    pcHLButtons->SameHeight( "BApply", "BRevert", "BDefault", NULL );
     pcVLRoot->AddChild( pcHLButtons );
   }
 
@@ -216,11 +220,20 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
     pcDDMTWindow->SetEnable(false);
     pcSPTWindow->SetEnable(false);
   }
+  
+  
+  // Set Icon
+  os::Resources cCol( get_image_id() );
+  os::ResStream *pcStream = cCol.GetResourceStream( "icon24x24.png" );
+  os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
+  SetIcon( pcIcon->LockBitmap() );
+  delete( pcIcon );
 
   // Show data
   GetCurrentValues();
   ShowData();
-  ResizeTo(pcVLRoot->GetPreferredSize(false));  //simple way of making sure the window is no bigger than it needs to dbe
+  ResizeTo(pcVLRoot->GetPreferredSize(false));  //simple way of making sure the window is no bigger than it needs to be
+
 }
 
 void MainWindow::GetCurrentValues()
@@ -411,7 +424,7 @@ void MainWindow::Default()
   ShowData();
 }
 
-void MainWindow::UpdateExample(const char *pzFont, float fNewSize) 
+void MainWindow::UpdateExample(const char *pzFont , float fNewSize) 
 {
   static std::string cFontName = "";
   static float fSize = 0;
@@ -555,3 +568,8 @@ bool MainWindow::OkToQuit()
   os::Application::GetInstance()->PostMessage(os::M_QUIT);
   return true;
 }
+
+
+
+
+

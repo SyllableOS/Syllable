@@ -18,7 +18,9 @@
 #include <stdio.h>
 #include <util/application.h>
 #include <util/message.h>
+#include <util/resources.h>
 #include <gui/requesters.h>
+#include <gui/image.h>
 #include "mainwindow.h"
 #include "messages.h"
 #include "main.h"
@@ -121,6 +123,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
     pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f));
     pcHLButtons->AddChild( pcBRevert = new os::Button(cRect, "BRevert", "_Revert", new os::Message(M_MW_REVERT)) );
     pcHLButtons->SameWidth( "BApply", "BRevert", NULL );
+    pcHLButtons->SameHeight( "BApply", "BRevert", NULL );
     pcVLRoot->AddChild(pcHLButtons);
   }
 
@@ -163,6 +166,13 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
     pcModifyWindow[i] = NULL;
     bModifyOpen[i] = false;
   }
+  
+  // Set Icon
+  os::Resources cCol( get_image_id() );
+  os::ResStream *pcStream = cCol.GetResourceStream( "icon24x24.png" );
+  os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
+  SetIcon( pcIcon->LockBitmap() );
+  delete( pcIcon );
 
   // Detect interfaces and show data
   pcConfig->Detect();
@@ -295,5 +305,7 @@ bool MainWindow::OkToQuit()
 
   return false;
 }
+
+
 
 

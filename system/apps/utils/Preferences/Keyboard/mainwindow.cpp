@@ -20,6 +20,8 @@
 #include <dirent.h>
 #include <util/application.h>
 #include <util/message.h>
+#include <util/resources.h>
+#include <gui/image.h>
 #include <appserver/keymap.h>
 #include "mainwindow.h"
 #include "messages.h"
@@ -155,6 +157,13 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
     pcSLRepeat->SetEnable(false);
     pcLVLayout->SetEnable(false);
   }
+  
+  // Set Icon
+  os::Resources cCol( get_image_id() );
+  os::ResStream *pcStream = cCol.GetResourceStream( "icon24x24.png" );
+  os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
+  SetIcon( pcIcon->LockBitmap() );
+  delete( pcIcon );
 
   ShowData();
 }
@@ -287,6 +296,8 @@ bool MainWindow::OkToQuit()
   os::Application::GetInstance()->PostMessage(os::M_QUIT);
   return true;
 }
+
+
 
 
 

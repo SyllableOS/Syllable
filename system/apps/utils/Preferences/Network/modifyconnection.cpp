@@ -118,6 +118,7 @@ ModifyConnectionWindow::ModifyConnectionWindow(const os::Rect& cFrame, AdaptorCo
     pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
     pcHLButtons->AddChild( pcBDisable = new os::Button(cRect, "BDisable", "_Disable", new os::Message(M_MC_DISABLE)) );
     pcHLButtons->SameWidth( "BEnable", "BDisable", NULL );
+    pcHLButtons->SameHeight( "BEnable", "BDisable", NULL );
     pcVLRoot->AddChild(pcHLButtons);
   }
   
@@ -259,6 +260,7 @@ bool ModifyConnectionWindow::OkToQuit()
     return true;
   }
 }
+
 
 
 

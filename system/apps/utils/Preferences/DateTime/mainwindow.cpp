@@ -15,7 +15,9 @@
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include <stdio.h>
-#include <fstream.h>
+#include <fstream>
+#include <atheos/image.h>
+#include <util/resources.h>
 #include <util/application.h>
 #include <util/message.h>
 #include <storage/file.h>
@@ -41,33 +43,38 @@ CMainWindow::CMainWindow(const os::Rect& cFrame) :
   m_pcLTimeDate = new os::LayoutView(cBounds, "LTimeDate", NULL, os::CF_FOLLOW_ALL);
   m_pcVLTimeDate = new os::VLayoutNode("VLTimeDate");
   m_pcVLTimeDate->SetBorders(os::Rect(5, 5, 5, 5));
+  
   m_pcHLTimeDate = new os::HLayoutNode("HLTimeDate", 1.0f, m_pcVLTimeDate);
 
   // Time
+  m_pcTPTime = new os::TimePicker(cRect, "TPTime");
   m_pcHLTime = new os::HLayoutNode("HLTime");
   m_pcHLTime->SetBorders(os::Rect(5, 5, 5, 5));
-  m_pcHLTime->AddChild(m_pcTPTime = new os::TimePicker(cRect, "TPTime"));
+  m_pcHLTime->AddChild( m_pcTPTime );
   m_pcFVTime = new os::FrameView(cBounds, "FVTime", "Time", os::CF_FOLLOW_ALL);
   m_pcFVTime->SetRoot(m_pcHLTime);
   m_pcHLTimeDate->AddChild(m_pcFVTime);
-				 
+  
+ 			 
   // Space
   m_pcHLTimeDate->AddChild(new os::HLayoutSpacer("", 10.0f, 10.0f));
   
   // Date
+  m_pcDPDate = new os::DatePicker(cRect, "DPDate");
   m_pcHLDate = new os::HLayoutNode("HLDate");
   m_pcHLDate->SetBorders(os::Rect(5, 5, 5, 5));
-  m_pcHLDate->AddChild(m_pcDPDate = new os::DatePicker(cRect, "DPDate"));
+  m_pcHLDate->AddChild( m_pcDPDate );
   m_pcFVDate = new os::FrameView(cBounds, "FVDate", "Date", os::CF_FOLLOW_ALL);
   m_pcFVDate->SetRoot(m_pcHLDate);
   m_pcHLTimeDate->AddChild(m_pcFVDate);
  
   // Add full time/date stringview
+  m_pcSVFullTimeDate = new os::StringView(cRect, "SVFull", "", os::ALIGN_CENTER);
   m_pcVLTimeDate->AddChild(new os::VLayoutSpacer("", 5.0f, 5.0f));
-  m_pcVLTimeDate->AddChild(m_pcSVFullTimeDate = new os::StringView(cRect, "SVFull", "", os::ALIGN_CENTER));
+  m_pcVLTimeDate->AddChild(m_pcSVFullTimeDate);
   m_pcSVFullTimeDate->SetMinPreferredSize(50);
   m_pcSVFullTimeDate->SetMaxPreferredSize(50);
-  
+ 
   // Add time/date tab
   m_pcLTimeDate->SetRoot(m_pcVLTimeDate);
   m_pcTVRoot->AppendTab("Time & Date", m_pcLTimeDate);
@@ -77,9 +84,12 @@ CMainWindow::CMainWindow(const os::Rect& cFrame) :
   m_pcBIImageSaved = new os::BitmapImage();
   
   // Load image and save it 
-  os::File *cFile = new os::File("timezone.png");
-  m_pcBIImage->Load(cFile, "image/png");
-  delete cFile;
+  os::File cSelf( open_image_file( get_image_id() ) );
+  os::Resources cCol( &cSelf );
+		
+  os::ResStream *pcStream = cCol.GetResourceStream( "timezone.png" );
+  m_pcBIImage->Load(pcStream);
+  delete( pcStream );
   
   // Store it
   *m_pcBIImageSaved = *m_pcBIImage;
@@ -124,11 +134,6 @@ CMainWindow::CMainWindow(const os::Rect& cFrame) :
   // Set root and add to window
   m_pcLRoot->SetRoot(m_pcVLRoot);
   AddChild(m_pcLRoot);
-  
-  os::Point cSize = m_pcLRoot->GetPreferredSize( false );
-  os::Rect cWFrame( 0, 0, cSize.x, cSize.y );
-  cWFrame.MoveTo( 100, 100 );
-  SetFrame( cWFrame );
 
   // Set Default button and initial focus
   if (g_bRoot) {
@@ -146,6 +151,13 @@ CMainWindow::CMainWindow(const os::Rect& cFrame) :
     this->SetTitle("Date & Time (View)");
   }
   
+  
+  // Set Icon
+  pcStream = cCol.GetResourceStream( "icon24x24.png" );
+  os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
+  SetIcon( pcIcon->LockBitmap() );
+  delete( pcIcon );
+  
   // Parse in time zones
   AddTimeZones();
 
@@ -153,25 +165,43 @@ CMainWindow::CMainWindow(const os::Rect& cFrame) :
   AddTimer(this, 0, 500000, false);
 }
 
+CMainWindow::~CMainWindow()
+{
+	delete( m_pcBIImage );
+	delete( m_pcBIImageSaved );
+}
+
+void CMainWindow::GetLine( os::StreamableIO* pcIO, char* zBuffer, int nMaxLen, char zEnd )
+{
+	char zTemp;
+	int nPointer = 0;
+	
+	while( nPointer < nMaxLen && pcIO->Read( (void*)&zTemp, 1 ) == 1 )
+	{
+		if( zTemp == zEnd )
+		{
+			zBuffer[nPointer] = 0;
+			return;
+		}
+		
+		zBuffer[nPointer++] = zTemp;
+	}
+}
+
 void CMainWindow::AddTimeZones()
 {
   // Open up file
-  fstream fsIn;
-  fsIn.open("timezone.info");
-
-  // Check exists
-  if (!fsIn.is_open()) {
-    fprintf(stdout, "Serious error: Can't open timezone.info file\n");
-    exit(1);
-  }
+  os::File cSelf( open_image_file( get_image_id() ) );
+  os::Resources cCol( &cSelf );
+  os::ResStream *pcStream = cCol.GetResourceStream( "timezone.info" );
 
   // Scratch space to read in lines
   char szScratch[1024];
-
+  
   // Read in number of lines first
-  fsIn.getline((char *)&szScratch, 1024, '\n');
+  GetLine( pcStream, szScratch, 1024, '\n');
   int iNumZones = atoi((const char *)&szScratch);
-
+ 
   // Dimension arrays
   m_pcstrShort = new std::string*[iNumZones];
   m_pcstrFile = new std::string*[iNumZones];
@@ -181,26 +211,25 @@ void CMainWindow::AddTimeZones()
   for (int i = 0; i < iNumZones; i++) {
     
     // Get description
-    fsIn.getline((char *)&szScratch, 1024, '|');
+    GetLine( pcStream, szScratch, 1024, '|');
+    
     m_pcDDMTimeZone->AppendItem(szScratch);
 
     // Get short description
-    fsIn.getline((char *)&szScratch, 1024, '|');
+    GetLine( pcStream, szScratch, 1024, '|');
     m_pcstrShort[i] = new std::string((const char *)&szScratch);
 
     // Get locale link
-    fsIn.getline((char *)&szScratch, 1024, '|');
+    GetLine( pcStream, szScratch, 1024, '|');
     m_pcstrFile[i] = new std::string((const char *)&szScratch);
 
     // get Horiz offset
-    fsIn.getline((char *)&szScratch, 1024, '\n');
+    GetLine( pcStream, szScratch, 1024, '\n');
     m_piDiff[i] = atoi(szScratch);
   }  
 
   // And close
-  fsIn.close();
-
-  //  m_pcLVTimeZone->SetCurrentRow(0);
+  delete( pcStream );
 }
 
 void CMainWindow::UpdateTimeZoneMap()
@@ -303,3 +332,19 @@ void CMainWindow::TimerTick(int nID)
     m_pcSVFullTimeDate->SetString(szScratch);
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

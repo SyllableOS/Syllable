@@ -42,9 +42,9 @@ CDateTimeApp::CDateTimeApp() : os::Application("application/x-vnd.Preferences-Da
 
   // Show main window
   if (g_bRoot) {
-    m_pcWindow = new CMainWindow(os::Rect(iLeft, iTop, iLeft+340, iTop+260));
+    m_pcWindow = new CMainWindow(os::Rect(iLeft, iTop, iLeft+350, iTop+260));
   } else {
-    m_pcWindow = new CMainWindow(os::Rect(iLeft, iTop, iLeft+340, iTop+260));
+    m_pcWindow = new CMainWindow(os::Rect(iLeft, iTop, iLeft+350, iTop+260));
   }
   m_pcWindow->Show();
   m_pcWindow->MakeFocus();

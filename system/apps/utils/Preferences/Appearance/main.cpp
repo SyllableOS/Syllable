@@ -44,7 +44,7 @@ PrefsAppearanceApp::PrefsAppearanceApp() : os::Application("application/x-vnd-Ap
   int iTop = (iHeight-260)/2;
 
   // Show main window
-  pcWindow = new MainWindow(os::Rect(iLeft, iTop, iLeft+320, iTop+260));
+  pcWindow = new MainWindow(os::Rect(iLeft, iTop, iLeft+320, iTop+280));
   pcWindow->Show();
   pcWindow->MakeFocus();
 }
@@ -52,6 +52,7 @@ PrefsAppearanceApp::PrefsAppearanceApp() : os::Application("application/x-vnd-Ap
 PrefsAppearanceApp::~PrefsAppearanceApp()
 {
 }
+
 
 
 
