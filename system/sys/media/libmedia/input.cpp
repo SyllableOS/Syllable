@@ -74,6 +74,7 @@ bool MediaInput::FileNameRequired()
  *****************************************************************************/
 status_t MediaInput::Open( String zFileName )
 {
+	return( -1 );
 }
 
 
@@ -242,6 +243,7 @@ uint64 MediaInput::Seek( uint64 nPosition )
 {
 	return( 0 );
 }
+
 
 
 

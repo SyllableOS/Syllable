@@ -20,6 +20,7 @@
 #include <media/output.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <iostream>
 extern "C" 
 {
 	#include "avformat.h"
@@ -98,12 +99,12 @@ status_t FFMpegOutput::Open( os::String zFileName )
 	AVOutputFormat* psOutputFormat;
 	psOutputFormat = guess_format( NULL, zFileName.c_str(), NULL );
 	if( !psOutputFormat ) {
-		cout<<"Could not guess output format!"<<endl;
+		std::cout<<"Could not guess output format!"<<std::endl;
 		return( -1 );
 	}
 	
 	if( psOutputFormat->video_codec == CODEC_ID_NONE || psOutputFormat->audio_codec == CODEC_ID_NONE ) {
-		cout<<"Format does not support video and audio!"<<endl;
+		std::cout<<"Format does not support video and audio!"<<std::endl;
 		return( -1 );
 	}
 	
@@ -126,7 +127,7 @@ void FFMpegOutput::Close()
 	if( m_bStarted ) {
 		/* Write trailer */
 		av_write_trailer( &m_sContext );
-		cout<<"Trailer written"<<endl;
+		std::cout<<"Trailer written"<<std::endl;
 	}
 	url_fclose( &m_sContext.pb );
 }
@@ -143,23 +144,23 @@ void FFMpegOutput::StartEncoding()
 	for( int i = 0; i < m_nCurrentStream; i++ ) {
 		m_sContext.streams[i] = m_sStream[i];
 	}
-	cout<<m_nCurrentStream<<" Streams added"<<endl;
+	std::cout<<m_nCurrentStream<<" Streams added"<<std::endl;
 	
 	/* Set parameters */
 	AVFormatParameters sParams;
 	memset( &sParams, 0, sizeof( sParams ) );
 	sParams.image_format = NULL;
 	if( av_set_parameters( &m_sContext, &sParams ) < 0 ) {
-		cout<<"Could not set parameters"<<endl;
+		std::cout<<"Could not set parameters"<<std::endl;
 		return;
 	}
 	
 	/* Writing header */
 	if( av_write_header( &m_sContext ) < 0 ) {
-		cout<<"Could not write file header"<<endl;
+		std::cout<<"Could not write file header"<<std::endl;
 		return;
 	} 
-	cout<<"File header written"<<endl;
+	std::cout<<"File header written"<<std::endl;
 	
 	m_bStarted = true;
 }
@@ -177,7 +178,7 @@ uint32 FFMpegOutput::GetOutputFormatCount()
 os::MediaFormat_s FFMpegOutput::GetOutputFormat( uint32 nIndex )
 {
 	os::MediaFormat_s sFormat;
-	memset( &sFormat, 0, sizeof( os::MediaFormat_s ) );
+	MEDIA_CLEAR_FORMAT( sFormat );
 	
 	switch( nIndex )
 	{
@@ -225,7 +226,7 @@ status_t FFMpegOutput::AddStream( os::String zName, os::MediaFormat_s sFormat )
 {
 	/* Add stream */
 	if( sFormat.pPrivate == NULL ) {
-		cout<<"The FFMpeg output does only work with the FFMpeg codec!"<<endl;
+		std::cout<<"The FFMpeg output does only work with the FFMpeg codec!"<<std::endl;
 		return( -1 );
 		
 	}
@@ -293,6 +294,9 @@ extern "C"
 	}
 
 }
+
+
+
 
 
 

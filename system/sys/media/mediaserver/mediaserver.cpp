@@ -57,7 +57,7 @@ MediaServer::MediaServer()
 	
 	/* Find available DSP devices */
 	m_nDspCount = FindDsps( "/dev/sound/" );
-	cout<<"Found "<<m_nDspCount<<" DSP's"<<endl;
+	std::cout<<"Found "<<m_nDspCount<<" DSP's"<<std::endl;
 	if( m_nDspCount < 0 )
 		m_nDefaultDsp = -1;
 
@@ -83,7 +83,7 @@ MediaServer::MediaServer()
 		}
 	}
 	/* Spawn flush thread */
-	m_hThread = spawn_thread( "media_server_flush", media_flush_entry, 0, 0, this );
+	m_hThread = spawn_thread( "media_server_flush", (void*)media_flush_entry, 0, 0, this );
 	resume_thread( m_hThread );
 	
 	
@@ -134,7 +134,7 @@ int MediaServer::FindDsps( const char *pzPath )
 	hAudioDir = opendir( pzPath );
 	if( hAudioDir == NULL )
 	{
-		cout<<"Unable to open"<<pzPath<<endl;
+		std::cout<<"Unable to open"<<pzPath<<std::endl;
 		return nRet;
 	}
 
@@ -143,11 +143,11 @@ int MediaServer::FindDsps( const char *pzPath )
 		if( !strcmp( hAudioDev->d_name, "." ) || !strcmp( hAudioDev->d_name, ".." ) )
 			continue;
 
-		cout<<"Found audio device "<<hAudioDev->d_name<<endl;
+		std::cout<<"Found audio device "<<hAudioDev->d_name<<std::endl;
 		zCurrentPath = (char*)calloc( 1, strlen( pzPath ) + strlen( hAudioDev->d_name ) + 5 );
 		if( zCurrentPath == NULL )
 		{
-			cout<<"Out of memory"<<endl;
+			std::cout<<"Out of memory"<<std::endl;
 			closedir( hAudioDir );
 			return nRet;
 		}
@@ -160,7 +160,7 @@ int MediaServer::FindDsps( const char *pzPath )
 		hDspDir = opendir( zCurrentPath );
 		if( hDspDir == NULL )
 		{
-			cout<<"Unable to open"<<zCurrentPath<<endl;
+			std::cout<<"Unable to open"<<zCurrentPath<<std::endl;
 			free( zCurrentPath );
 			continue;
 		}
@@ -199,7 +199,7 @@ int MediaServer::FindDsps( const char *pzPath )
 				sprintf( m_sDsps[i].zName, "%s - %s", hAudioDev->d_name, hDspNode->d_name );
 				strcpy( m_sDsps[i].zPath, zDspPath );
 
-				cout<<"Added "<<zDspPath<<" with handle #"<<i<<endl;
+				std::cout<<"Added "<<zDspPath<<" with handle #"<<i<<std::endl;
 				break;
 			}
 			free( zDspPath );
@@ -222,7 +222,7 @@ bool MediaServer::OpenSoundCard( int nDevice )
 
 	m_hOSS = open( m_sDsps[nDevice].zPath, O_RDWR );
 	if( m_hOSS >= 0 )
-		cout<<"Soundcard detected"<<endl;	
+		std::cout<<"Soundcard detected"<<std::endl;	
 	else
 		return( false );
 		
@@ -231,7 +231,7 @@ bool MediaServer::OpenSoundCard( int nDevice )
 	ioctl( m_hOSS, SNDCTL_DSP_GETOSPACE, &sInfo );
 	m_nBufferSize = sInfo.bytes;
 
-	cout<<"Using "<<m_nBufferSize<<" Bytes of soundcard buffer"<<endl;
+	std::cout<<"Using "<<m_nBufferSize<<" Bytes of soundcard buffer"<<std::endl;
 		
 	/* Set parameters */
 	ioctl( m_hOSS, SNDCTL_DSP_RESET, NULL );
@@ -250,7 +250,7 @@ bool MediaServer::OpenSoundCard( int nDevice )
 
 void MediaServer::CloseSoundCard()
 {
-	cout<<"Closing soundcard device"<<endl;
+	std::cout<<"Closing soundcard device"<<std::endl;
 	m_nMasterValueCount = 0;
 	m_vMasterValue = 0;
 	m_pcControls->SetMasterValue( 0 );
@@ -477,7 +477,7 @@ void MediaServer::SetStartupSound( Message* pcMessage )
 	/* Play startup sound if it has changed */
 	if( !( zSound == m_zStartupSound ) ) {
 		m_zStartupSound = zSound;
-		resume_thread( spawn_thread( "play_startup_sound", play_startup_sound, 0, 0, &m_zStartupSound ) );
+		resume_thread( spawn_thread( "play_startup_sound", (void*)play_startup_sound, 0, 0, &m_zStartupSound ) );
 	}
 	SaveSettings();
 	
@@ -547,9 +547,9 @@ void MediaServer::CreateAudioStream( Message* pcMessage )
 		return;
 	}
 	
-	cout<<"New Audio Stream "<<nHandle<<" ( "<<m_sAudioStream[nHandle].nChannels<<" Channels, "<<
+	std::cout<<"New Audio Stream "<<nHandle<<" ( "<<m_sAudioStream[nHandle].nChannels<<" Channels, "<<
 							m_sAudioStream[nHandle].nSampleRate<<" Hz"<<(m_sAudioStream[nHandle].bResample
-							? ", Resampling" : "")<<" )"<<endl;
+							? ", Resampling" : "")<<" )"<<std::endl;
 	
 	/* Send information back */
 	cReply.AddInt32( "area", m_sAudioStream[nHandle].hArea );
@@ -592,7 +592,7 @@ void MediaServer::DeleteAudioStream( Message* pcMessage )
 	unlock_semaphore( m_hLock );
 	delete_area( m_sAudioStream[nHandle].hArea );
 	
-	cout<<"Delete Audio Stream "<<nHandle<<endl;
+	std::cout<<"Delete Audio Stream "<<nHandle<<std::endl;
 	
 	pcMessage->SendReply( MEDIA_SERVER_OK );
 	
@@ -707,7 +707,7 @@ void MediaServer::FlushAudioStream( Message* pcMessage )
 		unlock_semaphore( m_hLock );
 		free( psQueuePacket->pBuffer[0] );
 		free( psQueuePacket );
-		cout<<"Packet buffer of Stream "<<nHandle<<" full"<<endl;
+		std::cout<<"Packet buffer of Stream "<<nHandle<<" full"<<std::endl;
 		pcMessage->SendReply( MEDIA_SERVER_ERROR );
 		return;
 	}
@@ -1003,13 +1003,17 @@ int play_startup_sound( void* pData )
 thread_id MediaServer::Start()
 {
 	make_port_public( GetMsgPort() );
-	cout<<"Media Server running at port "<<GetMsgPort()<<endl;
+	std::cout<<"Media Server running at port "<<GetMsgPort()<<std::endl;
 	/* Play startup sound */
-	resume_thread( spawn_thread( "play_startup_sound", play_startup_sound, 0, 0, &m_zStartupSound ) );
+	resume_thread( spawn_thread( "play_startup_sound", (void*)play_startup_sound, 0, 0, &m_zStartupSound ) );
 	
 	return( Application::Run() );
 }
 
+bool MediaServer::OkToQuit()
+{
+	return( false );
+}
 
 int main()
 {
@@ -1019,6 +1023,8 @@ int main()
 		pcServer->Start();
 	}
 }
+
+
 
 
 

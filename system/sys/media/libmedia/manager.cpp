@@ -23,7 +23,8 @@
 #include <util/message.h>
 #include <util/resources.h>
 #include <atheos/msgport.h>
-#include <iostream.h>
+#include <iostream>
+#include <cassert>
 
 using namespace os;
 
@@ -55,7 +56,7 @@ MediaManager::MediaManager()
 	
 	m = new Private;
 	
-	cout<<"Trying to connect to media server..."<<endl;
+	std::cout<<"Trying to connect to media server..."<<std::endl;
 	if( ( nPort = find_port( "l:media_server" ) ) < 0 ) {
 		m->m_bValid = false;
 		return;
@@ -70,7 +71,7 @@ MediaManager::MediaManager()
 			return;
 		}
 	}
-	cout<<"Connected to media server at port "<<nPort<<endl;
+	std::cout<<"Connected to media server at port "<<nPort<<std::endl;
 	
 	/* Open all media plugins in /system/media */
 	Directory *pcDirectory = new Directory();
@@ -81,7 +82,7 @@ MediaManager::MediaManager()
 	String zPath;
 	pcDirectory->GetPath( &zPath.str() );
 	
-	cout<<"Start plugin scan.."<<endl;
+	std::cout<<"Start plugin scan.."<<std::endl;
 	m->m_nPlugins.clear();
 	
 	while( pcDirectory->GetNextEntry( &zFileName.str() ) )
@@ -92,7 +93,7 @@ MediaManager::MediaManager()
 		
 		int nID = load_library( zFileName.c_str(), 0 );
 		if( nID >= 0 ) {
-			cout<<zFileName.c_str()<<" loaded @ "<<nID<<endl;
+			std::cout<<zFileName.c_str()<<" loaded @ "<<nID<<std::endl;
 			m->m_nPlugins.push_back( nID );
 		}
 	}
@@ -518,6 +519,7 @@ void MediaManager::_reserved7() {}
 void MediaManager::_reserved8() {}
 void MediaManager::_reserved9() {}
 void MediaManager::_reserved10() {}
+
 
 
 

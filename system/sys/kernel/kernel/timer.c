@@ -38,8 +38,6 @@
 
 #define	INT_FREQ	1000
 
-extern void ( *TSIHand ) ( void );
-
 int g_bNeedSchedule;		/* If true the scheduler will be called when returning from syscall     */
 
 SPIN_LOCK( g_sTimerSpinLock, "timer_slock" );
@@ -270,6 +268,8 @@ void TimerInterrupt( int dummy )
 	}
 
 	outb( 0x20, 0x20 );	/* Give handshake to interupt controller        */
+	
+	put_cpu_flags( nFlg );
 
 	spinlock( &g_sTimerSpinLock );
 	g_sSysBase.ex_nRealTime += ( uint64 )( 1000000 / INT_FREQ );
@@ -283,7 +283,7 @@ void TimerInterrupt( int dummy )
 		Schedule();
 	}
 
-	put_cpu_flags( nFlg );
+	
 }
 
 /*****************************************************************************

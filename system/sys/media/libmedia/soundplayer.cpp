@@ -130,7 +130,6 @@ status_t MediaSoundPlayer::SetFile( String zFileName )
 	if( !bStreamFound )
 	{
 		m->m_bReady = false;
-		delete( m->m_pcInput );
 		return( -1 );
 	}
 	/* Open audio output */
@@ -138,9 +137,6 @@ status_t MediaSoundPlayer::SetFile( String zFileName )
 	if( m->m_pcAudioOutput == NULL || ( m->m_pcAudioOutput && m->m_pcAudioOutput->FileNameRequired() )
 		|| ( m->m_pcAudioOutput && m->m_pcAudioOutput->Open( "" ) != 0 ) ) {
 		m->m_bReady = false;
-		if( m->m_pcAudioOutput )
-			delete( m->m_pcAudioOutput );
-		delete( m->m_pcInput );
 		return( -1 );	
 	}
 	/* Open audio codec */
@@ -153,17 +149,13 @@ status_t MediaSoundPlayer::SetFile( String zFileName )
 				delete( m->m_pcAudioCodec );
 				m->m_pcAudioCodec = NULL;
 			}
-		}
+	}
 	if( m->m_pcAudioCodec == NULL ) {
 		m->m_bReady = false;
-		m->m_pcAudioOutput->Close();
-		delete( m->m_pcInput );
 		return( -1 );
 	}
 	if( m->m_pcAudioOutput->AddStream( zFileName, m->m_pcAudioCodec->GetExternalFormat() ) != 0 ) {
 		m->m_bReady = false;
-		m->m_pcAudioOutput->Close();
-		delete( m->m_pcInput );
 		return( -1 );
 	}
 	
@@ -269,7 +261,7 @@ void MediaSoundPlayer::Play()
 		m->m_pcInput->Seek( 0 );
 	
 	/* Start Play thread */	
-	m->m_hPlayThread = spawn_thread( "play_thread", play_thread_entry, 150, 0, this );
+	m->m_hPlayThread = spawn_thread( "play_thread", (void*)play_thread_entry, 150, 0, this );
 	resume_thread( m->m_hPlayThread );
 }
 
@@ -315,6 +307,7 @@ void MediaSoundPlayer::_reserved7() {}
 void MediaSoundPlayer::_reserved8() {}
 void MediaSoundPlayer::_reserved9() {}
 void MediaSoundPlayer::_reserved10() {}
+
 
 
 

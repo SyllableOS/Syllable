@@ -18,6 +18,7 @@
  */
 
 #include <media/codec.h>
+#include <iostream>
 
 class RAWCodec : public os::MediaCodec
 {
@@ -79,7 +80,7 @@ status_t RAWCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExternal,
 		/* Check decoding parameters */
 		if( sExternal.nSampleRate !=0 || sExternal.nChannels != 0
 		|| sExternal.nWidth != 0 || sExternal.nHeight != 0 ) {
-			cout<<"Format conversion not supported by the RAW codec"<<endl;
+			std::cout<<"Format conversion not supported by the RAW codec"<<std::endl;
 			return( -1 );
 		}
 		m_sFormat = sFormat;
@@ -88,7 +89,7 @@ status_t RAWCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExternal,
 		/* Check encoding parameters */
 		if( sFormat.nSampleRate !=0 || sFormat.nChannels != 0
 		|| sFormat.nWidth != 0 || sFormat.nHeight != 0 ) {
-			cout<<"Format conversion not supported by the RAW codec"<<endl;
+			std::cout<<"Format conversion not supported by the RAW codec"<<std::endl;
 			return( -1 );
 		}
 		m_sFormat = sExternal;
@@ -203,6 +204,7 @@ extern "C"
 	}
 
 }
+
 
 
 

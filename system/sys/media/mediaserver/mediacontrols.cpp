@@ -19,6 +19,7 @@
 
 #include "mediaserver.h"
 #include "mediacontrols.h"
+#include <gui/image.h>
 #include <math.h>
 
 using namespace os;
@@ -124,6 +125,13 @@ MediaControls::MediaControls( MediaServer* pcServer, Rect cFrame )
 	SetFrame( cFrame );
 	
 	Unlock();
+	
+	/* Set Icon */
+	os::Resources cCol( get_image_id() );
+	os::ResStream *pcStream = cCol.GetResourceStream( "icon24x24.png" );
+	os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
+	SetIcon( pcIcon->LockBitmap() );
+	delete( pcIcon );
 }
 
 MediaControls::~MediaControls()
@@ -255,7 +263,7 @@ int MediaControls::FindMixers( const char *pzPath )
 	hAudioDir = opendir( pzPath );
 	if( hAudioDir == NULL )
 	{
-		cout<<"Unable to open"<<pzPath<<endl;
+		std::cout<<"Unable to open"<<pzPath<<std::endl;
 		return nRet;
 	}
 
@@ -267,7 +275,7 @@ int MediaControls::FindMixers( const char *pzPath )
 		zCurrentPath = (char*)calloc( 1, strlen( pzPath ) + strlen( hAudioDev->d_name ) + 7 );
 		if( zCurrentPath == NULL )
 		{
-			cout<<"Out of memory"<<endl;
+			std::cout<<"Out of memory"<<std::endl;
 			closedir( hAudioDir );
 			return nRet;
 		}
@@ -280,7 +288,7 @@ int MediaControls::FindMixers( const char *pzPath )
 		hMixerDir = opendir( zCurrentPath );
 		if( hMixerDir == NULL )
 		{
-			cout<<"Unable to open"<<zCurrentPath<<endl;
+			std::cout<<"Unable to open"<<zCurrentPath<<std::endl;
 			free( zCurrentPath );
 			continue;
 		}
@@ -298,7 +306,7 @@ int MediaControls::FindMixers( const char *pzPath )
 			zMixerPath = (char*)calloc( 1, strlen( zCurrentPath ) + strlen( hMixerNode->d_name ) + 1 );
 			if( zMixerPath == NULL )
 			{
-				cout<<"Out of memory"<<endl;
+				std::cout<<"Out of memory"<<std::endl;
 				closedir( hMixerDir );
 				free( zCurrentPath );
 				closedir( hAudioDir );
@@ -330,6 +338,8 @@ int MediaControls::FindMixers( const char *pzPath )
 	closedir( hAudioDir );
 	return nRet;
 }
+
+
 
 
 

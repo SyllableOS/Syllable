@@ -25,6 +25,7 @@
 #include <atheos/kernel.h>
 #include <atheos/time.h>
 #include <inttypes.h>
+#include <iostream>
 extern "C" 
 {
 	#include "mplayercomp.h"
@@ -38,7 +39,7 @@ public:
 	VideoBitmapView( const os::Rect& cFrame, const std::string&cTitle ) 
 				: os::View( cFrame, cTitle, os::CF_FOLLOW_ALL )
 	{
-		m_pcBitmap = new os::Bitmap( cFrame.Width() + 1, cFrame.Height() + 1, os::CS_RGB16 );
+		m_pcBitmap = new os::Bitmap( (int)cFrame.Width() + 1, (int)cFrame.Height() + 1, os::CS_RGB16 );
 	}
 	~VideoBitmapView()
 	{
@@ -171,7 +172,7 @@ void VideoBitmapOutput::Flush()
 			m_pcView->Paint( m_pcView->GetBounds() );
 			m_pcView->Sync();
 			} else {
-				cout<<"Framedrop"<<endl;
+				std::cout<<"Framedrop"<<std::endl;
 			}
 			/* Move frames up */
 			free( psFrame->pBuffer[0] );
@@ -207,7 +208,7 @@ status_t VideoBitmapOutput::Open( os::String zFileName )
 	}
 	if( zFileName == "-nocache" ) {
 		m_bNoCache = true;
-		cout<<"Video caching disabled"<<endl;
+		std::cout<<"Video caching disabled"<<std::endl;
 	}
 	else
 		m_bNoCache = false;
@@ -248,7 +249,7 @@ uint32 VideoBitmapOutput::GetOutputFormatCount()
 os::MediaFormat_s VideoBitmapOutput::GetOutputFormat( uint32 nIndex )
 {
 	os::MediaFormat_s sFormat;
-	memset( &sFormat, 0, sizeof( os::MediaFormat_s ) );
+	MEDIA_CLEAR_FORMAT( sFormat );
 	sFormat.zName = "Raw Video";
 	sFormat.nType = os::MEDIA_TYPE_VIDEO;
 	
@@ -299,7 +300,7 @@ status_t VideoBitmapOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psFra
 		unlock_semaphore( m_hLock );
 		free( psQueueFrame->pBuffer[0] );
 		free( psQueueFrame );
-		cout<<"Frame buffer full"<<endl;
+		std::cout<<"Frame buffer full"<<std::endl;
 		return( -1 );
 	}
 	m_psFrame[m_nQueuedFrames] = psQueueFrame;
@@ -334,6 +335,10 @@ extern "C"
 	}
 
 }
+
+
+
+
 
 
 

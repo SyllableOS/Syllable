@@ -1,4 +1,4 @@
-CFLAGS   = -D__KERNEL__ -D__BUILD_KERNEL__ -no-fPIC -c -g -O3 -Wall -march=i586 -mcpu=i586 -I./
+CFLAGS   = -D__KERNEL__ -D__BUILD_KERNEL__ -no-fPIC -c -g -O3 -fno-strict-aliasing -Wall -march=i586 -mcpu=i586 -I./
 CPPFLAGS = $(CFLAGS)
 AFLAGS   = -c
 

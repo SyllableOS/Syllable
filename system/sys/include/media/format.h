@@ -115,9 +115,25 @@ typedef struct {
 	void *pPrivate;
 } MediaFormat_s;
 
+#define MEDIA_CLEAR_FORMAT( s ) \
+s.nType = os::MEDIA_TYPE_OTHER; \
+s.zName = ""; \
+s.bVBR = false; \
+s.nBitRate = 0; \
+s.nSampleRate = 0; \
+s.nChannels = 0; \
+s.bVFR = false; \
+s.vFrameRate = 0; \
+s.nWidth = 0; \
+s.nHeight = 0; \
+s.eColorSpace = os::CS_NO_COLOR_SPACE; \
+s.pPrivate = NULL;
+
 }
 
 #endif
+
+
 
 
 

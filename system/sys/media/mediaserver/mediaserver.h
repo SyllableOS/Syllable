@@ -46,8 +46,8 @@
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <iostream.h>
-#include <vector.h>
+#include <iostream>
+#include <vector>
 
 namespace os
 {
@@ -97,6 +97,8 @@ class MediaServer : public Application
 public:
 	MediaServer();
 	~MediaServer();
+	
+	bool OkToQuit();
 	
 	void FlushThread();
 	
@@ -180,6 +182,8 @@ private:
 };
 
 #endif
+
+
 
 
 

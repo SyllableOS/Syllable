@@ -172,7 +172,7 @@ static void do_add_to_sleeplist( WaitQueue_s *psNode )
 			g_psFirstSleeping->wq_psPrev = psNode;
 		}
 		g_psFirstSleeping = psNode;
-		goto done;
+		return;
 	}
 
 	for ( psTmp = g_psFirstSleeping;; psTmp = psTmp->wq_psNext )
@@ -192,7 +192,7 @@ static void do_add_to_sleeplist( WaitQueue_s *psNode )
 				psTmp->wq_psPrev->wq_psNext = psNode;
 			}
 			psTmp->wq_psPrev = psNode;
-			goto done;
+			return;
 		}
 		if ( psTmp->wq_psNext == NULL )
 		{
@@ -204,7 +204,8 @@ static void do_add_to_sleeplist( WaitQueue_s *psNode )
 	psNode->wq_psNext = NULL;
 	psNode->wq_psPrev = psTmp;
 	psTmp->wq_psNext = psNode;
-      done:
+	
+//done:
 }
 
 void add_to_sleeplist( WaitQueue_s *psNode )

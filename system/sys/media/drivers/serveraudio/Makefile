@@ -9,7 +9,7 @@ VPATH = ./
 CC	= gcc
 LL	= ld
 
-OBJS	= server_output.o
+OBJS	= prefs.o server_output.o
 
 OBJDIR	:= objs
 
@@ -30,7 +30,7 @@ install:  $(OBJDIR)/serveraudio.so
 	
 	install -s $(OBJDIR)/serveraudio.so $(DRIVERBIN)/serveraudio.so
 
-dist:  $(OBJDIR)/oss.so
+dist:  $(OBJDIR)/serveraudio.so
 	install -s $(OBJDIR)/serveraudio.so $(DIST_DIR)/atheos/sys/drivers/media/serveraudio.so
 
 deps: $(OBJDIR) $(DEPS)
@@ -39,6 +39,7 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*
 
 -include $(OBJDIR)/*.d
+
 
 
 

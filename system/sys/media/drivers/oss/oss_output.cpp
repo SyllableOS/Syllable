@@ -30,7 +30,7 @@
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <iostream.h>
+#include <iostream>
 #include "mixerview.h"
 
 #define OSS_PACKET_NUMBER 10
@@ -63,6 +63,7 @@ public:
 	
 private:
 	void			Resample( uint16* pDst, uint16* pSrc, uint32 nLength );
+	os::String		m_zDSPPath;
 	bool			m_bRunThread;
 	thread_id		m_hThread;
 	uint64			m_nFactor;
@@ -104,7 +105,54 @@ os::String OSSOutput::GetIdentifier()
 
 os::View* OSSOutput::GetConfigurationView()
 {
-	os::MixerView* pcView = new os::MixerView( os::Rect( 0, 0, 1, 1 ) );
+	port_id nPort;
+	os::Message cReply;
+	int32 hDefaultDsp;
+	std::string cDspPath;
+	
+	/* Get DSP path */
+	if( ( nPort = find_port( "l:media_server" ) ) < 0 ) {
+		std::cout<<"Could not connect to media server!"<<std::endl;
+		return( NULL );
+	}
+	
+	m_cMediaServerLink = os::Messenger( nPort );
+	m_cMediaServerLink.SendMessage( os::MEDIA_SERVER_PING, &cReply );
+	if( cReply.GetCode() != os::MEDIA_SERVER_OK ) {
+		return( NULL );
+	}
+
+	/* Find soundcard */
+	os::Message cMsg( os::MEDIA_SERVER_GET_DEFAULT_DSP );
+	m_cMediaServerLink.SendMessage( &cMsg, &cReply );
+	if( cReply.GetCode() != os::MEDIA_SERVER_OK )
+		return( NULL );
+
+	if( cReply.FindInt32( "handle", &hDefaultDsp ) != 0 )
+		return( NULL );
+
+	cMsg.SetCode( os::MEDIA_SERVER_GET_DSP_INFO );
+	cMsg.AddInt32( "handle", hDefaultDsp );
+	m_cMediaServerLink.SendMessage( &cMsg, &cReply );
+	if( cReply.GetCode() != os::MEDIA_SERVER_OK )
+		return( NULL );
+
+	if( cReply.FindString( "path", &cDspPath ) )
+		return( NULL );
+
+	/* Open soundcard */
+	m_zDSPPath = cDspPath.c_str();
+	
+	/* Remove "dsp/x" from the path and add "mixer/x" */
+	char zPath[255];
+	memset( zPath, 0, 255 );
+	strncpy( zPath, m_zDSPPath.c_str(), m_zDSPPath.CountChars() - 5 );
+	strcat( zPath, "mixer/" );
+	char zTemp[2];
+	zTemp[1] = 0;
+	zTemp[0] = m_zDSPPath[m_zDSPPath.CountChars()-1];
+	strcat( zPath, zTemp );
+	os::MixerView* pcView = new os::MixerView( zPath, os::Rect( 0, 0, 1, 1 ) );
 	return( pcView );
 }
 
@@ -112,7 +160,7 @@ void OSSOutput::FlushThread()
 {
 	/* Always play the next packet in the queue */
 	os::MediaPacket_s *psNextPacket;
-	cout<<"OSS flush thread running"<<endl;
+	std::cout<<"OSS flush thread running"<<std::endl;
 	while( m_bRunThread )
 	{
 		lock_semaphore( m_hLock );
@@ -167,7 +215,7 @@ status_t OSSOutput::Open( os::String zFileName )
 	std::string cDspPath;
 
 	if( ( nPort = find_port( "l:media_server" ) ) < 0 ) {
-		cout<<"Could not connect to media server!"<<endl;
+		std::cout<<"Could not connect to media server!"<<std::endl;
 		return( -1 );
 	}
 	m_cMediaServerLink = os::Messenger( nPort );
@@ -200,6 +248,7 @@ status_t OSSOutput::Open( os::String zFileName )
 	if( m_hOSS < 0 )
 		return( -1 );
 	
+	m_zDSPPath = cDspPath.c_str();
 		
 	/* Clear packet buffer */
 	m_nQueuedPackets = 0;
@@ -209,7 +258,7 @@ status_t OSSOutput::Open( os::String zFileName )
 	
 	/* Spawn thread */
 	m_bRunThread = true;
-	m_hThread = spawn_thread( "oss_flush", flush_thread_entry, 0, 0, this );
+	m_hThread = spawn_thread( "oss_flush", (void*)flush_thread_entry, 0, 0, this );
 	resume_thread( m_hThread );
 		
 	return( 0 );
@@ -261,7 +310,7 @@ void OSSOutput::Clear()
 	/* Spawn thread */
 	if( bRestart ) {
 		m_bRunThread = true;
-		m_hThread = spawn_thread( "oss_flush", flush_thread_entry, 0, 0, this );
+		m_hThread = spawn_thread( "oss_flush", (void*)flush_thread_entry, 0, 0, this );
 		resume_thread( m_hThread );
 	}
 }
@@ -274,7 +323,7 @@ uint32 OSSOutput::GetOutputFormatCount()
 os::MediaFormat_s OSSOutput::GetOutputFormat( uint32 nIndex )
 {
 	os::MediaFormat_s sFormat;
-	memset( &sFormat, 0, sizeof( os::MediaFormat_s ) );
+	MEDIA_CLEAR_FORMAT( sFormat );
 	sFormat.zName = "Raw Audio";
 	sFormat.nType = os::MEDIA_TYPE_AUDIO;
 	
@@ -300,7 +349,7 @@ status_t OSSOutput::AddStream( os::String zName, os::MediaFormat_s sFormat )
 	ioctl( m_hOSS, SNDCTL_DSP_SETFMT, &nVal );
 	
 	if( sFormat.nChannels > 2 ) {
-		cout<<sFormat.nChannels<<" Channels -> 2 Channels"<<endl;
+		std::cout<<sFormat.nChannels<<" Channels -> 2 Channels"<<std::endl;
 		nVal = 2;
 		m_bResample = true;
 		/* Calculate size -> time factor */
@@ -383,7 +432,7 @@ status_t OSSOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket )
 		unlock_semaphore( m_hLock );
 		free( psQueuePacket->pBuffer[0] );
 		free( psQueuePacket );
-		cout<<"Packet buffer full"<<endl;
+		std::cout<<"Packet buffer full"<<std::endl;
 		return( -1 );
 	}
 	m_psPacket[m_nQueuedPackets] = psQueuePacket;
@@ -432,6 +481,10 @@ extern "C"
 	}
 
 }
+
+
+
+
 
 
 

@@ -655,7 +655,7 @@ static int find_symbol( ImageContext_s * psCtx, const char *pzName, ElfImageInst
 			{
 				if ( psWeak != NULL )
 				{
-					printk( "Symbol '%s' overrided by nonweek\n", pzName );
+					kerndbg( KERN_DEBUG, "Symbol '%s' overrided by nonweek\n", pzName );
 				}
 				*ppsSym = psSym;
 				*ppsInst = psInst;
@@ -670,7 +670,7 @@ static int find_symbol( ImageContext_s * psCtx, const char *pzName, ElfImageInst
 		return ( EOK );
 
 	}
-	printk( "Could not find symbol %s\n", pzName /*, psImage->im_zName */  );
+	
 	return ( -ENOSYM );
 }
 
@@ -1125,7 +1125,7 @@ static int do_reloc_image( ImageContext_s * psCtx, ElfImageInst_s *psInst, int n
 	int i;
 	bool bNeedReloc = psInst->ii_nTextAddress != psImage->im_nVirtualAddress;
 	MemContext_s *psMemCtx = CURRENT_PROC->tc_psMemSeg;
-
+	
 	for ( i = 0; i < nRelCount; ++i )
 	{
 		Elf32_Reloc_s *psReloc = &psRelTab[i];
@@ -1140,7 +1140,7 @@ static int do_reloc_image( ImageContext_s * psCtx, ElfImageInst_s *psInst, int n
 		}
 		pTarget = ( void * )( psInst->ii_nTextAddress + psReloc->r_nOffset - psImage->im_nVirtualAddress );
 
-		if ( nMode != IM_KERNEL_SPACE )
+		if ( nMode != IM_KERNEL_SPACE && nRelocType != R_386_NONE )
 		{
 			pgd_t *pPgd;
 			pte_t *pPte;
@@ -1163,7 +1163,7 @@ static int do_reloc_image( ImageContext_s * psCtx, ElfImageInst_s *psInst, int n
 		switch ( nRelocType )
 		{
 		case R_386_NONE:
-			printk( "R_386_NONE <%s>\n", psImage->im_zName );
+			kerndbg( KERN_DBUG, "R_386_NONE <%s>\n", psImage->im_zName );
 			break;
 		case R_386_32:
 			{
@@ -1173,6 +1173,7 @@ static int do_reloc_image( ImageContext_s * psCtx, ElfImageInst_s *psInst, int n
 				nError = find_symbol( psCtx, psSym->s_pzName, &psDllInst, &psDllSym );
 				if ( nError < 0 )
 				{
+					printk( "Could not find symbol %s\n", psSym->s_pzName );
 					break;
 				}
 				*pTarget = *pTarget + ( ( uint32 )get_sym_address( psDllInst, psDllSym ) );
@@ -1186,6 +1187,7 @@ static int do_reloc_image( ImageContext_s * psCtx, ElfImageInst_s *psInst, int n
 				nError = find_symbol( psCtx, psSym->s_pzName, &psDllInst, &psDllSym );
 				if ( nError < 0 )
 				{
+					printk( "Could not find symbol %s\n", psSym->s_pzName );
 					break;
 				}
 				*pTarget = *pTarget + ( ( uint32 )get_sym_address( psDllInst, psDllSym ) ) - ( ( uint32 )pTarget );
@@ -1205,6 +1207,7 @@ static int do_reloc_image( ImageContext_s * psCtx, ElfImageInst_s *psInst, int n
 				nError = find_symbol( psCtx, psSym->s_pzName, &psDllInst, &psDllSym );
 				if ( nError < 0 )
 				{
+					printk( "Could not find symbol %s\n", psSym->s_pzName );
 					break;
 				}
 
@@ -1224,9 +1227,17 @@ static int do_reloc_image( ImageContext_s * psCtx, ElfImageInst_s *psInst, int n
 				nError = find_symbol( psCtx, psSym->s_pzName, &psDllInst, &psDllSym );
 				if ( nError < 0 )
 				{
+					/* Ignore weak undefined symbols */
+					if( ELF32_ST_BIND( psSym->s_nInfo ) == STB_WEAK )
+					{
+						*pTarget = 0;
+						nError = 0;
+					} else {
+						printk( "Could not find symbol %s\n", psSym->s_pzName );
+					}
 					break;
 				}
-
+				
 				*pTarget = ( uint32 )get_sym_address( psDllInst, psDllSym );
 				break;
 			}
@@ -1238,9 +1249,17 @@ static int do_reloc_image( ImageContext_s * psCtx, ElfImageInst_s *psInst, int n
 				nError = find_symbol( psCtx, psSym->s_pzName, &psDllInst, &psDllSym );
 				if ( nError < 0 )
 				{
+					/* Ignore weak undefined symbols */
+					if( ELF32_ST_BIND( psSym->s_nInfo ) == STB_WEAK )
+					{
+						*pTarget = 0;
+						nError = 0;
+					} else {
+						printk( "Could not find symbol %s\n", psSym->s_pzName );
+					}
 					break;
 				}
-
+				
 				*pTarget = ( uint32 )get_sym_address( psDllInst, psDllSym );
 				break;
 			}

@@ -38,7 +38,7 @@
 using namespace os;
 
 
-MixerView::MixerView( Rect cFrame )
+MixerView::MixerView( String zPath, Rect cFrame )
 				:View( cFrame, "view", 0, WID_WILL_DRAW )
 {
 	float nXPos = 2;
@@ -48,7 +48,7 @@ MixerView::MixerView( Rect cFrame )
 	static const char *zSources[] = SOUND_DEVICE_LABELS;
 	mixer_info sInfo;
 	
-	m_nMixer = open( "/dev/sound/mixer", O_RDWR );
+	m_nMixer = open( zPath.c_str(), O_RDWR );
 	
 	ioctl( m_nMixer, SOUND_MIXER_INFO, &sInfo );
 	

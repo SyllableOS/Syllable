@@ -830,6 +830,7 @@ static int debugger_thread( void *pData )
 		}
 		snooze( 100000 );
 	}
+	return( 0 );
 }
 
 void set_debug_port_params( int nBaudRate, int nPort, bool bPlainTextDebug )

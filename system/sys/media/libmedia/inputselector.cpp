@@ -62,7 +62,7 @@ public:
  * \author	Arno Klenke
  *****************************************************************************/
 MediaInputSelector::MediaInputSelector( const Point cPosition, const String zTitle, Messenger* pcTarget, Message* pcOpenMessage, 
-						Message* pcCancelMessage, bool bAutoDetect = true )
+						Message* pcCancelMessage, bool bAutoDetect )
 						:Window( os::Rect( cPosition.x, cPosition.y, cPosition.x + 200, cPosition.y + 85 ), "media_input_selector", 
 							zTitle, WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_V_RESIZABLE )
 					
@@ -283,6 +283,7 @@ void MediaInputSelector::_reserved7() {}
 void MediaInputSelector::_reserved8() {}
 void MediaInputSelector::_reserved9() {}
 void MediaInputSelector::_reserved10() {}
+
 
 
 

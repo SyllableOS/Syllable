@@ -22,6 +22,7 @@ $(OBJDIR):
 
 $(OBJDIR)/mediaserver: $(OBJS)
 	gcc  $(OBJS) -lstdc++ -lsyllable -lmedia -o mediaserver
+	rescopy mediaserver -r *.png
 
 deps:
 

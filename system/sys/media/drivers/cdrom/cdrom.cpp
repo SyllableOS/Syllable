@@ -24,7 +24,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <fcntl.h>
-#include <iostream.h>
+#include <iostream>
 
 class CDRom : public os::MediaInput
 {
@@ -270,6 +270,7 @@ extern "C"
 	}
 
 }
+
 
 
 

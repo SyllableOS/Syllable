@@ -23,7 +23,8 @@
 #include <util/message.h>
 #include <atheos/msgport.h>
 #include <atheos/areas.h>
-#include <iostream.h>
+#include <iostream>
+#include "prefs.h"
 
 class ServerOutput : public os::MediaOutput
 {
@@ -76,7 +77,7 @@ os::String ServerOutput::GetIdentifier()
 
 os::View* ServerOutput::GetConfigurationView()
 {
-	return( NULL );
+	return( new PrefsView( os::Rect() ) );
 }
 
 void ServerOutput::Flush()
@@ -98,7 +99,7 @@ status_t ServerOutput::Open( os::String zFileName )
 	port_id nPort;
 	os::Message cReply;
 	if( ( nPort = find_port( "l:media_server" ) ) < 0 ) {
-		cout<<"Could not connect to media server!"<<endl;
+		std::cout<<"Could not connect to media server!"<<std::endl;
 		return( -1 );
 	}
 	m_cMediaServerLink = os::Messenger( nPort );
@@ -106,7 +107,7 @@ status_t ServerOutput::Open( os::String zFileName )
 	if( cReply.GetCode() != os::MEDIA_SERVER_OK ) {
 		return( -1 );
 	}
-	m_nHandle = 0;
+	m_nHandle = -1;
 	return( 0 );
 	
 }
@@ -120,7 +121,7 @@ void ServerOutput::Close()
 		os::Message cReply;
 		cMsg.AddInt32( "handle", m_nHandle );
 		m_cMediaServerLink.SendMessage( &cMsg, &cReply );
-		m_nHandle = 0;
+		m_nHandle = -1;
 	}
 }
 
@@ -141,7 +142,7 @@ uint32 ServerOutput::GetOutputFormatCount()
 os::MediaFormat_s ServerOutput::GetOutputFormat( uint32 nIndex )
 {
 	os::MediaFormat_s sFormat;
-	memset( &sFormat, 0, sizeof( os::MediaFormat_s ) );
+	MEDIA_CLEAR_FORMAT( sFormat );
 	sFormat.zName = "Raw Audio";
 	sFormat.nType = os::MEDIA_TYPE_AUDIO;
 	
@@ -236,6 +237,13 @@ extern "C"
 	}
 
 }
+
+
+
+
+
+
+
 
 
 

@@ -682,6 +682,7 @@ static int age_deamon( void *pData )
 		snooze( 10000 );
 		handle_signals( 0 );
 	}
+	return( 0 );
 }
 
 /*****************************************************************************
@@ -711,6 +712,7 @@ static int swap_deamon( void *pData )
 		}
 		handle_signals( 0 );
 	}
+	return( 0 );
 }
 
 /*****************************************************************************

@@ -1861,6 +1861,7 @@ static int32 cache_flusher( void *pData )
 		}
 		UNLOCK( g_sBlockCache.bc_hLock );
 	}
+	return( 0 );
 }
 
 /*****************************************************************************

@@ -44,7 +44,8 @@ int sys_get_vesa_mode_info( VESA_Mode_Info_s * psVesaModeInfo, uint32 nModeNr )
 
 	realint( 0x10, &rm );
 
-	*psVesaModeInfo = *psTmp;
+	memcpy( psVesaModeInfo, psTmp, sizeof( VESA_Mode_Info_s ) );
+	//*psVesaModeInfo = *psTmp;
 
 	free_real( psTmp );
 
@@ -85,7 +86,8 @@ int sys_get_vesa_info( Vesa_Info_s * psVesaInfo, uint16 *pnModeList, int nMaxMod
 		printk( "Error: get_vesa_info() out of real-memory\n" );
 		return ( -ENOMEM );
 	}
-	*psTmp = *psVesaInfo;
+	memcpy( psTmp, psVesaInfo, sizeof( Vesa_Info_s ) );
+	//*psTmp = *psVesaInfo;
 
 	rm.EAX = 0x4f00;
 	rm.ECX = 0;
@@ -94,7 +96,8 @@ int sys_get_vesa_info( Vesa_Info_s * psVesaInfo, uint16 *pnModeList, int nMaxMod
 
 	realint( 0x10, &rm );
 
-	*psVesaInfo = *psTmp;
+	memcpy( psVesaInfo, psTmp, sizeof( Vesa_Info_s ) );
+	//*psVesaInfo = *psTmp;
 
 	pnTmpList = ( uint16 * )( ( ( ( ( uint32 )psTmp->VideoModePtr ) & 0xffff0000 ) >> 12 ) + ( ( ( uint32 )psTmp->VideoModePtr ) & 0x0ffff ) );
 

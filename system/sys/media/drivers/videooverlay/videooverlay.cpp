@@ -29,6 +29,7 @@
 #include <util/application.h>
 #include <appserver/protocol.h>
 #include <inttypes.h>
+#include <iostream>
 extern "C" 
 {
 	#include "mplayercomp.h"
@@ -151,17 +152,17 @@ void VideoOverlayOutput::Flush()
 				/* YV12 Overlay */
 				for( int i = 0; i < m_sFormat.nHeight; i++ )
 				{
-					memcpy( m_pcView->GetRaster() + i * m_sFormat.nWidth, psFrame->pBuffer[0] + psFrame->nSize[0] * i, psFrame->nSize[0] );
+					memcpy( m_pcView->GetRaster() + i * m_sFormat.nWidth, psFrame->pBuffer[0] + psFrame->nSize[0] * i, m_sFormat.nWidth );
 				}
 				for( int i = 0; i < m_sFormat.nHeight / 2; i++ )
 				{
 					memcpy( m_pcView->GetRaster() +  m_sFormat.nHeight * m_sFormat.nWidth * 5 / 4 + m_sFormat.nWidth * i / 2, 
-						psFrame->pBuffer[1] + psFrame->nSize[1] * i, psFrame->nSize[1] );
+						psFrame->pBuffer[1] + psFrame->nSize[1] * i, m_sFormat.nWidth / 2 );
 				}
 				for( int i = 0; i < m_sFormat.nHeight / 2; i++ )
 				{
 					memcpy( m_pcView->GetRaster() +  m_sFormat.nHeight * m_sFormat.nWidth + m_sFormat.nWidth * i / 2, 
-							psFrame->pBuffer[2] + psFrame->nSize[2] * i, psFrame->nSize[2] );
+							psFrame->pBuffer[2] + psFrame->nSize[2] * i, m_sFormat.nWidth / 2 );
 				}
 			} 
 			else if( m_eColorSpace == os::CS_YUV422 )
@@ -169,19 +170,19 @@ void VideoOverlayOutput::Flush()
 				/* UYVY Overlay */
 				for( int i = 0; i < m_sFormat.nHeight; i++ )
 				{
-					memcpy( m_pcView->GetRaster() + i * m_sFormat.nWidth * 2, psFrame->pBuffer[0] + psFrame->nSize[0] * i, psFrame->nSize[0] );
+					memcpy( m_pcView->GetRaster() + i * m_sFormat.nWidth * 2, psFrame->pBuffer[0] + m_sFormat.nWidth * 2 * i, m_sFormat.nWidth * 2 );
 				}
 			} else {
 				/* RGB32 */
 				for( int i = 0; i < m_sFormat.nHeight; i++ )
 				{
-					memcpy( m_pcView->GetRaster() + i * m_sFormat.nWidth * 4, psFrame->pBuffer[0] + psFrame->nSize[0] * i, psFrame->nSize[0] );
+					memcpy( m_pcView->GetRaster() + i * m_sFormat.nWidth * 4, psFrame->pBuffer[0] + m_sFormat.nWidth * 4 * i, m_sFormat.nWidth * 4 );
 				}
 			}
 			
 			m_pcView->Update();
 			} else {
-				cout<<"Framedrop"<<endl;
+				std::cout<<"Framedrop"<<std::endl;
 			}
 			
 			/* Move frames up */
@@ -245,7 +246,7 @@ status_t VideoOverlayOutput::Open( os::String zFileName )
 	}
 	if( zFileName == "-nocache" ) {
 		m_bNoCache = true;
-		cout<<"Video caching disabled"<<endl;
+		std::cout<<"Video caching disabled"<<std::endl;
 	}
 	else 
 		m_bNoCache = false;
@@ -263,17 +264,17 @@ status_t VideoOverlayOutput::Open( os::String zFileName )
 		if( !CheckVideoOverlay( m_eColorSpace ) ) {
 			m_eColorSpace = os::CS_RGB32;
 			if( !CheckVideoOverlay( m_eColorSpace ) ) {
-				cout<<"Video Overlays are not supported"<<endl;
+				std::cout<<"Video Overlays are not supported"<<std::endl;
 				return( -1 );
 			} else {
-				cout<<"Using RGB32 Overlay"<<endl;
+				std::cout<<"Using RGB32 Overlay"<<std::endl;
 				yuv2rgb_init( 32, MODE_RGB );
 			}
 		} else {
-			cout<<"Using UYVY Overlay"<<endl;
+			std::cout<<"Using UYVY Overlay"<<std::endl;
 		}
 	} else {
-		cout<<"Using YV12 Overlay"<<endl;
+		std::cout<<"Using YV12 Overlay"<<std::endl;
 	}
 	return( 0 );
 }
@@ -310,7 +311,7 @@ uint32 VideoOverlayOutput::GetOutputFormatCount()
 os::MediaFormat_s VideoOverlayOutput::GetOutputFormat( uint32 nIndex )
 {
 	os::MediaFormat_s sFormat;
-	memset( &sFormat, 0, sizeof( os::MediaFormat_s ) );
+	MEDIA_CLEAR_FORMAT( sFormat );
 	sFormat.zName = "Raw Video";
 	sFormat.nType = os::MEDIA_TYPE_VIDEO;
 	
@@ -397,7 +398,7 @@ status_t VideoOverlayOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psFr
 			free( psQueueFrame->pBuffer[0] );
 		}
 		free( psQueueFrame );
-		cout<<"Frame buffer full"<<endl;
+		std::cout<<"Frame buffer full"<<std::endl;
 		return( -1 );
 	}
 	m_psFrame[m_nQueuedFrames] = psQueueFrame;
@@ -432,6 +433,14 @@ extern "C"
 	}
 
 }
+
+
+
+
+
+
+
+
 
 
 

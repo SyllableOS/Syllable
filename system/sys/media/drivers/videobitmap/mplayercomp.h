@@ -15,9 +15,10 @@
 #define MSGL_INFO
 #define MSGL_WARN
 
-#define mp_msg( nType, nFormat, zText...) printf( ## zText)
+#define mp_msg( nType, nFormat, zText...) printf( zText)
 
 
 #endif
+
 
 

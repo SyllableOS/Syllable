@@ -18,6 +18,7 @@
  */
 
 #include <media/codec.h>
+#include <iostream>
 
 #define FFMPEG_CACHE_SIZE 256 * 1024
 
@@ -153,13 +154,13 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 	if( !bEncode )
 	{
 		if( sFormat.pPrivate == NULL ) {
-			cout<<"The FFMpeg codec does only work together with the FFMpeg input"<<endl;
+			std::cout<<"The FFMpeg codec does only work together with the FFMpeg input"<<std::endl;
 			return( -1 );
 		}
 		/* Check decoding parameters */
 		if( sExternal.nSampleRate !=0 || sExternal.nChannels != 0
 		|| sExternal.nWidth != 0 || sExternal.nHeight != 0 ) {
-			cout<<"Format conversion not supported by the FFMpeg codec"<<endl;
+			std::cout<<"Format conversion not supported by the FFMpeg codec"<<std::endl;
 			return( -1 );
 		}
 	} else
@@ -167,13 +168,13 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 		/* Check encoding parameters */
 		if( sFormat.nSampleRate !=0 || sFormat.nChannels != 0
 		|| sFormat.nWidth != 0 || sFormat.nHeight != 0 ) {
-			cout<<"Format conversion not supported by the FFMpeg codec"<<endl;
+			std::cout<<"Format conversion not supported by the FFMpeg codec"<<std::endl;
 			return( -1 );
 		}
 	}
 		
-	memset( &m_sInternalFormat, 0, sizeof( m_sInternalFormat ) );
-	memset( &m_sExternalFormat, 0, sizeof( m_sExternalFormat ) );
+	MEDIA_CLEAR_FORMAT( m_sInternalFormat );
+	MEDIA_CLEAR_FORMAT( m_sExternalFormat );
 	m_bEncode = bEncode;
 	
 	m_sInternalFormat = sFormat;
@@ -195,7 +196,7 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 			m_sDecodeContext.flags |= CODEC_FLAG_TRUNCATED;
 		if( psCodec == NULL || avcodec_open( &m_sDecodeContext, psCodec ) < 0 )
 		{
-			cout<<"Error while opening codec "<<sFormat.zName.c_str()<<endl;
+			std::cout<<"Error while opening codec "<<sFormat.zName.c_str()<<std::endl;
 			return( -1 );
 		}
 	}
@@ -255,7 +256,7 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 		
 		/* No variable framerates supported for now */
 		if( sExternal.bVFR ) {
-			cout<<"Cannot encode video with variable framerate!"<<endl;
+			std::cout<<"Cannot encode video with variable framerate!"<<std::endl;
 			return( -1 );
 		}
 		sEnc->frame_rate = (int)sExternal.vFrameRate;
@@ -551,7 +552,7 @@ status_t FFMpegCodec::EncodePacket( os::MediaPacket_s* psPacket, os::MediaPacket
 	
 		/* Put packet into cache first */
 		if( ( m_nCachePointer + psPacket->nSize[0] ) > FFMPEG_CACHE_SIZE ) {
-			cout<<"Cache overflow!"<<endl;
+			std::cout<<"Cache overflow!"<<std::endl;
 			return( -1 );
 		}
 	
@@ -608,6 +609,13 @@ extern "C"
 	}
 
 }
+
+
+
+
+
+
+
 
 
 

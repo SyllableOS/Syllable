@@ -21,6 +21,7 @@
 #include <posix/fcntl.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <iostream>
 extern "C" 
 {
 	#include "avformat.h"
@@ -296,7 +297,7 @@ os::MediaFormat_s FFMpegDemuxer::GetStreamFormat( uint32 nIndex )
 		break;
 		default:
 			sFormat.zName = "Unknown";
-			cout<<"Warning Unknown Codec ( please add to ffmpeg_demux.c ) :"<<m_psContext->streams[nIndex]->codec.codec_id<<endl;
+			std::cout<<"Warning Unknown Codec ( please add to ffmpeg_demux.c ) :"<<m_psContext->streams[nIndex]->codec.codec_id<<std::endl;
 			
 	}
 
@@ -342,6 +343,7 @@ extern "C"
 	}
 
 }
+
 
 
 

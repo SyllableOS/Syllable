@@ -121,7 +121,7 @@ extern void irqd( void );
 extern void irqe( void );
 extern void irqf( void );
 
-extern void ( *TSIHand ) ( void );
+extern void TSIHand( void );
 
 extern void smp_preempt( void );
 extern void smp_invalidate_pgt( void );
@@ -136,7 +136,7 @@ extern uint32 g_anKernelStackEnd[];
 int Fork( const char *pzName )
 {
 	int nError;
-	__asm__ volatile ( "int $0x80":"=a" ( nError ):"0"( __NR_Fork ), "b"( ( int )pzName ) );
+	__asm__ volatile ( "int $0x80":"=a" ( nError ):"0"( __NR_Fork ), "b"( ( (int)pzName ) ) );
 
 	return ( nError );
 }
@@ -252,7 +252,7 @@ static void init_interrupt_table( void )
 	set_interrupt_gate( INT_INVAL_PGT, smp_invalidate_pgt );
 	set_interrupt_gate( INT_SPURIOUS, smp_spurious_irq );
 
-	set_interrupt_gate( 0x20, &TSIHand );
+	set_interrupt_gate( 0x20, TSIHand );
 
 	set_interrupt_gate( 0x21, irq1 );
 	set_interrupt_gate( 0x22, irq2 );
