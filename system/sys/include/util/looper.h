@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -17,8 +18,8 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef	GUI_SCHEDULER_HPP
-#define	GUI_SCHEDULER_HPP
+#ifndef	__F_UTIL_LOOPER_H__
+#define	__F_UTIL_LOOPER_H__
 
 #include <atheos/types.h>
 #include <atheos/threads.h>
@@ -54,7 +55,10 @@ public:
 
     void	SetName( const std::string& cName );
     std::string GetName() const;
-    
+
+	bool IsPublic() const;
+	void SetPublic( bool bPublic );
+
     port_id	GetMsgPort() const;
     thread_id	GetThread() const;
     proc_id	GetProcess() const;
@@ -122,6 +126,9 @@ public:
     const MsgFilterList& GetCommonFilterList() const;
     static Looper*		GetLooperForThread( thread_id hThread ) { return( _GetLooperForThread( hThread ) ); }
 
+protected:
+	bool FilterMessage( Message* pcMsg, Handler** ppcTarget, std::list<MessageFilter*>* pcFilterList );
+
 private:
     friend class Application;
     friend class Messenger;
@@ -164,4 +171,6 @@ private:
 };
 
 }
-#endif	//	GUI_SCHEDULER_HPP
+
+#endif	// __F_UTIL_LOOPER_H__
+

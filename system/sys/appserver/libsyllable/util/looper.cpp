@@ -1,6 +1,6 @@
-
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -29,6 +29,7 @@
 #include <atheos/kernel.h>
 #include <atheos/time.h>
 #include <atheos/filesystem.h>
+#include <atheos/msgport.h>
 #include <gui/guidefines.h>
 #include <util/looper.h>
 #include <util/message.h>
@@ -70,7 +71,7 @@ class Looper::Private
 
 //-------------------- Static members   --------------------------------------
 
-static Locker g_cLopperListMutex( "looper_list_lock" );
+static Locker g_cLooperListMutex( "looper_list_lock" );
 static std::map <Looper *, int >g_cLooperPtrMap;
 static std::map <thread_id, Looper * >g_cLooperThreadMap;
 static std::map <port_id, Looper * >g_cLooperPortMap;
@@ -164,9 +165,9 @@ void Looper::_SetThread( thread_id hThread )
 	m->m_hThread = hThread;
 	if( hThread != -1 )
 	{
-		g_cLopperListMutex.Lock();
+		g_cLooperListMutex.Lock();
 		g_cLooperThreadMap[hThread] = this;
-		g_cLopperListMutex.Unlock();
+		g_cLooperListMutex.Unlock();
 	}
 }
 
@@ -207,12 +208,46 @@ void Looper::SetName( const std::string & cName )
  * \sa SetName()
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
-
 std::string Looper::GetName() const
 {
 	return ( m->m_cName );
 }
 
+
+/** See if the looper's message port is public.
+ * \par Description:
+ *	Retur
+ * \return True if the message port is public, false otherwise.
+ * \sa SetPublic()
+ * \author Henrik Isaksson (henrik@isaksson.tk)
+ *****************************************************************************/
+bool Looper::IsPublic() const
+{
+	port_info	psInfo;
+	
+	if( get_port_info( m->m_hPort, &psInfo ) >= 0 ) {
+		return ( psInfo.pi_flags & MSG_PORT_PUBLIC );
+	} else {
+		throw "x";	// FIXME: throw proper exception
+	}
+}
+
+/** Make port public/private
+ * \par Description:
+ *	SetPublic() is used to decide whether the Looper's message port is to be
+ *	public or not. A public message port can be accessed by other processes
+ *	that only need to know the name of the message port.
+ * \sa IsPublic(), os::Messenger
+ * \author Henrik Isaksson (henrik@isaksson.tk)
+ *****************************************************************************/
+void Looper::SetPublic( bool bPublic )
+{
+	if( bPublic ) {
+		make_port_public( m->m_hPort );
+	} else {
+		make_port_private( m->m_hPort );
+	}
+}
 
 /** Add a timer to the looper.
  *  \par Description:
@@ -408,11 +443,11 @@ status_t Looper::Lock( bigtime_t nTimeout )
 
 /** Attempt to lock the looper.
  * \par Description:
- *	SafeLock() have the same semantics as Lock() except that it verify
+ *	SafeLock() have the same semantics as Lock() except that it verifies
  *	that the looper object is valid before attempting to lock it.
  * \par
  *	A common problem when locking a looper from an external thread is
- *	that the looper might terminate an become invalid between the
+ *	that the looper might terminate and become invalid between the
  *	time you obtain a pointer to it and the time you call Lock().
  *	This makes it impossible to lock a looper with Lock()
  *	from anything but the loopers own thread unless you have some other
@@ -420,14 +455,14 @@ status_t Looper::Lock( bigtime_t nTimeout )
  *	before it is properly locked.
  * \par
  *	SafeLock() will verify that the looper is valid and lock it in
- *	a atomic fasion thus solving this proble. Note that this
+ *	a atomic fasion thus solving this problem. Note that this
  *	is much more expensive than the regular Lock() method so you
  *	should think twice before calling SafeLock().
  * \note
  *	When communicating between two loopers it is often better to
  *	do so asyncronously through messages than by locking the
  *	peer and do direct member calls.
- * \return On success 0 is returned. On error -1 is returned and a error code
+ * \return On success 0 is returned. On error -1 is returned and an error code
  *	is written to the global variable \b errno.
  * \par Error codes:
  *	<dl>
@@ -441,7 +476,7 @@ status_t Looper::SafeLock()
 {
 	status_t nError;
 
-	g_cLopperListMutex.Lock();
+	g_cLooperListMutex.Lock();
 	for( ;; )
 	{
 		std::map <Looper *, int >::iterator i = g_cLooperPtrMap.find( this );
@@ -453,9 +488,9 @@ status_t Looper::SafeLock()
 			{
 				if( errno == ETIME || errno == EINTR )
 				{
-					g_cLopperListMutex.Unlock();
+					g_cLooperListMutex.Unlock();
 					snooze( 5000LL );
-					g_cLopperListMutex.Lock();
+					g_cLooperListMutex.Lock();
 					continue;
 				}
 				else
@@ -475,7 +510,7 @@ status_t Looper::SafeLock()
 			break;
 		}
 	}
-	g_cLopperListMutex.Unlock();
+	g_cLooperListMutex.Unlock();
 	return ( nError );
 }
 
@@ -502,7 +537,6 @@ status_t Looper::Unlock()
  *	the various Lock() and Unlock() members. In some very rare cases
  *	it might be necessarry to control this mutex from the application.
  * \par
- 
  *	One possible usage for this is to "link" two loopers together
  *	to give the impression that they are both run by a single
  *	thread.  By fetching the mutex from one looper with GetMutex()
@@ -713,11 +747,11 @@ Message *Looper::DetachCurrentMessage()
  * \note
  *	The looper is locked when DispatchMessage() is called.
  * \note
- *	Never do any lenthy operations in any hook members that are called
+ *	Never do any lengthy operations in any hook members that are called
  *	from the looper thread if the looper is involved with the GUI (for
  *	example if the looper is a os::Window). The looper will not be
  *	able to dispatch messages until the hook returns so spending a
- *	long time in this members will make the GUI feel unresponsive.
+ *	long time in this member will make the GUI feel unresponsive.
  * \param pcMsg - Pointer to the received messge. Note that this message will be
  *		  deleted when DispatchMessage() returns, unless detatched from
  *		  the looper through DetachCurrentMessage().
@@ -744,21 +778,16 @@ void Looper::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 		break;
 	default:
 		{
-			if( NULL != pcHandler )
-			{
-				pcHandler->HandleMessage( pcMsg );
-			}
-			else
-			{
-				if( NULL != m->m_pcDefaultHandler )
-				{
-					m->m_pcDefaultHandler->HandleMessage( pcMsg );
-				}
-				else
-				{
-					HandleMessage( pcMsg );
+			if( pcHandler == NULL ) {
+				pcHandler = m->m_pcDefaultHandler;
+				if( pcHandler == NULL ) {
+					pcHandler = this;
 				}
 			}
+			
+			FilterMessage( pcMsg, &pcHandler, &pcHandler->m_cFilterList );
+
+			pcHandler->HandleMessage( pcMsg );
 		}
 	}
 }
@@ -1179,9 +1208,9 @@ thread_id Looper::Run()
 	if( m->m_hThread != -1 )
 	{
 		resume_thread( m->m_hThread );
-		g_cLopperListMutex.Lock();
+		g_cLooperListMutex.Lock();
 		g_cLooperThreadMap[m->m_hThread] = this;
-		g_cLopperListMutex.Unlock();
+		g_cLooperListMutex.Unlock();
 	}
 	Unlock();
 	return ( m->m_hThread );
@@ -1251,7 +1280,7 @@ bool Looper::Idle()
  *	This hook can be overloaded to do one-shot initialization
  *	of the looper that can not be done in the contructor.
  *	Started() is called from the loopers thread just before
- *	it start processing messages.
+ *	it starts processing messages.
  * \sa Idle(), Run()
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
@@ -1304,6 +1333,26 @@ const MsgFilterList &Looper::GetCommonFilterList() const
 	return ( m->m_cCommonFilterList );
 }
 
+bool Looper::FilterMessage( Message* pcMsg, Handler** ppcTarget, std::list<MessageFilter*>* pcFilterList )
+{
+	bool bDiscard = false;
+	std::list<MessageFilter*>::iterator i;
+			
+	for( i = pcFilterList->begin(); i !=  pcFilterList->end(); i++ ) {
+		Handler *pcFilterTarget = *ppcTarget;
+		switch( (*i)->Filter( pcMsg, &pcFilterTarget ) ) {
+			case MF_DISCARD_MESSAGE:
+				bDiscard = true;
+				break;
+			case MF_DISPATCH_MESSAGE:
+				*ppcTarget = pcFilterTarget;
+				break;
+		}
+	}
+	
+	return (!bDiscard);
+}
+
 /******************************************************************************/
 
 /****** Private functions *****************************************************/
@@ -1319,12 +1368,12 @@ const MsgFilterList &Looper::GetCommonFilterList() const
 
 void Looper::_AddLooper( Looper * pcLooper )
 {
-	g_cLopperListMutex.Lock();
+	g_cLooperListMutex.Lock();
 	g_cLooperPtrMap[pcLooper] = pcLooper->m->m_nID;
 	g_cLooperPortMap[pcLooper->m->m_hPort] = pcLooper;
 //    pcLooper->m->m_pcNextLooper = s_pcFirstLooper;
 //    s_pcFirstLooper = pcLooper;
-	g_cLopperListMutex.Unlock();
+	g_cLooperListMutex.Unlock();
 }
 
 //----------------------------------------------------------------------------
@@ -1338,7 +1387,7 @@ void Looper::_RemoveLooper( Looper * pcLooper )
 {
 //    Looper** ppcPtr;
 
-	g_cLopperListMutex.Lock();
+	g_cLooperListMutex.Lock();
 
 	std::map <Looper *, int >::iterator i = g_cLooperPtrMap.find( pcLooper );
 
@@ -1370,7 +1419,7 @@ void Looper::_RemoveLooper( Looper * pcLooper )
 	    break;
 	}
     }*/
-	g_cLopperListMutex.Unlock();
+	g_cLooperListMutex.Unlock();
 }
 
 //----------------------------------------------------------------------------
@@ -1384,7 +1433,7 @@ bool Looper::_IsLooperValid( Looper * pcLooper )
 {
 	bool bValid = false;
 
-	g_cLopperListMutex.Lock();
+	g_cLooperListMutex.Lock();
 
 	std::map <Looper *, int >::iterator i = g_cLooperPtrMap.find( pcLooper );
 
@@ -1392,7 +1441,7 @@ bool Looper::_IsLooperValid( Looper * pcLooper )
 	{
 		bValid = true;
 	}
-	g_cLopperListMutex.Unlock();
+	g_cLooperListMutex.Unlock();
 
 	return ( bValid );
 }
@@ -1408,7 +1457,7 @@ Looper *Looper::_GetLooperForThread( thread_id hThread )
 {
 	Looper *pcLooper = NULL;
 
-	g_cLopperListMutex.Lock();
+	g_cLooperListMutex.Lock();
 
 	std::map <thread_id, Looper * >::iterator i = g_cLooperThreadMap.find( hThread );
 
@@ -1416,7 +1465,7 @@ Looper *Looper::_GetLooperForThread( thread_id hThread )
 	{
 		pcLooper = ( *i ).second;
 	}
-	g_cLopperListMutex.Unlock();
+	g_cLooperListMutex.Unlock();
 	return ( pcLooper );
 }
 
@@ -1431,14 +1480,14 @@ Looper *Looper::_GetLooperForPort( port_id hPort )
 {
 	Looper *pcLooper = NULL;
 
-	g_cLopperListMutex.Lock();
+	g_cLooperListMutex.Lock();
 	std::map <port_id, Looper * >::iterator i = g_cLooperPortMap.find( hPort );
 
 	if( i != g_cLooperPortMap.end() )
 	{
 		pcLooper = ( *i ).second;
 	}
-	g_cLopperListMutex.Unlock();
+	g_cLooperListMutex.Unlock();
 	return ( pcLooper );
 }
 
@@ -1694,7 +1743,7 @@ void Looper::_Loop()
 			}
 
 			Handler *pcTarget;
-
+			
 			if( -1 != m->m_pcCurrentMessage->m_nTargetToken )
 			{
 				pcTarget = _FindHandler( m->m_pcCurrentMessage->m_nTargetToken );
@@ -1703,16 +1752,20 @@ void Looper::_Loop()
 			{
 				pcTarget = NULL;
 			}
-			Lock();
-			try
-			{
-				DispatchMessage( m->m_pcCurrentMessage, pcTarget );
+
+			if( FilterMessage( m->m_pcCurrentMessage, &pcTarget, &m->m_cCommonFilterList ) ) {
+				Lock();
+				try
+				{
+					DispatchMessage( m->m_pcCurrentMessage, pcTarget );
+				}
+				catch( ... )
+				{
+					dbprintf( "Error: Looper::_Loop() uncaught exception in Looper::DispatchMessage()\n" );
+				}
+				Unlock();
 			}
-			catch( ... )
-			{
-				dbprintf( "Error: Looper::_Loop() uncaught exception in Looper::DispatchMessage()\n" );
-			}
-			Unlock();
+
 			delete m->m_pcCurrentMessage;
 
 			m->m_pcCurrentMessage = NULL;
