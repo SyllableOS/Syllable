@@ -224,7 +224,8 @@ void AmigaDecorator::SetButtonState( uint32 nButton, bool bPushed )
 	if( nButton == HIT_CLOSE || nButton == HIT_ZOOM || nButton == HIT_DEPTH ||
 		nButton == HIT_MINIMIZE ) {
 			m_bObjectState[ nButton ] = bPushed;
-			Color32_s sFillColor =  m_bHasFocus ? GetDefaultColor( PEN_SELWINTITLE ) : GetDefaultColor( PEN_WINTITLE );
+		    Color32_s sFillColor =  m_bHasFocus ? get_default_color( COL_SEL_WND_BORDER ) : get_default_color( COL_NORMAL_WND_BORDER );
+//			Color32_s sFillColor =  m_bHasFocus ? GetDefaultColor( PEN_SELWINTITLE ) : GetDefaultColor( PEN_WINTITLE );
 			DrawButton( nButton, sFillColor );
 	}
 }
@@ -366,3 +367,4 @@ extern "C" WindowDecorator* create_decorator( Layer* pcLayer, uint32 nFlags )
 {
     return( new AmigaDecorator( pcLayer, nFlags ) );
 }
+
