@@ -160,12 +160,12 @@ uint32 GetQualifiers()
 int FindDeadKey( int nDeadKeyState, int nKey )
 {
 	uint8 nDeadRaw = ( nDeadKeyState >> 8 );
-	uint8 nDeadQual = CM_NORMAL;
-	
-	switch( nDeadKeyState & 0xFF ) {
-		case CS_CAPSL:		nDeadQual = CM_NORMAL;	 break;
-		case CS_SHFT_CAPSL:	nDeadQual = CS_SHFT;	 break;
-		case CS_CAPSL_OPT:	nDeadQual = CS_OPT;	 break;
+	uint8 nDeadQual = nDeadKeyState & 0xFF;
+
+	switch( nDeadQual ) {
+		case CS_CAPSL:			nDeadQual = CM_NORMAL;	 break;
+		case CS_SHFT_CAPSL:		nDeadQual = CS_SHFT;	 break;
+		case CS_CAPSL_OPT:		nDeadQual = CS_OPT;	 break;
 		case CS_SHFT_CAPSL_OPT:	nDeadQual = CS_SHFT_OPT; break;
 	}
 	
@@ -209,8 +209,8 @@ int convert_key_code( char* pzDst, int nRawKey, int nQual, int *pnDeadKeyState )
     int	nQ = 0;
 
     if ( nRawKey < 0 || nRawKey >= 128 ) {
-	dbprintf( "convert_key_code() invalid keycode: %d\n", nRawKey );
-	return( -1 );
+		dbprintf( "convert_key_code() invalid keycode: %d\n", nRawKey );
+		return( -1 );
     }
 
     if ( nQual & QUAL_SHIFT ) nQ |= 0x01;
@@ -229,11 +229,11 @@ int convert_key_code( char* pzDst, int nRawKey, int nQual, int *pnDeadKeyState )
 	{
 		switch ( nQ )
 		{
-			case 0x0:  nTable = 5; break;	// Caps
-			case 0x1:  nTable = 6; break;	// Caps + Shift
-			case 0x2:  nTable = 2; break;	// Ctrl (Not affected by the Capslock)
-			case 0x4:  nTable = 8; break;	// Caps + Alt
-			case 0x5:  nTable = 9; break;	// Caps + Alt + Shift
+			case 0x0:  nTable = CS_CAPSL;			break;	// Caps
+			case 0x1:  nTable = CS_SHFT_CAPSL;		break;	// Caps + Shift
+			case 0x2:  nTable = CS_CTRL;			break;	// Ctrl (Not affected by the Capslock)
+			case 0x4:  nTable = CS_CAPSL_OPT;		break;	// Caps + Alt
+			case 0x5:  nTable = CS_SHFT_CAPSL_OPT;	break;	// Caps + Alt + Shift
 		}
 
 	}
@@ -241,11 +241,11 @@ int convert_key_code( char* pzDst, int nRawKey, int nQual, int *pnDeadKeyState )
 	{
 		switch ( nQ )
 		{
-			case 0x0:  nTable = 0; break;	// Normal
-			case 0x1:  nTable = 1; break;	// Shift
-			case 0x2:  nTable = 2; break;	// Ctrl
-			case 0x4:  nTable = 3; break;	// Alt
-			case 0x5:  nTable = 4; break;	// Alt + Shift
+			case 0x0:  nTable = CM_NORMAL;			break;	// Normal
+			case 0x1:  nTable = CS_SHFT;			break;	// Shift
+			case 0x2:  nTable = CS_CTRL;			break;	// Ctrl
+			case 0x4:  nTable = CS_OPT;				break;	// Alt
+			case 0x5:  nTable = CS_SHFT_OPT;		break;	// Alt + Shift
 		}
 	}
 
@@ -256,18 +256,18 @@ int convert_key_code( char* pzDst, int nRawKey, int nQual, int *pnDeadKeyState )
 
     if( pnDeadKeyState ) {	// Check for dead keys?
     	if( nChar == DEADKEY_ID ) {
-	    if( ( nChar = FindDeadKey( ( nRawKey << 8 ) | nTable, 0x00 ) ) ) {
-		*pnDeadKeyState = ( nRawKey << 8 ) | nTable;
-		// Dead key found.
-	    }
-	} else if( *pnDeadKeyState && nChar ) {	// Last key was a dead one, but this one is not!
-		uint nNewChar = FindDeadKey( *pnDeadKeyState, nChar );
-		if( nNewChar ) {
-			nChar = nNewChar;
-		} 
-		*pnDeadKeyState = 0;
+		    if( ( nChar = FindDeadKey( ( nRawKey << 8 ) | nTable, 0x00 ) ) ) {
+				*pnDeadKeyState = ( nRawKey << 8 ) | nTable;
+				// Dead key found.
+		    }
+		} else if( *pnDeadKeyState && nChar ) {	// Last key was a dead one, but this one is not!
+			uint nNewChar = FindDeadKey( *pnDeadKeyState, nChar );
+			if( nNewChar ) {
+				nChar = nNewChar;
+			} 
+			*pnDeadKeyState = 0;
+		}
 	}
-    }
     
     nLen = CharToString( nChar, pzDst );
 
@@ -398,5 +398,10 @@ void InitKeyboard( void )
     hKbdThread = spawn_thread( "keyb_thread", HandleKeyboard, 120, 0, NULL );
     resume_thread( hKbdThread );
 }
+
+
+
+
+
 
 
