@@ -7,6 +7,11 @@ Syllabe distribution from source.  Note that you normally
 will not need to do this, unless you're the build manager,
 or you just want to do it for the fun of it.
 
+At any one time, the Makefiles within the CVS repository
+may be missing, very badly broken, broken, or just downright
+not working.  I no longer build all of Syllable directly from the
+CVS repository myself, so many of the Makefiles are unmaintained.
+
 Step 0.
 
 WARNING!  Before you do *anything*, be aware that you need lots
@@ -18,7 +23,7 @@ If you don't have these, don't bother trying to build from source!
 
 Step 1.
 
-Install Syllable (or AtheOS) into a partition.
+Install Syllable into a partition.
 
 Step 2.
 
@@ -123,34 +128,9 @@ tarball with (Something like):
 
 	$ tar -czvpf base-syllable-x.x.x.tgz /distribution-directory
 
-Step 10.
+Step 11.
 
 You're done.  You can delete the distribution directory that was created
 when you ran "make distribution", and run "make clean" in the base
 directory, if you like.
-
-******************************************
-Notes on the BUILD_LIBC option in Makeconf
-******************************************
-
-The BUILD_LIBC option in Makeconf is currently set to 'n'.  This means
-that when you run "make distribution", the files in libs/gnu/glibc2 are
-not compiled from source.  Instead, the binary files in libs/compat/libc
-are copied into the distribution instead.  Under most circumstances,
-this should be fine.
-
-If you really want to try and build glibc from source, change BUILD_LIBC
-to 'y' and run "make distribution".  This will *attempt* to make glibc.
-
-Note that I say *attempt*!  Currently, there is a lot of voodoo
-required to get glibc to build, and I havn't got the runes just right, yet.
-
-If you want to try, be warned that it will most likely fail, and you
-will be surprised to find the libs/glibc2 directory apparently empty.
-I cannot explain this.  It must be solar flares...
-
-If you do get glibc to build from source, PLEASE PLEASE PLEASE email me
-the options & flags etc. you used to do it!  vanders@users.sourceforge.net,
-in case you're wondering.
-
 
