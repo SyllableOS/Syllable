@@ -1,3 +1,5 @@
+---- 0.5.4 Released -------------------------------------------------------------------
+
 * September 24 2004, Kristian Van Der Vliet *
 
 Complete strace rewrite.  The new strace() is a table driven function which is much easier

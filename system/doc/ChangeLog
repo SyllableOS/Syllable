@@ -1,3 +1,10 @@
+* October 6th 2004, Kristian Van Der Vliet *
+
+Better handling of multiple mixer devices for Trident audio cards.  Patch from
+Colin Phipps <cph@cph.demon.co.uk>
+
+---- 0.5.4 Released -------------------------------------------------------------------
+
 * September 17th 2004, Kristian Van Der Vliet *
 
 Added Turkish "F" and "Q" keymaps from Truva <truva@hotpop.com>
