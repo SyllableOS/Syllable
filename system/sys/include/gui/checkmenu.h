@@ -56,11 +56,13 @@ class CheckMenu : public MenuItem
 		void SetChecked(bool bChecked);
 
 		virtual bool Invoked(Message *pcMessage);
-
+		virtual bool IsSelectable();
     private:
+
 		bool m_Enabled;
 		bool m_Highlighted;
 		bool m_IsChecked;
+		bool m_bIsSelectable;
 
 		static Bitmap* s_pcCheckBitmap;
 };

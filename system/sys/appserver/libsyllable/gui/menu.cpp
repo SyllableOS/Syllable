@@ -142,6 +142,7 @@ public:
 		m_pcImage[ 0 ] = NULL;
 		m_pcImage[ 1 ] = NULL;
 		m_pcImage[ 2 ] = NULL;
+		m_bIsSelectable = true;
 	}
 	
 	~Private()
@@ -197,6 +198,7 @@ public:
 
 	bool m_bIsHighlighted;
 	bool m_bIsEnabled;
+	bool m_bIsSelectable;
 	
 	Image* m_pcImage[ 3 ];
 	ShortcutKey m_cKey;
@@ -490,6 +492,10 @@ bool MenuItem::IsEnabled() const
 void MenuItem::SetEnable( bool bEnabled )
 {
 	m->m_bIsEnabled = bEnabled;
+	if (bEnabled)
+		m->m_bIsSelectable = true;
+	else
+		m->m_bIsSelectable = false; 
 	Draw();
 }
 
@@ -532,19 +538,19 @@ void MenuItem::SetImage( Image* pcImage, bool bRefresh )
 void MenuItem::SetShortcut( const String& cShortcut )
 {
 	m->m_cShortcut = cShortcut;
-	/*if (pcWindow != NULL)
-	{
-		m->m_pcMenuWindow = pcWindow;
-		if( m->m_cKey.IsValid() && m->m_pcMenuWindow ) {
-			m->m_pcMenuWindow->RemoveShortcut( m->m_cKey );
-		}
-		
-		if( m->m_cKey.IsValid() && m->m_pcMenuWindow) {
-			m->m_pcMenuWindow->AddShortcut( m->m_cKey,pcMessage);
-		}
-	}*/
 }
 
+/** Tells the system whether or not this item can be selected.
+ * \par Description:
+ *  Tells the system whether or not this item can be selected.
+ * \author Rick Caudill(syllable@syllable-desk.tk)
+ *****************************************************************************/
+ bool MenuItem::IsSelectable()
+ {
+ 	return m->m_bIsSelectable;
+ }
+ 
+ 
 /*****************************inherited members*****************************/
 
 /** Draws the os::MenuItem
@@ -2349,7 +2355,7 @@ void Menu::_Close( bool bCloseChilds, bool bCloseParent )
  * NOTE: Private
  * SEE ALSO: _SelectNext(), _SelectPrev()
  **************************************************************************/
-void Menu::_SelectItem( MenuItem* pcItem )
+void Menu::_SelectItem( MenuItem* pcItem)
 {
 	MenuItem *pcPrev = FindMarked();
 
@@ -2358,11 +2364,12 @@ void Menu::_SelectItem( MenuItem* pcItem )
 		return;
 	}
 	
-	if( pcPrev != NULL )
+	if (pcPrev != NULL)
 	{
 		pcPrev->SetHighlighted( false );
 	}
-	if( pcItem != NULL )
+
+	if (pcItem != NULL && pcItem->IsSelectable())
 	{
 		pcItem->SetHighlighted( true );
 	}
@@ -2383,15 +2390,30 @@ void Menu::_SelectPrev()
 	{
 		if( pcTmp->IsHighlighted() )
 		{
-			if( pcPrev != NULL )
+			if( pcPrev != NULL)
 			{
-				_SelectItem( pcPrev );
-				Flush();
+				if (pcPrev->IsSelectable())
+				{
+					_SelectItem(pcPrev);
+					Flush();
+					return;
+				}
+				else  // now we are going to go up menuitems until we find a selectable item
+				{
+					int nIndex = GetIndexOf(pcPrev);  //get the index of previous
+					do
+					{
+						pcPrev = GetItemAt(--nIndex); //get the item at next less index
+					}	while (pcPrev != NULL && !pcPrev->IsSelectable());
+					_SelectItem(pcPrev);
+					Flush();
+					return;
+				}
 			}
-			return;
 		}
 		pcPrev = pcTmp;
 	}
+
 	if( m->m_eLayout == ITEMS_IN_COLUMN )
 	{
 		Menu *pcSuper = GetSuperMenu();
@@ -2420,21 +2442,33 @@ void Menu::_SelectNext()
 
 	for( pcTmp = m->m_pcFirstItem; NULL != pcTmp; pcTmp = pcTmp->_GetNext() )
 	{
-		if( pcTmp->IsHighlighted() || pcTmp->_GetNext(  ) == NULL )
+		if( pcTmp->IsHighlighted()  || pcTmp->_GetNext(  ) == NULL )
 		{
-			if( pcTmp->_GetNext() != NULL )
+			if( pcTmp->_GetNext() != NULL)
 			{
-				_SelectItem( pcTmp->_GetNext() );
+				if (pcTmp->_GetNext()->IsSelectable())  //so the next item is selectable
+				{
+					_SelectItem( pcTmp->_GetNext());
+				}
+				else  //we must traverse down until we find a selectable item
+				{
+					do
+					{
+						pcTmp = pcTmp->_GetNext();
+					} while (pcTmp->_GetNext() != NULL && !pcTmp->IsSelectable());
+					_SelectItem(pcTmp); //found the item now select it
+				}
 			}
 			else
 			{
-				_SelectItem( pcTmp );
+				_SelectItem(pcTmp);
 			}
 			Flush();
 			return;
 		}
 	}
 }
+
 
 void Menu::_SetOrClearShortcut( MenuItem* pcStart, bool bSet )
 {
@@ -2512,5 +2546,6 @@ MenuWindow::~MenuWindow()
 	}
 }
 /************************end of MenuWindow**************************************/
+
 
 

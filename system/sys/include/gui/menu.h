@@ -80,6 +80,8 @@ public:
 	
 	void 				SetShortcut( const String& cShortcut );
 	const 				String& GetShortcut() const;
+
+	virtual	bool		IsSelectable();
 private:
 	virtual void		_reserved_1_();
 	virtual void		_reserved_2_();
@@ -95,7 +97,6 @@ private:
 	void				_SetSubMenu( Menu* pcMenu );
 	void				_SetSuperMenu( Menu* pcMenu );
     void				_SetFrame( const Rect& cFrame );
-
 	Private* 			m;
 };
 
@@ -119,6 +120,7 @@ public:
     virtual void  Draw();
     virtual void  DrawContent();
     virtual void  SetHighlighted( bool bHighlight );
+	virtual bool  IsSelectable() {return false;}
 private:
 };
 
@@ -208,7 +210,7 @@ private:
     void				_StartOpenTimer( bigtime_t nDelay );
     void				_OpenSelection();
     
-    void				_SelectItem( MenuItem* pcItem );
+    void				_SelectItem( MenuItem* pcItem);
     void				_SelectPrev();
     void				_SelectNext();
     

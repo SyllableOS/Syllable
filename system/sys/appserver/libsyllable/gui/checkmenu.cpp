@@ -144,6 +144,7 @@ CheckMenu::CheckMenu( const String& cLabel, Message * pcMsg, bool bChecked )
 	m_Highlighted = false;
 	m_Enabled = true;
 	m_IsChecked = bChecked;
+	m_bIsSelectable = true;
 
 	if( s_pcCheckBitmap == NULL )
 	{
@@ -172,6 +173,7 @@ CheckMenu::CheckMenu( Menu * pcMenu, Message * pcMsg, bool bChecked )
 	m_Highlighted = false;
 	m_Enabled = true;
 	m_IsChecked = bChecked;
+	m_bIsSelectable = true;
 
 	if( s_pcCheckBitmap == NULL )
 	{
@@ -196,7 +198,6 @@ CheckMenu::CheckMenu( Menu * pcMenu, Message * pcMsg, bool bChecked )
 
 CheckMenu::~CheckMenu()
 {
-
 }
 
 //----------------------------------------------------------------------------
@@ -346,5 +347,10 @@ bool CheckMenu::Invoked( Message * pcMessage )
 	return true;
 }
 
+
+bool CheckMenu::IsSelectable()
+{
+	return m_bIsSelectable;
+}
 
 
