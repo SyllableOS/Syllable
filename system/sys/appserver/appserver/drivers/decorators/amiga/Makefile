@@ -18,23 +18,23 @@ $(OBJDIR)/%.o : %.cpp
 	$(CC) $(COPTS) $< -o $@
 
 
-all :	objs $(OBJDIR)/amiga
+all :	objs $(OBJDIR)/Amiga
 
 objs:
 	mkdir objs
 
-$(OBJDIR)/amiga: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/amiga /system/appserver -lsyllable -lstdc++ -lz
-	gcc -plugin $(OBJS) -o $(OBJDIR)/amiga -lsyllable -lstdc++
+$(OBJDIR)/Amiga: $(OBJS)
+	gcc $(OBJS) -o $(OBJDIR)/Amiga /system/appserver -lsyllable -lstdc++ -lz
+	gcc -plugin $(OBJS) -o $(OBJDIR)/Amiga -lsyllable -lstdc++
 
 deps:
 
-install: $(OBJDIR)/amiga
-	cp -f $(OBJDIR)/amiga $(DEVBIN)/amiga
+install: $(OBJDIR)/Amiga
+	cp -f $(OBJDIR)/Amiga $(DEVBIN)/Amiga
 
-dist: $(OBJDIR)/amiga
-	cp -f $(OBJDIR)/amiga $(DIST_DIR)/atheos/sys/drivers/appserver/decorators/amiga
+dist: $(OBJDIR)/Amiga
+	cp -f $(OBJDIR)/Amiga $(DIST_DIR)/atheos/sys/drivers/appserver/decorators/Amiga
 
 clean:
-	-rm $(OBJS) $(OBJDIR)/amiga
+	-rm $(OBJS) $(OBJDIR)/Amiga
 

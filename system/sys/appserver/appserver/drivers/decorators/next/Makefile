@@ -18,23 +18,23 @@ $(OBJDIR)/%.o : %.cpp
 	$(CC) $(COPTS) $< -o $@
 
 
-all :	objs $(OBJDIR)/next
+all :	objs $(OBJDIR)/Next
 
 objs:
 	mkdir objs
 
-$(OBJDIR)/next: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/next /system/appserver -lsyllable -lstdc++ -lz
-	gcc -plugin $(OBJS) -o $(OBJDIR)/next -lsyllable -lstdc++
+$(OBJDIR)/Next: $(OBJS)
+	gcc $(OBJS) -o $(OBJDIR)/Next /system/appserver -lsyllable -lstdc++ -lz
+	gcc -plugin $(OBJS) -o $(OBJDIR)/Next -lsyllable -lstdc++
 
 deps:
 
-install: $(OBJDIR)/next
-	cp -f $(OBJDIR)/next $(DEVBIN)/next
+install: $(OBJDIR)/Next
+	cp -f $(OBJDIR)/Next $(DEVBIN)/Next
 
-dist: $(OBJDIR)/next
-	cp -f $(OBJDIR)/next $(DIST_DIR)/atheos/sys/drivers/appserver/decorators/next
+dist: $(OBJDIR)/Next
+	cp -f $(OBJDIR)/Next $(DIST_DIR)/atheos/sys/drivers/appserver/decorators/Next
 
 clean:
-	-rm $(OBJS) $(OBJDIR)/next
+	-rm $(OBJS) $(OBJDIR)/Next
 
