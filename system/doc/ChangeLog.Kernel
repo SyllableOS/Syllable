@@ -1,3 +1,26 @@
+* March 27 2005, Jake Hamby *
+
+Updated to Build 0013.  Added stubs for three new system calls:  ftruncate(),
+truncate(), and sigaltstack().  It's unlikely that any of these functions
+will be implemented in time for the next release, but by adding the system
+calls now, we can add these functions to the kernel without requiring a
+glibc upgrade.  The next release of glibc 2.3.4 (RC3) will use these system
+calls, but the behavior (return -1 with errno = ENOSYS) will not change,
+except for a debug message printed by the kernel to the log when these new
+functions are called.
+
+In preparation for implementing ftruncate(), I have updated the filesystem
+driver API to version 2 and added a new method, op_truncate().  None of the
+filesystems implement this function yet, but I've updated the source code for
+each filesystem, cleaning up a number of GCC warnings in the process and fixing
+a few spelling errors in the AFS comments.  You do not have to recompile your
+filesystems after updating the kernel, as I've added code to allocate an
+operations structure of the larger size and copy in the values when an old
+filesystem driver is loaded.  The implementation of sys_ftruncate() and
+sys_truncate() is slightly better than an empty stub, as the code does the
+work of finding the inode structure and calling op_truncate(), so all that
+remains is to actually implement op_truncate() for one or more filesystems.
+
 * March 25 2005, Jake Hamby *
 
 Updated to Build 0012.  Improvements to signal handling:
