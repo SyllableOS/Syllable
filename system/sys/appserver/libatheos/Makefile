@@ -4,7 +4,7 @@ AOPTS   = -c
 
 LIBBIN = /system/libs
 
-LIBNAME = libatheos.so.2
+LIBNAME = libatheos.so.3
 
 VPATH = ./ gui storage util translation
 
