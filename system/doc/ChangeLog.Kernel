@@ -1,3 +1,13 @@
+* Jun 26 2003, Kristian Van Der Vliet *
+
+Disabled errent debug output from the IP stack during tcp transmits.
+
+* Jun 26 2003, Kristian Van Der Vliet *
+
+Applied patch from Arno Klenke <arno_klenke@yahoo.de> which stops the kernel from
+unloading a filesystem if it is loaded a boot module.  This should stop spurious
+"Unable to find boot device" messages when using the root=@boot argument.
+
 * May 17 2003, Kristian Van Der Vliet *
 
 find_boot_dev() function in init.c which is used to "probe" for a boot CD in all of the
