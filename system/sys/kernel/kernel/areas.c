@@ -293,7 +293,7 @@ static int do_delete_area( MemContext_s *psCtx, MemArea_s *psArea )
 	while ( psArea->a_nIOPages > 0 )
 	{
 		UNLOCK( g_hAreaTableSema );
-		printk( "do_delete_area() wait for IO to finnish\n" );
+		printk( "do_delete_area() wait for IO to finish\n" );
 		snooze( 20000 );
 		LOCK( g_hAreaTableSema );
 	}
@@ -746,7 +746,7 @@ status_t resize_area( area_id hArea, uint32 nNewSize, bool bAtomic )
 		if ( psArea->a_nIOPages > 0 )
 		{
 			UNLOCK( g_hAreaTableSema );
-			printk( "resize_area() wait for IO to finnish\n" );
+			printk( "resize_area() wait for IO to finish\n" );
 			snooze( 20000 );
 			goto again;;
 		}
@@ -1040,14 +1040,14 @@ MemContext_s *clone_mem_context( MemContext_s *psOrig )
 			continue;
 		}
 
-		// Wait til all IO performed on pages in the area is finnished
+		// Wait til all IO performed on pages in the area is finished
 		while ( psOldArea->a_nIOPages > 0 )
 		{
 			Thread_s *psThread = CURRENT_THREAD;
 			WaitQueue_s sWaitNode;
 			int nFlg;
 
-			printk( "clone_mem_context() Wait for area %s to finnish IO on %d pages\n", psOldArea->a_zName, psOldArea->a_nIOPages );
+			printk( "clone_mem_context() Wait for area %s to finish IO on %d pages\n", psOldArea->a_zName, psOldArea->a_nIOPages );
 			sWaitNode.wq_hThread = psThread->tr_hThreadID;
 
 			nFlg = cli();	// Make sure we are not pre-empted until we are added to the waitlist

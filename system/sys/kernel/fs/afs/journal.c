@@ -590,7 +590,7 @@ int afs_begin_transaction( AfsVolume_s * psVolume )
  *
  * NOTE:
  *	No checks are done to verify that the previous transaction is
- *	finnished or that the current really was written to disk.
+ *	finished or that the current really was written to disk.
  *	If you don't check this before calling it you will jepordize 
  *	the poor users hard earned data.
  *
@@ -722,7 +722,7 @@ static int afs_discard_flushed_journal_entries( AfsVolume_s * psVolume )
 	{
 		return( 0 );
 	}
-	// Unlink the finnished transaction.
+	// Unlink the finished transaction.
 	psVolume->av_psLastTrans = psTrans->at_psPrev;
 	if( psTrans->at_psPrev != NULL )
 	{
@@ -781,11 +781,11 @@ static int afs_discard_flushed_journal_entries( AfsVolume_s * psVolume )
  * NAME:
  * DESC:
  *	Makes room for nBlockCount number of blocks in the log by forcing
- *	cache flushes, and terminate the transactions that are finnished
+ *	cache flushes, and terminate the transactions that are finished
  *	because they are written to the disk.
  * NOTE:
  *	If nBlockCount are larger than the entire log this function will
- *	newer finnish.
+ *	never finish.
  * SEE ALSO:
  ****************************************************************************/
 
@@ -1256,7 +1256,7 @@ int afs_wait_for_block_to_leave_log( AfsVolume_s * psVolume, off_t nBlock )
  *	to split the transaction to avoid journal overflow.
  *	This can be necessary during operations that might touch more blocks
  *	than can possibly fit in the journal. It breaks the atomicity of the
- *	operation, but is only performed at times where a half finnished
+ *	operation, but is only performed at times where a half finished
  *	operation won't threathen the integrity of the file-system.
  *	One example where this can happen is when deleting a file with lot's
  *	of attributes. If the entire deletion whould be performed in one
@@ -1369,7 +1369,7 @@ int afs_end_transaction( AfsVolume_s * psVolume, bool bSubmitChanges )
 /*****************************************************************************
  * NAME:
  * DESC:
- *	Periodically finnish off half filled journal entries so they won't
+ *	Periodically finish off half filled journal entries so they won't
  *	stay unwritten forever if all other disk access stops.
  * NOTE:
  * SEE ALSO:
@@ -1453,7 +1453,7 @@ void afs_flush_journal( AfsVolume_s * psVolume )
 	}
 	printk( "Write last transaction to the journal\n" );
 	afs_write_transaction_to_log( psVolume );
-	printk( "Wait for the transactions to finnish\n" );
+	printk( "Wait for the transactions to finish\n" );
 	afs_wait_for_log_space( psVolume, psVolume->av_nJournalSize );
 	printk( "All journal entries flushed\n" );
 	UNLOCK( psVolume->av_hJournalLock );

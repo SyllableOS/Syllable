@@ -182,7 +182,7 @@ void print_registers( SysCallRegs_s * psRegs )
 	printk( "CS::EIP = %04x::%08lx\n", psRegs->cs, psRegs->eip );
 	printk( "DS = %04x : ES = %04x : FS = %04x : GS = %04x\n", psRegs->ds, psRegs->es, psRegs->fs, psRegs->gs );
 	printk( "EFLAGS = %08lx (%s)\n", psRegs->eflags, zBuffer );
-	printk( "CPU ID = %d : kerner-stack = %08lx\n", get_processor_id(), ( uint32 )CURRENT_THREAD->tc_plKStack );
+	printk( "CPU ID = %d : kernel stack = %08lx\n", get_processor_id(), ( uint32 )CURRENT_THREAD->tc_plKStack );
 
 	trace_stack( psRegs->eip, ( uint32 * )psRegs->ebp );
 
