@@ -1,0 +1,20 @@
+Version 1.0
+
+	- Recompiled for Syllable 0.4.2 and CodeView 1.0
+	- Settings are stored in ~/Settings/CodeView now
+	- HTML and Perl formatters added
+	- Added Tab support
+	- Added ToolBar and ImageButtons
+	- Removed multiple window support
+	- Reworked menus, added imageitems
+	- Added a templated debug class.
+
+Version 0.1
+
+	- Initial version
+
+
+
+
+
+

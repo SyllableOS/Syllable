@@ -1,0 +1,29 @@
+#ifndef _MESSAGES_H
+#define _MESSAGES_H
+
+enum
+{
+    ID_OK = 1001,
+    ID_CANCEL = 1002,
+    ID_UP = 1003,
+    ID_DOWN = 1004,
+    ID_CASE = 1005,
+    ID_NOCASE = 1006,
+    ID_BASIC = 1007,
+    ID_EXTENDED = 1008,
+    ID_BUT_REPLACE_DO = 1009,
+    ID_HELP_CODE_FOLDING = 1010,
+    ID_BUT_REPLACE_CLOSE = 1011,
+    M_BUT_FIND_GO=1012,
+    M_VOID=1013,
+    M_BUT_FIND_NEXT=1014,
+    M_BUT_REPLACE_DO=1015,
+    M_BUT_REPLACE_CLOSE=1016,
+    ID_FIND = 1017,
+
+    M_OPEN_FILE_IN_TAB
+};
+#endif
+
+
+
