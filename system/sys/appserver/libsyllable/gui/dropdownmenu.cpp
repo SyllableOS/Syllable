@@ -1,6 +1,6 @@
-
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 1999 - 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -18,16 +18,6 @@
  *  MA 02111-1307, USA
  */
 
-/*
- * Changes:
- *
- * 02-07-24: Added Flush() call to SetEnable(). (So it is rendered in disabled
- *           state immediately.)
- *
- * 02-11-09: Made the DropdownView scroll if there are more than MAX_DD_HEIGHT items.
- *
- */
-
 #include <stdio.h>
 
 #include <gui/dropdownmenu.h>
@@ -35,6 +25,7 @@
 #include <gui/bitmap.h>
 #include <gui/window.h>
 #include <util/message.h>
+#include <util/shortcutkey.h>
 
 using namespace os;
 
@@ -87,7 +78,7 @@ void DropdownMenu::DropdownTextView::KeyDown( const char *pzString, const char *
  * \author	Kurt Skauen (kurt@atheos.cx)
     *//////////////////////////////////////////////////////////////////////////////
 
-DropdownMenu::DropdownMenu( const Rect & cFrame, const char *pzName, uint32 nResizeMask, uint32 nFlags ):View( cFrame, pzName, nResizeMask, nFlags )
+DropdownMenu::DropdownMenu( const Rect & cFrame, const String& cName, uint32 nResizeMask, uint32 nFlags ):View( cFrame, cName, nResizeMask, nFlags )
 {
 	m_nSelection = 0;
 	m_bMenuOpen = false;
@@ -257,7 +248,7 @@ int DropdownMenu::GetItemCount() const
  * \author	Kurt Skauen (kurt@atheos.cx)
     *//////////////////////////////////////////////////////////////////////////////
 
-const std::string & DropdownMenu::GetItem( int nItem ) const
+const String & DropdownMenu::GetItem( int nItem ) const
 {
 	assert( nItem >= 0 );
 	assert( nItem < int ( m_cStringList.size() ) );
@@ -325,12 +316,12 @@ void DropdownMenu::SetSelection( int nItem, bool bNotify )
 	}
 }
 
-const std::string & DropdownMenu::GetCurrentString() const
+const String & DropdownMenu::GetCurrentString() const
 {
 	return ( m_pcEditBox->GetBuffer()[0] );
 }
 
-void DropdownMenu::SetCurrentString( const std::string & cString )
+void DropdownMenu::SetCurrentString( const String & cString )
 {
 	m_pcEditBox->Set( cString.c_str() );
 }
@@ -542,8 +533,38 @@ void DropdownMenu::MouseDown( const Point & cPosition, uint32 nButton )
 	}
 }
 
+void DropdownMenu::KeyDown( const char *pzString, const char *pzRawString, uint32 nQualifiers )
+{
+	if( IsEnabled() == false )
+	{
+		View::KeyDown( pzString, pzRawString, nQualifiers );
+		return;
+	}
+	if( ( pzString[1] == '\0' && ( pzString[0] == VK_ENTER || pzString[0] == ' ' ) ) ||
+		( GetShortcut() == ShortcutKey( pzRawString, nQualifiers ) ) )
+	{
+		m_bMenuOpen = true;
+		MakeFocus();
+		Invalidate( GetBounds() );
+		Flush();
+		OpenMenu();
+	}
+	else
+	{
+		View::KeyDown( pzString, pzRawString, nQualifiers );
+	}
+}
+
+void DropdownMenu::Activated( bool bIsActive )
+{
+	Invalidate();
+	Flush();
+}
+
 void DropdownMenu::Paint( const Rect & cUpdateRect )
 {
+	Rect cBounds = GetBounds();
+
 	SetEraseColor( get_default_color( COL_NORMAL ) );
 	DrawFrame( m_cArrowRect, ( m_bMenuOpen ) ? FRAME_RECESSED : FRAME_RAISED );
 
@@ -557,6 +578,18 @@ void DropdownMenu::Paint( const Rect & cUpdateRect )
 		nCenterX += 1.0f;
 		cBmOffset.y += ARROW_HEIGHT;
 	}
+
+	if( IsEnabled() && HasFocus() )
+	{
+		SetFgColor( 0, 0xAA, 0 );
+	} else {
+		SetFgColor( get_default_color( COL_NORMAL ) );
+	}
+
+	DrawLine( Point( cBounds.left, cBounds.top ), Point( cBounds.right, cBounds.top ) );
+	DrawLine( Point( cBounds.right, cBounds.bottom ) );
+	DrawLine( Point( cBounds.left, cBounds.bottom ) );
+	DrawLine( Point( cBounds.left, cBounds.top ) );
 
 	SetFgColor( 0, 0, 0 );
 	Rect cArrow( 0, 0, ARROW_WIDTH - 1, ARROW_HEIGHT - 1 );
@@ -574,6 +607,8 @@ void DropdownMenu::Paint( const Rect & cUpdateRect )
 void DropdownMenu::FrameSized( const Point & cDelta )
 {
 	Rect cEditFrame = GetBounds();
+	
+	cEditFrame.Resize( 1, 1, -1, -1 );
 
 	float vArrowHeight = cEditFrame.Height() + 1.0f;
 
@@ -644,7 +679,7 @@ Point DropdownMenu::GetPreferredSize( bool bLargest ) const
 		cSize.x = 16 + 9.0f + cSize.y * 0.9f + m_pcEditBox->GetPreferredSize( bLargest ).x;
 	}
 	cSize.x += cSize.y;
-	return ( cSize );
+	return ( cSize + Point( 2, 2 ) );
 }
 
 void DropdownMenu::AllAttached()
@@ -1080,3 +1115,4 @@ void DropdownMenu::DropdownView::HandleMessage( Message * pcMessage )
 	}
 
 }
+
