@@ -31,29 +31,29 @@ Desktop 29 =  640  480 80.00 50.00 70.00 80.00 60.00  RGB16 ""
 Desktop 30 =  640  480 80.00 50.00 70.00 80.00 60.00  RGB16 ""
 Desktop 31 =  640  480 80.00 50.00 70.00 80.00 60.00  RGB16 ""
 
-DefaultFont: "System/Bold" "Lucida Sans" "Bold" 80000000 8.00 0.00 0.00
-DefaultFont: "System/Fixed" "Lucida Sans Typewriter" "Regular" 80000001 8.00 0.00 0.00
-DefaultFont: "System/Regular" "Lucida Sans" "Regular" 80000000 8.00 0.00 0.00
-DefaultFont: "System/ToolWindow" "Lucida Sans" "Regular" 80000000 7.00 0.00 0.00
-DefaultFont: "System/Window" "Lucida Sans" "Regular" 80000000 8.00 0.00 0.00
+DefaultFont: "System/Bold" "Bitstream Vera Sans" "Bold" 80000002 8.00 0.00 0.00
+DefaultFont: "System/Fixed" "Bitstream Vera Sans Mono" "Roman" 80000002 8.50 0.00 0.00
+DefaultFont: "System/Regular" "Bitstream Vera Sans" "Roman" 80000002 8.50 0.00 0.00
+DefaultFont: "System/ToolWindow" "Bitstream Vera Sans" "Roman" 80000002 7.00 0.00 0.00
+DefaultFont: "System/Window" "Bitstream Vera Sans" "Roman" 80000002 8.00 0.00 0.00
 
-WndDecorator     = 
+WndDecorator     = /system/drivers/appserver/decorators/Photon
 Keymap           = /system/keymaps/American
-PopupSelWin      = false
+PopupSelWin      = true
 DoubleClickDelay = 500000
 KeyDelay         = 300
 KeyRepeat        = 30
 
-Color 00 = 170 170 170 255
+Color 00 = 211 211 211 255
 Color 01 = 255 255 255 255
-Color 02 = 000 000 000 255
-Color 03 = 102 136 187 255
-Color 04 = 120 120 120 255
+Color 02 = 150 150 150 255
+Color 03 = 102 136 227 255
+Color 04 = 211 211 211 255
 Color 05 = 000 000 000 255
 Color 06 = 000 000 000 255
-Color 07 = 204 204 204 255
-Color 08 = 102 136 187 255
+Color 07 = 215 215 215 255
+Color 08 = 101 134 247 255
 Color 09 = 120 120 120 255
-Color 10 = 170 170 170 255
-Color 11 = 120 120 120 255
-Color 12 = 255 255 255 255
+Color 10 = 211 211 211 255
+Color 11 = 211 211 215 255
+Color 12 = 000 000 000 255
