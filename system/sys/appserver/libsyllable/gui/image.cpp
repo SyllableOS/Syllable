@@ -77,6 +77,7 @@ status_t Image::SetSize( const Point & cSize )
 /** Get image size
  * \par		Description:
  *		Returns the size of the image.
+ *		Note! This returns the actual size in pixels.
  * \sa SetSize(), GetBounds()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
@@ -89,7 +90,9 @@ Point Image::GetSize( void ) const
  * \par		Description:
  *		Returns the size of the image as a Rect object (for consistency).
  *		Left and Top will typically be set to 0 and right/bottom to the
- *		value returned by GetSize().
+ *		value returned by GetSize() - 1.
+ *		Note! GetBounds().Width() and GetBounds().Height() will return one
+ *		less then GetSize().x and GetSize.y, due to coordinate system conventions.
  * \sa SetSize(), GetBounds()
  * \author Henrik Isaksson (henrik@boing.nu)
  *****************************************************************************/
@@ -97,7 +100,7 @@ Rect Image::GetBounds( void ) const
 {
 	Point z = GetSize();
 
-	return Rect( 0, 0, z.x, z.y );
+	return Rect( 0, 0, z.x - 1, z.y - 1 );
 }
 
 status_t Image::ApplyFilter( uint32 nFilterID )
@@ -400,8 +403,8 @@ status_t BitmapImage::Save( StreamableIO * pcDest, const String & cType )
 		cBmHeader.bh_flags = 0;
 		cBmHeader.bh_bounds.left = 0;
 		cBmHeader.bh_bounds.top = 0;
-		cBmHeader.bh_bounds.right = ( int )GetSize().x;
-		cBmHeader.bh_bounds.bottom = ( int )GetSize().y;
+		cBmHeader.bh_bounds.right = ( int )GetSize().x - 1;
+		cBmHeader.bh_bounds.bottom = ( int )GetSize().y - 1;
 		cBmHeader.bh_frame_count = 1;
 		cBmHeader.bh_bytes_per_row = 4 * ( int )GetSize().x;
 		cBmHeader.bh_color_space = CS_RGB32;
@@ -417,8 +420,8 @@ status_t BitmapImage::Save( StreamableIO * pcDest, const String & cType )
 		cFrameHeader.bf_bytes_per_row = 4 * ( int )GetSize().x;
 		cFrameHeader.bf_frame.left = 0;
 		cFrameHeader.bf_frame.top = 0;
-		cFrameHeader.bf_frame.right = ( int )GetSize().x;
-		cFrameHeader.bf_frame.bottom = ( int )GetSize().y;
+		cFrameHeader.bf_frame.right = ( int )GetSize().x - 1;
+		cFrameHeader.bf_frame.bottom = ( int )GetSize().y - 1;
 
 		trans->AddData( &cFrameHeader, sizeof( cFrameHeader ), 0 );
 
@@ -1330,3 +1333,4 @@ static float Filter_Mitchell( float t )
 }
 
 //-----------------------------------------------------------------------------
+
