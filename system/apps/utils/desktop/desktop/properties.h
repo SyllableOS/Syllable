@@ -58,6 +58,10 @@ class ColorView : public View
         ColorEdit* pcColorEdit;
         virtual void Paint(const Rect& cUpdate);
         Bitmap* pcScreenBmp;
+		t_List PopulateFolderList();
+		t_ListRows vFolderRow;
+		void ListFiles();
+		void SwitchList();
 };
 
 
@@ -100,6 +104,9 @@ class PropWin : public Window
 };
 
 #endif
+
+
+
 
 
 
