@@ -26,12 +26,13 @@ needs
 	glibc >= 2.2.5
 build-needs
 	autoconf 2.13
+;	Without make bootstrap:
+	gcc >= 2.95
 ;	For Ada:
 ;	gnat >= 3.13 | gcc >= 3.1
 test-needs			dejagnu >= 1.4.1
 
-patch-config
-;	. boehm-gc
+patch-config		. boehm-gc
 ;patch
 ;	cd gcc;
 ;	autoconf
@@ -62,10 +63,10 @@ configure-options
 ;	bootstrap
 ;	For printed documentation:
 ;	dvi
+
 ;test-vars
 ;	TCL_LIBRARY='/usr/tcl'
 ;	DEJAGNULIBS='/usr/dejagnu'
-
 test-options		-k
 
 ;install-prefix		DESTDIR=
@@ -77,8 +78,8 @@ documentation
 	README FAQ faq.html BUGS bugs.html COPYING COPYING.LIB ChangeLog MAINTAINERS
 	gcc/ABOUT-NLS gcc/ABOUT-GCC-NLS gcc/NEWS
 links
-	gcc					bin/cc
-	libgcc.a			lib/gcc-lib/i586-pc-syllable/3.3.3/libgcc_static.a
-	libgcc_s.so.1		/system/libs/libgcc_s.so
-	libstdc++.so.5.0.5	/system/libs/libstdc++.so.5
-	libstdc++.so.5		/system/libs/libstdc++.so
+	gcc						bin/cc
+	libgcc.a				lib/gcc-lib/i586-pc-syllable/3.3.3/libgcc_static.a
+	lib/libgcc_s.so.1		/system/libs/libgcc_s.so
+	lib/libstdc++.so.5.0.5	/system/libs/libstdc++.so.5
+	libstdc++.so.5			/system/libs/libstdc++.so
