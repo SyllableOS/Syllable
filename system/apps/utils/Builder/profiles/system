@@ -98,7 +98,6 @@ resources
 modules
 ;	Hangs during configuring:
 ;	sys/boot/grub-0.95
-	grub-binaries-0.95
 	other/config/grub
 	other/config/default
 	other/config/etc
@@ -107,7 +106,6 @@ modules
 	other/init
 	other/keymaps
 	sys/include
-	gcc-libraries-3.3.4
 	sys/kernel/kernel
 	sys/kernel/drivers/bus/ata
 	sys/kernel/drivers/bus/pci
