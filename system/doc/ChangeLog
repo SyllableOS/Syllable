@@ -1,3 +1,13 @@
+* Jul 11 2002, Kristian Van Der Vliet *
+
+Restructure and fix libs/compat-1.0, all of the libraries are kept within a tarball in
+order to preserve symlinks through the CVS Repository.
+
+* Jul 7 2002, Kristian Van Der Vliet *
+
+Made a few small changes to the SBPro driver, to stop it creating & holding /dev/sound/dsp
+even when no SBPro is detected.
+
 * Jul 5 2002, Kristian Van Der Vliet *
 
 Added apm_poweroff() function from a patch Anthony Morphett < tonymorph@yahoo.com >
