@@ -35,8 +35,9 @@ gzip kernel.so
 mv kernel.so.gz disk/atheos/sys/
 
 cp ../$ROOT/atheos/sys/drivers/fs/iso9660 disk/atheos/sys/drivers/fs/
-cp ../$ROOT/atheos/sys/drivers/dev/disk/ata disk/atheos/sys/drivers/dev/disk/
 cp ../$ROOT/atheos/sys/drivers/bus/pci disk/atheos/sys/drivers/bus/
+cp ../$ROOT/atheos/sys/drivers/bus/ata disk/atheos/sys/drivers/bus/
+cp ../$ROOT/atheos/sys/drivers/dev/hcd/ata_pci disk/atheos/sys/drivers/dev/hcd/
 touch disk/atheos/sys/config/kernel.cfg
 
 unmount disk

@@ -15,6 +15,5 @@ export HOME=/home/root
 export SHELL=bash
 export TEMP=/tmp
 
-aterm &
-aterm /boot/Install/install.sh &
+aterm /boot/Install/install.rb &
 

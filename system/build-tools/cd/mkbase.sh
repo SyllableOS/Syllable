@@ -136,33 +136,35 @@ cp -p $ROOT/atheos/sys/bin/mount $CDROOT/atheos/sys/bin/
 cp -p $ROOT/atheos/sys/bin/reboot $CDROOT/atheos/sys/bin/
 cp -p $ROOT/atheos/sys/bin/unmount $CDROOT/atheos/sys/bin/
 
+cp -p $ROOT/atheos/usr/coreutils/bin/cat $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/coreutils/bin/cp $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/coreutils/bin/cut $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/coreutils/bin/dd $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/coreutils/bin/echo $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/coreutils/bin/hostname $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/coreutils/bin/ln $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/coreutils/bin/ls $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/coreutils/bin/md5sum $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/coreutils/bin/mkdir $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/coreutils/bin/mv $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/coreutils/bin/printf $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/coreutils/bin/pwd $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/coreutils/bin/rm $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/coreutils/bin/rmdir $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/coreutils/bin/sleep $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/coreutils/bin/sync $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/coreutils/bin/whoami $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/coreutils/bin/uname $CDROOT/atheos/usr/bin/
+
+cp -p $ROOT/atheos/usr/findutils/bin/find $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/gzip/bin/gzip $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/sed/bin/sed $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/tar/bin/tar $CDROOT/atheos/usr/bin/
+
 cp -p $ROOT/atheos/usr/bin/bash $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/cat $CDROOT/atheos/usr/bin/
 cp -p $ROOT/atheos/usr/bin/clear $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/cp $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/cut $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/dd $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/echo $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/find $CDROOT/atheos/usr/bin/
 cp -p $ROOT/atheos/usr/bin/grep $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/gzip $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/hostname $CDROOT/atheos/usr/bin/
 cp -p $ROOT/atheos/usr/bin/less $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/ln $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/ls $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/md5sum $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/mkdir $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/mv $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/printf $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/pwd $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/rm $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/rmdir $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/sed $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/sleep $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/sync $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/tar $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/whoami $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/uname $CDROOT/atheos/usr/bin/
 
 cp -p $ROOT/atheos/usr/share/terminfo/x/xterm $CDROOT/atheos/usr/share/terminfo/x/
 
@@ -182,6 +184,22 @@ echo "Copying init files"
 
 cp ../scripts/sys/basic-init.sh $CDROOT/atheos/sys/init.sh
 cp -p $ROOT/atheos/sys/config/appserver $CDROOT/atheos/sys/config/
+
+# Ruby 1.8.1 is required for the installation scripts.
+RUBY=""
+
+echo -n "Enter the location of the Ruby 1.8.1 package:"
+read RUBY
+
+if [ ! -e "$RUBY" ]; then
+	echo "$RUBY does not exist.  Stoping."
+	exit 1;
+fi;
+
+tar -xzpf $RUBY -C $CDROOT/atheos/usr/
+cd $CDROOT/atheos/usr/bin
+ln -s /usr/ruby/bin/ruby ruby
+cd ../../../..
 
 echo "Copying boot image"
 cp objs/boot.img $CDROOT/boot/boot.img
