@@ -5,7 +5,7 @@ SCREENSHOT = y
 CFLAGS   = -Wall -c -O4 -pipe -fexceptions -march=i586 -mcpu=i586 -ffast-math -fomit-frame-pointer -I./$(FREETYPE)/include
 CPPFLAGS= $(CFLAGS)
 AOPTS   = -c
-LIBS    = -latheos
+LIBS    = -lsyllable
 
 CC	= gcc
 LL	= ld
@@ -35,10 +35,10 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/appserver: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/appserver $(FREETYPE)/objs/.libs/libfreetype.a $(LIBS) -lstdc++ -lm
+	gcc $(OBJS) -o $(OBJDIR)/appserver $(FREETYPE)/objs/libfreetype.a $(LIBS) -lstdc++ -lm
 
 $(OBJDIR)/mini_appserver: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/appserver $(FREETYPE)/objs/.libs/libfreetype.a $(LIBS) -lstdc++ -lm
+	gcc $(OBJS) -o $(OBJDIR)/appserver $(FREETYPE)/objs/libfreetype.a $(LIBS) -lstdc++ -lm
 
 install: $(OBJDIR)/appserver
 	cp -f $(OBJDIR)/appserver /system/appserver
@@ -53,6 +53,8 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d $(OBJDIR)/appserver
 
 -include $(OBJDIR)/*.d
+
+
 
 
 
