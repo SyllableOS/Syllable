@@ -1,0 +1,28 @@
+authors
+	Kurt Skauen
+	Kristian Van Der Vliet
+	Jack Tonkin
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				broken
+warning				Hangs during configure!
+
+licenses			GPL
+home				www.gnu.org/software/grub/
+locations			ftp://alpha.gnu.org/gnu/grub/
+
+build-needs
+	automake >= 1.7
+	autoconf >= 2.57
+build-recommends	texinfo >= 4.0
+
+patch-config
+patch
+	automake
+	autoconf
+
+configure-args		--prefix=/boot/boot/grub
+
+documentation
+	README netboot/README.netboot INSTALL BUGS COPYING NEWS ChangeLog TODO AUTHORS THANKS
+	MAINTENANCE
