@@ -1,3 +1,9 @@
 authors				Kaj de Vos
+notes				Thinks mmap works!
+
+licenses			custom
+home				www.zlib.org
+
+no-build-dir
 configure-options	--shared
 documentation		README ChangeLog FAQ algorithm.txt

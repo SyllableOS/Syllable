@@ -1,3 +1,5 @@
-authors Kaj de Vos
-configure-options --shared
-documentation README ChangeLog FAQ
+authors				Kaj de Vos
+status				deprecated
+no-build-dir
+configure-options	--shared
+documentation		README ChangeLog FAQ
