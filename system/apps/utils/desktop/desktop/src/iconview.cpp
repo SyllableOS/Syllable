@@ -389,7 +389,7 @@ int32 IconView::ReadDirectory( void* pData )
         Path cFilePath( pcView->GetPath().c_str() );
         cFilePath.Append( psEnt->d_name );
 
-        stat( cFilePath.GetPath(), &sStat );
+        stat( cFilePath.GetPath().c_str(), &sStat );
 
         Icon* pcIcon;
 
@@ -893,6 +893,7 @@ void IconView::DirChanged( const std::string& cNewPath )
     }
 
 }
+
 
 
 

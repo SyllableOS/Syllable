@@ -11,16 +11,16 @@
 */
 void LaunchFiles()
 {
-    std::vector<string> launch_files;
-    string zName;
-    string zPath;
+    std::vector<String> launch_files;
+    String zName;
+    String zPath;
     Directory* pcDir = new Directory();
 
     if(pcDir->SetTo("~/Settings/Desktop/Startup")==0)
     {
         pcDir->GetPath(&zName);
         while (pcDir->GetNextEntry(&zName))
-            if ( (zName.find( "..",0,1)==string::npos) && (zName.find( "Disabled",0)==string::npos))
+            if ( (zName.str().find( "..",0,1)==string::npos) && (zName.str().find( "Disabled",0)==string::npos))
             {
 
                 launch_files.push_back(zName);
@@ -32,7 +32,7 @@ void LaunchFiles()
         if ( nPid == 0 )
         {
             set_thread_priority( -1, 0 );
-            string sLaunch = launch_files[n];
+            String sLaunch = launch_files[n];
             execlp(launch_files[n].c_str(), sLaunch.c_str(), NULL );
             exit( 1 );
         }
@@ -235,7 +235,7 @@ BitmapView::~BitmapView()
 
 t_Menus BitmapView::AddMenus()
 {
-    string zName;
+    String zName;
     string zExecute;
     string zExtName;
     string zShort;
@@ -248,7 +248,7 @@ t_Menus BitmapView::AddMenus()
 
         while( pcDir->GetNextEntry( &zName ) )
         {
-            string zDir = pcSettings->GetExtDir() +(string)"/"+ zName;
+            string zDir = pcSettings->GetExtDir() +(string)"/"+ zName.str();
             if (zDir.find( "..",0,1)==string::npos)
             {
 
@@ -288,7 +288,7 @@ t_Menus BitmapView::AddMenus()
 */
 t_Icon BitmapView::IconList()
 {
-    string zName;
+    String zName;
     t_Icon t_icon;
     Directory *pcDir = new Directory( );
     struct stat sStat;
@@ -297,13 +297,13 @@ t_Icon BitmapView::IconList()
     {
         while( pcDir->GetNextEntry( &zName ) )
         {
-            string zDir = zIconDir + zName;
+            string zDir = zIconDir + zName.str();
             stat(zDir.c_str(), &sStat);
             FSNode* psNode = new FSNode(zDir);
-            if ( S_ISDIR( sStat.st_mode ) && zName.find( "..",0,1)==string::npos)
+            if ( S_ISDIR( sStat.st_mode ) && zName.str().find( "..",0,1)==string::npos)
                 t_icon.push_back(zName);
 
-            if (!(zName.find( ".desktop",0)==string::npos) )
+            if (!(zName.str().find( ".desktop",0)==string::npos) )
                 t_icon.push_back(zName);
         }
     }
@@ -956,6 +956,10 @@ bool BitmapWindow::OkToQuit(void)
     Application::GetInstance()->PostMessage(M_QUIT );
     return (true);
 } /*end of OkToQuit()*/
+
+
+
+
 
 
 

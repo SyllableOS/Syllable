@@ -80,15 +80,15 @@ t_List BackView::ImageList()
 {
 
     t_List t_list;
-    string zName;
+    String zName;
     Directory* pcDir = new Directory();
 
     if(pcDir->SetTo("~/Documents/Pictures/")==0)
     {
         while (pcDir->GetNextEntry(&zName))
-            if (!(zName.find( ".jpg",0)==string::npos)
-                    || !(zName.find( ".png",0)==string::npos) || !(zName.find( ".jpeg",0)==string::npos)
-                    || !(zName.find( ".gif",0)==string::npos))
+            if (!(zName.str().find( ".jpg",0)==string::npos)
+                    || !(zName.str().find( ".png",0)==string::npos) || !(zName.str().find( ".jpeg",0)==string::npos)
+                    || !(zName.str().find( ".gif",0)==string::npos))
             {
                 t_list.push_back(zName);
             }
@@ -179,7 +179,7 @@ void ColorView::ListFiles()
 t_List ColorView::PopulateFolderList()
 {
     t_List t_list;
-    string zName;
+    String zName;
     string zDir;
     Directory* pcDir = new Directory();
     struct stat my_stat;
@@ -187,8 +187,8 @@ t_List ColorView::PopulateFolderList()
     {
         while (pcDir->GetNextEntry(&zName))
 
-            if ((zName.find( ".",0)==string::npos) || (zName.find( ".",0)==string::npos))
-                zDir = (string)"~/Settings/Desktop/Themes" + zName;
+            if ((zName.str().find( ".",0)==string::npos) || (zName.str().find( ".",0)==string::npos))
+                zDir = (string)"~/Settings/Desktop/Themes" + zName.str();
         stat(zDir.c_str(), &my_stat);
         if (my_stat.st_mode & S_IFDIR)
             t_list.push_back(zName);
@@ -486,6 +486,8 @@ void PropWin::LoadPrefs(void)
     nImageSize = pcSettings->GetImageSize();
     bTrans     = pcSettings->GetTrans();
 }
+
+
 
 
 
