@@ -1,0 +1,15 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			GPL
+home				www.gnu.org/software/texinfo/
+locations			ftp://ftp.gnu.org/gnu/texinfo/
+
+install-vars
+	TEXMF /usr/texinfo/share/texmf
+;	TEXMF /usr/share/texmf
+install-targets		install install-tex
+documentation
+	README INSTALL INTRODUCTION COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS
+;	doc/*.tex
+
