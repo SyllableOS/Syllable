@@ -69,7 +69,7 @@ void BeIshDecorator::CalculateBorderSizes()
 	{
 	   //m_vTopBorder = float(m_sFontHeight.ascender + m_sFontHeight.descender + 6);
 //	   m_vTopBorder = 23.0f;
-	   m_vTopBorder = 26.0f;
+	   m_vTopBorder = 24.0f;
 	}
 	m_vLeftBorder   = 5;
 	m_vRightBorder  = 5;
@@ -280,14 +280,14 @@ void BeIshDecorator::Layout()
     {
 	m_cCloseRect.left = 4;
 //	m_cCloseRect.right = m_vTopBorder - 3;
-	m_cCloseRect.right = 14 + 4;
+	m_cCloseRect.right = 14 + 2;
 	m_cCloseRect.top = 4;
 //	m_cCloseRect.bottom = m_vTopBorder - 3;
-	m_cCloseRect.bottom = 14 + 4;
+	m_cCloseRect.bottom = 14 + 2;
 //        dbprintf("hello");
     }
 
-    m_cToggleRect.right = m_cBounds.right - 5;
+    m_cToggleRect.right = m_cBounds.right - 3;
     if ( m_nFlags & WND_NO_DEPTH_BUT ) 
     {
 	m_cToggleRect.left = m_cToggleRect.right;
@@ -298,7 +298,7 @@ void BeIshDecorator::Layout()
     }
     m_cToggleRect.top = 4;
 //    m_cToggleRect.bottom = m_vTopBorder - 3;
-    m_cToggleRect.bottom = m_cToggleRect.top + 14;
+    m_cToggleRect.bottom = m_cToggleRect.top + 12;
     
 
     if ( m_nFlags & WND_NO_ZOOM_BUT ) 
@@ -314,12 +314,12 @@ void BeIshDecorator::Layout()
 	}
         else
 	{
-	    m_cZoomRect.right  = m_cToggleRect.left - 6.0f;
+	    m_cZoomRect.right  = m_cToggleRect.left - 4.0f;
 	}
 	m_cZoomRect.left   = m_cZoomRect.right - 16.0f;
     }
     m_cZoomRect.top  = 4;
-    m_cZoomRect.bottom  = m_cZoomRect.top + 14;
+    m_cZoomRect.bottom  = m_cZoomRect.top + 12;
 //    m_cZoomRect.bottom  = m_vTopBorder - 3;
 
     if ( m_nFlags & WND_NO_CLOSE_BUT ) 
@@ -348,7 +348,7 @@ void BeIshDecorator::Layout()
     }
     m_cDragRect.top  = 1;
 //    m_cDragRect.bottom  = m_vTopBorder - 2;
-    m_cDragRect.bottom  = m_cDragRect.top + 20.0;
+    m_cDragRect.bottom  = m_cDragRect.top + 18.0;
 }
 
 void BeIshDecorator::SetButtonState( uint32 nButton, bool bPushed )
@@ -405,7 +405,7 @@ void BeIshDecorator::DrawDepth( const Rect& cRect, const Color32_s& sFillColor, 
     Rect rBar;
     rBar.left = cRect.left - 3;
     rBar.top = cRect.top - 3;
-    rBar.right = cRect.right + 3;
+    rBar.right = cRect.right + 2;
     rBar.bottom = cRect.bottom + 3;
     pcView->FillRect(rBar,sFillColor);
     
@@ -435,14 +435,14 @@ void BeIshDecorator::DrawDepth( const Rect& cRect, const Color32_s& sFillColor, 
     L.left = cRect.left;
     L.top = cRect.top;
 
-    L.right = L.left + 11.0f;
-    L.bottom = L.top + 11.0f;
+    L.right = L.left + 9.0f;
+    L.bottom = L.top + 9.0f;
 
     R.left = L.left + 3.0f;
     R.top = L.top + 3.0f;
 
-    R.right = R.left + 11.0f;
-    R.bottom = R.top + 11.0f;
+    R.right = R.left + 9.0f;
+    R.bottom = R.top + 9.0f;
 
   
     if ( bRecessed )
@@ -502,14 +502,14 @@ void BeIshDecorator::DrawZoom(  const Rect& cRect, const Color32_s& sFillColor, 
     L.left = cRect.left;
     L.top = cRect.top;
 
-    L.right = L.left + 9.0f;
-    L.bottom = L.top + 9.0f;
+    L.right = L.left + 7.0f;
+    L.bottom = L.top + 7.0f;
 
     R.left = L.left + 3.0f;
     R.top = L.top + 3.0f;
 
-    R.right = R.left + 11.0f;
-    R.bottom = R.top + 11.0f;
+    R.right = R.left + 9.0f;
+    R.bottom = R.top + 9.0f;
 
   
     if ( bRecessed )
@@ -592,6 +592,8 @@ void BeIshDecorator::DrawClose(  const Rect& cRect, const Color32_s& sFillColor,
 
 void BeIshDecorator::Render( const Rect& cUpdateRect )
 {
+    float font_y = 0;
+
     if ( m_nFlags & WND_NO_BORDER ) 
     {
 	return;
@@ -647,8 +649,7 @@ void BeIshDecorator::Render( const Rect& cUpdateRect )
     pcView->DrawLine(Point(cIBounds.left,cIBounds.bottom + 1),Point(cIBounds.right+1,cIBounds.bottom + 1));
     pcView->DrawLine(Point(cIBounds.right + 1, cIBounds.top - 1));
     pcView->SetFgColor(get_default_color(COL_SHINE));
-    pcView->DrawLine(Point(cIBounds.left - 1, cIBounds.top - 1));
-    pcView->DrawLine(Point(cIBounds.left - 1, cIBounds.bottom));
+    pcView->DrawLine(Point(cIBounds.left - 1, cIBounds.top - 1), Point(cIBounds.left - 1, cIBounds.bottom));
 
     //extra line 
     pcView->SetFgColor(get_default_color(COL_NORMAL));
@@ -674,6 +675,9 @@ void BeIshDecorator::Render( const Rect& cUpdateRect )
     pcView->DrawLine(Point(cIIBounds.left - 1, cIIBounds.top - 1));
     pcView->DrawLine(Point(cIIBounds.left - 1, cIIBounds.bottom + 1));
    
+    pcView->SetFgColor(get_default_color(COL_SHADOW));
+    pcView->DrawLine(Point(cIIBounds.left, cIIBounds.top), Point(cIIBounds.right, cIIBounds.top));
+    pcView->DrawLine(Point(cIIBounds.left, cIIBounds.top), Point(cIIBounds.left, cIIBounds.bottom));
 
     if ( (m_nFlags & WND_NOT_RESIZABLE) != WND_NOT_RESIZABLE ) 
     {
@@ -696,10 +700,14 @@ void BeIshDecorator::Render( const Rect& cUpdateRect )
         pcView->SetFgColor( 0, 0, 0, 0);
 	//pcView->SetFgColor( 255, 255, 255, 0 );
 	pcView->SetBgColor( sFillColor );
-	pcView->MovePenTo( m_cDragRect.left + 17,
-			   m_cDragRect.Height() / 2 -
-			   (m_sFontHeight.ascender + m_sFontHeight.descender) / 2 +
-			   m_sFontHeight.ascender);
+
+	font_y = m_cDragRect.Height() / 2 - (m_sFontHeight.ascender + m_sFontHeight.descender) / 2 + m_sFontHeight.ascender;
+
+	// Move font down just a tiny bit
+	font_y += 2;
+
+	pcView->MovePenTo( m_cDragRect.left + 17, font_y);
+
 /*	pcView->MovePenTo( m_cDragRect.left + 17,
 			   (m_cDragRect.Height()+1.0f) / 2 -
 			   (m_sFontHeight.ascender + m_sFontHeight.descender) / 2 + m_sFontHeight.ascender +
