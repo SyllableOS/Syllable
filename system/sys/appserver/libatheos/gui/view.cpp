@@ -196,19 +196,15 @@ View::View( const Rect& cFrame, const std::string& cTitle, uint32 nResizeMask, u
     m->m_sBgColor		= get_default_color( COL_NORMAL );
     m->m_sEraseColor	= get_default_color( COL_NORMAL );
 
-    Font* pcFont = new Font();
+	try {
+	    Font* pcFont = new Font( DEFAULT_FONT_REGULAR );
+		SetFont( pcFont );
+		pcFont->Release();
+	} catch( ... ) {
+		dbprintf( "Error : View::View() unable to create font\n" );
+	}
 
-    font_properties sProp;
-    Application::GetInstance()->GetDefaultFont( DEFAULT_FONT_REGULAR, &sProp );
-    
-    if ( pcFont->SetFamilyAndStyle( sProp.m_cFamily.c_str(), sProp.m_cStyle.c_str() ) == 0 ) {
-	pcFont->SetProperties( sProp.m_vSize, sProp.m_vShear, sProp.m_vRotation );
-	SetFont( pcFont );
-	pcFont->Release();
 	Flush();
-    } else {
-	dbprintf( "Error : View::View() unable to create font\n" );
-    }
 }
 
 /** View destructor
@@ -3307,3 +3303,4 @@ void View::__VW_reserved17__() {}
 void View::__VW_reserved18__() {}
 void View::__VW_reserved19__() {}
 void View::__VW_reserved20__() {}
+
