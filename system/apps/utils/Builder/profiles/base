@@ -88,7 +88,7 @@ sys/media/drivers/vorbis
 apps/gnu/bash-2.03
 apps/gnu/bzip2-1.0.2
 apps/gnu/coreutils-5.0
-apps/gnu/findutils-4.1
+apps/gnu/findutils-4.1.20
 apps/gnu/grep-2.5.1
 apps/gnu/gzip-1.3.5
 apps/gnu/inetutils-1.4.2

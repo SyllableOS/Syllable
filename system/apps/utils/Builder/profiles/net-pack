@@ -2,4 +2,5 @@
 ;
 applications/network/openssh-3.7.1p2
 applications/network/wget-1.9.1
+applications/network/web/links-2.1pre14
 applications/network/irc/bitchx-1.0c19
