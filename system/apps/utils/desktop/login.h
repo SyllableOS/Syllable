@@ -1,14 +1,21 @@
+//#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+
 #ifndef LOGIN_H
 #define LOGIN_H
+
 
 #include "include.h"
 #include "crect.h"
 #include "colorbutton.h"
 #include "loadbitmap.h"
+#include "bitmapwindow.h"
+
 
 using namespace os;
 
-
+static std::string pzLogin;
+static std::string cPassword;
 
 #define ID_OK 1
 #define ID_CANCEL 2
@@ -16,8 +23,7 @@ using namespace os;
 static bool g_bRun      = true;
 static bool g_bSelected = false;
 
-static std::string g_cName;
-static std::string g_cPassword;
+
 
 
 class LoginView : public View
@@ -42,6 +48,8 @@ class LoginView : public View
         void          LoadImages();
         Bitmap*       pcLoginImage;
         Bitmap*		  pcAtheImage;
+		 
+       
 
 };
 
@@ -49,13 +57,26 @@ class LoginWindow : public Window
 {
     public:
         LoginWindow( const Rect& cFrame );
+		 ~LoginWindow();
         virtual bool	OkToQuit() { g_bRun = false; return( true ); }
         virtual void	HandleMessage( Message* pcMessage );
+		 virtual void Close();
     private:
         LoginView* m_pcView;
+		 void          Authorize(const char* pzLoginName);
 };
 
 #endif
+
+
+
+
+
+
+
+
+
+
 
 
 

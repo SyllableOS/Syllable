@@ -105,7 +105,7 @@ LoginView::LoginView( const Rect& cFrame ) : View( cFrame, "password_view", CF_F
     AddChild( m_pcPasswordView, true );
     AddChild( m_pcOkBut, true );
 
-
+    
     Layout();
     LoadImages();
     Paint(GetBounds());
@@ -159,8 +159,7 @@ void LoginView::Paint(const Rect & cUpdate)
 */
 LoginView::~LoginView()
 {
-    g_cName     = m_pcNameView->GetBuffer()[0];
-    g_cPassword = m_pcPasswordView->GetBuffer()[0];
+	
 }
 
 
@@ -227,7 +226,7 @@ void LoginView::LoadImages()
 ** parameters: Rect(determinies the size of the window)
 ** returns:	   
 */
-LoginWindow::LoginWindow( const Rect& cFrame ) : Window( cFrame, "login_window", "Login:", WND_NO_BORDER )
+LoginWindow::LoginWindow( const Rect& cFrame ) : Window( cFrame, "login_window", "Login:", WND_NO_BORDER | WND_BACKMOST )
 {
     Rect cRect(0,0,470,195);
     m_pcView = new LoginView(cRect);
@@ -247,6 +246,11 @@ LoginWindow::LoginWindow( const Rect& cFrame ) : Window( cFrame, "login_window",
 
 }
 
+void LoginWindow::Close()
+{
+	
+}
+
 
 /*
 ** name:       LoginWindow::HandleMessage
@@ -259,7 +263,13 @@ void LoginWindow::HandleMessage( Message* pcMsg )
     switch( pcMsg->GetCode() )
     {
     case ID_OK:
-        g_bSelected = true;
+    	
+        
+        pzLogin = (string)m_pcView->m_pcNameView->GetBuffer()[0];
+        cPassword = (string)m_pcView->m_pcPasswordView->GetBuffer()[0];
+        Authorize(pzLogin.c_str());
+        
+        break;
     case ID_CANCEL:
         PostMessage( M_QUIT );
         break;
@@ -269,39 +279,88 @@ void LoginWindow::HandleMessage( Message* pcMsg )
     }
 }
 
-
-/*
-** name:       get_login
-** purpose:    
-** parameters: string(for the name of the user), string(for the password of the user)
-** returns:	   bool
-*/
-bool get_login( std::string* pcName, std::string* pcPassword )
+LoginWindow::~LoginWindow()
 {
-    g_bRun = true;
-    g_bSelected = false;
-    Rect cFrame( 0, 0,470,195 );  //470 195
-
-    IPoint cScreenRes;
-
-    // Need a new scope to reduce the time the desktop is locked.
-    { cScreenRes = Desktop().GetResolution();  }
-
-    cFrame += Point( cScreenRes.x / 2 - (cFrame.Width()+1.0f) / 2, cScreenRes.y / 2 - (cFrame.Height()+1.0f) / 2 );
-
-    Window* pcWnd = new LoginWindow( cFrame ); // cFrame
-
-    pcWnd->Show();
-    pcWnd->MakeFocus();
-
-    while( g_bRun )
-    {
-        snooze( 20000 );
-    }
-    *pcName     = g_cName;
-    *pcPassword = g_cPassword;
-    return( g_bSelected );
 }
+
+void LoginWindow::Authorize( const char* pzLoginName )
+{
+	for (;;)
+ 	{
+ 		
+ 		if (pzLoginName != NULL)
+ 		 {
+          	struct passwd* psPass;
+
+            if ( pzLoginName != NULL )
+            {
+                psPass = getpwnam( pzLoginName );
+            }
+            else
+            {
+                psPass = getpwnam( pzLoginName );
+            }
+
+            if ( psPass != NULL )
+            {
+                const char* pzPassWd = crypt(  cPassword.c_str(), "$1$" );
+
+                if ( pzLoginName == NULL && pzPassWd == NULL )
+                {
+                    perror( "crypt()" );
+                    pzLoginName = NULL;
+                    continue;
+                }
+
+                if (strcmp( pzPassWd, psPass->pw_passwd ) == 0 )
+                {
+                    setgid( psPass->pw_gid );
+                    setuid( psPass->pw_uid );
+                    setenv( "HOME", psPass->pw_dir, true );
+                    chdir( psPass->pw_dir );
+                    g_bSelected = true;
+                    
+                    BitmapWindow* pcBitmapWindow = new BitmapWindow();
+					pcBitmapWindow->Show();
+					pcBitmapWindow->MakeFocus();
+    				Quit();
+                    break;
+                }
+                else
+                {
+                    Alert* pcAlert = new Alert( "Login failed:",  "Incorrect password!!!", 0, "Sorry", NULL );
+                    pcAlert->Go();
+                }
+                break;
+            }
+            else
+            {
+
+                Alert* pcAlert = new Alert( "Login failed:",  "No such user!!!", 0, "Sorry", NULL );
+                pcAlert->Go();
+            }
+        	break;
+        }
+        pzLoginName = NULL;
+}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

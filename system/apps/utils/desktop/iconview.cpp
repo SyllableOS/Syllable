@@ -168,6 +168,7 @@ void Icon::Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendTe
         {
             return;
         }
+        
         float vStrWidth = GetStrWidth( pcFont );
         font_height sHeight;
 
@@ -178,6 +179,8 @@ void Icon::Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendTe
 
 
         pcView->MovePenTo( x, y );
+
+          
 
         if ( bBlendText )
         {
@@ -196,7 +199,7 @@ void Icon::Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendTe
             pcView->FillRect( cRect );
         }
 
-        //    pcView->SetFgColor( 0, 0, 0 );
+            //pcView->SetFgColor( fClr );
         if ( bBlendText )
         {
             pcView->SetFgColor( fClr );
@@ -602,6 +605,7 @@ void IconView::MouseDown( const Point& cPosition, uint32 nButtons )
         }
         else
         {
+        	
             m_bSelRectActive = true;
             m_cSelRect = Rect( cPosition.x, cPosition.y, cPosition.x, cPosition.y );
             SetDrawingMode( DM_INVERT );
@@ -864,6 +868,12 @@ void IconView::DirChanged( const std::string& cNewPath )
     }
 
 }
+
+
+
+
+
+
 
 
 

@@ -266,8 +266,8 @@ void PropWin::HandleMessage(Message* pcMessage)
 
 void PropWin::Defaults()
 {
-    //int nImageList = -1;
-   // t_List t_list = pcPropTab->pcBack->ImageList();
+    int nImageList = -1;
+    t_List t_list = pcPropTab->pcBack->ImageList();
 
     ReadLoginConfig();
 
@@ -275,13 +275,13 @@ void PropWin::Defaults()
 
     pcPropTab->pcMisc->pcShowVerCheck->SetValue(bShwVr);
 
-    //do
-   // {
-    //    nImageList = nImageList + 1;
-   // }
-   // while ( strcmp(t_list[nImageList].c_str(),zImage.c_str())!=0);
+    do
+    {
+        nImageList = nImageList + 1;
+    }
+    while ( strcmp(t_list[nImageList].c_str(),zImage.c_str())!=0);
 
-   // pcPropTab->pcBack->pcList->Select(nImageList,true,true);
+    pcPropTab->pcBack->pcList->Select(nImageList,true,true);
 
 }
 
@@ -364,8 +364,8 @@ void PropWin::SavePrefs(bool bShow, bool bLogin, string zPic, int32 nNewImageSiz
     }
 
     Message *pcPrefs = new Message( );
-    pcPrefs->AddColor32( "BackGround", c_bgColor );
-    pcPrefs->AddColor32( "IconText",   c_fgColor );
+    pcPrefs->AddColor32( "Back_Color", c_bgColor );
+    pcPrefs->AddColor32( "Icon_Color",   c_fgColor );
     pcPrefs->AddString ( "DeskImage",  zPic  );
     pcPrefs->AddBool   ( "ShowVer",    bShow   );
     pcPrefs->AddInt32  ( "SizeImage",  nNewImageSize);
@@ -400,14 +400,15 @@ void PropWin::LoadPrefs(void)
         Message *pcPrefs = new Message( );
         pcPrefs->Unflatten( (uint8 *)pBuffer );
 
-        pcPrefs->FindColor32( "BackGround", &c_bgColor );
-        pcPrefs->FindColor32( "IconText",   &c_fgColor );
+        pcPrefs->FindColor32( "Back_Color", &c_bgColor );
+        pcPrefs->FindColor32( "Icon_Color",   &c_fgColor );
         pcPrefs->FindString ( "DeskImage",  &zImage  );
         pcPrefs->FindBool   ( "ShowVer",    &bShwVr   );
         pcPrefs->FindInt32   ("SizeImage",   &nImageSize);
     }
 
 }
+
 
 
 
