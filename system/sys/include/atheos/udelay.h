@@ -16,14 +16,16 @@ extern "C" {
 #endif
 #endif
 
- 
 extern void __udelay(unsigned long usecs);
+extern void __ndelay(unsigned long nsecs);
 extern void __const_udelay(unsigned long usecs);
 extern void __delay(unsigned long loops);
 
 #define udelay(n) (__builtin_constant_p(n) ? \
-	__const_udelay((n) * 0x10c6ul) : \
-	__udelay(n))
+	(__const_udelay((n) * 0x10c7ul)) : __udelay(n))
+
+#define ndelay(n) (__builtin_constant_p(n) ? \
+	(__const_udelay((n) * 5ul)) : __ndelay(n))
 
 #ifdef __cplusplus
 }

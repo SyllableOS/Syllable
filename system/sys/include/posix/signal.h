@@ -27,6 +27,7 @@ extern "C" {
 #define SIGALRM		14
 #define SIGTERM		15
 #define SIGSTKFLT	16
+#define SIGCLD		SIGCHLD
 #define SIGCHLD		17
 #define SIGCONT		18
 #define SIGSTOP		19
@@ -39,7 +40,10 @@ extern "C" {
 #define SIGVTALRM	26
 #define SIGPROF		27
 #define SIGWINCH	28
+#define SIGPOLL		SIGIO
+#define SIGIO		29
 #define SIGPWR		30
+#define SIGSYS		31
 #define	SIGUNUSED	31
 
 #ifdef __KERNEL__
