@@ -160,7 +160,12 @@ status_t MediaSoundPlayer::SetFile( String zFileName )
 		delete( m->m_pcInput );
 		return( -1 );
 	}
-	m->m_pcAudioOutput->AddStream( zFileName, m->m_pcAudioCodec->GetExternalFormat() );
+	if( m->m_pcAudioOutput->AddStream( zFileName, m->m_pcAudioCodec->GetExternalFormat() ) != 0 ) {
+		m->m_bReady = false;
+		m->m_pcAudioOutput->Close();
+		delete( m->m_pcInput );
+		return( -1 );
+	}
 	
 	m->m_bReady = true;
 	m->m_hPlayThread = -1;
@@ -310,6 +315,7 @@ void MediaSoundPlayer::_reserved7() {}
 void MediaSoundPlayer::_reserved8() {}
 void MediaSoundPlayer::_reserved9() {}
 void MediaSoundPlayer::_reserved10() {}
+
 
 
 
