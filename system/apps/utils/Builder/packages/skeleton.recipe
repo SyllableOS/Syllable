@@ -12,7 +12,9 @@ description			<Full description>
 licenses			GPL LGPL GFDL BSD MIT ISC Apache Artistic Python MPL QPL OSI other PD freeware commercial
 
 home				syllable.sf.net
-packages			<Tarball names, if different from the package file name>
+packages
+	<Tarball names, if different from the package file name.
+	Common tarball extensions (.tgz, .tar.gz, .tbz2, .tar.bz2) should not be mentioned.>
 ;locations			<Download locations>
 ;archives			<Arch archives>
 
