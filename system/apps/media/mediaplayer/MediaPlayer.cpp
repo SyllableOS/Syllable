@@ -26,12 +26,22 @@
  */
  
 
-void SetButtonImageFromResource( os::ImageButton* pcButton, os::String zResource )
+void SetCButtonImageFromResource( os::CImageButton* pcButton, os::String zResource )
 {
 	os::File cSelf( open_image_file( get_image_id() ) );
 	os::Resources cCol( &cSelf );		
 	os::ResStream *pcStream = cCol.GetResourceStream( zResource );
 	pcButton->SetImage( pcStream );
+	delete( pcStream );
+}
+
+
+void SetCButtonSelectedImageFromResource( os::CImageButton* pcButton, os::String zResource )
+{
+	os::File cSelf( open_image_file( get_image_id() ) );
+	os::Resources cCol( &cSelf );		
+	os::ResStream *pcStream = cCol.GetResourceStream( zResource );
+	pcButton->SetSelectedImage( pcStream );
 	delete( pcStream );
 }
 
@@ -52,21 +62,21 @@ MPWindow::MPWindow( const os::Rect & cFrame, const std::string & cName, const st
 	m_pcMenuBar = new os::Menu( os::Rect( 0, 0, 1, 1 ), "mp_menu_bar", os::ITEMS_IN_ROW );
 	
 	
-	os::Menu* pcAppMenu = new os::Menu( os::Rect(), "Application", os::ITEMS_IN_COLUMN );
-	pcAppMenu->AddItem( "About...", new os::Message( MP_GUI_ABOUT ) );
+	os::Menu* pcAppMenu = new os::Menu( os::Rect(), MSG_MAINWND_MENU_APPLICATION, os::ITEMS_IN_COLUMN );
+	pcAppMenu->AddItem( MSG_MAINWND_MENU_APPLICATION_ABOUT, new os::Message( MP_GUI_ABOUT ) );
 	pcAppMenu->AddItem( new os::MenuSeparator() );
-	pcAppMenu->AddItem( "Quit", new os::Message( MP_GUI_QUIT ) );
+	pcAppMenu->AddItem( MSG_MAINWND_MENU_APPLICATION_QUIT, new os::Message( MP_GUI_QUIT ) );
 	m_pcMenuBar->AddItem( pcAppMenu );
 	
-	os::Menu* pcFileMenu = new os::Menu( os::Rect(), "File", os::ITEMS_IN_COLUMN );
-	pcFileMenu->AddItem( "Open...", new os::Message( MP_GUI_OPEN ) );
-	pcFileMenu->AddItem( "Open Input...", new os::Message( MP_GUI_OPEN_INPUT ) );
+	os::Menu* pcFileMenu = new os::Menu( os::Rect(), MSG_MAINWND_MENU_FILE, os::ITEMS_IN_COLUMN );
+	pcFileMenu->AddItem( MSG_MAINWND_MENU_FILE_OPEN, new os::Message( MP_GUI_OPEN ) );
+	pcFileMenu->AddItem( MSG_MAINWND_MENU_FILE_OPEN_INPUT, new os::Message( MP_GUI_OPEN_INPUT ) );
 	pcFileMenu->AddItem( new os::MenuSeparator() );
-	pcFileMenu->AddItem( "Fullscreen", new os::Message( MP_GUI_FULLSCREEN ) );
+	pcFileMenu->AddItem( MSG_MAINWND_MENU_FILE_FULLSCREEN, new os::Message( MP_GUI_FULLSCREEN ) );
 	pcFileMenu->GetItemAt( 3 )->SetEnable( false );
 	m_pcMenuBar->AddItem( pcFileMenu );
 	
-	m_pcTracksMenu = new os::Menu( os::Rect(), "Tracks", os::ITEMS_IN_COLUMN );
+	m_pcTracksMenu = new os::Menu( os::Rect(), MSG_MAINWND_MENU_TRACKS, os::ITEMS_IN_COLUMN );
 	m_pcMenuBar->AddItem( m_pcTracksMenu );
 	
 	cNewFrame = m_pcMenuBar->GetFrame();
@@ -88,20 +98,22 @@ MPWindow::MPWindow( const os::Rect & cFrame, const std::string & cName, const st
 	cNewFrame.bottom = m_pcMenuBar->GetPreferredSize( false ).y + 40;
 	m_pcControls = new os::View( cNewFrame, "mp_controls", os::CF_FOLLOW_LEFT | os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_BOTTOM );
 	/* Create buttons */
-	m_pcPlayPause = new os::ImageButton( os::Rect( 0, 0, 40, 40 ), "mp_play_pause", "", new os::Message( MP_GUI_PLAY_PAUSE ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, false, true );
-	SetButtonImageFromResource( m_pcPlayPause, "play.png" );
+	m_pcPlayPause = new os::CImageButton( os::Rect( 5, 2, 40, 40 ), "mp_play_pause", "", new os::Message( MP_GUI_PLAY_PAUSE ), NULL, os::ImageButton::IB_TEXT_BOTTOM, false, false, true );
+	SetCButtonImageFromResource( m_pcPlayPause, "play.png" );
+	SetCButtonSelectedImageFromResource( m_pcPlayPause, "play_sel.png" );
 	m_pcPlayPause->SetEnable( false );
 
-	m_pcStop = new os::ImageButton( os::Rect( 41, 0, 81, 40 ), "mp_stop", "", new os::Message( MP_GUI_STOP ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, false, true );
-	SetButtonImageFromResource( m_pcStop, "stop.png" );
+	m_pcStop = new os::CImageButton( os::Rect( 41, 2, 76, 40 ), "mp_stop", "", new os::Message( MP_GUI_STOP ), NULL, os::ImageButton::IB_TEXT_BOTTOM, false, false, true );
+	SetCButtonImageFromResource( m_pcStop, "stop.png" );
+	SetCButtonSelectedImageFromResource( m_pcStop, "stop_sel.png" );
 	m_pcStop->SetEnable( false );
 	
 
 	/* Create slider */
-	m_pcSlider = new os::SeekSlider( os::Rect( 90, 10, 295, 30 ), "mp_slider", new os::Message( MP_GUI_SEEK ) );
+	m_pcSlider = new os::SeekSlider( os::Rect( 80, 6, 299, 36 ), "mp_slider", new os::Message( MP_GUI_SEEK ) );
 	m_pcSlider->SetResizeMask( os::CF_FOLLOW_LEFT | os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_BOTTOM );
 	m_pcSlider->SetTarget( this );
-	m_pcSlider->SetMinMax( 0, 1000 );
+	m_pcSlider->SetEnable( false );
 
 	m_pcControls->AddChild( m_pcPlayPause );
 	m_pcControls->AddChild( m_pcStop );
@@ -169,9 +181,11 @@ void MPWindow::HandleMessage( os::Message * pcMessage )
 	case MP_GUI_ABOUT:
 		{
 		/* Show about alert */
-		os::Alert* pcAbout = new os::Alert( "About Media Player", "The Syllable Media Player 1.0\n\nA Media Player\nCopyright 2003 Arno Klenke\n\n"
-										"The Syllable Media Player is released under the LGPL.", os::Alert::ALERT_INFO, 
-										os::WND_NOT_RESIZABLE, "O.K.", NULL );
+		os::String cBodyText;
+		cBodyText = os::String( "Media Player V1.1\n" ) + MSG_ABOUTWND_TEXT;
+		
+		os::Alert* pcAbout = new os::Alert( MSG_ABOUTWND_TITLE, cBodyText, os::Alert::ALERT_INFO, 
+										os::WND_NOT_RESIZABLE, MSG_ABOUTWND_OK.c_str(), NULL );
 		pcAbout->Go( new os::Invoker( 0 ) ); 
 		}
 		break;
@@ -218,19 +232,25 @@ void MPWindow::HandleMessage( os::Message * pcMessage )
 			{
 				m_pcPlayPause->SetEnable( true );
 				m_pcStop->SetEnable( false );
-				SetButtonImageFromResource( m_pcPlayPause, "play.png" );
+				m_pcSlider->SetEnable( false );
+				SetCButtonImageFromResource( m_pcPlayPause, "play.png" );
+				SetCButtonSelectedImageFromResource( m_pcPlayPause, "play_sel.png" );
 			}
 			else if ( m_nState == MP_STATE_PLAYING )
 			{
 				m_pcPlayPause->SetEnable( true );
 				m_pcStop->SetEnable( true );
-				SetButtonImageFromResource( m_pcPlayPause, "pause.png" );	
+				m_pcSlider->SetEnable( true );
+				SetCButtonImageFromResource( m_pcPlayPause, "pause.png" );	
+				SetCButtonSelectedImageFromResource( m_pcPlayPause, "pause_sel.png" );	
 			}
 			else if ( m_nState == MP_STATE_PAUSED )
 			{
 				m_pcPlayPause->SetEnable( true );
 				m_pcStop->SetEnable( true );
-				SetButtonImageFromResource( m_pcPlayPause, "play.png" );
+				m_pcSlider->SetEnable( false );
+				SetCButtonImageFromResource( m_pcPlayPause, "play.png" );
+				SetCButtonSelectedImageFromResource( m_pcPlayPause, "play_sel.png" );
 			}
 			m_pcControls->Invalidate( true );
 			Sync();
@@ -260,6 +280,13 @@ void MPWindow::FrameMoved( const os::Point & cDelta )
 /* MPApp class */
 MPApp::MPApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::Application( pzMimeType )
 {
+	/* Select string catalogue */
+	try {
+		SetCatalog( "mediaplayer.catalog" );
+	} catch( ... ) {
+		std::cout << "Failed to load catalog file!" << std::endl;
+	}
+	
 	/* Set default values */
 	m_nState = MP_STATE_STOPPED;
 	m_pcInputSelector = NULL;
@@ -284,7 +311,7 @@ MPApp::MPApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::App
 	}
 
 	/* Create window */
-	m_pcWin = new MPWindow( os::Rect( 100, 100, 400, 400 ), "mp_window", "Media Player" );
+	m_pcWin = new MPWindow( os::Rect( 100, 100, 400, 400 ), "mp_window", MSG_MAINWND_TITLE );
 	m_pcWin->Show();
 	m_pcWin->MakeFocus( true );
 	
@@ -415,6 +442,7 @@ void MPApp::PlayThread()
 					nErrorCount++;
 					if ( ( m_bVideo && m_pcVideoOutput->GetDelay() > 0 ) || ( m_bAudio && m_pcAudioOutput->GetDelay(  ) > 0 ) )
 						nErrorCount--;
+					
 					if ( nErrorCount > 10 && !bError )
 					{
 						os::Application::GetInstance()->PostMessage( MP_GUI_STOP, os::Application::GetInstance(  ) );
@@ -436,10 +464,11 @@ void MPApp::PlayThread()
 			/* If we have started then flush the media data */
 			if ( bStarted )
 			{
-				if ( m_bVideo )
-					m_pcVideoOutput->Flush();
 				if ( m_bAudio )
 					m_pcAudioOutput->Flush();
+				if ( m_bVideo )
+					m_pcVideoOutput->Flush();
+				
 			}
 
 		}
@@ -452,8 +481,10 @@ void MPApp::PlayThread()
 			//cout<<"Position "<<m_pcInput->GetCurrentPosition()<<endl;
 			if ( m_bPacket && m_bVideo && m_bAudio )
 			{
-				double nVideo = ( ( double )nVideoFrames * 1000 / ( double )m_sVideoFormat.vFrameRate - ( double )m_pcVideoOutput->GetDelay() );
-				double nAudio = ( ( double )nAudioBytes * 1000 / 2 / ( double )m_sAudioFormat.nSampleRate / ( double )m_sAudioFormat.nChannels - m_pcAudioOutput->GetDelay() );
+				uint64 nVideo = ( ( uint64 )nVideoFrames * 1000 / ( uint64 )m_sVideoFormat.vFrameRate - m_pcVideoOutput->GetDelay() );
+				uint64 nAudio = ( ( uint64 )nAudioBytes * 1000 / 2 / ( uint64 )m_sAudioFormat.nSampleRate  / m_sAudioFormat.nChannels - m_pcAudioOutput->GetDelay() );
+
+				std::cout<<"Video "<<nVideo<<" "<<m_pcVideoOutput->GetDelay()<<" Audio "<<nAudio<<" "<<m_pcAudioOutput->GetDelay()<<std::endl;
 
 				if ( nVideo > nAudio )
 				{
@@ -698,7 +729,7 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 	if ( m_bPacket && !m_bAudio && !m_bVideo )
 	{
 		Close();
-		os::Alert * pcAlert = new os::Alert( "Error", "File could not be openend.\n Check your media settings.", os::Alert::ALERT_WARNING, 0, "Ok", NULL );
+		os::Alert * pcAlert = new os::Alert( MSG_ERRWND_TITLE, MSG_ERRWND_CANTPLAY, os::Alert::ALERT_WARNING, 0, MSG_ERRWND_OK.c_str(), NULL );
 		pcAlert->Go();
 		return;
 	}
@@ -710,7 +741,8 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 	for( int i = 0; i < ( int )m_pcInput->GetTrackCount(); i++ )
 	{
 		char zTest[30];
-		sprintf( zTest, "Track %i", i + 1 );
+		
+		sprintf( zTest, "%s %i", MSG_TRACK_MENU_ITEM.c_str(), i + 1 );
 		os::Message * pcItemMessage = new os::Message( MP_GUI_TRACK_SELECTED );
 		pcItemMessage->AddInt32( "track", i );
 		m_pcWin->GetTracksMenu()->AddItem( zTest, pcItemMessage );
@@ -722,9 +754,9 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 	m_zFileName = zFileName;
 	m_nLastPosition = 0;
 	if ( m_pcInput->FileNameRequired() )
-		m_pcWin->SetTitle( zFileName + " - Media Player " );
+		m_pcWin->SetTitle( zFileName + " - " + MSG_MAINWND_TITLE );
 	else
-		m_pcWin->SetTitle( m_pcInput->GetIdentifier() + " - Media Player " );
+		m_pcWin->SetTitle( m_pcInput->GetIdentifier() + " - " + MSG_MAINWND_TITLE );
 
 	m_pcWin->PostMessage( MP_STATE_CHANGED, m_pcWin );
 
@@ -924,6 +956,8 @@ void MPApp::HandleMessage( os::Message * pcMessage )
 			m_nLastPosition = m_pcWin->GetSlider()->GetValue(  ).AsInt32(  ) * m_pcInput->GetLength(  ) / 1000;
 			m_hPlayThread = spawn_thread( "play_thread", (void*)play_thread_entry, 0, 0, this );
 			resume_thread( m_hPlayThread );
+		} else {
+			m_pcWin->GetSlider()->SetValue( 0 );
 		}
 		break;
 	case MP_GUI_TRACK_SELECTED:
@@ -1029,9 +1063,11 @@ int main( int argc, char *argv[] )
 	}
 
 	pcApp->Run();
-	delete( pcApp );
 	return ( 0 );
 }
+
+
+
 
 
 

@@ -19,21 +19,26 @@
 
 #include <gui/view.h>
 #include <gui/font.h>
+#include <gui/control.h>
 
 namespace os
 {
 
-	class Lcd:public View
+	class Lcd:public Control
 	{
 	      public:
-		Lcd( const Rect & cFrame );
+		Lcd( const Rect & cFrame, Message* pcMessage, uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
 		 ~Lcd();
 
 		void Paint( const Rect & cUpdateRect );
+		void MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData );
 
 		void SetTrackName( std::string zName );
 		void SetTrackNumber( int nTrack );
 		void UpdateTime( uint64 nTime );
+		
+		void PostValueChange( const Variant & cNewValue );
+		void EnableStatusChanged( bool bIsEnabled );
 
 	      private:
 		  std::string m_zName;

@@ -14,33 +14,30 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-#ifndef __CF_SEEK_SLIDER_H_
-#define __CF_SEEK_SLIDER_H_
+#ifndef __COLDFISH_LCD_H_
+#define __COLDFISH_LCD_H_
 
-#include <util/message.h>
-
-#include <gui/slider.h>
+#include <gui/view.h>
+#include <gui/font.h>
+#include <gui/control.h>
 
 namespace os
 {
 
-class SeekSlider : public Slider
-{
-	public:
-		SeekSlider( const Rect &cFrame, const std::string &cName, Message *pcMsg );
-		~SeekSlider( void );
+	class SeekSlider:public Control
+	{
+	      public:
+		SeekSlider( const Rect & cFrame, os::String zName, Message* pcMessage, uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
+		 ~SeekSlider();
 
-		bool Invoked( Message *pcMessage );
+		void Paint( const Rect & cUpdateRect );
+		void MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData );
 
-		void MouseDown( const Point &cPosition, uint32 nButtons );
-		void MouseUp( const Point &cPosition, uint32 nButtons, Message *pcData );
+		void PostValueChange( const Variant & cNewValue );
+		void EnableStatusChanged( bool bIsEnabled );
 
-	private:
-		bool m_bMouseUp;
-};
+	};
 
 }
 
-#endif	// __CF_SEEK_SLIDER_H_
-
-
+#endif				// __SEEKSLIDER_H_

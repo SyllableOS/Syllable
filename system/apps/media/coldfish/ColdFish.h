@@ -45,9 +45,9 @@
 #include <storage/path.h>
 #include "resources/coldfish.h"
 #include "messages.h"
-#include "seekslider.h"
 #include "lcd.h"
 #include "SelectWin.h"
+#include "cimagebutton.h"
 
 
 enum
@@ -82,10 +82,6 @@ class CFWindow:public os::Window
 	{
 		return ( m_pcLCD );
 	}
-	os::SeekSlider * GetSlider()
-	{
-		return ( m_pcSlider );
-	}
 	os::Menu * GetMenuBar()
 	{
 		return ( m_pcMenuBar );
@@ -101,11 +97,10 @@ class CFWindow:public os::Window
 	os::HLayoutNode * m_pcControls;
 	os::Menu* m_pcMenuBar;
 	os::Lcd * m_pcLCD;
-	os::ImageButton * m_pcPlay;
-	os::ImageButton * m_pcPause;
-	os::ImageButton * m_pcStop;
-	os::SeekSlider * m_pcSlider;
-	os::ImageButton * m_pcShowList;
+	os::CImageButton * m_pcPlay;
+	os::CImageButton * m_pcPause;
+	os::CImageButton * m_pcStop;
+	os::CImageButton * m_pcShowList;
 
 	CFPlaylist *m_pcPlaylist;
 	os::FileRequester* m_pcFileDialog;
@@ -155,4 +150,12 @@ class CFApp:public os::Application
 };
 
 #endif
+
+
+
+
+
+
+
+
 

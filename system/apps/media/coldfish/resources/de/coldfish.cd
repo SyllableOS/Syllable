@@ -1,0 +1,45 @@
+//
+// Coldfish string catalog
+//
+
+MSG_MAINWND_TITLE=100						Coldfish
+MSG_MAINWND_PLAY							Start
+MSG_MAINWND_STOP							Stop
+MSG_MAINWND_PAUSE							Pause
+MSG_MAINWND_PLAYLIST						Abspielliste
+MSG_MAINWND_FILE							Datei
+MSG_MAINWND_TRACK							Titel
+MSG_MAINWND_STREAM							Stream
+MSG_MAINWND_LENGTH							Dauer
+
+MSG_MAINWND_MENU_APPLICATION=200			Anwendung
+MSG_MAINWND_MENU_APPLICATION_ABOUT			Info...
+MSG_MAINWND_MENU_APPLICATION_QUIT			Beenden
+
+MSG_MAINWND_MENU_PLAYLIST=300				Abspielliste
+MSG_MAINWND_MENU_PLAYLIST_SELECT			Auswählen...
+
+MSG_MAINWND_MENU_FILE=400					Datei
+MSG_MAINWND_MENU_FILE_ADD					Hinzufügen...
+MSG_MAINWND_MENU_FILE_REMOVE				Entfernen
+
+MSG_ABOUTWND_TITLE=1000						Info ColdFish
+MSG_ABOUTWND_TEXT							\nEine Musikabspielsoftware\nCopyright 2003 Arno Klenke\nCopyright 2003 Kristian Van Der Vliet\n\nColdFish ist unter der LGPL veröffentlicht.
+MSG_ABOUTWND_OK								O.K
+
+MSG_ERRWND_TITLE=1100						ColdFish Fehler
+MSG_ERRWND_OK								Ok
+MSG_ERRWND_CANTPLAY							ColdFish kann diese Datei nicht abspielen.
+MSG_ERRWND_CANTDELETE						Das gerade gespielte Stück kann nicht entfernt werden.
+MSG_ERRWND_NOTPLAYLIST						Die ausgewählte Datei ist keine Abspielliste.
+
+MSG_PLAYLIST_UNKNOWN=2000					Unbekannt
+
+MSG_PLAYLISTWND_TITLE=2100					Abspielliste auswählen - ColdFish
+MSG_PLAYLISTWND_FILE						Datei
+MSG_PLAYLISTWND_OPEN						Öffnen
+MSG_PLAYLISTWND_NOTE						Eine nicht vorhandene Abspielliste\nwird automatisch angelegt.
+
+MSG_LCD_TRACK=3000							Titel
+
+

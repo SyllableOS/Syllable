@@ -25,7 +25,6 @@
 #include <gui/window.h>
 #include <gui/button.h>
 #include <gui/textview.h>
-#include <gui/layoutview.h>
 #include <gui/filerequester.h>
 #include <gui/stringview.h>
 #include <util/message.h>
@@ -44,7 +43,5 @@ private:
 	os::Button* m_pcOpenButton;
 	os::StringView* m_pcInfo;
 	os::FileRequester* m_pcFileDialog;
-	os::LayoutView* m_pcLayout;
 };
 #endif
-

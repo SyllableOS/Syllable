@@ -18,6 +18,7 @@
  *  MA 02111-1307, USA
  */
 
+
 #include "resources/coldfish.h"
 #include "messages.h"
 #include "SelectWin.h"
@@ -38,17 +39,17 @@ SelectWin::SelectWin( os::Rect cFrame )
 	
 	m_pcFileInput = new os::TextView( os::Rect( 0, 0, 1, 1 ), "file_input", "", os::CF_FOLLOW_LEFT | os::CF_FOLLOW_TOP |
 																			os::CF_FOLLOW_RIGHT );
-	m_pcFileInput->SetFrame( os::Rect( m_pcFileLabel->GetPreferredSize( false ).x + 10, 5, 180,
+	m_pcFileInput->SetFrame( os::Rect( m_pcFileLabel->GetPreferredSize( false ).x + 10, 5, 205,
 								 m_pcFileInput->GetPreferredSize( false ).y + 5 ) );
 	m_pcFileInput->SetMultiLine( false );
 	
-	m_pcFileButton = new os::Button( os::Rect( 182, 5, 200, m_pcFileInput->GetPreferredSize( false ).y + 5 ),
+	m_pcFileButton = new os::Button( os::Rect( 207, 5, 225, m_pcFileInput->GetPreferredSize( false ).y + 5 ),
 							"file_button", "..", new os::Message( CF_GUI_PLAYLIST_SELECTOR ), os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_TOP );
 	
 	/* Create open button */
 	m_pcOpenButton = new os::Button( os::Rect( 0, 0, 1, 1 ),
 							"open_button", MSG_PLAYLISTWND_OPEN, new os::Message( CF_GUI_PLAYLIST_OPEN ), os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_BOTTOM );
-	m_pcOpenButton->SetFrame( os::Rect( 160, 30, 200, m_pcOpenButton->GetPreferredSize( false ).y + 30 ) );
+	m_pcOpenButton->SetFrame( os::Rect( 185, 30, 225, m_pcOpenButton->GetPreferredSize( false ).y + 30 ) );
 
 	/* Create information */
 	m_pcInfo = new os::StringView( os::Rect( 0, 0, 1, 1 ), "info", os::String("\33c") + MSG_PLAYLISTWND_NOTE,
@@ -106,7 +107,4 @@ void SelectWin::HandleMessage( os::Message* pcMessage )
 			os::Window::HandleMessage( pcMessage );
 	}
 }
-
-
-
 

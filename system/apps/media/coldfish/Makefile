@@ -9,7 +9,7 @@ VPATH = ./
 CC	= gcc
 LL	= ld
 
-OBJS = lcd.o seekslider.o SelectWin.o ColdFish.o
+OBJS = lcd.o SelectWin.o ColdFish.o cimagebutton.o
 
 OBJDIR	:= objs
 
@@ -24,13 +24,13 @@ $(OBJDIR)/ColdFish: $(OBJS)
 	gcc  $(OBJS) -lstdc++ -lsyllable -lmedia -o ColdFish
 	rescopy -r ColdFish *.png
 	rescopy -a ColdFish resources/coldfish.catalog
-
+	rescopy -a ColdFish sv/coldfish.catalog=resources/sv/coldfish.catalog
+	rescopy -a ColdFish de/coldfish.catalog=resources/de/coldfish.catalog
 
 deps:
 
 install:  $(OBJDIR)/ColdFish
 	mkdir -p $(APPBIN)
-	cp -r resources $(APPBIN)/resources
 	install -s ColdFish $(APPBIN)/ColdFish
 
 dist:  $(OBJDIR)/ColdFish
@@ -43,6 +43,39 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d ColdFish
 
 -include $(OBJDIR)/*.d
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

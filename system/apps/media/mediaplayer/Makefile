@@ -9,7 +9,7 @@ VPATH = ./
 CC	= gcc
 LL	= ld
 
-OBJS = seekslider.o MediaPlayer.o
+OBJS = seekslider.o cimagebutton.o MediaPlayer.o
 
 OBJDIR	:= objs
 
@@ -23,7 +23,8 @@ $(OBJDIR):
 $(OBJDIR)/MediaPlayer: $(OBJS)
 	gcc  $(OBJS) -lstdc++ -lsyllable -lmedia -o MediaPlayer
 	rescopy -r MediaPlayer *.png
-
+	rescopy -a MediaPlayer resources/mediaplayer.catalog
+	rescopy -a MediaPlayer de/mediaplayer.catalog=resources/de/mediaplayer.catalog
 
 deps:
 
@@ -41,6 +42,8 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d MediaPlayer
 
 -include $(OBJDIR)/*.d
+
+
 
 
 

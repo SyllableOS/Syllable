@@ -1,4 +1,3 @@
-
 /*  ColdFish Music Player
  *  Copyright (C) 2003 Kristian Van Der Vliet
  *  Copyright (C) 2003 Arno Klenke
@@ -23,13 +22,22 @@
 #include <iostream>
 #include <fstream>
 
-
-void SetButtonImageFromResource( os::ImageButton* pcButton, os::String zResource )
+void SetCButtonImageFromResource( os::CImageButton* pcButton, os::String zResource )
 {
 	os::File cSelf( open_image_file( get_image_id() ) );
 	os::Resources cCol( &cSelf );		
 	os::ResStream *pcStream = cCol.GetResourceStream( zResource );
 	pcButton->SetImage( pcStream );
+	delete( pcStream );
+}
+
+
+void SetCButtonSelectedImageFromResource( os::CImageButton* pcButton, os::String zResource )
+{
+	os::File cSelf( open_image_file( get_image_id() ) );
+	os::Resources cCol( &cSelf );		
+	os::ResStream *pcStream = cCol.GetResourceStream( zResource );
+	pcButton->SetSelectedImage( pcStream );
 	delete( pcStream );
 }
 
@@ -104,32 +112,28 @@ CFWindow::CFWindow( const os::Rect & cFrame, const os::String & cName, const os:
 	cNewFrame.bottom = cNewFrame.top + 70;
 
 	/* Create root view */
-	m_pcRoot = new os::LayoutView( cNewFrame, "cf_root", NULL, os::CF_FOLLOW_LEFT | os::CF_FOLLOW_TOP );
+	m_pcRoot = new os::LayoutView( cNewFrame, "cf_root", NULL, os::CF_FOLLOW_LEFT | os::CF_FOLLOW_TOP | os::CF_FOLLOW_RIGHT );
 
 	/* Create control view */
 	m_pcControls = new os::HLayoutNode( "cf_controls" );
 	m_pcControls->SetBorders( os::Rect( 2, 5, 2, 5 ) );
 
-	os::Font*	pcSmallFont = new os::Font( DEFAULT_FONT_TOOL_WINDOW );
 	/* Create buttons */
-	m_pcPlay = new os::ImageButton( os::Rect( 0, 0, 1, 1 ), "cf_play", MSG_MAINWND_PLAY, new os::Message( CF_GUI_PLAY ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, true, true );
-	m_pcPlay->SetFont( pcSmallFont );
-	SetButtonImageFromResource( m_pcPlay, "play.png" );
+	m_pcPlay = new os::CImageButton( os::Rect( 0, 0, 1, 1 ), "cf_play", MSG_MAINWND_PLAY, new os::Message( CF_GUI_PLAY ), NULL, os::ImageButton::IB_TEXT_BOTTOM, false, false, true );
+	SetCButtonImageFromResource( m_pcPlay, "play.png" );
+	SetCButtonSelectedImageFromResource( m_pcPlay, "play_sel.png" );
 
-	m_pcPause = new os::ImageButton( os::Rect( 0, 0, 1, 1 ), "cf_pause", MSG_MAINWND_PAUSE, new os::Message( CF_GUI_PAUSE ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, true, true );
-	m_pcPause->SetFont( pcSmallFont );
-	SetButtonImageFromResource( m_pcPause, "pause.png" );
+	m_pcPause = new os::CImageButton( os::Rect( 0, 0, 1, 1 ), "cf_pause", MSG_MAINWND_PAUSE, new os::Message( CF_GUI_PAUSE ), NULL, os::ImageButton::IB_TEXT_BOTTOM, false, false, true );
+	SetCButtonImageFromResource( m_pcPause, "pause.png" );
+	SetCButtonSelectedImageFromResource( m_pcPause, "pause_sel.png" );
 
-	m_pcStop = new os::ImageButton( os::Rect( 0, 0, 1, 1 ), "cf_stop", MSG_MAINWND_STOP, new os::Message( CF_GUI_STOP ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, true, true );
-	m_pcStop->SetFont( pcSmallFont );
-	SetButtonImageFromResource( m_pcStop, "stop.png" );
-
+	m_pcStop = new os::CImageButton( os::Rect( 0, 0, 1, 1 ), "cf_stop", MSG_MAINWND_STOP, new os::Message( CF_GUI_STOP ), NULL, os::ImageButton::IB_TEXT_BOTTOM, false, false, true );
+	SetCButtonImageFromResource( m_pcStop, "stop.png" );
+	SetCButtonSelectedImageFromResource( m_pcStop, "stop_sel.png" );
 	
-	m_pcShowList = new os::ImageButton( os::Rect( 0, 0, 1, 1 ), "cf_show_list", MSG_MAINWND_PLAYLIST, new os::Message( CF_GUI_SHOW_LIST ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, true, true );
-	m_pcShowList->SetFont( pcSmallFont );
-	SetButtonImageFromResource( m_pcShowList, "list.png" );
-	
-	pcSmallFont->Release();
+	m_pcShowList = new os::CImageButton( os::Rect( 0, 0, 1, 1 ), "cf_show_list", MSG_MAINWND_PLAYLIST, new os::Message( CF_GUI_SHOW_LIST ), NULL, os::ImageButton::IB_TEXT_BOTTOM, false, false, true );
+	SetCButtonImageFromResource( m_pcShowList, "list.png" );
+	SetCButtonSelectedImageFromResource( m_pcShowList, "list_sel.png" );
 
 	m_pcPause->SetEnable( false );
 	m_pcStop->SetEnable( false );
@@ -137,20 +141,17 @@ CFWindow::CFWindow( const os::Rect & cFrame, const os::String & cName, const os:
 	os::VLayoutNode * pcCenter = new os::VLayoutNode( "cf_v_center" );
 
 	/* Create LCD */
-	m_pcLCD = new os::Lcd( os::Rect( 0, 0, 1, 1 ) );
+	m_pcLCD = new os::Lcd( os::Rect( 0, 0, 1, 1 ), new os::Message( CF_GUI_SEEK ) );
+	m_pcLCD->SetTarget( this );
+	m_pcLCD->SetEnable( false );
 	pcCenter->AddChild( m_pcLCD );
 
-	/* Create slider */
-	m_pcSlider = new os::SeekSlider( os::Rect( 0, 0, 1, 1 ), "cf_slider", new os::Message( CF_GUI_SEEK ) );
-	m_pcSlider->SetResizeMask( os::CF_FOLLOW_LEFT | os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_BOTTOM );
-	m_pcSlider->SetTarget( this );
-	m_pcSlider->SetMinMax( 0, 1000 );
-	pcCenter->AddChild( m_pcSlider );
 
 	m_pcControls->AddChild( m_pcPlay );
 	m_pcControls->AddChild( m_pcPause );
 	m_pcControls->AddChild( m_pcStop );
 	m_pcControls->AddChild( pcCenter );
+	m_pcControls->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
 	m_pcControls->AddChild( m_pcShowList );
 
 	m_pcControls->SameWidth( "cf_play", "cf_pause", "cf_stop", "cf_show_list", NULL );
@@ -167,7 +168,7 @@ CFWindow::CFWindow( const os::Rect & cFrame, const os::String & cName, const os:
 	m_pcPlaylist->SetMultiSelect( false );
 	m_pcPlaylist->InsertColumn( MSG_MAINWND_FILE.c_str(), (int)cNewFrame.Width() - 160 );
 	m_pcPlaylist->InsertColumn( MSG_MAINWND_TRACK.c_str(), 50 );
-	m_pcPlaylist->InsertColumn( MSG_MAINWND_STREAM.c_str(), 50 );
+	m_pcPlaylist->InsertColumn( MSG_MAINWND_STREAM.c_str(), 55 );
 	m_pcPlaylist->InsertColumn( MSG_MAINWND_LENGTH.c_str(), 50 );
 	AddChild( m_pcPlaylist );
 	AddChild( m_pcMenuBar );
@@ -185,6 +186,8 @@ CFWindow::CFWindow( const os::Rect & cFrame, const os::String & cName, const os:
 	os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
 	SetIcon( pcIcon->LockBitmap() );
 	delete( pcIcon );
+	
+	SetSizeLimits( os::Point( 400,150 ), os::Point( 4096, 4096 ) );
 }
 
 CFWindow::~CFWindow()
@@ -230,10 +233,11 @@ void CFWindow::HandleMessage( os::Message * pcMessage )
 		break;
 	case CF_GUI_ABOUT:
 		{
+			/* Show about alert */
 			os::String cBodyText;
 			
-			cBodyText = os::String( "ColdFish V1.0\n" ) + MSG_ABOUTWND_TEXT;
-			/* Show about alert */
+			cBodyText = os::String( "ColdFish V1.1\n" ) + MSG_ABOUTWND_TEXT;
+			
 			os::Alert* pcAbout = new os::Alert( MSG_ABOUTWND_TITLE, cBodyText, os::Alert::ALERT_INFO, 
 											os::WND_NOT_RESIZABLE, MSG_ABOUTWND_OK.c_str(), NULL );
 			pcAbout->Go( new os::Invoker( 0 ) ); 
@@ -255,18 +259,21 @@ void CFWindow::HandleMessage( os::Message * pcMessage )
 				m_pcPlay->SetEnable( true );
 				m_pcPause->SetEnable( false );
 				m_pcStop->SetEnable( false );
+				m_pcLCD->SetEnable( false );
 			}
 			else if ( m_nState == CF_STATE_PLAYING )
 			{
 				m_pcPlay->SetEnable( false );
 				m_pcPause->SetEnable( true );
 				m_pcStop->SetEnable( true );
+				m_pcLCD->SetEnable( true );
 			}
 			else if ( m_nState == CF_STATE_PAUSED )
 			{
 				m_pcPlay->SetEnable( true );
 				m_pcPause->SetEnable( false );
 				m_pcStop->SetEnable( true );
+				m_pcLCD->SetEnable( false );
 			}
 			Sync();
 		}
@@ -294,7 +301,7 @@ CFApp::CFApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::App
 	} catch( ... ) {
 		std::cout << "Failed to load catalog file!" << std::endl;
 	}
-
+	
 	/* Set default values */
 	m_nState = CF_STATE_STOPPED;
 
@@ -327,7 +334,9 @@ CFApp::CFApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::App
 	}
 
 	/* Create window */
-	m_pcWin = new CFWindow( os::Rect( 50, 100, 500, 350 ), "cf_window", "Default Playlist.plst - ColdFish", os::WND_NOT_H_RESIZABLE );
+	m_pcWin = new CFWindow( os::Rect( 0, 0, 500, 350 ), "cf_window", "Default Playlist.plst - ColdFish", 0 );
+	
+	m_pcWin->CenterInScreen();
 	m_pcWin->Show();
 	m_pcWin->MakeFocus( true );
 
@@ -452,7 +461,7 @@ void CFApp::PlayThread()
 		if ( !m_bStream && get_system_time() > nTime + 1000000 )
 		{
 			/* Move slider */
-			m_pcWin->GetSlider()->SetValue( os::Variant( ( int )( m_pcInput->GetCurrentPosition(  ) * 1000 / m_pcInput->GetLength(  ) ) ), false );
+			m_pcWin->GetLCD()->SetValue( os::Variant( ( int )( m_pcInput->GetCurrentPosition(  ) * 1000 / m_pcInput->GetLength(  ) ) ), false );
 			m_pcWin->GetLCD()->UpdateTime( m_pcInput->GetCurrentPosition(  ) );
 			//cout<<"Position "<<m_pcInput->GetCurrentPosition()<<endl;
 			nTime = get_system_time();
@@ -500,7 +509,7 @@ bool CFApp::OpenList( os::String zFileName )
 	char zTemp2[255];
 
 	m_pcWin->GetPlaylist()->Clear(  );
-	m_pcWin->GetSlider()->SetValue( os::Variant( 0 ) );
+	m_pcWin->GetLCD()->SetValue( os::Variant( 0 ) );
 	m_pcWin->GetLCD()->UpdateTime( 0 );
 	m_pcWin->GetLCD()->SetTrackName( MSG_PLAYLIST_UNKNOWN );
 	m_pcWin->GetLCD()->SetTrackNumber( 0 );
@@ -812,9 +821,7 @@ int CFApp::OpenFile( os::String zFileName, uint32 nTrack, uint32 nStream )
 	m_pcWin->GetLCD()->SetTrackName( cPath.GetLeaf(  ) );
 	m_pcWin->GetLCD()->SetTrackNumber( m_nAudioTrack + 1 );
 	m_pcWin->GetLCD()->UpdateTime( 0 );
-
-	/* Set slider */
-	m_pcWin->GetSlider()->SetValue( os::Variant( 0 ) );
+	m_pcWin->GetLCD()->SetValue( os::Variant( 0 ) );
 
 	return ( 0 );
 }
@@ -926,7 +933,7 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 			m_nState = CF_STATE_PLAYING;
 			m_pcWin->SetState( CF_STATE_PLAYING );
 			m_pcWin->PostMessage( CF_STATE_CHANGED, m_pcWin );
-			m_nLastPosition = m_pcWin->GetSlider()->GetValue(  ).AsInt32(  ) * m_pcInput->GetLength(  ) / 1000;
+			m_nLastPosition = m_pcWin->GetLCD()->GetValue(  ).AsInt32(  ) * m_pcInput->GetLength(  ) / 1000;
 			m_hPlayThread = spawn_thread( "play_thread", (void*)play_thread_entry, 0, 0, this );
 			resume_thread( m_hPlayThread );
 		}
@@ -963,7 +970,7 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 			}
 			CloseCurrentFile();
 			m_nLastPosition = 0;
-			m_pcWin->GetSlider()->SetValue( os::Variant( 0 ) );
+			m_pcWin->GetLCD()->SetValue( os::Variant( 0 ) );
 			m_pcWin->GetLCD()->UpdateTime( 0 );
 		}
 		/* Play next track */
@@ -981,9 +988,11 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 				wait_for_thread( m_hPlayThread );
 			}
 			/* Set new position */
-			m_nLastPosition = m_pcWin->GetSlider()->GetValue(  ).AsInt32(  ) * m_pcInput->GetLength(  ) / 1000;
+			m_nLastPosition = m_pcWin->GetLCD()->GetValue(  ).AsInt32(  ) * m_pcInput->GetLength(  ) / 1000;
 			m_hPlayThread = spawn_thread( "play_thread", (void*)play_thread_entry, 0, 0, this );
 			resume_thread( m_hPlayThread );
+		} else {
+			m_pcWin->GetLCD()->SetValue( os::Variant( 0 ) );
 		}
 		break;
 	case CF_GUI_REMOVE_FILE:
@@ -1020,13 +1029,9 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 		/* Select playlist */
 		{
 			/* Open window */
-			os::Rect cFrame = m_pcWin->GetFrame();
-			cFrame.top += 50;
-			cFrame.left += 50;
-			cFrame.right = cFrame.left + 210;
-			cFrame.bottom = cFrame.top + 100;
+			os::Rect cFrame = os::Rect( 0, 0, 230, 100 );
 			SelectWin *pcWin = new SelectWin( cFrame );
-
+			pcWin->CenterInWindow( m_pcWin );
 			pcWin->Show();
 			pcWin->MakeFocus();
 		}
@@ -1042,6 +1047,7 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 				cFrame.bottom = cFrame.top + m_cSavedFrame.bottom - m_cSavedFrame.top;
 				m_pcWin->SetFrame( cFrame );
 				m_pcWin->SetFlags( m_pcWin->GetFlags() & ~os::WND_NOT_V_RESIZABLE );
+				m_pcWin->SetSizeLimits( os::Point( 400,150 ), os::Point( 4096, 4096 ) );
 			}
 			else
 			{
@@ -1049,6 +1055,7 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 				cFrame.bottom = cFrame.top + 70 + m_pcWin->GetMenuBar()->GetBounds().Height();
 				m_pcWin->SetFrame( cFrame );
 				m_pcWin->SetFlags( m_pcWin->GetFlags() | os::WND_NOT_V_RESIZABLE );
+				m_pcWin->SetSizeLimits( os::Point( 400,0 ), os::Point( 4096, 4096 ) );
 			}
 
 		}
@@ -1068,7 +1075,7 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 			}
 			CloseCurrentFile();
 			m_nLastPosition = 0;
-			m_pcWin->GetSlider()->SetValue( os::Variant( 0 ) );
+			m_pcWin->GetLCD()->SetValue( os::Variant( 0 ) );
 			m_pcWin->GetLCD()->UpdateTime( 0 );
 		}
 		/* Small hack ( select item before the invoked one ) */
@@ -1108,7 +1115,7 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 					}
 					CloseCurrentFile();
 					m_nLastPosition = 0;
-					m_pcWin->GetSlider()->SetValue( os::Variant( 0 ) );
+					m_pcWin->GetLCD()->SetValue( os::Variant( 0 ) );
 					m_pcWin->GetLCD()->UpdateTime( 0 );
 				}
 				/* Save opened list */
@@ -1166,10 +1173,9 @@ bool CFApp::OkToQuit()
 		pcSettings->AddString( "playlist", m_zListName );
 		pcSettings->Save();
 		delete( pcSettings );
-//		CloseCurrentFile();
-//		m_pcWin->Close();
+		CloseCurrentFile();
+		//m_pcWin->Close();
 	}
-
 	return ( true );
 }
 
@@ -1189,3 +1195,20 @@ int main( int argc, char *argv[] )
 	pcApp->Run();
 	return ( 0 );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

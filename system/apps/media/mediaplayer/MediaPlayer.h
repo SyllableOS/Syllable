@@ -29,6 +29,7 @@
 #include <gui/desktop.h>
 #include <gui/filerequester.h>
 #include <util/application.h>
+#include <util/locale.h>
 #include <atheos/threads.h>
 #include <storage/path.h>
 #include <media/manager.h>
@@ -39,6 +40,8 @@
 #include <media/packet.h>
 #include <media/inputselector.h>
 #include "seekslider.h"
+#include "cimagebutton.h"
+#include "resources/mediaplayer.h"
 
 /* Messages */
 enum {
@@ -90,9 +93,9 @@ private:
 	os::View* m_pcVideoView;
 	os::View* m_pcControls;
 	os::View* m_pcVideo;
-	os::ImageButton* m_pcPlayPause;
-	os::ImageButton* m_pcStop;
-	os::ImageButton* m_pcFullScreen;
+	os::CImageButton* m_pcPlayPause;
+	os::CImageButton* m_pcStop;
+	os::CImageButton* m_pcFullScreen;
 	os::SeekSlider* m_pcSlider;
 	os::FileRequester* m_pcFileDialog;
 };
