@@ -80,8 +80,8 @@ status_t IconTrans::AddData( const void* pData, size_t nLen, bool bFinal )
 			if( m_eState == STATE_FRAMEHDR && m_cInBuffer.Size() > (ssize_t)sizeof( BitmapFrameHeader ) ) {
 				m_cInBuffer.Read( &m_sCurrentFrame, sizeof( m_sCurrentFrame ) );
 				m_sIconHdr.nBitsPerPixel = BitsPerPixel( m_sCurrentFrame.bf_color_space );
-				m_sIconHdr.nWidth = m_sCurrentFrame.bf_frame.right - m_sCurrentFrame.bf_frame.left;
-				m_sIconHdr.nHeight = m_sCurrentFrame.bf_frame.bottom - m_sCurrentFrame.bf_frame.top;
+				m_sIconHdr.nWidth = m_sCurrentFrame.bf_frame.right - m_sCurrentFrame.bf_frame.left + 1;
+				m_sIconHdr.nHeight = m_sCurrentFrame.bf_frame.bottom - m_sCurrentFrame.bf_frame.top + 1;
 				m_cOutBuffer.Write( &m_sIconHdr, sizeof( m_sIconHdr ) );
 				m_sIconDir.nNumImages--;
 				m_eState = STATE_READING;
@@ -129,8 +129,8 @@ status_t IconTrans::AddData( const void* pData, size_t nLen, bool bFinal )
 					m_sBitmapHeader.bh_flags = 0;
 					m_sBitmapHeader.bh_bounds.left = 0;
 					m_sBitmapHeader.bh_bounds.top = 0;
-					m_sBitmapHeader.bh_bounds.right = m_sIconHdr.nWidth;
-					m_sBitmapHeader.bh_bounds.bottom = m_sIconHdr.nHeight;
+					m_sBitmapHeader.bh_bounds.right = m_sIconHdr.nWidth - 1;
+					m_sBitmapHeader.bh_bounds.bottom = m_sIconHdr.nHeight - 1;
 					m_sBitmapHeader.bh_frame_count = m_sIconDir.nNumImages;
 					m_sBitmapHeader.bh_bytes_per_row = ( m_sIconHdr.nBitsPerPixel * m_sIconHdr.nWidth + 7 ) / 8;
 					m_sBitmapHeader.bh_color_space = m_sIconHdr.nBitsPerPixel == 32 ? CS_RGBA32 : CS_GRAY8;
@@ -144,8 +144,8 @@ status_t IconTrans::AddData( const void* pData, size_t nLen, bool bFinal )
 				m_sCurrentFrame.bf_bytes_per_row = ( m_sIconHdr.nBitsPerPixel * m_sIconHdr.nWidth + 7 ) / 8;
 				m_sCurrentFrame.bf_frame.left = 0;
 				m_sCurrentFrame.bf_frame.top = 0;
-				m_sCurrentFrame.bf_frame.right = m_sIconHdr.nWidth;
-				m_sCurrentFrame.bf_frame.bottom = m_sIconHdr.nHeight;
+				m_sCurrentFrame.bf_frame.right = m_sIconHdr.nWidth - 1;
+				m_sCurrentFrame.bf_frame.bottom = m_sIconHdr.nHeight - 1;
 				m_cOutBuffer.Write( &m_sCurrentFrame, sizeof( m_sCurrentFrame ) );
 	
 				m_sBitmapHeader.bh_frame_count--;
