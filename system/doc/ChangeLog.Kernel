@@ -1,3 +1,17 @@
+* May 17 2003, Kristian Van Der Vliet *
+
+find_boot_dev() function in init.c which is used to "probe" for a boot CD in all of the
+available drives.  The function iterates over all of the available devices in /dev/disk and
+attempts to mount each one of them using the boot FS.  If the disk can be mounted,
+then a check is made for a file called "SYLLABLE" in the device root.
+
+To enable boot device probing you must pass root=@boot to the kernel.
+
+The flag MNTF_SLOW_DEVICE has also been added to filesystem.h
+which the do_mount() function to attempt to mount a device upto a maximum of five
+times.  This is useful if we are booting from E.g. a very slow CD-ROM drive, which
+can take some time to spin up.
+
 * Feb 16 2003, Kristian Van Der Vliet *
 
 Applied a patch by Alexander Deynichenko <thorn@fpss.ru> which splits
