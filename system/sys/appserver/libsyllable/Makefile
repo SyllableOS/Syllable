@@ -4,7 +4,7 @@ AOPTS   = -c
 
 LIBBIN = /system/libs
 
-LIBNAME = libsyllable.so.3
+LIBNAME = libsyllable.so.4
 
 VPATH = ./ gui storage util translation
 
@@ -66,3 +66,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d
 
 -include $(OBJDIR)/*.d
+
