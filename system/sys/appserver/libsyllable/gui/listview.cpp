@@ -54,7 +54,8 @@ namespace os
 	{			// : public binary_function<ListViewRow,ListViewRow, bool> {
 		bool operator() ( const ListViewRow * x, const ListViewRow * y )const
 		{
-			return ( x->m_vYPos < y->m_vYPos );
+			cout << "x: " << x->m_vYPos << " y: " << y->m_vYPos << " r: " << ( ( x->m_vYPos < y->m_vYPos ) && x->IsVisible() ) << endl;
+			return ( ( x->m_vYPos < y->m_vYPos ) && x->IsVisible() );
 		}
 	};
 }
@@ -171,6 +172,7 @@ namespace os
 		void MakeVisible( int nRow, bool bCenter );
 		void StartScroll( ListView::scroll_direction eDirection, bool bSelect );
 		void StopScroll();
+		void LayoutRows();
 
 		virtual void FrameSized( const Point & cDelta );
 		virtual void MouseDown( const Point & cPosition, uint32 nButton );
@@ -258,9 +260,7 @@ namespace os
 ListViewRow::ListViewRow()
 {
 	m_vHeight = 0.0f;
-	m_bSelected = false;
-	m_bHighlighted = false;
-	m_bIsSelectable = true;
+	m_nFlags = F_SELECTABLE | F_VISIBLE;
 }
 
 ListViewRow::~ListViewRow()
@@ -283,23 +283,51 @@ bool ListViewRow::HitTest( View * pcView, const Rect & cFrame, int nColumn, Poin
 
 void ListViewRow::SetIsSelectable( bool bSelectable )
 {
-	m_bIsSelectable = bSelectable;
+	m_nFlags &= ~F_SELECTABLE;
+	if( bSelectable )
+		m_nFlags |= F_SELECTABLE;
 }
 
 bool ListViewRow::IsSelectable() const
 {
-	return ( m_bIsSelectable );
+	return ( m_nFlags & F_SELECTABLE );
 }
 
 bool ListViewRow::IsSelected() const
 {
-	return ( m_bSelected );
+	return ( m_nFlags & F_SELECTED );
 }
 
 bool ListViewRow::IsHighlighted() const
 {
-	return ( m_bHighlighted );
+	return ( m_nFlags & F_HIGHLIGHTED );
 }
+void ListViewRow::SetIsVisible( bool bVisible )
+{
+	m_nFlags &= ~F_VISIBLE;
+	if( bVisible )
+		m_nFlags |= F_VISIBLE;
+}
+
+bool ListViewRow::IsVisible() const
+{
+	return ( m_nFlags & F_VISIBLE );
+}
+
+void ListViewRow::SetHighlighted( bool bHigh )
+{
+	m_nFlags &= ~F_HIGHLIGHTED;
+	if( bHigh )
+		m_nFlags |= F_HIGHLIGHTED;
+}
+
+void ListViewRow::SetSelected( bool bSel )
+{
+	m_nFlags &= ~F_SELECTED;
+	if( bSel )
+		m_nFlags |= F_SELECTED;
+}
+
 
 void ListViewStringRow::AttachToView( View * pcView, int nColumn )
 {
@@ -454,7 +482,6 @@ ListViewCol::~ListViewCol()
 // NOTE:
 // SEE ALSO:
 //----------------------------------------------------------------------------
-
 void ListViewCol::Refresh( const Rect & cUpdateRect )
 {
 	if( m_pcParent->m_cRows.empty() )
@@ -463,6 +490,7 @@ void ListViewCol::Refresh( const Rect & cUpdateRect )
 		FillRect( cUpdateRect );
 		return;
 	}
+
 	Rect cBounds = GetBounds();
 
 	ListViewRow *pcLastRow = m_pcParent->m_cRows[m_pcParent->m_cRows.size() - 1];
@@ -498,15 +526,19 @@ void ListViewCol::Refresh( const Rect & cUpdateRect )
 
 	for( int i = nFirstRow; i < int ( cList.size() ); ++i )
 	{
-		if( cList[i]->m_vYPos > cUpdateRect.bottom )
+		if( cList[i]->IsVisible() )
 		{
-			break;
-		}
-		cFrame.top = cList[i]->m_vYPos;
-		cFrame.bottom = cFrame.top + cList[i]->m_vHeight + m_pcParent->m_vVSpacing - 1.0f;
+			if( cList[i]->m_vYPos > cUpdateRect.bottom )
+			{
+				break;
+			}
+			cFrame.top = cList[i]->m_vYPos;
+			cFrame.bottom = cFrame.top + cList[i]->m_vHeight + m_pcParent->m_vVSpacing - 1.0f;
 
-		cList[i]->Paint( cFrame, this, nColumn, cList[i]->m_bSelected, cList[i]->m_bHighlighted, bHasFocus );
+			cList[i]->Paint( cFrame, this, nColumn, cList[i]->IsSelected(), cList[i]->IsHighlighted(  ), bHasFocus );
+		}
 	}
+
 	if( cFrame.bottom < cUpdateRect.bottom )
 	{
 		cFrame.top = cFrame.bottom + 1.0f;
@@ -709,11 +741,13 @@ void ListViewContainer::MouseDown( const Point & cPosition, uint32 nButton )
 	else
 	{
 		nHitRow = GetRowIndex( cPosition.y );
+//              cout << "got row index: " << nHitRow << endl;
 		if( nHitRow < 0 )
 		{
 			nHitRow = 0;
 		}
 	}
+
 	bool bDoubleClick = false;
 
 	bigtime_t nCurTime = get_system_time();
@@ -749,6 +783,7 @@ void ListViewContainer::MouseDown( const Point & cPosition, uint32 nButton )
 		m_pcListView->Invoked( m_nFirstSel, m_nLastSel );
 		return;
 	}
+
 	if( pcHitRow != NULL )
 	{
 		for( uint i = 0; i < m_cColMap.size(); ++i )
@@ -771,7 +806,7 @@ void ListViewContainer::MouseDown( const Point & cPosition, uint32 nButton )
 	}
 	m_bMouseMoved = false;
 
-	if( nHitCol == 1 && ( nQualifiers & QUAL_CTRL ) == 0 && m_cRows[nHitRow]->m_bSelected )
+	if( nHitCol == 1 && ( nQualifiers & QUAL_CTRL ) == 0 && m_cRows[nHitRow]->IsSelected() )
 	{
 		m_bDragIfMoved = true;
 	}
@@ -925,23 +960,47 @@ void ListViewContainer::WheelMoved( const Point & cDelta )
 	}
 }
 
+/*
 int ListViewContainer::GetRowIndex( float y ) const
 {
+    if ( y < 0.0f || m_cRows.empty() ) {
+	return( -1 );
+    }
+    
+    DummyRow cDummy;
+    cDummy.m_vYPos = y;
+
+    std::vector<ListViewRow*>::const_iterator cIterator = std::lower_bound( m_cRows.begin(),
+									    m_cRows.end(),
+									    &cDummy,
+									    RowPosPred() );
+    
+    int nIndex = cIterator - m_cRows.begin() - 1;
+    if ( nIndex >= 0 && y > m_cRows[nIndex]->m_vYPos + m_cRows[nIndex]->m_vHeight + m_vVSpacing ) {
+	nIndex = -1;
+    }
+    return( nIndex );
+}
+*/
+int ListViewContainer::GetRowIndex( float y ) const
+{
+	int nIndex = -1;
+
 	if( y < 0.0f || m_cRows.empty() )
 	{
 		return ( -1 );
 	}
 
-	DummyRow cDummy;
+	std::vector < ListViewRow * >::const_iterator cIterator;
 
-	cDummy.m_vYPos = y;
-
-	std::vector < ListViewRow * >::const_iterator cIterator = std::lower_bound( m_cRows.begin(),
-		m_cRows.end(),
-		&cDummy,
-		RowPosPred() );
-
-	int nIndex = cIterator - m_cRows.begin() - 1;
+	for( cIterator = m_cRows.begin(); cIterator != m_cRows.end(  ); cIterator++ )
+	{
+		if( ( *cIterator )->IsVisible() && y < ( *cIterator )->m_vYPos + ( *cIterator )->m_vHeight + m_vVSpacing )
+		{
+			nIndex = cIterator - m_cRows.begin();
+			break;
+		}
+	}
 
 	if( nIndex >= 0 && y > m_cRows[nIndex]->m_vYPos + m_cRows[nIndex]->m_vHeight + m_vVSpacing )
 	{
@@ -1061,14 +1120,14 @@ void ListViewContainer::TimerTick( int nID )
 	}
 }
 
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
+/** Handle keystrokes
+ *	\par	Description:
+ *			Handle pressed keys (called by ListView::KeyDown). Returns false
+ *			if the key was not handled, in which case the key event is passed
+ *			on to ListView::KeyDown().
+ * \sa ListView::KeyDown()
+ * \author Kurt Skauen, Henrik Isaksson (henrik@isaksson.tk)
+ *****************************************************************************/
 bool ListViewContainer::HandleKey( char nChar, uint32 nQualifiers )
 {
 	if( m_cRows.empty() )
@@ -1082,15 +1141,9 @@ bool ListViewContainer::HandleKey( char nChar, uint32 nQualifiers )
 	case VK_PAGE_UP:
 	case VK_UP_ARROW:
 		{
-			int nPageHeight = 0;
-
 			if( m_nEndSel == 0 )
 			{
 				return ( true );
-			}
-			if( m_cRows.empty() == false )
-			{
-				nPageHeight = int ( GetBounds().Height(  ) / ( m_vContentHeight / float ( m_cRows.size(  ) ) ) );
 			}
 
 			if( m_nEndSel == -1 )
@@ -1099,7 +1152,17 @@ bool ListViewContainer::HandleKey( char nChar, uint32 nQualifiers )
 			}
 			if( m_nBeginSel == -1 )
 			{
-				m_nBeginSel = m_nEndSel = m_cRows.size() - 1;
+				// No item was selected, we'll select the last one
+				m_nEndSel = m_cRows.size() - 1;
+
+				// Iterate backwards through the list until a visible item is found
+				for( ; m_nEndSel > 0; m_nEndSel-- )
+				{
+					if( m_cRows[m_nEndSel]->IsVisible() )
+						break;
+				}
+				m_nBeginSel = m_nEndSel;
+
 				ExpandSelect( m_nEndSel, false, ( nQualifiers & QUAL_SHIFT ) == 0 || ( m_nModeFlags & ListView::F_MULTI_SELECT ) == 0 );
 			}
 			else
@@ -1108,7 +1171,28 @@ bool ListViewContainer::HandleKey( char nChar, uint32 nQualifiers )
 				{
 					m_nBeginSel = -1;
 				}
-				ExpandSelect( m_nEndSel - ( ( nChar == VK_UP_ARROW ) ? 1 : nPageHeight ), false, ( nQualifiers & QUAL_SHIFT ) == 0 || ( m_nModeFlags & ListView::F_MULTI_SELECT ) == 0 );
+
+				float vPageBreak = m_cRows[m_nEndSel]->m_vYPos - GetBounds().Height(  );
+				int nNewSel = m_nEndSel - 1;
+
+				for( ; nNewSel > 0; nNewSel-- )
+				{
+					if( m_cRows[nNewSel]->IsVisible() )
+					{
+						if( nChar == VK_UP_ARROW )
+						{
+							break;
+						}
+						else
+						{
+							if( m_cRows[nNewSel]->m_vYPos < vPageBreak )
+							{
+								break;
+							}
+						}
+					}
+				}
+				ExpandSelect( nNewSel, false, ( nQualifiers & QUAL_SHIFT ) == 0 || ( m_nModeFlags & ListView::F_MULTI_SELECT ) == 0 );
 			}
 			if( ( nQualifiers & QUAL_SHIFT ) == 0 )
 			{
@@ -1124,16 +1208,9 @@ bool ListViewContainer::HandleKey( char nChar, uint32 nQualifiers )
 	case VK_PAGE_DOWN:
 	case VK_DOWN_ARROW:
 		{
-			int nPageHeight = 0;
-
 			if( m_nEndSel == int ( m_cRows.size() ) - 1 )
 			{
 				return ( true );
-			}
-
-			if( m_cRows.size() > 0 )
-			{
-				nPageHeight = int ( GetBounds().Height(  ) / ( m_vContentHeight / float ( m_cRows.size(  ) ) ) );
 			}
 
 			if( m_nEndSel == -1 )
@@ -1142,7 +1219,17 @@ bool ListViewContainer::HandleKey( char nChar, uint32 nQualifiers )
 			}
 			if( m_nBeginSel == -1 )
 			{
-				m_nBeginSel = m_nEndSel = 0;
+				// No item was selected, we'll select the first one
+				m_nEndSel = 0;
+
+				// Iterate through the list until a visible item is found
+				for( ; m_nEndSel < m_cRows.size(); m_nEndSel++ )
+				{
+					if( m_cRows[m_nEndSel]->IsVisible() )
+						break;
+				}
+				m_nBeginSel = m_nEndSel;
+
 				ExpandSelect( m_nEndSel, false, ( nQualifiers & QUAL_SHIFT ) == 0 || ( m_nModeFlags & ListView::F_MULTI_SELECT ) == 0 );
 			}
 			else
@@ -1151,7 +1238,28 @@ bool ListViewContainer::HandleKey( char nChar, uint32 nQualifiers )
 				{
 					m_nBeginSel = -1;
 				}
-				ExpandSelect( m_nEndSel + ( ( nChar == VK_DOWN_ARROW ) ? 1 : nPageHeight ), false, ( nQualifiers & QUAL_SHIFT ) == 0 || ( m_nModeFlags & ListView::F_MULTI_SELECT ) == 0 );
+
+				float vPageBreak = m_cRows[m_nEndSel]->m_vYPos + GetBounds().Height(  );
+				int nNewSel = m_nEndSel + 1;
+
+				for( ; nNewSel < m_cRows.size(); nNewSel++ )
+				{
+					if( m_cRows[nNewSel]->IsVisible() )
+					{
+						if( nChar == VK_DOWN_ARROW )
+						{
+							break;
+						}
+						else
+						{
+							if( m_cRows[nNewSel]->m_vYPos + m_cRows[m_nEndSel]->m_vHeight > vPageBreak )
+							{
+								break;
+							}
+						}
+					}
+				}
+				ExpandSelect( nNewSel, false, ( nQualifiers & QUAL_SHIFT ) == 0 || ( m_nModeFlags & ListView::F_MULTI_SELECT ) == 0 );
 			}
 			if( ( nQualifiers & QUAL_SHIFT ) == 0 )
 			{
@@ -1305,7 +1413,6 @@ int ListViewContainer::InsertColumn( const char *pzTitle, int nWidth, int nPos )
 // NOTE:
 // SEE ALSO:
 //----------------------------------------------------------------------------
-
 int ListViewContainer::InsertRow( int nPos, ListViewRow * pcRow, bool bUpdate )
 {
 	int nIndex;
@@ -1354,6 +1461,10 @@ int ListViewContainer::InsertRow( int nPos, ListViewRow * pcRow, bool bUpdate )
 
 	for( uint i = nIndex; i < m_cRows.size(); ++i )
 	{
+		for( ; !m_cRows[i]->IsVisible() && i < m_cRows.size(  ); i++ );
+		if( i >= m_cRows.size() )
+			break;
+
 		float y = 0.0f;
 
 		if( i > 0 )
@@ -1463,7 +1574,7 @@ ListViewRow *ListViewContainer::RemoveRow( int nIndex, bool bUpdate )
 			}
 		}
 	}
-	bool bSelChanged = pcRow->m_bSelected;
+	bool bSelChanged = pcRow->IsSelected();
 
 	if( m_nFirstSel != -1 )
 	{
@@ -1485,7 +1596,7 @@ ListViewRow *ListViewContainer::RemoveRow( int nIndex, bool bUpdate )
 				m_nLastSel--;
 				for( int i = nIndex; i <= m_nLastSel; ++i )
 				{
-					if( m_cRows[i]->m_bSelected )
+					if( m_cRows[i]->IsSelected() )
 					{
 						m_nFirstSel = i;
 						bSelChanged = true;
@@ -1502,7 +1613,7 @@ ListViewRow *ListViewContainer::RemoveRow( int nIndex, bool bUpdate )
 			{
 				for( int i = m_nLastSel - 1; i >= m_nFirstSel; --i )
 				{
-					if( m_cRows[i]->m_bSelected )
+					if( m_cRows[i]->IsSelected() )
 					{
 						m_nLastSel = i;
 						bSelChanged = true;
@@ -1526,6 +1637,39 @@ ListViewRow *ListViewContainer::RemoveRow( int nIndex, bool bUpdate )
 	}
 	return ( pcRow );
 
+}
+
+void ListViewContainer::LayoutRows()
+{
+	float y = 0.0f;
+
+	for( uint i = 0; i < m_cRows.size(); ++i )
+	{
+		if( m_cRows[i]->IsVisible() )
+		{
+			m_cRows[i]->m_vYPos = y;
+			y = m_cRows[i]->m_vYPos + m_cRows[i]->m_vHeight + m_vVSpacing;
+		}
+	}
+
+	m_vContentHeight = y;
+
+	for( uint i = 0; i < m_cCols.size(); ++i )
+	{
+		m_cCols[i]->m_vContentWidth = 0.0f;
+		for( uint j = 0; j < m_cRows.size(); ++j )
+		{
+			if( m_cRows[j]->IsVisible() )
+			{
+				float vWidth = m_cRows[j]->GetWidth( m_cCols[i], i );
+
+				if( vWidth > m_cCols[i]->m_vContentWidth )
+				{
+					m_cCols[i]->m_vContentWidth = vWidth;
+				}
+			}
+		}
+	}
 }
 
 //----------------------------------------------------------------------------
@@ -1605,7 +1749,7 @@ void ListViewContainer::Paint( const Rect & cUpdateRect )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-void ListViewContainer::InvalidateRow( int nRow, uint32 nFlags, bool bImidiate )
+void ListViewContainer::InvalidateRow( int nRow, uint32 nFlags, bool bImediate )
 {
 	float vTotRowHeight = m_cRows[nRow]->m_vHeight + m_vVSpacing;
 	float y = m_cRows[nRow]->m_vYPos;
@@ -1615,7 +1759,11 @@ void ListViewContainer::InvalidateRow( int nRow, uint32 nFlags, bool bImidiate )
 	{
 		return;
 	}
-	if( bImidiate )
+
+	if( !m_cRows[nRow]->IsVisible() )
+		return;
+
+	if( bImediate )
 	{
 		bool bHasFocus = m_pcListView->HasFocus();
 
@@ -1624,7 +1772,7 @@ void ListViewContainer::InvalidateRow( int nRow, uint32 nFlags, bool bImidiate )
 			Rect cColFrame( cFrame );
 
 			cColFrame.right = GetColumn( i )->GetFrame().Width(  );
-			m_cRows[nRow]->Paint( cColFrame, GetColumn( i ), i, m_cRows[nRow]->m_bSelected, m_cRows[nRow]->m_bHighlighted, bHasFocus );
+			m_cRows[nRow]->Paint( cColFrame, GetColumn( i ), i, m_cRows[nRow]->IsSelected(), m_cRows[nRow]->IsHighlighted(  ), bHasFocus );
 		}
 	}
 	else
@@ -1643,9 +1791,9 @@ void ListViewContainer::InvertRange( int nStart, int nEnd )
 {
 	for( int i = nStart; i <= nEnd; ++i )
 	{
-		if( m_cRows[i]->m_bIsSelectable )
+		if( m_cRows[i]->IsSelectable() )
 		{
-			m_cRows[i]->m_bSelected = !m_cRows[i]->m_bSelected;
+			m_cRows[i]->SetSelected( !m_cRows[i]->IsSelected() );
 			InvalidateRow( i, ListView::INV_VISUAL );
 		}
 	}
@@ -1660,7 +1808,7 @@ void ListViewContainer::InvertRange( int nStart, int nEnd )
 		{
 			for( int i = nStart; i <= nEnd; ++i )
 			{
-				if( m_cRows[i]->m_bSelected )
+				if( m_cRows[i]->IsSelected() )
 				{
 					m_nFirstSel = i;
 					break;
@@ -1671,7 +1819,7 @@ void ListViewContainer::InvertRange( int nStart, int nEnd )
 		{
 			for( int i = nEnd; i >= nStart; --i )
 			{
-				if( m_cRows[i]->m_bSelected )
+				if( m_cRows[i]->IsSelected() )
 				{
 					m_nLastSel = i;
 					break;
@@ -1685,7 +1833,7 @@ void ListViewContainer::InvertRange( int nStart, int nEnd )
 				m_nFirstSel = m_nLastSel + 1;
 				for( int i = nStart; i <= m_nLastSel; ++i )
 				{
-					if( m_cRows[i]->m_bSelected )
+					if( m_cRows[i]->IsSelected() )
 					{
 						m_nFirstSel = i;
 						break;
@@ -1699,7 +1847,7 @@ void ListViewContainer::InvertRange( int nStart, int nEnd )
 				{
 					for( int i = nEnd; i >= m_nFirstSel; --i )
 					{
-						if( m_cRows[i]->m_bSelected )
+						if( m_cRows[i]->IsSelected() )
 						{
 							m_nLastSel = i;
 							break;
@@ -1722,9 +1870,9 @@ bool ListViewContainer::SelectRange( int nStart, int nEnd, bool bSelect )
 
 	for( int i = nStart; i <= nEnd; ++i )
 	{
-		if( m_cRows[i]->m_bIsSelectable && m_cRows[i]->m_bSelected != bSelect )
+		if( m_cRows[i]->IsSelectable() && m_cRows[i]->IsSelected(  ) != bSelect )
 		{
-			m_cRows[i]->m_bSelected = bSelect;
+			m_cRows[i]->SetSelected( bSelect );
 			InvalidateRow( i, ListView::INV_VISUAL );
 			bChanged = true;
 		}
@@ -1761,7 +1909,7 @@ bool ListViewContainer::SelectRange( int nStart, int nEnd, bool bSelect )
 					m_nFirstSel = m_nLastSel + 1;
 					for( ; i <= m_nLastSel; ++i )
 					{
-						if( m_cRows[i]->m_bSelected )
+						if( m_cRows[i]->IsSelected() )
 						{
 							m_nFirstSel = i;
 							break;
@@ -1775,7 +1923,7 @@ bool ListViewContainer::SelectRange( int nStart, int nEnd, bool bSelect )
 					m_nLastSel = m_nFirstSel - 1;
 					for( ; i >= m_nFirstSel - 1; --i )
 					{
-						if( m_cRows[i]->m_bSelected )
+						if( m_cRows[i]->IsSelected() )
 						{
 							m_nLastSel = i;
 							break;
@@ -1814,9 +1962,9 @@ void ListViewContainer::ExpandSelect( int nRow, bool bInvert, bool bClear )
 		{
 			for( int i = m_nFirstSel; i <= m_nLastSel; ++i )
 			{
-				if( m_cRows[i]->m_bSelected )
+				if( m_cRows[i]->IsSelected() && m_cRows[i]->IsVisible(  ) )
 				{
-					m_cRows[i]->m_bSelected = false;
+					m_cRows[i]->SetSelected( false );
 					InvalidateRow( i, ListView::INV_VISUAL, true );
 				}
 			}
@@ -1988,10 +2136,10 @@ bool ListViewContainer::ClearSelection()
 	{
 		for( int i = m_nFirstSel; i <= m_nLastSel; ++i )
 		{
-			if( m_cRows[i]->m_bSelected )
+			if( m_cRows[i]->IsSelected() )
 			{
 				bChanged = true;
-				m_cRows[i]->m_bSelected = false;
+				m_cRows[i]->SetSelected( false );
 				InvalidateRow( i, ListView::INV_VISUAL, true );
 			}
 		}
@@ -2249,6 +2397,7 @@ void ListViewHeader::MouseUp( const Point & cPosition, uint32 nButton, Message *
 			Flush();
 		}
 	}
+
 	m_nDragColumn = -1;
 	if( pcData != NULL )
 	{
@@ -2326,7 +2475,7 @@ void ListViewHeader::FrameSized( const Point & cDelta )
 		bNeedFlush = true;
 	}
 
-	Layout();
+//      Layout();
 
 	if( bNeedFlush )
 	{
@@ -2470,6 +2619,13 @@ bool ListView::HasColumnHeader() const
 	return ( ( m_pcMainView->m_nModeFlags & F_NO_HEADER ) == 0 );
 }
 
+/** Turn column header on or off
+ *	\par	Description:
+ *			Use this method to specify if a column header should be drawn.
+ *			
+ * \sa HasColumnHeader()
+ * \author Kurt Skauen
+ *****************************************************************************/
 void ListView::SetHasColumnHeader( bool bFlag )
 {
 	if( bFlag )
@@ -2480,6 +2636,7 @@ void ListView::SetHasColumnHeader( bool bFlag )
 	{
 		m_pcMainView->m_nModeFlags |= F_NO_HEADER;
 	}
+
 	Layout();
 	Flush();
 }
@@ -2587,16 +2744,14 @@ Message *ListView::GetInvokeMsg() const
 }
 
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-//      Calculate and set the range and proportion of scroll bars.
-//      Scroll the view so upper/left corner
-//      is at or above/left of 0,0 if needed
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
+/** Adjust scroll bars
+ *	\par	Description:
+ *			Calculate and set the range and proportion of scroll bars.
+ *			Scroll the view so upper/left corner
+ *			is at or above/left of 0,0 if needed
+ *			
+ * \author Kurt Skauen
+ *****************************************************************************/
 void ListView::AdjustScrollBars( bool bOkToHScroll )
 {
 	if( m_pcMainView->m_cRows.size() == 0 )
@@ -2780,7 +2935,7 @@ void ListView::Layout()
 		Rect cVScrFrame( cFrame );
 
 		cVScrFrame.top += nTopHeight;
-//      cVScrFrame.bottom -= 2.0f;
+		//      cVScrFrame.bottom -= 2.0f;
 		if( m_pcHScroll != NULL )
 		{
 			cVScrFrame.bottom -= 16.0f;
@@ -2798,14 +2953,16 @@ void ListView::Layout()
 		{
 			cVScrFrame.right -= 16.0f;
 		}
-//      cVScrFrame.left  += 2.0f;
-//      cVScrFrame.right -= 2.0f;
+		//      cVScrFrame.left  += 2.0f;
+		//      cVScrFrame.right -= 2.0f;
 		cVScrFrame.top = cVScrFrame.bottom - 16.0f;
 		cHeaderFrame.bottom = cVScrFrame.top;
 
 		m_pcHScroll->SetFrame( cVScrFrame );
 	}
+
 	m_pcHeaderView->SetFrame( cHeaderFrame );
+	m_pcHeaderView->Layout();
 	AdjustScrollBars();
 }
 
@@ -2832,13 +2989,15 @@ void ListView::FrameSized( const Point & cDelta )
 	Flush();
 }
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
+/** Sort rows
+ *	\par	Description:
+ *			Sort rows in the ListView by the selected column, according to
+ *			ListViewRow::IsLessThan().
+ *			The actual sorting takes place in SortRows(), which can be overridden
+ *			to provide custom sorting routines.
+ * \sa SortRows()
+ * \author Kurt Skauen, Henrik Isaksson (henrik@isaksson.tk)
+ *****************************************************************************/
 void ListView::Sort()
 {
 	if( uint ( m_pcMainView->m_nSortColumn ) >= m_pcMainView->m_cCols.size() )
@@ -2849,20 +3008,14 @@ void ListView::Sort()
 	{
 		return;
 	}
-	std::sort( m_pcMainView->m_cRows.begin(), m_pcMainView->m_cRows.end(  ), RowContentPred( m_pcMainView->m_nSortColumn ) );
 
-	float y = 0.0f;
+	SortRows( &m_pcMainView->m_cRows, m_pcMainView->m_nSortColumn );
 
-	for( uint i = 0; i < m_pcMainView->m_cRows.size(); ++i )
-	{
-		m_pcMainView->m_cRows[i]->m_vYPos = y;
-		y += m_pcMainView->m_cRows[i]->m_vHeight + m_pcMainView->m_vVSpacing;
-	}
 	if( m_pcMainView->m_nFirstSel != -1 )
 	{
 		for( uint i = 0; i < m_pcMainView->m_cRows.size(); ++i )
 		{
-			if( m_pcMainView->m_cRows[i]->m_bSelected )
+			if( m_pcMainView->m_cRows[i]->IsSelected() )
 			{
 				m_pcMainView->m_nFirstSel = i;
 				break;
@@ -2870,39 +3023,29 @@ void ListView::Sort()
 		}
 		for( int i = m_pcMainView->m_cRows.size() - 1; i >= 0; --i )
 		{
-			if( m_pcMainView->m_cRows[i]->m_bSelected )
+			if( m_pcMainView->m_cRows[i]->IsSelected() )
 			{
 				m_pcMainView->m_nLastSel = i;
 				break;
 			}
 		}
 	}
-	for( uint i = 0; i < m_pcMainView->m_cCols.size(); ++i )
-	{
-		m_pcMainView->m_cCols[i]->Invalidate();
-	}
-	Flush();
+
+	RefreshLayout();
 }
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
+/** Make row visible
+ *	\par	Description:
+ *			Scroll the ListView so that a row becomes visible.
+ *	\param	nRow Index to row to make visible.
+ *	\param	bCenter Set to true to have the view centred on nRow.
+ * \author Kurt Skauen
+ *****************************************************************************/
 void ListView::MakeVisible( int nRow, bool bCenter )
 {
 	m_pcMainView->MakeVisible( nRow, bCenter );
 	Flush();
 }
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
 
 int ListView::InsertColumn( const char *pzTitle, int nWidth, int nPos )
 {
@@ -2942,13 +3085,14 @@ void ListView::SetColumnMapping( const std::vector < int >&cMap )
 	m_pcHeaderView->Invalidate();
 }
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
+/** Insert a row
+ *	\par	Description:
+ *			Insert a row at a specific position.
+ *	\param	nPos Row index.
+ *	\param	bUpdate Update display. If many operations are performed, often
+ *			only the last one need to update the display.
+ * \author Kurt Skauen
+ *****************************************************************************/
 void ListView::InsertRow( int nPos, ListViewRow * pcRow, bool bUpdate )
 {
 	m_pcMainView->InsertRow( nPos, pcRow, bUpdate );
@@ -2959,11 +3103,27 @@ void ListView::InsertRow( int nPos, ListViewRow * pcRow, bool bUpdate )
 	}
 }
 
+/** Insert a row
+ *	\par	Description:
+ *			Insert a row at the end of the list.
+ *	\param	bUpdate Update display. If many operations are performed, often
+ *			only the last one need to update the display.
+ * \author Kurt Skauen
+ *****************************************************************************/
 void ListView::InsertRow( ListViewRow * pcRow, bool bUpdate )
 {
 	InsertRow( -1, pcRow, bUpdate );
 }
 
+/** Remove a row
+ *	\par	Description:
+ *			Removes a row from the ListView. A pointer to the removed row is
+ *			returned, and the application is responsible for freeing it.
+ *	\param	nIndex Row index.
+ *	\param	bUpdate Update display. If many operations are performed, often
+ *			only the last one need to update the display.
+ * \author Kurt Skauen
+ *****************************************************************************/
 ListViewRow *ListView::RemoveRow( int nIndex, bool bUpdate )
 {
 	ListViewRow *pcRow = m_pcMainView->RemoveRow( nIndex, bUpdate );
@@ -2976,31 +3136,36 @@ ListViewRow *ListView::RemoveRow( int nIndex, bool bUpdate )
 	return ( pcRow );
 }
 
+/** Refresh row
+ *	\par	Description:
+ *			This method causes a row to be redrawn.
+ *	\param	nIndex Row index.
+ *	\param	nFlags Flags. Use INV_VISUAL.
+ * \author Kurt Skauen
+ *****************************************************************************/
 void ListView::InvalidateRow( int nRow, uint32 nFlags )
 {
 	m_pcMainView->InvalidateRow( nRow, nFlags );
 	Flush();
 }
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
+/** Get row count
+ *	\par	Description:
+ *			Returns the number of rows currently attached to the ListView.
+ * \author Kurt Skauen
+ *****************************************************************************/
 uint ListView::GetRowCount() const
 {
 	return ( m_pcMainView->m_cRows.size() );
 }
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
+/** Get a row
+ *	\par	Description:
+ *			Returns the a pointer to the row at index nIndex or NULL if the
+ *			index is out of bounds.
+ *	\param	nIndex Row index.
+ * \author Kurt Skauen
+ *****************************************************************************/
 ListViewRow *ListView::GetRow( uint nIndex ) const
 {
 	if( nIndex < m_pcMainView->m_cRows.size() )
@@ -3013,13 +3178,14 @@ ListViewRow *ListView::GetRow( uint nIndex ) const
 	}
 }
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
+/** Find row at a certain position
+ *	\par	Description:
+ *			Returns a pointer to the row that is located at cPos, or NULL
+ *			if no row was found at that position. Can for example be used to
+ *			implement pop-up menus.
+ *	\param	cPos Coordinates referenced to ListView control.
+ * \author Kurt Skauen
+ *****************************************************************************/
 ListViewRow *ListView::GetRow( const Point & cPos ) const
 {
 	int nHitRow = m_pcMainView->GetRowIndex( cPos.y );
@@ -3034,13 +3200,14 @@ ListViewRow *ListView::GetRow( const Point & cPos ) const
 	}
 }
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
+/** Find row at a certain position
+ *	\par	Description:
+ *			Returns the row index to the row that is located at cPos, or -1
+ *			if no row was found at that position. Can for example be used to
+ *			implement pop-up menus.
+ *	\param	cPos Screen coordinate to look for a row at.
+ * \author Kurt Skauen
+ *****************************************************************************/
 int ListView::HitTest( const Point & cPos ) const
 {
 	Point cParentPos = ConvertToScreen( m_pcMainView->ConvertFromScreen( cPos ) );
@@ -3056,13 +3223,14 @@ int ListView::HitTest( const Point & cPos ) const
 	}
 }
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
+/** Get row vertical position
+ *	\par	Description:
+ *			Returns the vertical position, in reference to the ListView control,
+ *			of a row with index nRow, or 0.0 if no row was found at that
+ *			position.
+ *	\param	nRow Row index to look at.
+ * \author Kurt Skauen
+ *****************************************************************************/
 float ListView::GetRowPos( int nRow )
 {
 	if( nRow >= 0 && nRow < int ( m_pcMainView->m_cRows.size() ) )
@@ -3092,9 +3260,9 @@ void ListView::Select( int nFirst, int nLast, bool bReplace, bool bSelect )
 	{
 		for( int i = m_pcMainView->m_nFirstSel; i <= m_pcMainView->m_nLastSel; ++i )
 		{
-			if( m_pcMainView->m_cRows[i]->m_bSelected )
+			if( m_pcMainView->m_cRows[i]->IsSelected() )
 			{
-				m_pcMainView->m_cRows[i]->m_bSelected = false;
+				m_pcMainView->m_cRows[i]->SetSelected( false );
 				m_pcMainView->InvalidateRow( i, INV_VISUAL );
 			}
 		}
@@ -3160,9 +3328,9 @@ void ListView::Highlight( int nFirst, int nLast, bool bReplace, bool bHighlight 
 		{
 			bool bHigh = ( i >= nFirst && i <= nLast );
 
-			if( m_pcMainView->m_cRows[i]->m_bHighlighted != bHigh )
+			if( m_pcMainView->m_cRows[i]->IsHighlighted() != bHigh )
 			{
-				m_pcMainView->m_cRows[i]->m_bHighlighted = bHigh;
+				m_pcMainView->m_cRows[i]->SetHighlighted( bHigh );
 				m_pcMainView->InvalidateRow( i, ListView::INV_VISUAL );
 			}
 		}
@@ -3171,9 +3339,9 @@ void ListView::Highlight( int nFirst, int nLast, bool bReplace, bool bHighlight 
 	{
 		for( int i = nFirst; i <= nLast; ++i )
 		{
-			if( m_pcMainView->m_cRows[i]->m_bHighlighted != bHighlight )
+			if( m_pcMainView->m_cRows[i]->IsHighlighted() != bHighlight )
 			{
-				m_pcMainView->m_cRows[i]->m_bHighlighted = bHighlight;
+				m_pcMainView->m_cRows[i]->SetHighlighted( bHighlight );
 				m_pcMainView->InvalidateRow( i, ListView::INV_VISUAL );
 			}
 		}
@@ -3198,30 +3366,22 @@ void ListView::SetCurrentRow( int nRow )
 	m_pcMainView->m_nEndSel = nRow;
 }
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
 void ListView::Highlight( int nRow, bool bReplace, bool bHighlight )
 {
 	Highlight( nRow, nRow, bReplace, bHighlight );
 }
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
+/** Check if a row is selected
+ *	\par	Description:
+ *			Returns true if nRow is selected.
+ * \param	nRow Row to check.
+ * \author Kurt Skauen
+ *****************************************************************************/
 bool ListView::IsSelected( uint nRow ) const
 {
 	if( nRow < m_pcMainView->m_cRows.size() )
 	{
-		return ( m_pcMainView->m_cRows[nRow]->m_bSelected );
+		return ( m_pcMainView->m_cRows[nRow]->IsSelected() );
 	}
 	else
 	{
@@ -3229,26 +3389,17 @@ bool ListView::IsSelected( uint nRow ) const
 	}
 }
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
+/** Clear list
+ *	\par	Description:
+ *			Clears the ListView for all rows.
+ * \author Kurt Skauen
+ *****************************************************************************/
 void ListView::Clear()
 {
 	m_pcMainView->Clear();
 	AdjustScrollBars();
 	Flush();
 }
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
 
 void ListView::Paint( const Rect & cUpdateRect )
 {
@@ -3296,13 +3447,11 @@ void ListView::SelectionChanged( int nFirstRow, int nLastRow )
 	}
 }
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
+/** Get first selected row
+ *	\par	Description:
+ *			Returns index to the first select row, or -1 if none is selected.
+ * \author Kurt Skauen
+ *****************************************************************************/
 int ListView::GetFirstSelected() const
 {
 	return ( m_pcMainView->m_nFirstSel );
@@ -3350,11 +3499,21 @@ bool ListView::DragSelection( const Point & cPos )
 }
 
 
+/** STL iterator interface
+ *	\par	Description:
+ *			Returns iterator pointing to the first row.
+ * \author Kurt Skauen
+ *****************************************************************************/
 ListView::const_iterator ListView::begin() const
 {
 	return ( m_pcMainView->m_cRows.begin() );
 }
 
+/** STL iterator interface
+ *	\par	Description:
+ *			Returns iterator pointing past the last row.
+ * \author Kurt Skauen
+ *****************************************************************************/
 ListView::const_iterator ListView::end() const
 {
 	return ( m_pcMainView->m_cRows.end() );
@@ -3372,3 +3531,41 @@ void ListView::__reserved3__()
 void ListView::__reserved4__()
 {
 }
+
+/** Refresh layout
+ *	\par	Description:
+ *			Calculates new positions for all rows, invalidates them so that
+ *			they are rendered, and adjusts scrollbars. Normally there is no
+ *			reason to use this function, it is primarily implemented for use
+ *			by the TreeView class.
+ * \author Henrik Isaksson (henrik@isaksson.tk)
+ *****************************************************************************/
+void ListView::RefreshLayout()
+{
+	m_pcMainView->LayoutRows();
+
+	for( uint i = 0; i < m_pcMainView->m_cColMap.size(); ++i )
+	{
+		m_pcMainView->GetColumn( i )->Invalidate();
+		m_pcMainView->GetColumn( i )->Flush();
+	}
+
+	AdjustScrollBars( false );
+
+	Flush();
+	Sync();
+}
+
+/** Sort rows
+ *	\par	Description:
+ *			Overridable default sorting routine.
+ *	\param	pcRows std::vector of ListViewRows to be sorted.
+ *	\param	nColumn The column to sort by.
+ * \sa Sort()
+ * \author Henrik Isaksson (henrik@isaksson.tk)
+ *****************************************************************************/
+void ListView::SortRows( std::vector < ListViewRow * >*pcRows, int nColumn )
+{
+	std::sort( pcRows->begin(), pcRows->end(  ), RowContentPred( nColumn ) );
+}
+
