@@ -245,7 +245,7 @@ File::~File()
 	delete m;
 }
 
-status_t File::FDChanged( int nNewFD, const struct::stat & sStat )
+status_t File::FDChanged( int nNewFD, const struct stat & sStat )
 {
 	if( m->m_bDirty && IsValid() )
 	{
@@ -670,7 +670,3 @@ off_t File::Seek( off_t nPos, int nMode )
 		return ( -1 );
 	}
 }
-
-
-
-

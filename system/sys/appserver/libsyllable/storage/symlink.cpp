@@ -129,15 +129,21 @@ status_t SymLink::SetTo( const SymLink & cLink )
 status_t SymLink::ReadLink( String * pcBuffer )
 {
 	String cBuffer;
+	int nSize = PATH_MAX;
 
-	cBuffer.resize( PATH_MAX );
+//	cBuffer.resize( PATH_MAX );
 	for( ;; )
 	{
-		ssize_t nLen = freadlink( GetFileDescriptor(), cBuffer.begin(  ), cBuffer.size(  ) );
+		char* pzBfr = new char[ nSize ];
+		ssize_t nLen = freadlink( GetFileDescriptor(), pzBfr, nSize );
+//		ssize_t nLen = freadlink( GetFileDescriptor(), cBuffer.begin( ), cBuffer.size(  ) );
+		cBuffer = pzBfr;
+		delete []pzBfr;
 
-		if( nLen == ssize_t ( cBuffer.size() ) )
+		if( nLen == ssize_t ( nSize ) )
 		{
-			cBuffer.resize( cBuffer.size() * 2 );
+			nSize*=2;
+//			cBuffer.resize( cBuffer.size() * 2 );
 		}
 		else if( nLen < 0 )
 		{

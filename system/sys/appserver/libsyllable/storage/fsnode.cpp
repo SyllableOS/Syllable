@@ -365,7 +365,7 @@ status_t FSNode::SetTo( const String & cPath, int nOpenMode )
 	{
 		return ( -1 );
 	}
-	struct::stat sStat;
+	struct stat sStat;
 
 	if( fstat( nNewFD, &sStat ) < 0 )
 	{
@@ -448,7 +448,7 @@ status_t FSNode::SetTo( const Directory & cDir, const String & cPath, int nOpenM
 	{
 		return ( -1 );
 	}
-	struct::stat sStat;
+	struct stat sStat;
 
 	if( fstat( nNewFD, &sStat ) < 0 )
 	{
@@ -508,7 +508,7 @@ status_t FSNode::SetTo( const FileReference & cRef, int nOpenMode )
 	{
 		return ( -1 );
 	}
-	struct::stat sStat;
+	struct stat sStat;
 
 	if( fstat( nNewFD, &sStat ) < 0 )
 	{
@@ -555,7 +555,7 @@ status_t FSNode::SetTo( const FileReference & cRef, int nOpenMode )
 
 status_t FSNode::SetTo( int nNewFD )
 {
-	struct::stat sStat;
+	struct stat sStat;
 
 	if( fstat( nNewFD, &sStat ) < 0 )
 	{
@@ -654,12 +654,12 @@ void FSNode::Unset()
 	}
 }
 
-status_t FSNode::FDChanged( int nNewFD, const struct::stat & sStat )
+status_t FSNode::FDChanged( int nNewFD, const struct stat & sStat )
 {
 	return ( 0 );
 }
 
-status_t FSNode::GetStat( struct::stat * psStat, bool bUpdateCache ) const
+status_t FSNode::GetStat( struct stat * psStat, bool bUpdateCache ) const
 {
 	if( m->m_nFD < 0 )
 	{
@@ -1038,5 +1038,6 @@ int FSNode::GetFileDescriptor() const
 {
 	return ( m->m_nFD );
 }
+
 
 

@@ -237,7 +237,7 @@ status_t FileReference::Delete()
 	return ( unlink( cPath.c_str() ) );
 }
 
-status_t FileReference::GetStat( struct::stat * psStat ) const
+status_t FileReference::GetStat( struct stat * psStat ) const
 {
 	int nFD = based_open( m->m_cDirectory.GetFileDescriptor(), m->m_cName.c_str(  ), O_RDONLY );
 
@@ -261,5 +261,3 @@ const Directory & FileReference::GetDirectory() const
 {
 	return ( m->m_cDirectory );
 }
-
-

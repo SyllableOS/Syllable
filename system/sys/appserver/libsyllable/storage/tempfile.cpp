@@ -32,8 +32,8 @@ class TempFile::Private
 };
 
 
-TempFile::TempFile( const String& cPrefix = "", const String& cPath = "", int nAccess = S_IRUSR | S_IWUSR ):
-File()
+TempFile::TempFile( const String& cPrefix, const String& cPath, int nAccess )
+:File()
 {
 	m = new Private;
 	m->m_bDeleteFile = true;
@@ -89,4 +89,5 @@ String TempFile::GetPath() const
 {
 	return ( m->m_cPath );
 }
+
 

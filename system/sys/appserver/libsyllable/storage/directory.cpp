@@ -203,7 +203,7 @@ Directory::~Directory()
 	delete m;
 }
 
-status_t Directory::FDChanged( int nNewFD, const struct::stat & sStat )
+status_t Directory::FDChanged( int nNewFD, const struct stat & sStat )
 {
 	if( nNewFD >= 0 && S_ISDIR( sStat.st_mode ) == false )
 	{

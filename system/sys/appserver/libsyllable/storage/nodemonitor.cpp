@@ -227,7 +227,6 @@ NodeMonitor::~NodeMonitor()
 	{
 		delete_node_monitor( m->m_nMonitor );
 	}
-
 	delete m;
 }
 
