@@ -20,11 +20,14 @@ tree
 
 	atheos/autolnk
 	atheos/autolnk/bin
+	atheos/autolnk/etc
 	atheos/autolnk/include
 	atheos/autolnk/info
 	atheos/autolnk/lib
 	atheos/autolnk/libexec
 	atheos/autolnk/man
+	atheos/autolnk/sbin
+	atheos/autolnk/share
 
 	atheos/sys
 
