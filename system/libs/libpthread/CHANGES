@@ -1,0 +1,18 @@
+* Oct 05 2002, Kristian Van Der Vliet *
+ 
+Initial checkin.  The following is complete :
+
+	* Thread creation and deletion
+	* Thread attributes
+	* Mutexes
+	* Conditional variables, including pthread_cond_timedwait()
+	* Misc. parts such as pthread_self(), pthread_equal() etc.
+
+The following is still to be done :
+
+	* Thread joins
+	* Cancellation
+	* Cleanup handlers via. pthread_cleanup_push() and pthread_cleanup_pop()
+	* X/Open R/W locks
+	* Misc. parts such as pthread_sigmask(), pthread_detach() etc.
+
