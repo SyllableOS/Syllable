@@ -593,17 +593,17 @@ void ListViewCol::Paint( const Rect & cUpdateRect )
 
 void ListViewCol::MouseDown(const Point& cPos, uint32 nButtons)
 {
-	m_pcParent->MouseDown(cPos,nButtons);
+	m_pcParent->MouseDown( cPos + GetFrame().LeftTop(), nButtons );
 }
 
 void ListViewCol::MouseUp(const Point& cPos, uint32 nButtons, Message* pcData)
 {
-	m_pcParent->MouseUp(cPos,nButtons,pcData);
+	m_pcParent->MouseUp( cPos + GetFrame().LeftTop(), nButtons, pcData );
 }
 
 void ListViewCol::MouseMove(const Point& cPos,int nCode,uint32 nButtons, Message* pcData)
 {
-	m_pcParent->MouseMove(cPos,nCode,nButtons,pcData);
+	m_pcParent->MouseMove( cPos + GetFrame().LeftTop(), nCode, nButtons, pcData );
 }
 
 //----------------------------------------------------------------------------
@@ -763,102 +763,97 @@ void ListViewContainer::MouseDown( const Point & cPosition, uint32 nButton )
 {
 	MakeFocus( true );
 
-	if( m_cRows.empty() )
+	if( !m_cRows.empty() )
 	{
-		return;
-	}
+		m_bMousDownSeen = true;
 
-	m_bMousDownSeen = true;
+		int nHitCol = -1;
+		int nHitRow;
 
-	int nHitCol = -1;
-	int nHitRow;
-
-	if( cPosition.y >= m_vContentHeight )
-	{
-		nHitRow = m_cRows.size() - 1;
-	}
-	else
-	{
-		nHitRow = GetRowIndex( cPosition.y );
-//              cout << "got row index: " << nHitRow << endl;
-		if( nHitRow < 0 )
+		if( cPosition.y >= m_vContentHeight )
 		{
-			nHitRow = 0;
+			nHitRow = m_cRows.size() - 1;
 		}
-	}
-
-	bool bDoubleClick = false;
-
-	bigtime_t nCurTime = get_system_time();
-
-	if( nHitRow == m_nLastHitRow && nCurTime - m_nMouseDownTime < 500000 )
-	{
-		bDoubleClick = true;
-	}
-	m_nLastHitRow = nHitRow;
-	if( nHitRow < 0 )
-	{
-		return;
-	}
-
-	ListViewRow *pcHitRow = ( nHitRow >= 0 ) ? m_cRows[nHitRow] : NULL;
-
-	m_nMouseDownTime = nCurTime;
-
-	uint32 nQualifiers = Application::GetInstance()->GetQualifiers(  );
-
-	if( ( nQualifiers & QUAL_SHIFT ) && ( m_nModeFlags & ListView::F_MULTI_SELECT ) )
-	{
-		m_nEndSel = m_nBeginSel;
-	}
-	else
-	{
-		m_nBeginSel = nHitRow;
-		m_nEndSel = nHitRow;
-	}
-
-	if( bDoubleClick )
-	{
-		m_pcListView->Invoked( m_nFirstSel, m_nLastSel );
-		return;
-	}
-
-	if( pcHitRow != NULL )
-	{
-		for( uint i = 0; i < m_cColMap.size(); ++i )
+		else
 		{
-			Rect cFrame = GetColumn( i )->GetFrame();
-
-			if( cPosition.x >= cFrame.left && cPosition.x < cFrame.right )
+			nHitRow = GetRowIndex( cPosition.y );
+	//              cout << "got row index: " << nHitRow << endl;
+			if( nHitRow < 0 )
 			{
-				Rect cFrame = GetColumn( i )->GetFrame();
-
-				cFrame.top = pcHitRow->m_vYPos;
-				cFrame.bottom = cFrame.top + pcHitRow->m_vHeight + m_vVSpacing;
-				if( pcHitRow->HitTest( GetColumn( i ), cFrame, i, cPosition ) )
-				{
-					nHitCol = i;
-				}
-				break;
+				nHitRow = 0;
 			}
 		}
-	}
-	m_bMouseMoved = false;
 
-	if( nHitCol == 1 && ( nQualifiers & QUAL_CTRL ) == 0 && m_cRows[nHitRow]->IsSelected() )
-	{
-		m_bDragIfMoved = true;
-	}
-	else
-	{
-		ExpandSelect( nHitRow, ( nQualifiers & QUAL_CTRL ), ( ( nQualifiers & ( QUAL_CTRL | QUAL_SHIFT ) ) == 0 || ( m_nModeFlags & ListView::F_MULTI_SELECT ) == 0 ) );
-		if( m_nModeFlags & ListView::F_MULTI_SELECT )
+		bool bDoubleClick = false;
+
+		bigtime_t nCurTime = get_system_time();
+
+		if( nHitRow == m_nLastHitRow && nCurTime - m_nMouseDownTime < 500000 )
 		{
-			m_bIsSelecting = true;
-			m_cSelectRect = Rect( cPosition.x, cPosition.y, cPosition.x, cPosition.y );
-			SetDrawingMode( DM_INVERT );
-			DrawFrame( m_cSelectRect, FRAME_TRANSPARENT | FRAME_THIN );
-			SetDrawingMode( DM_COPY );
+			bDoubleClick = true;
+		}
+		m_nLastHitRow = nHitRow;
+
+		ListViewRow *pcHitRow = ( nHitRow >= 0 ) ? m_cRows[nHitRow] : NULL;
+
+		m_nMouseDownTime = nCurTime;
+
+		uint32 nQualifiers = Application::GetInstance()->GetQualifiers(  );
+
+		if( ( nQualifiers & QUAL_SHIFT ) && ( m_nModeFlags & ListView::F_MULTI_SELECT ) )
+		{
+			m_nEndSel = m_nBeginSel;
+		}
+		else
+		{
+			m_nBeginSel = nHitRow;
+			m_nEndSel = nHitRow;
+		}
+
+		if( bDoubleClick )
+		{
+			m_pcListView->Invoked( m_nFirstSel, m_nLastSel );
+			return;
+		}
+
+		if( pcHitRow != NULL )
+		{
+			for( uint i = 0; i < m_cColMap.size(); ++i )
+			{
+				Rect cFrame = GetColumn( i )->GetFrame();
+	
+				if( cPosition.x >= cFrame.left && cPosition.x < cFrame.right )
+				{
+					Rect cFrame = GetColumn( i )->GetFrame();
+	
+					cFrame.top = pcHitRow->m_vYPos;
+					cFrame.bottom = cFrame.top + pcHitRow->m_vHeight + m_vVSpacing;
+					Point cPos = cPosition - cFrame.LeftTop();
+					if( pcHitRow->HitTest( GetColumn( i ), cFrame, i, cPos ) )
+					{
+						nHitCol = i;
+					}
+					break;
+				}
+			}
+		}
+		m_bMouseMoved = false;
+
+		if( nHitCol == 1 && ( nQualifiers & QUAL_CTRL ) == 0 && m_cRows[nHitRow]->IsSelected() )
+		{
+			m_bDragIfMoved = true;
+		}
+		else
+		{
+			ExpandSelect( nHitRow, ( nQualifiers & QUAL_CTRL ), ( ( nQualifiers & ( QUAL_CTRL | QUAL_SHIFT ) ) == 0 || ( m_nModeFlags & ListView::F_MULTI_SELECT ) == 0 ) );
+			if( m_nModeFlags & ListView::F_MULTI_SELECT )
+			{
+				m_bIsSelecting = true;
+				m_cSelectRect = Rect( cPosition.x, cPosition.y, cPosition.x, cPosition.y );
+				SetDrawingMode( DM_INVERT );
+				DrawFrame( m_cSelectRect, FRAME_TRANSPARENT | FRAME_THIN );
+				SetDrawingMode( DM_COPY );
+			}
 		}
 	}
 	m_pcListView->MouseDown(cPosition, nButton);
@@ -1264,7 +1259,7 @@ bool ListViewContainer::HandleKey( char nChar, uint32 nQualifiers )
 				m_nEndSel = 0;
 
 				// Iterate through the list until a visible item is found
-				for( ; m_nEndSel < m_cRows.size(); m_nEndSel++ )
+				for( ; m_nEndSel < (int)m_cRows.size(); m_nEndSel++ )
 				{
 					if( m_cRows[m_nEndSel]->IsVisible() )
 						break;
@@ -1283,7 +1278,7 @@ bool ListViewContainer::HandleKey( char nChar, uint32 nQualifiers )
 				float vPageBreak = m_cRows[m_nEndSel]->m_vYPos + GetBounds().Height(  );
 				int nNewSel = m_nEndSel + 1;
 
-				for( ; nNewSel < m_cRows.size(); nNewSel++ )
+				for( ; nNewSel < (int)m_cRows.size(); nNewSel++ )
 				{
 					if( m_cRows[nNewSel]->IsVisible() )
 					{
