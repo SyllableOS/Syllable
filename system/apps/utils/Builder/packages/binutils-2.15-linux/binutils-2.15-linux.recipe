@@ -1,0 +1,20 @@
+authors				Kaj de Vos
+status				testing
+
+inherits			binutils-2.15
+
+headline			"Cross-assembler for Linux"
+packages			binutils-2.15
+
+configure-options
+	--target=i586-pc-linux-gnu
+;	--enable-shared
+;	May be needed for porting a limited cross-assembler:
+;	--disable-shared
+;	--disable-nls
+;	This would be for a 64-bits port:
+;	--enable-64-bit-bfd
+
+; The normal links are not relevant. Cross-assembling binaries don't have the same names:
+links
+
