@@ -184,11 +184,11 @@ void Icon::Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendTe
 
         if ( bBlendText )
         {
-	    pcView->SetDrawingMode( DM_OVER );
+	    pcView->SetDrawingMode( DM_OVER );  // DM_OVER
         }
         else
         {
-            pcView->SetDrawingMode( DM_BLEND );
+            pcView->SetDrawingMode( DM_BLEND );  //DM_BLEND
             pcView->SetBgColor(200,200,200);  //atoi (Colors.bgColor.red), atoi(Colors.bgColor.green), atoi(Colors.bgColor.blue),255
         }
         if ( m_bSelected && bBlendText )
@@ -211,7 +211,7 @@ void Icon::Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendTe
 
         pcView->DrawString( m_cTitle.c_str(), m_nMaxStrLen );
 
-        pcView->SetDrawingMode( DM_BLEND );
+        pcView->SetDrawingMode( DM_BLEND );  //DM_BLEND
 
         if ( s_nCurBitmap == 16 )
         {
@@ -454,7 +454,7 @@ void IconView::Erase( const Rect& cFrame )
         int nWidth  = int(cBmBounds.Width()) + 1;
         int nHeight = int(cBmBounds.Height()) + 1;
 
-        SetDrawingMode( DM_COPY );
+        SetDrawingMode( DM_COPY );  //COPY
         for ( int nDstY = int(cFrame.top) ; nDstY <= cFrame.bottom ; )
         {
             int y = nDstY % nHeight;
@@ -868,6 +868,8 @@ void IconView::DirChanged( const std::string& cNewPath )
     }
 
 }
+
+
 
 
 

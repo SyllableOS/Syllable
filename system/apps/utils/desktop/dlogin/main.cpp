@@ -2,7 +2,7 @@
 #include "include.h"
 
 
-
+/*Thank you Will for the help :) */
 int Become_User( struct passwd *psPwd, LoginWindow* pcWindow ) {
   int nStatus;
   pid_t nError = waitpid(-1, &nStatus, WNOHANG);
@@ -31,7 +31,7 @@ int Become_User( struct passwd *psPwd, LoginWindow* pcWindow ) {
       // hide login box
        pcWindow->Hide();
        pcWindow->m_pcView->m_pcPasswordView->Clear();
-      int nDesktopPid, nExitStatus;
+       int nDesktopPid, nExitStatus;
      
       nDesktopPid = nError;
      
@@ -41,8 +41,9 @@ int Become_User( struct passwd *psPwd, LoginWindow* pcWindow ) {
          break;
      
       // Show the login window again
-     
-     	pcWindow->Show();
+      sleep(1);
+      pcWindow->Show();
+      pcWindow->MakeFocus();
       return 0;
       //return nError;
       
@@ -416,6 +417,8 @@ int main()
 	thisApp->Run();
 	
 }
+
+
 
 
 

@@ -326,7 +326,7 @@ void BitmapView::SetIcons()
 void BitmapView::Paint( const Rect& cUpdateRect)
 {
     Rect cBounds = GetBounds();
-    SetDrawingMode( DM_COPY );
+    SetDrawingMode( DM_COPY ); //COPY
     Font* pcFont = GetFont();
     
     Erase( cUpdateRect );
@@ -342,7 +342,7 @@ void BitmapView::Paint( const Rect& cUpdateRect)
     if (bShow == true)
     {
         SetFgColor(0,0,0);
-        SetDrawingMode(DM_BLEND);
+        SetDrawingMode(DM_BLEND);  // BLEND
         MovePenTo(ScreenRes().x - 15 - GetStringWidth(pzSyllableVer) , ScreenRes().y -10);
         DrawString(pzSyllableVer);
     }
@@ -838,6 +838,8 @@ bool BitmapWindow::OkToQuit(void)
     Application::GetInstance()->PostMessage(M_QUIT );
   	return (true);
 }
+
+
 
 
 
