@@ -1,14 +1,11 @@
 # Log local kernel output into /var/log/kernel
 dbterm 8 >>/var/log/kernel &
 
-# Mount any additional drives
-#mkdir /windows
-#mount /dev/disk/ata/hda/0 /windows
-
+# Create /root for the convience of the root user
 ln -s home/root /root
 
 # Check for network changes
-netprefs --detect
+/Applications/Preferences/Network --detect
 
 # Configure the network
 /system/net_init.sh

@@ -12,5 +12,4 @@ export CC=gcc
 export HOME=/home/root
 export SHELL=bash
 export TEMP=/tmp
-export ATERM_ATTR=0x80
 
