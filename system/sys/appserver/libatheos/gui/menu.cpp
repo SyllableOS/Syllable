@@ -21,12 +21,12 @@
 #include <assert.h>
 #include <gui/desktop.h>
 #include <gui/window.h>
-#include <gui/menu.h>
+#include "menu.h"
 #include <gui/font.h>
 #include <gui/bitmap.h>
 #include <util/message.h>
-
 #include <atheos/kernel.h>
+
 
 
 namespace os
@@ -162,7 +162,16 @@ uint8 nSubMenuArrowData[]={
 
 Locker Menu::s_cMutex( "menu_mutex" );
 
-
+static Color32_s Tint( const Color32_s& sColor, float vTint )
+{
+    int r = int( (float(sColor.red) * vTint + 127.0f * (1.0f - vTint)) );
+    int g = int( (float(sColor.green) * vTint + 127.0f * (1.0f - vTint)) );
+    int b = int( (float(sColor.blue) * vTint + 127.0f * (1.0f - vTint)) );
+    if ( r < 0 ) r = 0; else if (r > 255) r = 255;
+    if ( g < 0 ) g = 0; else if (g > 255) g = 255;
+    if ( b < 0 ) b = 0; else if (b > 255) b = 255;
+    return( Color32_s( r, g, b, sColor.alpha ) );
+}
 
 class Menu::Private
 {
@@ -172,7 +181,36 @@ public:
     Message	m_cCloseMsg;
     Messenger   m_cCloseMsgTarget;
     Locker	m_cMutex;
+    
 };
+
+class MenuItem::Private
+{
+public:
+	Private() {
+		m_pcNext	   = NULL;
+		m_pcSuperMenu	   = NULL;
+		m_pcSubMenu	   = NULL;
+		m_bIsHighlighted = false;
+		m_bIsEnabled = true;
+		m_pzLabel = NULL;
+	}
+	~Private() {
+		if(m_pzLabel) delete[] m_pzLabel;
+		if(m_pcSubMenu) delete m_pcSubMenu;
+	}
+
+    MenuItem*	m_pcNext;
+    Menu*		m_pcSuperMenu;
+    Menu*		m_pcSubMenu;
+    Rect		m_cFrame;
+
+    char*		m_pzLabel;
+
+    bool		m_bIsHighlighted;
+    bool 		m_bIsEnabled;
+};
+
 
 //----------------------------------------------------------------------------
 // NAME:
@@ -183,19 +221,12 @@ public:
 
 MenuItem::MenuItem( const char* pzLabel, Message* pcMsg ) : Invoker( pcMsg, NULL, NULL )
 {
-	m_pcNext	   = NULL;
-	m_pcSuperMenu	   = NULL;
-	m_pcSubMenu	   = NULL;
-	m_bIsHighlighted = false;
-  
+	m = new Private;
+
 	if ( NULL != pzLabel )
 	{
-		m_pzLabel = new char[ strlen( pzLabel ) + 1 ];
-		strcpy( m_pzLabel, pzLabel );
-	}
-	else
-	{
-		m_pzLabel = NULL;
+		m->m_pzLabel = new char[ strlen( pzLabel ) + 1 ];
+		strcpy( m->m_pzLabel, pzLabel );
 	}
 
 	if( s_pcSubMenuBitmap == NULL )
@@ -221,20 +252,17 @@ MenuItem::MenuItem( const char* pzLabel, Message* pcMsg ) : Invoker( pcMsg, NULL
 
 MenuItem::MenuItem( Menu* pcMenu, Message* pcMsg ) : Invoker( pcMsg, NULL, NULL )
 {
-    m_pcNext	   = NULL;
-    m_pcSuperMenu  = NULL;
-    m_pcSubMenu	   = pcMenu;
-    m_bIsHighlighted = false;
-
+	m = new Private;
+    m->m_pcSubMenu	   = pcMenu;
     pcMenu->m_pcSuperItem = this;
 
     std::string cLabel = pcMenu->GetLabel();
 
     if ( cLabel.empty() == false ) {
-	m_pzLabel = new char[ cLabel.size() + 1 ];
-	strcpy( m_pzLabel, cLabel.c_str() );
+		m->m_pzLabel = new char[ cLabel.size() + 1 ];
+		strcpy( m->m_pzLabel, cLabel.c_str() );
     } else {
-	m_pzLabel = NULL;
+		m->m_pzLabel = NULL;
     }
 }
 
@@ -247,8 +275,7 @@ MenuItem::MenuItem( Menu* pcMenu, Message* pcMsg ) : Invoker( pcMsg, NULL, NULL 
 
 MenuItem::~MenuItem()
 {
-    delete[] m_pzLabel;
-    delete   m_pcSubMenu;
+	delete m;
 }
 
 //----------------------------------------------------------------------------
@@ -272,7 +299,12 @@ bool MenuItem::Invoked( Message* pcMessage )
 
 Menu*	MenuItem::GetSubMenu() const
 {
-    return( m_pcSubMenu );
+    return( m->m_pcSubMenu );
+}
+
+void	MenuItem::SetSubMenu( Menu* pcMenu )
+{
+	m->m_pcSubMenu = pcMenu;
 }
 
 //----------------------------------------------------------------------------
@@ -284,7 +316,12 @@ Menu*	MenuItem::GetSubMenu() const
 
 Menu*	MenuItem::GetSuperMenu() const
 {
-    return( m_pcSuperMenu );
+    return( m->m_pcSuperMenu );
+}
+
+void	MenuItem::SetSuperMenu( Menu* pcMenu )
+{
+    m->m_pcSuperMenu = pcMenu;
 }
 
 //----------------------------------------------------------------------------
@@ -296,7 +333,12 @@ Menu*	MenuItem::GetSuperMenu() const
 
 Rect MenuItem::GetFrame() const
 {
-    return( m_cFrame );
+    return( m->m_cFrame );
+}
+
+void MenuItem::SetFrame( const Rect& cFrame )
+{
+	m->m_cFrame = cFrame;
 }
 
 //----------------------------------------------------------------------------
@@ -311,7 +353,7 @@ Point MenuItem::GetContentSize()
 	Menu* pcMenu = GetSuperMenu();
 
 	// Are we a super-menu?  If so, we need to make room for the sub-menu arrow
-	if ( m_pzLabel != NULL && pcMenu != NULL && GetSubMenu() != NULL && m_pcSuperMenu->GetLayout() == ITEMS_IN_COLUMN )
+	if ( m->m_pzLabel != NULL && pcMenu != NULL && GetSubMenu() != NULL && m->m_pcSuperMenu->GetLayout() == ITEMS_IN_COLUMN )
 	{
 		font_height sHeight;
 		pcMenu->GetFontHeight( &sHeight );
@@ -320,7 +362,7 @@ Point MenuItem::GetContentSize()
 	}
 
 	// Are we a "normal" menu, in a column of other menus?  If so, we need to allow for a gap on the left
-	if ( m_pzLabel != NULL && pcMenu != NULL && m_pcSuperMenu->GetLayout() != ITEMS_IN_ROW )
+	if ( m->m_pzLabel != NULL && pcMenu != NULL && m->m_pcSuperMenu->GetLayout() != ITEMS_IN_ROW )
 	{
 		font_height sHeight;
 		pcMenu->GetFontHeight( &sHeight );
@@ -330,7 +372,7 @@ Point MenuItem::GetContentSize()
 	}
 
 	// We are a menu which is in a row of menus, I.e. a menu bar.  We don't need a gap, and we can't have a sub-menu
-	if ( m_pzLabel != NULL && pcMenu != NULL )
+	if ( m->m_pzLabel != NULL && pcMenu != NULL )
 	{
 		font_height sHeight;
 		pcMenu->GetFontHeight( &sHeight );
@@ -352,7 +394,7 @@ Point MenuItem::GetContentSize()
 
 const char* MenuItem::GetLabel() const
 {
-    return( m_pzLabel );
+    return( m->m_pzLabel );
 }
 
 //----------------------------------------------------------------------------
@@ -364,7 +406,7 @@ const char* MenuItem::GetLabel() const
 
 Point MenuItem::GetContentLocation() const
 {
-	return( Point( m_cFrame.left, m_cFrame.top ) );
+	return( Point( m->m_cFrame.left, m->m_cFrame.top ) );
 }
 
 //----------------------------------------------------------------------------
@@ -394,53 +436,72 @@ void MenuItem::Draw()
 
 	font_height sHeight;
 	pcMenu->GetFontHeight( &sHeight );
+	
+	if( m->m_bIsEnabled )
+	{
+		if ( m->m_bIsHighlighted )
+		{
+			pcMenu->SetFgColor( get_default_color( COL_SEL_MENU_BACKGROUND ) );
+		}
+		else
+		{
+			pcMenu->SetFgColor( get_default_color( COL_MENU_BACKGROUND ) );
+		}
+		
+		pcMenu->FillRect( GetFrame() );
 
-	if ( m_bIsHighlighted )
-	{
-		pcMenu->SetFgColor( get_default_color( COL_SEL_MENU_BACKGROUND ) );
-	}
-	else
-	{
+		if ( m->m_bIsHighlighted )
+		{
+			pcMenu->SetFgColor( get_default_color( COL_SEL_MENU_TEXT ) );
+			pcMenu->SetBgColor( get_default_color( COL_SEL_MENU_BACKGROUND ) );
+		}
+		else
+		{
+			pcMenu->SetFgColor( get_default_color( COL_MENU_TEXT ) );
+			pcMenu->SetBgColor( get_default_color( COL_MENU_BACKGROUND ) );
+		}
+
+	} else {
 		pcMenu->SetFgColor( get_default_color( COL_MENU_BACKGROUND ) );
-	}
-
-	pcMenu->FillRect( GetFrame() );
-
-	if ( m_bIsHighlighted )
-	{
-		pcMenu->SetFgColor( get_default_color( COL_SEL_MENU_TEXT ) );
-		pcMenu->SetBgColor( get_default_color( COL_SEL_MENU_BACKGROUND ) );
-	}
-	else
-	{
-		pcMenu->SetFgColor( get_default_color( COL_MENU_TEXT ) );
+		pcMenu->FillRect( GetFrame() );
+		pcMenu->SetFgColor( 255, 255, 255 );
 		pcMenu->SetBgColor( get_default_color( COL_MENU_BACKGROUND ) );
 	}
 
 	float vCharHeight = sHeight.ascender + sHeight.descender + sHeight.line_gap;
 	float y = cFrame.top + (cFrame.Height()+1.0f) / 2 - vCharHeight / 2 + sHeight.ascender + sHeight.line_gap * 0.5f;
+	float x = cFrame.left + ( ( m->m_pcSuperMenu->GetLayout() == ITEMS_IN_COLUMN ) ? 16 : 2 ) ;
 
-	if ( m_pcSuperMenu->GetLayout() == ITEMS_IN_COLUMN )
-	{
-		pcMenu->DrawString( pzLabel, Point( cFrame.left + 16, y ) );
-	}
-	else
-	{
-		pcMenu->DrawString( pzLabel, Point( cFrame.left + 2, y ) );
-	}
+	pcMenu->MovePenTo( x, y );
+	pcMenu->DrawString( pzLabel );
+
+    if ( IsEnabled() == false ) {
+		pcMenu->SetFgColor( 100, 100, 100 );
+		pcMenu->MovePenTo( x - 1.0f, y - 1.0f );
+		pcMenu->SetDrawingMode( DM_OVER );
+		pcMenu->DrawString( GetLabel() );
+		pcMenu->SetDrawingMode( DM_COPY );
+    }
 
 	// If we are the super-menu, draw the sub-menu triangle on the right of the label
-	if ( GetSubMenu() != NULL && m_pcSuperMenu->GetLayout() == ITEMS_IN_COLUMN )
+	if ( GetSubMenu() != NULL && m->m_pcSuperMenu->GetLayout() == ITEMS_IN_COLUMN )
 	{
 		Rect cSourceRect = s_pcSubMenuBitmap->GetBounds();
 		Rect cTargetRect;
 
-		cTargetRect = cSourceRect.Bounds() + Point( m_cFrame.right - SUB_MENU_ARROW_W, m_cFrame.top + ( m_cFrame.Height() / 2) - 4.0f);
+		cTargetRect = cSourceRect.Bounds() + Point( m->m_cFrame.right - SUB_MENU_ARROW_W, m->m_cFrame.top + ( m->m_cFrame.Height() / 2) - 4.0f);
 
 		pcMenu->SetDrawingMode( DM_OVER );
 		pcMenu->DrawBitmap( s_pcSubMenuBitmap, cSourceRect, cTargetRect );
 		pcMenu->SetDrawingMode( DM_COPY );
 	}
+
+}
+
+void MenuItem::SetEnable( bool bEnabled )
+{
+	m->m_bIsEnabled = bEnabled;
+	Draw();
 }
 
 //----------------------------------------------------------------------------
@@ -454,11 +515,32 @@ void MenuItem::DrawContent()
 {
 }
 
-void MenuItem::Highlight( bool bHighlight )
+void MenuItem::SetHighlighted( bool bHighlighted )
 {
-    m_bIsHighlighted = bHighlight;
+    m->m_bIsHighlighted = bHighlighted;
     Draw();
 }
+
+bool MenuItem::IsHighlighted() const
+{
+	return m->m_bIsHighlighted;
+}
+
+bool MenuItem::IsEnabled() const
+{
+	return m->m_bIsEnabled;
+}
+
+MenuItem* MenuItem::GetNext()
+{
+	return m->m_pcNext;
+}
+
+void MenuItem::SetNext( MenuItem* pcItem )
+{
+	m->m_pcNext = pcItem;
+}
+
 
 
 
@@ -529,7 +611,7 @@ void MenuSeparator::DrawContent()
 {
 }
 
-void MenuSeparator::Highlight( bool bHighlight )
+void MenuSeparator::SetHighlighted( bool bHighlighted )
 {
 }
 
@@ -588,13 +670,11 @@ Menu::Menu( Rect cFrame, const char* pzTitle, MenuLayout_e eLayout, uint32 nResi
     m_bHasOpenChilds  = false;
     m_bCloseOnMouseUp = false;
     m_hTrackPort      = -1;
+    m_bEnabled = true;
 
     if ( NULL != pzTitle ) {
 	m->m_cTitle = pzTitle;
-//	m_pzTitle	=	new char[ strlen( pzTitle ) + 1 ];
-//	strcpy( m_pzTitle, pzTitle );
     }	else {
-//	m_pzTitle = NULL;
     }
     m_pcRoot = this;
 }
@@ -608,11 +688,9 @@ Menu::Menu( Rect cFrame, const char* pzTitle, MenuLayout_e eLayout, uint32 nResi
 
 Menu::~Menu()
 {
-//    delete[] m_pzTitle;
-
-    while( m_pcFirstItem != NULL ) {
+	while( m_pcFirstItem != NULL ) {
 	MenuItem* pcItem = m_pcFirstItem;
-	m_pcFirstItem = pcItem->m_pcNext;
+	m_pcFirstItem = pcItem->GetNext();
 	delete pcItem;
     }
     delete m;
@@ -668,9 +746,9 @@ void Menu::SetRoot( Menu* pcRoot )
 
     MenuItem* pcTmp;
   
-    for ( pcTmp = m_pcFirstItem ; NULL != pcTmp ; pcTmp = pcTmp->m_pcNext ) {
-	if ( pcTmp->m_pcSubMenu != NULL  ) {
-	    pcTmp->m_pcSubMenu->SetRoot( pcRoot );
+    for ( pcTmp = m_pcFirstItem ; NULL != pcTmp ; pcTmp = pcTmp->GetNext() ) {
+	if ( pcTmp->GetSubMenu() != NULL  ) {
+	    pcTmp->GetSubMenu()->SetRoot( pcRoot );
 	}
     }
   
@@ -703,24 +781,24 @@ void Menu::StartOpenTimer( bigtime_t nDelay )
 void Menu::OpenSelection()
 {
     MenuItem* pcItem = FindMarked();
-  
-    if ( pcItem == NULL ) {
+
+    if ( pcItem == NULL) {
 	return;
     }
 
     MenuItem* pcTmp;
   
-    for ( pcTmp = m_pcFirstItem ; NULL != pcTmp ; pcTmp = pcTmp->m_pcNext ) {
+    for ( pcTmp = m_pcFirstItem ; NULL != pcTmp ; pcTmp = pcTmp->GetNext() ) {
 	if ( pcTmp == pcItem ) {
 	    continue;
 	}
-	if ( pcTmp->m_pcSubMenu != NULL && pcTmp->m_pcSubMenu->m_pcWindow != NULL ) {
-	    pcTmp->m_pcSubMenu->Close( true, false );
+	if ( pcTmp->GetSubMenu() != NULL && pcTmp->GetSubMenu()->m_pcWindow != NULL ) {
+	    pcTmp->GetSubMenu()->Close( true, false );
 	    break;
 	}
     }
   
-    if ( pcItem->m_pcSubMenu == NULL || pcItem->m_pcSubMenu->m_pcWindow != NULL ) {
+    if ( pcItem->GetSubMenu() == NULL || pcItem->GetSubMenu()->m_pcWindow != NULL ) {
 	return;
     }
   
@@ -736,24 +814,25 @@ void Menu::OpenSelection()
     if ( m_eLayout == ITEMS_IN_ROW ) {
 	cScrPos.x = cLeftTop.x + cFrame.left - m_cItemBorders.left;
 
-	float nHeight = pcItem->m_pcSubMenu->m_cSize.y;
+	float nHeight = pcItem->GetSubMenu()->m_cSize.y;
 	if ( cLeftTop.y + GetBounds().Height() + 1.0f + nHeight <= cScreenRes.y ) {
 	    cScrPos.y = cLeftTop.y + GetBounds().Height()+1.0f;
 	} else {
 	    cScrPos.y = cLeftTop.y - nHeight;
 	}
     } else {
-	float nHeight = pcItem->m_pcSubMenu->m_cSize.y;
+	float nHeight = pcItem->GetSubMenu()->m_cSize.y;
 
 	cScrPos.x = cLeftTop.x + GetBounds().Width() + 1.0f - 4.0f;
 	if ( cLeftTop.y + cFrame.top - m_cItemBorders.top + nHeight <= cScreenRes.y ) {
 	    cScrPos.y = cLeftTop.y + cFrame.top - m_cItemBorders.top;
 	} else {
-	    cScrPos.y = cLeftTop.y + cFrame.bottom - nHeight + m_cItemBorders.top + pcItem->m_pcSubMenu->m_cItemBorders.bottom;
+	    cScrPos.y = cLeftTop.y + cFrame.bottom - nHeight + m_cItemBorders.top + pcItem->GetSubMenu()->m_cItemBorders.bottom;
 	}
     }
     m_bHasOpenChilds = true;
-    pcItem->m_pcSubMenu->Open( cScrPos );
+    
+    pcItem->GetSubMenu()->Open( cScrPos );
 }
 
 //----------------------------------------------------------------------------
@@ -766,9 +845,8 @@ void Menu::OpenSelection()
 void Menu::TimerTick( int nID )
 {
     AutoLocker __lock__( &m_pcRoot->m->m_cMutex );
-//    s_cMutex.Lock();
-    OpenSelection();
-//    s_cMutex.Unlock();
+	OpenSelection();
+
 }
 
 //----------------------------------------------------------------------------
@@ -786,10 +864,10 @@ void Menu::SelectItem( MenuItem* pcItem )
 	return;
     }
     if ( pcPrev != NULL ) {
-	pcPrev->Highlight( false );
+	pcPrev->SetHighlighted( false );
     }
     if ( pcItem != NULL ) {
-	pcItem->Highlight( true );
+	pcItem->SetHighlighted( true );
     }
 }
 
@@ -805,8 +883,8 @@ void Menu::SelectPrev()
     MenuItem* pcTmp;
     MenuItem* pcPrev = NULL;
 
-    for ( pcTmp = m_pcFirstItem ; NULL != pcTmp ; pcTmp = pcTmp->m_pcNext ) {
-	if ( pcTmp->m_bIsHighlighted ) {
+    for ( pcTmp = m_pcFirstItem ; NULL != pcTmp ; pcTmp = pcTmp->GetNext() ) {
+	if ( pcTmp->IsHighlighted() ) {
 	    if ( pcPrev != NULL ) {
 		SelectItem( pcPrev );
 		Flush();
@@ -837,10 +915,10 @@ void Menu::SelectNext()
 {
     MenuItem* pcTmp;
 
-    for ( pcTmp = m_pcFirstItem ; NULL != pcTmp ; pcTmp = pcTmp->m_pcNext ) {
-	if ( pcTmp->m_bIsHighlighted || pcTmp->m_pcNext == NULL ) {
-	    if ( pcTmp->m_pcNext != NULL ) {
-		SelectItem( pcTmp->m_pcNext );
+    for ( pcTmp = m_pcFirstItem ; NULL != pcTmp ; pcTmp = pcTmp->GetNext() ) {
+	if ( pcTmp->IsHighlighted() || pcTmp->GetNext() == NULL ) {
+	    if ( pcTmp->GetNext() != NULL ) {
+		SelectItem( pcTmp->GetNext() );
 	    } else {
 		SelectItem( pcTmp );
 	    }
@@ -860,9 +938,9 @@ void Menu::SelectNext()
 void Menu::Open( Point cScrPos )
 {
     AutoLocker __lock__( &m_pcRoot->m->m_cMutex );
-//    s_cMutex.Lock();
+
     if ( m_pcWindow != NULL ) {
-//	s_cMutex.Unlock();
+
 	return;
     }
     Point  cSize = GetPreferredSize( false );
@@ -885,16 +963,14 @@ void Menu::Open( Point cScrPos )
     m_pcRoot->m->m_cMutex.Lock();
     m_pcWindow->SetMutex( &m_pcRoot->m->m_cMutex );
     SetFrame( cBounds );
-//    if ( m_pcWindow->Lock() == 0 ) {
+
 	m_bIsTracking = true;
 	MakeFocus( true );
-//	m_pcWindow->Unlock();
-//    }
+
     SelectItem( m_pcFirstItem );
-    m_pcWindow->Show();
+    m_pcWindow->Show();    
 
     Flush();
-//    s_cMutex.Unlock();
 }
 
 //----------------------------------------------------------------------------
@@ -909,45 +985,59 @@ void Menu::Close( bool bCloseChilds, bool bCloseParent )
     AutoLocker __lock__( &m_pcRoot->m->m_cMutex );
     MenuItem* pcTmp;
 
-    for ( pcTmp = m_pcFirstItem ; NULL != pcTmp ; pcTmp = pcTmp->m_pcNext ) {
-	if ( pcTmp->m_bIsHighlighted ) {
-	    pcTmp->Highlight( false );
-	}
-    }  
-    if ( bCloseChilds ) {
-	for ( pcTmp = m_pcFirstItem ; NULL != pcTmp ; pcTmp = pcTmp->m_pcNext ) {
-	    if ( pcTmp->m_pcSubMenu != NULL /*&& pcTmp->m_pcSubMenu->m_pcWindow != NULL*/ ) {
-		pcTmp->m_pcSubMenu->Close( bCloseChilds, bCloseParent );
-	    }
-	}
+    for ( pcTmp = m_pcFirstItem ; NULL != pcTmp ; pcTmp = pcTmp->GetNext() ) 
+    {
+		if ( pcTmp->IsHighlighted() ) 
+		{
+	    	pcTmp->SetHighlighted( false );
+		}
+    }
+      
+    if ( bCloseChilds ) 
+    {
+		for ( pcTmp = m_pcFirstItem ; NULL != pcTmp ; pcTmp = pcTmp->GetNext() ) 
+		{
+	    	if ( pcTmp->GetSubMenu() != NULL) 
+	    	{
+				pcTmp->GetSubMenu()->Close( bCloseChilds, bCloseParent );
+	    	}
+		}
     }
  
-    if ( m_pcWindow != NULL ) {
-	MenuWindow* pcWnd = m_pcWindow;
-	m_pcWindow = NULL; // Must clear this before we shutdown.
-	pcWnd->ShutDown();
+    if ( m_pcWindow != NULL ) 
+    {
+		MenuWindow* pcWnd = m_pcWindow;
+		m_pcWindow = NULL; // Must clear this before we shutdown.
+		pcWnd->ShutDown();
 
-	Menu* pcParent = GetSuperMenu();
-	if ( pcParent != NULL ) {
+		Menu* pcParent = GetSuperMenu();
+		if ( pcParent != NULL ) 
+		{
 	      // NOTE: We activate the parents window even if was not
 	      //       opened by the menu-system (GetWindow() vs m_pcWindow)
-	    Window* pcWnd = pcParent->GetWindow();
-	    if ( pcWnd != NULL ) {
-		pcParent->MakeFocus( true );
-	    }
-	    pcParent->m_bHasOpenChilds = false;
-	    pcParent->m_bIsTracking = true;
-	}
-    }
-    if ( m->m_cCloseMsgTarget.IsValid() ) {
-	m->m_cCloseMsgTarget.SendMessage( &m->m_cCloseMsg );
+	    	Window* pcWnd = pcParent->GetWindow();
+	    	if ( pcWnd != NULL ) 
+	    	{
+				pcParent->MakeFocus( true );
+	    	}
+	    	pcParent->m_bHasOpenChilds = false;
+	    	pcParent->m_bIsTracking = true;
+		}
     }
     
-    if ( bCloseParent ) {
-	Menu* pcParent = GetSuperMenu();
-	if ( pcParent != NULL ) {
-	    pcParent->Close( false, true );
-	}
+    if ( m->m_cCloseMsgTarget.IsValid() ) 
+    {
+    	printf("%d\n", m->m_cCloseMsg.GetCode());
+		m->m_cCloseMsgTarget.SendMessage( &m->m_cCloseMsg );
+    }
+    
+    if ( bCloseParent ) 
+    {
+		Menu* pcParent = GetSuperMenu();
+		if ( pcParent != NULL ) 
+		{
+	    	pcParent->Close( false, true );
+		}
     }
     m_bIsTracking = false;
 }
@@ -962,10 +1052,8 @@ void Menu::Close( bool bCloseChilds, bool bCloseParent )
 void Menu::AttachedToWindow()
 {
     AutoLocker __lock__( &m_pcRoot->m->m_cMutex );
-//    s_cMutex.Lock();
     InvalidateLayout();
-//    s_cMutex.Unlock();
-//  SetTargetForItems( GetWindow() );
+
 }
 
 //----------------------------------------------------------------------------
@@ -991,13 +1079,12 @@ void Menu::DetachedFromWindow()
 void Menu::WindowActivated( bool bIsActive )
 {
     AutoLocker __lock__( &m_pcRoot->m->m_cMutex );
-//    s_cMutex.Lock();
     if ( false == bIsActive && m_bHasOpenChilds == false ) {
 	Close( false, true );
     
 	if ( m_hTrackPort != -1 ) {
 	    MenuItem* pcItem = NULL;
-	    if ( send_msg( m_hTrackPort, 1, &pcItem, sizeof(pcItem) ) < 0 ) {
+	    if (send_msg( m_hTrackPort, 1, &pcItem, sizeof(pcItem) ) < 0 ) {
 		dbprintf( "Error: Menu::WindowActivated() failed to send message to m_hTrackPort\n" );
 	    }
 	}
@@ -1015,39 +1102,44 @@ void Menu::WindowActivated( bool bIsActive )
 void Menu::MouseDown( const Point& cPosition, uint32 nButtons )
 {
     AutoLocker __lock__( &m_pcRoot->m->m_cMutex );
-
-    if ( GetBounds().DoIntersect( cPosition ) ) {
-//	s_cMutex.Lock();
-	MenuItem* pcItem = GetItemAt( cPosition );
-	SetCloseOnMouseUp( false );
+    if ( GetBounds().DoIntersect( cPosition ) ) 
+    {
+		MenuItem* pcItem = GetItemAt( cPosition );
+		SetCloseOnMouseUp( false );
 	
-	if ( pcItem != NULL ) {
-	    MakeFocus( true );
-	    m_bIsTracking = true;
-	    SelectItem( pcItem );
-	    if ( m_eLayout == ITEMS_IN_ROW ) {
-		OpenSelection();
-	    } else {
-		StartOpenTimer( 200000 );
-	    }
+		if ( pcItem != NULL) 
+		{
+	    	MakeFocus( true );
+	    	m_bIsTracking = true;
+	    	SelectItem( pcItem );
+	    	
+	    	if ( m_eLayout == ITEMS_IN_ROW ) 
+	    	{
+				OpenSelection();
+	    	} 
+	    	else 
+	    	{
+			StartOpenTimer( 200000 );
+	    	}
 	    Flush();
-	}
-	
-	OpenSelection();
-//	s_cMutex.Unlock();
-    } else {
-//	s_cMutex.Lock();
-	if ( m_bHasOpenChilds == false )
-	{
-	    Close( false, true );
-	    if ( m_hTrackPort != -1 ) {
-		MenuItem* pcItem = NULL;
-		if ( send_msg( m_hTrackPort, 1, &pcItem, sizeof(pcItem) ) < 0 ) {
-		    dbprintf( "Error: Menu::WindowActivated() failed to send message to m_hTrackPort\n" );
 		}
-	    }
-	}
-//	s_cMutex.Unlock();
+	OpenSelection();
+	} 
+
+	else 
+	{
+	if ( m_bHasOpenChilds == false )
+		{
+	    	Close( false, true );
+	    	if ( m_hTrackPort != -1 ) 
+	    	{
+				MenuItem* pcItem = NULL;
+				if ( send_msg( m_hTrackPort, 1, &pcItem, sizeof(pcItem) ) < 0 ) 
+				{
+		    		dbprintf( "Error: Menu::WindowActivated() failed to send message to m_hTrackPort\n" );
+				}
+	    	}
+		}
     }
 }
 
@@ -1092,30 +1184,37 @@ void Menu::EndSession( MenuItem* pcSelItem )
 void Menu::MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData )
 {
     AutoLocker __lock__( &m_pcRoot->m->m_cMutex );
-//    s_cMutex.Lock();
-
-    if ( GetBounds().DoIntersect( cPosition ) ) {
-    
-	MenuItem*	pcItem	= FindMarked();
-
-	if ( NULL != pcItem && pcItem == GetItemAt( cPosition ) && NULL == pcItem->m_pcSubMenu ) {
-	    pcItem->Invoke();
-	    Close( false, true );
-	}
-    } else {
-	if ( m_bCloseOnMouseUp )
-	{
-	    Close( false, true );
-	    if ( m_hTrackPort != -1 ) {
-		MenuItem* pcItem = NULL;
-		if ( send_msg( m_hTrackPort, 1, &pcItem, sizeof(pcItem) ) < 0 ) {
-		    dbprintf( "Error: Menu::WindowActivated() failed to send message to m_hTrackPort\n" );
+	
+    if ( GetBounds().DoIntersect( cPosition ) ) 
+    {
+    	MenuItem*	pcItem	= FindMarked();
+		if ( NULL != pcItem && pcItem == GetItemAt( cPosition ) && NULL == pcItem->GetSubMenu() ) 
+		{
+			if (pcItem->IsEnabled())  //if enabled it will invoke the message and then close
+			{								  //else it will not do anything
+	    		pcItem->Invoke();
+	    		Close( false, true );
+	    	}
 		}
-	    }
-	}
+    	 
+    }
+    
+    else 
+    {
+		if ( m_bCloseOnMouseUp )
+		{
+	    	Close( false, true );
+	    	if ( m_hTrackPort != -1 ) 
+	    	{
+				MenuItem* pcItem = NULL;
+				if ( send_msg( m_hTrackPort, 1, &pcItem, sizeof(pcItem) ) < 0 ) 
+				{
+		    		dbprintf( "Error: Menu::WindowActivated() failed to send message to m_hTrackPort\n" );
+				}
+	    	}	
+		}
     }
     SetCloseOnMouseUp( false );
-//    s_cMutex.Unlock();
 }
 
 //----------------------------------------------------------------------------
@@ -1128,7 +1227,6 @@ void Menu::MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData )
 void Menu::MouseMove( const Point& cPosition, int nCode, uint32 nButtons, Message* pcData )
 {
     AutoLocker __lock__( &m_pcRoot->m->m_cMutex );
-//    s_cMutex.Lock();
     if ( nButtons & 0x01 ) {
 	SetCloseOnMouseUp( true );
     }
@@ -1153,7 +1251,6 @@ void Menu::MouseMove( const Point& cPosition, int nCode, uint32 nButtons, Messag
 	    }
 	}
     }
-//    s_cMutex.Unlock();
 }
 
 
@@ -1167,7 +1264,6 @@ void Menu::MouseMove( const Point& cPosition, int nCode, uint32 nButtons, Messag
 void Menu::KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers )
 {
     AutoLocker __lock__( &m_pcRoot->m->m_cMutex );
-//    s_cMutex.Lock();
   
     switch( pzString[0] )
     {
@@ -1190,7 +1286,6 @@ void Menu::KeyDown( const char* pzString, const char* pzRawString, uint32 nQuali
 	    if ( m_eLayout == ITEMS_IN_ROW ) {
 		SelectPrev();
 		OpenSelection();
-//	StartOpenTimer( 1000000 );
 	    } else {
 		Menu* pcSuper = GetSuperMenu();
 		if ( pcSuper != NULL ) {
@@ -1207,12 +1302,11 @@ void Menu::KeyDown( const char* pzString, const char* pzRawString, uint32 nQuali
 	    if ( m_eLayout == ITEMS_IN_ROW ) {
 		SelectNext();
 		OpenSelection();
-//	StartOpenTimer( 1000000 );
 	    } else {
 		Menu* pcSuper = GetSuperMenu();
 		if ( pcSuper != NULL ) {
 		    MenuItem* pcItem = FindMarked();
-		    if ( pcItem != NULL && pcItem->m_pcSubMenu != NULL ) {
+		    if ( pcItem != NULL && pcItem->GetSubMenu() != NULL ) {
 			OpenSelection();
 		    } else if ( pcSuper->m_eLayout == ITEMS_IN_ROW ) {
 			pcSuper->SelectNext();
@@ -1225,7 +1319,7 @@ void Menu::KeyDown( const char* pzString, const char* pzRawString, uint32 nQuali
 	{
 	    MenuItem* pcItem = FindMarked();
 	    if ( pcItem != NULL ) {
-		if ( pcItem->m_pcSubMenu != NULL ) {
+		if ( pcItem->GetSubMenu() != NULL ) {
 		    OpenSelection();
 		} else  {
 		    pcItem->Invoke();
@@ -1241,7 +1335,6 @@ void Menu::KeyDown( const char* pzString, const char* pzRawString, uint32 nQuali
 	default:
 	    View::KeyDown( pzString, pzRawString, nQualifiers );
     }
-//    s_cMutex.Unlock();
 }
 
 //----------------------------------------------------------------------------
@@ -1255,15 +1348,13 @@ void Menu::Paint( const Rect& cUpdateRect )
 {
     AutoLocker __lock__( &m_pcRoot->m->m_cMutex );
     MenuItem*	pcItem;
-
+    	
     SetFgColor( get_default_color( COL_MENU_BACKGROUND ) );
     FillRect( GetBounds() );
 
-//    s_cMutex.Lock();
-    for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->m_pcNext )	{
-	pcItem->Draw();
-    }
-//    s_cMutex.Unlock();
+
+	for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->GetNext() )
+		pcItem->Draw();
 
     DrawFrame( GetBounds(), FRAME_RAISED | FRAME_THIN | FRAME_TRANSPARENT );
 }
@@ -1303,10 +1394,10 @@ bool Menu::AddItem( MenuItem* pcItem, int nIndex )
 {
     bool	bResult = false;
 
-    pcItem->m_pcSuperMenu = this;
+    pcItem->SetSuperMenu( this );
 
     if ( nIndex == 0 ) {
-	pcItem->m_pcNext = m_pcFirstItem;
+	pcItem->SetNext( m_pcFirstItem );
 	m_pcFirstItem	= pcItem;
 	bResult = true;
     } else {
@@ -1314,18 +1405,18 @@ bool Menu::AddItem( MenuItem* pcItem, int nIndex )
 	int		i;
 
 	for ( i = 1, pcPrev = m_pcFirstItem ; i < nIndex && NULL != pcPrev ; ++i ) {
-	    pcPrev = pcPrev->m_pcNext;
+	    pcPrev = pcPrev->GetNext();
 	}
 	if ( pcPrev ) {
-	    pcItem->m_pcNext = pcPrev->m_pcNext;
-	    pcPrev->m_pcNext = pcItem;
+	    pcItem->SetNext( pcPrev->GetNext() );
+	    pcPrev->SetNext( pcItem );
 	    bResult = true;
 	}
     }
 
     if ( bResult ) {
-	if ( pcItem->m_pcSubMenu != NULL ) {
-	    pcItem->m_pcSubMenu->SetRoot( m_pcRoot );
+	if ( pcItem->GetSubMenu() != NULL ) {
+	    pcItem->GetSubMenu()->SetRoot( m_pcRoot );
 	}
 	m_nItemCount++;
 	InvalidateLayout();
@@ -1369,15 +1460,44 @@ bool Menu::AddItem( Menu* pcMenu, int nIndex )
 
 MenuItem* Menu::RemoveItem( int nIndex )
 {
+    MenuItem* pcTmp;
+    MenuItem* pcPrev = NULL;
+    MenuItem* pcItem = NULL;
+
+    for( pcTmp = m_pcFirstItem ; pcTmp != NULL ; pcPrev = pcTmp, pcTmp = pcTmp->GetNext() ) {
+		if( nIndex == 0 ) {
+			pcItem = pcTmp;
+			pcTmp = pcItem->GetNext();
+			
+			if( pcPrev )
+				pcPrev->SetNext( pcTmp );
+			else
+				m_pcFirstItem = pcTmp;
+			
+			if ( pcItem->GetSubMenu() != NULL ) {
+				pcItem->GetSubMenu()->SetRoot( pcItem->GetSubMenu() );
+			}
+
+			m_nItemCount--;
+			InvalidateLayout();
+			break;
+		}
+		nIndex--;
+    }
+
+    return( pcItem );
+
+/* What was the point with this code ??? */
+/*
     MenuItem** ppcTmp;
     MenuItem*  pcItem = NULL;
   
-    for ( ppcTmp = &m_pcFirstItem ; *ppcTmp != NULL ; ppcTmp = &(*ppcTmp)->m_pcNext ) {
+    for ( ppcTmp = &m_pcFirstItem ; *ppcTmp != NULL ; ppcTmp = &(*ppcTmp)->GetNext() ) {
 	if ( nIndex == 0 ) {
 	    pcItem = *ppcTmp;
-	    *ppcTmp = pcItem->m_pcNext;
-	    if ( pcItem->m_pcSubMenu != NULL ) {
-		pcItem->m_pcSubMenu->SetRoot( pcItem->m_pcSubMenu );
+	    *ppcTmp = pcItem->GetNext();
+	    if ( pcItem->GetSubMenu() != NULL ) {
+		pcItem->GetSubMenu()->SetRoot( pcItem->GetSubMenu() );
 	    }
 	    m_nItemCount--;
 	    InvalidateLayout();
@@ -1385,7 +1505,7 @@ MenuItem* Menu::RemoveItem( int nIndex )
 	}
 	nIndex--;
     }
-    return( pcItem );
+    return( pcItem );*/
 }
 
 //----------------------------------------------------------------------------
@@ -1397,20 +1517,47 @@ MenuItem* Menu::RemoveItem( int nIndex )
 
 bool Menu::RemoveItem( MenuItem* pcItem )
 {
+    MenuItem* pcTmp;
+    MenuItem* pcPrev = NULL;
+
+    for( pcTmp = m_pcFirstItem ; pcTmp != NULL ; pcPrev = pcTmp, pcTmp = pcTmp->GetNext() ) {
+		if( pcItem == pcTmp ) {
+			pcItem = pcTmp;
+			pcTmp = pcItem->GetNext();
+			
+			if( pcPrev )
+				pcPrev->SetNext( pcTmp );
+			else
+				m_pcFirstItem = pcTmp;
+			
+			if ( pcItem->GetSubMenu() != NULL ) {
+				pcItem->GetSubMenu()->SetRoot( pcItem->GetSubMenu() );
+			}
+			
+			delete pcItem;
+
+			m_nItemCount--;
+			InvalidateLayout();
+			return true;
+		}
+    }
+    return false;
+
+/*
     MenuItem** ppcTmp;
   
-    for ( ppcTmp = &m_pcFirstItem ; *ppcTmp != NULL ; ppcTmp = &(*ppcTmp)->m_pcNext ) {
+    for ( ppcTmp = &m_pcFirstItem ; *ppcTmp != NULL ; ppcTmp = &(*ppcTmp)->GetNext() ) {
 	if ( *ppcTmp == pcItem ) {
-	    *ppcTmp = pcItem->m_pcNext;
+	    *ppcTmp = pcItem->GetNext();
 	    m_nItemCount--;
 	    InvalidateLayout();
-	    if ( pcItem->m_pcSubMenu != NULL ) {
-		pcItem->m_pcSubMenu->SetRoot( pcItem->m_pcSubMenu );
+	    if ( pcItem->GetSubMenu() != NULL ) {
+		pcItem->GetSubMenu()->SetRoot( pcItem->GetSubMenu() );
 	    }
 	    return( true );
 	}
     }
-    return( false );
+    return( false );*/
 }
 
 //----------------------------------------------------------------------------
@@ -1422,20 +1569,45 @@ bool Menu::RemoveItem( MenuItem* pcItem )
 
 bool Menu::RemoveItem( Menu* pcMenu )
 {
+    MenuItem* pcTmp;
+    MenuItem* pcPrev = NULL;
+    MenuItem* pcItem = NULL;
+
+    for( pcTmp = m_pcFirstItem ; pcTmp != NULL ; pcPrev = pcTmp, pcTmp = pcTmp->GetNext() ) {
+		if ( pcTmp->GetSubMenu() == pcMenu ) {
+			pcItem = pcTmp;
+			pcTmp = pcItem->GetNext();
+			
+			if( pcPrev )
+				pcPrev->SetNext( pcTmp );
+			else
+				m_pcFirstItem = pcTmp;
+			
+			pcMenu->SetRoot( pcMenu );
+			
+			delete pcItem;
+
+			m_nItemCount--;
+			InvalidateLayout();
+			return true;
+		}
+    }
+    return false;
+/*
     MenuItem** ppcTmp;
     MenuItem*  pcItem = NULL;
   
-    for ( ppcTmp = &m_pcFirstItem ; *ppcTmp != NULL ; ppcTmp = &(*ppcTmp)->m_pcNext ) {
+    for ( ppcTmp = &m_pcFirstItem ; *ppcTmp != NULL ; ppcTmp = &(*ppcTmp)->GetNext() ) {
 	pcItem = *ppcTmp;
-	if ( pcItem->m_pcSubMenu == pcMenu ) {
-	    *ppcTmp = pcItem->m_pcNext;
+	if ( pcItem->GetSubMenu() == pcMenu ) {
+	    *ppcTmp = pcItem->GetNext();
 	    pcMenu->SetRoot( pcMenu );
 	    m_nItemCount--;
 	    InvalidateLayout();
 	    return( true );
 	}
     }
-    return( false );
+    return( false );*/
 }
 
 //----------------------------------------------------------------------------
@@ -1449,8 +1621,8 @@ MenuItem* Menu::GetItemAt( Point cPosition ) const
 {
     MenuItem* pcItem;
 
-    for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->m_pcNext )	{
-	if ( pcItem->m_cFrame.DoIntersect( cPosition ) ) {
+    for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->GetNext() )	{
+	if ( pcItem->GetFrame().DoIntersect( cPosition ) ) {
 	    break;
 	}
     }
@@ -1469,7 +1641,7 @@ MenuItem* Menu::GetItemAt( int nIndex ) const
     MenuItem*	pcItem = NULL;
 
     if ( nIndex >= 0 && nIndex < m_nItemCount ) {
-	for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->m_pcNext ) {
+	for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->GetNext() ) {
 	    if ( 0 == nIndex ) {
 		return( pcItem );
 	    }
@@ -1491,7 +1663,7 @@ Menu*	Menu::GetSubMenuAt( int nIndex ) const
     MenuItem*	pcItem = GetItemAt( nIndex );
 
     if ( NULL != pcItem ) {
-	return( pcItem->m_pcSubMenu );
+	return( pcItem->GetSubMenu() );
     } else {
 	return( NULL );
     }
@@ -1521,7 +1693,7 @@ int Menu::GetIndexOf( MenuItem* pcItem ) const
     MenuItem*	pcPtr;
     int		nIndex = 0;
 
-    for ( pcPtr = m_pcFirstItem ; NULL != pcPtr ; pcPtr = pcPtr->m_pcNext )
+    for ( pcPtr = m_pcFirstItem ; NULL != pcPtr ; pcPtr = pcPtr->GetNext() )
     {
 	if ( pcPtr == pcItem ) {
 	    return( nIndex );
@@ -1543,9 +1715,9 @@ int Menu::GetIndexOf( Menu* pcMenu ) const
     MenuItem*	pcPtr;
     int		nIndex = 0;
 
-    for ( pcPtr = m_pcFirstItem ; NULL != pcPtr ; pcPtr = pcPtr->m_pcNext )
+    for ( pcPtr = m_pcFirstItem ; NULL != pcPtr ; pcPtr = pcPtr->GetNext() )
     {
-	if ( pcPtr->m_pcSubMenu == pcMenu ) {
+	if ( pcPtr->GetSubMenu() == pcMenu ) {
 	    return( nIndex );
 	}
 	nIndex++;
@@ -1564,10 +1736,10 @@ MenuItem* Menu::FindItem( int nCode ) const
 {
     MenuItem*	pcItem = NULL;
 
-    for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->m_pcNext )
+    for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->GetNext() )
     {
-	if ( pcItem->m_pcSubMenu != NULL ) {
-	    MenuItem* pcTmp = pcItem->m_pcSubMenu->FindItem( nCode );
+	if ( pcItem->GetSubMenu() != NULL ) {
+	    MenuItem* pcTmp = pcItem->GetSubMenu()->FindItem( nCode );
 	    if ( pcTmp != NULL ) {
 		return( pcTmp );
 	    }
@@ -1587,9 +1759,9 @@ void Menu::SetCloseOnMouseUp( bool bFlag )
 
     m_bCloseOnMouseUp = bFlag;
 
-    for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->m_pcNext ) {
-	if ( pcItem->m_pcSubMenu != NULL ) {
-	    pcItem->m_pcSubMenu->SetCloseOnMouseUp( bFlag );
+    for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->GetNext() ) {
+	if ( pcItem->GetSubMenu() != NULL ) {
+	    pcItem->GetSubMenu()->SetCloseOnMouseUp( bFlag );
 	}
     }
 }
@@ -1605,15 +1777,15 @@ MenuItem* Menu::FindItem( const char* pzName ) const
 {
     MenuItem* pcItem;
 
-    for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->m_pcNext )
+    for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->GetNext() )
     {
-	if ( pcItem->m_pcSubMenu != NULL ) {
-	    MenuItem* pcTmp = pcItem->m_pcSubMenu->FindItem( pzName );
+	if ( pcItem->GetSubMenu() != NULL ) {
+	    MenuItem* pcTmp = pcItem->GetSubMenu()->FindItem( pzName );
 	    if ( pcTmp != NULL ) {
 		return( pcTmp );
 	    }
 	} else {
-	    if ( NULL != pcItem->m_pzLabel && strcmp( pcItem->m_pzLabel, pzName ) == 0 ) {
+	    if ( NULL != pcItem->GetLabel() && strcmp( pcItem->GetLabel(), pzName ) == 0 ) {
 		break;
 	    }
 	}
@@ -1632,12 +1804,12 @@ status_t Menu::SetTargetForItems( Handler* pcTarget )
 {
     MenuItem*	pcItem;
 
-    for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->m_pcNext )
+    for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->GetNext() )
     {
-	if ( NULL == pcItem->m_pcSubMenu ) {
+	if ( NULL == pcItem->GetSubMenu() ) {
 	    pcItem->SetTarget( pcTarget );
 	} else {
-	    pcItem->m_pcSubMenu->SetTargetForItems( pcTarget );
+	    pcItem->GetSubMenu()->SetTargetForItems( pcTarget );
 	}
     }
     return( 0 );
@@ -1654,12 +1826,12 @@ status_t Menu::SetTargetForItems( Messenger cMessenger )
 {
     MenuItem*	pcItem;
 
-    for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->m_pcNext )
+    for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->GetNext() )
     {
-	if ( NULL == pcItem->m_pcSubMenu ) {
+	if ( NULL == pcItem->GetSubMenu() ) {
 	    pcItem->SetTarget( cMessenger );
 	} else {
-	    pcItem->m_pcSubMenu->SetTargetForItems( cMessenger );
+	    pcItem->GetSubMenu()->SetTargetForItems( cMessenger );
 	}
     }
     return( 0 );
@@ -1686,8 +1858,8 @@ MenuItem* Menu::FindMarked() const
 {
     MenuItem* pcItem;
 
-    for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->m_pcNext ) {
-	if ( pcItem->m_bIsHighlighted ) {
+    for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->GetNext() ) {
+	if ( pcItem->IsHighlighted() ) {
 	    break;
 	}
     }
@@ -1704,7 +1876,7 @@ MenuItem* Menu::FindMarked() const
 Menu*	Menu::GetSuperMenu() const
 {
     if ( NULL != m_pcSuperItem ) {
-	return( m_pcSuperItem->m_pcSuperMenu );
+	return( m_pcSuperItem->GetSuperMenu() );
     } else {
 	return( NULL );
     }
@@ -1750,34 +1922,32 @@ void Menu::InvalidateLayout()
 	switch( m_eLayout )
 	{
 		case ITEMS_IN_ROW:
-			for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->m_pcNext )
+			for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->GetNext() )
 			{
 				Point	cSize = pcItem->GetContentSize();
 
-				pcItem->m_cFrame = Rect( m_cSize.x + m_cItemBorders.left,
-											m_cItemBorders.top,
-											m_cSize.x + cSize.x + m_cItemBorders.left - 1,
-											cSize.y + m_cItemBorders.bottom - 1 );
-
-				pcItem->m_cFrame += Point( 1.0f, 1.0f );	// Menu border
+				pcItem->SetFrame( Rect( m_cSize.x + m_cItemBorders.left + 1,
+										m_cItemBorders.top + 1,
+										m_cSize.x + cSize.x + m_cItemBorders.left - 1,
+										cSize.y + m_cItemBorders.bottom - 1 ) );
 
 				m_cSize.x += cSize.x + m_cItemBorders.left + m_cItemBorders.right;
 
-				if ( cSize.y + m_cItemBorders.top + m_cItemBorders.bottom + 2 > m_cSize.y )
-					m_cSize.y = cSize.y + m_cItemBorders.top + m_cItemBorders.bottom + 2;
+				if ( cSize.y > m_cSize.y ) m_cSize.y = cSize.y;
 			}
+			m_cSize.y +=  m_cItemBorders.top + m_cItemBorders.bottom /*+ 2*/;
 
 			break; 
 
 		case ITEMS_IN_COLUMN:
-			for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->m_pcNext )
+			for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->GetNext() )
 			{
 				Point	cSize = pcItem->GetContentSize();
 
-				pcItem->m_cFrame = Rect( m_cItemBorders.left,
+				pcItem->SetFrame( Rect( m_cItemBorders.left,
 											m_cSize.y + m_cItemBorders.top,
 											cSize.x + m_cItemBorders.right - 1,
-											m_cSize.y + cSize.y + m_cItemBorders.top - 1 );
+											m_cSize.y + cSize.y + m_cItemBorders.top - 1 ) );
 
 				m_cSize.y += cSize.y + m_cItemBorders.top + m_cItemBorders.bottom;
 
@@ -1785,8 +1955,12 @@ void Menu::InvalidateLayout()
 					m_cSize.x = cSize.x + m_cItemBorders.left + m_cItemBorders.right;
 			}
 
-			for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->m_pcNext )
-				pcItem->m_cFrame.right = m_cSize.x - 2;
+			for ( pcItem = m_pcFirstItem ; NULL != pcItem ; pcItem = pcItem->GetNext() )
+			{
+				Rect	frame = pcItem->GetFrame();
+				frame.right = m_cSize.x - 2;
+				pcItem->SetFrame(frame);
+			}
 
 			break;
 
@@ -1836,3 +2010,54 @@ MenuItem* Menu::Track( const Point& cScreenPos )
     m_hTrackPort = -1;
     return( pcSelItem );
 }
+
+void Menu::SetEnable(bool bEnabled)
+{
+	m_bEnabled = bEnabled;
+	
+	for (int i=0; i< GetItemCount(); i++)
+		GetItemAt(i)->SetEnable(bEnabled);
+}
+
+bool Menu::IsEnabled()
+{
+	return m_bEnabled;
+}	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

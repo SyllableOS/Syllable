@@ -17,8 +17,8 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef	_GUI_MENU_HPP
-#define	_GUI_MENU_HPP
+#ifndef	__F_GUI_MENU_H__
+#define	__F_GUI_MENU_H__
 
 #include <gui/view.h>
 #include <gui/window.h>
@@ -53,29 +53,34 @@ public:
     MenuItem( Menu* pcMenu, Message* pcMsg );
     ~MenuItem();
 
-    Menu*	  GetSubMenu() const;
-    Menu*	  GetSuperMenu() const;
-    Rect	  GetFrame() const;
+    Menu*	GetSubMenu() const;
+    Menu*	GetSuperMenu() const;
+    Rect	GetFrame() const;
     virtual Point GetContentSize();
     const char*	  GetLabel() const;
     virtual void  Draw();
     virtual void  DrawContent();
-    virtual void  Highlight( bool bHighlight );
     Point	  GetContentLocation() const;
     virtual bool  Invoked( Message* pcMessage );
-    
+    void SetEnable( bool bEnabled = false );
+    bool IsEnabled() const;
+    virtual void SetHighlighted( bool bHighlighted = true );
+	bool IsHighlighted() const;
+
 private:
     friend class Menu;
-    MenuItem*	m_pcNext;
-    Menu*		m_pcSuperMenu;
-    Menu*		m_pcSubMenu;
-    Rect		m_cFrame;
 
-    char*		m_pzLabel;
+	MenuItem*	GetNext();
+	void		SetNext( MenuItem* pcItem );
+	void		SetSubMenu( Menu* pcMenu );
+	void		SetSuperMenu( Menu* pcMenu );
+    void		SetFrame( const Rect& cFrame );
+    
+    class Private;
+    
+    Private* m;
 
-    bool		m_bIsHighlighted;
-
-    static Bitmap* s_pcSubMenuBitmap;
+	static Bitmap* s_pcSubMenuBitmap;
 };
 
 /** Menu separator item.
@@ -97,7 +102,7 @@ public:
     virtual Point GetContentSize();
     virtual void  Draw();
     virtual void  DrawContent();
-    virtual void  Highlight( bool bHighlight );
+    virtual void  SetHighlighted( bool bHighlight );
 private:
 };
 
@@ -173,6 +178,9 @@ public:
 
     MenuItem*	Track( const Point& cScreenPos );
     void 	Open( Point cScrPos );
+    
+    void SetEnable(bool);
+    bool IsEnabled();
 
 private:
     friend	class MenuItem;
@@ -203,7 +211,10 @@ private:
     bool	  m_bIsTracking;
     bool	  m_bHasOpenChilds;
     bool	  m_bCloseOnMouseUp;
+    bool   m_bEnabled;
 };
 
 }
-#endif	//	_GUI_MENU_HPP
+#endif	//	__F_GUI_MENU_H__
+
+
