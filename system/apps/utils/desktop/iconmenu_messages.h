@@ -15,10 +15,13 @@ enum iconmenu_messages{
 
 enum iconmenu_private_messages{
     ID_ICON_PROP_RENAME = 10016,
-    ID_ICON_PROP_OK   = 10017
+    ID_ICON_PROP_OK   = 10017,
+    ID_ICON_PROP_CHANGE = 10018,
+    ID_ICON_PROP_CANCEL = 10019
 };
 
 #endif
+
 
 
 

@@ -8,7 +8,7 @@ using namespace os;
 class IconProp : public Window
 {
     public:
-        IconProp(string cIconName);
+        IconProp(string cIconName, string cExec);
 
     private:
         TextView* pcIconNameText;
@@ -17,15 +17,16 @@ class IconProp : public Window
         Button*    pcIconOkBut;
         Button*    pcIconRenameBut;
         
-        //Button*    pcIconExecBut;
-        //TextView*  pcIconExecTxt;
-        //StringView pcIconExecStr;
+        Button*    pcIconExecBut;
+        TextView*  pcIconExecTxt;
+        StringView* pcIconExecStr;
         
         
         virtual void HandleMessage(Message* pcMessage);
 };
 
 #endif
+
 
 
 

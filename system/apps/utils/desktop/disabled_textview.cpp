@@ -13,6 +13,7 @@
 DisabledTextView::DisabledTextView(const Rect& cFrame, const char* zTitle, const char* zText, bool bRead = false) : TextView(cFrame, zTitle, zText)
 {
     SetReadOnly(bRead);
+    SetEnable(bRead);
 }
 
 /*

@@ -672,6 +672,7 @@ void BitmapView::MouseDown( const Point& cPosition, uint32 nButtons )
 
             if (  pcIcon->m_bSelected )
                 cIconName = pcIcon->GetName();
+                cIconExec = pcIcon->GetExecName();
 
             pcIconMenu->Open(ConvertToScreen(cPosition));
             pcIconMenu->SetTargetForItems(this);
@@ -922,7 +923,7 @@ void BitmapView::HandleMessage(Message* pcMessage)
 
     case ID_ICON_PROPERTIES:
         {
-            Window* pcIconProp = new IconProp(cIconName);
+            Window* pcIconProp = new IconProp(cIconName, cIconExec);
             pcIconProp->Show();
             pcIconProp->MakeFocus();
         }
@@ -960,7 +961,7 @@ void BitmapView::HandleMessage(Message* pcMessage)
 
     case M_DRIVES_UNMOUNT:
 
-        pcAlert = new Alert("Alert!!!","Unmount doesn't work yet!!!\n", 0, "OK", NULL );
+        pcAlert = new Alert("Alert!!!","Unmount doesn't work yet!!!\n", 0, "OK",NULL );
         pcAlert->Go(new Invoker());
 
         break;
@@ -1114,6 +1115,10 @@ int main( int argc, char** argv )
 
     return( 0 );
 }
+
+
+
+
 
 
 

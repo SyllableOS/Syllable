@@ -96,6 +96,7 @@ class BitmapView : public View
         bool 			 bShow;
         IconMenu* 		 pcIconMenu;
         string 			 cIconName;
+        string			 cIconExec;
         t_Icon 			 IconList();
         bool             bAlphbt;
         
@@ -117,6 +118,7 @@ class BitmapWindow : public Window
 };
 
 #endif
+
 
 
 
