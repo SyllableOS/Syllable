@@ -12,7 +12,7 @@ OBJS := ../objs/main.o ../objs/toolbar.o ../objs/archiver.o ../objs/new.o ../obj
 
 $(EXE): $(OBJS)
 	@echo Building : $(EXE)
-	@g++ $(OBJS) -latheos -o $(EXE)
+	@g++ $(OBJS) -lsyllable -o $(EXE)
 	@echo Adding images into : $(EXE)
 	@rescopy -r ../objs/archiver ./images/*.png
 
