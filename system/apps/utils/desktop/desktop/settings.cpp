@@ -3,24 +3,23 @@
 
 DeskSettings::DeskSettings()
 {
-	system("mkdir ~/config 2> /dev/null");
-    system("mkdir ~/config/desktop 2> /dev/null");
-    system("mkdir ~/config/desktop/config 2> /dev/null");
-    system("mkdir ~/config/desktop/startup 2> /dev/null");
-    system("mkdir ~/config/desktop/pictures 2> /dev/null");
-    system("mkdir ~/config/desktop/disks 2> /dev/null");
-    system("mkdir ~/Desktop 2> /dev/null");
-    system("mkdir ~/Trash 2> /dev/null");
+	string cString = (string) getenv("HOME");
+	mkdir ((cString +  (string)"/Settings").c_str(),0700);
+    mkdir ((cString + (string)"/Settings/Desktop").c_str(), 0700);
+    mkdir ((cString + (string)"/Settings/Desktop/config").c_str(), 0700); 
+    mkdir ((cString + (string)"/Settings/Desktop/Startup").c_str(), 0700);
+    mkdir ((cString + (string)"/Documents").c_str(),0700);
+    mkdir ((cString + (string)"/Documents/Pictures").c_str(), 0700);
+    mkdir ((cString + "/Desktop").c_str(), 0700);
+    mkdir ((cString + "/Trash").c_str(), 0700);
 	
-	
-	sprintf(pzConfigFile,"%s/config/desktop/config/desktop.cfg",getenv("HOME"));
-    sprintf(pzConfigDir, "%s/config/desktop/config/",getenv("HOME"));
-    sprintf(pzImageDir, "%s/config/desktop/pictures/",getenv("HOME"));
+	sprintf(pzConfigFile,"%s/Settings/Desktop/desktop.cfg",getenv("HOME"));
+    sprintf(pzConfigDir, "%s/Settings/Desktop/",getenv("HOME"));
+    sprintf(pzImageDir, "%s/Documents/Pictures/",getenv("HOME"));
     sprintf(pzIconDir, "%s/Desktop/",getenv("HOME"));
 	
 	pcReturnMessage = new Message();
 	
-	//Debug("DeskSettings::DeskSettings(), launching ReadSettings()");
 	DefaultSettings();
 	ReadSettings();
 }
@@ -50,7 +49,7 @@ void DeskSettings::SaveSettings(Message* pcMessage)
         free( pBuffer );
     }
     
-     system("/usr/bin/mv -f /tmp/desktop.cfg ~/config/desktop/config");
+     system("/usr/bin/mv -f /tmp/desktop.cfg ~/Settings/Desktop/desktop.cfg");
   
 }
 
@@ -68,7 +67,6 @@ Message* DeskSettings::GetSettings()
 void DeskSettings::ReadSettings()
 {
 	
-	//Debug("DeskSettings::ReadSettings() reads the settings from ~/config/desktop/config/desktop.cfg");
 	FSNode *pcNode = new FSNode();
     
     if( pcNode->SetTo(pzConfigFile) == 0 )
@@ -89,7 +87,6 @@ void DeskSettings::ReadSettings()
         
     
     }else {
-    	//Debug ("DeskSettings::ReadSettings(), ~/config/desktop/config/desktop.cfg is\n   nonexsistant, we will try to create it");
 		Message* pcCreateSettings = GetSettings();
 		DefaultSettings();
 		SaveSettings(pcCreateSettings);
@@ -103,7 +100,6 @@ void DeskSettings::ReadSettings()
 void DeskSettings::ResetSettings()
 {
 	
-	//Debug("DeskSettings::ResetSettings() reads the settings from ~/config/desktop/config/desktop.cfg");
 	FSNode *pcNode = new FSNode();
     
     if( pcNode->SetTo(pzConfigFile) == 0 )
@@ -123,7 +119,6 @@ void DeskSettings::ResetSettings()
         pcPrefs->FindBool   ( "Alphabet",   &bAlpha);
     
     }else {
-    	//Debug ("DeskSettings::ResetSettings(), ~/config/desktop/config/desktop.cfg is\n   nonexsistant, we will try to create it");
 	}
 }
 
@@ -163,6 +158,12 @@ int32 DeskSettings::GetImageSize()
 {
 	return (nSizeImage);
 }
+
+
+
+
+
+
 
 
 
