@@ -416,13 +416,13 @@ Semaphore_s *get_semaphore_by_handle( proc_id hProcess, sem_id hSema )
  *	The object returned by create_semaphore() can be used both as a
  *	counting semaphore, and as a condition variable. Whether it is
  *	used as a semaphore or a conditional variable depend on the functions
- *	used to aquire/release the semaphore.
+ *	used to acquire/release the semaphore.
  *
  *	A semaphore consist of a counter and a thread-list keeping
  *	track on threads waiting for the semaphore to be released.
  *
  *	When used as a counting semaphore the functions
- *	lock_semaphore() and unlock_semaphore() are used to aquire and
+ *	lock_semaphore() and unlock_semaphore() are used to acquire and
  *	release the semaphore. The counter is given a initial value
  *	through create_semaphore() and lock_semaphore() will decrease
  *	the counter and unlock_semaphore() will increase it. If
@@ -450,7 +450,7 @@ Semaphore_s *get_semaphore_by_handle( proc_id hProcess, sem_id hSema )
  * \param nFlags
  *	Various flags describing how to create the semaphore.
  *		- SEM_RECURSIVE	Don't block if the semaphore is
- *				aquired multiple times by the same
+ *				acquired multiple times by the same
  *				thread.
  * \return
  *	On success a positive handle is returned.
@@ -1340,8 +1340,8 @@ static status_t do_lock_semaphore_ex( bool bKernel, sem_id hSema, int nCount, ui
  *
  *	If the timeout is 0 lock_semaphore_ex() will never block, but
  *	instead returns immediatly with ETIME if the semaphore can
- *	not be aquired. If the timeout is INFINITE_TIMEOUT the thread
- *	will be blocked until it can be successfully aquired or a
+ *	not be acquired. If the timeout is INFINITE_TIMEOUT the thread
+ *	will be blocked until it can be successfully acquired or a
  *	signal is caught.
  *
  * \if document_driver_api
@@ -1372,7 +1372,7 @@ static status_t do_lock_semaphore_ex( bool bKernel, sem_id hSema, int nCount, ui
  *	Maximum number of micro seconds to wait for the semaphore to
  *	be released. If the timeout is 0 lock_semaphore_ex() will
  *	never return, and if it is INFINITE_TIMEOUT it will block
- *	until the semaphore can be aquired or a signel is caught.
+ *	until the semaphore can be acquired or a signel is caught.
  * \return
  *	On success 0 is returned.
  *	\if document_driver_api
@@ -1383,8 +1383,8 @@ static status_t do_lock_semaphore_ex( bool bKernel, sem_id hSema, int nCount, ui
  *	\endif
  *
  * \par Error codes:
- *	- \b ETIME  the semaphore could not be aquired before the timeout expiered.
- *	- \b EINTR  a signal was caught before the semaphore could be aquired.
+ *	- \b ETIME  the semaphore could not be acquired before the timeout expiered.
+ *	- \b EINTR  a signal was caught before the semaphore could be acquired.
  *	- \b EINVAL hSema was not a valid semaphore handle, or the semaphore
  *		    was deleted while we blocked.
  *
@@ -1561,7 +1561,7 @@ status_t unlock_mutex( sem_id hSema )
  *	Maximum number of micro seconds to wait for the semaphore to
  *	be released. If the timeout is 0 lock_semaphore_ex() will
  *	never return, and if it is INFINITE_TIMEOUT it will block
- *	until the semaphore can be aquired or a signel is caught.
+ *	until the semaphore can be acquired or a signel is caught.
  * \return
  *	On success 0 is returned.
  *	\if document_driver_api
@@ -1572,8 +1572,8 @@ status_t unlock_mutex( sem_id hSema )
  *	\endif
  *
  * \par Error codes:
- *	- \b ETIME  the semaphore could not be aquired before the timeout expiered.
- *	- \b EINTR  a signal was caught before the semaphore could be aquired.
+ *	- \b ETIME  the semaphore could not be acquired before the timeout expiered.
+ *	- \b EINTR  a signal was caught before the semaphore could be acquired.
  *	- \b EINVAL hSema was not a valid semaphore handle, or the semaphore
  *		    was deleted while we blocked.
  *

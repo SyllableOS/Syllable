@@ -193,7 +193,10 @@ void Desc_Free( uint16 desc )
 
 void enable_mmu( void )
 {
-	
+	/* Enable the mmu */
+	unsigned int nDummy;
+	g_sInitialTSS.cr3 = ( void * )&g_psKernelSeg->mc_pPageDir;
+	__asm__ __volatile__( "movl %%cr0,%0; orl $0x80010000,%0; movl %0,%%cr0" : "=r" (nDummy) );	// set PG & WP bit in cr0
 }
 
 //****************************************************************************/
@@ -209,7 +212,6 @@ void init_descriptors()
 {
 	struct i3DescrTable IDT;
 	int i;
-	unsigned int nDummy;
 	
 	/* Init the code and data descriptors */
 	IDT.Base = ( uint32 )g_sSysBase.ex_IDT;
@@ -266,9 +268,6 @@ void init_descriptors()
 		g_sSysBase.ex_DTAllocList[i] |= DTAL_GDT;
 	}
 	
-	/* Enable the mmu */
-	g_sInitialTSS.cr3 = ( void * )&g_psKernelSeg->mc_pPageDir;
-	__asm__ __volatile__( "movl %%cr0,%0; orl $0x80010000,%0; movl %0,%%cr0" : "=r" (nDummy) );	// set PG & WP bit in cr0
 }
  
  

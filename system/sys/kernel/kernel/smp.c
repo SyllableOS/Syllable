@@ -1208,8 +1208,6 @@ void init_smp( bool bInitSMP, bool bScanACPI )
 {
 	bool bFound = false;
 	int i;
-	
-	calibrate_delay();
 
 	if ( bInitSMP )
 	{
@@ -1251,7 +1249,7 @@ void init_smp( bool bInitSMP, bool bScanACPI )
 			}	
 		}
 	}
-
+	
 	if ( ( bFound || ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_APIC ) ) && bInitSMP )
 	{
 		/* Map APIC registers */
@@ -1308,11 +1306,11 @@ void boot_ap_processors( void )
 	int nFlg;
 	int i;
 	
+	printk( "Untie AP processors...\n" );
+	
+	calibrate_delay();
 	if ( g_bFoundSmpConfig )
 	{
-
-		printk( "Untie AP processors...\n" );
-
 		nFlg = cli();
 		calibrate_apic_timer( get_processor_id() );
 		smp_boot_cpus();

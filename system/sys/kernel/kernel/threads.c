@@ -686,7 +686,8 @@ Thread_s *Thread_New( Process_s *psProc )
 
 	Desc_SetLimit( psThread->tc_TSSDesc, 0xffff );
 	Desc_SetBase( psThread->tc_TSSDesc, ( uint32 )tss );
-	Desc_SetAccess( psThread->tc_TSSDesc, 0xe9 );
+	Desc_SetAccess( psThread->tc_TSSDesc, 0xe9 );                                                                                                                                                                                      
+	g_sSysBase.ex_GDT[psThread->tc_TSSDesc >> 3].desc_lmh &= 0x8f;	// TSS descriptor has bit 22 clear (as opposed to 32 bit data and code descriptors)
 
 	tss->IOMapBase = 104;
 	tss->cr3 = ( uint32 * )psProc->tc_psMemSeg->mc_pPageDir;

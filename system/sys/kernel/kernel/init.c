@@ -773,16 +773,16 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 
 	set_debug_port_params( g_nDebugBaudRate, g_nDebugSerialPort, g_bPlainTextDebug );
 
+	g_sSysBase.ex_nTotalPageCount = g_nMemSize / PAGE_SIZE;
 	
 	v86Stack_seg = ( ( uint32 )pRealMemBase ) >> 4;
 	v86Stack_off = 65500;	// 65532;
 
 	pRealMemBase += 65536;
 	
+	init_descriptors();
+	init_interrupt_table();
 	init_cpuid();
-	
-	g_sSysBase.ex_nTotalPageCount = g_nMemSize / PAGE_SIZE;
-
 	init_pages( KERNEL_LOAD_ADDR + nKernelSize );
 
 	kassertw( sizeof( MemContext_s ) <= PAGE_SIZE );	/* Late compile-time check :) */
@@ -798,8 +798,7 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 
 	/* Initialize the descriptors and enable the mmu */
 	set_page_directory_base_reg( g_psKernelSeg->mc_pPageDir );
-	init_interrupt_table();
-	init_descriptors();
+	enable_mmu();
 
 	kassertw( ( get_cpu_flags() & EFLG_IF ) == 0 );
 	

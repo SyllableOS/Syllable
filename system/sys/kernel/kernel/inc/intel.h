@@ -294,6 +294,7 @@ static inline void set_in_cr4( unsigned int nFlags )
 void init_cpuid( void );
 
 void init_descriptors( void );
+void enable_mmu( void );
 bool Desc_SetBase( uint16 desc, uint32 base );
 uint32 Desc_GetBase( uint16 desc );
 bool Desc_SetLimit( uint16 desc, uint32 limit );

@@ -197,6 +197,16 @@ uint32 memmap_no_page( MemArea_s *psArea, uintptr_t nAddress, bool bWriteAccess 
 		}
 
 		flush_tlb_global();
+		
+		// Wake up threads bumping into the page while we were loading it.
+		if ( psPage->p_psIOThreads != NULL )
+		{
+			wake_up_queue( psPage->p_psIOThreads, 0, true );
+		}
+		if ( psArea->a_psIOThreads != NULL )
+		{
+			wake_up_queue( psArea->a_psIOThreads, 0, true );
+		}	
 		return ( 0 );
 	}
 
@@ -425,6 +435,7 @@ static int handle_not_present( MemArea_s *psArea, pte_t * pPte, uintptr_t nAddre
 			nFlg = cli();	// Make sure we are not pre-empted until we are added to the waitlist
 			add_to_waitlist( &psPage->p_psIOThreads, &sWaitNode );
 			UNLOCK( g_hAreaTableSema );
+			psThread->tr_nState = TS_WAIT;
 			put_cpu_flags( nFlg );
 			Schedule();
 			LOCK( g_hAreaTableSema );
