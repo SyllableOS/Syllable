@@ -5,7 +5,7 @@ binaries			:= rebuild_all.sh mksection.sh mkindex.sh addpage.sh manaddpackage.sh
 posix-apps-path	:= /usr
 binaries-dir		:= bin
 install-path		:= $(posix-apps-path)/$(name)
-distro-path		:= ($DIST_ROOT)/atheos$(install-path)
+distro-path		:= ($DIST_DIR)/atheos$(install-path)
 
 all: $(executable)
 	make -C $(source-path)/
