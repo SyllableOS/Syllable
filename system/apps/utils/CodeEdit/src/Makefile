@@ -1,7 +1,7 @@
 OBJS = ../objs/App.o ../objs/EditWin.o ../objs/StatusBar.o ../objs/KeyMap.o ../objs/Dialogs.o ../objs/SettingsDialog.o ../objs/SettingsTab_Key.o ../objs/SettingsTab_Formats.o ../objs/FavoriteMenu.o ../objs/ToolBar.o ../objs/ImageItem.o ../objs/LoadBitmap.o ../objs/Version.o ../objs/SettingsTab_Font.o
 
 COPTS = -Wall --no-warn
-LOPTS = -latheos -lcodeview
+LOPTS = -lsyllable -lcodeview
 CC= g++
 LL = g++
 
@@ -19,6 +19,9 @@ clean:
 	@-rm -f $(OBJS)
 	@-rm -f $(EXE)
 	@-rmdir ../objs
+
+dist: $(EXE)
+	cp -a $(EXE) $(DIST_DIR)/atheos/sys/bin/$(EXE)
 
 astyle:
 	@echo Running astyle on all source files.
