@@ -312,6 +312,7 @@ bool FileRequester::OkToQuit( void )
 {
 	Message *pcMsg = new Message( M_FILE_REQUESTER_CANCELED );
 
+	pcMsg->AddPointer( "source", this );
 	m->m_pcTarget->SendMessage( pcMsg );
 	Show( false );
 	return ( false );
@@ -513,7 +514,7 @@ void FileRequester::HandleMessage( Message * pcMessage )
 		{
 			Message *pcMsg = new Message( M_FILE_REQUESTER_CANCELED );
 
-			pcMsg->AddPointer( "source", pcMsg );
+			pcMsg->AddPointer( "source", this );
 			m->m_pcTarget->SendMessage( pcMsg );
 			Show( false );
 		}

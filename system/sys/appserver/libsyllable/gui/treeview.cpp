@@ -1187,6 +1187,7 @@ void TreeView::Paint( const Rect& cUpdateRect )
  *****************************************************************************/
 TreeViewNode* TreeView::RemoveNode( int nIndex, bool bUpdate )
 {
+	m->m_bTrunkValid = false;
 	return (TreeViewNode*)RemoveRow( nIndex, bUpdate );
 }
 
@@ -1194,6 +1195,12 @@ ListViewRow* TreeView::RemoveRow( int nIndex, bool bUpdate )
 {
 	m->m_bTrunkValid = false;
 	return ListView::RemoveRow( nIndex, bUpdate );
+}
+
+void TreeView::Clear()
+{
+	m->m_bTrunkValid = false;
+	ListView::Clear();
 }
 
 /* Disabled - not valid in a TreeView */

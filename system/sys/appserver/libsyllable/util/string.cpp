@@ -307,6 +307,21 @@ bool String::operator==( const String &cString ) const
 	return ( m_cString == cString.m_cString );
 }
 
+bool String::operator!=( const char *pzString ) const
+{
+	return ( m_cString != pzString );
+}
+
+bool String::operator!=( const std::string & cString ) const
+{
+	return ( m_cString != cString );
+}
+
+bool String::operator!=( const String &cString ) const
+{
+	return ( m_cString != cString.m_cString );
+}
+
 bool String::operator<( const char *pzString ) const
 {
 	return ( m_cString < pzString );

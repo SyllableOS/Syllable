@@ -335,7 +335,20 @@ status_t Directory::Rewind()
 	return ( 0 );
 }
 
+/** Delete the directory
+ * \par Warning: The Directory will be invalid if the call to Delete suceeds.
+ *      You should destroy the Directory instance after calling Delete() to
+ *      remove any references and ensure the directory is removed from the filesystem.
+ * \author	Kristian Van Der Vliet (vanders@liqwyd.com)
+ *****************************************************************************/
 
+status_t Directory::Delete()
+{
+	String cPath;
+	GetPath( &cPath );
+
+	return rmdir( cPath.c_str() );
+}
 
 status_t Directory::CreateFile( const String & cName, File * pcFile, int nAccessMode )
 {

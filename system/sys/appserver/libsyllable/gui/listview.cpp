@@ -908,7 +908,7 @@ void ListViewContainer::MouseDown( const Point & cPosition, uint32 nButton )
 		else
 		{
 			ExpandSelect( nHitRow, ( nQualifiers & QUAL_CTRL ), ( ( nQualifiers & ( QUAL_CTRL | QUAL_SHIFT ) ) == 0 || ( m_nModeFlags & ListView::F_MULTI_SELECT ) == 0 ) );
-			if( m_nModeFlags & ListView::F_MULTI_SELECT )
+			if( ( m_nModeFlags & ListView::F_MULTI_SELECT ) && ( MOUSE_BUT_LEFT == nButton ) )
 			{
 				m_bIsSelecting = true;
 				m_cSelectRect = Rect( cPosition.x, cPosition.y, cPosition.x, cPosition.y );
@@ -918,7 +918,7 @@ void ListViewContainer::MouseDown( const Point & cPosition, uint32 nButton )
 			}
 		}
 	}
-	m_pcListView->MouseDown(cPosition, nButton);
+	m_pcListView->MouseDown( ConvertToParent( cPosition ), nButton);
 	Flush();
 }
 

@@ -46,6 +46,7 @@
 #include <cassert>
 #include <sys/stat.h>
 #include <sys/mount.h>
+#include <sys/ioctl.h>
 #include <string>
 
 
