@@ -70,11 +70,61 @@ extern "C" {
 #define S_IRUGO		(S_IRUSR|S_IRGRP|S_IROTH)
 #define S_IWUGO		(S_IWUSR|S_IWGRP|S_IWOTH)
 #define S_IXUGO		(S_IXUSR|S_IXGRP|S_IXOTH)
-#endif
+
+#else
+
+#define __S_IFMT	00170000
+#define __S_IFSOCK	0140000
+#define __S_IFLNK	0120000
+
+#define __S_IFREG	0100000
+#define __S_IFBLK	0060000
+#define __S_IFDIR	0040000
+#define __S_IFCHR	0020000
+#define __S_IFIFO	0010000
+
+#define __S_ISUID	0004000
+#define __S_ISGID	0002000
+#define __S_ISVTX	0001000
+
+#define __S_ISLNK(m)	(((m) & __S_IFMT) == __S_IFLNK)
+#define __S_ISREG(m)	(((m) & __S_IFMT) == __S_IFREG)
+#define __S_ISDIR(m)	(((m) & __S_IFMT) == __S_IFDIR)
+#define __S_ISCHR(m)	(((m) & __S_IFMT) == __S_IFCHR)
+#define __S_ISBLK(m)	(((m) & __S_IFMT) == __S_IFBLK)
+#define __S_ISFIFO(m)	(((m) & __S_IFMT) == __S_IFIFO)
+#define __S_ISSOCK(m)	(((m) & __S_IFMT) == __S_IFSOCK)
+
+#define __S_IRWXU 00700
+#define __S_IRUSR 00400
+#define __S_IWUSR 00200
+#define __S_IXUSR 00100
+
+#define __S_IRWXG 00070
+#define __S_IRGRP 00040
+#define __S_IWGRP 00020
+#define __S_IXGRP 00010
+
+#define __S_IRWXO 00007
+#define __S_IROTH 00004
+#define __S_IWOTH 00002
+#define __S_IXOTH 00001
+
+#define __S_IRWXUGO	(__S_IRWXU|__S_IRWXG|__S_IRWXO)
+#define __S_IALLUGO	(__S_ISUID|__S_ISGID|__S_ISVTX|__S_IRWXUGO)
+#define __S_IRUGO	(__S_IRUSR|__S_IRGRP|__S_IROTH)
+#define __S_IWUGO	(__S_IWUSR|__S_IWGRP|__S_IWOTH)
+#define __S_IXUGO	(__S_IXUSR|__S_IXGRP|__S_IXOTH)
+
+#define __S_IREAD	__S_IRUSR
+#define __S_IWRITE	__S_IWUSR
+#define __S_IEXEC	__S_IXUSR
+
+#endif	/* __KERNEL__ */
 
 #include <posix/types.h>
 
-#define _STAT_VER_KERNEL 0    
+#define _STAT_VER_KERNEL 0
 struct stat {
     int	 	 st_dev;
     long long	 st_ino;

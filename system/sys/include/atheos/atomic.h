@@ -27,9 +27,9 @@ extern "C" {
 #endif
 #endif
 
-#include <atheos/types.h>
-
 typedef int atomic_t;
+
+#include <atheos/types.h>
 
 struct __atomic_fool_gcc_struct { int a[100]; };
 #define __atomic_fool_gcc(x) (*(volatile struct __atomic_fool_gcc_struct *)x)

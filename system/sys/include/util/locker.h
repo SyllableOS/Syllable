@@ -48,7 +48,7 @@ public:
     Locker( const char* pzName, bool bRecursive = true, bool bInterruptible = false )
     {
 	if ( !bRecursive ) bRecursive = false;
-	m_hSema = create_semaphore( pzName, 0, /*(bRecursive) ? SEM_REQURSIVE :*/ 0 );
+	m_hSema = create_semaphore( pzName, 0, /*(bRecursive) ? SEM_RECURSIVE :*/ 0 );
 	m_nLock = 0;
 	m_nNestCount = 0;
 	  // FIXME: Check for errors.
@@ -222,7 +222,7 @@ int gate::Lock()
     public:
 	Gate( const char* pzName, bool bRecursive = true, bool bInterruptible = false )
 	{
-	    m_hSema = create_semaphore( pzName, 100000000, (bRecursive) ? SEM_REQURSIVE : 0 );
+	    m_hSema = create_semaphore( pzName, 100000000, (bRecursive) ? SEM_RECURSIVE : 0 );
 	      // FIXME: Check for errors.
 	    m_bInterruptible = bInterruptible;
 	}

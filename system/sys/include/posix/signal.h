@@ -7,8 +7,6 @@
 extern "C" {
 #endif
 
-
-#ifdef __KERNEL__
 #define _NSIG             32
 #define NSIG		_NSIG
 
@@ -41,13 +39,10 @@ extern "C" {
 #define SIGVTALRM	26
 #define SIGPROF		27
 #define SIGWINCH	28
-/*#define SIGIO		29 */
-/*#define SIGPOLL		SIGIO */
-/*
-#define SIGLOST		29
-*/
 #define SIGPWR		30
 #define	SIGUNUSED	31
+
+#ifdef __KERNEL__
 
 /*
  * sa_flags values: SA_STACK is not currently supported, but will allow the
@@ -82,25 +77,18 @@ extern "C" {
 #define SIG_UNBLOCK        1	/* for unblocking signals */
 #define SIG_SETMASK        2	/* for setting the signal mask */
 
+typedef	unsigned long sigset_t;
+
 /* Type of a signal handler.  */
 typedef void (*__sighandler_t)(int);
 
-#define SIG_DFL	((__sighandler_t)0)	/* default signal handling */
-#define SIG_IGN	((__sighandler_t)1)	/* ignore signal */
-#define SIG_ERR	((__sighandler_t)-1)	/* error return from signal */
-
-
-typedef	unsigned long sigset_t;
-
 typedef struct sigaction
 {
-  __sighandler_t sa_handler;
+  sighandler_t sa_handler;
   sigset_t 	sa_mask;
   unsigned long sa_flags;
   void 		(*sa_restorer)(void);
 } SigAction_s;
-
-
 
 /* Values returned from GetSignalMode() */
 
@@ -116,12 +104,8 @@ int	sys_sigaction( const int nSigNum, const struct sigaction * const psAction, s
 int	is_signals_pending( void );
 void	send_alarm_signals( bigtime_t nCurTime );
 
-
 int	raise(int _sig);
 void	(*signal(int nSig, void (*pFunc)(int)))(int);
-
-
-
 
 int	kill( pid_t nPid, int nSig );
 int	sigaction( int nSig, const struct sigaction *psAct, struct sigaction *psOldAct );
@@ -135,6 +119,10 @@ int	sigprocmask( int nHow, const sigset_t *pSet, sigset_t *pOldSet );
 int	sigsuspend( const sigset_t *pSet );
 
 #endif /* __KERNEL__ */
+
+#define SIG_DFL	((__sighandler_t)0)	/* default signal handling */
+#define SIG_IGN	((__sighandler_t)1)	/* ignore signal */
+#define SIG_ERR	((__sighandler_t)-1)	/* error return from signal */
 
 #include <atheos/pthreadsignal.h>
 

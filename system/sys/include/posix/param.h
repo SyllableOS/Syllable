@@ -20,7 +20,7 @@
 #ifndef __F_POSIX_PARAM_H__
 #define __F_POSIX_PARAM_H__
 
-#define EXEC_PAGESIZE	4096
+#define EXEC_PAGESIZE	4096	/* This should be the same as PAGE_SIZE */
 
 #ifndef NGROUPS
 #define NGROUPS		32

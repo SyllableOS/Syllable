@@ -20,34 +20,36 @@
 #ifndef __F_ATHEOS_POSIX_TYPES_H__
 #define __F_ATHEOS_POSIX_TYPES_H__
 
-#ifndef time_t
+#ifndef __time_t_defined
 typedef long int time_t;
-#define time_t time_t
+#define __time_t_defined
 #endif
+
+#ifndef __pid_t_defined
+typedef int pid_t;
+#define __pid_t_defined
+#endif
+
+#ifndef __uid_t_defined
+typedef int uid_t;
+# define __uid_t_defined
+#endif
+
+#ifndef __gid_t_defined
+typedef int gid_t;
+# define __gid_t_defined
+#endif
+
+#ifndef __dev_t_defined
+typedef int dev_t;
+# define __dev_t_defined
+#endif
+
+#ifdef __KERNEL__
 
 #ifndef mode_t
-typedef unsigned int	mode_t;
+typedef unsigned int mode_t;
 #define mode_t mode_t
-#endif
-
-#ifndef uid_t
-typedef int uid_t;
-#define uid_t uid_t
-#endif
-
-#ifndef gid_t
-typedef int gid_t;
-#define gid_t gid_t
-#endif
-
-#ifndef dev_t
-typedef int   dev_t;
-#define dev_t dev_t
-#endif
-
-#ifndef pid_t
-typedef int pid_t;
-#define pid_t pid_t
 #endif
 
 #ifndef ino_t
@@ -60,28 +62,15 @@ typedef long long int off_t;
 #define off_t off_t
 #endif
 
-#ifdef __KERNEL__
-
-
 #ifndef nlink_t
-typedef int	nlink_t;
+typedef int nlink_t;
 #define nlink_t nlink_t
 #endif
-
-/*
-#ifndef clock_t
-typedef int clock_t;
-#define clock_t clock_t;
-#endif
-*/
-
-
 
 #ifndef ssize_t
 typedef int ssize_t;
 #define ssize_t ssize_t
 #endif
-
 
 #define MAXHOSTNAMELEN	64
 #define FD_SETSIZE 1024

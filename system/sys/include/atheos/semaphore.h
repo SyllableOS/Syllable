@@ -46,8 +46,6 @@ typedef struct
 #define SEMSTYLE_RWLOCK     0x0010  /* Reader-writer lock */
 #define SEM_STYLE( sem )		( (sem) & SEM_STYLE_MASK )
 
-#define	SEM_REQURSIVE	    SEM_RECURSIVE /* Backward compatibility with an old typo */
-
 sem_id		create_semaphore( const char* pzName, int nCount, uint32 nFlags );
 status_t	delete_semaphore( sem_id hSema );
 
