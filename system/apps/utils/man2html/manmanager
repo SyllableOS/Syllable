@@ -287,7 +287,7 @@ function remove_section()
 
   # If the section is now empty, remove the directory, the section index
   # and rebuild the main index
-  if [ `ls $HTML_DIR/$2/* 2>>/dev/null` ]
+  if [ "`ls $HTML_DIR/$2/* 2>>/dev/null`" ]
   then
     # Directory is not empty, rebuild the index for this section
     rebuild_section_index $SECTION
