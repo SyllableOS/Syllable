@@ -4,6 +4,7 @@ Drivers
 
 Keymaps
 
+Belgian		:	Bram Van Dam <gandalfbram@pandora.be>
 British		:	Kristian Van Der Vliet <vanders@blueyonder.co.uk>
 Dvorak		:	DraX <drax@stampede.org>
 French		:	Herve Parissi <hparissi@mail.dotcom.fr>
@@ -20,12 +21,15 @@ Patches
 Anthony Morphett <tonymorph@yahoo.com>
 Henrik Isaksson <henrik@boing.nu>
 Jack Tonkin <lists@tonkin.org.uk>
+Daniel Gryniewicz <dang@fprintf.net>
+Ville Kallioniemi <festivus@mbnet.fi>
 
 Ports
 
 sed-3.02	:	Andrew Brown <abrown.taos@bemail.org>
 
 Misc. help, work and advice
+
 
 
 

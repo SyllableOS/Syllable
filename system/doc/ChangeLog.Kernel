@@ -1,7 +1,29 @@
+* Dec 30 2002, Kristian Van Der Vliet *
+
+Added raw sockets (SOCK_RAW) support to the IP stack with a patch from
+Ville Kallioniemi <festivus@mbnet.fi>
+
+Added raw sockets (SOCK_RAW) to the IP stack
+  Changed a lot of debugging output to use the kerndbg() macro
+
+Added ping utility (More tools to follow)
+  The kernel ICMP ignores ICMP_ECHOREPLY packets.
+
+* Dec 24 2002, Kristian Van Der Vliet *
+
+Applied a patch from Daniel Gryniewicz <dang@fprintf.net> to the AFS
+(AtheOS File System) driver, and the "mount" utility to add read-only support.
+
+Added a mount flag for read-only (mount -r)
+Added mount flag processing for read-only flag - afs_mount will now set
+the read-only afs filesystem flag
+Added checks in all writing entrypoints to afs for the mount flag - these
+entrypoints will return a read-only error if called on a read-only filesystem.
+
 * Nov 3 2002, Kristian Van Der Vliet *
 
 Added a kerndbg() macro to kdebug.h  Kernel output can now be controlled
-by defining the DEBUG_LIMIT macro at compile time. 
+by defining the DEBUG_LIMIT macro at compile time.
 
 * Oct 24 2002, Kristian Van Der Vliet *
 
@@ -27,3 +49,4 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
