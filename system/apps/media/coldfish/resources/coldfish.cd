@@ -1,0 +1,45 @@
+//
+// Coldfish string catalog
+//
+
+MSG_MAINWND_TITLE=100						Coldfish
+MSG_MAINWND_PLAY							Play
+MSG_MAINWND_STOP							Stop
+MSG_MAINWND_PAUSE							Pause
+MSG_MAINWND_PLAYLIST						Playlist
+MSG_MAINWND_FILE							File
+MSG_MAINWND_TRACK							Track
+MSG_MAINWND_STREAM							Stream
+MSG_MAINWND_LENGTH							Length
+
+MSG_MAINWND_MENU_APPLICATION=200			Application
+MSG_MAINWND_MENU_APPLICATION_ABOUT			About...
+MSG_MAINWND_MENU_APPLICATION_QUIT			Quit
+
+MSG_MAINWND_MENU_PLAYLIST=300				Playlist
+MSG_MAINWND_MENU_PLAYLIST_SELECT			Select...
+
+MSG_MAINWND_MENU_FILE=400					File
+MSG_MAINWND_MENU_FILE_ADD					Add...
+MSG_MAINWND_MENU_FILE_REMOVE				Remove
+
+MSG_ABOUTWND_TITLE=1000						About ColdFish
+MSG_ABOUTWND_TEXT							\nA Music Player\nCopyright 2003 Arno Klenke\nCopyright 2003 Kristian Van Der Vliet\n\nColdFish is released under the LGPL.
+MSG_ABOUTWND_OK								O.K
+
+MSG_ERRWND_TITLE=1100						ColdFish Error
+MSG_ERRWND_OK								Ok
+MSG_ERRWND_CANTPLAY							ColdFish cannot play this file.
+MSG_ERRWND_CANTDELETE						The currently played track cannot be deleted.
+MSG_ERRWND_NOTPLAYLIST						Selected file is not a playlist.
+
+MSG_PLAYLIST_UNKNOWN=2000					Unknown
+
+MSG_PLAYLISTWND_TITLE=2100					Select Playlist - ColdFish
+MSG_PLAYLISTWND_FILE						File
+MSG_PLAYLISTWND_OPEN						Open
+MSG_PLAYLISTWND_NOTE						Note: If you try to open a non existent\nplaylist then it will be created
+
+MSG_LCD_TRACK=3000							Track
+
+

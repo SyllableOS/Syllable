@@ -33,6 +33,7 @@
 #include <gui/filerequester.h>
 #include <util/application.h>
 #include <util/settings.h>
+#include <util/locale.h>
 #include <atheos/threads.h>
 #include <media/manager.h>
 #include <media/input.h>
@@ -42,6 +43,7 @@
 #include <media/packet.h>
 #include <media/inputselector.h>
 #include <storage/path.h>
+#include "resources/coldfish.h"
 #include "messages.h"
 #include "seekslider.h"
 #include "lcd.h"
@@ -68,7 +70,7 @@ class CFPlaylist:public os::ListView
 class CFWindow:public os::Window
 {
       public:
-	CFWindow( const os::Rect & cFrame, const std::string & cName, const std::string & cTitle, uint32 nFlags );
+	CFWindow( const os::Rect & cFrame, const os::String & cName, const os::String & cTitle, uint32 nFlags );
 	 ~CFWindow();
 	virtual void HandleMessage( os::Message * pcMessage );
 	virtual bool OkToQuit();
@@ -153,12 +155,4 @@ class CFApp:public os::Application
 };
 
 #endif
-
-
-
-
-
-
-
-
 

@@ -18,6 +18,7 @@
  *  MA 02111-1307, USA
  */
 
+#include "resources/coldfish.h"
 #include "messages.h"
 #include "SelectWin.h"
 
@@ -27,11 +28,11 @@ enum {
 };
 
 SelectWin::SelectWin( os::Rect cFrame )
-		: os::Window( cFrame, "cf_select_win", "Select Playlist - ColdFish", 
+		: os::Window( cFrame, "cf_select_win", MSG_PLAYLISTWND_TITLE, 
 						os::WND_NOT_V_RESIZABLE )
 {
 	/* Create file input field */
-	m_pcFileLabel = new os::StringView( os::Rect( 0, 0, 1, 1 ), "file_label", "File" );
+	m_pcFileLabel = new os::StringView( os::Rect( 0, 0, 1, 1 ), "file_label", MSG_PLAYLISTWND_FILE );
 	m_pcFileLabel->SetFrame( os::Rect( 5, 10, m_pcFileLabel->GetPreferredSize( false ).x + 5, 
 									m_pcFileLabel->GetPreferredSize( false ).y + 10 ) );
 	
@@ -46,19 +47,15 @@ SelectWin::SelectWin( os::Rect cFrame )
 	
 	/* Create open button */
 	m_pcOpenButton = new os::Button( os::Rect( 0, 0, 1, 1 ),
-							"open_button", "Open", new os::Message( CF_GUI_PLAYLIST_OPEN ), os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_BOTTOM );
+							"open_button", MSG_PLAYLISTWND_OPEN, new os::Message( CF_GUI_PLAYLIST_OPEN ), os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_BOTTOM );
 	m_pcOpenButton->SetFrame( os::Rect( 160, 30, 200, m_pcOpenButton->GetPreferredSize( false ).y + 30 ) );
 
 	/* Create information */
-	m_pcInfo = new os::StringView( os::Rect( 0, 0, 1, 1 ), "info", "Note: If you try to open a non existent",
+	m_pcInfo = new os::StringView( os::Rect( 0, 0, 1, 1 ), "info", os::String("\33c") + MSG_PLAYLISTWND_NOTE,
 												os::ALIGN_CENTER, os::CF_FOLLOW_LEFT | os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_TOP );
 	m_pcInfo->SetFrame( os::Rect( 0, m_pcOpenButton->GetPreferredSize( false ).y + 40, 
 												GetBounds().Width(), m_pcOpenButton->GetPreferredSize( false ).y + 
 												m_pcInfo->GetPreferredSize( false ).y + 40 ) );
-	
-	m_pcInfo2 = new os::StringView( os::Rect( 0, 0, 1, 1 ), "info", "playlist then it will be created",
-												os::ALIGN_CENTER, os::CF_FOLLOW_LEFT | os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_TOP );
-	m_pcInfo2->SetFrame( m_pcInfo->GetFrame() + os::Point( 0, m_pcInfo->GetPreferredSize( false ).y ) );
 	
 	/* Create file selector */
 	m_pcFileDialog = new os::FileRequester( os::FileRequester::LOAD_REQ, new os::Messenger( this ), NULL, os::FileRequester::NODE_FILE, false );
@@ -71,7 +68,6 @@ SelectWin::SelectWin( os::Rect cFrame )
 	AddChild( m_pcFileButton );
 	AddChild( m_pcOpenButton );
 	AddChild( m_pcInfo );
-	AddChild( m_pcInfo2 );
 	
 	SetFocusChild( m_pcFileInput );
 	
@@ -110,4 +106,7 @@ void SelectWin::HandleMessage( os::Message* pcMessage )
 			os::Window::HandleMessage( pcMessage );
 	}
 }
+
+
+
 

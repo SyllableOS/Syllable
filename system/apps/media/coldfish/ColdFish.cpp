@@ -70,7 +70,7 @@ void CFPlaylist::MouseUp( const os::Point & cPos, uint32 nButtons, os::Message *
 
 /* CFWindow class */
 
-CFWindow::CFWindow( const os::Rect & cFrame, const std::string & cName, const std::string & cTitle, uint32 nFlags ):os::Window( cFrame, cName, cTitle, nFlags )
+CFWindow::CFWindow( const os::Rect & cFrame, const os::String & cName, const os::String & cTitle, uint32 nFlags ):os::Window( cFrame, cName, cTitle, nFlags )
 {
 	m_nState = CF_STATE_STOPPED;
 	os::Rect cNewFrame = GetBounds();
@@ -78,19 +78,19 @@ CFWindow::CFWindow( const os::Rect & cFrame, const std::string & cName, const st
 	/* Create menubar */
 	m_pcMenuBar = new os::Menu( os::Rect( 0, 0, 1, 1 ), "cf_menu_bar", os::ITEMS_IN_ROW );
 	
-	os::Menu* pcAppMenu = new os::Menu( os::Rect(), "Application", os::ITEMS_IN_COLUMN );
-	pcAppMenu->AddItem( "About...", new os::Message( CF_GUI_ABOUT ) );
+	os::Menu* pcAppMenu = new os::Menu( os::Rect(), MSG_MAINWND_MENU_APPLICATION, os::ITEMS_IN_COLUMN );
+	pcAppMenu->AddItem( MSG_MAINWND_MENU_APPLICATION_ABOUT, new os::Message( CF_GUI_ABOUT ) );
 	pcAppMenu->AddItem( new os::MenuSeparator() );
-	pcAppMenu->AddItem( "Quit", new os::Message( CF_GUI_QUIT ) );
+	pcAppMenu->AddItem( MSG_MAINWND_MENU_APPLICATION_QUIT, new os::Message( CF_GUI_QUIT ) );
 	m_pcMenuBar->AddItem( pcAppMenu );
 	
-	os::Menu* pcPlaylistMenu = new os::Menu( os::Rect(), "Playlist", os::ITEMS_IN_COLUMN );
-	pcPlaylistMenu->AddItem( "Select...", new os::Message( CF_GUI_SELECT_LIST ) );
+	os::Menu* pcPlaylistMenu = new os::Menu( os::Rect(), MSG_MAINWND_MENU_PLAYLIST, os::ITEMS_IN_COLUMN );
+	pcPlaylistMenu->AddItem( MSG_MAINWND_MENU_PLAYLIST_SELECT, new os::Message( CF_GUI_SELECT_LIST ) );
 	m_pcMenuBar->AddItem( pcPlaylistMenu );
 	
-	os::Menu* pcFileMenu = new os::Menu( os::Rect(), "File", os::ITEMS_IN_COLUMN );
-	pcFileMenu->AddItem( "Add...", new os::Message( CF_GUI_ADD_FILE ) );
-	pcFileMenu->AddItem( "Remove", new os::Message( CF_GUI_REMOVE_FILE ) );
+	os::Menu* pcFileMenu = new os::Menu( os::Rect(), MSG_MAINWND_MENU_FILE, os::ITEMS_IN_COLUMN );
+	pcFileMenu->AddItem( MSG_MAINWND_MENU_FILE_ADD, new os::Message( CF_GUI_ADD_FILE ) );
+	pcFileMenu->AddItem( MSG_MAINWND_MENU_FILE_REMOVE, new os::Message( CF_GUI_REMOVE_FILE ) );
 	m_pcMenuBar->AddItem( pcFileMenu );
 	
 	cNewFrame = m_pcMenuBar->GetFrame();
@@ -110,19 +110,26 @@ CFWindow::CFWindow( const os::Rect & cFrame, const std::string & cName, const st
 	m_pcControls = new os::HLayoutNode( "cf_controls" );
 	m_pcControls->SetBorders( os::Rect( 2, 5, 2, 5 ) );
 
+	os::Font*	pcSmallFont = new os::Font( DEFAULT_FONT_TOOL_WINDOW );
 	/* Create buttons */
-	m_pcPlay = new os::ImageButton( os::Rect( 0, 0, 1, 1 ), "cf_play", "Play", new os::Message( CF_GUI_PLAY ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	m_pcPlay = new os::ImageButton( os::Rect( 0, 0, 1, 1 ), "cf_play", MSG_MAINWND_PLAY, new os::Message( CF_GUI_PLAY ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	m_pcPlay->SetFont( pcSmallFont );
 	SetButtonImageFromResource( m_pcPlay, "play.png" );
 
-	m_pcPause = new os::ImageButton( os::Rect( 0, 0, 1, 1 ), "cf_pause", "Pause", new os::Message( CF_GUI_PAUSE ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	m_pcPause = new os::ImageButton( os::Rect( 0, 0, 1, 1 ), "cf_pause", MSG_MAINWND_PAUSE, new os::Message( CF_GUI_PAUSE ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	m_pcPause->SetFont( pcSmallFont );
 	SetButtonImageFromResource( m_pcPause, "pause.png" );
 
-	m_pcStop = new os::ImageButton( os::Rect( 0, 0, 1, 1 ), "cf_stop", "Stop", new os::Message( CF_GUI_STOP ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	m_pcStop = new os::ImageButton( os::Rect( 0, 0, 1, 1 ), "cf_stop", MSG_MAINWND_STOP, new os::Message( CF_GUI_STOP ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	m_pcStop->SetFont( pcSmallFont );
 	SetButtonImageFromResource( m_pcStop, "stop.png" );
 
 	
-	m_pcShowList = new os::ImageButton( os::Rect( 0, 0, 1, 1 ), "cf_show_list", "Playlist", new os::Message( CF_GUI_SHOW_LIST ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	m_pcShowList = new os::ImageButton( os::Rect( 0, 0, 1, 1 ), "cf_show_list", MSG_MAINWND_PLAYLIST, new os::Message( CF_GUI_SHOW_LIST ), NULL, os::ImageButton::IB_TEXT_BOTTOM, true, true, true );
+	m_pcShowList->SetFont( pcSmallFont );
 	SetButtonImageFromResource( m_pcShowList, "list.png" );
+	
+	pcSmallFont->Release();
 
 	m_pcPause->SetEnable( false );
 	m_pcStop->SetEnable( false );
@@ -158,10 +165,10 @@ CFWindow::CFWindow( const os::Rect & cFrame, const std::string & cName, const st
 	m_pcPlaylist->SetTarget( this );
 	m_pcPlaylist->SetAutoSort( false );
 	m_pcPlaylist->SetMultiSelect( false );
-	m_pcPlaylist->InsertColumn( "File", (int)cNewFrame.Width() - 160 );
-	m_pcPlaylist->InsertColumn( "Track", 50 );
-	m_pcPlaylist->InsertColumn( "Stream", 50 );
-	m_pcPlaylist->InsertColumn( "Length", 50 );
+	m_pcPlaylist->InsertColumn( MSG_MAINWND_FILE.c_str(), (int)cNewFrame.Width() - 160 );
+	m_pcPlaylist->InsertColumn( MSG_MAINWND_TRACK.c_str(), 50 );
+	m_pcPlaylist->InsertColumn( MSG_MAINWND_STREAM.c_str(), 50 );
+	m_pcPlaylist->InsertColumn( MSG_MAINWND_LENGTH.c_str(), 50 );
 	AddChild( m_pcPlaylist );
 	AddChild( m_pcMenuBar );
 	AddChild( m_pcRoot );
@@ -223,12 +230,13 @@ void CFWindow::HandleMessage( os::Message * pcMessage )
 		break;
 	case CF_GUI_ABOUT:
 		{
-		/* Show about alert */
-		os::Alert* pcAbout = new os::Alert( "About ColdFish", "ColdFish 1.0\n\nA Music Player\nCopyright 2003 Arno Klenke\n"
-										"Copyright 2003 Kristian Van Der Vliet\n\n"
-										"ColdFish is released under the LGPL.", os::Alert::ALERT_INFO, 
-										os::WND_NOT_RESIZABLE, "O.K.", NULL );
-		pcAbout->Go( new os::Invoker( 0 ) ); 
+			os::String cBodyText;
+			
+			cBodyText = os::String( "ColdFish V1.0\n" ) + MSG_ABOUTWND_TEXT;
+			/* Show about alert */
+			os::Alert* pcAbout = new os::Alert( MSG_ABOUTWND_TITLE, cBodyText, os::Alert::ALERT_INFO, 
+											os::WND_NOT_RESIZABLE, MSG_ABOUTWND_OK.c_str(), NULL );
+			pcAbout->Go( new os::Invoker( 0 ) ); 
 		}
 		break;
 	case CF_GUI_SHOW_LIST:
@@ -280,6 +288,13 @@ bool CFWindow::OkToQuit()
 /* MPApp class */
 CFApp::CFApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::Application( pzMimeType )
 {
+	/* Select string catalogue */
+	try {
+		SetCatalog( "coldfish.catalog" );
+	} catch( ... ) {
+		std::cout << "Failed to load catalog file!" << std::endl;
+	}
+
 	/* Set default values */
 	m_nState = CF_STATE_STOPPED;
 
@@ -487,7 +502,7 @@ bool CFApp::OpenList( os::String zFileName )
 	m_pcWin->GetPlaylist()->Clear(  );
 	m_pcWin->GetSlider()->SetValue( os::Variant( 0 ) );
 	m_pcWin->GetLCD()->UpdateTime( 0 );
-	m_pcWin->GetLCD()->SetTrackName( "Unknown" );
+	m_pcWin->GetLCD()->SetTrackName( MSG_PLAYLIST_UNKNOWN );
 	m_pcWin->GetLCD()->SetTrackNumber( 0 );
 	std::ifstream hIn;
 
@@ -685,7 +700,7 @@ void CFApp::AddFile( os::String zFileName )
 		pcInput->Close();
 		delete( pcInput );
 	}
-	os::Alert * pcAlert = new os::Alert( "ColdFish Error", "ColdFish cannot play this file.", os::Alert::ALERT_WARNING, 0, "Ok", NULL );
+	os::Alert * pcAlert = new os::Alert( MSG_ERRWND_TITLE, MSG_ERRWND_CANTPLAY, os::Alert::ALERT_WARNING, 0, MSG_ERRWND_OK.c_str(), NULL );
 	pcAlert->Go( new os::Invoker( 0 ) );
 }
 
@@ -987,7 +1002,7 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 
 				if ( os::String ( pcRow->GetString( 0 ) ) == m_zAudioFile && atoi( pcRow->GetString( 1 ).c_str() ) - 1 == ( int )m_nAudioTrack && atoi( pcRow->GetString( 2 ).c_str(  ) ) - 1 == ( int )m_nAudioStream )
 				{
-					os::Alert * pcAlert = new os::Alert( "ColdFish Error", "The currently played track cannot be deleted.", os::Alert::ALERT_WARNING, 0, "Ok", NULL );
+					os::Alert * pcAlert = new os::Alert( MSG_ERRWND_TITLE, MSG_ERRWND_CANTDELETE, os::Alert::ALERT_WARNING, 0, MSG_ERRWND_OK.c_str(), NULL );
 					pcAlert->Go( new os::Invoker( 0 ) );
 					break;
 				}
@@ -1108,7 +1123,7 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 					{
 						/* Do not overwrite any files */
 						OpenList( m_zListName );
-						os::Alert * pcAlert = new os::Alert( "ColdFish Error", "Selected file is not a playlist.", os::Alert::ALERT_WARNING, 0, "Ok", NULL );
+						os::Alert * pcAlert = new os::Alert( MSG_ERRWND_TITLE, MSG_ERRWND_NOTPLAYLIST, os::Alert::ALERT_WARNING, 0, MSG_ERRWND_OK.c_str(), NULL );
 						pcAlert->Go( new os::Invoker( 0 ) );
 						break;
 					}
@@ -1151,9 +1166,10 @@ bool CFApp::OkToQuit()
 		pcSettings->AddString( "playlist", m_zListName );
 		pcSettings->Save();
 		delete( pcSettings );
-		CloseCurrentFile();
-		m_pcWin->Close();
+//		CloseCurrentFile();
+//		m_pcWin->Close();
 	}
+
 	return ( true );
 }
 
@@ -1173,20 +1189,3 @@ int main( int argc, char *argv[] )
 	pcApp->Run();
 	return ( 0 );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

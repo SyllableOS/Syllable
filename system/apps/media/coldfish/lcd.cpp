@@ -15,6 +15,7 @@
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "lcd.h"
+#include "resources/coldfish.h"
 #include <time.h>
 
 using namespace os;
@@ -71,7 +72,7 @@ void Lcd::Paint( const Rect & cUpdateRect )
 	MovePenTo( 5.0, 20.0 );
 	DrawString( m_zName );
 
-	sprintf( zTrackString, "Track %.2i", m_nTrack );
+	sprintf( zTrackString, "%s %.2i", MSG_LCD_TRACK.c_str(), m_nTrack );
 	MovePenTo( 5.0, 40.0 );
 	DrawString( zTrackString );
 
@@ -106,3 +107,5 @@ void Lcd::UpdateTime( uint64 nTime )
 	m_nTime = nTime;
 	Paint( Rect( 100, 39, 163, 51 ) );
 }
+
+

@@ -23,6 +23,7 @@ $(OBJDIR):
 $(OBJDIR)/ColdFish: $(OBJS)
 	gcc  $(OBJS) -lstdc++ -lsyllable -lmedia -o ColdFish
 	rescopy -r ColdFish *.png
+	rescopy -a ColdFish resources/coldfish.catalog
 
 
 deps:
@@ -41,36 +42,5 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d ColdFish
 
 -include $(OBJDIR)/*.d
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
