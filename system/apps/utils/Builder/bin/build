@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.5.14
+# Version 0.5.15
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -616,17 +616,19 @@ def makeDistro target
 			Dir.chdir @workDir
 		end
 	else  # Create a single package
-		file = (name = fullName target) + '.bin.1'
+		file = (name = fullName target.to_s) + '.bin.1'
 
 		if  # Tar it up
 			if action "tar cvf #{file}.tar" +
 				" --directory=#{@installRoot} " +
 					toString(modules.collect {|package| installName package}) +
-				(	(links = parseList(getRecipe(target)['links']).collect { |link|
+				(	(links = parseList(getRecipe(target.to_s)['links']) ?
+						links.collect { |link|
 							(destination = toList(link)[1])[0, 1] == '/' ?  # A link into the system
 								destination :
 								[]
-						}
+						} :
+						[]
 					) == [] ?
 						'' :
 						' --absolute-names ' + toString(links)
@@ -1040,7 +1042,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.14',
+	puts 'Syllable Build System 0.5.15',
 		'Copyright (c) 2002-2004 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
