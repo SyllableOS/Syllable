@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.4.11
+# Version 0.4.12
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -102,7 +102,7 @@ def patchPackage target
 			return false
 		else
 			# Crude way to remove possible CVS dirs from patches - to be fixed
-#			deleteCVSData
+			deleteCVSData
 		end
 	end
 
@@ -364,11 +364,15 @@ def installPackage target
 							logHeader "Creating links"
 							for link in toList links
 								original, destination = link.split
-								action destination[0, 1] == "/" ?
-									"cd #{File.join(@systemRoot, File.dirname destination)} && " +
-										"ln -sf #{File.join(prefix(target), original)} " + File.basename(destination) :
-									"cd #{File.join(prefix(target), File.dirname destination)} && " +
-										"ln -sf #{original} " + File.basename(destination)
+								linkPath = File.dirname destination
+								linkFile = File.basename destination
+								if linkPath[0, 1] == "/"
+									original = File.join prefix(target), original
+									linkPath = File.join @systemRoot, linkPath if @systemBuild
+								else
+									linkPath = File.join prefix(target), linkPath
+								end
+								action "cd #{linkPath} && ln -sf #{original} " + linkFile
 							end
 						end
 					then
@@ -926,7 +930,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.4.11",
+	puts "Syllable Build System 0.4.12",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
