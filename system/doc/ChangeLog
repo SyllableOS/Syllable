@@ -1,3 +1,15 @@
+* Aug 25 2002, Kristian Van Der Vliet *
+
+Updated nVideo driver from Iain Hutchison < iain_hutchison@yahoo.com >.  The driver now supports more cards, including the GeForce 4 and Riva128.  It should also correctly detect if you have an LCD  screen attached and set things up correctly.  The update also includes Joseph's patch to allow multiple video cards in the same PC
+
+* Aug 25 2002, Kristian Van Der Vliet *
+
+Applied a patch from Sebastien Keim < s.keim@laposte.net > for copy.c in Fileutils-4.1 which adds attribute support to cp
+
+* Aug 18 2002, Kristian Van Der Vliet *
+
+I have finally managed to get Glibc fixed!  I have added it back under libs/ & the Makefile is updated.  Not all Makefiles are complete, and the README is also out of date...
+
 * Aug 11 2002, Kristian Van Der Vliet *
 
 Updated the Trident video driver, which fixes a bug with PCI Trident cards.
@@ -102,6 +114,7 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
 
 
 

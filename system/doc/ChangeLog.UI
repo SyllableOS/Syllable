@@ -1,3 +1,21 @@
+* Aug 25 2002, Kristian Van Der Vliet *
+
+Patched both the FileRequester & Alert dialogs
+(filerequester.cpp & requester.cpp) by Rick Caudill < cau0730@cup.edu >
+which improve the functionality of the standard Load / Save dialogs, and
+add the ability to display an icon on an Alert.
+
+* Aug 25 2002, Kristian Van Der Vliet *
+
+Updated screenshot support with a patch from Iain Hutchison
+< iain_hutchison@yahoo.com >  The patch means that the appserver now has
+support for screenshots in all true-colour bit-depths (15, 16, 24, 32 bit).
+
+* Aug 25 2002, Kristian Van Der Vliet *
+
+Added a Splitter class, written by Sebastien Keim < s.keim@laposte.net >  See
+the GUI documentation for more information.
+
 * Aug 11 2002, Kristian Van Der Vliet *
 
 Applied a patch to the appserver, from Henrik Isaksson (henrik@boing.nu)
@@ -33,5 +51,6 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
 

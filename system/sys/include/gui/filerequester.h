@@ -22,13 +22,13 @@
 
 #include <sys/stat.h>
 #include <gui/window.h>
-
 namespace os
 {
-
 class DirectoryView;
 class TextView;
 class Button;
+class StringView;
+class DropdownMenu;
 
 class FileFilter
 {
@@ -68,7 +68,7 @@ public:
     std::string GetPath() const;
 private:
     void Layout();
-    enum { ID_PATH_CHANGED = 1, ID_SEL_CHANGED, ID_INVOKED, ID_CANCEL, ID_OK, ID_ALERT };
+    enum { ID_PATH_CHANGED = 1, ID_SEL_CHANGED, ID_INVOKED, ID_CANCEL, ID_OK, ID_ALERT, ID_DROP_CHANGE };
 
     Message*	 m_pcMessage;
     Messenger*	 m_pcTarget;
@@ -80,8 +80,15 @@ private:
     TextView*	    m_pcPathView;
     Button*	    m_pcOkButton;
     Button*	    m_pcCancelButton;
+    StringView* m_pcFileString;
+    StringView* m_pcTypeString;
+    DropdownMenu* m_pcTypeDrop;
+    
 };
 
 }
 
 #endif // __F_GUI_FILEREQUESTER_H__
+
+
+
