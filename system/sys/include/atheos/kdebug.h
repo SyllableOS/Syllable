@@ -71,7 +71,7 @@ enum debug_level{
 };
 
 #ifndef DEBUG_LIMIT
-#define DEBUG_LIMIT	KERN_WARNING	/* Default debug level */
+#define DEBUG_LIMIT	KERN_INFO	/* Default debug level */
 #endif
 
 #ifdef __ENABLE_DEBUG__
