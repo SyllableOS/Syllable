@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.3.19
+# Version 0.3.20
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -85,11 +85,16 @@ end
 
 def patchPackage target
 	if exists? dir = patchesPath(target)
-		logHeader "Patching source"
+		logHeader "Applying patches"
 		return false unless action "cp -a #{File.join dir, "*"} ."
 	end
 
-	if dirs = (recipe = recipe target)["patch-config"]
+	if cmdLine = (recipe = recipe target)["patch"]
+		logHeader "Executing patch instructions"
+		return false unless action cmdLine
+	end
+
+	if dirs = recipe["patch-config"]
 		logHeader "Patching configuration"
 		files = File.join @sourcesPath, "config/config.*"
 
@@ -822,7 +827,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.3.19",
+	puts "Syllable Build System 0.3.20",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"

@@ -29,6 +29,7 @@ packages			<Deviating tarball name>
 ; Patching options:
 patch-config		[<Directories>]
 patch-legacy-config
+patch				<Extra patching command sequence>
 ;
 ; Configuring:
 ; <configure>
