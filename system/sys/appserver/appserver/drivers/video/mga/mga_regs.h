@@ -167,7 +167,7 @@ struct MGAChip_s
 	MGADACType eDAC;
 };
 
-#define MAXCHIPS	18
+#define MAXCHIPS	19
 
 #define MGA_REG_WINDOW	1024 * 16	// 16k memory area for the MGA registers
 

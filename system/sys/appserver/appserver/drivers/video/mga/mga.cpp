@@ -168,7 +168,6 @@ Matrox::Matrox( int nFd ) : m_cGELock( "matrox_ge_lock" ), m_cCursorHotSpot(0,0)
 			dbprintf("Gx50 DAC not supported, falling back to Vesa BIOS\n");
 			m_pcDac = NULL;
 			m_nCRTCScheme = CRTC_VESA;
-			return;
 			break;
 		}
 
