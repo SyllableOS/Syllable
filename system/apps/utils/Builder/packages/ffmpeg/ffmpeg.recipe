@@ -1,6 +1,7 @@
 authors
 	Arno Klenke
 	Kaj de Vos
+no-build-dir
 configure-options
 	--source-path=$PWD
 	--extra-cflags="-DPIC -fomit-frame-pointer"
