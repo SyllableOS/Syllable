@@ -19,44 +19,46 @@
  */
 
 #include <gui/filerequester.h>
-#include <gui/directoryview.h>
+#include <gui/icondirview.h>
 #include <gui/textview.h>
 #include <gui/button.h>
 #include <gui/requesters.h>
+#include <gui/layoutview.h>
 #include <util/message.h>
 #include <util/application.h>
 #include <gui/dropdownmenu.h>
 #include <gui/imagebutton.h>
 #include <gui/image.h>
+#include <storage/memfile.h>
 #include <string>
+#include <stack>
 
 using namespace os;
 
-uint8 back_image[] = {
+static uint8 g_aBackImage[] = {
 #include "pixmaps/back.h"
 };
 
-uint8 up_image[] = {
+static uint8 g_aUpImage[] = {
 #include "pixmaps/up.h"
 };
 
-uint8 home_image[] = {
+static uint8 g_aHomeImage[] = {
 #include "pixmaps/home.h"
-};
-
-uint8 forward_image[] = {
-#include "pixmaps/forward.h"
 };
 
 class FileRequester::Private
 {
-      public:
+public:
 
 	Private()
 	{
+		m_bFirstReread = true;
 		m_pcMessage = NULL;
 		m_pcTarget = NULL;
 	}
+	
+	bool m_bFirstReread;
 
 	Message *m_pcMessage;
 	Messenger *m_pcTarget;
@@ -64,20 +66,38 @@ class FileRequester::Private
 	file_req_mode_t m_nMode;
 	uint32 m_nNodeType;
 	bool m_bHideWhenDone;
-	DirectoryView *m_pcDirView;
+	LayoutView* m_pcRoot;
+	IconDirectoryView *m_pcDirView;
 	TextView *m_pcPathView;
 	Button *m_pcOkButton;
 	Button *m_pcCancelButton;
 	StringView *m_pcFileString;
-	StringView *m_pcTypeString;
 	DropdownMenu *m_pcTypeDrop;
 	ImageButton *m_pcUpButton;
 	ImageButton *m_pcHomeButton;
-	ImageButton *m_pcForwardButton;
 	ImageButton *m_pcBackButton;
+	std::stack<String> m_cBackStack;
 };
 
-FileRequester::FileRequester( file_req_mode_t nMode, Messenger * pcTarget, const char *pzPath, uint32 nNodeType, bool bMultiSelect, Message * pcMessage, FileFilter * pcFilter, bool bModal, bool bHideWhenDone, String cOkLabel, String cCancelLabel ):Window( Rect( 0, 0, 1, 1 ), "file_requester", "", WND_NOT_RESIZABLE )
+
+/** Constructor.
+ * \par Description:
+ * Filerequester constructure. 
+ * \param nMode - Whether the filerequester is used to load or save files.
+ * \param zName - The target of the messages.
+ * \param pzStartPath - The start path. Default is the home directory of the user.
+ * \param nNodeType - When NODE_DIR is given, also directories can be opened.
+ * \param bMultiSelect - Whether multiple files can be selected.
+ * \param pcMessage - A message which overrieds M_LOAD_REQUESTED/M_SAVE_REQUESTED.
+ * \param pcFilter - A file filter. NOT SUPPORTED YET.
+ * \param bModal - NOT SUPPORTED YET.
+ * \param bHideWhenDone - NOT SUPPORTED YET.
+ * \param cOKLabel - Overrides "Load" or "Save".
+ * \param cCancelLabel - Overrides "Cancel".
+ *
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+FileRequester::FileRequester( file_req_mode_t nMode, Messenger * pcTarget, String cStartPath, uint32 nNodeType, bool bMultiSelect, Message * pcMessage, FileFilter * pcFilter, bool bModal, bool bHideWhenDone, String cOkLabel, String cCancelLabel ):Window( Rect( 0, 0, 1, 1 ), "file_requester", "", 0 )
 {
 	Lock();		// Why ??
 
@@ -109,7 +129,7 @@ FileRequester::FileRequester( file_req_mode_t nMode, Messenger * pcTarget, const
 	std::string cPath;
 	std::string cFile;
 
-	if( pzPath == NULL )
+	if( cStartPath == "" )
 	{
 		const char *pzHome = getenv( "HOME" );
 
@@ -128,7 +148,7 @@ FileRequester::FileRequester( file_req_mode_t nMode, Messenger * pcTarget, const
 	}
 	else
 	{
-		cPath = pzPath;
+		cPath = cStartPath;
 		if( cPath.find( '/' ) == std::string::npos )
 		{
 			const char *pzHome = getenv( "HOME" );
@@ -145,11 +165,11 @@ FileRequester::FileRequester( file_req_mode_t nMode, Messenger * pcTarget, const
 			{
 				cPath = "/tmp/";
 			}
-			cFile = pzPath;
+			cFile = cStartPath;
 		}
 		else
 		{
-			cPath = pzPath;
+			cPath = cStartPath;
 		}
 	}
 	if( cFile.empty() )
@@ -176,84 +196,101 @@ FileRequester::FileRequester( file_req_mode_t nMode, Messenger * pcTarget, const
 		}
 	}
 
-	std::string cRootName = getenv( "HOME" ) + ( std::string ) "/";
+	String cRootName = String( getenv( "HOME" ) ) + "/";
+	
+	m->m_pcRoot = new LayoutView( GetBounds(), "layout_root" );
+	
+	VLayoutNode* pcVRoot = new VLayoutNode( "vlayout_root" );
+	pcVRoot->SetBorders( Rect( 10, 5, 10, 5 ) );
+	
+	HLayoutNode* pcHButtons = new HLayoutNode( "hlayout_buttons", 0.0f );
+	
+	m->m_pcBackButton = new ImageButton( Rect( 0, 0, 0, 0 ), "BackBut", "", new Message( ID_BACK_BUT ), NULL, ImageButton::IB_TEXT_BOTTOM, true, false, true );
+	MemFile* pcSource = new MemFile( g_aBackImage, sizeof( g_aBackImage ) );
+	m->m_pcBackButton->SetImage( pcSource );
+	m->m_pcBackButton->SetEnable( false );
+	delete( pcSource );
+	
+	m->m_pcUpButton = new ImageButton( Rect(), "UpBut", "", new Message( ID_UP_BUT ), NULL, ImageButton::IB_TEXT_BOTTOM, true, false, true );
+	pcSource = new MemFile( g_aUpImage, sizeof( g_aUpImage ) );
+	m->m_pcUpButton->SetImage( pcSource );
+	delete( pcSource );
 
-	m->m_pcDirView = new DirectoryView( GetBounds(), cPath );
-	m->m_pcPathView = new TextView( Rect( 0, 0, 1, 1 ), "path_edit", cFile.c_str() );
-	m->m_pcCancelButton = new Button( Rect( 0, 0, 1, 1 ), "cancel", cCancelLabel, new Message( ID_CANCEL ) );
-	m->m_pcOkButton = new Button( Rect( 0, 0, 1, 1 ), "ok", cOkLabel, new Message( ID_OK ) );
-	m->m_pcFileString = new StringView( Rect( 0, 0, 1, 1 ), "string", "File Name:" );
-	m->m_pcTypeString = new StringView( Rect( 0, 0, 1, 1 ), "string_1", "Look in:" );
-	m->m_pcTypeDrop = new DropdownMenu( Rect( 0, 0, 0, 0 ), "Drop" );
+	m->m_pcHomeButton = new ImageButton( Rect( 0, 0, 0, 0 ), "HomeBut", "", new Message( ID_HOME_BUT ), NULL, ImageButton::IB_TEXT_BOTTOM, true, false, true );
+	pcSource = new MemFile( g_aHomeImage, sizeof( g_aHomeImage ) );
+	m->m_pcHomeButton->SetImage( pcSource );
+	delete( pcSource );
 
-	m->m_pcUpButton = new ImageButton( Rect( 0, 0, 0, 0 ), "UpBut", "up", new Message( ID_UP_BUT ), NULL );
-	BitmapImage *pImage = new BitmapImage( up_image, IPoint( 16, 16 ), CS_RGB32 );
+	m->m_pcTypeDrop = new DropdownMenu( Rect(), "Drop" );
+	m->m_pcTypeDrop->SetMaxPreferredSize( 1000 );
+	
+	pcHButtons->AddChild( m->m_pcBackButton, 0.0f );
+	pcHButtons->AddChild( new HLayoutSpacer( "", 5.0f, 5.0f ) );
+	pcHButtons->AddChild( m->m_pcUpButton, 0.0f );
+	pcHButtons->AddChild( new HLayoutSpacer( "", 5.0f, 5.0f ) );
+	pcHButtons->AddChild( m->m_pcHomeButton, 0.0f );
+	pcHButtons->AddChild( new HLayoutSpacer( "", 5.0f, 5.0f ) );
+	pcHButtons->AddChild( m->m_pcTypeDrop );
 
-	m->m_pcUpButton->SetImage( pImage );
-
-
-	m->m_pcHomeButton = new ImageButton( Rect( 0, 0, 0, 0 ), "HomeBut", "home", new Message( ID_HOME_BUT ), NULL );
-	pImage = new BitmapImage( home_image, IPoint( 16, 16 ), CS_RGB32 );
-	m->m_pcHomeButton->SetImage( pImage );
-
-	m->m_pcBackButton = new ImageButton( Rect( 0, 0, 0, 0 ), "BackBut", "back", new Message( ID_BACK_BUT ), NULL );
-	pImage = new BitmapImage( back_image, IPoint( 16, 16 ), CS_RGB32 );
-	m->m_pcBackButton->SetImage( pImage );
-
-
-	m->m_pcForwardButton = new ImageButton( Rect( 0, 0, 0, 0 ), "ForwardBut", "forward", new Message( ID_FORWARD_BUT ), NULL );
-	pImage = new BitmapImage( forward_image, IPoint( 16, 16 ), CS_RGB32 );
-	m->m_pcForwardButton->SetImage( pImage );
-
-	AddChild( m->m_pcForwardButton );
-	AddChild( m->m_pcBackButton );
-	AddChild( m->m_pcUpButton );
-	AddChild( m->m_pcHomeButton );
-	AddChild( m->m_pcDirView );
-	AddChild( m->m_pcCancelButton );
-	AddChild( m->m_pcOkButton );
-	AddChild( m->m_pcTypeString );
-	AddChild( m->m_pcTypeDrop );
-	AddChild( m->m_pcPathView );
-	AddChild( m->m_pcFileString );
-
-	if( nMode == 1 )
-	{
-		m->m_pcTypeString->SetString( "Save in:" );
-
-	}
-
+	m->m_pcDirView = new IconDirectoryView( Rect(), cPath );
+	
+	HLayoutNode* pcHBottom = new HLayoutNode( "hlayout_bottom", 0.0f );
+	
+	m->m_pcPathView = new TextView( Rect(), "path_edit", cFile.c_str() );
+	m->m_pcCancelButton = new Button( Rect(), "cancel", cCancelLabel, new Message( ID_CANCEL ) );
+	m->m_pcOkButton = new Button( Rect(), "ok", cOkLabel, new Message( ID_OK ) );
+	m->m_pcFileString = new StringView( Rect(), "string", "File Name:" );
+	
+	pcHBottom->AddChild( m->m_pcFileString, 0.0f );
+	pcHBottom->AddChild( new HLayoutSpacer( "", 5.0f, 5.0f ) );
+	pcHBottom->AddChild( m->m_pcPathView );
+	pcHBottom->AddChild( new HLayoutSpacer( "", 10.0f, 10.0f ) );
+	pcHBottom->AddChild( m->m_pcOkButton, 0.0f );
+	pcHBottom->AddChild( new HLayoutSpacer( "", 5.0f, 5.0f ) );
+	pcHBottom->AddChild( m->m_pcCancelButton, 0.0f );
+	
+	pcVRoot->AddChild( pcHButtons );
+	pcVRoot->AddChild( new VLayoutSpacer( "", 5.0f, 5.0f ) );
+	pcVRoot->AddChild( m->m_pcDirView );
+	pcVRoot->AddChild( new VLayoutSpacer( "", 5.0f, 5.0f ) );
+	pcVRoot->AddChild( pcHBottom );
+	
+	m->m_pcRoot->SetRoot( pcVRoot );
+	AddChild( m->m_pcRoot );
+	
 	m->m_pcTypeDrop->SetReadOnly( true );
-	m->m_pcTypeDrop->AppendItem( "/atheos/" );
-	m->m_pcTypeDrop->AppendItem( "/bin/" );
-	m->m_pcTypeDrop->AppendItem( cRootName.c_str() );
+	m->m_pcTypeDrop->AppendItem( cRootName );
+	m->m_pcTypeDrop->AppendItem( cRootName + "Documents/" );
+	m->m_pcTypeDrop->AppendItem( cRootName + "Trash/" );
+	m->m_pcTypeDrop->AppendItem( "/Applications/" );
 	m->m_pcTypeDrop->AppendItem( "/system/" );
-	m->m_pcTypeDrop->AppendItem( "/usr/" );
-
 
 	std::string cDropString = m->m_pcDirView->GetPath() + ( std::string ) "/";
 	m->m_pcTypeDrop->InsertItem( 5, cDropString.c_str() );
-	m->m_pcTypeDrop->SetSelection( 5 );
+	m->m_pcTypeDrop->SetSelection( 5, false );
 	m->m_pcTypeDrop->SetSelectionMessage( new Message( ID_DROP_CHANGE ) );
 	m->m_pcTypeDrop->SetTarget( this );
 
+	m->m_pcDirView->SetAutoLaunch( false );
 	m->m_pcDirView->SetMultiSelect( bMultiSelect );
 	m->m_pcDirView->SetSelChangeMsg( new Message( ID_SEL_CHANGED ) );
 	m->m_pcDirView->SetInvokeMsg( new Message( ID_INVOKED ) );
 	m->m_pcDirView->SetDirChangeMsg( new Message( ID_PATH_CHANGED ) );
-	m->m_pcDirView->MakeFocus();
-
+	
 	String cTitlePath = ( String ) "Searching in: " + m->m_pcDirView->GetPath();
 	SetTitle( cTitlePath );
+	
+	m->m_cBackStack.push( cPath );
 
 	Rect cFrame( 250, 150, 699, 400 );
 
 	SetFrame( cFrame );
 	SetDefaultButton( m->m_pcOkButton );
+	
+	m->m_pcDirView->SetView( IconView::VIEW_DETAILS );
+	m->m_pcDirView->MakeFocus();
+	
 	Unlock();
-
-
-
 }
 
 FileRequester::~FileRequester()
@@ -261,104 +298,14 @@ FileRequester::~FileRequester()
 	delete m;
 }
 
-void FileRequester::Layout()
+void FileRequester::Show( bool bMakeVisible )
 {
-	Rect cBounds = GetBounds();
-
-	Point cSize1 = m->m_pcOkButton->GetPreferredSize( false );
-	Point cSize2 = m->m_pcCancelButton->GetPreferredSize( false );
-
-	if( cSize2.x > cSize1.x )
+	if( bMakeVisible && m->m_bFirstReread )
 	{
-		cSize1 = cSize2;
+		m->m_bFirstReread = false;
+		m->m_pcDirView->ReRead();
 	}
-
-	Point cSize = m->m_pcPathView->GetPreferredSize( false );
-
-	Rect cOkRect = cBounds;
-
-	cOkRect.bottom -= 5;
-	cOkRect.top = cOkRect.bottom - cSize1.y;
-	cOkRect.right -= 70;
-	cOkRect.left = cOkRect.right - cSize1.x;
-
-	Rect cCancelRect = cBounds;
-
-	cCancelRect.bottom -= 5;
-	cCancelRect.top = cCancelRect.bottom + -cSize2.y;
-	cCancelRect.right -= 10;
-	cCancelRect.left = cCancelRect.right - cSize2.x;
-
-	Rect cFileFrame = cBounds;
-
-	cFileFrame.bottom = cOkRect.bottom;
-	cFileFrame.top = cFileFrame.bottom - cSize.y;
-	cFileFrame.left = 10;
-	cFileFrame.right = 75;
-
-	Rect cPathFrame = cBounds;
-
-	cPathFrame.bottom = cOkRect.bottom;
-	cPathFrame.top = cPathFrame.bottom - cSize.y;
-	cPathFrame.left = cFileFrame.right + 10;
-	cPathFrame.right -= 130;
-
-	Rect cFile2Frame = cBounds;
-
-	cFile2Frame.bottom = cCancelRect.bottom;
-	cFile2Frame.top = cCancelRect.top;
-	cFile2Frame.left = cFileFrame.right + 15;
-	cFile2Frame.right -= 160;
-
-	Rect cDirFrame = cBounds;
-
-	cDirFrame.bottom = cPathFrame.top - 10;
-	cDirFrame.top += 27;
-	cDirFrame.left += 10;
-	cDirFrame.right -= 10;
-
-	Rect cTypeFrame = cBounds;
-
-	cTypeFrame.bottom = cDirFrame.top - 5;
-	cTypeFrame.top = 10;
-	cTypeFrame.left = 10;
-	cTypeFrame.right = cTypeFrame.left + 55;
-
-	Rect cDropFrame = cBounds;
-
-	cDropFrame.bottom = cTypeFrame.bottom - 2;
-	cDropFrame.top = cTypeFrame.top - 10;
-	cDropFrame.left = cTypeFrame.right + 5;
-	cDropFrame.right -= 100;
-
-	Rect cOkFrame = cBounds;
-
-	cOkFrame.bottom = cPathFrame.bottom;
-	cOkFrame.top = cOkFrame.bottom - cSize.y;
-	cOkFrame.left = cPathFrame.right + 10;
-	cOkFrame.right = 20;
-
-
-
-	m->m_pcPathView->SetFrame( cFile2Frame );
-	m->m_pcDirView->SetFrame( cDirFrame );
-	m->m_pcOkButton->SetFrame( cOkRect );
-	m->m_pcCancelButton->SetFrame( cCancelRect );
-	m->m_pcFileString->SetFrame( cFileFrame + Point( 0, -2 ) );
-	m->m_pcTypeString->SetFrame( cTypeFrame );
-	m->m_pcTypeDrop->SetFrame( cDropFrame + Point( 0, 5 ) );
-	m->m_pcBackButton->SetFrame( Rect( 351, 3, 367, 23 ) );
-	m->m_pcForwardButton->SetFrame( Rect( 369, 3, 384, 23 ) );
-	m->m_pcUpButton->SetFrame( Rect( 386, 3, 404, 23 ) );
-	m->m_pcHomeButton->SetFrame( Rect( 406, 3, 422, 23 ) );
-
-	m->m_pcTypeDrop->SetTabOrder( 0 );
-	m->m_pcDirView->SetTabOrder( 1 );
-	m->m_pcPathView->SetTabOrder( 2 );
-	m->m_pcOkButton->SetTabOrder( 3 );
-	m->m_pcCancelButton->SetTabOrder( 4 );
-	SetFocusChild( m->m_pcPathView );
-
+	Window::Show( bMakeVisible );
 }
 
 bool FileRequester::OkToQuit( void )
@@ -372,7 +319,6 @@ bool FileRequester::OkToQuit( void )
 
 void FileRequester::FrameSized( const Point & cDelta )
 {
-	Layout();
 }
 
 void FileRequester::HandleMessage( Message * pcMessage )
@@ -384,12 +330,8 @@ void FileRequester::HandleMessage( Message * pcMessage )
 		{
 			uint32 nSwitch = m->m_pcTypeDrop->GetSelection();
 
-			std::string c_ChangePath = m->m_pcTypeDrop->GetItem( nSwitch );
-			SetPath( c_ChangePath );
-			m->m_pcDirView->Clear();
-			m->m_pcDirView->ReRead();
-
-			PostMessage( new Message( ID_PATH_CHANGED ), this );
+			String cChangePath = m->m_pcTypeDrop->GetItem( nSwitch );
+			SetPath( cChangePath );
 			break;
 		}
 
@@ -403,77 +345,88 @@ void FileRequester::HandleMessage( Message * pcMessage )
 				for( int i = 5; i <= m->m_pcTypeDrop->GetItemCount(); i++ )
 					m->m_pcTypeDrop->DeleteItem( i );
 			}
+			
 			std::string cDropString = m->m_pcDirView->GetPath() + ( std::string ) "/";
 
 			if( cDropString != "//" )
 			{
 				m->m_pcTypeDrop->InsertItem( 5, cDropString.c_str() );
-				m->m_pcTypeDrop->SetSelection( 5 );
+				m->m_pcTypeDrop->SetSelection( 5, false );
 			}
 
 			else
 			{
 				m->m_pcTypeDrop->InsertItem( 5, "/" );
-				m->m_pcTypeDrop->SetSelection( 5 );
+				m->m_pcTypeDrop->SetSelection( 5, false );
 			}
-
+			
+			m->m_cBackStack.push( m->m_pcDirView->GetPath() + "/" );
+			if( m->m_cBackStack.size() > 1 )
+				m->m_pcBackButton->SetEnable( true );
+			else
+				m->m_pcBackButton->SetEnable( false );
+			
 			break;
 		}
-
+	case ID_BACK_BUT:
+	{
+		if( m->m_cBackStack.size() > 1 )
+		{
+			m->m_cBackStack.pop();
+			String cNewPath = m->m_cBackStack.top();
+			m->m_cBackStack.pop();
+			//printf( "%s\n", cNewPath.c_str() );
+			SetPath( cNewPath );
+		}
+		break;
+	}
 	case ID_HOME_BUT:
 		{
 			std::string cRootName = getenv( "HOME" ) + ( std::string ) "/";
 			SetPath( cRootName );
-			m->m_pcDirView->Clear();
-			m->m_pcDirView->ReRead();
-			PostMessage( new Message( ID_PATH_CHANGED ), this );
 			break;
 		}
 
 	case ID_UP_BUT:
 		{
-			FileRow *pcFileRow = m->m_pcDirView->GetFile( 0 );
-
-			if( pcFileRow->GetName() == ".." )
+			Path cNewPath = m->m_pcDirView->GetPath();
+			cNewPath.Append( ".." );
+			m->m_pcDirView->SetPath( cNewPath );
+			m->m_pcDirView->ReRead();
+			
+			if( m->m_pcTypeDrop->GetItemCount() >= 5 )
 			{
-				m->m_pcDirView->Invoked( 0, 0 );
-				m->m_pcDirView->Clear();
-				m->m_pcDirView->ReRead();
-				if( m->m_pcTypeDrop->GetItemCount() >= 5 )
-				{
-					for( int i = 5; i <= m->m_pcTypeDrop->GetItemCount(); i++ )
-						m->m_pcTypeDrop->DeleteItem( i );
-				}
+				for( int i = 5; i <= m->m_pcTypeDrop->GetItemCount(); i++ )
+					m->m_pcTypeDrop->DeleteItem( i );
+			}
 
-				std::string cDropString = m->m_pcDirView->GetPath() + ( std::string ) "/";
+			std::string cDropString = m->m_pcDirView->GetPath() + ( std::string ) "/";
 
-				if( cDropString != "//" )
-				{
-					m->m_pcTypeDrop->InsertItem( 5, cDropString.c_str() );
-					m->m_pcTypeDrop->SetSelection( 5 );
-				}
-
-				else
-				{
-					m->m_pcTypeDrop->InsertItem( 5, "/" );
-					m->m_pcTypeDrop->SetSelection( 5 );
-				}
+			if( cDropString != "//" )
+			{
+				m->m_pcTypeDrop->InsertItem( 5, cDropString.c_str() );
+				m->m_pcTypeDrop->SetSelection( 5, false );
+			}
+			else
+			{
+				m->m_pcTypeDrop->InsertItem( 5, "/" );
+				m->m_pcTypeDrop->SetSelection( 5, false );
 			}
 			break;
 		}
 
 	case ID_SEL_CHANGED:
 		{
-			int nSel = m->m_pcDirView->GetFirstSelected();
-
-			if( nSel >= 0 )
+			for( uint i = 0; i < m->m_pcDirView->GetIconCount(); i++ )
 			{
-				FileRow *pcFile = m->m_pcDirView->GetFile( nSel );
-
-				if( ( m->m_nNodeType & NODE_DIR ) || S_ISDIR( pcFile->GetFileStat().st_mode ) == false )
+				if( m->m_pcDirView->GetIconSelected( i ) )
 				{
-					m->m_pcPathView->Set( pcFile->GetName().c_str(  ) );
-
+					IconData* pcIconData = m->m_pcDirView->GetIconData( i );
+					DirectoryIconData *pcData = static_cast < DirectoryIconData * >( pcIconData );
+					if( ( m->m_nNodeType & NODE_DIR ) || S_ISDIR( pcData->m_sStat.st_mode ) == false )
+					{
+						m->m_pcPathView->Set( m->m_pcDirView->GetIconString( i, 0 ).c_str() );
+					}
 				}
 			}
 			break;
@@ -511,17 +464,17 @@ void FileRequester::HandleMessage( Message * pcMessage )
 
 			if( m->m_nMode == LOAD_REQ )
 			{
-				for( int i = m->m_pcDirView->GetFirstSelected(); i <= m->m_pcDirView->GetLastSelected(  ); ++i )
+				Path cPath( m->m_pcDirView->GetPath() );
+				for( uint i = 0; i < m->m_pcDirView->GetIconCount(); i++ )
 				{
-					if( m->m_pcDirView->IsSelected( i ) == false )
+					if( m->m_pcDirView->GetIconSelected( i ) )
 					{
-						continue;
+						IconData* pcIconData = m->m_pcDirView->GetIconData( i );
+						DirectoryIconData *pcData = static_cast < DirectoryIconData * >( pcIconData );
+						
+						cPath.Append( pcData->m_zPath );
+						pcMsg->AddString( "file/path", cPath.GetPath() );
 					}
-					Path cPath( m->m_pcDirView->GetPath().c_str(  ) );
-
-					cPath.Append( m->m_pcDirView->GetFile( i )->GetName().c_str(  ) );
-					pcMsg->AddString( "file/path", cPath.GetPath() );
-
 				}
 				m->m_pcTarget->SendMessage( pcMsg );
 				Show( false );
@@ -569,9 +522,17 @@ void FileRequester::HandleMessage( Message * pcMessage )
 	}
 }
 
-void FileRequester::SetPath( const String & a_cPath )
+
+/** Sets a new path
+ * \par Description:
+ * Sets a new path.
+ * \param cNewPath - The new path.
+ *
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+void FileRequester::SetPath( const String & cNewPath )
 {
-	std::string cPath = a_cPath;
+	std::string cPath = cNewPath;
 	std::string cFile;
 
 
@@ -591,7 +552,7 @@ void FileRequester::SetPath( const String & a_cPath )
 		{
 			cPath = "/tmp/";
 		}
-		cFile = a_cPath;
+		cFile = cNewPath;
 	}
 	if( cFile.empty() )
 	{
@@ -617,9 +578,19 @@ void FileRequester::SetPath( const String & a_cPath )
 		}
 	}
 	m->m_pcPathView->Set( cFile.c_str(), false );
+	if( String( cPath ) == GetPath() + "/" )
+		return;
 	m->m_pcDirView->SetPath( cPath );
+	m->m_pcDirView->ReRead();
 }
 
+
+/** Returns the current path.
+ * \par Description:
+ * Returns the current path.
+ *
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
 String FileRequester::GetPath() const
 {
 	return ( m->m_pcDirView->GetPath() );

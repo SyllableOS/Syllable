@@ -614,17 +614,22 @@ uint32 Application::GetQualifiers()
 	AR_GetQualifiers_s sReq( m->m_hReplyPort );
 	AR_GetQualifiersReply_s sReply;
 
+	Lock();
+
 	if( send_msg( m->m_hSrvAppPort, AR_GET_QUALIFIERS, &sReq, sizeof( sReq ) ) != 0 )
 	{
+		Unlock();
 		dbprintf( "Error: Application::GetQualifiers() failed to send request to server\n" );
 		return ( 0 );
 	}
 
 	if( get_msg( m->m_hReplyPort, NULL, &sReply, sizeof( sReply ) ) < 0 )
 	{
+		Unlock();
 		dbprintf( "Error: Application::GetQualifiers() failed to read reply from server\n" );
 		return ( 0 );
 	}
+	Unlock();
 	return ( sReply.m_nQualifiers );
 }
 
@@ -700,18 +705,23 @@ int Application::CreateBitmap( int nWidth, int nHeight, color_space eColorSpc, u
 	sReq.nWidth = nWidth;
 	sReq.nHeight = nHeight;
 	sReq.eColorSpc = eColorSpc;
+	
+	Lock();
 
 	if( send_msg( m->m_hSrvAppPort, AR_CREATE_BITMAP, &sReq, sizeof( sReq ) ) != 0 )
 	{
+		Unlock();
 		dbprintf( "Error: Application::CreateBitmap() failed to send request to server\n" );
 		return ( -1 );
 	}
 
 	if( get_msg( m->m_hReplyPort, NULL, &sReply, sizeof( sReply ) ) < 0 )
 	{
+		Unlock();
 		dbprintf( "Error: Application::CreateBitmap() failed to read reply from server\n" );
 		return ( -1 );
 	}
+	Unlock();
 	if( sReply.m_hHandle < 0 )
 	{
 		return ( sReply.m_hHandle );
@@ -754,8 +764,11 @@ int Application::CreateSprite( const Rect & cFrame, int nBitmapHandle, uint32 *p
 {
 	AR_CreateSprite_s sReq( m->m_hReplyPort, cFrame, nBitmapHandle );
 
+	Lock();
+
 	if( send_msg( m->m_hSrvAppPort, AR_CREATE_SPRITE, &sReq, sizeof( sReq ) ) != 0 )
 	{
+		Unlock();
 		dbprintf( "Error: Application::CreateSprite() failed to send request to server\n" );
 		return ( -1 );
 	}
@@ -764,9 +777,12 @@ int Application::CreateSprite( const Rect & cFrame, int nBitmapHandle, uint32 *p
 
 	if( get_msg( m->m_hReplyPort, NULL, &sReply, sizeof( sReply ) ) < 0 )
 	{
+		Unlock();
 		dbprintf( "Error: Application::CreateSprite() failed to read reply from server\n" );
 		return ( -1 );
 	}
+	Unlock();
+	
 	*pnHandle = sReply.m_nHandle;
 	return ( sReply.m_nError );
 }

@@ -1,6 +1,6 @@
 #include <storage/memfile.h>
 #include <stdlib.h>
-#include <iostream.h>
+#include <iostream>
 
 #define MIN_BLOCK_SIZE		1024
 //#define MIN_BLOCK_SIZE                2
@@ -90,7 +90,7 @@ class MemFile::Private
 		}
 		else if( m_nSize > nSize )
 		{
-			cout << "Free" << endl;
+			std::cout << "Free" << std::endl;
 
 			uint32 v = nSize - m_nSize;
 
@@ -261,6 +261,15 @@ MemFile::MemFile( const void *pData, uint32 nLen )
 
 MemFile::~MemFile()
 {
+	/* Delete all blocks */
+	Private::Block* pcBlock = m->m_psFirst;
+	while( pcBlock )
+	{
+		Private::Block* pcCurrent = pcBlock;
+		pcBlock = pcCurrent->m_psNext;
+		delete( pcCurrent );
+	}
+	
 	delete m;
 }
 

@@ -163,21 +163,19 @@ Point ImageButton::GetPreferredSize( bool bLargest ) const
 		return Point( COORD_MAX, COORD_MAX );
 	} else {
 		Point cSize;
-/*		if( !( GetLabel() == "" ) ) {
+		if( !( GetLabel() == "" ) ) {
 			cSize = GetTextExtent( GetLabel() );
-			cSize.x += 16;
-			cSize.y += 8;
-		}*/
+		}
 		if( m->m_pcBitmap ) {
 			Point cImgSize( m->m_pcBitmap->GetSize() );
 
 			if( cSize.x > 0 ) {
 				if( ( m->m_nTextPosition == IB_TEXT_RIGHT ) || ( m->m_nTextPosition == IB_TEXT_LEFT ) ) {
-					cSize.x += cImgSize.x + 2;
-					cSize.y = std::max( cSize.y, cImgSize.y );
+					cSize.x += cImgSize.x + 6;
+					cSize.y = std::max( cSize.y, cImgSize.y ) + 4;
 				} else {
-					cSize.y += cImgSize.y + 2;
-					cSize.x = std::max( cSize.x, cImgSize.x );
+					cSize.y += cImgSize.y + 6;
+					cSize.x = std::max( cSize.x, cImgSize.x ) + 4;
 				}
 			} else {
 				cSize.x = cImgSize.x + 4;
@@ -186,42 +184,7 @@ Point ImageButton::GetPreferredSize( bool bLargest ) const
 		}
 		return cSize;
 	}
-/*
-	font_height sHeight;
-
-	GetFontHeight( &sHeight );
-	float vCharHeight = sHeight.ascender + sHeight.descender + 8;
-	float vStrWidth = GetStringWidth( GetLabel() ) + 16;
-
-	float x = vStrWidth;
-	float y = vCharHeight;
-
-	if( m->m_pcBitmap )
-	{
-		Rect cBitmapRect = m->m_pcBitmap->GetBounds();
-
-		if( vStrWidth > 16 )
-		{
-			if( ( m->m_nTextPosition == IB_TEXT_RIGHT ) || ( m->m_nTextPosition == IB_TEXT_LEFT ) )
-			{
-				x += cBitmapRect.Width() + 2;
-				y = ( ( cBitmapRect.Height() + 8 ) > y ) ? cBitmapRect.Height(  ) + 8 : y;
-			}
-			else
-			{
-				x = ( ( cBitmapRect.Width() + 8 ) > x ) ? cBitmapRect.Width(  ) + 8 : x;
-				y += cBitmapRect.Height() + 2;
-			}
-		}
-		else
-		{
-			x = cBitmapRect.Width() + 8;
-			y = cBitmapRect.Height() + 8;
-		}
-	}
-
-	return Point( x, y );*/
-}				/*end GetPreferredSize() */
+}
 
 /** Gets the text postion...
  * \par Description:
@@ -269,47 +232,48 @@ void ImageButton::Paint( const Rect & cUpdateRect )
 {
 	Rect cBounds = GetBounds();
 	Rect cTextBounds = GetBounds();
-	float vStrWidth = GetStringWidth( GetLabel() );
+	Point cTextSize = GetTextExtent( GetLabel() );
 	Point cBitPoint;
-	font_height sHeight;
-
-	GetFontHeight( &sHeight );
-	float vCharHeight = sHeight.ascender + sHeight.descender;
 	Image *pcImg = IsEnabled()? m->GetImage(  ) : m->GetGrayImage(  );
 
 	if( pcImg )
 	{
+		if( GetLabel().empty() ) {
+			cBitPoint.x = ( GetBounds().Width(  ) + 1.0f - pcImg->GetSize(  ).x ) / 2;
+			cBitPoint.y = ( GetBounds().Height(  ) + 1.0f - pcImg->GetSize(  ).y ) / 2;
+		} else {
+			switch ( m->m_nTextPosition )
+			{
+			case IB_TEXT_RIGHT:			
+				cTextBounds.left += pcImg->GetSize().x + 4;
+				cTextBounds.right -= 2;
+				cBitPoint.x = 2;
+				cBitPoint.y = ( GetBounds().Height(  ) + 1.0f - pcImg->GetSize(  ).y ) / 2;
+				break;
 
-		switch ( m->m_nTextPosition )
-		{
-		case IB_TEXT_RIGHT:
-			cTextBounds.left -= pcImg->GetSize().x - 2;
-			cBitPoint.x = 4;
-			cBitPoint.y = GetBounds().top + 3;
-			break;
+			case IB_TEXT_LEFT:
+				cTextBounds.left = 2;
+				cTextBounds.right -= pcImg->GetSize().x + 4;
+				cBitPoint.x = cTextBounds.right + 2;
+				cBitPoint.y = ( GetBounds().Height(  ) + 1.0f - pcImg->GetSize(  ).y ) / 2;
+				break;
 
-		case IB_TEXT_LEFT:
-			cTextBounds.left = 0;
-			cTextBounds.right = vStrWidth;
-			cBitPoint.x = cTextBounds.right + 2;
-			cBitPoint.y = GetBounds().top + 3;
-			break;
+			case IB_TEXT_BOTTOM:
+				cTextBounds.bottom -= 2;
+				cTextBounds.top += pcImg->GetSize().y + 4;
+				cBitPoint.x = ( GetBounds().Width(  ) + 1.0f - pcImg->GetSize(  ).x ) / 2;
+				cBitPoint.y = 2;
+				break;
 
-		case IB_TEXT_BOTTOM:
-			cTextBounds.top -= pcImg->GetSize().y;
-			cBitPoint.x = ( GetBounds().Width(  ) - pcImg->GetSize(  ).x ) / 2;
-			cBitPoint.y = 4;
-			break;
-
-		case IB_TEXT_TOP:
-			cTextBounds.bottom = vCharHeight;
-			cTextBounds.left = 0;
-			cTextBounds.top = 0;
-			cBitPoint.y = cTextBounds.bottom + 2;
-			cBitPoint.x = ( GetBounds().Width(  ) / 2 - pcImg->GetSize(  ).x / 2 );
-			break;
-		default:
-			break;
+			case IB_TEXT_TOP:
+				cTextBounds.bottom = cTextSize.y + 2;
+				cTextBounds.top = 2;
+				cBitPoint.y = cTextBounds.bottom + 2;
+				cBitPoint.x = ( GetBounds().Width(  ) + 1.0f - pcImg->GetSize(  ).x ) / 2;
+				break;
+			default:
+				break;
+			}
 		}
 
 	}
@@ -351,8 +315,9 @@ void ImageButton::Paint( const Rect & cUpdateRect )
 		}
 	}
 
-	float y = floor( 2.0f + ( cTextBounds.Height() + 1.0f ) * 0.5f - vCharHeight * 0.5f + sHeight.ascender );
-	float x = floor( ( cTextBounds.Width() + 1.0f ) / 2.0f - vStrWidth / 2.0f );
+	float y = floor( ( cTextBounds.Height() + 1.0f ) / 2.0f - cTextSize.y / 2.0f );
+	float x = floor( ( cTextBounds.Width() + 1.0f ) / 2.0f - cTextSize.x / 2.0f );
+	cTextBounds += Point( x, y );
 
 	if( GetWindow()->GetDefaultButton(  ) == this && IsEnabled(  ) )
 	{
@@ -373,22 +338,21 @@ void ImageButton::Paint( const Rect & cUpdateRect )
 		{
 			if( HasFocus() )
 			{
+				font_height sHeight;
+				GetFontHeight( &sHeight );
 				SetFgColor( 0, 0, 0 );
-				DrawLine( Point( ( cTextBounds.Width() + 1.0f ) * 0.5f - vStrWidth * 0.5f, y + sHeight.descender - sHeight.line_gap / 2 - 1.0f ), Point( ( cTextBounds.Width(  ) + 1.0f ) * 0.5f + vStrWidth * 0.5f, y + sHeight.descender - sHeight.line_gap / 2 - 1.0f ) );
+				DrawLine( Point( cTextBounds.left, cTextBounds.top + cTextSize.y - sHeight.line_gap - 1.0f ), Point( cTextBounds.left + cTextSize.x, cTextBounds.top + cTextSize.y - sHeight.line_gap - 1.0f ) );
 			}
 
 			SetFgColor( 0, 0, 0 );
-			MovePenTo( x, y );
-			DrawString( GetLabel() );
+			DrawText( cTextBounds, GetLabel() );
 		}
 		else
 		{
-			MovePenTo( x, y );
-			DrawString( GetLabel() );
-			MovePenTo( x - 1.0f, y - 1.0f );
+			DrawText( cTextBounds, GetLabel() );
 			SetFgColor( 100, 100, 100 );
 			SetDrawingMode( DM_OVER );
-			DrawString( GetLabel() );
+			DrawText( cTextBounds - Point( 1, 1 ), GetLabel() );
 			SetDrawingMode( DM_COPY );
 		}
 	}
