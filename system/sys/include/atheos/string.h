@@ -538,11 +538,11 @@ extern inline void * memscan(void * addr, int c, size_t size)
 {
 	if (!size)
 		return addr;
-	__asm__("cld
-		repnz; scasb
-		jnz 1f
-		dec %%edi
-1:		"
+	__asm__("cld\n\t"
+		"repnz; scasb\n\t"
+		"jnz 1f\n\t"
+		"dec %%edi\n\t"
+"1:\n\t"
 		: "=D" (addr), "=c" (size)
 		: "0" (addr), "1" (size), "a" (c));
 	return addr;
@@ -560,3 +560,4 @@ long strtoul(const char *nptr, char **endptr, int base);
 
 
 #endif
+

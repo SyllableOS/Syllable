@@ -29,7 +29,10 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+ 
 
+//#define DEBUG_LIMIT KERN_DEBUG
+ 
 #include <atheos/usb.h>
 #include <atheos/kernel.h>
 #include <atheos/kdebug.h>
@@ -252,7 +255,7 @@ void usb_hub_irq( USB_packet_s* psPacket )
 	if( psPacket->nStatus ) {
 		if( psPacket->nStatus == -ENOENT )
 			return;
-		printk( "USB: usb_hub_irq() error\n" );
+		kerndbg( KERN_WARNING, "USB: usb_hub_irq() error\n" );
 		
 		if( ( ++psHub->nErrors < 10 ) || psHub->nError )
 			return;
@@ -273,7 +276,7 @@ void usb_hub_power_on( USB_hub* psHub )
 	int i;
 
 	/* Enable power to the ports */
-	//printk( "Enabling power on all ports\n" );
+	kerndbg( KERN_DEBUG, "Enabling power on all ports\n" );
 	for( i = 0; i < psHub->psDesc->nNbrPorts; i++ )
 		usb_set_port_feature( psHub->psDevice, i + 1, USB_PORT_FEAT_POWER );
 
@@ -292,7 +295,7 @@ int usb_hub_configure( USB_hub* psHub, USB_desc_endpoint_s* psEndpoint )
 
 	psHub->psDesc = kmalloc( sizeof( *psHub->psDesc ), MEMF_KERNEL | MEMF_NOBLOCK );
 	if( !psHub->psDesc ) {
-		printk( "USB: Unable to kmalloc %Zd bytes for hub descriptor\n", sizeof( *psHub->psDesc ) );
+		kerndbg( KERN_WARNING, "USB: Unable to kmalloc %Zd bytes for hub descriptor\n", sizeof( *psHub->psDesc ) );
 		return( -1 );
 	}
 	memset( psHub->psDesc, 0, sizeof( *psHub->psDesc ) );
@@ -302,14 +305,18 @@ int usb_hub_configure( USB_hub* psHub, USB_desc_endpoint_s* psEndpoint )
 		/* <hub->descriptor> is large enough for a hub with 127 ports;
 		 * the hub can/will return fewer bytes here. */
 	if( nRet < 0 ) {
-		printk( "USB: Unable to get hub descriptor (err = %d)\n", nRet );
+		kerndbg( KERN_WARNING, "USB: Unable to get hub descriptor (err = %d)\n", nRet );
 		kfree( psHub->psDesc );
 		return( -1 );
 	}
 
 	psDevice->nMaxChild = psHub->psDesc->nNbrPorts;
-#if 0
-	//printk( "%d port%s detected\n", psHub->psDesc->nNbrPorts, (psHub->psDesc->nNbrPorts == 1) ? "" : "s" )
+
+	kerndbg( KERN_INFO,  "%d port%s detected\n", psHub->psDesc->nNbrPorts, (psHub->psDesc->nNbrPorts == 1) ? "" : "s" );
+
+#ifdef __ENABLE_DEBUG__
+	if( KERN_DEBUG >= DEBUG_LIMIT )
+	{
 	if( psHub->psDesc->nHubCharacteristics & HUB_CHAR_COMPOUND )
 		printk( "Part of a compound device\n" );
 	else
@@ -346,16 +353,17 @@ int usb_hub_configure( USB_hub* psHub, USB_desc_endpoint_s* psEndpoint )
 
 	printk( "Power on to power good time: %dms\n", psHub->psDesc->nPwrOn2PwrGood * 2);
 	printk( "Hub controller current requirement: %dmA\n", psHub->psDesc->nHubContrCurrent );
-#endif
+	}
+	#endif
 	for( i = 0; i < psDevice->nMaxChild; i++ )
 		portstr[i] = psHub->psDesc->bDeviceRemovable[((i + 1) / 8)] & (1 << ((i + 1) % 8)) ? 'F' : 'R';
 	portstr[psDevice->nMaxChild] = 0;
 
-	//printk( "Port removable status: %s\n", portstr );
+	kerndbg( KERN_DEBUG, "Port removable status: %s\n", portstr );
 
 	nRet = usb_get_hub_status( psDevice, &sStatus );
 	if( nRet < 0) {
-		printk( "USB: Unable to get hub status (err = %d)\n", nRet );
+		kerndbg( KERN_WARNING, "USB: Unable to get hub status (err = %d)\n", nRet );
 		kfree( psHub->psDesc );
 		return( -1 );
 	}
@@ -370,7 +378,7 @@ int usb_hub_configure( USB_hub* psHub, USB_desc_endpoint_s* psEndpoint )
 
 	psHub->psPacket = usb_alloc_packet( 0 );
 	if( !psHub->psPacket ) {
-		printk( "USB: Out of memory\n" );
+		kerndbg( KERN_WARNING, "USB: Out of memory\n" );
 		kfree( psHub->psDesc );
 		return( -1 );
 	}
@@ -379,7 +387,7 @@ int usb_hub_configure( USB_hub* psHub, USB_desc_endpoint_s* psEndpoint )
 		psHub, psEndpoint->nInterval );
 	nRet = usb_submit_packet( psHub->psPacket );
 	if( nRet ) {
-		printk( "USB: usb_submit_packet failed (%d)", nRet );
+		kerndbg( KERN_WARNING, "USB: usb_submit_packet failed (%d)", nRet );
 		kfree( psHub->psDesc );
 		return( -1 );
 	}
@@ -434,14 +442,14 @@ bool usb_hub_add( USB_device_s* psDevice, unsigned int nIF,
 	/*  specs is not defined, but it works */
 	if( ( psIFDesc->nInterfaceSubClass != 0 ) &&
 	    ( psIFDesc->nInterfaceSubClass != 1 ) ) {
-		printk( "USB: Invalid subclass (%d) for USB hub device #%d",
+		kerndbg( KERN_WARNING, "USB: Invalid subclass (%d) for USB hub device #%d",
 			psIFDesc->nInterfaceSubClass, psDevice->nDeviceNum );
 		return( false );
 	}
 
 	/* Multiple endpoints? What kind of mutant ninja-hub is this? */
 	if( psIFDesc->nNumEndpoints != 1 ) {
-		printk( "USB: Invalid bNumEndpoints (%d) for USB hub device #%d",
+		kerndbg( KERN_WARNING, "USB: Invalid bNumEndpoints (%d) for USB hub device #%d",
 			psIFDesc->nInterfaceSubClass, psDevice->nDeviceNum );
 		return( false );
 	}
@@ -450,14 +458,14 @@ bool usb_hub_add( USB_device_s* psDevice, unsigned int nIF,
 
 	/* Output endpoint? Curiousier and curiousier.. */
 	if( !( psEndpoint->nEndpointAddress & USB_DIR_IN ) ) {
-		printk( "USB: Device #%d is hub class, but has output endpoint?",
+		kerndbg( KERN_WARNING, "USB: Device #%d is hub class, but has output endpoint?",
 			psDevice->nDeviceNum );
 		return( false );
 	}
 
 	/* If it's not an interrupt endpoint, we'd better punt! */
 	if( ( psEndpoint->nMAttributes & USB_ENDPOINT_XFERTYPE_MASK ) != USB_ENDPOINT_XFER_INT ) {
-		printk("USB: Device #%d is hub class, but has endpoint other than interrupt?\n",
+		kerndbg( KERN_WARNING, "USB: Device #%d is hub class, but has endpoint other than interrupt?\n",
 			psDevice->nDeviceNum );
 		return( false );
 	}
@@ -465,7 +473,7 @@ bool usb_hub_add( USB_device_s* psDevice, unsigned int nIF,
 
 	psHub = kmalloc( sizeof( *psHub ), MEMF_KERNEL | MEMF_NOBLOCK );
 	if( !psHub ) {
-		printk( "USB: Couldn't kmalloc hub struct" );
+		kerndbg( KERN_WARNING, "USB: Couldn't kmalloc hub struct" );
 		return( false );
 	}
 
@@ -481,7 +489,7 @@ bool usb_hub_add( USB_device_s* psDevice, unsigned int nIF,
 		return( true );
 	}
 		
-	printk( "USB: Hub configuration failed for device #%d", psDevice->nDeviceNum );
+	kerndbg( KERN_WARNING, "USB: Hub configuration failed for device #%d", psDevice->nDeviceNum );
 
 	
 	kfree( psHub );
@@ -560,14 +568,14 @@ int usb_hub_port_wait_reset( USB_device_s* psHub, int nPort,
 		/* read and decode port status */
 		ret = usb_get_port_status( psHub, nPort + 1, &portsts );
 		if( ret < 0 ) {
-			printk( "USB: get_port_status(%d) failed (err = %d)\n", nPort + 1, ret );
+			kerndbg( KERN_WARNING, "USB: get_port_status(%d) failed (err = %d)\n", nPort + 1, ret );
 			return( -1 );
 		}
 
 		portstatus = portsts.nPortStatus;
 		portchange = portsts.nPortChange;
-		//printk("Port %d, portstatus %x, change %x, %s\n", nPort + 1,
-			//portstatus, portchange, portspeed (portstatus));
+		kerndbg( KERN_DEBUG, "Port %d, portstatus %x, change %x, %s\n", nPort + 1,
+			portstatus, portchange, portspeed (portstatus));
 
 		/* bomb out completely if something weird happened */
 		if( ( portchange & USB_PORT_STAT_C_CONNECTION ) )
@@ -589,7 +597,7 @@ int usb_hub_port_wait_reset( USB_device_s* psHub, int nPort,
 		if( delay_time >= 2 * HUB_SHORT_RESET_TIME )
 			nDelay = HUB_LONG_RESET_TIME;
 
-		printk( "USB: Port %d of hub %d not reset yet, waiting %dms\n", nPort + 1,
+		kerndbg( KERN_WARNING, "USB: Port %d of hub %d not reset yet, waiting %dms\n", nPort + 1,
 			psHub->nDeviceNum, nDelay );
 	}
 
@@ -613,14 +621,14 @@ int usb_hub_port_reset( USB_device_s* psHub, int nPort,
 			return( status );
 		}
 
-		printk("USB: Port %d of hub %d not enabled, trying reset again...\n",
+		kerndbg( KERN_WARNING, "USB: Port %d of hub %d not enabled, trying reset again...\n",
 			nPort + 1, psHub->nDeviceNum );
 		nDelay = HUB_LONG_RESET_TIME;
 	}
 
-	printk("USB: Cannot enable port %i of hub %d, disabling port.\n",
+	kerndbg( KERN_WARNING, "USB: Cannot enable port %i of hub %d, disabling port.\n",
 		nPort + 1, psHub->nDeviceNum );
-	printk("USB: Maybe the USB cable is bad?\n");
+	kerndbg( KERN_WARNING, "USB: Maybe the USB cable is bad?\n");
 
 	return( -1 );
 }
@@ -632,7 +640,7 @@ void usb_hub_port_disable( USB_device_s* psHub, int nPort )
 
 	nRet = usb_clear_port_feature( psHub, nPort + 1, USB_PORT_FEAT_ENABLE);
 	if( nRet )
-		printk("USB: Cannot disable port %d of hub %d (err = %d)\n",
+		kerndbg( KERN_WARNING, "USB: Cannot disable port %d of hub %d (err = %d)\n",
 			nPort + 1, psHub->nDeviceNum, nRet );
 }
 
@@ -647,8 +655,8 @@ void usb_hub_port_connect_change( USB_device_s* psHub, int nPort,
 
 	portstatus = psPortsts->nPortStatus;
 	portchange = psPortsts->nPortChange;
-	//printk( "Port %d, portstatus %x, change %x, %s\n",
-		//nPort + 1, portstatus, portchange, portspeed ( portstatus ) );
+	kerndbg( KERN_DEBUG, "Port %d, portstatus %x, change %x, %s\n",
+		nPort + 1, portstatus, portchange, portspeed ( portstatus ) );
 
 	/* Clear the connection change status */
 	usb_clear_port_feature( psHub, nPort + 1, USB_PORT_FEAT_C_CONNECTION );
@@ -684,7 +692,7 @@ void usb_hub_port_connect_change( USB_device_s* psHub, int nPort,
 		/* Allocate a new device struct */
 		psDevice = usb_alloc_device( psHub, psHub->psBus );
 		if( !psDevice ) {
-			printk("USB: Couldn't allocate usb_device\n");
+			kerndbg( KERN_WARNING, "USB: Couldn't allocate usb_device\n");
 			break;
 		}
 		
@@ -720,12 +728,14 @@ void usb_hub_port_connect_change( USB_device_s* psHub, int nPort,
 				psCDev = psPDev;
 				psPDev = psPDev->psParent;
 			}
-			/*printk("USB new device connect on bus%d/%s, assigned device number %d\n",
-				psDevice->psBus->nBusNum, portstr, psDevice->nDeviceNum );*/
-		} /*else
+			kerndbg( KERN_DEBUG, "USB new device connect on bus%d/%s, assigned device number %d\n",
+				psDevice->psBus->nBusNum, portstr, psDevice->nDeviceNum );
+		} 
+		else if( KERN_DEBUG >= DEBUG_LIMIT )
+		{
 			printk("USB new device connect on bus%d, assigned device number %d\n",
 				psDevice->psBus->nBusNum, psDevice->nDeviceNum );
-		*/	
+		}
 
 		/* Run it through the hoops (find a driver, etc) */
 		if ( !usb_new_device( psDevice ) ) {
@@ -764,7 +774,7 @@ void usb_hub_thread_worker()
 	while( 1 )
 	{
 		
-		//printk( "Hub needs attention\n" );
+		kerndbg( KERN_DEBUG, "Hub needs attention\n" );
 		
 		LOCK( g_hHubListLock );
 		
@@ -794,10 +804,10 @@ void usb_hub_thread_worker()
 		
 		UNLOCK( g_hHubListLock );
 		
-		//printk( "Hub needs attention\n" );
+		kerndbg( KERN_DEBUG, "Working...\n" );
 		
 		if( psHub->nError ) {
-			printk( "USB: Hub reports an error, reset not implemented yet\n" );
+			kerndbg( KERN_WARNING, "USB: Hub reports an error, reset not implemented yet\n" );
 			psHub->nError = 0;
 			psHub->nErrors = 0;
 		}
@@ -807,7 +817,7 @@ void usb_hub_thread_worker()
 
 			nRet = usb_get_port_status( psDevice, i + 1, &sPortsts );
 			if( nRet < 0 ) {
-				printk("USB: get_port_status failed (err = %d)\n", nRet);
+				kerndbg( KERN_WARNING, "USB: get_port_status failed (err = %d)\n", nRet);
 				continue;
 			}
 
@@ -815,11 +825,11 @@ void usb_hub_thread_worker()
 			portchange = sPortsts.nPortChange;
 
 			if( portchange & USB_PORT_STAT_C_CONNECTION ) {
-				//printk("Port %d connection change\n", i + 1);
+				kerndbg( KERN_DEBUG, "Port %d connection change\n", i + 1);
 
 				usb_hub_port_connect_change( psDevice, i, &sPortsts );
 			} else if( portchange & USB_PORT_STAT_C_ENABLE ) {
-				//printk("Port %d enable change, status %x\n", i + 1, portstatus);
+				kerndbg( KERN_DEBUG, "Port %d enable change, status %x\n", i + 1, portstatus);
 				usb_clear_port_feature( psDevice, i + 1, USB_PORT_FEAT_C_ENABLE );
 
 				/*
@@ -829,41 +839,41 @@ void usb_hub_thread_worker()
 				 */
 				if (!(portstatus & USB_PORT_STAT_ENABLE) && 
 				    (portstatus & USB_PORT_STAT_CONNECTION) && (psDevice->psChildren[i])) {
-					printk("USB: Already running port %i disabled by hub (EMI?), re-enabling...",
+					kerndbg( KERN_WARNING, "USB: Already running port %i disabled by hub (EMI?), re-enabling...",
 						i + 1);
 					usb_hub_port_connect_change( psDevice, i, &sPortsts );
 				}
 			}
 
 			if( portchange & USB_PORT_STAT_C_SUSPEND ) {
-				//printk("Port %d suspend change\n", i + 1);
+				kerndbg( KERN_DEBUG, "Port %d suspend change\n", i + 1);
 				usb_clear_port_feature( psDevice, i + 1,  USB_PORT_FEAT_C_SUSPEND );
 			}
 			
 			if( portchange & USB_PORT_STAT_C_OVERCURRENT ) {
-				//printk("Port %d over-current change\n", i + 1);
+				kerndbg( KERN_DEBUG, "Port %d over-current change\n", i + 1);
 				usb_clear_port_feature( psDevice, i + 1, USB_PORT_FEAT_C_OVER_CURRENT );
 				usb_hub_power_on( psHub );
 			}
 
 			if (portchange & USB_PORT_STAT_C_RESET) {
-				//printk("Port %d reset change", i + 1);
+				kerndbg( KERN_DEBUG, "Port %d reset change", i + 1);
 				usb_clear_port_feature( psDevice, i + 1, USB_PORT_FEAT_C_RESET );
 			}
 		} /* end for i */
 
 		/* deal with hub status changes */
 		if( usb_get_hub_status( psDevice, &hubsts ) < 0 )
-			printk("USB: get_hub_status failed\n");
+			printk( "USB: get_hub_status failed\n");
 		else {
 			hubstatus = hubsts.nHubStatus;
 			hubchange = hubsts.nHubChange;
 			if( hubchange & HUB_CHANGE_LOCAL_POWER ) {
-				//printk("hub power change\n" );
+				kerndbg( KERN_DEBUG, "hub power change\n" );
 				usb_clear_hub_feature( psDevice, C_HUB_LOCAL_POWER );
 			}
 			if( hubchange & HUB_CHANGE_OVERCURRENT ) {
-				//printk("Hub overcurrent change\n");
+				kerndbg( KERN_DEBUG, "Hub overcurrent change\n");
 				snooze( 500 * 1000 ); /* Cool down */
 				usb_clear_hub_feature( psDevice, C_HUB_OVER_CURRENT );
 				usb_hub_power_on( psHub );
@@ -874,13 +884,14 @@ void usb_hub_thread_worker()
 
 int usb_hub_thread( void* pData )
 {
-	//printk( "USB hub thread running\n" );
+	kerndbg( KERN_DEBUG,  "USB hub thread running\n" );
 	snooze( 2 * 1000 * 1000 );
 	while( 1 ) {
 		usb_hub_thread_worker();
 		sleep_on_sem( g_hHubWait, INFINITE_TIMEOUT );
-		//printk( "usb_hub_thread() waking up\n" );
+		kerndbg( KERN_DEBUG,  "usb_hub_thread() waking up\n" );
 	}
+	return( 0 );
 }
 
 void usb_hub_init()
@@ -904,6 +915,19 @@ void usb_hub_init()
 	/* Start thread */
 	wakeup_thread( spawn_kernel_thread( "usb_hub_thread", usb_hub_thread, 0, 4096, NULL ), true );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

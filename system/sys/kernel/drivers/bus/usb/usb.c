@@ -29,7 +29,9 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
+ 
+//#define DEBUG_LIMIT KERN_DEBUG
+ 
 #include <atheos/usb.h>
 #include <atheos/kernel.h>
 #include <atheos/kdebug.h>
@@ -69,7 +71,7 @@ status_t usb_register_driver( USB_driver_s* psDriver )
 	psDriver->psNext = g_psFirstUSBDriver;
 	g_psFirstUSBDriver = psDriver;
 	
-	printk( "USB: %s driver added\n", g_psFirstUSBDriver->zName );
+	kerndbg( KERN_INFO, "USB: %s driver added\n", g_psFirstUSBDriver->zName );
 	
 	for( i = 0; i < 64; i++ )
 	{
@@ -83,7 +85,7 @@ status_t usb_register_driver( USB_driver_s* psDriver )
 		return( 0 );
 	}
 	/* No new driver for any device found -> driver is unnecessary */
-	printk( "USB: %s driver unnecessary\n", g_psFirstUSBDriver->zName );
+	kerndbg( KERN_INFO, "USB: %s driver unnecessary\n", g_psFirstUSBDriver->zName );
 	g_psFirstUSBDriver = psDriver->psNext;
 	UNLOCK( g_hUSBLock );
 	return( -1 );
@@ -110,7 +112,7 @@ void usb_register_driver_force( USB_driver_s* psDriver )
 	psDriver->psNext = g_psFirstUSBDriver;
 	g_psFirstUSBDriver = psDriver;
 	
-	printk( "USB: %s driver registered\n", g_psFirstUSBDriver->zName );
+	kerndbg( KERN_INFO, "USB: %s driver registered\n", g_psFirstUSBDriver->zName );
 	
 	for( i = 0; i < 64; i++ )
 	{
@@ -193,7 +195,7 @@ void usb_deregister_driver( USB_driver_s* psDriver )
 				if( g_bUSBBusMap[i] )
 					usb_remove_driver( psDriver, g_psUSBBus[i]->psRootHUB ); 
 			}
-			printk( "USB: %s driver deregistered\n", psDriver->zName );
+			kerndbg( KERN_INFO, "USB: %s driver deregistered\n", psDriver->zName );
 			UNLOCK( g_hUSBLock );
 			return;
 		}
@@ -201,7 +203,7 @@ void usb_deregister_driver( USB_driver_s* psDriver )
 		psNextDriver = psNextDriver->psNext;
 	}
 	UNLOCK( g_hUSBLock );
-	printk( "USB: Could not deregister not registered %s driver\n", psDriver->zName );
+	kerndbg( KERN_WARNING, "USB: Could not deregister not registered %s driver\n", psDriver->zName );
 }
 
 
@@ -272,9 +274,10 @@ void usb_register_bus( USB_bus_driver_s* psBus )
 	LOCK( g_hUSBLock );
 	g_bUSBBusMap[i] = true;
 	g_psUSBBus[i] = psBus;
+	psBus->nBusNum = i;
 	UNLOCK( g_hUSBLock );
 	
-	printk( "USB: Bus %i registered\n", (int)i );
+	kerndbg( KERN_INFO, "USB: Bus %i registered\n", (int)i );
 }
 
 
@@ -344,13 +347,13 @@ status_t usb_find_interface_driver( USB_device_s* psDev, int nIFNum )
 			UNLOCK( psDev->hLock );
 			psIF->psDriver = psDriver;
 			psIF->pPrivate = pPrivate;
-			printk( "USB: Device claimed by %s driver\n", psDriver->zName );
+			kerndbg( KERN_INFO, "USB: Device claimed by %s driver\n", psDriver->zName );
 			return( 0 );
 		}
 		psDriver = psDriver->psNext;
 	}
 	UNLOCK( psDev->hLock );
-	printk("USB: No driver found\n");
+	kerndbg( KERN_INFO, "USB: No driver found\n");
 	return( -1 );
 }
 
@@ -490,7 +493,7 @@ int usb_check_bandwidth( USB_device_s* psDevice, USB_packet_s* psPacket )
 		/* what new total allocated bus time would be */
 
 	if( nNewAlloc > FRAME_TIME_MAX_USECS_ALLOC )
-		printk( "USB: usb-check-bandwidth %sFAILED: was %u, would be %u, bustime = %ld us\n",
+		kerndbg( KERN_WARNING, "USB: usb-check-bandwidth %sFAILED: was %u, would be %u, bustime = %ld us\n",
 			"would have ",
 			nOldAlloc, nNewAlloc, nBusTime );
 
@@ -666,29 +669,36 @@ int usb_submit_packet_blocked( USB_packet_s* psPacket, bigtime_t nTimeOut, int* 
 	int nStatus;
 	bigtime_t nTime = get_system_time() + nTimeOut;
 	
+	kerndbg( KERN_DEBUG, "usb_submit_packet_blocked(): Submitting usb packet...\n" );
+	
 	psPacket->bDone = false;
 	psPacket->hWait = create_semaphore( "usb_block_packet", 0, 0 );
 	
 	nStatus = usb_submit_packet( psPacket );
 	if( nStatus != 0 )
 	{
+		kerndbg( KERN_DEBUG, "usb_submit_packet_blocked(): Failed!\n" );
 		usb_free_packet( psPacket );
 		delete_semaphore( psPacket->hWait );
 		return( nStatus );
 	}
+	kerndbg( KERN_DEBUG, "usb_submit_packet_blocked(): Waiting...\n" );
 	while( nTime > get_system_time() && !psPacket->bDone )
 	{
 		sleep_on_sem( psPacket->hWait, nTimeOut );
 	}
+	kerndbg( KERN_DEBUG, "usb_submit_packet_blocked(): Done!\n" );
 	
 	delete_semaphore( psPacket->hWait );
 	
+	kerndbg( KERN_DEBUG, "usb_submit_packet_blocked(): Checking status...\n" );
+	
 	if( !psPacket->bDone ) {
 		if( psPacket->nStatus != -EINPROGRESS ) {
-			printk( "USB: usb_submit_block_packet() -> timeout\n" );
+			kerndbg( KERN_WARNING, "USB: usb_submit_block_packet() -> timeout\n" );
 			nStatus = psPacket->nStatus;
 		} else {
-			printk( "USB: usb_submit_block_packet() -> timeout\n" );
+			kerndbg( KERN_WARNING, "USB: usb_submit_block_packet() -> timeout (urb still pending)\n" );
 			usb_cancel_packet( psPacket );
 			nStatus = -ETIMEDOUT;
 		} 
@@ -792,12 +802,12 @@ int usb_parse_endpoint( USB_desc_endpoint_s* psEndpoint, uint8* pBuffer, int nSi
 	psHeader = ( USB_desc_header_s* )pBuffer;
 	
 	if( psHeader->nLength > nSize ) {
-		printk( "USB: Error while parsing endpoint\n" );
+		kerndbg( KERN_WARNING, "USB: Error while parsing endpoint\n" );
 		return( -1 );
 	}
 	
 	if( psHeader->nDescriptorType != USB_DT_ENDPOINT ) {
-		printk( "USB: Error while parsing endpoint\n" );
+		kerndbg( KERN_WARNING, "USB: Error while parsing endpoint\n" );
 		return( nParsed );
 	}
 	
@@ -818,7 +828,7 @@ int usb_parse_endpoint( USB_desc_endpoint_s* psEndpoint, uint8* pBuffer, int nSi
 		psHeader = ( USB_desc_header_s* )pBuffer;
 		
 		if( psHeader->nLength < 2 ) {
-			printk( "USB: Error while parsing endpoint\n" );
+			kerndbg( KERN_WARNING, "USB: Error while parsing endpoint\n" );
 			return( -1 );
 		}
 		
@@ -830,7 +840,7 @@ int usb_parse_endpoint( USB_desc_endpoint_s* psEndpoint, uint8* pBuffer, int nSi
 			break;
 			
 		/* Skip data */
-		//printk( "Skipping %i\n", psHeader->nDescriptorType );
+		kerndbg( KERN_DEBUG, "Skipping %i\n", psHeader->nDescriptorType );
 		nNumSkipped++;
 		
 		pBuffer += psHeader->nLength;
@@ -838,7 +848,7 @@ int usb_parse_endpoint( USB_desc_endpoint_s* psEndpoint, uint8* pBuffer, int nSi
 		nParsed += psHeader->nLength;
 	}
 	if( nNumSkipped )
-		printk( "USB: %i of vendor specific descriptors skipped\n", nNumSkipped );
+		kerndbg( KERN_DEBUG, "USB: %i of vendor specific descriptors skipped\n", nNumSkipped );
 	
 	nLen = (int)( pBuffer - pBegin );
 	if( !nLen ) {
@@ -850,7 +860,7 @@ int usb_parse_endpoint( USB_desc_endpoint_s* psEndpoint, uint8* pBuffer, int nSi
 	/* Allocate extra memory */
 	psEndpoint->pExtra = kmalloc( nLen, MEMF_KERNEL | MEMF_NOBLOCK );
 	if( !psEndpoint->pExtra ) {
-		printk( "USB: Out of memory!\n" );
+		kerndbg( KERN_WARNING, "USB: Out of memory!\n" );
 		return( nParsed );
 	}
 	memcpy( psEndpoint->pExtra, pBegin, nLen );
@@ -869,11 +879,11 @@ int usb_parse_interface( USB_interface_s* psIF, uint8* pBuffer, int nSize )
 	
 	psIF->nActSetting = 0;
 	psIF->nNumSetting = 0;
-	psIF->nMaxSetting = 4;
+	psIF->nMaxSetting = 16;
 	
 	psIF->psSetting = kmalloc( sizeof( USB_desc_interface_s ) * psIF->nMaxSetting, MEMF_KERNEL | MEMF_NOBLOCK );
 	if( !psIF->psSetting ) {
-		printk( "USB: Out of memory!\n" );
+		kerndbg( KERN_WARNING, "USB: Out of memory!\n" );
 		return( -1 );
 	}
 	memset( psIF->psSetting, 0, sizeof( USB_desc_interface_s ) * psIF->nMaxSetting );
@@ -881,7 +891,7 @@ int usb_parse_interface( USB_interface_s* psIF, uint8* pBuffer, int nSize )
 	while( nSize > 0 ) {
 		if( psIF->nNumSetting >= psIF->nMaxSetting )
 		{
-			printk( "USB: Too many alternate settings -> increase number in usb_parse_interface()\n" );
+			kerndbg( KERN_WARNING, "USB: Too many alternate settings -> increase number in usb_parse_interface()\n" );
 			return( -1 );
 		}
 		
@@ -901,7 +911,7 @@ int usb_parse_interface( USB_interface_s* psIF, uint8* pBuffer, int nSize )
 			psHeader = ( USB_desc_header_s* )pBuffer;
 		
 			if( psHeader->nLength < 2 ) {
-				printk( "USB: Error while parsing interface\n" );
+				kerndbg( KERN_WARNING, "USB: Error while parsing interface\n" );
 				return( -1 );
 			}
 		
@@ -913,15 +923,15 @@ int usb_parse_interface( USB_interface_s* psIF, uint8* pBuffer, int nSize )
 				break;
 			
 			/* Skip data */
-			//printk( "Skipping %i\n", psHeader->nDescriptorType );
+			kerndbg( KERN_DEBUG, "Skipping %i\n", psHeader->nDescriptorType );
 			nNumSkipped++;
 		
 			pBuffer += psHeader->nLength;
 			nSize -= psHeader->nLength;
 			nParsed += psHeader->nLength;
 		}
-		//if( nNumSkipped )
-			//printk( "%i of vendor specific descriptors skipped\n", nNumSkipped );
+		if( nNumSkipped )
+			kerndbg( KERN_DEBUG, "%i of vendor specific descriptors skipped\n", nNumSkipped );
 	
 		nLen = (int)( pBuffer - pBegin );
 		if( !nLen ) {
@@ -933,7 +943,7 @@ int usb_parse_interface( USB_interface_s* psIF, uint8* pBuffer, int nSize )
 			/* Allocate extra memory */
 			psIFDesc->pExtra = kmalloc( nLen, MEMF_KERNEL | MEMF_NOBLOCK );
 			if( !psIFDesc->pExtra ) {
-				printk( "USB: Out of memory!\n" );
+				kerndbg( KERN_WARNING, "USB: Out of memory!\n" );
 				return( -1 );
 			}
 			memset( psIFDesc->pExtra, 0, nLen );
@@ -947,13 +957,13 @@ int usb_parse_interface( USB_interface_s* psIF, uint8* pBuffer, int nSize )
 			  ( psHeader->nDescriptorType == USB_DT_DEVICE ) ) )
 			  return( nParsed );
 		
-		//printk( "Interface has %i endpoints\n", psIFDesc->nNumEndpoints );
+		kerndbg( KERN_DEBUG, "Interface has %i endpoints\n", psIFDesc->nNumEndpoints );
 		
 		/* Allocate endpoints */
 		psIFDesc->psEndpoint = ( USB_desc_endpoint_s* )kmalloc( sizeof( USB_desc_endpoint_s ) *
 															psIFDesc->nNumEndpoints, MEMF_KERNEL | MEMF_NOBLOCK );
 		if( !psIFDesc->psEndpoint ) {
-			printk( "USB: Out of memory!\n" );
+			kerndbg( KERN_WARNING, "USB: Out of memory!\n" );
 			return( -1 );
 		}
 		memset( psIFDesc->psEndpoint, 0, sizeof( USB_desc_endpoint_s ) * psIFDesc->nNumEndpoints );
@@ -964,7 +974,7 @@ int usb_parse_interface( USB_interface_s* psIF, uint8* pBuffer, int nSize )
 			psHeader = ( USB_desc_header_s* )pBuffer;
 			
 			if( psHeader->nLength > nSize ) {
-				printk( "USB: Invalid endpoint header\n" );
+				kerndbg( KERN_WARNING, "USB: Invalid endpoint header\n" );
 				return( -1 );
 			}
 			nResult = usb_parse_endpoint( psIFDesc->psEndpoint + i, pBuffer, nSize );
@@ -988,13 +998,13 @@ int usb_parse_config( USB_desc_config_s* psConfig, uint8* pBuffer )
 	memcpy( psConfig, pBuffer, USB_DT_CONFIG_SIZE );
 	nSize = psConfig->nTotalLength;
 	
-	//printk( "Config has %i interfaces\n", psConfig->nNumInterfaces );
+	kerndbg( KERN_DEBUG, "Config has %i interfaces\n", psConfig->nNumInterfaces );
 	
 	/* Allocate memory for the interfaces */
 	psConfig->psInterface = ( USB_interface_s* )kmalloc( sizeof( USB_interface_s ) * psConfig->nNumInterfaces,
 													MEMF_KERNEL | MEMF_NOBLOCK );
 	if( !psConfig->psInterface ) {
-		printk( "USB: Out of memory!\n" );
+		kerndbg( KERN_WARNING, "USB: Out of memory!\n" );
 		return( -1 );
 	}
 	
@@ -1021,7 +1031,7 @@ int usb_parse_config( USB_desc_config_s* psConfig, uint8* pBuffer )
 			psHeader = ( USB_desc_header_s* )pBuffer;
 			
 			if( ( psHeader->nLength > nSize ) || ( psHeader->nLength < 2 ) ) {
-				printk( "USB: Error while parsing config\n" );
+				kerndbg( KERN_WARNING, "USB: Error while parsing config\n" );
 				return( -1 );
 			}
 			/* Look if we have found the next descriptors */
@@ -1031,14 +1041,14 @@ int usb_parse_config( USB_desc_config_s* psConfig, uint8* pBuffer )
 				( psHeader->nDescriptorType == USB_DT_DEVICE ) )
 				break;
 				
-			//printk( "Skipping %i\n", psHeader->nDescriptorType );
+			kerndbg( KERN_DEBUG, "Skipping %i\n", psHeader->nDescriptorType );
 			nNumSkipped++; 
 			
 			pBuffer += psHeader->nLength;
 			nSize -= psHeader->nLength;
 		}
-		//if( nNumSkipped )
-			//printk( "Skipped %i of vendor specific data\n", nNumSkipped );
+		if( nNumSkipped )
+			kerndbg( KERN_DEBUG, "Skipped %i of vendor specific data\n", nNumSkipped );
 		
 		/* Save vendor specific data */
 		nLen = (int)( pBuffer - pBegin );
@@ -1046,7 +1056,7 @@ int usb_parse_config( USB_desc_config_s* psConfig, uint8* pBuffer )
 			if( !psConfig->nExtraLen ) {
 				psConfig->pExtra = kmalloc( nLen, MEMF_KERNEL | MEMF_NOBLOCK );
 				if( !psConfig->pExtra ) {
-					printk( "USB: Out of memory!\n" );
+					kerndbg( KERN_WARNING, "USB: Out of memory!\n" );
 					return( -1 );
 				}
 				memset( psConfig->pExtra, 0, nLen );
@@ -1076,7 +1086,7 @@ void usb_disconnect( USB_device_s** psDevice )
 		
 	*psDevice = NULL;
 	
-	printk( "USB: Device %i disconnected\n", psDev->nDeviceNum );
+	kerndbg( KERN_INFO, "USB: Device %i disconnected\n", psDev->nDeviceNum );
 	
 	
 	if( psDev->psActConfig ) 
@@ -1131,7 +1141,7 @@ void usb_connect( USB_device_s* psDevice )
 			break; 
 	}
 	if( i == 128 ) {
-		printk( "USB: Too many devices\n" );
+		kerndbg( KERN_WARNING, "USB: Too many devices\n" );
 		return;
 	}
 	psDevice->psBus->bDevMap[i] = true;
@@ -1140,6 +1150,7 @@ void usb_connect( USB_device_s* psDevice )
 
 int usb_set_address( USB_device_s* psDevice )
 {
+	kerndbg( KERN_DEBUG, "Sending address setting message ( device %i on bus %i )...\n", psDevice->nDeviceNum, psDevice->psBus->nBusNum );
 	return( usb_control_msg( psDevice, usb_snddefctrl( psDevice ), USB_REQ_SET_ADDRESS,
 			0, psDevice->nDeviceNum, 0, NULL, 0, 3 * 1000 * 1000 ) );
 }
@@ -1273,7 +1284,7 @@ int usb_clear_halt( USB_device_s* psDevice, int nPipe )
 
 	pBuffer = kmalloc( sizeof( nStatus ), MEMF_KERNEL | MEMF_NOBLOCK );
 	if( !pBuffer ) {
-		printk( "USB: unable to allocate memory for configuration descriptors\n" );
+		kerndbg( KERN_WARNING, "USB: unable to allocate memory for configuration descriptors\n" );
 		return( -ENOMEM );
 	}
 	memset( pBuffer, 0, sizeof( nStatus ) );
@@ -1374,14 +1385,14 @@ int usb_set_interface( USB_device_s* psDevice, int nIFNum, int nAlternate )
 
 	psIF = usb_ifnum_to_if( psDevice, nIFNum );
 	if( !psIF ) {
-		printk( "USB: selecting invalid interface %d\n", nIFNum );
+		kerndbg( KERN_WARNING, "USB: selecting invalid interface %d\n", nIFNum );
 		return( -EINVAL );
 	}
 
 	/* 9.4.10 says devices don't need this, if the interface
 	   only has one alternate setting */
 	if( psIF->nNumSetting == 1 ) {
-		printk( "USB: ignoring set_interface for dev %d, iface %d, alt %d",
+		kerndbg( KERN_DEBUG, "USB: ignoring set_interface for dev %d, iface %d, alt %d",
 			psDevice->nDeviceNum, nIFNum, nAlternate );
 		return( 0 );
 	}
@@ -1410,7 +1421,7 @@ int usb_set_configuration( USB_device_s* psDevice, int nConfig )
 		}
 	}
 	if( !psConfig ) {
-		printk( "USB: selecting invalid configuration %d\n", nConfig );
+		kerndbg( KERN_WARNING, "USB: selecting invalid configuration %d\n", nConfig );
 		return( -EINVAL );
 	}
 
@@ -1448,11 +1459,11 @@ int usb_get_configuration( USB_device_s* psDevice )
 	uint8 *pBigbuffer;
 	USB_desc_config_s* psConfigDesc;
 	
-	//printk( "Device has %i configurations\n", psDevice->sDeviceDesc.nNumConfigurations );
+	kerndbg( KERN_DEBUG, "Device has %i configurations\n", psDevice->sDeviceDesc.nNumConfigurations );
  	
 
 	if( psDevice->sDeviceDesc.nNumConfigurations < 1 ) {
-		printk( "USB: Not enough configurations\n" );
+		kerndbg( KERN_WARNING, "USB: Not enough configurations\n" );
 		return( -EINVAL );
 	}
 
@@ -1460,7 +1471,7 @@ int usb_get_configuration( USB_device_s* psDevice )
 		kmalloc( psDevice->sDeviceDesc.nNumConfigurations *
 		sizeof( USB_desc_config_s ), MEMF_KERNEL | MEMF_NOBLOCK );
 	if( !psDevice->psConfig ) {
-		printk( "USB: Out of memory\n" );
+		kerndbg( KERN_WARNING, "USB: Out of memory\n" );
 		return( -ENOMEM );	
 	}
 	memset( psDevice->psConfig, 0, psDevice->sDeviceDesc.nNumConfigurations *
@@ -1469,7 +1480,7 @@ int usb_get_configuration( USB_device_s* psDevice )
 	psDevice->pRawDescs = ( char ** )kmalloc( sizeof( char* ) *
 		psDevice->sDeviceDesc.nNumConfigurations, MEMF_KERNEL | MEMF_NOBLOCK );
 	if( !psDevice->pRawDescs ) {
-		printk( "USB: Out of memory\n" );
+		kerndbg( KERN_WARNING, "USB: Out of memory\n" );
 		return( -ENOMEM );
 	}
 	memset( psDevice->pRawDescs, 0, sizeof( char* ) *
@@ -1477,7 +1488,7 @@ int usb_get_configuration( USB_device_s* psDevice )
 
 	pBuffer = kmalloc( 8, MEMF_KERNEL | MEMF_NOBLOCK );
 	if( !pBuffer ) {
-		printk( "USB: Unable to allocate memory for configuration descriptors\n" );
+		kerndbg( KERN_WARNING, "USB: Unable to allocate memory for configuration descriptors\n" );
 		return( -ENOMEM );
 	}
 	memset( pBuffer, 0, 8 );
@@ -1488,10 +1499,10 @@ int usb_get_configuration( USB_device_s* psDevice )
 		/*  configuration is */
 		nResult = usb_get_descriptor( psDevice, USB_DT_CONFIG, nCfgNo, pBuffer, 8 );
 		if( nResult < 8 ) {
-			if( nResult < 0)
-				printk( "USB: unable to get descriptor\n" );
-			else {
-				printk( "USB: config descriptor too short (expected %i, got %i)\n", 8, nResult );
+			if( nResult < 0) {
+				kerndbg( KERN_WARNING, "USB: unable to get descriptor\n" );
+			} else {
+				kerndbg( KERN_WARNING, "USB: config descriptor too short (expected %i, got %i)\n", 8, nResult );
 				nResult = -EINVAL;
 			}
 			goto err;
@@ -1502,7 +1513,7 @@ int usb_get_configuration( USB_device_s* psDevice )
 
 		pBigbuffer = kmalloc( nLength, MEMF_KERNEL | MEMF_NOBLOCK );
 		if( !pBigbuffer ) {
-			printk( "USB: Unable to allocate memory for configuration descriptors\n" );
+			kerndbg( KERN_WARNING, "USB: Unable to allocate memory for configuration descriptors\n" );
 			nResult = -ENOMEM;
 			goto err;
 		}
@@ -1511,13 +1522,13 @@ int usb_get_configuration( USB_device_s* psDevice )
 		/* Now that we know the length, get the whole thing */
 		nResult = usb_get_descriptor( psDevice, USB_DT_CONFIG, nCfgNo, pBigbuffer, nLength );
 		if( nResult < 0 ) {
-			printk( "USB: Couldn't get all of config descriptors\n" );
+			kerndbg( KERN_WARNING, "USB: Couldn't get all of config descriptors\n" );
 			kfree( pBigbuffer );
 			goto err;
 		}	
 	
 		if( nResult < nLength ) {
-			printk( "USB: Config descriptor too short (expected %i, got %i)\n", nLength, nResult );
+			kerndbg( KERN_WARNING, "USB: Config descriptor too short (expected %i, got %i)\n", nLength, nResult );
 			nResult = -EINVAL;
 			kfree( pBigbuffer );
 			goto err;
@@ -1526,9 +1537,9 @@ int usb_get_configuration( USB_device_s* psDevice )
 		psDevice->pRawDescs[nCfgNo] = pBigbuffer;
 
 		nResult = usb_parse_config( &psDevice->psConfig[nCfgNo], pBigbuffer );
-		if( nResult > 0 )
-			printk( "USB: Descriptor data left\n" );
-		else if( nResult < 0 ) {
+		if( nResult > 0 ) {
+			kerndbg( KERN_WARNING, "USB: Descriptor data left\n" );
+		} else if( nResult < 0 ) {
 			nResult = -EINVAL;
 			goto err;
 		}
@@ -1570,18 +1581,18 @@ int usb_string( USB_device_s* psDevice, int nIndex, char* pBuf, size_t nSize )
 	if( !psDevice->bLangID ) {
 		nErr = usb_get_string( psDevice, 0, 0, pTbuf, 4 );
 		if( nErr < 0 ) {
-			printk("USB: Error getting string descriptor 0 (error=%d)\n", nErr);
+			kerndbg( KERN_WARNING, "USB: Error getting string descriptor 0 (error=%d)\n", nErr);
 			goto errout;
 		} else if( pTbuf[0] < 4 ) {
-			printk( "USB: String descriptor 0 too short\n" );
+			kerndbg( KERN_WARNING, "USB: String descriptor 0 too short\n" );
 			nErr = -EINVAL;
 			goto errout;
 		} else {
 			psDevice->bLangID = true;
 			psDevice->nStringLangID = pTbuf[2] | ( pTbuf[3]<< 8 );
 				/* always use the first langid listed */
-			//printk( "USB device number %d default language ID 0x%x\n",
-				//psDevice->nDeviceNum, psDevice->nStringLangID );
+			kerndbg( KERN_DEBUG, "USB device number %d default language ID 0x%x\n",
+				psDevice->nDeviceNum, psDevice->nStringLangID );
 		}
 	}
 
@@ -1619,7 +1630,7 @@ void usb_show_string( USB_device_s* psDevice, char *pID, int nIndex )
 	if( !( pBuf = kmalloc( 256, MEMF_KERNEL | MEMF_NOBLOCK ) ) )
 		return;
 	if( usb_string( psDevice, nIndex, pBuf, 256 ) > 0 )
-		printk( "%s: %s\n", pID, pBuf );
+		kerndbg( KERN_INFO, "%s: %s\n", pID, pBuf );
 	kfree( pBuf );
 }
 
@@ -1643,11 +1654,11 @@ int usb_new_device( USB_device_s* psDevice )
 	psDevice->nMaxPacketIn[0] = 8;
 	psDevice->nMaxPacketOut[0] = 8;
 	
-	//printk( "USB: Setting address...\n" );
+	kerndbg( KERN_DEBUG, "USB: Setting address...\n" );
 
 	nErr = usb_set_address( psDevice );
 	if( nErr < 0 ) {
-		printk( "USB: Device not accepting new address=%d (error=%d)\n",
+		kerndbg( KERN_WARNING, "USB: Device not accepting new address=%d (error=%d)\n",
 			psDevice->nDeviceNum, nErr );
 		psDevice->psBus->bDevMap[psDevice->nDeviceNum] = false;
 		psDevice->nDeviceNum = -1;
@@ -1656,14 +1667,15 @@ int usb_new_device( USB_device_s* psDevice )
 
 	snooze( 10 * 1000 );
 	
-	//printk( "USB: Getting descriptor...\n" );
+	kerndbg( KERN_DEBUG, "USB: Getting descriptor...\n" );
 
 	nErr = usb_get_descriptor( psDevice, USB_DT_DEVICE, 0, (uint8*)&psDevice->sDeviceDesc, 8 );
 	if( nErr < 8) {
-		if( nErr < 0 )
-			printk( "USB: Device not responding, giving up (error=%d)\n", nErr );
-		else
-			printk( "USB: Device descriptor short read (expected %i, got %i)\n", 8, nErr );
+		if( nErr < 0 ) {
+			kerndbg( KERN_WARNING, "USB: Device not responding, giving up (error=%d)\n", nErr );
+		} else {
+			kerndbg( KERN_WARNING, "USB: Device descriptor short read (expected %i, got %i)\n", 8, nErr );
+		}
 		psDevice->psBus->bDevMap[psDevice->nDeviceNum] = false;
 		psDevice->nDeviceNum = -1;
 		return( 1 );
@@ -1672,38 +1684,38 @@ int usb_new_device( USB_device_s* psDevice )
 	psDevice->nMaxPacketIn[0] = psDevice->sDeviceDesc.nMaxPacketSize;
 	psDevice->nMaxPacketOut[0] = psDevice->sDeviceDesc.nMaxPacketSize;
 	
-	//printk( "USB: Getting device descriptor...\n" );
+	kerndbg( KERN_DEBUG, "USB: Getting device descriptor...\n" );
 
 	nErr = usb_get_device_descriptor( psDevice );
 	if( nErr < (signed)sizeof( psDevice->sDeviceDesc ) ) {
-		if( nErr < 0 )
-			printk( "USB: Unable to get device descriptor (error=%d)\n", nErr );
-		else
-			printk( "USB: Device descriptor short read (expected %Zi, got %i)\n",
+		if( nErr < 0 ) {
+			kerndbg( KERN_WARNING, "USB: Unable to get device descriptor (error=%d)\n", nErr );
+		} else {
+			kerndbg( KERN_WARNING, "USB: Device descriptor short read (expected %Zi, got %i)\n",
 				sizeof( psDevice->sDeviceDesc ), nErr );
-	
+		}
 		psDevice->psBus->bDevMap[psDevice->nDeviceNum] = false;
 		psDevice->nDeviceNum = -1;
 		return( 1 );
 	}
 	
-	//printk( "USB: Getting config...\n" );
+	kerndbg( KERN_DEBUG, "USB: Getting config...\n" );
 
 	nErr = usb_get_configuration( psDevice );
 	if( nErr < 0 ) {
-		printk( "USB: Unable to get device %d configuration (error=%d)\n",
+		kerndbg( KERN_WARNING, "USB: Unable to get device %d configuration (error=%d)\n",
 			psDevice->nDeviceNum, nErr );
 		psDevice->psBus->bDevMap[psDevice->nDeviceNum] = false;
 		psDevice->nDeviceNum = -1;
 		return( 1 );
 	}
 	
-	//printk( "USB: Setting config...\n" );
+	kerndbg( KERN_DEBUG, "USB: Setting config...\n" );
 
 	/* we set the default configuration here */
 	nErr = usb_set_configuration( psDevice, psDevice->psConfig[0].nConfigValue );
 	if( nErr ) {
-		printk( "USB: Failed to set device %d default configuration (error=%d)\n",
+		kerndbg( KERN_WARNING, "USB: Failed to set device %d default configuration (error=%d)\n",
 			psDevice->nDeviceNum, nErr );
 		psDevice->psBus->bDevMap[psDevice->nDeviceNum] = false;
 		psDevice->nDeviceNum = -1;
@@ -1715,7 +1727,7 @@ int usb_new_device( USB_device_s* psDevice )
 	usb_string( psDevice, psDevice->sDeviceDesc.nProduct, zTemp, 256 );
 	psDevice->nHandle = register_device( zTemp, "usb" );
 
-	printk( "USB: New device strings: Mfr=%d, Product=%d, SerialNumber=%d\n",
+	kerndbg( KERN_INFO, "USB: New device strings: Mfr=%d, Product=%d, SerialNumber=%d\n",
 		psDevice->sDeviceDesc.nManufacturer, psDevice->sDeviceDesc.nProduct, psDevice->sDeviceDesc.nSerialNumber );
 
 	if( psDevice->sDeviceDesc.nManufacturer )
@@ -1772,7 +1784,7 @@ status_t bus_init()
 	{
 		if( get_bool_arg( &bDisableUSB, "disable_usb=", argv[i], strlen( argv[i] ) ) )
 			if( bDisableUSB ) {
-				printk( "USB bus disabled by user\n" );
+				kerndbg( KERN_WARNING, "USB bus disabled by user\n" );
 				return( -1 );
 			}
 	}
@@ -1787,7 +1799,7 @@ status_t bus_init()
 	
 	g_hUSBLock = create_semaphore( "usb_lock", 1, 0 );
 	
-	printk( "USB: Busmanager initialized\n" );
+	kerndbg( KERN_INFO, "USB: Busmanager initialized\n" );
 	
 	usb_hub_init();
 	
@@ -1822,7 +1834,9 @@ USB_bus_s sBus = {
 	usb_free_packet,
 	usb_submit_packet,
 	usb_cancel_packet,
-	usb_control_msg
+	usb_control_msg,
+	usb_set_interface,
+	usb_set_configuration
 };
 
 
@@ -1839,6 +1853,24 @@ void* bus_get_hooks( int nVersion )
 		return( NULL );
 	return( &sBus );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

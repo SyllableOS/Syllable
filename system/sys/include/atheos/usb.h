@@ -207,6 +207,9 @@ typedef struct
 	int ( *control_msg )( USB_device_s* psDevice, unsigned int nPipe, uint8 nRequest, 
 					uint8 nRequestType, uint16 nValue, uint16 nIndex, void* pData, uint16 nSize,
 					bigtime_t nTimeOut );
+					
+	int ( *set_interface )( USB_device_s* psDevice, int nIFNum, int nAlternate );
+	int ( *set_configuration )( USB_device_s* psDevice, int nConfig );
 } USB_bus_s;
 
 
@@ -371,6 +374,7 @@ static inline unsigned int __default_pipe( USB_device_s *psDev )
 #endif
 
 #endif /* _SYLLABLE_USB_H_ */
+
 
 
 

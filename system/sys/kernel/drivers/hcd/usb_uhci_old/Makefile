@@ -1,9 +1,9 @@
 
-CFLAGS   = -kernel -fno-PIC -c -O3 -Wall -D__ENABLE_DEBUG__
+CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
 AFLAGS   = -c
 
 
-OBJS := usb-uhci.o
+OBJS := usb_uhci.o
 
 
 OBJDIR	:= objs
@@ -42,16 +42,11 @@ install: all
 	cp -f $(OBJDIR)/usb_uhci /system/drivers/dev/hcd/usb_uhci
 
 dist: all
-	mkdir -p $(DIST_SYS_DIR)/drivers/dev/hcd
-	cp -f $(OBJDIR)/usb_uhci $(DIST_SYS_DIR)/drivers/dev/hcd/usb_uhci
+	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/hcd
+	cp -f $(OBJDIR)/usb_uhci $(DIST_DIR)/atheos/sys/drivers/dev/hcd/usb_uhci
 
 clean:
 	rm -f $(OBJS) $(OBJDIR)/usb_uhci
-
-
-
-
-
 
 
 

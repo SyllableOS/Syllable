@@ -317,7 +317,7 @@ int usb_stor_clear_halt( USB_device_s * dev, int pipe )
 	int result;
 	int endp = usb_pipeendpoint( pipe ) | ( usb_pipein( pipe ) << 7 );
 
-	result = g_psBus->control_msg( dev, usb_sndctrlpipe( dev, 0 ), USB_REQ_CLEAR_FEATURE, USB_RECIP_ENDPOINT, 0, endp, NULL, 0, 100 * 3 );
+	result = g_psBus->control_msg( dev, usb_sndctrlpipe( dev, 0 ), USB_REQ_CLEAR_FEATURE, USB_RECIP_ENDPOINT, 0, endp, NULL, 0, 100 * 3 * 1000 );
 
 	/* this is a failure case */
 	if ( result < 0 )
@@ -1181,3 +1181,4 @@ int usb_stor_Bulk_reset( USB_disk_s * psDisk )
 	printk( "Bulk soft reset completed\n" );
 	return SCSI_SUCCESS;
 }
+

@@ -71,32 +71,32 @@ typedef struct
 /* Endpoint descriptor */
 typedef struct
 {
-	uint8 	nLength;
-	uint8	nDescriptorType;
-	uint8	nEndpointAddress;
-	uint8	nMAttributes;
-	uint16	nMaxPacketSize;
-	uint8	nInterval;
-	uint8	nRefresh;
-	uint8	nSynchAddress;
+	uint8 	nLength __attribute__ ((packed));
+	uint8	nDescriptorType	__attribute__ ((packed));
+	uint8	nEndpointAddress __attribute__ ((packed));
+	uint8	nMAttributes __attribute__ ((packed));
+	uint16	nMaxPacketSize __attribute__ ((packed));
+	uint8	nInterval __attribute__ ((packed));
+	uint8	nRefresh __attribute__ ((packed));
+	uint8	nSynchAddress __attribute__ ((packed));
 	
 	uint8*	pExtra;
 	int		nExtraLen;
-} USB_desc_endpoint_s __attribute__ ((packed));
+} USB_desc_endpoint_s;
 
 
 /* Interface descriptor */
 typedef struct
 {
-	uint8 	nLength;
-	uint8	nDescriptorType;
-	uint8	nInterfaceNumber;
-	uint8	nAlternateSettings;
-	uint8	nNumEndpoints;
-	uint8	nInterfaceClass;
-	uint8	nInterfaceSubClass;
-	uint8	nInterfaceProtocol;
-	uint8	nInterface;
+	uint8 	nLength __attribute__ ((packed));;
+	uint8	nDescriptorType __attribute__ ((packed));;
+	uint8	nInterfaceNumber __attribute__ ((packed));;
+	uint8	nAlternateSettings __attribute__ ((packed));;
+	uint8	nNumEndpoints __attribute__ ((packed));;
+	uint8	nInterfaceClass __attribute__ ((packed));;
+	uint8	nInterfaceSubClass __attribute__ ((packed));;
+	uint8	nInterfaceProtocol __attribute__ ((packed));;
+	uint8	nInterface __attribute__ ((packed));;
 	
 	USB_desc_endpoint_s* psEndpoint;
 	
@@ -124,20 +124,20 @@ typedef struct
 /* Config descriptor */
 typedef struct
 {
-	uint8 	nLength;
-	uint8	nDescriptorType;
-	uint16	nTotalLength;
-	uint8	nNumInterfaces;
-	uint8	nConfigValue;
-	uint8	nConfig;
-	uint8	nMAttributes;
-	uint8	nMaxPower;
+	uint8 	nLength __attribute__ ((packed));;
+	uint8	nDescriptorType __attribute__ ((packed));;
+	uint16	nTotalLength __attribute__ ((packed));;
+	uint8	nNumInterfaces __attribute__ ((packed));;
+	uint8	nConfigValue __attribute__ ((packed));;
+	uint8	nConfig __attribute__ ((packed));;
+	uint8	nMAttributes __attribute__ ((packed));;
+	uint8	nMaxPower __attribute__ ((packed));;
 	
 	USB_interface_s* psInterface;
 	
 	uint8*	pExtra;
 	int		nExtraLen;
-} USB_desc_config_s __attribute__ ((packed));
+} USB_desc_config_s;
 
 /* String descriptor */
 typedef struct
@@ -313,6 +313,7 @@ enum {
 #endif
 
 #endif /* _SYLLABLE_USB_DEFS_H_ */
+
 
 
 
