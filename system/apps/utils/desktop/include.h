@@ -42,7 +42,7 @@
 #include <util/handler.h>
 #include <gui/bitmap.h>
 #include <gui/icon.h>
-#include <gui/menu.h> 
+#include <gui/menu.h>
 #include <util/application.h>
 #include <gui/font.h>
 #include <gui/tableview.h>

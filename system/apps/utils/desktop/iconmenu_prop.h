@@ -7,15 +7,15 @@ using namespace os;
 
 class IconProp : public Window
 {
-	public:
-	IconProp(string cIconName);
-	
-	private:
-	TextView* pcIconNameText;
-	StringView* pcIconNameString;
-	Button*    pcIconOkBut;
-	Button*    pcIconRenameBut;
-	virtual void HandleMessage(Message* pcMessage);
+    public:
+        IconProp(string cIconName);
+
+    private:
+        TextView* pcIconNameText;
+        StringView* pcIconNameString;
+        Button*    pcIconOkBut;
+        Button*    pcIconRenameBut;
+        virtual void HandleMessage(Message* pcMessage);
 };
 
 #endif

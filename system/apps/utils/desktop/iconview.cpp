@@ -4,6 +4,14 @@ Bitmap* Icon::s_pcBitmap[16] = {NULL,};
 int	Icon::s_nCurBitmap = 0;
 Color32_s fgColor, bgColor;
 
+/*
+** name:       Icon Constructor
+** purpose:    
+** parameters: Pointer for the icon name, pointer for the path of the icon, pointer
+**		       for the file that will execute when you click the icon, Point of where the 
+**			   the icon will be placed.
+** returns:
+*/
 Icon::Icon( const char* pzTitle, const char* pzPath, const char* pzExec, Point cPoint, const struct stat& sStat ) : m_cTitle( pzTitle)
 {
     m_bSelected = false;
@@ -12,52 +20,74 @@ Icon::Icon( const char* pzTitle, const char* pzPath, const char* pzExec, Point c
     m_bStrWidthValid = false;
     m_cExec = pzExec;
     m_cPosition = cPoint;
-    
-    if ( s_pcBitmap[0] == NULL ) {
-        for ( int i = 0 ; i < 16 ; ++i ) {
+
+    if ( s_pcBitmap[0] == NULL )
+    {
+        for ( int i = 0 ; i < 16 ; ++i )
+        {
             s_pcBitmap[i] = new Bitmap( 32,32, CS_RGB32 );
         }
     }
-    
+
 
     IconDir sDir;
     IconHeader sHeader;
-	
+
     FILE* hFile = fopen( pzPath, "r" );
 
-    if ( hFile == NULL ) {
+    if ( hFile == NULL )
+    {
         printf( "Failed to open file %s\n", pzPath );
         return;
     }
 
-    if ( fread( &sDir, sizeof( sDir ), 1, hFile ) != 1 ) {
+    if ( fread( &sDir, sizeof( sDir ), 1, hFile ) != 1 )
+    {
         printf( "Failed to read icon dir\n" );
     }
-    if ( sDir.nIconMagic != ICON_MAGIC ) {
+    if ( sDir.nIconMagic != ICON_MAGIC )
+    {
         printf( "Files %s is not an icon\n", pzPath );
         return;
     }
-    for ( int i = 0 ; i < sDir.nNumImages ; ++i ) {
-         if ( fread( &sHeader, sizeof( sHeader ), 1, hFile ) != 1 ) {
+    for ( int i = 0 ; i < sDir.nNumImages ; ++i )
+    {
+        if ( fread( &sHeader, sizeof( sHeader ), 1, hFile ) != 1 )
+        {
             printf( "Failed to read icon header\n" );
         }
-        if ( sHeader.nWidth == 32 ) {
+        if ( sHeader.nWidth == 32 )
+        {
             fread( m_anLarge, 32*32*4, 1, hFile );
-        } else if ( sHeader.nWidth == 16 ) {
+        }
+        else if ( sHeader.nWidth == 16 )
+        {
             fread( m_anSmall, 16*16*4, 1, hFile );
         }
     }
     fclose( hFile );
 }
 
+/*
+** name:       Icon Destructor
+** purpose:    
+** parameters: 
+** returns:
+*/
 Icon::~Icon()
-{
-}
+{}
 
-
+/*
+** name:       Icon::Select
+** purpose:    Selects the icon
+** parameters: IconView, is the view where the specified icon is, and a bool to tell
+**			   whether the icon is selected or not
+** returns:
+*/
 void Icon::Select( IconView* pcView, bool bSelected )
 {
-    if ( m_bSelected == bSelected ) {
+    if ( m_bSelected == bSelected )
+    {
         return;
     }
     m_bSelected = bSelected;
@@ -67,9 +97,16 @@ void Icon::Select( IconView* pcView, bool bSelected )
     Paint( pcView, Point(0,0), true, true, bgColor,fgColor );
 }
 
+/*
+** name:       Icon::GetStrWidth
+** purpose:    Gets the string width of the icons title(pzTitle)
+** parameters: pointer to a Font
+** returns:	   width of the string
+*/
 float Icon::GetStrWidth( Font* pcFont )
 {
-    if ( m_bStrWidthValid == false ) {
+    if ( m_bStrWidthValid == false )
+    {
         m_nMaxStrLen = pcFont->GetStringLength( m_cTitle.c_str(), 72.0f );
         m_vStringWidth = pcFont->GetStringWidth( m_cTitle.c_str(), m_nMaxStrLen );
         m_bStrWidthValid = true;
@@ -77,9 +114,16 @@ float Icon::GetStrWidth( Font* pcFont )
     return( m_vStringWidth );
 }
 
+/*
+** name:       GetBounds
+** purpose:    Gets the rect of the icon
+** parameters: Pointer to a Font 
+** returns:    Rect
+*/
 Rect Icon::GetBounds( Font* pcFont )
 {
-    if ( m_bBoundsValid == false ) {
+    if ( m_bBoundsValid == false )
+    {
         font_height sHeight;
 
         pcFont->GetHeight( &sHeight );
@@ -91,21 +135,36 @@ Rect Icon::GetBounds( Font* pcFont )
     return( m_cBounds );
 }
 
+
+/*
+** name:       Icon::GetFrame
+** purpose:    Gets the frame of the icon
+** parameters: Pointer to a Font
+** returns:	   Rect
+*/
 Rect Icon::GetFrame( Font* pcFont )
 {
     Rect cBounds = GetBounds( pcFont );
     return( cBounds + m_cPosition - Point( cBounds.Width() * 0.5f, 0.0f ) );
 }
 
+
+/*
+** name:       Icon::Paint
+** purpose:    Paints the icon onto the screen
+** parameters: View, Point, bool, bool, Color32_s, Color32_s
+** returns:	   
+*/
 void Icon::Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendText, Color32_s bClr,Color32_s fClr )
 {
-	bgColor = bClr;
-	fgColor = fClr;
+    bgColor = bClr;
+    fgColor = fClr;
     Point cPosition = m_cPosition + cOffset;
     if ( bLarge )
     {
         Font* pcFont = pcView->GetFont();
-        if ( pcFont == NULL ) {
+        if ( pcFont == NULL )
+        {
             return;
         }
         float vStrWidth = GetStrWidth( pcFont );
@@ -119,13 +178,17 @@ void Icon::Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendTe
 
         pcView->MovePenTo( x, y );
 
-        if ( bBlendText ) {
+        if ( bBlendText )
+        {
             pcView->SetDrawingMode( DM_OVER );
-        } else {
+        }
+        else
+        {
             pcView->SetDrawingMode( DM_BLEND );
             pcView->SetBgColor(200,200,200);  //atoi (Colors.bgColor.red), atoi(Colors.bgColor.green), atoi(Colors.bgColor.blue),255
         }
-        if ( m_bSelected && bBlendText ) {
+        if ( m_bSelected && bBlendText )
+        {
             pcView->SetFgColor(bClr);
             Rect cRect( x - 2, y - sHeight.ascender,
                         x + vStrWidth + 1, y + sHeight.descender );
@@ -133,9 +196,12 @@ void Icon::Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendTe
         }
 
         //    pcView->SetFgColor( 0, 0, 0 );
-        if ( bBlendText ) {
+        if ( bBlendText )
+        {
             pcView->SetFgColor( fClr );
-        } else {
+        }
+        else
+        {
             pcView->SetFgColor( 255,255,255, 0xff );
         }
 
@@ -143,7 +209,8 @@ void Icon::Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendTe
 
         pcView->SetDrawingMode( DM_BLEND );
 
-        if ( s_nCurBitmap == 16 ) {
+        if ( s_nCurBitmap == 16 )
+        {
             s_nCurBitmap = 0;
             pcView->Sync();
         }
@@ -154,9 +221,17 @@ void Icon::Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendTe
     }
 }
 
+
+/*
+** name:       Icon::GetBitmap
+** purpose:    Gets the icon bitmap
+** parameters: 
+** returns:	   Bitmap
+*/
 Bitmap* Icon::GetBitmap()
 {
-    if ( s_nCurBitmap == 16 ) {
+    if ( s_nCurBitmap == 16 )
+    {
         s_nCurBitmap = 0;
     }
     memcpy( s_pcBitmap[s_nCurBitmap]->LockRaster(), m_anLarge, 32*32 * 4 );
@@ -164,6 +239,12 @@ Bitmap* Icon::GetBitmap()
     return( s_pcBitmap[s_nCurBitmap++] );
 }
 
+/*
+** name:       IconView Constructor
+** purpose:    Base for the IconView
+** parameters: Rect, const char*, and Bitmap
+** returns:	   
+*/
 IconView::IconView( const Rect& cFrame, const char* pzPath, Bitmap* pcBitmap ) :
         View( cFrame, "_bitmap_view",CF_FOLLOW_ALL ), m_cPath( pzPath )
 {
@@ -175,11 +256,25 @@ IconView::IconView( const Rect& cFrame, const char* pzPath, Bitmap* pcBitmap ) :
     m_nHitTime = 0;
 }
 
+
+/*
+** name:       IconView Destructor
+** purpose:    
+** parameters: 
+** returns:	   
+*/
 IconView::~IconView()
 {
     delete m_pcDirChangeMsg;
 }
 
+
+/*
+** name:       IconView::AttachedToWindow
+** purpose:    Attaches the IconView to the Window
+** parameters: 
+** returns:	   
+*/
 void IconView::AttachedToWindow()
 {
     View::AttachedToWindow();
@@ -198,6 +293,7 @@ std::string IconView::GetPath()
     return( std::string( m_cPath.GetPath() ) );
 }
 
+
 void IconView::LayoutIcons()
 {
     Rect cFrame = GetBounds();
@@ -214,7 +310,8 @@ void IconView::LayoutIcons()
         cPos.x += cIconFrame.Width() + 1.0f + 16.0f;
 
 
-        if ( cPos.x > cFrame.right - 50 ) {
+        if ( cPos.x > cFrame.right - 50 )
+        {
             cPos.x = 20;
             cPos.y += 50;
         }
@@ -230,12 +327,14 @@ int32 IconView::ReadDirectory( void* pData )
 
     Window* pcWnd = pcView->GetWindow();
 
-    if ( pcWnd == NULL ) {
+    if ( pcWnd == NULL )
+    {
         return(0);
     }
 
     pcWnd->Lock();
-    for ( uint i = 0 ; i < pcView->m_cIcons.size() ; ++i ) {
+    for ( uint i = 0 ; i < pcView->m_cIcons.size() ; ++i )
+    {
         pcView->Erase( pcView->m_cIcons[i]->GetFrame( pcView->GetFont() ) );
         delete pcView->m_cIcons[i];
     }
@@ -244,7 +343,8 @@ int32 IconView::ReadDirectory( void* pData )
     pcWnd->Unlock();
 
     DIR* pDir = opendir( pcView->GetPath().c_str() );
-    if ( pDir == NULL ) {
+    if ( pDir == NULL )
+    {
         dbprintf( "Error: IconView::ReadDirectory() Failed to open %s\n", pcView->GetPath().c_str() );
         goto error;
     }
@@ -253,7 +353,8 @@ int32 IconView::ReadDirectory( void* pData )
     while( pcParam->m_bCancel == false && (psEnt = readdir( pDir ) ) != NULL )
     {
         struct stat sStat;
-        if ( strcmp( psEnt->d_name, "." ) == 0 || strcmp( psEnt->d_name, ".." ) == 0 ) {
+        if ( strcmp( psEnt->d_name, "." ) == 0 || strcmp( psEnt->d_name, ".." ) == 0 )
+        {
             continue;
         }
         Path cFilePath( pcView->GetPath().c_str() );
@@ -265,9 +366,9 @@ int32 IconView::ReadDirectory( void* pData )
 
         /*if ( S_ISDIR( sStat.st_mode ) == false ) {
             pcIcon = new Icon( psEnt->d_name, "/system/icons/file.icon", NULL, , sStat );
-        } else {
+    } else {
             pcIcon = new Icon( psEnt->d_name, "/system/icons/folder.icon", NULL, NULL, sStat );
-        }*/
+    }*/
 
         pcWnd->Lock();
         pcView->m_cIcons.push_back( pcIcon );
@@ -277,7 +378,8 @@ int32 IconView::ReadDirectory( void* pData )
     closedir( pDir );
 error:
     pcWnd->Lock();
-    if ( pcView->m_pcCurReadDirSession == pcParam ) {
+    if ( pcView->m_pcCurReadDirSession == pcParam )
+    {
         pcView->m_pcCurReadDirSession = NULL;
     }
 
@@ -297,13 +399,15 @@ error:
 
 void IconView::ReRead()
 {
-    if ( m_pcCurReadDirSession != NULL ) {
+    if ( m_pcCurReadDirSession != NULL )
+    {
         m_pcCurReadDirSession->m_bCancel = true;
     }
     m_pcCurReadDirSession = new ReadDirParam( this );
 
     thread_id hTread = spawn_thread( "read_dir_thread", ReadDirectory, 0, 0, m_pcCurReadDirSession );
-    if ( hTread >= 0 ) {
+    if ( hTread >= 0 )
+    {
         resume_thread( hTread );
     }
 }
@@ -322,8 +426,10 @@ void IconView::Paint( const Rect& cUpdateRect )
 
     Erase( cUpdateRect );
 
-    for ( uint i = 0 ; i < m_cIcons.size() ; ++i ) {
-        if ( m_cIcons[i]->GetFrame( pcFont ).DoIntersect( cUpdateRect ) ) {
+    for ( uint i = 0 ; i < m_cIcons.size() ; ++i )
+    {
+        if ( m_cIcons[i]->GetFrame( pcFont ).DoIntersect( cUpdateRect ) )
+        {
             m_cIcons[i]->Paint( this, Point(0,0), true, true, bgColor,fgColor  );
         }
     }
@@ -338,7 +444,8 @@ void IconView::Paint( const Rect& cUpdateRect )
 
 void IconView::Erase( const Rect& cFrame )
 {
-    if ( m_pcBitmap != NULL ) {
+    if ( m_pcBitmap != NULL )
+    {
         Rect cBmBounds = m_pcBitmap->GetBounds();
         int nWidth  = int(cBmBounds.Width()) + 1;
         int nHeight = int(cBmBounds.Height()) + 1;
@@ -359,7 +466,9 @@ void IconView::Erase( const Rect& cFrame )
             }
             nDstY += nCurHeight;
         }
-    } else {
+    }
+    else
+    {
         FillRect( cFrame, Color32_s( 255, 255, 255, 0 ) );
     }
 }
@@ -377,7 +486,8 @@ Icon* IconView::FindIcon( const Point& cPos )
 
     for ( uint i = 0 ; i < m_cIcons.size() ; ++i )
     {
-        if ( m_cIcons[i]->GetFrame( pcFont ).DoIntersect( cPos ) ) {
+        if ( m_cIcons[i]->GetFrame( pcFont ).DoIntersect( cPos ) )
+        {
             return( m_cIcons[i] );
         }
     }
@@ -396,8 +506,7 @@ void IconView::KeyDown( const char* pzString, const char* pzRawString, uint32 nQ
     char nChar = pzString[0];
 
     if ( isprint( nChar ) )
-    {
-    }
+    {}
     else
     {
         switch( pzString[0] )
@@ -419,7 +528,7 @@ void IconView::KeyDown( const char* pzString, const char* pzRawString, uint32 nQ
             	StartFileDelete( cPaths, Messenger( this ) );
             	break;
                   }
-            	*/	
+            	*/
         case VK_BACKSPACE:
             m_cPath.Append( ".." );
             ReRead();
@@ -463,28 +572,36 @@ void IconView::MouseDown( const Point& cPosition, uint32 nButtons )
     MakeFocus( true );
 
     Icon* pcIcon = FindIcon( cPosition );
-    if(nButtons == 1){
+    if(nButtons == 1)
+    {
 
         if ( pcIcon != NULL )
         {
-            if (  pcIcon->m_bSelected ) {
-                if ( m_nHitTime + 500000 >= get_system_time() ) {
+            if (  pcIcon->m_bSelected )
+            {
+                if ( m_nHitTime + 500000 >= get_system_time() )
+                {
                     Invoked();
-                } 
-                else {
+                }
+                else
+                {
                     m_bCanDrag = true;
                 }
                 m_nHitTime = get_system_time();
                 return;
             }
         }
-        for ( uint i = 0 ; i < m_cIcons.size() ; ++i ) {
+        for ( uint i = 0 ; i < m_cIcons.size() ; ++i )
+        {
             m_cIcons[i]->Select( this, false );
         }
-        if ( pcIcon != NULL ) {
+        if ( pcIcon != NULL )
+        {
             m_bCanDrag = true;
             pcIcon->Select( this, true );
-        } else {
+        }
+        else
+        {
             m_bSelRectActive = true;
             m_cSelRect = Rect( cPosition.x, cPosition.y, cPosition.x, cPosition.y );
             SetDrawingMode( DM_INVERT );
@@ -494,10 +611,10 @@ void IconView::MouseDown( const Point& cPosition, uint32 nButtons )
         m_cLastPos = cPosition;
         m_nHitTime = get_system_time();
     }
-    
-   //if (nButtons == 2){
-    	//Invoked();
-          //  }
+
+    //if (nButtons == 2){
+    //Invoked();
+    //  }
     //
 }
 
@@ -508,43 +625,53 @@ void IconView::MouseDown( const Point& cPosition, uint32 nButtons )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
+
 void IconView::MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData )
 {
     m_bCanDrag = false;
 
     Font* pcFont = GetFont();
-    if ( m_bSelRectActive ) {
+    if ( m_bSelRectActive )
+    {
         SetDrawingMode( DM_INVERT );
         DrawFrame( m_cSelRect, FRAME_TRANSPARENT | FRAME_THIN );
         m_bSelRectActive = false;
 
-        if ( m_cSelRect.left > m_cSelRect.right ) {
+        if ( m_cSelRect.left > m_cSelRect.right )
+        {
             float nTmp = m_cSelRect.left;
             m_cSelRect.left = m_cSelRect.right;
             m_cSelRect.right = nTmp;
         }
-        if ( m_cSelRect.top > m_cSelRect.bottom ) {
+        if ( m_cSelRect.top > m_cSelRect.bottom )
+        {
             float nTmp = m_cSelRect.top;
             m_cSelRect.top = m_cSelRect.bottom;
             m_cSelRect.bottom = nTmp;
         }
 
-        for ( uint i = 0 ; i < m_cIcons.size() ; ++i ) {
+        for ( uint i = 0 ; i < m_cIcons.size() ; ++i )
+        {
             m_cIcons[i]->Select( this, m_cSelRect.DoIntersect( m_cIcons[i]->GetFrame( pcFont ) ) );
         }
         Flush();
-    } else if ( pcData != NULL && pcData->ReturnAddress() == Messenger( this ) ) {
+    }
+    else if ( pcData != NULL && pcData->ReturnAddress() == Messenger( this ) )
+    {
         Point cHotSpot;
         pcData->FindPoint( "_hot_spot", &cHotSpot );
 
 
-        for ( uint i = 0 ; i < m_cIcons.size() ; ++i ) {
+        for ( uint i = 0 ; i < m_cIcons.size() ; ++i )
+        {
             Rect cFrame = m_cIcons[i]->GetFrame( pcFont );
             Erase( cFrame );
         }
         Flush();
-        for ( uint i = 0 ; i < m_cIcons.size() ; ++i ) {
-            if ( m_cIcons[i]->m_bSelected ) {
+        for ( uint i = 0 ; i < m_cIcons.size() ; ++i )
+        {
+            if ( m_cIcons[i]->m_bSelected )
+            {
                 m_cIcons[i]->m_cPosition += cPosition - m_cDragStartPos;
             }
             m_cIcons[i]->Paint( this, Point(0,0), true, true, bgColor,fgColor  );
@@ -564,30 +691,35 @@ void IconView::MouseMove( const Point& cNewPos, int nCode, uint32 nButtons, Mess
 {
     m_cLastPos = cNewPos;
 
-    if ( (nButtons & 0x01) == 0 ) {
+    if ( (nButtons & 0x01) == 0 )
+    {
         return;
     }
 
-    if ( m_bSelRectActive ) {
+    if ( m_bSelRectActive )
+    {
         SetDrawingMode( DM_INVERT );
         DrawFrame( m_cSelRect, FRAME_TRANSPARENT | FRAME_THIN );
         m_cSelRect.right = cNewPos.x;
         m_cSelRect.bottom = cNewPos.y;
 
         Rect cSelRect = m_cSelRect;
-        if ( cSelRect.left > cSelRect.right ) {
+        if ( cSelRect.left > cSelRect.right )
+        {
             float nTmp = cSelRect.left;
             cSelRect.left = cSelRect.right;
             cSelRect.right = nTmp;
         }
-        if ( cSelRect.top > cSelRect.bottom ) {
+        if ( cSelRect.top > cSelRect.bottom )
+        {
             float nTmp = cSelRect.top;
             cSelRect.top = cSelRect.bottom;
             cSelRect.bottom = nTmp;
         }
         Font* pcFont = GetFont();
         SetDrawingMode( DM_COPY );
-        for ( uint i = 0 ; i < m_cIcons.size() ; ++i ) {
+        for ( uint i = 0 ; i < m_cIcons.size() ; ++i )
+        {
             m_cIcons[i]->Select( this, cSelRect.DoIntersect( m_cIcons[i]->GetFrame( pcFont ) ) );
         }
 
@@ -608,14 +740,17 @@ void IconView::MouseMove( const Point& cNewPos, int nCode, uint32 nButtons, Mess
 
         Font* pcFont = GetFont();
         Message cData(1234);
-        for ( uint i = 0 ; i < m_cIcons.size() ; ++i ) {
-            if ( m_cIcons[i]->m_bSelected ) {
+        for ( uint i = 0 ; i < m_cIcons.size() ; ++i )
+        {
+            if ( m_cIcons[i]->m_bSelected )
+            {
                 cData.AddString( "file/path", m_cIcons[i]->GetName().c_str() );
                 cSelFrame |= m_cIcons[i]->GetFrame( pcFont );
                 pcSelIcon = m_cIcons[i];
             }
         }
-        if ( pcSelIcon != NULL ) {
+        if ( pcSelIcon != NULL )
+        {
             m_cDragStartPos = cNewPos; // + cSelFrame.LeftTop() - cNewPos;
 
             if ( (cSelFrame.Width()+1.0f) * (cSelFrame.Height()+1.0f) < 12000 )
@@ -630,8 +765,10 @@ void IconView::MouseMove( const Point& cNewPos, int nCode, uint32 nButtons, Mess
                 pcView->FillRect( cSelFrame.Bounds() );
 
 
-                for ( uint i = 0 ; i < m_cIcons.size() ; ++i ) {
-                    if ( m_cIcons[i]->m_bSelected ) {
+                for ( uint i = 0 ; i < m_cIcons.size() ; ++i )
+                {
+                    if ( m_cIcons[i]->m_bSelected )
+                    {
                         m_cIcons[i]->Paint( pcView, -cSelFrame.LeftTop(), true, false, bgColor,fgColor  );
                     }
                 }
@@ -640,16 +777,21 @@ void IconView::MouseMove( const Point& cNewPos, int nCode, uint32 nButtons, Mess
 
                 uint32* pRaster = (uint32*)cDragBitmap.LockRaster();
 
-                for ( int y = 0 ; y < cSelFrame.Height() + 1.0f ; ++y ) {
-                    for ( int x = 0 ; x < cSelFrame.Width()+1.0f ; ++x ) {
+                for ( int y = 0 ; y < cSelFrame.Height() + 1.0f ; ++y )
+                {
+                    for ( int x = 0 ; x < cSelFrame.Width()+1.0f ; ++x )
+                    {
                         if ( pRaster[x + y * int(cSelFrame.Width()+1.0f)] != 0xffffffff &&
-                                (pRaster[x + y * int(cSelFrame.Width()+1.0f)] & 0xff000000) == 0x00000000 ) {
+                                (pRaster[x + y * int(cSelFrame.Width()+1.0f)] & 0xff000000) == 0x00000000 )
+                        {
                             pRaster[x + y * int(cSelFrame.Width()+1.0f)] = (pRaster[x + y * int(cSelFrame.Width()+1.0f)] & 0x00ffffff) | 0x50000000;
                         }
                     }
                 }
                 BeginDrag( &cData, cNewPos - cSelFrame.LeftTop(), &cDragBitmap );
-            } else {
+            }
+            else
+            {
                 BeginDrag( &cData, cNewPos - cSelFrame.LeftTop(), cSelFrame.Bounds() );
             }
         }
@@ -671,15 +813,18 @@ void IconView::Invoked()
 
     for ( uint i = 0 ; i < m_cIcons.size() ; ++i )
     {
-        if ( m_cIcons[i]->IsSelected() ) {
+        if ( m_cIcons[i]->IsSelected() )
+        {
             pcIcon = m_cIcons[i];
             break;
         }
     }
-    if ( pcIcon == NULL ) {
+    if ( pcIcon == NULL )
+    {
         return;
     }
-    if ( S_ISDIR( pcIcon->m_sStat.st_mode ) == false ) {
+    if ( S_ISDIR( pcIcon->m_sStat.st_mode ) == false )
+    {
         //    ListView::Invoked( nFirstRow, nLastRow );
         return;
     }
@@ -717,11 +862,13 @@ void IconView::SetDirChangeMsg( Message* pcMsg )
 
 void IconView::DirChanged( const std::string& cNewPath )
 {
-    if ( m_pcDirChangeMsg != NULL ) {
+    if ( m_pcDirChangeMsg != NULL )
+    {
         Invoke( m_pcDirChangeMsg );
     }
 
 }
+
 
 
 
