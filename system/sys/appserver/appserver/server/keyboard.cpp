@@ -27,6 +27,10 @@
 #include <atheos/types.h>
 #include <atheos/kernel.h>
 
+#include <posix/ioctl.h>
+
+#include <sys/ioctl.h>
+
 #include <appserver/keymap.h>
 
 #include <macros.h>
@@ -40,6 +44,8 @@
 #include "config.h"
 
 static uint32 g_nQual = 0;
+static uint32 g_nLock = 0;
+static int g_nKbdDev = 0;
 
 /*
  *     Raw key numbering for 101 keyboard:
@@ -121,6 +127,27 @@ void SetQualifiers( int nKeyCode )
 	case 0x5f | 0x80:
 	    g_nQual &= ~QUAL_RALT;
 	    break;
+
+	case 0x3b:
+	{
+		g_nLock ^= KLOCK_CAPSLOCK;
+		ioctl( g_nKbdDev, IOCTL_KBD_CAPLOC);
+		break;
+	}
+
+	case 0x22:
+	{
+		g_nLock ^= KLOCK_NUMLOCK;
+		ioctl( g_nKbdDev, IOCTL_KBD_NUMLOC);
+		break;
+	}
+
+	case 0x0f:
+	{
+		g_nLock ^= KLOCK_SCROLLLOCK;			// ScrollLock doesn't do anything
+		ioctl( g_nKbdDev, IOCTL_KBD_SCRLOC);
+		break;
+	}
     }
 }
 
@@ -138,22 +165,43 @@ int convert_key_code( char* pzDst, int nRawKey, int nQual )
 	dbprintf( "convert_key_code() invalid keycode: %d\n", nRawKey );
 	return( -1 );
     }
-    
+
     if ( nQual & QUAL_SHIFT ) nQ |= 0x01;
     if ( nQual & QUAL_CTRL )  nQ |= 0x02;
     if ( nQual & QUAL_ALT )   nQ |= 0x04;
 
-    switch ( nQ )
-    {
-	case 0x0:  nTable = 0; break;
-	case 0x1:  nTable = 1; break;
-	case 0x2:  nTable = 2; break;
-	case 0x3:  nTable = 6; break;
-	case 0x4:  nTable = 3; break;
-	case 0x5:  nTable = 4; break;
-	case 0x6:  nTable = 7; break;
-	case 0x7:  nTable = 8; break;
-    }
+	if( g_nLock & KLOCK_NUMLOCK )
+		if( ( nRawKey >= 0x23 && nRawKey <= 0x25 ) ||
+		    ( nRawKey >= 0x37 && nRawKey <= 0x3a ) ||
+		    ( nRawKey >= 0x48 && nRawKey <= 0x4a ) ||
+		    ( nRawKey >= 0x58 && nRawKey <= 0x5b ) ||
+		    ( nRawKey >= 0x64 && nRawKey <= 0x65 ))
+			nQ |= 0x01;
+
+	if( g_nLock & KLOCK_CAPSLOCK )
+	{
+		switch ( nQ )
+		{
+			case 0x0:  nTable = 5; break;	// Caps
+			case 0x1:  nTable = 6; break;	// Caps + Shift
+			case 0x2:  nTable = 2; break;	// Ctrl (Not affected by the Capslock)
+			case 0x4:  nTable = 8; break;	// Caps + Alt
+			case 0x5:  nTable = 9; break;	// Caps + Alt + Shift
+		}
+
+	}
+	else
+	{
+		switch ( nQ )
+		{
+			case 0x0:  nTable = 0; break;	// Normal
+			case 0x1:  nTable = 1; break;	// Shift
+			case 0x2:  nTable = 2; break;	// Ctrl
+			case 0x4:  nTable = 3; break;	// Alt
+			case 0x5:  nTable = 4; break;	// Alt + Shift
+		}
+	}
+
 //    int nLen = unicode_to_utf8( pzDst, g_sKeymap.m_anMap[nRawKey][nTable] );
     int nLen;
     uint nChar = g_sKeymap.m_anMap[nRawKey][nTable];
@@ -183,15 +231,47 @@ void HandleKeyboard()
     signal( SIGQUIT, SIG_IGN );
     signal( SIGTERM, SIG_IGN );
 	
-    int nKbdDev = open( "/dev/keybd", O_RDONLY );
+    g_nKbdDev = open( "/dev/keybd", O_RDONLY );
 
-    if ( nKbdDev < 0 ) {
+    if ( g_nKbdDev < 0 ) {
 	dbprintf( "Panic : Could not open keyboard device!\n" );
     }
-  
+
+	ioctl( g_nKbdDev, IOCTL_KBD_LEDRST);
+	switch(g_sKeymap.m_nLockSetting)
+	{
+		case 0x00:		// None
+			break;
+
+		case 0x01:		// Caps
+		{
+			g_nLock ^= KLOCK_CAPSLOCK;
+			ioctl( g_nKbdDev, IOCTL_KBD_CAPLOC);
+			break;
+		}
+
+		case 0x02:		// Scroll
+		{
+			g_nLock ^= KLOCK_SCROLLLOCK;
+			ioctl( g_nKbdDev, IOCTL_KBD_SCRLOC);
+			break;
+		}
+
+		case 0x04:		// Num
+		{
+			g_nLock ^= KLOCK_NUMLOCK;
+			ioctl( g_nKbdDev, IOCTL_KBD_NUMLOC);
+			break;
+		}
+
+		default:
+			dbprintf("Unknown lock key 0x%2X\n",g_sKeymap.m_nLockSetting);
+			break;
+	}
+
     for (;;) {
 	snooze( 10000 );
-	if ( read( nKbdDev, &nKeyCode, 1 ) == 1 ) {
+	if ( read( g_nKbdDev, &nKeyCode, 1 ) == 1 ) {
 	    SetQualifiers( nKeyCode );
 			
 	    if ( 0 != nKeyCode ) {

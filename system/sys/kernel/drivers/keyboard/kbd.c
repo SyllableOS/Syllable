@@ -1,6 +1,7 @@
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999  Kurt Skauen
+ *  Copyright (C) 2002  Kristian Van Der Vliet (vanders@users.sourceforge.net)
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -419,7 +420,7 @@ typedef struct
 } KbdVolume_s;
 
 static KbdVolume_s	g_sVolume;
-
+static unsigned char g_nKbdLedStatus;
 
 /*****************************************************************************
  * NAME:
@@ -475,6 +476,54 @@ static int kbd_close( void* pNode, void* pCookie )
     kfree( psCookie );
 	
     return( 0 );
+}
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+
+static status_t kbd_ioctl( void* pNode, void* pCookie, uint32 nCommand, void* pArgs, bool bFromKernel )
+{
+	int nFlags;
+
+	nFlags = cli();
+
+	switch( nCommand )
+	{
+		case IOCTL_KBD_LEDRST:
+			g_nKbdLedStatus=0;
+			break;
+
+		case IOCTL_KBD_SCRLOC:
+			g_nKbdLedStatus ^= 0x01;
+			break;
+
+		case IOCTL_KBD_NUMLOC:
+			g_nKbdLedStatus ^= 0x02;
+			break;
+
+		case IOCTL_KBD_CAPLOC:
+			g_nKbdLedStatus ^= 0x04;
+			break;
+
+		default:
+			printk( "Keyboard device: Unknown IOCTL %x\n",(int)nCommand );
+			break;
+	}
+
+	while(inb(0x64) & 0x02);			/* Wait for the command buffer to empty	*/
+
+	outb_p(0xed, 0x60);				/* Write the command and wait for it to	*/
+	while(inb(0x64) & 0x02);			/* appear in the command buffer.			*/
+
+	outb_p(g_nKbdLedStatus, 0x60);	/* Write the LED status to the keyboard	*/
+
+	put_cpu_flags( nFlags );
+
+	return( 0 );
 }
 
 /*****************************************************************************
@@ -549,7 +598,7 @@ static int kbd_read( void* pNode, void* pCookie, off_t nPos, void* pBuf, size_t 
 DeviceOperations_s g_sOperations = {
     kbd_open,
     kbd_close,
-    NULL,		/* ioctl */
+    kbd_ioctl,
     kbd_read,
     NULL		/* write */
 };
@@ -663,6 +712,8 @@ status_t device_init( int nDeviceID )
     g_sVolume.nBytesReceived = 0;
     g_sVolume.nOpenCount 	   = 0;
     g_sVolume.nIrqHandle	   = request_irq( 1, kbd_irq, NULL, 0, "keyboard_device", NULL );
+
+    g_nKbdLedStatus = 0;
   
     if ( g_sVolume.nIrqHandle < 0 ) {
 	printk( "ERROR : Failed to initiate keybord interrupt handler\n" );
