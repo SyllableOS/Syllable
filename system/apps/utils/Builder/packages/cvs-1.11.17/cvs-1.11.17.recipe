@@ -1,0 +1,15 @@
+authors			Kaj de Vos
+status			broken
+warnings		Doesn't connect.
+
+licenses		GPL
+home			www.cvshome.org
+
+test-needs		gawk
+
+configure-options
+	--with-external-zlib
+	--with-rsh=ssh
+;	--disable-server
+;	--enable-encryption
+documentation	README INSTALL FAQ BUGS MINOR-BUGS COPYING COPYING.LIB NEWS ChangeLog TODO PROJECTS AUTHORS
