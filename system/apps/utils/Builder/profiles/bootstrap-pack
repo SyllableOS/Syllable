@@ -1,12 +1,13 @@
 ; The Bootstrap Bundle
 
-programming/gettext-0.13.1
-programming/languages/nasm-0.98.38
-programming/languages/ruby-1.6.7
-programming/libraries/freetype-2.1.5
-programming/libraries/libjpeg-6b
-programming/libraries/libpng-1.2.5
-programming/libraries/libungif-4.1.0
-programming/libraries/libogg-1.1
-programming/libraries/libvorbis-1.0
-productivity/publishing/texinfo-4.6
+modules
+	programming/gettext-0.13.1
+	programming/languages/nasm-0.98.38
+	programming/languages/ruby-1.6.7
+	programming/libraries/freetype-2.1.5
+	programming/libraries/libjpeg-6b
+	programming/libraries/libpng-1.2.5
+	programming/libraries/libungif-4.1.0
+	programming/libraries/libogg-1.1
+	programming/libraries/libvorbis-1.0
+	productivity/publishing/texinfo-4.6
