@@ -1,0 +1,43 @@
+AView 0.3 -:- Readme
+
+AView is a image viewer for the AtheOS Operating System.  AView is released under the GNU General
+Puplic Licencse.  See the file COPYING for more information.. AView is Copyright 2000 Kristian Van Der Vliet
+
+
+Installation
+
+Installation uses the standard GNU Make tool.  To install, do the following from a command line:
+
+  make
+  make install
+
+AView is installed by default into the /system/bin/ directory.
+
+Usage
+
+To load a single image to be viewed, simply select the File->Load menu item.  Select the image you wish
+to load from the file requester in the normal way.  AView will automatically resize the window to the dimensions
+of the JPEG image.
+
+AView also has a "slideshow" system, which allows you to move backwards and forwards through the images in an
+entire directory.  To create a slideshow, select the File->Load menu item, but instead select the directory you
+wish to create a slideshow from.  AView will automatically load the first image in the directory.
+
+To move to the next image, press the Tab or Space key.
+To move to the previous image, press the Backspace key.
+
+Author
+
+AView is written by Kristian Van Der Vliet -:- vanders@cableinet.co.uk, with the code taken from Kurt Skauens
+bmview application which is included with the standard AtheOS distribution.
+
+AView has been taken over by Rick Caudill  -:- cau0730@cup.edu
+
+History
+
+  V0.2 Kristian
+    Second Release
+    
+  V0.1 Kristian
+    First Release.
+
