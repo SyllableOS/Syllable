@@ -45,6 +45,7 @@ class Slider::Private
 		m_bChanged = false;
 		m_vSliderSize = 5.0f;
 		m_nNumSteps = 0;
+		m_pcRenderBitmap = NULL;
 	}
 
 	public:
@@ -1097,7 +1098,9 @@ void Slider::_RefreshDisplay()
 	}
 	Sync();
 	RenderSlider( m->m_pcRenderView );
-	m->m_pcRenderBitmap->Sync();
+	if( m->m_pcRenderBitmap ) {
+		m->m_pcRenderBitmap->Sync();
+	}
 	Invalidate();
 	Flush();
 }
