@@ -1,7 +1,6 @@
-
 /*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
- *  Copyright (C) 2003 The Syllable Team
+ *  Copyright (C) 2003 - 2004 The Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -23,6 +22,7 @@
 
 #include <util/looper.h>
 #include <util/message.h>
+#include <util/shortcutkey.h>
 #include <gui/button.h>
 #include <gui/window.h>
 #include <gui/font.h>
@@ -31,6 +31,11 @@
 
 using namespace os;
 
+class Button::Private {
+	public:
+	bool m_bClicked;
+};
+
 //----------------------------------------------------------------------------
 // NAME:
 // DESC:
@@ -38,9 +43,11 @@ using namespace os;
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-Button::Button( Rect cFrame, const char *pzName, const char *pzLabel, Message * pcMessage, uint32 nResizeMask, uint32 nFlags ):Control( cFrame, pzName, pzLabel, pcMessage, nResizeMask, nFlags )
+Button::Button( Rect cFrame, const String& cName, const String& cLabel, Message * pcMessage, uint32 nResizeMask, uint32 nFlags )
+ : Control( cFrame, cName, cLabel, pcMessage, nResizeMask, nFlags )
 {
-	m_bClicked = false;
+	m = new Private;
+	m->m_bClicked = false;
 }
 
 //----------------------------------------------------------------------------
@@ -52,6 +59,7 @@ Button::Button( Rect cFrame, const char *pzName, const char *pzLabel, Message * 
 
 Button::~Button()
 {
+	delete m;
 }
 
 //----------------------------------------------------------------------------
@@ -63,17 +71,14 @@ Button::~Button()
 
 Point Button::GetPreferredSize( bool bLargest ) const
 {
-	font_height sHeight;
-
-	GetFontHeight( &sHeight );
-
 	if( bLargest )
 	{
-		return ( Point( ( GetStringWidth( GetLabel() ) + 16 ) * 1.1f, sHeight.ascender + sHeight.descender + sHeight.line_gap + 8 ) );
-	}
-	else
-	{
-		return ( Point( GetStringWidth( GetLabel() ) + 16, sHeight.ascender + sHeight.descender + sHeight.line_gap + 8 ) );
+		return Point( COORD_MAX, COORD_MAX );
+	} else {
+		font_height sHeight;
+		GetFontHeight( &sHeight );
+		Point cStringExt = GetTextExtent( GetLabel() );
+		return Point( cStringExt.x+16, cStringExt.y + 10 + sHeight.line_gap );
 	}
 }
 
@@ -83,7 +88,7 @@ void Button::PostValueChange( const Variant & cNewValue )
 	Flush();
 }
 
-void Button::LabelChanged( const std::string & cNewLabel )
+void Button::LabelChanged( const String & cNewLabel )
 {
 	Invalidate();
 	Flush();
@@ -115,9 +120,11 @@ void Button::KeyDown( const char *pzString, const char *pzRawString, uint32 nQua
 		View::KeyDown( pzString, pzRawString, nQualifiers );
 		return;
 	}
-	if( pzString[1] == '\0' && ( pzString[0] == VK_ENTER || pzString[0] == ' ' ) )
+	if( ( pzString[1] == '\0' && ( pzString[0] == VK_ENTER || pzString[0] == ' ' ) ) ||
+		( GetShortcut() == ShortcutKey( pzRawString, nQualifiers ) ) )
 	{
 		SetValue( 1, false );
+		MakeFocus();
 	}
 	else
 	{
@@ -133,7 +140,8 @@ void Button::KeyUp( const char *pzString, const char *pzRawString, uint32 nQuali
 		View::KeyUp( pzString, pzRawString, nQualifiers );
 		return;
 	}
-	if( pzString[1] == '\0' && ( pzString[0] == VK_ENTER || pzString[0] == ' ' ) )
+	if( ( pzString[1] == '\0' && ( pzString[0] == VK_ENTER || pzString[0] == ' ' ) ) ||
+		( GetShortcut() == ShortcutKey( pzRawString, nQualifiers ) ) )
 	{
 		if( GetValue().AsBool(  ) == true )
 		{
@@ -163,8 +171,8 @@ void Button::MouseDown( const Point & cPosition, uint32 nButton )
 
 	MakeFocus( true );
 
-	m_bClicked = GetBounds().DoIntersect( cPosition );
-	SetValue( m_bClicked, false );
+	m->m_bClicked = GetBounds().DoIntersect( cPosition );
+	SetValue( m->m_bClicked, false );
 }
 
 //----------------------------------------------------------------------------
@@ -185,7 +193,7 @@ void Button::MouseUp( const Point & cPosition, uint32 nButton, Message * pcData 
 	{
 		SetValue( false );
 	}
-	m_bClicked = false;
+	m->m_bClicked = false;
 }
 
 //----------------------------------------------------------------------------
@@ -203,7 +211,7 @@ void Button::MouseMove( const Point & cPosition, int nCode, uint32 nButtons, Mes
 		return;
 	}
 
-	if( m_bClicked )
+	if( m->m_bClicked )
 	{
 		uint32 nButtons;
 
@@ -235,44 +243,25 @@ void Button::Paint( const Rect & cUpdateRect )
 {
 	Rect cBounds = GetBounds();
 
-
-	float vStrWidth = GetStringWidth( GetLabel() );
-
-	font_height sHeight;
-
-	GetFontHeight( &sHeight );
-
-	float vCharHeight = sHeight.ascender /* + sHeight.descender */ ;
-	float y = floor( cBounds.Height() * 0.5f - vCharHeight * 0.5f + sHeight.ascender );
-	float x = floor( ( cBounds.Width() + 1.0f ) / 2.0f - vStrWidth / 2.0f );
-
-	if( GetValue().AsBool(  ) )
-	{
-		y += 1.0f;
-		x += 1.0f;
-	}
-
 	SetEraseColor( get_default_color( COL_NORMAL ) );
 
 	uint32 nFrameFlags = ( GetValue().AsBool(  ) && IsEnabled(  ) )? FRAME_RECESSED : FRAME_RAISED;
 
-	if( IsEnabled() && GetWindow(  )->GetDefaultButton(  ) == this )
+	if( IsEnabled() && ( HasFocus() || ( GetWindow(  )->GetDefaultButton(  ) == this ) ) )
 	{
-		SetFgColor( 0, 0, 0 );
+		if( HasFocus() ) {
+			SetFgColor( 0, 0xAA, 0 );
+		} else {
+			SetFgColor( 0, 0, 0 );
+		}
 		DrawLine( Point( cBounds.left, cBounds.top ), Point( cBounds.right, cBounds.top ) );
 		DrawLine( Point( cBounds.right, cBounds.bottom ) );
 		DrawLine( Point( cBounds.left, cBounds.bottom ) );
 		DrawLine( Point( cBounds.left, cBounds.top ) );
-		cBounds.left += 1;
-		cBounds.top += 1;
-		cBounds.right -= 1;
-		cBounds.bottom -= 1;
-		DrawFrame( cBounds, nFrameFlags );
+		cBounds.Resize( 1, 1, -1, -1 );
 	}
-	else
-	{
-		DrawFrame( cBounds, nFrameFlags );
-	}
+
+	DrawFrame( cBounds, nFrameFlags );
 
 	if( IsEnabled() )
 	{
@@ -284,21 +273,18 @@ void Button::Paint( const Rect & cUpdateRect )
 	}
 	SetBgColor( get_default_color( COL_NORMAL ) );
 
-	MovePenTo( x, y );
+	if( GetValue().AsBool(  ) )
+	{
+		cBounds.MoveTo( 1, 1 );
+	}
 
-	DrawString( GetLabel() );
+	DrawText( cBounds, GetLabel(), DTF_ALIGN_CENTER );
 	if( IsEnabled() == false )
 	{
 		SetFgColor( 100, 100, 100 );
-		MovePenTo( x - 1.0f, y - 1.0f );
 		SetDrawingMode( DM_OVER );
-		DrawString( GetLabel() );
+		cBounds.MoveTo( -1, -1 );
+		DrawText( cBounds, GetLabel(), DTF_ALIGN_CENTER );
 		SetDrawingMode( DM_COPY );
 	}
-
-	if( IsEnabled() && HasFocus(  ) )
-	{
-		DrawLine( Point( ( cBounds.Width() + 1.0f ) * 0.5f - vStrWidth * 0.5f, y + sHeight.descender - sHeight.line_gap / 2 - 1.0f ), Point( ( cBounds.Width(  ) + 1.0f ) * 0.5f + vStrWidth * 0.5f, y + sHeight.descender - sHeight.line_gap / 2 - 1.0f ) );
-	}
 }
-

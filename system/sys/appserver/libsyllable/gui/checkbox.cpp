@@ -1,6 +1,6 @@
-
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -18,26 +18,20 @@
  *  MA 02111-1307, USA
  */
 
-/*
- * Changes:
- *
- * 02-07-23: Added code for disabling (Paint, MouseDown).
- *           MouseUp, MouseDown passes the event on the super class now (if it's
- *           not used).
- *           Does only react on LMB clicks now.
- *           Prepared for keyboard control (binary compatibilty will break when
- *           its implemented!).
- *
- */
-
 #include <atheos/types.h>
 
 #include <gui/checkbox.h>
+#include <util/shortcutkey.h>
 #include <gui/font.h>
+#include <gui/window.h>
 
 #include <macros.h>
 
 using namespace os;
+
+class CheckBox::Private {
+	public:
+};
 
 //----------------------------------------------------------------------------
 // NAME:
@@ -46,8 +40,9 @@ using namespace os;
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-CheckBox::CheckBox( Rect cFrame, const char *pzName, const char *pzLabel, Message * pcMessage, uint32 nResizeMask, uint32 nFlags ):Control( cFrame, pzName, pzLabel, pcMessage, nResizeMask, nFlags )
+CheckBox::CheckBox( Rect cFrame, const String& cName, const String& cLabel, Message * pcMessage, uint32 nResizeMask, uint32 nFlags ):Control( cFrame, cName, cLabel, pcMessage, nResizeMask, nFlags )
 {
+//	m = new Private;
 }
 
 //----------------------------------------------------------------------------
@@ -59,6 +54,7 @@ CheckBox::CheckBox( Rect cFrame, const char *pzName, const char *pzLabel, Messag
 
 CheckBox::~CheckBox()
 {
+//	delete m;
 }
 
 void CheckBox::PostValueChange( const Variant & cNewValue )
@@ -67,7 +63,7 @@ void CheckBox::PostValueChange( const Variant & cNewValue )
 	Flush();
 }
 
-void CheckBox::LabelChanged( const std::string & cNewLabel )
+void CheckBox::LabelChanged( const String & cNewLabel )
 {
 	Invalidate();
 	Flush();
@@ -85,47 +81,53 @@ bool CheckBox::Invoked( Message * pcMessage )
 	return ( true );
 }
 
+void CheckBox::Activated( bool bIsActive )
+{
+	Invalidate();
+	Flush();
+}
+
 Point CheckBox::GetPreferredSize( bool bLargest ) const
 {
-	std::string cLabel = GetLabel();
-
-	Point cSize( 13, 13 );
-
-	if( cLabel.empty() == false )
+	if( bLargest )
 	{
-		font_height sHeight;
-
-		GetFontHeight( &sHeight );
-		if( sHeight.ascender + sHeight.descender > 13 )
-		{
-			cSize.y = sHeight.ascender + sHeight.descender;
+		return Point( COORD_MAX, COORD_MAX );
+	} else {
+		Point cSize( 13, 13 );
+		Point cStringExt = GetTextExtent( GetLabel() );
+		if( cStringExt.y > 13 ) {
+			cSize.y = cStringExt.y;
 		}
-		cSize.x += 3 + GetStringWidth( cLabel );
+
+		cSize.x += 3 + cStringExt.x;
+
+		return ( cSize );
 	}
-	return ( cSize );
 }
 
-// This method will provide keyboard control (ENTER/SPACE will toggle the state of
-// the checkmark.
-// Adding this will however mean that a virtual method has to be added to the class
-// and this will break binary compatibilty.
-
-/*
-
-void CheckBox::KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers )
+void CheckBox::KeyDown( const char *pzString, const char *pzRawString, uint32 nQualifiers )
 {
-    if ( IsEnabled() == false ) {
-	View::KeyDown( pzString, pzRawString, nQualifiers );
-	return;
-    }
-    if ( pzString[1] == '\0' && (pzString[0] == VK_ENTER || pzString[0] == ' ')  ) {
-	SetValue( !GetValue().AsBool() );
-    } else {
-	Control::KeyDown( pzString, pzRawString, nQualifiers );
-    }
+	if( IsEnabled() == false )
+	{
+		View::KeyDown( pzString, pzRawString, nQualifiers );
+		return;
+	}
+	if( ( pzString[1] == '\0' && ( pzString[0] == VK_ENTER || pzString[0] == ' ' ) ) ||
+		( GetShortcut() == ShortcutKey( pzRawString, nQualifiers ) ) )
+	{
+		SetValue( !GetValue().AsBool() );
+		MakeFocus();
+	}
+	else
+	{
+		Control::KeyDown( pzString, pzRawString, nQualifiers );
+	}
 }
 
-*/
+void CheckBox::KeyUp( const char *pzString, const char *pzRawString, uint32 nQualifiers )
+{
+	View::KeyUp( pzString, pzRawString, nQualifiers );
+}
 
 //----------------------------------------------------------------------------
 // NAME:
@@ -180,16 +182,9 @@ void CheckBox::Paint( const Rect & cUpdateRect )
 
 	if( cLabel.empty() == false )
 	{
-		font_height sHeight;
-		float vStrWidth;
+		Rect cLabelRect( cBounds );
 
-		vStrWidth = GetStringWidth( cLabel );
-		GetFontHeight( &sHeight );
-
-		float x = 16.0f;
-		float y = ( cBounds.Height() + 1.0f ) * 0.5f - ( sHeight.ascender + sHeight.descender + 1.0f ) * 0.5f + sHeight.ascender;
-
-		MovePenTo( x, y );
+		cLabelRect.left += 16;
 
 		if( IsEnabled() )
 		{
@@ -201,23 +196,16 @@ void CheckBox::Paint( const Rect & cUpdateRect )
 		}
 
 		SetBgColor( get_default_color( COL_NORMAL ) );
-		DrawString( cLabel );
+		DrawText( cLabelRect, cLabel, DTF_ALIGN_MIDDLE | DTF_ALIGN_LEFT );
 
 		if( IsEnabled() == false )
 		{
 			SetFgColor( 100, 100, 100 );
-			MovePenTo( x - 1.0f, y - 1.0f );
 			SetDrawingMode( DM_OVER );
-			DrawString( GetLabel() );
+			cLabelRect.MoveTo( -1, -1 );
+			DrawText( cLabelRect, cLabel, DTF_ALIGN_MIDDLE | DTF_ALIGN_LEFT );
 			SetDrawingMode( DM_COPY );
 		}
-
-		// For this to work, we need the FocusChanged callback => breaking binary compatibilty
-
-/*	if ( IsEnabled() && HasFocus() ) {
-	    DrawLine( Point( x, y + sHeight.descender - sHeight.line_gap / 2 - 1.0f ),
-		      Point( x + vStrWidth, y + sHeight.descender - sHeight.line_gap / 2 - 1.0f ) );
-	}*/
 	}
 
 	SetEraseColor( get_default_color( COL_NORMAL ) );
@@ -228,6 +216,16 @@ void CheckBox::Paint( const Rect & cUpdateRect )
 
 	cButFrame.top += nDelta;
 	cButFrame.bottom += nDelta;
+
+	if( IsEnabled() && HasFocus() )
+	{
+		SetFgColor( 0, 0xAA, 0 );
+		DrawLine( Point( cButFrame.left, cButFrame.top ), Point( cButFrame.right, cButFrame.top ) );
+		DrawLine( Point( cButFrame.right, cButFrame.bottom ) );
+		DrawLine( Point( cButFrame.left, cButFrame.bottom ) );
+		DrawLine( Point( cButFrame.left, cButFrame.top ) );
+		cButFrame.Resize( 1, 1, -1, -1 );
+	}
 
 	DrawFrame( cButFrame, FRAME_RAISED | FRAME_TRANSPARENT );
 
