@@ -4,7 +4,7 @@ authors
 	Arno Klenke
 	Kristian Van Der Vliet
 maintainers			Kaj de Vos
-status				testing
+status				deprecated
 
 licenses			GPL LGPL GFDL
 home				gcc.gnu.org
@@ -95,3 +95,4 @@ system-links
 	lib/libstdc++.so.5.0.5	/system/libs/libstdc++.so.5.0.5
 	libstdc++.so.5.0.5		/system/libs/libstdc++.so.5
 	libstdc++.so.5			/system/libs/libstdc++.so
+

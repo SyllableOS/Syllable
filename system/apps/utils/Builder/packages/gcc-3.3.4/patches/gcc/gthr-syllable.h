@@ -41,12 +41,12 @@ typedef int __gthread_key_t;
 typedef atomic_t __gthread_once_t;
 typedef struct
 {
-    atomic_t count;
-    sem_id   mutex;
+  atomic_t count;
+  sem_id   mutex;
 } __gthread_mutex_t;
 
 #define __GTHREAD_ONCE_INIT 0
-#define __GTHREAD_MUTEX_INIT_FUNCTION(lock) do { (lock)->count = 0; (lock)->mutex = create_semaphore( "gcc_mutex", 0, 0 ); } while(0)
+#define __GTHREAD_MUTEX_INIT_FUNCTION(lock) do { atomic_set( &(lock)->count, 0 ); (lock)->mutex = create_semaphore( "gcc_mutex", 0, 0 ); } while(0)
 
 static inline int
 __gthread_active_p ()
@@ -54,42 +54,41 @@ __gthread_active_p ()
   return 1;
 }
 
-
 static inline int
 __gthread_once (__gthread_once_t *once, void (*func) ())
 {
-    if (__gthread_active_p ()) {
-	if ( atomic_swap( once, 1 ) == 0 ) {
-	    func();
-	}
-	return( 0 );
-    } else {
-	return -1;
+  if (__gthread_active_p ()) {
+    if ( atomic_swap( once, 1 ) == 0 ) {
+      func();
     }
+    return( 0 );
+  } else {
+    return -1;
+  }
 }
 
 static inline int
 __gthread_key_create (__gthread_key_t *key, void (*dtor) (void *))
 {
-    int _key = alloc_tld( (void*)dtor );
-    if ( _key >= 0 ) {
-	*key = _key;
-	return( 0 );
-    } else {
-	return( -1 );
-    }
+  int _key = alloc_tld( (void*)dtor );
+  if ( _key >= 0 ) {
+    *key = _key;
+    return( 0 );
+  } else {
+    return( -1 );
+  }
 }
 
 static inline int
 __gthread_key_dtor (__gthread_key_t key, void *ptr)
 {
   /* Just reset the key value to zero. */
-    if (ptr) {
-	set_tld(key, 0);
-	return 0;
-    } else {
-	return 0;
-    }
+  if (ptr) {
+    set_tld(key, 0);
+    return 0;
+  } else {
+    return 0;
+  }
 }
 
 static inline int
@@ -114,58 +113,51 @@ __gthread_setspecific (__gthread_key_t key, const void *ptr)
 static inline int
 __gthread_mutex_lock (__gthread_mutex_t *mutex)
 {
-    if (__gthread_active_p ()) {
-	atomic_t old = atomic_add( &mutex->count, 1 );
-	if ( old > 0 ) {
-	    for (;;) {
-		int error = lock_semaphore( mutex->mutex );
-		if ( error >= 0 || errno != EINTR ) {
-		    return error;
-		}
-	    }
-	} else {
-	    return 0;
-	}
+  if (__gthread_active_p ()) {
+    if ( atomic_inc_and_read( &mutex->count ) > 0 ) {
+      for (;;) {
+        int error = lock_semaphore( mutex->mutex );
+        if ( error >= 0 || errno != EINTR ) {
+          return error;
+        }
+      }
     } else {
-	return 0;
+      return 0;
     }
+  } else {
+    return 0;
+  }
 }
 
 static inline int
 __gthread_mutex_trylock (__gthread_mutex_t *mutex)
 {
-    if (__gthread_active_p ()) {
-	atomic_t old = atomic_add( &mutex->count, 1 );
-	if (old > 0) {
-	    atomic_add( &mutex->count, -1 );
-	    unlock_semaphore_x( mutex->mutex, 0, 0 );
-	    errno = EWOULDBLOCK;
-	    return -1;
-	} else {
-	    return 0;
-	}
+  if (__gthread_active_p ()) {
+    if ( atomic_inc_and_read( &mutex->count ) > 0 ) {
+      atomic_add( &mutex->count, -1 );
+      unlock_semaphore_x( mutex->mutex, 0, 0 );
+      errno = EWOULDBLOCK;
+      return -1;
     } else {
-	return 0;
+      return 0;
     }
+  } else {
+    return 0;
+  }
 }
 
 static inline int
 __gthread_mutex_unlock (__gthread_mutex_t *mutex)
 {
-    if (__gthread_active_p ()) {
-	atomic_t old = atomic_add( &mutex->count, -1 );
-	if ( old > 1) {
-	    unlock_semaphore( mutex->mutex );
-	}
-	return 0;
-    } else {
-	return 0;
+  if (__gthread_active_p ()) {
+    if ( !atomic_dec_and_test( &mutex->count ) ) {
+      unlock_semaphore( mutex->mutex );
     }
+    return 0;
+  } else {
+    return 0;
+  }
 }
 
 #endif /* not __gthr_syllable_h */
-
-
-
-
 

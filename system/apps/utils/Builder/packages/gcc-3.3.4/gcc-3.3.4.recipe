@@ -19,6 +19,8 @@ home				gcc.gnu.org
 locations			ftp://gcc.gnu.org/pub/gcc/releases/gcc-3.3.4/
 
 needs
+;	Due to new atomics definitions:
+	Syllable >= 0.5.5
 ;	For -O3 with -fPIC:
 	binutils >= 2.13.1
 ;	For libstdc++-v3 >= 3.2.1, for Linux at least:
@@ -94,3 +96,4 @@ system-links
 	lib/libstdc++.so.5.0.6	/system/libs/libstdc++.so.5.0.6
 	libstdc++.so.5.0.6		/system/libs/libstdc++.so.5
 	libstdc++.so.5.0.6		/system/libs/libstdc++.so
+

@@ -10,7 +10,10 @@ packages
 ;	gcc-2.95.3
 locations			ftp://gcc.gnu.org/pub/gcc/releases/gcc-2.95.3/
 
-needs				binutils
+needs
+;	Due to new atomics definitions:
+	Syllable >= 0.5.5
+	binutils
 build-needs			autoconf 2.13
 
 patch-config
@@ -46,3 +49,4 @@ documentation
 links
 	gcc			bin/cc
 	libgcc.a	lib/gcc-lib/i586-pc-syllable/2.95.3/libgcc_static.a
+
