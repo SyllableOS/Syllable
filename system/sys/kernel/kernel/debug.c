@@ -481,6 +481,11 @@ static void receive_serial_data( void )
 	{
 		while ( read_serial( &nChar, 1 ) == 1 )
 		{
+			// Convert telnet <CR><NUL> to <CR><LF>
+			if ( nChar == '\0' )
+			{
+				nChar = '\n';
+			}
 			write_serial( &nChar, 1, false );
 			write_buffer( &g_asBuffers[1], &nChar, 1 );
 		}
@@ -808,11 +813,21 @@ static int debugger_thread( void *pData )
 			{
 				if ( pzBuffer[i] == 0x08 )
 				{
-					memmove( pzBuffer + i - 1, pzBuffer + i + 1, nTotSize + nSize - i - 1 );
+					if ( i == 0 )
+					{
+						memmove( pzBuffer, pzBuffer + 1, nTotSize + nSize - 1 );
+						i -= 1;
+						nSize -= 1;
+						continue;
+					}
+					else
+					{
+						memmove( pzBuffer + i - 1, pzBuffer + i + 1, nTotSize + nSize - i - 1 );
 
-					i -= 2;
-					nSize -= 2;
-					continue;
+						i -= 2;
+						nSize -= 2;
+						continue;
+					}
 				}
 				if ( pzBuffer[i] == '\r' || pzBuffer[i] == '\n' )
 				{
@@ -821,9 +836,15 @@ static int debugger_thread( void *pData )
 					parse_command( pzBuffer );
 					dbprintf( DBP_DEBUGGER, "dbg>" );
 
+					// handle <CR><LF>
+					if ( i + 1 < nTotSize + nSize && ( pzBuffer[i+1] == '\n' ) )
+					{
+						i++;
+					}
+
 					memmove( pzBuffer, pzBuffer + i + 1, nTotSize + nSize - i - 1 );
 					nTotSize -= i + 1;
-					i = 0;
+					i = -1;
 				}
 			}
 			nTotSize += nSize;
