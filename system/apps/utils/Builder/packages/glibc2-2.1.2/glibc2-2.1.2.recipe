@@ -14,6 +14,8 @@ packages
 
 build-needs
 	autoconf 2.13
+;	This problem is patched:
+;	gcc 2.95.2
 	gcc < 3
 	gettext >= 0.10.35
 ;build-recommends	texinfo <
