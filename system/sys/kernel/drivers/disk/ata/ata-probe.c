@@ -91,7 +91,7 @@ void ata_detect_pci_controllers( void )
 			else if( strcmp( zArg, "nodma" ) == 0 )
 			{
 				kerndbg( KERN_INFO, "ata1 DMA disabled by user\n" );
-				bPrimaryDmaEnabled = false;
+				bSecondaryDmaEnabled = false;
 				continue;
 			}
 			else	/* Assume that the argument given is the base address */
