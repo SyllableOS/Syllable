@@ -1,0 +1,26 @@
+authors
+	Kurt Skauen
+	Sebastien Keim
+	Kaj de Vos
+maintainers		Kaj de Vos
+status			developing
+
+licenses		GPL
+home			www.gnu.org/software/coreutils/
+
+build-needs		perl
+
+documentation	README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS THANKS-to-translators
+links
+;	For she-bang lines:
+	bin/env		/usr/bin
+;	For GLibC:
+	bin/pwd		/bin
+;	For JEd, S-Lang:
+	bin/cp		/bin
+	bin/rm		/bin
+	bin/ln		/bin
+;	For NcFTP:
+	bin/ls		/bin
+;	For SaMBa:
+	bin/echo	/bin
