@@ -1,6 +1,6 @@
 authors				
 maintainers			
-status				testing | broken
+status				testing | developing | broken
 packages			<Deviating tarball name>
 ;
 ; Patching options:
