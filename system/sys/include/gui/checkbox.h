@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 1999 - 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -17,8 +18,8 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef	GUI_CHECKBOX_HPP
-#define	GUI_CHECKBOX_HPP
+#ifndef	__F_GUI_CHECKBOX_H__
+#define	__F_GUI_CHECKBOX_H__
 
 #include <gui/control.h>
 
@@ -39,7 +40,7 @@ namespace os
 class CheckBox : public Control
 {
 public:
-    CheckBox( Rect cFrame, const char* pzName, const char* pzLabel, Message* pcMessage,
+    CheckBox( Rect cFrame, const String& cName, const String& cLabel, Message* pcMessage,
 	      uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP, uint32 nFlags  = WID_WILL_DRAW | WID_CLEAR_BACKGROUND );
     ~CheckBox();
 
@@ -48,18 +49,22 @@ public:
     virtual Point GetPreferredSize( bool bLargest ) const;
     virtual void  MouseDown( const Point& cPosition, uint32 nButtons );
     virtual void  MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData );
+    virtual void  KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
+    virtual void  KeyUp( const char* pzString, const char* pzRawString, uint32 nQualifiers );
     virtual void  Paint( const Rect& cUpdateRect );
 
     virtual void PostValueChange( const Variant& cNewValue );
-    virtual void LabelChanged( const std::string& cNewLabel );
+    virtual void LabelChanged( const String& cNewLabel );
     virtual void EnableStatusChanged( bool bIsEnabled );
     virtual bool Invoked( Message* pcMessage );
-    
+	virtual void Activated( bool bIsActive );
 
 private:
-
+	class Private;
+	Private *m;
 };
 
 }
 
 #endif	//	GUI_CHECKBOX_HPP
+
