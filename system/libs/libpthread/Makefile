@@ -17,10 +17,16 @@ clean:
 	-rm $(OBJS)
 	-rm $(OBJDIR)/$(LIB)
 
-install:
-	-cp -f $(OBJDIR)/$(LIB) /system/libs/
+install: all
+	cp -f $(OBJDIR)/$(LIB) /system/libs/
 	if [ ! -e /system/libs/$(SON) ];then \
 		ln -s /system/libs/$(LIB) /system/libs/$(SON); \
+	fi
+
+dist: all
+	cp -f $(OBJDIR)/$(LIB) $(DIST_DIR)/atheos/sys/libs/
+	if [ ! -e $(DIST_DIR)/atheos/sys/libs/$(SON) ];then \
+		ln -s $(DIST_DIR)/atheos/sys/libs/$(LIB) $(DIST_DIR)/atheos/sys/libs/$(SON); \
 	fi
 
 $(OBJDIR):
