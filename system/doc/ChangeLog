@@ -1,5 +1,10 @@
 * Dec 31 2003, Kristian Van Der Vliet *
 
+Updates to the Savage IX/MX driver using the latest code from the official S3/Via
+driver, from Hilary Cheng <tinyobject@yahoo.com>
+
+* Dec 31 2003, Kristian Van Der Vliet *
+
 Improved IMPS2/PS2 mouse detection in the PS/2 mouse driver from Damien Danneels
 <ddanneels@free.fr>
 
