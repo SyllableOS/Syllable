@@ -45,6 +45,12 @@ typedef struct {
 	* Stream the packet belongs to.
 	*****************************************************************************/
 	uint32 nStream;
+	
+	/** \par Description: 
+	* Timestamp of the packet.
+	*****************************************************************************/
+	uint64 nTimeStamp;
+	
 	/** \par Description: 
 	* Buffer which contains the media data. Audio data will only use one buffer,
 	* but at least raw video data will probably need more.
