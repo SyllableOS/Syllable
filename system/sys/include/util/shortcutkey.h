@@ -28,7 +28,7 @@ namespace os {
 
 class ShortcutKey {
 	public:
-	ShortcutKey( const char* pzKey, uint32 nQualifiers = 0 );
+	ShortcutKey( const String& cKey, uint32 nQualifiers = 0 );
 	ShortcutKey( const uint32 nKey, uint32 nQualifiers = 0 );
 	ShortcutKey( const ShortcutKey& cShortcut );
 	ShortcutKey();
@@ -43,7 +43,6 @@ class ShortcutKey {
 	bool operator==( const ShortcutKey& c ) const;
 	
 	private:
-//	char*		m_pzKey;
 	uint32		m_nKey;
 	uint32		m_nQualifiers;
 
@@ -56,4 +55,5 @@ class ShortcutKey {
 } // end of namespace
 
 #endif	// __F_UTIL_SHORTCUTKEY_H__
+
 
