@@ -1,194 +1,11 @@
-; Syllable base system
-
-; Root tree structure to build the distribution in
-
-distro-tree
-;	Boot directory structure
-
-	boot
-
-;	Main directory structure
-
-	atheos
-
-	atheos/etc
-
-	atheos/home
-	atheos/home/root
-	atheos/home/guest
-
-	atheos/autolnk
-	atheos/autolnk/bin
-	atheos/autolnk/include
-	atheos/autolnk/info
-	atheos/autolnk/lib
-	atheos/autolnk/libexec
-	atheos/autolnk/man
-
-	atheos/sys
-
-	atheos/sys/config
-	atheos/sys/config/drivers
-	atheos/sys/config/drivers/dev
-	atheos/sys/config/default_user
-	atheos/sys/config/default_user/config
-
-	atheos/sys/include
-
-	atheos/sys/bin
-	atheos/sys/libs
-
-	atheos/sys/fonts
-	atheos/sys/icons
-	atheos/sys/keymaps
-
-	atheos/sys/drivers
-
-	atheos/sys/drivers/bus
-
-	atheos/sys/drivers/dev
-	atheos/sys/drivers/dev/disk
-	atheos/sys/drivers/dev/misc
-	atheos/sys/drivers/dev/net
-	atheos/sys/drivers/dev/net/eth
-	atheos/sys/drivers/dev/graphics
-	atheos/sys/drivers/dev/sound
-
-	atheos/sys/drivers/fs
-
-	atheos/sys/drivers/net
-	atheos/sys/drivers/net/if
-
-	atheos/sys/drivers/appserver
-	atheos/sys/drivers/appserver/decorators
-	atheos/sys/drivers/appserver/input
-	atheos/sys/drivers/appserver/video
-
-	atheos/sys/translators
-
-	atheos/tmp
-
-	atheos/var
-	atheos/var/log
-
-	atheos/usr
-	atheos/usr/etc
-	atheos/usr/include
-	atheos/usr/bin
-	atheos/usr/lib
-	atheos/usr/local
-	atheos/usr/man
-	atheos/usr/sbin
-	atheos/usr/share
-	atheos/usr/share/terminfo
-	atheos/usr/share/terminfo/x
-
-	atheos/Applications
-	atheos/Applications/Preferences
-	atheos/Documentation
+; Syllable base distribution, in addition to core system
 
 modules
-	sys/include
-	other/config/default
-	other/config/etc
-	other/fonts
-	other/icons
-	other/init
-	other/keymaps
-	sys/kernel/kernel
-	sys/kernel/drivers/bus/pci
-	sys/kernel/drivers/bus/scsi
-	sys/kernel/drivers/bus/usb
-	sys/kernel/drivers/disk/ata
-	sys/kernel/drivers/disk/bios
-	sys/kernel/drivers/disk/usb
-	sys/kernel/drivers/graphics/geforcefx
-	sys/kernel/drivers/graphics/mach64
-	sys/kernel/drivers/graphics/mga
-	sys/kernel/drivers/graphics/nvidia
-	sys/kernel/drivers/graphics/s3_savage
-	sys/kernel/drivers/graphics/s3_virge
-	sys/kernel/drivers/graphics/sis3xx
-	sys/kernel/drivers/graphics/trident
-	sys/kernel/drivers/hcd/usb_uhci
-	sys/kernel/drivers/input/usb_mouse
-	sys/kernel/drivers/keyboard
-	sys/kernel/drivers/misc/apm
-	sys/kernel/drivers/misc/devices
-	sys/kernel/drivers/misc/ps2aux
-	sys/kernel/drivers/misc/random
-	sys/kernel/drivers/misc/serial
-	sys/kernel/drivers/misc/w8378x
-	sys/kernel/drivers/net/3c509
-	sys/kernel/drivers/net/3c59x
-	sys/kernel/drivers/net/eepro100
-	sys/kernel/drivers/net/ne2000
-	sys/kernel/drivers/net/pcnet32
-	sys/kernel/drivers/net/rtl8139
-	sys/kernel/drivers/net/tulip
-	sys/kernel/drivers/net/via
-	sys/kernel/drivers/sound/emu10k1
-	sys/kernel/drivers/sound/es1370
-	sys/kernel/drivers/sound/es1371
-	sys/kernel/drivers/sound/i810
-	sys/kernel/drivers/sound/sbpro
-	sys/kernel/drivers/sound/trident
-	sys/kernel/drivers/sound/via686a
-	sys/kernel/drivers/sound/vt82xx
-	sys/kernel/fs/afs
-	sys/kernel/fs/ext2
-	sys/kernel/fs/fatfs
-	sys/kernel/fs/iso9660
-	sys/kernel/fs/ramfs
-;	Hangs during configuring:
-;	sys/boot/grub
-	libs/glibc
-	libs/compat-1.0
-	libs/libpthread
-	libs/ncurses-5.3
-	libs/zlib-1.2.1
-	sys/translators
-	sys/appserver/libsyllable
-	sys/appserver/appserver/server
-	sys/appserver/appserver/drivers/decorators/amiga
-	sys/appserver/appserver/drivers/decorators/beish
-	sys/appserver/appserver/drivers/decorators/drow
-	sys/appserver/appserver/drivers/decorators/mulvane
-	sys/appserver/appserver/drivers/decorators/next
-	sys/appserver/appserver/drivers/decorators/photon
-	sys/appserver/appserver/drivers/decorators/red
-	sys/appserver/appserver/drivers/decorators/win98
-	sys/appserver/appserver/drivers/input/ps2mouse
-	sys/appserver/appserver/drivers/input/sermouse
-	sys/appserver/appserver/drivers/input/usbmouse
-	sys/appserver/appserver/drivers/video/geforcefx
-	sys/appserver/appserver/drivers/video/mach64
-	sys/appserver/appserver/drivers/video/mga
-	sys/appserver/appserver/drivers/video/nvidia
-	sys/appserver/appserver/drivers/video/s3
-	sys/appserver/appserver/drivers/video/savage
-	sys/appserver/appserver/drivers/video/sis3xx
-	sys/appserver/appserver/drivers/video/trident
-	sys/media/libmedia
-	sys/media/mediaserver
-	sys/media/drivers/cdrom
-	sys/media/drivers/ffmpeg/ffmpeg
-	sys/media/drivers/ffmpeg
-	sys/media/drivers/oss
-	sys/media/drivers/raw
-	sys/media/drivers/serveraudio
-	sys/media/drivers/videobitmap
-	sys/media/drivers/videooverlay
-	sys/media/drivers/vorbis
-	apps/gnu/bash-2.03
 	apps/gnu/bzip2-1.0.2
-	apps/gnu/coreutils-5.0
 	apps/gnu/findutils-4.1.20
-	apps/gnu/grep-2.5.1
 	apps/gnu/gzip-1.3.5
 	apps/gnu/inetutils-1.4.2
 	apps/gnu/less-381
-	apps/gnu/sed-4.0.9
 	apps/gnu/tar-1.13.92
 ;	apps/other/man-1.5m2
 	apps/media/coldfish
@@ -198,36 +15,18 @@ modules
 ;	apps/utils/Builder
 	apps/utils/CodeEdit
 	apps/utils/DiskManager
-	apps/utils/Preferences/Appearance
-	apps/utils/Preferences/DateTime
-	apps/utils/Preferences/Font
-	apps/utils/Preferences/Keyboard
-	apps/utils/Preferences/Media
-	apps/utils/Preferences/Network
-	apps/utils/Preferences/Screen
 	apps/utils/aclock
 	apps/utils/aedit
 	apps/utils/archiver
-	apps/utils/aterm
 	apps/utils/aview
 	apps/utils/bzoom
 	apps/utils/cpumon
 	apps/utils/crypt
-	apps/utils/debug
-	apps/utils/desktop
-	apps/utils/dhcpc
-	apps/utils/fsutils
-	apps/utils/guiprefs
 	apps/utils/keymapconv
 	apps/utils/launcher_1.1
 	apps/utils/locator_0.2
-	apps/utils/man2html
 	apps/utils/memmon
 	apps/utils/mixer
-	apps/utils/nettools
-	apps/utils/pkgmanager
 	apps/utils/rescopy
 	apps/utils/shelltools
 	apps/utils/slbmgr
-	apps/utils/systools
-	apps/utils/users-1.0.1b
