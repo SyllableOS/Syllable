@@ -1,8 +1,0 @@
-; Libraries to (re)build for Syllable 0.5.3
-
-modules
-	libs/zlib-1.2.1
-	programming/gettext-0.13.1
-	programming/libraries/freetype-2.1.5
-	programming/libraries/libpng-1.2.5
-	programming/libraries/libogg-1.1

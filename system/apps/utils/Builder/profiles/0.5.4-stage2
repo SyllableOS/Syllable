@@ -26,6 +26,7 @@ modules
 	sys/appserver/appserver/drivers/video/tdfx
 	sys/appserver/registrar
 	sys/translators
+	sys/media/libmedia
 	sys/media/mediaserver
 	sys/media/drivers/cdda
 	sys/media/drivers/ffmpeg
