@@ -23,6 +23,9 @@ clean:
 dist: $(EXE)
 	cp -a $(EXE) $(DIST_DIR)/atheos/sys/bin/
 
+install: $(EXE)
+	cp -a $(EXE) /bin/
+
 astyle:
 	@echo Running astyle on all source files.
 	@astyle --style=ansi *.cpp

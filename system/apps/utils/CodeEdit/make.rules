@@ -8,6 +8,11 @@ dist:
 		if ! $(MAKE) -C $$PWD/$$subdir dist; then exit 1; fi;\
 	done
 
+install:
+	@for subdir in $(SUBDIRS); do\
+		if ! $(MAKE) -C $$PWD/$$subdir install; then exit 1; fi;\
+	done
+
 clean:
 	@for subdir in $(SUBDIRS); do\
 		if ! $(MAKE) -C $$PWD/$$subdir clean; then exit 1; fi;\
