@@ -5,13 +5,13 @@
 OptionsGeneralView::OptionsGeneralView() : View(Rect(0,0,50,50),"")
 {
     m_pcOpenToView = new StringView( Rect( 0, 0, 0, 0 ), "Open_To:", "Open Path:" );
-    m_pcOpenToBut = new ImageButton( Rect( 0, 0, 60, 15 ), "Select", "Select", new Message( ID_OPT_SELECT_1 ),NULL,false,false,false );
+    m_pcOpenToBut = new ImageButton( Rect( 0, 0, 60, 15 ), "Select", "", new Message( ID_OPT_SELECT_1 ),NULL,ImageButton::IB_TEXT_BOTTOM,true,true,true);
     m_pcOpenToBut->SetImage(LoadImageFromResource("folder.png"));
     m_pcOpenToTextView = new TextView( Rect( 0, 0, 0, 0 ), "Open_Text", "" );
 
     m_pcOpenToView->SetFrame( Rect( 0, 0, 80, 20 ) + Point( 15, 15 ) );
     m_pcOpenToTextView->SetFrame( Rect( 0, 0, 150, 20 ) + Point( 100, 15 ) );
-    m_pcOpenToBut->SetFrame( Rect( 0, 0, 16, 16 ) + Point( 255, 17 ) );
+    m_pcOpenToBut->SetFrame( Rect( 0, 0, 20, 20 ) + Point( 255, 15 ) );
 
     AddChild( m_pcOpenToView );
     AddChild( m_pcOpenToTextView );
@@ -19,14 +19,14 @@ OptionsGeneralView::OptionsGeneralView() : View(Rect(0,0,50,50),"")
 
 
     //Set Extract To Option
-    m_pcExtractToBut = new ImageButton( Rect( 0, 0, 60, 15 ), "Select", "Select", new Message( ID_OPT_SELECT_2 ),NULL,false,false,false );
+    m_pcExtractToBut = new ImageButton( Rect( 0, 0, 60, 15 ), "Select", "", new Message( ID_OPT_SELECT_2 ),NULL,ImageButton::IB_TEXT_BOTTOM,true,true,true);
     m_pcExtractToBut->SetImage(LoadImageFromResource("folder.png"));
     m_pcExtractToView = new StringView( Rect( 0, 0, 60, 20 ), "ExtractToView", "Extract Path:" );
     m_pcExtractToTextView = new TextView( Rect( 0, 0, 0, 0 ), "", "" );
 
     //Set Position of Extract To Option
     m_pcExtractToTextView->SetFrame( Rect( 0, 0, 150, 20 ) + Point( 100, 45 ) );
-    m_pcExtractToBut->SetFrame( Rect( 0, 0, 16, 16 ) + Point( 255, 47 ) );
+    m_pcExtractToBut->SetFrame( Rect( 0, 0, 20, 20 ) + Point( 255, 45 ) );
     m_pcExtractToView->SetFrame( Rect( 0, 0, 80, 20 ) + Point( 15, 45 ) );
 
     //Add Extract To Option to The View
@@ -35,7 +35,7 @@ OptionsGeneralView::OptionsGeneralView() : View(Rect(0,0,50,50),"")
     AddChild( m_pcExtractToBut );
 
     //Set Buttonbar option
-    m_pcSelectButtonBarPath =  new ImageButton( Rect( 0, 0, 60, 15 ), "Select", "Select", new Message( ID_OPT_SELECT_3 ),NULL,false,false,false );
+    m_pcSelectButtonBarPath =  new ImageButton( Rect( 0, 0, 60, 15 ), "Select", "", new Message( ID_OPT_SELECT_3 ),NULL,ImageButton::IB_TEXT_BOTTOM,true,true,true);
     m_pcSelectButtonBarPath->SetImage(LoadImageFromResource("folder.png"));
     m_pcSelectButtonBarPath->SetEnable(false);
     m_pcButtonBarView = new StringView( Rect( 0, 0, 60, 20 ), "ButtonBarView", "Button Path:" );
@@ -44,7 +44,7 @@ OptionsGeneralView::OptionsGeneralView() : View(Rect(0,0,50,50),"")
   
 	  //Set Position of Extract To Option
     m_pcButtonBarTextView->SetFrame( Rect( 0, 0, 150, 20 ) + Point( 100, 75 ) );
-    m_pcSelectButtonBarPath->SetFrame( Rect( 0, 0, 16, 16 ) + Point( 255, 77 ) );
+    m_pcSelectButtonBarPath->SetFrame( Rect( 0, 0, 20, 20 ) + Point( 255, 75 ) );
     m_pcButtonBarView->SetFrame( Rect( 0, 0, 80, 20 ) + Point( 15, 75 ) );
 
     //Add Extract To Option to The View
@@ -210,14 +210,14 @@ void OptionsWindow::HandleMessage( Message* pcMessage )
 
 		case ID_OPT_QUIT:
         {
-            Close();
+            PostMessage( M_QUIT );
         	break;
 		}
 
 		case ID_OPT_WRITE:
 		{
 			SaveOptions();
-			Close();
+			PostMessage( M_QUIT );
 			break;
 		}
 
@@ -226,7 +226,9 @@ void OptionsWindow::HandleMessage( Message* pcMessage )
             Open = true;
             Extract = false;
 			m_pcPathRequester->CenterInWindow(this);
+            m_pcPathRequester->Lock();
             m_pcPathRequester->Show();
+            m_pcPathRequester->Unlock();
             m_pcPathRequester->MakeFocus();
 			break;
 		}
@@ -236,7 +238,9 @@ void OptionsWindow::HandleMessage( Message* pcMessage )
             Open = false;
             Extract = true;
 			m_pcPathRequester->CenterInWindow(this);
+			m_pcPathRequester->Lock();
             m_pcPathRequester->Show();
+            m_pcPathRequester->Unlock();
             m_pcPathRequester->MakeFocus();
         	break;
 		}
@@ -292,6 +296,7 @@ void OptionsWindow::SaveOptions()
 void OptionsWindow::_Init()
 {
 	m_pcPathRequester = new FileRequester(FileRequester::LOAD_REQ, new Messenger(this),pcAppSettings->GetOpenPath().c_str(),FileRequester::NODE_DIR,false,NULL,NULL,true,true,"Select","Cancel");
+	m_pcPathRequester->Start();
 	m_pcTabView->m_pcGenView->m_pcNewClose->SetValue(pcAppSettings->GetCloseNewWindow());
 	m_pcTabView->m_pcGenView->m_pcExtractClose->SetValue(pcAppSettings->GetCloseExtractWindow());
 	m_pcTabView->m_pcGenView->m_pcExtractToTextView->Set(pcAppSettings->GetExtractPath().c_str());

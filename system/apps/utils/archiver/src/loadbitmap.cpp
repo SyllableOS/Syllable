@@ -21,13 +21,15 @@ BitmapImage* LoadImageFromFile(const os::String& cString)
 os::BitmapImage* LoadImageFromResource( const os::String &cName )
 {
 	os::BitmapImage * pcImage = new os::BitmapImage();
-	os::Resources cRes( get_image_id() );
+	os::File cSelf( open_image_file( get_image_id() ) );
+	os::Resources cRes( &cSelf );
 	os::ResStream * pcStream = cRes.GetResourceStream( cName.c_str() );
 	if( pcStream == NULL )
 	{
 		throw( os::errno_exception("") );
 	}
 	pcImage->Load( pcStream );
+	delete( pcStream );
 	return pcImage;
 }
 

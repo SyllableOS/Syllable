@@ -41,8 +41,9 @@ ArcWindow::ArcWindow(AppSettings* pcSettings):Window( Rect( 0, 0, 525, 280 ), "m
 	m_pcOptions = NULL;
 	pcOpenRequest = NULL;
 	pcAppSettings = pcSettings;
-
+	
 	SetupMenus();
+	
 	SetupToolBar();
 	SetupStatusBar();
 
@@ -54,6 +55,7 @@ ArcWindow::ArcWindow(AppSettings* pcSettings):Window( Rect( 0, 0, 525, 280 ), "m
 	AddChild( pcView );
 
 	SetIcon(LoadImageFromResource("icon24x24.png")->LockBitmap());
+	
 }
 
 
@@ -67,7 +69,7 @@ void ArcWindow::SetupMenus()
 	Rect cMainFrame = cMenuFrame;
 
 	m_pcMenu = new Menu( cMenuFrame, "main_menu", ITEMS_IN_ROW, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT | CF_FOLLOW_TOP );
-
+	
 	aMenu = new Menu( Rect( 0, 0, 0, 0 ), "_Application", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
 	aMenu->AddItem( new MenuItem( "Settings...", new Message( ID_APP_SET ), "Ctrl+S", LoadImageFromResource( "settings-16.png" ) ) );
 	aMenu->AddItem( new MenuSeparator() );
@@ -100,37 +102,38 @@ void ArcWindow::SetupMenus()
 void ArcWindow::SetupToolBar()
 {
 
-	pcButtonBar = new ToolBar( Rect(), "",false );
+	pcButtonBar = new ToolBar( Rect(), "",true );
 	FlowLayoutNode *pcNode = new FlowLayoutNode( "" );
+	pcNode->SetBorders( os::Rect( 0, 2, 0, 0 ) );
 	pcNode->SetHAlignment( ALIGN_LEFT );
 	pcNode->AddChild( new HLayoutSpacer( "", 2, 2 ) );	// Looks better when resizing if they're fixed width... :o)
 
-	ImageButton *pcOpen = new ImageButton( Rect(), "imagebut1", "  Open", new Message( ID_OPEN ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, false );
+	ImageButton *pcOpen = new ImageButton( Rect(), "imagebut1", "Open", new Message( ID_OPEN ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, true );
 	pcOpen->SetImage( LoadImageFromResource( "open.png" ) );
 	pcNode->AddChild( pcOpen );
 	pcNode->AddChild( new HLayoutSpacer( "", 2, 2 ) );	// Looks better when resizing if they're fixed width... :o)
 
-	ImageButton *pcNew = new ImageButton( Rect(), "imagebut2", "   New", new Message( ID_NEW ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, false );
+	ImageButton *pcNew = new ImageButton( Rect(), "imagebut2", "New", new Message( ID_NEW ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, true );
 	pcNew->SetImage( LoadImageFromResource( "new.png" ) );
 	pcNode->AddChild( pcNew );
 	pcNode->AddChild( new HLayoutSpacer( "", 2, 2 ) );	// Looks better when resizing if they're fixed width... :o)
 
-	ImageButton *pcExtract = new ImageButton( Rect(), "imagebut3", "Extract", new Message( ID_EXTRACT ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, false );
+	ImageButton *pcExtract = new ImageButton( Rect(), "imagebut3", "Extract", new Message( ID_EXTRACT ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, true );
 	pcExtract->SetImage( LoadImageFromResource( "extract.png" ) );
 	pcNode->AddChild( pcExtract );
 	pcNode->AddChild( new HLayoutSpacer( "", 2, 2 ) );	// Looks better when resizing if they're fixed width... :o)
 
-	ImageButton *pcExe = new ImageButton( Rect(), "imagebut4", "MakeSelf", new Message( ID_EXE ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, false );
+	ImageButton *pcExe = new ImageButton( Rect(), "imagebut4", "MakeSelf", new Message( ID_EXE ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, true );
 	pcExe->SetImage( LoadImageFromResource( "exe.png" ) );
 	pcNode->AddChild( pcExe );
 	pcNode->AddChild( new HLayoutSpacer( "", 2, 2 ) );	// Looks better when resizing if they're fixed width... :o)
 
-	ImageButton *pcSettingsBut = new ImageButton( Rect(), "imagebut5", "Settings", new Message( ID_APP_SET ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, false );
+	ImageButton *pcSettingsBut = new ImageButton( Rect(), "imagebut5", "Settings", new Message( ID_APP_SET ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, true );
 	pcSettingsBut->SetImage( LoadImageFromResource( "settings.png" ) );
 	pcNode->AddChild( pcSettingsBut );
 	pcNode->AddChild( new HLayoutSpacer( "", 2, 2 ) );	// Looks better when resizing if they're fixed width... :o)
 
-	ImageButton *pcAboutBut = new ImageButton( Rect(), "imagebut6", "About", new Message( ID_HELP_ABOUT ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, false );
+	ImageButton *pcAboutBut = new ImageButton( Rect(), "imagebut6", "About", new Message( ID_HELP_ABOUT ), NULL, ImageButton::IB_TEXT_BOTTOM, true, true, true );
 	pcAboutBut->SetImage( LoadImageFromResource( "about.png" ) );
 	pcNode->AddChild( pcAboutBut );
 	pcNode->AddChild( new HLayoutSpacer( "", 0, COORD_MAX, NULL, 100.0f ) );
@@ -169,7 +172,6 @@ void ArcWindow::SetupStatusBar()
 
 void ArcWindow::HandleMessage( Message * pcMessage )
 {
-	Alert *m_pcError = new Alert( "Error", "Only one Window can \nbe opened at a time.", Alert::ALERT_WARNING, 0x00, "OK", NULL );
 	switch ( pcMessage->GetCode() )
 	{
 		case ID_NEW:
@@ -183,6 +185,7 @@ void ArcWindow::HandleMessage( Message * pcMessage )
 			}
 			else
 			{
+				Alert *m_pcError = new Alert( "Error", "Only one Window can \nbe opened at a time.", Alert::ALERT_WARNING, 0x00, "OK", NULL );
 				m_pcError->CenterInWindow(this);
 				m_pcError->Go( new Invoker() );		
 			}	
@@ -206,6 +209,7 @@ void ArcWindow::HandleMessage( Message * pcMessage )
 			}
 			else
 			{
+				Alert *m_pcError = new Alert( "Error", "Only one Window can \nbe opened at a time.", Alert::ALERT_WARNING, 0x00, "OK", NULL );
 				m_pcError->CenterInWindow(this);
 				m_pcError->Go( new Invoker() );
 			}
@@ -229,6 +233,7 @@ void ArcWindow::HandleMessage( Message * pcMessage )
 			}
 			else
 			{
+				Alert *m_pcError = new Alert( "Error", "Only one Window can \nbe opened at a time.", Alert::ALERT_WARNING, 0x00, "OK", NULL );
 				m_pcError->CenterInWindow(this);
 				m_pcError->Go( new Invoker() );
 			}	
@@ -277,6 +282,7 @@ void ArcWindow::HandleMessage( Message * pcMessage )
 			}
 			else
 			{
+				Alert *m_pcError = new Alert( "Error", "Only one Window can \nbe opened at a time.", Alert::ALERT_WARNING, 0x00, "OK", NULL );
 				m_pcError->CenterInWindow(this);
 				m_pcError->Go( new Invoker() );
 			}
@@ -307,12 +313,13 @@ void ArcWindow::HandleMessage( Message * pcMessage )
 				pcOpenRequest = NULL;
 				break;
 			}
+			break;
 		}
 
 
 		case ID_QUIT:
 		{
-			OkToQuit();
+			PostMessage( M_QUIT );
 			break;
 		}
 
@@ -328,7 +335,7 @@ bool ArcWindow::OkToQuit( void )
 	pcAppSettings->SaveSettings();
 	delete pcAppSettings;
 	Application::GetInstance()->PostMessage( M_QUIT );
-	return ( false );
+	return ( true );
 }
 
 
@@ -919,7 +926,7 @@ void ArcWindow::DispatchMessage( os::Message * pcMessage, os::Handler * pcHandle
 {
 	String cRawString;
 	int32 nQual, nRawKey;
-
+	
 	if( pcMessage->GetCode() == os::M_KEY_DOWN )	//a key must have been pressed
 	{
 		if( pcMessage->FindString( "_raw_string", &cRawString ) != 0 || pcMessage->FindInt32( "_qualifiers", &nQual ) != 0 || pcMessage->FindInt32( "_raw_key", &nRawKey ) != 0 )

@@ -23,14 +23,14 @@ NewFrameView::NewFrameView( Rect & r ) : FrameView( r, "new_view", "Create File"
     m_pcDropView->SetFrame(Rect(0,0,95,15) + Point ( 32,74));
     AddChild(m_pcDropView);
 
-    m_pcFileButton = new ImageButton( Rect( 0, 0, 0, 0 ), "file_but", "", new Message(ID_NEW_SELECT_1),NULL,false,false,false);
+    m_pcFileButton = new ImageButton( Rect( 0, 0, 0, 0 ), "file_but", "", new Message(ID_NEW_SELECT_1),NULL,ImageButton::IB_TEXT_BOTTOM,true,true,true);
     m_pcFileButton->SetImage(LoadImageFromResource("folder.png"));
     m_pcFileTextView = new TextView( Rect( 0, 0, 0, 0 ), "file_text", "" );
     m_pcFileStringView = new StringView( Rect( 0, 0, 0, 0 ), "file_str", "Name:" );
 
     m_pcFileStringView->SetFrame( Rect( 0, 0, 60, 15 ) + Point( 10, 14 ) );
     m_pcFileTextView->SetFrame( Rect( 0, 0, 195, 20 ) + Point( 75, 13 ) );
-    m_pcFileButton->SetFrame( Rect( 0, 0, 16,16 ) + Point( 276, 15 ) );
+    m_pcFileButton->SetFrame( Rect( 0, 0, 20,20 ) + Point( 276, 13 ) );
 
     AddChild( m_pcFileButton );
     AddChild( m_pcFileTextView );
@@ -39,12 +39,12 @@ NewFrameView::NewFrameView( Rect & r ) : FrameView( r, "new_view", "Create File"
     m_pcDirectoryTextView = new TextView( Rect( 0, 0, 0, 0 ), "file_text", "" );
     m_pcDirectoryStringView = new StringView( Rect( 0, 0, 0, 0 ), "file_str", "Directory:" );
     
-    m_pcDirectoryButton = new ImageButton( Rect( 0, 0, 0, 0 ), "file_but", "", new Message(ID_NEW_SELECT_2),NULL,false,false,false);
+    m_pcDirectoryButton = new ImageButton( Rect( 0, 0, 0, 0 ), "file_but", "", new Message(ID_NEW_SELECT_2),NULL,ImageButton::IB_TEXT_BOTTOM,true,true,true);
 	m_pcDirectoryButton->SetImage(LoadImageFromResource("folder.png"));
 	
     m_pcDirectoryStringView->SetFrame( Rect( 0, 0, 60, 15 ) + Point( 10, 43 ) );
     m_pcDirectoryTextView->SetFrame( Rect( 0, 0, 195, 20 ) + Point( 75, 43 ) );
-    m_pcDirectoryButton->SetFrame( Rect( 0, 0,16,16 ) + Point( 276, 45 ) );
+    m_pcDirectoryButton->SetFrame( Rect( 0, 0,20,20 ) + Point( 276, 43 ) );
 
 
 
@@ -93,8 +93,10 @@ NewWindow::NewWindow(Window* pcParent, bool bCreation) : Window( Rect( 0, 0, 315
     SetFocusChild(m_pcView->m_pcFrameView->m_pcFileTextView);
     SetDefaultButton(m_pcView->m_pcCreate);
     
-	m_pcOpenSelect = new FileRequester( FileRequester::LOAD_REQ, new Messenger( this ), getenv("$HOME"), FileRequester::NODE_DIR, false, NULL, NULL, true, true, "Open", "Cancel" );
-    m_pcSaveSelect = new FileRequester( FileRequester::SAVE_REQ, new Messenger( this ),getenv("$HOME"), FileRequester::NODE_FILE, false, NULL, NULL, true, true, "Save", "Cancel" );
+	m_pcOpenSelect = new FileRequester( FileRequester::LOAD_REQ, new Messenger( this ), "", FileRequester::NODE_DIR, false, NULL, NULL, true, true, "Open", "Cancel" );
+    m_pcOpenSelect->Start();
+    m_pcSaveSelect = new FileRequester( FileRequester::SAVE_REQ, new Messenger( this ), "", FileRequester::NODE_FILE, false, NULL, NULL, true, true, "Save", "Cancel" );
+	m_pcSaveSelect->Start();
 }
 
 
@@ -110,16 +112,18 @@ void NewWindow::HandleMessage( Message* pcMessage )
 
     case ID_NEW_SELECT_1:
         {
+        	m_pcSaveSelect->Lock();
             m_pcSaveSelect->Show();
+            m_pcSaveSelect->Unlock();
             m_pcSaveSelect->MakeFocus();
         }
         break;
 
     case ID_NEW_SELECT_2:
         {
-
-
+			m_pcOpenSelect->Lock();
             m_pcOpenSelect->Show();
+            m_pcOpenSelect->Unlock();
             m_pcOpenSelect->MakeFocus();
         }
         break;
