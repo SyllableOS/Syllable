@@ -16,5 +16,5 @@ install:
 	unzip $(package) -d $(install-path)
 
 dist:
-	unzip $(package) -d $(distro-path)
+	unzip -o $(package) -d $(distro-path)
 
