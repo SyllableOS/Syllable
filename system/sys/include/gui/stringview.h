@@ -47,8 +47,8 @@ public:
 		uint32 nFlags  = WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
     ~StringView();
 
-    void	SetMinPreferredSize( int nWidthChars );
-    void	SetMaxPreferredSize( int nWidthChars );
+    void	SetMinPreferredSize( int nWidthChars, int nHeightChars = 1 );
+    void	SetMaxPreferredSize( int nWidthChars, int nHeightChars = 1 );
     
     virtual Point GetPreferredSize( bool bLargest ) const;
 
@@ -64,15 +64,12 @@ public:
     virtual void AttachedToWindow();
 
 private:
-    struct data {
-	String m_cString;
-	int	    m_nMinSize;
-	int	    m_nMaxSize;
-    }* m;
-    alignment	m_eAlign;
+	class Private;
+	Private* m;
 };
 
 }
 
 #endif	//	__F_GUI_STRINGVIEW_H__
+
 

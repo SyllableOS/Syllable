@@ -49,7 +49,6 @@ class CheckMenu : public MenuItem
 		~CheckMenu();
 
 		virtual void  Draw();
-		virtual void  DrawContent();
 		virtual void  SetHighlighted( bool bHighlighted );
 		virtual Point GetContentSize();
 

@@ -26,7 +26,9 @@
 #include <util/invoker.h>
 #include <util/locker.h>
 #include <gui/bitmap.h>
-
+#include <gui/image.h>
+#include <gui/exceptions.h>
+#include <util/shortcutkey.h>
 namespace os
 {
 #if 0
@@ -39,49 +41,62 @@ class	MenuWindow;
 enum MenuLayout_e { ITEMS_IN_COLUMN, ITEMS_IN_ROW, ITEMS_CUSTOM_LAYOUT };
 
 
-/** 
+/** Menu item class.
  * \ingroup gui
  * \par Description:
- *
- * \sa
- * \author	Kurt Skauen (kurt@atheos.cx)
+ *	The MenuItem class is what you use to insert into a menu
+ * \author	Kurt Skauen (kurt@atheos.cx) with modifications by the Syllable team
  *****************************************************************************/
 
 class MenuItem : public Invoker
 {
 public:
-    MenuItem( const String& cLabel, Message* pcMsg );
-    MenuItem( Menu* pcMenu, Message* pcMsg );
+    MenuItem( const String& cLabel, Message* pcMsg, const String& cShortcut = "", Image* pcImage = NULL);
+    MenuItem( Menu* pcMenu, Message* pcMsg, const String& cShortcut = "", Image* pcImage = NULL );
     ~MenuItem();
 
-    Menu*	GetSubMenu() const;
-    Menu*	GetSuperMenu() const;
-    Rect	GetFrame() const;
-    virtual Point GetContentSize();
-    const String&  GetLabel() const;
-    virtual void  Draw();
-    virtual void  DrawContent();
-    Point	  GetContentLocation() const;
-    virtual bool  Invoked( Message* pcMessage );
-    void SetEnable( bool bEnabled = false );
-    bool IsEnabled() const;
-    virtual void SetHighlighted( bool bHighlighted = true );
-	bool IsHighlighted() const;
+    Menu*				GetSubMenu() const;
+    Menu*				GetSuperMenu() const;
+    Rect				GetFrame() const;
+    
+    virtual Point 		GetContentSize();
+    virtual float		GetColumnWidth( int nColumn ) const;
+    virtual int			GetNumColumns() const;
+    const String&  		GetLabel() const;
+    
+    virtual void  		Draw();
 
+    Point	  			GetContentLocation() const;
+    
+    virtual bool  		Invoked( Message* pcMessage );
+    void 				SetEnable( bool bEnabled);
+    bool 				IsEnabled() const;
+    
+    virtual void 		SetHighlighted( bool bHighlighted );
+	bool 				IsHighlighted() const;
+	
+	Image* 				GetImage() const;
+	void 				SetImage( Image* pcImage, bool bRefresh = false );
+	
+	void 				SetShortcut( const String& cShortcut );
+	const 				String& GetShortcut() const;
+private:
+	virtual void		_reserved_1_();
+	virtual void		_reserved_2_();
+	virtual void		_reserved_3_();
+	virtual void		_reserved_4_();
+	virtual void		_reserved_5_();
 private:
     friend class Menu;
-
-	MenuItem*	GetNext();
-	void		SetNext( MenuItem* pcItem );
-	void		SetSubMenu( Menu* pcMenu );
-	void		SetSuperMenu( Menu* pcMenu );
-    void		SetFrame( const Rect& cFrame );
-    
     class Private;
     
-    Private* m;
+    MenuItem*			_GetNext();
+	void				_SetNext( MenuItem* pcItem );
+	void				_SetSubMenu( Menu* pcMenu );
+	void				_SetSuperMenu( Menu* pcMenu );
+    void				_SetFrame( const Rect& cFrame );
 
-	static Bitmap* s_pcSubMenuBitmap;
+	Private* 			m;
 };
 
 /** Menu separator item.
@@ -107,11 +122,12 @@ public:
 private:
 };
 
-/**
+/** The menuing system for Syllable
  * \ingroup gui
  * \par Description:
- * \sa
- * \author Kurt Skauen (kurt@atheos.cx)
+ *  The menuing system for Syllable.	
+ * \sa os::MenuItem, os::MenuSeparator()
+ * \author Kurt Skauen (kurt@atheos.cx) with modifications and improvements by the Syllable team.
  *****************************************************************************/
 
 class	Menu : public View
@@ -120,100 +136,97 @@ public:
     Menu( Rect cFrame, const String& cName, MenuLayout_e eLayout,
 	  uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT | CF_FOLLOW_TOP,
 	  uint32 nFlags  = WID_WILL_DRAW | WID_CLEAR_BACKGROUND | WID_FULL_UPDATE_ON_RESIZE );
-
-    ~Menu();
-    int		Lock( void ) const;
-    void	Unlock( void ) const;
+	~Menu();
+    
+    int					Lock( void ) const;
+    void				Unlock( void ) const;
 
 //	From Handler:
-    virtual void  TimerTick( int nID );
+    virtual void  		TimerTick( int nID );
 
 //	From View:
-    void		AttachedToWindow( void );
-    void		DetachedFromWindow( void );
-    void		WindowActivated( bool bIsActive );
+    void				AttachedToWindow( void );
+    void				DetachedFromWindow( void );
+    void				WindowActivated( bool bIsActive );
 
-    Point		GetPreferredSize( bool bLargest ) const;
-    virtual void	MouseDown( const Point& cPosition, uint32 nButtons );
-    virtual void	MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData );
-    virtual void	MouseMove( const Point& cNewPos, int nCode, uint32 nButtons, Message* pcData );
-    virtual void	KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
-    virtual void	FrameSized( const Point& cDelta );
-
-    virtual void	Paint( const Rect& cUpdateRect );
+	Point				GetPreferredSize( bool bLargest ) const;
+    
+    virtual void		MouseDown( const Point& cPosition, uint32 nButtons );
+    virtual void		MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData );
+    virtual void		MouseMove( const Point& cNewPos, int nCode, uint32 nButtons, Message* pcData );
+    virtual void		KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
+    virtual void		FrameSized( const Point& cDelta );
+	virtual void		Paint( const Rect& cUpdateRect );
 
 //	From Menu:
-    String GetLabel() const;
-    MenuLayout_e GetLayout() const;
-    bool	AddItem( const String& cLabel, Message* pcMessage );
-    bool	AddItem( MenuItem* pcItem );
-    bool	AddItem( MenuItem* pcItem, int nIndex );
-    bool	AddItem( Menu* pcItem );
-    bool	AddItem( Menu* pcItem, int nIndex );
-
-    MenuItem*	RemoveItem( int nIndex );
-    bool	RemoveItem( MenuItem* pcItem );
-    bool	RemoveItem( Menu* pcMenu );
-
-    MenuItem*	GetItemAt( int nIndex ) const;
-    MenuItem*	GetItemAt( Point cPos ) const;
-    Menu*	GetSubMenuAt( int nIndex ) const;
-    int		GetItemCount( void ) const;
-
-    int		GetIndexOf( MenuItem* pcItem ) const;
-    int		GetIndexOf( Menu* pcMenu ) const;
-
-    MenuItem*	FindItem( int nCode ) const;
-    MenuItem*	FindItem( const String& cName ) const;
-
-    virtual	status_t SetTargetForItems( Handler* pcTarget );
-    virtual	status_t SetTargetForItems( Messenger cMessenger );
-    MenuItem*	FindMarked() const;
-
-    Menu*	GetSuperMenu() const;
-    MenuItem*	GetSuperItem();
-    void	InvalidateLayout();
-
-    void	SetCloseMessage( const Message& cMsg );
-    void	SetCloseMsgTarget( const Messenger& cTarget );
-
-    MenuItem*	Track( const Point& cScreenPos );
-    void 	Open( Point cScrPos );
+    String 				GetLabel() const;
+    MenuLayout_e 		GetLayout() const;
     
-    void SetEnable(bool);
-    bool IsEnabled();
+    bool				AddItem( const String& cLabel, Message* pcMessage, const String& cShortcut = "", Image* pcImage = NULL );
+    bool				AddItem( MenuItem* pcItem );
+    bool				AddItem( MenuItem* pcItem, int nIndex );
+    bool				AddItem( Menu* pcItem );
+    bool				AddItem( Menu* pcItem, int nIndex );
+
+    MenuItem*			RemoveItem( int nIndex );
+    bool				RemoveItem( MenuItem* pcItem );
+    bool				RemoveItem( Menu* pcMenu );
+
+    MenuItem*			GetItemAt( int nIndex ) const;
+    MenuItem*			GetItemAt( Point cPos ) const;
+    Menu*				GetSubMenuAt( int nIndex ) const;
+    int					GetItemCount( void ) const;
+
+    int					GetIndexOf( MenuItem* pcItem ) const;
+    int					GetIndexOf( Menu* pcMenu ) const;
+
+    MenuItem*			FindItem( int nCode ) const;
+    MenuItem*			FindItem( const String& cName ) const;
+    MenuItem*			FindMarked() const;
+    
+    virtual	status_t 	SetTargetForItems( Handler* pcTarget );
+    virtual	status_t 	SetTargetForItems( Messenger cMessenger );
+
+    Menu*				GetSuperMenu() const;
+    MenuItem*			GetSuperItem();
+    void				InvalidateLayout();
+
+    void				SetCloseMessage( const Message& cMsg );
+    void				SetCloseMsgTarget( const Messenger& cTarget );
+
+    MenuItem*			Track( const Point& cScreenPos );
+    void 				Open( Point cScrPos );
+    
+    void 				SetEnable(bool);
+    bool 				IsEnabled();
 
 private:
     friend	class MenuItem;
 
-    void		SetRoot( Menu* pcRoot );
-    void		StartOpenTimer( bigtime_t nDelay );
-    void		OpenSelection();
-    void		SelectItem( MenuItem* pcItem );
-    void		SelectPrev();
-    void		SelectNext();
-    void		EndSession( MenuItem* pcSelItem );
-    void		Close( bool bCloseChilds, bool bCloseParent );
-    void		SetCloseOnMouseUp( bool bFlag );
-    static Locker s_cMutex;
-    port_id	  m_hTrackPort;
-    MenuWindow*	  m_pcWindow;
-    Menu*	  m_pcRoot;
-    MenuItem*	  m_pcFirstItem;
-    int		  m_nItemCount;
-    MenuLayout_e  m_eLayout;
-    MenuItem*	  m_pcSuperItem;
-    Point	  m_cSize;
+    void				_SetRoot( Menu* pcRoot );
+    
+    void				_StartOpenTimer( bigtime_t nDelay );
+    void				_OpenSelection();
+    
+    void				_SelectItem( MenuItem* pcItem );
+    void				_SelectPrev();
+    void				_SelectNext();
+    
+    void				_EndSession( MenuItem* pcSelItem );
+    void				_Close( bool bCloseChilds, bool bCloseParent );
+    void				_SetCloseOnMouseUp( bool bFlag );
 
-    Rect	  m_cItemBorders;
+	void				_SetOrClearShortcut( MenuItem* pcStart, bool bSet = true );
+	Image*				_GetSubMenuArrow( int nState );
+	float				_GetColumnWidth( int nColumn );
 
     class Private;
     Private*	m;
-    bool	  m_bIsTracking;
-    bool	  m_bHasOpenChilds;
-    bool	  m_bCloseOnMouseUp;
-    bool   m_bEnabled;
+    
+    MenuItem*	  	m_pcSuperItem;
+    static 			Locker s_cMutex;
 };
 
 }
 #endif	//	__F_GUI_MENU_H__
+
