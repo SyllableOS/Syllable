@@ -26,7 +26,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Red: $(OBJS)
-	$(CXX) $(OBJS) -o $(OBJDIR)/Red /system/appserver -lsyllable -lz
+	$(CXX) $(OBJS) -o $(OBJDIR)/Red ../../../server/objs/appserver -lsyllable -lz
 	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/Red -lsyllable
 
 install: $(OBJDIR)/Red

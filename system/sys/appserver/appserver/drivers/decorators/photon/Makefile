@@ -26,7 +26,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Photon: $(OBJS)
-	$(CXX) $(OBJS) -o $(OBJDIR)/Photon /system/appserver -lsyllable -lz
+	$(CXX) $(OBJS) -o $(OBJDIR)/Photon ../../../server/objs/appserver -lsyllable -lz
 	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/Photon -lsyllable
 
 install: $(OBJDIR)/Photon

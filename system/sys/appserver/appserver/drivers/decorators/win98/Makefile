@@ -26,7 +26,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Win98: $(OBJS)
-	$(CXX) $(OBJS) -o $(OBJDIR)/Win98 /system/appserver -lsyllable -lz
+	$(CXX) $(OBJS) -o $(OBJDIR)/Win98 ../../../server/objs/appserver -lsyllable -lz
 	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/Win98 -lsyllable
 
 install: $(OBJDIR)/Win98

@@ -24,7 +24,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Next: $(OBJS)
-	$(CXX) $(OBJS) -o $(OBJDIR)/Next /system/appserver -lsyllable -lz
+	$(CXX) $(OBJS) -o $(OBJDIR)/Next ../../../server/objs/appserver -lsyllable -lz
 	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/Next -lsyllable
 
 deps:

@@ -24,7 +24,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/WarpSpeed: $(OBJS)
-	$(CXX) $(OBJS) -o $(OBJDIR)/WarpSpeed /system/appserver -lsyllable -lz
+	$(CXX) $(OBJS) -o $(OBJDIR)/WarpSpeed ../../../server/objs/appserver -lsyllable -lz
 	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/WarpSpeed -lsyllable
 
 deps:

@@ -26,7 +26,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Beish: $(OBJS)
-	$(CXX) $(OBJS) -o $(OBJDIR)/Beish /system/appserver -lsyllable -lz
+	$(CXX) $(OBJS) -o $(OBJDIR)/Beish ../../../server/objs/appserver -lsyllable -lz
 	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/Beish -lsyllable
 
 install: $(OBJDIR)/Beish

@@ -26,7 +26,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Drow: $(OBJS)
-	$(CXX) $(OBJS) -o $(OBJDIR)/Drow /system/appserver -lsyllable -lz
+	$(CXX) $(OBJS) -o $(OBJDIR)/Drow ../../../server/objs/appserver -lsyllable -lz
 	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/Drow -lsyllable
 
 install: $(OBJDIR)/Drow
