@@ -1,3 +1,24 @@
+* May 17 2003, Kristian Van Der Vliet *
+
+The BIOS and ATA drivers now check for kernel parameters that indicate which drives and
+controllers to enable.  For the BIOS driver:
+
+o By default, the driver only probes for floppy drives and ignores all harddrives
+o Individual drives can be enabled by passing hd?=bios in the kernel parameters E.g.
+   hda=bios enables the BIOS driver for hda
+ 
+For the ATA driver:
+
+o By default the driver probes for a Primary and a Secondary controller but no others.
+o The primary controller can be disabled by passing ata0=disabled in the kernel paramters.
+  The secondary controller can be disabled by passing ata1=disabled.
+
+The BIOS & ATA paramters can be combined.  E.g. if you wish to disable the ATA controller
+for hda and hdb and instead use the BIOS driver, while leaving the drive cdc enabled in
+the ATA driver you would pass:
+
+ata0=disabled hda=bios hdb=bios
+
 * Apr 27 2003, Henrik Isaksson *
 
 Updated keymaps for the new keymap format.
@@ -205,6 +226,7 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
 
 
 
