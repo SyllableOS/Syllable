@@ -1,5 +1,11 @@
 * February 3 2005, Jake Hamby *
 
+Updated to Build 0004.  Integrated Daniel's scheduler cleanup patches.
+Added a 'pause' loop to spinlock() to improve power consumption and
+performance on Pentium 4 hyperthreaded systems.
+
+* February 3 2005, Jake Hamby *
+
 Updated to Build 0003.  Fixed errno printing bug in strace and fixed
 sys_rmdir() to accept pathnames with a trailing '/'.
 
