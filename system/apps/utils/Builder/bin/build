@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.2.1
+# Version 0.2.2
 # Copyright (c) 2002, 2003 Kaj de Vos
 # License: GPL 2
 
@@ -106,7 +106,7 @@ def getPackage target
 
 			unless exists? dir = File.dirname(target) or action "mkdir --parents " + dir
 				false
-			else
+			else  # We have a destination dir
 				unless unpackPackage target
 					false
 				else
@@ -121,28 +121,31 @@ def getPackage target
 				# Source already prepared
 				true
 			else
-				if exists? File.join @sourcesDir, fullName(target) + ".*"
+				if Dir[File.join @sourcesDir, fullName(target) + ".*"] != []
 					puts "\nWARNING! This will clobber your CVS repository!"
 					logHeader "Replacing source"
 
-					if action "rm -r " + target
-						if unpackPackage target
+					unless action "rm -r " + target
+						logError "Failed to delete source"
+						false
+					else
+						unless unpackPackage target
+							false
+						else
 							Dir.chdir @workDir
 							Dir.chdir target
 
 							patchPackage target
-						else
-							false
 						end
-					else
-						logError "Failed to delete source"
-						false
 					end
 				else
 					Dir.chdir target
-					if exists? "configure"
+					unless exists? "configure"
+						true
+					else  # 3rd-party package
 						puts "\nWARNING! This will clobber your CVS repository!"
 						deleteCVSData
+						patchPackage target
 					end
 				end
 			end
@@ -491,7 +494,6 @@ def deleteCVSData
 end
 
 def exists? file
-#	Dir[file] != []
 	FileTest.exists? file
 end
 
@@ -664,7 +666,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "--version"
-	puts "Syllable Build System 0.2.1",
+	puts "Syllable Build System 0.2.2",
 		"Copyright (c) 2002, 2003 Kaj de Vos",
 		"License: GPL 2"
 when "--help"
