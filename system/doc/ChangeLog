@@ -1,3 +1,10 @@
+* May 13 2004, Henrik Isaksson *
+
+- Swedish keymap:
+  Added a couple of deadkeys for east European languages (ČĎĚŇŘŠŤŮŽ).
+  The new characters are available through the ´ key (next to backspace), when AltGr
+  is pressed.
+
 * May 5 2004, Henrik Isaksson *
 
 - Added ATERM_ATTR=0x80 to setup_environ.sh to get rid of that awful cyan background
