@@ -9,7 +9,10 @@ OBJS = obj/gbar.o obj/Clock.o obj/LauncherBar.o obj/CPU.o obj/Mem.o obj/Launcher
 
 INSTDIR = /Applications/Launcher
 
-all : $(PLUGINS) $(OBJS)
+all : obj $(PLUGINS) $(OBJS)
+
+obj:
+	mkdir obj
 
 clean:
 	-rm $(OBJS) $(PLUGINS)
