@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.8
+# Version 0.6.9
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -1303,8 +1303,7 @@ end
 @workDir = Dir.getwd
 
 # Get the path to the application directory.
-# build should not be called from a relative path!
-@builderPath = File.dirname File.dirname(dereference($0))
+@builderPath = File.dirname File.dirname(dereference(File.expand_path($0)))
 
 @portsPath, Profile.path, @sourcesPath, @resourcesPath, @distrosPath,    Log.path = [
 'packages', 'profiles',   'sources',    'resources',    'distributions', 'logs'
@@ -1374,7 +1373,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.8',
+	puts 'Syllable Build System 0.6.9',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
