@@ -1,0 +1,4 @@
+authors			Kaj de Vos
+patch-config
+;make-targets	termidx
+documentation	README INFO LIST COPYING NEWS ChangeLog TODO docs
