@@ -9,9 +9,9 @@ GCC for Syllable
 This is a binary distribution of version 3.3.3 of the GNU compiler
 collection for the Syllable operating system. This distribution was
 built on Syllable 0.5.2, and was optimized for a Pentium CPU. It
-requires version 0.5.2a of Syllable, or newer. It supports only the C
-and C++ languages. The compiler defaults to generating Pentium code
-(default --march=i586).
+requires version 0.5.2a of Syllable, or newer. It supports only the C,
+C++ and Fortran languages. The compiler defaults to generating Pentium
+code (default --march=i586).
 
 If you encounter problems or have any other interesting observations,
 I would be interested to hear about them (see contact information).

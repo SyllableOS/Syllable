@@ -43,11 +43,11 @@ pre-configure		rm -f /system/libs/libstdc++.so
 ; Dirty alternative for replacing libstdc++.so, when compiling with GCC 2.95.x:
 ;configure-env		CXXFLAGS '-march=i586 -O2 -pipe -lstdc++'
 configure-options
-	--enable-languages=c,c++
+	--enable-languages=c,c++,f77
 ;		,treelang
 ;		Won't do --enable-shared:
 ;		,objc
-;		,java,f77,ada
+;		,java,ada
 	--with-arch=i586
 	--enable-sjlj-exceptions
 	--enable-shared
@@ -78,7 +78,7 @@ make-targets
 test-options		-k
 
 ;install-prefix-var	DESTDIR
-;install-files
+;system-files
 ;	/system/libs
 ;		lib/libgcc_s.so.1
 ;		lib/libstdc++.so.5.0.5
@@ -88,6 +88,7 @@ documentation
 links
 	gcc						bin/cc
 	libgcc.a				lib/gcc-lib/i586-pc-syllable/3.3.3/libgcc_static.a
+system-links
 	lib/libgcc_s.so.1		/system/libs/libgcc_s.so.1
 	libgcc_s.so.1			/system/libs/libgcc_s.so
 	lib/libstdc++.so.5.0.5	/system/libs/libstdc++.so.5.0.5
