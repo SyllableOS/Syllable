@@ -30,7 +30,7 @@
 
 
 #include "init.h"
-#include "init301.h"
+//#include "init301.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -48,6 +48,7 @@
 
 #define DISPMODE_SINGLE1 0x1  /* TW: CRT1 only */
 #define DISPMODE_SINGLE2 0x2  /* TW: CRT2 only */
+#define DISPMODE_MIRROR 0x4
 
 #define PIXEL_FMT_YV12 0x01
 #define PIXEL_FMT_UYVY 0x02
@@ -114,7 +115,7 @@ static uint8 vblank_active_CRT1( )
 static uint8 vblank_active_CRT2( )
 {
     uint8 ret;
-    if(si.vga_engine == SIS_315_VGA) {
+    if(si.sisvga_engine == SIS_315_VGA) {
        inSISIDXREG(SISPART1, Index_310_CRT2_FC_VR, ret);
     } else {
        inSISIDXREG(SISPART1, Index_CRT2_FC_VR, ret);
@@ -128,11 +129,11 @@ SiSBridgeIsInSlaveMode()
 {
     unsigned char usScratchP1_00;
 
-    if(!(si.hasVB != HASVB_NONE)) return FALSE;
+    if(!(si.vbflags != 0)) return FALSE;
 
     inSISIDXREG(SISPART1,0x00,usScratchP1_00);
-    if( ((si.vga_engine == SIS_300_VGA) && (usScratchP1_00 & 0xa0) == 0x20) ||
-        ((si.vga_engine == SIS_315_VGA) && (usScratchP1_00 & 0x50) == 0x10) ) {
+    if( ((si.sisvga_engine == SIS_300_VGA) && (usScratchP1_00 & 0xa0) == 0x20) ||
+        ((si.sisvga_engine == SIS_315_VGA) && (usScratchP1_00 & 0x50) == 0x10) ) {
 	   return TRUE;
     } else {
            return FALSE;
@@ -187,7 +188,7 @@ SISResetVideo()
     setvideoregmask (Index_VI_Control_Misc2,        0x00, 0x01);
     setvideoregmask (Index_VI_Contrast_Enh_Ctrl,    0x04, 0x07);
     setvideoreg (Index_VI_Brightness,               0x20);
-    if (si.vga_engine == SIS_315_VGA) {
+    if (si.sisvga_engine == SIS_315_VGA) {
       	setvideoreg (Index_VI_Hue,          	   0x00);
        	setvideoreg (Index_VI_Saturation,            0x00);
     }
@@ -195,7 +196,7 @@ SISResetVideo()
     setvideoregmask (Index_VI_Control_Misc2,        0x01, 0x01);
     	setvideoregmask (Index_VI_Contrast_Enh_Ctrl,    0x04, 0x07);
     	setvideoreg (Index_VI_Brightness,               0x20);
-    	if (si.vga_engine == SIS_315_VGA) {
+    	if (si.sisvga_engine == SIS_315_VGA) {
        		setvideoreg (Index_VI_Hue,              0x00);
        		setvideoreg (Index_VI_Saturation,       0x00);
     	}
@@ -216,11 +217,11 @@ set_dispmode()
 
     if(SiSBridgeIsInSlaveMode()) si.video_port.bridgeIsSlave = TRUE;
 
-    if( (si.disp_state & DISPMODE_MIRROR ) ||
-        ((si.video_port.bridgeIsSlave) && (si.disp_state & DISPTYPE_DISP2)) )  {
+    if( (si.currentvbflags & VB_MIRROR_MODE ) ||
+        ((si.video_port.bridgeIsSlave) && (si.vbflags & CRT2_VGA)) )  {
 	  si.video_port.displayMode = DISPMODE_SINGLE2;
     } else {
-      if(si.disp_state & DISPTYPE_DISP1) {
+      if(si.currentvbflags & VB_DISPTYPE_CRT1) {
       	si.video_port.displayMode = DISPMODE_SINGLE1;  /* TW: CRT1 only */
       } else {
         si.video_port.displayMode = DISPMODE_SINGLE2;  /* TW: CRT2 only */
@@ -300,7 +301,7 @@ void SISSetupImageVideo()
      /* TW: 300 series require double words for addresses and pitches,
      *     310/325 series accept word.
      */
-    switch (si.vga_engine) {
+    switch (si.sisvga_engine) {
     case SIS_315_VGA:
     	si.video_port.shiftValue = 1;
 	break;
@@ -331,25 +332,25 @@ calc_scale_factor(SISOverlayPtr pOverlay, int index, int iscrt2)
   int dstH = pOverlay->dy2 - pOverlay->dy1;
   int srcW = pOverlay->srcW;
   int srcH = pOverlay->srcH;
-  uint16 LCDheight = si.LCDheight;
+  uint16 LCDheight = si.lcdyres;
   int srcPitch = pOverlay->origPitch;
   int origdstH = dstH;
 
   /* TW: Stretch image due to idiotic LCD "auto"-scaling on LVDS (and 630+301B) */
-	if(si.disp_state & DISPTYPE_LCD) {
+	if(si.vbflags & CRT2_LCD) {
 		if(si.video_port.bridgeIsSlave) {
-			if(si.hasVB & HASVB_LVDS) {
+			if(si.vbflags & VB_LVDS) {
 				dstH = (dstH * LCDheight) / pOverlay->SCREENheight;
-			} else if( (si.vga_engine == SIS_300_VGA) &&
-		  		(si.hasVB & (HASVB_301|HASVB_302|HASVB_303)) ) {
+			} else if( (si.sisvga_engine == SIS_300_VGA) &&
+		  		(si.vbflags & (VB_301|VB_302B|VB_30xBDH)) ) {
 				dstH = (dstH * LCDheight) / pOverlay->SCREENheight;
 			}
 		} else if(iscrt2) {
-  			if (si.hasVB & HASVB_LVDS) {
+  			if (si.vbflags & VB_LVDS) {
    				dstH = (dstH * LCDheight) / pOverlay->SCREENheight;
 				if (si.video_port.displayMode == DISPMODE_MIRROR) flag = 1;
-    		} else if ( (si.vga_engine == SIS_300_VGA) &&
-         	  (si.hasVB & (HASVB_301|HASVB_302|HASVB_303)) ) {
+    		} else if ( (si.sisvga_engine == SIS_300_VGA) &&
+         	  (si.vbflags & (VB_301|VB_302B|VB_30xBDH)) ) {
     			dstH = (dstH * LCDheight) / pOverlay->SCREENheight;
 				if (si.video_port.displayMode == DISPMODE_MIRROR) flag = 1;
     		}
@@ -614,8 +615,8 @@ set_overlay(SISOverlayPtr pOverlay, int index)
     uint16 pitch=0;
     uint8  h_over=0, v_over=0;
     uint16 top, bottom, left, right;
-    uint16 screenX = si.width;
-    uint16 screenY = si.height;
+    uint16 screenX = si.video_width;
+    uint16 screenY = si.video_height;
     uint8  data;
     uint32 watchdog;
 
@@ -659,7 +660,7 @@ set_overlay(SISOverlayPtr pOverlay, int index)
     /* TEST end */
 
     /* TEST: Is this required? */
-    if (si.vga_engine == SIS_315_VGA)
+    if (si.sisvga_engine == SIS_315_VGA)
     	setvideoreg (Index_VI_Control_Misc3, 0x00);
     /* TEST end */
 
@@ -673,7 +674,7 @@ set_overlay(SISOverlayPtr pOverlay, int index)
     setvideoreg (Index_VI_Disp_Y_Buf_Start_High,   (uint8)((pOverlay->PSY)>>16));
 
     /* set 310/325 series overflow bits for Y plane */
-    if (si.vga_engine == SIS_315_VGA) {
+    if (si.sisvga_engine == SIS_315_VGA) {
         setvideoreg (Index_VI_Disp_Y_Buf_Pitch_High, (uint8)(pitch>>12));
     	setvideoreg (Index_VI_Y_Buf_Start_Over, ((uint8)((pOverlay->PSY)>>24) & 0x01));
     }
@@ -701,14 +702,14 @@ set_overlay(SISOverlayPtr pOverlay, int index)
         setvideoreg (Index_VI_V_Buf_Start_High,  (uint8)(PSV>>16));
 
 	/* 310/325 series overflow bits */
-	if (si.vga_engine == SIS_315_VGA) {
+	if (si.sisvga_engine == SIS_315_VGA) {
 	   setvideoreg (Index_VI_Disp_UV_Buf_Pitch_High, (uint8)(pitch>>13));
 	   setvideoreg (Index_VI_U_Buf_Start_Over, ((uint8)(PSU>>24) & 0x01));
 	   setvideoreg (Index_VI_V_Buf_Start_Over, ((uint8)(PSV>>24) & 0x01));
 	}
     }
 
-    if (si.vga_engine == SIS_315_VGA) {
+    if (si.sisvga_engine == SIS_315_VGA) {
 	/* Trigger register copy for 310 series */
 	setvideoreg(Index_VI_Control_Misc3, 1 << index);
     }
@@ -789,7 +790,7 @@ SISDisplayVideo()
    /* overlay.bobEnable = 0x02; */
    overlay.bobEnable = 0x00;    /* Disable BOB (whatever that is) */
 
-   overlay.SCREENheight = si.height;
+   overlay.SCREENheight = si.video_height;
    
    overlay.dx1 = si.video_port.drw_x;
    overlay.dx2 = si.video_port.drw_x + si.video_port.drw_w;
@@ -904,7 +905,7 @@ SISDisplayVideo()
    /* set brightness, contrast, hue and saturation */
    set_brightness(si.video_port.brightness);
    set_contrast(si.video_port.contrast);
-   if (si.vga_engine == SIS_315_VGA) {
+   if (si.sisvga_engine == SIS_315_VGA) {
    	set_hue(si.video_port.hue);
    	set_saturation(si.video_port.saturation);
    }
@@ -962,14 +963,14 @@ area_id SISStartVideo( short src_x, short src_y,
    }
    
    /* Allocate memory ( only use the lower 16mb ) */
-	if( si.mem_size > 1024 * 1024 * 16 ) {
+	if( si.video_size > 1024 * 1024 * 16 ) {
 		si.video_port.bufAddr = PAGE_ALIGN((1024 * 1024 * 16 - totalSize - PAGE_SIZE));
 	} else {
-		si.video_port.bufAddr = PAGE_ALIGN((si.mem_size - totalSize - PAGE_SIZE));
+		si.video_port.bufAddr = PAGE_ALIGN((si.video_size - totalSize - PAGE_SIZE));
 	}
    si.video_port.colorKey    = color_key & 0x00ffffff;
    //dbprintf("Video @ %x %x\n", si.video_port.bufAddr, ( si.pci_dev.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK ) + si.video_port.bufAddr  );
-   
+   dbprintf( "%x %x\n", (uint)si.vbflags, (uint)si.currentvbflags );
    SISDisplayVideo() ;
    
   

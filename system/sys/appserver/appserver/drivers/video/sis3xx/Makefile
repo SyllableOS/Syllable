@@ -1,4 +1,4 @@
-COPTS   = -I$(TOP)/src $(shell freetype-config --cflags) -c -O2 -Wall
+COPTS   = -I$(TOP)/src $(shell freetype-config --cflags) -c -O2
 
 DEVBIN = /system/drivers/appserver/video
 OBJS = init301.o init.o sis_video.o sis.o sis3xx.o
