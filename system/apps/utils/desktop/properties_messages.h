@@ -1,0 +1,21 @@
+enum
+{
+
+    ID_PROP_CANCEL = 1008,
+    ID_PROP_CLOSE = 1009,
+    ID_PROP_APPLY = 1010,
+
+    ID_PROP_IMAGE_SIZE = 1011,
+    ID_PROP_LIST = 1012,
+    ID_PROP_LIST_INIT = 1013,
+
+    ID_PEN_CHANGED = 1014,
+    ID_PROP_LOGIN_CHECK = 1015
+
+};
+
+
+
+
+
+
