@@ -4055,6 +4055,7 @@ int sys_rmdir( const char *a_pzPath )
 {
 	int nError;
 	char *pzPath = NULL;
+	int nLength;
 
 	nError = strndup_from_user( a_pzPath, PATH_MAX, &pzPath );
 	if ( nError < 0 )
@@ -4062,6 +4063,13 @@ int sys_rmdir( const char *a_pzPath )
 		printk( "Error: sys_rmdir() failed to dup source path\n" );
 		return ( nError );
 	}
+
+	nLength = strlen( pzPath );
+	if ( pzPath[nLength - 1] == '/' )
+	{
+		pzPath[nLength - 1] = '\0';
+	}
+
 	nError = do_rmdir( NULL, pzPath );
 	kfree( pzPath );
 	return ( nError );

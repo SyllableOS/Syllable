@@ -537,11 +537,12 @@ static void strace_print_errno( long nReturnVal )
 	if( nReturnVal < 0 )
 	{
 		strace_print( "-" );
+		nReturnVal = -nReturnVal;
 	}
 
 	for( nErrno = 0; nErrno < __NUM_ERRNOS; nErrno++ )
 	{
-		if( g_sErrnoTable[nErrno].nErrno == nErrno )
+		if( g_sErrnoTable[nErrno].nErrno == (int)nReturnVal )
 		{
 			strace_print( "%s", g_sErrnoTable[nErrno].zName );
 			break;
