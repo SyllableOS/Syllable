@@ -3,6 +3,7 @@
 modules
 	sys/include
 	other/config/etc
+	other/icons
 	other/init
 	other/keymaps
 	sys/kernel/kernel
@@ -24,6 +25,7 @@ modules
 	sys/appserver/appserver/drivers/decorators/photon
 	sys/appserver/appserver/drivers/decorators/win98
 	sys/appserver/appserver/drivers/video/tdfx
+	sys/appserver/registrar
 	sys/media/mediaserver
 	sys/media/drivers/cdda
 	sys/media/drivers/ffmpeg
@@ -32,6 +34,10 @@ modules
 	sys/media/drivers/videobitmap
 	sys/media/drivers/videooverlay
 	sys/media/drivers/vorbis
+	apps/desktop/desktop
+	apps/desktop/dock
+	apps/desktop/dock_plugins
+	apps/desktop/filebrowser
 	apps/gnu/coreutils-5.2.1
 	apps/gnu/less-382
 	apps/gnu/sed-4.1.1
@@ -43,6 +49,9 @@ modules
 	apps/utils/DiskManager
 	apps/utils/Preferences/Appearance
 	apps/utils/Preferences/DateTime
+	apps/utils/Preferences/Desktop
+	apps/utils/Preferences/Dock
+	apps/utils/Preferences/FileTypes
 	apps/utils/Preferences/Font
 	apps/utils/Preferences/Keyboard
 	apps/utils/Preferences/Locale
@@ -51,6 +60,7 @@ modules
 	apps/utils/Preferences/Screen
 	apps/utils/aclock
 	apps/utils/aedit
+	apps/utils/archiver
 	apps/utils/aterm
 	apps/utils/aview
 	apps/utils/bzoom
@@ -58,6 +68,7 @@ modules
 	apps/utils/charmap
 	apps/utils/cpumon
 	apps/utils/dhcpc
+	apps/utils/fsutils
 	apps/utils/man2html
 	apps/utils/memmon
 	apps/utils/pkgmanager

@@ -180,6 +180,7 @@ modules
 	sys/appserver/appserver/drivers/video/tdfx
 	sys/appserver/appserver/drivers/video/trident
 	sys/appserver/appserver/drivers/video/vmware
+	sys/appserver/registrar
 	sys/media/libmedia
 	sys/media/mediaserver
 	sys/media/drivers/cdda
@@ -191,12 +192,19 @@ modules
 	sys/media/drivers/videobitmap
 	sys/media/drivers/videooverlay
 	sys/media/drivers/vorbis
+	apps/desktop/desktop
+	apps/desktop/dock
+	apps/desktop/dock_plugins
+	apps/desktop/filebrowser
 	apps/gnu/bash-2.03
 	apps/gnu/coreutils-5.2.1
 	apps/gnu/grep-2.5.1
 	apps/gnu/sed-4.1.1
 	apps/utils/Preferences/Appearance
 	apps/utils/Preferences/DateTime
+	apps/utils/Preferences/Desktop
+	apps/utils/Preferences/Dock
+	apps/utils/Preferences/FileTypes
 	apps/utils/Preferences/Font
 	apps/utils/Preferences/Keyboard
 	apps/utils/Preferences/Locale
