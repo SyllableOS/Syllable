@@ -17,7 +17,6 @@ LoginView::LoginView( const Rect& cFrame ) : View( cFrame, "password_view", CF_F
    	Color32_s bg(239,236,231,255);
 
     m_pcOkBut        = new ColorButton( Rect( 0, 0, 0, 0 ),"ok", "_Login", new Message( ID_OK ),bg);
-	m_pcShutdownBut	 = new LoginImageButton(Rect(50,260,74,284),"shutbut","Shutdown",new Message(ID_SHUTDOWN),pcShutdownImage,ImageButton::IB_TEXT_BOTTOM,false,false,false);
 	m_pcNameView     = new TextView( Rect( 0, 0, 0, 0 ), "name_view", "", CF_FOLLOW_NONE );
     m_pcPasswordView = new TextView( Rect( 0, 0, 0, 0 ), "pasw_view", "", CF_FOLLOW_NONE );
 
@@ -26,7 +25,6 @@ LoginView::LoginView( const Rect& cFrame ) : View( cFrame, "password_view", CF_F
     AddChild( m_pcNameView);
     AddChild( m_pcPasswordView);
     AddChild( m_pcOkBut);
-	AddChild( m_pcShutdownBut);
 
     Layout();
 
@@ -51,7 +49,6 @@ LoginView::LoginView( const Rect& cFrame ) : View( cFrame, "password_view", CF_F
 void LoginView::Paint(const Rect & cUpdate)
 {
     os::String zInfo = GetSyllableVersion();
-	os::String cShutdown = "Shutdown";
 
     SetFgColor(102,136,217,0);
 	SetBgColor(255,255,255,0);
@@ -63,9 +60,6 @@ void LoginView::Paint(const Rect & cUpdate)
 
     MovePenTo(470-GetStringWidth(zInfo.c_str()),40);
     DrawString(zInfo.c_str());
-
-	MovePenTo(76,276);
-	DrawString(cShutdown.c_str());
 
 }
 
@@ -136,7 +130,6 @@ void LoginView::Layout()
 void LoginView::LoadImages()
 {
     pcLoginImage = LoadImageFromResource("syllable.gif");
-	pcShutdownImage = LoadImageFromResource("shutdown.png");
 }
 
 

@@ -1,6 +1,8 @@
 #include "commonfuncs.h"
 #include "mainwindow.h"
 
+
+
 using std::ifstream;
 
 int BecomeUser( struct passwd *psPwd, LoginWindow* pcWindow )
@@ -21,6 +23,7 @@ int BecomeUser( struct passwd *psPwd, LoginWindow* pcWindow )
         setenv( "USER", psPwd->pw_name,true );
         setenv( "SHELL", psPwd->pw_shell,true );
         UpdateLoginConfig(psPwd->pw_name);
+		 Application::GetInstance()->PopCursor();
         execl( "/bin/desktop", "desktop", NULL );
         break;
 
