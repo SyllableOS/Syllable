@@ -1171,6 +1171,9 @@ case $os in
 	-atheos*)
 		os=-atheos
 		;;
+	-syllable*)
+		os=-syllable
+		;;
 	-386bsd)
 		os=-bsd
 		;;
