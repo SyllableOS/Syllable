@@ -1,3 +1,13 @@
+* Oct 21 2003, Kristian Van Der Vliet *
+
+Implement SNDCTL_DSP_GETOSPACE & SNDCTL_DSP_GETODELAY ioctl's in the
+emu10k1 driver.
+
+* Oct 21 2003, Kristian Van Der Vliet *
+
+Improve drive detection in the ATA driver.  The changes are especially helpful
+in eliminating "phantom" ATAPI devices some user have experienced.
+
 * Oct 6 2003, Kaj de Vos *
 
 First check-in of the new build system.
