@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.3.17
+# Version 0.3.18
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -253,7 +253,7 @@ def installPackage target
 				unless thirdParty?
 					action "make install"
 				else
-					if exists? dir = installPath(target) and not
+					if exists? root = installPath(target) and not
 						begin
 							logHeader "Uninstalling " + shortName(target)
 							uninstallPackage target  # Double failure logging!
@@ -261,10 +261,21 @@ def installPackage target
 					then
 						false
 					else
+						if dirs = (recipe = recipe target)["install-tree"]
+							logHeader "Creating subdirectories"
+							logDetail root
+							Dir.mkdir root
+
+							for dir in toList dirs
+								logDetail d = File.join(root, dir)
+								Dir.mkdir d
+							end
+						end
+
 						if not action (cmdLine = (recipe = recipe target)["install"]) ? toString(cmdLine) :
 							"make" +
-							(	(arg = recipe["install-prefix"]) ? " " + arg + dir :
-								@systemBuild ? " prefix=" + dir :
+							(	(arg = recipe["install-prefix"]) ? " " + arg + root :
+								@systemBuild ? " prefix=" + root :
 								""
 							) +
 							" install"
@@ -274,14 +285,14 @@ def installPackage target
 						elsif files = recipe["documentation"] and not
 							begin
 								logHeader "Installing documentation"
-								action "cp -a #{toString files} " + dir
+								action "cp -a #{toString files} " + root
 							end
 						then
 							false
 						elsif exists? filesPath = File.join(@packagesPath, fullName(target), "distro") and not
 							begin
 								logHeader "Installing extra files"
-								action "cp -a #{File.join filesPath, "*"} " + dir
+								action "cp -a #{File.join filesPath, "*"} " + root
 							end
 						then
 							false
@@ -289,7 +300,7 @@ def installPackage target
 							@systemBuild or
 							begin
 								logHeader "Registering " + target
-								action "pkgmanager -a " + dir
+								action "pkgmanager -a " + root
 							end
 						end
 					end
@@ -391,13 +402,6 @@ end
 
 def prepare
 	if @systemBuild
-#		logHeader "Creating extra directories in source tree"
-
-#		for dir in load File.join(@builderPath, "extra-source-dirs")
-#			logDetail dir
-#			Dir.mkdir dir unless exists? dir
-#		end
-
 		logHeader "Building distribution tree"
 
 		if exists? @distroRoot
@@ -818,7 +822,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.3.17",
+	puts "Syllable Build System 0.3.18",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
