@@ -29,8 +29,7 @@ extern "C" {
 
 #define	DEFAULT_PORT_SIZE		15
 
-#define	MSG_PORT_PRIVATE	1
-#define	MSG_PORT_PUBLIC	1<<1
+#define	MSG_PORT_PUBLIC			1<<1
 
 #ifdef __KERNEL__
 
@@ -96,3 +95,4 @@ port_id find_port( const char* pzPortname );
 
 
 #endif	/* __F_ATHEOS_MSGPORTS_H__ */
+

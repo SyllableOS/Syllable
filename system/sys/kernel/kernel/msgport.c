@@ -143,7 +143,7 @@ port_id sys_create_port( const char *const pzName, int nMaxCount )
 		goto error3;
 	}
 	psPort->mp_nMaxCount = nMaxCount;
-	psPort->mp_nFlags = MSG_PORT_PRIVATE;
+	psPort->mp_nFlags = 0;
 	strncpy_from_user( psPort->mp_zName, pzName, OS_NAME_LENGTH );
 	psPort->mp_zName[OS_NAME_LENGTH - 1] = '\0';
 
@@ -168,7 +168,7 @@ port_id sys_create_port( const char *const pzName, int nMaxCount )
 
 static void do_delete_port( Process_s *psProc, MsgPort_s *psPort )
 {
-	if ( psPort->mp_nFlags == MSG_PORT_PUBLIC )
+	if ( psPort->mp_nFlags & MSG_PORT_PUBLIC )
 	{
 		unlock_mutex( g_hPortListSema );
 		make_port_private( psPort->mp_hPortID );
@@ -219,6 +219,7 @@ status_t sys_delete_port( port_id hPort )
 		nError = -EINVAL;
 		goto error;
 	}
+
 	if ( psPort->mp_hOwner != psProc->tc_hProcID )
 	{
 		printk( "Warning: Attempt to delete message port not owned by us(%d) but by %d\n", psProc->tc_hProcID, psPort->mp_hOwner );
@@ -598,7 +599,7 @@ status_t make_port_public( port_id hPort )
 
 	lock_mutex( g_hPortListSema, true );
 
-	psPort->mp_nFlags = MSG_PORT_PUBLIC;
+	psPort->mp_nFlags |= MSG_PORT_PUBLIC;
 
 	unlock_mutex( g_hPortListSema );
 
@@ -648,7 +649,7 @@ status_t make_port_private( port_id hPort )
 
 			lock_mutex( g_hPortListSema, true );
 
-			psPort->mp_nFlags = MSG_PORT_PRIVATE;
+			psPort->mp_nFlags &= ~MSG_PORT_PUBLIC;
 
 			unlock_mutex( g_hPortListSema );
 
