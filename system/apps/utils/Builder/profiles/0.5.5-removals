@@ -1,0 +1,6 @@
+; To be removed for Syllable 0.5.5
+
+modules
+	sys/kernel/drivers/graphics/s3_savage
+	sys/appserver/appserver/drivers/video/savage
+

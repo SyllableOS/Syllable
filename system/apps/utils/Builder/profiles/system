@@ -110,7 +110,8 @@ modules
 	sys/kernel/drivers/graphics/mga
 	sys/kernel/drivers/graphics/nvidia
 	sys/kernel/drivers/graphics/radeon
-	sys/kernel/drivers/graphics/s3_savage
+;	Dropped for now:
+;	sys/kernel/drivers/graphics/s3_savage
 	sys/kernel/drivers/graphics/s3_virge
 	sys/kernel/drivers/graphics/sis3xx
 	sys/kernel/drivers/graphics/tdfx
@@ -176,7 +177,8 @@ modules
 	sys/appserver/appserver/drivers/video/nvidia
 	sys/appserver/appserver/drivers/video/radeon
 	sys/appserver/appserver/drivers/video/s3
-	sys/appserver/appserver/drivers/video/savage
+;	Dropped for now:
+;	sys/appserver/appserver/drivers/video/savage
 	sys/appserver/appserver/drivers/video/sis3xx
 	sys/appserver/appserver/drivers/video/tdfx
 	sys/appserver/appserver/drivers/video/trident
