@@ -39,17 +39,22 @@ MediaServer::MediaServer()
 	m_zStartupSound = "startup.wav";
 	
 	/* Load Settings */
-	os::Settings* pcSettings = new os::Settings( "mediaserver", String( getenv( "HOME" ) ) + "/Settings/" );
-	//cout<<Application::GetInstance()->GetName().c_str()<<endl;
-	if( pcSettings->Load() == 0 )
+	try
 	{
-		m_zDefaultInput = pcSettings->GetString( "default_input", "" );
-		m_zDefaultAudioOutput = pcSettings->GetString( "default_audio_output", "Media Server Audio Output" );
-		m_zDefaultVideoOutput = pcSettings->GetString( "default_video_output", "Video Overlay Output" );
-		m_zStartupSound = pcSettings->GetString( "startup_sound", "startup.wav" );
-		m_nDefaultDsp = pcSettings->GetInt32( "default_dsp", 0 );
+		Settings* pcSettings = new Settings( new File( "/system/config/mediaserver" ) );
+	//cout<<Application::GetInstance()->GetName().c_str()<<endl;
+		if( pcSettings->Load() == 0 )
+		{
+			m_zDefaultInput = pcSettings->GetString( "default_input", "" );
+			m_zDefaultAudioOutput = pcSettings->GetString( "default_audio_output", "Media Server Audio Output" );
+			m_zDefaultVideoOutput = pcSettings->GetString( "default_video_output", "Video Overlay Output" );
+			m_zStartupSound = pcSettings->GetString( "startup_sound", "startup.wav" );
+			m_nDefaultDsp = pcSettings->GetInt32( "default_dsp", 0 );
+		}
+		delete( pcSettings );
+	} catch( ... )
+	{
 	}
-	delete( pcSettings );
 	
 	
 	m_hLock = create_semaphore( "media_server_lock", 1, 0 );
@@ -114,7 +119,7 @@ MediaServer::~MediaServer()
 void MediaServer::SaveSettings()
 {
 	/* Save */
-	os::Settings* pcSettings = new os::Settings( "mediaserver", String( getenv( "HOME" ) ) + "/Settings/" );
+	Settings* pcSettings = new Settings( new File( "/system/config/mediaserver", O_RDWR | O_CREAT ) );
 	pcSettings->SetString( "default_input", m_zDefaultInput );
 	pcSettings->SetString( "default_audio_output", m_zDefaultAudioOutput );
 	pcSettings->SetString( "default_video_output", m_zDefaultVideoOutput );
@@ -1023,6 +1028,7 @@ int main()
 		pcServer->Start();
 	}
 }
+
 
 
 
