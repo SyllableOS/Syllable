@@ -26,3 +26,19 @@ links
 	bin/ls		/bin
 ;	For SaMBa:
 	bin/echo	/bin
+;	For general compatibility:
+	bin/cat		/bin
+	bin/chgrp	/bin
+	bin/chmod	/bin
+	bin/chown	/bin
+	bin/date	/bin
+	bin/dd		/bin
+	bin/false	/bin
+	bin/hostname	/bin
+	bin/mkdir	/bin
+	bin/mv		/bin
+	bin/rmdir	/bin
+	bin/su		/bin
+	bin/sync	/bin
+	bin/true	/bin
+	bin/uname	/bin
