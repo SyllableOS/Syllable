@@ -249,9 +249,11 @@ class TreeViewStringNode::Private
 	public:
     std::vector< std::pair<String,float> > m_cStrings;
     Image*	m_pcIcon;
+	uint32	m_nTextFlags;
     
     Private() {
     	m_pcIcon = NULL;
+    	m_nTextFlags = DTF_IGNORE_FMT;
     }
     
     ~Private() {
@@ -308,7 +310,7 @@ float TreeViewStringNode::GetHeight( View* pcView )
 	uint i;
 	
 	for( i = 0; i < m->m_cStrings.size(); i++ ) {
-		Point s = pcView->GetTextExtent( m->m_cStrings[i].first );
+		Point s = pcView->GetTextExtent( m->m_cStrings[i].first, m->m_nTextFlags );
 		if( s.y > cSize.y ) cSize.y = s.y;
 	}
      
@@ -318,6 +320,16 @@ float TreeViewStringNode::GetHeight( View* pcView )
     }
 
     return cSize.y;
+}
+
+uint32 TreeViewStringNode::GetTextFlags() const
+{
+	return m->m_nTextFlags;
+}
+
+void TreeViewStringNode::SetTextFlags( uint32 nTextFlags ) const
+{
+	m->m_nTextFlags = nTextFlags;
 }
 
 void TreeViewStringNode::Paint( const Rect& cFrame, View* pcView, uint nColumn,
@@ -338,7 +350,7 @@ void TreeViewStringNode::Paint( const Rect& cFrame, View* pcView, uint nColumn,
 
 	Point	cTextSize;
 	if( nColumn <= m->m_cStrings.size() ) {
-		cTextSize = pcView->GetTextExtent( m->m_cStrings[nColumn].first );
+		cTextSize = pcView->GetTextExtent( m->m_cStrings[nColumn].first, m->m_nTextFlags );
 	}
 
 	if( nIndent && !nColumn ) {	
@@ -379,7 +391,7 @@ void TreeViewStringNode::Paint( const Rect& cFrame, View* pcView, uint nColumn,
 
 	if( nColumn <= m->m_cStrings.size() ) {
 		Rect cTextRect( vTextPos, cItemRect.top, cItemRect.right, cItemRect.bottom );
-    	pcView->DrawText( cTextRect, m->m_cStrings[nColumn].first, 0 );
+    	pcView->DrawText( cTextRect, m->m_cStrings[nColumn].first, m->m_nTextFlags );
     }
 
 	if( GetIcon() && nColumn == 0 ) {
@@ -1158,4 +1170,3 @@ void TreeView::InsertRow( int nPos, ListViewRow* pcRow, bool bUpdate )
 void TreeView::InsertRow( ListViewRow* pcRow, bool bUpdate )
 {
 }
-

@@ -112,10 +112,14 @@ public:
 	
     void		     	AppendString( const String& cString );
     void	 	     	SetString( int nIndex, const String& cString );
-    const String&	GetString( int nIndex ) const;
+    const String&		GetString( int nIndex ) const;
 
 	void				SetIcon( Image* pcIcon );
 	Image*				GetIcon() const;
+
+
+	uint32				GetTextFlags() const;
+	void				SetTextFlags( uint32 nTextFlags ) const;
 
 private:
 	class Private;
@@ -195,6 +199,4 @@ private:
 
 
 #endif // __F_GUI_TREEVIEW_H__
-
-
 
