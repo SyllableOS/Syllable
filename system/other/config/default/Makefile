@@ -17,13 +17,14 @@ doc:
 install-doc:
 
 dist:
-	@cp -a * $(DIST_TARGET_PATH)
+	@cp -a appserver dev $(DIST_TARGET_PATH)
 	@cd default_user/;\
 	cp -p .profile $(DIST_TARGET_PATH)/default_user/.profile;\
 	cp -p .profile $(DIST_DIR)/atheos/home/root/.profile;\
+	cp -p .profile $(DIST_DIR)/atheos/home/guest/.profile;\
+	unzip Desktop/default-desktop-objects.zip -d $(DIST_TARGET_PATH)/default_user/Desktop;\
 	unzip Desktop/default-desktop-objects.zip -d $(DIST_DIR)/atheos/home/root/Desktop;\
 	unzip Desktop/default-desktop-objects.zip -d $(DIST_DIR)/atheos/home/guest/Desktop;\
-	cp -p .profile $(DIST_DIR)/atheos/home/guest/.profile;\
 	cd ..;
 
 clean:
