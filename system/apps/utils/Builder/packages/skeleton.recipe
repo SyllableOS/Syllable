@@ -1,6 +1,6 @@
 ; Recipe information
-authors				<Recipe authors>
-maintainers			<Recipe maintainers>
+authors				<Recipe authors, in historical order>
+maintainers			<Recipe maintainers, if not first author>
 status				broken | incomplete | developing | testing
 notes				<Internal notes>
 ;
@@ -51,7 +51,7 @@ configure-options	--with-option
 ; Extra variables for make:
 make-vars			VAR="value"
 ; Non-standard make targets:
-make-targets		all
+;make-targets		all
 ;
 ; Testing:
 ; make <test-targets>
@@ -60,12 +60,15 @@ make-targets		all
 test-targets		check
 ;
 ; Installing:
+; <install>
 ; make [<install-prefix>] <install-targets>
+;
+install				<Installation command sequence>
 ;
 ; Non-standard install prefix option:
 install-prefix		prefix=
 ; Non-standard install targets:
-install-targets		install
+;install-targets		install
 ;
 ; Extra files to install:
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS

@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.3.16
+# Version 0.3.17
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -182,7 +182,8 @@ def configurePackage target
 			logHeader "Configuring"
 			action "rm config.cache" if exists? "config.cache"
 			name = shortName package
-			if action ((vars = recipe["configure-vars"]) ? vars + " " : "") +
+			if action (cmdLine = recipe["configure"]) ? toString(cmdLine) :
+				((vars = recipe["configure-vars"]) ? vars + " " : "") +
 				"./" + cmd +
 #				(name == "man" || name == "grub" ? "" :
 				((args = recipe["configure-args"]) ?
@@ -209,7 +210,9 @@ def cleanPackage target
 end
 
 def makePackage target
-	unless action "make"
+	unless action ((vars = recipe(target)["make-vars"]) ? vars + " " : "") +
+		"make"
+	then
 		logFailure target
 		false
 	else
@@ -218,7 +221,7 @@ def makePackage target
 end
 
 def testPackage target
-	unless action "make check"
+	unless action "make " + (targets = recipe(target)["test-targets"]) ? targets : "check"
 		logFailure target
 		false
 	else
@@ -237,7 +240,7 @@ def installPackage target
 			then
 				false
 			else
-				action "tar -C /usr -xpzf #{target}" and
+				action "tar -C /usr -xpzf " + target and
 				begin
 					logHeader "Registering " + target
 					action "pkgmanager -a " + dir
@@ -258,8 +261,9 @@ def installPackage target
 					then
 						false
 					else
-						if not action "make" +
-							(	(arg = recipe(target)["install-prefix"]) ? " " + arg + dir :
+						if not action (cmdLine = (recipe = recipe target)["install"]) ? toString(cmdLine) :
+							"make" +
+							(	(arg = recipe["install-prefix"]) ? " " + arg + dir :
 								@systemBuild ? " prefix=" + dir :
 								""
 							) +
@@ -267,7 +271,7 @@ def installPackage target
 #							" install-strip"
 						then
 							false
-						elsif files = recipe(target)["documentation"] and not
+						elsif files = recipe["documentation"] and not
 							begin
 								logHeader "Installing documentation"
 								action "cp -a #{toString files} " + dir
@@ -814,7 +818,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.3.16",
+	puts "Syllable Build System 0.3.17",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
