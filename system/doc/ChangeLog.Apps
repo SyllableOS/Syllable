@@ -1,3 +1,16 @@
+* February 14 2004, Henrik Isaksson *
+
+	- guiprefs
+		o Corrected typo.
+	- keymapconv
+		o Updated for GCC3.
+	- locator_0.2
+		o Updated for GCC3 and libsyllable changes.
+	- memmon
+		o Updated for GCC3 and libsyllable changes.
+	- pkgmanager
+		o Updated for GCC3
+
 * February 13 2004, Henrik Isaksson *
 	
 	- rescopy

@@ -1,3 +1,10 @@
+* February 14 2004, Henrik Isaksson *
+
+ * TableView.cpp
+	Bugfix: will now Invalidate() itself when resized.
+	Bugfix: titles were not drawn correctly (this bug was introduced when
+	char* was changed to os::String).
+
 * February 9 2004, Henrik Isaksson *
 
  * string.cpp/.h
@@ -500,3 +507,4 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
