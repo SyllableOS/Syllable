@@ -6,6 +6,20 @@
 #include <atheos/types.h>
 #include <atheos/soundcard.h>
 #include <posix/errno.h>
+
+typedef uint8 u8;
+typedef uint16 u16;
+typedef uint32 u32;
+typedef int8 s8;
+typedef int16 s16;
+typedef int32 s32;
+
+#define spinlock_t SpinLock_s
+
+#define GFP_KERNEL	MEMF_KERNEL
+#define copy_from_user	memcpy_from_user
+#define copy_to_user	memcpy_to_user
+
 #include "list.h"
 
 #define UP_INODE_SEM(a)
@@ -27,15 +41,19 @@ static inline unsigned long virt_to_bus(volatile void *addr)
 	return (unsigned long) addr;
 }
 
+extern uint32 get_free_pages( int nPageCount, int nFlags ); // This should probably be in kernel.h
+extern void free_pages( uint32 nPages, int nCount ); // This should probably be in kernel.h
+
 static inline void* alloc_dma_mem(PCI_Info_s *pdev, size_t size, dma_addr_t *bus_addr)
 {
-	void* mem_addr=kmalloc(size,MEMF_KERNEL);
-	*bus_addr=virt_to_bus(mem_addr);
 
-	return mem_addr;
+	uint32 mem_addr = get_free_pages( PAGE_ALIGN(size) >> PAGE_SHIFT, 0 );
+	*bus_addr=virt_to_bus((void*)mem_addr);
+
+	return (void*)mem_addr;
 }
 
-#define free_dma_mem(cookie, size, ptr, dma_ptr)	kfree(ptr)
+#define free_dma_mem(cookie, size, ptr, dma_ptr)	free_pages( (uint32)ptr, PAGE_ALIGN(size) >> PAGE_SHIFT );
 
 static inline int pci_read_config_byte(PCI_Info_s *pdev, int where, uint8 *ptr)
 {
@@ -197,3 +215,11 @@ static inline void debug_ioctl(uint32 cmd)
 }
 
 #endif /* __EMU_WRAPPER_H */
+
+
+
+
+
+
+
+

@@ -159,6 +159,24 @@ void emu10k1_writefn0(struct emu10k1_card *card, uint32 reg, uint32 data)
 	return;
 }
 
+void emu10k1_writefn0_2(struct emu10k1_card *card, u32 reg, u32 data, int size)
+{
+	unsigned long flags;
+
+	spinlock_cli(&card->lock, flags);
+
+	if (size == 32)
+		outl(data, card->iobase + (reg & 0x1F));
+	else if (size == 16)
+		outw(data, card->iobase + (reg & 0x1F));
+	else
+		outb(data, card->iobase + (reg & 0x1F));
+
+	spinunlock_restore(&card->lock, flags);
+
+	return;
+}
+
 uint32 emu10k1_readfn0(struct emu10k1_card * card, uint32 reg)
 {
 	uint32 val;
@@ -186,16 +204,26 @@ uint32 emu10k1_readfn0(struct emu10k1_card * card, uint32 reg)
 	}
 }
 
+void emu10k1_timer_set(struct emu10k1_card * card, u16 data)
+{
+	unsigned long flags;
+
+	spinlock_cli(&card->lock, flags);
+	outw(data & TIMER_RATE_MASK, card->iobase + TIMER);
+	spinunlock_restore(&card->lock, flags);
+}
+
 /************************************************************************
 * write/read Emu10k1 pointer-offset register set, accessed through      *
 *  the PTR and DATA registers                                           *
 *************************************************************************/
+#define A_PTR_ADDRESS_MASK 0x0fff0000
 void sblive_writeptr(struct emu10k1_card *card, uint32 reg, uint32 channel, uint32 data)
 {
 	uint32 regptr;
 	unsigned long flags;
 
-	regptr = ((reg << 16) & PTR_ADDRESS_MASK) | (channel & PTR_CHANNELNUM_MASK);
+	regptr = ((reg << 16) & A_PTR_ADDRESS_MASK) | (channel & PTR_CHANNELNUM_MASK);
 
 	if (reg & 0xff000000) {
 		uint32 mask;
@@ -392,15 +420,23 @@ int emu10k1_mpu_write_data(struct emu10k1_card *card, uint8 data)
 	unsigned long flags;
 	int ret;
 
-	spinlock_cli(&card->lock, flags);
-
-	if ((inb(card->iobase + MUSTAT) & MUSTAT_ORDYN) == 0) {
-		outb(data, card->iobase + MUDATA);
-		ret = 0;
-	} else
-		ret = -1;
-
-	spinunlock_restore(&card->lock, flags);
+	if (card->is_audigy) {
+/*		if ((sblive_readptr(card, A_MUSTAT,0) & MUSTAT_ORDYN) == 0) {
+			sblive_writeptr(card, A_MUDATA, 0, data);
+			ret = 0;
+		} else*/
+			ret = -1;
+	} else {
+		spinlock_cli(&card->lock, flags);
+	
+		if ((inb(card->iobase + MUSTAT) & MUSTAT_ORDYN) == 0) {
+			outb(data, card->iobase + MUDATA);
+			ret = 0;
+		} else
+			ret = -1;
+	
+		spinunlock_restore(&card->lock, flags);
+	}
 
 	return ret;
 }
@@ -410,15 +446,23 @@ int emu10k1_mpu_read_data(struct emu10k1_card *card, uint8 * data)
 	unsigned long flags;
 	int ret;
 
-	spinlock_cli(&card->lock, flags);
+	if (card->is_audigy) {
+/*		if ((sblive_readptr(card, A_MUSTAT,0) & MUSTAT_IRDYN) == 0) {
+			*data = sblive_readptr(card, A_MUDATA,0);
+			ret = 0;
+		} else*/
+			ret = -1;
+	} else {
+		spinlock_cli(&card->lock, flags);
 
-	if ((inb(card->iobase + MUSTAT) & MUSTAT_IRDYN) == 0) {
-		*data = inb(card->iobase + MUDATA);
-		ret = 0;
-	} else
-		ret = -1;
+		if ((inb(card->iobase + MUSTAT) & MUSTAT_IRDYN) == 0) {
+			*data = inb(card->iobase + MUDATA);
+			ret = 0;
+		} else
+			ret = -1;
 
-	spinunlock_restore(&card->lock, flags);
+		spinunlock_restore(&card->lock, flags);
+	}
 
 	return ret;
 }
@@ -430,33 +474,51 @@ int emu10k1_mpu_reset(struct emu10k1_card *card)
 
 	DPF(2, "emu10k1_mpu_reset()\n");
 
-	if (card->mpuacqcount == 0) {
-		spinlock_cli(&card->lock, flags);
-		outb(MUCMD_RESET, card->iobase + MUCMD);
-		spinunlock_restore(&card->lock, flags);
+	if (card->is_audigy) {
+/*		if (card->mpuacqcount == 0) {
+			sblive_writeptr(card, A_MUCMD, 0, MUCMD_RESET);
+			sblive_wcwait(card, 8);
+			sblive_writeptr(card, A_MUCMD, 0, MUCMD_RESET);
+			sblive_wcwait(card, 8);
+			sblive_writeptr(card, A_MUCMD, 0, MUCMD_ENTERUARTMODE);
+			sblive_wcwait(card, 8);
+			status = sblive_readptr(card, A_MUDATA, 0);
+			if (status == 0xfe)
+				return 0;
+			else
+				return -1;
+		}*/
 
-		sblive_wcwait(card, 8);
-
-		spinlock_cli(&card->lock, flags);
-		outb(MUCMD_RESET, card->iobase + MUCMD);
-		spinunlock_restore(&card->lock, flags);
-
-		sblive_wcwait(card, 8);
-
-		spinlock_cli(&card->lock, flags);
-		outb(MUCMD_ENTERUARTMODE, card->iobase + MUCMD);
-		spinunlock_restore(&card->lock, flags);
-
-		sblive_wcwait(card, 8);
-
-		spinlock_cli(&card->lock, flags);
-		status = inb(card->iobase + MUDATA);
-		spinunlock_restore(&card->lock, flags);
-
-		if (status == 0xfe)
-			return 0;
-		else
-			return -1;
+		return 0;
+	} else {
+		if (card->mpuacqcount == 0) {
+			spinlock_cli(&card->lock, flags);
+			outb(MUCMD_RESET, card->iobase + MUCMD);
+			spinunlock_restore(&card->lock, flags);
+	
+			sblive_wcwait(card, 8);
+	
+			spinlock_cli(&card->lock, flags);
+			outb(MUCMD_RESET, card->iobase + MUCMD);
+			spinunlock_restore(&card->lock, flags);
+	
+			sblive_wcwait(card, 8);
+	
+			spinlock_cli(&card->lock, flags);
+			outb(MUCMD_ENTERUARTMODE, card->iobase + MUCMD);
+			spinunlock_restore(&card->lock, flags);
+	
+			sblive_wcwait(card, 8);
+	
+			spinlock_cli(&card->lock, flags);
+			status = inb(card->iobase + MUDATA);
+			spinunlock_restore(&card->lock, flags);
+	
+			if (status == 0xfe)
+				return 0;
+			else
+				return -1;
+		}
 	}
 
 	return 0;
@@ -477,4 +539,6 @@ int emu10k1_mpu_release(struct emu10k1_card *card)
 
 	return 0;
 }
+
+
 

@@ -48,7 +48,8 @@
 #define NUM_G           64              /* use all channels */
 #define NUM_FXSENDS     4               /* don't change */
 /* setting this to other than a power of two may break some applications */
-#define MAXBUFSIZE	65536
+#define MAXBUFSIZE	1024000
+//#define MAXBUFSIZE	65536
 #define MAXPAGES	8192 
 #define BUFMAXPAGES     (MAXBUFSIZE / PAGE_SIZE)
 
@@ -78,13 +79,22 @@ struct memhandle
 
 struct emu10k1_waveout
 {
-	uint16 send_routing[3];
+	u32 send_routing[3];
+	// audigy only:
+	u32 send_routing2[3];
 
-	uint8 send_a[3];
-	uint8 send_b[3];
-	uint8 send_c[3];
-	uint8 send_d[3];
+	u32 send_dcba[3];
+	// audigy only:
+	u32 send_hgfe[3];
 };
+
+#define ROUTE_PCM 0
+#define ROUTE_PT 1
+#define ROUTE_PCM1 2
+
+#define SEND_MONO 0
+#define SEND_LEFT 1
+#define SEND_RIGHT 2
 
 struct emu10k1_wavein
 {
@@ -128,7 +138,7 @@ struct mixer_private_ioctl {
 #define CMD_AC97_BOOST		_IOW('D', 20, struct mixer_private_ioctl)
 
 //up this number when breaking compatibility
-#define PRIVATE3_VERSION 1
+#define PRIVATE3_VERSION 2
 
 struct emu10k1_card 
 {
@@ -177,9 +187,11 @@ struct emu10k1_card
 
 	uint8 chiprev;                    /* Chip revision                */
 
-	int isaps;
+	u8 is_audigy;
+	u8 is_aps;
 
 	struct patch_manager mgr;
+//	struct pt_data pt;
 
 	int irq_handle;
 	int dev_id;
@@ -212,6 +224,8 @@ extern struct list_head emu10k1_devs;
 void emu10k1_writefn0(struct emu10k1_card *, uint32 , uint32 );
 uint32 emu10k1_readfn0(struct emu10k1_card *, uint32 );
 
+void emu10k1_timer_set(struct emu10k1_card *, u16);
+
 void sblive_writeptr(struct emu10k1_card *, uint32 , uint32 , uint32 );
 void sblive_writeptr_tag(struct emu10k1_card *card, uint32 channel, ...);
 #define TAGLIST_END	0
@@ -235,6 +249,11 @@ int emu10k1_mpu_acquire(struct emu10k1_card *);
 int emu10k1_mpu_release(struct emu10k1_card *);
 
 #endif  /* _HWACCESS_H */
+
+
+
+
+
 
 
 

@@ -71,7 +71,7 @@ int emu10k1_find_control_gpr(struct patch_manager *mgr, const char *patch_name, 
 	return -1;
 }
 
-void emu10k1_set_control_gpr(struct emu10k1_card *card, int addr, int32 val, int flag)
+void emu10k1_set_control_gpr(struct emu10k1_card *card, int addr, s32 val, int flag)
 {
 	struct patch_manager *mgr = &card->mgr;
 
@@ -80,15 +80,20 @@ void emu10k1_set_control_gpr(struct emu10k1_card *card, int addr, int32 val, int
 	if (addr < 0 || addr >= NUM_GPRS)
 		return;
 
-	if (flag)
-		val += sblive_readptr(card, GPR_BASE + addr, 0);
-
-	if (val > mgr->gpr[addr].max)
-		val = mgr->gpr[addr].max;
-	else if (val < mgr->gpr[addr].min)
-		val = mgr->gpr[addr].min;
-
-	sblive_writeptr(card, GPR_BASE + addr, 0, val);
+	//fixme: once patch manager is up, remember to fix this for the audigy
+	if (card->is_audigy) {
+		sblive_writeptr(card, A_GPR_BASE + addr, 0, val);
+	} else {
+		if (flag)
+			val += sblive_readptr(card, GPR_BASE + addr, 0);
+		if (val > mgr->gpr[addr].max)
+			val = mgr->gpr[addr].max;
+		else if (val < mgr->gpr[addr].min)
+			val = mgr->gpr[addr].min;
+		sblive_writeptr(card, GPR_BASE + addr, 0, val);
+	}
+	
+	
 }
 
 //TODO: make this configurable:
@@ -103,7 +108,7 @@ void emu10k1_set_oss_vol(struct emu10k1_card *card, int oss_mixer,
 
 	card->ac97.mixer_state[oss_mixer] = (right << 8) | left;
 
-	if (!card->isaps)
+	if (!card->is_aps)
 		card->ac97.write_mixer(&card->ac97, oss_mixer, left, right);
 	
 	emu10k1_set_volume_gpr(card, card->mgr.ctrl_gpr[oss_mixer][0], left,
@@ -199,5 +204,7 @@ void emu10k1_dsp_irqhandler(struct emu10k1_card *card)
 {
 	return;
 }
+
+
 
 

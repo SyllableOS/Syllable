@@ -66,7 +66,7 @@ void emu10k1_timer_install(struct emu10k1_card *card, struct emu_timer *timer, u
 	struct list_head *entry;
 	unsigned long flags;
 
-	printk("emu10k1_timer_install()\n");
+	//printk("emu10k1_timer_install()\n");
 
 	if (delay < 5)
 		delay = 5;
@@ -88,7 +88,8 @@ void emu10k1_timer_install(struct emu10k1_card *card, struct emu_timer *timer, u
 		card->timer_delay = delay;
 		delay = (delay < 1024 ? delay : 1024);
 
-		emu10k1_writefn0(card, TIMER_RATE, delay);
+		emu10k1_timer_set(card, delay);
+		//emu10k1_writefn0(card, TIMER_RATE, delay);
 
 		list_for_each(entry, &card->timers) {
 			t = list_entry(entry, struct emu_timer, list);
@@ -136,7 +137,8 @@ void emu10k1_timer_uninstall(struct emu10k1_card *card, struct emu_timer *timer)
 		else {
 			delay = (delay < 1024 ? delay : 1024);
 
-			emu10k1_writefn0(card, TIMER_RATE, delay);
+			//emu10k1_writefn0(card, TIMER_RATE, delay);
+			emu10k1_timer_set(card, delay);
 
 			list_for_each(entry, &card->timers) {
 				t = list_entry(entry, struct emu_timer, list);
@@ -160,7 +162,7 @@ void emu10k1_timer_enable(struct emu10k1_card *card, struct emu_timer *timer)
 {
 	unsigned long flags;
 
-	printk("emu10k1_timer_enable()\n");
+//	printk("emu10k1_timer_enable()\n");
 
 	spinlock_cli(&card->timer_lock, flags);
 	timer->state |= TIMER_STATE_ACTIVE;
@@ -179,3 +181,6 @@ void emu10k1_timer_disable(struct emu10k1_card *card, struct emu_timer *timer)
 
 	return;
 }
+
+
+

@@ -47,21 +47,23 @@ struct voice_param
 {
 	/* FX bus amount send */
 
-	uint32 send_routing;
+	u32 send_routing;
+	// audigy only:
+	u32 send_routing2;
 
-	uint32 send_a;
-	uint32 send_b;
-	uint32 send_c;
-	uint32 send_d;
+	u32 send_dcba;
+	// audigy only:
+	u32 send_hgfe;
 
-	uint32 initial_fc;
-	uint32 fc_target;
 
-	uint32 initial_attn;
-	uint32 volume_target;
+	u32 initial_fc;
+	u32 fc_target;
 
-	uint32 byampl_env_sustain;
-	uint32 byampl_env_decay;
+	u32 initial_attn;
+	u32 volume_target;
+
+	u32 byampl_env_sustain;
+	u32 byampl_env_decay;
 };
 
 struct voice_mem {
@@ -99,3 +101,4 @@ void emu10k1_voices_start(struct emu_voice *, unsigned int, int);
 void emu10k1_voices_stop(struct emu_voice *, int);
 
 #endif /* _VOICEMGR_H */
+

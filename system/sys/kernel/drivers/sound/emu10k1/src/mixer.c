@@ -136,7 +136,7 @@ static void set_bass(struct emu10k1_card *card, int l, int r)
 	r = (r * 40 + 50) / 100;
 
 	for (i = 0; i < 5; i++)
-		sblive_writeptr(card, GPR_BASE + card->mgr.ctrl_gpr[SOUND_MIXER_BASS][0] + i, 0, bass_table[l][i]);
+		sblive_writeptr(card, (card->is_audigy ? A_GPR_BASE : GPR_BASE) + card->mgr.ctrl_gpr[SOUND_MIXER_BASS][0] + i, 0, bass_table[l][i]);
 }
 
 static void set_treble(struct emu10k1_card *card, int l, int r)
@@ -147,7 +147,7 @@ static void set_treble(struct emu10k1_card *card, int l, int r)
 	r = (r * 40 + 50) / 100;
 
 	for (i = 0; i < 5; i++)
-		sblive_writeptr(card, GPR_BASE + card->mgr.ctrl_gpr[SOUND_MIXER_TREBLE][0] + i , 0, treble_table[l][i]);
+		sblive_writeptr(card, (card->is_audigy ? A_GPR_BASE : GPR_BASE) + card->mgr.ctrl_gpr[SOUND_MIXER_TREBLE][0] + i , 0, treble_table[l][i]);
 }
 
 const char volume_params[SOUND_MIXER_NRDEVICES]= {
@@ -182,6 +182,405 @@ const char volume_params[SOUND_MIXER_NRDEVICES]= {
 
 /* Mixer file operations */
 static int emu10k1_private_mixer(struct emu10k1_card *card, unsigned int cmd, unsigned long arg)
+{
+	struct mixer_private_ioctl *ctl;
+	int addr, ret;
+	unsigned int id, ch;
+
+	switch (cmd) {
+
+	case SOUND_MIXER_PRIVATE3:
+
+		ctl = (struct mixer_private_ioctl *) kmalloc(sizeof(struct mixer_private_ioctl), GFP_KERNEL);
+		if (ctl == NULL)
+			return -ENOMEM;
+
+		if (copy_from_user(ctl, (void *) arg, sizeof(struct mixer_private_ioctl))) {
+			kfree(ctl);
+			return -EFAULT;
+		}
+
+		ret = 0;
+		switch (ctl->cmd) {
+#ifdef DBGEMU
+		case CMD_WRITEFN0:
+				
+			emu10k1_writefn0_2(card, ctl->val[0], ctl->val[1], ctl->val[2]);
+			break;
+#endif
+		case CMD_WRITEPTR:
+#ifdef DBGEMU
+			if (ctl->val[1] >= 0x40 || ctl->val[0] >= 0x1000) {
+#else
+			if (ctl->val[1] >= 0x40 || ctl->val[0] >= 0x1000 || ((ctl->val[0] < 0x100 ) &&
+		    //Any register allowed raw access goes here:
+				     (ctl->val[0] != A_SPDIF_SAMPLERATE) && (ctl->val[0] != A_DBG)
+			)
+				) {
+#endif
+				ret = -EINVAL;
+				break;
+			}
+			sblive_writeptr(card, ctl->val[0], ctl->val[1], ctl->val[2]);
+			break;
+
+		case CMD_READFN0:
+			ctl->val[2] = emu10k1_readfn0(card, ctl->val[0]);
+
+			if (copy_to_user((void *) arg, ctl, sizeof(struct mixer_private_ioctl)))
+				ret = -EFAULT;
+
+			break;
+
+		case CMD_READPTR:
+			if (ctl->val[1] >= 0x40 || (ctl->val[0] & 0x7ff) > 0xff) {
+				ret = -EINVAL;
+				break;
+			}
+
+			if ((ctl->val[0] & 0x7ff) > 0x3f)
+				ctl->val[1] = 0x00;
+
+			ctl->val[2] = sblive_readptr(card, ctl->val[0], ctl->val[1]);
+
+			if (copy_to_user((void *) arg, ctl, sizeof(struct mixer_private_ioctl)))
+				ret = -EFAULT;
+
+			break;
+
+/*		case CMD_SETRECSRC:
+			switch (ctl->val[0]) {
+			case WAVERECORD_AC97:
+				if (card->is_aps) {
+					ret = -EINVAL;
+					break;
+				}
+
+				card->wavein.recsrc = WAVERECORD_AC97;
+				break;
+
+			case WAVERECORD_MIC:
+				card->wavein.recsrc = WAVERECORD_MIC;
+				break;
+
+			case WAVERECORD_FX:
+				card->wavein.recsrc = WAVERECORD_FX;
+				card->wavein.fxwc = ctl->val[1] & 0xffff;
+
+				if (!card->wavein.fxwc)
+					ret = -EINVAL;
+
+				break;
+
+			default:
+				ret = -EINVAL;
+				break;
+			}
+			break;
+
+		case CMD_GETRECSRC:
+			ctl->val[0] = card->wavein.recsrc;
+			ctl->val[1] = card->wavein.fxwc;
+
+			if (copy_to_user((void *) arg, ctl, sizeof(struct mixer_private_ioctl)))
+				ret = -EFAULT;
+
+			break;*/
+
+		case CMD_GETVOICEPARAM:
+			ctl->val[0] = card->waveout.send_routing[0];
+			ctl->val[1] = card->waveout.send_dcba[0];
+
+			ctl->val[2] = card->waveout.send_routing[1];
+			ctl->val[3] = card->waveout.send_dcba[1];
+
+			ctl->val[4] = card->waveout.send_routing[2];
+			ctl->val[5] = card->waveout.send_dcba[2];
+
+			if (copy_to_user((void *) arg, ctl, sizeof(struct mixer_private_ioctl)))
+				ret = -EFAULT;
+
+			break;
+
+		case CMD_SETVOICEPARAM:
+			card->waveout.send_routing[0] = ctl->val[0];
+			card->waveout.send_dcba[0] = ctl->val[1];
+
+			card->waveout.send_routing[1] = ctl->val[2];
+			card->waveout.send_dcba[1] = ctl->val[3];
+
+			card->waveout.send_routing[2] = ctl->val[4];
+			card->waveout.send_dcba[2] = ctl->val[5];
+
+			break;
+		
+		case CMD_SETMCH_FX:
+			card->mchannel_fx = ctl->val[0] & 0x000f;
+			break;
+		
+		case CMD_GETPATCH:
+			if (ctl->val[0] == 0) {
+				if (copy_to_user((void *) arg, &card->mgr.rpatch, sizeof(struct dsp_rpatch)))
+                                	ret = -EFAULT;
+			} else {
+				if ((ctl->val[0] - 1) / PATCHES_PER_PAGE >= card->mgr.current_pages) {
+					ret = -EINVAL;
+					break;
+				}
+
+				if (copy_to_user((void *) arg, PATCH(&card->mgr, ctl->val[0] - 1), sizeof(struct dsp_patch)))
+					ret = -EFAULT;
+			}
+
+			break;
+
+		case CMD_GETGPR:
+			id = ctl->val[0];
+
+			if (id > NUM_GPRS) {
+				ret = -EINVAL;
+				break;
+			}
+
+			if (copy_to_user((void *) arg, &card->mgr.gpr[id], sizeof(struct dsp_gpr)))
+				ret = -EFAULT;
+
+			break;
+
+		case CMD_GETCTLGPR:
+			addr = emu10k1_find_control_gpr(&card->mgr, (char *) ctl->val, &((char *) ctl->val)[PATCH_NAME_SIZE]);
+			ctl->val[0] = sblive_readptr(card, addr, 0);
+
+			if (copy_to_user((void *) arg, ctl, sizeof(struct mixer_private_ioctl)))
+				ret = -EFAULT;
+
+			break;
+
+/*		case CMD_SETPATCH:
+			if (ctl->val[0] == 0)
+				memcpy(&card->mgr.rpatch, &ctl->val[1], sizeof(struct dsp_rpatch));
+			else {
+				page = (ctl->val[0] - 1) / PATCHES_PER_PAGE;
+				if (page > MAX_PATCHES_PAGES) {
+					ret = -EINVAL;
+					break;
+				}
+
+				if (page >= card->mgr.current_pages) {
+					for (i = card->mgr.current_pages; i < page + 1; i++) {
+				                card->mgr.patch[i] = (void *)__get_free_page(GFP_KERNEL);
+						if(card->mgr.patch[i] == NULL) {
+							card->mgr.current_pages = i;
+							ret = -ENOMEM;
+							break;
+						}
+						memset(card->mgr.patch[i], 0, PAGE_SIZE);
+					}
+					card->mgr.current_pages = page + 1;
+				}
+
+				patch = PATCH(&card->mgr, ctl->val[0] - 1);
+
+				memcpy(patch, &ctl->val[1], sizeof(struct dsp_patch));
+
+				if (patch->code_size == 0) {
+					for(i = page + 1; i < card->mgr.current_pages; i++)
+                                                free_page((unsigned long) card->mgr.patch[i]);
+
+					card->mgr.current_pages = page + 1;
+				}
+			}
+
+			break;*/
+
+		case CMD_SETGPR:
+			if (ctl->val[0] > NUM_GPRS) {
+				ret = -EINVAL;
+				break;
+			}
+
+			memcpy(&card->mgr.gpr[ctl->val[0]], &ctl->val[1], sizeof(struct dsp_gpr));
+			break;
+
+		case CMD_SETCTLGPR:
+			addr = emu10k1_find_control_gpr(&card->mgr, (char *) ctl->val, (char *) ctl->val + PATCH_NAME_SIZE);
+			emu10k1_set_control_gpr(card, addr, *((s32 *)((char *) ctl->val + 2 * PATCH_NAME_SIZE)), 0);
+
+			break;
+
+		case CMD_SETGPOUT:
+			if ( ((ctl->val[0] > 2) && (!card->is_audigy))
+			     || (ctl->val[0] > 15) || ctl->val[1] > 1) {
+				ret= -EINVAL;
+				break;
+			}
+
+			if (card->is_audigy)
+				emu10k1_writefn0(card, (1 << 24) | ((ctl->val[0]) << 16) | A_IOCFG, ctl->val[1]);
+			else
+				emu10k1_writefn0(card, (1 << 24) | (((ctl->val[0]) + 10) << 16) | HCFG, ctl->val[1]);
+			break;
+
+		case CMD_GETGPR2OSS:
+			id = ctl->val[0];
+			ch = ctl->val[1];
+
+			if (id >= SOUND_MIXER_NRDEVICES || ch >= 2) {
+				ret = -EINVAL;
+				break;
+			}
+
+			ctl->val[2] = card->mgr.ctrl_gpr[id][ch];
+
+			if (copy_to_user((void *) arg, ctl, sizeof(struct mixer_private_ioctl)))
+				ret = -EFAULT;
+
+			break;
+
+		case CMD_SETGPR2OSS:
+			id = ctl->val[0];
+			/* 0 == left, 1 == right */
+			ch = ctl->val[1];
+			addr = ctl->val[2];
+
+			if (id >= SOUND_MIXER_NRDEVICES || ch >= 2) {
+				ret = -EINVAL;
+				break;
+			}
+
+			card->mgr.ctrl_gpr[id][ch] = addr;
+
+			if (card->is_aps)
+				break;
+
+			if (addr >= 0) {
+				unsigned int state = card->ac97.mixer_state[id];
+
+				if (ch == 1) {
+					state >>= 8;
+					card->ac97.stereo_mixers |= (1 << id);
+				}
+
+				card->ac97.supported_mixers |= (1 << id);
+
+				if (id == SOUND_MIXER_TREBLE) {
+					set_treble(card, card->ac97.mixer_state[id] & 0xff, (card->ac97.mixer_state[id] >> 8) & 0xff);
+				} else if (id == SOUND_MIXER_BASS) {
+					set_bass(card, card->ac97.mixer_state[id] & 0xff, (card->ac97.mixer_state[id] >> 8) & 0xff);
+				} else
+					emu10k1_set_volume_gpr(card, addr, state & 0xff,
+							       volume_params[id]);
+			} else {
+				card->ac97.stereo_mixers &= ~(1 << id);
+				card->ac97.stereo_mixers |= card->ac97_stereo_mixers;
+
+				if (ch == 0) {
+					card->ac97.supported_mixers &= ~(1 << id);
+					card->ac97.supported_mixers |= card->ac97_supported_mixers;
+				}
+			}
+			break;
+
+/*		case CMD_SETPASSTHROUGH:
+			card->pt.selected = ctl->val[0] ? 1 : 0;
+
+			if (card->pt.state != PT_STATE_INACTIVE)
+				break;
+
+			card->pt.spcs_to_use = ctl->val[0] & 0x07;
+
+			break;*/
+	
+		case CMD_PRIVATE3_VERSION:
+			ctl->val[0] = PRIVATE3_VERSION;	//private3 version
+			ctl->val[1] = MAJOR_VER;	//major driver version
+			ctl->val[2] = MINOR_VER;	//minor driver version
+			ctl->val[3] = card->is_audigy;	//1=card is audigy
+
+			if (card->is_audigy)
+				ctl->val[4]=emu10k1_readfn0(card, 0x18);
+
+			if (copy_to_user((void *) arg, ctl, sizeof(struct mixer_private_ioctl)))
+				ret = -EFAULT;
+			break;
+
+		case CMD_AC97_BOOST:
+			if (ctl->val[0])
+				emu10k1_ac97_write(&card->ac97, 0x18, 0x0);	
+			else
+				emu10k1_ac97_write(&card->ac97, 0x18, 0x0808);
+			break;
+
+		default:
+			ret = -EINVAL;
+			break;
+		}
+
+		kfree(ctl);
+		return ret;
+		break;
+
+/*	case SOUND_MIXER_PRIVATE4:
+
+		if (copy_from_user(&size, (void *) arg, sizeof(size)))
+			return -EFAULT;
+
+		DPD(2, "External tram size %#x\n", size);
+
+		if (size > 0x1fffff)
+			return -EINVAL;
+
+		size_reg = 0;
+
+		if (size != 0) {
+			size = (size - 1) >> 14;
+
+			while (size) {
+				size >>= 1;
+				size_reg++;
+			}
+
+			size = 0x4000 << size_reg;
+		}
+
+		DPD(2, "External tram size %#x %#x\n", size, size_reg);
+
+		if (size != card->tankmem.size) {
+			if (card->tankmem.size > 0) {
+				emu10k1_writefn0(card, HCFG_LOCKTANKCACHE, 1);
+
+				sblive_writeptr_tag(card, 0, TCB, 0, TCBS, 0, TAGLIST_END);
+
+				pci_free_consistent(card->pci_dev, card->tankmem.size, card->tankmem.addr, card->tankmem.dma_handle);
+
+				card->tankmem.size = 0;
+			}
+
+			if (size != 0) {
+				card->tankmem.addr = pci_alloc_consistent(card->pci_dev, size, &card->tankmem.dma_handle);
+				if (card->tankmem.addr == NULL)
+					return -ENOMEM;
+
+				card->tankmem.size = size;
+
+				sblive_writeptr_tag(card, 0, TCB,(u32) card->tankmem.dma_handle, TCBS,(u32) size_reg, 
+TAGLIST_END);
+
+				emu10k1_writefn0(card, HCFG_LOCKTANKCACHE, 0);
+			}
+		}
+		return 0;
+		break;*/
+
+	default:
+		break;
+	}
+
+	return -EINVAL;
+}
+
+/* Mixer file operations */
+/*static int emu10k1_private_mixer(struct emu10k1_card *card, unsigned int cmd, unsigned long arg)
 {
 	struct mixer_private_ioctl *ctl;
 	struct dsp_patch *patch;
@@ -374,7 +773,7 @@ static int emu10k1_private_mixer(struct emu10k1_card *card, unsigned int cmd, un
 
 		case CMD_SETGPR2OSS:
 			id = ctl->val[0];
-			/* 0 == left, 1 == right */
+			// 0 == left, 1 == right 
 			ch = ctl->val[1];
 			addr = ctl->val[2];
 
@@ -493,7 +892,7 @@ static int emu10k1_private_mixer(struct emu10k1_card *card, unsigned int cmd, un
 	}
 
 	return -EINVAL;
-}
+}*/
 
 static int emu10k1_dsp_mixer(struct emu10k1_card *card, unsigned int oss_mixer, unsigned long arg)
 {
@@ -543,12 +942,17 @@ status_t emu10k1_mixer_ioctl(void *node, void *cookie, uint32 cmd, void *arg, si
 	unsigned int oss_mixer = _IOC_NR(cmd);
 
 	ret = -EINVAL;
-	if (!card->isaps) {
+	if (!card->is_aps) {
 		if (cmd == SOUND_MIXER_INFO) {
 			mixer_info info;
 
 			strncpy(info.id, card->ac97.name, sizeof(info.id));
-			strncpy(info.name, "Creative SBLive - Emu10k1", sizeof(info.name));
+
+			if (card->is_audigy)
+				strncpy(info.name, "Audigy - Emu10k1", sizeof(info.name));
+			else
+				strncpy(info.name, "Creative SBLive - Emu10k1", sizeof(info.name));
+
 			info.modify_counter = card->ac97.modcnt;
 
 			if (memcpy_to_user((void *)arg, &info, sizeof(info)))
@@ -558,13 +962,13 @@ status_t emu10k1_mixer_ioctl(void *node, void *cookie, uint32 cmd, void *arg, si
 		}
 
 		if ((_SIOC_DIR(cmd) == (_SIOC_WRITE|_SIOC_READ)) && oss_mixer <= SOUND_MIXER_NRDEVICES)
-			ret = emu10k1_dsp_mixer(card, oss_mixer, arg);
+			ret = emu10k1_dsp_mixer(card, oss_mixer, (unsigned long)arg);
 		else
-			ret = card->ac97.mixer_ioctl(&card->ac97, cmd, arg);
+			ret = card->ac97.mixer_ioctl(&card->ac97, cmd, (unsigned long)arg);
 	}
 	
 	if (ret < 0)
-		ret = emu10k1_private_mixer(card, cmd, arg);
+		ret = emu10k1_private_mixer(card, cmd, (unsigned long)arg);
 
 	return ret;
 }

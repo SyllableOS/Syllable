@@ -36,45 +36,48 @@
 #include "audio.h"
 #include "voicemgr.h"
 #include "timer.h"
+#include "emu_wrapper.h"
 
 /* setting this to other than a power of two may break some applications */
 #define WAVEOUT_MAXBUFSIZE	MAXBUFSIZE
-#define WAVEOUT_MINBUFSIZE	64
+//#define WAVEOUT_MINBUFSIZE	64
 
 #define WAVEOUT_DEFAULTFRAGLEN	20 /* Time to play a fragment in ms (latency) */
 #define WAVEOUT_DEFAULTBUFLEN	500 /* Time to play the entire buffer in ms */
 
-#define WAVEOUT_MINFRAGSHIFT	6
-#define WAVEOUT_MAXVOICES 6
+#define WAVEOUT_MINFRAGSHIFT	6 /* Minimum fragment size in bytes is 2^6 */
+#define WAVEOUT_MINFRAGS	3 /* _don't_ go bellow 3, it would break silence filling */
+#define WAVEOUT_MAXVOICES	6
 
 struct waveout_buffer {
-	uint16 ossfragshift;
-	uint32 numfrags;
-	uint32 fragment_size;	/* in bytes units */
-	uint32 size;		/* in bytes units */
-	uint32 pages;		/* buffer size in page units*/
-	uint32 silence_pos;	/* software cursor position (including silence bytes) */
-	uint32 hw_pos;		/* hardware cursor position */
-	uint32 free_bytes;		/* free bytes available on the buffer (not including silence bytes) */
-	uint8 fill_silence;
-	uint32 silence_bytes;      /* silence bytes on the buffer */
+	u16 ossfragshift;
+	u32 numfrags;
+	u32 fragment_size;	/* in bytes units */
+	u32 size;		/* in bytes units */
+	u32 pages;		/* buffer size in page units*/
+	u32 silence_pos;	/* software cursor position (including silence bytes) */
+	u32 hw_pos;		/* hardware cursor position */
+	u32 free_bytes;		/* free bytes available on the buffer (not including silence bytes) */
+	u8 fill_silence;
+	u32 silence_bytes;      /* silence bytes on the buffer */
 };
 
 struct woinst 
 {
-	uint8 state;
-	uint8 num_voices;
+	u8 state;
+	u8 num_voices;
 	struct emu_voice voice[WAVEOUT_MAXVOICES];
 	struct emu_timer timer;
 	struct wave_format format;
 	struct waveout_buffer buffer;
+	//wait_queue_head_t wait_queue;
 	sem_id wait_queue;
-	uint8 mmapped;
-	uint32 total_copied;	/* total number of bytes written() to the buffer (excluding silence) */
-	uint32 total_played;	/* total number of bytes played including silence */
-	uint32 blocks;
-	uint8 device;
-	SpinLock_s lock;
+	u8 mmapped;
+	u32 total_copied;	/* total number of bytes written() to the buffer (excluding silence) */
+	u32 total_played;	/* total number of bytes played including silence */
+	u32 blocks;
+	u8 device;
+	spinlock_t lock;
 };
 
 int emu10k1_waveout_open(struct emu10k1_wavedevice *);
@@ -88,5 +91,7 @@ int emu10k1_waveout_setformat(struct emu10k1_wavedevice*, struct wave_format*);
 void emu10k1_waveout_update(struct woinst*);
 
 #endif /* _CARDWO_H */
+
+
 
 

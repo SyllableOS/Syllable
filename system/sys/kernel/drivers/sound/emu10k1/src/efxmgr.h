@@ -35,58 +35,71 @@
 #include "emu_wrapper.h"
 #include <atheos/spinlock.h>
 
-#define WRITE_EFX(a, b, c) sblive_writeptr((a), MICROCODEBASE + (b), 0, (c))
+struct emu_efx_info_t{
+	int opcode_shift;
+	int high_operand_shift;
+	int instruction_start;
+	int gpr_base;
+	int output_base;
+};
+
+#define WRITE_EFX(a, b, c) sblive_writeptr((a), emu_efx_info[card->is_audigy].instruction_start + (b), 0, (c))
 
 #define OP(op, z, w, x, y) \
-        do { WRITE_EFX(card, (pc) * 2, ((x) << 10) | (y)); \
-        WRITE_EFX(card, (pc) * 2 + 1, ((op) << 20) | ((z) << 10) | (w)); \
-        ++pc; } while (0)
+	do { WRITE_EFX(card, (pc) * 2, ((x) << emu_efx_info[card->is_audigy].high_operand_shift) | (y)); \
+	WRITE_EFX(card, (pc) * 2 + 1, ((op) << emu_efx_info[card->is_audigy].opcode_shift ) | ((z) << emu_efx_info[card->is_audigy].high_operand_shift) | (w)); \
+	++pc; } while (0)
 
 #define NUM_INPUTS 0x20
 #define NUM_OUTPUTS 0x20
 #define NUM_GPRS 0x100
+
+#define A_NUM_INPUTS 0x60
+#define A_NUM_OUTPUTS 0x60  //fixme: this may or may not be true
+#define A_NUM_GPRS 0x200
+
 #define GPR_NAME_SIZE   32
 #define PATCH_NAME_SIZE 32
 
 struct dsp_rpatch {
 	char name[PATCH_NAME_SIZE];
-        uint16 code_start;
-        uint16 code_size;
+	u16 code_start;
+	u16 code_size;
 
-        uint32 gpr_used[NUM_GPRS / 32];
-        uint32 gpr_input[NUM_GPRS / 32];
-        uint32 route[NUM_OUTPUTS];
-        uint32 route_v[NUM_OUTPUTS];
+	unsigned long gpr_used[NUM_GPRS / (sizeof(unsigned long) * 8) + 1];
+	unsigned long gpr_input[NUM_GPRS / (sizeof(unsigned long) * 8) + 1];
+	unsigned long route[NUM_OUTPUTS];
+	unsigned long route_v[NUM_OUTPUTS];
 };
 
 struct dsp_patch {
-        char name[PATCH_NAME_SIZE];
-        uint8 id;
-        uint32 input;                      /* bitmap of the lines used as inputs */
-	uint32 output;                     /* bitmap of the lines used as outputs */
-        uint16 code_start;
-        uint16 code_size;
+	char name[PATCH_NAME_SIZE];
+	u8 id;
+	unsigned long input;                      /* bitmap of the lines used as inputs */
+	unsigned long output;                     /* bitmap of the lines used as outputs */
+	u16 code_start;
+	u16 code_size;
 
-        uint32 gpr_used[NUM_GPRS / 32];    /* bitmap of used gprs */
-        uint32 gpr_input[NUM_GPRS / 32];
-        uint8 traml_istart;  /* starting address of the internal tram lines used */
-        uint8 traml_isize;   /* number of internal tram lines used */
+	unsigned long gpr_used[NUM_GPRS / (sizeof(unsigned long) * 8) + 1];    /* bitmap of used gprs */
+	unsigned long gpr_input[NUM_GPRS / (sizeof(unsigned long) * 8) + 1];
+	u8 traml_istart;  /* starting address of the internal tram lines used */
+	u8 traml_isize;   /* number of internal tram lines used */
 
-        uint8 traml_estart;
-        uint8 traml_esize;
+	u8 traml_estart;
+	u8 traml_esize;
 
-        uint16 tramb_istart;        /* starting address of the internal tram memory used */
-        uint16 tramb_isize;         /* amount of internal memory used */
-        uint32 tramb_estart;
-        uint32 tramb_esize;
+	u16 tramb_istart;        /* starting address of the internal tram memory used */
+	u16 tramb_isize;         /* amount of internal memory used */
+	u32 tramb_estart;
+	u32 tramb_esize;
 };
 
 struct dsp_gpr {
-        uint8 type;                      /* gpr type, STATIC, DYNAMIC, INPUT, OUTPUT, CONTROL */
-        char name[GPR_NAME_SIZE];       /* gpr value, only valid for control gprs */
-        int32 min, max;         /* value range for this gpr, only valid for control gprs */
-        uint8 line;                    /* which input/output line is the gpr attached, only valid for input/output gprs */
-        uint8 usage;
+	u8 type;                      /* gpr type, STATIC, DYNAMIC, INPUT, OUTPUT, CONTROL */
+	char name[GPR_NAME_SIZE];       /* gpr value, only valid for control gprs */
+	s32 min, max;         /* value range for this gpr, only valid for control gprs */
+	u8 line;                    /* which input/output line is the gpr attached, only valid for input/output gprs */
+	u8 usage;
 };
 
 enum {
@@ -100,6 +113,9 @@ enum {
 
 #define GPR_BASE 0x100
 #define OUTPUT_BASE 0x20
+
+#define A_GPR_BASE 0x400
+#define A_OUTPUT_BASE 0x60
 
 #define MAX_PATCHES_PAGES 32
 
@@ -255,3 +271,4 @@ do {								\
 } while(0)
 
 #endif /* _EFXMGR_H */
+
