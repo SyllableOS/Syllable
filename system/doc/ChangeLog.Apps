@@ -1,3 +1,15 @@
+* February 13 2004, Henrik Isaksson *
+	
+	- rescopy
+		o Updated for GCC3 and libsyllable changes.
+	- ShellTools/alert
+		o Changed to link against libsyllable.
+	- SlbMgr
+		o Updated for GCC3 and libsyllable changes.
+	- Users
+		o Updated for GCC3 and libsyllable changes.
+		o Added shortcuts and tabbing.
+
 * January 28 2004, Henrik Isaksson *
 
 	Fixed apps to match changes in API:
@@ -182,5 +194,3 @@ Network Preferences
 		* Added NetworkPreferences from Daryl Dudey(daryl.dudey@ntlworld.com).
 		* Added SlbMgr(AtheMgr renamed).
 		* Patches by Vanders for AEdit.
-
-
