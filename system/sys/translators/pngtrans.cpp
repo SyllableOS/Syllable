@@ -384,14 +384,14 @@ status_t PNGTrans::AddData( const void* pData, size_t nLen, bool bFinal )
 			m_cInBuffer.Read( &m_sCurrentFrame, sizeof( m_sCurrentFrame ) );
 			// TODO: Verify depth, convert if not RGB32
 			png_set_IHDR( m_psPNGStruct, m_psPNGInfo,
-				m_sCurrentFrame.bf_frame.right - m_sCurrentFrame.bf_frame.left,
-				m_sCurrentFrame.bf_frame.bottom - m_sCurrentFrame.bf_frame.top,
+				m_sCurrentFrame.bf_frame.right - m_sCurrentFrame.bf_frame.left + 1,
+				m_sCurrentFrame.bf_frame.bottom - m_sCurrentFrame.bf_frame.top + 1,
 				8, PNG_COLOR_TYPE_RGB, //_ALPHA,
 				PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE );
 		//	png_set_filler( m_psPNGStruct, 0xff, PNG_FILLER_AFTER);
 			png_set_bgr( m_psPNGStruct );
 			png_write_info( m_psPNGStruct, m_psPNGInfo );
-			AllocRowBuffer( m_sCurrentFrame.bf_frame.right - m_sCurrentFrame.bf_frame.left );
+			AllocRowBuffer( m_sCurrentFrame.bf_frame.right - m_sCurrentFrame.bf_frame.left + 1 );
 			m_eState = STATE_READING;
 		}
 		
@@ -497,3 +497,5 @@ TranslatorNode* get_translator_node( int nIndex )
 }
     
 };
+
+
