@@ -571,7 +571,7 @@ float Splitter::GetSeparatorWidth()
 * \bug
 * \author Sebastien Keim (s.keim@laposte.net)
 */	     
-void Splitter::SetSeparatorWitdh(float fWidth)
+void Splitter::SetSeparatorWidth(float fWidth)
 {
    m->m_SeparatorWidth = fWidth;
    AdjustLayout();
@@ -693,3 +693,4 @@ void Splitter::KeyDown( const char* pzString, const char* pzRawString,
      }
    View::KeyDown(pzString, pzRawString, nQualifiers);     
 }
+

@@ -83,7 +83,7 @@ class Splitter : public View
    View* SeparatorView();
    float GetSplitPosition();
    float GetSeparatorWidth();
-   void  SetSeparatorWitdh(float fWidth);
+   void  SetSeparatorWidth(float fWidth);
 
    void MouseMove(const Point &cNewPos, int nCode, uint32 nButtons,
 			Message *pcData);
@@ -108,3 +108,4 @@ class Splitter : public View
 } //namespace os
 
 #endif //ndef __F_GUI_SPLITTER_H__
+
