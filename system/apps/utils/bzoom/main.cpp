@@ -67,7 +67,6 @@ MyWindow::MyWindow( const Rect& cFrame ) : Window( cFrame, "main_window", "Zoom"
 
 MyWindow::~MyWindow()
 {
-    delete m_pcZoom;
 }
 
 bool MyWindow::OkToQuit( void )
@@ -126,7 +125,6 @@ MyApp::MyApp() : Application( "application/x-VND.KHS-digitaliz-Zoom" )
 
 MyApp::~MyApp()
 {
-   delete m_pcMainWindow;
 }
 
 // ---------------------------------------------------------------------------

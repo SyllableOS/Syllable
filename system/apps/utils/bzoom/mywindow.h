@@ -40,7 +40,7 @@ class MyWindow : public Window
 {
   public:
     MyWindow( const Rect& cFrame );
-    ~MyWindow();
+    virtual ~MyWindow();
     virtual void HandleMessage( Message* pcMessage );
     virtual bool OkToQuit();
     
@@ -61,7 +61,8 @@ class MyApp : public Application
 {
   public:
     MyApp();
-    ~MyApp();
+    virtual ~MyApp();
   private:
     MyWindow* m_pcMainWindow;
 };
+
