@@ -1,18 +1,24 @@
 COPTS	= -Wall -c --no-warning
 
+OBJDIR	:= ../objs
 OBJS	= ../objs/main.o ../objs/settings.o ../objs/bitmapwindow.o ../objs/iconview.o ../objs/iconmenu.o ../objs/iconmenu_prop.o ../objs/loadbitmap.o ../objs/imageitem.o ../objs/properties.o ../objs/bitmapscale.o ../objs/drives.o ../objs/coloredit.o ../objs/drives_settings.o 
-EXE	= ../objs/desktop
+EXE		= $(OBJDIR)/desktop
 
 CC	= g++
 LL	= g++
 
-$(EXE) : $(OBJS)
+all: $(OBJDIR) $(EXE)
+
+$(OBJDIR):
+	mkdir $(OBJDIR)
+
+$(EXE): $(OBJS)
 	@echo Building : $(EXE)
-	@$(LL) $(OBJS) -latheos -o $@
+	@$(LL) $(OBJS) -lsyllable -o $@
 	@echo Adding images to : $(EXE)
 	@rescopy -r $(EXE) ./images/*.jpg ./images/*.png
 
-install: $(EXE)
+install: all
 	cp -f $(EXE) /bin/$(EXE)
 	strip --strip-all /bin/$(EXE)
 
@@ -21,7 +27,7 @@ clean:
 	@rm -f $(OBJS)
 	@rm -f $(EXE)
 
-dist:
+dist: all
 	@echo Copying $(EXE) to $(DIST_DIR)/atheos/sys/bin
 	@cp -f $(EXE) $(DIST_DIR)/atheos/sys/bin
 

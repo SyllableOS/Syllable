@@ -1,26 +1,29 @@
-COPTS = -Wall -c --no-warn
+COPTS	= -Wall -c --no-warn
 
-OBJS = ../objs/main.o ../objs/loadbitmap.o ../objs/colorbutton.o
-EXE	= ../objs/dlogin
+OBJDIR	:= ../objs
+OBJS	= ../objs/main.o ../objs/loadbitmap.o ../objs/colorbutton.o
+EXE		= $(OBJDIR)/dlogin
 
 CC	= g++
 LL	= g++
 
-$(EXE) : $(OBJS)
+all: $(OBJDIR) $(EXE)
+
+$(OBJDIR):
+	mkdir $(OBJDIR)
+
+$(EXE): $(OBJS)
 	@echo Building : $(EXE)
-	@$(LL) $(OBJS) -latheos -lcrypt -o $@
+	@$(LL) $(OBJS) -lsyllable -lcrypt -o $@
 	@echo Adding images to : $(EXE)
 	@rescopy -r $(EXE) ./images/*.gif
- 
-
 
 clean:
 	@echo Removing all objects and executables 
 	@rm -f $(OBJS)
 	@rm -f $(EXE)
 
-
-dist:
+dist: all
 	@echo Copying $(EXE) to $(DIST_DIR)/atheos/sys/bin
 	@cp  -f $(EXE) $(DIST_DIR)/atheos/sys/bin
 
