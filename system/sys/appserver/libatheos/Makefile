@@ -17,7 +17,7 @@ OBJS	= rect.o region.o desktop.o bitmap.o view.o tabview.o			\
 	  control.o stringview.o menu.o tableview.o sprite.o progressbar.o	\
 	  listview.o directoryview.o requesters.o layoutview.o			\
 	  radiobutton.o filerequester.o dropdownmenu.o appserverconfig.o	\
-	  checkmenu.o splitter.o image.o imageview.o imagebutton.o
+	  checkmenu.o splitter.o image.o imageview.o imagebutton.o videooverlay.o
 
 OBJS += looper.o handler.o application.o message.o messenger.o messagequeue.o	\
 	invoker.o clipboard.o string.o regexp.o variant.o circularbuffer.o	\
@@ -63,3 +63,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d
 
 -include $(OBJDIR)/*.d
+
