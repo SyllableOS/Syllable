@@ -26,3 +26,8 @@ clean:
 install: $(EXE)
 	-mkdir $(INSTALLDIR)
 	cp $(EXE) $(INSTALLDIR)/$(EXE)
+
+dist: $(EXE)
+	-mkdir $(DIST_DIR)/atheos$(INSTALLDIR)
+	cp $(EXE) $(DIST_DIR)/atheos$(INSTALLDIR)/$(EXE)
+
