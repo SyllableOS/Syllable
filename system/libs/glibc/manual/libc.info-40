@@ -1,0 +1,1028 @@
+This is Info file libc.info, produced by Makeinfo version 1.68 from the
+input file libc.texinfo.
+
+INFO-DIR-SECTION GNU libraries
+START-INFO-DIR-ENTRY
+* Libc: (libc).                 C library.
+END-INFO-DIR-ENTRY
+
+   This file documents the GNU C library.
+
+   This is Edition 0.08 DRAFT, last updated 11 Jan 1999, of `The GNU C
+Library Reference Manual', for Version 2.1 Beta.
+
+   Copyright (C) 1993, '94, '95, '96, '97, '98, '99 Free Software
+Foundation, Inc.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided also
+that the section entitled "GNU Library General Public License" is
+included exactly as in the original, and provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that the text of the translation of the section
+entitled "GNU Library General Public License" must be approved for
+accuracy by the Foundation.
+
+
+File: libc.info,  Node: Database Example,  Next: Netgroup Database,  Prev: Group Database,  Up: Users and Groups
+
+User and Group Database Example
+===============================
+
+   Here is an example program showing the use of the system database
+inquiry functions.  The program prints some information about the user
+running the program.
+
+     #include <grp.h>
+     #include <pwd.h>
+     #include <sys/types.h>
+     #include <unistd.h>
+     #include <stdlib.h>
+     
+     int
+     main (void)
+     {
+       uid_t me;
+       struct passwd *my_passwd;
+       struct group *my_group;
+       char **members;
+     
+       /* Get information about the user ID. */
+       me = getuid ();
+       my_passwd = getpwuid (me);
+       if (!my_passwd)
+         {
+           printf ("Couldn't find out about user %d.\n", (int) me);
+           exit (EXIT_FAILURE);
+         }
+     
+       /* Print the information. */
+       printf ("I am %s.\n", my_passwd->pw_gecos);
+       printf ("My login name is %s.\n", my_passwd->pw_name);
+       printf ("My uid is %d.\n", (int) (my_passwd->pw_uid));
+       printf ("My home directory is %s.\n", my_passwd->pw_dir);
+       printf ("My default shell is %s.\n", my_passwd->pw_shell);
+     
+       /* Get information about the default group ID. */
+       my_group = getgrgid (my_passwd->pw_gid);
+       if (!my_group)
+         {
+           printf ("Couldn't find out about group %d.\n",
+                   (int) my_passwd->pw_gid);
+           exit (EXIT_FAILURE);
+         }
+     
+       /* Print the information. */
+       printf ("My default group is %s (%d).\n",
+               my_group->gr_name, (int) (my_passwd->pw_gid));
+       printf ("The members of this group are:\n");
+       members = my_group->gr_mem;
+       while (*members)
+         {
+           printf ("  %s\n", *(members));
+           members++;
+         }
+     
+       return EXIT_SUCCESS;
+     }
+
+   Here is some output from this program:
+
+     I am Throckmorton Snurd.
+     My login name is snurd.
+     My uid is 31093.
+     My home directory is /home/fsg/snurd.
+     My default shell is /bin/sh.
+     My default group is guest (12).
+     The members of this group are:
+       friedman
+       tami
+
+
+File: libc.info,  Node: Netgroup Database,  Prev: Database Example,  Up: Users and Groups
+
+Netgroup Database
+=================
+
+* Menu:
+
+* Netgroup Data::                  Data in the Netgroup database and where
+                                   it comes from.
+* Lookup Netgroup::                How to look for a particular netgroup.
+* Netgroup Membership::            How to test for netgroup membership.
+
+
+File: libc.info,  Node: Netgroup Data,  Next: Lookup Netgroup,  Up: Netgroup Database
+
+Netgroup Data
+-------------
+
+   Sometimes it is useful to group users according to other criteria
+(*note Group Database::.).  E.g., it is useful to associate a certain
+group of users with a certain machine.  On the other hand grouping of
+host names is not supported so far.
+
+   In Sun Microsystems SunOS appeared a new kind of database, the
+netgroup database.  It allows to group hosts, users, and domain freely,
+giving them individual names.  More concrete: a netgroup is a list of
+triples consisting of a host name, a user name, and a domain name,
+where any of the entries can be a wildcard entry, matching all inputs.
+A last possibility is that names of other netgroups can also be given
+in the list specifying a netgroup.  So one can construct arbitrary
+hierarchies without loops.
+
+   Sun's implementation allows netgroups only for the `nis' or
+`nisplus' service *note Services in the NSS configuration::..  The
+implementation in the GNU C library has no such restriction.  An entry
+in either of the input services must have the following form:
+
+     GROUPNAME ( GROUPNAME | `('HOSTNAME`,'USERNAME`,'`domainname'`)' )+
+
+   Any of the fields in the triple can be empty which means anything
+matches.  While describing the functions we will see that the opposite
+case is useful as well.  I.e., there may be entries which will not
+match any input.  For entries like a name consisting of the single
+character `-' shall be used.
+
+
+File: libc.info,  Node: Lookup Netgroup,  Next: Netgroup Membership,  Prev: Netgroup Data,  Up: Netgroup Database
+
+Looking up one Netgroup
+-----------------------
+
+   The lookup functions for netgroups are a bit different to all other
+system database handling functions.  Since a single netgroup can contain
+many entries a two-step process is needed.  First a single netgroup is
+selected and then one can iterate over all entries in this netgroup.
+These functions are declared in `netdb.h'.
+
+ - Function: int setnetgrent (const char *NETGROUP)
+     A call to this function initializes the internal state of the
+     library to allow following calls of the `getnetgrent' iterate over
+     all entries in the netgroup with name NETGROUP.
+
+     When the call is successful (i.e., when a netgroup with this name
+     exist) the return value is `1'.  When the return value is `0' no
+     netgroup of this name is known or some other error occurred.
+
+   It is important to remember that there is only one single state for
+iterating the netgroups.  Even if the programmer uses the
+`getnetgrent_r' function the result is not really reentrant since
+always only one single netgroup at a time can be processed.  If the
+program needs to process more than one netgroup simultaneously she must
+protect this by using external locking.  This problem was introduced in
+the original netgroups implementation in SunOS and since we must stay
+compatible it is not possible to change this.
+
+   Some other functions also use the netgroups state.  Currently these
+are the `innetgr' function and parts of the implementation of the
+`compat' service part of the NSS implementation.
+
+ - Function: int getnetgrent (char **HOSTP, char **USERP, char
+          **DOMAINP)
+     This function returns the next unprocessed entry of the currently
+     selected netgroup.  The string pointers, which addresses are
+     passed in the arguments HOSTP, USERP, and DOMAINP, will contain
+     after a successful call pointers to appropriate strings.  If the
+     string in the next entry is empty the pointer has the value `NULL'.
+     The returned string pointers are only valid unless no of the
+     netgroup related functions are called.
+
+     The return value is `1' if the next entry was successfully read.  A
+     value of `0' means no further entries exist or internal errors
+     occurred.
+
+ - Function: int getnetgrent_r (char **HOSTP, char **USERP, char
+          **DOMAINP, char *BUFFER, int BUFLEN)
+     This function is similar to `getnetgrent' with only one exception:
+     the strings the three string pointers HOSTP, USERP, and DOMAINP
+     point to, are placed in the buffer of BUFLEN bytes starting at
+     BUFFER.  This means the returned values are valid even after other
+     netgroup related functions are called.
+
+     The return value is `1' if the next entry was successfully read and
+     the buffer contains enough room to place the strings in it.  `0' is
+     returned in case no more entries are found, the buffer is too
+     small, or internal errors occurred.
+
+     This function is a GNU extension.  The original implementation in
+     the SunOS libc does not provide this function.
+
+ - Function: void endnetgrent (void)
+     This function free all buffers which were allocated to process the
+     last selected netgroup.  As a result all string pointers returned
+     by calls to `getnetgrent' are invalid afterwards.
+
+
+File: libc.info,  Node: Netgroup Membership,  Prev: Lookup Netgroup,  Up: Netgroup Database
+
+Testing for Netgroup Membership
+-------------------------------
+
+   It is often not necessary to scan the whole netgroup since often the
+only interesting question is whether a given entry is part of the
+selected netgroup.
+
+ - Function: int innetgr (const char *NETGROUP, const char *HOST, const
+          char *USER, const char *DOMAIN)
+     This function tests whether the triple specified by the parameters
+     HOSTP, USERP, and DOMAINP is part of the netgroup NETGROUP.  Using
+     this function has the advantage that
+
+       1. no other netgroup function can use the global netgroup state
+          since internal locking is used and
+
+       2. the function is implemented more efficiently than successive
+          calls to the other `set'/`get'/`endnetgrent' functions.
+
+     Any of the pointers HOSTP, USERP, and DOMAINP can be `NULL' which
+     means any value is excepted in this position.  This is also true
+     for the name `-' which should not match any other string otherwise.
+
+     The return value is `1' if an entry matching the given triple is
+     found in the netgroup.  The return value is `0' if the netgroup
+     itself is not found, the netgroup does not contain the triple or
+     internal errors occurred.
+
+
+File: libc.info,  Node: System Information,  Next: System Configuration,  Prev: Users and Groups,  Up: Top
+
+System Information
+******************
+
+   This chapter describes functions that return information about the
+particular machine that is in use--the type of hardware, the type of
+software, and the individual machine's name.
+
+* Menu:
+
+* Host Identification::         Determining the name of the machine.
+* Hardware/Software Type ID::   Determining the hardware type of the
+                                 machine and what operating system it is
+                                 running.
+* Filesystem handling::         Which is mounted and/or available?
+
+
+File: libc.info,  Node: Host Identification,  Next: Hardware/Software Type ID,  Up: System Information
+
+Host Identification
+===================
+
+   This section explains how to identify the particular machine that
+your program is running on.  The identification of a machine consists
+of its Internet host name and Internet address; see *Note Internet
+Namespace::.  The host name should always be a fully qualified domain
+name, like `crispy-wheats-n-chicken.ai.mit.edu', not a simple name like
+just `crispy-wheats-n-chicken'.
+
+   Prototypes for these functions appear in `unistd.h'.  The shell
+commands `hostname' and `hostid' work by calling them.
+
+ - Function: int gethostname (char *NAME, size_t SIZE)
+     This function returns the name of the host machine in the array
+     NAME.  The SIZE argument specifies the size of this array, in
+     bytes.
+
+     The return value is `0' on success and `-1' on failure.  In the
+     GNU C library, `gethostname' fails if SIZE is not large enough;
+     then you can try again with a larger array.  The following `errno'
+     error condition is defined for this function:
+
+    `ENAMETOOLONG'
+          The SIZE argument is less than the size of the host name plus
+          one.
+
+     On some systems, there is a symbol for the maximum possible host
+     name length: `MAXHOSTNAMELEN'.  It is defined in `sys/param.h'.
+     But you can't count on this to exist, so it is cleaner to handle
+     failure and try again.
+
+     `gethostname' stores the beginning of the host name in NAME even
+     if the host name won't entirely fit.  For some purposes, a
+     truncated host name is good enough.  If it is, you can ignore the
+     error code.
+
+ - Function: int sethostname (const char *NAME, size_t LENGTH)
+     The `sethostname' function sets the name of the host machine to
+     NAME, a string with length LENGTH.  Only privileged processes are
+     allowed to do this.  Usually it happens just once, at system boot
+     time.
+
+     The return value is `0' on success and `-1' on failure.  The
+     following `errno' error condition is defined for this function:
+
+    `EPERM'
+          This process cannot set the host name because it is not
+          privileged.
+
+ - Function: long int gethostid (void)
+     This function returns the "host ID" of the machine the program is
+     running on.  By convention, this is usually the primary Internet
+     address of that machine, converted to a `long int'.  However, some
+     systems it is a meaningless but unique number which is hard-coded
+     for each machine.
+
+ - Function: int sethostid (long int ID)
+     The `sethostid' function sets the "host ID" of the host machine to
+     ID.  Only privileged processes are allowed to do this.  Usually it
+     happens just once, at system boot time.
+
+     The return value is `0' on success and `-1' on failure.  The
+     following `errno' error condition is defined for this function:
+
+    `EPERM'
+          This process cannot set the host name because it is not
+          privileged.
+
+    `ENOSYS'
+          The operating system does not support setting the host ID.
+          On some systems, the host ID is a meaningless but unique
+          number hard-coded for each machine.
+
+
+File: libc.info,  Node: Hardware/Software Type ID,  Next: Filesystem handling,  Prev: Host Identification,  Up: System Information
+
+Hardware/Software Type Identification
+=====================================
+
+   You can use the `uname' function to find out some information about
+the type of computer your program is running on.  This function and the
+associated data type are declared in the header file `sys/utsname.h'.
+
+ - Data Type: struct utsname
+     The `utsname' structure is used to hold information returned by
+     the `uname' function.  It has the following members:
+
+    `char sysname[]'
+          This is the name of the operating system in use.
+
+    `char nodename[]'
+          This is the network name of this particular computer.  In the
+          GNU library, the value is the same as that returned by
+          `gethostname'; see *Note Host Identification::.
+
+    `char release[]'
+          This is the current release level of the operating system
+          implementation.
+
+    `char version[]'
+          This is the current version level within the release of the
+          operating system.
+
+    `char machine[]'
+          This is a description of the type of hardware that is in use.
+
+          Some systems provide a mechanism to interrogate the kernel
+          directly for this information.  On systems without such a
+          mechanism, the GNU C library fills in this field based on the
+          configuration name that was specified when building and
+          installing the library.
+
+          GNU uses a three-part name to describe a system
+          configuration; the three parts are CPU, MANUFACTURER and
+          SYSTEM-TYPE, and they are separated with dashes.  Any
+          possible combination of three names is potentially
+          meaningful, but most such combinations are meaningless in
+          practice and even the meaningful ones are not necessarily
+          supported by any particular GNU program.
+
+          Since the value in `machine' is supposed to describe just the
+          hardware, it consists of the first two parts of the
+          configuration name: `CPU-MANUFACTURER'.  For example, it
+          might be one of these:
+
+               `"sparc-sun"', `"i386-ANYTHING"', `"m68k-hp"',
+               `"m68k-sony"', `"m68k-sun"', `"mips-dec"'
+
+ - Function: int uname (struct utsname *INFO)
+     The `uname' function fills in the structure pointed to by INFO
+     with information about the operating system and host machine.  A
+     non-negative value indicates that the data was successfully stored.
+
+     `-1' as the value indicates an error.  The only error possible is
+     `EFAULT', which we normally don't mention as it is always a
+     possibility.
+
+
+File: libc.info,  Node: Filesystem handling,  Prev: Hardware/Software Type ID,  Up: System Information
+
+Which filesystems are mounted and/or available?
+===============================================
+
+   The Unix concept of *Everything is a file* is based on the
+possibility to "mount" filesystems or other things into the filesystem.
+For some programs it is desirable and necessary to access the
+information whether and, if yes, where a certain filesystem is mounted
+or simply to get lists of all the available filesystems.  The GNU libc
+provides some functions to retrieve this information portably.
+
+   Traditionally Unix systems have a file named `/etc/fstab' which
+describes all possibly mounted filesystems.  The `mount' program uses
+this file to mount at startup time of the system all the necessary
+filesystems.  The information about all the filesystems actually mounted
+is normally kept in a file named `/etc/mtab'.  Both files share the
+same syntax and it is crucial that this syntax is followed all the
+time.  Therefore it is best to never directly write the files.  The
+functions described in this section can do this and they also provide
+the functionality to convert the external textual representation to the
+internal representation.
+
+   The filenames given above should never be used directly.  The
+portable way to handle these file is to use the macros `_PATH_FSTAB',
+defined in `fstab.h' and `_PATH_MNTTAB', defined in `mntent.h',
+respectively.  There are also two alternate macro names `FSTAB' and
+`_PATH_MOUNTED' defined but both names are deprecated and kept only for
+backward compatibility.  The two former names should always be used.
+
+   The internal representation for entries of the file is
+`struct fstab', defined in `fstab.h'.
+
+ - Data Type: struct fstab
+     This structure is used with the `getfsent', `getfsspec', and
+     `getfsfile' functions.
+
+    `char *fs_spec'
+          This element describes the device from which the filesystem
+          is mounted.  Normally this is the name of a special device,
+          such as a hard disk partition, but it could also be a more or
+          less generic string.  For "NFS" it would be a hostname and
+          directory name combination.
+
+          Even though the element is not declared `const' it shouldn't
+          be modified.  The missing `const' has historic reasons, since
+          this function predates ISO C.  The same is true for the other
+          string elements of this structure.
+
+    `char *fs_file'
+          This describes the mount point on the local system.  I.e.,
+          accessing any file in this filesystem has implicitly or
+          explicitly this string as a prefix.
+
+    `char *fs_vfstype'
+          This is the type of the filesystem.  Depending on what the
+          underlying kernel understands it can be any string.
+
+    `char *fs_mntops'
+          This is a string containing options passed to the kernel with
+          the `mount' call.  Again, this can be almost anything.  There
+          can be more than one option, separated from the others by a
+          comma.  Each option consists of a name and an optional value
+          part, introduced by an `=' character.
+
+          If the value of this element must be processed it should best
+          happen using the `getsubopt' function; see *Note Suboptions::.
+
+    `const char *fs_type'
+          This name is poorly chosen.  This element points to a string
+          (possibly in the `fs_mntops' string) which describes the
+          modes with which the filesystem is mounted.  `fstab' defines
+          five macros to describe the possible values:
+
+         `FSTAB_RW'
+               The filesystems gets mounted with read and write enabled.
+
+         `FSTAB_RQ'
+               The filesystems gets mounted with read and write
+               enabled.  Write access is restricted by quotas.
+
+         `FSTAB_RO'
+               The filesystem gets mounted read-only.
+
+         `FSTAB_SW'
+               This is not a real filesystem, it is a swap device.
+
+         `FSTAB_XX'
+               This entry from the `fstab' file is totally ignored.
+
+          Testing for equality with these value must happen using
+          `strcmp' since these are all strings.  Comparing the pointer
+          will probably always fail.
+
+    `int fs_freq'
+          This element describes the dump frequency in days.
+
+    `int fs_passno'
+          This element describes the pass number on parallel dumps.  It
+          is closely related to the `dump' utility used on Unix systems.
+
+   To read the entire content of the of the `fstab' file the GNU libc
+contains a set of three functions which are designed in the usual way.
+
+ - Function: int setfsent (void)
+     This function makes sure that the internal read pointer for the
+     `fstab' file is at the beginning of the file.  This is done by
+     either opening the file or resetting the read pointer.
+
+     Since the file handle is internal to the libc this function is not
+     thread-safe.
+
+     This function returns a non-zero value if the operation was
+     successful and the `getfs*' functions can be used to read the
+     entries of the file.
+
+ - Function: void endfsent (void)
+     This function makes sure that all resources acquired by a prior
+     call to `setfsent' (explicitly or implicitly by calling
+     `getfsent') are freed.
+
+ - Function: struct fstab * getfsent (void)
+     This function returns the next entry of the `fstab' file.  If this
+     is the first call to any of the functions handling `fstab' since
+     program start or the last call of `endfsent', the file will be
+     opened.
+
+     The function returns a pointer to an variable of type `struct
+     fstab'.  This variable is shared by all threads and therefore this
+     function is not thread-safe.  If an error occurred `getfsent'
+     returns a `NULL' pointer.
+
+ - Function: struct fstab * getfsspec (const char *NAME)
+     This function returns the next entry of the `fstab' file which has
+     a string equal to NAME pointed to by the `fs_spec' element.  Since
+     there is normally exactly one entry for each special device it
+     makes no sense to call this function more than once for the same
+     argument.  If this is the first call to any of the functions
+     handling `fstab' since program start or the last call of
+     `endfsent', the file will be opened.
+
+     The function returns a pointer to an variable of type `struct
+     fstab'.  This variable is shared by all threads and therefore this
+     function is not thread-safe.  If an error occurred `getfsent'
+     returns a `NULL' pointer.
+
+ - Function: struct fstab * getfsfile (const char *NAME)
+     This function returns the next entry of the `fstab' file which has
+     a string equal to NAME pointed to by the `fs_file' element.  Since
+     there is normally exactly one entry for each mount point it makes
+     no sense to call this function more than once for the same
+     argument.  If this is the first call to any of the functions
+     handling `fstab' since program start or the last call of
+     `endfsent', the file will be opened.
+
+     The function returns a pointer to an variable of type `struct
+     fstab'.  This variable is shared by all threads and therefore this
+     function is not thread-safe.  If an error occurred `getfsent'
+     returns a `NULL' pointer.
+
+   To access the `mtab' file there is a different set of functions and
+also a different structure to describe the results.
+
+ - Data Type: struct mntent
+     This structure is used with the `getmntent', `getmntent_t',
+     `addmntent', and `hasmntopt' functions.
+
+    `char *mnt_fsname'
+          This element contains a pointer to a string describing the
+          name of the special device from which the filesystem is
+          mounted.  It corresponds to the `fs_spec' element in `struct
+          fstab'.
+
+    `char *mnt_dir'
+          This element points to a string describing the mount point of
+          the filesystem.  It corresponds to the `fs_file' element in
+          `struct fstab'.
+
+    `char *mnt_type'
+          `mnt_type' describes the filesystem type and is therefore
+          equivalent to `fs_vfstype' in `struct fstab'.  `mntent.h'
+          defines a few symbolic names for some of the value this
+          string can have.  But since the kernel can support an
+          arbitrary filesystems it does not make much sense to give
+          them symbolic names.  If one knows the symbol name one also
+          knows the filesystem name.  Nevertheless here follows the
+          list of the symbol provided in `mntent.h'.
+
+         `MNTTYPE_IGNORE'
+               This symbol expands to `"ignore"'.  The value is
+               sometime used in `fstab' files to make sure entries are
+               not used without removing them.
+
+         `MNTTYPE_NFS'
+               Expands to `"nfs"'.  Using this macro sometimes could
+               make sense since it names the default NFS
+               implementation, in case both version 2 and 3 are
+               supported.
+
+         `MNTTYPE_SWAP'
+               This symbol expands to `"swap"'.  It names the special
+               `fstab' entry which names one of the possibly multiple
+               swap partitions.
+
+    `char *mnt_opts'
+          The element contains a string describing the options used
+          while mounting the filesystem.  As for the equivalent element
+          `fs_mntops' of `struct fstab' it is best to use the function
+          `getsubopt' (*note Suboptions::.) to access the parts of this
+          string.
+
+          The `mntent.h' file defines a number of macros with string
+          values which correspond to some of the options understood by
+          the kernel.  There might be many more options which are
+          possible so it makes not much sense to rely on these macros
+          but to be consistent here is the list:
+
+         `MNTOPT_DEFAULTS'
+               Expands to `"defaults"'.  This option should be used
+               alone since it indicates all values for the custumizable
+               values are chosen to be the default.
+
+         `MNTOPT_RO'
+               Expands to `"ro"'.  See the `FSTAB_RO' value, it means
+               the filesystem is mounted read-only.
+
+         `MNTOPT_RW'
+               Expand to `"rw"'.  See the `FSTAB_RW' value, it means the
+               filesystem is mounted with read and write permissions.
+
+         `MNTOPT_SUID'
+               Expands to `"suid"'.  This means that the SUID bit
+               (*note How Change Persona::.) is respected when a
+               program from the filesystem is started.
+
+         `MNTOPT_NOSUID'
+               Expands to `"nosuid"'.  This is the opposite of
+               `MNTOPT_SUID', the SUID bit for all files from the
+               filesystem is ignored.
+
+         `MNTOPT_NOAUTO'
+               Expands to `"noauto"'.  At startup time the `mount'
+               program will ignore this entry if it is started with the
+               `-a' option to mount all filesystems mentioned in the
+               `fstab' file.
+
+          As for the `FSTAB_*' entries introduced above it is important
+          to use `strcmp' to check for equality.
+
+    `mnt_freq'
+          This elements corresponds to `fs_freq' and also specifies the
+          frequency in days in which dumps are made.
+
+    `mnt_passno'
+          This element is equivalent to `fs_passno' with the same
+          meaning which is uninteresting for all programs beside `dump'.
+
+   For accessing the `mtab' file there is again a set of three
+functions to access all entries in a row.  Unlike the functions to
+handle `fstab' these functions do not access a fixed file and there is
+even a thread safe variant of the get function.  Beside this the GNU
+libc contains functions to alter the file and test for specific options.
+
+ - Function: FILE * setmntent (const char *FILE, const char *MODE)
+     The `setmntent' function prepares the file named FILE which must
+     be in the format of a `fstab' and `mtab' file for the upcoming
+     processing through the other functions of the family.  The MODE
+     parameter can be chosen in the way the OPENTYPE parameter for
+     `fopen' (*note Opening Streams::.) can be chosen.  If the file is
+     opened for writing the file is also allowed to be empty.
+
+     If the file was successfully opened `setmntent' returns a file
+     descriptor for future use.  Otherwise the return value is `NULL'
+     and `errno' is set accordingly.
+
+ - Function: int endmntent (FILE *STREAM)
+     This function takes for the STREAM parameter a file handle which
+     previously was returned from the `setmntent' call.  `endmntent'
+     closes the stream and frees all resources.
+
+     The return value is 1 unless an error occurred in which case it is
+     0.
+
+ - Function: struct mntent * getmntent (FILE *STREAM)
+     The `getmntent' function takes as the parameter a file handle
+     previously returned by successful call to `setmntent'.  It returns
+     a pointer to a static variable of type `struct mntent' which is
+     filled with the information from the next entry from the file
+     currently read.
+
+     If there was an error or the end of the file is reached the return
+     value is `NULL'.
+
+     This function is not thread-safe since all calls to this function
+     return a pointer to the same static variable.  `getmntent_r'
+     should be used in situations where multiple threads access the
+     file.
+
+ - Function: struct mntent * getmntent_r (FILE *STREAM, struct mentent
+          *RESULT, char *BUFFER, int BUFSIZE)
+     The `getmntent_r' function is the reentrant variant of
+     `getmntent'.  It also returns the next entry from the file and
+     returns a pointer.  The actual variable the values are stored in
+     is not static, though.  Instead the function stores the values in
+     the variable pointed to by the RESULT parameter.  Additional
+     information (e.g., the strings pointed to by the elements of the
+     result) are kept in the buffer of size BUFSIZE pointed to by
+     BUFFER.
+
+     The function returns a `NULL' pointer in error cases.  Errors
+     could be:
+        * error while reading the file,
+
+        * end of file reached,
+
+        * BUFSIZE is too small for reading a complete new entry.
+
+ - Function: int addmntent (FILE *STREAM, const struct mntent *MNT)
+     The `addmntent' function allows to add a new entry to the file
+     previously opened with `setmntent'.  The new entries are always
+     appended.  I.e., even if the position of the file descriptor is
+     not at the end of the file this function does not overwrite an
+     existing entry following the current position.
+
+     The implication of this is that to remove an entry from a file one
+     has to create a new file while leaving out the entry to be removed
+     and after closing the file remove the old one and rename the new
+     file to the chosen name.
+
+     This function returns 0 in case the operation was successful.
+     Otherwise the return value is 1 and `errno' is set appropriately.
+
+ - Function: char * hasmntopt (const struct mntent *MNT, const char
+          *OPT)
+     This function can be used to check whether the string pointed to
+     by the `mnt_opts' element of the variable pointed to by MNT
+     contains the option OPT.  If this is true a pointer to the
+     beginning of the option in the `mnt_opts' element is returned.  If
+     no such option exists the function returns `NULL'.
+
+     This function is useful to test whether a specific option is
+     present but when all options have to be processed one is better
+     off with using the `getsubopt' function to iterate over all
+     options in the string.
+
+
+File: libc.info,  Node: System Configuration,  Next: Cryptographic Functions,  Prev: System Information,  Up: Top
+
+System Configuration Parameters
+*******************************
+
+   The functions and macros listed in this chapter give information
+about configuration parameters of the operating system--for example,
+capacity limits, presence of optional POSIX features, and the default
+path for executable files (*note String Parameters::.).
+
+* Menu:
+
+* General Limits::           Constants and functions that describe
+				various process-related limits that have
+				one uniform value for any given machine.
+* System Options::           Optional POSIX features.
+* Version Supported::        Version numbers of POSIX.1 and POSIX.2.
+* Sysconf::                  Getting specific configuration values
+                                of general limits and system options.
+* Minimums::                 Minimum values for general limits.
+
+* Limits for Files::         Size limitations that pertain to individual files.
+                                These can vary between file systems
+                                or even from file to file.
+* Options for Files::        Optional features that some files may support.
+* File Minimums::            Minimum values for file limits.
+* Pathconf::                 Getting the limit values for a particular file.
+
+* Utility Limits::           Capacity limits of some POSIX.2 utility programs.
+* Utility Minimums::         Minimum allowable values of those limits.
+
+* String Parameters::        Getting the default search path.
+
+
+File: libc.info,  Node: General Limits,  Next: System Options,  Up: System Configuration
+
+General Capacity Limits
+=======================
+
+   The POSIX.1 and POSIX.2 standards specify a number of parameters that
+describe capacity limitations of the system.  These limits can be fixed
+constants for a given operating system, or they can vary from machine to
+machine.  For example, some limit values may be configurable by the
+system administrator, either at run time or by rebuilding the kernel,
+and this should not require recompiling application programs.
+
+   Each of the following limit parameters has a macro that is defined in
+`limits.h' only if the system has a fixed, uniform limit for the
+parameter in question.  If the system allows different file systems or
+files to have different limits, then the macro is undefined; use
+`sysconf' to find out the limit that applies at a particular time on a
+particular machine.  *Note Sysconf::.
+
+   Each of these parameters also has another macro, with a name starting
+with `_POSIX', which gives the lowest value that the limit is allowed
+to have on *any* POSIX system.  *Note Minimums::.
+
+ - Macro: int ARG_MAX
+     If defined, the unvarying maximum combined length of the ARGV and
+     ENVIRON arguments that can be passed to the `exec' functions.
+
+ - Macro: int CHILD_MAX
+     If defined, the unvarying maximum number of processes that can
+     exist with the same real user ID at any one time.  In BSD and GNU,
+     this is controlled by the `RLIMIT_NPROC' resource limit; *note
+     Limits on Resources::..
+
+ - Macro: int OPEN_MAX
+     If defined, the unvarying maximum number of files that a single
+     process can have open simultaneously.  In BSD and GNU, this is
+     controlled by the `RLIMIT_NOFILE' resource limit; *note Limits on
+     Resources::..
+
+ - Macro: int STREAM_MAX
+     If defined, the unvarying maximum number of streams that a single
+     process can have open simultaneously.  *Note Opening Streams::.
+
+ - Macro: int TZNAME_MAX
+     If defined, the unvarying maximum length of a time zone name.
+     *Note Time Zone Functions::.
+
+   These limit macros are always defined in `limits.h'.
+
+ - Macro: int NGROUPS_MAX
+     The maximum number of supplementary group IDs that one process can
+     have.
+
+     The value of this macro is actually a lower bound for the maximum.
+     That is, you can count on being able to have that many
+     supplementary group IDs, but a particular machine might let you
+     have even more.  You can use `sysconf' to see whether a particular
+     machine will let you have more (*note Sysconf::.).
+
+ - Macro: int SSIZE_MAX
+     The largest value that can fit in an object of type `ssize_t'.
+     Effectively, this is the limit on the number of bytes that can be
+     read or written in a single operation.
+
+     This macro is defined in all POSIX systems because this limit is
+     never configurable.
+
+ - Macro: int RE_DUP_MAX
+     The largest number of repetitions you are guaranteed is allowed in
+     the construct `\{MIN,MAX\}' in a regular expression.
+
+     The value of this macro is actually a lower bound for the maximum.
+     That is, you can count on being able to have that many
+     repetitions, but a particular machine might let you have even
+     more.  You can use `sysconf' to see whether a particular machine
+     will let you have more (*note Sysconf::.).  And even the value
+     that `sysconf' tells you is just a lower bound--larger values
+     might work.
+
+     This macro is defined in all POSIX.2 systems, because POSIX.2 says
+     it should always be defined even if there is no specific imposed
+     limit.
+
+
+File: libc.info,  Node: System Options,  Next: Version Supported,  Prev: General Limits,  Up: System Configuration
+
+Overall System Options
+======================
+
+   POSIX defines certain system-specific options that not all POSIX
+systems support.  Since these options are provided in the kernel, not
+in the library, simply using the GNU C library does not guarantee any
+of these features is supported; it depends on the system you are using.
+
+   You can test for the availability of a given option using the macros
+in this section, together with the function `sysconf'.  The macros are
+defined only if you include `unistd.h'.
+
+   For the following macros, if the macro is defined in `unistd.h',
+then the option is supported.  Otherwise, the option may or may not be
+supported; use `sysconf' to find out.  *Note Sysconf::.
+
+ - Macro: int _POSIX_JOB_CONTROL
+     If this symbol is defined, it indicates that the system supports
+     job control.  Otherwise, the implementation behaves as if all
+     processes within a session belong to a single process group.
+     *Note Job Control::.
+
+ - Macro: int _POSIX_SAVED_IDS
+     If this symbol is defined, it indicates that the system remembers
+     the effective user and group IDs of a process before it executes an
+     executable file with the set-user-ID or set-group-ID bits set, and
+     that explicitly changing the effective user or group IDs back to
+     these values is permitted.  If this option is not defined, then if
+     a nonprivileged process changes its effective user or group ID to
+     the real user or group ID of the process, it can't change it back
+     again.  *Note Enable/Disable Setuid::.
+
+   For the following macros, if the macro is defined in `unistd.h',
+then its value indicates whether the option is supported.  A value of
+`-1' means no, and any other value means yes.  If the macro is not
+defined, then the option may or may not be supported; use `sysconf' to
+find out.  *Note Sysconf::.
+
+ - Macro: int _POSIX2_C_DEV
+     If this symbol is defined, it indicates that the system has the
+     POSIX.2 C compiler command, `c89'.  The GNU C library always
+     defines this as `1', on the assumption that you would not have
+     installed it if you didn't have a C compiler.
+
+ - Macro: int _POSIX2_FORT_DEV
+     If this symbol is defined, it indicates that the system has the
+     POSIX.2 Fortran compiler command, `fort77'.  The GNU C library
+     never defines this, because we don't know what the system has.
+
+ - Macro: int _POSIX2_FORT_RUN
+     If this symbol is defined, it indicates that the system has the
+     POSIX.2 `asa' command to interpret Fortran carriage control.  The
+     GNU C library never defines this, because we don't know what the
+     system has.
+
+ - Macro: int _POSIX2_LOCALEDEF
+     If this symbol is defined, it indicates that the system has the
+     POSIX.2 `localedef' command.  The GNU C library never defines
+     this, because we don't know what the system has.
+
+ - Macro: int _POSIX2_SW_DEV
+     If this symbol is defined, it indicates that the system has the
+     POSIX.2 commands `ar', `make', and `strip'.  The GNU C library
+     always defines this as `1', on the assumption that you had to have
+     `ar' and `make' to install the library, and it's unlikely that
+     `strip' would be absent when those are present.
+
+
+File: libc.info,  Node: Version Supported,  Next: Sysconf,  Prev: System Options,  Up: System Configuration
+
+Which Version of POSIX is Supported
+===================================
+
+ - Macro: long int _POSIX_VERSION
+     This constant represents the version of the POSIX.1 standard to
+     which the implementation conforms.  For an implementation
+     conforming to the 1995 POSIX.1 standard, the value is the integer
+     `199506L'.
+
+     `_POSIX_VERSION' is always defined (in `unistd.h') in any POSIX
+     system.
+
+     *Usage Note:* Don't try to test whether the system supports POSIX
+     by including `unistd.h' and then checking whether `_POSIX_VERSION'
+     is defined.  On a non-POSIX system, this will probably fail
+     because there is no `unistd.h'.  We do not know of *any* way you
+     can reliably test at compilation time whether your target system
+     supports POSIX or whether `unistd.h' exists.
+
+     The GNU C compiler predefines the symbol `__POSIX__' if the target
+     system is a POSIX system.  Provided you do not use any other
+     compilers on POSIX systems, testing `defined (__POSIX__)' will
+     reliably detect such systems.
+
+ - Macro: long int _POSIX2_C_VERSION
+     This constant represents the version of the POSIX.2 standard which
+     the library and system kernel support.  We don't know what value
+     this will be for the first version of the POSIX.2 standard,
+     because the value is based on the year and month in which the
+     standard is officially adopted.
+
+     The value of this symbol says nothing about the utilities
+     installed on the system.
+
+     *Usage Note:* You can use this macro to tell whether a POSIX.1
+     system library supports POSIX.2 as well.  Any POSIX.1 system
+     contains `unistd.h', so include that file and then test `defined
+     (_POSIX2_C_VERSION)'.
+
+
+File: libc.info,  Node: Sysconf,  Next: Minimums,  Prev: Version Supported,  Up: System Configuration
+
+Using `sysconf'
+===============
+
+   When your system has configurable system limits, you can use the
+`sysconf' function to find out the value that applies to any particular
+machine.  The function and the associated PARAMETER constants are
+declared in the header file `unistd.h'.
+
+* Menu:
+
+* Sysconf Definition::        Detailed specifications of `sysconf'.
+* Constants for Sysconf::     The list of parameters `sysconf' can read.
+* Examples of Sysconf::       How to use `sysconf' and the parameter
+				 macros properly together.
+
+
+File: libc.info,  Node: Sysconf Definition,  Next: Constants for Sysconf,  Up: Sysconf
+
+Definition of `sysconf'
+-----------------------
+
+ - Function: long int sysconf (int PARAMETER)
+     This function is used to inquire about runtime system parameters.
+     The PARAMETER argument should be one of the `_SC_' symbols listed
+     below.
+
+     The normal return value from `sysconf' is the value you requested.
+     A value of `-1' is returned both if the implementation does not
+     impose a limit, and in case of an error.
+
+     The following `errno' error conditions are defined for this
+     function:
+
+    `EINVAL'
+          The value of the PARAMETER is invalid.
+

@@ -1,0 +1,41 @@
+getdate.o : \
+ getdate.c ../config.h /include/alloca.h /include/features.h \
+ /include/sys/cdefs.h /include/gnu/stubs.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h \
+ /include/ctype.h /include/bits/types.h /include/bits/pthreadtypes.h \
+ /include/endian.h /include/bits/endian.h /include/xlocale.h \
+ /include/stdlib.h /include/sys/types.h /include/time.h \
+ /include/sys/select.h /include/bits/select.h /include/bits/sigset.h \
+ /include/sys/sysmacros.h /include/string.h /include/bits/string.h \
+ /include/bits/string2.h getdate.h /include/sys/time.h \
+ /include/bits/time.h /ainc/posix/time.h /ainc/posix/types.h \
+ unlocked-io.h
+getdate.c :
+../config.h :
+/include/alloca.h :
+/include/features.h :
+/include/sys/cdefs.h :
+/include/gnu/stubs.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h :
+/include/ctype.h :
+/include/bits/types.h :
+/include/bits/pthreadtypes.h :
+/include/endian.h :
+/include/bits/endian.h :
+/include/xlocale.h :
+/include/stdlib.h :
+/include/sys/types.h :
+/include/time.h :
+/include/sys/select.h :
+/include/bits/select.h :
+/include/bits/sigset.h :
+/include/sys/sysmacros.h :
+/include/string.h :
+/include/bits/string.h :
+/include/bits/string2.h :
+getdate.h :
+/include/sys/time.h :
+/include/bits/time.h :
+/ainc/posix/time.h :
+/ainc/posix/types.h :
+unlocked-io.h :

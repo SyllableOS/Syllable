@@ -1,0 +1,21 @@
+README		Getting started with Qt
+INSTALL		How to install Qt
+PORTING		Notes about porting Qt
+changes.<ver>	List of changes from the last version
+LICENCE		Licence statement
+README.QT	To be included with libraries using Qt
+ANNOUNCE	Qt overview, as posted to the net
+FAQ		Frequently Answered Questions about Qt
+MANIFEST	This file
+
+Directories:
+------------
+bin		Place for Qt executables (moc)
+configs		Platform/compiler configuration files.
+doc		Qt documentation in HTML and manpage format.
+examples	Qt example programs
+extensions	Qt extensions (Browser Plugin, Xt/Motif support etc.)
+include		Qt include files
+lib		Place for the Qt library
+src		Qt source code
+tutorial	Source code for the Qt tutorial

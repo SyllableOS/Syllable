@@ -1,0 +1,58 @@
+#!/bin/sh
+
+: ${RM=rm}
+test=ir-1
+
+if test "$VERBOSE" = yes; then
+  set -x
+  $RM --version
+fi
+
+# Don't require use of TMPDIR.
+: ${RM_TMPDIR=.}
+
+tmp=$RM_TMPDIR/t-rm.$$
+
+test_failure=0
+mkdir $tmp $tmp/a $tmp/b $tmp/c || test_failure=1
+> $tmp/a/a || test_failure=1
+> $tmp/b/bb || test_failure=1
+> $tmp/c/cc || test_failure=1
+
+if test $test_failure = 1; then
+  echo 'failure in testing framework'
+  exit 1
+fi
+
+cat <<EOF > $test.I
+y
+y
+y
+y
+y
+y
+y
+y
+n
+n
+n
+EOF
+
+# Remove all but one of a, b, c -- I doubt that this test can portably
+# determine which one was removed based on order of dir entries.
+# This is a good argument for switching to a dejagnu-style test suite.
+fail=0
+$RM --verbose -i -r $tmp < $test.I > /dev/null 2>&1 || fail=1
+
+# $tmp should not have been removed.
+test -d $tmp || fail=1
+
+# There should be only one directory left.
+case `echo $tmp/*` in
+  $tmp/[abc]) ;;
+  *) fail=1 ;;
+esac
+
+rm -rf $tmp $test.I
+
+exit $fail

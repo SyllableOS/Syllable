@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W30//DTD W3 HTML 3.0//EN">
+<!-- IVW-fixed-Type -->
+<HTML>
+<HEAD>
+<TITLE>Tests for comment parsing</TITLE>
+<script>
+<!-- 
+  alert("ok 1"); 
+//--> 
+</script>
+<!-- regular comment 1 -->
+<script>
+<!--- 
+ alert("ok 2");
+ //-->
+ </script>
+<!--- regular comment 2 -->
+<script>
+ <!-- 
+ alert("ok 3"); 
+//--!>
+</script>
+<!-- regular comment 3 --!>
+<script>
+ <!-- 
+  alert("ok 4"); 
+//---> 
+</script>
+<!-- regular comment 4 --->
+<script>
+ <!--
+   alert("<--- <!-- ");
+ //-->
+ </script>
+<!-- regular <--- <!-- comment 5 -->
+<script>
+  <--
+   alert("faulty 6");
+ // -->
+ </script>
+<script>
+  <!--
+    alert("ok 7");
+  // -->
+</script  >
+<-- not a comment 6 -->
+</HEAD>
+<BODY bgcolor="ffffff">
+<h2>comments inside</h2>
+<p>this is a test file for testing the comment tokenizer. you don't see
+anything useful here.</p>
+</BODY>
+</HTML>

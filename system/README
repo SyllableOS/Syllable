@@ -1,0 +1,156 @@
+*****************************
+Building Syllable from Source
+*****************************
+
+This is a quick set of notes intended to help you build a
+Syllabe distribution from source.  Note that you normally
+will not need to do this, unless you're the build manager,
+or you just want to do it for the fun of it.
+
+Step 0.
+
+WARNING!  Before you do *anything*, be aware that you need lots
+of memory (Think 256MB), a fast processor (Syllable takes about
+an hour or so to build on my new Duron 1.1Ghz), and a spare
+partition or two that you can wipe and install Syllable into.
+
+If you don't have these, don't bother trying to build from source!
+
+Step 1.
+
+Install Syllable (or AtheOS) into a partition.
+
+Step 2.
+
+Install the following packages:
+
+	autoconf-2.13.bin.1.tgz
+	automake-1.4.bin.1.tgz
+	binutils-2.10.bin.2.tgz
+	bison-1.28.bin.1.tgz
+	diffutils-2.7.bin.1.tgz
+	gawk-3.0.4.bin.1.tgz
+	gcc-2.95.2.bin.4.tgz
+	libjpeg-6b.bin.1.tgz
+	libpng-1.0.5.bin.1.tgz
+	libungif-4.1.0.bin.1.tgz
+	m4-1.4.bin.1.tgz
+	make-3.78.1.bin.1.tgz
+	nasm-0.98.bin.1.tgz
+	perl-5.005.3.bin.1.tgz
+	zlib-1.1.3.bin.1.tgz
+
+You may well want to install an editor of choice.  Syllable
+comes with AEdit, but you can install any editor that you
+would prefer to use.
+
+Step 3.
+
+Untar the source.  You have already done this, clearly.  Move the
+entire directory structure that you have (The "system" dir this
+README resides in) into the partition you have installed Syllable
+and all the above packages into.
+
+NOTE!  You *can* use an existing installation if you're not too
+bothered about the slim chances of a header conflict, or your
+code being linked against an old library etc.  If you build
+Syllable from inside a 100% "clean" enviroment, you can avoid this
+problem of course.
+
+Step 4.
+
+Edit the Makeconf file to set some options.  The defaults
+provided will almost certainly work for you.  Most of them
+should be clear enough, if you do want to make some changes.
+
+Step 5.
+
+Build it.  Ensure you are in the base directory (Called "system")
+and run:
+
+	$ make distribution
+
+This will build the distribution directory tree, run three make
+processes that will build & install the files into the distribution
+tree, clean up some files, and then create a tarball for you, called
+something like "base-syllable-x.x.x.tgz"  Obviously the exact filename
+will depend on the version.
+
+WARNING!  This tarball is not a complete, ready-to-go distribution!
+Read on...
+
+Step 6.
+
+Install the base-syllable-x.x.x.tgz tarball as you would install any
+other distribution of Syllable.  You'll want a spare partition for
+this!
+
+Step 7.
+
+Boot the distribution you have just installed.  If it doesn't boot,
+something has gone wrong.  Try again, ask on the mailing list, or
+give up.  There really shouldn't be any reason for this to happen,
+unless you have made your own changes to the source code, in which
+case it's really going to be up to yourself to fix it.
+
+Step 8.
+
+Fix the symlinks.  Some files, especially those in /atheos/system/bin,
+and /atheos/usr, have symlinks that are incorrect (Due to the way
+in which they are installed into the distribution directory).
+
+The script "findlinks.sh" in the build-tools/ directory *may* help
+you to find these symlinks, but a) You will need to correct them
+yourself, by deleting them & recreating them, and b) It may not
+spot all of them for you.
+
+Step 9.
+
+Run:
+
+	$ pkgmanager -a /usr
+
+to build the symlinks in /atheos/autolnk
+
+Step 10.
+
+NOTE! You only need to do this step if you intend to actually
+distribute your own distribution!
+
+Reboot into the Syllable that you build the distribution in.  Mount
+the partition that you have the build installed into, and build a
+tarball with (Something like):
+
+	$ tar -czvpf base-syllable-x.x.x.tgz /distribution-directory
+
+Step 10.
+
+You're done.  You can delete the distribution directory that was created
+when you ran "make distribution", and run "make clean" in the base
+directory, if you like.
+
+******************************************
+Notes on the BUILD_LIBC option in Makeconf
+******************************************
+
+The BUILD_LIBC option in Makeconf is currently set to 'n'.  This means
+that when you run "make distribution", the files in libs/gnu/glibc2 are
+not compiled from source.  Instead, the binary files in libs/compat/libc
+are copied into the distribution instead.  Under most circumstances,
+this should be fine.
+
+If you really want to try and build glibc from source, change BUILD_LIBC
+to 'y' and run "make distribution".  This will *attempt* to make glibc.
+
+Note that I say *attempt*!  Currently, there is a lot of voodoo
+required to get glibc to build, and I havn't got the runes just right, yet.
+
+If you want to try, be warned that it will most likely fail, and you
+will be surprised to find the libs/glibc2 directory apparently empty.
+I cannot explain this.  It must be solar flares...
+
+If you do get glibc to build from source, PLEASE PLEASE PLEASE email me
+the options & flags etc. you used to do it!  vanders@users.sourceforge.net,
+in case you're wondering.
+
+

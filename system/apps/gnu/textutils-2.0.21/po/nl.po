@@ -1,0 +1,4287 @@
+# Dutch messages for GNU textutils
+# Copyright (C) 1996, 2000 Free Software Foundation, Inc.
+# Ivo Timmermans <itimmermans@bigfoot.com>, 2000.
+# Erick Branderhorst <branderh@debian.org>, 1996.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: GNU textutils 2.0d\n"
+"POT-Creation-Date: 2002-02-17 10:07+0100\n"
+"PO-Revision-Date: 2000-03-17 17:45+01:00\n"
+"Last-Translator: Ivo Timmermans <itimmermans@bigfoot.com>\n"
+"Language-Team: Dutch <nl@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: 8-bit\n"
+
+#: lib/argmatch.c:161
+#, fuzzy, c-format
+msgid "invalid argument %s for %s"
+msgstr "ongeldig argument %s voor `%s'"
+
+#: lib/argmatch.c:162
+#, fuzzy, c-format
+msgid "ambiguous argument %s for %s"
+msgstr "dubbelzinnig argument %s voor `%s'"
+
+#: lib/argmatch.c:181
+msgid "Valid arguments are:"
+msgstr "Geldige argumenten zijn:"
+
+#: lib/closeout.c:107 src/cat.c:186 src/cat.c:267 src/cat.c:320
+#: src/cksum.c:267 src/head.c:152 src/head.c:195 src/tail.c:327
+#: src/tail.c:1653 src/tr.c:1665 src/tr.c:1911 src/tr.c:2019
+msgid "write error"
+msgstr "fout bij schrijven"
+
+#: lib/error.c:129 lib/error.c:157
+msgid "Unknown system error"
+msgstr "Onbekende systeemfout"
+
+#: lib/getopt.c:694
+#, c-format
+msgid "%s: option `%s' is ambiguous\n"
+msgstr "%s: optie `%s' is dubbelzinnig\n"
+
+#: lib/getopt.c:719
+#, c-format
+msgid "%s: option `--%s' doesn't allow an argument\n"
+msgstr "%s: optie `--%s' staat geen argumenten toe\n"
+
+#: lib/getopt.c:724
+#, c-format
+msgid "%s: option `%c%s' doesn't allow an argument\n"
+msgstr "%s: optie `%c%s' staat geen argumenten toe\n"
+
+#: lib/getopt.c:742 lib/getopt.c:915
+#, c-format
+msgid "%s: option `%s' requires an argument\n"
+msgstr "%s: optie `%s' vereist een argument\n"
+
+#: lib/getopt.c:771
+#, c-format
+msgid "%s: unrecognized option `--%s'\n"
+msgstr "%s: onbekende optie `--%s'\n"
+
+#: lib/getopt.c:775
+#, c-format
+msgid "%s: unrecognized option `%c%s'\n"
+msgstr "%s: onbekende optie `%c%s'\n"
+
+#: lib/getopt.c:801
+#, c-format
+msgid "%s: illegal option -- %c\n"
+msgstr "%s: ongeldige optie -- %c\n"
+
+#: lib/getopt.c:804
+#, c-format
+msgid "%s: invalid option -- %c\n"
+msgstr "%s: ongeldige optie -- %c\n"
+
+#: lib/getopt.c:834 lib/getopt.c:964
+#, c-format
+msgid "%s: option requires an argument -- %c\n"
+msgstr "%s: optie vereist een argument -- %c\n"
+
+#: lib/getopt.c:881
+#, c-format
+msgid "%s: option `-W %s' is ambiguous\n"
+msgstr "%s: optie `-W %s' is dubbelzinnig\n"
+
+#: lib/getopt.c:899
+#, c-format
+msgid "%s: option `-W %s' doesn't allow an argument\n"
+msgstr "%s: optie `-W %s' staat geen argumenten toe\n"
+
+#: lib/human.c:365
+msgid "block size"
+msgstr "blokgrootte"
+
+#: lib/makepath.c:176
+#, fuzzy, c-format
+msgid "cannot create directory %s"
+msgstr "kan map `%s' niet aanmaken"
+
+#: lib/makepath.c:182 lib/makepath.c:423
+#, fuzzy, c-format
+msgid "%s exists but is not a directory"
+msgstr "`%s' bestaat maar is geen map"
+
+#: lib/makepath.c:319 lib/makepath.c:381 lib/makepath.c:442
+#, fuzzy, c-format
+msgid "cannot change owner and/or group of %s"
+msgstr "u kunt niet zowel de gebruiker als de groep weglaten"
+
+#: lib/makepath.c:341
+#, c-format
+msgid "cannot chdir to directory, %s"
+msgstr "kan niet naar map gaan, %s"
+
+#: lib/makepath.c:395 lib/makepath.c:448
+#, fuzzy, c-format
+msgid "cannot change permissions of %s"
+msgstr "kan de eigenaar van %s niet veranderen"
+
+#: lib/obstack.c:494 lib/obstack.c:497 lib/xmalloc.c:66
+#, fuzzy
+msgid "memory exhausted"
+msgstr "geen geheugen meer beschikbaar\n"
+
+#: lib/quotearg.c:270
+msgid "`"
+msgstr "`"
+
+#: lib/quotearg.c:271
+msgid "'"
+msgstr "'"
+
+#: lib/rpmatch.c:78
+msgid "^[yY]"
+msgstr "^[yYjJ]"
+
+#: lib/rpmatch.c:81
+msgid "^[nN]"
+msgstr "^[nN]"
+
+#: lib/unicodeio.c:159
+msgid "iconv function not usable"
+msgstr ""
+
+#: lib/unicodeio.c:161
+msgid "iconv function not available"
+msgstr ""
+
+#: lib/unicodeio.c:168
+#, fuzzy
+msgid "character out of range"
+msgstr "%s: regelnummer buiten bereik"
+
+#: lib/unicodeio.c:231
+#, c-format
+msgid "cannot convert U+%04X to local character set"
+msgstr ""
+
+#: lib/unicodeio.c:233
+#, c-format
+msgid "cannot convert U+%04X to local character set: %s"
+msgstr ""
+
+#: lib/userspec.c:178
+msgid "invalid user"
+msgstr "ongeldige gebruiker"
+
+#: lib/userspec.c:179
+msgid "invalid group"
+msgstr "ongeldige groep"
+
+#: lib/userspec.c:181
+msgid "cannot get the login group of a numeric UID"
+msgstr "kan de logingroep van een numerieke gebruiker niet opvragen"
+
+#: lib/userspec.c:183
+msgid "cannot omit both user and group"
+msgstr "u kunt niet zowel de gebruiker als de groep weglaten"
+
+#: lib/version-etc.c:61
+#, c-format
+msgid "Written by %s.\n"
+msgstr "Geschreven door %s.\n"
+
+#: lib/version-etc.c:67
+msgid ""
+"This is free software; see the source for copying conditions.  There is NO\n"
+"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+msgstr ""
+"Dit is vrije programmatuur; zie de broncode voor de voorwaarden van\n"
+"distributie.  Er is GEEN garantie; zelfs niet voor VERKOOPBAARHEID of\n"
+"GESCHIKTHEID VOOR EEN BEPAALD DOEL.\n"
+
+#: lib/xmemcoll.c:61
+msgid "string comparison failed"
+msgstr ""
+
+#: lib/xmemcoll.c:62
+msgid "Set LC_ALL='C' to work around the problem."
+msgstr ""
+
+#: lib/xmemcoll.c:64
+#, c-format
+msgid "The strings compared were %s and %s."
+msgstr ""
+
+#: src/cat.c:42 src/split.c:42
+msgid "Torbjorn Granlund and Richard M. Stallman"
+msgstr ""
+
+#: src/cat.c:88 src/cksum.c:276 src/comm.c:71 src/csplit.c:1490 src/cut.c:163
+#: src/expand.c:106 src/fmt.c:267 src/fold.c:63 src/head.c:84 src/join.c:142
+#: src/md5sum.c:121 src/nl.c:172 src/od.c:277 src/paste.c:399 src/pr.c:2752
+#: src/ptx.c:1855 src/sort.c:281 src/split.c:91 src/sum.c:56 src/tac.c:123
+#: src/tail.c:234 src/tr.c:323 src/tsort.c:93 src/unexpand.c:371
+#: src/uniq.c:130 src/wc.c:124
+#, c-format
+msgid "Try `%s --help' for more information.\n"
+msgstr "Probeer `%s --help' voor meer informatie.\n"
+
+#: src/cat.c:92
+#, c-format
+msgid "Usage: %s [OPTION] [FILE]...\n"
+msgstr "Gebruik: %s [OPTIE] [BESTAND]...\n"
+
+#: src/cat.c:96
+#, fuzzy
+msgid ""
+"Concatenate FILE(s), or standard input, to standard output.\n"
+"\n"
+"  -A, --show-all           equivalent to -vET\n"
+"  -b, --number-nonblank    number nonblank output lines\n"
+"  -e                       equivalent to -vE\n"
+"  -E, --show-ends          display $ at end of each line\n"
+"  -n, --number             number all output lines\n"
+"  -s, --squeeze-blank      never more than one single blank line\n"
+msgstr ""
+"Stuur BESTAND(en) of standaard invoer, naar standaard uitvoer.\n"
+"\n"
+"  -A, --show-all           zelfde als -vET\n"
+"  -b, --number-nonblank    nummer niet-lege uitvoerregels\n"
+"  -e                       zelfde als -vE\n"
+"  -E, --show-ends          geef een $ aan het einde van alle regels\n"
+"  -n, --number             nummer alle uitvoerregels\n"
+"  -s, --squeeze-blank      nooit meer dan één lege regel\n"
+"  -t                       zelfde als -vT\n"
+"  -T, --show-tabs          geef TAB-tekens weer met ^I\n"
+"  -u                       (wordt genegeerd)\n"
+"  -v, --show-nonprinting   gebruik ^ en M- notatie, behalve voor LFD en TAB\n"
+"      --help               toon deze hulptekst en beëindig programma\n"
+"      --version            toon versie-informatie en beëindig programma\n"
+"\n"
+"Indien geen BESTAND wordt gegeven, of BESTAND is -, wordt de\n"
+"standaard-invoer gelezen.\n"
+
+#: src/cat.c:106
+#, fuzzy
+msgid ""
+"  -t                       equivalent to -vT\n"
+"  -T, --show-tabs          display TAB characters as ^I\n"
+"  -u                       (ignored)\n"
+"  -v, --show-nonprinting   use ^ and M- notation, except for LFD and TAB\n"
+msgstr ""
+"Stuur BESTAND(en) of standaard invoer, naar standaard uitvoer.\n"
+"\n"
+"  -A, --show-all           zelfde als -vET\n"
+"  -b, --number-nonblank    nummer niet-lege uitvoerregels\n"
+"  -e                       zelfde als -vE\n"
+"  -E, --show-ends          geef een $ aan het einde van alle regels\n"
+"  -n, --number             nummer alle uitvoerregels\n"
+"  -s, --squeeze-blank      nooit meer dan één lege regel\n"
+"  -t                       zelfde als -vT\n"
+"  -T, --show-tabs          geef TAB-tekens weer met ^I\n"
+"  -u                       (wordt genegeerd)\n"
+"  -v, --show-nonprinting   gebruik ^ en M- notatie, behalve voor LFD en TAB\n"
+"      --help               toon deze hulptekst en beëindig programma\n"
+"      --version            toon versie-informatie en beëindig programma\n"
+"\n"
+"Indien geen BESTAND wordt gegeven, of BESTAND is -, wordt de\n"
+"standaard-invoer gelezen.\n"
+
+#: src/cat.c:114 src/sum.c:72
+msgid ""
+"\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+msgstr ""
+
+#: src/cat.c:119
+msgid ""
+"\n"
+"  -B, --binary             use binary writes to the console device.\n"
+"\n"
+msgstr ""
+"\n"
+"  -B, --binary             schrijf binair naar het console-apparaat.\n"
+"\n"
+
+#: src/cat.c:124 src/cksum.c:291 src/comm.c:88 src/csplit.c:1532 src/cut.c:208
+#: src/expand.c:131 src/fmt.c:297 src/fold.c:86 src/head.c:115 src/join.c:182
+#: src/md5sum.c:157 src/nl.c:227 src/od.c:364 src/paste.c:423 src/pr.c:2864
+#: src/sort.c:352 src/split.c:123 src/sum.c:76 src/tac.c:146 src/tail.c:304
+#: src/tr.c:394 src/tsort.c:105 src/unexpand.c:394 src/uniq.c:169 src/wc.c:146
+msgid ""
+"\n"
+"Report bugs to <bug-textutils@gnu.org>."
+msgstr ""
+"\n"
+"Schrijf foutrapportages aan <bug-textutils@gnu.org>;\n"
+"Meld fouten in de vertaling aan <nl@li.org>."
+
+#: src/cat.c:308
+#, c-format
+msgid "cannot do ioctl on `%s'"
+msgstr "kan geen ioctl doen op `%s'"
+
+#: src/cat.c:648 src/od.c:1004
+msgid "standard output"
+msgstr "standaarduitvoer"
+
+#: src/cat.c:779
+#, c-format
+msgid "%s: input file is output file"
+msgstr "%s: invoerbestand is uitvoerbestand"
+
+#: src/cksum.c:234
+#, fuzzy, c-format
+msgid "%s: file too long"
+msgstr "bestand ingekort"
+
+#: src/cksum.c:280
+#, fuzzy, c-format
+msgid ""
+"Usage: %s [FILE]...\n"
+"  or:  %s [OPTION]\n"
+msgstr "Aanroep: %s [OPTIE]... [INVOER [UITVOER]]\n"
+
+#: src/cksum.c:285
+msgid ""
+"Print CRC checksum and byte counts of each FILE.\n"
+"\n"
+msgstr ""
+
+#: src/comm.c:35 src/uniq.c:38
+msgid "Richard Stallman and David MacKenzie"
+msgstr ""
+
+#: src/comm.c:75
+#, c-format
+msgid "Usage: %s [OPTION]... LEFT_FILE RIGHT_FILE\n"
+msgstr "Aanroep: %s [OPTIE]... BESTAND1 BESTAND2\n"
+
+#: src/comm.c:79
+#, fuzzy
+msgid ""
+"Compare sorted files LEFT_FILE and RIGHT_FILE line by line.\n"
+"\n"
+"  -1              suppress lines unique to left file\n"
+"  -2              suppress lines unique to right file\n"
+"  -3              suppress lines that appear in both files\n"
+msgstr ""
+"Vergelijk gesorteerde bestanden BESTAND1 en BESTAND2 regel voor regel.\n"
+"\n"
+"  -1              onderdruk regels die alleen in BESTAND1 voorkomen\n"
+"  -2              onderdruk regels die alleen in BESTAND2 voorkomen\n"
+"  -3              onderdruk regels die slechts in één van beide bestanden\n"
+"                  voorkomen\n"
+"      --help      toon deze hulptekst en beëindig programma\n"
+"      --version   toon versie-informatie en beëindig programma\n"
+
+#: src/csplit.c:41
+msgid "Stuart Kemp and David MacKenzie"
+msgstr ""
+
+#: src/csplit.c:290 src/csplit.c:1479 src/tac-pipe.c:57 src/tr.c:1607
+#: src/tr.c:1710 src/tr.c:1753
+msgid "read error"
+msgstr "fout bij lezen"
+
+#: src/csplit.c:584
+msgid "input disappeared"
+msgstr "invoer verdween"
+
+#: src/csplit.c:706 src/csplit.c:717
+#, c-format
+msgid "%s: line number out of range"
+msgstr "%s: regelnummer buiten bereik"
+
+#: src/csplit.c:744
+#, c-format
+msgid "%s: `%s': line number out of range"
+msgstr "%s: `%s': regelnummer buiten bereik"
+
+#: src/csplit.c:747 src/csplit.c:793
+#, c-format
+msgid " on repetition %d\n"
+msgstr " tijdens herhaling %d\n"
+
+#: src/csplit.c:789
+#, c-format
+msgid "%s: `%s': match not found"
+msgstr "%s: `%s': geen overeenkomst gevonden"
+
+#: src/csplit.c:850 src/csplit.c:890 src/tac.c:262
+msgid "error in regular expression search"
+msgstr "fout in zoeken met reguliere expressie"
+
+#: src/csplit.c:993
+#, c-format
+msgid "write error for `%s'"
+msgstr "fout bij schrijven naar `%s'"
+
+#: src/csplit.c:1065
+#, c-format
+msgid "%s: `+' or `-' expected after delimeter"
+msgstr "%s: na een scheidingsteken werd een `+' of `-' verwacht"
+
+#: src/csplit.c:1069
+#, c-format
+msgid "%s: integer expected after `%c'"
+msgstr "%s: geheel getal verwacht na `%c'"
+
+#: src/csplit.c:1089
+#, c-format
+msgid "%s: `}' is required in repeat count"
+msgstr "%s: `}' is verplicht bij een herhalingsaantal"
+
+#: src/csplit.c:1099
+#, c-format
+msgid "%s}: integer required between `{' and `}'"
+msgstr "%s}: geheel getal verplicht tussen `{' en `}'"
+
+#: src/csplit.c:1126
+#, c-format
+msgid "%s: closing delimeter `%c' missing"
+msgstr "%s: afsluitend scheidinsteken `%c' ontbreekt"
+
+#: src/csplit.c:1142
+#, c-format
+msgid "%s: invalid regular expression: %s"
+msgstr "%s: ongeldige reguliere expressie: %s"
+
+#: src/csplit.c:1175
+#, c-format
+msgid "%s: invalid pattern"
+msgstr "%s: ongeldig patroon"
+
+#: src/csplit.c:1178
+#, c-format
+msgid "%s: line number must be greater than zero"
+msgstr "%s: regelnummer moet groter zijn dan nul"
+
+#: src/csplit.c:1184
+#, c-format
+msgid "line number `%s' is smaller than preceding line number, %s"
+msgstr "regelnummer `%s' is kleiner dan het voorgaande regelnummer, %s"
+
+#: src/csplit.c:1190
+#, c-format
+msgid "warning: line number `%s' is the same as preceding line number"
+msgstr "let op: regelnummer `%s' is het zelfde als het voorgaande regelnummer"
+
+#: src/csplit.c:1312
+msgid "missing conversion specifier in suffix"
+msgstr "specificatie voor conversie ontbreekt in achtervoegsel"
+
+#: src/csplit.c:1318
+#, c-format
+msgid "invalid conversion specifier in suffix: %c"
+msgstr "specificatie voor conversie in het achtervoegsel is ongeldig: %c"
+
+#: src/csplit.c:1321
+#, c-format
+msgid "invalid conversion specifier in suffix: \\%.3o"
+msgstr "specificatie voor conversie in het achtervoegsel is ongeldig: \\%.3o"
+
+#: src/csplit.c:1353
+#, c-format
+msgid "missing %% conversion specification in suffix"
+msgstr "ontbrekende specificatie voor %%-conversie in achtervoegsel"
+
+#: src/csplit.c:1356
+#, c-format
+msgid "too many %% conversion specifications in suffix"
+msgstr "te veel specificaties voor %%-conversie in achtervoegsel"
+
+#: src/csplit.c:1439
+#, c-format
+msgid "%s: invalid number"
+msgstr "%s: ongeldig getal"
+
+#: src/csplit.c:1462
+msgid "too few arguments"
+msgstr "te weinig argumenten"
+
+#: src/csplit.c:1494
+#, c-format
+msgid "Usage: %s [OPTION]... FILE PATTERN...\n"
+msgstr "Aanroep: %s [OPTIE]... BESTAND PATROON...\n"
+
+#: src/csplit.c:1498
+msgid ""
+"Output pieces of FILE separated by PATTERN(s) to files `xx01', `xx02', ...,\n"
+"and output byte counts of each piece to standard output.\n"
+"\n"
+msgstr ""
+
+#: src/csplit.c:1503 src/cut.c:175 src/expand.c:119 src/fmt.c:277
+#: src/fold.c:76 src/head.c:98 src/nl.c:185 src/paste.c:413 src/pr.c:2765
+#: src/ptx.c:1867 src/sort.c:295 src/split.c:104 src/tac.c:136 src/tail.c:248
+#: src/unexpand.c:384 src/uniq.c:143
+msgid ""
+"Mandatory arguments to long options are mandatory for short options too.\n"
+msgstr ""
+
+#: src/csplit.c:1506
+#, c-format
+msgid ""
+"  -b, --suffix-format=FORMAT use sprintf FORMAT instead of %d\n"
+"  -f, --prefix=PREFIX        use PREFIX instead of `xx'\n"
+"  -k, --keep-files           do not remove output files on errors\n"
+msgstr ""
+
+#: src/csplit.c:1511
+msgid ""
+"  -n, --digits=DIGITS        use specified number of digits instead of 2\n"
+"  -s, --quiet, --silent      do not print counts of output file sizes\n"
+"  -z, --elide-empty-files    remove empty output files\n"
+msgstr ""
+
+#: src/csplit.c:1518
+msgid ""
+"\n"
+"Read standard input if FILE is -.  Each PATTERN may be:\n"
+msgstr ""
+
+#: src/csplit.c:1522
+msgid ""
+"\n"
+"  INTEGER            copy up to but not including specified line number\n"
+"  /REGEXP/[OFFSET]   copy up to but not including a matching line\n"
+"  %REGEXP%[OFFSET]   skip to, but not including a matching line\n"
+"  {INTEGER}          repeat the previous pattern specified number of times\n"
+"  {*}                repeat the previous pattern as many times as possible\n"
+"\n"
+"A line OFFSET is a required `+' or `-' followed by a positive integer.\n"
+msgstr ""
+
+#: src/cut.c:39
+msgid "David Ihnat, David MacKenzie, and Jim Meyering"
+msgstr ""
+
+#: src/cut.c:167 src/expand.c:110 src/fold.c:67 src/head.c:88 src/nl.c:176
+#: src/paste.c:403 src/pr.c:2756 src/sort.c:285 src/sum.c:60 src/tac.c:127
+#: src/tail.c:238 src/unexpand.c:375 src/wc.c:128
+#, c-format
+msgid "Usage: %s [OPTION]... [FILE]...\n"
+msgstr "Aanroep: %s [OPTIE]... [BESTAND]...\n"
+
+#: src/cut.c:171
+msgid ""
+"Print selected parts of lines from each FILE to standard output.\n"
+"\n"
+msgstr ""
+
+#: src/cut.c:178
+#, fuzzy
+msgid ""
+"  -b, --bytes=LIST        output only these bytes\n"
+"  -c, --characters=LIST   output only these characters\n"
+"  -d, --delimiter=DELIM   use DELIM instead of TAB for field delimiter\n"
+msgstr ""
+"Vul invoer regels uit van elk BESTAND (standaard is de standaard invoer),\n"
+"de uitvoer gaat naar de standaard uitvoer.\n"
+"\n"
+"  -b, --bytes          tel bytes in plaats van kolommen\n"
+"  -s, --spaces         breek af op spaties\n"
+"  -w, --width=BREEDTE  gebruik BREEDTE kolommen in plaats van 80\n"
+"      --help           toon deze hulptekst en beëindig\n"
+"      --version        toon versie-informatie en beëindig\n"
+
+#: src/cut.c:183
+msgid ""
+"  -f, --fields=LIST       output only these fields;  also print any line\n"
+"                            that contains no delimiter character, unless\n"
+"                            the -s option is specified\n"
+"  -n                      (ignored)\n"
+msgstr ""
+
+#: src/cut.c:189
+msgid ""
+"  -s, --only-delimited    do not print lines not containing delimiters\n"
+"      --output-delimiter=STRING  use STRING as the output delimiter\n"
+"                            the default is to use the input delimiter\n"
+msgstr ""
+
+#: src/cut.c:196
+msgid ""
+"\n"
+"Use one, and only one of -b, -c or -f.  Each LIST is made up of one\n"
+"range, or many ranges separated by commas.  Each range is one of:\n"
+"\n"
+"  N     N'th byte, character or field, counted from 1\n"
+"  N-    from N'th byte, character or field, to end of line\n"
+"  N-M   from N'th to M'th (included) byte, character or field\n"
+"  -M    from first to M'th (included) byte, character or field\n"
+"\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+msgstr ""
+
+#: src/cut.c:263 src/cut.c:294 src/cut.c:354
+msgid "invalid byte or field list"
+msgstr "ongeldige lijst van bytes of velden"
+
+#: src/cut.c:624 src/cut.c:633
+msgid "only one type of list may be specified"
+msgstr "slechts één soort lijst mag worden opgegeven"
+
+#: src/cut.c:627
+msgid "missing list of positions"
+msgstr "ontbrekende lijst van posities"
+
+#: src/cut.c:636
+msgid "missing list of fields"
+msgstr "ontbrekende lijst van velden"
+
+#: src/cut.c:643
+msgid "the delimiter must be a single character"
+msgstr "de scheiding moet een enkel teken zijn"
+
+#: src/cut.c:673
+msgid "you must specify a list of bytes, characters, or fields"
+msgstr "u moet een lijst van bytes, tekens, of velden geven"
+
+#: src/cut.c:676
+msgid "a delimiter may be specified only when operating on fields"
+msgstr ""
+"een scheidingsteken mag alleen gespecificeerd zijn indien met velden gewerkt "
+"wordt"
+
+#: src/cut.c:679
+msgid ""
+"suppressing non-delimited lines makes sense\n"
+"\tonly when operating on fields"
+msgstr ""
+"het onderdrukken van onbegrensde regels heeft\n"
+"        alleen zin indien met velden gewerkt wordt"
+
+#: src/expand.c:114
+msgid ""
+"Convert tabs in each FILE to spaces, writing to standard output.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/expand.c:122
+msgid ""
+"  -i, --initial       do not convert TABs after non whitespace\n"
+"  -t, --tabs=NUMBER   have tabs NUMBER characters apart, not 8\n"
+msgstr ""
+
+#: src/expand.c:126
+msgid ""
+"  -t, --tabs=LIST     use comma separated list of explicit tab positions\n"
+msgstr ""
+
+#: src/expand.c:173 src/unexpand.c:153
+msgid "tab size contains an invalid character"
+msgstr "TAB-grootte bevat een ongeldig karakter"
+
+#: src/expand.c:191 src/unexpand.c:171
+msgid "tab size cannot be 0"
+msgstr "TAB-grootte mag geen nul zijn"
+
+#: src/expand.c:193 src/unexpand.c:173
+msgid "tab sizes must be ascending"
+msgstr "TAB-grootte moet toenemen"
+
+#: src/expand.c:386
+#, fuzzy
+msgid "`-LIST' option is obsolete; use `-t LIST'"
+msgstr "let op: ongeldige breedte %lu; zal %d gebruiken"
+
+#: src/fmt.c:271
+#, c-format
+msgid "Usage: %s [-DIGITS] [OPTION]... [FILE]...\n"
+msgstr "Aanroep: %s [-NUMMERS] [OPTIE]... [BESTAND]...\n"
+
+#: src/fmt.c:272
+msgid ""
+"Reformat each paragraph in the FILE(s), writing to standard output.\n"
+"If no FILE or if FILE is `-', read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/fmt.c:280
+#, fuzzy
+msgid ""
+"  -c, --crown-margin        preserve indentation of first two lines\n"
+"  -p, --prefix=STRING       combine only lines having STRING as prefix\n"
+"  -s, --split-only          split long lines, but do not refill\n"
+msgstr ""
+"Herschrijf elke paragraaf in de BESTAND(en), de uitvoer gaat naar de\n"
+"standaard uitvoer.  Indien geen BESTAND is gegeven, of BESTAND is -,\n"
+"wordt er gelezen uit de standaard invoer.\n"
+"\n"
+"De verplichte argumenten voor lange opties zijn ook verplicht voor een-"
+"letter opties.\n"
+"  -c, --crown-margin        behoud inspringing van eerste twee regels\n"
+"  -p, --prefix=TEKST        combineer regels met TEKST als voorvoegsel\n"
+"  -s, --split-only          lange regels splitsen, maar niet opnieuw "
+"uitvullen\n"
+"  -t, --tagged-paragraph    inspringing eerste regel verschilt van tweede\n"
+"  -u, --uniform-spacing     één spatie tussen woorden, twee na een "
+"zinseinde\n"
+"  -w, --width=NUMMER        maximale regelbreedte (standaard is 75 tekens)\n"
+"      --help                toon deze hulptekst en beëindig programma\n"
+"      --version             toon versie-informatie en beëindig programma\n"
+"\n"
+"Bij -wNUMMER, mag de `w' worden weggelaten.\n"
+
+#: src/fmt.c:286
+#, fuzzy
+msgid ""
+"  -t, --tagged-paragraph    indentation of first line different from second\n"
+"  -u, --uniform-spacing     one space between words, two after sentences\n"
+"  -w, --width=NUMBER        maximum line width (default of 75 columns)\n"
+msgstr ""
+"Herschrijf elke paragraaf in de BESTAND(en), de uitvoer gaat naar de\n"
+"standaard uitvoer.  Indien geen BESTAND is gegeven, of BESTAND is -,\n"
+"wordt er gelezen uit de standaard invoer.\n"
+"\n"
+"De verplichte argumenten voor lange opties zijn ook verplicht voor een-"
+"letter opties.\n"
+"  -c, --crown-margin        behoud inspringing van eerste twee regels\n"
+"  -p, --prefix=TEKST        combineer regels met TEKST als voorvoegsel\n"
+"  -s, --split-only          lange regels splitsen, maar niet opnieuw "
+"uitvullen\n"
+"  -t, --tagged-paragraph    inspringing eerste regel verschilt van tweede\n"
+"  -u, --uniform-spacing     één spatie tussen woorden, twee na een "
+"zinseinde\n"
+"  -w, --width=NUMMER        maximale regelbreedte (standaard is 75 tekens)\n"
+"      --help                toon deze hulptekst en beëindig programma\n"
+"      --version             toon versie-informatie en beëindig programma\n"
+"\n"
+"Bij -wNUMMER, mag de `w' worden weggelaten.\n"
+
+#: src/fmt.c:293
+msgid ""
+"\n"
+"In -wNUMBER, the letter `w' may be omitted.\n"
+msgstr ""
+
+#: src/fmt.c:345
+#, fuzzy, c-format
+msgid "invalid width option: `%s'"
+msgstr "ongeldig teksttype `%s'"
+
+#: src/fmt.c:385
+#, fuzzy, c-format
+msgid "invalid width: `%s'"
+msgstr "ongeldig veldnummer: `%s'"
+
+#: src/fold.c:71
+msgid ""
+"Wrap input lines in each FILE (standard input by default), writing to\n"
+"standard output.\n"
+"\n"
+msgstr ""
+
+#: src/fold.c:79
+msgid ""
+"  -b, --bytes         count bytes rather than columns\n"
+"  -s, --spaces        break at spaces\n"
+"  -w, --width=WIDTH   use WIDTH columns instead of 80\n"
+msgstr ""
+
+#: src/fold.c:267
+#, fuzzy, c-format
+msgid "`%s' option is obsolete; use `%s'"
+msgstr "let op: ongeldige breedte %lu; zal %d gebruiken"
+
+#: src/fold.c:295
+#, c-format
+msgid "invalid number of columns: `%s'"
+msgstr "ongeldig aantal kolommen: `%s'"
+
+#: src/head.c:92
+#, fuzzy
+msgid ""
+"Print first 10 lines of each FILE to standard output.\n"
+"With more than one FILE, precede each with a header giving the file name.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"Kopieer de eerste 10 regels van elk BESTAND naar standaard-uitvoer.\n"
+"Indien meerdere bestanden gegeven zijn, wordt de uitvoer van ieder\n"
+"bestand voorafgegaan door de bestandsnaam.  Indien geen BESTAND\n"
+"gegeven is, of BESTAND is -, wordt de standaard invoer gelezen.\n"
+"\n"
+"  -c, --bytes=GROOTTE      print eerste GROOTTE bytes\n"
+"  -n, --lines=AANTAL       print eerste AANTAL regels in plaats van eerste "
+"10\n"
+"  -q, --quiet, --silent    print nooit bestandsnamen als headers\n"
+"  -v, --verbose            print altijd bestandsnamen als headers\n"
+"      --help               toon deze hulptekst en beëindig programma\n"
+"      --version            toon versie-informatie en beëindig programma\n"
+"\n"
+"GROOTTE mag een achtervoegsel hebben om aan te geven waarmee het\n"
+"vermenigvuldigd moet worden: b voor 512, k voor 1 Kilobyte, m voor 1\n"
+"Megabyte.  Als -GROOTTE de eerste OPTIE is, lees -c GROOTTE wanneer\n"
+"een van de vermunigvuldigingsachtervoegsels bkm volgt, ander lees -n\n"
+"GROOTTE.\n"
+
+#: src/head.c:101
+msgid ""
+"  -c, --bytes=SIZE         print first SIZE bytes\n"
+"  -n, --lines=NUMBER       print first NUMBER lines instead of first 10\n"
+msgstr ""
+
+#: src/head.c:105
+msgid ""
+"  -q, --quiet, --silent    never print headers giving file names\n"
+"  -v, --verbose            always print headers giving file names\n"
+msgstr ""
+
+#: src/head.c:111 src/split.c:119
+msgid ""
+"\n"
+"SIZE may have a multiplier suffix: b for 512, k for 1K, m for 1 Meg.\n"
+msgstr ""
+
+#: src/head.c:189
+#, fuzzy, c-format
+msgid "cannot reposition file pointer for %s"
+msgstr "kan map `%s' niet aanmaken"
+
+#: src/head.c:220 src/md5sum.c:334 src/md5sum.c:675 src/od.c:950 src/od.c:1990
+#: src/pr.c:1166 src/pr.c:1373 src/pr.c:1495 src/tac.c:484 src/tac.c:490
+#: src/tr.c:2026 src/tsort.c:585
+msgid "standard input"
+msgstr "standaard invoer"
+
+#: src/head.c:255 src/tail.c:1380
+#, c-format
+msgid "%s: %s is so large that it is not representable"
+msgstr "%s: %s is zo groot dat het niet weergegeven kan worden"
+
+#: src/head.c:256 src/tail.c:1382
+msgid "number of lines"
+msgstr "aantal regels"
+
+#: src/head.c:256 src/tail.c:1383
+msgid "number of bytes"
+msgstr "aantal bytes"
+
+#: src/head.c:263 src/tail.c:1469
+msgid "invalid number of lines"
+msgstr "ongeldig aantal regels"
+
+#: src/head.c:264 src/tail.c:1470
+msgid "invalid number of bytes"
+msgstr "ongeldig aantal bytes"
+
+#: src/head.c:340
+#, c-format
+msgid "unrecognized option `-%c'"
+msgstr "onbekende optie `-%c'"
+
+#: src/head.c:347
+#, fuzzy, c-format
+msgid "`-%s' option is obsolete; use `-%c %.*s%.*s%s'"
+msgstr "let op: ongeldige breedte %lu; zal %d gebruiken"
+
+#: src/join.c:146
+#, c-format
+msgid "Usage: %s [OPTION]... FILE1 FILE2\n"
+msgstr "Aanroep: %s [OPTIE]... BESTAND1 BESTAND2\n"
+
+#: src/join.c:150
+msgid ""
+"For each pair of input lines with identical join fields, write a line to\n"
+"standard output.  The default join field is the first, delimited\n"
+"by whitespace.  When FILE1 or FILE2 (not both) is -, read standard input.\n"
+"\n"
+"  -a SIDE           print unpairable lines coming from file SIDE\n"
+"  -e EMPTY          replace missing input fields with EMPTY\n"
+msgstr ""
+
+#: src/join.c:158
+msgid ""
+"  -i, --ignore-case ignore differences in case when comparing fields\n"
+"  -j FIELD          (obsolescent) equivalent to `-1 FIELD -2 FIELD'\n"
+"  -j1 FIELD         (obsolescent) equivalent to `-1 FIELD'\n"
+"  -j2 FIELD         (obsolescent) equivalent to `-2 FIELD'\n"
+"  -o FORMAT         obey FORMAT while constructing output line\n"
+"  -t CHAR           use CHAR as input and output field separator\n"
+msgstr ""
+
+#: src/join.c:166
+#, fuzzy
+msgid ""
+"  -v SIDE           like -a SIDE, but suppress joined output lines\n"
+"  -1 FIELD          join on this FIELD of file 1\n"
+"  -2 FIELD          join on this FIELD of file 2\n"
+msgstr ""
+"Vergelijk gesorteerde bestanden BESTAND1 en BESTAND2 regel voor regel.\n"
+"\n"
+"  -1              onderdruk regels die alleen in BESTAND1 voorkomen\n"
+"  -2              onderdruk regels die alleen in BESTAND2 voorkomen\n"
+"  -3              onderdruk regels die slechts in één van beide bestanden\n"
+"                  voorkomen\n"
+"      --help      toon deze hulptekst en beëindig programma\n"
+"      --version   toon versie-informatie en beëindig programma\n"
+
+#: src/join.c:173
+msgid ""
+"\n"
+"Unless -t CHAR is given, leading blanks separate fields and are ignored,\n"
+"else fields are separated by CHAR.  Any FIELD is a field number counted\n"
+"from 1.  FORMAT is one or more comma or blank separated specifications,\n"
+"each being `SIDE.FIELD' or `0'.  Default FORMAT outputs the join field,\n"
+"the remaining fields from FILE1, the remaining fields from FILE2, all\n"
+"separated by CHAR.\n"
+msgstr ""
+
+#: src/join.c:648
+#, c-format
+msgid "invalid field specifier: `%s'"
+msgstr "ongeldige veld specificatie: `%s'"
+
+#: src/join.c:662 src/join.c:778 src/join.c:814
+#, c-format
+msgid "invalid field number: `%s'"
+msgstr "ongeldig veldnummer: `%s'"
+
+#: src/join.c:675
+#, c-format
+msgid "invalid file number in field spec: `%s'"
+msgstr "ongeldig bestandsnummer in veld specificatie: `%s'"
+
+#: src/join.c:798
+#, c-format
+msgid "invalid field number for file 1: `%s'"
+msgstr "ongeldig veldnummer bij bestand 1: `%s'"
+
+#: src/join.c:807
+#, c-format
+msgid "invalid field number for file 2: `%s'"
+msgstr "ongeldig veldnummer bij bestand 2: `%s'"
+
+#: src/join.c:839
+msgid "too many non-option arguments"
+msgstr "te veel argumenten die geen optie zijn"
+
+#: src/join.c:861
+msgid "too few non-option arguments"
+msgstr "te weinig argumenten die geen optie zijn"
+
+#: src/join.c:872
+msgid "both files cannot be standard input"
+msgstr "niet beide bestanden mogen de standaard invoer zijn"
+
+#: src/md5sum.c:38
+msgid "Ulrich Drepper and Scott Miller"
+msgstr ""
+
+#: src/md5sum.c:125
+#, c-format
+msgid ""
+"Usage: %s [OPTION] [FILE]...\n"
+"  or:  %s [OPTION] --check [FILE]\n"
+"Print or check %s (%d-bit) checksums.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+msgstr ""
+
+#: src/md5sum.c:134
+#, c-format
+msgid ""
+"\n"
+"  -b, --binary            read files in binary mode (default on DOS/"
+"Windows)\n"
+"  -c, --check             check %s sums against given list\n"
+"  -t, --text              read files in text mode (default)\n"
+"\n"
+msgstr ""
+
+#: src/md5sum.c:142
+msgid ""
+"The following two options are useful only when verifying checksums:\n"
+"      --status            don't output anything, status code shows success\n"
+"  -w, --warn              warn about improperly formated checksum lines\n"
+"\n"
+msgstr ""
+
+#: src/md5sum.c:150
+#, c-format
+msgid ""
+"\n"
+"The sums are computed as described in %s.  When checking, the input\n"
+"should be a former output of this program.  The default mode is to print\n"
+"a line with checksum, a character indicating type (`*' for binary, ` ' for\n"
+"text), and name for each FILE.\n"
+msgstr ""
+
+#: src/md5sum.c:379
+#, fuzzy, c-format
+msgid "%s: %lu: improperly formatted %s checksum line"
+msgstr "%s: %lu: foutief opgemaakte regel met MD5 controlesom"
+
+#: src/md5sum.c:401
+#, c-format
+msgid "%s: FAILED open or read\n"
+msgstr "%s: openen of lezen MISLUKT\n"
+
+#: src/md5sum.c:425
+msgid "FAILED"
+msgstr "MISLUKT"
+
+#: src/md5sum.c:425
+msgid "OK"
+msgstr "OK"
+
+#: src/md5sum.c:438
+#, c-format
+msgid "%s: read error"
+msgstr "%s: fout bij lezen"
+
+#: src/md5sum.c:451
+#, fuzzy, c-format
+msgid "%s: no properly formatted %s checksum lines found"
+msgstr "%s: geen correct opgemaakte regels met MD5 controlesom"
+
+#: src/md5sum.c:464
+#, c-format
+msgid "WARNING: %d of %d listed %s could not be read"
+msgstr "LET OP: %d van %d getoonde %s kunnen niet gelezen worden"
+
+#: src/md5sum.c:467
+msgid "file"
+msgstr "bestand"
+
+#: src/md5sum.c:467
+msgid "files"
+msgstr "bestanden"
+
+#: src/md5sum.c:473
+#, c-format
+msgid "WARNING: %d of %d computed %s did NOT match"
+msgstr "LET OP: %d van %d berekende %s zijn NIET overeenkomstig"
+
+#: src/md5sum.c:476
+msgid "checksum"
+msgstr "controlesom"
+
+#: src/md5sum.c:476
+msgid "checksums"
+msgstr "controlesommen"
+
+#: src/md5sum.c:558
+msgid ""
+"the --binary and --text options are meaningless when verifying checksums"
+msgstr ""
+"de --binary en --text opties werken niet bij het verifiëren van "
+"controlesommen"
+
+#: src/md5sum.c:566
+msgid "the --string and --check options are mutually exclusive"
+msgstr "de --string and --check opties sluiten elkaar uit"
+
+#: src/md5sum.c:573
+msgid "the --status option is meaningful only when verifying checksums"
+msgstr "de --status optie werkt alleen bij het verifiëren van controlesommen"
+
+#: src/md5sum.c:580
+msgid "the --warn option is meaningful only when verifying checksums"
+msgstr "de --warn optie werkt alleen bij het verifiëren van controlesommen"
+
+#: src/md5sum.c:590
+msgid "no files may be specified when using --string"
+msgstr "bij het gebruik van --string mogen geen bestanden opgegeven worden"
+
+#: src/md5sum.c:612
+msgid "only one argument may be specified when using --check"
+msgstr "bij het gebruik van --check mag slechts een argument gegeven worden"
+
+#: src/nl.c:39
+msgid "Scott Bartram and David MacKenzie"
+msgstr ""
+
+#: src/nl.c:180
+msgid ""
+"Write each FILE to standard output, with line numbers added.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/nl.c:188
+#, fuzzy
+msgid ""
+"  -b, --body-numbering=STYLE      use STYLE for numbering body lines\n"
+"  -d, --section-delimiter=CC      use CC for separating logical pages\n"
+"  -f, --footer-numbering=STYLE    use STYLE for numbering footer lines\n"
+msgstr ""
+"Print elk BESTAND naar standaard uitvoer, de laatste regel als eerste.\n"
+"Bij geen BESTAND of BESTAND is -, lees standaard-invoer.\n"
+"\n"
+"  -b, --before             plaats scheider voor i.p.v. achter de regel\n"
+"  -r, --regex              interpreteer de scheider als reguliere expressie\n"
+"  -s, --separator=STRING   gebruik STRING als scheider (nieuwe regel)\n"
+"  --help                   toon hulptekst en beëindig programma\n"
+"  --version                toon versie-informatie en beëindig programma\n"
+
+#: src/nl.c:193
+msgid ""
+"  -h, --header-numbering=STYLE    use STYLE for numbering header lines\n"
+"  -i, --page-increment=NUMBER     line number increment at each line\n"
+"  -l, --join-blank-lines=NUMBER   group of NUMBER empty lines counted as "
+"one\n"
+"  -n, --number-format=FORMAT      insert line numbers according to FORMAT\n"
+"  -p, --no-renumber               do not reset line numbers at logical "
+"pages\n"
+"  -s, --number-separator=STRING   add STRING after (possible) line number\n"
+msgstr ""
+
+#: src/nl.c:201
+msgid ""
+"  -v, --first-page=NUMBER         first line number on each logical page\n"
+"  -w, --number-width=NUMBER       use NUMBER columns for line numbers\n"
+msgstr ""
+
+#: src/nl.c:207
+msgid ""
+"\n"
+"By default, selects -v1 -i1 -l1 -sTAB -w6 -nrn -hn -bt -fn.  CC are\n"
+"two delimiter characters for separating logical pages, a missing\n"
+"second character implies :.  Type \\\\ for \\.  STYLE is one of:\n"
+msgstr ""
+
+#: src/nl.c:213
+msgid ""
+"\n"
+"  a         number all lines\n"
+"  t         number only nonempty lines\n"
+"  n         number no lines\n"
+"  pREGEXP   number only lines that contain a match for REGEXP\n"
+"\n"
+"FORMAT is one of:\n"
+"\n"
+"  ln   left justified, no leading zeros\n"
+"  rn   right justified, no leading zeros\n"
+"  rz   right justified, leading zeros\n"
+"\n"
+msgstr ""
+
+#: src/nl.c:500
+#, c-format
+msgid "invalid starting line number: `%s'"
+msgstr "ongeldig regelnummer voor begin: `%s'"
+
+#: src/nl.c:510
+#, c-format
+msgid "invalid line number increment: `%s'"
+msgstr "ongeldige ophoging voor regelnummers: `%s'"
+
+#: src/nl.c:523
+#, c-format
+msgid "invalid number of blank lines: `%s'"
+msgstr "ongeldig aantal lege regels: `%s'"
+
+#: src/nl.c:537
+#, c-format
+msgid "invalid line number field width: `%s'"
+msgstr "ongeldige veldbreedte voor regelnummer: `%s'"
+
+#: src/od.c:281
+#, c-format
+msgid ""
+"Usage: %s [OPTION]... [FILE]...\n"
+"  or:  %s --traditional [FILE] [[+]OFFSET [[+]LABEL]]\n"
+msgstr ""
+"Aanroep: %s [OPTIE]... [BESTAND]...\n"
+"  of:    %s --traditional [BESTAND] [[+]OFFSET [[+]LABEL]]\n"
+
+#: src/od.c:286
+msgid ""
+"\n"
+"Write an unambiguous representation, octal bytes by default,\n"
+"of FILE to standard output.  With more than one FILE argument,\n"
+"concatenate them in the listed order to form the input.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/od.c:293
+msgid "All arguments to long options are mandatory for short options.\n"
+msgstr ""
+
+#: src/od.c:296
+msgid ""
+"  -A, --address-radix=RADIX   decide how file offsets are printed\n"
+"  -j, --skip-bytes=BYTES      skip BYTES input bytes first\n"
+msgstr ""
+
+#: src/od.c:300
+msgid ""
+"  -N, --read-bytes=BYTES      limit dump to BYTES input bytes\n"
+"  -s, --strings[=BYTES]       output strings of at least BYTES graphic "
+"chars\n"
+"  -t, --format=TYPE           select output format or formats\n"
+"  -v, --output-duplicates     do not use * to mark line suppression\n"
+"  -w, --width[=BYTES]         output BYTES bytes per output line\n"
+"      --traditional           accept arguments in traditional form\n"
+msgstr ""
+
+#: src/od.c:310
+msgid ""
+"\n"
+"Traditional format specifications may be intermixed; they accumulate:\n"
+"  -a   same as -t a,  select named characters\n"
+"  -b   same as -t oC, select octal bytes\n"
+"  -c   same as -t c,  select ASCII characters or backslash escapes\n"
+"  -d   same as -t u2, select unsigned decimal shorts\n"
+msgstr ""
+
+#: src/od.c:318
+msgid ""
+"  -f   same as -t fF, select floats\n"
+"  -h   same as -t x2, select hexadecimal shorts\n"
+"  -i   same as -t d2, select decimal shorts\n"
+"  -l   same as -t d4, select decimal longs\n"
+"  -o   same as -t o2, select octal shorts\n"
+"  -x   same as -t x2, select hexadecimal shorts\n"
+msgstr ""
+
+#: src/od.c:326
+msgid ""
+"\n"
+"For older syntax (second call format), OFFSET means -j OFFSET.  LABEL\n"
+"is the pseudo-address at first byte printed, incremented when dump is\n"
+"progressing.  For OFFSET and LABEL, a 0x or 0X prefix indicates\n"
+"hexadecimal, suffixes may be . for octal and b for multiply by 512.\n"
+"\n"
+"TYPE is made up of one or more of these specifications:\n"
+"\n"
+"  a          named character\n"
+"  c          ASCII character or backslash escape\n"
+msgstr ""
+
+#: src/od.c:338
+msgid ""
+"  d[SIZE]    signed decimal, SIZE bytes per integer\n"
+"  f[SIZE]    floating point, SIZE bytes per integer\n"
+"  o[SIZE]    octal, SIZE bytes per integer\n"
+"  u[SIZE]    unsigned decimal, SIZE bytes per integer\n"
+"  x[SIZE]    hexadecimal, SIZE bytes per integer\n"
+msgstr ""
+
+#: src/od.c:345
+msgid ""
+"\n"
+"SIZE is a number.  For TYPE in doux, SIZE may also be C for\n"
+"sizeof(char), S for sizeof(short), I for sizeof(int) or L for\n"
+"sizeof(long).  If TYPE is f, SIZE may also be F for sizeof(float), D\n"
+"for sizeof(double) or L for sizeof(long double).\n"
+msgstr ""
+
+#: src/od.c:352
+msgid ""
+"\n"
+"RADIX is d for decimal, o for octal, x for hexadecimal or n for none.\n"
+"BYTES is hexadecimal with 0x or 0X prefix, it is multiplied by 512\n"
+"with b suffix, by 1024 with k and by 1048576 with m.  Adding a z suffix to\n"
+"any type adds a display of printable characters to the end of each line\n"
+"of output.  "
+msgstr ""
+
+#: src/od.c:360
+msgid ""
+"--string without a number implies 3.  --width without a number\n"
+"implies 32.  By default, od uses -A o -t d2 -w 16.\n"
+msgstr ""
+
+#: src/od.c:716 src/od.c:835
+#, c-format
+msgid "invalid type string `%s'"
+msgstr "ongeldig teksttype `%s'"
+
+#: src/od.c:726
+#, c-format
+msgid ""
+"invalid type string `%s';\n"
+"this system doesn't provide a %lu-byte integral type"
+msgstr ""
+"ongeldig string-type `%s';\n"
+"dit systeem biedt geen integraal %lu-byte type"
+
+#: src/od.c:845
+#, c-format
+msgid ""
+"invalid type string `%s';\n"
+"this system doesn't provide a %lu-byte floating point type"
+msgstr ""
+"ongeldig string-type `%s';\n"
+"dit system biedt geen %lu-byte drijvende komma type"
+
+#: src/od.c:908
+#, c-format
+msgid "invalid character `%c' in type string `%s'"
+msgstr "ongeldig teken `%c' in teksttype `%s'"
+
+#: src/od.c:1135
+msgid "cannot skip past end of combined input"
+msgstr "kan niet verder dan het einde van de gecombineerde invoer"
+
+#: src/od.c:1388
+msgid "old-style offset"
+msgstr "oude stijl offset"
+
+#: src/od.c:1696
+#, c-format
+msgid "invalid output address radix `%c'; it must be one character from [doxn]"
+msgstr ""
+"ongeldig grondtal voor uitvoeradres `%c'; dit moet een teken zijn uit [doxn]"
+
+#: src/od.c:1706
+msgid "skip argument"
+msgstr "sla argument over"
+
+#: src/od.c:1714
+msgid "limit argument"
+msgstr "beperk argument"
+
+#: src/od.c:1724
+msgid "minimum string length"
+msgstr "minimale lengte van de tekst"
+
+#: src/od.c:1729 src/od.c:1795
+#, c-format
+msgid "%s is too large"
+msgstr ""
+
+#: src/od.c:1793
+msgid "width specification"
+msgstr "specificatie voor de breedte"
+
+#: src/od.c:1815
+msgid "no type may be specified when dumping strings"
+msgstr "er mag geen type gegeven zijn indien met tekst gedumpt wordt"
+
+#: src/od.c:1863
+#, c-format
+msgid "invalid second operand in compatibility mode `%s'"
+msgstr "ongeldige tweede operand in compatibilteits mode `%s'"
+
+#: src/od.c:1884
+msgid "in compatibility mode, the last two arguments must be offsets"
+msgstr "in compatibiliteits mode moeten de laatste 2 argumenten offsets zijn"
+
+#: src/od.c:1891
+msgid "compatibility mode supports at most three arguments"
+msgstr "in compatibiliteits mode mogen er niet meer dan 3 argumenten zijn"
+
+#: src/od.c:1964
+#, c-format
+msgid "warning: invalid width %lu; using %d instead"
+msgstr "let op: ongeldige breedte %lu; zal %d gebruiken"
+
+#: src/od.c:1980
+#, c-format
+msgid "%d: fmt=\"%s\" width=%d\n"
+msgstr "%d: fmt=\"%s\" breedte=%d\n"
+
+#: src/paste.c:50
+msgid "David M. Ihnat and David MacKenzie"
+msgstr ""
+
+#: src/paste.c:208
+msgid "standard input is closed"
+msgstr "standaard invoer is gesloten"
+
+#: src/paste.c:407
+msgid ""
+"Write lines consisting of the sequentially corresponding lines from\n"
+"each FILE, separated by TABs, to standard output.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/paste.c:416
+msgid ""
+"  -d, --delimiters=LIST   reuse characters from LIST instead of TABs\n"
+"  -s, --serial            paste one file at a time instead of in parallel\n"
+msgstr ""
+
+#: src/pr.c:328
+msgid "Pete TerMaat and Roland Huebner"
+msgstr ""
+
+#: src/pr.c:805
+#, c-format
+msgid "`--pages' invalid range of page numbers: `%s'"
+msgstr "`--pages'  ongeldige reeks van paginanummers: `%s'"
+
+#: src/pr.c:817
+#, c-format
+msgid "`--pages' invalid starting page number: `%s'"
+msgstr "`--pages' ongeldig startpaginanummer: `%s'"
+
+#: src/pr.c:829
+#, c-format
+msgid "`--pages' invalid ending page number: `%s'"
+msgstr "`--pages' ongeldig laatste paginanummer: `%s'"
+
+#: src/pr.c:836
+msgid "`--pages' starting page number is larger than ending page number"
+msgstr ""
+"`--pages' paginanummer van de eerste pagina is groter dan van de laatste"
+
+#: src/pr.c:913
+msgid "`--pages=FIRST_PAGE[:LAST_PAGE]' missing argument"
+msgstr "`--pages=EERSTE[:LAATSTE]' ontbrekend argument"
+
+#: src/pr.c:924
+#, c-format
+msgid "`--columns=COLUMN' invalid number of columns: `%s'"
+msgstr "`--columns=KOLOM' ongeldig aantal kolommon: `%s'"
+
+#: src/pr.c:978
+#, c-format
+msgid "`-l PAGE_LENGTH' invalid number of lines: `%s'"
+msgstr "`-l PAGINALENGTE' ongeldig aantal regels: `%s'"
+
+#: src/pr.c:1002
+#, c-format
+msgid "`-N NUMBER' invalid starting line number: `%s'"
+msgstr "`-N AANTAL' ongeldig beginregelnummer: `%s'"
+
+#: src/pr.c:1014
+#, c-format
+msgid "`-o MARGIN' invalid line offset: `%s'"
+msgstr "`-o MARGE' ongeldige regeloffset: `%s'"
+
+#: src/pr.c:1055
+#, c-format
+msgid "`-w PAGE_WIDTH' invalid number of characters: `%s'"
+msgstr "`-w PAGINABREEDTE' ongeldig aantal tekens: `%s'"
+
+#: src/pr.c:1067
+#, c-format
+msgid "`-W PAGE_WIDTH' invalid number of characters: `%s'"
+msgstr "`-W PAGINABREEDTE' ongeldig aantal tekens: `%s'"
+
+#: src/pr.c:1081
+msgid "%b %e %H:%M %Y"
+msgstr ""
+
+#: src/pr.c:1090
+msgid "Cannot specify number of columns when printing in parallel."
+msgstr ""
+"Bij parallel afdrukken kan het aantal kolommen niet worden gespecificeerd."
+
+#: src/pr.c:1094
+msgid "Cannot specify both printing across and printing in parallel."
+msgstr "Kan niet zowel parallel als dwars afdrukken."
+
+#: src/pr.c:1190
+#, c-format
+msgid "`-%c' extra characters or invalid number in the argument: `%s'"
+msgstr "`-%c' extra tekens of ongeldig nummer in het argument: `%s'"
+
+#: src/pr.c:1301
+msgid "page width too narrow"
+msgstr "te smalle pagina-breedte"
+
+#: src/pr.c:2364
+#, c-format
+msgid "starting page number larger than total number of pages: `%d'"
+msgstr "beginpaginanummer is groter dan het totaal aantal pagina's: `%d'"
+
+#: src/pr.c:2395
+#, c-format
+msgid "Page %d"
+msgstr ""
+
+#: src/pr.c:2761
+msgid ""
+"Paginate or columnate FILE(s) for printing.\n"
+"\n"
+msgstr ""
+
+#: src/pr.c:2768
+msgid ""
+"  +FIRST_PAGE[:LAST_PAGE], --pages=FIRST_PAGE[:LAST_PAGE]\n"
+"                    begin [stop] printing with page FIRST_[LAST_]PAGE\n"
+"  -COLUMN, --columns=COLUMN\n"
+"                    produce COLUMN-column output and print columns down,\n"
+"                    unless -a is used. Balance number of lines in the\n"
+"                    columns on each page.\n"
+msgstr ""
+
+#: src/pr.c:2776
+msgid ""
+"  -a, --across      print columns across rather than down, used together\n"
+"                    with -COLUMN\n"
+"  -c, --show-control-chars\n"
+"                    use hat notation (^G) and octal backslash notation\n"
+"  -d, --double-space\n"
+"                    double space the output\n"
+msgstr ""
+
+#: src/pr.c:2784
+msgid ""
+"  -D, --date-format=FORMAT\n"
+"                    use FORMAT for the header date\n"
+"  -e[CHAR[WIDTH]], --expand-tabs[=CHAR[WIDTH]]\n"
+"                    expand input CHARs (TABs) to tab WIDTH (8)\n"
+"  -F, -f, --form-feed\n"
+"                    use form feeds instead of newlines to separate pages\n"
+"                    (by a 3-line page header with -F or a 5-line header\n"
+"                    and trailer without -F)\n"
+msgstr ""
+
+#: src/pr.c:2794
+msgid ""
+"  -h HEADER, --header=HEADER\n"
+"                    use a centered HEADER instead of filename in page "
+"header,\n"
+"                    -h \"\" prints a blank line, don't use -h\"\"\n"
+"  -i[CHAR[WIDTH]], --output-tabs[=CHAR[WIDTH]]\n"
+"                    replace spaces with CHARs (TABs) to tab WIDTH (8)\n"
+"  -J, --join-lines  merge full lines, turns off -W line truncation, no "
+"column\n"
+"                    alignment, --sep-string[=STRING] sets separators\n"
+msgstr ""
+
+#: src/pr.c:2803
+msgid ""
+"  -l PAGE_LENGTH, --length=PAGE_LENGTH\n"
+"                    set the page length to PAGE_LENGTH (66) lines\n"
+"                    (default number of lines of text 56, and with -F 63)\n"
+"  -m, --merge       print all files in parallel, one in each column,\n"
+"                    truncate lines, but join lines of full length with -J\n"
+msgstr ""
+
+#: src/pr.c:2810
+msgid ""
+"  -n[SEP[DIGITS]], --number-lines[=SEP[DIGITS]]\n"
+"                    number lines, use DIGITS (5) digits, then SEP (TAB),\n"
+"                    default counting starts with 1st line of input file\n"
+"  -N NUMBER, --first-line-number=NUMBER\n"
+"                    start counting with NUMBER at 1st line of first\n"
+"                    page printed (see +FIRST_PAGE)\n"
+msgstr ""
+
+#: src/pr.c:2818
+msgid ""
+"  -o MARGIN, --indent=MARGIN\n"
+"                    offset each line with MARGIN (zero) spaces, do not\n"
+"                    affect -w or -W, MARGIN will be added to PAGE_WIDTH\n"
+"  -r, --no-file-warnings\n"
+"                    omit warning when a file cannot be opened\n"
+msgstr ""
+
+#: src/pr.c:2825
+msgid ""
+"  -s[CHAR],--separator[=CHAR]\n"
+"                    separate columns by a single character, default for "
+"CHAR\n"
+"                    is the <TAB> character without -w and 'no char' with -w\n"
+"                    -s[CHAR] turns off line truncation of all 3 column\n"
+"                    options (-COLUMN|-a -COLUMN|-m) except -w is set\n"
+msgstr ""
+
+#: src/pr.c:2832
+msgid "  -SSTRING, --sep-string[=STRING]\n"
+msgstr ""
+
+#: src/pr.c:2835
+msgid ""
+"                    separate columns by STRING,\n"
+"                    without -S: Default separator <TAB> with -J and <space>\n"
+"                    otherwise (same as -S\" \"), no effect on column "
+"options\n"
+"  -t, --omit-header omit page headers and trailers\n"
+msgstr ""
+
+#: src/pr.c:2841
+msgid ""
+"  -T, --omit-pagination\n"
+"                    omit page headers and trailers, eliminate any "
+"pagination\n"
+"                    by form feeds set in input files\n"
+"  -v, --show-nonprinting\n"
+"                    use octal backslash notation\n"
+"  -w PAGE_WIDTH, --width=PAGE_WIDTH\n"
+"                    set page width to PAGE_WIDTH (72) characters for\n"
+"                    multiple text-column output only, -s[char] turns off "
+"(72)\n"
+msgstr ""
+
+#: src/pr.c:2851
+#, fuzzy
+msgid ""
+"  -W PAGE_WIDTH, --page-width=PAGE_WIDTH\n"
+"                    set page width to PAGE_WIDTH (72) characters always,\n"
+"                    truncate lines, except -J option is set, no "
+"interference\n"
+"                    with -S or -s\n"
+msgstr ""
+"Vergelijk gesorteerde bestanden BESTAND1 en BESTAND2 regel voor regel.\n"
+"\n"
+"  -1              onderdruk regels die alleen in BESTAND1 voorkomen\n"
+"  -2              onderdruk regels die alleen in BESTAND2 voorkomen\n"
+"  -3              onderdruk regels die slechts in één van beide bestanden\n"
+"                  voorkomen\n"
+"      --help      toon deze hulptekst en beëindig programma\n"
+"      --version   toon versie-informatie en beëindig programma\n"
+
+#: src/pr.c:2859
+msgid ""
+"\n"
+"-T implied by -l nn when nn <= 10 or <= 3 with -F. With no FILE, or when\n"
+"FILE is -, read standard input.\n"
+msgstr ""
+
+#: src/ptx.c:410
+#, c-format
+msgid "%s (for regexp `%s')"
+msgstr "%s (voor reguliere expressie `%s')"
+
+#: src/ptx.c:1859
+#, c-format
+msgid ""
+"Usage: %s [OPTION]... [INPUT]...   (without -G)\n"
+"  or:  %s -G [OPTION]... [INPUT [OUTPUT]]\n"
+msgstr ""
+"Aanroep: %s [OPTIE]... [INVOER]...  (zonder -G)\n"
+"  of:    %s -G [OPTIE]... [INVOER [UITVOER]]\n"
+
+#: src/ptx.c:1863
+msgid ""
+"Output a permuted index, including context, of the words in the input "
+"files.\n"
+"\n"
+msgstr ""
+
+#: src/ptx.c:1870
+msgid ""
+"  -A, --auto-reference           output automatically generated references\n"
+"  -C, --copyright                display Copyright and copying conditions\n"
+"  -G, --traditional              behave more like System V `ptx'\n"
+"  -F, --flag-truncation=STRING   use STRING for flagging line truncations\n"
+msgstr ""
+
+#: src/ptx.c:1876
+msgid ""
+"  -M, --macro-name=STRING        macro name to use instead of `xx'\n"
+"  -O, --format=roff              generate output as roff directives\n"
+"  -R, --right-side-refs          put references at right, not counted in -w\n"
+"  -S, --sentence-regexp=REGEXP   for end of lines or end of sentences\n"
+"  -T, --format=tex               generate output as TeX directives\n"
+msgstr ""
+
+#: src/ptx.c:1883
+msgid ""
+"  -W, --word-regexp=REGEXP       use REGEXP to match each keyword\n"
+"  -b, --break-file=FILE          word break characters in this FILE\n"
+"  -f, --ignore-case              fold lower case to upper case for sorting\n"
+"  -g, --gap-size=NUMBER          gap size in columns between output fields\n"
+"  -i, --ignore-file=FILE         read ignore word list from FILE\n"
+"  -o, --only-file=FILE           read only word list from this FILE\n"
+msgstr ""
+
+#: src/ptx.c:1891
+msgid ""
+"  -r, --references               first field of each line is a reference\n"
+"  -t, --typeset-mode               - not implemented -\n"
+"  -w, --width=NUMBER             output width in columns, reference "
+"excluded\n"
+msgstr ""
+
+#: src/ptx.c:1898
+msgid ""
+"\n"
+"With no FILE or if FILE is -, read Standard Input.  `-F /' by default.\n"
+msgstr ""
+
+#: src/ptx.c:1978
+#, fuzzy
+msgid ""
+"This program is free software; you can redistribute it and/or modify\n"
+"it under the terms of the GNU General Public License as published by\n"
+"the Free Software Foundation; either version 2, or (at your option)\n"
+"any later version.\n"
+"\n"
+msgstr ""
+"Dit programma is vrije programmatuur; het kan gedistribueerd en/of\n"
+"gewijzigd worden zolang de voorwaarden aangehouden worden die\n"
+"beschreven staan in de GNU General Public License, zoals gepubliceerd\n"
+"door de Free Software Foundation; ofwel versie 2, ofwel (als u daar\n"
+"voor kiest) een latere versie.\n"
+"\n"
+"Dit programma wordt uitgegeven in de hoop dat het bruikbaar is, maar\n"
+"ZONDER ENIGE GARANTIE; zelfs zonder de impliciete garantie van\n"
+"VERKOOPBAARHEID of GESCHIKTHEID VOOR EEN BEPAALD DOEL.  In de GNU\n"
+"General Public License staan meer details.\n"
+"\n"
+"U zou een kopie van de GNU General Public License ontvangen moeten\n"
+"hebben bij dit programma; zo niet, schrijf dan naar de Free Software\n"
+"Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,\n"
+"USA.\n"
+
+#: src/ptx.c:1985
+msgid ""
+"This program is distributed in the hope that it will be useful,\n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+"GNU General Public License for more details.\n"
+"\n"
+msgstr ""
+
+#: src/ptx.c:1992
+#, fuzzy
+msgid ""
+"You should have received a copy of the GNU General Public License\n"
+"along with this program; if not, write to the Free Software Foundation,\n"
+"Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.\n"
+msgstr ""
+"Dit programma is vrije programmatuur; het kan gedistribueerd en/of\n"
+"gewijzigd worden zolang de voorwaarden aangehouden worden die\n"
+"beschreven staan in de GNU General Public License, zoals gepubliceerd\n"
+"door de Free Software Foundation; ofwel versie 2, ofwel (als u daar\n"
+"voor kiest) een latere versie.\n"
+"\n"
+"Dit programma wordt uitgegeven in de hoop dat het bruikbaar is, maar\n"
+"ZONDER ENIGE GARANTIE; zelfs zonder de impliciete garantie van\n"
+"VERKOOPBAARHEID of GESCHIKTHEID VOOR EEN BEPAALD DOEL.  In de GNU\n"
+"General Public License staan meer details.\n"
+"\n"
+"U zou een kopie van de GNU General Public License ontvangen moeten\n"
+"hebben bij dit programma; zo niet, schrijf dan naar de Free Software\n"
+"Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,\n"
+"USA.\n"
+
+#: src/sort.c:53
+msgid "Mike Haertel and Paul Eggert"
+msgstr ""
+
+#: src/sort.c:289
+msgid ""
+"Write sorted concatenation of all FILE(s) to standard output.\n"
+"\n"
+"Ordering options:\n"
+"\n"
+msgstr ""
+
+#: src/sort.c:298
+msgid ""
+"  -b, --ignore-leading-blanks ignore leading blanks\n"
+"  -d, --dictionary-order      consider only blanks and alphanumeric "
+"characters\n"
+"  -f, --ignore-case           fold lower case to upper case characters\n"
+msgstr ""
+
+#: src/sort.c:303
+msgid ""
+"  -g, --general-numeric-sort  compare according to general numerical value\n"
+"  -i, --ignore-nonprinting    consider only printable characters\n"
+"  -M, --month-sort            compare (unknown) < `JAN' < ... < `DEC'\n"
+"  -n, --numeric-sort          compare according to string numerical value\n"
+"  -r, --reverse               reverse the result of comparisons\n"
+"\n"
+msgstr ""
+
+#: src/sort.c:311
+msgid ""
+"Other options:\n"
+"\n"
+"  -c, --check               check whether input is sorted; do not sort\n"
+"  -k, --key=POS1[,POS2]     start a key at POS1, end it at POS 2 (origin 1)\n"
+"  -m, --merge               merge already sorted files; do not sort\n"
+"  -o, --output=FILE         write result to FILE instead of standard output\n"
+"  -s, --stable              stabilize sort by disabling last-resort "
+"comparison\n"
+"  -S, --buffer-size=SIZE    use SIZE for main memory buffer\n"
+msgstr ""
+
+#: src/sort.c:321
+#, c-format
+msgid ""
+"  -t, --field-separator=SEP use SEP instead of non- to whitespace "
+"transition\n"
+"  -T, --temporary-directory=DIR  use DIR for temporaries, not $TMPDIR or %s\n"
+"                              multiple options specify multiple directories\n"
+"  -u, --unique              with -c: check for strict ordering\n"
+"                              otherwise: output only the first of an equal "
+"run\n"
+msgstr ""
+
+#: src/sort.c:328
+msgid "  -z, --zero-terminated     end lines with 0 byte, not newline\n"
+msgstr ""
+
+#: src/sort.c:333
+#, fuzzy
+msgid ""
+"\n"
+"POS is F[.C][OPTS], where F is the field number and C the character "
+"position\n"
+"in the field.  OPTS is one or more single-letter ordering options, which\n"
+"override global ordering options for that key.  If no key is given, use the\n"
+"entire line as the key.\n"
+"\n"
+"SIZE may be followed by the following multiplicative suffixes:\n"
+msgstr ""
+"POS is F[.C][OPTS], waarin F een veldnummer is en C de tekenpositie in\n"
+"het veld, beide genummerd vanaf 1 indien met -k, vanaf 0 in de\n"
+"verouderde vorm.  OPTS bestaat uit één of meer van Mbdfinr; effectief\n"
+"zet dit de instellingen voor de globale -Mbdfinr uit.  Indien geen\n"
+"sleutel gegeven is, wordt de hele regel gebruikt als sleutel.  Zonder\n"
+"BESTAND, of indien BESTAND is -, wordt de standaard invoer gelezen.\n"
+
+#: src/sort.c:342
+#, c-format
+msgid ""
+"% 1% of memory, b 1, K 1024 (default), and so on for M, G, T, P, E, Z, Y.\n"
+"\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+"*** WARNING ***\n"
+"The locale specified by the environment affects sort order.\n"
+"Set LC_ALL=C to get the traditional sort order that uses\n"
+"native byte values.\n"
+msgstr ""
+
+#: src/sort.c:453
+#, fuzzy
+msgid "cannot create temporary file"
+msgstr "kan map `%s' niet aanmaken"
+
+#: src/sort.c:476
+msgid "open failed"
+msgstr ""
+
+#: src/sort.c:496 src/sort.c:2499
+#, fuzzy
+msgid "close failed"
+msgstr "fout bij sluiten bestand"
+
+#: src/sort.c:504
+#, fuzzy
+msgid "write failed"
+msgstr "fout bij schrijven"
+
+#: src/sort.c:650
+#, fuzzy
+msgid "sort size"
+msgstr "blokgrootte"
+
+#: src/sort.c:724
+msgid "stat failed"
+msgstr ""
+
+#: src/sort.c:975
+msgid "read failed"
+msgstr ""
+
+#: src/sort.c:1575
+#, fuzzy, c-format
+msgid "%s: %s:%s: disorder: "
+msgstr "%s: %s:%d: storing: "
+
+#: src/sort.c:1579
+msgid "standard error"
+msgstr "standaard fout-uitvoer"
+
+#: src/sort.c:2037
+#, fuzzy, c-format
+msgid "%s: invalid field specification `%s'"
+msgstr "ongeldige veldspecificatie `%s'"
+
+#: src/sort.c:2063
+#, c-format
+msgid "%s: count `%.*s' too large"
+msgstr ""
+
+#: src/sort.c:2069
+#, fuzzy, c-format
+msgid "%s: invalid count at start of `%s'"
+msgstr "ongeldig argument %s voor `%s'"
+
+#: src/sort.c:2301
+#, fuzzy
+msgid "invalid number after `-'"
+msgstr "ongeldig aantal bytes"
+
+#: src/sort.c:2304 src/sort.c:2350 src/sort.c:2377
+#, fuzzy
+msgid "invalid number after `.'"
+msgstr "ongeldig aantal bytes"
+
+#: src/sort.c:2307 src/sort.c:2386
+msgid "stray character in field spec"
+msgstr ""
+
+#: src/sort.c:2341
+#, fuzzy
+msgid "invalid number at field start"
+msgstr "ongeldig aantal regels"
+
+#: src/sort.c:2345 src/sort.c:2373
+#, fuzzy
+msgid "field number is zero"
+msgstr "ongeldig veldnummer: `%s'"
+
+#: src/sort.c:2354
+msgid "character offset is zero"
+msgstr ""
+
+#: src/sort.c:2369
+#, fuzzy
+msgid "invalid number after `,'"
+msgstr "ongeldig aantal bytes"
+
+#: src/sort.c:2414
+#, fuzzy, c-format
+msgid "multi-character tab `%s'"
+msgstr "ongeldige tekenklasse `%s'"
+
+#: src/sort.c:2482
+#, c-format
+msgid "extra operand `%s' not allowed with -c"
+msgstr ""
+
+#: src/split.c:95
+#, c-format
+msgid "Usage: %s [OPTION] [INPUT [PREFIX]]\n"
+msgstr "Aanroep: %s [OPTIE] [INVOER] [VOORVOEGSEL]]\n"
+
+#: src/split.c:99
+msgid ""
+"Output fixed-size pieces of INPUT to PREFIXaa, PREFIXab, ...; default\n"
+"PREFIX is `x'.  With no INPUT, or when INPUT is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/split.c:107
+#, fuzzy, c-format
+msgid ""
+"  -a, --suffix-length=N   use suffixes of length N (default %d)\n"
+"  -b, --bytes=SIZE        put SIZE bytes per output file\n"
+"  -C, --line-bytes=SIZE   put at most SIZE bytes of lines per output file\n"
+"  -l, --lines=NUMBER      put NUMBER lines per output file\n"
+msgstr ""
+"Bewaar stukjes van de INVOER van een vaste grootte naar VOORVOEGSELaa,\n"
+"VOORVOEGSELab, ...; standaard VOORVOEGSEL is `x'.  Indien geen INVOER\n"
+"is gegeven, of INVOER is -, wordt de standaard invoer gelezen.\n"
+"\n"
+"  -b, --bytes=N           uitvoerbestanden zijn maximaal N bytes groot\n"
+"  -C, --line-bytes=N      uitvoerbestanden zijn maximaal N bytes aan\n"
+"                          hele regels groot\n"
+"  -l, --lines=N           uitvoerbestand bevat maximaal N regels\n"
+"  -GROOTTE                zelfde als -l GROOTTE\n"
+"      --verbose           geef een diagnose op de standaard\n"
+"                          fout-uitvoer vlak voor een uitvoerbestand\n"
+"                          geopend wordt\n"
+"  --help                  toon deze hulptekst en beëindig programma\n"
+"  --version               toon versie-informatie en beëindig programma\n"
+"\n"
+"N mag worden gevolgd door: b voor 512, k voor 1K, m voor 1 Meg.\n"
+
+#: src/split.c:113
+msgid ""
+"      --verbose           print a diagnostic to standard error just\n"
+"                            before each output file is opened\n"
+msgstr ""
+
+#: src/split.c:170
+msgid "Output file suffixes exhausted"
+msgstr ""
+
+#: src/split.c:188
+#, c-format
+msgid "creating file `%s'\n"
+msgstr "bestand `%s' wordt aangemaakt\n"
+
+#: src/split.c:407
+#, fuzzy, c-format
+msgid "%s: invalid suffix length"
+msgstr "%s: ongeldig aantal regels"
+
+#: src/split.c:416 src/split.c:432 src/split.c:448 src/split.c:474
+msgid "cannot split in more than one way"
+msgstr "kan niet op meer dan één manier splitsen"
+
+#: src/split.c:423 src/split.c:456
+#, c-format
+msgid "%s: invalid number of bytes"
+msgstr "%s: ongeldig aantal bytes"
+
+#: src/split.c:439
+#, c-format
+msgid "%s: invalid number of lines"
+msgstr "%s: ongeldig aantal regels"
+
+#: src/split.c:499
+#, fuzzy, c-format
+msgid "`-%d' option is obsolete; use `-l %d'"
+msgstr "let op: ongeldige breedte %lu; zal %d gebruiken"
+
+#: src/split.c:512
+msgid "invalid number"
+msgstr "ongeldig nummer"
+
+#: src/split.c:527 src/tr.c:1847
+msgid "too many arguments"
+msgstr "teveel argumenten"
+
+#: src/sum.c:36
+msgid "Kayvan Aghaiepour and David MacKenzie"
+msgstr ""
+
+#: src/sum.c:64
+#, fuzzy
+msgid ""
+"Print checksum and block counts for each FILE.\n"
+"\n"
+"  -r              defeat -s, use BSD sum algorithm, use 1K blocks\n"
+"  -s, --sysv      use System V sum algorithm, use 512 bytes blocks\n"
+msgstr ""
+"Print kontrolesom en aantal blokken voor elk BESTAND.\n"
+"\n"
+"  -r              defeat -s, gebruik BSD somatie algoritme, gebruik 1K "
+"blokken\n"
+"  -s, --sysv      gebruik System V somatie algoritme, gebruik 512 bytes "
+"blokken\n"
+"  --help          toon hulptekst en beëindig programma\n"
+"  --version       toon versie-informatie en beëindig programma\n"
+"\n"
+"Bij geen BESTAND of BESTAND is -, lees standaard-invoer.\n"
+
+#: src/sys2.h:407
+#, fuzzy
+msgid "      --help     display this help and exit\n"
+msgstr ""
+"Toon CRC-controlesom en het aantal bytes voor ieder BESTAND.\n"
+"\n"
+"      --help     toon deze hulptekst en beëindig programma\n"
+"      --version  toon versie-informatie en beëindig programma\n"
+
+#: src/sys2.h:409
+#, fuzzy
+msgid "      --version  output version information and exit\n"
+msgstr ""
+"Toon CRC-controlesom en het aantal bytes voor ieder BESTAND.\n"
+"\n"
+"      --help     toon deze hulptekst en beëindig programma\n"
+"      --version  toon versie-informatie en beëindig programma\n"
+
+#: src/tac.c:54
+msgid "Jay Lepreau and David MacKenzie"
+msgstr ""
+
+#: src/tac.c:131
+msgid ""
+"Write each FILE to standard output, last line first.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/tac.c:139
+#, fuzzy
+msgid ""
+"  -b, --before             attach the separator before instead of after\n"
+"  -r, --regex              interpret the separator as a regular expression\n"
+"  -s, --separator=STRING   use STRING as the separator instead of newline\n"
+msgstr ""
+"Print elk BESTAND naar standaard uitvoer, de laatste regel als eerste.\n"
+"Bij geen BESTAND of BESTAND is -, lees standaard-invoer.\n"
+"\n"
+"  -b, --before             plaats scheider voor i.p.v. achter de regel\n"
+"  -r, --regex              interpreteer de scheider als reguliere expressie\n"
+"  -s, --separator=STRING   gebruik STRING als scheider (nieuwe regel)\n"
+"  --help                   toon hulptekst en beëindig programma\n"
+"  --version                toon versie-informatie en beëindig programma\n"
+
+#: src/tac.c:454 src/tac.c:593
+msgid "stdin: read error"
+msgstr "standaard invoer: fout bij lezen"
+
+#: src/tac.c:639
+msgid "separator cannot be empty"
+msgstr "scheidingsteken kan niet leeg zijn"
+
+#: src/tail.c:242
+#, fuzzy, c-format
+msgid ""
+"Print the last %d lines of each FILE to standard output.\n"
+"With more than one FILE, precede each with a header giving the file name.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"Kopieer de eerste 10 regels van elk BESTAND naar standaard-uitvoer.\n"
+"Indien meerdere bestanden gegeven zijn, wordt de uitvoer van ieder\n"
+"bestand voorafgegaan door de bestandsnaam.  Indien geen BESTAND\n"
+"gegeven is, of BESTAND is -, wordt de standaard invoer gelezen.\n"
+"\n"
+"  -c, --bytes=GROOTTE      print eerste GROOTTE bytes\n"
+"  -n, --lines=AANTAL       print eerste AANTAL regels in plaats van eerste "
+"10\n"
+"  -q, --quiet, --silent    print nooit bestandsnamen als headers\n"
+"  -v, --verbose            print altijd bestandsnamen als headers\n"
+"      --help               toon deze hulptekst en beëindig programma\n"
+"      --version            toon versie-informatie en beëindig programma\n"
+"\n"
+"GROOTTE mag een achtervoegsel hebben om aan te geven waarmee het\n"
+"vermenigvuldigd moet worden: b voor 512, k voor 1 Kilobyte, m voor 1\n"
+"Megabyte.  Als -GROOTTE de eerste OPTIE is, lees -c GROOTTE wanneer\n"
+"een van de vermunigvuldigingsachtervoegsels bkm volgt, ander lees -n\n"
+"GROOTTE.\n"
+
+#: src/tail.c:251
+msgid ""
+"      --retry              keep trying to open a file even if it is\n"
+"                           inaccessible when tail starts or if it becomes\n"
+"                           inaccessible later -- useful only with -f\n"
+"  -c, --bytes=N            output the last N bytes\n"
+msgstr ""
+
+#: src/tail.c:257
+msgid ""
+"  -f, --follow[={name|descriptor}]\n"
+"                           output appended data as the file grows;\n"
+"                           -f, --follow, and --follow=descriptor are\n"
+"                           equivalent\n"
+"  -F                       same as --follow=name --retry\n"
+msgstr ""
+
+#: src/tail.c:264
+#, c-format
+msgid ""
+"  -n, --lines=N            output the last N lines, instead of the last %d\n"
+"      --max-unchanged-stats=N\n"
+"                           with --follow=name, reopen a FILE which has not\n"
+"                           changed size after N (default %d) iterations\n"
+"                           to see if it has been unlinked or renamed\n"
+"                           (this is the usual case of rotated log files)\n"
+msgstr ""
+
+#: src/tail.c:275
+msgid ""
+"      --pid=PID            with -f, terminate after process ID, PID dies\n"
+"  -q, --quiet, --silent    never output headers giving file names\n"
+"  -s, --sleep-interval=S   with -f, each iteration lasts approximately S\n"
+"                           (default 1) seconds\n"
+"  -v, --verbose            always output headers giving file names\n"
+msgstr ""
+
+#: src/tail.c:284
+msgid ""
+"\n"
+"If the first character of N (the number of bytes or lines) is a `+',\n"
+"print beginning with the Nth item from the start of each file, otherwise,\n"
+"print the last N items in the file.  N may have a multiplier suffix:\n"
+"b for 512, k for 1024, m for 1048576 (1 Meg).\n"
+"\n"
+msgstr ""
+
+#: src/tail.c:292
+msgid ""
+"With --follow (-f), tail defaults to following the file descriptor, which\n"
+"means that even if a tail'ed file is renamed, tail will continue to track\n"
+"its end.  "
+msgstr ""
+
+#: src/tail.c:297
+msgid ""
+"This default behavior is not desirable when you really want to\n"
+"track the actual name of the file, not the file descriptor (e.g., log\n"
+"rotation).  Use --follow=name in that case.  That causes tail to track the\n"
+"named file by reopening it periodically to see if it has been removed and\n"
+"recreated by some other program.\n"
+msgstr ""
+
+#: src/tail.c:335
+#, c-format
+msgid "closing %s (fd=%d)"
+msgstr "%s wordt gesloten (fd=%d)"
+
+#: src/tail.c:400
+#, c-format
+msgid "%s: cannot seek to offset %s%s"
+msgstr ""
+
+#: src/tail.c:404
+#, c-format
+msgid "%s: cannot seek to relative offset %s%s"
+msgstr ""
+
+#: src/tail.c:408
+#, c-format
+msgid "%s: cannot seek to end-relative offset %s%s"
+msgstr ""
+
+#: src/tail.c:814
+#, c-format
+msgid "`%s' has become inaccessible"
+msgstr "`%s' is ontoegankelijk geworden"
+
+#: src/tail.c:831
+#, c-format
+msgid "`%s' has been replaced with an untailable file; giving up on this name"
+msgstr ""
+"`%s' is vervangen door een bestand dat niet gevolgd kan worden; ik geef deze "
+"naam op"
+
+#: src/tail.c:852
+#, c-format
+msgid "`%s' has become accessible"
+msgstr "`%s' is toegankelijk geworden"
+
+#: src/tail.c:860
+#, c-format
+msgid "`%s' has appeared;  following end of new file"
+msgstr ""
+"`%s' is tevoorschijn gekomen;  ik ga het einde van het nieuwe bestand volgen"
+
+#: src/tail.c:871
+#, c-format
+msgid "`%s' has been replaced;  following end of new file"
+msgstr "`%s' is vervangen;  ik ga het einde van het nieuwe bestand volgen"
+
+#: src/tail.c:998
+#, fuzzy, c-format
+msgid "%s: file truncated"
+msgstr "bestand ingekort"
+
+#: src/tail.c:1018
+msgid "no files remaining"
+msgstr "geen bestanden meer over"
+
+#: src/tail.c:1228
+#, c-format
+msgid "%s: cannot follow end of this type of file; giving up on this name"
+msgstr ""
+"%s: kan het einde van dit type bestand niet volgen; ik geef deze naam op"
+
+#: src/tail.c:1348
+#, c-format
+msgid "%c: invalid suffix character in obsolescent option"
+msgstr "%c: ongeldig achtervoegsel in verouderde optie"
+
+#: src/tail.c:1397
+#, c-format
+msgid ""
+"too many arguments;  When using tail's obsolescent option syntax (%s)\n"
+"there may be no more than one file argument.  Use the equivalent -n or -c\n"
+"option instead."
+msgstr ""
+"te veel argumenten; Indien de verouderde syntax van tail (%s) wordt\n"
+"gebruikt, mag er niet meer dan een bestandsargument zijn.  Gebruik in\n"
+"plaats daarvan de equivalente optie -n of -c."
+
+#: src/tail.c:1406
+#, c-format
+msgid ""
+"Warning: it is not portable to use two or more file arguments with\n"
+"tail's obsolescent option syntax (%s).  Use the equivalent -n or -c\n"
+"option instead."
+msgstr ""
+"Let op: het gebruik van twee of meer bestandsargumenten met de\n"
+"verouderde syntax van tail (%s) is niet overdraagbaar.  Gebruik in\n"
+"plaats daarvan de equivalente optie -n of -c"
+
+#: src/tail.c:1415
+#, fuzzy, c-format
+msgid "`%s' option is obsolete; use `%s-%c %.*s'"
+msgstr "let op: ongeldige breedte %lu; zal %d gebruiken"
+
+#: src/tail.c:1475
+#, fuzzy, c-format
+msgid "%s: is so large that it is not representable"
+msgstr "%s: %s is zo groot dat het niet weergegeven kan worden"
+
+#: src/tail.c:1479
+#, c-format
+msgid "%s is larger than the maximum file size on this system"
+msgstr ""
+
+#: src/tail.c:1505
+#, c-format
+msgid "%s: invalid maximum number of unchanged stats between opens"
+msgstr "%s: ongeldig maximaal aantal onveranderde statussen tussen openen"
+
+#: src/tail.c:1517
+#, c-format
+msgid "%s: invalid maximum number of consecutive size changes"
+msgstr "%s: ongeldig maximum aantal opeenvolgende veranderingen in grootte"
+
+#: src/tail.c:1529
+#, c-format
+msgid "%s: invalid PID"
+msgstr "%s: ongeldig procesnummer"
+
+#: src/tail.c:1547
+#, c-format
+msgid "%s: invalid number of seconds"
+msgstr "%s: ongeldig aantal seconden"
+
+#: src/tail.c:1567
+msgid "warning: --retry is useful only when following by name"
+msgstr "let op: --retry is alleen zinvol als het gevolgd wordt door een naam"
+
+#: src/tail.c:1571
+msgid "warning: PID ignored; --pid=PID is useful only when following"
+msgstr ""
+"let op: PROCES genegeerd; --pid=PROCES is alleen zinvol wanneer gevolgd wordt"
+
+#: src/tail.c:1574
+msgid "warning: --pid=PID is not supported on this system"
+msgstr "let op: --pid=PROCES wordt niet ondersteund op dit systeem"
+
+#: src/tr.c:327
+#, c-format
+msgid "Usage: %s [OPTION]... SET1 [SET2]\n"
+msgstr "Aanroep: %s [OPTIE]... SET1 [SET2]\n"
+
+#: src/tr.c:331
+#, fuzzy
+msgid ""
+"Translate, squeeze, and/or delete characters from standard input,\n"
+"writing to standard output.\n"
+"\n"
+"  -c, --complement        first complement SET1\n"
+"  -d, --delete            delete characters in SET1, do not translate\n"
+"  -s, --squeeze-repeats   replace sequence of characters with one\n"
+"  -t, --truncate-set1     first truncate SET1 to length of SET2\n"
+msgstr ""
+"Vertaal, squeeze, en/of verwijder karakters vanuit standaard-invoer,\n"
+"uitvoer naar standaard-uitvoer.\n"
+"\n"
+"  -c, --complement        eerste complementaire SET1\n"
+"  -d, --delete            verwijder karakters in SET1, niet vertalen\n"
+"  -s, --squeeze-repeats   vervang herhaling van karakters met een\n"
+"  -t, --truncate-set1     verkort SET1 tot de lengte van SET2\n"
+"      --help              toon hulptekst en beëindig programma\n"
+"      --version           toon versie-informatie en beëindig programma\n"
+
+#: src/tr.c:342
+msgid ""
+"\n"
+"SETs are specified as strings of characters.  Most represent themselves.\n"
+"Interpreted sequences are:\n"
+"\n"
+"  \\NNN            character with octal value NNN (1 to 3 octal digits)\n"
+"  \\\\              backslash\n"
+"  \\a              audible BEL\n"
+"  \\b              backspace\n"
+"  \\f              form feed\n"
+"  \\n              new line\n"
+"  \\r              return\n"
+"  \\t              horizontal tab\n"
+msgstr ""
+
+#: src/tr.c:356
+msgid ""
+"  \\v              vertical tab\n"
+"  CHAR1-CHAR2     all characters from CHAR1 to CHAR2 in ascending order\n"
+"  [CHAR*]         in SET2, copies of CHAR until length of SET1\n"
+"  [CHAR*REPEAT]   REPEAT copies of CHAR, REPEAT octal if starting with 0\n"
+"  [:alnum:]       all letters and digits\n"
+"  [:alpha:]       all letters\n"
+"  [:blank:]       all horizontal whitespace\n"
+"  [:cntrl:]       all control characters\n"
+"  [:digit:]       all digits\n"
+msgstr ""
+
+#: src/tr.c:367
+msgid ""
+"  [:graph:]       all printable characters, not including space\n"
+"  [:lower:]       all lower case letters\n"
+"  [:print:]       all printable characters, including space\n"
+"  [:punct:]       all punctuation characters\n"
+"  [:space:]       all horizontal or vertical whitespace\n"
+"  [:upper:]       all upper case letters\n"
+"  [:xdigit:]      all hexadecimal digits\n"
+"  [=CHAR=]        all characters which are equivalent to CHAR\n"
+msgstr ""
+
+#: src/tr.c:377
+#, fuzzy
+msgid ""
+"\n"
+"Translation occurs if -d is not given and both SET1 and SET2 appear.\n"
+"-t may be used only when translating.  SET2 is extended to length of\n"
+"SET1 by repeating its last character as necessary.  "
+msgstr ""
+"\n"
+"Vertaling treedt op als -d niet gegeven is en SET1 en SET2 beide voorkomen.\n"
+"-t mag alleen gebruikt worden bij vertaling.  SET2 zal, indien nodig, "
+"verlengd\n"
+" worden tot de lengte van SET1 door herhaling van het laatste karakater.\n"
+"Excess karakters van SET2 worden genegeerd.  Alleen [:lower:] en [:upper:]\n"
+"worden zeker geexpandeerd in oplopende volgorde; gebruikt in SET2 bij\n"
+"vertaling, alleen gebruikt worden in paren om case conversie te "
+"specificeren.\n"
+"-s gebruikt SET1 als niet vertaald noch verwijderd wordt; anders gebruikt\n"
+"squeezing SET2 en treedt op na vertaling of verwijdering.\n"
+
+#: src/tr.c:383
+msgid ""
+"Excess characters\n"
+"of SET2 are ignored.  Only [:lower:] and [:upper:] are guaranteed to\n"
+"expand in ascending order; used in SET2 while translating, they may\n"
+"only be used in pairs to specify case conversion.  "
+msgstr ""
+
+#: src/tr.c:389
+#, fuzzy
+msgid ""
+"-s uses SET1 if not\n"
+"translating nor deleting; else squeezing uses SET2 and occurs after\n"
+"translation or deletion.\n"
+msgstr ""
+"\n"
+"Vertaling treedt op als -d niet gegeven is en SET1 en SET2 beide voorkomen.\n"
+"-t mag alleen gebruikt worden bij vertaling.  SET2 zal, indien nodig, "
+"verlengd\n"
+" worden tot de lengte van SET1 door herhaling van het laatste karakater.\n"
+"Excess karakters van SET2 worden genegeerd.  Alleen [:lower:] en [:upper:]\n"
+"worden zeker geexpandeerd in oplopende volgorde; gebruikt in SET2 bij\n"
+"vertaling, alleen gebruikt worden in paren om case conversie te "
+"specificeren.\n"
+"-s gebruikt SET1 als niet vertaald noch verwijderd wordt; anders gebruikt\n"
+"squeezing SET2 en treedt op na vertaling of verwijdering.\n"
+
+#: src/tr.c:555
+#, c-format
+msgid ""
+"warning: the ambiguous octal escape \\%c%c%c is being\n"
+"\tinterpreted as the 2-byte sequence \\0%c%c, `%c'"
+msgstr ""
+"let op: het ongeldige octale teken \\%c%c%c wordt geïnterpreteerd als\n"
+"de de twee bytes \\0%c%c, `%c'"
+
+#: src/tr.c:564
+msgid "invalid backslash escape at end of string"
+msgstr "ongeldige backslash escape aan einde van string"
+
+#: src/tr.c:570
+#, c-format
+msgid "invalid backslash escape `\\%c'"
+msgstr "ongeldige backslash escape `\\%c'"
+
+#: src/tr.c:723
+#, c-format
+msgid "range-endpoints of `%s-%s' are in reverse collating sequence order"
+msgstr "de eindpunten van het bereik `%s-%s' zijn in tegengestelde volgorde"
+
+#: src/tr.c:904
+#, c-format
+msgid "invalid repeat count `%s' in [c*n] construct"
+msgstr "ongeldig herhalingsaantal `%s' in [c*n] konstruktie"
+
+#: src/tr.c:997
+#, fuzzy
+msgid "missing character class name `[::]'"
+msgstr "ongeldige tekenklasse `%s'"
+
+#: src/tr.c:1000
+msgid "missing equivalence class character `[==]'"
+msgstr ""
+
+#: src/tr.c:1023
+#, c-format
+msgid "invalid character class `%s'"
+msgstr "ongeldige tekenklasse `%s'"
+
+#: src/tr.c:1048
+#, c-format
+msgid "%s: equivalence class operand must be a single character"
+msgstr "%s: equivalente klasse operator moet een enkel teken zijn"
+
+#: src/tr.c:1520
+msgid "the [c*] repeat construct may not appear in string1"
+msgstr "de [c*] herhalingsconstructie mag niet voorkomen in tekst1"
+
+#: src/tr.c:1530
+msgid "only one [c*] repeat construct may appear in string2"
+msgstr "enkel een [c*] herhalings konstruktie mag voorkomen in tekst2"
+
+#: src/tr.c:1538
+msgid "[=c=] expressions may not appear in string2 when translating"
+msgstr "[=c=] expressies mogen niet voorkomen in tekst2 tijdens vertalen"
+
+#: src/tr.c:1551
+msgid "when not truncating set1, string2 must be non-empty"
+msgstr "indien set1 niet ingekort wordt, mag tekst2 niet leeg zijn"
+
+#: src/tr.c:1560
+msgid ""
+"when translating with complemented character classes,\n"
+"string2 must map all characters in the domain to one"
+msgstr ""
+"bij vertalen met complementaire tekenklassen,\n"
+"moet tekst2 alle tekens in het domein naar één afbeelden"
+
+#: src/tr.c:1567
+msgid ""
+"when translating, the only character classes that may appear in\n"
+"string2 are `upper' and `lower'"
+msgstr ""
+"indien vertaald wordt, zijn alleen `upper' en `lower' toegestaan in\n"
+"tekst2"
+
+#: src/tr.c:1576
+msgid "the [c*] construct may appear in string2 only when translating"
+msgstr "de [c*] mag alleen in tekst2 voorkomen tijdens vertaling"
+
+#: src/tr.c:1852
+msgid "two strings must be given when translating"
+msgstr "twee tekst-en nodig voor vertalen"
+
+#: src/tr.c:1855
+msgid "two strings must be given when both deleting and squeezing repeats"
+msgstr ""
+"twee tekst-en moeten gegeven zijn indien herhalingen naast verwijderd ook "
+"ingekort worden"
+
+#: src/tr.c:1869
+msgid "only one string may be given when deleting without squeezing repeats"
+msgstr ""
+"een tekst mag gegeven worden bij verwijderen zonder inkorting van herhalingen"
+
+#: src/tr.c:1875
+msgid "at least one string must be given when squeezing repeats"
+msgstr "minstens één tekst nodig voor het inkorten van herhalingen"
+
+#: src/tr.c:1966
+msgid "misaligned [:upper:] and/or [:lower:] construct"
+msgstr "verkeerd uitgelijnde constructie met [:upper:] en/of [:lower:]"
+
+#: src/tr.c:1989
+msgid ""
+"invalid identity mapping;  when translating, any [:lower:] or [:upper:]\n"
+"construct in string1 must be aligned with a corresponding construct\n"
+"([:upper:] or [:lower:], respectively) in string2"
+msgstr ""
+"ongeldige identiteitsafbeelding; wanneer er vertaald wordt, moeten\n"
+"[:lower:] of [:upper:] constructies in tekst1 op de zelfde plek staan\n"
+"als een overeenkomstige constructie (respectievelijk [:upper:] of\n"
+"[:lower:]) in tekst2"
+
+#: src/tsort.c:97
+#, fuzzy, c-format
+msgid ""
+"Usage: %s [OPTION] [FILE]\n"
+"Write totally ordered list consistent with the partial ordering in FILE.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"Gebruik: %s [OPTIE] [BESTAND] Geef een totaal gesorteerde lijst,\n"
+"overeenkomstig de gedeeltelijke volgorde in BESTAND.  Indien geen\n"
+"BESTAND gegeven is, of BESTAND is -, wordt de standaard invoer\n"
+"gelezen.\n"
+"\n"
+"      --help     toon hulptekst en beëindig programma\n"
+"      --version  toon versie-informatie en beëindig programma\n"
+
+#: src/tsort.c:533
+#, c-format
+msgid "%s: input contains a loop:"
+msgstr "%s: invoer bevat een terugkoppeling:"
+
+#: src/tsort.c:575
+msgid "only one argument may be specified"
+msgstr "slechts één argument mag gegeven worden"
+
+#: src/unexpand.c:379
+#, fuzzy
+msgid ""
+"Convert spaces in each FILE to tabs, writing to standard output.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"Vervang spaties in elk BESTAND door tabs, uitvoer naar standaard-uitvoer.\n"
+"Bij geen BESTAND of BESTAND is -, lees standaard-invoer.\n"
+"\n"
+"  -a, --all           vervang alle, in plaats van alleen de initiele, "
+"witruimte\n"
+"  -t, --tabs=NUMMER   maak tabs NUMMER character breed in plaats van 8\n"
+"  -t, --tabs=LIJST    gebruik komma gesepereerde lijst van tab posities\n"
+"      --help          toon hulptekst en beëindig programma\n"
+"      --version       toon versie-informatie en beëindig programma\n"
+"\n"
+"In plaats van -t NUMMER of -t LIJST, kan -NUMMER of -LIJST gebruikt worden.\n"
+
+#: src/unexpand.c:387
+msgid ""
+"  -a, --all           convert all whitespace, instead of initial whitespace\n"
+"  -t, --tabs=NUMBER   have tabs NUMBER characters apart instead of 8\n"
+"  -t, --tabs=LIST     use comma separated list of explicit tab positions\n"
+msgstr ""
+
+#: src/unexpand.c:463
+#, fuzzy
+msgid "`-LIST' option is obsolete; use `--first-only -t LIST'"
+msgstr "let op: ongeldige breedte %lu; zal %d gebruiken"
+
+#: src/uniq.c:134
+#, c-format
+msgid "Usage: %s [OPTION]... [INPUT [OUTPUT]]\n"
+msgstr "Aanroep: %s [OPTIE]... [INVOER [UITVOER]]\n"
+
+#: src/uniq.c:138
+msgid ""
+"Discard all but one of successive identical lines from INPUT (or\n"
+"standard input), writing to OUTPUT (or standard output).\n"
+"\n"
+msgstr ""
+
+#: src/uniq.c:146
+msgid ""
+"  -c, --count           prefix lines by the number of occurrences\n"
+"  -d, --repeated        only print duplicate lines\n"
+msgstr ""
+
+#: src/uniq.c:150
+msgid ""
+"  -D, --all-repeated[=delimit-method] print all duplicate lines\n"
+"                        delimit-method={none(default),prepend,separate}\n"
+"                        Delimiting is done with blank lines.\n"
+"  -f, --skip-fields=N   avoid comparing the first N fields\n"
+"  -i, --ignore-case     ignore differences in case when comparing\n"
+"  -s, --skip-chars=N    avoid comparing the first N characters\n"
+"  -u, --unique          only print unique lines\n"
+msgstr ""
+
+#: src/uniq.c:159
+msgid "  -w, --check-chars=N   compare no more than N characters in lines\n"
+msgstr ""
+
+#: src/uniq.c:164
+msgid ""
+"\n"
+"A field is a run of whitespace, then non-whitespace characters.\n"
+"Fields are skipped before chars.\n"
+msgstr ""
+
+#: src/uniq.c:377
+#, c-format
+msgid "error reading %s"
+msgstr "fout bij lezen %s"
+
+#: src/uniq.c:382
+#, c-format
+msgid "error writing %s"
+msgstr "fout bij schrijven %s"
+
+#: src/uniq.c:428 src/uniq.c:445
+#, c-format
+msgid "extra operand `%s'"
+msgstr ""
+
+#: src/uniq.c:468 src/uniq.c:493
+#, fuzzy
+msgid "invalid number of fields to skip"
+msgstr "ongeldig aantal velden om over te slaan: `%s'"
+
+#: src/uniq.c:502
+#, fuzzy
+msgid "invalid number of bytes to skip"
+msgstr "ongeldig aantal bytes om over te slaan: `%s'"
+
+#: src/uniq.c:511
+#, fuzzy
+msgid "invalid number of bytes to compare"
+msgstr "ongeldig aantal bytes te vergelijken: `%s'"
+
+#: src/uniq.c:525
+#, fuzzy, c-format
+msgid "`-%lu' option is obsolete; use `-f %lu'"
+msgstr "let op: ongeldige breedte %lu; zal %d gebruiken"
+
+#: src/uniq.c:533
+msgid "printing all duplicated lines and repeat counts is meaningless"
+msgstr ""
+"het afdrukken van alle dubbele regels en het aantal keren dat een regel "
+"voorkomt is onzin"
+
+#: src/wc.c:78
+msgid "Paul Rubin and David MacKenzie"
+msgstr ""
+
+#: src/wc.c:132
+#, fuzzy
+msgid ""
+"Print newline, word, and byte counts for each FILE, and a total line if\n"
+"more than one FILE is specified.  With no FILE, or when FILE is -,\n"
+"read standard input.\n"
+"  -c, --bytes            print the byte counts\n"
+"  -m, --chars            print the character counts\n"
+"  -l, --lines            print the newline counts\n"
+msgstr ""
+"Print aantal regels, woorden en bytes voor elk BESTAND, en een\n"
+"totaalregel als meer dan een BESTAND is gegeven.  Indien geen BESTAND\n"
+"is gegeven, of BESTAND is -, wordt de standaard invoer gegeven.\n"
+"  -c, --bytes, --chars   geef het aantal bytes\n"
+"  -l, --lines            geef het aantal nieuwe regels\n"
+"  -L, --max-line-length  geef de lengte van de langste regel\n"
+"  -w, --words            geef het aantal woorden\n"
+"      --help             toon deze hulptekst en beëindig programma\n"
+"      --version          toon versie-informatie en beëindig programma\n"
+
+#: src/wc.c:140
+#, fuzzy
+msgid ""
+"  -L, --max-line-length  print the length of the longest line\n"
+"  -w, --words            print the word counts\n"
+msgstr ""
+"Toon CRC-controlesom en het aantal bytes voor ieder BESTAND.\n"
+"\n"
+"      --help     toon deze hulptekst en beëindig programma\n"
+"      --version  toon versie-informatie en beëindig programma\n"
+
+#: src/wc.c:589
+msgid "total"
+msgstr "totaal"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "(obsolete)  If -VALUE is used as first OPTION, same as -c VALUE when one "
+#~ "of\n"
+#~ "multipliers bkm follows concatenated, else same as -n VALUE.\n"
+#~ msgstr ""
+#~ "Kopieer de eerste 10 regels van elk BESTAND naar standaard-uitvoer.\n"
+#~ "Indien meerdere bestanden gegeven zijn, wordt de uitvoer van ieder\n"
+#~ "bestand voorafgegaan door de bestandsnaam.  Indien geen BESTAND\n"
+#~ "gegeven is, of BESTAND is -, wordt de standaard invoer gelezen.\n"
+#~ "\n"
+#~ "  -c, --bytes=GROOTTE      print eerste GROOTTE bytes\n"
+#~ "  -n, --lines=AANTAL       print eerste AANTAL regels in plaats van "
+#~ "eerste 10\n"
+#~ "  -q, --quiet, --silent    print nooit bestandsnamen als headers\n"
+#~ "  -v, --verbose            print altijd bestandsnamen als headers\n"
+#~ "      --help               toon deze hulptekst en beëindig programma\n"
+#~ "      --version            toon versie-informatie en beëindig programma\n"
+#~ "\n"
+#~ "GROOTTE mag een achtervoegsel hebben om aan te geven waarmee het\n"
+#~ "vermenigvuldigd moet worden: b voor 512, k voor 1 Kilobyte, m voor 1\n"
+#~ "Megabyte.  Als -GROOTTE de eerste OPTIE is, lees -c GROOTTE wanneer\n"
+#~ "een van de vermunigvuldigingsachtervoegsels bkm volgt, ander lees -n\n"
+#~ "GROOTTE.\n"
+
+#, fuzzy
+#~ msgid "warning: `od -s' is obsolete; use `od --strings'"
+#~ msgstr "let op: ongeldige breedte %lu; zal %d gebruiken"
+
+#, fuzzy
+#~ msgid "warning: `od -w' is obsolete; use `od --width'"
+#~ msgstr "let op: ongeldige breedte %lu; zal %d gebruiken"
+
+#, fuzzy
+#~ msgid "warning: `pr -S' is obsolete; use `pr --sep-string'"
+#~ msgstr "let op: ongeldige breedte %lu; zal %d gebruiken"
+
+#, fuzzy
+#~ msgid ""
+#~ "  +POS1 [-POS2]             start a key at POS1, end it before POS2 "
+#~ "(origin 0)\n"
+#~ "                              Warning: this option is obsolete\n"
+#~ msgstr ""
+#~ "Vergelijk gesorteerde bestanden BESTAND1 en BESTAND2 regel voor regel.\n"
+#~ "\n"
+#~ "  -1              onderdruk regels die alleen in BESTAND1 voorkomen\n"
+#~ "  -2              onderdruk regels die alleen in BESTAND2 voorkomen\n"
+#~ "  -3              onderdruk regels die slechts in één van beide "
+#~ "bestanden\n"
+#~ "                  voorkomen\n"
+#~ "      --help      toon deze hulptekst en beëindig programma\n"
+#~ "      --version   toon versie-informatie en beëindig programma\n"
+
+#, fuzzy
+#~ msgid "warning: `sort -y' is obsolete; omit `-y'"
+#~ msgstr "let op: ongeldige breedte %lu; zal %d gebruiken"
+
+#, fuzzy
+#~ msgid "warning: `tail %s' is obsolete; use -n or -c instead"
+#~ msgstr "let op: ongeldige breedte %lu; zal %d gebruiken"
+
+#, fuzzy
+#~ msgid "warning: `uniq %s' is obsolete; use `uniq -s %s' instead"
+#~ msgstr "let op: ongeldige breedte %lu; zal %d gebruiken"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help               display this help and exit\n"
+#~ "      --version            output version information and exit\n"
+#~ msgstr ""
+#~ "Toon CRC-controlesom en het aantal bytes voor ieder BESTAND.\n"
+#~ "\n"
+#~ "      --help     toon deze hulptekst en beëindig programma\n"
+#~ "      --version  toon versie-informatie en beëindig programma\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help        display this help and exit\n"
+#~ "      --version     output version information and exit\n"
+#~ msgstr ""
+#~ "Toon CRC-controlesom en het aantal bytes voor ieder BESTAND.\n"
+#~ "\n"
+#~ "      --help     toon deze hulptekst en beëindig programma\n"
+#~ "      --version  toon versie-informatie en beëindig programma\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help      display this help and exit\n"
+#~ "      --version   output version information and exit\n"
+#~ msgstr ""
+#~ "Toon CRC-controlesom en het aantal bytes voor ieder BESTAND.\n"
+#~ "\n"
+#~ "      --help     toon deze hulptekst en beëindig programma\n"
+#~ "      --version  toon versie-informatie en beëindig programma\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help                 display this help and exit\n"
+#~ "      --version              output version information and exit\n"
+#~ msgstr ""
+#~ "Toon CRC-controlesom en het aantal bytes voor ieder BESTAND.\n"
+#~ "\n"
+#~ "      --help     toon deze hulptekst en beëindig programma\n"
+#~ "      --version  toon versie-informatie en beëindig programma\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help              display this help and exit\n"
+#~ "      --version           output version information and exit\n"
+#~ msgstr ""
+#~ "Toon CRC-controlesom en het aantal bytes voor ieder BESTAND.\n"
+#~ "\n"
+#~ "      --help     toon deze hulptekst en beëindig programma\n"
+#~ "      --version  toon versie-informatie en beëindig programma\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help          display this help and exit\n"
+#~ "      --version       output version information and exit\n"
+#~ msgstr ""
+#~ "Toon CRC-controlesom en het aantal bytes voor ieder BESTAND.\n"
+#~ "\n"
+#~ "      --help     toon deze hulptekst en beëindig programma\n"
+#~ "      --version  toon versie-informatie en beëindig programma\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help                display this help and exit\n"
+#~ "      --version             output version information and exit\n"
+#~ msgstr ""
+#~ "Toon CRC-controlesom en het aantal bytes voor ieder BESTAND.\n"
+#~ "\n"
+#~ "      --help     toon deze hulptekst en beëindig programma\n"
+#~ "      --version  toon versie-informatie en beëindig programma\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help                      display this help and exit\n"
+#~ "      --version                   output version information and exit\n"
+#~ msgstr ""
+#~ "Toon CRC-controlesom en het aantal bytes voor ieder BESTAND.\n"
+#~ "\n"
+#~ "      --help     toon deze hulptekst en beëindig programma\n"
+#~ "      --version  toon versie-informatie en beëindig programma\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help                  display this help and exit\n"
+#~ "      --version               output version information and exit\n"
+#~ msgstr ""
+#~ "Toon CRC-controlesom en het aantal bytes voor ieder BESTAND.\n"
+#~ "\n"
+#~ "      --help     toon deze hulptekst en beëindig programma\n"
+#~ "      --version  toon versie-informatie en beëindig programma\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help                     display this help and exit\n"
+#~ "      --version                  output version information and exit\n"
+#~ msgstr ""
+#~ "Toon CRC-controlesom en het aantal bytes voor ieder BESTAND.\n"
+#~ "\n"
+#~ "      --help     toon deze hulptekst en beëindig programma\n"
+#~ "      --version  toon versie-informatie en beëindig programma\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help       display this help and exit\n"
+#~ "      --version    output version information and exit\n"
+#~ msgstr ""
+#~ "Toon CRC-controlesom en het aantal bytes voor ieder BESTAND.\n"
+#~ "\n"
+#~ "      --help     toon deze hulptekst en beëindig programma\n"
+#~ "      --version  toon versie-informatie en beëindig programma\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help            display this help and exit\n"
+#~ "      --version         output version information and exit\n"
+#~ msgstr ""
+#~ "Toon CRC-controlesom en het aantal bytes voor ieder BESTAND.\n"
+#~ "\n"
+#~ "      --help     toon deze hulptekst en beëindig programma\n"
+#~ "      --version  toon versie-informatie en beëindig programma\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help             display this help and exit\n"
+#~ "      --version          output version information and exit\n"
+#~ msgstr ""
+#~ "Toon CRC-controlesom en het aantal bytes voor ieder BESTAND.\n"
+#~ "\n"
+#~ "      --help     toon deze hulptekst en beëindig programma\n"
+#~ "      --version  toon versie-informatie en beëindig programma\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "  --help            display this help and exit\n"
+#~ "  --version         output version information and exit\n"
+#~ msgstr ""
+#~ "Toon CRC-controlesom en het aantal bytes voor ieder BESTAND.\n"
+#~ "\n"
+#~ "      --help     toon deze hulptekst en beëindig programma\n"
+#~ "      --version  toon versie-informatie en beëindig programma\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Convert tabs in each FILE to spaces, writing to standard output.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -i, --initial       do not convert TABs after non whitespace\n"
+#~ "  -t, --tabs=NUMBER   have tabs NUMBER characters apart, not 8\n"
+#~ msgstr ""
+#~ "Verander tabs in elk BESTAND naar spaties, de uitvoer gaat naar de\n"
+#~ "standaard uitvoer.  Indien geen BESTAND is gegeven, of BESTAND is -,\n"
+#~ "wordt de standaard invoer gelezen.\n"
+#~ "\n"
+#~ "  -i, --initial       converteer TABs alleen na een witte ruimte\n"
+#~ "  -t, --tabs=NUMMER   gebruik TABs van NUMMER posities, niet 8\n"
+#~ "  -t, --tabs=LIJST    gebruik TAB-posities uit LIJST, door\n"
+#~ "                      komma's gescheiden\n"
+#~ "      --help          toon deze hulptekst en beëindig programma\n"
+#~ "      --version       toon versie-informatie en beëindig programma\n"
+#~ "\n"
+#~ "In plaats van -t NUMMER of -t LIJST, kan -NUMMER of -LIJST worden\n"
+#~ "gebruikt.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "  -t, --tabs=LIST     use comma separated list of explicit tab positions\n"
+#~ "      --help          display this help and exit\n"
+#~ "      --version       output version information and exit\n"
+#~ "\n"
+#~ "Instead of -t NUMBER or -t LIST, -NUMBER or -LIST may be used.\n"
+#~ msgstr ""
+#~ "Verander tabs in elk BESTAND naar spaties, de uitvoer gaat naar de\n"
+#~ "standaard uitvoer.  Indien geen BESTAND is gegeven, of BESTAND is -,\n"
+#~ "wordt de standaard invoer gelezen.\n"
+#~ "\n"
+#~ "  -i, --initial       converteer TABs alleen na een witte ruimte\n"
+#~ "  -t, --tabs=NUMMER   gebruik TABs van NUMMER posities, niet 8\n"
+#~ "  -t, --tabs=LIJST    gebruik TAB-posities uit LIJST, door\n"
+#~ "                      komma's gescheiden\n"
+#~ "      --help          toon deze hulptekst en beëindig programma\n"
+#~ "      --version       toon versie-informatie en beëindig programma\n"
+#~ "\n"
+#~ "In plaats van -t NUMMER of -t LIJST, kan -NUMMER of -LIJST worden\n"
+#~ "gebruikt.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Wrap input lines in each FILE (standard input by default), writing to\n"
+#~ "standard output.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -b, --bytes         count bytes rather than columns\n"
+#~ "  -s, --spaces        break at spaces\n"
+#~ "  -w, --width=WIDTH   use WIDTH columns instead of 80\n"
+#~ "      --help          display this help and exit\n"
+#~ "      --version       output version information and exit\n"
+#~ msgstr ""
+#~ "Vul invoer regels uit van elk BESTAND (standaard is de standaard "
+#~ "invoer),\n"
+#~ "de uitvoer gaat naar de standaard uitvoer.\n"
+#~ "\n"
+#~ "  -b, --bytes          tel bytes in plaats van kolommen\n"
+#~ "  -s, --spaces         breek af op spaties\n"
+#~ "  -w, --width=BREEDTE  gebruik BREEDTE kolommen in plaats van 80\n"
+#~ "      --help           toon deze hulptekst en beëindig\n"
+#~ "      --version        toon versie-informatie en beëindig\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Write lines consisting of the sequentially corresponding lines from\n"
+#~ "each FILE, separated by TABs, to standard output.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -d, --delimiters=LIST   reuse characters from LIST instead of TABs\n"
+#~ "  -s, --serial            paste one file at a time instead of in "
+#~ "parallel\n"
+#~ "      --help              display this help and exit\n"
+#~ "      --version           output version information and exit\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Schrijf regels welke sequentieel corresponderende regels bevatten vanuit\n"
+#~ "BESTAND, gescheiden door TABs, naar standaard-uitvoer.\n"
+#~ "Bij geen BESTAND of BESTAND is -, lees standaard-invoer.\n"
+#~ "\n"
+#~ "  -d, --delimiters=LIJST  hergebruik karakters uit LIJST in plaats van "
+#~ "TABs\n"
+#~ "  -s, --serial            paste one file at a time instead of in "
+#~ "parallel\n"
+#~ "      --help              toon hulptekst en beëindig programma\n"
+#~ "      --version           toon versie-informatie en beëindig programma\n"
+#~ "\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "  -NUMBER                 same as -l NUMBER\n"
+#~ "      --verbose           print a diagnostic to standard error just\n"
+#~ "                            before each output file is opened\n"
+#~ "      --help              display this help and exit\n"
+#~ "      --version           output version information and exit\n"
+#~ "\n"
+#~ "SIZE may have a multiplier suffix: b for 512, k for 1K, m for 1 Meg.\n"
+#~ msgstr ""
+#~ "Bewaar stukjes van de INVOER van een vaste grootte naar VOORVOEGSELaa,\n"
+#~ "VOORVOEGSELab, ...; standaard VOORVOEGSEL is `x'.  Indien geen INVOER\n"
+#~ "is gegeven, of INVOER is -, wordt de standaard invoer gelezen.\n"
+#~ "\n"
+#~ "  -b, --bytes=N           uitvoerbestanden zijn maximaal N bytes groot\n"
+#~ "  -C, --line-bytes=N      uitvoerbestanden zijn maximaal N bytes aan\n"
+#~ "                          hele regels groot\n"
+#~ "  -l, --lines=N           uitvoerbestand bevat maximaal N regels\n"
+#~ "  -GROOTTE                zelfde als -l GROOTTE\n"
+#~ "      --verbose           geef een diagnose op de standaard\n"
+#~ "                          fout-uitvoer vlak voor een uitvoerbestand\n"
+#~ "                          geopend wordt\n"
+#~ "  --help                  toon deze hulptekst en beëindig programma\n"
+#~ "  --version               toon versie-informatie en beëindig programma\n"
+#~ "\n"
+#~ "N mag worden gevolgd door: b voor 512, k voor 1K, m voor 1 Meg.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Write each FILE to standard output, last line first.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -b, --before             attach the separator before instead of after\n"
+#~ msgstr ""
+#~ "Print elk BESTAND naar standaard uitvoer, de laatste regel als eerste.\n"
+#~ "Bij geen BESTAND of BESTAND is -, lees standaard-invoer.\n"
+#~ "\n"
+#~ "  -b, --before             plaats scheider voor i.p.v. achter de regel\n"
+#~ "  -r, --regex              interpreteer de scheider als reguliere "
+#~ "expressie\n"
+#~ "  -s, --separator=STRING   gebruik STRING als scheider (nieuwe regel)\n"
+#~ "  --help                   toon hulptekst en beëindig programma\n"
+#~ "  --version                toon versie-informatie en beëindig programma\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Print the last %d lines of each FILE to standard output.\n"
+#~ "With more than one FILE, precede each with a header giving the file "
+#~ "name.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "      --retry              keep trying to open a file even if it is\n"
+#~ "                           inaccessible when tail starts or if it "
+#~ "becomes\n"
+#~ "                           inaccessible later -- useful only with -f\n"
+#~ msgstr ""
+#~ "Kopieer de eerste 10 regels van elk BESTAND naar standaard-uitvoer.\n"
+#~ "Indien meerdere bestanden gegeven zijn, wordt de uitvoer van ieder\n"
+#~ "bestand voorafgegaan door de bestandsnaam.  Indien geen BESTAND\n"
+#~ "gegeven is, of BESTAND is -, wordt de standaard invoer gelezen.\n"
+#~ "\n"
+#~ "  -c, --bytes=GROOTTE      print eerste GROOTTE bytes\n"
+#~ "  -n, --lines=AANTAL       print eerste AANTAL regels in plaats van "
+#~ "eerste 10\n"
+#~ "  -q, --quiet, --silent    print nooit bestandsnamen als headers\n"
+#~ "  -v, --verbose            print altijd bestandsnamen als headers\n"
+#~ "      --help               toon deze hulptekst en beëindig programma\n"
+#~ "      --version            toon versie-informatie en beëindig programma\n"
+#~ "\n"
+#~ "GROOTTE mag een achtervoegsel hebben om aan te geven waarmee het\n"
+#~ "vermenigvuldigd moet worden: b voor 512, k voor 1 Kilobyte, m voor 1\n"
+#~ "Megabyte.  Als -GROOTTE de eerste OPTIE is, lees -c GROOTTE wanneer\n"
+#~ "een van de vermunigvuldigingsachtervoegsels bkm volgt, ander lees -n\n"
+#~ "GROOTTE.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "  -t, --tabs=NUMBER   have tabs NUMBER characters apart instead of 8\n"
+#~ "  -t, --tabs=LIST     use comma separated list of explicit tab positions\n"
+#~ "      --help          display this help and exit\n"
+#~ "      --version       output version information and exit\n"
+#~ "\n"
+#~ "Instead of -t NUMBER or -t LIST, -NUMBER or -LIST may be used.\n"
+#~ msgstr ""
+#~ "Vervang spaties in elk BESTAND door tabs, uitvoer naar standaard-"
+#~ "uitvoer.\n"
+#~ "Bij geen BESTAND of BESTAND is -, lees standaard-invoer.\n"
+#~ "\n"
+#~ "  -a, --all           vervang alle, in plaats van alleen de initiele, "
+#~ "witruimte\n"
+#~ "  -t, --tabs=NUMMER   maak tabs NUMMER character breed in plaats van 8\n"
+#~ "  -t, --tabs=LIJST    gebruik komma gesepereerde lijst van tab posities\n"
+#~ "      --help          toon hulptekst en beëindig programma\n"
+#~ "      --version       toon versie-informatie en beëindig programma\n"
+#~ "\n"
+#~ "In plaats van -t NUMMER of -t LIJST, kan -NUMMER of -LIJST gebruikt "
+#~ "worden.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Output pieces of FILE separated by PATTERN(s) to files `xx01', "
+#~ "`xx02', ...,\n"
+#~ "and output byte counts of each piece to standard output.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -b, --suffix-format=FORMAT use sprintf FORMAT instead of %%d\n"
+#~ "  -f, --prefix=PREFIX        use PREFIX instead of `xx'\n"
+#~ "  -k, --keep-files           do not remove output files on errors\n"
+#~ "  -n, --digits=DIGITS        use specified number of digits instead of 2\n"
+#~ "  -s, --quiet, --silent      do not print counts of output file sizes\n"
+#~ "  -z, --elide-empty-files    remove empty output files\n"
+#~ "      --help                 display this help and exit\n"
+#~ "      --version              output version information and exit\n"
+#~ "\n"
+#~ "Read standard input if FILE is -.  Each PATTERN may be:\n"
+#~ "\n"
+#~ "  INTEGER            copy up to but not including specified line number\n"
+#~ "  /REGEXP/[OFFSET]   copy up to but not including a matching line\n"
+#~ "  %%REGEXP%%[OFFSET]   skip to, but not including a matching line\n"
+#~ "  {INTEGER}          repeat the previous pattern specified number of "
+#~ "times\n"
+#~ "  {*}                repeat the previous pattern as many times as "
+#~ "possible\n"
+#~ "\n"
+#~ "A line OFFSET is a required `+' or `-' followed by a positive integer.\n"
+#~ msgstr ""
+#~ "Maak deelbestanden `xx01', `xx02', ... van BESTAND, gescheiden op\n"
+#~ "basis van PATROON, en geef het aantal bytes voor ieder deel weer naar\n"
+#~ "de standaard-uitvoer.\n"
+#~ "\n"
+#~ "  -b, --suffix-format=FORMAAT gebruik sprintf-FORMAAT in plaats van %%d\n"
+#~ "  -f, --prefix=VOORVOEGSEL    gebruik VOORVOEGSEL in plaats van `xx'\n"
+#~ "  -k, --keep-files            bewaar uitvoerbestanden bij fouten\n"
+#~ "  -n, --digits=N              gebruik N cijfers in plaats van 2\n"
+#~ "  -s, --quiet, --silent       geen informatie over de grootte van de\n"
+#~ "                              uitvoer-bestanden\n"
+#~ "  -z, --elide-empty-files     verwijder lege uitvoer-bestanden\n"
+#~ "      --help                  toon deze hulptekst en beëindig programma\n"
+#~ "      --version               toon versie-informatie en beëindig "
+#~ "programma\n"
+#~ "\n"
+#~ "Indien BESTAND een - is, wordt de standaard-invoer gelezen. Patronen\n"
+#~ "mogen het volgende zijn:\n"
+#~ "\n"
+#~ "  GEHEEL GETAL         kopieer tot regelnummer GEHEEL GETAL\n"
+#~ "  /REGEXP/[OFFSET]     kopieer tot de regel die overeenkomt met REGEXP\n"
+#~ "  %%REGEXP%%[OFFSET]     negeer alles tot aan de regel die overeenkomt\n"
+#~ "  {GEHEEL GETAL}       herhaal het voorgaande patroon GEHEEL GETAL maal\n"
+#~ "  {*}                  herhaal het voorgaande patroon zo vaak mogelijk\n"
+#~ "\n"
+#~ "Een regel-OFFSET is een verplichte `+' of `-' gevolgd door een\n"
+#~ "positief geheel getal.\n"
+#~ "\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Print selected parts of lines from each FILE to standard output.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -b, --bytes=LIST        output only these bytes\n"
+#~ "  -c, --characters=LIST   output only these characters\n"
+#~ "  -d, --delimiter=DELIM   use DELIM instead of TAB for field delimiter\n"
+#~ "  -f, --fields=LIST       output only these fields;  also print any line\n"
+#~ "                            that contains no delimiter character, unless\n"
+#~ "                            the -s option is specified\n"
+#~ "  -n                      (ignored)\n"
+#~ "  -s, --only-delimited    do not print lines not containing delimiters\n"
+#~ "      --output-delimiter=STRING  use STRING as the output delimiter\n"
+#~ "                            the default is to use the input delimiter\n"
+#~ "      --help              display this help and exit\n"
+#~ "      --version           output version information and exit\n"
+#~ "\n"
+#~ "Use one, and only one of -b, -c or -f.  Each LIST is made up of one\n"
+#~ "range, or many ranges separated by commas.  Each range is one of:\n"
+#~ "\n"
+#~ "  N     N'th byte, character or field, counted from 1\n"
+#~ "  N-    from N'th byte, character or field, to end of line\n"
+#~ "  N-M   from N'th to M'th (included) byte, character or field\n"
+#~ "  -M    from first to M'th (included) byte, character or field\n"
+#~ "\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ msgstr ""
+#~ "Stuur de geselecteerde delen van regels uit elk BESTAND naar\n"
+#~ "standaard-uitvoer.\n"
+#~ "\n"
+#~ "  -b, --bytes=LIJST       laat alleen deze bytes zien\n"
+#~ "  -c, --characters=LIJST  toon alleen deze tekens\n"
+#~ "  -d, --delimiter=SCHEID  gebruik SCHEID in plaats van TAB als "
+#~ "veldscheiding\n"
+#~ "  -f, --fields=LIJST      toon alleen deze velden\n"
+#~ "  -n                      (wordt genegeerd)\n"
+#~ "  -s, --only-delimited    negeer de regels zonder scheidingstekens\n"
+#~ "      --help              toon deze hulptekst en beëindig programma\n"
+#~ "      --version           toon versie-informatie en beëindig programma\n"
+#~ "\n"
+#~ "Gebruik precies één van -b, -c of -f.  Elke LIJST is opgebouwd uit één\n"
+#~ "of meerdere bereiken, gescheiden door komma's.  Elk bereik is als\n"
+#~ "volgt:\n"
+#~ "\n"
+#~ "  N     Nde byte, teken of veld, geteld vanaf 1\n"
+#~ "  N-    vanaf de Nde byte, teken of veld, tot aan het einde van de regel\n"
+#~ "  N-M   vanaf Nde tot en met de Mde byte, teken of veld\n"
+#~ "  -M    vanaf de eerste tot en met de Mde byte, teken of veld\n"
+#~ "\n"
+#~ "Indien geen BESTAND is gegeven, of BESTAND is -, wordt de standaard\n"
+#~ "invoer gelezen.\n"
+
+#~ msgid ""
+#~ "For each pair of input lines with identical join fields, write a line to\n"
+#~ "standard output.  The default join field is the first, delimited\n"
+#~ "by whitespace.  When FILE1 or FILE2 (not both) is -, read standard "
+#~ "input.\n"
+#~ "\n"
+#~ "  -a SIDE           print unpairable lines coming from file SIDE\n"
+#~ "  -e EMPTY          replace missing input fields with EMPTY\n"
+#~ "  -i, --ignore-case ignore differences in case when comparing fields\n"
+#~ "  -j FIELD          (obsolescent) equivalent to `-1 FIELD -2 FIELD'\n"
+#~ "  -j1 FIELD         (obsolescent) equivalent to `-1 FIELD'\n"
+#~ "  -j2 FIELD         (obsolescent) equivalent to `-2 FIELD'\n"
+#~ "  -o FORMAT         obey FORMAT while constructing output line\n"
+#~ "  -t CHAR           use CHAR as input and output field separator\n"
+#~ "  -v SIDE           like -a SIDE, but suppress joined output lines\n"
+#~ "  -1 FIELD          join on this FIELD of file 1\n"
+#~ "  -2 FIELD          join on this FIELD of file 2\n"
+#~ "      --help        display this help and exit\n"
+#~ "      --version     output version information and exit\n"
+#~ "\n"
+#~ "Unless -t CHAR is given, leading blanks separate fields and are ignored,\n"
+#~ "else fields are separated by CHAR.  Any FIELD is a field number counted\n"
+#~ "from 1.  FORMAT is one or more comma or blank separated specifications,\n"
+#~ "each being `SIDE.FIELD' or `0'.  Default FORMAT outputs the join field,\n"
+#~ "the remaining fields from FILE1, the remaining fields from FILE2, all\n"
+#~ "separated by CHAR.\n"
+#~ msgstr ""
+#~ "Geef een regel uitvoer voor ieder paar invoerregels met identieke\n"
+#~ "samenvoegregels naar de standaard uitvoer.  Het standaard\n"
+#~ "samenvoegveld is het eerste, afgesloten door een ruimteteken.  Indien\n"
+#~ "BESTAND1 of BESTAND2 (nooit allebei) - is, wordt de standaard invoer\n"
+#~ "gelezen.\n"
+#~ "\n"
+#~ "  -a ZIJDE         geef de niet samenvoegbare regels uit bestand ZIJDE\n"
+#~ "  -e LEEG          vervang de ontbrekende invoervelden met LEEG\n"
+#~ "  -i, --ignore-case  negeer verschillen tussen hoofd- en kleine letters\n"
+#~ "  -j VELD          (verouderd) equivalent met `-1 VELD -2 VELD'\n"
+#~ "  -j1 VELD         (verouderd) equivalent met `-1 VELD'\n"
+#~ "  -j2 VELD         (verouderd) equivalent met `-2 VELD'\n"
+#~ "  -o FORMAAT       gebruik FORMAAT bij het samenstellen van de\n"
+#~ "                   uitvoerregels\n"
+#~ "  -t TEKEN         gebruik TEKEN als scheidingsteken in invoer en\n"
+#~ "                   uitvoer\n"
+#~ "  -v VIJDE         zelfde als -a ZIJDE, maar onderdruk gecombineerde\n"
+#~ "                   uitvoerregels\n"
+#~ "  -1 VELD          combineer op dit VELD uit bestand 1\n"
+#~ "  -2 VELD          combineer op dit VELD uit bestand 2\n"
+#~ "      --help       toon deze hulptekst en beëindig programma\n"
+#~ "      --version    toon versie-informatie en beëindig programma\n"
+#~ "\n"
+#~ "Tenzij -t TEKEN gegeven is, worden voorgaande ruimtes en losstaande\n"
+#~ "velden genegeerd, anders worden de velden gescheiden door TEKEN.\n"
+#~ "Ieder VELD is een veldnummer geteld vanaf 1.  FORMAAT is een of\n"
+#~ "meerdere specificaties gescheiden door een komma of ruimteteken, een\n"
+#~ "specificatie is `ZIJDE.VELD' of `0'.  Standaard FORMAAT geeft het\n"
+#~ "samenvoegveld, de overgebleven velden uit BESTAND1, de overgebleven\n"
+#~ "velden uit BESTAND2, allemaal gescheiden door TEKEN.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Usage: %s [OPTION] [FILE]...\n"
+#~ "  or:  %s [OPTION] --check [FILE]\n"
+#~ "Print or check %s (%d-bit) checksums.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "  -b, --binary            read files in binary mode (default on DOS/"
+#~ "Windows)\n"
+#~ "  -c, --check             check %s sums against given list\n"
+#~ "  -t, --text              read files in text mode (default)\n"
+#~ "\n"
+#~ "The following two options are useful only when verifying checksums:\n"
+#~ "      --status            don't output anything, status code shows "
+#~ "success\n"
+#~ "  -w, --warn              warn about improperly formated checksum lines\n"
+#~ "\n"
+#~ "      --help              display this help and exit\n"
+#~ "      --version           output version information and exit\n"
+#~ "\n"
+#~ "The sums are computed as described in %s.  When checking, the input\n"
+#~ "should be a former output of this program.  The default mode is to print\n"
+#~ "a line with checksum, a character indicating type (`*' for binary, ` ' "
+#~ "for\n"
+#~ "text), and name for each FILE.\n"
+#~ msgstr ""
+#~ "Aanroep: %s [OPTIE] [BESTAND]...\n"
+#~ "   of:   %s [OPTIE] --check [BESTAND]\n"
+#~ "Toon of controleer MD5 controlegetallen.\n"
+#~ "Indien geen BESTAND is gegeven, of BESTAND is -, wordt de standaard\n"
+#~ "invoer gelezen.\n"
+#~ "\n"
+#~ "  -b, --binary            lees bestanden in binaire mode (standaard in\n"
+#~ "                          DOS/Windows)\n"
+#~ "  -c, --check             controleer MD5 sommen a.d.h. een lijst\n"
+#~ "  -t, --text              lees bestanden in tekst mode (standaard)\n"
+#~ "\n"
+#~ "De volgende twee opties zijn van nut bij het verifiëren van\n"
+#~ "controlesommen:\n"
+#~ "      --status            geen uitvoer, de statuscode geeft succes aan\n"
+#~ "  -w, --warn              waarschuw in geval van onjuist opgemaakte\n"
+#~ "                          regels met MD5 controlegetallen\n"
+#~ "\n"
+#~ "      --help              toon deze hulptekst en beëindig programma\n"
+#~ "      --version           toon versie-informatie en beëindig programma\n"
+#~ "\n"
+#~ "De sommen worden berekend zoals beschreven in RFC 1321.  Bij controle\n"
+#~ "moet de invoer de uitvoer zijn van dit programma.  Standaard wordt een\n"
+#~ "regel gegeven met de kontrolesom, een karakter representatief voor het\n"
+#~ "bestandstype (`*' is binair, ` ' is tekst) en de naam van elk BESTAND.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Write each FILE to standard output, with line numbers added.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -b, --body-numbering=STYLE      use STYLE for numbering body lines\n"
+#~ "  -d, --section-delimiter=CC      use CC for separating logical pages\n"
+#~ "  -f, --footer-numbering=STYLE    use STYLE for numbering footer lines\n"
+#~ "  -h, --header-numbering=STYLE    use STYLE for numbering header lines\n"
+#~ "  -i, --page-increment=NUMBER     line number increment at each line\n"
+#~ "  -l, --join-blank-lines=NUMBER   group of NUMBER empty lines counted as "
+#~ "one\n"
+#~ "  -n, --number-format=FORMAT      insert line numbers according to "
+#~ "FORMAT\n"
+#~ "  -p, --no-renumber               do not reset line numbers at logical "
+#~ "pages\n"
+#~ "  -s, --number-separator=STRING   add STRING after (possible) line "
+#~ "number\n"
+#~ "  -v, --first-page=NUMBER         first line number on each logical page\n"
+#~ "  -w, --number-width=NUMBER       use NUMBER columns for line numbers\n"
+#~ "      --help                      display this help and exit\n"
+#~ "      --version                   output version information and exit\n"
+#~ "\n"
+#~ "By default, selects -v1 -i1 -l1 -sTAB -w6 -nrn -hn -bt -fn.  CC are\n"
+#~ "two delimiter characters for separating logical pages, a missing\n"
+#~ "second character implies :.  Type \\\\ for \\.  STYLE is one of:\n"
+#~ "\n"
+#~ "  a         number all lines\n"
+#~ "  t         number only nonempty lines\n"
+#~ "  n         number no lines\n"
+#~ "  pREGEXP   number only lines that contain a match for REGEXP\n"
+#~ "\n"
+#~ "FORMAT is one of:\n"
+#~ "\n"
+#~ "  ln   left justified, no leading zeros\n"
+#~ "  rn   right justified, no leading zeros\n"
+#~ "  rz   right justified, leading zeros\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Stuur elk BESTAND naar standaard-uitvoer, regels voorafgegaan door\n"
+#~ "regelnummers. Bij geen BESTAND of BESTAND is -, lees standaard-invoer.\n"
+#~ "\n"
+#~ "  -b, --body-numbering=STIJL      gebruik STIJL voor nummering "
+#~ "bodyregels\n"
+#~ "  -d, --section-delimiter=CC      gebruik CC voor seperatie logische "
+#~ "pagina's\n"
+#~ "  -f, --footer-numbering=STIJL    gebruik STIJL voor nummering "
+#~ "voetregels\n"
+#~ "  -h, --header-numbering=STIJL    gebruik STIJL voor nummering "
+#~ "hoofdregels\n"
+#~ "  -i, --page-increment=NUMMER     regelnummer toename bij elke regel\n"
+#~ "  -l, --join-blank-lines=NUMMER   groep van NUMMER lege regels telt voor "
+#~ "een\n"
+#~ "  -n, --number-format=FORMAAT     voeg regelnummers in volgens FORMAAT\n"
+#~ "  -p, --no-renumber               geen hernummering bij logische "
+#~ "pagina's\n"
+#~ "  -s, --number-separator=STRING   voeg STRING toe na (mogelijk) "
+#~ "regelnummer\n"
+#~ "  -v, --first-page=NUMMER         eerste regelnummer op elke logische "
+#~ "pagina\n"
+#~ "  -w, --number-width=NUMMER       gebruik NUMMER kolommen voor "
+#~ "regelnummers\n"
+#~ "      --help     toon hulptekst en beëindig programma\n"
+#~ "      --version  toon versie-informatie en beëindig programma\n"
+#~ "\n"
+#~ "Standaard opties: -v1 -i1 -l1 -sTAB -w6 -nrn -hn -bt -fn.  CC zijn\n"
+#~ "twee begrenzingskarakters voor onderscheiden logisch pagina's, een "
+#~ "missend\n"
+#~ "tweede karakter impliceert:.  Gebruik \\\\ voor \\.  STIJL is een van:\n"
+#~ "\n"
+#~ "  a         nummer alle regels\n"
+#~ "  t         nummer alle niet lege regels\n"
+#~ "  n         number geen enkele regel\n"
+#~ "  pREGEXP   nummer de regels welke een REGEXP bevatten\n"
+#~ "\n"
+#~ "FORMAAT is een van:\n"
+#~ "\n"
+#~ "  ln   links uitgelijnd, geen voorloopnullen\n"
+#~ "  rn   rechts uitgelijnd, geen voorloopnullen\n"
+#~ "  rz   rechts uitgelijnd, voorloopnullen\n"
+#~ "\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "Write an unambiguous representation, octal bytes by default,\n"
+#~ "of FILE to standard output.  With more than one FILE argument,\n"
+#~ "concatenate them in the listed order to form the input.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -A, --address-radix=RADIX   decide how file offsets are printed\n"
+#~ "  -j, --skip-bytes=BYTES      skip BYTES input bytes first\n"
+#~ "  -N, --read-bytes=BYTES      limit dump to BYTES input bytes\n"
+#~ "  -s, --strings[=BYTES]       output strings of at least BYTES graphic "
+#~ "chars\n"
+#~ "  -t, --format=TYPE           select output format or formats\n"
+#~ "  -v, --output-duplicates     do not use * to mark line suppression\n"
+#~ "  -w, --width[=BYTES]         output BYTES bytes per output line\n"
+#~ "      --traditional           accept arguments in pre-POSIX form\n"
+#~ "      --help                  display this help and exit\n"
+#~ "      --version               output version information and exit\n"
+#~ "\n"
+#~ "Pre-POSIX format specifications may be intermixed, they accumulate:\n"
+#~ "  -a   same as -t a,  select named characters\n"
+#~ "  -b   same as -t oC, select octal bytes\n"
+#~ "  -c   same as -t c,  select ASCII characters or backslash escapes\n"
+#~ "  -d   same as -t u2, select unsigned decimal shorts\n"
+#~ "  -f   same as -t fF, select floats\n"
+#~ "  -h   same as -t x2, select hexadecimal shorts\n"
+#~ "  -i   same as -t d2, select decimal shorts\n"
+#~ "  -l   same as -t d4, select decimal longs\n"
+#~ "  -o   same as -t o2, select octal shorts\n"
+#~ "  -x   same as -t x2, select hexadecimal shorts\n"
+#~ msgstr ""
+#~ "Geef een ondubbelzinnige representatie van BESTAND naar de standaard\n"
+#~ "uitvoer.  Standaard is dit met octale bytes.  Indien geen BESTAND is\n"
+#~ "gegeven, of BESTAND is -, wordt de standaard invoer gelezen.\n"
+#~ "\n"
+#~ "  -A, --address-radix=GETAL   beslis over hoe de offset in het bestand\n"
+#~ "                              gegeven wordt\n"
+#~ "  -j, --skip-bytes=BYTES      sla BYTES invoer bytes over bij elk\n"
+#~ "                              bestand\n"
+#~ "  -N, --read-bytes=BYTES      beperk de dump tot BYTES invoer bytes\n"
+#~ "                              per bestand\n"
+#~ "  -s, --strings[=N]           geef tekst van ten minste N afdrukbare\n"
+#~ "                              tekens\n"
+#~ "  -t, --format=TYPE           selekteer uitvoerformaat of -formaten\n"
+#~ "  -v, --output-duplicates     gebruik geen * om regelonderdrukking te\n"
+#~ "                              markeren\n"
+#~ "  -w, --width[=BYTES]         geef maximaal BYTES bytes per\n"
+#~ "                              uitvoerregel\n"
+#~ "      --traditional           accepteer argumenten in pre-POSIX vorm\n"
+#~ "      --help                  toon deze hulptekst en beëindig programma\n"
+#~ "      --version               toon versie-informatie en beëindig "
+#~ "programma\n"
+#~ "\n"
+#~ "Pre-POSIX specificaties voor de opmaak mogen door elkaar gebruikt worden, "
+#~ "ze \n"
+#~ "  -a   zelfde als -t a,  selecteer genoemde tekens\n"
+#~ "  -b   zelfde als -t oC, selecteer octale bytes\n"
+#~ "  -c   zelfde als -t c,  selecteer ASCII tekens of aangahaald met "
+#~ "backslash\n"
+#~ "  -d   zelfde als -t u2, selecteer positief decimaal kort\n"
+#~ "  -f   zelfde als -t fF, selecteer drijvende komma\n"
+#~ "  -h   zelfde als -t x2, selecteer hexadecimaal kort\n"
+#~ "  -i   zelfde als -t d2, selecteer decimaal kort\n"
+#~ "  -l   zelfde als -t d4, selecteer decimaal lang\n"
+#~ "  -o   zelfde als -t o2, selecteer octaal kort\n"
+#~ "  -x   zelfde als -t x2, selecteer hexadecimaal kort\n"
+
+#~ msgid ""
+#~ "\n"
+#~ "For older syntax (second call format), OFFSET means -j OFFSET.  LABEL\n"
+#~ "is the pseudo-address at first byte printed, incremented when dump is\n"
+#~ "progressing.  For OFFSET and LABEL, a 0x or 0X prefix indicates\n"
+#~ "hexadecimal, suffixes maybe . for octal and b multiply by 512.\n"
+#~ "\n"
+#~ "TYPE is made up of one or more of these specifications:\n"
+#~ "\n"
+#~ "  a          named character\n"
+#~ "  c          ASCII character or backslash escape\n"
+#~ "  d[SIZE]    signed decimal, SIZE bytes per integer\n"
+#~ "  f[SIZE]    floating point, SIZE bytes per integer\n"
+#~ "  o[SIZE]    octal, SIZE bytes per integer\n"
+#~ "  u[SIZE]    unsigned decimal, SIZE bytes per integer\n"
+#~ "  x[SIZE]    hexadecimal, SIZE bytes per integer\n"
+#~ "\n"
+#~ "SIZE is a number.  For TYPE in doux, SIZE may also be C for\n"
+#~ "sizeof(char), S for sizeof(short), I for sizeof(int) or L for\n"
+#~ "sizeof(long).  If TYPE is f, SIZE may also be F for sizeof(float), D\n"
+#~ "for sizeof(double) or L for sizeof(long double).\n"
+#~ "\n"
+#~ "RADIX is d for decimal, o for octal, x for hexadecimal or n for none.\n"
+#~ "BYTES is hexadecimal with 0x or 0X prefix, it is multiplied by 512\n"
+#~ "with b suffix, by 1024 with k and by 1048576 with m.  Adding a z suffix "
+#~ "to\n"
+#~ "any type adds a display of printable characters to the end of each line\n"
+#~ "of output.  -s without a number implies 3.  -w without a number implies "
+#~ "32.\n"
+#~ "By default, od uses -A o -t d2 -w 16.\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Voor de oudere syntax (formaat van de tweede ronde), betekent OFFSET\n"
+#~ "-j OFFSET.  LABEL is het pseudo-addres vanaf eerste gegeven byte,\n"
+#~ "oplopend naarmate de dump vordert.  Voor OFFSET en LABEL geeft een 0x\n"
+#~ "of 0X voorvoegsel aan dat het in hexadecimaal is, met misschien een\n"
+#~ "achtervoegsel. Vermenigvuldig met 512 voor octaal en b.\n"
+#~ "\n"
+#~ "TYPE is samengesteld uit een of meer van de volgende specificaties:\n"
+#~ "\n"
+#~ "  a          teken met naam\n"
+#~ "  c          ASCII teken of aangehaald met backslash\n"
+#~ "  d[GROOTTE] decimaal met teken, GROOTTE bytes per getal\n"
+#~ "  f[GROOTTE] drijvende komma, GROOTTE bytes per getal\n"
+#~ "  o[GROOTTE] octaal, GROOTTE bytes per getal\n"
+#~ "  u[GROOTTE] positief decimaal, GROOTTE bytes per getal\n"
+#~ "  x[GROOTTE] hexadecimaal, GROOTTE bytes per getal\n"
+#~ "\n"
+#~ "GROOTTE is een nummer.  Als TYPE één van [doux] is, mag GROOTTE C zijn\n"
+#~ "voor grootte(teken), S voor grootte(kort), I voor grootte(getal) of L\n"
+#~ "voor grootte(lang).  Als TYPE f is, mag GROOTTE F zijn voor\n"
+#~ "groote(drijvend), D voor grootte(dubbel drijvend) of L voor\n"
+#~ "grootte(lang drijvend).\n"
+#~ "\n"
+#~ "GROND is d voor decimaal, o voor octaal, x voor hexadecimaal of n voor\n"
+#~ "niets.  BYTES is hexadecimaal met 0x of 0X voorvoegsel,\n"
+#~ "vermenigvuldigd met 512 als b het achtervoegsel is, 1024 met k en\n"
+#~ "1048576 bij m.  Toevoeging van z achtervoegsel bij een soort zorgt\n"
+#~ "voor de toevoeging van de afdrukbare tekens achteraan een regel\n"
+#~ "invoer.  -s zonder een nummer betekent 3.  -w zonder nummer is\n"
+#~ "hetzelfde als 32.  Standaard gebruik od -A o -t d2 -w 16.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Paginate or columnate FILE(s) for printing.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  +FIRST_PAGE[:LAST_PAGE], --pages=FIRST_PAGE[:LAST_PAGE]\n"
+#~ "                    begin [stop] printing with page FIRST_[LAST_]PAGE\n"
+#~ "  -COLUMN, --columns=COLUMN\n"
+#~ "                    produce COLUMN-column output and print columns down,\n"
+#~ "                    unless -a is used. Balance number of lines in the\n"
+#~ "                    columns on each page.\n"
+#~ "  -a, --across      print columns across rather than down, used together\n"
+#~ "                    with -COLUMN\n"
+#~ "  -c, --show-control-chars\n"
+#~ "                    use hat notation (^G) and octal backslash notation\n"
+#~ "  -d, --double-space\n"
+#~ "                    double space the output\n"
+#~ "  -D, --date-format=FORMAT\n"
+#~ "                    use FORMAT for the header date\n"
+#~ "  -e[CHAR[WIDTH]], --expand-tabs[=CHAR[WIDTH]]\n"
+#~ "                    expand input CHARs (TABs) to tab WIDTH (8)\n"
+#~ "  -F, -f, --form-feed\n"
+#~ "                    use form feeds instead of newlines to separate pages\n"
+#~ "                    (by a 3-line page header with -F or a 5-line header\n"
+#~ "                    and trailer without -F)\n"
+#~ msgstr ""
+#~ "Maak BESTAND(en) op voor afdrukken.\n"
+#~ "\n"
+#~ "  +EERSTE_PAGINA[:LAATSTE_PAGINA], --pages=EERSTE_PAGINA[:"
+#~ "LAATSTE_PAGINA]\n"
+#~ "                    begin [beëindig] printen bij pagina EERSTE_[LAATSTE_]"
+#~ "PAGINA\n"
+#~ "  -KOLOM, --columns=KOLOM\n"
+#~ "                    maak een uitvoer die KOLOM kolommen breed is, en\n"
+#~ "                    druk de kolommen naar beneden af, tenzij -a\n"
+#~ "                    gebruikt wordt. Balanceer het aantal regels in een\n"
+#~ "                    kolom op alle pagina's.\n"
+#~ "  -a, --across      druk de kolommen overdwars af in plaats van naar\n"
+#~ "                    beneden, gebruik samen met -KOLOM\n"
+#~ "  -c, --show-control-chars\n"
+#~ "                    gebruik dakjes (^G) en octale notatie met\n"
+#~ "                    backslashes\n"
+#~ "  -d, --double-space\n"
+#~ "                    verdubbel de ruimte in de uitvoer\n"
+#~ "  -e[TEKEN[BREEDTE]], --expand-tabs[=TEKEN[BREEDTE]]\n"
+#~ "                    verander TEKENs in de invoer (TABs) naar tab\n"
+#~ "                    BREEDTE (8)\n"
+#~ "  -F, -f, --form-feed\n"
+#~ "                    gebruik paginadoorvoer in plaats van nieuwe regels\n"
+#~ "                    om twee pagina's te scheiden (met een kop van 3\n"
+#~ "                    regels met -F of een kop- en voettekst van 5\n"
+#~ "                    regels zonder -F)\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "  -h HEADER, --header=HEADER\n"
+#~ "                    use a centered HEADER instead of filename in page "
+#~ "header,\n"
+#~ "                    -h \"\" prints a blank line, don't use -h\"\"\n"
+#~ "  -i[CHAR[WIDTH]], --output-tabs[=CHAR[WIDTH]]\n"
+#~ "                    replace spaces with CHARs (TABs) to tab WIDTH (8)\n"
+#~ "  -J, --join-lines  merge full lines, turns off -W line truncation, no "
+#~ "column\n"
+#~ "                    alignment, -S[STRING] sets separators\n"
+#~ "  -l PAGE_LENGTH, --length=PAGE_LENGTH\n"
+#~ "                    set the page length to PAGE_LENGTH (66) lines\n"
+#~ "                    (default number of lines of text 56, and with -F 63)\n"
+#~ "  -m, --merge       print all files in parallel, one in each column,\n"
+#~ "                    truncate lines, but join lines of full length with -"
+#~ "J\n"
+#~ "  -n[SEP[DIGITS]], --number-lines[=SEP[DIGITS]]\n"
+#~ "                    number lines, use DIGITS (5) digits, then SEP (TAB),\n"
+#~ "                    default counting starts with 1st line of input file\n"
+#~ "  -N NUMBER, --first-line-number=NUMBER\n"
+#~ "                    start counting with NUMBER at 1st line of first\n"
+#~ "                    page printed (see +FIRST_PAGE)\n"
+#~ "  -o MARGIN, --indent=MARGIN\n"
+#~ "                    offset each line with MARGIN (zero) spaces, do not\n"
+#~ "                    affect -w or -W, MARGIN will be added to PAGE_WIDTH\n"
+#~ "  -r, --no-file-warnings\n"
+#~ "                    omit warning when a file cannot be opened\n"
+#~ msgstr ""
+#~ "  -h KOP, --header=KOP\n"
+#~ "                    gebruik een gecentreerde KOP inplaats van\n"
+#~ "                    bestandsnaam in de koptekst op een pagina, lange\n"
+#~ "                    kopteksten kunnen aan de linker kant afgekapt\n"
+#~ "                    worden, -h \"\" geeft een lege regel, gebruik -h "
+#~ "\"\"\n"
+#~ "                    niet.\n"
+#~ "  -i[TEKEN[BREEDTE]], --output-tabs[=TEKEN[BREEDTE]]\n"
+#~ "                    vervang spaties door TEKENs (TABs) tot aan de\n"
+#~ "                    tabbreedte (8)\n"
+#~ "  -J, --join-lines  voeg volle regels samen, zet de -W regelafbreking\n"
+#~ "                    uit, geen kolomuitlijning, -S[TEKST] geeft de\n"
+#~ "                    scheiding\n"
+#~ "  -l PAGINALENGTE, --length=PAGINALENGTE\n"
+#~ "                    stelt de paginalengte in op PAGINALENGTE (66)\n"
+#~ "                    regels (standaard aantal regels is 56, en met -F\n"
+#~ "                    63)\n"
+#~ "  -m, --merge       druk alle bestanden parallel af, een in iedere\n"
+#~ "                    kolom, kap regels af, maar voeg volle regels samen\n"
+#~ "                    met -J\n"
+#~ "  -n[SCHEID[CIJFERS]], --number-lines[=SCHEID[CIJFERS]]\n"
+#~ "                    nummer regels, met CIJFERS (5) cijfers, dan een\n"
+#~ "                    SCHEID (TAB), standaard begint het tellen bij de\n"
+#~ "                    eerste regel van de invoer\n"
+#~ "  -N NUMMER, --first-line-number=NUMMER\n"
+#~ "                    begin met tellen bij NUMMER op de eerste regel van\n"
+#~ "                    de eerste pagina (zie +EERSTE_PAGINA)\n"
+#~ "  -o MARGE, --indent=MARGE\n"
+#~ "                    begin iedere regel met MARGE (0) spaties, geen\n"
+#~ "                    effect op -w of -W, MARGE wordt toegevoegd aan\n"
+#~ "                    PAGINABREEDTE\n"
+#~ "  -r, --no-file-warnings\n"
+#~ "                    geef geen waarschuwing als een bestand niet\n"
+#~ "                    gelezen kan worden\n"
+
+#~ msgid ""
+#~ "  -s[CHAR],--separator[=CHAR]\n"
+#~ "                    separate columns by a single character, default for "
+#~ "CHAR\n"
+#~ "                    is the <TAB> character without -w and 'no char' with -"
+#~ "w\n"
+#~ "                    -s[CHAR] turns off line truncation of all 3 column\n"
+#~ "                    options (-COLUMN|-a -COLUMN|-m) except -w is set\n"
+#~ "  -S[STRING], --sep-string[=STRING]\n"
+#~ "                    separate columns by an optional STRING, don't use\n"
+#~ "                    -S \"STRING\", -S only: No separator used (same as -S"
+#~ "\"\"),\n"
+#~ "                    without -S: Default separator <TAB> with -J and "
+#~ "<space>\n"
+#~ "                    otherwise (same as -S\" \"), no effect on column "
+#~ "options\n"
+#~ "  -t, --omit-header omit page headers and trailers\n"
+#~ "  -T, --omit-pagination\n"
+#~ "                    omit page headers and trailers, eliminate any "
+#~ "pagination\n"
+#~ "                    by form feeds set in input files\n"
+#~ "  -v, --show-nonprinting\n"
+#~ "                    use octal backslash notation\n"
+#~ "  -w PAGE_WIDTH, --width=PAGE_WIDTH\n"
+#~ "                    set page width to PAGE_WIDTH (72) characters for\n"
+#~ "                    multiple text-column output only, -s[char] turns off "
+#~ "(72)\n"
+#~ "  -W PAGE_WIDTH, --page-width=PAGE_WIDTH\n"
+#~ "                    set page width to PAGE_WIDTH (72) characters always,\n"
+#~ "                    truncate lines, except -J option is set, no "
+#~ "interference\n"
+#~ "                    with -S or -s\n"
+#~ "  --help            display this help and exit\n"
+#~ "  --version         output version information and exit\n"
+#~ "\n"
+#~ "-T implied by -l nn when nn <= 10 or <= 3 with -F. With no FILE, or when\n"
+#~ "FILE is -, read standard input.\n"
+#~ msgstr ""
+#~ "  -s[TEKEN], --separator[=TEKEN]\n"
+#~ "                    scheid kolommen door een enkel teken, stardaard\n"
+#~ "                    TEKEN is het <TAB> teken zonder -w en `geen' met\n"
+#~ "                    -w.  -s[TEKEN] zet de regelafkapping uit voor alle\n"
+#~ "                    drie de kolomopties (-KOLOM|-a KOLOM|-m) tenzij -w\n"
+#~ "                    gegeven is\n"
+#~ "  -t, --omit-header geen kop- en voetteksten\n"
+#~ "  -T, --omit-pagination\n"
+#~ "                    geen kop- en voetteksten, en geen paginadoorvoer\n"
+#~ "                    door pagina-eindes in de invoerbestanden\n"
+#~ "  -v, --show-nonprinting\n"
+#~ "                    gebruik octale nummers met backslashes\n"
+#~ "  -w PAGINABREEDTE, --width=PAGINABREEDTE\n"
+#~ "                    stel de paginabreedte in op PAGINABREEDTE (72)\n"
+#~ "                    tekens alleen voor meerkolomse uitvoer, -s[teken]\n"
+#~ "                    zet het uit (72)\n"
+#~ "  -W PAGINABREEDTE, --page-width=PAGINABREEDTE\n"
+#~ "                    stel de paginabreedte altijd in op PAGINABREEDTE\n"
+#~ "                    (72) tekens, tenzij -J gegeven, dit heeft geen\n"
+#~ "                    invloed op -S of -s\n"
+#~ "  --help            toon deze hulptekst en beëindig\n"
+#~ "  --version         toon versie-informatie en beëindig\n"
+#~ "\n"
+#~ "-l nn betekent -T indien nn <= 10 of <= 3 met -F.  Indien geen BESTAND\n"
+#~ "is gegeven, of BESTAND is -, wordt de standaard invoer gelezen.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Output a permuted index, including context, of the words in the input "
+#~ "files.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -A, --auto-reference           output automatically generated "
+#~ "references\n"
+#~ "  -C, --copyright                display Copyright and copying "
+#~ "conditions\n"
+#~ "  -G, --traditional              behave more like System V `ptx'\n"
+#~ "  -F, --flag-truncation=STRING   use STRING for flagging line "
+#~ "truncations\n"
+#~ "  -M, --macro-name=STRING        macro name to use instead of `xx'\n"
+#~ "  -O, --format=roff              generate output as roff directives\n"
+#~ "  -R, --right-side-refs          put references at right, not counted in -"
+#~ "w\n"
+#~ "  -S, --sentence-regexp=REGEXP   for end of lines or end of sentences\n"
+#~ "  -T, --format=tex               generate output as TeX directives\n"
+#~ "  -W, --word-regexp=REGEXP       use REGEXP to match each keyword\n"
+#~ "  -b, --break-file=FILE          word break characters in this FILE\n"
+#~ "  -f, --ignore-case              fold lower case to upper case for "
+#~ "sorting\n"
+#~ "  -g, --gap-size=NUMBER          gap size in columns between output "
+#~ "fields\n"
+#~ "  -i, --ignore-file=FILE         read ignore word list from FILE\n"
+#~ "  -o, --only-file=FILE           read only word list from this FILE\n"
+#~ "  -r, --references               first field of each line is a reference\n"
+#~ "  -t, --typeset-mode               - not implemented -\n"
+#~ "  -w, --width=NUMBER             output width in columns, reference "
+#~ "excluded\n"
+#~ "      --help                     display this help and exit\n"
+#~ "      --version                  output version information and exit\n"
+#~ "\n"
+#~ "With no FILE or if FILE is -, read Standard Input.  `-F /' by default.\n"
+#~ msgstr ""
+#~ "Verplichte argumenten voor lange opties zijn ook verplicht voor korte\n"
+#~ "opties.\n"
+#~ "\n"
+#~ "\n"
+#~ "  -A, --auto-reference           automatisch gegerereerde referenties\n"
+#~ "  -C, --copyright                geef Copyright en "
+#~ "distributievoorwaarden\n"
+#~ "  -G, --traditional              gedrag volgens System V `ptx'\n"
+#~ "  -F, --flag-truncation=TEKST    gebruik TEKST om regelafkappingen te\n"
+#~ "                                 markeren\n"
+#~ "  -M, --macro-name=TEKST         macro om te gebruiken in plaats van "
+#~ "`xx'\n"
+#~ "  -O, --format=roff              genereer uitvoer als roff opdrachten\n"
+#~ "  -R, --right-side-refs          zet referenties aan de rechter kant,\n"
+#~ "                                 niet geteld met -w\n"
+#~ "  -S, --sentence-regexp=REGEXP   voor het einde van regels of zinnen\n"
+#~ "  -T, --format=tex               genereer uitvoer als TeX opgrachten\n"
+#~ "  -W, --word-regexp=REGEXP       gebruik REGEXP om sleutelwoorden te\n"
+#~ "                                 vinden\n"
+#~ "  -b, --break-file=BESTAND       woordafbreektekens in dit BESTAND\n"
+#~ "  -f, --ignore-case              maak hoofdletters van kleine letters\n"
+#~ "                                 voor sorteren\n"
+#~ "  -g, --gap-size=AANTAL          gatgrootte in kolommen tussen\n"
+#~ "                                 uitvoervelden\n"
+#~ "  -i, --ignore-file=BESTAND      lees een lijst met te negeren woorden\n"
+#~ "                                 uit BESTAND\n"
+#~ "  -o, --only-file=BESTAND        lees een lijst met woorden die alleen\n"
+#~ "                                 gebruikt mogen worden uit BESTAND\n"
+#~ "  -r, --references               eerste veld van iedere regel is een\n"
+#~ "                                 verwijzing\n"
+#~ "  -t, --typeset-mode              - niet geïmplementeerd -\n"
+#~ "  -w, --width=AANTAL             uitvoerbreedte in kolommen, exclusief\n"
+#~ "                                 de verwijzingen\n"
+#~ "      --help                     toon deze hulptekst en beëindig\n"
+#~ "      --version                  toon versie-informatie en beëindig\n"
+#~ "\n"
+#~ "Indien geen BESTAND is gegeven, of BESTAND is -, wordt de standaard\n"
+#~ "invoer gelezen.  `-F /' is standaard.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Other options:\n"
+#~ "\n"
+#~ "  -c, --check               check whether input is sorted; do not sort\n"
+#~ "  -k, --key=POS1[,POS2]     start a key at POS1, end it at POS 2 (origin "
+#~ "1)\n"
+#~ "  -m, --merge               merge already sorted files; do not sort\n"
+#~ "  -o, --output=FILE         write result to FILE instead of standard "
+#~ "output\n"
+#~ "  -s, --stable              stabilize sort by disabling last-resort "
+#~ "comparison\n"
+#~ "  -S, --buffer-size=SIZE    use SIZE for main memory buffer\n"
+#~ "  -t, --field-separator=SEP use SEP instead of non- to whitespace "
+#~ "transition\n"
+#~ "  -T, --temporary-directory=DIR  use DIR for temporaries, not $TMPDIR or %"
+#~ "s\n"
+#~ "                              multiple options specify multiple "
+#~ "directories\n"
+#~ "  -u, --unique              with -c: check for strict ordering\n"
+#~ "                              otherwise: output only the first of an "
+#~ "equal run\n"
+#~ "  -z, --zero-terminated     end lines with 0 byte, not newline\n"
+#~ "  +POS1 [-POS2]             start a key at POS1, end it before POS2 "
+#~ "(origin 0)\n"
+#~ "                              Warning: this option is obsolescent\n"
+#~ "      --help       display this help and exit\n"
+#~ "      --version    output version information and exit\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Schrijf gesorteerde samenvoeging van BESTAND(en) naar standaard\n"
+#~ "uitvoer.\n"
+#~ "\n"
+#~ "  +POS1 [-POS2]    begin een sorteersleutel bij POS1 en eindig *voor*\n"
+#~ "                   POS2(verouderd).  Veldnummers en tekenoffsets\n"
+#~ "                   worden geteld vanaf nul (tegengesteld aan -k)\n"
+#~ "  -b               negeer voorafgaande spaties in gesorteerde velden\n"
+#~ "                   of sleutels\n"
+#~ "  -c               controleer of bestanden gesorteerd zijn, sorteer ze\n"
+#~ "                   niet\n"
+#~ "  -d               verwacht enkel de tekens [a-zA-Z0-9 ] in sleutels\n"
+#~ "  -f               verander kleine letters in hoofdletter in sleutels\n"
+#~ "  -g               vergelijk volgens numerieke waarde, impliceert -b\n"
+#~ "  -i               verwacht enkel de tekens [\\040-\\0176] in sleutels\n"
+#~ "  -k POS1[,POS2]   begin een sleutel op POS1, en eindig *op* POS2.\n"
+#~ "                   Veldnummers en tekenoffsets worden geteld vanaf één\n"
+#~ "                   (+POS-vorm telt vanaf nul)\n"
+#~ "  -m               voeg reeds gesorteerde bestanden samen, sorteer niet\n"
+#~ "  -M               vergelijk (onbekend) < `JAN' < ... < `DEC',\n"
+#~ "                   betekent -b\n"
+#~ "  -n               vergelijk volgens de numerieke waarde van de tekst,\n"
+#~ "                   betekent -b\n"
+#~ "  -o BESTAND       schrijf resultaat naar BESTAND i.p.v. de standaard\n"
+#~ "                   uitvoer\n"
+#~ "  -r               draai het resultaat van de vergelijking om\n"
+#~ "  -s               stabiliseer de sortering door het uitschakelen van\n"
+#~ "                   de `last resort' vergelijking\n"
+#~ "  -t SCHEID        gebruik SCHEIDing i.p.v. de overgang van tekens\n"
+#~ "                   naar lege ruimte\n"
+#~ "  -T MAP           gebruik MAP voor tijdelijke bestanden, niet $TMPDIR\n"
+#~ "                   of %s\n"
+#~ "  -u               met -c, controleer voor strikte volgorde;\n"
+#~ "                   met -m, geef alleen de eerste van een opeenvolging\n"
+#~ "                   van gelijken\n"
+#~ "  -z               eindig regels met een nulteken, i.v.m find -print0\n"
+#~ "      --help       toon deze hulptekst en beëindig programma\n"
+#~ "      --version    toon versie-informatie en beëindig programma\n"
+#~ "\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Print the last %d lines of each FILE to standard output.\n"
+#~ "With more than one FILE, precede each with a header giving the file "
+#~ "name.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "      --retry              keep trying to open a file even if it is\n"
+#~ "                           inaccessible when tail starts or if it "
+#~ "becomes\n"
+#~ "                           inaccessible later -- useful only with -f\n"
+#~ "  -c, --bytes=N            output the last N bytes\n"
+#~ "  -f, --follow[={name|descriptor}]\n"
+#~ "                           output appended data as the file grows;\n"
+#~ "                           -f, --follow, and --follow=descriptor are\n"
+#~ "                           equivalent\n"
+#~ "  -F                       same as --follow=name --retry\n"
+#~ "  -n, --lines=N            output the last N lines, instead of the last %"
+#~ "d\n"
+#~ "      --max-unchanged-stats=N\n"
+#~ "                           with --follow=name, reopen a FILE which has "
+#~ "not\n"
+#~ "                           changed size after N (default %d) iterations\n"
+#~ "                           to see if it has been unlinked or renamed\n"
+#~ "                           (this is the usual case of rotated log files)\n"
+#~ "      --pid=PID            with -f, terminate after process ID, PID dies\n"
+#~ "  -q, --quiet, --silent    never output headers giving file names\n"
+#~ "  -s, --sleep-interval=S   with -f, each iteration lasts approximately S\n"
+#~ "                           (default 1) seconds\n"
+#~ "  -v, --verbose            always output headers giving file names\n"
+#~ "      --help               display this help and exit\n"
+#~ "      --version            output version information and exit\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Geef de laatste %d regels van ieder BESTAND weer op de standaard\n"
+#~ "uitvoer.  Indien meer dan een BESTAND is gegeven, wordt iedere uitvoer\n"
+#~ "voorafgegaan door de bestandsnaam.  Indien geen BESTAND is gegeven, of\n"
+#~ "BESTAND is -, wordt de standaard invoer gelezen.\n"
+#~ "\n"
+#~ "      --retry              blijf proberen het bestand te openen, zelfs\n"
+#~ "                           als het ontoegankelijk is als tail opstart,\n"
+#~ "                           of als het later ontoegankelijk wordt --\n"
+#~ "                           alleen nuttig met -f\n"
+#~ "  -c, --bytes=N            geef de laatste N bytes\n"
+#~ "  -f, --follow[={name|descriptor}] geef toegevoegde gegevens naarmate\n"
+#~ "                           het bestand groter wordt; -f, --follow, en\n"
+#~ "                           --follow=descriptor zijn equivalent\n"
+#~ "  -n, --lines=N            geef de laatste N regels in plaats van de\n"
+#~ "                           laatste %d\n"
+#~ "      --max-unchanged-stats=N zie de texinfo documentatie\n"
+#~ "                           (standaard %d)\n"
+#~ "      --max-consecutive-size-changes=N zie de texinfo documentatie\n"
+#~ "                           (standaard %d)\n"
+#~ "      --pid=PID            met -f, stop indien proces PID verdwijnt\n"
+#~ "  -q, --quiet, --silent    geef nooit de bestandsnaam weer\n"
+#~ "  -s, --sleep-interval=S   met -f, wacht S seconden tussen herhalingen\n"
+#~ "  -v, --verbose            geef altijd een kopregel met de bestandsnaam\n"
+#~ "      --help               toon deze hulptekst en beëindig\n"
+#~ "      --version            toon versie-informatie en beëindig\n"
+#~ "\n"
+#~ "Indien het eerste teken van N (het aantal bytes of regels) een `+' is,\n"
+#~ "begint het afdrukken bij de Nde byte of regel vanaf het begin van het\n"
+#~ "bestand, anders vanaf het einde.  N mag een achtervoegsel hebben om\n"
+#~ "aan te geven waarmee het vermenigvuldigd moet worden: b voor 512, k\n"
+#~ "voor 1024, m voor 1048576 (1 Meg).  Een eerste optie +WAARDE of\n"
+#~ "-WAARDE wordt gezien als -n +WAARDE of -n WAARDE tenzij WAARDE een van\n"
+#~ "de vermenigvuldigingsachtervoegsels [bkm] heeft, want dan wordt het\n"
+#~ "beschouwd als -c +WAARDE of -c WAARDE.\n"
+#~ "\n"
+#~ "Met --follow (-f) wordt de bestandsbeschrijver in de gaten gehouden,\n"
+#~ "wat inhoudt dat tail het einde van een bestand kan volgen, zelfs als\n"
+#~ "het hernoemd wordt.  Dit gedrag is niet gewenst als u echt de naam van\n"
+#~ "het bestand bedoelt (bijv. met logwisseling).  Gebruik in dat geval\n"
+#~ "--follow=name.  Dat zorgt ervoor dat tail het bestand in de gaten\n"
+#~ "houdt door het periodiek te openen om te zien of het verwijderd en\n"
+#~ "opnieuw aangemaakt is door iemand.\n"
+#~ "\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "SETs are specified as strings of characters.  Most represent themselves.\n"
+#~ "Interpreted sequences are:\n"
+#~ "\n"
+#~ "  \\NNN            character with octal value NNN (1 to 3 octal digits)\n"
+#~ "  \\\\              backslash\n"
+#~ "  \\a              audible BEL\n"
+#~ "  \\b              backspace\n"
+#~ "  \\f              form feed\n"
+#~ "  \\n              new line\n"
+#~ "  \\r              return\n"
+#~ "  \\t              horizontal tab\n"
+#~ "  \\v              vertical tab\n"
+#~ "  CHAR1-CHAR2     all characters from CHAR1 to CHAR2 in ascending order\n"
+#~ "  [CHAR*]         in SET2, copies of CHAR until length of SET1\n"
+#~ "  [CHAR*REPEAT]   REPEAT copies of CHAR, REPEAT octal if starting with 0\n"
+#~ "  [:alnum:]       all letters and digits\n"
+#~ "  [:alpha:]       all letters\n"
+#~ "  [:blank:]       all horizontal whitespace\n"
+#~ "  [:cntrl:]       all control characters\n"
+#~ "  [:digit:]       all digits\n"
+#~ "  [:graph:]       all printable characters, not including space\n"
+#~ "  [:lower:]       all lower case letters\n"
+#~ "  [:print:]       all printable characters, including space\n"
+#~ "  [:punct:]       all punctuation characters\n"
+#~ "  [:space:]       all horizontal or vertical whitespace\n"
+#~ "  [:upper:]       all upper case letters\n"
+#~ "  [:xdigit:]      all hexadecimal digits\n"
+#~ "  [=CHAR=]        all characters which are equivalent to CHAR\n"
+#~ msgstr ""
+#~ "\n"
+#~ "SETs zijn gespecificeerd als strings van karakters. De meeste stellen\n"
+#~ "zichzelf voor. De volgende wijken daarvan af en worden geinterpreteerd:\n"
+#~ "\n"
+#~ "  \\NNN            karakter met octaal nummer NNN (1 tot 3 octale "
+#~ "getallen)\n"
+#~ "  \\\\              backslash\n"
+#~ "  \\a              hoorbare BEL\n"
+#~ "  \\b              backspace\n"
+#~ "  \\f              form feed\n"
+#~ "  \\n              nieuwe regel\n"
+#~ "  \\r              return\n"
+#~ "  \\t              horizontale tab\n"
+#~ "  \\v              verticale tab\n"
+#~ "  CHAR1-CHAR2     alle karakters van CHAR1 tot CHAR2 in oplopende "
+#~ "volgorde\n"
+#~ "  [CHAR1-CHAR2]   zelfde als CHAR1-CHAR2, als SET1 en SET2 dit gebruiken\n"
+#~ "  [CHAR*]         in SET2, kopieer CHAR tot lengte van SET1\n"
+#~ "  [CHAR*HERHAAL]  HERHAAL kopieen van CHAR, HERHAAL octaal als gestart "
+#~ "met 0\n"
+#~ "  [:alnum:]       alle letters en cijfers\n"
+#~ "  [:alpha:]       alle letters\n"
+#~ "  [:blank:]       alle horizontal witruimte\n"
+#~ "  [:cntrl:]       alle controle karakters\n"
+#~ "  [:digit:]       alle cijfers\n"
+#~ "  [:graph:]       alle printbare karakters, uitgezonderd spatie\n"
+#~ "  [:lower:]       alle kleine letters\n"
+#~ "  [:print:]       alle printbare karakters, inklusief spatie\n"
+#~ "  [:punct:]       alle interpunctie karakters\n"
+#~ "  [:space:]       alle horizontale of verticale witruimte\n"
+#~ "  [:upper:]       alle hoofdletters\n"
+#~ "  [:xdigit:]      alle hexadecimale cijfers\n"
+#~ "  [=CHAR=]        alle karakters equivalent aan CHAR\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Discard all but one of successive identical lines from INPUT (or\n"
+#~ "standard input), writing to OUTPUT (or standard output).\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -c, --count           prefix lines by the number of occurrences\n"
+#~ "  -d, --repeated        only print duplicate lines\n"
+#~ "  -D, --all-repeated[=delimit-method] print all duplicate lines\n"
+#~ "                        delimit-method={none(default),prepend,separate)}\n"
+#~ "                        Delimiting is done with blank lines.\n"
+#~ "  -f, --skip-fields=N   avoid comparing the first N fields\n"
+#~ "  -i, --ignore-case     ignore differences in case when comparing\n"
+#~ "  -s, --skip-chars=N    avoid comparing the first N characters\n"
+#~ "  -u, --unique          only print unique lines\n"
+#~ "  -w, --check-chars=N   compare no more than N characters in lines\n"
+#~ "  -N                    same as -f N\n"
+#~ "  +N                    same as -s N (obsolescent; will be withdrawn)\n"
+#~ "      --help            display this help and exit\n"
+#~ "      --version         output version information and exit\n"
+#~ "\n"
+#~ "A field is a run of whitespace, then non-whitespace characters.\n"
+#~ "Fields are skipped before chars.\n"
+#~ msgstr ""
+#~ "Negeer alle opeenvolgende zelfde regels op één na uit de INVOER (of\n"
+#~ "standaard invoer), en schrijf dat naar UITVOER (of standaard uitvoer).\n"
+#~ "\n"
+#~ "  -c, --count           zet voor de regel het aantal keren dat die\n"
+#~ "                        voorkomt\n"
+#~ "  -d, --repeated        geef alleen de vaker voorkomende regels\n"
+#~ "  -D, --all-repeated    geef alle vaker voorkomende regels\n"
+#~ "  -f, --skip-fields=N   voorkom vergelijking van de eerste N velden\n"
+#~ "  -i, --ignore-case     beschouw hoofd- en kleine letters als dezelfde\n"
+#~ "  -s, --skip-chars=N    voorkom vergelijking van de eerste N tekens\n"
+#~ "  -u, --unique          toon alleen de unieke regels\n"
+#~ "  -w, --check-chars=N   vergelijk niet meer dan N tekens per regel\n"
+#~ "  -N                    zelfde als -f N\n"
+#~ "  +N                    zelfde als -s N\n"
+#~ "      --help            toon deze hulptekst en beëindig programma\n"
+#~ "      --version         toon versie-informatie en beëindig programma\n"
+#~ "\n"
+#~ "Een veld is een of meerdere lege ruimtes gevolgd door niet-ruimte\n"
+#~ "tekens.  Velden worden overgeslagen voor tekens.\n"
+
+#, fuzzy
+#~ msgid "Copyright (C) 2001 Free Software Foundation, Inc."
+#~ msgstr "Copyright (C) 1999 Free Software Foundation, Inc."
+
+#~ msgid ""
+#~ "when using the old-style +POS and -POS key specifiers,\n"
+#~ "the +POS specifier must come first"
+#~ msgstr ""
+#~ "bij gebruik van oude-stijl +POS en -POS zoeksleutel,\n"
+#~ "dient de +POS sleutel als eerste gegeven te worden"
+
+#~ msgid "option `-k' requires an argument"
+#~ msgstr "optie `-k' vereist een argument"
+
+#~ msgid ""
+#~ "the starting field number argument to the `-k' option must be positive"
+#~ msgstr "het eerste veldnummer argument bij de `-k' optie moet positief zijn"
+
+#~ msgid "starting field spec has `.' but lacks following character offset"
+#~ msgstr ""
+#~ "de eerste veld specificatie bevat een `.' maar mist een teken-offset"
+
+#, fuzzy
+#~ msgid ""
+#~ "starting field character offset argument to the `-k' option must be "
+#~ "positive"
+#~ msgstr ""
+#~ "de teken-offset voor het beginveld als argument van de `-k' optie moet\n"
+#~ "positief zijn"
+
+#~ msgid "field specification has `,' but lacks following field spec"
+#~ msgstr ""
+#~ "de veldspecificatie bevat een `,' maar een volgende specificatie ontbreekt"
+
+#~ msgid "ending field number argument to the `-k' option must be positive"
+#~ msgstr ""
+#~ "het nummer van het laatste veld als argument van de `-k' optie moet "
+#~ "positief zijn"
+
+#~ msgid "ending field spec has `.' but lacks following character offset"
+#~ msgstr "einde veld specifikatie heeft `.' maar mist karakter offset"
+
+#~ msgid "option `-o' requires an argument"
+#~ msgstr "optie `-o' heeft een argument nodig"
+
+#, fuzzy
+#~ msgid "option `-S' requires an argument"
+#~ msgstr "optie `-k' vereist een argument"
+
+#~ msgid "option `-t' requires an argument"
+#~ msgstr "optie `-t' heeft een argument nodig"
+
+#~ msgid "option `-T' requires an argument"
+#~ msgstr "optie `-T' heeft een argument nodig"
+
+#~ msgid "%s: unrecognized option `-%c'\n"
+#~ msgstr "%s: onbekende optie `-%c'\n"
+
+#~ msgid "%s%*s%s%*sPage"
+#~ msgstr "%s%*s%s%*sPagina"
+
+#~ msgid "flushing file"
+#~ msgstr "bestand doorspoelen"
+
+#~ msgid "%s: write error"
+#~ msgstr "%s: fout bij schrijven"
+
+#~ msgid ""
+#~ "specified number of bytes `%s' is larger than the maximum\n"
+#~ "representable value of type `long'"
+#~ msgstr ""
+#~ "opgegeven aantal bytes `%s' is groter dan de maximale waarde van een\n"
+#~ "type `long'"
+
+#~ msgid "virtual memory exhausted"
+#~ msgstr "geen geheugen meer beschikbaar"
+
+#~ msgid "Memory exhausted"
+#~ msgstr "Geen geheugen meer beschikbaar"
+
+#~ msgid "cannot chmod %s"
+#~ msgstr "kan de rechten van %s niet veranderen"
+
+#~ msgid "%s: cannot follow end of non-regular file"
+#~ msgstr "%s: kan het einde van niet-regulier bestand niet volgen"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "Report bugs to <textutils-bugs@gnu.org>."
+#~ msgstr ""
+#~ "\n"
+#~ "Meld fouten via bug-gnu-utils@gnu.ai.mit.edu"
+
+#~ msgid "`+' requires a numeric argument"
+#~ msgstr "`+' benodigd een numeriek argument"
+
+#~ msgid "%s: extra characters in the argument to the `-%c' option: `%s'\n"
+#~ msgstr "%s: extra argument karakters bij de `-%c' optie: `%s'\n"
+
+#~ msgid ""
+#~ "Paginate or columnate FILE(s) for printing.\n"
+#~ "\n"
+#~ "  +PAGE             begin printing with page PAGE\n"
+#~ "  -COLUMN           produce COLUMN-column output and print columns down\n"
+#~ "  -F, -f            simulate formfeed with newlines on output\n"
+#~ "  -a                print columns across rather than down\n"
+#~ "  -b                balance columns on the last page\n"
+#~ "  -c                use hat notation (^G) and octal backslash notation\n"
+#~ "  -d                double space the output\n"
+#~ "  -e[CHAR[WIDTH]]   expand input CHARs (TABs) to tab WIDTH (8)\n"
+#~ "  -h HEADER         use HEADER instead of filename in page headers\n"
+#~ "  -i[CHAR[WIDTH]]   replace spaces with CHARs (TABs) to tab WIDTH (8)\n"
+#~ "  -l PAGE_LENGTH    set the page length to PAGE_LENGTH (66) lines\n"
+#~ "  -m                print all files in parallel, one in each column\n"
+#~ "  -n[SEP[DIGITS]]   number lines, use DIGITS (5) digits, then SEP (TAB)\n"
+#~ "  -o MARGIN         offset each line with MARGIN spaces (do not affect -"
+#~ "w)\n"
+#~ "  -r                inhibit warning when a file cannot be opened\n"
+#~ "  -s[SEP]           separate columns by character SEP (TAB)\n"
+#~ "  -t                inhibit 5-line page headers and trailers\n"
+#~ "  -v                use octal backslash notation\n"
+#~ "  -w PAGE_WIDTH     set page width to PAGE_WIDTH (72) columns\n"
+#~ "      --help        display this help and exit\n"
+#~ "      --version     output version information and exit\n"
+#~ "\n"
+#~ "-t implied by -l N when N < 10.  Without -s, columns are separated by\n"
+#~ "spaces.  With no FILE, or when FILE is -, read standard input.\n"
+#~ msgstr ""
+#~ "Pagineer of kolomneer BESTAND(en) voor printen.\n"
+#~ "\n"
+#~ "  +PAGINA           begin met pagina PAGINA\n"
+#~ "  -KOLOM            produce COLUMN-column output and print columns down\n"
+#~ "  -F, -f            simuleer formfeed met nieuwe regels in uitvoer\n"
+#~ "  -a                print columns across rather than down\n"
+#~ "  -b                balance columns on the last page\n"
+#~ "  -c                gebruik dakje notatie (^G) en octale backslash "
+#~ "notatie\n"
+#~ "  -d                dubbele regelafstand in uitvoer\n"
+#~ "  -e[CHAR[BREEDTE]]  expandeer invoer CHARs (TABs) naar tab BREEDTE (8)\n"
+#~ "  -h HOOFD          gebruik HOOFD i.p.v.\\ bestandsnaam in pagina hoofd\n"
+#~ "  -i[CHAR[BREEDTE]]  vervang spaties met CHARs (TABs) naar tab BREEDTE "
+#~ "(8)\n"
+#~ "  -l PAGINALENGTE   stel paginalengte in op PAGINALENGTE (66) regels\n"
+#~ "  -m                print alle bestanden tegelijkertijd, een in elke "
+#~ "kolom\n"
+#~ "  -n[SEP[DIGITS]]   nummer regels, gebruik DIGITS (5) digits, dan SEP "
+#~ "(TAB)\n"
+#~ "  -o MARGE          offset elke regel met MARGE spaties (geen invloed op -"
+#~ "w)\n"
+#~ "  -r                inhibit waarschuwing wanneer een bestand niet kan\n"
+#~ "                    worden geopend\n"
+#~ "  -s[SEP]           scheid kolomen door karakter SEP (TAB)\n"
+#~ "  -t                inhibit 5-regel pagina hoofden en voeten\n"
+#~ "  -v                gebruik octale backslash notatie\n"
+#~ "  -w PAGINABREEDTE  stel paginabreedte in op PAGINABREEDTE (72) kolomen\n"
+#~ "      --help     toon hulptekst en beëindig programma\n"
+#~ "      --version  toon versie-informatie en beëindig programma\n"
+#~ "\n"
+#~ "-t implied door -l N wanneer N < 10.  Zonder -s, worden kolomen "
+#~ "gescheiden\n"
+#~ "door spaties.  Bij geen BESTAND of BESTAND is -, lees standaard-invoer.\n"
+
+#~ msgid ""
+#~ "Print last 10 lines of each FILE to standard output.\n"
+#~ "With more than one FILE, precede each with a header giving the file "
+#~ "name.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "  -c, --bytes=N            output the last N bytes\n"
+#~ "  -f, --follow             output appended data as the file grows\n"
+#~ "  -n, --lines=N            output the last N lines, instead of last 10\n"
+#~ "  -q, --quiet, --silent    never output headers giving file names\n"
+#~ "  -v, --verbose            always output headers giving file names\n"
+#~ "      --help               display this help and exit\n"
+#~ "      --version            output version information and exit\n"
+#~ "\n"
+#~ "If the first character of N (the number of bytes or lines) is a `+',\n"
+#~ "print beginning with the Nth item from the start of each file, "
+#~ "otherwise,\n"
+#~ "print the last N items in the file.  N may have a multiplier suffix:\n"
+#~ "b for 512, k for 1024, m for 1048576 (1 Meg).  A first OPTION of -VALUE\n"
+#~ "or +VALUE is treated like -n VALUE or -n +VALUE unless VALUE has one of\n"
+#~ "the [bkm] suffix multipliers, in which case it is treated like -c VALUE\n"
+#~ "or -c +VALUE.\n"
+#~ msgstr ""
+#~ "Print laatste 10 regels van elk BESTAND naar standaard-uitvoer.\n"
+#~ "Bij meer dan een BESTAND, uitvoer vooraf laten gaan door bestandsnaam.\n"
+#~ "Bij geen BESTAND of BESTAND is -, lees standaard-invoer.\n"
+#~ "\n"
+#~ "  -c, --bytes=N            print eerste N bytes\n"
+#~ "  -f, --follow             print toegevoegde data als bestand groeit\n"
+#~ "  -n, --lines=N            print eerste N regels i.p.v. eerste 10\n"
+#~ "  -q, --quiet, --silent    print nooit bestandsnamen als hoofd\n"
+#~ "  -v, --verbose            print altijd bestandsnamen als hoofd\n"
+#~ "      --help               toon hulptekst en beëindig programma\n"
+#~ "      --version            toon versie-informatie en beëindig programma\n"
+#~ "\n"
+#~ "Als het eerste karakter van N (het aantal bytes of regels) een `+' is,\n"
+#~ "begin printen bij het N'de item vanaf het begin van elk bestand, anders,\n"
+#~ "print de laatste N items van het bestand.  N mag gevolgd wordten door:\n"
+#~ "b voor 512, k voor 1024, m voor 1048576 (1 Meg).  Een eerste OPTIE als\n"
+#~ "+WAARDE is equivalent met -n WAARDE of -n +WAARDE tenzij WAARDE gevolgd\n"
+#~ "wordt door [bkm], in welke geval het gelijk is aan -c WAARDE of -c "
+#~ "+WAARDE.\n"
+
+#~ msgid "argument"
+#~ msgstr "argument"

@@ -1,0 +1,186 @@
+/****************************************************************************
+** QMovieFilePrivate meta object code from reading C++ file 'qmovie.cpp'
+**
+** Created: Fri Apr 20 01:59:10 2001
+**      by: The Qt MOC ($Id$)
+**
+** WARNING! All changes made in this file will be lost!
+*****************************************************************************/
+
+#if !defined(Q_MOC_OUTPUT_REVISION)
+#define Q_MOC_OUTPUT_REVISION 9
+#elif Q_MOC_OUTPUT_REVISION != 9
+#error "Moc format conflict - please regenerate all moc files"
+#endif
+
+#include <qmetaobject.h>
+#include <qapplication.h>
+
+
+
+const char *QMovieFilePrivate::className() const
+{
+    return "QMovieFilePrivate";
+}
+
+QMetaObject *QMovieFilePrivate::metaObj = 0;
+
+void QMovieFilePrivate::initMetaObject()
+{
+    if ( metaObj )
+	return;
+    if ( qstrcmp(QObject::className(), "QObject") != 0 )
+	badSuperclassWarning("QMovieFilePrivate","QObject");
+    (void) staticMetaObject();
+}
+
+#ifndef QT_NO_TRANSLATION
+
+QString QMovieFilePrivate::tr(const char* s)
+{
+    return qApp->translate( "QMovieFilePrivate", s, 0 );
+}
+
+QString QMovieFilePrivate::tr(const char* s, const char * c)
+{
+    return qApp->translate( "QMovieFilePrivate", s, c );
+}
+
+#endif // QT_NO_TRANSLATION
+
+QMetaObject* QMovieFilePrivate::staticMetaObject()
+{
+    if ( metaObj )
+	return metaObj;
+    (void) QObject::staticMetaObject();
+#ifndef QT_NO_PROPERTIES
+#endif // QT_NO_PROPERTIES
+    typedef void (QMovieFilePrivate::*m1_t0)();
+    typedef void (QObject::*om1_t0)();
+    m1_t0 v1_0 = &QMovieFilePrivate::refresh;
+    om1_t0 ov1_0 = (om1_t0)v1_0;
+    QMetaData *slot_tbl = QMetaObject::new_metadata(1);
+    QMetaData::Access *slot_tbl_access = QMetaObject::new_metaaccess(1);
+    slot_tbl[0].name = "refresh()";
+    slot_tbl[0].ptr = (QMember)ov1_0;
+    slot_tbl_access[0] = QMetaData::Public;
+    typedef void (QMovieFilePrivate::*m2_t0)(const QSize&);
+    typedef void (QObject::*om2_t0)(const QSize&);
+    typedef void (QMovieFilePrivate::*m2_t1)(const QRect&);
+    typedef void (QObject::*om2_t1)(const QRect&);
+    typedef void (QMovieFilePrivate::*m2_t2)(int);
+    typedef void (QObject::*om2_t2)(int);
+    m2_t0 v2_0 = &QMovieFilePrivate::sizeChanged;
+    om2_t0 ov2_0 = (om2_t0)v2_0;
+    m2_t1 v2_1 = &QMovieFilePrivate::areaChanged;
+    om2_t1 ov2_1 = (om2_t1)v2_1;
+    m2_t2 v2_2 = &QMovieFilePrivate::dataStatus;
+    om2_t2 ov2_2 = (om2_t2)v2_2;
+    QMetaData *signal_tbl = QMetaObject::new_metadata(3);
+    signal_tbl[0].name = "sizeChanged(const QSize&)";
+    signal_tbl[0].ptr = (QMember)ov2_0;
+    signal_tbl[1].name = "areaChanged(const QRect&)";
+    signal_tbl[1].ptr = (QMember)ov2_1;
+    signal_tbl[2].name = "dataStatus(int)";
+    signal_tbl[2].ptr = (QMember)ov2_2;
+    metaObj = QMetaObject::new_metaobject(
+	"QMovieFilePrivate", "QObject",
+	slot_tbl, 1,
+	signal_tbl, 3,
+#ifndef QT_NO_PROPERTIES
+	0, 0,
+	0, 0,
+#endif // QT_NO_PROPERTIES
+	0, 0 );
+    metaObj->set_slot_access( slot_tbl_access );
+#ifndef QT_NO_PROPERTIES
+#endif // QT_NO_PROPERTIES
+    return metaObj;
+}
+
+#include <qobjectdefs.h>
+#include <qsignalslotimp.h>
+
+// SIGNAL sizeChanged
+void QMovieFilePrivate::sizeChanged( const QSize& t0 )
+{
+    // No builtin function for signal parameter type const QSize&
+    QConnectionList *clist = receivers("sizeChanged(const QSize&)");
+    if ( !clist || signalsBlocked() )
+	return;
+    typedef void (QObject::*RT0)();
+    typedef void (QObject::*RT1)(const QSize&);
+    RT0 r0;
+    RT1 r1;
+    QConnectionListIt it(*clist);
+    QConnection   *c;
+    QSenderObject *object;
+    while ( (c=it.current()) ) {
+	++it;
+	object = (QSenderObject*)c->object();
+	object->setSender( this );
+	switch ( c->numArgs() ) {
+	    case 0:
+#ifdef Q_FP_CCAST_BROKEN
+		r0 = reinterpret_cast<RT0>(*(c->member()));
+#else
+		r0 = (RT0)*(c->member());
+#endif
+		(object->*r0)();
+		break;
+	    case 1:
+#ifdef Q_FP_CCAST_BROKEN
+		r1 = reinterpret_cast<RT1>(*(c->member()));
+#else
+		r1 = (RT1)*(c->member());
+#endif
+		(object->*r1)(t0);
+		break;
+	}
+    }
+}
+
+// SIGNAL areaChanged
+void QMovieFilePrivate::areaChanged( const QRect& t0 )
+{
+    // No builtin function for signal parameter type const QRect&
+    QConnectionList *clist = receivers("areaChanged(const QRect&)");
+    if ( !clist || signalsBlocked() )
+	return;
+    typedef void (QObject::*RT0)();
+    typedef void (QObject::*RT1)(const QRect&);
+    RT0 r0;
+    RT1 r1;
+    QConnectionListIt it(*clist);
+    QConnection   *c;
+    QSenderObject *object;
+    while ( (c=it.current()) ) {
+	++it;
+	object = (QSenderObject*)c->object();
+	object->setSender( this );
+	switch ( c->numArgs() ) {
+	    case 0:
+#ifdef Q_FP_CCAST_BROKEN
+		r0 = reinterpret_cast<RT0>(*(c->member()));
+#else
+		r0 = (RT0)*(c->member());
+#endif
+		(object->*r0)();
+		break;
+	    case 1:
+#ifdef Q_FP_CCAST_BROKEN
+		r1 = reinterpret_cast<RT1>(*(c->member()));
+#else
+		r1 = (RT1)*(c->member());
+#endif
+		(object->*r1)(t0);
+		break;
+	}
+    }
+}
+
+// SIGNAL dataStatus
+void QMovieFilePrivate::dataStatus( int t0 )
+{
+    activate_signal( "dataStatus(int)", t0 );
+}

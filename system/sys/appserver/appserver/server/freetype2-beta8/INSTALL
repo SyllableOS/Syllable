@@ -1,0 +1,36 @@
+This is beta software. For now, we only provide installation instructions
+for Unix:
+
+   1. Build the library (see below)
+   2. type "make install" (make uninstall provided too)
+
+the library name is "libfreetype.so" (FreeType 1.x uses "libttf.so")
+
+In order to build the library, read the "BUILD" document in the "docs"
+directory. Quick starter: go to "freetype2-beta8", then:
+
+
+  Unix (+GNU Make):
+     
+     - make
+     - make
+
+
+  Windows + gcc + GNU Make:     
+     
+     - make
+     - make
+
+  Windows + Visual C++ + GNU Make:
+
+     - make setup visualc
+     - make     
+   
+  Windows + Win32-LCC + GNU Make:
+  
+     - make setup lcc
+     - make
+  
+  etc...
+  
+

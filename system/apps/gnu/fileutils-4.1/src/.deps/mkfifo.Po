@@ -1,0 +1,103 @@
+mkfifo.o : \
+ mkfifo.c ../config.h /include/stdio.h /include/features.h \
+ /include/sys/cdefs.h /include/gnu/stubs.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stdarg.h \
+ /include/bits/types.h /include/bits/pthreadtypes.h /include/libio.h \
+ /include/_G_config.h /include/bits/stdio_lim.h /include/bits/stdio.h \
+ ../lib/getopt.h /include/sys/types.h /include/time.h \
+ /include/endian.h /include/bits/endian.h /include/sys/select.h \
+ /include/bits/select.h /include/bits/sigset.h \
+ /include/sys/sysmacros.h system.h /include/sys/stat.h \
+ /include/bits/stat.h /ainc/posix/stat.h /ainc/posix/types.h \
+ /include/sys/param.h /include/limits.h /include/bits/posix1_lim.h \
+ /include/bits/local_lim.h /ainc/posix/limits.h \
+ /include/bits/posix2_lim.h /include/bits/xopen_lim.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/limits.h \
+ /ainc/posix/param.h /include/unistd.h /include/bits/posix_opt.h \
+ /include/bits/environments.h /include/bits/wordsize.h \
+ /include/bits/confname.h ../lib/pathmax.h /include/sys/time.h \
+ /include/bits/time.h /ainc/posix/time.h /include/utime.h \
+ /include/string.h /include/xlocale.h /include/bits/string.h \
+ /include/bits/string2.h /include/stdlib.h /include/errno.h \
+ /include/bits/errno.h /ainc/posix/errno.h /include/alloca.h \
+ /include/fcntl.h /include/bits/fcntl.h /ainc/posix/fcntl.h \
+ /include/dirent.h /include/bits/dirent.h /ainc/posix/dirent.h sys2.h \
+ /include/stdint.h /include/inttypes.h /include/ctype.h \
+ /include/locale.h ../intl/libintl.h ../lib/xalloc.h ../lib/closeout.h \
+ ../lib/version-etc.h ../lib/error.h ../lib/modechange.h \
+ ../lib/quote.h
+mkfifo.c :
+../config.h :
+/include/stdio.h :
+/include/features.h :
+/include/sys/cdefs.h :
+/include/gnu/stubs.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stdarg.h :
+/include/bits/types.h :
+/include/bits/pthreadtypes.h :
+/include/libio.h :
+/include/_G_config.h :
+/include/bits/stdio_lim.h :
+/include/bits/stdio.h :
+../lib/getopt.h :
+/include/sys/types.h :
+/include/time.h :
+/include/endian.h :
+/include/bits/endian.h :
+/include/sys/select.h :
+/include/bits/select.h :
+/include/bits/sigset.h :
+/include/sys/sysmacros.h :
+system.h :
+/include/sys/stat.h :
+/include/bits/stat.h :
+/ainc/posix/stat.h :
+/ainc/posix/types.h :
+/include/sys/param.h :
+/include/limits.h :
+/include/bits/posix1_lim.h :
+/include/bits/local_lim.h :
+/ainc/posix/limits.h :
+/include/bits/posix2_lim.h :
+/include/bits/xopen_lim.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/limits.h :
+/ainc/posix/param.h :
+/include/unistd.h :
+/include/bits/posix_opt.h :
+/include/bits/environments.h :
+/include/bits/wordsize.h :
+/include/bits/confname.h :
+../lib/pathmax.h :
+/include/sys/time.h :
+/include/bits/time.h :
+/ainc/posix/time.h :
+/include/utime.h :
+/include/string.h :
+/include/xlocale.h :
+/include/bits/string.h :
+/include/bits/string2.h :
+/include/stdlib.h :
+/include/errno.h :
+/include/bits/errno.h :
+/ainc/posix/errno.h :
+/include/alloca.h :
+/include/fcntl.h :
+/include/bits/fcntl.h :
+/ainc/posix/fcntl.h :
+/include/dirent.h :
+/include/bits/dirent.h :
+/ainc/posix/dirent.h :
+sys2.h :
+/include/stdint.h :
+/include/inttypes.h :
+/include/ctype.h :
+/include/locale.h :
+../intl/libintl.h :
+../lib/xalloc.h :
+../lib/closeout.h :
+../lib/version-etc.h :
+../lib/error.h :
+../lib/modechange.h :
+../lib/quote.h :

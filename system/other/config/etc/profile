@@ -1,0 +1,45 @@
+export PWD
+
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:~/bin:/atheos/autolnk/bin:/atheos/autolnk/sbin:/usr/jed/bin:/usr/inetutils/bin
+export MANPATH=/system/docs/man:/usr/man:/usr/local/man:/atheos/autolnk/man:/atheos/man
+export INFOPATH=/usr/local/info:/atheos/autolnk/info
+export LIBRARY_PATH=/system/libs:/usr/glibc2/lib/:/atheos/autolnk/lib
+export DLL_PATH=@bindir@/lib:./:/boot/atheos/sys/libs:/boot/atheos/sys:/atheos/autolnk/lib
+
+export C_INCLUDE_PATH=/include:/ainc:/usr/local/include:/usr/include:/atheos/autolnk/include
+export CPLUS_INCLUDE_PATH=/include:/ainc:/usr/local/include:/usr/include:/atheos/autolnk/include
+export OBJC_INCLUDE_PATH=/include:/ainc:/usr/local/include:/usr/include:/atheos/autolnk/include
+
+LIBRARY_PATH=$LIBRARY_PATH:/usr/local/lib:/usr/lib
+INFOPATH=$INFOPATH:/usr/info
+
+export ATHEOS_SRC=/atheos/src
+
+export PAGER=less
+export LESSCHARSET=latin1
+export EDITOR=vi
+export COLORTERM=xterm
+export LS_COLORS="ex=35:ln=4;35:di=31;1:*.c=36:*.cpp=34:*.h=34:*.hpp=34:*.c=34"
+export CC=gcc
+export TERMINFO=/usr/share/terminfo
+
+case $TERM in 
+    xterm | xterm-color)
+	PROMPT_COMMAND="echo -en \"\33]0;$(whoami)@$(hostname):\$PWD - AtheOs Terminal\7\"";;
+    *)  
+	unset PROMPT_COMMAND;;
+esac
+
+alias d="ls --color"
+alias dir="ls --color -l"
+alias more=less
+
+mc ()
+{
+    MC=/tmp/mc$$-"$RANDOM"
+    /usr/mc/bin/mc -c -P "$@" > "$MC"
+    cd "`cat $MC`"
+    rm "$MC"
+    unset MC;
+}
+

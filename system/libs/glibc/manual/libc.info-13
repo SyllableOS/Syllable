@@ -1,0 +1,1154 @@
+This is Info file libc.info, produced by Makeinfo version 1.68 from the
+input file libc.texinfo.
+
+INFO-DIR-SECTION GNU libraries
+START-INFO-DIR-ENTRY
+* Libc: (libc).                 C library.
+END-INFO-DIR-ENTRY
+
+   This file documents the GNU C library.
+
+   This is Edition 0.08 DRAFT, last updated 11 Jan 1999, of `The GNU C
+Library Reference Manual', for Version 2.1 Beta.
+
+   Copyright (C) 1993, '94, '95, '96, '97, '98, '99 Free Software
+Foundation, Inc.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided also
+that the section entitled "GNU Library General Public License" is
+included exactly as in the original, and provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that the text of the translation of the section
+entitled "GNU Library General Public License" must be approved for
+accuracy by the Foundation.
+
+
+File: libc.info,  Node: More Flags for Globbing,  Prev: Flags for Globbing,  Up: Globbing
+
+More Flags for Globbing
+-----------------------
+
+   Beside the flags described in the last section, the GNU
+implementation of `glob' allows a few more flags which are also defined
+in the `glob.h' file.  Some of the extensions implement functionality
+which is available in modern shell implementations.
+
+`GLOB_PERIOD'
+     The `.' character (period) is treated special.  It cannot be
+     matched by wildcards.  *Note Wildcard Matching::, `FNM_PERIOD'.
+
+`GLOB_MAGCHAR'
+     The `GLOB_MAGCHAR' value is not to be given to `glob' in the FLAGS
+     parameter.  Instead, `glob' sets this bit in the GL_FLAGS element
+     of the GLOB_T structure provided as the result if the pattern used
+     for matching contains any wildcard character.
+
+`GLOB_ALTDIRFUNC'
+     Instead of the using the using the normal functions for accessing
+     the filesystem the `glob' implementation uses the user-supplied
+     functions specified in the structure pointed to by PGLOB
+     parameter.  For more information about the functions refer to the
+     sections about directory handling see *Note Accessing
+     Directories::, and *Note Reading Attributes::.
+
+`GLOB_BRACE'
+     If this flag is given the handling of braces in the pattern is
+     changed.  It is now required that braces appear correctly grouped.
+     I.e., for each opening brace there must be a closing one.  Braces
+     can be used recursively.  So it is possible to define one brace
+     expression in another one.  It is important to note that the range
+     of each brace expression is completely contained in the outer
+     brace expression (if there is one).
+
+     The string between the matching braces is separated into single
+     expressions by splitting at `,' (comma) characters.  The commas
+     themself are discarded.  Please note what we said above about
+     recursive brace expressions.  The commas used to separate the
+     subexpressions must be at the same level.  Commas in brace
+     subexpressions are not matched.  They are used during expansion of
+     the brace expression of the deeper level.  The example below shows
+     this
+
+          glob ("{foo/{,bar,biz},baz}", GLOB_BRACE, NULL, &result)
+
+     is equivalent to the sequence
+
+          glob ("foo/", GLOB_BRACE, NULL, &result)
+          glob ("foo/bar", GLOB_BRACE|GLOB_APPEND, NULL, &result)
+          glob ("foo/biz", GLOB_BRACE|GLOB_APPEND, NULL, &result)
+          glob ("baz", GLOB_BRACE|GLOB_APPEND, NULL, &result)
+
+     if we leave aside error handling.
+
+`GLOB_NOMAGIC'
+     If the pattern contains no wildcard constructs (it is a literal
+     file name), return it as the sole "matching" word, even if no file
+     exists by that name.
+
+`GLOB_TILDE'
+     If this flag is used the character `~' (tilde) is handled special
+     if it appears at the beginning of the pattern.  Instead of being
+     taken verbatim it is used to represent the home directory of a
+     known user.
+
+     If `~' is the only character in pattern or it is followed by a `/'
+     (slash), the home directory of the process owner is substituted.
+     Using `getlogin' and `getpwnam' the information is read from the
+     system databases.  As an example take user `bart' with his home
+     directory at `/home/bart'.  For him a call like
+
+          glob ("~/bin/*", GLOB_TILDE, NULL, &result)
+
+     would return the contents of the directory `/home/bart/bin'.
+     Instead of referring to the own home directory it is also possible
+     to name the home directory of other users.  To do so one has to
+     append the user name after the tilde character.  So the contents
+     of user `homer''s `bin' directory can be retrieved by
+
+          glob ("~homer/bin/*", GLOB_TILDE, NULL, &result)
+
+     If the user name is not valid or the home directory cannot be
+     determined for some reason the pattern is left untouched and
+     itself used as the result.  I.e., if in the last example `home' is
+     not available the tilde expansion yields to `"~homer/bin/*"' and
+     `glob' is not looking for a directory named `~homer'.
+
+     This functionality is equivalent to what is available in C-shells
+     if the `nonomatch' flag is set.
+
+`GLOB_TILDE_CHECK'
+     If this flag is used `glob' behaves like as if `GLOB_TILDE' is
+     given.  The only difference is that if the user name is not
+     available or the home directory cannot be determined for other
+     reasons this leads to an error.  `glob' will return `GLOB_NOMATCH'
+     instead of using the pattern itself as the name.
+
+     This functionality is equivalent to what is available in C-shells
+     if `nonomatch' flag is not set.
+
+`GLOB_ONLYDIR'
+     If this flag is used the globbing function takes this as a *hint*
+     that the caller is only interested in directories matching the
+     pattern.  If the information about the type of the file is easily
+     available non-directories will be rejected but no extra work will
+     be done to determine the information for each file.  I.e., the
+     caller must still be able to filter directories out.
+
+     This functionality is only available with the GNU `glob'
+     implementation.  It is mainly used internally to increase the
+     performance but might be useful for a user as well and therefore is
+     documented here.
+
+   Calling `glob' will in most cases allocate resources which are used
+to represent the result of the function call.  If the same object of
+type `glob_t' is used in multiple call to `glob' the resources are
+freed or reused so that no leaks appear.  But this does not include the
+time when all `glob' calls are done.
+
+ - Function: void globfree (glob_t *PGLOB)
+     The `globfree' function frees all resources allocated by previous
+     calls to `glob' associated with the object pointed to by PGLOB.
+     This function should be called whenever the currently used
+     `glob_t' typed object isn't used anymore.
+
+
+File: libc.info,  Node: Regular Expressions,  Next: Word Expansion,  Prev: Globbing,  Up: Pattern Matching
+
+Regular Expression Matching
+===========================
+
+   The GNU C library supports two interfaces for matching regular
+expressions.  One is the standard POSIX.2 interface, and the other is
+what the GNU system has had for many years.
+
+   Both interfaces are declared in the header file `regex.h'.  If you
+define `_POSIX_C_SOURCE', then only the POSIX.2 functions, structures,
+and constants are declared.
+
+* Menu:
+
+* POSIX Regexp Compilation::    Using `regcomp' to prepare to match.
+* Flags for POSIX Regexps::     Syntax variations for `regcomp'.
+* Matching POSIX Regexps::      Using `regexec' to match the compiled
+				   pattern that you get from `regcomp'.
+* Regexp Subexpressions::       Finding which parts of the string were matched.
+* Subexpression Complications:: Find points of which parts were matched.
+* Regexp Cleanup::		Freeing storage; reporting errors.
+
+
+File: libc.info,  Node: POSIX Regexp Compilation,  Next: Flags for POSIX Regexps,  Up: Regular Expressions
+
+POSIX Regular Expression Compilation
+------------------------------------
+
+   Before you can actually match a regular expression, you must
+"compile" it.  This is not true compilation--it produces a special data
+structure, not machine instructions.  But it is like ordinary
+compilation in that its purpose is to enable you to "execute" the
+pattern fast.  (*Note Matching POSIX Regexps::, for how to use the
+compiled regular expression for matching.)
+
+   There is a special data type for compiled regular expressions:
+
+ - Data Type: regex_t
+     This type of object holds a compiled regular expression.  It is
+     actually a structure.  It has just one field that your programs
+     should look at:
+
+    `re_nsub'
+          This field holds the number of parenthetical subexpressions
+          in the regular expression that was compiled.
+
+     There are several other fields, but we don't describe them here,
+     because only the functions in the library should use them.
+
+   After you create a `regex_t' object, you can compile a regular
+expression into it by calling `regcomp'.
+
+ - Function: int regcomp (regex_t *COMPILED, const char *PATTERN, int
+          CFLAGS)
+     The function `regcomp' "compiles" a regular expression into a data
+     structure that you can use with `regexec' to match against a
+     string.  The compiled regular expression format is designed for
+     efficient matching.  `regcomp' stores it into `*COMPILED'.
+
+     It's up to you to allocate an object of type `regex_t' and pass its
+     address to `regcomp'.
+
+     The argument CFLAGS lets you specify various options that control
+     the syntax and semantics of regular expressions.  *Note Flags for
+     POSIX Regexps::.
+
+     If you use the flag `REG_NOSUB', then `regcomp' omits from the
+     compiled regular expression the information necessary to record
+     how subexpressions actually match.  In this case, you might as well
+     pass `0' for the MATCHPTR and NMATCH arguments when you call
+     `regexec'.
+
+     If you don't use `REG_NOSUB', then the compiled regular expression
+     does have the capacity to record how subexpressions match.  Also,
+     `regcomp' tells you how many subexpressions PATTERN has, by
+     storing the number in `COMPILED->re_nsub'.  You can use that value
+     to decide how long an array to allocate to hold information about
+     subexpression matches.
+
+     `regcomp' returns `0' if it succeeds in compiling the regular
+     expression; otherwise, it returns a nonzero error code (see the
+     table below).  You can use `regerror' to produce an error message
+     string describing the reason for a nonzero value; see *Note Regexp
+     Cleanup::.
+
+
+   Here are the possible nonzero values that `regcomp' can return:
+
+`REG_BADBR'
+     There was an invalid `\{...\}' construct in the regular
+     expression.  A valid `\{...\}' construct must contain either a
+     single number, or two numbers in increasing order separated by a
+     comma.
+
+`REG_BADPAT'
+     There was a syntax error in the regular expression.
+
+`REG_BADRPT'
+     A repetition operator such as `?' or `*' appeared in a bad
+     position (with no preceding subexpression to act on).
+
+`REG_ECOLLATE'
+     The regular expression referred to an invalid collating element
+     (one not defined in the current locale for string collation).
+     *Note Locale Categories::.
+
+`REG_ECTYPE'
+     The regular expression referred to an invalid character class name.
+
+`REG_EESCAPE'
+     The regular expression ended with `\'.
+
+`REG_ESUBREG'
+     There was an invalid number in the `\DIGIT' construct.
+
+`REG_EBRACK'
+     There were unbalanced square brackets in the regular expression.
+
+`REG_EPAREN'
+     An extended regular expression had unbalanced parentheses, or a
+     basic regular expression had unbalanced `\(' and `\)'.
+
+`REG_EBRACE'
+     The regular expression had unbalanced `\{' and `\}'.
+
+`REG_ERANGE'
+     One of the endpoints in a range expression was invalid.
+
+`REG_ESPACE'
+     `regcomp' ran out of memory.
+
+
+File: libc.info,  Node: Flags for POSIX Regexps,  Next: Matching POSIX Regexps,  Prev: POSIX Regexp Compilation,  Up: Regular Expressions
+
+Flags for POSIX Regular Expressions
+-----------------------------------
+
+   These are the bit flags that you can use in the CFLAGS operand when
+compiling a regular expression with `regcomp'.
+
+`REG_EXTENDED'
+     Treat the pattern as an extended regular expression, rather than
+     as a basic regular expression.
+
+`REG_ICASE'
+     Ignore case when matching letters.
+
+`REG_NOSUB'
+     Don't bother storing the contents of the MATCHES-PTR array.
+
+`REG_NEWLINE'
+     Treat a newline in STRING as dividing STRING into multiple lines,
+     so that `$' can match before the newline and `^' can match after.
+     Also, don't permit `.' to match a newline, and don't permit
+     `[^...]' to match a newline.
+
+     Otherwise, newline acts like any other ordinary character.
+
+
+File: libc.info,  Node: Matching POSIX Regexps,  Next: Regexp Subexpressions,  Prev: Flags for POSIX Regexps,  Up: Regular Expressions
+
+Matching a Compiled POSIX Regular Expression
+--------------------------------------------
+
+   Once you have compiled a regular expression, as described in *Note
+POSIX Regexp Compilation::, you can match it against strings using
+`regexec'.  A match anywhere inside the string counts as success,
+unless the regular expression contains anchor characters (`^' or `$').
+
+ - Function: int regexec (regex_t *COMPILED, char *STRING, size_t
+          NMATCH, regmatch_t MATCHPTR [], int EFLAGS)
+     This function tries to match the compiled regular expression
+     `*COMPILED' against STRING.
+
+     `regexec' returns `0' if the regular expression matches;
+     otherwise, it returns a nonzero value.  See the table below for
+     what nonzero values mean.  You can use `regerror' to produce an
+     error message string describing the reason for a nonzero value;
+     see *Note Regexp Cleanup::.
+
+     The argument EFLAGS is a word of bit flags that enable various
+     options.
+
+     If you want to get information about what part of STRING actually
+     matched the regular expression or its subexpressions, use the
+     arguments MATCHPTR and NMATCH.  Otherwise, pass `0' for NMATCH,
+     and `NULL' for MATCHPTR.  *Note Regexp Subexpressions::.
+
+   You must match the regular expression with the same set of current
+locales that were in effect when you compiled the regular expression.
+
+   The function `regexec' accepts the following flags in the EFLAGS
+argument:
+
+`REG_NOTBOL'
+     Do not regard the beginning of the specified string as the
+     beginning of a line; more generally, don't make any assumptions
+     about what text might precede it.
+
+`REG_NOTEOL'
+     Do not regard the end of the specified string as the end of a
+     line; more generally, don't make any assumptions about what text
+     might follow it.
+
+   Here are the possible nonzero values that `regexec' can return:
+
+`REG_NOMATCH'
+     The pattern didn't match the string.  This isn't really an error.
+
+`REG_ESPACE'
+     `regexec' ran out of memory.
+
+
+File: libc.info,  Node: Regexp Subexpressions,  Next: Subexpression Complications,  Prev: Matching POSIX Regexps,  Up: Regular Expressions
+
+Match Results with Subexpressions
+---------------------------------
+
+   When `regexec' matches parenthetical subexpressions of PATTERN, it
+records which parts of STRING they match.  It returns that information
+by storing the offsets into an array whose elements are structures of
+type `regmatch_t'.  The first element of the array (index `0') records
+the part of the string that matched the entire regular expression.
+Each other element of the array records the beginning and end of the
+part that matched a single parenthetical subexpression.
+
+ - Data Type: regmatch_t
+     This is the data type of the MATCHARRAY array that you pass to
+     `regexec'.  It contains two structure fields, as follows:
+
+    `rm_so'
+          The offset in STRING of the beginning of a substring.  Add
+          this value to STRING to get the address of that part.
+
+    `rm_eo'
+          The offset in STRING of the end of the substring.
+
+ - Data Type: regoff_t
+     `regoff_t' is an alias for another signed integer type.  The
+     fields of `regmatch_t' have type `regoff_t'.
+
+   The `regmatch_t' elements correspond to subexpressions positionally;
+the first element (index `1') records where the first subexpression
+matched, the second element records the second subexpression, and so
+on.  The order of the subexpressions is the order in which they begin.
+
+   When you call `regexec', you specify how long the MATCHPTR array is,
+with the NMATCH argument.  This tells `regexec' how many elements to
+store.  If the actual regular expression has more than NMATCH
+subexpressions, then you won't get offset information about the rest of
+them.  But this doesn't alter whether the pattern matches a particular
+string or not.
+
+   If you don't want `regexec' to return any information about where
+the subexpressions matched, you can either supply `0' for NMATCH, or
+use the flag `REG_NOSUB' when you compile the pattern with `regcomp'.
+
+
+File: libc.info,  Node: Subexpression Complications,  Next: Regexp Cleanup,  Prev: Regexp Subexpressions,  Up: Regular Expressions
+
+Complications in Subexpression Matching
+---------------------------------------
+
+   Sometimes a subexpression matches a substring of no characters.  This
+happens when `f\(o*\)' matches the string `fum'.  (It really matches
+just the `f'.)  In this case, both of the offsets identify the point in
+the string where the null substring was found.  In this example, the
+offsets are both `1'.
+
+   Sometimes the entire regular expression can match without using some
+of its subexpressions at all--for example, when `ba\(na\)*' matches the
+string `ba', the parenthetical subexpression is not used.  When this
+happens, `regexec' stores `-1' in both fields of the element for that
+subexpression.
+
+   Sometimes matching the entire regular expression can match a
+particular subexpression more than once--for example, when `ba\(na\)*'
+matches the string `bananana', the parenthetical subexpression matches
+three times.  When this happens, `regexec' usually stores the offsets
+of the last part of the string that matched the subexpression.  In the
+case of `bananana', these offsets are `6' and `8'.
+
+   But the last match is not always the one that is chosen.  It's more
+accurate to say that the last *opportunity* to match is the one that
+takes precedence.  What this means is that when one subexpression
+appears within another, then the results reported for the inner
+subexpression reflect whatever happened on the last match of the outer
+subexpression.  For an example, consider `\(ba\(na\)*s \)*' matching
+the string `bananas bas '.  The last time the inner expression actually
+matches is near the end of the first word.  But it is *considered*
+again in the second word, and fails to match there.  `regexec' reports
+nonuse of the "na" subexpression.
+
+   Another place where this rule applies is when the regular expression
+     \(ba\(na\)*s \|nefer\(ti\)* \)*
+
+matches `bananas nefertiti'.  The "na" subexpression does match in the
+first word, but it doesn't match in the second word because the other
+alternative is used there.  Once again, the second repetition of the
+outer subexpression overrides the first, and within that second
+repetition, the "na" subexpression is not used.  So `regexec' reports
+nonuse of the "na" subexpression.
+
+
+File: libc.info,  Node: Regexp Cleanup,  Prev: Subexpression Complications,  Up: Regular Expressions
+
+POSIX Regexp Matching Cleanup
+-----------------------------
+
+   When you are finished using a compiled regular expression, you can
+free the storage it uses by calling `regfree'.
+
+ - Function: void regfree (regex_t *COMPILED)
+     Calling `regfree' frees all the storage that `*COMPILED' points
+     to.  This includes various internal fields of the `regex_t'
+     structure that aren't documented in this manual.
+
+     `regfree' does not free the object `*COMPILED' itself.
+
+   You should always free the space in a `regex_t' structure with
+`regfree' before using the structure to compile another regular
+expression.
+
+   When `regcomp' or `regexec' reports an error, you can use the
+function `regerror' to turn it into an error message string.
+
+ - Function: size_t regerror (int ERRCODE, regex_t *COMPILED, char
+          *BUFFER, size_t LENGTH)
+     This function produces an error message string for the error code
+     ERRCODE, and stores the string in LENGTH bytes of memory starting
+     at BUFFER.  For the COMPILED argument, supply the same compiled
+     regular expression structure that `regcomp' or `regexec' was
+     working with when it got the error.  Alternatively, you can supply
+     `NULL' for COMPILED; you will still get a meaningful error
+     message, but it might not be as detailed.
+
+     If the error message can't fit in LENGTH bytes (including a
+     terminating null character), then `regerror' truncates it.  The
+     string that `regerror' stores is always null-terminated even if it
+     has been truncated.
+
+     The return value of `regerror' is the minimum length needed to
+     store the entire error message.  If this is less than LENGTH, then
+     the error message was not truncated, and you can use it.
+     Otherwise, you should call `regerror' again with a larger buffer.
+
+     Here is a function which uses `regerror', but always dynamically
+     allocates a buffer for the error message:
+
+          char *get_regerror (int errcode, regex_t *compiled)
+          {
+            size_t length = regerror (errcode, compiled, NULL, 0);
+            char *buffer = xmalloc (length);
+            (void) regerror (errcode, compiled, buffer, length);
+            return buffer;
+          }
+
+
+File: libc.info,  Node: Word Expansion,  Prev: Regular Expressions,  Up: Pattern Matching
+
+Shell-Style Word Expansion
+==========================
+
+   "Word expansion" means the process of splitting a string into
+"words" and substituting for variables, commands, and wildcards just as
+the shell does.
+
+   For example, when you write `ls -l foo.c', this string is split into
+three separate words--`ls', `-l' and `foo.c'.  This is the most basic
+function of word expansion.
+
+   When you write `ls *.c', this can become many words, because the
+word `*.c' can be replaced with any number of file names.  This is
+called "wildcard expansion", and it is also a part of word expansion.
+
+   When you use `echo $PATH' to print your path, you are taking
+advantage of "variable substitution", which is also part of word
+expansion.
+
+   Ordinary programs can perform word expansion just like the shell by
+calling the library function `wordexp'.
+
+* Menu:
+
+* Expansion Stages::            What word expansion does to a string.
+* Calling Wordexp::             How to call `wordexp'.
+* Flags for Wordexp::           Options you can enable in `wordexp'.
+* Wordexp Example::             A sample program that does word expansion.
+* Tilde Expansion::             Details of how tilde expansion works.
+* Variable Substitution::       Different types of variable substitution.
+
+
+File: libc.info,  Node: Expansion Stages,  Next: Calling Wordexp,  Up: Word Expansion
+
+The Stages of Word Expansion
+----------------------------
+
+   When word expansion is applied to a sequence of words, it performs
+the following transformations in the order shown here:
+
+  1. "Tilde expansion": Replacement of `~foo' with the name of the home
+     directory of `foo'.
+
+  2. Next, three different transformations are applied in the same step,
+     from left to right:
+
+        * "Variable substitution": Environment variables are
+          substituted for references such as `$foo'.
+
+        * "Command substitution": Constructs such as ``cat foo`' and
+          the equivalent `$(cat foo)' are replaced with the output from
+          the inner command.
+
+        * "Arithmetic expansion": Constructs such as `$(($x-1))' are
+          replaced with the result of the arithmetic computation.
+
+  3. "Field splitting": subdivision of the text into "words".
+
+  4. "Wildcard expansion": The replacement of a construct such as `*.c'
+     with a list of `.c' file names.  Wildcard expansion applies to an
+     entire word at a time, and replaces that word with 0 or more file
+     names that are themselves words.
+
+  5. "Quote removal": The deletion of string-quotes, now that they have
+     done their job by inhibiting the above transformations when
+     appropriate.
+
+   For the details of these transformations, and how to write the
+constructs that use them, see `The BASH Manual' (to appear).
+
+
+File: libc.info,  Node: Calling Wordexp,  Next: Flags for Wordexp,  Prev: Expansion Stages,  Up: Word Expansion
+
+Calling `wordexp'
+-----------------
+
+   All the functions, constants and data types for word expansion are
+declared in the header file `wordexp.h'.
+
+   Word expansion produces a vector of words (strings).  To return this
+vector, `wordexp' uses a special data type, `wordexp_t', which is a
+structure.  You pass `wordexp' the address of the structure, and it
+fills in the structure's fields to tell you about the results.
+
+ - Data Type: wordexp_t
+     This data type holds a pointer to a word vector.  More precisely,
+     it records both the address of the word vector and its size.
+
+    `we_wordc'
+          The number of elements in the vector.
+
+    `we_wordv'
+          The address of the vector.  This field has type `char **'.
+
+    `we_offs'
+          The offset of the first real element of the vector, from its
+          nominal address in the `we_wordv' field.  Unlike the other
+          fields, this is always an input to `wordexp', rather than an
+          output from it.
+
+          If you use a nonzero offset, then that many elements at the
+          beginning of the vector are left empty.  (The `wordexp'
+          function fills them with null pointers.)
+
+          The `we_offs' field is meaningful only if you use the
+          `WRDE_DOOFFS' flag.  Otherwise, the offset is always zero
+          regardless of what is in this field, and the first real
+          element comes at the beginning of the vector.
+
+ - Function: int wordexp (const char *WORDS, wordexp_t
+          *WORD-VECTOR-PTR, int FLAGS)
+     Perform word expansion on the string WORDS, putting the result in
+     a newly allocated vector, and store the size and address of this
+     vector into `*WORD-VECTOR-PTR'.  The argument FLAGS is a
+     combination of bit flags; see *Note Flags for Wordexp::, for
+     details of the flags.
+
+     You shouldn't use any of the characters `|&;<>' in the string
+     WORDS unless they are quoted; likewise for newline.  If you use
+     these characters unquoted, you will get the `WRDE_BADCHAR' error
+     code.  Don't use parentheses or braces unless they are quoted or
+     part of a word expansion construct.  If you use quotation
+     characters `'"`', they should come in pairs that balance.
+
+     The results of word expansion are a sequence of words.  The
+     function `wordexp' allocates a string for each resulting word, then
+     allocates a vector of type `char **' to store the addresses of
+     these strings.  The last element of the vector is a null pointer.
+     This vector is called the "word vector".
+
+     To return this vector, `wordexp' stores both its address and its
+     length (number of elements, not counting the terminating null
+     pointer) into `*WORD-VECTOR-PTR'.
+
+     If `wordexp' succeeds, it returns 0.  Otherwise, it returns one of
+     these error codes:
+
+    `WRDE_BADCHAR'
+          The input string WORDS contains an unquoted invalid character
+          such as `|'.
+
+    `WRDE_BADVAL'
+          The input string refers to an undefined shell variable, and
+          you used the flag `WRDE_UNDEF' to forbid such references.
+
+    `WRDE_CMDSUB'
+          The input string uses command substitution, and you used the
+          flag `WRDE_NOCMD' to forbid command substitution.
+
+    `WRDE_NOSPACE'
+          It was impossible to allocate memory to hold the result.  In
+          this case, `wordexp' can store part of the results--as much
+          as it could allocate room for.
+
+    `WRDE_SYNTAX'
+          There was a syntax error in the input string.  For example,
+          an unmatched quoting character is a syntax error.
+
+ - Function: void wordfree (wordexp_t *WORD-VECTOR-PTR)
+     Free the storage used for the word-strings and vector that
+     `*WORD-VECTOR-PTR' points to.  This does not free the structure
+     `*WORD-VECTOR-PTR' itself--only the other data it points to.
+
+
+File: libc.info,  Node: Flags for Wordexp,  Next: Wordexp Example,  Prev: Calling Wordexp,  Up: Word Expansion
+
+Flags for Word Expansion
+------------------------
+
+   This section describes the flags that you can specify in the FLAGS
+argument to `wordexp'.  Choose the flags you want, and combine them
+with the C operator `|'.
+
+`WRDE_APPEND'
+     Append the words from this expansion to the vector of words
+     produced by previous calls to `wordexp'.  This way you can
+     effectively expand several words as if they were concatenated with
+     spaces between them.
+
+     In order for appending to work, you must not modify the contents
+     of the word vector structure between calls to `wordexp'.  And, if
+     you set `WRDE_DOOFFS' in the first call to `wordexp', you must also
+     set it when you append to the results.
+
+`WRDE_DOOFFS'
+     Leave blank slots at the beginning of the vector of words.  The
+     `we_offs' field says how many slots to leave.  The blank slots
+     contain null pointers.
+
+`WRDE_NOCMD'
+     Don't do command substitution; if the input requests command
+     substitution, report an error.
+
+`WRDE_REUSE'
+     Reuse a word vector made by a previous call to `wordexp'.  Instead
+     of allocating a new vector of words, this call to `wordexp' will
+     use the vector that already exists (making it larger if necessary).
+
+     Note that the vector may move, so it is not safe to save an old
+     pointer and use it again after calling `wordexp'.  You must fetch
+     `we_pathv' anew after each call.
+
+`WRDE_SHOWERR'
+     Do show any error messages printed by commands run by command
+     substitution.  More precisely, allow these commands to inherit the
+     standard error output stream of the current process.  By default,
+     `wordexp' gives these commands a standard error stream that
+     discards all output.
+
+`WRDE_UNDEF'
+     If the input refers to a shell variable that is not defined,
+     report an error.
+
+
+File: libc.info,  Node: Wordexp Example,  Next: Tilde Expansion,  Prev: Flags for Wordexp,  Up: Word Expansion
+
+`wordexp' Example
+-----------------
+
+   Here is an example of using `wordexp' to expand several strings and
+use the results to run a shell command.  It also shows the use of
+`WRDE_APPEND' to concatenate the expansions and of `wordfree' to free
+the space allocated by `wordexp'.
+
+     int
+     expand_and_execute (const char *program, const char *options)
+     {
+       wordexp_t result;
+       pid_t pid
+       int status, i;
+     
+       /* Expand the string for the program to run.  */
+       switch (wordexp (program, &result, 0))
+         {
+         case 0:			/* Successful.  */
+           break;
+         case WRDE_NOSPACE:
+           /* If the error was `WRDE_NOSPACE',
+              then perhaps part of the result was allocated.  */
+           wordfree (&result);
+         default:                    /* Some other error.  */
+           return -1;
+         }
+     
+       /* Expand the strings specified for the arguments.  */
+       for (i = 0; args[i]; i++)
+         {
+           if (wordexp (options, &result, WRDE_APPEND))
+             {
+               wordfree (&result);
+               return -1;
+             }
+         }
+     
+       pid = fork ();
+       if (pid == 0)
+         {
+           /* This is the child process.  Execute the command. */
+           execv (result.we_wordv[0], result.we_wordv);
+           exit (EXIT_FAILURE);
+         }
+       else if (pid < 0)
+         /* The fork failed.  Report failure.  */
+         status = -1;
+       else
+         /* This is the parent process.  Wait for the child to complete.  */
+         if (waitpid (pid, &status, 0) != pid)
+           status = -1;
+     
+       wordfree (&result);
+       return status;
+     }
+
+
+File: libc.info,  Node: Tilde Expansion,  Next: Variable Substitution,  Prev: Wordexp Example,  Up: Word Expansion
+
+Details of Tilde Expansion
+--------------------------
+
+   It's a standard part of shell syntax that you can use `~' at the
+beginning of a file name to stand for your own home directory.  You can
+use `~USER' to stand for USER's home directory.
+
+   "Tilde expansion" is the process of converting these abbreviations
+to the directory names that they stand for.
+
+   Tilde expansion applies to the `~' plus all following characters up
+to whitespace or a slash.  It takes place only at the beginning of a
+word, and only if none of the characters to be transformed is quoted in
+any way.
+
+   Plain `~' uses the value of the environment variable `HOME' as the
+proper home directory name.  `~' followed by a user name uses
+`getpwname' to look up that user in the user database, and uses
+whatever directory is recorded there.  Thus, `~' followed by your own
+name can give different results from plain `~', if the value of `HOME'
+is not really your home directory.
+
+
+File: libc.info,  Node: Variable Substitution,  Prev: Tilde Expansion,  Up: Word Expansion
+
+Details of Variable Substitution
+--------------------------------
+
+   Part of ordinary shell syntax is the use of `$VARIABLE' to
+substitute the value of a shell variable into a command.  This is called
+"variable substitution", and it is one part of doing word expansion.
+
+   There are two basic ways you can write a variable reference for
+substitution:
+
+`${VARIABLE}'
+     If you write braces around the variable name, then it is completely
+     unambiguous where the variable name ends.  You can concatenate
+     additional letters onto the end of the variable value by writing
+     them immediately after the close brace.  For example, `${foo}s'
+     expands into `tractors'.
+
+`$VARIABLE'
+     If you do not put braces around the variable name, then the
+     variable name consists of all the alphanumeric characters and
+     underscores that follow the `$'.  The next punctuation character
+     ends the variable name.  Thus, `$foo-bar' refers to the variable
+     `foo' and expands into `tractor-bar'.
+
+   When you use braces, you can also use various constructs to modify
+the value that is substituted, or test it in various ways.
+
+`${VARIABLE:-DEFAULT}'
+     Substitute the value of VARIABLE, but if that is empty or
+     undefined, use DEFAULT instead.
+
+`${VARIABLE:=DEFAULT}'
+     Substitute the value of VARIABLE, but if that is empty or
+     undefined, use DEFAULT instead and set the variable to DEFAULT.
+
+`${VARIABLE:?MESSAGE}'
+     If VARIABLE is defined and not empty, substitute its value.
+
+     Otherwise, print MESSAGE as an error message on the standard error
+     stream, and consider word expansion a failure.
+
+`${VARIABLE:+REPLACEMENT}'
+     Substitute REPLACEMENT, but only if VARIABLE is defined and
+     nonempty.  Otherwise, substitute nothing for this construct.
+
+`${#VARIABLE}'
+     Substitute a numeral which expresses in base ten the number of
+     characters in the value of VARIABLE.  `${#foo}' stands for `7',
+     because `tractor' is seven characters.
+
+   These variants of variable substitution let you remove part of the
+variable's value before substituting it.  The PREFIX and SUFFIX are not
+mere strings; they are wildcard patterns, just like the patterns that
+you use to match multiple file names.  But in this context, they match
+against parts of the variable value rather than against file names.
+
+`${VARIABLE%%SUFFIX}'
+     Substitute the value of VARIABLE, but first discard from that
+     variable any portion at the end that matches the pattern SUFFIX.
+
+     If there is more than one alternative for how to match against
+     SUFFIX, this construct uses the longest possible match.
+
+     Thus, `${foo%%r*}' substitutes `t', because the largest match for
+     `r*' at the end of `tractor' is `ractor'.
+
+`${VARIABLE%SUFFIX}'
+     Substitute the value of VARIABLE, but first discard from that
+     variable any portion at the end that matches the pattern SUFFIX.
+
+     If there is more than one alternative for how to match against
+     SUFFIX, this construct uses the shortest possible alternative.
+
+     Thus, `${foo%%r*}' substitutes `tracto', because the shortest
+     match for `r*' at the end of `tractor' is just `r'.
+
+`${VARIABLE##PREFIX}'
+     Substitute the value of VARIABLE, but first discard from that
+     variable any portion at the beginning that matches the pattern
+     PREFIX.
+
+     If there is more than one alternative for how to match against
+     PREFIX, this construct uses the longest possible match.
+
+     Thus, `${foo%%r*}' substitutes `t', because the largest match for
+     `r*' at the end of `tractor' is `ractor'.
+
+`${VARIABLE#PREFIX}'
+     Substitute the value of VARIABLE, but first discard from that
+     variable any portion at the beginning that matches the pattern
+     PREFIX.
+
+     If there is more than one alternative for how to match against
+     PREFIX, this construct uses the shortest possible alternative.
+
+     Thus, `${foo%%r*}' substitutes `tracto', because the shortest
+     match for `r*' at the end of `tractor' is just `r'.
+
+
+File: libc.info,  Node: I/O Overview,  Next: I/O on Streams,  Prev: Pattern Matching,  Up: Top
+
+Input/Output Overview
+*********************
+
+   Most programs need to do either input (reading data) or output
+(writing data), or most frequently both, in order to do anything
+useful.  The GNU C library provides such a large selection of input and
+output functions that the hardest part is often deciding which function
+is most appropriate!
+
+   This chapter introduces concepts and terminology relating to input
+and output.  Other chapters relating to the GNU I/O facilities are:
+
+   * *Note I/O on Streams::, which covers the high-level functions that
+     operate on streams, including formatted input and output.
+
+   * *Note Low-Level I/O::, which covers the basic I/O and control
+     functions on file descriptors.
+
+   * *Note File System Interface::, which covers functions for
+     operating on directories and for manipulating file attributes such
+     as access modes and ownership.
+
+   * *Note Pipes and FIFOs::, which includes information on the basic
+     interprocess communication facilities.
+
+   * *Note Sockets::, which covers a more complicated interprocess
+     communication facility with support for networking.
+
+   * *Note Low-Level Terminal Interface::, which covers functions for
+     changing how input and output to terminal or other serial devices
+     are processed.
+
+* Menu:
+
+* I/O Concepts::       Some basic information and terminology.
+* File Names::         How to refer to a file.
+
+
+File: libc.info,  Node: I/O Concepts,  Next: File Names,  Up: I/O Overview
+
+Input/Output Concepts
+=====================
+
+   Before you can read or write the contents of a file, you must
+establish a connection or communications channel to the file.  This
+process is called "opening" the file.  You can open a file for reading,
+writing, or both.
+
+   The connection to an open file is represented either as a stream or
+as a file descriptor.  You pass this as an argument to the functions
+that do the actual read or write operations, to tell them which file to
+operate on.  Certain functions expect streams, and others are designed
+to operate on file descriptors.
+
+   When you have finished reading to or writing from the file, you can
+terminate the connection by "closing" the file.  Once you have closed a
+stream or file descriptor, you cannot do any more input or output
+operations on it.
+
+* Menu:
+
+* Streams and File Descriptors::    The GNU Library provides two ways
+			             to access the contents of files.
+* File Position::                   The number of bytes from the
+                                     beginning of the file.
+
+
+File: libc.info,  Node: Streams and File Descriptors,  Next: File Position,  Up: I/O Concepts
+
+Streams and File Descriptors
+----------------------------
+
+   When you want to do input or output to a file, you have a choice of
+two basic mechanisms for representing the connection between your
+program and the file: file descriptors and streams.  File descriptors
+are represented as objects of type `int', while streams are represented
+as `FILE *' objects.
+
+   File descriptors provide a primitive, low-level interface to input
+and output operations.  Both file descriptors and streams can represent
+a connection to a device (such as a terminal), or a pipe or socket for
+communicating with another process, as well as a normal file.  But, if
+you want to do control operations that are specific to a particular kind
+of device, you must use a file descriptor; there are no facilities to
+use streams in this way.  You must also use file descriptors if your
+program needs to do input or output in special modes, such as
+nonblocking (or polled) input (*note File Status Flags::.).
+
+   Streams provide a higher-level interface, layered on top of the
+primitive file descriptor facilities.  The stream interface treats all
+kinds of files pretty much alike--the sole exception being the three
+styles of buffering that you can choose (*note Stream Buffering::.).
+
+   The main advantage of using the stream interface is that the set of
+functions for performing actual input and output operations (as opposed
+to control operations) on streams is much richer and more powerful than
+the corresponding facilities for file descriptors.  The file descriptor
+interface provides only simple functions for transferring blocks of
+characters, but the stream interface also provides powerful formatted
+input and output functions (`printf' and `scanf') as well as functions
+for character- and line-oriented input and output.
+
+   Since streams are implemented in terms of file descriptors, you can
+extract the file descriptor from a stream and perform low-level
+operations directly on the file descriptor.  You can also initially open
+a connection as a file descriptor and then make a stream associated with
+that file descriptor.
+
+   In general, you should stick with using streams rather than file
+descriptors, unless there is some specific operation you want to do that
+can only be done on a file descriptor.  If you are a beginning
+programmer and aren't sure what functions to use, we suggest that you
+concentrate on the formatted input functions (*note Formatted Input::.)
+and formatted output functions (*note Formatted Output::.).
+
+   If you are concerned about portability of your programs to systems
+other than GNU, you should also be aware that file descriptors are not
+as portable as streams.  You can expect any system running ISO C to
+support streams, but non-GNU systems may not support file descriptors at
+all, or may only implement a subset of the GNU functions that operate on
+file descriptors.  Most of the file descriptor functions in the GNU
+library are included in the POSIX.1 standard, however.
+
+
+File: libc.info,  Node: File Position,  Prev: Streams and File Descriptors,  Up: I/O Concepts
+
+File Position
+-------------
+
+   One of the attributes of an open file is its "file position" that
+keeps track of where in the file the next character is to be read or
+written.  In the GNU system, and all POSIX.1 systems, the file position
+is simply an integer representing the number of bytes from the beginning
+of the file.
+
+   The file position is normally set to the beginning of the file when
+it is opened, and each time a character is read or written, the file
+position is incremented.  In other words, access to the file is normally
+"sequential".
+
+   Ordinary files permit read or write operations at any position within
+the file.  Some other kinds of files may also permit this.  Files which
+do permit this are sometimes referred to as "random-access" files.  You
+can change the file position using the `fseek' function on a stream
+(*note File Positioning::.) or the `lseek' function on a file
+descriptor (*note I/O Primitives::.).  If you try to change the file
+position on a file that doesn't support random access, you get the
+`ESPIPE' error.
+
+   Streams and descriptors that are opened for "append access" are
+treated specially for output: output to such files is *always* appended
+sequentially to the *end* of the file, regardless of the file position.
+However, the file position is still used to control where in the file
+reading is done.
+
+   If you think about it, you'll realize that several programs can read
+a given file at the same time.  In order for each program to be able to
+read the file at its own pace, each program must have its own file
+pointer, which is not affected by anything the other programs do.
+
+   In fact, each opening of a file creates a separate file position.
+Thus, if you open a file twice even in the same program, you get two
+streams or descriptors with independent file positions.
+
+   By contrast, if you open a descriptor and then duplicate it to get
+another descriptor, these two descriptors share the same file position:
+changing the file position of one descriptor will affect the other.
+
+
+File: libc.info,  Node: File Names,  Prev: I/O Concepts,  Up: I/O Overview
+
+File Names
+==========
+
+   In order to open a connection to a file, or to perform other
+operations such as deleting a file, you need some way to refer to the
+file.  Nearly all files have names that are strings--even files which
+are actually devices such as tape drives or terminals.  These strings
+are called "file names".  You specify the file name to say which file
+you want to open or operate on.
+
+   This section describes the conventions for file names and how the
+operating system works with them.
+
+* Menu:
+
+* Directories::                 Directories contain entries for files.
+* File Name Resolution::        A file name specifies how to look up a file.
+* File Name Errors::            Error conditions relating to file names.
+* File Name Portability::       File name portability and syntax issues.
+
+
+File: libc.info,  Node: Directories,  Next: File Name Resolution,  Up: File Names
+
+Directories
+-----------
+
+   In order to understand the syntax of file names, you need to
+understand how the file system is organized into a hierarchy of
+directories.
+
+   A "directory" is a file that contains information to associate other
+files with names; these associations are called "links" or "directory
+entries".  Sometimes, people speak of "files in a directory", but in
+reality, a directory only contains pointers to files, not the files
+themselves.
+
+   The name of a file contained in a directory entry is called a "file
+name component".  In general, a file name consists of a sequence of one
+or more such components, separated by the slash character (`/').  A
+file name which is just one component names a file with respect to its
+directory.  A file name with multiple components names a directory, and
+then a file in that directory, and so on.
+
+   Some other documents, such as the POSIX standard, use the term
+"pathname" for what we call a file name, and either "filename" or
+"pathname component" for what this manual calls a file name component.
+We don't use this terminology because a "path" is something completely
+different (a list of directories to search), and we think that
+"pathname" used for something else will confuse users.  We always use
+"file name" and "file name component" (or sometimes just "component",
+where the context is obvious) in GNU documentation.  Some macros use
+the POSIX terminology in their names, such as `PATH_MAX'.  These macros
+are defined by the POSIX standard, so we cannot change their names.
+
+   You can find more detailed information about operations on
+directories in *Note File System Interface::.
+

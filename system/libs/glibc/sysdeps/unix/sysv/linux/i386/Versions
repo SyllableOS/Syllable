@@ -1,0 +1,10 @@
+libc {
+  GLIBC_2.0 {
+    ioperm; iopl;
+
+    vm86;
+  }
+  GLIBC_2.1 {
+    __modify_ldt; modify_ldt;
+  }
+}

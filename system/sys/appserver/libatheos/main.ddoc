@@ -1,0 +1,19 @@
+/*! \mainpage Documentation of the AtheOS highlevel C++ API
+
+
+
+\ref gui "The AtheOS GUI API"
+
+\ref storage "The higlevel filesystem API"
+
+\ref util "Various utillity classes"
+
+*/
+
+/*! \page intro
+
+Intro to the highlevel API
+
+
+*/
+

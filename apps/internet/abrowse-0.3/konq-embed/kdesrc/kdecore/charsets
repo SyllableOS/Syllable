@@ -1,0 +1,140 @@
+# KDE Config file
+#
+# This file defines where to find conversion maps for specific encodings.
+# The directory below gives the dir where the posix charmaps are located.
+#
+[general]
+i18ndir=/usr/share/i18n/charmaps
+
+# defines some different names for codecs that are built into Qt.
+[builtin]
+iso-ir-111=koi8-r
+koi8-ru=koi8-r
+koi8r=koi8-r
+koi8u=koi8-u
+koi unified=koi8-r
+us-ascii=iso 8859-1
+usascii=iso 8859-1
+x-utf-8=utf8
+x-utf-7=utf7
+euc-kr=euckr
+x-euc-kr=euckr
+euc-jp=eucjp
+x-euc-jp=eucjp
+shift_jis=sjis
+shift-jis=sjis
+x-sjis=sjis
+iso-2022-jp=jis7
+windows1250=cp 1250
+windows1251=cp 1251
+windows1252=cp 1252
+windows1253=cp 1253
+windows1254=cp 1254
+windows1255=cp 1255
+windows1256=cp 1256
+windows1257=cp 1257
+windows-1250=cp 1250
+windows-1251=cp 1251
+windows-1252=cp 1252
+windows-1253=cp 1253
+windows-1254=cp 1254
+windows-1255=cp 1255
+windows-1256=cp 1256
+windows-1257=cp 1257
+x-windows-1250=cp 1250
+x-windows-1251=cp 1251
+x-windows-1252=cp 1252
+x-windows-1253=cp 1253
+x-windows-1254=cp 1254
+x-windows-1255=cp 1255
+x-windows-1256=cp 1256
+x-windows-1257=cp 1257
+cp-1250=cp 1250
+cp-1251=cp 1251
+cp-1252=cp 1252
+cp-1253=cp 1253
+cp-1254=cp 1254
+cp-1255=cp 1255
+cp-1256=cp 1256
+cp-1257=cp 1257
+x-cp-1250=cp 1250
+x-cp-1251=cp 1251
+x-cp-1252=cp 1252
+x-cp-1253=cp 1253
+x-cp-1254=cp 1254
+x-cp-1255=cp 1255
+x-cp-1256=cp 1256
+x-cp-1257=cp 1257
+tis620=iso 8859-11
+tis-620=iso 8859-11
+ks_c_5601-1987=euckr
+iso-8859-1=iso 8859-1
+iso-8859-2=iso 8859-2
+iso-8859-3=iso 8859-3
+iso-8859-4=iso 8859-4
+iso-8859-5=iso 8859-5
+iso-8859-6=iso 8859-6
+iso-8859-7=iso 8859-7
+iso-8859-8=iso 8859-8
+iso-8859-9=iso 8859-9
+iso-8859-10=iso 8859-10
+iso-8859-11=iso 8859-11
+iso-8859-12=iso 8859-12
+iso-8859-13=iso 8859-13
+iso-8859-14=iso 8859-14
+iso-8859-15=iso 8859-15
+
+# some different names for the encodings defined in the charmaps files.
+# even though the charmap file names are all uppercase, the names are all lowercase here.
+[aliases]
+cp852=ibm852
+
+# some last resort hints in case the charmap file couldn't be found. This gives at least a partial conversion
+# and helps making things readable.
+#the name used as input here is already converted to the more canonical name as defined in the [aliases] group.
+[conversionHints]
+cp1250=iso-8859-2
+koi8-r=iso-8859-5
+koi8-u=koi8-r
+
+# this list gives the charsets that can be used to display a file given in a certain encoding.
+# the list should be in order of preference
+# left side is the name returned by the codec used, right side the name of the charset as
+# used in kcharsets.cpp
+# 'unicode' will always be chosen as last resort, so it only needs to be added to the list,
+# if it should get a higher priority
+[charsetsForEncoding]
+koi8-r=koi8-r,iso-8859-5,koi8-u
+koi8-u=koi8-u,iso8859-5,koi8-r
+iso 8859-1=iso8859-1
+iso 8859-2=iso8859-2,unicode,iso8859-1
+iso 8859-3=iso8859-3,unicode,iso8859-1
+iso 8859-4=iso8859-4,unicode,iso8859-1
+iso 8859-5=iso8859-5,koi8-r,koi8-u
+iso 8859-6=unicode,iso8859-6
+iso 8859-6-i=unicode,iso8859-6
+iso 8859-7=iso8859-7
+iso 8859-8=iso8859-8,unicode
+iso 8859-8-i=iso8859-8
+iso 8859-9=iso8859-9,unicode,iso8859-1
+iso 8859-11=iso8859-11
+iso 8859-13=iso8859-13,unicode,iso8859-1
+iso 8859-15=iso8859-15,unicode,iso8859-1
+utf8=unicode,iso8859-1
+utf16=unicode,iso8859-1
+cp 1250=iso8859-2
+cp 1251=koi8-r,koi8-u,iso8859-5
+cp 1252=iso8859-1
+cp 1253=iso8859-7
+cp 1254=iso8859-2
+cp 1255=iso8859-8
+cp 1256=unicode,iso8859-6
+cp 1257=iso8859-13
+ibm852=unicode,iso-8859-2
+tis620=iso8859-11,unicode
+eucjp=eucjp,unicode,iso8859-1
+sjis=eucjp,unicode,iso8859-1
+jis7=eucjp,unicode,iso8859-1
+big5=big5,unicode,iso8859-1
+gbk=set-gbk,unicode
+euckr=euckr,unicode,iso8859-1

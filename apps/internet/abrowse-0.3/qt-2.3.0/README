@@ -1,0 +1,50 @@
+          Qt FREE EDITION 2.3.0 SOURCE CODE-stable DISTRIBUTION
+
+This is the official release of the Qt Free Edition version 2.3.0.
+
+You may use the Qt Free Edition for software development free of charge
+only if you develop Free (non-proprietary) Software. The LICENSE.QPL file
+explains what you may or may not do with the Qt Free Edition.
+
+The Qt Free Edition may only be used on the X Window System.
+
+If you are using Qt for developing commercial, proprietary, or other
+software not covered by the terms listed in the LICENSE.QPL file, you
+must have have a license for commercial Qt editions. Please see
+http://www.trolltech.com/purchase.html for how to obtain this. Qt
+commercial editions also support Microsoft Windows.  
+
+The INSTALL file explains how to install Qt.
+
+If you want to enable built-in GIF image reading support in Qt, run
+configure with the "-gif" argument before compiling.
+
+The Qt Free Edition is currently supported on Linux, Solaris, SunOS,
+FreeBSD, OSF/1, Irix, BSD/OS, NetBSD, SCO, HP-UX and AIX. If you want
+to port Qt to a new platform, please read the PORTING file.
+
+The Qt Reference Documentation is available in HTML format in the
+qt/doc/html directory. Start your favorite Web browser with the
+doc/html/index.html file. The class reference doc. is also included in
+Unix man format in the qt/doc/man directory.
+
+If you are new to Qt it is a good idea to read the tutorial. It is located
+in doc/html/tutorial.html. The tutorial directory contains the programs
+used in the tutorial.
+
+The example programs in the examples directory demonstrate some Qt
+features. You can study these examples to get an overview of how Qt
+programs can be written, or look at doc/html/examples.html with your
+browser.
+
+If you find any bugs, please see information in the reference
+documentation about how to report it.
+
+If you want to join the Qt user forum mailing list, send a message to
+qt-interest-request@trolltech.com containing a single word "subscribe".  If
+you want to be added to our announcements mailing list (no spam), send
+a message to qt-announce-request@trolltech.com containing a single word
+"subscribe".
+
+If you are interested in commercial Qt licensing, please write
+to sales@trolltech.com.  Other mail can be sent to info@trolltech.com.

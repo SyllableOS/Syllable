@@ -1,0 +1,27 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:617: checking host system type
+configure:638: checking target system type
+configure:656: checking build system type
+configure:715: checking for a BSD compatible install
+configure:772: checking for -p flag to install
+configure:795: checking whether build environment is sane
+configure:833: checking whether make sets ${MAKE}
+configure:879: checking for working aclocal
+configure:892: checking for working autoconf
+configure:905: checking for working automake
+configure:918: checking for working autoheader
+configure:931: checking for working makeinfo
+configure:1017: checking for a C-Compiler
+configure:1129: checking whether the C compiler (gcc  ) works
+configure:1145: gcc -o conftest    conftest.c  1>&5
+configure:1171: checking whether the C compiler (gcc  ) is a cross-compiler
+configure:1176: checking whether we are using GNU C
+configure:1185: gcc -E conftest.c
+configure:1288: checking how to run the C preprocessor
+configure:1309: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1350: checking for a C++-Compiler
+configure:1356: checking for g++
+configure:1472: checking whether the C++ compiler (g++  ) works
+configure:1493: rm -rf SunWS_cache; g++ -o conftest    conftest.C  1>&5

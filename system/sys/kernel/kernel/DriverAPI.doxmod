@@ -1,0 +1,207 @@
+/*!
+ * \defgroup DriverAPI AtheOS Device Driver API
+ */
+
+
+/*! \mainpage Documentation of the AtheOS kernel driver API
+
+This documentation is very far from compleate but I am trying to
+document new functionality as I write it, and are also slowly
+documenting the existing functionality.
+
+\ref intro "Introduction"
+
+\ref generic_drivers "Writing regular device drivers"
+
+\ref filesystem_drivers "Writing file-system drivers"
+
+\ref network_drivers "Writing network drivers"
+
+\ref DriverAPI "API documentation"
+
+*/
+
+
+/*! \page intro Brief introduction to the AtheOS kernel land
+
+The AtheOS kernel have a very modular design where as much work as
+possible is delegated to dynamically loaded device drivers. Writing
+device drivers for the AtheOS kernel very much resemble normal
+application development. A driver is not a tightly integrated part of
+the kernel (like for example a Linux driver) but is more loosly tied
+to the kernel through a API exported by the kernel and a well defined
+interface exported by the device driver.
+
+The driver API offer much of the same functionality as the "C" library
+offers to applications. You will find that many of the low-level
+functions you know from user-space applications are also available
+when working with device drivers. If you are familiar with C
+programming and know how to deal with multithreaded programming you
+should have no problem developing device drivers for AtheOS.
+
+There is more than one type of kernel drivers. Currently 3 distinct
+interfaces are defined:
+
+	- Regular device drivers.
+	- File system drivers.
+	- Network interface drivers.
+
+Common to all drivers is that they are linked to libkernel.so that is
+a "fake" DLL who export all the functions available to the device
+driver and that they export most of their functionality to the kernel
+through function pointers.
+
+Most driver entry points are passed to the kernel through structures
+containing nothing but a list of correctly prototyped function
+pointers. For device drivers a distinct set of functions can be
+associated with each "node" it export in the /dev/ device hierarchy.
+
+Filesystem only have one function-pointer table that will be
+associated by all files (or inodes) that lives in the FS.
+
+*/
+
+
+/*! \page generic_drivers
+
+\section sec1 Basic description
+Device drivers in AtheOS is abstractet through the filesystem in much
+the same way as in UNIX. All device drivers exports their
+functionality through special files inside the /dev/ directory or a
+sub-directory of /dev/. Unlike in traditional UNIXes the /dev/
+directory in AtheOS is hierarchial and is very dynamic in that device
+drivers can add and remove nodes at runtime if it for example controll
+a removable device that might be added or removed after the driver is
+initialized.
+
+\section sec2 Driver initialization
+
+A driver is just an ELF binary built in much the same way as a regular
+DLL. When a driver is loaded by the kernel it will search for a
+exported symbol named "device_init" and call it to allow the driver to
+initialize itself. The device_init() function is passed a unique
+device ID that is dynamically assigned to each driver when loaded and
+used by the kernel to identify the driver later.
+
+Just before the driver is unloaded the kernel will look for a global
+function named "device_uninit()" and if found it will be called to
+allow the driver to clean up.
+
+This device_init() and device_uninit() is the only functions that will
+be called directly by the kernel. For the driver to do any usefull
+work it must export one or more device-nodes through the AtheOS Device
+FS (ADFS). ADFS is a logical file system that is mounted at "/dev/"
+and controll all devices. Each device is present as a magic file
+located in "/dev/" or a sub-directory of "/dev/". Initially "/dev/"
+only contain "/dev/null" and "/dev/zero" which is controlled by ADFS
+itself. All other directory and device-nodes are created by device
+drivers. A device driver can create a device-node with
+create_device_node() and remove it with delete_device_node().  When
+creating a device node the driver must provide a function pointer
+table with entry points to the drivers functionality. The functions in
+the table will be called by the ADFS to controll the device. The most
+important functions is read(), write() and ioctl() but there is also
+functions to open/close the device aswell as functions called by
+select() to make it possible for one thread to wait for IO on multiple
+devices.
+
+A typical device driver will create one node in device_init() and
+delete it again in device_uninit().
+
+int g_nMyDeviceNode = -1;
+
+status_t device_init( int nDeviceID )
+{
+	struct MyDeviceNode sNode;
+	g_nMyDeviceNode = create_device_node( nDeviceID, "misc/mydevice", &g_sOperations, &sNode );
+	
+	if ( g_nMyDeviceNode < 0 ) {
+		return( g_nMyDeviceNode ); /* Failed to create the device node */
+	} else {
+		return( EOK );
+	}
+}
+
+status_t device_uninit( int nDeviceID )
+{
+	delete_device_node( g_nMyDeviceNode );
+	return( EOK );
+}
+
+
+\section sec3 How a driver is located
+
+Since the nodes inside /dev/ is created by the device drivers themself
+and not the kernel it is not directly obvious what driver should be
+loaded if a application tries to open for example
+"/dev/video/cpia".
+
+If this is the first time someone attempts to open the CPiA device the
+driver is not loaded and "/dev/video/cpia" does not exists. If this is
+the first time anything inside /dev/ is touched neighter does the
+"/dev/video" directory.
+
+To make it possible for the kernel to search for drivers in a
+efficient way the driver-binaries are located in a directory tree
+similar to the resulting tree inside /dev/. For example the CPiA
+driver from the above example whould be located in
+"/system/drivers/dev/video/cpia".
+
+If the kernel is asked to open for example "/dev/video/cpia" it whould
+start by opening the "/dev" directory which whould cause the
+"/system/drivers/dev" directory to be iterated. During the iteration
+all drivers found will be attempted loaded and initiated and all
+directories will be replicated inside /dev/. Since
+"/system/drivers/dev" contains a directory named "video" this will
+cause "/dev/video" to be created.  When "/dev/" is successfully opened
+it will attempt to open "/dev/video" which should now exist. Opening
+"/dev/video" will cause the "/system/drivers/dev/video" directory to
+be iterated and the "cpia" binary to be loaded. The CPiA driver will
+then probe for a CPiA device and if found it will create a device node
+named "/dev/video/cpia" which will then be found and opened when the
+kernel descend into the "/dev/video" directory.
+
+In the trivial example above there was direct match between the name
+of the driver and the name of the device inside /dev. Since one driver
+might export more than one device this is not always the case. For
+example a IDE disk driver whould export one device for each disk
+connected to the bus and one device for each partitions found on those
+disks. The device-tree exported by a IDE driver might look something
+like this:
+
+<pre>
+/dev/disk/ide/bus1/master/raw
+/dev/disk/ide/bus1/master/0
+/dev/disk/ide/bus1/master/1
+/dev/disk/ide/bus1/slave/raw
+/dev/disk/ide/bus2/master/raw
+/dev/disk/ide/bus2/master/0
+</pre>
+
+In this case the ide driver should be located in
+"/system/drivers/dev/disk/ide/ide". If someone attempts to open the
+first partition on the master disk connected to the first controller
+it whould have to open "/dev/disk/ide/bus1/master/0".
+
+When descending the path the kernel will first create the "/dev/disk"
+and the "/dev/disk/ide" directory. Then it will load the ide-driver
+which will detect that there is 3 disks connected to the two
+controllers before decoding the partition tables and add all the nodes
+listed above. At his point "/dev/disk/ide/bus1/master/0" already
+exists and no other drivers need to be loaded to fullfill the request.
+
+
+*/
+
+/*! \page filesystem_drivers
+
+FS stuff
+
+*/
+
+/*! \page network_drivers
+
+network stuff.
+
+*/
+

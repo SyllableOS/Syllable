@@ -1,0 +1,53 @@
+all:
+	@for subdir in $(SUBDIRS); do\
+		PWD=$(PWD)/$$subdir;\
+		if ! $(MAKE) -C $(PWD)/$$subdir; then exit 1; fi;\
+	done
+
+deps:
+	@for subdir in $(SUBDIRS); do\
+		PWD=$(PWD)/$$subdir;\
+		if [ -e $(PWD)/$$subdir/configure ];then\
+			cd $(PWD)/$$subdir/ ;\
+			./configure; \
+		fi;\
+		$(MAKE) -C $(PWD)/$$subdir deps;\
+	done
+
+install:
+	@for subdir in $(SUBDIRS); do\
+		PWD=$(PWD)/$$subdir;\
+		if ! $(MAKE) -C $(PWD)/$$subdir install; then exit 1; fi;\
+	done
+
+clean:
+	@for subdir in $(SUBDIRS); do\
+		PWD=$(PWD)/$$subdir;\
+		if ! $(MAKE) -C $(PWD)/$$subdir clean; then exit 1; fi;\
+	done
+
+doc:
+	@for subdir in $(SUBDIRS); do\
+		PWD=$(PWD)/$$subdir;\
+		if ! $(MAKE) -C $(PWD)/$$subdir doc; then exit 1; fi;\
+	done
+
+install-doc:
+	@for subdir in $(SUBDIRS); do\
+		PWD=$(PWD)/$$subdir;\
+		if ! $(MAKE) -C $(PWD)/$$subdir install-doc; then exit 1; fi;\
+	done
+
+dist:
+	@for subdir in $(SUBDIRS); do\
+		PWD=$(PWD)/$$subdir;\
+		if ! $(MAKE) -C $(PWD)/$$subdir dist; then exit 1; fi;\
+	done
+
+distclean:
+	@for subdir in $(SUBDIRS); do\
+		PWD=$(PWD)/$$subdir;\
+		if ! $(MAKE) -C $(PWD)/$$subdir distclean; then exit 1; fi;\
+	done
+
+

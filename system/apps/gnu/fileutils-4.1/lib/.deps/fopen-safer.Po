@@ -1,0 +1,37 @@
+fopen-safer.o : \
+ fopen-safer.c ../config.h /include/unistd.h \
+ /include/features.h /include/sys/cdefs.h /include/gnu/stubs.h \
+ /include/bits/posix_opt.h /include/bits/environments.h \
+ /include/bits/wordsize.h /include/bits/types.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h \
+ /include/bits/pthreadtypes.h /include/bits/confname.h getopt.h \
+ unistd-safer.h /include/errno.h /include/bits/errno.h \
+ /ainc/posix/errno.h /include/stdio.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stdarg.h \
+ /include/libio.h /include/_G_config.h /include/bits/stdio_lim.h \
+ /include/bits/stdio.h stdio-safer.h
+fopen-safer.c :
+../config.h :
+/include/unistd.h :
+/include/features.h :
+/include/sys/cdefs.h :
+/include/gnu/stubs.h :
+/include/bits/posix_opt.h :
+/include/bits/environments.h :
+/include/bits/wordsize.h :
+/include/bits/types.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h :
+/include/bits/pthreadtypes.h :
+/include/bits/confname.h :
+getopt.h :
+unistd-safer.h :
+/include/errno.h :
+/include/bits/errno.h :
+/ainc/posix/errno.h :
+/include/stdio.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stdarg.h :
+/include/libio.h :
+/include/_G_config.h :
+/include/bits/stdio_lim.h :
+/include/bits/stdio.h :
+stdio-safer.h :

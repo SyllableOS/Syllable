@@ -1,0 +1,4250 @@
+# Translation of `textutils' messages to Japanese.
+# Copyright (C) 2000 Free Software Foundation, Inc.
+# Masahito Yamaga <yamaga@ipc.chiba-u.ac.jp>, 2000.
+#  derived from the version by Yasuyuki Furukawa <yasu@on.cs.keio.ac.jp> 1998
+#                              Jun Nishii <jun@flatout.org> 1999
+#                              Daisuke Yamashita <yamad@mb.infoweb.ne.jp> 1999
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: GNU textutils 2.0c\n"
+"POT-Creation-Date: 2002-02-17 10:07+0100\n"
+"PO-Revision-Date: 2000-01-22 19:22+0900\n"
+"Last-Translator: Masahito Yamaga <yamaga@ipc.chiba-u.ac.jp>\n"
+"Language-Team: Japanese <ja@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=EUC-JP\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: lib/argmatch.c:161
+#, fuzzy, c-format
+msgid "invalid argument %s for %s"
+msgstr "`%2$s' に対する引数 %1$s が間違っています"
+
+#: lib/argmatch.c:162
+#, fuzzy, c-format
+msgid "ambiguous argument %s for %s"
+msgstr "`%2$s' に対する引数 %1$s が曖昧です"
+
+#: lib/argmatch.c:181
+msgid "Valid arguments are:"
+msgstr "有効な引数:"
+
+#: lib/closeout.c:107 src/cat.c:186 src/cat.c:267 src/cat.c:320
+#: src/cksum.c:267 src/head.c:152 src/head.c:195 src/tail.c:327
+#: src/tail.c:1653 src/tr.c:1665 src/tr.c:1911 src/tr.c:2019
+msgid "write error"
+msgstr "書き込みエラー"
+
+#: lib/error.c:129 lib/error.c:157
+msgid "Unknown system error"
+msgstr "未知のシステムエラー"
+
+#: lib/getopt.c:694
+#, c-format
+msgid "%s: option `%s' is ambiguous\n"
+msgstr "%s: オプション `%s' は曖昧です\n"
+
+#: lib/getopt.c:719
+#, c-format
+msgid "%s: option `--%s' doesn't allow an argument\n"
+msgstr "%s: オプション `--%s' に引数はありません\n"
+
+#: lib/getopt.c:724
+#, c-format
+msgid "%s: option `%c%s' doesn't allow an argument\n"
+msgstr "%s: オプション `%c%s' に引数は必要ありません\n"
+
+#: lib/getopt.c:742 lib/getopt.c:915
+#, c-format
+msgid "%s: option `%s' requires an argument\n"
+msgstr "%s: オプション `%s' には引数が必要です\n"
+
+#: lib/getopt.c:771
+#, c-format
+msgid "%s: unrecognized option `--%s'\n"
+msgstr "%s: オプション `--%s' を認識できません\n"
+
+#: lib/getopt.c:775
+#, c-format
+msgid "%s: unrecognized option `%c%s'\n"
+msgstr "%s: オプション `%c%s' を認識できません\n"
+
+#: lib/getopt.c:801
+#, c-format
+msgid "%s: illegal option -- %c\n"
+msgstr "%s: 不正なオプション -- %c\n"
+
+#: lib/getopt.c:804
+#, c-format
+msgid "%s: invalid option -- %c\n"
+msgstr "%s: 間違ったオプション -- %c\n"
+
+#: lib/getopt.c:834 lib/getopt.c:964
+#, c-format
+msgid "%s: option requires an argument -- %c\n"
+msgstr "%s: オプションには引数が必要です -- %c\n"
+
+#: lib/getopt.c:881
+#, c-format
+msgid "%s: option `-W %s' is ambiguous\n"
+msgstr "%s: オプション `-W %s' は曖昧です\n"
+
+#: lib/getopt.c:899
+#, c-format
+msgid "%s: option `-W %s' doesn't allow an argument\n"
+msgstr "%s: オプション `-W %s' に引数はありません\n"
+
+#: lib/human.c:365
+msgid "block size"
+msgstr "ブロックサイズ"
+
+#: lib/makepath.c:176
+#, fuzzy, c-format
+msgid "cannot create directory %s"
+msgstr "`%s' で ioctl() を実行できません"
+
+#: lib/makepath.c:182 lib/makepath.c:423
+#, c-format
+msgid "%s exists but is not a directory"
+msgstr ""
+
+#: lib/makepath.c:319 lib/makepath.c:381 lib/makepath.c:442
+#, c-format
+msgid "cannot change owner and/or group of %s"
+msgstr ""
+
+#: lib/makepath.c:341
+#, fuzzy, c-format
+msgid "cannot chdir to directory, %s"
+msgstr "`%s' で ioctl() を実行できません"
+
+#: lib/makepath.c:395 lib/makepath.c:448
+#, fuzzy, c-format
+msgid "cannot change permissions of %s"
+msgstr "`%s' で ioctl() を実行できません"
+
+#: lib/obstack.c:494 lib/obstack.c:497 lib/xmalloc.c:66
+#, fuzzy
+msgid "memory exhausted"
+msgstr "メモリを使い果たしました\n"
+
+#: lib/quotearg.c:270
+msgid "`"
+msgstr "`"
+
+#: lib/quotearg.c:271
+msgid "'"
+msgstr "'"
+
+#: lib/rpmatch.c:78
+msgid "^[yY]"
+msgstr ""
+
+#: lib/rpmatch.c:81
+msgid "^[nN]"
+msgstr ""
+
+#: lib/unicodeio.c:159
+msgid "iconv function not usable"
+msgstr ""
+
+#: lib/unicodeio.c:161
+msgid "iconv function not available"
+msgstr ""
+
+#: lib/unicodeio.c:168
+#, fuzzy
+msgid "character out of range"
+msgstr "%s: 範囲外の行番号"
+
+#: lib/unicodeio.c:231
+#, c-format
+msgid "cannot convert U+%04X to local character set"
+msgstr ""
+
+#: lib/unicodeio.c:233
+#, c-format
+msgid "cannot convert U+%04X to local character set: %s"
+msgstr ""
+
+#: lib/userspec.c:178
+#, fuzzy
+msgid "invalid user"
+msgstr "%s: 無効な番号表記です"
+
+#: lib/userspec.c:179
+#, fuzzy
+msgid "invalid group"
+msgstr "%s: 無効な番号表記です"
+
+#: lib/userspec.c:181
+msgid "cannot get the login group of a numeric UID"
+msgstr ""
+
+#: lib/userspec.c:183
+msgid "cannot omit both user and group"
+msgstr ""
+
+#: lib/version-etc.c:61
+#, c-format
+msgid "Written by %s.\n"
+msgstr "作者 %s.\n"
+
+#: lib/version-etc.c:67
+msgid ""
+"This is free software; see the source for copying conditions.  There is NO\n"
+"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+msgstr ""
+"This is free software; see the source for copying conditions.  There is NO\n"
+"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+"\n"
+"[参考訳]\n"
+"これはフリー・ソフトウェアです. コピーの条件についてはソースをお読みくださ"
+"い.\n"
+"市場性及び特定目的適合性の如何によらず, いかなる保証もありません.\n"
+
+#: lib/xmemcoll.c:61
+msgid "string comparison failed"
+msgstr ""
+
+#: lib/xmemcoll.c:62
+msgid "Set LC_ALL='C' to work around the problem."
+msgstr ""
+
+#: lib/xmemcoll.c:64
+#, c-format
+msgid "The strings compared were %s and %s."
+msgstr ""
+
+#: src/cat.c:42 src/split.c:42
+msgid "Torbjorn Granlund and Richard M. Stallman"
+msgstr ""
+
+#: src/cat.c:88 src/cksum.c:276 src/comm.c:71 src/csplit.c:1490 src/cut.c:163
+#: src/expand.c:106 src/fmt.c:267 src/fold.c:63 src/head.c:84 src/join.c:142
+#: src/md5sum.c:121 src/nl.c:172 src/od.c:277 src/paste.c:399 src/pr.c:2752
+#: src/ptx.c:1855 src/sort.c:281 src/split.c:91 src/sum.c:56 src/tac.c:123
+#: src/tail.c:234 src/tr.c:323 src/tsort.c:93 src/unexpand.c:371
+#: src/uniq.c:130 src/wc.c:124
+#, c-format
+msgid "Try `%s --help' for more information.\n"
+msgstr "詳しくは `%s --help' を実行して下さい.\n"
+
+#: src/cat.c:92
+#, c-format
+msgid "Usage: %s [OPTION] [FILE]...\n"
+msgstr "使用法: %s [オプション] [ファイル]...\n"
+
+#: src/cat.c:96
+#, fuzzy
+msgid ""
+"Concatenate FILE(s), or standard input, to standard output.\n"
+"\n"
+"  -A, --show-all           equivalent to -vET\n"
+"  -b, --number-nonblank    number nonblank output lines\n"
+"  -e                       equivalent to -vE\n"
+"  -E, --show-ends          display $ at end of each line\n"
+"  -n, --number             number all output lines\n"
+"  -s, --squeeze-blank      never more than one single blank line\n"
+msgstr ""
+"ファイルもしくは標準入力を連続的に読み込み, 標準出力に書き出します.\n"
+"\n"
+"  -A, --show-all           -vETと同じ\n"
+"  -b, --number-nonblank    空行を除いて行番号を付け加える\n"
+"  -e                       -vEと同じ\n"
+"  -E, --show-ends          行の最後に`$'を付け加える\n"
+"  -n, --number             行番号を付け加える\n"
+"  -s, --squeeze-blank      連続した空行を圧縮\n"
+"  -t                       -vTと同じ\n"
+"  -T, --show-tabs          TAB文字を`^I'で表示\n"
+"  -u                       (無効)\n"
+"  -v, --show-nonprinting   非表示文字と`^'や`^'を付けて表示\n"
+"                                             (LFDとTABは除く)\n"
+"      --help               使い方を表示\n"
+"      --version            バージョン情報を表示\n"
+"\n"
+"ファイルの指定がなかったり, `-'であった場合, 標準入力から読み込みます.\n"
+
+#: src/cat.c:106
+#, fuzzy
+msgid ""
+"  -t                       equivalent to -vT\n"
+"  -T, --show-tabs          display TAB characters as ^I\n"
+"  -u                       (ignored)\n"
+"  -v, --show-nonprinting   use ^ and M- notation, except for LFD and TAB\n"
+msgstr ""
+"ファイルもしくは標準入力を連続的に読み込み, 標準出力に書き出します.\n"
+"\n"
+"  -A, --show-all           -vETと同じ\n"
+"  -b, --number-nonblank    空行を除いて行番号を付け加える\n"
+"  -e                       -vEと同じ\n"
+"  -E, --show-ends          行の最後に`$'を付け加える\n"
+"  -n, --number             行番号を付け加える\n"
+"  -s, --squeeze-blank      連続した空行を圧縮\n"
+"  -t                       -vTと同じ\n"
+"  -T, --show-tabs          TAB文字を`^I'で表示\n"
+"  -u                       (無効)\n"
+"  -v, --show-nonprinting   非表示文字と`^'や`^'を付けて表示\n"
+"                                             (LFDとTABは除く)\n"
+"      --help               使い方を表示\n"
+"      --version            バージョン情報を表示\n"
+"\n"
+"ファイルの指定がなかったり, `-'であった場合, 標準入力から読み込みます.\n"
+
+#: src/cat.c:114 src/sum.c:72
+msgid ""
+"\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+msgstr ""
+
+#: src/cat.c:119
+msgid ""
+"\n"
+"  -B, --binary             use binary writes to the console device.\n"
+"\n"
+msgstr ""
+"\n"
+"  -B, --binary             コンソールデバイスにバイナリで出力\n"
+"\n"
+
+#: src/cat.c:124 src/cksum.c:291 src/comm.c:88 src/csplit.c:1532 src/cut.c:208
+#: src/expand.c:131 src/fmt.c:297 src/fold.c:86 src/head.c:115 src/join.c:182
+#: src/md5sum.c:157 src/nl.c:227 src/od.c:364 src/paste.c:423 src/pr.c:2864
+#: src/sort.c:352 src/split.c:123 src/sum.c:76 src/tac.c:146 src/tail.c:304
+#: src/tr.c:394 src/tsort.c:105 src/unexpand.c:394 src/uniq.c:169 src/wc.c:146
+msgid ""
+"\n"
+"Report bugs to <bug-textutils@gnu.org>."
+msgstr ""
+"\n"
+"バグを発見したら <bug-textutils@gnu.org> 宛に報告して下さい."
+
+#: src/cat.c:308
+#, c-format
+msgid "cannot do ioctl on `%s'"
+msgstr "`%s' で ioctl() を実行できません"
+
+#: src/cat.c:648 src/od.c:1004
+msgid "standard output"
+msgstr "標準出力"
+
+#: src/cat.c:779
+#, c-format
+msgid "%s: input file is output file"
+msgstr "%s: 入力ファイルが出力ファイルが同じファイルです"
+
+#: src/cksum.c:234
+#, fuzzy, c-format
+msgid "%s: file too long"
+msgstr "ファイルが切り詰められました"
+
+#: src/cksum.c:280
+#, fuzzy, c-format
+msgid ""
+"Usage: %s [FILE]...\n"
+"  or:  %s [OPTION]\n"
+msgstr "使用法: %s [オプション]... [入力元 [出力先]]\n"
+
+#: src/cksum.c:285
+msgid ""
+"Print CRC checksum and byte counts of each FILE.\n"
+"\n"
+msgstr ""
+
+#: src/comm.c:35 src/uniq.c:38
+msgid "Richard Stallman and David MacKenzie"
+msgstr ""
+
+#: src/comm.c:75
+#, c-format
+msgid "Usage: %s [OPTION]... LEFT_FILE RIGHT_FILE\n"
+msgstr "使用法: %s [オプション]... ファイルA  ファイルB\n"
+
+#: src/comm.c:79
+#, fuzzy
+msgid ""
+"Compare sorted files LEFT_FILE and RIGHT_FILE line by line.\n"
+"\n"
+"  -1              suppress lines unique to left file\n"
+"  -2              suppress lines unique to right file\n"
+"  -3              suppress lines that appear in both files\n"
+msgstr ""
+"それぞれソートされた ファイルA と ファイルB とを行ごとに比較します.\n"
+"\n"
+"  -1              ファイルA だけにしか含まれない行の出力を抑制\n"
+"  -2              ファイルB だけにしか含まれない行の出力を抑制\n"
+"  -3              両方のファイルに共通に含まれている行の出力を抑制\n"
+"      --help      使い方を表示\n"
+"      --version   バージョン情報を表示\n"
+
+#: src/csplit.c:41
+msgid "Stuart Kemp and David MacKenzie"
+msgstr ""
+
+#: src/csplit.c:290 src/csplit.c:1479 src/tac-pipe.c:57 src/tr.c:1607
+#: src/tr.c:1710 src/tr.c:1753
+msgid "read error"
+msgstr "読み込みエラー"
+
+#: src/csplit.c:584
+msgid "input disappeared"
+msgstr "入力が無くなりました"
+
+#: src/csplit.c:706 src/csplit.c:717
+#, c-format
+msgid "%s: line number out of range"
+msgstr "%s: 範囲外の行番号"
+
+#: src/csplit.c:744
+#, c-format
+msgid "%s: `%s': line number out of range"
+msgstr "%s: `%s': 範囲外の行番号"
+
+#: src/csplit.c:747 src/csplit.c:793
+#, c-format
+msgid " on repetition %d\n"
+msgstr ": 繰り返し %d 回目\n"
+
+#: src/csplit.c:789
+#, c-format
+msgid "%s: `%s': match not found"
+msgstr "%s: `%s': 一致しません"
+
+#: src/csplit.c:850 src/csplit.c:890 src/tac.c:262
+msgid "error in regular expression search"
+msgstr "正規表現による検索中のエラー"
+
+#: src/csplit.c:993
+#, c-format
+msgid "write error for `%s'"
+msgstr "`%s' への書き込みエラー"
+
+#: src/csplit.c:1065
+#, c-format
+msgid "%s: `+' or `-' expected after delimeter"
+msgstr "%s: デリミタ(`/') の次には `+',`-' 付きの整数値を指定して下さい"
+
+#: src/csplit.c:1069
+#, c-format
+msgid "%s: integer expected after `%c'"
+msgstr "%s: `%c' の次には整数値を指定して下さい"
+
+#: src/csplit.c:1089
+#, c-format
+msgid "%s: `}' is required in repeat count"
+msgstr "%s: 繰り返しカウントには `}' が必要です"
+
+#: src/csplit.c:1099
+#, c-format
+msgid "%s}: integer required between `{' and `}'"
+msgstr "%s}: `{' と `}' の間には整数値が必要です"
+
+#: src/csplit.c:1126
+#, c-format
+msgid "%s: closing delimeter `%c' missing"
+msgstr "%s: 終端デリミタ(`%c')が欠けています"
+
+#: src/csplit.c:1142
+#, c-format
+msgid "%s: invalid regular expression: %s"
+msgstr "%s: 無効な正規表現です: %s"
+
+#: src/csplit.c:1175
+#, c-format
+msgid "%s: invalid pattern"
+msgstr "%s: 無効なパターン指定です"
+
+#: src/csplit.c:1178
+#, c-format
+msgid "%s: line number must be greater than zero"
+msgstr "%s: 行番号はゼロより大きい数でなければなりません"
+
+#: src/csplit.c:1184
+#, c-format
+msgid "line number `%s' is smaller than preceding line number, %s"
+msgstr "行番号 `%s' が %s よりも順序が前になっています"
+
+#: src/csplit.c:1190
+#, c-format
+msgid "warning: line number `%s' is the same as preceding line number"
+msgstr "警告: 行番号 `%s' が同じ行番号になっています"
+
+#: src/csplit.c:1312
+msgid "missing conversion specifier in suffix"
+msgstr "末尾の変換修飾子が指定されていません"
+
+#: src/csplit.c:1318
+#, c-format
+msgid "invalid conversion specifier in suffix: %c"
+msgstr "末尾の変換修飾子が無効です: %c"
+
+#: src/csplit.c:1321
+#, c-format
+msgid "invalid conversion specifier in suffix: \\%.3o"
+msgstr "末尾の変換修飾子が無効です: \\%.3o"
+
+#: src/csplit.c:1353
+#, c-format
+msgid "missing %% conversion specification in suffix"
+msgstr "末尾の %% 変換修飾子が無効です"
+
+#: src/csplit.c:1356
+#, c-format
+msgid "too many %% conversion specifications in suffix"
+msgstr "末尾の %% 変換修飾子が多すぎます"
+
+#: src/csplit.c:1439
+#, c-format
+msgid "%s: invalid number"
+msgstr "%s: 無効な番号です"
+
+#: src/csplit.c:1462
+msgid "too few arguments"
+msgstr "引数が足りません"
+
+#: src/csplit.c:1494
+#, c-format
+msgid "Usage: %s [OPTION]... FILE PATTERN...\n"
+msgstr "使用法: %s [オプション]... ファイル パターン...\n"
+
+#: src/csplit.c:1498
+msgid ""
+"Output pieces of FILE separated by PATTERN(s) to files `xx01', `xx02', ...,\n"
+"and output byte counts of each piece to standard output.\n"
+"\n"
+msgstr ""
+
+#: src/csplit.c:1503 src/cut.c:175 src/expand.c:119 src/fmt.c:277
+#: src/fold.c:76 src/head.c:98 src/nl.c:185 src/paste.c:413 src/pr.c:2765
+#: src/ptx.c:1867 src/sort.c:295 src/split.c:104 src/tac.c:136 src/tail.c:248
+#: src/unexpand.c:384 src/uniq.c:143
+msgid ""
+"Mandatory arguments to long options are mandatory for short options too.\n"
+msgstr ""
+
+#: src/csplit.c:1506
+#, c-format
+msgid ""
+"  -b, --suffix-format=FORMAT use sprintf FORMAT instead of %d\n"
+"  -f, --prefix=PREFIX        use PREFIX instead of `xx'\n"
+"  -k, --keep-files           do not remove output files on errors\n"
+msgstr ""
+
+#: src/csplit.c:1511
+msgid ""
+"  -n, --digits=DIGITS        use specified number of digits instead of 2\n"
+"  -s, --quiet, --silent      do not print counts of output file sizes\n"
+"  -z, --elide-empty-files    remove empty output files\n"
+msgstr ""
+
+#: src/csplit.c:1518
+msgid ""
+"\n"
+"Read standard input if FILE is -.  Each PATTERN may be:\n"
+msgstr ""
+
+#: src/csplit.c:1522
+msgid ""
+"\n"
+"  INTEGER            copy up to but not including specified line number\n"
+"  /REGEXP/[OFFSET]   copy up to but not including a matching line\n"
+"  %REGEXP%[OFFSET]   skip to, but not including a matching line\n"
+"  {INTEGER}          repeat the previous pattern specified number of times\n"
+"  {*}                repeat the previous pattern as many times as possible\n"
+"\n"
+"A line OFFSET is a required `+' or `-' followed by a positive integer.\n"
+msgstr ""
+
+#: src/cut.c:39
+msgid "David Ihnat, David MacKenzie, and Jim Meyering"
+msgstr ""
+
+#: src/cut.c:167 src/expand.c:110 src/fold.c:67 src/head.c:88 src/nl.c:176
+#: src/paste.c:403 src/pr.c:2756 src/sort.c:285 src/sum.c:60 src/tac.c:127
+#: src/tail.c:238 src/unexpand.c:375 src/wc.c:128
+#, c-format
+msgid "Usage: %s [OPTION]... [FILE]...\n"
+msgstr "使用法: %s [オプション]... [ファイル]...\n"
+
+#: src/cut.c:171
+msgid ""
+"Print selected parts of lines from each FILE to standard output.\n"
+"\n"
+msgstr ""
+
+#: src/cut.c:178
+#, fuzzy
+msgid ""
+"  -b, --bytes=LIST        output only these bytes\n"
+"  -c, --characters=LIST   output only these characters\n"
+"  -d, --delimiter=DELIM   use DELIM instead of TAB for field delimiter\n"
+msgstr ""
+"ファイルの各行の折り返しを行い, 結果を標準出力に書き込みます.\n"
+"\n"
+"  -b, --bytes         カラム数ではなくバイト数でカウント\n"
+"  -s, --spaces        空白の位置で折り返す\n"
+"  -w, --width=WIDTH   80 の代わりに 1 行の幅を指定\n"
+"      --help          使い方を表示\n"
+"      --version       バージョン情報を表示\n"
+
+#: src/cut.c:183
+msgid ""
+"  -f, --fields=LIST       output only these fields;  also print any line\n"
+"                            that contains no delimiter character, unless\n"
+"                            the -s option is specified\n"
+"  -n                      (ignored)\n"
+msgstr ""
+
+#: src/cut.c:189
+msgid ""
+"  -s, --only-delimited    do not print lines not containing delimiters\n"
+"      --output-delimiter=STRING  use STRING as the output delimiter\n"
+"                            the default is to use the input delimiter\n"
+msgstr ""
+
+#: src/cut.c:196
+msgid ""
+"\n"
+"Use one, and only one of -b, -c or -f.  Each LIST is made up of one\n"
+"range, or many ranges separated by commas.  Each range is one of:\n"
+"\n"
+"  N     N'th byte, character or field, counted from 1\n"
+"  N-    from N'th byte, character or field, to end of line\n"
+"  N-M   from N'th to M'th (included) byte, character or field\n"
+"  -M    from first to M'th (included) byte, character or field\n"
+"\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+msgstr ""
+
+#: src/cut.c:263 src/cut.c:294 src/cut.c:354
+msgid "invalid byte or field list"
+msgstr "バイト数もしくはフィールドの範囲指定が間違っています"
+
+#: src/cut.c:624 src/cut.c:633
+msgid "only one type of list may be specified"
+msgstr "切り出し方として指定できるのは 1 種類だけです"
+
+#: src/cut.c:627
+msgid "missing list of positions"
+msgstr "位置指定リストがありません"
+
+#: src/cut.c:636
+msgid "missing list of fields"
+msgstr "フィールドのリストがありません"
+
+#: src/cut.c:643
+msgid "the delimiter must be a single character"
+msgstr "区切り文字に指定できるのは 1 文字だけです"
+
+#: src/cut.c:673
+msgid "you must specify a list of bytes, characters, or fields"
+msgstr "バイト, 文字, もしくはフィールドのリストを指定してください"
+
+#: src/cut.c:676
+msgid "a delimiter may be specified only when operating on fields"
+msgstr "フィールドを指定して実行する場合にのみ, 区切り文字が指定できます"
+
+#: src/cut.c:679
+msgid ""
+"suppressing non-delimited lines makes sense\n"
+"\tonly when operating on fields"
+msgstr ""
+"--only-delimited の指定は, \n"
+"\tフィールドを指定して実行するときだけに有効です"
+
+#: src/expand.c:114
+msgid ""
+"Convert tabs in each FILE to spaces, writing to standard output.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/expand.c:122
+msgid ""
+"  -i, --initial       do not convert TABs after non whitespace\n"
+"  -t, --tabs=NUMBER   have tabs NUMBER characters apart, not 8\n"
+msgstr ""
+
+#: src/expand.c:126
+msgid ""
+"  -t, --tabs=LIST     use comma separated list of explicit tab positions\n"
+msgstr ""
+
+#: src/expand.c:173 src/unexpand.c:153
+msgid "tab size contains an invalid character"
+msgstr "タブサイズの指定に不正な文字が含まれています"
+
+#: src/expand.c:191 src/unexpand.c:171
+msgid "tab size cannot be 0"
+msgstr "タブサイズは0(ゼロ)にできません"
+
+#: src/expand.c:193 src/unexpand.c:173
+msgid "tab sizes must be ascending"
+msgstr "タブサイズの指定は昇順でなければなりません"
+
+#: src/expand.c:386
+#, fuzzy
+msgid "`-LIST' option is obsolete; use `-t LIST'"
+msgstr "警告: 幅 %lu は無効な値です.  -- 代わりに %d を使用します"
+
+#: src/fmt.c:271
+#, c-format
+msgid "Usage: %s [-DIGITS] [OPTION]... [FILE]...\n"
+msgstr "使用法: %s [-DIGITS] [オプション]... [ファイル]...\n"
+
+#: src/fmt.c:272
+msgid ""
+"Reformat each paragraph in the FILE(s), writing to standard output.\n"
+"If no FILE or if FILE is `-', read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/fmt.c:280
+#, fuzzy
+msgid ""
+"  -c, --crown-margin        preserve indentation of first two lines\n"
+"  -p, --prefix=STRING       combine only lines having STRING as prefix\n"
+"  -s, --split-only          split long lines, but do not refill\n"
+msgstr ""
+"ファイル内のそれぞれの段落を整形しなおして, 標準出力に表示します.\n"
+"ファイル名を指定しなかった場合や, ファイル名が `-' と指定された場合には\n"
+"標準入力から読み込みます.\n"
+"\n"
+"長いオプションも, 短いオプションも, 引数の意味としては同等です.\n"
+"  -c, --crown-margin        最初の 2 行のインデントを保存\n"
+"  -p, --prefix=STRING       STRING で始まる行だけを結合\n"
+"  -s, --split-only          長い行の分割だけを行う\n"
+"  -t, --tagged-paragraph    1 行目と 2 行目とでインデントが異なる段落を処理\n"
+"  -u, --uniform-spacing     単語の間には 1つ, 文の間には 2 つの空白を置く\n"
+"  -w, --width=NUMBER        最大行幅 (標準 75文字) を指定\n"
+"      --help                使い方を表示\n"
+"      --version             バージョン情報を表示\n"
+"\n"
+"-wNUMBER という形式を用いる際, 文字 `w' は省略できます.\n"
+
+#: src/fmt.c:286
+#, fuzzy
+msgid ""
+"  -t, --tagged-paragraph    indentation of first line different from second\n"
+"  -u, --uniform-spacing     one space between words, two after sentences\n"
+"  -w, --width=NUMBER        maximum line width (default of 75 columns)\n"
+msgstr ""
+"ファイル内のそれぞれの段落を整形しなおして, 標準出力に表示します.\n"
+"ファイル名を指定しなかった場合や, ファイル名が `-' と指定された場合には\n"
+"標準入力から読み込みます.\n"
+"\n"
+"長いオプションも, 短いオプションも, 引数の意味としては同等です.\n"
+"  -c, --crown-margin        最初の 2 行のインデントを保存\n"
+"  -p, --prefix=STRING       STRING で始まる行だけを結合\n"
+"  -s, --split-only          長い行の分割だけを行う\n"
+"  -t, --tagged-paragraph    1 行目と 2 行目とでインデントが異なる段落を処理\n"
+"  -u, --uniform-spacing     単語の間には 1つ, 文の間には 2 つの空白を置く\n"
+"  -w, --width=NUMBER        最大行幅 (標準 75文字) を指定\n"
+"      --help                使い方を表示\n"
+"      --version             バージョン情報を表示\n"
+"\n"
+"-wNUMBER という形式を用いる際, 文字 `w' は省略できます.\n"
+
+#: src/fmt.c:293
+msgid ""
+"\n"
+"In -wNUMBER, the letter `w' may be omitted.\n"
+msgstr ""
+
+#: src/fmt.c:345
+#, fuzzy, c-format
+msgid "invalid width option: `%s'"
+msgstr "型指定が間違っています `%s'"
+
+#: src/fmt.c:385
+#, fuzzy, c-format
+msgid "invalid width: `%s'"
+msgstr "フィールド数が間違っています: `%s'"
+
+#: src/fold.c:71
+msgid ""
+"Wrap input lines in each FILE (standard input by default), writing to\n"
+"standard output.\n"
+"\n"
+msgstr ""
+
+#: src/fold.c:79
+msgid ""
+"  -b, --bytes         count bytes rather than columns\n"
+"  -s, --spaces        break at spaces\n"
+"  -w, --width=WIDTH   use WIDTH columns instead of 80\n"
+msgstr ""
+
+#: src/fold.c:267
+#, fuzzy, c-format
+msgid "`%s' option is obsolete; use `%s'"
+msgstr "警告: 幅 %lu は無効な値です.  -- 代わりに %d を使用します"
+
+#: src/fold.c:295
+#, c-format
+msgid "invalid number of columns: `%s'"
+msgstr "行幅の指定が無効です: `%s'"
+
+#: src/head.c:92
+#, fuzzy
+msgid ""
+"Print first 10 lines of each FILE to standard output.\n"
+"With more than one FILE, precede each with a header giving the file name.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"ファイルの先頭から 10 行分を標準出力に表示します.\n"
+"複数のファイルを処理する際には, 各出力のはじめにファイル名を表示します.\n"
+"ファイル名を指定しないか, ファイル名に `-' を指定した場合には, \n"
+"標準入力を読み込みます.\n"
+"\n"
+"  -c, --bytes=SIZE         冒頭の SIZE バイト数だけ出力\n"
+"  -n, --lines=NUMBER       冒頭の指定行数行数出力 (デフォルト 10行)\n"
+"  -q, --quiet, --silent    ファイルごとのヘッダの出力を行わない\n"
+"  -v, --verbose            ファイルごとにヘッダを出力\n"
+"      --help               使い方を表示\n"
+"      --version            バージョン情報を表示\n"
+"\n"
+"SIZEはいくつかのサフィックスを付けられます: 512バイトでは`b',1キロでは`k',\n"
+"1メガでは`m'となっています.\n"
+"最初のオプションとして`-VALUE'を与えた場合, VALUE に`b',`k',`m'のサフィック\n"
+"スがあると`-c VALUE'となり, それ以外では`-n VALUE'と解釈されます.\n"
+
+#: src/head.c:101
+msgid ""
+"  -c, --bytes=SIZE         print first SIZE bytes\n"
+"  -n, --lines=NUMBER       print first NUMBER lines instead of first 10\n"
+msgstr ""
+
+#: src/head.c:105
+msgid ""
+"  -q, --quiet, --silent    never print headers giving file names\n"
+"  -v, --verbose            always print headers giving file names\n"
+msgstr ""
+
+#: src/head.c:111 src/split.c:119
+msgid ""
+"\n"
+"SIZE may have a multiplier suffix: b for 512, k for 1K, m for 1 Meg.\n"
+msgstr ""
+
+#: src/head.c:189
+#, fuzzy, c-format
+msgid "cannot reposition file pointer for %s"
+msgstr "`%s' で ioctl() を実行できません"
+
+#: src/head.c:220 src/md5sum.c:334 src/md5sum.c:675 src/od.c:950 src/od.c:1990
+#: src/pr.c:1166 src/pr.c:1373 src/pr.c:1495 src/tac.c:484 src/tac.c:490
+#: src/tr.c:2026 src/tsort.c:585
+msgid "standard input"
+msgstr "標準入力"
+
+#: src/head.c:255 src/tail.c:1380
+#, c-format
+msgid "%s: %s is so large that it is not representable"
+msgstr "%s: %s は大きすぎて表示できません"
+
+#: src/head.c:256 src/tail.c:1382
+msgid "number of lines"
+msgstr "行数"
+
+#: src/head.c:256 src/tail.c:1383
+msgid "number of bytes"
+msgstr "バイト数"
+
+#: src/head.c:263 src/tail.c:1469
+msgid "invalid number of lines"
+msgstr "無効な行数です"
+
+#: src/head.c:264 src/tail.c:1470
+msgid "invalid number of bytes"
+msgstr "無効なバイト数です"
+
+#: src/head.c:340
+#, c-format
+msgid "unrecognized option `-%c'"
+msgstr "オプション `-%c' を認識できません"
+
+#: src/head.c:347
+#, fuzzy, c-format
+msgid "`-%s' option is obsolete; use `-%c %.*s%.*s%s'"
+msgstr "警告: 幅 %lu は無効な値です.  -- 代わりに %d を使用します"
+
+#: src/join.c:146
+#, c-format
+msgid "Usage: %s [OPTION]... FILE1 FILE2\n"
+msgstr "使用法: %s [オプション]... ファイル1 ファイル2\n"
+
+#: src/join.c:150
+msgid ""
+"For each pair of input lines with identical join fields, write a line to\n"
+"standard output.  The default join field is the first, delimited\n"
+"by whitespace.  When FILE1 or FILE2 (not both) is -, read standard input.\n"
+"\n"
+"  -a SIDE           print unpairable lines coming from file SIDE\n"
+"  -e EMPTY          replace missing input fields with EMPTY\n"
+msgstr ""
+
+#: src/join.c:158
+msgid ""
+"  -i, --ignore-case ignore differences in case when comparing fields\n"
+"  -j FIELD          (obsolescent) equivalent to `-1 FIELD -2 FIELD'\n"
+"  -j1 FIELD         (obsolescent) equivalent to `-1 FIELD'\n"
+"  -j2 FIELD         (obsolescent) equivalent to `-2 FIELD'\n"
+"  -o FORMAT         obey FORMAT while constructing output line\n"
+"  -t CHAR           use CHAR as input and output field separator\n"
+msgstr ""
+
+#: src/join.c:166
+#, fuzzy
+msgid ""
+"  -v SIDE           like -a SIDE, but suppress joined output lines\n"
+"  -1 FIELD          join on this FIELD of file 1\n"
+"  -2 FIELD          join on this FIELD of file 2\n"
+msgstr ""
+"それぞれソートされた ファイルA と ファイルB とを行ごとに比較します.\n"
+"\n"
+"  -1              ファイルA だけにしか含まれない行の出力を抑制\n"
+"  -2              ファイルB だけにしか含まれない行の出力を抑制\n"
+"  -3              両方のファイルに共通に含まれている行の出力を抑制\n"
+"      --help      使い方を表示\n"
+"      --version   バージョン情報を表示\n"
+
+#: src/join.c:173
+msgid ""
+"\n"
+"Unless -t CHAR is given, leading blanks separate fields and are ignored,\n"
+"else fields are separated by CHAR.  Any FIELD is a field number counted\n"
+"from 1.  FORMAT is one or more comma or blank separated specifications,\n"
+"each being `SIDE.FIELD' or `0'.  Default FORMAT outputs the join field,\n"
+"the remaining fields from FILE1, the remaining fields from FILE2, all\n"
+"separated by CHAR.\n"
+msgstr ""
+
+#: src/join.c:648
+#, c-format
+msgid "invalid field specifier: `%s'"
+msgstr "フィールドの指定が無効です: `%s'"
+
+#: src/join.c:662 src/join.c:778 src/join.c:814
+#, c-format
+msgid "invalid field number: `%s'"
+msgstr "フィールド数が間違っています: `%s'"
+
+#: src/join.c:675
+#, c-format
+msgid "invalid file number in field spec: `%s'"
+msgstr "フィールドの指定でのファイル番号は無効です: %s"
+
+#: src/join.c:798
+#, c-format
+msgid "invalid field number for file 1: `%s'"
+msgstr "ファイル1 のフィールド数が間違ってます: `%s'"
+
+#: src/join.c:807
+#, c-format
+msgid "invalid field number for file 2: `%s'"
+msgstr "ファイル2 のフィールド数が間違ってます: `%s'"
+
+#: src/join.c:839
+msgid "too many non-option arguments"
+msgstr "非オプション引数の数が多すぎます"
+
+#: src/join.c:861
+msgid "too few non-option arguments"
+msgstr "非オプション引数の数が少なすぎます"
+
+#: src/join.c:872
+msgid "both files cannot be standard input"
+msgstr "両方のファイルを標準入力にはできません"
+
+#: src/md5sum.c:38
+msgid "Ulrich Drepper and Scott Miller"
+msgstr ""
+
+#: src/md5sum.c:125
+#, c-format
+msgid ""
+"Usage: %s [OPTION] [FILE]...\n"
+"  or:  %s [OPTION] --check [FILE]\n"
+"Print or check %s (%d-bit) checksums.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+msgstr ""
+
+#: src/md5sum.c:134
+#, c-format
+msgid ""
+"\n"
+"  -b, --binary            read files in binary mode (default on DOS/"
+"Windows)\n"
+"  -c, --check             check %s sums against given list\n"
+"  -t, --text              read files in text mode (default)\n"
+"\n"
+msgstr ""
+
+#: src/md5sum.c:142
+msgid ""
+"The following two options are useful only when verifying checksums:\n"
+"      --status            don't output anything, status code shows success\n"
+"  -w, --warn              warn about improperly formated checksum lines\n"
+"\n"
+msgstr ""
+
+#: src/md5sum.c:150
+#, c-format
+msgid ""
+"\n"
+"The sums are computed as described in %s.  When checking, the input\n"
+"should be a former output of this program.  The default mode is to print\n"
+"a line with checksum, a character indicating type (`*' for binary, ` ' for\n"
+"text), and name for each FILE.\n"
+msgstr ""
+
+#: src/md5sum.c:379
+#, fuzzy, c-format
+msgid "%s: %lu: improperly formatted %s checksum line"
+msgstr "%s: %lu: MD5 チェックサムの行として不適切な書式です"
+
+#: src/md5sum.c:401
+#, c-format
+msgid "%s: FAILED open or read\n"
+msgstr "%s: オープンまたは読み込みに失敗しました\n"
+
+#: src/md5sum.c:425
+msgid "FAILED"
+msgstr "失敗"
+
+#: src/md5sum.c:425
+msgid "OK"
+msgstr "完了"
+
+#: src/md5sum.c:438
+#, c-format
+msgid "%s: read error"
+msgstr "%s: 読み込みエラー"
+
+#: src/md5sum.c:451
+#, fuzzy, c-format
+msgid "%s: no properly formatted %s checksum lines found"
+msgstr "%s: MD5 チェックサムとして適切な書式の行がありません"
+
+#: src/md5sum.c:464
+#, c-format
+msgid "WARNING: %d of %d listed %s could not be read"
+msgstr "警告: %2$d のうち %1$d 個の%3$sを読めませんでした"
+
+#: src/md5sum.c:467
+msgid "file"
+msgstr "ファイル"
+
+#: src/md5sum.c:467
+msgid "files"
+msgstr "ファイル"
+
+#: src/md5sum.c:473
+#, c-format
+msgid "WARNING: %d of %d computed %s did NOT match"
+msgstr "警告: %2$d の内 %1$d の%3$sが一致しませんでした"
+
+#: src/md5sum.c:476
+msgid "checksum"
+msgstr "チェックサム"
+
+#: src/md5sum.c:476
+msgid "checksums"
+msgstr "チェックサム"
+
+#: src/md5sum.c:558
+msgid ""
+"the --binary and --text options are meaningless when verifying checksums"
+msgstr "--binary と --text オプションはチェックサムの確認時のみ意味を持ちます"
+
+#: src/md5sum.c:566
+msgid "the --string and --check options are mutually exclusive"
+msgstr "オプション --string と --check は排他的に使われます"
+
+#: src/md5sum.c:573
+msgid "the --status option is meaningful only when verifying checksums"
+msgstr "--status オプションはチェックサムの確認時のみ意味を持ちます"
+
+#: src/md5sum.c:580
+msgid "the --warn option is meaningful only when verifying checksums"
+msgstr "--warn オプションはチェックサムの確認時のみ意味を持ちます"
+
+#: src/md5sum.c:590
+msgid "no files may be specified when using --string"
+msgstr "--string オプションを利用するときは, ファイルを指定できません"
+
+#: src/md5sum.c:612
+msgid "only one argument may be specified when using --check"
+msgstr "--check オプションを使うときは, 引数を一つだけ指定できます"
+
+#: src/nl.c:39
+msgid "Scott Bartram and David MacKenzie"
+msgstr ""
+
+#: src/nl.c:180
+msgid ""
+"Write each FILE to standard output, with line numbers added.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/nl.c:188
+#, fuzzy
+msgid ""
+"  -b, --body-numbering=STYLE      use STYLE for numbering body lines\n"
+"  -d, --section-delimiter=CC      use CC for separating logical pages\n"
+"  -f, --footer-numbering=STYLE    use STYLE for numbering footer lines\n"
+msgstr ""
+"ファイル毎に行を逆順にして標準出力に書き込みます\n"
+"FILE が指定されないか FILE として - が指定された場合, 標準入力を読み込みま"
+"す\n"
+"\n"
+"  -b, --before             区切り文字列をレコードの前ではなく後ろに\n"
+"  -r, --regex              区切り文字列を正規表現として解釈\n"
+"  -s, --separator=STRING   改行文字の代わりに STRING を区切り文字列に\n"
+"      --help               使い方を表示\n"
+"      --version            バージョン情報を表示\n"
+
+#: src/nl.c:193
+msgid ""
+"  -h, --header-numbering=STYLE    use STYLE for numbering header lines\n"
+"  -i, --page-increment=NUMBER     line number increment at each line\n"
+"  -l, --join-blank-lines=NUMBER   group of NUMBER empty lines counted as "
+"one\n"
+"  -n, --number-format=FORMAT      insert line numbers according to FORMAT\n"
+"  -p, --no-renumber               do not reset line numbers at logical "
+"pages\n"
+"  -s, --number-separator=STRING   add STRING after (possible) line number\n"
+msgstr ""
+
+#: src/nl.c:201
+msgid ""
+"  -v, --first-page=NUMBER         first line number on each logical page\n"
+"  -w, --number-width=NUMBER       use NUMBER columns for line numbers\n"
+msgstr ""
+
+#: src/nl.c:207
+msgid ""
+"\n"
+"By default, selects -v1 -i1 -l1 -sTAB -w6 -nrn -hn -bt -fn.  CC are\n"
+"two delimiter characters for separating logical pages, a missing\n"
+"second character implies :.  Type \\\\ for \\.  STYLE is one of:\n"
+msgstr ""
+
+#: src/nl.c:213
+msgid ""
+"\n"
+"  a         number all lines\n"
+"  t         number only nonempty lines\n"
+"  n         number no lines\n"
+"  pREGEXP   number only lines that contain a match for REGEXP\n"
+"\n"
+"FORMAT is one of:\n"
+"\n"
+"  ln   left justified, no leading zeros\n"
+"  rn   right justified, no leading zeros\n"
+"  rz   right justified, leading zeros\n"
+"\n"
+msgstr ""
+
+#: src/nl.c:500
+#, c-format
+msgid "invalid starting line number: `%s'"
+msgstr "無効な開始行番号です: `%s'"
+
+#: src/nl.c:510
+#, c-format
+msgid "invalid line number increment: `%s'"
+msgstr "行番号の増分が無効です: `%s'"
+
+#: src/nl.c:523
+#, c-format
+msgid "invalid number of blank lines: `%s'"
+msgstr "無効な空行の行番号です: `%s'"
+
+#: src/nl.c:537
+#, c-format
+msgid "invalid line number field width: `%s'"
+msgstr "フィールド幅の指定行番号が無効です: `%s'"
+
+#: src/od.c:281
+#, c-format
+msgid ""
+"Usage: %s [OPTION]... [FILE]...\n"
+"  or:  %s --traditional [FILE] [[+]OFFSET [[+]LABEL]]\n"
+msgstr ""
+"使用法:   %s [オプション]... [ファイル]...\n"
+"  又は: %s --traditional [ファイル] [[+]オフセット [[+]ラベル]]\n"
+
+#: src/od.c:286
+msgid ""
+"\n"
+"Write an unambiguous representation, octal bytes by default,\n"
+"of FILE to standard output.  With more than one FILE argument,\n"
+"concatenate them in the listed order to form the input.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/od.c:293
+msgid "All arguments to long options are mandatory for short options.\n"
+msgstr ""
+
+#: src/od.c:296
+msgid ""
+"  -A, --address-radix=RADIX   decide how file offsets are printed\n"
+"  -j, --skip-bytes=BYTES      skip BYTES input bytes first\n"
+msgstr ""
+
+#: src/od.c:300
+msgid ""
+"  -N, --read-bytes=BYTES      limit dump to BYTES input bytes\n"
+"  -s, --strings[=BYTES]       output strings of at least BYTES graphic "
+"chars\n"
+"  -t, --format=TYPE           select output format or formats\n"
+"  -v, --output-duplicates     do not use * to mark line suppression\n"
+"  -w, --width[=BYTES]         output BYTES bytes per output line\n"
+"      --traditional           accept arguments in traditional form\n"
+msgstr ""
+
+#: src/od.c:310
+msgid ""
+"\n"
+"Traditional format specifications may be intermixed; they accumulate:\n"
+"  -a   same as -t a,  select named characters\n"
+"  -b   same as -t oC, select octal bytes\n"
+"  -c   same as -t c,  select ASCII characters or backslash escapes\n"
+"  -d   same as -t u2, select unsigned decimal shorts\n"
+msgstr ""
+
+#: src/od.c:318
+msgid ""
+"  -f   same as -t fF, select floats\n"
+"  -h   same as -t x2, select hexadecimal shorts\n"
+"  -i   same as -t d2, select decimal shorts\n"
+"  -l   same as -t d4, select decimal longs\n"
+"  -o   same as -t o2, select octal shorts\n"
+"  -x   same as -t x2, select hexadecimal shorts\n"
+msgstr ""
+
+#: src/od.c:326
+msgid ""
+"\n"
+"For older syntax (second call format), OFFSET means -j OFFSET.  LABEL\n"
+"is the pseudo-address at first byte printed, incremented when dump is\n"
+"progressing.  For OFFSET and LABEL, a 0x or 0X prefix indicates\n"
+"hexadecimal, suffixes may be . for octal and b for multiply by 512.\n"
+"\n"
+"TYPE is made up of one or more of these specifications:\n"
+"\n"
+"  a          named character\n"
+"  c          ASCII character or backslash escape\n"
+msgstr ""
+
+#: src/od.c:338
+msgid ""
+"  d[SIZE]    signed decimal, SIZE bytes per integer\n"
+"  f[SIZE]    floating point, SIZE bytes per integer\n"
+"  o[SIZE]    octal, SIZE bytes per integer\n"
+"  u[SIZE]    unsigned decimal, SIZE bytes per integer\n"
+"  x[SIZE]    hexadecimal, SIZE bytes per integer\n"
+msgstr ""
+
+#: src/od.c:345
+msgid ""
+"\n"
+"SIZE is a number.  For TYPE in doux, SIZE may also be C for\n"
+"sizeof(char), S for sizeof(short), I for sizeof(int) or L for\n"
+"sizeof(long).  If TYPE is f, SIZE may also be F for sizeof(float), D\n"
+"for sizeof(double) or L for sizeof(long double).\n"
+msgstr ""
+
+#: src/od.c:352
+msgid ""
+"\n"
+"RADIX is d for decimal, o for octal, x for hexadecimal or n for none.\n"
+"BYTES is hexadecimal with 0x or 0X prefix, it is multiplied by 512\n"
+"with b suffix, by 1024 with k and by 1048576 with m.  Adding a z suffix to\n"
+"any type adds a display of printable characters to the end of each line\n"
+"of output.  "
+msgstr ""
+
+#: src/od.c:360
+msgid ""
+"--string without a number implies 3.  --width without a number\n"
+"implies 32.  By default, od uses -A o -t d2 -w 16.\n"
+msgstr ""
+
+#: src/od.c:716 src/od.c:835
+#, c-format
+msgid "invalid type string `%s'"
+msgstr "型指定が間違っています `%s'"
+
+#: src/od.c:726
+#, c-format
+msgid ""
+"invalid type string `%s';\n"
+"this system doesn't provide a %lu-byte integral type"
+msgstr ""
+"型指定`%s'が間違っています\n"
+" -- このシステムでは %lu バイト整数型を扱えません"
+
+#: src/od.c:845
+#, c-format
+msgid ""
+"invalid type string `%s';\n"
+"this system doesn't provide a %lu-byte floating point type"
+msgstr ""
+"型指定`%s'が間違っています\n"
+" -- このシステムでは %lu バイト浮動小数点型を扱えません"
+
+#: src/od.c:908
+#, c-format
+msgid "invalid character `%c' in type string `%s'"
+msgstr "間違った文字 `%c' が型指定 `%s' の中にあります"
+
+#: src/od.c:1135
+msgid "cannot skip past end of combined input"
+msgstr "入力の終端を越えて読みとばす事はできません"
+
+#: src/od.c:1388
+msgid "old-style offset"
+msgstr "古い形式のオフセット"
+
+#: src/od.c:1696
+#, c-format
+msgid "invalid output address radix `%c'; it must be one character from [doxn]"
+msgstr ""
+"無効な出力アドレスの基数 `%c' が指定されました\n"
+"             -- doxn のいずれかを指定してください"
+
+#: src/od.c:1706
+msgid "skip argument"
+msgstr "スキップ数指定の引数"
+
+#: src/od.c:1714
+msgid "limit argument"
+msgstr "入力の大きさ制限の引数"
+
+#: src/od.c:1724
+msgid "minimum string length"
+msgstr "文字列長の最小値"
+
+#: src/od.c:1729 src/od.c:1795
+#, c-format
+msgid "%s is too large"
+msgstr ""
+
+#: src/od.c:1793
+msgid "width specification"
+msgstr "幅の指定"
+
+#: src/od.c:1815
+msgid "no type may be specified when dumping strings"
+msgstr "文字列ダンプ時の型は指定できません"
+
+#: src/od.c:1863
+#, c-format
+msgid "invalid second operand in compatibility mode `%s'"
+msgstr "互換モード `%s' 中の 2 つめの演算子が無効"
+
+#: src/od.c:1884
+msgid "in compatibility mode, the last two arguments must be offsets"
+msgstr "互換モードでは, 後ろ 2 つの引数はオフセットでなければなりません"
+
+#: src/od.c:1891
+msgid "compatibility mode supports at most three arguments"
+msgstr "互換モードでは, 3 つ以上の引数を受け付けません"
+
+#: src/od.c:1964
+#, c-format
+msgid "warning: invalid width %lu; using %d instead"
+msgstr "警告: 幅 %lu は無効な値です.  -- 代わりに %d を使用します"
+
+#: src/od.c:1980
+#, c-format
+msgid "%d: fmt=\"%s\" width=%d\n"
+msgstr "%d: フォーマット=\"%s\" 幅=%d\n"
+
+#: src/paste.c:50
+msgid "David M. Ihnat and David MacKenzie"
+msgstr ""
+
+#: src/paste.c:208
+msgid "standard input is closed"
+msgstr "標準入力が閉じられています"
+
+#: src/paste.c:407
+msgid ""
+"Write lines consisting of the sequentially corresponding lines from\n"
+"each FILE, separated by TABs, to standard output.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/paste.c:416
+msgid ""
+"  -d, --delimiters=LIST   reuse characters from LIST instead of TABs\n"
+"  -s, --serial            paste one file at a time instead of in parallel\n"
+msgstr ""
+
+#: src/pr.c:328
+msgid "Pete TerMaat and Roland Huebner"
+msgstr ""
+
+#: src/pr.c:805
+#, c-format
+msgid "`--pages' invalid range of page numbers: `%s'"
+msgstr "`--pages' ページ数の範囲指定が間違っています: `%s'"
+
+#: src/pr.c:817
+#, c-format
+msgid "`--pages' invalid starting page number: `%s'"
+msgstr "`--pages' 開始ページ指定が無効です: `%s'"
+
+#: src/pr.c:829
+#, c-format
+msgid "`--pages' invalid ending page number: `%s'"
+msgstr "`--pages' 終了ページの指定が無効です: `%s'"
+
+#: src/pr.c:836
+msgid "`--pages' starting page number is larger than ending page number"
+msgstr "`--pages' 開始ページの指定が終了ページよりも大きい値になっています"
+
+#: src/pr.c:913
+msgid "`--pages=FIRST_PAGE[:LAST_PAGE]' missing argument"
+msgstr "`--pages=開始ページ[:終了ページ]' 指定がありません"
+
+#: src/pr.c:924
+#, c-format
+msgid "`--columns=COLUMN' invalid number of columns: `%s'"
+msgstr "`--columns=行幅' 行幅の指定が無効です: `%s'"
+
+#: src/pr.c:978
+#, c-format
+msgid "`-l PAGE_LENGTH' invalid number of lines: `%s'"
+msgstr "`-l ページの長さ' 無効な行番号です: `%s'"
+
+#: src/pr.c:1002
+#, c-format
+msgid "`-N NUMBER' invalid starting line number: `%s'"
+msgstr "`-N 行番号' 無効な開始行番号: `%s'"
+
+#: src/pr.c:1014
+#, c-format
+msgid "`-o MARGIN' invalid line offset: `%s'"
+msgstr "`-o 余白' 無効な行オフセット: `%s'"
+
+#: src/pr.c:1055
+#, c-format
+msgid "`-w PAGE_WIDTH' invalid number of characters: `%s'"
+msgstr "`-w ページの幅' 無効な文字数です: `%s'"
+
+#: src/pr.c:1067
+#, c-format
+msgid "`-W PAGE_WIDTH' invalid number of characters: `%s'"
+msgstr "`-W ページの幅' 無効な文字数です: `%s'"
+
+#: src/pr.c:1081
+msgid "%b %e %H:%M %Y"
+msgstr ""
+
+#: src/pr.c:1090
+msgid "Cannot specify number of columns when printing in parallel."
+msgstr "並列に印刷するときにはカラム数を指定できません."
+
+#: src/pr.c:1094
+msgid "Cannot specify both printing across and printing in parallel."
+msgstr "段組の横方向印刷(-a)と並列印刷を同時指定できません."
+
+#: src/pr.c:1190
+#, c-format
+msgid "`-%c' extra characters or invalid number in the argument: `%s'"
+msgstr "`-%c' 余分な文字が付いているか引数の数字が無効です: `%s'"
+
+#: src/pr.c:1301
+msgid "page width too narrow"
+msgstr "ページ幅が狭すぎます"
+
+#: src/pr.c:2364
+#, c-format
+msgid "starting page number larger than total number of pages: `%d'"
+msgstr "開始ページの指定が総ページ数よりも大きい値になっています: `%d'"
+
+#: src/pr.c:2395
+#, c-format
+msgid "Page %d"
+msgstr ""
+
+#: src/pr.c:2761
+msgid ""
+"Paginate or columnate FILE(s) for printing.\n"
+"\n"
+msgstr ""
+
+#: src/pr.c:2768
+msgid ""
+"  +FIRST_PAGE[:LAST_PAGE], --pages=FIRST_PAGE[:LAST_PAGE]\n"
+"                    begin [stop] printing with page FIRST_[LAST_]PAGE\n"
+"  -COLUMN, --columns=COLUMN\n"
+"                    produce COLUMN-column output and print columns down,\n"
+"                    unless -a is used. Balance number of lines in the\n"
+"                    columns on each page.\n"
+msgstr ""
+
+#: src/pr.c:2776
+msgid ""
+"  -a, --across      print columns across rather than down, used together\n"
+"                    with -COLUMN\n"
+"  -c, --show-control-chars\n"
+"                    use hat notation (^G) and octal backslash notation\n"
+"  -d, --double-space\n"
+"                    double space the output\n"
+msgstr ""
+
+#: src/pr.c:2784
+msgid ""
+"  -D, --date-format=FORMAT\n"
+"                    use FORMAT for the header date\n"
+"  -e[CHAR[WIDTH]], --expand-tabs[=CHAR[WIDTH]]\n"
+"                    expand input CHARs (TABs) to tab WIDTH (8)\n"
+"  -F, -f, --form-feed\n"
+"                    use form feeds instead of newlines to separate pages\n"
+"                    (by a 3-line page header with -F or a 5-line header\n"
+"                    and trailer without -F)\n"
+msgstr ""
+
+#: src/pr.c:2794
+msgid ""
+"  -h HEADER, --header=HEADER\n"
+"                    use a centered HEADER instead of filename in page "
+"header,\n"
+"                    -h \"\" prints a blank line, don't use -h\"\"\n"
+"  -i[CHAR[WIDTH]], --output-tabs[=CHAR[WIDTH]]\n"
+"                    replace spaces with CHARs (TABs) to tab WIDTH (8)\n"
+"  -J, --join-lines  merge full lines, turns off -W line truncation, no "
+"column\n"
+"                    alignment, --sep-string[=STRING] sets separators\n"
+msgstr ""
+
+#: src/pr.c:2803
+msgid ""
+"  -l PAGE_LENGTH, --length=PAGE_LENGTH\n"
+"                    set the page length to PAGE_LENGTH (66) lines\n"
+"                    (default number of lines of text 56, and with -F 63)\n"
+"  -m, --merge       print all files in parallel, one in each column,\n"
+"                    truncate lines, but join lines of full length with -J\n"
+msgstr ""
+
+#: src/pr.c:2810
+msgid ""
+"  -n[SEP[DIGITS]], --number-lines[=SEP[DIGITS]]\n"
+"                    number lines, use DIGITS (5) digits, then SEP (TAB),\n"
+"                    default counting starts with 1st line of input file\n"
+"  -N NUMBER, --first-line-number=NUMBER\n"
+"                    start counting with NUMBER at 1st line of first\n"
+"                    page printed (see +FIRST_PAGE)\n"
+msgstr ""
+
+#: src/pr.c:2818
+msgid ""
+"  -o MARGIN, --indent=MARGIN\n"
+"                    offset each line with MARGIN (zero) spaces, do not\n"
+"                    affect -w or -W, MARGIN will be added to PAGE_WIDTH\n"
+"  -r, --no-file-warnings\n"
+"                    omit warning when a file cannot be opened\n"
+msgstr ""
+
+#: src/pr.c:2825
+msgid ""
+"  -s[CHAR],--separator[=CHAR]\n"
+"                    separate columns by a single character, default for "
+"CHAR\n"
+"                    is the <TAB> character without -w and 'no char' with -w\n"
+"                    -s[CHAR] turns off line truncation of all 3 column\n"
+"                    options (-COLUMN|-a -COLUMN|-m) except -w is set\n"
+msgstr ""
+
+#: src/pr.c:2832
+msgid "  -SSTRING, --sep-string[=STRING]\n"
+msgstr ""
+
+#: src/pr.c:2835
+msgid ""
+"                    separate columns by STRING,\n"
+"                    without -S: Default separator <TAB> with -J and <space>\n"
+"                    otherwise (same as -S\" \"), no effect on column "
+"options\n"
+"  -t, --omit-header omit page headers and trailers\n"
+msgstr ""
+
+#: src/pr.c:2841
+msgid ""
+"  -T, --omit-pagination\n"
+"                    omit page headers and trailers, eliminate any "
+"pagination\n"
+"                    by form feeds set in input files\n"
+"  -v, --show-nonprinting\n"
+"                    use octal backslash notation\n"
+"  -w PAGE_WIDTH, --width=PAGE_WIDTH\n"
+"                    set page width to PAGE_WIDTH (72) characters for\n"
+"                    multiple text-column output only, -s[char] turns off "
+"(72)\n"
+msgstr ""
+
+#: src/pr.c:2851
+#, fuzzy
+msgid ""
+"  -W PAGE_WIDTH, --page-width=PAGE_WIDTH\n"
+"                    set page width to PAGE_WIDTH (72) characters always,\n"
+"                    truncate lines, except -J option is set, no "
+"interference\n"
+"                    with -S or -s\n"
+msgstr ""
+"それぞれソートされた ファイルA と ファイルB とを行ごとに比較します.\n"
+"\n"
+"  -1              ファイルA だけにしか含まれない行の出力を抑制\n"
+"  -2              ファイルB だけにしか含まれない行の出力を抑制\n"
+"  -3              両方のファイルに共通に含まれている行の出力を抑制\n"
+"      --help      使い方を表示\n"
+"      --version   バージョン情報を表示\n"
+
+#: src/pr.c:2859
+msgid ""
+"\n"
+"-T implied by -l nn when nn <= 10 or <= 3 with -F. With no FILE, or when\n"
+"FILE is -, read standard input.\n"
+msgstr ""
+
+#: src/ptx.c:410
+#, c-format
+msgid "%s (for regexp `%s')"
+msgstr "%s (正規表現 `%s')"
+
+#: src/ptx.c:1859
+#, c-format
+msgid ""
+"Usage: %s [OPTION]... [INPUT]...   (without -G)\n"
+"  or:  %s -G [OPTION]... [INPUT [OUTPUT]]\n"
+msgstr ""
+"使用法: %s [オプション]... [入力元]... (-G なし)\n"
+"  又は: %s -G [オプション]... [入力元 [出力先]]\n"
+
+#: src/ptx.c:1863
+msgid ""
+"Output a permuted index, including context, of the words in the input "
+"files.\n"
+"\n"
+msgstr ""
+
+#: src/ptx.c:1870
+msgid ""
+"  -A, --auto-reference           output automatically generated references\n"
+"  -C, --copyright                display Copyright and copying conditions\n"
+"  -G, --traditional              behave more like System V `ptx'\n"
+"  -F, --flag-truncation=STRING   use STRING for flagging line truncations\n"
+msgstr ""
+
+#: src/ptx.c:1876
+msgid ""
+"  -M, --macro-name=STRING        macro name to use instead of `xx'\n"
+"  -O, --format=roff              generate output as roff directives\n"
+"  -R, --right-side-refs          put references at right, not counted in -w\n"
+"  -S, --sentence-regexp=REGEXP   for end of lines or end of sentences\n"
+"  -T, --format=tex               generate output as TeX directives\n"
+msgstr ""
+
+#: src/ptx.c:1883
+msgid ""
+"  -W, --word-regexp=REGEXP       use REGEXP to match each keyword\n"
+"  -b, --break-file=FILE          word break characters in this FILE\n"
+"  -f, --ignore-case              fold lower case to upper case for sorting\n"
+"  -g, --gap-size=NUMBER          gap size in columns between output fields\n"
+"  -i, --ignore-file=FILE         read ignore word list from FILE\n"
+"  -o, --only-file=FILE           read only word list from this FILE\n"
+msgstr ""
+
+#: src/ptx.c:1891
+msgid ""
+"  -r, --references               first field of each line is a reference\n"
+"  -t, --typeset-mode               - not implemented -\n"
+"  -w, --width=NUMBER             output width in columns, reference "
+"excluded\n"
+msgstr ""
+
+#: src/ptx.c:1898
+msgid ""
+"\n"
+"With no FILE or if FILE is -, read Standard Input.  `-F /' by default.\n"
+msgstr ""
+
+#: src/ptx.c:1978
+#, fuzzy
+msgid ""
+"This program is free software; you can redistribute it and/or modify\n"
+"it under the terms of the GNU General Public License as published by\n"
+"the Free Software Foundation; either version 2, or (at your option)\n"
+"any later version.\n"
+"\n"
+msgstr ""
+"This program is free software; you can redistribute it and/or modify\n"
+"it under the terms of the GNU General Public License as published by\n"
+"the Free Software Foundation; either version 2, or (at your option)\n"
+"any later version.\n"
+"\n"
+"This program is distributed in the hope that it will be useful,\n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+"GNU General Public License for more details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License\n"
+"along with this program; if not, write to the Free Software Foundation,\n"
+"Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.\n"
+"\n"
+"\n"
+"[訳註] 重要なものなのでオリジナルもそのまま残してあります.\n"
+"\n"
+"本プログラムはフリーソフトウェアです. あなたは Free Software Foundation\n"
+"が公表した GNU 一般公有使用許諾のバージョン 2 もしくは\n"
+"それ以降のバージョンのうちのいずれかのバージョン (選択) で定められた\n"
+"条項の下で本プログラムを再配布したり変更したりすることができます.\n"
+"\n"
+"本プログラムは有用であると期待しておりますが, 配布にあたっては,\n"
+"市場性または特定目的適合性に対する暗黙の保証を含めて,\n"
+"いかなる保証も致しません. 詳細は GNU 一般公有使用許諾をお読みください.\n"
+"\n"
+"あなたは本プログラムとともに GNU 一般公有使用許諾の写しを受け取っている\n"
+"はずですが, もしそうでない場合は Free Software Foundation, inc.,\n"
+"59 Temple Place - Suite 330, Boston, MA 02111-1307, USA へ手紙を書いてくださ"
+"い.\n"
+
+#: src/ptx.c:1985
+msgid ""
+"This program is distributed in the hope that it will be useful,\n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+"GNU General Public License for more details.\n"
+"\n"
+msgstr ""
+
+#: src/ptx.c:1992
+#, fuzzy
+msgid ""
+"You should have received a copy of the GNU General Public License\n"
+"along with this program; if not, write to the Free Software Foundation,\n"
+"Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.\n"
+msgstr ""
+"This program is free software; you can redistribute it and/or modify\n"
+"it under the terms of the GNU General Public License as published by\n"
+"the Free Software Foundation; either version 2, or (at your option)\n"
+"any later version.\n"
+"\n"
+"This program is distributed in the hope that it will be useful,\n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+"GNU General Public License for more details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License\n"
+"along with this program; if not, write to the Free Software Foundation,\n"
+"Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.\n"
+"\n"
+"\n"
+"[訳註] 重要なものなのでオリジナルもそのまま残してあります.\n"
+"\n"
+"本プログラムはフリーソフトウェアです. あなたは Free Software Foundation\n"
+"が公表した GNU 一般公有使用許諾のバージョン 2 もしくは\n"
+"それ以降のバージョンのうちのいずれかのバージョン (選択) で定められた\n"
+"条項の下で本プログラムを再配布したり変更したりすることができます.\n"
+"\n"
+"本プログラムは有用であると期待しておりますが, 配布にあたっては,\n"
+"市場性または特定目的適合性に対する暗黙の保証を含めて,\n"
+"いかなる保証も致しません. 詳細は GNU 一般公有使用許諾をお読みください.\n"
+"\n"
+"あなたは本プログラムとともに GNU 一般公有使用許諾の写しを受け取っている\n"
+"はずですが, もしそうでない場合は Free Software Foundation, inc.,\n"
+"59 Temple Place - Suite 330, Boston, MA 02111-1307, USA へ手紙を書いてくださ"
+"い.\n"
+
+#: src/sort.c:53
+msgid "Mike Haertel and Paul Eggert"
+msgstr ""
+
+#: src/sort.c:289
+msgid ""
+"Write sorted concatenation of all FILE(s) to standard output.\n"
+"\n"
+"Ordering options:\n"
+"\n"
+msgstr ""
+
+#: src/sort.c:298
+msgid ""
+"  -b, --ignore-leading-blanks ignore leading blanks\n"
+"  -d, --dictionary-order      consider only blanks and alphanumeric "
+"characters\n"
+"  -f, --ignore-case           fold lower case to upper case characters\n"
+msgstr ""
+
+#: src/sort.c:303
+msgid ""
+"  -g, --general-numeric-sort  compare according to general numerical value\n"
+"  -i, --ignore-nonprinting    consider only printable characters\n"
+"  -M, --month-sort            compare (unknown) < `JAN' < ... < `DEC'\n"
+"  -n, --numeric-sort          compare according to string numerical value\n"
+"  -r, --reverse               reverse the result of comparisons\n"
+"\n"
+msgstr ""
+
+#: src/sort.c:311
+msgid ""
+"Other options:\n"
+"\n"
+"  -c, --check               check whether input is sorted; do not sort\n"
+"  -k, --key=POS1[,POS2]     start a key at POS1, end it at POS 2 (origin 1)\n"
+"  -m, --merge               merge already sorted files; do not sort\n"
+"  -o, --output=FILE         write result to FILE instead of standard output\n"
+"  -s, --stable              stabilize sort by disabling last-resort "
+"comparison\n"
+"  -S, --buffer-size=SIZE    use SIZE for main memory buffer\n"
+msgstr ""
+
+#: src/sort.c:321
+#, c-format
+msgid ""
+"  -t, --field-separator=SEP use SEP instead of non- to whitespace "
+"transition\n"
+"  -T, --temporary-directory=DIR  use DIR for temporaries, not $TMPDIR or %s\n"
+"                              multiple options specify multiple directories\n"
+"  -u, --unique              with -c: check for strict ordering\n"
+"                              otherwise: output only the first of an equal "
+"run\n"
+msgstr ""
+
+#: src/sort.c:328
+msgid "  -z, --zero-terminated     end lines with 0 byte, not newline\n"
+msgstr ""
+
+#: src/sort.c:333
+#, fuzzy
+msgid ""
+"\n"
+"POS is F[.C][OPTS], where F is the field number and C the character "
+"position\n"
+"in the field.  OPTS is one or more single-letter ordering options, which\n"
+"override global ordering options for that key.  If no key is given, use the\n"
+"entire line as the key.\n"
+"\n"
+"SIZE may be followed by the following multiplicative suffixes:\n"
+msgstr ""
+"POS の書式は F[.C][OPTS] であり, F にはフィールド番号, C にはフィールド内の\n"
+"文字の位置を指定します. 位置の値はいずれも 0 からカウントされます.\n"
+"OPTS は 1 つ以上の Mbdfinr が指定されると, このフィールドに対して指定した\n"
+"方法よる並び替えを行います. この場合, 全体に指定した -Mbdfinr オプションは\n"
+"このフィールドに対して影響を与えます.\n"
+"キーが与えられなかった場合, 行全体をキーとして使用します.\n"
+"ファイルの指定がないかファイル名が `-' の場合は標準入力から読み込みます.\n"
+
+#: src/sort.c:342
+#, c-format
+msgid ""
+"% 1% of memory, b 1, K 1024 (default), and so on for M, G, T, P, E, Z, Y.\n"
+"\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+"*** WARNING ***\n"
+"The locale specified by the environment affects sort order.\n"
+"Set LC_ALL=C to get the traditional sort order that uses\n"
+"native byte values.\n"
+msgstr ""
+
+#: src/sort.c:453
+#, fuzzy
+msgid "cannot create temporary file"
+msgstr "`%s' で ioctl() を実行できません"
+
+#: src/sort.c:476
+msgid "open failed"
+msgstr ""
+
+#: src/sort.c:496 src/sort.c:2499
+#, fuzzy
+msgid "close failed"
+msgstr "ファイルクローズエラー"
+
+#: src/sort.c:504
+#, fuzzy
+msgid "write failed"
+msgstr "書き込みエラー"
+
+#: src/sort.c:650
+#, fuzzy
+msgid "sort size"
+msgstr "ブロックサイズ"
+
+#: src/sort.c:724
+msgid "stat failed"
+msgstr ""
+
+#: src/sort.c:975
+msgid "read failed"
+msgstr ""
+
+#: src/sort.c:1575
+#, fuzzy, c-format
+msgid "%s: %s:%s: disorder: "
+msgstr "%s: %s:%d: の順序が不規則: "
+
+#: src/sort.c:1579
+msgid "standard error"
+msgstr "標準エラー"
+
+#: src/sort.c:2037
+#, fuzzy, c-format
+msgid "%s: invalid field specification `%s'"
+msgstr "フィールドの指定 `%s' が無効です"
+
+#: src/sort.c:2063
+#, c-format
+msgid "%s: count `%.*s' too large"
+msgstr ""
+
+#: src/sort.c:2069
+#, fuzzy, c-format
+msgid "%s: invalid count at start of `%s'"
+msgstr "`%2$s' に対する引数 %1$s が間違っています"
+
+#: src/sort.c:2301
+#, fuzzy
+msgid "invalid number after `-'"
+msgstr "無効なバイト数です"
+
+#: src/sort.c:2304 src/sort.c:2350 src/sort.c:2377
+#, fuzzy
+msgid "invalid number after `.'"
+msgstr "無効なバイト数です"
+
+#: src/sort.c:2307 src/sort.c:2386
+msgid "stray character in field spec"
+msgstr ""
+
+#: src/sort.c:2341
+#, fuzzy
+msgid "invalid number at field start"
+msgstr "無効な行数です"
+
+#: src/sort.c:2345 src/sort.c:2373
+#, fuzzy
+msgid "field number is zero"
+msgstr "フィールド数が間違っています: `%s'"
+
+#: src/sort.c:2354
+msgid "character offset is zero"
+msgstr ""
+
+#: src/sort.c:2369
+#, fuzzy
+msgid "invalid number after `,'"
+msgstr "無効なバイト数です"
+
+#: src/sort.c:2414
+#, fuzzy, c-format
+msgid "multi-character tab `%s'"
+msgstr "`%s' は無効な文字種類です"
+
+#: src/sort.c:2482
+#, c-format
+msgid "extra operand `%s' not allowed with -c"
+msgstr ""
+
+#: src/split.c:95
+#, c-format
+msgid "Usage: %s [OPTION] [INPUT [PREFIX]]\n"
+msgstr "使用法: %s [オプション] [INPUT [PREFIX]]\n"
+
+#: src/split.c:99
+msgid ""
+"Output fixed-size pieces of INPUT to PREFIXaa, PREFIXab, ...; default\n"
+"PREFIX is `x'.  With no INPUT, or when INPUT is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/split.c:107
+#, fuzzy, c-format
+msgid ""
+"  -a, --suffix-length=N   use suffixes of length N (default %d)\n"
+"  -b, --bytes=SIZE        put SIZE bytes per output file\n"
+"  -C, --line-bytes=SIZE   put at most SIZE bytes of lines per output file\n"
+"  -l, --lines=NUMBER      put NUMBER lines per output file\n"
+msgstr ""
+"INPUT ファイルを指定サイズに分割し, それぞれ PREFIXaa, PREFIXab, ... という\n"
+"名前のファイルに書き込みます.\n"
+"特に指定がないか INPUT として - を指定した場合, 標準入力から読み込みます\n"
+"\n"
+"  -b, --bytes=SIZE        1 つの出力ファイルあたり SIZE バイトずつ出力\n"
+"  -C, --line-bytes=SIZE   1 つの出力ファイルあたり 各行が SIZE 以下の長さに\n"
+"                          なるようにして出力\n"
+"  -l, --lines=NUMBER      1 つの出力ファイル当たり SIZE 行ずつ出力\n"
+"  -NUMBER                 -l NUMBER と同じ\n"
+"      --verbose           出力ファイルをオープンする度に, 標準エラー出力へ\n"
+"                              診断メッセージを出力\n"
+"      --help              使い方を表示\n"
+"      --version           バージョン情報を表示\n"
+"\n"
+"SIZE には, 倍数接尾子をつけることができます.\n"
+"b は 512 倍, k は 1024 倍(kilo), m は 1048576 倍(mega)となる.\n"
+
+#: src/split.c:113
+msgid ""
+"      --verbose           print a diagnostic to standard error just\n"
+"                            before each output file is opened\n"
+msgstr ""
+
+#: src/split.c:170
+msgid "Output file suffixes exhausted"
+msgstr ""
+
+#: src/split.c:188
+#, c-format
+msgid "creating file `%s'\n"
+msgstr "ファイル `%s' を作成\n"
+
+#: src/split.c:407
+#, fuzzy, c-format
+msgid "%s: invalid suffix length"
+msgstr "%s: 無効な行数表記です"
+
+#: src/split.c:416 src/split.c:432 src/split.c:448 src/split.c:474
+msgid "cannot split in more than one way"
+msgstr "複数の分割方法は指定できません"
+
+#: src/split.c:423 src/split.c:456
+#, c-format
+msgid "%s: invalid number of bytes"
+msgstr "%s: 無効なバイト数表記です"
+
+#: src/split.c:439
+#, c-format
+msgid "%s: invalid number of lines"
+msgstr "%s: 無効な行数表記です"
+
+#: src/split.c:499
+#, fuzzy, c-format
+msgid "`-%d' option is obsolete; use `-l %d'"
+msgstr "警告: 幅 %lu は無効な値です.  -- 代わりに %d を使用します"
+
+#: src/split.c:512
+msgid "invalid number"
+msgstr "%s: 無効な番号表記です"
+
+#: src/split.c:527 src/tr.c:1847
+msgid "too many arguments"
+msgstr "引数が多すぎます"
+
+#: src/sum.c:36
+msgid "Kayvan Aghaiepour and David MacKenzie"
+msgstr ""
+
+#: src/sum.c:64
+#, fuzzy
+msgid ""
+"Print checksum and block counts for each FILE.\n"
+"\n"
+"  -r              defeat -s, use BSD sum algorithm, use 1K blocks\n"
+"  -s, --sysv      use System V sum algorithm, use 512 bytes blocks\n"
+msgstr ""
+"各 FILE のチェックサムとブロック数を表示します.\n"
+"\n"
+"  -r              -s オプションを無効にして BSD 形式のチェックサム\n"
+"                      アルゴリズムを利用し, ブロックの単位を 1K バイトに\n"
+"  -s, --sysv      System V 形式のチェックサムアルゴリズムを利用し, \n"
+"                      ブロックの単位を 512 バイトに\n"
+"      --help      使い方を表示\n"
+"      --version   バージョン情報を表示\n"
+"\n"
+"FILE が指定されないか, FILE として - が指定された場合, 標準入力を読み込みま"
+"す\n"
+
+#: src/sys2.h:407
+#, fuzzy
+msgid "      --help     display this help and exit\n"
+msgstr ""
+"ファイルの CRC チェックサムを表示し, バイト数を計算します.\n"
+"\n"
+"      --help               使い方を表示\n"
+"      --version            バージョン情報を表示\n"
+
+#: src/sys2.h:409
+#, fuzzy
+msgid "      --version  output version information and exit\n"
+msgstr ""
+"ファイルの CRC チェックサムを表示し, バイト数を計算します.\n"
+"\n"
+"      --help               使い方を表示\n"
+"      --version            バージョン情報を表示\n"
+
+#: src/tac.c:54
+msgid "Jay Lepreau and David MacKenzie"
+msgstr ""
+
+#: src/tac.c:131
+msgid ""
+"Write each FILE to standard output, last line first.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/tac.c:139
+#, fuzzy
+msgid ""
+"  -b, --before             attach the separator before instead of after\n"
+"  -r, --regex              interpret the separator as a regular expression\n"
+"  -s, --separator=STRING   use STRING as the separator instead of newline\n"
+msgstr ""
+"ファイル毎に行を逆順にして標準出力に書き込みます\n"
+"FILE が指定されないか FILE として - が指定された場合, 標準入力を読み込みま"
+"す\n"
+"\n"
+"  -b, --before             区切り文字列をレコードの前ではなく後ろに\n"
+"  -r, --regex              区切り文字列を正規表現として解釈\n"
+"  -s, --separator=STRING   改行文字の代わりに STRING を区切り文字列に\n"
+"      --help               使い方を表示\n"
+"      --version            バージョン情報を表示\n"
+
+#: src/tac.c:454 src/tac.c:593
+msgid "stdin: read error"
+msgstr "標準入力: 読み込みエラー"
+
+#: src/tac.c:639
+msgid "separator cannot be empty"
+msgstr "区切り文字が空であってはなりません"
+
+#: src/tail.c:242
+#, fuzzy, c-format
+msgid ""
+"Print the last %d lines of each FILE to standard output.\n"
+"With more than one FILE, precede each with a header giving the file name.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"ファイルの先頭から 10 行分を標準出力に表示します.\n"
+"複数のファイルを処理する際には, 各出力のはじめにファイル名を表示します.\n"
+"ファイル名を指定しないか, ファイル名に `-' を指定した場合には, \n"
+"標準入力を読み込みます.\n"
+"\n"
+"  -c, --bytes=SIZE         冒頭の SIZE バイト数だけ出力\n"
+"  -n, --lines=NUMBER       冒頭の指定行数行数出力 (デフォルト 10行)\n"
+"  -q, --quiet, --silent    ファイルごとのヘッダの出力を行わない\n"
+"  -v, --verbose            ファイルごとにヘッダを出力\n"
+"      --help               使い方を表示\n"
+"      --version            バージョン情報を表示\n"
+"\n"
+"SIZEはいくつかのサフィックスを付けられます: 512バイトでは`b',1キロでは`k',\n"
+"1メガでは`m'となっています.\n"
+"最初のオプションとして`-VALUE'を与えた場合, VALUE に`b',`k',`m'のサフィック\n"
+"スがあると`-c VALUE'となり, それ以外では`-n VALUE'と解釈されます.\n"
+
+#: src/tail.c:251
+msgid ""
+"      --retry              keep trying to open a file even if it is\n"
+"                           inaccessible when tail starts or if it becomes\n"
+"                           inaccessible later -- useful only with -f\n"
+"  -c, --bytes=N            output the last N bytes\n"
+msgstr ""
+
+#: src/tail.c:257
+msgid ""
+"  -f, --follow[={name|descriptor}]\n"
+"                           output appended data as the file grows;\n"
+"                           -f, --follow, and --follow=descriptor are\n"
+"                           equivalent\n"
+"  -F                       same as --follow=name --retry\n"
+msgstr ""
+
+#: src/tail.c:264
+#, c-format
+msgid ""
+"  -n, --lines=N            output the last N lines, instead of the last %d\n"
+"      --max-unchanged-stats=N\n"
+"                           with --follow=name, reopen a FILE which has not\n"
+"                           changed size after N (default %d) iterations\n"
+"                           to see if it has been unlinked or renamed\n"
+"                           (this is the usual case of rotated log files)\n"
+msgstr ""
+
+#: src/tail.c:275
+msgid ""
+"      --pid=PID            with -f, terminate after process ID, PID dies\n"
+"  -q, --quiet, --silent    never output headers giving file names\n"
+"  -s, --sleep-interval=S   with -f, each iteration lasts approximately S\n"
+"                           (default 1) seconds\n"
+"  -v, --verbose            always output headers giving file names\n"
+msgstr ""
+
+#: src/tail.c:284
+msgid ""
+"\n"
+"If the first character of N (the number of bytes or lines) is a `+',\n"
+"print beginning with the Nth item from the start of each file, otherwise,\n"
+"print the last N items in the file.  N may have a multiplier suffix:\n"
+"b for 512, k for 1024, m for 1048576 (1 Meg).\n"
+"\n"
+msgstr ""
+
+#: src/tail.c:292
+msgid ""
+"With --follow (-f), tail defaults to following the file descriptor, which\n"
+"means that even if a tail'ed file is renamed, tail will continue to track\n"
+"its end.  "
+msgstr ""
+
+#: src/tail.c:297
+msgid ""
+"This default behavior is not desirable when you really want to\n"
+"track the actual name of the file, not the file descriptor (e.g., log\n"
+"rotation).  Use --follow=name in that case.  That causes tail to track the\n"
+"named file by reopening it periodically to see if it has been removed and\n"
+"recreated by some other program.\n"
+msgstr ""
+
+#: src/tail.c:335
+#, c-format
+msgid "closing %s (fd=%d)"
+msgstr "%s を閉じています (fd=%d)"
+
+#: src/tail.c:400
+#, c-format
+msgid "%s: cannot seek to offset %s%s"
+msgstr ""
+
+#: src/tail.c:404
+#, c-format
+msgid "%s: cannot seek to relative offset %s%s"
+msgstr ""
+
+#: src/tail.c:408
+#, c-format
+msgid "%s: cannot seek to end-relative offset %s%s"
+msgstr ""
+
+#: src/tail.c:814
+#, c-format
+msgid "`%s' has become inaccessible"
+msgstr "`%s' はアクセス不能になりました"
+
+#: src/tail.c:831
+#, fuzzy, c-format
+msgid "`%s' has been replaced with an untailable file; giving up on this name"
+msgstr ""
+"`%s' は非通常ファイルで置き換えられました.非通常ファイルのファイル末尾は捕捉"
+"できません"
+
+#: src/tail.c:852
+#, c-format
+msgid "`%s' has become accessible"
+msgstr "`%s' はアクセス可能になりました"
+
+#: src/tail.c:860
+#, c-format
+msgid "`%s' has appeared;  following end of new file"
+msgstr "`%s' が現れました. 新しいファイルのファイル末尾を捕捉します"
+
+#: src/tail.c:871
+#, c-format
+msgid "`%s' has been replaced;  following end of new file"
+msgstr "`%s' は置き換えられました. 新しいファイルのファイル末尾を捕捉します"
+
+#: src/tail.c:998
+#, fuzzy, c-format
+msgid "%s: file truncated"
+msgstr "ファイルが切り詰められました"
+
+#: src/tail.c:1018
+msgid "no files remaining"
+msgstr "何もファイルは残っていません"
+
+#: src/tail.c:1228
+#, c-format
+msgid "%s: cannot follow end of this type of file; giving up on this name"
+msgstr ""
+
+#: src/tail.c:1348
+#, c-format
+msgid "%c: invalid suffix character in obsolescent option"
+msgstr "%c: 旧式オプション中の接尾文字が無効です"
+
+#: src/tail.c:1397
+#, c-format
+msgid ""
+"too many arguments;  When using tail's obsolescent option syntax (%s)\n"
+"there may be no more than one file argument.  Use the equivalent -n or -c\n"
+"option instead."
+msgstr ""
+"引数が多すぎます. tail の旧式オプション (%s) を使う場合は\n"
+"指定できるファイルは 1つだけになります. 代わりに等価の -n または -c\n"
+"オプションを使ってください."
+
+#: src/tail.c:1406
+#, c-format
+msgid ""
+"Warning: it is not portable to use two or more file arguments with\n"
+"tail's obsolescent option syntax (%s).  Use the equivalent -n or -c\n"
+"option instead."
+msgstr ""
+"警告: tail の旧式オプション (%s) では 2つ以上のファイルを指定することは\n"
+"可搬性がよくありません. 代わりに等価の -n または -c オプションを\n"
+"使ってください."
+
+#: src/tail.c:1415
+#, fuzzy, c-format
+msgid "`%s' option is obsolete; use `%s-%c %.*s'"
+msgstr "警告: 幅 %lu は無効な値です.  -- 代わりに %d を使用します"
+
+#: src/tail.c:1475
+#, fuzzy, c-format
+msgid "%s: is so large that it is not representable"
+msgstr "%s: %s は大きすぎて表示できません"
+
+#: src/tail.c:1479
+#, c-format
+msgid "%s is larger than the maximum file size on this system"
+msgstr ""
+
+#: src/tail.c:1505
+#, c-format
+msgid "%s: invalid maximum number of unchanged stats between opens"
+msgstr "%s: 無変化の状態の最大数が無効です"
+
+#: src/tail.c:1517
+#, c-format
+msgid "%s: invalid maximum number of consecutive size changes"
+msgstr "%s: サイズの継続変化の最大数が無効です"
+
+#: src/tail.c:1529
+#, c-format
+msgid "%s: invalid PID"
+msgstr "%s: 無効なプロセス番号です"
+
+#: src/tail.c:1547
+#, c-format
+msgid "%s: invalid number of seconds"
+msgstr "%s: 無効な秒数です"
+
+#: src/tail.c:1567
+msgid "warning: --retry is useful only when following by name"
+msgstr "警告: --retry はファイル名が指定されているときだけ意味があります"
+
+#: src/tail.c:1571
+msgid "warning: PID ignored; --pid=PID is useful only when following"
+msgstr ""
+"警告: PID は無視されます. --pid=PID は --follow (-f) を指定している場合のみ意"
+"味があります"
+
+#: src/tail.c:1574
+msgid "warning: --pid=PID is not supported on this system"
+msgstr "警告: --pid=PID はこのシステムではサポートされていません"
+
+#: src/tr.c:327
+#, c-format
+msgid "Usage: %s [OPTION]... SET1 [SET2]\n"
+msgstr "使用法: %s [オプション]... SET1 [SET2]\n"
+
+#: src/tr.c:331
+#, fuzzy
+msgid ""
+"Translate, squeeze, and/or delete characters from standard input,\n"
+"writing to standard output.\n"
+"\n"
+"  -c, --complement        first complement SET1\n"
+"  -d, --delete            delete characters in SET1, do not translate\n"
+"  -s, --squeeze-repeats   replace sequence of characters with one\n"
+"  -t, --truncate-set1     first truncate SET1 to length of SET2\n"
+msgstr ""
+"標準入力から読み込んだ文字を置換, 圧縮, 削除し, 標準出力に書き込みます.\n"
+"\n"
+"  -c, --complement        最初に SET1 を補集合に置き換え\n"
+"  -d, --delete            SET1 中の文字を削除し, 置換は行わない\n"
+"  -s, --squeeze-repeats   繰り返される文字の列を 1 文字に圧縮\n"
+"  -t, --truncate-set1     SET1 の長さを SET2 の長さに切り捨て\n"
+"      --help              使い方を表示\n"
+"      --version           バージョン情報を表示\n"
+
+#: src/tr.c:342
+msgid ""
+"\n"
+"SETs are specified as strings of characters.  Most represent themselves.\n"
+"Interpreted sequences are:\n"
+"\n"
+"  \\NNN            character with octal value NNN (1 to 3 octal digits)\n"
+"  \\\\              backslash\n"
+"  \\a              audible BEL\n"
+"  \\b              backspace\n"
+"  \\f              form feed\n"
+"  \\n              new line\n"
+"  \\r              return\n"
+"  \\t              horizontal tab\n"
+msgstr ""
+
+#: src/tr.c:356
+msgid ""
+"  \\v              vertical tab\n"
+"  CHAR1-CHAR2     all characters from CHAR1 to CHAR2 in ascending order\n"
+"  [CHAR*]         in SET2, copies of CHAR until length of SET1\n"
+"  [CHAR*REPEAT]   REPEAT copies of CHAR, REPEAT octal if starting with 0\n"
+"  [:alnum:]       all letters and digits\n"
+"  [:alpha:]       all letters\n"
+"  [:blank:]       all horizontal whitespace\n"
+"  [:cntrl:]       all control characters\n"
+"  [:digit:]       all digits\n"
+msgstr ""
+
+#: src/tr.c:367
+msgid ""
+"  [:graph:]       all printable characters, not including space\n"
+"  [:lower:]       all lower case letters\n"
+"  [:print:]       all printable characters, including space\n"
+"  [:punct:]       all punctuation characters\n"
+"  [:space:]       all horizontal or vertical whitespace\n"
+"  [:upper:]       all upper case letters\n"
+"  [:xdigit:]      all hexadecimal digits\n"
+"  [=CHAR=]        all characters which are equivalent to CHAR\n"
+msgstr ""
+
+#: src/tr.c:377
+#, fuzzy
+msgid ""
+"\n"
+"Translation occurs if -d is not given and both SET1 and SET2 appear.\n"
+"-t may be used only when translating.  SET2 is extended to length of\n"
+"SET1 by repeating its last character as necessary.  "
+msgstr ""
+"\n"
+"置換は -d オプションが与えられず, かつ SET1 と SET2 の指定があるときに\n"
+"行なわれます. -t オプションは置換の実行時にのみ利用できます. SET2 は SET1 "
+"の\n"
+"長さ分を満たすため必要に応じてその最後の文字で展開します. SET2 の余分な文字"
+"は\n"
+"無視されます. [:lower:] 及び [:upper:] の場合のみ昇順で展開することが\n"
+"保証されます. これらのオプションは大文字と小文字との置換の指定を行なう際の\n"
+"組み合わせとして利用できます. -s オプションは, 置換でも削除でもない場合\n"
+"SET1 の値を利用します.  -- 置換や削除であった場合には, 置換や削除を行なった"
+"後\n"
+"SET2 を利用した文字列の圧縮を行ないます.\n"
+
+#: src/tr.c:383
+msgid ""
+"Excess characters\n"
+"of SET2 are ignored.  Only [:lower:] and [:upper:] are guaranteed to\n"
+"expand in ascending order; used in SET2 while translating, they may\n"
+"only be used in pairs to specify case conversion.  "
+msgstr ""
+
+#: src/tr.c:389
+#, fuzzy
+msgid ""
+"-s uses SET1 if not\n"
+"translating nor deleting; else squeezing uses SET2 and occurs after\n"
+"translation or deletion.\n"
+msgstr ""
+"\n"
+"置換は -d オプションが与えられず, かつ SET1 と SET2 の指定があるときに\n"
+"行なわれます. -t オプションは置換の実行時にのみ利用できます. SET2 は SET1 "
+"の\n"
+"長さ分を満たすため必要に応じてその最後の文字で展開します. SET2 の余分な文字"
+"は\n"
+"無視されます. [:lower:] 及び [:upper:] の場合のみ昇順で展開することが\n"
+"保証されます. これらのオプションは大文字と小文字との置換の指定を行なう際の\n"
+"組み合わせとして利用できます. -s オプションは, 置換でも削除でもない場合\n"
+"SET1 の値を利用します.  -- 置換や削除であった場合には, 置換や削除を行なった"
+"後\n"
+"SET2 を利用した文字列の圧縮を行ないます.\n"
+
+#: src/tr.c:555
+#, c-format
+msgid ""
+"warning: the ambiguous octal escape \\%c%c%c is being\n"
+"\tinterpreted as the 2-byte sequence \\0%c%c, `%c'"
+msgstr ""
+"警告: 曖昧な 8 進数エスケープ \\%c%c%c です\n"
+"\t2 バイトの列 \\0%c%c, `%c' として解釈されました"
+
+#: src/tr.c:564
+msgid "invalid backslash escape at end of string"
+msgstr "文字列の終端でのバックスラッシュエスケープが無効"
+
+#: src/tr.c:570
+#, c-format
+msgid "invalid backslash escape `\\%c'"
+msgstr "無効なバックスラッシュエスケープ `\\%c'"
+
+#: src/tr.c:723
+#, c-format
+msgid "range-endpoints of `%s-%s' are in reverse collating sequence order"
+msgstr "範囲指定 `%s-%s' の端点が逆順に指定されています"
+
+#: src/tr.c:904
+#, c-format
+msgid "invalid repeat count `%s' in [c*n] construct"
+msgstr "[c*n] の構成内の `%s' は無効な繰り返し回数です"
+
+#: src/tr.c:997
+#, fuzzy
+msgid "missing character class name `[::]'"
+msgstr "無効な文字クラス名です"
+
+#: src/tr.c:1000
+msgid "missing equivalence class character `[==]'"
+msgstr ""
+
+#: src/tr.c:1023
+#, c-format
+msgid "invalid character class `%s'"
+msgstr "`%s' は無効な文字種類です"
+
+#: src/tr.c:1048
+#, c-format
+msgid "%s: equivalence class operand must be a single character"
+msgstr "%s: 等価クラス演算子は一つの文字でなければなりません"
+
+#: src/tr.c:1520
+msgid "the [c*] repeat construct may not appear in string1"
+msgstr "[c*] 繰り返し回数指定は, 1 つ目の文字列中では利用できません"
+
+#: src/tr.c:1530
+msgid "only one [c*] repeat construct may appear in string2"
+msgstr "[c*] 繰り返し回数指定は, 2 つめの文字列中では 1 つだけ利用できません"
+
+#: src/tr.c:1538
+msgid "[=c=] expressions may not appear in string2 when translating"
+msgstr "置換の時には, 2 つ目の文字列中で [=c=] 形式の表現はできません"
+
+#: src/tr.c:1551
+msgid "when not truncating set1, string2 must be non-empty"
+msgstr ""
+"SET1 を切り捨てるのではない場合は, 2 つめの文字列を指定しなければなりません"
+
+#: src/tr.c:1560
+msgid ""
+"when translating with complemented character classes,\n"
+"string2 must map all characters in the domain to one"
+msgstr ""
+"補集合文字クラスで置換を行なうとき, 2 つ目の文字列は該当する文字の全ての\n"
+"置換結果を特定できなければなりません"
+
+#: src/tr.c:1567
+msgid ""
+"when translating, the only character classes that may appear in\n"
+"string2 are `upper' and `lower'"
+msgstr ""
+"置換の時, 2 つめの文字列中で利用できる文字クラスは, 大文字と小文字だけです"
+
+#: src/tr.c:1576
+msgid "the [c*] construct may appear in string2 only when translating"
+msgstr "置換を行なう場合 [c*] は, 2 つ目の文字列でのみ利用できます"
+
+#: src/tr.c:1852
+msgid "two strings must be given when translating"
+msgstr "置換を行なう場合, 2 つの文字列が与えられなければなりません"
+
+#: src/tr.c:1855
+msgid "two strings must be given when both deleting and squeezing repeats"
+msgstr ""
+"削除及び繰り返し文字圧縮の両方を行なう場合, 2 つの文字列が与えられなければ\n"
+"なりません"
+
+#: src/tr.c:1869
+msgid "only one string may be given when deleting without squeezing repeats"
+msgstr ""
+"繰り返しの圧縮をしないで削除するときには, 一つの文字列だけを受け付けます"
+
+#: src/tr.c:1875
+msgid "at least one string must be given when squeezing repeats"
+msgstr ""
+"繰り返しの圧縮を行うには, 最低限 1 つの文字列が与えられなければなりません"
+
+#: src/tr.c:1966
+msgid "misaligned [:upper:] and/or [:lower:] construct"
+msgstr "[:upper:] と [:lower:] との構成が一致しません"
+
+#: src/tr.c:1989
+msgid ""
+"invalid identity mapping;  when translating, any [:lower:] or [:upper:]\n"
+"construct in string1 must be aligned with a corresponding construct\n"
+"([:upper:] or [:lower:], respectively) in string2"
+msgstr ""
+"無効なコードマッピング\n"
+"    -- 置換の時, 1 つめの文字列が [:lower:] か [:upper:] の構成ならば, \n"
+"       string2 ではそれぞれに対応する構成(それぞれ [:upper:] か [:lower:])"
+"と\n"
+"       一致しなければなりません."
+
+#: src/tsort.c:97
+#, fuzzy, c-format
+msgid ""
+"Usage: %s [OPTION] [FILE]\n"
+"Write totally ordered list consistent with the partial ordering in FILE.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"使用法: %s [オプション] [ファイル]\n"
+"ファイル中の順序にしたがって, 全てを順序化して出力します.\n"
+"ファイルが指定されない, もしくはファイルが - の場合は標準入力を読み込みま"
+"す.\n"
+"\n"
+"      --help               使い方を表示\n"
+"      --version            バージョン情報を表示\n"
+
+#: src/tsort.c:533
+#, c-format
+msgid "%s: input contains a loop:"
+msgstr "%s: 入力にループが含まれています:"
+
+#: src/tsort.c:575
+msgid "only one argument may be specified"
+msgstr "引数を一つだけ指定できます"
+
+#: src/unexpand.c:379
+#, fuzzy
+msgid ""
+"Convert spaces in each FILE to tabs, writing to standard output.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"各ファイルの空白をタブに変換し, 標準出力に書き込みます.\n"
+"FILE が指定されないか, FILE に - が指定された場合には標準入力を読み込みま"
+"す.\n"
+"\n"
+"  -a, --all           先頭の空白だけでなく, 全ての空白をタブに変換\n"
+"  -t, --tabs=NUMBER   8 の代わりに NUMBER 個の空白をタブに変更\n"
+"  -t, --tabs=LIST     カンマで区切った LIST でタブの位置を明示的に指定\n"
+"      --help          使い方を表示\n"
+"      --version       バージョン情報を表示\n"
+"\n"
+"-t NUMBER や, -t LIST の代わりに, -NUMBER や -LIST という書式を利用しても\n"
+"構いません.\n"
+
+#: src/unexpand.c:387
+msgid ""
+"  -a, --all           convert all whitespace, instead of initial whitespace\n"
+"  -t, --tabs=NUMBER   have tabs NUMBER characters apart instead of 8\n"
+"  -t, --tabs=LIST     use comma separated list of explicit tab positions\n"
+msgstr ""
+
+#: src/unexpand.c:463
+#, fuzzy
+msgid "`-LIST' option is obsolete; use `--first-only -t LIST'"
+msgstr "警告: 幅 %lu は無効な値です.  -- 代わりに %d を使用します"
+
+#: src/uniq.c:134
+#, c-format
+msgid "Usage: %s [OPTION]... [INPUT [OUTPUT]]\n"
+msgstr "使用法: %s [オプション]... [入力元 [出力先]]\n"
+
+#: src/uniq.c:138
+msgid ""
+"Discard all but one of successive identical lines from INPUT (or\n"
+"standard input), writing to OUTPUT (or standard output).\n"
+"\n"
+msgstr ""
+
+#: src/uniq.c:146
+msgid ""
+"  -c, --count           prefix lines by the number of occurrences\n"
+"  -d, --repeated        only print duplicate lines\n"
+msgstr ""
+
+#: src/uniq.c:150
+msgid ""
+"  -D, --all-repeated[=delimit-method] print all duplicate lines\n"
+"                        delimit-method={none(default),prepend,separate}\n"
+"                        Delimiting is done with blank lines.\n"
+"  -f, --skip-fields=N   avoid comparing the first N fields\n"
+"  -i, --ignore-case     ignore differences in case when comparing\n"
+"  -s, --skip-chars=N    avoid comparing the first N characters\n"
+"  -u, --unique          only print unique lines\n"
+msgstr ""
+
+#: src/uniq.c:159
+msgid "  -w, --check-chars=N   compare no more than N characters in lines\n"
+msgstr ""
+
+#: src/uniq.c:164
+msgid ""
+"\n"
+"A field is a run of whitespace, then non-whitespace characters.\n"
+"Fields are skipped before chars.\n"
+msgstr ""
+
+#: src/uniq.c:377
+#, c-format
+msgid "error reading %s"
+msgstr "%s の読み込みエラー"
+
+#: src/uniq.c:382
+#, c-format
+msgid "error writing %s"
+msgstr "%s の書き込みエラー"
+
+#: src/uniq.c:428 src/uniq.c:445
+#, c-format
+msgid "extra operand `%s'"
+msgstr ""
+
+#: src/uniq.c:468 src/uniq.c:493
+#, fuzzy
+msgid "invalid number of fields to skip"
+msgstr "スキップするフィールド数の指定が無効です: `%s'"
+
+#: src/uniq.c:502
+#, fuzzy
+msgid "invalid number of bytes to skip"
+msgstr "スキップするバイト数の指定が無効です: `%s'"
+
+#: src/uniq.c:511
+#, fuzzy
+msgid "invalid number of bytes to compare"
+msgstr "比較するバイト数の指定が無効です: `%s'"
+
+#: src/uniq.c:525
+#, fuzzy, c-format
+msgid "`-%lu' option is obsolete; use `-f %lu'"
+msgstr "警告: 幅 %lu は無効な値です.  -- 代わりに %d を使用します"
+
+#: src/uniq.c:533
+msgid "printing all duplicated lines and repeat counts is meaningless"
+msgstr "全ての重複行と繰り返し回数を表示することに意味がありません"
+
+#: src/wc.c:78
+msgid "Paul Rubin and David MacKenzie"
+msgstr ""
+
+#: src/wc.c:132
+#, fuzzy
+msgid ""
+"Print newline, word, and byte counts for each FILE, and a total line if\n"
+"more than one FILE is specified.  With no FILE, or when FILE is -,\n"
+"read standard input.\n"
+"  -c, --bytes            print the byte counts\n"
+"  -m, --chars            print the character counts\n"
+"  -l, --lines            print the newline counts\n"
+msgstr ""
+"指定されたファイルの行数, 単語数,バイト数を数えます. 合計行数も\n"
+"複数ファイルがある場合, 合計行数を表示します. ファイル指定がなかったり\n"
+"`-'である場合, 標準入力が入力となります.\n"
+"  -c, --bytes, --chars   バイト数を表示\n"
+"  -l, --lines            行数を表示\n"
+"  -L, --max-line-length  最も長い行の長さを表示\n"
+"  -w, --words            単語数を表示\n"
+"      --help             使い方を表示\n"
+"      --version          バージョン情報を表示\n"
+
+#: src/wc.c:140
+#, fuzzy
+msgid ""
+"  -L, --max-line-length  print the length of the longest line\n"
+"  -w, --words            print the word counts\n"
+msgstr ""
+"ファイルの CRC チェックサムを表示し, バイト数を計算します.\n"
+"\n"
+"      --help               使い方を表示\n"
+"      --version            バージョン情報を表示\n"
+
+#: src/wc.c:589
+msgid "total"
+msgstr "合計"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "(obsolete)  If -VALUE is used as first OPTION, same as -c VALUE when one "
+#~ "of\n"
+#~ "multipliers bkm follows concatenated, else same as -n VALUE.\n"
+#~ msgstr ""
+#~ "ファイルの先頭から 10 行分を標準出力に表示します.\n"
+#~ "複数のファイルを処理する際には, 各出力のはじめにファイル名を表示します.\n"
+#~ "ファイル名を指定しないか, ファイル名に `-' を指定した場合には, \n"
+#~ "標準入力を読み込みます.\n"
+#~ "\n"
+#~ "  -c, --bytes=SIZE         冒頭の SIZE バイト数だけ出力\n"
+#~ "  -n, --lines=NUMBER       冒頭の指定行数行数出力 (デフォルト 10行)\n"
+#~ "  -q, --quiet, --silent    ファイルごとのヘッダの出力を行わない\n"
+#~ "  -v, --verbose            ファイルごとにヘッダを出力\n"
+#~ "      --help               使い方を表示\n"
+#~ "      --version            バージョン情報を表示\n"
+#~ "\n"
+#~ "SIZEはいくつかのサフィックスを付けられます: 512バイトでは`b',1キロでは"
+#~ "`k',\n"
+#~ "1メガでは`m'となっています.\n"
+#~ "最初のオプションとして`-VALUE'を与えた場合, VALUE に`b',`k',`m'のサフィッ"
+#~ "ク\n"
+#~ "スがあると`-c VALUE'となり, それ以外では`-n VALUE'と解釈されます.\n"
+
+#, fuzzy
+#~ msgid "warning: `od -s' is obsolete; use `od --strings'"
+#~ msgstr "警告: 幅 %lu は無効な値です.  -- 代わりに %d を使用します"
+
+#, fuzzy
+#~ msgid "warning: `od -w' is obsolete; use `od --width'"
+#~ msgstr "警告: 幅 %lu は無効な値です.  -- 代わりに %d を使用します"
+
+#, fuzzy
+#~ msgid "warning: `pr -S' is obsolete; use `pr --sep-string'"
+#~ msgstr "警告: 幅 %lu は無効な値です.  -- 代わりに %d を使用します"
+
+#, fuzzy
+#~ msgid ""
+#~ "  +POS1 [-POS2]             start a key at POS1, end it before POS2 "
+#~ "(origin 0)\n"
+#~ "                              Warning: this option is obsolete\n"
+#~ msgstr ""
+#~ "それぞれソートされた ファイルA と ファイルB とを行ごとに比較します.\n"
+#~ "\n"
+#~ "  -1              ファイルA だけにしか含まれない行の出力を抑制\n"
+#~ "  -2              ファイルB だけにしか含まれない行の出力を抑制\n"
+#~ "  -3              両方のファイルに共通に含まれている行の出力を抑制\n"
+#~ "      --help      使い方を表示\n"
+#~ "      --version   バージョン情報を表示\n"
+
+#, fuzzy
+#~ msgid "warning: `sort -y' is obsolete; omit `-y'"
+#~ msgstr "警告: 幅 %lu は無効な値です.  -- 代わりに %d を使用します"
+
+#, fuzzy
+#~ msgid "warning: `tail %s' is obsolete; use -n or -c instead"
+#~ msgstr "警告: 幅 %lu は無効な値です.  -- 代わりに %d を使用します"
+
+#, fuzzy
+#~ msgid "warning: `uniq %s' is obsolete; use `uniq -s %s' instead"
+#~ msgstr "警告: 幅 %lu は無効な値です.  -- 代わりに %d を使用します"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help               display this help and exit\n"
+#~ "      --version            output version information and exit\n"
+#~ msgstr ""
+#~ "ファイルの CRC チェックサムを表示し, バイト数を計算します.\n"
+#~ "\n"
+#~ "      --help               使い方を表示\n"
+#~ "      --version            バージョン情報を表示\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help        display this help and exit\n"
+#~ "      --version     output version information and exit\n"
+#~ msgstr ""
+#~ "ファイルの CRC チェックサムを表示し, バイト数を計算します.\n"
+#~ "\n"
+#~ "      --help               使い方を表示\n"
+#~ "      --version            バージョン情報を表示\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help      display this help and exit\n"
+#~ "      --version   output version information and exit\n"
+#~ msgstr ""
+#~ "ファイルの CRC チェックサムを表示し, バイト数を計算します.\n"
+#~ "\n"
+#~ "      --help               使い方を表示\n"
+#~ "      --version            バージョン情報を表示\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help                 display this help and exit\n"
+#~ "      --version              output version information and exit\n"
+#~ msgstr ""
+#~ "ファイルの CRC チェックサムを表示し, バイト数を計算します.\n"
+#~ "\n"
+#~ "      --help               使い方を表示\n"
+#~ "      --version            バージョン情報を表示\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help              display this help and exit\n"
+#~ "      --version           output version information and exit\n"
+#~ msgstr ""
+#~ "ファイルの CRC チェックサムを表示し, バイト数を計算します.\n"
+#~ "\n"
+#~ "      --help               使い方を表示\n"
+#~ "      --version            バージョン情報を表示\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help          display this help and exit\n"
+#~ "      --version       output version information and exit\n"
+#~ msgstr ""
+#~ "ファイルの CRC チェックサムを表示し, バイト数を計算します.\n"
+#~ "\n"
+#~ "      --help               使い方を表示\n"
+#~ "      --version            バージョン情報を表示\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help                display this help and exit\n"
+#~ "      --version             output version information and exit\n"
+#~ msgstr ""
+#~ "ファイルの CRC チェックサムを表示し, バイト数を計算します.\n"
+#~ "\n"
+#~ "      --help               使い方を表示\n"
+#~ "      --version            バージョン情報を表示\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help                      display this help and exit\n"
+#~ "      --version                   output version information and exit\n"
+#~ msgstr ""
+#~ "ファイルの CRC チェックサムを表示し, バイト数を計算します.\n"
+#~ "\n"
+#~ "      --help               使い方を表示\n"
+#~ "      --version            バージョン情報を表示\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help                  display this help and exit\n"
+#~ "      --version               output version information and exit\n"
+#~ msgstr ""
+#~ "ファイルの CRC チェックサムを表示し, バイト数を計算します.\n"
+#~ "\n"
+#~ "      --help               使い方を表示\n"
+#~ "      --version            バージョン情報を表示\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help                     display this help and exit\n"
+#~ "      --version                  output version information and exit\n"
+#~ msgstr ""
+#~ "ファイルの CRC チェックサムを表示し, バイト数を計算します.\n"
+#~ "\n"
+#~ "      --help               使い方を表示\n"
+#~ "      --version            バージョン情報を表示\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help       display this help and exit\n"
+#~ "      --version    output version information and exit\n"
+#~ msgstr ""
+#~ "ファイルの CRC チェックサムを表示し, バイト数を計算します.\n"
+#~ "\n"
+#~ "      --help               使い方を表示\n"
+#~ "      --version            バージョン情報を表示\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help            display this help and exit\n"
+#~ "      --version         output version information and exit\n"
+#~ msgstr ""
+#~ "ファイルの CRC チェックサムを表示し, バイト数を計算します.\n"
+#~ "\n"
+#~ "      --help               使い方を表示\n"
+#~ "      --version            バージョン情報を表示\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help             display this help and exit\n"
+#~ "      --version          output version information and exit\n"
+#~ msgstr ""
+#~ "ファイルの CRC チェックサムを表示し, バイト数を計算します.\n"
+#~ "\n"
+#~ "      --help               使い方を表示\n"
+#~ "      --version            バージョン情報を表示\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "  --help            display this help and exit\n"
+#~ "  --version         output version information and exit\n"
+#~ msgstr ""
+#~ "ファイルの CRC チェックサムを表示し, バイト数を計算します.\n"
+#~ "\n"
+#~ "      --help               使い方を表示\n"
+#~ "      --version            バージョン情報を表示\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Convert tabs in each FILE to spaces, writing to standard output.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -i, --initial       do not convert TABs after non whitespace\n"
+#~ "  -t, --tabs=NUMBER   have tabs NUMBER characters apart, not 8\n"
+#~ msgstr ""
+#~ "ファイルのタブを空白文字に変換し, 標準出力に出力します.\n"
+#~ "ファイルの指定がなかったり, `-' であった場合, 標準入力から読み込みます.\n"
+#~ "\n"
+#~ "  -i, --initial      非空白文字以降のタブを変換しない\n"
+#~ "  -t, --tabs=数      タブ幅を標準の8にかわりに指定\n"
+#~ "  -t, --tabs=リスト  コンマ(,)で区切られたリストにタブストップを設定\n"
+#~ "      --help         使い方を表示\n"
+#~ "      --version      バージョン情報を表示\n"
+#~ "\n"
+#~ "`-t 数' や `-t リスト'のかわりに, `-数' もしくは `-リスト'によっても\n"
+#~ "指定できます.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "  -t, --tabs=LIST     use comma separated list of explicit tab positions\n"
+#~ "      --help          display this help and exit\n"
+#~ "      --version       output version information and exit\n"
+#~ "\n"
+#~ "Instead of -t NUMBER or -t LIST, -NUMBER or -LIST may be used.\n"
+#~ msgstr ""
+#~ "ファイルのタブを空白文字に変換し, 標準出力に出力します.\n"
+#~ "ファイルの指定がなかったり, `-' であった場合, 標準入力から読み込みます.\n"
+#~ "\n"
+#~ "  -i, --initial      非空白文字以降のタブを変換しない\n"
+#~ "  -t, --tabs=数      タブ幅を標準の8にかわりに指定\n"
+#~ "  -t, --tabs=リスト  コンマ(,)で区切られたリストにタブストップを設定\n"
+#~ "      --help         使い方を表示\n"
+#~ "      --version      バージョン情報を表示\n"
+#~ "\n"
+#~ "`-t 数' や `-t リスト'のかわりに, `-数' もしくは `-リスト'によっても\n"
+#~ "指定できます.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Wrap input lines in each FILE (standard input by default), writing to\n"
+#~ "standard output.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -b, --bytes         count bytes rather than columns\n"
+#~ "  -s, --spaces        break at spaces\n"
+#~ "  -w, --width=WIDTH   use WIDTH columns instead of 80\n"
+#~ "      --help          display this help and exit\n"
+#~ "      --version       output version information and exit\n"
+#~ msgstr ""
+#~ "ファイルの各行の折り返しを行い, 結果を標準出力に書き込みます.\n"
+#~ "\n"
+#~ "  -b, --bytes         カラム数ではなくバイト数でカウント\n"
+#~ "  -s, --spaces        空白の位置で折り返す\n"
+#~ "  -w, --width=WIDTH   80 の代わりに 1 行の幅を指定\n"
+#~ "      --help          使い方を表示\n"
+#~ "      --version       バージョン情報を表示\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Write lines consisting of the sequentially corresponding lines from\n"
+#~ "each FILE, separated by TABs, to standard output.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -d, --delimiters=LIST   reuse characters from LIST instead of TABs\n"
+#~ "  -s, --serial            paste one file at a time instead of in "
+#~ "parallel\n"
+#~ "      --help              display this help and exit\n"
+#~ "      --version           output version information and exit\n"
+#~ "\n"
+#~ msgstr ""
+#~ "FILE の各行から, 一致する行をタブ文字で区切り, 順に標準出力に書き込みま"
+#~ "す.\n"
+#~ "FILE が指定されない, あるいは `-' を指定した場合には標準入力を読み込みま"
+#~ "す.\n"
+#~ "\n"
+#~ "  -d, --delimiters=LIST   タブ文字の代わりに, LIST の文字を区切りとして使"
+#~ "用\n"
+#~ "  -s, --serial            一行毎ではなく, 一度に 1 つのファイルを貼付け"
+#~ "る\n"
+#~ "      --help              使い方を表示\n"
+#~ "      --version           バージョン情報を表示\n"
+#~ "\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "  -NUMBER                 same as -l NUMBER\n"
+#~ "      --verbose           print a diagnostic to standard error just\n"
+#~ "                            before each output file is opened\n"
+#~ "      --help              display this help and exit\n"
+#~ "      --version           output version information and exit\n"
+#~ "\n"
+#~ "SIZE may have a multiplier suffix: b for 512, k for 1K, m for 1 Meg.\n"
+#~ msgstr ""
+#~ "INPUT ファイルを指定サイズに分割し, それぞれ PREFIXaa, PREFIXab, ... とい"
+#~ "う\n"
+#~ "名前のファイルに書き込みます.\n"
+#~ "特に指定がないか INPUT として - を指定した場合, 標準入力から読み込みます\n"
+#~ "\n"
+#~ "  -b, --bytes=SIZE        1 つの出力ファイルあたり SIZE バイトずつ出力\n"
+#~ "  -C, --line-bytes=SIZE   1 つの出力ファイルあたり 各行が SIZE 以下の長さ"
+#~ "に\n"
+#~ "                          なるようにして出力\n"
+#~ "  -l, --lines=NUMBER      1 つの出力ファイル当たり SIZE 行ずつ出力\n"
+#~ "  -NUMBER                 -l NUMBER と同じ\n"
+#~ "      --verbose           出力ファイルをオープンする度に, 標準エラー出力"
+#~ "へ\n"
+#~ "                              診断メッセージを出力\n"
+#~ "      --help              使い方を表示\n"
+#~ "      --version           バージョン情報を表示\n"
+#~ "\n"
+#~ "SIZE には, 倍数接尾子をつけることができます.\n"
+#~ "b は 512 倍, k は 1024 倍(kilo), m は 1048576 倍(mega)となる.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Write each FILE to standard output, last line first.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -b, --before             attach the separator before instead of after\n"
+#~ msgstr ""
+#~ "ファイル毎に行を逆順にして標準出力に書き込みます\n"
+#~ "FILE が指定されないか FILE として - が指定された場合, 標準入力を読み込みま"
+#~ "す\n"
+#~ "\n"
+#~ "  -b, --before             区切り文字列をレコードの前ではなく後ろに\n"
+#~ "  -r, --regex              区切り文字列を正規表現として解釈\n"
+#~ "  -s, --separator=STRING   改行文字の代わりに STRING を区切り文字列に\n"
+#~ "      --help               使い方を表示\n"
+#~ "      --version            バージョン情報を表示\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Print the last %d lines of each FILE to standard output.\n"
+#~ "With more than one FILE, precede each with a header giving the file "
+#~ "name.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "      --retry              keep trying to open a file even if it is\n"
+#~ "                           inaccessible when tail starts or if it "
+#~ "becomes\n"
+#~ "                           inaccessible later -- useful only with -f\n"
+#~ msgstr ""
+#~ "ファイルの先頭から 10 行分を標準出力に表示します.\n"
+#~ "複数のファイルを処理する際には, 各出力のはじめにファイル名を表示します.\n"
+#~ "ファイル名を指定しないか, ファイル名に `-' を指定した場合には, \n"
+#~ "標準入力を読み込みます.\n"
+#~ "\n"
+#~ "  -c, --bytes=SIZE         冒頭の SIZE バイト数だけ出力\n"
+#~ "  -n, --lines=NUMBER       冒頭の指定行数行数出力 (デフォルト 10行)\n"
+#~ "  -q, --quiet, --silent    ファイルごとのヘッダの出力を行わない\n"
+#~ "  -v, --verbose            ファイルごとにヘッダを出力\n"
+#~ "      --help               使い方を表示\n"
+#~ "      --version            バージョン情報を表示\n"
+#~ "\n"
+#~ "SIZEはいくつかのサフィックスを付けられます: 512バイトでは`b',1キロでは"
+#~ "`k',\n"
+#~ "1メガでは`m'となっています.\n"
+#~ "最初のオプションとして`-VALUE'を与えた場合, VALUE に`b',`k',`m'のサフィッ"
+#~ "ク\n"
+#~ "スがあると`-c VALUE'となり, それ以外では`-n VALUE'と解釈されます.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "  -t, --tabs=NUMBER   have tabs NUMBER characters apart instead of 8\n"
+#~ "  -t, --tabs=LIST     use comma separated list of explicit tab positions\n"
+#~ "      --help          display this help and exit\n"
+#~ "      --version       output version information and exit\n"
+#~ "\n"
+#~ "Instead of -t NUMBER or -t LIST, -NUMBER or -LIST may be used.\n"
+#~ msgstr ""
+#~ "各ファイルの空白をタブに変換し, 標準出力に書き込みます.\n"
+#~ "FILE が指定されないか, FILE に - が指定された場合には標準入力を読み込みま"
+#~ "す.\n"
+#~ "\n"
+#~ "  -a, --all           先頭の空白だけでなく, 全ての空白をタブに変換\n"
+#~ "  -t, --tabs=NUMBER   8 の代わりに NUMBER 個の空白をタブに変更\n"
+#~ "  -t, --tabs=LIST     カンマで区切った LIST でタブの位置を明示的に指定\n"
+#~ "      --help          使い方を表示\n"
+#~ "      --version       バージョン情報を表示\n"
+#~ "\n"
+#~ "-t NUMBER や, -t LIST の代わりに, -NUMBER や -LIST という書式を利用して"
+#~ "も\n"
+#~ "構いません.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Output pieces of FILE separated by PATTERN(s) to files `xx01', "
+#~ "`xx02', ...,\n"
+#~ "and output byte counts of each piece to standard output.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -b, --suffix-format=FORMAT use sprintf FORMAT instead of %%d\n"
+#~ "  -f, --prefix=PREFIX        use PREFIX instead of `xx'\n"
+#~ "  -k, --keep-files           do not remove output files on errors\n"
+#~ "  -n, --digits=DIGITS        use specified number of digits instead of 2\n"
+#~ "  -s, --quiet, --silent      do not print counts of output file sizes\n"
+#~ "  -z, --elide-empty-files    remove empty output files\n"
+#~ "      --help                 display this help and exit\n"
+#~ "      --version              output version information and exit\n"
+#~ "\n"
+#~ "Read standard input if FILE is -.  Each PATTERN may be:\n"
+#~ "\n"
+#~ "  INTEGER            copy up to but not including specified line number\n"
+#~ "  /REGEXP/[OFFSET]   copy up to but not including a matching line\n"
+#~ "  %%REGEXP%%[OFFSET]   skip to, but not including a matching line\n"
+#~ "  {INTEGER}          repeat the previous pattern specified number of "
+#~ "times\n"
+#~ "  {*}                repeat the previous pattern as many times as "
+#~ "possible\n"
+#~ "\n"
+#~ "A line OFFSET is a required `+' or `-' followed by a positive integer.\n"
+#~ msgstr ""
+#~ "入力ファイルをパターンで区切り, その断片をファイル`xx01', `xx02',...\n"
+#~ "へ出力します. そして, その各断片ファイルのサイズ(バイト単位)を標準出力しま"
+#~ "す.\n"
+#~ "\n"
+#~ "  -b, --suffix-format=FORMAT %%d のかわりにFORMAT(printf形式)を使用\n"
+#~ "  -f, --prefix=PREFIX        出力ファイル名の先頭として `xx' の代わりに\n"
+#~ "                                 PREFIX を使うように\n"
+#~ "  -k, --keep-files           エラー発生時にそれまでの出力ファイルを削除し"
+#~ "ない\n"
+#~ "  -n, --digits=DIGITS        出力ファイル名の数値部分を\n"
+#~ "                                 2 桁にかわり DIGITS 桁に\n"
+#~ "  -s, --quiet, --silent      出力ファイルのサイズを表示しない\n"
+#~ "  -z, --elide-empty-files    空のファイルは作成しないように\n"
+#~ "      --help                 使い方を表示\n"
+#~ "      --version              バージョン情報を表示\n"
+#~ "\n"
+#~ "ファイル名が`-'のときは標準入力から読み込みます. パターンは以下の通り:\n"
+#~ "\n"
+#~ "  行数                     指定行の直前まで(その行は含まれない)を書き込"
+#~ "む\n"
+#~ "  /正規表現/[オフセット]   一致する行の直前までを書き込む\n"
+#~ "  %%正規表現%%[オフセット] 一致する行の直前までをスキップ\n"
+#~ "  {整数値}                 直前のパターンを指定した数だけ繰り返す\n"
+#~ "  {*}                      直前のパターンを可能なだけ繰り返す\n"
+#~ "\n"
+#~ "オフセットの指定には `+' または `-' に正の整数値を続けて指定します.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Print selected parts of lines from each FILE to standard output.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -b, --bytes=LIST        output only these bytes\n"
+#~ "  -c, --characters=LIST   output only these characters\n"
+#~ "  -d, --delimiter=DELIM   use DELIM instead of TAB for field delimiter\n"
+#~ "  -f, --fields=LIST       output only these fields;  also print any line\n"
+#~ "                            that contains no delimiter character, unless\n"
+#~ "                            the -s option is specified\n"
+#~ "  -n                      (ignored)\n"
+#~ "  -s, --only-delimited    do not print lines not containing delimiters\n"
+#~ "      --output-delimiter=STRING  use STRING as the output delimiter\n"
+#~ "                            the default is to use the input delimiter\n"
+#~ "      --help              display this help and exit\n"
+#~ "      --version           output version information and exit\n"
+#~ "\n"
+#~ "Use one, and only one of -b, -c or -f.  Each LIST is made up of one\n"
+#~ "range, or many ranges separated by commas.  Each range is one of:\n"
+#~ "\n"
+#~ "  N     N'th byte, character or field, counted from 1\n"
+#~ "  N-    from N'th byte, character or field, to end of line\n"
+#~ "  N-M   from N'th to M'th (included) byte, character or field\n"
+#~ "  -M    from first to M'th (included) byte, character or field\n"
+#~ "\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ msgstr ""
+#~ "ファイルの各行から選択した部分だけを切り出して, 標準出力に表示します.\n"
+#~ "\n"
+#~ "  -b, --bytes=LIST        LIST に指定したバイト位置の文字を出力\n"
+#~ "  -c, --characters=LIST   LIST に指定した文字位置だけを出力\n"
+#~ "  -d, --delimiter=DELIM   フィールドの区切り文字を TAB の代わりに DELIM "
+#~ "に\n"
+#~ "  -f, --fields=LIST       LIST に指定したフィールドだけを出力\n"
+#~ "  -n                      (無視される)\n"
+#~ "  -s, --only-delimited    区切り文字を含まない行を出力させない\n"
+#~ "      --output-delimiter=STRING  出力の区切り文字として STRING を使用\n"
+#~ "                            デフォルトでは入力の区切り文字を使用\n"
+#~ "      --help              使い方を表示\n"
+#~ "      --version           バージョン情報を表示\n"
+#~ "\n"
+#~ "-b, -c, -f オプションの内, 少なくとも一つは指定する必要があります. LIST \n"
+#~ "には以下の書式により切り出し範囲を指定します. 範囲の指定の際には, カンマ"
+#~ "(,)\n"
+#~ "を使って, 範囲を羅列することもできます.\n"
+#~ "\n"
+#~ "  N     行頭を 1 として, N 番目の位置にある位置, 文字またはフィールドを指"
+#~ "定\n"
+#~ "  N-    N 番目の位置, 文字またはフィールドから行末までを指定\n"
+#~ "  N-M   N 番目から M 番目(これも含めて)までの位置, 文字またはフィールドを"
+#~ "指定\n"
+#~ "  -M    行頭から M 番目(これも含めて)までの位置, 文字またはフィールドを指"
+#~ "定\n"
+#~ "\n"
+#~ "ファイルの指定がなかったり, `-'であった場合, 標準入力から読み込みます.\n"
+
+#~ msgid ""
+#~ "For each pair of input lines with identical join fields, write a line to\n"
+#~ "standard output.  The default join field is the first, delimited\n"
+#~ "by whitespace.  When FILE1 or FILE2 (not both) is -, read standard "
+#~ "input.\n"
+#~ "\n"
+#~ "  -a SIDE           print unpairable lines coming from file SIDE\n"
+#~ "  -e EMPTY          replace missing input fields with EMPTY\n"
+#~ "  -i, --ignore-case ignore differences in case when comparing fields\n"
+#~ "  -j FIELD          (obsolescent) equivalent to `-1 FIELD -2 FIELD'\n"
+#~ "  -j1 FIELD         (obsolescent) equivalent to `-1 FIELD'\n"
+#~ "  -j2 FIELD         (obsolescent) equivalent to `-2 FIELD'\n"
+#~ "  -o FORMAT         obey FORMAT while constructing output line\n"
+#~ "  -t CHAR           use CHAR as input and output field separator\n"
+#~ "  -v SIDE           like -a SIDE, but suppress joined output lines\n"
+#~ "  -1 FIELD          join on this FIELD of file 1\n"
+#~ "  -2 FIELD          join on this FIELD of file 2\n"
+#~ "      --help        display this help and exit\n"
+#~ "      --version     output version information and exit\n"
+#~ "\n"
+#~ "Unless -t CHAR is given, leading blanks separate fields and are ignored,\n"
+#~ "else fields are separated by CHAR.  Any FIELD is a field number counted\n"
+#~ "from 1.  FORMAT is one or more comma or blank separated specifications,\n"
+#~ "each being `SIDE.FIELD' or `0'.  Default FORMAT outputs the join field,\n"
+#~ "the remaining fields from FILE1, the remaining fields from FILE2, all\n"
+#~ "separated by CHAR.\n"
+#~ msgstr ""
+#~ "入力した一対の行のうち, 指定した結合フィールドの内容が一致していた場合に"
+#~ "は\n"
+#~ "標準出力に 1 行だけを書き込みます. 特に指定がない場合には, 空白で区切られ"
+#~ "た\n"
+#~ "最初のフィールドを, 結合フィールドとして処理します. ファイル1 またはファイ"
+#~ "ル2\n"
+#~ "として `-' が与えられた場合(両方は不可)には, 標準入力から読み込みます.\n"
+#~ "\n"
+#~ "  -a SIDE           SIDE に指定したファイルからの行は不一致の行も出力\n"
+#~ "  -e EMPTY          空の出力フィールドを EMPTY で置き換える\n"
+#~ "  -i, --ignore-case フィールド比較の際に大文字・小文字の違いを無視\n"
+#~ "  -j FIELD          (古い方法) `-1 FIELD -2 FIELD' と同じ\n"
+#~ "  -j1 FIELD         (古い方法) `-1 FIELD' と同じ\n"
+#~ "  -j2 FIELD         (古い方法) `-2 FIELD' と同じ\n"
+#~ "  -o FORMAT         出力行を FORMAT の書式に従って構成\n"
+#~ "  -t CHAR           出力・入力のフィールド区切り文字として CHAR を使用\n"
+#~ "  -v SIDE           `-a SIDE' と似ているが出力を少し抑制\n"
+#~ "  -1 FIELD          ファイル1 の FIELD に基づいて結合\n"
+#~ "  -2 FIELD          ファイル2 の FILED に基づいて結合\n"
+#~ "      --help        使い方を表示\n"
+#~ "      --version     バージョン情報を表示\n"
+#~ "\n"
+#~ "-t CHAR が与えられない場合, 空白文字がフィールドを分割し, 空白そのものは\n"
+#~ "無視されます. 与えられた場合には, フィールドは文字 CHAR によって分割されま"
+#~ "す.\n"
+#~ "FIELD の部分には 1 から数えたフィールドの位置を要求します.\n"
+#~ "FORMAT の部分には 1つ以上の `SIDE.FIELD' や `0' をカンマ(,)や空白文字\n"
+#~ "で区切って指定します. FORMAT を指定しなかった場合には, FILE1 の残された\n"
+#~ "フィールド, FILE2 の残されたフィールド, 結合フィールドを CHAR で区切って\n"
+#~ "出力します.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Usage: %s [OPTION] [FILE]...\n"
+#~ "  or:  %s [OPTION] --check [FILE]\n"
+#~ "Print or check %s (%d-bit) checksums.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "  -b, --binary            read files in binary mode (default on DOS/"
+#~ "Windows)\n"
+#~ "  -c, --check             check %s sums against given list\n"
+#~ "  -t, --text              read files in text mode (default)\n"
+#~ "\n"
+#~ "The following two options are useful only when verifying checksums:\n"
+#~ "      --status            don't output anything, status code shows "
+#~ "success\n"
+#~ "  -w, --warn              warn about improperly formated checksum lines\n"
+#~ "\n"
+#~ "      --help              display this help and exit\n"
+#~ "      --version           output version information and exit\n"
+#~ "\n"
+#~ "The sums are computed as described in %s.  When checking, the input\n"
+#~ "should be a former output of this program.  The default mode is to print\n"
+#~ "a line with checksum, a character indicating type (`*' for binary, ` ' "
+#~ "for\n"
+#~ "text), and name for each FILE.\n"
+#~ msgstr ""
+#~ "使用法: %s [オプション] [ファイル]...\n"
+#~ "  又は: %s [オプション] --check [ファイル]\n"
+#~ "MD5 チェックサムの表示, または照合\n"
+#~ "ファイルが指定されないか, ファイルとして `-' を指定した場合には, \n"
+#~ "標準入力から読み込みます.\n"
+#~ "\n"
+#~ "  -b, --binary            ファイルをバイナリモードで読み込む(DOS/Windows "
+#~ "ではデフォルト)\n"
+#~ "  -c, --check             与えられたリストに対する MD5 値の照合を行う\n"
+#~ "  -t, --text              ファイルをテキストモードで読み込む(デフォルト)\n"
+#~ "\n"
+#~ "以下の 2つのオプションはチェックサムの確認を行う際にのみ有益\n"
+#~ "      --status            何も表示せずにステータスコードによって, 成功か\n"
+#~ "                          どうかを示す\n"
+#~ "  -w, --warn              MD5 チェックサム行が正しく無い場合に警告\n"
+#~ "\n"
+#~ "      --help              使い方を表示\n"
+#~ "      --version           バージョン情報を表示\n"
+#~ "\n"
+#~ "チェックサムは RFC 1321 に記されている通りに計算されます. 照合の際に入力\n"
+#~ "するファイルは, このプログラムによって出力された形式でなければなりませ"
+#~ "ん.\n"
+#~ "特にオプションを指定しないで実行した場合には, それぞれのファイル毎に\n"
+#~ "チェックサム, タイプに関する印(バイナリには `*', テキストには ` '), \n"
+#~ "及びファイル名を表示します.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Write each FILE to standard output, with line numbers added.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -b, --body-numbering=STYLE      use STYLE for numbering body lines\n"
+#~ "  -d, --section-delimiter=CC      use CC for separating logical pages\n"
+#~ "  -f, --footer-numbering=STYLE    use STYLE for numbering footer lines\n"
+#~ "  -h, --header-numbering=STYLE    use STYLE for numbering header lines\n"
+#~ "  -i, --page-increment=NUMBER     line number increment at each line\n"
+#~ "  -l, --join-blank-lines=NUMBER   group of NUMBER empty lines counted as "
+#~ "one\n"
+#~ "  -n, --number-format=FORMAT      insert line numbers according to "
+#~ "FORMAT\n"
+#~ "  -p, --no-renumber               do not reset line numbers at logical "
+#~ "pages\n"
+#~ "  -s, --number-separator=STRING   add STRING after (possible) line "
+#~ "number\n"
+#~ "  -v, --first-page=NUMBER         first line number on each logical page\n"
+#~ "  -w, --number-width=NUMBER       use NUMBER columns for line numbers\n"
+#~ "      --help                      display this help and exit\n"
+#~ "      --version                   output version information and exit\n"
+#~ "\n"
+#~ "By default, selects -v1 -i1 -l1 -sTAB -w6 -nrn -hn -bt -fn.  CC are\n"
+#~ "two delimiter characters for separating logical pages, a missing\n"
+#~ "second character implies :.  Type \\\\ for \\.  STYLE is one of:\n"
+#~ "\n"
+#~ "  a         number all lines\n"
+#~ "  t         number only nonempty lines\n"
+#~ "  n         number no lines\n"
+#~ "  pREGEXP   number only lines that contain a match for REGEXP\n"
+#~ "\n"
+#~ "FORMAT is one of:\n"
+#~ "\n"
+#~ "  ln   left justified, no leading zeros\n"
+#~ "  rn   right justified, no leading zeros\n"
+#~ "  rz   right justified, leading zeros\n"
+#~ "\n"
+#~ msgstr ""
+#~ "指定したそれぞれのファイルに行番号を付け足して, 標準出力に書き込みます.\n"
+#~ "ファイルの指定が無いか, `-' を指定した場合には, 標準入力を読み込みます.\n"
+#~ "\n"
+#~ "  -b, --body-numbering=STYLE      本文の行番号を STYLE の形式に\n"
+#~ "  -d, --section-delimiter=CC      論理ページの区切り記号に CC を利用\n"
+#~ "  -f, --footer-numbering=STYLE    フッタの行番号を STYLE の形式に\n"
+#~ "  -h, --header-numbering=STYLE    ヘッダの行番号を STYLE の形式に\n"
+#~ "  -i, --page-increment=NUMBER     行番号の増分を NUMBER に\n"
+#~ "  -l, --join-blank-lines=NUMBER   NUMBER 個以下の空行を纏めて一行と\n"
+#~ "                                  見なしてカウント\n"
+#~ "  -n, --number-format=FORMAT      行番号の出力形式を FORMAT に\n"
+#~ "  -p, --no-renumber               論理ページごとに行番号のカウンタを\n"
+#~ "                                  リセットしない\n"
+#~ "  -s, --number-separator=STRING   (可能な場合)行番号の後ろに STRING\n"
+#~ "                                  を付け足す\n"
+#~ "  -v, --first-page=NUMBER         各論理ページの最初の行番号を NUMBER に\n"
+#~ "  -w, --number-width=NUMBER       行番号に利用する文字幅を NUMBER に\n"
+#~ "      --help                      使い方を表示\n"
+#~ "      --version                   バージョン情報を表示\n"
+#~ "\n"
+#~ "オプションの指定が無ければ, プログラムは -v1 -i1 -l1 -sTAB -w6 -nrn, -"
+#~ "hn,\n"
+#~ "-bt, -fn として動作します. CC 値は 論理ページの区切り記号を指定するため"
+#~ "の\n"
+#~ "2 つの文字です. 2つめの文字が指定されない場合には, 暗黙に : が指定されま"
+#~ "す.\n"
+#~ "`\\\\' を 指定したければ, `\\\\' を使うようにしてください.\n"
+#~ "STYLE は, 以下のうちの 1 つを指定します.\n"
+#~ "\n"
+#~ "  a         すべての行番号\n"
+#~ "  t         空行以外の行番号\n"
+#~ "  n         空行の行番号\n"
+#~ "  pREGEXP   正規表現 REGEXP との一致を含む行だけの行番号\n"
+#~ "\n"
+#~ "FORMAT には, 以下から一つ指定します:\n"
+#~ "\n"
+#~ "  ln   左揃え, ゼロを埋めない\n"
+#~ "  rn   右揃え, ゼロを埋めない\n"
+#~ "  rz   右揃え, ゼロを埋める\n"
+#~ "\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "Write an unambiguous representation, octal bytes by default,\n"
+#~ "of FILE to standard output.  With more than one FILE argument,\n"
+#~ "concatenate them in the listed order to form the input.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -A, --address-radix=RADIX   decide how file offsets are printed\n"
+#~ "  -j, --skip-bytes=BYTES      skip BYTES input bytes first\n"
+#~ "  -N, --read-bytes=BYTES      limit dump to BYTES input bytes\n"
+#~ "  -s, --strings[=BYTES]       output strings of at least BYTES graphic "
+#~ "chars\n"
+#~ "  -t, --format=TYPE           select output format or formats\n"
+#~ "  -v, --output-duplicates     do not use * to mark line suppression\n"
+#~ "  -w, --width[=BYTES]         output BYTES bytes per output line\n"
+#~ "      --traditional           accept arguments in pre-POSIX form\n"
+#~ "      --help                  display this help and exit\n"
+#~ "      --version               output version information and exit\n"
+#~ "\n"
+#~ "Pre-POSIX format specifications may be intermixed, they accumulate:\n"
+#~ "  -a   same as -t a,  select named characters\n"
+#~ "  -b   same as -t oC, select octal bytes\n"
+#~ "  -c   same as -t c,  select ASCII characters or backslash escapes\n"
+#~ "  -d   same as -t u2, select unsigned decimal shorts\n"
+#~ "  -f   same as -t fF, select floats\n"
+#~ "  -h   same as -t x2, select hexadecimal shorts\n"
+#~ "  -i   same as -t d2, select decimal shorts\n"
+#~ "  -l   same as -t d4, select decimal longs\n"
+#~ "  -o   same as -t o2, select octal shorts\n"
+#~ "  -x   same as -t x2, select hexadecimal shorts\n"
+#~ msgstr ""
+#~ "ファイルの明確な表現を標準出力に書き込む. 特に指定がなければ, 8 進数で\n"
+#~ "表現します. ファイル指定されない, あるいは `-' が指定された場合には, \n"
+#~ "標準入力を読み込みます.\n"
+#~ "\n"
+#~ "  -A, --address-radix=RADIX   ファイルオフセットの表示形式を指定\n"
+#~ "  -j, --skip-bytes=BYTES      ファイルの先頭より BYTES 分スキップ\n"
+#~ "  -N, --read-bytes=BYTES      ダンプするファイルの大きさを BYTES に制限\n"
+#~ "  -s, --strings[=BYTES]       表示可能な BYTES 以上の長さを持つ文字列を出"
+#~ "力\n"
+#~ "  -t, --format=TYPE           出力フォーマットを指定\n"
+#~ "  -v, --output-duplicates     `*' マークで出力行を省略するのを止めさせる\n"
+#~ "  -w, --width[=BYTES]         一行あたりの出力バイト数を指定\n"
+#~ "      --traditional           引数の形式を古い POSIX の形式として解釈\n"
+#~ "      --help                  使い方を表示\n"
+#~ "      --version               バージョン情報を表示\n"
+#~ "\n"
+#~ "以前の POSIX 形式仕様を, 混合させて指定しても構いません.\n"
+#~ "指定した順にそれぞれの形式で表示されます.\n"
+#~ "  -a   オプション -t a  と同じ, 文字名の指定に\n"
+#~ "  -b   オプション -t oC と同じ, 8進数バイトの指定に\n"
+#~ "  -c   オプション -t c  と同じ, ASCII文字か`\\'エスケープの指定に\n"
+#~ "  -d   オプション -t u2 と同じ, 符号なしショート10進数の指定に\n"
+#~ "  -f   オプション -t fF と同じ, 浮動小数点の指定に\n"
+#~ "  -h   オプション -t x2 と同じ, ショート16進数の指定に\n"
+#~ "  -i   オプション -t d2 と同じ, ショート10進数の指定に\n"
+#~ "  -l   オプション -t d4 と同じ, ロング10進数の指定に\n"
+#~ "  -o   オプション -t o2 と同じ, ショート8進数の指定に\n"
+#~ "  -x   オプション -t x2 と同じ, ショート16進数の指定に\n"
+
+#~ msgid ""
+#~ "\n"
+#~ "For older syntax (second call format), OFFSET means -j OFFSET.  LABEL\n"
+#~ "is the pseudo-address at first byte printed, incremented when dump is\n"
+#~ "progressing.  For OFFSET and LABEL, a 0x or 0X prefix indicates\n"
+#~ "hexadecimal, suffixes maybe . for octal and b multiply by 512.\n"
+#~ "\n"
+#~ "TYPE is made up of one or more of these specifications:\n"
+#~ "\n"
+#~ "  a          named character\n"
+#~ "  c          ASCII character or backslash escape\n"
+#~ "  d[SIZE]    signed decimal, SIZE bytes per integer\n"
+#~ "  f[SIZE]    floating point, SIZE bytes per integer\n"
+#~ "  o[SIZE]    octal, SIZE bytes per integer\n"
+#~ "  u[SIZE]    unsigned decimal, SIZE bytes per integer\n"
+#~ "  x[SIZE]    hexadecimal, SIZE bytes per integer\n"
+#~ "\n"
+#~ "SIZE is a number.  For TYPE in doux, SIZE may also be C for\n"
+#~ "sizeof(char), S for sizeof(short), I for sizeof(int) or L for\n"
+#~ "sizeof(long).  If TYPE is f, SIZE may also be F for sizeof(float), D\n"
+#~ "for sizeof(double) or L for sizeof(long double).\n"
+#~ "\n"
+#~ "RADIX is d for decimal, o for octal, x for hexadecimal or n for none.\n"
+#~ "BYTES is hexadecimal with 0x or 0X prefix, it is multiplied by 512\n"
+#~ "with b suffix, by 1024 with k and by 1048576 with m.  Adding a z suffix "
+#~ "to\n"
+#~ "any type adds a display of printable characters to the end of each line\n"
+#~ "of output.  -s without a number implies 3.  -w without a number implies "
+#~ "32.\n"
+#~ "By default, od uses -A o -t d2 -w 16.\n"
+#~ msgstr ""
+#~ "\n"
+#~ "古いほうの書式(形式)で `オフセット' は -j OFFSET と同じ意味となります.\n"
+#~ "`ラベル' は表示を開始するバイト位置の疑似アドレスで, ダンプの進行ととも"
+#~ "に\n"
+#~ "値が増加します. OFFSET や LABEL の値として, `.' サフィックスのような\n"
+#~ "動作をさせる為に, 最初に 0x や 0X をつけたり, `b' をつけることで, \n"
+#~ "512 倍することができます.\n"
+#~ "\n"
+#~ "-t,--typeオプションでの型の指定は以下のようになります:\n"
+#~ "\n"
+#~ "  a            文字名\n"
+#~ "  c            ASCII 文字もしくは, `\\'エスケープ\n"
+#~ "  d[サイズ]    符号付き10進数  1 整数(integer)のサイズ指定\n"
+#~ "  f[サイズ]    浮動小数点      1 整数(integer)のサイズ指定\n"
+#~ "  o[サイズ]    8進数           1 整数(integer)のサイズ指定\n"
+#~ "  u[サイズ]    符号なし10進数  1 整数(integer)のサイズ指定\n"
+#~ "  x[サイズ]    16進数          1 整数(integer)のサイズ指定\n"
+#~ "\n"
+#~ "ここでのサイズの指定は数字です. タイプが doux に含まれるなら, サイズに\n"
+#~ "は,C は sizeof(char) として, S は sizeof(short) として, I は sizeof"
+#~ "(int), \n"
+#~ "または Lは sizeof(long) も指定できます. またタイプが f ならば, さらに\n"
+#~ "F は sizeof(float) として, D は sizeof(double) として, または \n"
+#~ "L は sizeof(long double) として指定できます.\n"
+#~ "\n"
+#~ "RADIX には, オフセット値の基数として使用する値を, 10 進数なら d を, 8 進"
+#~ "数\n"
+#~ "なら o を, 16 進数なら x を指定し, 表示したくなければ n を指定します.\n"
+#~ "BYTES には, 16 進数ならば, `0x'か`0X' を数値の前に付け, 512 倍するには b "
+#~ "を,\n"
+#~ "1024 倍するには k を, 1048576 倍するには, m を付けます. z を後ろに付ける"
+#~ "と\n"
+#~ "どんな型でも出力の各行の後ろに印字可能な文字を付け加えます. -s に数値を指"
+#~ "定\n"
+#~ "しない場合には, 3 がセットされます. -w に数値を指定しなければ, 32 と設定\n"
+#~ "されます.\n"
+#~ "特にオプションを指定しない場合には, od コマンドは `-A o -t d2 -w 16'\n"
+#~ "の指定になっています.\n"
+
+# 良く解っていない
+#, fuzzy
+#~ msgid ""
+#~ "Paginate or columnate FILE(s) for printing.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  +FIRST_PAGE[:LAST_PAGE], --pages=FIRST_PAGE[:LAST_PAGE]\n"
+#~ "                    begin [stop] printing with page FIRST_[LAST_]PAGE\n"
+#~ "  -COLUMN, --columns=COLUMN\n"
+#~ "                    produce COLUMN-column output and print columns down,\n"
+#~ "                    unless -a is used. Balance number of lines in the\n"
+#~ "                    columns on each page.\n"
+#~ "  -a, --across      print columns across rather than down, used together\n"
+#~ "                    with -COLUMN\n"
+#~ "  -c, --show-control-chars\n"
+#~ "                    use hat notation (^G) and octal backslash notation\n"
+#~ "  -d, --double-space\n"
+#~ "                    double space the output\n"
+#~ "  -D, --date-format=FORMAT\n"
+#~ "                    use FORMAT for the header date\n"
+#~ "  -e[CHAR[WIDTH]], --expand-tabs[=CHAR[WIDTH]]\n"
+#~ "                    expand input CHARs (TABs) to tab WIDTH (8)\n"
+#~ "  -F, -f, --form-feed\n"
+#~ "                    use form feeds instead of newlines to separate pages\n"
+#~ "                    (by a 3-line page header with -F or a 5-line header\n"
+#~ "                    and trailer without -F)\n"
+#~ msgstr ""
+#~ "印字のために, ページ付けや段組を行ないます.\n"
+#~ "\n"
+#~ "  +FIRST_PAGE[:LAST_PAGE], --pages=FIRST_PAGE[:LAST_PAGE]\n"
+#~ "                    FIRST_PAGE から印字を開始し LAST_PAGE までを印字\n"
+#~ "                    LAST_PAGE を省略した場合, 最後まで印字\n"
+#~ "  -COLUMN, --columns=COLUMN\n"
+#~ "                    COLUMN 段の段組を生成し, 段の下方に向けて出力\n"
+#~ "                    ページ毎にカラム内の行数を調整\n"
+#~ "  -a, --across      各行を段組の横方向へ順に出力\n"
+#~ "                    -COLUMN オプションと共に使用\n"
+#~ "  -c, --show-control-chars\n"
+#~ "                    コントロールキャラクタにハットをつけ(例 ^G), その他"
+#~ "の\n"
+#~ "                    印字不能な文字にはバックスラッシュと 8 進数で表示\n"
+#~ "  -d, --double-space\n"
+#~ "                    行間に空行を挿入\n"
+#~ "  -e[CHAR[WIDTH]], --expand-tabs[=CHAR[WIDTH]]\n"
+#~ "                    入力された CHAR を幅 WIDTH の空白に拡げる\n"
+#~ "                    CHAR, WIDTH の指定がなければ CHAR は TAB, \n"
+#~ "                    WIDTH は 8 に変更\n"
+#~ "  -F, -f, --form-feed\n"
+#~ "                    改ページの際に改行ではなく, 改ページコードを使用\n"
+#~ "                    (-f と共に 3行分, -f を指定しない場合 5行分のヘッダを"
+#~ "出力)\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "  -h HEADER, --header=HEADER\n"
+#~ "                    use a centered HEADER instead of filename in page "
+#~ "header,\n"
+#~ "                    -h \"\" prints a blank line, don't use -h\"\"\n"
+#~ "  -i[CHAR[WIDTH]], --output-tabs[=CHAR[WIDTH]]\n"
+#~ "                    replace spaces with CHARs (TABs) to tab WIDTH (8)\n"
+#~ "  -J, --join-lines  merge full lines, turns off -W line truncation, no "
+#~ "column\n"
+#~ "                    alignment, -S[STRING] sets separators\n"
+#~ "  -l PAGE_LENGTH, --length=PAGE_LENGTH\n"
+#~ "                    set the page length to PAGE_LENGTH (66) lines\n"
+#~ "                    (default number of lines of text 56, and with -F 63)\n"
+#~ "  -m, --merge       print all files in parallel, one in each column,\n"
+#~ "                    truncate lines, but join lines of full length with -"
+#~ "J\n"
+#~ "  -n[SEP[DIGITS]], --number-lines[=SEP[DIGITS]]\n"
+#~ "                    number lines, use DIGITS (5) digits, then SEP (TAB),\n"
+#~ "                    default counting starts with 1st line of input file\n"
+#~ "  -N NUMBER, --first-line-number=NUMBER\n"
+#~ "                    start counting with NUMBER at 1st line of first\n"
+#~ "                    page printed (see +FIRST_PAGE)\n"
+#~ "  -o MARGIN, --indent=MARGIN\n"
+#~ "                    offset each line with MARGIN (zero) spaces, do not\n"
+#~ "                    affect -w or -W, MARGIN will be added to PAGE_WIDTH\n"
+#~ "  -r, --no-file-warnings\n"
+#~ "                    omit warning when a file cannot be opened\n"
+#~ msgstr ""
+#~ "  -h HEADER, --header=HEADER\n"
+#~ "                    ページヘッダ中央のファイル名の代わりに HEADER を利用\n"
+#~ "                    長いヘッダであれば, 文字列の左側が切り取られることにな"
+#~ "る\n"
+#~ "                    -h \"\" と指定すれば, ヘッダは空の行となる\n"
+#~ "                    -h\"\" という指定を行なってはいけない\n"
+#~ "  -i[CHAR[WIDTH]], --output-tabs[=CHAR[WIDTH]]\n"
+#~ "                    空白を CHAR に置換して WIDTH の幅に\n"
+#~ "                    特に指定がない場合 CHAR は TAB に WIDTH は 8 に\n"
+#~ "  -J, --join-lines  行の全てを結合し, (-W の行切り落としを行なわない)段組"
+#~ "の\n"
+#~ "                    調節を行なわない. -S[STRING] で区切り文字を設定\n"
+#~ "  -l PAGE_LENGTH, --length=PAGE_LENGTH\n"
+#~ "                    ページの長さを PAGE_LENGTH に設定. 指定されない場合\n"
+#~ "                    66 行. (行数は 56 となり, -f をつけた場合なら 63 行)\n"
+#~ "  -m, --merge       各ファイルを一段ずつ並べて表示. はみ出した行は切り捨"
+#~ "て\n"
+#~ "                    られるが, -J オプションによって行の内容は繋げられる\n"
+#~ "  -n[SEP[DIGITS]], --number-lines[=SEP[DIGITS]]\n"
+#~ "                    行番号を付加する. 番号の桁は DIGIT 番号と行との間の文"
+#~ "字\n"
+#~ "                    として SEP を指定. 指定がない場合 DIGITS は 5, SEP "
+#~ "は\n"
+#~ "                    TAB に設定\n"
+#~ "                    デフォルトでは入力ファイルの 1行目からカウント\n"
+#~ "  -N NUMBER, --first-line-number=NUMBER\n"
+#~ "                    最初のページの 1 行目の行番号を NUMBER 番から開始\n"
+#~ "                    (+FIRST_PAGE の説明を参照)\n"
+#~ "  -o MARGIN, --indent=MARGIN\n"
+#~ "                    各行の左余白を MARGIN (ゼロ) 文字分の空白とする\n"
+#~ "                    -w や -W に影響させてはならない. MARGIN は PAGE_WIDTH "
+#~ "に\n"
+#~ "                    加えられる\n"
+#~ "  -r, --no-file-warnings\n"
+#~ "                    ファイルが開けなかった場合の警告を省略する\n"
+
+#~ msgid ""
+#~ "  -s[CHAR],--separator[=CHAR]\n"
+#~ "                    separate columns by a single character, default for "
+#~ "CHAR\n"
+#~ "                    is the <TAB> character without -w and 'no char' with -"
+#~ "w\n"
+#~ "                    -s[CHAR] turns off line truncation of all 3 column\n"
+#~ "                    options (-COLUMN|-a -COLUMN|-m) except -w is set\n"
+#~ "  -S[STRING], --sep-string[=STRING]\n"
+#~ "                    separate columns by an optional STRING, don't use\n"
+#~ "                    -S \"STRING\", -S only: No separator used (same as -S"
+#~ "\"\"),\n"
+#~ "                    without -S: Default separator <TAB> with -J and "
+#~ "<space>\n"
+#~ "                    otherwise (same as -S\" \"), no effect on column "
+#~ "options\n"
+#~ "  -t, --omit-header omit page headers and trailers\n"
+#~ "  -T, --omit-pagination\n"
+#~ "                    omit page headers and trailers, eliminate any "
+#~ "pagination\n"
+#~ "                    by form feeds set in input files\n"
+#~ "  -v, --show-nonprinting\n"
+#~ "                    use octal backslash notation\n"
+#~ "  -w PAGE_WIDTH, --width=PAGE_WIDTH\n"
+#~ "                    set page width to PAGE_WIDTH (72) characters for\n"
+#~ "                    multiple text-column output only, -s[char] turns off "
+#~ "(72)\n"
+#~ "  -W PAGE_WIDTH, --page-width=PAGE_WIDTH\n"
+#~ "                    set page width to PAGE_WIDTH (72) characters always,\n"
+#~ "                    truncate lines, except -J option is set, no "
+#~ "interference\n"
+#~ "                    with -S or -s\n"
+#~ "  --help            display this help and exit\n"
+#~ "  --version         output version information and exit\n"
+#~ "\n"
+#~ "-T implied by -l nn when nn <= 10 or <= 3 with -F. With no FILE, or when\n"
+#~ "FILE is -, read standard input.\n"
+#~ msgstr ""
+#~ "  -s[CHAR],--separator[=CHAR]\n"
+#~ "                    文字 CHAR を段の分割に使用\n"
+#~ "                    CHAR のデフォルトは -w がなければ <TAB>,\n"
+#~ "                    -w オプションがあれば空文字\n"
+#~ "                    -s[CHAR] は -w が指定されていなければ\n"
+#~ "                    段に関する 3つのオプション (-COLUMN|-a -COLUMN|-m) す"
+#~ "べて\n"
+#~ "                    による行の切り詰めを無効に\n"
+#~ "  -S[STRING], --sep-string[=STRING]\n"
+#~ "                    任意の STRING を段の分割に使用\n"
+#~ "                    -S \"STRING\" として使ってはならない\n"
+#~ "                    -S のみ: 分割文字を使用しない (-S\"\" と同じ)\n"
+#~ "                    -S なし: -J があるなら <TAB> それ以外は <space> を\n"
+#~ "                    使う (-S\" \" と同じ). 段に関するオプションには影響し"
+#~ "ない\n"
+#~ "  -t, --omit-header ヘッダや本文の余白を省略\n"
+#~ "  -T, --omit-pagination\n"
+#~ "                    ヘッダや本文の余白を省略し, 入力ファイル中の改ページを"
+#~ "無視\n"
+#~ "  -v, --show-nonprinting\n"
+#~ "                    バックスラッシュ(\\) + 8 進数による記述を使用\n"
+#~ "  -w PAGE_WIDTH, --width=PAGE_WIDTH\n"
+#~ "                    複数の欄の出力に対してのみページ幅を PAGE_WIDTH (72)\n"
+#~ "                    文字に設定し, -s[char] を無効に (72)\n"
+#~ "  -W PAGE_WIDTH, --page-width=PAGE_WIDTH\n"
+#~ "                    ページ幅を PAGE_WIDTH (72) 文字に設定し, はみ出た行"
+#~ "は\n"
+#~ "                    切り捨て. ただし -J オプションが指定されていない場合"
+#~ "に\n"
+#~ "                    限る. -S や -s には何も影響しない\n"
+#~ "  --help            使い方を表示\n"
+#~ "  --version         バージョン情報を表示\n"
+#~ "\n"
+#~ "-T は -l nn を用い, nn <= 3 の指定(-f オプションあり), もしくは\n"
+#~ "nn <= 10 (-f オプションなし)と指定するのと同じ意味になります.\n"
+#~ "ファイルが指定されない, あるいはファイルとして `-' が指定された場合, \n"
+#~ "標準入力を読み込みます.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Output a permuted index, including context, of the words in the input "
+#~ "files.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -A, --auto-reference           output automatically generated "
+#~ "references\n"
+#~ "  -C, --copyright                display Copyright and copying "
+#~ "conditions\n"
+#~ "  -G, --traditional              behave more like System V `ptx'\n"
+#~ "  -F, --flag-truncation=STRING   use STRING for flagging line "
+#~ "truncations\n"
+#~ "  -M, --macro-name=STRING        macro name to use instead of `xx'\n"
+#~ "  -O, --format=roff              generate output as roff directives\n"
+#~ "  -R, --right-side-refs          put references at right, not counted in -"
+#~ "w\n"
+#~ "  -S, --sentence-regexp=REGEXP   for end of lines or end of sentences\n"
+#~ "  -T, --format=tex               generate output as TeX directives\n"
+#~ "  -W, --word-regexp=REGEXP       use REGEXP to match each keyword\n"
+#~ "  -b, --break-file=FILE          word break characters in this FILE\n"
+#~ "  -f, --ignore-case              fold lower case to upper case for "
+#~ "sorting\n"
+#~ "  -g, --gap-size=NUMBER          gap size in columns between output "
+#~ "fields\n"
+#~ "  -i, --ignore-file=FILE         read ignore word list from FILE\n"
+#~ "  -o, --only-file=FILE           read only word list from this FILE\n"
+#~ "  -r, --references               first field of each line is a reference\n"
+#~ "  -t, --typeset-mode               - not implemented -\n"
+#~ "  -w, --width=NUMBER             output width in columns, reference "
+#~ "excluded\n"
+#~ "      --help                     display this help and exit\n"
+#~ "      --version                  output version information and exit\n"
+#~ "\n"
+#~ "With no FILE or if FILE is -, read Standard Input.  `-F /' by default.\n"
+#~ msgstr ""
+#~ "長いオプションに対して必須の引数は短いオプションに対しても必須です.\n"
+#~ "\n"
+#~ "  -A, --auto-reference           自動生成した参照文を出力\n"
+#~ "  -C, --copyright                著作権とコピーに関する条件を表示\n"
+#~ "  -G, --traditional              System V の `ptx' により近い動作\n"
+#~ "  -F, --flag-truncation=STRING   行の切り詰めの目印に STRING を使用\n"
+#~ "  -M, --macro-name=STRING        `xx' の代わりに使うマクロ名を指定\n"
+#~ "  -O, --format=roff              roff 命令で出力を生成\n"
+#~ "  -R, --right-side-refs          参照文を右に. ただし -w の勘定には入らな"
+#~ "い\n"
+#~ "  -S, --sentence-regexp=REGEXP   行末または文末を表現する正規表現を指定\n"
+#~ "  -T, --format=tex               TeX 命令で出力を生成\n"
+#~ "  -W, --word-regexp=REGEXP       キーワードに対して REGEXP で一致を調べ"
+#~ "る\n"
+#~ "  -b, --break-file=FILE          この FILE 中から単語を分割する文字を取"
+#~ "得\n"
+#~ "  -f, --ignore-case              小文字を大文字に変えて並び替え\n"
+#~ "  -g, --gap-size=NUMBER          出力のフィールド間の列中の隙間の大きさ\n"
+#~ "  -i, --ignore-file=FILE         FILE から無視する単語一覧を読み込む\n"
+#~ "  -o, --only-file=FILE           この FILE から単語一覧のみを読み込む\n"
+#~ "  -r, --references               各行の第1フィールドを参照文と見なす\n"
+#~ "  -t, --typeset-mode               - 未実装 -\n"
+#~ "  -w, --width=NUMBER             列の出力幅を指定. 参照文を除いて数える\n"
+#~ "      --help                     使い方を表示\n"
+#~ "      --version                  バージョン情報を表示\n"
+#~ "\n"
+#~ "FILE が指定されない, もしくは FILE が - の場合, 標準入力が読み込まれま"
+#~ "す.\n"
+#~ "デフォルトでは `-F /' を指定したことになります.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Other options:\n"
+#~ "\n"
+#~ "  -c, --check               check whether input is sorted; do not sort\n"
+#~ "  -k, --key=POS1[,POS2]     start a key at POS1, end it at POS 2 (origin "
+#~ "1)\n"
+#~ "  -m, --merge               merge already sorted files; do not sort\n"
+#~ "  -o, --output=FILE         write result to FILE instead of standard "
+#~ "output\n"
+#~ "  -s, --stable              stabilize sort by disabling last-resort "
+#~ "comparison\n"
+#~ "  -S, --buffer-size=SIZE    use SIZE for main memory buffer\n"
+#~ "  -t, --field-separator=SEP use SEP instead of non- to whitespace "
+#~ "transition\n"
+#~ "  -T, --temporary-directory=DIR  use DIR for temporaries, not $TMPDIR or %"
+#~ "s\n"
+#~ "                              multiple options specify multiple "
+#~ "directories\n"
+#~ "  -u, --unique              with -c: check for strict ordering\n"
+#~ "                              otherwise: output only the first of an "
+#~ "equal run\n"
+#~ "  -z, --zero-terminated     end lines with 0 byte, not newline\n"
+#~ "  +POS1 [-POS2]             start a key at POS1, end it before POS2 "
+#~ "(origin 0)\n"
+#~ "                              Warning: this option is obsolescent\n"
+#~ "      --help       display this help and exit\n"
+#~ "      --version    output version information and exit\n"
+#~ "\n"
+#~ msgstr ""
+#~ "ファイルの内容をソートして標準出力に書き込みます. 入力ファイルが複数の場"
+#~ "合,\n"
+#~ "連結して出力します.\n"
+#~ "\n"
+#~ "  +POS1 [-POS2]    ソートキーを POS1 から POS2 の **前まで** に (古い方"
+#~ "法)\n"
+#~ "\t\t     フィードの番号や文字のオフセットはゼロから開始\n"
+#~ "                     (-k オプションと対照的)\n"
+#~ "  -b               ソート対象の前にある空白を無視\n"
+#~ "  -c               与えられたファイルがソートされているか否かを調べる\n"
+#~ "  -d               英数字と空白文字のみを対象にして並び替え\n"
+#~ "  -f               大文字・小文字を同一視して並び替え\n"
+#~ "  -g               一般的な数値の大小によって比較. -b の効果が含まれる\n"
+#~ "  -i               キーの ASCII 文字だけを対象に比較して　並び替え\n"
+#~ "  -k POS1[,POS2]   ソートキーを POS1 から POS2 **まで** に\n"
+#~ "\t\t     フィードの番号や文字のオフセットは 1から開始\n"
+#~ "                     (0から始まる +POS 形式と対照的)\n"
+#~ "  -m               並び替えずにマージのみ行う\n"
+#~ "  -M               月名でソートを行う. 月名以外は JAN より小さいと見なす\n"
+#~ "                       -b オプションの効果を含む\n"
+#~ "  -n               文字列を数値の大小によって比較. -b の効果が含まれる\n"
+#~ "  -o FILE          標準出力のかわりに, 結果を FILE に書き込む\n"
+#~ "  -r               比較結果を反転\n"
+#~ "  -s               前の比較結果に頼らない安定的な並び替え\n"
+#~ "  -t SEP           区切り文字を空白文字列の代わりに SEP に変更\n"
+#~ "  -T DIRECT        一時ファイルとして $TMPDIR や %s の代わりに DIRECT を利"
+#~ "用\n"
+#~ "  -u               -c オプションとともに利用すれば連続した行で同じものが\n"
+#~ "                       ないかチェック. -m オプションとともに利用すれば, \n"
+#~ "                       等しい行のうち最初のものだけを表示\n"
+#~ "  -z               find -print0 の様に文字列の最後に改行でなくヌル文字を付"
+#~ "加\n"
+#~ "      --help       使い方を表示\n"
+#~ "      --version    バージョン情報を表示\n"
+#~ "\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Print the last %d lines of each FILE to standard output.\n"
+#~ "With more than one FILE, precede each with a header giving the file "
+#~ "name.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "      --retry              keep trying to open a file even if it is\n"
+#~ "                           inaccessible when tail starts or if it "
+#~ "becomes\n"
+#~ "                           inaccessible later -- useful only with -f\n"
+#~ "  -c, --bytes=N            output the last N bytes\n"
+#~ "  -f, --follow[={name|descriptor}]\n"
+#~ "                           output appended data as the file grows;\n"
+#~ "                           -f, --follow, and --follow=descriptor are\n"
+#~ "                           equivalent\n"
+#~ "  -F                       same as --follow=name --retry\n"
+#~ "  -n, --lines=N            output the last N lines, instead of the last %"
+#~ "d\n"
+#~ "      --max-unchanged-stats=N\n"
+#~ "                           with --follow=name, reopen a FILE which has "
+#~ "not\n"
+#~ "                           changed size after N (default %d) iterations\n"
+#~ "                           to see if it has been unlinked or renamed\n"
+#~ "                           (this is the usual case of rotated log files)\n"
+#~ "      --pid=PID            with -f, terminate after process ID, PID dies\n"
+#~ "  -q, --quiet, --silent    never output headers giving file names\n"
+#~ "  -s, --sleep-interval=S   with -f, each iteration lasts approximately S\n"
+#~ "                           (default 1) seconds\n"
+#~ "  -v, --verbose            always output headers giving file names\n"
+#~ "      --help               display this help and exit\n"
+#~ "      --version            output version information and exit\n"
+#~ "\n"
+#~ msgstr ""
+#~ "各 FILE の末尾 %d 行を標準出力に表示します.\n"
+#~ "複数の FILE を指定した場合, 各ファイルの先頭にヘッダとしてファイル名を\n"
+#~ "挿入します. FILE が指定されないか, FILE に - が指定された場合\n"
+#~ "標準入力を読み込みます.\n"
+#~ "\n"
+#~ "      --retry              tail の起動時にファイルがアクセス不能, もしく"
+#~ "は\n"
+#~ "                             その後にアクセス不能になったとしてもファイル"
+#~ "を\n"
+#~ "                             開こうとし続ける (-f 使用時のみ便利)\n"
+#~ "  -c, --bytes=N            最後の N バイトを表示\n"
+#~ "  -f, --follow[={name|descriptor}]\n"
+#~ "                           ファイルサイズの増加とともに, 追加的な出力を行"
+#~ "う\n"
+#~ "                             -f, --follow および --follow=descriptor は等"
+#~ "価\n"
+#~ "  -n, --lines=N            最後の %d 行ではなく, 最後の N 行を出力\n"
+#~ "      --max-unchanged-stats=N\n"
+#~ "                           texinfo 文書を参照 (デフォルト %d)\n"
+#~ "      --max-consecutive-size-changes=N\n"
+#~ "                           texinfo 文書を参照 (デフォルト %d)\n"
+#~ "      --pid=PID            -f 使用時にプロセス ID PID が死ぬと終了\n"
+#~ "  -q, --quiet, --silent    ファイル名をヘッダとして出力するのを止めさせ"
+#~ "る\n"
+#~ "  -s, --sleep-interval=S   -f 使用時の繰り返し処理の間隔を S 秒に\n"
+#~ "  -v, --verbose            常にファイル名をヘッダとして出力\n"
+#~ "      --help               使い方を表示\n"
+#~ "      --version            バージョン情報を表示\n"
+#~ "\n"
+#~ "バイトやライン数の指定である N の最初の文字として `+' を与えた場合,\n"
+#~ "各ファイルの先頭 N 番目から表示し, そうでなければ, ファイルの最後から N 番"
+#~ "目\n"
+#~ "までの項目を表示します. N として倍数オプションをつけることもできます.\n"
+#~ "b なら 512 倍, k なら 1024 倍, m なら 1048576 倍(1MB) されます.\n"
+#~ "最初のオプション 1 つに -VALUE や +VALUE を指定し, それに bkm をつけなけれ"
+#~ "ば\n"
+#~ "それぞれ -n VALUE あるいは -n +VALUE として扱われます. このような場合に"
+#~ "は\n"
+#~ "-c VALUE や -c +VALUE として扱われます.\n"
+#~ "\n"
+#~ "--follow (-f) を使うと tail はデフォルトでファイル記述子を捕捉します.\n"
+#~ "つまり tail が読んでいるファイルの名前が変更されても, tail はそのファイル"
+#~ "を\n"
+#~ "読み続けます. このデフォルトの動作は, ファイル記述子ではなくファイルの名前"
+#~ "で\n"
+#~ "ファイルを捕捉したい場合には好ましくありません (例: ログのロテーション).\n"
+#~ "そのような場合は --follow=name を使ってください. これにより tail は\n"
+#~ "周期的にそのファイルが削除されたり他のプログラムによって作り直されたり\n"
+#~ "したかどうかを確認し, その名前のファイルを捕捉します.\n"
+#~ "\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "SETs are specified as strings of characters.  Most represent themselves.\n"
+#~ "Interpreted sequences are:\n"
+#~ "\n"
+#~ "  \\NNN            character with octal value NNN (1 to 3 octal digits)\n"
+#~ "  \\\\              backslash\n"
+#~ "  \\a              audible BEL\n"
+#~ "  \\b              backspace\n"
+#~ "  \\f              form feed\n"
+#~ "  \\n              new line\n"
+#~ "  \\r              return\n"
+#~ "  \\t              horizontal tab\n"
+#~ "  \\v              vertical tab\n"
+#~ "  CHAR1-CHAR2     all characters from CHAR1 to CHAR2 in ascending order\n"
+#~ "  [CHAR*]         in SET2, copies of CHAR until length of SET1\n"
+#~ "  [CHAR*REPEAT]   REPEAT copies of CHAR, REPEAT octal if starting with 0\n"
+#~ "  [:alnum:]       all letters and digits\n"
+#~ "  [:alpha:]       all letters\n"
+#~ "  [:blank:]       all horizontal whitespace\n"
+#~ "  [:cntrl:]       all control characters\n"
+#~ "  [:digit:]       all digits\n"
+#~ "  [:graph:]       all printable characters, not including space\n"
+#~ "  [:lower:]       all lower case letters\n"
+#~ "  [:print:]       all printable characters, including space\n"
+#~ "  [:punct:]       all punctuation characters\n"
+#~ "  [:space:]       all horizontal or vertical whitespace\n"
+#~ "  [:upper:]       all upper case letters\n"
+#~ "  [:xdigit:]      all hexadecimal digits\n"
+#~ "  [=CHAR=]        all characters which are equivalent to CHAR\n"
+#~ msgstr ""
+#~ "\n"
+#~ "SET は文字列によって指定します. 多くの場合その文字自身を表現します.\n"
+#~ "解釈のされ方は以下の通り:\n"
+#~ "\n"
+#~ "  \\NNN            文字の 8 進数表現(1 から 3 個の 8 進数値)\n"
+#~ "  \\\\              バックスラッシュ\n"
+#~ "  \\a              ベル\n"
+#~ "  \\b              バックスペース\n"
+#~ "  \\f              フォームフィード\n"
+#~ "  \\n              改行\n"
+#~ "  \\r              復帰\n"
+#~ "  \\t              水平タブ\n"
+#~ "  \\v              垂直タブ\n"
+#~ "  CHAR1-CHAR2     CHAR1 から CHAR2 までを昇順に展開した文字列\n"
+#~ "  [CHAR1-CHAR2]   SET1 と SET2 の両方で指定した場合には CHAR1-CHAR2 と同"
+#~ "じ\n"
+#~ "  [CHAR*]         SET2 として, CHAR を SET1 の長さ分展開した文字列\n"
+#~ "  [CHAR*REPEAT]   CHAR を REPEAT 個展開した文字列, REPEAT の値を 0 から\n"
+#~ "                      始めた場合には, 8 進数として解釈\n"
+#~ "  [:alnum:]       全てのアルファベットと数字\n"
+#~ "  [:alpha:]       全てのアルファベット\n"
+#~ "  [:blank:]       全ての水平方向空白文字\n"
+#~ "  [:cntrl:]       全ての制御文字\n"
+#~ "  [:digit:]       全ての数字\n"
+#~ "  [:graph:]       全ての表示可能文字, 空白は含まない\n"
+#~ "  [:lower:]       全ての小文字アルファベット\n"
+#~ "  [:print:]       全ての表示可能文字, 空白も含む\n"
+#~ "  [:punct:]       全ての句読点\n"
+#~ "  [:space:]       全ての水平及び垂直タブ文字\n"
+#~ "  [:upper:]       全ての大文字アルファベット\n"
+#~ "  [:xdigit:]      全ての 16 進数数値\n"
+#~ "  [=CHAR=]        全ての CHAR と等価な文字. 等価クラス\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Discard all but one of successive identical lines from INPUT (or\n"
+#~ "standard input), writing to OUTPUT (or standard output).\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -c, --count           prefix lines by the number of occurrences\n"
+#~ "  -d, --repeated        only print duplicate lines\n"
+#~ "  -D, --all-repeated[=delimit-method] print all duplicate lines\n"
+#~ "                        delimit-method={none(default),prepend,separate)}\n"
+#~ "                        Delimiting is done with blank lines.\n"
+#~ "  -f, --skip-fields=N   avoid comparing the first N fields\n"
+#~ "  -i, --ignore-case     ignore differences in case when comparing\n"
+#~ "  -s, --skip-chars=N    avoid comparing the first N characters\n"
+#~ "  -u, --unique          only print unique lines\n"
+#~ "  -w, --check-chars=N   compare no more than N characters in lines\n"
+#~ "  -N                    same as -f N\n"
+#~ "  +N                    same as -s N (obsolescent; will be withdrawn)\n"
+#~ "      --help            display this help and exit\n"
+#~ "      --version         output version information and exit\n"
+#~ "\n"
+#~ "A field is a run of whitespace, then non-whitespace characters.\n"
+#~ "Fields are skipped before chars.\n"
+#~ msgstr ""
+#~ "入力元(もしくは標準入力)から重複行を, 出力先(もしくは標準出力)へ\n"
+#~ "書き込みます.\n"
+#~ "\n"
+#~ "  -c, --count           入力中に続けて出現した行の回数を表示\n"
+#~ "  -d, --repeated        重複した行のみを出力\n"
+#~ "  -D, --all-repeated    全ての重複した行を出力\n"
+#~ "  -f, --skip-fields=N   行の先頭から N 個のフィールドを無視\n"
+#~ "  -i, --ignore-case     大文字小文字の違いを無視\n"
+#~ "  -s, --skip-chars=N    最初のN文字を比較しない\n"
+#~ "  -u, --unique          重複がなかった行のみを出力\n"
+#~ "  -w, --check-chars=N   行中, N 文字以上を比較しない\n"
+#~ "  -N                    -f N と同じ\n"
+#~ "  +N                    -s N と同じ\n"
+#~ "      --help            使い方を表示\n"
+#~ "      --version         バージョン情報を表示\n"
+#~ "\n"
+#~ "フィールドとは, 空白文字で区切られた, 空白以外の文字からなる文字列を\n"
+#~ "指します. 最初のフィールドを 1 として数えます.\n"
+
+#, fuzzy
+#~ msgid "Copyright (C) 2001 Free Software Foundation, Inc."
+#~ msgstr "Copyright (C) 1999 Free Software Foundation, Inc."
+
+#~ msgid ""
+#~ "when using the old-style +POS and -POS key specifiers,\n"
+#~ "the +POS specifier must come first"
+#~ msgstr ""
+#~ "旧書式のソートキー指定子 +POS -POS を使用するときには, まず +POS 指定子"
+#~ "を\n"
+#~ "指定しなければなりません"
+
+#~ msgid "option `-k' requires an argument"
+#~ msgstr "オプション `-k' は引数が必要です"
+
+#~ msgid ""
+#~ "the starting field number argument to the `-k' option must be positive"
+#~ msgstr "開始フィールド番号引数 `-k' は正の整数でなければなりません"
+
+#~ msgid "starting field spec has `.' but lacks following character offset"
+#~ msgstr "開始フィールド指定に `.' がありますが, 文字位置の指定がありません"
+
+#, fuzzy
+#~ msgid ""
+#~ "starting field character offset argument to the `-k' option must be "
+#~ "positive"
+#~ msgstr ""
+#~ "`-k' オプションに対する開始フィールドの文字位置の指定は正の整数でなけれ"
+#~ "ば\n"
+#~ "なりません"
+
+#~ msgid "field specification has `,' but lacks following field spec"
+#~ msgstr "フィールドの指定に `,' がありますが, 終了フィールド指定がありません"
+
+#~ msgid "ending field number argument to the `-k' option must be positive"
+#~ msgstr ""
+#~ "`-k' オプションに対する終了フィールド番号は, 正の整数でなければなりません"
+
+#~ msgid "ending field spec has `.' but lacks following character offset"
+#~ msgstr ""
+#~ "終了フィールド指定に `.' がありますが, これに続く文字位置の指定がありませ"
+#~ "ん"
+
+#~ msgid "option `-o' requires an argument"
+#~ msgstr "オプション `-o' には引数が必要です"
+
+#, fuzzy
+#~ msgid "option `-S' requires an argument"
+#~ msgstr "オプション `-k' は引数が必要です"
+
+#~ msgid "option `-t' requires an argument"
+#~ msgstr "オプション `-t' には引数が必要です"
+
+#~ msgid "option `-T' requires an argument"
+#~ msgstr "オプション `-T' には引数が必要です"
+
+#~ msgid "%s: unrecognized option `-%c'\n"
+#~ msgstr "%s: オプション `-%c' を認識できません\n"
+
+#~ msgid "%s%*s%s%*sPage"
+#~ msgstr "%s%*s%s%*s ページ"
+
+#~ msgid "flushing file"
+#~ msgstr "ファイル同期中"
+
+#~ msgid "%s: write error"
+#~ msgstr "%s: 書き込みエラー"
+
+#~ msgid ""
+#~ "specified number of bytes `%s' is larger than the maximum\n"
+#~ "representable value of type `long'"
+#~ msgstr "指定されたバイト数 `%s' は `long' 型表現の上限値を越えています"
+
+#, fuzzy
+#~ msgid "virtual memory exhausted"
+#~ msgstr "メモリを使い果たしました\n"
+
+#~ msgid "Memory exhausted"
+#~ msgstr "メモリを使い果たしました"
+
+#, fuzzy
+#~ msgid "cannot chmod %s"
+#~ msgstr "`%s' で ioctl() を実行できません"
+
+#~ msgid "could not find loop"
+#~ msgstr "ループを見つけることができませんでした"
+
+#~ msgid "Success"
+#~ msgstr "成功"
+
+#~ msgid "No match"
+#~ msgstr "一致するものがありません"
+
+#~ msgid "Invalid regular expression"
+#~ msgstr "無効な正規表現です"
+
+#~ msgid "Invalid collation character"
+#~ msgstr "無効な照合文字です"
+
+#~ msgid "Trailing backslash"
+#~ msgstr "末尾のバックスラッシュ"
+
+#~ msgid "Invalid back reference"
+#~ msgstr "後参照が無効です"
+
+#~ msgid "Unmatched [ or [^"
+#~ msgstr "[ または [^ が一致しません"
+
+#~ msgid "Unmatched ( or \\("
+#~ msgstr "( または \\( が一致しません"
+
+#~ msgid "Unmatched \\{"
+#~ msgstr "\\{ が一致しません"
+
+#~ msgid "Invalid content of \\{\\}"
+#~ msgstr "\\{\\} の内容が無効です"
+
+#~ msgid "Invalid range end"
+#~ msgstr "範囲の終了が無効です"
+
+#~ msgid "Invalid preceding regular expression"
+#~ msgstr "先立つ正規表現が無効です"
+
+#~ msgid "Premature end of regular expression"
+#~ msgstr "正規表現の終了が早すぎます"
+
+#~ msgid "Regular expression too big"
+#~ msgstr "正規表現が大きすぎます"
+
+#~ msgid "Unmatched ) or \\)"
+#~ msgstr ") または \\) が一致しません"
+
+#~ msgid "No previous regular expression"
+#~ msgstr "以前の正規表現がありません"
+
+#~ msgid "%s: cannot follow end of non-regular file"
+#~ msgstr "%s: 非通常ファイルのファイル末尾は捕捉できません"
+
+#~ msgid ""
+#~ "\n"
+#~ "Report bugs to <textutils-bugs@gnu.org>."
+#~ msgstr ""
+#~ "\n"
+#~ "バグを発見したら <textutils-bugs@gnu.org> 宛に報告して下さい."

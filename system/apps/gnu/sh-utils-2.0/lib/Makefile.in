@@ -1,0 +1,526 @@
+# Makefile.in generated automatically by automake 1.4a from Makefile.am
+
+# Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+SHELL = @SHELL@
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
+
+DESTDIR =
+
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
+
+top_builddir = ..
+
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+INSTALL_STRIP_FLAG =
+transform = @program_transform_name@
+
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
+AMTAR = @AMTAR@
+AMTARFLAGS = @AMTARFLAGS@
+CATALOGS = @CATALOGS@
+CATOBJEXT = @CATOBJEXT@
+CC = @CC@
+CPP = @CPP@
+DATADIRNAME = @DATADIRNAME@
+GENCAT = @GENCAT@
+GETCONF = @GETCONF@
+GETLOADAVG_LIBS = @GETLOADAVG_LIBS@
+GMOFILES = @GMOFILES@
+GMSGFMT = @GMSGFMT@
+GNU_PACKAGE = @GNU_PACKAGE@
+GT_NO = @GT_NO@
+GT_YES = @GT_YES@
+INCLUDE_LOCALE_H = @INCLUDE_LOCALE_H@
+INSTOBJEXT = @INSTOBJEXT@
+INTLDEPS = @INTLDEPS@
+INTLLIBS = @INTLLIBS@
+INTLOBJS = @INTLOBJS@
+KMEM_GROUP = @KMEM_GROUP@
+LIBOBJS = @LIBOBJS@
+LIB_CRYPT = @LIB_CRYPT@
+MAKEINFO = @MAKEINFO@
+MAN = @MAN@
+MKINSTALLDIRS = @MKINSTALLDIRS@
+MSGFMT = @MSGFMT@
+NEED_SETGID = @NEED_SETGID@
+OPTIONAL_BIN_PROGS = @OPTIONAL_BIN_PROGS@
+OPTIONAL_BIN_ZCRIPTS = @OPTIONAL_BIN_ZCRIPTS@
+PACKAGE = @PACKAGE@
+PERL = @PERL@
+POFILES = @POFILES@
+POSUB = @POSUB@
+POW_LIBM = @POW_LIBM@
+RANLIB = @RANLIB@
+SEQ_LIBM = @SEQ_LIBM@
+SQRT_LIBM = @SQRT_LIBM@
+U = @U@
+USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
+USE_NLS = @USE_NLS@
+VERSION = @VERSION@
+YACC = @YACC@
+l = @l@
+
+
+AUTOMAKE_OPTIONS = ../src/ansi2knr
+
+noinst_LIBRARIES = libsu.a
+
+INCLUDES = -I.. -I$(srcdir) -I../intl
+
+libsu_a_SOURCES = getdate.y posixtm.c readtokens.c \
+  argmatch.c basename.c canon-host.c closeout.c full-write.c \
+  getopt.c getopt1.c getugroups.c human.c long-options.c quotearg.c readutmp.c \
+  stripslash.c version-etc.c xgetcwd.c xgethostname.c xmalloc.c \
+  xstrdup.c xstrtod.c xstrtol.c xstrtoul.c xstrtoumax.c
+
+
+libsu_a_LIBADD = @LIBOBJS@ @ALLOCA@
+libsu_a_DEPENDENCIES = $(libsu_a_LIBADD)
+
+noinst_HEADERS = argmatch.h closeout.h error.h fnmatch.h getdate.h \
+  getline.h getopt.h group-member.h human.h lchown.h long-options.h \
+  pathmax.h posixtm.h quotearg.h readtokens.h \
+  readutmp.h regex.h \
+  version-etc.h xalloc.h xstrtod.h xstrtol.h
+
+
+BUILT_SOURCES = getdate.c lstat.c stat.c
+
+EXTRA_DIST = xstat.in
+subdir = lib
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = ../config.h
+CONFIG_CLEAN_FILES = 
+LIBRARIES =  $(noinst_LIBRARIES)
+
+
+DEFS = @DEFS@ -I. -I$(srcdir) -I..
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+ANSI2KNR = ../src/ansi2knr
+libsu_a_AR = $(AR) cru
+am_libsu_a_OBJECTS =  getdate$U.o posixtm$U.o readtokens$U.o \
+argmatch$U.o basename$U.o canon-host$U.o closeout$U.o full-write$U.o \
+getopt$U.o getopt1$U.o getugroups$U.o human$U.o long-options$U.o \
+quotearg$U.o readutmp$U.o stripslash$U.o version-etc$U.o xgetcwd$U.o \
+xgethostname$U.o xmalloc$U.o xstrdup$U.o xstrtod$U.o xstrtol$U.o \
+xstrtoul$U.o xstrtoumax$U.o
+libsu_a_OBJECTS =  $(am_libsu_a_OBJECTS)
+AR = ar
+COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CFLAGS = @CFLAGS@
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+DIST_SOURCES =  $(libsu_a_SOURCES)
+HEADERS =  $(noinst_HEADERS)
+
+DIST_COMMON =  $(noinst_HEADERS) Makefile.am Makefile.in alloca.c \
+chown.c dup2.c error.c error.h fnmatch.c getdate.c getgroups.c \
+gethostname.c getline.c getloadavg.c getusershell.c group-member.c \
+lchown.c malloc.c memchr.c memcmp.c memcpy.c memmove.c memset.c \
+mktime.c putenv.c realloc.c regex.c stime.c stpcpy.c strcasecmp.c \
+strcspn.c strftime.c strncasecmp.c strstr.c strtod.c strtol.c strtoul.c \
+strtoull.c strtoumax.c
+
+
+DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+
+GZIP_ENV = --best
+SOURCES = $(libsu_a_SOURCES)
+OBJECTS = $(am_libsu_a_OBJECTS)
+
+all: all-redirect
+.SUFFIXES:
+.SUFFIXES: .c .o .y
+$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOMAKE) --gnits --include-deps lib/Makefile
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+
+mostlyclean-noinstLIBRARIES:
+
+clean-noinstLIBRARIES:
+	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
+
+distclean-noinstLIBRARIES:
+
+maintainer-clean-noinstLIBRARIES:
+
+mostlyclean-compile:
+	-rm -f *.o core *.core
+
+clean-compile:
+
+distclean-compile:
+	-rm -f *.tab.c
+
+maintainer-clean-compile:
+../src/ansi2knr: ../src/ansi2knr.o
+	cd ../src && $(MAKE) $(AM_MAKEFLAGS) ansi2knr
+
+../src/ansi2knr.o:
+	cd ../src && $(MAKE) $(AM_MAKEFLAGS) ansi2knr.o
+
+
+mostlyclean-kr:
+	-rm -f *_.c
+
+clean-kr:
+
+distclean-kr:
+
+maintainer-clean-kr:
+
+libsu.a: $(libsu_a_OBJECTS) $(libsu_a_DEPENDENCIES)
+	-rm -f libsu.a
+	$(libsu_a_AR) libsu.a $(libsu_a_OBJECTS) $(libsu_a_LIBADD)
+	$(RANLIB) libsu.a
+.c.o:
+	$(COMPILE) -c $<
+alloca_.c: alloca.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/alloca.c; then echo $(srcdir)/alloca.c; else echo alloca.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > alloca_.c
+argmatch_.c: argmatch.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/argmatch.c; then echo $(srcdir)/argmatch.c; else echo argmatch.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > argmatch_.c
+basename_.c: basename.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/basename.c; then echo $(srcdir)/basename.c; else echo basename.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > basename_.c
+canon-host_.c: canon-host.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/canon-host.c; then echo $(srcdir)/canon-host.c; else echo canon-host.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > canon-host_.c
+chown_.c: chown.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/chown.c; then echo $(srcdir)/chown.c; else echo chown.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > chown_.c
+closeout_.c: closeout.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/closeout.c; then echo $(srcdir)/closeout.c; else echo closeout.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > closeout_.c
+dup2_.c: dup2.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/dup2.c; then echo $(srcdir)/dup2.c; else echo dup2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > dup2_.c
+error_.c: error.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/error.c; then echo $(srcdir)/error.c; else echo error.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > error_.c
+fnmatch_.c: fnmatch.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fnmatch.c; then echo $(srcdir)/fnmatch.c; else echo fnmatch.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fnmatch_.c
+full-write_.c: full-write.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/full-write.c; then echo $(srcdir)/full-write.c; else echo full-write.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > full-write_.c
+getdate_.c: getdate.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/getdate.c; then echo $(srcdir)/getdate.c; else echo getdate.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > getdate_.c
+getgroups_.c: getgroups.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/getgroups.c; then echo $(srcdir)/getgroups.c; else echo getgroups.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > getgroups_.c
+gethostname_.c: gethostname.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gethostname.c; then echo $(srcdir)/gethostname.c; else echo gethostname.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gethostname_.c
+getline_.c: getline.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/getline.c; then echo $(srcdir)/getline.c; else echo getline.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > getline_.c
+getloadavg_.c: getloadavg.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/getloadavg.c; then echo $(srcdir)/getloadavg.c; else echo getloadavg.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > getloadavg_.c
+getopt_.c: getopt.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/getopt.c; then echo $(srcdir)/getopt.c; else echo getopt.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > getopt_.c
+getopt1_.c: getopt1.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/getopt1.c; then echo $(srcdir)/getopt1.c; else echo getopt1.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > getopt1_.c
+getugroups_.c: getugroups.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/getugroups.c; then echo $(srcdir)/getugroups.c; else echo getugroups.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > getugroups_.c
+getusershell_.c: getusershell.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/getusershell.c; then echo $(srcdir)/getusershell.c; else echo getusershell.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > getusershell_.c
+group-member_.c: group-member.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/group-member.c; then echo $(srcdir)/group-member.c; else echo group-member.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > group-member_.c
+human_.c: human.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/human.c; then echo $(srcdir)/human.c; else echo human.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > human_.c
+lchown_.c: lchown.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/lchown.c; then echo $(srcdir)/lchown.c; else echo lchown.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > lchown_.c
+long-options_.c: long-options.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/long-options.c; then echo $(srcdir)/long-options.c; else echo long-options.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > long-options_.c
+lstat_.c: lstat.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/lstat.c; then echo $(srcdir)/lstat.c; else echo lstat.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > lstat_.c
+malloc_.c: malloc.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/malloc.c; then echo $(srcdir)/malloc.c; else echo malloc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > malloc_.c
+memchr_.c: memchr.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/memchr.c; then echo $(srcdir)/memchr.c; else echo memchr.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > memchr_.c
+memcmp_.c: memcmp.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/memcmp.c; then echo $(srcdir)/memcmp.c; else echo memcmp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > memcmp_.c
+memcpy_.c: memcpy.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/memcpy.c; then echo $(srcdir)/memcpy.c; else echo memcpy.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > memcpy_.c
+memmove_.c: memmove.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/memmove.c; then echo $(srcdir)/memmove.c; else echo memmove.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > memmove_.c
+memset_.c: memset.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/memset.c; then echo $(srcdir)/memset.c; else echo memset.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > memset_.c
+mktime_.c: mktime.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mktime.c; then echo $(srcdir)/mktime.c; else echo mktime.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mktime_.c
+posixtm_.c: posixtm.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/posixtm.c; then echo $(srcdir)/posixtm.c; else echo posixtm.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > posixtm_.c
+putenv_.c: putenv.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/putenv.c; then echo $(srcdir)/putenv.c; else echo putenv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > putenv_.c
+quotearg_.c: quotearg.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/quotearg.c; then echo $(srcdir)/quotearg.c; else echo quotearg.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > quotearg_.c
+readtokens_.c: readtokens.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/readtokens.c; then echo $(srcdir)/readtokens.c; else echo readtokens.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > readtokens_.c
+readutmp_.c: readutmp.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/readutmp.c; then echo $(srcdir)/readutmp.c; else echo readutmp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > readutmp_.c
+realloc_.c: realloc.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/realloc.c; then echo $(srcdir)/realloc.c; else echo realloc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > realloc_.c
+regex_.c: regex.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/regex.c; then echo $(srcdir)/regex.c; else echo regex.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > regex_.c
+stat_.c: stat.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/stat.c; then echo $(srcdir)/stat.c; else echo stat.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > stat_.c
+stime_.c: stime.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/stime.c; then echo $(srcdir)/stime.c; else echo stime.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > stime_.c
+stpcpy_.c: stpcpy.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/stpcpy.c; then echo $(srcdir)/stpcpy.c; else echo stpcpy.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > stpcpy_.c
+strcasecmp_.c: strcasecmp.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/strcasecmp.c; then echo $(srcdir)/strcasecmp.c; else echo strcasecmp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > strcasecmp_.c
+strcspn_.c: strcspn.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/strcspn.c; then echo $(srcdir)/strcspn.c; else echo strcspn.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > strcspn_.c
+strftime_.c: strftime.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/strftime.c; then echo $(srcdir)/strftime.c; else echo strftime.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > strftime_.c
+stripslash_.c: stripslash.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/stripslash.c; then echo $(srcdir)/stripslash.c; else echo stripslash.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > stripslash_.c
+strncasecmp_.c: strncasecmp.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/strncasecmp.c; then echo $(srcdir)/strncasecmp.c; else echo strncasecmp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > strncasecmp_.c
+strstr_.c: strstr.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/strstr.c; then echo $(srcdir)/strstr.c; else echo strstr.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > strstr_.c
+strtod_.c: strtod.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/strtod.c; then echo $(srcdir)/strtod.c; else echo strtod.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > strtod_.c
+strtol_.c: strtol.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/strtol.c; then echo $(srcdir)/strtol.c; else echo strtol.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > strtol_.c
+strtoul_.c: strtoul.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/strtoul.c; then echo $(srcdir)/strtoul.c; else echo strtoul.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > strtoul_.c
+strtoull_.c: strtoull.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/strtoull.c; then echo $(srcdir)/strtoull.c; else echo strtoull.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > strtoull_.c
+strtoumax_.c: strtoumax.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/strtoumax.c; then echo $(srcdir)/strtoumax.c; else echo strtoumax.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > strtoumax_.c
+version-etc_.c: version-etc.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/version-etc.c; then echo $(srcdir)/version-etc.c; else echo version-etc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > version-etc_.c
+xgetcwd_.c: xgetcwd.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/xgetcwd.c; then echo $(srcdir)/xgetcwd.c; else echo xgetcwd.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > xgetcwd_.c
+xgethostname_.c: xgethostname.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/xgethostname.c; then echo $(srcdir)/xgethostname.c; else echo xgethostname.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > xgethostname_.c
+xmalloc_.c: xmalloc.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/xmalloc.c; then echo $(srcdir)/xmalloc.c; else echo xmalloc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > xmalloc_.c
+xstrdup_.c: xstrdup.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/xstrdup.c; then echo $(srcdir)/xstrdup.c; else echo xstrdup.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > xstrdup_.c
+xstrtod_.c: xstrtod.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/xstrtod.c; then echo $(srcdir)/xstrtod.c; else echo xstrtod.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > xstrtod_.c
+xstrtol_.c: xstrtol.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/xstrtol.c; then echo $(srcdir)/xstrtol.c; else echo xstrtol.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > xstrtol_.c
+xstrtoul_.c: xstrtoul.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/xstrtoul.c; then echo $(srcdir)/xstrtoul.c; else echo xstrtoul.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > xstrtoul_.c
+xstrtoumax_.c: xstrtoumax.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/xstrtoumax.c; then echo $(srcdir)/xstrtoumax.c; else echo xstrtoumax.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > xstrtoumax_.c
+alloca_.o argmatch_.o basename_.o canon-host_.o chown_.o closeout_.o \
+dup2_.o error_.o fnmatch_.o full-write_.o getdate_.o getgroups_.o \
+gethostname_.o getline_.o getloadavg_.o getopt_.o getopt1_.o \
+getugroups_.o getusershell_.o group-member_.o human_.o lchown_.o \
+long-options_.o lstat_.o malloc_.o memchr_.o memcmp_.o memcpy_.o \
+memmove_.o memset_.o mktime_.o posixtm_.o putenv_.o quotearg_.o \
+readtokens_.o readutmp_.o realloc_.o regex_.o stat_.o stime_.o \
+stpcpy_.o strcasecmp_.o strcspn_.o strftime_.o stripslash_.o \
+strncasecmp_.o strstr_.o strtod_.o strtol_.o strtoul_.o strtoull_.o \
+strtoumax_.o version-etc_.o xgetcwd_.o xgethostname_.o xmalloc_.o \
+xstrdup_.o xstrtod_.o xstrtol_.o xstrtoul_.o xstrtoumax_.o : \
+$(ANSI2KNR)
+.y.c:
+	$(YACC) $(AM_YFLAGS) $(YFLAGS) $< && mv y.tab.c $*.c
+	if test -f y.tab.h; then \
+	if cmp -s y.tab.h $*.h; then rm -f y.tab.h; else mv y.tab.h $*.h; fi; \
+	else :; fi
+
+
+tags: TAGS
+
+ID: $(HEADERS) $(SOURCES) $(LISP)
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	here=`pwd` && cd $(srcdir) \
+	  && mkid -f$$here/ID $$unique $(LISP)
+
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
+	tags=; \
+	here=`pwd`; \
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
+	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags  $$unique $(LISP) -o $$here/TAGS)
+
+mostlyclean-tags:
+
+clean-tags:
+
+distclean-tags:
+	-rm -f TAGS ID
+
+maintainer-clean-tags:
+
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+
+distdir: $(DISTFILES)
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  if test -d $$d/$$file; then \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+	  fi; \
+	done
+
+argmatch.o: argmatch.c argmatch.h ../config.h error.h quotearg.h
+basename.o: basename.c ../config.h
+canon-host.o: canon-host.c ../config.h
+closeout.o: closeout.c ../config.h closeout.h error.h
+full-write.o: full-write.c ../config.h
+getdate.o: getdate.c ../config.h getdate.h
+getloadavg.o: getloadavg.c ../config.h
+getopt.o: getopt.c ../config.h
+getopt1.o: getopt1.c ../config.h getopt.h
+getugroups.o: getugroups.c ../config.h
+human.o: human.c ../config.h argmatch.h error.h xstrtol.h human.h
+lchown.o: lchown.c ../config.h lchown.h
+long-options.o: long-options.c ../config.h getopt.h closeout.h \
+	long-options.h version-etc.h
+posixtm.o: posixtm.c ../config.h posixtm.h
+quotearg.o: quotearg.c ../config.h quotearg.h xalloc.h
+readtokens.o: readtokens.c ../config.h readtokens.h
+readutmp.o: readutmp.c ../config.h readutmp.h
+regex.o: regex.c ../config.h regex.h
+strftime.o: strftime.c ../config.h
+stripslash.o: stripslash.c ../config.h
+strtoumax.o: strtoumax.c ../config.h
+version-etc.o: version-etc.c ../config.h version-etc.h
+xgetcwd.o: xgetcwd.c ../config.h pathmax.h
+xgethostname.o: xgethostname.c ../config.h error.h
+xmalloc.o: xmalloc.c ../config.h error.h xalloc.h
+xstrdup.o: xstrdup.c ../config.h
+xstrtod.o: xstrtod.c ../config.h xstrtod.h
+xstrtol.o: xstrtol.c ../config.h xstrtol.h
+xstrtoul.o: xstrtoul.c xstrtol.c ../config.h xstrtol.h
+xstrtoumax.o: xstrtoumax.c ../config.h xstrtol.c xstrtol.h
+
+info-am:
+info: info-am
+dvi-am:
+dvi: dvi-am
+check-am: all-am
+check: check-am
+installcheck-am:
+installcheck: installcheck-am
+install-exec-am:
+install-exec: install-exec-am
+
+install-data-am:
+install-data: install-data-am
+
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+install: install-am
+uninstall-am:
+uninstall: uninstall-am
+all-am: Makefile $(LIBRARIES) $(HEADERS)
+all-redirect: all-am
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
+installdirs:
+
+
+mostlyclean-generic:
+
+clean-generic:
+
+distclean-generic:
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+
+maintainer-clean-generic:
+	-test -z "getdate.c$(BUILT_SOURCES)" || rm -f getdate.c $(BUILT_SOURCES)
+mostlyclean-am:  mostlyclean-noinstLIBRARIES mostlyclean-compile \
+		mostlyclean-kr mostlyclean-tags mostlyclean-generic
+
+mostlyclean: mostlyclean-am
+
+clean-am:  clean-noinstLIBRARIES clean-compile clean-kr clean-tags \
+		clean-generic mostlyclean-am
+
+clean: clean-am
+
+distclean-am:  distclean-noinstLIBRARIES distclean-compile distclean-kr \
+		distclean-tags distclean-generic clean-am
+
+distclean: distclean-am
+
+maintainer-clean-am:  maintainer-clean-noinstLIBRARIES \
+		maintainer-clean-compile maintainer-clean-kr \
+		maintainer-clean-tags maintainer-clean-generic \
+		distclean-am
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+
+maintainer-clean: maintainer-clean-am
+
+.PHONY: mostlyclean-noinstLIBRARIES distclean-noinstLIBRARIES \
+clean-noinstLIBRARIES maintainer-clean-noinstLIBRARIES \
+mostlyclean-compile distclean-compile clean-compile \
+maintainer-clean-compile mostlyclean-kr distclean-kr clean-kr \
+maintainer-clean-kr tags mostlyclean-tags distclean-tags clean-tags \
+maintainer-clean-tags distdir info-am info dvi-am dvi check check-am \
+installcheck-am installcheck install-exec-am install-exec \
+install-data-am install-data install-am install uninstall-am uninstall \
+all-redirect all-am all install-strip installdirs mostlyclean-generic \
+distclean-generic clean-generic maintainer-clean-generic clean \
+mostlyclean distclean maintainer-clean
+
+lstat.c: xstat.in
+	sed -e '/@IGNORE@/d' -e 's/@xstat@/lstat/g' $(srcdir)/xstat.in > $@-t
+	mv $@-t $@
+
+stat.c: xstat.in
+	sed -e '/@IGNORE@/d' -e 's/@xstat@/stat/g' $(srcdir)/xstat.in > $@-t
+	mv $@-t $@
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

@@ -1,0 +1,10 @@
+Makefile
+Makefile.in
+libkjava_la.all_cpp.cpp
+*.kdoc
+SunWS_cache
+ir.out
+kjava.policy
+*.kdevprj
+*.moc
+.deps

@@ -1,0 +1,21 @@
+#!/bin/sh
+# Just like p-1, but with TMPDIR=.
+
+TMPDIR=.
+
+if test "$VERBOSE" = yes; then
+  set -x
+  mkdir --version
+fi
+
+tmp=$TMPDIR/t-mkdir.$$
+temp_files=$tmp
+rm -rf $temp_files
+
+mkdir --parents $tmp || fail=1
+
+test -d $tmp || fail=1
+
+rm -rf $temp_files
+
+exit $fail

@@ -1,0 +1,2215 @@
+# Norwegian messages for sh-utils. (bokmål dialect)
+# Copyright (C) 1996 Free Software Foundation, Inc.
+# Eivind Tagseth <eivindt@multinet.no>, 1996.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sh-utils 1.15a\n"
+"POT-Creation-Date: 1999-08-14 13:15+0200\n"
+"PO-Revision-Date: 1997-06-05 12:54+0200\n"
+"Last-Translator: Eivind Tagseth <eivindt@multinet.no>\n"
+"Language-Team: Norwegian <no@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: lib/argmatch.c:159
+#, fuzzy, c-format
+msgid "invalid argument %s for `%s'"
+msgstr "ugyldig argument «%s»"
+
+#: lib/argmatch.c:160
+#, fuzzy, c-format
+msgid "ambiguous argument %s for `%s'"
+msgstr "manglende argument til «%s»"
+
+#. We try to put synonyms on the same line.  The assumption is that
+#. synonyms follow each other
+#: lib/argmatch.c:178
+#, fuzzy
+msgid "Valid arguments are:"
+msgstr "ugyldig argument «%s»"
+
+#: lib/closeout.c:71 lib/closeout.c:73
+msgid "write error"
+msgstr "feil ved skriving"
+
+#: lib/error.c:102
+#, fuzzy
+msgid "Unknown system error"
+msgstr "ukjent binær operator"
+
+#: lib/getopt.c:677
+#, c-format
+msgid "%s: option `%s' is ambiguous\n"
+msgstr ""
+
+#: lib/getopt.c:702
+#, c-format
+msgid "%s: option `--%s' doesn't allow an argument\n"
+msgstr ""
+
+#: lib/getopt.c:707
+#, c-format
+msgid "%s: option `%c%s' doesn't allow an argument\n"
+msgstr ""
+
+#: lib/getopt.c:725 lib/getopt.c:898
+#, c-format
+msgid "%s: option `%s' requires an argument\n"
+msgstr ""
+
+#. --option
+#: lib/getopt.c:754
+#, fuzzy, c-format
+msgid "%s: unrecognized option `--%s'\n"
+msgstr "ugyldig flagg «%s»"
+
+#. +option or -option
+#: lib/getopt.c:758
+#, fuzzy, c-format
+msgid "%s: unrecognized option `%c%s'\n"
+msgstr "ugyldig flagg «%s»"
+
+#. 1003.2 specifies the format of this message.
+#: lib/getopt.c:784
+#, c-format
+msgid "%s: illegal option -- %c\n"
+msgstr ""
+
+#: lib/getopt.c:787
+#, fuzzy, c-format
+msgid "%s: invalid option -- %c\n"
+msgstr "ugyldig flagg «%s»"
+
+#. 1003.2 specifies the format of this message.
+#: lib/getopt.c:817 lib/getopt.c:947
+#, c-format
+msgid "%s: option requires an argument -- %c\n"
+msgstr ""
+
+#: lib/getopt.c:864
+#, c-format
+msgid "%s: option `-W %s' is ambiguous\n"
+msgstr ""
+
+#: lib/getopt.c:882
+#, c-format
+msgid "%s: option `-W %s' doesn't allow an argument\n"
+msgstr ""
+
+#: lib/human.c:310
+msgid "block size"
+msgstr ""
+
+#: lib/version-etc.c:38
+#, c-format
+msgid "Written by %s.\n"
+msgstr ""
+
+#: lib/version-etc.c:39
+msgid ""
+"\n"
+"Copyright (C) 1999 Free Software Foundation, Inc.\n"
+"This is free software; see the source for copying conditions.  There is NO\n"
+"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+msgstr ""
+
+#. If XALLOC_FAIL_FUNC is NULL, or does return, display this message
+#. before exiting when memory is exhausted.  Goes through gettext.
+#: lib/xmalloc.c:66
+#, fuzzy
+msgid "Memory exhausted"
+msgstr "virtuelt minne oppbrukt"
+
+#: src/basename.c:51 src/chroot.c:40 src/date.c:115 src/dirname.c:42
+#: src/echo.c:72 src/env.c:114 src/expr.c:101 src/factor.c:54 src/hostid.c:44
+#: src/hostname.c:62 src/id.c:94 src/logname.c:43 src/nice.c:62
+#: src/pathchk.c:114 src/pinky.c:462 src/printenv.c:59 src/printf.c:90
+#: src/pwd.c:42 src/seq.c:84 src/sleep.c:46 src/stty.c:488 src/su.c:429
+#: src/tee.c:61 src/test.c:987 src/tty.c:58 src/uname.c:93 src/uptime.c:165
+#: src/users.c:111 src/who.c:354 src/whoami.c:47 src/yes.c:40
+#, c-format
+msgid "Try `%s --help' for more information.\n"
+msgstr "Prøv «%s --help» for mer informasjon.\n"
+
+#: src/basename.c:55
+#, c-format
+msgid ""
+"Usage: %s NAME [SUFFIX]\n"
+"  or:  %s OPTION\n"
+msgstr ""
+"Bruk:    %s NAVN [SUFFIKS]\n"
+"  eller: %s FLAGG\n"
+
+#: src/basename.c:60
+msgid ""
+"Print NAME with any leading directory components removed.\n"
+"If specified, also remove a trailing SUFFIX.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+msgstr ""
+"Skriv ut NAVN med eventuelle innledende katalog-komponenter fjernet.\n"
+"Hvis spesifisert, fjern også avsluttende SUFFIKS.\n"
+"\n"
+"  --help      vis denne hjelpeteksten og avslutt\n"
+"  --version   vis versjonsinformasjon og avslutt\n"
+
+#: src/basename.c:67 src/chroot.c:56 src/date.c:186 src/dirname.c:58
+#: src/echo.c:100 src/env.c:131 src/expr.c:156 src/factor.c:72 src/false.c:27
+#: src/hostid.c:56 src/hostname.c:75 src/id.c:113 src/logname.c:54
+#: src/nice.c:76 src/pathchk.c:126 src/pinky.c:485 src/printenv.c:69
+#: src/printf.c:126 src/pwd.c:53 src/seq.c:108 src/sleep.c:57 src/stty.c:662
+#: src/su.c:448 src/tee.c:74 src/test.c:1054 src/true.c:27 src/tty.c:70
+#: src/uname.c:110 src/uptime.c:179 src/users.c:123 src/who.c:376
+#: src/whoami.c:58 src/yes.c:50
+#, fuzzy
+msgid ""
+"\n"
+"Report bugs to <bug-sh-utils@gnu.org>."
+msgstr ""
+"\n"
+"Rapporter feil til sh-utils-bugs@gnu.ai.mit.edu"
+
+#: src/basename.c:113 src/chroot.c:73 src/dirname.c:86 src/expr.c:180
+#: src/pathchk.c:164 src/seq.c:189 src/sleep.c:91
+msgid "too few arguments"
+msgstr "for få argumenter"
+
+#. lose
+#: src/basename.c:114 src/dirname.c:87 src/hostid.c:76 src/hostname.c:119
+#: src/uptime.c:219 src/users.c:163 src/who.c:459
+msgid "too many arguments"
+msgstr "for mange argumenter"
+
+#: src/chroot.c:44
+#, fuzzy, c-format
+msgid ""
+"Usage: %s [OPTION] NEWROOT [COMMAND...]\n"
+"  or:  %s OPTION\n"
+msgstr ""
+"Bruk:  %s [FLAGG] NYROT [KOMMANDO...]\n"
+"eller: %s FLAGG\n"
+
+#: src/chroot.c:48
+msgid ""
+"Run COMMAND with root directory set to NEWROOT.\n"
+"\n"
+"      --help       display this help and exit\n"
+"      --version    output version information and exit\n"
+"\n"
+"If no command is given, run ``${SHELL} -i'' (default: /bin/sh).\n"
+msgstr ""
+"Kjør KOMMANDO med rot-katalog satt til NYROT.\n"
+"\n"
+"      --help       vis denne hjelpteksten og avslutt\n"
+"      --version    vis versjonsinformasjon og avslutt\n"
+"\n"
+"Hvis ingen kommando er gitt, kjør «${SHELL} -i» (forvalgt: /bin/sh).\n"
+
+#: src/chroot.c:78
+#, c-format
+msgid "cannot change root directory to %s"
+msgstr "kan ikke endre rot-katalogen til %s"
+
+#: src/chroot.c:81
+#, fuzzy
+msgid "cannot chdir to root directory"
+msgstr "kan ikke endre rot-katalogen til %s"
+
+#: src/chroot.c:100
+#, c-format
+msgid "cannot execute %s"
+msgstr "kan ikke eksekvere %s"
+
+#: src/date.c:119
+#, c-format
+msgid ""
+"Usage: %s [OPTION]... [+FORMAT]\n"
+"  or:  %s [OPTION] [MMDDhhmm[[CC]YY][.ss]]\n"
+msgstr ""
+"Bruk:   %s [FLAGG]... [+FORMAT]\n"
+" eller: %s [FLAGG] [MMDDhhmm[[CC]YY][.ss]]\n"
+
+#: src/date.c:124
+#, fuzzy
+msgid ""
+"Display the current time in the given FORMAT, or set the system date.\n"
+"\n"
+"  -d, --date=STRING         display time described by STRING, not `now'\n"
+"  -f, --file=DATEFILE       like --date once for each line of DATEFILE\n"
+"  -I, --iso-8601[=TIMESPEC] output an ISO-8601 compliant date/time string.\n"
+"                            TIMESPEC=`date' (or missing) for date only,\n"
+"                            `hours', `minutes', or `seconds' for date and\n"
+"                            time to the indicated precision.\n"
+"  -r, --reference=FILE      display the last modification time of FILE\n"
+"  -R, --rfc-822             output RFC-822 compliant date string\n"
+"  -s, --set=STRING          set time described by STRING\n"
+"  -u, --utc, --universal    print or set Coordinated Universal Time\n"
+"      --help                display this help and exit\n"
+"      --version             output version information and exit\n"
+msgstr ""
+"Vis den nåværende tiden i det gitte FORMATet eller sett systemdatoen.\n"
+"\n"
+"  -d, --date=STRENG        vis tiden beskrevet av STRENG, ikke «nå»\n"
+"  -f, --file=DATOFIL       som --date en gang for hver linje av DATOFIL\n"
+"  -r, --reference=FIL      vis siste endringsdato for FIL\n"
+"  -R, --rfc-822            skriv ut en datostreng i henhold til RFC-822\n"
+"  -s, --set=STRENG         sett tiden som er beskrevet av STRENG\n"
+"  -u, --utc, --universal   skriv ut eller sett «Coordinated Universal Time»\n"
+"      --help               vis denne hjelpeteksten og avslutt\n"
+"      --version            vis versjonsinformasjon og avslutt\n"
+
+#: src/date.c:140
+#, fuzzy
+msgid ""
+"\n"
+"FORMAT controls the output.  The only valid option for the second form\n"
+"specifies Coordinated Universal Time.  Interpreted sequences are:\n"
+"\n"
+"  %%%%   a literal %%\n"
+"  %%a   locale's abbreviated weekday name (Sun..Sat)\n"
+"  %%A   locale's full weekday name, variable length (Sunday..Saturday)\n"
+"  %%b   locale's abbreviated month name (Jan..Dec)\n"
+"  %%B   locale's full month name, variable length (January..December)\n"
+"  %%c   locale's date and time (Sat Nov 04 12:02:33 EST 1989)\n"
+"  %%d   day of month (01..31)\n"
+"  %%D   date (mm/dd/yy)\n"
+"  %%e   day of month, blank padded ( 1..31)\n"
+"  %%h   same as %%b\n"
+"  %%H   hour (00..23)\n"
+"  %%I   hour (01..12)\n"
+"  %%j   day of year (001..366)\n"
+"  %%k   hour ( 0..23)\n"
+"  %%l   hour ( 1..12)\n"
+"  %%m   month (01..12)\n"
+"  %%M   minute (00..59)\n"
+"  %%n   a newline\n"
+"  %%p   locale's AM or PM\n"
+"  %%r   time, 12-hour (hh:mm:ss [AP]M)\n"
+"  %%s   seconds since 00:00:00, Jan 1, 1970 (a GNU extension)\n"
+"  %%S   second (00..60)\n"
+"  %%t   a horizontal tab\n"
+"  %%T   time, 24-hour (hh:mm:ss)\n"
+"  %%U   week number of year with Sunday as first day of week (00..53)\n"
+"  %%V   week number of year with Monday as first day of week (01..52)\n"
+"  %%w   day of week (0..6);  0 represents Sunday\n"
+"  %%W   week number of year with Monday as first day of week (00..53)\n"
+"  %%x   locale's date representation (mm/dd/yy)\n"
+"  %%X   locale's time representation (%%H:%%M:%%S)\n"
+"  %%y   last two digits of year (00..99)\n"
+"  %%Y   year (1970...)\n"
+"  %%z   RFC-822 style numeric timezone (-0500) (a nonstandard extension)\n"
+"  %%Z   time zone (e.g., EDT), or nothing if no time zone is determinable\n"
+"\n"
+"By default, date pads numeric fields with zeroes.  GNU date recognizes\n"
+"the following modifiers between `%%' and a numeric directive.\n"
+"\n"
+"  `-' (hyphen) do not pad the field\n"
+"  `_' (underscore) pad the field with spaces\n"
+msgstr ""
+"\n"
+"FORMAT kontrollerer utskriften.  Det eneste gyldige flagget for den andre\n"
+"formen spesifiserer «Coordinated Universal Time».  Tolkede sekvenser er:\n"
+"\n"
+"  %%%%   en vanlig %%\n"
+"  %%a   locale's forkortede ukedagsnavn (søn..lør)\n"
+"  %%A   locale's fulle ukedagsnavn, variabel lengde (søndag..lørdag)\n"
+"  %%b   locale's forkortede månedsnavn (jan..des)\n"
+"  %%B   locale's fulle månedsnavn, variabel lengde (januar..desember)\n"
+"  %%c   locale's dato og tid (lør nov 04 12:02:33 MET 1989)\n"
+"  %%d   dag i måneden (01..31)\n"
+"  %%D   dato (mm/dd/åå)\n"
+"  %%e   dag i måneden, fylt ut med blanke ( 1..31)\n"
+"  %%h   samme som %%b\n"
+"  %%H   time (00..23)\n"
+"  %%I   time (01..12)\n"
+"  %%j   dag i året (001..366)\n"
+"  %%k   time ( 0..23)\n"
+"  %%l   time ( 1..12)\n"
+"  %%m   måned (01..12)\n"
+"  %%M   minutt (00..59)\n"
+"  %%n   linjeskift\n"
+"  %%p   locale's AM eller PM\n"
+"  %%r   tid, 12-timers (tt:mm:ss [AP]M)\n"
+"  %%s   sekunder siden 00:00:00, jan 1, 1970 (en GNU-utvidelse)\n"
+"  %%S   sekunder (00..61)\n"
+"  %%t   en horisontal tab\n"
+"  %%T   tid, 24-timers (tt:mm:ss)\n"
+"  %%U   ukenummer med søndag som første dag i uken (00..53)\n"
+"  %%V   ukenummer med mandag som første dag i uken (01..52)\n"
+"  %%w   dag i uken (0..6);  0 representerer søndag\n"
+"  %%W   ukenummer med mandag som første dag i uken (00..53)\n"
+"  %%x   locale's datorepresentasjon (mm/dd/åå)\n"
+"  %%X   locale's tidsrepresentasjon (%%T:%%M:%%S)\n"
+"  %%y   siste 2 siffer av årstallet (00..99)\n"
+"  %%Y   årstallet (1970...)\n"
+"  %%z   numerisk tidssone på RFC-822-format (-0500) (en GNU-utvidelse)\n"
+"  %%Z   tidssone (f.eks, EDT) eller ingenting dersom tidssonen er ukjent\n"
+"\n"
+"Forvalgt er at date fyller numeriske felter med nuller.  GNU date "
+"gjenkjenner\n"
+"følgende modifikatorer mellom «%%» og et numerisk direktiv.\n"
+"\n"
+"  «-» (bindestrek) ikke fyll ut feltet\n"
+"  «_» (understrek) fyll ut feltet med mellomrom\n"
+
+#: src/date.c:224 src/stty.c:861 src/tee.c:151
+msgid "standard input"
+msgstr "standard inn"
+
+#: src/date.c:278 src/date.c:444
+#, c-format
+msgid "invalid date `%s'"
+msgstr "ugyldig dato «%s»"
+
+#: src/date.c:366
+msgid "the options to specify dates for printing are mutually exclusive"
+msgstr "flaggene for å spesifisere datoer til utskriving utelukker hverandre"
+
+#: src/date.c:373
+msgid "the options to print and set the time may not be used together"
+msgstr "flaggene for å skrive ut og sette tiden kan ikke brukes sammen"
+
+#: src/date.c:379
+msgid "too many non-option arguments"
+msgstr "for mange ikke-flagg-argumenter"
+
+#: src/date.c:386
+#, fuzzy, c-format
+msgid ""
+"the argument `%s' lacks a leading `+';\n"
+"When using an option to specify date(s), any non-option\n"
+"argument must be a format string beginning with `+'."
+msgstr ""
+"argumentet «%s» mangler en innledende «+»;\n"
+"når man bruker et flagg for å spesifisere dato(er) må eventuelle\n"
+"andre typer argumenter bestå av en format-streng som begynner med «+»"
+
+#. Prepare to print the current date/time.
+#: src/date.c:421
+msgid "undefined"
+msgstr "udefinert"
+
+#: src/date.c:452
+msgid "cannot set date"
+msgstr "kan ikke sette dato"
+
+#: src/dirname.c:46
+#, c-format
+msgid ""
+"Usage: %s NAME\n"
+"  or:  %s OPTION\n"
+msgstr ""
+"Bruk:   %s NAVN\n"
+" eller: %s FLAGG\n"
+
+#: src/dirname.c:51
+msgid ""
+"Print NAME with its trailing /component removed; if NAME contains no /'s,\n"
+"output `.' (meaning the current directory).\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+msgstr ""
+"Skriv ut NAVN med alt fra siste «/» fjernet, eller alt fra nest siste «/»\n"
+"dersom NAVN ender på «/».  Hvis NAVN ikke inneholder «/», skriv ut «.»\n"
+"(for nåværende katalog).\n"
+"\n"
+"  --help      vis denne hjelpeteksten og avslutt\n"
+"  --version   vis versjonsinformasjon og avslutt\n"
+
+#: src/echo.c:76 src/yes.c:44
+#, c-format
+msgid "Usage: %s [OPTION]... [STRING]...\n"
+msgstr "Bruk: %s [FLAGG]... [STRENG]...\n"
+
+#: src/echo.c:77
+#, fuzzy
+msgid ""
+"Echo the STRING(s) to standard output.\n"
+"\n"
+"  -n              do not output the trailing newline\n"
+"  -e              enable interpretation of the backslash-escaped characters\n"
+"                    listed below\n"
+"  -E              disable interpretation of those sequences in STRINGs\n"
+"      --help      display this help and exit (should be alone)\n"
+"      --version   output version information and exit (should be alone)\n"
+"\n"
+"Without -E, the following sequences are recognized and interpolated:\n"
+"\n"
+"  \\NNN   the character whose ASCII code is NNN (octal)\n"
+"  \\\\     backslash\n"
+"  \\a     alert (BEL)\n"
+"  \\b     backspace\n"
+"  \\c     suppress trailing newline\n"
+"  \\f     form feed\n"
+"  \\n     new line\n"
+"  \\r     carriage return\n"
+"  \\t     horizontal tab\n"
+"  \\v     vertical tab\n"
+msgstr ""
+"Gjengi STRENGen(e) til standard ut.\n"
+"\n"
+"  -n               ikke skriv ut etterfølgende linjeskift\n"
+"  -e               (ubrukt)\n"
+"  -E               skru av erstatning av enkelte sekvenser i STRENGer\n"
+"      --help       vis denne hjelpeteksten og avslutt\n"
+"      --version    vis versjonsinformasjon og avslutt\n"
+"\n"
+"Uten -E blir de følgende sekvensene gjenkjent og erstattet:\n"
+"\n"
+"  \\NNN   tegnet som har ASCII-kode NNN (oktalt)\n"
+"  \\\\     backslash\n"
+"  \\a     «alert», dvs. et pip (BEL)\n"
+"  \\b     backspace\n"
+"  \\c     utelat etterfølgende linjeskift\n"
+"  \\f     sideskift («form feed»)\n"
+"  \\n     linjeskift («new line»)\n"
+"  \\r     vognretur («carriage return»)\n"
+"  \\t     horisontal tabulator\n"
+"  \\v     vertikal tabulator\n"
+
+#: src/env.c:118
+#, c-format
+msgid "Usage: %s [OPTION]... [-] [NAME=VALUE]... [COMMAND [ARG]...]\n"
+msgstr "Bruk: %s [FLAGG]... [-] [NAVN=VERDI]... [KOMMANDO [ARG]...]\n"
+
+#: src/env.c:121
+msgid ""
+"Set each NAME to VALUE in the environment and run COMMAND.\n"
+"\n"
+"  -i, --ignore-environment   start with an empty environment\n"
+"  -u, --unset=NAME           remove variable from the environment\n"
+"      --help                 display this help and exit\n"
+"      --version              output version information and exit\n"
+"\n"
+"A mere - implies -i.  If no COMMAND, print the resulting environment.\n"
+msgstr ""
+"Sett hvert NAVN til VERDI som miljøvariabler og utfør KOMMANDO.\n"
+"  -i, --ignore-environment   start uten miljøvariabler\n"
+"  -u, --unset=NAVN           fjern miljøvariabelen NAVN\n"
+"      --help                 vis denne hjelpeteksten og avslutt\n"
+"      --version              vis versjonsinformasjon og avslutt\n"
+"\n"
+"En - for seg selv impliserer -i.  Hvis ingen KOMMANDO er angitt, skriv ut\n"
+"det resulterende miljøet.\n"
+
+#: src/expr.c:105
+#, c-format
+msgid ""
+"Usage: %s EXPRESSION\n"
+"  or:  %s OPTION\n"
+msgstr ""
+"Bruk:    %s UTTRYKK\n"
+"  eller: %s FLAGG\n"
+
+#: src/expr.c:110
+msgid ""
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+"\n"
+msgstr ""
+"\n"
+"  --help      vis denne hjelpeteksten og avslutt\n"
+"  --version   vis versjonsinformasjon og avslutt\n"
+"\n"
+
+#: src/expr.c:116
+#, fuzzy
+msgid ""
+"Print the value of EXPRESSION to standard output.  A blank line below\n"
+"separates increasing precedence groups.  EXPRESSION may be:\n"
+"\n"
+"  ARG1 | ARG2       ARG1 if it is neither null nor 0, otherwise ARG2\n"
+"\n"
+"  ARG1 & ARG2       ARG1 if neither argument is null or 0, otherwise 0\n"
+"\n"
+"  ARG1 < ARG2       ARG1 is less than ARG2\n"
+"  ARG1 <= ARG2      ARG1 is less than or equal to ARG2\n"
+"  ARG1 = ARG2       ARG1 is equal to ARG2\n"
+"  ARG1 != ARG2      ARG1 is unequal to ARG2\n"
+"  ARG1 >= ARG2      ARG1 is greater than or equal to ARG2\n"
+"  ARG1 > ARG2       ARG1 is greater than ARG2\n"
+"\n"
+"  ARG1 + ARG2       arithmetic sum of ARG1 and ARG2\n"
+"  ARG1 - ARG2       arithmetic difference of ARG1 and ARG2\n"
+"\n"
+"  ARG1 * ARG2       arithmetic product of ARG1 and ARG2\n"
+"  ARG1 / ARG2       arithmetic quotient of ARG1 divided by ARG2\n"
+"  ARG1 %% ARG2       arithmetic remainder of ARG1 divided by ARG2\n"
+"\n"
+"  STRING : REGEXP   anchored pattern match of REGEXP in STRING\n"
+"\n"
+"  match STRING REGEXP        same as STRING : REGEXP\n"
+"  substr STRING POS LENGTH   substring of STRING, POS counted from 1\n"
+"  index STRING CHARS         index in STRING where any CHARS is found, or 0\n"
+"  length STRING              length of STRING\n"
+"  quote TOKEN                interpret TOKEN as a string, even if it is a\n"
+"                               keyword like `match' or an operator like `/'\n"
+"\n"
+"  ( EXPRESSION )             value of EXPRESSION\n"
+msgstr ""
+"Skriv verdien av UTTRYKKet til standard ut.  En blank linje under skiller\n"
+"grupper av økende presedens.  UTTRYKK kan være:\n"
+"\n"
+"  ARG1 | ARG2       ARG1 dersom det hverken er null eller 0, ellers ARG2\n"
+"\n"
+"  ARG1 & ARG2       ARG1 dersom ingen av argumentene er null eller 0, ellers "
+"0\n"
+"\n"
+"  ARG1 < ARG2       ARG1 er mindre enn ARG2\n"
+"  ARG1 <= ARG2      ARG1 er mindre enn eller lik ARG2\n"
+"  ARG1 = ARG2       ARG1 er lik ARG2\n"
+"  ARG1 != ARG2      ARG1 er ulik ARG2\n"
+"  ARG1 >= ARG2      ARG1 er større enn eller lik ARG2\n"
+"  ARG1 > ARG2       ARG1 er større enn ARG2\n"
+"\n"
+"  ARG1 + ARG2       aritmetisk sum av ARG1 og ARG2\n"
+"  ARG1 - ARG2       artimetisk differanse mellom ARG1 og ARG2\n"
+"\n"
+"  ARG1 * ARG2       aritmetisk produkt av ARG1 og ARG2\n"
+"  ARG1 / ARG2       aritmetisk kvotient av ARG1 delt på ARG2\n"
+"  ARG1 %% ARG2       aritmetisk rest av ARG1 delt på ARG2\n"
+"\n"
+"  STRENG : REGEXP   forankret uttrykkssøk etter REGEXP i STRENG\n"
+"\n"
+"  match STRENG REGEXP       samme som STRENG : REGEXP\n"
+"  substr STRENG POS LENGDE  substreng av STRENG, POS telt fra 1\n"
+"  index STRENG TEGN         indeks i STRENG hvor evt. TEGN er funnet eller "
+"0\n"
+"  length STRENG             lengde av STRENG\n"
+"\n"
+"  ( UTTRYKK )               verdi av UTTRYKK\n"
+
+#: src/expr.c:149
+msgid ""
+"\n"
+"Beware that many operators need to be escaped or quoted for shells.\n"
+"Comparisons are arithmetic if both ARGs are numbers, else lexicographical.\n"
+"Pattern matches return the string matched between \\( and \\) or null; if\n"
+"\\( and \\) are not used, they return the number of characters matched or "
+"0.\n"
+msgstr ""
+"\n"
+"Vær oppmerksom på at mange operatorer må beskyttes mot kommandotolken,\n"
+"f.eks. med gåseøyne.  Sammenligninger er aritmetiske dersom begge\n"
+"ARGumentene er tall, ellers leksiografiske.  Mønster-sammenligninger\n"
+"returnerer strengen som passet mønstret mellom \\( og \\) eller null.\n"
+"Hvis \\( og \\) ikke brukes returneres antall tegn som passet eller 0.\n"
+
+#: src/expr.c:188 src/expr.c:491 src/expr.c:498 src/expr.c:504 src/expr.c:527
+msgid "syntax error"
+msgstr "syntaksfeil"
+
+#: src/expr.c:439
+#, c-format
+msgid ""
+"warning: unportable BRE: `%s': using `^' as the first character\n"
+"of the basic regular expression is not portable; it is being ignored"
+msgstr ""
+"advarsel: ikke-portabel BRE(Basic Regular Expression): «%s»: \n"
+"bruk av «^» som første tegn av et vanlig regulært uttrykk er ikke\n"
+"portabelt; «^» ignoreres"
+
+#: src/factor.c:58
+#, c-format
+msgid ""
+"Usage: %s [NUMBER]...\n"
+"  or:  %s OPTION\n"
+msgstr ""
+"Bruk:    %s [TALL]...\n"
+"  eller: %s FLAGG\n"
+
+#: src/factor.c:63
+msgid ""
+"Print factors of each NUMBER; read standard input with no arguments.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+"\n"
+"  Print the prime factors of all specified integer NUMBERs.  If no "
+"arguments\n"
+"  are specified on the command line, they are read from standard input.\n"
+msgstr ""
+"Skriv ut faktorene til hvert TALL; les fra standard inn dersom ingen\n"
+"argumenter er gitt.\n"
+"\n"
+"  --help       vis denne hjelpeteksten og avslutt\n"
+"  --version    vis versjonsinformasjon og avslutt\n"
+"\n"
+"  Skriv ut primtalls-faktorene til alle spesifiserte heltall TALL.  Hvis \n"
+"  ingen argumenter er angitt på kommandolinjen leses de fra standard inn.\n"
+
+#: src/factor.c:140
+#, c-format
+msgid "`%s' is not a valid positive integer"
+msgstr "«%s» er ikke et gyldig positivt heltall"
+
+#: src/false.c:16
+#, fuzzy, c-format
+msgid ""
+"Usage: %s [ignored command line arguments]\n"
+"  or:  %s OPTION\n"
+"Exit with a status code indicating failure.\n"
+"\n"
+"These option names may not be abbreviated.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+msgstr ""
+"Bruk:    %s [NAVN]\n"
+" eller:  %s FLAGG\n"
+"Skriv vertsnavnet til dette systemet.\n"
+"\n"
+"  --help       vis denne hjelpeteksten og avslutt\n"
+"  --version    vis versjonsinformasjon og avslutt\n"
+
+#: src/hostid.c:48
+#, fuzzy, c-format
+msgid "Usage: %s [-v]\n"
+msgstr "Bruk: %s [FLAGG]\n"
+
+#: src/hostid.c:49
+#, fuzzy
+msgid ""
+"Print the numeric identifier (in hexadecimal) for the current host.\n"
+"\n"
+"      --help       display this help and exit\n"
+"      --version    output version information and exit\n"
+"\n"
+msgstr ""
+"Skriv ut navnet til den nåværende brukeren.\n"
+"\n"
+"  --help      vis denne hjelpeteksten og avslutt\n"
+"  --version   vis versjonsinformasjon og avslutt\n"
+
+#: src/hostname.c:66
+#, c-format
+msgid ""
+"Usage: %s [NAME]\n"
+"  or:  %s OPTION\n"
+"Print the hostname of the current system.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+msgstr ""
+"Bruk:    %s [NAVN]\n"
+" eller:  %s FLAGG\n"
+"Skriv vertsnavnet til dette systemet.\n"
+"\n"
+"  --help       vis denne hjelpeteksten og avslutt\n"
+"  --version    vis versjonsinformasjon og avslutt\n"
+
+#: src/hostname.c:101
+#, fuzzy, c-format
+msgid "cannot set hostname to `%s'"
+msgstr "kan ikke bestemme vertsnavnet"
+
+#: src/hostname.c:107
+msgid "cannot set hostname; this system lacks the functionality"
+msgstr "kan ikke sette vertsnavnet; dette systemet mangler funksjonaliteten"
+
+#: src/hostname.c:114
+msgid "cannot determine hostname"
+msgstr "kan ikke bestemme vertsnavnet"
+
+#: src/id.c:98
+#, c-format
+msgid "Usage: %s [OPTION]... [USERNAME]\n"
+msgstr "Bruk: %s [FLAGG]... [BRUKERNAVN]\n"
+
+#: src/id.c:99
+msgid ""
+"Print information for USERNAME, or the current user.\n"
+"\n"
+"  -a              ignore, for compatibility with other versions\n"
+"  -g, --group     print only the group ID\n"
+"  -G, --groups    print only the supplementary groups\n"
+"  -n, --name      print a name instead of a number, for -ugG\n"
+"  -r, --real      print the real ID instead of effective ID, for -ugG\n"
+"  -u, --user      print only the user ID\n"
+"      --help      display this help and exit\n"
+"      --version   output version information and exit\n"
+"\n"
+"Without any OPTION, print some useful set of identified information.\n"
+msgstr ""
+"Skriv ut informasjon for BRUKERNAVN eller nåværende bruker.\n"
+"\n"
+"  -a               ignoreres, for kompatibilitet med andre versjoner\n"
+"  -g, --group      skriv bare ut gruppe-ID\n"
+"  -G, --groups     skriv bare ut supplerende grupper\n"
+"  -n, --name       skriv et navn i stedet for et nummer, for -ugG\n"
+"  -r, --real       skriv ut den virkelige ID-en istedet for den effektive,\n"
+"                   for -ugG\n"
+"  -u, --user       skriv bare ut brukeridentiteten\n"
+"      --help       vis denne hjelpeteksten og avslutt\n"
+"      --version    vis versjonsinformasjon og avslutt\n"
+"\n"
+"Uten noen FLAGG, skriv ut et nyttig utvalg av identifisert informasjon.\n"
+
+#: src/id.c:160
+msgid "cannot print only user and only group"
+msgstr "kan ikke skrive ut bare bruker _og_ bare gruppe"
+
+#: src/id.c:163
+msgid "cannot print only names or real IDs in default format"
+msgstr "kan ikke skrive ut bare navn eller virkelige IDer i forvalgt format"
+
+#: src/id.c:172
+#, c-format
+msgid "%s: No such user"
+msgstr "%s: Ingen slik bruker"
+
+#: src/id.c:264
+msgid "cannot get supplemental group list"
+msgstr "kan ikke hente supplerende gruppeliste"
+
+#: src/id.c:374
+msgid " groups="
+msgstr " grupper="
+
+#: src/logname.c:47 src/tty.c:62 src/uname.c:97 src/whoami.c:51
+#, c-format
+msgid "Usage: %s [OPTION]...\n"
+msgstr "Bruk: %s [FLAGG]...\n"
+
+#: src/logname.c:48
+msgid ""
+"Print the name of the current user.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+msgstr ""
+"Skriv ut navnet til den nåværende brukeren.\n"
+"\n"
+"  --help      vis denne hjelpeteksten og avslutt\n"
+"  --version   vis versjonsinformasjon og avslutt\n"
+
+#. POSIX.2 prohibits using a fallback technique.
+#: src/logname.c:96
+#, c-format
+msgid "%s: no login name\n"
+msgstr "%s: ikke noe login-navn\n"
+
+#: src/nice.c:66
+#, c-format
+msgid "Usage: %s [OPTION]... [COMMAND [ARG]...]\n"
+msgstr "Bruk: %s [FLAGG]... [KOMMANDO [ARG]...]\n"
+
+#: src/nice.c:67
+msgid ""
+"Run COMMAND with an adjusted scheduling priority.\n"
+"With no COMMAND, print the current scheduling priority.  ADJUST is 10\n"
+"by default.  Range goes from -20 (highest priority) to 19 (lowest).\n"
+"\n"
+"  -ADJUST                   increment priority by ADJUST first\n"
+"  -n, --adjustment=ADJUST   same as -ADJUST\n"
+"      --help                display this help and exit\n"
+"      --version             output version information and exit\n"
+msgstr ""
+"Kjør KOMMANDO med en justert behandlingsprioritet.\n"
+"Uten noen KOMMANDO, skriv ut nåværende behandlingsprioritet.  JUSTERING\n"
+"er forvalgt til 10.  Skalaen går fra -20 (høyest prioritet) til 19 "
+"(lavest).\n"
+"\n"
+"  -JUSTERING                  øk prioriteten med JUSTERING først\n"
+"  -n, --adjustment=JUSTERING  samme som -JUSTERING\n"
+"      --help                  vis denne hjelpeteksten og avslutt\n"
+"      --version               vis versjonsinformasjon og avslutt\n"
+
+#: src/nice.c:105 src/nice.c:119
+#, c-format
+msgid "invalid option `%s'"
+msgstr "ugyldig flagg «%s»"
+
+#: src/nice.c:145
+#, c-format
+msgid "invalid priority `%s'"
+msgstr "ugyldig prioritet «%s»"
+
+#: src/nice.c:171
+msgid "a command must be given with an adjustment"
+msgstr "en kommando må bli gitt med en justering"
+
+#: src/nice.c:178 src/nice.c:187
+msgid "cannot get priority"
+msgstr "finner ikke ut prioritet"
+
+#: src/nice.c:192
+msgid "cannot set priority"
+msgstr "kan ikke sette prioritet"
+
+#: src/pathchk.c:118
+#, c-format
+msgid "Usage: %s [OPTION]... NAME...\n"
+msgstr "Bruk: %s [FLAGG]... NAVN...\n"
+
+#: src/pathchk.c:119
+msgid ""
+"Diagnose unportable constructs in NAME.\n"
+"\n"
+"  -p, --portability   check for all POSIX systems, not only this one\n"
+"      --help          display this help and exit\n"
+"      --version       output version information and exit\n"
+msgstr ""
+"Sjekker om filNAVN er portable.\n"
+"\n"
+"  -p, --portability   sjekk for alle POSIX-systemer, ikke bare dette\n"
+"      --help          vis denne hjelpeteksten og avslutt\n"
+"      --version       vis versjonsinformasjon og avslutt\n"
+
+#: src/pathchk.c:207
+#, c-format
+msgid "path `%s' contains nonportable character `%c'"
+msgstr "stien «%s» inneholder et ikke-portabelt tegn «%c»"
+
+#: src/pathchk.c:227
+#, c-format
+msgid "`%s' is not a directory"
+msgstr "«%s» er ikke en katalog"
+
+#: src/pathchk.c:238
+#, c-format
+msgid "directory `%s' is not searchable"
+msgstr "katalogen «%s» er ikke søkbar"
+
+#: src/pathchk.c:330
+#, c-format
+msgid "name `%s' has length %d; exceeds limit of %d"
+msgstr "navnet «%s» har lengde %d; overstiger grensen på %d"
+
+#: src/pathchk.c:356
+#, c-format
+msgid "path `%s' has length %d; exceeds limit of %d"
+msgstr "stien «%s» har lengde %d; overstiger grensen på %d"
+
+#: src/pinky.c:289
+#, fuzzy
+msgid "Login name: "
+msgstr "%s: ikke noe login-navn\n"
+
+#: src/pinky.c:292
+msgid "In real life: "
+msgstr ""
+
+#: src/pinky.c:295
+msgid "???\n"
+msgstr ""
+
+#: src/pinky.c:315
+msgid "Directory: "
+msgstr ""
+
+#: src/pinky.c:317
+msgid "Shell: "
+msgstr ""
+
+#: src/pinky.c:338
+msgid "Project: "
+msgstr ""
+
+#: src/pinky.c:364
+msgid "Plan:\n"
+msgstr ""
+
+#: src/pinky.c:383
+msgid "Login"
+msgstr ""
+
+#: src/pinky.c:385
+msgid "   Name"
+msgstr ""
+
+#: src/pinky.c:386
+msgid "TTY"
+msgstr ""
+
+#: src/pinky.c:388
+msgid "Idle"
+msgstr ""
+
+#: src/pinky.c:389
+msgid "When"
+msgstr ""
+
+#: src/pinky.c:392
+msgid "Where"
+msgstr ""
+
+#: src/pinky.c:466
+#, fuzzy, c-format
+msgid "Usage: %s [OPTION]... [USER]...\n"
+msgstr "Bruk: %s [FLAGG]... [STRENG]...\n"
+
+#: src/pinky.c:467
+#, c-format
+msgid ""
+"\n"
+"  -l              do long format output\n"
+"  -b              omit the user's home directory and shell in long format\n"
+"  -h              omit the user's project file in long format\n"
+"  -p              omit the user's plan file in long format\n"
+"  -s              do short format output, this is the default\n"
+"  -f              omit the line of column headings in short format\n"
+"  -w              omit the user's full name in short format\n"
+"  -i              omit the user's full name and remote host in short format\n"
+"  -q              omit the user's full name, remote host and idle time\n"
+"                  in short format\n"
+"      --help      display this help and exit\n"
+"      --version   output version information and exit\n"
+"\n"
+"A lightweight `finger' program;  print user information.\n"
+"The utmp file will be %s.\n"
+msgstr ""
+
+#: src/printenv.c:63
+#, c-format
+msgid "Usage: %s [OPTION]... [VARIABLE]...\n"
+msgstr "Bruk: %s [FLAGG]... [VARIABEL]...\n"
+
+#: src/printenv.c:64
+msgid ""
+"If no environment VARIABLE specified, print them all.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+msgstr ""
+"Dersom ingen miljø-VARIABEL er spesifisert, skriv ut alle.\n"
+"\n"
+"  --help      vis denne hjelpeteksten og avslutt\n"
+"  --version   vis versjonsinformasjon og avslutt\n"
+
+#: src/printf.c:81
+#, fuzzy, c-format
+msgid ""
+"warning: %s: character(s) following character constant have been ignored"
+msgstr "advarsel: overflødige argumenter har blitt ignorert"
+
+#: src/printf.c:94
+#, c-format
+msgid ""
+"Usage: %s FORMAT [ARGUMENT]...\n"
+"  or:  %s OPTION\n"
+msgstr ""
+"Bruk:    %s FORMAT [ARGUMENT]...\n"
+"  eller: %s FLAGG\n"
+
+#: src/printf.c:99
+msgid ""
+"Print ARGUMENT(s) according to FORMAT.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+"\n"
+"FORMAT controls the output as in C printf.  Interpreted sequences are:\n"
+"\n"
+"  \\\"      double quote\n"
+"  \\0NNN   character with octal value NNN (0 to 3 digits)\n"
+"  \\\\      backslash\n"
+"  \\a      alert (BEL)\n"
+"  \\b      backspace\n"
+"  \\c      produce no further output\n"
+"  \\f      form feed\n"
+"  \\n      new line\n"
+"  \\r      carriage return\n"
+"  \\t      horizontal tab\n"
+"  \\v      vertical tab\n"
+"  \\xNNN   character with hexadecimal value NNN (1 to 3 digits)\n"
+"\n"
+"  %%%%      a single %%\n"
+"  %%b      ARGUMENT as a string with `\\' escapes interpreted\n"
+"\n"
+"and all C format specifications ending with one of diouxXfeEgGcs, with\n"
+"ARGUMENTs converted to proper type first.  Variable widths are handled.\n"
+msgstr ""
+"Skriv ut ARGUMENT(er) i henhold til FORMAT.\n"
+"\n"
+"  --help      vis denne hjelpeteksten og avslutt\n"
+"  --version   vis versjonsinformasjon og avslutt\n"
+"\n"
+"FORMAT kontrollerer utskriften som i C sin printf.  Tolkede sekvenser er:\n"
+"\n"
+"  \\\"      gåseøyne\n"
+"  \\0NNN   tegn med oktal verdi NNN (0 til 3 siffer)\n"
+"  \\\\      backslash\n"
+"  \\a      «alert», dvs. et pip (BEL)\n"
+"  \\b      backspace\n"
+"  \\c      ikke produser mer utskrift\n"
+"  \\f      sideskift («form feed»)\n"
+"  \\n      linjeskift («new line»)\n"
+"  \\r      vognretur («carriage return»)\n"
+"  \\t      horisontal tabulator\n"
+"  \\v      vertikal tabulator\n"
+"  \\xNNN   tegn med heksadesimal verdi NNN (1 til 3 siffer)\n"
+"\n"
+"  %%%%      en enkel %%\n"
+"  %%b      ARGUMENT som en streng med «\\»-beskyttelser fortolket\n"
+"\n"
+"og alle C-format-spesifikasjoner som ender med en av diouxXfeEgGcs, med\n"
+"ARGUMENTer konvertert til passende type først.  Variable bredder håndteres.\n"
+
+#: src/printf.c:142
+#, c-format
+msgid "%s: expected a numeric value"
+msgstr "%s: ventet en numerisk verdi"
+
+#: src/printf.c:144
+#, c-format
+msgid "%s: value not completely converted"
+msgstr "%s: verdi ikke fullstendig konvertert"
+
+#: src/printf.c:236
+msgid "missing hexadecimal number in escape"
+msgstr "manglende heksadesimal-tall i beskyttet tegnsekvens"
+
+#: src/printf.c:250
+#, c-format
+msgid "\\%c: invalid escape"
+msgstr "\\%c: ugyldig beskyttelse"
+
+#: src/printf.c:458
+msgid "%%%c: invalid directive"
+msgstr "%%%c: ugyldig direktiv"
+
+#: src/printf.c:505
+#, c-format
+msgid "Usage: %s format [argument...]\n"
+msgstr "Bruk: %s format [argument...]\n"
+
+#: src/printf.c:522
+msgid "warning: excess arguments have been ignored"
+msgstr "advarsel: overflødige argumenter har blitt ignorert"
+
+#: src/pwd.c:46
+#, c-format
+msgid "Usage: %s [OPTION]\n"
+msgstr "Bruk: %s [FLAGG]\n"
+
+#: src/pwd.c:47
+msgid ""
+"Print the full filename of the current working directory.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+msgstr ""
+"Skriv ut det fulle filnavnet til nåværende arbeidskatalog.\n"
+"\n"
+"  --help      vis denne hjelpeteksten og avslutt\n"
+"  --version   vis versjonsinformasjon og avslutt\n"
+
+#: src/pwd.c:72
+msgid "ignoring non-option arguments"
+msgstr "ignorerer argumenter som ikke er flagg"
+
+#: src/pwd.c:76
+msgid "cannot get current directory"
+msgstr "kan ikke finne ut aktiv katalog"
+
+#: src/seq.c:88
+#, c-format
+msgid ""
+"Usage: %s [OPTION]... LAST\n"
+"  or:  %s [OPTION]... FIRST LAST\n"
+"  or:  %s [OPTION]... FIRST INCREMENT LAST\n"
+msgstr ""
+"Bruk:    %s [FLAGG]... SISTE\n"
+"  eller: %s [FLAGG]... FØRSTE SISTE\n"
+"  eller: %s [FLAGG]... FØRSTE ØKNING SISTE\n"
+
+#: src/seq.c:93
+msgid ""
+"Print numbers from FIRST to LAST, in steps of INCREMENT.\n"
+"\n"
+"  -f, --format FORMAT      use printf(3) style FORMAT (default: %%g)\n"
+"  -s, --separator STRING   use STRING to separate numbers (default: \\n)\n"
+"  -w, --equal-width        equalize width by padding with leading zeroes\n"
+"      --help               display this help and exit\n"
+"      --version            output version information and exit\n"
+"\n"
+"If FIRST or INCREMENT is omitted, it defaults to 1.\n"
+"FIRST, INCREMENT, and LAST are interpreted as floating point values.\n"
+"INCREMENT should be positive if FIRST is smaller than LAST, and negative\n"
+"otherwise.  When given, the FORMAT argument must contain exactly one of\n"
+"the printf-style, floating point output formats %%e, %%f, or %%g.\n"
+msgstr ""
+"Skriv ut tallene fra FØRSTE til SISTE, med steg på ØKNING.\n"
+"\n"
+"  -f, --format FORMAT      bruk printf(3)-FORMAT (forvalgt: %%g)\n"
+"  -s, --separator STRENG   bruk STRENG for å separere tallene (forvalgt: "
+"\\n)\n"
+"  -w, --equal-width        gjør bredden lik ved å fylle inn med nuller "
+"foran\n"
+"      --help               vis denne hjelpeteksten og avslutt\n"
+"      --version            vis versjonsinformasjon og avslutt\n"
+"\n"
+"Hvis FØRSTE eller ØKNING ikke er oppgitt, er forvalgt verdi 1.\n"
+"FØRSTE, ØKNING og SISTE tolkes som desimalverdier.  ØKNING skal være\n"
+"positiv hvis FØRSTE er mindre enn SISTE, og negativ ellers.  Når FORMAT\n"
+"er oppgitt, må det inneholde nøyaktig ett av printf-direktivene for\n"
+"desimaltall: %%e, %%f eller %%g.\n"
+
+#: src/seq.c:216
+msgid "format string may not be specified when printing equal width strings"
+msgstr ""
+"format-strengen kan ikke spesifiseres når det skrives ut strenger\n"
+"med lik bredde"
+
+#: src/seq.c:230
+#, c-format
+msgid "invalid format string: `%s'"
+msgstr "ugyldig format-streng: «%s»"
+
+#: src/seq.c:258
+#, c-format
+msgid "invalid floating point argument: %s"
+msgstr "ugyldig desimal-argument: %s"
+
+#: src/seq.c:421
+msgid ""
+"when the starting value is larger than the limit,\n"
+"the increment must be negative"
+msgstr "når startverdien er større enn grensen må økningen være negativ"
+
+#: src/seq.c:446
+msgid ""
+"when the starting value is smaller than the limit,\n"
+"the increment must be positive"
+msgstr "når startverdien er mindre enn grensen må økningen være positiv"
+
+#: src/sleep.c:50
+#, c-format
+msgid "Usage: %s [OPTION]... NUMBER[SUFFIX]\n"
+msgstr "Bruk: %s [FLAGG]... ANTALL[SUFFIKS]\n"
+
+#: src/sleep.c:51
+msgid ""
+"Pause for NUMBER seconds.\n"
+"SUFFIX may be s to keep seconds, m for minutes, h for hours or d for days.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+msgstr ""
+"Sov i ANTALL sekund.\n"
+"SUFFIKS kan være s for å angi sekunder, m for minutter, h for \n"
+"timer (hours) og d for dager.\n"
+"\n"
+"  --help      vis denne hjelpeteksten og avslutt\n"
+"  --version   vis versjonsinformasjon og avslutt\n"
+
+#: src/sleep.c:132
+#, c-format
+msgid "invalid time interval `%s'"
+msgstr "ugyldig tidsintervall «%s»"
+
+#: src/stty.c:492
+#, c-format
+msgid ""
+"Usage: %s [-F device] [--file=device] [SETTING]...\n"
+"  or:  %s [-F device] [--file=device] [-a|--all]\n"
+"  or:  %s [-F device] [--file=device] [-g|--save]\n"
+msgstr ""
+
+#: src/stty.c:498
+#, fuzzy
+msgid ""
+"Print or change terminal characteristics.\n"
+"\n"
+"  -a, --all       print all current settings in human-readable form\n"
+"  -g, --save      print all current settings in a stty-readable form\n"
+"  -F, --file      open and use the specified device instead of stdin\n"
+"      --help      display this help and exit\n"
+"      --version   output version information and exit\n"
+"\n"
+"Optional - before SETTING indicates negation.  An * marks non-POSIX\n"
+"settings.  The underlying system defines which settings are available.\n"
+msgstr ""
+"Skriv ut eller endre terminal-karakteristikk.\n"
+"\n"
+"  -a, --all       skriv ut alle nåværende innstillinger i menneske-lesbar "
+"form\n"
+"  -g, --save      skriv ut alle nåværende innstillinger i stty-lesbar form\n"
+"      --help      vis denne hjelpeteksten og avslutt\n"
+"      --version   vis versjonsinformasjon og avslutt\n"
+"\n"
+"«-» før INNSTILLING indikerer en motsatt innstilling.  «*» markerer\n"
+"innstillinger som ikke følger POSIX-standarden.  Det underliggende systemet\n"
+"definerer hvilke innstillinger som er tilgjengelige.\n"
+
+#: src/stty.c:510
+msgid ""
+"\n"
+"Special characters:\n"
+"* dsusp CHAR    CHAR will send a terminal stop signal once input flushed\n"
+"  eof CHAR      CHAR will send an end of file (terminate the input)\n"
+"  eol CHAR      CHAR will end the line\n"
+"* eol2 CHAR     alternate CHAR for ending the line\n"
+"  erase CHAR    CHAR will erase the last character typed\n"
+"  intr CHAR     CHAR will send an interrupt signal\n"
+"  kill CHAR     CHAR will erase the current line\n"
+"* lnext CHAR    CHAR will enter the next character quoted\n"
+"  quit CHAR     CHAR will send a quit signal\n"
+"* rprnt CHAR    CHAR will redraw the current line\n"
+"  start CHAR    CHAR will restart the output after stopping it\n"
+"  stop CHAR     CHAR will stop the output\n"
+"  susp CHAR     CHAR will send a terminal stop signal\n"
+"* swtch CHAR    CHAR will switch to a different shell layer\n"
+"* werase CHAR   CHAR will erase the last word typed\n"
+msgstr ""
+"\n"
+"Spesielle tegn:\n"
+"* dsusp TEGN    TEGN vil sende et «terminal stop»-signal når input tømmes\n"
+"  eof TEGN      TEGN vil sende en «end of file» (avslutt input)\n"
+"  eol TEGN      TEGN vil avslutte linjen\n"
+"* eol2 TEGN     alternativt TEGN for å avslutte linjen\n"
+"  erase TEGN    TEGN vil slette siste skrevne tegn\n"
+"  intr TEGN     TEGN vil sende et interrupt-signal\n"
+"  kill TEGN     TEGN vil slette nåværende linje\n"
+"* lnext TEGN    TEGN vil skrive neste tegn sitert («quoted»)\n"
+"  quit TEGN     TEGN vil sende et quit-signal\n"
+"* rprnt TEGN    TEGN vil tegne nåværende linje på nytt\n"
+"  start TEGN    TEGN vil starte opp utskrift etter å ha stoppet det\n"
+"  stop TEGN     TEGN vil stoppe utskriften\n"
+"  susp TEGN     TEGN vil sende et «terminal stop»-signal\n"
+"* swtch TEGN    TEGN vil skifte til et annet shell-lag\n"
+"* werase TEGN   TEGN vil slette det sist skrevne ordet\n"
+
+#: src/stty.c:529
+msgid ""
+"\n"
+"Special settings:\n"
+"  N             set the input and output speeds to N bauds\n"
+"* cols N        tell the kernel that the terminal has N columns\n"
+"* columns N     same as cols N\n"
+"  ispeed N      set the input speed to N\n"
+"* line N        use line discipline N\n"
+"  min N         with -icanon, set N characters minimum for a completed read\n"
+"  ospeed N      set the output speed to N\n"
+"* rows N        tell the kernel that the terminal has N rows\n"
+"* size          print the number of rows and columns according to the "
+"kernel\n"
+"  speed         print the terminal speed\n"
+"  time N        with -icanon, set read timeout of N tenths of a second\n"
+msgstr ""
+"\n"
+"Spesielle innstillinger:\n"
+"  N             sett lese- og skrivehastiget til N bps\n"
+"* cols N        fortell kjernen at terminalen har N kolonner\n"
+"* columns N     samme som cols\n"
+"  ispeed N      sett lesehastigeten til N\n"
+"* line N        bruk linjedisiplin N\n"
+"  min N         med -icanon, sett N tegn minimum for en komplett lesning\n"
+"  ospeed N      sett skrivehastigheten til N\n"
+"* rows N        fortell kjernen at terminalen har N rader/linjer\n"
+"* size          skriv ut antall rader og kolonner ifølge kjernen\n"
+"  speed         skriv ut terminalhastigeten\n"
+"  time N        med -iconon, sett lese-timeout til N tidels sekunder\n"
+
+#: src/stty.c:544
+msgid ""
+"\n"
+"Control settings:\n"
+"  [-]clocal     disable modem control signals\n"
+"  [-]cread      allow input to be received\n"
+"* [-]crtscts    enable RTS/CTS handshaking\n"
+"  csN           set character size to N bits, N in [5..8]\n"
+"  [-]cstopb     use two stop bits per character (one with `-')\n"
+"  [-]hup        send a hangup signal when the last process closes the tty\n"
+"  [-]hupcl      same as [-]hup\n"
+"  [-]parenb     generate parity bit in output and expect parity bit in "
+"input\n"
+"  [-]parodd     set odd parity (even with `-')\n"
+msgstr ""
+"\n"
+"Kontrollinnstillinger:\n"
+"  [-]clocal     slå av signaler for modem-kontroll\n"
+"  [-]cread      la inndata bli mottatt\n"
+"* [-]crtscts    slå på RTC/CTS-forhandling («handshaking»)\n"
+"  csN           sett tegnstørrelse til N bits, N i [5..8]\n"
+"  [-]cstopb     bruk to stop-bits per tegn (én med «-»)\n"
+"  [-]hup        send et hangup-signal når den siste prosessen lukker ttyen\n"
+"  [-]hupcl      samme som [-]hup\n"
+"  [-]parenb     generer paritetsbit ved skriving og forvent paritetsbit ved\n"
+"                lesing\n"
+"  [-]parodd     sett ulik paritet (lik med «-»)\n"
+
+#: src/stty.c:557
+msgid ""
+"\n"
+"Input settings:\n"
+"  [-]brkint     breaks cause an interrupt signal\n"
+"  [-]icrnl      translate carriage return to newline\n"
+"  [-]ignbrk     ignore break characters\n"
+"  [-]igncr      ignore carriage return\n"
+"  [-]ignpar     ignore characters with parity errors\n"
+"* [-]imaxbel    beep and do not flush a full input buffer on a character\n"
+"  [-]inlcr      translate newline to carriage return\n"
+"  [-]inpck      enable input parity checking\n"
+"  [-]istrip     clear high (8th) bit of input characters\n"
+"* [-]iuclc      translate uppercase characters to lowercase\n"
+"* [-]ixany      let any character restart output, not only start character\n"
+"  [-]ixoff      enable sending of start/stop characters\n"
+"  [-]ixon       enable XON/XOFF flow control\n"
+"  [-]parmrk     mark parity errors (with a 255-0-character sequence)\n"
+"  [-]tandem     same as [-]ixoff\n"
+msgstr ""
+"\n"
+"Innstillinger for inndata:\n"
+"  [-]brkint     sett avbryt («break») til å forårsake et avbruddssignal\n"
+"  [-]icrnl      oversett vognretur til linjeskift\n"
+"  [-]ignbrk     ignorer «break»-tegn\n"
+"  [-]igncr      ignorer vognretur\n"
+"  [-]ignpar     ignorer tegn med paritetsfeil\n"
+"* [-]imaxbel    pip og ikke tøm et fullt inn-buffer ved et tegn\n"
+"  [-]inlcr      oversett linjeskift til vognretur\n"
+"  [-]inpck      slå på paritetsjekking på inndata\n"
+"  [-]istrip     blank øverste (8.) bit på inndata\n"
+"* [-]iuclc      oversett store bokstaver til små\n"
+"* [-]ixany      la alle tegn omstarte utdata, ikke bare start-tegnet\n"
+"  [-]ixoff      slå på sending av start/stop-tegn\n"
+"  [-]ixon       slå på XON/XOFF flytkontroll\n"
+"  [-]parmrk     marker paritetsfeil (med en 255-0-tegns sekvens)\n"
+"  [-]tandem     samme som [-]ixoff\n"
+
+#: src/stty.c:576
+msgid ""
+"\n"
+"Output settings:\n"
+"* bsN           backspace delay style, N in [0..1]\n"
+"* crN           carriage return delay style, N in [0..3]\n"
+"* ffN           form feed delay style, N in [0..1]\n"
+"* nlN           newline delay style, N in [0..1]\n"
+"* [-]ocrnl      translate carriage return to newline\n"
+"* [-]ofdel      use delete characters for fill instead of null characters\n"
+"* [-]ofill      use fill (padding) characters instead of timing for delays\n"
+"* [-]olcuc      translate lowercase characters to uppercase\n"
+"* [-]onlcr      translate newline to carriage return-newline\n"
+"* [-]onlret     newline performs a carriage return\n"
+"* [-]onocr      do not print carriage returns in the first column\n"
+"  [-]opost      postprocess output\n"
+"* tabN          horizontal tab delay style, N in [0..3]\n"
+"* tabs          same as tab0\n"
+"* -tabs         same as tab3\n"
+"* vtN           vertical tab delay style, N in [0..1]\n"
+msgstr ""
+"\n"
+"Innstillinger for utdata:\n"
+"* bsN           backspace-forsinkelsesstil, N i [0..1]\n"
+"* crN           vognretur-forsinkelsesstil, N i [0..3]\n"
+"* ffN           sideskift-forsinkelsesstil, N i [0..1]\n"
+"* nlN           linjeskift-forsinkelsesstil, N i [0..1]\n"
+"* [-]ocrnl      oversett vognretur til linjeskift\n"
+"* [-]ofdel      bruk slettetegn til fyll istedet for null-tegn\n"
+"* [-]ofill      bruk fyll-tegn (padding) istedet for forsinkelses-timing\n"
+"* [-]olcuc      oversett små bokstaver til store\n"
+"* [-]onlcr      oversett linjeskift til vognretur-linjeskift\n"
+"* [-]onlret     linjeskift foretar vognretur\n"
+"* [-]onocr      ikke skriv vognreturer i første kolonne\n"
+"  [-]opost      etterprossesser output\n"
+"* tabN          horisontal tab-forsinkelsesstil, N i [0..3]\n"
+"* tabs          samme som tab0\n"
+"* -tabs         samme som tab3\n"
+"* vtN           vertikal tab-forsinkelsesstil, N i [0..1]\n"
+
+#: src/stty.c:596
+msgid ""
+"\n"
+"Local settings:\n"
+"  [-]crterase   echo erase characters as backspace-space-backspace\n"
+"* crtkill       kill all line by obeying the echoprt and echoe settings\n"
+"* -crtkill      kill all line by obeying the echoctl and echok settings\n"
+"* [-]ctlecho    echo control characters in hat notation (`^c')\n"
+"  [-]echo       echo input characters\n"
+"* [-]echoctl    same as [-]ctlecho\n"
+"  [-]echoe      same as [-]crterase\n"
+"  [-]echok      echo a newline after a kill character\n"
+"* [-]echoke     same as [-]crtkill\n"
+"  [-]echonl     echo newline even if not echoing other characters\n"
+"* [-]echoprt    echo erased characters backward, between `\\' and '/'\n"
+"  [-]icanon     enable erase, kill, werase, and rprnt special characters\n"
+"  [-]iexten     enable non-POSIX special characters\n"
+"  [-]isig       enable interrupt, quit, and suspend special characters\n"
+"  [-]noflsh     disable flushing after interrupt and quit special "
+"characters\n"
+"* [-]prterase   same as [-]echoprt\n"
+"* [-]tostop     stop background jobs that try to write to the terminal\n"
+"* [-]xcase      with icanon, escape with `\\' for uppercase characters\n"
+msgstr ""
+"\n"
+"Lokale innstillinger:\n"
+"  [-]crterase   gjengi slettetegn som backspace-space-backspace\n"
+"* crtkill       slett hele linjen ved å overholde echoprt- og echoe-\n"
+"                innstillingene\n"
+"* -crtkill      slett hele linjen ved å overholde echoctl- og echok-\n"
+"                innstillingene\n"
+"* [-]ctlecho    gjengi kontrolltegn i hattnotasjon («^c»)\n"
+"  [-]echo       gjengi input-tegn\n"
+"* [-]echoctl    samme som [-]ctlecho\n"
+"  [-]echoe      samme som [-]crterase\n"
+"  [-]echok      gjengi et linjeskift etter et kill-tegn\n"
+"* [-]echoke     samme som [-]crtkill\n"
+"  [-]echonl     gjengi linjeskift selv om andre tegn ikke gjengis\n"
+"* [-]echoprt    gjengi slettede tegn baklengs mellom «\\» og «/»\n"
+"  [-]icanon     slå på erase-, kill-, werase- og rprnt-spesielle tegn\n"
+"  [-]iexten     slå på spesielle tegn utenfor POSIX \n"
+"  [-]isig       slå på avbrudds-, quit- og suspend-spesielle tegn\n"
+"  [-]noflsh     slå av tømming (flushing) etter avbrudds- og "
+"quit-spesialtegn\n"
+"* [-]prterase   samme som [-]echoprt\n"
+"* [-]tostop     stopp bakgrunnsjobber som prøver å skrive til terminalen\n"
+"* [-]xcase      med icanon, beskytt med «\\» for store bokstaver\n"
+
+#: src/stty.c:618
+msgid ""
+"\n"
+"Combination settings:\n"
+"* [-]LCASE      same as [-]lcase\n"
+"  cbreak        same as -icanon\n"
+"  -cbreak       same as icanon\n"
+"  cooked        same as brkint ignpar istrip icrnl ixon opost isig\n"
+"                icanon, eof and eol characters to their default values\n"
+"  -cooked       same as raw\n"
+"  crt           same as echoe echoctl echoke\n"
+"  dec           same as echoe echoctl echoke -ixany intr ^c erase 0177\n"
+"                kill ^u\n"
+"* [-]decctlq    same as [-]ixany\n"
+"  ek            erase and kill characters to their default values\n"
+"  evenp         same as parenb -parodd cs7\n"
+"  -evenp        same as -parenb cs8\n"
+"* [-]lcase      same as xcase iuclc olcuc\n"
+"  litout        same as -parenb -istrip -opost cs8\n"
+"  -litout       same as parenb istrip opost cs7\n"
+"  nl            same as -icrnl -onlcr\n"
+"  -nl           same as icrnl -inlcr -igncr onlcr -ocrnl -onlret\n"
+"  oddp          same as parenb parodd cs7\n"
+"  -oddp         same as -parenb cs8\n"
+"  [-]parity     same as [-]evenp\n"
+"  pass8         same as -parenb -istrip cs8\n"
+"  -pass8        same as parenb istrip cs7\n"
+"  raw           same as -ignbrk -brkint -ignpar -parmrk -inpck -istrip\n"
+"                -inlcr -igncr -icrnl  -ixon  -ixoff  -iuclc  -ixany\n"
+"                -imaxbel -opost -isig -icanon -xcase min 1 time 0\n"
+"  -raw          same as cooked\n"
+"  sane          same as cread -ignbrk brkint -inlcr -igncr icrnl\n"
+"                -ixoff -iuclc -ixany imaxbel opost -olcuc -ocrnl onlcr\n"
+"                -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0 vt0 ff0\n"
+"                isig icanon iexten echo echoe echok -echonl -noflsh\n"
+"                -xcase -tostop -echoprt echoctl echoke, all special\n"
+"                characters to their default values.\n"
+msgstr ""
+"\n"
+"Kombinasjonsinnstillinger:\n"
+"* [-]LCASE      samme som [-]lcase\n"
+"  cbreak        samme som -icanon\n"
+"  -cbreak       samme som icanon\n"
+"  cooked        samme som å sette brkint ignpar istrip icrnl ixon opost "
+"isig\n"
+"                icanon, eof og eol til deres forvalgte verdier\n"
+"  -cooked       samme som raw\n"
+"  crt           samme som echoe echoctl echoke\n"
+"  dec           samme som echoe echoctl echoke -ixany intr ^c erase 0177\n"
+"                kill ^u\n"
+"* [-]decctlq    samme som [-]ixany\n"
+"  ek            erase- og kill-tegn til deres forvalgte verdier\n"
+"  evenp         samme som parenb -parodd cs7\n"
+"  -evenp        samme som -parenb cs8\n"
+"* [-]lcase      samme som xcase iuclc olcuc\n"
+"  litout        samme som -parenb -istrip -opost cs8\n"
+"  -litout       samme som parenb istrip opost cs7\n"
+"  nl            samme som -icrnl -onlcr\n"
+"  -nl           samme som icrnl -inlcr -igncr onlcr -ocrnl -onlret\n"
+"  oddp          samme som parenb parodd cs7\n"
+"  -oddp         samme som -parenb cs8\n"
+"  [-]parity     samme som [-]evenp\n"
+"  pass8         samme som -parenb -istrip cs8\n"
+"  -pass8        samme som parenb istrip cs7\n"
+"  raw           samme som -ignbrk -brkint -ignpar -parmrk -inpck -istrip\n"
+"                -inlcr -igncr -icrnl  -ixon  -ixoff  -iuclc  -ixany\n"
+"                -imaxbel -opost -isig -icanon -xcase min 1 time 0\n"
+"  -raw          samme som cooked\n"
+"  sane          samme som cread -ignbrk brkint -inlcr -igncr icrnl\n"
+"                -ixoff -iuclc -ixany imaxbel opost -olcuc -ocrnl onlcr\n"
+"                -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0 vt0 ff0\n"
+"                isig icanon iexten echo echoe echok -echonl -noflsh\n"
+"                -xcase -tostop -echoprt echoctl echoke, alle spesial-\n"
+"                tegn til deres forvalgte verdier.\n"
+
+#: src/stty.c:655
+msgid ""
+"\n"
+"Handle the tty line connected to standard input.  Without arguments,\n"
+"prints baud rate, line discipline, and deviations from stty sane.  In\n"
+"settings, CHAR is taken literally, or coded as in ^c, 0x37, 0177 or\n"
+"127; special values ^- or undef used to disable special characters.\n"
+msgstr ""
+"\n"
+"Håndter tty-linjen koblet til standard inn.  Uten argumenter, skriv ut\n"
+"bitrate, linjedisiplin og avvik fra «stty sane».  I innstillinger tas\n"
+"TEGN bokstavelig eller kodet som i ^c, 0x37, 0177 eller 127; spesielle\n"
+"verdier, ^- eller undef brukes for å slå av spesielle tegn\n"
+
+#: src/stty.c:739
+msgid "only one device may be specified"
+msgstr ""
+
+#: src/stty.c:834
+msgid ""
+"the options for verbose and stty-readable output styles are\n"
+"mutually exclusive"
+msgstr "flaggene for fyldig og stty-lesbar utskrift utelukker hverandre"
+
+#: src/stty.c:839
+msgid "when specifying an output style, modes may not be set"
+msgstr "når en stil for utdata spesifiseres kan ikke modi settes"
+
+#: src/stty.c:855
+#, c-format
+msgid "%s: couldn't reset non-blocking mode"
+msgstr ""
+
+#: src/stty.c:909 src/stty.c:1016
+#, c-format
+msgid "invalid argument `%s'"
+msgstr "ugyldig argument «%s»"
+
+#: src/stty.c:920 src/stty.c:937 src/stty.c:949 src/stty.c:962 src/stty.c:974
+#: src/stty.c:993
+#, c-format
+msgid "missing argument to `%s'"
+msgstr "manglende argument til «%s»"
+
+#: src/stty.c:1069
+#, fuzzy, c-format
+msgid "%s: unable to perform all requested operations"
+msgstr "standard inn: ikke i stand til å utføre alle forespurte operasjoner"
+
+#: src/stty.c:1074
+msgid "new_mode: mode\n"
+msgstr "new_mode: modus\n"
+
+#: src/stty.c:1413
+#, fuzzy, c-format
+msgid "%s: no size information for this device"
+msgstr "ingen informasjon om størrelse for denne enheten"
+
+#: src/stty.c:1804
+msgid "<undef>"
+msgstr "<undef>"
+
+#: src/stty.c:1855
+#, c-format
+msgid "invalid integer argument `%s'"
+msgstr "ugyldig heltallsargument «%s»"
+
+#: src/su.c:187
+msgid "virtual memory exhausted"
+msgstr "virtuelt minne oppbrukt"
+
+#: src/su.c:290
+msgid "Password:"
+msgstr "Passord:"
+
+#: src/su.c:293
+msgid "getpass: cannot open /dev/tty"
+msgstr "getpass: kan ikke åpne /dev/tty"
+
+#: src/su.c:351
+msgid "cannot set groups"
+msgstr "kan ikke sette grupper"
+
+#: src/su.c:355
+msgid "cannot set group id"
+msgstr "kan ikke sette gruppe-id"
+
+#: src/su.c:357
+msgid "cannot set user id"
+msgstr "kan ikke sette bruker-id"
+
+#: src/su.c:401
+#, c-format
+msgid "cannot run %s"
+msgstr "kan ikke kjøre %s"
+
+#: src/su.c:433
+#, c-format
+msgid "Usage: %s [OPTION]... [-] [USER [ARG]...]\n"
+msgstr "Bruk: %s [FLAGG]... [-] [BRUKER [ARG]...]\n"
+
+#: src/su.c:434
+msgid ""
+"Change the effective user id and group id to that of USER.\n"
+"\n"
+"  -, -l, --login               make the shell a login shell\n"
+"  -c, --commmand=COMMAND       pass a single COMMAND to the shell with -c\n"
+"  -f, --fast                   pass -f to the shell (for csh or tcsh)\n"
+"  -m, --preserve-environment   do not reset environment variables\n"
+"  -p                           same as -m\n"
+"  -s, --shell=SHELL            run SHELL if /etc/shells allows it\n"
+"      --help                   display this help and exit\n"
+"      --version                output version information and exit\n"
+"\n"
+"A mere - implies -l.   If USER not given, assume root.\n"
+msgstr ""
+"Endre den effektive bruker-id'en og gruppe-id'en til BRUKER.\n"
+"\n"
+"  -, -l, --login               gjør shellet til et login-shell\n"
+"  -c, --command=KOMMANDO       send en enkel kommando til shellet med -c\n"
+"  -f, --fast                   send -f til shellet (for csh eller tcsh)\n"
+"  -m, --preserve-environment   ikke nullstill miljøvariabler\n"
+"  -s, --shell=SHELL            kjør SHELL hvis /etc/shells tillater det\n"
+"      --help                   vis denne hjelpeteksten og avslutt\n"
+"      --version                vis versjonsinformasjon og avslutt\n"
+"\n"
+"En enkel - impliserer -l.  Hvis BRUKER ikke er angitt, anta root.\n"
+
+#: src/su.c:522
+#, c-format
+msgid "user %s does not exist"
+msgstr "bruker %s eksisterer ikke"
+
+#: src/su.c:545
+msgid "incorrect password"
+msgstr "feil passord"
+
+#. The user being su'd to has a nonstandard shell, and so is
+#. probably a uucp account or has restricted access.  Don't
+#. compromise the account by allowing access with a standard
+#. shell.
+#: src/su.c:562
+#, c-format
+msgid "using restricted shell %s"
+msgstr "bruker begrenset shell %s"
+
+#: src/su.c:573
+#, c-format
+msgid "warning: cannot change directory to %s"
+msgstr "advarsel: kan ikke skifte katalog til %s"
+
+#: src/tee.c:65
+#, c-format
+msgid "Usage: %s [OPTION]... [FILE]...\n"
+msgstr "Bruk: %s [FLAGG]... [FIL]...\n"
+
+#: src/tee.c:66
+msgid ""
+"Copy standard input to each FILE, and also to standard output.\n"
+"\n"
+"  -a, --append              append to the given FILEs, do not overwrite\n"
+"  -i, --ignore-interrupts   ignore interrupt signals\n"
+"      --help                display this help and exit\n"
+"      --version             output version information and exit\n"
+msgstr ""
+"Kopier standard inn til hver FIL og til standard ut.\n"
+"\n"
+"  -a, --append              legg til til de angitte FILene, ikke overskriv\n"
+"  -i, --ignore-interrrupts  ignorer avbruddssignaler\n"
+"      --help                vis denne hjelpeteksten og avslutt\n"
+"      --version             vis versjonsinformasjon og avslutt\n"
+
+#: src/tee.c:181
+msgid "standard output"
+msgstr "standard ut"
+
+#: src/tee.c:219
+msgid "read error"
+msgstr "lesefeil"
+
+#: src/test.c:232
+msgid "argument expected\n"
+msgstr "argument forventet\n"
+
+#: src/test.c:240
+#, c-format
+msgid "integer expression expected %s\n"
+msgstr "forventet heltallsuttrykk %s\n"
+
+#: src/test.c:362
+msgid "')' expected\n"
+msgstr "«)» forventet\n"
+
+#: src/test.c:365
+#, c-format
+msgid "')' expected, found %s\n"
+msgstr "«)» forventet, fant %s\n"
+
+#: src/test.c:381 src/test.c:907
+#, c-format
+msgid "%s: unary operator expected\n"
+msgstr "%s: unær operator forventet\n"
+
+#: src/test.c:408 src/test.c:933
+#, c-format
+msgid "%s: binary operator expected\n"
+msgstr "%s: binær operator forventet\n"
+
+#: src/test.c:443
+msgid "before -lt"
+msgstr "før -lt"
+
+#: src/test.c:451
+msgid "after -lt"
+msgstr "etter -lt"
+
+#: src/test.c:465
+msgid "before -le"
+msgstr "før -le"
+
+#: src/test.c:472
+msgid "after -le"
+msgstr "etter -le"
+
+#: src/test.c:488
+msgid "before -gt"
+msgstr "før -gt"
+
+#: src/test.c:495
+msgid "after -gt"
+msgstr "etter -gt"
+
+#: src/test.c:509
+msgid "before -ge"
+msgstr "før -ge"
+
+#: src/test.c:516
+msgid "after -ge"
+msgstr "etter -ge"
+
+#: src/test.c:529 src/test.c:602
+msgid "-nt does not accept -l\n"
+msgstr "-nt aksepterer ikke -l\n"
+
+#: src/test.c:544
+msgid "before -ne"
+msgstr "før -ne"
+
+#: src/test.c:551
+msgid "after -ne"
+msgstr "etter -ne"
+
+#: src/test.c:567
+msgid "before -eq"
+msgstr "før -eq"
+
+#: src/test.c:574
+msgid "after -eq"
+msgstr "etter -eq"
+
+#: src/test.c:585
+msgid "-ef does not accept -l\n"
+msgstr "-ef aksepterer ikke -l\n"
+
+#: src/test.c:609
+msgid "unknown binary operator"
+msgstr "ukjent binær operator"
+
+#: src/test.c:795
+#, fuzzy
+msgid "after -t"
+msgstr "etter -lt"
+
+#: src/test.c:991
+#, c-format
+msgid ""
+"Usage: %s EXPRESSION\n"
+"  or:  [ EXPRESSION ]\n"
+"  or:  %s OPTION\n"
+msgstr ""
+"Bruk:    %s UTTRYKK\n"
+"  eller: [ UTTRYKK ]\n"
+"  eller: %s FLAGG\n"
+
+#: src/test.c:997
+msgid ""
+"Exit with the status determined by EXPRESSION.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+"\n"
+"EXPRESSION is true or false and sets exit status.  It is one of:\n"
+msgstr ""
+"Avslutt med statusen bestemt av UTTRYKK.\n"
+"\n"
+"  --help      vis denne hjelpeteksten og avslutt\n"
+"  --version   vis versjonsinformasjon og avslutt\n"
+"\n"
+"UTTRYKK er sant eller usant og setter avslutningsstatus.  UTTRYKK er en av:\n"
+
+#: src/test.c:1005
+msgid ""
+"\n"
+"  ( EXPRESSION )               EXPRESSION is true\n"
+"  ! EXPRESSION                 EXPRESSION is false\n"
+"  EXPRESSION1 -a EXPRESSION2   both EXPRESSION1 and EXPRESSION2 are true\n"
+"  EXPRESSION1 -o EXPRESSION2   either EXPRESSION1 or EXPRESSION2 is true\n"
+"\n"
+"  [-n] STRING          the length of STRING is nonzero\n"
+"  -z STRING            the length of STRING is zero\n"
+"  STRING1 = STRING2    the strings are equal\n"
+"  STRING1 != STRING2   the strings are not equal\n"
+"\n"
+"  INTEGER1 -eq INTEGER2   INTEGER1 is equal to INTEGER2\n"
+"  INTEGER1 -ge INTEGER2   INTEGER1 is greater than or equal to INTEGER2\n"
+"  INTEGER1 -gt INTEGER2   INTEGER1 is greater than INTEGER2\n"
+"  INTEGER1 -le INTEGER2   INTEGER1 is less than or equal to INTEGER2\n"
+"  INTEGER1 -lt INTEGER2   INTEGER1 is less than INTEGER2\n"
+"  INTEGER1 -ne INTEGER2   INTEGER1 is not equal to INTEGER2\n"
+msgstr ""
+"\n"
+"  ( UTTRYKK )                  UTTRYKK er sant\n"
+"  ! UTTRYKK                    UTTRYKK er usant\n"
+"  UTTRYKK1 -a UTTRYKK2         både UTTRYKK1 og UTTRYKK2 er sanne\n"
+"  UTTRYKK1 -o UTTRYKK2         minst ett av uttrykkene er sanne\n"
+"\n"
+"  [-n ] STRENG                 lengden av STRENG er ikke-null\n"
+"  -z STRENG                    lengden av STRENG er null\n"
+"  STRENG1 = STRENG2            strengene er like\n"
+"  STRENG1 != STRENG2           strengene er ulike\n"
+"\n"
+"  HELTALL1 -eq HELTALL2        HELTALL1 er lik HELTALL2\n"
+"  HELTALL1 -ge HELTALL2        HELTALL1 er større enn eller lik HELTALL2\n"
+"  HELTALL1 -gt HELTALL2        HELTALL1 er større enn HELTALL2\n"
+"  HELTALL1 -le HELTALL2        HELTALL1 er mindre enn eller lik HELTALL2\n"
+"  HELTALL1 -lt HELTALL2        HELTALL1 er mindre enn HELTALL2\n"
+"  HELTALL1 -ne HELTALL2        HELTALL1 er ulikt HELTALL2\n"
+
+#: src/test.c:1024
+msgid ""
+"\n"
+"  FILE1 -ef FILE2   FILE1 and FILE2 have the same device and inode numbers\n"
+"  FILE1 -nt FILE2   FILE1 is newer (modification date) than FILE2\n"
+"  FILE1 -ot FILE2   FILE1 is older than FILE2\n"
+"\n"
+"  -b FILE     FILE exists and is block special\n"
+"  -c FILE     FILE exists and is character special\n"
+"  -d FILE     FILE exists and is a directory\n"
+"  -e FILE     FILE exists\n"
+"  -f FILE     FILE exists and is a regular file\n"
+"  -g FILE     FILE exists and is set-group-ID\n"
+"  -G FILE     FILE exists and is owned by the effective group ID\n"
+"  -k FILE     FILE exists and has its sticky bit set\n"
+"  -L FILE     FILE exists and is a symbolic link\n"
+"  -O FILE     FILE exists and is owned by the effective user ID\n"
+"  -p FILE     FILE exists and is a named pipe\n"
+"  -r FILE     FILE exists and is readable\n"
+"  -s FILE     FILE exists and has a size greater than zero\n"
+"  -S FILE     FILE exists and is a socket\n"
+"  -t [FD]     file descriptor FD (stdout by default) is opened on a "
+"terminal\n"
+"  -u FILE     FILE exists and its set-user-ID bit is set\n"
+"  -w FILE     FILE exists and is writable\n"
+"  -x FILE     FILE exists and is executable\n"
+msgstr ""
+"\n"
+"  FIL1 -ef FIL2   FIL1 og FIL2 har samme enhet og inodenummer\n"
+"  FIL1 -nt FIL2   FIL1 er nyere (endringsdato) enn FIL2\n"
+"  FIL1 -ot FIL2   FIL1 er eldre enn FIL2\n"
+"\n"
+"  -b FIL      FIL eksisterer og er en blokkenhet\n"
+"  -c FIL      FIL eksisterer og er en tegn-enhet\n"
+"  -d FIL      FIL eksisterer og er en filkatalog\n"
+"  -e FIL      FIL eksisterer\n"
+"  -f FIL      FIL eksisterer og er en vanlig fil\n"
+"  -g FIL      FIL eksisterer og er «set-group-ID»\n"
+"  -G FIL      FIL eksisterer og er eid av den effektive gruppe-IDen\n"
+"  -k FIL      FIL eksisterer og har sin «sticky bit» satt\n"
+"  -L FIL      FIL eksisterer og er en symbolsk lenke\n"
+"  -O FIL      FIL eksisterer og er eid av den effektive bruker-ID\n"
+"  -p FIL      FIL eksisterer og er en «named pipe»\n"
+"  -r FIL      FIL eksisterer og er lesbar\n"
+"  -s FIL      FIL eksisterer og har en størrelse større enn null\n"
+"  -S FIL      FIL eksisterer og er en socket\n"
+"  -t [FD]     fil-deskriptor FD (stdout er forvalgt) er åpnet på en "
+"terminal\n"
+"  -u FIL      FIL eksisterer og dens «set-user-ID»-bit er satt\n"
+"  -w FIL      FIL eksisterer og er skrivbar\n"
+"  -x FIL      FIL eksisterer og er kjørbar\n"
+
+#: src/test.c:1049
+msgid ""
+"\n"
+"Beware that parentheses need to be escaped (e.g., by backslashes) for "
+"shells.\n"
+"INTEGER may also be -l STRING, which evaluates to the length of STRING.\n"
+msgstr ""
+"\n"
+"Vær oppmerksom på at paranteser må være beskyttet (f.eks. med backslasher)\n"
+"for shell.  HELTALL kan også være -l STRENG, som evalueres til lengden\n"
+"av STRENGen.\n"
+
+#: src/test.c:1106
+msgid "missing `]'\n"
+msgstr "manglende «]»\n"
+
+#: src/test.c:1120
+msgid "too many arguments\n"
+msgstr "for mange argumenter\n"
+
+#: src/true.c:16
+#, fuzzy, c-format
+msgid ""
+"Usage: %s [ignored command line arguments]\n"
+"  or:  %s OPTION\n"
+"Exit with a status code indicating success.\n"
+"\n"
+"These option names may not be abbreviated.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+msgstr ""
+"Bruk:    %s [NAVN]\n"
+" eller:  %s FLAGG\n"
+"Skriv vertsnavnet til dette systemet.\n"
+"\n"
+"  --help       vis denne hjelpeteksten og avslutt\n"
+"  --version    vis versjonsinformasjon og avslutt\n"
+
+#: src/tty.c:63
+msgid ""
+"Print the file name of the terminal connected to standard input.\n"
+"\n"
+"  -s, --silent, --quiet   print nothing, only return an exit status\n"
+"      --help              display this help and exit\n"
+"      --version           output version information and exit\n"
+msgstr ""
+"Skriv ut filnavnet til terminalen som er koblet til standard inn.\n"
+"\n"
+"  -s, --silent, --quiet   ikke skriv ut noe, bare returner en "
+"avslutningsstatus\n"
+"      --help              vis denne hjelpeteksten og avslutt\n"
+"      --version           vis versjonsinformasjon og avslutt\n"
+
+#: src/tty.c:117
+msgid "not a tty"
+msgstr "ikke en tty"
+
+#: src/uname.c:98
+msgid ""
+"Print certain system information.  With no OPTION, same as -s.\n"
+"\n"
+"  -a, --all        print all information\n"
+"  -m, --machine    print the machine (hardware) type\n"
+"  -n, --nodename   print the machine's network node hostname\n"
+"  -r, --release    print the operating system release\n"
+"  -s, --sysname    print the operating system name\n"
+"  -p, --processor  print the host processor type\n"
+"  -v               print the operating system version\n"
+"      --help       display this help and exit\n"
+"      --version    output version information and exit\n"
+msgstr ""
+"Skriv ut visse systemdata.  Uten FLAGG, samme som -s.\n"
+"\n"
+"  -a, --all        skriv ut all informasjon\n"
+"  -m, --machine    skriv ut maskin-typen (hardwaretypen)\n"
+"  -n, --nodename   skriv ut maskinens vertsnavn\n"
+"  -r, --release    skriv ut operativsystemets versjonnummer\n"
+"  -s, --sysname    skriv ut navnet til operativsystemet\n"
+"  -p, --processor  skriv ut maskinens prosessortype\n"
+"  -v               skriv ut versjonen til operativsystemet\n"
+"      --help       vis denne hjelpeteksten og avslutt\n"
+"      --version    vis versjonsinformasjon og avslutt\n"
+
+#: src/uname.c:181
+msgid "cannot get system name"
+msgstr "kan ikke finne ut systemnavnet"
+
+#: src/uname.c:185
+msgid "cannot get processor type"
+msgstr "kan ikke finne ut prosessortypen"
+
+#: src/uptime.c:107
+msgid "couldn't get boot time"
+msgstr "kunne ikke finne ut boot-tid"
+
+#: src/uptime.c:114
+#, c-format
+msgid " %2d:%02d%s  up "
+msgstr " %2d:%02d%s  oppe "
+
+#. FIXME: use strftime, not am, pm.  Uli reports that
+#. the german translation is meaningless.
+#: src/uptime.c:118
+msgid "am"
+msgstr "am"
+
+#: src/uptime.c:118
+msgid "pm"
+msgstr "pm"
+
+#: src/uptime.c:120
+msgid "day"
+msgstr "dag"
+
+#: src/uptime.c:120
+msgid "days"
+msgstr "dager"
+
+#: src/uptime.c:122
+msgid "user"
+msgstr "bruker"
+
+#: src/uptime.c:122
+msgid "users"
+msgstr "brukere"
+
+#: src/uptime.c:135
+#, c-format
+msgid ",  load average: %.2f"
+msgstr ",  snittlast: %.2f"
+
+#: src/uptime.c:169 src/users.c:115
+#, c-format
+msgid "Usage: %s [OPTION]... [ FILE ]\n"
+msgstr "Bruk: %s [FLAGG]... [ FIL ]\n"
+
+#: src/uptime.c:170
+#, fuzzy, c-format
+msgid ""
+"Print the current time, the length of time the system has been up,\n"
+"the number of users on the system, and the average number of jobs\n"
+"in the run queue over the last 1, 5 and 15 minutes.\n"
+"If FILE is not specified, use %s.  %s as FILE is common.\n"
+"\n"
+"      --help        display this help and exit\n"
+"      --version     output version information and exit\n"
+msgstr ""
+"Skriv ut hvem som for øyeblikket er pålogget i følge FIL.\n"
+"Hvis FIL ikke er spesifisert brukes %s.  %s som FIL er vanlig.\n"
+"\n"
+"      --help        vis denne hjelpeteksten og avslutt\n"
+"      --version     vis versjonsinformasjon og avslutt\n"
+
+#: src/users.c:116
+#, c-format
+msgid ""
+"Output who is currently logged in according to FILE.\n"
+"If FILE is not specified, use %s.  %s as FILE is common.\n"
+"\n"
+"      --help        display this help and exit\n"
+"      --version     output version information and exit\n"
+msgstr ""
+"Skriv ut hvem som for øyeblikket er pålogget i følge FIL.\n"
+"Hvis FIL ikke er spesifisert brukes %s.  %s som FIL er vanlig.\n"
+"\n"
+"      --help        vis denne hjelpeteksten og avslutt\n"
+"      --version     vis versjonsinformasjon og avslutt\n"
+
+#: src/who.c:112
+msgid " old "
+msgstr " gammel "
+
+#: src/who.c:235
+#, c-format
+msgid ""
+"\n"
+"# users=%u\n"
+msgstr ""
+"\n"
+"# brukere=%u\n"
+
+#: src/who.c:241
+msgid "USER"
+msgstr "BRUKER"
+
+#: src/who.c:243
+msgid "MESG "
+msgstr "MELD "
+
+#: src/who.c:244
+msgid "LINE"
+msgstr "LINJE"
+
+#: src/who.c:245
+msgid "LOGIN-TIME   "
+msgstr "LOGIN-TID    "
+
+#: src/who.c:247
+msgid "IDLE  "
+msgstr "IDLE  "
+
+#: src/who.c:248
+msgid "FROM\n"
+msgstr "FRA\n"
+
+#: src/who.c:358
+#, c-format
+msgid "Usage: %s [OPTION]... [ FILE | ARG1 ARG2 ]\n"
+msgstr "Bruk: %s [FLAGG]... [ FIL | ARG1 ARG2 ]\n"
+
+#: src/who.c:359
+#, fuzzy, c-format
+msgid ""
+"\n"
+"  -H, --heading     print line of column headings\n"
+"  -i, -u, --idle    add user idle time as HOURS:MINUTES, . or old\n"
+"  -l, --lookup      attempt to canonicalize hostnames via DNS\n"
+"  -m                only hostname and user associated with stdin\n"
+"  -q, --count       all login names and number of users logged on\n"
+"  -s                (ignored)\n"
+"  -T, -w, --mesg    add user's message status as +, - or ?\n"
+"      --message     same as -T\n"
+"      --writable    same as -T\n"
+"      --help        display this help and exit\n"
+"      --version     output version information and exit\n"
+"\n"
+"If FILE is not specified, use %s.  %s as FILE is common.\n"
+"If ARG1 ARG2 given, -m presumed: `am i' or `mom likes' are usual.\n"
+msgstr ""
+"\n"
+"  -H, --heading     skriv ut en linje med kolonneoverskrifter\n"
+"  -i, -u, --idle    legg til brukers borte-tid som TIMER:MINUTTER, . eller\n"
+"                    gammel\n"
+"  -m,               bare vertsnavn og bruker assosiert med standard inn\n"
+"  -q, --count       alle brukernavn og antall brukere pålogget\n"
+"  -s                (ignorert)\n"
+"  -T, -w, --mesg    legg til brukers meldingsstatus som +, - eller ?\n"
+"      --message     samme som -T\n"
+"      --writeable   samme som -T\n"
+"      --help        vis denne hjelpeteksten og avslutt\n"
+"      --version     vis versjonsinformasjon og avslutt\n"
+"\n"
+"Hvis FIL ikke er spesifisert, bruk %s.  %s som FIL er vanlig.\n"
+"Hvis ARG1 ARG2 er oppgitt antas -m: «am i» eller «mom likes» er vanlig.\n"
+
+#: src/whoami.c:52
+msgid ""
+"Print the user name associated with the current effective user id.\n"
+"Same as id -un.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+msgstr ""
+"Skriv ut brukernavnet bundet til den nåværende effektive brukeridentiteten.\n"
+"Samme som id -un.\n"
+"\n"
+"  --help      vis denne hjelpeteksten og avslutt\n"
+"  --version   vis versjonsinformasjon og avslutt\n"
+
+#: src/whoami.c:100
+#, c-format
+msgid "%s: cannot find username for UID %u\n"
+msgstr "%s: kan ikke finne brukernavnet til UID %u\n"
+
+#: src/yes.c:45
+msgid ""
+"Repeatedly output a line with all specified STRING(s), or `y'.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+msgstr ""
+"Skriv ut en linje som inneholder alle spesifiserte STRENG(er) eller «y»\n"
+"om og om igjen.\n"
+"\n"
+"  --help      vis denne hjelpeteksten og avslutt\n"
+"  --version   vis versjonsinformasjon og avslutt\n"
+
+#~ msgid ""
+#~ "Usage: %s [SETTING]...\n"
+#~ "  or:  %s OPTION\n"
+#~ msgstr ""
+#~ "Usage:   %s [INNSTILLING]...\n"
+#~ "  eller: %s FLAGG\n"
+
+#~ msgid "invalid date ` %s'"
+#~ msgstr "ugyldig dato « %s»"

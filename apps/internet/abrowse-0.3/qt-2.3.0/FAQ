@@ -1,0 +1,130 @@
+                       Frequently Asked Questions
+
+Please note: the latest version of this and other FAQ lists are available at:
+                        http://www.trolltech.com/faq/
+
+
+   1.Who is Trolltech? 
+
+      Trolltech is a software company based in Oslo, the capital of
+      Norway. Our flagship product is Qt, the multi-platform C++
+      GUI toolkit. 
+
+      Trolltech AS was founded in 1994. However, the core team of
+      designers at Trolltech started developing Qt already in 1992.
+      Ever since then, Qt has steadily expanded and improved. Qt is
+      currently used in hundreds of software development projects
+      world wide. 
+
+      In addition to Qt development and support, Trolltech engages
+      on a consultancy basis in various exciting development projects.
+
+   2.Do you have any plans for a graphical designer/dialog
+      builder? 
+
+      Yes, since Qt 2.2.
+      See the tools/designer directory of your Qt distribution.
+
+   3.Is there a mailing list or something for Qt? 
+
+      There are three: qt-interest@trolltech.com, snapshot-users@trolltech.com,
+      and qt-announce.
+
+      Qt-interest is a user forum. There can be as much as 150
+      messages per week. To join it, send a message containing the
+      single word "subscribe" to qt-interest-request@trolltech.com. 
+
+      Snapshot-users@trolltech.com is a forum for people using the
+      cutting-edge unstable version.  The details of the snapshot
+      releases are detailed at http://www.trolltech.com/qt-snapshots.html
+
+      Qt-announce is for announcements of new Qt versions and a
+      few other announcements. We expect that there will be less
+      than ten messages to the list each year. To join the list, send
+      mail containing the single word "subscribe" to
+      qt-announce-request@trolltech.com. 
+
+      All messages to Qt-announce are also sent to Qt-interest, so
+      you don't need to be on both lists. 
+
+   4.Can I use Qt's classes without writing a graphical
+      user interface? 
+
+      Quite a few of the classes can be used independently of the
+      user interface. See utility classes, for example. There are also
+      a few classes that will work without the GUI only by chance. 
+
+   5.What kind of licenses exist for Qt? 
+
+      The Qt toolkit is available under two different licenses: The
+      Professional Edition for commercial use, and the Q Public License
+      for developing free software for the X platform. 
+
+   6.What are the differences between the Professional
+      Edition and Free Edition of Qt? 
+
+      You can write commercial software only if you have the
+      Professional Edition. The library itself is the same. With the
+      Professional Edition, you also get technical support and
+      upgrades.  For full details, see the LICENSE.QPL file.
+
+   7.Are you going to include so-and-so feature in Qt? If
+      so, when? 
+
+      We try not to make public speculations about the whats and
+      whens of the next Qt release too early, because we do not want
+      to be known as a vaporware company. 
+
+   8.I don't want to give away my source code. What do I do? 
+
+      Then you need the Professional Edition. 
+
+   9.Can I charge for my application? 
+
+      If you have the Professional Edition: Yes, of course. If you use
+      the Free Edition your software must be freely distributable
+      and you must include the source. 
+
+      The Free Edition is intended for free software. We realize
+      that CD-ROMs cost money to produce, for example, so you
+      can charge a copying fee. 
+
+  10.Where can I find Qt? 
+
+      The latest version of Qt can be downloaded from
+      http://www.trolltech.com or from ftp.trolltech.com, and a whole range of
+      ftp mirror sites around the world. Look for a mirror near you
+      on the list available under http://www.trolltech.com/dl/ 
+
+      We encourage all developers of free Qt software to upload
+      their work to ftp.trolltech.com. 
+
+  11.I want to port Qt to a new platform. What do I do? 
+
+      If the new platform is POSIX-like and runs the X Window
+      System, it's simple. Read the file PORTING for details. 
+
+  12.Will Qt be available for [OS/2, Mac, Amiga]? 
+
+      At present, Qt only works well on X11 and Win32 (Windows
+      95 and Windows NT). Porting to other platforms is a lower
+      priority. Currently, we concentrate on the Windows and X
+      versions. 
+
+  13.Can I make a Qt shared library and distribute it with
+      my Linux distribution? 
+
+      Yes, if you do not make changes to Qt and include all the files
+      present in our distribution of Qt. If you absolutely need to
+      change something, write to info@trolltech.com. 
+
+      It is very important for Trolltech that we know what is being
+      distributed, so that we can guarantee the quality of Qt. 
+
+  14.I found this obscure bug and I need it fixed, fast! 
+
+      Qt Professional Edition includes technical support. We try to
+      support the developers using the Qt Free Edition as well, and
+      we take all bug reports seriously, no matter who they come
+      from. But, of course, when there's too much to do, our
+      customers have higher priority. 

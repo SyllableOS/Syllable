@@ -1,0 +1,125 @@
+#
+# services	This file describes the various services that are
+#		available from the TCP/IP subsystem.  It should be
+#		consulted instead of using the numbers in the ARPA
+#		include files, or, worse, just guessing them.
+#
+# Version:	@(#)/etc/services	2.00	04/30/93
+#
+# Author:	Fred N. van Kempen, <waltje@uwalt.nl.mugnet.org>
+#
+
+tcpmux		1/tcp				# rfc-1078
+echo		7/tcp
+echo		7/udp
+discard		9/tcp		sink null
+discard		9/udp		sink null
+systat		11/tcp		users
+daytime		13/tcp
+daytime		13/udp
+netstat		15/tcp
+qotd		17/tcp		quote
+chargen		19/tcp		ttytst source
+chargen		19/udp		ttytst source
+ftp-data	20/tcp
+ftp		21/tcp
+telnet		23/tcp
+ssh		22/tcp
+smtp		25/tcp		mail
+time		37/tcp		timserver
+time		37/udp		timserver
+rlp		39/udp		resource	# resource location
+name		42/udp		nameserver
+whois		43/tcp		nicname		# usually to sri-nic
+domain		53/tcp
+domain		53/udp
+mtp             57/tcp                          # deprecated
+bootps		67/udp				# bootp server
+bootpc		68/udp				# bootp client
+tftp		69/udp
+gopher		70/tcp				# gopher server
+rje		77/tcp
+finger		79/tcp
+http		80/tcp				# www is used by some broken 
+www		80/tcp				# progs, http is more correct
+link		87/tcp		ttylink
+kerberos	88/udp		kdc             # Kerberos authentication--udp
+kerberos	88/tcp		kdc             # Kerberos authentication--tcp
+supdup		95/tcp				# BSD supdupd(8)
+hostnames	101/tcp		hostname	# usually to sri-nic
+iso-tsap	102/tcp
+x400		103/tcp				# ISO Mail
+x400-snd	104/tcp
+csnet-ns	105/tcp
+pop-2		109/tcp				# PostOffice V.2
+pop-3		110/tcp				# PostOffice V.3
+pop		110/tcp				# PostOffice V.3
+sunrpc		111/tcp
+sunrpc		111/tcp		portmapper	# RPC 4.0 portmapper UDP
+sunrpc		111/udp
+sunrpc		111/udp		portmapper	# RPC 4.0 portmapper TCP
+auth		113/tcp		ident           # User Verification
+sftp		115/tcp
+uucp-path	117/tcp
+nntp            119/tcp         usenet		# Network News Transfer
+ntp		123/tcp				# Network Time Protocol
+ntp		123/udp				# Network Time Protocol
+netbios-ns      137/tcp         nbns
+netbios-ns      137/udp         nbns
+netbios-dgm     138/tcp         nbdgm
+netbios-dgm     138/udp         nbdgm
+netbios-ssn     139/tcp         nbssn
+imap 		143/tcp				# imap network mail protocol
+NeWS		144/tcp		news		# Window System
+snmp		161/udp
+snmp-trap	162/udp
+exec		512/tcp				# BSD rexecd(8)
+biff		512/udp		comsat
+login		513/tcp				# BSD rlogind(8)
+who		513/udp		whod		# BSD rwhod(8)
+shell		514/tcp		cmd		# BSD rshd(8)
+syslog		514/udp				# BSD syslogd(8)
+printer		515/tcp		spooler		# BSD lpd(8)
+talk		517/udp				# BSD talkd(8)
+ntalk		518/udp				# SunOS talkd(8)
+efs             520/tcp                         # for LucasFilm
+route		520/udp		router routed	# 521/udp too
+timed		525/udp		timeserver
+tempo           526/tcp         newdate
+courier		530/tcp		rpc		# experimental
+conference      531/tcp         chat
+netnews         532/tcp         readnews
+netwall         533/udp                         # -for emergency broadcasts
+uucp		540/tcp		uucpd		# BSD uucpd(8) UUCP service
+klogin		543/tcp                         # Kerberos authenticated rlogin
+kshell		544/tcp		cmd             # and remote shell
+new-rwho	550/udp		new-who		# experimental
+remotefs        556/tcp         rfs_server rfs  # Brunhoff remote filesystem
+rmonitor	560/udp		rmonitord	# experimental
+monitor		561/udp				# experimental
+pcserver	600/tcp				# ECD Integrated PC board srvr
+mount		635/udp				# NFS Mount Service
+pcnfs		640/udp				# PC-NFS DOS Authentication
+bwnfs		650/udp				# BW-NFS DOS Authentication
+kerberos-adm	749/tcp                         # Kerberos 5 admin/changepw
+kerberos-adm	749/udp                         # Kerberos 5 admin/changepw
+kerberos-sec	750/udp                         # Kerberos authentication--udp
+kerberos-sec	750/tcp                         # Kerberos authentication--tcp
+kerberos_master	751/udp                         # Kerberos authentication
+kerberos_master	751/tcp                         # Kerberos authentication
+krb5_prop	754/tcp                         # Kerberos slave propagation
+listen		1025/tcp	listener RFS remote_file_sharing
+nterm		1026/tcp	remote_login network_terminal
+kpop		1109/tcp                        # Pop with Kerberos
+ingreslock      1524/tcp
+tnet            1600/tcp                        # transputer net daemon
+cfinger		2003/tcp			# GNU finger
+nfs		2049/udp			# NFS File Service
+eklogin		2105/tcp                        # Kerberos encrypted rlogin
+krb524		4444/tcp                        # Kerberos 5 to 4 ticket xlator
+irc		6667/tcp			# Internet Relay Chat
+dos		7000/tcp	msdos
+cvs		2401/tcp	cvs
+
+# End of services.
+linuxconf	98/tcp		# added by linuxconf RPM

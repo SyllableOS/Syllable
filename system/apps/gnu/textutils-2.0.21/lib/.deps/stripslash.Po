@@ -1,0 +1,23 @@
+stripslash.o : \
+ stripslash.c ../config.h /include/string.h \
+ /include/features.h /include/sys/cdefs.h /include/gnu/stubs.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h \
+ /include/xlocale.h /include/bits/string.h /include/bits/string2.h \
+ /include/endian.h /include/bits/endian.h /include/bits/types.h \
+ /include/bits/pthreadtypes.h /include/stdlib.h dirname.h
+stripslash.c :
+../config.h :
+/include/string.h :
+/include/features.h :
+/include/sys/cdefs.h :
+/include/gnu/stubs.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h :
+/include/xlocale.h :
+/include/bits/string.h :
+/include/bits/string2.h :
+/include/endian.h :
+/include/bits/endian.h :
+/include/bits/types.h :
+/include/bits/pthreadtypes.h :
+/include/stdlib.h :
+dirname.h :

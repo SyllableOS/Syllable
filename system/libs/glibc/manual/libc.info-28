@@ -1,0 +1,1161 @@
+This is Info file libc.info, produced by Makeinfo version 1.68 from the
+input file libc.texinfo.
+
+INFO-DIR-SECTION GNU libraries
+START-INFO-DIR-ENTRY
+* Libc: (libc).                 C library.
+END-INFO-DIR-ENTRY
+
+   This file documents the GNU C library.
+
+   This is Edition 0.08 DRAFT, last updated 11 Jan 1999, of `The GNU C
+Library Reference Manual', for Version 2.1 Beta.
+
+   Copyright (C) 1993, '94, '95, '96, '97, '98, '99 Free Software
+Foundation, Inc.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided also
+that the section entitled "GNU Library General Public License" is
+included exactly as in the original, and provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that the text of the translation of the section
+entitled "GNU Library General Public License" must be approved for
+accuracy by the Foundation.
+
+
+File: libc.info,  Node: Floating Point Classes,  Next: Floating Point Errors,  Prev: Floating Point Numbers,  Up: Arithmetic
+
+Floating-Point Number Classification Functions
+==============================================
+
+   ISO C 9x defines macros that let you determine what sort of
+floating-point number a variable holds.
+
+ - Macro: int fpclassify (*float-type* X)
+     This is a generic macro which works on all floating-point types and
+     which returns a value of type `int'.  The possible values are:
+
+    `FP_NAN'
+          The floating-point number X is "Not a Number" (*note Infinity
+          and NaN::.)
+
+    `FP_INFINITE'
+          The value of X is either plus or minus infinity (*note
+          Infinity and NaN::.)
+
+    `FP_ZERO'
+          The value of X is zero.  In floating-point formats like
+          IEEE 754, where zero can be signed, this value is also
+          returned if X is negative zero.
+
+    `FP_SUBNORMAL'
+          Numbers whose absolute value is too small to be represented
+          in the normal format are represented in an alternate,
+          "denormalized" format (*note Floating Point Concepts::.).
+          This format is less precise but can represent values closer
+          to zero.  `fpclassify' returns this value for values of X in
+          this alternate format.
+
+    `FP_NORMAL'
+          This value is returned for all other values of X.  It
+          indicates that there is nothing special about the number.
+
+
+   `fpclassify' is most useful if more than one property of a number
+must be tested.  There are more specific macros which only test one
+property at a time.  Generally these macros execute faster than
+`fpclassify', since there is special hardware support for them.  You
+should therefore use the specific macros whenever possible.
+
+ - Macro: int isfinite (*float-type* X)
+     This macro returns a nonzero value if X is finite: not plus or
+     minus infinity, and not NaN.  It is equivalent to
+
+          (fpclassify (x) != FP_NAN && fpclassify (x) != FP_INFINITE)
+
+     `isfinite' is implemented as a macro which accepts any
+     floating-point type.
+
+ - Macro: int isnormal (*float-type* X)
+     This macro returns a nonzero value if X is finite and normalized.
+     It is equivalent to
+
+          (fpclassify (x) == FP_NORMAL)
+
+ - Macro: int isnan (*float-type* X)
+     This macro returns a nonzero value if X is NaN.  It is equivalent
+     to
+
+          (fpclassify (x) == FP_NAN)
+
+   Another set of floating-point classification functions was provided
+by BSD.  The GNU C library also supports these functions; however, we
+recommend that you use the C9x macros in new code.  Those are standard
+and will be available more widely.  Also, since they are macros, you do
+not have to worry about the type of their argument.
+
+ - Function: int isinf (double X)
+ - Function: int isinff (float X)
+ - Function: int isinfl (long double X)
+     This function returns `-1' if X represents negative infinity, `1'
+     if X represents positive infinity, and `0' otherwise.
+
+ - Function: int isnan (double X)
+ - Function: int isnanf (float X)
+ - Function: int isnanl (long double X)
+     This function returns a nonzero value if X is a "not a number"
+     value, and zero otherwise.
+
+     *Note:* The `isnan' macro defined by ISO C 9x overrides the BSD
+     function.  This is normally not a problem, because the two
+     routines behave identically.  However, if you really need to get
+     the BSD function for some reason, you can write
+
+          (isnan) (x)
+
+ - Function: int finite (double X)
+ - Function: int finitef (float X)
+ - Function: int finitel (long double X)
+     This function returns a nonzero value if X is finite or a "not a
+     number" value, and zero otherwise.
+
+ - Function: double infnan (int ERROR)
+     This function is provided for compatibility with BSD.  Its
+     argument is an error code, `EDOM' or `ERANGE'; `infnan' returns the
+     value that a math function would return if it set `errno' to that
+     value.  *Note Math Error Reporting::.  `-ERANGE' is also acceptable
+     as an argument, and corresponds to `-HUGE_VAL' as a value.
+
+     In the BSD library, on certain machines, `infnan' raises a fatal
+     signal in all cases.  The GNU library does not do likewise,
+     because that does not fit the ISO C specification.
+
+   *Portability Note:* The functions listed in this section are BSD
+extensions.
+
+
+File: libc.info,  Node: Floating Point Errors,  Next: Rounding,  Prev: Floating Point Classes,  Up: Arithmetic
+
+Errors in Floating-Point Calculations
+=====================================
+
+* Menu:
+
+* FP Exceptions::               IEEE 754 math exceptions and how to detect them.
+* Infinity and NaN::            Special values returned by calculations.
+* Status bit operations::       Checking for exceptions after the fact.
+* Math Error Reporting::        How the math functions report errors.
+
+
+File: libc.info,  Node: FP Exceptions,  Next: Infinity and NaN,  Up: Floating Point Errors
+
+FP Exceptions
+-------------
+
+   The IEEE 754 standard defines five "exceptions" that can occur
+during a calculation.  Each corresponds to a particular sort of error,
+such as overflow.
+
+   When exceptions occur (when exceptions are "raised", in the language
+of the standard), one of two things can happen.  By default the
+exception is simply noted in the floating-point "status word", and the
+program continues as if nothing had happened.  The operation produces a
+default value, which depends on the exception (see the table below).
+Your program can check the status word to find out which exceptions
+happened.
+
+   Alternatively, you can enable "traps" for exceptions.  In that case,
+when an exception is raised, your program will receive the `SIGFPE'
+signal.  The default action for this signal is to terminate the
+program.  *Note Signal Handling::, for how you can change the effect of
+the signal.
+
+   In the System V math library, the user-defined function `matherr' is
+called when certain exceptions occur inside math library functions.
+However, the Unix98 standard deprecates this interface.  We support it
+for historical compatibility, but recommend that you do not use it in
+new programs.
+
+The exceptions defined in IEEE 754 are:
+
+`Invalid Operation'
+     This exception is raised if the given operands are invalid for the
+     operation to be performed.  Examples are (see IEEE 754, section 7):
+       1. Addition or subtraction: oo - oo.  (But oo + oo = oo).
+
+       2. Multiplication: 0 * oo.
+
+       3. Division: 0/0 or oo/oo.
+
+       4. Remainder: x REM y, where y is zero or x is infinite.
+
+       5. Square root if the operand is less then zero.  More
+          generally, any mathematical function evaluated outside its
+          domain produces this exception.
+
+       6. Conversion of a floating-point number to an integer or decimal
+          string, when the number cannot be represented in the target
+          format (due to overflow, infinity, or NaN).
+
+       7. Conversion of an unrecognizable input string.
+
+       8. Comparison via predicates involving < or >, when one or other
+          of the operands is NaN.  You can prevent this exception by
+          using the unordered comparison functions instead; see *Note
+          FP Comparison Functions::.
+
+     If the exception does not trap, the result of the operation is NaN.
+
+`Division by Zero'
+     This exception is raised when a finite nonzero number is divided
+     by zero.  If no trap occurs the result is either +oo or -oo,
+     depending on the signs of the operands.
+
+`Overflow'
+     This exception is raised whenever the result cannot be represented
+     as a finite value in the precision format of the destination.  If
+     no trap occurs the result depends on the sign of the intermediate
+     result and the current rounding mode (IEEE 754, section 7.3):
+       1. Round to nearest carries all overflows to oo with the sign of
+          the intermediate result.
+
+       2. Round toward 0 carries all overflows to the largest
+          representable finite number with the sign of the intermediate
+          result.
+
+       3. Round toward -oo carries positive overflows to the largest
+          representable finite number and negative overflows to -oo.
+
+       4. Round toward oo carries negative overflows to the most
+          negative representable finite number and positive overflows
+          to oo.
+
+     Whenever the overflow exception is raised, the inexact exception
+     is also raised.
+
+`Underflow'
+     The underflow exception is raised when an intermediate result is
+     too small to be calculated accurately, or if the operation's
+     result rounded to the destination precision is too small to be
+     normalized.
+
+     When no trap is installed for the underflow exception, underflow is
+     signaled (via the underflow flag) only when both tininess and loss
+     of accuracy have been detected.  If no trap handler is installed
+     the operation continues with an imprecise small value, or zero if
+     the destination precision cannot hold the small exact result.
+
+`Inexact'
+     This exception is signalled if a rounded result is not exact (such
+     as when calculating the square root of two) or a result overflows
+     without an overflow trap.
+
+
+File: libc.info,  Node: Infinity and NaN,  Next: Status bit operations,  Prev: FP Exceptions,  Up: Floating Point Errors
+
+Infinity and NaN
+----------------
+
+   IEEE 754 floating point numbers can represent positive or negative
+infinity, and "NaN" (not a number).  These three values arise from
+calculations whose result is undefined or cannot be represented
+accurately.  You can also deliberately set a floating-point variable to
+any of them, which is sometimes useful.  Some examples of calculations
+that produce infinity or NaN:
+
+     1/0 = oo
+     log (0) = -oo
+     sqrt (-1) = NaN
+
+   When a calculation produces any of these values, an exception also
+occurs; see *Note FP Exceptions::.
+
+   The basic operations and math functions all accept infinity and NaN
+and produce sensible output.  Infinities propagate through calculations
+as one would expect: for example, 2 + oo = oo, 4/oo = 0, atan (oo) =
+pi/2.  NaN, on the other hand, infects any calculation that involves
+it.  Unless the calculation would produce the same result no matter
+what real value replaced NaN, the result is NaN.
+
+   In comparison operations, positive infinity is larger than all values
+except itself and NaN, and negative infinity is smaller than all values
+except itself and NaN.  NaN is "unordered": it is not equal to, greater
+than, or less than anything, *including itself*. `x == x' is false if
+the value of `x' is NaN.  You can use this to test whether a value is
+NaN or not, but the recommended way to test for NaN is with the `isnan'
+function (*note Floating Point Classes::.).  In addition, `<', `>',
+`<=', and `>=' will raise an exception when applied to NaNs.
+
+   `math.h' defines macros that allow you to explicitly set a variable
+to infinity or NaN.
+
+ - Macro: float INFINITY
+     An expression representing positive infinity.  It is equal to the
+     value produced  by mathematical operations like `1.0 / 0.0'.
+     `-INFINITY' represents negative infinity.
+
+     You can test whether a floating-point value is infinite by
+     comparing it to this macro.  However, this is not recommended; you
+     should use the `isfinite' macro instead.  *Note Floating Point
+     Classes::.
+
+     This macro was introduced in the ISO C 9X standard.
+
+ - Macro: float NAN
+     An expression representing a value which is "not a number".  This
+     macro is a GNU extension, available only on machines that support
+     the "not a number" value--that is to say, on all machines that
+     support IEEE floating point.
+
+     You can use `#ifdef NAN' to test whether the machine supports NaN.
+     (Of course, you must arrange for GNU extensions to be visible,
+     such as by defining `_GNU_SOURCE', and then you must include
+     `math.h'.)
+
+   IEEE 754 also allows for another unusual value: negative zero.  This
+value is produced when you divide a positive number by negative
+infinity, or when a negative result is smaller than the limits of
+representation.  Negative zero behaves identically to zero in all
+calculations, unless you explicitly test the sign bit with `signbit' or
+`copysign'.
+
+
+File: libc.info,  Node: Status bit operations,  Next: Math Error Reporting,  Prev: Infinity and NaN,  Up: Floating Point Errors
+
+Examining the FPU status word
+-----------------------------
+
+   ISO C 9x defines functions to query and manipulate the
+floating-point status word.  You can use these functions to check for
+untrapped exceptions when it's convenient, rather than worrying about
+them in the middle of a calculation.
+
+   These constants represent the various IEEE 754 exceptions.  Not all
+FPUs report all the different exceptions.  Each constant is defined if
+and only if the FPU you are compiling for supports that exception, so
+you can test for FPU support with `#ifdef'.  They are defined in
+`fenv.h'.
+
+`FE_INEXACT'
+     The inexact exception.
+
+`FE_DIVBYZERO'
+     The divide by zero exception.
+
+`FE_UNDERFLOW'
+     The underflow exception.
+
+`FE_OVERFLOW'
+     The overflow exception.
+
+`FE_INVALID'
+     The invalid exception.
+
+   The macro `FE_ALL_EXCEPT' is the bitwise OR of all exception macros
+which are supported by the FP implementation.
+
+   These functions allow you to clear exception flags, test for
+exceptions, and save and restore the set of exceptions flagged.
+
+ - Function: void feclearexcept (int EXCEPTS)
+     This function clears all of the supported exception flags
+     indicated by EXCEPTS.
+
+ - Function: int fetestexcept (int EXCEPTS)
+     Test whether the exception flags indicated by the parameter EXCEPT
+     are currently set.  If any of them are, a nonzero value is returned
+     which specifies which exceptions are set.  Otherwise the result is
+     zero.
+
+   To understand these functions, imagine that the status word is an
+integer variable named STATUS.  `feclearexcept' is then equivalent to
+`status &= ~excepts' and `fetestexcept' is equivalent to `(status &
+excepts)'.  The actual implementation may be very different, of course.
+
+   Exception flags are only cleared when the program explicitly
+requests it, by calling `feclearexcept'.  If you want to check for
+exceptions from a set of calculations, you should clear all the flags
+first.  Here is a simple example of the way to use `fetestexcept':
+
+     {
+       double f;
+       int raised;
+       feclearexcept (FE_ALL_EXCEPT);
+       f = compute ();
+       raised = fetestexcept (FE_OVERFLOW | FE_INVALID);
+       if (raised & FE_OVERFLOW) { /* ... */ }
+       if (raised & FE_INVALID) { /* ... */ }
+       /* ... */
+     }
+
+   You cannot explicitly set bits in the status word.  You can, however,
+save the entire status word and restore it later.  This is done with the
+following functions:
+
+ - Function: void fegetexceptflag (fexcept_t *FLAGP, int EXCEPTS)
+     This function stores in the variable pointed to by FLAGP an
+     implementation-defined value representing the current setting of
+     the exception flags indicated by EXCEPTS.
+
+ - Function: void fesetexceptflag (const fexcept_t *FLAGP, int
+     EXCEPTS) This function restores the flags for the exceptions
+     indicated by EXCEPTS to the values stored in the variable pointed
+     to by FLAGP.
+
+   Note that the value stored in `fexcept_t' bears no resemblance to
+the bit mask returned by `fetestexcept'.  The type may not even be an
+integer.  Do not attempt to modify an `fexcept_t' variable.
+
+
+File: libc.info,  Node: Math Error Reporting,  Prev: Status bit operations,  Up: Floating Point Errors
+
+Error Reporting by Mathematical Functions
+-----------------------------------------
+
+   Many of the math functions are defined only over a subset of the
+real or complex numbers.  Even if they are mathematically defined,
+their result may be larger or smaller than the range representable by
+their return type.  These are known as "domain errors", "overflows", and
+"underflows", respectively.  Math functions do several things when one
+of these errors occurs.  In this manual we will refer to the complete
+response as "signalling" a domain error, overflow, or underflow.
+
+   When a math function suffers a domain error, it raises the invalid
+exception and returns NaN.  It also sets ERRNO to `EDOM'; this is for
+compatibility with old systems that do not support IEEE 754 exception
+handling.  Likewise, when overflow occurs, math functions raise the
+overflow exception and return oo or -oo as appropriate.  They also set
+ERRNO to `ERANGE'.  When underflow occurs, the underflow exception is
+raised, and zero (appropriately signed) is returned.  ERRNO may be set
+to `ERANGE', but this is not guaranteed.
+
+   Some of the math functions are defined mathematically to result in a
+complex value over parts of their domains.  The most familiar example of
+this is taking the square root of a negative number.  The complex math
+functions, such as `csqrt', will return the appropriate complex value
+in this case.  The real-valued functions, such as `sqrt', will signal a
+domain error.
+
+   Some older hardware does not support infinities.  On that hardware,
+overflows instead return a particular very large number (usually the
+largest representable number).  `math.h' defines macros you can use to
+test for overflow on both old and new hardware.
+
+ - Macro: double HUGE_VAL
+ - Macro: float HUGE_VALF
+ - Macro: long double HUGE_VALL
+     An expression representing a particular very large number.  On
+     machines that use IEEE 754 floating point format, `HUGE_VAL' is
+     infinity.  On other machines, it's typically the largest positive
+     number that can be represented.
+
+     Mathematical functions return the appropriately typed version of
+     `HUGE_VAL' or `-HUGE_VAL' when the result is too large to be
+     represented.
+
+
+File: libc.info,  Node: Rounding,  Next: Control Functions,  Prev: Floating Point Errors,  Up: Arithmetic
+
+Rounding Modes
+==============
+
+   Floating-point calculations are carried out internally with extra
+precision, and then rounded to fit into the destination type.  This
+ensures that results are as precise as the input data.  IEEE 754
+defines four possible rounding modes:
+
+Round to nearest.
+     This is the default mode.  It should be used unless there is a
+     specific need for one of the others.  In this mode results are
+     rounded to the nearest representable value.  If the result is
+     midway between two representable values, the even representable is
+     chosen. "Even" here means the lowest-order bit is zero.  This
+     rounding mode prevents statistical bias and guarantees numeric
+     stability: round-off errors in a lengthy calculation will remain
+     smaller than half of `FLT_EPSILON'.
+
+Round toward plus Infinity.
+     All results are rounded to the smallest representable value which
+     is greater than the result.
+
+Round toward minus Infinity.
+     All results are rounded to the largest representable value which
+     is less than the result.
+
+Round toward zero.
+     All results are rounded to the largest representable value whose
+     magnitude is less than that of the result.  In other words, if the
+     result is negative it is rounded up; if it is positive, it is
+     rounded down.
+
+`fenv.h' defines constants which you can use to refer to the various
+rounding modes.  Each one will be defined if and only if the FPU
+supports the corresponding rounding mode.
+
+`FE_TONEAREST'
+     Round to nearest.
+
+`FE_UPWARD'
+     Round toward +oo.
+
+`FE_DOWNWARD'
+     Round toward -oo.
+
+`FE_TOWARDZERO'
+     Round toward zero.
+
+   Underflow is an unusual case.  Normally, IEEE 754 floating point
+numbers are always normalized (*note Floating Point Concepts::.).
+Numbers smaller than 2^r (where r is the minimum exponent,
+`FLT_MIN_RADIX-1' for FLOAT) cannot be represented as normalized
+numbers.  Rounding all such numbers to zero or 2^r would cause some
+algorithms to fail at 0.  Therefore, they are left in denormalized
+form.  That produces loss of precision, since some bits of the mantissa
+are stolen to indicate the decimal point.
+
+   If a result is too small to be represented as a denormalized number,
+it is rounded to zero.  However, the sign of the result is preserved; if
+the calculation was negative, the result is "negative zero".  Negative
+zero can also result from some operations on infinity, such as 4/-oo.
+Negative zero behaves identically to zero except when the `copysign' or
+`signbit' functions are used to check the sign bit directly.
+
+   At any time one of the above four rounding modes is selected.  You
+can find out which one with this function:
+
+ - Function: int fegetround (void)
+     Returns the currently selected rounding mode, represented by one
+     of the values of the defined rounding mode macros.
+
+To change the rounding mode, use this function:
+
+ - Function: int fesetround (int ROUND)
+     Changes the currently selected rounding mode to ROUND.  If ROUND
+     does not correspond to one of the supported rounding modes nothing
+     is changed.  `fesetround' returns a nonzero value if it changed
+     the rounding mode, zero if the mode is not supported.
+
+   You should avoid changing the rounding mode if possible.  It can be
+an expensive operation; also, some hardware requires you to compile your
+program differently for it to work.  The resulting code may run slower.
+See your compiler documentation for details.
+
+
+File: libc.info,  Node: Control Functions,  Next: Arithmetic Functions,  Prev: Rounding,  Up: Arithmetic
+
+Floating-Point Control Functions
+================================
+
+   IEEE 754 floating-point implementations allow the programmer to
+decide whether traps will occur for each of the exceptions, by setting
+bits in the "control word".  In C, traps result in the program
+receiving the `SIGFPE' signal; see *Note Signal Handling::.
+
+   *Note:* IEEE 754 says that trap handlers are given details of the
+exceptional situation, and can set the result value.  C signals do not
+provide any mechanism to pass this information back and forth.
+Trapping exceptions in C is therefore not very useful.
+
+   It is sometimes necessary to save the state of the floating-point
+unit while you perform some calculation.  The library provides functions
+which save and restore the exception flags, the set of exceptions that
+generate traps, and the rounding mode.  This information is known as the
+"floating-point environment".
+
+   The functions to save and restore the floating-point environment all
+use a variable of type `fenv_t' to store information.  This type is
+defined in `fenv.h'.  Its size and contents are implementation-defined.
+You should not attempt to manipulate a variable of this type directly.
+
+   To save the state of the FPU, use one of these functions:
+
+ - Function: void fegetenv (fenv_t *ENVP)
+     Store the floating-point environment in the variable pointed to by
+     ENVP.
+
+ - Function: int feholdexcept (fenv_t *ENVP)
+     Store the current floating-point environment in the object pointed
+     to by ENVP.  Then clear all exception flags, and set the FPU to
+     trap no exceptions.  Not all FPUs support trapping no exceptions;
+     if `feholdexcept' cannot set this mode, it returns zero.  If it
+     succeeds, it returns a nonzero value.
+
+   The functions which restore the floating-point environment can take
+two kinds of arguments:
+
+   * Pointers to `fenv_t' objects, which were initialized previously by
+     a call to `fegetenv' or `feholdexcept'.
+
+   * The special macro `FE_DFL_ENV' which represents the floating-point
+     environment as it was available at program start.
+
+   * Implementation defined macros with names starting with `FE_'.
+
+     If possible, the GNU C Library defines a macro `FE_NOMASK_ENV'
+     which represents an environment where every exception raised
+     causes a trap to occur.  You can test for this macro using
+     `#ifdef'.  It is only defined if `_GNU_SOURCE' is defined.
+
+     Some platforms might define other predefined environments.
+
+To set the floating-point environment, you can use either of these
+functions:
+
+ - Function: void fesetenv (const fenv_t *ENVP)
+     Set the floating-point environment to that described by ENVP.
+
+ - Function: void feupdateenv (const fenv_t *ENVP)
+     Like `fesetenv', this function sets the floating-point environment
+     to that described by ENVP.  However, if any exceptions were
+     flagged in the status word before `feupdateenv' was called, they
+     remain flagged after the call.  In other words, after `feupdateenv'
+     is called, the status word is the bitwise OR of the previous
+     status word and the one saved in ENVP.
+
+
+File: libc.info,  Node: Arithmetic Functions,  Next: Complex Numbers,  Prev: Control Functions,  Up: Arithmetic
+
+Arithmetic Functions
+====================
+
+   The C library provides functions to do basic operations on
+floating-point numbers.  These include absolute value, maximum and
+minimum, normalization, bit twiddling, rounding, and a few others.
+
+* Menu:
+
+* Absolute Value::              Absolute values of integers and floats.
+* Normalization Functions::     Extracting exponents and putting them back.
+* Rounding Functions::          Rounding floats to integers.
+* Remainder Functions::         Remainders on division, precisely defined.
+* FP Bit Twiddling::            Sign bit adjustment.  Adding epsilon.
+* FP Comparison Functions::     Comparisons without risk of exceptions.
+* Misc FP Arithmetic::          Max, min, positive difference, multiply-add.
+
+
+File: libc.info,  Node: Absolute Value,  Next: Normalization Functions,  Up: Arithmetic Functions
+
+Absolute Value
+--------------
+
+   These functions are provided for obtaining the "absolute value" (or
+"magnitude") of a number.  The absolute value of a real number X is X
+if X is positive, -X if X is negative.  For a complex number Z, whose
+real part is X and whose imaginary part is Y, the absolute value is
+`sqrt (X*X + Y*Y)'.
+
+   Prototypes for `abs', `labs' and `llabs' are in `stdlib.h';
+`imaxabs' is declared in `inttypes.h'; `fabs', `fabsf' and `fabsl' are
+declared in `math.h'.  `cabs', `cabsf' and `cabsl' are declared in
+`complex.h'.
+
+ - Function: int abs (int NUMBER)
+ - Function: long int labs (long int NUMBER)
+ - Function: long long int llabs (long long int NUMBER)
+ - Function: intmax_t imaxabs (intmax_t NUMBER)
+     These functions return the absolute value of NUMBER.
+
+     Most computers use a two's complement integer representation, in
+     which the absolute value of `INT_MIN' (the smallest possible `int')
+     cannot be represented; thus, `abs (INT_MIN)' is not defined.
+
+     `llabs' and `imaxdiv' are new to ISO C 9x.
+
+ - Function: double fabs (double NUMBER)
+ - Function: float fabsf (float NUMBER)
+ - Function: long double fabsl (long double NUMBER)
+     This function returns the absolute value of the floating-point
+     number NUMBER.
+
+ - Function: double cabs (complex double Z)
+ - Function: float cabsf (complex float Z)
+ - Function: long double cabsl (complex long double Z)
+     These functions return the absolute  value of the complex number Z
+     (*note Complex Numbers::.).  The absolute value of a complex
+     number is:
+
+          sqrt (creal (Z) * creal (Z) + cimag (Z) * cimag (Z))
+
+     This function should always be used instead of the direct formula
+     because it takes special care to avoid losing precision.  It may
+     also take advantage of hardware support for this operation. See
+     `hypot' in *Note Exponents and Logarithms::.
+
+
+File: libc.info,  Node: Normalization Functions,  Next: Rounding Functions,  Prev: Absolute Value,  Up: Arithmetic Functions
+
+Normalization Functions
+-----------------------
+
+   The functions described in this section are primarily provided as a
+way to efficiently perform certain low-level manipulations on floating
+point numbers that are represented internally using a binary radix; see
+*Note Floating Point Concepts::.  These functions are required to have
+equivalent behavior even if the representation does not use a radix of
+2, but of course they are unlikely to be particularly efficient in
+those cases.
+
+   All these functions are declared in `math.h'.
+
+ - Function: double frexp (double VALUE, int *EXPONENT)
+ - Function: float frexpf (float VALUE, int *EXPONENT)
+ - Function: long double frexpl (long double VALUE, int *EXPONENT)
+     These functions are used to split the number VALUE into a
+     normalized fraction and an exponent.
+
+     If the argument VALUE is not zero, the return value is VALUE times
+     a power of two, and is always in the range 1/2 (inclusive) to 1
+     (exclusive).  The corresponding exponent is stored in `*EXPONENT';
+     the return value multiplied by 2 raised to this exponent equals
+     the original number VALUE.
+
+     For example, `frexp (12.8, &exponent)' returns `0.8' and stores
+     `4' in `exponent'.
+
+     If VALUE is zero, then the return value is zero and zero is stored
+     in `*EXPONENT'.
+
+ - Function: double ldexp (double VALUE, int EXPONENT)
+ - Function: float ldexpf (float VALUE, int EXPONENT)
+ - Function: long double ldexpl (long double VALUE, int EXPONENT)
+     These functions return the result of multiplying the floating-point
+     number VALUE by 2 raised to the power EXPONENT.  (It can be used
+     to reassemble floating-point numbers that were taken apart by
+     `frexp'.)
+
+     For example, `ldexp (0.8, 4)' returns `12.8'.
+
+   The following functions, which come from BSD, provide facilities
+equivalent to those of `ldexp' and `frexp'.
+
+ - Function: double logb (double X)
+ - Function: float logbf (float X)
+ - Function: long double logbl (long double X)
+     These functions return the integer part of the base-2 logarithm of
+     X, an integer value represented in type `double'.  This is the
+     highest integer power of `2' contained in X.  The sign of X is
+     ignored.  For example, `logb (3.5)' is `1.0' and `logb (4.0)' is
+     `2.0'.
+
+     When `2' raised to this power is divided into X, it gives a
+     quotient between `1' (inclusive) and `2' (exclusive).
+
+     If X is zero, the return value is minus infinity if the machine
+     supports infinities, and a very small number if it does not.  If X
+     is infinity, the return value is infinity.
+
+     For finite X, the value returned by `logb' is one less than the
+     value that `frexp' would store into `*EXPONENT'.
+
+ - Function: double scalb (double VALUE, int EXPONENT)
+ - Function: float scalbf (float VALUE, int EXPONENT)
+ - Function: long double scalbl (long double VALUE, int EXPONENT)
+     The `scalb' function is the BSD name for `ldexp'.
+
+ - Function: long long int scalbn (double X, int n)
+ - Function: long long int scalbnf (float X, int n)
+ - Function: long long int scalbnl (long double X, int n)
+     `scalbn' is identical to `scalb', except that the exponent N is an
+     `int' instead of a floating-point number.
+
+ - Function: long long int scalbln (double X, long int n)
+ - Function: long long int scalblnf (float X, long int n)
+ - Function: long long int scalblnl (long double X, long int n)
+     `scalbln' is identical to `scalb', except that the exponent N is a
+     `long int' instead of a floating-point number.
+
+ - Function: long long int significand (double X)
+ - Function: long long int significandf (float X)
+ - Function: long long int significandl (long double X)
+     `significand' returns the mantissa of X scaled to the range [1, 2).
+     It is equivalent to `scalb (X, (double) -ilogb (X))'.
+
+     This function exists mainly for use in certain standardized tests
+     of IEEE 754 conformance.
+
+
+File: libc.info,  Node: Rounding Functions,  Next: Remainder Functions,  Prev: Normalization Functions,  Up: Arithmetic Functions
+
+Rounding Functions
+------------------
+
+   The functions listed here perform operations such as rounding and
+truncation of floating-point values. Some of these functions convert
+floating point numbers to integer values.  They are all declared in
+`math.h'.
+
+   You can also convert floating-point numbers to integers simply by
+casting them to `int'.  This discards the fractional part, effectively
+rounding towards zero.  However, this only works if the result can
+actually be represented as an `int'--for very large numbers, this is
+impossible.  The functions listed here return the result as a `double'
+instead to get around this problem.
+
+ - Function: double ceil (double X)
+ - Function: float ceilf (float X)
+ - Function: long double ceill (long double X)
+     These functions round X upwards to the nearest integer, returning
+     that value as a `double'.  Thus, `ceil (1.5)' is `2.0'.
+
+ - Function: double floor (double X)
+ - Function: float floorf (float X)
+ - Function: long double floorl (long double X)
+     These functions round X downwards to the nearest integer,
+     returning that value as a `double'.  Thus, `floor (1.5)' is `1.0'
+     and `floor (-1.5)' is `-2.0'.
+
+ - Function: double trunc (double X)
+ - Function: float truncf (float X)
+ - Function: long double truncl (long double X)
+     `trunc' is another name for `floor'
+
+ - Function: double rint (double X)
+ - Function: float rintf (float X)
+ - Function: long double rintl (long double X)
+     These functions round X to an integer value according to the
+     current rounding mode.  *Note Floating Point Parameters::, for
+     information about the various rounding modes.  The default
+     rounding mode is to round to the nearest integer; some machines
+     support other modes, but round-to-nearest is always used unless
+     you explicitly select another.
+
+     If X was not initially an integer, these functions raise the
+     inexact exception.
+
+ - Function: double nearbyint (double X)
+ - Function: float nearbyintf (float X)
+ - Function: long double nearbyintl (long double X)
+     These functions return the same value as the `rint' functions, but
+     do not raise the inexact exception if X is not an integer.
+
+ - Function: double round (double X)
+ - Function: float roundf (float X)
+ - Function: long double roundl (long double X)
+     These functions are similar to `rint', but they round halfway
+     cases away from zero instead of to the nearest even integer.
+
+ - Function: long int lrint (double X)
+ - Function: long int lrintf (float X)
+ - Function: long int lrintl (long double X)
+     These functions are just like `rint', but they return a `long int'
+     instead of a floating-point number.
+
+ - Function: long long int llrint (double X)
+ - Function: long long int llrintf (float X)
+ - Function: long long int llrintl (long double X)
+     These functions are just like `rint', but they return a `long long
+     int' instead of a floating-point number.
+
+ - Function: long int lround (double X)
+ - Function: long int lroundf (float X)
+ - Function: long int lroundl (long double X)
+     These functions are just like `round', but they return a `long
+     int' instead of a floating-point number.
+
+ - Function: long long int llround (double X)
+ - Function: long long int llroundf (float X)
+ - Function: long long int llroundl (long double X)
+     These functions are just like `round', but they return a `long
+     long int' instead of a floating-point number.
+
+ - Function: double modf (double VALUE, double *INTEGER-PART)
+ - Function: float modff (float VALUE, float *INTEGER-PART)
+ - Function: long double modfl (long double VALUE, long double
+          *INTEGER-PART)
+     These functions break the argument VALUE into an integer part and a
+     fractional part (between `-1' and `1', exclusive).  Their sum
+     equals VALUE.  Each of the parts has the same sign as VALUE, and
+     the integer part is always rounded toward zero.
+
+     `modf' stores the integer part in `*INTEGER-PART', and returns the
+     fractional part.  For example, `modf (2.5, &intpart)' returns
+     `0.5' and stores `2.0' into `intpart'.
+
+
+File: libc.info,  Node: Remainder Functions,  Next: FP Bit Twiddling,  Prev: Rounding Functions,  Up: Arithmetic Functions
+
+Remainder Functions
+-------------------
+
+   The functions in this section compute the remainder on division of
+two floating-point numbers.  Each is a little different; pick the one
+that suits your problem.
+
+ - Function: double fmod (double NUMERATOR, double DENOMINATOR)
+ - Function: float fmodf (float NUMERATOR, float DENOMINATOR)
+ - Function: long double fmodl (long double NUMERATOR, long double
+          DENOMINATOR)
+     These functions compute the remainder from the division of
+     NUMERATOR by DENOMINATOR.  Specifically, the return value is
+     `NUMERATOR - N * DENOMINATOR', where N is the quotient of
+     NUMERATOR divided by DENOMINATOR, rounded towards zero to an
+     integer.  Thus, `fmod (6.5, 2.3)' returns `1.9', which is `6.5'
+     minus `4.6'.
+
+     The result has the same sign as the NUMERATOR and has magnitude
+     less than the magnitude of the DENOMINATOR.
+
+     If DENOMINATOR is zero, `fmod' signals a domain error.
+
+ - Function: double drem (double NUMERATOR, double DENOMINATOR)
+ - Function: float dremf (float NUMERATOR, float DENOMINATOR)
+ - Function: long double dreml (long double NUMERATOR, long double
+          DENOMINATOR)
+     These functions are like `fmod' except that they rounds the
+     internal quotient N to the nearest integer instead of towards zero
+     to an integer.  For example, `drem (6.5, 2.3)' returns `-0.4',
+     which is `6.5' minus `6.9'.
+
+     The absolute value of the result is less than or equal to half the
+     absolute value of the DENOMINATOR.  The difference between `fmod
+     (NUMERATOR, DENOMINATOR)' and `drem (NUMERATOR, DENOMINATOR)' is
+     always either DENOMINATOR, minus DENOMINATOR, or zero.
+
+     If DENOMINATOR is zero, `drem' signals a domain error.
+
+ - Function: double remainder (double NUMERATOR, double DENOMINATOR)
+ - Function: float remainderf (float NUMERATOR, float DENOMINATOR)
+ - Function: long double remainderl (long double NUMERATOR, long double
+          DENOMINATOR)
+     This function is another name for `drem'.
+
+
+File: libc.info,  Node: FP Bit Twiddling,  Next: FP Comparison Functions,  Prev: Remainder Functions,  Up: Arithmetic Functions
+
+Setting and modifying single bits of FP values
+----------------------------------------------
+
+   There are some operations that are too complicated or expensive to
+perform by hand on floating-point numbers.  ISO C 9x defines functions
+to do these operations, which mostly involve changing single bits.
+
+ - Function: double copysign (double X, double Y)
+ - Function: float copysignf (float X, float Y)
+ - Function: long double copysignl (long double X, long double Y)
+     These functions return X but with the sign of Y.  They work even
+     if X or Y are NaN or zero.  Both of these can carry a sign
+     (although not all implementations support it) and this is one of
+     the few operations that can tell the difference.
+
+     `copysign' never raises an exception.
+
+     This function is defined in IEC 559 (and the appendix with
+     recommended functions in IEEE 754/IEEE 854).
+
+ - Function: int signbit (*float-type* X)
+     `signbit' is a generic macro which can work on all floating-point
+     types.  It returns a nonzero value if the value of X has its sign
+     bit set.
+
+     This is not the same as `x < 0.0', because IEEE 754 floating point
+     allows zero to be signed.  The comparison `-0.0 < 0.0' is false,
+     but `signbit (-0.0)' will return a nonzero value.
+
+ - Function: double nextafter (double X, double Y)
+ - Function: float nextafterf (float X, float Y)
+ - Function: long double nextafterl (long double X, long double Y)
+     The `nextafter' function returns the next representable neighbor of
+     X in the direction towards Y.  The size of the step between X and
+     the result depends on the type of the result.  If X = Y the
+     function simply returns X.  If either value is `NaN', `NaN' is
+     returned.  Otherwise a value corresponding to the value of the
+     least significant bit in the mantissa is added or subtracted,
+     depending on the direction.  `nextafter' will signal overflow or
+     underflow if the result goes outside of the range of normalized
+     numbers.
+
+     This function is defined in IEC 559 (and the appendix with
+     recommended functions in IEEE 754/IEEE 854).
+
+ - Function: double nexttoward (double X, long double Y)
+ - Function: float nexttowardf (float X, long double Y)
+ - Function: long double nexttowardl (long double X, long double Y)
+     These functions are identical to the corresponding versions of
+     `nextafter' except that their second argument is a `long double'.
+
+ - Function: double nan (const char *TAGP)
+ - Function: float nanf (const char *TAGP)
+ - Function: long double nanl (const char *TAGP)
+     The `nan' function returns a representation of NaN, provided that
+     NaN is supported by the target platform.  `nan
+     ("N-CHAR-SEQUENCE")' is equivalent to `strtod
+     ("NAN(N-CHAR-SEQUENCE)")'.
+
+     The argument TAGP is used in an unspecified manner.  On IEEE 754
+     systems, there are many representations of NaN, and TAGP selects
+     one.  On other systems it may do nothing.
+
+
+File: libc.info,  Node: FP Comparison Functions,  Next: Misc FP Arithmetic,  Prev: FP Bit Twiddling,  Up: Arithmetic Functions
+
+Floating-Point Comparison Functions
+-----------------------------------
+
+   The standard C comparison operators provoke exceptions when one or
+other of the operands is NaN.  For example,
+
+     int v = a < 1.0;
+
+will raise an exception if A is NaN.  (This does *not* happen with `=='
+and `!='; those merely return false and true, respectively, when NaN is
+examined.)  Frequently this exception is undesirable.  ISO C 9x
+therefore defines comparison functions that do not raise exceptions
+when NaN is examined.  All of the functions are implemented as macros
+which allow their arguments to be of any floating-point type.  The
+macros are guaranteed to evaluate their arguments only once.
+
+ - Macro: int isgreater (*real-floating* X, *real-floating* Y)
+     This macro determines whether the argument X is greater than Y.
+     It is equivalent to `(X) > (Y)', but no exception is raised if X
+     or Y are NaN.
+
+ - Macro: int isgreaterequal (*real-floating* X, *real-floating* Y)
+     This macro determines whether the argument X is greater than or
+     equal to Y.  It is equivalent to `(X) >= (Y)', but no exception is
+     raised if X or Y are NaN.
+
+ - Macro: int isless (*real-floating* X, *real-floating* Y)
+     This macro determines whether the argument X is less than Y.  It
+     is equivalent to `(X) < (Y)', but no exception is raised if X or Y
+     are NaN.
+
+ - Macro: int islessequal (*real-floating* X, *real-floating* Y)
+     This macro determines whether the argument X is less than or equal
+     to Y.  It is equivalent to `(X) <= (Y)', but no exception is
+     raised if X or Y are NaN.
+
+ - Macro: int islessgreater (*real-floating* X, *real-floating* Y)
+     This macro determines whether the argument X is less or greater
+     than Y.  It is equivalent to `(X) < (Y) || (X) > (Y)' (although it
+     only evaluates X and Y once), but no exception is raised if X or Y
+     are NaN.
+
+     This macro is not equivalent to `X != Y', because that expression
+     is true if X or Y are NaN.
+
+ - Macro: int isunordered (*real-floating* X, *real-floating* Y)
+     This macro determines whether its arguments are unordered.  In
+     other words, it is true if X or Y are NaN, and false otherwise.
+
+   Not all machines provide hardware support for these operations.  On
+machines that don't, the macros can be very slow.  Therefore, you should
+not use these functions when NaN is not a concern.
+
+   *Note:* There are no macros `isequal' or `isunequal'.  They are
+unnecessary, because the `==' and `!=' operators do *not* throw an
+exception if one or both of the operands are NaN.
+
+
+File: libc.info,  Node: Misc FP Arithmetic,  Prev: FP Comparison Functions,  Up: Arithmetic Functions
+
+Miscellaneous FP arithmetic functions
+-------------------------------------
+
+   The functions in this section perform miscellaneous but common
+operations that are awkward to express with C operators.  On some
+processors these functions can use special machine instructions to
+perform these operations faster than the equivalent C code.
+
+ - Function: double fmin (double X, double Y)
+ - Function: float fminf (float X, float Y)
+ - Function: long double fminl (long double X, long double Y)
+     The `fmin' function returns the lesser of the two values X and Y.
+     It is similar to the expression
+          ((x) < (y) ? (x) : (y))
+     except that X and Y are only evaluated once.
+
+     If an argument is NaN, the other argument is returned.  If both
+     arguments are NaN, NaN is returned.
+
+ - Function: double fmax (double X, double Y)
+ - Function: float fmaxf (float X, float Y)
+ - Function: long double fmaxl (long double X, long double Y)
+     The `fmax' function returns the greater of the two values X and Y.
+
+     If an argument is NaN, the other argument is returned.  If both
+     arguments are NaN, NaN is returned.
+
+ - Function: double fdim (double X, double Y)
+ - Function: float fdimf (float X, float Y)
+ - Function: long double fdiml (long double X, long double Y)
+     The `fdim' function returns the positive difference between X and
+     Y.  The positive difference is X - Y if X is greater than Y, and 0
+     otherwise.
+
+     If X, Y, or both are NaN, NaN is returned.
+
+ - Function: double fma (double X, double Y, double Z)
+ - Function: float fmaf (float X, float Y, float Z)
+ - Function: long double fmal (long double X, long double Y, long
+          double Z)
+     The `fma' function performs floating-point multiply-add.  This is
+     the operation (X * Y) + Z, but the intermediate result is not
+     rounded to the destination type.  This can sometimes improve the
+     precision of a calculation.
+
+     This function was introduced because some processors have a special
+     instruction to perform multiply-add.  The C compiler cannot use it
+     directly, because the expression `x*y + z' is defined to round the
+     intermediate result.  `fma' lets you choose when you want to round
+     only once.
+
+     On processors which do not implement multiply-add in hardware,
+     `fma' can be very slow since it must avoid intermediate rounding.
+     `math.h' defines the symbols `FP_FAST_FMA', `FP_FAST_FMAF', and
+     `FP_FAST_FMAL' when the corresponding version of `fma' is no
+     slower than the expression `x*y + z'.  In the GNU C library, this
+     always means the operation is implemented in hardware.
+
+
+File: libc.info,  Node: Complex Numbers,  Next: Operations on Complex,  Prev: Arithmetic Functions,  Up: Arithmetic
+
+Complex Numbers
+===============
+
+   ISO C 9x introduces support for complex numbers in C.  This is done
+with a new type qualifier, `complex'.  It is a keyword if and only if
+`complex.h' has been included.  There are three complex types,
+corresponding to the three real types:  `float complex', `double
+complex', and `long double complex'.
+
+   To construct complex numbers you need a way to indicate the imaginary
+part of a number.  There is no standard notation for an imaginary
+floating point constant.  Instead, `complex.h' defines two macros that
+can be used to create complex numbers.
+
+ - Macro: const float complex _Complex_I
+     This macro is a representation of the complex number "0+1i".
+     Multiplying a real floating-point value by `_Complex_I' gives a
+     complex number whose value is purely imaginary.  You can use this
+     to construct complex constants:
+
+          3.0 + 4.0i = `3.0 + 4.0 * _Complex_I'
+
+     Note that `_Complex_I * _Complex_I' has the value `-1', but the
+     type of that value is `complex'.
+
+`_Complex_I' is a bit of a mouthful.  `complex.h' also defines a
+shorter name for the same constant.
+
+ - Macro: const float complex I
+     This macro has exactly the same value as `_Complex_I'.  Most of the
+     time it is preferable.  However, it causes problems if you want to
+     use the identifier `I' for something else.  You can safely write
+
+          #include <complex.h>
+          #undef I
+
+     if you need `I' for your own purposes.  (In that case we recommend
+     you also define some other short name for `_Complex_I', such as
+     `J'.)
+
+

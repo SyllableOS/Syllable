@@ -1,0 +1,90 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:534: checking for gcc
+configure:647: checking whether the C compiler (gcc  ) works
+configure:663: gcc -o conftest    conftest.c  1>&5
+configure:689: checking whether the C compiler (gcc  ) is a cross-compiler
+configure:694: checking whether we are using GNU C
+configure:722: checking whether gcc accepts -g
+configure:754: checking for POSIXized ISC
+configure:775: checking how to run the C preprocessor
+configure:856: checking whether gcc needs -traditional
+configure:932: checking for a BSD compatible install
+configure:987: checking for initscr in -lxcurses
+configure:1028: checking for initscr in -lncurses
+configure:1069: checking for initscr in -lcurses
+configure:1110: checking for tgetent in -ltermcap
+configure:1151: checking for tgetent in -ltermlib
+configure:1192: checking for regcmp in -lgen
+configure:1239: checking for regcmp in -lintl
+configure:1286: checking for regcmp in -lPW
+configure:1334: checking for working terminal libraries
+configure:1389: gcc -o conftest -g -O2   conftest.c  -lncurses 1>&5
+configure:1531: checking for ctype.h
+configure:1531: checking for errno.h
+configure:1531: checking for fcntl.h
+configure:1531: checking for limits.h
+configure:1531: checking for stdio.h
+configure:1531: checking for stdlib.h
+configure:1531: checking for string.h
+configure:1531: checking for termcap.h
+configure:1531: checking for termio.h
+configure:1531: checking for termios.h
+configure:1531: checking for time.h
+configure:1531: checking for unistd.h
+configure:1531: checking for values.h
+configure:1531: checking for sys/ioctl.h
+configure:1531: checking for sys/stream.h
+configure:1531: checking for sys/ptem.h
+configure:1569: checking for ANSI C header files
+configure:1673: checking for off_t
+configure:1706: checking for void
+configure:1715: gcc -c -g -O2  conftest.c 1>&5
+configure:1729: checking for const
+configure:1738: gcc -c -g -O2  conftest.c 1>&5
+configure:1752: checking for time_t
+configure:1761: gcc -c -g -O2  conftest.c 1>&5
+configure:1776: checking return type of signal handlers
+configure:1819: checking for fsync
+configure:1819: checking for memcpy
+configure:1819: checking for popen
+configure:1819: checking for _setjmp
+configure:1819: checking for sigprocmask
+configure:1819: checking for sigsetmask
+configure:1819: checking for stat
+configure:1819: checking for strchr
+configure:1819: checking for strstr
+configure:1819: checking for system
+configure:1873: checking for tcgetattr
+configure:1925: checking for fileno
+configure:1937: gcc -o conftest -g -O2   conftest.c  -lncurses 1>&5
+configure:1952: checking for strerror
+configure:1970: gcc -o conftest -g -O2   conftest.c  -lncurses 1>&5
+configure:1985: checking for sys_errlist
+configure:1994: gcc -o conftest -g -O2   conftest.c  -lncurses 1>&5
+configure:2009: checking for sigset_t
+configure:2020: gcc -o conftest -g -O2   conftest.c  -lncurses 1>&5
+configure: In function `main':
+configure:2016: incompatible types in assignment
+configure: failed program was:
+#line 2011 "configure"
+#include "confdefs.h"
+
+#include <signal.h>
+
+int main() {
+sigset_t s; s = 0;
+; return 0; }
+configure:2035: checking for sigemptyset
+configure:2046: gcc -o conftest -g -O2   conftest.c  -lncurses 1>&5
+configure:2062: checking for errno
+configure:2074: gcc -o conftest -g -O2   conftest.c  -lncurses 1>&5
+configure:2116: checking for locale
+configure:2126: gcc -o conftest -g -O2   conftest.c  -lncurses 1>&5
+configure:2140: checking for ctype functions
+configure:2152: gcc -o conftest -g -O2   conftest.c  -lncurses 1>&5
+configure:2168: checking termcap for ospeed
+configure:2184: gcc -o conftest -g -O2   conftest.c  -lncurses 1>&5
+configure:2225: checking for regcomp
+configure:2256: gcc -o conftest -g -O2   conftest.c  -lncurses 1>&5

@@ -1,0 +1,104 @@
+			  INSTALLING Qt FOR X11
+
+
+You may need to be root, depending on the permissions of the directories
+where you choose to install Qt.
+
+
+1.  Unpack the archive if you have not done so already:
+
+	cd /usr/local
+	gunzip qt-x11-2.3.0.tar.gz	# uncompress the archive
+	tar xf qt-x11-2.3.0.tar	# unpack it
+
+    This creates the directory /usr/local/qt-2.3.0 containing the
+    files from the main archive.
+
+    Rename qt-2.3.0 to qt (or make a symlink):
+
+	mv qt-2.3.0 qt
+
+    The rest of this file assumes that Qt is installed in /usr/local/qt.
+
+
+2.  Set some environment variables in the file .profile (or .login,
+    depending on your shell) in your home directory. (Create the
+    file if it is not there already.)
+
+	QTDIR		   - wherever you installed Qt
+	PATH		   - to locate the moc program and other Qt tools
+	MANPATH 	   - to access the Qt man pages
+	LD_LIBRARY_PATH	   - for the shared Qt library
+
+    This is done like this:
+
+    In .profile (if your shell is bash, ksh, zsh or sh), add the
+    following lines:
+
+	QTDIR=/usr/local/qt
+	PATH=$QTDIR/bin:$PATH
+	MANPATH=$QTDIR/doc/man:$MANPATH
+	LD_LIBRARY_PATH=$QTDIR/lib:$LD_LIBRARY_PATH
+
+	export QTDIR PATH MANPATH LD_LIBRARY_PATH
+
+    In .login (in case your shell is csh or tcsh), add the following lines:
+
+	setenv QTDIR /usr/local/qt
+	setenv PATH $QTDIR/bin:$PATH
+	setenv MANPATH $QTDIR/doc/man:$MANPATH
+	setenv LD_LIBRARY_PATH $QTDIR/lib:$LD_LIBRARY_PATH
+
+    After you have done this, you will need to login again, or
+    re-source the profile before continuing, so that at least $QTDIR
+    is set.  The installation will give an error message and not
+    proceed otherwise.
+
+
+3.  Install your license file as $HOME/.qt-license.
+    For the free edition, you do not need a license file.  For Professional
+    and Enterprise editions, install your license file as described in your
+    distribution.
+
+
+4.  Building.
+
+    This step compiles the Qt library, and builds the example programs,
+    the tutorial, and the tools (eg. the Designer).
+
+    Type:
+
+	./configure
+
+    This will configure the Qt library for your machine. Note that
+    GIF support is turned off by default. Run ./configure -help
+    to get a list of configuration options. Read PLATFORMS for a
+    list of supported platforms.
+
+    To create the library and compile all examples and the tutorial:
+
+	make
+
+    If your platform or compiler is not supported, read PORTING.  If it is
+    supported but you have problems, see http://www.trolltech.com/platforms/
+
+
+5.  In very few cases you may need to run /sbin/ldconfig or something
+    similar at this point if you are using shared libraries.
+
+    If you have problems running the example programs, e.g. messages like
+
+	 can't load library 'libqt.so.2'
+
+    you probably need to put a reference to the qt library in a
+    configuration file and run /sbin/ldconfig as root on your system.
+    And don't forget to set LD_LIBRARY_PATH as explained in 2) above.
+
+
+6.  The online HTML documentation is installed in /usr/local/qt/doc/html/
+    The main page is /usr/local/qt/doc/html/index.html
+    The man pages are installed in /usr/local/qt/doc/man/
+
+
+
+That's all.  Qt is now installed.

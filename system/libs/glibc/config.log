@@ -1,0 +1,8 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:804: checking host system type
+configure:929: checking sysdep dirs
+configure:1131: checking for a BSD compatible install
+configure:1188: checking whether ln -s works
+configure:1211: checking build system type

@@ -1,0 +1,134 @@
+/****************************************************************************
+** QArrowWidget meta object code from reading C++ file 'qtoolbar.cpp'
+**
+** Created: Fri Apr 20 02:05:47 2001
+**      by: The Qt MOC ($Id$)
+**
+** WARNING! All changes made in this file will be lost!
+*****************************************************************************/
+
+#if !defined(Q_MOC_OUTPUT_REVISION)
+#define Q_MOC_OUTPUT_REVISION 9
+#elif Q_MOC_OUTPUT_REVISION != 9
+#error "Moc format conflict - please regenerate all moc files"
+#endif
+
+#include <qmetaobject.h>
+#include <qapplication.h>
+
+
+
+const char *QArrowWidget::className() const
+{
+    return "QArrowWidget";
+}
+
+QMetaObject *QArrowWidget::metaObj = 0;
+
+void QArrowWidget::initMetaObject()
+{
+    if ( metaObj )
+	return;
+    if ( qstrcmp(QWidget::className(), "QWidget") != 0 )
+	badSuperclassWarning("QArrowWidget","QWidget");
+    (void) staticMetaObject();
+}
+
+#ifndef QT_NO_TRANSLATION
+
+QString QArrowWidget::tr(const char* s)
+{
+    return qApp->translate( "QArrowWidget", s, 0 );
+}
+
+QString QArrowWidget::tr(const char* s, const char * c)
+{
+    return qApp->translate( "QArrowWidget", s, c );
+}
+
+#endif // QT_NO_TRANSLATION
+
+QMetaObject* QArrowWidget::staticMetaObject()
+{
+    if ( metaObj )
+	return metaObj;
+    (void) QWidget::staticMetaObject();
+#ifndef QT_NO_PROPERTIES
+#endif // QT_NO_PROPERTIES
+    QMetaData::Access *slot_tbl_access = 0;
+    metaObj = QMetaObject::new_metaobject(
+	"QArrowWidget", "QWidget",
+	0, 0,
+	0, 0,
+#ifndef QT_NO_PROPERTIES
+	0, 0,
+	0, 0,
+#endif // QT_NO_PROPERTIES
+	0, 0 );
+    metaObj->set_slot_access( slot_tbl_access );
+#ifndef QT_NO_PROPERTIES
+#endif // QT_NO_PROPERTIES
+    return metaObj;
+}
+
+
+const char *QToolBarSeparator::className() const
+{
+    return "QToolBarSeparator";
+}
+
+QMetaObject *QToolBarSeparator::metaObj = 0;
+
+void QToolBarSeparator::initMetaObject()
+{
+    if ( metaObj )
+	return;
+    if ( qstrcmp(QFrame::className(), "QFrame") != 0 )
+	badSuperclassWarning("QToolBarSeparator","QFrame");
+    (void) staticMetaObject();
+}
+
+#ifndef QT_NO_TRANSLATION
+
+QString QToolBarSeparator::tr(const char* s)
+{
+    return qApp->translate( "QToolBarSeparator", s, 0 );
+}
+
+QString QToolBarSeparator::tr(const char* s, const char * c)
+{
+    return qApp->translate( "QToolBarSeparator", s, c );
+}
+
+#endif // QT_NO_TRANSLATION
+
+QMetaObject* QToolBarSeparator::staticMetaObject()
+{
+    if ( metaObj )
+	return metaObj;
+    (void) QFrame::staticMetaObject();
+#ifndef QT_NO_PROPERTIES
+#endif // QT_NO_PROPERTIES
+    typedef void (QToolBarSeparator::*m1_t0)(Orientation);
+    typedef void (QObject::*om1_t0)(Orientation);
+    m1_t0 v1_0 = &QToolBarSeparator::setOrientation;
+    om1_t0 ov1_0 = (om1_t0)v1_0;
+    QMetaData *slot_tbl = QMetaObject::new_metadata(1);
+    QMetaData::Access *slot_tbl_access = QMetaObject::new_metaaccess(1);
+    slot_tbl[0].name = "setOrientation(Orientation)";
+    slot_tbl[0].ptr = (QMember)ov1_0;
+    slot_tbl_access[0] = QMetaData::Public;
+    metaObj = QMetaObject::new_metaobject(
+	"QToolBarSeparator", "QFrame",
+	slot_tbl, 1,
+	0, 0,
+#ifndef QT_NO_PROPERTIES
+	0, 0,
+	0, 0,
+#endif // QT_NO_PROPERTIES
+	0, 0 );
+    metaObj->set_slot_access( slot_tbl_access );
+#ifndef QT_NO_PROPERTIES
+#endif // QT_NO_PROPERTIES
+    return metaObj;
+}

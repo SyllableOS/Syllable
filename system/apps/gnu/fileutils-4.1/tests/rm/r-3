@@ -1,0 +1,42 @@
+#!/bin/sh
+# Create and remove a directory with more than 254 files.
+# An early version of my rewritten rm failed to remove all of
+# the files on SunOS4 when there were 254 or more in a directory.
+
+: ${RM=rm}
+
+: ${TMPDIR=.}
+
+if test "$VERBOSE" = yes; then
+  $RM --version
+  set -x
+fi
+
+tmp=$TMPDIR/t-rm.$$
+
+framework_fail=0
+mkdir $tmp || framework_fail=1
+
+a=1
+n=300
+i=$a
+echo "creating $n files in $tmp..."
+while :; do
+  > $tmp/$i || framework_fail=1
+  test $i = $n && break
+  i=`expr $i + 1`
+done
+
+test -f $tmp/$a || framework_fail=1
+test -f $tmp/$n || framework_fail=1
+
+if test $framework_fail = 1; then
+  echo 'failure in testing framework'
+  exit 1
+fi
+
+fail=0
+$RM -rf $tmp || fail=1
+test -d $tmp && fail=1
+
+exit $fail

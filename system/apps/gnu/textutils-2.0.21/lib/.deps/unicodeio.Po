@@ -1,0 +1,42 @@
+unicodeio.o : \
+ unicodeio.c ../config.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h \
+ /include/stdio.h /include/features.h /include/sys/cdefs.h \
+ /include/gnu/stubs.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stdarg.h \
+ /include/bits/types.h /include/bits/pthreadtypes.h /include/libio.h \
+ /include/_G_config.h /include/bits/stdio_lim.h /include/bits/stdio.h \
+ /include/string.h /include/xlocale.h /include/bits/string.h \
+ /include/bits/string2.h /include/endian.h /include/bits/endian.h \
+ /include/stdlib.h /include/errno.h /include/bits/errno.h \
+ /ainc/posix/errno.h /include/iconv.h error.h /include/libintl.h \
+ /include/locale.h unicodeio.h
+unicodeio.c :
+../config.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h :
+/include/stdio.h :
+/include/features.h :
+/include/sys/cdefs.h :
+/include/gnu/stubs.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stdarg.h :
+/include/bits/types.h :
+/include/bits/pthreadtypes.h :
+/include/libio.h :
+/include/_G_config.h :
+/include/bits/stdio_lim.h :
+/include/bits/stdio.h :
+/include/string.h :
+/include/xlocale.h :
+/include/bits/string.h :
+/include/bits/string2.h :
+/include/endian.h :
+/include/bits/endian.h :
+/include/stdlib.h :
+/include/errno.h :
+/include/bits/errno.h :
+/ainc/posix/errno.h :
+/include/iconv.h :
+error.h :
+/include/libintl.h :
+/include/locale.h :
+unicodeio.h :

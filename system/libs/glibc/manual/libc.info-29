@@ -1,0 +1,1129 @@
+This is Info file libc.info, produced by Makeinfo version 1.68 from the
+input file libc.texinfo.
+
+INFO-DIR-SECTION GNU libraries
+START-INFO-DIR-ENTRY
+* Libc: (libc).                 C library.
+END-INFO-DIR-ENTRY
+
+   This file documents the GNU C library.
+
+   This is Edition 0.08 DRAFT, last updated 11 Jan 1999, of `The GNU C
+Library Reference Manual', for Version 2.1 Beta.
+
+   Copyright (C) 1993, '94, '95, '96, '97, '98, '99 Free Software
+Foundation, Inc.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided also
+that the section entitled "GNU Library General Public License" is
+included exactly as in the original, and provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that the text of the translation of the section
+entitled "GNU Library General Public License" must be approved for
+accuracy by the Foundation.
+
+
+File: libc.info,  Node: Operations on Complex,  Next: Integer Division,  Prev: Complex Numbers,  Up: Arithmetic
+
+Projections, Conjugates, and Decomposing of Complex Numbers
+===========================================================
+
+   ISO C 9x also defines functions that perform basic operations on
+complex numbers, such as decomposition and conjugation.  The prototypes
+for all these functions are in `complex.h'.  All functions are
+available in three variants, one for each of the three complex types.
+
+ - Function: double creal (complex double Z)
+ - Function: float crealf (complex float Z)
+ - Function: long double creall (complex long double Z)
+     These functions return the real part of the complex number Z.
+
+ - Function: double cimag (complex double Z)
+ - Function: float cimagf (complex float Z)
+ - Function: long double cimagl (complex long double Z)
+     These functions return the imaginary part of the complex number Z.
+
+ - Function: complex double conj (complex double Z)
+ - Function: complex float conjf (complex float Z)
+ - Function: complex long double conjl (complex long double Z)
+     These functions return the conjugate value of the complex number
+     Z.  The conjugate of a complex number has the same real part and a
+     negated imaginary part.  In other words, `conj(a + bi) = a + -bi'.
+
+ - Function: double carg (complex double Z)
+ - Function: float cargf (complex float Z)
+ - Function: long double cargl (complex long double Z)
+     These functions return the argument of the complex number Z.  The
+     argument of a complex number is the angle in the complex plane
+     between the positive real axis and a line passing through zero and
+     the number.  This angle is measured in the usual fashion and
+     ranges from 0 to 2pi.
+
+     `carg' has a branch cut along the positive real axis.
+
+ - Function: complex double cproj (complex double Z)
+ - Function: complex float cprojf (complex float Z)
+ - Function: complex long double cprojl (complex long double Z)
+     These functions return the projection of the complex value Z onto
+     the Riemann sphere.  Values with a infinite imaginary part are
+     projected to positive infinity on the real axis, even if the real
+     part is NaN.  If the real part is infinite, the result is
+     equivalent to
+
+          INFINITY + I * copysign (0.0, cimag (z))
+
+
+File: libc.info,  Node: Integer Division,  Next: Parsing of Numbers,  Prev: Operations on Complex,  Up: Arithmetic
+
+Integer Division
+================
+
+   This section describes functions for performing integer division.
+These functions are redundant when GNU CC is used, because in GNU C the
+`/' operator always rounds towards zero.  But in other C
+implementations, `/' may round differently with negative arguments.
+`div' and `ldiv' are useful because they specify how to round the
+quotient: towards zero.  The remainder has the same sign as the
+numerator.
+
+   These functions are specified to return a result R such that the
+value `R.quot*DENOMINATOR + R.rem' equals NUMERATOR.
+
+   To use these facilities, you should include the header file
+`stdlib.h' in your program.
+
+ - Data Type: div_t
+     This is a structure type used to hold the result returned by the
+     `div' function.  It has the following members:
+
+    `int quot'
+          The quotient from the division.
+
+    `int rem'
+          The remainder from the division.
+
+ - Function: div_t div (int NUMERATOR, int DENOMINATOR)
+     This function `div' computes the quotient and remainder from the
+     division of NUMERATOR by DENOMINATOR, returning the result in a
+     structure of type `div_t'.
+
+     If the result cannot be represented (as in a division by zero), the
+     behavior is undefined.
+
+     Here is an example, albeit not a very useful one.
+
+          div_t result;
+          result = div (20, -6);
+
+     Now `result.quot' is `-3' and `result.rem' is `2'.
+
+ - Data Type: ldiv_t
+     This is a structure type used to hold the result returned by the
+     `ldiv' function.  It has the following members:
+
+    `long int quot'
+          The quotient from the division.
+
+    `long int rem'
+          The remainder from the division.
+
+     (This is identical to `div_t' except that the components are of
+     type `long int' rather than `int'.)
+
+ - Function: ldiv_t ldiv (long int NUMERATOR, long int DENOMINATOR)
+     The `ldiv' function is similar to `div', except that the arguments
+     are of type `long int' and the result is returned as a structure
+     of type `ldiv_t'.
+
+ - Data Type: lldiv_t
+     This is a structure type used to hold the result returned by the
+     `lldiv' function.  It has the following members:
+
+    `long long int quot'
+          The quotient from the division.
+
+    `long long int rem'
+          The remainder from the division.
+
+     (This is identical to `div_t' except that the components are of
+     type `long long int' rather than `int'.)
+
+ - Function: lldiv_t lldiv (long long int NUMERATOR, long long int
+          DENOMINATOR)
+     The `lldiv' function is like the `div' function, but the arguments
+     are of type `long long int' and the result is returned as a
+     structure of type `lldiv_t'.
+
+     The `lldiv' function was added in ISO C 9x.
+
+ - Data Type: imaxdiv_t
+     This is a structure type used to hold the result returned by the
+     `imaxdiv' function.  It has the following members:
+
+    `intmax_t quot'
+          The quotient from the division.
+
+    `intmax_t rem'
+          The remainder from the division.
+
+     (This is identical to `div_t' except that the components are of
+     type `intmax_t' rather than `int'.)
+
+ - Function: imaxdiv_t imaxdiv (intmax_t NUMERATOR, intmax_t
+          DENOMINATOR)
+     The `imaxdiv' function is like the `div' function, but the
+     arguments are of type `intmax_t' and the result is returned as a
+     structure of type `imaxdiv_t'.
+
+     The `imaxdiv' function was added in ISO C 9x.
+
+
+File: libc.info,  Node: Parsing of Numbers,  Next: System V Number Conversion,  Prev: Integer Division,  Up: Arithmetic
+
+Parsing of Numbers
+==================
+
+   This section describes functions for "reading" integer and
+floating-point numbers from a string.  It may be more convenient in some
+cases to use `sscanf' or one of the related functions; see *Note
+Formatted Input::.  But often you can make a program more robust by
+finding the tokens in the string by hand, then converting the numbers
+one by one.
+
+* Menu:
+
+* Parsing of Integers::         Functions for conversion of integer values.
+* Parsing of Floats::           Functions for conversion of floating-point
+				 values.
+
+
+File: libc.info,  Node: Parsing of Integers,  Next: Parsing of Floats,  Up: Parsing of Numbers
+
+Parsing of Integers
+-------------------
+
+   These functions are declared in `stdlib.h'.
+
+ - Function: long int strtol (const char *STRING, char **TAILPTR, int
+          BASE)
+     The `strtol' ("string-to-long") function converts the initial part
+     of STRING to a signed integer, which is returned as a value of
+     type `long int'.
+
+     This function attempts to decompose STRING as follows:
+
+        * A (possibly empty) sequence of whitespace characters.  Which
+          characters are whitespace is determined by the `isspace'
+          function (*note Classification of Characters::.).  These are
+          discarded.
+
+        * An optional plus or minus sign (`+' or `-').
+
+        * A nonempty sequence of digits in the radix specified by BASE.
+
+          If BASE is zero, decimal radix is assumed unless the series of
+          digits begins with `0' (specifying octal radix), or `0x' or
+          `0X' (specifying hexadecimal radix); in other words, the same
+          syntax used for integer constants in C.
+
+          Otherwise BASE must have a value between `2' and `35'.  If
+          BASE is `16', the digits may optionally be preceded by `0x'
+          or `0X'.  If base has no legal value the value returned is
+          `0l' and the global variable `errno' is set to `EINVAL'.
+
+        * Any remaining characters in the string.  If TAILPTR is not a
+          null pointer, `strtol' stores a pointer to this tail in
+          `*TAILPTR'.
+
+     If the string is empty, contains only whitespace, or does not
+     contain an initial substring that has the expected syntax for an
+     integer in the specified BASE, no conversion is performed.  In
+     this case, `strtol' returns a value of zero and the value stored in
+     `*TAILPTR' is the value of STRING.
+
+     In a locale other than the standard `"C"' locale, this function
+     may recognize additional implementation-dependent syntax.
+
+     If the string has valid syntax for an integer but the value is not
+     representable because of overflow, `strtol' returns either
+     `LONG_MAX' or `LONG_MIN' (*note Range of Type::.), as appropriate
+     for the sign of the value.  It also sets `errno' to `ERANGE' to
+     indicate there was overflow.
+
+     You should not check for errors by examining the return value of
+     `strtol', because the string might be a valid representation of
+     `0l', `LONG_MAX', or `LONG_MIN'.  Instead, check whether TAILPTR
+     points to what you expect after the number (e.g. `'\0'' if the
+     string should end after the number).  You also need to clear ERRNO
+     before the call and check it afterward, in case there was overflow.
+
+     There is an example at the end of this section.
+
+ - Function: unsigned long int strtoul (const char *STRING, char
+          **TAILPTR, int BASE)
+     The `strtoul' ("string-to-unsigned-long") function is like
+     `strtol' except it returns an `unsigned long int' value.  If the
+     number has a leading `-' sign, the return value is negated.  The
+     syntax is the same as described above for `strtol'.  The value
+     returned on overflow is `ULONG_MAX' (*note Range of Type::.).
+
+     `strtoul' sets ERRNO to `EINVAL' if BASE is out of range, or
+     `ERANGE' on overflow.
+
+ - Function: long long int strtoll (const char *STRING, char **TAILPTR,
+          int BASE)
+     The `strtoll' function is like `strtol' except that it returns a
+     `long long int' value, and accepts numbers with a correspondingly
+     larger range.
+
+     If the string has valid syntax for an integer but the value is not
+     representable because of overflow, `strtoll' returns either
+     `LONG_LONG_MAX' or `LONG_LONG_MIN' (*note Range of Type::.), as
+     appropriate for the sign of the value.  It also sets `errno' to
+     `ERANGE' to indicate there was overflow.
+
+     The `strtoll' function was introduced in ISO C 9x.
+
+ - Function: long long int strtoq (const char *STRING, char **TAILPTR,
+          int BASE)
+     `strtoq' ("string-to-quad-word") is the BSD name for `strtoll'.
+
+ - Function: unsigned long long int strtoull (const char *STRING, char
+          **TAILPTR, int BASE)
+     The `strtoull' function is like `strtoul' except that it returns
+     an `unsigned long long int'.  The value returned on overflow is
+     `ULONG_LONG_MAX' (*note Range of Type::.).
+
+     The `strtoull' function was introduced in ISO C 9x.
+
+ - Function: unsigned long long int strtouq (const char *STRING, char
+          **TAILPTR, int BASE)
+     `strtouq' is the BSD name for `strtoull'.
+
+ - Function: long int atol (const char *STRING)
+     This function is similar to the `strtol' function with a BASE
+     argument of `10', except that it need not detect overflow errors.
+     The `atol' function is provided mostly for compatibility with
+     existing code; using `strtol' is more robust.
+
+ - Function: int atoi (const char *STRING)
+     This function is like `atol', except that it returns an `int'.
+     The `atoi' function is also considered obsolete; use `strtol'
+     instead.
+
+ - Function: long long int atoll (const char *STRING)
+     This function is similar to `atol', except it returns a `long long
+     int'.
+
+     The `atoll' function was introduced in ISO C 9x.  It too is
+     obsolete (despite having just been added); use `strtoll' instead.
+
+   Some locales specify a printed syntax for numbers other than the one
+that these functions understand.  If you need to read numbers formatted
+in some other locale, you can use the `strtoX_l' functions.  Each of
+the `strtoX' functions has a counterpart with `_l' added to its name.
+The `_l' counterparts take an additional argument: a pointer to an
+`locale_t' structure, which describes how the numbers to be read are
+formatted.  *Note Locales::.
+
+   *Portability Note:* These functions are all GNU extensions.  You can
+also use `scanf' or its relatives, which have the `'' flag for parsing
+numeric input according to the current locale (*note Numeric Input
+Conversions::.).  This feature is standard.
+
+   Here is a function which parses a string as a sequence of integers
+and returns the sum of them:
+
+     int
+     sum_ints_from_string (char *string)
+     {
+       int sum = 0;
+     
+       while (1) {
+         char *tail;
+         int next;
+     
+         /* Skip whitespace by hand, to detect the end.  */
+         while (isspace (*string)) string++;
+         if (*string == 0)
+           break;
+     
+         /* There is more nonwhitespace,  */
+         /* so it ought to be another number.  */
+         errno = 0;
+         /* Parse it.  */
+         next = strtol (string, &tail, 0);
+         /* Add it in, if not overflow.  */
+         if (errno)
+           printf ("Overflow\n");
+         else
+           sum += next;
+         /* Advance past it.  */
+         string = tail;
+       }
+     
+       return sum;
+     }
+
+
+File: libc.info,  Node: Parsing of Floats,  Prev: Parsing of Integers,  Up: Parsing of Numbers
+
+Parsing of Floats
+-----------------
+
+   These functions are declared in `stdlib.h'.
+
+ - Function: double strtod (const char *STRING, char **TAILPTR)
+     The `strtod' ("string-to-double") function converts the initial
+     part of STRING to a floating-point number, which is returned as a
+     value of type `double'.
+
+     This function attempts to decompose STRING as follows:
+
+        * A (possibly empty) sequence of whitespace characters.  Which
+          characters are whitespace is determined by the `isspace'
+          function (*note Classification of Characters::.).  These are
+          discarded.
+
+        * An optional plus or minus sign (`+' or `-').
+
+        * A nonempty sequence of digits optionally containing a
+          decimal-point character--normally `.', but it depends on the
+          locale (*note General Numeric::.).
+
+        * An optional exponent part, consisting of a character `e' or
+          `E', an optional sign, and a sequence of digits.
+
+        * Any remaining characters in the string.  If TAILPTR is not a
+          null pointer, a pointer to this tail of the string is stored
+          in `*TAILPTR'.
+
+     If the string is empty, contains only whitespace, or does not
+     contain an initial substring that has the expected syntax for a
+     floating-point number, no conversion is performed.  In this case,
+     `strtod' returns a value of zero and the value returned in
+     `*TAILPTR' is the value of STRING.
+
+     In a locale other than the standard `"C"' or `"POSIX"' locales,
+     this function may recognize additional locale-dependent syntax.
+
+     If the string has valid syntax for a floating-point number but the
+     value is outside the range of a `double', `strtod' will signal
+     overflow or underflow as described in *Note Math Error Reporting::.
+
+     `strtod' recognizes four special input strings.  The strings
+     `"inf"' and `"infinity"' are converted to oo, or to the largest
+     representable value if the floating-point format doesn't support
+     infinities.  You can prepend a `"+"' or `"-"' to specify the sign.
+     Case is ignored when scanning these strings.
+
+     The strings `"nan"' and `"nan(CHARS...)"' are converted to NaN.
+     Again, case is ignored.  If CHARS... are provided, they are used
+     in some unspecified fashion to select a particular representation
+     of NaN (there can be several).
+
+     Since zero is a valid result as well as the value returned on
+     error, you should check for errors in the same way as for
+     `strtol', by examining ERRNO and TAILPTR.
+
+ - Function: float strtof (const char *STRING, char **TAILPTR)
+ - Function: long double strtold (const char *STRING, char **TAILPTR)
+     These functions are analogous to `strtod', but return `float' and
+     `long double' values respectively.  They report errors in the same
+     way as `strtod'.  `strtof' can be substantially faster than
+     `strtod', but has less precision; conversely, `strtold' can be
+     much slower but has more precision (on systems where `long double'
+     is a separate type).
+
+     These functions are GNU extensions.
+
+ - Function: double atof (const char *STRING)
+     This function is similar to the `strtod' function, except that it
+     need not detect overflow and underflow errors.  The `atof' function
+     is provided mostly for compatibility with existing code; using
+     `strtod' is more robust.
+
+   The GNU C library also provides `_l' versions of thse functions,
+which take an additional argument, the locale to use in conversion.
+*Note Parsing of Integers::.
+
+
+File: libc.info,  Node: System V Number Conversion,  Prev: Parsing of Numbers,  Up: Arithmetic
+
+Old-fashioned System V number-to-string functions
+=================================================
+
+   The old System V C library provided three functions to convert
+numbers to strings, with unusual and hard-to-use semantics.  The GNU C
+library also provides these functions and some natural extensions.
+
+   These functions are only available in glibc and on systems descended
+from AT&T Unix.  Therefore, unless these functions do precisely what you
+need, it is better to use `sprintf', which is standard.
+
+   All these functions are defined in `stdlib.h'.
+
+ - Function: char * ecvt (double VALUE, int NDIGIT, int *DECPT, int
+          *NEG)
+     The function `ecvt' converts the floating-point number VALUE to a
+     string with at most NDIGIT decimal digits.  The returned string
+     contains no decimal point or sign. The first digit of the string
+     is non-zero (unless VALUE is actually zero) and the last digit is
+     rounded to nearest.  `*DECPT' is set to the index in the string of
+     the first digit after the decimal point.  `*NEG' is set to a
+     nonzero value if VALUE is negative, zero otherwise.
+
+     If NDIGIT decimal digits would exceed the precision of a `double'
+     it is reduced to a system-specific value.
+
+     The returned string is statically allocated and overwritten by
+     each call to `ecvt'.
+
+     If VALUE is zero, it is implementation defined whether `*DECPT' is
+     `0' or `1'.
+
+     For example: `ecvt (12.3, 5, &d, &n)' returns `"12300"' and sets D
+     to `2' and N to `0'.
+
+ - Function: char * fcvt (double VALUE, int NDIGIT, int *DECPT, int
+          *NEG)
+     The function `fcvt' is like `ecvt', but NDIGIT specifies the
+     number of digits after the decimal point.  If NDIGIT is less than
+     zero, VALUE is rounded to the NDIGIT+1'th place to the left of the
+     decimal point.  For example, if NDIGIT is `-1', VALUE will be
+     rounded to the nearest 10.  If NDIGIT is negative and larger than
+     the number of digits to the left of the decimal point in VALUE,
+     VALUE will be rounded to one significant digit.
+
+     If NDIGIT decimal digits would exceed the precision of a `double'
+     it is reduced to a system-specific value.
+
+     The returned string is statically allocated and overwritten by
+     each call to `fcvt'.
+
+ - Function: char * gcvt (double VALUE, int NDIGIT, char *BUF)
+     `gcvt' is functionally equivalent to `sprintf(buf, "%*g", ndigit,
+     value'.  It is provided only for compatibility's sake.  It returns
+     BUF.
+
+     If NDIGIT decimal digits would exceed the precision of a `double'
+     it is reduced to a system-specific value.
+
+   As extensions, the GNU C library provides versions of these three
+functions that take `long double' arguments.
+
+ - Function: char * qecvt (long double VALUE, int NDIGIT, int *DECPT,
+          int *NEG)
+     This function is equivalent to `ecvt' except that it takes a `long
+     double' for the first parameter and that NDIGIT is restricted by
+     the precision of a `long double'.
+
+ - Function: char * qfcvt (long double VALUE, int NDIGIT, int *DECPT,
+          int *NEG)
+     This function is equivalent to `fcvt' except that it takes a `long
+     double' for the first parameter and that NDIGIT is restricted by
+     the precision of a `long double'.
+
+ - Function: char * qgcvt (long double VALUE, int NDIGIT, char *BUF)
+     This function is equivalent to `gcvt' except that it takes a `long
+     double' for the first parameter and that NDIGIT is restricted by
+     the precision of a `long double'.
+
+   The `ecvt' and `fcvt' functions, and their `long double'
+equivalents, all return a string located in a static buffer which is
+overwritten by the next call to the function.  The GNU C library
+provides another set of extended functions which write the converted
+string into a user-supplied buffer.  These have the conventional `_r'
+suffix.
+
+   `gcvt_r' is not necessary, because `gcvt' already uses a
+user-supplied buffer.
+
+ - Function: char * ecvt_r (double VALUE, int NDIGIT, int *DECPT, int
+          *NEG, char *BUF, size_t LEN)
+     The `ecvt_r' function is the same as `ecvt', except that it places
+     its result into the user-specified buffer pointed to by BUF, with
+     length LEN.
+
+     This function is a GNU extension.
+
+ - Function: char * fcvt_r (double VALUE, int NDIGIT, int *DECPT, int
+          *NEG, char *BUF, size_t LEN)
+     The `fcvt_r' function is the same as `fcvt', except that it places
+     its result into the user-specified buffer pointed to by BUF, with
+     length LEN.
+
+     This function is a GNU extension.
+
+ - Function: char * qecvt_r (long double VALUE, int NDIGIT, int *DECPT,
+          int *NEG, char *BUF, size_t LEN)
+     The `qecvt_r' function is the same as `qecvt', except that it
+     places its result into the user-specified buffer pointed to by
+     BUF, with length LEN.
+
+     This function is a GNU extension.
+
+ - Function: char * qfcvt_r (long double VALUE, int NDIGIT, int *DECPT,
+          int *NEG, char *BUF, size_t LEN)
+     The `qfcvt_r' function is the same as `qfcvt', except that it
+     places its result into the user-specified buffer pointed to by
+     BUF, with length LEN.
+
+     This function is a GNU extension.
+
+
+File: libc.info,  Node: Date and Time,  Next: Non-Local Exits,  Prev: Arithmetic,  Up: Top
+
+Date and Time
+*************
+
+   This chapter describes functions for manipulating dates and times,
+including functions for determining what the current time is and
+conversion between different time representations.
+
+   The time functions fall into three main categories:
+
+   * Functions for measuring elapsed CPU time are discussed in *Note
+     Processor Time::.
+
+   * Functions for measuring absolute clock or calendar time are
+     discussed in *Note Calendar Time::.
+
+   * Functions for setting alarms and timers are discussed in *Note
+     Setting an Alarm::.
+
+* Menu:
+
+* Processor Time::              Measures processor time used by a program.
+* Calendar Time::               Manipulation of "real" dates and times.
+* Precision Time::              Manipulation and monitoring of high accuracy
+                                  time.
+* Setting an Alarm::            Sending a signal after a specified time.
+* Sleeping::                    Waiting for a period of time.
+* Resource Usage::		Measuring various resources used.
+* Limits on Resources::		Specifying limits on resource usage.
+* Priority::			Reading or setting process run priority.
+
+
+File: libc.info,  Node: Processor Time,  Next: Calendar Time,  Up: Date and Time
+
+Processor Time
+==============
+
+   If you're trying to optimize your program or measure its efficiency,
+it's very useful to be able to know how much "processor time" or "CPU
+time" it has used at any given point.  Processor time is different from
+actual wall clock time because it doesn't include any time spent waiting
+for I/O or when some other process is running.  Processor time is
+represented by the data type `clock_t', and is given as a number of
+"clock ticks" relative to an arbitrary base time marking the beginning
+of a single program invocation.
+
+* Menu:
+
+* Basic CPU Time::              The `clock' function.
+* Detailed CPU Time::           The `times' function.
+
+
+File: libc.info,  Node: Basic CPU Time,  Next: Detailed CPU Time,  Up: Processor Time
+
+Basic CPU Time Inquiry
+----------------------
+
+   To get the elapsed CPU time used by a process, you can use the
+`clock' function.  This facility is declared in the header file
+`time.h'.
+
+   In typical usage, you call the `clock' function at the beginning and
+end of the interval you want to time, subtract the values, and then
+divide by `CLOCKS_PER_SEC' (the number of clock ticks per second), like
+this:
+
+     #include <time.h>
+     
+     clock_t start, end;
+     double elapsed;
+     
+     start = clock();
+     ... /* Do the work. */
+     end = clock();
+     elapsed = ((double) (end - start)) / CLOCKS_PER_SEC;
+
+   Different computers and operating systems vary wildly in how they
+keep track of processor time.  It's common for the internal processor
+clock to have a resolution somewhere between hundredth and millionth of
+a second.
+
+   In the GNU system, `clock_t' is equivalent to `long int' and
+`CLOCKS_PER_SEC' is an integer value.  But in other systems, both
+`clock_t' and the type of the macro `CLOCKS_PER_SEC' can be either
+integer or floating-point types.  Casting processor time values to
+`double', as in the example above, makes sure that operations such as
+arithmetic and printing work properly and consistently no matter what
+the underlying representation is.
+
+   Note that the clock can wrap around.  On a 32bit system with
+`CLOCKS_PER_SEC' set to one million a wrap around happens after around
+36 minutes.
+
+ - Macro: int CLOCKS_PER_SEC
+     The value of this macro is the number of clock ticks per second
+     measured by the `clock' function.  POSIX requires that this value
+     is one million independend of the actual resolution.
+
+ - Macro: int CLK_TCK
+     This is an obsolete name for `CLOCKS_PER_SEC'.
+
+ - Data Type: clock_t
+     This is the type of the value returned by the `clock' function.
+     Values of type `clock_t' are in units of clock ticks.
+
+ - Function: clock_t clock (void)
+     This function returns the elapsed processor time.  The base time is
+     arbitrary but doesn't change within a single process.  If the
+     processor time is not available or cannot be represented, `clock'
+     returns the value `(clock_t)(-1)'.
+
+
+File: libc.info,  Node: Detailed CPU Time,  Prev: Basic CPU Time,  Up: Processor Time
+
+Detailed Elapsed CPU Time Inquiry
+---------------------------------
+
+   The `times' function returns more detailed information about elapsed
+processor time in a `struct tms' object.  You should include the header
+file `sys/times.h' to use this facility.
+
+ - Data Type: struct tms
+     The `tms' structure is used to return information about process
+     times.  It contains at least the following members:
+
+    `clock_t tms_utime'
+          This is the CPU time used in executing the instructions of
+          the calling process.
+
+    `clock_t tms_stime'
+          This is the CPU time used by the system on behalf of the
+          calling process.
+
+    `clock_t tms_cutime'
+          This is the sum of the `tms_utime' values and the `tms_cutime'
+          values of all terminated child processes of the calling
+          process, whose status has been reported to the parent process
+          by `wait' or `waitpid'; see *Note Process Completion::.  In
+          other words, it represents the total CPU time used in
+          executing the instructions of all the terminated child
+          processes of the calling process, excluding child processes
+          which have not yet been reported by `wait' or `waitpid'.
+
+    `clock_t tms_cstime'
+          This is similar to `tms_cutime', but represents the total CPU
+          time used by the system on behalf of all the terminated child
+          processes of the calling process.
+
+     All of the times are given in clock ticks.  These are absolute
+     values; in a newly created process, they are all zero.  *Note
+     Creating a Process::.
+
+ - Function: clock_t times (struct tms *BUFFER)
+     The `times' function stores the processor time information for the
+     calling process in BUFFER.
+
+     The return value is the same as the value of `clock()': the elapsed
+     real time relative to an arbitrary base.  The base is a constant
+     within a particular process, and typically represents the time
+     since system start-up.  A value of `(clock_t)(-1)' is returned to
+     indicate failure.
+
+   *Portability Note:* The `clock' function described in *Note Basic
+CPU Time::, is specified by the ISO C standard.  The `times' function
+is a feature of POSIX.1.  In the GNU system, the value returned by the
+`clock' function is equivalent to the sum of the `tms_utime' and
+`tms_stime' fields returned by `times'.
+
+
+File: libc.info,  Node: Calendar Time,  Next: Precision Time,  Prev: Processor Time,  Up: Date and Time
+
+Calendar Time
+=============
+
+   This section describes facilities for keeping track of dates and
+times according to the Gregorian calendar.
+
+   There are three representations for date and time information:
+
+   * "Calendar time" (the `time_t' data type) is a compact
+     representation, typically giving the number of seconds elapsed
+     since some implementation-specific base time.
+
+   * There is also a "high-resolution time" representation (the `struct
+     timeval' data type) that includes fractions of a second.  Use this
+     time representation instead of ordinary calendar time when you
+     need greater precision.
+
+   * "Local time" or "broken-down time" (the `struct tm' data type)
+     represents the date and time as a set of components specifying the
+     year, month, and so on, for a specific time zone.  This time
+     representation is usually used in conjunction with formatting date
+     and time values.
+
+* Menu:
+
+* Simple Calendar Time::        Facilities for manipulating calendar time.
+* High-Resolution Calendar::    A time representation with greater precision.
+* Broken-down Time::            Facilities for manipulating local time.
+* Formatting Date and Time::    Converting times to strings.
+* Parsing Date and Time::       Convert textual time and date information back
+                                 into broken-down time values.
+* TZ Variable::                 How users specify the time zone.
+* Time Zone Functions::         Functions to examine or specify the time zone.
+* Time Functions Example::      An example program showing use of some of
+				 the time functions.
+
+
+File: libc.info,  Node: Simple Calendar Time,  Next: High-Resolution Calendar,  Up: Calendar Time
+
+Simple Calendar Time
+--------------------
+
+   This section describes the `time_t' data type for representing
+calendar time, and the functions which operate on calendar time objects.
+These facilities are declared in the header file `time.h'.
+
+ - Data Type: time_t
+     This is the data type used to represent calendar time.  When
+     interpreted as an absolute time value, it represents the number of
+     seconds elapsed since 00:00:00 on January 1, 1970, Coordinated
+     Universal Time.  (This date is sometimes referred to as the
+     "epoch".)  POSIX requires that this count ignore leap seconds, but
+     on some hosts this count includes leap seconds if you set `TZ' to
+     certain values (*note TZ Variable::.).
+
+     In the GNU C library, `time_t' is equivalent to `long int'.  In
+     other systems, `time_t' might be either an integer or
+     floating-point type.
+
+ - Function: double difftime (time_t TIME1, time_t TIME0)
+     The `difftime' function returns the number of seconds elapsed
+     between time TIME1 and time TIME0, as a value of type `double'.
+     The difference ignores leap seconds unless leap second support is
+     enabled.
+
+     In the GNU system, you can simply subtract `time_t' values.  But on
+     other systems, the `time_t' data type might use some other encoding
+     where subtraction doesn't work directly.
+
+ - Function: time_t time (time_t *RESULT)
+     The `time' function returns the current time as a value of type
+     `time_t'.  If the argument RESULT is not a null pointer, the time
+     value is also stored in `*RESULT'.  If the calendar time is not
+     available, the value `(time_t)(-1)' is returned.
+
+
+File: libc.info,  Node: High-Resolution Calendar,  Next: Broken-down Time,  Prev: Simple Calendar Time,  Up: Calendar Time
+
+High-Resolution Calendar
+------------------------
+
+   The `time_t' data type used to represent calendar times has a
+resolution of only one second.  Some applications need more precision.
+
+   So, the GNU C library also contains functions which are capable of
+representing calendar times to a higher resolution than one second.  The
+functions and the associated data types described in this section are
+declared in `sys/time.h'.
+
+ - Data Type: struct timeval
+     The `struct timeval' structure represents a calendar time.  It has
+     the following members:
+
+    `long int tv_sec'
+          This represents the number of seconds since the epoch.  It is
+          equivalent to a normal `time_t' value.
+
+    `long int tv_usec'
+          This is the fractional second value, represented as the
+          number of microseconds.
+
+          Some times struct timeval values are used for time intervals.
+          Then the `tv_sec' member is the number of seconds in the
+          interval, and `tv_usec' is the number of additional
+          microseconds.
+
+ - Data Type: struct timezone
+     The `struct timezone' structure is used to hold minimal information
+     about the local time zone.  It has the following members:
+
+    `int tz_minuteswest'
+          This is the number of minutes west of UTC.
+
+    `int tz_dsttime'
+          If nonzero, daylight saving time applies during some part of
+          the year.
+
+     The `struct timezone' type is obsolete and should never be used.
+     Instead, use the facilities described in *Note Time Zone
+     Functions::.
+
+   It is often necessary to subtract two values of type
+`struct timeval'.  Here is the best way to do this.  It works even on
+some peculiar operating systems where the `tv_sec' member has an
+unsigned type.
+
+     /* Subtract the `struct timeval' values X and Y,
+        storing the result in RESULT.
+        Return 1 if the difference is negative, otherwise 0.  */
+     
+     int
+     timeval_subtract (result, x, y)
+          struct timeval *result, *x, *y;
+     {
+       /* Perform the carry for the later subtraction by updating Y. */
+       if (x->tv_usec < y->tv_usec) {
+         int nsec = (y->tv_usec - x->tv_usec) / 1000000 + 1;
+         y->tv_usec -= 1000000 * nsec;
+         y->tv_sec += nsec;
+       }
+       if (x->tv_usec - y->tv_usec > 1000000) {
+         int nsec = (x->tv_usec - y->tv_usec) / 1000000;
+         y->tv_usec += 1000000 * nsec;
+         y->tv_sec -= nsec;
+       }
+     
+       /* Compute the time remaining to wait.
+          `tv_usec' is certainly positive. */
+       result->tv_sec = x->tv_sec - y->tv_sec;
+       result->tv_usec = x->tv_usec - y->tv_usec;
+     
+       /* Return 1 if result is negative. */
+       return x->tv_sec < y->tv_sec;
+     }
+
+ - Function: int gettimeofday (struct timeval *TP, struct timezone *TZP)
+     The `gettimeofday' function returns the current date and time in
+     the `struct timeval' structure indicated by TP.  Information about
+     the time zone is returned in the structure pointed at TZP.  If the
+     TZP argument is a null pointer, time zone information is ignored.
+
+     The return value is `0' on success and `-1' on failure.  The
+     following `errno' error condition is defined for this function:
+
+    `ENOSYS'
+          The operating system does not support getting time zone
+          information, and TZP is not a null pointer.  The GNU
+          operating system does not support using `struct timezone' to
+          represent time zone information; that is an obsolete feature
+          of 4.3 BSD.  Instead, use the facilities described in *Note
+          Time Zone Functions::.
+
+ - Function: int settimeofday (const struct timeval *TP, const struct
+          timezone *TZP)
+     The `settimeofday' function sets the current date and time
+     according to the arguments.  As for `gettimeofday', time zone
+     information is ignored if TZP is a null pointer.
+
+     You must be a privileged user in order to use `settimeofday'.
+
+     The return value is `0' on success and `-1' on failure.  The
+     following `errno' error conditions are defined for this function:
+
+    `EPERM'
+          This process cannot set the time because it is not privileged.
+
+    `ENOSYS'
+          The operating system does not support setting time zone
+          information, and TZP is not a null pointer.
+
+ - Function: int adjtime (const struct timeval *DELTA, struct timeval
+          *OLDDELTA)
+     This function speeds up or slows down the system clock in order to
+     make gradual adjustments in the current time.  This ensures that
+     the time reported by the system clock is always monotonically
+     increasing, which might not happen if you simply set the current
+     time.
+
+     The DELTA argument specifies a relative adjustment to be made to
+     the current time.  If negative, the system clock is slowed down
+     for a while until it has lost this much time.  If positive, the
+     system clock is speeded up for a while.
+
+     If the OLDDELTA argument is not a null pointer, the `adjtime'
+     function returns information about any previous time adjustment
+     that has not yet completed.
+
+     This function is typically used to synchronize the clocks of
+     computers in a local network.  You must be a privileged user to
+     use it.  The return value is `0' on success and `-1' on failure.
+     The following `errno' error condition is defined for this function:
+
+    `EPERM'
+          You do not have privilege to set the time.
+
+   *Portability Note:*  The `gettimeofday', `settimeofday', and
+`adjtime' functions are derived from BSD.
+
+
+File: libc.info,  Node: Broken-down Time,  Next: Formatting Date and Time,  Prev: High-Resolution Calendar,  Up: Calendar Time
+
+Broken-down Time
+----------------
+
+   Calendar time is represented as a number of seconds.  This is
+convenient for calculation, but has no resemblance to the way people
+normally represent dates and times.  By contrast, "broken-down time" is
+a binary representation separated into year, month, day, and so on.
+Broken down time values are not useful for calculations, but they are
+useful for printing human readable time.
+
+   A broken-down time value is always relative to a choice of local time
+zone, and it also indicates which time zone was used.
+
+   The symbols in this section are declared in the header file `time.h'.
+
+ - Data Type: struct tm
+     This is the data type used to represent a broken-down time.  The
+     structure contains at least the following members, which can
+     appear in any order:
+
+    `int tm_sec'
+          This is the number of seconds after the minute, normally in
+          the range `0' through `59'.  (The actual upper limit is `60',
+          to allow for leap seconds if leap second support is
+          available.)
+
+    `int tm_min'
+          This is the number of minutes after the hour, in the range
+          `0' through `59'.
+
+    `int tm_hour'
+          This is the number of hours past midnight, in the range `0'
+          through `23'.
+
+    `int tm_mday'
+          This is the day of the month, in the range `1' through `31'.
+
+    `int tm_mon'
+          This is the number of months since January, in the range `0'
+          through `11'.
+
+    `int tm_year'
+          This is the number of years since `1900'.
+
+    `int tm_wday'
+          This is the number of days since Sunday, in the range `0'
+          through `6'.
+
+    `int tm_yday'
+          This is the number of days since January 1, in the range `0'
+          through `365'.
+
+    `int tm_isdst'
+          This is a flag that indicates whether Daylight Saving Time is
+          (or was, or will be) in effect at the time described.  The
+          value is positive if Daylight Saving Time is in effect, zero
+          if it is not, and negative if the information is not
+          available.
+
+    `long int tm_gmtoff'
+          This field describes the time zone that was used to compute
+          this broken-down time value, including any adjustment for
+          daylight saving; it is the number of seconds that you must
+          add to UTC to get local time.  You can also think of this as
+          the number of seconds east of UTC.  For example, for U.S.
+          Eastern Standard Time, the value is `-5*60*60'.  The
+          `tm_gmtoff' field is derived from BSD and is a GNU library
+          extension; it is not visible in a strict ISO C environment.
+
+    `const char *tm_zone'
+          This field is the name for the time zone that was used to
+          compute this broken-down time value.  Like `tm_gmtoff', this
+          field is a BSD and GNU extension, and is not visible in a
+          strict ISO C environment.
+
+ - Function: struct tm * localtime (const time_t *TIME)
+     The `localtime' function converts the calendar time pointed to by
+     TIME to broken-down time representation, expressed relative to the
+     user's specified time zone.
+
+     The return value is a pointer to a static broken-down time
+     structure, which might be overwritten by subsequent calls to
+     `ctime', `gmtime', or `localtime'.  (But no other library function
+     overwrites the contents of this object.)
+
+     The return value is the null pointer if TIME cannot be represented
+     as a broken-down time; typically this is because the year cannot
+     fit into an `int'.
+
+     Calling `localtime' has one other effect: it sets the variable
+     `tzname' with information about the current time zone.  *Note Time
+     Zone Functions::.
+
+   Using the `localtime' function is a big problem in multi-threaded
+programs.  The result is returned in a static buffer and this is used in
+all threads.  POSIX.1c introduced a varient of this function.
+
+ - Function: struct tm * localtime_r (const time_t *TIME, struct tm
+          *RESULTP)
+     The `localtime_r' function works just like the `localtime'
+     function.  It takes a pointer to a variable containing the
+     calendar time and converts it to the broken-down time format.
+
+     But the result is not placed in a static buffer.  Instead it is
+     placed in the object of type `struct tm' to which the parameter
+     RESULTP points.
+
+     If the conversion is successful the function returns a pointer to
+     the object the result was written into, i.e., it returns RESULTP.
+
+ - Function: struct tm * gmtime (const time_t *TIME)
+     This function is similar to `localtime', except that the
+     broken-down time is expressed as Coordinated Universal Time
+     (UTC)--that is, as Greenwich Mean Time (GMT)--rather than relative
+     to the local time zone.
+
+     Recall that calendar times are *always* expressed in coordinated
+     universal time.
+
+   As for the `localtime' function we have the problem that the result
+is placed in a static variable.  POSIX.1c also provides a replacement
+for `gmtime'.
+
+ - Function: struct tm * gmtime_r (const time_t *TIME, struct tm
+          *RESULTP)
+     This function is similar to `localtime_r', except that it converts
+     just like `gmtime' the given time as Coordinated Universal Time.
+
+     If the conversion is successful the function returns a pointer to
+     the object the result was written into, i.e., it returns RESULTP.
+
+ - Function: time_t mktime (struct tm *BROKENTIME)
+     The `mktime' function is used to convert a broken-down time
+     structure to a calendar time representation.  It also "normalizes"
+     the contents of the broken-down time structure, by filling in the
+     day of week and day of year based on the other date and time
+     components.
+
+     The `mktime' function ignores the specified contents of the
+     `tm_wday' and `tm_yday' members of the broken-down time structure.
+     It uses the values of the other components to compute the
+     calendar time; it's permissible for these components to have
+     unnormalized values outside of their normal ranges.  The last
+     thing that `mktime' does is adjust the components of the BROKENTIME
+     structure (including the `tm_wday' and `tm_yday').
+
+     If the specified broken-down time cannot be represented as a
+     calendar time, `mktime' returns a value of `(time_t)(-1)' and does
+     not modify the contents of BROKENTIME.
+
+     Calling `mktime' also sets the variable `tzname' with information
+     about the current time zone.  *Note Time Zone Functions::.
+

@@ -1,0 +1,109 @@
+# -*- TCL -*-
+# Test-specific TCL procedures required by DejaGNU.
+# Copyright (C) 1994 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+# Modified by David MacKenzie <djm@gnu.ai.mit.edu> from the gcc files
+# written by Rob Savoye <rob@cygnus.com>.
+
+
+# Called by runtest.
+# Extract and print the version number of xargs.
+proc xargs_version {} {
+    global XARGS
+    global XARGSFLAGS
+
+    if {[which $XARGS] != 0} then {
+	set tmp [ eval exec $XARGS $XARGSFLAGS --version </dev/null ]
+	regexp "version.*$" $tmp version
+	if [info exists version] then {
+	    clone_output "[which $XARGS] $version\n"
+	} else {
+	    warning "cannot get version from $tmp."
+	}
+    } else {
+	warning "$XARGS, program does not exist"
+    }
+}
+
+# Run xargs and leave the output in $comp_output.
+# Called by individual test scripts.
+proc xargs_start { passfail options infile } {
+    global verbose
+    global XARGS
+    global XARGSFLAGS
+    global comp_output
+
+    if {[which $XARGS] == 0} then {
+	error "$XARGS, program does not exist"
+	exit 1
+    }
+
+    set fail_good [string match "f*" $passfail]
+
+    set scriptname [uplevel {info script}]
+    set testbase [file rootname $scriptname]
+    set testname [file tail $testbase]
+
+    set outfile "$testbase.xo"
+    if {$infile != ""} then {
+	set infile "[file dirname [file dirname $testbase]]/inputs/$infile"
+    } else {
+	set infile /dev/null
+    }
+
+    set cmd "$XARGS $XARGSFLAGS $options < $infile > xargs.out"
+    send_log "$cmd\n"
+    if $verbose>1 then {
+	send_user "Spawning \"$cmd\"\n"
+    }
+
+    catch "exec $cmd" comp_output
+    if {$comp_output != ""} then {
+	send_log "$comp_output\n"
+	if $verbose>1 then {
+	    send_user "$comp_output\n"
+	}
+	if $fail_good then {
+	    pass "$testname"
+	} else {
+	    fail "$testname, $comp_output"
+	}
+	return
+    }
+
+    if [file exists $outfile] then {
+	set cmp_cmd "cmp xargs.out $outfile"
+	send_log "$cmp_cmd\n"
+	catch "exec $cmp_cmd" cmpout
+	if {$cmpout != ""} then {
+	    fail "$testname, $cmpout"
+	    return
+	}
+    } else {
+	if {[file size xargs.out] != 0} then {
+	    fail "$testname, output should be empty"
+	    return
+	}
+    }
+    pass "$testname"
+}
+
+# Called by runtest.
+# Clean up (remove temporary files) before runtest exits.
+proc xargs_exit {} {
+    catch "exec rm -f xargs.out"
+}

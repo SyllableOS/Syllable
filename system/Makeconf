@@ -1,0 +1,20 @@
+# Set some global variables for the sub-Makefiles
+
+export ATHEOS_SRC := $(PWD)
+export ATHEOS_INCLUDE_PATH := $(PWD)/sys/include
+export ATHEOS_LIB_PATH := $(PWD)/libs
+
+export BUILD_TOOLS := $(ATHEOS_SRC)/build-tools
+export DIST_DIR := $(PWD)/dist-root
+
+# Change this line to 'y' if you want to try and build
+# Glibc from source.  See README for more information
+# before you try this!
+
+export BUILD_LIBC := n
+
+# Set this to the version of the distribution you are building
+
+DIST_VER:=0.3.9alpha
+export DIST_NAME=base-syllable-$(DIST_VER).tgz
+

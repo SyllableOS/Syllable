@@ -1,0 +1,2206 @@
+\input texinfo @c -*-texinfo-*-
+@c %**start of header
+@setfilename find.info
+@settitle Finding Files
+@c For double-sided printing, uncomment:
+@c @setchapternewpage odd
+@c %**end of header
+
+@set EDITION 1.1
+@set VERSION 4.1
+@set UPDATED November 1994
+
+@iftex
+@finalout
+@end iftex
+
+@ifinfo
+@format
+START-INFO-DIR-ENTRY
+* Finding Files: (find).        Listing and operating on files
+                                that match certain criteria.
+END-INFO-DIR-ENTRY
+@end format
+
+This file documents the GNU utilities for finding files that match
+certain criteria and performing various operations on them.
+
+Copyright (C) 1994 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+@ignore
+Permission is granted to process this file through TeX and print the
+results, provided the printed document carries copying permission
+notice identical to this one except for the removal of this paragraph
+(this paragraph not being relevant to the printed manual).
+
+@end ignore
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice may be stated in a translation approved
+by the Foundation.
+@end ifinfo
+
+@titlepage
+@title Finding Files
+@subtitle Edition @value{EDITION}, for GNU @code{find} version @value{VERSION}
+@subtitle @value{UPDATED}
+@author by David MacKenzie
+
+@page
+@vskip 0pt plus 1filll
+Copyright @copyright{} 1994 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice may be stated in a translation approved
+by the Foundation.
+@end titlepage
+
+@node Top, Introduction, , (dir)
+@comment  node-name,  next,  previous,  up
+
+@ifinfo
+This file documents the GNU utilities for finding files that match
+certain criteria and performing various actions on them.
+This is edition @value{EDITION}, for @code{find} version @value{VERSION}.
+@end ifinfo
+
+@c The master menu, created with texinfo-master-menu, goes here.
+
+@menu
+* Introduction::                Summary of the tasks this manual describes.
+* Finding Files::               Finding files that match certain criteria.
+* Actions::                     Doing things to files you have found.
+* Common Tasks::                Solutions to common real-world problems.
+* Databases::                   Maintaining file name databases.
+* File Permissions::            How to control access to files.
+* Reference::                   Summary of how to invoke the programs.
+* Primary Index::               The components of @code{find} expressions.
+@end menu
+
+@node Introduction, Finding Files, Top, Top
+@chapter Introduction
+
+This manual shows how to find files that meet criteria you specify, and
+how to perform various actions on the files that you find.  The
+principal programs that you use to perform these tasks are @code{find},
+@code{locate}, and @code{xargs}.  Some of the examples in this manual
+use capabilities specific to the GNU versions of those programs.
+
+GNU @code{find} was originally written by Eric Decker, with enhancements
+by David MacKenzie, Jay Plett, and Tim Wood.  GNU @code{xargs} was
+originally written by Mike Rendell, with enhancements by David
+MacKenzie.  GNU @code{locate} and its associated utilities were
+originally written by James Woods, with enhancements by David MacKenzie.
+The idea for @samp{find -print0} and @samp{xargs -0} came from Dan
+Bernstein.  Many other people have contributed bug fixes, small
+improvements, and helpful suggestions.  Thanks!
+
+Mail suggestions and bug reports for these programs to
+@code{bug-gnu-utils@@prep.ai.mit.edu}.  Please include the version
+number, which you can get by running @samp{find --version}.
+
+@menu
+* Scope::
+* Overview::
+* find Expressions::
+@end menu
+
+@node Scope
+@section Scope
+
+For brevity, the word @dfn{file} in this manual means a regular file, a
+directory, a symbolic link, or any other kind of node that has a
+directory entry.  A directory entry is also called a @dfn{file name}.  A
+file name may contain some, all, or none of the directories in a path
+that leads to the file.  These are all examples of what this manual
+calls ``file names'':
+
+@example
+parser.c
+README
+./budget/may-94.sc
+fred/.cshrc
+/usr/local/include/termcap.h
+@end example
+
+A @dfn{directory tree} is a directory and the files it contains, all of
+its subdirectories and the files they contain, etc.  It can also be a
+single non-directory file.
+
+These programs enable you to find the files in one or more directory
+trees that:
+
+@itemize @bullet
+@item
+have names that contain certain text or match a certain pattern;
+@item
+are links to certain files;
+@item
+were last used during a certain period of time;
+@item
+are within a certain size range;
+@item
+are of a certain type (regular file, directory, symbolic link, etc.);
+@item
+are owned by a certain user or group;
+@item
+have certain access permissions;
+@item
+contain text that matches a certain pattern;
+@item
+are within a certain depth in the directory tree;
+@item
+or some combination of the above.
+@end itemize
+
+Once you have found the files you're looking for (or files that are
+potentially the ones you're looking for), you can do more to them than
+simply list their names.  You can get any combination of the files'
+attributes, or process the files in many ways, either individually or in
+groups of various sizes.  Actions that you might want to perform on the
+files you have found include, but are not limited to:
+
+@itemize @bullet
+@item
+view or edit
+@item
+store in an archive
+@item
+remove or rename
+@item
+change access permissions
+@item
+classify into groups
+@end itemize
+
+This manual describes how to perform each of those tasks, and more.
+
+@node Overview
+@section Overview
+
+The principal programs used for making lists of files that match given
+criteria and running commands on them are @code{find}, @code{locate},
+and @code{xargs}.  An additional command, @code{updatedb}, is used by
+system administrators to create databases for @code{locate} to use.
+
+@code{find} searches for files in a directory hierarchy and prints
+information about the files it found.  It is run like this:
+
+@example
+find @r{[}@var{file}@dots{}@r{]} @r{[}@var{expression}@r{]}
+@end example
+
+@noindent
+Here is a typical use of @code{find}.  This example prints the names of
+all files in the directory tree rooted in @file{/usr/src} whose name
+ends with @samp{.c} and that are larger than 100 Kilobytes.
+@example
+find /usr/src -name '*.c' -size +100k -print
+@end example
+
+@code{locate} searches special file name databases for file names that
+match patterns.  The system administrator runs the @code{updatedb}
+program to create the databases.  @code{locate} is run like this:
+
+@example
+locate @r{[}@var{option}@dots{}@r{]} @var{pattern}@dots{}
+@end example
+
+@noindent
+This example prints the names of all files in the default file name
+database whose name ends with @samp{Makefile} or @samp{makefile}.  Which
+file names are stored in the database depends on how the system
+administrator ran @code{updatedb}.
+@example
+locate '*[Mm]akefile'
+@end example
+
+The name @code{xargs}, pronounced EX-args, means ``combine arguments.''
+@code{xargs} builds and executes command lines by gathering together
+arguments it reads on the standard input.  Most often, these arguments
+are lists of file names generated by @code{find}.  @code{xargs} is run
+like this:
+
+@example
+xargs @r{[}@var{option}@dots{}@r{]} @r{[}@var{command} @r{[}@var{initial-arguments}@r{]}@r{]}
+@end example
+
+@noindent
+The following command searches the files listed in the file
+@file{file-list} and prints all of the lines in them that contain the
+word @samp{typedef}.
+@example
+xargs grep typedef < file-list
+@end example
+
+@node find Expressions
+@section @code{find} Expressions
+
+The expression that @code{find} uses to select files consists of one or
+more @dfn{primaries}, each of which is a separate command line argument
+to @code{find}.  @code{find} evaluates the expression each time it
+processes a file.  An expression can contain any of the following types
+of primaries:
+
+@table @dfn
+@item options
+affect overall operation rather than the processing of a specific file;
+@item tests
+return a true or false value, depending on the file's attributes;
+@item actions
+have side effects and return a true or false value; and
+@item operators
+connect the other arguments and affect when and whether they are
+evaluated.
+@end table
+
+You can omit the operator between two primaries; it defaults to
+@samp{-and}.  @xref{Combining Primaries With Operators}, for ways to
+connect primaries into more complex expressions.  If the expression
+contains no actions other than @samp{-prune}, @samp{-print} is performed
+on all files for which the entire expression is true (@pxref{Print File
+Name}).
+
+Options take effect immediately, rather than being evaluated for each
+file when their place in the expression is reached.  Therefore, for
+clarity, it is best to place them at the beginning of the expression.
+
+Many of the primaries take arguments, which immediately follow them in
+the next command line argument to @code{find}.  Some arguments are file
+names, patterns, or other strings; others are numbers.  Numeric
+arguments can be specified as
+
+@table @code
+@item +@var{n}
+for greater than @var{n},
+@item -@var{n}
+for less than @var{n},
+@item @var{n}
+for exactly @var{n}.
+@end table
+
+@node Finding Files, Actions, Introduction, Top
+@chapter Finding Files
+
+By default, @code{find} prints to the standard output the names of the
+files that match the given criteria.  @xref{Actions}, for how to get more
+information about the matching files.
+
+@menu
+* Name::
+* Links::
+* Time::
+* Size::
+* Type::
+* Owner::
+* Permissions::
+* Contents::
+* Directories::
+* Filesystems::
+* Combining Primaries With Operators::
+@end menu
+
+@node Name
+@section Name
+
+Here are ways to search for files whose name matches a certain pattern.
+@xref{Shell Pattern Matching}, for a description of the @var{pattern}
+arguments to these tests.
+
+Each of these tests has a case-sensitive version and a case-insensitive
+version, whose name begins with @samp{i}.  In a case-insensitive
+comparison, the patterns @samp{fo*} and @samp{F??} match the file names
+@file{Foo}, @samp{FOO}, @samp{foo}, @samp{fOo}, etc.
+
+@menu
+* Base Name Patterns::
+* Full Name Patterns::
+* Fast Full Name Search::
+* Shell Pattern Matching::      Wildcards used by these programs.
+@end menu
+
+@node Base Name Patterns
+@subsection Base Name Patterns
+
+@deffn Test -name pattern
+@deffnx Test -iname pattern
+True if the base of the file name (the path with the leading directories
+removed) matches shell pattern @var{pattern}.  For @samp{-iname}, the
+match is case-insensitive.  To ignore a whole directory tree, use
+@samp{-prune} (@pxref{Directories}).  As an example, to find Texinfo
+source files in @file{/usr/local/doc}:
+
+@example
+find /usr/local/doc -name '*.texi'
+@end example
+@end deffn
+
+@node Full Name Patterns
+@subsection Full Name Patterns
+
+@deffn Test -path pattern
+@deffnx Test -ipath pattern
+True if the entire file name, starting with the command line argument
+under which the file was found, matches shell pattern @var{pattern}.
+For @samp{-ipath}, the match is case-insensitive.  To ignore a whole
+directory tree, use @samp{-prune} rather than checking every file in the
+tree (@pxref{Directories}).
+@end deffn
+
+@deffn Test -regex expr
+@deffnx Test -iregex expr
+True if the entire file name matches regular expression @var{expr}.
+This is a match on the whole path, not a search.  For example, to match
+a file named @file{./fubar3}, you can use the regular expression
+@samp{.*bar.} or @samp{.*b.*3}, but not @samp{b.*r3}.  @xref{Regexps, ,
+Syntax of Regular Expressions, emacs, The GNU Emacs Manual}, for a
+description of the syntax of regular expressions.  For @samp{-iregex},
+the match is case-insensitive.
+@end deffn
+
+@node Fast Full Name Search
+@subsection Fast Full Name Search
+
+To search for files by name without having to actually scan the
+directories on the disk (which can be slow), you can use the
+@code{locate} program.  For each shell pattern you give it,
+@code{locate} searches one or more databases of file names and displays
+the file names that contain the pattern.  @xref{Shell Pattern Matching},
+for details about shell patterns.
+
+If a pattern is a plain string---it contains no
+metacharacters---@code{locate} displays all file names in the database
+that contain that string.  If a pattern contains
+metacharacters, @code{locate} only displays file names that match the
+pattern exactly.  As a result, patterns that contain metacharacters
+should usually begin with a @samp{*}, and will most often end with one
+as well.  The exceptions are patterns that are intended to explicitly
+match the beginning or end of a file name.
+
+The command
+@example
+locate @var{pattern}
+@end example
+
+is almost equivalent to
+@example
+find @var{directories} -name @var{pattern}
+@end example
+
+where @var{directories} are the directories for which the file name
+databases contain information.  The differences are that the
+@code{locate} information might be out of date, and that @code{locate}
+handles wildcards in the pattern slightly differently than @code{find}
+(@pxref{Shell Pattern Matching}).
+
+The file name databases contain lists of files that were on the system
+when the databases were last updated.  The system administrator can
+choose the file name of the default database, the frequency with which
+the databases are updated, and the directories for which they contain
+entries.
+
+Here is how to select which file name databases @code{locate} searches.
+The default is system-dependent.
+
+@table @code
+@item --database=@var{path}
+@itemx -d @var{path}
+Instead of searching the default file name database, search the file
+name databases in @var{path}, which is a colon-separated list of
+database file names.  You can also use the environment variable
+@code{LOCATE_PATH} to set the list of database files to search.  The
+option overrides the environment variable if both are used.
+@end table
+
+@node Shell Pattern Matching
+@subsection Shell Pattern Matching
+
+@code{find} and @code{locate} can compare file names, or parts of file
+names, to shell patterns.  A @dfn{shell pattern} is a string that may
+contain the following special characters, which are known as
+@dfn{wildcards} or @dfn{metacharacters}.
+
+You must quote patterns that contain metacharacters to prevent the shell
+from expanding them itself.  Double and single quotes both work; so does
+escaping with a backslash.
+
+@table @code
+@item *
+Matches any zero or more characters.
+
+@item ?
+Matches any one character.
+
+@item [@var{string}]
+Matches exactly one character that is a member of the string
+@var{string}.  This is called a @dfn{character class}.  As a shorthand,
+@var{string} may contain ranges, which consist of two characters with a
+dash between them.  For example, the class @samp{[a-z0-9_]} matches a
+lowercase letter, a number, or an underscore.  You can negate a class by
+placing a @samp{!} or @samp{^} immediately after the opening bracket.
+Thus, @samp{[^A-Z@@]} matches any character except an uppercase letter
+or an at sign.
+
+@item \
+Removes the special meaning of the character that follows it.  This
+works even in character classes.
+@end table
+
+In the @code{find} tests that do shell pattern matching (@samp{-name},
+@samp{-path}, etc.), wildcards in the pattern do not match a @samp{.}
+at the beginning of a file name.  This is not the case for
+@code{locate}.  Thus, @samp{find -name '*macs'} does not match a file
+named @file{.emacs}, but @samp{locate '*macs'} does.
+
+Slash characters have no special significance in the shell pattern
+matching that @code{find} and @code{locate} do, unlike in the shell, in
+which wildcards do not match them.  Therefore, a pattern @samp{foo*bar}
+can match a file name @samp{foo3/bar}, and a pattern @samp{./sr*sc} can
+match a file name @samp{./src/misc}.
+
+@node Links
+@section Links
+
+There are two ways that files can be linked together.  @dfn{Symbolic
+links} are a special type of file whose contents are a portion of the
+name of another file.  @dfn{Hard links} are multiple directory entries
+for one file; the file names all have the same index node (@dfn{inode})
+number on the disk.
+
+@menu
+* Symbolic Links::
+* Hard Links::
+@end menu
+
+@node Symbolic Links
+@subsection Symbolic Links
+
+@deffn Test -lname pattern
+@deffnx Test -ilname pattern
+True if the file is a symbolic link whose contents match shell pattern
+@var{pattern}.  For @samp{-ilname}, the match is case-insensitive.
+@xref{Shell Pattern Matching}, for details about the @var{pattern}
+argument.  So, to list any symbolic links to @file{sysdep.c} in the
+current directory and its subdirectories, you can do:
+
+@example
+find . -lname '*sysdep.c'
+@end example
+@end deffn
+
+@deffn Option -follow
+Dereference symbolic links.  The following differences in behavior occur
+when this option is given:
+
+@itemize @bullet
+@item
+@code{find} follows symbolic links to directories when searching
+directory trees.
+@item
+@samp{-lname} and @samp{-ilname} always return false.
+@item
+@samp{-type} reports the types of the files that symbolic links point
+to.
+@item
+Implies @samp{-noleaf} (@pxref{Directories}).
+@end itemize
+@end deffn
+
+@node Hard Links
+@subsection Hard Links
+
+To find hard links, first get the inode number of the file whose links
+you want to find.  You can learn a file's inode number and the number of
+links to it by running @samp{ls -i} or @samp{find -ls}.  If the file has
+more than one link, you can search for the other links by passing that
+inode number to @samp{-inum}.  Add the @samp{-xdev} option if you are
+starting the search at a directory that has other filesystems mounted on
+it, such as @file{/usr} on many systems.  Doing this saves needless
+searching, since hard links to a file must be on the same filesystem.
+@xref{Filesystems}.
+
+@deffn Test -inum n
+File has inode number @var{n}.
+@end deffn
+
+You can also search for files that have a certain number of links, with
+@samp{-links}.  Directories normally have at least two hard links; their
+@file{.} entry is the second one.  If they have subdirectories, each of
+those also has a hard link called @file{..} to its parent directory.
+
+@deffn Test -links n
+File has @var{n} hard links.
+@end deffn
+
+@node Time
+@section Time
+
+Each file has three time stamps, which record the last time that certain
+operations were performed on the file:
+
+@enumerate
+@item
+access (read the file's contents)
+@item
+change the status (modify the file or its attributes)
+@item
+modify (change the file's contents)
+@end enumerate
+
+You can search for files whose time stamps are within a certain age
+range, or compare them to other time stamps.
+
+@menu
+* Age Ranges::
+* Comparing Timestamps::
+@end menu
+
+@node Age Ranges
+@subsection Age Ranges
+
+These tests are mainly useful with ranges (@samp{+@var{n}} and
+@samp{-@var{n}}).
+
+@deffn Test -atime n
+@deffnx Test -ctime n
+@deffnx Test -mtime n
+True if the file was last accessed (or its status changed, or it was
+modified) @var{n}*24 hours ago.
+@end deffn
+
+@deffn Test -amin n
+@deffnx Test -cmin n
+@deffnx Test -mmin n
+True if the file was last accessed (or its status changed, or it was
+modified) @var{n} minutes ago.  These tests provide finer granularity of
+measurement than @samp{-atime} et al.  For example, to list files in
+@file{/u/bill} that were last read from 2 to 6 hours ago:
+
+@example
+find /u/bill -amin +2 -amin -6
+@end example
+@end deffn
+
+@deffn Option -daystart
+Measure times from the beginning of today rather than from 24 hours ago.
+So, to list the regular files in your home directory that were modified
+yesterday, do
+
+@example
+find ~ -daystart -type f -mtime 1
+@end example
+@end deffn
+
+@node Comparing Timestamps
+@subsection Comparing Timestamps
+
+As an alternative to comparing timestamps to the current time, you can
+compare them to another file's timestamp.  That file's timestamp could
+be updated by another program when some event occurs.  Or you could set
+it to a particular fixed date using the @code{touch} command.  For
+example, to list files in @file{/usr} modified after February 1 of the
+current year:
+
+@c Idea from Rick Sladkey.
+@example
+touch -t 02010000 /tmp/stamp$$
+find /usr -newer /tmp/stamp$$
+rm -f /tmp/stamp$$
+@end example
+
+@deffn Test -anewer file
+@deffnx Test -cnewer file
+@deffnx Test -newer file
+True if the file was last accessed (or its status changed, or it was
+modified) more recently than @var{file} was modified.  These tests are
+affected by @samp{-follow} only if @samp{-follow} comes before them on
+the command line.  @xref{Symbolic Links}, for more information on
+@samp{-follow}.  As an example, to list any files modified since
+@file{/bin/sh} was last modified:
+
+@example
+find . -newer /bin/sh
+@end example
+@end deffn
+
+@deffn Test -used n
+True if the file was last accessed @var{n} days after its status was
+last changed.  Useful for finding files that are not being used, and
+could perhaps be archived or removed to save disk space.
+@end deffn
+
+@node Size
+@section Size
+
+@deffn Test -size n@r{[}bckw@r{]}
+True if the file uses @var{n} units of space, rounding up.  The units
+are 512-byte blocks by default, but they can be changed by adding a
+one-character suffix to @var{n}:
+
+@table @code
+@item b
+512-byte blocks
+@item c
+bytes
+@item k
+kilobytes (1024 bytes)
+@item w
+2-byte words
+@end table
+
+The size does not count indirect blocks, but it does count blocks in
+sparse files that are not actually allocated.
+@end deffn
+
+@deffn Test -empty
+True if the file is empty and is either a regular file or a directory.
+This might make it a good candidate for deletion.  This test is useful
+with @samp{-depth} (@pxref{Directories}) and @samp{-exec rm -rf '@{@}' ';'}
+(@pxref{Single File}).
+@end deffn
+
+@node Type
+@section Type
+
+@deffn Test -type c
+True if the file is of type @var{c}:
+
+@table @code
+@item b
+block (buffered) special
+@item c
+character (unbuffered) special
+@item d
+directory
+@item p
+named pipe (FIFO)
+@item f
+regular file
+@item l
+symbolic link
+@item s
+socket
+@end table
+@end deffn
+
+@deffn Test -xtype c
+The same as @samp{-type} unless the file is a symbolic link.  For
+symbolic links: if @samp{-follow} has not been given, true if the file
+is a link to a file of type @var{c}; if @samp{-follow} has been given,
+true if @var{c} is @samp{l}.  In other words, for symbolic links,
+@samp{-xtype} checks the type of the file that @samp{-type} does not
+check.  @xref{Symbolic Links}, for more information on @samp{-follow}.
+@end deffn
+
+@node Owner
+@section Owner
+
+@deffn Test -user uname
+@deffnx Test -group gname
+True if the file is owned by user @var{uname} (belongs to group @var{gname}).
+A numeric ID is allowed.
+@end deffn
+
+@deffn Test -uid n
+@deffnx Test -gid n
+True if the file's numeric user ID (group ID) is @var{n}.  These tests
+support ranges (@samp{+@var{n}} and @samp{-@var{n}}), unlike
+@samp{-user} and @samp{-group}.
+@end deffn
+
+@deffn Test -nouser
+@deffnx Test -nogroup
+True if no user corresponds to the file's numeric user ID (no group
+corresponds to the numeric group ID).  These cases usually mean that the
+files belonged to users who have since been removed from the system.
+You probably should change the ownership of such files to an existing
+user or group, using the @code{chown} or @code{chgrp} program.
+@end deffn
+
+@node Permissions
+@section Permissions
+
+@xref{File Permissions}, for information on how file permissions are
+structured and how to specify them.
+
+@deffn Test -perm mode
+True if the
+file's permissions are exactly @var{mode} (which can be numeric or symbolic).
+Symbolic modes use mode 0 as a point of departure.
+If @var{mode} starts with @samp{-}, true if
+@emph{all} of the permissions set in @var{mode} are set for the file;
+permissions not set in @var{mode} are ignored.
+If @var{mode} starts with @samp{+}, true if
+@emph{any} of the permissions set in @var{mode} are set for the file;
+permissions not set in @var{mode} are ignored.
+@end deffn
+
+@node Contents
+@section Contents
+
+To search for files based on their contents, you can use the @code{grep}
+program.  For example, to find out which C source files in the current
+directory contain the string @samp{thing}, you can do:
+
+@example
+grep -l thing *.[ch]
+@end example
+
+If you also want to search for the string in files in subdirectories,
+you can combine @code{grep} with @code{find} and @code{xargs}, like
+this:
+
+@example
+find . -name '*.[ch]' | xargs grep -l thing
+@end example
+
+The @samp{-l} option causes @code{grep} to print only the names of files
+that contain the string, rather than the lines that contain it.  The
+string argument (@samp{thing}) is actually a regular expression, so it
+can contain metacharacters.  This method can be refined a little by
+using the @samp{-r} option to make @code{xargs} not run @code{grep} if
+@code{find} produces no output, and using the @code{find} action
+@samp{-print0} and the @code{xargs} option @samp{-0} to avoid
+misinterpreting files whose names contain spaces:
+
+@example
+find . -name '*.[ch]' -print0 | xargs -r -0 grep -l thing
+@end example
+
+For a fuller treatment of finding files whose contents match a pattern,
+see the manual page for @code{grep}.
+
+@node Directories
+@section Directories
+
+Here is how to control which directories @code{find} searches, and how
+it searches them.  These two options allow you to process a horizontal
+slice of a directory tree.
+
+@deffn Option -maxdepth levels
+Descend at most @var{levels} (a non-negative integer) levels of
+directories below the command line arguments.  @samp{-maxdepth 0} means
+only apply the tests and actions to the command line arguments.
+@end deffn
+
+@deffn Option -mindepth levels
+Do not apply any tests or actions at levels less than @var{levels} (a
+non-negative integer).  @samp{-mindepth 1} means process all files
+except the command line arguments.
+@end deffn
+
+@deffn Option -depth
+Process each directory's contents before the directory itself.  Doing
+this is a good idea when producing lists of files to archive with
+@code{cpio} or @code{tar}.  If a directory does not have write
+permission for its owner, its contents can still be restored from the
+archive since the directory's permissions are restored after its contents.
+@end deffn
+
+@deffn Action -prune
+If @samp{-depth} is not given, true; do not descend the current
+directory.  If @samp{-depth} is given, false; no effect.  @samp{-prune}
+only affects tests and actions that come after it in the expression, not
+those that come before.
+
+For example, to skip the directory @file{src/emacs} and all files and
+directories under it, and print the names of the other files found:
+
+@example
+find . -path './src/emacs' -prune -o -print
+@end example
+@end deffn
+
+@deffn Option -noleaf
+Do not optimize by assuming that directories contain 2 fewer
+subdirectories than their hard link count.  This option is needed when
+searching filesystems that do not follow the Unix directory-link
+convention, such as CD-ROM or MS-DOS filesystems or AFS volume mount
+points.  Each directory on a normal Unix filesystem has at least 2 hard
+links: its name and its @file{.}  entry.  Additionally, its
+subdirectories (if any) each have a @file{..}  entry linked to that
+directory.  When @code{find} is examining a directory, after it has
+statted 2 fewer subdirectories than the directory's link count, it knows
+that the rest of the entries in the directory are non-directories
+(@dfn{leaf} files in the directory tree).  If only the files' names need
+to be examined, there is no need to stat them; this gives a significant
+increase in search speed.
+@end deffn
+
+@node Filesystems
+@section Filesystems
+
+A @dfn{filesystem} is a section of a disk, either on the local host or
+mounted from a remote host over a network.  Searching network
+filesystems can be slow, so it is common to make @code{find} avoid them.
+
+There are two ways to avoid searching certain filesystems.  One way is
+to tell @code{find} to only search one filesystem:
+
+@deffn Option -xdev
+@deffnx Option -mount
+Don't descend directories on other filesystems.  These options are synonyms.
+@end deffn
+
+The other way is to check the type of filesystem each file is on, and
+not descend directories that are on undesirable filesystem types:
+
+@deffn Test -fstype type
+True if the file is on a filesystem of type @var{type}.  The valid
+filesystem types vary among different versions of Unix; an incomplete
+list of filesystem types that are accepted on some version of Unix or
+another is:
+@example
+ufs 4.2 4.3 nfs tmp mfs S51K S52K
+@end example
+You can use @samp{-printf} with the @samp{%F} directive to see the types
+of your filesystems.  @xref{Print File Information}.  @samp{-fstype} is
+usually used with @samp{-prune} to avoid searching remote filesystems
+(@pxref{Directories}). 
+@end deffn
+
+@node Combining Primaries With Operators
+@section Combining Primaries With Operators
+
+Operators build a complex expression from tests and actions.
+The operators are, in order of decreasing precedence:
+
+@table @code
+@item @asis{( @var{expr} )}
+Force precedence.  True if @var{expr} is true.
+
+@item @asis{! @var{expr}}
+@itemx @asis{-not @var{expr}}
+True if @var{expr} is false.
+
+@item @asis{@var{expr1 expr2}}
+@itemx @asis{@var{expr1} -a @var{expr2}}
+@itemx @asis{@var{expr1} -and @var{expr2}}
+And; @var{expr2} is not evaluated if @var{expr1} is false.
+
+@item @asis{@var{expr1} -o @var{expr2}}
+@itemx @asis{@var{expr1} -or @var{expr2}}
+Or; @var{expr2} is not evaluated if @var{expr1} is true.
+
+@item @asis{@var{expr1} , @var{expr2}}
+List; both @var{expr1} and @var{expr2} are always evaluated.  True if
+@var{expr2} is true.  The value of @var{expr1} is discarded.  This
+operator lets you do multiple independent operations on one traversal,
+without depending on whether other operations succeeded.
+@end table
+
+@code{find} searches the directory tree rooted at each file name by
+evaluating the expression from left to right, according to the rules of
+precedence, until the outcome is known (the left hand side is false for
+@samp{-and}, true for @samp{-or}), at which point @code{find} moves on
+to the next file name.
+
+There are two other tests that can be useful in complex expressions:
+
+@deffn Test -true
+Always true.
+@end deffn
+
+@deffn Test -false
+Always false.
+@end deffn
+
+@node Actions, Common Tasks, Finding Files, Top
+@chapter Actions
+
+There are several ways you can print information about the files that
+match the criteria you gave in the @code{find} expression.  You can
+print the information either to the standard output or to a file that
+you name.  You can also execute commands that have the file names as
+arguments.  You can use those commands as further filters to select files.
+
+@menu
+* Print File Name::
+* Print File Information::
+* Run Commands::
+* Adding Tests::
+@end menu
+
+@node Print File Name
+@section Print File Name
+
+@deffn Action -print
+True; print the full file name on the standard output, followed by a
+newline.
+@end deffn
+
+@deffn Action -fprint file
+True; print the full file name into file @var{file}, followed by a
+newline.  If @var{file} does not exist when @code{find} is run, it is
+created; if it does exist, it is truncated to 0 bytes.  The file names
+@file{/dev/stdout} and @file{/dev/stderr} are handled specially; they
+refer to the standard output and standard error output, respectively.
+@end deffn
+
+@node Print File Information
+@section Print File Information
+
+@deffn Action -ls
+True; list the current file in @samp{ls -dils} format on the standard
+output.  The output looks like this:
+
+@smallexample
+204744   17 -rw-r--r--   1 djm      staff       17337 Nov  2  1992 ./lwall-quotes
+@end smallexample
+
+The fields are:
+
+@enumerate
+@item
+The inode number of the file.  @xref{Hard Links}, for how to find files
+based on their inode number.
+
+@item
+the number of blocks in the file.  The block counts are of 1K blocks,
+unless the environment variable @code{POSIXLY_CORRECT} is set, in which
+case 512-byte blocks are used.  @xref{Size}, for how to find files based
+on their size.
+
+@item
+The file's type and permissions.  The type is shown as a dash for a
+regular file; for other file types, a letter like for @samp{-type} is
+used (@pxref{Type}).  The permissions are read, write, and execute for
+the file's owner, its group, and other users, respectively; a dash means
+the permission is not granted.  @xref{File Permissions}, for more details
+about file permissions.  @xref{Permissions}, for how to find files based
+on their permissions.
+
+@item
+The number of hard links to the file.
+
+@item
+The user who owns the file.
+
+@item
+The file's group.
+
+@item
+The file's size in bytes.
+
+@item
+The date the file was last modified.
+
+@item
+The file's name.  @samp{-ls} quotes non-printable characters in the file
+names using C-like backslash escapes.
+@end enumerate
+@end deffn
+
+@deffn Action -fls file
+True; like @samp{-ls} but write to @var{file} like @samp{-fprint}
+(@pxref{Print File Name}).
+@end deffn
+
+@deffn Action -printf format
+True; print @var{format} on the standard output, interpreting @samp{\}
+escapes and @samp{%} directives.  Field widths and precisions can be
+specified as with the @code{printf} C function.  Unlike @samp{-print},
+@samp{-printf} does not add a newline at the end of the string.
+@end deffn
+
+@deffn Action -fprintf file format
+True; like @samp{-printf} but write to @var{file} like @samp{-fprint}
+(@pxref{Print File Name}).
+@end deffn
+
+@menu
+* Escapes::
+* Format Directives::
+* Time Formats::
+@end menu
+
+@node Escapes
+@subsection Escapes
+
+The escapes that @samp{-printf} and @samp{-fprintf} recognize are:
+
+@table @code
+@item \a
+Alarm bell.
+@item \b
+Backspace.
+@item \c
+Stop printing from this format immediately and flush the output.
+@item \f
+Form feed.
+@item \n
+Newline.
+@item \r
+Carriage return.
+@item \t
+Horizontal tab.
+@item \v
+Vertical tab.
+@item \\
+A literal backslash (@samp{\}).
+@end table
+
+A @samp{\} character followed by any other character is treated as an
+ordinary character, so they both are printed, and a warning message is
+printed to the standard error output (because it was probably a typo).
+
+@node Format Directives
+@subsection Format Directives
+
+@samp{-printf} and @samp{-fprintf} support the following format
+directives to print information about the file being processed.  Unlike
+the C @code{printf} function, they do not support field width specifiers.
+
+@samp{%%} is a literal percent sign.  A @samp{%} character followed by
+any other character is discarded (but the other character is printed),
+and a warning message is printed to the standard error output (because
+it was probably a typo).
+
+@menu
+* Name Directives::
+* Ownership Directives::
+* Size Directives::
+* Location Directives::
+* Time Directives::
+@end menu
+
+@node Name Directives
+@subsubsection Name Directives
+
+@table @code
+@item %p
+File's name.
+@item %f
+File's name with any leading directories removed (only the last element).
+@item %h
+Leading directories of file's name (all but the last element and the
+slash before it).
+@item %P
+File's name with the name of the command line argument under which
+it was found removed from the beginning.
+@item %H
+Command line argument under which file was found.
+@end table
+
+@node Ownership Directives
+@subsubsection Ownership Directives
+
+@table @code
+@item %g
+File's group name, or numeric group ID if the group has no name.
+@item %G
+File's numeric group ID.
+@item %u
+File's user name, or numeric user ID if the user has no name.
+@item %U
+File's numeric user ID.
+@item %m
+File's permissions (in octal).
+@end table
+
+@node Size Directives
+@subsubsection Size Directives
+
+@table @code
+@item %k
+File's size in 1K blocks (rounded up).
+@item %b
+File's size in 512-byte blocks (rounded up).
+@item %s
+File's size in bytes.
+@end table
+
+@node Location Directives
+@subsubsection Location Directives
+
+@table @code
+@item %d
+File's depth in the directory tree; files named on the command line
+have a depth of 0.
+@item %F
+Type of the filesystem the file is on; this value can be used for
+@samp{-fstype} (@pxref{Directories}).
+@item %l
+Object of symbolic link (empty string if file is not a symbolic link).
+@item %i
+File's inode number (in decimal).
+@item %n
+Number of hard links to file.
+@end table
+
+@node Time Directives
+@subsubsection Time Directives
+
+Some of these directives use the C @code{ctime} function.  Its output
+depends on the current locale, but it typically looks like
+
+@example
+Wed Nov  2 00:42:36 1994
+@end example
+
+@table @code
+@item %a
+File's last access time in the format returned by the C @code{ctime} function.
+@item %A@var{k}
+File's last access time in the format specified by @var{k}
+(@pxref{Time Formats}). 
+@item %c
+File's last status change time in the format returned by the C @code{ctime}
+function.
+@item %C@var{k}
+File's last status change time in the format specified by @var{k}
+(@pxref{Time Formats}).
+@item %t
+File's last modification time in the format returned by the C @code{ctime}
+function.
+@item %T@var{k}
+File's last modification time in the format specified by @var{k} 
+(@pxref{Time Formats}). 
+@end table
+
+@node Time Formats
+@subsection Time Formats
+
+Below are the formats for the directives @samp{%A}, @samp{%C}, and
+@samp{%T}, which print the file's timestamps.  Some of these formats
+might not be available on all systems, due to differences in the C
+@code{strftime} function between systems.
+
+@menu
+* Time Components::
+* Date Components::
+* Combined Time Formats::
+@end menu
+
+@node Time Components
+@subsubsection Time Components
+
+The following format directives print single components of the time.
+
+@table @code
+@item H
+hour (00..23)
+@item I
+hour (01..12)
+@item k
+hour ( 0..23)
+@item l
+hour ( 1..12)
+@item p
+locale's AM or PM
+@item Z
+time zone (e.g., EDT), or nothing if no time zone is determinable
+@item M
+minute (00..59)
+@item S
+second (00..61)
+@item @@
+seconds since Jan. 1, 1970, 00:00 GMT.
+@end table
+
+@node Date Components
+@subsubsection Date Components
+
+The following format directives print single components of the date.
+
+@table @code
+@item a
+locale's abbreviated weekday name (Sun..Sat)
+@item A
+locale's full weekday name, variable length (Sunday..Saturday)
+@item b
+@itemx h
+locale's abbreviated month name (Jan..Dec)
+@item B
+locale's full month name, variable length (January..December)
+@item m
+month (01..12)
+@item d
+day of month (01..31)
+@item w
+day of week (0..6)
+@item j
+day of year (001..366)
+@item U
+week number of year with Sunday as first day of week (00..53)
+@item W
+week number of year with Monday as first day of week (00..53)
+@item Y
+year (1970@dots{})
+@item y
+last two digits of year (00..99)
+@end table
+
+@node Combined Time Formats
+@subsubsection Combined Time Formats
+
+The following format directives print combinations of time and date
+components. 
+
+@table @code
+@item r
+time, 12-hour (hh:mm:ss [AP]M)
+@item T
+time, 24-hour (hh:mm:ss)
+@item X
+locale's time representation (H:M:S)
+@item c
+locale's date and time (Sat Nov 04 12:02:33 EST 1989)
+@item D
+date (mm/dd/yy)
+@item x
+locale's date representation (mm/dd/yy)
+@end table
+
+@node Run Commands
+@section Run Commands
+
+You can use the list of file names created by @code{find} or
+@code{locate} as arguments to other commands.  In this way you can
+perform arbitrary actions on the files.
+
+@menu
+* Single File::
+* Multiple Files::
+* Querying::
+@end menu
+
+@node Single File
+@subsection Single File
+
+Here is how to run a command on one file at a time.
+
+@deffn Action -exec command ;
+Execute @var{command}; true if 0 status is returned.  @code{find} takes
+all arguments after @samp{-exec} to be part of the command until an
+argument consisting of @samp{;} is reached.  It replaces the string
+@samp{@{@}} by the current file name being processed everywhere it
+occurs in the command.  Both of these constructions need to be escaped
+(with a @samp{\}) or quoted to protect them from expansion by the shell.
+The command is executed in the directory in which @code{find} was run.
+
+For example, to compare each C header file in the current directory with
+the file @file{/tmp/master}:
+
+@example
+find . -name '*.h' -exec diff -u '@{@}' /tmp/master ';'
+@end example
+@end deffn
+
+@node Multiple Files
+@subsection Multiple Files
+
+Sometimes you need to process files alone.  But when you
+don't, it is faster to run a command on as many files as possible at a
+time, rather than once per file.  Doing this saves on the time it takes
+to start up the command each time.
+
+To run a command on more than one file at once, use the @code{xargs}
+command, which is invoked like this:
+
+@example
+xargs @r{[}@var{option}@dots{}@r{]} @r{[}@var{command} @r{[}@var{initial-arguments}@r{]}@r{]}
+@end example
+
+@code{xargs} reads arguments from the standard input, delimited by
+blanks (which can be protected with double or single quotes or a
+backslash) or newlines.  It executes the @var{command} (default is
+@file{/bin/echo}) one or more times with any @var{initial-arguments}
+followed by arguments read from standard input.  Blank lines on the
+standard input are ignored.
+
+Instead of blank-delimited names, it is safer to use @samp{find -print0}
+or @samp{find -fprint0} and process the output by giving the @samp{-0}
+or @samp{--null} option to GNU @code{xargs}, GNU @code{tar}, GNU
+@code{cpio}, or @code{perl}.
+
+You can use shell command substitution (backquotes) to process a list of
+arguments, like this:
+
+@example
+grep -l sprintf `find $HOME -name '*.c' -print`
+@end example
+
+However, that method produces an error if the length of the @samp{.c}
+file names exceeds the operating system's command-line length limit.
+@code{xargs} avoids that problem by running the command as many times as
+necessary without exceeding the limit:
+
+@example
+find $HOME -name '*.c' -print | grep -l sprintf
+@end example
+
+However, if the command needs to have its standard input be a terminal
+(@code{less}, for example), you have to use the shell command
+substitution method.
+
+@menu
+* Unsafe File Name Handling::
+* Safe File Name Handling::
+* Limiting Command Size::
+* Interspersing File Names::
+@end menu
+
+@node Unsafe File Name Handling
+@subsubsection Unsafe File Name Handling
+
+Because file names can contain quotes, backslashes, blank characters,
+and even newlines, it is not safe to process them using @code{xargs} in its
+default mode of operation.  But since most files' names do not contain
+blanks, this problem occurs only infrequently.  If you are only
+searching through files that you know have safe names, then you need not
+be concerned about it.
+
+@c This example is adapted from:
+@c From: pfalstad@stone.Princeton.EDU (Paul John Falstad)
+@c Newsgroups: comp.unix.shell
+@c Subject: Re: Beware xargs security holes
+@c Date: 16 Oct 90 19:12:06 GMT
+@c 
+In many applications, if @code{xargs} botches processing a file because
+its name contains special characters, some data might be lost.  The
+importance of this problem depends on the importance of the data and
+whether anyone notices the loss soon enough to correct it.  However,
+here is an extreme example of the problems that using blank-delimited
+names can cause.  If the following command is run daily from
+@code{cron}, then any user can remove any file on the system:
+
+@example
+find / -name '#*' -atime +7 -print | xargs rm
+@end example
+
+For example, you could do something like this:
+
+@example
+eg$ echo > '#
+vmunix'
+@end example
+
+@noindent
+and then @code{cron} would delete @file{/vmunix}, if it ran
+@code{xargs} with @file{/} as its current directory.
+
+To delete other files, for example @file{/u/joeuser/.plan}, you could do
+this:
+
+@example
+eg$ mkdir '#
+'
+eg$ cd '#
+'
+eg$ mkdir u u/joeuser u/joeuser/.plan'
+'
+eg$ echo > u/joeuser/.plan'
+/#foo'
+eg$ cd ..
+eg$ find . -name '#*' -print | xargs echo
+./# ./# /u/joeuser/.plan /#foo
+@end example
+
+@node Safe File Name Handling
+@subsubsection Safe File Name Handling
+
+Here is how to make @code{find} output file names so that they can be
+used by other programs without being mangled or misinterpreted.  You can
+process file names generated this way by giving the @samp{-0} or
+@samp{--null} option to GNU @code{xargs}, GNU @code{tar}, GNU
+@code{cpio}, or @code{perl}.
+
+@deffn Action -print0
+True; print the full file name on the standard output, followed by a
+null character.
+@end deffn
+
+@deffn Action -fprint0 file
+True; like @samp{-print0} but write to @var{file} like @samp{-fprint}
+(@pxref{Print File Name}).
+@end deffn
+
+@node Limiting Command Size
+@subsubsection Limiting Command Size
+
+@code{xargs} gives you control over how many arguments it passes to the
+command each time it executes it.  By default, it uses up to
+@code{ARG_MAX} - 2k, or 20k, whichever is smaller, characters per
+command.  It uses as many lines and arguments as fit within that limit.
+The following options modify those values.
+
+@table @code
+@item --no-run-if-empty
+@itemx -r
+If the standard input does not contain any nonblanks, do not run the
+command.  By default, the command is run once even if there is no input.
+
+@item --max-lines@r{[}=@var{max-lines}@r{]}
+@itemx -l@r{[}@var{max-lines}@r{]}
+Use at most @var{max-lines} nonblank input lines per command line;
+@var{max-lines} defaults to 1 if omitted.  Trailing blanks cause an
+input line to be logically continued on the next input line, for the
+purpose of counting the lines.  Implies @samp{-x}.
+
+@item --max-args=@var{max-args}
+@itemx -n @var{max-args}
+Use at most @var{max-args} arguments per command line.  Fewer than
+@var{max-args} arguments will be used if the size (see the @samp{-s}
+option) is exceeded, unless the @samp{-x} option is given, in which case
+@code{xargs} will exit.
+
+@item --max-chars=@var{max-chars}
+@itemx -s @var{max-chars}
+Use at most @var{max-chars} characters per command line, including the
+command and initial arguments and the terminating nulls at the ends of
+the argument strings.
+
+@item --max-procs=@var{max-procs}
+@itemx -P @var{max-procs}
+Run up to @var{max-procs} processes at a time; the default is 1.  If
+@var{max-procs} is 0, @code{xargs} will run as many processes as
+possible at a time.  Use the @samp{-n}, @samp{-s}, or @samp{-l} option
+with @samp{-P}; otherwise chances are that the command will be run only
+once.
+@end table
+
+@node Interspersing File Names
+@subsubsection Interspersing File Names
+
+@code{xargs} can insert the name of the file it is processing between
+arguments you give for the command.  Unless you also give options to
+limit the command size (@pxref{Limiting Command Size}), this mode of
+operation is equivalent to @samp{find -exec} (@pxref{Single File}).
+
+@table @code
+@item --replace@r{[}=@var{replace-str}@r{]}
+@itemx -i@r{[}@var{replace-str}@r{]}
+Replace occurences of @var{replace-str} in the initial arguments with
+names read from standard input.  Also, unquoted blanks do not terminate
+arguments.  If @var{replace-str} is omitted, it defaults to @samp{@{@}}
+(like for @samp{find -exec}).  Implies @samp{-x} and @samp{-l 1}.  As an
+example, to sort each file the @file{bills} directory, leaving the
+output in that file name with @file{.sorted} appended, you could do:
+
+@example
+find bills -type f | xargs -iXX sort -o XX.sorted XX
+@end example
+
+@noindent
+The equivalent command using @samp{find -exec} is:
+
+@example
+find bills -type f -exec sort -o '@{@}.sorted' '@{@}' ';'
+@end example
+@end table
+
+@node Querying
+@subsection Querying
+
+To ask the user whether to execute a command on a single file, you can
+use the @code{find} primary @samp{-ok} instead of @samp{-exec}:
+
+@deffn Action -ok command ;
+Like @samp{-exec} (@pxref{Single File}), but ask the user first (on
+the standard input); if the response does not start with @samp{y} or
+@samp{Y}, do not run the command, and return false.
+@end deffn
+
+When processing multiple files with a single command, to query the user
+you give @code{xargs} the following option.  When using this option, you
+might find it useful to control the number of files processed per
+invocation of the command (@pxref{Limiting Command Size}).
+
+@table @code
+@item --interactive
+@itemx -p
+Prompt the user about whether to run each command line and read a line
+from the terminal.  Only run the command line if the response starts
+with @samp{y} or @samp{Y}.  Implies @samp{-t}.
+@end table
+
+@node Adding Tests
+@section Adding Tests
+
+You can test for file attributes that none of the @code{find} builtin
+tests check.  To do this, use @code{xargs} to run a program that filters
+a list of files printed by @code{find}.  If possible, use @code{find}
+builtin tests to pare down the list, so the program run by @code{xargs}
+has less work to do.  The tests builtin to @code{find} will likely run
+faster than tests that other programs perform.
+
+For example, here is a way to print the names of all of the unstripped
+binaries in the @file{/usr/local} directory tree.  Builtin tests avoid
+running @code{file} on files that are not regular files or are not
+executable.
+
+@example
+find /usr/local -type f -perm +a=x | xargs file | 
+  grep 'not stripped' | cut -d: -f1
+@end example
+
+@noindent
+The @code{cut} program removes everything after the file name from the
+output of @code{file}.
+
+@c Idea from Martin Weitzel.
+If you want to place a special test somewhere in the middle of a
+@code{find} expression, you can use @samp{-exec} to run a program that
+performs the test.  Because @samp{-exec} evaluates to the exit status of
+the executed program, you can write a program (which can be a shell
+script) that tests for a special attribute and make it exit with a true
+(zero) or false (non-zero) status.  It is a good idea to place such a
+special test @emph{after} the builtin tests, because it starts a new
+process which could be avoided if a builtin test evaluates to false.
+Use this method only when @code{xargs} is not flexible enough, because
+starting one or more new processes to test each file is slower than
+using @code{xargs} to start one process that tests many files.
+
+Here is a shell script called @code{unstripped} that checks whether its
+argument is an unstripped binary file:
+
+@example
+#!/bin/sh
+file $1 | grep 'not stripped' > /dev/null
+@end example
+
+This script relies on the fact that the shell exits with the status of
+the last program it executed, in this case @code{grep}.  @code{grep}
+exits with a true status if it found any matches, false if not.  Here is
+an example of using the script (assuming it is in your search path).  It
+lists the stripped executables in the file @file{sbins} and the
+unstripped ones in @file{ubins}.
+
+@example
+find /usr/local -type f -perm +a=x \
+  \( -exec unstripped '@{@}' \; -fprint ubins -o -fprint sbins \)
+@end example
+
+@node Common Tasks, Databases, Actions, Top
+@chapter Common Tasks
+
+The sections that follow contain some extended examples that both give a
+good idea of the power of these programs, and show you how to solve
+common real-world problems.
+
+@menu
+* Viewing And Editing::
+* Archiving::
+* Cleaning Up::
+* Strange File Names::
+* Fixing Permissions::
+* Classifying Files::
+@end menu
+
+@node Viewing And Editing
+@section Viewing And Editing
+
+To view a list of files that meet certain criteria, simply run your file
+viewing program with the file names as arguments.  Shells substitute a
+command enclosed in backquotes with its output, so the whole command
+looks like this:
+
+@example
+less `find /usr/include -name '*.h' | xargs grep -l mode_t`
+@end example
+
+@noindent
+You can edit those files by giving an editor name instead of a file
+viewing program.
+
+@node Archiving
+@section Archiving
+
+You can pass a list of files produced by @code{find} to a file archiving
+program.  GNU @code{tar} and @code{cpio} can both read lists of file
+names from the standard input---either delimited by nulls (the safe way)
+or by blanks (the lazy, risky default way).  To use null-delimited
+names, give them the @samp{--null} option.  You can store a file archive
+in a file, write it on a tape, or send it over a network to extract on
+another machine.
+
+One common use of @code{find} to archive files is to send a list of the
+files in a directory tree to @code{cpio}.  Use @samp{-depth} so if a
+directory does not have write permission for its owner, its contents can
+still be restored from the archive since the directory's permissions are
+restored after its contents.  Here is an example of doing this using
+@code{cpio}; you could use a more complex @code{find} expression to
+archive only certain files.
+
+@example
+find . -depth -print0 |
+  cpio --create --null --format=crc --file=/dev/nrst0
+@end example
+
+You could restore that archive using this command:
+
+@example
+cpio --extract --null --make-dir --unconditional \
+  --preserve --file=/dev/nrst0
+@end example
+
+Here are the commands to do the same things using @code{tar}:
+
+@example
+find . -depth -print0 |
+  tar --create --null --files-from=- --file=/dev/nrst0
+
+tar --extract --null --preserve-perm --same-owner \
+  --file=/dev/nrst0
+@end example
+
+@c Idea from Rick Sladkey.
+Here is an example of copying a directory from one machine to another:
+
+@example
+find . -depth -print0 | cpio -0o -Hnewc |
+  rsh @var{other-machine} "cd `pwd` && cpio -i0dum"
+@end example
+
+@node Cleaning Up
+@section Cleaning Up
+
+@c Idea from Jim Meyering.
+This section gives examples of removing unwanted files in various situations.
+Here is a command to remove the CVS backup files created when an update
+requires a merge:
+
+@example
+find . -name '.#*' -print0 | xargs -0r rm -f
+@end example
+
+@c Idea from Franc,ois Pinard.
+You can run this command to clean out your clutter in @file{/tmp}.  You
+might place it in the file your shell runs when you log out
+(@file{.bash_logout}, @file{.logout}, or @file{.zlogout}, depending on
+which shell you use).
+
+@example
+find /tmp -user $LOGNAME -type f -print0 | xargs -0 -r rm -f
+@end example
+
+@c Idea from Noah Friedman.
+To remove old Emacs backup and auto-save files, you can use a command
+like the following.  It is especially important in this case to use
+null-terminated file names because Emacs packages like the VM mailer
+often create temporary file names with spaces in them, like @file{#reply
+to David J. MacKenzie<1>#}.
+
+@example
+find ~ \( -name '*~' -o -name '#*#' \) -print0 |
+  xargs --no-run-if-empty --null rm -vf
+@end example
+
+Removing old files from @file{/tmp} is commonly done from @code{cron}:
+
+@c Idea from Kaveh Ghazi.
+@example
+find /tmp /var/tmp -not -type d -mtime +3 -print0 |
+  xargs --null --no-run-if-empty rm -f
+
+find /tmp /var/tmp -depth -mindepth 1 -type d -empty -print0 |
+  xargs --null --no-run-if-empty rmdir
+@end example
+
+The second @code{find} command above uses @samp{-depth} so it cleans out
+empty directories depth-first, hoping that the parents become empty and
+can be removed too.  It uses @samp{-mindepth} to avoid removing
+@file{/tmp} itself if it becomes totally empty.
+
+@node Strange File Names
+@section Strange File Names
+
+@c Idea from:
+@c From: tmatimar@isgtec.com (Ted Timar)
+@c Newsgroups: comp.unix.questions,comp.unix.shell,comp.answers,news.answers
+@c Subject: Unix - Frequently Asked Questions (2/7) [Frequent posting]
+@c Subject: How do I remove a file with funny characters in the filename ?
+@c Date: Thu Mar 18 17:16:55 EST 1993
+@code{find} can help you remove or rename a file with strange characters
+in its name.  People are sometimes stymied by files whose names contain
+characters such as spaces, tabs, control characters, or characters with
+the high bit set.  The simplest way to remove such files is:
+
+@example
+rm -i @var{some*pattern*that*matches*the*problem*file}
+@end example
+
+@code{rm} asks you whether to remove each file matching the given
+pattern.  If you are using an old shell, this approach might not work if
+the file name contains a character with the high bit set; the shell may
+strip it off.  A more reliable way is:
+
+@example
+find . -maxdepth 1 @var{tests} -ok rm '@{@}' \;
+@end example
+
+@noindent
+where @var{tests} uniquely identify the file.  The @samp{-maxdepth 1}
+option prevents @code{find} from wasting time searching for the file in
+any subdirectories; if there are no subdirectories, you may omit it.  A
+good way to uniquely identify the problem file is to figure out its
+inode number; use
+
+@example
+ls -i
+@end example
+
+Suppose you have a file whose name contains control characters, and you
+have found that its inode number is 12345.  This command prompts you for
+whether to remove it:
+
+@example
+find . -maxdepth 1 -inum 12345 -ok rm -f '@{@}' \;
+@end example
+
+If you don't want to be asked, perhaps because the file name may contain
+a strange character sequence that will mess up your screen when printed,
+then use @samp{-exec} instead of @samp{-ok}.
+
+If you want to rename the file instead, you can use @code{mv} instead of
+@code{rm}:
+
+@example
+find . -maxdepth 1 -inum 12345 -ok mv '@{@}' @var{new-file-name} \;
+@end example
+
+@node Fixing Permissions
+@section Fixing Permissions
+
+Suppose you want to make sure that everyone can write to the directories in a
+certain directory tree.  Here is a way to find directories lacking either
+user or group write permission (or both), and fix their permissions:
+
+@example
+find . -type d -not -perm -ug=w | xargs chmod ug+w
+@end example
+
+@noindent
+You could also reverse the operations, if you want to make sure that
+directories do @emph{not} have world write permission.
+
+@node Classifying Files
+@section Classifying Files
+
+@c Idea from:
+@c From: martin@mwtech.UUCP (Martin Weitzel)
+@c Newsgroups: comp.unix.wizards,comp.unix.questions
+@c Subject: Advanced usage of 'find' (Re: Unix security automating script)
+@c Date: 22 Mar 90 15:05:19 GMT
+If you want to classify a set of files into several groups based on
+different criteria, you can use the comma operator to perform multiple
+independent tests on the files.  Here is an example:
+
+@example
+find / -type d \( -perm -o=w -fprint allwrite , \
+  -perm -o=x -fprint allexec \)
+
+echo "Directories that can be written to by everyone:"
+cat allwrite
+echo ""
+echo "Directories with search permissions for everyone:"
+cat allexec
+@end example
+
+@code{find} has only to make one scan through the directory tree (which
+is one of the most time consuming parts of its work).
+
+@node Databases, File Permissions, Common Tasks, Top
+@chapter File Name Databases
+
+The file name databases used by @code{locate} contain lists of files
+that were in particular directory trees when the databases were last
+updated.  The file name of the default database is determined when
+@code{locate} and @code{updatedb} are configured and installed.  The
+frequency with which the databases are updated and the directories for
+which they contain entries depend on how often @code{updatedb} is run,
+and with which arguments.
+
+@menu
+* Database Locations::
+* Database Formats::
+@end menu
+
+@node Database Locations
+@section Database Locations
+
+There can be multiple file name databases.  Users can select which
+databases @code{locate} searches using an environment variable or a
+command line option.  The system administrator can choose the file name
+of the default database, the frequency with which the databases are
+updated, and the directories for which they contain entries.  File name
+databases are updated by running the @code{updatedb} program, typically
+nightly.
+
+In networked environments, it often makes sense to build a database at
+the root of each filesystem, containing the entries for that filesystem.
+@code{updatedb} is then run for each filesystem on the fileserver where
+that filesystem is on a local disk, to prevent thrashing the network.
+Here are the options to @code{updatedb} to select which directories each
+database contains entries for:
+
+@table @code
+@item --localpaths='@var{path}@dots{}'
+Non-network directories to put in the database.
+Default is @file{/}.
+
+@item --netpaths='@var{path}@dots{}'
+Network (NFS, AFS, RFS, etc.) directories to put in the database.
+Default is none.
+
+@item --prunepaths='@var{path}@dots{}'
+Directories to not put in the database, which would otherwise be.
+Default is @file{/tmp /usr/tmp /var/tmp /afs}.
+
+@item --output=@var{dbfile}
+The database file to build.
+Default is system-dependent, but typically @file{/usr/local/var/locatedb}.
+
+@item --netuser=@var{user}
+The user to search network directories as, using @code{su}.
+Default is @code{daemon}.
+@end table
+
+@node Database Formats
+@section Database Formats
+
+The file name databases contain lists of files that were in particular
+directory trees when the databases were last updated.  The file name
+database format changed starting with GNU @code{locate} version 4.0 to
+allow machines with diffent byte orderings to share the databases.  The
+new GNU @code{locate} can read both the old and new database formats.
+However, old versions of @code{locate} and @code{find} produce incorrect
+results if given a new-format database.
+
+@menu
+* New Database Format::
+* Sample Database::
+* Old Database Format::
+@end menu
+
+@node New Database Format
+@subsection New Database Format
+
+@code{updatedb} runs a program called @code{frcode} to
+@dfn{front-compress} the list of file names, which reduces the database
+size by a factor of 4 to 5.  Front-compression (also known as
+incremental encoding) works as follows.
+
+The database entries are a sorted list (case-insensitively, for users'
+convenience).  Since the list is sorted, each entry is likely to share a
+prefix (initial string) with the previous entry.  Each database entry
+begins with an offset-differential count byte, which is the additional
+number of characters of prefix of the preceding entry to use beyond the
+number that the preceding entry is using of its predecessor.  (The
+counts can be negative.)  Following the count is a null-terminated ASCII
+remainder---the part of the name that follows the shared prefix.
+
+If the offset-differential count is larger than can be stored in a byte
+(+/-127), the byte has the value 0x80 and the count follows in a 2-byte
+word, with the high byte first (network byte order).
+
+Every database begins with a dummy entry for a file called
+@file{LOCATE02}, which @code{locate} checks for to ensure that the
+database file has the correct format; it ignores the entry in doing the
+search.
+
+Databases can not be concatenated together, even if the first (dummy)
+entry is trimmed from all but the first database.  This is because the
+offset-differential count in the first entry of the second and following
+databases will be wrong.
+
+@node Sample Database
+@subsection Sample Database
+
+Sample input to @code{frcode}:
+@c with nulls changed to newlines:
+
+@example
+/usr/src
+/usr/src/cmd/aardvark.c
+/usr/src/cmd/armadillo.c
+/usr/tmp/zoo
+@end example
+
+Length of the longest prefix of the preceding entry to share:
+
+@example
+0 /usr/src
+8 /cmd/aardvark.c
+14 rmadillo.c
+5 tmp/zoo
+@end example
+
+Output from @code{frcode}, with trailing nulls changed to newlines
+and count bytes made printable:
+
+@example
+0 LOCATE02
+0 /usr/src
+8 /cmd/aardvark.c
+6 rmadillo.c
+-9 tmp/zoo
+@end example
+
+(6 = 14 - 8, and -9 = 5 - 14)
+
+@node Old Database Format
+@subsection Old Database Format
+
+The old database format is used by Unix @code{locate} and @code{find}
+programs and earlier releases of the GNU ones.  @code{updatedb} produces
+this format if given the @samp{--old-format} option.
+
+@code{updatedb} runs programs called @code{bigram} and @code{code} to
+produce old-format databases.  The old format differs from the new one
+in the following ways.  Instead of each entry starting with an
+offset-differential count byte and ending with a null, byte values from
+0 through 28 indicate offset-differential counts from -14 through 14.
+The byte value indicating that a long offset-differential count follows
+is 0x1e (30), not 0x80.  The long counts are stored in host byte order,
+which is not necessarily network byte order, and host integer word size,
+which is usually 4 bytes.  They also represent a count 14 less than
+their value.  The database lines have no termination byte; the start of
+the next line is indicated by its first byte having a value <= 30.
+
+In addition, instead of starting with a dummy entry, the old database
+format starts with a 256 byte table containing the 128 most common
+bigrams in the file list.  A bigram is a pair of adjacent bytes.  Bytes
+in the database that have the high bit set are indexes (with the high
+bit cleared) into the bigram table.  The bigram and offset-differential
+count coding makes these databases 20-25% smaller than the new format,
+but makes them not 8-bit clean.  Any byte in a file name that is in the
+ranges used for the special codes is replaced in the database by a
+question mark, which not coincidentally is the shell wildcard to match a
+single character.
+
+@node File Permissions, Reference, Databases, Top
+@chapter File Permissions
+
+@include perm.texi
+
+@node Reference, Primary Index, File Permissions, Top
+@chapter Reference
+
+Below are summaries of the command line syntax for the programs
+discussed in this manual.
+
+@menu
+* Invoking find::
+* Invoking locate::
+* Invoking updatedb::
+* Invoking xargs::
+@end menu
+
+@node Invoking find, Invoking locate, , Reference
+@section Invoking @code{find}
+
+@example
+find @r{[}@var{file}@dots{}@r{]} @r{[}@var{expression}@r{]}
+@end example
+
+@code{find} searches the directory tree rooted at each file name
+@var{file} by evaluating the @var{expression} on each file it finds in
+the tree.
+
+@code{find} considers the first argument that begins with @samp{-},
+@samp{(}, @samp{)}, @samp{,}, or @samp{!} to be the beginning of the
+expression; any arguments before it are paths to search, and any
+arguments after it are the rest of the expression.  If no paths are
+given, the current directory is used.  If no expression is given, the
+expression @samp{-print} is used.
+
+@code{find} exits with status 0 if all files are processed successfully,
+greater than 0 if errors occur.
+
+@xref{Primary Index}, for a summary of all of the tests, actions, and
+options that the expression can contain.
+
+@code{find} also recognizes two options for administrative use:
+
+@table @code
+@item --help
+Print a summary of the command-line argument format and exit.
+@item --version
+Print the version number of @code{find} and exit.
+@end table
+
+@node Invoking locate, Invoking updatedb, Invoking find, Reference
+@section Invoking @code{locate}
+
+@example
+locate @r{[}@var{option}@dots{}@r{]} @var{pattern}@dots{}
+@end example
+
+@table @code
+@item --database=@var{path}
+@itemx -d @var{path}
+Instead of searching the default file name database, search the file
+name databases in @var{path}, which is a colon-separated list of
+database file names.  You can also use the environment variable
+@code{LOCATE_PATH} to set the list of database files to search.  The
+option overrides the environment variable if both are used.
+
+@item --help
+Print a summary of the options to @code{locate} and exit.
+
+@item --version
+Print the version number of @code{locate} and exit.
+@end table
+
+@node Invoking updatedb, Invoking xargs, Invoking locate, Reference
+@section Invoking @code{updatedb}
+
+@example
+updatedb @r{[}@var{option}@dots{}@r{]}
+@end example
+
+@table @code
+@item --localpaths='@var{path}@dots{}'
+Non-network directories to put in the database.
+Default is @file{/}.
+
+@item --netpaths='@var{path}@dots{}'
+Network (NFS, AFS, RFS, etc.) directories to put in the database.
+Default is none.
+
+@item --prunepaths='@var{path}@dots{}'
+Directories to not put in the database, which would otherwise be.
+Default is @file{/tmp /usr/tmp /var/tmp /afs}.
+
+@item --output=@var{dbfile}
+The database file to build.
+Default is system-dependent, but typically @file{/usr/local/var/locatedb}.
+
+@item --netuser=@var{user}
+The user to search network directories as, using @code{su}(1).
+Default is @code{daemon}.
+@end table
+
+@node Invoking xargs, ,  Invoking updatedb, Reference
+@section Invoking @code{xargs}
+
+@example
+xargs @r{[}@var{option}@dots{}@r{]} @r{[}@var{command} @r{[}@var{initial-arguments}@r{]}@r{]}
+@end example
+
+@code{xargs} exits with the following status:
+
+@table @asis
+@item 0
+if it succeeds
+@item 123
+if any invocation of the command exited with status 1-125
+@item 124
+if the command exited with status 255
+@item 125
+if the command is killed by a signal
+@item 126
+if the command cannot be run
+@item 127
+if the command is not found
+@item 1
+if some other error occurred.
+@end table
+
+@table @code
+@item --null
+@itemx -0
+Input filenames are terminated by a null character instead of by
+whitespace, and the quotes and backslash are not special (every
+character is taken literally).  Disables the end of file string, which
+is treated like any other argument.
+
+@item --eof@r{[}=@var{eof-str}@r{]}
+@itemx -e@r{[}@var{eof-str}@r{]}
+Set the end of file string to @var{eof-str}.  If the end of file string
+occurs as a line of input, the rest of the input is ignored.  If
+@var{eof-str} is omitted, there is no end of file string.  If this
+option is not given, the end of file string defaults to @samp{_}.
+
+@item --help
+Print a summary of the options to @code{xargs} and exit.
+
+@item --replace@r{[}=@var{replace-str}@r{]}
+@itemx -i@r{[}@var{replace-str}@r{]}
+Replace occurences of @var{replace-str} in the initial arguments with
+names read from standard input.  Also, unquoted blanks do not terminate
+arguments.  If @var{replace-str} is omitted, it defaults to @samp{@{@}}
+(like for @samp{find -exec}).  Implies @samp{-x} and @samp{-l 1}.
+
+@item --max-lines@r{[}=@var{max-lines}@r{]}
+@itemx -l@r{[}@var{max-lines}@r{]}
+Use at most @var{max-lines} nonblank input lines per command line;
+@var{max-lines} defaults to 1 if omitted.  Trailing blanks cause an
+input line to be logically continued on the next input line, for the
+purpose of counting the lines.  Implies @samp{-x}.
+
+@item --max-args=@var{max-args}
+@itemx -n @var{max-args}
+Use at most @var{max-args} arguments per command line.  Fewer than
+@var{max-args} arguments will be used if the size (see the @samp{-s}
+option) is exceeded, unless the @samp{-x} option is given, in which case
+@code{xargs} will exit.
+
+@item --interactive
+@itemx -p
+Prompt the user about whether to run each command line and read a line
+from the terminal.  Only run the command line if the response starts
+with @samp{y} or @samp{Y}.  Implies @samp{-t}.
+
+@item --no-run-if-empty
+@itemx -r
+If the standard input does not contain any nonblanks, do not run the
+command.  By default, the command is run once even if there is no input.
+
+@item --max-chars=@var{max-chars}
+@itemx -s @var{max-chars}
+Use at most @var{max-chars} characters per command line, including the
+command and initial arguments and the terminating nulls at the ends of
+the argument strings.
+
+@item --verbose
+@itemx -t
+Print the command line on the standard error output before executing
+it.
+
+@item --version
+Print the version number of @code{xargs} and exit.
+
+@item --exit
+@itemx -x
+Exit if the size (see the @var{-s} option) is exceeded.
+
+@item --max-procs=@var{max-procs}
+@itemx -P @var{max-procs}
+Run up to @var{max-procs} processes at a time; the default is 1.  If
+@var{max-procs} is 0, @code{xargs} will run as many processes as
+possible at a time.
+@end table
+
+@node Primary Index, , Reference, Top
+@unnumbered @code{find} Primary Index
+
+This is a list of all of the primaries (tests, actions, and options)
+that make up @code{find} expressions for selecting files.  @xref{find
+Expressions}, for more information on expressions.
+
+@printindex fn
+
+@contents
+@bye

@@ -1,0 +1,129 @@
+ls.o : \
+ ls.c ../config.h /include/sys/types.h /include/features.h \
+ /include/sys/cdefs.h /include/gnu/stubs.h /include/bits/types.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h \
+ /include/bits/pthreadtypes.h /include/time.h /include/endian.h \
+ /include/bits/endian.h /include/sys/select.h /include/bits/select.h \
+ /include/bits/sigset.h /include/sys/sysmacros.h /include/inttypes.h \
+ /include/stdint.h /include/bits/wordsize.h /include/termios.h \
+ /include/bits/termios.h /ainc/posix/termios.h /ainc/posix/termbits.h \
+ /ainc/posix/types.h /ainc/posix/ioctls.h /ainc/posix/ioctl.h \
+ /include/sys/ttydefaults.h /include/stdio.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stdarg.h \
+ /include/libio.h /include/_G_config.h /include/bits/stdio_lim.h \
+ /include/bits/stdio.h /include/assert.h /include/grp.h /include/pwd.h \
+ ../lib/getopt.h /include/stdlib.h /include/xlocale.h \
+ /include/alloca.h /include/wchar.h /include/wctype.h system.h \
+ /include/sys/stat.h /include/bits/stat.h /ainc/posix/stat.h \
+ /include/sys/param.h /include/limits.h /include/bits/posix1_lim.h \
+ /include/bits/local_lim.h /ainc/posix/limits.h \
+ /include/bits/posix2_lim.h /include/bits/xopen_lim.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/limits.h \
+ /ainc/posix/param.h /include/unistd.h /include/bits/posix_opt.h \
+ /include/bits/environments.h /include/bits/confname.h \
+ ../lib/pathmax.h /include/sys/time.h /include/bits/time.h \
+ /ainc/posix/time.h /include/utime.h /include/string.h \
+ /include/bits/string.h /include/bits/string2.h /include/errno.h \
+ /include/bits/errno.h /ainc/posix/errno.h /include/fcntl.h \
+ /include/bits/fcntl.h /ainc/posix/fcntl.h /include/dirent.h \
+ /include/bits/dirent.h /ainc/posix/dirent.h sys2.h /include/ctype.h \
+ /include/locale.h ../intl/libintl.h ../lib/xalloc.h ../lib/closeout.h \
+ ../lib/version-etc.h ../lib/fnmatch.h ../lib/argmatch.h \
+ ../lib/error.h ../lib/human.h ../lib/filemode.h ls.h \
+ ../lib/mbswidth.h ../lib/obstack.h ../lib/path-concat.h \
+ ../lib/quotearg.h ../lib/strverscmp.h ../lib/xstrtol.h
+ls.c :
+../config.h :
+/include/sys/types.h :
+/include/features.h :
+/include/sys/cdefs.h :
+/include/gnu/stubs.h :
+/include/bits/types.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h :
+/include/bits/pthreadtypes.h :
+/include/time.h :
+/include/endian.h :
+/include/bits/endian.h :
+/include/sys/select.h :
+/include/bits/select.h :
+/include/bits/sigset.h :
+/include/sys/sysmacros.h :
+/include/inttypes.h :
+/include/stdint.h :
+/include/bits/wordsize.h :
+/include/termios.h :
+/include/bits/termios.h :
+/ainc/posix/termios.h :
+/ainc/posix/termbits.h :
+/ainc/posix/types.h :
+/ainc/posix/ioctls.h :
+/ainc/posix/ioctl.h :
+/include/sys/ttydefaults.h :
+/include/stdio.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stdarg.h :
+/include/libio.h :
+/include/_G_config.h :
+/include/bits/stdio_lim.h :
+/include/bits/stdio.h :
+/include/assert.h :
+/include/grp.h :
+/include/pwd.h :
+../lib/getopt.h :
+/include/stdlib.h :
+/include/xlocale.h :
+/include/alloca.h :
+/include/wchar.h :
+/include/wctype.h :
+system.h :
+/include/sys/stat.h :
+/include/bits/stat.h :
+/ainc/posix/stat.h :
+/include/sys/param.h :
+/include/limits.h :
+/include/bits/posix1_lim.h :
+/include/bits/local_lim.h :
+/ainc/posix/limits.h :
+/include/bits/posix2_lim.h :
+/include/bits/xopen_lim.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/limits.h :
+/ainc/posix/param.h :
+/include/unistd.h :
+/include/bits/posix_opt.h :
+/include/bits/environments.h :
+/include/bits/confname.h :
+../lib/pathmax.h :
+/include/sys/time.h :
+/include/bits/time.h :
+/ainc/posix/time.h :
+/include/utime.h :
+/include/string.h :
+/include/bits/string.h :
+/include/bits/string2.h :
+/include/errno.h :
+/include/bits/errno.h :
+/ainc/posix/errno.h :
+/include/fcntl.h :
+/include/bits/fcntl.h :
+/ainc/posix/fcntl.h :
+/include/dirent.h :
+/include/bits/dirent.h :
+/ainc/posix/dirent.h :
+sys2.h :
+/include/ctype.h :
+/include/locale.h :
+../intl/libintl.h :
+../lib/xalloc.h :
+../lib/closeout.h :
+../lib/version-etc.h :
+../lib/fnmatch.h :
+../lib/argmatch.h :
+../lib/error.h :
+../lib/human.h :
+../lib/filemode.h :
+ls.h :
+../lib/mbswidth.h :
+../lib/obstack.h :
+../lib/path-concat.h :
+../lib/quotearg.h :
+../lib/strverscmp.h :
+../lib/xstrtol.h :

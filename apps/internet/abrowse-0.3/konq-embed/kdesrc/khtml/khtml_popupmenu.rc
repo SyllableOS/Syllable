@@ -1,0 +1,17 @@
+<!DOCTYPE kpartgui SYSTEM "kpartgui.dtd"><kpartgui name="khtmlpart_popupmenu" version="4">
+<Menu name="popupmenu">
+ <Action name="reloadframe" group="reload" />
+ <Separator weakSeparator="1" />
+ <Action name="savelinkas" />
+ <Action name="saveimageas" />
+ <Separator weakSeparator="1" />
+ <Action name="selectAll" />
+ <Separator weakSeparator="1" />
+ <Action name="copylinklocation" />
+ <Action name="copyimagelocation" />
+ <Separator weakSeparator="1" />
+ <Action name="viewDocumentSource" />
+ <Action name="viewFrameSource" />
+ <Action name="setEncoding" />
+</Menu>
+</kpartgui>

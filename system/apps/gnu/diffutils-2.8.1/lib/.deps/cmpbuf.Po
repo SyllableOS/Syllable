@@ -1,0 +1,63 @@
+cmpbuf.o : \
+ cmpbuf.c ../config.h /include/errno.h /include/features.h \
+ /include/sys/cdefs.h /include/gnu/stubs.h /include/bits/errno.h \
+ /ainc/posix/errno.h /include/limits.h /include/bits/posix1_lim.h \
+ /include/bits/local_lim.h /ainc/posix/limits.h \
+ /include/bits/posix2_lim.h /include/bits/xopen_lim.h \
+ /include/bits/stdio_lim.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/limits.h \
+ /include/signal.h /include/bits/sigset.h /include/bits/types.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h \
+ /include/bits/pthreadtypes.h /include/bits/signum.h /include/time.h \
+ /include/bits/siginfo.h /include/bits/sigaction.h \
+ /include/bits/sigcontext.h /ainc/atheos/sigcontext.h \
+ /include/bits/sigstack.h /include/bits/sigthread.h /include/unistd.h \
+ /include/bits/posix_opt.h /include/bits/environments.h \
+ /include/bits/wordsize.h /include/bits/confname.h getopt.h \
+ /include/inttypes.h /include/stdint.h /include/sys/types.h \
+ /include/endian.h /include/bits/endian.h /include/sys/select.h \
+ /include/bits/select.h /include/sys/sysmacros.h cmpbuf.h
+cmpbuf.c :
+../config.h :
+/include/errno.h :
+/include/features.h :
+/include/sys/cdefs.h :
+/include/gnu/stubs.h :
+/include/bits/errno.h :
+/ainc/posix/errno.h :
+/include/limits.h :
+/include/bits/posix1_lim.h :
+/include/bits/local_lim.h :
+/ainc/posix/limits.h :
+/include/bits/posix2_lim.h :
+/include/bits/xopen_lim.h :
+/include/bits/stdio_lim.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/limits.h :
+/include/signal.h :
+/include/bits/sigset.h :
+/include/bits/types.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h :
+/include/bits/pthreadtypes.h :
+/include/bits/signum.h :
+/include/time.h :
+/include/bits/siginfo.h :
+/include/bits/sigaction.h :
+/include/bits/sigcontext.h :
+/ainc/atheos/sigcontext.h :
+/include/bits/sigstack.h :
+/include/bits/sigthread.h :
+/include/unistd.h :
+/include/bits/posix_opt.h :
+/include/bits/environments.h :
+/include/bits/wordsize.h :
+/include/bits/confname.h :
+getopt.h :
+/include/inttypes.h :
+/include/stdint.h :
+/include/sys/types.h :
+/include/endian.h :
+/include/bits/endian.h :
+/include/sys/select.h :
+/include/bits/select.h :
+/include/sys/sysmacros.h :
+cmpbuf.h :

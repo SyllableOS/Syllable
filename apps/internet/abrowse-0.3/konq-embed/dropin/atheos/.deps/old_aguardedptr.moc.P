@@ -1,0 +1,2 @@
+old_aguardedptr.moc.lo old_aguardedptr.moc.o : old_aguardedptr.moc.cpp
+old_aguardedptr.moc.cpp :

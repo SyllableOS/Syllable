@@ -1,0 +1,89 @@
+# This file defines the shared library version numbers we will install.
+
+# The following lines list filename patterns matching canonical configurations,
+# and the associated versions to use for various libraries.  The entire
+# list is processed, with earlier entries taking precedence over later
+# entries.  So loose patterns at the end of the list can give defaults.
+
+# Configuration		Library versions
+# -------------		------- --------
+
+# The interface to -lm depends mostly only on cpu, not on operating system.
+i.86-.*-.*		libm=6
+m68k-.*-.*		libm=6
+sparc.*-.*-.*		libm=6
+alpha.*-.*-linux.*	libm=6.1
+alpha.*-.*-.*		libm=6
+powerpc-.*-.*		libm=6
+mips-.*-.*		libm=6
+arm.*-.*-.*		libm=6
+
+# We provide libc.so.6 for Linux kernel versions 2.0 and later.
+alpha.*-.*-linux.*	libc=6.1
+.*-.*-linux.*		libc=6
+
+# libmachuser.so.1 corresponds to mach/*.defs as of Utah's UK22 release.
+.*-.*-gnu-gnu.*		libmachuser=1
+
+# libhurduser.so.0.0 corresponds to hurd/*.defs as of 7 May 1996.
+.*-.*-gnu-gnu*		libhurduser=0.0
+
+# libc.so.0.2 is for the Hurd alpha release 0.2.
+.*-.*-gnu-gnu*		libc=0.2
+
+# The dynamic loader also requires different names.
+i.86-.*-linux.*		ld=ld-linux.so.2
+sparc64-.*-linux.*	ld=ld-linux.so.2
+sparc.*-.*-linux.*	ld=ld-linux.so.2
+alpha.*-.*-linux.*	ld=ld-linux.so.2
+arm.*-.*-linux.*	ld=ld-linux.so.2
+# We use the ELF ABI standard name for the default.
+.*-.*-.*		ld=ld.so.1
+
+# The -ldl interface (see <dlfcn.h>) is the same on all platforms.
+alpha.*-.*-linux.*	libdl=2.1
+.*-.*-.*		libdl=2
+
+# So far the -lutil interface is the same on all platforms, except for the
+# `struct utmp' format, which depends on libc.
+alpha.*-.*-linux.*	libutil=1.1
+.*-.*-.*		libutil=1
+
+# Version number 2 is used on other systems for the BIND 4.9.5 resolver
+# interface.
+alpha.*-.*-linux.*	libresolv=2.1
+.*-.*-.*		libresolv=2
+
+# Interface revision of nss_* modules.  This must match NSS_SHLIB_REVISION
+# in nss/nsswitch.h, which determines the library names used for service
+# names given in /etc/nsswitch.conf.
+.*-.*-.*		libnss_files=2
+.*-.*-.*		libnss_dns=2
+.*-.*-.*		libnss_db=2
+.*-.*-.*		libnss_compat=2
+.*-.*-.*		libnss_nis=2
+.*-.*-.*		libnss_nisplus=2
+.*-.*-.*		libnss_ldap=2
+.*-.*-.*		libnss_hesiod=2
+
+# Version for libnsl with YP and NIS+ functions.
+alpha.*-.*-linux.*	libnsl=1.1
+.*-.*-.*		libnsl=1
+
+# We use libdb.so.3 for the interface in version 2.x of the Berkeley DB code.
+.*-.*-.*		libdb=3
+# This is the Berkeley DB 1.85.  We use the version numbers from glibc 2.0.*
+# for all times.
+alpha-.*-linux.*        libdb1=2.1
+.*-.*-.*                libdb1=2
+
+# This defines the shared library version numbers we will install.
+alpha.*-.*-linux.*	libcrypt=1.1
+.*-.*-.*		libcrypt=1
+
+# The gross patch for programs assuming broken locale implementations.
+alpha.*-.*-linux.*	libBrokenLocale=1.1
+.*-.*-.*		libBrokenLocale=1
+
+# The real-time library from POSIX.1b.
+.*-.*-.*		librt=1

@@ -1,0 +1,2 @@
+job.lo job.o : job.cpp
+job.cpp :

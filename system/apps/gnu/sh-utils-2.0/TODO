@@ -1,0 +1,23 @@
+  - write (or find version that we can copyleft) primes
+
+  - integrate/package spline
+
+------------------------
+  From: "Tyler S. MacDonald" <tylermac@axion.net>
+    nohup: add an option to specify the output file (default is nohup.out)
+    E.g., nohup --output=/dev/null x11amp `find / -name \*.mp3` &
+
+------------------------
+  Subject: sh-utils-1.16c, pinky.c (lightweight finger) included ...
+  Cc: ghazi@caip.rutgers.edu
+
+	  I've completed hacking who.c into a passable pinky.c.  It
+  probably needs more work, but I'd like to get it in the next beta
+  release of sh-utils so others can play with it (ie complete it for me)
+  bazaar style. :-)
+
+	  The most notable missing pieces of functionality are "@host"
+  support, no expansion of '&' from gecos [Done, now] and the -m flag.
+  There are also probably behavior differences from what one should expect
+  from a traditional unix finger, which anyone is free to correct if they know
+  what I implemented wrong.

@@ -1,0 +1,60 @@
+# This file is a shell script that caches the results of configure
+# tests run on this system so they can be shared between configure
+# scripts and configure runs.  It is not useful on other systems.
+# If it contains results you don't want to keep, you may remove or edit it.
+#
+# By default, configure uses ./config.cache as the cache file,
+# creating it if it does not exist already.  You can give configure
+# the --cache-file=FILE option to use a different cache file; that is
+# what configure does when it calls configure scripts in
+# subdirectories, so they share the cache.
+# Giving --cache-file=/dev/null disables caching, for debugging configure.
+# config.status only pays attention to the cache file if you give it the
+# --recheck option to rerun configure.
+#
+ac_cv_func__setjmp=${ac_cv_func__setjmp=yes}
+ac_cv_func_fsync=${ac_cv_func_fsync=yes}
+ac_cv_func_memcpy=${ac_cv_func_memcpy=yes}
+ac_cv_func_popen=${ac_cv_func_popen=yes}
+ac_cv_func_sigprocmask=${ac_cv_func_sigprocmask=yes}
+ac_cv_func_sigsetmask=${ac_cv_func_sigsetmask=yes}
+ac_cv_func_stat=${ac_cv_func_stat=yes}
+ac_cv_func_strchr=${ac_cv_func_strchr=yes}
+ac_cv_func_strstr=${ac_cv_func_strstr=yes}
+ac_cv_func_system=${ac_cv_func_system=yes}
+ac_cv_func_tcgetattr=${ac_cv_func_tcgetattr=yes}
+ac_cv_header_ctype_h=${ac_cv_header_ctype_h=yes}
+ac_cv_header_errno_h=${ac_cv_header_errno_h=yes}
+ac_cv_header_fcntl_h=${ac_cv_header_fcntl_h=yes}
+ac_cv_header_limits_h=${ac_cv_header_limits_h=yes}
+ac_cv_header_stdc=${ac_cv_header_stdc=yes}
+ac_cv_header_stdio_h=${ac_cv_header_stdio_h=yes}
+ac_cv_header_stdlib_h=${ac_cv_header_stdlib_h=yes}
+ac_cv_header_string_h=${ac_cv_header_string_h=yes}
+ac_cv_header_sys_ioctl_h=${ac_cv_header_sys_ioctl_h=yes}
+ac_cv_header_sys_ptem_h=${ac_cv_header_sys_ptem_h=no}
+ac_cv_header_sys_stream_h=${ac_cv_header_sys_stream_h=no}
+ac_cv_header_termcap_h=${ac_cv_header_termcap_h=yes}
+ac_cv_header_termio_h=${ac_cv_header_termio_h=yes}
+ac_cv_header_termios_h=${ac_cv_header_termios_h=yes}
+ac_cv_header_time_h=${ac_cv_header_time_h=yes}
+ac_cv_header_unistd_h=${ac_cv_header_unistd_h=yes}
+ac_cv_header_values_h=${ac_cv_header_values_h=yes}
+ac_cv_lib_PW_regcmp=${ac_cv_lib_PW_regcmp=no}
+ac_cv_lib_curses_initscr=${ac_cv_lib_curses_initscr=yes}
+ac_cv_lib_gen_regcmp=${ac_cv_lib_gen_regcmp=no}
+ac_cv_lib_intl_regcmp=${ac_cv_lib_intl_regcmp=no}
+ac_cv_lib_ncurses_initscr=${ac_cv_lib_ncurses_initscr=yes}
+ac_cv_lib_termcap_tgetent=${ac_cv_lib_termcap_tgetent=yes}
+ac_cv_lib_termlib_tgetent=${ac_cv_lib_termlib_tgetent=no}
+ac_cv_lib_xcurses_initscr=${ac_cv_lib_xcurses_initscr=no}
+ac_cv_path_install=${ac_cv_path_install='/usr/local/bin/install -c'}
+ac_cv_prog_CC=${ac_cv_prog_CC=gcc}
+ac_cv_prog_CPP=${ac_cv_prog_CPP='gcc -E'}
+ac_cv_prog_cc_cross=${ac_cv_prog_cc_cross=no}
+ac_cv_prog_cc_g=${ac_cv_prog_cc_g=yes}
+ac_cv_prog_cc_works=${ac_cv_prog_cc_works=yes}
+ac_cv_prog_gcc=${ac_cv_prog_gcc=yes}
+ac_cv_prog_gcc_traditional=${ac_cv_prog_gcc_traditional=no}
+ac_cv_type_off_t=${ac_cv_type_off_t=yes}
+ac_cv_type_signal=${ac_cv_type_signal=void}

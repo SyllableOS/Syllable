@@ -1,0 +1,2 @@
+Makefile .deps e2fs_stage1_5 e2fs_stage1_5.exec fat_stage1_5 fat_stage1_5.exec ffs_stage1_5 ffs_stage1_5.exec minix_stage1_5 minix_stage1_5.exec reiserfs_stage1_5 reiserfs_stage1_5.exec pre_stage2 pre_stage2.exec stage2 stage2_size.h start start.exec
+afs_stage1_5 afs_stage1_5.exec

@@ -1,0 +1,2682 @@
+# Mensajes en español para GNU sh-utils.
+# Copyright (C) 1997, 1998, 1999 Free Software Foundation, Inc.
+# Cristian Othón Martínez Vera <cfuga@colossus.rhon.itam.mx>, 1997.
+# Santiago Vila Doncel <sanvila@unex.es>, 1998, 1999
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: GNU sh-utils 1.16j\n"
+"POT-Creation-Date: 1999-08-14 13:15+0200\n"
+"PO-Revision-Date: 1999-05-18 00:21+0200\n"
+"Last-Translator: Santiago Vila Doncel <sanvila@unex.es>\n"
+"Language-Team: Spanish <es@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: 8-bit\n"
+
+#: lib/argmatch.c:159
+#, fuzzy, c-format
+msgid "invalid argument %s for `%s'"
+msgstr "argumento inválido `%s'"
+
+#: lib/argmatch.c:160
+#, fuzzy, c-format
+msgid "ambiguous argument %s for `%s'"
+msgstr "falta el argumento de `%s'"
+
+#. We try to put synonyms on the same line.  The assumption is that
+#. synonyms follow each other
+#: lib/argmatch.c:178
+#, fuzzy
+msgid "Valid arguments are:"
+msgstr "argumento inválido `%s'"
+
+#: lib/closeout.c:71 lib/closeout.c:73
+msgid "write error"
+msgstr "error de escritura"
+
+#: lib/error.c:102
+#, fuzzy
+msgid "Unknown system error"
+msgstr "operador binario desconocido"
+
+#: lib/getopt.c:677
+#, c-format
+msgid "%s: option `%s' is ambiguous\n"
+msgstr ""
+
+#: lib/getopt.c:702
+#, c-format
+msgid "%s: option `--%s' doesn't allow an argument\n"
+msgstr ""
+
+#: lib/getopt.c:707
+#, c-format
+msgid "%s: option `%c%s' doesn't allow an argument\n"
+msgstr ""
+
+#: lib/getopt.c:725 lib/getopt.c:898
+#, c-format
+msgid "%s: option `%s' requires an argument\n"
+msgstr ""
+
+#. --option
+#: lib/getopt.c:754
+#, fuzzy, c-format
+msgid "%s: unrecognized option `--%s'\n"
+msgstr "opción inválida `%s'"
+
+#. +option or -option
+#: lib/getopt.c:758
+#, fuzzy, c-format
+msgid "%s: unrecognized option `%c%s'\n"
+msgstr "opción inválida `%s'"
+
+#. 1003.2 specifies the format of this message.
+#: lib/getopt.c:784
+#, c-format
+msgid "%s: illegal option -- %c\n"
+msgstr ""
+
+#: lib/getopt.c:787
+#, fuzzy, c-format
+msgid "%s: invalid option -- %c\n"
+msgstr "opción inválida `%s'"
+
+#. 1003.2 specifies the format of this message.
+#: lib/getopt.c:817 lib/getopt.c:947
+#, c-format
+msgid "%s: option requires an argument -- %c\n"
+msgstr ""
+
+#: lib/getopt.c:864
+#, c-format
+msgid "%s: option `-W %s' is ambiguous\n"
+msgstr ""
+
+#: lib/getopt.c:882
+#, c-format
+msgid "%s: option `-W %s' doesn't allow an argument\n"
+msgstr ""
+
+#: lib/human.c:310
+msgid "block size"
+msgstr ""
+
+#: lib/version-etc.c:38
+#, c-format
+msgid "Written by %s.\n"
+msgstr ""
+
+#: lib/version-etc.c:39
+msgid ""
+"\n"
+"Copyright (C) 1999 Free Software Foundation, Inc.\n"
+"This is free software; see the source for copying conditions.  There is NO\n"
+"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+msgstr ""
+
+# FIXME. sv
+# ¿Por qué no traducís "virtual"? gerardo
+# Porque creo que el original está mal...
+# Hoy en día todo es virtual...
+# Me recuerda los viejos tiempos en los que había memoria convencional,
+# extendida, expandida, superior...
+#
+# ¿Viejos tiempos? Hay muchíiisima gente con el maldito M$-DOG aún, y
+# las BIOS siguen diciendo lo de "640 k" de memoria convencional,
+# aunque tengas 64 MB.
+#
+# Me estás dando la razón. ¿Es que no pretendemos alejarnos de todo eso?
+# (Tengo entendido que Linux pasa de la BIOS todo lo que puede). sv
+#
+# Francamente, prefiero pensar en que un programa intenta un malloc(),
+# y si no lo consigue, entonces es que se ha agotado la memoria, así
+# sin más. ¿qué opinas? sv
+#
+# Bueno, no es que esté mal, pero cuando el autor pone "virtual", se
+# podría dejar, y tampoco estaría mal. Sí, no me recuerdes lo del
+# ASCII :-) gerardo
+# ¡Es verdad! :-)
+# De todas formas esto habría que preguntárselo al gran jefe de GNU (RMS).
+#. If XALLOC_FAIL_FUNC is NULL, or does return, display this message
+#. before exiting when memory is exhausted.  Goes through gettext.
+#: lib/xmalloc.c:66
+#, fuzzy
+msgid "Memory exhausted"
+msgstr "memoria agotada"
+
+#: src/basename.c:51 src/chroot.c:40 src/date.c:115 src/dirname.c:42
+#: src/echo.c:72 src/env.c:114 src/expr.c:101 src/factor.c:54 src/hostid.c:44
+#: src/hostname.c:62 src/id.c:94 src/logname.c:43 src/nice.c:62
+#: src/pathchk.c:114 src/pinky.c:462 src/printenv.c:59 src/printf.c:90
+#: src/pwd.c:42 src/seq.c:84 src/sleep.c:46 src/stty.c:488 src/su.c:429
+#: src/tee.c:61 src/test.c:987 src/tty.c:58 src/uname.c:93 src/uptime.c:165
+#: src/users.c:111 src/who.c:354 src/whoami.c:47 src/yes.c:40
+#, c-format
+msgid "Try `%s --help' for more information.\n"
+msgstr "Pruebe `%s --help' para más información.\n"
+
+#: src/basename.c:55
+#, c-format
+msgid ""
+"Usage: %s NAME [SUFFIX]\n"
+"  or:  %s OPTION\n"
+msgstr ""
+"Modo de empleo: %s NOMBRE [SUFIJO]\n"
+"       o bien:  %s OPCIÓN\n"
+
+#: src/basename.c:60
+msgid ""
+"Print NAME with any leading directory components removed.\n"
+"If specified, also remove a trailing SUFFIX.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+msgstr ""
+"Muestra NOMBRE eliminando cualquier componente de directorio que lo "
+"preceda.\n"
+"Si se especifica, también elimina un SUFIJO final.\n"
+"\n"
+"  --help      muestra esta ayuda y finaliza\n"
+"  --version   informa de la versión y finaliza\n"
+
+#: src/basename.c:67 src/chroot.c:56 src/date.c:186 src/dirname.c:58
+#: src/echo.c:100 src/env.c:131 src/expr.c:156 src/factor.c:72 src/false.c:27
+#: src/hostid.c:56 src/hostname.c:75 src/id.c:113 src/logname.c:54
+#: src/nice.c:76 src/pathchk.c:126 src/pinky.c:485 src/printenv.c:69
+#: src/printf.c:126 src/pwd.c:53 src/seq.c:108 src/sleep.c:57 src/stty.c:662
+#: src/su.c:448 src/tee.c:74 src/test.c:1054 src/true.c:27 src/tty.c:70
+#: src/uname.c:110 src/uptime.c:179 src/users.c:123 src/who.c:376
+#: src/whoami.c:58 src/yes.c:50
+msgid ""
+"\n"
+"Report bugs to <bug-sh-utils@gnu.org>."
+msgstr ""
+"\n"
+"Comunicar `bugs' a <sh-utils-bugs@gnu.org>."
+
+#: src/basename.c:113 src/chroot.c:73 src/dirname.c:86 src/expr.c:180
+#: src/pathchk.c:164 src/seq.c:189 src/sleep.c:91
+msgid "too few arguments"
+msgstr "número de argumentos insuficiente"
+
+#. lose
+#: src/basename.c:114 src/dirname.c:87 src/hostid.c:76 src/hostname.c:119
+#: src/uptime.c:219 src/users.c:163 src/who.c:459
+msgid "too many arguments"
+msgstr "demasiados argumentos"
+
+#: src/chroot.c:44
+#, c-format
+msgid ""
+"Usage: %s [OPTION] NEWROOT [COMMAND...]\n"
+"  or:  %s OPTION\n"
+msgstr ""
+"Modo de empleo: %s [OPCIÓN] NUEVO_RAÍZ [ORDEN...]\n"
+"       o bien:  %s OPCIÓN\n"
+
+#: src/chroot.c:48
+msgid ""
+"Run COMMAND with root directory set to NEWROOT.\n"
+"\n"
+"      --help       display this help and exit\n"
+"      --version    output version information and exit\n"
+"\n"
+"If no command is given, run ``${SHELL} -i'' (default: /bin/sh).\n"
+msgstr ""
+"Ejecuta ORDEN siendo NUEVO_RAÍZ el directorio raíz.\n"
+"\n"
+"      --help       muestra esta ayuda y finaliza\n"
+"      --version    informa de la versión y finaliza\n"
+"\n"
+"Si no se especifica ninguna orden, ejecuta ``${SHELL} -i''\n"
+"(por omisión: /bin/sh).\n"
+
+#: src/chroot.c:78
+#, c-format
+msgid "cannot change root directory to %s"
+msgstr "no se puede cambiar el directorio raíz a %s"
+
+#: src/chroot.c:81
+msgid "cannot chdir to root directory"
+msgstr "no se puede cambiar al directorio raíz"
+
+#: src/chroot.c:100
+#, c-format
+msgid "cannot execute %s"
+msgstr "no se puede ejecutar %s"
+
+# Pongo AA en vez de YY. sv
+#: src/date.c:119
+#, c-format
+msgid ""
+"Usage: %s [OPTION]... [+FORMAT]\n"
+"  or:  %s [OPTION] [MMDDhhmm[[CC]YY][.ss]]\n"
+msgstr ""
+"Modo de empleo: %s [OPCIÓN]... [+FORMATO]\n"
+"       o bien:  %s [OPCIÓN] [MMDDhhmm[[CC]AA][.ss]]\n"
+
+# UTC = Tiempo Universal Coordinado, antiguo GMT (Greenwich Mean Time,
+# Hora Media de Greenwich). gerardo
+#: src/date.c:124
+msgid ""
+"Display the current time in the given FORMAT, or set the system date.\n"
+"\n"
+"  -d, --date=STRING         display time described by STRING, not `now'\n"
+"  -f, --file=DATEFILE       like --date once for each line of DATEFILE\n"
+"  -I, --iso-8601[=TIMESPEC] output an ISO-8601 compliant date/time string.\n"
+"                            TIMESPEC=`date' (or missing) for date only,\n"
+"                            `hours', `minutes', or `seconds' for date and\n"
+"                            time to the indicated precision.\n"
+"  -r, --reference=FILE      display the last modification time of FILE\n"
+"  -R, --rfc-822             output RFC-822 compliant date string\n"
+"  -s, --set=STRING          set time described by STRING\n"
+"  -u, --utc, --universal    print or set Coordinated Universal Time\n"
+"      --help                display this help and exit\n"
+"      --version             output version information and exit\n"
+msgstr ""
+"Muestra la hora actual en el FORMATO dado, o establece la fecha del "
+"sistema.\n"
+"\n"
+"  -d, --date=CADENA         muestra la hora descrita por CADENA, no `now'\n"
+"  -f, --file=FICHERO_FECHA  igual que --date por cada línea de "
+"FICHERO_FECHA\n"
+"  -I, --iso-8601[=E_TIEMPO] muestra una cadena de fecha/hora según la norma\n"
+"                            ISO-8601. E_TIEMPO=`fecha' (o nada) para la "
+"fecha\n"
+"                            solamente, `horas', `minutos', o `segundos'\n"
+"                            para la fecha y la hora con la precisión "
+"indicada\n"
+"  -r, --reference=FICHERO   muestra la fecha de última modificación de "
+"FICHERO\n"
+"  -R, --rfc-822             muestra la cadena de fecha que cumple con "
+"RFC-822\n"
+"  -s, --set=CADENA          establece la hora descrita por CADENA\n"
+"  -u, --utc, --universal    muestra o establece el Tiempo Universal "
+"Coordinado\n"
+"      --help                muestra esta ayuda y finaliza\n"
+"      --version             informa de la versión y finaliza\n"
+
+#: src/date.c:140
+#, fuzzy
+msgid ""
+"\n"
+"FORMAT controls the output.  The only valid option for the second form\n"
+"specifies Coordinated Universal Time.  Interpreted sequences are:\n"
+"\n"
+"  %%%%   a literal %%\n"
+"  %%a   locale's abbreviated weekday name (Sun..Sat)\n"
+"  %%A   locale's full weekday name, variable length (Sunday..Saturday)\n"
+"  %%b   locale's abbreviated month name (Jan..Dec)\n"
+"  %%B   locale's full month name, variable length (January..December)\n"
+"  %%c   locale's date and time (Sat Nov 04 12:02:33 EST 1989)\n"
+"  %%d   day of month (01..31)\n"
+"  %%D   date (mm/dd/yy)\n"
+"  %%e   day of month, blank padded ( 1..31)\n"
+"  %%h   same as %%b\n"
+"  %%H   hour (00..23)\n"
+"  %%I   hour (01..12)\n"
+"  %%j   day of year (001..366)\n"
+"  %%k   hour ( 0..23)\n"
+"  %%l   hour ( 1..12)\n"
+"  %%m   month (01..12)\n"
+"  %%M   minute (00..59)\n"
+"  %%n   a newline\n"
+"  %%p   locale's AM or PM\n"
+"  %%r   time, 12-hour (hh:mm:ss [AP]M)\n"
+"  %%s   seconds since 00:00:00, Jan 1, 1970 (a GNU extension)\n"
+"  %%S   second (00..60)\n"
+"  %%t   a horizontal tab\n"
+"  %%T   time, 24-hour (hh:mm:ss)\n"
+"  %%U   week number of year with Sunday as first day of week (00..53)\n"
+"  %%V   week number of year with Monday as first day of week (01..52)\n"
+"  %%w   day of week (0..6);  0 represents Sunday\n"
+"  %%W   week number of year with Monday as first day of week (00..53)\n"
+"  %%x   locale's date representation (mm/dd/yy)\n"
+"  %%X   locale's time representation (%%H:%%M:%%S)\n"
+"  %%y   last two digits of year (00..99)\n"
+"  %%Y   year (1970...)\n"
+"  %%z   RFC-822 style numeric timezone (-0500) (a nonstandard extension)\n"
+"  %%Z   time zone (e.g., EDT), or nothing if no time zone is determinable\n"
+"\n"
+"By default, date pads numeric fields with zeroes.  GNU date recognizes\n"
+"the following modifiers between `%%' and a numeric directive.\n"
+"\n"
+"  `-' (hyphen) do not pad the field\n"
+"  `_' (underscore) pad the field with spaces\n"
+msgstr ""
+"\n"
+"FORMATO controla la salida. La única opción válida para la segunda forma\n"
+"especifica Tiempo Universal Coordinado. Las secuencias interpretadas son:\n"
+"\n"
+"  %%%%   un %% literal\n"
+"  %%a   el nombre local abreviado de la semana (Dom..Sáb)\n"
+"  %%A   el nombre local completo de la semana, de longitud variable\n"
+"        (Domingo..Sábado)\n"
+"  %%b   el nombre local abreviado del mes (Ene..Dic)\n"
+"  %%B   el nombre local completo del mes, de longitud variable\n"
+"        (Enero..Diciembre)\n"
+"  %%c   la fecha y hora local (Sab Nov 04 12:02:33 EST 1989)\n"
+"  %%d   el día del mes (01..31)\n"
+"  %%D   la fecha (mm/dd/aa)\n"
+"  %%e   el día del mes, completado con espacios ( 1..31)\n"
+"  %%h   igual que %%b\n"
+"  %%H   la hora (00..23)\n"
+"  %%I   la hora (01..12)\n"
+"  %%j   el día del año (001..366)\n"
+"  %%k   la hora ( 0..23)\n"
+"  %%l   la hora ( 1..12)\n"
+"  %%m   el mes (01..12)\n"
+"  %%M   los minutos (00..59)\n"
+"  %%n   un carácter de nueva línea\n"
+"  %%p   AM o PM local\n"
+"  %%r   la hora, en formato de 12 horas (hh:mm:ss [AP]M)\n"
+"  %%s   los segundos desde las 00:00:00 del 1 de enero de 1970\n"
+"        (una extensión de GNU)\n"
+"  %%S   los segundos (00..61)\n"
+"  %%t   un tabulador horizontal\n"
+"  %%T   la hora, en formato de 24 horas (hh:mm:ss)\n"
+"  %%U   el número de la semana del año con Domingo como primer día de la\n"
+"        semana (00..53)\n"
+"  %%V   el número de la semana del año con Lunes como primer día de la\n"
+"        semana (00..52)\n"
+"  %%w   el día de la semana (0..6);  0 representa Domingo\n"
+"  %%V   el número de la semana del año con Lunes como primer día de la\n"
+"        semana (00..53)\n"
+"  %%x   la representación local de la fecha (dd/mm/aa)\n"
+"  %%X   la representación local de la hora (%%H:%%M:%%S)\n"
+"  %%y   los últimos dos dígitos del año (00..99)\n"
+"  %%Y   el año (1970...)\n"
+"  %%z   la zona horaria numérica estilo RFC-822 (-0500)\n"
+"        (una extensión no estándar)\n"
+"  %%Z   la zona horaria (p.e., EDT), o nada si no es determinable la\n"
+"        zona horaria\n"
+"\n"
+"Por omisión, date rellena los campos numéricos con ceros. GNU date\n"
+"reconoce los siguientes modificadores entre `%%' y una directiva numérica.\n"
+"\n"
+"  `-' (guión) no rellena el campo\n"
+"  `_' (subrayado) rellena el campo con espacios\n"
+
+#: src/date.c:224 src/stty.c:861 src/tee.c:151
+msgid "standard input"
+msgstr "entrada estándar"
+
+#: src/date.c:278 src/date.c:444
+#, c-format
+msgid "invalid date `%s'"
+msgstr "fecha inválida `%s'"
+
+# Cualquier cosa menos poner "fechas a imprimir".
+#: src/date.c:366
+msgid "the options to specify dates for printing are mutually exclusive"
+msgstr "las opciones para especificar la fecha son mutuamente excluyentes"
+
+#: src/date.c:373
+msgid "the options to print and set the time may not be used together"
+msgstr ""
+"las opciones para mostrar y establecer la hora no se pueden utilizar a la vez"
+
+#: src/date.c:379
+msgid "too many non-option arguments"
+msgstr "demasiados argumentos que no son opciones"
+
+#: src/date.c:386
+#, c-format
+msgid ""
+"the argument `%s' lacks a leading `+';\n"
+"When using an option to specify date(s), any non-option\n"
+"argument must be a format string beginning with `+'."
+msgstr ""
+"el argumento `%s' carece del signo `+' inicial;\n"
+"cuando se utiliza una opción para especificar fecha(s), cualquier argumento\n"
+"que no sea una opción debe ser una cadena de formato que comience con `+'."
+
+# Nota: Se refiere con toda probabilidad a una fecha o a una hora.
+#. Prepare to print the current date/time.
+#: src/date.c:421
+msgid "undefined"
+msgstr "no definida"
+
+#: src/date.c:452
+msgid "cannot set date"
+msgstr "no se puede establecer la fecha"
+
+#: src/dirname.c:46
+#, c-format
+msgid ""
+"Usage: %s NAME\n"
+"  or:  %s OPTION\n"
+msgstr ""
+"Modo de empleo: %s NOMBRE\n"
+"       o bien:  %s OPCIÓN\n"
+
+#: src/dirname.c:51
+msgid ""
+"Print NAME with its trailing /component removed; if NAME contains no /'s,\n"
+"output `.' (meaning the current directory).\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+msgstr ""
+"Muestra NOMBRE con sus /componentes finales eliminados; si NOMBRE no tiene\n"
+"/'s, el resultado es `.' (representando el directorio actual).\n"
+"\n"
+"  --help      muestra esta ayuda y finaliza\n"
+"  --version   informa de la versión y finaliza\n"
+
+#: src/echo.c:76 src/yes.c:44
+#, c-format
+msgid "Usage: %s [OPTION]... [STRING]...\n"
+msgstr "Modo de empleo: %s [OPCIÓN]... [CADENA]...\n"
+
+# alerta (BEL) -> pitido audible (BEL) em+
+# Vale que no es alerta, pero yo creo que debería ser campana. sv+
+#
+#: src/echo.c:77
+msgid ""
+"Echo the STRING(s) to standard output.\n"
+"\n"
+"  -n              do not output the trailing newline\n"
+"  -e              enable interpretation of the backslash-escaped characters\n"
+"                    listed below\n"
+"  -E              disable interpretation of those sequences in STRINGs\n"
+"      --help      display this help and exit (should be alone)\n"
+"      --version   output version information and exit (should be alone)\n"
+"\n"
+"Without -E, the following sequences are recognized and interpolated:\n"
+"\n"
+"  \\NNN   the character whose ASCII code is NNN (octal)\n"
+"  \\\\     backslash\n"
+"  \\a     alert (BEL)\n"
+"  \\b     backspace\n"
+"  \\c     suppress trailing newline\n"
+"  \\f     form feed\n"
+"  \\n     new line\n"
+"  \\r     carriage return\n"
+"  \\t     horizontal tab\n"
+"  \\v     vertical tab\n"
+msgstr ""
+"Repite la(s) CADENA(s) por la salida estándar.\n"
+"\n"
+"  -n              no muestra el carácter final de nueva línea\n"
+"  -e              activa la interpretación de caracteres escapados con una\n"
+"                  barra invertida que se listan más abajo\n"
+"  -E              desactiva la interpretación de esas secuencias en CADENAs\n"
+"      --help      muestra esta ayuda y finaliza (debe estar sola)\n"
+"      --version   informa de la versión y finaliza (debe estar sola)\n"
+"\n"
+"Sin -E, las siguientes secuencias son reconocidas e intercaladas:\n"
+"\n"
+"  \\NNN   el carácter cuyo código es NNN (octal)\n"
+"  \\\\     barra invertida\n"
+"  \\a     campana (BEL)\n"
+"  \\b     retroceso\n"
+"  \\c     suprime los caracteres de nueva línea finales\n"
+"  \\f     avance de página (form feed)\n"
+"  \\n     nueva línea\n"
+"  \\r     retorno de carro\n"
+"  \\t     tabulador horizontal\n"
+"  \\v     tabulador vertical\n"
+
+#: src/env.c:118
+#, c-format
+msgid "Usage: %s [OPTION]... [-] [NAME=VALUE]... [COMMAND [ARG]...]\n"
+msgstr ""
+"Modo de empleo: %s [OPCIÓN]... [-] [NOMBRE=VALOR]... [ORDEN [ARGUMENTO]...]\n"
+
+#: src/env.c:121
+msgid ""
+"Set each NAME to VALUE in the environment and run COMMAND.\n"
+"\n"
+"  -i, --ignore-environment   start with an empty environment\n"
+"  -u, --unset=NAME           remove variable from the environment\n"
+"      --help                 display this help and exit\n"
+"      --version              output version information and exit\n"
+"\n"
+"A mere - implies -i.  If no COMMAND, print the resulting environment.\n"
+msgstr ""
+"Asigna a cada NOMBRE el VALOR en el entorno y ejecuta ORDEN.\n"
+"\n"
+"  -i, --ignore-environment   comienza con un entorno vacío\n"
+"  -u, --unset=NOMBRE         borra la variable del entorno\n"
+"      --help                 muestra esta ayuda y finaliza\n"
+"      --version              informa de la versión y finaliza\n"
+"\n"
+"Un simple - implica -i. Si no hay ORDEN, muestra el entorno resultante.\n"
+
+#: src/expr.c:105
+#, c-format
+msgid ""
+"Usage: %s EXPRESSION\n"
+"  or:  %s OPTION\n"
+msgstr ""
+"Modo de empleo: %s EXPRESIÓN\n"
+"       o bien:  %s OPCIÓN\n"
+
+#: src/expr.c:110
+msgid ""
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+"\n"
+msgstr ""
+"\n"
+"  --help      muestra esta ayuda y finaliza\n"
+"  --version   informa de la versión y finaliza\n"
+"\n"
+
+#: src/expr.c:116
+msgid ""
+"Print the value of EXPRESSION to standard output.  A blank line below\n"
+"separates increasing precedence groups.  EXPRESSION may be:\n"
+"\n"
+"  ARG1 | ARG2       ARG1 if it is neither null nor 0, otherwise ARG2\n"
+"\n"
+"  ARG1 & ARG2       ARG1 if neither argument is null or 0, otherwise 0\n"
+"\n"
+"  ARG1 < ARG2       ARG1 is less than ARG2\n"
+"  ARG1 <= ARG2      ARG1 is less than or equal to ARG2\n"
+"  ARG1 = ARG2       ARG1 is equal to ARG2\n"
+"  ARG1 != ARG2      ARG1 is unequal to ARG2\n"
+"  ARG1 >= ARG2      ARG1 is greater than or equal to ARG2\n"
+"  ARG1 > ARG2       ARG1 is greater than ARG2\n"
+"\n"
+"  ARG1 + ARG2       arithmetic sum of ARG1 and ARG2\n"
+"  ARG1 - ARG2       arithmetic difference of ARG1 and ARG2\n"
+"\n"
+"  ARG1 * ARG2       arithmetic product of ARG1 and ARG2\n"
+"  ARG1 / ARG2       arithmetic quotient of ARG1 divided by ARG2\n"
+"  ARG1 %% ARG2       arithmetic remainder of ARG1 divided by ARG2\n"
+"\n"
+"  STRING : REGEXP   anchored pattern match of REGEXP in STRING\n"
+"\n"
+"  match STRING REGEXP        same as STRING : REGEXP\n"
+"  substr STRING POS LENGTH   substring of STRING, POS counted from 1\n"
+"  index STRING CHARS         index in STRING where any CHARS is found, or 0\n"
+"  length STRING              length of STRING\n"
+"  quote TOKEN                interpret TOKEN as a string, even if it is a\n"
+"                               keyword like `match' or an operator like `/'\n"
+"\n"
+"  ( EXPRESSION )             value of EXPRESSION\n"
+msgstr ""
+"Muestra el valor de la EXPRESIÓN en la salida estándar. Una línea en blanco\n"
+"debajo separa los grupos de prioridad creciente. La EXPRESIÓN puede ser:\n"
+"\n"
+"  ARG1 | ARG2       ARG1 si no es nulo ni 0, de otra manera ARG2\n"
+"\n"
+"  ARG1 & ARG2       ARG1 si ningún argumento es nulo o 0, de otra manera 0\n"
+"\n"
+"  ARG1 < ARG2       ARG1 es menor que ARG2\n"
+"  ARG1 <= ARG2      ARG1 es menor o igual que ARG2\n"
+"  ARG1 = ARG2       ARG1 es igual a ARG2\n"
+"  ARG1 != ARG2      ARG1 es distinto de ARG2\n"
+"  ARG1 >= ARG2      ARG1 es mayor o igual que ARG2\n"
+"  ARG1 > ARG2       ARG1 es mayor que ARG2\n"
+"\n"
+"  ARG1 + ARG2       suma aritmética de ARG1 y ARG2\n"
+"  ARG1 - ARG2       diferencia aritmética de  ARG1 y ARG2\n"
+"\n"
+"  ARG1 * ARG2       producto aritmético de ARG1 y ARG2\n"
+"  ARG1 / ARG2       cociente aritmético de ARG1 dividido entre ARG2\n"
+"  ARG1 %% ARG2       residuo aritmético de ARG1 dividido entre ARG2\n"
+"\n"
+"  CADENA : EXPREG   búsqueda de expresiones regulares REGEXP en CADENA\n"
+"\n"
+"  match CADENA EXPREG        igual que CADENA : EXPREG\n"
+"  substr CADENA POS LONG     subcadena de CADENA, POS se cuenta partiendo de "
+"1\n"
+"  index CADENA CARacteres    índice en CADENA donde cualquier CARácter es\n"
+"                             encontrado, ó 0\n"
+"  length CADENA              longitud de CADENA\n"
+"  quote TOKEN                interpreta TOKEN como una cadena, incluso si "
+"es\n"
+"                             una palabra clave como `match' o un operador\n"
+"                             como `/'\n"
+"\n"
+"  ( EXPRESIÓN )              valor de EXPRESIÓN\n"
+
+# Aquí no estoy muy conforme con quoted -> colocado entre comillas
+# ¿Acaso no sería mejor comentado? cfuga
+# Bueno, realmente sería "citado". Comentado se aplica más bien a estas
+# líneas que tienen un "#" al principio.
+# me parece mejor lo que hay ahora que comentado. sv
+# Sugerencia: emparejada -> que coincide con. cfuga
+# Por mí, bien. Se trata de "string matching", es decir que una cadena
+# coincide (en el sentido de que "encaja") con una determinada expresión
+# regular. Lo de match-emparejada lo solemos usar para llaves o comillas
+# que deben estar por parejas (una al principio y otra al final). sv
+#
+# ¿¿Escapados?? = colocados entre secuencias de escape.
+# No sería exacto, porque así das a entender que debe haber una secuencia
+# de escape antes y otra después.
+#
+# ¿No habría que poner "shell" entre comillas: `shell', ya que no lo
+# traducimos por "concha" (para los argentinos y otros: xoxo) ni
+# "caparazón" o "envoltorio"? (Conste que he visto estas palabras en
+# libros) Ya que es una palabra inglesa con traducción española, si
+# bien algo inconveniente quizá. gerardo
+# Es un neologismo. Creo que en español lo mejor es llamarle también shell.
+# No conozco ninguna traducción que haya prosperado.
+# Piensa en que tampoco ponemos entre comillas hardware ni software. sv
+# ## Es distinto. Las traducciones de hardware ("cacharrería") y
+# software ("logical") son demasiado forzadas. No hay traducción
+# aceptable. De "shell" sí hay, aunque la verdad es que a mí no me
+# gustan tampoco. En fin, tú mandas. Aquí me rindo. gerardo
+# Gracias. Si se te ocurre alguna ingeniosa traducción de shell, que nos
+# guste a los dos, *y que estés dispuesta a usarla en tu lenguaje cotidiano*
+# me avisas. No creo que suceda. sv
+#: src/expr.c:149
+msgid ""
+"\n"
+"Beware that many operators need to be escaped or quoted for shells.\n"
+"Comparisons are arithmetic if both ARGs are numbers, else lexicographical.\n"
+"Pattern matches return the string matched between \\( and \\) or null; if\n"
+"\\( and \\) are not used, they return the number of characters matched or "
+"0.\n"
+msgstr ""
+"\n"
+"Advierta que muchos operadores necesitan ser escritos con secuencias de "
+"escape\n"
+"o encerrados entre comillas para los shells.\n"
+"Las comparaciones son aritméticas si ambos ARGs son números, de otra manera\n"
+"son lexicográficas.\n"
+"Las coincidencias de expresiones regulares devuelven la cadena emparejada\n"
+"entre \\( y \\) o nulo; si no se utilizan \\( y \\), devuelven el número de\n"
+"caracteres coincidentes ó 0.\n"
+
+#: src/expr.c:188 src/expr.c:491 src/expr.c:498 src/expr.c:504 src/expr.c:527
+msgid "syntax error"
+msgstr "error de sintaxis"
+
+# Portable = transportable (sugerencia: gerardo)
+# Me gusta más "portable". sv
+#
+# A mí no, pero como el traductor eres tú... :-( ¿Tú dices por
+# ejemplo: "voy a portar un mueble de una habitación a otra"? "¡Hay
+# que ver lo de la huelga de portes y camioneros...!" "Este televisor
+# es muy grande para ser de 14'', es incómodo de portar"... etc...
+# gerardo
+#
+# No te niego que son buenos tus ejemplos. Pero dime:
+# ¿De verdad dirías que DJGPP es un "transporte" de GNU CC a MS-DOS?
+# (Erosión, transporte y sedimentación).
+#
+# Al final me convenciste. Ahora estoy intrigado:
+# ¿Aparecerá en algún sitio más? sv
+#: src/expr.c:439
+#, c-format
+msgid ""
+"warning: unportable BRE: `%s': using `^' as the first character\n"
+"of the basic regular expression is not portable; it is being ignored"
+msgstr ""
+"atención: ERB no transportable: `%s': utilizar `^' como el primer carácter\n"
+"de la expresión regular básica no es transportable; no se tendrá en cuenta"
+
+#: src/factor.c:58
+#, c-format
+msgid ""
+"Usage: %s [NUMBER]...\n"
+"  or:  %s OPTION\n"
+msgstr ""
+"Modo de empleo: %s [NÚMERO]...\n"
+"       o bien:  %s OPCIÓN\n"
+
+#: src/factor.c:63
+msgid ""
+"Print factors of each NUMBER; read standard input with no arguments.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+"\n"
+"  Print the prime factors of all specified integer NUMBERs.  If no "
+"arguments\n"
+"  are specified on the command line, they are read from standard input.\n"
+msgstr ""
+"Muestra los factores de cada NÚMERO; lee la entrada estándar cuando no hay\n"
+"ningún argumento\n"
+"\n"
+"  --help      muestra esta ayuda y finaliza\n"
+"  --version   informa de la versión y finaliza\n"
+"\n"
+"  Muestra los factores primos de cada NÚMERO entero especificado. Si no se\n"
+"especifican argumentos en la línea de órdenes, se leen de la entrada "
+"estándar\n"
+
+#: src/factor.c:140
+#, c-format
+msgid "`%s' is not a valid positive integer"
+msgstr "`%s' no es un entero positivo válido"
+
+# Host = huésped (vale, vale, no me peguéi má, me retracto, ab
+# renuncio: gerardo :-)
+#
+# Pues no te lo vas a creer, pero en el libro de Infovía de Telefónica
+# ponen anfitrión y se quedan tan anchos.
+# Esto no lo tengo claro del todo todavía. sv
+#
+# ¿Y por qué no? "Huésped" en español se refiere tanto al hospedador
+# como al hospedado. En nuestro caso "host" es el ordenador u/o/y
+# cacharro informático que hospeda en su seno un servicio, programa o
+# lo que sea. El anfitrión, para distinguir. Como he dicho otras
+# veces, "los angloparlantes dicen _anfitrión_ o _huésped_ en su
+# idioma. ¿Por qué nosotros no en el nuestro?"
+# gerardo
+#
+# ¿Porque siempre dudamos entre anfitrión o huésped?
+# (Como el asno de Buridán)
+# ¿O tal vez porque nadie se ha atrevido jamás?
+# A mí me da miedo ser el primero. sv
+#: src/false.c:16
+#, fuzzy, c-format
+msgid ""
+"Usage: %s [ignored command line arguments]\n"
+"  or:  %s OPTION\n"
+"Exit with a status code indicating failure.\n"
+"\n"
+"These option names may not be abbreviated.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+msgstr ""
+"Modo de empleo: %s [NOMBRE]\n"
+"       o bien:  %s OPCIÓN\n"
+"Muestra el nombre del `host' del sistema actual.\n"
+"\n"
+"  --help      muestra esta ayuda y finaliza\n"
+"  --version   informa de la versión y finaliza\n"
+
+#: src/hostid.c:48
+#, fuzzy, c-format
+msgid "Usage: %s [-v]\n"
+msgstr "Modo de empleo: %s [OPCIÓN]\n"
+
+#: src/hostid.c:49
+#, fuzzy
+msgid ""
+"Print the numeric identifier (in hexadecimal) for the current host.\n"
+"\n"
+"      --help       display this help and exit\n"
+"      --version    output version information and exit\n"
+"\n"
+msgstr ""
+"Muestra el nombre del usuario actual.\n"
+"\n"
+"  --help      muestra esta ayuda y finaliza\n"
+"  --version   informa de la versión y finaliza\n"
+
+# Host = huésped (vale, vale, no me peguéi má, me retracto, ab
+# renuncio: gerardo :-)
+#
+# Pues no te lo vas a creer, pero en el libro de Infovía de Telefónica
+# ponen anfitrión y se quedan tan anchos.
+# Esto no lo tengo claro del todo todavía. sv
+#
+# ¿Y por qué no? "Huésped" en español se refiere tanto al hospedador
+# como al hospedado. En nuestro caso "host" es el ordenador u/o/y
+# cacharro informático que hospeda en su seno un servicio, programa o
+# lo que sea. El anfitrión, para distinguir. Como he dicho otras
+# veces, "los angloparlantes dicen _anfitrión_ o _huésped_ en su
+# idioma. ¿Por qué nosotros no en el nuestro?"
+# gerardo
+#
+# ¿Porque siempre dudamos entre anfitrión o huésped?
+# (Como el asno de Buridán)
+# ¿O tal vez porque nadie se ha atrevido jamás?
+# A mí me da miedo ser el primero. sv
+#: src/hostname.c:66
+#, c-format
+msgid ""
+"Usage: %s [NAME]\n"
+"  or:  %s OPTION\n"
+"Print the hostname of the current system.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+msgstr ""
+"Modo de empleo: %s [NOMBRE]\n"
+"       o bien:  %s OPCIÓN\n"
+"Muestra el nombre del `host' del sistema actual.\n"
+"\n"
+"  --help      muestra esta ayuda y finaliza\n"
+"  --version   informa de la versión y finaliza\n"
+
+#: src/hostname.c:101
+#, c-format
+msgid "cannot set hostname to `%s'"
+msgstr "no se puede establecer el nombre del `host' en `%s'"
+
+#: src/hostname.c:107
+msgid "cannot set hostname; this system lacks the functionality"
+msgstr ""
+"no se puede cambiar el nombre de `host'; este sistema carece de esa capacidad"
+
+#: src/hostname.c:114
+msgid "cannot determine hostname"
+msgstr "no se puede determinar el nombre del `host'"
+
+#: src/id.c:98
+#, c-format
+msgid "Usage: %s [OPTION]... [USERNAME]\n"
+msgstr "Modo de empleo: %s [OPCIÓN]... [USUARIO]\n"
+
+#: src/id.c:99
+msgid ""
+"Print information for USERNAME, or the current user.\n"
+"\n"
+"  -a              ignore, for compatibility with other versions\n"
+"  -g, --group     print only the group ID\n"
+"  -G, --groups    print only the supplementary groups\n"
+"  -n, --name      print a name instead of a number, for -ugG\n"
+"  -r, --real      print the real ID instead of effective ID, for -ugG\n"
+"  -u, --user      print only the user ID\n"
+"      --help      display this help and exit\n"
+"      --version   output version information and exit\n"
+"\n"
+"Without any OPTION, print some useful set of identified information.\n"
+msgstr ""
+"Muestra información del USUARIO, o del usuario actual.\n"
+"  -a              sin efecto, para compatibilidad con otras versiones\n"
+"  -g, --group     muestra sólo el ID de grupo\n"
+"  -G, --groups    muestra sólo los grupos suplementarios\n"
+"  -n, --name      muestra un nombre en lugar de un número, para -ugG\n"
+"  -r, --real      muestra el ID real en lugar del ID efectivo, para -ugG\n"
+"  -u, --user      muestra sólo el ID del usuario\n"
+"      --help      muestra esta ayuda y finaliza\n"
+"      --version   informa de la versión y finaliza\n"
+"\n"
+"Sin ninguna OPCIÓN, muestra un conjunto útil de información sobre la "
+"identidad.\n"
+
+# No se puedeN imprimir ... en plural, que son varias cosas las que no
+# se pueden imprimir. gerardo
+# Precisamente, lo que dice el mensaje es que es una sola cosa
+# la que se imprime, sin quedar claro cuál de las dos (usuario o grupo)
+# es esa única cosa. sv
+# En cualquier caso, el "no se puede" se refiere a un *hecho*:
+# "imprimir solamente el usuario y solamente el grupo" sv
+#: src/id.c:160
+msgid "cannot print only user and only group"
+msgstr "no se puede imprimir solamente el usuario y solamente el grupo"
+
+# Cambio un poco este mensaje. Si el anterior habla en singular, prefiero
+# que este también lo haga. Después de todo la orden id solamente
+# acepta un usuario.
+#: src/id.c:163
+msgid "cannot print only names or real IDs in default format"
+msgstr ""
+"no se puede imprimir solamente el nombre o el ID real en el formato\n"
+"predeterminado"
+
+#: src/id.c:172
+#, c-format
+msgid "%s: No such user"
+msgstr "%s: No existe ese usuario"
+
+#: src/id.c:264
+msgid "cannot get supplemental group list"
+msgstr "no se puede obtener la lista de grupos suplementarios"
+
+#: src/id.c:374
+msgid " groups="
+msgstr " grupos="
+
+#: src/logname.c:47 src/tty.c:62 src/uname.c:97 src/whoami.c:51
+#, c-format
+msgid "Usage: %s [OPTION]...\n"
+msgstr "Modo de empleo: %s [OPCIÓN]...\n"
+
+#: src/logname.c:48
+msgid ""
+"Print the name of the current user.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+msgstr ""
+"Muestra el nombre del usuario actual.\n"
+"\n"
+"  --help      muestra esta ayuda y finaliza\n"
+"  --version   informa de la versión y finaliza\n"
+
+# login name = nombre de usuario ?
+# login = [registro de] entrada ? "login" viene de "to log"
+# (registrar) y de "in"; es el procedimiento que usan en edificios
+# importantes con guardia de seguridad cuando uno para entrar tiene que
+# identificarse, firmar, acreditarse, y te dan una tarjetita para la
+# solapa. Todo ello trasladado al mundo informático, donde uno se
+# acredita con el nombre de usuario y la clave. Pero bueno, si creéis
+# que es mejor dejar la palabra en inglés, me callo. gerardo
+# No me parece mal del todo. Lo pensaré. sv
+#. POSIX.2 prohibits using a fallback technique.
+#: src/logname.c:96
+#, c-format
+msgid "%s: no login name\n"
+msgstr "%s: no hay ningún nombre de `login'\n"
+
+#: src/nice.c:66
+#, c-format
+msgid "Usage: %s [OPTION]... [COMMAND [ARG]...]\n"
+msgstr "Modo de empleo: %s [OPCIÓN]... [ORDEN [ARG]...]\n"
+
+# scheduling priority -> prioridad de ejecución
+# ¿Hay algo mejor? cfuga
+# prioridad de planificación. Aunque quizá "ejecución", si no tan
+# ajustado y exacto, se entienda mejor. gerardo
+# Vale. Me quedo con ejecución, pero dejo aquí la otra posibilidad. sv
+#: src/nice.c:67
+msgid ""
+"Run COMMAND with an adjusted scheduling priority.\n"
+"With no COMMAND, print the current scheduling priority.  ADJUST is 10\n"
+"by default.  Range goes from -20 (highest priority) to 19 (lowest).\n"
+"\n"
+"  -ADJUST                   increment priority by ADJUST first\n"
+"  -n, --adjustment=ADJUST   same as -ADJUST\n"
+"      --help                display this help and exit\n"
+"      --version             output version information and exit\n"
+msgstr ""
+"Ejecuta ORDEN con una prioridad de ejecución ajustada.\n"
+"Si no hay ORDEN, muestra la prioridad de ejecución actual. AJUSTE es 10\n"
+"por omisión. El rango abarca desde -20 (mayor prioridad) hasta 19 (menor).\n"
+"\n"
+"  -AJUSTE                   incrementa la prioridad primero por AJUSTE\n"
+"  -n, --adjustment=AJUSTE   igual que -AJUSTE\n"
+"      --help                muestra esta ayuda y finaliza\n"
+"      --version             informa de la versión y finaliza\n"
+
+#: src/nice.c:105 src/nice.c:119
+#, c-format
+msgid "invalid option `%s'"
+msgstr "opción inválida `%s'"
+
+#: src/nice.c:145
+#, c-format
+msgid "invalid priority `%s'"
+msgstr "prioridad inválida `%s'"
+
+# Me parece mejor: "Con un ajuste debe darse una orden"
+# Lo consideraré. Esta frase es realmente fea. sv
+# Vale, lo cambio, pero añado una coma.
+# (Antes decía: debe darse una orden con un ajuste).
+#: src/nice.c:171
+msgid "a command must be given with an adjustment"
+msgstr "con un ajuste, debe darse una orden"
+
+#: src/nice.c:178 src/nice.c:187
+msgid "cannot get priority"
+msgstr "no se puede obtener la prioridad"
+
+#: src/nice.c:192
+msgid "cannot set priority"
+msgstr "no se puede establecer la prioridad"
+
+#: src/pathchk.c:118
+#, c-format
+msgid "Usage: %s [OPTION]... NAME...\n"
+msgstr "Modo de empleo: %s [OPCIÓN]... [NOMBRE]...\n"
+
+# Sugerencia: "no sólo este"-> "no sólo éste" gerardo
+# ¿Estás seguro? sv
+# ¡¡SÍ!! Observa: "todos los sistemas... no sólo este sistema"
+#                 "todos los sistemas... no sólo éste."
+# En el primer caso, "este" es adjetivo, y en el 2º, adverbio.
+# La RAE dice que la tilde es optativa si no hay ambigüedad posible.
+# Yo creo que es mejor ponerla siempre.
+#
+# Yo prefiero no ponerla si no hay ambigüedad... sv
+#: src/pathchk.c:119
+msgid ""
+"Diagnose unportable constructs in NAME.\n"
+"\n"
+"  -p, --portability   check for all POSIX systems, not only this one\n"
+"      --help          display this help and exit\n"
+"      --version       output version information and exit\n"
+msgstr ""
+"Diagnostica construcciones no portables en NOMBRE\n"
+"\n"
+"  -p, --portability   comprueba para todos los sistemas POSIX, no sólo este\n"
+"      --help          muestra esta ayuda y finaliza\n"
+"      --version       informa de la versión y finaliza\n"
+
+# Aquí también pongo transportable.
+#: src/pathchk.c:207
+#, c-format
+msgid "path `%s' contains nonportable character `%c'"
+msgstr "la ruta de acceso `%s' contiene el carácter no transportable `%c'"
+
+#: src/pathchk.c:227
+#, c-format
+msgid "`%s' is not a directory"
+msgstr "`%s' no es un directorio"
+
+#: src/pathchk.c:238
+#, c-format
+msgid "directory `%s' is not searchable"
+msgstr "el directorio `%s' es inaccesible"
+
+#: src/pathchk.c:330
+#, c-format
+msgid "name `%s' has length %d; exceeds limit of %d"
+msgstr "el nombre `%s' tiene longitud %d; excede el límite de %d"
+
+#: src/pathchk.c:356
+#, c-format
+msgid "path `%s' has length %d; exceeds limit of %d"
+msgstr "la ruta de acceso `%s' tiene longitud %d; excede el límite de %d"
+
+#: src/pinky.c:289
+msgid "Login name: "
+msgstr "Nombre de usuario: "
+
+#: src/pinky.c:292
+msgid "In real life: "
+msgstr "En la vida real: "
+
+#: src/pinky.c:295
+msgid "???\n"
+msgstr "???\n"
+
+#: src/pinky.c:315
+msgid "Directory: "
+msgstr "Directorio: "
+
+#: src/pinky.c:317
+msgid "Shell: "
+msgstr "Shell: "
+
+#: src/pinky.c:338
+msgid "Project: "
+msgstr "Proyecto: "
+
+#: src/pinky.c:364
+msgid "Plan:\n"
+msgstr "Plan:\n"
+
+# FIXME: Sin el contexto es difícil.
+#: src/pinky.c:383
+msgid "Login"
+msgstr "Login"
+
+#: src/pinky.c:385
+msgid "   Name"
+msgstr "   Nombre"
+
+#: src/pinky.c:386
+msgid "TTY"
+msgstr "TTY"
+
+#: src/pinky.c:388
+msgid "Idle"
+msgstr "Inactivo"
+
+#: src/pinky.c:389
+msgid "When"
+msgstr "Cuándo"
+
+#: src/pinky.c:392
+msgid "Where"
+msgstr "Dónde"
+
+#: src/pinky.c:466
+#, c-format
+msgid "Usage: %s [OPTION]... [USER]...\n"
+msgstr "Modo de empleo: %s [OPCIÓN]... [USUARIO]...\n"
+
+# FUZZY.
+#: src/pinky.c:467
+#, c-format
+msgid ""
+"\n"
+"  -l              do long format output\n"
+"  -b              omit the user's home directory and shell in long format\n"
+"  -h              omit the user's project file in long format\n"
+"  -p              omit the user's plan file in long format\n"
+"  -s              do short format output, this is the default\n"
+"  -f              omit the line of column headings in short format\n"
+"  -w              omit the user's full name in short format\n"
+"  -i              omit the user's full name and remote host in short format\n"
+"  -q              omit the user's full name, remote host and idle time\n"
+"                  in short format\n"
+"      --help      display this help and exit\n"
+"      --version   output version information and exit\n"
+"\n"
+"A lightweight `finger' program;  print user information.\n"
+"The utmp file will be %s.\n"
+msgstr ""
+"\n"
+"  -l              usa el formato ancho para el resultado\n"
+"  -b              omite el directorio inicial y shell del usuario en "
+"formato\n"
+"                  ancho\n"
+"  -h              omite el fichero project del usuario en formato largo\n"
+"  -p              omite el fichero plan del usuario en formato largo\n"
+"  -s              usa el formato corto (este es el predeterminado)\n"
+"  -f              omite la línea de cabeceras de columnas en formato corto\n"
+"  -w              omite el nombre completo del usuario en formato corto\n"
+"  -i              omite el nombre completo del usuario y el `host' remoto\n"
+"                  en formato corto\n"
+"  -q              omite el nombre completo del usuario, el `host' remoto\n"
+"                  y el tiempo inactivo en formato corto\n"
+"      --help      muestra esta ayuda\n"
+"      --version   muestra la versión\n"
+"\n"
+"Un programa `finger' sencillo; muestra información del usuario.\n"
+"El fichero utmp será %s.\n"
+
+#: src/printenv.c:63
+#, c-format
+msgid "Usage: %s [OPTION]... [VARIABLE]...\n"
+msgstr "Modo de empleo: %s [OPCIÓN]... [VARIABLE]...\n"
+
+#: src/printenv.c:64
+msgid ""
+"If no environment VARIABLE specified, print them all.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+msgstr ""
+"Si no se especifica ninguna VARIABLE de entorno, las muestra todas.\n"
+"\n"
+"  --help      muestra esta ayuda y finaliza\n"
+"  --version   informa de la versión y finaliza\n"
+
+#: src/printf.c:81
+#, c-format
+msgid ""
+"warning: %s: character(s) following character constant have been ignored"
+msgstr ""
+"atención: %s: los caracteres que siguen a la constante de caracteres\n"
+"no se han tenido en cuenta"
+
+#: src/printf.c:94
+#, c-format
+msgid ""
+"Usage: %s FORMAT [ARGUMENT]...\n"
+"  or:  %s OPTION\n"
+msgstr ""
+"Modo de empleo: %s FORMATO [ARGUMENTO]...\n"
+"       o bien:  %s OPCIÓN\n"
+
+# alerta (BEL) ? mejor, pitido audible (BEL) em+
+# campana. sv+
+# ¿Manejada? . ¿Qué te parece 'Se considera el ancho variable' em
+# A ver si te gusta lo que he puesto. sv+
+#: src/printf.c:99
+msgid ""
+"Print ARGUMENT(s) according to FORMAT.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+"\n"
+"FORMAT controls the output as in C printf.  Interpreted sequences are:\n"
+"\n"
+"  \\\"      double quote\n"
+"  \\0NNN   character with octal value NNN (0 to 3 digits)\n"
+"  \\\\      backslash\n"
+"  \\a      alert (BEL)\n"
+"  \\b      backspace\n"
+"  \\c      produce no further output\n"
+"  \\f      form feed\n"
+"  \\n      new line\n"
+"  \\r      carriage return\n"
+"  \\t      horizontal tab\n"
+"  \\v      vertical tab\n"
+"  \\xNNN   character with hexadecimal value NNN (1 to 3 digits)\n"
+"\n"
+"  %%%%      a single %%\n"
+"  %%b      ARGUMENT as a string with `\\' escapes interpreted\n"
+"\n"
+"and all C format specifications ending with one of diouxXfeEgGcs, with\n"
+"ARGUMENTs converted to proper type first.  Variable widths are handled.\n"
+msgstr ""
+"Muestra ARGUMENTO(s) de acuerdo a FORMATO.\n"
+"\n"
+"  --help      muestra esta ayuda y finaliza\n"
+"  --version   informa de la versión y finaliza\n"
+"\n"
+"FORMATO controla la salida como la función printf de C. Las secuencias\n"
+"interpretadas son:\n"
+"\n"
+"  \\\"      dobles comillas\n"
+"  \\0NNN   el carácter con valor octal NNN (0 a 3 dígitos)\n"
+"  \\\\      barra invertida\n"
+"  \\a      campana (BEL)\n"
+"  \\b      carácter de retroceso (backspace)\n"
+"  \\c      no produce más salida\n"
+"  \\f      avance de página (form feed)\n"
+"  \\n      nueva línea\n"
+"  \\r      retorno de carro\n"
+"  \\t      tabulador horizontal\n"
+"  \\v      tabulador vertical\n"
+"  \\xNNN   el carácter con valor hexadecimal NNN (de 1 a 3 dígitos)\n"
+"\n"
+"  %%%%      un sólo %%\n"
+"  %%b      ARGUMENTO como una cadena con secuencias de escape `\\'\n"
+"           interpretadas\n"
+"\n"
+"En todas las especificaciones de formato en C que terminan con un miembro\n"
+"de diouxXfeEgGcs, los ARGUMENTOs se convierten al tipo adecuado primero.\n"
+"Se admiten anchuras variables.\n"
+
+#: src/printf.c:142
+#, c-format
+msgid "%s: expected a numeric value"
+msgstr "%s: se esperaba un valor numérico"
+
+#: src/printf.c:144
+#, c-format
+msgid "%s: value not completely converted"
+msgstr "%s: valor no completamente convertido"
+
+#: src/printf.c:236
+msgid "missing hexadecimal number in escape"
+msgstr "falta un número hexadecimal en la secuencia de escape"
+
+#: src/printf.c:250
+#, c-format
+msgid "\\%c: invalid escape"
+msgstr "\\%c: secuencia de escape inválida"
+
+#: src/printf.c:458
+msgid "%%%c: invalid directive"
+msgstr "%%%c: directiva inválida"
+
+#: src/printf.c:505
+#, c-format
+msgid "Usage: %s format [argument...]\n"
+msgstr "Modo de empleo: %s formato [argumento...]\n"
+
+#: src/printf.c:522
+msgid "warning: excess arguments have been ignored"
+msgstr "atención: los argumentos que sobran no se tienen en cuenta"
+
+#: src/pwd.c:46
+#, c-format
+msgid "Usage: %s [OPTION]\n"
+msgstr "Modo de empleo: %s [OPCIÓN]\n"
+
+#: src/pwd.c:47
+msgid ""
+"Print the full filename of the current working directory.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+msgstr ""
+"Muestra el nombre de fichero completo del directorio de trabajo actual.\n"
+"\n"
+"  --help      muestra esta ayuda y finaliza\n"
+"  --version   informa de la versión y finaliza\n"
+
+#: src/pwd.c:72
+msgid "ignoring non-option arguments"
+msgstr "los argumentos que no son opciones no serán tenidos en cuenta"
+
+#: src/pwd.c:76
+msgid "cannot get current directory"
+msgstr "no se puede obtener el directorio actual"
+
+#: src/seq.c:88
+#, c-format
+msgid ""
+"Usage: %s [OPTION]... LAST\n"
+"  or:  %s [OPTION]... FIRST LAST\n"
+"  or:  %s [OPTION]... FIRST INCREMENT LAST\n"
+msgstr ""
+"Modo de empleo: %s [OPCIÓN]... ÚLTIMO\n"
+"       o bien:  %s [OPCIÓN]... PRIMERO ÚLTIMO\n"
+"       o bien:  %s [OPCIÓN]... PRIMERO INCREMENTO ÚLTIMO\n"
+
+#: src/seq.c:93
+msgid ""
+"Print numbers from FIRST to LAST, in steps of INCREMENT.\n"
+"\n"
+"  -f, --format FORMAT      use printf(3) style FORMAT (default: %%g)\n"
+"  -s, --separator STRING   use STRING to separate numbers (default: \\n)\n"
+"  -w, --equal-width        equalize width by padding with leading zeroes\n"
+"      --help               display this help and exit\n"
+"      --version            output version information and exit\n"
+"\n"
+"If FIRST or INCREMENT is omitted, it defaults to 1.\n"
+"FIRST, INCREMENT, and LAST are interpreted as floating point values.\n"
+"INCREMENT should be positive if FIRST is smaller than LAST, and negative\n"
+"otherwise.  When given, the FORMAT argument must contain exactly one of\n"
+"the printf-style, floating point output formats %%e, %%f, or %%g.\n"
+msgstr ""
+"Muestra los números desde PRIMERO hasta ÚLTIMO, en incrementos de "
+"INCREMENTO.\n"
+"\n"
+"  -f, --format FORMATO     utiliza el estilo de FORMATO printf(3)\n"
+"                           (por omisión: %%g)\n"
+"  -s, --separador CADENA   utiliza CADENA para separar los números\n"
+"                           (por omisión: \\n)\n"
+"  -w, --equal-width        iguala el ancho rellenando con ceros\n"
+"      --help               muestra esta ayuda y finaliza\n"
+"      --version            informa de la versión y finaliza\n"
+"\n"
+"Si se omiten PRIMERO o INCREMENTO, el valor predeterminado es 1.\n"
+"PRIMERO, INCREMENTO y ÚLTIMO se interpretan como valores de coma flotante.\n"
+"INCREMENTO debe ser positivo si PRIMERO es menor que ÚLTIMO, de otra "
+"manera,\n"
+"negativo. Cuando se da el argumento FORMATO, debe contener exactamente uno\n"
+"de los formatos estilo printf para coma flotante %%e, %%f, o %%g.\n"
+
+#: src/seq.c:216
+msgid "format string may not be specified when printing equal width strings"
+msgstr ""
+"la cadena de formato no debe especificarse cuando se muestran\n"
+"cadenas de la misma anchura"
+
+#: src/seq.c:230
+#, c-format
+msgid "invalid format string: `%s'"
+msgstr "cadena de formato inválida: `%s'"
+
+#: src/seq.c:258
+#, c-format
+msgid "invalid floating point argument: %s"
+msgstr "argumento de coma flotante inválido: %s"
+
+#: src/seq.c:421
+msgid ""
+"when the starting value is larger than the limit,\n"
+"the increment must be negative"
+msgstr ""
+"cuando el valor inicial es mayor que el límite,\n"
+"el incremento debe ser negativo"
+
+#: src/seq.c:446
+msgid ""
+"when the starting value is smaller than the limit,\n"
+"the increment must be positive"
+msgstr ""
+"cuando el valor inicial es menor que el límite,\n"
+"el incremento debe ser positivo"
+
+#: src/sleep.c:50
+#, c-format
+msgid "Usage: %s [OPTION]... NUMBER[SUFFIX]\n"
+msgstr "Modo de empleo: %s [OPCIÓN]... NÚMERO[SUFIJO]\n"
+
+#: src/sleep.c:51
+msgid ""
+"Pause for NUMBER seconds.\n"
+"SUFFIX may be s to keep seconds, m for minutes, h for hours or d for days.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+msgstr ""
+"Hace una pausa de NÚMERO segundos.\n"
+"El SUFIJO puede ser s para segundos, m para minutos, h para horas o d para\n"
+"días\n"
+"\n"
+"  --help      muestra esta ayuda y finaliza\n"
+"  --version   informa de la versión y finaliza\n"
+
+#: src/sleep.c:132
+#, c-format
+msgid "invalid time interval `%s'"
+msgstr "intervalo de tiempo inválido `%s'"
+
+#: src/stty.c:492
+#, c-format
+msgid ""
+"Usage: %s [-F device] [--file=device] [SETTING]...\n"
+"  or:  %s [-F device] [--file=device] [-a|--all]\n"
+"  or:  %s [-F device] [--file=device] [-g|--save]\n"
+msgstr ""
+"Modo de empleo: %s [-F dispositivo] [--file=dispositivo] [OPCIONES]...\n"
+"       o bien:  %s [-F dispositivo] [--file=dispositivo] [-a|--all]\n"
+"       o bien:  %s [-F dispositivo] [--file=dispositivo] [-g|--save]\n"
+
+# Eso de los "humanos" en español suena un poco raro. ¿no? sv
+# Por acuerdo, usamos 'el' terminal em+
+# Añado comillas en '-' em+
+# FIXME. Comunicar primero al autor. sv+
+# Sistema subyacente ?? , mejor dejar 'sistema' a secas em+
+# Depende, ¿qué ocurre con los compiladores cruzados?
+#: src/stty.c:498
+msgid ""
+"Print or change terminal characteristics.\n"
+"\n"
+"  -a, --all       print all current settings in human-readable form\n"
+"  -g, --save      print all current settings in a stty-readable form\n"
+"  -F, --file      open and use the specified device instead of stdin\n"
+"      --help      display this help and exit\n"
+"      --version   output version information and exit\n"
+"\n"
+"Optional - before SETTING indicates negation.  An * marks non-POSIX\n"
+"settings.  The underlying system defines which settings are available.\n"
+msgstr ""
+"Muestra o establece las características de la terminal\n"
+"\n"
+"  -a, --all       muestra todos los valores actuales en forma legible para\n"
+"                  humanos\n"
+"  -F, --file      abre y utiliza el dispositivo especificado en lugar de la\n"
+"                  entrada estándar\n"
+"  -g, --save      muestra todos los valores actuales en forma legible para\n"
+"                  ttys\n"
+"      --help      muestra esta ayuda y finaliza\n"
+"      --version   informa de la versión y finaliza\n"
+"\n"
+"Un - opcional antes de VALOR indica negación. Un * marca valores no POSIX.\n"
+"El sistema subyacente define qué valores están disponibles.\n"
+
+# Contexto del shell ? , ¿qué es eso? em+
+#: src/stty.c:510
+msgid ""
+"\n"
+"Special characters:\n"
+"* dsusp CHAR    CHAR will send a terminal stop signal once input flushed\n"
+"  eof CHAR      CHAR will send an end of file (terminate the input)\n"
+"  eol CHAR      CHAR will end the line\n"
+"* eol2 CHAR     alternate CHAR for ending the line\n"
+"  erase CHAR    CHAR will erase the last character typed\n"
+"  intr CHAR     CHAR will send an interrupt signal\n"
+"  kill CHAR     CHAR will erase the current line\n"
+"* lnext CHAR    CHAR will enter the next character quoted\n"
+"  quit CHAR     CHAR will send a quit signal\n"
+"* rprnt CHAR    CHAR will redraw the current line\n"
+"  start CHAR    CHAR will restart the output after stopping it\n"
+"  stop CHAR     CHAR will stop the output\n"
+"  susp CHAR     CHAR will send a terminal stop signal\n"
+"* swtch CHAR    CHAR will switch to a different shell layer\n"
+"* werase CHAR   CHAR will erase the last word typed\n"
+msgstr ""
+"\n"
+"Caracteres especiales:\n"
+"* dsusp CAR     el CARácter enviará una señal de alto a la terminal una vez "
+"que\n"
+"                la entrada haya sido limpiada\n"
+"  eof CAR       el CARácter enviará un fin de línea (termina la entrada)\n"
+"  eol CAR       el CARácter terminará la línea\n"
+"* eol2 CAR      CARácter alternativo para terminar la línea\n"
+"  erase CAR     el CARácter borrará el último carácter tecleado\n"
+"  intr CAR      el CARácter enviará una señal de interrupción\n"
+"  kill CAR      el CARácter borrará la línea actual\n"
+"* lnext CAR     el CARácter introducirá el siguiente carácter comentado\n"
+"  quit CAR      el CARácter enviará una señal de salida\n"
+"* rprnt CAR     el CARácter redibujará la línea actual\n"
+"  start CAR     el CARácter reiniciará la salida después de haberla "
+"detenido\n"
+"  stop CAR      el CARácter detendrá la salida\n"
+"  susp CAR      el CARácter enviará una señal de alto a la terminal\n"
+"* swtch CAR     el CARácter establecerá un contexto diferente de shell\n"
+"* werase CAR    el CARácter borrará la última palabra tecleada\n"
+
+# Para una lectura completada = para completar una lectura em+
+# kernel = núcleo. gerardo
+#
+# Pones kernel sin
+# ni siquiera comillas, ni "kérnel" o "quérnel" (¡qué horror!), pero
+# debería ser "núcleo". El núcleo de Unix... por aquí lo decimos, y
+# todo el mundo lo entiende. "Kernel" tiene traducción, y es corta y
+# no suena mal.
+#
+# Tienes razón, en todo caso sería kérnel, o al menos `kernel'.
+# Vale. acepto núcleo. sv
+#: src/stty.c:529
+msgid ""
+"\n"
+"Special settings:\n"
+"  N             set the input and output speeds to N bauds\n"
+"* cols N        tell the kernel that the terminal has N columns\n"
+"* columns N     same as cols N\n"
+"  ispeed N      set the input speed to N\n"
+"* line N        use line discipline N\n"
+"  min N         with -icanon, set N characters minimum for a completed read\n"
+"  ospeed N      set the output speed to N\n"
+"* rows N        tell the kernel that the terminal has N rows\n"
+"* size          print the number of rows and columns according to the "
+"kernel\n"
+"  speed         print the terminal speed\n"
+"  time N        with -icanon, set read timeout of N tenths of a second\n"
+msgstr ""
+"\n"
+"Valores especiales:\n"
+"  N             establece la velocidad de entrada y salida a N baudios\n"
+"* cols N        dice al núcleo que la terminal tiene N columnas\n"
+"* columns N     igual que cols N\n"
+"  ispeed N      establece la velocidad de entrada a N\n"
+"* line N        utiliza la disciplina de línea N\n"
+"  min N         con -icanon, establece a N caracteres como mínimo para una\n"
+"                lectura completada\n"
+"  ospeed N      establece la velocidad de salida a N\n"
+"* rows N        dice al núcleo que la terminal tiene N líneas\n"
+"* size          muestra el número de líneas y columnas de acuerdo con el "
+"núcleo\n"
+"  speed         muestra la velocidad de la terminal\n"
+"  time N        con -icanon, establece el tiempo fuera de lectura en N\n"
+"                décimas de segundo\n"
+
+# ## en -cread -> permite que se reciba entrada
+# ## vale.
+#: src/stty.c:544
+msgid ""
+"\n"
+"Control settings:\n"
+"  [-]clocal     disable modem control signals\n"
+"  [-]cread      allow input to be received\n"
+"* [-]crtscts    enable RTS/CTS handshaking\n"
+"  csN           set character size to N bits, N in [5..8]\n"
+"  [-]cstopb     use two stop bits per character (one with `-')\n"
+"  [-]hup        send a hangup signal when the last process closes the tty\n"
+"  [-]hupcl      same as [-]hup\n"
+"  [-]parenb     generate parity bit in output and expect parity bit in "
+"input\n"
+"  [-]parodd     set odd parity (even with `-')\n"
+msgstr ""
+"\n"
+"Valores de control:\n"
+"  [-]clocal     desactiva las señales de control del módem\n"
+"  [-]cread      permite que se reciba entrada\n"
+"* [-]crtscts    permite negociación RTS/CTS\n"
+"  csN           establece el tamaño del carácter en N bits, N en [5..8]\n"
+"  [-]cstopb     utiliza dos bits de paro por carácter (uno con `-')\n"
+"  [-]hup        manda una señal de colgar cuando el último proceso cierra\n"
+"                la tty\n"
+"  [-]hupcl      igual que [-]hup\n"
+"  [-]parenb     genera un bit de paridad en la salida y espera un bit de "
+"paridad\n"
+"                en la entrada\n"
+"  [-]parodd     establece paridad impar (incluso con `-')\n"
+
+#: src/stty.c:557
+msgid ""
+"\n"
+"Input settings:\n"
+"  [-]brkint     breaks cause an interrupt signal\n"
+"  [-]icrnl      translate carriage return to newline\n"
+"  [-]ignbrk     ignore break characters\n"
+"  [-]igncr      ignore carriage return\n"
+"  [-]ignpar     ignore characters with parity errors\n"
+"* [-]imaxbel    beep and do not flush a full input buffer on a character\n"
+"  [-]inlcr      translate newline to carriage return\n"
+"  [-]inpck      enable input parity checking\n"
+"  [-]istrip     clear high (8th) bit of input characters\n"
+"* [-]iuclc      translate uppercase characters to lowercase\n"
+"* [-]ixany      let any character restart output, not only start character\n"
+"  [-]ixoff      enable sending of start/stop characters\n"
+"  [-]ixon       enable XON/XOFF flow control\n"
+"  [-]parmrk     mark parity errors (with a 255-0-character sequence)\n"
+"  [-]tandem     same as [-]ixoff\n"
+msgstr ""
+"\n"
+"Valores de entrada:\n"
+"  [-]brkint     `breaks' causan una señal de interrupción\n"
+"  [-]icrnl      traduce el retorno de carro a nueva línea\n"
+"  [-]ignbrk     descarta los caracteres de `break'\n"
+"  [-]igncr      descarta los retornos de carro\n"
+"  [-]ignpar     descarta los caracteres con error de paridad\n"
+"* [-]imaxbel    emite un pitido y no limpia un búfer de entrada lleno con "
+"un\n"
+"                carácter\n"
+"  [-]inlcr      traduce nueva línea a retorno de carro\n"
+"  [-]inpck      permite la revisión de paridad de entrada\n"
+"  [-]istrip     borra el bit alto (8º) de los caracteres de entrada\n"
+"* [-]iuclc      traduce de caracteres en mayúscula a minúscula\n"
+"* [-]ixany      deja que cualquier carácter reinicie la entrada, no sólo\n"
+"                el carácter de inicio\n"
+"  [-]ixoff      permite el envío de caracteres de inicio/alto\n"
+"  [-]ixon       permite el control de flujo XON/XOFF\n"
+"  [-]parmrk     marca errores de paridad (con la secuencia de caracteres "
+"255-0)\n"
+"  [-]tandem     igual que [-]ixoff\n"
+
+#: src/stty.c:576
+msgid ""
+"\n"
+"Output settings:\n"
+"* bsN           backspace delay style, N in [0..1]\n"
+"* crN           carriage return delay style, N in [0..3]\n"
+"* ffN           form feed delay style, N in [0..1]\n"
+"* nlN           newline delay style, N in [0..1]\n"
+"* [-]ocrnl      translate carriage return to newline\n"
+"* [-]ofdel      use delete characters for fill instead of null characters\n"
+"* [-]ofill      use fill (padding) characters instead of timing for delays\n"
+"* [-]olcuc      translate lowercase characters to uppercase\n"
+"* [-]onlcr      translate newline to carriage return-newline\n"
+"* [-]onlret     newline performs a carriage return\n"
+"* [-]onocr      do not print carriage returns in the first column\n"
+"  [-]opost      postprocess output\n"
+"* tabN          horizontal tab delay style, N in [0..3]\n"
+"* tabs          same as tab0\n"
+"* -tabs         same as tab3\n"
+"* vtN           vertical tab delay style, N in [0..1]\n"
+msgstr ""
+"\n"
+"Valores de salida:\n"
+"* bsN           estilo de retardo de retroceso, N en [0..1]\n"
+"* crN           estilo de retardo de retorno de carro, N en [0..3]\n"
+"* ffN           estilo de retardo de salto de página, N en [0..1]\n"
+"* nlN           estilo de retardo de nueva línea, N in [0..1]\n"
+"* [-]ocrnl      traduce retorno de carro a nueva línea\n"
+"* [-]ofdel      utiliza caracteres de borrado para relleno en lugar de\n"
+"                caracteres nulos\n"
+"* [-]ofill      utiliza caracteres de relleno en lugar de tiempo para "
+"retardos\n"
+"* [-]olcuc      traduce caracteres en minúscula a mayúscula\n"
+"* [-]onlcr      traduce nueva línea a retorno de carro-nueva línea\n"
+"* [-]onlret     nueva línea realiza un retorno de carro\n"
+"* [-]onocr      no muestra retornos de carro en la primera columna\n"
+"  [-]opost      postprocesa salida\n"
+"* tabN          estilo de retardo de tabulador horizontal, N en [0..3]\n"
+"* tabs          igual que tab0\n"
+"* -tabs         igual que tab3\n"
+"* vtN           estilo de retardo de tabulador vertical, N en [0..1]\n"
+
+# lo del carácter de matar es un poco fuerte, ¿no? sv
+# echo = muestra, mejor que repite, aquí, creo. gerardo
+# perdería parte del significado. sv
+#: src/stty.c:596
+msgid ""
+"\n"
+"Local settings:\n"
+"  [-]crterase   echo erase characters as backspace-space-backspace\n"
+"* crtkill       kill all line by obeying the echoprt and echoe settings\n"
+"* -crtkill      kill all line by obeying the echoctl and echok settings\n"
+"* [-]ctlecho    echo control characters in hat notation (`^c')\n"
+"  [-]echo       echo input characters\n"
+"* [-]echoctl    same as [-]ctlecho\n"
+"  [-]echoe      same as [-]crterase\n"
+"  [-]echok      echo a newline after a kill character\n"
+"* [-]echoke     same as [-]crtkill\n"
+"  [-]echonl     echo newline even if not echoing other characters\n"
+"* [-]echoprt    echo erased characters backward, between `\\' and '/'\n"
+"  [-]icanon     enable erase, kill, werase, and rprnt special characters\n"
+"  [-]iexten     enable non-POSIX special characters\n"
+"  [-]isig       enable interrupt, quit, and suspend special characters\n"
+"  [-]noflsh     disable flushing after interrupt and quit special "
+"characters\n"
+"* [-]prterase   same as [-]echoprt\n"
+"* [-]tostop     stop background jobs that try to write to the terminal\n"
+"* [-]xcase      with icanon, escape with `\\' for uppercase characters\n"
+msgstr ""
+"\n"
+"Valores locales:\n"
+"  [-]crterase   repite los caracteres de borrado como\n"
+"                retroceso-espacio-retroceso\n"
+"* crtkill       mata toda la línea obedeciendo los valores echoprt y echoe\n"
+"* -crtkill      mata toda la línea obedeciendo los valores echoctl y echok\n"
+"* [-]ctlecho    repite los caracteres de control en notación gorro (`^c')\n"
+"  [-]echo       repite los caracteres de entrada\n"
+"* [-]echoctl    igual que [-]ctlecho\n"
+"  [-]echoe      igual que [-]crterase\n"
+"  [-]echok      repite una nueva línea después de un carácter de matar\n"
+"* [-]echoke     igual que [-]crtkill\n"
+"  [-]echonl     repite nueva línea aún si no está repitiendo otros           "
+"     caracteres\n"
+"* [-]echoprt    repite los caracteres borrados en orden inverso, entre\n"
+"                `\\' y '/'\n"
+"  [-]icanon     permite los caracteres especiales erase, kill, werase,\n"
+"                y rprnt\n"
+"  [-]iexten     permite caracteres especiales no-POSIX\n"
+"  [-]isig       permite los caracteres especiales interrupt, quit, y "
+"suspend\n"
+"  [-]noflsh     no permite limpieza después de los caracteres especiales\n"
+"                interrupt y quit\n"
+"* [-]prterase   igual que [-]echoprt\n"
+"* [-]tostop     detiene trabajos en `background' que tratan de escribir a\n"
+"                la terminal\n"
+"* [-]xcase      con icanon, escapa con `\\' para caracteres en mayúscula\n"
+
+#: src/stty.c:618
+msgid ""
+"\n"
+"Combination settings:\n"
+"* [-]LCASE      same as [-]lcase\n"
+"  cbreak        same as -icanon\n"
+"  -cbreak       same as icanon\n"
+"  cooked        same as brkint ignpar istrip icrnl ixon opost isig\n"
+"                icanon, eof and eol characters to their default values\n"
+"  -cooked       same as raw\n"
+"  crt           same as echoe echoctl echoke\n"
+"  dec           same as echoe echoctl echoke -ixany intr ^c erase 0177\n"
+"                kill ^u\n"
+"* [-]decctlq    same as [-]ixany\n"
+"  ek            erase and kill characters to their default values\n"
+"  evenp         same as parenb -parodd cs7\n"
+"  -evenp        same as -parenb cs8\n"
+"* [-]lcase      same as xcase iuclc olcuc\n"
+"  litout        same as -parenb -istrip -opost cs8\n"
+"  -litout       same as parenb istrip opost cs7\n"
+"  nl            same as -icrnl -onlcr\n"
+"  -nl           same as icrnl -inlcr -igncr onlcr -ocrnl -onlret\n"
+"  oddp          same as parenb parodd cs7\n"
+"  -oddp         same as -parenb cs8\n"
+"  [-]parity     same as [-]evenp\n"
+"  pass8         same as -parenb -istrip cs8\n"
+"  -pass8        same as parenb istrip cs7\n"
+"  raw           same as -ignbrk -brkint -ignpar -parmrk -inpck -istrip\n"
+"                -inlcr -igncr -icrnl  -ixon  -ixoff  -iuclc  -ixany\n"
+"                -imaxbel -opost -isig -icanon -xcase min 1 time 0\n"
+"  -raw          same as cooked\n"
+"  sane          same as cread -ignbrk brkint -inlcr -igncr icrnl\n"
+"                -ixoff -iuclc -ixany imaxbel opost -olcuc -ocrnl onlcr\n"
+"                -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0 vt0 ff0\n"
+"                isig icanon iexten echo echoe echok -echonl -noflsh\n"
+"                -xcase -tostop -echoprt echoctl echoke, all special\n"
+"                characters to their default values.\n"
+msgstr ""
+"\n"
+"Valores de combinación:\n"
+"* [-]LCASE      igual que [-]lcase\n"
+"  cbreak        igual que -icanon\n"
+"  -cbreak       igual que icanon\n"
+"  cooked        igual que caracteres brkint ignpar istrip icrnl ixon\n"
+"                opost isig icanon, eof y eol a sus valores por omisión\n"
+"  -cooked       igual que raw\n"
+"  crt           igual que echoe echoctl echoke\n"
+"  dec           igual que echoe echoctl echoke -ixany intr ^c erase 0177\n"
+"                kill ^u\n"
+"* [-]decctlq    igual que [-]ixany\n"
+"  ek            caracteres erase y kill a sus valores por omisión\n"
+"  evenp         igual que parenb -parodd cs7\n"
+"  -evenp        igual que -parenb cs8\n"
+"* [-]lcase      igual que xcase iuclc olcuc\n"
+"  litout        igual que -parenb -istrip -opost cs8\n"
+"  -litout       igual que parenb istrip opost cs7\n"
+"  nl            igual que -icrnl -onlcr\n"
+"  -nl           igual que icrnl -inlcr -igncr onlcr -ocrnl -onlret\n"
+"  oddp          igual que parenb parodd cs7\n"
+"  -oddp         igual que -parenb cs8\n"
+"  [-]parity     igual que [-]evenp\n"
+"  pass8         igual que -parenb -istrip cs8\n"
+"  -pass8        igual que parenb istrip cs7\n"
+"  raw           igual que -ignbrk -brkint -ignpar -parmrk -inpck -istrip\n"
+"                -inlcr -igncr -icrnl  -ixon  -ixoff  -iuclc  -ixany\n"
+"                -imaxbel -opost -isig -icanon -xcase min 1 time 0\n"
+"  -raw          igual que cooked\n"
+"  sane          igual que cread -ignbrk brkint -inlcr -igncr icrnl\n"
+"                -ixoff -iuclc -ixany imaxbel opost -olcuc -ocrnl onlcr\n"
+"                -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0 vt0 ff0\n"
+"                isig icanon iexten echo echoe echok -echonl -noflsh\n"
+"                -xcase -tostop -echoprt echoctl echoke, y todos los\n"
+"                caracteres especiales a sus valores por omisión.\n"
+
+#: src/stty.c:655
+msgid ""
+"\n"
+"Handle the tty line connected to standard input.  Without arguments,\n"
+"prints baud rate, line discipline, and deviations from stty sane.  In\n"
+"settings, CHAR is taken literally, or coded as in ^c, 0x37, 0177 or\n"
+"127; special values ^- or undef used to disable special characters.\n"
+msgstr ""
+"\n"
+"Maneja la línea tty conectada a la entrada estándar. Sin argumentos,\n"
+"muestra la tasa de baudios, la disciplina de línea, y desviaciones con\n"
+"respecto de `stty sane'. En valores, el CARácter es tomado literalmente,\n"
+"o codificado como en ^c, 0x37, 0177 ó 127; los valores especiales ^- o\n"
+"undef son utilizados para no permitir caracteres especiales.\n"
+
+#: src/stty.c:739
+msgid "only one device may be specified"
+msgstr "sólo se puede especificar un dispositivo"
+
+#: src/stty.c:834
+msgid ""
+"the options for verbose and stty-readable output styles are\n"
+"mutually exclusive"
+msgstr ""
+"las opciones para estilos de salida explícitos y legibles para terminal son\n"
+"mutuamente excluyentes"
+
+#: src/stty.c:839
+msgid "when specifying an output style, modes may not be set"
+msgstr ""
+"cuando se especifica un estilo de salida, no se pueden establecer los modos"
+
+#: src/stty.c:855
+#, c-format
+msgid "%s: couldn't reset non-blocking mode"
+msgstr "%s: no se pudo reiniciar el modo `non-blocking'"
+
+#: src/stty.c:909 src/stty.c:1016
+#, c-format
+msgid "invalid argument `%s'"
+msgstr "argumento inválido `%s'"
+
+#: src/stty.c:920 src/stty.c:937 src/stty.c:949 src/stty.c:962 src/stty.c:974
+#: src/stty.c:993
+#, c-format
+msgid "missing argument to `%s'"
+msgstr "falta el argumento de `%s'"
+
+#: src/stty.c:1069
+#, c-format
+msgid "%s: unable to perform all requested operations"
+msgstr "%s: no se pudieron realizar todas las operaciones solicitadas"
+
+# Me temo que new_mode no se puede traducir. sv
+#: src/stty.c:1074
+msgid "new_mode: mode\n"
+msgstr "new_mode: modo\n"
+
+#: src/stty.c:1413
+#, c-format
+msgid "%s: no size information for this device"
+msgstr "%s: no hay información sobre tamaño para este dispositivo"
+
+#: src/stty.c:1804
+msgid "<undef>"
+msgstr "<no definido>"
+
+#: src/stty.c:1855
+#, c-format
+msgid "invalid integer argument `%s'"
+msgstr "argumento entero inválido `%s'"
+
+# FIXME. sv
+# ¿Por qué no traducís "virtual"? gerardo
+# Porque creo que el original está mal...
+# Hoy en día todo es virtual...
+# Me recuerda los viejos tiempos en los que había memoria convencional,
+# extendida, expandida, superior...
+#
+# ¿Viejos tiempos? Hay muchíiisima gente con el maldito M$-DOG aún, y
+# las BIOS siguen diciendo lo de "640 k" de memoria convencional,
+# aunque tengas 64 MB.
+#
+# Me estás dando la razón. ¿Es que no pretendemos alejarnos de todo eso?
+# (Tengo entendido que Linux pasa de la BIOS todo lo que puede). sv
+#
+# Francamente, prefiero pensar en que un programa intenta un malloc(),
+# y si no lo consigue, entonces es que se ha agotado la memoria, así
+# sin más. ¿qué opinas? sv
+#
+# Bueno, no es que esté mal, pero cuando el autor pone "virtual", se
+# podría dejar, y tampoco estaría mal. Sí, no me recuerdes lo del
+# ASCII :-) gerardo
+# ¡Es verdad! :-)
+# De todas formas esto habría que preguntárselo al gran jefe de GNU (RMS).
+#: src/su.c:187
+msgid "virtual memory exhausted"
+msgstr "memoria agotada"
+
+#: src/su.c:290
+msgid "Password:"
+msgstr "Contraseña:"
+
+#: src/su.c:293
+msgid "getpass: cannot open /dev/tty"
+msgstr "getpass: no se puede abrir /dev/tty"
+
+# Aquí habla de "groups", en plural. No se pueden establecer los
+# grupos. gerardo
+# Cierto, eso es literalmente, pero: ¿"su" puede cambiar a varios grupos
+# o a uno cada vez? sv
+#: src/su.c:351
+msgid "cannot set groups"
+msgstr "no se puede establecer el grupo"
+
+#: src/su.c:355
+msgid "cannot set group id"
+msgstr "no se puede establecer el id del grupo"
+
+#: src/su.c:357
+msgid "cannot set user id"
+msgstr "no se puede establecer el id del usuario"
+
+#: src/su.c:401
+#, c-format
+msgid "cannot run %s"
+msgstr "no se puede ejecutar %s"
+
+#: src/su.c:433
+#, c-format
+msgid "Usage: %s [OPTION]... [-] [USER [ARG]...]\n"
+msgstr "Modo de empleo: %s [OPCIÓN]... [-] [USUARIO [ARG]...]\n"
+
+# login shell no lo traduciría em+
+# Caparazón de entrada. Bueno, vale, `shell' de entrada. gerardo
+# Si acaso shell de inicio. Pero sólo si acaso. sv
+#: src/su.c:434
+msgid ""
+"Change the effective user id and group id to that of USER.\n"
+"\n"
+"  -, -l, --login               make the shell a login shell\n"
+"  -c, --commmand=COMMAND       pass a single COMMAND to the shell with -c\n"
+"  -f, --fast                   pass -f to the shell (for csh or tcsh)\n"
+"  -m, --preserve-environment   do not reset environment variables\n"
+"  -p                           same as -m\n"
+"  -s, --shell=SHELL            run SHELL if /etc/shells allows it\n"
+"      --help                   display this help and exit\n"
+"      --version                output version information and exit\n"
+"\n"
+"A mere - implies -l.   If USER not given, assume root.\n"
+msgstr ""
+"Cambia el identificador efectivo de usuario y de grupo al del USUARIO.\n"
+"\n"
+"  -, -l, --login               hace al shell un shell de `login'\n"
+"  -c, --command=ORDEN          pasa una sola ORDEN al shell con -c\n"
+"  -f, --fast                   pasa -f al shell (para csh o tcsh)\n"
+"  -m, --preserve-environment   no borra las variables de entorno\n"
+"  -p                           igual que -m\n"
+"  -s, --shell=SHELL            ejecuta SHELL si /etc/shells lo permite\n"
+"      --help                   muestra esta ayuda y finaliza\n"
+"      --version                informa de la versión y finaliza\n"
+"\n"
+"Un simple - implica -l. Si no se da el USUARIO, se supone root.\n"
+
+#: src/su.c:522
+#, c-format
+msgid "user %s does not exist"
+msgstr "el usuario %s no existe"
+
+#: src/su.c:545
+msgid "incorrect password"
+msgstr "contraseña incorrecta"
+
+#. The user being su'd to has a nonstandard shell, and so is
+#. probably a uucp account or has restricted access.  Don't
+#. compromise the account by allowing access with a standard
+#. shell.
+#: src/su.c:562
+#, c-format
+msgid "using restricted shell %s"
+msgstr "usando el shell restringido %s"
+
+#: src/su.c:573
+#, c-format
+msgid "warning: cannot change directory to %s"
+msgstr "atención: no se puede cambiar al directorio %s"
+
+#: src/tee.c:65
+#, c-format
+msgid "Usage: %s [OPTION]... [FILE]...\n"
+msgstr "Modo de empleo: %s [OPCIÓN]... [FICHERO]...\n"
+
+#: src/tee.c:66
+msgid ""
+"Copy standard input to each FILE, and also to standard output.\n"
+"\n"
+"  -a, --append              append to the given FILEs, do not overwrite\n"
+"  -i, --ignore-interrupts   ignore interrupt signals\n"
+"      --help                display this help and exit\n"
+"      --version             output version information and exit\n"
+msgstr ""
+"Copia la entrada estándar a cada FICHERO, y también a salida estándar.\n"
+"\n"
+"  -a, --append              añade a los FICHEROs dados, no los sobreescribe\n"
+"  -i, --ignore-interrupts   no hace caso a las señales de interrupción\n"
+"      --help                muestra esta ayuda y finaliza\n"
+"      --version             informa de la versión y finaliza\n"
+
+#: src/tee.c:181
+msgid "standard output"
+msgstr "salida estándar"
+
+#: src/tee.c:219
+msgid "read error"
+msgstr "error de lectura"
+
+#: src/test.c:232
+msgid "argument expected\n"
+msgstr "se esperaba un argumento\n"
+
+#: src/test.c:240
+#, c-format
+msgid "integer expression expected %s\n"
+msgstr "se esperaba una expresión entera %s\n"
+
+#: src/test.c:362
+msgid "')' expected\n"
+msgstr "se esperaba ')'\n"
+
+#: src/test.c:365
+#, c-format
+msgid "')' expected, found %s\n"
+msgstr "se esperaba ')', se encontró %s\n"
+
+#: src/test.c:381 src/test.c:907
+#, c-format
+msgid "%s: unary operator expected\n"
+msgstr "%s: se esperaba un operador unario\n"
+
+#: src/test.c:408 src/test.c:933
+#, c-format
+msgid "%s: binary operator expected\n"
+msgstr "%s: se esperaba un operador binario\n"
+
+#: src/test.c:443
+msgid "before -lt"
+msgstr "antes de -lt"
+
+#: src/test.c:451
+msgid "after -lt"
+msgstr "después de -lt"
+
+#: src/test.c:465
+msgid "before -le"
+msgstr "antes de -le"
+
+#: src/test.c:472
+msgid "after -le"
+msgstr "después de -le"
+
+#: src/test.c:488
+msgid "before -gt"
+msgstr "antes de -gt"
+
+#: src/test.c:495
+msgid "after -gt"
+msgstr "después de -gt"
+
+#: src/test.c:509
+msgid "before -ge"
+msgstr "antes de -ge"
+
+#: src/test.c:516
+msgid "after -ge"
+msgstr "después de -ge"
+
+#: src/test.c:529 src/test.c:602
+msgid "-nt does not accept -l\n"
+msgstr "-nt no acepta -l\n"
+
+#: src/test.c:544
+msgid "before -ne"
+msgstr "antes de -ne"
+
+#: src/test.c:551
+msgid "after -ne"
+msgstr "después de -ne"
+
+#: src/test.c:567
+msgid "before -eq"
+msgstr "antes de -eq"
+
+#: src/test.c:574
+msgid "after -eq"
+msgstr "después de -eq"
+
+#: src/test.c:585
+msgid "-ef does not accept -l\n"
+msgstr "-ef no acepta -l\n"
+
+#: src/test.c:609
+msgid "unknown binary operator"
+msgstr "operador binario desconocido"
+
+#: src/test.c:795
+msgid "after -t"
+msgstr "después de -t"
+
+#: src/test.c:991
+#, c-format
+msgid ""
+"Usage: %s EXPRESSION\n"
+"  or:  [ EXPRESSION ]\n"
+"  or:  %s OPTION\n"
+msgstr ""
+"Modo de empleo: %s EXPRESIÓN\n"
+"       o bien:  [ EXPRESIÓN ]\n"
+"       o bien:  %s OPCIÓN\n"
+
+#: src/test.c:997
+msgid ""
+"Exit with the status determined by EXPRESSION.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+"\n"
+"EXPRESSION is true or false and sets exit status.  It is one of:\n"
+msgstr ""
+"Termina con el estado determinado por EXPRESIÓN.\n"
+"\n"
+"  --help      muestra esta ayuda y finaliza\n"
+"  --version   informa de la versión y finaliza\n"
+"\n"
+"La EXPRESIÓN es verdadera o falsa y determina el estado de salida. Es una "
+"de:\n"
+
+#: src/test.c:1005
+msgid ""
+"\n"
+"  ( EXPRESSION )               EXPRESSION is true\n"
+"  ! EXPRESSION                 EXPRESSION is false\n"
+"  EXPRESSION1 -a EXPRESSION2   both EXPRESSION1 and EXPRESSION2 are true\n"
+"  EXPRESSION1 -o EXPRESSION2   either EXPRESSION1 or EXPRESSION2 is true\n"
+"\n"
+"  [-n] STRING          the length of STRING is nonzero\n"
+"  -z STRING            the length of STRING is zero\n"
+"  STRING1 = STRING2    the strings are equal\n"
+"  STRING1 != STRING2   the strings are not equal\n"
+"\n"
+"  INTEGER1 -eq INTEGER2   INTEGER1 is equal to INTEGER2\n"
+"  INTEGER1 -ge INTEGER2   INTEGER1 is greater than or equal to INTEGER2\n"
+"  INTEGER1 -gt INTEGER2   INTEGER1 is greater than INTEGER2\n"
+"  INTEGER1 -le INTEGER2   INTEGER1 is less than or equal to INTEGER2\n"
+"  INTEGER1 -lt INTEGER2   INTEGER1 is less than INTEGER2\n"
+"  INTEGER1 -ne INTEGER2   INTEGER1 is not equal to INTEGER2\n"
+msgstr ""
+"\n"
+"  ( EXPRESIÓN )                la EXPRESIÓN es verdadera\n"
+"  ! EXPRESIÓN                  la EXPRESIÓN es falsa\n"
+"  EXPRESIÓN1 -a EXPRESIÓN2     la EXPRESIÓN1 y la EXPRESIÓN2 son verdaderas\n"
+"  EXPRESIÓN1 -o EXPRESIÓN2     la EXPRESIÓN1 o la EXPRESIÓN2 son verdaderas\n"
+"\n"
+"  [-n] CADENA          la longitud de la CADENA es distinta de cero\n"
+"  -z CADENA            la longitud de la CADENA es igual a cero\n"
+"  CADENA1 = CADENA2    las cadenas son iguales\n"
+"  CADENA1 != CADENA2   las cadenas no son iguales\n"
+"\n"
+"  ENTERO1 -eq ENTERO2     el ENTERO1 es igual a ENTERO2\n"
+"  ENTERO1 -ge ENTERO2     el ENTERO1 es mayor o igual que ENTERO2\n"
+"  ENTERO1 -gt ENTERO2     el ENTERO1 es mayor que ENTERO2\n"
+"  ENTERO1 -le ENTERO2     el ENTERO1 es menor o igual que ENTERO2\n"
+"  ENTERO1 -lt ENTERO2     el ENTERO1 es menor que ENTERO2\n"
+"  ENTERO1 -ne ENTERO2     el ENTERO1 no es igual a ENTERO2\n"
+
+# named pipe -> no lo traduciría em+
+# Yo sí, pero pongo named pipe entre paréntesis. sv+
+# mayor a -> mayor 'que' em+
+# nodo-i -> nodo-í (con acento, porque es de índice) gerardo
+# No, es el i que se pone por ejemplo en $a_i$ (para que me entiendas :-)
+# ¿Tú crees? Yo diría que "inode numbers" es "números de
+# nodo-índice", o "número-í". gerardo
+#
+# Además en el Kernighan y Ritchie viene nodo-i.
+# Bueno... y "ligar", y "header", y... (malditas traducciones)
+#
+# La letra "i" se utiliza muchísimo como índice (soy matemático).
+# Pero jamás la he visto acentuada por ese motivo yendo sola.
+#
+# bit sticky -> bit pegajoso (sugerencia: gerardo)
+# Esto es demasiado fuerte... sv
+#
+# Ouh yeahh!! ¿Y por qué no? Es un juego de palabras entre "S(ave) T(ext)
+# I(mage)"-cky y la palabra "pegajoso", pues el código se queda
+# "pegado" en la memoria. (O se quedaba, hoy día esto no vale para
+# nada.) Iron Maiden
+#
+# ¡Al fin, alguien me lo explica! No está nada mal.
+# Entonces ¿se podría decir el "bit STI"?
+# Ya sabes que cuando uno intenta traducir un juego de palabras, lo que
+# suele suceder es que se lo carga (o bien traduce solamente el juego
+# de palabras perdiendo su verdadero significado).
+#
+# En cambio sí traducís el bit SUID/SGID
+# por-una-cosa-muy-larga. Sugiero dejar las siglas SUID o SGID. gerardo
+# ¿Quieres decir que propones traducir "set-group-ID" por "SGID"?
+# Esto me parecería una buena solución.
+#
+# socket = enchufe. gerardo
+# Este también es un poco fuerte. ¿Conoces a alguien (además de a tí mismo)
+# que utilice este término y se quede tan ancho?
+# ¿Por qué enchufe y no (por ejemplo) conector? sv
+#: src/test.c:1024
+msgid ""
+"\n"
+"  FILE1 -ef FILE2   FILE1 and FILE2 have the same device and inode numbers\n"
+"  FILE1 -nt FILE2   FILE1 is newer (modification date) than FILE2\n"
+"  FILE1 -ot FILE2   FILE1 is older than FILE2\n"
+"\n"
+"  -b FILE     FILE exists and is block special\n"
+"  -c FILE     FILE exists and is character special\n"
+"  -d FILE     FILE exists and is a directory\n"
+"  -e FILE     FILE exists\n"
+"  -f FILE     FILE exists and is a regular file\n"
+"  -g FILE     FILE exists and is set-group-ID\n"
+"  -G FILE     FILE exists and is owned by the effective group ID\n"
+"  -k FILE     FILE exists and has its sticky bit set\n"
+"  -L FILE     FILE exists and is a symbolic link\n"
+"  -O FILE     FILE exists and is owned by the effective user ID\n"
+"  -p FILE     FILE exists and is a named pipe\n"
+"  -r FILE     FILE exists and is readable\n"
+"  -s FILE     FILE exists and has a size greater than zero\n"
+"  -S FILE     FILE exists and is a socket\n"
+"  -t [FD]     file descriptor FD (stdout by default) is opened on a "
+"terminal\n"
+"  -u FILE     FILE exists and its set-user-ID bit is set\n"
+"  -w FILE     FILE exists and is writable\n"
+"  -x FILE     FILE exists and is executable\n"
+msgstr ""
+"\n"
+"  FICHERO1 -ef FICHERO2   el FICHERO1 y FICHERO2 tienen los mismos números "
+"de\n"
+"                          dispositivo y de nodo-i\n"
+"  FICHERO1 -nt FICHERO2   el FICHERO1 es más moderno (fecha de "
+"modificación)\n"
+"                          que FICHERO2\n"
+"  FICHERO1 -ot FICHERO2   el FICHERO1 es más antiguo que FICHERO2\n"
+"\n"
+"  -b FICHERO  el FICHERO existe y es un fichero especial de bloques\n"
+"  -c FICHERO  el FICHERO existe y es un fichero especial de caracteres\n"
+"  -d FICHERO  el FICHERO existe y es un directorio\n"
+"  -e FICHERO  el FICHERO existe\n"
+"  -f FICHERO  el FICHERO existe y es un fichero regular\n"
+"  -g FICHERO  el FICHERO existe y tiene cambio-de-ID-de-grupo\n"
+"  -G FICHERO  el FICHERO existe y su propietario es el ID efectivo de grupo\n"
+"  -k FICHERO  el FICHERO existe y tiene activo su bit `sticky'\n"
+"  -L FICHERO  el FICHERO existe y es un enlace simbólico\n"
+"  -O FICHERO  el FICHERO existe y su propietario es el ID efectivo de "
+"usuario\n"
+"  -p FICHERO  el FICHERO existe y es una tubería nombrada (named pipe)\n"
+"  -r FICHERO  el FICHERO existe y puede leerse\n"
+"  -s FICHERO  el FICHERO existe y tiene un tamaño mayor a cero\n"
+"  -S FICHERO  el FICHERO existe y es un `socket'\n"
+"  -t [DA]     el descriptor de fichero DA (salida estándar por omisión)\n"
+"              está abierto en una terminal\n"
+"  -u FICHERO  el FICHERO existe y su bit de cambio-de-ID-de-usuario está "
+"activo\n"
+"  -w FICHERO  el FICHERO existe y puede escribirse\n"
+"  -x FICHERO  el FICHERO existe y puede ejecutarse\n"
+
+# No me acaba de gustar el "Advierta". Se admiten sugerencias.
+#: src/test.c:1049
+msgid ""
+"\n"
+"Beware that parentheses need to be escaped (e.g., by backslashes) for "
+"shells.\n"
+"INTEGER may also be -l STRING, which evaluates to the length of STRING.\n"
+msgstr ""
+"\n"
+"Advierta que los paréntesis deben ser precedidos por caracteres de escape\n"
+"(p.e. barras invertidas) para los shells.\n"
+"ENTERO también puede ser -l CADENA, que evalúa la longitud de la CADENA.\n"
+
+#: src/test.c:1106
+msgid "missing `]'\n"
+msgstr "falta un `]'\n"
+
+#: src/test.c:1120
+msgid "too many arguments\n"
+msgstr "demasiados argumentos\n"
+
+# Host = huésped (vale, vale, no me peguéi má, me retracto, ab
+# renuncio: gerardo :-)
+#
+# Pues no te lo vas a creer, pero en el libro de Infovía de Telefónica
+# ponen anfitrión y se quedan tan anchos.
+# Esto no lo tengo claro del todo todavía. sv
+#
+# ¿Y por qué no? "Huésped" en español se refiere tanto al hospedador
+# como al hospedado. En nuestro caso "host" es el ordenador u/o/y
+# cacharro informático que hospeda en su seno un servicio, programa o
+# lo que sea. El anfitrión, para distinguir. Como he dicho otras
+# veces, "los angloparlantes dicen _anfitrión_ o _huésped_ en su
+# idioma. ¿Por qué nosotros no en el nuestro?"
+# gerardo
+#
+# ¿Porque siempre dudamos entre anfitrión o huésped?
+# (Como el asno de Buridán)
+# ¿O tal vez porque nadie se ha atrevido jamás?
+# A mí me da miedo ser el primero. sv
+#: src/true.c:16
+#, fuzzy, c-format
+msgid ""
+"Usage: %s [ignored command line arguments]\n"
+"  or:  %s OPTION\n"
+"Exit with a status code indicating success.\n"
+"\n"
+"These option names may not be abbreviated.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+msgstr ""
+"Modo de empleo: %s [NOMBRE]\n"
+"       o bien:  %s OPCIÓN\n"
+"Muestra el nombre del `host' del sistema actual.\n"
+"\n"
+"  --help      muestra esta ayuda y finaliza\n"
+"  --version   informa de la versión y finaliza\n"
+
+#: src/tty.c:63
+msgid ""
+"Print the file name of the terminal connected to standard input.\n"
+"\n"
+"  -s, --silent, --quiet   print nothing, only return an exit status\n"
+"      --help              display this help and exit\n"
+"      --version           output version information and exit\n"
+msgstr ""
+"Muestra el nombre de fichero de la terminal conectada a la salida estándar.\n"
+"\n"
+"  -s, --silent, --quiet   no muestra nada, sólo devuelve un valor de salida\n"
+"      --help              muestra esta ayuda y finaliza\n"
+"      --version           informa de la versión y finaliza\n"
+
+# "No es una terminal", ¿no se entendería mejor? gerardo
+# Depende. La terminal se refiere a la terminal física, mientras que
+# tty se refiere al dispositivo "lógico". Es como cuando envías
+# el resultado a una tubería o a un tty. ¿Qué opinas? sv
+#
+# Bueno, fale. Pero ¿es "un tty" o "una tty"? gerardo
+#
+# Depende: ¿Sabes como averiguar si una tortuga es macho o hembra?
+# Se le hacen cosquillas en la barriga, si se pone contento es
+# macho, y si se pone contenta es hembra :-)
+# En este caso yo diría que es así: "no es un [dispositivo] tty" sv
+#: src/tty.c:117
+msgid "not a tty"
+msgstr "no es un `tty'"
+
+# Nota: En Linux, uname -r da como resultado la versión del `kernel'
+# mientras que uname -v de como resultado la fecha de compilación.
+# (una especie de sub-versión).
+#
+# Por sugerencia de Gerardo, pongo distribución para uname -r.
+#
+# Aquí parece que hay algo de confusión entre -v que da la versión del
+# S.O. y --version, que da la versión del POGRAMA uname. ¿No
+# deberíamos especificarlo un poco? Por ejemplo:
+# --version Informa sobre la versión de este programa y finaliza.
+# Finalizo: gerardo
+# Piensa, piensa... Resumiendo:
+#     --version    informa de la versión de este programa y acaba\n
+#
+# No creo que sea necesario, las opciones --help y --version van siempre
+# al final y son obligatorias de acuerdo con las
+# "normas de programación de GNU" (GNU coding standards).
+# Por cierto, ¿te parece apropiada esta traducción de los "coding standards"?
+# (La verdad es que nunca se me había ocurrido traducirlo hasta ahora mismo).
+#
+# Aunque es cierto que --release da lo que nosotros llamaríamos
+# "versión" (p. ej.: 2.0.0) y -v da la sub-versión (con guión,
+# efectivamente :-). Lo mismo observo en Digital UNIX. gerardo
+#
+# ¿Podrías decirme lo que observas en Digital UNIX exactamente?
+#: src/uname.c:98
+msgid ""
+"Print certain system information.  With no OPTION, same as -s.\n"
+"\n"
+"  -a, --all        print all information\n"
+"  -m, --machine    print the machine (hardware) type\n"
+"  -n, --nodename   print the machine's network node hostname\n"
+"  -r, --release    print the operating system release\n"
+"  -s, --sysname    print the operating system name\n"
+"  -p, --processor  print the host processor type\n"
+"  -v               print the operating system version\n"
+"      --help       display this help and exit\n"
+"      --version    output version information and exit\n"
+msgstr ""
+"Muestra cierta información del sistema. Sin ninguna OPCIÓN, igual que -s.\n"
+"\n"
+"  -a, --all        muestra toda la información\n"
+"  -m, --machine    muestra el tipo de máquina (hardware)\n"
+"  -n, --nodename   muestra el nombre de `host' del nodo de red de la "
+"máquina\n"
+"  -r, --release    muestra la distribución del sistema operativo\n"
+"  -s, --sysname    muestra el nombre del sistema operativo\n"
+"  -p, --processor  muestra el tipo de procesador\n"
+"  -v               muestra la versión del sistema operativo\n"
+"      --help       muestra esta ayuda y finaliza\n"
+"      --version    informa de la versión y finaliza\n"
+
+#: src/uname.c:181
+msgid "cannot get system name"
+msgstr "no se puede obtener el nombre del sistema"
+
+#: src/uname.c:185
+msgid "cannot get processor type"
+msgstr "no se puede obtener el tipo de procesador"
+
+#: src/uptime.c:107
+msgid "couldn't get boot time"
+msgstr "no se puede obtener la fecha de arranque"
+
+#: src/uptime.c:114
+#, c-format
+msgid " %2d:%02d%s  up "
+msgstr " %2d:%02d%s  funcionando "
+
+# Por indicación de Gerardo Aburruzaga, lo pongo con mayúsculas.
+#. FIXME: use strftime, not am, pm.  Uli reports that
+#. the german translation is meaningless.
+#: src/uptime.c:118
+msgid "am"
+msgstr "AM"
+
+#: src/uptime.c:118
+msgid "pm"
+msgstr "PM"
+
+#: src/uptime.c:120
+msgid "day"
+msgstr "día"
+
+#: src/uptime.c:120
+msgid "days"
+msgstr "días"
+
+#: src/uptime.c:122
+msgid "user"
+msgstr "usuario"
+
+#: src/uptime.c:122
+msgid "users"
+msgstr "usuarios"
+
+#: src/uptime.c:135
+#, c-format
+msgid ",  load average: %.2f"
+msgstr ",  carga promedio: %.2f"
+
+#: src/uptime.c:169 src/users.c:115
+#, c-format
+msgid "Usage: %s [OPTION]... [ FILE ]\n"
+msgstr "Modo de empleo: %s [OPCIÓN]... [FICHERO]\n"
+
+#: src/uptime.c:170
+#, c-format
+msgid ""
+"Print the current time, the length of time the system has been up,\n"
+"the number of users on the system, and the average number of jobs\n"
+"in the run queue over the last 1, 5 and 15 minutes.\n"
+"If FILE is not specified, use %s.  %s as FILE is common.\n"
+"\n"
+"      --help        display this help and exit\n"
+"      --version     output version information and exit\n"
+msgstr ""
+"Muestra la fecha/hora actual, el lapso de tiempo que el sistema lleva "
+"arriba,\n"
+"el número de usuarios en el sistema, y el número medio de trabajos\n"
+"en la cola de ejecución en los últimos 1, 5 y 15 minutos.\n"
+"Si no se especifica ningún FICHERO, se utiliza %s. Habitualmente,\n"
+"FICHERO es %s\n"
+"\n"
+"      --help        muestra esta ayuda y finaliza\n"
+"      --version     informa de la versión y finaliza\n"
+
+# Nota: El primer %s era /etc/utmp y el segundo /etc/wtmp.
+#: src/users.c:116
+#, c-format
+msgid ""
+"Output who is currently logged in according to FILE.\n"
+"If FILE is not specified, use %s.  %s as FILE is common.\n"
+"\n"
+"      --help        display this help and exit\n"
+"      --version     output version information and exit\n"
+msgstr ""
+"Muestra quién esta actualmente conectado de acuerdo con FICHERO.\n"
+"Si no se especifica ningún FICHERO, se utiliza %s. Habitualmente,\n"
+"FICHERO es %s\n"
+"\n"
+"      --help        muestra esta ayuda y finaliza\n"
+"      --version     informa de la versión y finaliza\n"
+
+#: src/who.c:112
+msgid " old "
+msgstr " antiguo "
+
+#: src/who.c:235
+#, c-format
+msgid ""
+"\n"
+"# users=%u\n"
+msgstr ""
+"\n"
+"Nº de usuarios=%u\n"
+
+#: src/who.c:241
+msgid "USER"
+msgstr "USUARIO"
+
+# ¿Qué es eso de MESG? Si se refiere a si la tty acepta mensajes
+# (orden mesg), ¿no habría que traducir MENS " o algo así? Porque
+# "mensaje" en español no tiene ninguna G.erardo
+# Ni idea. Investigarlo. sv
+# Lo investigo por ti: un "who --help; who -H -T" te dará la
+# pista. Estoy en lo correcto. Cámbialo. gerardo
+# Efectivamente, who -H -T es muy esclarecedor.
+# Pero no me acaba de convencer. Ese MESG no es necesariamente MENSAJES.
+# Yo lo veo como una variable llamada MESG que puede tener dos valores
+# distintos, "y" y "n", y que se cambia con la orden mesg.
+# ¿Opiniones?
+#: src/who.c:243
+msgid "MESG "
+msgstr "MESG "
+
+#: src/who.c:244
+msgid "LINE"
+msgstr "LÍNEA"
+
+# Antes decía TIEMPO-ENTRADA.
+#: src/who.c:245
+msgid "LOGIN-TIME   "
+msgstr "HORA DE CONEXIÓN "
+
+# Va a haber problemas por la longitud de la cadena...
+# INACTIVO es más corto. VAGO mas aún (ouaahhh -bostezo-) gerardo
+# Me gusta la idea, pero ¿es INACTIVO o INACTIVA? sv
+# Como USUARIO, que también puede ser USUARIA. Si quieres ponerlo
+# "políticamente c." (c.= correcto? carajote?): INACTIV@ gerardo :-)
+# Odio la correción política. Lo dejaré en género "neutro", o sea
+# en masculino (ya que en español, coinciden, que es lo que a muchos
+# les cuesta digerir).
+# De todas formas, ¿INACTIVO no es [TIEMPO] INACTIVO? sv
+#: src/who.c:247
+msgid "IDLE  "
+msgstr "INACTIVO  "
+
+# Estas palabrejas en mayúsculas son para la CABECERA de who. Yo que
+# tú lo probaba, porque me temo que va a salir fatal, tendría que
+# tener la traducción la misma longitud que el original. Habría que
+# abreviar, aunque quizá acabemos de forma que no se entenderá
+# nada. gerardo
+#
+# Si sale mal, nos quejaremos amargamente al autor.
+# Quien mantiene esto actualmente (Jim Meyering) me ha hecho caso
+# otras veces (si miras el ChangeLog de fileutils podrás comprobarlo)
+# y es bastante comprensivo.
+#: src/who.c:248
+msgid "FROM\n"
+msgstr "DESDE\n"
+
+#: src/who.c:358
+#, c-format
+msgid "Usage: %s [OPTION]... [ FILE | ARG1 ARG2 ]\n"
+msgstr "Modo de empleo: %s [OPCIÓN]... [ FICHERO | ARG1 ARG2 ]\n"
+
+# Nota: El primer %s era /etc/utmp y el segundo /etc/wtmp.
+# Hay una ó con tilde que no debiera, pues no va entre cifras. gerardo
+# Va entre cosas que no son letras. sv
+#
+# Que yo sepa, la RAE dice que la conjunción "o" debe llevar tilde
+# cuando va entre guarismos, para que no se confunda con un cero. Si
+# no hay ambigüedad puede omitirse, aunque se recomienda ponerlo.
+# No tiene que ir entre "cosas que no son letras", sino entre cifras
+# numéricas. Según la RAE. Cuando yo estudié Lingüística/Literatura,
+# hace ya unos pocos años :-( gerardo
+#
+# Ya, pero me temo que la RAE no contemplaba (cuando dijo eso)
+# otra cosa que no sean cifras o letras ¿o sí? sv
+#
+# ¿Al haber un signo menos a su izquierda no tiene la "o" posibilidad de ser
+# confundida con un cero? sv
+#: src/who.c:359
+#, c-format
+msgid ""
+"\n"
+"  -H, --heading     print line of column headings\n"
+"  -i, -u, --idle    add user idle time as HOURS:MINUTES, . or old\n"
+"  -l, --lookup      attempt to canonicalize hostnames via DNS\n"
+"  -m                only hostname and user associated with stdin\n"
+"  -q, --count       all login names and number of users logged on\n"
+"  -s                (ignored)\n"
+"  -T, -w, --mesg    add user's message status as +, - or ?\n"
+"      --message     same as -T\n"
+"      --writable    same as -T\n"
+"      --help        display this help and exit\n"
+"      --version     output version information and exit\n"
+"\n"
+"If FILE is not specified, use %s.  %s as FILE is common.\n"
+"If ARG1 ARG2 given, -m presumed: `am i' or `mom likes' are usual.\n"
+msgstr ""
+"\n"
+"  -H, --heading     muestra la línea de encabezados de columnas\n"
+"  -i, -u, --idle    añade el tiempo inactivo del usuario como\n"
+"                    HORAS:MINUTOS, . o antiguo\n"
+"  -l, --lookup      intenta canonicalizar los nombres de `host' a través del "
+"DNS\n"
+"  -m                sólo el nombre del `host' y de usuario asociado con\n"
+"                    la entrada estándar\n"
+"  -q, --count       todos los nombres de entrada y número de usuarios\n"
+"                    conectados\n"
+"  -s                (sin efecto)\n"
+"  -T, -w, --mesg    añade el estado de mensajes del usuario como\n"
+"                    +, - ó ?\n"
+"      --message     igual que -T\n"
+"      --writable    igual que -T\n"
+"      --help        muestra esta ayuda y finaliza\n"
+"      --version     informa de la versión y finaliza\n"
+"\n"
+"Si no se especifica ningún FICHERO, se utiliza %s. Habitualmente,\n"
+"FICHERO es %s. Si se dan ARG1 y ARG2, se supone -m: habitualmente\n"
+"`am i' o `mom likes'.\n"
+
+#: src/whoami.c:52
+msgid ""
+"Print the user name associated with the current effective user id.\n"
+"Same as id -un.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+msgstr ""
+"Muestra el nombre de usuario asociado con el identificador efectivo de\n"
+"usuario actual. Equivalente a id -un.\n"
+"\n"
+"  --help      muestra esta ayuda y finaliza\n"
+"  --version   informa de la versión y finaliza\n"
+
+#: src/whoami.c:100
+#, c-format
+msgid "%s: cannot find username for UID %u\n"
+msgstr "%s: no se puede encontrar el nombre de usuario para el UID %u\n"
+
+# Se aceptan sugerencias para `repetidamente'. cfuga
+# (pues a mí no me disgusta). sv
+# Es curioso que el 'y' esté compilado en "yes". En mi Digital UNIX,
+# también internacionalizado y traducido, "yes" produce repetidamente
+# "sí" para LANG=es_ES.ISO8859-1. Concretamente LC_MESSAGES. gerardo
+# Curioso, ¿no romperá ningun `script'? sv
+# Para lo poco que se usa "yes"... (me pasé dos años sin saber para
+# qué c~%&# servía, y aún ahora creo que no sirve para nada). gerardo
+#
+# Sirve para hacer prácticas con la redirección de la salida... ( > )
+#
+# Creo que es mejor dejarlo así. Con el programa "hello" pasa lo mismo:
+# escribes "hello" y te responde "hola", lo cual no es lógico :-)
+# Si no hay oportunidad de escribir "sí", para que salga una tira de
+# eses, mejor olvidarse. sv
+#: src/yes.c:45
+msgid ""
+"Repeatedly output a line with all specified STRING(s), or `y'.\n"
+"\n"
+"  --help      display this help and exit\n"
+"  --version   output version information and exit\n"
+msgstr ""
+"Muestra repetidamente una línea con todas las CADENA(s) especificadas, o "
+"`y'.\n"
+"\n"
+"  --help      muestra esta ayuda y finaliza\n"
+"  --version   informa de la versión y finaliza\n"
+
+#~ msgid "invalid date ` %s'"
+#~ msgstr "fecha inválida ` %s'"
+
+#~ msgid ""
+#~ "Usage: %s [SETTING]...\n"
+#~ "  or:  %s OPTION\n"
+#~ msgstr ""
+#~ "Modo de empleo: %s [VALOR]...\n"
+#~ "       o bien:  %s OPCIÓN\n"

@@ -1,0 +1,5 @@
+setmode.o : \
+ setmode.c ../config.h setmode.h
+setmode.c :
+../config.h :
+setmode.h :

@@ -1,0 +1,42 @@
+long-options.o : \
+ long-options.c ../config.h /include/stdio.h \
+ /include/features.h /include/sys/cdefs.h /include/gnu/stubs.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stdarg.h \
+ /include/bits/types.h /include/bits/pthreadtypes.h /include/libio.h \
+ /include/_G_config.h /include/bits/stdio_lim.h /include/bits/stdio.h \
+ getopt.h /include/stdlib.h /include/xlocale.h /include/sys/types.h \
+ /include/time.h /include/endian.h /include/bits/endian.h \
+ /include/sys/select.h /include/bits/select.h /include/bits/sigset.h \
+ /include/sys/sysmacros.h /include/alloca.h long-options.h \
+ version-etc.h ../intl/libintl.h /include/locale.h
+long-options.c :
+../config.h :
+/include/stdio.h :
+/include/features.h :
+/include/sys/cdefs.h :
+/include/gnu/stubs.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stdarg.h :
+/include/bits/types.h :
+/include/bits/pthreadtypes.h :
+/include/libio.h :
+/include/_G_config.h :
+/include/bits/stdio_lim.h :
+/include/bits/stdio.h :
+getopt.h :
+/include/stdlib.h :
+/include/xlocale.h :
+/include/sys/types.h :
+/include/time.h :
+/include/endian.h :
+/include/bits/endian.h :
+/include/sys/select.h :
+/include/bits/select.h :
+/include/bits/sigset.h :
+/include/sys/sysmacros.h :
+/include/alloca.h :
+long-options.h :
+version-etc.h :
+../intl/libintl.h :
+/include/locale.h :

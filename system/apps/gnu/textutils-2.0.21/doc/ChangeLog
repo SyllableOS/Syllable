@@ -1,0 +1,143 @@
+2002-02-17  Jim Meyering  <meyering@lucent.com>
+
+	* coreutils.texi (tsort background): New section.
+	From Ian Lance Taylor.
+	(tsort invocation): Add a more realistic example.
+
+2002-02-15  Paul Eggert  <eggert@twinsun.com>
+
+	* coreutils.texi: Document _POSIX2_VERSION.
+	(Standards Conformance): New section.
+
+2002-01-24  Jim Meyering  <meyering@lucent.com>
+
+	* coreutils.texi (START-INFO-DIR-ENTRY): Remove a few entries
+	and clean up a few others based on suggestions from Bob Proulx.
+
+2002-02-14  Paul Eggert  <eggert@twinsun.com>
+
+	Add support for POSIX 1003.1-2001, which requires removal for
+	support of obsolete "+" option syntax in sort, tail, and uniq.
+	* coreutils.texi: Document this.  (Also, document a similar
+	change to "touch", for fileutils).
+
+2002-01-12  Jim Meyering  <meyering@lucent.com>
+
+	* coreutils.texi (shred invocation): List some journaled filesystems.
+
+2001-11-10  Jim Meyering  <meyering@lucent.com>
+
+	* coreutils.texi (Date directives): Document %u.
+
+2001-11-07  Paul Eggert  <eggert@twinsun.com>
+
+	* coreutils.texi (paste invocation): Give examples.
+	Thanks to Dan Jacobson for suggesting the examples.
+
+2001-11-05  Jim Meyering  <meyering@lucent.com>
+
+	* coreutils.texi (sort invocation): Recommend setting LC_ALL=C,
+	not LC_COLLATE=C.  Explain how the latter can cause problems.
+	Based on a message from Paul Eggert.
+	(ls invocation): Recommend setting LC_ALL=C, not LC_COLLATE=C.
+
+2001-10-21  Jim Meyering  <meyering@lucent.com>
+
+	* coreutils.texi (cp invocation): Describe --reply=...
+
+2001-10-17  Jim Meyering  <meyering@lucent.com>
+
+	* coreutils.texi (cp invocation): `cp --no-dereference' is
+	no longer equivalent to `cp -d'.
+	`cp -d' is equivalent to `--no-dereference --preserve=links'.
+	cp's -P option means --no-dereference, not --parents.
+	Describe new optional argument to --preserve.
+	Describe new option: --no-preserve=ATTRIBUTE_LIST.
+
+2001-09-23  Jim Meyering  <meyering@lucent.com>
+
+	* Makefile.am (check-texinfo): Redirect stderr of `grep -w' to
+	/dev/null, so people with old versions of grep don't see the failure.
+
+2001-09-16  Jim Meyering  <meyering@lucent.com>
+
+	* coreutils.texi (mv invocation): Describe new option:
+	--reply={yes,no,query}.  Fix a few typos.
+
+2001-09-15  Paul Eggert  <eggert@twinsun.com>
+
+	* coreutils.texi (uniq invocation): The input need not
+	be sorted.  Try to clarify -d versus -D versus -u.
+
+2001-09-12  Jim Meyering  <meyering@lucent.com>
+
+	* coreutils.texi (tail invocation): Document new option: -F.
+	From Herbert Xu.
+
+2001-09-04  Paul Eggert  <eggert@twinsun.com>
+
+	* coreutils.texi (join invocation): Describe the GNU
+	extension to join, which does not require sorted input when
+	the input contains no unpairable lines.
+
+2001-09-03  Paul Eggert  <eggert@twinsun.com>
+
+	* coreutils.texi:
+	New 'uname' options -i or --hardware-platform,
+	and -o or --operating-system.
+	'uname -a' now outputs -i and -o information at the end.
+	New uname option --kernel-version is an alias for -v.
+	Uname option --release has been renamed to --kernel-release,
+	and --sysname has been renamed to --kernel-name;
+	the old options will work for a while, but are no longer documented.
+
+2001-08-24  Herbert Xu  <herbert@gondor.apana.org.au>
+
+	* coreutils.texi (cut invocation): Document how cut treats lines
+	with no separators.
+
+2001-06-19  Paul Eggert  <eggert@twinsun.com>
+
+	* coreutils.texi: expr now uses LC_COLLATE for string comparison,
+	as per POSIX.
+
+2001-08-25  Jim Meyering  <meyering@lucent.com>
+
+	* coreutils.texi: Use @option, rather than @samp everywhere.
+
+2001-06-21  Paul Eggert  <eggert@twinsun.com>
+
+	* coreutils.texi: 'expr' now requires '+' rather than 'quote'
+	to quote tokens.
+
+2001-07-14  Jim Meyering  <meyering@lucent.com>
+
+	* coreutils.texi (cp invocation): Reflect 2001-07-08 change to
+	cp (via copy.c).
+
+2001-06-16  Jim Meyering  <meyering@lucent.com>
+
+	* Makefile.am (info_TEXINFOS): Reflect renaming: s/omni-/core/.
+	* coreutils.texi: Likewise.
+
+	* coreutils.texi: New, renamed from omni-utils.texi.
+	* omni-utils.texi: Removed, renamed to coreutils.texi.
+
+	* omni-utils.texi (ls invocation): Mention the effect of locale.
+	Reported by Keith Thompson.
+
+2001-05-24  Jim Meyering  <meyering@lucent.com>
+
+	* texinfo.tex: Update from master source.
+
+	* omni-utils.texi (ls invocation): Document more clearly what ls
+	does when given no arguments.
+
+2001-05-21  Jim Meyering  <meyering@lucent.com>
+
+	* textutils.texi: Remove file.
+
+	* Makefile.am ($(DVIS), $(INFO_DEPS)): Depend on $(EXTRA_DIST).
+	(DISABLED_constants.texi): New rule -- disabled for now.
+
+	This directory is now shared by fileutils, textutils, and sh-utils.

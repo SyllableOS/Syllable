@@ -1,0 +1,140 @@
+# Makefile.in generated automatically by automake from Makefile.am.
+# Copyright (C) 1994 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+SHELL = /bin/sh
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = $(exec_prefix)/bin
+sbindir = $(exec_prefix)/sbin
+libexecdir = $(exec_prefix)/libexec
+datadir = $(prefix)/share
+sysconfdir = $(prefix)/etc
+sharedstatedir = $(prefix)/com
+localstatedir = $(prefix)/var
+libdir = $(exec_prefix)/lib
+infodir = $(prefix)/info
+mandir = $(prefix)/man
+includedir = $(prefix)/include
+oldincludedir = /usr/include
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+transform = @program_transform_name@
+
+ALL = ${PROGRAMS} ${LIBPROGRAMS} ${SCRIPTS} ${LIBSCRIPTS} ${LIBFILES}
+ACCONFIG = acconfig.h
+SOURCES = 
+DIST_CONF = Makefile.am Makefile.in README INSTALL NEWS \
+	configure configure.in ${ACLOCAL} ${ACCONFIG} ${CONFIG_TOP} \
+	${CONFIG_BOT} mkinstalldirs
+DIST_FILES = $(DIST_CONF) $(SOURCES) $(TEXINFOS) $(INFOS) $(MANS) $(DIST_OTHER)
+
+DIST_OTHER = COPYING ChangeLog TODO install-sh config.h.in stamp-h.in
+SUBDIRS = lib find xargs locate doc testsuite
+CONFIG_HEADER = config.h
+
+all:: ${ALL}
+
+# This directory's subdirectories are mostly independent; you can cd
+# into them and run `make' without going through this Makefile.
+# To change the values of `make' variables: instead of editing Makefiles,
+# (1) if the variable is set in `config.status', edit `config.status'
+#     (which will cause the Makefiles to be regenerated when you run `make');
+# (2) otherwise, pass the desired values on the `make' command line.
+
+@SET_MAKE@
+
+all install install-info uninstall check tags TAGS info dvi::
+	for subdir in $(SUBDIRS); do \
+	  echo making $@ in $$subdir ; \
+	  (cd $$subdir; $(MAKE) $@); \
+	done
+
+mostlyclean: mostlyclean-recursive mostlyclean-local
+
+clean: clean-recursive clean-local
+
+distclean: distclean-recursive
+	$(MAKE) distclean-local
+	       
+realclean: realclean-recursive
+	$(MAKE) realclean-local
+
+mostlyclean-recursive clean-recursive distclean-recursive realclean-recursive:
+	for subdir in $(SUBDIRS); do \
+	  (cd $$subdir; $(MAKE) `echo $@ | sed s/-recursive//`); \
+	done
+
+mostlyclean-local:
+
+clean-local: mostlyclean-local
+
+distclean-local: clean-local
+	rm -f Makefile config.cache config.log config.status
+	rm -f ${CONFIG_HEADER} stamp-h
+
+realclean-local: distclean-local
+
+# For an explanation of the following Makefile rules, see node
+# `Automatic Remaking' in GNU Autoconf documentation.
+Makefile: Makefile.in config.status
+	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+config.status: configure
+	./config.status --recheck
+${srcdir}/configure: configure.in ${ACLOCAL}
+	cd $(srcdir); autoconf
+
+${CONFIG_HEADER}: stamp-h
+stamp-h: ${CONFIG_HEADER}.in config.status
+	CONFIG_FILES= CONFIG_HEADERS=${CONFIG_HEADER} ./config.status
+${srcdir}/${CONFIG_HEADER}.in: stamp-h.in
+${srcdir}/stamp-h.in: configure.in ${ACLOCAL} ${ACCONFIG} ${CONFIG_TOP} ${CONFIG_BOT}
+	cd $(srcdir); autoheader
+	date > $(srcdir)/stamp-h.in
+
+dist: $(DIST_FILES) $(DIST_DIRS) distname
+	rm -rf `cat distname`; mkdir `cat distname`
+	@for file in $(DIST_FILES); do \
+	  echo linking $$file; \
+	  ln $(srcdir)/$$file `cat distname`/$$file || \
+	    { echo copying $$file instead; cp -p $(srcdir)/$$file `cat distname`/$$file;}; \
+	done
+	for subdir in $(SUBDIRS); do \
+	  (cd $$subdir; $(MAKE) subdir=$$subdir $@); done
+	chmod -R a+r `cat distname`
+	tar -chozf `cat distname`.tar.gz `cat distname`
+	rm -rf `cat distname` distname
+
+check dvi info install uninstall::
+
+tags:: TAGS
+
+TAGS::
+	cd $(srcdir); etags $(SOURCES)
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:
+
+distname:
+	echo findutils-`sed -e '/version_string/!d' -e 's/[^0-9.]*\([0-9.]*\).*/\1/' -e q find/version.c` > $@

@@ -1,0 +1,34 @@
+#!/bin/sh
+
+if test "$VERBOSE" = yes; then
+  set -x
+  cp --version
+fi
+
+framework_failure=0
+rm -f a a~ || framework_failure=1
+echo a > a || framework_failure=1
+echo a-tilde > a~ || framework_failure=1
+
+if test $framework_failure = 1; then
+  echo 'failure in testing framework'
+  exit 1
+fi
+
+# Make sure we get English translations.
+. $srcdir/../lang-default
+
+# This cp command should exit nonzero.
+cp --b=simple a~ a > out 2>&1 && fail=1
+
+sed "s,cp:,XXX:," out > out2
+
+cat > exp <<\EOF
+XXX: backing up `a' would destroy source;  `a~' not copied
+EOF
+
+cmp out2 exp || fail=1
+
+rm -f out out2 exp a a~
+
+exit $fail

@@ -1,0 +1,2389 @@
+<code_set_name> UTF-8
+<comment_char> %
+<escape_char> /
+<mb_cur_min> 1
+<mb_cur_max> 6
+% automatically generated from the charDB
+
+% alias ISO-10646/UTF-8
+CHARMAP
+<SH>                   /x01         <U0001> START OF HEADING
+<SOH>                  /x01         <U0001> START OF HEADING
+<STX>                  /x02         <U0002> START OF TEXT
+<SX>                   /x02         <U0002> START OF TEXT
+<ETX>                  /x03         <U0003> END OF TEXT
+<EX>                   /x03         <U0003> END OF TEXT
+<EOT>                  /x04         <U0004> END OF TRANSMISSION
+<ET>                   /x04         <U0004> END OF TRANSMISSION
+<ENQ>                  /x05         <U0005> ENQUIRY
+<EQ>                   /x05         <U0005> ENQUIRY
+<ACK>                  /x06         <U0006> ACKNOWLEDGE
+<AK>                   /x06         <U0006> ACKNOWLEDGE
+<BEL>                  /x07         <U0007> BELL
+<BL>                   /x07         <U0007> BELL
+<alert>                /x07         <U0007> BELL
+<BS>                   /x08         <U0008> BACKSPACE
+<backspace>            /x08         <U0008> BACKSPACE
+<HT>                   /x09         <U0009> HORIZONTAL TABULATION
+<tab>                  /x09         <U0009> HORIZONTAL TABULATION
+<LF>                   /x0A         <U000A> LINE FEED
+<newline>              /x0A         <U000A> LINE FEED
+<VT>                   /x0B         <U000B> VERTICAL TABULATION
+<vertical-tab>         /x0B         <U000B> VERTICAL TABULATION
+<FF>                   /x0C         <U000C> FORM FEED
+<form-feed>            /x0C         <U000C> FORM FEED
+<CR>                   /x0D         <U000D> CARRIAGE RETURN
+<carriage-return>      /x0D         <U000D> CARRIAGE RETURN
+<SO>                   /x0E         <U000E> SHIFT OUT
+<SI>                   /x0F         <U000F> SHIFT IN
+<DL>                   /x10         <U0010> DATA LINK ESCAPE
+<DLE>                  /x10         <U0010> DATA LINK ESCAPE
+<D1>                   /x11         <U0011> DEVICE CONTROL ONE
+<DC1>                  /x11         <U0011> DEVICE CONTROL ONE
+<D2>                   /x12         <U0012> DEVICE CONTROL TWO
+<DC2>                  /x12         <U0012> DEVICE CONTROL TWO
+<D3>                   /x13         <U0013> DEVICE CONTROL THREE
+<DC3>                  /x13         <U0013> DEVICE CONTROL THREE
+<D4>                   /x14         <U0014> DEVICE CONTROL FOUR
+<DC4>                  /x14         <U0014> DEVICE CONTROL FOUR
+<NAK>                  /x15         <U0015> NEGATIVE ACKNOWLEDGE
+<NK>                   /x15         <U0015> NEGATIVE ACKNOWLEDGE
+<SY>                   /x16         <U0016> SYNCHRONOUS IDLE
+<SYN>                  /x16         <U0016> SYNCHRONOUS IDLE
+<EB>                   /x17         <U0017> END OF TRANSMISSION BLOCK
+<ETB>                  /x17         <U0017> END OF TRANSMISSION BLOCK
+<CAN>                  /x18         <U0018> CANCEL
+<CN>                   /x18         <U0018> CANCEL
+<EM>                   /x19         <U0019> END OF MEDIUM
+<SB>                   /x1A         <U001A> SUBSTITUTE
+<SUB>                  /x1A         <U001A> SUBSTITUTE
+<EC>                   /x1B         <U001B> ESCAPE
+<ESC>                  /x1B         <U001B> ESCAPE
+<FS>                   /x1C         <U001C> FILE SEPARATOR
+<IS4>                  /x1C         <U001C> FILE SEPARATOR
+<GS>                   /x1D         <U001D> GROUP SEPARATOR
+<IS3>                  /x1D         <U001D> GROUP SEPARATOR
+<intro>                /x1D         <U001D> GROUP SEPARATOR
+<IS2>                  /x1E         <U001E> RECORD SEPARATOR
+<RS>                   /x1E         <U001E> RECORD SEPARATOR
+<IS1>                  /x1F         <U001F> UNIT SEPARATOR
+<US>                   /x1F         <U001F> UNIT SEPARATOR
+<space>                /x20         <U0020> SPACE
+<SP>                   /x20         <U0020> SPACE
+<!>                    /x21         <U0021> EXCLAMATION MARK
+<exclamation-mark>     /x21         <U0021> EXCLAMATION MARK
+<">                    /x22         <U0022> QUOTATION MARK
+<quotation-mark>       /x22         <U0022> QUOTATION MARK
+<Nb>                   /x23         <U0023> NUMBER SIGN
+<number-sign>          /x23         <U0023> NUMBER SIGN
+<H->                   /x23         <U0023> NUMBER SIGN
+<!S>                   /x24         <U0024> DOLLAR SIGN
+<DO>                   /x24         <U0024> DOLLAR SIGN
+<dollar-sign>          /x24         <U0024> DOLLAR SIGN
+<%>                    /x25         <U0025> PERCENT SIGN
+<percent-sign>         /x25         <U0025> PERCENT SIGN
+<percent-sign/>>       /x25         <U0025> PERCENT SIGN
+<&>                    /x26         <U0026> AMPERSAND
+<ampersand>            /x26         <U0026> AMPERSAND
+<'>                    /x27         <U0027> APOSTROPHE
+<apostrophe>           /x27         <U0027> APOSTROPHE
+<(>                    /x28         <U0028> LEFT PARENTHESIS
+<left-parenthesis>     /x28         <U0028> LEFT PARENTHESIS
+<)>                    /x29         <U0029> RIGHT PARENTHESIS
+<right-parenthesis>    /x29         <U0029> RIGHT PARENTHESIS
+<*>                    /x2A         <U002A> ASTERISK
+<asterisk>             /x2A         <U002A> ASTERISK
+<+>                    /x2B         <U002B> PLUS SIGN
+<plus-sign>            /x2B         <U002B> PLUS SIGN
+<,>                    /x2C         <U002C> COMMA
+<comma>                /x2C         <U002C> COMMA
+<->                    /x2D         <U002D> HYPHEN-MINUS
+<hyphen>               /x2D         <U002D> HYPHEN-MINUS
+<hyphen-minus>         /x2D         <U002D> HYPHEN-MINUS
+<.>                    /x2E         <U002E> FULL STOP
+<full-stop>            /x2E         <U002E> FULL STOP
+<period>               /x2E         <U002E> FULL STOP
+<//>                   /x2F         <U002F> SOLIDUS
+<slash>                /x2F         <U002F> SOLIDUS
+<solidus>              /x2F         <U002F> SOLIDUS
+<0>                    /x30         <U0030> DIGIT ZERO
+<zero>                 /x30         <U0030> DIGIT ZERO
+<1>                    /x31         <U0031> DIGIT ONE
+<one>                  /x31         <U0031> DIGIT ONE
+<2>                    /x32         <U0032> DIGIT TWO
+<two>                  /x32         <U0032> DIGIT TWO
+<3>                    /x33         <U0033> DIGIT THREE
+<three>                /x33         <U0033> DIGIT THREE
+<4>                    /x34         <U0034> DIGIT FOUR
+<four>                 /x34         <U0034> DIGIT FOUR
+<5>                    /x35         <U0035> DIGIT FIVE
+<five>                 /x35         <U0035> DIGIT FIVE
+<6>                    /x36         <U0036> DIGIT SIX
+<six>                  /x36         <U0036> DIGIT SIX
+<7>                    /x37         <U0037> DIGIT SEVEN
+<seven>                /x37         <U0037> DIGIT SEVEN
+<8>                    /x38         <U0038> DIGIT EIGHT
+<eight>                /x38         <U0038> DIGIT EIGHT
+<9>                    /x39         <U0039> DIGIT NINE
+<nine>                 /x39         <U0039> DIGIT NINE
+<:>                    /x3A         <U003A> COLON
+<colon>                /x3A         <U003A> COLON
+<;>                    /x3B         <U003B> SEMICOLON
+<semicolon>            /x3B         <U003B> SEMICOLON
+<<>                    /x3C         <U003C> LESS-THAN SIGN
+<less-than-sign>       /x3C         <U003C> LESS-THAN SIGN
+<=>                    /x3D         <U003D> EQUALS SIGN
+<equals-sign>          /x3D         <U003D> EQUALS SIGN
+</>>                   /x3E         <U003E> GREATER-THAN SIGN
+<greater-than-sign>    /x3E         <U003E> GREATER-THAN SIGN
+<?>                    /x3F         <U003F> QUESTION MARK
+<question-mark>        /x3F         <U003F> QUESTION MARK
+<At>                   /x40         <U0040> COMMERCIAL AT
+<commercial-at>        /x40         <U0040> COMMERCIAL AT
+<@>                    /x40         <U0040> COMMERCIAL AT
+<Oa>                   /x40         <U0040> COMMERCIAL AT
+<A>                    /x41         <U0041> LATIN CAPITAL LETTER A
+<B>                    /x42         <U0042> LATIN CAPITAL LETTER B
+<C>                    /x43         <U0043> LATIN CAPITAL LETTER C
+<D>                    /x44         <U0044> LATIN CAPITAL LETTER D
+<E>                    /x45         <U0045> LATIN CAPITAL LETTER E
+<F>                    /x46         <U0046> LATIN CAPITAL LETTER F
+<G>                    /x47         <U0047> LATIN CAPITAL LETTER G
+<H>                    /x48         <U0048> LATIN CAPITAL LETTER H
+<I>                    /x49         <U0049> LATIN CAPITAL LETTER I
+<J>                    /x4A         <U004A> LATIN CAPITAL LETTER J
+<K>                    /x4B         <U004B> LATIN CAPITAL LETTER K
+<L>                    /x4C         <U004C> LATIN CAPITAL LETTER L
+<M>                    /x4D         <U004D> LATIN CAPITAL LETTER M
+<N>                    /x4E         <U004E> LATIN CAPITAL LETTER N
+<O>                    /x4F         <U004F> LATIN CAPITAL LETTER O
+<P>                    /x50         <U0050> LATIN CAPITAL LETTER P
+<Q>                    /x51         <U0051> LATIN CAPITAL LETTER Q
+<R>                    /x52         <U0052> LATIN CAPITAL LETTER R
+<S>                    /x53         <U0053> LATIN CAPITAL LETTER S
+<T>                    /x54         <U0054> LATIN CAPITAL LETTER T
+<U>                    /x55         <U0055> LATIN CAPITAL LETTER U
+<V>                    /x56         <U0056> LATIN CAPITAL LETTER V
+<W>                    /x57         <U0057> LATIN CAPITAL LETTER W
+<X>                    /x58         <U0058> LATIN CAPITAL LETTER X
+<Y>                    /x59         <U0059> LATIN CAPITAL LETTER Y
+<Z>                    /x5A         <U005A> LATIN CAPITAL LETTER Z
+<<(>                   /x5B         <U005B> LEFT SQUARE BRACKET
+<left-square-bracket>  /x5B         <U005B> LEFT SQUARE BRACKET
+<////>                 /x5C         <U005C> REVERSE SOLIDUS
+<backslash>            /x5C         <U005C> REVERSE SOLIDUS
+<reverse-solidus>      /x5C         <U005C> REVERSE SOLIDUS
+<)/>>                  /x5D         <U005D> RIGHT SQUARE BRACKET
+<right-square-bracket> /x5D         <U005D> RIGHT SQUARE BRACKET
+<'/>>                  /x5E         <U005E> CIRCUMFLEX ACCENT
+<circumflex>           /x5E         <U005E> CIRCUMFLEX ACCENT
+<circumflex-accent>    /x5E         <U005E> CIRCUMFLEX ACCENT
+<_>                    /x5F         <U005F> LOW LINE
+<low-line>             /x5F         <U005F> LOW LINE
+<underscore>           /x5F         <U005F> LOW LINE
+<'!>                   /x60         <U0060> GRAVE ACCENT
+<grave-accent>         /x60         <U0060> GRAVE ACCENT
+<a>                    /x61         <U0061> LATIN SMALL LETTER A
+<b>                    /x62         <U0062> LATIN SMALL LETTER B
+<c>                    /x63         <U0063> LATIN SMALL LETTER C
+<d>                    /x64         <U0064> LATIN SMALL LETTER D
+<e>                    /x65         <U0065> LATIN SMALL LETTER E
+<f>                    /x66         <U0066> LATIN SMALL LETTER F
+<g>                    /x67         <U0067> LATIN SMALL LETTER G
+<h>                    /x68         <U0068> LATIN SMALL LETTER H
+<i>                    /x69         <U0069> LATIN SMALL LETTER I
+<j>                    /x6A         <U006A> LATIN SMALL LETTER J
+<k>                    /x6B         <U006B> LATIN SMALL LETTER K
+<l>                    /x6C         <U006C> LATIN SMALL LETTER L
+<m>                    /x6D         <U006D> LATIN SMALL LETTER M
+<n>                    /x6E         <U006E> LATIN SMALL LETTER N
+<o>                    /x6F         <U006F> LATIN SMALL LETTER O
+<p>                    /x70         <U0070> LATIN SMALL LETTER P
+<q>                    /x71         <U0071> LATIN SMALL LETTER Q
+<r>                    /x72         <U0072> LATIN SMALL LETTER R
+<s>                    /x73         <U0073> LATIN SMALL LETTER S
+<t>                    /x74         <U0074> LATIN SMALL LETTER T
+<u>                    /x75         <U0075> LATIN SMALL LETTER U
+<v>                    /x76         <U0076> LATIN SMALL LETTER V
+<w>                    /x77         <U0077> LATIN SMALL LETTER W
+<x>                    /x78         <U0078> LATIN SMALL LETTER X
+<y>                    /x79         <U0079> LATIN SMALL LETTER Y
+<z>                    /x7A         <U007A> LATIN SMALL LETTER Z
+<(!>                   /x7B         <U007B> LEFT CURLY BRACKET
+<left-brace>           /x7B         <U007B> LEFT CURLY BRACKET
+<left-curly-bracket>   /x7B         <U007B> LEFT CURLY BRACKET
+<!!>                   /x7C         <U007C> VERTICAL LINE
+<vertical-line>        /x7C         <U007C> VERTICAL LINE
+<!)>                   /x7D         <U007D> RIGHT CURLY BRACKET
+<right-brace>          /x7D         <U007D> RIGHT CURLY BRACKET
+<right-curly-bracket>  /x7D         <U007D> RIGHT CURLY BRACKET
+<'?>                   /x7E         <U007E> TILDE
+<tilde>                /x7E         <U007E> TILDE
+<DEL>                  /x7F         <U007F> DELETE
+<DT>                   /x7F         <U007F> DELETE
+<PA>                   /xC2/x80     <U0080> PADDING CHARACTER (PAD)
+<HO>                   /xC2/x81     <U0081> HIGH OCTET PRESET (HOP)
+<BH>                   /xC2/x82     <U0082> BREAK PERMITTED HERE (BPH)
+<NH>                   /xC2/x83     <U0083> NO BREAK HERE (NBH)
+<IN>                   /xC2/x84     <U0084> INDEX (IND)
+<NL>                   /xC2/x85     <U0085> NEXT LINE (NEL)
+<SA>                   /xC2/x86     <U0086> START OF SELECTED AREA (SSA)
+<ES>                   /xC2/x87     <U0087> END OF SELECTED AREA (ESA)
+<HS>                   /xC2/x88     <U0088> CHARACTER TABULATION SET (HTS)
+<HJ>                   /xC2/x89     <U0089> CHARACTER TABULATION WITH JUSTIFICATION (HTJ)
+<VS>                   /xC2/x8A     <U008A> LINE TABULATION SET (VTS)
+<PD>                   /xC2/x8B     <U008B> PARTIAL LINE FORWARD (PLD)
+<PU>                   /xC2/x8C     <U008C> PARTIAL LINE BACKWARD (PLU)
+<RI>                   /xC2/x8D     <U008D> REVERSE LINE FEED (RI)
+<S2>                   /xC2/x8E     <U008E> SINGLE-SHIFT TWO (SS2)
+<S3>                   /xC2/x8F     <U008F> SINGLE-SHIFT THREE (SS3)
+<DC>                   /xC2/x90     <U0090> DEVICE CONTROL STRING (DCS)
+<P1>                   /xC2/x91     <U0091> PRIVATE USE ONE (PU1)
+<P2>                   /xC2/x92     <U0092> PRIVATE USE ONE (PU2)
+<TS>                   /xC2/x93     <U0093> SET TRANSMIT STATE (STS)
+<CC>                   /xC2/x94     <U0094> CANCEL CHARACTER (CCH)
+<MW>                   /xC2/x95     <U0095> MESSAGE WAITING (MW)
+<SG>                   /xC2/x96     <U0096> START OF GUARDED AREA (SPA)
+<EG>                   /xC2/x97     <U0097> END OF GUARDED AREA (EPA)
+<SS>                   /xC2/x98     <U0098> START OF STRING (SOS)
+<GC>                   /xC2/x99     <U0099> SINGLE GRAPHIC CHARACTER INTRODUCER (SGCI)
+<SC>                   /xC2/x9A     <U009A> SINGLE CHARACTER INTRODUCER (SCI)
+<CI>                   /xC2/x9B     <U009B> CONTROL SEQUENCE INTRODUCER (CSI)
+<ST>                   /xC2/x9C     <U009C> STRING TERMINATOR (ST)
+<OC>                   /xC2/x9D     <U009D> OPERATING SYSTEM COMMAND (OSC)
+<PM>                   /xC2/x9E     <U009E> PRIVACY MESSAGE (PM)
+<AC>                   /xC2/x9F     <U009F> APPLICATION PROGRAM COMMAND (APC)
+<NS>                   /xC2/xA0     <U00A0> NO-BREAK SPACE
+<!I>                   /xC2/xA1     <U00A1> INVERTED EXCLAMATION MARK
+<Ct>                   /xC2/xA2     <U00A2> CENT SIGN
+<!C>                   /xC2/xA2     <U00A2> CENT SIGN
+<L->                   /xC2/xA3     <U00A3> POUND SIGN
+<Pd>                   /xC2/xA3     <U00A3> POUND SIGN
+<Cu>                   /xC2/xA4     <U00A4> CURRENCY SIGN
+<Xo>                   /xC2/xA4     <U00A4> CURRENCY SIGN
+<Y->                   /xC2/xA5     <U00A5> YEN SIGN
+<Ye>                   /xC2/xA5     <U00A5> YEN SIGN
+<BB>                   /xC2/xA6     <U00A6> BROKEN BAR
+<!B>                   /xC2/xA6     <U00A6> BROKEN BAR
+<SE>                   /xC2/xA7     <U00A7> SECTION SIGN
+<':>                   /xC2/xA8     <U00A8> DIAERESIS
+<Co>                   /xC2/xA9     <U00A9> COPYRIGHT SIGN
+<-a>                   /xC2/xAA     <U00AA> FEMININE ORDINAL INDICATOR
+<<<>                   /xC2/xAB     <U00AB> LEFT-POINTING DOUBLE ANGLE QUOTATION MARK
+<NO>                   /xC2/xAC     <U00AC> NOT SIGN
+<7!>                   /xC2/xAC     <U00AC> NOT SIGN
+<-->                   /xC2/xAD     <U00AD> SOFT HYPHEN
+<Rg>                   /xC2/xAE     <U00AE> REGISTERED SIGN
+<'m>                   /xC2/xAF     <U00AF> MACRON
+<DG>                   /xC2/xB0     <U00B0> DEGREE SIGN
+<+->                   /xC2/xB1     <U00B1> PLUS-MINUS SIGN
+<2S>                   /xC2/xB2     <U00B2> SUPERSCRIPT TWO
+<3S>                   /xC2/xB3     <U00B3> SUPERSCRIPT THREE
+<''>                   /xC2/xB4     <U00B4> ACUTE ACCENT
+<My>                   /xC2/xB5     <U00B5> MICRO SIGN
+<PI>                   /xC2/xB6     <U00B6> PILCROW SIGN
+<9I>                   /xC2/xB6     <U00B6> PILCROW SIGN
+<.M>                   /xC2/xB7     <U00B7> MIDDLE DOT
+<',>                   /xC2/xB8     <U00B8> CEDILLA
+<1S>                   /xC2/xB9     <U00B9> SUPERSCRIPT ONE
+<-o>                   /xC2/xBA     <U00BA> MASCULINE ORDINAL INDICATOR
+</>/>>                 /xC2/xBB     <U00BB> RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
+<14>                   /xC2/xBC     <U00BC> VULGAR FRACTION ONE QUARTER
+<12>                   /xC2/xBD     <U00BD> VULGAR FRACTION ONE HALF
+<34>                   /xC2/xBE     <U00BE> VULGAR FRACTION THREE QUARTERS
+<?I>                   /xC2/xBF     <U00BF> INVERTED QUESTION MARK
+<A!>                   /xC3/x80     <U00C0> LATIN CAPITAL LETTER A WITH GRAVE
+<A'>                   /xC3/x81     <U00C1> LATIN CAPITAL LETTER A WITH ACUTE
+<A/>>                  /xC3/x82     <U00C2> LATIN CAPITAL LETTER A WITH CIRCUMFLEX
+<A?>                   /xC3/x83     <U00C3> LATIN CAPITAL LETTER A WITH TILDE
+<A:>                   /xC3/x84     <U00C4> LATIN CAPITAL LETTER A WITH DIAERESIS
+<AA>                   /xC3/x85     <U00C5> LATIN CAPITAL LETTER A WITH RING ABOVE
+<AE>                   /xC3/x86     <U00C6> LATIN CAPITAL LETTER AE
+<C,>                   /xC3/x87     <U00C7> LATIN CAPITAL LETTER C WITH CEDILLA
+<E!>                   /xC3/x88     <U00C8> LATIN CAPITAL LETTER E WITH GRAVE
+<E'>                   /xC3/x89     <U00C9> LATIN CAPITAL LETTER E WITH ACUTE
+<E/>>                  /xC3/x8A     <U00CA> LATIN CAPITAL LETTER E WITH CIRCUMFLEX
+<E:>                   /xC3/x8B     <U00CB> LATIN CAPITAL LETTER E WITH DIAERESIS
+<I!>                   /xC3/x8C     <U00CC> LATIN CAPITAL LETTER I WITH GRAVE
+<I'>                   /xC3/x8D     <U00CD> LATIN CAPITAL LETTER I WITH ACUTE
+<I/>>                  /xC3/x8E     <U00CE> LATIN CAPITAL LETTER I WITH CIRCUMFLEX
+<I:>                   /xC3/x8F     <U00CF> LATIN CAPITAL LETTER I WITH DIAERESIS
+<D->                   /xC3/x90     <U00D0> LATIN CAPITAL LETTER ETH
+<N?>                   /xC3/x91     <U00D1> LATIN CAPITAL LETTER N WITH TILDE
+<O!>                   /xC3/x92     <U00D2> LATIN CAPITAL LETTER O WITH GRAVE
+<O'>                   /xC3/x93     <U00D3> LATIN CAPITAL LETTER O WITH ACUTE
+<O/>>                  /xC3/x94     <U00D4> LATIN CAPITAL LETTER O WITH CIRCUMFLEX
+<O?>                   /xC3/x95     <U00D5> LATIN CAPITAL LETTER O WITH TILDE
+<O:>                   /xC3/x96     <U00D6> LATIN CAPITAL LETTER O WITH DIAERESIS
+<*X>                   /xC3/x97     <U00D7> MULTIPLICATION SIGN
+<O//>                  /xC3/x98     <U00D8> LATIN CAPITAL LETTER O WITH STROKE
+<U!>                   /xC3/x99     <U00D9> LATIN CAPITAL LETTER U WITH GRAVE
+<U'>                   /xC3/x9A     <U00DA> LATIN CAPITAL LETTER U WITH ACUTE
+<U/>>                  /xC3/x9B     <U00DB> LATIN CAPITAL LETTER U WITH CIRCUMFLEX
+<U:>                   /xC3/x9C     <U00DC> LATIN CAPITAL LETTER U WITH DIAERESIS
+<Y'>                   /xC3/x9D     <U00DD> LATIN CAPITAL LETTER Y WITH ACUTE
+<TH>                   /xC3/x9E     <U00DE> LATIN CAPITAL LETTER THORN
+<ss>                   /xC3/x9F     <U00DF> LATIN SMALL LETTER SHARP S
+<a!>                   /xC3/xA0     <U00E0> LATIN SMALL LETTER A WITH GRAVE
+<a'>                   /xC3/xA1     <U00E1> LATIN SMALL LETTER A WITH ACUTE
+<a/>>                  /xC3/xA2     <U00E2> LATIN SMALL LETTER A WITH CIRCUMFLEX
+<a?>                   /xC3/xA3     <U00E3> LATIN SMALL LETTER A WITH TILDE
+<a:>                   /xC3/xA4     <U00E4> LATIN SMALL LETTER A WITH DIAERESIS
+<aa>                   /xC3/xA5     <U00E5> LATIN SMALL LETTER A WITH RING ABOVE
+<ae>                   /xC3/xA6     <U00E6> LATIN SMALL LETTER AE
+<c,>                   /xC3/xA7     <U00E7> LATIN SMALL LETTER C WITH CEDILLA
+<e!>                   /xC3/xA8     <U00E8> LATIN SMALL LETTER E WITH GRAVE
+<e'>                   /xC3/xA9     <U00E9> LATIN SMALL LETTER E WITH ACUTE
+<e/>>                  /xC3/xAA     <U00EA> LATIN SMALL LETTER E WITH CIRCUMFLEX
+<e:>                   /xC3/xAB     <U00EB> LATIN SMALL LETTER E WITH DIAERESIS
+<i!>                   /xC3/xAC     <U00EC> LATIN SMALL LETTER I WITH GRAVE
+<i'>                   /xC3/xAD     <U00ED> LATIN SMALL LETTER I WITH ACUTE
+<i/>>                  /xC3/xAE     <U00EE> LATIN SMALL LETTER I WITH CIRCUMFLEX
+<i:>                   /xC3/xAF     <U00EF> LATIN SMALL LETTER I WITH DIAERESIS
+<d->                   /xC3/xB0     <U00F0> LATIN SMALL LETTER ETH
+<n?>                   /xC3/xB1     <U00F1> LATIN SMALL LETTER N WITH TILDE
+<o!>                   /xC3/xB2     <U00F2> LATIN SMALL LETTER O WITH GRAVE
+<o'>                   /xC3/xB3     <U00F3> LATIN SMALL LETTER O WITH ACUTE
+<o/>>                  /xC3/xB4     <U00F4> LATIN SMALL LETTER O WITH CIRCUMFLEX
+<o?>                   /xC3/xB5     <U00F5> LATIN SMALL LETTER O WITH TILDE
+<o:>                   /xC3/xB6     <U00F6> LATIN SMALL LETTER O WITH DIAERESIS
+<-:>                   /xC3/xB7     <U00F7> DIVISION SIGN
+<o//>                  /xC3/xB8     <U00F8> LATIN SMALL LETTER O WITH STROKE
+<u!>                   /xC3/xB9     <U00F9> LATIN SMALL LETTER U WITH GRAVE
+<u'>                   /xC3/xBA     <U00FA> LATIN SMALL LETTER U WITH ACUTE
+<u/>>                  /xC3/xBB     <U00FB> LATIN SMALL LETTER U WITH CIRCUMFLEX
+<u:>                   /xC3/xBC     <U00FC> LATIN SMALL LETTER U WITH DIAERESIS
+<y'>                   /xC3/xBD     <U00FD> LATIN SMALL LETTER Y WITH ACUTE
+<th>                   /xC3/xBE     <U00FE> LATIN SMALL LETTER THORN
+<y:>                   /xC3/xBF     <U00FF> LATIN SMALL LETTER Y WITH DIAERESIS
+<A->                   /xC4/x80     <U0100> LATIN CAPITAL LETTER A WITH MACRON
+<a->                   /xC4/x81     <U0101> LATIN SMALL LETTER A WITH MACRON
+<A(>                   /xC4/x82     <U0102> LATIN CAPITAL LETTER A WITH BREVE
+<a(>                   /xC4/x83     <U0103> LATIN SMALL LETTER A WITH BREVE
+<A;>                   /xC4/x84     <U0104> LATIN CAPITAL LETTER A WITH OGONEK
+<a;>                   /xC4/x85     <U0105> LATIN SMALL LETTER A WITH OGONEK
+<C'>                   /xC4/x86     <U0106> LATIN CAPITAL LETTER C WITH ACUTE
+<c'>                   /xC4/x87     <U0107> LATIN SMALL LETTER C WITH ACUTE
+<C/>>                  /xC4/x88     <U0108> LATIN CAPITAL LETTER C WITH CIRCUMFLEX
+<c/>>                  /xC4/x89     <U0109> LATIN SMALL LETTER C WITH CIRCUMFLEX
+<C.>                   /xC4/x8A     <U010A> LATIN CAPITAL LETTER C WITH DOT ABOVE
+<c.>                   /xC4/x8B     <U010B> LATIN SMALL LETTER C WITH DOT ABOVE
+<C<>                   /xC4/x8C     <U010C> LATIN CAPITAL LETTER C WITH CARON
+<c<>                   /xC4/x8D     <U010D> LATIN SMALL LETTER C WITH CARON
+<D<>                   /xC4/x8E     <U010E> LATIN CAPITAL LETTER D WITH CARON
+<d<>                   /xC4/x8F     <U010F> LATIN SMALL LETTER D WITH CARON
+<D//>                  /xC4/x90     <U0110> LATIN CAPITAL LETTER D WITH STROKE
+<d//>                  /xC4/x91     <U0111> LATIN SMALL LETTER D WITH STROKE
+<E->                   /xC4/x92     <U0112> LATIN CAPITAL LETTER E WITH MACRON
+<e->                   /xC4/x93     <U0113> LATIN SMALL LETTER E WITH MACRON
+<E(>                   /xC4/x94     <U0114> LATIN CAPITAL LETTER E WITH BREVE
+<e(>                   /xC4/x95     <U0115> LATIN SMALL LETTER E WITH BREVE
+<E.>                   /xC4/x96     <U0116> LATIN CAPITAL LETTER E WITH DOT ABOVE
+<e.>                   /xC4/x97     <U0117> LATIN SMALL LETTER E WITH DOT ABOVE
+<E;>                   /xC4/x98     <U0118> LATIN CAPITAL LETTER E WITH OGONEK
+<e;>                   /xC4/x99     <U0119> LATIN SMALL LETTER E WITH OGONEK
+<E<>                   /xC4/x9A     <U011A> LATIN CAPITAL LETTER E WITH CARON
+<e<>                   /xC4/x9B     <U011B> LATIN SMALL LETTER E WITH CARON
+<G/>>                  /xC4/x9C     <U011C> LATIN CAPITAL LETTER G WITH CIRCUMFLEX
+<g/>>                  /xC4/x9D     <U011D> LATIN SMALL LETTER G WITH CIRCUMFLEX
+<G(>                   /xC4/x9E     <U011E> LATIN CAPITAL LETTER G WITH BREVE
+<g(>                   /xC4/x9F     <U011F> LATIN SMALL LETTER G WITH BREVE
+<G.>                   /xC4/xA0     <U0120> LATIN CAPITAL LETTER G WITH DOT ABOVE
+<g.>                   /xC4/xA1     <U0121> LATIN SMALL LETTER G WITH DOT ABOVE
+<G,>                   /xC4/xA2     <U0122> LATIN CAPITAL LETTER G WITH CEDILLA
+<g,>                   /xC4/xA3     <U0123> LATIN SMALL LETTER G WITH CEDILLA
+<H/>>                  /xC4/xA4     <U0124> LATIN CAPITAL LETTER H WITH CIRCUMFLEX
+<h/>>                  /xC4/xA5     <U0125> LATIN SMALL LETTER H WITH CIRCUMFLEX
+<H//>                  /xC4/xA6     <U0126> LATIN CAPITAL LETTER H WITH STROKE
+<h//>                  /xC4/xA7     <U0127> LATIN SMALL LETTER H WITH STROKE
+<I?>                   /xC4/xA8     <U0128> LATIN CAPITAL LETTER I WITH TILDE
+<i?>                   /xC4/xA9     <U0129> LATIN SMALL LETTER I WITH TILDE
+<I->                   /xC4/xAA     <U012A> LATIN CAPITAL LETTER I WITH MACRON
+<i->                   /xC4/xAB     <U012B> LATIN SMALL LETTER I WITH MACRON
+<I(>                   /xC4/xAC     <U012C> LATIN CAPITAL LETTER I WITH BREVE
+<i(>                   /xC4/xAD     <U012D> LATIN SMALL LETTER I WITH BREVE
+<I;>                   /xC4/xAE     <U012E> LATIN CAPITAL LETTER I WITH OGONEK
+<i;>                   /xC4/xAF     <U012F> LATIN SMALL LETTER I WITH OGONEK
+<I.>                   /xC4/xB0     <U0130> LATIN CAPITAL LETTER I WITH DOT ABOVE
+<i.>                   /xC4/xB1     <U0131> LATIN SMALL LETTER DOTLESS I
+<IJ>                   /xC4/xB2     <U0132> LATIN CAPITAL LIGATURE IJ
+<ij>                   /xC4/xB3     <U0133> LATIN SMALL LIGATURE IJ
+<J/>>                  /xC4/xB4     <U0134> LATIN CAPITAL LETTER J WITH CIRCUMFLEX
+<j/>>                  /xC4/xB5     <U0135> LATIN SMALL LETTER J WITH CIRCUMFLEX
+<K,>                   /xC4/xB6     <U0136> LATIN CAPITAL LETTER K WITH CEDILLA
+<k,>                   /xC4/xB7     <U0137> LATIN SMALL LETTER K WITH CEDILLA
+<kk>                   /xC4/xB8     <U0138> LATIN SMALL LETTER KRA
+<L'>                   /xC4/xB9     <U0139> LATIN CAPITAL LETTER L WITH ACUTE
+<l'>                   /xC4/xBA     <U013A> LATIN SMALL LETTER L WITH ACUTE
+<L,>                   /xC4/xBB     <U013B> LATIN CAPITAL LETTER L WITH CEDILLA
+<l,>                   /xC4/xBC     <U013C> LATIN SMALL LETTER L WITH CEDILLA
+<L<>                   /xC4/xBD     <U013D> LATIN CAPITAL LETTER L WITH CARON
+<l<>                   /xC4/xBE     <U013E> LATIN SMALL LETTER L WITH CARON
+<L.>                   /xC4/xBF     <U013F> LATIN CAPITAL LETTER L WITH MIDDLE DOT
+<l.>                   /xC5/x80     <U0140> LATIN SMALL LETTER L WITH MIDDLE DOT
+<L//>                  /xC5/x81     <U0141> LATIN CAPITAL LETTER L WITH STROKE
+<l//>                  /xC5/x82     <U0142> LATIN SMALL LETTER L WITH STROKE
+<N'>                   /xC5/x83     <U0143> LATIN CAPITAL LETTER N WITH ACUTE
+<n'>                   /xC5/x84     <U0144> LATIN SMALL LETTER N WITH ACUTE
+<N,>                   /xC5/x85     <U0145> LATIN CAPITAL LETTER N WITH CEDILLA
+<n,>                   /xC5/x86     <U0146> LATIN SMALL LETTER N WITH CEDILLA
+<N<>                   /xC5/x87     <U0147> LATIN CAPITAL LETTER N WITH CARON
+<n<>                   /xC5/x88     <U0148> LATIN SMALL LETTER N WITH CARON
+<'n>                   /xC5/x89     <U0149> LATIN SMALL LETTER N PRECEDED BY APOSTROPHE
+<NG>                   /xC5/x8A     <U014A> LATIN CAPITAL LETTER ENG
+<ng>                   /xC5/x8B     <U014B> LATIN SMALL LETTER ENG
+<O->                   /xC5/x8C     <U014C> LATIN CAPITAL LETTER O WITH MACRON
+<o->                   /xC5/x8D     <U014D> LATIN SMALL LETTER O WITH MACRON
+<O(>                   /xC5/x8E     <U014E> LATIN CAPITAL LETTER O WITH BREVE
+<o(>                   /xC5/x8F     <U014F> LATIN SMALL LETTER O WITH BREVE
+<O">                   /xC5/x90     <U0150> LATIN CAPITAL LETTER O WITH DOUBLE ACUTE
+<o">                   /xC5/x91     <U0151> LATIN SMALL LETTER O WITH DOUBLE ACUTE
+<OE>                   /xC5/x92     <U0152> LATIN CAPITAL LIGATURE OE
+<oe>                   /xC5/x93     <U0153> LATIN SMALL LIGATURE OE
+<R'>                   /xC5/x94     <U0154> LATIN CAPITAL LETTER R WITH ACUTE
+<r'>                   /xC5/x95     <U0155> LATIN SMALL LETTER R WITH ACUTE
+<R,>                   /xC5/x96     <U0156> LATIN CAPITAL LETTER R WITH CEDILLA
+<r,>                   /xC5/x97     <U0157> LATIN SMALL LETTER R WITH CEDILLA
+<R<>                   /xC5/x98     <U0158> LATIN CAPITAL LETTER R WITH CARON
+<r<>                   /xC5/x99     <U0159> LATIN SMALL LETTER R WITH CARON
+<S'>                   /xC5/x9A     <U015A> LATIN CAPITAL LETTER S WITH ACUTE
+<s'>                   /xC5/x9B     <U015B> LATIN SMALL LETTER S WITH ACUTE
+<S/>>                  /xC5/x9C     <U015C> LATIN CAPITAL LETTER S WITH CIRCUMFLEX
+<s/>>                  /xC5/x9D     <U015D> LATIN SMALL LETTER S WITH CIRCUMFLEX
+<S,>                   /xC5/x9E     <U015E> LATIN CAPITAL LETTER S WITH CEDILLA
+<s,>                   /xC5/x9F     <U015F> LATIN SMALL LETTER S WITH CEDILLA
+<S<>                   /xC5/xA0     <U0160> LATIN CAPITAL LETTER S WITH CARON
+<s<>                   /xC5/xA1     <U0161> LATIN SMALL LETTER S WITH CARON
+<T,>                   /xC5/xA2     <U0162> LATIN CAPITAL LETTER T WITH CEDILLA
+<t,>                   /xC5/xA3     <U0163> LATIN SMALL LETTER T WITH CEDILLA
+<T<>                   /xC5/xA4     <U0164> LATIN CAPITAL LETTER T WITH CARON
+<t<>                   /xC5/xA5     <U0165> LATIN SMALL LETTER T WITH CARON
+<T//>                  /xC5/xA6     <U0166> LATIN CAPITAL LETTER T WITH STROKE
+<t//>                  /xC5/xA7     <U0167> LATIN SMALL LETTER T WITH STROKE
+<U?>                   /xC5/xA8     <U0168> LATIN CAPITAL LETTER U WITH TILDE
+<u?>                   /xC5/xA9     <U0169> LATIN SMALL LETTER U WITH TILDE
+<U->                   /xC5/xAA     <U016A> LATIN CAPITAL LETTER U WITH MACRON
+<u->                   /xC5/xAB     <U016B> LATIN SMALL LETTER U WITH MACRON
+<U(>                   /xC5/xAC     <U016C> LATIN CAPITAL LETTER U WITH BREVE
+<u(>                   /xC5/xAD     <U016D> LATIN SMALL LETTER U WITH BREVE
+<U0>                   /xC5/xAE     <U016E> LATIN CAPITAL LETTER U WITH RING ABOVE
+<u0>                   /xC5/xAF     <U016F> LATIN SMALL LETTER U WITH RING ABOVE
+<U">                   /xC5/xB0     <U0170> LATIN CAPITAL LETTER U WITH DOUBLE ACUTE
+<u">                   /xC5/xB1     <U0171> LATIN SMALL LETTER U WITH DOUBLE ACUTE
+<U;>                   /xC5/xB2     <U0172> LATIN CAPITAL LETTER U WITH OGONEK
+<u;>                   /xC5/xB3     <U0173> LATIN SMALL LETTER U WITH OGONEK
+<W/>>                  /xC5/xB4     <U0174> LATIN CAPITAL LETTER W WITH CIRCUMFLEX
+<w/>>                  /xC5/xB5     <U0175> LATIN SMALL LETTER W WITH CIRCUMFLEX
+<Y/>>                  /xC5/xB6     <U0176> LATIN CAPITAL LETTER Y WITH CIRCUMFLEX
+<y/>>                  /xC5/xB7     <U0177> LATIN SMALL LETTER Y WITH CIRCUMFLEX
+<Y:>                   /xC5/xB8     <U0178> LATIN CAPITAL LETTER Y WITH DIAERESIS
+<Z'>                   /xC5/xB9     <U0179> LATIN CAPITAL LETTER Z WITH ACUTE
+<z'>                   /xC5/xBA     <U017A> LATIN SMALL LETTER Z WITH ACUTE
+<Z.>                   /xC5/xBB     <U017B> LATIN CAPITAL LETTER Z WITH DOT ABOVE
+<z.>                   /xC5/xBC     <U017C> LATIN SMALL LETTER Z WITH DOT ABOVE
+<Z<>                   /xC5/xBD     <U017D> LATIN CAPITAL LETTER Z WITH CARON
+<z<>                   /xC5/xBE     <U017E> LATIN SMALL LETTER Z WITH CARON
+<s1>                   /xC5/xBF     <U017F> LATIN SMALL LETTER LONG S
+<b//>                  /xC6/x80     <U0180> LATIN SMALL LETTER B WITH STROKE
+<B2>                   /xC6/x81     <U0181> LATIN CAPITAL LETTER B WITH HOOK
+<C2>                   /xC6/x87     <U0187> LATIN CAPITAL LETTER C WITH HOOK
+<c2>                   /xC6/x88     <U0188> LATIN SMALL LETTER C WITH HOOK
+<F2>                   /xC6/x91     <U0191> LATIN CAPITAL LETTER F WITH HOOK
+<f2>                   /xC6/x92     <U0192> LATIN SMALL LETTER F WITH HOOK
+<K2>                   /xC6/x98     <U0198> LATIN CAPITAL LETTER K WITH HOOK
+<k2>                   /xC6/x99     <U0199> LATIN SMALL LETTER K WITH HOOK
+<O9>                   /xC6/xA0     <U01A0> LATIN CAPITAL LETTER O WITH HORN
+<o9>                   /xC6/xA1     <U01A1> LATIN SMALL LETTER O WITH HORN
+<OI>                   /xC6/xA2     <U01A2> LATIN CAPITAL LETTER OI
+<oi>                   /xC6/xA3     <U01A3> LATIN SMALL LETTER OI
+<yr>                   /xC6/xA6     <U01A6> LATIN LETTER YR
+<U9>                   /xC6/xAF     <U01AF> LATIN CAPITAL LETTER U WITH HORN
+<u9>                   /xC6/xB0     <U01B0> LATIN SMALL LETTER U WITH HORN
+<Z//>                  /xC6/xB5     <U01B5> LATIN CAPITAL LETTER Z WITH STROKE
+<z//>                  /xC6/xB6     <U01B6> LATIN SMALL LETTER Z WITH STROKE
+<ED>                   /xC6/xB7     <U01B7> LATIN CAPITAL LETTER EZH
+<DZ<>                  /xC7/x84     <U01C4> LATIN CAPITAL LETTER DZ WITH CARON
+<Dz<>                  /xC7/x85     <U01C5> LATIN CAPITAL LETTER D WITH SMALL LETTER Z WITH CARON
+<dz<>                  /xC7/x86     <U01C6> LATIN SMALL LETTER DZ WITH CARON
+<LJ3>                  /xC7/x87     <U01C7> LATIN CAPITAL LETTER LJ
+<Lj3>                  /xC7/x88     <U01C8> LATIN CAPITAL LETTER L WITH SMALL LETTER J
+<lj3>                  /xC7/x89     <U01C9> LATIN SMALL LETTER LJ
+<NJ3>                  /xC7/x8A     <U01CA> LATIN CAPITAL LETTER NJ
+<Nj3>                  /xC7/x8B     <U01CB> LATIN CAPITAL LETTER N WITH SMALL LETTER J
+<nj3>                  /xC7/x8C     <U01CC> LATIN SMALL LETTER NJ
+<A<>                   /xC7/x8D     <U01CD> LATIN CAPITAL LETTER A WITH CARON
+<a<>                   /xC7/x8E     <U01CE> LATIN SMALL LETTER A WITH CARON
+<I<>                   /xC7/x8F     <U01CF> LATIN CAPITAL LETTER I WITH CARON
+<i<>                   /xC7/x90     <U01D0> LATIN SMALL LETTER I WITH CARON
+<O<>                   /xC7/x91     <U01D1> LATIN CAPITAL LETTER O WITH CARON
+<o<>                   /xC7/x92     <U01D2> LATIN SMALL LETTER O WITH CARON
+<U<>                   /xC7/x93     <U01D3> LATIN CAPITAL LETTER U WITH CARON
+<u<>                   /xC7/x94     <U01D4> LATIN SMALL LETTER U WITH CARON
+<U:->                  /xC7/x95     <U01D5> LATIN CAPITAL LETTER U WITH DIAERESIS AND MACRON
+<u:->                  /xC7/x96     <U01D6> LATIN SMALL LETTER U WITH DIAERESIS AND MACRON
+<U:'>                  /xC7/x97     <U01D7> LATIN CAPITAL LETTER U WITH DIAERESIS AND ACUTE
+<u:'>                  /xC7/x98     <U01D8> LATIN SMALL LETTER U WITH DIAERESIS AND ACUTE
+<U:<>                  /xC7/x99     <U01D9> LATIN CAPITAL LETTER U WITH DIAERESIS AND CARON
+<u:<>                  /xC7/x9A     <U01DA> LATIN SMALL LETTER U WITH DIAERESIS AND CARON
+<U:!>                  /xC7/x9B     <U01DB> LATIN CAPITAL LETTER U WITH DIAERESIS AND GRAVE
+<u:!>                  /xC7/x9C     <U01DC> LATIN SMALL LETTER U WITH DIAERESIS AND GRAVE
+<e1>                   /xC7/x9D     <U01DD> LATIN SMALL LETTER TURNED E
+<A1>                   /xC7/x9E     <U01DE> LATIN CAPITAL LETTER A WITH DIAERESIS AND MACRON
+<a1>                   /xC7/x9F     <U01DF> LATIN SMALL LETTER A WITH DIAERESIS AND MACRON
+<A7>                   /xC7/xA0     <U01E0> LATIN CAPITAL LETTER A WITH DOT ABOVE AND MACRON
+<a7>                   /xC7/xA1     <U01E1> LATIN SMALL LETTER A WITH DOT ABOVE AND MACRON
+<A3>                   /xC7/xA2     <U01E2> LATIN CAPITAL LETTER AE WITH MACRON
+<a3>                   /xC7/xA3     <U01E3> LATIN SMALL LETTER AE WITH MACRON
+<G//>                  /xC7/xA4     <U01E4> LATIN CAPITAL LETTER G WITH STROKE
+<g//>                  /xC7/xA5     <U01E5> LATIN SMALL LETTER G WITH STROKE
+<G<>                   /xC7/xA6     <U01E6> LATIN CAPITAL LETTER G WITH CARON
+<g<>                   /xC7/xA7     <U01E7> LATIN SMALL LETTER G WITH CARON
+<K<>                   /xC7/xA8     <U01E8> LATIN CAPITAL LETTER K WITH CARON
+<k<>                   /xC7/xA9     <U01E9> LATIN SMALL LETTER K WITH CARON
+<O;>                   /xC7/xAA     <U01EA> LATIN CAPITAL LETTER O WITH OGONEK
+<o;>                   /xC7/xAB     <U01EB> LATIN SMALL LETTER O WITH OGONEK
+<O1>                   /xC7/xAC     <U01EC> LATIN CAPITAL LETTER O WITH OGONEK AND MACRON
+<o1>                   /xC7/xAD     <U01ED> LATIN SMALL LETTER O WITH OGONEK AND MACRON
+<EZ>                   /xC7/xAE     <U01EE> LATIN CAPITAL LETTER EZH WITH CARON
+<ez>                   /xC7/xAF     <U01EF> LATIN SMALL LETTER EZH WITH CARON
+<j<>                   /xC7/xB0     <U01F0> LATIN SMALL LETTER J WITH CARON
+<DZ3>                  /xC7/xB1     <U01F1> LATIN CAPITAL LETTER DZ
+<Dz3>                  /xC7/xB2     <U01F2> LATIN CAPITAL LETTER D WITH SMALL LETTER Z
+<dz3>                  /xC7/xB3     <U01F3> LATIN SMALL LETTER DZ
+<G'>                   /xC7/xB4     <U01F4> LATIN CAPITAL LETTER G WITH ACUTE
+<g'>                   /xC7/xB5     <U01F5> LATIN SMALL LETTER G WITH ACUTE
+<AA'>                  /xC7/xBA     <U01FA> LATIN CAPITAL LETTER A WITH RING ABOVE AND ACUTE
+<aa'>                  /xC7/xBB     <U01FB> LATIN SMALL LETTER A WITH RING ABOVE AND ACUTE
+<AE'>                  /xC7/xBC     <U01FC> LATIN CAPITAL LETTER AE WITH ACUTE
+<ae'>                  /xC7/xBD     <U01FD> LATIN SMALL LETTER AE WITH ACUTE
+<O//'>                 /xC7/xBE     <U01FE> LATIN CAPITAL LETTER O WITH STROKE AND ACUTE
+<o//'>                 /xC7/xBF     <U01FF> LATIN SMALL LETTER O WITH STROKE AND ACUTE
+<A!!>                  /xC8/x80     <U0200> LATIN CAPITAL LETTER A WITH DOUBLE GRAVE
+<a!!>                  /xC8/x81     <U0201> LATIN SMALL LETTER A WITH DOUBLE GRAVE
+<A)>                   /xC8/x82     <U0202> LATIN CAPITAL LETTER A WITH INVERTED BREVE
+<a)>                   /xC8/x83     <U0203> LATIN SMALL LETTER A WITH INVERTED BREVE
+<E!!>                  /xC8/x84     <U0204> LATIN CAPITAL LETTER E WITH DOUBLE GRAVE
+<e!!>                  /xC8/x85     <U0205> LATIN SMALL LETTER E WITH DOUBLE GRAVE
+<E)>                   /xC8/x86     <U0206> LATIN CAPITAL LETTER E WITH INVERTED BREVE
+<e)>                   /xC8/x87     <U0207> LATIN SMALL LETTER E WITH INVERTED BREVE
+<I!!>                  /xC8/x88     <U0208> LATIN CAPITAL LETTER I WITH DOUBLE GRAVE
+<i!!>                  /xC8/x89     <U0209> LATIN SMALL LETTER I WITH DOUBLE GRAVE
+<I)>                   /xC8/x8A     <U020A> LATIN CAPITAL LETTER I WITH INVERTED BREVE
+<i)>                   /xC8/x8B     <U020B> LATIN SMALL LETTER I WITH INVERTED BREVE
+<O!!>                  /xC8/x8C     <U020C> LATIN CAPITAL LETTER O WITH DOUBLE GRAVE
+<o!!>                  /xC8/x8D     <U020D> LATIN SMALL LETTER O WITH DOUBLE GRAVE
+<O)>                   /xC8/x8E     <U020E> LATIN CAPITAL LETTER O WITH INVERTED BREVE
+<o)>                   /xC8/x8F     <U020F> LATIN SMALL LETTER O WITH INVERTED BREVE
+<R!!>                  /xC8/x90     <U0210> LATIN CAPITAL LETTER R WITH DOUBLE GRAVE
+<r!!>                  /xC8/x91     <U0211> LATIN SMALL LETTER R WITH DOUBLE GRAVE
+<R)>                   /xC8/x92     <U0212> LATIN CAPITAL LETTER R WITH INVERTED BREVE
+<r)>                   /xC8/x93     <U0213> LATIN SMALL LETTER R WITH INVERTED BREVE
+<U!!>                  /xC8/x94     <U0214> LATIN CAPITAL LETTER U WITH DOUBLE GRAVE
+<u!!>                  /xC8/x95     <U0215> LATIN SMALL LETTER U WITH DOUBLE GRAVE
+<U)>                   /xC8/x96     <U0216> LATIN CAPITAL LETTER U WITH INVERTED BREVE
+<u)>                   /xC8/x97     <U0217> LATIN SMALL LETTER U WITH INVERTED BREVE
+<r1>                   /xC9/xBC     <U027C> LATIN SMALL LETTER R WITH LONG LEG
+<ed>                   /xCA/x92     <U0292> LATIN SMALL LETTER EZH
+<;S>                   /xCA/xBB     <U02BB> MODIFIER LETTER TURNED COMMA
+<1/>>                  /xCB/x86     <U02C6> MODIFIER LETTER CIRCUMFLEX ACCENT
+<'<>                   /xCB/x87     <U02C7> CARON
+<1->                   /xCB/x89     <U02C9> MODIFIER LETTER MACRON
+<1!>                   /xCB/x8B     <U02CB> MODIFIER LETTER GRAVE ACCENT
+<'(>                   /xCB/x98     <U02D8> BREVE
+<'.>                   /xCB/x99     <U02D9> DOT ABOVE
+<'0>                   /xCB/x9A     <U02DA> RING ABOVE
+<';>                   /xCB/x9B     <U02DB> OGONEK
+<1?>                   /xCB/x9C     <U02DC> SMALL TILDE
+<'">                   /xCB/x9D     <U02DD> DOUBLE ACUTE ACCENT
+<'C!>                  /xCC/x80     <U0300> COMBINING GRAVE ACCENT
+<-C?>                  /xCC/x83     <U0303> COMBINING TILDE
+<'C2>                  /xCC/x89     <U0309> COMBINING HOOK ABOVE
+<-C.>                  /xCC/xA3     <U0323> COMBINING DOT BELOW
+<'G>                   /xCD/xB4     <U0374> GREEK NUMERAL SIGN
+<,G>                   /xCD/xB5     <U0375> GREEK LOWER NUMERAL SIGN
+<j3>                   /xCD/xBA     <U037A> GREEK YPOGEGRAMMENI
+<?%>                   /xCD/xBE     <U037E> GREEK QUESTION MARK
+<'*>                   /xCE/x84     <U0384> GREEK TONOS
+<'%>                   /xCE/x85     <U0385> GREEK DIALYTIKA TONOS
+<A%>                   /xCE/x86     <U0386> GREEK CAPITAL LETTER ALPHA WITH TONOS
+<.*>                   /xCE/x87     <U0387> GREEK ANO TELEIA
+<E%>                   /xCE/x88     <U0388> GREEK CAPITAL LETTER EPSILON WITH TONOS
+<Y%>                   /xCE/x89     <U0389> GREEK CAPITAL LETTER ETA WITH TONOS
+<I%>                   /xCE/x8A     <U038A> GREEK CAPITAL LETTER IOTA WITH TONOS
+<O%>                   /xCE/x8C     <U038C> GREEK CAPITAL LETTER OMICRON WITH TONOS
+<U%>                   /xCE/x8E     <U038E> GREEK CAPITAL LETTER UPSILON WITH TONOS
+<W%>                   /xCE/x8F     <U038F> GREEK CAPITAL LETTER OMEGA WITH TONOS
+<i3>                   /xCE/x90     <U0390> GREEK SMALL LETTER IOTA WITH DIALYTIKA AND TONOS
+<A*>                   /xCE/x91     <U0391> GREEK CAPITAL LETTER ALPHA
+<B*>                   /xCE/x92     <U0392> GREEK CAPITAL LETTER BETA
+<G*>                   /xCE/x93     <U0393> GREEK CAPITAL LETTER GAMMA
+<D*>                   /xCE/x94     <U0394> GREEK CAPITAL LETTER DELTA
+<E*>                   /xCE/x95     <U0395> GREEK CAPITAL LETTER EPSILON
+<Z*>                   /xCE/x96     <U0396> GREEK CAPITAL LETTER ZETA
+<Y*>                   /xCE/x97     <U0397> GREEK CAPITAL LETTER ETA
+<H*>                   /xCE/x98     <U0398> GREEK CAPITAL LETTER THETA
+<I*>                   /xCE/x99     <U0399> GREEK CAPITAL LETTER IOTA
+<K*>                   /xCE/x9A     <U039A> GREEK CAPITAL LETTER KAPPA
+<L*>                   /xCE/x9B     <U039B> GREEK CAPITAL LETTER LAMDA
+<M*>                   /xCE/x9C     <U039C> GREEK CAPITAL LETTER MU
+<N*>                   /xCE/x9D     <U039D> GREEK CAPITAL LETTER NU
+<C*>                   /xCE/x9E     <U039E> GREEK CAPITAL LETTER XI
+<O*>                   /xCE/x9F     <U039F> GREEK CAPITAL LETTER OMICRON
+<P*>                   /xCE/xA0     <U03A0> GREEK CAPITAL LETTER PI
+<R*>                   /xCE/xA1     <U03A1> GREEK CAPITAL LETTER RHO
+<S*>                   /xCE/xA3     <U03A3> GREEK CAPITAL LETTER SIGMA
+<T*>                   /xCE/xA4     <U03A4> GREEK CAPITAL LETTER TAU
+<U*>                   /xCE/xA5     <U03A5> GREEK CAPITAL LETTER UPSILON
+<F*>                   /xCE/xA6     <U03A6> GREEK CAPITAL LETTER PHI
+<X*>                   /xCE/xA7     <U03A7> GREEK CAPITAL LETTER CHI
+<Q*>                   /xCE/xA8     <U03A8> GREEK CAPITAL LETTER PSI
+<W*>                   /xCE/xA9     <U03A9> GREEK CAPITAL LETTER OMEGA
+<J*>                   /xCE/xAA     <U03AA> GREEK CAPITAL LETTER IOTA WITH DIALYTIKA
+<V*>                   /xCE/xAB     <U03AB> GREEK CAPITAL LETTER UPSILON WITH DIALYTIKA
+<a%>                   /xCE/xAC     <U03AC> GREEK SMALL LETTER ALPHA WITH TONOS
+<e%>                   /xCE/xAD     <U03AD> GREEK SMALL LETTER EPSILON WITH TONOS
+<y%>                   /xCE/xAE     <U03AE> GREEK SMALL LETTER ETA WITH TONOS
+<i%>                   /xCE/xAF     <U03AF> GREEK SMALL LETTER IOTA WITH TONOS
+<u3>                   /xCE/xB0     <U03B0> GREEK SMALL LETTER UPSILON WITH DIALYTIKA AND TONOS
+<a*>                   /xCE/xB1     <U03B1> GREEK SMALL LETTER ALPHA
+<b*>                   /xCE/xB2     <U03B2> GREEK SMALL LETTER BETA
+<g*>                   /xCE/xB3     <U03B3> GREEK SMALL LETTER GAMMA
+<d*>                   /xCE/xB4     <U03B4> GREEK SMALL LETTER DELTA
+<e*>                   /xCE/xB5     <U03B5> GREEK SMALL LETTER EPSILON
+<z*>                   /xCE/xB6     <U03B6> GREEK SMALL LETTER ZETA
+<y*>                   /xCE/xB7     <U03B7> GREEK SMALL LETTER ETA
+<h*>                   /xCE/xB8     <U03B8> GREEK SMALL LETTER THETA
+<i*>                   /xCE/xB9     <U03B9> GREEK SMALL LETTER IOTA
+<k*>                   /xCE/xBA     <U03BA> GREEK SMALL LETTER KAPPA
+<l*>                   /xCE/xBB     <U03BB> GREEK SMALL LETTER LAMDA
+<m*>                   /xCE/xBC     <U03BC> GREEK SMALL LETTER MU
+<n*>                   /xCE/xBD     <U03BD> GREEK SMALL LETTER NU
+<c*>                   /xCE/xBE     <U03BE> GREEK SMALL LETTER XI
+<o*>                   /xCE/xBF     <U03BF> GREEK SMALL LETTER OMICRON
+<p*>                   /xCF/x80     <U03C0> GREEK SMALL LETTER PI
+<r*>                   /xCF/x81     <U03C1> GREEK SMALL LETTER RHO
+<*s>                   /xCF/x82     <U03C2> GREEK SMALL LETTER FINAL SIGMA
+<s*>                   /xCF/x83     <U03C3> GREEK SMALL LETTER SIGMA
+<t*>                   /xCF/x84     <U03C4> GREEK SMALL LETTER TAU
+<u*>                   /xCF/x85     <U03C5> GREEK SMALL LETTER UPSILON
+<f*>                   /xCF/x86     <U03C6> GREEK SMALL LETTER PHI
+<x*>                   /xCF/x87     <U03C7> GREEK SMALL LETTER CHI
+<q*>                   /xCF/x88     <U03C8> GREEK SMALL LETTER PSI
+<w*>                   /xCF/x89     <U03C9> GREEK SMALL LETTER OMEGA
+<j*>                   /xCF/x8A     <U03CA> GREEK SMALL LETTER IOTA WITH DIALYTIKA
+<v*>                   /xCF/x8B     <U03CB> GREEK SMALL LETTER UPSILON WITH DIALYTIKA
+<o%>                   /xCF/x8C     <U03CC> GREEK SMALL LETTER OMICRON WITH TONOS
+<u%>                   /xCF/x8D     <U03CD> GREEK SMALL LETTER UPSILON WITH TONOS
+<w%>                   /xCF/x8E     <U03CE> GREEK SMALL LETTER OMEGA WITH TONOS
+<b3>                   /xCF/x90     <U03D0> GREEK BETA SYMBOL
+<T3>                   /xCF/x9A     <U03DA> GREEK LETTER STIGMA
+<M3>                   /xCF/x9C     <U03DC> GREEK LETTER DIGAMMA
+<K3>                   /xCF/x9E     <U03DE> GREEK LETTER KOPPA
+<P3>                   /xCF/xA0     <U03E0> GREEK LETTER SAMPI
+<IO>                   /xD0/x81     <U0401> CYRILLIC CAPITAL LETTER IO
+<D%>                   /xD0/x82     <U0402> CYRILLIC CAPITAL LETTER DJE
+<G%>                   /xD0/x83     <U0403> CYRILLIC CAPITAL LETTER GJE
+<IE>                   /xD0/x84     <U0404> CYRILLIC CAPITAL LETTER UKRAINIAN IE
+<DS>                   /xD0/x85     <U0405> CYRILLIC CAPITAL LETTER DZE
+<II>                   /xD0/x86     <U0406> CYRILLIC CAPITAL LETTER BYELORUSSIAN-UKRAINIAN I
+<YI>                   /xD0/x87     <U0407> CYRILLIC CAPITAL LETTER YI
+<J%>                   /xD0/x88     <U0408> CYRILLIC CAPITAL LETTER JE
+<LJ>                   /xD0/x89     <U0409> CYRILLIC CAPITAL LETTER LJE
+<NJ>                   /xD0/x8A     <U040A> CYRILLIC CAPITAL LETTER NJE
+<Ts>                   /xD0/x8B     <U040B> CYRILLIC CAPITAL LETTER TSHE
+<KJ>                   /xD0/x8C     <U040C> CYRILLIC CAPITAL LETTER KJE
+<V%>                   /xD0/x8E     <U040E> CYRILLIC CAPITAL LETTER SHORT U
+<DZ>                   /xD0/x8F     <U040F> CYRILLIC CAPITAL LETTER DZHE
+<A=>                   /xD0/x90     <U0410> CYRILLIC CAPITAL LETTER A
+<B=>                   /xD0/x91     <U0411> CYRILLIC CAPITAL LETTER BE
+<V=>                   /xD0/x92     <U0412> CYRILLIC CAPITAL LETTER VE
+<G=>                   /xD0/x93     <U0413> CYRILLIC CAPITAL LETTER GHE
+<D=>                   /xD0/x94     <U0414> CYRILLIC CAPITAL LETTER DE
+<E=>                   /xD0/x95     <U0415> CYRILLIC CAPITAL LETTER IE
+<Z%>                   /xD0/x96     <U0416> CYRILLIC CAPITAL LETTER ZHE
+<Z=>                   /xD0/x97     <U0417> CYRILLIC CAPITAL LETTER ZE
+<I=>                   /xD0/x98     <U0418> CYRILLIC CAPITAL LETTER I
+<J=>                   /xD0/x99     <U0419> CYRILLIC CAPITAL LETTER SHORT I
+<K=>                   /xD0/x9A     <U041A> CYRILLIC CAPITAL LETTER KA
+<L=>                   /xD0/x9B     <U041B> CYRILLIC CAPITAL LETTER EL
+<M=>                   /xD0/x9C     <U041C> CYRILLIC CAPITAL LETTER EM
+<N=>                   /xD0/x9D     <U041D> CYRILLIC CAPITAL LETTER EN
+<O=>                   /xD0/x9E     <U041E> CYRILLIC CAPITAL LETTER O
+<P=>                   /xD0/x9F     <U041F> CYRILLIC CAPITAL LETTER PE
+<R=>                   /xD0/xA0     <U0420> CYRILLIC CAPITAL LETTER ER
+<S=>                   /xD0/xA1     <U0421> CYRILLIC CAPITAL LETTER ES
+<T=>                   /xD0/xA2     <U0422> CYRILLIC CAPITAL LETTER TE
+<U=>                   /xD0/xA3     <U0423> CYRILLIC CAPITAL LETTER U
+<F=>                   /xD0/xA4     <U0424> CYRILLIC CAPITAL LETTER EF
+<H=>                   /xD0/xA5     <U0425> CYRILLIC CAPITAL LETTER HA
+<C=>                   /xD0/xA6     <U0426> CYRILLIC CAPITAL LETTER TSE
+<C%>                   /xD0/xA7     <U0427> CYRILLIC CAPITAL LETTER CHE
+<S%>                   /xD0/xA8     <U0428> CYRILLIC CAPITAL LETTER SHA
+<Sc>                   /xD0/xA9     <U0429> CYRILLIC CAPITAL LETTER SHCHA
+<=">                   /xD0/xAA     <U042A> CYRILLIC CAPITAL LETTER HARD SIGN
+<Y=>                   /xD0/xAB     <U042B> CYRILLIC CAPITAL LETTER YERU
+<%">                   /xD0/xAC     <U042C> CYRILLIC CAPITAL LETTER SOFT SIGN
+<JE>                   /xD0/xAD     <U042D> CYRILLIC CAPITAL LETTER E
+<JU>                   /xD0/xAE     <U042E> CYRILLIC CAPITAL LETTER YU
+<JA>                   /xD0/xAF     <U042F> CYRILLIC CAPITAL LETTER YA
+<a=>                   /xD0/xB0     <U0430> CYRILLIC SMALL LETTER A
+<b=>                   /xD0/xB1     <U0431> CYRILLIC SMALL LETTER BE
+<v=>                   /xD0/xB2     <U0432> CYRILLIC SMALL LETTER VE
+<g=>                   /xD0/xB3     <U0433> CYRILLIC SMALL LETTER GHE
+<d=>                   /xD0/xB4     <U0434> CYRILLIC SMALL LETTER DE
+<e=>                   /xD0/xB5     <U0435> CYRILLIC SMALL LETTER IE
+<z%>                   /xD0/xB6     <U0436> CYRILLIC SMALL LETTER ZHE
+<z=>                   /xD0/xB7     <U0437> CYRILLIC SMALL LETTER ZE
+<i=>                   /xD0/xB8     <U0438> CYRILLIC SMALL LETTER I
+<j=>                   /xD0/xB9     <U0439> CYRILLIC SMALL LETTER SHORT I
+<k=>                   /xD0/xBA     <U043A> CYRILLIC SMALL LETTER KA
+<l=>                   /xD0/xBB     <U043B> CYRILLIC SMALL LETTER EL
+<m=>                   /xD0/xBC     <U043C> CYRILLIC SMALL LETTER EM
+<n=>                   /xD0/xBD     <U043D> CYRILLIC SMALL LETTER EN
+<o=>                   /xD0/xBE     <U043E> CYRILLIC SMALL LETTER O
+<p=>                   /xD0/xBF     <U043F> CYRILLIC SMALL LETTER PE
+<r=>                   /xD1/x80     <U0440> CYRILLIC SMALL LETTER ER
+<s=>                   /xD1/x81     <U0441> CYRILLIC SMALL LETTER ES
+<t=>                   /xD1/x82     <U0442> CYRILLIC SMALL LETTER TE
+<u=>                   /xD1/x83     <U0443> CYRILLIC SMALL LETTER U
+<f=>                   /xD1/x84     <U0444> CYRILLIC SMALL LETTER EF
+<h=>                   /xD1/x85     <U0445> CYRILLIC SMALL LETTER HA
+<c=>                   /xD1/x86     <U0446> CYRILLIC SMALL LETTER TSE
+<c%>                   /xD1/x87     <U0447> CYRILLIC SMALL LETTER CHE
+<s%>                   /xD1/x88     <U0448> CYRILLIC SMALL LETTER SHA
+<sc>                   /xD1/x89     <U0449> CYRILLIC SMALL LETTER SHCHA
+<='>                   /xD1/x8A     <U044A> CYRILLIC SMALL LETTER HARD SIGN
+<y=>                   /xD1/x8B     <U044B> CYRILLIC SMALL LETTER YERU
+<%'>                   /xD1/x8C     <U044C> CYRILLIC SMALL LETTER SOFT SIGN
+<je>                   /xD1/x8D     <U044D> CYRILLIC SMALL LETTER E
+<ju>                   /xD1/x8E     <U044E> CYRILLIC SMALL LETTER YU
+<ja>                   /xD1/x8F     <U044F> CYRILLIC SMALL LETTER YA
+<io>                   /xD1/x91     <U0451> CYRILLIC SMALL LETTER IO
+<d%>                   /xD1/x92     <U0452> CYRILLIC SMALL LETTER DJE
+<g%>                   /xD1/x93     <U0453> CYRILLIC SMALL LETTER GJE
+<ie>                   /xD1/x94     <U0454> CYRILLIC SMALL LETTER UKRAINIAN IE
+<ds>                   /xD1/x95     <U0455> CYRILLIC SMALL LETTER DZE
+<ii>                   /xD1/x96     <U0456> CYRILLIC SMALL LETTER BYELORUSSIAN-UKRAINIAN I
+<yi>                   /xD1/x97     <U0457> CYRILLIC SMALL LETTER YI
+<j%>                   /xD1/x98     <U0458> CYRILLIC SMALL LETTER JE
+<lj>                   /xD1/x99     <U0459> CYRILLIC SMALL LETTER LJE
+<nj>                   /xD1/x9A     <U045A> CYRILLIC SMALL LETTER NJE
+<ts>                   /xD1/x9B     <U045B> CYRILLIC SMALL LETTER TSHE
+<kj>                   /xD1/x9C     <U045C> CYRILLIC SMALL LETTER KJE
+<v%>                   /xD1/x9E     <U045E> CYRILLIC SMALL LETTER SHORT U
+<dz>                   /xD1/x9F     <U045F> CYRILLIC SMALL LETTER DZHE
+<Y3>                   /xD1/xA2     <U0462> CYRILLIC CAPITAL LETTER YAT
+<y3>                   /xD1/xA3     <U0463> CYRILLIC SMALL LETTER YAT
+<O3>                   /xD1/xAA     <U046A> CYRILLIC CAPITAL LETTER BIG YUS
+<o3>                   /xD1/xAB     <U046B> CYRILLIC SMALL LETTER BIG YUS
+<F3>                   /xD1/xB2     <U0472> CYRILLIC CAPITAL LETTER FITA
+<f3>                   /xD1/xB3     <U0473> CYRILLIC SMALL LETTER FITA
+<V3>                   /xD1/xB4     <U0474> CYRILLIC CAPITAL LETTER IZHITSA
+<v3>                   /xD1/xB5     <U0475> CYRILLIC SMALL LETTER IZHITSA
+<C3>                   /xD2/x80     <U0480> CYRILLIC CAPITAL LETTER KOPPA
+<c3>                   /xD2/x81     <U0481> CYRILLIC SMALL LETTER KOPPA
+<G3>                   /xD2/x90     <U0490> CYRILLIC CAPITAL LETTER GHE WITH UPTURN
+<g3>                   /xD2/x91     <U0491> CYRILLIC SMALL LETTER GHE WITH UPTURN
+<A+>                   /xD7/x90     <U05D0> HEBREW LETTER ALEF
+<B+>                   /xD7/x91     <U05D1> HEBREW LETTER BET
+<G+>                   /xD7/x92     <U05D2> HEBREW LETTER GIMEL
+<D+>                   /xD7/x93     <U05D3> HEBREW LETTER DALET
+<H+>                   /xD7/x94     <U05D4> HEBREW LETTER HE
+<W+>                   /xD7/x95     <U05D5> HEBREW LETTER VAV
+<Z+>                   /xD7/x96     <U05D6> HEBREW LETTER ZAYIN
+<X+>                   /xD7/x97     <U05D7> HEBREW LETTER HET
+<Tj>                   /xD7/x98     <U05D8> HEBREW LETTER TET
+<J+>                   /xD7/x99     <U05D9> HEBREW LETTER YOD
+<K%>                   /xD7/x9A     <U05DA> HEBREW LETTER FINAL KAF
+<K+>                   /xD7/x9B     <U05DB> HEBREW LETTER KAF
+<L+>                   /xD7/x9C     <U05DC> HEBREW LETTER LAMED
+<M%>                   /xD7/x9D     <U05DD> HEBREW LETTER FINAL MEM
+<M+>                   /xD7/x9E     <U05DE> HEBREW LETTER MEM
+<N%>                   /xD7/x9F     <U05DF> HEBREW LETTER FINAL NUN
+<N+>                   /xD7/xA0     <U05E0> HEBREW LETTER NUN
+<S+>                   /xD7/xA1     <U05E1> HEBREW LETTER SAMEKH
+<E+>                   /xD7/xA2     <U05E2> HEBREW LETTER AYIN
+<P%>                   /xD7/xA3     <U05E3> HEBREW LETTER FINAL PE
+<P+>                   /xD7/xA4     <U05E4> HEBREW LETTER PE
+<Zj>                   /xD7/xA5     <U05E5> HEBREW LETTER FINAL TSADI
+<ZJ>                   /xD7/xA6     <U05E6> HEBREW LETTER TSADI
+<Q+>                   /xD7/xA7     <U05E7> HEBREW LETTER QOF
+<R+>                   /xD7/xA8     <U05E8> HEBREW LETTER RESH
+<Sh>                   /xD7/xA9     <U05E9> HEBREW LETTER SHIN
+<T+>                   /xD7/xAA     <U05EA> HEBREW LETTER TAV
+<,+>                   /xD8/x8C     <U060C> ARABIC COMMA
+<;+>                   /xD8/x9B     <U061B> ARABIC SEMICOLON
+<?+>                   /xD8/x9F     <U061F> ARABIC QUESTION MARK
+<H'>                   /xD8/xA1     <U0621> ARABIC LETTER HAMZA
+<aM>                   /xD8/xA2     <U0622> ARABIC LETTER ALEF WITH MADDA ABOVE
+<aH>                   /xD8/xA3     <U0623> ARABIC LETTER ALEF WITH HAMZA ABOVE
+<wH>                   /xD8/xA4     <U0624> ARABIC LETTER WAW WITH HAMZA ABOVE
+<ah>                   /xD8/xA5     <U0625> ARABIC LETTER ALEF WITH HAMZA BELOW
+<yH>                   /xD8/xA6     <U0626> ARABIC LETTER YEH WITH HAMZA ABOVE
+<a+>                   /xD8/xA7     <U0627> ARABIC LETTER ALEF
+<b+>                   /xD8/xA8     <U0628> ARABIC LETTER BEH
+<tm>                   /xD8/xA9     <U0629> ARABIC LETTER TEH MARBUTA
+<t+>                   /xD8/xAA     <U062A> ARABIC LETTER TEH
+<tk>                   /xD8/xAB     <U062B> ARABIC LETTER THEH
+<g+>                   /xD8/xAC     <U062C> ARABIC LETTER JEEM
+<hk>                   /xD8/xAD     <U062D> ARABIC LETTER HAH
+<x+>                   /xD8/xAE     <U062E> ARABIC LETTER KHAH
+<d+>                   /xD8/xAF     <U062F> ARABIC LETTER DAL
+<dk>                   /xD8/xB0     <U0630> ARABIC LETTER THAL
+<r+>                   /xD8/xB1     <U0631> ARABIC LETTER REH
+<z+>                   /xD8/xB2     <U0632> ARABIC LETTER ZAIN
+<s+>                   /xD8/xB3     <U0633> ARABIC LETTER SEEN
+<sn>                   /xD8/xB4     <U0634> ARABIC LETTER SHEEN
+<c+>                   /xD8/xB5     <U0635> ARABIC LETTER SAD
+<dd>                   /xD8/xB6     <U0636> ARABIC LETTER DAD
+<tj>                   /xD8/xB7     <U0637> ARABIC LETTER TAH
+<zH>                   /xD8/xB8     <U0638> ARABIC LETTER ZAH
+<e+>                   /xD8/xB9     <U0639> ARABIC LETTER AIN
+<i+>                   /xD8/xBA     <U063A> ARABIC LETTER GHAIN
+<++>                   /xD9/x80     <U0640> ARABIC TATWEEL
+<f+>                   /xD9/x81     <U0641> ARABIC LETTER FEH
+<q+>                   /xD9/x82     <U0642> ARABIC LETTER QAF
+<k+>                   /xD9/x83     <U0643> ARABIC LETTER KAF
+<l+>                   /xD9/x84     <U0644> ARABIC LETTER LAM
+<m+>                   /xD9/x85     <U0645> ARABIC LETTER MEEM
+<n+>                   /xD9/x86     <U0646> ARABIC LETTER NOON
+<h+>                   /xD9/x87     <U0647> ARABIC LETTER HEH
+<w+>                   /xD9/x88     <U0648> ARABIC LETTER WAW
+<j+>                   /xD9/x89     <U0649> ARABIC LETTER ALEF MAKSURA
+<y+>                   /xD9/x8A     <U064A> ARABIC LETTER YEH
+<:+>                   /xD9/x8B     <U064B> ARABIC FATHATAN
+<"+>                   /xD9/x8C     <U064C> ARABIC DAMMATAN
+<=+>                   /xD9/x8D     <U064D> ARABIC KASRATAN
+<//+>                  /xD9/x8E     <U064E> ARABIC FATHA
+<'+>                   /xD9/x8F     <U064F> ARABIC DAMMA
+<1+>                   /xD9/x90     <U0650> ARABIC KASRA
+<3+>                   /xD9/x91     <U0651> ARABIC SHADDA
+<0+>                   /xD9/x92     <U0652> ARABIC SUKUN
+<0a>                   /xD9/xA0     <U0660> ARABIC-INDIC DIGIT ZERO
+<1a>                   /xD9/xA1     <U0661> ARABIC-INDIC DIGIT ONE
+<2a>                   /xD9/xA2     <U0662> ARABIC-INDIC DIGIT TWO
+<3a>                   /xD9/xA3     <U0663> ARABIC-INDIC DIGIT THREE
+<4a>                   /xD9/xA4     <U0664> ARABIC-INDIC DIGIT FOUR
+<5a>                   /xD9/xA5     <U0665> ARABIC-INDIC DIGIT FIVE
+<6a>                   /xD9/xA6     <U0666> ARABIC-INDIC DIGIT SIX
+<7a>                   /xD9/xA7     <U0667> ARABIC-INDIC DIGIT SEVEN
+<8a>                   /xD9/xA8     <U0668> ARABIC-INDIC DIGIT EIGHT
+<9a>                   /xD9/xA9     <U0669> ARABIC-INDIC DIGIT NINE
+<aS>                   /xD9/xB0     <U0670> ARABIC LETTER SUPERSCRIPT ALEF
+<p+>                   /xD9/xBE     <U067E> ARABIC LETTER PEH
+<hH>                   /xDA/x81     <U0681> ARABIC LETTER HAH WITH HAMZA ABOVE
+<tc>                   /xDA/x86     <U0686> ARABIC LETTER TCHEH
+<zj>                   /xDA/x98     <U0698> ARABIC LETTER JEH
+<v+>                   /xDA/xA4     <U06A4> ARABIC LETTER VEH
+<gf>                   /xDA/xAF     <U06AF> ARABIC LETTER GAF
+<th161>                /xE0/xB8/x81 <U0E01> THAI CHARACTER KO KAI
+<th162>                /xE0/xB8/x82 <U0E02> THAI CHARACTER KHO KHAI
+<th163>                /xE0/xB8/x83 <U0E03> THAI CHARACTER KHO KHUAT
+<th164>                /xE0/xB8/x84 <U0E04> THAI CHARACTER KHO KHWAI
+<th165>                /xE0/xB8/x85 <U0E05> THAI CHARACTER KHO KHON
+<th166>                /xE0/xB8/x86 <U0E06> THAI CHARACTER KHO RAKHANG
+<th167>                /xE0/xB8/x87 <U0E07> THAI CHARACTER NGO NGU
+<th168>                /xE0/xB8/x88 <U0E08> THAI CHARACTER CHO CHAN
+<th169>                /xE0/xB8/x89 <U0E09> THAI CHARACTER CHO CHING
+<th170>                /xE0/xB8/x8A <U0E0A> THAI CHARACTER CHO CHANG
+<th171>                /xE0/xB8/x8B <U0E0B> THAI CHARACTER SO SO
+<th172>                /xE0/xB8/x8C <U0E0C> THAI CHARACTER CHO CHOE
+<th173>                /xE0/xB8/x8D <U0E0D> THAI CHARACTER YO YING
+<th174>                /xE0/xB8/x8E <U0E0E> THAI CHARACTER DO CHADA
+<th175>                /xE0/xB8/x8F <U0E0F> THAI CHARACTER TO PATAK
+<th176>                /xE0/xB8/x90 <U0E10> THAI CHARACTER THO THAN
+<th177>                /xE0/xB8/x91 <U0E11> THAI CHARACTER THO NANGMONTHO
+<th178>                /xE0/xB8/x92 <U0E12> THAI CHARACTER THO PHUTHAO
+<th179>                /xE0/xB8/x93 <U0E13> THAI CHARACTER NO NEN
+<th180>                /xE0/xB8/x94 <U0E14> THAI CHARACTER DO DEK
+<th181>                /xE0/xB8/x95 <U0E15> THAI CHARACTER TO TAO
+<th182>                /xE0/xB8/x96 <U0E16> THAI CHARACTER THO THUNG
+<th183>                /xE0/xB8/x97 <U0E17> THAI CHARACTER THO THAHAN
+<th184>                /xE0/xB8/x98 <U0E18> THAI CHARACTER THO THONG
+<th185>                /xE0/xB8/x99 <U0E19> THAI CHARACTER NO NU
+<th186>                /xE0/xB8/x9A <U0E1A> THAI CHARACTER BO BAIMAI
+<th187>                /xE0/xB8/x9B <U0E1B> THAI CHARACTER PO PLA
+<th188>                /xE0/xB8/x9C <U0E1C> THAI CHARACTER PHO PHUNG
+<th189>                /xE0/xB8/x9D <U0E1D> THAI CHARACTER FO FA
+<th190>                /xE0/xB8/x9E <U0E1E> THAI CHARACTER PHO PHAN
+<th191>                /xE0/xB8/x9F <U0E1F> THAI CHARACTER FO FAN
+<th192>                /xE0/xB8/xA0 <U0E20> THAI CHARACTER PHO SAMPHAO
+<th193>                /xE0/xB8/xA1 <U0E21> THAI CHARACTER MO MA
+<th194>                /xE0/xB8/xA2 <U0E22> THAI CHARACTER YO YAK
+<th195>                /xE0/xB8/xA3 <U0E23> THAI CHARACTER RO RUA
+<th196>                /xE0/xB8/xA4 <U0E24> THAI CHARACTER RU
+<th197>                /xE0/xB8/xA5 <U0E25> THAI CHARACTER LO LING
+<th198>                /xE0/xB8/xA6 <U0E26> THAI CHARACTER LU
+<th199>                /xE0/xB8/xA7 <U0E27> THAI CHARACTER WO WAEN
+<th200>                /xE0/xB8/xA8 <U0E28> THAI CHARACTER SO SALA
+<th201>                /xE0/xB8/xA9 <U0E29> THAI CHARACTER SO RUSI
+<th202>                /xE0/xB8/xAA <U0E2A> THAI CHARACTER SO SUA
+<th203>                /xE0/xB8/xAB <U0E2B> THAI CHARACTER HO HIP
+<th204>                /xE0/xB8/xAC <U0E2C> THAI CHARACTER LO CHULA
+<th205>                /xE0/xB8/xAD <U0E2D> THAI CHARACTER O ANG
+<th206>                /xE0/xB8/xAE <U0E2E> THAI CHARACTER HO NOKHUK
+<th207>                /xE0/xB8/xAF <U0E2F> THAI CHARACTER PAIYANNOI
+<th208>                /xE0/xB8/xB0 <U0E30> THAI CHARACTER SARA A
+<th209>                /xE0/xB8/xB1 <U0E31> THAI CHARACTER MAI HAN-AKAT
+<th210>                /xE0/xB8/xB2 <U0E32> THAI CHARACTER SARA AA
+<th211>                /xE0/xB8/xB3 <U0E33> THAI CHARACTER SARA AM
+<th212>                /xE0/xB8/xB4 <U0E34> THAI CHARACTER SARA I
+<th213>                /xE0/xB8/xB5 <U0E35> THAI CHARACTER SARA II
+<th214>                /xE0/xB8/xB6 <U0E36> THAI CHARACTER SARA UE
+<th215>                /xE0/xB8/xB7 <U0E37> THAI CHARACTER SARA UEE
+<th216>                /xE0/xB8/xB8 <U0E38> THAI CHARACTER SARA U
+<th217>                /xE0/xB8/xB9 <U0E39> THAI CHARACTER SARA UU
+<th218>                /xE0/xB8/xBA <U0E3A> THAI CHARACTER PHINTHU
+<th223>                /xE0/xB8/xBF <U0E3F> THAI CURRENCY SYMBOL BAHT
+<th224>                /xE0/xB9/x80 <U0E40> THAI CHARACTER SARA E
+<th225>                /xE0/xB9/x81 <U0E41> THAI CHARACTER SARA AE
+<th226>                /xE0/xB9/x82 <U0E42> THAI CHARACTER SARA O
+<th227>                /xE0/xB9/x83 <U0E43> THAI CHARACTER SARA AI MAIMUAN
+<th228>                /xE0/xB9/x84 <U0E44> THAI CHARACTER SARA AI MAIMALAI
+<th229>                /xE0/xB9/x85 <U0E45> THAI CHARACTER LAKKHANGYAO
+<th230>                /xE0/xB9/x86 <U0E46> THAI CHARACTER MAIYAMOK
+<th231>                /xE0/xB9/x87 <U0E47> THAI CHARACTER MAITAIKHU
+<th232>                /xE0/xB9/x88 <U0E48> THAI CHARACTER MAI EK
+<th233>                /xE0/xB9/x89 <U0E49> THAI CHARACTER MAI THO
+<th234>                /xE0/xB9/x8A <U0E4A> THAI CHARACTER MAI TRI
+<th235>                /xE0/xB9/x8B <U0E4B> THAI CHARACTER MAI CHATTAWA
+<th236>                /xE0/xB9/x8C <U0E4C> THAI CHARACTER THANTHAKHAT
+<th237>                /xE0/xB9/x8D <U0E4D> THAI CHARACTER NIKHAHIT
+<th238>                /xE0/xB9/x8E <U0E4E> THAI CHARACTER YAMAKKAN
+<th239>                /xE0/xB9/x8F <U0E4F> THAI CHARACTER FONGMAN
+<th240>                /xE0/xB9/x90 <U0E50> THAI DIGIT ZERO
+<th241>                /xE0/xB9/x91 <U0E51> THAI DIGIT ONE
+<th242>                /xE0/xB9/x92 <U0E52> THAI DIGIT TWO
+<th243>                /xE0/xB9/x93 <U0E53> THAI DIGIT THREE
+<th244>                /xE0/xB9/x94 <U0E54> THAI DIGIT FOUR
+<th245>                /xE0/xB9/x95 <U0E55> THAI DIGIT FIVE
+<th246>                /xE0/xB9/x96 <U0E56> THAI DIGIT SIX
+<th247>                /xE0/xB9/x97 <U0E57> THAI DIGIT SEVEN
+<th248>                /xE0/xB9/x98 <U0E58> THAI DIGIT EIGHT
+<th249>                /xE0/xB9/x99 <U0E59> THAI DIGIT NINE
+<th250>                /xE0/xB9/x9A <U0E5A> THAI CHARACTER ANGKHANKHU
+<th251>                /xE0/xB9/x9B <U0E5B> THAI CHARACTER KHOMUT
+<A-0>                  /xE1/xB8/x80 <U1E00> LATIN CAPITAL LETTER A WITH RING BELOW
+<a-0>                  /xE1/xB8/x81 <U1E01> LATIN SMALL LETTER A WITH RING BELOW
+<B.>                   /xE1/xB8/x82 <U1E02> LATIN CAPITAL LETTER B WITH DOT ABOVE
+<b.>                   /xE1/xB8/x83 <U1E03> LATIN SMALL LETTER B WITH DOT ABOVE
+<B-.>                  /xE1/xB8/x84 <U1E04> LATIN CAPITAL LETTER B WITH DOT BELOW
+<b-.>                  /xE1/xB8/x85 <U1E05> LATIN SMALL LETTER B WITH DOT BELOW
+<B_>                   /xE1/xB8/x86 <U1E06> LATIN CAPITAL LETTER B WITH LINE BELOW
+<b_>                   /xE1/xB8/x87 <U1E07> LATIN SMALL LETTER B WITH LINE BELOW
+<C,'>                  /xE1/xB8/x88 <U1E08> LATIN CAPITAL LETTER C WITH CEDILLA AND ACUTE
+<c,'>                  /xE1/xB8/x89 <U1E09> LATIN SMALL LETTER C WITH CEDILLA AND ACUTE
+<D.>                   /xE1/xB8/x8A <U1E0A> LATIN CAPITAL LETTER D WITH DOT ABOVE
+<d.>                   /xE1/xB8/x8B <U1E0B> LATIN SMALL LETTER D WITH DOT ABOVE
+<D-.>                  /xE1/xB8/x8C <U1E0C> LATIN CAPITAL LETTER D WITH DOT BELOW
+<d-.>                  /xE1/xB8/x8D <U1E0D> LATIN SMALL LETTER D WITH DOT BELOW
+<D_>                   /xE1/xB8/x8E <U1E0E> LATIN CAPITAL LETTER D WITH LINE BELOW
+<d_>                   /xE1/xB8/x8F <U1E0F> LATIN SMALL LETTER D WITH LINE BELOW
+<D,>                   /xE1/xB8/x90 <U1E10> LATIN CAPITAL LETTER D WITH CEDILLA
+<d,>                   /xE1/xB8/x91 <U1E11> LATIN SMALL LETTER D WITH CEDILLA
+<D-/>>                 /xE1/xB8/x92 <U1E12> LATIN CAPITAL LETTER D WITH CIRCUMFLEX BELOW
+<d-/>>                 /xE1/xB8/x93 <U1E13> LATIN SMALL LETTER D WITH CIRCUMFLEX BELOW
+<E-!>                  /xE1/xB8/x94 <U1E14> LATIN CAPITAL LETTER E WITH MACRON AND GRAVE
+<e-!>                  /xE1/xB8/x95 <U1E15> LATIN SMALL LETTER E WITH MACRON AND GRAVE
+<E-'>                  /xE1/xB8/x96 <U1E16> LATIN CAPITAL LETTER E WITH MACRON AND ACUTE
+<e-'>                  /xE1/xB8/x97 <U1E17> LATIN SMALL LETTER E WITH MACRON AND ACUTE
+<E-/>>                 /xE1/xB8/x98 <U1E18> LATIN CAPITAL LETTER E WITH CIRCUMFLEX BELOW
+<e-/>>                 /xE1/xB8/x99 <U1E19> LATIN SMALL LETTER E WITH CIRCUMFLEX BELOW
+<E-?>                  /xE1/xB8/x9A <U1E1A> LATIN CAPITAL LETTER E WITH TILDE BELOW
+<e-?>                  /xE1/xB8/x9B <U1E1B> LATIN SMALL LETTER E WITH TILDE BELOW
+<E,(>                  /xE1/xB8/x9C <U1E1C> LATIN CAPITAL LETTER E WITH CEDILLA AND BREVE
+<e,(>                  /xE1/xB8/x9D <U1E1D> LATIN SMALL LETTER E WITH CEDILLA AND BREVE
+<F.>                   /xE1/xB8/x9E <U1E1E> LATIN CAPITAL LETTER F WITH DOT ABOVE
+<f.>                   /xE1/xB8/x9F <U1E1F> LATIN SMALL LETTER F WITH DOT ABOVE
+<G->                   /xE1/xB8/xA0 <U1E20> LATIN CAPITAL LETTER G WITH MACRON
+<g->                   /xE1/xB8/xA1 <U1E21> LATIN SMALL LETTER G WITH MACRON
+<H.>                   /xE1/xB8/xA2 <U1E22> LATIN CAPITAL LETTER H WITH DOT ABOVE
+<h.>                   /xE1/xB8/xA3 <U1E23> LATIN SMALL LETTER H WITH DOT ABOVE
+<H-.>                  /xE1/xB8/xA4 <U1E24> LATIN CAPITAL LETTER H WITH DOT BELOW
+<h-.>                  /xE1/xB8/xA5 <U1E25> LATIN SMALL LETTER H WITH DOT BELOW
+<H:>                   /xE1/xB8/xA6 <U1E26> LATIN CAPITAL LETTER H WITH DIAERESIS
+<h:>                   /xE1/xB8/xA7 <U1E27> LATIN SMALL LETTER H WITH DIAERESIS
+<H,>                   /xE1/xB8/xA8 <U1E28> LATIN CAPITAL LETTER H WITH CEDILLA
+<h,>                   /xE1/xB8/xA9 <U1E29> LATIN SMALL LETTER H WITH CEDILLA
+<H-(>                  /xE1/xB8/xAA <U1E2A> LATIN CAPITAL LETTER H WITH BREVE BELOW
+<h-(>                  /xE1/xB8/xAB <U1E2B> LATIN SMALL LETTER H WITH BREVE BELOW
+<I-?>                  /xE1/xB8/xAC <U1E2C> LATIN CAPITAL LETTER I WITH TILDE BELOW
+<i-?>                  /xE1/xB8/xAD <U1E2D> LATIN SMALL LETTER I WITH TILDE BELOW
+<I:'>                  /xE1/xB8/xAE <U1E2E> LATIN CAPITAL LETTER I WITH DIAERESIS AND ACUTE
+<i:'>                  /xE1/xB8/xAF <U1E2F> LATIN SMALL LETTER I WITH DIAERESIS AND ACUTE
+<K'>                   /xE1/xB8/xB0 <U1E30> LATIN CAPITAL LETTER K WITH ACUTE
+<k'>                   /xE1/xB8/xB1 <U1E31> LATIN SMALL LETTER K WITH ACUTE
+<K-.>                  /xE1/xB8/xB2 <U1E32> LATIN CAPITAL LETTER K WITH DOT BELOW
+<k-.>                  /xE1/xB8/xB3 <U1E33> LATIN SMALL LETTER K WITH DOT BELOW
+<K_>                   /xE1/xB8/xB4 <U1E34> LATIN CAPITAL LETTER K WITH LINE BELOW
+<k_>                   /xE1/xB8/xB5 <U1E35> LATIN SMALL LETTER K WITH LINE BELOW
+<L-.>                  /xE1/xB8/xB6 <U1E36> LATIN CAPITAL LETTER L WITH DOT BELOW
+<l-.>                  /xE1/xB8/xB7 <U1E37> LATIN SMALL LETTER L WITH DOT BELOW
+<L--.>                 /xE1/xB8/xB8 <U1E38> LATIN CAPITAL LETTER L WITH DOT BELOW AND MACRON
+<l--.>                 /xE1/xB8/xB9 <U1E39> LATIN SMALL LETTER L WITH DOT BELOW AND MACRON
+<L_>                   /xE1/xB8/xBA <U1E3A> LATIN CAPITAL LETTER L WITH LINE BELOW
+<l_>                   /xE1/xB8/xBB <U1E3B> LATIN SMALL LETTER L WITH LINE BELOW
+<L-/>>                 /xE1/xB8/xBC <U1E3C> LATIN CAPITAL LETTER L WITH CIRCUMFLEX BELOW
+<l-/>>                 /xE1/xB8/xBD <U1E3D> LATIN SMALL LETTER L WITH CIRCUMFLEX BELOW
+<M'>                   /xE1/xB8/xBE <U1E3E> LATIN CAPITAL LETTER M WITH ACUTE
+<m'>                   /xE1/xB8/xBF <U1E3F> LATIN SMALL LETTER M WITH ACUTE
+<M.>                   /xE1/xB9/x80 <U1E40> LATIN CAPITAL LETTER M WITH DOT ABOVE
+<m.>                   /xE1/xB9/x81 <U1E41> LATIN SMALL LETTER M WITH DOT ABOVE
+<M-.>                  /xE1/xB9/x82 <U1E42> LATIN CAPITAL LETTER M WITH DOT BELOW
+<m-.>                  /xE1/xB9/x83 <U1E43> LATIN SMALL LETTER M WITH DOT BELOW
+<N.>                   /xE1/xB9/x84 <U1E44> LATIN CAPITAL LETTER N WITH DOT ABOVE
+<n.>                   /xE1/xB9/x85 <U1E45> LATIN SMALL LETTER N WITH DOT ABOVE
+<N-.>                  /xE1/xB9/x86 <U1E46> LATIN CAPITAL LETTER N WITH DOT BELOW
+<n-.>                  /xE1/xB9/x87 <U1E47> LATIN SMALL LETTER N WITH DOT BELOW
+<N_>                   /xE1/xB9/x88 <U1E48> LATIN CAPITAL LETTER N WITH LINE BELOW
+<n_>                   /xE1/xB9/x89 <U1E49> LATIN SMALL LETTER N WITH LINE BELOW
+<N-/>>                 /xE1/xB9/x8A <U1E4A> LATIN CAPITAL LETTER N WITH CIRCUMFLEX BELOW
+<n-/>>                 /xE1/xB9/x8B <U1E4B> LATIN SMALL LETTER N WITH CIRCUMFLEX BELOW
+<O?'>                  /xE1/xB9/x8C <U1E4C> LATIN CAPITAL LETTER O WITH TILDE AND ACUTE
+<o?'>                  /xE1/xB9/x8D <U1E4D> LATIN SMALL LETTER O WITH TILDE AND ACUTE
+<O?:>                  /xE1/xB9/x8E <U1E4E> LATIN CAPITAL LETTER O WITH TILDE AND DIAERESIS
+<o?:>                  /xE1/xB9/x8F <U1E4F> LATIN SMALL LETTER O WITH TILDE AND DIAERESIS
+<O-!>                  /xE1/xB9/x90 <U1E50> LATIN CAPITAL LETTER O WITH MACRON AND GRAVE
+<o-!>                  /xE1/xB9/x91 <U1E51> LATIN SMALL LETTER O WITH MACRON AND GRAVE
+<O-'>                  /xE1/xB9/x92 <U1E52> LATIN CAPITAL LETTER O WITH MACRON AND ACUTE
+<o-'>                  /xE1/xB9/x93 <U1E53> LATIN SMALL LETTER O WITH MACRON AND ACUTE
+<P'>                   /xE1/xB9/x94 <U1E54> LATIN CAPITAL LETTER P WITH ACUTE
+<p'>                   /xE1/xB9/x95 <U1E55> LATIN SMALL LETTER P WITH ACUTE
+<P.>                   /xE1/xB9/x96 <U1E56> LATIN CAPITAL LETTER P WITH DOT ABOVE
+<p.>                   /xE1/xB9/x97 <U1E57> LATIN SMALL LETTER P WITH DOT ABOVE
+<R.>                   /xE1/xB9/x98 <U1E58> LATIN CAPITAL LETTER R WITH DOT ABOVE
+<r.>                   /xE1/xB9/x99 <U1E59> LATIN SMALL LETTER R WITH DOT ABOVE
+<R-.>                  /xE1/xB9/x9A <U1E5A> LATIN CAPITAL LETTER R WITH DOT BELOW
+<r-.>                  /xE1/xB9/x9B <U1E5B> LATIN SMALL LETTER R WITH DOT BELOW
+<R--.>                 /xE1/xB9/x9C <U1E5C> LATIN CAPITAL LETTER R WITH DOT BELOW AND MACRON
+<r--.>                 /xE1/xB9/x9D <U1E5D> LATIN SMALL LETTER R WITH DOT BELOW AND MACRON
+<R_>                   /xE1/xB9/x9E <U1E5E> LATIN CAPITAL LETTER R WITH LINE BELOW
+<r_>                   /xE1/xB9/x9F <U1E5F> LATIN SMALL LETTER R WITH LINE BELOW
+<S.>                   /xE1/xB9/xA0 <U1E60> LATIN CAPITAL LETTER S WITH DOT ABOVE
+<s.>                   /xE1/xB9/xA1 <U1E61> LATIN SMALL LETTER S WITH DOT ABOVE
+<S-.>                  /xE1/xB9/xA2 <U1E62> LATIN CAPITAL LETTER S WITH DOT BELOW
+<s-.>                  /xE1/xB9/xA3 <U1E63> LATIN SMALL LETTER S WITH DOT BELOW
+<S'.>                  /xE1/xB9/xA4 <U1E64> LATIN CAPITAL LETTER S WITH ACUTE AND DOT ABOVE
+<s'.>                  /xE1/xB9/xA5 <U1E65> LATIN SMALL LETTER S WITH ACUTE AND DOT ABOVE
+<S<.>                  /xE1/xB9/xA6 <U1E66> LATIN CAPITAL LETTER S WITH CARON AND DOT ABOVE
+<s<.>                  /xE1/xB9/xA7 <U1E67> LATIN SMALL LETTER S WITH CARON AND DOT ABOVE
+<S.-.>                 /xE1/xB9/xA8 <U1E68> LATIN CAPITAL LETTER S WITH DOT BELOW AND DOT ABOVE
+<s.-.>                 /xE1/xB9/xA9 <U1E69> LATIN SMALL LETTER S WITH DOT BELOW AND DOT ABOVE
+<T.>                   /xE1/xB9/xAA <U1E6A> LATIN CAPITAL LETTER T WITH DOT ABOVE
+<t.>                   /xE1/xB9/xAB <U1E6B> LATIN SMALL LETTER T WITH DOT ABOVE
+<T-.>                  /xE1/xB9/xAC <U1E6C> LATIN CAPITAL LETTER T WITH DOT BELOW
+<t-.>                  /xE1/xB9/xAD <U1E6D> LATIN SMALL LETTER T WITH DOT BELOW
+<T_>                   /xE1/xB9/xAE <U1E6E> LATIN CAPITAL LETTER T WITH LINE BELOW
+<t_>                   /xE1/xB9/xAF <U1E6F> LATIN SMALL LETTER T WITH LINE BELOW
+<T-/>>                 /xE1/xB9/xB0 <U1E70> LATIN CAPITAL LETTER T WITH CIRCUMFLEX BELOW
+<t-/>>                 /xE1/xB9/xB1 <U1E71> LATIN SMALL LETTER T WITH CIRCUMFLEX BELOW
+<U--:>                 /xE1/xB9/xB2 <U1E72> LATIN CAPITAL LETTER U WITH DIAERESIS BELOW
+<u--:>                 /xE1/xB9/xB3 <U1E73> LATIN SMALL LETTER U WITH DIAERESIS BELOW
+<U-?>                  /xE1/xB9/xB4 <U1E74> LATIN CAPITAL LETTER U WITH TILDE BELOW
+<u-?>                  /xE1/xB9/xB5 <U1E75> LATIN SMALL LETTER U WITH TILDE BELOW
+<U-/>>                 /xE1/xB9/xB6 <U1E76> LATIN CAPITAL LETTER U WITH CIRCUMFLEX BELOW
+<u-/>>                 /xE1/xB9/xB7 <U1E77> LATIN SMALL LETTER U WITH CIRCUMFLEX BELOW
+<U?'>                  /xE1/xB9/xB8 <U1E78> LATIN CAPITAL LETTER U WITH TILDE AND ACUTE
+<u?'>                  /xE1/xB9/xB9 <U1E79> LATIN SMALL LETTER U WITH TILDE AND ACUTE
+<U-:>                  /xE1/xB9/xBA <U1E7A> LATIN CAPITAL LETTER U WITH MACRON AND DIAERESIS
+<u-:>                  /xE1/xB9/xBB <U1E7B> LATIN SMALL LETTER U WITH MACRON AND DIAERESIS
+<V?>                   /xE1/xB9/xBC <U1E7C> LATIN CAPITAL LETTER V WITH TILDE
+<v?>                   /xE1/xB9/xBD <U1E7D> LATIN SMALL LETTER V WITH TILDE
+<V-.>                  /xE1/xB9/xBE <U1E7E> LATIN CAPITAL LETTER V WITH DOT BELOW
+<v-.>                  /xE1/xB9/xBF <U1E7F> LATIN SMALL LETTER V WITH DOT BELOW
+<W!>                   /xE1/xBA/x80 <U1E80> LATIN CAPITAL LETTER W WITH GRAVE
+<w!>                   /xE1/xBA/x81 <U1E81> LATIN SMALL LETTER W WITH GRAVE
+<W'>                   /xE1/xBA/x82 <U1E82> LATIN CAPITAL LETTER W WITH ACUTE
+<w'>                   /xE1/xBA/x83 <U1E83> LATIN SMALL LETTER W WITH ACUTE
+<W:>                   /xE1/xBA/x84 <U1E84> LATIN CAPITAL LETTER W WITH DIAERESIS
+<w:>                   /xE1/xBA/x85 <U1E85> LATIN SMALL LETTER W WITH DIAERESIS
+<W.>                   /xE1/xBA/x86 <U1E86> LATIN CAPITAL LETTER W WITH DOT ABOVE
+<w.>                   /xE1/xBA/x87 <U1E87> LATIN SMALL LETTER W WITH DOT ABOVE
+<W-.>                  /xE1/xBA/x88 <U1E88> LATIN CAPITAL LETTER W WITH DOT BELOW
+<w-.>                  /xE1/xBA/x89 <U1E89> LATIN SMALL LETTER W WITH DOT BELOW
+<X.>                   /xE1/xBA/x8A <U1E8A> LATIN CAPITAL LETTER X WITH DOT ABOVE
+<x.>                   /xE1/xBA/x8B <U1E8B> LATIN SMALL LETTER X WITH DOT ABOVE
+<X:>                   /xE1/xBA/x8C <U1E8C> LATIN CAPITAL LETTER X WITH DIAERESIS
+<x:>                   /xE1/xBA/x8D <U1E8D> LATIN SMALL LETTER X WITH DIAERESIS
+<Y.>                   /xE1/xBA/x8E <U1E8E> LATIN CAPITAL LETTER Y WITH DOT ABOVE
+<y.>                   /xE1/xBA/x8F <U1E8F> LATIN SMALL LETTER Y WITH DOT ABOVE
+<Z/>>                  /xE1/xBA/x90 <U1E90> LATIN CAPITAL LETTER Z WITH CIRCUMFLEX
+<z/>>                  /xE1/xBA/x91 <U1E91> LATIN SMALL LETTER Z WITH CIRCUMFLEX
+<Z-.>                  /xE1/xBA/x92 <U1E92> LATIN CAPITAL LETTER Z WITH DOT BELOW
+<z-.>                  /xE1/xBA/x93 <U1E93> LATIN SMALL LETTER Z WITH DOT BELOW
+<Z_>                   /xE1/xBA/x94 <U1E94> LATIN CAPITAL LETTER Z WITH LINE BELOW
+<z_>                   /xE1/xBA/x95 <U1E95> LATIN SMALL LETTER Z WITH LINE BELOW
+<A-.>                  /xE1/xBA/xA0 <U1EA0> LATIN CAPITAL LETTER A WITH DOT BELOW
+<a-.>                  /xE1/xBA/xA1 <U1EA1> LATIN SMALL LETTER A WITH DOT BELOW
+<A2>                   /xE1/xBA/xA2 <U1EA2> LATIN CAPITAL LETTER A WITH HOOK ABOVE
+<a2>                   /xE1/xBA/xA3 <U1EA3> LATIN SMALL LETTER A WITH HOOK ABOVE
+<A/>'>                 /xE1/xBA/xA4 <U1EA4> LATIN CAPITAL LETTER A WITH CIRCUMFLEX AND ACUTE
+<a/>'>                 /xE1/xBA/xA5 <U1EA5> LATIN SMALL LETTER A WITH CIRCUMFLEX AND ACUTE
+<A/>!>                 /xE1/xBA/xA6 <U1EA6> LATIN CAPITAL LETTER A WITH CIRCUMFLEX AND GRAVE
+<a/>!>                 /xE1/xBA/xA7 <U1EA7> LATIN SMALL LETTER A WITH CIRCUMFLEX AND GRAVE
+<A/>2>                 /xE1/xBA/xA8 <U1EA8> LATIN CAPITAL LETTER A WITH CIRCUMFLEX AND HOOK ABOVE
+<a/>2>                 /xE1/xBA/xA9 <U1EA9> LATIN SMALL LETTER A WITH CIRCUMFLEX AND HOOK ABOVE
+<A/>?>                 /xE1/xBA/xAA <U1EAA> LATIN CAPITAL LETTER A WITH CIRCUMFLEX AND TILDE
+<a/>?>                 /xE1/xBA/xAB <U1EAB> LATIN SMALL LETTER A WITH CIRCUMFLEX AND TILDE
+<A/>-.>                /xE1/xBA/xAC <U1EAC> LATIN CAPITAL LETTER A WITH CIRCUMFLEX AND DOT BELOW
+<a/>-.>                /xE1/xBA/xAD <U1EAD> LATIN SMALL LETTER A WITH CIRCUMFLEX AND DOT BELOW
+<A('>                  /xE1/xBA/xAE <U1EAE> LATIN CAPITAL LETTER A WITH BREVE AND ACUTE
+<a('>                  /xE1/xBA/xAF <U1EAF> LATIN SMALL LETTER A WITH BREVE AND ACUTE
+<A(!>                  /xE1/xBA/xB0 <U1EB0> LATIN CAPITAL LETTER A WITH BREVE AND GRAVE
+<a(!>                  /xE1/xBA/xB1 <U1EB1> LATIN SMALL LETTER A WITH BREVE AND GRAVE
+<A(2>                  /xE1/xBA/xB2 <U1EB2> LATIN CAPITAL LETTER A WITH BREVE AND HOOK ABOVE
+<a(2>                  /xE1/xBA/xB3 <U1EB3> LATIN SMALL LETTER A WITH BREVE AND HOOK ABOVE
+<A(?>                  /xE1/xBA/xB4 <U1EB4> LATIN CAPITAL LETTER A WITH BREVE AND TILDE
+<a(?>                  /xE1/xBA/xB5 <U1EB5> LATIN SMALL LETTER A WITH BREVE AND TILDE
+<A(-.>                 /xE1/xBA/xB6 <U1EB6> LATIN CAPITAL LETTER A WITH BREVE AND DOT BELOW
+<a(-.>                 /xE1/xBA/xB7 <U1EB7> LATIN SMALL LETTER A WITH BREVE AND DOT BELOW
+<E-.>                  /xE1/xBA/xB8 <U1EB8> LATIN CAPITAL LETTER E WITH DOT BELOW
+<e-.>                  /xE1/xBA/xB9 <U1EB9> LATIN SMALL LETTER E WITH DOT BELOW
+<E2>                   /xE1/xBA/xBA <U1EBA> LATIN CAPITAL LETTER E WITH HOOK ABOVE
+<e2>                   /xE1/xBA/xBB <U1EBB> LATIN SMALL LETTER E WITH HOOK ABOVE
+<E?>                   /xE1/xBA/xBC <U1EBC> LATIN CAPITAL LETTER E WITH TILDE
+<e?>                   /xE1/xBA/xBD <U1EBD> LATIN SMALL LETTER E WITH TILDE
+<E/>'>                 /xE1/xBA/xBE <U1EBE> LATIN CAPITAL LETTER E WITH CIRCUMFLEX AND ACUTE
+<e/>'>                 /xE1/xBA/xBF <U1EBF> LATIN SMALL LETTER E WITH CIRCUMFLEX AND ACUTE
+<E/>!>                 /xE1/xBB/x80 <U1EC0> LATIN CAPITAL LETTER E WITH CIRCUMFLEX AND GRAVE
+<e/>!>                 /xE1/xBB/x81 <U1EC1> LATIN SMALL LETTER E WITH CIRCUMFLEX AND GRAVE
+<E/>2>                 /xE1/xBB/x82 <U1EC2> LATIN CAPITAL LETTER E WITH CIRCUMFLEX AND HOOK ABOVE
+<e/>2>                 /xE1/xBB/x83 <U1EC3> LATIN SMALL LETTER E WITH CIRCUMFLEX AND HOOK ABOVE
+<E/>?>                 /xE1/xBB/x84 <U1EC4> LATIN CAPITAL LETTER E WITH CIRCUMFLEX AND TILDE
+<e/>?>                 /xE1/xBB/x85 <U1EC5> LATIN SMALL LETTER E WITH CIRCUMFLEX AND TILDE
+<E/>-.>                /xE1/xBB/x86 <U1EC6> LATIN CAPITAL LETTER E WITH CIRCUMFLEX AND DOT BELOW
+<e/>-.>                /xE1/xBB/x87 <U1EC7> LATIN SMALL LETTER E WITH CIRCUMFLEX AND DOT BELOW
+<I2>                   /xE1/xBB/x88 <U1EC8> LATIN CAPITAL LETTER I WITH HOOK ABOVE
+<i2>                   /xE1/xBB/x89 <U1EC9> LATIN SMALL LETTER I WITH HOOK ABOVE
+<I-.>                  /xE1/xBB/x8A <U1ECA> LATIN CAPITAL LETTER I WITH DOT BELOW
+<i-.>                  /xE1/xBB/x8B <U1ECB> LATIN SMALL LETTER I WITH DOT BELOW
+<O-.>                  /xE1/xBB/x8C <U1ECC> LATIN CAPITAL LETTER O WITH DOT BELOW
+<o-.>                  /xE1/xBB/x8D <U1ECD> LATIN SMALL LETTER O WITH DOT BELOW
+<O2>                   /xE1/xBB/x8E <U1ECE> LATIN CAPITAL LETTER O WITH HOOK ABOVE
+<o2>                   /xE1/xBB/x8F <U1ECF> LATIN SMALL LETTER O WITH HOOK ABOVE
+<O/>'>                 /xE1/xBB/x90 <U1ED0> LATIN CAPITAL LETTER O WITH CIRCUMFLEX AND ACUTE
+<o/>'>                 /xE1/xBB/x91 <U1ED1> LATIN SMALL LETTER O WITH CIRCUMFLEX AND ACUTE
+<O/>!>                 /xE1/xBB/x92 <U1ED2> LATIN CAPITAL LETTER O WITH CIRCUMFLEX AND GRAVE
+<o/>!>                 /xE1/xBB/x93 <U1ED3> LATIN SMALL LETTER O WITH CIRCUMFLEX AND GRAVE
+<O/>2>                 /xE1/xBB/x94 <U1ED4> LATIN CAPITAL LETTER O WITH CIRCUMFLEX AND HOOK ABOVE
+<o/>2>                 /xE1/xBB/x95 <U1ED5> LATIN SMALL LETTER O WITH CIRCUMFLEX AND HOOK ABOVE
+<O/>?>                 /xE1/xBB/x96 <U1ED6> LATIN CAPITAL LETTER O WITH CIRCUMFLEX AND TILDE
+<o/>?>                 /xE1/xBB/x97 <U1ED7> LATIN SMALL LETTER O WITH CIRCUMFLEX AND TILDE
+<O/>-.>                /xE1/xBB/x98 <U1ED8> LATIN CAPITAL LETTER O WITH CIRCUMFLEX AND DOT BELOW
+<o/>-.>                /xE1/xBB/x99 <U1ED9> LATIN SMALL LETTER O WITH CIRCUMFLEX AND DOT BELOW
+<O9'>                  /xE1/xBB/x9A <U1EDA> LATIN CAPITAL LETTER O WITH HORN AND ACUTE
+<o9'>                  /xE1/xBB/x9B <U1EDB> LATIN SMALL LETTER O WITH HORN AND ACUTE
+<O9!>                  /xE1/xBB/x9C <U1EDC> LATIN CAPITAL LETTER O WITH HORN AND GRAVE
+<o9!>                  /xE1/xBB/x9D <U1EDD> LATIN SMALL LETTER O WITH HORN AND GRAVE
+<O92>                  /xE1/xBB/x9E <U1EDE> LATIN CAPITAL LETTER O WITH HORN AND HOOK ABOVE
+<o92>                  /xE1/xBB/x9F <U1EDF> LATIN SMALL LETTER O WITH HORN AND HOOK ABOVE
+<O9?>                  /xE1/xBB/xA0 <U1EE0> LATIN CAPITAL LETTER O WITH HORN AND TILDE
+<o9?>                  /xE1/xBB/xA1 <U1EE1> LATIN SMALL LETTER O WITH HORN AND TILDE
+<O9-.>                 /xE1/xBB/xA2 <U1EE2> LATIN CAPITAL LETTER O WITH HORN AND DOT BELOW
+<o9-.>                 /xE1/xBB/xA3 <U1EE3> LATIN SMALL LETTER O WITH HORN AND DOT BELOW
+<U-.>                  /xE1/xBB/xA4 <U1EE4> LATIN CAPITAL LETTER U WITH DOT BELOW
+<u-.>                  /xE1/xBB/xA5 <U1EE5> LATIN SMALL LETTER U WITH DOT BELOW
+<U2>                   /xE1/xBB/xA6 <U1EE6> LATIN CAPITAL LETTER U WITH HOOK ABOVE
+<u2>                   /xE1/xBB/xA7 <U1EE7> LATIN SMALL LETTER U WITH HOOK ABOVE
+<U9'>                  /xE1/xBB/xA8 <U1EE8> LATIN CAPITAL LETTER U WITH HORN AND ACUTE
+<u9'>                  /xE1/xBB/xA9 <U1EE9> LATIN SMALL LETTER U WITH HORN AND ACUTE
+<U9!>                  /xE1/xBB/xAA <U1EEA> LATIN CAPITAL LETTER U WITH HORN AND GRAVE
+<u9!>                  /xE1/xBB/xAB <U1EEB> LATIN SMALL LETTER U WITH HORN AND GRAVE
+<U92>                  /xE1/xBB/xAC <U1EEC> LATIN CAPITAL LETTER U WITH HORN AND HOOK ABOVE
+<u92>                  /xE1/xBB/xAD <U1EED> LATIN SMALL LETTER U WITH HORN AND HOOK ABOVE
+<U9?>                  /xE1/xBB/xAE <U1EEE> LATIN CAPITAL LETTER U WITH HORN AND TILDE
+<u9?>                  /xE1/xBB/xAF <U1EEF> LATIN SMALL LETTER U WITH HORN AND TILDE
+<U9-.>                 /xE1/xBB/xB0 <U1EF0> LATIN CAPITAL LETTER U WITH HORN AND DOT BELOW
+<u9-.>                 /xE1/xBB/xB1 <U1EF1> LATIN SMALL LETTER U WITH HORN AND DOT BELOW
+<Y!>                   /xE1/xBB/xB2 <U1EF2> LATIN CAPITAL LETTER Y WITH GRAVE
+<y!>                   /xE1/xBB/xB3 <U1EF3> LATIN SMALL LETTER Y WITH GRAVE
+<Y-.>                  /xE1/xBB/xB4 <U1EF4> LATIN CAPITAL LETTER Y WITH DOT BELOW
+<y-.>                  /xE1/xBB/xB5 <U1EF5> LATIN SMALL LETTER Y WITH DOT BELOW
+<Y2>                   /xE1/xBB/xB6 <U1EF6> LATIN CAPITAL LETTER Y WITH HOOK ABOVE
+<y2>                   /xE1/xBB/xB7 <U1EF7> LATIN SMALL LETTER Y WITH HOOK ABOVE
+<Y?>                   /xE1/xBB/xB8 <U1EF8> LATIN CAPITAL LETTER Y WITH TILDE
+<y?>                   /xE1/xBB/xB9 <U1EF9> LATIN SMALL LETTER Y WITH TILDE
+<a*,>                  /xE1/xBC/x80 <U1F00> GREEK SMALL LETTER ALPHA WITH PSILI
+<a*;>                  /xE1/xBC/x81 <U1F01> GREEK SMALL LETTER ALPHA WITH DASIA
+<a*,!>                 /xE1/xBC/x82 <U1F02> GREEK SMALL LETTER ALPHA WITH PSILI AND VARIA
+<a*;!>                 /xE1/xBC/x83 <U1F03> GREEK SMALL LETTER ALPHA WITH DASIA AND VARIA
+<a*,'>                 /xE1/xBC/x84 <U1F04> GREEK SMALL LETTER ALPHA WITH PSILI AND OXIA
+<a*;'>                 /xE1/xBC/x85 <U1F05> GREEK SMALL LETTER ALPHA WITH DASIA AND OXIA
+<a*,?>                 /xE1/xBC/x86 <U1F06> GREEK SMALL LETTER ALPHA WITH PSILI AND PERISPOMENI
+<a*;?>                 /xE1/xBC/x87 <U1F07> GREEK SMALL LETTER ALPHA WITH DASIA AND PERISPOMENI
+<A*,>                  /xE1/xBC/x88 <U1F08> GREEK CAPITAL LETTER ALPHA WITH PSILI
+<A*;>                  /xE1/xBC/x89 <U1F09> GREEK CAPITAL LETTER ALPHA WITH DASIA
+<A*,!>                 /xE1/xBC/x8A <U1F0A> GREEK CAPITAL LETTER ALPHA WITH PSILI AND VARIA
+<A*;!>                 /xE1/xBC/x8B <U1F0B> GREEK CAPITAL LETTER ALPHA WITH DASIA AND VARIA
+<A*,'>                 /xE1/xBC/x8C <U1F0C> GREEK CAPITAL LETTER ALPHA WITH PSILI AND OXIA
+<A*;'>                 /xE1/xBC/x8D <U1F0D> GREEK CAPITAL LETTER ALPHA WITH DASIA AND OXIA
+<A*,?>                 /xE1/xBC/x8E <U1F0E> GREEK CAPITAL LETTER ALPHA WITH PSILI AND PERISPOMENI
+<A*;?>                 /xE1/xBC/x8F <U1F0F> GREEK CAPITAL LETTER ALPHA WITH DASIA AND PERISPOMENI
+<e*,>                  /xE1/xBC/x90 <U1F10> GREEK SMALL LETTER EPSILON WITH PSILI
+<e*;>                  /xE1/xBC/x91 <U1F11> GREEK SMALL LETTER EPSILON WITH DASIA
+<e*,!>                 /xE1/xBC/x92 <U1F12> GREEK SMALL LETTER EPSILON WITH PSILI AND VARIA
+<e*;!>                 /xE1/xBC/x93 <U1F13> GREEK SMALL LETTER EPSILON WITH DASIA AND VARIA
+<e*,'>                 /xE1/xBC/x94 <U1F14> GREEK SMALL LETTER EPSILON WITH PSILI AND OXIA
+<e*;'>                 /xE1/xBC/x95 <U1F15> GREEK SMALL LETTER EPSILON WITH DASIA AND OXIA
+<E*,>                  /xE1/xBC/x98 <U1F18> GREEK CAPITAL LETTER EPSILON WITH PSILI
+<E*;>                  /xE1/xBC/x99 <U1F19> GREEK CAPITAL LETTER EPSILON WITH DASIA
+<E*,!>                 /xE1/xBC/x9A <U1F1A> GREEK CAPITAL LETTER EPSILON WITH PSILI AND VARIA
+<E*;!>                 /xE1/xBC/x9B <U1F1B> GREEK CAPITAL LETTER EPSILON WITH DASIA AND VARIA
+<E*,'>                 /xE1/xBC/x9C <U1F1C> GREEK CAPITAL LETTER EPSILON WITH PSILI AND OXIA
+<E*;'>                 /xE1/xBC/x9D <U1F1D> GREEK CAPITAL LETTER EPSILON WITH DASIA AND OXIA
+<y*,>                  /xE1/xBC/xA0 <U1F20> GREEK SMALL LETTER ETA WITH PSILI
+<y*;>                  /xE1/xBC/xA1 <U1F21> GREEK SMALL LETTER ETA WITH DASIA
+<y*,!>                 /xE1/xBC/xA2 <U1F22> GREEK SMALL LETTER ETA WITH PSILI AND VARIA
+<y*;!>                 /xE1/xBC/xA3 <U1F23> GREEK SMALL LETTER ETA WITH DASIA AND VARIA
+<y*,'>                 /xE1/xBC/xA4 <U1F24> GREEK SMALL LETTER ETA WITH PSILI AND OXIA
+<y*;'>                 /xE1/xBC/xA5 <U1F25> GREEK SMALL LETTER ETA WITH DASIA AND OXIA
+<y*,?>                 /xE1/xBC/xA6 <U1F26> GREEK SMALL LETTER ETA WITH PSILI AND PERISPOMENI
+<y*;?>                 /xE1/xBC/xA7 <U1F27> GREEK SMALL LETTER ETA WITH DASIA AND PERISPOMENI
+<Y*,>                  /xE1/xBC/xA8 <U1F28> GREEK CAPITAL LETTER ETA WITH PSILI
+<Y*;>                  /xE1/xBC/xA9 <U1F29> GREEK CAPITAL LETTER ETA WITH DASIA
+<Y*,!>                 /xE1/xBC/xAA <U1F2A> GREEK CAPITAL LETTER ETA WITH PSILI AND VARIA
+<Y*;!>                 /xE1/xBC/xAB <U1F2B> GREEK CAPITAL LETTER ETA WITH DASIA AND VARIA
+<Y*,'>                 /xE1/xBC/xAC <U1F2C> GREEK CAPITAL LETTER ETA WITH PSILI AND OXIA
+<Y*;'>                 /xE1/xBC/xAD <U1F2D> GREEK CAPITAL LETTER ETA WITH DASIA AND OXIA
+<Y*,?>                 /xE1/xBC/xAE <U1F2E> GREEK CAPITAL LETTER ETA WITH PSILI AND PERISPOMENI
+<Y*;?>                 /xE1/xBC/xAF <U1F2F> GREEK CAPITAL LETTER ETA WITH DASIA AND PERISPOMENI
+<i*,>                  /xE1/xBC/xB0 <U1F30> GREEK SMALL LETTER IOTA WITH PSILI
+<i*;>                  /xE1/xBC/xB1 <U1F31> GREEK SMALL LETTER IOTA WITH DASIA
+<i*,!>                 /xE1/xBC/xB2 <U1F32> GREEK SMALL LETTER IOTA WITH PSILI AND VARIA
+<i*;!>                 /xE1/xBC/xB3 <U1F33> GREEK SMALL LETTER IOTA WITH DASIA AND VARIA
+<i*,'>                 /xE1/xBC/xB4 <U1F34> GREEK SMALL LETTER IOTA WITH PSILI AND OXIA
+<i*;'>                 /xE1/xBC/xB5 <U1F35> GREEK SMALL LETTER IOTA WITH DASIA AND OXIA
+<i*,?>                 /xE1/xBC/xB6 <U1F36> GREEK SMALL LETTER IOTA WITH PSILI AND PERISPOMENI
+<i*;?>                 /xE1/xBC/xB7 <U1F37> GREEK SMALL LETTER IOTA WITH DASIA AND PERISPOMENI
+<I*,>                  /xE1/xBC/xB8 <U1F38> GREEK CAPITAL LETTER IOTA WITH PSILI
+<I*;>                  /xE1/xBC/xB9 <U1F39> GREEK CAPITAL LETTER IOTA WITH DASIA
+<I*,!>                 /xE1/xBC/xBA <U1F3A> GREEK CAPITAL LETTER IOTA WITH PSILI AND VARIA
+<I*;!>                 /xE1/xBC/xBB <U1F3B> GREEK CAPITAL LETTER IOTA WITH DASIA AND VARIA
+<I*,'>                 /xE1/xBC/xBC <U1F3C> GREEK CAPITAL LETTER IOTA WITH PSILI AND OXIA
+<I*;'>                 /xE1/xBC/xBD <U1F3D> GREEK CAPITAL LETTER IOTA WITH DASIA AND OXIA
+<I*,?>                 /xE1/xBC/xBE <U1F3E> GREEK CAPITAL LETTER IOTA WITH PSILI AND PERISPOMENI
+<I*;?>                 /xE1/xBC/xBF <U1F3F> GREEK CAPITAL LETTER IOTA WITH DASIA AND PERISPOMENI
+<o*,>                  /xE1/xBD/x80 <U1F40> GREEK SMALL LETTER OMICRON WITH PSILI
+<o*;>                  /xE1/xBD/x81 <U1F41> GREEK SMALL LETTER OMICRON WITH DASIA
+<o*,!>                 /xE1/xBD/x82 <U1F42> GREEK SMALL LETTER OMICRON WITH PSILI AND VARIA
+<o*;!>                 /xE1/xBD/x83 <U1F43> GREEK SMALL LETTER OMICRON WITH DASIA AND VARIA
+<o*,'>                 /xE1/xBD/x84 <U1F44> GREEK SMALL LETTER OMICRON WITH PSILI AND OXIA
+<o*;'>                 /xE1/xBD/x85 <U1F45> GREEK SMALL LETTER OMICRON WITH DASIA AND OXIA
+<O*,>                  /xE1/xBD/x88 <U1F48> GREEK CAPITAL LETTER OMICRON WITH PSILI
+<O*;>                  /xE1/xBD/x89 <U1F49> GREEK CAPITAL LETTER OMICRON WITH DASIA
+<O*,!>                 /xE1/xBD/x8A <U1F4A> GREEK CAPITAL LETTER OMICRON WITH PSILI AND VARIA
+<O*;!>                 /xE1/xBD/x8B <U1F4B> GREEK CAPITAL LETTER OMICRON WITH DASIA AND VARIA
+<O*,'>                 /xE1/xBD/x8C <U1F4C> GREEK CAPITAL LETTER OMICRON WITH PSILI AND OXIA
+<O*;'>                 /xE1/xBD/x8D <U1F4D> GREEK CAPITAL LETTER OMICRON WITH DASIA AND OXIA
+<u*,>                  /xE1/xBD/x90 <U1F50> GREEK SMALL LETTER UPSILON WITH PSILI
+<u*;>                  /xE1/xBD/x91 <U1F51> GREEK SMALL LETTER UPSILON WITH DASIA
+<u*,!>                 /xE1/xBD/x92 <U1F52> GREEK SMALL LETTER UPSILON WITH PSILI AND VARIA
+<u*;!>                 /xE1/xBD/x93 <U1F53> GREEK SMALL LETTER UPSILON WITH DASIA AND VARIA
+<u*,'>                 /xE1/xBD/x94 <U1F54> GREEK SMALL LETTER UPSILON WITH PSILI AND OXIA
+<u*;'>                 /xE1/xBD/x95 <U1F55> GREEK SMALL LETTER UPSILON WITH DASIA AND OXIA
+<u*,?>                 /xE1/xBD/x96 <U1F56> GREEK SMALL LETTER UPSILON WITH PSILI AND PERISPOMENI
+<u*;?>                 /xE1/xBD/x97 <U1F57> GREEK SMALL LETTER UPSILON WITH DASIA AND PERISPOMENI
+<U*;>                  /xE1/xBD/x99 <U1F59> GREEK CAPITAL LETTER UPSILON WITH DASIA
+<U*;!>                 /xE1/xBD/x9B <U1F5B> GREEK CAPITAL LETTER UPSILON WITH DASIA AND VARIA
+<U*;'>                 /xE1/xBD/x9D <U1F5D> GREEK CAPITAL LETTER UPSILON WITH DASIA AND OXIA
+<U*;?>                 /xE1/xBD/x9F <U1F5F> GREEK CAPITAL LETTER UPSILON WITH DASIA AND PERISPOMENI
+<w*,>                  /xE1/xBD/xA0 <U1F60> GREEK SMALL LETTER OMEGA WITH PSILI
+<w*;>                  /xE1/xBD/xA1 <U1F61> GREEK SMALL LETTER OMEGA WITH DASIA
+<w*,!>                 /xE1/xBD/xA2 <U1F62> GREEK SMALL LETTER OMEGA WITH PSILI AND VARIA
+<w*;!>                 /xE1/xBD/xA3 <U1F63> GREEK SMALL LETTER OMEGA WITH DASIA AND VARIA
+<w*,'>                 /xE1/xBD/xA4 <U1F64> GREEK SMALL LETTER OMEGA WITH PSILI AND OXIA
+<w*;'>                 /xE1/xBD/xA5 <U1F65> GREEK SMALL LETTER OMEGA WITH DASIA AND OXIA
+<w*,?>                 /xE1/xBD/xA6 <U1F66> GREEK SMALL LETTER OMEGA WITH PSILI AND PERISPOMENI
+<w*;?>                 /xE1/xBD/xA7 <U1F67> GREEK SMALL LETTER OMEGA WITH DASIA AND PERISPOMENI
+<W*,>                  /xE1/xBD/xA8 <U1F68> GREEK CAPITAL LETTER OMEGA WITH PSILI
+<W*;>                  /xE1/xBD/xA9 <U1F69> GREEK CAPITAL LETTER OMEGA WITH DASIA
+<W*,!>                 /xE1/xBD/xAA <U1F6A> GREEK CAPITAL LETTER OMEGA WITH PSILI AND VARIA
+<W*;!>                 /xE1/xBD/xAB <U1F6B> GREEK CAPITAL LETTER OMEGA WITH DASIA AND VARIA
+<W*,'>                 /xE1/xBD/xAC <U1F6C> GREEK CAPITAL LETTER OMEGA WITH PSILI AND OXIA
+<W*;'>                 /xE1/xBD/xAD <U1F6D> GREEK CAPITAL LETTER OMEGA WITH DASIA AND OXIA
+<W*,?>                 /xE1/xBD/xAE <U1F6E> GREEK CAPITAL LETTER OMEGA WITH PSILI AND PERISPOMENI
+<W*;?>                 /xE1/xBD/xAF <U1F6F> GREEK CAPITAL LETTER OMEGA WITH DASIA AND PERISPOMENI
+<a*!>                  /xE1/xBD/xB0 <U1F70> GREEK SMALL LETTER ALPHA WITH VARIA
+<a*'>                  /xE1/xBD/xB1 <U1F71> GREEK SMALL LETTER ALPHA WITH OXIA
+<e*!>                  /xE1/xBD/xB2 <U1F72> GREEK SMALL LETTER EPSILON WITH VARIA
+<e*'>                  /xE1/xBD/xB3 <U1F73> GREEK SMALL LETTER EPSILON WITH OXIA
+<y*!>                  /xE1/xBD/xB4 <U1F74> GREEK SMALL LETTER ETA WITH VARIA
+<y*'>                  /xE1/xBD/xB5 <U1F75> GREEK SMALL LETTER ETA WITH OXIA
+<i*!>                  /xE1/xBD/xB6 <U1F76> GREEK SMALL LETTER IOTA WITH VARIA
+<i*'>                  /xE1/xBD/xB7 <U1F77> GREEK SMALL LETTER IOTA WITH OXIA
+<o*!>                  /xE1/xBD/xB8 <U1F78> GREEK SMALL LETTER OMICRON WITH VARIA
+<o*'>                  /xE1/xBD/xB9 <U1F79> GREEK SMALL LETTER OMICRON WITH OXIA
+<u*!>                  /xE1/xBD/xBA <U1F7A> GREEK SMALL LETTER UPSILON WITH VARIA
+<u*'>                  /xE1/xBD/xBB <U1F7B> GREEK SMALL LETTER UPSILON WITH OXIA
+<w*!>                  /xE1/xBD/xBC <U1F7C> GREEK SMALL LETTER OMEGA WITH VARIA
+<w*'>                  /xE1/xBD/xBD <U1F7D> GREEK SMALL LETTER OMEGA WITH OXIA
+<a*,j>                 /xE1/xBE/x80 <U1F80> GREEK SMALL LETTER ALPHA WITH PSILI AND YPOGEGRAMMENI
+<a*;j>                 /xE1/xBE/x81 <U1F81> GREEK SMALL LETTER ALPHA WITH DASIA AND YPOGEGRAMMENI
+<a*,!j>                /xE1/xBE/x82 <U1F82> GREEK SMALL LETTER ALPHA WITH PSILI AND VARIA AND YPOGEGRAMMENI
+<a*;!j>                /xE1/xBE/x83 <U1F83> GREEK SMALL LETTER ALPHA WITH DASIA AND VARIA AND YPOGEGRAMMENI
+<a*,'j>                /xE1/xBE/x84 <U1F84> GREEK SMALL LETTER ALPHA WITH PSILI AND OXIA AND YPOGEGRAMMENI
+<a*;'j>                /xE1/xBE/x85 <U1F85> GREEK SMALL LETTER ALPHA WITH DASIA AND OXIA AND YPOGEGRAMMENI
+<a*,?j>                /xE1/xBE/x86 <U1F86> GREEK SMALL LETTER ALPHA WITH PSILI AND PERISPOMENI AND YPOGEGRAMMENI
+<a*;?j>                /xE1/xBE/x87 <U1F87> GREEK SMALL LETTER ALPHA WITH DASIA AND PERISPOMENI AND YPOGEGRAMMENI
+<A*,J>                 /xE1/xBE/x88 <U1F88> GREEK CAPITAL LETTER ALPHA WITH PSILI AND PROSGEGRAMMENI
+<A*;J>                 /xE1/xBE/x89 <U1F89> GREEK CAPITAL LETTER ALPHA WITH DASIA AND PROSGEGRAMMENI
+<A*,!J>                /xE1/xBE/x8A <U1F8A> GREEK CAPITAL LETTER ALPHA WITH PSILI AND VARIA AND PROSGEGRAMMENI
+<A*;!J>                /xE1/xBE/x8B <U1F8B> GREEK CAPITAL LETTER ALPHA WITH DASIA AND VARIA AND PROSGEGRAMMENI
+<A*,'J>                /xE1/xBE/x8C <U1F8C> GREEK CAPITAL LETTER ALPHA WITH PSILI AND OXIA AND PROSGEGRAMMENI
+<A*;'J>                /xE1/xBE/x8D <U1F8D> GREEK CAPITAL LETTER ALPHA WITH DASIA AND OXIA AND PROSGEGRAMMENI
+<A*,?J>                /xE1/xBE/x8E <U1F8E> GREEK CAPITAL LETTER ALPHA WITH PSILI AND PERISPOMENI AND PROSGEGRAMMENI
+<A*;?J>                /xE1/xBE/x8F <U1F8F> GREEK CAPITAL LETTER ALPHA WITH DASIA AND PERISPOMENI AND PROSGEGRAMMENI
+<y*,j>                 /xE1/xBE/x90 <U1F90> GREEK SMALL LETTER ETA WITH PSILI AND YPOGEGRAMMENI
+<y*;j>                 /xE1/xBE/x91 <U1F91> GREEK SMALL LETTER ETA WITH DASIA AND YPOGEGRAMMENI
+<y*,!j>                /xE1/xBE/x92 <U1F92> GREEK SMALL LETTER ETA WITH PSILI AND VARIA AND YPOGEGRAMMENI
+<y*;!j>                /xE1/xBE/x93 <U1F93> GREEK SMALL LETTER ETA WITH DASIA AND VARIA AND YPOGEGRAMMENI
+<y*,'j>                /xE1/xBE/x94 <U1F94> GREEK SMALL LETTER ETA WITH PSILI AND OXIA AND YPOGEGRAMMENI
+<y*;'j>                /xE1/xBE/x95 <U1F95> GREEK SMALL LETTER ETA WITH DASIA AND OXIA AND YPOGEGRAMMENI
+<y*,?j>                /xE1/xBE/x96 <U1F96> GREEK SMALL LETTER ETA WITH PSILI AND PERISPOMENI AND YPOGEGRAMMENI
+<y*;?j>                /xE1/xBE/x97 <U1F97> GREEK SMALL LETTER ETA WITH DASIA AND PERISPOMENI AND YPOGEGRAMMENI
+<Y*,J>                 /xE1/xBE/x98 <U1F98> GREEK CAPITAL LETTER ETA WITH PSILI AND PROSGEGRAMMENI
+<Y*;J>                 /xE1/xBE/x99 <U1F99> GREEK CAPITAL LETTER ETA WITH DASIA AND PROSGEGRAMMENI
+<Y*,!J>                /xE1/xBE/x9A <U1F9A> GREEK CAPITAL LETTER ETA WITH PSILI AND VARIA AND PROSGEGRAMMENI
+<Y*;!J>                /xE1/xBE/x9B <U1F9B> GREEK CAPITAL LETTER ETA WITH DASIA AND VARIA AND PROSGEGRAMMENI
+<Y*,'J>                /xE1/xBE/x9C <U1F9C> GREEK CAPITAL LETTER ETA WITH PSILI AND OXIA AND PROSGEGRAMMENI
+<Y*;'J>                /xE1/xBE/x9D <U1F9D> GREEK CAPITAL LETTER ETA WITH DASIA AND OXIA AND PROSGEGRAMMENI
+<Y*,?J>                /xE1/xBE/x9E <U1F9E> GREEK CAPITAL LETTER ETA WITH PSILI AND PERISPOMENI AND PROSGEGRAMMENI
+<Y*;?J>                /xE1/xBE/x9F <U1F9F> GREEK CAPITAL LETTER ETA WITH DASIA AND PERISPOMENI AND PROSGEGRAMMENI
+<w*,j>                 /xE1/xBE/xA0 <U1FA0> GREEK SMALL LETTER OMEGA WITH PSILI AND YPOGEGRAMMENI
+<w*;j>                 /xE1/xBE/xA1 <U1FA1> GREEK SMALL LETTER OMEGA WITH DASIA AND YPOGEGRAMMENI
+<w*,!j>                /xE1/xBE/xA2 <U1FA2> GREEK SMALL LETTER OMEGA WITH PSILI AND VARIA AND YPOGEGRAMMENI
+<w*;!j>                /xE1/xBE/xA3 <U1FA3> GREEK SMALL LETTER OMEGA WITH DASIA AND VARIA AND YPOGEGRAMMENI
+<w*,'j>                /xE1/xBE/xA4 <U1FA4> GREEK SMALL LETTER OMEGA WITH PSILI AND OXIA AND YPOGEGRAMMENI
+<w*;'j>                /xE1/xBE/xA5 <U1FA5> GREEK SMALL LETTER OMEGA WITH DASIA AND OXIA AND YPOGEGRAMMENI
+<w*,?j>                /xE1/xBE/xA6 <U1FA6> GREEK SMALL LETTER OMEGA WITH PSILI AND PERISPOMENI AND YPOGEGRAMMENI
+<w*;?j>                /xE1/xBE/xA7 <U1FA7> GREEK SMALL LETTER OMEGA WITH DASIA AND PERISPOMENI AND YPOGEGRAMMENI
+<W*,J>                 /xE1/xBE/xA8 <U1FA8> GREEK CAPITAL LETTER OMEGA WITH PSILI AND PROSGEGRAMMENI
+<W*;J>                 /xE1/xBE/xA9 <U1FA9> GREEK CAPITAL LETTER OMEGA WITH DASIA AND PROSGEGRAMMENI
+<W*,!J>                /xE1/xBE/xAA <U1FAA> GREEK CAPITAL LETTER OMEGA WITH PSILI AND VARIA AND PROSGEGRAMMENI
+<W*;!J>                /xE1/xBE/xAB <U1FAB> GREEK CAPITAL LETTER OMEGA WITH DASIA AND VARIA AND PROSGEGRAMMENI
+<W*,'J>                /xE1/xBE/xAC <U1FAC> GREEK CAPITAL LETTER OMEGA WITH PSILI AND OXIA AND PROSGEGRAMMENI
+<W*;'J>                /xE1/xBE/xAD <U1FAD> GREEK CAPITAL LETTER OMEGA WITH DASIA AND OXIA AND PROSGEGRAMMENI
+<W*,?J>                /xE1/xBE/xAE <U1FAE> GREEK CAPITAL LETTER OMEGA WITH PSILI AND PERISPOMENI AND PROSGEGRAMMENI
+<W*;?J>                /xE1/xBE/xAF <U1FAF> GREEK CAPITAL LETTER OMEGA WITH DASIA AND PERISPOMENI AND PROSGEGRAMMENI
+<a*(>                  /xE1/xBE/xB0 <U1FB0> GREEK SMALL LETTER ALPHA WITH VRACHY
+<a*->                  /xE1/xBE/xB1 <U1FB1> GREEK SMALL LETTER ALPHA WITH MACRON
+<a*!j>                 /xE1/xBE/xB2 <U1FB2> GREEK SMALL LETTER ALPHA WITH VARIA AND YPOGEGRAMMENI
+<a*j>                  /xE1/xBE/xB3 <U1FB3> GREEK SMALL LETTER ALPHA WITH YPOGEGRAMMENI
+<a*'j>                 /xE1/xBE/xB4 <U1FB4> GREEK SMALL LETTER ALPHA WITH OXIA AND YPOGEGRAMMENI
+<a*?>                  /xE1/xBE/xB6 <U1FB6> GREEK SMALL LETTER ALPHA WITH PERISPOMENI
+<a*?j>                 /xE1/xBE/xB7 <U1FB7> GREEK SMALL LETTER ALPHA WITH PERISPOMENI AND YPOGEGRAMMENI
+<A*(>                  /xE1/xBE/xB8 <U1FB8> GREEK CAPITAL LETTER ALPHA WITH VRACHY
+<A*->                  /xE1/xBE/xB9 <U1FB9> GREEK CAPITAL LETTER ALPHA WITH MACRON
+<A*!>                  /xE1/xBE/xBA <U1FBA> GREEK CAPITAL LETTER ALPHA WITH VARIA
+<A*'>                  /xE1/xBE/xBB <U1FBB> GREEK CAPITAL LETTER ALPHA WITH OXIA
+<A*J>                  /xE1/xBE/xBC <U1FBC> GREEK CAPITAL LETTER ALPHA WITH PROSGEGRAMMENI
+<)*>                   /xE1/xBE/xBD <U1FBD> GREEK KORONIS
+<J3>                   /xE1/xBE/xBE <U1FBE> GREEK PROSGEGRAMMENI
+<,,>                   /xE1/xBE/xBF <U1FBF> GREEK PSILI
+<?*>                   /xE1/xBF/x80 <U1FC0> GREEK PERISPOMENI
+<?:>                   /xE1/xBF/x81 <U1FC1> GREEK DIALYTIKA AND PERISPOMENI
+<y*!j>                 /xE1/xBF/x82 <U1FC2> GREEK SMALL LETTER ETA WITH VARIA AND YPOGEGRAMMENI
+<y*j>                  /xE1/xBF/x83 <U1FC3> GREEK SMALL LETTER ETA WITH YPOGEGRAMMENI
+<y*'j>                 /xE1/xBF/x84 <U1FC4> GREEK SMALL LETTER ETA WITH OXIA AND YPOGEGRAMMENI
+<y*?>                  /xE1/xBF/x86 <U1FC6> GREEK SMALL LETTER ETA WITH PERISPOMENI
+<y*?j>                 /xE1/xBF/x87 <U1FC7> GREEK SMALL LETTER ETA WITH PERISPOMENI AND YPOGEGRAMMENI
+<E*!!>                 /xE1/xBF/x88 <U1FC8> GREEK CAPITAL LETTER EPSILON WITH VARIA
+<E*'>                  /xE1/xBF/x89 <U1FC9> GREEK CAPITAL LETTER EPSILON WITH OXIA
+<Y*!>                  /xE1/xBF/x8A <U1FCA> GREEK CAPITAL LETTER ETA WITH VARIA
+<Y*'>                  /xE1/xBF/x8B <U1FCB> GREEK CAPITAL LETTER ETA WITH OXIA
+<Y*J>                  /xE1/xBF/x8C <U1FCC> GREEK CAPITAL LETTER ETA WITH PROSGEGRAMMENI
+<,!>                   /xE1/xBF/x8D <U1FCD> GREEK PSILI AND VARIA
+<,'>                   /xE1/xBF/x8E <U1FCE> GREEK PSILI AND OXIA
+<?,>                   /xE1/xBF/x8F <U1FCF> GREEK PSILI AND PERISPOMENI
+<i*(>                  /xE1/xBF/x90 <U1FD0> GREEK SMALL LETTER IOTA WITH VRACHY
+<i*->                  /xE1/xBF/x91 <U1FD1> GREEK SMALL LETTER IOTA WITH MACRON
+<i*:!>                 /xE1/xBF/x92 <U1FD2> GREEK SMALL LETTER IOTA WITH DIALYTIKA AND VARIA
+<i*:'>                 /xE1/xBF/x93 <U1FD3> GREEK SMALL LETTER IOTA WITH DIALYTIKA AND OXIA
+<i*?>                  /xE1/xBF/x96 <U1FD6> GREEK SMALL LETTER IOTA WITH PERISPOMENI
+<i*:?>                 /xE1/xBF/x97 <U1FD7> GREEK SMALL LETTER IOTA WITH DIALYTIKA AND PERISPOMENI
+<I*(>                  /xE1/xBF/x98 <U1FD8> GREEK CAPITAL LETTER IOTA WITH VRACHY
+<I*->                  /xE1/xBF/x99 <U1FD9> GREEK CAPITAL LETTER IOTA WITH MACRON
+<I*!>                  /xE1/xBF/x9A <U1FDA> GREEK CAPITAL LETTER IOTA WITH VARIA
+<I*'>                  /xE1/xBF/x9B <U1FDB> GREEK CAPITAL LETTER IOTA WITH OXIA
+<;!>                   /xE1/xBF/x9D <U1FDD> GREEK DASIA AND VARIA
+<;'>                   /xE1/xBF/x9E <U1FDE> GREEK DASIA AND OXIA
+<?;>                   /xE1/xBF/x9F <U1FDF> GREEK DASIA AND PERISPOMENI
+<u*(>                  /xE1/xBF/xA0 <U1FE0> GREEK SMALL LETTER UPSILON WITH VRACHY
+<u*->                  /xE1/xBF/xA1 <U1FE1> GREEK SMALL LETTER UPSILON WITH MACRON
+<u*:!>                 /xE1/xBF/xA2 <U1FE2> GREEK SMALL LETTER UPSILON WITH DIALYTIKA AND VARIA
+<u*:'>                 /xE1/xBF/xA3 <U1FE3> GREEK SMALL LETTER UPSILON WITH DIALYTIKA AND OXIA
+<r*,>                  /xE1/xBF/xA4 <U1FE4> GREEK SMALL LETTER RHO WITH PSILI
+<r*;>                  /xE1/xBF/xA5 <U1FE5> GREEK SMALL LETTER RHO WITH DASIA
+<u*?>                  /xE1/xBF/xA6 <U1FE6> GREEK SMALL LETTER UPSILON WITH PERISPOMENI
+<u*:?>                 /xE1/xBF/xA7 <U1FE7> GREEK SMALL LETTER UPSILON WITH DIALYTIKA AND PERISPOMENI
+<U*(>                  /xE1/xBF/xA8 <U1FE8> GREEK CAPITAL LETTER UPSILON WITH VRACHY
+<U*->                  /xE1/xBF/xA9 <U1FE9> GREEK CAPITAL LETTER UPSILON WITH MACRON
+<U*!>                  /xE1/xBF/xAA <U1FEA> GREEK CAPITAL LETTER UPSILON WITH VARIA
+<U*'>                  /xE1/xBF/xAB <U1FEB> GREEK CAPITAL LETTER UPSILON WITH OXIA
+<R*;>                  /xE1/xBF/xAC <U1FEC> GREEK CAPITAL LETTER RHO WITH DASIA
+<!:>                   /xE1/xBF/xAD <U1FED> GREEK DIALYTIKA AND VARIA
+<:'>                   /xE1/xBF/xAE <U1FEE> GREEK DIALYTIKA AND OXIA
+<!*>                   /xE1/xBF/xAF <U1FEF> GREEK VARIA
+<w*!j>                 /xE1/xBF/xB2 <U1FF2> GREEK SMALL LETTER OMEGA WITH VARIA AND YPOGEGRAMMENI
+<w*j>                  /xE1/xBF/xB3 <U1FF3> GREEK SMALL LETTER OMEGA WITH YPOGEGRAMMENI
+<w*'j>                 /xE1/xBF/xB4 <U1FF4> GREEK SMALL LETTER OMEGA WITH OXIA AND YPOGEGRAMMENI
+<w*?>                  /xE1/xBF/xB6 <U1FF6> GREEK SMALL LETTER OMEGA WITH PERISPOMENI
+<w*?j>                 /xE1/xBF/xB7 <U1FF7> GREEK SMALL LETTER OMEGA WITH PERISPOMENI AND YPOGEGRAMMENI
+<O*!>                  /xE1/xBF/xB8 <U1FF8> GREEK CAPITAL LETTER OMICRON WITH VARIA
+<O*'>                  /xE1/xBF/xB9 <U1FF9> GREEK CAPITAL LETTER OMICRON WITH OXIA
+<W*!>                  /xE1/xBF/xBA <U1FFA> GREEK CAPITAL LETTER OMEGA WITH VARIA
+<W*'>                  /xE1/xBF/xBB <U1FFB> GREEK CAPITAL LETTER OMEGA WITH OXIA
+<W*J>                  /xE1/xBF/xBC <U1FFC> GREEK CAPITAL LETTER OMEGA WITH PROSGEGRAMMENI
+<//*>                  /xE1/xBF/xBD <U1FFD> GREEK OXIA
+<;;>                   /xE1/xBF/xBE <U1FFE> GREEK DASIA
+<1N>                   /xE2/x80/x82 <U2002> EN SPACE
+<1M>                   /xE2/x80/x83 <U2003> EM SPACE
+<3M>                   /xE2/x80/x84 <U2004> THREE-PER-EM SPACE
+<4M>                   /xE2/x80/x85 <U2005> FOUR-PER-EM SPACE
+<6M>                   /xE2/x80/x86 <U2006> SIX-PER-EM SPACE
+<1T>                   /xE2/x80/x89 <U2009> THIN SPACE
+<1H>                   /xE2/x80/x8A <U200A> HAIR SPACE
+<LR>                   /xE2/x80/x8E <U200E> LEFT-TO-RIGHT MARK
+<RL>                   /xE2/x80/x8F <U200F> RIGHT-TO-LEFT MARK
+<-1>                   /xE2/x80/x90 <U2010> HYPHEN
+<-N>                   /xE2/x80/x93 <U2013> EN DASH
+<-M>                   /xE2/x80/x94 <U2014> EM DASH
+<-3>                   /xE2/x80/x95 <U2015> HORIZONTAL BAR
+<!2>                   /xE2/x80/x96 <U2016> DOUBLE VERTICAL LINE
+<=2>                   /xE2/x80/x97 <U2017> DOUBLE LOW LINE
+<'6>                   /xE2/x80/x98 <U2018> LEFT SINGLE QUOTATION MARK
+<'9>                   /xE2/x80/x99 <U2019> RIGHT SINGLE QUOTATION MARK
+<.9>                   /xE2/x80/x9A <U201A> SINGLE LOW-9 QUOTATION MARK
+<9'>                   /xE2/x80/x9B <U201B> SINGLE HIGH-REVERSED-9 QUOTATION MARK
+<"6>                   /xE2/x80/x9C <U201C> LEFT DOUBLE QUOTATION MARK
+<"9>                   /xE2/x80/x9D <U201D> RIGHT DOUBLE QUOTATION MARK
+<:9>                   /xE2/x80/x9E <U201E> DOUBLE LOW-9 QUOTATION MARK
+<9">                   /xE2/x80/x9F <U201F> DOUBLE HIGH-REVERSED-9 QUOTATION MARK
+<//->                  /xE2/x80/xA0 <U2020> DAGGER
+<//=>                  /xE2/x80/xA1 <U2021> DOUBLE DAGGER
+<sb>                   /xE2/x80/xA2 <U2022> BULLET
+<3b>                   /xE2/x80/xA3 <U2023> TRIANGULAR BULLET
+<..>                   /xE2/x80/xA5 <U2025> TWO DOT LEADER
+<.3>                   /xE2/x80/xA6 <U2026> HORIZONTAL ELLIPSIS
+<.->                   /xE2/x80/xA7 <U2027> HYPHENATION POINT
+<linesep>              /xE2/x80/xA8 <U2028> LINE SEPARATOR
+<parsep>               /xE2/x80/xA9 <U2029> PARAGRAPH SEPARATOR
+<%0>                   /xE2/x80/xB0 <U2030> PER MILLE SIGN
+<1'>                   /xE2/x80/xB2 <U2032> PRIME
+<2'>                   /xE2/x80/xB3 <U2033> DOUBLE PRIME
+<3'>                   /xE2/x80/xB4 <U2034> TRIPLE PRIME
+<1">                   /xE2/x80/xB5 <U2035> REVERSED PRIME
+<2">                   /xE2/x80/xB6 <U2036> REVERSED DOUBLE PRIME
+<3">                   /xE2/x80/xB7 <U2037> REVERSED TRIPLE PRIME
+<Ca>                   /xE2/x80/xB8 <U2038> CARET
+<<1>                   /xE2/x80/xB9 <U2039> SINGLE LEFT-POINTING ANGLE QUOTATION MARK
+</>1>                  /xE2/x80/xBA <U203A> SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
+<:X>                   /xE2/x80/xBB <U203B> REFERENCE MARK
+<!*2>                  /xE2/x80/xBC <U203C> DOUBLE EXCLAMATION MARK
+<'->                   /xE2/x80/xBE <U203E> OVERLINE
+<-b>                   /xE2/x81/x83 <U2043> HYPHEN BULLET
+<//f>                  /xE2/x81/x84 <U2044> FRACTION SLASH
+<0S>                   /xE2/x81/xB0 <U2070> SUPERSCRIPT ZERO
+<4S>                   /xE2/x81/xB4 <U2074> SUPERSCRIPT FOUR
+<5S>                   /xE2/x81/xB5 <U2075> SUPERSCRIPT FIVE
+<6S>                   /xE2/x81/xB6 <U2076> SUPERSCRIPT SIX
+<7S>                   /xE2/x81/xB7 <U2077> SUPERSCRIPT SEVEN
+<8S>                   /xE2/x81/xB8 <U2078> SUPERSCRIPT EIGHT
+<9S>                   /xE2/x81/xB9 <U2079> SUPERSCRIPT NINE
+<+S>                   /xE2/x81/xBA <U207A> SUPERSCRIPT PLUS SIGN
+<-S>                   /xE2/x81/xBB <U207B> SUPERSCRIPT MINUS
+<=S>                   /xE2/x81/xBC <U207C> SUPERSCRIPT EQUALS SIGN
+<(S>                   /xE2/x81/xBD <U207D> SUPERSCRIPT LEFT PARENTHESIS
+<)S>                   /xE2/x81/xBE <U207E> SUPERSCRIPT RIGHT PARENTHESIS
+<nS>                   /xE2/x81/xBF <U207F> SUPERSCRIPT LATIN SMALL LETTER N
+<0s>                   /xE2/x82/x80 <U2080> SUBSCRIPT ZERO
+<1s>                   /xE2/x82/x81 <U2081> SUBSCRIPT ONE
+<2s>                   /xE2/x82/x82 <U2082> SUBSCRIPT TWO
+<3s>                   /xE2/x82/x83 <U2083> SUBSCRIPT THREE
+<4s>                   /xE2/x82/x84 <U2084> SUBSCRIPT FOUR
+<5s>                   /xE2/x82/x85 <U2085> SUBSCRIPT FIVE
+<6s>                   /xE2/x82/x86 <U2086> SUBSCRIPT SIX
+<7s>                   /xE2/x82/x87 <U2087> SUBSCRIPT SEVEN
+<8s>                   /xE2/x82/x88 <U2088> SUBSCRIPT EIGHT
+<9s>                   /xE2/x82/x89 <U2089> SUBSCRIPT NINE
+<+s>                   /xE2/x82/x8A <U208A> SUBSCRIPT PLUS SIGN
+<-s>                   /xE2/x82/x8B <U208B> SUBSCRIPT MINUS
+<=s>                   /xE2/x82/x8C <U208C> SUBSCRIPT EQUALS SIGN
+<(s>                   /xE2/x82/x8D <U208D> SUBSCRIPT LEFT PARENTHESIS
+<)s>                   /xE2/x82/x8E <U208E> SUBSCRIPT RIGHT PARENTHESIS
+<Ff>                   /xE2/x82/xA3 <U20A3> FRENCH FRANC SIGN
+<Li>                   /xE2/x82/xA4 <U20A4> LIRA SIGN
+<Pt>                   /xE2/x82/xA7 <U20A7> PESETA SIGN
+<W=>                   /xE2/x82/xA9 <U20A9> WON SIGN
+<DNG>                  /xE2/x82/xAB <U20AB> DONG SIGN
+<Eu>                   /xE2/x82/xAC <U20AC> EURO SIGN
+<"7>                   /xE2/x83/x91 <U20D1> COMBINING RIGHT HARPOON ABOVE
+<oC>                   /xE2/x84/x83 <U2103> DEGREE CELSIUS
+<co>                   /xE2/x84/x85 <U2105> CARE OF
+<oF>                   /xE2/x84/x89 <U2109> DEGREE FAHRENHEIT
+<N0>                   /xE2/x84/x96 <U2116> NUMERO SIGN
+<PO>                   /xE2/x84/x97 <U2117> SOUND RECORDING COPYRIGHT
+<Rx>                   /xE2/x84/x9E <U211E> PRESCRIPTION TAKE
+<SM>                   /xE2/x84/xA0 <U2120> SERVICE MARK
+<TM>                   /xE2/x84/xA2 <U2122> TRADE MARK SIGN
+<Om>                   /xE2/x84/xA6 <U2126> OHM SIGN
+<AO>                   /xE2/x84/xAB <U212B> ANGSTROM SIGN
+<Est>                  /xE2/x84/xAE <U212E> ESTIMATED SYMBOL
+<13>                   /xE2/x85/x93 <U2153> VULGAR FRACTION ONE THIRD
+<23>                   /xE2/x85/x94 <U2154> VULGAR FRACTION TWO THIRDS
+<15>                   /xE2/x85/x95 <U2155> VULGAR FRACTION ONE FIFTH
+<25>                   /xE2/x85/x96 <U2156> VULGAR FRACTION TWO FIFTHS
+<35>                   /xE2/x85/x97 <U2157> VULGAR FRACTION THREE FIFTHS
+<45>                   /xE2/x85/x98 <U2158> VULGAR FRACTION FOUR FIFTHS
+<16>                   /xE2/x85/x99 <U2159> VULGAR FRACTION ONE SIXTH
+<56>                   /xE2/x85/x9A <U215A> VULGAR FRACTION FIVE SIXTHS
+<18>                   /xE2/x85/x9B <U215B> VULGAR FRACTION ONE EIGHTH
+<38>                   /xE2/x85/x9C <U215C> VULGAR FRACTION THREE EIGHTHS
+<58>                   /xE2/x85/x9D <U215D> VULGAR FRACTION FIVE EIGHTHS
+<78>                   /xE2/x85/x9E <U215E> VULGAR FRACTION SEVEN EIGHTHS
+<1R>                   /xE2/x85/xA0 <U2160> ROMAN NUMERAL ONE
+<2R>                   /xE2/x85/xA1 <U2161> ROMAN NUMERAL TWO
+<3R>                   /xE2/x85/xA2 <U2162> ROMAN NUMERAL THREE
+<4R>                   /xE2/x85/xA3 <U2163> ROMAN NUMERAL FOUR
+<5R>                   /xE2/x85/xA4 <U2164> ROMAN NUMERAL FIVE
+<6R>                   /xE2/x85/xA5 <U2165> ROMAN NUMERAL SIX
+<7R>                   /xE2/x85/xA6 <U2166> ROMAN NUMERAL SEVEN
+<8R>                   /xE2/x85/xA7 <U2167> ROMAN NUMERAL EIGHT
+<9R>                   /xE2/x85/xA8 <U2168> ROMAN NUMERAL NINE
+<aR>                   /xE2/x85/xA9 <U2169> ROMAN NUMERAL TEN
+<bR>                   /xE2/x85/xAA <U216A> ROMAN NUMERAL ELEVEN
+<cR>                   /xE2/x85/xAB <U216B> ROMAN NUMERAL TWELVE
+<50R>                  /xE2/x85/xAC <U216C> ROMAN NUMERAL FIFTY
+<100R>                 /xE2/x85/xAD <U216D> ROMAN NUMERAL ONE HUNDRED
+<500R>                 /xE2/x85/xAE <U216E> ROMAN NUMERAL FIVE HUNDRED
+<1000R>                /xE2/x85/xAF <U216F> ROMAN NUMERAL ONE THOUSAND
+<1r>                   /xE2/x85/xB0 <U2170> SMALL ROMAN NUMERAL ONE
+<2r>                   /xE2/x85/xB1 <U2171> SMALL ROMAN NUMERAL TWO
+<3r>                   /xE2/x85/xB2 <U2172> SMALL ROMAN NUMERAL THREE
+<4r>                   /xE2/x85/xB3 <U2173> SMALL ROMAN NUMERAL FOUR
+<5r>                   /xE2/x85/xB4 <U2174> SMALL ROMAN NUMERAL FIVE
+<6r>                   /xE2/x85/xB5 <U2175> SMALL ROMAN NUMERAL SIX
+<7r>                   /xE2/x85/xB6 <U2176> SMALL ROMAN NUMERAL SEVEN
+<8r>                   /xE2/x85/xB7 <U2177> SMALL ROMAN NUMERAL EIGHT
+<9r>                   /xE2/x85/xB8 <U2178> SMALL ROMAN NUMERAL NINE
+<ar>                   /xE2/x85/xB9 <U2179> SMALL ROMAN NUMERAL TEN
+<br>                   /xE2/x85/xBA <U217A> SMALL ROMAN NUMERAL ELEVEN
+<cr>                   /xE2/x85/xBB <U217B> SMALL ROMAN NUMERAL TWELVE
+<50r>                  /xE2/x85/xBC <U217C> SMALL ROMAN NUMERAL FIFTY
+<100r>                 /xE2/x85/xBD <U217D> SMALL ROMAN NUMERAL ONE HUNDRED
+<500r>                 /xE2/x85/xBE <U217E> SMALL ROMAN NUMERAL FIVE HUNDRED
+<1000r>                /xE2/x85/xBF <U217F> SMALL ROMAN NUMERAL ONE THOUSAND
+<1000RCD>              /xE2/x86/x80 <U2180> ROMAN NUMERAL ONE THOUSAND C D
+<5000R>                /xE2/x86/x81 <U2181> ROMAN NUMERAL FIVE THOUSAND
+<10000R>               /xE2/x86/x82 <U2182> ROMAN NUMERAL TEN THOUSAND
+<<->                   /xE2/x86/x90 <U2190> LEFTWARDS ARROW
+<-!>                   /xE2/x86/x91 <U2191> UPWARDS ARROW
+<-/>>                  /xE2/x86/x92 <U2192> RIGHTWARDS ARROW
+<-v>                   /xE2/x86/x93 <U2193> DOWNWARDS ARROW
+<</>>                  /xE2/x86/x94 <U2194> LEFT RIGHT ARROW
+<UD>                   /xE2/x86/x95 <U2195> UP DOWN ARROW
+<<!!>                  /xE2/x86/x96 <U2196> NORTH WEST ARROW
+</////>>               /xE2/x86/x97 <U2197> NORTH EAST ARROW
+<!!/>>                 /xE2/x86/x98 <U2198> SOUTH EAST ARROW
+<<////>                /xE2/x86/x99 <U2199> SOUTH WEST ARROW
+<UD->                  /xE2/x86/xA8 <U21A8> UP DOWN ARROW WITH BASE
+</>V>                  /xE2/x87/x80 <U21C0> RIGHTWARDS HARPOON WITH BARB UPWARDS
+<<=>                   /xE2/x87/x90 <U21D0> LEFTWARDS DOUBLE ARROW
+<=/>>                  /xE2/x87/x92 <U21D2> RIGHTWARDS DOUBLE ARROW
+<==>                   /xE2/x87/x94 <U21D4> LEFT RIGHT DOUBLE ARROW
+<FA>                   /xE2/x88/x80 <U2200> FOR ALL
+<dP>                   /xE2/x88/x82 <U2202> PARTIAL DIFFERENTIAL
+<TE>                   /xE2/x88/x83 <U2203> THERE EXISTS
+<//0>                  /xE2/x88/x85 <U2205> EMPTY SET
+<DE>                   /xE2/x88/x86 <U2206> INCREMENT
+<NB>                   /xE2/x88/x87 <U2207> NABLA
+<(->                   /xE2/x88/x88 <U2208> ELEMENT OF
+<-)>                   /xE2/x88/x8B <U220B> CONTAINS AS MEMBER
+<FP>                   /xE2/x88/x8E <U220E> END OF PROOF
+<*P>                   /xE2/x88/x8F <U220F> N-ARY PRODUCT
+<+Z>                   /xE2/x88/x91 <U2211> N-ARY SUMMATION
+<-2>                   /xE2/x88/x92 <U2212> MINUS SIGN
+<-+>                   /xE2/x88/x93 <U2213> MINUS-OR-PLUS SIGN
+<.+>                   /xE2/x88/x94 <U2214> DOT PLUS
+<*->                   /xE2/x88/x97 <U2217> ASTERISK OPERATOR
+<Ob>                   /xE2/x88/x98 <U2218> RING OPERATOR
+<Sb>                   /xE2/x88/x99 <U2219> BULLET OPERATOR
+<RT>                   /xE2/x88/x9A <U221A> SQUARE ROOT
+<0(>                   /xE2/x88/x9D <U221D> PROPORTIONAL TO
+<00>                   /xE2/x88/x9E <U221E> INFINITY
+<-L>                   /xE2/x88/x9F <U221F> RIGHT ANGLE
+<-V>                   /xE2/x88/xA0 <U2220> ANGLE
+<PP>                   /xE2/x88/xA5 <U2225> PARALLEL TO
+<AN>                   /xE2/x88/xA7 <U2227> LOGICAL AND
+<OR>                   /xE2/x88/xA8 <U2228> LOGICAL OR
+<(U>                   /xE2/x88/xA9 <U2229> INTERSECTION
+<)U>                   /xE2/x88/xAA <U222A> UNION
+<In>                   /xE2/x88/xAB <U222B> INTEGRAL
+<DI>                   /xE2/x88/xAC <U222C> DOUBLE INTEGRAL
+<Io>                   /xE2/x88/xAE <U222E> CONTOUR INTEGRAL
+<.:>                   /xE2/x88/xB4 <U2234> THEREFORE
+<:.>                   /xE2/x88/xB5 <U2235> BECAUSE
+<:R>                   /xE2/x88/xB6 <U2236> RATIO
+<::>                   /xE2/x88/xB7 <U2237> PROPORTION
+<?1>                   /xE2/x88/xBC <U223C> TILDE OPERATOR
+<CG>                   /xE2/x88/xBE <U223E> INVERTED LAZY S
+<?->                   /xE2/x89/x83 <U2243> ASYMPTOTICALLY EQUAL TO
+<?=>                   /xE2/x89/x85 <U2245> APPROXIMATELY EQUAL TO
+<?2>                   /xE2/x89/x88 <U2248> ALMOST EQUAL TO
+<=?>                   /xE2/x89/x8C <U224C> ALL EQUAL TO
+<HI>                   /xE2/x89/x93 <U2253> IMAGE OF OR APPROXIMATELY EQUAL TO
+<!=>                   /xE2/x89/xA0 <U2260> NOT EQUAL TO
+<=3>                   /xE2/x89/xA1 <U2261> IDENTICAL TO
+<=<>                   /xE2/x89/xA4 <U2264> LESS-THAN OR EQUAL TO
+</>=>                  /xE2/x89/xA5 <U2265> GREATER-THAN OR EQUAL TO
+<<*>                   /xE2/x89/xAA <U226A> MUCH LESS-THAN
+<*/>>                  /xE2/x89/xAB <U226B> MUCH GREATER-THAN
+<!<>                   /xE2/x89/xAE <U226E> NOT LESS-THAN
+<!/>>                  /xE2/x89/xAF <U226F> NOT GREATER-THAN
+<(C>                   /xE2/x8A/x82 <U2282> SUBSET OF
+<)C>                   /xE2/x8A/x83 <U2283> SUPERSET OF
+<(_>                   /xE2/x8A/x86 <U2286> SUBSET OF OR EQUAL TO
+<)_>                   /xE2/x8A/x87 <U2287> SUPERSET OF OR EQUAL TO
+<0.>                   /xE2/x8A/x99 <U2299> CIRCLED DOT OPERATOR
+<02>                   /xE2/x8A/x9A <U229A> CIRCLED RING OPERATOR
+<-T>                   /xE2/x8A/xA5 <U22A5> UP TACK
+<.P>                   /xE2/x8B/x85 <U22C5> DOT OPERATOR
+<:3>                   /xE2/x8B/xAE <U22EE> VERTICAL ELLIPSIS
+<Eh>                   /xE2/x8C/x82 <U2302> HOUSE
+<<7>                   /xE2/x8C/x88 <U2308> LEFT CEILING
+</>7>                  /xE2/x8C/x89 <U2309> RIGHT CEILING
+<7<>                   /xE2/x8C/x8A <U230A> LEFT FLOOR
+<7/>>                  /xE2/x8C/x8B <U230B> RIGHT FLOOR
+<NI>                   /xE2/x8C/x90 <U2310> REVERSED NOT SIGN
+<(A>                   /xE2/x8C/x92 <U2312> ARC
+<TR>                   /xE2/x8C/x95 <U2315> TELEPHONE RECORDER
+<88>                   /xE2/x8C/x98 <U2318> PLACE OF INTEREST SIGN
+<Iu>                   /xE2/x8C/xA0 <U2320> TOP HALF INTEGRAL
+<Il>                   /xE2/x8C/xA1 <U2321> BOTTOM HALF INTEGRAL
+<<//>                  /xE2/x8C/xA9 <U2329> LEFT-POINTING ANGLE BRACKET
+<///>>                 /xE2/x8C/xAA <U232A> RIGHT-POINTING ANGLE BRACKET
+<Vs>                   /xE2/x90/xA3 <U2423> OPEN BOX
+<1h>                   /xE2/x91/x80 <U2440> OCR HOOK
+<3h>                   /xE2/x91/x81 <U2441> OCR CHAIR
+<2h>                   /xE2/x91/x82 <U2442> OCR FORK
+<4h>                   /xE2/x91/x83 <U2443> OCR INVERTED FORK
+<1j>                   /xE2/x91/x86 <U2446> OCR BRANCH BANK IDENTIFICATION
+<2j>                   /xE2/x91/x87 <U2447> OCR AMOUNT OF CHECK
+<3j>                   /xE2/x91/x88 <U2448> OCR DASH
+<4j>                   /xE2/x91/x89 <U2449> OCR CUSTOMER ACCOUNT NUMBER
+<1-o>                  /xE2/x91/xA0 <U2460> CIRCLED DIGIT ONE
+<2-o>                  /xE2/x91/xA1 <U2461> CIRCLED DIGIT TWO
+<3-o>                  /xE2/x91/xA2 <U2462> CIRCLED DIGIT THREE
+<4-o>                  /xE2/x91/xA3 <U2463> CIRCLED DIGIT FOUR
+<5-o>                  /xE2/x91/xA4 <U2464> CIRCLED DIGIT FIVE
+<6-o>                  /xE2/x91/xA5 <U2465> CIRCLED DIGIT SIX
+<7-o>                  /xE2/x91/xA6 <U2466> CIRCLED DIGIT SEVEN
+<8-o>                  /xE2/x91/xA7 <U2467> CIRCLED DIGIT EIGHT
+<9-o>                  /xE2/x91/xA8 <U2468> CIRCLED DIGIT NINE
+<10-o>                 /xE2/x91/xA9 <U2469> CIRCLED NUMBER TEN
+<11-o>                 /xE2/x91/xAA <U246A> CIRCLED NUMBER ELEVEN
+<12-o>                 /xE2/x91/xAB <U246B> CIRCLED NUMBER TWELVE
+<13-o>                 /xE2/x91/xAC <U246C> CIRCLED NUMBER THIRTEEN
+<14-o>                 /xE2/x91/xAD <U246D> CIRCLED NUMBER FOURTEEN
+<15-o>                 /xE2/x91/xAE <U246E> CIRCLED NUMBER FIFTEEN
+<16-o>                 /xE2/x91/xAF <U246F> CIRCLED NUMBER SIXTEEN
+<17-o>                 /xE2/x91/xB0 <U2470> CIRCLED NUMBER SEVENTEEN
+<18-o>                 /xE2/x91/xB1 <U2471> CIRCLED NUMBER EIGHTEEN
+<19-o>                 /xE2/x91/xB2 <U2472> CIRCLED NUMBER NINETEEN
+<20-o>                 /xE2/x91/xB3 <U2473> CIRCLED NUMBER TWENTY
+<(1)>                  /xE2/x91/xB4 <U2474> PARENTHESIZED DIGIT ONE
+<(2)>                  /xE2/x91/xB5 <U2475> PARENTHESIZED DIGIT TWO
+<(3)>                  /xE2/x91/xB6 <U2476> PARENTHESIZED DIGIT THREE
+<(4)>                  /xE2/x91/xB7 <U2477> PARENTHESIZED DIGIT FOUR
+<(5)>                  /xE2/x91/xB8 <U2478> PARENTHESIZED DIGIT FIVE
+<(6)>                  /xE2/x91/xB9 <U2479> PARENTHESIZED DIGIT SIX
+<(7)>                  /xE2/x91/xBA <U247A> PARENTHESIZED DIGIT SEVEN
+<(8)>                  /xE2/x91/xBB <U247B> PARENTHESIZED DIGIT EIGHT
+<(9)>                  /xE2/x91/xBC <U247C> PARENTHESIZED DIGIT NINE
+<(10)>                 /xE2/x91/xBD <U247D> PARENTHESIZED NUMBER TEN
+<(11)>                 /xE2/x91/xBE <U247E> PARENTHESIZED NUMBER ELEVEN
+<(12)>                 /xE2/x91/xBF <U247F> PARENTHESIZED NUMBER TWELVE
+<(13)>                 /xE2/x92/x80 <U2480> PARENTHESIZED NUMBER THIRTEEN
+<(14)>                 /xE2/x92/x81 <U2481> PARENTHESIZED NUMBER FOURTEEN
+<(15)>                 /xE2/x92/x82 <U2482> PARENTHESIZED NUMBER FIFTEEN
+<(16)>                 /xE2/x92/x83 <U2483> PARENTHESIZED NUMBER SIXTEEN
+<(17)>                 /xE2/x92/x84 <U2484> PARENTHESIZED NUMBER SEVENTEEN
+<(18)>                 /xE2/x92/x85 <U2485> PARENTHESIZED NUMBER EIGHTEEN
+<(19)>                 /xE2/x92/x86 <U2486> PARENTHESIZED NUMBER NINETEEN
+<(20)>                 /xE2/x92/x87 <U2487> PARENTHESIZED NUMBER TWENTY
+<1.>                   /xE2/x92/x88 <U2488> DIGIT ONE FULL STOP
+<2.>                   /xE2/x92/x89 <U2489> DIGIT TWO FULL STOP
+<3.>                   /xE2/x92/x8A <U248A> DIGIT THREE FULL STOP
+<4.>                   /xE2/x92/x8B <U248B> DIGIT FOUR FULL STOP
+<5.>                   /xE2/x92/x8C <U248C> DIGIT FIVE FULL STOP
+<6.>                   /xE2/x92/x8D <U248D> DIGIT SIX FULL STOP
+<7.>                   /xE2/x92/x8E <U248E> DIGIT SEVEN FULL STOP
+<8.>                   /xE2/x92/x8F <U248F> DIGIT EIGHT FULL STOP
+<9.>                   /xE2/x92/x90 <U2490> DIGIT NINE FULL STOP
+<10.>                  /xE2/x92/x91 <U2491> NUMBER TEN FULL STOP
+<11.>                  /xE2/x92/x92 <U2492> NUMBER ELEVEN FULL STOP
+<12.>                  /xE2/x92/x93 <U2493> NUMBER TWELVE FULL STOP
+<13.>                  /xE2/x92/x94 <U2494> NUMBER THIRTEEN FULL STOP
+<14.>                  /xE2/x92/x95 <U2495> NUMBER FOURTEEN FULL STOP
+<15.>                  /xE2/x92/x96 <U2496> NUMBER FIFTEEN FULL STOP
+<16.>                  /xE2/x92/x97 <U2497> NUMBER SIXTEEN FULL STOP
+<17.>                  /xE2/x92/x98 <U2498> NUMBER SEVENTEEN FULL STOP
+<18.>                  /xE2/x92/x99 <U2499> NUMBER EIGHTEEN FULL STOP
+<19.>                  /xE2/x92/x9A <U249A> NUMBER NINETEEN FULL STOP
+<20.>                  /xE2/x92/x9B <U249B> NUMBER TWENTY FULL STOP
+<(a)>                  /xE2/x92/x9C <U249C> PARENTHESIZED LATIN SMALL LETTER A
+<(b)>                  /xE2/x92/x9D <U249D> PARENTHESIZED LATIN SMALL LETTER B
+<(c)>                  /xE2/x92/x9E <U249E> PARENTHESIZED LATIN SMALL LETTER C
+<(d)>                  /xE2/x92/x9F <U249F> PARENTHESIZED LATIN SMALL LETTER D
+<(e)>                  /xE2/x92/xA0 <U24A0> PARENTHESIZED LATIN SMALL LETTER E
+<(f)>                  /xE2/x92/xA1 <U24A1> PARENTHESIZED LATIN SMALL LETTER F
+<(g)>                  /xE2/x92/xA2 <U24A2> PARENTHESIZED LATIN SMALL LETTER G
+<(h)>                  /xE2/x92/xA3 <U24A3> PARENTHESIZED LATIN SMALL LETTER H
+<(i)>                  /xE2/x92/xA4 <U24A4> PARENTHESIZED LATIN SMALL LETTER I
+<(j)>                  /xE2/x92/xA5 <U24A5> PARENTHESIZED LATIN SMALL LETTER J
+<(k)>                  /xE2/x92/xA6 <U24A6> PARENTHESIZED LATIN SMALL LETTER K
+<(l)>                  /xE2/x92/xA7 <U24A7> PARENTHESIZED LATIN SMALL LETTER L
+<(m)>                  /xE2/x92/xA8 <U24A8> PARENTHESIZED LATIN SMALL LETTER M
+<(n)>                  /xE2/x92/xA9 <U24A9> PARENTHESIZED LATIN SMALL LETTER N
+<(o)>                  /xE2/x92/xAA <U24AA> PARENTHESIZED LATIN SMALL LETTER O
+<(p)>                  /xE2/x92/xAB <U24AB> PARENTHESIZED LATIN SMALL LETTER P
+<(q)>                  /xE2/x92/xAC <U24AC> PARENTHESIZED LATIN SMALL LETTER Q
+<(r)>                  /xE2/x92/xAD <U24AD> PARENTHESIZED LATIN SMALL LETTER R
+<(s)>                  /xE2/x92/xAE <U24AE> PARENTHESIZED LATIN SMALL LETTER S
+<(t)>                  /xE2/x92/xAF <U24AF> PARENTHESIZED LATIN SMALL LETTER T
+<(u)>                  /xE2/x92/xB0 <U24B0> PARENTHESIZED LATIN SMALL LETTER U
+<(v)>                  /xE2/x92/xB1 <U24B1> PARENTHESIZED LATIN SMALL LETTER V
+<(w)>                  /xE2/x92/xB2 <U24B2> PARENTHESIZED LATIN SMALL LETTER W
+<(x)>                  /xE2/x92/xB3 <U24B3> PARENTHESIZED LATIN SMALL LETTER X
+<(y)>                  /xE2/x92/xB4 <U24B4> PARENTHESIZED LATIN SMALL LETTER Y
+<(z)>                  /xE2/x92/xB5 <U24B5> PARENTHESIZED LATIN SMALL LETTER Z
+<A-o>                  /xE2/x92/xB6 <U24B6> CIRCLED LATIN CAPITAL LETTER A
+<B-o>                  /xE2/x92/xB7 <U24B7> CIRCLED LATIN CAPITAL LETTER B
+<C-o>                  /xE2/x92/xB8 <U24B8> CIRCLED LATIN CAPITAL LETTER C
+<D-o>                  /xE2/x92/xB9 <U24B9> CIRCLED LATIN CAPITAL LETTER D
+<E-o>                  /xE2/x92/xBA <U24BA> CIRCLED LATIN CAPITAL LETTER E
+<F-o>                  /xE2/x92/xBB <U24BB> CIRCLED LATIN CAPITAL LETTER F
+<G-o>                  /xE2/x92/xBC <U24BC> CIRCLED LATIN CAPITAL LETTER G
+<H-o>                  /xE2/x92/xBD <U24BD> CIRCLED LATIN CAPITAL LETTER H
+<I-o>                  /xE2/x92/xBE <U24BE> CIRCLED LATIN CAPITAL LETTER I
+<J-o>                  /xE2/x92/xBF <U24BF> CIRCLED LATIN CAPITAL LETTER J
+<K-o>                  /xE2/x93/x80 <U24C0> CIRCLED LATIN CAPITAL LETTER K
+<L-o>                  /xE2/x93/x81 <U24C1> CIRCLED LATIN CAPITAL LETTER L
+<M-o>                  /xE2/x93/x82 <U24C2> CIRCLED LATIN CAPITAL LETTER M
+<N-o>                  /xE2/x93/x83 <U24C3> CIRCLED LATIN CAPITAL LETTER N
+<O-o>                  /xE2/x93/x84 <U24C4> CIRCLED LATIN CAPITAL LETTER O
+<P-o>                  /xE2/x93/x85 <U24C5> CIRCLED LATIN CAPITAL LETTER P
+<Q-o>                  /xE2/x93/x86 <U24C6> CIRCLED LATIN CAPITAL LETTER Q
+<R-o>                  /xE2/x93/x87 <U24C7> CIRCLED LATIN CAPITAL LETTER R
+<S-o>                  /xE2/x93/x88 <U24C8> CIRCLED LATIN CAPITAL LETTER S
+<T-o>                  /xE2/x93/x89 <U24C9> CIRCLED LATIN CAPITAL LETTER T
+<U-o>                  /xE2/x93/x8A <U24CA> CIRCLED LATIN CAPITAL LETTER U
+<V-o>                  /xE2/x93/x8B <U24CB> CIRCLED LATIN CAPITAL LETTER V
+<W-o>                  /xE2/x93/x8C <U24CC> CIRCLED LATIN CAPITAL LETTER W
+<X-o>                  /xE2/x93/x8D <U24CD> CIRCLED LATIN CAPITAL LETTER X
+<Y-o>                  /xE2/x93/x8E <U24CE> CIRCLED LATIN CAPITAL LETTER Y
+<Z-o>                  /xE2/x93/x8F <U24CF> CIRCLED LATIN CAPITAL LETTER Z
+<a-o>                  /xE2/x93/x90 <U24D0> CIRCLED LATIN SMALL LETTER A
+<b-o>                  /xE2/x93/x91 <U24D1> CIRCLED LATIN SMALL LETTER B
+<c-o>                  /xE2/x93/x92 <U24D2> CIRCLED LATIN SMALL LETTER C
+<d-o>                  /xE2/x93/x93 <U24D3> CIRCLED LATIN SMALL LETTER D
+<e-o>                  /xE2/x93/x94 <U24D4> CIRCLED LATIN SMALL LETTER E
+<f-o>                  /xE2/x93/x95 <U24D5> CIRCLED LATIN SMALL LETTER F
+<g-o>                  /xE2/x93/x96 <U24D6> CIRCLED LATIN SMALL LETTER G
+<h-o>                  /xE2/x93/x97 <U24D7> CIRCLED LATIN SMALL LETTER H
+<i-o>                  /xE2/x93/x98 <U24D8> CIRCLED LATIN SMALL LETTER I
+<j-o>                  /xE2/x93/x99 <U24D9> CIRCLED LATIN SMALL LETTER J
+<k-o>                  /xE2/x93/x9A <U24DA> CIRCLED LATIN SMALL LETTER K
+<l-o>                  /xE2/x93/x9B <U24DB> CIRCLED LATIN SMALL LETTER L
+<m-o>                  /xE2/x93/x9C <U24DC> CIRCLED LATIN SMALL LETTER M
+<n-o>                  /xE2/x93/x9D <U24DD> CIRCLED LATIN SMALL LETTER N
+<o-o>                  /xE2/x93/x9E <U24DE> CIRCLED LATIN SMALL LETTER O
+<p-o>                  /xE2/x93/x9F <U24DF> CIRCLED LATIN SMALL LETTER P
+<q-o>                  /xE2/x93/xA0 <U24E0> CIRCLED LATIN SMALL LETTER Q
+<r-o>                  /xE2/x93/xA1 <U24E1> CIRCLED LATIN SMALL LETTER R
+<s-o>                  /xE2/x93/xA2 <U24E2> CIRCLED LATIN SMALL LETTER S
+<t-o>                  /xE2/x93/xA3 <U24E3> CIRCLED LATIN SMALL LETTER T
+<u-o>                  /xE2/x93/xA4 <U24E4> CIRCLED LATIN SMALL LETTER U
+<v-o>                  /xE2/x93/xA5 <U24E5> CIRCLED LATIN SMALL LETTER V
+<w-o>                  /xE2/x93/xA6 <U24E6> CIRCLED LATIN SMALL LETTER W
+<x-o>                  /xE2/x93/xA7 <U24E7> CIRCLED LATIN SMALL LETTER X
+<y-o>                  /xE2/x93/xA8 <U24E8> CIRCLED LATIN SMALL LETTER Y
+<z-o>                  /xE2/x93/xA9 <U24E9> CIRCLED LATIN SMALL LETTER Z
+<0-o>                  /xE2/x93/xAA <U24EA> CIRCLED DIGIT ZERO
+<hh>                   /xE2/x94/x80 <U2500> BOX DRAWINGS LIGHT HORIZONTAL
+<_->                   /xE2/x94/x80 <U2500> BOX DRAWINGS LIGHT HORIZONTAL
+<_=>                   /xE2/x94/x81 <U2501> BOX DRAWINGS HEAVY HORIZONTAL
+<HH->                  /xE2/x94/x81 <U2501> BOX DRAWINGS HEAVY HORIZONTAL
+<vv>                   /xE2/x94/x82 <U2502> BOX DRAWINGS LIGHT VERTICAL
+<_!>                   /xE2/x94/x82 <U2502> BOX DRAWINGS LIGHT VERTICAL
+<VV->                  /xE2/x94/x83 <U2503> BOX DRAWINGS HEAVY VERTICAL
+<3->                   /xE2/x94/x84 <U2504> BOX DRAWINGS LIGHT TRIPLE DASH HORIZONTAL
+<3_>                   /xE2/x94/x85 <U2505> BOX DRAWINGS HEAVY TRIPLE DASH HORIZONTAL
+<3!>                   /xE2/x94/x86 <U2506> BOX DRAWINGS LIGHT TRIPLE DASH VERTICAL
+<3//>                  /xE2/x94/x87 <U2507> BOX DRAWINGS HEAVY TRIPLE DASH VERTICAL
+<4->                   /xE2/x94/x88 <U2508> BOX DRAWINGS LIGHT QUADRUPLE DASH HORIZONTAL
+<4_>                   /xE2/x94/x89 <U2509> BOX DRAWINGS HEAVY QUADRUPLE DASH HORIZONTAL
+<4!>                   /xE2/x94/x8A <U250A> BOX DRAWINGS LIGHT QUADRUPLE DASH VERTICAL
+<4//>                  /xE2/x94/x8B <U250B> BOX DRAWINGS HEAVY QUADRUPLE DASH VERTICAL
+<dr>                   /xE2/x94/x8C <U250C> BOX DRAWINGS LIGHT DOWN AND RIGHT
+<_V/>>                 /xE2/x94/x8C <U250C> BOX DRAWINGS LIGHT DOWN AND RIGHT
+<dR->                  /xE2/x94/x8D <U250D> BOX DRAWINGS DOWN LIGHT AND RIGHT HEAVY
+<Dr->                  /xE2/x94/x8E <U250E> BOX DRAWINGS DOWN HEAVY AND RIGHT LIGHT
+<DR->                  /xE2/x94/x8F <U250F> BOX DRAWINGS HEAVY DOWN AND RIGHT
+<dl>                   /xE2/x94/x90 <U2510> BOX DRAWINGS LIGHT DOWN AND LEFT
+<_V<w>                 /xE2/x94/x90 <U2510> BOX DRAWINGS LIGHT DOWN AND LEFT
+<dL->                  /xE2/x94/x91 <U2511> BOX DRAWINGS DOWN LIGHT AND LEFT HEAVY
+<Dl->                  /xE2/x94/x92 <U2512> BOX DRAWINGS DOWN HEAVY AND LEFT LIGHT
+<LD->                  /xE2/x94/x93 <U2513> BOX DRAWINGS HEAVY DOWN AND LEFT
+<ur>                   /xE2/x94/x94 <U2514> BOX DRAWINGS LIGHT UP AND RIGHT
+<_A/>>                 /xE2/x94/x94 <U2514> BOX DRAWINGS LIGHT UP AND RIGHT
+<uR->                  /xE2/x94/x95 <U2515> BOX DRAWINGS UP LIGHT AND RIGHT HEAVY
+<Ur->                  /xE2/x94/x96 <U2516> BOX DRAWINGS UP HEAVY AND RIGHT LIGHT
+<UR->                  /xE2/x94/x97 <U2517> BOX DRAWINGS HEAVY UP AND RIGHT
+<ul>                   /xE2/x94/x98 <U2518> BOX DRAWINGS LIGHT UP AND LEFT
+<_A<>                  /xE2/x94/x98 <U2518> BOX DRAWINGS LIGHT UP AND LEFT
+<uL->                  /xE2/x94/x99 <U2519> BOX DRAWINGS UP LIGHT AND LEFT HEAVY
+<Ul->                  /xE2/x94/x9A <U251A> BOX DRAWINGS UP HEAVY AND LEFT LIGHT
+<UL->                  /xE2/x94/x9B <U251B> BOX DRAWINGS HEAVY UP AND LEFT
+<vr>                   /xE2/x94/x9C <U251C> BOX DRAWINGS LIGHT VERTICAL AND RIGHT
+<_!/>>                 /xE2/x94/x9C <U251C> BOX DRAWINGS LIGHT VERTICAL AND RIGHT
+<vR->                  /xE2/x94/x9D <U251D> BOX DRAWINGS VERTICAL LIGHT AND RIGHT HEAVY
+<Udr>                  /xE2/x94/x9E <U251E> BOX DRAWINGS UP HEAVY AND RIGHT DOWN LIGHT
+<uDr>                  /xE2/x94/x9F <U251F> BOX DRAWINGS DOWN HEAVY AND RIGHT UP LIGHT
+<Vr->                  /xE2/x94/xA0 <U2520> BOX DRAWINGS VERTICAL HEAVY AND RIGHT LIGHT
+<UdR>                  /xE2/x94/xA1 <U2521> BOX DRAWINGS DOWN LIGHT AND RIGHT UP HEAVY
+<uDR>                  /xE2/x94/xA2 <U2522> BOX DRAWINGS UP LIGHT AND RIGHT DOWN HEAVY
+<VR->                  /xE2/x94/xA3 <U2523> BOX DRAWINGS HEAVY VERTICAL AND RIGHT
+<vl>                   /xE2/x94/xA4 <U2524> BOX DRAWINGS LIGHT VERTICAL AND LEFT
+<_!<>                  /xE2/x94/xA4 <U2524> BOX DRAWINGS LIGHT VERTICAL AND LEFT
+<vL->                  /xE2/x94/xA5 <U2525> BOX DRAWINGS VERTICAL LIGHT AND LEFT HEAVY
+<Udl>                  /xE2/x94/xA6 <U2526> BOX DRAWINGS UP HEAVY AND LEFT DOWN LIGHT
+<uDl>                  /xE2/x94/xA7 <U2527> BOX DRAWINGS DOWN HEAVY AND LEFT UP LIGHT
+<Vl->                  /xE2/x94/xA8 <U2528> BOX DRAWINGS VERTICAL HEAVY AND LEFT LIGHT
+<UdL>                  /xE2/x94/xA9 <U2529> BOX DRAWINGS DOWN LIGHT AND LEFT UP HEAVY
+<uDL>                  /xE2/x94/xAA <U252A> BOX DRAWINGS UP LIGHT AND LEFT DOWN HEAVY
+<VL->                  /xE2/x94/xAB <U252B> BOX DRAWINGS HEAVY VERTICAL AND LEFT
+<dh>                   /xE2/x94/xAC <U252C> BOX DRAWINGS LIGHT DOWN AND HORIZONTAL
+<_V->                  /xE2/x94/xAC <U252C> BOX DRAWINGS LIGHT DOWN AND HORIZONTAL
+<dLr>                  /xE2/x94/xAD <U252D> BOX DRAWINGS LEFT HEAVY AND RIGHT DOWN LIGHT
+<dlR>                  /xE2/x94/xAE <U252E> BOX DRAWINGS RIGHT HEAVY AND LEFT DOWN LIGHT
+<dH->                  /xE2/x94/xAF <U252F> BOX DRAWINGS DOWN LIGHT AND HORIZONTAL HEAVY
+<Dh->                  /xE2/x94/xB0 <U2530> BOX DRAWINGS DOWN HEAVY AND HORIZONTAL LIGHT
+<DLr>                  /xE2/x94/xB1 <U2531> BOX DRAWINGS RIGHT LIGHT AND LEFT DOWN HEAVY
+<DlR>                  /xE2/x94/xB2 <U2532> BOX DRAWINGS LEFT LIGHT AND RIGHT DOWN HEAVY
+<DH->                  /xE2/x94/xB3 <U2533> BOX DRAWINGS HEAVY DOWN AND HORIZONTAL
+<uh>                   /xE2/x94/xB4 <U2534> BOX DRAWINGS LIGHT UP AND HORIZONTAL
+<_-A>                  /xE2/x94/xB4 <U2534> BOX DRAWINGS LIGHT UP AND HORIZONTAL
+<uLr>                  /xE2/x94/xB5 <U2535> BOX DRAWINGS LEFT HEAVY AND RIGHT UP LIGHT
+<ulR>                  /xE2/x94/xB6 <U2536> BOX DRAWINGS RIGHT HEAVY AND LEFT UP LIGHT
+<uH->                  /xE2/x94/xB7 <U2537> BOX DRAWINGS UP LIGHT AND HORIZONTAL HEAVY
+<Uh->                  /xE2/x94/xB8 <U2538> BOX DRAWINGS UP HEAVY AND HORIZONTAL LIGHT
+<ULr>                  /xE2/x94/xB9 <U2539> BOX DRAWINGS RIGHT LIGHT AND LEFT UP HEAVY
+<UlR>                  /xE2/x94/xBA <U253A> BOX DRAWINGS LEFT LIGHT AND RIGHT UP HEAVY
+<UH->                  /xE2/x94/xBB <U253B> BOX DRAWINGS HEAVY UP AND HORIZONTAL
+<vh>                   /xE2/x94/xBC <U253C> BOX DRAWINGS LIGHT VERTICAL AND HORIZONTAL
+<_!->                  /xE2/x94/xBC <U253C> BOX DRAWINGS LIGHT VERTICAL AND HORIZONTAL
+<vLr>                  /xE2/x94/xBD <U253D> BOX DRAWINGS LEFT HEAVY AND RIGHT VERTICAL LIGHT
+<vlR>                  /xE2/x94/xBE <U253E> BOX DRAWINGS RIGHT HEAVY AND LEFT VERTICAL LIGHT
+<vH->                  /xE2/x94/xBF <U253F> BOX DRAWINGS VERTICAL LIGHT AND HORIZONTAL HEAVY
+<Udh>                  /xE2/x95/x80 <U2540> BOX DRAWINGS UP HEAVY AND DOWN HORIZONTAL LIGHT
+<uDh>                  /xE2/x95/x81 <U2541> BOX DRAWINGS DOWN HEAVY AND UP HORIZONTAL LIGHT
+<Vh->                  /xE2/x95/x82 <U2542> BOX DRAWINGS VERTICAL HEAVY AND HORIZONTAL LIGHT
+<UdLr>                 /xE2/x95/x83 <U2543> BOX DRAWINGS LEFT UP HEAVY AND RIGHT DOWN LIGHT
+<UdlR>                 /xE2/x95/x84 <U2544> BOX DRAWINGS RIGHT UP HEAVY AND LEFT DOWN LIGHT
+<uDLr>                 /xE2/x95/x85 <U2545> BOX DRAWINGS LEFT DOWN HEAVY AND RIGHT UP LIGHT
+<uDlR>                 /xE2/x95/x86 <U2546> BOX DRAWINGS RIGHT DOWN HEAVY AND LEFT UP LIGHT
+<UdH>                  /xE2/x95/x87 <U2547> BOX DRAWINGS DOWN LIGHT AND UP HORIZONTAL HEAVY
+<uDH>                  /xE2/x95/x88 <U2548> BOX DRAWINGS UP LIGHT AND DOWN HORIZONTAL HEAVY
+<VLr>                  /xE2/x95/x89 <U2549> BOX DRAWINGS RIGHT LIGHT AND LEFT VERTICAL HEAVY
+<VlR>                  /xE2/x95/x8A <U254A> BOX DRAWINGS LEFT LIGHT AND RIGHT VERTICAL HEAVY
+<VH->                  /xE2/x95/x8B <U254B> BOX DRAWINGS HEAVY VERTICAL AND HORIZONTAL
+<HH>                   /xE2/x95/x90 <U2550> BOX DRAWINGS DOUBLE HORIZONTAL
+<VV>                   /xE2/x95/x91 <U2551> BOX DRAWINGS DOUBLE VERTICAL
+<dR>                   /xE2/x95/x92 <U2552> BOX DRAWINGS DOWN SINGLE AND RIGHT DOUBLE
+<Dr>                   /xE2/x95/x93 <U2553> BOX DRAWINGS DOWN DOUBLE AND RIGHT SINGLE
+<DR>                   /xE2/x95/x94 <U2554> BOX DRAWINGS DOUBLE DOWN AND RIGHT
+<dL>                   /xE2/x95/x95 <U2555> BOX DRAWINGS DOWN SINGLE AND LEFT DOUBLE
+<Dl>                   /xE2/x95/x96 <U2556> BOX DRAWINGS DOWN DOUBLE AND LEFT SINGLE
+<LD>                   /xE2/x95/x97 <U2557> BOX DRAWINGS DOUBLE DOWN AND LEFT
+<uR>                   /xE2/x95/x98 <U2558> BOX DRAWINGS UP SINGLE AND RIGHT DOUBLE
+<Ur>                   /xE2/x95/x99 <U2559> BOX DRAWINGS UP DOUBLE AND RIGHT SINGLE
+<UR>                   /xE2/x95/x9A <U255A> BOX DRAWINGS DOUBLE UP AND RIGHT
+<uL>                   /xE2/x95/x9B <U255B> BOX DRAWINGS UP SINGLE AND LEFT DOUBLE
+<Ul>                   /xE2/x95/x9C <U255C> BOX DRAWINGS UP DOUBLE AND LEFT SINGLE
+<UL>                   /xE2/x95/x9D <U255D> BOX DRAWINGS DOUBLE UP AND LEFT
+<vR>                   /xE2/x95/x9E <U255E> BOX DRAWINGS VERTICAL SINGLE AND RIGHT DOUBLE
+<Vr>                   /xE2/x95/x9F <U255F> BOX DRAWINGS VERTICAL DOUBLE AND RIGHT SINGLE
+<VR>                   /xE2/x95/xA0 <U2560> BOX DRAWINGS DOUBLE VERTICAL AND RIGHT
+<vL>                   /xE2/x95/xA1 <U2561> BOX DRAWINGS VERTICAL SINGLE AND LEFT DOUBLE
+<Vl>                   /xE2/x95/xA2 <U2562> BOX DRAWINGS VERTICAL DOUBLE AND LEFT SINGLE
+<VL>                   /xE2/x95/xA3 <U2563> BOX DRAWINGS DOUBLE VERTICAL AND LEFT
+<dH>                   /xE2/x95/xA4 <U2564> BOX DRAWINGS DOWN SINGLE AND HORIZONTAL DOUBLE
+<Dh>                   /xE2/x95/xA5 <U2565> BOX DRAWINGS DOWN DOUBLE AND HORIZONTAL SINGLE
+<DH>                   /xE2/x95/xA6 <U2566> BOX DRAWINGS DOUBLE DOWN AND HORIZONTAL
+<uH>                   /xE2/x95/xA7 <U2567> BOX DRAWINGS UP SINGLE AND HORIZONTAL DOUBLE
+<Uh>                   /xE2/x95/xA8 <U2568> BOX DRAWINGS UP DOUBLE AND HORIZONTAL SINGLE
+<UH>                   /xE2/x95/xA9 <U2569> BOX DRAWINGS DOUBLE UP AND HORIZONTAL
+<vH>                   /xE2/x95/xAA <U256A> BOX DRAWINGS VERTICAL SINGLE AND HORIZONTAL DOUBLE
+<Vh>                   /xE2/x95/xAB <U256B> BOX DRAWINGS VERTICAL DOUBLE AND HORIZONTAL SINGLE
+<VH>                   /xE2/x95/xAC <U256C> BOX DRAWINGS DOUBLE VERTICAL AND HORIZONTAL
+<FD>                   /xE2/x95/xB1 <U2571> BOX DRAWINGS LIGHT DIAGONAL UPPER RIGHT TO LOWER LEFT
+<_/>//>                /xE2/x95/xB1 <U2571> BOX DRAWINGS LIGHT DIAGONAL UPPER RIGHT TO LOWER LEFT
+<BD>                   /xE2/x95/xB2 <U2572> BOX DRAWINGS LIGHT DIAGONAL UPPER LEFT TO LOWER RIGHT
+<TB>                   /xE2/x96/x80 <U2580> UPPER HALF BLOCK
+<LB>                   /xE2/x96/x84 <U2584> LOWER HALF BLOCK
+<FB>                   /xE2/x96/x88 <U2588> FULL BLOCK
+<lB>                   /xE2/x96/x8C <U258C> LEFT HALF BLOCK
+<RB>                   /xE2/x96/x90 <U2590> RIGHT HALF BLOCK
+<.S>                   /xE2/x96/x91 <U2591> LIGHT SHADE
+<:S>                   /xE2/x96/x92 <U2592> MEDIUM SHADE
+<?S>                   /xE2/x96/x93 <U2593> DARK SHADE
+<fS>                   /xE2/x96/xA0 <U25A0> BLACK SQUARE
+<OS>                   /xE2/x96/xA1 <U25A1> WHITE SQUARE
+<RO>                   /xE2/x96/xA2 <U25A2> WHITE SQUARE WITH ROUNDED CORNERS
+<Rr>                   /xE2/x96/xA3 <U25A3> WHITE SQUARE CONTAINING BLACK SMALL SQUARE
+<RF>                   /xE2/x96/xA4 <U25A4> SQUARE WITH HORIZONTAL FILL
+<RY>                   /xE2/x96/xA5 <U25A5> SQUARE WITH VERTICAL FILL
+<RH>                   /xE2/x96/xA6 <U25A6> SQUARE WITH ORTHOGONAL CROSSHATCH FILL
+<RZ>                   /xE2/x96/xA7 <U25A7> SQUARE WITH UPPER LEFT TO LOWER RIGHT FILL
+<RK>                   /xE2/x96/xA8 <U25A8> SQUARE WITH UPPER RIGHT TO LOWER LEFT FILL
+<RX>                   /xE2/x96/xA9 <U25A9> SQUARE WITH DIAGONAL CROSSHATCH FILL
+<sB>                   /xE2/x96/xAA <U25AA> BLACK SMALL SQUARE
+<SR>                   /xE2/x96/xAC <U25AC> BLACK RECTANGLE
+<Or>                   /xE2/x96/xAD <U25AD> WHITE RECTANGLE
+<UT>                   /xE2/x96/xB2 <U25B2> BLACK UP-POINTING TRIANGLE
+<uT>                   /xE2/x96/xB3 <U25B3> WHITE UP-POINTING TRIANGLE
+<Tr>                   /xE2/x96/xB7 <U25B7> WHITE RIGHT-POINTING TRIANGLE
+<PR>                   /xE2/x96/xBA <U25BA> BLACK RIGHT-POINTING POINTER
+<Dt>                   /xE2/x96/xBC <U25BC> BLACK DOWN-POINTING TRIANGLE
+<dT>                   /xE2/x96/xBD <U25BD> WHITE DOWN-POINTING TRIANGLE
+<Tl>                   /xE2/x97/x81 <U25C1> WHITE LEFT-POINTING TRIANGLE
+<PL>                   /xE2/x97/x84 <U25C4> BLACK LEFT-POINTING POINTER
+<Db>                   /xE2/x97/x86 <U25C6> BLACK DIAMOND
+<Dw>                   /xE2/x97/x87 <U25C7> WHITE DIAMOND
+<LZ>                   /xE2/x97/x8A <U25CA> LOZENGE
+<0m>                   /xE2/x97/x8B <U25CB> WHITE CIRCLE
+<0o>                   /xE2/x97/x8E <U25CE> BULLSEYE
+<0M>                   /xE2/x97/x8F <U25CF> BLACK CIRCLE
+<0L>                   /xE2/x97/x90 <U25D0> CIRCLE WITH LEFT HALF BLACK
+<0R>                   /xE2/x97/x91 <U25D1> CIRCLE WITH RIGHT HALF BLACK
+<Sn>                   /xE2/x97/x98 <U25D8> INVERSE BULLET
+<Ic>                   /xE2/x97/x99 <U25D9> INVERSE WHITE CIRCLE
+<Fd>                   /xE2/x97/xA2 <U25E2> BLACK LOWER RIGHT TRIANGLE
+<_./>//>               /xE2/x97/xA2 <U25E2> BLACK LOWER RIGHT TRIANGLE
+<Bd>                   /xE2/x97/xA3 <U25E3> BLACK LOWER LEFT TRIANGLE
+<Ci>                   /xE2/x97/xAF <U25EF> LARGE CIRCLE
+<*2>                   /xE2/x98/x85 <U2605> BLACK STAR
+<*1>                   /xE2/x98/x86 <U2606> WHITE STAR
+<TEL>                  /xE2/x98/x8E <U260E> BLACK TELEPHONE
+<tel>                  /xE2/x98/x8F <U260F> WHITE TELEPHONE
+<<H>                   /xE2/x98/x9C <U261C> WHITE LEFT POINTING INDEX
+</>H>                  /xE2/x98/x9E <U261E> WHITE RIGHT POINTING INDEX
+<0u>                   /xE2/x98/xBA <U263A> WHITE SMILING FACE
+<0U>                   /xE2/x98/xBB <U263B> BLACK SMILING FACE
+<SU>                   /xE2/x98/xBC <U263C> WHITE SUN WITH RAYS
+<Fm>                   /xE2/x99/x80 <U2640> FEMALE SIGN
+<Ml>                   /xE2/x99/x82 <U2642> MALE SIGN
+<cS>                   /xE2/x99/xA0 <U2660> BLACK SPADE SUIT
+<cH>                   /xE2/x99/xA1 <U2661> WHITE HEART SUIT
+<cD>                   /xE2/x99/xA2 <U2662> WHITE DIAMOND SUIT
+<cC>                   /xE2/x99/xA3 <U2663> BLACK CLUB SUIT
+<cS->                  /xE2/x99/xA4 <U2664> WHITE SPADE SUIT
+<cH->                  /xE2/x99/xA5 <U2665> BLACK HEART SUIT
+<cD->                  /xE2/x99/xA6 <U2666> BLACK DIAMOND SUIT
+<cC->                  /xE2/x99/xA7 <U2667> WHITE CLUB SUIT
+<Md>                   /xE2/x99/xA9 <U2669> QUARTER NOTE
+<M8>                   /xE2/x99/xAA <U266A> EIGHTH NOTE
+<_d!>                  /xE2/x99/xAA <U266A> EIGHTH NOTE
+<M2>                   /xE2/x99/xAB <U266B> BEAMED EIGHTH NOTES
+<M16>                  /xE2/x99/xAC <U266C> BEAMED SIXTEENTH NOTES
+<Mb>                   /xE2/x99/xAD <U266D> MUSIC FLAT SIGN
+<Mx>                   /xE2/x99/xAE <U266E> MUSIC NATURAL SIGN
+<MX>                   /xE2/x99/xAF <U266F> MUSIC SHARP SIGN
+<OK>                   /xE2/x9C/x93 <U2713> CHECK MARK
+<XX>                   /xE2/x9C/x97 <U2717> BALLOT X
+<-X>                   /xE2/x9C/xA0 <U2720> MALTESE CROSS
+<IS>                   /xE3/x80/x80 <U3000> IDEOGRAPHIC SPACE
+<,_>                   /xE3/x80/x81 <U3001> IDEOGRAPHIC COMMA
+<._>                   /xE3/x80/x82 <U3002> IDEOGRAPHIC FULL STOP
+<+">                   /xE3/x80/x83 <U3003> DITTO MARK
+<JIS>                  /xE3/x80/x84 <U3004> JAPANESE INDUSTRIAL STANDARD SYMBOL
+<*_>                   /xE3/x80/x85 <U3005> IDEOGRAPHIC ITERATION MARK
+<;_>                   /xE3/x80/x86 <U3006> IDEOGRAPHIC CLOSING MARK
+<0_>                   /xE3/x80/x87 <U3007> IDEOGRAPHIC NUMBER ZERO
+<<+>                   /xE3/x80/x8A <U300A> LEFT DOUBLE ANGLE BRACKET
+</>+>                  /xE3/x80/x8B <U300B> RIGHT DOUBLE ANGLE BRACKET
+<<'>                   /xE3/x80/x8C <U300C> LEFT CORNER BRACKET
+</>'>                  /xE3/x80/x8D <U300D> RIGHT CORNER BRACKET
+<<">                   /xE3/x80/x8E <U300E> LEFT WHITE CORNER BRACKET
+</>">                  /xE3/x80/x8F <U300F> RIGHT WHITE CORNER BRACKET
+<(">                   /xE3/x80/x90 <U3010> LEFT BLACK LENTICULAR BRACKET
+<)">                   /xE3/x80/x91 <U3011> RIGHT BLACK LENTICULAR BRACKET
+<=T>                   /xE3/x80/x92 <U3012> POSTAL MARK
+<=_>                   /xE3/x80/x93 <U3013> GETA MARK
+<('>                   /xE3/x80/x94 <U3014> LEFT TORTOISE SHELL BRACKET
+<)'>                   /xE3/x80/x95 <U3015> RIGHT TORTOISE SHELL BRACKET
+<(I>                   /xE3/x80/x96 <U3016> LEFT WHITE LENTICULAR BRACKET
+<)I>                   /xE3/x80/x97 <U3017> RIGHT WHITE LENTICULAR BRACKET
+<-?>                   /xE3/x80/x9C <U301C> WAVE DASH
+<=T:)>                 /xE3/x80/xA0 <U3020> POSTAL MARK FACE
+<A5>                   /xE3/x81/x81 <U3041> HIRAGANA LETTER SMALL A
+<a5>                   /xE3/x81/x82 <U3042> HIRAGANA LETTER A
+<I5>                   /xE3/x81/x83 <U3043> HIRAGANA LETTER SMALL I
+<i5>                   /xE3/x81/x84 <U3044> HIRAGANA LETTER I
+<U5>                   /xE3/x81/x85 <U3045> HIRAGANA LETTER SMALL U
+<u5>                   /xE3/x81/x86 <U3046> HIRAGANA LETTER U
+<E5>                   /xE3/x81/x87 <U3047> HIRAGANA LETTER SMALL E
+<e5>                   /xE3/x81/x88 <U3048> HIRAGANA LETTER E
+<O5>                   /xE3/x81/x89 <U3049> HIRAGANA LETTER SMALL O
+<o5>                   /xE3/x81/x8A <U304A> HIRAGANA LETTER O
+<ka>                   /xE3/x81/x8B <U304B> HIRAGANA LETTER KA
+<ga>                   /xE3/x81/x8C <U304C> HIRAGANA LETTER GA
+<ki>                   /xE3/x81/x8D <U304D> HIRAGANA LETTER KI
+<gi>                   /xE3/x81/x8E <U304E> HIRAGANA LETTER GI
+<ku>                   /xE3/x81/x8F <U304F> HIRAGANA LETTER KU
+<gu>                   /xE3/x81/x90 <U3050> HIRAGANA LETTER GU
+<ke>                   /xE3/x81/x91 <U3051> HIRAGANA LETTER KE
+<ge>                   /xE3/x81/x92 <U3052> HIRAGANA LETTER GE
+<ko>                   /xE3/x81/x93 <U3053> HIRAGANA LETTER KO
+<go>                   /xE3/x81/x94 <U3054> HIRAGANA LETTER GO
+<sa>                   /xE3/x81/x95 <U3055> HIRAGANA LETTER SA
+<za>                   /xE3/x81/x96 <U3056> HIRAGANA LETTER ZA
+<si>                   /xE3/x81/x97 <U3057> HIRAGANA LETTER SI
+<zi>                   /xE3/x81/x98 <U3058> HIRAGANA LETTER ZI
+<su>                   /xE3/x81/x99 <U3059> HIRAGANA LETTER SU
+<zu>                   /xE3/x81/x9A <U305A> HIRAGANA LETTER ZU
+<se>                   /xE3/x81/x9B <U305B> HIRAGANA LETTER SE
+<ze>                   /xE3/x81/x9C <U305C> HIRAGANA LETTER ZE
+<so>                   /xE3/x81/x9D <U305D> HIRAGANA LETTER SO
+<zo>                   /xE3/x81/x9E <U305E> HIRAGANA LETTER ZO
+<ta>                   /xE3/x81/x9F <U305F> HIRAGANA LETTER TA
+<da>                   /xE3/x81/xA0 <U3060> HIRAGANA LETTER DA
+<ti>                   /xE3/x81/xA1 <U3061> HIRAGANA LETTER TI
+<di>                   /xE3/x81/xA2 <U3062> HIRAGANA LETTER DI
+<tU>                   /xE3/x81/xA3 <U3063> HIRAGANA LETTER SMALL TU
+<tu>                   /xE3/x81/xA4 <U3064> HIRAGANA LETTER TU
+<du>                   /xE3/x81/xA5 <U3065> HIRAGANA LETTER DU
+<te>                   /xE3/x81/xA6 <U3066> HIRAGANA LETTER TE
+<de>                   /xE3/x81/xA7 <U3067> HIRAGANA LETTER DE
+<to>                   /xE3/x81/xA8 <U3068> HIRAGANA LETTER TO
+<do>                   /xE3/x81/xA9 <U3069> HIRAGANA LETTER DO
+<na>                   /xE3/x81/xAA <U306A> HIRAGANA LETTER NA
+<ni>                   /xE3/x81/xAB <U306B> HIRAGANA LETTER NI
+<nu>                   /xE3/x81/xAC <U306C> HIRAGANA LETTER NU
+<ne>                   /xE3/x81/xAD <U306D> HIRAGANA LETTER NE
+<no>                   /xE3/x81/xAE <U306E> HIRAGANA LETTER NO
+<ha>                   /xE3/x81/xAF <U306F> HIRAGANA LETTER HA
+<ba>                   /xE3/x81/xB0 <U3070> HIRAGANA LETTER BA
+<pa>                   /xE3/x81/xB1 <U3071> HIRAGANA LETTER PA
+<hi>                   /xE3/x81/xB2 <U3072> HIRAGANA LETTER HI
+<bi>                   /xE3/x81/xB3 <U3073> HIRAGANA LETTER BI
+<pi>                   /xE3/x81/xB4 <U3074> HIRAGANA LETTER PI
+<hu>                   /xE3/x81/xB5 <U3075> HIRAGANA LETTER HU
+<bu>                   /xE3/x81/xB6 <U3076> HIRAGANA LETTER BU
+<pu>                   /xE3/x81/xB7 <U3077> HIRAGANA LETTER PU
+<he>                   /xE3/x81/xB8 <U3078> HIRAGANA LETTER HE
+<be>                   /xE3/x81/xB9 <U3079> HIRAGANA LETTER BE
+<pe>                   /xE3/x81/xBA <U307A> HIRAGANA LETTER PE
+<ho>                   /xE3/x81/xBB <U307B> HIRAGANA LETTER HO
+<bo>                   /xE3/x81/xBC <U307C> HIRAGANA LETTER BO
+<po>                   /xE3/x81/xBD <U307D> HIRAGANA LETTER PO
+<ma>                   /xE3/x81/xBE <U307E> HIRAGANA LETTER MA
+<mi>                   /xE3/x81/xBF <U307F> HIRAGANA LETTER MI
+<mu>                   /xE3/x82/x80 <U3080> HIRAGANA LETTER MU
+<me>                   /xE3/x82/x81 <U3081> HIRAGANA LETTER ME
+<mo>                   /xE3/x82/x82 <U3082> HIRAGANA LETTER MO
+<yA>                   /xE3/x82/x83 <U3083> HIRAGANA LETTER SMALL YA
+<ya>                   /xE3/x82/x84 <U3084> HIRAGANA LETTER YA
+<yU>                   /xE3/x82/x85 <U3085> HIRAGANA LETTER SMALL YU
+<yu>                   /xE3/x82/x86 <U3086> HIRAGANA LETTER YU
+<yO>                   /xE3/x82/x87 <U3087> HIRAGANA LETTER SMALL YO
+<yo>                   /xE3/x82/x88 <U3088> HIRAGANA LETTER YO
+<ra>                   /xE3/x82/x89 <U3089> HIRAGANA LETTER RA
+<ri>                   /xE3/x82/x8A <U308A> HIRAGANA LETTER RI
+<ru>                   /xE3/x82/x8B <U308B> HIRAGANA LETTER RU
+<re>                   /xE3/x82/x8C <U308C> HIRAGANA LETTER RE
+<ro>                   /xE3/x82/x8D <U308D> HIRAGANA LETTER RO
+<wA>                   /xE3/x82/x8E <U308E> HIRAGANA LETTER SMALL WA
+<wa>                   /xE3/x82/x8F <U308F> HIRAGANA LETTER WA
+<wi>                   /xE3/x82/x90 <U3090> HIRAGANA LETTER WI
+<we>                   /xE3/x82/x91 <U3091> HIRAGANA LETTER WE
+<wo>                   /xE3/x82/x92 <U3092> HIRAGANA LETTER WO
+<n5>                   /xE3/x82/x93 <U3093> HIRAGANA LETTER N
+<vu>                   /xE3/x82/x94 <U3094> HIRAGANA LETTER VU
+<"5>                   /xE3/x82/x9B <U309B> KATAKANA-HIRAGANA VOICED SOUND MARK
+<05>                   /xE3/x82/x9C <U309C> KATAKANA-HIRAGANA SEMI-VOICED SOUND MARK
+<*5>                   /xE3/x82/x9D <U309D> HIRAGANA ITERATION MARK
+<+5>                   /xE3/x82/x9E <U309E> HIRAGANA VOICED ITERATION MARK
+<a6>                   /xE3/x82/xA1 <U30A1> KATAKANA LETTER SMALL A
+<A6>                   /xE3/x82/xA2 <U30A2> KATAKANA LETTER A
+<i6>                   /xE3/x82/xA3 <U30A3> KATAKANA LETTER SMALL I
+<I6>                   /xE3/x82/xA4 <U30A4> KATAKANA LETTER I
+<u6>                   /xE3/x82/xA5 <U30A5> KATAKANA LETTER SMALL U
+<U6>                   /xE3/x82/xA6 <U30A6> KATAKANA LETTER U
+<e6>                   /xE3/x82/xA7 <U30A7> KATAKANA LETTER SMALL E
+<E6>                   /xE3/x82/xA8 <U30A8> KATAKANA LETTER E
+<o6>                   /xE3/x82/xA9 <U30A9> KATAKANA LETTER SMALL O
+<O6>                   /xE3/x82/xAA <U30AA> KATAKANA LETTER O
+<Ka>                   /xE3/x82/xAB <U30AB> KATAKANA LETTER KA
+<Ga>                   /xE3/x82/xAC <U30AC> KATAKANA LETTER GA
+<Ki>                   /xE3/x82/xAD <U30AD> KATAKANA LETTER KI
+<Gi>                   /xE3/x82/xAE <U30AE> KATAKANA LETTER GI
+<Ku>                   /xE3/x82/xAF <U30AF> KATAKANA LETTER KU
+<Gu>                   /xE3/x82/xB0 <U30B0> KATAKANA LETTER GU
+<Ke>                   /xE3/x82/xB1 <U30B1> KATAKANA LETTER KE
+<Ge>                   /xE3/x82/xB2 <U30B2> KATAKANA LETTER GE
+<Ko>                   /xE3/x82/xB3 <U30B3> KATAKANA LETTER KO
+<Go>                   /xE3/x82/xB4 <U30B4> KATAKANA LETTER GO
+<Sa>                   /xE3/x82/xB5 <U30B5> KATAKANA LETTER SA
+<Za>                   /xE3/x82/xB6 <U30B6> KATAKANA LETTER ZA
+<Si>                   /xE3/x82/xB7 <U30B7> KATAKANA LETTER SI
+<Zi>                   /xE3/x82/xB8 <U30B8> KATAKANA LETTER ZI
+<Su>                   /xE3/x82/xB9 <U30B9> KATAKANA LETTER SU
+<Zu>                   /xE3/x82/xBA <U30BA> KATAKANA LETTER ZU
+<Se>                   /xE3/x82/xBB <U30BB> KATAKANA LETTER SE
+<Ze>                   /xE3/x82/xBC <U30BC> KATAKANA LETTER ZE
+<So>                   /xE3/x82/xBD <U30BD> KATAKANA LETTER SO
+<Zo>                   /xE3/x82/xBE <U30BE> KATAKANA LETTER ZO
+<Ta>                   /xE3/x82/xBF <U30BF> KATAKANA LETTER TA
+<Da>                   /xE3/x83/x80 <U30C0> KATAKANA LETTER DA
+<Ti>                   /xE3/x83/x81 <U30C1> KATAKANA LETTER TI
+<Di>                   /xE3/x83/x82 <U30C2> KATAKANA LETTER DI
+<TU>                   /xE3/x83/x83 <U30C3> KATAKANA LETTER SMALL TU
+<Tu>                   /xE3/x83/x84 <U30C4> KATAKANA LETTER TU
+<Du>                   /xE3/x83/x85 <U30C5> KATAKANA LETTER DU
+<Te>                   /xE3/x83/x86 <U30C6> KATAKANA LETTER TE
+<De>                   /xE3/x83/x87 <U30C7> KATAKANA LETTER DE
+<To>                   /xE3/x83/x88 <U30C8> KATAKANA LETTER TO
+<Do>                   /xE3/x83/x89 <U30C9> KATAKANA LETTER DO
+<Na>                   /xE3/x83/x8A <U30CA> KATAKANA LETTER NA
+<Ni>                   /xE3/x83/x8B <U30CB> KATAKANA LETTER NI
+<Nu>                   /xE3/x83/x8C <U30CC> KATAKANA LETTER NU
+<Ne>                   /xE3/x83/x8D <U30CD> KATAKANA LETTER NE
+<No>                   /xE3/x83/x8E <U30CE> KATAKANA LETTER NO
+<Ha>                   /xE3/x83/x8F <U30CF> KATAKANA LETTER HA
+<Ba>                   /xE3/x83/x90 <U30D0> KATAKANA LETTER BA
+<Pa>                   /xE3/x83/x91 <U30D1> KATAKANA LETTER PA
+<Hi>                   /xE3/x83/x92 <U30D2> KATAKANA LETTER HI
+<Bi>                   /xE3/x83/x93 <U30D3> KATAKANA LETTER BI
+<Pi>                   /xE3/x83/x94 <U30D4> KATAKANA LETTER PI
+<Hu>                   /xE3/x83/x95 <U30D5> KATAKANA LETTER HU
+<Bu>                   /xE3/x83/x96 <U30D6> KATAKANA LETTER BU
+<Pu>                   /xE3/x83/x97 <U30D7> KATAKANA LETTER PU
+<He>                   /xE3/x83/x98 <U30D8> KATAKANA LETTER HE
+<Be>                   /xE3/x83/x99 <U30D9> KATAKANA LETTER BE
+<Pe>                   /xE3/x83/x9A <U30DA> KATAKANA LETTER PE
+<Ho>                   /xE3/x83/x9B <U30DB> KATAKANA LETTER HO
+<Bo>                   /xE3/x83/x9C <U30DC> KATAKANA LETTER BO
+<Po>                   /xE3/x83/x9D <U30DD> KATAKANA LETTER PO
+<Ma>                   /xE3/x83/x9E <U30DE> KATAKANA LETTER MA
+<Mi>                   /xE3/x83/x9F <U30DF> KATAKANA LETTER MI
+<Mu>                   /xE3/x83/xA0 <U30E0> KATAKANA LETTER MU
+<Me>                   /xE3/x83/xA1 <U30E1> KATAKANA LETTER ME
+<Mo>                   /xE3/x83/xA2 <U30E2> KATAKANA LETTER MO
+<YA>                   /xE3/x83/xA3 <U30E3> KATAKANA LETTER SMALL YA
+<Ya>                   /xE3/x83/xA4 <U30E4> KATAKANA LETTER YA
+<YU>                   /xE3/x83/xA5 <U30E5> KATAKANA LETTER SMALL YU
+<Yu>                   /xE3/x83/xA6 <U30E6> KATAKANA LETTER YU
+<YO>                   /xE3/x83/xA7 <U30E7> KATAKANA LETTER SMALL YO
+<Yo>                   /xE3/x83/xA8 <U30E8> KATAKANA LETTER YO
+<Ra>                   /xE3/x83/xA9 <U30E9> KATAKANA LETTER RA
+<Ri>                   /xE3/x83/xAA <U30EA> KATAKANA LETTER RI
+<Ru>                   /xE3/x83/xAB <U30EB> KATAKANA LETTER RU
+<Re>                   /xE3/x83/xAC <U30EC> KATAKANA LETTER RE
+<Ro>                   /xE3/x83/xAD <U30ED> KATAKANA LETTER RO
+<WA>                   /xE3/x83/xAE <U30EE> KATAKANA LETTER SMALL WA
+<Wa>                   /xE3/x83/xAF <U30EF> KATAKANA LETTER WA
+<Wi>                   /xE3/x83/xB0 <U30F0> KATAKANA LETTER WI
+<We>                   /xE3/x83/xB1 <U30F1> KATAKANA LETTER WE
+<Wo>                   /xE3/x83/xB2 <U30F2> KATAKANA LETTER WO
+<N6>                   /xE3/x83/xB3 <U30F3> KATAKANA LETTER N
+<Vu>                   /xE3/x83/xB4 <U30F4> KATAKANA LETTER VU
+<KA>                   /xE3/x83/xB5 <U30F5> KATAKANA LETTER SMALL KA
+<KE>                   /xE3/x83/xB6 <U30F6> KATAKANA LETTER SMALL KE
+<Va>                   /xE3/x83/xB7 <U30F7> KATAKANA LETTER VA
+<Vi>                   /xE3/x83/xB8 <U30F8> KATAKANA LETTER VI
+<Ve>                   /xE3/x83/xB9 <U30F9> KATAKANA LETTER VE
+<Vo>                   /xE3/x83/xBA <U30FA> KATAKANA LETTER VO
+<.6>                   /xE3/x83/xBB <U30FB> KATAKANA MIDDLE DOT
+<-6>                   /xE3/x83/xBC <U30FC> KATAKANA-HIRAGANA PROLONGED SOUND MARK
+<*6>                   /xE3/x83/xBD <U30FD> KATAKANA ITERATION MARK
+<+6>                   /xE3/x83/xBE <U30FE> KATAKANA VOICED ITERATION MARK
+<b4>                   /xE3/x84/x85 <U3105> BOPOMOFO LETTER B
+<p4>                   /xE3/x84/x86 <U3106> BOPOMOFO LETTER P
+<m4>                   /xE3/x84/x87 <U3107> BOPOMOFO LETTER M
+<f4>                   /xE3/x84/x88 <U3108> BOPOMOFO LETTER F
+<d4>                   /xE3/x84/x89 <U3109> BOPOMOFO LETTER D
+<t4>                   /xE3/x84/x8A <U310A> BOPOMOFO LETTER T
+<n4>                   /xE3/x84/x8B <U310B> BOPOMOFO LETTER N
+<l4>                   /xE3/x84/x8C <U310C> BOPOMOFO LETTER L
+<g4>                   /xE3/x84/x8D <U310D> BOPOMOFO LETTER G
+<k4>                   /xE3/x84/x8E <U310E> BOPOMOFO LETTER K
+<h4>                   /xE3/x84/x8F <U310F> BOPOMOFO LETTER H
+<j4>                   /xE3/x84/x90 <U3110> BOPOMOFO LETTER J
+<q4>                   /xE3/x84/x91 <U3111> BOPOMOFO LETTER Q
+<x4>                   /xE3/x84/x92 <U3112> BOPOMOFO LETTER X
+<zh>                   /xE3/x84/x93 <U3113> BOPOMOFO LETTER ZH
+<ch>                   /xE3/x84/x94 <U3114> BOPOMOFO LETTER CH
+<sh>                   /xE3/x84/x95 <U3115> BOPOMOFO LETTER SH
+<r4>                   /xE3/x84/x96 <U3116> BOPOMOFO LETTER R
+<z4>                   /xE3/x84/x97 <U3117> BOPOMOFO LETTER Z
+<c4>                   /xE3/x84/x98 <U3118> BOPOMOFO LETTER C
+<s4>                   /xE3/x84/x99 <U3119> BOPOMOFO LETTER S
+<a4>                   /xE3/x84/x9A <U311A> BOPOMOFO LETTER A
+<o4>                   /xE3/x84/x9B <U311B> BOPOMOFO LETTER O
+<e4>                   /xE3/x84/x9C <U311C> BOPOMOFO LETTER E
+<eh4>                  /xE3/x84/x9D <U311D> BOPOMOFO LETTER EH
+<ai>                   /xE3/x84/x9E <U311E> BOPOMOFO LETTER AI
+<ei>                   /xE3/x84/x9F <U311F> BOPOMOFO LETTER EI
+<au>                   /xE3/x84/xA0 <U3120> BOPOMOFO LETTER AU
+<ou>                   /xE3/x84/xA1 <U3121> BOPOMOFO LETTER OU
+<an>                   /xE3/x84/xA2 <U3122> BOPOMOFO LETTER AN
+<en>                   /xE3/x84/xA3 <U3123> BOPOMOFO LETTER EN
+<aN>                   /xE3/x84/xA4 <U3124> BOPOMOFO LETTER ANG
+<eN>                   /xE3/x84/xA5 <U3125> BOPOMOFO LETTER ENG
+<er>                   /xE3/x84/xA6 <U3126> BOPOMOFO LETTER ER
+<i4>                   /xE3/x84/xA7 <U3127> BOPOMOFO LETTER I
+<u4>                   /xE3/x84/xA8 <U3128> BOPOMOFO LETTER U
+<iu>                   /xE3/x84/xA9 <U3129> BOPOMOFO LETTER IU
+<v4>                   /xE3/x84/xAA <U312A> BOPOMOFO LETTER V
+<nG>                   /xE3/x84/xAB <U312B> BOPOMOFO LETTER NG
+<gn>                   /xE3/x84/xAC <U312C> BOPOMOFO LETTER GN
+<(JU)>                 /xE3/x88/x9C <U321C> PARENTHESIZED HANGUL CIEUC U
+<1c>                   /xE3/x88/xA0 <U3220> PARENTHESIZED IDEOGRAPH ONE
+<2c>                   /xE3/x88/xA1 <U3221> PARENTHESIZED IDEOGRAPH TWO
+<3c>                   /xE3/x88/xA2 <U3222> PARENTHESIZED IDEOGRAPH THREE
+<4c>                   /xE3/x88/xA3 <U3223> PARENTHESIZED IDEOGRAPH FOUR
+<5c>                   /xE3/x88/xA4 <U3224> PARENTHESIZED IDEOGRAPH FIVE
+<6c>                   /xE3/x88/xA5 <U3225> PARENTHESIZED IDEOGRAPH SIX
+<7c>                   /xE3/x88/xA6 <U3226> PARENTHESIZED IDEOGRAPH SEVEN
+<8c>                   /xE3/x88/xA7 <U3227> PARENTHESIZED IDEOGRAPH EIGHT
+<9c>                   /xE3/x88/xA8 <U3228> PARENTHESIZED IDEOGRAPH NINE
+<10c>                  /xE3/x88/xA9 <U3229> PARENTHESIZED IDEOGRAPH TEN
+<KSC>                  /xE3/x89/xBF <U327F> KOREAN STANDARD SYMBOL
+<am>                   /xE3/x8F/x82 <U33C2> SQUARE AM
+<pm>                   /xE3/x8F/x98 <U33D8> SQUARE PM
+<ff>                   /xEF/xAC/x80 <UFB00> LATIN SMALL LIGATURE FF
+<fi>                   /xEF/xAC/x81 <UFB01> LATIN SMALL LIGATURE FI
+<fl>                   /xEF/xAC/x82 <UFB02> LATIN SMALL LIGATURE FL
+<ffi>                  /xEF/xAC/x83 <UFB03> LATIN SMALL LIGATURE FFI
+<ffl>                  /xEF/xAC/x84 <UFB04> LATIN SMALL LIGATURE FFL
+<St>                   /xEF/xAC/x85 <UFB05> LATIN SMALL LIGATURE LONG S T
+<st>                   /xEF/xAC/x86 <UFB06> LATIN SMALL LIGATURE ST
+<3+;>                  /xEF/xB9/xBD <UFE7D> ARABIC SHADDA MEDIAL FORM
+<aM.>                  /xEF/xBA/x82 <UFE82> ARABIC LETTER ALEF WITH MADDA ABOVE FINAL FORM
+<aH.>                  /xEF/xBA/x84 <UFE84> ARABIC LETTER ALEF WITH HAMZA ABOVE FINAL FORM
+<ah.>                  /xEF/xBA/x88 <UFE88> ARABIC LETTER ALEF WITH HAMZA BELOW FINAL FORM
+<a+->                  /xEF/xBA/x8D <UFE8D> ARABIC LETTER ALEF ISOLATED FORM
+<a+.>                  /xEF/xBA/x8E <UFE8E> ARABIC LETTER ALEF FINAL FORM
+<b+->                  /xEF/xBA/x8F <UFE8F> ARABIC LETTER BEH ISOLATED FORM
+<b+.>                  /xEF/xBA/x90 <UFE90> ARABIC LETTER BEH FINAL FORM
+<b+,>                  /xEF/xBA/x91 <UFE91> ARABIC LETTER BEH INITIAL FORM
+<b+;>                  /xEF/xBA/x92 <UFE92> ARABIC LETTER BEH MEDIAL FORM
+<tm->                  /xEF/xBA/x93 <UFE93> ARABIC LETTER TEH MARBUTA ISOLATED FORM
+<tm.>                  /xEF/xBA/x94 <UFE94> ARABIC LETTER TEH MARBUTA FINAL FORM
+<t+->                  /xEF/xBA/x95 <UFE95> ARABIC LETTER TEH ISOLATED FORM
+<t+.>                  /xEF/xBA/x96 <UFE96> ARABIC LETTER TEH FINAL FORM
+<t+,>                  /xEF/xBA/x97 <UFE97> ARABIC LETTER TEH INITIAL FORM
+<t+;>                  /xEF/xBA/x98 <UFE98> ARABIC LETTER TEH MEDIAL FORM
+<tk->                  /xEF/xBA/x99 <UFE99> ARABIC LETTER THEH ISOLATED FORM
+<tk.>                  /xEF/xBA/x9A <UFE9A> ARABIC LETTER THEH FINAL FORM
+<tk,>                  /xEF/xBA/x9B <UFE9B> ARABIC LETTER THEH INITIAL FORM
+<tk;>                  /xEF/xBA/x9C <UFE9C> ARABIC LETTER THEH MEDIAL FORM
+<g+->                  /xEF/xBA/x9D <UFE9D> ARABIC LETTER JEEM ISOLATED FORM
+<g+.>                  /xEF/xBA/x9E <UFE9E> ARABIC LETTER JEEM FINAL FORM
+<g+,>                  /xEF/xBA/x9F <UFE9F> ARABIC LETTER JEEM INITIAL FORM
+<g+;>                  /xEF/xBA/xA0 <UFEA0> ARABIC LETTER JEEM MEDIAL FORM
+<hk->                  /xEF/xBA/xA1 <UFEA1> ARABIC LETTER HAH ISOLATED FORM
+<hk.>                  /xEF/xBA/xA2 <UFEA2> ARABIC LETTER HAH FINAL FORM
+<hk,>                  /xEF/xBA/xA3 <UFEA3> ARABIC LETTER HAH INITIAL FORM
+<hk;>                  /xEF/xBA/xA4 <UFEA4> ARABIC LETTER HAH MEDIAL FORM
+<x+->                  /xEF/xBA/xA5 <UFEA5> ARABIC LETTER KHAH ISOLATED FORM
+<x+.>                  /xEF/xBA/xA6 <UFEA6> ARABIC LETTER KHAH FINAL FORM
+<x+,>                  /xEF/xBA/xA7 <UFEA7> ARABIC LETTER KHAH INITIAL FORM
+<x+;>                  /xEF/xBA/xA8 <UFEA8> ARABIC LETTER KHAH MEDIAL FORM
+<d+->                  /xEF/xBA/xA9 <UFEA9> ARABIC LETTER DAL ISOLATED FORM
+<d+.>                  /xEF/xBA/xAA <UFEAA> ARABIC LETTER DAL FINAL FORM
+<dk->                  /xEF/xBA/xAB <UFEAB> ARABIC LETTER THAL ISOLATED FORM
+<dk.>                  /xEF/xBA/xAC <UFEAC> ARABIC LETTER THAL FINAL FORM
+<r+->                  /xEF/xBA/xAD <UFEAD> ARABIC LETTER REH ISOLATED FORM
+<r+.>                  /xEF/xBA/xAE <UFEAE> ARABIC LETTER REH FINAL FORM
+<z+->                  /xEF/xBA/xAF <UFEAF> ARABIC LETTER ZAIN ISOLATED FORM
+<z+.>                  /xEF/xBA/xB0 <UFEB0> ARABIC LETTER ZAIN FINAL FORM
+<s+->                  /xEF/xBA/xB1 <UFEB1> ARABIC LETTER SEEN ISOLATED FORM
+<s+.>                  /xEF/xBA/xB2 <UFEB2> ARABIC LETTER SEEN FINAL FORM
+<s+,>                  /xEF/xBA/xB3 <UFEB3> ARABIC LETTER SEEN INITIAL FORM
+<s+;>                  /xEF/xBA/xB4 <UFEB4> ARABIC LETTER SEEN MEDIAL FORM
+<sn->                  /xEF/xBA/xB5 <UFEB5> ARABIC LETTER SHEEN ISOLATED FORM
+<sn.>                  /xEF/xBA/xB6 <UFEB6> ARABIC LETTER SHEEN FINAL FORM
+<sn,>                  /xEF/xBA/xB7 <UFEB7> ARABIC LETTER SHEEN INITIAL FORM
+<sn;>                  /xEF/xBA/xB8 <UFEB8> ARABIC LETTER SHEEN MEDIAL FORM
+<c+->                  /xEF/xBA/xB9 <UFEB9> ARABIC LETTER SAD ISOLATED FORM
+<c+.>                  /xEF/xBA/xBA <UFEBA> ARABIC LETTER SAD FINAL FORM
+<c+,>                  /xEF/xBA/xBB <UFEBB> ARABIC LETTER SAD INITIAL FORM
+<c+;>                  /xEF/xBA/xBC <UFEBC> ARABIC LETTER SAD MEDIAL FORM
+<dd->                  /xEF/xBA/xBD <UFEBD> ARABIC LETTER DAD ISOLATED FORM
+<dd.>                  /xEF/xBA/xBE <UFEBE> ARABIC LETTER DAD FINAL FORM
+<dd,>                  /xEF/xBA/xBF <UFEBF> ARABIC LETTER DAD INITIAL FORM
+<dd;>                  /xEF/xBB/x80 <UFEC0> ARABIC LETTER DAD MEDIAL FORM
+<tj->                  /xEF/xBB/x81 <UFEC1> ARABIC LETTER TAH ISOLATED FORM
+<tj.>                  /xEF/xBB/x82 <UFEC2> ARABIC LETTER TAH FINAL FORM
+<tj,>                  /xEF/xBB/x83 <UFEC3> ARABIC LETTER TAH INITIAL FORM
+<tj;>                  /xEF/xBB/x84 <UFEC4> ARABIC LETTER TAH MEDIAL FORM
+<zH->                  /xEF/xBB/x85 <UFEC5> ARABIC LETTER ZAH ISOLATED FORM
+<zH.>                  /xEF/xBB/x86 <UFEC6> ARABIC LETTER ZAH FINAL FORM
+<zH,>                  /xEF/xBB/x87 <UFEC7> ARABIC LETTER ZAH INITIAL FORM
+<zH;>                  /xEF/xBB/x88 <UFEC8> ARABIC LETTER ZAH MEDIAL FORM
+<e+->                  /xEF/xBB/x89 <UFEC9> ARABIC LETTER AIN ISOLATED FORM
+<e+.>                  /xEF/xBB/x8A <UFECA> ARABIC LETTER AIN FINAL FORM
+<e+,>                  /xEF/xBB/x8B <UFECB> ARABIC LETTER AIN INITIAL FORM
+<e+;>                  /xEF/xBB/x8C <UFECC> ARABIC LETTER AIN MEDIAL FORM
+<i+->                  /xEF/xBB/x8D <UFECD> ARABIC LETTER GHAIN ISOLATED FORM
+<i+.>                  /xEF/xBB/x8E <UFECE> ARABIC LETTER GHAIN FINAL FORM
+<i+,>                  /xEF/xBB/x8F <UFECF> ARABIC LETTER GHAIN INITIAL FORM
+<i+;>                  /xEF/xBB/x90 <UFED0> ARABIC LETTER GHAIN MEDIAL FORM
+<f+->                  /xEF/xBB/x91 <UFED1> ARABIC LETTER FEH ISOLATED FORM
+<f+.>                  /xEF/xBB/x92 <UFED2> ARABIC LETTER FEH FINAL FORM
+<f+,>                  /xEF/xBB/x93 <UFED3> ARABIC LETTER FEH INITIAL FORM
+<f+;>                  /xEF/xBB/x94 <UFED4> ARABIC LETTER FEH MEDIAL FORM
+<q+->                  /xEF/xBB/x95 <UFED5> ARABIC LETTER QAF ISOLATED FORM
+<q+.>                  /xEF/xBB/x96 <UFED6> ARABIC LETTER QAF FINAL FORM
+<q+,>                  /xEF/xBB/x97 <UFED7> ARABIC LETTER QAF INITIAL FORM
+<q+;>                  /xEF/xBB/x98 <UFED8> ARABIC LETTER QAF MEDIAL FORM
+<k+->                  /xEF/xBB/x99 <UFED9> ARABIC LETTER KAF ISOLATED FORM
+<k+.>                  /xEF/xBB/x9A <UFEDA> ARABIC LETTER KAF FINAL FORM
+<k+,>                  /xEF/xBB/x9B <UFEDB> ARABIC LETTER KAF INITIAL FORM
+<k+;>                  /xEF/xBB/x9C <UFEDC> ARABIC LETTER KAF MEDIAL FORM
+<l+->                  /xEF/xBB/x9D <UFEDD> ARABIC LETTER LAM ISOLATED FORM
+<l+.>                  /xEF/xBB/x9E <UFEDE> ARABIC LETTER LAM FINAL FORM
+<l+,>                  /xEF/xBB/x9F <UFEDF> ARABIC LETTER LAM INITIAL FORM
+<l+;>                  /xEF/xBB/xA0 <UFEE0> ARABIC LETTER LAM MEDIAL FORM
+<m+->                  /xEF/xBB/xA1 <UFEE1> ARABIC LETTER MEEM ISOLATED FORM
+<m+.>                  /xEF/xBB/xA2 <UFEE2> ARABIC LETTER MEEM FINAL FORM
+<m+,>                  /xEF/xBB/xA3 <UFEE3> ARABIC LETTER MEEM INITIAL FORM
+<m+;>                  /xEF/xBB/xA4 <UFEE4> ARABIC LETTER MEEM MEDIAL FORM
+<n+->                  /xEF/xBB/xA5 <UFEE5> ARABIC LETTER NOON ISOLATED FORM
+<n+.>                  /xEF/xBB/xA6 <UFEE6> ARABIC LETTER NOON FINAL FORM
+<n+,>                  /xEF/xBB/xA7 <UFEE7> ARABIC LETTER NOON INITIAL FORM
+<n+;>                  /xEF/xBB/xA8 <UFEE8> ARABIC LETTER NOON MEDIAL FORM
+<h+->                  /xEF/xBB/xA9 <UFEE9> ARABIC LETTER HEH ISOLATED FORM
+<h+.>                  /xEF/xBB/xAA <UFEEA> ARABIC LETTER HEH FINAL FORM
+<h+,>                  /xEF/xBB/xAB <UFEEB> ARABIC LETTER HEH INITIAL FORM
+<h+;>                  /xEF/xBB/xAC <UFEEC> ARABIC LETTER HEH MEDIAL FORM
+<w+->                  /xEF/xBB/xAD <UFEED> ARABIC LETTER WAW ISOLATED FORM
+<w+.>                  /xEF/xBB/xAE <UFEEE> ARABIC LETTER WAW FINAL FORM
+<j+->                  /xEF/xBB/xAF <UFEEF> ARABIC LETTER ALEF MAKSURA ISOLATED FORM
+<j+.>                  /xEF/xBB/xB0 <UFEF0> ARABIC LETTER ALEF MAKSURA FINAL FORM
+<y+->                  /xEF/xBB/xB1 <UFEF1> ARABIC LETTER YEH ISOLATED FORM
+<y+.>                  /xEF/xBB/xB2 <UFEF2> ARABIC LETTER YEH FINAL FORM
+<y+,>                  /xEF/xBB/xB3 <UFEF3> ARABIC LETTER YEH INITIAL FORM
+<y+;>                  /xEF/xBB/xB4 <UFEF4> ARABIC LETTER YEH MEDIAL FORM
+<lM->                  /xEF/xBB/xB5 <UFEF5> ARABIC LIGATURE LAM WITH ALEF WITH MADDA ABOVE ISOLATED FORM
+<lM.>                  /xEF/xBB/xB6 <UFEF6> ARABIC LIGATURE LAM WITH ALEF WITH MADDA ABOVE FINAL FORM
+<lH->                  /xEF/xBB/xB7 <UFEF7> ARABIC LIGATURE LAM WITH ALEF WITH HAMZA ABOVE ISOLATED FORM
+<lH.>                  /xEF/xBB/xB8 <UFEF8> ARABIC LIGATURE LAM WITH ALEF WITH HAMZA ABOVE FINAL FORM
+<lh->                  /xEF/xBB/xB9 <UFEF9> ARABIC LIGATURE LAM WITH ALEF WITH HAMZA BELOW ISOLATED FORM
+<lh.>                  /xEF/xBB/xBA <UFEFA> ARABIC LIGATURE LAM WITH ALEF WITH HAMZA BELOW FINAL FORM
+<la->                  /xEF/xBB/xBB <UFEFB> ARABIC LIGATURE LAM WITH ALEF ISOLATED FORM
+<la.>                  /xEF/xBB/xBC <UFEFC> ARABIC LIGATURE LAM WITH ALEF FINAL FORM
+END CHARMAP

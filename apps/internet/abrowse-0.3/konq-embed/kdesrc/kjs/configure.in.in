@@ -1,0 +1,36 @@
+dnl KDE JavaScript specific configure tests
+
+AC_CHECK_HEADERS(ieeefp.h)
+AC_CHECK_LIB(m, isinf, [
+  AC_DEFINE_UNQUOTED(HAVE_FUNC_ISINF, 1, [Define if you have isinf])
+])
+AC_CHECK_LIB(m, finite, [
+  AC_DEFINE_UNQUOTED(HAVE_FUNC_FINITE, 1, [Define if you have finite])
+])
+AC_CHECK_LIB(m, isnan, [
+  AC_DEFINE_UNQUOTED(HAVE_FUNC_ISNAN, 1, [Define if you have isnan])
+])
+
+AC_DEFUN(AC_CHECK_PCREPOSIX,
+[
+  AC_MSG_CHECKING([for pcreposix])
+  AC_CACHE_VAL(ac_cv_have_pcreposix,
+  [
+    ac_save_libs="$LIBS"
+    LIBS="-lpcre -lpcreposix"
+    AC_TRY_LINK(
+      [#include <pcreposix.h>],
+      [regfree(0);],
+      [ac_cv_have_pcreposix="yes"],
+      [ac_cv_have_pcreposix="no"]
+    )
+    LIBS="$ac_save_libs"
+  ])
+  AC_MSG_RESULT($ac_cv_have_pcreposix)
+  if test "$ac_cv_have_pcreposix" = "yes"; then
+    LIBPCRE="-lpcre -lpcreposix"
+    AC_DEFINE(HAVE_PCREPOSIX, 1, [Define if you have pcreposix libraries and header files.])
+  fi
+])
+AC_CHECK_PCREPOSIX
+AC_SUBST(LIBPCRE)

@@ -1,0 +1,9 @@
+
+
+     timeout 5
+
+     title  Syllable
+     root   (hd0,0)
+     kernel /atheos/sys/kernel.so root=/dev/disk/bios/hda/0
+     module /atheos/sys/drivers/fs/afs
+     module /atheos/sys/drivers/dev/disk/bios

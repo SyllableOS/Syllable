@@ -1,0 +1,4252 @@
+# Greek messages for GNU textutils
+# Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+# Simos Xenitellis <S.Xenitellis@rhbnc.ac.uk>, 1999, 2000.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: textutils 2.0e\n"
+"POT-Creation-Date: 2002-02-17 10:07+0100\n"
+"PO-Revision-Date: 2000-06-03 18:00+0000\n"
+"Last-Translator: Simos Xenitellis <S.Xenitellis@rhbnc.ac.uk>\n"
+"Language-Team: Greek <nls@tux.hellug.gr>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-7\n"
+"Content-Transfer-Encoding: 8-bit\n"
+
+#: lib/argmatch.c:161
+#, fuzzy, c-format
+msgid "invalid argument %s for %s"
+msgstr "μη έγκυρο όρισμα %s για `%s'"
+
+#: lib/argmatch.c:162
+#, fuzzy, c-format
+msgid "ambiguous argument %s for %s"
+msgstr "ασαφές όρισμα %s για `%s'"
+
+#: lib/argmatch.c:181
+msgid "Valid arguments are:"
+msgstr "Έγκυρα ορίσματα είναι:"
+
+#: lib/closeout.c:107 src/cat.c:186 src/cat.c:267 src/cat.c:320
+#: src/cksum.c:267 src/head.c:152 src/head.c:195 src/tail.c:327
+#: src/tail.c:1653 src/tr.c:1665 src/tr.c:1911 src/tr.c:2019
+msgid "write error"
+msgstr "σφάλμα εγγραφής"
+
+#: lib/error.c:129 lib/error.c:157
+msgid "Unknown system error"
+msgstr "¶γνωστο σφάλμα συστήματος"
+
+#: lib/getopt.c:694
+#, c-format
+msgid "%s: option `%s' is ambiguous\n"
+msgstr "%s: η επιλογή `%s' είναι ασαφής\n"
+
+#: lib/getopt.c:719
+#, c-format
+msgid "%s: option `--%s' doesn't allow an argument\n"
+msgstr "%s: η επιλογή `--%s' δεν επιτρέπει ορίσματα\n"
+
+#: lib/getopt.c:724
+#, c-format
+msgid "%s: option `%c%s' doesn't allow an argument\n"
+msgstr "%s: η επιλογή `%c%s' δεν επιτρέπει ορίσματα\n"
+
+#: lib/getopt.c:742 lib/getopt.c:915
+#, c-format
+msgid "%s: option `%s' requires an argument\n"
+msgstr "%s: η επιλογή `-%s' απαιτεί ένα όρισμα\n"
+
+#: lib/getopt.c:771
+#, c-format
+msgid "%s: unrecognized option `--%s'\n"
+msgstr "%s: μη αναγνωρίσιμη επιλογή `--%s'\n"
+
+#: lib/getopt.c:775
+#, c-format
+msgid "%s: unrecognized option `%c%s'\n"
+msgstr "%s: μη αναγνωρίσιμη επιλογή `%c%s'\n"
+
+#: lib/getopt.c:801
+#, c-format
+msgid "%s: illegal option -- %c\n"
+msgstr "%s: μη αναγνωρίσιμη επιλογή -- %c\n"
+
+#: lib/getopt.c:804
+#, c-format
+msgid "%s: invalid option -- %c\n"
+msgstr "%s: μη έγκυρη επιλογή -- %c\n"
+
+#: lib/getopt.c:834 lib/getopt.c:964
+#, c-format
+msgid "%s: option requires an argument -- %c\n"
+msgstr "%s: η επιλογή απαιτεί ένα όρισμα -- %c\n"
+
+#: lib/getopt.c:881
+#, c-format
+msgid "%s: option `-W %s' is ambiguous\n"
+msgstr "%s: η επιλογή `-W %s' είναι ασαφής\n"
+
+#: lib/getopt.c:899
+#, c-format
+msgid "%s: option `-W %s' doesn't allow an argument\n"
+msgstr "%s: η επιλογή `-W %s' δεν επιτρέπει ορίσματα\n"
+
+#: lib/human.c:365
+msgid "block size"
+msgstr "μέγεθος μπλοκ"
+
+#: lib/makepath.c:176
+#, fuzzy, c-format
+msgid "cannot create directory %s"
+msgstr "αδύνατη η δημιουργία καταλόγου `%s'"
+
+#: lib/makepath.c:182 lib/makepath.c:423
+#, fuzzy, c-format
+msgid "%s exists but is not a directory"
+msgstr "το `%s' υπάρχει ήδη άλλα δεν είναι κατάλογος"
+
+#: lib/makepath.c:319 lib/makepath.c:381 lib/makepath.c:442
+#, fuzzy, c-format
+msgid "cannot change owner and/or group of %s"
+msgstr "δεν είναι δυνατό να παραληφθεί χρήστης και ομάδα"
+
+#: lib/makepath.c:341
+#, c-format
+msgid "cannot chdir to directory, %s"
+msgstr "αδύνατη η αλλαγή στο κατάλογο %s"
+
+#: lib/makepath.c:395 lib/makepath.c:448
+#, fuzzy, c-format
+msgid "cannot change permissions of %s"
+msgstr "αδυναμία αλλαγής ιδιοκτησίας στο %s"
+
+#: lib/obstack.c:494 lib/obstack.c:497 lib/xmalloc.c:66
+#, fuzzy
+msgid "memory exhausted"
+msgstr "η μνήμη εξαντλήθηκε\n"
+
+#: lib/quotearg.c:270
+msgid "`"
+msgstr "`"
+
+#: lib/quotearg.c:271
+msgid "'"
+msgstr "'"
+
+#: lib/rpmatch.c:78
+msgid "^[yY]"
+msgstr "^[yYνΝ]"
+
+#: lib/rpmatch.c:81
+msgid "^[nN]"
+msgstr "^[nNοΟ]"
+
+#: lib/unicodeio.c:159
+msgid "iconv function not usable"
+msgstr ""
+
+#: lib/unicodeio.c:161
+msgid "iconv function not available"
+msgstr ""
+
+#: lib/unicodeio.c:168
+#, fuzzy
+msgid "character out of range"
+msgstr "%s: αριθμός γραμμής έξω από τα όρια"
+
+#: lib/unicodeio.c:231
+#, c-format
+msgid "cannot convert U+%04X to local character set"
+msgstr ""
+
+#: lib/unicodeio.c:233
+#, c-format
+msgid "cannot convert U+%04X to local character set: %s"
+msgstr ""
+
+#: lib/userspec.c:178
+msgid "invalid user"
+msgstr "μη έγκυρος χρήστης"
+
+#: lib/userspec.c:179
+msgid "invalid group"
+msgstr "μη έγκυρη ομάδα"
+
+#: lib/userspec.c:181
+msgid "cannot get the login group of a numeric UID"
+msgstr "αδύνατη η λήψη της ομάδας εισαγωγής στο σύστημα ενός αριθμητικού UID"
+
+#: lib/userspec.c:183
+msgid "cannot omit both user and group"
+msgstr "δεν είναι δυνατό να παραληφθεί χρήστης και ομάδα"
+
+#: lib/version-etc.c:61
+#, c-format
+msgid "Written by %s.\n"
+msgstr "Γραμμένο από τον/την %s.\n"
+
+#: lib/version-etc.c:67
+msgid ""
+"This is free software; see the source for copying conditions.  There is NO\n"
+"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+msgstr ""
+"Αυτό είναι ελεύθερο λογισμικό· δείτε το πηγαίο κώδικα για κανόνες "
+"αντιγραφής\n"
+"ΔΕΝ υπάρχει εγγύηση· ούτε ακόμα για ΧΡΗΣΙΜΟΤΗΤΑ ή ΚΑΤΑΛΛΗΛΟΤΗΤΑ ΓΙΑ ΕΝΑ\n"
+"ΣΥΓΚΕΚΡΙΜΕΝΟ ΣΚΟΠΟ.\n"
+
+#: lib/xmemcoll.c:61
+msgid "string comparison failed"
+msgstr ""
+
+#: lib/xmemcoll.c:62
+msgid "Set LC_ALL='C' to work around the problem."
+msgstr ""
+
+#: lib/xmemcoll.c:64
+#, c-format
+msgid "The strings compared were %s and %s."
+msgstr ""
+
+#: src/cat.c:42 src/split.c:42
+msgid "Torbjorn Granlund and Richard M. Stallman"
+msgstr ""
+
+#: src/cat.c:88 src/cksum.c:276 src/comm.c:71 src/csplit.c:1490 src/cut.c:163
+#: src/expand.c:106 src/fmt.c:267 src/fold.c:63 src/head.c:84 src/join.c:142
+#: src/md5sum.c:121 src/nl.c:172 src/od.c:277 src/paste.c:399 src/pr.c:2752
+#: src/ptx.c:1855 src/sort.c:281 src/split.c:91 src/sum.c:56 src/tac.c:123
+#: src/tail.c:234 src/tr.c:323 src/tsort.c:93 src/unexpand.c:371
+#: src/uniq.c:130 src/wc.c:124
+#, c-format
+msgid "Try `%s --help' for more information.\n"
+msgstr "Δοκιμάστε `%s --help' για περισσότερη βοήθεια.\n"
+
+#: src/cat.c:92
+#, c-format
+msgid "Usage: %s [OPTION] [FILE]...\n"
+msgstr "Χρήση: %s [ΕΠΙΛΟΓΗ] [ΑΡΧΕΙΟ]...\n"
+
+#: src/cat.c:96
+#, fuzzy
+msgid ""
+"Concatenate FILE(s), or standard input, to standard output.\n"
+"\n"
+"  -A, --show-all           equivalent to -vET\n"
+"  -b, --number-nonblank    number nonblank output lines\n"
+"  -e                       equivalent to -vE\n"
+"  -E, --show-ends          display $ at end of each line\n"
+"  -n, --number             number all output lines\n"
+"  -s, --squeeze-blank      never more than one single blank line\n"
+msgstr ""
+"Συνένωση ΑΡΧΕΙΟΥ(ΩΝ) ή κανονικής εισόδου σε κανονική έξοδο.\n"
+"\n"
+"  -A, --show-all           ισοδύναμο με -vET\n"
+"  -b, --number-nonblank    αρίθμηση μη-κενών γραμμών της εξόδου\n"
+"  -e                       ισοδύναμο με -vE\n"
+"  -E, --show-ends          εμφάνιση του $ στο τέλος κάθε γραμμής\n"
+"  -n, --number             αρίθμηση όλων των γραμμών εξόδου\n"
+"  -s, --squeeze-blank      ποτέ περισσότερο από μια μονή κενή γραμμή\n"
+"  -t                       ισοδύναμο με -vT\n"
+"  -T, --show-tabs          εμφάνιση χαρακτήτα TAB σαν ^I\n"
+"  -u                       (αγνοείτε)\n"
+"  -v, --show-nonprinting   χρήση ^ και Μ- κωδικογραφή, εκτός για LFD και "
+"TAB\n"
+"      --help               εμφάνιση αυτής της βοήθειας και έξοδος\n"
+"      --version            εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+"\n"
+"Χωρίς ΑΡΧΕΙΟ ή όταν το αρχείο είναι το -, ανάγνωση από την κανονική είσοδο.\n"
+
+#: src/cat.c:106
+#, fuzzy
+msgid ""
+"  -t                       equivalent to -vT\n"
+"  -T, --show-tabs          display TAB characters as ^I\n"
+"  -u                       (ignored)\n"
+"  -v, --show-nonprinting   use ^ and M- notation, except for LFD and TAB\n"
+msgstr ""
+"Συνένωση ΑΡΧΕΙΟΥ(ΩΝ) ή κανονικής εισόδου σε κανονική έξοδο.\n"
+"\n"
+"  -A, --show-all           ισοδύναμο με -vET\n"
+"  -b, --number-nonblank    αρίθμηση μη-κενών γραμμών της εξόδου\n"
+"  -e                       ισοδύναμο με -vE\n"
+"  -E, --show-ends          εμφάνιση του $ στο τέλος κάθε γραμμής\n"
+"  -n, --number             αρίθμηση όλων των γραμμών εξόδου\n"
+"  -s, --squeeze-blank      ποτέ περισσότερο από μια μονή κενή γραμμή\n"
+"  -t                       ισοδύναμο με -vT\n"
+"  -T, --show-tabs          εμφάνιση χαρακτήτα TAB σαν ^I\n"
+"  -u                       (αγνοείτε)\n"
+"  -v, --show-nonprinting   χρήση ^ και Μ- κωδικογραφή, εκτός για LFD και "
+"TAB\n"
+"      --help               εμφάνιση αυτής της βοήθειας και έξοδος\n"
+"      --version            εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+"\n"
+"Χωρίς ΑΡΧΕΙΟ ή όταν το αρχείο είναι το -, ανάγνωση από την κανονική είσοδο.\n"
+
+#: src/cat.c:114 src/sum.c:72
+msgid ""
+"\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+msgstr ""
+
+#: src/cat.c:119
+msgid ""
+"\n"
+"  -B, --binary             use binary writes to the console device.\n"
+"\n"
+msgstr ""
+"\n"
+"  -B, --binary             χρήση δυαδικών γραψιμάτων στη συσκευή της "
+"κονσόλας.\n"
+"\n"
+
+#: src/cat.c:124 src/cksum.c:291 src/comm.c:88 src/csplit.c:1532 src/cut.c:208
+#: src/expand.c:131 src/fmt.c:297 src/fold.c:86 src/head.c:115 src/join.c:182
+#: src/md5sum.c:157 src/nl.c:227 src/od.c:364 src/paste.c:423 src/pr.c:2864
+#: src/sort.c:352 src/split.c:123 src/sum.c:76 src/tac.c:146 src/tail.c:304
+#: src/tr.c:394 src/tsort.c:105 src/unexpand.c:394 src/uniq.c:169 src/wc.c:146
+msgid ""
+"\n"
+"Report bugs to <bug-textutils@gnu.org>."
+msgstr ""
+"\n"
+"Αναφέρατε σφάλματα στο <bug-textutils@gnu.org>."
+
+#: src/cat.c:308
+#, c-format
+msgid "cannot do ioctl on `%s'"
+msgstr "αδυναμία εκτέλεσης ioctl στο `%s'"
+
+#: src/cat.c:648 src/od.c:1004
+msgid "standard output"
+msgstr "κανονική έξοδος"
+
+#: src/cat.c:779
+#, c-format
+msgid "%s: input file is output file"
+msgstr "%s: το αρχείο εισόδου είναι το αρχείο εξόδου"
+
+#: src/cksum.c:234
+#, fuzzy, c-format
+msgid "%s: file too long"
+msgstr "το αρχείο μηδενίστηκε"
+
+#: src/cksum.c:280
+#, fuzzy, c-format
+msgid ""
+"Usage: %s [FILE]...\n"
+"  or:  %s [OPTION]\n"
+msgstr "Χρήση: %s [ΕΠΙΛΟΓΗ]... [ΕΙΣΟΔΟΣ [ΕΞΟΔΟΣ]]\n"
+
+#: src/cksum.c:285
+msgid ""
+"Print CRC checksum and byte counts of each FILE.\n"
+"\n"
+msgstr ""
+
+#: src/comm.c:35 src/uniq.c:38
+msgid "Richard Stallman and David MacKenzie"
+msgstr ""
+
+#: src/comm.c:75
+#, c-format
+msgid "Usage: %s [OPTION]... LEFT_FILE RIGHT_FILE\n"
+msgstr "Χρήση: %s [ΕΠΙΛΟΓΗ]... ΑΡΙΣΤΕΡΌ_ΑΡΧΕΊΟ ΔΕΞΙΌ_ΑΡΧΕΊΟ\n"
+
+#: src/comm.c:79
+#, fuzzy
+msgid ""
+"Compare sorted files LEFT_FILE and RIGHT_FILE line by line.\n"
+"\n"
+"  -1              suppress lines unique to left file\n"
+"  -2              suppress lines unique to right file\n"
+"  -3              suppress lines that appear in both files\n"
+msgstr ""
+"Σύγκριση ταξινομημένων αρχείων ΑΡΙΣΤΕΡΌ_ΑΡΧΕΊΟ και ΔΕΞΙΌ_ΑΡΧΕΊΟ, ανά "
+"γραμμή.\n"
+"\n"
+"  -1              απόκρυψη μοναδικών γραμμών στο αριστερό αρχείο\n"
+"  -2              απόκρυψη μοναδικών γραμμών στο δεξιό αρχείο\n"
+"  -3              απόκρυψη μοναδικών γραμμών και στα δύο αρχεία\n"
+"      --help      εμφάνιση αυτής της βοήθειας και έξοδος\n"
+"      --version   εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#: src/csplit.c:41
+msgid "Stuart Kemp and David MacKenzie"
+msgstr ""
+
+#: src/csplit.c:290 src/csplit.c:1479 src/tac-pipe.c:57 src/tr.c:1607
+#: src/tr.c:1710 src/tr.c:1753
+msgid "read error"
+msgstr "σφάλμα ανάγνωσης"
+
+#: src/csplit.c:584
+msgid "input disappeared"
+msgstr "η είσοδος εξαφανίστηκε"
+
+#: src/csplit.c:706 src/csplit.c:717
+#, c-format
+msgid "%s: line number out of range"
+msgstr "%s: αριθμός γραμμής έξω από τα όρια"
+
+#: src/csplit.c:744
+#, c-format
+msgid "%s: `%s': line number out of range"
+msgstr "%s: `%s': αριθμός γραμμής έξω από τα όρια"
+
+#: src/csplit.c:747 src/csplit.c:793
+#, c-format
+msgid " on repetition %d\n"
+msgstr " στην επανάληψη %d\n"
+
+#: src/csplit.c:789
+#, c-format
+msgid "%s: `%s': match not found"
+msgstr "%s: `%s': δεν βρέθηκε ταίριασμα"
+
+#: src/csplit.c:850 src/csplit.c:890 src/tac.c:262
+msgid "error in regular expression search"
+msgstr "σφάλμα στην ανεύρεση μέσω κανονικής έκφρασης"
+
+#: src/csplit.c:993
+#, c-format
+msgid "write error for `%s'"
+msgstr "σφάλμα εγγραφής για το `%s'"
+
+#: src/csplit.c:1065
+#, c-format
+msgid "%s: `+' or `-' expected after delimeter"
+msgstr "%s: αναμενόταν `+' ή `-' μετά το διαχωριστή"
+
+#: src/csplit.c:1069
+#, c-format
+msgid "%s: integer expected after `%c'"
+msgstr "%s: αναμενόταν ακέραιος μετά το `%c'"
+
+#: src/csplit.c:1089
+#, c-format
+msgid "%s: `}' is required in repeat count"
+msgstr "%s: το `}' απαιτείται όταν δηλώνονται οι επαναλήψεις"
+
+#: src/csplit.c:1099
+#, c-format
+msgid "%s}: integer required between `{' and `}'"
+msgstr "%s}: απαιτείται ακέραιος μεταξύ των `{' και `}'"
+
+#: src/csplit.c:1126
+#, c-format
+msgid "%s: closing delimeter `%c' missing"
+msgstr "%s: ο τελεστής τερματισμού `%c' έχει παραληφθεί"
+
+#: src/csplit.c:1142
+#, c-format
+msgid "%s: invalid regular expression: %s"
+msgstr "%s: μη έγκυρη κανονική έκφραση: %s"
+
+#: src/csplit.c:1175
+#, c-format
+msgid "%s: invalid pattern"
+msgstr "%s: μη έγκυρη μορφή"
+
+#: src/csplit.c:1178
+#, c-format
+msgid "%s: line number must be greater than zero"
+msgstr "%s: ο αριθμός γραμμής πρέπει να είναι μεγαλύτερος από το μηδέν"
+
+#: src/csplit.c:1184
+#, c-format
+msgid "line number `%s' is smaller than preceding line number, %s"
+msgstr ""
+"ο αριθμός γραμμής `%s' είναι μικρότερος από τον προηγούμενο αριθμό γραμμής, %"
+"s"
+
+#: src/csplit.c:1190
+#, c-format
+msgid "warning: line number `%s' is the same as preceding line number"
+msgstr ""
+"προειδοποίηση: ο αριθμός γραμμής `%s' είναι ίδιος με αυτόν της προηγούμενης "
+"γραμμής"
+
+#: src/csplit.c:1312
+msgid "missing conversion specifier in suffix"
+msgstr "έχει παραληφθεί ο δηλωτής μετατροπής στην κατάληξη"
+
+#: src/csplit.c:1318
+#, c-format
+msgid "invalid conversion specifier in suffix: %c"
+msgstr "μη έγκυρος δηλωτής μετατροπής στην κατάληξη: %c"
+
+#: src/csplit.c:1321
+#, c-format
+msgid "invalid conversion specifier in suffix: \\%.3o"
+msgstr "μη έγκυρος δηλωτής μετατροπής στην κατάληξη: \\%.3o"
+
+#: src/csplit.c:1353
+#, c-format
+msgid "missing %% conversion specification in suffix"
+msgstr "έχει παραληφθεί η δήλωση μετατροπής %% στην κατάληξη"
+
+#: src/csplit.c:1356
+#, c-format
+msgid "too many %% conversion specifications in suffix"
+msgstr "πάρα πολλές δηλώσεις μετατροπής στην κατάληξη"
+
+#: src/csplit.c:1439
+#, c-format
+msgid "%s: invalid number"
+msgstr "%s: μη έγκυρος αριθμός"
+
+#: src/csplit.c:1462
+msgid "too few arguments"
+msgstr "πολύ λίγα ορίσματα"
+
+#: src/csplit.c:1494
+#, c-format
+msgid "Usage: %s [OPTION]... FILE PATTERN...\n"
+msgstr "Χρήση: %s [ΕΠΙΛΟΓΗ]... ΑΡΧΕΙΟ ΜΟΡΦΗ...\n"
+
+#: src/csplit.c:1498
+msgid ""
+"Output pieces of FILE separated by PATTERN(s) to files `xx01', `xx02', ...,\n"
+"and output byte counts of each piece to standard output.\n"
+"\n"
+msgstr ""
+
+#: src/csplit.c:1503 src/cut.c:175 src/expand.c:119 src/fmt.c:277
+#: src/fold.c:76 src/head.c:98 src/nl.c:185 src/paste.c:413 src/pr.c:2765
+#: src/ptx.c:1867 src/sort.c:295 src/split.c:104 src/tac.c:136 src/tail.c:248
+#: src/unexpand.c:384 src/uniq.c:143
+msgid ""
+"Mandatory arguments to long options are mandatory for short options too.\n"
+msgstr ""
+
+#: src/csplit.c:1506
+#, c-format
+msgid ""
+"  -b, --suffix-format=FORMAT use sprintf FORMAT instead of %d\n"
+"  -f, --prefix=PREFIX        use PREFIX instead of `xx'\n"
+"  -k, --keep-files           do not remove output files on errors\n"
+msgstr ""
+
+#: src/csplit.c:1511
+msgid ""
+"  -n, --digits=DIGITS        use specified number of digits instead of 2\n"
+"  -s, --quiet, --silent      do not print counts of output file sizes\n"
+"  -z, --elide-empty-files    remove empty output files\n"
+msgstr ""
+
+#: src/csplit.c:1518
+msgid ""
+"\n"
+"Read standard input if FILE is -.  Each PATTERN may be:\n"
+msgstr ""
+
+#: src/csplit.c:1522
+msgid ""
+"\n"
+"  INTEGER            copy up to but not including specified line number\n"
+"  /REGEXP/[OFFSET]   copy up to but not including a matching line\n"
+"  %REGEXP%[OFFSET]   skip to, but not including a matching line\n"
+"  {INTEGER}          repeat the previous pattern specified number of times\n"
+"  {*}                repeat the previous pattern as many times as possible\n"
+"\n"
+"A line OFFSET is a required `+' or `-' followed by a positive integer.\n"
+msgstr ""
+
+#: src/cut.c:39
+msgid "David Ihnat, David MacKenzie, and Jim Meyering"
+msgstr ""
+
+#: src/cut.c:167 src/expand.c:110 src/fold.c:67 src/head.c:88 src/nl.c:176
+#: src/paste.c:403 src/pr.c:2756 src/sort.c:285 src/sum.c:60 src/tac.c:127
+#: src/tail.c:238 src/unexpand.c:375 src/wc.c:128
+#, c-format
+msgid "Usage: %s [OPTION]... [FILE]...\n"
+msgstr "Χρήση: %s [ΕΠΙΛΟΓΕΣ]... [ΑΡΧΕΙΟ]...\n"
+
+#: src/cut.c:171
+msgid ""
+"Print selected parts of lines from each FILE to standard output.\n"
+"\n"
+msgstr ""
+
+#: src/cut.c:178
+#, fuzzy
+msgid ""
+"  -b, --bytes=LIST        output only these bytes\n"
+"  -c, --characters=LIST   output only these characters\n"
+"  -d, --delimiter=DELIM   use DELIM instead of TAB for field delimiter\n"
+msgstr ""
+"Αναδίπλωση γραμμών εισόδου σε κάθε ΑΡΧΕΙΟ (κανονική είσοδος εξ ορισμού),\n"
+"γράφοντας στην κανονική έξοδο.\n"
+"\n"
+"  -b, --bytes         μέτρηση bytes αντί στηλών\n"
+"  -s, --spaces        αναδίπλωση σε διαστήματα μόνο\n"
+"  -w, --width=ΠΛΑΤΟΣ  χρήση ΠΛΑΤΟΣ στήλες αντί για 80\n"
+"      --help          εμφάνιση αυτής της βοήθειας και έξοδος\n"
+"      --version       εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#: src/cut.c:183
+msgid ""
+"  -f, --fields=LIST       output only these fields;  also print any line\n"
+"                            that contains no delimiter character, unless\n"
+"                            the -s option is specified\n"
+"  -n                      (ignored)\n"
+msgstr ""
+
+#: src/cut.c:189
+msgid ""
+"  -s, --only-delimited    do not print lines not containing delimiters\n"
+"      --output-delimiter=STRING  use STRING as the output delimiter\n"
+"                            the default is to use the input delimiter\n"
+msgstr ""
+
+#: src/cut.c:196
+msgid ""
+"\n"
+"Use one, and only one of -b, -c or -f.  Each LIST is made up of one\n"
+"range, or many ranges separated by commas.  Each range is one of:\n"
+"\n"
+"  N     N'th byte, character or field, counted from 1\n"
+"  N-    from N'th byte, character or field, to end of line\n"
+"  N-M   from N'th to M'th (included) byte, character or field\n"
+"  -M    from first to M'th (included) byte, character or field\n"
+"\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+msgstr ""
+
+#: src/cut.c:263 src/cut.c:294 src/cut.c:354
+msgid "invalid byte or field list"
+msgstr "μη έγκυρο byte ή λίστα πεδίων"
+
+#: src/cut.c:624 src/cut.c:633
+msgid "only one type of list may be specified"
+msgstr "μόνο ένα είδος λίστας μπορεί να οριστεί"
+
+#: src/cut.c:627
+msgid "missing list of positions"
+msgstr "έχει παραληφθεί η λίστα με τις θέσεις"
+
+#: src/cut.c:636
+msgid "missing list of fields"
+msgstr "έχει παραληφθεί η λίστα με τα πεδία"
+
+#: src/cut.c:643
+msgid "the delimiter must be a single character"
+msgstr "ο διαχωριστής πρέπει να είναι ένας μόνο χαρακτήρας"
+
+#: src/cut.c:673
+msgid "you must specify a list of bytes, characters, or fields"
+msgstr "πρέπει να ορίσετε λίστα από bytes, χαρακτήρες ή πεδία"
+
+#: src/cut.c:676
+msgid "a delimiter may be specified only when operating on fields"
+msgstr "ένας διαχωριστής μπορεί να οριστεί μόνο όταν λειτουργούμε με πεδία"
+
+#: src/cut.c:679
+msgid ""
+"suppressing non-delimited lines makes sense\n"
+"\tonly when operating on fields"
+msgstr ""
+"η απόκρυψη γραμμών που δεν έχουν διαχωριστές έχει νόημα\n"
+"\tμόνο όταν λειτουργούμε με πεδία"
+
+#: src/expand.c:114
+msgid ""
+"Convert tabs in each FILE to spaces, writing to standard output.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/expand.c:122
+msgid ""
+"  -i, --initial       do not convert TABs after non whitespace\n"
+"  -t, --tabs=NUMBER   have tabs NUMBER characters apart, not 8\n"
+msgstr ""
+
+#: src/expand.c:126
+msgid ""
+"  -t, --tabs=LIST     use comma separated list of explicit tab positions\n"
+msgstr ""
+
+#: src/expand.c:173 src/unexpand.c:153
+msgid "tab size contains an invalid character"
+msgstr "το μέγεθος στηλογνώμονα περιέχει μη έγκυρο χαρακτήρα"
+
+#: src/expand.c:191 src/unexpand.c:171
+msgid "tab size cannot be 0"
+msgstr "το μέγεθος στηλογνώμονα δε μπορεί να είναι 0"
+
+#: src/expand.c:193 src/unexpand.c:173
+msgid "tab sizes must be ascending"
+msgstr "τα μεγέθη του στηλογνώμονα πρέπει να είναι κατά αύξουσα σειρά"
+
+#: src/expand.c:386
+msgid "`-LIST' option is obsolete; use `-t LIST'"
+msgstr ""
+
+#: src/fmt.c:271
+#, c-format
+msgid "Usage: %s [-DIGITS] [OPTION]... [FILE]...\n"
+msgstr "Χρήση: %s [-ΨΗΦΙΑ] [ΕΠΙΛΟΓΗ]... [ΑΡΧΕΙΟ]...\n"
+
+#: src/fmt.c:272
+msgid ""
+"Reformat each paragraph in the FILE(s), writing to standard output.\n"
+"If no FILE or if FILE is `-', read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/fmt.c:280
+#, fuzzy
+msgid ""
+"  -c, --crown-margin        preserve indentation of first two lines\n"
+"  -p, --prefix=STRING       combine only lines having STRING as prefix\n"
+"  -s, --split-only          split long lines, but do not refill\n"
+msgstr ""
+"Μορφοποίηση ξανά κάθε παραγράφου στο ΑΡΧΕΙΟ(Α), γράφοντας στην κανονική "
+"έξοδο.\n"
+"Αν κανένα ΑΡΧΕΙΟ δεν έχει οριστεί ή το ΑΡΧΕΙΟ είναι το `-', ανάγνωση από "
+"κανονική είσοδο.\n"
+"\n"
+"Υποχρεωτικά ορίσματα στις μακρές επιλογές είναι υποχρεωτικά για σύντομες "
+"επιλογές επίσεις.\n"
+"  -c, --crown-margin        διατήρησε την εσοχή των δύο πρώτων γραμμών\n"
+"  -p, --prefix=ΑΛΦΑΡΙΘ      συνδύασε μόνο γραμμές με ΑΛΦΑΡΙΘΜητικό ως "
+"πρόθεμα\n"
+"  -s, --split-only          χώρισε στα δύο τις μακρές γραμμές αλλά χωρίς "
+"γέμισμα ξανά\n"
+"  -t, --tagged-paragraph    η εσοχή της πρώτης γραμμής να είναι διαφορετική "
+"από τη δεύτερη\n"
+"  -u, --uniform-spacing     ένα διάστημα μεταξύ λέξεων, δύο μετά από "
+"προτάσεις\n"
+"  -w, --width=ΑΡΙΘΜΟΣ       μέγιστο πλάτος γραμμής (εξ ορισμού 75 στήλες)\n"
+"      --help                εμφάνιση αυτής της βοήθειας και έξοδος\n"
+"      --version             εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+"\n"
+"Στο -wΑΡΙΘΜΟΣ, το γράμμα `w' μπορεί να παραληφθεί.\n"
+
+#: src/fmt.c:286
+#, fuzzy
+msgid ""
+"  -t, --tagged-paragraph    indentation of first line different from second\n"
+"  -u, --uniform-spacing     one space between words, two after sentences\n"
+"  -w, --width=NUMBER        maximum line width (default of 75 columns)\n"
+msgstr ""
+"Μορφοποίηση ξανά κάθε παραγράφου στο ΑΡΧΕΙΟ(Α), γράφοντας στην κανονική "
+"έξοδο.\n"
+"Αν κανένα ΑΡΧΕΙΟ δεν έχει οριστεί ή το ΑΡΧΕΙΟ είναι το `-', ανάγνωση από "
+"κανονική είσοδο.\n"
+"\n"
+"Υποχρεωτικά ορίσματα στις μακρές επιλογές είναι υποχρεωτικά για σύντομες "
+"επιλογές επίσεις.\n"
+"  -c, --crown-margin        διατήρησε την εσοχή των δύο πρώτων γραμμών\n"
+"  -p, --prefix=ΑΛΦΑΡΙΘ      συνδύασε μόνο γραμμές με ΑΛΦΑΡΙΘΜητικό ως "
+"πρόθεμα\n"
+"  -s, --split-only          χώρισε στα δύο τις μακρές γραμμές αλλά χωρίς "
+"γέμισμα ξανά\n"
+"  -t, --tagged-paragraph    η εσοχή της πρώτης γραμμής να είναι διαφορετική "
+"από τη δεύτερη\n"
+"  -u, --uniform-spacing     ένα διάστημα μεταξύ λέξεων, δύο μετά από "
+"προτάσεις\n"
+"  -w, --width=ΑΡΙΘΜΟΣ       μέγιστο πλάτος γραμμής (εξ ορισμού 75 στήλες)\n"
+"      --help                εμφάνιση αυτής της βοήθειας και έξοδος\n"
+"      --version             εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+"\n"
+"Στο -wΑΡΙΘΜΟΣ, το γράμμα `w' μπορεί να παραληφθεί.\n"
+
+#: src/fmt.c:293
+msgid ""
+"\n"
+"In -wNUMBER, the letter `w' may be omitted.\n"
+msgstr ""
+
+#: src/fmt.c:345
+#, fuzzy, c-format
+msgid "invalid width option: `%s'"
+msgstr "μη έγκυρο είδος αλφαριθμητικού `%s'"
+
+#: src/fmt.c:385
+#, fuzzy, c-format
+msgid "invalid width: `%s'"
+msgstr "μη έγκυρος αριθμός πεδίου: `%s'"
+
+#: src/fold.c:71
+msgid ""
+"Wrap input lines in each FILE (standard input by default), writing to\n"
+"standard output.\n"
+"\n"
+msgstr ""
+
+#: src/fold.c:79
+msgid ""
+"  -b, --bytes         count bytes rather than columns\n"
+"  -s, --spaces        break at spaces\n"
+"  -w, --width=WIDTH   use WIDTH columns instead of 80\n"
+msgstr ""
+
+#: src/fold.c:267
+#, c-format
+msgid "`%s' option is obsolete; use `%s'"
+msgstr ""
+
+#: src/fold.c:295
+#, c-format
+msgid "invalid number of columns: `%s'"
+msgstr "μη έγκυρος αριθμός από στήλες: `%s'"
+
+#: src/head.c:92
+#, fuzzy
+msgid ""
+"Print first 10 lines of each FILE to standard output.\n"
+"With more than one FILE, precede each with a header giving the file name.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"Εμφάνιση των 10 πρώτων γραμμών από κάθε ΑΡΧΕΙΟ στην κανονική έξοδο.\n"
+"Με περισσότερα από ένα ΑΡΧΕΙΟ, να προηγηθεί επισέλιδο με το όνομα του "
+"αρχείου.\n"
+"Χωρίς ΑΡΧΕΙΟ ή όταν το ΑΡΧΕΙΟ είναι το -, ανάγνωση από την κανονική είσοδο.\n"
+"\n"
+"  -c, --bytes=ΜΕΓΕΘΟΣ      εμφάνιση των πρώτων ΜΕΓΕΘΟΣ bytes\n"
+"  -n, --lines=ΑΡΙΘΜΟΣ      εμφάνιση των πρώτων ΑΡΙΘΜΟΣ γραμμών αντί των "
+"πρώτων 10\n"
+"  -q, --quiet, --silent    να μην τυπώνονται επισέλιδα με τα ονόματα "
+"αρχείων\n"
+"  -v, --verbose            να τυπώνονται πάντα επισέλιδα με τα ονόματα "
+"αρχείων\n"
+"      --help               εμφάνιση αυτής της βοήθειας και έξοδος\n"
+"      --version            εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+"\n"
+"Το ΜΕΓΕΘΟΣ μπορεί να έχει κατάληξη με πολλαπλασιαστή: b για 512, k για 1K, m "
+"για 1 Meg.\n"
+"Αν χρησιμοποιείται το -VALUE σαν πρώτη ΕΠΙΛΟΓΗ, ανάγνωσε -c ΤΙΜΗ όταν\n"
+"ένας από τους πολλαπλασιαστές bkm ακολουθεί συνενωμένος, διαφορετικά "
+"ανάγνωσε -n ΤΙΜΗ\n"
+
+#: src/head.c:101
+msgid ""
+"  -c, --bytes=SIZE         print first SIZE bytes\n"
+"  -n, --lines=NUMBER       print first NUMBER lines instead of first 10\n"
+msgstr ""
+
+#: src/head.c:105
+msgid ""
+"  -q, --quiet, --silent    never print headers giving file names\n"
+"  -v, --verbose            always print headers giving file names\n"
+msgstr ""
+
+#: src/head.c:111 src/split.c:119
+msgid ""
+"\n"
+"SIZE may have a multiplier suffix: b for 512, k for 1K, m for 1 Meg.\n"
+msgstr ""
+
+#: src/head.c:189
+#, fuzzy, c-format
+msgid "cannot reposition file pointer for %s"
+msgstr "αδύνατη η δημιουργία καταλόγου `%s'"
+
+#: src/head.c:220 src/md5sum.c:334 src/md5sum.c:675 src/od.c:950 src/od.c:1990
+#: src/pr.c:1166 src/pr.c:1373 src/pr.c:1495 src/tac.c:484 src/tac.c:490
+#: src/tr.c:2026 src/tsort.c:585
+msgid "standard input"
+msgstr "κανονική είσοδος"
+
+#: src/head.c:255 src/tail.c:1380
+#, c-format
+msgid "%s: %s is so large that it is not representable"
+msgstr "%s: το %s είναι τόσο μεγάλο που δε μπορεί να αναπαρασταθεί"
+
+#: src/head.c:256 src/tail.c:1382
+msgid "number of lines"
+msgstr "αριθμός γραμμών"
+
+#: src/head.c:256 src/tail.c:1383
+msgid "number of bytes"
+msgstr "αριθμός από bytes"
+
+#: src/head.c:263 src/tail.c:1469
+msgid "invalid number of lines"
+msgstr "μη έγκυρος αριθμός από γραμμές"
+
+#: src/head.c:264 src/tail.c:1470
+msgid "invalid number of bytes"
+msgstr "μη έγκυρος αριθμός από bytes"
+
+#: src/head.c:340
+#, c-format
+msgid "unrecognized option `-%c'"
+msgstr "μη αναγνωρίσημη επιλογή `-%c'"
+
+#: src/head.c:347
+#, c-format
+msgid "`-%s' option is obsolete; use `-%c %.*s%.*s%s'"
+msgstr ""
+
+#: src/join.c:146
+#, c-format
+msgid "Usage: %s [OPTION]... FILE1 FILE2\n"
+msgstr "Χρήση: %s [ΕΠΙΛΟΓΗ]... ΑΡΧΕΙΟ1 ΑΡΧΕΙΟ2\n"
+
+#: src/join.c:150
+msgid ""
+"For each pair of input lines with identical join fields, write a line to\n"
+"standard output.  The default join field is the first, delimited\n"
+"by whitespace.  When FILE1 or FILE2 (not both) is -, read standard input.\n"
+"\n"
+"  -a SIDE           print unpairable lines coming from file SIDE\n"
+"  -e EMPTY          replace missing input fields with EMPTY\n"
+msgstr ""
+
+#: src/join.c:158
+msgid ""
+"  -i, --ignore-case ignore differences in case when comparing fields\n"
+"  -j FIELD          (obsolescent) equivalent to `-1 FIELD -2 FIELD'\n"
+"  -j1 FIELD         (obsolescent) equivalent to `-1 FIELD'\n"
+"  -j2 FIELD         (obsolescent) equivalent to `-2 FIELD'\n"
+"  -o FORMAT         obey FORMAT while constructing output line\n"
+"  -t CHAR           use CHAR as input and output field separator\n"
+msgstr ""
+
+#: src/join.c:166
+#, fuzzy
+msgid ""
+"  -v SIDE           like -a SIDE, but suppress joined output lines\n"
+"  -1 FIELD          join on this FIELD of file 1\n"
+"  -2 FIELD          join on this FIELD of file 2\n"
+msgstr ""
+"Σύγκριση ταξινομημένων αρχείων ΑΡΙΣΤΕΡΌ_ΑΡΧΕΊΟ και ΔΕΞΙΌ_ΑΡΧΕΊΟ, ανά "
+"γραμμή.\n"
+"\n"
+"  -1              απόκρυψη μοναδικών γραμμών στο αριστερό αρχείο\n"
+"  -2              απόκρυψη μοναδικών γραμμών στο δεξιό αρχείο\n"
+"  -3              απόκρυψη μοναδικών γραμμών και στα δύο αρχεία\n"
+"      --help      εμφάνιση αυτής της βοήθειας και έξοδος\n"
+"      --version   εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#: src/join.c:173
+msgid ""
+"\n"
+"Unless -t CHAR is given, leading blanks separate fields and are ignored,\n"
+"else fields are separated by CHAR.  Any FIELD is a field number counted\n"
+"from 1.  FORMAT is one or more comma or blank separated specifications,\n"
+"each being `SIDE.FIELD' or `0'.  Default FORMAT outputs the join field,\n"
+"the remaining fields from FILE1, the remaining fields from FILE2, all\n"
+"separated by CHAR.\n"
+msgstr ""
+
+#: src/join.c:648
+#, c-format
+msgid "invalid field specifier: `%s'"
+msgstr "μη έγκυρος δηλωτής πεδίου: `%s'"
+
+#: src/join.c:662 src/join.c:778 src/join.c:814
+#, c-format
+msgid "invalid field number: `%s'"
+msgstr "μη έγκυρος αριθμός πεδίου: `%s'"
+
+#: src/join.c:675
+#, c-format
+msgid "invalid file number in field spec: `%s'"
+msgstr "μη έγκυρος αριθμός αρχείου στη δήλωση πεδίου: `%s'"
+
+#: src/join.c:798
+#, c-format
+msgid "invalid field number for file 1: `%s'"
+msgstr "μη έγκυρος αριθμός πεδίου για το αρχείο 1: `%s'"
+
+#: src/join.c:807
+#, c-format
+msgid "invalid field number for file 2: `%s'"
+msgstr "μη έγκυρος αριθμός πεδίου για το αρχείο 2: `%s'"
+
+#: src/join.c:839
+msgid "too many non-option arguments"
+msgstr "πάρα πολλά ορίσματα που δεν έχουν επιλογές"
+
+#: src/join.c:861
+msgid "too few non-option arguments"
+msgstr "πάρα πολλά ορίσματα που δεν έχουν επιλογές"
+
+#: src/join.c:872
+msgid "both files cannot be standard input"
+msgstr "και τα δύο αρχεία δε μπορεί να είναι η κανονική είσοδος"
+
+#: src/md5sum.c:38
+msgid "Ulrich Drepper and Scott Miller"
+msgstr ""
+
+#: src/md5sum.c:125
+#, c-format
+msgid ""
+"Usage: %s [OPTION] [FILE]...\n"
+"  or:  %s [OPTION] --check [FILE]\n"
+"Print or check %s (%d-bit) checksums.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+msgstr ""
+
+#: src/md5sum.c:134
+#, c-format
+msgid ""
+"\n"
+"  -b, --binary            read files in binary mode (default on DOS/"
+"Windows)\n"
+"  -c, --check             check %s sums against given list\n"
+"  -t, --text              read files in text mode (default)\n"
+"\n"
+msgstr ""
+
+#: src/md5sum.c:142
+msgid ""
+"The following two options are useful only when verifying checksums:\n"
+"      --status            don't output anything, status code shows success\n"
+"  -w, --warn              warn about improperly formated checksum lines\n"
+"\n"
+msgstr ""
+
+#: src/md5sum.c:150
+#, c-format
+msgid ""
+"\n"
+"The sums are computed as described in %s.  When checking, the input\n"
+"should be a former output of this program.  The default mode is to print\n"
+"a line with checksum, a character indicating type (`*' for binary, ` ' for\n"
+"text), and name for each FILE.\n"
+msgstr ""
+
+#: src/md5sum.c:379
+#, fuzzy, c-format
+msgid "%s: %lu: improperly formatted %s checksum line"
+msgstr "%s: %lu: εσφαλμένα μορφοποιημένη γραμμή αθροίσματος ελέγχου MD5"
+
+#: src/md5sum.c:401
+#, c-format
+msgid "%s: FAILED open or read\n"
+msgstr "%s: ΑΝΕΠΙΤΥΧΕΣ άνοιγμα ή ανάγνωση\n"
+
+#: src/md5sum.c:425
+msgid "FAILED"
+msgstr "ΑΝΕΠΙΤΥΧΕΣ"
+
+#: src/md5sum.c:425
+msgid "OK"
+msgstr "ΕΝΤΑΞΗ"
+
+#: src/md5sum.c:438
+#, c-format
+msgid "%s: read error"
+msgstr "%s: σφάλμα ανάγνωσης"
+
+#: src/md5sum.c:451
+#, fuzzy, c-format
+msgid "%s: no properly formatted %s checksum lines found"
+msgstr ""
+"%s: δε βρέθηκαν κανονικά μορφοποιημένες γραμμές αθροισμάτων ελέγχου MD5"
+
+#: src/md5sum.c:464
+#, c-format
+msgid "WARNING: %d of %d listed %s could not be read"
+msgstr "ΠΡΟΕΙΔΟΠΟΙΗΣΗ: %d από %d αναφερόμενα %s δεν ήταν δυνατό να αναγνωστούν"
+
+#: src/md5sum.c:467
+msgid "file"
+msgstr "αρχείο"
+
+#: src/md5sum.c:467
+msgid "files"
+msgstr "αρχεία"
+
+#: src/md5sum.c:473
+#, c-format
+msgid "WARNING: %d of %d computed %s did NOT match"
+msgstr "ΠΡΟΕΙΔΟΠΟΙΗΣΗ: %d από %d υπολόγισαν σε %s ΔΕΝ ταίριαξαν"
+
+#: src/md5sum.c:476
+msgid "checksum"
+msgstr "άθροισμα ελέγχου"
+
+#: src/md5sum.c:476
+msgid "checksums"
+msgstr "αθροίσματα ελέγχου"
+
+#: src/md5sum.c:558
+msgid ""
+"the --binary and --text options are meaningless when verifying checksums"
+msgstr ""
+"οι επιλογές --binary και --text δεν έχουν σημασία όταν επιβεβαιώνονται "
+"αθροίσματα ελέγχου"
+
+#: src/md5sum.c:566
+msgid "the --string and --check options are mutually exclusive"
+msgstr "οι επιλογές --string και --check είναι αμοιβαίως αποκλειόμενες"
+
+#: src/md5sum.c:573
+msgid "the --status option is meaningful only when verifying checksums"
+msgstr ""
+"η επιλογή --status έχει έννοια μόνο στην επιβεβαίωση αθροισμάτων ελέγχου"
+
+#: src/md5sum.c:580
+msgid "the --warn option is meaningful only when verifying checksums"
+msgstr "η επιλογή --warn έχει έννοια μόνο στην επιβεβαίωση αθροισμάτων ελέγχου"
+
+#: src/md5sum.c:590
+msgid "no files may be specified when using --string"
+msgstr "δε μπορούν να δηλώνονται αρχεία όταν γίνεται χρήση του --string"
+
+#: src/md5sum.c:612
+msgid "only one argument may be specified when using --check"
+msgstr "μόνο ένα όρισμα μπορεί να δηλώνεται όταν γίνεται χρήση του --check"
+
+#: src/nl.c:39
+msgid "Scott Bartram and David MacKenzie"
+msgstr ""
+
+#: src/nl.c:180
+msgid ""
+"Write each FILE to standard output, with line numbers added.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/nl.c:188
+#, fuzzy
+msgid ""
+"  -b, --body-numbering=STYLE      use STYLE for numbering body lines\n"
+"  -d, --section-delimiter=CC      use CC for separating logical pages\n"
+"  -f, --footer-numbering=STYLE    use STYLE for numbering footer lines\n"
+msgstr ""
+"Εγγραφή κάθε αρχείου στην κανονική έξοδο, τελευταία γραμμή πρώτα.\n"
+"Χωρίς ΑΡΧΕΙΟ, ή όταν το αρχείο είναι το -, ανάγνωση από την κανονική "
+"είσοδο.\n"
+"\n"
+"  -b, --before             τοποθέτηση του διαχωριστή πριν αντί για μετά\n"
+"  -r, --regex              μετάφραση του διαχωριστή ως κανονική έκφραση\n"
+"  -s, --separator=ΑΛΦΑΡΙΘΜ  χρήση ΑΛΦΑΡΙΘΜητικού ως διαχωριστής αντί του "
+"χαρακτήρα νέας γραμμής\n"
+"      --help               εμφάνιση αυτής της βοήθειας και έξοδος\n"
+"      --version            εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#: src/nl.c:193
+msgid ""
+"  -h, --header-numbering=STYLE    use STYLE for numbering header lines\n"
+"  -i, --page-increment=NUMBER     line number increment at each line\n"
+"  -l, --join-blank-lines=NUMBER   group of NUMBER empty lines counted as "
+"one\n"
+"  -n, --number-format=FORMAT      insert line numbers according to FORMAT\n"
+"  -p, --no-renumber               do not reset line numbers at logical "
+"pages\n"
+"  -s, --number-separator=STRING   add STRING after (possible) line number\n"
+msgstr ""
+
+#: src/nl.c:201
+msgid ""
+"  -v, --first-page=NUMBER         first line number on each logical page\n"
+"  -w, --number-width=NUMBER       use NUMBER columns for line numbers\n"
+msgstr ""
+
+#: src/nl.c:207
+msgid ""
+"\n"
+"By default, selects -v1 -i1 -l1 -sTAB -w6 -nrn -hn -bt -fn.  CC are\n"
+"two delimiter characters for separating logical pages, a missing\n"
+"second character implies :.  Type \\\\ for \\.  STYLE is one of:\n"
+msgstr ""
+
+#: src/nl.c:213
+msgid ""
+"\n"
+"  a         number all lines\n"
+"  t         number only nonempty lines\n"
+"  n         number no lines\n"
+"  pREGEXP   number only lines that contain a match for REGEXP\n"
+"\n"
+"FORMAT is one of:\n"
+"\n"
+"  ln   left justified, no leading zeros\n"
+"  rn   right justified, no leading zeros\n"
+"  rz   right justified, leading zeros\n"
+"\n"
+msgstr ""
+
+#: src/nl.c:500
+#, c-format
+msgid "invalid starting line number: `%s'"
+msgstr "μη έγκυρος αρχικός αριθμός γραμμής: `%s'"
+
+#: src/nl.c:510
+#, c-format
+msgid "invalid line number increment: `%s'"
+msgstr "μη έγκυρη αύξηση στον αριθμό εντολής: `%s'"
+
+#: src/nl.c:523
+#, c-format
+msgid "invalid number of blank lines: `%s'"
+msgstr "μη έγκυρος αριθμός από κενές γραμμές: `%s'"
+
+#: src/nl.c:537
+#, c-format
+msgid "invalid line number field width: `%s'"
+msgstr "μη έγκυρος μήκος πεδίου αριθμού γραμμής: `%s'"
+
+#: src/od.c:281
+#, c-format
+msgid ""
+"Usage: %s [OPTION]... [FILE]...\n"
+"  or:  %s --traditional [FILE] [[+]OFFSET [[+]LABEL]]\n"
+msgstr ""
+"Χρήση: %s [ΕΠΙΛΟΓΗ]... [ΑΡΧΕΙΟ]...\n"
+"   ή:  %s --traditional [ΑΡΧΕΙΟ] [[+]ΘΕΣΗ [[+]ΧΑΡΑΚΤΗΡΙΣΤΙΚΟ]]\n"
+
+#: src/od.c:286
+msgid ""
+"\n"
+"Write an unambiguous representation, octal bytes by default,\n"
+"of FILE to standard output.  With more than one FILE argument,\n"
+"concatenate them in the listed order to form the input.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/od.c:293
+msgid "All arguments to long options are mandatory for short options.\n"
+msgstr ""
+
+#: src/od.c:296
+msgid ""
+"  -A, --address-radix=RADIX   decide how file offsets are printed\n"
+"  -j, --skip-bytes=BYTES      skip BYTES input bytes first\n"
+msgstr ""
+
+#: src/od.c:300
+msgid ""
+"  -N, --read-bytes=BYTES      limit dump to BYTES input bytes\n"
+"  -s, --strings[=BYTES]       output strings of at least BYTES graphic "
+"chars\n"
+"  -t, --format=TYPE           select output format or formats\n"
+"  -v, --output-duplicates     do not use * to mark line suppression\n"
+"  -w, --width[=BYTES]         output BYTES bytes per output line\n"
+"      --traditional           accept arguments in traditional form\n"
+msgstr ""
+
+#: src/od.c:310
+msgid ""
+"\n"
+"Traditional format specifications may be intermixed; they accumulate:\n"
+"  -a   same as -t a,  select named characters\n"
+"  -b   same as -t oC, select octal bytes\n"
+"  -c   same as -t c,  select ASCII characters or backslash escapes\n"
+"  -d   same as -t u2, select unsigned decimal shorts\n"
+msgstr ""
+
+#: src/od.c:318
+msgid ""
+"  -f   same as -t fF, select floats\n"
+"  -h   same as -t x2, select hexadecimal shorts\n"
+"  -i   same as -t d2, select decimal shorts\n"
+"  -l   same as -t d4, select decimal longs\n"
+"  -o   same as -t o2, select octal shorts\n"
+"  -x   same as -t x2, select hexadecimal shorts\n"
+msgstr ""
+
+#: src/od.c:326
+msgid ""
+"\n"
+"For older syntax (second call format), OFFSET means -j OFFSET.  LABEL\n"
+"is the pseudo-address at first byte printed, incremented when dump is\n"
+"progressing.  For OFFSET and LABEL, a 0x or 0X prefix indicates\n"
+"hexadecimal, suffixes may be . for octal and b for multiply by 512.\n"
+"\n"
+"TYPE is made up of one or more of these specifications:\n"
+"\n"
+"  a          named character\n"
+"  c          ASCII character or backslash escape\n"
+msgstr ""
+
+#: src/od.c:338
+msgid ""
+"  d[SIZE]    signed decimal, SIZE bytes per integer\n"
+"  f[SIZE]    floating point, SIZE bytes per integer\n"
+"  o[SIZE]    octal, SIZE bytes per integer\n"
+"  u[SIZE]    unsigned decimal, SIZE bytes per integer\n"
+"  x[SIZE]    hexadecimal, SIZE bytes per integer\n"
+msgstr ""
+
+#: src/od.c:345
+msgid ""
+"\n"
+"SIZE is a number.  For TYPE in doux, SIZE may also be C for\n"
+"sizeof(char), S for sizeof(short), I for sizeof(int) or L for\n"
+"sizeof(long).  If TYPE is f, SIZE may also be F for sizeof(float), D\n"
+"for sizeof(double) or L for sizeof(long double).\n"
+msgstr ""
+
+#: src/od.c:352
+msgid ""
+"\n"
+"RADIX is d for decimal, o for octal, x for hexadecimal or n for none.\n"
+"BYTES is hexadecimal with 0x or 0X prefix, it is multiplied by 512\n"
+"with b suffix, by 1024 with k and by 1048576 with m.  Adding a z suffix to\n"
+"any type adds a display of printable characters to the end of each line\n"
+"of output.  "
+msgstr ""
+
+#: src/od.c:360
+msgid ""
+"--string without a number implies 3.  --width without a number\n"
+"implies 32.  By default, od uses -A o -t d2 -w 16.\n"
+msgstr ""
+
+#: src/od.c:716 src/od.c:835
+#, c-format
+msgid "invalid type string `%s'"
+msgstr "μη έγκυρο είδος αλφαριθμητικού `%s'"
+
+#: src/od.c:726
+#, c-format
+msgid ""
+"invalid type string `%s';\n"
+"this system doesn't provide a %lu-byte integral type"
+msgstr ""
+"μη έγκυρο είδος αλφαριθμητικού `%s';\n"
+"αυτό το σύστημα δεν παρέχει τον εσωτερικό τύπο δεδομένων %lu-byte"
+
+#: src/od.c:845
+#, c-format
+msgid ""
+"invalid type string `%s';\n"
+"this system doesn't provide a %lu-byte floating point type"
+msgstr ""
+"μη έγκυρο είδος αλφαριθμητικού `%s';\n"
+"αυτό το σύστημα δεν παρέχει τον εσωτερικό τύπο δεδομένων κινητής "
+"υποδιαστολής %lu-byte"
+
+#: src/od.c:908
+#, c-format
+msgid "invalid character `%c' in type string `%s'"
+msgstr "μη έγκυρος χαρακτήρας `%c' στο τύπο αλφαριθμητικού `%s'"
+
+#: src/od.c:1135
+msgid "cannot skip past end of combined input"
+msgstr "αδυναμία προσπέρασης μετά το τέλος της συνδιασμένης εισόδου"
+
+#: src/od.c:1388
+msgid "old-style offset"
+msgstr "παλαιού είδους θέση"
+
+#: src/od.c:1696
+#, c-format
+msgid "invalid output address radix `%c'; it must be one character from [doxn]"
+msgstr ""
+
+#: src/od.c:1706
+msgid "skip argument"
+msgstr "προσπέρασμα ορίσματος"
+
+#: src/od.c:1714
+msgid "limit argument"
+msgstr "όριο ορίσματος"
+
+#: src/od.c:1724
+msgid "minimum string length"
+msgstr "ελάχιστο μέγεθος αλφαριθμητικού"
+
+#: src/od.c:1729 src/od.c:1795
+#, c-format
+msgid "%s is too large"
+msgstr ""
+
+#: src/od.c:1793
+msgid "width specification"
+msgstr "δήλωση πλάτους"
+
+#: src/od.c:1815
+msgid "no type may be specified when dumping strings"
+msgstr "κανένα είδος δε μπορεί να δηλωθεί όταν τυπώνονται αλφαριθμητικά"
+
+#: src/od.c:1863
+#, c-format
+msgid "invalid second operand in compatibility mode `%s'"
+msgstr "μη έγκυρος δεύτερος τελεστής σε κατάσταση συμβατότητας `%s'"
+
+#: src/od.c:1884
+msgid "in compatibility mode, the last two arguments must be offsets"
+msgstr ""
+"σε κατάσταση σημβατότητας, τα τελευταία δύο ορίσματα πρέπει να είναι θέσεις"
+
+#: src/od.c:1891
+msgid "compatibility mode supports at most three arguments"
+msgstr "η κατάσταση συμβατότητας υποστηρίζει το πολύ τρία ορίσματα"
+
+#: src/od.c:1964
+#, c-format
+msgid "warning: invalid width %lu; using %d instead"
+msgstr ""
+
+#: src/od.c:1980
+#, c-format
+msgid "%d: fmt=\"%s\" width=%d\n"
+msgstr "%d: fmt=\"%s\" πλάτος=%d\n"
+
+#: src/paste.c:50
+msgid "David M. Ihnat and David MacKenzie"
+msgstr ""
+
+#: src/paste.c:208
+msgid "standard input is closed"
+msgstr "η κανονική είσοδος είναι κλεισμένη"
+
+#: src/paste.c:407
+msgid ""
+"Write lines consisting of the sequentially corresponding lines from\n"
+"each FILE, separated by TABs, to standard output.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/paste.c:416
+msgid ""
+"  -d, --delimiters=LIST   reuse characters from LIST instead of TABs\n"
+"  -s, --serial            paste one file at a time instead of in parallel\n"
+msgstr ""
+
+#: src/pr.c:328
+msgid "Pete TerMaat and Roland Huebner"
+msgstr ""
+
+#: src/pr.c:805
+#, c-format
+msgid "`--pages' invalid range of page numbers: `%s'"
+msgstr "`--pages' μη έγκυρο όριο από αριθμούς σελίδων: `%s'"
+
+#: src/pr.c:817
+#, c-format
+msgid "`--pages' invalid starting page number: `%s'"
+msgstr "`--pages' μη έγκυρος αριθμός αρχικής σελίδας: `%s'"
+
+#: src/pr.c:829
+#, c-format
+msgid "`--pages' invalid ending page number: `%s'"
+msgstr "`--pages' μη έγκυρος αριθμός τελικής σελίδας: `%s'"
+
+#: src/pr.c:836
+msgid "`--pages' starting page number is larger than ending page number"
+msgstr ""
+"`--pages' ο αριθμός αρχικής σελίδας είναι μεγαλύτερος από της τελικής σελίδας"
+
+#: src/pr.c:913
+msgid "`--pages=FIRST_PAGE[:LAST_PAGE]' missing argument"
+msgstr "`--pages=ΠΡΩΤΗ_ΣΕΛΙΔΑ[:ΤΕΛΕΥΤΑΙΑ_ΣΕΛΙΔΑ]' απουσία ορίσματος"
+
+#: src/pr.c:924
+#, c-format
+msgid "`--columns=COLUMN' invalid number of columns: `%s'"
+msgstr "`--columns=ΣΤΗΛΗ' μη έγκυρος αριθμός στηλών: `%s'"
+
+#: src/pr.c:978
+#, c-format
+msgid "`-l PAGE_LENGTH' invalid number of lines: `%s'"
+msgstr "`-l ΜΗΚΟΣ_ΣΕΛΙΔΑΣ' μη έγκυρος αριθμός γραμμών: `%s'"
+
+#: src/pr.c:1002
+#, c-format
+msgid "`-N NUMBER' invalid starting line number: `%s'"
+msgstr "`-N ΑΡΙΘΜΟΣ' μη έγκυρος αριθμός αρχικής σελίδας: `%s'"
+
+#: src/pr.c:1014
+#, c-format
+msgid "`-o MARGIN' invalid line offset: `%s'"
+msgstr "`-o ΠΕΡΙΘΩΡΙΟ' μη έγκυρη θέση γραμμής: `%s'"
+
+#: src/pr.c:1055
+#, c-format
+msgid "`-w PAGE_WIDTH' invalid number of characters: `%s'"
+msgstr "`-w ΠΛΑΤΟΣ_ΣΕΛΙΔΑΣ' μη έγκυρος αριθμός χαρακτήρων : `%s'"
+
+#: src/pr.c:1067
+#, c-format
+msgid "`-W PAGE_WIDTH' invalid number of characters: `%s'"
+msgstr "`-W ΠΛΑΤΟΣ_ΣΕΛΙΔΑΣ' μη έγκυρος αριθμός χαρακτήρων : `%s'"
+
+#: src/pr.c:1081
+msgid "%b %e %H:%M %Y"
+msgstr ""
+
+#: src/pr.c:1090
+msgid "Cannot specify number of columns when printing in parallel."
+msgstr "Δεν είναι δυνατό να δηλωθεί αριθμός στηλών στην παράλληλη εκτύπωση."
+
+#: src/pr.c:1094
+msgid "Cannot specify both printing across and printing in parallel."
+msgstr "Δεν είναι δυνατό να δηλωθεί σειριακή και παράλληλη εκτύπωση."
+
+#: src/pr.c:1190
+#, c-format
+msgid "`-%c' extra characters or invalid number in the argument: `%s'"
+msgstr "`-%c' επιπλέον χαρακτήρες ή μη έγκυρος αριθμός στο όρισμα: `%s'"
+
+#: src/pr.c:1301
+msgid "page width too narrow"
+msgstr "το πλάτος σελίδας είναι πολύ στενό"
+
+#: src/pr.c:2364
+#, c-format
+msgid "starting page number larger than total number of pages: `%d'"
+msgstr ""
+"ο αρχικός αριθμός σελίδας είναι μεγαλύτερος από το συνολικό αριθμό σελίδων: `"
+"%d'"
+
+#: src/pr.c:2395
+#, c-format
+msgid "Page %d"
+msgstr ""
+
+#: src/pr.c:2761
+msgid ""
+"Paginate or columnate FILE(s) for printing.\n"
+"\n"
+msgstr ""
+
+#: src/pr.c:2768
+msgid ""
+"  +FIRST_PAGE[:LAST_PAGE], --pages=FIRST_PAGE[:LAST_PAGE]\n"
+"                    begin [stop] printing with page FIRST_[LAST_]PAGE\n"
+"  -COLUMN, --columns=COLUMN\n"
+"                    produce COLUMN-column output and print columns down,\n"
+"                    unless -a is used. Balance number of lines in the\n"
+"                    columns on each page.\n"
+msgstr ""
+
+#: src/pr.c:2776
+msgid ""
+"  -a, --across      print columns across rather than down, used together\n"
+"                    with -COLUMN\n"
+"  -c, --show-control-chars\n"
+"                    use hat notation (^G) and octal backslash notation\n"
+"  -d, --double-space\n"
+"                    double space the output\n"
+msgstr ""
+
+#: src/pr.c:2784
+msgid ""
+"  -D, --date-format=FORMAT\n"
+"                    use FORMAT for the header date\n"
+"  -e[CHAR[WIDTH]], --expand-tabs[=CHAR[WIDTH]]\n"
+"                    expand input CHARs (TABs) to tab WIDTH (8)\n"
+"  -F, -f, --form-feed\n"
+"                    use form feeds instead of newlines to separate pages\n"
+"                    (by a 3-line page header with -F or a 5-line header\n"
+"                    and trailer without -F)\n"
+msgstr ""
+
+#: src/pr.c:2794
+msgid ""
+"  -h HEADER, --header=HEADER\n"
+"                    use a centered HEADER instead of filename in page "
+"header,\n"
+"                    -h \"\" prints a blank line, don't use -h\"\"\n"
+"  -i[CHAR[WIDTH]], --output-tabs[=CHAR[WIDTH]]\n"
+"                    replace spaces with CHARs (TABs) to tab WIDTH (8)\n"
+"  -J, --join-lines  merge full lines, turns off -W line truncation, no "
+"column\n"
+"                    alignment, --sep-string[=STRING] sets separators\n"
+msgstr ""
+
+#: src/pr.c:2803
+msgid ""
+"  -l PAGE_LENGTH, --length=PAGE_LENGTH\n"
+"                    set the page length to PAGE_LENGTH (66) lines\n"
+"                    (default number of lines of text 56, and with -F 63)\n"
+"  -m, --merge       print all files in parallel, one in each column,\n"
+"                    truncate lines, but join lines of full length with -J\n"
+msgstr ""
+
+#: src/pr.c:2810
+msgid ""
+"  -n[SEP[DIGITS]], --number-lines[=SEP[DIGITS]]\n"
+"                    number lines, use DIGITS (5) digits, then SEP (TAB),\n"
+"                    default counting starts with 1st line of input file\n"
+"  -N NUMBER, --first-line-number=NUMBER\n"
+"                    start counting with NUMBER at 1st line of first\n"
+"                    page printed (see +FIRST_PAGE)\n"
+msgstr ""
+
+#: src/pr.c:2818
+msgid ""
+"  -o MARGIN, --indent=MARGIN\n"
+"                    offset each line with MARGIN (zero) spaces, do not\n"
+"                    affect -w or -W, MARGIN will be added to PAGE_WIDTH\n"
+"  -r, --no-file-warnings\n"
+"                    omit warning when a file cannot be opened\n"
+msgstr ""
+
+#: src/pr.c:2825
+msgid ""
+"  -s[CHAR],--separator[=CHAR]\n"
+"                    separate columns by a single character, default for "
+"CHAR\n"
+"                    is the <TAB> character without -w and 'no char' with -w\n"
+"                    -s[CHAR] turns off line truncation of all 3 column\n"
+"                    options (-COLUMN|-a -COLUMN|-m) except -w is set\n"
+msgstr ""
+
+#: src/pr.c:2832
+msgid "  -SSTRING, --sep-string[=STRING]\n"
+msgstr ""
+
+#: src/pr.c:2835
+msgid ""
+"                    separate columns by STRING,\n"
+"                    without -S: Default separator <TAB> with -J and <space>\n"
+"                    otherwise (same as -S\" \"), no effect on column "
+"options\n"
+"  -t, --omit-header omit page headers and trailers\n"
+msgstr ""
+
+#: src/pr.c:2841
+msgid ""
+"  -T, --omit-pagination\n"
+"                    omit page headers and trailers, eliminate any "
+"pagination\n"
+"                    by form feeds set in input files\n"
+"  -v, --show-nonprinting\n"
+"                    use octal backslash notation\n"
+"  -w PAGE_WIDTH, --width=PAGE_WIDTH\n"
+"                    set page width to PAGE_WIDTH (72) characters for\n"
+"                    multiple text-column output only, -s[char] turns off "
+"(72)\n"
+msgstr ""
+
+#: src/pr.c:2851
+#, fuzzy
+msgid ""
+"  -W PAGE_WIDTH, --page-width=PAGE_WIDTH\n"
+"                    set page width to PAGE_WIDTH (72) characters always,\n"
+"                    truncate lines, except -J option is set, no "
+"interference\n"
+"                    with -S or -s\n"
+msgstr ""
+"Σύγκριση ταξινομημένων αρχείων ΑΡΙΣΤΕΡΌ_ΑΡΧΕΊΟ και ΔΕΞΙΌ_ΑΡΧΕΊΟ, ανά "
+"γραμμή.\n"
+"\n"
+"  -1              απόκρυψη μοναδικών γραμμών στο αριστερό αρχείο\n"
+"  -2              απόκρυψη μοναδικών γραμμών στο δεξιό αρχείο\n"
+"  -3              απόκρυψη μοναδικών γραμμών και στα δύο αρχεία\n"
+"      --help      εμφάνιση αυτής της βοήθειας και έξοδος\n"
+"      --version   εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#: src/pr.c:2859
+msgid ""
+"\n"
+"-T implied by -l nn when nn <= 10 or <= 3 with -F. With no FILE, or when\n"
+"FILE is -, read standard input.\n"
+msgstr ""
+
+#: src/ptx.c:410
+#, c-format
+msgid "%s (for regexp `%s')"
+msgstr "%s (για κανονική έκφραση `%s')"
+
+#: src/ptx.c:1859
+#, c-format
+msgid ""
+"Usage: %s [OPTION]... [INPUT]...   (without -G)\n"
+"  or:  %s -G [OPTION]... [INPUT [OUTPUT]]\n"
+msgstr ""
+"Χρήση: %s [ΕΠΙΛΟΓΗ]... [ΕΙΣΟΔΟΣ]...   (χωρίς -G)\n"
+"   ή:  %s -G [ΕΠΙΛΟΓΗ]... [ΕΙΣΟΔΟΣ [ΕΞΟΔΟΣ]]\n"
+
+#: src/ptx.c:1863
+msgid ""
+"Output a permuted index, including context, of the words in the input "
+"files.\n"
+"\n"
+msgstr ""
+
+#: src/ptx.c:1870
+msgid ""
+"  -A, --auto-reference           output automatically generated references\n"
+"  -C, --copyright                display Copyright and copying conditions\n"
+"  -G, --traditional              behave more like System V `ptx'\n"
+"  -F, --flag-truncation=STRING   use STRING for flagging line truncations\n"
+msgstr ""
+
+#: src/ptx.c:1876
+msgid ""
+"  -M, --macro-name=STRING        macro name to use instead of `xx'\n"
+"  -O, --format=roff              generate output as roff directives\n"
+"  -R, --right-side-refs          put references at right, not counted in -w\n"
+"  -S, --sentence-regexp=REGEXP   for end of lines or end of sentences\n"
+"  -T, --format=tex               generate output as TeX directives\n"
+msgstr ""
+
+#: src/ptx.c:1883
+msgid ""
+"  -W, --word-regexp=REGEXP       use REGEXP to match each keyword\n"
+"  -b, --break-file=FILE          word break characters in this FILE\n"
+"  -f, --ignore-case              fold lower case to upper case for sorting\n"
+"  -g, --gap-size=NUMBER          gap size in columns between output fields\n"
+"  -i, --ignore-file=FILE         read ignore word list from FILE\n"
+"  -o, --only-file=FILE           read only word list from this FILE\n"
+msgstr ""
+
+#: src/ptx.c:1891
+msgid ""
+"  -r, --references               first field of each line is a reference\n"
+"  -t, --typeset-mode               - not implemented -\n"
+"  -w, --width=NUMBER             output width in columns, reference "
+"excluded\n"
+msgstr ""
+
+#: src/ptx.c:1898
+msgid ""
+"\n"
+"With no FILE or if FILE is -, read Standard Input.  `-F /' by default.\n"
+msgstr ""
+
+#: src/ptx.c:1978
+msgid ""
+"This program is free software; you can redistribute it and/or modify\n"
+"it under the terms of the GNU General Public License as published by\n"
+"the Free Software Foundation; either version 2, or (at your option)\n"
+"any later version.\n"
+"\n"
+msgstr ""
+
+#: src/ptx.c:1985
+msgid ""
+"This program is distributed in the hope that it will be useful,\n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+"GNU General Public License for more details.\n"
+"\n"
+msgstr ""
+
+#: src/ptx.c:1992
+msgid ""
+"You should have received a copy of the GNU General Public License\n"
+"along with this program; if not, write to the Free Software Foundation,\n"
+"Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.\n"
+msgstr ""
+
+#: src/sort.c:53
+msgid "Mike Haertel and Paul Eggert"
+msgstr ""
+
+#: src/sort.c:289
+msgid ""
+"Write sorted concatenation of all FILE(s) to standard output.\n"
+"\n"
+"Ordering options:\n"
+"\n"
+msgstr ""
+
+#: src/sort.c:298
+msgid ""
+"  -b, --ignore-leading-blanks ignore leading blanks\n"
+"  -d, --dictionary-order      consider only blanks and alphanumeric "
+"characters\n"
+"  -f, --ignore-case           fold lower case to upper case characters\n"
+msgstr ""
+
+#: src/sort.c:303
+msgid ""
+"  -g, --general-numeric-sort  compare according to general numerical value\n"
+"  -i, --ignore-nonprinting    consider only printable characters\n"
+"  -M, --month-sort            compare (unknown) < `JAN' < ... < `DEC'\n"
+"  -n, --numeric-sort          compare according to string numerical value\n"
+"  -r, --reverse               reverse the result of comparisons\n"
+"\n"
+msgstr ""
+
+#: src/sort.c:311
+msgid ""
+"Other options:\n"
+"\n"
+"  -c, --check               check whether input is sorted; do not sort\n"
+"  -k, --key=POS1[,POS2]     start a key at POS1, end it at POS 2 (origin 1)\n"
+"  -m, --merge               merge already sorted files; do not sort\n"
+"  -o, --output=FILE         write result to FILE instead of standard output\n"
+"  -s, --stable              stabilize sort by disabling last-resort "
+"comparison\n"
+"  -S, --buffer-size=SIZE    use SIZE for main memory buffer\n"
+msgstr ""
+
+#: src/sort.c:321
+#, c-format
+msgid ""
+"  -t, --field-separator=SEP use SEP instead of non- to whitespace "
+"transition\n"
+"  -T, --temporary-directory=DIR  use DIR for temporaries, not $TMPDIR or %s\n"
+"                              multiple options specify multiple directories\n"
+"  -u, --unique              with -c: check for strict ordering\n"
+"                              otherwise: output only the first of an equal "
+"run\n"
+msgstr ""
+
+#: src/sort.c:328
+msgid "  -z, --zero-terminated     end lines with 0 byte, not newline\n"
+msgstr ""
+
+#: src/sort.c:333
+#, fuzzy
+msgid ""
+"\n"
+"POS is F[.C][OPTS], where F is the field number and C the character "
+"position\n"
+"in the field.  OPTS is one or more single-letter ordering options, which\n"
+"override global ordering options for that key.  If no key is given, use the\n"
+"entire line as the key.\n"
+"\n"
+"SIZE may be followed by the following multiplicative suffixes:\n"
+msgstr ""
+"ΘΕΣΗ είναι F[.C][OPTS], όπου F είναι ο αριθμός πεδίου και C η θέση του\n"
+"χαρακτήρα στο πεδίο, και τα δύο μετρημένα από το ένα με -k ή από το μηδέν\n"
+"με την εκτός χρήσης μορφή.  Το OPTS απαρτίζεται από ένα ή περισσότερα από\n"
+"τα Mbdfinr· αυτό ουσιαστικά απενεργοποιεί τις καθολικές ρυθμίσεις -Mbdfinr\n"
+"για το κλειδί αυτό. Αν δεν ορίζεται κλειδί, να γίνει χρήση ολόκληρης της\n"
+"γραμμής για κλειδί.  Χωρίς ΑΡΧΕΙΟ, ή όταν το ARXEIO είναι το -, ανάγνωση\n"
+"από την κανονική είσοδο.\n"
+
+#: src/sort.c:342
+#, c-format
+msgid ""
+"% 1% of memory, b 1, K 1024 (default), and so on for M, G, T, P, E, Z, Y.\n"
+"\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+"*** WARNING ***\n"
+"The locale specified by the environment affects sort order.\n"
+"Set LC_ALL=C to get the traditional sort order that uses\n"
+"native byte values.\n"
+msgstr ""
+
+#: src/sort.c:453
+#, fuzzy
+msgid "cannot create temporary file"
+msgstr "αδύνατη η δημιουργία καταλόγου `%s'"
+
+#: src/sort.c:476
+msgid "open failed"
+msgstr ""
+
+#: src/sort.c:496 src/sort.c:2499
+#, fuzzy
+msgid "close failed"
+msgstr "σφάλμα κλεισίματος αρχείου"
+
+#: src/sort.c:504
+#, fuzzy
+msgid "write failed"
+msgstr "σφάλμα εγγραφής"
+
+#: src/sort.c:650
+#, fuzzy
+msgid "sort size"
+msgstr "μέγεθος μπλοκ"
+
+#: src/sort.c:724
+msgid "stat failed"
+msgstr ""
+
+#: src/sort.c:975
+msgid "read failed"
+msgstr ""
+
+#: src/sort.c:1575
+#, fuzzy, c-format
+msgid "%s: %s:%s: disorder: "
+msgstr "%s: %s:%d: όχι σε σειρά: "
+
+#: src/sort.c:1579
+msgid "standard error"
+msgstr "κανονικό σφάλμα"
+
+#: src/sort.c:2037
+#, fuzzy, c-format
+msgid "%s: invalid field specification `%s'"
+msgstr "μη έγκυρη δήλωση πεδίου `%s'"
+
+#: src/sort.c:2063
+#, c-format
+msgid "%s: count `%.*s' too large"
+msgstr ""
+
+#: src/sort.c:2069
+#, fuzzy, c-format
+msgid "%s: invalid count at start of `%s'"
+msgstr "μη έγκυρο όρισμα %s για `%s'"
+
+#: src/sort.c:2301
+#, fuzzy
+msgid "invalid number after `-'"
+msgstr "μη έγκυρος αριθμός από bytes"
+
+#: src/sort.c:2304 src/sort.c:2350 src/sort.c:2377
+#, fuzzy
+msgid "invalid number after `.'"
+msgstr "μη έγκυρος αριθμός από bytes"
+
+#: src/sort.c:2307 src/sort.c:2386
+msgid "stray character in field spec"
+msgstr ""
+
+#: src/sort.c:2341
+#, fuzzy
+msgid "invalid number at field start"
+msgstr "μη έγκυρος αριθμός από γραμμές"
+
+#: src/sort.c:2345 src/sort.c:2373
+#, fuzzy
+msgid "field number is zero"
+msgstr "μη έγκυρος αριθμός πεδίου: `%s'"
+
+#: src/sort.c:2354
+msgid "character offset is zero"
+msgstr ""
+
+#: src/sort.c:2369
+#, fuzzy
+msgid "invalid number after `,'"
+msgstr "μη έγκυρος αριθμός από bytes"
+
+#: src/sort.c:2414
+#, fuzzy, c-format
+msgid "multi-character tab `%s'"
+msgstr "μη έγκυρη τάξη χαρακτήρων `%s'"
+
+#: src/sort.c:2482
+#, c-format
+msgid "extra operand `%s' not allowed with -c"
+msgstr ""
+
+#: src/split.c:95
+#, c-format
+msgid "Usage: %s [OPTION] [INPUT [PREFIX]]\n"
+msgstr "Χρήση: %s [ΕΠΙΛΟΓΗ] [ΕΙΣΟΔΟΣ [ΠΡΟΘΕΜΑ]]\n"
+
+#: src/split.c:99
+msgid ""
+"Output fixed-size pieces of INPUT to PREFIXaa, PREFIXab, ...; default\n"
+"PREFIX is `x'.  With no INPUT, or when INPUT is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/split.c:107
+#, fuzzy, c-format
+msgid ""
+"  -a, --suffix-length=N   use suffixes of length N (default %d)\n"
+"  -b, --bytes=SIZE        put SIZE bytes per output file\n"
+"  -C, --line-bytes=SIZE   put at most SIZE bytes of lines per output file\n"
+"  -l, --lines=NUMBER      put NUMBER lines per output file\n"
+msgstr ""
+"Έξοδος τμημάτων σταθερού μεγέθους από την ΕΙΣΟΔΟ σε ΠΡΟΘΕΜΑaa, "
+"ΠΡΟΘΕΜΑab, ...; εξ ορισμού\n"
+"ΠΡΟΘΕΜΑ είναι το `x'.  Χωρίς ΕΙΣΟΔΟ, ή όταν η ΕΙΣΟΔΟΣ είναι το -, ανάγνωση "
+"από την κανονική είσοδο.\n"
+"\n"
+"  -b, --bytes=ΜΕΓΕΘΟΣ     τοποθέτηση ΜΕΓΕΘΟΣ bytes σε κάθε αρχείο εξόδου\n"
+"  -C, --line-bytes=ΜΕΓΕΘΟΣ  τοποθέτηση το πολύ ΜΕΓΕΘΟΣ bytes από γραμμές σε "
+"κάθε αρχείο εξόδου\n"
+"  -l, --lines=ΑΡΙΘΜΟΣ     τοποθέτηση ΑΡΙΘΜΟΣ γραμμών σε κάθε αρχείου εξόδου\n"
+"  -ΑΡΙΘΜΟΣ                ίδιο με -l ΑΡΙΘΜΟΣ\n"
+"      --verbose           εκτύπωση διαγνωστικού στο κανονικό σφάλμα μόλις "
+"πριν\n"
+"                            ανοιχτεί κάθε αρχείο εξόδου\n"
+"      --help              εμφάνιση αυτής της βοήθειας και έξοδος\n"
+"      --version           εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+"\n"
+"ΜΕΓΕΘΟΣ μπορεί να έχει πρόθεμα πολλαπλασιαστή: b για 512, k για 1K, m για 1 "
+"Meg.\n"
+
+#: src/split.c:113
+msgid ""
+"      --verbose           print a diagnostic to standard error just\n"
+"                            before each output file is opened\n"
+msgstr ""
+
+#: src/split.c:170
+msgid "Output file suffixes exhausted"
+msgstr ""
+
+#: src/split.c:188
+#, c-format
+msgid "creating file `%s'\n"
+msgstr "δημιουργία αρχείου `%s'\n"
+
+#: src/split.c:407
+#, fuzzy, c-format
+msgid "%s: invalid suffix length"
+msgstr "%s: μη έγκυρος αριθμός γραμμών"
+
+#: src/split.c:416 src/split.c:432 src/split.c:448 src/split.c:474
+msgid "cannot split in more than one way"
+msgstr "δεν είναι δυνατό να γίνει διαχωρισμός σε περισσότερους από ένα τρόπο"
+
+#: src/split.c:423 src/split.c:456
+#, c-format
+msgid "%s: invalid number of bytes"
+msgstr "%s: μη έγκυρος αριθμός από bytes"
+
+#: src/split.c:439
+#, c-format
+msgid "%s: invalid number of lines"
+msgstr "%s: μη έγκυρος αριθμός γραμμών"
+
+#: src/split.c:499
+#, c-format
+msgid "`-%d' option is obsolete; use `-l %d'"
+msgstr ""
+
+#: src/split.c:512
+msgid "invalid number"
+msgstr "μη έγκυρος αριθμός"
+
+#: src/split.c:527 src/tr.c:1847
+msgid "too many arguments"
+msgstr "πάρα πολλά ορίσματα"
+
+#: src/sum.c:36
+msgid "Kayvan Aghaiepour and David MacKenzie"
+msgstr ""
+
+#: src/sum.c:64
+#, fuzzy
+msgid ""
+"Print checksum and block counts for each FILE.\n"
+"\n"
+"  -r              defeat -s, use BSD sum algorithm, use 1K blocks\n"
+"  -s, --sysv      use System V sum algorithm, use 512 bytes blocks\n"
+msgstr ""
+"Εκτύπωση αθροισμάτων ελέγχου και μετρητές μπλοκ για κάθε ΑΡΧΕΙΟ.\n"
+"\n"
+"  -r              υπερνίκηση του -s, χρήση του BSD αλγορίθμου αθροίσματος, "
+"χρήση μπλοκ 1Κ\n"
+"  -s, --sysv      χρήση System V αλγορίθμου αθροίσματος, χρήση μπλοκ 512 "
+"bytes\n"
+"      --help          εμφάνιση αυτής της βοήθειας και έξοδος\n"
+"      --version       εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+"\n"
+"Χωρίς ΑΡΧΕΙΟ, ή όταν το αρχείο είναι το -, ανάγνωση από την κανονική "
+"είσοδο.\n"
+
+#: src/sys2.h:407
+#, fuzzy
+msgid "      --help     display this help and exit\n"
+msgstr ""
+"Εμφάνιση άθροισμα ελέγχου CRC και αριθμό bytes για κάθε ΑΡΧΕΙΟ.\n"
+"\n"
+"  --help       εμφάνιση αυτής της βοήθειας και έξοδος\n"
+"  --version    εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#: src/sys2.h:409
+#, fuzzy
+msgid "      --version  output version information and exit\n"
+msgstr ""
+"Εμφάνιση άθροισμα ελέγχου CRC και αριθμό bytes για κάθε ΑΡΧΕΙΟ.\n"
+"\n"
+"  --help       εμφάνιση αυτής της βοήθειας και έξοδος\n"
+"  --version    εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#: src/tac.c:54
+msgid "Jay Lepreau and David MacKenzie"
+msgstr ""
+
+#: src/tac.c:131
+msgid ""
+"Write each FILE to standard output, last line first.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/tac.c:139
+#, fuzzy
+msgid ""
+"  -b, --before             attach the separator before instead of after\n"
+"  -r, --regex              interpret the separator as a regular expression\n"
+"  -s, --separator=STRING   use STRING as the separator instead of newline\n"
+msgstr ""
+"Εγγραφή κάθε αρχείου στην κανονική έξοδο, τελευταία γραμμή πρώτα.\n"
+"Χωρίς ΑΡΧΕΙΟ, ή όταν το αρχείο είναι το -, ανάγνωση από την κανονική "
+"είσοδο.\n"
+"\n"
+"  -b, --before             τοποθέτηση του διαχωριστή πριν αντί για μετά\n"
+"  -r, --regex              μετάφραση του διαχωριστή ως κανονική έκφραση\n"
+"  -s, --separator=ΑΛΦΑΡΙΘΜ  χρήση ΑΛΦΑΡΙΘΜητικού ως διαχωριστής αντί του "
+"χαρακτήρα νέας γραμμής\n"
+"      --help               εμφάνιση αυτής της βοήθειας και έξοδος\n"
+"      --version            εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#: src/tac.c:454 src/tac.c:593
+msgid "stdin: read error"
+msgstr "stdin: σφάλμα ανάγνωσης"
+
+#: src/tac.c:639
+msgid "separator cannot be empty"
+msgstr "ο διαχωριστής δε μπορεί να είναι κενός"
+
+#: src/tail.c:242
+#, fuzzy, c-format
+msgid ""
+"Print the last %d lines of each FILE to standard output.\n"
+"With more than one FILE, precede each with a header giving the file name.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"Εμφάνιση των 10 πρώτων γραμμών από κάθε ΑΡΧΕΙΟ στην κανονική έξοδο.\n"
+"Με περισσότερα από ένα ΑΡΧΕΙΟ, να προηγηθεί επισέλιδο με το όνομα του "
+"αρχείου.\n"
+"Χωρίς ΑΡΧΕΙΟ ή όταν το ΑΡΧΕΙΟ είναι το -, ανάγνωση από την κανονική είσοδο.\n"
+"\n"
+"  -c, --bytes=ΜΕΓΕΘΟΣ      εμφάνιση των πρώτων ΜΕΓΕΘΟΣ bytes\n"
+"  -n, --lines=ΑΡΙΘΜΟΣ      εμφάνιση των πρώτων ΑΡΙΘΜΟΣ γραμμών αντί των "
+"πρώτων 10\n"
+"  -q, --quiet, --silent    να μην τυπώνονται επισέλιδα με τα ονόματα "
+"αρχείων\n"
+"  -v, --verbose            να τυπώνονται πάντα επισέλιδα με τα ονόματα "
+"αρχείων\n"
+"      --help               εμφάνιση αυτής της βοήθειας και έξοδος\n"
+"      --version            εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+"\n"
+"Το ΜΕΓΕΘΟΣ μπορεί να έχει κατάληξη με πολλαπλασιαστή: b για 512, k για 1K, m "
+"για 1 Meg.\n"
+"Αν χρησιμοποιείται το -VALUE σαν πρώτη ΕΠΙΛΟΓΗ, ανάγνωσε -c ΤΙΜΗ όταν\n"
+"ένας από τους πολλαπλασιαστές bkm ακολουθεί συνενωμένος, διαφορετικά "
+"ανάγνωσε -n ΤΙΜΗ\n"
+
+#: src/tail.c:251
+msgid ""
+"      --retry              keep trying to open a file even if it is\n"
+"                           inaccessible when tail starts or if it becomes\n"
+"                           inaccessible later -- useful only with -f\n"
+"  -c, --bytes=N            output the last N bytes\n"
+msgstr ""
+
+#: src/tail.c:257
+msgid ""
+"  -f, --follow[={name|descriptor}]\n"
+"                           output appended data as the file grows;\n"
+"                           -f, --follow, and --follow=descriptor are\n"
+"                           equivalent\n"
+"  -F                       same as --follow=name --retry\n"
+msgstr ""
+
+#: src/tail.c:264
+#, c-format
+msgid ""
+"  -n, --lines=N            output the last N lines, instead of the last %d\n"
+"      --max-unchanged-stats=N\n"
+"                           with --follow=name, reopen a FILE which has not\n"
+"                           changed size after N (default %d) iterations\n"
+"                           to see if it has been unlinked or renamed\n"
+"                           (this is the usual case of rotated log files)\n"
+msgstr ""
+
+#: src/tail.c:275
+msgid ""
+"      --pid=PID            with -f, terminate after process ID, PID dies\n"
+"  -q, --quiet, --silent    never output headers giving file names\n"
+"  -s, --sleep-interval=S   with -f, each iteration lasts approximately S\n"
+"                           (default 1) seconds\n"
+"  -v, --verbose            always output headers giving file names\n"
+msgstr ""
+
+#: src/tail.c:284
+msgid ""
+"\n"
+"If the first character of N (the number of bytes or lines) is a `+',\n"
+"print beginning with the Nth item from the start of each file, otherwise,\n"
+"print the last N items in the file.  N may have a multiplier suffix:\n"
+"b for 512, k for 1024, m for 1048576 (1 Meg).\n"
+"\n"
+msgstr ""
+
+#: src/tail.c:292
+msgid ""
+"With --follow (-f), tail defaults to following the file descriptor, which\n"
+"means that even if a tail'ed file is renamed, tail will continue to track\n"
+"its end.  "
+msgstr ""
+
+#: src/tail.c:297
+msgid ""
+"This default behavior is not desirable when you really want to\n"
+"track the actual name of the file, not the file descriptor (e.g., log\n"
+"rotation).  Use --follow=name in that case.  That causes tail to track the\n"
+"named file by reopening it periodically to see if it has been removed and\n"
+"recreated by some other program.\n"
+msgstr ""
+
+#: src/tail.c:335
+#, c-format
+msgid "closing %s (fd=%d)"
+msgstr "κλείσιμο του %s (fd=%d)"
+
+#: src/tail.c:400
+#, c-format
+msgid "%s: cannot seek to offset %s%s"
+msgstr ""
+
+#: src/tail.c:404
+#, c-format
+msgid "%s: cannot seek to relative offset %s%s"
+msgstr ""
+
+#: src/tail.c:408
+#, c-format
+msgid "%s: cannot seek to end-relative offset %s%s"
+msgstr ""
+
+#: src/tail.c:814
+#, c-format
+msgid "`%s' has become inaccessible"
+msgstr "το `%s' είναι μη-προσπελάσιμο"
+
+#: src/tail.c:831
+#, fuzzy, c-format
+msgid "`%s' has been replaced with an untailable file; giving up on this name"
+msgstr ""
+"%s: αδύνατη η ακολούθηση του τέλους αυτού του είδους αρχείου· παράκαμψη"
+
+#: src/tail.c:852
+#, c-format
+msgid "`%s' has become accessible"
+msgstr "το `%s' έχει γίνει προσπελάσιμο"
+
+#: src/tail.c:860
+#, c-format
+msgid "`%s' has appeared;  following end of new file"
+msgstr "το `%s' εμφανίστηκε· ακολούθηση τέλους νέου αρχείου"
+
+#: src/tail.c:871
+#, c-format
+msgid "`%s' has been replaced;  following end of new file"
+msgstr "το `%s' έχει αντικατασταθεί· ακολούθηση τέλους νέου αρχείου"
+
+#: src/tail.c:998
+#, fuzzy, c-format
+msgid "%s: file truncated"
+msgstr "το αρχείο μηδενίστηκε"
+
+#: src/tail.c:1018
+msgid "no files remaining"
+msgstr "δεν υπολείπονται αρχεία"
+
+#: src/tail.c:1228
+#, c-format
+msgid "%s: cannot follow end of this type of file; giving up on this name"
+msgstr ""
+"%s: αδύνατη η ακολούθηση του τέλους αυτού του είδους αρχείου· παράκαμψη"
+
+#: src/tail.c:1348
+#, c-format
+msgid "%c: invalid suffix character in obsolescent option"
+msgstr "%c: μη έγκυρος χαρακτήρας κατάληξης σε εκτός χρήσης επιλογή"
+
+#: src/tail.c:1397
+#, fuzzy, c-format
+msgid ""
+"too many arguments;  When using tail's obsolescent option syntax (%s)\n"
+"there may be no more than one file argument.  Use the equivalent -n or -c\n"
+"option instead."
+msgstr ""
+"Προειδοποίηση: δεν είναι μεταφέρσιμο να γίνετε χρήση δύο ή περισσότερο "
+"ορισμάτων\n"
+"για αρχεία με το εκτός χρήσης συντακτικό (%s). Κάντε χρήση του ισοδύναμου -n "
+"ή -c\n"
+"στη περίπτωση αυτή."
+
+#: src/tail.c:1406
+#, c-format
+msgid ""
+"Warning: it is not portable to use two or more file arguments with\n"
+"tail's obsolescent option syntax (%s).  Use the equivalent -n or -c\n"
+"option instead."
+msgstr ""
+"Προειδοποίηση: δεν είναι μεταφέρσιμο να γίνετε χρήση δύο ή περισσότερο "
+"ορισμάτων\n"
+"για αρχεία με το εκτός χρήσης συντακτικό (%s). Κάντε χρήση του ισοδύναμου -n "
+"ή -c\n"
+"στη περίπτωση αυτή."
+
+#: src/tail.c:1415
+#, c-format
+msgid "`%s' option is obsolete; use `%s-%c %.*s'"
+msgstr ""
+
+#: src/tail.c:1475
+#, fuzzy, c-format
+msgid "%s: is so large that it is not representable"
+msgstr "%s: το %s είναι τόσο μεγάλο που δε μπορεί να αναπαρασταθεί"
+
+#: src/tail.c:1479
+#, c-format
+msgid "%s is larger than the maximum file size on this system"
+msgstr ""
+
+#: src/tail.c:1505
+#, c-format
+msgid "%s: invalid maximum number of unchanged stats between opens"
+msgstr ""
+"%s: μη έγκυρος μέγιστος αριθμός από χωρίς μεταβολή `stats' μεταξύ ανοιγμάτων"
+
+#: src/tail.c:1517
+#, c-format
+msgid "%s: invalid maximum number of consecutive size changes"
+msgstr "%s: μη έγκυρος μέγιστος αριθμός από διαδοχικές αλλαγές μεγέθους"
+
+#: src/tail.c:1529
+#, c-format
+msgid "%s: invalid PID"
+msgstr "%s: μη έγκυρος περιγραφέας διεργασίας (PID)"
+
+#: src/tail.c:1547
+#, c-format
+msgid "%s: invalid number of seconds"
+msgstr "%s: μη έγκυτος αριθμός από δευτερόλεπτα"
+
+#: src/tail.c:1567
+msgid "warning: --retry is useful only when following by name"
+msgstr ""
+"προειδοποίηση: το --retry είναι χρήσιμο μόνο με παρακολούθηση βάση ονόματος"
+
+#: src/tail.c:1571
+msgid "warning: PID ignored; --pid=PID is useful only when following"
+msgstr ""
+"προειδοποίηση: ο περιγραφέας διεργασίας αγνοείτε· το --pid=PID είναι χρήσιμο "
+"μόνο σε παρακολούθηση"
+
+#: src/tail.c:1574
+msgid "warning: --pid=PID is not supported on this system"
+msgstr "προειδοποίηση: το --pid=PID δεν υποστηρίζεται σε αυτό το σύστημα"
+
+#: src/tr.c:327
+#, c-format
+msgid "Usage: %s [OPTION]... SET1 [SET2]\n"
+msgstr "Χρήση: %s [ΕΠΙΛΟΓΗ]... ΣΥΝΟΛΟ1 [ΣΥΝΟΛΟ2]\n"
+
+#: src/tr.c:331
+#, fuzzy
+msgid ""
+"Translate, squeeze, and/or delete characters from standard input,\n"
+"writing to standard output.\n"
+"\n"
+"  -c, --complement        first complement SET1\n"
+"  -d, --delete            delete characters in SET1, do not translate\n"
+"  -s, --squeeze-repeats   replace sequence of characters with one\n"
+"  -t, --truncate-set1     first truncate SET1 to length of SET2\n"
+msgstr ""
+"Μετάφραση, συμπύκνωση και/η διαγραφή χαρακτήρων από την κανονική είσοδο,\n"
+"γράφοντας στη κανονική έξοδο.\n"
+"\n"
+"  -c, --complement        χρήση του συμπληρώματος του ΣΥΝΟΛΟ1\n"
+"  -d, --delete            διαγραγή χαρακτήρων από το ΣΥΝΟΛΟ1, όχι μετάφραση\n"
+"  -s, --squeeze-repeats   αντικατάσταση ακολουθίας χαρακτήρων με ένα\n"
+"  -t, --truncate-set1     πρώτα ελάττωσε το ΣΥΝΟΛΟ1 στο μέγεθος του ΣΥΝΟΛΟ2\n"
+"      --help              εμφάνιση αυτής της βοήθειας και έξοδος\n"
+"      --version           εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#: src/tr.c:342
+msgid ""
+"\n"
+"SETs are specified as strings of characters.  Most represent themselves.\n"
+"Interpreted sequences are:\n"
+"\n"
+"  \\NNN            character with octal value NNN (1 to 3 octal digits)\n"
+"  \\\\              backslash\n"
+"  \\a              audible BEL\n"
+"  \\b              backspace\n"
+"  \\f              form feed\n"
+"  \\n              new line\n"
+"  \\r              return\n"
+"  \\t              horizontal tab\n"
+msgstr ""
+
+#: src/tr.c:356
+msgid ""
+"  \\v              vertical tab\n"
+"  CHAR1-CHAR2     all characters from CHAR1 to CHAR2 in ascending order\n"
+"  [CHAR*]         in SET2, copies of CHAR until length of SET1\n"
+"  [CHAR*REPEAT]   REPEAT copies of CHAR, REPEAT octal if starting with 0\n"
+"  [:alnum:]       all letters and digits\n"
+"  [:alpha:]       all letters\n"
+"  [:blank:]       all horizontal whitespace\n"
+"  [:cntrl:]       all control characters\n"
+"  [:digit:]       all digits\n"
+msgstr ""
+
+#: src/tr.c:367
+msgid ""
+"  [:graph:]       all printable characters, not including space\n"
+"  [:lower:]       all lower case letters\n"
+"  [:print:]       all printable characters, including space\n"
+"  [:punct:]       all punctuation characters\n"
+"  [:space:]       all horizontal or vertical whitespace\n"
+"  [:upper:]       all upper case letters\n"
+"  [:xdigit:]      all hexadecimal digits\n"
+"  [=CHAR=]        all characters which are equivalent to CHAR\n"
+msgstr ""
+
+#: src/tr.c:377
+msgid ""
+"\n"
+"Translation occurs if -d is not given and both SET1 and SET2 appear.\n"
+"-t may be used only when translating.  SET2 is extended to length of\n"
+"SET1 by repeating its last character as necessary.  "
+msgstr ""
+
+#: src/tr.c:383
+msgid ""
+"Excess characters\n"
+"of SET2 are ignored.  Only [:lower:] and [:upper:] are guaranteed to\n"
+"expand in ascending order; used in SET2 while translating, they may\n"
+"only be used in pairs to specify case conversion.  "
+msgstr ""
+
+#: src/tr.c:389
+msgid ""
+"-s uses SET1 if not\n"
+"translating nor deleting; else squeezing uses SET2 and occurs after\n"
+"translation or deletion.\n"
+msgstr ""
+
+#: src/tr.c:555
+#, c-format
+msgid ""
+"warning: the ambiguous octal escape \\%c%c%c is being\n"
+"\tinterpreted as the 2-byte sequence \\0%c%c, `%c'"
+msgstr ""
+"προειδοποίηση: ο ασαφής οκταδικός διαφυγής \\%c%c%c μεταφράζεται\n"
+"ως την ακολουθία δύο bytes \\0%c%c, `%c'"
+
+#: src/tr.c:564
+msgid "invalid backslash escape at end of string"
+msgstr "μη έγκυρη διαφυγή με πισωκάθετο στο τέλος του αλφαριθμητικού"
+
+#: src/tr.c:570
+#, c-format
+msgid "invalid backslash escape `\\%c'"
+msgstr "μη έγκυρη διαφυγή με πισωκάθετο `\\%c'`"
+
+#: src/tr.c:723
+#, c-format
+msgid "range-endpoints of `%s-%s' are in reverse collating sequence order"
+msgstr "τα άκρη του διαστήματος `%s-%s' είναι σε αντίστροφη σειρά"
+
+#: src/tr.c:904
+#, c-format
+msgid "invalid repeat count `%s' in [c*n] construct"
+msgstr "μη έγκυρη μέτρηση επανάληψης `%s' στη κατασκευή [c*n]"
+
+#: src/tr.c:997
+#, fuzzy
+msgid "missing character class name `[::]'"
+msgstr "μη έγκυρη τάξη χαρακτήρων `%s'"
+
+#: src/tr.c:1000
+msgid "missing equivalence class character `[==]'"
+msgstr ""
+
+#: src/tr.c:1023
+#, c-format
+msgid "invalid character class `%s'"
+msgstr "μη έγκυρη τάξη χαρακτήρων `%s'"
+
+#: src/tr.c:1048
+#, c-format
+msgid "%s: equivalence class operand must be a single character"
+msgstr "%s: ο τελεστής ισοδυναμίας τάξης πρέπει να είναι ένας μόνο χαρακτήρας"
+
+#: src/tr.c:1520
+msgid "the [c*] repeat construct may not appear in string1"
+msgstr "η δομή επανάληψης [c*] δε μπορεί να εμφανίζεται στο αλφαριθμητικό1"
+
+#: src/tr.c:1530
+msgid "only one [c*] repeat construct may appear in string2"
+msgstr "μόνο μια δομή επανάληψης [c*] μπορεί να εμφανιστεί στο αλφαριθμητικό2"
+
+#: src/tr.c:1538
+msgid "[=c=] expressions may not appear in string2 when translating"
+msgstr ""
+"εκφράσεις [=c=] δεν μπορούν να εμφανίζονται στο αλφαριθμητικό 2 στη μετάφραση"
+
+#: src/tr.c:1551
+msgid "when not truncating set1, string2 must be non-empty"
+msgstr ""
+"όταν δεν αποκόπτεται το σύνολο1, το αλφαριθμητικό 2 πρέπει να μην είναι κενό"
+
+#: src/tr.c:1560
+msgid ""
+"when translating with complemented character classes,\n"
+"string2 must map all characters in the domain to one"
+msgstr ""
+"όταν γίνεται μετάφραση με συμπλήρωμα τάξης χαρακτήρων,\n"
+"το αλφαριθμητικό 2 πρέπει να αντιστοιχίζει όλους τους χαρακτήρες στην "
+"περιοχή με ένα"
+
+#: src/tr.c:1567
+msgid ""
+"when translating, the only character classes that may appear in\n"
+"string2 are `upper' and `lower'"
+msgstr ""
+"στη μετάφραση, οι μόνες κλάσεις χαρακτήρων που μπορούν να εμφανιστούν\n"
+"στο αλφαριθμητικό 2 είναι `upper' και `lower'"
+
+#: src/tr.c:1576
+msgid "the [c*] construct may appear in string2 only when translating"
+msgstr "η δομή [c*] μπορεί να εμφανιστεί στο αλφαριθμητικό2 μόνο στη μετάφραση"
+
+#: src/tr.c:1852
+msgid "two strings must be given when translating"
+msgstr "δύο αλφαριθμητικά πρέπει να δίνονται στη μετάφραση"
+
+#: src/tr.c:1855
+msgid "two strings must be given when both deleting and squeezing repeats"
+msgstr ""
+"δύο αλφαριθμητικά πρέπει να δίνονται όταν γίνονται διαγραφή και\n"
+"συμπυκνώσεις επαναλήψεων"
+
+#: src/tr.c:1869
+msgid "only one string may be given when deleting without squeezing repeats"
+msgstr ""
+"μόνο ένα αλφαριθμητικό μπορεί να δοθεί όταν γίνεται διαγραφή χωρίς\n"
+"συμπυκνώσεις επαναλήψεων"
+
+#: src/tr.c:1875
+msgid "at least one string must be given when squeezing repeats"
+msgstr ""
+"τουλάχιστον ένα αλφαριθμητικό πρέπει να δίνεται όταν συμπυκνώνονται\n"
+"επαναλήψεις"
+
+#: src/tr.c:1966
+msgid "misaligned [:upper:] and/or [:lower:] construct"
+msgstr "κακώς αντιχοισμένη δομή [:upper:] και/ή [:lower:]"
+
+#: src/tr.c:1989
+msgid ""
+"invalid identity mapping;  when translating, any [:lower:] or [:upper:]\n"
+"construct in string1 must be aligned with a corresponding construct\n"
+"([:upper:] or [:lower:], respectively) in string2"
+msgstr ""
+
+#: src/tsort.c:97
+#, fuzzy, c-format
+msgid ""
+"Usage: %s [OPTION] [FILE]\n"
+"Write totally ordered list consistent with the partial ordering in FILE.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"Χρήση: %s [ΕΠΙΛΟΓΗ] [ΑΡΧΕΙΟ]\n"
+"Εγγραφή πλήρους ταξινομημένης λίστας σε συμφωνία με τη μερική ταξινόμηση\n"
+"στο ΑΡΧΕΙΟ. Χωρίς ΑΡΧΕΙΟ, ή όταν το αρχείο είναι το -, ανάγνωση από την\n"
+"κανονική είσοδο.\n"
+"\n"
+"      --help       εμφάνιση αυτής της βοήθειας και έξοδος\n"
+"      --version    εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#: src/tsort.c:533
+#, c-format
+msgid "%s: input contains a loop:"
+msgstr "%s: η είσοδος περιέχει βρόχο:"
+
+#: src/tsort.c:575
+msgid "only one argument may be specified"
+msgstr "μόνο ένα όρισμα μπορεί να δηλωθεί"
+
+#: src/unexpand.c:379
+#, fuzzy
+msgid ""
+"Convert spaces in each FILE to tabs, writing to standard output.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"Μετατροπή διαστημάτων σε κάθε ΑΡΧΕΙΟ σε στηλοθέτες, γράφοντας στην κανονική "
+"έξοδο.\n"
+"Χωρίς ΑΡΧΕΙΟ, ή όταν το αρχείο είναι το -, ανάγνωση από την κανονική "
+"είσοδο.\n"
+"\n"
+"  -a, --all           μετατροπή όλων των λευκών χαρακτήρων, αντί μόνο των "
+"αρχικών\n"
+"  -t, --tabs=ΑΡΙΘΜΟΣ  οι στηλοθέτες να έχουν απόσταση ΑΡΙΘΜΟΣ αντί 8\n"
+"  -t, --tabs=ΛΙΣΤΑ    χρήση λίστας χωρισμένης με κόμμα για τη δήλωση της "
+"θέσης των στηλοθετών\n"
+"      --help          εμφάνιση αυτής της βοήθειας και έξοδος\n"
+"      --version       εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+"\n"
+"Αντί για -t ΑΡΙΘΜΟΣ ή -t ΛΙΣΤΑ, -ΑΡΙΘΜΟΣ ή -ΛΙΣΤΑ μπορούν να "
+"χρησιμοποιηθούν.\n"
+
+#: src/unexpand.c:387
+msgid ""
+"  -a, --all           convert all whitespace, instead of initial whitespace\n"
+"  -t, --tabs=NUMBER   have tabs NUMBER characters apart instead of 8\n"
+"  -t, --tabs=LIST     use comma separated list of explicit tab positions\n"
+msgstr ""
+
+#: src/unexpand.c:463
+msgid "`-LIST' option is obsolete; use `--first-only -t LIST'"
+msgstr ""
+
+#: src/uniq.c:134
+#, c-format
+msgid "Usage: %s [OPTION]... [INPUT [OUTPUT]]\n"
+msgstr "Χρήση: %s [ΕΠΙΛΟΓΗ]... [ΕΙΣΟΔΟΣ [ΕΞΟΔΟΣ]]\n"
+
+#: src/uniq.c:138
+msgid ""
+"Discard all but one of successive identical lines from INPUT (or\n"
+"standard input), writing to OUTPUT (or standard output).\n"
+"\n"
+msgstr ""
+
+#: src/uniq.c:146
+msgid ""
+"  -c, --count           prefix lines by the number of occurrences\n"
+"  -d, --repeated        only print duplicate lines\n"
+msgstr ""
+
+#: src/uniq.c:150
+msgid ""
+"  -D, --all-repeated[=delimit-method] print all duplicate lines\n"
+"                        delimit-method={none(default),prepend,separate}\n"
+"                        Delimiting is done with blank lines.\n"
+"  -f, --skip-fields=N   avoid comparing the first N fields\n"
+"  -i, --ignore-case     ignore differences in case when comparing\n"
+"  -s, --skip-chars=N    avoid comparing the first N characters\n"
+"  -u, --unique          only print unique lines\n"
+msgstr ""
+
+#: src/uniq.c:159
+msgid "  -w, --check-chars=N   compare no more than N characters in lines\n"
+msgstr ""
+
+#: src/uniq.c:164
+msgid ""
+"\n"
+"A field is a run of whitespace, then non-whitespace characters.\n"
+"Fields are skipped before chars.\n"
+msgstr ""
+
+#: src/uniq.c:377
+#, c-format
+msgid "error reading %s"
+msgstr "σφάλμα ανάγνωσης %s"
+
+#: src/uniq.c:382
+#, c-format
+msgid "error writing %s"
+msgstr "σφάλμα εγγραφής %s"
+
+#: src/uniq.c:428 src/uniq.c:445
+#, c-format
+msgid "extra operand `%s'"
+msgstr ""
+
+#: src/uniq.c:468 src/uniq.c:493
+#, fuzzy
+msgid "invalid number of fields to skip"
+msgstr "μη έγκυρος αριθμός πεδίων προς προσπέραση: `%s'"
+
+#: src/uniq.c:502
+#, fuzzy
+msgid "invalid number of bytes to skip"
+msgstr "μη έγκυρος αριθμός bytes προς προσπέραση: `%s'"
+
+#: src/uniq.c:511
+#, fuzzy
+msgid "invalid number of bytes to compare"
+msgstr "μη έγκυρος αριθμός από bytes προς σύγκριση: `%s'"
+
+#: src/uniq.c:525
+#, c-format
+msgid "`-%lu' option is obsolete; use `-f %lu'"
+msgstr ""
+
+#: src/uniq.c:533
+msgid "printing all duplicated lines and repeat counts is meaningless"
+msgstr ""
+"εκτύπωση όλων των διπλών γραμμών και μετρητών επαναλήψεων δεν έχει έννοια"
+
+#: src/wc.c:78
+msgid "Paul Rubin and David MacKenzie"
+msgstr ""
+
+#: src/wc.c:132
+#, fuzzy
+msgid ""
+"Print newline, word, and byte counts for each FILE, and a total line if\n"
+"more than one FILE is specified.  With no FILE, or when FILE is -,\n"
+"read standard input.\n"
+"  -c, --bytes            print the byte counts\n"
+"  -m, --chars            print the character counts\n"
+"  -l, --lines            print the newline counts\n"
+msgstr ""
+"Εμφάνιση μετρητών γραμμών, λέξεων και byte για κάθε ΑΡΧΕΙΟ, και μια γραμμή "
+"συνόλων\n"
+"άν ορίζονται περισσότερο από ένα ΑΡΧΕΙΑ. Χωρίς ΑΡΧΕΙΟ, ή όταν το αρχείο "
+"είναι το -,\n"
+"ανάγνωση από την κανονική είσοδο.\n"
+"  -c, --bytes, --chars   εμφάνιση του συνόλου των bytes\n"
+"  -l, --lines            εμφάνιση του συνόλου των γραμμών\n"
+"  -L, --max-line-length  εμφάνιση του μήκους της μεγαλύτερης γραμμής\n"
+"  -w, --words            εμφάνιση του συνόλου των λέξεων\n"
+"      --help             εμφάνιση αυτής της βοήθειας και έξοδος\n"
+"      --version          εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#: src/wc.c:140
+#, fuzzy
+msgid ""
+"  -L, --max-line-length  print the length of the longest line\n"
+"  -w, --words            print the word counts\n"
+msgstr ""
+"Εμφάνιση άθροισμα ελέγχου CRC και αριθμό bytes για κάθε ΑΡΧΕΙΟ.\n"
+"\n"
+"  --help       εμφάνιση αυτής της βοήθειας και έξοδος\n"
+"  --version    εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#: src/wc.c:589
+msgid "total"
+msgstr "σύνολο"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "(obsolete)  If -VALUE is used as first OPTION, same as -c VALUE when one "
+#~ "of\n"
+#~ "multipliers bkm follows concatenated, else same as -n VALUE.\n"
+#~ msgstr ""
+#~ "Εμφάνιση των 10 πρώτων γραμμών από κάθε ΑΡΧΕΙΟ στην κανονική έξοδο.\n"
+#~ "Με περισσότερα από ένα ΑΡΧΕΙΟ, να προηγηθεί επισέλιδο με το όνομα του "
+#~ "αρχείου.\n"
+#~ "Χωρίς ΑΡΧΕΙΟ ή όταν το ΑΡΧΕΙΟ είναι το -, ανάγνωση από την κανονική "
+#~ "είσοδο.\n"
+#~ "\n"
+#~ "  -c, --bytes=ΜΕΓΕΘΟΣ      εμφάνιση των πρώτων ΜΕΓΕΘΟΣ bytes\n"
+#~ "  -n, --lines=ΑΡΙΘΜΟΣ      εμφάνιση των πρώτων ΑΡΙΘΜΟΣ γραμμών αντί των "
+#~ "πρώτων 10\n"
+#~ "  -q, --quiet, --silent    να μην τυπώνονται επισέλιδα με τα ονόματα "
+#~ "αρχείων\n"
+#~ "  -v, --verbose            να τυπώνονται πάντα επισέλιδα με τα ονόματα "
+#~ "αρχείων\n"
+#~ "      --help               εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "      --version            εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+#~ "\n"
+#~ "Το ΜΕΓΕΘΟΣ μπορεί να έχει κατάληξη με πολλαπλασιαστή: b για 512, k για "
+#~ "1K, m για 1 Meg.\n"
+#~ "Αν χρησιμοποιείται το -VALUE σαν πρώτη ΕΠΙΛΟΓΗ, ανάγνωσε -c ΤΙΜΗ όταν\n"
+#~ "ένας από τους πολλαπλασιαστές bkm ακολουθεί συνενωμένος, διαφορετικά "
+#~ "ανάγνωσε -n ΤΙΜΗ\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "  +POS1 [-POS2]             start a key at POS1, end it before POS2 "
+#~ "(origin 0)\n"
+#~ "                              Warning: this option is obsolete\n"
+#~ msgstr ""
+#~ "Σύγκριση ταξινομημένων αρχείων ΑΡΙΣΤΕΡΌ_ΑΡΧΕΊΟ και ΔΕΞΙΌ_ΑΡΧΕΊΟ, ανά "
+#~ "γραμμή.\n"
+#~ "\n"
+#~ "  -1              απόκρυψη μοναδικών γραμμών στο αριστερό αρχείο\n"
+#~ "  -2              απόκρυψη μοναδικών γραμμών στο δεξιό αρχείο\n"
+#~ "  -3              απόκρυψη μοναδικών γραμμών και στα δύο αρχεία\n"
+#~ "      --help      εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "      --version   εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help               display this help and exit\n"
+#~ "      --version            output version information and exit\n"
+#~ msgstr ""
+#~ "Εμφάνιση άθροισμα ελέγχου CRC και αριθμό bytes για κάθε ΑΡΧΕΙΟ.\n"
+#~ "\n"
+#~ "  --help       εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "  --version    εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help        display this help and exit\n"
+#~ "      --version     output version information and exit\n"
+#~ msgstr ""
+#~ "Εμφάνιση άθροισμα ελέγχου CRC και αριθμό bytes για κάθε ΑΡΧΕΙΟ.\n"
+#~ "\n"
+#~ "  --help       εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "  --version    εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help      display this help and exit\n"
+#~ "      --version   output version information and exit\n"
+#~ msgstr ""
+#~ "Εμφάνιση άθροισμα ελέγχου CRC και αριθμό bytes για κάθε ΑΡΧΕΙΟ.\n"
+#~ "\n"
+#~ "  --help       εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "  --version    εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help                 display this help and exit\n"
+#~ "      --version              output version information and exit\n"
+#~ msgstr ""
+#~ "Εμφάνιση άθροισμα ελέγχου CRC και αριθμό bytes για κάθε ΑΡΧΕΙΟ.\n"
+#~ "\n"
+#~ "  --help       εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "  --version    εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help              display this help and exit\n"
+#~ "      --version           output version information and exit\n"
+#~ msgstr ""
+#~ "Εμφάνιση άθροισμα ελέγχου CRC και αριθμό bytes για κάθε ΑΡΧΕΙΟ.\n"
+#~ "\n"
+#~ "  --help       εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "  --version    εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help          display this help and exit\n"
+#~ "      --version       output version information and exit\n"
+#~ msgstr ""
+#~ "Εμφάνιση άθροισμα ελέγχου CRC και αριθμό bytes για κάθε ΑΡΧΕΙΟ.\n"
+#~ "\n"
+#~ "  --help       εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "  --version    εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help                display this help and exit\n"
+#~ "      --version             output version information and exit\n"
+#~ msgstr ""
+#~ "Εμφάνιση άθροισμα ελέγχου CRC και αριθμό bytes για κάθε ΑΡΧΕΙΟ.\n"
+#~ "\n"
+#~ "  --help       εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "  --version    εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help                      display this help and exit\n"
+#~ "      --version                   output version information and exit\n"
+#~ msgstr ""
+#~ "Εμφάνιση άθροισμα ελέγχου CRC και αριθμό bytes για κάθε ΑΡΧΕΙΟ.\n"
+#~ "\n"
+#~ "  --help       εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "  --version    εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help                  display this help and exit\n"
+#~ "      --version               output version information and exit\n"
+#~ msgstr ""
+#~ "Εμφάνιση άθροισμα ελέγχου CRC και αριθμό bytes για κάθε ΑΡΧΕΙΟ.\n"
+#~ "\n"
+#~ "  --help       εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "  --version    εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help                     display this help and exit\n"
+#~ "      --version                  output version information and exit\n"
+#~ msgstr ""
+#~ "Εμφάνιση άθροισμα ελέγχου CRC και αριθμό bytes για κάθε ΑΡΧΕΙΟ.\n"
+#~ "\n"
+#~ "  --help       εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "  --version    εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help       display this help and exit\n"
+#~ "      --version    output version information and exit\n"
+#~ msgstr ""
+#~ "Εμφάνιση άθροισμα ελέγχου CRC και αριθμό bytes για κάθε ΑΡΧΕΙΟ.\n"
+#~ "\n"
+#~ "  --help       εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "  --version    εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help            display this help and exit\n"
+#~ "      --version         output version information and exit\n"
+#~ msgstr ""
+#~ "Εμφάνιση άθροισμα ελέγχου CRC και αριθμό bytes για κάθε ΑΡΧΕΙΟ.\n"
+#~ "\n"
+#~ "  --help       εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "  --version    εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help             display this help and exit\n"
+#~ "      --version          output version information and exit\n"
+#~ msgstr ""
+#~ "Εμφάνιση άθροισμα ελέγχου CRC και αριθμό bytes για κάθε ΑΡΧΕΙΟ.\n"
+#~ "\n"
+#~ "  --help       εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "  --version    εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "  --help            display this help and exit\n"
+#~ "  --version         output version information and exit\n"
+#~ msgstr ""
+#~ "Εμφάνιση άθροισμα ελέγχου CRC και αριθμό bytes για κάθε ΑΡΧΕΙΟ.\n"
+#~ "\n"
+#~ "  --help       εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "  --version    εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Convert tabs in each FILE to spaces, writing to standard output.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -i, --initial       do not convert TABs after non whitespace\n"
+#~ "  -t, --tabs=NUMBER   have tabs NUMBER characters apart, not 8\n"
+#~ msgstr ""
+#~ "Μετατροπή στηλογνωμόνων σε κάθε ΑΡΧΕΙΟ σε διαστήματα, με εγγραφή στην "
+#~ "κανονική έξοδο.\n"
+#~ "Χωρίς ΑΡΧΕΙΟ ή όταν το ΑΡΧΕΙΟ είναι το -, ανάγνωση από την κανονική "
+#~ "είσοδο.\n"
+#~ "\n"
+#~ "  -i, --initial       να μη μετατραπούν τα TAB μετά από μη-λευκούς "
+#~ "χαρακτήρες\n"
+#~ "  -t, --tabs=ΑΡΙΘΜ    οι στηλογνώμονες να έχουν μέγεθος ΑΡΙΘΜός "
+#~ "χαρακτήρες, όχι 8\n"
+#~ "  -t, --tabs=ΛΙΣΤΑ    χρήση λίστας διαχωρισμένης με κόμματα για ορισμό "
+#~ "θέσεων στηλογνωμόνων\n"
+#~ "      --help          εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "      --version       εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+#~ "\n"
+#~ "Αντί για -t ΑΡΙΘΜΟΣ ή -t ΛΙΣΤΑ, -ΑΡΙΘΜΟΣ ή -ΛΙΣΤΑ μπορούν να "
+#~ "χρησιμοποιηθούν.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "  -t, --tabs=LIST     use comma separated list of explicit tab positions\n"
+#~ "      --help          display this help and exit\n"
+#~ "      --version       output version information and exit\n"
+#~ "\n"
+#~ "Instead of -t NUMBER or -t LIST, -NUMBER or -LIST may be used.\n"
+#~ msgstr ""
+#~ "Μετατροπή στηλογνωμόνων σε κάθε ΑΡΧΕΙΟ σε διαστήματα, με εγγραφή στην "
+#~ "κανονική έξοδο.\n"
+#~ "Χωρίς ΑΡΧΕΙΟ ή όταν το ΑΡΧΕΙΟ είναι το -, ανάγνωση από την κανονική "
+#~ "είσοδο.\n"
+#~ "\n"
+#~ "  -i, --initial       να μη μετατραπούν τα TAB μετά από μη-λευκούς "
+#~ "χαρακτήρες\n"
+#~ "  -t, --tabs=ΑΡΙΘΜ    οι στηλογνώμονες να έχουν μέγεθος ΑΡΙΘΜός "
+#~ "χαρακτήρες, όχι 8\n"
+#~ "  -t, --tabs=ΛΙΣΤΑ    χρήση λίστας διαχωρισμένης με κόμματα για ορισμό "
+#~ "θέσεων στηλογνωμόνων\n"
+#~ "      --help          εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "      --version       εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+#~ "\n"
+#~ "Αντί για -t ΑΡΙΘΜΟΣ ή -t ΛΙΣΤΑ, -ΑΡΙΘΜΟΣ ή -ΛΙΣΤΑ μπορούν να "
+#~ "χρησιμοποιηθούν.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Wrap input lines in each FILE (standard input by default), writing to\n"
+#~ "standard output.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -b, --bytes         count bytes rather than columns\n"
+#~ "  -s, --spaces        break at spaces\n"
+#~ "  -w, --width=WIDTH   use WIDTH columns instead of 80\n"
+#~ "      --help          display this help and exit\n"
+#~ "      --version       output version information and exit\n"
+#~ msgstr ""
+#~ "Αναδίπλωση γραμμών εισόδου σε κάθε ΑΡΧΕΙΟ (κανονική είσοδος εξ ορισμού),\n"
+#~ "γράφοντας στην κανονική έξοδο.\n"
+#~ "\n"
+#~ "  -b, --bytes         μέτρηση bytes αντί στηλών\n"
+#~ "  -s, --spaces        αναδίπλωση σε διαστήματα μόνο\n"
+#~ "  -w, --width=ΠΛΑΤΟΣ  χρήση ΠΛΑΤΟΣ στήλες αντί για 80\n"
+#~ "      --help          εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "      --version       εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Write lines consisting of the sequentially corresponding lines from\n"
+#~ "each FILE, separated by TABs, to standard output.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -d, --delimiters=LIST   reuse characters from LIST instead of TABs\n"
+#~ "  -s, --serial            paste one file at a time instead of in "
+#~ "parallel\n"
+#~ "      --help              display this help and exit\n"
+#~ "      --version           output version information and exit\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Εμφάνιση γραμμών που απαρτίζονται από τις σειριακά αντίστοιχες γραμμές "
+#~ "από\n"
+#~ "κάθε ΑΡΧΕΙΟ, χωρισμένες με TABs, στην κανονική έξοδο.\n"
+#~ "Χωρίς ΑΡΧΕΙΟ, ή όταν το αρχείο είναι το -, ανάγνωση από την κανονική "
+#~ "είσοδο.\n"
+#~ "\n"
+#~ "  -d, --delimiters=ΛΙΣΤΑ  επαναχρησιμοποίηση χαρακτήρων από τη ΛΙΣΤΑ αντί "
+#~ "για TABs\n"
+#~ "  -s, --serial            επικόλληση ενός αρχείου τη φορά αντί παράλληλα\n"
+#~ "      --help          εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "      --version       εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+#~ "\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "  -NUMBER                 same as -l NUMBER\n"
+#~ "      --verbose           print a diagnostic to standard error just\n"
+#~ "                            before each output file is opened\n"
+#~ "      --help              display this help and exit\n"
+#~ "      --version           output version information and exit\n"
+#~ "\n"
+#~ "SIZE may have a multiplier suffix: b for 512, k for 1K, m for 1 Meg.\n"
+#~ msgstr ""
+#~ "Έξοδος τμημάτων σταθερού μεγέθους από την ΕΙΣΟΔΟ σε ΠΡΟΘΕΜΑaa, "
+#~ "ΠΡΟΘΕΜΑab, ...; εξ ορισμού\n"
+#~ "ΠΡΟΘΕΜΑ είναι το `x'.  Χωρίς ΕΙΣΟΔΟ, ή όταν η ΕΙΣΟΔΟΣ είναι το -, "
+#~ "ανάγνωση από την κανονική είσοδο.\n"
+#~ "\n"
+#~ "  -b, --bytes=ΜΕΓΕΘΟΣ     τοποθέτηση ΜΕΓΕΘΟΣ bytes σε κάθε αρχείο εξόδου\n"
+#~ "  -C, --line-bytes=ΜΕΓΕΘΟΣ  τοποθέτηση το πολύ ΜΕΓΕΘΟΣ bytes από γραμμές "
+#~ "σε κάθε αρχείο εξόδου\n"
+#~ "  -l, --lines=ΑΡΙΘΜΟΣ     τοποθέτηση ΑΡΙΘΜΟΣ γραμμών σε κάθε αρχείου "
+#~ "εξόδου\n"
+#~ "  -ΑΡΙΘΜΟΣ                ίδιο με -l ΑΡΙΘΜΟΣ\n"
+#~ "      --verbose           εκτύπωση διαγνωστικού στο κανονικό σφάλμα μόλις "
+#~ "πριν\n"
+#~ "                            ανοιχτεί κάθε αρχείο εξόδου\n"
+#~ "      --help              εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "      --version           εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+#~ "\n"
+#~ "ΜΕΓΕΘΟΣ μπορεί να έχει πρόθεμα πολλαπλασιαστή: b για 512, k για 1K, m για "
+#~ "1 Meg.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Write each FILE to standard output, last line first.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -b, --before             attach the separator before instead of after\n"
+#~ msgstr ""
+#~ "Εγγραφή κάθε αρχείου στην κανονική έξοδο, τελευταία γραμμή πρώτα.\n"
+#~ "Χωρίς ΑΡΧΕΙΟ, ή όταν το αρχείο είναι το -, ανάγνωση από την κανονική "
+#~ "είσοδο.\n"
+#~ "\n"
+#~ "  -b, --before             τοποθέτηση του διαχωριστή πριν αντί για μετά\n"
+#~ "  -r, --regex              μετάφραση του διαχωριστή ως κανονική έκφραση\n"
+#~ "  -s, --separator=ΑΛΦΑΡΙΘΜ  χρήση ΑΛΦΑΡΙΘΜητικού ως διαχωριστής αντί του "
+#~ "χαρακτήρα νέας γραμμής\n"
+#~ "      --help               εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "      --version            εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Print the last %d lines of each FILE to standard output.\n"
+#~ "With more than one FILE, precede each with a header giving the file "
+#~ "name.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "      --retry              keep trying to open a file even if it is\n"
+#~ "                           inaccessible when tail starts or if it "
+#~ "becomes\n"
+#~ "                           inaccessible later -- useful only with -f\n"
+#~ msgstr ""
+#~ "Εμφάνιση των 10 πρώτων γραμμών από κάθε ΑΡΧΕΙΟ στην κανονική έξοδο.\n"
+#~ "Με περισσότερα από ένα ΑΡΧΕΙΟ, να προηγηθεί επισέλιδο με το όνομα του "
+#~ "αρχείου.\n"
+#~ "Χωρίς ΑΡΧΕΙΟ ή όταν το ΑΡΧΕΙΟ είναι το -, ανάγνωση από την κανονική "
+#~ "είσοδο.\n"
+#~ "\n"
+#~ "  -c, --bytes=ΜΕΓΕΘΟΣ      εμφάνιση των πρώτων ΜΕΓΕΘΟΣ bytes\n"
+#~ "  -n, --lines=ΑΡΙΘΜΟΣ      εμφάνιση των πρώτων ΑΡΙΘΜΟΣ γραμμών αντί των "
+#~ "πρώτων 10\n"
+#~ "  -q, --quiet, --silent    να μην τυπώνονται επισέλιδα με τα ονόματα "
+#~ "αρχείων\n"
+#~ "  -v, --verbose            να τυπώνονται πάντα επισέλιδα με τα ονόματα "
+#~ "αρχείων\n"
+#~ "      --help               εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "      --version            εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+#~ "\n"
+#~ "Το ΜΕΓΕΘΟΣ μπορεί να έχει κατάληξη με πολλαπλασιαστή: b για 512, k για "
+#~ "1K, m για 1 Meg.\n"
+#~ "Αν χρησιμοποιείται το -VALUE σαν πρώτη ΕΠΙΛΟΓΗ, ανάγνωσε -c ΤΙΜΗ όταν\n"
+#~ "ένας από τους πολλαπλασιαστές bkm ακολουθεί συνενωμένος, διαφορετικά "
+#~ "ανάγνωσε -n ΤΙΜΗ\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "  -t, --tabs=NUMBER   have tabs NUMBER characters apart instead of 8\n"
+#~ "  -t, --tabs=LIST     use comma separated list of explicit tab positions\n"
+#~ "      --help          display this help and exit\n"
+#~ "      --version       output version information and exit\n"
+#~ "\n"
+#~ "Instead of -t NUMBER or -t LIST, -NUMBER or -LIST may be used.\n"
+#~ msgstr ""
+#~ "Μετατροπή διαστημάτων σε κάθε ΑΡΧΕΙΟ σε στηλοθέτες, γράφοντας στην "
+#~ "κανονική έξοδο.\n"
+#~ "Χωρίς ΑΡΧΕΙΟ, ή όταν το αρχείο είναι το -, ανάγνωση από την κανονική "
+#~ "είσοδο.\n"
+#~ "\n"
+#~ "  -a, --all           μετατροπή όλων των λευκών χαρακτήρων, αντί μόνο των "
+#~ "αρχικών\n"
+#~ "  -t, --tabs=ΑΡΙΘΜΟΣ  οι στηλοθέτες να έχουν απόσταση ΑΡΙΘΜΟΣ αντί 8\n"
+#~ "  -t, --tabs=ΛΙΣΤΑ    χρήση λίστας χωρισμένης με κόμμα για τη δήλωση της "
+#~ "θέσης των στηλοθετών\n"
+#~ "      --help          εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "      --version       εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+#~ "\n"
+#~ "Αντί για -t ΑΡΙΘΜΟΣ ή -t ΛΙΣΤΑ, -ΑΡΙΘΜΟΣ ή -ΛΙΣΤΑ μπορούν να "
+#~ "χρησιμοποιηθούν.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Output pieces of FILE separated by PATTERN(s) to files `xx01', "
+#~ "`xx02', ...,\n"
+#~ "and output byte counts of each piece to standard output.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -b, --suffix-format=FORMAT use sprintf FORMAT instead of %%d\n"
+#~ "  -f, --prefix=PREFIX        use PREFIX instead of `xx'\n"
+#~ "  -k, --keep-files           do not remove output files on errors\n"
+#~ "  -n, --digits=DIGITS        use specified number of digits instead of 2\n"
+#~ "  -s, --quiet, --silent      do not print counts of output file sizes\n"
+#~ "  -z, --elide-empty-files    remove empty output files\n"
+#~ "      --help                 display this help and exit\n"
+#~ "      --version              output version information and exit\n"
+#~ "\n"
+#~ "Read standard input if FILE is -.  Each PATTERN may be:\n"
+#~ "\n"
+#~ "  INTEGER            copy up to but not including specified line number\n"
+#~ "  /REGEXP/[OFFSET]   copy up to but not including a matching line\n"
+#~ "  %%REGEXP%%[OFFSET]   skip to, but not including a matching line\n"
+#~ "  {INTEGER}          repeat the previous pattern specified number of "
+#~ "times\n"
+#~ "  {*}                repeat the previous pattern as many times as "
+#~ "possible\n"
+#~ "\n"
+#~ "A line OFFSET is a required `+' or `-' followed by a positive integer.\n"
+#~ msgstr ""
+#~ "Παρήγαγε τμήματα από το ΑΡΧΕΙΟ διαχωρισμένα από ΜΟΡΦΗ(ΕΣ) σε αρχεία "
+#~ "`xx01', `xx02', ...,\n"
+#~ "και εμφάνισε τους αριθμούς των byte κάθε τμήματος στην κανονική έξοδο.\n"
+#~ "\n"
+#~ "  -b, --suffix-format=ΜΟΡΦΗ  χρήση μορφής αλά sprintf αντί του %%d\n"
+#~ "  -f, --prefix=ΚΑΤΑΛΗΞΗ      χρήση ΚΑΤΑΛΗΞΗς αντί του `xx'\n"
+#~ "  -k, --keep-files           να μη διαγραφούν τα αρχεία εξόδου σε "
+#~ "περίπτωση σφαλμάτων\n"
+#~ "  -n, --digits=ΨΗΦΙΑ         χρήση ΨΗΦΙΑ αριθμό ψηφίων αντί 2\n"
+#~ "  -s, --quiet, --silent      να μην εμφανιστούν οι μετρήσεις των μεγεθών "
+#~ "των αρχείων\n"
+#~ "  -z, --elide-empty-files    διαγραφή των κενών αρχείων\n"
+#~ "      --help                 εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "      --version              εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+#~ "\n"
+#~ "Ανάγνωση από κανονική είσοδο εάν ΑΡΧΕΙΟ είναι το -.  Κάθε ΜΟΡΦΗ μπορεί να "
+#~ "είναι:\n"
+#~ "\n"
+#~ "  ΑΚΕΡΑΙΟΣ           αντιγραφή μέχρι, αλλά χωρίς συμπεριληψη, αριθμό "
+#~ "γραμμής\n"
+#~ "  /ΚΑΝΕΚΦ/[ΘΕΣΗ]     αντιγραφή μέχρι, αλλά χωρίς συμπερίληψη, μιας "
+#~ "γραμμής που ταιριάζει\n"
+#~ "  %%ΚΑΝΕΚΦ%%[ΘΕΣΗ]   παρέκαμψε σε, αλλά χωρίς συμπερίληψη γραμμής που "
+#~ "ταιριάζει\n"
+#~ "  {ΑΚΕΡΑΙΟΣ}         επανάληψη της προηγούμενης μορφής ΑΚΕΡΑΙΟΣ φορές\n"
+#~ "  {*}                επανάληψη της προηγούμενης μορφής όσον το δυνατό "
+#~ "περισσότερες φορές\n"
+#~ "\n"
+#~ "Η ΘΕΣΗ γραμμής είναι ένα υποχρεωτικό `+' ή `-' ακολουθούμενο από ένα "
+#~ "θετικό ακέραιο.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Print selected parts of lines from each FILE to standard output.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -b, --bytes=LIST        output only these bytes\n"
+#~ "  -c, --characters=LIST   output only these characters\n"
+#~ "  -d, --delimiter=DELIM   use DELIM instead of TAB for field delimiter\n"
+#~ "  -f, --fields=LIST       output only these fields;  also print any line\n"
+#~ "                            that contains no delimiter character, unless\n"
+#~ "                            the -s option is specified\n"
+#~ "  -n                      (ignored)\n"
+#~ "  -s, --only-delimited    do not print lines not containing delimiters\n"
+#~ "      --output-delimiter=STRING  use STRING as the output delimiter\n"
+#~ "                            the default is to use the input delimiter\n"
+#~ "      --help              display this help and exit\n"
+#~ "      --version           output version information and exit\n"
+#~ "\n"
+#~ "Use one, and only one of -b, -c or -f.  Each LIST is made up of one\n"
+#~ "range, or many ranges separated by commas.  Each range is one of:\n"
+#~ "\n"
+#~ "  N     N'th byte, character or field, counted from 1\n"
+#~ "  N-    from N'th byte, character or field, to end of line\n"
+#~ "  N-M   from N'th to M'th (included) byte, character or field\n"
+#~ "  -M    from first to M'th (included) byte, character or field\n"
+#~ "\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ msgstr ""
+#~ "Εμφάνιση επιλεγμένων τμημάτων από γραμμές από κάθε ΑΡΧΕΙΟ στην κανονική "
+#~ "έξοδο.\n"
+#~ "\n"
+#~ "  -b, --bytes=ΛΙΣΤΑ       εμφάνιση μόνο αυτών των bytes\n"
+#~ "  -c, --characters=ΛΙΣΤΑ  εμφάνιση μόνο αυτών των χαρακτήρων\n"
+#~ "  -d, --delimiter=ΔΙΑΧΩΡ  χρήση ΔΙΑΧΩΡΙΣΤή αντί για TAB για διαχωριστή "
+#~ "πεδίου\n"
+#~ "  -f, --fields=ΛΙΣΤΑ      εμφάνιση μόνο αυτών των πεδίων\n"
+#~ "  -n                      (αγνοείτε)\n"
+#~ "  -s, --only-delimited    να μην εμφανιστούν γραμμές που δεν περιέχουν "
+#~ "διαχωριστές\n"
+#~ "      --output-delimiter=ΑΛΦΑΡΙΘ  χρήση ΑΛΦΑΡΙΘΜΗΤΙΚΟΥ για διαχωριστή "
+#~ "εξόδου\n"
+#~ "                            το εξ ορισμού είναι η χρήση του διαχωριστή "
+#~ "εισόδου\n"
+#~ "      --help              εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "      --version           εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+#~ "\n"
+#~ "Χρήση ενός και μόνου από τα -b, -c ή -f.  Κάθε ΛΙΣΤΑ απαρτίζεται από ένα "
+#~ "διάστημα\n"
+#~ "ή πολλά διαστήματα διαχωρισμένα με κόμματα.  Κάθε διάστημα είναι ένα "
+#~ "από:\n"
+#~ "\n"
+#~ "  N     N-οστό byte, χαρακτήρα ή πεδίο, μετρημένο από το 1\n"
+#~ "  N-    από το N-οστό byte, χαρακτήρα ή πεδίο, μέχρι τέλος γραμμής\n"
+#~ "  N-M   από Ν-οστό μέχρι Μ-οστό (συμπεριλαμβανομένων) byte, χαρακτήρα ή "
+#~ "πεδίο\n"
+#~ "  -M    από πρώτο εώς Μ-οστό (συμπεριλαμβανομένων) byte, χαρακτήρα ή "
+#~ "πεδίο\n"
+#~ "\n"
+#~ "Χωρίς ΑΡΧΕΙΟ ή όταν αρχείο είναι το -, ανάγνωση από κανονική είσοδο.\n"
+
+#~ msgid ""
+#~ "For each pair of input lines with identical join fields, write a line to\n"
+#~ "standard output.  The default join field is the first, delimited\n"
+#~ "by whitespace.  When FILE1 or FILE2 (not both) is -, read standard "
+#~ "input.\n"
+#~ "\n"
+#~ "  -a SIDE           print unpairable lines coming from file SIDE\n"
+#~ "  -e EMPTY          replace missing input fields with EMPTY\n"
+#~ "  -i, --ignore-case ignore differences in case when comparing fields\n"
+#~ "  -j FIELD          (obsolescent) equivalent to `-1 FIELD -2 FIELD'\n"
+#~ "  -j1 FIELD         (obsolescent) equivalent to `-1 FIELD'\n"
+#~ "  -j2 FIELD         (obsolescent) equivalent to `-2 FIELD'\n"
+#~ "  -o FORMAT         obey FORMAT while constructing output line\n"
+#~ "  -t CHAR           use CHAR as input and output field separator\n"
+#~ "  -v SIDE           like -a SIDE, but suppress joined output lines\n"
+#~ "  -1 FIELD          join on this FIELD of file 1\n"
+#~ "  -2 FIELD          join on this FIELD of file 2\n"
+#~ "      --help        display this help and exit\n"
+#~ "      --version     output version information and exit\n"
+#~ "\n"
+#~ "Unless -t CHAR is given, leading blanks separate fields and are ignored,\n"
+#~ "else fields are separated by CHAR.  Any FIELD is a field number counted\n"
+#~ "from 1.  FORMAT is one or more comma or blank separated specifications,\n"
+#~ "each being `SIDE.FIELD' or `0'.  Default FORMAT outputs the join field,\n"
+#~ "the remaining fields from FILE1, the remaining fields from FILE2, all\n"
+#~ "separated by CHAR.\n"
+#~ msgstr ""
+#~ "Για κάθε ζεύγος από γραμμές εισόδου με όμοια πεδία συνένωσης, εμφάνιση "
+#~ "μιας\n"
+#~ "γραμμής στην κανονική έξοδο.  Το εξ ορισμού πεδίο συνένωσης είναι το "
+#~ "πρώτο,\n"
+#~ "διαχωρισμένο με λευκό χαρακτήρα.  Όταν το ΑΡΧΕΙΟ1 ή ΑΡΧΕΙΟ2 (όχι και τα "
+#~ "δύο)\n"
+#~ "είναι το -, ανάγνωση από την κανονική είσοδο.\n"
+#~ "\n"
+#~ "  -a ΜΕΡΟΣ          εμφάνιση αταίριαστων γραμμών, προερχόμενεσ από το "
+#~ "αρχείο ΜΕΡΟΣ\n"
+#~ "  -e ΚΕΝΟ           αντικατάσταση ελλιπών πεδίων εισόδου με ΚΕΝΟ\n"
+#~ "  -i, --ignore-case αγνόηση διαφορών μεταξύ πεζών/κεφαλαίων όταν "
+#~ "συγκρίνονται πεδία\n"
+#~ "  -j ΠΕΔΙΟ          (δεν είναι σε χρήση) ισοδύναμε με `-1 FIELD -2 "
+#~ "FIELD'\n"
+#~ "  -j1 ΠΕΔΙΟ         (δεν είναι σε χρήση) ισοδύναμο με `-1 FIELD'\n"
+#~ "  -j2 ΠΕΔΙΟ         (δεν είναι σε χρήση) ισοδύναμο με `-2 FIELD'\n"
+#~ "  -o ΜΟΡΦΗ          χρήση του ΜΟΡΦΗ στην κατασκευή της γραμμής εξόδου\n"
+#~ "  -t ΧΑΡΑΚΤ         χρήση ΧΑΡΑΚΤήρα για διαχωριστή πεδίου για είσοδο και "
+#~ "έξοδο\n"
+#~ "  -v ΜΕΡΟΣ          όπως -a ΜΕΡΟΣ, αλλά με απόκρυψη των συνενωμένων "
+#~ "γραμμών εξόδου\n"
+#~ "  -1 ΠΕΔΙΟ          συνένωση σε αυτό το ΠΕΔΙΟ του αρχείου 1\n"
+#~ "  -2 ΠΕΔΙΟ          συνένωση σε αυτό το πεδίο του αρχείου 2\n"
+#~ "      --help        εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "      --version     εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+#~ "\n"
+#~ "Εκτός αν δίνεται -t ΧΑΡΑΚΤήρας, τα προπορευόμενα κενά διαχωρίζουν τα "
+#~ "πεδία\n"
+#~ "και αγνοούνται, διαφορετικά τα πεδία χωρίζονται από το ΧΑΡΑΚΤήρα.\n"
+#~ "Οποιοδήποτε ΠΕΔΙΟ είναι ένας αριθμός πεδίου μετρούμενος από το 1.\n"
+#~ "Η ΜΟΡΦΗ είναι μια ή περισσότερες δηλώσεις διαχωρισμένες με κόμμα ή κενό,\n"
+#~ "με το καθένα να είναι `ΜΕΡΟΣ.ΠΕΔΙΟ' ή `0'.  Η εξ ορισμού ΜΟΡΦΗ εμφανίζει\n"
+#~ "το πεδίο συνένωσης, τα υπόλοιπα πεδία από το ΑΡΧΕΙΟ1, τα υπόλοιπα πεδία\n"
+#~ "από το ΑΡΧΕΙΟ2, όλα διαχωρισμένα από το ΧΑΡΑΚΤήρα.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Usage: %s [OPTION] [FILE]...\n"
+#~ "  or:  %s [OPTION] --check [FILE]\n"
+#~ "Print or check %s (%d-bit) checksums.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "  -b, --binary            read files in binary mode (default on DOS/"
+#~ "Windows)\n"
+#~ "  -c, --check             check %s sums against given list\n"
+#~ "  -t, --text              read files in text mode (default)\n"
+#~ "\n"
+#~ "The following two options are useful only when verifying checksums:\n"
+#~ "      --status            don't output anything, status code shows "
+#~ "success\n"
+#~ "  -w, --warn              warn about improperly formated checksum lines\n"
+#~ "\n"
+#~ "      --help              display this help and exit\n"
+#~ "      --version           output version information and exit\n"
+#~ "\n"
+#~ "The sums are computed as described in %s.  When checking, the input\n"
+#~ "should be a former output of this program.  The default mode is to print\n"
+#~ "a line with checksum, a character indicating type (`*' for binary, ` ' "
+#~ "for\n"
+#~ "text), and name for each FILE.\n"
+#~ msgstr ""
+#~ "Χρήσηe: %s [ΕΠΙΛΟΓΗ] [ΑΡΧΕΙΟ]...\n"
+#~ "    ή:  %s [ΕΠΙΛΟΓΗ] --check [ΑΡΧΕΙΟ]\n"
+#~ "Εμφάνιση ή έλεγχος αθροισμάτων ελέγχου MD5.\n"
+#~ "Χωρίς ΑΡΧΕΙΟ, ή όταν το αρχείο είναι το -, ανάγνωση από την κανονική "
+#~ "είσοδο.\n"
+#~ "\n"
+#~ "  -b, --binary            ανάγνωση αρχείων σε δυαδική κατάσταση (εξ "
+#~ "ορισμού για DOS/Windows)\n"
+#~ "  -c, --check             έλεγχος αθροισμάτων MD5 σε σχέση με δοσμένη "
+#~ "λίστα\n"
+#~ "  -t, --text              ανάγνωση αρχείων σε κατάσταση κειμένου (εξ "
+#~ "ορισμού)\n"
+#~ "\n"
+#~ "Οι επόμενες δύο επιλογές είναι χρήσιμες μόνο στην επιβεβαίωση αθροισμάτων "
+#~ "ελέγχου:\n"
+#~ "      --status            να μην εμφανιστεί τίποτα, ο κώδικας κατάστασης "
+#~ "δηλώνει την επιτυχία\n"
+#~ "  -w, --warn              προειδοποίησε για αντικανονικά μορφοποιημένες "
+#~ "γραμμές με αθροίσματα ελέγχου MD5\n"
+#~ "\n"
+#~ "      --help              εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "      --version           εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+#~ "\n"
+#~ "Τα αθροίσματα υπολογίζοντε όπως περιγράφεται στο RFC 1321.  Στον έλεγχο, "
+#~ "η είσοδος\n"
+#~ "θα πρέπει να είναι μια προηγούμενη έξοδος αυτού του προγράμματος.  Η εξ "
+#~ "ορισμού κατάσταση\n"
+#~ "είναι να εκτυπώνεται μια γραμμή με το άθροισμα ελέγχου, ένα χαρακτήρα "
+#~ "ένδειξης τύπου\n"
+#~ "(`*' για δυαδικό, ` ' για κείμενο), και το όνομα για κάθε ΑΡΧΕΙΟ.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Write each FILE to standard output, with line numbers added.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -b, --body-numbering=STYLE      use STYLE for numbering body lines\n"
+#~ "  -d, --section-delimiter=CC      use CC for separating logical pages\n"
+#~ "  -f, --footer-numbering=STYLE    use STYLE for numbering footer lines\n"
+#~ "  -h, --header-numbering=STYLE    use STYLE for numbering header lines\n"
+#~ "  -i, --page-increment=NUMBER     line number increment at each line\n"
+#~ "  -l, --join-blank-lines=NUMBER   group of NUMBER empty lines counted as "
+#~ "one\n"
+#~ "  -n, --number-format=FORMAT      insert line numbers according to "
+#~ "FORMAT\n"
+#~ "  -p, --no-renumber               do not reset line numbers at logical "
+#~ "pages\n"
+#~ "  -s, --number-separator=STRING   add STRING after (possible) line "
+#~ "number\n"
+#~ "  -v, --first-page=NUMBER         first line number on each logical page\n"
+#~ "  -w, --number-width=NUMBER       use NUMBER columns for line numbers\n"
+#~ "      --help                      display this help and exit\n"
+#~ "      --version                   output version information and exit\n"
+#~ "\n"
+#~ "By default, selects -v1 -i1 -l1 -sTAB -w6 -nrn -hn -bt -fn.  CC are\n"
+#~ "two delimiter characters for separating logical pages, a missing\n"
+#~ "second character implies :.  Type \\\\ for \\.  STYLE is one of:\n"
+#~ "\n"
+#~ "  a         number all lines\n"
+#~ "  t         number only nonempty lines\n"
+#~ "  n         number no lines\n"
+#~ "  pREGEXP   number only lines that contain a match for REGEXP\n"
+#~ "\n"
+#~ "FORMAT is one of:\n"
+#~ "\n"
+#~ "  ln   left justified, no leading zeros\n"
+#~ "  rn   right justified, no leading zeros\n"
+#~ "  rz   right justified, leading zeros\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Εμφάνιση κάθε ΑΡΧΕΙΟΥ στην κανονική έξοδο, με πρόσθεση αριθμών γραμμής.\n"
+#~ "Χωρίς ΑΡΧΕΙΟ, ή όταν το αρχείο είναι το -, ανάγνωση από την κανονική "
+#~ "είσοδο.\n"
+#~ "\n"
+#~ "  -b, --body-numbering=ΣΤΥΛ       χρήση ΣΤΥΛ στην αρίθμηση των γραμμών "
+#~ "του\n"
+#~ "                                    κυρίου μέρους\n"
+#~ "  -d, --section-delimiter=CC      χρήση του CC στο χωρισμό λογικών "
+#~ "σελίδων\n"
+#~ "  -f, --footer-numbering=ΣΤΥΛ     χρήση ΣΤΥΛ στην αρίθμηση των γραμμών "
+#~ "του\n"
+#~ "                                    υποσέλιδου\n"
+#~ "  -h, --header-numbering=ΣΤΥΛ     χρήση ΣΤΥΛ στην αρίθμηση των γραμμών "
+#~ "του\n"
+#~ "                                    επισέλιδου\n"
+#~ "  -i, --page-increment=ΑΡΙΘΜΟΣ    αύξηση αριθμού γραμμής σε κάθε γραμμή\n"
+#~ "  -l, --join-blank-lines=ΑΡΙΘΜΟΣ  ομάδα από ΑΡΙΘΜΟΣ κενών γραμμών που\n"
+#~ "                                    μετρούντε ως μία\n"
+#~ "  -n, --number-format=ΜΟΡΦΗ       εισαγωγή αρίθμηση γραμμών σύμφωνα με "
+#~ "ΜΟΡΦΗ\n"
+#~ "  -p, --no-renumber               να μη μηδενίζεται η αρίθμηση γραμμών "
+#~ "στις\n"
+#~ "                                    λογικές σελίδες\n"
+#~ "  -s, --number-separator=ΑΛΦΑΡΙΘΜ πρόσθεση ΑΛΦΑΡΙΘΜητικού μετά από "
+#~ "(πιθανό)\n"
+#~ "                                    αριθμό γραμμής\n"
+#~ "  -v, --first-page=ΑΡΙΘΜΟΣ        πρώτος αριθμός γραμμής σε κάθε λογική "
+#~ "σελίδα\n"
+#~ "  -w, --number-width=ΑΡΙΘΜΟΣ      χρήση ΑΡΙΘΜΟΣ από στήλες για αριθμούς "
+#~ "γραμμής\n"
+#~ "      --help                      εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "      --version                   εμφάνιση πληροφοριών έκδοσης και "
+#~ "έξοδος\n"
+#~ "\n"
+#~ "Εξ ορισμού, είναι -v1 -i1 -l1 -sTAB -w6 -nrn -hn -bt -fn.  CC είναι\n"
+#~ "δύο χαρακτήρες διαχωρισμού για το χωρισμό των λογικών σελίδων, η απουσία\n"
+#~ "δεύτερου χαρακτήρα υποδηλώνει :.  Γράψτε \\\\ για \\.  Το ΣΤΥΛ είναι ένα "
+#~ "από:\n"
+#~ "\n"
+#~ "  a         αριθμός γραμμών\n"
+#~ "  t         αρίθμηση μόνο μη κενών γραμμών\n"
+#~ "  n         να μην αριθμηθούν οι γραμμές\n"
+#~ "  pΚΑΝΕΚΦ   να αριθμηθούν μόνο γραμμές που περιέχουν ταίριασμα για την\n"
+#~ "              ΚΑΝονική ΈΚΦραση\n"
+#~ "\n"
+#~ "ΜΟΡΦΗ είναι ένα από:\n"
+#~ "\n"
+#~ "  ln   στοίχιση στα αριστερά, χωρίς προπορευόμενα μηδενικά\n"
+#~ "  rn   στοίχιση στα δεξιά, χωρίς προπορευόμενα μηδενικά\n"
+#~ "  rz   στοίχιση στα δεξιά, χωρίς προπορευόμενα μηδενικά\n"
+#~ "\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "Write an unambiguous representation, octal bytes by default,\n"
+#~ "of FILE to standard output.  With more than one FILE argument,\n"
+#~ "concatenate them in the listed order to form the input.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -A, --address-radix=RADIX   decide how file offsets are printed\n"
+#~ "  -j, --skip-bytes=BYTES      skip BYTES input bytes first\n"
+#~ "  -N, --read-bytes=BYTES      limit dump to BYTES input bytes\n"
+#~ "  -s, --strings[=BYTES]       output strings of at least BYTES graphic "
+#~ "chars\n"
+#~ "  -t, --format=TYPE           select output format or formats\n"
+#~ "  -v, --output-duplicates     do not use * to mark line suppression\n"
+#~ "  -w, --width[=BYTES]         output BYTES bytes per output line\n"
+#~ "      --traditional           accept arguments in pre-POSIX form\n"
+#~ "      --help                  display this help and exit\n"
+#~ "      --version               output version information and exit\n"
+#~ "\n"
+#~ "Pre-POSIX format specifications may be intermixed, they accumulate:\n"
+#~ "  -a   same as -t a,  select named characters\n"
+#~ "  -b   same as -t oC, select octal bytes\n"
+#~ "  -c   same as -t c,  select ASCII characters or backslash escapes\n"
+#~ "  -d   same as -t u2, select unsigned decimal shorts\n"
+#~ "  -f   same as -t fF, select floats\n"
+#~ "  -h   same as -t x2, select hexadecimal shorts\n"
+#~ "  -i   same as -t d2, select decimal shorts\n"
+#~ "  -l   same as -t d4, select decimal longs\n"
+#~ "  -o   same as -t o2, select octal shorts\n"
+#~ "  -x   same as -t x2, select hexadecimal shorts\n"
+#~ msgstr ""
+#~ "Εμφάνιση μιας χωρίς ασάφειες αναπαράσταση, με οκταδικά bytes εξ ορισμού,\n"
+#~ "του ΑΡΧΕΙΟ στη κανονική έξοδο. Χωρίς ΑΡΧΕΙΟ, ή όταν το αρχείο είναι το "
+#~ "-,\n"
+#~ "ανάγνωση από την κανονική είσοδο.\n"
+#~ "\n"
+#~ "  -A, --address-radix=RADIX   επιλογή του πώς εκτυπώνονται οι θέσεις "
+#~ "αρχείου\n"
+#~ "  -j, --skip-bytes=BYTES      προσπέρασμα των πρώτων BYTES bytes εισόδου "
+#~ "από\n"
+#~ "                                κάθε αρχείο\n"
+#~ "  -N, --read-bytes=BYTES      περιορισμός της εμφάνισης στα πρώτα BYTES\n"
+#~ "                                byte εισόδου για κάθε αρχείο\n"
+#~ "  -s, --strings[=BYTES]       εμφάνιση αλφαριθμητικών με τουλάχιστον "
+#~ "BYTES\n"
+#~ "                                γραφικούς χαρακτήρες\n"
+#~ "  -t, --format=ΕΙΔΟΣ          επιλογή μορφής εξόδου ή μορφές\n"
+#~ "  -v, --output-duplicates     να μη χρησιμοποιειθεί * να για υποδηλώσει\n"
+#~ "                                απόρριψη γραμμής\n"
+#~ "  -w, --width[=BYTES]         εμφάνιση BYTES bytes για κάθε γραμμή "
+#~ "εξόδου\n"
+#~ "      --traditional           αποδοχή ορισμάτων σε προ-POSIX μορφή\n"
+#~ "      --help                  εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "      --version               εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+#~ "\n"
+#~ "οι προ-POSIX δηλώσεις μορφών μπορούν να αναμιγνύοντε, δρούν προσθετικά:\n"
+#~ "  -a   ίδιο με -t a,  επιλογή δοθέντων χαρακτήρων\n"
+#~ "  -b   ίδιο με -t oC, επιλογή οκταδικών bytes\n"
+#~ "  -c   ίδιο με -t c,  επιλογή χαρακτήρων ASCII ή διαφυγές με πισωκάθετο\n"
+#~ "  -d   ίδιο με -t u2, επιλογή μη-προσημασμένων δεκαδικών μικρών ακέραιων\n"
+#~ "  -f   ίδιο με -t fF, επιλογή αριθμών κινητής υποδιαστολής\n"
+#~ "  -h   ίδιο με -t x2, επιλογή δεκαεξαδικών μικρών ακεραίων\n"
+#~ "  -i   ίδιο με -t d2, επιλογή δεκαδικών μικρών ακεραίων\n"
+#~ "  -l   ίδιο με -t d4, επιλογή δεκαδικών ακεραίων\n"
+#~ "  -o   ίδιο με -t o2, επιλογή οκταδικών μικρών ακεραίων\n"
+#~ "  -x   ίδιο με -t x2, επιλογή δεκαεξαδικών μικρών ακεραίων\n"
+
+#~ msgid ""
+#~ "\n"
+#~ "For older syntax (second call format), OFFSET means -j OFFSET.  LABEL\n"
+#~ "is the pseudo-address at first byte printed, incremented when dump is\n"
+#~ "progressing.  For OFFSET and LABEL, a 0x or 0X prefix indicates\n"
+#~ "hexadecimal, suffixes maybe . for octal and b multiply by 512.\n"
+#~ "\n"
+#~ "TYPE is made up of one or more of these specifications:\n"
+#~ "\n"
+#~ "  a          named character\n"
+#~ "  c          ASCII character or backslash escape\n"
+#~ "  d[SIZE]    signed decimal, SIZE bytes per integer\n"
+#~ "  f[SIZE]    floating point, SIZE bytes per integer\n"
+#~ "  o[SIZE]    octal, SIZE bytes per integer\n"
+#~ "  u[SIZE]    unsigned decimal, SIZE bytes per integer\n"
+#~ "  x[SIZE]    hexadecimal, SIZE bytes per integer\n"
+#~ "\n"
+#~ "SIZE is a number.  For TYPE in doux, SIZE may also be C for\n"
+#~ "sizeof(char), S for sizeof(short), I for sizeof(int) or L for\n"
+#~ "sizeof(long).  If TYPE is f, SIZE may also be F for sizeof(float), D\n"
+#~ "for sizeof(double) or L for sizeof(long double).\n"
+#~ "\n"
+#~ "RADIX is d for decimal, o for octal, x for hexadecimal or n for none.\n"
+#~ "BYTES is hexadecimal with 0x or 0X prefix, it is multiplied by 512\n"
+#~ "with b suffix, by 1024 with k and by 1048576 with m.  Adding a z suffix "
+#~ "to\n"
+#~ "any type adds a display of printable characters to the end of each line\n"
+#~ "of output.  -s without a number implies 3.  -w without a number implies "
+#~ "32.\n"
+#~ "By default, od uses -A o -t d2 -w 16.\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Για την παλαιότερη σύνταξη (δεύτερη μορφή κλήσης), η ΘΕΣΗ είναι -j ΘΕΣΗ.\n"
+#~ "Το ΧΑΡΑΚΤΗΡΙΣΤΙΚΟ είναι η ψευδο-διεύθυνση στο πρώτο byte που τυπώνεται,\n"
+#~ "αυξανόμενο καθώς η έξοδος προοδεύει.  Για ΘΕΣΗ και ΧΑΡΑΚΤΗΡΙΣΤΙΚΟ, το\n"
+#~ "πρόθεμα 0x ή 0X δηλώνει δεκαεξαδικό, οι καταλήξεις ίσως. Για οκταδικά "
+#~ "και\n"
+#~ "b πολλαπλασιάστε με 512.\n"
+#~ "\n"
+#~ "Το ΕΙΔΟΣ απαρτίζεται από μια ή περισσότερες από τις παρακάτω δηλώσεις:\n"
+#~ "\n"
+#~ "  a          δοθέν χαρακτήρας\n"
+#~ "  c          χαρακτήρας ASCII ή διαφυγή με πισωκάθετο\n"
+#~ "  d[ΜΕΓΕΘΟΣ] προσημασμένος δεκαδικός, ΜΕΓΕΘΟΣ bytes ανά ακέραιο\n"
+#~ "  f[ΜΕΓΕΘΟΣ] κινητής υποδιαστολής, ΜΕΓΕΘΟΣ bytes ανά ακέραιο\n"
+#~ "  o[ΜΕΓΕΘΟΣ] οκταδικός, ΜΕΓΕΘΟΣ bytes ανά ακέραιο\n"
+#~ "  u[ΜΕΓΕΘΟΣ] χωρίς πρόσημο δεκαδικός, ΜΕΓΕΘΟΣ bytes ανά ακέραιο\n"
+#~ "  x[ΜΕΓΕΘΟΣ] δεκαεξαδικό, ΜΕΓΕΘΟΣ bytes ανά ακέραιο\n"
+#~ "\n"
+#~ "Το ΜΕΓΕΘΟΣ είναι ένας αριθμός.  Για το ΕΙΔΟΣ, το ΜΕΓΕΘΟΣ μπορεί να είναι "
+#~ "C\n"
+#~ "για sizeof(char), S για sizeof(short), I για sizeof(int) ή L για\n"
+#~ "sizeof(long).  Αν το ΕΙΔΟΣ είναι f, το ΜΕΓΕΘΟΣ μπορεί επίσεις να είναι F\n"
+#~ "για sizeof(float), D για sizeof(double) ή L για sizeof(long double).\n"
+#~ "\n"
+#~ "Η ΒΑΣΗ είναι d για δεκαδικό, o για οκταδικό, x για δεκαεξαδικό ή n για "
+#~ "τίποτα.\n"
+#~ "Το BYTES είναι δεκαεξαδικό αν έχει πρόθεμα 0x ή 0X, πολλαπλασιάζεται με "
+#~ "512\n"
+#~ "αν έχει κατάληξη b, με 1024 αν έχει k και με 1048576 αν έχει m.  "
+#~ "Προσθέτοντας\n"
+#~ "την κατάληξη z σε κάθε είδος, προσθέτει την εμφάνιση των εκτυπώσιμων\n"
+#~ "χαρακτήρων στο τέλος κάθε γραμμής της εξόδου.  Το -s χωρίς αριθμό "
+#~ "υποδηλώνει\n"
+#~ "3.  Το -w χωρίς αριθμό υποδηλώνει 32.\n"
+#~ "Εξ ορισμού, η od χρησιμοποιεί -A o -t d2 -w 16.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Paginate or columnate FILE(s) for printing.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  +FIRST_PAGE[:LAST_PAGE], --pages=FIRST_PAGE[:LAST_PAGE]\n"
+#~ "                    begin [stop] printing with page FIRST_[LAST_]PAGE\n"
+#~ "  -COLUMN, --columns=COLUMN\n"
+#~ "                    produce COLUMN-column output and print columns down,\n"
+#~ "                    unless -a is used. Balance number of lines in the\n"
+#~ "                    columns on each page.\n"
+#~ "  -a, --across      print columns across rather than down, used together\n"
+#~ "                    with -COLUMN\n"
+#~ "  -c, --show-control-chars\n"
+#~ "                    use hat notation (^G) and octal backslash notation\n"
+#~ "  -d, --double-space\n"
+#~ "                    double space the output\n"
+#~ "  -D, --date-format=FORMAT\n"
+#~ "                    use FORMAT for the header date\n"
+#~ "  -e[CHAR[WIDTH]], --expand-tabs[=CHAR[WIDTH]]\n"
+#~ "                    expand input CHARs (TABs) to tab WIDTH (8)\n"
+#~ "  -F, -f, --form-feed\n"
+#~ "                    use form feeds instead of newlines to separate pages\n"
+#~ "                    (by a 3-line page header with -F or a 5-line header\n"
+#~ "                    and trailer without -F)\n"
+#~ msgstr ""
+#~ "Σελιδοποίηση ή στηλοποίηση ΑΡΧΕΙΟΥ(ΩΝ) για εκτύπωση.\n"
+#~ "\n"
+#~ "  +ΠΡΩΤΗ_ΣΕΛΙΔΑ[:ΤΕΛΕΥΤΑΙΑ_ΣΕΛΙΔΑ], --pages=ΠΡΩΤΗ_ΣΕΛΙΔΑ[:"
+#~ "ΤΕΛΕΥΤΑΙΑ_ΣΕΛΙΔΑ]\n"
+#~ "                      έναρξη [διακοπή] εκτύπωσης με σελίδα\n"
+#~ "                      ΠΡΩΤΗ_[ΤΕΛΕΥΤΑΙΑ_]ΣΕΛΙΔΑ\n"
+#~ "  -ΣΤΗΛΗ, --columns=ΣΤΗΛΗ\n"
+#~ "                    παραγωγή εξόδου με ΣΤΗΛΗ-στήλες και εκτύπωση στηλών\n"
+#~ "                      προς τα κάτω, εκτός αν χρησιμοποιείται το -a.\n"
+#~ "                      Ισορρόπηση του αριθμού γραμμών στις στήλες κάθε\n"
+#~ "                      σελίδας.\n"
+#~ "  -a, --across      εμφάνιση στηλών κατά μήκος αντί προς τα κάτω, σε "
+#~ "χρήση\n"
+#~ "                      με -ΣΤΗΛΗ\n"
+#~ "  -c, --show-control-chars\n"
+#~ "                    χρήση αναπαράστασης με καπέλο (^G) και οκταδικής\n"
+#~ "                      αναπαράστασης με πισωκάθετο\n"
+#~ "  -d, --double-space\n"
+#~ "                    διπλά διαστήματα στην έξοδο\n"
+#~ "  -e[ΧΑΡΑΚΤ[ΠΛΑΤΟΣ]], --expand-tabs[=ΧΑΡΑΚΤ[ΠΛΑΤΟΣ]]\n"
+#~ "                    ανάπτυξη ΧΑΡΑΚΤήρων εισόδου (TABs) σε στηλεθέτη με\n"
+#~ "                      πλάτος ΠΛΑΤΟΣ(8)\n"
+#~ "  -F, -f, --form-feed\n"
+#~ "                    χρήση χαρακτήρων αλλαγής σελίδας αντί χαρακτήρων "
+#~ "νέας\n"
+#~ "                      γραμμής για χωρισμό σελίδων\n"
+#~ "                      (-F για επισέλιδο 3 γραμμών ή επισέλιδο 5 γραμμών\n"
+#~ "                      και ακόλουθο χωρίς -F)\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "  -h HEADER, --header=HEADER\n"
+#~ "                    use a centered HEADER instead of filename in page "
+#~ "header,\n"
+#~ "                    -h \"\" prints a blank line, don't use -h\"\"\n"
+#~ "  -i[CHAR[WIDTH]], --output-tabs[=CHAR[WIDTH]]\n"
+#~ "                    replace spaces with CHARs (TABs) to tab WIDTH (8)\n"
+#~ "  -J, --join-lines  merge full lines, turns off -W line truncation, no "
+#~ "column\n"
+#~ "                    alignment, -S[STRING] sets separators\n"
+#~ "  -l PAGE_LENGTH, --length=PAGE_LENGTH\n"
+#~ "                    set the page length to PAGE_LENGTH (66) lines\n"
+#~ "                    (default number of lines of text 56, and with -F 63)\n"
+#~ "  -m, --merge       print all files in parallel, one in each column,\n"
+#~ "                    truncate lines, but join lines of full length with -"
+#~ "J\n"
+#~ "  -n[SEP[DIGITS]], --number-lines[=SEP[DIGITS]]\n"
+#~ "                    number lines, use DIGITS (5) digits, then SEP (TAB),\n"
+#~ "                    default counting starts with 1st line of input file\n"
+#~ "  -N NUMBER, --first-line-number=NUMBER\n"
+#~ "                    start counting with NUMBER at 1st line of first\n"
+#~ "                    page printed (see +FIRST_PAGE)\n"
+#~ "  -o MARGIN, --indent=MARGIN\n"
+#~ "                    offset each line with MARGIN (zero) spaces, do not\n"
+#~ "                    affect -w or -W, MARGIN will be added to PAGE_WIDTH\n"
+#~ "  -r, --no-file-warnings\n"
+#~ "                    omit warning when a file cannot be opened\n"
+#~ msgstr ""
+#~ "  -h ΕΠΙΣΕΛΙΔΟ, --header=ΕΠΙΣΕΛΙΔΟ\n"
+#~ "                    χρήση κεντραρισμένου ΕΠΙΣΕΛΙΔΟΥ αντί του ονόματος\n"
+#~ "                      αρχείου στο επισέλιδο,\n"
+#~ "                    με μακρά επισέλιδα μπορεί να γίνει αποκοπή από τα "
+#~ "αριστερά,\n"
+#~ "                    -h \"\" τυπώνει μια κενή γραμμή, μην κάνετε χρήση του "
+#~ "-h\"\"\n"
+#~ "  -i[ΧΑΡΑΚΤ[ΠΛΑΤΟΣ]], --output-tabs[=ΧΑΡΑΚΤ[ΠΛΑΤΟΣ]]\n"
+#~ "                    αντικατάσταση διαστημάτων με ΧΑΡΑΚΤήρα(TABs) σε "
+#~ "μήκος\n"
+#~ "                      στηλοθέτη ΠΛΑΤΟΣ(8)\n"
+#~ "  -J, --join-lines  συνένωση γεμάτων γραμμών, απενεργοποιεί μηδενισμό\n"
+#~ "                      γραμμής του -W, χωρίς\n"
+#~ "                    στοίχιση στήλης, -S[ΑΛΦΑΡΙΘΜ] θέτει διαχωριστές\n"
+#~ "  -l ΜΗΚΟΣ_ΣΕΛΙΔΑΣ, --length=ΜΗΚΟΣ_ΣΕΛΙΔΑΣ\n"
+#~ "                    θέτει το μήκος σελίδας σε ΜΗΚΟΣ_ΣΕΛΙΔΑΣ (66) γραμμές\n"
+#~ "                    (εξ ορισμού αριθμός γραμμών κειμένου είναι 56, και "
+#~ "με\n"
+#~ "                      -F 63)\n"
+#~ "  -m, --merge       εκτύπωση όλων των αρχείων παράλληλα, ένα σε κάθε "
+#~ "στήλη,\n"
+#~ "                    μηδενισμός γραμμών άλλα συνένωση γραμμών πλήρους "
+#~ "μήκους\n"
+#~ "                      με -J\n"
+#~ "  -n[ΔΙΑΧ[ΨΗΦΙΑ]], --number-lines[=ΔΙΑΧ[ΨΗΦΙΑ]]\n"
+#~ "                    αρίθμηση γραμμών, χρήση ΨΗΦΙΑ (5) ψηφία, μετά ΔΙΑΧ "
+#~ "(TAB),\n"
+#~ "                    εξ ορισμού μέτρηση ξεκινά με τη πρώτη γραμμή του\n"
+#~ "                      αρχείου εισόδου\n"
+#~ "  -N ΑΡΙΘΜΟΣ, --first-line-number=ΑΡΙΘΜΟΣ\n"
+#~ "                    έναρξη μέτρησης με ΑΡΙΘΜΟΣ στη πρώτη γραμμή της "
+#~ "πρώτης\n"
+#~ "                      σελίδας\n"
+#~ "                    που εκτυπώνεται(δείτε +ΠΡΩΤΗ_ΣΕΛΙΔΑ)\n"
+#~ "  -o ΠΕΡΙΘΩΡΙΟ, --indent=ΠΕΡΙΘΩΡΙΟ\n"
+#~ "                    παρέμβαλε κάθε γραμμή με ΠΕΡΙΘΩΡΙΟ (μηδέν) "
+#~ "διαστήματα,\n"
+#~ "                      να μην επηρεαστούν τα -w ή -W, το ΠΕΡΙΘΩΡΙΟ θα "
+#~ "προστεθεί\n"
+#~ "                      στο ΠΛΑΤΟΣ_ΣΕΛΙΔΑΣ\n"
+#~ "  -r, --no-file-warnings\n"
+#~ "                    παράληψη προειδοποίησης όταν το αρχείο δεν μπορεί να\n"
+#~ "                      ανοιχτεί\n"
+
+#~ msgid ""
+#~ "  -s[CHAR],--separator[=CHAR]\n"
+#~ "                    separate columns by a single character, default for "
+#~ "CHAR\n"
+#~ "                    is the <TAB> character without -w and 'no char' with -"
+#~ "w\n"
+#~ "                    -s[CHAR] turns off line truncation of all 3 column\n"
+#~ "                    options (-COLUMN|-a -COLUMN|-m) except -w is set\n"
+#~ "  -S[STRING], --sep-string[=STRING]\n"
+#~ "                    separate columns by an optional STRING, don't use\n"
+#~ "                    -S \"STRING\", -S only: No separator used (same as -S"
+#~ "\"\"),\n"
+#~ "                    without -S: Default separator <TAB> with -J and "
+#~ "<space>\n"
+#~ "                    otherwise (same as -S\" \"), no effect on column "
+#~ "options\n"
+#~ "  -t, --omit-header omit page headers and trailers\n"
+#~ "  -T, --omit-pagination\n"
+#~ "                    omit page headers and trailers, eliminate any "
+#~ "pagination\n"
+#~ "                    by form feeds set in input files\n"
+#~ "  -v, --show-nonprinting\n"
+#~ "                    use octal backslash notation\n"
+#~ "  -w PAGE_WIDTH, --width=PAGE_WIDTH\n"
+#~ "                    set page width to PAGE_WIDTH (72) characters for\n"
+#~ "                    multiple text-column output only, -s[char] turns off "
+#~ "(72)\n"
+#~ "  -W PAGE_WIDTH, --page-width=PAGE_WIDTH\n"
+#~ "                    set page width to PAGE_WIDTH (72) characters always,\n"
+#~ "                    truncate lines, except -J option is set, no "
+#~ "interference\n"
+#~ "                    with -S or -s\n"
+#~ "  --help            display this help and exit\n"
+#~ "  --version         output version information and exit\n"
+#~ "\n"
+#~ "-T implied by -l nn when nn <= 10 or <= 3 with -F. With no FILE, or when\n"
+#~ "FILE is -, read standard input.\n"
+#~ msgstr ""
+#~ "  -s[ΧΑΡΑΚΤ],--separator[=ΧΑΡΑΚΤ]\n"
+#~ "                    διαχωρισμός στηλών με ένα χαρακτήρα, εξ ορισμού τιμή\n"
+#~ "                      για ΧΑΡΑΚΤ\n"
+#~ "                    είναι το <TAB> χωρίς -w και 'όχι χαρακτ' με -w\n"
+#~ "                    -s[ΧΑΡΑΚΤ] απενεργοποιεί το μηδενισμό γραμμής από "
+#~ "όλες\n"
+#~ "                      (3) της επιλογές\n"
+#~ "                    στήλης (-ΣΤΗΛΗ|-a -ΣΤΗΛΗ|-m) εκτός αν έχει τεθεί το -"
+#~ "w\n"
+#~ "  -S[ΑΛΦΑΡΙΘΜ], --sep-string[=ΑΛΦΑΡΙΘΜ]\n"
+#~ "                    διαχωρισμός στηλών από ένα προαιρετικό ΑΛΦΑΡΙΘΜ, να "
+#~ "μην\n"
+#~ "                      κάνετε χρήση του -S \"ΑΛΦΑΡΙΘΜ\",\n"
+#~ "                      μόνο -S : Δεν χρησιμοποιείται διαχωριστής (ίδιο με\n"
+#~ "                        -S\"\"),\n"
+#~ "                      χωρίς -S: Εξ ορισμού διαχωριστής <TAB> με -J και\n"
+#~ "                        <διάστημα> διαφορετικά (ίδιο με -S\" \"), χωρίς\n"
+#~ "                        επίδραση σε επιλογές για στήλες\n"
+#~ "  -t, --omit-header παράληψη επισέλιδων και ακολούθων\n"
+#~ "  -T, --omit-pagination\n"
+#~ "                    παράληψη επισέλιδων και ακολούθων, ελαχιστοποίηση "
+#~ "κάθε\n"
+#~ "                      σελιδοποίησης από `form feeds' που έχουν τυχόν "
+#~ "τεθεί\n"
+#~ "                      στα αρχεία εισόδου\n"
+#~ "  -v, --show-nonprinting\n"
+#~ "                    χρήση οκταδική κωδικογραφή με πισωκάθετο\n"
+#~ "  -w ΠΛΑΤΟΣ_ΣΕΛΙΔΑΣ, --width=ΠΛΑΤΟΣ_ΣΕΛΙΔΑΣ\n"
+#~ "                    ορισμός πλάτους σελίδας σε ΠΛΑΤΟΣ_ΣΕΛΙΔΑΣ (72)\n"
+#~ "                      χαρακτήρες για\n"
+#~ "                    πολλαπλή έξοδο στηλών με κείμενο μόνο, -s[χαρακτ]\n"
+#~ "                      απενεργοποιεί (72)\n"
+#~ "  -W ΠΛΑΤΟΣ_ΣΕΛΙΔΑΣ, --page-width=ΠΛΑΤΟΣ_ΣΕΛΙΔΑΣ\n"
+#~ "                    ορισμός πλάτους σελίδας σε ΠΛΑΤΟΣ_ΣΕΛΙΔΑΣ (72)\n"
+#~ "                      χαρακτήρες πάντα,\n"
+#~ "                    μηδενισμός γραμμών, εκτός αν έχει τεθεί -J, καμία\n"
+#~ "                      παρεμβελή\n"
+#~ "                    με -S ή -s\n"
+#~ "  --help            εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "  --version         εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+#~ "\n"
+#~ "Το -T εννοείτε από το -l nn όπου nn <= 10 ή <= 3 με -F. Χωρίς ΑΡΧΕΙΟ, ή\n"
+#~ "όταν το αρχείο είναι το -, ανάγνωση από την κανονική είσοδο.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Output a permuted index, including context, of the words in the input "
+#~ "files.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -A, --auto-reference           output automatically generated "
+#~ "references\n"
+#~ "  -C, --copyright                display Copyright and copying "
+#~ "conditions\n"
+#~ "  -G, --traditional              behave more like System V `ptx'\n"
+#~ "  -F, --flag-truncation=STRING   use STRING for flagging line "
+#~ "truncations\n"
+#~ "  -M, --macro-name=STRING        macro name to use instead of `xx'\n"
+#~ "  -O, --format=roff              generate output as roff directives\n"
+#~ "  -R, --right-side-refs          put references at right, not counted in -"
+#~ "w\n"
+#~ "  -S, --sentence-regexp=REGEXP   for end of lines or end of sentences\n"
+#~ "  -T, --format=tex               generate output as TeX directives\n"
+#~ "  -W, --word-regexp=REGEXP       use REGEXP to match each keyword\n"
+#~ "  -b, --break-file=FILE          word break characters in this FILE\n"
+#~ "  -f, --ignore-case              fold lower case to upper case for "
+#~ "sorting\n"
+#~ "  -g, --gap-size=NUMBER          gap size in columns between output "
+#~ "fields\n"
+#~ "  -i, --ignore-file=FILE         read ignore word list from FILE\n"
+#~ "  -o, --only-file=FILE           read only word list from this FILE\n"
+#~ "  -r, --references               first field of each line is a reference\n"
+#~ "  -t, --typeset-mode               - not implemented -\n"
+#~ "  -w, --width=NUMBER             output width in columns, reference "
+#~ "excluded\n"
+#~ "      --help                     display this help and exit\n"
+#~ "      --version                  output version information and exit\n"
+#~ "\n"
+#~ "With no FILE or if FILE is -, read Standard Input.  `-F /' by default.\n"
+#~ msgstr ""
+#~ "Υποχρεωτικά ορίσματα για μακρές επιλογές είναι υποχρεωτικά για σύντομες\n"
+#~ "επιλογές επίσεις.\n"
+#~ "\n"
+#~ "  -A, --auto-reference           εμφάνιση αυτόματα παραγώμενες αναφορές\n"
+#~ "  -C, --copyright                εμφάνιση Copyright και κανόνες "
+#~ "αντιγραφής\n"
+#~ "  -G, --traditional              συμπεριφορά περισσότερο όμοια με του "
+#~ "System\n"
+#~ "                                   V την `ptx'\n"
+#~ "  -F, --flag-truncation=ΑΛΦΑΡΙΘΜ  χρήση ΑΛΦΑΡΙΘΜ για υποδήλωση "
+#~ "μηδενισμού\n"
+#~ "                                   γραμμών\n"
+#~ "  -M, --macro-name=ΑΛΦΑΡΙΘΜ      όνομα μακροεντολής προς χρήση αντί του "
+#~ "`xx'\n"
+#~ "  -O, --format=roff              δημιουργία εξόδου ως εντολές roff\n"
+#~ "  -R, --right-side-refs          τοποθέτηση αναφορών στα δεξιά, χωρίς να\n"
+#~ "                                   μετρώνται στο -w\n"
+#~ "  -S, --sentence-regexp=ΚΑΝΕΚΦ   για το τέλος γραμμών ή το τέλος των "
+#~ "προτάσεων\n"
+#~ "  -T, --format=tex               δημιουργία εξόδου ως εντολές TeX\n"
+#~ "  -W, --word-regexp=ΚΑΝΕΚΦ       χρήση ΚΑΝονικής ΕΚΦρασης στο ταίριασμα "
+#~ "κάθε\n"
+#~ "                                   λέξης-κλειδί\n"
+#~ "  -b, --break-file=ΑΡΧΕΙΟ        η λέξη σπάει τους χαρακτήρες σε αυτό το\n"
+#~ "                                   ΑΡΧΕΙΟ\n"
+#~ "  -f, --ignore-case              αναδίπλωση πεζών σε κεφαλαία για την\n"
+#~ "                                   ταξινόμηση\n"
+#~ "  -g, --gap-size=ΑΡΙΘΜΟΣ         μέγεθος διάκενου στις στήλες μεταξύ "
+#~ "πεδίων\n"
+#~ "                                   εξόδου\n"
+#~ "  -i, --ignore-file=ΑΡΧΕΙΟ       ανάγνωση λίστα λέξεων προς αγνόηση από "
+#~ "ΑΡΧΕΙΟ\n"
+#~ "  -o, --only-file=ΑΡΧΕΙΟ         ανάγνωση μόνο λίστα λέξεων από αυτό το "
+#~ "ΑΡΧΕΙΟ\n"
+#~ "  -r, --references               πρώτο πεδία κάθε γραμμής είναι μια "
+#~ "αναφορά\n"
+#~ "  -t, --typeset-mode               - δεν έχει υλοποιηθεί -\n"
+#~ "  -w, --width=ΑΡΙΘΜΟΣ            πλάτος εξόδου σε στήλες, με εξαίρεση "
+#~ "των\n"
+#~ "                                   αναφορών\n"
+#~ "      --help                     εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "      --version                  εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+#~ "\n"
+#~ "Χωρίς ΑΡΧΕΙΟ, ή όταν το αρχείο είναι το -, ανάγνωση από την κανονική "
+#~ "είσοδο.\n"
+#~ "Είναι `-F /' εξ ορισμού.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Other options:\n"
+#~ "\n"
+#~ "  -c, --check               check whether input is sorted; do not sort\n"
+#~ "  -k, --key=POS1[,POS2]     start a key at POS1, end it at POS 2 (origin "
+#~ "1)\n"
+#~ "  -m, --merge               merge already sorted files; do not sort\n"
+#~ "  -o, --output=FILE         write result to FILE instead of standard "
+#~ "output\n"
+#~ "  -s, --stable              stabilize sort by disabling last-resort "
+#~ "comparison\n"
+#~ "  -S, --buffer-size=SIZE    use SIZE for main memory buffer\n"
+#~ "  -t, --field-separator=SEP use SEP instead of non- to whitespace "
+#~ "transition\n"
+#~ "  -T, --temporary-directory=DIR  use DIR for temporaries, not $TMPDIR or %"
+#~ "s\n"
+#~ "                              multiple options specify multiple "
+#~ "directories\n"
+#~ "  -u, --unique              with -c: check for strict ordering\n"
+#~ "                              otherwise: output only the first of an "
+#~ "equal run\n"
+#~ "  -z, --zero-terminated     end lines with 0 byte, not newline\n"
+#~ "  +POS1 [-POS2]             start a key at POS1, end it before POS2 "
+#~ "(origin 0)\n"
+#~ "                              Warning: this option is obsolescent\n"
+#~ "      --help       display this help and exit\n"
+#~ "      --version    output version information and exit\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Εμφάνιση ταξινομημένης συνένωσης όλων των ΑΡΧΕΙΟ(ΩΝ) στην κανονική "
+#~ "έξοδο.\n"
+#~ "\n"
+#~ "  +ΘΕΣΗ1 [-ΘΕΣΗ2]    αρχή κλειδιού στη ΘΕΣΗ1, τερματισμός *πριν* τη "
+#~ "ΘΕΣΗ2\n"
+#~ "                       (εκτός χρήσης)\n"
+#~ "                       αριθμοί πεδίων και θέσεις χαρακτήρων αριθμούνται\n"
+#~ "                       αρχίζοντας από το μηδέν (σε αντίθεση με την "
+#~ "επιλογή -k)\n"
+#~ "  -b               αγνόηση προπορευόμενων κενών σε πεδία ταξινόμησης ή "
+#~ "κλειδιά\n"
+#~ "  -c               έλεγχος αν τα δοθέντα αρχεία είναι ήδη ταξινομημένα, "
+#~ "να\n"
+#~ "                     μην ταξινομηθούν\n"
+#~ "  -d               να θεωρηθούν μόνο οι χαρακτήρες [a-zA-Z0-9 ] στα "
+#~ "κλειδιά\n"
+#~ "  -f               αναδίπλωση πεζών χαρακτήρων σε κεφαλαία στα κλειδιά\n"
+#~ "  -g               σύγκριση σύμφωνα με τη γενική αριθμητική τιμή, θεώρησε "
+#~ "-b\n"
+#~ "  -i               θεώρησε μόνο τους χαρακτήρες [\\040-\\0176] στα "
+#~ "κλειδιά\n"
+#~ "  -k ΘΕΣΗ1[,ΘΕΣΗ2]   έναρξη κλειδού στη θέση ΘΕΣΗ1, τερματιστός *στη* "
+#~ "ΘΕΣΗ2\n"
+#~ "                     αριθμοί πεδίων και θέσεις χαρακτήρων αριθμούνται\n"
+#~ "                     αρχίζοντας από το ένα (σε αντίθεση με τη βασισμένη "
+#~ "στο\n"
+#~ "                     μηδέν μορφή +ΘΕΣΗ)\n"
+#~ "  -m               συνένωση μόνο ταξινομημένων αρχείων, να μη γίνει "
+#~ "ταξινόμηση\n"
+#~ "  -M               σύγκριση (άγνωστο) < `ΙΑΝ' < ... < `ΔΕΚ', θεώρησε -b\n"
+#~ "  -n               σύγκριση σύμφωνα με τη αλφαριθμητική αριθμητική τιμή, "
+#~ "θεώρησε -b\n"
+#~ "  -o ARXEIO        εγγραφή αποτελέσματος στο ΑΡΧΕΙΟ αντί στην κανονική "
+#~ "έξοδο\n"
+#~ "  -r               αντιστροφή των αποτελεσμάτων των συγκρίσεων\n"
+#~ "  -s               σταθεροποίηση της ταξινόμησης με απενεργοποίηση τη\n"
+#~ "                     σύγκρισης τελευταίας ελπίδας\n"
+#~ "  -t ΔΙΑΧ          χρήση ΔΙΑΧωριστή αντί της μετάστασης από μη-κενό σε\n"
+#~ "                     λευκό χαρακτήρα\n"
+#~ "  -T ΚΑΤΑΛΟΓΟΣ     χρήση ΚΑΤΑΛΟΓΟΣ για προσωρινά αρχεία, όχι το $TMPDIR ή "
+#~ "%s\n"
+#~ "  -u               με -c, έλεγχος για αυστηρή τοποθέτηση σε σειρά\n"
+#~ "                   με -m, μόνο έξοδος του πρώτου από μια ίση ακολουθία\n"
+#~ "  -z               τερματισμός γραμμών με 0 byte, όχι με νέα γραμμή, για\n"
+#~ "                     τη find -print0\n"
+#~ "      --help       εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "      --version    εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+#~ "\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Print the last %d lines of each FILE to standard output.\n"
+#~ "With more than one FILE, precede each with a header giving the file "
+#~ "name.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "      --retry              keep trying to open a file even if it is\n"
+#~ "                           inaccessible when tail starts or if it "
+#~ "becomes\n"
+#~ "                           inaccessible later -- useful only with -f\n"
+#~ "  -c, --bytes=N            output the last N bytes\n"
+#~ "  -f, --follow[={name|descriptor}]\n"
+#~ "                           output appended data as the file grows;\n"
+#~ "                           -f, --follow, and --follow=descriptor are\n"
+#~ "                           equivalent\n"
+#~ "  -F                       same as --follow=name --retry\n"
+#~ "  -n, --lines=N            output the last N lines, instead of the last %"
+#~ "d\n"
+#~ "      --max-unchanged-stats=N\n"
+#~ "                           with --follow=name, reopen a FILE which has "
+#~ "not\n"
+#~ "                           changed size after N (default %d) iterations\n"
+#~ "                           to see if it has been unlinked or renamed\n"
+#~ "                           (this is the usual case of rotated log files)\n"
+#~ "      --pid=PID            with -f, terminate after process ID, PID dies\n"
+#~ "  -q, --quiet, --silent    never output headers giving file names\n"
+#~ "  -s, --sleep-interval=S   with -f, each iteration lasts approximately S\n"
+#~ "                           (default 1) seconds\n"
+#~ "  -v, --verbose            always output headers giving file names\n"
+#~ "      --help               display this help and exit\n"
+#~ "      --version            output version information and exit\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Εκτύπωση των τελευταίων %d γραμμών κάθε ΑΡΧΕΙΟΥ στην κανονική έξοδο.\n"
+#~ "Με περισσότερο από ένα ΑΡΧΕΙΑ, να τυπωθεί πρώτα κεφαλίδα με το όνομα του\n"
+#~ "αρχείου.\n"
+#~ "Χωρίς ΑΡΧΕΙΟ, ή όταν το ΑΡΧΕΙΟ είναι το -, ανάγνωση από την κανονική "
+#~ "είσοδο.\n"
+#~ "\n"
+#~ "      --retry              συνέχιση προσπάθειας ανοίγματος αρχείου ακόμα "
+#~ "και\n"
+#~ "                             αν αυτό δεν είναι προσπελάσιμο όταν η tail \n"
+#~ "                             εκκινήται ή αν γίνετε μη-προσπελάσιμο μετά\n"
+#~ "                             χρήσιμο μόνο με την παράμετρο -f\n"
+#~ "  -c, --bytes=N            εμφάνιση των τελευταίων N bytes\n"
+#~ "  -f, --follow[={name|descriptor}]  εμφάνιση προστιθέμενων δεδομένων "
+#~ "όπως\n"
+#~ "                             αυξάνεται το αρχείο· τα -f, --follow και\n"
+#~ "                             --follow=descriptor είναι ισοδύναμα\n"
+#~ "  -n, --lines=N            εμφάνιση των τελευταίων Ν γραμμών, αντί των\n"
+#~ "                             τελευταίων %d\n"
+#~ "      --max-unchanged-stats=N  δείτε την τεκμηρίωση του texinfo\n"
+#~ "                             (εξ ορισμού είναι %d)\n"
+#~ "      --max-consecutive-size-changes=N δείτε την τεκμηρίωση του texinfo\n"
+#~ "                             (εξ ορισμού είναι %d)\n"
+#~ "      --pid=PID            με -f, τερματισμός όταν η διεργασία με\n"
+#~ "                             ταυτότητα εργασίας PID πεθάνει\n"
+#~ "  -q, --quiet, --silent    να μην εκτυπώνονται κεφαλίδες με τα ονόματα "
+#~ "των\n"
+#~ "                             αρχείων\n"
+#~ "  -s, --sleep-interval=S   με -f, παύση για S δευτερόλεπτα μεταξύ "
+#~ "επαναλήψεων\n"
+#~ "  -v, --verbose            πάντα να τυπώνονται κεφαλίδες με ονόματα "
+#~ "αρχείων\n"
+#~ "      --help               εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "      --version            εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+#~ "\n"
+#~ "Αν ο πρώτος χαρακτήρας του Ν (αριθμός byte ή γραμμών) είναι `+',\n"
+#~ "τύπωσε αρχίζοντας με το Ν-οστό αντικείμενο από την αρχή του κάθε "
+#~ "αρχείου,\n"
+#~ "διαφορετικά, τύπωσε τα τελευταία Ν αντικείμενα του αρχείου.  Το Ν μπορεί\n"
+#~ "να έχει πολλαπλασιαστικό πρόθεμα:\n"
+#~ "b για 512, k για 1024, m για 1048576 (1 Meg).  Μια πρώτη ΕΠΙΛΟΓΗ με -"
+#~ "ΤΙΜΗ\n"
+#~ "ή +ΤΙΜΗ θεωρήται για -n ΤΙΜΗ ή -n +ΤΙΜΗ εκτός αν η ΤΙΜΗ έχει ένα από τις\n"
+#~ "πολλαπλασιαστικές καταλήξεις [bkm], στην οποία περίπτωση γίνεται χρήση "
+#~ "ως\n"
+#~ "-c ΤΙΜΗ ή -c +TIMH.\n"
+#~ "\n"
+#~ "Με --follow (-f), η tail εξ ορισμού παρακολουθεί τον περιγραφέα αρχείου,\n"
+#~ "που σημαίνει ότι ακόμα και αν το αρχείο μετανομοσθεί, η tail θα "
+#~ "συνεχίσει\n"
+#~ "να το παρακολουθεί. Αυτή η εξ ορισμού συμπεριφορά δεν είναι επιθυμητή "
+#~ "όταν\n"
+#~ "θέλετε να παρακολουθήσετε το πραγματικό όνομα του αρχείου και όχι τον "
+#~ "περι-\n"
+#~ "γραφέα αρχείου (π.χ. περιστροφή αρχείου καταγραφών). Κάντε χρήση του\n"
+#~ "--follow=name στην περίπτωση αυτή. Αυτό προκαλεί την tail να "
+#~ "παρακολουθεί\n"
+#~ "το αρχείο με το συγκεκριμένο όνομα ανοίγοντας το περιοδικά για να δεί αν\n"
+#~ "έχει διαγραφεί και επαναδημιουργηθεί από κάποιο άλλο πρόγραμμα.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "SETs are specified as strings of characters.  Most represent themselves.\n"
+#~ "Interpreted sequences are:\n"
+#~ "\n"
+#~ "  \\NNN            character with octal value NNN (1 to 3 octal digits)\n"
+#~ "  \\\\              backslash\n"
+#~ "  \\a              audible BEL\n"
+#~ "  \\b              backspace\n"
+#~ "  \\f              form feed\n"
+#~ "  \\n              new line\n"
+#~ "  \\r              return\n"
+#~ "  \\t              horizontal tab\n"
+#~ "  \\v              vertical tab\n"
+#~ "  CHAR1-CHAR2     all characters from CHAR1 to CHAR2 in ascending order\n"
+#~ "  [CHAR*]         in SET2, copies of CHAR until length of SET1\n"
+#~ "  [CHAR*REPEAT]   REPEAT copies of CHAR, REPEAT octal if starting with 0\n"
+#~ "  [:alnum:]       all letters and digits\n"
+#~ "  [:alpha:]       all letters\n"
+#~ "  [:blank:]       all horizontal whitespace\n"
+#~ "  [:cntrl:]       all control characters\n"
+#~ "  [:digit:]       all digits\n"
+#~ "  [:graph:]       all printable characters, not including space\n"
+#~ "  [:lower:]       all lower case letters\n"
+#~ "  [:print:]       all printable characters, including space\n"
+#~ "  [:punct:]       all punctuation characters\n"
+#~ "  [:space:]       all horizontal or vertical whitespace\n"
+#~ "  [:upper:]       all upper case letters\n"
+#~ "  [:xdigit:]      all hexadecimal digits\n"
+#~ "  [=CHAR=]        all characters which are equivalent to CHAR\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Τα ΣΥΝΟΛΑ ορίζονται ως αλφαριθμητικά.  Τα περισσότερα αντιπροσωπεύουν τον "
+#~ "εαυτό τους.\n"
+#~ "Οι μεταφρασμένες ακολουθίες είναι:\n"
+#~ "\n"
+#~ "  \\NNN            χαρακτήρας με οκταδική τιμή NNN (1 με 3 οκταδικά "
+#~ "ψηφία)\n"
+#~ "  \\\\              πισωκάθετος\n"
+#~ "  \\a              ηχητικό κουδούνι\n"
+#~ "  \\b              `backspace'\n"
+#~ "  \\f              `form feed'\n"
+#~ "  \\n              `new line'\n"
+#~ "  \\r              `return'\n"
+#~ "  \\t              οριζόντιος στηλοθέτης\n"
+#~ "  \\v              κάθετος στηλοθέτης\n"
+#~ "  ΧΑΡΑΚΤ1-ΧΑΡΑΚΤ2  όλοι οι χαρακτήρες από ΧΑΡΑΚΤ1 μέχρι ΧΑΡΑΚΤ2 σε "
+#~ "αύξουσα σειρά\n"
+#~ "  [ΧΑΡΑΚΤ1-ΧΑΡΑΚΤ2]   όπως ΧΑΡΑΚΤ1-ΧΑΡΑΚΤ2, αν και τα δύο ΣΥΝΟΛΟ1, "
+#~ "ΣΥΝΟΛΟ2 το κάνουν χρήση\n"
+#~ "  [ΧΑΡΑΚΤ*]         στο ΣΥΝΟΛΟ2, αντιγράφει το ΧΑΡΑΚΤήρα μέχρι το μήκος "
+#~ "του ΣΥΝΟΛΟ1\n"
+#~ "  [ΧΑΡΑΚΤ*ΕΠΑΝΑΛ]  ΕΠΑΝΑΛηψη αντίγραφα του ΧΑΡΑΚΤήρα, ΕΠΑΝΑΛ είναι "
+#~ "οκταδικό αν αρχίζει από 0\n"
+#~ "  [:alnum:]       όλοι οι χαρακτήρες και τα ψηφία\n"
+#~ "  [:alpha:]       όλοι οι χαρακτήρες\n"
+#~ "  [:blank:]       όλοι οι οριζόντιοι λευκοί χαρακτήρες\n"
+#~ "  [:cntrl:]       όλοι οι χαρακτήρες ελέγχου\n"
+#~ "  [:digit:]       όλα τα ψηφία\n"
+#~ "  [:graph:]       όλοι οι εκτυπώσιμοι χαρακτήρες, χωρίς το διάστημα\n"
+#~ "  [:lower:]       όλα τα πεζά γράμματα\n"
+#~ "  [:print:]       όλοι οι εκτυπώσιμοι χαρακτήρες, μαζί με το διάστημα\n"
+#~ "  [:punct:]       όλα οι χαρακτήρες τονισμού\n"
+#~ "  [:space:]       όλοι οι οριζόντιοι ή κάθετοι λευκοί χαρακτήρες\n"
+#~ "  [:upper:]       όλοι οι κεφαλαίοι χαρακτήρες\n"
+#~ "  [:xdigit:]      όλα τα δεκαεξαδικά ψηφία\n"
+#~ "  [=ΧΑΡΑΚΤ=]        όλοι οι χαρακτήρες που είναι ισοδύναμοι με το ΧΑΡΑΚΤ\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Discard all but one of successive identical lines from INPUT (or\n"
+#~ "standard input), writing to OUTPUT (or standard output).\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -c, --count           prefix lines by the number of occurrences\n"
+#~ "  -d, --repeated        only print duplicate lines\n"
+#~ "  -D, --all-repeated[=delimit-method] print all duplicate lines\n"
+#~ "                        delimit-method={none(default),prepend,separate)}\n"
+#~ "                        Delimiting is done with blank lines.\n"
+#~ "  -f, --skip-fields=N   avoid comparing the first N fields\n"
+#~ "  -i, --ignore-case     ignore differences in case when comparing\n"
+#~ "  -s, --skip-chars=N    avoid comparing the first N characters\n"
+#~ "  -u, --unique          only print unique lines\n"
+#~ "  -w, --check-chars=N   compare no more than N characters in lines\n"
+#~ "  -N                    same as -f N\n"
+#~ "  +N                    same as -s N (obsolescent; will be withdrawn)\n"
+#~ "      --help            display this help and exit\n"
+#~ "      --version         output version information and exit\n"
+#~ "\n"
+#~ "A field is a run of whitespace, then non-whitespace characters.\n"
+#~ "Fields are skipped before chars.\n"
+#~ msgstr ""
+#~ "Αποβολή όλες εκτός από τις συνεχόμενες όμοιες γραμμές από την ΕΙΣΟΔΟ\n"
+#~ "(ή κανονική είσοδο), γράφοντας στην έξοδο (ή κανονική έξοδο).\n"
+#~ "\n"
+#~ "  -c, --count           αριθμός των εμφανίσεων στην αρχή των γραμμών\n"
+#~ "  -d, --repeated        εμφάνιση μόνο διπλών γραμμών\n"
+#~ "  -D, --all-repeated    εμφάνιση όλων των διπλών γραμμών\n"
+#~ "  -f, --skip-fields=N   αποφυγή σύγκρισης των πρώτων N πεδίων\n"
+#~ "  -i, --ignore-case     αγνόηση διαφορών μεταξύ πεζών/κεφαλαίων στις "
+#~ "συγκρίσεις\n"
+#~ "  -s, --skip-chars=N    αγνόηση σύγκρισης των πρώτων Ν χαρακτήρων\n"
+#~ "  -u, --unique          εμφάνιση μόνο των μοναδικών γραμμών\n"
+#~ "  -w, --check-chars=N   σύγκριση όχι παραπάνω από Ν χαρακτήρες στη "
+#~ "γραμμή\n"
+#~ "  -N                    ίδιο με -f N\n"
+#~ "  +N                    ίδιο με -s N\n"
+#~ "      --help            εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "      --version         εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
+#~ "\n"
+#~ "Πεδίο είναι μια σειρά από λευκούς χαρακτήρες, και μετά μη-λευκοί "
+#~ "χαρακτήρες.\n"
+#~ "Τα πεδία προσπερνόνται πριν τους χαρακτήρες.\n"
+
+#, fuzzy
+#~ msgid "Copyright (C) 2001 Free Software Foundation, Inc."
+#~ msgstr "Πνευματικά Δικαιώματα (C) 1999 Free Software Foundation, Inc."
+
+#~ msgid ""
+#~ "when using the old-style +POS and -POS key specifiers,\n"
+#~ "the +POS specifier must come first"
+#~ msgstr ""
+#~ "Όταν γίνετε χρήση παλιού-στυλ δηλωτών +ΘΕΣΗ και -ΘΕΣΗ,\n"
+#~ "ο δηλωτής +ΘΕΣΗ πρέπει να έρχεται πρώτος"
+
+#~ msgid "option `-k' requires an argument"
+#~ msgstr "η επιλογή `-k' απαιτεί ένα όρισμα"
+
+#~ msgid ""
+#~ "the starting field number argument to the `-k' option must be positive"
+#~ msgstr ""
+#~ "το όρισμα έναρξης πεδίου αριθμού στην επιλογή `-k' πρέπει να είναι θετικός"
+
+#~ msgid "starting field spec has `.' but lacks following character offset"
+#~ msgstr ""
+#~ "η δήλωση έναρξης πεδίου έχει `.' αλλά της λείπει η θέση επόμενου χαρακτήρα"
+
+#, fuzzy
+#~ msgid ""
+#~ "starting field character offset argument to the `-k' option must be "
+#~ "positive"
+#~ msgstr ""
+#~ "το όρισμα έναρξης πεδίου αριθμού στην επιλογή `-k'\n"
+#~ "πρέπει να είναι θετικός"
+
+#~ msgid "field specification has `,' but lacks following field spec"
+#~ msgstr "η δήλωση πεδίου έχει `,' αλλά της λείπει η δήλωση επόμενου πεδίου"
+
+#~ msgid "ending field number argument to the `-k' option must be positive"
+#~ msgstr ""
+#~ "το όρισμα τέρματος πεδίου αριθμού στην επιλογή `-k' πρέπει να είναι "
+#~ "θετικός"
+
+#~ msgid "ending field spec has `.' but lacks following character offset"
+#~ msgstr ""
+#~ "η δήλωση τέρματος πεδίου έχει `.' αλλά της λείπει η θέση επόμενου "
+#~ "χαρακτήρα"
+
+#~ msgid "option `-o' requires an argument"
+#~ msgstr "η επιλογή `-o' απαιτεί ένα όρισμα"
+
+#, fuzzy
+#~ msgid "option `-S' requires an argument"
+#~ msgstr "η επιλογή `-k' απαιτεί ένα όρισμα"
+
+#~ msgid "option `-t' requires an argument"
+#~ msgstr "η επιλογή `-t' απαιτεί ένα όρισμα"
+
+#~ msgid "option `-T' requires an argument"
+#~ msgstr "η επιλογή `-T' απαιτεί ένα όρισμα"
+
+#~ msgid "%s: unrecognized option `-%c'\n"
+#~ msgstr "%s: μη αναγνωρίσιμη επιλογή `-%c'\n"
+
+#~ msgid "%s%*s%s%*sPage"
+#~ msgstr "%s%*s%s%*sΣελίδα"
+
+#~ msgid "flushing file"
+#~ msgstr "ολοκλήρωση αρχείου"
+
+#~ msgid "%s: write error"
+#~ msgstr "%s: σφάλμα εγγραφής"
+
+#~ msgid ""
+#~ "specified number of bytes `%s' is larger than the maximum\n"
+#~ "representable value of type `long'"
+#~ msgstr ""
+#~ "ο δηλωμένος αριθμός bytes `%s' είναι μεγαλύτερος από το μέγιστο\n"
+#~ "που μπορεί να αναπαρασταθεί από το τύπο δεδομένων `long'"
+
+#~ msgid "virtual memory exhausted"
+#~ msgstr "η ιδεατή μνήμη εξαντλήθηκε"
+
+#~ msgid "Memory exhausted"
+#~ msgstr "Η μνήμη εξαντλήθηκε"
+
+#~ msgid "cannot chmod %s"
+#~ msgstr "αδύνατη η αλλαγή δικαιωμάτων στο %s"
+
+#~ msgid "could not find loop"
+#~ msgstr "αδυναμία εύρεσης βρόχου"
+
+#~ msgid "%s: cannot follow end of non-regular file"
+#~ msgstr "%s: αδυναμία ακολούθησης τέλους μη-κανονικού αρχείου"
+
+#~ msgid ""
+#~ "\n"
+#~ "Report bugs to <textutils-bugs@gnu.org>."
+#~ msgstr ""
+#~ "\n"
+#~ "Αναφέρατε σφάλματα στο <bug-textutils@gnu.org>."
+
+#~ msgid "`%s' has reappeared"
+#~ msgstr "το `%s' εμφανίστηκε ξανά"

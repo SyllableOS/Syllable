@@ -1,0 +1,10 @@
+Makefile
+Makefile.in
+testkjs
+libkjs_la.all_cpp.cpp
+libkjs.la.closure
+SunWS_cache
+*.lo
+*.la
+.libs
+.deps

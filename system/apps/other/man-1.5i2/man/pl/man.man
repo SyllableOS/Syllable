@@ -1,0 +1,236 @@
+.\" Man page for man (and the former manpath)
+.\"
+.\" Copyright (c) 1990, 1991, John W. Eaton.
+.\"
+.\" You may distribute under the terms of the GNU General Public
+.\" License as specified in the README file that comes with the man 1.0
+.\" distribution.  
+.\"
+.\" John W. Eaton
+.\" jwe@che.utexas.edu
+.\" Department of Chemical Engineering
+.\" The University of Texas at Austin
+.\" Austin, Texas  78712
+.\"
+.\" Many changes - aeb
+.\"
+.\" T³umaczenie - 950322 Rafa³ Maszkowski <rzm@pdi.net>
+.\" 960619 - aktualizacja -K
+.\"
+.TH man 1 "December 20, 1994"
+.LO 1
+.SH NAME
+man \- formatowanie i wy¶wietlanie dostêpnych stron manuala
+.br
+manpath \- wyznaczanie ¶cie¿ki poszukiwania stron manuala odpowiedniej dla danego u¿ytkownika
+.SH SK£ADNIA
+man [\-adfhkKtw] [\-m system] [\-p lañcuch znaków] [\-C plik_konfiguracji] [\-M ¶cie¿ka]
+[\-P pager] [\-S lista_sekcji] [sekcja] nazwa ...
+.SH OPIS
+.B man
+formatuje i wy¶wietla strony manuala dostêpne w systemie. Ta wersja
+sprawdza zmienne ¶rodowiskowe
+.B MANPATH
+i
+.BR (MAN)PAGER ,
+wiêc mo¿esz mieæ Twój
+w³asny zestaw (lub zestawy) osobistych stron manuala i wybraæ do
+wy¶wietlania ulubiony program. Je¿eli zostanie podana
+.I sekcja,
+.B man
+sprawdza tylko t± sekcjê manuala.
+U¿ywaj±c opcji lub zmiennych ¶rodowiskowych mo¿esz tak¿e podaæ porz±dek,
+w jakim nale¿y przeszukiwaæ sekcje oraz jakie preprocesory powinny
+zostaæ u¿yte do wstêpnego przetworzenia stron.
+Je¿eli
+.I nazwa
+zawiera / wtedy man próbuje najpierw znale¼æ podany plik, wiêc np.
+mo¿esz
+.B "man ./foo.5"
+a nawet
+.B "man /cd/foo/bar.1.gz\fR.\fP"
+.SH OPCJE
+.TP
+.B \-\^C " plik_konfiguracji"
+Mo¿esz podaæ inny man.conf; domy¶lnie jest to
+@man_config_file@. (Zobacz man.conf(5).)
+.TP
+.B \-\^M " ¶cie¿ka"
+Mo¿esz podaæ listê katalogów, w których bêd± szukane strony manuala.
+Je¿eli taka opcja nie zostanie podana, u¿ywana jest zmienna ¶rodowiskowa
+.B MANPATH
+. Je¿eli taka zmienna nie jest zdefiniowana, domy¶lna lista jest
+formowana przez sprawdzenie @man_config_file@. Pusta MANPATH równie¿
+oznacza wybranie ¶cie¿ki domy¶lnej.
+.TP
+.B \-\^P " pager"
+Mo¿esz podaæ jakiego pagera chcesz uzywaæ. Domy¶lnie man u¿ywa
+.B @pager@
+Podanie tej opcji powoduje zignorowanie wartosci zmiennej ¶rodowiskowej
+.B PAGER
+.
+.TP
+.B \-\^S " lista_sekcji"
+Oddzielona dwukropkami lista sekcji manuala, które maja byæ
+przeszukane. Je¿eli uzyta jest ta opcja, zmienna ¶rodowiskowa
+.B MANSECT
+jest ignorowana.
+.TP
+.B \-\^a
+Zwykle man zakoñczy dzia³anie po wy¶wietleniu pierwszej znalezionej
+strony. U¿ycie tej opcji powoduje wy¶wietlenie wszystkich stron
+manuala, które pasuj± do
+.B nazwy, 
+nie tylko pierwszej.
+.TP
+.B \-\^c
+Przformatuj ¼ród³ow± stronê manuala, nawet jezeli istnije aktualna
+storna cat. Mo¿e to byæ istotne, je¿eli strona cat jest sformatowana
+dla ekranu z inn± liczb± kolumn.
+.TP
+.B \-\^d
+Zamiast stron manuala wy¶wietl mnóstwo informacji o wykonywaniu
+zadania.
+.TP
+.B \-\^D
+Wy¶wietl zarówno stronê manuala jak i informacjê o wykonaniu.
+.TP
+.B \-\^f
+Równowa¿ne
+.B whatis.
+.TP
+.B \-\^h
+Wy¶wietl krótk± informacjê o tym jak u¿ywaæ programu i zakoñcz pracê.
+.TP
+.B \-\^k
+Równowa¿ny
+.B apropos.
+.TP
+.B \-\^K
+Szukaj podanego ³añcucha znaków we *wszystkich* stronach manuala. Uwaga:
+mo¿e byæ bardzo powolne! Podanie sekscji pomaga przyspieszyæ szukanie.
+(Dla ogólnej orientacji: na mojej maszynie zajmuje to ok. minuty dla
+500 stron manuala.)
+.TP
+.B \-\^m " system"
+Podanie alternatywnego zestawu stron manuala, odpowiedniego dla
+podanego systemu.
+.TP
+.B \-\^p " ³añcuch_znaków"
+Podanie nazw preprocesorów, ktore zostan± uruchomione przed nroff i
+troff. Nie wszystkie intalacje maj± pe³ny zestaw preprocesorów.
+Niektóre z nich i litery u¿ywane do ich oznaczenia to:
+eqn (e), grap (g), pic (p), tbl (t), vgrind (v), refer (r).
+Podanie tej opcji powoduje zignorowanie zmiennej ¶rodowiskowej
+.B MANROFFSEQ
+.
+.TP
+.B \-\^t
+U¿yj
+.B @troff@
+dla sformatowania strony manuala, a wynik wy¶lij do
+.B stdout
+(standardowego wyj¶cia).
+Wynik z
+.B @troff@
+powinien byæ na ogó³ przepuszczony przez jaki¶ filtr przed wydrukowaniem.
+.TP
+.B \-\^w \fRlub\fP \-\-path
+Nie wy¶wietlaj stron manuala, podaj tylko gdzie znajduj± siê pliki, które
+by³yby sformatowane i wyswietlone. Je¿eli nie s± podane argumenty:
+wy¶wietla (przed stdout) liste katalogow przeszukiwanych przez
+.B man
+. Je¿eli
+.B manpath
+to link do man to "manpath" jest równowa¿ne "man --path".
+
+.SH "STRONY CAT"
+Man bêdzie próbowal zapisaæ sformatowane strony manuala aby
+zaoszczedziæ czasu zu¿ywanego na formatowanie nastepnym razem,
+kiedy te strony bêd± potrzebne.
+Tradycyjnie sformatowane wersje stron z katalogu DIR/manX s±
+zapisywane do DIR/catX, ale inne w pliku @man_config_file@
+mog± byæ zapisane równie¿ inne zasady.
+Strony cat nie s± zapisywane je¿eli wymagany do tego katalog nie istnieje.
+.TP
+Mo¿liwe jest zmiana uprawnien man-a na suid man. Wtedy katalogi cat
+maj± w³a¶ciciela man i uprawnienia 0755 (zapisywalne tylko przez
+u¿ytkownika man), a pliki cat maj± w³a¶ciciela man i uprawnienia
+0644 lub 0444 (zapisywalne przez man lub przez nikogo). ¯aden zwyk³y
+u¿ytkownik nie mo¿e zmieniæ stron cat lub wpisaæ innych plików w te
+katalogi. Je¿eli man nie ma uprawnien suid to katalog cat powinien mieæ
+uprawnienia 0777, je¿eli wszyscy u¿ytkownicy powinni mieæ mo¿liwo¶æ
+pozostawienia tam stron cat.
+.TP
+Opcja -c wymusza przeformatowanie strony nawet je¿eli istnieje ju¿
+strona cat.
+
+
+.SH "ZMIENNE ¦RODOWISKOWE"
+.TP
+.B MANPATH
+Je¿eli
+.B MANPATH
+jest zdefiniowana, warto¶æ jest u¿ywana jako ¶cie¿ka poszukiwania stron
+manuala.
+.TP
+.B MANROFFSEQ
+Je¿eli
+.B MANROFFSEQ
+jest zdefinowana, warto¶æ jest u¿ywana do zdefinowania zestawu
+preprocesorów uruchamianych przed nroff i troff. Domy¶lnie strony
+s± przepuszczane przez procesor tablic przed u¿yciem nroff.
+.TP
+.B MANSECT
+Je¿eli
+.B MANSECT
+jest zdefiniowana, warto¶æ jest u¿ywana do podania jakie sekcje manuala
+powinny zostac przeszukane.
+.TP
+.B PAGER
+Je¿eli
+.B PAGER
+jest zdefiniowana, warto¶æ jest u¿ywana jako nazwa programu do
+wy¶wietlania strony manuala. Domy¶lnie uzywany jest
+.B @pager@
+.
+.TP
+.B LANG
+Je¿eli
+.B LANG
+jest zdefiniowana, warto¶æ jest nazw± podkatalogu, gdzie man szuka
+stron. Zatem komenda `LANG=dk man 1 foo' (w sh lub bash) spowoduje, ¿e
+man bêdzie szukal strony w .../dk/man1/foo.1, a nastêpnie, je¿eli nie
+bêdzie móg³ znale¼æ takiego pliku, w .../man1/foo.1, gdzie ... jest
+katalogiem ze ¶cie¿ki przeszukiwania.
+.TP
+.B "NLSPATH, LC_MESSAGES, LANG"
+Zmienne ¶rodowiskowe
+.B NLSPATH
+i
+.B LC_MESSAGES
+(lub
+.B LANG,
+je¿eli ta druga nie istnieje)
+steruj± przeszukiwaniem katalogów z komunikatami.
+(Komunikaty angielskie s± wkompilowane, wiêc dla angielskiego taki
+katalog nie jest potrzebny.)
+Zauwa¿, ze programy takie jak col(1), wo³ane przez man, równie¿ u¿ywaj±
+np. LC_TYPE.
+.TP
+.B PATH
+.B PATH
+jest u¿ywana do zbudowania domy¶lnej ¶ciezki szukania stron manuala.
+.TP
+.B SYSTEM
+.B SYSTEM
+jest u¿ywana dla podania domy¶lnej alternatywnej nazwy systemu (do u¿ywania
+razem z opcj±
+.B \-m
+). 
+.SH "ZOBACZ TE¯"
+apropos(1), whatis(1), less(1), groff(1).
+.SH B£ÊDY
+Opcja
+.B \-t
+dzia³a tylko je¿eli jest zainstalowany jaki¶ program dzia³aj±cy jak troff.

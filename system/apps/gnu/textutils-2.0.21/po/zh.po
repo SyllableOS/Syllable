@@ -1,0 +1,3813 @@
+# Chinese translation for GNU textutils messages.
+# Copyright (C) 1998 Free Software Foundation, Inc.
+# Yuan-Chung Cheng <platin@ms.ccafps.khc.edu.tw>, 1998.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: textutils 1.22\n"
+"POT-Creation-Date: 2002-02-17 10:07+0100\n"
+"PO-Revision-Date: 1998-04-23 16:27+06:00\n"
+"Last-Translator: Yuan-Chung Cheng <platin@ms.ccafps.khc.edu.tw>\n"
+"Language-Team: Chinese <zh@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=big5\n"
+"Content-Transfer-Encoding: 8-bit\n"
+
+#: lib/argmatch.c:161
+#, fuzzy, c-format
+msgid "invalid argument %s for %s"
+msgstr "無效的號碼 `%s'"
+
+#: lib/argmatch.c:162
+#, fuzzy, c-format
+msgid "ambiguous argument %s for %s"
+msgstr "無效的號碼 `%s'"
+
+#: lib/argmatch.c:181
+#, fuzzy
+msgid "Valid arguments are:"
+msgstr "限制引數"
+
+#: lib/closeout.c:107 src/cat.c:186 src/cat.c:267 src/cat.c:320
+#: src/cksum.c:267 src/head.c:152 src/head.c:195 src/tail.c:327
+#: src/tail.c:1653 src/tr.c:1665 src/tr.c:1911 src/tr.c:2019
+msgid "write error"
+msgstr "寫入時發生錯誤"
+
+#: lib/error.c:129 lib/error.c:157
+msgid "Unknown system error"
+msgstr ""
+
+#: lib/getopt.c:694
+#, c-format
+msgid "%s: option `%s' is ambiguous\n"
+msgstr ""
+
+#: lib/getopt.c:719
+#, fuzzy, c-format
+msgid "%s: option `--%s' doesn't allow an argument\n"
+msgstr "選項 `-k' 需要有一個引數"
+
+#: lib/getopt.c:724
+#, fuzzy, c-format
+msgid "%s: option `%c%s' doesn't allow an argument\n"
+msgstr "選項 `-T' 需要有一個引數"
+
+#: lib/getopt.c:742 lib/getopt.c:915
+#, fuzzy, c-format
+msgid "%s: option `%s' requires an argument\n"
+msgstr "選項 `-T' 需要有一個引數"
+
+#: lib/getopt.c:771
+#, fuzzy, c-format
+msgid "%s: unrecognized option `--%s'\n"
+msgstr "%s: 無法辨識的選項 `-%c'\n"
+
+#: lib/getopt.c:775
+#, fuzzy, c-format
+msgid "%s: unrecognized option `%c%s'\n"
+msgstr "%s: 無法辨識的選項 `-%c'\n"
+
+#: lib/getopt.c:801
+#, fuzzy, c-format
+msgid "%s: illegal option -- %c\n"
+msgstr "%s: 無法辨識的選項 `-%c'\n"
+
+#: lib/getopt.c:804
+#, fuzzy, c-format
+msgid "%s: invalid option -- %c\n"
+msgstr "%s: 無法辨識的選項 `-%c'\n"
+
+#: lib/getopt.c:834 lib/getopt.c:964
+#, fuzzy, c-format
+msgid "%s: option requires an argument -- %c\n"
+msgstr "選項 `-k' 需要有一個引數"
+
+#: lib/getopt.c:881
+#, c-format
+msgid "%s: option `-W %s' is ambiguous\n"
+msgstr ""
+
+#: lib/getopt.c:899
+#, fuzzy, c-format
+msgid "%s: option `-W %s' doesn't allow an argument\n"
+msgstr "選項 `-T' 需要有一個引數"
+
+#: lib/human.c:365
+msgid "block size"
+msgstr ""
+
+#: lib/makepath.c:176
+#, fuzzy, c-format
+msgid "cannot create directory %s"
+msgstr "沒辦法對 `%s' 執行輸出入控制 (ioctl)"
+
+#: lib/makepath.c:182 lib/makepath.c:423
+#, c-format
+msgid "%s exists but is not a directory"
+msgstr ""
+
+#: lib/makepath.c:319 lib/makepath.c:381 lib/makepath.c:442
+#, c-format
+msgid "cannot change owner and/or group of %s"
+msgstr ""
+
+#: lib/makepath.c:341
+#, fuzzy, c-format
+msgid "cannot chdir to directory, %s"
+msgstr "沒辦法對 `%s' 執行輸出入控制 (ioctl)"
+
+#: lib/makepath.c:395 lib/makepath.c:448
+#, c-format
+msgid "cannot change permissions of %s"
+msgstr ""
+
+#: lib/obstack.c:494 lib/obstack.c:497 lib/xmalloc.c:66
+#, fuzzy
+msgid "memory exhausted"
+msgstr "虛擬記憶體耗盡"
+
+#: lib/quotearg.c:270
+msgid "`"
+msgstr ""
+
+#: lib/quotearg.c:271
+msgid "'"
+msgstr ""
+
+#: lib/rpmatch.c:78
+msgid "^[yY]"
+msgstr ""
+
+#: lib/rpmatch.c:81
+msgid "^[nN]"
+msgstr ""
+
+#: lib/unicodeio.c:159
+msgid "iconv function not usable"
+msgstr ""
+
+#: lib/unicodeio.c:161
+msgid "iconv function not available"
+msgstr ""
+
+#: lib/unicodeio.c:168
+#, fuzzy
+msgid "character out of range"
+msgstr "%s: 行號超出範圍"
+
+#: lib/unicodeio.c:231
+#, c-format
+msgid "cannot convert U+%04X to local character set"
+msgstr ""
+
+#: lib/unicodeio.c:233
+#, c-format
+msgid "cannot convert U+%04X to local character set: %s"
+msgstr ""
+
+#: lib/userspec.c:178
+#, fuzzy
+msgid "invalid user"
+msgstr "無效的數字"
+
+#: lib/userspec.c:179
+#, fuzzy
+msgid "invalid group"
+msgstr "無效的數字"
+
+#: lib/userspec.c:181
+msgid "cannot get the login group of a numeric UID"
+msgstr ""
+
+#: lib/userspec.c:183
+msgid "cannot omit both user and group"
+msgstr ""
+
+#: lib/version-etc.c:61
+#, c-format
+msgid "Written by %s.\n"
+msgstr ""
+
+#: lib/version-etc.c:67
+msgid ""
+"This is free software; see the source for copying conditions.  There is NO\n"
+"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+msgstr ""
+
+#: lib/xmemcoll.c:61
+msgid "string comparison failed"
+msgstr ""
+
+#: lib/xmemcoll.c:62
+msgid "Set LC_ALL='C' to work around the problem."
+msgstr ""
+
+#: lib/xmemcoll.c:64
+#, c-format
+msgid "The strings compared were %s and %s."
+msgstr ""
+
+#: src/cat.c:42 src/split.c:42
+msgid "Torbjorn Granlund and Richard M. Stallman"
+msgstr ""
+
+#: src/cat.c:88 src/cksum.c:276 src/comm.c:71 src/csplit.c:1490 src/cut.c:163
+#: src/expand.c:106 src/fmt.c:267 src/fold.c:63 src/head.c:84 src/join.c:142
+#: src/md5sum.c:121 src/nl.c:172 src/od.c:277 src/paste.c:399 src/pr.c:2752
+#: src/ptx.c:1855 src/sort.c:281 src/split.c:91 src/sum.c:56 src/tac.c:123
+#: src/tail.c:234 src/tr.c:323 src/tsort.c:93 src/unexpand.c:371
+#: src/uniq.c:130 src/wc.c:124
+#, c-format
+msgid "Try `%s --help' for more information.\n"
+msgstr "請用 `%s --help' 來顯示本指令的用法\n"
+
+#: src/cat.c:92
+#, c-format
+msgid "Usage: %s [OPTION] [FILE]...\n"
+msgstr "用法：%s [OPTION] [FILE]...\n"
+
+#: src/cat.c:96
+#, fuzzy
+msgid ""
+"Concatenate FILE(s), or standard input, to standard output.\n"
+"\n"
+"  -A, --show-all           equivalent to -vET\n"
+"  -b, --number-nonblank    number nonblank output lines\n"
+"  -e                       equivalent to -vE\n"
+"  -E, --show-ends          display $ at end of each line\n"
+"  -n, --number             number all output lines\n"
+"  -s, --squeeze-blank      never more than one single blank line\n"
+msgstr ""
+"把由 FILE(s) 或標準輸入讀取的資料連結起來，輸出到標準輸出。\n"
+"\n"
+"  -A, --show-all           跟 -vET 相同\n"
+"  -b, --number-nonblank    輸出時標出非空白行的行號\n"
+"  -e                       跟 -vE 相同\n"
+"  -E, --show-ends          在每一行的最後顯示 `$' 記號 \n"
+"  -n, --number             輸出時標出行號\n"
+"  -s, --squeeze-blank      不輸出超過一行的空白行\n"
+"  -t                       跟 -vT 相同\n"
+"  -T, --show-tabs          將跳格字元 (TAB) 顯示為  ^I\n"
+"  -u                       (這選項不被處理)\n"
+"  -v, --show-nonprinting   除了跳格及換行字元外，使用 ^ 及 M- 表示法顯示字"
+"元\n"
+"      --help               顯示這段說明訊息\n"
+"      --version            顯示版本資訊\n"
+"\n"
+"假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+
+#: src/cat.c:106
+#, fuzzy
+msgid ""
+"  -t                       equivalent to -vT\n"
+"  -T, --show-tabs          display TAB characters as ^I\n"
+"  -u                       (ignored)\n"
+"  -v, --show-nonprinting   use ^ and M- notation, except for LFD and TAB\n"
+msgstr ""
+"把由 FILE(s) 或標準輸入讀取的資料連結起來，輸出到標準輸出。\n"
+"\n"
+"  -A, --show-all           跟 -vET 相同\n"
+"  -b, --number-nonblank    輸出時標出非空白行的行號\n"
+"  -e                       跟 -vE 相同\n"
+"  -E, --show-ends          在每一行的最後顯示 `$' 記號 \n"
+"  -n, --number             輸出時標出行號\n"
+"  -s, --squeeze-blank      不輸出超過一行的空白行\n"
+"  -t                       跟 -vT 相同\n"
+"  -T, --show-tabs          將跳格字元 (TAB) 顯示為  ^I\n"
+"  -u                       (這選項不被處理)\n"
+"  -v, --show-nonprinting   除了跳格及換行字元外，使用 ^ 及 M- 表示法顯示字"
+"元\n"
+"      --help               顯示這段說明訊息\n"
+"      --version            顯示版本資訊\n"
+"\n"
+"假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+
+#: src/cat.c:114 src/sum.c:72
+msgid ""
+"\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+msgstr ""
+
+#: src/cat.c:119
+msgid ""
+"\n"
+"  -B, --binary             use binary writes to the console device.\n"
+"\n"
+msgstr ""
+
+#: src/cat.c:124 src/cksum.c:291 src/comm.c:88 src/csplit.c:1532 src/cut.c:208
+#: src/expand.c:131 src/fmt.c:297 src/fold.c:86 src/head.c:115 src/join.c:182
+#: src/md5sum.c:157 src/nl.c:227 src/od.c:364 src/paste.c:423 src/pr.c:2864
+#: src/sort.c:352 src/split.c:123 src/sum.c:76 src/tac.c:146 src/tail.c:304
+#: src/tr.c:394 src/tsort.c:105 src/unexpand.c:394 src/uniq.c:169 src/wc.c:146
+#, fuzzy
+msgid ""
+"\n"
+"Report bugs to <bug-textutils@gnu.org>."
+msgstr ""
+"\n"
+"發現錯誤, 請報告到 textutils-bugs@gnu.ai.mit.edu"
+
+#: src/cat.c:308
+#, c-format
+msgid "cannot do ioctl on `%s'"
+msgstr "沒辦法對 `%s' 執行輸出入控制 (ioctl)"
+
+#: src/cat.c:648 src/od.c:1004
+msgid "standard output"
+msgstr "標準輸出"
+
+#: src/cat.c:779
+#, c-format
+msgid "%s: input file is output file"
+msgstr "%s: 輸出和輸入檔案是相同的"
+
+#: src/cksum.c:234
+#, c-format
+msgid "%s: file too long"
+msgstr ""
+
+#: src/cksum.c:280
+#, fuzzy, c-format
+msgid ""
+"Usage: %s [FILE]...\n"
+"  or:  %s [OPTION]\n"
+msgstr "用法：%s [選項]... [INPUT [OUTPUT]]\n"
+
+#: src/cksum.c:285
+msgid ""
+"Print CRC checksum and byte counts of each FILE.\n"
+"\n"
+msgstr ""
+
+#: src/comm.c:35 src/uniq.c:38
+msgid "Richard Stallman and David MacKenzie"
+msgstr ""
+
+#: src/comm.c:75
+#, c-format
+msgid "Usage: %s [OPTION]... LEFT_FILE RIGHT_FILE\n"
+msgstr "用法：%s [選項]... LEFT_FILE RIGHT_FILE\n"
+
+#: src/comm.c:79
+#, fuzzy
+msgid ""
+"Compare sorted files LEFT_FILE and RIGHT_FILE line by line.\n"
+"\n"
+"  -1              suppress lines unique to left file\n"
+"  -2              suppress lines unique to right file\n"
+"  -3              suppress lines that appear in both files\n"
+msgstr ""
+"一行一行的比較 LEFT_FILE 及 RIGHT_FILE 這兩個排序過的檔案。\n"
+"\n"
+"  -1              不顯示只在第一個檔案 LEFT_FILE 出現過的行\n"
+"  -2              不顯示只在第二個檔案 RIGHT_FILE 出現過的行\n"
+"  -3              不顯示在兩個檔案中同時出現過的行\n"
+"      --help      顯示這段說明訊息\n"
+"      --version   顯示版本資訊\n"
+
+#: src/csplit.c:41
+msgid "Stuart Kemp and David MacKenzie"
+msgstr ""
+
+#: src/csplit.c:290 src/csplit.c:1479 src/tac-pipe.c:57 src/tr.c:1607
+#: src/tr.c:1710 src/tr.c:1753
+msgid "read error"
+msgstr "讀取發生錯誤"
+
+#: src/csplit.c:584
+msgid "input disappeared"
+msgstr "輸入消失了"
+
+#: src/csplit.c:706 src/csplit.c:717
+#, c-format
+msgid "%s: line number out of range"
+msgstr "%s: 行號超出範圍"
+
+#: src/csplit.c:744
+#, fuzzy, c-format
+msgid "%s: `%s': line number out of range"
+msgstr "%s: `%d': 行號超出範圍"
+
+#: src/csplit.c:747 src/csplit.c:793
+#, c-format
+msgid " on repetition %d\n"
+msgstr "在第 %d 次重覆時\n"
+
+#: src/csplit.c:789
+#, c-format
+msgid "%s: `%s': match not found"
+msgstr "%s: `%s': 找不到符合的字串"
+
+#: src/csplit.c:850 src/csplit.c:890 src/tac.c:262
+msgid "error in regular expression search"
+msgstr "在正規運算式搜尋時發生錯誤"
+
+#: src/csplit.c:993
+#, c-format
+msgid "write error for `%s'"
+msgstr "寫入 `%s' 時發生錯誤"
+
+#: src/csplit.c:1065
+#, c-format
+msgid "%s: `+' or `-' expected after delimeter"
+msgstr "%s: 在劃界符號後面應該有 `+' 或 `-' 字元"
+
+#: src/csplit.c:1069
+#, c-format
+msgid "%s: integer expected after `%c'"
+msgstr "%s: 在 `%c' 後面應該有一個整數引數"
+
+#: src/csplit.c:1089
+#, c-format
+msgid "%s: `}' is required in repeat count"
+msgstr "%s: 在重覆計數之後應該有 `}' 字元"
+
+#: src/csplit.c:1099
+#, c-format
+msgid "%s}: integer required between `{' and `}'"
+msgstr "%s}: 在 `{' 和 `}' 之間應該含有整數"
+
+#: src/csplit.c:1126
+#, c-format
+msgid "%s: closing delimeter `%c' missing"
+msgstr "%s: 找不到封閉劃界符號 `%c' "
+
+#: src/csplit.c:1142
+#, c-format
+msgid "%s: invalid regular expression: %s"
+msgstr "%s: 無效的正規運算式：%s"
+
+#: src/csplit.c:1175
+#, c-format
+msgid "%s: invalid pattern"
+msgstr "%s: 無效的樣式"
+
+#: src/csplit.c:1178
+#, c-format
+msgid "%s: line number must be greater than zero"
+msgstr "%s: 行號必須大於零"
+
+#: src/csplit.c:1184
+#, fuzzy, c-format
+msgid "line number `%s' is smaller than preceding line number, %s"
+msgstr "行號 `%s' 比前導行號還要小，%lu"
+
+#: src/csplit.c:1190
+#, c-format
+msgid "warning: line number `%s' is the same as preceding line number"
+msgstr "警告：行號 `%s' 跟前導行號一樣大"
+
+#: src/csplit.c:1312
+msgid "missing conversion specifier in suffix"
+msgstr "在字尾裡找不到轉換說明符"
+
+#: src/csplit.c:1318
+#, c-format
+msgid "invalid conversion specifier in suffix: %c"
+msgstr "在字尾裡的轉換說明符無效：%c"
+
+#: src/csplit.c:1321
+#, c-format
+msgid "invalid conversion specifier in suffix: \\%.3o"
+msgstr "在字尾裡的轉換說明符無效：\\%.3o"
+
+#: src/csplit.c:1353
+#, c-format
+msgid "missing %% conversion specification in suffix"
+msgstr "在字尾裡找不到 %% 轉換規格"
+
+#: src/csplit.c:1356
+#, c-format
+msgid "too many %% conversion specifications in suffix"
+msgstr "在字尾裡有太多 %% 轉換規格"
+
+#: src/csplit.c:1439
+#, c-format
+msgid "%s: invalid number"
+msgstr "%s: 無效的號碼"
+
+#: src/csplit.c:1462
+msgid "too few arguments"
+msgstr "引數太少了"
+
+#: src/csplit.c:1494
+#, c-format
+msgid "Usage: %s [OPTION]... FILE PATTERN...\n"
+msgstr "用法：%s [選項]... FILE PATTERN...\n"
+
+#: src/csplit.c:1498
+msgid ""
+"Output pieces of FILE separated by PATTERN(s) to files `xx01', `xx02', ...,\n"
+"and output byte counts of each piece to standard output.\n"
+"\n"
+msgstr ""
+
+#: src/csplit.c:1503 src/cut.c:175 src/expand.c:119 src/fmt.c:277
+#: src/fold.c:76 src/head.c:98 src/nl.c:185 src/paste.c:413 src/pr.c:2765
+#: src/ptx.c:1867 src/sort.c:295 src/split.c:104 src/tac.c:136 src/tail.c:248
+#: src/unexpand.c:384 src/uniq.c:143
+msgid ""
+"Mandatory arguments to long options are mandatory for short options too.\n"
+msgstr ""
+
+#: src/csplit.c:1506
+#, c-format
+msgid ""
+"  -b, --suffix-format=FORMAT use sprintf FORMAT instead of %d\n"
+"  -f, --prefix=PREFIX        use PREFIX instead of `xx'\n"
+"  -k, --keep-files           do not remove output files on errors\n"
+msgstr ""
+
+#: src/csplit.c:1511
+msgid ""
+"  -n, --digits=DIGITS        use specified number of digits instead of 2\n"
+"  -s, --quiet, --silent      do not print counts of output file sizes\n"
+"  -z, --elide-empty-files    remove empty output files\n"
+msgstr ""
+
+#: src/csplit.c:1518
+msgid ""
+"\n"
+"Read standard input if FILE is -.  Each PATTERN may be:\n"
+msgstr ""
+
+#: src/csplit.c:1522
+msgid ""
+"\n"
+"  INTEGER            copy up to but not including specified line number\n"
+"  /REGEXP/[OFFSET]   copy up to but not including a matching line\n"
+"  %REGEXP%[OFFSET]   skip to, but not including a matching line\n"
+"  {INTEGER}          repeat the previous pattern specified number of times\n"
+"  {*}                repeat the previous pattern as many times as possible\n"
+"\n"
+"A line OFFSET is a required `+' or `-' followed by a positive integer.\n"
+msgstr ""
+
+#: src/cut.c:39
+msgid "David Ihnat, David MacKenzie, and Jim Meyering"
+msgstr ""
+
+#: src/cut.c:167 src/expand.c:110 src/fold.c:67 src/head.c:88 src/nl.c:176
+#: src/paste.c:403 src/pr.c:2756 src/sort.c:285 src/sum.c:60 src/tac.c:127
+#: src/tail.c:238 src/unexpand.c:375 src/wc.c:128
+#, c-format
+msgid "Usage: %s [OPTION]... [FILE]...\n"
+msgstr "用法：%s [選項]... [FILE]...\n"
+
+#: src/cut.c:171
+msgid ""
+"Print selected parts of lines from each FILE to standard output.\n"
+"\n"
+msgstr ""
+
+#: src/cut.c:178
+#, fuzzy
+msgid ""
+"  -b, --bytes=LIST        output only these bytes\n"
+"  -c, --characters=LIST   output only these characters\n"
+"  -d, --delimiter=DELIM   use DELIM instead of TAB for field delimiter\n"
+msgstr ""
+"在檔案 FILE 裡面太長的行中加入換行字元，使所有行都在一定長度以下。\n"
+"預設是從標準輸入讀取資料，把結果輸出到標準輸出去。\n"
+"\n"
+"  -b, --bytes         依位元組數目計算，而非欄位數目\n"
+"  -s, --spaces        在空格字元處斷行\n"
+"  -w, --width=WIDTH   設定寬度為 WIDTH (預設是 80)\n"
+
+#: src/cut.c:183
+msgid ""
+"  -f, --fields=LIST       output only these fields;  also print any line\n"
+"                            that contains no delimiter character, unless\n"
+"                            the -s option is specified\n"
+"  -n                      (ignored)\n"
+msgstr ""
+
+#: src/cut.c:189
+msgid ""
+"  -s, --only-delimited    do not print lines not containing delimiters\n"
+"      --output-delimiter=STRING  use STRING as the output delimiter\n"
+"                            the default is to use the input delimiter\n"
+msgstr ""
+
+#: src/cut.c:196
+msgid ""
+"\n"
+"Use one, and only one of -b, -c or -f.  Each LIST is made up of one\n"
+"range, or many ranges separated by commas.  Each range is one of:\n"
+"\n"
+"  N     N'th byte, character or field, counted from 1\n"
+"  N-    from N'th byte, character or field, to end of line\n"
+"  N-M   from N'th to M'th (included) byte, character or field\n"
+"  -M    from first to M'th (included) byte, character or field\n"
+"\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+msgstr ""
+
+#: src/cut.c:263 src/cut.c:294 src/cut.c:354
+msgid "invalid byte or field list"
+msgstr "無效的位元組或欄位串列"
+
+#: src/cut.c:624 src/cut.c:633
+msgid "only one type of list may be specified"
+msgstr "一次只能指定一種類型的串列"
+
+#: src/cut.c:627
+msgid "missing list of positions"
+msgstr "找不到位置串列"
+
+#: src/cut.c:636
+msgid "missing list of fields"
+msgstr "找不到欄位串列"
+
+#: src/cut.c:643
+msgid "the delimiter must be a single character"
+msgstr "劃界符號必須是一個單一字元"
+
+#: src/cut.c:673
+msgid "you must specify a list of bytes, characters, or fields"
+msgstr "你必須指定一個位元組、字元或欄位的串列"
+
+#: src/cut.c:676
+msgid "a delimiter may be specified only when operating on fields"
+msgstr "只有在針對欄位作業時才能指定劃界符號"
+
+#: src/cut.c:679
+msgid ""
+"suppressing non-delimited lines makes sense\n"
+"\tonly when operating on fields"
+msgstr ""
+"只有在針對欄位作業時才能忽略\n"
+"\t缺少劃界符號的行"
+
+#: src/expand.c:114
+msgid ""
+"Convert tabs in each FILE to spaces, writing to standard output.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/expand.c:122
+msgid ""
+"  -i, --initial       do not convert TABs after non whitespace\n"
+"  -t, --tabs=NUMBER   have tabs NUMBER characters apart, not 8\n"
+msgstr ""
+
+#: src/expand.c:126
+msgid ""
+"  -t, --tabs=LIST     use comma separated list of explicit tab positions\n"
+msgstr ""
+
+#: src/expand.c:173 src/unexpand.c:153
+msgid "tab size contains an invalid character"
+msgstr "指定的欄標大小裡含有無效的字元"
+
+#: src/expand.c:191 src/unexpand.c:171
+msgid "tab size cannot be 0"
+msgstr "欄標大小不可為零"
+
+#: src/expand.c:193 src/unexpand.c:173
+msgid "tab sizes must be ascending"
+msgstr "指定的欄標大小必須是升序的 (ascending)"
+
+#: src/expand.c:386
+#, fuzzy
+msgid "`-LIST' option is obsolete; use `-t LIST'"
+msgstr "警告：寬度 %lu 是無效的；用 %d 代替"
+
+#: src/fmt.c:271
+#, c-format
+msgid "Usage: %s [-DIGITS] [OPTION]... [FILE]...\n"
+msgstr "用法：%s [-阿拉伯數字] [選項]... [FILE]...\n"
+
+#: src/fmt.c:272
+msgid ""
+"Reformat each paragraph in the FILE(s), writing to standard output.\n"
+"If no FILE or if FILE is `-', read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/fmt.c:280
+#, fuzzy
+msgid ""
+"  -c, --crown-margin        preserve indentation of first two lines\n"
+"  -p, --prefix=STRING       combine only lines having STRING as prefix\n"
+"  -s, --split-only          split long lines, but do not refill\n"
+msgstr ""
+"把檔案 FILE(s) 裡面的每一段重新格式化後，輸出到標準輸出。\n"
+"假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+"\n"
+" (短選項用的參數和長選項用的是一樣的) \n"
+"  -c, --crown-margin        保留最開頭兩行的縮排\n"
+"  -p, --prefix=STRING       只合併用 STRING 開頭的行\n"
+"  -s, --split-only          只把太長的行拆開，不把太短的行補滿\n"
+"  -t, --tagged-paragraph    標示出每一段，每一段的第一行和第二行的縮排不同\n"
+"  -u, --uniform-spacing     字與字之間用一個空格分開，句子之間則用兩個\n"
+"  -w, --width=NUMBER        最大行寬 (預設為 75 格)\n"
+"      --help                顯示這段說明訊息\n"
+"      --version             顯示版本資訊\n"
+"選項 -wNUMBER 裡面的 `w' 可以忽略不寫。\n"
+
+#: src/fmt.c:286
+#, fuzzy
+msgid ""
+"  -t, --tagged-paragraph    indentation of first line different from second\n"
+"  -u, --uniform-spacing     one space between words, two after sentences\n"
+"  -w, --width=NUMBER        maximum line width (default of 75 columns)\n"
+msgstr ""
+"把檔案 FILE(s) 裡面的每一段重新格式化後，輸出到標準輸出。\n"
+"假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+"\n"
+" (短選項用的參數和長選項用的是一樣的) \n"
+"  -c, --crown-margin        保留最開頭兩行的縮排\n"
+"  -p, --prefix=STRING       只合併用 STRING 開頭的行\n"
+"  -s, --split-only          只把太長的行拆開，不把太短的行補滿\n"
+"  -t, --tagged-paragraph    標示出每一段，每一段的第一行和第二行的縮排不同\n"
+"  -u, --uniform-spacing     字與字之間用一個空格分開，句子之間則用兩個\n"
+"  -w, --width=NUMBER        最大行寬 (預設為 75 格)\n"
+"      --help                顯示這段說明訊息\n"
+"      --version             顯示版本資訊\n"
+"選項 -wNUMBER 裡面的 `w' 可以忽略不寫。\n"
+
+#: src/fmt.c:293
+msgid ""
+"\n"
+"In -wNUMBER, the letter `w' may be omitted.\n"
+msgstr ""
+
+#: src/fmt.c:345
+#, fuzzy, c-format
+msgid "invalid width option: `%s'"
+msgstr "`%s' 是無效的型別字串"
+
+#: src/fmt.c:385
+#, fuzzy, c-format
+msgid "invalid width: `%s'"
+msgstr "無效的欄位號碼：`%s'"
+
+#: src/fold.c:71
+msgid ""
+"Wrap input lines in each FILE (standard input by default), writing to\n"
+"standard output.\n"
+"\n"
+msgstr ""
+
+#: src/fold.c:79
+msgid ""
+"  -b, --bytes         count bytes rather than columns\n"
+"  -s, --spaces        break at spaces\n"
+"  -w, --width=WIDTH   use WIDTH columns instead of 80\n"
+msgstr ""
+
+#: src/fold.c:267
+#, fuzzy, c-format
+msgid "`%s' option is obsolete; use `%s'"
+msgstr "警告：寬度 %lu 是無效的；用 %d 代替"
+
+#: src/fold.c:295
+#, c-format
+msgid "invalid number of columns: `%s'"
+msgstr "無效的欄位數目：`%s'"
+
+#: src/head.c:92
+#, fuzzy
+msgid ""
+"Print first 10 lines of each FILE to standard output.\n"
+"With more than one FILE, precede each with a header giving the file name.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"把每一個檔案 FILE 最前面的 10 行輸出到標準輸出。\n"
+"所給的引數 FILE 超過一個時，會在每一個檔案內容之前標示出檔名。\n"
+"假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+"\n"
+"  -c, --bytes=SIZE         印出最前面的 SIZE 個位元組\n"
+"  -n, --lines=NUMBER       印出最前面的 NUMBER 行 (預設值是 10 行)\n"
+"  -q, --quiet, --silent    不要在檔案內容之前標示出檔名\n"
+"  -v, --verbose            總是在檔案內容之前標示出檔名\n"
+"      --help               顯示這段說明訊息\n"
+"      --version            顯示版本資訊\n"
+"\n"
+"指定的 SIZE 可以是一個乘數字尾： b 表示 512，k 表示 1K，m 表示 1 Meg。\n"
+"可以用一個數目字 -VALUE 當第一個選項，假如 VALUE 中含有乘數字尾 [bkm] 的"
+"話，\n"
+"程式會把它解釋為 -c VALUE，否則就當成 -n VALUE 處理。 \n"
+
+#: src/head.c:101
+msgid ""
+"  -c, --bytes=SIZE         print first SIZE bytes\n"
+"  -n, --lines=NUMBER       print first NUMBER lines instead of first 10\n"
+msgstr ""
+
+#: src/head.c:105
+msgid ""
+"  -q, --quiet, --silent    never print headers giving file names\n"
+"  -v, --verbose            always print headers giving file names\n"
+msgstr ""
+
+#: src/head.c:111 src/split.c:119
+msgid ""
+"\n"
+"SIZE may have a multiplier suffix: b for 512, k for 1K, m for 1 Meg.\n"
+msgstr ""
+
+#: src/head.c:189
+#, fuzzy, c-format
+msgid "cannot reposition file pointer for %s"
+msgstr "沒辦法對 `%s' 執行輸出入控制 (ioctl)"
+
+#: src/head.c:220 src/md5sum.c:334 src/md5sum.c:675 src/od.c:950 src/od.c:1990
+#: src/pr.c:1166 src/pr.c:1373 src/pr.c:1495 src/tac.c:484 src/tac.c:490
+#: src/tr.c:2026 src/tsort.c:585
+msgid "standard input"
+msgstr "標準輸出"
+
+#: src/head.c:255 src/tail.c:1380
+#, fuzzy, c-format
+msgid "%s: %s is so large that it is not representable"
+msgstr "%s: `%s' 太大了以致於無法被表示出來"
+
+#: src/head.c:256 src/tail.c:1382
+msgid "number of lines"
+msgstr "行數"
+
+#: src/head.c:256 src/tail.c:1383
+msgid "number of bytes"
+msgstr "位元組數目"
+
+#: src/head.c:263 src/tail.c:1469
+msgid "invalid number of lines"
+msgstr "無效的行數"
+
+#: src/head.c:264 src/tail.c:1470
+msgid "invalid number of bytes"
+msgstr "無效的位元組數目"
+
+#: src/head.c:340
+#, c-format
+msgid "unrecognized option `-%c'"
+msgstr "無法辨識的選項 `-%c'"
+
+#: src/head.c:347
+#, fuzzy, c-format
+msgid "`-%s' option is obsolete; use `-%c %.*s%.*s%s'"
+msgstr "警告：寬度 %lu 是無效的；用 %d 代替"
+
+#: src/join.c:146
+#, c-format
+msgid "Usage: %s [OPTION]... FILE1 FILE2\n"
+msgstr "用法：%s [選項]... FILE1 FILE2\n"
+
+#: src/join.c:150
+msgid ""
+"For each pair of input lines with identical join fields, write a line to\n"
+"standard output.  The default join field is the first, delimited\n"
+"by whitespace.  When FILE1 or FILE2 (not both) is -, read standard input.\n"
+"\n"
+"  -a SIDE           print unpairable lines coming from file SIDE\n"
+"  -e EMPTY          replace missing input fields with EMPTY\n"
+msgstr ""
+
+#: src/join.c:158
+msgid ""
+"  -i, --ignore-case ignore differences in case when comparing fields\n"
+"  -j FIELD          (obsolescent) equivalent to `-1 FIELD -2 FIELD'\n"
+"  -j1 FIELD         (obsolescent) equivalent to `-1 FIELD'\n"
+"  -j2 FIELD         (obsolescent) equivalent to `-2 FIELD'\n"
+"  -o FORMAT         obey FORMAT while constructing output line\n"
+"  -t CHAR           use CHAR as input and output field separator\n"
+msgstr ""
+
+#: src/join.c:166
+#, fuzzy
+msgid ""
+"  -v SIDE           like -a SIDE, but suppress joined output lines\n"
+"  -1 FIELD          join on this FIELD of file 1\n"
+"  -2 FIELD          join on this FIELD of file 2\n"
+msgstr ""
+"一行一行的比較 LEFT_FILE 及 RIGHT_FILE 這兩個排序過的檔案。\n"
+"\n"
+"  -1              不顯示只在第一個檔案 LEFT_FILE 出現過的行\n"
+"  -2              不顯示只在第二個檔案 RIGHT_FILE 出現過的行\n"
+"  -3              不顯示在兩個檔案中同時出現過的行\n"
+"      --help      顯示這段說明訊息\n"
+"      --version   顯示版本資訊\n"
+
+#: src/join.c:173
+msgid ""
+"\n"
+"Unless -t CHAR is given, leading blanks separate fields and are ignored,\n"
+"else fields are separated by CHAR.  Any FIELD is a field number counted\n"
+"from 1.  FORMAT is one or more comma or blank separated specifications,\n"
+"each being `SIDE.FIELD' or `0'.  Default FORMAT outputs the join field,\n"
+"the remaining fields from FILE1, the remaining fields from FILE2, all\n"
+"separated by CHAR.\n"
+msgstr ""
+
+#: src/join.c:648
+#, c-format
+msgid "invalid field specifier: `%s'"
+msgstr "無效的欄位說明符：`%s'"
+
+#: src/join.c:662 src/join.c:778 src/join.c:814
+#, c-format
+msgid "invalid field number: `%s'"
+msgstr "無效的欄位號碼：`%s'"
+
+#: src/join.c:675
+#, c-format
+msgid "invalid file number in field spec: `%s'"
+msgstr "在欄位中指定了無效的檔案編號：`%s'"
+
+#: src/join.c:798
+#, c-format
+msgid "invalid field number for file 1: `%s'"
+msgstr "針對 1 號檔案的欄位號碼是無效的：`%s'"
+
+#: src/join.c:807
+#, c-format
+msgid "invalid field number for file 2: `%s'"
+msgstr "針對 2 號檔案的欄位號碼是無效的：`%s'"
+
+#: src/join.c:839
+msgid "too many non-option arguments"
+msgstr "非選項的引數太多了"
+
+#: src/join.c:861
+msgid "too few non-option arguments"
+msgstr "非選項的引數太少了"
+
+#: src/join.c:872
+msgid "both files cannot be standard input"
+msgstr "指定的兩個檔案不能都是標準輸入"
+
+#: src/md5sum.c:38
+msgid "Ulrich Drepper and Scott Miller"
+msgstr ""
+
+#: src/md5sum.c:125
+#, c-format
+msgid ""
+"Usage: %s [OPTION] [FILE]...\n"
+"  or:  %s [OPTION] --check [FILE]\n"
+"Print or check %s (%d-bit) checksums.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+msgstr ""
+
+#: src/md5sum.c:134
+#, c-format
+msgid ""
+"\n"
+"  -b, --binary            read files in binary mode (default on DOS/"
+"Windows)\n"
+"  -c, --check             check %s sums against given list\n"
+"  -t, --text              read files in text mode (default)\n"
+"\n"
+msgstr ""
+
+#: src/md5sum.c:142
+msgid ""
+"The following two options are useful only when verifying checksums:\n"
+"      --status            don't output anything, status code shows success\n"
+"  -w, --warn              warn about improperly formated checksum lines\n"
+"\n"
+msgstr ""
+
+#: src/md5sum.c:150
+#, c-format
+msgid ""
+"\n"
+"The sums are computed as described in %s.  When checking, the input\n"
+"should be a former output of this program.  The default mode is to print\n"
+"a line with checksum, a character indicating type (`*' for binary, ` ' for\n"
+"text), and name for each FILE.\n"
+msgstr ""
+
+#: src/md5sum.c:379
+#, fuzzy, c-format
+msgid "%s: %lu: improperly formatted %s checksum line"
+msgstr "%s: %lu: 這一行不是經過適當格式化的 MD5 總和檢查行"
+
+#: src/md5sum.c:401
+#, c-format
+msgid "%s: FAILED open or read\n"
+msgstr "%s: 在開啟或讀取時發生嚴重錯誤\n"
+
+#: src/md5sum.c:425
+msgid "FAILED"
+msgstr "嚴重錯誤"
+
+#: src/md5sum.c:425
+msgid "OK"
+msgstr "OK"
+
+#: src/md5sum.c:438
+#, c-format
+msgid "%s: read error"
+msgstr "%s: 讀取時發生錯誤"
+
+#: src/md5sum.c:451
+#, fuzzy, c-format
+msgid "%s: no properly formatted %s checksum lines found"
+msgstr "%s: 找到未經適當格式化的 MD5 總和檢查行"
+
+#: src/md5sum.c:464
+#, fuzzy, c-format
+msgid "WARNING: %d of %d listed %s could not be read"
+msgstr "警告：無法讀取 %d 之 %d 列出的 %s \n"
+
+#: src/md5sum.c:467
+msgid "file"
+msgstr "檔案"
+
+#: src/md5sum.c:467
+msgid "files"
+msgstr "檔案"
+
+#: src/md5sum.c:473
+#, c-format
+msgid "WARNING: %d of %d computed %s did NOT match"
+msgstr "警告：%d 之 %d 計算出來的 %s 並 `不' 匹配"
+
+#: src/md5sum.c:476
+msgid "checksum"
+msgstr "總和檢查"
+
+#: src/md5sum.c:476
+msgid "checksums"
+msgstr "總和檢查"
+
+#: src/md5sum.c:558
+msgid ""
+"the --binary and --text options are meaningless when verifying checksums"
+msgstr "當執行總和檢查驗証時，選項 --binary 及 --text 是沒有意義的"
+
+#: src/md5sum.c:566
+msgid "the --string and --check options are mutually exclusive"
+msgstr "不能同時使用 --string 和 --check 這兩個選項"
+
+#: src/md5sum.c:573
+msgid "the --status option is meaningful only when verifying checksums"
+msgstr "選項 --status 只有在執行總和檢查驗証時才有意義"
+
+#: src/md5sum.c:580
+msgid "the --warn option is meaningful only when verifying checksums"
+msgstr "選項 --warn 只有在執行總和檢查驗証時才有意義"
+
+#: src/md5sum.c:590
+msgid "no files may be specified when using --string"
+msgstr "使用選項 --string 時就不能再指定檔案了"
+
+#: src/md5sum.c:612
+msgid "only one argument may be specified when using --check"
+msgstr "使用選項 --check 時只能指定一個引數"
+
+#: src/nl.c:39
+msgid "Scott Bartram and David MacKenzie"
+msgstr ""
+
+#: src/nl.c:180
+msgid ""
+"Write each FILE to standard output, with line numbers added.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/nl.c:188
+#, fuzzy
+msgid ""
+"  -b, --body-numbering=STYLE      use STYLE for numbering body lines\n"
+"  -d, --section-delimiter=CC      use CC for separating logical pages\n"
+"  -f, --footer-numbering=STYLE    use STYLE for numbering footer lines\n"
+msgstr ""
+"從最後一行開始，把每個檔案 FILE 的內容倒過來，輸出到標準輸出去。\n"
+"假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+"\n"
+"  -b, --before             把分隔符加在前面 (預設是加在後面)\n"
+"  -r, --regex              把分隔符解釋為正規運算式\n"
+"  -s, --separator=STRING   用字串 STRING 當分隔符 (預設是換行字元)\n"
+"      --help               顯示這段說明訊息\n"
+"      --version            顯示版本資訊\n"
+
+#: src/nl.c:193
+msgid ""
+"  -h, --header-numbering=STYLE    use STYLE for numbering header lines\n"
+"  -i, --page-increment=NUMBER     line number increment at each line\n"
+"  -l, --join-blank-lines=NUMBER   group of NUMBER empty lines counted as "
+"one\n"
+"  -n, --number-format=FORMAT      insert line numbers according to FORMAT\n"
+"  -p, --no-renumber               do not reset line numbers at logical "
+"pages\n"
+"  -s, --number-separator=STRING   add STRING after (possible) line number\n"
+msgstr ""
+
+#: src/nl.c:201
+msgid ""
+"  -v, --first-page=NUMBER         first line number on each logical page\n"
+"  -w, --number-width=NUMBER       use NUMBER columns for line numbers\n"
+msgstr ""
+
+#: src/nl.c:207
+msgid ""
+"\n"
+"By default, selects -v1 -i1 -l1 -sTAB -w6 -nrn -hn -bt -fn.  CC are\n"
+"two delimiter characters for separating logical pages, a missing\n"
+"second character implies :.  Type \\\\ for \\.  STYLE is one of:\n"
+msgstr ""
+
+#: src/nl.c:213
+msgid ""
+"\n"
+"  a         number all lines\n"
+"  t         number only nonempty lines\n"
+"  n         number no lines\n"
+"  pREGEXP   number only lines that contain a match for REGEXP\n"
+"\n"
+"FORMAT is one of:\n"
+"\n"
+"  ln   left justified, no leading zeros\n"
+"  rn   right justified, no leading zeros\n"
+"  rz   right justified, leading zeros\n"
+"\n"
+msgstr ""
+
+#: src/nl.c:500
+#, c-format
+msgid "invalid starting line number: `%s'"
+msgstr "無效的開始行號：`%s'"
+
+#: src/nl.c:510
+#, c-format
+msgid "invalid line number increment: `%s'"
+msgstr "無效的行號增量：`%s'"
+
+#: src/nl.c:523
+#, c-format
+msgid "invalid number of blank lines: `%s'"
+msgstr "無效的空白行數目：`%s'"
+
+#: src/nl.c:537
+#, c-format
+msgid "invalid line number field width: `%s'"
+msgstr "無效的行號欄位寬度：`%s'"
+
+#: src/od.c:281
+#, c-format
+msgid ""
+"Usage: %s [OPTION]... [FILE]...\n"
+"  or:  %s --traditional [FILE] [[+]OFFSET [[+]LABEL]]\n"
+msgstr ""
+"用法：%s [選項]... [FILE]...\n"
+"  或：%s --traditional [FILE] [[+]OFFSET [[+]LABEL]]\n"
+
+#: src/od.c:286
+msgid ""
+"\n"
+"Write an unambiguous representation, octal bytes by default,\n"
+"of FILE to standard output.  With more than one FILE argument,\n"
+"concatenate them in the listed order to form the input.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/od.c:293
+msgid "All arguments to long options are mandatory for short options.\n"
+msgstr ""
+
+#: src/od.c:296
+msgid ""
+"  -A, --address-radix=RADIX   decide how file offsets are printed\n"
+"  -j, --skip-bytes=BYTES      skip BYTES input bytes first\n"
+msgstr ""
+
+#: src/od.c:300
+msgid ""
+"  -N, --read-bytes=BYTES      limit dump to BYTES input bytes\n"
+"  -s, --strings[=BYTES]       output strings of at least BYTES graphic "
+"chars\n"
+"  -t, --format=TYPE           select output format or formats\n"
+"  -v, --output-duplicates     do not use * to mark line suppression\n"
+"  -w, --width[=BYTES]         output BYTES bytes per output line\n"
+"      --traditional           accept arguments in traditional form\n"
+msgstr ""
+
+#: src/od.c:310
+msgid ""
+"\n"
+"Traditional format specifications may be intermixed; they accumulate:\n"
+"  -a   same as -t a,  select named characters\n"
+"  -b   same as -t oC, select octal bytes\n"
+"  -c   same as -t c,  select ASCII characters or backslash escapes\n"
+"  -d   same as -t u2, select unsigned decimal shorts\n"
+msgstr ""
+
+#: src/od.c:318
+msgid ""
+"  -f   same as -t fF, select floats\n"
+"  -h   same as -t x2, select hexadecimal shorts\n"
+"  -i   same as -t d2, select decimal shorts\n"
+"  -l   same as -t d4, select decimal longs\n"
+"  -o   same as -t o2, select octal shorts\n"
+"  -x   same as -t x2, select hexadecimal shorts\n"
+msgstr ""
+
+#: src/od.c:326
+msgid ""
+"\n"
+"For older syntax (second call format), OFFSET means -j OFFSET.  LABEL\n"
+"is the pseudo-address at first byte printed, incremented when dump is\n"
+"progressing.  For OFFSET and LABEL, a 0x or 0X prefix indicates\n"
+"hexadecimal, suffixes may be . for octal and b for multiply by 512.\n"
+"\n"
+"TYPE is made up of one or more of these specifications:\n"
+"\n"
+"  a          named character\n"
+"  c          ASCII character or backslash escape\n"
+msgstr ""
+
+#: src/od.c:338
+msgid ""
+"  d[SIZE]    signed decimal, SIZE bytes per integer\n"
+"  f[SIZE]    floating point, SIZE bytes per integer\n"
+"  o[SIZE]    octal, SIZE bytes per integer\n"
+"  u[SIZE]    unsigned decimal, SIZE bytes per integer\n"
+"  x[SIZE]    hexadecimal, SIZE bytes per integer\n"
+msgstr ""
+
+#: src/od.c:345
+msgid ""
+"\n"
+"SIZE is a number.  For TYPE in doux, SIZE may also be C for\n"
+"sizeof(char), S for sizeof(short), I for sizeof(int) or L for\n"
+"sizeof(long).  If TYPE is f, SIZE may also be F for sizeof(float), D\n"
+"for sizeof(double) or L for sizeof(long double).\n"
+msgstr ""
+
+#: src/od.c:352
+msgid ""
+"\n"
+"RADIX is d for decimal, o for octal, x for hexadecimal or n for none.\n"
+"BYTES is hexadecimal with 0x or 0X prefix, it is multiplied by 512\n"
+"with b suffix, by 1024 with k and by 1048576 with m.  Adding a z suffix to\n"
+"any type adds a display of printable characters to the end of each line\n"
+"of output.  "
+msgstr ""
+
+#: src/od.c:360
+msgid ""
+"--string without a number implies 3.  --width without a number\n"
+"implies 32.  By default, od uses -A o -t d2 -w 16.\n"
+msgstr ""
+
+#: src/od.c:716 src/od.c:835
+#, c-format
+msgid "invalid type string `%s'"
+msgstr "`%s' 是無效的型別字串"
+
+#: src/od.c:726
+#, c-format
+msgid ""
+"invalid type string `%s';\n"
+"this system doesn't provide a %lu-byte integral type"
+msgstr ""
+"`%s' 是無效的型別字串；\n"
+"這個系統並沒有 %lu-位元的整數型別"
+
+#: src/od.c:845
+#, c-format
+msgid ""
+"invalid type string `%s';\n"
+"this system doesn't provide a %lu-byte floating point type"
+msgstr ""
+"`%s' 是無效的型別字串；\n"
+"這個系統並沒有 %lu-位元的浮點數型別\""
+
+#: src/od.c:908
+#, c-format
+msgid "invalid character `%c' in type string `%s'"
+msgstr "`%c' 是無效的字元 (在型別字串 `%s' 裡面)。"
+
+#: src/od.c:1135
+msgid "cannot skip past end of combined input"
+msgstr "無法跳過合併輸入先前的結束符號"
+
+#: src/od.c:1388
+msgid "old-style offset"
+msgstr "舊樣式的偏移量"
+
+#: src/od.c:1696
+#, c-format
+msgid "invalid output address radix `%c'; it must be one character from [doxn]"
+msgstr "輸出位址的基數 `%c' 是無效的；基數必須是 [doxn] 其中之一"
+
+#: src/od.c:1706
+msgid "skip argument"
+msgstr "跳過引數"
+
+#: src/od.c:1714
+msgid "limit argument"
+msgstr "限制引數"
+
+#: src/od.c:1724
+msgid "minimum string length"
+msgstr "最小字串長度"
+
+#: src/od.c:1729 src/od.c:1795
+#, c-format
+msgid "%s is too large"
+msgstr ""
+
+#: src/od.c:1793
+msgid "width specification"
+msgstr "寬度規格"
+
+#: src/od.c:1815
+msgid "no type may be specified when dumping strings"
+msgstr "在傾印字串的時候不能指定型別"
+
+#: src/od.c:1863
+#, c-format
+msgid "invalid second operand in compatibility mode `%s'"
+msgstr "在相容性模式 `%s' 下，第二個運算數是無效的"
+
+#: src/od.c:1884
+#, fuzzy
+msgid "in compatibility mode, the last two arguments must be offsets"
+msgstr "在相容性模式下，最後的兩個引數必須是偏移量"
+
+#: src/od.c:1891
+#, fuzzy
+msgid "compatibility mode supports at most three arguments"
+msgstr "在相容性模式下，不能有超過三個引數"
+
+#: src/od.c:1964
+#, c-format
+msgid "warning: invalid width %lu; using %d instead"
+msgstr "警告：寬度 %lu 是無效的；用 %d 代替"
+
+#: src/od.c:1980
+#, c-format
+msgid "%d: fmt=\"%s\" width=%d\n"
+msgstr "%d: 格式=\"%s\" 寬度=%d\n"
+
+#: src/paste.c:50
+msgid "David M. Ihnat and David MacKenzie"
+msgstr ""
+
+#: src/paste.c:208
+msgid "standard input is closed"
+msgstr "標準輸入被關閉了"
+
+#: src/paste.c:407
+msgid ""
+"Write lines consisting of the sequentially corresponding lines from\n"
+"each FILE, separated by TABs, to standard output.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/paste.c:416
+msgid ""
+"  -d, --delimiters=LIST   reuse characters from LIST instead of TABs\n"
+"  -s, --serial            paste one file at a time instead of in parallel\n"
+msgstr ""
+
+#: src/pr.c:328
+msgid "Pete TerMaat and Roland Huebner"
+msgstr ""
+
+#: src/pr.c:805
+#, fuzzy, c-format
+msgid "`--pages' invalid range of page numbers: `%s'"
+msgstr "頁碼範圍無效：`%s'"
+
+#: src/pr.c:817
+#, fuzzy, c-format
+msgid "`--pages' invalid starting page number: `%s'"
+msgstr "開始的頁碼無效：`%s'"
+
+#: src/pr.c:829
+#, fuzzy, c-format
+msgid "`--pages' invalid ending page number: `%s'"
+msgstr "結束的頁碼無效：`%s'"
+
+#: src/pr.c:836
+#, fuzzy
+msgid "`--pages' starting page number is larger than ending page number"
+msgstr "開始頁碼比結束頁碼還要大"
+
+#: src/pr.c:913
+msgid "`--pages=FIRST_PAGE[:LAST_PAGE]' missing argument"
+msgstr ""
+
+#: src/pr.c:924
+#, fuzzy, c-format
+msgid "`--columns=COLUMN' invalid number of columns: `%s'"
+msgstr "無效的欄位數目：`%s'"
+
+#: src/pr.c:978
+#, c-format
+msgid "`-l PAGE_LENGTH' invalid number of lines: `%s'"
+msgstr "`-l PAGE_LENGTH' 無效的行數：`%s'"
+
+#: src/pr.c:1002
+#, c-format
+msgid "`-N NUMBER' invalid starting line number: `%s'"
+msgstr "`-N NUMBER' 無效的開始行號：`%s'"
+
+#: src/pr.c:1014
+#, c-format
+msgid "`-o MARGIN' invalid line offset: `%s'"
+msgstr "`-o MARGIN' 無效的行偏移量：`%s'"
+
+#: src/pr.c:1055
+#, fuzzy, c-format
+msgid "`-w PAGE_WIDTH' invalid number of characters: `%s'"
+msgstr "`-l PAGE_LENGTH' 無效的行數：`%s'"
+
+#: src/pr.c:1067
+#, fuzzy, c-format
+msgid "`-W PAGE_WIDTH' invalid number of characters: `%s'"
+msgstr "`-l PAGE_LENGTH' 無效的行數：`%s'"
+
+#: src/pr.c:1081
+msgid "%b %e %H:%M %Y"
+msgstr ""
+
+#: src/pr.c:1090
+msgid "Cannot specify number of columns when printing in parallel."
+msgstr "當平行列印時，不能指定欄位數目"
+
+#: src/pr.c:1094
+msgid "Cannot specify both printing across and printing in parallel."
+msgstr "不能同時指定平行列印與交錯列印"
+
+#: src/pr.c:1190
+#, c-format
+msgid "`-%c' extra characters or invalid number in the argument: `%s'"
+msgstr "`-%c' 有多餘的字元或無效的數字在引數 `%s' 裡面"
+
+#: src/pr.c:1301
+msgid "page width too narrow"
+msgstr "頁寬太窄了"
+
+#: src/pr.c:2364
+#, fuzzy, c-format
+msgid "starting page number larger than total number of pages: `%d'"
+msgstr "開始頁碼比結束頁碼還要大"
+
+#: src/pr.c:2395
+#, c-format
+msgid "Page %d"
+msgstr ""
+
+#: src/pr.c:2761
+msgid ""
+"Paginate or columnate FILE(s) for printing.\n"
+"\n"
+msgstr ""
+
+#: src/pr.c:2768
+msgid ""
+"  +FIRST_PAGE[:LAST_PAGE], --pages=FIRST_PAGE[:LAST_PAGE]\n"
+"                    begin [stop] printing with page FIRST_[LAST_]PAGE\n"
+"  -COLUMN, --columns=COLUMN\n"
+"                    produce COLUMN-column output and print columns down,\n"
+"                    unless -a is used. Balance number of lines in the\n"
+"                    columns on each page.\n"
+msgstr ""
+
+#: src/pr.c:2776
+msgid ""
+"  -a, --across      print columns across rather than down, used together\n"
+"                    with -COLUMN\n"
+"  -c, --show-control-chars\n"
+"                    use hat notation (^G) and octal backslash notation\n"
+"  -d, --double-space\n"
+"                    double space the output\n"
+msgstr ""
+
+#: src/pr.c:2784
+msgid ""
+"  -D, --date-format=FORMAT\n"
+"                    use FORMAT for the header date\n"
+"  -e[CHAR[WIDTH]], --expand-tabs[=CHAR[WIDTH]]\n"
+"                    expand input CHARs (TABs) to tab WIDTH (8)\n"
+"  -F, -f, --form-feed\n"
+"                    use form feeds instead of newlines to separate pages\n"
+"                    (by a 3-line page header with -F or a 5-line header\n"
+"                    and trailer without -F)\n"
+msgstr ""
+
+#: src/pr.c:2794
+msgid ""
+"  -h HEADER, --header=HEADER\n"
+"                    use a centered HEADER instead of filename in page "
+"header,\n"
+"                    -h \"\" prints a blank line, don't use -h\"\"\n"
+"  -i[CHAR[WIDTH]], --output-tabs[=CHAR[WIDTH]]\n"
+"                    replace spaces with CHARs (TABs) to tab WIDTH (8)\n"
+"  -J, --join-lines  merge full lines, turns off -W line truncation, no "
+"column\n"
+"                    alignment, --sep-string[=STRING] sets separators\n"
+msgstr ""
+
+#: src/pr.c:2803
+msgid ""
+"  -l PAGE_LENGTH, --length=PAGE_LENGTH\n"
+"                    set the page length to PAGE_LENGTH (66) lines\n"
+"                    (default number of lines of text 56, and with -F 63)\n"
+"  -m, --merge       print all files in parallel, one in each column,\n"
+"                    truncate lines, but join lines of full length with -J\n"
+msgstr ""
+
+#: src/pr.c:2810
+msgid ""
+"  -n[SEP[DIGITS]], --number-lines[=SEP[DIGITS]]\n"
+"                    number lines, use DIGITS (5) digits, then SEP (TAB),\n"
+"                    default counting starts with 1st line of input file\n"
+"  -N NUMBER, --first-line-number=NUMBER\n"
+"                    start counting with NUMBER at 1st line of first\n"
+"                    page printed (see +FIRST_PAGE)\n"
+msgstr ""
+
+#: src/pr.c:2818
+msgid ""
+"  -o MARGIN, --indent=MARGIN\n"
+"                    offset each line with MARGIN (zero) spaces, do not\n"
+"                    affect -w or -W, MARGIN will be added to PAGE_WIDTH\n"
+"  -r, --no-file-warnings\n"
+"                    omit warning when a file cannot be opened\n"
+msgstr ""
+
+#: src/pr.c:2825
+msgid ""
+"  -s[CHAR],--separator[=CHAR]\n"
+"                    separate columns by a single character, default for "
+"CHAR\n"
+"                    is the <TAB> character without -w and 'no char' with -w\n"
+"                    -s[CHAR] turns off line truncation of all 3 column\n"
+"                    options (-COLUMN|-a -COLUMN|-m) except -w is set\n"
+msgstr ""
+
+#: src/pr.c:2832
+msgid "  -SSTRING, --sep-string[=STRING]\n"
+msgstr ""
+
+#: src/pr.c:2835
+msgid ""
+"                    separate columns by STRING,\n"
+"                    without -S: Default separator <TAB> with -J and <space>\n"
+"                    otherwise (same as -S\" \"), no effect on column "
+"options\n"
+"  -t, --omit-header omit page headers and trailers\n"
+msgstr ""
+
+#: src/pr.c:2841
+msgid ""
+"  -T, --omit-pagination\n"
+"                    omit page headers and trailers, eliminate any "
+"pagination\n"
+"                    by form feeds set in input files\n"
+"  -v, --show-nonprinting\n"
+"                    use octal backslash notation\n"
+"  -w PAGE_WIDTH, --width=PAGE_WIDTH\n"
+"                    set page width to PAGE_WIDTH (72) characters for\n"
+"                    multiple text-column output only, -s[char] turns off "
+"(72)\n"
+msgstr ""
+
+#: src/pr.c:2851
+#, fuzzy
+msgid ""
+"  -W PAGE_WIDTH, --page-width=PAGE_WIDTH\n"
+"                    set page width to PAGE_WIDTH (72) characters always,\n"
+"                    truncate lines, except -J option is set, no "
+"interference\n"
+"                    with -S or -s\n"
+msgstr ""
+"一行一行的比較 LEFT_FILE 及 RIGHT_FILE 這兩個排序過的檔案。\n"
+"\n"
+"  -1              不顯示只在第一個檔案 LEFT_FILE 出現過的行\n"
+"  -2              不顯示只在第二個檔案 RIGHT_FILE 出現過的行\n"
+"  -3              不顯示在兩個檔案中同時出現過的行\n"
+"      --help      顯示這段說明訊息\n"
+"      --version   顯示版本資訊\n"
+
+#: src/pr.c:2859
+msgid ""
+"\n"
+"-T implied by -l nn when nn <= 10 or <= 3 with -F. With no FILE, or when\n"
+"FILE is -, read standard input.\n"
+msgstr ""
+
+#: src/ptx.c:410
+#, c-format
+msgid "%s (for regexp `%s')"
+msgstr ""
+
+#: src/ptx.c:1859
+#, fuzzy, c-format
+msgid ""
+"Usage: %s [OPTION]... [INPUT]...   (without -G)\n"
+"  or:  %s -G [OPTION]... [INPUT [OUTPUT]]\n"
+msgstr "用法：%s [選項]... [INPUT [OUTPUT]]\n"
+
+#: src/ptx.c:1863
+msgid ""
+"Output a permuted index, including context, of the words in the input "
+"files.\n"
+"\n"
+msgstr ""
+
+#: src/ptx.c:1870
+msgid ""
+"  -A, --auto-reference           output automatically generated references\n"
+"  -C, --copyright                display Copyright and copying conditions\n"
+"  -G, --traditional              behave more like System V `ptx'\n"
+"  -F, --flag-truncation=STRING   use STRING for flagging line truncations\n"
+msgstr ""
+
+#: src/ptx.c:1876
+msgid ""
+"  -M, --macro-name=STRING        macro name to use instead of `xx'\n"
+"  -O, --format=roff              generate output as roff directives\n"
+"  -R, --right-side-refs          put references at right, not counted in -w\n"
+"  -S, --sentence-regexp=REGEXP   for end of lines or end of sentences\n"
+"  -T, --format=tex               generate output as TeX directives\n"
+msgstr ""
+
+#: src/ptx.c:1883
+msgid ""
+"  -W, --word-regexp=REGEXP       use REGEXP to match each keyword\n"
+"  -b, --break-file=FILE          word break characters in this FILE\n"
+"  -f, --ignore-case              fold lower case to upper case for sorting\n"
+"  -g, --gap-size=NUMBER          gap size in columns between output fields\n"
+"  -i, --ignore-file=FILE         read ignore word list from FILE\n"
+"  -o, --only-file=FILE           read only word list from this FILE\n"
+msgstr ""
+
+#: src/ptx.c:1891
+msgid ""
+"  -r, --references               first field of each line is a reference\n"
+"  -t, --typeset-mode               - not implemented -\n"
+"  -w, --width=NUMBER             output width in columns, reference "
+"excluded\n"
+msgstr ""
+
+#: src/ptx.c:1898
+msgid ""
+"\n"
+"With no FILE or if FILE is -, read Standard Input.  `-F /' by default.\n"
+msgstr ""
+
+#: src/ptx.c:1978
+msgid ""
+"This program is free software; you can redistribute it and/or modify\n"
+"it under the terms of the GNU General Public License as published by\n"
+"the Free Software Foundation; either version 2, or (at your option)\n"
+"any later version.\n"
+"\n"
+msgstr ""
+
+#: src/ptx.c:1985
+msgid ""
+"This program is distributed in the hope that it will be useful,\n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+"GNU General Public License for more details.\n"
+"\n"
+msgstr ""
+
+#: src/ptx.c:1992
+msgid ""
+"You should have received a copy of the GNU General Public License\n"
+"along with this program; if not, write to the Free Software Foundation,\n"
+"Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.\n"
+msgstr ""
+
+#: src/sort.c:53
+msgid "Mike Haertel and Paul Eggert"
+msgstr ""
+
+#: src/sort.c:289
+msgid ""
+"Write sorted concatenation of all FILE(s) to standard output.\n"
+"\n"
+"Ordering options:\n"
+"\n"
+msgstr ""
+
+#: src/sort.c:298
+msgid ""
+"  -b, --ignore-leading-blanks ignore leading blanks\n"
+"  -d, --dictionary-order      consider only blanks and alphanumeric "
+"characters\n"
+"  -f, --ignore-case           fold lower case to upper case characters\n"
+msgstr ""
+
+#: src/sort.c:303
+msgid ""
+"  -g, --general-numeric-sort  compare according to general numerical value\n"
+"  -i, --ignore-nonprinting    consider only printable characters\n"
+"  -M, --month-sort            compare (unknown) < `JAN' < ... < `DEC'\n"
+"  -n, --numeric-sort          compare according to string numerical value\n"
+"  -r, --reverse               reverse the result of comparisons\n"
+"\n"
+msgstr ""
+
+#: src/sort.c:311
+msgid ""
+"Other options:\n"
+"\n"
+"  -c, --check               check whether input is sorted; do not sort\n"
+"  -k, --key=POS1[,POS2]     start a key at POS1, end it at POS 2 (origin 1)\n"
+"  -m, --merge               merge already sorted files; do not sort\n"
+"  -o, --output=FILE         write result to FILE instead of standard output\n"
+"  -s, --stable              stabilize sort by disabling last-resort "
+"comparison\n"
+"  -S, --buffer-size=SIZE    use SIZE for main memory buffer\n"
+msgstr ""
+
+#: src/sort.c:321
+#, c-format
+msgid ""
+"  -t, --field-separator=SEP use SEP instead of non- to whitespace "
+"transition\n"
+"  -T, --temporary-directory=DIR  use DIR for temporaries, not $TMPDIR or %s\n"
+"                              multiple options specify multiple directories\n"
+"  -u, --unique              with -c: check for strict ordering\n"
+"                              otherwise: output only the first of an equal "
+"run\n"
+msgstr ""
+
+#: src/sort.c:328
+msgid "  -z, --zero-terminated     end lines with 0 byte, not newline\n"
+msgstr ""
+
+#: src/sort.c:333
+msgid ""
+"\n"
+"POS is F[.C][OPTS], where F is the field number and C the character "
+"position\n"
+"in the field.  OPTS is one or more single-letter ordering options, which\n"
+"override global ordering options for that key.  If no key is given, use the\n"
+"entire line as the key.\n"
+"\n"
+"SIZE may be followed by the following multiplicative suffixes:\n"
+msgstr ""
+
+#: src/sort.c:342
+#, c-format
+msgid ""
+"% 1% of memory, b 1, K 1024 (default), and so on for M, G, T, P, E, Z, Y.\n"
+"\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+"*** WARNING ***\n"
+"The locale specified by the environment affects sort order.\n"
+"Set LC_ALL=C to get the traditional sort order that uses\n"
+"native byte values.\n"
+msgstr ""
+
+#: src/sort.c:453
+msgid "cannot create temporary file"
+msgstr ""
+
+#: src/sort.c:476
+msgid "open failed"
+msgstr ""
+
+#: src/sort.c:496 src/sort.c:2499
+#, fuzzy
+msgid "close failed"
+msgstr "正在關閉檔案時發生錯誤"
+
+#: src/sort.c:504
+#, fuzzy
+msgid "write failed"
+msgstr "寫入時發生錯誤"
+
+#: src/sort.c:650
+msgid "sort size"
+msgstr ""
+
+#: src/sort.c:724
+msgid "stat failed"
+msgstr ""
+
+#: src/sort.c:975
+msgid "read failed"
+msgstr ""
+
+#: src/sort.c:1575
+#, fuzzy, c-format
+msgid "%s: %s:%s: disorder: "
+msgstr "%s: %s 錯亂\n"
+
+#: src/sort.c:1579
+#, fuzzy
+msgid "standard error"
+msgstr "%s: 讀取時發生錯誤"
+
+#: src/sort.c:2037
+#, fuzzy, c-format
+msgid "%s: invalid field specification `%s'"
+msgstr "`%s' 是無效的欄位說明符"
+
+#: src/sort.c:2063
+#, c-format
+msgid "%s: count `%.*s' too large"
+msgstr ""
+
+#: src/sort.c:2069
+#, fuzzy, c-format
+msgid "%s: invalid count at start of `%s'"
+msgstr "%s: 無效的位元組數目"
+
+#: src/sort.c:2301
+#, fuzzy
+msgid "invalid number after `-'"
+msgstr "無效的號碼 `%s'"
+
+#: src/sort.c:2304 src/sort.c:2350 src/sort.c:2377
+#, fuzzy
+msgid "invalid number after `.'"
+msgstr "無效的號碼 `%s'"
+
+#: src/sort.c:2307 src/sort.c:2386
+msgid "stray character in field spec"
+msgstr ""
+
+#: src/sort.c:2341
+#, fuzzy
+msgid "invalid number at field start"
+msgstr "無效的行數"
+
+#: src/sort.c:2345 src/sort.c:2373
+#, fuzzy
+msgid "field number is zero"
+msgstr "無效的號碼 `%s'"
+
+#: src/sort.c:2354
+msgid "character offset is zero"
+msgstr ""
+
+#: src/sort.c:2369
+#, fuzzy
+msgid "invalid number after `,'"
+msgstr "無效的號碼 `%s'"
+
+#: src/sort.c:2414
+#, fuzzy, c-format
+msgid "multi-character tab `%s'"
+msgstr "無效的字元類別 `%s'"
+
+#: src/sort.c:2482
+#, c-format
+msgid "extra operand `%s' not allowed with -c"
+msgstr ""
+
+#: src/split.c:95
+#, c-format
+msgid "Usage: %s [OPTION] [INPUT [PREFIX]]\n"
+msgstr "用法：%s [選項] [INPUT [PREFIX]]\n"
+
+#: src/split.c:99
+msgid ""
+"Output fixed-size pieces of INPUT to PREFIXaa, PREFIXab, ...; default\n"
+"PREFIX is `x'.  With no INPUT, or when INPUT is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/split.c:107
+#, fuzzy, c-format
+msgid ""
+"  -a, --suffix-length=N   use suffixes of length N (default %d)\n"
+"  -b, --bytes=SIZE        put SIZE bytes per output file\n"
+"  -C, --line-bytes=SIZE   put at most SIZE bytes of lines per output file\n"
+"  -l, --lines=NUMBER      put NUMBER lines per output file\n"
+msgstr ""
+"把輸入檔 INPUT 分割成固定大小、檔名為 PREFIXaa, PREFIXab,... 的小檔案；\n"
+"預設的字首 PREFIX 為 `x'。\n"
+"假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+"\n"
+"  -b, --bytes=SIZE        每個輸出檔案的大小為 SIZE 個位元組\n"
+"  -C, --line-bytes=SIZE   以行為單位輸出，每個輸出檔案最大為 SIZE 個位元組\n"
+"  -l, --lines=NUMBER      每以行為單位輸出，個輸出檔案 NUMBER 行\n"
+"  -NUMBER                 跟 -l NUMBER 相同\n"
+"      --verbose           在開啟每一個輸出檔的同時，\n"
+"\t\t\t  印出一份診斷訊息到標準錯誤輸出 (standard error)\n"
+"      --help              顯示這段說明訊息顯示這段說明訊息\n"
+"      --version           顯示版本資訊\n"
+"\n"
+"指定的 SIZE 可以是一個乘數字尾： b 表示 512，k 表示 1K，m 表示 1 Meg。\n"
+
+#: src/split.c:113
+msgid ""
+"      --verbose           print a diagnostic to standard error just\n"
+"                            before each output file is opened\n"
+msgstr ""
+
+#: src/split.c:170
+msgid "Output file suffixes exhausted"
+msgstr ""
+
+#: src/split.c:188
+#, c-format
+msgid "creating file `%s'\n"
+msgstr "正在建立檔案 `%s'\n"
+
+#: src/split.c:407
+#, fuzzy, c-format
+msgid "%s: invalid suffix length"
+msgstr "%s: 無效的行數"
+
+#: src/split.c:416 src/split.c:432 src/split.c:448 src/split.c:474
+msgid "cannot split in more than one way"
+msgstr "不能用超過一種方式來進行分割工作"
+
+#: src/split.c:423 src/split.c:456
+#, c-format
+msgid "%s: invalid number of bytes"
+msgstr "%s: 無效的位元組數目"
+
+#: src/split.c:439
+#, c-format
+msgid "%s: invalid number of lines"
+msgstr "%s: 無效的行數"
+
+#: src/split.c:499
+#, fuzzy, c-format
+msgid "`-%d' option is obsolete; use `-l %d'"
+msgstr "警告：寬度 %lu 是無效的；用 %d 代替"
+
+#: src/split.c:512
+msgid "invalid number"
+msgstr "無效的數字"
+
+#: src/split.c:527 src/tr.c:1847
+msgid "too many arguments"
+msgstr "太多引數了"
+
+#: src/sum.c:36
+msgid "Kayvan Aghaiepour and David MacKenzie"
+msgstr ""
+
+#: src/sum.c:64
+#, fuzzy
+msgid ""
+"Print checksum and block counts for each FILE.\n"
+"\n"
+"  -r              defeat -s, use BSD sum algorithm, use 1K blocks\n"
+"  -s, --sysv      use System V sum algorithm, use 512 bytes blocks\n"
+msgstr ""
+"把每個檔案 FILE 的總合檢查結果以及區塊數目印出來。\n"
+"\n"
+"  -r              蓋過 -s，使用 BSD 的演算法、用 1K 的區塊大小\n"
+"  -s, --sysv      使用 System V 的演算法、用 512 個位元組的區塊大小\n"
+"      --help      顯示這段說明訊息\n"
+"      --version   顯示版本資訊\n"
+"\n"
+"假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+
+#: src/sys2.h:407
+#, fuzzy
+msgid "      --help     display this help and exit\n"
+msgstr ""
+"印出每個檔案的 CRC 總和檢查以及總位元組數目\n"
+"\n"
+"  --help               顯示這段說明訊息\n"
+"  --version            顯示版本資訊\n"
+
+#: src/sys2.h:409
+#, fuzzy
+msgid "      --version  output version information and exit\n"
+msgstr ""
+"印出每個檔案的 CRC 總和檢查以及總位元組數目\n"
+"\n"
+"  --help               顯示這段說明訊息\n"
+"  --version            顯示版本資訊\n"
+
+#: src/tac.c:54
+msgid "Jay Lepreau and David MacKenzie"
+msgstr ""
+
+#: src/tac.c:131
+msgid ""
+"Write each FILE to standard output, last line first.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+
+#: src/tac.c:139
+#, fuzzy
+msgid ""
+"  -b, --before             attach the separator before instead of after\n"
+"  -r, --regex              interpret the separator as a regular expression\n"
+"  -s, --separator=STRING   use STRING as the separator instead of newline\n"
+msgstr ""
+"從最後一行開始，把每個檔案 FILE 的內容倒過來，輸出到標準輸出去。\n"
+"假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+"\n"
+"  -b, --before             把分隔符加在前面 (預設是加在後面)\n"
+"  -r, --regex              把分隔符解釋為正規運算式\n"
+"  -s, --separator=STRING   用字串 STRING 當分隔符 (預設是換行字元)\n"
+"      --help               顯示這段說明訊息\n"
+"      --version            顯示版本資訊\n"
+
+#: src/tac.c:454 src/tac.c:593
+#, fuzzy
+msgid "stdin: read error"
+msgstr "%s: 讀取時發生錯誤"
+
+#: src/tac.c:639
+msgid "separator cannot be empty"
+msgstr "分隔符不可以是空的"
+
+#: src/tail.c:242
+#, fuzzy, c-format
+msgid ""
+"Print the last %d lines of each FILE to standard output.\n"
+"With more than one FILE, precede each with a header giving the file name.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"把每一個檔案 FILE 最前面的 10 行輸出到標準輸出。\n"
+"所給的引數 FILE 超過一個時，會在每一個檔案內容之前標示出檔名。\n"
+"假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+"\n"
+"  -c, --bytes=SIZE         印出最前面的 SIZE 個位元組\n"
+"  -n, --lines=NUMBER       印出最前面的 NUMBER 行 (預設值是 10 行)\n"
+"  -q, --quiet, --silent    不要在檔案內容之前標示出檔名\n"
+"  -v, --verbose            總是在檔案內容之前標示出檔名\n"
+"      --help               顯示這段說明訊息\n"
+"      --version            顯示版本資訊\n"
+"\n"
+"指定的 SIZE 可以是一個乘數字尾： b 表示 512，k 表示 1K，m 表示 1 Meg。\n"
+"可以用一個數目字 -VALUE 當第一個選項，假如 VALUE 中含有乘數字尾 [bkm] 的"
+"話，\n"
+"程式會把它解釋為 -c VALUE，否則就當成 -n VALUE 處理。 \n"
+
+#: src/tail.c:251
+msgid ""
+"      --retry              keep trying to open a file even if it is\n"
+"                           inaccessible when tail starts or if it becomes\n"
+"                           inaccessible later -- useful only with -f\n"
+"  -c, --bytes=N            output the last N bytes\n"
+msgstr ""
+
+#: src/tail.c:257
+msgid ""
+"  -f, --follow[={name|descriptor}]\n"
+"                           output appended data as the file grows;\n"
+"                           -f, --follow, and --follow=descriptor are\n"
+"                           equivalent\n"
+"  -F                       same as --follow=name --retry\n"
+msgstr ""
+
+#: src/tail.c:264
+#, c-format
+msgid ""
+"  -n, --lines=N            output the last N lines, instead of the last %d\n"
+"      --max-unchanged-stats=N\n"
+"                           with --follow=name, reopen a FILE which has not\n"
+"                           changed size after N (default %d) iterations\n"
+"                           to see if it has been unlinked or renamed\n"
+"                           (this is the usual case of rotated log files)\n"
+msgstr ""
+
+#: src/tail.c:275
+msgid ""
+"      --pid=PID            with -f, terminate after process ID, PID dies\n"
+"  -q, --quiet, --silent    never output headers giving file names\n"
+"  -s, --sleep-interval=S   with -f, each iteration lasts approximately S\n"
+"                           (default 1) seconds\n"
+"  -v, --verbose            always output headers giving file names\n"
+msgstr ""
+
+#: src/tail.c:284
+msgid ""
+"\n"
+"If the first character of N (the number of bytes or lines) is a `+',\n"
+"print beginning with the Nth item from the start of each file, otherwise,\n"
+"print the last N items in the file.  N may have a multiplier suffix:\n"
+"b for 512, k for 1024, m for 1048576 (1 Meg).\n"
+"\n"
+msgstr ""
+
+#: src/tail.c:292
+msgid ""
+"With --follow (-f), tail defaults to following the file descriptor, which\n"
+"means that even if a tail'ed file is renamed, tail will continue to track\n"
+"its end.  "
+msgstr ""
+
+#: src/tail.c:297
+msgid ""
+"This default behavior is not desirable when you really want to\n"
+"track the actual name of the file, not the file descriptor (e.g., log\n"
+"rotation).  Use --follow=name in that case.  That causes tail to track the\n"
+"named file by reopening it periodically to see if it has been removed and\n"
+"recreated by some other program.\n"
+msgstr ""
+
+#: src/tail.c:335
+#, c-format
+msgid "closing %s (fd=%d)"
+msgstr ""
+
+#: src/tail.c:400
+#, c-format
+msgid "%s: cannot seek to offset %s%s"
+msgstr ""
+
+#: src/tail.c:404
+#, c-format
+msgid "%s: cannot seek to relative offset %s%s"
+msgstr ""
+
+#: src/tail.c:408
+#, c-format
+msgid "%s: cannot seek to end-relative offset %s%s"
+msgstr ""
+
+#: src/tail.c:814
+#, c-format
+msgid "`%s' has become inaccessible"
+msgstr ""
+
+#: src/tail.c:831
+#, fuzzy, c-format
+msgid "`%s' has been replaced with an untailable file; giving up on this name"
+msgstr "標準輸入：不能跟隨非常規檔案結束"
+
+#: src/tail.c:852
+#, c-format
+msgid "`%s' has become accessible"
+msgstr ""
+
+#: src/tail.c:860
+#, fuzzy, c-format
+msgid "`%s' has appeared;  following end of new file"
+msgstr "%s: 不能跟隨非常規檔案結束"
+
+#: src/tail.c:871
+#, c-format
+msgid "`%s' has been replaced;  following end of new file"
+msgstr ""
+
+#: src/tail.c:998
+#, fuzzy, c-format
+msgid "%s: file truncated"
+msgstr "檔案被截斷了"
+
+#: src/tail.c:1018
+msgid "no files remaining"
+msgstr ""
+
+#: src/tail.c:1228
+#, c-format
+msgid "%s: cannot follow end of this type of file; giving up on this name"
+msgstr ""
+
+#: src/tail.c:1348
+#, c-format
+msgid "%c: invalid suffix character in obsolescent option"
+msgstr "%c: 在即將廢棄的選項中含有無效的字尾字元"
+
+#: src/tail.c:1397
+#, c-format
+msgid ""
+"too many arguments;  When using tail's obsolescent option syntax (%s)\n"
+"there may be no more than one file argument.  Use the equivalent -n or -c\n"
+"option instead."
+msgstr ""
+
+#: src/tail.c:1406
+#, c-format
+msgid ""
+"Warning: it is not portable to use two or more file arguments with\n"
+"tail's obsolescent option syntax (%s).  Use the equivalent -n or -c\n"
+"option instead."
+msgstr ""
+
+#: src/tail.c:1415
+#, fuzzy, c-format
+msgid "`%s' option is obsolete; use `%s-%c %.*s'"
+msgstr "警告：寬度 %lu 是無效的；用 %d 代替"
+
+#: src/tail.c:1475
+#, fuzzy, c-format
+msgid "%s: is so large that it is not representable"
+msgstr "%s: `%s' 太大了以致於無法被表示出來"
+
+#: src/tail.c:1479
+#, c-format
+msgid "%s is larger than the maximum file size on this system"
+msgstr ""
+
+#: src/tail.c:1505
+#, fuzzy, c-format
+msgid "%s: invalid maximum number of unchanged stats between opens"
+msgstr "%s: 無效的位元組數目"
+
+#: src/tail.c:1517
+#, fuzzy, c-format
+msgid "%s: invalid maximum number of consecutive size changes"
+msgstr "%s: 無效的行數"
+
+#: src/tail.c:1529
+#, fuzzy, c-format
+msgid "%s: invalid PID"
+msgstr "%s: 無效的號碼"
+
+#: src/tail.c:1547
+#, fuzzy, c-format
+msgid "%s: invalid number of seconds"
+msgstr "%s: 無效的位元組數目"
+
+#: src/tail.c:1567
+msgid "warning: --retry is useful only when following by name"
+msgstr ""
+
+#: src/tail.c:1571
+msgid "warning: PID ignored; --pid=PID is useful only when following"
+msgstr ""
+
+#: src/tail.c:1574
+msgid "warning: --pid=PID is not supported on this system"
+msgstr ""
+
+#: src/tr.c:327
+#, c-format
+msgid "Usage: %s [OPTION]... SET1 [SET2]\n"
+msgstr "用法：%s [選項]... SET1 [SET2]\n"
+
+#: src/tr.c:331
+#, fuzzy
+msgid ""
+"Translate, squeeze, and/or delete characters from standard input,\n"
+"writing to standard output.\n"
+"\n"
+"  -c, --complement        first complement SET1\n"
+"  -d, --delete            delete characters in SET1, do not translate\n"
+"  -s, --squeeze-repeats   replace sequence of characters with one\n"
+"  -t, --truncate-set1     first truncate SET1 to length of SET2\n"
+msgstr ""
+"從標準輸入讀取資料，將資料替換、壓縮、刪除字元後，輸出到標準輸出。\n"
+"\n"
+"  -c, --complement        補數，用所有不在 SET1 裡的字元來當 SET1\n"
+"  -d, --delete            不做替換，直接把在 SET1 裡面的字元都刪除\n"
+"  -s, --squeeze-repeats   把連續重複的字元都刪成只剩一個\n"
+"  -t, --truncate-set1     先把 SET1 的長度截成跟 SET2 一樣長\n"
+"      --help              顯示這段說明訊息\n"
+"      --version           顯示版本資訊\n"
+
+#: src/tr.c:342
+msgid ""
+"\n"
+"SETs are specified as strings of characters.  Most represent themselves.\n"
+"Interpreted sequences are:\n"
+"\n"
+"  \\NNN            character with octal value NNN (1 to 3 octal digits)\n"
+"  \\\\              backslash\n"
+"  \\a              audible BEL\n"
+"  \\b              backspace\n"
+"  \\f              form feed\n"
+"  \\n              new line\n"
+"  \\r              return\n"
+"  \\t              horizontal tab\n"
+msgstr ""
+
+#: src/tr.c:356
+msgid ""
+"  \\v              vertical tab\n"
+"  CHAR1-CHAR2     all characters from CHAR1 to CHAR2 in ascending order\n"
+"  [CHAR*]         in SET2, copies of CHAR until length of SET1\n"
+"  [CHAR*REPEAT]   REPEAT copies of CHAR, REPEAT octal if starting with 0\n"
+"  [:alnum:]       all letters and digits\n"
+"  [:alpha:]       all letters\n"
+"  [:blank:]       all horizontal whitespace\n"
+"  [:cntrl:]       all control characters\n"
+"  [:digit:]       all digits\n"
+msgstr ""
+
+#: src/tr.c:367
+msgid ""
+"  [:graph:]       all printable characters, not including space\n"
+"  [:lower:]       all lower case letters\n"
+"  [:print:]       all printable characters, including space\n"
+"  [:punct:]       all punctuation characters\n"
+"  [:space:]       all horizontal or vertical whitespace\n"
+"  [:upper:]       all upper case letters\n"
+"  [:xdigit:]      all hexadecimal digits\n"
+"  [=CHAR=]        all characters which are equivalent to CHAR\n"
+msgstr ""
+
+#: src/tr.c:377
+#, fuzzy
+msgid ""
+"\n"
+"Translation occurs if -d is not given and both SET1 and SET2 appear.\n"
+"-t may be used only when translating.  SET2 is extended to length of\n"
+"SET1 by repeating its last character as necessary.  "
+msgstr ""
+"\n"
+"當 SET1 與 SET2 都有給，而且沒有指定選項 -d 時，程式就進行替換的工作；選項 -"
+"t\n"
+"只能在進行替換時使用。SET2 比 SET1 短時，程式會自動使用 SET2 的最後一個字元\n"
+"補滿 SET2，讓 SET1 與 SET2 長度相等。SET2 比 SET1 長時，多的字元會被忽略。\n"
+"這些字元集裡面，只有 [:lower:] 與 [:upper:] 用在 SET2 時會保証依遞增的順序"
+"展\n"
+"開，而 [:lower:] 與 [:upper:] 一定要成對的出現，用來作大小寫的轉換。\n"
+"使用選項 -s ，且不作替換或刪除時，會使用 SET1 當壓縮的標的。\n"
+"當需要壓縮並同時作替換或刪除時，會使用 SET2 當壓縮的標的，並且在替換或刪除"
+"後\n"
+"再作壓縮的動作。\n"
+
+#: src/tr.c:383
+msgid ""
+"Excess characters\n"
+"of SET2 are ignored.  Only [:lower:] and [:upper:] are guaranteed to\n"
+"expand in ascending order; used in SET2 while translating, they may\n"
+"only be used in pairs to specify case conversion.  "
+msgstr ""
+
+#: src/tr.c:389
+#, fuzzy
+msgid ""
+"-s uses SET1 if not\n"
+"translating nor deleting; else squeezing uses SET2 and occurs after\n"
+"translation or deletion.\n"
+msgstr ""
+"\n"
+"當 SET1 與 SET2 都有給，而且沒有指定選項 -d 時，程式就進行替換的工作；選項 -"
+"t\n"
+"只能在進行替換時使用。SET2 比 SET1 短時，程式會自動使用 SET2 的最後一個字元\n"
+"補滿 SET2，讓 SET1 與 SET2 長度相等。SET2 比 SET1 長時，多的字元會被忽略。\n"
+"這些字元集裡面，只有 [:lower:] 與 [:upper:] 用在 SET2 時會保証依遞增的順序"
+"展\n"
+"開，而 [:lower:] 與 [:upper:] 一定要成對的出現，用來作大小寫的轉換。\n"
+"使用選項 -s ，且不作替換或刪除時，會使用 SET1 當壓縮的標的。\n"
+"當需要壓縮並同時作替換或刪除時，會使用 SET2 當壓縮的標的，並且在替換或刪除"
+"後\n"
+"再作壓縮的動作。\n"
+
+#: src/tr.c:555
+#, c-format
+msgid ""
+"warning: the ambiguous octal escape \\%c%c%c is being\n"
+"\tinterpreted as the 2-byte sequence \\0%c%c, `%c'"
+msgstr ""
+"警告：將岐義的八進位逸出序列 \\%c%c%c \n"
+"\t解釋為兩個位元組的序列 \\0%c%c, `%c'"
+
+#: src/tr.c:564
+msgid "invalid backslash escape at end of string"
+msgstr "在字串的結尾有無效的反斜線逸出"
+
+#: src/tr.c:570
+#, c-format
+msgid "invalid backslash escape `\\%c'"
+msgstr "無效的反斜線逸出序列 `\\%c'"
+
+#: src/tr.c:723
+#, c-format
+msgid "range-endpoints of `%s-%s' are in reverse collating sequence order"
+msgstr "`%s-%s' 的範圍結束點在相反的排列序向"
+
+#: src/tr.c:904
+#, c-format
+msgid "invalid repeat count `%s' in [c*n] construct"
+msgstr "在 [c*n] 結構中有無效的重覆次數 `%s' "
+
+#: src/tr.c:997
+#, fuzzy
+msgid "missing character class name `[::]'"
+msgstr "無效的字元類別 `%s'"
+
+#: src/tr.c:1000
+msgid "missing equivalence class character `[==]'"
+msgstr ""
+
+#: src/tr.c:1023
+#, c-format
+msgid "invalid character class `%s'"
+msgstr "無效的字元類別 `%s'"
+
+#: src/tr.c:1048
+#, c-format
+msgid "%s: equivalence class operand must be a single character"
+msgstr "%s: 等價類別運算數 (equivalence class operand) 必須是一個單一字元"
+
+#: src/tr.c:1520
+msgid "the [c*] repeat construct may not appear in string1"
+msgstr "第一個字串裡不能有 [c*] 這種重複結構"
+
+#: src/tr.c:1530
+msgid "only one [c*] repeat construct may appear in string2"
+msgstr "第二個字串裡只能出現一個 [c*] 這種重複結構"
+
+#: src/tr.c:1538
+msgid "[=c=] expressions may not appear in string2 when translating"
+msgstr "進行替換時，[=c=] 表示式不能在第二個字串裡出現"
+
+#: src/tr.c:1551
+msgid "when not truncating set1, string2 must be non-empty"
+msgstr "在不消除第一個字元集 (set1) 時，第二個字串不能是空的"
+
+#: src/tr.c:1560
+msgid ""
+"when translating with complemented character classes,\n"
+"string2 must map all characters in the domain to one"
+msgstr ""
+"在以互補的字元種類作替換時，第二個字串的範圍\n"
+"必須包含第一個字串裡所有的字元"
+
+#: src/tr.c:1567
+msgid ""
+"when translating, the only character classes that may appear in\n"
+"string2 are `upper' and `lower'"
+msgstr ""
+"在替換時，唯一可能出現在第二個字串的字元種類\n"
+"只有 `upper' 或 `lower'"
+
+#: src/tr.c:1576
+msgid "the [c*] construct may appear in string2 only when translating"
+msgstr " [c*] 結構只有在替換時才能出現在第二個字串裡面"
+
+#: src/tr.c:1852
+msgid "two strings must be given when translating"
+msgstr "在替換時必須給定兩個字串"
+
+#: src/tr.c:1855
+msgid "two strings must be given when both deleting and squeezing repeats"
+msgstr "在同時刪除、壓擠重覆字 (squeezing repeats) 時必須給定兩個字串"
+
+#: src/tr.c:1869
+msgid "only one string may be given when deleting without squeezing repeats"
+msgstr "刪除但是不壓擠重覆字 (squeezing repeats) 時只能給定一個字串"
+
+#: src/tr.c:1875
+msgid "at least one string must be given when squeezing repeats"
+msgstr "在壓擠重覆字 (squeezing repeats) 時至少需給定一個字串"
+
+#: src/tr.c:1966
+msgid "misaligned [:upper:] and/or [:lower:] construct"
+msgstr "沒有對齊的 [:upper:]、[:lower:] 結構"
+
+#: src/tr.c:1989
+msgid ""
+"invalid identity mapping;  when translating, any [:lower:] or [:upper:]\n"
+"construct in string1 must be aligned with a corresponding construct\n"
+"([:upper:] or [:lower:], respectively) in string2"
+msgstr ""
+"無效的恆等映射 (identity mapping)；進行替換時，字串 1 的任何\n"
+" [:lower:]、[:upper:] 結構，在字串 2 裡都必須有一個相對應的結構才可以。\n"
+" (分別為 [:upper:]、[:lower:]) "
+
+#: src/tsort.c:97
+#, fuzzy, c-format
+msgid ""
+"Usage: %s [OPTION] [FILE]\n"
+"Write totally ordered list consistent with the partial ordering in FILE.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"印出每個檔案的 CRC 總和檢查以及總位元組數目\n"
+"\n"
+"  --help               顯示這段說明訊息\n"
+"  --version            顯示版本資訊\n"
+
+#: src/tsort.c:533
+#, c-format
+msgid "%s: input contains a loop:"
+msgstr ""
+
+#: src/tsort.c:575
+#, fuzzy
+msgid "only one argument may be specified"
+msgstr "使用選項 --check 時只能指定一個引數"
+
+#: src/unexpand.c:379
+#, fuzzy
+msgid ""
+"Convert spaces in each FILE to tabs, writing to standard output.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"把每個檔案 FILE 裡面的空格字元替換成欄標 (TAB)，輸出到標準輸出。\n"
+"假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+"\n"
+"  -a, --all           除了檔案開頭的空白字元外，替換所有的空白字元\n"
+"  -t, --tabs=NUMBER   把欄標定成間隔 NUMBER 個字元 (預設值為 8)\n"
+"  -t, --tabs=LIST     用 LIST 當欄標的位置，LIST 是用逗號分隔的串列\n"
+"      --help          顯示這段說明訊息\n"
+"      --version       顯示版本資訊\n"
+"\n"
+"可以用比較簡單的 -NUMBER、 -LIST 來代替 -t NUMBER、 -t LIST。\n"
+
+#: src/unexpand.c:387
+msgid ""
+"  -a, --all           convert all whitespace, instead of initial whitespace\n"
+"  -t, --tabs=NUMBER   have tabs NUMBER characters apart instead of 8\n"
+"  -t, --tabs=LIST     use comma separated list of explicit tab positions\n"
+msgstr ""
+
+#: src/unexpand.c:463
+#, fuzzy
+msgid "`-LIST' option is obsolete; use `--first-only -t LIST'"
+msgstr "警告：寬度 %lu 是無效的；用 %d 代替"
+
+#: src/uniq.c:134
+#, c-format
+msgid "Usage: %s [OPTION]... [INPUT [OUTPUT]]\n"
+msgstr "用法：%s [選項]... [INPUT [OUTPUT]]\n"
+
+#: src/uniq.c:138
+msgid ""
+"Discard all but one of successive identical lines from INPUT (or\n"
+"standard input), writing to OUTPUT (or standard output).\n"
+"\n"
+msgstr ""
+
+#: src/uniq.c:146
+msgid ""
+"  -c, --count           prefix lines by the number of occurrences\n"
+"  -d, --repeated        only print duplicate lines\n"
+msgstr ""
+
+#: src/uniq.c:150
+msgid ""
+"  -D, --all-repeated[=delimit-method] print all duplicate lines\n"
+"                        delimit-method={none(default),prepend,separate}\n"
+"                        Delimiting is done with blank lines.\n"
+"  -f, --skip-fields=N   avoid comparing the first N fields\n"
+"  -i, --ignore-case     ignore differences in case when comparing\n"
+"  -s, --skip-chars=N    avoid comparing the first N characters\n"
+"  -u, --unique          only print unique lines\n"
+msgstr ""
+
+#: src/uniq.c:159
+msgid "  -w, --check-chars=N   compare no more than N characters in lines\n"
+msgstr ""
+
+#: src/uniq.c:164
+msgid ""
+"\n"
+"A field is a run of whitespace, then non-whitespace characters.\n"
+"Fields are skipped before chars.\n"
+msgstr ""
+
+#: src/uniq.c:377
+#, c-format
+msgid "error reading %s"
+msgstr "正在讀取 %s 時發生錯誤"
+
+#: src/uniq.c:382
+#, c-format
+msgid "error writing %s"
+msgstr "正在寫入 %s 時發生錯誤"
+
+#: src/uniq.c:428 src/uniq.c:445
+#, c-format
+msgid "extra operand `%s'"
+msgstr ""
+
+#: src/uniq.c:468 src/uniq.c:493
+#, fuzzy
+msgid "invalid number of fields to skip"
+msgstr "要跳過的欄位數目無效：`%s'"
+
+#: src/uniq.c:502
+#, fuzzy
+msgid "invalid number of bytes to skip"
+msgstr "要跳過的位元組數目無效：`%s'"
+
+#: src/uniq.c:511
+#, fuzzy
+msgid "invalid number of bytes to compare"
+msgstr "要比較的位元組數目無效：`%s'"
+
+#: src/uniq.c:525
+#, fuzzy, c-format
+msgid "`-%lu' option is obsolete; use `-f %lu'"
+msgstr "警告：寬度 %lu 是無效的；用 %d 代替"
+
+#: src/uniq.c:533
+msgid "printing all duplicated lines and repeat counts is meaningless"
+msgstr ""
+
+#: src/wc.c:78
+msgid "Paul Rubin and David MacKenzie"
+msgstr ""
+
+#: src/wc.c:132
+#, fuzzy
+msgid ""
+"Print newline, word, and byte counts for each FILE, and a total line if\n"
+"more than one FILE is specified.  With no FILE, or when FILE is -,\n"
+"read standard input.\n"
+"  -c, --bytes            print the byte counts\n"
+"  -m, --chars            print the character counts\n"
+"  -l, --lines            print the newline counts\n"
+msgstr ""
+"印出每個檔案 FILE 裡面的行數、字數及位元組數目，指定多個檔案的話\n"
+"還會把總計印出來。\n"
+"假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+"  -c, --bytes, --chars   印出位元組數目\n"
+"  -l, --lines            印出行數\n"
+"  -w, --words            印出字數\n"
+"      --help             顯示這段說明訊息\n"
+"      --version          顯示版本資訊\n"
+
+#: src/wc.c:140
+#, fuzzy
+msgid ""
+"  -L, --max-line-length  print the length of the longest line\n"
+"  -w, --words            print the word counts\n"
+msgstr ""
+"印出每個檔案的 CRC 總和檢查以及總位元組數目\n"
+"\n"
+"  --help               顯示這段說明訊息\n"
+"  --version            顯示版本資訊\n"
+
+#: src/wc.c:589
+msgid "total"
+msgstr "總計"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "(obsolete)  If -VALUE is used as first OPTION, same as -c VALUE when one "
+#~ "of\n"
+#~ "multipliers bkm follows concatenated, else same as -n VALUE.\n"
+#~ msgstr ""
+#~ "把每一個檔案 FILE 最前面的 10 行輸出到標準輸出。\n"
+#~ "所給的引數 FILE 超過一個時，會在每一個檔案內容之前標示出檔名。\n"
+#~ "假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+#~ "\n"
+#~ "  -c, --bytes=SIZE         印出最前面的 SIZE 個位元組\n"
+#~ "  -n, --lines=NUMBER       印出最前面的 NUMBER 行 (預設值是 10 行)\n"
+#~ "  -q, --quiet, --silent    不要在檔案內容之前標示出檔名\n"
+#~ "  -v, --verbose            總是在檔案內容之前標示出檔名\n"
+#~ "      --help               顯示這段說明訊息\n"
+#~ "      --version            顯示版本資訊\n"
+#~ "\n"
+#~ "指定的 SIZE 可以是一個乘數字尾： b 表示 512，k 表示 1K，m 表示 1 Meg。\n"
+#~ "可以用一個數目字 -VALUE 當第一個選項，假如 VALUE 中含有乘數字尾 [bkm] 的"
+#~ "話，\n"
+#~ "程式會把它解釋為 -c VALUE，否則就當成 -n VALUE 處理。 \n"
+
+#, fuzzy
+#~ msgid "warning: `od -s' is obsolete; use `od --strings'"
+#~ msgstr "警告：寬度 %lu 是無效的；用 %d 代替"
+
+#, fuzzy
+#~ msgid "warning: `od -w' is obsolete; use `od --width'"
+#~ msgstr "警告：寬度 %lu 是無效的；用 %d 代替"
+
+#, fuzzy
+#~ msgid "warning: `pr -S' is obsolete; use `pr --sep-string'"
+#~ msgstr "警告：寬度 %lu 是無效的；用 %d 代替"
+
+#, fuzzy
+#~ msgid ""
+#~ "  +POS1 [-POS2]             start a key at POS1, end it before POS2 "
+#~ "(origin 0)\n"
+#~ "                              Warning: this option is obsolete\n"
+#~ msgstr ""
+#~ "一行一行的比較 LEFT_FILE 及 RIGHT_FILE 這兩個排序過的檔案。\n"
+#~ "\n"
+#~ "  -1              不顯示只在第一個檔案 LEFT_FILE 出現過的行\n"
+#~ "  -2              不顯示只在第二個檔案 RIGHT_FILE 出現過的行\n"
+#~ "  -3              不顯示在兩個檔案中同時出現過的行\n"
+#~ "      --help      顯示這段說明訊息\n"
+#~ "      --version   顯示版本資訊\n"
+
+#, fuzzy
+#~ msgid "warning: `sort -y' is obsolete; omit `-y'"
+#~ msgstr "警告：寬度 %lu 是無效的；用 %d 代替"
+
+#, fuzzy
+#~ msgid "warning: `tail %s' is obsolete; use -n or -c instead"
+#~ msgstr "警告：寬度 %lu 是無效的；用 %d 代替"
+
+#, fuzzy
+#~ msgid "warning: `uniq %s' is obsolete; use `uniq -s %s' instead"
+#~ msgstr "警告：寬度 %lu 是無效的；用 %d 代替"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help               display this help and exit\n"
+#~ "      --version            output version information and exit\n"
+#~ msgstr ""
+#~ "印出每個檔案的 CRC 總和檢查以及總位元組數目\n"
+#~ "\n"
+#~ "  --help               顯示這段說明訊息\n"
+#~ "  --version            顯示版本資訊\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help        display this help and exit\n"
+#~ "      --version     output version information and exit\n"
+#~ msgstr ""
+#~ "印出每個檔案的 CRC 總和檢查以及總位元組數目\n"
+#~ "\n"
+#~ "  --help               顯示這段說明訊息\n"
+#~ "  --version            顯示版本資訊\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help      display this help and exit\n"
+#~ "      --version   output version information and exit\n"
+#~ msgstr ""
+#~ "印出每個檔案的 CRC 總和檢查以及總位元組數目\n"
+#~ "\n"
+#~ "  --help               顯示這段說明訊息\n"
+#~ "  --version            顯示版本資訊\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help                 display this help and exit\n"
+#~ "      --version              output version information and exit\n"
+#~ msgstr ""
+#~ "印出每個檔案的 CRC 總和檢查以及總位元組數目\n"
+#~ "\n"
+#~ "  --help               顯示這段說明訊息\n"
+#~ "  --version            顯示版本資訊\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help              display this help and exit\n"
+#~ "      --version           output version information and exit\n"
+#~ msgstr ""
+#~ "印出每個檔案的 CRC 總和檢查以及總位元組數目\n"
+#~ "\n"
+#~ "  --help               顯示這段說明訊息\n"
+#~ "  --version            顯示版本資訊\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help          display this help and exit\n"
+#~ "      --version       output version information and exit\n"
+#~ msgstr ""
+#~ "印出每個檔案的 CRC 總和檢查以及總位元組數目\n"
+#~ "\n"
+#~ "  --help               顯示這段說明訊息\n"
+#~ "  --version            顯示版本資訊\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help                display this help and exit\n"
+#~ "      --version             output version information and exit\n"
+#~ msgstr ""
+#~ "印出每個檔案的 CRC 總和檢查以及總位元組數目\n"
+#~ "\n"
+#~ "  --help               顯示這段說明訊息\n"
+#~ "  --version            顯示版本資訊\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help                      display this help and exit\n"
+#~ "      --version                   output version information and exit\n"
+#~ msgstr ""
+#~ "印出每個檔案的 CRC 總和檢查以及總位元組數目\n"
+#~ "\n"
+#~ "  --help               顯示這段說明訊息\n"
+#~ "  --version            顯示版本資訊\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help                  display this help and exit\n"
+#~ "      --version               output version information and exit\n"
+#~ msgstr ""
+#~ "印出每個檔案的 CRC 總和檢查以及總位元組數目\n"
+#~ "\n"
+#~ "  --help               顯示這段說明訊息\n"
+#~ "  --version            顯示版本資訊\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help                     display this help and exit\n"
+#~ "      --version                  output version information and exit\n"
+#~ msgstr ""
+#~ "印出每個檔案的 CRC 總和檢查以及總位元組數目\n"
+#~ "\n"
+#~ "  --help               顯示這段說明訊息\n"
+#~ "  --version            顯示版本資訊\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help       display this help and exit\n"
+#~ "      --version    output version information and exit\n"
+#~ msgstr ""
+#~ "印出每個檔案的 CRC 總和檢查以及總位元組數目\n"
+#~ "\n"
+#~ "  --help               顯示這段說明訊息\n"
+#~ "  --version            顯示版本資訊\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help            display this help and exit\n"
+#~ "      --version         output version information and exit\n"
+#~ msgstr ""
+#~ "印出每個檔案的 CRC 總和檢查以及總位元組數目\n"
+#~ "\n"
+#~ "  --help               顯示這段說明訊息\n"
+#~ "  --version            顯示版本資訊\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "      --help             display this help and exit\n"
+#~ "      --version          output version information and exit\n"
+#~ msgstr ""
+#~ "印出每個檔案的 CRC 總和檢查以及總位元組數目\n"
+#~ "\n"
+#~ "  --help               顯示這段說明訊息\n"
+#~ "  --version            顯示版本資訊\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "  --help            display this help and exit\n"
+#~ "  --version         output version information and exit\n"
+#~ msgstr ""
+#~ "印出每個檔案的 CRC 總和檢查以及總位元組數目\n"
+#~ "\n"
+#~ "  --help               顯示這段說明訊息\n"
+#~ "  --version            顯示版本資訊\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Convert tabs in each FILE to spaces, writing to standard output.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -i, --initial       do not convert TABs after non whitespace\n"
+#~ "  -t, --tabs=NUMBER   have tabs NUMBER characters apart, not 8\n"
+#~ msgstr ""
+#~ "把每個檔案 FILE 裡面的欄標轉換成空格字元，輸出到標準輸出。\n"
+#~ "假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+#~ "\n"
+#~ "  -i, --initial       不要轉換在非空白字元後面的欄標\n"
+#~ "  -t, --tabs=NUMBER   把欄標轉換成 NUMBER 個字元 (預設是八個)\n"
+#~ "  -t, --tabs=LIST     用逗號分隔的串列 LIST 作為欄標的位置\n"
+#~ "      --help          顯示這段說明訊息\n"
+#~ "      --version       顯示版本資訊\n"
+#~ "\n"
+#~ "使用時可以用 -NUMBER 代替 -t NUMBER，用 -LIST 代替 -t LIST 。\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "  -t, --tabs=LIST     use comma separated list of explicit tab positions\n"
+#~ "      --help          display this help and exit\n"
+#~ "      --version       output version information and exit\n"
+#~ "\n"
+#~ "Instead of -t NUMBER or -t LIST, -NUMBER or -LIST may be used.\n"
+#~ msgstr ""
+#~ "把每個檔案 FILE 裡面的欄標轉換成空格字元，輸出到標準輸出。\n"
+#~ "假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+#~ "\n"
+#~ "  -i, --initial       不要轉換在非空白字元後面的欄標\n"
+#~ "  -t, --tabs=NUMBER   把欄標轉換成 NUMBER 個字元 (預設是八個)\n"
+#~ "  -t, --tabs=LIST     用逗號分隔的串列 LIST 作為欄標的位置\n"
+#~ "      --help          顯示這段說明訊息\n"
+#~ "      --version       顯示版本資訊\n"
+#~ "\n"
+#~ "使用時可以用 -NUMBER 代替 -t NUMBER，用 -LIST 代替 -t LIST 。\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Wrap input lines in each FILE (standard input by default), writing to\n"
+#~ "standard output.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -b, --bytes         count bytes rather than columns\n"
+#~ "  -s, --spaces        break at spaces\n"
+#~ "  -w, --width=WIDTH   use WIDTH columns instead of 80\n"
+#~ "      --help          display this help and exit\n"
+#~ "      --version       output version information and exit\n"
+#~ msgstr ""
+#~ "在檔案 FILE 裡面太長的行中加入換行字元，使所有行都在一定長度以下。\n"
+#~ "預設是從標準輸入讀取資料，把結果輸出到標準輸出去。\n"
+#~ "\n"
+#~ "  -b, --bytes         依位元組數目計算，而非欄位數目\n"
+#~ "  -s, --spaces        在空格字元處斷行\n"
+#~ "  -w, --width=WIDTH   設定寬度為 WIDTH (預設是 80)\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Write lines consisting of the sequentially corresponding lines from\n"
+#~ "each FILE, separated by TABs, to standard output.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -d, --delimiters=LIST   reuse characters from LIST instead of TABs\n"
+#~ "  -s, --serial            paste one file at a time instead of in "
+#~ "parallel\n"
+#~ "      --help              display this help and exit\n"
+#~ "      --version           output version information and exit\n"
+#~ "\n"
+#~ msgstr ""
+#~ "把所有檔案 FILE 合併在一起，每個檔案佔一個欄位，不同檔案的資料之間\n"
+#~ "以欄標 (TAB) 相隔，輸出到標準輸出。\n"
+#~ "印出每個檔案 FILE 裡面的行數、字數及位元數，指定多個檔案的話\n"
+#~ "\n"
+#~ "  -d, --delimiters=LIST   用串列 LIST 裡面的字元代替欄標來當作輸出的間隔\n"
+#~ "  -s, --serial            以串列方式，同一檔案的內容先併成一行，再接下一個"
+#~ "檔案\n"
+#~ "      --help              顯示這段說明訊息\n"
+#~ "      --version           顯示版本資訊\n"
+#~ "\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "  -NUMBER                 same as -l NUMBER\n"
+#~ "      --verbose           print a diagnostic to standard error just\n"
+#~ "                            before each output file is opened\n"
+#~ "      --help              display this help and exit\n"
+#~ "      --version           output version information and exit\n"
+#~ "\n"
+#~ "SIZE may have a multiplier suffix: b for 512, k for 1K, m for 1 Meg.\n"
+#~ msgstr ""
+#~ "把輸入檔 INPUT 分割成固定大小、檔名為 PREFIXaa, PREFIXab,... 的小檔案；\n"
+#~ "預設的字首 PREFIX 為 `x'。\n"
+#~ "假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+#~ "\n"
+#~ "  -b, --bytes=SIZE        每個輸出檔案的大小為 SIZE 個位元組\n"
+#~ "  -C, --line-bytes=SIZE   以行為單位輸出，每個輸出檔案最大為 SIZE 個位元"
+#~ "組\n"
+#~ "  -l, --lines=NUMBER      每以行為單位輸出，個輸出檔案 NUMBER 行\n"
+#~ "  -NUMBER                 跟 -l NUMBER 相同\n"
+#~ "      --verbose           在開啟每一個輸出檔的同時，\n"
+#~ "\t\t\t  印出一份診斷訊息到標準錯誤輸出 (standard error)\n"
+#~ "      --help              顯示這段說明訊息顯示這段說明訊息\n"
+#~ "      --version           顯示版本資訊\n"
+#~ "\n"
+#~ "指定的 SIZE 可以是一個乘數字尾： b 表示 512，k 表示 1K，m 表示 1 Meg。\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Write each FILE to standard output, last line first.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -b, --before             attach the separator before instead of after\n"
+#~ msgstr ""
+#~ "從最後一行開始，把每個檔案 FILE 的內容倒過來，輸出到標準輸出去。\n"
+#~ "假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+#~ "\n"
+#~ "  -b, --before             把分隔符加在前面 (預設是加在後面)\n"
+#~ "  -r, --regex              把分隔符解釋為正規運算式\n"
+#~ "  -s, --separator=STRING   用字串 STRING 當分隔符 (預設是換行字元)\n"
+#~ "      --help               顯示這段說明訊息\n"
+#~ "      --version            顯示版本資訊\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Print the last %d lines of each FILE to standard output.\n"
+#~ "With more than one FILE, precede each with a header giving the file "
+#~ "name.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "      --retry              keep trying to open a file even if it is\n"
+#~ "                           inaccessible when tail starts or if it "
+#~ "becomes\n"
+#~ "                           inaccessible later -- useful only with -f\n"
+#~ msgstr ""
+#~ "把每一個檔案 FILE 最前面的 10 行輸出到標準輸出。\n"
+#~ "所給的引數 FILE 超過一個時，會在每一個檔案內容之前標示出檔名。\n"
+#~ "假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+#~ "\n"
+#~ "  -c, --bytes=SIZE         印出最前面的 SIZE 個位元組\n"
+#~ "  -n, --lines=NUMBER       印出最前面的 NUMBER 行 (預設值是 10 行)\n"
+#~ "  -q, --quiet, --silent    不要在檔案內容之前標示出檔名\n"
+#~ "  -v, --verbose            總是在檔案內容之前標示出檔名\n"
+#~ "      --help               顯示這段說明訊息\n"
+#~ "      --version            顯示版本資訊\n"
+#~ "\n"
+#~ "指定的 SIZE 可以是一個乘數字尾： b 表示 512，k 表示 1K，m 表示 1 Meg。\n"
+#~ "可以用一個數目字 -VALUE 當第一個選項，假如 VALUE 中含有乘數字尾 [bkm] 的"
+#~ "話，\n"
+#~ "程式會把它解釋為 -c VALUE，否則就當成 -n VALUE 處理。 \n"
+
+#, fuzzy
+#~ msgid ""
+#~ "  -t, --tabs=NUMBER   have tabs NUMBER characters apart instead of 8\n"
+#~ "  -t, --tabs=LIST     use comma separated list of explicit tab positions\n"
+#~ "      --help          display this help and exit\n"
+#~ "      --version       output version information and exit\n"
+#~ "\n"
+#~ "Instead of -t NUMBER or -t LIST, -NUMBER or -LIST may be used.\n"
+#~ msgstr ""
+#~ "把每個檔案 FILE 裡面的空格字元替換成欄標 (TAB)，輸出到標準輸出。\n"
+#~ "假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+#~ "\n"
+#~ "  -a, --all           除了檔案開頭的空白字元外，替換所有的空白字元\n"
+#~ "  -t, --tabs=NUMBER   把欄標定成間隔 NUMBER 個字元 (預設值為 8)\n"
+#~ "  -t, --tabs=LIST     用 LIST 當欄標的位置，LIST 是用逗號分隔的串列\n"
+#~ "      --help          顯示這段說明訊息\n"
+#~ "      --version       顯示版本資訊\n"
+#~ "\n"
+#~ "可以用比較簡單的 -NUMBER、 -LIST 來代替 -t NUMBER、 -t LIST。\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Output pieces of FILE separated by PATTERN(s) to files `xx01', "
+#~ "`xx02', ...,\n"
+#~ "and output byte counts of each piece to standard output.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -b, --suffix-format=FORMAT use sprintf FORMAT instead of %%d\n"
+#~ "  -f, --prefix=PREFIX        use PREFIX instead of `xx'\n"
+#~ "  -k, --keep-files           do not remove output files on errors\n"
+#~ "  -n, --digits=DIGITS        use specified number of digits instead of 2\n"
+#~ "  -s, --quiet, --silent      do not print counts of output file sizes\n"
+#~ "  -z, --elide-empty-files    remove empty output files\n"
+#~ "      --help                 display this help and exit\n"
+#~ "      --version              output version information and exit\n"
+#~ "\n"
+#~ "Read standard input if FILE is -.  Each PATTERN may be:\n"
+#~ "\n"
+#~ "  INTEGER            copy up to but not including specified line number\n"
+#~ "  /REGEXP/[OFFSET]   copy up to but not including a matching line\n"
+#~ "  %%REGEXP%%[OFFSET]   skip to, but not including a matching line\n"
+#~ "  {INTEGER}          repeat the previous pattern specified number of "
+#~ "times\n"
+#~ "  {*}                repeat the previous pattern as many times as "
+#~ "possible\n"
+#~ "\n"
+#~ "A line OFFSET is a required `+' or `-' followed by a positive integer.\n"
+#~ msgstr ""
+#~ "把檔案 FILE 依照樣式 PATTERN(s) 分割成數個小檔案 `xx01'，`xx02'，...，\n"
+#~ "並且將每個小檔案的大小輸出到標準輸出去。\n"
+#~ "\n"
+#~ "  -b, --suffix-format=FORMAT 用輸出格式 FORMAT 代替 %%d (sprintf 的格式)\n"
+#~ "  -f, --prefix=PREFIX        用字首 PREFIX 代替 `xx'\n"
+#~ "  -k, --keep-files           發生錯誤時不要移除已輸出的檔案\n"
+#~ "  -n, --digits=DIGITS        輸出檔名裡用 DIGITS 個數字標示 (預設值為 2)\n"
+#~ "  -s, --quiet, --silent      不要列印輸出檔案的大小\n"
+#~ "  -z, --elide-empty-files    移除空的輸出檔案\n"
+#~ "      --help                 顯示這段說明訊息\n"
+#~ "      --version              顯示版本資訊\n"
+#~ "\n"
+#~ "給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。使用的樣式 (PATTERN) 可以"
+#~ "是：\n"
+#~ "\n"
+#~ "  INTEGER            行號；會把這些行號之前的部份分割出來\n"
+#~ "  /REGEXP/[OFFSET]   正規運算式；會把符合的那一行之前的部份分割出來\n"
+#~ "  %%REGEXP%%[OFFSET]   正規運算式；不過只輸出符合之後的部份\n"
+#~ "  {INTEGER}          重覆前一個樣式 INTEGER 次\n"
+#~ "  {*}                一直重覆前一個樣式\n"
+#~ "\n"
+#~ "行偏移量 OFFSET 是以加號或減號後面緊跟著一個正整數來表示 (如 `+3')。\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Print selected parts of lines from each FILE to standard output.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -b, --bytes=LIST        output only these bytes\n"
+#~ "  -c, --characters=LIST   output only these characters\n"
+#~ "  -d, --delimiter=DELIM   use DELIM instead of TAB for field delimiter\n"
+#~ "  -f, --fields=LIST       output only these fields;  also print any line\n"
+#~ "                            that contains no delimiter character, unless\n"
+#~ "                            the -s option is specified\n"
+#~ "  -n                      (ignored)\n"
+#~ "  -s, --only-delimited    do not print lines not containing delimiters\n"
+#~ "      --output-delimiter=STRING  use STRING as the output delimiter\n"
+#~ "                            the default is to use the input delimiter\n"
+#~ "      --help              display this help and exit\n"
+#~ "      --version           output version information and exit\n"
+#~ "\n"
+#~ "Use one, and only one of -b, -c or -f.  Each LIST is made up of one\n"
+#~ "range, or many ranges separated by commas.  Each range is one of:\n"
+#~ "\n"
+#~ "  N     N'th byte, character or field, counted from 1\n"
+#~ "  N-    from N'th byte, character or field, to end of line\n"
+#~ "  N-M   from N'th to M'th (included) byte, character or field\n"
+#~ "  -M    from first to M'th (included) byte, character or field\n"
+#~ "\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ msgstr ""
+#~ "從檔案 FILE 中，每一行選出一部分輸出到標準輸出。\n"
+#~ "\n"
+#~ "  -b, --bytes=LIST        只輸出串列 LIST 中指定的位元組\n"
+#~ "  -c, --characters=LIST   只輸出串列 LIST 中指定的字元組\n"
+#~ "  -d, --delimiter=DELIM   用 DELIM 做為劃界符號 (預設是用欄標 TAB)\n"
+#~ "  -f, --fields=LIST       只輸出串列 LIST 中指定的欄位\n"
+#~ "  -n                      (這選項不被處理)\n"
+#~ "  -s, --only-delimited    不輸出沒有劃界符號的行\n"
+#~ "      --help              顯示這段說明訊息\n"
+#~ "      --version           顯示版本資訊\n"
+#~ "\n"
+#~ "使用 -b、-c、-f 來選擇輸出的部份，而且每次只能用一種選取方式。\n"
+#~ " LIST 是一個或多個用逗號 `,' 分隔的範圍。範圍的形式為：\n"
+#~ "\n"
+#~ "  N     第 N 個位元組、字元或欄位，由 1 算起\n"
+#~ "  N-    從第 N 個位元組、字元或欄位到這一行結束\n"
+#~ "  N-M   從第 N 個到第 M 個位元組、字元或欄位，包含 N、M\n"
+#~ "  -M    從這行的一開始到第 M 個位元組、字元或欄位，包含第 M 個\n"
+#~ "\n"
+#~ "假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+
+#~ msgid ""
+#~ "For each pair of input lines with identical join fields, write a line to\n"
+#~ "standard output.  The default join field is the first, delimited\n"
+#~ "by whitespace.  When FILE1 or FILE2 (not both) is -, read standard "
+#~ "input.\n"
+#~ "\n"
+#~ "  -a SIDE           print unpairable lines coming from file SIDE\n"
+#~ "  -e EMPTY          replace missing input fields with EMPTY\n"
+#~ "  -i, --ignore-case ignore differences in case when comparing fields\n"
+#~ "  -j FIELD          (obsolescent) equivalent to `-1 FIELD -2 FIELD'\n"
+#~ "  -j1 FIELD         (obsolescent) equivalent to `-1 FIELD'\n"
+#~ "  -j2 FIELD         (obsolescent) equivalent to `-2 FIELD'\n"
+#~ "  -o FORMAT         obey FORMAT while constructing output line\n"
+#~ "  -t CHAR           use CHAR as input and output field separator\n"
+#~ "  -v SIDE           like -a SIDE, but suppress joined output lines\n"
+#~ "  -1 FIELD          join on this FIELD of file 1\n"
+#~ "  -2 FIELD          join on this FIELD of file 2\n"
+#~ "      --help        display this help and exit\n"
+#~ "      --version     output version information and exit\n"
+#~ "\n"
+#~ "Unless -t CHAR is given, leading blanks separate fields and are ignored,\n"
+#~ "else fields are separated by CHAR.  Any FIELD is a field number counted\n"
+#~ "from 1.  FORMAT is one or more comma or blank separated specifications,\n"
+#~ "each being `SIDE.FIELD' or `0'.  Default FORMAT outputs the join field,\n"
+#~ "the remaining fields from FILE1, the remaining fields from FILE2, all\n"
+#~ "separated by CHAR.\n"
+#~ msgstr ""
+#~ "把檔案 FILE1、FILE2 裡面某個欄位內容相同的行連結成一行，輸出到標準輸出。\n"
+#~ "預設值是兩個檔案的第一個欄位，用空白字元當劃界符號。\n"
+#~ "假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+#~ "\n"
+#~ "  -a SIDE           把檔案 SIDE 中不成對的行也印出來 (SIDE = 1 或 2)\n"
+#~ "  -e EMPTY          把找不到欄位的行用 EMPTY 代換\n"
+#~ "  -i, --ignore-case 比較欄位內容時，忽略大小寫的不同\n"
+#~ "  -j FIELD          (即將廢棄) 與 `-1 FIELD -2 FIELD' 相同\n"
+#~ "  -j1 FIELD         (即將廢棄) 與 `-1 FIELD' 相同\n"
+#~ "  -j2 FIELD         (即將廢棄) 與 `-2 FIELD' 相同\n"
+#~ "  -o FORMAT         遵循格式 FORMAT 來輸出結果\n"
+#~ "  -t CHAR           用字元 CHAR 當輸入輸出的劃界符號\n"
+#~ "  -v SIDE           跟 -a SIDE 相似，但是不把相同的行印出來\n"
+#~ "  -1 FIELD          採用第一個檔案的第 FIELD 個欄位\n"
+#~ "  -2 FIELD          採用第二個檔案的第 FIELD 個欄位\n"
+#~ "      --help        顯示這段說明訊息\n"
+#~ "      --version     顯示版本資訊\n"
+#~ "\n"
+#~ "Unless -t CHAR is given, leading blanks separate fields and are ignored,\n"
+#~ "else fields are separated by CHAR.  Any FIELD is a field number counted\n"
+#~ "from 1.  FORMAT is one or more comma or blank separated specifications,\n"
+#~ "each being `SIDE.FIELD' or `0'.  Default FORMAT outputs the join field,\n"
+#~ "the remaining fields from FILE1, the remaining fields from FILE2, all\n"
+#~ "separated by CHAR.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Usage: %s [OPTION] [FILE]...\n"
+#~ "  or:  %s [OPTION] --check [FILE]\n"
+#~ "Print or check %s (%d-bit) checksums.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "  -b, --binary            read files in binary mode (default on DOS/"
+#~ "Windows)\n"
+#~ "  -c, --check             check %s sums against given list\n"
+#~ "  -t, --text              read files in text mode (default)\n"
+#~ "\n"
+#~ "The following two options are useful only when verifying checksums:\n"
+#~ "      --status            don't output anything, status code shows "
+#~ "success\n"
+#~ "  -w, --warn              warn about improperly formated checksum lines\n"
+#~ "\n"
+#~ "      --help              display this help and exit\n"
+#~ "      --version           output version information and exit\n"
+#~ "\n"
+#~ "The sums are computed as described in %s.  When checking, the input\n"
+#~ "should be a former output of this program.  The default mode is to print\n"
+#~ "a line with checksum, a character indicating type (`*' for binary, ` ' "
+#~ "for\n"
+#~ "text), and name for each FILE.\n"
+#~ msgstr ""
+#~ "用法：%s [選項] [FILE]...\n"
+#~ "  或：%s [選項] --check [FILE]\n"
+#~ "印出檔案 FILE 的 MD5 總和檢查值，或對檔案進行 MD5 總和檢查。\n"
+#~ "假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+#~ "\n"
+#~ "  -b, --binary            用二進制模式讀取檔案\n"
+#~ "  -c, --check             真對與定的檔案進行 MD5 總和檢查\n"
+#~ "  -t, --text              用文字模式讀取檔案 (預設值)\n"
+#~ "\n"
+#~ "底下這兩個選項只有在進行 MD5 總和檢查時才有效：\n"
+#~ "      --status            不要顯示訊息，以狀態碼告知成功與否\n"
+#~ "  -w, --warn              對未經適當格式化的 MD5 總和檢查行做出警告\n"
+#~ "\n"
+#~ "      --help              顯示這段說明訊息\n"
+#~ "      --version           顯示版本資訊\n"
+#~ "\n"
+#~ "總和檢查的計算方式可以在 RFC 1321 裡面找到。\n"
+#~ "用來檢查的輸入值必須是這個程式先前所產生的結果才行。程式預設模式是針對每"
+#~ "個\n"
+#~ "給定的檔案印出一行結果，每一行的第一個欄位是 MD5 總和檢查值，接著用一個字"
+#~ "元\n"
+#~ "來標示檢查的形式 (`*' 表示用二進制模式，` ' 表示用文字模式)，最後則為檔"
+#~ "名。 \n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Write each FILE to standard output, with line numbers added.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -b, --body-numbering=STYLE      use STYLE for numbering body lines\n"
+#~ "  -d, --section-delimiter=CC      use CC for separating logical pages\n"
+#~ "  -f, --footer-numbering=STYLE    use STYLE for numbering footer lines\n"
+#~ "  -h, --header-numbering=STYLE    use STYLE for numbering header lines\n"
+#~ "  -i, --page-increment=NUMBER     line number increment at each line\n"
+#~ "  -l, --join-blank-lines=NUMBER   group of NUMBER empty lines counted as "
+#~ "one\n"
+#~ "  -n, --number-format=FORMAT      insert line numbers according to "
+#~ "FORMAT\n"
+#~ "  -p, --no-renumber               do not reset line numbers at logical "
+#~ "pages\n"
+#~ "  -s, --number-separator=STRING   add STRING after (possible) line "
+#~ "number\n"
+#~ "  -v, --first-page=NUMBER         first line number on each logical page\n"
+#~ "  -w, --number-width=NUMBER       use NUMBER columns for line numbers\n"
+#~ "      --help                      display this help and exit\n"
+#~ "      --version                   output version information and exit\n"
+#~ "\n"
+#~ "By default, selects -v1 -i1 -l1 -sTAB -w6 -nrn -hn -bt -fn.  CC are\n"
+#~ "two delimiter characters for separating logical pages, a missing\n"
+#~ "second character implies :.  Type \\\\ for \\.  STYLE is one of:\n"
+#~ "\n"
+#~ "  a         number all lines\n"
+#~ "  t         number only nonempty lines\n"
+#~ "  n         number no lines\n"
+#~ "  pREGEXP   number only lines that contain a match for REGEXP\n"
+#~ "\n"
+#~ "FORMAT is one of:\n"
+#~ "\n"
+#~ "  ln   left justified, no leading zeros\n"
+#~ "  rn   right justified, no leading zeros\n"
+#~ "  rz   right justified, leading zeros\n"
+#~ "\n"
+#~ msgstr ""
+#~ "把每個檔案的內容都標上行號，輸出到標準輸出去。\n"
+#~ "假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+#~ "\n"
+#~ "  -b, --body-numbering=STYLE      使用樣式 STYLE 來標示內文的行號\n"
+#~ "  -d, --section-delimiter=CC      使用 CC 來區分邏輯頁 (logical pages)\n"
+#~ "  -f, --footer-numbering=STYLE    使用 STYLE 來標示註腳的行號\n"
+#~ "  -h, --header-numbering=STYLE    使用 STYLE 來標示標頭的行號\n"
+#~ "  -i, --page-increment=NUMBER     行與行之間，行號的增加量\n"
+#~ "  -l, --join-blank-lines=NUMBER   把 NUMBER 個空白行算成一行\n"
+#~ "  -n, --number-format=FORMAT      依據 FORMAT 插入行號\n"
+#~ "  -p, --no-renumber               在跨越邏輯頁時，不要把行號大小歸零\n"
+#~ "  -s, --number-separator=STRING   輸出時，把字串 STRING 加在行號之後\n"
+#~ "  -v, --first-page=NUMBER         每個邏輯頁第一行的行號大小\n"
+#~ "  -w, --number-width=NUMBER       用 NUMBER 個字元來標示行號\n"
+#~ "      --help                      顯示這段說明訊息\n"
+#~ "      --version                   顯示版本資訊\n"
+#~ "\n"
+#~ "程式執行時，預設會使用選項 -v1 -i1 -l1 -sTAB -w6 -nrn -hn -bt -fn。\n"
+#~ " CC 是兩個定界字符 (delimiter characters)，用來區分邏輯頁；假如只給一個\n"
+#~ " 定界字符，會自動把第二個設成 `:'。\n"
+#~ "要打兩個倒斜線 `\\\\' 來輸入倒斜線 `\\'。STYLE 是指：\n"
+#~ "\n"
+#~ "  a         把所有的行都標上行號\n"
+#~ "  t         只標非空白行\n"
+#~ "  n         不標行號\n"
+#~ "  pREGEXP   只把符合正規運算式 REGEXP 的行標上行號\n"
+#~ "\n"
+#~ "FORMAT 可以是：\n"
+#~ "\n"
+#~ "  ln   行號靠左對齊，開頭沒有零\n"
+#~ "  rn   行號靠右對齊，開頭沒有零\n"
+#~ "  rz   行號靠右對齊，開頭有零\n"
+#~ "\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "Write an unambiguous representation, octal bytes by default,\n"
+#~ "of FILE to standard output.  With more than one FILE argument,\n"
+#~ "concatenate them in the listed order to form the input.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -A, --address-radix=RADIX   decide how file offsets are printed\n"
+#~ "  -j, --skip-bytes=BYTES      skip BYTES input bytes first\n"
+#~ "  -N, --read-bytes=BYTES      limit dump to BYTES input bytes\n"
+#~ "  -s, --strings[=BYTES]       output strings of at least BYTES graphic "
+#~ "chars\n"
+#~ "  -t, --format=TYPE           select output format or formats\n"
+#~ "  -v, --output-duplicates     do not use * to mark line suppression\n"
+#~ "  -w, --width[=BYTES]         output BYTES bytes per output line\n"
+#~ "      --traditional           accept arguments in pre-POSIX form\n"
+#~ "      --help                  display this help and exit\n"
+#~ "      --version               output version information and exit\n"
+#~ "\n"
+#~ "Pre-POSIX format specifications may be intermixed, they accumulate:\n"
+#~ "  -a   same as -t a,  select named characters\n"
+#~ "  -b   same as -t oC, select octal bytes\n"
+#~ "  -c   same as -t c,  select ASCII characters or backslash escapes\n"
+#~ "  -d   same as -t u2, select unsigned decimal shorts\n"
+#~ "  -f   same as -t fF, select floats\n"
+#~ "  -h   same as -t x2, select hexadecimal shorts\n"
+#~ "  -i   same as -t d2, select decimal shorts\n"
+#~ "  -l   same as -t d4, select decimal longs\n"
+#~ "  -o   same as -t o2, select octal shorts\n"
+#~ "  -x   same as -t x2, select hexadecimal shorts\n"
+#~ msgstr ""
+#~ "把檔案內容用八進位、十進位或十六進位顯示出來 (預設是八進位)。\n"
+#~ "假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+#~ "\n"
+#~ "  -A, --address-radix=RADIX   選擇檔案偏移量印出的方式\n"
+#~ "  -j, --skip-bytes=BYTES      跳過每個輸入檔最開頭的 BYTES 個位元組\n"
+#~ "  -N, --read-bytes=BYTES      每個檔案最多印出 BYTES 個位元組\n"
+#~ "  -s, --strings[=BYTES]       輸出至少含有 BYTES 個繪圖字元的字串\n"
+#~ "  -t, --format=TYPE           選擇輸出的格式\n"
+#~ "  -v, --output-duplicates     不要用星號 `*' 標示忽略掉的行\n"
+#~ "  -w, --width[=BYTES]         輸出時每一行印出 BYTES 個位元組\n"
+#~ "      --traditional           接受 \"前-POSIX\" 形式的引數\n"
+#~ "      --help                  顯示這段說明訊息\n"
+#~ "      --version               顯示版本資訊\n"
+#~ "\n"
+#~ "前-POSIX 形式的引數可以被混在一起用，包含了：\n"
+#~ "  -a   跟 -t a  相同，印出字元名稱\n"
+#~ "  -b   跟 -t oC 相同，用八進位顯示位元組\n"
+#~ "  -c   跟 -t c  相同，顯示 ASCII 字元或倒斜線逸出字元\n"
+#~ "  -d   跟 -t u2 相同，顯示十進位的無符號短整數 (unsigned short)\n"
+#~ "  -f   跟 -t fF 相同，顯示浮點數\n"
+#~ "  -h   跟 -t x2 相同，顯示十六進位的短整數\n"
+#~ "  -i   跟 -t d2 相同，顯示十進位的短整數\n"
+#~ "  -l   跟 -t d4 相同，顯示十進位的長整數\n"
+#~ "  -o   跟 -t o2 相同，顯示八進位短整數\n"
+#~ "  -x   跟 -t x2 相同，顯示十六進位的短整數\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "For older syntax (second call format), OFFSET means -j OFFSET.  LABEL\n"
+#~ "is the pseudo-address at first byte printed, incremented when dump is\n"
+#~ "progressing.  For OFFSET and LABEL, a 0x or 0X prefix indicates\n"
+#~ "hexadecimal, suffixes maybe . for octal and b multiply by 512.\n"
+#~ "\n"
+#~ "TYPE is made up of one or more of these specifications:\n"
+#~ "\n"
+#~ "  a          named character\n"
+#~ "  c          ASCII character or backslash escape\n"
+#~ "  d[SIZE]    signed decimal, SIZE bytes per integer\n"
+#~ "  f[SIZE]    floating point, SIZE bytes per integer\n"
+#~ "  o[SIZE]    octal, SIZE bytes per integer\n"
+#~ "  u[SIZE]    unsigned decimal, SIZE bytes per integer\n"
+#~ "  x[SIZE]    hexadecimal, SIZE bytes per integer\n"
+#~ "\n"
+#~ "SIZE is a number.  For TYPE in doux, SIZE may also be C for\n"
+#~ "sizeof(char), S for sizeof(short), I for sizeof(int) or L for\n"
+#~ "sizeof(long).  If TYPE is f, SIZE may also be F for sizeof(float), D\n"
+#~ "for sizeof(double) or L for sizeof(long double).\n"
+#~ "\n"
+#~ "RADIX is d for decimal, o for octal, x for hexadecimal or n for none.\n"
+#~ "BYTES is hexadecimal with 0x or 0X prefix, it is multiplied by 512\n"
+#~ "with b suffix, by 1024 with k and by 1048576 with m.  Adding a z suffix "
+#~ "to\n"
+#~ "any type adds a display of printable characters to the end of each line\n"
+#~ "of output.  -s without a number implies 3.  -w without a number implies "
+#~ "32.\n"
+#~ "By default, od uses -A o -t d2 -w 16.\n"
+#~ msgstr ""
+#~ "\n"
+#~ "用舊式的語法時 (第二種呼叫方法)，引數 OFFSET 意義跟 -j OFFSET 相同。\n"
+#~ "而 LABEL 就是在印出位址的時候，第一個位元組起算的基數。\n"
+#~ " OFFSET 與 LABEL 這兩個引數，都可以用字首 `0x' 或 `0X' 來表示十六進位\n"
+#~ "的數字，用字尾 `.' 表示八進位數字，`b' 表示乘以 512。\n"
+#~ "\n"
+#~ "輸出的格式 TYPE 可以用一個或多個的下列字元來指定：\n"
+#~ "\n"
+#~ "  a          用字元名稱來顯示字元\n"
+#~ "  c          用 ASCII 字元或倒斜線逸出字元來顯示\n"
+#~ "  d[SIZE]    有號的十進位整數，每 SIZE 個位元組當成一個整數\n"
+#~ "  f[SIZE]    浮點數，每 SIZE 個位元組當成一個浮點數\n"
+#~ "  o[SIZE]    八進位表示法，每 SIZE 個位元組當成一個整數\n"
+#~ "  u[SIZE]    無號的十進位整數，每 SIZE 個位元組當成一個整數\n"
+#~ "  x[SIZE]    十六進位表示法，每 SIZE 個位元組當成一個整數\n"
+#~ "\n"
+#~ "引數 SIZE 是一個數字；不過在用格式 [doux] 時，可以用 `C' 代表 sizeof"
+#~ "(char)、\n"
+#~ "用 `S' 代表 sizeof(short)、用 `I' 代表 sizeof(int)、`L' 代表 sizeof"
+#~ "(long)。\n"
+#~ "當格式為 `f' 時，SIZE 可以是 `F'，代表 sizeof(float)、`D' 代表 sizeof"
+#~ "(double)、\n"
+#~ " `L' 代表 sizeof(long double)。\n"
+#~ "\n"
+#~ "引數 RADIX 是 `d' 就代表十進位、`o' 是八進位、`x' 是十六進位，`n' 則是沒"
+#~ "有。\n"
+#~ "引數 BYTES 假如有字首 `0x' 或 `0X' ，表示十六進位。\n"
+#~ " BYTES 假如有字尾 `b' 表示乘以 512、`k' 表示乘以 1024、`m' 表示乘以 "
+#~ "1048576。\n"
+#~ "選項 -s 後面沒有指定數目字的話，程式預設值是 3 。\n"
+#~ "選項 -w 後面沒有指定數目字的話，程式預設值是 32 。\n"
+#~ " od 預設會使用 -A o -t d2 -w 16 這些參數。\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Paginate or columnate FILE(s) for printing.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  +FIRST_PAGE[:LAST_PAGE], --pages=FIRST_PAGE[:LAST_PAGE]\n"
+#~ "                    begin [stop] printing with page FIRST_[LAST_]PAGE\n"
+#~ "  -COLUMN, --columns=COLUMN\n"
+#~ "                    produce COLUMN-column output and print columns down,\n"
+#~ "                    unless -a is used. Balance number of lines in the\n"
+#~ "                    columns on each page.\n"
+#~ "  -a, --across      print columns across rather than down, used together\n"
+#~ "                    with -COLUMN\n"
+#~ "  -c, --show-control-chars\n"
+#~ "                    use hat notation (^G) and octal backslash notation\n"
+#~ "  -d, --double-space\n"
+#~ "                    double space the output\n"
+#~ "  -D, --date-format=FORMAT\n"
+#~ "                    use FORMAT for the header date\n"
+#~ "  -e[CHAR[WIDTH]], --expand-tabs[=CHAR[WIDTH]]\n"
+#~ "                    expand input CHARs (TABs) to tab WIDTH (8)\n"
+#~ "  -F, -f, --form-feed\n"
+#~ "                    use form feeds instead of newlines to separate pages\n"
+#~ "                    (by a 3-line page header with -F or a 5-line header\n"
+#~ "                    and trailer without -F)\n"
+#~ msgstr ""
+#~ "把檔案標上頁數或分欄，輸出到標準輸出，以作為列印之用。\n"
+#~ "\n"
+#~ "  +FIRST_PAGE[:LAST_PAGE]\n"
+#~ "                    由第 FIRST_PAGE[LAST_PAGE] 頁開始 [結束] 列印\n"
+#~ "  -COLUMN           製造 COLUMN 欄的輸出結果，將檔案內容由上到下的印出。\n"
+#~ "                    除非同時有指定選項 -a，否則程式會自動的平均每頁裡面\n"
+#~ "                    各欄的行數。\n"
+#~ "  -a                在分欄時將檔案內容交錯的印出，第一行在第一欄、第二行\n"
+#~ "                    在第二欄... 與選項 -COLUMN 一起使用。\n"
+#~ "  -c                使用 `^' 表示法 (^G) 以及八進位反斜線表示法來輸出\n"
+#~ "  -d                把輸出的間隔加倍\n"
+#~ "  -e[CHAR[WIDTH]]   把輸入資料裡面所有的字元 CHAR 換成寬度為 WIDTH 的欄標"
+#~ "(TAB)\n"
+#~ "  -F, -f            使用換頁符號 (form feeds) 代替空白行來分頁\n"
+#~ "                    (用了選項 -f 的話，頁首會變成三行的格式，預設是五行的"
+#~ "頁首\n"
+#~ "                    以及頁尾。)\n"
+#~ "  -h HEADER         用字串 HEADER 當每頁的標題 (預設是檔名當標題)\n"
+#~ "                    字串 HEADER 太長的話，左邊會被截掉。\n"
+#~ "                    而 -h \"\" 會印出一行空白行；記得不要使用  -h\"\"\n"
+#~ "  -i[CHAR[WIDTH]]   輸出時將所有空格字元替代成 CHAR (TAB)，欄位寬度 WIDTH "
+#~ "(8)\n"
+#~ "  -j                分欄時合併整行，不會把太長的行截斷，欄位之間也不必對"
+#~ "齊。\n"
+#~ "                    可用選項 -s[STRING] 設定分隔字元\n"
+#~ "  -l PAGE_LENGTH    把一頁的長度定為 PAGE_LENGTH 行 (預設值是 66)\n"
+#~ "                    (預設內文的長度是 56 行，用選項 -f 時有 63 行)\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "SETs are specified as strings of characters.  Most represent themselves.\n"
+#~ "Interpreted sequences are:\n"
+#~ "\n"
+#~ "  \\NNN            character with octal value NNN (1 to 3 octal digits)\n"
+#~ "  \\\\              backslash\n"
+#~ "  \\a              audible BEL\n"
+#~ "  \\b              backspace\n"
+#~ "  \\f              form feed\n"
+#~ "  \\n              new line\n"
+#~ "  \\r              return\n"
+#~ "  \\t              horizontal tab\n"
+#~ "  \\v              vertical tab\n"
+#~ "  CHAR1-CHAR2     all characters from CHAR1 to CHAR2 in ascending order\n"
+#~ "  [CHAR*]         in SET2, copies of CHAR until length of SET1\n"
+#~ "  [CHAR*REPEAT]   REPEAT copies of CHAR, REPEAT octal if starting with 0\n"
+#~ "  [:alnum:]       all letters and digits\n"
+#~ "  [:alpha:]       all letters\n"
+#~ "  [:blank:]       all horizontal whitespace\n"
+#~ "  [:cntrl:]       all control characters\n"
+#~ "  [:digit:]       all digits\n"
+#~ "  [:graph:]       all printable characters, not including space\n"
+#~ "  [:lower:]       all lower case letters\n"
+#~ "  [:print:]       all printable characters, including space\n"
+#~ "  [:punct:]       all punctuation characters\n"
+#~ "  [:space:]       all horizontal or vertical whitespace\n"
+#~ "  [:upper:]       all upper case letters\n"
+#~ "  [:xdigit:]      all hexadecimal digits\n"
+#~ "  [=CHAR=]        all characters which are equivalent to CHAR\n"
+#~ msgstr ""
+#~ "\n"
+#~ "字元集 SETs 是一個字串，表示出現在這個字串裡面所有字元所構成的集合。\n"
+#~ "另外，還有一些含有特殊意義的字串：\n"
+#~ "\n"
+#~ "  \\NNN            八進位編碼為 NNN 的字元 (1 到 3 個八進位阿拉伯數字)\n"
+#~ "  \\\\              反斜線\n"
+#~ "  \\a              喇叭聲 (BEL)\n"
+#~ "  \\b              退格字元 (backspace)\n"
+#~ "  \\f              換頁字元 (form feed)\n"
+#~ "  \\n              換行字元 (new line)\n"
+#~ "  \\r              轉回字元 (return)\n"
+#~ "  \\t              水平表號 (horizontal tab)\n"
+#~ "  \\v              垂直表號 (vertical tab)\n"
+#~ "  CHAR1-CHAR2     所有編碼在 CHAR1 到 CHAR2 之間的字元，依升序排列\n"
+#~ "  [CHAR1-CHAR2]   在 SET1 與 SET2 都用 `[]' 的時候，跟 CHAR1-CHAR2 相同\n"
+#~ "  [CHAR*]         用在 SET2，重複字元 CHAR 直到與 SET1 長度相同\n"
+#~ "  [CHAR*REPEAT]   重複字元 CHAR，重複 REPEAT 次\n"
+#~ "  [:alnum:]       所有的字母與阿拉伯數字\n"
+#~ "  [:alpha:]       所有的字母\n"
+#~ "  [:blank:]       所有的水平空白字元 (space、tab... 等等)\n"
+#~ "  [:cntrl:]       所有的控制字元\n"
+#~ "  [:digit:]       所有阿拉伯數字\n"
+#~ "  [:graph:]       所有可列印字元，不包括空格字元\n"
+#~ "  [:lower:]       所有小寫字母\n"
+#~ "  [:print:]       所有可列印字元，包括空格字元\n"
+#~ "  [:punct:]       所有標點符號 (punctuation characters)\n"
+#~ "  [:space:]       所有的水平及垂直空白字元\n"
+#~ "  [:upper:]       所有大寫字母\n"
+#~ "  [:xdigit:]      所有十六進位數字 ([0-9A-Fa-f])\n"
+#~ "  [=CHAR=]        所有跟字元 CHAR 相等的字元\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Discard all but one of successive identical lines from INPUT (or\n"
+#~ "standard input), writing to OUTPUT (or standard output).\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -c, --count           prefix lines by the number of occurrences\n"
+#~ "  -d, --repeated        only print duplicate lines\n"
+#~ "  -D, --all-repeated[=delimit-method] print all duplicate lines\n"
+#~ "                        delimit-method={none(default),prepend,separate)}\n"
+#~ "                        Delimiting is done with blank lines.\n"
+#~ "  -f, --skip-fields=N   avoid comparing the first N fields\n"
+#~ "  -i, --ignore-case     ignore differences in case when comparing\n"
+#~ "  -s, --skip-chars=N    avoid comparing the first N characters\n"
+#~ "  -u, --unique          only print unique lines\n"
+#~ "  -w, --check-chars=N   compare no more than N characters in lines\n"
+#~ "  -N                    same as -f N\n"
+#~ "  +N                    same as -s N (obsolescent; will be withdrawn)\n"
+#~ "      --help            display this help and exit\n"
+#~ "      --version         output version information and exit\n"
+#~ "\n"
+#~ "A field is a run of whitespace, then non-whitespace characters.\n"
+#~ "Fields are skipped before chars.\n"
+#~ msgstr ""
+#~ "把由輸入檔 INPUT 讀取的資料裡，有內容重複相連的行都縮成一行，寫入\n"
+#~ "檔案 OUTPUT 中 (或輸出到標準輸出)。\n"
+#~ "\n"
+#~ "  -c, --count           在每行的開頭印出此行出現的次數\n"
+#~ "  -d, --repeated        只印出有重複相連的行\n"
+#~ "  -f, --skip-fields=N   跳過欄位，不比較每行最前面的 N 個欄位\n"
+#~ "  -i, --ignore-case     比較內容時，忽略大小寫的不同\n"
+#~ "  -s, --skip-chars=N    跳過字元，不比較每行最前面的 N 個字元\n"
+#~ "  -u, --unique          只印出沒有重複過的行\n"
+#~ "  -w, --check-chars=N   比較時，每行不超過 N 個字元\n"
+#~ "  -N                    與 -f N 相同\n"
+#~ "  +N                    與 -s N 相同\n"
+#~ "      --help            顯示這段說明訊息\n"
+#~ "      --version         顯示版本資訊\n"
+#~ "\n"
+#~ "這邊所謂的一個欄位，指的是一群用任意個空白字元相隔的非空白字元。\n"
+#~ "同時指定選項 -f 與 -s 時，會先跳過欄位、再跳過字元。\n"
+
+#~ msgid ""
+#~ "specified number of bytes `%s' is larger than the maximum\n"
+#~ "representable value of type `long'"
+#~ msgstr ""
+#~ "指定的位元數目 `%s' 大於型別 `long' 的\n"
+#~ "最大可表示數值。"
+
+#~ msgid "%s%*s%s%*sPage"
+#~ msgstr "%s%*s%s%*s頁"
+
+#, fuzzy
+#~ msgid ""
+#~ "Write sorted concatenation of all FILE(s) to standard output.\n"
+#~ "\n"
+#~ "  +POS1 [-POS2]    start a key at POS1, end it *before* POS2 "
+#~ "(obsolescent)\n"
+#~ "\t\t     field numbers and character offsets are numbered\n"
+#~ "                     starting with zero (contrast with the -k option)\n"
+#~ "  -b               ignore leading blanks in sort fields or keys\n"
+#~ "  -c               check if given files already sorted, do not sort\n"
+#~ "  -d               consider only [a-zA-Z0-9 ] characters in keys\n"
+#~ "  -f               fold lower case to upper case characters in keys\n"
+#~ "  -g               compare according to general numerical value, imply -"
+#~ "b\n"
+#~ "  -i               consider only [\\040-\\0176] characters in keys\n"
+#~ "  -k POS1[,POS2]   start a key at POS1, end it *at* POS2\n"
+#~ "\t\t     field numbers and character offsets are numbered\n"
+#~ "                     starting with one (contrast with zero-based +POS "
+#~ "form)\n"
+#~ "  -m               merge already sorted files, do not sort\n"
+#~ "  -M               compare (unknown) < `JAN' < ... < `DEC', imply -b\n"
+#~ "  -n               compare according to string numerical value, imply -b\n"
+#~ "  -o FILE          write result on FILE instead of standard output\n"
+#~ "  -r               reverse the result of comparisons\n"
+#~ "  -s               stabilize sort by disabling last resort comparison\n"
+#~ "  -t SEP           use SEParator instead of non- to whitespace "
+#~ "transition\n"
+#~ "  -T DIRECTORY     use DIRECTORY for temporary files, not $TMPDIR or %s\n"
+#~ "  -u               with -c, check for strict ordering;\n"
+#~ "                   with -m, only output the first of an equal sequence\n"
+#~ "  -z               end lines with 0 byte, not newline, for find -print0\n"
+#~ "      --help       display this help and exit\n"
+#~ "      --version    output version information and exit\n"
+#~ "\n"
+#~ msgstr ""
+#~ "把所有檔案 FILE(s) 的內容經過排序後，輸出到標準輸出。\n"
+#~ "\n"
+#~ "  +POS1 [-POS2]    用 POS1 到 POS2 當鍵 (key) 進行排序(包含POS1，不包含"
+#~ "POS2)。\n"
+#~ "  -b               在對欄位或鍵進行排序時，忽略開頭的空白\n"
+#~ "  -c               先檢查所給的檔案是否已經排序妥當，排序好的就不進行排序"
+#~ "了\n"
+#~ "  -d               比較大小時，只考慮鍵 (key) 裡面 [a-zA-Z0-9 ] 這些字元\n"
+#~ "  -f               比較大小時，忽略大小寫的不同\n"
+#~ "  -g               依據字元編碼的數字大小來比較，同時忽略開頭的空白 (-b)\n"
+#~ "  -i               排序時只考慮 [\\040-\\0176] 這個範圍的字元\n"
+#~ "  -k POS1[,POS2]   跟 +POS1 [-POS2] 相同，但位置是從 1 起算\n"
+#~ "  -m               把已經排序妥當的檔案合併在一起，不進行排序\n"
+#~ "  -M               比較月份， (unknown)< `JAN' <...< `DEC'，忽略開頭的空"
+#~ "白 (-b)\n"
+#~ "  -n               依據字串的數字大小來比較，同時忽略開頭的空白 (-b)\n"
+#~ "  -o FILE          把結果寫到檔案 FILE 裡面去 (預設為標準輸出)\n"
+#~ "  -r               以相反的順序印出結果\n"
+#~ "  -s               對所有鍵(keys)都相同的行，依輸入順序印出，不對其他欄位"
+#~ "排序\n"
+#~ "  -t SEP           用字元 SEP 來當欄位間的劃界符號 (預設是空字元)\n"
+#~ "  -T DIRECT        用目錄 DIRECT 來存放暫存檔，而非 $TMPDIR 或 %s\n"
+#~ "  -u               跟選項 -c 一起用，嚴格的檢查排序順序\n"
+#~ "                   跟選項 -m 一起用，連續的資料內容一樣時，只輸出第一筆\n"
+#~ "  -z               不用換行字元，以位元組 0 當作行的結尾，在 find -print0 "
+#~ "使用\n"
+#~ "      --help       顯示這段說明訊息\n"
+#~ "      --version    顯示版本資訊\n"
+#~ "\n"
+#~ "POS 的格式為 F[.C][OPTS]，其中 F 是欄位號碼、C 是在欄位中的字元位置，兩"
+#~ "者\n"
+#~ "都由零起算。OPTS 是由 [Mbdfinr] 這些字元所組成，用來讓全域的 -Mbdfinr 選"
+#~ "項\n"
+#~ "在比較該欄位時失效。\n"
+#~ "假如沒有指定排序鍵 (key) 時，sort 會用整行的內容來比較、排序。\n"
+#~ "假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+
+#~ msgid "flushing file"
+#~ msgstr "正在將檔案排齊"
+
+#~ msgid ""
+#~ "when using the old-style +POS and -POS key specifiers,\n"
+#~ "the +POS specifier must come first"
+#~ msgstr ""
+#~ "當使用舊式的 +POS 與 -POS 鍵 (key) 說明符時，\n"
+#~ " +POS 說明符必須放在前面 "
+
+#~ msgid ""
+#~ "the starting field number argument to the `-k' option must be positive"
+#~ msgstr "在選項 `-k' 裡指定的開始欄位號碼必須是正的"
+
+#~ msgid "starting field spec has `.' but lacks following character offset"
+#~ msgstr "在開始欄位說明符裡面含有 `.'，卻沒有跟隨的字元偏移量"
+
+#~ msgid ""
+#~ "starting field character offset argument to the `-k' option\n"
+#~ "must be positive"
+#~ msgstr ""
+#~ "在選項 `-k' 裡指定的開始欄位字元偏移量\n"
+#~ "必須是正的"
+
+#~ msgid "field specification has `,' but lacks following field spec"
+#~ msgstr "所給的欄位規格裡面含有 `,'，卻沒有跟隨的欄位說明符"
+
+#~ msgid "ending field number argument to the `-k' option must be positive"
+#~ msgstr "在選項 `-k' 裡指定的結束欄位號碼必須是正的"
+
+#~ msgid "ending field spec has `.' but lacks following character offset"
+#~ msgstr "在結束欄位說明符裡面含有 `.'，卻沒有跟隨的字元偏移量"
+
+#~ msgid "option `-o' requires an argument"
+#~ msgstr "選項 `-o' 需要有一個引數"
+
+#~ msgid "option `-t' requires an argument"
+#~ msgstr "選項 `-t' 需要有一個引數"
+
+#~ msgid "%s: write error"
+#~ msgstr "%s: 寫入時發生錯誤"
+
+#~ msgid "%s: cannot follow end of non-regular file"
+#~ msgstr "%s: 不能跟隨非常規檔案結束"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "Report bugs to <textutils-bugs@gnu.org>."
+#~ msgstr ""
+#~ "\n"
+#~ "發現錯誤, 請報告到 textutils-bugs@gnu.ai.mit.edu"
+
+#~ msgid "`-w PAGE_WIDTH' invalid column number: `%s'"
+#~ msgstr "`-w PAGE_WIDTH' 無效的欄位號碼：`%s'"
+
+#~ msgid ""
+#~ "  -m                print all files in parallel, one in each column,\n"
+#~ "                    truncate lines, but join lines of full length with -"
+#~ "j\n"
+#~ "  -n[SEP[DIGITS]]   number lines, use DIGITS (5) digits, then SEP (TAB)\n"
+#~ "                    default counting starts with 1st line of input file\n"
+#~ "  -N NUMBER         start counting with NUMBER at 1st line of first\n"
+#~ "                    page printed (see +FIRST_PAGE)\n"
+#~ "  -o MARGIN         offset each line with MARGIN spaces (do not affect -"
+#~ "w)\n"
+#~ "  -r                inhibit warning when a file cannot be opened\n"
+#~ "  -s[STRING]        separate columns by an optional STRING\n"
+#~ "                    don't use -s \"STRING\" \n"
+#~ "                    without -s: default sep. 'space' used, same as -s\" "
+#~ "\"\n"
+#~ "                    -s only: no separator used, same as -s\"\" \n"
+#~ "  -t                inhibit page headers and trailers\n"
+#~ "  -T                inhibit page headers and trailers, eliminate any "
+#~ "page\n"
+#~ "                    layout by form feeds set in input files\n"
+#~ "  -v                use octal backslash notation\n"
+#~ "  -w PAGE_WIDTH     set page width to PAGE_WIDTH (72) columns, truncate\n"
+#~ "                    lines (see also -j option)\n"
+#~ "  --help            display this help and exit\n"
+#~ "  --version         output version information and exit\n"
+#~ "\n"
+#~ "-T implied by -l nn when nn <= 10 or <= 3 with -f. With no FILE, or when\n"
+#~ "FILE is -, read standard input.\n"
+#~ msgstr ""
+#~ "  -m                把所有檔案水平的合併在一起，每個檔案佔一個欄位，把太長"
+#~ "的\n"
+#~ "                    行截斷。 (可以用選項 -j 讓每行都完整的合併)\n"
+#~ "  -n[SEP[DIGITS]]   標上行號，行號用 DIGITS 位整數標出，用 SEP 當行號與內"
+#~ "文的\n"
+#~ "                    間隔 (預設為 5、TAB)。會從第一行、行號一開始計算行"
+#~ "號。\n"
+#~ "  -N NUMBER         從印出的第一頁第一行當作行號 NUMBER，開始計算行號。\n"
+#~ "  -o MARGIN         每一行偏移 MARGIN 個空格當作邊界 (不影響選項 -w)\n"
+#~ "  -r                不要在檔案無法被開啟時，印出警告訊息\n"
+#~ "  -s[STRING]        在欄位中間插入一個字串 STRING\n"
+#~ "                    選項 -s 和字串中間是沒有空白的，不要打成 -s \"STRING"
+#~ "\"\n"
+#~ "                    沒有指定 -s 時，是用空白字元分隔，跟 -s\" \" 相同\n"
+#~ "                    假如沒給 STRING，只給了 -s，則欄位之間沒有間隔 (-s"
+#~ "\"\")\n"
+#~ "  -t                不印出頁首及頁尾\n"
+#~ "  -T                不印出頁首及頁尾；並且忽略輸入檔裡面原先用分頁\n"
+#~ "                    符號 (form feeds) 作的分頁設定\n"
+#~ "  -v                以八進位反斜線表示法來輸出\n"
+#~ "  -w PAGE_WIDTH     把每頁的寬度定為 PAGE_WIDTH (預設是 72 )。\n"
+#~ "                    會把太長的行右邊太長的部份截掉 (請同時參考選項 -j)\n"
+#~ "  --help            顯示這段說明訊息\n"
+#~ "  --version         顯示版本資訊\n"
+#~ "\n"
+#~ "用選項 -T 的同時也包含了選項 -l nn 的效力；這裡 nn <= 10 或者\n"
+#~ "當用到 -f 時， nn <= 3。\n"
+#~ "假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+
+#~ msgid ""
+#~ "Print last 10 lines of each FILE to standard output.\n"
+#~ "With more than one FILE, precede each with a header giving the file "
+#~ "name.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "  -c, --bytes=N            output the last N bytes\n"
+#~ "  -f, --follow             output appended data as the file grows\n"
+#~ "  -n, --lines=N            output the last N lines, instead of last 10\n"
+#~ "  -q, --quiet, --silent    never output headers giving file names\n"
+#~ "  -v, --verbose            always output headers giving file names\n"
+#~ "      --help               display this help and exit\n"
+#~ "      --version            output version information and exit\n"
+#~ "\n"
+#~ "If the first character of N (the number of bytes or lines) is a `+',\n"
+#~ "print beginning with the Nth item from the start of each file, "
+#~ "otherwise,\n"
+#~ "print the last N items in the file.  N may have a multiplier suffix:\n"
+#~ "b for 512, k for 1024, m for 1048576 (1 Meg).  A first OPTION of -VALUE\n"
+#~ "or +VALUE is treated like -n VALUE or -n +VALUE unless VALUE has one of\n"
+#~ "the [bkm] suffix multipliers, in which case it is treated like -c VALUE\n"
+#~ "or -c +VALUE.\n"
+#~ msgstr ""
+#~ "把每個檔案 FILE P的最後 10 行輸出到標準輸出。\n"
+#~ "指定了超過一個 FILE 時，會一一處理，然後在輸出結果之前加上對應的檔名。\n"
+#~ "假如沒有給引數 FILE、或給定的 FILE 為 `-' 的話，則從標準輸入讀取資料。\n"
+#~ "\n"
+#~ "  -c, --bytes=N            輸出倒數 N 個位元組\n"
+#~ "  -f, --follow             當檔案變大時，跟著輸出加在檔案尾端的資料\n"
+#~ "  -n, --lines=N            輸出倒數 N 行 (預設是 10 行)\n"
+#~ "  -q, --quiet, --silent    不要在輸出結果之前加上對應的檔名\n"
+#~ "  -v, --verbose            在輸出結果之前加上對應的檔名\n"
+#~ "      --help               顯示這段說明訊息\n"
+#~ "      --version            顯示版本資訊\n"
+#~ "\n"
+#~ "假如數目字 N 之前有一個 `+' 的話，會從檔案開頭起算的第 N 行 (或位元組)\n"
+#~ "開始印出，否則就把從檔案最後算起的 N 行 (或位元組) 印出。\n"
+#~ "指定的 N 可以有一個乘數字尾： b 表示 512，k 表示 1K，m 表示 1 Meg。\n"
+#~ "\n"
+#~ "此外，可以用一個數目字 -VALUE 當第一個選項，假如 VALUE 中含有\n"
+#~ "乘數字尾 [bkm] 的話，程式會把它解釋為 -c VALUE，否則就當成 -n VALUE 處"
+#~ "理。\n"

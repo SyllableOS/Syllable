@@ -1,0 +1,38 @@
+yesno.o : \
+ yesno.c ../config.h /include/ctype.h /include/features.h \
+ /include/sys/cdefs.h /include/gnu/stubs.h /include/bits/types.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h \
+ /include/bits/pthreadtypes.h /include/endian.h /include/bits/endian.h \
+ /include/xlocale.h /include/stdlib.h /include/sys/types.h \
+ /include/time.h /include/sys/select.h /include/bits/select.h \
+ /include/bits/sigset.h /include/sys/sysmacros.h /include/alloca.h \
+ /include/stdio.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stdarg.h \
+ /include/libio.h /include/_G_config.h /include/bits/stdio_lim.h \
+ /include/bits/stdio.h
+yesno.c :
+../config.h :
+/include/ctype.h :
+/include/features.h :
+/include/sys/cdefs.h :
+/include/gnu/stubs.h :
+/include/bits/types.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h :
+/include/bits/pthreadtypes.h :
+/include/endian.h :
+/include/bits/endian.h :
+/include/xlocale.h :
+/include/stdlib.h :
+/include/sys/types.h :
+/include/time.h :
+/include/sys/select.h :
+/include/bits/select.h :
+/include/bits/sigset.h :
+/include/sys/sysmacros.h :
+/include/alloca.h :
+/include/stdio.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stdarg.h :
+/include/libio.h :
+/include/_G_config.h :
+/include/bits/stdio_lim.h :
+/include/bits/stdio.h :

@@ -1,0 +1,34 @@
+lchown.o : \
+ lchown.c ../config.h /include/sys/types.h \
+ /include/features.h /include/sys/cdefs.h /include/gnu/stubs.h \
+ /include/bits/types.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h \
+ /include/bits/pthreadtypes.h /include/time.h /include/endian.h \
+ /include/bits/endian.h /include/sys/select.h /include/bits/select.h \
+ /include/bits/sigset.h /include/sys/sysmacros.h /include/sys/stat.h \
+ /include/bits/stat.h /ainc/posix/stat.h /ainc/posix/types.h \
+ /include/errno.h /include/bits/errno.h /ainc/posix/errno.h lchown.h
+lchown.c :
+../config.h :
+/include/sys/types.h :
+/include/features.h :
+/include/sys/cdefs.h :
+/include/gnu/stubs.h :
+/include/bits/types.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h :
+/include/bits/pthreadtypes.h :
+/include/time.h :
+/include/endian.h :
+/include/bits/endian.h :
+/include/sys/select.h :
+/include/bits/select.h :
+/include/bits/sigset.h :
+/include/sys/sysmacros.h :
+/include/sys/stat.h :
+/include/bits/stat.h :
+/ainc/posix/stat.h :
+/ainc/posix/types.h :
+/include/errno.h :
+/include/bits/errno.h :
+/ainc/posix/errno.h :
+lchown.h :

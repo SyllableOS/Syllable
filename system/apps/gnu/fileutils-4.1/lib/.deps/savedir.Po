@@ -1,0 +1,42 @@
+savedir.o : \
+ savedir.c ../config.h /include/sys/types.h \
+ /include/features.h /include/sys/cdefs.h /include/gnu/stubs.h \
+ /include/bits/types.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h \
+ /include/bits/pthreadtypes.h /include/time.h /include/endian.h \
+ /include/bits/endian.h /include/sys/select.h /include/bits/select.h \
+ /include/bits/sigset.h /include/sys/sysmacros.h /include/errno.h \
+ /include/bits/errno.h /ainc/posix/errno.h /include/dirent.h \
+ /include/bits/dirent.h /ainc/posix/dirent.h /include/stdlib.h \
+ /include/xlocale.h /include/alloca.h /include/string.h \
+ /include/bits/string.h /include/bits/string2.h savedir.h xalloc.h
+savedir.c :
+../config.h :
+/include/sys/types.h :
+/include/features.h :
+/include/sys/cdefs.h :
+/include/gnu/stubs.h :
+/include/bits/types.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h :
+/include/bits/pthreadtypes.h :
+/include/time.h :
+/include/endian.h :
+/include/bits/endian.h :
+/include/sys/select.h :
+/include/bits/select.h :
+/include/bits/sigset.h :
+/include/sys/sysmacros.h :
+/include/errno.h :
+/include/bits/errno.h :
+/ainc/posix/errno.h :
+/include/dirent.h :
+/include/bits/dirent.h :
+/ainc/posix/dirent.h :
+/include/stdlib.h :
+/include/xlocale.h :
+/include/alloca.h :
+/include/string.h :
+/include/bits/string.h :
+/include/bits/string2.h :
+savedir.h :
+xalloc.h :

@@ -1,0 +1,5 @@
+hash-pjw.o : \
+ hash-pjw.c ../config.h hash-pjw.h
+hash-pjw.c :
+../config.h :
+hash-pjw.h :

@@ -1,0 +1,68 @@
+Trolltech AS (http://www.trolltech.com) is proud to announce the release
+of Qt version 2.3.0.
+
+Qt is a complete and well-designed multi-platform object-oriented
+framework for developing graphical user interface (GUI) applications using
+C++.  Qt has seamless integration with OpenGL/Mesa 3D libraries.
+
+Qt is free for development of free software on the X Window System. It
+includes the complete source code for the X version and makefiles for
+Linux, Solaris, SunOS, FreeBSD, OSF/1, Irix, BSD/OS, NetBSD, SCO, HP-UX
+and AIX.  This edition of Qt may be modified and distributed under the
+terms found in the LICENSE.QPL file.
+
+Qt also supports Windows 95 and NT, with native look and feel. Code
+developed for the X version of Qt can be recompiled and run using the
+Windows 95/NT version of Qt, and vice versa.
+
+Qt is currently used in hundreds of software development projects world
+wide, including the K Desktop Environment (see http://www.kde.org).
+For more examples, see http://www.trolltech.com/qtprogs.html.
+
+Qt can be downloaded from http://www.trolltech.com/dl/ or via anonymous FTP
+from ftp.trolltech.com.  Unstable snapshot releases are also available on
+a daily basis.
+
+Qt has excellent documentation: around 750 pages of postscript and fully
+cross-referenced online html documentation. It is available on the web:
+http://doc.trolltech.com/
+
+Qt is easy to learn, with consistent naming across all the classes and a
+14-chapter on-line tutorial with links into the rest of the documentation.
+A number of 3rd-party books are also available.
+
+Qt dramatically cuts down on development time and complexity in writing
+user interface software for the X Window System. It allows the programmer
+to focus directly on the programming task, and not mess around with
+low-level Motif/X11 code.
+
+Qt is fully object-oriented. All widgets and dialogs are C++ objects,
+and, using inheritance, creation of new widgets is easy and natural.
+
+Qt's revolutionary signal/slot mechanism provides true component
+programming. Reusable components can work together without any knowledge
+of each other, and in a type-safe way.
+
+Qt has a very fast paint engine, in some cases ten times faster than other
+toolkits. The X version is based directly on Xlib and uses neither
+Motif nor X Intrinsics.
+
+Qt is available under two different licenses:
+  - The Qt Professional Edition License, for developing fully
+       commercial software: see http://www.trolltech.com/pricing.html
+  - The Q Public License (QPL), for developing free software
+       (X Window System only).
+
+Join the qt-interest mailing list by sending a message containing the
+single word "subscribe" to qt-interest-request@trolltech.com.
+
+You can contact Trolltech at:
+
+	Trolltech AS
+	Waldemar Thranes gate 98 B
+	N-0175 Oslo
+	Norway
+
+	fax:   +47  22 80 63 80
+	email: info@trolltech.com, sales@trolltech.com
+        www:   http://www.trolltech.com

@@ -1,0 +1,189 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:663: checking whether make sets ${MAKE}
+configure:693: checking for gcc
+configure:806: checking whether the C compiler (gcc  ) works
+configure:822: gcc -o conftest  -D_BSD_SOURCE  conftest.c  1>&5
+configure:848: checking whether the C compiler (gcc  ) is a cross-compiler
+configure:853: checking whether we are using GNU C
+configure:881: checking whether gcc accepts -g
+configure:913: checking how to run the C preprocessor
+configure:993: checking for working const
+configure:1098: checking for a BSD compatible install
+configure:1155: checking for bison
+configure:1192: checking host system type
+configure:1213: checking build system type
+configure:1239: checking for i386-unknown-atheos-ar
+configure:1271: checking for i386-unknown-atheos-ranlib
+configure:1338: checking for rm
+configure:1383: checking for malloc.h
+configure:1383: checking for errno.h
+configure:1383: checking for string.h
+configure:1383: checking for stdarg.h
+configure:1383: checking for termio.h
+configure:1383: checking for termios.h
+configure:1383: checking for stdlib.h
+configure:1383: checking for sys/tty.h
+configure:1383: checking for sys/utsname.h
+configure:1383: checking for glob.h
+configure:1383: checking for sys/ptyvar.h
+configure:1383: checking for sys/msgbuf.h
+configure:1383: checking for krb.h
+configure:1383: checking for des.h
+configure:1383: checking for netinet/in_systm.h
+configure:1383: checking for sys/filio.h
+configure:1383: checking for netinet/ip.h
+configure:1383: checking for netinet/ip_icmp.h
+configure:1383: checking for netinet/ip_var.h
+configure:1383: checking for vis.h
+configure:1383: checking for sys/ioctl_compat.h
+configure:1383: checking for sys/cdefs.h
+configure:1383: checking for utmp.h
+configure:1383: checking for utmpx.h
+configure:1383: checking for sys/stream.h
+configure:1383: checking for arpa/nameser.h
+configure:1383: checking for sys/sockio.h
+configure:1383: checking for sys/sysmacros.h
+configure:1383: checking for sys/param.h
+configure:1383: checking for unistd.h
+configure:1383: checking for sys/file.h
+configure:1383: checking for fcntl.h
+configure:1383: checking for sys/proc.h
+configure:1383: checking for sys/select.h
+configure:1383: checking for sys/time.h
+configure:1420: checking whether time.h and sys/time.h may both be included
+configure:1456: checking for inet_ntoa in -lnsl
+configure:1503: checking for getpeername in -lsocket
+configure:1550: checking for gethostname in -lresolv
+configure:1597: checking for revoke in -lbsd
+configure:1650: checking for cgetent
+configure:1650: checking for uname
+configure:1650: checking for setutent_r
+configure:1650: checking for fpathconf
+configure:1650: checking for tcgetattr
+configure:1650: checking for sigvec
+configure:1650: checking for sigaction
+configure:1650: checking for flock
+configure:1650: checking for ftruncate
+configure:1650: checking for wait3
+configure:1650: checking for memcpy
+configure:1650: checking for bcopy
+configure:1650: checking for bzero
+configure:1650: checking for setsid
+configure:1650: checking for cfsetspeed
+configure:1650: checking for strchr
+configure:1650: checking for waitpid
+configure:1650: checking for seteuid
+configure:1650: checking for setegid
+configure:1650: checking for setreuid
+configure:1650: checking for setregid
+configure:1650: checking for setresuid
+configure:1650: checking for setresgid
+configure:1650: checking for killpg
+configure:1650: checking for setlinebuf
+configure:1650: checking for utimes
+configure:1650: checking for utime
+configure:1706: checking for daemon
+configure:1706: checking for strdup
+configure:1706: checking for setenv
+configure:1706: checking for memset
+configure:1706: checking for memmove
+configure:1706: checking for iruserok
+configure:1706: checking for herror
+configure:1706: checking for xstrdup
+configure:1706: checking for getusershell
+configure:1763: checking for setpgid
+configure:1819: checking whether fclose is declared
+configure:1856: checking whether pclose is declared
+configure:1893: checking whether getpass is declared
+configure:1930: checking whether getusershell is declared
+configure:1967: checking whether strerror is declared
+configure:2004: checking whether strchr is declared
+configure:2042: checking if getcwd accepts a 0 size argument
+configure:2081: checking whether htons is declared
+configure:2172: checking for EWOULDBLOCK
+configure:2208: checking whether errno is declared
+configure:2248: checking for __P
+configure:2289: checking for revoke
+configure:2347: checking for working alloca.h
+configure:2380: checking for alloca
+configure:2579: checking whether setvbuf arguments are reversed
+configure:2625: checking for ANSI C header files
+configure:2729: checking for pid_t
+configure:2763: checking for vfork.h
+configure:2798: checking for working vfork
+configure:2978: checking for syslog internal macros
+configure:3011: checking whether CODE is defined
+configure:3045: checking whether prioritynames is declared
+configure:3095: checking for logout in -lutil
+configure:3142: checking for login
+configure:3142: checking for logout
+configure:3142: checking for logwtmp
+configure:3142: checking for openpty
+configure:3142: checking for forkpty
+configure:3142: checking for iruserok
+configure:3142: checking for login_tty
+configure:3205: checking whether gcc weak references work
+configure:3241: checking whether pragma weak references work
+configure:3319: checking for crypt in -lcrypt
+configure:3365: checking for crypt
+configure:3421: checking whether crypt is declared
+configure:3462: checking for SEEK_ macros
+configure:3551: checking for fd_set macros
+configure:3626: checking for st_blksize in struct stat
+configure:3665: checking whether struct stat has st_mtimespec field
+configure:3698: checking whether struct stat has st_mtime_usec field
+configure:3748: checking for initscr in -lncurses
+configure:3808: checking for ncurses include dir
+configure:4075: checking whether struct osockaddr is defined
+configure:4113: checking whether struct sockaddr_in has sin_len field
+configure:4158: checking for glob in -lglob
+configure:4200: checking for glob
+configure:4244: checking for system glob is ok
+configure:4397: checking for getopt_long
+configure:4449: checking for verrx
+configure:4502: checking whether struct lastlog is defined
+configure:4539: checking whether struct utmp has ut_type field
+configure:4576: checking whether struct utmp has ut_host field
+configure:4613: checking whether struct utmp has ut_tv field
+configure:4652: checking whether struct utmpx has ut_tv field
+configure:4691: checking for strerror
+configure:4839: checking for h_errno
+configure:4871: checking whether h_errno is declared
+configure:4910: checking for hstrerror
+configure:4961: checking whether hstrerror is declared
+configure:5099: checking return type of signal handlers
+configure:5142: checking whether sig_t is defined
+configure:5181: checking whether sigset_t is defined
+configure:5220: checking whether sig_atomic_t is defined
+configure:5259: checking for __progname
+configure:5313: checking for snprintf
+configure:5367: checking for vsnprintf
+configure:5439: checking for paths.h
+configure:5487: checking for value of PATH_BSHELL
+configure:5487: checking for value of PATH_CONSOLE
+configure:5487: checking for value of PATH_CP
+configure:5487: checking for value of PATH_DEFPATH
+configure:5487: checking for value of PATH_DEV
+configure:5487: checking for value of PATH_TTY_PFX
+configure:5487: checking for value of PATH_DEVNULL
+configure:5487: checking for value of PATH_FTPLOGINMESG
+configure:5487: checking for value of PATH_FTPUSERS
+configure:5487: checking for value of PATH_FTPWELCOME
+configure:5487: checking for value of PATH_INETDCONF
+configure:5487: checking for value of PATH_UTMP
+configure:5487: checking for value of PATH_WTMP
+configure:5487: checking for value of PATH_LASTLOG
+configure:5487: checking for value of PATH_LOG
+configure:5487: checking for value of PATH_KLOG
+configure:5487: checking for value of PATH_LOGCONF
+configure:5487: checking for value of PATH_LOGIN
+configure:5487: checking for value of PATH_LOGPID
+configure:5487: checking for value of PATH_NOLOGIN
+configure:5487: checking for value of PATH_RLOGIN
+configure:5487: checking for value of PATH_RSH
+configure:5487: checking for value of PATH_TMP
+configure:5487: checking for value of PATH_TTY
+configure:5487: checking for value of PATH_UUCICO
+configure:5487: checking for value of PATH_HEQUIV

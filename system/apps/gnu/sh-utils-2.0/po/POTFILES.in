@@ -1,0 +1,49 @@
+# List of files which contain translatable strings.
+# Copyright (C) 1996, 1997, 1999 Free Software Foundation, Inc.
+
+# These are nominally temporary...
+# Get the list like this: grep -E -l '\b_\(' lib/*.c
+lib/argmatch.c
+lib/closeout.c
+lib/error.c
+lib/getopt.c
+lib/human.c
+lib/long-options.c
+lib/quotearg.c
+lib/version-etc.c
+lib/xmalloc.c
+
+# Package source files
+src/basename.c
+src/chroot.c
+src/date.c
+src/dirname.c
+src/echo.c
+src/env.c
+src/expr.c
+src/factor.c
+src/false.c
+src/hostid.c
+src/hostname.c
+src/id.c
+src/logname.c
+src/nice.c
+src/pathchk.c
+src/pinky.c
+src/printenv.c
+src/printf.c
+src/pwd.c
+src/seq.c
+src/sleep.c
+src/stty.c
+src/su.c
+src/tee.c
+src/test.c
+src/true.c
+src/tty.c
+src/uname.c
+src/uptime.c
+src/users.c
+src/who.c
+src/whoami.c
+src/yes.c

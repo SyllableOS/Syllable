@@ -1,0 +1,21 @@
+	../lib/argmatch.c \
+	../lib/error.c \
+	../lib/getopt.c \
+	../lib/xmalloc.c \
+	../src/arith.c \
+	../src/buffer.c \
+	../src/common.h \
+	../src/compare.c \
+	../src/create.c \
+	../src/delete.c \
+	../src/extract.c \
+	../src/incremen.c \
+	../src/list.c \
+	../src/mangle.c \
+	../src/misc.c \
+	../src/names.c \
+	../src/rmt.c \
+	../src/rtapelib.c \
+	../src/tar.c \
+	../src/update.c \
+	../tests/genfile.c

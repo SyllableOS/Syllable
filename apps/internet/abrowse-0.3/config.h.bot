@@ -1,0 +1,101 @@
+/* provide a definition for a 32 bit entity, usable as a typedef, possibly
+   extended by "unsigned" */
+#undef INT32_BASETYPE
+#ifdef SIZEOF_INT
+#if SIZEOF_INT == 4
+#define INT32_BASETYPE int
+#endif
+#endif
+#if !defined(INT32_BASETYPE) && defined(SIZEOF_LONG)
+#if SIZEOF_LONG == 4
+#define INT32_BASETYPE long
+#endif
+#endif
+#ifndef INT32_BASETYPE
+#define INT32_BASETYPE int
+#endif
+
+/* this is needed for Solaris and others */
+#ifndef HAVE_GETDOMAINNAME
+#define HAVE_GETDOMAINNAME
+#ifdef __cplusplus
+extern "C"
+#endif
+int getdomainname (char *Name, int Namelen);
+#endif  
+
+#ifndef HAVE_GETHOSTNAME
+#define HAVE_GETHOSTNAME
+#ifdef __cplusplus  
+extern "C" 
+#endif
+int gethostname (char *Name, int Namelen);
+#endif  
+
+/*
+ * jpeg.h needs HAVE_BOOLEAN, when the system uses boolean in system
+ * headers and I'm too lazy to write a configure test as long as only
+ * unixware is related
+ */
+#ifdef _UNIXWARE
+#define HAVE_BOOLEAN
+#endif
+
+#ifndef HAVE_S_ISSOCK
+#define HAVE_S_ISSOCK
+#define S_ISSOCK(mode) (1==0)
+#endif
+
+/* this is for Tru64 Unix (alias OSF, alias Digital Unix) */
+
+#ifdef __osf__
+#if !defined(__STDC__) || !__STDC__
+#define __STDC__  1
+#endif
+typedef int u_int32_t;
+#include <sys/types.h>       /* for size_t below */
+#include <stdarg.h>          /* va_start and the like */
+#define RTLD_GLOBAL 0        /* dlopen flag not known under Tru64  */
+#ifndef HAVE_USLEEP          /* usleep not defined in Tru64        */
+#ifdef __cplusplus  
+extern "C" void usleep(unsigned int);
+#else
+void usleep(unsigned int);
+#endif
+#endif
+#endif
+
+/*
+ * On HP-UX, the declaration of vsnprintf() is needed every time !
+ */
+ 
+#if !defined(HAVE_VSNPRINTF) || defined(hpux)
+#if __STDC__
+#include <stdarg.h>
+#include <stdlib.h>
+#else
+#include <varargs.h>
+#endif
+#ifdef __cplusplus
+extern "C"
+#endif
+int vsnprintf(char *str, size_t n, char const *fmt, va_list ap);
+int snprintf(char *str, size_t n, char const *fmt, ...);
+#endif
+
+#if !defined(HAVE_SETENV)
+int setenv(const char *name, const char *value, int overwrite);
+#endif
+
+#if !defined(HAVE_UNSETENV)
+int unsetenv(const char *name);
+#endif
+
+/*
+ * AIX defines FD_SET in terms of bzero, but fails to include <strings.h>
+ * that defines bzero. 
+ */
+
+#if defined(_AIX)
+#include <strings.h>
+#endif

@@ -1,0 +1,4 @@
+ls-vdir.o : \
+ ls-vdir.c ls.h
+ls-vdir.c :
+ls.h :

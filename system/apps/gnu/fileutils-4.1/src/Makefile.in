@@ -1,0 +1,710 @@
+# Makefile.in generated automatically by automake 1.4e from Makefile.am.
+
+# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
+# Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+SHELL = @SHELL@
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
+
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
+
+top_builddir = ..
+
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+INSTALL_HEADER = $(INSTALL_DATA)
+
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
+
+host_alias = @host_alias@
+host_triplet = @host@
+
+@SET_MAKE@
+AMDEP = @AMDEP@
+AMTAR = @AMTAR@
+AWK = @AWK@
+CATALOGS = @CATALOGS@
+CATOBJEXT = @CATOBJEXT@
+CC = @CC@
+CPP = @CPP@
+DATADIRNAME = @DATADIRNAME@
+DEPDIR = @DEPDIR@
+DF_PROG = @DF_PROG@
+FESETROUND_LIBM = @FESETROUND_LIBM@
+GENCAT = @GENCAT@
+GETLOADAVG_LIBS = @GETLOADAVG_LIBS@
+GLIBC21 = @GLIBC21@
+GMOFILES = @GMOFILES@
+GMSGFMT = @GMSGFMT@
+GNU_PACKAGE = @GNU_PACKAGE@
+GT_NO = @GT_NO@
+GT_YES = @GT_YES@
+INCLUDE_LOCALE_H = @INCLUDE_LOCALE_H@
+INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+INSTALL_STRIP_PROGRAM_ENV = @INSTALL_STRIP_PROGRAM_ENV@
+INSTOBJEXT = @INSTOBJEXT@
+INTLDEPS = @INTLDEPS@
+INTLLIBS = @INTLLIBS@
+INTLOBJS = @INTLOBJS@
+KMEM_GROUP = @KMEM_GROUP@
+LIBICONV = @LIBICONV@
+LIBOBJS = @LIBOBJS@
+LIB_CLOCK_GETTIME = @LIB_CLOCK_GETTIME@
+LIB_CRYPT = @LIB_CRYPT@
+LIB_NANOSLEEP = @LIB_NANOSLEEP@
+MAKEINFO = @MAKEINFO@
+MAN = @MAN@
+MKINSTALLDIRS = @MKINSTALLDIRS@
+MSGFMT = @MSGFMT@
+NEED_SETGID = @NEED_SETGID@
+OPTIONAL_BIN_PROGS = @OPTIONAL_BIN_PROGS@
+OPTIONAL_BIN_ZCRIPTS = @OPTIONAL_BIN_ZCRIPTS@
+PACKAGE = @PACKAGE@
+PERL = @PERL@
+POFILES = @POFILES@
+POSUB = @POSUB@
+POW_LIBM = @POW_LIBM@
+RANLIB = @RANLIB@
+SEQ_LIBM = @SEQ_LIBM@
+SQRT_LIBM = @SQRT_LIBM@
+STRIP = @STRIP@
+U = @U@
+USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
+USE_NLS = @USE_NLS@
+VERSION = @VERSION@
+YACC = @YACC@
+_am_include = @_am_include@
+install_sh = @install_sh@
+l = @l@
+
+
+AUTOMAKE_OPTIONS = ansi2knr
+
+EXTRA_PROGRAMS = df
+
+bin_PROGRAMS = chgrp chown chmod cp dd dircolors du \
+ginstall ln dir vdir ls mkdir \
+mkfifo mknod mv rm rmdir shred sync touch @DF_PROG@
+
+
+datadir = $(prefix)/@DATADIRNAME@
+localedir = $(datadir)/locale
+
+noinst_HEADERS = \
+  system.h sys2.h copy.h cp-hash.h ls.h dircolors.h remove.h \
+  chown-core.h
+
+EXTRA_DIST = dcgen dircolors.hin
+
+INCLUDES = -I.. -I$(srcdir) -I$(top_srcdir)/lib -I../intl
+DEFS = -DLOCALEDIR=\"$(localedir)\" -DSHAREDIR=\"$(datadir)\" @DEFS@
+LDADD = @INTLLIBS@ ../lib/libfetish.a
+
+dir_LDADD = $(LDADD) @LIB_CLOCK_GETTIME@
+ls_LDADD = $(LDADD) @LIB_CLOCK_GETTIME@
+shred_LDADD = $(LDADD) @LIB_CLOCK_GETTIME@
+vdir_LDADD = $(LDADD) @LIB_CLOCK_GETTIME@
+
+# Use `ginstall' in the definition of PROGRAMS and in dependencies to avoid
+# confusion with the `install' target.  The install rule transforms `ginstall'
+# to install before applying any user-specified name transformations.
+
+transform = s/ginstall/install/; @program_transform_name@
+ginstall_SOURCES = install.c copy.c cp-hash.c
+
+cp_SOURCES = cp.c copy.c cp-hash.c
+dir_SOURCES = ls.c ls-dir.c
+vdir_SOURCES = ls.c ls-vdir.c
+ls_SOURCES = ls.c ls-ls.c
+chown_SOURCES = chown.c chown-core.c
+chgrp_SOURCES = chgrp.c chown-core.c
+
+mv_SOURCES = mv.c copy.c cp-hash.c remove.c
+rm_SOURCES = rm.c remove.c
+
+BUILT_SOURCES = dircolors.h
+PERL = @PERL@
+editpl = sed -e 's,@''PERL''@,$(PERL),g'
+
+MAINTAINERCLEANFILES = dircolors.h
+EXEEXT =
+OBJEXT = o
+subdir = src
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = $(top_builddir)/config.h
+CONFIG_CLEAN_FILES =
+EXTRA_PROGRAMS = df$(EXEEXT)
+bin_PROGRAMS = chgrp$(EXEEXT) chown$(EXEEXT) chmod$(EXEEXT) cp$(EXEEXT) \
+dd$(EXEEXT) dircolors$(EXEEXT) du$(EXEEXT) ginstall$(EXEEXT) \
+ln$(EXEEXT) dir$(EXEEXT) vdir$(EXEEXT) ls$(EXEEXT) mkdir$(EXEEXT) \
+mkfifo$(EXEEXT) mknod$(EXEEXT) mv$(EXEEXT) rm$(EXEEXT) rmdir$(EXEEXT) \
+shred$(EXEEXT) sync$(EXEEXT) touch$(EXEEXT) @DF_PROG@
+PROGRAMS = $(bin_PROGRAMS)
+
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+ANSI2KNR = @ANSI2KNR@
+am_chgrp_OBJECTS = chgrp$U.$(OBJEXT) chown-core$U.$(OBJEXT)
+chgrp_OBJECTS = $(am_chgrp_OBJECTS)
+chgrp_LDADD = $(LDADD)
+chgrp_DEPENDENCIES = ../lib/libfetish.a
+chgrp_LDFLAGS = 
+chmod_SOURCES = chmod.c
+chmod_OBJECTS = chmod$U.$(OBJEXT)
+chmod_LDADD = $(LDADD)
+chmod_DEPENDENCIES = ../lib/libfetish.a
+chmod_LDFLAGS = 
+am_chown_OBJECTS = chown$U.$(OBJEXT) chown-core$U.$(OBJEXT)
+chown_OBJECTS = $(am_chown_OBJECTS)
+chown_LDADD = $(LDADD)
+chown_DEPENDENCIES = ../lib/libfetish.a
+chown_LDFLAGS = 
+am_cp_OBJECTS = cp$U.$(OBJEXT) copy$U.$(OBJEXT) cp-hash$U.$(OBJEXT)
+cp_OBJECTS = $(am_cp_OBJECTS)
+cp_LDADD = $(LDADD)
+cp_DEPENDENCIES = ../lib/libfetish.a
+cp_LDFLAGS = 
+dd_SOURCES = dd.c
+dd_OBJECTS = dd$U.$(OBJEXT)
+dd_LDADD = $(LDADD)
+dd_DEPENDENCIES = ../lib/libfetish.a
+dd_LDFLAGS = 
+df_SOURCES = df.c
+df_OBJECTS = df$U.$(OBJEXT)
+df_LDADD = $(LDADD)
+df_DEPENDENCIES = ../lib/libfetish.a
+df_LDFLAGS = 
+am_dir_OBJECTS = ls$U.$(OBJEXT) ls-dir$U.$(OBJEXT)
+dir_OBJECTS = $(am_dir_OBJECTS)
+dir_DEPENDENCIES = ../lib/libfetish.a
+dir_LDFLAGS = 
+dircolors_SOURCES = dircolors.c
+dircolors_OBJECTS = dircolors$U.$(OBJEXT)
+dircolors_LDADD = $(LDADD)
+dircolors_DEPENDENCIES = ../lib/libfetish.a
+dircolors_LDFLAGS = 
+du_SOURCES = du.c
+du_OBJECTS = du$U.$(OBJEXT)
+du_LDADD = $(LDADD)
+du_DEPENDENCIES = ../lib/libfetish.a
+du_LDFLAGS = 
+am_ginstall_OBJECTS = install$U.$(OBJEXT) copy$U.$(OBJEXT) \
+cp-hash$U.$(OBJEXT)
+ginstall_OBJECTS = $(am_ginstall_OBJECTS)
+ginstall_LDADD = $(LDADD)
+ginstall_DEPENDENCIES = ../lib/libfetish.a
+ginstall_LDFLAGS = 
+ln_SOURCES = ln.c
+ln_OBJECTS = ln$U.$(OBJEXT)
+ln_LDADD = $(LDADD)
+ln_DEPENDENCIES = ../lib/libfetish.a
+ln_LDFLAGS = 
+am_ls_OBJECTS = ls$U.$(OBJEXT) ls-ls$U.$(OBJEXT)
+ls_OBJECTS = $(am_ls_OBJECTS)
+ls_DEPENDENCIES = ../lib/libfetish.a
+ls_LDFLAGS = 
+mkdir_SOURCES = mkdir.c
+mkdir_OBJECTS = mkdir$U.$(OBJEXT)
+mkdir_LDADD = $(LDADD)
+mkdir_DEPENDENCIES = ../lib/libfetish.a
+mkdir_LDFLAGS = 
+mkfifo_SOURCES = mkfifo.c
+mkfifo_OBJECTS = mkfifo$U.$(OBJEXT)
+mkfifo_LDADD = $(LDADD)
+mkfifo_DEPENDENCIES = ../lib/libfetish.a
+mkfifo_LDFLAGS = 
+mknod_SOURCES = mknod.c
+mknod_OBJECTS = mknod$U.$(OBJEXT)
+mknod_LDADD = $(LDADD)
+mknod_DEPENDENCIES = ../lib/libfetish.a
+mknod_LDFLAGS = 
+am_mv_OBJECTS = mv$U.$(OBJEXT) copy$U.$(OBJEXT) cp-hash$U.$(OBJEXT) \
+remove$U.$(OBJEXT)
+mv_OBJECTS = $(am_mv_OBJECTS)
+mv_LDADD = $(LDADD)
+mv_DEPENDENCIES = ../lib/libfetish.a
+mv_LDFLAGS = 
+am_rm_OBJECTS = rm$U.$(OBJEXT) remove$U.$(OBJEXT)
+rm_OBJECTS = $(am_rm_OBJECTS)
+rm_LDADD = $(LDADD)
+rm_DEPENDENCIES = ../lib/libfetish.a
+rm_LDFLAGS = 
+rmdir_SOURCES = rmdir.c
+rmdir_OBJECTS = rmdir$U.$(OBJEXT)
+rmdir_LDADD = $(LDADD)
+rmdir_DEPENDENCIES = ../lib/libfetish.a
+rmdir_LDFLAGS = 
+shred_SOURCES = shred.c
+shred_OBJECTS = shred$U.$(OBJEXT)
+shred_DEPENDENCIES = ../lib/libfetish.a
+shred_LDFLAGS = 
+sync_SOURCES = sync.c
+sync_OBJECTS = sync$U.$(OBJEXT)
+sync_LDADD = $(LDADD)
+sync_DEPENDENCIES = ../lib/libfetish.a
+sync_LDFLAGS = 
+touch_SOURCES = touch.c
+touch_OBJECTS = touch$U.$(OBJEXT)
+touch_LDADD = $(LDADD)
+touch_DEPENDENCIES = ../lib/libfetish.a
+touch_LDFLAGS = 
+am_vdir_OBJECTS = ls$U.$(OBJEXT) ls-vdir$U.$(OBJEXT)
+vdir_OBJECTS = $(am_vdir_OBJECTS)
+vdir_DEPENDENCIES = ../lib/libfetish.a
+vdir_LDFLAGS = 
+COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CFLAGS = @CFLAGS@
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+DIST_SOURCES = $(chgrp_SOURCES) chmod.c $(chown_SOURCES) $(cp_SOURCES) \
+dd.c df.c $(dir_SOURCES) dircolors.c du.c $(ginstall_SOURCES) ln.c \
+$(ls_SOURCES) mkdir.c mkfifo.c mknod.c $(mv_SOURCES) $(rm_SOURCES) \
+rmdir.c shred.c sync.c touch.c $(vdir_SOURCES)
+HEADERS = $(noinst_HEADERS)
+
+depcomp = $(SHELL) $(top_srcdir)/depcomp
+@AMDEP@DEP_FILES = $(DEPDIR)/chgrp$U.Po $(DEPDIR)/chmod$U.Po \
+@AMDEP@ $(DEPDIR)/chown$U.Po $(DEPDIR)/chown-core$U.Po \
+@AMDEP@ $(DEPDIR)/copy$U.Po $(DEPDIR)/cp$U.Po $(DEPDIR)/cp-hash$U.Po \
+@AMDEP@ $(DEPDIR)/dd$U.Po $(DEPDIR)/df$U.Po $(DEPDIR)/dircolors$U.Po \
+@AMDEP@ $(DEPDIR)/du$U.Po $(DEPDIR)/install$U.Po $(DEPDIR)/ln$U.Po \
+@AMDEP@ $(DEPDIR)/ls$U.Po $(DEPDIR)/ls-dir$U.Po $(DEPDIR)/ls-ls$U.Po \
+@AMDEP@ $(DEPDIR)/ls-vdir$U.Po $(DEPDIR)/mkdir$U.Po \
+@AMDEP@ $(DEPDIR)/mkfifo$U.Po $(DEPDIR)/mknod$U.Po $(DEPDIR)/mv$U.Po \
+@AMDEP@ $(DEPDIR)/remove$U.Po $(DEPDIR)/rm$U.Po $(DEPDIR)/rmdir$U.Po \
+@AMDEP@ $(DEPDIR)/shred$U.Po $(DEPDIR)/sync$U.Po $(DEPDIR)/touch$U.Po
+DIST_COMMON = $(noinst_HEADERS) Makefile.am Makefile.in ansi2knr.1 \
+ansi2knr.c
+
+SOURCES = $(chgrp_SOURCES) chmod.c $(chown_SOURCES) $(cp_SOURCES) dd.c df.c $(dir_SOURCES) dircolors.c du.c $(ginstall_SOURCES) ln.c $(ls_SOURCES) mkdir.c mkfifo.c mknod.c $(mv_SOURCES) $(rm_SOURCES) rmdir.c shred.c sync.c touch.c $(vdir_SOURCES)
+OBJECTS = $(am_chgrp_OBJECTS) chmod$U.$(OBJEXT) $(am_chown_OBJECTS) $(am_cp_OBJECTS) dd$U.$(OBJEXT) df$U.$(OBJEXT) $(am_dir_OBJECTS) dircolors$U.$(OBJEXT) du$U.$(OBJEXT) $(am_ginstall_OBJECTS) ln$U.$(OBJEXT) $(am_ls_OBJECTS) mkdir$U.$(OBJEXT) mkfifo$U.$(OBJEXT) mknod$U.$(OBJEXT) $(am_mv_OBJECTS) $(am_rm_OBJECTS) rmdir$U.$(OBJEXT) shred$U.$(OBJEXT) sync$U.$(OBJEXT) touch$U.$(OBJEXT) $(am_vdir_OBJECTS)
+
+all: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) all-am
+
+.SUFFIXES:
+.SUFFIXES: .c .o .obj
+
+$(srcdir)/Makefile.in: Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
+	cd $(top_srcdir) && \
+	  $(AUTOMAKE) --gnits  src/Makefile
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) && \
+	  CONFIG_HEADERS= CONFIG_LINKS= \
+	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
+install-binPROGRAMS: $(bin_PROGRAMS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(bindir)
+	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  if test -f $$p; then \
+	    f=`echo $$p|sed 's/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
+	   echo " $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/$$f"; \
+	   $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/$$f; \
+	  else :; fi; \
+	done
+
+uninstall-binPROGRAMS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  f=`echo $$p|sed 's/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
+	  echo " rm -f $(DESTDIR)$(bindir)/$$f"; \
+	  rm -f $(DESTDIR)$(bindir)/$$f; \
+	done
+
+clean-binPROGRAMS:
+	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS) > /dev/null 2>&1 || /bin/rm -f $(bin_PROGRAMS)
+
+mostlyclean-compile:
+	-rm -f *.$(OBJEXT) core *.core
+
+distclean-compile:
+	-rm -f *.tab.c
+
+clean-krextra:
+	-rm -f ansi2knr
+ansi2knr: ansi2knr.$(OBJEXT)
+	$(LINK) ansi2knr.$(OBJEXT) $(LIBS)
+ansi2knr.$(OBJEXT): $(CONFIG_HEADER)
+
+
+mostlyclean-kr:
+	-rm -f *_.c
+
+chgrp: $(chgrp_OBJECTS) $(chgrp_DEPENDENCIES)
+	@rm -f chgrp
+	$(LINK) $(chgrp_LDFLAGS) $(chgrp_OBJECTS) $(chgrp_LDADD) $(LIBS)
+
+chmod: $(chmod_OBJECTS) $(chmod_DEPENDENCIES)
+	@rm -f chmod
+	$(LINK) $(chmod_LDFLAGS) $(chmod_OBJECTS) $(chmod_LDADD) $(LIBS)
+
+chown: $(chown_OBJECTS) $(chown_DEPENDENCIES)
+	@rm -f chown
+	$(LINK) $(chown_LDFLAGS) $(chown_OBJECTS) $(chown_LDADD) $(LIBS)
+
+cp: $(cp_OBJECTS) $(cp_DEPENDENCIES)
+	@rm -f cp
+	$(LINK) $(cp_LDFLAGS) $(cp_OBJECTS) $(cp_LDADD) $(LIBS)
+
+dd: $(dd_OBJECTS) $(dd_DEPENDENCIES)
+	@rm -f dd
+	$(LINK) $(dd_LDFLAGS) $(dd_OBJECTS) $(dd_LDADD) $(LIBS)
+
+df: $(df_OBJECTS) $(df_DEPENDENCIES)
+	@rm -f df
+	$(LINK) $(df_LDFLAGS) $(df_OBJECTS) $(df_LDADD) $(LIBS)
+
+dir: $(dir_OBJECTS) $(dir_DEPENDENCIES)
+	@rm -f dir
+	$(LINK) $(dir_LDFLAGS) $(dir_OBJECTS) $(dir_LDADD) $(LIBS)
+
+dircolors: $(dircolors_OBJECTS) $(dircolors_DEPENDENCIES)
+	@rm -f dircolors
+	$(LINK) $(dircolors_LDFLAGS) $(dircolors_OBJECTS) $(dircolors_LDADD) $(LIBS)
+
+du: $(du_OBJECTS) $(du_DEPENDENCIES)
+	@rm -f du
+	$(LINK) $(du_LDFLAGS) $(du_OBJECTS) $(du_LDADD) $(LIBS)
+
+ginstall: $(ginstall_OBJECTS) $(ginstall_DEPENDENCIES)
+	@rm -f ginstall
+	$(LINK) $(ginstall_LDFLAGS) $(ginstall_OBJECTS) $(ginstall_LDADD) $(LIBS)
+
+ln: $(ln_OBJECTS) $(ln_DEPENDENCIES)
+	@rm -f ln
+	$(LINK) $(ln_LDFLAGS) $(ln_OBJECTS) $(ln_LDADD) $(LIBS)
+
+ls: $(ls_OBJECTS) $(ls_DEPENDENCIES)
+	@rm -f ls
+	$(LINK) $(ls_LDFLAGS) $(ls_OBJECTS) $(ls_LDADD) $(LIBS)
+
+mkdir: $(mkdir_OBJECTS) $(mkdir_DEPENDENCIES)
+	@rm -f mkdir
+	$(LINK) $(mkdir_LDFLAGS) $(mkdir_OBJECTS) $(mkdir_LDADD) $(LIBS)
+
+mkfifo: $(mkfifo_OBJECTS) $(mkfifo_DEPENDENCIES)
+	@rm -f mkfifo
+	$(LINK) $(mkfifo_LDFLAGS) $(mkfifo_OBJECTS) $(mkfifo_LDADD) $(LIBS)
+
+mknod: $(mknod_OBJECTS) $(mknod_DEPENDENCIES)
+	@rm -f mknod
+	$(LINK) $(mknod_LDFLAGS) $(mknod_OBJECTS) $(mknod_LDADD) $(LIBS)
+
+mv: $(mv_OBJECTS) $(mv_DEPENDENCIES)
+	@rm -f mv
+	$(LINK) $(mv_LDFLAGS) $(mv_OBJECTS) $(mv_LDADD) $(LIBS)
+
+rm: $(rm_OBJECTS) $(rm_DEPENDENCIES)
+	@rm -f rm > /dev/null 2>&1 || /bin/rm -f rm
+	$(LINK) $(rm_LDFLAGS) $(rm_OBJECTS) $(rm_LDADD) $(LIBS)
+
+rmdir: $(rmdir_OBJECTS) $(rmdir_DEPENDENCIES)
+	@rm -f rmdir
+	$(LINK) $(rmdir_LDFLAGS) $(rmdir_OBJECTS) $(rmdir_LDADD) $(LIBS)
+
+shred: $(shred_OBJECTS) $(shred_DEPENDENCIES)
+	@rm -f shred
+	$(LINK) $(shred_LDFLAGS) $(shred_OBJECTS) $(shred_LDADD) $(LIBS)
+
+sync: $(sync_OBJECTS) $(sync_DEPENDENCIES)
+	@rm -f sync
+	$(LINK) $(sync_LDFLAGS) $(sync_OBJECTS) $(sync_LDADD) $(LIBS)
+
+touch: $(touch_OBJECTS) $(touch_DEPENDENCIES)
+	@rm -f touch
+	$(LINK) $(touch_LDFLAGS) $(touch_OBJECTS) $(touch_LDADD) $(LIBS)
+
+vdir: $(vdir_OBJECTS) $(vdir_DEPENDENCIES)
+	@rm -f vdir
+	$(LINK) $(vdir_LDFLAGS) $(vdir_OBJECTS) $(vdir_LDADD) $(LIBS)
+chgrp_.c: chgrp.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/chgrp.c; then echo $(srcdir)/chgrp.c; else echo chgrp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > chgrp_.c
+chmod_.c: chmod.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/chmod.c; then echo $(srcdir)/chmod.c; else echo chmod.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > chmod_.c
+chown_.c: chown.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/chown.c; then echo $(srcdir)/chown.c; else echo chown.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > chown_.c
+chown-core_.c: chown-core.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/chown-core.c; then echo $(srcdir)/chown-core.c; else echo chown-core.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > chown-core_.c
+copy_.c: copy.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/copy.c; then echo $(srcdir)/copy.c; else echo copy.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > copy_.c
+cp_.c: cp.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cp.c; then echo $(srcdir)/cp.c; else echo cp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cp_.c
+cp-hash_.c: cp-hash.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cp-hash.c; then echo $(srcdir)/cp-hash.c; else echo cp-hash.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cp-hash_.c
+dd_.c: dd.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/dd.c; then echo $(srcdir)/dd.c; else echo dd.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > dd_.c
+df_.c: df.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/df.c; then echo $(srcdir)/df.c; else echo df.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > df_.c
+dircolors_.c: dircolors.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/dircolors.c; then echo $(srcdir)/dircolors.c; else echo dircolors.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > dircolors_.c
+du_.c: du.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/du.c; then echo $(srcdir)/du.c; else echo du.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > du_.c
+install_.c: install.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/install.c; then echo $(srcdir)/install.c; else echo install.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > install_.c
+ln_.c: ln.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/ln.c; then echo $(srcdir)/ln.c; else echo ln.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > ln_.c
+ls_.c: ls.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/ls.c; then echo $(srcdir)/ls.c; else echo ls.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > ls_.c
+ls-dir_.c: ls-dir.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/ls-dir.c; then echo $(srcdir)/ls-dir.c; else echo ls-dir.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > ls-dir_.c
+ls-ls_.c: ls-ls.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/ls-ls.c; then echo $(srcdir)/ls-ls.c; else echo ls-ls.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > ls-ls_.c
+ls-vdir_.c: ls-vdir.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/ls-vdir.c; then echo $(srcdir)/ls-vdir.c; else echo ls-vdir.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > ls-vdir_.c
+mkdir_.c: mkdir.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mkdir.c; then echo $(srcdir)/mkdir.c; else echo mkdir.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mkdir_.c
+mkfifo_.c: mkfifo.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mkfifo.c; then echo $(srcdir)/mkfifo.c; else echo mkfifo.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mkfifo_.c
+mknod_.c: mknod.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mknod.c; then echo $(srcdir)/mknod.c; else echo mknod.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mknod_.c
+mv_.c: mv.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mv.c; then echo $(srcdir)/mv.c; else echo mv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mv_.c
+remove_.c: remove.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/remove.c; then echo $(srcdir)/remove.c; else echo remove.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > remove_.c
+rm_.c: rm.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/rm.c; then echo $(srcdir)/rm.c; else echo rm.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > rm_.c
+rmdir_.c: rmdir.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/rmdir.c; then echo $(srcdir)/rmdir.c; else echo rmdir.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > rmdir_.c
+shred_.c: shred.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/shred.c; then echo $(srcdir)/shred.c; else echo shred.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > shred_.c
+sync_.c: sync.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sync.c; then echo $(srcdir)/sync.c; else echo sync.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sync_.c
+touch_.c: touch.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/touch.c; then echo $(srcdir)/touch.c; else echo touch.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > touch_.c
+chgrp_.$(OBJEXT) chmod_.$(OBJEXT) chown_.$(OBJEXT) \
+chown-core_.$(OBJEXT) copy_.$(OBJEXT) cp_.$(OBJEXT) cp-hash_.$(OBJEXT) \
+dd_.$(OBJEXT) df_.$(OBJEXT) dircolors_.$(OBJEXT) du_.$(OBJEXT) \
+install_.$(OBJEXT) ln_.$(OBJEXT) ls_.$(OBJEXT) ls-dir_.$(OBJEXT) \
+ls-ls_.$(OBJEXT) ls-vdir_.$(OBJEXT) mkdir_.$(OBJEXT) mkfifo_.$(OBJEXT) \
+mknod_.$(OBJEXT) mv_.$(OBJEXT) remove_.$(OBJEXT) rm_.$(OBJEXT) \
+rmdir_.$(OBJEXT) shred_.$(OBJEXT) sync_.$(OBJEXT) touch_.$(OBJEXT) : \
+$(ANSI2KNR)
+
+tags: TAGS
+
+ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
+	list='$(SOURCES) $(HEADERS) $(TAGS_FILES)'; \
+	unique=`for i in $$list; do \
+	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+	  done | \
+	  $(AWK) '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	mkid -fID $$unique $(LISP)
+
+TAGS: $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+		$(TAGS_FILES) $(LISP)
+	tags=; \
+	here=`pwd`; \
+	list='$(SOURCES) $(HEADERS) $(TAGS_FILES)'; \
+	unique=`for i in $$list; do \
+	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+	  done | \
+	  $(AWK) '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
+	  || etags $(ETAGS_ARGS) $$tags  $$unique $(LISP)
+
+GTAGS:
+	here=`CDPATH=: && cd $(top_builddir) && pwd` \
+	  && cd $(top_srcdir) \
+	  && gtags -i $$here
+
+distclean-tags:
+	-rm -f TAGS ID
+
+@AMDEP@@_am_include@ $(DEPDIR)/chgrp$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/chmod$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/chown$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/chown-core$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/copy$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/cp$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/cp-hash$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/dd$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/df$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/dircolors$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/du$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/install$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/ln$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/ls$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/ls-dir$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/ls-ls$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/ls-vdir$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/mkdir$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/mkfifo$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/mknod$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/mv$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/remove$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/rm$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/rmdir$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/shred$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/sync$U.Po
+@AMDEP@@_am_include@ $(DEPDIR)/touch$U.Po
+
+distclean-depend:
+	-rm -rf $(DEPDIR)
+
+@AMDEP@CCDEPMODE = @CCDEPMODE@
+
+.c.o:
+@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(COMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
+
+.c.obj:
+@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(COMPILE) -c -o $@ `cygpath -w $<`
+
+
+DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+
+top_distdir = ..
+distdir = $(top_distdir)/$(PACKAGE)-$(VERSION)
+
+distdir: $(DISTFILES)
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  if test -d $$d/$$file; then \
+	    cp -pR $$d/$$file $(distdir) \
+	    || exit 1; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || cp -p $$d/$$file $(distdir)/$$file \
+	    || exit 1; \
+	  fi; \
+	done
+check-am: all-am
+check: check-am
+all-am: Makefile $(ANSI2KNR) $(PROGRAMS) $(HEADERS)
+
+installdirs:
+	$(mkinstalldirs) $(DESTDIR)$(bindir)
+
+install: install-am
+install-exec: install-exec-am
+install-data: install-data-am
+uninstall: uninstall-am
+
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+
+installcheck: installcheck-am
+
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
+	  INSTALL_PROGRAM_ENV='$(INSTALL_STRIP_PROGRAM_ENV)' install
+
+mostlyclean-generic:
+
+clean-generic:
+
+distclean-generic:
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+
+maintainer-clean-generic:
+	@echo "This command is intended for maintainers to use"
+	@echo "it deletes files that may require special tools to rebuild."
+	-rm -f Makefile.in
+	-test -z "$(BUILT_SOURCES)$(MAINTAINERCLEANFILES)" || rm -f $(BUILT_SOURCES) $(MAINTAINERCLEANFILES)
+clean: clean-am
+
+clean-am: clean-binPROGRAMS clean-generic clean-krextra mostlyclean-am
+
+distclean: distclean-am
+
+distclean-am: clean-am distclean-compile distclean-depend \
+	distclean-generic distclean-tags
+
+dvi:
+
+dvi-am:
+
+info:
+
+info-am:
+
+install-data-am:
+
+install-exec-am: install-binPROGRAMS
+
+install-info:
+
+install-man:
+
+installcheck-am:
+
+maintainer-clean: maintainer-clean-am
+
+maintainer-clean-am: distclean-am maintainer-clean-generic
+
+mostlyclean: mostlyclean-am
+
+mostlyclean-am: mostlyclean-compile mostlyclean-generic mostlyclean-kr
+
+uninstall-am: uninstall-binPROGRAMS
+
+.PHONY: all all-am check check-am clean clean-binPROGRAMS clean-generic \
+	clean-krextra distclean distclean-compile distclean-depend \
+	distclean-generic distclean-tags distdir dvi dvi-am info \
+	info-am install install-am install-binPROGRAMS install-data \
+	install-data-am install-exec install-exec-am install-info \
+	install-man install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic \
+	mostlyclean-kr tags uninstall uninstall-am \
+	uninstall-binPROGRAMS
+
+
+$(bin_PROGRAMS) $(libexec_PROGRAMS): ../lib/libfetish.a
+
+dircolors.h: dcgen dircolors.hin
+	$(PERL) -w -- $(srcdir)/dcgen $(srcdir)/dircolors.hin > $@-t
+	mv $@-t $@
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

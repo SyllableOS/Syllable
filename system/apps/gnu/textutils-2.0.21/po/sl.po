@@ -1,0 +1,4642 @@
+# -*- mode: po; coding: iso-latin-2; -*- Slovenian msg. catalog / GNU textutils.
+# Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+# Primo¾ Peterlin <primoz.peterlin@biofiz.mf.uni-lj.si>, 1999, 2000.
+# $Id$
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: GNU textutils 2.0.19\n"
+"POT-Creation-Date: 2002-02-17 10:07+0100\n"
+"PO-Revision-Date: 2001-12-10 14:40+01:00\n"
+"Last-Translator: Primo¾ Peterlin <primoz.peterlin@biofiz.mf.uni-lj.si>\n"
+"Language-Team: Slovenian <sl@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-2\n"
+"Content-Transfer-Encoding: 8-bit\n"
+
+#: lib/argmatch.c:161
+#, c-format
+msgid "invalid argument %s for %s"
+msgstr "neveljaven argument %s za %s"
+
+#: lib/argmatch.c:162
+#, c-format
+msgid "ambiguous argument %s for %s"
+msgstr "dvoumen argument %s za %s"
+
+#: lib/argmatch.c:181
+msgid "Valid arguments are:"
+msgstr "Veljavni argumenti so:"
+
+#: lib/closeout.c:107 src/cat.c:186 src/cat.c:267 src/cat.c:320
+#: src/cksum.c:267 src/head.c:152 src/head.c:195 src/tail.c:327
+#: src/tail.c:1653 src/tr.c:1665 src/tr.c:1911 src/tr.c:2019
+msgid "write error"
+msgstr "napaka pri pisanju"
+
+#: lib/error.c:129 lib/error.c:157
+msgid "Unknown system error"
+msgstr "Neznana sistemska napaka"
+
+#: lib/getopt.c:694
+#, c-format
+msgid "%s: option `%s' is ambiguous\n"
+msgstr "%s: izbira ,%s` je dvoumna\n"
+
+#: lib/getopt.c:719
+#, c-format
+msgid "%s: option `--%s' doesn't allow an argument\n"
+msgstr "%s: izbira ,--%s` ne dovoljuje argumenta\n"
+
+#: lib/getopt.c:724
+#, c-format
+msgid "%s: option `%c%s' doesn't allow an argument\n"
+msgstr "%s: izbira ,%c%s` ne dovoljuje argumenta\n"
+
+#: lib/getopt.c:742 lib/getopt.c:915
+#, c-format
+msgid "%s: option `%s' requires an argument\n"
+msgstr "%s: izbira ,%s` zahteva argument\n"
+
+#: lib/getopt.c:771
+#, c-format
+msgid "%s: unrecognized option `--%s'\n"
+msgstr "%s: neprepoznana izbira ,-%s`\n"
+
+#: lib/getopt.c:775
+#, c-format
+msgid "%s: unrecognized option `%c%s'\n"
+msgstr "%s: neprepoznana izbira ,%c%s`\n"
+
+#: lib/getopt.c:801
+#, c-format
+msgid "%s: illegal option -- %c\n"
+msgstr "%s: nedovoljena izbira - %c\n"
+
+#: lib/getopt.c:804
+#, c-format
+msgid "%s: invalid option -- %c\n"
+msgstr "%s: neveljavna izbira - %c\n"
+
+#: lib/getopt.c:834 lib/getopt.c:964
+#, c-format
+msgid "%s: option requires an argument -- %c\n"
+msgstr "%s: izbira zahteva argument - %c\n"
+
+#: lib/getopt.c:881
+#, c-format
+msgid "%s: option `-W %s' is ambiguous\n"
+msgstr "%s: izbira ,-W %s` je dvoumna\n"
+
+#: lib/getopt.c:899
+#, c-format
+msgid "%s: option `-W %s' doesn't allow an argument\n"
+msgstr "%s: izbira ,-W %s` ne dovoljuje argumenta\n"
+
+#: lib/human.c:365
+msgid "block size"
+msgstr "velikost bloka"
+
+#: lib/makepath.c:176
+#, c-format
+msgid "cannot create directory %s"
+msgstr "ni mogoèe ustvariti imenika %s"
+
+#: lib/makepath.c:182 lib/makepath.c:423
+#, c-format
+msgid "%s exists but is not a directory"
+msgstr "%s obstaja, vendar ni imenik"
+
+#: lib/makepath.c:319 lib/makepath.c:381 lib/makepath.c:442
+#, c-format
+msgid "cannot change owner and/or group of %s"
+msgstr "lastnika in/ali skupine %s ni mogoèe spremeniti"
+
+#: lib/makepath.c:341
+#, c-format
+msgid "cannot chdir to directory, %s"
+msgstr "pomik v imenik ,%s` ni mo¾en"
+
+#: lib/makepath.c:395 lib/makepath.c:448
+#, c-format
+msgid "cannot change permissions of %s"
+msgstr "dovoljenj %s ni mogoèe spremeniti"
+
+#: lib/obstack.c:494 lib/obstack.c:497 lib/xmalloc.c:66
+msgid "memory exhausted"
+msgstr "pomnilnik porabljen"
+
+#: lib/quotearg.c:270
+msgid "`"
+msgstr ","
+
+#: lib/quotearg.c:271
+msgid "'"
+msgstr "`"
+
+#: lib/rpmatch.c:78
+msgid "^[yY]"
+msgstr "^[jJdD]"
+
+#: lib/rpmatch.c:81
+msgid "^[nN]"
+msgstr "^[nN]"
+
+#: lib/unicodeio.c:159
+#, fuzzy
+msgid "iconv function not usable"
+msgstr "izpis U+%04X ni mogoè: funkcija iconv ne deluje"
+
+#: lib/unicodeio.c:161
+#, fuzzy
+msgid "iconv function not available"
+msgstr "izpis U+%04X ni mogoè: funkcija iconv ni na voljo<"
+
+#: lib/unicodeio.c:168
+#, fuzzy
+msgid "character out of range"
+msgstr "U+%04X: znak izven obsega"
+
+#: lib/unicodeio.c:231
+#, c-format
+msgid "cannot convert U+%04X to local character set"
+msgstr "pretvorba U+%04X v krajevni nabor znakov ni mogoèa"
+
+#: lib/unicodeio.c:233
+#, fuzzy, c-format
+msgid "cannot convert U+%04X to local character set: %s"
+msgstr "pretvorba U+%04X v krajevni nabor znakov ni mogoèa"
+
+#: lib/userspec.c:178
+msgid "invalid user"
+msgstr "neveljaven uporabnik"
+
+#: lib/userspec.c:179
+msgid "invalid group"
+msgstr "neveljavna skupina"
+
+#: lib/userspec.c:181
+msgid "cannot get the login group of a numeric UID"
+msgstr "imena skupine, ki pripada ¹tevilènemu UID, ni mo¾no ugotoviti"
+
+#: lib/userspec.c:183
+msgid "cannot omit both user and group"
+msgstr "navesti je potrebno vsaj uporabnika ali skupino"
+
+#: lib/version-etc.c:61
+#, c-format
+msgid "Written by %s.\n"
+msgstr "Avtor %s.\n"
+
+#: lib/version-etc.c:67
+msgid ""
+"This is free software; see the source for copying conditions.  There is NO\n"
+"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+msgstr ""
+"To je prost program; pogoji, pod katerimi ga lahko razmno¾ujete in\n"
+"raz¹irjate so navedeni v izvorni kodi. Za program ni NOBENEGA jamstva,\n"
+"niti jamstev USTREZNOSTI ZA PRODAJO ali PRIMERNOSTI ZA UPORABO.\n"
+
+#: lib/xmemcoll.c:61
+msgid "string comparison failed"
+msgstr ""
+
+#: lib/xmemcoll.c:62
+msgid "Set LC_ALL='C' to work around the problem."
+msgstr ""
+
+#: lib/xmemcoll.c:64
+#, c-format
+msgid "The strings compared were %s and %s."
+msgstr ""
+
+#: src/cat.c:42 src/split.c:42
+msgid "Torbjorn Granlund and Richard M. Stallman"
+msgstr "Torbjorn Granlund in Richard M. Stallman"
+
+#: src/cat.c:88 src/cksum.c:276 src/comm.c:71 src/csplit.c:1490 src/cut.c:163
+#: src/expand.c:106 src/fmt.c:267 src/fold.c:63 src/head.c:84 src/join.c:142
+#: src/md5sum.c:121 src/nl.c:172 src/od.c:277 src/paste.c:399 src/pr.c:2752
+#: src/ptx.c:1855 src/sort.c:281 src/split.c:91 src/sum.c:56 src/tac.c:123
+#: src/tail.c:234 src/tr.c:323 src/tsort.c:93 src/unexpand.c:371
+#: src/uniq.c:130 src/wc.c:124
+#, c-format
+msgid "Try `%s --help' for more information.\n"
+msgstr "Poskusite ,%s --help` za izèrpnej¹e informacije.\n"
+
+#: src/cat.c:92
+#, c-format
+msgid "Usage: %s [OPTION] [FILE]...\n"
+msgstr "Uporaba: %s [IZBIRA] [DATOTEKA]...\n"
+
+#: src/cat.c:96
+msgid ""
+"Concatenate FILE(s), or standard input, to standard output.\n"
+"\n"
+"  -A, --show-all           equivalent to -vET\n"
+"  -b, --number-nonblank    number nonblank output lines\n"
+"  -e                       equivalent to -vE\n"
+"  -E, --show-ends          display $ at end of each line\n"
+"  -n, --number             number all output lines\n"
+"  -s, --squeeze-blank      never more than one single blank line\n"
+msgstr ""
+"Prepi¹emo eno ali veè DATOTEK na standardni izhod, ali std. vhod na std. "
+"izhod.\n"
+"\n"
+"  -A, --show-all           enakovredno sestavljeni izbiri -vET\n"
+"  -b, --number-nonblank    o¹tevilèi neprazne izpisane vrstice\n"
+"  -e                       enakovredno sestavljeni izbiri -vE\n"
+"  -E, --show-ends          izpi¹i $ na koncu vsake vrstice\n"
+"  -n, --number             o¹tevilèi vse izpisane vrstice\n"
+"  -s, --squeeze-blank      zaporedje veè praznih vrstic skrèi v eno\n"
+
+#: src/cat.c:106
+msgid ""
+"  -t                       equivalent to -vT\n"
+"  -T, --show-tabs          display TAB characters as ^I\n"
+"  -u                       (ignored)\n"
+"  -v, --show-nonprinting   use ^ and M- notation, except for LFD and TAB\n"
+msgstr ""
+"  -t                       enakovredno sestavljeni izbiri -vT\n"
+"  -T, --show-tabs          prika¾i znake TAB kot ^I\n"
+"  -u                       (ignorirano)\n"
+"  -v, --show-nonprinting   krmilne znake razen LF in TAB izpi¹i kot ^ and "
+"M-\n"
+
+#: src/cat.c:114 src/sum.c:72
+msgid ""
+"\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+msgstr ""
+"\n"
+"Èe DATOTEKA ni podana, ali pa je enaka -, beremo s standardnega vhoda.\n"
+
+#: src/cat.c:119
+msgid ""
+"\n"
+"  -B, --binary             use binary writes to the console device.\n"
+"\n"
+msgstr ""
+"\n"
+"  -B, --binary             pi¹i binarno na konzolo.\n"
+"\n"
+
+#: src/cat.c:124 src/cksum.c:291 src/comm.c:88 src/csplit.c:1532 src/cut.c:208
+#: src/expand.c:131 src/fmt.c:297 src/fold.c:86 src/head.c:115 src/join.c:182
+#: src/md5sum.c:157 src/nl.c:227 src/od.c:364 src/paste.c:423 src/pr.c:2864
+#: src/sort.c:352 src/split.c:123 src/sum.c:76 src/tac.c:146 src/tail.c:304
+#: src/tr.c:394 src/tsort.c:105 src/unexpand.c:394 src/uniq.c:169 src/wc.c:146
+msgid ""
+"\n"
+"Report bugs to <bug-textutils@gnu.org>."
+msgstr ""
+"\n"
+"Poroèila o napakah na <bug-textutils@gnu.org>."
+
+#: src/cat.c:308
+#, c-format
+msgid "cannot do ioctl on `%s'"
+msgstr "ioctl na ,%s` ni mo¾en"
+
+#: src/cat.c:648 src/od.c:1004
+msgid "standard output"
+msgstr "standardni izhod"
+
+#: src/cat.c:779
+#, c-format
+msgid "%s: input file is output file"
+msgstr "%s: vhodna in izhodna datoteka sta isti"
+
+#: src/cksum.c:234
+#, c-format
+msgid "%s: file too long"
+msgstr "%s: datoteka je predolga"
+
+#: src/cksum.c:280
+#, c-format
+msgid ""
+"Usage: %s [FILE]...\n"
+"  or:  %s [OPTION]\n"
+msgstr ""
+"Uporaba: %s [DATOTEKA]...\n"
+"   ali:  %s [IZBIRA]\n"
+
+#: src/cksum.c:285
+msgid ""
+"Print CRC checksum and byte counts of each FILE.\n"
+"\n"
+msgstr ""
+"Izpi¹emo nadzorno vsoto in dol¾ino v bajtih za vsako DATOTEKO.\n"
+"\n"
+
+#: src/comm.c:35 src/uniq.c:38
+msgid "Richard Stallman and David MacKenzie"
+msgstr "Richard Stallman in David MacKenzie"
+
+#: src/comm.c:75
+#, c-format
+msgid "Usage: %s [OPTION]... LEFT_FILE RIGHT_FILE\n"
+msgstr "Uporaba: %s [IZBIRA]... LEVA DESNA\n"
+
+#: src/comm.c:79
+msgid ""
+"Compare sorted files LEFT_FILE and RIGHT_FILE line by line.\n"
+"\n"
+"  -1              suppress lines unique to left file\n"
+"  -2              suppress lines unique to right file\n"
+"  -3              suppress lines that appear in both files\n"
+msgstr ""
+"Urejeni datoteki LEVA in DESNA primerjamo vrstico za vrstico.\n"
+"\n"
+"  -1              izpusti vrstice, ki se pojavijo samo v levi datoteki\n"
+"  -2              izpusti vrstice, ki se pojavijo samo v desni datoteki\n"
+"  -3              izpusti vrstice, ki se pojavijo v obeh datotekah\n"
+
+#: src/csplit.c:41
+msgid "Stuart Kemp and David MacKenzie"
+msgstr "Stuart Kemp in David MacKenzie"
+
+#: src/csplit.c:290 src/csplit.c:1479 src/tac-pipe.c:57 src/tr.c:1607
+#: src/tr.c:1710 src/tr.c:1753
+msgid "read error"
+msgstr "napaka pri branju"
+
+#: src/csplit.c:584
+msgid "input disappeared"
+msgstr "vhod je izginil"
+
+#: src/csplit.c:706 src/csplit.c:717
+#, c-format
+msgid "%s: line number out of range"
+msgstr "%s: ¹tevilka vrstice izven intervala"
+
+#: src/csplit.c:744
+#, c-format
+msgid "%s: `%s': line number out of range"
+msgstr "%s: ,%s`: ¹tevilka vrstice izven intervala"
+
+#: src/csplit.c:747 src/csplit.c:793
+#, c-format
+msgid " on repetition %d\n"
+msgstr " pri ponovitvi %d\n"
+
+#: src/csplit.c:789
+#, c-format
+msgid "%s: `%s': match not found"
+msgstr "%s: ,%s`: ujemanja ni"
+
+#: src/csplit.c:850 src/csplit.c:890 src/tac.c:262
+msgid "error in regular expression search"
+msgstr "napaka pri iskanju z regularnimi izrazi"
+
+#: src/csplit.c:993
+#, c-format
+msgid "write error for `%s'"
+msgstr "napaka pri pisanju za ,%s`"
+
+#: src/csplit.c:1065
+#, c-format
+msgid "%s: `+' or `-' expected after delimeter"
+msgstr "%s: po razmejilniku prièakovana ,*` ali ,-`"
+
+#: src/csplit.c:1069
+#, c-format
+msgid "%s: integer expected after `%c'"
+msgstr "%s: za ,%c` prièakovano celo ¹tevilo"
+
+#: src/csplit.c:1089
+#, c-format
+msgid "%s: `}' is required in repeat count"
+msgstr "%s: pri ponovitvah je zahtevan ,}`"
+
+#: src/csplit.c:1099
+#, c-format
+msgid "%s}: integer required between `{' and `}'"
+msgstr "%s}: med ,{` in ,}` je zahtevano celo ¹tevilo"
+
+#: src/csplit.c:1126
+#, c-format
+msgid "%s: closing delimeter `%c' missing"
+msgstr "%s: zakljuèni razmejilnik ,%c` manjka"
+
+#: src/csplit.c:1142
+#, c-format
+msgid "%s: invalid regular expression: %s"
+msgstr "%s: neveljaven regularni izraz: %s"
+
+#: src/csplit.c:1175
+#, c-format
+msgid "%s: invalid pattern"
+msgstr "%s: neveljavni vzorec"
+
+#: src/csplit.c:1178
+#, c-format
+msgid "%s: line number must be greater than zero"
+msgstr "%s: ¹tevilo vrstice mora biti pozitivno"
+
+#: src/csplit.c:1184
+#, c-format
+msgid "line number `%s' is smaller than preceding line number, %s"
+msgstr "¹tevilka vrstice ,%s` je ni¾ja od ¹tevilke vrstice pred njo, %s"
+
+#: src/csplit.c:1190
+#, c-format
+msgid "warning: line number `%s' is the same as preceding line number"
+msgstr "opozorilo: ¹tevilka vrstice ,%s` je ista kot tista pred njo"
+
+#: src/csplit.c:1312
+msgid "missing conversion specifier in suffix"
+msgstr "manjkajoèe doloèilo pretvorbe v priponi"
+
+#: src/csplit.c:1318
+#, c-format
+msgid "invalid conversion specifier in suffix: %c"
+msgstr "neveljavno doloèilo pretvorbe v priponi: %c"
+
+#: src/csplit.c:1321
+#, c-format
+msgid "invalid conversion specifier in suffix: \\%.3o"
+msgstr "neveljavno doloèilo pretvorbe v priponi: \\\\%.3o"
+
+#: src/csplit.c:1353
+#, c-format
+msgid "missing %% conversion specification in suffix"
+msgstr "manjkajoèe doloèilo pretvorbe %% v priponi"
+
+#: src/csplit.c:1356
+#, c-format
+msgid "too many %% conversion specifications in suffix"
+msgstr "preveè doloèil pretvorbe %% v priponi"
+
+#: src/csplit.c:1439
+#, c-format
+msgid "%s: invalid number"
+msgstr "%s: neveljavno ¹tevilo"
+
+#: src/csplit.c:1462
+msgid "too few arguments"
+msgstr "premalo argumentov"
+
+#: src/csplit.c:1494
+#, c-format
+msgid "Usage: %s [OPTION]... FILE PATTERN...\n"
+msgstr "Uporaba: %s [IZBIRA]... DATOTEKA VZOREC...\n"
+
+#: src/csplit.c:1498
+msgid ""
+"Output pieces of FILE separated by PATTERN(s) to files `xx01', `xx02', ...,\n"
+"and output byte counts of each piece to standard output.\n"
+"\n"
+msgstr ""
+"Kose DATOTEKE loèimo z VZORCEM in zapi¹emo v datoteke ,xx01`, ,xx02`...,\n"
+"¹tevilo bajtov za posamièen kos pa izpi¹emo na standardni izhod.\n"
+"\n"
+
+#: src/csplit.c:1503 src/cut.c:175 src/expand.c:119 src/fmt.c:277
+#: src/fold.c:76 src/head.c:98 src/nl.c:185 src/paste.c:413 src/pr.c:2765
+#: src/ptx.c:1867 src/sort.c:295 src/split.c:104 src/tac.c:136 src/tail.c:248
+#: src/unexpand.c:384 src/uniq.c:143
+msgid ""
+"Mandatory arguments to long options are mandatory for short options too.\n"
+msgstr ""
+"Èe je pri dolgi obliki izbire naveden argument, je ta obvezen tudi pri "
+"kratki.\n"
+
+#: src/csplit.c:1506
+#, c-format
+msgid ""
+"  -b, --suffix-format=FORMAT use sprintf FORMAT instead of %d\n"
+"  -f, --prefix=PREFIX        use PREFIX instead of `xx'\n"
+"  -k, --keep-files           do not remove output files on errors\n"
+msgstr ""
+"  -b, --suffix-format=OBLIKA uporabi OBLIKO spritntf namesto %d\n"
+"  -f, --prefix=PREDPONA      uporabi podano PREDPONO namesto ,xx`\n"
+"  -k, --keep-files           ob napaki ne pobri¹i nepopolno zapisanih "
+"datotek\n"
+
+#: src/csplit.c:1511
+msgid ""
+"  -n, --digits=DIGITS        use specified number of digits instead of 2\n"
+"  -s, --quiet, --silent      do not print counts of output file sizes\n"
+"  -z, --elide-empty-files    remove empty output files\n"
+msgstr ""
+"  -n, --digits=©TEVKE        uporabi navedeno ¹tevilo ¹tevk namesto "
+"privzetih 2\n"
+"  -s, --quiet, --silent      brez izpisa velikosti na standardni izhod\n"
+"  -z, --elide-empty-files    odstrani prazne izhodne datoteke\n"
+
+#: src/csplit.c:1518
+msgid ""
+"\n"
+"Read standard input if FILE is -.  Each PATTERN may be:\n"
+msgstr ""
+"\n"
+"Èe je DATOTEKA -, beremo s standardnega vhoda. VZOREC je lahko eden od:\n"
+
+#: src/csplit.c:1522
+msgid ""
+"\n"
+"  INTEGER            copy up to but not including specified line number\n"
+"  /REGEXP/[OFFSET]   copy up to but not including a matching line\n"
+"  %REGEXP%[OFFSET]   skip to, but not including a matching line\n"
+"  {INTEGER}          repeat the previous pattern specified number of times\n"
+"  {*}                repeat the previous pattern as many times as possible\n"
+"\n"
+"A line OFFSET is a required `+' or `-' followed by a positive integer.\n"
+msgstr ""
+"\n"
+"  CELO_©TEVILO       prepi¹i do navedene vrstice, ne v¹tev¹i te vrstice\n"
+"  /REGIZR/[ODMIK]    prepi¹i do ODMIKA, ne v¹tev¹i ujemajoèe se vrstice\n"
+"  %%REGIZR%%[ODMIK]    preskoèi na ODMIK, ne v¹tev¹i ujemajoèe se vrstice\n"
+"  {CELO_©TEVILO}     ponovi prej¹nji regularni izraz navedenokrat\n"
+"  {*}                ponovi prej¹nji regularni izraz, kolikorkrat gre\n"
+"\n"
+"Zapis vrstice ODMIKA je znak ,+` ali ,-`, ki mu sledi pozitivno celo "
+"¹tevilo.\n"
+
+#: src/cut.c:39
+msgid "David Ihnat, David MacKenzie, and Jim Meyering"
+msgstr "David Ihnat, David MacKenzie in Jim Meyering"
+
+#: src/cut.c:167 src/expand.c:110 src/fold.c:67 src/head.c:88 src/nl.c:176
+#: src/paste.c:403 src/pr.c:2756 src/sort.c:285 src/sum.c:60 src/tac.c:127
+#: src/tail.c:238 src/unexpand.c:375 src/wc.c:128
+#, c-format
+msgid "Usage: %s [OPTION]... [FILE]...\n"
+msgstr "Uporaba: %s [IZBIRA]... [DATOTEKA]...\n"
+
+#: src/cut.c:171
+msgid ""
+"Print selected parts of lines from each FILE to standard output.\n"
+"\n"
+msgstr ""
+"Izbrane dele vrstic iz vsake od navedenih DATOTEK izpi¹emo na standardni "
+"izhod.\n"
+"\n"
+
+#: src/cut.c:178
+msgid ""
+"  -b, --bytes=LIST        output only these bytes\n"
+"  -c, --characters=LIST   output only these characters\n"
+"  -d, --delimiter=DELIM   use DELIM instead of TAB for field delimiter\n"
+msgstr ""
+"  -b, --bytes=SEZNAM      izpi¹i samo navedene bajte\n"
+"  -c, --characters=SEZNAM izpi¹i samo navedene znake\n"
+"  -d, --delimiter=RAZMEJ  polja so razmejena z znakom RAZMEJ namesto s TAB\n"
+
+#: src/cut.c:183
+msgid ""
+"  -f, --fields=LIST       output only these fields;  also print any line\n"
+"                            that contains no delimiter character, unless\n"
+"                            the -s option is specified\n"
+"  -n                      (ignored)\n"
+msgstr ""
+"  -f, --fields=SEZNAM     izpi¹i samo navedena polja; izpi¹i tudi vse "
+"vrstice,\n"
+"                            ki ne vsebujejo razmejevalnika, razen èe je v "
+"rabi\n"
+"                            izbira -s\n"
+"  -n                      (prezrto)\n"
+
+#: src/cut.c:189
+msgid ""
+"  -s, --only-delimited    do not print lines not containing delimiters\n"
+"      --output-delimiter=STRING  use STRING as the output delimiter\n"
+"                            the default is to use the input delimiter\n"
+msgstr ""
+"  -s, --only-delimited    ne izpi¹i vrstic, ki ne vsebujejo razmejevalnika\n"
+"      --output-delimiter=NIZ  naj bo NIZ razmejevalnik na izhodu\n"
+"                            privzeti izhodni razmejevalnik je enak vhodnemu\n"
+
+#: src/cut.c:196
+msgid ""
+"\n"
+"Use one, and only one of -b, -c or -f.  Each LIST is made up of one\n"
+"range, or many ranges separated by commas.  Each range is one of:\n"
+"\n"
+"  N     N'th byte, character or field, counted from 1\n"
+"  N-    from N'th byte, character or field, to end of line\n"
+"  N-M   from N'th to M'th (included) byte, character or field\n"
+"  -M    from first to M'th (included) byte, character or field\n"
+"\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+msgstr ""
+"\n"
+"Izbire -b, -c in -f se medsebojno izkljuèujejo. Vsak SEZNAM lahko sestavlja "
+"en\n"
+"ali veè razponov, ki so med seboj loèeni z vejico. Vsak razpon ima lahko "
+"obliko:\n"
+"\n"
+"  N     N-ti bajt, znak ali polje, ¹teto od 1 dalje\n"
+"  N-    od N-tega bajta, znaka ali polja do konca vrstice\n"
+"  N-M   od N-tega do vkljuèno M-tega bajta, znaka ali polja\n"
+"  -M    od prvega do vkljuèno M-tega bajta, znaka ali polja\n"
+"\n"
+"Èe DATOTEKA ni podana, ali èe je enaka - (minusu), se bere standardni vhod.\n"
+
+#: src/cut.c:263 src/cut.c:294 src/cut.c:354
+msgid "invalid byte or field list"
+msgstr "neveljaven seznam bajtov ali polj"
+
+#: src/cut.c:624 src/cut.c:633
+msgid "only one type of list may be specified"
+msgstr "doloèen je lahko samo en tip seznama"
+
+#: src/cut.c:627
+msgid "missing list of positions"
+msgstr "seznam polo¾ajev manjka"
+
+#: src/cut.c:636
+msgid "missing list of fields"
+msgstr "seznam polj manjka"
+
+#: src/cut.c:643
+msgid "the delimiter must be a single character"
+msgstr "razmejilnik mora biti en sam znak"
+
+#: src/cut.c:673
+msgid "you must specify a list of bytes, characters, or fields"
+msgstr "podati je treba seznam bajtov, znakov ali polj"
+
+#: src/cut.c:676
+msgid "a delimiter may be specified only when operating on fields"
+msgstr "razmejilnik se sme doloèiti le, kadar delamo s polji"
+
+#: src/cut.c:679
+msgid ""
+"suppressing non-delimited lines makes sense\n"
+"\tonly when operating on fields"
+msgstr ""
+"neizpisovanje vrstic, ki ne vsebujejo razmejilnika\n"
+"\tje smiselno le, kadar delamo s polji"
+
+#: src/expand.c:114
+msgid ""
+"Convert tabs in each FILE to spaces, writing to standard output.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"Tabulatorje v vsaki od DATOTEK nadomestimo s presledki in rezultat izpi¹emo\n"
+"na standardni izhod. Èe DATOTEKA ni podana, ali èe je enaka - (minus), "
+"beremo\n"
+"s standardnega vhoda.\n"
+"\n"
+
+#: src/expand.c:122
+msgid ""
+"  -i, --initial       do not convert TABs after non whitespace\n"
+"  -t, --tabs=NUMBER   have tabs NUMBER characters apart, not 8\n"
+msgstr ""
+"  -i, --initial       nadomesti samo tabulatorje, ki sledijo praznim znakom\n"
+"  -t, --tabs=©IRINA   ©IRINA tabulatorja naj bo navedeno namesto 8\n"
+
+#: src/expand.c:126
+msgid ""
+"  -t, --tabs=LIST     use comma separated list of explicit tab positions\n"
+msgstr ""
+"  -t, --tabs=SEZNAM   uporabi z vejicami loèen SEZNAM eksplicitnih "
+"tabulatorjev\n"
+
+#: src/expand.c:173 src/unexpand.c:153
+msgid "tab size contains an invalid character"
+msgstr "¹irina tabulatorja vsebuje neveljaven znak"
+
+#: src/expand.c:191 src/unexpand.c:171
+msgid "tab size cannot be 0"
+msgstr "¹irina tabulatorja ne more biti 0"
+
+#: src/expand.c:193 src/unexpand.c:173
+msgid "tab sizes must be ascending"
+msgstr "seznam tabulatorjev mora biti nara¹èajoè"
+
+#: src/expand.c:386
+#, fuzzy
+msgid "`-LIST' option is obsolete; use `-t LIST'"
+msgstr "opozorilo: neveljavna ¹irina %lu; namesto nje jemljemo %d"
+
+#: src/fmt.c:271
+#, c-format
+msgid "Usage: %s [-DIGITS] [OPTION]... [FILE]...\n"
+msgstr "Uporaba: %s [-©TEVKE] [IZBIRA]... [DATOTEKA]...\n"
+
+#: src/fmt.c:272
+msgid ""
+"Reformat each paragraph in the FILE(s), writing to standard output.\n"
+"If no FILE or if FILE is `-', read standard input.\n"
+"\n"
+msgstr ""
+"Vsak odstavek v DATOTEKI(-ah) preoblikujemo in izpi¹emo na standardni "
+"izhod.\n"
+"Èe DATOTEKA ni podana ali je enaka - (minus), beremo s standardnega vhoda.\n"
+
+#: src/fmt.c:280
+msgid ""
+"  -c, --crown-margin        preserve indentation of first two lines\n"
+"  -p, --prefix=STRING       combine only lines having STRING as prefix\n"
+"  -s, --split-only          split long lines, but do not refill\n"
+msgstr ""
+"  -c, --crown-margin        ohrani zamik prvih dveh vrstic\n"
+"  -p, --prefix=NIZ          preoblikuj samo vrstice, ki se zaèno z NIZOM\n"
+"  -s, --split-only          pore¾i predolge vrstice, a brez poravnave\n"
+
+#: src/fmt.c:286
+msgid ""
+"  -t, --tagged-paragraph    indentation of first line different from second\n"
+"  -u, --uniform-spacing     one space between words, two after sentences\n"
+"  -w, --width=NUMBER        maximum line width (default of 75 columns)\n"
+msgstr ""
+"  -t, --tagged-paragraph    zamik prve vrstice v odstavku je razlièen od "
+"ostalih\n"
+"  -u, --uniform-spacing     en presledek med besedami, dva za piko\n"
+"  -w, --width=©IRINA        najveèja ¹irina vrstice (privzeto 75 znakov)\n"
+
+#: src/fmt.c:293
+msgid ""
+"\n"
+"In -wNUMBER, the letter `w' may be omitted.\n"
+msgstr ""
+"\n"
+"Izbiro -w©TEVILO lahko uporabimo tudi v obliki -©TEVILO.\n"
+
+#: src/fmt.c:345
+#, c-format
+msgid "invalid width option: `%s'"
+msgstr "neveljavna izbira ¹irine: ,%s`"
+
+#: src/fmt.c:385
+#, c-format
+msgid "invalid width: `%s'"
+msgstr "neveljavna ¹irina: ,%s`"
+
+#: src/fold.c:71
+msgid ""
+"Wrap input lines in each FILE (standard input by default), writing to\n"
+"standard output.\n"
+"\n"
+msgstr ""
+"Vrstice v vsaki DATOTEKI na vhodu (privzet je standardni vhod) prelomimo\n"
+"in rezultat izpi¹emo na standardni izhod.\n"
+"\n"
+
+#: src/fold.c:79
+msgid ""
+"  -b, --bytes         count bytes rather than columns\n"
+"  -s, --spaces        break at spaces\n"
+"  -w, --width=WIDTH   use WIDTH columns instead of 80\n"
+msgstr ""
+"  -b, --bytes         ¹tejemo bajte namesto znakov\n"
+"  -s, --spaces        prelom na presledkih\n"
+"  -w, --width=©IRINA  nastavimo ©IRINO vrstic (privzeto 80)\n"
+
+#: src/fold.c:267
+#, fuzzy, c-format
+msgid "`%s' option is obsolete; use `%s'"
+msgstr "opozorilo: neveljavna ¹irina %lu; namesto nje jemljemo %d"
+
+#: src/fold.c:295
+#, c-format
+msgid "invalid number of columns: `%s'"
+msgstr "neveljavna ¹irina: ,%s`"
+
+#: src/head.c:92
+msgid ""
+"Print first 10 lines of each FILE to standard output.\n"
+"With more than one FILE, precede each with a header giving the file name.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"Izpi¹emo prvih 10 vrstic vsake od DATOTEK na standardni izhod.\n"
+"Èe je podana veè kot ena DATOTEKA, pred vsebino izpi¹emo ¹e ime datoteke.\n"
+"Èe DATOTEKA ni podana, ali èe je enaka -, beremo s standardnega vhoda.\n"
+"\n"
+
+#: src/head.c:101
+msgid ""
+"  -c, --bytes=SIZE         print first SIZE bytes\n"
+"  -n, --lines=NUMBER       print first NUMBER lines instead of first 10\n"
+msgstr ""
+"  -c, --bytes=VELIKOST     izpi¹emo prvih VELIKOST bajtov z zaèetka "
+"datoteke\n"
+"  -n, --lines=©TEVILO      izpi¹emo dano ©TEVILO vrstic namesto prvih 10\n"
+
+#: src/head.c:105
+msgid ""
+"  -q, --quiet, --silent    never print headers giving file names\n"
+"  -v, --verbose            always print headers giving file names\n"
+msgstr ""
+"  -q, --quiet, --silent    vedno brez izpisa imena datoteke\n"
+"  -v, --verbose            vedno izpi¹emo ¹e ime datoteke\n"
+
+#: src/head.c:111 src/split.c:119
+msgid ""
+"\n"
+"SIZE may have a multiplier suffix: b for 512, k for 1K, m for 1 Meg.\n"
+msgstr ""
+"\n"
+"VELIKOST ima lahko pripono b za mno¾enje s 512, k za 1024 ali m za 1048576.\n"
+
+#: src/head.c:189
+#, fuzzy, c-format
+msgid "cannot reposition file pointer for %s"
+msgstr "ni mogoèe ustvariti imenika %s"
+
+#: src/head.c:220 src/md5sum.c:334 src/md5sum.c:675 src/od.c:950 src/od.c:1990
+#: src/pr.c:1166 src/pr.c:1373 src/pr.c:1495 src/tac.c:484 src/tac.c:490
+#: src/tr.c:2026 src/tsort.c:585
+msgid "standard input"
+msgstr "standardni vhod"
+
+#: src/head.c:255 src/tail.c:1380
+#, c-format
+msgid "%s: %s is so large that it is not representable"
+msgstr "%s: %s je tako veliko, da ni predstavljivo"
+
+#: src/head.c:256 src/tail.c:1382
+msgid "number of lines"
+msgstr "¹tevilo vrstic"
+
+#: src/head.c:256 src/tail.c:1383
+msgid "number of bytes"
+msgstr "¹tevilo bajtov"
+
+#: src/head.c:263 src/tail.c:1469
+msgid "invalid number of lines"
+msgstr "neveljavno ¹tevilo vrstic"
+
+#: src/head.c:264 src/tail.c:1470
+msgid "invalid number of bytes"
+msgstr "neveljavno ¹tevilo bajtov"
+
+#: src/head.c:340
+#, c-format
+msgid "unrecognized option `-%c'"
+msgstr "neprepoznana izbira ,-%c`"
+
+#: src/head.c:347
+#, fuzzy, c-format
+msgid "`-%s' option is obsolete; use `-%c %.*s%.*s%s'"
+msgstr "opozorilo: neveljavna ¹irina %lu; namesto nje jemljemo %d"
+
+#: src/join.c:146
+#, c-format
+msgid "Usage: %s [OPTION]... FILE1 FILE2\n"
+msgstr "Uporaba: %s [IZBIRA]... DATOTEKA1 DATOTEKA2\n"
+
+#: src/join.c:150
+msgid ""
+"For each pair of input lines with identical join fields, write a line to\n"
+"standard output.  The default join field is the first, delimited\n"
+"by whitespace.  When FILE1 or FILE2 (not both) is -, read standard input.\n"
+"\n"
+"  -a SIDE           print unpairable lines coming from file SIDE\n"
+"  -e EMPTY          replace missing input fields with EMPTY\n"
+msgstr ""
+"Za vsak par vrstic na vhodu z enakimi zdru¾itvenimi polji izpi¹emo vrstico\n"
+"na standardni izhod. Privzeto zdru¾itveno polje je prvo, loèeno s praznim\n"
+"prostorom. Èe sta DATOTEKA1 ali DATOTEKA2 (ne pa obe hkrati) enaki -, "
+"beremo\n"
+"s standardnega vhoda.\n"
+"\n"
+"  -a STRAN          izpi¹emo vrstice brez para, ki izvirajo iz navedene "
+"STRANI\n"
+"  -e PRAZNO         manjkajoèe vhodno polje nadomestimo z nizom PRAZNO\n"
+
+#: src/join.c:158
+msgid ""
+"  -i, --ignore-case ignore differences in case when comparing fields\n"
+"  -j FIELD          (obsolescent) equivalent to `-1 FIELD -2 FIELD'\n"
+"  -j1 FIELD         (obsolescent) equivalent to `-1 FIELD'\n"
+"  -j2 FIELD         (obsolescent) equivalent to `-2 FIELD'\n"
+"  -o FORMAT         obey FORMAT while constructing output line\n"
+"  -t CHAR           use CHAR as input and output field separator\n"
+msgstr ""
+"  -i, --ignore-case pri primerjanju obravnavamo velike in male èrke enako\n"
+"  -j POLJE          (zastarelo) isto kot ,-1 POLJE -2 POLJE`\n"
+"  -j1 POLJE         (zastarelo) isto kot ,-1 POLJE`\n"
+"  -j2 POLJE         (zastarelo) isto kot ,-2 POLJE`\n"
+"  -o OBLIKA         pri izpisu uporabimo predpisano OBLIKO\n"
+"  -t ZNAK           navedeni ZNAK naj bo loèilo med polji na vhodu in "
+"izhodu\n"
+
+#: src/join.c:166
+msgid ""
+"  -v SIDE           like -a SIDE, but suppress joined output lines\n"
+"  -1 FIELD          join on this FIELD of file 1\n"
+"  -2 FIELD          join on this FIELD of file 2\n"
+msgstr ""
+"  -v STRAN          isto kot -a STRAN, vendar brez zdru¾enih izhodnih "
+"vrstic\n"
+"  -1 POLJE          zdru¾ujemo glede na navedeno POLJE v prvi datoteki\n"
+"  -2 POLJE          zdru¾ujemo glede na navedeno POLJE v drugi datoteki\n"
+
+#: src/join.c:173
+msgid ""
+"\n"
+"Unless -t CHAR is given, leading blanks separate fields and are ignored,\n"
+"else fields are separated by CHAR.  Any FIELD is a field number counted\n"
+"from 1.  FORMAT is one or more comma or blank separated specifications,\n"
+"each being `SIDE.FIELD' or `0'.  Default FORMAT outputs the join field,\n"
+"the remaining fields from FILE1, the remaining fields from FILE2, all\n"
+"separated by CHAR.\n"
+msgstr ""
+"\n"
+"Èe izbira -t ZNAK ni podana, vodilna prazna polja loèujejo polja in se ne\n"
+"upo¹tevajo, sicer pa ZNAK loèuje polja. POLJE je ¹tevilka polja, ¹teto od 1\n"
+"dalje. OBLIKA je eno ali veè z vejico ali presledkom loèenih doloèil, "
+"vsako \n"
+"od njih je oblike ,STRAN.POLJE` ali ,0`. Privzeta OBLIKA izpi¹e zdru¾itveno\n"
+"polje, vsa preostala polja iz DATOTEKE1, in zatem ¹e vsa preostala polja iz\n"
+"DATOTEKE2; loèilo med polji je ZNAK.\n"
+
+#: src/join.c:648
+#, c-format
+msgid "invalid field specifier: `%s'"
+msgstr "neveljavno doloèilo polja: ,%s`"
+
+#: src/join.c:662 src/join.c:778 src/join.c:814
+#, c-format
+msgid "invalid field number: `%s'"
+msgstr "neveljavna ¹tevilka polja: ,%s`"
+
+#: src/join.c:675
+#, c-format
+msgid "invalid file number in field spec: `%s'"
+msgstr "neveljavna ¹tevilka datoteke v doloèilu polja: ,%s`"
+
+#: src/join.c:798
+#, c-format
+msgid "invalid field number for file 1: `%s'"
+msgstr "neveljavna ¹tevilka polja za prvo datoteko: ,%s`"
+
+#: src/join.c:807
+#, c-format
+msgid "invalid field number for file 2: `%s'"
+msgstr "neveljavna ¹tevilka polja za drugo datoteko: ,%s`"
+
+#: src/join.c:839
+msgid "too many non-option arguments"
+msgstr "preveè neizbirnih argumentov"
+
+#: src/join.c:861
+msgid "too few non-option arguments"
+msgstr "premalo neizbirnih argumentov"
+
+#: src/join.c:872
+msgid "both files cannot be standard input"
+msgstr "obeh datotek ne moremo hkrati brati s standardnega vhoda"
+
+#: src/md5sum.c:38
+msgid "Ulrich Drepper and Scott Miller"
+msgstr "Ulrich Drepper in Scott Miller"
+
+#: src/md5sum.c:125
+#, c-format
+msgid ""
+"Usage: %s [OPTION] [FILE]...\n"
+"  or:  %s [OPTION] --check [FILE]\n"
+"Print or check %s (%d-bit) checksums.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+msgstr ""
+"Uporaba: %s [IZBIRA] [DATOTEKA]...\n"
+"  ali:   %s [IZBIRA] --check [DATOTEKA]\n"
+"Izpi¹emo ali preverimo nadzorne vsote %s (%d-bitne).\n"
+"Èe DATOTEKA ni podana, ali èe je enaka -, beremo s standardnega vhoda.\n"
+
+#: src/md5sum.c:134
+#, c-format
+msgid ""
+"\n"
+"  -b, --binary            read files in binary mode (default on DOS/"
+"Windows)\n"
+"  -c, --check             check %s sums against given list\n"
+"  -t, --text              read files in text mode (default)\n"
+"\n"
+msgstr ""
+"\n"
+"  -b, --binary            datoteke beremo v binarnem naèinu (privzeto v\n"
+"                            okoljih DOS/Windows)\n"
+"  -c, --check             izraèunane nadzorne vsote %s primerjamo z "
+"vrednostmi\n"
+"                            v navedeni datoteki\n"
+"  -t, --text              datoteke beremo v besedilnem naèinu (privzeto)\n"
+"\n"
+
+#: src/md5sum.c:142
+msgid ""
+"The following two options are useful only when verifying checksums:\n"
+"      --status            don't output anything, status code shows success\n"
+"  -w, --warn              warn about improperly formated checksum lines\n"
+"\n"
+msgstr ""
+"Naslednji dve izbiri sta uporabni le pri preverjanju nadzornih vsot:\n"
+"      --status            brez izpisa, izhodna statusna koda ka¾e uspeh\n"
+"  -w, --warn              z opozorili pri nepravilno oblikovanih vrsticah\n"
+"                            z nadzornimi vsotami MD5\n"
+"\n"
+
+#: src/md5sum.c:150
+#, c-format
+msgid ""
+"\n"
+"The sums are computed as described in %s.  When checking, the input\n"
+"should be a former output of this program.  The default mode is to print\n"
+"a line with checksum, a character indicating type (`*' for binary, ` ' for\n"
+"text), and name for each FILE.\n"
+msgstr ""
+"\n"
+"Izraèun nadzornih vsot je opisan v %s. Pri preverjanju mora biti datoteka\n"
+"z vrednostmi v enaki obliki kot izpis programa. Privzet naèin je izpis\n"
+"vrstice z nadzorno vsoto, statusnim znakom (,*` za binarne, , ` za "
+"besedilne\n"
+"datoteke) in imenom DATOTEKE, za katero je bila izraèunana nadzorna vsota.\n"
+
+#: src/md5sum.c:379
+#, c-format
+msgid "%s: %lu: improperly formatted %s checksum line"
+msgstr "%s: %lu: nepravilno oblikovana vrstica z nadzorno vsoto %s"
+
+#: src/md5sum.c:401
+#, c-format
+msgid "%s: FAILED open or read\n"
+msgstr "%s: NAPAKA pri odpiranju ali branju\n"
+
+#: src/md5sum.c:425
+msgid "FAILED"
+msgstr "NAPAKA"
+
+#: src/md5sum.c:425
+msgid "OK"
+msgstr "V REDU"
+
+#: src/md5sum.c:438
+#, c-format
+msgid "%s: read error"
+msgstr "%s: napaka pri branju"
+
+#: src/md5sum.c:451
+#, c-format
+msgid "%s: no properly formatted %s checksum lines found"
+msgstr "%s: nobene pravilno oblikovane vrstice z nadzorno vsoto %s ni najti"
+
+#: src/md5sum.c:464
+#, c-format
+msgid "WARNING: %d of %d listed %s could not be read"
+msgstr "OPOZORILO: %d od %d navedenih %s se ne da prebrati"
+
+#: src/md5sum.c:467
+msgid "file"
+msgstr "na¹tete datoteke"
+
+#: src/md5sum.c:467
+msgid "files"
+msgstr "na¹tetih datotek"
+
+#: src/md5sum.c:473
+#, c-format
+msgid "WARNING: %d of %d computed %s did NOT match"
+msgstr "OPOZORILO: %d od %d %s se NE ujema."
+
+#: src/md5sum.c:476
+msgid "checksum"
+msgstr "izraèunane nadzorne vsote"
+
+#: src/md5sum.c:476
+msgid "checksums"
+msgstr "izraèunanih nadzornih vsot"
+
+#: src/md5sum.c:558
+msgid ""
+"the --binary and --text options are meaningless when verifying checksums"
+msgstr ""
+"izbiri --binary in --text nista smiselni pri preverjanju nadzornih vsot"
+
+#: src/md5sum.c:566
+msgid "the --string and --check options are mutually exclusive"
+msgstr "izbiri --string in --check se medsebojno izkljuèujeta"
+
+#: src/md5sum.c:573
+msgid "the --status option is meaningful only when verifying checksums"
+msgstr "izbira --status je smiselna samo pri preverjanju nadzornih vsot"
+
+#: src/md5sum.c:580
+msgid "the --warn option is meaningful only when verifying checksums"
+msgstr "izbira --warn je smiselna samo pri preverjanju nadzornih vsot"
+
+#: src/md5sum.c:590
+msgid "no files may be specified when using --string"
+msgstr "pri izbiri --string ne sme biti podana nobena datoteka"
+
+#: src/md5sum.c:612
+msgid "only one argument may be specified when using --check"
+msgstr "pri izbiri --check sme biti doloèen samo en argument"
+
+#: src/nl.c:39
+msgid "Scott Bartram and David MacKenzie"
+msgstr "Scott Bartram in David MacKenzie"
+
+#: src/nl.c:180
+msgid ""
+"Write each FILE to standard output, with line numbers added.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"Vsako od DATOTEK prepi¹emo na standardni izhod in spotoma o¹tevilèimo "
+"vrstice.\n"
+"Èe DATOTEKA ni podana, ali èe je enaka -, beremo s standardnega vhoda.\n"
+"\n"
+
+#: src/nl.c:188
+msgid ""
+"  -b, --body-numbering=STYLE      use STYLE for numbering body lines\n"
+"  -d, --section-delimiter=CC      use CC for separating logical pages\n"
+"  -f, --footer-numbering=STYLE    use STYLE for numbering footer lines\n"
+msgstr ""
+"  -b, --body-numbering=SLOG       uporabi SLOG pri o¹tevilèenju vrstic "
+"telesa\n"
+"  -d, --section-delimiter=CC      uporabi CC pri loèitvi logiènih strani\n"
+"  -f, --footer-numbering=SLOG     uporabi SLOG pri o¹tevilèenju zno¾ja "
+"strani\n"
+
+#: src/nl.c:193
+msgid ""
+"  -h, --header-numbering=STYLE    use STYLE for numbering header lines\n"
+"  -i, --page-increment=NUMBER     line number increment at each line\n"
+"  -l, --join-blank-lines=NUMBER   group of NUMBER empty lines counted as "
+"one\n"
+"  -n, --number-format=FORMAT      insert line numbers according to FORMAT\n"
+"  -p, --no-renumber               do not reset line numbers at logical "
+"pages\n"
+"  -s, --number-separator=STRING   add STRING after (possible) line number\n"
+msgstr ""
+"  -h, --header-numbering=SLOG     uporabi SLOG pri o¹tevilèenju zglavja "
+"strani\n"
+"  -i, --page-increment=©TEVILO    ¹tevilke vrstic inkrementiraj po ©TEVILO\n"
+"  -l, --join-blank-lines=©TEVILO  skupino ©TEVILA praznih vrstic ¹tej kot "
+"eno\n"
+"  -n, --number-format=OBLIKA      ¹tevilke vrstic vrini glede na OBLIKO\n"
+"  -p, --no-renumber               o¹tevilèenje vrstic naj teèe prek log. "
+"strani\n"
+"  -s, --number-separator=NIZ      pripni NIZ (mo¾ni) ¹tevilki vrstice\n"
+
+#: src/nl.c:201
+msgid ""
+"  -v, --first-page=NUMBER         first line number on each logical page\n"
+"  -w, --number-width=NUMBER       use NUMBER columns for line numbers\n"
+msgstr ""
+"  -v, --first-page=©TEVILO        ¹tevilka prve vrstice na novi logièni "
+"strani\n"
+"  -w, --number-width=©TEVILO      ©TEVILO znakov ¹irine za o¹tevilèenje\n"
+
+#: src/nl.c:207
+msgid ""
+"\n"
+"By default, selects -v1 -i1 -l1 -sTAB -w6 -nrn -hn -bt -fn.  CC are\n"
+"two delimiter characters for separating logical pages, a missing\n"
+"second character implies :.  Type \\\\ for \\.  STYLE is one of:\n"
+msgstr ""
+"\n"
+"Privzete so izbire -v1 -i1 -l1 -sTAB -w6 -nrn -hn -bt -fn. CC sta dva "
+"loèitvena\n"
+"znaka za loèevanje logiènih strani; èe je drugi znak izpu¹èen, se "
+"privzame :.\n"
+"Uporabite \\\\\\\\ za \\\\. SLOG je nekaj od na¹tetega:\n"
+
+#: src/nl.c:213
+msgid ""
+"\n"
+"  a         number all lines\n"
+"  t         number only nonempty lines\n"
+"  n         number no lines\n"
+"  pREGEXP   number only lines that contain a match for REGEXP\n"
+"\n"
+"FORMAT is one of:\n"
+"\n"
+"  ln   left justified, no leading zeros\n"
+"  rn   right justified, no leading zeros\n"
+"  rz   right justified, leading zeros\n"
+"\n"
+msgstr ""
+"\n"
+"  a         o¹tevilèi vse vrstice\n"
+"  t         o¹tevilèi samo polne vrstice, praznih ne\n"
+"  n         ne o¹tevilèi nobenih vrstic\n"
+"  pREGIZR   o¹tevilèi samo vrstice, ki se ujemajo z regularnim izrazom "
+"REGIZR\n"
+"\n"
+"OBLIKA je nekaj od na¹tetega:\n"
+"\n"
+"  ln   levo poravnano, brez vodilnih nièel\n"
+"  rn   desno poravnano, brez vodilnih nièel\n"
+"  rz   desno poravnano, z vodilnimi nièlami\n"
+
+#: src/nl.c:500
+#, c-format
+msgid "invalid starting line number: `%s'"
+msgstr "neveljavna zaèetna ¹tevilka vrstice: ,%s`"
+
+#: src/nl.c:510
+#, c-format
+msgid "invalid line number increment: `%s'"
+msgstr "neveljaven vrstièni inkrement: ,%s`"
+
+#: src/nl.c:523
+#, c-format
+msgid "invalid number of blank lines: `%s'"
+msgstr "neveljavno ¹tevilo praznih vrstic: ,%s`"
+
+#: src/nl.c:537
+#, c-format
+msgid "invalid line number field width: `%s'"
+msgstr "neveljavna ¹irina polja s ¹tevilko vrstice: ,%s`"
+
+#: src/od.c:281
+#, c-format
+msgid ""
+"Usage: %s [OPTION]... [FILE]...\n"
+"  or:  %s --traditional [FILE] [[+]OFFSET [[+]LABEL]]\n"
+msgstr ""
+"Uporaba: %s [IZBIRA]... [DATOTEKA]...\n"
+"  ali:   %s --traditional [DATOTEKA] [[+]ODMIK [[+]OZNAKA]]\n"
+
+#: src/od.c:286
+msgid ""
+"\n"
+"Write an unambiguous representation, octal bytes by default,\n"
+"of FILE to standard output.  With more than one FILE argument,\n"
+"concatenate them in the listed order to form the input.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"\n"
+"Na standardni izhod zapi¹emo enoznaèno predstavitev DATOTEKE, privzeto "
+"osmi¹ki\n"
+"zapis bajtov. Èe DATOTEKA ni podana ali je enaka -, beremo s standardnega "
+"vhoda.\n"
+"\n"
+
+#: src/od.c:293
+#, fuzzy
+msgid "All arguments to long options are mandatory for short options.\n"
+msgstr ""
+"Èe je pri dolgi obliki izbire naveden argument, je ta obvezen tudi pri "
+"kratki.\n"
+
+#: src/od.c:296
+msgid ""
+"  -A, --address-radix=RADIX   decide how file offsets are printed\n"
+"  -j, --skip-bytes=BYTES      skip BYTES input bytes first\n"
+msgstr ""
+"  -A, --address-radix=OSNOVA  OSNOVA pri izpisu odmikov v datoteki (doxn)\n"
+"  -j, --skip-bytes=©TEVILO    pri vsaki datoteki preskoèimo prvih ©TEVILO "
+"bajtov\n"
+
+#: src/od.c:300
+#, fuzzy
+msgid ""
+"  -N, --read-bytes=BYTES      limit dump to BYTES input bytes\n"
+"  -s, --strings[=BYTES]       output strings of at least BYTES graphic "
+"chars\n"
+"  -t, --format=TYPE           select output format or formats\n"
+"  -v, --output-duplicates     do not use * to mark line suppression\n"
+"  -w, --width[=BYTES]         output BYTES bytes per output line\n"
+"      --traditional           accept arguments in traditional form\n"
+msgstr ""
+"  -N, --read-bytes=©TEVILO    izpis omejimo na ©TEVILO bajtov v vsaki "
+"datoteki\n"
+"  -s, --strings[=©TEVILO]     zapor. dolgo vsaj ©TEVILO bajtov izpi¹emo kot "
+"niz\n"
+"  -t, --format=TIP            izberemo obliko ali oblike izpisov\n"
+"  -v, --output-duplicates     ne uporabimo * za oznako izpu¹èenih vrstic\n"
+"  -w, --width[=©TEVILO]       v vsaki vrstici izpi¹emo ©TEVILO bajtov\n"
+"      --traditional           dovoljena oblika argumentov pred standardom "
+"POSIX\n"
+
+#: src/od.c:310
+#, fuzzy
+msgid ""
+"\n"
+"Traditional format specifications may be intermixed; they accumulate:\n"
+"  -a   same as -t a,  select named characters\n"
+"  -b   same as -t oC, select octal bytes\n"
+"  -c   same as -t c,  select ASCII characters or backslash escapes\n"
+"  -d   same as -t u2, select unsigned decimal shorts\n"
+msgstr ""
+"\n"
+"Doloèila v stari obliki (pred POSIXom) lahko kombiniramo, in se "
+"sestavljajo:\n"
+"  -a   isto kot -t a,  neizpisljive znake poimenujemo s kraticami\n"
+"  -b   isto kot -t oC, osmi¹ki izpis bajtov\n"
+"  -c   isto kot -t c,  neizpisljive znake uvedemo z nagibnico\n"
+"  -d   isto kot -t u2, deseti¹ki izpis dvobajtnih nepredznaèenih celih "
+"¹tevil\n"
+
+#: src/od.c:318
+msgid ""
+"  -f   same as -t fF, select floats\n"
+"  -h   same as -t x2, select hexadecimal shorts\n"
+"  -i   same as -t d2, select decimal shorts\n"
+"  -l   same as -t d4, select decimal longs\n"
+"  -o   same as -t o2, select octal shorts\n"
+"  -x   same as -t x2, select hexadecimal shorts\n"
+msgstr ""
+"  -f   isto kot -t fF, izpis ¹tevil s plavajoèo vejico\n"
+"  -h   isto kot -t x2, ¹estnajsti¹ki izpis dvobajtnih celih ¹tevil\n"
+"  -i   isto kot -t d2, deseti¹ki izpis dvobajtnih predznaèenih celih ¹tevil\n"
+"  -l   isto kot -t d4, deseti¹ki izpis ¹tiribajtnih predznaèenih celih "
+"¹tevil\n"
+"  -o   isto kot -t o2, osmi¹ki izpis dvobajtnih celih ¹tevil\n"
+"  -x   isto kot -t x2, ¹estnajsti¹ki izpis dvobajtnih celih ¹tevil\n"
+
+#: src/od.c:326
+#, fuzzy
+msgid ""
+"\n"
+"For older syntax (second call format), OFFSET means -j OFFSET.  LABEL\n"
+"is the pseudo-address at first byte printed, incremented when dump is\n"
+"progressing.  For OFFSET and LABEL, a 0x or 0X prefix indicates\n"
+"hexadecimal, suffixes may be . for octal and b for multiply by 512.\n"
+"\n"
+"TYPE is made up of one or more of these specifications:\n"
+"\n"
+"  a          named character\n"
+"  c          ASCII character or backslash escape\n"
+msgstr ""
+"\n"
+"Pri stari skladnji (druga oblika klica) pomeni ODMIK izbiro -j ODMIK.\n"
+"OZNAKA je psevdonaslov prvega izpisanega bajta in se pri¹teje odmiku pri\n"
+"izpisu. Pri ODMIKU in OZNAKI predpona 0x ali 0X naznanja ¹estnajsti¹ki "
+"zapis.\n"
+"Pripone so lahko . za osmi¹ki zapis ali b za mno¾enje s 512.\n"
+"\n"
+"TIP je lahko eno ali veè doloèil s seznama:\n"
+"\n"
+"  a            znaki; neizpisljivi znaki so poimenovani s kraticami\n"
+"  c            znaki; neizpisljivi znaki so uvedeni z nagibnico\n"
+
+#: src/od.c:338
+msgid ""
+"  d[SIZE]    signed decimal, SIZE bytes per integer\n"
+"  f[SIZE]    floating point, SIZE bytes per integer\n"
+"  o[SIZE]    octal, SIZE bytes per integer\n"
+"  u[SIZE]    unsigned decimal, SIZE bytes per integer\n"
+"  x[SIZE]    hexadecimal, SIZE bytes per integer\n"
+msgstr ""
+"  d[VELIKOST]  predznaèeno deseti¹ko celo ¹tevilo dol¾ine VELIKOST bajtov\n"
+"  f[VELIKOST]  ¹tevilo v plavajoèi vejici dol¾ine VELIKOST bajtov\n"
+"  o[VELIKOST]  osmi¹ko ¹tevilo dol¾ine VELIKOST bajtov\n"
+"  u[VELIKOST]  nepredznaèeno deseti¹ko celo ¹tevilo dol¾ine VELIKOST bajtov\n"
+"  x[VELIKOST]  ¹estnajsti¹ko ¹tevilo dol¾ine VELIKOST bajtov\n"
+
+#: src/od.c:345
+msgid ""
+"\n"
+"SIZE is a number.  For TYPE in doux, SIZE may also be C for\n"
+"sizeof(char), S for sizeof(short), I for sizeof(int) or L for\n"
+"sizeof(long).  If TYPE is f, SIZE may also be F for sizeof(float), D\n"
+"for sizeof(double) or L for sizeof(long double).\n"
+msgstr ""
+"\n"
+"VELIKOST je ¹tevilka. Za TIPE d,o,u ali x je VELIKOST lahko tudi C, kar\n"
+"pomeni dol¾ino tipa char, S (dol¾ina tipa short), I (dol¾ina tipa int) ali\n"
+"L (dol¾ina tipa long). Èe je TIP f, je lahko VELIKOST tudi F za dol¾ino\n"
+"tipa float, D (dol¾ina tipa double) ali L (dol¾ina tipa long double).\n"
+
+#: src/od.c:352
+msgid ""
+"\n"
+"RADIX is d for decimal, o for octal, x for hexadecimal or n for none.\n"
+"BYTES is hexadecimal with 0x or 0X prefix, it is multiplied by 512\n"
+"with b suffix, by 1024 with k and by 1048576 with m.  Adding a z suffix to\n"
+"any type adds a display of printable characters to the end of each line\n"
+"of output.  "
+msgstr ""
+"\n"
+"OSNOVA je lahko d (deseti¹ka), o (osmi¹ka), x (¹estnajsti¹ka) ali n\n"
+"(nobena). Èe ima ©TEVILO predpono 0x ali 0X, se tolmaèi kot\n"
+"¹estnajsti¹ka vrednost. Pripona b pomeni mno¾enje s 512, pripona k\n"
+"mno¾enje s 1024, pripona m mno¾enje s 1048576. Pripona z pri\n"
+"kateremkoli tipu doda prikaz izpisljivih znakov na koncu vsake\n"
+"vrstice. "
+
+#: src/od.c:360
+#, fuzzy
+msgid ""
+"--string without a number implies 3.  --width without a number\n"
+"implies 32.  By default, od uses -A o -t d2 -w 16.\n"
+msgstr ""
+"Izbira -s brez podanega ¹tevila privzame vrednost 3. Izbira\n"
+"-w brez podanega ¹tevila privzame vrednost 32. Privzete vrednosti, ki\n"
+"jih od uporablja, so -A o -t d2 -w 16.\n"
+
+#: src/od.c:716 src/od.c:835
+#, c-format
+msgid "invalid type string `%s'"
+msgstr "neveljaven tip ,%s`"
+
+#: src/od.c:726
+#, c-format
+msgid ""
+"invalid type string `%s';\n"
+"this system doesn't provide a %lu-byte integral type"
+msgstr ""
+"neveljaven tip ,%s`;\n"
+"ta sistem ne omogoèa %lu-bajtnega celo¹tevilènega tipa"
+
+#: src/od.c:845
+#, c-format
+msgid ""
+"invalid type string `%s';\n"
+"this system doesn't provide a %lu-byte floating point type"
+msgstr ""
+"neveljaven tip ,%s`;\n"
+"ta sistem ne omogoèa %lu-bajtnega zapisa v plavajoèi vejici"
+
+#: src/od.c:908
+#, c-format
+msgid "invalid character `%c' in type string `%s'"
+msgstr "neveljaven znak ,%c` v oznaki tipa ,%s`"
+
+#: src/od.c:1135
+msgid "cannot skip past end of combined input"
+msgstr "ni mo¾no prek konca kombiniranega vhoda"
+
+#: src/od.c:1388
+msgid "old-style offset"
+msgstr "odmik v starem slogu"
+
+#: src/od.c:1696
+#, c-format
+msgid "invalid output address radix `%c'; it must be one character from [doxn]"
+msgstr "neveljavna osnova naslovov ,%c`; veljavne so mo¾nosti d, o, x in n"
+
+#: src/od.c:1706
+msgid "skip argument"
+msgstr "preskoèi argument"
+
+#: src/od.c:1714
+msgid "limit argument"
+msgstr "omeji argument"
+
+#: src/od.c:1724
+msgid "minimum string length"
+msgstr "najmanj¹a dol¾ina niza"
+
+#: src/od.c:1729 src/od.c:1795
+#, c-format
+msgid "%s is too large"
+msgstr "%s je preveliko"
+
+#: src/od.c:1793
+msgid "width specification"
+msgstr "doloèilo ¹irine"
+
+#: src/od.c:1815
+msgid "no type may be specified when dumping strings"
+msgstr "tip ne sme biti doloèen, kadar izna¹amo nize"
+
+#: src/od.c:1863
+#, c-format
+msgid "invalid second operand in compatibility mode `%s'"
+msgstr "neveljaven drugi operand v zdru¾ljivostnem naèinu ,%s`"
+
+#: src/od.c:1884
+msgid "in compatibility mode, the last two arguments must be offsets"
+msgstr "v zdru¾ljivostnem naèinu morata biti zadnja dva argumenta odmika"
+
+#: src/od.c:1891
+msgid "compatibility mode supports at most three arguments"
+msgstr "zdru¾ljivostni naèin podpira najveè tri argumente"
+
+#: src/od.c:1964
+#, c-format
+msgid "warning: invalid width %lu; using %d instead"
+msgstr "opozorilo: neveljavna ¹irina %lu; namesto nje jemljemo %d"
+
+#: src/od.c:1980
+#, c-format
+msgid "%d: fmt=\"%s\" width=%d\n"
+msgstr "%d: fmt=\"%s\" width?%d\n"
+
+#: src/paste.c:50
+msgid "David M. Ihnat and David MacKenzie"
+msgstr "David M. Ihnat in David MacKenzie"
+
+#: src/paste.c:208
+msgid "standard input is closed"
+msgstr "standardni vhod je zaprt"
+
+#: src/paste.c:407
+msgid ""
+"Write lines consisting of the sequentially corresponding lines from\n"
+"each FILE, separated by TABs, to standard output.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"Vsaki od vrstic iz prve DATOTEKE s tabulatorjem na konec pridru¾imo "
+"istole¾no\n"
+"vrstico iz druge DATOTEKE, in tako naprej do konca seznama DATOTEK. Èe\n"
+"DATOTEKA ni podana ali je enaka -, beremo s standardnega vhoda.\n"
+"\n"
+
+#: src/paste.c:416
+msgid ""
+"  -d, --delimiters=LIST   reuse characters from LIST instead of TABs\n"
+"  -s, --serial            paste one file at a time instead of in parallel\n"
+msgstr ""
+"  -d, --delimiters=SEZNAM  za loèitev uporabimo znake s SEZNAMA namesto TAB\n"
+"  -s, --serial            datoteke zdru¾ujemo zaporedno namesto vzporedno\n"
+
+#: src/pr.c:328
+msgid "Pete TerMaat and Roland Huebner"
+msgstr "Pete TerMaat in Roland Huebner"
+
+#: src/pr.c:805
+#, c-format
+msgid "`--pages' invalid range of page numbers: `%s'"
+msgstr ",--pages` neveljavni obseg ¹tevilk strani: ,%s`"
+
+#: src/pr.c:817
+#, c-format
+msgid "`--pages' invalid starting page number: `%s'"
+msgstr ",--pages` neveljavna zaèetna ¹tevilka strani: ,%s`"
+
+#: src/pr.c:829
+#, c-format
+msgid "`--pages' invalid ending page number: `%s'"
+msgstr ",--pages` neveljavna konèna ¹tevilka strani: ,%s`"
+
+#: src/pr.c:836
+msgid "`--pages' starting page number is larger than ending page number"
+msgstr ",--pages` zaèetna ¹tevilka strani je vi¹ja od konène"
+
+#: src/pr.c:913
+msgid "`--pages=FIRST_PAGE[:LAST_PAGE]' missing argument"
+msgstr ",--pages=PRVA_STRAN[:ZADNJA_STRAN]`: manjkajoèi argument"
+
+#: src/pr.c:924
+#, c-format
+msgid "`--columns=COLUMN' invalid number of columns: `%s'"
+msgstr ",--columns=STOLPCI` neveljavno ¹tevilo stolpcev: ,%s`"
+
+#: src/pr.c:978
+#, c-format
+msgid "`-l PAGE_LENGTH' invalid number of lines: `%s'"
+msgstr ",-l DOL®INA_STRANI` nedovoljeno ¹tevilo vrstic: ,%s`"
+
+#: src/pr.c:1002
+#, c-format
+msgid "`-N NUMBER' invalid starting line number: `%s'"
+msgstr ",-N ©TEVILKA` nedovoljena ¹tevilka zaèetne vrstice: ,%s`"
+
+#: src/pr.c:1014
+#, c-format
+msgid "`-o MARGIN' invalid line offset: `%s'"
+msgstr ",-o ROB` nedovoljen odmik od levega roba: ,%s`"
+
+#: src/pr.c:1055
+#, c-format
+msgid "`-w PAGE_WIDTH' invalid number of characters: `%s'"
+msgstr ",-w ©IRINA_STRANI` neveljavno ¹tevilo znakov: ,%s`"
+
+#: src/pr.c:1067
+#, c-format
+msgid "`-W PAGE_WIDTH' invalid number of characters: `%s'"
+msgstr ",-W ©IRINA_STRANI` neveljavno ¹tevilo znakov: ,%s`"
+
+#: src/pr.c:1081
+msgid "%b %e %H:%M %Y"
+msgstr "%b %e %H:%M %Y"
+
+#: src/pr.c:1090
+msgid "Cannot specify number of columns when printing in parallel."
+msgstr "Pri vzporednem izpisu ni mo¾no doloèiti ¹tevila stolpcev"
+
+#: src/pr.c:1094
+msgid "Cannot specify both printing across and printing in parallel."
+msgstr "Mo¾nosti izpisa poèez in vzporednega izpisa se izkljuèujeta"
+
+#: src/pr.c:1190
+#, c-format
+msgid "`-%c' extra characters or invalid number in the argument: `%s'"
+msgstr ",-%c` dodatni znaki ali neveljavno ¹tevilo v argumentu: ,%s`"
+
+#: src/pr.c:1301
+msgid "page width too narrow"
+msgstr "¹irina strani premajhna"
+
+#: src/pr.c:2364
+#, c-format
+msgid "starting page number larger than total number of pages: `%d'"
+msgstr "zaèetna stran je vi¹ja od celotnega ¹tevila strani: ,%d`"
+
+#: src/pr.c:2395
+#, c-format
+msgid "Page %d"
+msgstr "Str. %d"
+
+#: src/pr.c:2761
+msgid ""
+"Paginate or columnate FILE(s) for printing.\n"
+"\n"
+msgstr ""
+"O¹tevilèimo strani ali poravnamo besedilo v DATOTEKI v stolpce za izpis.\n"
+"\n"
+
+#: src/pr.c:2768
+msgid ""
+"  +FIRST_PAGE[:LAST_PAGE], --pages=FIRST_PAGE[:LAST_PAGE]\n"
+"                    begin [stop] printing with page FIRST_[LAST_]PAGE\n"
+"  -COLUMN, --columns=COLUMN\n"
+"                    produce COLUMN-column output and print columns down,\n"
+"                    unless -a is used. Balance number of lines in the\n"
+"                    columns on each page.\n"
+msgstr ""
+"  +PRVA_STRAN[:ZADNJA_STRAN], --pages=PRVA_STRAN[:ZADNJA_STRAN]\n"
+"                    tiskanje zaènemo na PRVI in konèamo na ZADNJI STRANI\n"
+"  -STOLPCI, --columns=STOLPCI\n"
+"                    izpis v danem ¹tevilu STOLPCEV, ki teèejo od zgoraj "
+"navzdol\n"
+"                    razen èe je izbrano -a. ©tevilo vrstic v stolpcih na "
+"strani\n"
+"                    je uravnote¾eno.\n"
+
+#: src/pr.c:2776
+msgid ""
+"  -a, --across      print columns across rather than down, used together\n"
+"                    with -COLUMN\n"
+"  -c, --show-control-chars\n"
+"                    use hat notation (^G) and octal backslash notation\n"
+"  -d, --double-space\n"
+"                    double space the output\n"
+msgstr ""
+"  -a, --across      skupaj s -STOLPCI; stolpce tiskamo poprek prek strani\n"
+"                    namesto navzdol.\n"
+"  -c, --show-control-chars\n"
+"                    uporabimo zapis ^G in osmi¹ki zapis z uvodno nagibnico\n"
+"  -d, --double-space\n"
+"                    izpis z dvojnim razmakom\n"
+
+#: src/pr.c:2784
+msgid ""
+"  -D, --date-format=FORMAT\n"
+"                    use FORMAT for the header date\n"
+"  -e[CHAR[WIDTH]], --expand-tabs[=CHAR[WIDTH]]\n"
+"                    expand input CHARs (TABs) to tab WIDTH (8)\n"
+"  -F, -f, --form-feed\n"
+"                    use form feeds instead of newlines to separate pages\n"
+"                    (by a 3-line page header with -F or a 5-line header\n"
+"                    and trailer without -F)\n"
+msgstr ""
+"  -D, --date-format=OBLIKA\n"
+"                    izpis datuma v glavi v navedeni OBLIKI\n"
+"  -e[ZNAK[©IRINA]], --expand-tabs[=ZNAK[©IRINA]]\n"
+"                    ZNAKE (privzeto TAB) na vhodu raz¹irimo v tabulator\n"
+"                    dane ©IRINE (privzeto 8)\n"
+"  -F, -f, --form-feed\n"
+"                    strani loèimo z znaki za skok na novo stran namesto s\n"
+"                    praznimi vrsticami (s 3-vrstiènim zglavjem z izbiro -F\n"
+"                    ali 5-vrstiènim zglavjem in zno¾jem brez -F)\n"
+
+#: src/pr.c:2794
+#, fuzzy
+msgid ""
+"  -h HEADER, --header=HEADER\n"
+"                    use a centered HEADER instead of filename in page "
+"header,\n"
+"                    -h \"\" prints a blank line, don't use -h\"\"\n"
+"  -i[CHAR[WIDTH]], --output-tabs[=CHAR[WIDTH]]\n"
+"                    replace spaces with CHARs (TABs) to tab WIDTH (8)\n"
+"  -J, --join-lines  merge full lines, turns off -W line truncation, no "
+"column\n"
+"                    alignment, --sep-string[=STRING] sets separators\n"
+msgstr ""
+"  -h ZGLAVJE, --header=ZGLAVJE\n"
+"                    uporabimo navedeno osredinjeno ZGLAVJE namesto imena\n"
+"                    datoteke; -h \\\"\\\" izpi¹e prazno vrstica; ne "
+"uporabljajte -h\\\"\\\"\n"
+"  -i[ZNAK[©IRINA]], --output-tabs[=ZNAK[©IRINA]]\n"
+"                    presledke skrèimo v ZNAK (privzeto TAB) do ©IRINE\n"
+"                    tabulatorja (privzeto 8)\n"
+"  -J, --join-lines  zdru¾ujemo cele vrstice, brez rezanja vrstic z -W, brez\n"
+"                    poravnave stolpcev, -S[NIZ] nastavi loèila\n"
+
+#: src/pr.c:2803
+msgid ""
+"  -l PAGE_LENGTH, --length=PAGE_LENGTH\n"
+"                    set the page length to PAGE_LENGTH (66) lines\n"
+"                    (default number of lines of text 56, and with -F 63)\n"
+"  -m, --merge       print all files in parallel, one in each column,\n"
+"                    truncate lines, but join lines of full length with -J\n"
+msgstr ""
+"  -l DOL®INA_STRANI, --length=DOL®INA_STRANI\n"
+"                    doloèimo DOL®INO STRANI, v vrsticah (privzeto 66)\n"
+"                    (privzeto ¹tevilo vrstic besedila je 56, z -F 63)\n"
+"  -m, --merge       datoteke izpisujemo vzporedno, po eno v stolpec. "
+"Predolge\n"
+"                    vrstice pore¾emo, razen z izbiro -J, kjer zdru¾imo "
+"celotne\n"
+
+#: src/pr.c:2810
+msgid ""
+"  -n[SEP[DIGITS]], --number-lines[=SEP[DIGITS]]\n"
+"                    number lines, use DIGITS (5) digits, then SEP (TAB),\n"
+"                    default counting starts with 1st line of input file\n"
+"  -N NUMBER, --first-line-number=NUMBER\n"
+"                    start counting with NUMBER at 1st line of first\n"
+"                    page printed (see +FIRST_PAGE)\n"
+msgstr ""
+"  -n[LOÈ[©TEVILO]], --number-lines[=LOÈ[©TEVILO]]\n"
+"                    vrstice o¹tevilèimo, ¹irina polja je ©TEVILO (privzeto "
+"5)\n"
+"                    znakov, sledi LOÈ (privzeto TAB). O¹tevilèenje  gre od "
+"prve\n"
+"                    vrstice vhodne datoteke.\n"
+"  -N ©TEVILO, --first-line-number=©TEVILO\n"
+"                    o¹tevilèenje zaènemo z navedenim ©TEVILOM v prvi vrstici "
+"na\n"
+"                    prvi natisnjeni strani (glej +PRVA_STRAN)\n"
+
+#: src/pr.c:2818
+msgid ""
+"  -o MARGIN, --indent=MARGIN\n"
+"                    offset each line with MARGIN (zero) spaces, do not\n"
+"                    affect -w or -W, MARGIN will be added to PAGE_WIDTH\n"
+"  -r, --no-file-warnings\n"
+"                    omit warning when a file cannot be opened\n"
+msgstr ""
+"  -o ROB, --indent=ROB\n"
+"                    vrstice zamaknemo za ROB znakov od levega roba; ne "
+"vpliva\n"
+"                    na -w in -W; ROB se pri¹teje ©IRINI_STRANI.\n"
+"  -r, --no-file-warnings\n"
+"                    brez opozoril, kadar ni mo¾no odpreti datoteke\n"
+
+#: src/pr.c:2825
+msgid ""
+"  -s[CHAR],--separator[=CHAR]\n"
+"                    separate columns by a single character, default for "
+"CHAR\n"
+"                    is the <TAB> character without -w and 'no char' with -w\n"
+"                    -s[CHAR] turns off line truncation of all 3 column\n"
+"                    options (-COLUMN|-a -COLUMN|-m) except -w is set\n"
+msgstr ""
+"  -s[ZNAK], --separator[=ZNAK]\n"
+"                    stolpce loèimo z navedenim ZNAKOM (privzeto TAB) namesto "
+"s\n"
+"                    presledki.\n"
+
+#: src/pr.c:2832
+msgid "  -SSTRING, --sep-string[=STRING]\n"
+msgstr ""
+
+#: src/pr.c:2835
+#, fuzzy
+msgid ""
+"                    separate columns by STRING,\n"
+"                    without -S: Default separator <TAB> with -J and <space>\n"
+"                    otherwise (same as -S\" \"), no effect on column "
+"options\n"
+"  -t, --omit-header omit page headers and trailers\n"
+msgstr ""
+"  -S[NIZ], --sep-string[=NIZ]\n"
+"                    stolpce loèimo z navedenim NIZOM; ne uporabljajte "
+"oblike\n"
+"                    -S \\\"NIZ\\\". Samo -S: brez loèila (isto kot -S\\\"\\"
+"\"); brez -S:\n"
+"                    privzeto loèilo (TAB pri -J, presledki sicer).\n"
+"  -t, --omit-header brez zglavja in repa\n"
+
+#: src/pr.c:2841
+msgid ""
+"  -T, --omit-pagination\n"
+"                    omit page headers and trailers, eliminate any "
+"pagination\n"
+"                    by form feeds set in input files\n"
+"  -v, --show-nonprinting\n"
+"                    use octal backslash notation\n"
+"  -w PAGE_WIDTH, --width=PAGE_WIDTH\n"
+"                    set page width to PAGE_WIDTH (72) characters for\n"
+"                    multiple text-column output only, -s[char] turns off "
+"(72)\n"
+msgstr ""
+"  -T, --omit-pagination\n"
+"                    brez zglavja in repa; brez o¹tevilèenja strani, ki jih\n"
+"                    povzroèijo znaki za skok na novo stran v vhodni "
+"datoteki\n"
+"  -v, --show-nonprinting\n"
+"                    z uporabo osmi¹kih vrednosti z ube¾nimi zaporedji\n"
+"  -w ©IRINA_STRANI, --width=©IRINA_STRANI\n"
+"                    ©IRINO STRANI nastavimo na dano ¹tevilo znakov (privz. "
+"72);\n"
+"                    samo besedilo v veè stolpcih; -s[znak] izklopi\n"
+
+#: src/pr.c:2851
+msgid ""
+"  -W PAGE_WIDTH, --page-width=PAGE_WIDTH\n"
+"                    set page width to PAGE_WIDTH (72) characters always,\n"
+"                    truncate lines, except -J option is set, no "
+"interference\n"
+"                    with -S or -s\n"
+msgstr ""
+"  -W ©IRINA_STRANI, --page-width=©IRINA_STRANI\n"
+"                    ©IRINO STRANI nastavimo na dano ¹tevilo znakov (privz. "
+"72);\n"
+"                    predolge vrstice pore¾emo razen z izbiro -J; ne vpliva "
+"na\n"
+"                    izbiri -s in -S\n"
+
+#: src/pr.c:2859
+msgid ""
+"\n"
+"-T implied by -l nn when nn <= 10 or <= 3 with -F. With no FILE, or when\n"
+"FILE is -, read standard input.\n"
+msgstr ""
+"\n"
+"V dveh primerih se privzame -T: pri izbiri -l NN, kadar NN <= 10; ter pri\n"
+"izbiri -F, kadar je NN <= 3. Kadar DATOTEKA ni podana ali je enaka -, beremo "
+"s\n"
+"standardnega vhoda.\n"
+
+#: src/ptx.c:410
+#, c-format
+msgid "%s (for regexp `%s')"
+msgstr "%s (za regularni izraz ,%s`)"
+
+#: src/ptx.c:1859
+#, c-format
+msgid ""
+"Usage: %s [OPTION]... [INPUT]...   (without -G)\n"
+"  or:  %s -G [OPTION]... [INPUT [OUTPUT]]\n"
+msgstr ""
+"Uporaba: %s [IZBIRA]... [VHOD]...  (brez -G)\n"
+"  ali:   %s -G [IZBIRA]... [VHOD [IZHOD]]\n"
+
+#: src/ptx.c:1863
+msgid ""
+"Output a permuted index, including context, of the words in the input "
+"files.\n"
+"\n"
+msgstr ""
+"Izpis permutiranega kazala gesel v vhodnih datotekah, skupaj s kontekstom.\n"
+"\n"
+
+#: src/ptx.c:1870
+msgid ""
+"  -A, --auto-reference           output automatically generated references\n"
+"  -C, --copyright                display Copyright and copying conditions\n"
+"  -G, --traditional              behave more like System V `ptx'\n"
+"  -F, --flag-truncation=STRING   use STRING for flagging line truncations\n"
+msgstr ""
+"  -A, --auto-reference           izpis samodejno generiranih vnosov\n"
+"  -C, --copyright                izpis dovoljenja za uporabo, razmno¾evanje\n"
+"                                   in raz¹irjanje\n"
+"  -G, --traditional              obna¹anje kot ,ptx` v sistemu System V\n"
+"  -F, --flag-truncation=NIZ      za oznaèevanje okraj¹anih vrstic uporabi "
+"NIZ\n"
+
+#: src/ptx.c:1876
+msgid ""
+"  -M, --macro-name=STRING        macro name to use instead of `xx'\n"
+"  -O, --format=roff              generate output as roff directives\n"
+"  -R, --right-side-refs          put references at right, not counted in -w\n"
+"  -S, --sentence-regexp=REGEXP   for end of lines or end of sentences\n"
+"  -T, --format=tex               generate output as TeX directives\n"
+msgstr ""
+"  -M, --macro-name=NIZ           uporabi podano ime makroukaza (privzeto ,"
+"xx`)\n"
+"  -O, --format=roff              izpis v obliki stavnega jezika roff\n"
+"  -R, --right-side-refs          sklici ob desnem robu (niso v¹teti v -w)\n"
+"  -S, --sentence-regexp=REGIZR   za konce vrstic ali konce stavkov\n"
+"  -T, --format=tex               izpis v obliki stavnega jezika tex\n"
+
+#: src/ptx.c:1883
+msgid ""
+"  -W, --word-regexp=REGEXP       use REGEXP to match each keyword\n"
+"  -b, --break-file=FILE          word break characters in this FILE\n"
+"  -f, --ignore-case              fold lower case to upper case for sorting\n"
+"  -g, --gap-size=NUMBER          gap size in columns between output fields\n"
+"  -i, --ignore-file=FILE         read ignore word list from FILE\n"
+"  -o, --only-file=FILE           read only word list from this FILE\n"
+msgstr ""
+"  -W, --word-regexp=REGIZR       uporabi REGIZR za lovljenje besed\n"
+"  -b, --break-file=DATOTEKA      znake v podani DATOTEKI razlomi po besedah\n"
+"  -f, --ignore-case              pri urejanju obravnavaj male in velike "
+"èrke \n"
+"                                   enako\n"
+"  -g, --gap-size=©TEVILO         ¹irina razmaka v znakih med polji v izpisu\n"
+"  -i, --ignore-file=DATOTEKA     seznam prezrtih besed preberi iz DATOTEKE\n"
+"  -o, --only-file=FILE           preberi le seznam besed iz navedene "
+"DATOTEKE\n"
+
+#: src/ptx.c:1891
+msgid ""
+"  -r, --references               first field of each line is a reference\n"
+"  -t, --typeset-mode               - not implemented -\n"
+"  -w, --width=NUMBER             output width in columns, reference "
+"excluded\n"
+msgstr ""
+"  -r, --references               prvo polje v vsaki vrstici je sklic\n"
+"  -t, --typeset-mode               - ni izvedeno -\n"
+"  -w, --width=©TEVILO            ¹irina izhoda v znakih, brez sklicev\n"
+
+#: src/ptx.c:1898
+msgid ""
+"\n"
+"With no FILE or if FILE is -, read Standard Input.  `-F /' by default.\n"
+msgstr ""
+"\n"
+"Kadar DATOTEKA ni podana ali je enaka -, se bere standardni vhod. Privzeto\n"
+"oznaèevanje okraj¹anih vrstic je ,-F /`.\n"
+
+#: src/ptx.c:1978
+msgid ""
+"This program is free software; you can redistribute it and/or modify\n"
+"it under the terms of the GNU General Public License as published by\n"
+"the Free Software Foundation; either version 2, or (at your option)\n"
+"any later version.\n"
+"\n"
+msgstr ""
+"Ta program je prosta programska oprema; lahko ga redistribuirate in/ali\n"
+"spreminjate po pogojih, doloèenih v ,,GNU General Public License``, izdani\n"
+"pri Free Software Foundation; 2. izdaja (ali novej¹a, èe razpolagate z "
+"njo).\n"
+"\n"
+
+#: src/ptx.c:1985
+msgid ""
+"This program is distributed in the hope that it will be useful,\n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+"GNU General Public License for more details.\n"
+"\n"
+msgstr ""
+"Ta program se raz¹irja v upanju, da je koristen, vendar BREZ KAKR©NEGAKOLI\n"
+"JAMSTVA, niti jamstev USTREZNOSTI ZA PRODAJO ali PRIMERNOSTI ZA UPORABO. Za\n"
+"podrobnosti si oglejte ,,GNU General Public License``.\n"
+"\n"
+
+#: src/ptx.c:1992
+msgid ""
+"You should have received a copy of the GNU General Public License\n"
+"along with this program; if not, write to the Free Software Foundation,\n"
+"Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.\n"
+msgstr ""
+"Izvod ,,GNU General Public License`` bi moral biti prilo¾en temu programu;\n"
+"èe ni, pi¹ite Free Software Foundation, Inc., 59 Temple Place - Suite 330,\n"
+"Boston, MA 02111-1307, USA.\n"
+
+#: src/sort.c:53
+msgid "Mike Haertel and Paul Eggert"
+msgstr "Mike Haertel in Paul Eggert"
+
+#: src/sort.c:289
+msgid ""
+"Write sorted concatenation of all FILE(s) to standard output.\n"
+"\n"
+"Ordering options:\n"
+"\n"
+msgstr ""
+"Vsebino vseh DATOTEK na vhodu zdru¾imo, uredimo, in izpi¹emo na standarni "
+"izhod.\n"
+"\n"
+"Izbire pri urejanju:\n"
+"\n"
+
+#: src/sort.c:298
+msgid ""
+"  -b, --ignore-leading-blanks ignore leading blanks\n"
+"  -d, --dictionary-order      consider only blanks and alphanumeric "
+"characters\n"
+"  -f, --ignore-case           fold lower case to upper case characters\n"
+msgstr ""
+"  -b, --ignore-leading-blanks ne upo¹tevamo vodilnih presledkov v poljih,\n"
+"                                po katerih urejamo\n"
+"  -d,  --dictionary-order     v kljuèih upo¹tevamo samo znake [a-zA-Z0-9 ]\n"
+"  -f , --ignore-case          male in velike èrke so v kljuèih enakovredne\n"
+
+#: src/sort.c:303
+msgid ""
+"  -g, --general-numeric-sort  compare according to general numerical value\n"
+"  -i, --ignore-nonprinting    consider only printable characters\n"
+"  -M, --month-sort            compare (unknown) < `JAN' < ... < `DEC'\n"
+"  -n, --numeric-sort          compare according to string numerical value\n"
+"  -r, --reverse               reverse the result of comparisons\n"
+"\n"
+msgstr ""
+"  -g, --general-numeric-sort  primerjamo po splo¹ni ¹tevilski vrednosti\n"
+"  -i, --ignore-nonprinting    v kljuèih upo¹tevamo samo izpisljive znake\n"
+"  -M, --month-sort            kljuèe urejamo: (neznano) < ,jan` < ... < ,"
+"dec`\n"
+"  -n, --numeric-sort          primerjamo po ¹tevilski vrednosti nizov\n"
+"  -r, --reverse               izpis v obrnjenem vrstnem redu\n"
+"\n"
+
+#: src/sort.c:311
+msgid ""
+"Other options:\n"
+"\n"
+"  -c, --check               check whether input is sorted; do not sort\n"
+"  -k, --key=POS1[,POS2]     start a key at POS1, end it at POS 2 (origin 1)\n"
+"  -m, --merge               merge already sorted files; do not sort\n"
+"  -o, --output=FILE         write result to FILE instead of standard output\n"
+"  -s, --stable              stabilize sort by disabling last-resort "
+"comparison\n"
+"  -S, --buffer-size=SIZE    use SIZE for main memory buffer\n"
+msgstr ""
+"Druge izbire:\n"
+"\n"
+"  -c, --check               èe je datoteka ¾e urejena, je ne urejamo znova\n"
+"  -k, --key=POZ1[,POZ2]     kljuè se zaène v stolpcu POZ1 in konèa v "
+"stolpcu\n"
+"                              POZ2. Stolpci se ¹tejejo od 1 dalje.\n"
+"  -m, --merge               ¾e urejene datoteke zdru¾imo brez ponovnega "
+"urejanja\n"
+"  -o, --output=DATOTEKA     izhod pi¹emo na DATOTEKO namesto na standardni "
+"izhod\n"
+"  -s, --stable              urejanje stabiliziramo z onemogoèenjem skrajnih\n"
+"                              primerjav\n"
+"  -S, --buffer-size=VELIKOST  doloèimo VELIKOST medpomnilnika\n"
+
+#: src/sort.c:321
+#, c-format
+msgid ""
+"  -t, --field-separator=SEP use SEP instead of non- to whitespace "
+"transition\n"
+"  -T, --temporary-directory=DIR  use DIR for temporaries, not $TMPDIR or %s\n"
+"                              multiple options specify multiple directories\n"
+"  -u, --unique              with -c: check for strict ordering\n"
+"                              otherwise: output only the first of an equal "
+"run\n"
+msgstr ""
+"  -t, --field-separator=LOÈILO  LOÈILO namesto mej med znaki in praznimi "
+"prostori\n"
+"  -T, --temporary-directory=IMENIK        \n"
+"                            uporabi IMENIK za zaèasne datoteke namesto "
+"$TMPDIR\n"
+"                              ali %s\n"
+"                              razliène izbire doloèajo razliène imenike\n"
+"  -u, --unique              skupaj z -c, preverjamo za strogo urejenost;\n"
+"                              sicer izpi¹emo samo prve od zaporednih enakih "
+"vrstic\n"
+
+#: src/sort.c:328
+msgid "  -z, --zero-terminated     end lines with 0 byte, not newline\n"
+msgstr ""
+
+#: src/sort.c:333
+#, fuzzy
+msgid ""
+"\n"
+"POS is F[.C][OPTS], where F is the field number and C the character "
+"position\n"
+"in the field.  OPTS is one or more single-letter ordering options, which\n"
+"override global ordering options for that key.  If no key is given, use the\n"
+"entire line as the key.\n"
+"\n"
+"SIZE may be followed by the following multiplicative suffixes:\n"
+msgstr ""
+"\n"
+"POZ ima obliko P[.Z][IZBIRE], kjer je P ¹tevilka polja in Z polo¾aj znaka\n"
+"znotraj polja, oba ¹teta od 1 dalje pri izbiri -k, ali od 0 pri stari "
+"obliki.\n"
+"IZBIRE so lahko ena ali veè od Mbdfinr, kar prevlada nad globalnimi\n"
+"nastavitvami Mbdfinr za ta kljuè. Èe kljuè ni podan, se kot kljuè uporabi\n"
+"celotna vrstica.\n"
+"\n"
+"VELIKOSTI lahko sledi ena od naslednji multiplikativnih pripon:\n"
+
+#: src/sort.c:342
+#, fuzzy, c-format
+msgid ""
+"% 1% of memory, b 1, K 1024 (default), and so on for M, G, T, P, E, Z, Y.\n"
+"\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+"*** WARNING ***\n"
+"The locale specified by the environment affects sort order.\n"
+"Set LC_ALL=C to get the traditional sort order that uses\n"
+"native byte values.\n"
+msgstr ""
+"% 1% pomnilnika, b 1, k 1024 (privzeto), itn. za M, G, T, P, E, Z, Y.\n"
+"\n"
+"Èe DATOTEKA ni podana ali je enaka -, beremo s standardnega vhoda.\n"
+"\n"
+"***OPOZORILO***\n"
+"Krajevne prilagoditve vplivajo na urejanje. Èe ¾elite tradicionalno "
+"obna¹anje\n"
+"(urejanje po ¹tevilski vrednosti bajtov), uporabite LC_ALL=C.\n"
+
+#: src/sort.c:453
+msgid "cannot create temporary file"
+msgstr "zaèasne datoteke ni mogoèe ustvariti"
+
+#: src/sort.c:476
+msgid "open failed"
+msgstr "odpiranje ni uspelo"
+
+#: src/sort.c:496 src/sort.c:2499
+msgid "close failed"
+msgstr "zapiranje ni uspelo"
+
+#: src/sort.c:504
+msgid "write failed"
+msgstr "pisanje ni uspelo"
+
+#: src/sort.c:650
+msgid "sort size"
+msgstr "velikost urejanja"
+
+#: src/sort.c:724
+msgid "stat failed"
+msgstr "poizvedba po statusu ni uspela"
+
+#: src/sort.c:975
+msgid "read failed"
+msgstr "branje ni uspelo"
+
+#: src/sort.c:1575
+#, c-format
+msgid "%s: %s:%s: disorder: "
+msgstr "%s: %s:%s: neurejenost: "
+
+#: src/sort.c:1579
+msgid "standard error"
+msgstr "standardna napaka"
+
+#: src/sort.c:2037
+#, c-format
+msgid "%s: invalid field specification `%s'"
+msgstr "%s: neveljavno doloèijo polja: ,%s`"
+
+#: src/sort.c:2063
+#, c-format
+msgid "%s: count `%.*s' too large"
+msgstr "%s: ¹tevec ,%.*s` je prevelik"
+
+#: src/sort.c:2069
+#, c-format
+msgid "%s: invalid count at start of `%s'"
+msgstr "%s: neveljaven ¹tevec na zaèetku ,%s`"
+
+#: src/sort.c:2301
+msgid "invalid number after `-'"
+msgstr "neveljavno ¹tevilo za ,-`"
+
+#: src/sort.c:2304 src/sort.c:2350 src/sort.c:2377
+msgid "invalid number after `.'"
+msgstr "neveljavno ¹tevilo za ,.`"
+
+#: src/sort.c:2307 src/sort.c:2386
+msgid "stray character in field spec"
+msgstr "zablodeli znak v doloèilu polja"
+
+#: src/sort.c:2341
+msgid "invalid number at field start"
+msgstr "neveljavno ¹tevilo zaèetka polja"
+
+#: src/sort.c:2345 src/sort.c:2373
+msgid "field number is zero"
+msgstr "¹tevilka polja je niè"
+
+#: src/sort.c:2354
+msgid "character offset is zero"
+msgstr "znakovni zamik je niè"
+
+#: src/sort.c:2369
+msgid "invalid number after `,'"
+msgstr "neveljavno ¹tevilo za \",\""
+
+#: src/sort.c:2414
+#, c-format
+msgid "multi-character tab `%s'"
+msgstr "veèznakovni tabulator ,%s`"
+
+#: src/sort.c:2482
+#, c-format
+msgid "extra operand `%s' not allowed with -c"
+msgstr "dodatni operand ,%s` pri izbiri -c ni dovoljen"
+
+#: src/split.c:95
+#, c-format
+msgid "Usage: %s [OPTION] [INPUT [PREFIX]]\n"
+msgstr "Uporaba: %s [IZBIRA] [VHOD [PREDPONA]]\n"
+
+#: src/split.c:99
+msgid ""
+"Output fixed-size pieces of INPUT to PREFIXaa, PREFIXab, ...; default\n"
+"PREFIX is `x'.  With no INPUT, or when INPUT is -, read standard input.\n"
+"\n"
+msgstr ""
+"Datoteko VHOD razre¾emo na kose enake dol¾ine, ki jih poimenujemo "
+"PREDPONAaa,\n"
+"PREDPONAab...; privzeta PREDPONA je ,x`. Èe VHOD ni podan ali je enak -,\n"
+"beremo s standardnega vhoda.\n"
+"\n"
+
+#: src/split.c:107
+#, fuzzy, c-format
+msgid ""
+"  -a, --suffix-length=N   use suffixes of length N (default %d)\n"
+"  -b, --bytes=SIZE        put SIZE bytes per output file\n"
+"  -C, --line-bytes=SIZE   put at most SIZE bytes of lines per output file\n"
+"  -l, --lines=NUMBER      put NUMBER lines per output file\n"
+msgstr ""
+"  -b, --bytes=VELIKOST    doloèimo VELIKOST (v bajtih) izhodnih datotek\n"
+"  -C, --line-bytes=VELIKOST  velikost izhodnih datotek je navzgor omejena "
+"na\n"
+"                             VELIKOST (v bajtih)\n"
+"  -l, --lines=©TEVILO     doloèimo ©TEVILO vrstic v izhodni datoteki\n"
+"  -©TEVILO                isto kot -l ©TEVILO\n"
+"      --verbose           z izpisom diagnostiènega sporoèila na stan. izhod\n"
+"                            za napake, preden odpremo novo izhodno datoteko\n"
+
+#: src/split.c:113
+msgid ""
+"      --verbose           print a diagnostic to standard error just\n"
+"                            before each output file is opened\n"
+msgstr ""
+
+#: src/split.c:170
+msgid "Output file suffixes exhausted"
+msgstr ""
+
+#: src/split.c:188
+#, c-format
+msgid "creating file `%s'\n"
+msgstr "ustvarjamo datoteko ,%s`\n"
+
+#: src/split.c:407
+#, fuzzy, c-format
+msgid "%s: invalid suffix length"
+msgstr "%s: neveljavno ¹tevilo vrstic"
+
+#: src/split.c:416 src/split.c:432 src/split.c:448 src/split.c:474
+msgid "cannot split in more than one way"
+msgstr "razcep na veè kot en naèin ni mo¾en"
+
+#: src/split.c:423 src/split.c:456
+#, c-format
+msgid "%s: invalid number of bytes"
+msgstr "%s: neveljavno ¹tevilo bajtov"
+
+#: src/split.c:439
+#, c-format
+msgid "%s: invalid number of lines"
+msgstr "%s: neveljavno ¹tevilo vrstic"
+
+#: src/split.c:499
+#, fuzzy, c-format
+msgid "`-%d' option is obsolete; use `-l %d'"
+msgstr "opozorilo: neveljavna ¹irina %lu; namesto nje jemljemo %d"
+
+#: src/split.c:512
+msgid "invalid number"
+msgstr "neveljavno ¹tevilo"
+
+#: src/split.c:527 src/tr.c:1847
+msgid "too many arguments"
+msgstr "preveè argumentov"
+
+#: src/sum.c:36
+msgid "Kayvan Aghaiepour and David MacKenzie"
+msgstr "Kayvan Aghaiepour in David MacKenzie"
+
+#: src/sum.c:64
+msgid ""
+"Print checksum and block counts for each FILE.\n"
+"\n"
+"  -r              defeat -s, use BSD sum algorithm, use 1K blocks\n"
+"  -s, --sysv      use System V sum algorithm, use 512 bytes blocks\n"
+msgstr ""
+"Za vsako podano DATOTEKO izraèunamo nadzorno vsoto in izpi¹emo ¹tevilo "
+"blokov.\n"
+"\n"
+"  -r              preklièemo -s; algoritem BSD, velikost blokov 1 KB\n"
+"  -s, --sysv      raèunanje vsote z algoritmom System V, velikost blokov 512 "
+"B\n"
+
+#: src/sys2.h:407
+msgid "      --help     display this help and exit\n"
+msgstr "      --help     ta navodila\n"
+
+#: src/sys2.h:409
+msgid "      --version  output version information and exit\n"
+msgstr "      --version  razlièica programa\n"
+
+#: src/tac.c:54
+msgid "Jay Lepreau and David MacKenzie"
+msgstr "Jay Lepreau in David MacKenzie"
+
+#: src/tac.c:131
+msgid ""
+"Write each FILE to standard output, last line first.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"Vsako od DATOTEK prepi¹emo na standardni izhod v obratnem vrstnem redu, od\n"
+"zadnje vrstice proti prvi. Èe DATOTEKA ni podana ali je enaka -, beremo s\n"
+"standardnega vhoda.\n"
+"\n"
+
+#: src/tac.c:139
+msgid ""
+"  -b, --before             attach the separator before instead of after\n"
+"  -r, --regex              interpret the separator as a regular expression\n"
+"  -s, --separator=STRING   use STRING as the separator instead of newline\n"
+msgstr ""
+"  -b, --before             loèilo dodamo pred, ne za izpisano vrstico\n"
+"  -r, --regex              loèila obravnavamo kot regularne izraze\n"
+"  -s, --separator=NIZ      vrstice naj loèuje NIZ, ne znak za novo vrstico\n"
+
+#: src/tac.c:454 src/tac.c:593
+msgid "stdin: read error"
+msgstr "stdin: napaka pri branju"
+
+#: src/tac.c:639
+msgid "separator cannot be empty"
+msgstr "loèilo ne more biti prazno"
+
+#: src/tail.c:242
+#, c-format
+msgid ""
+"Print the last %d lines of each FILE to standard output.\n"
+"With more than one FILE, precede each with a header giving the file name.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"Zadnjih %d vrstic vsake od podanih DATOTEK izpi¹emo na standardni izhod.\n"
+"Èe je podana veè kot ena DATOTEKA, izpi¹emo pred tem ¹e glavo z imenom\n"
+"datoteke. Èe DATOTEKA ni podana ali je enaka -, beremo s standardnega "
+"vhoda.\n"
+"\n"
+
+#: src/tail.c:251
+msgid ""
+"      --retry              keep trying to open a file even if it is\n"
+"                           inaccessible when tail starts or if it becomes\n"
+"                           inaccessible later -- useful only with -f\n"
+"  -c, --bytes=N            output the last N bytes\n"
+msgstr ""
+"      --retry              datoteko posku¹amo odpreti, èetudi ni dostopna v\n"
+"                             trenutku, ko po¾enemo tail ali kdaj kasneje --\n"
+"                             uporabno skupaj z izbiro -f\n"
+"  -c, --bytes=N            izpi¹emo zadnjih N bajtov datoteke\n"
+
+#: src/tail.c:257
+msgid ""
+"  -f, --follow[={name|descriptor}]\n"
+"                           output appended data as the file grows;\n"
+"                           -f, --follow, and --follow=descriptor are\n"
+"                           equivalent\n"
+"  -F                       same as --follow=name --retry\n"
+msgstr ""
+"  -f, --follow[={name|descriptor}]  pri datotekah, ki rastejo, sledimo\n"
+"                             trenutnemu koncu datoteke; -f, --follow in\n"
+"                             --follow=descriptor so sopomenke\n"
+"  -F                         isto kot --follow=name --retry\n"
+
+#: src/tail.c:264
+#, c-format
+msgid ""
+"  -n, --lines=N            output the last N lines, instead of the last %d\n"
+"      --max-unchanged-stats=N\n"
+"                           with --follow=name, reopen a FILE which has not\n"
+"                           changed size after N (default %d) iterations\n"
+"                           to see if it has been unlinked or renamed\n"
+"                           (this is the usual case of rotated log files)\n"
+msgstr ""
+"  -n, --lines=N            izpi¹emo zadnjih N vrstic namesto privzetih %d\n"
+"      --max-unchanged-stats=N\n"
+"                           skupaj z --follow=name, ponovno odpri DATOTEKO, "
+"ki\n"
+"                             se ni spremenila v zadnjih N (privzeto %d) "
+"branjih;\n"
+"                             s tem preverimo, ali vmes ni bila izbrisana "
+"ali\n"
+"                             preimenovana (uporabno pri dnevni¹kih "
+"datotekah)\n"
+
+#: src/tail.c:275
+msgid ""
+"      --pid=PID            with -f, terminate after process ID, PID dies\n"
+"  -q, --quiet, --silent    never output headers giving file names\n"
+"  -s, --sleep-interval=S   with -f, each iteration lasts approximately S\n"
+"                           (default 1) seconds\n"
+"  -v, --verbose            always output headers giving file names\n"
+msgstr ""
+"      --pid=PID            skupaj z -f, proces zakljuèimo, ko PID ugasne\n"
+"  -q, --quiet, --silent    vedno brez izpisa glave z imenom datoteke\n"
+"  -s, --sleep-interval=S   skupaj z -f; premor S sekund med ponovitvami\n"
+"  -v, --verbose            vedno z izpisom glave z imenom datoteke\n"
+
+#: src/tail.c:284
+#, fuzzy
+msgid ""
+"\n"
+"If the first character of N (the number of bytes or lines) is a `+',\n"
+"print beginning with the Nth item from the start of each file, otherwise,\n"
+"print the last N items in the file.  N may have a multiplier suffix:\n"
+"b for 512, k for 1024, m for 1048576 (1 Meg).\n"
+"\n"
+msgstr ""
+"\n"
+"©tevilo N (¹tevilo vrstic ali bajtov) je lahko predznaèeno z znakom + "
+"(plus).\n"
+"V tem primeru izpisujemo vrstice od N-te vrstice (N-tega bajta) dalje "
+"namesto\n"
+"zadnjih N vrstic (bajtov). Mo¾ne pripone pri N so b (mno¾enje s 512), k "
+"(1024)\n"
+"in m (1048576). "
+
+#: src/tail.c:292
+msgid ""
+"With --follow (-f), tail defaults to following the file descriptor, which\n"
+"means that even if a tail'ed file is renamed, tail will continue to track\n"
+"its end.  "
+msgstr ""
+"Z izbiro --follow (-f) tail privzeto sledi deskriptorju datoteke, kar "
+"pomeni,\n"
+"da konec datoteke sledimo tudi, èe je ta vmes preimenovana. "
+
+#: src/tail.c:297
+#, fuzzy
+msgid ""
+"This default behavior is not desirable when you really want to\n"
+"track the actual name of the file, not the file descriptor (e.g., log\n"
+"rotation).  Use --follow=name in that case.  That causes tail to track the\n"
+"named file by reopening it periodically to see if it has been removed and\n"
+"recreated by some other program.\n"
+msgstr ""
+"Privzeti naèin ni\n"
+"uporaben, èe ¾elimo spremljati samo datoteko z danim imenom (npr. dnevni¹ki\n"
+"zapisi). V tem primeru uporabimo --follow=name. V tem naèinu tail "
+"periodièno\n"
+"poskusi odpreti datoteko in tako preverja, ali ta ¹e obstaja, ali pa morda\n"
+"znova obstaja.\n"
+
+#: src/tail.c:335
+#, c-format
+msgid "closing %s (fd=%d)"
+msgstr "zapiramo %s (fd=%d)"
+
+#: src/tail.c:400
+#, c-format
+msgid "%s: cannot seek to offset %s%s"
+msgstr "%s: premik na odmik %s%s ni mogoè"
+
+#: src/tail.c:404
+#, c-format
+msgid "%s: cannot seek to relative offset %s%s"
+msgstr "%s: premik na relativni odmik %s%s ni mogoè"
+
+#: src/tail.c:408
+#, c-format
+msgid "%s: cannot seek to end-relative offset %s%s"
+msgstr "%s: premik na odmik %s%s (relativno od konca) ni mogoè"
+
+#: src/tail.c:814
+#, c-format
+msgid "`%s' has become inaccessible"
+msgstr ",%s` je postala nedostopna"
+
+#: src/tail.c:831
+#, c-format
+msgid "`%s' has been replaced with an untailable file; giving up on this name"
+msgstr ""
+",%s` je bila nadome¹èena z datoteko, kateri ni moè slediti konca; opu¹èamo"
+
+#: src/tail.c:852
+#, c-format
+msgid "`%s' has become accessible"
+msgstr ",%s` je postala dostopna"
+
+#: src/tail.c:860
+#, c-format
+msgid "`%s' has appeared;  following end of new file"
+msgstr ",%s` se je pojavila;  sledimo konec nove datoteka"
+
+#: src/tail.c:871
+#, c-format
+msgid "`%s' has been replaced;  following end of new file"
+msgstr ",%s` je bila zamenjana;  sledimo konec nove datoteke"
+
+#: src/tail.c:998
+#, c-format
+msgid "%s: file truncated"
+msgstr "%s: datoteka je porezana"
+
+#: src/tail.c:1018
+msgid "no files remaining"
+msgstr "nobene datoteke ni veè"
+
+#: src/tail.c:1228
+#, c-format
+msgid "%s: cannot follow end of this type of file; giving up on this name"
+msgstr "%s: koncu te zvrsti datoteke ni mo¾no slediti; s tem imenom odnehamo"
+
+#: src/tail.c:1348
+#, c-format
+msgid "%c: invalid suffix character in obsolescent option"
+msgstr "%c: neveljavna enoznakovna pripona pri zastareli izbiri"
+
+#: src/tail.c:1397
+#, c-format
+msgid ""
+"too many arguments;  When using tail's obsolescent option syntax (%s)\n"
+"there may be no more than one file argument.  Use the equivalent -n or -c\n"
+"option instead."
+msgstr ""
+"preveè argumentov: Pri stari skladnji izbir (%s) lahko podamo kot argument "
+"le\n"
+"eno datoteko. Namesto tega uporabite izbiri -n ali -c."
+
+#: src/tail.c:1406
+#, c-format
+msgid ""
+"Warning: it is not portable to use two or more file arguments with\n"
+"tail's obsolescent option syntax (%s).  Use the equivalent -n or -c\n"
+"option instead."
+msgstr ""
+"Opozorilo: pri uporabi stare skladnje (%s) navedba dveh ali veè datotek\n"
+"ni prenosljiva. Namesto nje uporabite izbiri -n ali -c."
+
+#: src/tail.c:1415
+#, fuzzy, c-format
+msgid "`%s' option is obsolete; use `%s-%c %.*s'"
+msgstr "opozorilo: neveljavna ¹irina %lu; namesto nje jemljemo %d"
+
+#: src/tail.c:1475
+#, c-format
+msgid "%s: is so large that it is not representable"
+msgstr "%s: je tako veliko, da ni predstavljivo"
+
+#: src/tail.c:1479
+#, c-format
+msgid "%s is larger than the maximum file size on this system"
+msgstr "%s presega najveèjo dovoljeno velikost datoteke na tem sistemu"
+
+#: src/tail.c:1505
+#, c-format
+msgid "%s: invalid maximum number of unchanged stats between opens"
+msgstr "%s: neveljavno najveèje ¹tevilo nespremenjenih statusov med odpiranji"
+
+#: src/tail.c:1517
+#, c-format
+msgid "%s: invalid maximum number of consecutive size changes"
+msgstr "%s: neveljavno najveèje ¹tevilo zaporednih sprememb velikosti"
+
+#: src/tail.c:1529
+#, c-format
+msgid "%s: invalid PID"
+msgstr "%s: neveljavno ¹tevilo PID"
+
+#: src/tail.c:1547
+#, c-format
+msgid "%s: invalid number of seconds"
+msgstr "%s: neveljavno ¹tevilo sekund"
+
+#: src/tail.c:1567
+msgid "warning: --retry is useful only when following by name"
+msgstr "opozorilo: izbira --retry je uporabna le, kadar ji sledi ime"
+
+#: src/tail.c:1571
+msgid "warning: PID ignored; --pid=PID is useful only when following"
+msgstr "opozorilo: PID ignoriran; --pid=PID je uporabno samo pri sledenju"
+
+#: src/tail.c:1574
+msgid "warning: --pid=PID is not supported on this system"
+msgstr "opozorilo: izbira --pid=PID na tem sistemu ni podprta"
+
+#: src/tr.c:327
+#, c-format
+msgid "Usage: %s [OPTION]... SET1 [SET2]\n"
+msgstr "Uporaba: %s [IZBIRA]... MNO®ICA1 [MNO®ICA2]\n"
+
+#: src/tr.c:331
+msgid ""
+"Translate, squeeze, and/or delete characters from standard input,\n"
+"writing to standard output.\n"
+"\n"
+"  -c, --complement        first complement SET1\n"
+"  -d, --delete            delete characters in SET1, do not translate\n"
+"  -s, --squeeze-repeats   replace sequence of characters with one\n"
+"  -t, --truncate-set1     first truncate SET1 to length of SET2\n"
+msgstr ""
+"Prevedemo, stisnemo ali pobri¹emo znake iz toka podatkov na standardnem \n"
+"vhodu in rezultat pi¹emo na standardni izhod.\n"
+"\n"
+"  -c, --complement        komplement MNO®ICE 1.\n"
+"  -d, --delete            pobri¹emo znake, navedene v MNO®ICI 1.\n"
+"  -s, --squeeze-repeats   sosledje enakih znakov nadomestimo z enim samim "
+"znakom\n"
+"  -t, --truncate-set1     MNO®ICO 1 najprej skrèimo na velikost MNO®ICE 2.\n"
+
+#: src/tr.c:342
+msgid ""
+"\n"
+"SETs are specified as strings of characters.  Most represent themselves.\n"
+"Interpreted sequences are:\n"
+"\n"
+"  \\NNN            character with octal value NNN (1 to 3 octal digits)\n"
+"  \\\\              backslash\n"
+"  \\a              audible BEL\n"
+"  \\b              backspace\n"
+"  \\f              form feed\n"
+"  \\n              new line\n"
+"  \\r              return\n"
+"  \\t              horizontal tab\n"
+msgstr ""
+"\n"
+"MNO®ICE doloèajo nizi znakov. Veèinoma predstavljajo sebe, posebej pa se\n"
+"tolmaèijo naslednja zaporedja:\n"
+"\n"
+"  \\\\NNN            znak z osmi¹ko kodo NNN (dol¾ina 1, 2 ali 3 osmi¹ke "
+"¹tevke)\n"
+"  \\\\\\\\              nagibnica\n"
+"  \\\\a              zvonèek\n"
+"  \\\\b              pomik za en znak v levo\n"
+"  \\\\f              skok na novo stran\n"
+"  \\\\n              skok v novo vrstico\n"
+"  \\\\r              pomik na levi rob\n"
+"  \\\\t              vodoravni tabulator\n"
+
+#: src/tr.c:356
+msgid ""
+"  \\v              vertical tab\n"
+"  CHAR1-CHAR2     all characters from CHAR1 to CHAR2 in ascending order\n"
+"  [CHAR*]         in SET2, copies of CHAR until length of SET1\n"
+"  [CHAR*REPEAT]   REPEAT copies of CHAR, REPEAT octal if starting with 0\n"
+"  [:alnum:]       all letters and digits\n"
+"  [:alpha:]       all letters\n"
+"  [:blank:]       all horizontal whitespace\n"
+"  [:cntrl:]       all control characters\n"
+"  [:digit:]       all digits\n"
+msgstr ""
+"  \\\\v              navpièni tabulator\n"
+"  ZNAK1-ZNAK2     nara¹èajoèe zaporedje znakov od ZNAKA1 do ZNAKA2\n"
+"  [ZNAK1-ZNAK2]   isto kot ZNAK1-ZNAK2, èe to uporabljata obe mno¾ici\n"
+"  [ZNAK*]         v MNO®ICI 2; toliko ponovitev ZNAKA kot v MNO®ICI 1\n"
+"  [ZNAK*N]        N ponovitev znaka; osmi¹ka vrednost, èe se N zaène z "
+"nièlo\n"
+"  [:alnum:]       vse èrke in ¹tevke\n"
+"  [:alpha:]       vse èrke\n"
+"  [:blank:]       vsi vodoravni prazni znaki\n"
+"  [:cntrl:]       vsi krmilni znaki\n"
+"  [:digit:]       vse ¹tevke\n"
+
+#: src/tr.c:367
+msgid ""
+"  [:graph:]       all printable characters, not including space\n"
+"  [:lower:]       all lower case letters\n"
+"  [:print:]       all printable characters, including space\n"
+"  [:punct:]       all punctuation characters\n"
+"  [:space:]       all horizontal or vertical whitespace\n"
+"  [:upper:]       all upper case letters\n"
+"  [:xdigit:]      all hexadecimal digits\n"
+"  [=CHAR=]        all characters which are equivalent to CHAR\n"
+msgstr ""
+"  [:graph:]       vsi izpisljivi znaki razen presledka\n"
+"  [:lower:]       vse male èrke\n"
+"  [:print:]       vsi izpisljivi znaki s presledkom vred\n"
+"  [:punct:]       vsa loèila\n"
+"  [:space:]       vsi prazni znaki, vodoravni in navpièni\n"
+"  [:upper:]       vse velike èrke\n"
+"  [:xdigit:]      vse ¹estnajsti¹ke ¹tevke\n"
+"  [=ZNAK=]        vsi znaki, ki so enakovredni navedenemu ZNAKU\n"
+
+#: src/tr.c:377
+msgid ""
+"\n"
+"Translation occurs if -d is not given and both SET1 and SET2 appear.\n"
+"-t may be used only when translating.  SET2 is extended to length of\n"
+"SET1 by repeating its last character as necessary.  "
+msgstr ""
+"\n"
+"Èe izbira -d ni podana in sta navedeni tako MNO®ICA1 kot MNO®ICA2, se "
+"privzame\n"
+"prevedba. Izbira -t se sme uporabiti samo ob prevedbi. Èe je MNO®ICA 2 "
+"kraj¹a\n"
+"od MNO®ICE 1, se privzame ponovitev zadnjega znaka v MNO®ICI 2 do dol¾ine\n"
+"MNO®ICE 1. "
+
+#: src/tr.c:383
+msgid ""
+"Excess characters\n"
+"of SET2 are ignored.  Only [:lower:] and [:upper:] are guaranteed to\n"
+"expand in ascending order; used in SET2 while translating, they may\n"
+"only be used in pairs to specify case conversion.  "
+msgstr ""
+"Znaki, ki v MNO®ICI 2 segajo prek dol¾ine MNO®ICE 1, se zavr¾ejo.\n"
+"Edino razreda [:lower:] in [:upper:] se zajamèeno raz¹irita v nara¹èajoèem\n"
+"vrstnem redu. Èe je kateri od njiju naveden v MNO®ICI 2, ju lahko uporabimo\n"
+"le za pretvorbo med velikimi in malimi èrkami. "
+
+#: src/tr.c:389
+msgid ""
+"-s uses SET1 if not\n"
+"translating nor deleting; else squeezing uses SET2 and occurs after\n"
+"translation or deletion.\n"
+msgstr ""
+"Izbira -s uporablja MNO®ICO 1,\n"
+"kadar ne prevajamo ali bri¹emo, sicer pa stiskanje uporablja MNO®ICO 2 in "
+"se\n"
+"izvede po prevajanju in brisanju.\n"
+
+#: src/tr.c:555
+#, c-format
+msgid ""
+"warning: the ambiguous octal escape \\%c%c%c is being\n"
+"\tinterpreted as the 2-byte sequence \\0%c%c, `%c'"
+msgstr ""
+"opozorilo: dvoumno osmi¹ko ube¾no zaporedje \\%c%c%c \n"
+"tolmaèimo kot dvobajtno zaporedje \\0%c%c, ,%c`"
+
+#: src/tr.c:564
+msgid "invalid backslash escape at end of string"
+msgstr "neveljavno ube¾no zaporedje na koncu niza"
+
+#: src/tr.c:570
+#, c-format
+msgid "invalid backslash escape `\\%c'"
+msgstr "neveljavno ube¾no zaporedje ,\\%c`"
+
+#: src/tr.c:723
+#, c-format
+msgid "range-endpoints of `%s-%s' are in reverse collating sequence order"
+msgstr "meji obsega ,%s-%s` nista navedeni v nara¹èajoèem abecednem redu"
+
+#: src/tr.c:904
+#, c-format
+msgid "invalid repeat count `%s' in [c*n] construct"
+msgstr "neveljavno ¹tevilo ponavljanj ,%s` v konstruktu [c*n]"
+
+#: src/tr.c:997
+#, fuzzy
+msgid "missing character class name `[::]'"
+msgstr "neveljaven razred znakov ,%s`"
+
+#: src/tr.c:1000
+msgid "missing equivalence class character `[==]'"
+msgstr ""
+
+#: src/tr.c:1023
+#, c-format
+msgid "invalid character class `%s'"
+msgstr "neveljaven razred znakov ,%s`"
+
+#: src/tr.c:1048
+#, c-format
+msgid "%s: equivalence class operand must be a single character"
+msgstr "%s: operand ekvivalentnih razredov sme biti en sam znak"
+
+#: src/tr.c:1520
+msgid "the [c*] repeat construct may not appear in string1"
+msgstr "konstrukt ponovitev znaka [c*] se ne sme pojaviti v nizu 1"
+
+#: src/tr.c:1530
+msgid "only one [c*] repeat construct may appear in string2"
+msgstr "kveèjemu en konstrukt ponovitev znaka [c*] se sme pojaviti v nizu 2"
+
+#: src/tr.c:1538
+msgid "[=c=] expressions may not appear in string2 when translating"
+msgstr "izrazi [=c=] se pri prevedbi ne smejo pojavljati v nizu 2"
+
+#: src/tr.c:1551
+msgid "when not truncating set1, string2 must be non-empty"
+msgstr "kadar ne kraj¹amo niza 1, mora biti niz 2 neprazen"
+
+#: src/tr.c:1560
+msgid ""
+"when translating with complemented character classes,\n"
+"string2 must map all characters in the domain to one"
+msgstr ""
+"pri prevedbi s komplementi znakovnih razredov mora\n"
+"niz 2 preslikati vse znake iz domene v enega"
+
+#: src/tr.c:1567
+msgid ""
+"when translating, the only character classes that may appear in\n"
+"string2 are `upper' and `lower'"
+msgstr ""
+"edina razreda znakov, ki se smeta pri prevedbi pojaviti v nizu 2,\n"
+"sta ,upper` in ,lower`"
+
+#: src/tr.c:1576
+msgid "the [c*] construct may appear in string2 only when translating"
+msgstr "konstrukt [c*] se sme pojaviti v nizu 2 le pri prevedbi"
+
+#: src/tr.c:1852
+msgid "two strings must be given when translating"
+msgstr "pri prevedbi morata biti podana dva niza"
+
+#: src/tr.c:1855
+msgid "two strings must be given when both deleting and squeezing repeats"
+msgstr ""
+"ob hkratnem veèkratnem brisanju in stiskanju morata biti podana dva niza"
+
+#: src/tr.c:1869
+msgid "only one string may be given when deleting without squeezing repeats"
+msgstr "samo en niz sme biti podan kadar bri¹emo brez veèkratnega stiskanja"
+
+#: src/tr.c:1875
+msgid "at least one string must be given when squeezing repeats"
+msgstr "vsaj en niz mora biti podan pri stiskanju veè znakov"
+
+#: src/tr.c:1966
+msgid "misaligned [:upper:] and/or [:lower:] construct"
+msgstr "neporavnana konstrukta [:upper:] in/ali [:lower:]"
+
+#: src/tr.c:1989
+msgid ""
+"invalid identity mapping;  when translating, any [:lower:] or [:upper:]\n"
+"construct in string1 must be aligned with a corresponding construct\n"
+"([:upper:] or [:lower:], respectively) in string2"
+msgstr ""
+"neveljavna identièna preslikava: pri prevedbi mora biti vsak konstrukt [:"
+"upper:]\n"
+"ali [:lower:] v nizu 1 poravnan z ustreznim konstruktom (torej [:lower:] "
+"ali\n"
+"[:upper:]) v nizu 2"
+
+#: src/tsort.c:97
+#, c-format
+msgid ""
+"Usage: %s [OPTION] [FILE]\n"
+"Write totally ordered list consistent with the partial ordering in FILE.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"Uporaba: %s [IZBIRA] [DATOTEKA]\n"
+"Zapi¹emo povsem urejen seznam, usklajen z delno ureditvijo v DATOTEKI.\n"
+"Èe DATOTEKA ni podana ali je enaka -, beremo s standardnega vhoda.\n"
+"\n"
+
+#: src/tsort.c:533
+#, c-format
+msgid "%s: input contains a loop:"
+msgstr "%s: zanka na vhodu:"
+
+#: src/tsort.c:575
+msgid "only one argument may be specified"
+msgstr "dovoljen je le en argument"
+
+#: src/unexpand.c:379
+msgid ""
+"Convert spaces in each FILE to tabs, writing to standard output.\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+"\n"
+msgstr ""
+"Presledke v vsaki DATOTEKI nadomestimo s tabulatorji in rezultat zapi¹emo "
+"na\n"
+"standardni izhod. Èe DATOTEKA ni podana ali je enaka -, beremo s "
+"standardnega\n"
+"vhoda.\n"
+"\n"
+
+#: src/unexpand.c:387
+msgid ""
+"  -a, --all           convert all whitespace, instead of initial whitespace\n"
+"  -t, --tabs=NUMBER   have tabs NUMBER characters apart instead of 8\n"
+"  -t, --tabs=LIST     use comma separated list of explicit tab positions\n"
+msgstr ""
+"  -a, --all           pretvorimo vse prazne prostore, ne le uvodnih\n"
+"  -t, --tabs=©TEVILO  tabulatorji naj bodo ©TEVILO znakov narazen (privzeto "
+"8)\n"
+"  -t, --tabs=SEZNAM   z vejicami loèen seznam eksplicitnih polo¾ajev "
+"tabulatorja\n"
+
+#: src/unexpand.c:463
+#, fuzzy
+msgid "`-LIST' option is obsolete; use `--first-only -t LIST'"
+msgstr "opozorilo: neveljavna ¹irina %lu; namesto nje jemljemo %d"
+
+#: src/uniq.c:134
+#, c-format
+msgid "Usage: %s [OPTION]... [INPUT [OUTPUT]]\n"
+msgstr "Uporaba: %s [IZBIRA]... [VHOD [IZHOD]]\n"
+
+#: src/uniq.c:138
+msgid ""
+"Discard all but one of successive identical lines from INPUT (or\n"
+"standard input), writing to OUTPUT (or standard output).\n"
+"\n"
+msgstr ""
+"Sosledje enakih vrstic na VHODU (ali standardnem vhodu) nadomestimo z eno\n"
+"samo in rezultat zapi¹emo na IZHOD (standardni izhod).\n"
+"\n"
+
+#: src/uniq.c:146
+msgid ""
+"  -c, --count           prefix lines by the number of occurrences\n"
+"  -d, --repeated        only print duplicate lines\n"
+msgstr ""
+"  -c, --count           na zaèetku vsake vrstice izpi¹emo tudi ¹tevilo "
+"ponovitev\n"
+"  -d, --repeated        izpi¹emo samo podvojene vrstice\n"
+
+#: src/uniq.c:150
+#, fuzzy
+msgid ""
+"  -D, --all-repeated[=delimit-method] print all duplicate lines\n"
+"                        delimit-method={none(default),prepend,separate}\n"
+"                        Delimiting is done with blank lines.\n"
+"  -f, --skip-fields=N   avoid comparing the first N fields\n"
+"  -i, --ignore-case     ignore differences in case when comparing\n"
+"  -s, --skip-chars=N    avoid comparing the first N characters\n"
+"  -u, --unique          only print unique lines\n"
+msgstr ""
+"  -D, --all-repeated    izpi¹emo vse podvojene vrstice\n"
+"  -f, --skip-fields=N   pri primerjanju izpustimo prvih N polj vsake "
+"vrstice\n"
+"  -i, --ignore-case     male in velike èrke obravnavamo enakovredno\n"
+"  -s, --skip-chars=N    pri primerjanju izpustimo prvih N znakov vsake "
+"vrstice\n"
+"  -u, --unique          izpi¹emo samo nepodvojene vrstice\n"
+
+#: src/uniq.c:159
+#, fuzzy
+msgid "  -w, --check-chars=N   compare no more than N characters in lines\n"
+msgstr ""
+"  -w, --check-chars=N   primerjamo samo N znakov v vrstici\n"
+"  -N                    isto kot -f N\n"
+"  +N                    isto kot -s N\n"
+
+#: src/uniq.c:164
+msgid ""
+"\n"
+"A field is a run of whitespace, then non-whitespace characters.\n"
+"Fields are skipped before chars.\n"
+msgstr ""
+"\n"
+"Polje je zaporedje praznih znakov, ki mu sledi zaporedje nepraznih znakov.\n"
+"Najprej preskoèimo polja, potem znake.\n"
+
+#: src/uniq.c:377
+#, c-format
+msgid "error reading %s"
+msgstr "napaka pri branju %s"
+
+#: src/uniq.c:382
+#, c-format
+msgid "error writing %s"
+msgstr "napaka pri pisanju na %s"
+
+#: src/uniq.c:428 src/uniq.c:445
+#, c-format
+msgid "extra operand `%s'"
+msgstr "odveèni operand ,%s`"
+
+#: src/uniq.c:468 src/uniq.c:493
+msgid "invalid number of fields to skip"
+msgstr "neveljavno ¹tevilo preskoèenih polj"
+
+#: src/uniq.c:502
+msgid "invalid number of bytes to skip"
+msgstr "neveljavno ¹tevilo preskoèenih bajtov"
+
+#: src/uniq.c:511
+msgid "invalid number of bytes to compare"
+msgstr "neveljavno ¹tevilo primerjanih bajtov"
+
+#: src/uniq.c:525
+#, fuzzy, c-format
+msgid "`-%lu' option is obsolete; use `-f %lu'"
+msgstr "opozorilo: neveljavna ¹irina %lu; namesto nje jemljemo %d"
+
+#: src/uniq.c:533
+msgid "printing all duplicated lines and repeat counts is meaningless"
+msgstr "izpis vseh podvojenih vrstic skupaj s ¹tevilom ponovitev ni smiseln"
+
+#: src/wc.c:78
+msgid "Paul Rubin and David MacKenzie"
+msgstr "Paul Rubin in David MacKenzie"
+
+#: src/wc.c:132
+msgid ""
+"Print newline, word, and byte counts for each FILE, and a total line if\n"
+"more than one FILE is specified.  With no FILE, or when FILE is -,\n"
+"read standard input.\n"
+"  -c, --bytes            print the byte counts\n"
+"  -m, --chars            print the character counts\n"
+"  -l, --lines            print the newline counts\n"
+msgstr ""
+"Izpi¹emo ¹tevilo vrstic, besed in bajtov v vsaki od podanih DATOTEK, in "
+"skupne\n"
+"vrednosti, èe je bila podana veè kot ena datoteka. Èe DATOTEKA ni podana "
+"ali\n"
+"je enaka -, beremo s standardnega vhoda.\n"
+"\n"
+"  -c, --bytes            izpi¹emo ¹tevilo bajtov\n"
+"  -m, --chars            izpi¹emo ¹tevilo znakov\n"
+"  -l, --lines            izpi¹emo ¹tevilo vrstic\n"
+
+#: src/wc.c:140
+msgid ""
+"  -L, --max-line-length  print the length of the longest line\n"
+"  -w, --words            print the word counts\n"
+msgstr ""
+"  -L, --max-line-length  izpi¹emo dol¾ino najdalj¹e vrstice\n"
+"  -w, --words            izpi¹emo ¹tevilo besed\n"
+
+#: src/wc.c:589
+msgid "total"
+msgstr "skupno"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "(obsolete) Instead of -t NUMBER or -t LIST, -NUMBER or -LIST may be "
+#~ "used.\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Namesto -t ©IRINA ali -t SEZNAM sta dovoljeni tudi obliki -©IRINA in -"
+#~ "SEZNAM.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "(obsolete)  If -VALUE is used as first OPTION, same as -c VALUE when one "
+#~ "of\n"
+#~ "multipliers bkm follows concatenated, else same as -n VALUE.\n"
+#~ msgstr ""
+#~ "\n"
+#~ "VELIKOSTI lahko sledi pripona b (bloki; mno¾enje s 512), k (kilo) ali\n"
+#~ "m (mega). Èe je -VREDNOST podana kot prva IZBIRA, se interpretira kot\n"
+#~ "-c VREDNOST, èe ji sledi katera od pripon, sicer pa kot -n VALUE.\n"
+
+#, fuzzy
+#~ msgid "warning: `od -s' is obsolete; use `od --strings'"
+#~ msgstr "opozorilo: neveljavna ¹irina %lu; namesto nje jemljemo %d"
+
+#, fuzzy
+#~ msgid "warning: `od -w' is obsolete; use `od --width'"
+#~ msgstr "opozorilo: neveljavna ¹irina %lu; namesto nje jemljemo %d"
+
+#, fuzzy
+#~ msgid "warning: `pr -S' is obsolete; use `pr --sep-string'"
+#~ msgstr "opozorilo: neveljavna ¹irina %lu; namesto nje jemljemo %d"
+
+#, fuzzy
+#~ msgid ""
+#~ "  +POS1 [-POS2]             start a key at POS1, end it before POS2 "
+#~ "(origin 0)\n"
+#~ "                              Warning: this option is obsolete\n"
+#~ msgstr ""
+#~ "  -z, --zero-terminated     vrstice zakljuèimo z znakom 0 namesto z "
+#~ "znakom za\n"
+#~ "                              novo vrstico (uporabno pri find -print0)\n"
+#~ "  +POZ1 [-POZ2]             kljuè se zaèenja v stolpcu POZ1 in se konèa "
+#~ "pred \n"
+#~ "                              stolpcem POZ2 (stoplci se ¹tejejo od 0 "
+#~ "dalje)\n"
+#~ "                              Opozorilo: ta izbira je zastarela.\n"
+
+#, fuzzy
+#~ msgid "warning: `sort -y' is obsolete; omit `-y'"
+#~ msgstr "opozorilo: neveljavna ¹irina %lu; namesto nje jemljemo %d"
+
+#, fuzzy
+#~ msgid ""
+#~ "A first OPTION of -VALUE\n"
+#~ "is treated like -n VALUE unless VALUE has one of the [bkm] suffix\n"
+#~ "multipliers, in which case it is treated like -c VALUE.\n"
+#~ msgstr ""
+#~ "Èe je prva IZBIRA -VREDNOST ali +VREDNOST, se tolmaèi kot\n"
+#~ "-n VREDNOST oz. -n +VREDNOST, kadar ji ne sledi pripona b, k ali m, sicer "
+#~ "pa kot\n"
+#~ "-c VREDNOST oz. -c +VREDNOST. "
+
+#, fuzzy
+#~ msgid ""
+#~ "A first option of +VALUE is treated like -+VALUE, but this usage is "
+#~ "obsolete\n"
+#~ "and support for it will be withdrawn.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Opozorilo: oblika +VREDNOST kot izbira se opu¹èa \n"
+#~ "in v prihodnjih izdajah ne bo veè podprta.\n"
+#~ "\n"
+
+#, fuzzy
+#~ msgid "warning: `tail %s' is obsolete; use -n or -c instead"
+#~ msgstr "opozorilo: neveljavna ¹irina %lu; namesto nje jemljemo %d"
+
+#, fuzzy
+#~ msgid "warning: `uniq %s' is obsolete; use `uniq -s %s' instead"
+#~ msgstr "opozorilo: neveljavna ¹irina %lu; namesto nje jemljemo %d"
+
+#~ msgid "\n"
+#~ msgstr "\n"
+
+#~ msgid ""
+#~ "sizeof(long).  If TYPE is f, SIZE may also be F for sizeof(float), D\n"
+#~ "for sizeof(double) or L for sizeof(long double).\n"
+#~ "\n"
+#~ "RADIX is d for decimal, o for octal, x for hexadecimal or n for none.\n"
+#~ "BYTES is hexadecimal with 0x or 0X prefix, it is multiplied by 512\n"
+#~ msgstr ""
+#~ "tipa long). Èe je TIP f, je lahko VELIKOST tudi F za dol¾ino tipa float, "
+#~ "D\n"
+#~ "(dol¾ina tipa double) ali L (dol¾ina tipa long double).\n"
+#~ "\n"
+#~ "OSNOVA je lahko d (deseti¹ka), o (osmi¹ka), x (¹estnajsti¹ka) ali n "
+#~ "(nobena).\n"
+#~ "Èe ima ©TEVILO predpono 0x ali 0X, se tolmaèi kot ¹estnajsti¹ka "
+#~ "vrednost.\n"
+
+#~ msgid ""
+#~ "with b suffix, by 1024 with k and by 1048576 with m.  Adding a z suffix "
+#~ "to\n"
+#~ "any type adds a display of printable characters to the end of each line\n"
+#~ "of output.  -s without a number implies 3.  -w without a number implies "
+#~ "32.\n"
+#~ "By default, od uses -A o -t d2 -w 16.\n"
+#~ msgstr ""
+#~ "Pripona b pomeni mno¾enje s 512, pripona k mno¾enje s 1024, pripona m "
+#~ "mno¾enje\n"
+#~ "s 1048576. Pripona z pri kateremkoli tipu doda prikaz izpisljivih znakov "
+#~ "na\n"
+#~ "koncu vsake vrstice. Izbira -s brez podanega ¹tevila privzame vrednost "
+#~ "3.\n"
+#~ "Izbira -w brez podanega ¹tevila privzame vrednost 32. Privzete vrednosti, "
+#~ "ki jih\n"
+#~ "od uporablja, so -A o -t d2 -w 16.\n"
+
+#~ msgid "Copyright (C) 2001 Free Software Foundation, Inc."
+#~ msgstr "Copyright (C) 2001 Free Software Foundation, Inc."
+
+#~ msgid ""
+#~ "Print CRC checksum and byte counts of each FILE.\n"
+#~ "\n"
+#~ "  --help      display this help and exit\n"
+#~ "  --version   output version information and exit\n"
+#~ msgstr ""
+#~ "Izpi¹emo nadzorno vsoto in dol¾ino v bajtih za vsako DATOTEKO.\n"
+#~ "\n"
+#~ "  --help      ta navodila\n"
+#~ "  --version   razlièica programa\n"
+
+#~ msgid ""
+#~ "Output pieces of FILE separated by PATTERN(s) to files `xx01', "
+#~ "`xx02', ...,\n"
+#~ "and output byte counts of each piece to standard output.\n"
+#~ "\n"
+#~ "  -b, --suffix-format=FORMAT use sprintf FORMAT instead of %%d\n"
+#~ "  -f, --prefix=PREFIX        use PREFIX instead of `xx'\n"
+#~ "  -k, --keep-files           do not remove output files on errors\n"
+#~ "  -n, --digits=DIGITS        use specified number of digits instead of 2\n"
+#~ "  -s, --quiet, --silent      do not print counts of output file sizes\n"
+#~ "  -z, --elide-empty-files    remove empty output files\n"
+#~ "      --help                 display this help and exit\n"
+#~ "      --version              output version information and exit\n"
+#~ "\n"
+#~ "Read standard input if FILE is -.  Each PATTERN may be:\n"
+#~ "\n"
+#~ "  INTEGER            copy up to but not including specified line number\n"
+#~ "  /REGEXP/[OFFSET]   copy up to but not including a matching line\n"
+#~ "  %%REGEXP%%[OFFSET]   skip to, but not including a matching line\n"
+#~ "  {INTEGER}          repeat the previous pattern specified number of "
+#~ "times\n"
+#~ "  {*}                repeat the previous pattern as many times as "
+#~ "possible\n"
+#~ "\n"
+#~ "A line OFFSET is a required `+' or `-' followed by a positive integer.\n"
+#~ msgstr ""
+#~ "Kose DATOTEKE loèimo z VZORCEM in zapi¹emo v datoteke ,xx01`, ,xx02`...,\n"
+#~ "¹tevilo bajtov za posamièen kos pa izpi¹emo na standardni izhod.\n"
+#~ "\n"
+#~ "  -b, --suffix-format=OBLIKA uporabi OBLIKO spritntf namesto %%d\n"
+#~ "  -f, --prefix=PREDPONA      uporabi podano PREDPONO namesto ,xx`\n"
+#~ "  -k, --keep-files           ob napaki ne pobri¹i nepopolno zapisanih "
+#~ "datotek\n"
+#~ "  -n, --digits=©TEVKE        uporabi navedeno ¹tevilo ¹tevk namesto "
+#~ "privzetih 2\n"
+#~ "  -s, --quiet, --silent      brez izpisa velikosti na standardni izhod\n"
+#~ "  -z, --elide-empty-files    odstrani prazne izhodne datoteke\n"
+#~ "      --help                 ta navodila\n"
+#~ "      --version              razlièica programa\n"
+#~ "\n"
+#~ "Èe je DATOTEKA -, beremo s standardnega vhoda. VZOREC je lahko eden od:\n"
+#~ "\n"
+#~ "  CELO_©TEVILO       prepi¹i do navedene vrstice, ne v¹tev¹i te vrstice\n"
+#~ "  /REGIZR/[ODMIK]    prepi¹i do ODMIKA, ne v¹tev¹i ujemajoèe se vrstice\n"
+#~ "  %%REGIZR%%[ODMIK]  preskoèi na ODMIK, ne v¹tev¹i ujemajoèe se vrstice\n"
+#~ "  {CELO_©TEVILO}     ponovi prej¹nji regularni izraz navedenokrat\n"
+#~ "  {*}                ponovi prej¹nji regularni izraz, kolikorkrat gre\n"
+#~ "\n"
+#~ "Zapis vrstice ODMIKA je znak ,+` ali ,-`, ki mu sledi pozitivno celo "
+#~ "¹tevilo.\n"
+
+#~ msgid ""
+#~ "Print selected parts of lines from each FILE to standard output.\n"
+#~ "\n"
+#~ "  -b, --bytes=LIST        output only these bytes\n"
+#~ "  -c, --characters=LIST   output only these characters\n"
+#~ "  -d, --delimiter=DELIM   use DELIM instead of TAB for field delimiter\n"
+#~ "  -f, --fields=LIST       output only these fields;  also print any line\n"
+#~ "                            that contains no delimiter character, unless\n"
+#~ "                            the -s option is specified\n"
+#~ "  -n                      (ignored)\n"
+#~ "  -s, --only-delimited    do not print lines not containing delimiters\n"
+#~ "      --output-delimiter=STRING  use STRING as the output delimiter\n"
+#~ "                            the default is to use the input delimiter\n"
+#~ "      --help              display this help and exit\n"
+#~ "      --version           output version information and exit\n"
+#~ "\n"
+#~ "Use one, and only one of -b, -c or -f.  Each LIST is made up of one\n"
+#~ "range, or many ranges separated by commas.  Each range is one of:\n"
+#~ "\n"
+#~ "  N     N'th byte, character or field, counted from 1\n"
+#~ "  N-    from N'th byte, character or field, to end of line\n"
+#~ "  N-M   from N'th to M'th (included) byte, character or field\n"
+#~ "  -M    from first to M'th (included) byte, character or field\n"
+#~ "\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ msgstr ""
+#~ "Izbrane dele vrstic iz vsake od navedenih DATOTEK izpi¹emo na standardni "
+#~ "izhod.\n"
+#~ "\n"
+#~ "  -b, --bytes=SEZNAM      izpi¹i samo navedene bajte\n"
+#~ "  -c, --characters=SEZNAM izpi¹i samo navedene znake\n"
+#~ "  -d, --delimiter=RAZMEJ  polja so razmejena z znakom RAZMEJ namesto s "
+#~ "TAB\n"
+#~ "  -f, --fields=SEZNAM     izpi¹i samo navedena polja; izpi¹i tudi vse "
+#~ "vrstice,\n"
+#~ "                            ki ne vsebujejo razmejevalnika, razen èe je v "
+#~ "rabi\n"
+#~ "                            izbira -s\n"
+#~ "  -n                      (prezrto)\n"
+#~ "  -s, --only-delimited    ne izpi¹i vrstic, ki ne vsebujejo "
+#~ "razmejevalnika\n"
+#~ "      --output-delimiter=NIZ  naj bo NIZ razmejevalnik na izhodu\n"
+#~ "                            privzeti izhodni razmejevalnik je enak "
+#~ "vhodnemu\n"
+#~ "      --help              ta navodila\n"
+#~ "      --version           razlièica programa\n"
+#~ "\n"
+#~ "Izbire -b, -c in -f se medsebojno izkljuèujejo. Vsak SEZNAM lahko "
+#~ "sestavlja en\n"
+#~ "ali veè razponov, ki so med seboj loèeni z vejico. Vsak razpon ima lahko "
+#~ "obliko:\n"
+#~ "\n"
+#~ "  N     N-ti bajt, znak ali polje, ¹teto od 1 dalje\n"
+#~ "  N-    od N-tega bajta, znaka ali polja do konca vrstice\n"
+#~ "  N-M   od N-tega do vkljuèno M-tega bajta, znaka ali polja\n"
+#~ "  -M    od prvega do vkljuèno M-tega bajta, znaka ali polja\n"
+#~ "\n"
+#~ "Èe DATOTEKA ni podana, ali èe je enaka - (minusu), se bere standardni "
+#~ "vhod.\n"
+
+#~ msgid ""
+#~ "Convert tabs in each FILE to spaces, writing to standard output.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "  -i, --initial       do not convert TABs after non whitespace\n"
+#~ "  -t, --tabs=NUMBER   have tabs NUMBER characters apart, not 8\n"
+#~ "  -t, --tabs=LIST     use comma separated list of explicit tab positions\n"
+#~ "      --help          display this help and exit\n"
+#~ "      --version       output version information and exit\n"
+#~ "\n"
+#~ "Instead of -t NUMBER or -t LIST, -NUMBER or -LIST may be used.\n"
+#~ msgstr ""
+#~ "Tabulatorje v vsaki od DATOTEK nadomestimo s presledki in rezultat "
+#~ "izpi¹emo\n"
+#~ "na standardni izhod. Èe DATOTEKA ni podana, ali èe je enaka - (minus), "
+#~ "beremo\n"
+#~ "s standardnega vhoda.\n"
+#~ "\n"
+#~ "  -i, --initial       nadomesti samo tabulatorje, ki sledijo praznim "
+#~ "znakom\n"
+#~ "  -t, --tabs=©IRINA   ©IRINA tabulatorja naj bo navedeno namesto 8\n"
+#~ "  -t, --tabs=SEZNAM   uporabi z vejicami loèen SEZNAM eksplicitnih "
+#~ "tabulatorjev\n"
+#~ "      --help          ta navodila\n"
+#~ "      --version       razlièica programa\n"
+#~ "\n"
+#~ "Namesto -t ©IRINA ali -t SEZNAM sta dovoljeni tudi obliki -©IRINA in -"
+#~ "SEZNAM.\n"
+
+#~ msgid ""
+#~ "Reformat each paragraph in the FILE(s), writing to standard output.\n"
+#~ "If no FILE or if FILE is `-', read standard input.\n"
+#~ "\n"
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "  -c, --crown-margin        preserve indentation of first two lines\n"
+#~ "  -p, --prefix=STRING       combine only lines having STRING as prefix\n"
+#~ "  -s, --split-only          split long lines, but do not refill\n"
+#~ "  -t, --tagged-paragraph    indentation of first line different from "
+#~ "second\n"
+#~ "  -u, --uniform-spacing     one space between words, two after sentences\n"
+#~ "  -w, --width=NUMBER        maximum line width (default of 75 columns)\n"
+#~ "      --help                display this help and exit\n"
+#~ "      --version             output version information and exit\n"
+#~ "\n"
+#~ "In -wNUMBER, the letter `w' may be omitted.\n"
+#~ msgstr ""
+#~ "Vsak odstavek v DATOTEKI(-ah) preoblikujemo in izpi¹emo na standardni "
+#~ "izhod.\n"
+#~ "Èe DATOTEKA ni podana ali je enaka - (minus), beremo s standardnega "
+#~ "vhoda.\n"
+#~ "\n"
+#~ "Èe je pri dolgi obliki izbire naveden argument, je ta obvezen tudi pri "
+#~ "kratki.\n"
+#~ "  -c, --crown-margin        ohrani zamik prvih dveh vrstic\n"
+#~ "  -p, --prefix=NIZ          preoblikuj samo vrstice, ki se zaèno z NIZOM\n"
+#~ "  -s, --split-only          pore¾i predolge vrstice, a brez poravnave\n"
+#~ "  -t, --tagged-paragraph    zamik prve vrstice v odstavku je razlièen od "
+#~ "ostalih\n"
+#~ "  -u, --uniform-spacing     en presledek med besedami, dva za piko\n"
+#~ "  -w, --width=©IRINA        najveèja ¹irina vrstice (privzeto 75 znakov)\n"
+#~ "      --help                ta navodila\n"
+#~ "      --version             razlièica programa\n"
+#~ "\n"
+#~ "Izbiro -w©TEVILO lahko uporabimo tudi v obliki -©TEVILO.\n"
+
+#~ msgid ""
+#~ "Wrap input lines in each FILE (standard input by default), writing to\n"
+#~ "standard output.\n"
+#~ "\n"
+#~ "  -b, --bytes         count bytes rather than columns\n"
+#~ "  -s, --spaces        break at spaces\n"
+#~ "  -w, --width=WIDTH   use WIDTH columns instead of 80\n"
+#~ "      --help          display this help and exit\n"
+#~ "      --version       output version information and exit\n"
+#~ msgstr ""
+#~ "Vrstice v vsaki DATOTEKI na vhodu (privzet je standardni vhod) prelomimo\n"
+#~ "in rezultat izpi¹emo na standardni izhod.\n"
+#~ "\n"
+#~ "  -b, --bytes         ¹tejemo bajte namesto znakov\n"
+#~ "  -s, --spaces        prelom na presledkih\n"
+#~ "  -w, --width=©IRINA  nastavimo ©IRINO vrstic (privzeto 80)\n"
+#~ "      --help          ta navodila\n"
+#~ "      --version       razlièica programa\n"
+
+#~ msgid ""
+#~ "Print first 10 lines of each FILE to standard output.\n"
+#~ "With more than one FILE, precede each with a header giving the file "
+#~ "name.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "  -c, --bytes=SIZE         print first SIZE bytes\n"
+#~ "  -n, --lines=NUMBER       print first NUMBER lines instead of first 10\n"
+#~ "  -q, --quiet, --silent    never print headers giving file names\n"
+#~ "  -v, --verbose            always print headers giving file names\n"
+#~ "      --help               display this help and exit\n"
+#~ "      --version            output version information and exit\n"
+#~ "\n"
+#~ "SIZE may have a multiplier suffix: b for 512, k for 1K, m for 1 Meg.\n"
+#~ "If -VALUE is used as first OPTION, read -c VALUE when one of\n"
+#~ "multipliers bkm follows concatenated, else read -n VALUE.\n"
+#~ msgstr ""
+#~ "Izpi¹emo prvih 10 vrstic vsake od DATOTEK na standardni izhod.\n"
+#~ "Èe je podana veè kot ena DATOTEKA, pred vsebino izpi¹emo ¹e ime "
+#~ "datoteke.\n"
+#~ "Èe DATOTEKA ni podana, ali èe je enaka -, beremo s standardnega vhoda.\n"
+#~ "\n"
+#~ "  -c, --bytes=VELIKOST     izpi¹emo prvih VELIKOST bajtov z zaèetka "
+#~ "datoteke\n"
+#~ "  -n, --lines=©TEVILO      izpi¹emo dano ©TEVILO vrstic namesto prvih 10\n"
+#~ "  -q, --quiet, --silent    vedno brez izpisa imena datoteke\n"
+#~ "  -v, --verbose            vedno izpi¹emo ¹e ime datoteke\n"
+#~ "      --help               ta navodila\n"
+#~ "      --version            razlièica programa\n"
+#~ "\n"
+#~ "VELIKOSTI lahko sledi pripona b (bloki; mno¾enje s 512), k (kilo) ali m "
+#~ "(mega).\n"
+#~ "Èe je -VREDNOST podana kot prva IZBIRA, se interpretira kot -c VREDNOST, "
+#~ "èe tej\n"
+#~ "sledi katera od pripon, sicer pa kot -n VALUE.\n"
+
+#~ msgid ""
+#~ "For each pair of input lines with identical join fields, write a line to\n"
+#~ "standard output.  The default join field is the first, delimited\n"
+#~ "by whitespace.  When FILE1 or FILE2 (not both) is -, read standard "
+#~ "input.\n"
+#~ "\n"
+#~ "  -a SIDE           print unpairable lines coming from file SIDE\n"
+#~ "  -e EMPTY          replace missing input fields with EMPTY\n"
+#~ "  -i, --ignore-case ignore differences in case when comparing fields\n"
+#~ "  -j FIELD          (obsolescent) equivalent to `-1 FIELD -2 FIELD'\n"
+#~ "  -j1 FIELD         (obsolescent) equivalent to `-1 FIELD'\n"
+#~ "  -j2 FIELD         (obsolescent) equivalent to `-2 FIELD'\n"
+#~ "  -o FORMAT         obey FORMAT while constructing output line\n"
+#~ "  -t CHAR           use CHAR as input and output field separator\n"
+#~ "  -v SIDE           like -a SIDE, but suppress joined output lines\n"
+#~ "  -1 FIELD          join on this FIELD of file 1\n"
+#~ "  -2 FIELD          join on this FIELD of file 2\n"
+#~ "      --help        display this help and exit\n"
+#~ "      --version     output version information and exit\n"
+#~ "\n"
+#~ "Unless -t CHAR is given, leading blanks separate fields and are ignored,\n"
+#~ "else fields are separated by CHAR.  Any FIELD is a field number counted\n"
+#~ "from 1.  FORMAT is one or more comma or blank separated specifications,\n"
+#~ "each being `SIDE.FIELD' or `0'.  Default FORMAT outputs the join field,\n"
+#~ "the remaining fields from FILE1, the remaining fields from FILE2, all\n"
+#~ "separated by CHAR.\n"
+#~ msgstr ""
+#~ "Za vsak par vrstic na vhodu z enakimi zdru¾itvenimi polji izpi¹emo "
+#~ "vrstico\n"
+#~ "na standardni izhod. Privzeto zdru¾itveno polje je prvo, loèeno s "
+#~ "praznim\n"
+#~ "prostorom. Èe sta DATOTEKA1 ali DATOTEKA2 (ne pa obe hkrati) enaki -, "
+#~ "beremo\n"
+#~ "s standardnega vhoda.\n"
+#~ "\n"
+#~ "  -a STRAN          izpi¹emo vrstice brez para, ki izvirajo iz navedene "
+#~ "STRANI\n"
+#~ "  -e PRAZNO         manjkajoèe vhodno polje nadomestimo z nizom PRAZNO\n"
+#~ "  -i, --ignore-case pri primerjanju obravnavamo velike in male èrke "
+#~ "enako\n"
+#~ "  -j POLJE          (zastarelo) isto kot ,-1 POLJE -2 POLJE`\n"
+#~ "  -j1 POLJE         (zastarelo) isto kot ,-1 POLJE`\n"
+#~ "  -j2 POLJE         (zastarelo) isto kot ,-2 POLJE`\n"
+#~ "  -o OBLIKA         pri izpisu uporabimo predpisano OBLIKO\n"
+#~ "  -t ZNAK           navedeni ZNAK naj bo loèilo med polji na vhodu in "
+#~ "izhodu\n"
+#~ "  -v STRAN          isto kot -a STRAN, vendar brez zdru¾enih izhodnih "
+#~ "vrstic\n"
+#~ "  -1 POLJE          zdru¾ujemo glede na navedeno POLJE v prvi datoteki\n"
+#~ "  -2 POLJE          zdru¾ujemo glede na navedeno POLJE v drugi datoteki\n"
+#~ "      --help        ta navodila\n"
+#~ "      --version     razlièica programa\n"
+#~ "\n"
+#~ "Èe izbira -t ZNAK ni podana, vodilna prazna polja loèujejo polja in se "
+#~ "ne\n"
+#~ "upo¹tevajo, sicer pa ZNAK loèuje polja. POLJE je ¹tevilka polja, ¹teto od "
+#~ "1\n"
+#~ "dalje. OBLIKA je eno ali veè z vejico ali presledkom loèenih doloèil, "
+#~ "vsako \n"
+#~ "od njih je oblike ,STRAN.POLJE` ali ,0`. Privzeta OBLIKA izpi¹e "
+#~ "zdru¾itveno\n"
+#~ "polje, vsa preostala polja iz DATOTEKE1, in zatem ¹e vsa preostala polja "
+#~ "iz\n"
+#~ "DATOTEKE2; loèilo med polji je ZNAK.\n"
+
+#~ msgid ""
+#~ "Usage: %s [OPTION] [FILE]...\n"
+#~ "  or:  %s [OPTION] --check [FILE]\n"
+#~ "Print or check %s (%d-bit) checksums.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "  -b, --binary            read files in binary mode (default on DOS/"
+#~ "Windows)\n"
+#~ "  -c, --check             check %s sums against given list\n"
+#~ "  -t, --text              read files in text mode (default)\n"
+#~ "\n"
+#~ "The following two options are useful only when verifying checksums:\n"
+#~ "      --status            don't output anything, status code shows "
+#~ "success\n"
+#~ "  -w, --warn              warn about improperly formated checksum lines\n"
+#~ "\n"
+#~ "      --help              display this help and exit\n"
+#~ "      --version           output version information and exit\n"
+#~ "\n"
+#~ "The sums are computed as described in %s.  When checking, the input\n"
+#~ "should be a former output of this program.  The default mode is to print\n"
+#~ "a line with checksum, a character indicating type (`*' for binary, ` ' "
+#~ "for\n"
+#~ "text), and name for each FILE.\n"
+#~ msgstr ""
+#~ "Uporaba: %s [IZBIRA] [DATOTEKA]...\n"
+#~ "  ali:   %s [IZBIRA] --check [DATOTEKA]\n"
+#~ "Izpi¹emo ali preverimo nadzorne vsote %s (%d-bitne).\n"
+#~ "Èe DATOTEKA ni podana, ali èe je enaka -, beremo s standardnega vhoda.\n"
+#~ "\n"
+#~ "  -b, --binary            datoteke beremo v binarnem naèinu (privzeto v\n"
+#~ "                            okoljih DOS/Windows)\n"
+#~ "  -c, --check             izraèunane nadzorne vsote %s primerjamo z "
+#~ "vrednostmi\n"
+#~ "                            v navedeni datoteki\n"
+#~ "  -t, --text              datoteke beremo v besedilnem naèinu (privzeto)\n"
+#~ "\n"
+#~ "Naslednji dve izbiri sta uporabni le pri preverjanju nadzornih vsot:\n"
+#~ "      --status            brez izpisa, izhodna statusna koda ka¾e uspeh\n"
+#~ "  -w, --warn              z opozorili pri nepravilno oblikovanih "
+#~ "vrsticah\n"
+#~ "                            z nadzornimi vsotami MD5\n"
+#~ "\n"
+#~ "      --help              ta navodila\n"
+#~ "      --version           razlièica programa\n"
+#~ "\n"
+#~ "Izraèun nadzornih vsot je opisan v %s. Pri preverjanju mora biti\n"
+#~ "datoteka z vrednostmi v enaki obliki kot izpis programa. Privzet naèin je "
+#~ "izpis\n"
+#~ "vrstice z nadzorno vsoto, statusnim znakom (,*` za binarne, , ` za "
+#~ "besedilne\n"
+#~ "datoteke) in imenom DATOTEKE, za katero je bila izraèunana nadzorna "
+#~ "vsota.\n"
+
+#~ msgid ""
+#~ "Write each FILE to standard output, with line numbers added.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "  -b, --body-numbering=STYLE      use STYLE for numbering body lines\n"
+#~ "  -d, --section-delimiter=CC      use CC for separating logical pages\n"
+#~ "  -f, --footer-numbering=STYLE    use STYLE for numbering footer lines\n"
+#~ "  -h, --header-numbering=STYLE    use STYLE for numbering header lines\n"
+#~ "  -i, --page-increment=NUMBER     line number increment at each line\n"
+#~ "  -l, --join-blank-lines=NUMBER   group of NUMBER empty lines counted as "
+#~ "one\n"
+#~ "  -n, --number-format=FORMAT      insert line numbers according to "
+#~ "FORMAT\n"
+#~ "  -p, --no-renumber               do not reset line numbers at logical "
+#~ "pages\n"
+#~ "  -s, --number-separator=STRING   add STRING after (possible) line "
+#~ "number\n"
+#~ "  -v, --first-page=NUMBER         first line number on each logical page\n"
+#~ "  -w, --number-width=NUMBER       use NUMBER columns for line numbers\n"
+#~ "      --help                      display this help and exit\n"
+#~ "      --version                   output version information and exit\n"
+#~ "\n"
+#~ "By default, selects -v1 -i1 -l1 -sTAB -w6 -nrn -hn -bt -fn.  CC are\n"
+#~ "two delimiter characters for separating logical pages, a missing\n"
+#~ "second character implies :.  Type \\\\ for \\.  STYLE is one of:\n"
+#~ "\n"
+#~ "  a         number all lines\n"
+#~ "  t         number only nonempty lines\n"
+#~ "  n         number no lines\n"
+#~ "  pREGEXP   number only lines that contain a match for REGEXP\n"
+#~ "\n"
+#~ "FORMAT is one of:\n"
+#~ "\n"
+#~ "  ln   left justified, no leading zeros\n"
+#~ "  rn   right justified, no leading zeros\n"
+#~ "  rz   right justified, leading zeros\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Vsako od DATOTEK prepi¹emo na standardni izhod in spotoma o¹tevilèimo "
+#~ "vrstice.\n"
+#~ "Èe DATOTEKA ni podana, ali èe je enaka -, beremo s standardnega vhoda.\n"
+#~ "\n"
+#~ "  -b, --body-numbering=SLOG       uporabi SLOG pri o¹tevilèenju vrstic "
+#~ "telesa\n"
+#~ "  -d, --section-delimiter=CC      uporabi CC pri loèitvi logiènih strani\n"
+#~ "  -f, --footer-numbering=SLOG     uporabi SLOG pri o¹tevilèenju zno¾ja "
+#~ "strani\n"
+#~ "  -h, --header-numbering=SLOG     uporabi SLOG pri o¹tevilèenju zglavja "
+#~ "strani\n"
+#~ "  -i, --page-increment=©TEVILO    ¹tevilke vrstic inkrementiraj po "
+#~ "©TEVILO\n"
+#~ "  -l, --join-blank-lines=©TEVILO  skupino ©TEVILA praznih vrstic ¹tej kot "
+#~ "eno\n"
+#~ "  -n, --number-format=OBLIKA      ¹tevilke vrstic vrini glede na OBLIKO\n"
+#~ "  -p, --no-renumber               o¹tevilèenje vrstic naj teèe prek log. "
+#~ "strani\n"
+#~ "  -s, --number-separator=NIZ      pripni NIZ (mo¾ni) ¹tevilki vrstice\n"
+#~ "  -v, --first-page=©TEVILO        ¹tevilka prve vrstice na novi logièni "
+#~ "strani\n"
+#~ "  -w, --number-width=©TEVILO      ©TEVILO znakov ¹irine za o¹tevilèenje\n"
+#~ "      --help                      ta navodila\n"
+#~ "      --version                   razlièica programa\n"
+#~ "\n"
+#~ "Privzete so izbire -v1 -i1 -l1 -sTAB -w6 -nrn -hn -bt -fn. CC sta dva "
+#~ "loèitvena\n"
+#~ "znaka za loèevanje logiènih strani; èe je drugi znak izpu¹èen, se "
+#~ "privzame :.\n"
+#~ "Uporabite \\\\ za \\. SLOG je nekaj od na¹tetega:\n"
+#~ "\n"
+#~ "  a         o¹tevilèi vse vrstice\n"
+#~ "  t         o¹tevilèi samo polne vrstice, praznih ne\n"
+#~ "  n         ne o¹tevilèi nobenih vrstic\n"
+#~ "  pREGIZR   o¹tevilèi samo vrstice, ki se ujemajo z regularnim izrazom "
+#~ "REGIZR\n"
+#~ "\n"
+#~ "OBLIKA je nekaj od na¹tetega:\n"
+#~ "\n"
+#~ "  ln   levo poravnano, brez vodilnih nièel\n"
+#~ "  rn   desno poravnano, brez vodilnih nièel\n"
+#~ "  rz   desno poravnano, z vodilnimi nièlami\n"
+
+#~ msgid ""
+#~ "Write an unambiguous representation, octal bytes by default, of FILE\n"
+#~ "to standard output.  With no FILE, or when FILE is -, read standard "
+#~ "input.\n"
+#~ "\n"
+#~ "  -A, --address-radix=RADIX   decide how file offsets are printed\n"
+#~ "  -j, --skip-bytes=BYTES      skip BYTES input bytes first on each file\n"
+#~ "  -N, --read-bytes=BYTES      limit dump to BYTES input bytes per file\n"
+#~ "  -s, --strings[=BYTES]       output strings of at least BYTES graphic "
+#~ "chars\n"
+#~ "  -t, --format=TYPE           select output format or formats\n"
+#~ "  -v, --output-duplicates     do not use * to mark line suppression\n"
+#~ "  -w, --width[=BYTES]         output BYTES bytes per output line\n"
+#~ "      --traditional           accept arguments in pre-POSIX form\n"
+#~ "      --help                  display this help and exit\n"
+#~ "      --version               output version information and exit\n"
+#~ "\n"
+#~ "Pre-POSIX format specifications may be intermixed, they accumulate:\n"
+#~ "  -a   same as -t a,  select named characters\n"
+#~ "  -b   same as -t oC, select octal bytes\n"
+#~ "  -c   same as -t c,  select ASCII characters or backslash escapes\n"
+#~ "  -d   same as -t u2, select unsigned decimal shorts\n"
+#~ "  -f   same as -t fF, select floats\n"
+#~ "  -h   same as -t x2, select hexadecimal shorts\n"
+#~ "  -i   same as -t d2, select decimal shorts\n"
+#~ "  -l   same as -t d4, select decimal longs\n"
+#~ "  -o   same as -t o2, select octal shorts\n"
+#~ "  -x   same as -t x2, select hexadecimal shorts\n"
+#~ msgstr ""
+#~ "Na standardni izhod zapi¹emo enoznaèno predstavitev DATOTEKE, privzeto "
+#~ "osmi¹ki\n"
+#~ "zapis bajtov. Èe DATOTEKA ni podana ali je enaka -, beremo s standardnega "
+#~ "vhoda.\n"
+#~ "\n"
+#~ "  -A, --address-radix=OSNOVA  OSNOVA pri izpisu odmikov v datoteki "
+#~ "(doxn)\n"
+#~ "  -j, --skip-bytes=©TEVILO    pri vsaki datoteki preskoèimo prvih ©TEVILO "
+#~ "bajtov\n"
+#~ "  -N, --read-bytes=©TEVILO    izpis omejimo na ©TEVILO bajtov v vsaki "
+#~ "datoteki\n"
+#~ "  -s, --strings[=©TEVILO]     zapor. dolgo vsaj ©TEVILO bajtov izpi¹emo "
+#~ "kot niz\n"
+#~ "  -t, --format=TIP            izberemo obliko ali oblike izpisov\n"
+#~ "  -v, --output-duplicates     ne uporabimo * za oznako izpu¹èenih vrstic\n"
+#~ "  -w, --width[=©TEVILO]       v vsaki vrstici izpi¹emo ©TEVILO bajtov\n"
+#~ "      --traditional           dovoljena oblika argumentov pred standardom "
+#~ "POSIX\n"
+#~ "      --help                  ta navodila\n"
+#~ "      --version               razlièica programa\n"
+#~ "\n"
+#~ "Doloèila v stari obliki (pred POSIXom) lahko kombiniramo, in se "
+#~ "sestavljajo:\n"
+#~ "  -a   isto kot -t a,  neizpisljive znake poimenujemo s kraticami\n"
+#~ "  -b   isto kot -t oC, osmi¹ki izpis bajtov\n"
+#~ "  -c   isto kot -t c,  neizpisljive znake uvedemo z nagibnico\n"
+#~ "  -d   isto kot -t u2, deseti¹ki izpis dvobajtnih nepredznaèenih celih "
+#~ "¹tevil\n"
+#~ "  -f   isto kot -t fF, izpis ¹tevil s plavajoèo vejico\n"
+#~ "  -h   isto kot -t x2, ¹estnajsti¹ki izpis dvobajtnih celih ¹tevil\n"
+#~ "  -i   isto kot -t d2, deseti¹ki izpis dvobajtnih predznaèenih celih "
+#~ "¹tevil\n"
+#~ "  -l   isto kot -t d4, deseti¹ki izpis ¹tiribajtnih predznaèenih celih "
+#~ "¹tevil\n"
+#~ "  -o   isto kot -t o2, osmi¹ki izpis dvobajtnih celih ¹tevil\n"
+#~ "  -x   isto kot -t x2, ¹estnajsti¹ki izpis dvobajtnih celih ¹tevil\n"
+
+#~ msgid ""
+#~ "\n"
+#~ "For older syntax (second call format), OFFSET means -j OFFSET.  LABEL\n"
+#~ "is the pseudo-address at first byte printed, incremented when dump is\n"
+#~ "progressing.  For OFFSET and LABEL, a 0x or 0X prefix indicates\n"
+#~ "hexadecimal, suffixes maybe . for octal and b multiply by 512.\n"
+#~ "\n"
+#~ "TYPE is made up of one or more of these specifications:\n"
+#~ "\n"
+#~ "  a          named character\n"
+#~ "  c          ASCII character or backslash escape\n"
+#~ "  d[SIZE]    signed decimal, SIZE bytes per integer\n"
+#~ "  f[SIZE]    floating point, SIZE bytes per integer\n"
+#~ "  o[SIZE]    octal, SIZE bytes per integer\n"
+#~ "  u[SIZE]    unsigned decimal, SIZE bytes per integer\n"
+#~ "  x[SIZE]    hexadecimal, SIZE bytes per integer\n"
+#~ "\n"
+#~ "SIZE is a number.  For TYPE in doux, SIZE may also be C for\n"
+#~ "sizeof(char), S for sizeof(short), I for sizeof(int) or L for\n"
+#~ "sizeof(long).  If TYPE is f, SIZE may also be F for sizeof(float), D\n"
+#~ "for sizeof(double) or L for sizeof(long double).\n"
+#~ "\n"
+#~ "RADIX is d for decimal, o for octal, x for hexadecimal or n for none.\n"
+#~ "BYTES is hexadecimal with 0x or 0X prefix, it is multiplied by 512\n"
+#~ "with b suffix, by 1024 with k and by 1048576 with m.  Adding a z suffix "
+#~ "to\n"
+#~ "any type adds a display of printable characters to the end of each line\n"
+#~ "of output.  -s without a number implies 3.  -w without a number implies "
+#~ "32.\n"
+#~ "By default, od uses -A o -t d2 -w 16.\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Pri stari skladnji (druga oblika klica) pomeni ODMIK izbiro -j ODMIK.\n"
+#~ "OZNAKA je psevdonaslov prvega izpisanega bajta in se pri¹teje odmiku pri\n"
+#~ "izpisu. Pri ODMIKU in OZNAKI predpona 0x ali 0X naznanja ¹estnajsti¹ki "
+#~ "zapis.\n"
+#~ "Pripone so lahko . za osmi¹ki zapis ali b za mno¾enje s 512.\n"
+#~ "\n"
+#~ "TIP je lahko eno ali veè doloèil s seznama:\n"
+#~ "\n"
+#~ "  a            znaki; neizpisljivi znaki so poimenovani s kraticami\n"
+#~ "  c            znaki; neizpisljivi znaki so uvedeni z nagibnico\n"
+#~ "  d[VELIKOST]  predznaèeno deseti¹ko celo ¹tevilo dol¾ine VELIKOST "
+#~ "bajtov\n"
+#~ "  f[VELIKOST]  ¹tevilo v plavajoèi vejici dol¾ine VELIKOST bajtov\n"
+#~ "  o[VELIKOST]  osmi¹ko ¹tevilo dol¾ine VELIKOST bajtov\n"
+#~ "  u[VELIKOST]  nepredznaèeno deseti¹ko celo ¹tevilo dol¾ine VELIKOST "
+#~ "bajtov\n"
+#~ "  x[VELIKOST]  ¹estnajsti¹ko ¹tevilo dol¾ine VELIKOST bajtov\n"
+#~ "\n"
+#~ "VELIKOST je ¹tevilka. Za TIPE d,o,u ali x je VELIKOST lahko tudi C, kar "
+#~ "pomeni\n"
+#~ "dol¾ino tipa char, S (dol¾ina tipa short), I (dol¾ina tipa int) ali L "
+#~ "(dol¾ina\n"
+#~ "tipa long). Èe je TIP f, je lahko VELIKOST tudi F za dol¾ino tipa float, "
+#~ "D\n"
+#~ "(dol¾ina tipa double) ali L (dol¾ina tipa long double).\n"
+#~ "\n"
+#~ "OSNOVA je lahko d (deseti¹ka), o (osmi¹ka), x (¹estnajsti¹ka) ali n "
+#~ "(nobena).\n"
+#~ "Èe ima ©TEVILO predpono 0x ali 0X, se tolmaèi kot ¹estnajsti¹ka "
+#~ "vrednost.\n"
+#~ "Pripona b pomeni mno¾enje s 512, pripona k mno¾enje s 1024, pripona m "
+#~ "mno¾enje\n"
+#~ "s 1048576. Pripona z pri kateremkoli tipu doda prikaz izpisljivih znakov "
+#~ "na\n"
+#~ "koncu vsake vrstice. Izbira -s brez podanega ¹tevila privzame vrednost "
+#~ "3.\n"
+#~ "Izbira -w brez podanega ¹tevila privzame vrednost 32. Privzete vrednosti, "
+#~ "ki jih\n"
+#~ "od uporablja, so -A o -t d2 -w 16.\n"
+
+#~ msgid ""
+#~ "Write lines consisting of the sequentially corresponding lines from\n"
+#~ "each FILE, separated by TABs, to standard output.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "  -d, --delimiters=LIST   reuse characters from LIST instead of TABs\n"
+#~ "  -s, --serial            paste one file at a time instead of in "
+#~ "parallel\n"
+#~ "      --help              display this help and exit\n"
+#~ "      --version           output version information and exit\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Vsaki od vrstic iz prve DATOTEKE s tabulatorjem na konec pridru¾imo "
+#~ "istole¾no\n"
+#~ "vrstico iz druge DATOTEKE, in tako naprej do konca seznama DATOTEK. Èe\n"
+#~ "DATOTEKA ni podana ali je enaka -, beremo s standardnega vhoda.\n"
+#~ "\n"
+#~ "  -d, --delimiters=SEZNAM  za loèitev uporabimo znake s SEZNAMA namesto "
+#~ "TAB\n"
+#~ "  -s, --serial             datoteke zdru¾ujemo zaporedno namesto "
+#~ "vzporedno\n"
+#~ "      --help               ta navodila\n"
+#~ "      --version            razlièica programa\n"
+#~ "\n"
+
+#~ msgid ""
+#~ "Paginate or columnate FILE(s) for printing.\n"
+#~ "\n"
+#~ "  +FIRST_PAGE[:LAST_PAGE], --pages=FIRST_PAGE[:LAST_PAGE]\n"
+#~ "                    begin [stop] printing with page FIRST_[LAST_]PAGE\n"
+#~ "  -COLUMN, --columns=COLUMN\n"
+#~ "                    produce COLUMN-column output and print columns down,\n"
+#~ "                    unless -a is used. Balance number of lines in the\n"
+#~ "                    columns on each page.\n"
+#~ "  -a, --across      print columns across rather than down, used together\n"
+#~ "                    with -COLUMN\n"
+#~ "  -c, --show-control-chars\n"
+#~ "                    use hat notation (^G) and octal backslash notation\n"
+#~ "  -d, --double-space\n"
+#~ "                    double space the output\n"
+#~ "  -D, --date-format=FORMAT\n"
+#~ "                    use FORMAT for the header date\n"
+#~ "  -e[CHAR[WIDTH]], --expand-tabs[=CHAR[WIDTH]]\n"
+#~ "                    expand input CHARs (TABs) to tab WIDTH (8)\n"
+#~ "  -F, -f, --form-feed\n"
+#~ "                    use form feeds instead of newlines to separate pages\n"
+#~ "                    (by a 3-line page header with -F or a 5-line header\n"
+#~ "                    and trailer without -F)\n"
+#~ msgstr ""
+#~ "O¹tevilèimo strani ali poravnamo besedilo v DATOTEKI v stolpce za izpis.\n"
+#~ "\n"
+#~ "  +PRVA_STRAN[:ZADNJA_STRAN], --pages=PRVA_STRAN[:ZADNJA_STRAN]\n"
+#~ "                    tiskanje zaènemo na PRVI in konèamo na ZADNJI STRANI\n"
+#~ "  -STOLPCI, --columns=STOLPCI\n"
+#~ "                    izpis v danem ¹tevilu STOLPCEV, ki teèejo od zgoraj "
+#~ "navzdol\n"
+#~ "                    razen èe je izbrano -a. ©tevilo vrstic v stolpcih na "
+#~ "strani\n"
+#~ "                    je uravnote¾eno.\n"
+#~ "  -a, --across      skupaj s -STOLPCI; stolpce tiskamo poprek prek "
+#~ "strani\n"
+#~ "                    namesto navzdol.\n"
+#~ "  -c, --show-control-chars\n"
+#~ "                    uporabimo zapis ^G in osmi¹ki zapis z uvodno "
+#~ "nagibnico\n"
+#~ "  -d, --double-space\n"
+#~ "                    izpis z dvojnim razmakom\n"
+#~ "  -D, --date-format=OBLIKA\n"
+#~ "                    izpis datuma v glavi v navedeni OBLIKI\n"
+#~ "  -e[ZNAK[©IRINA]], --expand-tabs[=ZNAK[©IRINA]]\n"
+#~ "                    ZNAKE (privzeto TAB) na vhodu raz¹irimo v tabulator\n"
+#~ "                    dane ©IRINE (privzeto 8)\n"
+#~ "  -F, -f, --form-feed\n"
+#~ "                    strani loèimo z znaki za skok na novo stran namesto "
+#~ "s\n"
+#~ "                    praznimi vrsticami (s 3-vrstiènim zglavjem z izbiro -"
+#~ "F\n"
+#~ "                    ali 5-vrstiènim zglavjem in zno¾jem brez -F)\n"
+
+#~ msgid ""
+#~ "  -h HEADER, --header=HEADER\n"
+#~ "                    use a centered HEADER instead of filename in page "
+#~ "header,\n"
+#~ "                    -h \"\" prints a blank line, don't use -h\"\"\n"
+#~ "  -i[CHAR[WIDTH]], --output-tabs[=CHAR[WIDTH]]\n"
+#~ "                    replace spaces with CHARs (TABs) to tab WIDTH (8)\n"
+#~ "  -J, --join-lines  merge full lines, turns off -W line truncation, no "
+#~ "column\n"
+#~ "                    alignment, -S[STRING] sets separators\n"
+#~ "  -l PAGE_LENGTH, --length=PAGE_LENGTH\n"
+#~ "                    set the page length to PAGE_LENGTH (66) lines\n"
+#~ "                    (default number of lines of text 56, and with -F 63)\n"
+#~ "  -m, --merge       print all files in parallel, one in each column,\n"
+#~ "                    truncate lines, but join lines of full length with -"
+#~ "J\n"
+#~ "  -n[SEP[DIGITS]], --number-lines[=SEP[DIGITS]]\n"
+#~ "                    number lines, use DIGITS (5) digits, then SEP (TAB),\n"
+#~ "                    default counting starts with 1st line of input file\n"
+#~ "  -N NUMBER, --first-line-number=NUMBER\n"
+#~ "                    start counting with NUMBER at 1st line of first\n"
+#~ "                    page printed (see +FIRST_PAGE)\n"
+#~ "  -o MARGIN, --indent=MARGIN\n"
+#~ "                    offset each line with MARGIN (zero) spaces, do not\n"
+#~ "                    affect -w or -W, MARGIN will be added to PAGE_WIDTH\n"
+#~ "  -r, --no-file-warnings\n"
+#~ "                    omit warning when a file cannot be opened\n"
+#~ msgstr ""
+#~ "  -h ZGLAVJE, --header=ZGLAVJE\n"
+#~ "                    uporabimo navedeno osredinjeno ZGLAVJE namesto imena\n"
+#~ "                    datoteke; -h \"\" izpi¹e prazno vrstica; ne "
+#~ "uporabljajte -h\"\"\n"
+#~ "  -i[ZNAK[©IRINA]], --output-tabs[=ZNAK[©IRINA]]\n"
+#~ "                    presledke skrèimo v ZNAK (privzeto TAB) do ©IRINE\n"
+#~ "                    tabulatorja (privzeto 8)\n"
+#~ "  -J, --join-lines  zdru¾ujemo cele vrstice, brez rezanja vrstic z -W, "
+#~ "brez\n"
+#~ "                    poravnave stolpcev, -S[NIZ] nastavi loèila\n"
+#~ "  -l DOL®INA_STRANI, --length=DOL®INA_STRANI\n"
+#~ "                    doloèimo DOL®INO STRANI, v vrsticah (privzeto 66)\n"
+#~ "                    (privzeto ¹tevilo vrstic besedila je 56, z -F 63)\n"
+#~ "  -m, --merge       datoteke izpisujemo vzporedno, po eno v stolpec. "
+#~ "Predolge\n"
+#~ "                    vrstice pore¾emo, razen z izbiro -J, kjer zdru¾imo "
+#~ "celotne\n"
+#~ "  -n[LOÈ[©TEVILO]], --number-lines[=LOÈ[©TEVILO]]\n"
+#~ "                    vrstice o¹tevilèimo, ¹irina polja je ©TEVILO "
+#~ "(privzeto 5)\n"
+#~ "                    znakov, sledi LOÈ (privzeto TAB). O¹tevilèenje  gre "
+#~ "od prve\n"
+#~ "                    vrstice vhodne datoteke.\n"
+#~ "  -N ©TEVILO, --first-line-number=©TEVILO\n"
+#~ "                    o¹tevilèenje zaènemo z navedenim ©TEVILOM v prvi "
+#~ "vrstici na\n"
+#~ "                    prvi natisnjeni strani (glej +PRVA_STRAN)\n"
+#~ "  -o ROB, --indent=ROB\n"
+#~ "                    vrstice zamaknemo za ROB znakov od levega roba; ne "
+#~ "vpliva\n"
+#~ "                    na -w in -W; ROB se pri¹teje ©IRINI_STRANI.\n"
+#~ "  -r, --no-file-warnings\n"
+#~ "                    brez opozoril, kadar ni mo¾no odpreti datoteke\n"
+
+#~ msgid ""
+#~ "  -s[CHAR],--separator[=CHAR]\n"
+#~ "                    separate columns by a single character, default for "
+#~ "CHAR\n"
+#~ "                    is the <TAB> character without -w and 'no char' with -"
+#~ "w\n"
+#~ "                    -s[CHAR] turns off line truncation of all 3 column\n"
+#~ "                    options (-COLUMN|-a -COLUMN|-m) except -w is set\n"
+#~ "  -S[STRING], --sep-string[=STRING]\n"
+#~ "                    separate columns by an optional STRING, don't use\n"
+#~ "                    -S \"STRING\", -S only: No separator used (same as -S"
+#~ "\"\"),\n"
+#~ "                    without -S: Default separator <TAB> with -J and "
+#~ "<space>\n"
+#~ "                    otherwise (same as -S\" \"), no effect on column "
+#~ "options\n"
+#~ "  -t, --omit-header omit page headers and trailers\n"
+#~ "  -T, --omit-pagination\n"
+#~ "                    omit page headers and trailers, eliminate any "
+#~ "pagination\n"
+#~ "                    by form feeds set in input files\n"
+#~ "  -v, --show-nonprinting\n"
+#~ "                    use octal backslash notation\n"
+#~ "  -w PAGE_WIDTH, --width=PAGE_WIDTH\n"
+#~ "                    set page width to PAGE_WIDTH (72) characters for\n"
+#~ "                    multiple text-column output only, -s[char] turns off "
+#~ "(72)\n"
+#~ "  -W PAGE_WIDTH, --page-width=PAGE_WIDTH\n"
+#~ "                    set page width to PAGE_WIDTH (72) characters always,\n"
+#~ "                    truncate lines, except -J option is set, no "
+#~ "interference\n"
+#~ "                    with -S or -s\n"
+#~ "  --help            display this help and exit\n"
+#~ "  --version         output version information and exit\n"
+#~ "\n"
+#~ "-T implied by -l nn when nn <= 10 or <= 3 with -F. With no FILE, or when\n"
+#~ "FILE is -, read standard input.\n"
+#~ msgstr ""
+#~ "  -s[ZNAK], --separator[=ZNAK]\n"
+#~ "                    stolpce loèimo z navedenim ZNAKOM (privzeto TAB) "
+#~ "namesto s\n"
+#~ "                    presledki.\n"
+#~ "  -S[NIZ], --sep-string[=NIZ]\n"
+#~ "                    stolpce loèimo z navedenim NIZOM; ne uporabljajte "
+#~ "oblike\n"
+#~ "                    -S \"NIZ\". Samo -S: brez loèila (isto kot -S\"\"); "
+#~ "brez -S:\n"
+#~ "                    privzeto loèilo (TAB pri -J, presledki sicer).\n"
+#~ "  -t, --omit-header brez zglavja in repa\n"
+#~ "  -T, --omit-pagination\n"
+#~ "                    brez zglavja in repa; brez o¹tevilèenja strani, ki "
+#~ "jih\n"
+#~ "                    povzroèijo znaki za skok na novo stran v vhodni "
+#~ "datoteki\n"
+#~ "  -w ©IRINA_STRANI, --width=©IRINA_STRANI\n"
+#~ "                    ©IRINO STRANI nastavimo na dano ¹tevilo znakov "
+#~ "(privz. 72);\n"
+#~ "                    samo besedilo v veè stolpcih; -s[znak] izklopi\n"
+#~ "  -W ©IRINA_STRANI, --page-width=©IRINA_STRANI\n"
+#~ "                    ©IRINO STRANI nastavimo na dano ¹tevilo znakov "
+#~ "(privz. 72);\n"
+#~ "                    predolge vrstice pore¾emo razen z izbiro -J; ne "
+#~ "vpliva na\n"
+#~ "                    izbiri -s in -S\n"
+#~ "  --help            ta navodila\n"
+#~ "  --version         razlièica programa\n"
+#~ "\n"
+#~ "V dveh primerih se privzame -T: pri izbiri -l NN, kadar NN <= 10; ter pri "
+#~ "izbiri\n"
+#~ "-F, kadar je NN <= 3. Kadar DATOTEKA ni podana ali je enaka -, beremo s\n"
+#~ "standardnega vhoda.\n"
+
+#~ msgid ""
+#~ "Mandatory arguments to long options are mandatory for short options too.\n"
+#~ "\n"
+#~ "  -A, --auto-reference           output automatically generated "
+#~ "references\n"
+#~ "  -C, --copyright                display Copyright and copying "
+#~ "conditions\n"
+#~ "  -G, --traditional              behave more like System V `ptx'\n"
+#~ "  -F, --flag-truncation=STRING   use STRING for flagging line "
+#~ "truncations\n"
+#~ "  -M, --macro-name=STRING        macro name to use instead of `xx'\n"
+#~ "  -O, --format=roff              generate output as roff directives\n"
+#~ "  -R, --right-side-refs          put references at right, not counted in -"
+#~ "w\n"
+#~ "  -S, --sentence-regexp=REGEXP   for end of lines or end of sentences\n"
+#~ "  -T, --format=tex               generate output as TeX directives\n"
+#~ "  -W, --word-regexp=REGEXP       use REGEXP to match each keyword\n"
+#~ "  -b, --break-file=FILE          word break characters in this FILE\n"
+#~ "  -f, --ignore-case              fold lower case to upper case for "
+#~ "sorting\n"
+#~ "  -g, --gap-size=NUMBER          gap size in columns between output "
+#~ "fields\n"
+#~ "  -i, --ignore-file=FILE         read ignore word list from FILE\n"
+#~ "  -o, --only-file=FILE           read only word list from this FILE\n"
+#~ "  -r, --references               first field of each line is a reference\n"
+#~ "  -t, --typeset-mode               - not implemented -\n"
+#~ "  -w, --width=NUMBER             output width in columns, reference "
+#~ "excluded\n"
+#~ "      --help                     display this help and exit\n"
+#~ "      --version                  output version information and exit\n"
+#~ "\n"
+#~ "With no FILE or if FILE is -, read Standard Input.  `-F /' by default.\n"
+#~ msgstr ""
+#~ "Èe je pri dalj¹i obliki izbire navedeno, da ta zahteva argument, je "
+#~ "argument\n"
+#~ "obvezen tudi za kratko obliko. Podobno velja za neobvezne argumente.\n"
+#~ "\n"
+#~ "  -A, --auto-reference           izpis avtomatièno ustvarjenih referenc\n"
+#~ "  -C, --copyright                izpis dovoljenja za razmno¾. in "
+#~ "raz¹irjanje\n"
+#~ "  -G, --traditional              obna¹anje kot ukaz ptx na sistemih "
+#~ "System V\n"
+#~ "  -F, --flag-truncation=NIZ      NIZ doloèa pravila za rezanje vrstic\n"
+#~ "  -M, --macro-name=NIZ           ime makroukaza, ki naj se uporabi "
+#~ "namesto ,xx`\n"
+#~ "  -O, --format=roff              izhod v obliki ROFF\n"
+#~ "  -R, --right-side-refs          reference postavimo na desno, ni v¹teto "
+#~ "pri -w\n"
+#~ "  -S, --sentence-regexp=REGIZR   reg. izr. za konce vrstic ali konce "
+#~ "stavkov\n"
+#~ "  -T, --format=tex               izhod v obliki TeX\n"
+#~ "  -W, --word-regexp=REGIZR       reg. izr. za vsako od kljuènih besed\n"
+#~ "  -b, --break-file=DATOTEKA      datoteka s seznamom znakov za deljenje "
+#~ "besed\n"
+#~ "  -f, --ignore-case              pri urejanju so male in velike èrke "
+#~ "enakovredne\n"
+#~ "  -g, --gap-size=©TEVILO         ¹irina presledka (v znakih) med polji na "
+#~ "izhodu\n"
+#~ "  -i, --ignore-file=DATOTEKA     datoteka s seznamom praznih besed\n"
+#~ "  -o, --only-file=DATOTEKA       datoteka s seznamom besed, ki gredo v "
+#~ "kazalo\n"
+#~ "  -r, --references               prvo polje v vsaki vrstici je referenca\n"
+#~ "  -t, --typeset-mode               - ni izvedeno -\n"
+#~ "  -w, --width=©TEVILO            ¹irina izpisa v znakih, brez referenc\n"
+#~ "      --help                     ta navodila\n"
+#~ "      --version                  razlièica programa\n"
+#~ "\n"
+#~ "Èe DATOTEKA ni podana ali je enaka -, beremo s standardnega vhoda. "
+#~ "Privzeta je\n"
+#~ "izbira ,-F /`.\n"
+
+#~ msgid ""
+#~ "This program is free software; you can redistribute it and/or modify\n"
+#~ "it under the terms of the GNU General Public License as published by\n"
+#~ "the Free Software Foundation; either version 2, or (at your option)\n"
+#~ "any later version.\n"
+#~ "\n"
+#~ "This program is distributed in the hope that it will be useful,\n"
+#~ "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+#~ "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+#~ "GNU General Public License for more details.\n"
+#~ "\n"
+#~ "You should have received a copy of the GNU General Public License\n"
+#~ "along with this program; if not, write to the Free Software Foundation,\n"
+#~ "Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.\n"
+#~ msgstr ""
+#~ "Ta program je prosta programska oprema; lahko ga redistribuirate in/ali\n"
+#~ "spreminjate po pogojih, doloèenih v ,,GNU General Public License``, "
+#~ "izdani\n"
+#~ "pri Free Software Foundation; 2. izdaja (ali novej¹a, èe razpolagate z "
+#~ "njo).\n"
+#~ "\n"
+#~ "Ta program se distribuira v upanju, da je uporaben, vendar BREZ "
+#~ "KAKR©NEGAKOLI\n"
+#~ "JAMSTVA, niti jamstev USTREZNOSTI ZA PRODAJO ali PRIMERNOSTI ZA UPORABO. "
+#~ "Za\n"
+#~ "podrobnosti si oglejte ,,GNU General Public License``.\n"
+#~ "\n"
+#~ "Izvod ,,GNU General Public License`` bi moral biti prilo¾en temu "
+#~ "programu;\n"
+#~ "èe ni, pi¹ite Free Software Foundation, Inc., 59 Temple Place - Suite "
+#~ "330,\n"
+#~ "Boston, MA 02111-1307, USA.\n"
+
+#~ msgid ""
+#~ "Other options:\n"
+#~ "\n"
+#~ "  -c, --check               check whether input is sorted; do not sort\n"
+#~ "  -k, --key=POS1[,POS2]     start a key at POS1, end it at POS 2 (origin "
+#~ "1)\n"
+#~ "  -m, --merge               merge already sorted files; do not sort\n"
+#~ "  -o, --output=FILE         write result to FILE instead of standard "
+#~ "output\n"
+#~ "  -s, --stable              stabilize sort by disabling last-resort "
+#~ "comparison\n"
+#~ "  -S, --buffer-size=SIZE    use SIZE for main memory buffer\n"
+#~ "  -t, --field-separator=SEP use SEP instead of non- to whitespace "
+#~ "transition\n"
+#~ "  -T, --temporary-directory=DIR  use DIR for temporaries, not $TMPDIR or %"
+#~ "s\n"
+#~ "                              multiple options specify multiple "
+#~ "directories\n"
+#~ "  -u, --unique              with -c: check for strict ordering\n"
+#~ "                              otherwise: output only the first of an "
+#~ "equal run\n"
+#~ "  -z, --zero-terminated     end lines with 0 byte, not newline\n"
+#~ "  +POS1 [-POS2]             start a key at POS1, end it before POS2 "
+#~ "(origin 0)\n"
+#~ "                              Warning: this option is obsolescent\n"
+#~ "      --help       display this help and exit\n"
+#~ "      --version    output version information and exit\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Druge izbire:\n"
+#~ "\n"
+#~ "  -c, --check               èe je datoteka ¾e urejena, je ne urejamo "
+#~ "znova\n"
+#~ "  -k, --key=POZ1[,POZ2]     kljuè se zaèenja v stolpcu POZ1 in se konèa z "
+#~ "POZ2\n"
+#~ "  -m, --merge               zdru¾imo ¾e urejene datoteke brez ponovnega "
+#~ "urejanja\n"
+#~ "  -o, --output=DATOTEKA     izhod pi¹emo na DATOTEKO namesto na "
+#~ "standardni izhod\n"
+#~ "  -s, --stable              urejanje stabiliziramo tako, da onemogoèimo\n"
+#~ "                              skrajne primerjave\n"
+#~ "  -S, --buffer-size=VELIKOST  doloèimo VELIKOST medpomnilnika v "
+#~ "pomnilniku\n"
+#~ "  -t, --field-separator=LOÈILO  LOÈILO namesto mej med znaki in praznimi "
+#~ "prostori\n"
+#~ "  -T, --temporary-directory=IMENIK  izrecno doloèimo IMENIK za zaèasne "
+#~ "datoteke;\n"
+#~ "                              namesto $TMPDIR ali %s; ponovljena izbira "
+#~ "doloèi\n"
+#~ "                              veè imenikov\n"
+#~ "  -u, --unique              skupaj s -c: preverimo strogo urejenost\n"
+#~ "                              sicer: izpi¹emo samo prvi zapis od veè "
+#~ "enakih\n"
+#~ "  -z, --zero-terminated     vrstice zakljuèimo z znakom 0 namesto z "
+#~ "znakom \n"
+#~ "                              za novo vrstico\n"
+#~ "  +POZ1 [-POZ2]             kljuè se zaèenja v stolpcu POZ1 in se konèa "
+#~ "pred POZ2\n"
+#~ "      --help                ta navodila\n"
+#~ "      --version             razlièica programa\n"
+#~ "\n"
+
+#~ msgid ""
+#~ "Print the last %d lines of each FILE to standard output.\n"
+#~ "With more than one FILE, precede each with a header giving the file "
+#~ "name.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "      --retry              keep trying to open a file even if it is\n"
+#~ "                             inaccessible when tail starts or if it "
+#~ "becomes\n"
+#~ "                             inaccessible later -- useful only with -f\n"
+#~ "  -c, --bytes=N            output the last N bytes\n"
+#~ "  -f, --follow[={name|descriptor}] output appended data as the file "
+#~ "grows;\n"
+#~ "                             -f, --follow, and --follow=descriptor are\n"
+#~ "                             equivalent\n"
+#~ "  -n, --lines=N            output the last N lines, instead of the last %"
+#~ "d\n"
+#~ "      --max-unchanged-stats=N\n"
+#~ "                           with --follow=name, reopen a FILE which has "
+#~ "not\n"
+#~ "                             changed size after N (default %d) "
+#~ "iterations\n"
+#~ "                             to see if it has been unlinked or renamed\n"
+#~ "                             (this is the usual case of rotated log "
+#~ "files)\n"
+#~ "      --pid=PID            with -f, terminate after process ID, PID dies\n"
+#~ "  -q, --quiet, --silent    never output headers giving file names\n"
+#~ "  -s, --sleep-interval=S   with -f, each iteration lasts approximately S\n"
+#~ "                             (default 1) seconds\n"
+#~ "  -v, --verbose            always output headers giving file names\n"
+#~ "      --help               display this help and exit\n"
+#~ "      --version            output version information and exit\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Zadnjih %d vrstic vsake od podanih DATOTEK izpi¹emo na standardni izhod.\n"
+#~ "Èe je podana veè kot ena DATOTEKA, izpi¹emo pred tem ¹e glavo z imenom\n"
+#~ "datoteke. Èe DATOTEKA ni podana ali je enaka -, beremo s standardnega "
+#~ "vhoda.\n"
+#~ "\n"
+#~ "      --retry              datoteko posku¹amo odpreti, èetudi ni dostopna "
+#~ "v\n"
+#~ "                             trenutku, ko po¾enemo tail ali kdaj kasneje "
+#~ "--\n"
+#~ "                             uporabno skupaj z izbiro -f\n"
+#~ "  -c, --bytes=N            izpi¹emo zadnjih N bajtov datoteke\n"
+#~ "  -f, --follow[={name|descriptor}]  pri datotekah, ki rastejo, sledimo\n"
+#~ "                             trenutnemu koncu datoteke; -f, --follow in\n"
+#~ "                             --follow=descriptor so sopomenke\n"
+#~ "  -n, --lines=N            izpi¹emo zadnjih N vrstic namesto privzetih %"
+#~ "d\n"
+#~ "      --max-unchanged-stats=N\n"
+#~ "                           skupaj z --follow=name, ponovno odpri "
+#~ "DATOTEKO, ki\n"
+#~ "                             se ni spremenila v zadnjih N (privzeto %d) "
+#~ "branjih;\n"
+#~ "                             s tem preverimo, ali vmes ni bila izbrisana "
+#~ "ali\n"
+#~ "                             preimenovana (uporabno pri dnevni¹kih "
+#~ "datotekah)\n"
+#~ "      --pid=PID            skupaj z -f, proces zakljuèimo, ko PID ugasne\n"
+#~ "  -q, --quiet, --silent    vedno brez izpisa glave z imenom datoteke\n"
+#~ "  -s, --sleep-interval=S   skupaj z -f; premor S sekund med ponovitvami\n"
+#~ "  -v, --verbose            vedno z izpisom glave z imenom datoteke\n"
+#~ "      --help               ta navodila\n"
+#~ "      --version            razlièica programa\n"
+#~ "\n"
+
+#~ msgid ""
+#~ "If the first character of N (the number of bytes or lines) is a `+',\n"
+#~ "print beginning with the Nth item from the start of each file, "
+#~ "otherwise,\n"
+#~ "print the last N items in the file.  N may have a multiplier suffix:\n"
+#~ "b for 512, k for 1024, m for 1048576 (1 Meg).  A first OPTION of -VALUE\n"
+#~ "or +VALUE is treated like -n VALUE or -n +VALUE unless VALUE has one of\n"
+#~ "the [bkm] suffix multipliers, in which case it is treated like -c VALUE\n"
+#~ "or -c +VALUE.  Warning: a first option of +VALUE is obsolescent, and "
+#~ "support\n"
+#~ "for it will be withdrawn.\n"
+#~ "\n"
+#~ "With --follow (-f), tail defaults to following the file descriptor, "
+#~ "which\n"
+#~ "means that even if a tail'ed file is renamed, tail will continue to "
+#~ "track\n"
+#~ "its end.  This default behavior is not desirable when you really want to\n"
+#~ "track the actual name of the file, not the file descriptor (e.g., log\n"
+#~ "rotation).  Use --follow=name in that case.  That causes tail to track "
+#~ "the\n"
+#~ "named file by reopening it periodically to see if it has been removed "
+#~ "and\n"
+#~ "recreated by some other program.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "©tevilo N (¹tevilo vrstic ali bajtov) je lahko predznaèeno z znakom + "
+#~ "(plus).\n"
+#~ "V tem primeru izpisujemo vrstice od N-te vrstice (N-tega bajta) dalje "
+#~ "namesto\n"
+#~ "zadnjih N vrstic (bajtov). Mo¾ne pripone pri N so b (mno¾enje s 512), k "
+#~ "(1024)\n"
+#~ "in m (1048576). Èe je prva IZBIRA -VREDNOST ali +VREDNOST, se tolmaèi "
+#~ "kot\n"
+#~ "-n VREDNOST oz. -n +VREDNOST, kadar ji ne sledi pripona b, k ali m, sicer "
+#~ "pa\n"
+#~ "kot -c VREDNOST oz. -c +VREDNOST. Opozorilo: +VREDNOST kot izbira se "
+#~ "opu¹èa.\n"
+#~ "\n"
+#~ "Z izbiro --follow (-f) tail privzeto sledi deskriptorju datoteke, kar "
+#~ "pomeni,\n"
+#~ "da konec datoteke sledimo tudi, èe je ta vmes preimenovana. Privzeti "
+#~ "naèin ni\n"
+#~ "uporaben, èe ¾elimo spremljati samo datoteko z danim imenom (npr. "
+#~ "dnevni¹ki\n"
+#~ "zapisi). V tem primeru uporabimo --follow=name. V tem naèinu tail "
+#~ "periodièno\n"
+#~ "poskusi odpreti datoteko in tako preverja, ali ta ¹e obstaja, ali pa "
+#~ "morda\n"
+#~ "znova obstaja.\n"
+#~ "\n"
+
+#~ msgid ""
+#~ "\n"
+#~ "SETs are specified as strings of characters.  Most represent themselves.\n"
+#~ "Interpreted sequences are:\n"
+#~ "\n"
+#~ "  \\NNN            character with octal value NNN (1 to 3 octal digits)\n"
+#~ "  \\\\              backslash\n"
+#~ "  \\a              audible BEL\n"
+#~ "  \\b              backspace\n"
+#~ "  \\f              form feed\n"
+#~ "  \\n              new line\n"
+#~ "  \\r              return\n"
+#~ "  \\t              horizontal tab\n"
+#~ "  \\v              vertical tab\n"
+#~ "  CHAR1-CHAR2     all characters from CHAR1 to CHAR2 in ascending order\n"
+#~ "  [CHAR*]         in SET2, copies of CHAR until length of SET1\n"
+#~ "  [CHAR*REPEAT]   REPEAT copies of CHAR, REPEAT octal if starting with 0\n"
+#~ "  [:alnum:]       all letters and digits\n"
+#~ "  [:alpha:]       all letters\n"
+#~ "  [:blank:]       all horizontal whitespace\n"
+#~ "  [:cntrl:]       all control characters\n"
+#~ "  [:digit:]       all digits\n"
+#~ "  [:graph:]       all printable characters, not including space\n"
+#~ "  [:lower:]       all lower case letters\n"
+#~ "  [:print:]       all printable characters, including space\n"
+#~ "  [:punct:]       all punctuation characters\n"
+#~ "  [:space:]       all horizontal or vertical whitespace\n"
+#~ "  [:upper:]       all upper case letters\n"
+#~ "  [:xdigit:]      all hexadecimal digits\n"
+#~ "  [=CHAR=]        all characters which are equivalent to CHAR\n"
+#~ msgstr ""
+#~ "\n"
+#~ "MNO®ICE doloèajo nizi znakov. Veèinoma predstavljajo sebe, posebej pa se\n"
+#~ "tolmaèijo naslednja zaporedja:\n"
+#~ "\n"
+#~ "  \\NNN            znak z osmi¹ko kodo NNN (dol¾ina 1, 2 ali 3 osmi¹ke "
+#~ "¹tevke)\n"
+#~ "  \\\\              nagibnica\n"
+#~ "  \\a              zvonèek\n"
+#~ "  \\b              pomik za en znak v levo\n"
+#~ "  \\f              skok na novo stran\n"
+#~ "  \\n              skok v novo vrstico\n"
+#~ "  \\r              pomik na levi rob\n"
+#~ "  \\t              vodoravni tabulator\n"
+#~ "  \\v              navpièni tabulator\n"
+#~ "  ZNAK1-ZNAK2     nara¹èajoèe zaporedje znakov od ZNAKA1 do ZNAKA2\n"
+#~ "  [ZNAK1-ZNAK2]   isto kot ZNAK1-ZNAK2, èe to uporabljata obe mno¾ici\n"
+#~ "  [ZNAK*]         v MNO®ICI 2; toliko ponovitev ZNAKA kot v MNO®ICI 1\n"
+#~ "  [ZNAK*N]        N ponovitev znaka; osmi¹ka vrednost, èe se N zaène z "
+#~ "nièlo\n"
+#~ "  [:alnum:]       vse èrke in ¹tevke\n"
+#~ "  [:alpha:]       vse èrke\n"
+#~ "  [:blank:]       vsi vodoravni prazni znaki\n"
+#~ "  [:cntrl:]       vsi krmilni znaki\n"
+#~ "  [:digit:]       vse ¹tevke\n"
+#~ "  [:graph:]       vsi izpisljivi znaki razen presledka\n"
+#~ "  [:lower:]       vse male èrke\n"
+#~ "  [:print:]       vsi izpisljivi znaki s presledkom vred\n"
+#~ "  [:punct:]       vsa loèila\n"
+#~ "  [:space:]       vsi prazni znaki, vodoravni in navpièni\n"
+#~ "  [:upper:]       vse velike èrke\n"
+#~ "  [:xdigit:]      vse ¹estnajsti¹ke ¹tevke\n"
+#~ "  [=ZNAK=]        vsi znaki, ki so enakovredni navedenemu ZNAKU\n"
+
+#~ msgid ""
+#~ "Convert spaces in each FILE to tabs, writing to standard output.\n"
+#~ "With no FILE, or when FILE is -, read standard input.\n"
+#~ "\n"
+#~ "  -a, --all           convert all whitespace, instead of initial "
+#~ "whitespace\n"
+#~ "  -t, --tabs=NUMBER   have tabs NUMBER characters apart instead of 8\n"
+#~ "  -t, --tabs=LIST     use comma separated list of explicit tab positions\n"
+#~ "      --help          display this help and exit\n"
+#~ "      --version       output version information and exit\n"
+#~ "\n"
+#~ "Instead of -t NUMBER or -t LIST, -NUMBER or -LIST may be used.\n"
+#~ msgstr ""
+#~ "Presledke v vsaki DATOTEKI nadomestimo s tabulatorji in rezultat zapi¹emo "
+#~ "na\n"
+#~ "standardni izhod. Èe DATOTEKA ni podana ali je enaka -, beremo s "
+#~ "standardnega\n"
+#~ "vhoda.\n"
+#~ "\n"
+#~ "  -a, --all           pretvorimo vse prazne prostore, ne le uvodnih\n"
+#~ "  -t, --tabs=©TEVILO  tabulatorji naj bodo ©TEVILO znakov narazen "
+#~ "(privzeto 8)\n"
+#~ "  -t, --tabs=SEZNAM   z vejicami loèen seznam eksplicitnih polo¾ajev "
+#~ "tabulatorja\n"
+#~ "      --help          ta navodila\n"
+#~ "      --version       razlièica programa\n"
+#~ "\n"
+#~ "Namesto oblike -t ©TEVILO ali -t SEZNAM lahko uporabljamo tudi -©TEVILO "
+#~ "in\n"
+#~ "-SEZNAM.\n"
+
+#~ msgid ""
+#~ "Discard all but one of successive identical lines from INPUT (or\n"
+#~ "standard input), writing to OUTPUT (or standard output).\n"
+#~ "\n"
+#~ "  -c, --count           prefix lines by the number of occurrences\n"
+#~ "  -d, --repeated        only print duplicate lines\n"
+#~ "  -D, --all-repeated    print all duplicate lines\n"
+#~ "  -f, --skip-fields=N   avoid comparing the first N fields\n"
+#~ "  -i, --ignore-case     ignore differences in case when comparing\n"
+#~ "  -s, --skip-chars=N    avoid comparing the first N characters\n"
+#~ "  -u, --unique          only print unique lines\n"
+#~ "  -w, --check-chars=N   compare no more than N characters in lines\n"
+#~ "  -N                    same as -f N\n"
+#~ "  +N                    same as -s N (obsolescent; will be withdrawn)\n"
+#~ "      --help            display this help and exit\n"
+#~ "      --version         output version information and exit\n"
+#~ "\n"
+#~ "A field is a run of whitespace, then non-whitespace characters.\n"
+#~ "Fields are skipped before chars.\n"
+#~ msgstr ""
+#~ "Sosledje enakih vrstic na VHODU (ali standardnem vhodu) nadomestimo z eno "
+#~ "samo\n"
+#~ "in rezultat zapi¹emo na IZHOD (standardni izhod).\n"
+#~ "\n"
+#~ "  -c, --count           na zaèetku vsake vrstice izpi¹emo tudi ¹tevilo "
+#~ "ponovitev\n"
+#~ "  -d, --repeated        izpi¹emo samo podvojene vrstice\n"
+#~ "  -D, --all-repeated    izpi¹emo vse podvojene vrstice\n"
+#~ "  -f, --skip-fields=N   pri primerjanju izpustimo prvih N polj vsake "
+#~ "vrstice\n"
+#~ "  -i, --ignore-case     male in velike èrke obravnavamo enakovredno\n"
+#~ "  -s, --skip-chars=N    pri primerjanju izpustimo prvih N znakov vsake "
+#~ "vrstice\n"
+#~ "  -u, --unique          izpi¹emo samo nepodvojene vrstice\n"
+#~ "  -w, --check-chars=N   primerjamo samo N znakov v vrstici\n"
+#~ "  -N                    isto kot -f N\n"
+#~ "  +N                    isto kot -s N\n"
+#~ "      --help            ta navodila\n"
+#~ "      --version         razlièica programa\n"
+#~ "\n"
+#~ "Polje je zaporedje praznih znakov, ki mu sledi zaporedje nepraznih "
+#~ "znakov.\n"
+#~ "Najprej preskoèimo polja, potem znake.\n"
+
+#~ msgid "cannot chmod %s"
+#~ msgstr "sprememba za¹èite ,%s` ni mo¾na"
+
+#~ msgid "virtual memory exhausted"
+#~ msgstr "virtualni pomnilnik porabljen"
+
+#~ msgid "Memory exhausted"
+#~ msgstr "Pomnilnik porabljen"
+
+#~ msgid ""
+#~ "specified number of bytes `%s' is larger than the maximum\n"
+#~ "representable value of type `long'"
+#~ msgstr ""
+#~ "doloèeno ¹tevilo bajtov ,%s` je veèje od najveèje vrednosti,\n"
+#~ "ki jo lahko predstavimo s tipom ,long`"
+
+#~ msgid "%s%*s%s%*sPage"
+#~ msgstr "%s%*s%s%*sstran"
+
+#~ msgid ""
+#~ "Write sorted concatenation of all FILE(s) to standard output.\n"
+#~ "\n"
+#~ "  +POS1 [-POS2]    start a key at POS1, end it *before* POS2 "
+#~ "(obsolescent)\n"
+#~ "\t\t     field numbers and character offsets are numbered\n"
+#~ "                     starting with zero (contrast with the -k option)\n"
+#~ "  -b               ignore leading blanks in sort fields or keys\n"
+#~ "  -c               check if given files already sorted, do not sort\n"
+#~ "  -d               consider only [a-zA-Z0-9 ] characters in keys\n"
+#~ "  -f               fold lower case to upper case characters in keys\n"
+#~ "  -g               compare according to general numerical value, imply -"
+#~ "b\n"
+#~ "  -i               consider only [\\040-\\0176] characters in keys\n"
+#~ "  -k POS1[,POS2]   start a key at POS1, end it *at* POS2\n"
+#~ "\t\t     field numbers and character offsets are numbered\n"
+#~ "                     starting with one (contrast with zero-based +POS "
+#~ "form)\n"
+#~ "  -m               merge already sorted files, do not sort\n"
+#~ "  -M               compare (unknown) < `JAN' < ... < `DEC', imply -b\n"
+#~ "  -n               compare according to string numerical value, imply -b\n"
+#~ "  -o FILE          write result on FILE instead of standard output\n"
+#~ "  -r               reverse the result of comparisons\n"
+#~ "  -s               stabilize sort by disabling last resort comparison\n"
+#~ "  -t SEP           use SEParator instead of non- to whitespace "
+#~ "transition\n"
+#~ "  -T DIRECTORY     use DIRECTORY for temporary files, not $TMPDIR or %s\n"
+#~ "  -u               with -c, check for strict ordering;\n"
+#~ "                   with -m, only output the first of an equal sequence\n"
+#~ "  -z               end lines with 0 byte, not newline, for find -print0\n"
+#~ "      --help       display this help and exit\n"
+#~ "      --version    output version information and exit\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Vsebino vseh DATOTEK na vhodu zdru¾imo, uredimo, in izpi¹emo na standarni "
+#~ "izhod.\n"
+#~ "\n"
+#~ "  +POZ1 [-POZ2]    kljuè se zaèenja v stolpcu POZ1 in se konèa pred POZ2\n"
+#~ "  -b               ne upo¹tevamo vodilnih presledkov v poljih, po katerih "
+#~ "urejamo\n"
+#~ "  -c               èe je datoteka ¾e urejena, je ne urejamo ponovno\n"
+#~ "  -d               v kljuèih upo¹tevamo samo znake [a-zA-Z0-9 ]\n"
+#~ "  -f               male in velike èrke so v kljuèih enakovredne\n"
+#~ "  -g               kljuèe primerjamo glede na ¹tevilsko vrednost; "
+#~ "vkljuèuje -b\n"
+#~ "  -i               v kljuèih upo¹tevamo samo znake [\\040-\\0176]\n"
+#~ "  -k POZ1[,POZ2]   enako kot +POZ1 [-POZ2], a s ¹tetjem stolpcev od 1 "
+#~ "dalje\n"
+#~ "  -m               zdru¾imo ¾e urejene datoteke brez ponovnega urejanja\n"
+#~ "  -M               kljuèe primerjamo glede na vrednost meseca; (neznano) "
+#~ "<\n"
+#~ "                   ,JAN` < ... < ,DEC`; vkljuèuje izbiro -b\n"
+#~ "  -n               kljuèe primerjamo glede na ¹tevilsko vrednost; "
+#~ "vkljuèuje -b\n"
+#~ "  -o DATOTEKA      izhod pi¹emo na DATOTEKO namesto na standardni izhod\n"
+#~ "  -r               izpis v obrnjenem vrstnem redu\n"
+#~ "  -s               urejanje stabiliziramo z onemogoèenjem skrajnih "
+#~ "primerjav\n"
+#~ "  -t LOÈILO        LOÈILO namesto mej med znaki in praznimi prostori\n"
+#~ "  -T IMENIK        IMENIKU za zaèasne datoteke; namesto $TMPDIR ali %s\n"
+#~ "  -u               skupaj z -c, preverjamo za strogo urejenost\n"
+#~ "                   skupaj z -m, izhod samo prve od zaporednih enakih "
+#~ "vrstic\n"
+#~ "  -z               vrstice zakljuèimo z znakom 0 namesto z znakom za "
+#~ "novo\n"
+#~ "                   vrstico (uporabno pri find -print0)\n"
+#~ "      --help       ta navodila\n"
+#~ "      --version    razlièica programa\n"
+#~ "\n"
+
+#~ msgid "flushing file"
+#~ msgstr "zapisujemo datoteko"
+
+#~ msgid "%s: write error"
+#~ msgstr "%s: napaka pri pisanju"
+
+#~ msgid ""
+#~ "when using the old-style +POS and -POS key specifiers,\n"
+#~ "the +POS specifier must come first"
+#~ msgstr ""
+#~ "pri uporabi doloèil v stari obliki (+POZ in -POZ)\n"
+#~ "mora biti prvi +POZ"
+
+#~ msgid "option `-k' requires an argument"
+#~ msgstr "izbira ,-k` zahteva argument"
+
+#~ msgid ""
+#~ "the starting field number argument to the `-k' option must be positive"
+#~ msgstr "zaèetna ¹tevilka polja pri izbiri ,-k` mora biti pozitivna"
+
+#~ msgid "starting field spec has `.' but lacks following character offset"
+#~ msgstr ""
+#~ "doloèilo zaèetnega polja vsebuje piko, ki pa ji ne sledi odmik v znakih"
+
+#~ msgid ""
+#~ "starting field character offset argument to the `-k' option\n"
+#~ "must be positive"
+#~ msgstr ""
+#~ "odmik v znakih pri zaèetnem polju pri izbiri ,-k` mora biti pozitiven"
+
+#~ msgid "field specification has `,' but lacks following field spec"
+#~ msgstr ""
+#~ "doloèilo polj vsebuje vejico, ki pa ji ne sledi doloèilo konènega polja"
+
+#~ msgid "ending field number argument to the `-k' option must be positive"
+#~ msgstr ""
+#~ "konèna ¹tevilka pri doloèilu polja z izbiro ,-k` mora biti pozitivna"
+
+#~ msgid "ending field spec has `.' but lacks following character offset"
+#~ msgstr ""
+#~ "doloèilo konènega polja vsebuje piko, ki pa ji ne sledi odmik v znakih"
+
+#~ msgid "option `-o' requires an argument"
+#~ msgstr "izbira ,-o` zahteva argument"
+
+#~ msgid "option `-t' requires an argument"
+#~ msgstr "izbira ,-t` zahteva argument"
+
+#~ msgid "option `-T' requires an argument"
+#~ msgstr "izbira ,-T` zahteva argument"
+
+#~ msgid "%s: unrecognized option `-%c'\n"
+#~ msgstr "%s: neprepoznana izbira ,-%c`\n"
+
+#~ msgid "%s: cannot follow end of non-regular file"
+#~ msgstr "%s: ni mo¾no slediti konca posebne datoteke"
+
+#~ msgid ""
+#~ "\n"
+#~ "Report bugs to <textutils-bugs@gnu.org>."
+#~ msgstr ""
+#~ "\n"
+#~ "Poroèila o napakah po¹ljite na <textutils-bugs@gnu.org>."
+
+#~ msgid "could not find loop"
+#~ msgstr "zanke ni mo¾no najti"
+
+#~ msgid ""
+#~ "Paginate or columnate FILE(s) for printing.\n"
+#~ "\n"
+#~ "Including version 1.22i: Redefinition of some SMALL LETTER options "
+#~ "(better\n"
+#~ "POSIX compliance, adapting to other UNIXes in some cases) resulting in\n"
+#~ "violations of downward compatibility; defining some new CAPITAL LETTER "
+#~ "options\n"
+#~ "to turn off unexpected interferences of options; capital letter options\n"
+#~ "dominate small letter ones.\n"
+#~ "Form feeds in the input cause page breaks in the output. Multiple form "
+#~ "feeds\n"
+#~ "produce empty pages.\n"
+#~ "\n"
+#~ "  +FIRST_PAGE[:LAST_PAGE], --pages=FIRST_PAGE[:LAST_PAGE]\n"
+#~ "                    begin [stop] printing with page FIRST_[LAST_]PAGE\n"
+#~ "  -COLUMN, --columns=COLUMN\n"
+#~ "                    produce COLUMN-column output and print columns down,\n"
+#~ "                    unless -a is used. Balance number of lines in the\n"
+#~ "                    columns on each page.\n"
+#~ "  -a, --across      print columns across rather than down, used together\n"
+#~ "                    with -COLUMN\n"
+#~ "  -c, --show-control-chars\n"
+#~ "                    use hat notation (^G) and octal backslash notation\n"
+#~ "  -d, --double-space\n"
+#~ "                    double space the output\n"
+#~ "  -e[CHAR[WIDTH]], --expand-tabs[=CHAR[WIDTH]]\n"
+#~ "                    expand input CHARs (TABs) to tab WIDTH (8)\n"
+#~ "  -F, -f, --form-feed\n"
+#~ "                    use form feeds instead of newlines to separate pages\n"
+#~ "                    (by a 3-line page header with -F or a 5-line header\n"
+#~ "                    and trailer without -F)\n"
+#~ "  -h HEADER, --header=HEADER\n"
+#~ "                    use a centered HEADER instead of filename in page "
+#~ "header,\n"
+#~ "                    with long headers left-hand-side truncation may "
+#~ "occur,\n"
+#~ "                    -h \"\" prints a blank line, don't use -h\"\"\n"
+#~ "  -i[CHAR[WIDTH]], --output-tabs[=CHAR[WIDTH]]\n"
+#~ "                    replace spaces with CHARs (TABs) to tab WIDTH (8)\n"
+#~ "  -J, --join-lines  merge full lines, turns off -W line truncation, no "
+#~ "column\n"
+#~ "                    alignment, -S[STRING] sets separators\n"
+#~ "  -l PAGE_LENGTH, --length=PAGE_LENGTH\n"
+#~ "                    set the page length to PAGE_LENGTH (66) lines\n"
+#~ "                    (default number of lines of text 56, and with -F 63)\n"
+#~ msgstr ""
+#~ "O¹tevilèimo strani ali poravnamo besedilo v DATOTEKI v stolpce za izpis.\n"
+#~ "\n"
+#~ "Vkljuèno z razlièico 1.22: Predefiniranje nekaterih izbir z MALIMI "
+#~ "ÈRKAMI\n"
+#~ "(bolj¹a zdru¾ljivost s POSIX in prilagoditev na nekatere sisteme Unix) "
+#~ "pomeni,\n"
+#~ "da razlièice niso zdru¾jive s starej¹imi izdajami; uvedba nekaterih izbir "
+#~ "z\n"
+#~ "VELIKIMI ÈRKAMI, ki odpravljajo neprièakovane interference izbir; izbire "
+#~ "z\n"
+#~ "velikimi èrkami imajo prednost pred izbirami z malimi.\n"
+#~ "Znaki za skok na novo stran na vhodu povzroèijo skoke na novo stran na "
+#~ "izhodu.\n"
+#~ "Zaporedni znaki za skok na novo stran povzroèijo prazne strani.\n"
+#~ "\n"
+#~ "  +PRVA_STRAN[:ZADNJA_STRAN], --pages=PRVA_STRAN[:ZADNJA_STRAN]\n"
+#~ "                    tiskanje zaènemo na PRVI in konèamo na ZADNJI STRANI\n"
+#~ "  -STOLPCI, --columns=STOLPCI\n"
+#~ "                    izpis v danem ¹tevilu STOLPCEV, ki teèejo od zgoraj "
+#~ "navzdol\n"
+#~ "                    razen èe je izbrano -a. ©tevilo vrstic v stolpcih na "
+#~ "strani\n"
+#~ "                    je uravnote¾eno.\n"
+#~ "  -a, --across      stolpce tiskamo poprek prek strani namesto navzdol.\n"
+#~ "                    Uporabno skupaj z -STOLPCI.\n"
+#~ "  -c, --show-control-chars\n"
+#~ "                    uporabimmo zapis ^G in osmi¹ki zapis z uvodno "
+#~ "nagibnico\n"
+#~ "  -d, --double-space\n"
+#~ "                    izpis z dvojnim razmakom\n"
+#~ "  -e[ZNAK[©IRINA]], --expand-tabs[=ZNAK[©IRINA]]\n"
+#~ "                    ZNAKE (privzeto TAB) na vhodu raz¹irimo v tabulator\n"
+#~ "                    dane ©IRINE (privzeto 8)\n"
+#~ "  -F, -f, --form-feed\n"
+#~ "                    strani loèimo z znaki za skok na novo stran namesto "
+#~ "s\n"
+#~ "                    praznimi vrsticami (s 3-vrstiènim zglavjem z izbiro -"
+#~ "F ali\n"
+#~ "                    s 5-vrstiènim zglavjem in repom brez -F)\n"
+#~ "  -h ZGLAVJE, --header=ZGLAVJE\n"
+#~ "                    uporabimo navedeno osredinjeno ZGLAVJE namesto imena\n"
+#~ "                    datoteke; predolga zglavja se pore¾ejo a levi, -h "
+#~ "\"\" izpi¹e\n"
+#~ "                    prazno vrstico, ne uporabljajte -h\"\"\n"
+#~ "  -i[ZNAK[©IRINA]], --outpu-tabs[=ZNAK[©IRINA]]\n"
+#~ "                    presledke skrèimo v ZNAK (privzeto TAB) do ©IRINE\n"
+#~ "                    tabulatorja (privzeto 8)\n"
+#~ "  -J, --join-lines  zdru¾ujemo cele vrstice, brez rezanja vrstic z -W, "
+#~ "brez\n"
+#~ "                    poravnave stolpcev, -S[NIZ] nastavi loèila\n"
+#~ "  -l DOL®INA_STRANI, --length=DOL®INA_STRANI\n"
+#~ "                    doloèimo DOL®INO STRANI, v vrsticah (privzeto 66)\n"
+#~ "                    (privzeto ¹tevilo vrstic besedila je 56, z -F 63)\n"
+
+#~ msgid "`%s' has reappeared"
+#~ msgstr ",%s` se je ponovno pojavila"

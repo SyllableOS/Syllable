@@ -1,0 +1,354 @@
+dnl Process this file with autoconf to produce a configure script. -*-m4-*-
+AC_INIT(src/stty.c)
+AM_CONFIG_HEADER(config.h)
+AC_PREREQ(2.13)               dnl Minimum Autoconf version required.
+AC_CANONICAL_HOST
+
+AM_INIT_AUTOMAKE([sh-utils], [2.0])
+
+# Enable GNU extensions.
+# Define this here, not in acconfig's @TOP@ section, since definitions
+# in the latter don't make it into the configure-time tests.
+AC_DEFINE([_GNU_SOURCE])
+
+ALL_LINGUAS="cs de el es fr it nl no pl pt pt_BR ru sk sv zh"
+
+jm_PERL
+AC_SUBST(OPTIONAL_BIN_PROGS)
+AC_SUBST(OPTIONAL_BIN_ZCRIPTS)
+AC_SUBST(MAN)
+AC_PROG_CC
+AC_PROG_CPP
+AC_PROG_GCC_TRADITIONAL
+AC_PROG_RANLIB
+AC_PROG_YACC
+AC_AIX
+AC_MINIX
+
+dnl This test must come as early as possible after the compiler configuration
+dnl tests, because the choice of the file model can (in principle) affect
+dnl whether functions and headers are available, whether they work, etc.
+AC_SYS_LARGEFILE
+
+dnl This test must precede tests of compiler characteristics like
+dnl that for the inline keyword, since it may change the degree to
+dnl which the compiler supports such features.
+AM_C_PROTOTYPES
+
+AC_CHECK_FUNCS(uname,
+	OPTIONAL_BIN_PROGS="$OPTIONAL_BIN_PROGS uname" MAN="$MAN uname.1")
+AC_CHECK_FUNCS(chroot,
+	OPTIONAL_BIN_PROGS="$OPTIONAL_BIN_PROGS chroot" MAN="$MAN chroot.1")
+AC_CHECK_FUNCS(gethostid,
+	OPTIONAL_BIN_PROGS="$OPTIONAL_BIN_PROGS hostid" MAN="$MAN hostid.1")
+AC_C_CONST
+AC_HEADER_STDC
+AC_C_BIGENDIAN
+
+AC_STRUCT_TM
+AC_HEADER_TIME
+AC_STRUCT_TIMEZONE
+AC_HEADER_STAT
+
+jm_CHECK_ALL_TYPES
+
+dnl Add any libraries as early as possible.
+dnl In particular, inet_ntoa needs -lnsl at least on Solaris5.5.1,
+dnl so we have to add -lnsl to LIBS before checking for that function.
+AC_SEARCH_LIBS(gethostbyname, [inet nsl])
+
+jm_MACROS
+
+dnl This test replaces the obsolescent AC_ISC_POSIX kludge.
+AC_CHECK_LIB(cposix, strerror, [LIBS="$LIBS -lcposix"])
+
+dnl These come from -lnsl on Solaris5.5.1.
+AC_CHECK_FUNCS(gethostbyname gethostbyaddr inet_ntoa)
+
+AC_CHECK_FUNCS(bcopy endgrent endpwent ftime getcwd \
+               gettimeofday \
+               isascii localeconv memcpy mempcpy sethostname \
+               strchr strrchr strerror sysinfo tzset)
+
+AC_MSG_CHECKING(whether localtime caches TZ)
+AC_CACHE_VAL(utils_cv_localtime_cache,
+[if test x$ac_cv_func_tzset = xyes; then
+AC_TRY_RUN([#include <time.h>
+#if STDC_HEADERS
+# include <stdlib.h>
+#endif
+extern char **environ;
+unset_TZ ()
+{
+  char **from, **to;
+  for (to = from = environ; (*to = *from); from++)
+    if (! (to[0][0] == 'T' && to[0][1] == 'Z' && to[0][2] == '='))
+      to++;
+}
+main()
+{
+  time_t now = time ((time_t *) 0);
+  int hour_GMT0, hour_unset;
+  if (putenv ("TZ=GMT0") != 0)
+    exit (1);
+  hour_GMT0 = localtime (&now)->tm_hour;
+  unset_TZ ();
+  hour_unset = localtime (&now)->tm_hour;
+  if (putenv ("TZ=PST8") != 0)
+    exit (1);
+  if (localtime (&now)->tm_hour == hour_GMT0)
+    exit (1);
+  unset_TZ ();
+  if (localtime (&now)->tm_hour != hour_unset)
+    exit (1);
+  exit (0);
+}], utils_cv_localtime_cache=no, utils_cv_localtime_cache=yes,
+[# If we have tzset, assume the worst when cross-compiling.
+utils_cv_localtime_cache=yes])
+else
+	# If we lack tzset, report that localtime does not cache TZ,
+	# since we can't invalidate the cache if we don't have tzset.
+	utils_cv_localtime_cache=no
+fi])dnl
+AC_MSG_RESULT($utils_cv_localtime_cache)
+if test $utils_cv_localtime_cache = yes; then
+  AC_DEFINE(LOCALTIME_CACHE)
+fi
+
+# SCO-ODT-3.0 is reported to need -los to link programs using initgroups
+AC_CHECK_FUNCS(initgroups)
+if test $ac_cv_func_initgroups = no; then
+  AC_CHECK_LIB(os, initgroups)
+fi
+
+AC_CHECK_FUNCS(syslog)
+if test $ac_cv_func_syslog = no; then
+  # syslog is not in the default libraries.  See if it's in some other.
+  for lib in bsd socket inet; do
+    AC_CHECK_LIB($lib, syslog, [AC_DEFINE(HAVE_SYSLOG)
+      LIBS="$LIBS -l$lib"; break])
+  done
+fi
+
+AC_CHECK_HEADERS(arpa/inet.h fcntl.h float.h limits.h netdb.h \
+		 netinet/in.h stdlib.h string.h sys/param.h \
+		 sys/socket.h sys/systeminfo.h sys/time.h sys/timeb.h \
+		 syslog.h unistd.h paths.h termios.h)
+
+AC_REPLACE_FUNCS(gethostname getusershell memcpy memset)
+AC_REPLACE_FUNCS(stime strcspn stpcpy strstr strtol strtoul)
+
+jm_FUNC_GROUP_MEMBER
+
+jm_FUNC_PUTENV
+AM_FUNC_ERROR_AT_LINE
+jm_FUNC_GNU_STRFTIME
+jm_FUNC_MKTIME
+
+jm_FUNC_GETGROUPS
+test -n "$GETGROUPS_LIB" && LIBS="$GETGROUPS_LIB $LIBS"
+
+AC_FUNC_VPRINTF
+AC_FUNC_ALLOCA
+
+AC_MSG_CHECKING(for 3-argument setpriority function)
+AC_CACHE_VAL(utils_cv_func_setpriority,
+[AC_TRY_LINK([#include <sys/time.h>
+#include <sys/resource.h>],
+[setpriority(0, 0, 0);],
+utils_cv_func_setpriority=yes, utils_cv_func_setpriority=no)])
+AC_MSG_RESULT($utils_cv_func_setpriority)
+if test $utils_cv_func_setpriority = yes; then
+  OPTIONAL_BIN_PROGS="$OPTIONAL_BIN_PROGS nice"
+  OPTIONAL_BIN_ZCRIPTS="$OPTIONAL_BIN_ZCRIPTS nohup"
+  MAN="$MAN nice.1 nohup.1"
+else
+  AC_MSG_CHECKING(for nice function)
+  AC_CACHE_VAL(utils_cv_func_nice,
+  [AC_TRY_LINK([], nice();,
+  utils_cv_func_nice=yes, utils_cv_func_nice=no)])
+  AC_MSG_RESULT($utils_cv_func_nice)
+  if test $utils_cv_func_nice = yes; then
+    AC_DEFINE(NICE_PRIORITY)
+    OPTIONAL_BIN_PROGS="$OPTIONAL_BIN_PROGS nice"
+    OPTIONAL_BIN_ZCRIPTS="$OPTIONAL_BIN_ZCRIPTS nohup"
+    MAN="$MAN nice.1 nohup.1"
+  fi
+fi
+
+dnl For lib/readutmp.c.
+AC_CHECK_FUNCS(utmpname)
+
+AC_MSG_CHECKING(ut_host in struct utmp)
+AC_CACHE_VAL(su_cv_func_ut_host_in_utmp,
+[AC_TRY_LINK([#include <sys/types.h>
+#include <utmp.h>], [struct utmp ut; ut.ut_host;],
+su_cv_func_ut_host_in_utmp=yes, su_cv_func_ut_host_in_utmp=no)])
+AC_MSG_RESULT($su_cv_func_ut_host_in_utmp)
+if test $su_cv_func_ut_host_in_utmp = yes; then
+  have_ut_host=1
+  AC_DEFINE(HAVE_UT_HOST)
+fi
+
+if test -z "$have_ut_host"; then
+  AC_MSG_CHECKING(ut_host in struct utmpx)
+  AC_CACHE_VAL(su_cv_func_ut_host_in_utmpx,
+  [AC_TRY_LINK([#include <sys/types.h>
+#include <utmpx.h>], [struct utmpx ut; ut.ut_host;],
+  su_cv_func_ut_host_in_utmpx=yes, su_cv_func_ut_host_in_utmpx=no)])
+  AC_MSG_RESULT($su_cv_func_ut_host_in_utmpx)
+  if test $su_cv_func_ut_host_in_utmpx = yes; then
+    AC_DEFINE(HAVE_UTMPX_H)
+    AC_DEFINE(HAVE_UT_HOST)
+  fi
+fi
+
+AC_MSG_CHECKING(if we can get the system boot time)
+AC_CACHE_VAL(su_cv_have_boot_time,
+[AC_EGREP_CPP(yes,
+[#ifdef HAVE_UTMPX_H
+#include <utmpx.h>
+#else
+#include <utmp.h>
+#endif
+#ifdef BOOT_TIME
+yes
+#endif
+], su_cv_have_boot_time=yes, su_cv_have_boot_time=no)])
+AC_MSG_RESULT($su_cv_have_boot_time)
+if test X$su_cv_have_boot_time = Xyes
+then
+  OPTIONAL_BIN_PROGS="$OPTIONAL_BIN_PROGS uptime"
+fi
+
+AM_FUNC_GETLOADAVG
+
+jm_SYS_PROC_UPTIME
+
+AM_SYS_POSIX_TERMIOS
+jm_HEADER_TIOCGWINSZ_NEEDS_SYS_IOCTL
+
+if test $am_cv_sys_posix_termios = yes; then
+  OPTIONAL_BIN_PROGS="$OPTIONAL_BIN_PROGS stty" MAN="$MAN stty.1"
+
+  AC_MSG_CHECKING(whether termios.h needs _XOPEN_SOURCE)
+  AC_CACHE_VAL(su_cv_sys_termios_needs_xopen_source,
+  [AC_EGREP_CPP(yes, [#include <termios.h>
+#ifdef IUCLC
+yes
+#endif], su_cv_sys_termios_needs_xopen_source=no,
+   AC_EGREP_CPP(yes, [#define _XOPEN_SOURCE
+#include <termios.h>
+#ifdef IUCLC
+yes
+#endif], su_cv_sys_termios_needs_xopen_source=yes,
+   su_cv_sys_termios_needs_xopen_source=no))])
+  AC_MSG_RESULT($su_cv_sys_termios_needs_xopen_source)
+  test $su_cv_sys_termios_needs_xopen_source = yes &&
+    AC_DEFINE(TERMIOS_NEEDS_XOPEN_SOURCE)
+
+  AC_MSG_CHECKING(c_line in struct termios)
+  AC_CACHE_VAL(su_cv_sys_c_line_in_termios,
+  [AC_TRY_LINK([#if TERMIOS_NEEDS_XOPEN_SOURCE
+#define _XOPEN_SOURCE
+#endif
+#include <sys/types.h>
+#include <termios.h>],
+	      [struct termios t; t.c_line;],
+	      su_cv_sys_c_line_in_termios=yes,
+	      su_cv_sys_c_line_in_termios=no)])
+  AC_MSG_RESULT($su_cv_sys_c_line_in_termios)
+  test $su_cv_sys_c_line_in_termios = yes && AC_DEFINE(HAVE_C_LINE)
+fi
+
+jm_WINSIZE_IN_PTEM
+jm_HEADER_TIOCGWINSZ_IN_TERMIOS_H
+if test $jm_cv_sys_tiocgwinsz_needs_termios_h = no && \
+   test $jm_cv_sys_tiocgwinsz_needs_sys_ioctl_h = no; then
+  AC_MSG_CHECKING(TIOCGWINSZ in sys/pty.h)
+  AC_CACHE_VAL(su_cv_sys_tiocgwinsz_in_sys_pty_h,
+  [AC_TRY_LINK([#include <sys/types.h>
+#ifdef WINSIZE_IN_PTEM
+# include <sys/stream.h>
+# include <sys/ptem.h>
+#endif
+#include <sys/ioctl.h>
+#include <sys/tty.h>
+#include <sys/pty.h>],
+	      [int x = TIOCGWINSZ;],
+	      su_cv_sys_tiocgwinsz_in_sys_pty_h=yes,
+	      su_cv_sys_tiocgwinsz_in_sys_pty_h=no)])
+  AC_MSG_RESULT($su_cv_sys_tiocgwinsz_in_sys_pty_h)
+
+  test $su_cv_sys_tiocgwinsz_in_sys_pty_h = yes \
+      && AC_DEFINE(GWINSZ_IN_SYS_PTY, 1,
+                   [Define if your system defines TIOCGWINSZ in sys/pty.h.])
+fi
+
+# Some programs need to link with -lm.  printf does if it uses
+# lib/strtod.c which uses pow.  And seq uses the math functions,
+# floor, modf, rint.  And factor uses sqrt.
+
+AC_SUBST(SEQ_LIBM)
+# Chances are that seq will always need to link with -lm.
+# If anyone finds a system for which -lm is not required to link seq,
+# please send mail to the bug-reporting address and someone will add
+# the appropriate tests.
+SEQ_LIBM=-lm
+
+# Save a copy of $LIBS and add $FLOOR_LIBM before these tests
+# Check for these math functions used by seq.
+ac_su_saved_lib="$LIBS"
+LIBS="$LIBS -lm"
+AC_CHECK_FUNCS(floor modf rint)
+LIBS="$ac_su_saved_lib"
+
+AM_FUNC_STRTOD
+AC_SUBST(POW_LIBM)
+test $am_cv_func_strtod_needs_libm = yes && POW_LIBM=-lm
+
+AC_SUBST(SQRT_LIBM)
+AC_CHECK_FUNCS(sqrt)
+if test $ac_cv_func_sqrt = no; then
+  AC_CHECK_LIB(m, sqrt, [SQRT_LIBM=-lm])
+fi
+
+# The -lsun library is required for YP support on Irix-4.0.5 systems.
+# m88k/svr3 DolphinOS systems using YP need -lypsec for id.
+AC_SEARCH_LIBS(yp_match, [sun ypsec])
+
+# SysV needs -lsec, older versions of Linux need -lshadow for shadow passwords.
+AC_SEARCH_LIBS(getspnam, [shadow sec])
+
+AC_EGREP_HEADER(sp_pwdp, shadow.h,
+		AC_CHECK_FUNC(getspnam, AC_DEFINE(HAVE_SHADOW_H)))
+
+# SCO-ODT-3.0 is reported to need -lufc for crypt.
+# NetBSD needs -lcrypt for crypt.
+ac_su_saved_lib="$LIBS"
+AC_SEARCH_LIBS(crypt, [ufc crypt], [LIB_CRYPT="$ac_cv_search_crypt"])
+LIBS="$ac_su_saved_lib"
+AC_SUBST(LIB_CRYPT)
+
+AM_GNU_GETTEXT
+
+# This is necessary so that .o files in LIBOBJS are also built via
+# the ANSI2KNR-filtering rules.
+LIBOBJS=`echo $LIBOBJS|sed 's/\.o /\$U.o /g;s/\.o$/\$U.o/'`
+
+AC_OUTPUT([Makefile
+	   doc/Makefile
+	   intl/Makefile
+	   lib/Makefile
+	   man/Makefile
+	   m4/Makefile
+	   po/Makefile.in
+	   src/Makefile
+	   tests/Makefile
+	   tests/basename/Makefile
+	   tests/date/Makefile
+	   tests/factor/Makefile
+	   tests/seq/Makefile
+	   tests/stty/Makefile
+	   tests/test/Makefile
+	  ])

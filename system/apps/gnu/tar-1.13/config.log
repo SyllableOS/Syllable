@@ -1,0 +1,169 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:566: checking host system type
+configure:598: checking for a BSD compatible install
+configure:651: checking whether build environment is sane
+configure:708: checking whether make sets ${MAKE}
+configure:754: checking for working aclocal
+configure:767: checking for working autoconf
+configure:780: checking for working automake
+configure:793: checking for working autoheader
+configure:806: checking for working makeinfo
+configure:828: checking for gcc
+configure:941: checking whether the C compiler (gcc  ) works
+configure:957: gcc -o conftest    conftest.c  1>&5
+configure:983: checking whether the C compiler (gcc  ) is a cross-compiler
+configure:988: checking whether we are using GNU C
+configure:1016: checking whether gcc accepts -g
+configure:1048: checking how to run the C preprocessor
+configure:1129: checking whether gcc needs -traditional
+configure:1175: checking for AIX
+configure:1200: checking for minix/config.h
+configure:1248: checking for Cygwin environment
+configure:1281: checking for mingw32 environment
+configure:1312: checking for executable suffix
+configure:1345: checking for ranlib
+configure:1377: checking for bison
+configure:1408: checking build system type
+configure:1442: checking for i386-unknown-atheos-getconf
+configure:1472: checking for CFLAGS value to request large file support
+configure:1510: checking for LDFLAGS value to request large file support
+configure:1522: checking for LIBS value to request large file support
+configure:1577: checking for _FILE_OFFSET_BITS
+configure:1602: checking for _LARGEFILE_SOURCE
+configure:1631: checking for _LARGE_FILES
+configure:1663: checking for strerror in -lcposix
+configure:1708: checking for gcc option to accept ANSI C
+configure:1787: checking for function prototypes
+configure:1946: checking for working const
+configure:2021: checking for inline
+configure:2061: checking size of unsigned long
+configure:2100: checking size of long long
+configure:2147: checking for fcntl.h
+configure:2147: checking for limits.h
+configure:2147: checking for linux/fd.h
+configure:2147: checking for memory.h
+configure:2147: checking for net/errno.h
+configure:2147: checking for poll.h
+configure:2147: checking for sgtty.h
+configure:2147: checking for string.h
+configure:2147: checking for stropts.h
+configure:2147: checking for sys/buf.h
+configure:2147: checking for sys/device.h
+configure:2147: checking for sys/gentape.h
+configure:2147: checking for sys/inet.h
+configure:2147: checking for sys/io/trioctl.h
+configure:2147: checking for sys/ioccom.h
+configure:2147: checking for sys/mtio.h
+configure:2147: checking for sys/param.h
+configure:2147: checking for sys/tprintf.h
+configure:2147: checking for sys/tape.h
+configure:2147: checking for sys/time.h
+configure:2147: checking for sys/timeb.h
+configure:2147: checking for sys/wait.h
+configure:2147: checking for unistd.h
+configure:2186: checking for inttypes.h
+configure:2225: checking for utime.h
+configure:2259: checking for remote tape header files
+configure:2294: checking for getgrgid declaration
+configure:2322: checking for getpwuid declaration
+configure:2350: checking which ioctl field to test for reversed bytes
+configure:2382: checking for dirent.h that defines DIR
+configure:2420: checking for opendir in -ldir
+configure:2503: checking whether sys/types.h defines makedev
+configure:2609: checking whether stat file-mode macros are broken
+configure:2665: checking for ANSI C header files
+configure:2769: checking whether time.h and sys/time.h may both be included
+configure:2804: checking for st_blksize in struct stat
+configure:2838: checking for st_blocks in struct stat
+configure:2874: checking for d_ino member in directory struct
+configure:2926: checking for st_fstype string in struct stat
+configure:2960: checking return type of signal handlers
+configure:3001: checking for mode_t
+configure:3034: checking for pid_t
+configure:3067: checking for off_t
+configure:3100: checking for size_t
+configure:3133: checking for uid_t in sys/types.h
+configure:3167: checking for daddr_t
+configure:3200: checking for major_t
+configure:3233: checking for minor_t
+configure:3266: checking for ssize_t
+configure:3300: checking for unsigned long long
+configure:3352: checking for stdlib.h
+configure:3391: checking for strtoumax
+configure:3514: checking for fsync
+configure:3514: checking for ftime
+configure:3514: checking for getcwd
+configure:3514: checking for isascii
+configure:3514: checking for mkfifo
+configure:3514: checking for nap
+configure:3514: checking for napms
+configure:3514: checking for poll
+configure:3514: checking for select
+configure:3514: checking for strerror
+configure:3514: checking for strstr
+configure:3514: checking for usleep
+configure:3568: checking for mknod
+configure:3607: checking for gethostent
+configure:3704: checking for setsockopt
+configure:3804: checking for working alloca.h
+configure:3837: checking for alloca
+configure:4036: checking for working fnmatch
+configure:4075: checking for vprintf
+configure:4183: checking for execlp
+configure:4183: checking for ftruncate
+configure:4183: checking for lchown
+configure:4183: checking for memset
+configure:4183: checking for mkdir
+configure:4183: checking for rename
+configure:4183: checking for rmdir
+configure:4183: checking for strtol
+configure:4183: checking for strtoul
+configure:4244: checking for working malloc
+configure:4292: checking for sys/time.h
+configure:4292: checking for unistd.h
+configure:4331: checking for alarm
+configure:4384: checking for working mktime
+configure:4565: checking for localtime_r
+configure:4632: checking for working realloc
+configure:4682: checking for 3-argument open
+configure:4727: checking for union wait
+configure:4762: checking for remote shell
+configure:4787: checking for netdb.h
+configure:4831: checking for default archive
+configure:4870: checking for default blocking
+configure:4879: checking if malloc debugging is wanted
+configure:4904: checking for unistd.h
+configure:4943: checking for getpagesize
+configure:4996: checking for working mmap
+configure:5172: checking for argz.h
+configure:5172: checking for limits.h
+configure:5172: checking for locale.h
+configure:5172: checking for nl_types.h
+configure:5172: checking for malloc.h
+configure:5172: checking for string.h
+configure:5172: checking for unistd.h
+configure:5172: checking for sys/param.h
+configure:5212: checking for getcwd
+configure:5212: checking for munmap
+configure:5212: checking for putenv
+configure:5212: checking for setenv
+configure:5212: checking for setlocale
+configure:5212: checking for strchr
+configure:5212: checking for strcasecmp
+configure:5212: checking for strdup
+configure:5212: checking for __argz_count
+configure:5212: checking for __argz_stringify
+configure:5212: checking for __argz_next
+configure:5331: checking for LC_MESSAGES
+configure:5364: checking whether NLS is requested
+configure:5384: checking whether included gettext is requested
+configure:5403: checking for libintl.h
+configure:5430: checking for gettext in libc
+configure:5554: checking for msgfmt
+configure:5742: checking whether catgets can be used
+configure:6014: checking for msgfmt
+configure:6048: checking for gmsgfmt
+configure:6084: checking for xgettext
+configure:6181: checking for catalogs to be installed

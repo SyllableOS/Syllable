@@ -1,0 +1,52 @@
+path-concat.o : \
+ path-concat.c ../config.h /include/stdio.h \
+ /include/features.h /include/sys/cdefs.h /include/gnu/stubs.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stdarg.h \
+ /include/bits/types.h /include/bits/pthreadtypes.h /include/libio.h \
+ /include/_G_config.h /include/bits/stdio_lim.h /include/bits/stdio.h \
+ /include/string.h /include/xlocale.h /include/bits/string.h \
+ /include/bits/string2.h /include/endian.h /include/bits/endian.h \
+ /include/stdlib.h /include/sys/types.h /include/time.h \
+ /include/sys/select.h /include/bits/select.h /include/bits/sigset.h \
+ /include/sys/sysmacros.h /include/alloca.h /include/unistd.h \
+ /include/bits/posix_opt.h /include/bits/environments.h \
+ /include/bits/wordsize.h /include/bits/confname.h getopt.h dirname.h \
+ xalloc.h path-concat.h
+path-concat.c :
+../config.h :
+/include/stdio.h :
+/include/features.h :
+/include/sys/cdefs.h :
+/include/gnu/stubs.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stdarg.h :
+/include/bits/types.h :
+/include/bits/pthreadtypes.h :
+/include/libio.h :
+/include/_G_config.h :
+/include/bits/stdio_lim.h :
+/include/bits/stdio.h :
+/include/string.h :
+/include/xlocale.h :
+/include/bits/string.h :
+/include/bits/string2.h :
+/include/endian.h :
+/include/bits/endian.h :
+/include/stdlib.h :
+/include/sys/types.h :
+/include/time.h :
+/include/sys/select.h :
+/include/bits/select.h :
+/include/bits/sigset.h :
+/include/sys/sysmacros.h :
+/include/alloca.h :
+/include/unistd.h :
+/include/bits/posix_opt.h :
+/include/bits/environments.h :
+/include/bits/wordsize.h :
+/include/bits/confname.h :
+getopt.h :
+dirname.h :
+xalloc.h :
+path-concat.h :

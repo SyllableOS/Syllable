@@ -1,0 +1,3 @@
+
+SUBDIRS = dropin kdesrc src
+

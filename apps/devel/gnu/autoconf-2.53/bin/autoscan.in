@@ -1,0 +1,602 @@
+#! @PERL@ -w
+# -*- perl -*-
+# autoscan - Create configure.scan (a preliminary configure.ac) for a package.
+# Copyright 1994, 1999, 2000, 2001 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+# 02111-1307, USA.
+
+# Written by David MacKenzie <djm@gnu.ai.mit.edu>.
+
+eval 'exec @PERL@ -S $0 ${1+"$@"}'
+    if 0;
+
+BEGIN
+{
+  my $perllibdir = $ENV{'autom4te_perllibdir'} || "@datadir@";
+  unshift @INC, "$perllibdir";
+}
+
+use Autom4te::General;
+use Autom4te::XFile;
+use File::Basename;
+use File::Find;
+use strict;
+
+use vars qw(@cfiles @makefiles @shfiles %printed);
+
+# The list of C keywords.
+my %c_keywords = map { $_ => 1}
+  qw (int char float double struct union long short unsigned
+      auto extern register typedef static goto return sizeof break
+      continue if else for do while switch case default);
+
+# $USED{KIND}{ITEM} is set if ITEM is used in the program.
+# It is set to its list of locations.
+my %used = ();
+
+# $MACRO{KIND}{ITEM} is the list of macros to use to test ITEM.
+my %macro = ();
+
+# $NEEDED_MACROS{MACRO} is an array of locations requiring MACRO.
+my %needed_macros = ();
+
+my @kinds = qw (functions headers identifiers programs
+                makevars libraries);
+
+# For each kind, the default macro.
+my %generic_macro =
+  (
+   'functions'   => 'AC_CHECK_FUNCS',
+   'headers'     => 'AC_CHECK_HEADERS',
+   'identifiers' => 'AC_CHECK_TYPES',
+   'programs'    => 'AC_CHECK_PROGS',
+   'libraries'   => 'AC_CHECK_LIB'
+  );
+
+my %kind_comment =
+  (
+   'functions' => 'Checks for library functions.',
+   'headers' => 'Checks for header files.',
+   'identifiers' => 'Checks for typedefs, structures, and compiler characteristics.',
+   'programs' => 'Checks for programs.',
+  );
+
+my $configure_scan = 'configure.scan';
+my $log = new Autom4te::XFile ">$me.log";
+
+# Autoconf and lib files.
+my $autom4te = $ENV{'AUTOM4TE'} || '@autom4te-name@';
+my $autoconf = "$autom4te --language=autoconf";
+my @include = ('@datadir@');
+
+# $help
+# -----
+$help = "Usage: $0 [OPTION] ... [SRCDIR]
+
+Examine source files in the directory tree rooted at SRCDIR, or the
+current directory if none is given.  Search the source files for
+common portability problems, check for incompleteness of
+`configure.ac', and create a file `$configure_scan' which is a
+preliminary `configure.ac' for that package.
+
+  -h, --help          print this help, then exit
+  -V, --version       print version number, then exit
+  -v, --verbose       verbosely report processing
+  -d, --debug         don't remove temporary files
+  -I, --include=DIR   look for input files in DIR (cumulative)
+
+Report bugs to <bug-autoconf\@gnu.org>.\n";
+
+# $version
+# --------
+$version = "autoscan (@PACKAGE_NAME@) @VERSION@
+Written by David J. MacKenzie and Akim Demaille.
+
+Copyright 2002 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n";
+
+
+
+
+## ------------------------ ##
+## Command line interface.  ##
+## ------------------------ ##
+
+# parse_args ()
+# -------------
+# Process any command line arguments.
+sub parse_args ()
+{
+  getopt ("I|include|A|autoconf-dir|m|macrodir=s" => \@include);
+
+  die "$me: too many arguments
+Try `$me --help' for more information.\n"
+    if @ARGV > 1;
+
+  my $srcdir = $ARGV[0] || ".";
+
+  verbose "srcdir = $srcdir";
+  chdir $srcdir || die "$me: cannot cd to $srcdir: $!\n";
+}
+
+
+# init_tables ()
+# --------------
+# Put values in the tables of what to do with each token.
+sub init_tables ()
+{
+  # Initialize a table of C keywords (to ignore).
+  # Taken from K&R 1st edition p. 180.
+  # ANSI C, GNU C, and C++ keywords can introduce portability problems,
+  # so don't ignore them.
+
+  # The data file format supports only one line of macros per function.
+  # If more than that is required for a common portability problem,
+  # a new Autoconf macro should probably be written for that case,
+  # instead of duplicating the code in lots of configure.ac files.
+  my $tables_are_consistent = 1;
+  foreach my $kind (@kinds)
+    {
+      my $file = find_file ("autoscan/$kind", @include);
+      my $table = new Autom4te::XFile $file;
+      while ($_ = $table->getline)
+	{
+	  # Ignore blank lines and comments.
+	  next
+	    if /^\s*$/ || /^\s*\#/;
+	  unless (/^(\S+)\s+(\S.*)$/ || /^(\S+)\s*$/)
+	    {
+	      die "$me: cannot parse definition in $file:\n$_\n";
+	    }
+	  my $word = $1;
+	  my $macro = $2 || $generic_macro{$kind};
+	  # The default macro must be explicitly listed for words
+	  # which have a specific macros.  This allows to enforce
+	  # consistency checks.
+	  if (!defined $2 && exists $macro{$kind}{$word})
+	    {
+	      warn ("$file:$.: "
+		    . "ignoring implicit call to the generic macro for $word\n");
+	      $tables_are_consistent = 0;
+	    }
+	  else
+	    {
+	      push @{$macro{$kind}{$word}}, $macro;
+	    }
+	}
+      $table->close;
+    }
+
+  die "$me: some tables are inconsistent\n"
+    if !$tables_are_consistent;
+}
+
+
+# used($KIND, $WORD, [$WHERE])
+# ----------------------------
+# $WORD is used as a $KIND.
+sub used ($$;$)
+{
+  my ($kind, $word, $where) = @_;
+  $where ||= "$File::Find::name:$.";
+  push (@{$used{$kind}{$word}}, $where);
+}
+
+## ----------------------- ##
+## Scanning source files.  ##
+## ----------------------- ##
+
+
+# scan_c_file($FILENAME)
+# ----------------------
+sub scan_c_file ($)
+{
+  my ($filename) = @_;
+  push @cfiles, $File::Find::name;
+
+  # Nonzero if in a multiline comment.
+  my $in_comment = 0;
+
+  my $file = new Autom4te::XFile "<$filename";
+
+  while ($_ = $file->getline)
+    {
+      # Strip out comments.
+      if ($in_comment && s,^.*?\*/,,)
+	{
+	  $in_comment = 0;
+	}
+      # The whole line is inside a commment.
+      next if $in_comment;
+      # All on one line.
+      s,/\*.*?\*/,,g;
+
+      # Starting on this line.
+      if (s,/\*.*$,,)
+	{
+	  $in_comment = 1;
+	}
+
+      # Preprocessor directives.
+      if (s/^\s*\#\s*//)
+	{
+	  if (/^include\s*<([^>]*)>/)
+	    {
+	      used ('headers', $1);
+	    }
+	  if (s/^(if|ifdef|ifndef|elif)\s+//)
+	    {
+	      foreach my $word (split (/\W+/))
+		{
+		  used ('identifiers', $word)
+		    unless $word eq 'defined' || $word !~ /^[a-zA-Z_]/;
+		}
+	    }
+	  # Ignore other preprocessor directives.
+	  next;
+	}
+
+      # Remove string and character constants.
+      s,\"[^\"]*\",,g;
+      s,\'[^\']*\',,g;
+
+      # Tokens in the code.
+      # Maybe we should ignore function definitions (in column 0)?
+      while (s/\b([a-zA-Z_]\w*)\s*\(/ /)
+	{
+	  used ('functions', $1)
+	    if !$c_keywords{$1};
+	}
+      while (s/\b([a-zA-Z_]\w*)\b/ /)
+	{
+	  used ('identifiers', $1)
+	    if !$c_keywords{$1};
+	}
+    }
+
+  $file->close;
+}
+
+
+# scan_makefile($MAKEFILE-NAME)
+# -----------------------------
+sub scan_makefile ($)
+{
+  my ($filename) = @_;
+  push @makefiles, $File::Find::name;
+
+  my $file = new Autom4te::XFile "<$filename";
+
+  while ($_ = $file->getline)
+    {
+      # Strip out comments.
+      s/#.*//;
+
+      # Variable assignments.
+      while (s/\b([a-zA-Z_]\w*)\s*=/ /)
+	{
+	  used ('makevars', $1);
+	}
+      # Be sure to catch a whole word.  For instance `lex$U.$(OBJEXT)'
+      # is a single token.  Otherwise we might believe `lex' is needed.
+      foreach my $word (split (/\s+/))
+	{
+	  # Libraries.
+	  if ($word =~ /^-l([a-zA-Z_]\w*)$/)
+	    {
+	      used ('libraries', $1);
+	    }
+	  # Tokens in the code.
+	  # We allow some additional characters, e.g., `+', since
+	  # autoscan/programs includes `c++'.
+	  if ($word =~ /^[a-zA-Z_][\w+]*$/)
+	    {
+	      used ('programs', $word);
+	    }
+	}
+    }
+
+  $file->close;
+}
+
+
+# scan_sh_file($SHELL-SCRIPT-NAME)
+# --------------------------------
+sub scan_sh_file ($)
+{
+  my ($filename) = @_;
+  push @shfiles, $File::Find::name;
+
+  my $file = new Autom4te::XFile "<$filename";
+
+  while ($_ = $file->getline)
+    {
+      # Strip out comments and variable references.
+      s/#.*//;
+      s/\${[^\}]*}//g;
+      s/@[^@]*@//g;
+
+      # Tokens in the code.
+      while (s/\b([a-zA-Z_]\w*)\b/ /)
+	{
+	  used ('programs', $1);
+	}
+    }
+
+  $file->close;
+}
+
+
+# scan_file ()
+# ------------
+# Called by &find on each file.  $_ contains the current filename with
+# the current directory of the walk through.
+sub scan_file ()
+{
+  # Wanted only if there is no corresponding FILE.in.
+  return
+    if -f "$_.in";
+
+  # Save $_ as Find::File requires it to be preserved.
+  my $underscore = $_;
+
+  # Strip a useless leading `./'.
+  $File::Find::name =~ s,^\./,,;
+
+  if (/\.[chlym](\.in)?$/)
+    {
+      used 'programs', 'cc';
+      scan_c_file ($_);
+    }
+  elsif (/\.(cc|cpp|cxx|CC|C|hh|hpp|hxx|HH|H|yy|ypp|ll|lpp)(\.in)?$/)
+    {
+      used 'programs', 'c++';
+      scan_c_file ($_);
+    }
+  elsif (/^[Mm]akefile(\.in)?$/ || /^GNUmakefile(\.in)?$/)
+    {
+      scan_makefile ($_);
+    }
+  elsif (/\.sh(\.in)?$/)
+    {
+      scan_sh_file ($_);
+    }
+
+  $_ = $underscore;
+}
+
+
+# scan_files ()
+# -------------
+# Read through the files and collect lists of tokens in them
+# that might create nonportabilities.
+sub scan_files ()
+{
+  find (\&scan_file, '.');
+
+  if ($verbose)
+    {
+      print "cfiles: @cfiles\n";
+      print "makefiles: @makefiles\n";
+      print "shfiles: @shfiles\n";
+
+      foreach my $kind (@kinds)
+	{
+	  print "\n$kind:\n";
+	  foreach my $word (sort keys %{$used{$kind}})
+	    {
+	      print "$word: @{$used{$kind}{$word}}\n";
+	    }
+	}
+    }
+}
+
+
+## ----------------------- ##
+## Output configure.scan.  ##
+## ----------------------- ##
+
+
+# output_kind ($FILE, $KIND)
+# --------------------------
+sub output_kind ($$)
+{
+  my ($file, $kind) = @_;
+  # Lists of words to be checked with the generic macro.
+  my @have;
+
+  print $file "\n# $kind_comment{$kind}\n"
+    if exists $kind_comment{$kind};
+  foreach my $word (sort keys %{$used{$kind}})
+    {
+      # Words that were caught, but not to be checked according to the
+      # autoscan library files.
+      next
+	if ! exists $macro{$kind}{$word};
+
+      # Output the needed macro invocations in $configure_scan if not
+      # already printed, and remember these macros are needed.
+      foreach my $macro (@{$macro{$kind}{$word}})
+	{
+	  if (exists $generic_macro{$kind}
+	      && $macro eq $generic_macro{$kind})
+	    {
+	      push (@have, $word);
+	      push (@{$needed_macros{"$generic_macro{$kind}([$word])"}},
+		    @{$used{$kind}{$word}});
+	    }
+	  else
+	    {
+	      if (! $printed{$macro})
+		{
+		  print $file "$macro\n";
+		  $printed{$macro} = 1;
+		}
+	      push (@{$needed_macros{$macro}},
+		    @{$used{$kind}{$word}});
+	    }
+	}
+    }
+  print $file "$generic_macro{$kind}([" . join(' ', sort(@have)) . "])\n"
+    if @have;
+}
+
+
+# output_libraries ($FILE)
+# ------------------------
+sub output_libraries ($)
+{
+  my ($file) = @_;
+
+  print $file "\n# Checks for libraries.\n";
+  foreach my $word (sort keys %{$used{'libraries'}})
+    {
+      print $file "# FIXME: Replace `main' with a function in `-l$word':\n";
+      print $file "AC_CHECK_LIB([$word], [main])\n";
+    }
+}
+
+
+# output ($CONFIGURE_SCAN)
+# ------------------------
+# Print a proto configure.ac.
+sub output ($)
+{
+  my $configure_scan = shift;
+  my %unique_makefiles;
+
+  my $file = new Autom4te::XFile ">$configure_scan";
+
+  print $file
+    ("# Process this file with autoconf to produce a configure script.\n"
+     . "AC_INIT(FULL-PACKAGE-NAME, VERSION, BUG-REPORT-ADDRESS)\n");
+  if (defined $cfiles[0])
+    {
+      print $file "AC_CONFIG_SRCDIR([$cfiles[0]])\n";
+      print $file "AC_CONFIG_HEADER([config.h])\n";
+    }
+
+  output_kind ($file, 'programs');
+  output_kind ($file, 'makevars');
+  output_libraries ($file);
+  output_kind ($file, 'headers');
+  output_kind ($file, 'identifiers');
+  output_kind ($file, 'functions');
+
+  # Change DIR/Makefile.in to DIR/Makefile.
+  foreach my $m (@makefiles)
+    {
+      $m =~ s/\.in$//;
+      $unique_makefiles{$m}++;
+    }
+  print $file "\nAC_CONFIG_FILES([",
+       join ("\n                 ", sort keys %unique_makefiles), "])\n";
+  print $file "AC_OUTPUT\n";
+
+  $file->close;
+}
+
+
+
+## --------------------------------------- ##
+## Checking the accuracy of configure.ac.  ##
+## --------------------------------------- ##
+
+
+# &check_configure_ac ($CONFIGURE_AC)
+# -----------------------------------
+# Use autoconf to check if all the suggested macros are included
+# in CONFIGURE_AC.
+sub check_configure_ac ($)
+{
+  my ($configure_ac) = @_;
+
+  # Find what needed macros are invoked in CONFIGURE_AC.
+  # I'd be very happy if someone could explain to me why sort (uniq ...)
+  # doesn't work properly: I need `uniq (sort ...)'.  --akim
+  my $trace_option =
+    join (' --trace=', '',
+	  uniq (sort (map { s/\(.*//; $_ } keys %needed_macros)));
+
+  verbose "running: $autoconf $trace_option $configure_ac";
+  my $traces =
+    new Autom4te::XFile "$autoconf $trace_option $configure_ac|";
+
+  while ($_ = $traces->getline)
+    {
+      chomp;
+      my ($file, $line, $macro, @args) = split (/:/, $_);
+      if ($macro =~ /^AC_CHECK_(HEADER|FUNC|TYPE|MEMBER)S$/)
+	{
+	  # To be rigorous, we should distinguish between space and comma
+	  # separated macros.  But there is no point.
+	  foreach my $word (split (/\s|,/, $args[0]))
+	    {
+	      # AC_CHECK_MEMBERS wants `struct' or `union'.
+	      if ($macro eq "AC_CHECK_MEMBERS"
+		  && $word =~ /^stat.st_/)
+		{
+		  $word = "struct " . $word;
+		}
+	      delete $needed_macros{"$macro([$word])"};
+	    }
+	}
+      else
+	{
+	  delete $needed_macros{$macro};
+	}
+    }
+
+  $traces->close;
+
+  # Report the missing macros.
+  foreach my $macro (sort keys %needed_macros)
+    {
+      warn ("$configure_ac: warning: missing $macro wanted by: "
+	    . (${$needed_macros{$macro}}[0])
+	    . "\n");
+      print $log "$me: warning: missing $macro wanted by: \n";
+      foreach my $need (@{$needed_macros{$macro}})
+        {
+          print $log "\t$need\n";
+        }
+    }
+}
+
+
+## -------------- ##
+## Main program.  ##
+## -------------- ##
+
+parse_args;
+$autoconf .= " --debug" if $debug;
+$autoconf .= " --verbose" if $verbose;
+$autoconf .= join (' --include=', '', @include);
+
+my $configure_ac = find_configure_ac;
+init_tables;
+scan_files;
+output ('configure.scan');
+if ($configure_ac)
+  {
+    check_configure_ac ($configure_ac);
+  }
+# This close is really needed.  For some reason, probably best named
+# a bug, it seems that the dtor of $LOG is not called automatically
+# at END.  It results in a truncated file.
+$log->close;
+exit 0;

@@ -1,0 +1,263 @@
+#							-*- Autotest -*-
+
+AT_BANNER([M4sh.])
+
+# Copyright 2000, 2001 Free Software Foundation, Inc.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+# 02111-1307, USA.
+
+# Used in many tests.
+m4_pattern_allow([^AS_EXIT$])
+
+## ---------------- ##
+## LINENO support.  ##
+## ---------------- ##
+
+AT_SETUP([LINENO])
+
+# AT_DATA_LINENO(FILENAME,
+#                UNSET-LINENO = true | false, COUNTER, COUNTER-RE)
+# ----------------------------------------------------------------
+# Produce FILENAME which uses the COUNTER LINENO or _oline_, which
+# we can recognized via COUNTER-RE.  Unset LINENO is UNSET-LINENO.
+#
+# Use COUNTER, COUNTER-RE = [$@&t@LINENO],   [LINENO]
+#  or                     = [__@&t@oline__], [_oline__]
+# to make sure we are not replace in the test suite itself and to avoid
+# seeing the COUNTER-RE being replaced.
+#
+# UNSET-LINENO is a shell condition to make sure the scripts have the
+# same number of lines in the output, so that their outputs be identical.
+m4_define([AT_DATA_LINENO],
+[AT_DATA([$1],
+[[AS@&t@_INIT
+if $2; then
+  AS@&t@_UNSET([LINENO])
+fi
+AS@&t@_SHELL_SANITIZE
+echo "Line: $3"
+grep 'Line: .*$4' $[0] >/dev/null ||
+  AS@&t@_ERROR([cannot find original script])
+exit 0
+]])
+])# AT_DATA_LINENO
+
+# `_oline_', once processed and ran, produces our reference.
+# We check that we find ourself by looking at a string which is
+# available only in the original script: `_oline_'.
+AT_DATA_LINENO([reference.as], [false], [__@&t@oline__], [_oline__])
+AT_CHECK([autom4te -l m4sh reference.as -o reference])
+AT_CHECK([./reference], 0, [stdout])
+
+# The reference:
+mv stdout expout
+
+# Now using a maybe-functioning LINENO, with different call conventions.
+# Be sure to be out of the PATH.
+AT_CHECK([mkdir test || exit 77])
+
+AT_DATA_LINENO([test/test-1.as], [false], [$@&t@LINENO], [LINENO])
+AT_CHECK([autom4te -l m4sh test/test-1.as -o test/test-1])
+AT_CHECK([./test/test-1],                          0, [expout])
+AT_CHECK([PATH=test$PATH_SEPARATOR$PATH test-1],   0, [expout])
+AT_CHECK([sh ./test/test-1],                       0, [expout])
+
+# Now using a disabled LINENO, with different call conventions.
+AT_DATA_LINENO([test/test-2.as], [true], [$@&t@LINENO], [LINENO])
+AT_CHECK([autom4te -l m4sh test/test-2.as -o test/test-2])
+AT_CHECK([./test/test-2],                          0, [expout])
+AT_CHECK([PATH=test$PATH_SEPARATOR$PATH test-2],   0, [expout])
+AT_CHECK([sh ./test/test-2],                       0, [expout])
+
+# Beware that *.lineno scripts can be *here* while the masters are in test/.
+AT_CLEANUP(reference test test-1.lineno test-2.lineno)
+
+
+## ------------ ##
+## AS_DIRNAME.  ##
+## ------------ ##
+
+# Build nested dirs.
+AT_SETUP([[AS@&t@_DIRNAME]])
+
+AT_DATA_M4SH([script.as],
+[[AS_INIT
+
+# The EXPR variant is allowed to fail if `expr' was considered as too
+# weak for us, in which case `as_expr=false'.
+m4_define([DIRNAME_TEST],
+[dir=`AS_DIRNAME([$1])`
+test "$dir" = "$2" || (test -n "$3" && test "$dir" = "$3") ||
+  echo "dirname($1) = $dir instead of $2" >&2
+
+if test "$as_expr" != false; then
+  dir=`AS_DIRNAME_EXPR([$1])`
+  test "$dir" = "$2" || (test -n "$3" && test "$dir" = "$3") ||
+    echo "dirname_expr($1) = $dir instead of $2" >&2
+fi
+
+dir=`AS_DIRNAME_SED([$1])`
+test "$dir" = "$2" ||
+test "$dir" = "$2" || (test -n "$3" && test "$dir" = "$3") ||
+  echo "dirname_sed($1) = $dir instead of $2" >&2])
+
+DIRNAME_TEST([/],		[/])
+DIRNAME_TEST([//],		[//],	[/])
+DIRNAME_TEST([///],		[/])
+DIRNAME_TEST([//1],		[//],	[/])
+DIRNAME_TEST([/1],		[/])
+DIRNAME_TEST([./1],		[.])
+DIRNAME_TEST([../../2],		[../..])
+DIRNAME_TEST([//1/],		[//],	[/])
+DIRNAME_TEST([/1/],		[/])
+DIRNAME_TEST([./1/],		[.])
+DIRNAME_TEST([../../2],		[../..])
+DIRNAME_TEST([//1/3],		[//1])
+DIRNAME_TEST([/1/3],		[/1])
+DIRNAME_TEST([./1/3],		[./1])
+DIRNAME_TEST([../../2/3],	[../../2])
+DIRNAME_TEST([//1/3///],	[//1])
+DIRNAME_TEST([/1/3///],		[/1])
+DIRNAME_TEST([./1/3///],	[./1])
+DIRNAME_TEST([../../2/3///],	[../../2])
+DIRNAME_TEST([//1//3/],		[//1])
+DIRNAME_TEST([/1//3/],		[/1])
+DIRNAME_TEST([./1//3/],		[./1])
+DIRNAME_TEST([../../2//3/],	[../../2])
+AS_EXIT(0)
+]])
+
+AT_CHECK_M4SH
+AT_CHECK([./script])
+
+AT_CLEANUP
+
+
+
+## ------------- ##
+## AS_BASENAME.  ##
+## ------------- ##
+
+# Build nested dirs.
+AT_SETUP([[AS@&t@_BASENAME]])
+
+AT_DATA_M4SH([script.as],
+[[AS_INIT
+
+m4_define([BASENAME_TEST],
+[base=`AS_BASENAME([$1])`
+test "$base" = "$2" ||
+  echo "basename($1) = $base instead of $2" >&2
+
+base=`AS_BASENAME_SED([$1])`
+test "$base" = "$2" ||
+  echo "basename_sed($1) = $base instead of $2" >&2])
+
+BASENAME_TEST([//1],             [1])
+BASENAME_TEST([/1],              [1])
+BASENAME_TEST([./1],             [1])
+BASENAME_TEST([../../2],         [2])
+BASENAME_TEST([//1/],            [1])
+BASENAME_TEST([/1/],             [1])
+BASENAME_TEST([./1/],            [1])
+BASENAME_TEST([../../2],         [2])
+BASENAME_TEST([//1/3],           [3])
+BASENAME_TEST([/1/3],            [3])
+BASENAME_TEST([./1/3],           [3])
+BASENAME_TEST([../../2/3],       [3])
+BASENAME_TEST([//1/3///],        [3])
+BASENAME_TEST([/1/3///],         [3])
+BASENAME_TEST([./1/3///],        [3])
+BASENAME_TEST([../../2/3///],    [3])
+BASENAME_TEST([//1//3/],         [3])
+BASENAME_TEST([/1//3/],          [3])
+BASENAME_TEST([./1//3/],         [3])
+BASENAME_TEST([a.c],             [a.c])
+BASENAME_TEST([a.c/],            [a.c])
+BASENAME_TEST([/a.c/],           [a.c])
+BASENAME_TEST([/1/a.c],          [a.c])
+BASENAME_TEST([/1/a.c/],         [a.c])
+BASENAME_TEST([/1/../a.c],       [a.c])
+BASENAME_TEST([/1/../a.c/],      [a.c])
+BASENAME_TEST([./1/a.c],         [a.c])
+BASENAME_TEST([./1/a.c/],        [a.c])
+AS_EXIT(0)
+]])
+
+AT_CHECK_M4SH
+AT_CHECK([./script])
+
+AT_CLEANUP
+
+
+
+## ------------ ##
+## AS_MKDIR_P.  ##
+## ------------ ##
+
+# Build nested dirs.
+AT_SETUP([[AS@&t@_MKDIR_P]])
+
+AT_DATA_M4SH([script.as],
+[[AS_INIT
+
+pwd=`pwd`
+set -e
+# Absolute
+AS_MKDIR_P(["$pwd/1/2/3/4/5/6"])
+test -d "$pwd/1/2/3/4/5/6" ||
+  AS_ERROR([$pwd/1/2/3/4/5/6 has not been properly created])
+# Relative
+AS_MKDIR_P(["a/b/c/d/e/f"])
+test -d a/b/c/d/e/f ||
+  AS_ERROR([a/b/c/d/e/f has not been properly created])
+AS_EXIT(0)
+]])
+
+AT_CHECK_M4SH
+AT_CHECK([./script])
+
+AT_CLEANUP(1 a)
+
+
+
+
+## ----------------------------- ##
+## Negated classes in globbing.  ##
+## ----------------------------- ##
+
+# It is known that `[^...]' is not universally supported, but it is
+# unknown for `[!...]'.
+
+AT_SETUP([Negated classes in globbing])
+
+AT_DATA_M4SH([script.as],
+[[AS_INIT
+
+case 'with!two!bangs' in
+  *[[!a-z]]*) ;;
+           *) AS_ERROR([[`*[!a-z]*' didn't match `with!two!bangs']]);;
+esac
+
+case without in
+  *[[!a-z]]*) AS_ERROR([[`*[!a-z]*' matched `without']]);;
+esac
+]])
+
+AT_CHECK_M4SH
+AT_CHECK([./script])
+
+AT_CLEANUP

@@ -1,0 +1,8 @@
+rename noargs
+
+	       !strncmp(argv[k], "--file=", 7))
+
+Rename device to device_name in:
+  set_window_size (int rows, int cols, int fd, const char *device)
+
+Use '"%s"' in format for device_name in case it contains `%'

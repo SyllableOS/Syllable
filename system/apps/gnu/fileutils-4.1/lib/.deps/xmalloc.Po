@@ -1,0 +1,33 @@
+xmalloc.o : \
+ xmalloc.c ../config.h /include/sys/types.h \
+ /include/features.h /include/sys/cdefs.h /include/gnu/stubs.h \
+ /include/bits/types.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h \
+ /include/bits/pthreadtypes.h /include/time.h /include/endian.h \
+ /include/bits/endian.h /include/sys/select.h /include/bits/select.h \
+ /include/bits/sigset.h /include/sys/sysmacros.h /include/stdlib.h \
+ /include/xlocale.h /include/alloca.h ../intl/libintl.h \
+ /include/locale.h error.h xalloc.h
+xmalloc.c :
+../config.h :
+/include/sys/types.h :
+/include/features.h :
+/include/sys/cdefs.h :
+/include/gnu/stubs.h :
+/include/bits/types.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h :
+/include/bits/pthreadtypes.h :
+/include/time.h :
+/include/endian.h :
+/include/bits/endian.h :
+/include/sys/select.h :
+/include/bits/select.h :
+/include/bits/sigset.h :
+/include/sys/sysmacros.h :
+/include/stdlib.h :
+/include/xlocale.h :
+/include/alloca.h :
+../intl/libintl.h :
+/include/locale.h :
+error.h :
+xalloc.h :

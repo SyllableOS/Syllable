@@ -1,0 +1,929 @@
+This is grep.info, produced by makeinfo version 4.2 from grep.texi.
+
+START-INFO-DIR-ENTRY
+* grep: (grep).                   print lines matching a pattern.
+END-INFO-DIR-ENTRY
+   This file documents `grep', a pattern matching engine.
+
+   Published by the Free Software Foundation, 59 Temple Place - Suite
+330 Boston, MA 02111-1307, USA
+
+   Copyright (C) 2000, 2001 Free Software Foundation, Inc.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.1 or
+any later version published by the Free Software Foundation; with the
+Invariant Sections being "GNU General Public License" and "GNU Free
+Documentation License", with no Front-Cover Texts, and with no
+Back-Cover Texts.  A copy of the license is included in the section
+entitled "GNU Free Documentation License" (*note Copying::).
+
+
+File: grep.info,  Node: Top,  Next: Introduction,  Up: (dir)
+
+Grep
+****
+
+   `grep' searches for lines matching a pattern.
+
+   This document was produced for version 2.5 of GNU `grep'.
+
+* Menu:
+
+* Introduction::                Introduction.
+* Invoking::                    Invoking `grep'; description of options.
+* Diagnostics::                 Exit status returned by `grep'.
+* Grep Programs::               `grep' programs.
+* Regular Expressions::         Regular Expressions.
+* Usage::                       Examples.
+* Reporting Bugs::              Reporting Bugs.
+* Copying::                     License terms.
+* Concept Index::               A menu with all the topics in this manual.
+* Index::                       A menu with all `grep' commands
+                                 and command-line options.
+
+
+File: grep.info,  Node: Introduction,  Next: Invoking,  Prev: Top,  Up: Top
+
+Introduction
+************
+
+   `grep' searches the input files for lines containing a match to a
+given pattern list.  When it finds a match in a line, it copies the
+line to standard output (by default), or does whatever other sort of
+output you have requested with options.
+
+   Though `grep' expects to do the matching on text, it has no limits
+on input line length other than available memory, and it can match
+arbitrary characters within a line.  If the final byte of an input file
+is not a newline, `grep' silently supplies one.  Since newline is also
+a separator for the list of patterns, there is no way to match newline
+characters in a text.
+
+
+File: grep.info,  Node: Invoking,  Next: Diagnostics,  Prev: Introduction,  Up: Top
+
+Invoking `grep'
+***************
+
+   `grep' comes with a rich set of options from POSIX.2 and GNU
+extensions.
+
+`-c'
+`--count'
+     Suppress normal output; instead print a count of matching lines
+     for each input file.  With the `-v', `--invert-match' option,
+     count non-matching lines.
+
+`-e PATTERN'
+`--regexp=PATTERN'
+     Use PATTERN as the pattern; useful to protect patterns beginning
+     with a `-'.
+
+`-f FILE'
+`--file=FILE'
+     Obtain patterns from FILE, one per line.  The empty file contains
+     zero patterns, and therefore matches nothing.
+
+`-i'
+`--ignore-case'
+     Ignore case distinctions in both the pattern and the input files.
+
+`-l'
+`--files-with-matches'
+     Suppress normal output; instead print the name of each input file
+     from which output would normally have been printed.  The scanning
+     of every file will stop on the first match.
+
+`-n'
+`--line-number'
+     Prefix each line of output with the line number within its input
+     file.
+
+`-o'
+`--only-matching'
+     Print only the part of matching lines that actually matches
+     PATTERN.
+
+`-q'
+`--quiet'
+`--silent'
+     Quiet; do not write anything to standard output.  Exit immediately
+     with zero status if any match is found, even if an error was
+     detected.  Also see the `-s' or `--no-messages' option.
+
+`-s'
+`--no-messages'
+     Suppress error messages about nonexistent or unreadable files.
+     Portability note: unlike GNU `grep', traditional `grep' did not
+     conform to POSIX.2, because traditional `grep' lacked a `-q'
+     option and its `-s' option behaved like GNU `grep''s `-q' option.
+     Shell scripts intended to be portable to traditional `grep' should
+     avoid both `-q' and `-s' and should redirect output to `/dev/null'
+     instead.
+
+`-v'
+`--invert-match'
+     Invert the sense of matching, to select non-matching lines.
+
+`-x'
+`--line-regexp'
+     Select only those matches that exactly match the whole line.
+
+GNU Extensions
+==============
+
+`-A NUM'
+`--after-context=NUM'
+     Print NUM lines of trailing context after matching lines.
+
+`-B NUM'
+`--before-context=NUM'
+     Print NUM lines of leading context before matching lines.
+
+`-C NUM'
+`--context=NUM'
+     Print NUM lines of output context.
+
+`--colour[=WHEN]'
+`--color[=WHEN]'
+     The matching string is surrounded by the marker specify in
+     GREP_COLOR.  WHEN may be `never', `always', or `auto'.
+
+`-NUM'
+     Same as `--context=NUM' lines of leading and trailing context.
+     However, grep will never print any given line more than once.
+
+`-V'
+`--version'
+     Print the version number of `grep' to the standard output stream.
+     This version number should be included in all bug reports.
+
+`--help'
+     Print a usage message briefly summarizing these command-line
+     options and the bug-reporting address, then exit.
+
+`--binary-files=TYPE'
+     If the first few bytes of a file indicate that the file contains
+     binary data, assume that the file is of type TYPE.  By default,
+     TYPE is `binary', and `grep' normally outputs either a one-line
+     message saying that a binary file matches, or no message if there
+     is no match.  If TYPE is `without-match', `grep' assumes that a
+     binary file does not match; this is equivalent to the `-I' option.
+     If TYPE is `text', `grep' processes a binary file as if it were
+     text; this is equivalent to the `-a' option.  _Warning:_
+     `--binary-files=text' might output binary garbage, which can have
+     nasty side effects if the output is a terminal and if the terminal
+     driver interprets some of it as commands.
+
+`-b'
+`--byte-offset'
+     Print the byte offset within the input file before each line of
+     output.  When `grep' runs on MS-DOS or MS-Windows, the printed
+     byte offsets depend on whether the `-u' (`--unix-byte-offsets')
+     option is used; see below.
+
+`-D ACTION'
+`--devices=ACTION'
+     If an input file is a device, FIFO or socket, use ACTION to
+     process it.  By default, ACTION is `read', which means that
+     devices are read just as if they were ordinary files.  If ACTION
+     is `skip', devices, FIFOs and sockets are silently skipped.
+
+`-d ACTION'
+`--directories=ACTION'
+     If an input file is a directory, use ACTION to process it.  By
+     default, ACTION is `read', which means that directories are read
+     just as if they were ordinary files (some operating systems and
+     filesystems disallow this, and will cause `grep' to print error
+     messages for every directory or silently skip them). If ACTION is
+     `skip', directories are silently skipped.  If ACTION is `recurse',
+     `grep' reads all files under each directory, recursively; this is
+     equivalent to the `-r' option.
+
+`-H'
+`--with-filename'
+     Print the filename for each match.
+
+`-h'
+`--no-filename'
+     Suppress the prefixing of filenames on output when multiple files
+     are searched.
+
+`--line-buffered'
+     Set the line buffering policy, this can be a performance penality.
+
+`--label=LABEL'
+     Displays input actually coming from standard input as input coming
+     from file LABEL. This is especially useful for tools like zgrep,
+     e.g.  `gzip -cd foo.gz |grep --label=foo something'
+
+`-L'
+`--files-without-match'
+     Suppress normal output; instead print the name of each input file
+     from which no output would normally have been printed.  The
+     scanning of every file will stop on the first match.
+
+`-a'
+`--text'
+     Process a binary file as if it were text; this is equivalent to the
+     `--binary-files=text' option.
+
+`-I'
+     Process a binary file as if it did not contain matching data; this
+     is equivalent to the `--binary-files=without-match' option.
+
+`-w'
+`--word-regexp'
+     Select only those lines containing matches that form whole words.
+     The test is that the matching substring must either be at the
+     beginning of the line, or preceded by a non-word constituent
+     character.  Similarly, it must be either at the end of the line or
+     followed by a non-word constituent character.  Word-constituent
+     characters are letters, digits, and the underscore.
+
+`-r'
+`-R'
+`--recursive'
+     For each directory mentioned in the command line, read and process
+     all files in that directory, recursively.  This is the same as the
+     `--directories=recurse' option.
+
+`--include=FILE_PATTERN'
+     When processing directories recursively, only files matching
+     FILE_PATTERN will be search.
+
+`--exclude=FILE_PATTERN'
+     When processing directories recursively, skip files matching
+     FILE_PATTERN.
+
+`-m NUM'
+`--max-count=NUM'
+     Stop reading a file after NUM matching lines.  If the input is
+     standard input from a regular file, and NUM matching lines are
+     output, `grep' ensures that the standard input is positioned to
+     just after the last matching line before exiting, regardless of the
+     presence of trailing context lines.  This enables a calling process
+     to resume a search.  For example, the following shell script makes
+     use of it:
+
+          while grep -m 1 PATTERN
+          do
+            echo xxxx
+          done < FILE
+
+     But the following probably will not work because a pipe is not a
+     regular file:
+
+          # This probably will not work.
+          cat FILE |
+          while grep -m 1 PATTERN
+          do
+            echo xxxx
+          done
+
+     When `grep' stops after NUM matching lines, it outputs any
+     trailing context lines. Since context does not include matching
+     lines, `grep' will stop when it encounters another matching line.
+     When the `-c' or `--count' option is also used, `grep' does not
+     output a count greater than NUM.  When the `-v' or
+     `--invert-match' option is also used, `grep' stops after
+     outputting NUM non-matching lines.
+
+`-y'
+     Obsolete synonym for `-i'.
+
+`-U'
+`--binary'
+     Treat the file(s) as binary.  By default, under MS-DOS and
+     MS-Windows, `grep' guesses the file type by looking at the
+     contents of the first 32kB read from the file.  If `grep' decides
+     the file is a text file, it strips the `CR' characters from the
+     original file contents (to make regular expressions with `^' and
+     `$' work correctly).  Specifying `-U' overrules this guesswork,
+     causing all files to be read and passed to the matching mechanism
+     verbatim; if the file is a text file with `CR/LF' pairs at the end
+     of each line, this will cause some regular expressions to fail.
+     This option has no effect on platforms other than MS-DOS and
+     MS-Windows.
+
+`-u'
+`--unix-byte-offsets'
+     Report Unix-style byte offsets.  This switch causes `grep' to
+     report byte offsets as if the file were Unix style text file,
+     i.e., the byte offsets ignore the `CR' characters which were
+     stripped.  This will produce results identical to running `grep' on
+     a Unix machine.  This option has no effect unless `-b' option is
+     also used; it has no effect on platforms other than MS-DOS and
+     MS-Windows.
+
+`--mmap'
+     If possible, use the `mmap' system call to read input, instead of
+     the default `read' system call.  In some situations, `--mmap'
+     yields better performance.  However, `--mmap' can cause undefined
+     behavior (including core dumps) if an input file shrinks while
+     `grep' is operating, or if an I/O error occurs.
+
+`-Z'
+`--null'
+     Output a zero byte (the ASCII `NUL' character) instead of the
+     character that normally follows a file name.  For example, `grep
+     -lZ' outputs a zero byte after each file name instead of the usual
+     newline.  This option makes the output unambiguous, even in the
+     presence of file names containing unusual characters like
+     newlines.  This option can be used with commands like `find
+     -print0', `perl -0', `sort -z', and `xargs -0' to process
+     arbitrary file names, even those that contain newline characters.
+
+`-z'
+`--null-data'
+     Treat the input as a set of lines, each terminated by a zero byte
+     (the ASCII `NUL' character) instead of a newline.  Like the `-Z'
+     or `--null' option, this option can be used with commands like
+     `sort -z' to process arbitrary file names.
+
+   Several additional options control which variant of the `grep'
+matching engine is used.  *Note Grep Programs::.
+
+Environment Variables
+=====================
+
+   Grep's behavior is affected by the following environment variables.
+
+   A locale `LC_FOO' is specified by examining the three environment
+variables `LC_ALL', `LC_FOO', and `LANG', in that order.  The first of
+these variables that is set specifies the locale.  For example, if
+`LC_ALL' is not set, but `LC_MESSAGES' is set to `pt_BR', then
+Brazilian Portuguese is used for the `LC_MESSAGES' locale.  The C
+locale is used if none of these environment variables are set, or if
+the locale catalog is not installed, or if `grep' was not compiled with
+national language support (NLS).
+
+`GREP_OPTIONS'
+     This variable specifies default options to be placed in front of
+     any explicit options.  For example, if `GREP_OPTIONS' is
+     `--binary-files=without-match --directories=skip', `grep' behaves
+     as if the two options `--binary-files=without-match' and
+     `--directories=skip' had been specified before any explicit
+     options.  Option specifications are separated by whitespace.  A
+     backslash escapes the next character, so it can be used to specify
+     an option containing whitespace or a backslash.
+
+`GREP_COLOR'
+     This variable specifies the surrounding markers use to highlight
+     the matching text.  The default is control ascii red.
+
+`LC_ALL'
+`LC_COLLATE'
+`LANG'
+     These variables specify the `LC_COLLATE' locale, which determines
+     the collating sequence used to interpret range expressions like
+     `[a-z]'.
+
+`LC_ALL'
+`LC_CTYPE'
+`LANG'
+     These variables specify the `LC_CTYPE' locale, which determines the
+     type of characters, e.g., which characters are whitespace.
+
+`LC_ALL'
+`LC_MESSAGES'
+`LANG'
+     These variables specify the `LC_MESSAGES' locale, which determines
+     the language that `grep' uses for messages.  The default C locale
+     uses American English messages.
+
+`POSIXLY_CORRECT'
+     If set, `grep' behaves as POSIX.2 requires; otherwise, `grep'
+     behaves more like other GNU programs.  POSIX.2 requires that
+     options that follow file names must be treated as file names; by
+     default, such options are permuted to the front of the operand
+     list and are treated as options.  Also, POSIX.2 requires that
+     unrecognized options be diagnosed as "illegal", but since they are
+     not really against the law the default is to diagnose them as
+     "invalid".  `POSIXLY_CORRECT' also disables
+     `_N_GNU_nonoption_argv_flags_', described below.
+
+`_N_GNU_nonoption_argv_flags_'
+     (Here `N' is `grep''s numeric process ID.)  If the Ith character
+     of this environment variable's value is `1', do not consider the
+     Ith operand of `grep' to be an option, even if it appears to be
+     one.  A shell can put this variable in the environment for each
+     command it runs, specifying which operands are the results of file
+     name wildcard expansion and therefore should not be treated as
+     options.  This behavior is available only with the GNU C library,
+     and only when `POSIXLY_CORRECT' is not set.
+
+
+File: grep.info,  Node: Diagnostics,  Next: Grep Programs,  Prev: Invoking,  Up: Top
+
+Diagnostics
+***********
+
+   Normally, exit status is 0 if selected lines are found and 1
+otherwise.  But the exit status is 2 if an error occurred, unless the
+`-q' or `--quiet' or `--silent' option is used and a selected line is
+found.
+
+
+File: grep.info,  Node: Grep Programs,  Next: Regular Expressions,  Prev: Diagnostics,  Up: Top
+
+`grep' programs
+***************
+
+   `grep' searches the named input files (or standard input if no files
+are named, or the file name `-' is given) for lines containing a match
+to the given pattern.  By default, `grep' prints the matching lines.
+There are four major variants of `grep', controlled by the following
+options.
+
+`-G'
+`--basic-regexp'
+     Interpret the pattern as a basic regular expression.  This is the
+     default.
+
+`-E'
+`--extended-regexp'
+     Interpret the pattern as an extended regular expression.
+
+`-F'
+`--fixed-strings'
+     Interpret the pattern as a list of fixed strings, separated by
+     newlines, any of which is to be matched.
+
+`-P'
+`--perl-regexp'
+     Interpret the pattern as a Perl regular expression.
+
+   In addition, two variant programs EGREP and FGREP are available.
+EGREP is the same as `grep -E'.  FGREP is the same as `grep -F'.
+
+
+File: grep.info,  Node: Regular Expressions,  Next: Usage,  Prev: Grep Programs,  Up: Top
+
+Regular Expressions
+*******************
+
+   A "regular expression" is a pattern that describes a set of strings.
+Regular expressions are constructed analogously to arithmetic
+expressions, by using various operators to combine smaller expressions.
+`grep' understands two different versions of regular expression syntax:
+"basic"(BRE) and "extended"(ERE).  In GNU `grep', there is no
+difference in available functionality using either syntax.  In other
+implementations, basic regular expressions are less powerful.  The
+following description applies to extended regular expressions;
+differences for basic regular expressions are summarized afterwards.
+
+   The fundamental building blocks are the regular expressions that
+match a single character.  Most characters, including all letters and
+digits, are regular expressions that match themselves.  Any
+metacharacter with special meaning may be quoted by preceding it with a
+backslash.
+
+   A regular expression may be followed by one of several repetition
+operators:
+
+`.'
+     The period `.' matches any single character.
+
+`?'
+     The preceding item is optional and will be matched at most once.
+
+`*'
+     The preceding item will be matched zero or more times.
+
+`+'
+     The preceding item will be matched one or more times.
+
+`{N}'
+     The preceding item is matched exactly N times.
+
+`{N,}'
+     The preceding item is matched n or more times.
+
+`{N,M}'
+     The preceding item is matched at least N times, but not more than
+     M times.
+
+   Two regular expressions may be concatenated; the resulting regular
+expression matches any string formed by concatenating two substrings
+that respectively match the concatenated subexpressions.
+
+   Two regular expressions may be joined by the infix operator `|'; the
+resulting regular expression matches any string matching either
+subexpression.
+
+   Repetition takes precedence over concatenation, which in turn takes
+precedence over alternation.  A whole subexpression may be enclosed in
+parentheses to override these precedence rules.
+
+Character Class
+===============
+
+   A "bracket expression" is a list of characters enclosed by `[' and
+`]'.  It matches any single character in that list; if the first
+character of the list is the caret `^', then it matches any character
+*not* in the list.  For example, the regular expression `[0123456789]'
+matches any single digit.
+
+   Within a bracket expression, a "range expression" consists of two
+characters separated by a hyphen.  It matches any single character that
+sorts between the two characters, inclusive, using the locale's
+collating sequence and character set.  For example, in the default C
+locale, `[a-d]' is equivalent to `[abcd]'.  Many locales sort
+characters in dictionary order, and in these locales `[a-d]' is
+typically not equivalent to `[abcd]'; it might be equivalent to
+`[aBbCcDd]', for example.  To obtain the traditional interpretation of
+bracket expressions, you can use the C locale by setting the `LC_ALL'
+environment variable to the value `C'.
+
+   Finally, certain named classes of characters are predefined within
+bracket expressions, as follows.  Their interpretation depends on the
+`LC_CTYPE' locale; the interpretation below is that of the C locale,
+which is the default if no `LC_CTYPE' locale is specified.
+
+`[:alnum:]'
+     Alphanumeric characters: `[:alpha:]' and `[:digit:]'.
+
+`[:alpha:]'
+     Alphabetic characters: `[:lower:]' and `[:upper:]'.
+
+`[:blank:]'
+     Blank characters: space and tab.
+
+`[:cntrl:]'
+     Control characters.  In ASCII, these characters have octal codes
+     000 through 037, and 177 (`DEL').  In other character sets, these
+     are the equivalent characters, if any.
+
+`[:digit:]'
+     Digits: `0 1 2 3 4 5 6 7 8 9'.
+
+`[:graph:]'
+     Graphical characters: `[:alnum:]' and `[:punct:]'.
+
+`[:lower:]'
+     Lower-case letters: `a b c d e f g h i j k l m n o p q r s t u v w
+     x y z'.
+
+`[:print:]'
+     Printable characters: `[:alnum:]', `[:punct:]', and space.
+
+`[:punct:]'
+     Punctuation characters: `! " # $ % & ' ( ) * + , - . / : ; < = > ?
+     @ [ \ ] ^ _ ` { | } ~'.
+
+`[:space:]'
+     Space characters: tab, newline, vertical tab, form feed, carriage
+     return, and space.
+
+`[:upper:]'
+     Upper-case letters: `A B C D E F G H I J K L M N O P Q R S T U V W
+     X Y Z'.
+
+`[:xdigit:]'
+     Hexadecimal digits: `0 1 2 3 4 5 6 7 8 9 A B C D E F a b c d e f'.
+
+   For example, `[[:alnum:]]' means `[0-9A-Za-z]', except the latter
+depends upon the C locale and the ASCII character encoding, whereas the
+former is independent of locale and character set.  (Note that the
+brackets in these class names are part of the symbolic names, and must
+be included in addition to the brackets delimiting the bracket list.)
+
+   Most metacharacters lose their special meaning inside lists.
+
+`]'
+     ends the list if it's not the first list item.  So, if you want to
+     make the `]' character a list item, you must put it first.
+
+`[.'
+     represents the open collating symbol.
+
+`.]'
+     represents the close collating symbol.
+
+`[='
+     represents the open equivalence class.
+
+`=]'
+     represents the close equivalence class.
+
+`[:'
+     represents the open character class followed by a valid character
+     class name.
+
+`:]'
+     represents the close character class followed by a valid character
+     class name.
+
+`-'
+     represents the range if it's not first or last in a list or the
+     ending point of a range.
+
+`^'
+     represents the characters not in the list.  If you want to make
+     the `^' character a list item, place it anywhere but first.
+
+Backslash Character
+===================
+
+   The `\' when followed by certain ordinary characters take a special
+meaning :
+
+``\b''
+     Match the empty string at the edge of a word.
+
+``\B''
+     Match the empty string provided it's not at the edge of a word.
+
+``\<''
+     Match the empty string at the beginning of word.
+
+``\>''
+     Match the empty string at the end of word.
+
+``\w''
+     Match word constituent, it is a synonym for `[[:alnum:]]'.
+
+``\W''
+     Match non word constituent, it is a synonym for `[^[:alnum:]]'.
+
+   For example , `\brat\b' matches the separate word `rat', `c\Brat\Be'
+matches `crate', but `dirty \Brat' doesn't match `dirty rat'.
+
+Anchoring
+=========
+
+   The caret `^' and the dollar sign `$' are metacharacters that
+respectively match the empty string at the beginning and end of a line.
+
+Back-reference
+==============
+
+   The back-reference `\N', where N is a single digit, matches the
+substring previously matched by the Nth parenthesized subexpression of
+the regular expression. For example, `(a)\1' matches `aa'.  When use
+with alternation if the group does not participate in the match, then
+the back-reference makes the whole match fail.  For example, `a(.)|b\1'
+will not match `ba'.  When multiple regular expressions are given with
+`-e' or from a file `-f file', the back-referecences are local to each
+expression.
+
+Basic vs Extended
+=================
+
+   In basic regular expressions the metacharacters `?', `+', `{', `|',
+`(', and `)' lose their special meaning; instead use the backslashed
+versions `\?', `\+', `\{', `\|', `\(', and `\)'.
+
+   Traditional `egrep' did not support the `{' metacharacter, and some
+`egrep' implementations support `\{' instead, so portable scripts
+should avoid `{' in `egrep' patterns and should use `[{]' to match a
+literal `{'.
+
+   GNU `egrep' attempts to support traditional usage by assuming that
+`{' is not special if it would be the start of an invalid interval
+specification.  For example, the shell command `egrep '{1'' searches
+for the two-character string `{1' instead of reporting a syntax error
+in the regular expression.  POSIX.2 allows this behavior as an
+extension, but portable scripts should avoid it.
+
+
+File: grep.info,  Node: Usage,  Next: Reporting Bugs,  Prev: Regular Expressions,  Up: Top
+
+Usage
+*****
+
+   Here is an example shell command that invokes GNU `grep':
+
+     grep -i 'hello.*world' menu.h main.c
+
+This lists all lines in the files `menu.h' and `main.c' that contain
+the string `hello' followed by the string `world'; this is because `.*'
+matches zero or more characters within a line.  *Note Regular
+Expressions::.  The `-i' option causes `grep' to ignore case, causing
+it to match the line `Hello, world!', which it would not otherwise
+match.  *Note Invoking::, for more details about how to invoke `grep'.
+
+   Here are some common questions and answers about `grep' usage.
+
+  1. How can I list just the names of matching files?
+
+          grep -l 'main' *.c
+
+     lists the names of all C files in the current directory whose
+     contents mention `main'.
+
+  2. How do I search directories recursively?
+
+          grep -r 'hello' /home/gigi
+
+     searches for `hello' in all files under the directory
+     `/home/gigi'.  For more control of which files are searched, use
+     `find', `grep' and `xargs'.  For example, the following command
+     searches only C files:
+
+          find /home/gigi -name '*.c' -print | xargs grep 'hello' /dev/null
+
+     This differs from the command:
+
+          grep -r 'hello' *.c
+
+     which merely looks for `hello' in all files in the current
+     directory whose names end in `.c'.  Here the `-r' is probably
+     unnecessary, as recursion occurs only in the unlikely event that
+     one of `.c' files is a directory.
+
+  3. What if a pattern has a leading `-'?
+
+          grep -e '--cut here--' *
+
+     searches for all lines matching `--cut here--'.  Without `-e',
+     `grep' would attempt to parse `--cut here--' as a list of options.
+
+  4. Suppose I want to search for a whole word, not a part of a word?
+
+          grep -w 'hello' *
+
+     searches only for instances of `hello' that are entire words; it
+     does not match `Othello'.  For more control, use `\<' and `\>' to
+     match the start and end of words.  For example:
+
+          grep 'hello\>' *
+
+     searches only for words ending in `hello', so it matches the word
+     `Othello'.
+
+  5. How do I output context around the matching lines?
+
+          grep -C 2 'hello' *
+
+     prints two lines of context around each matching line.
+
+  6. How do I force grep to print the name of the file?
+
+     Append `/dev/null':
+
+          grep 'eli' /etc/passwd /dev/null
+
+     gets you:
+
+          /etc/passwd:eli:DNGUTF58.IMe.:98:11:Eli Smith:/home/do/eli:/bin/bash
+
+  7. Why do people use strange regular expressions on `ps' output?
+
+          ps -ef | grep '[c]ron'
+
+     If the pattern had been written without the square brackets, it
+     would have matched not only the `ps' output line for `cron', but
+     also the `ps' output line for `grep'.  Note that some platforms
+     `ps' limit the ouput to the width of the screen, grep does not
+     have any limit on the length of a line except the available memory.
+
+  8. Why does `grep' report "Binary file matches"?
+
+     If `grep' listed all matching "lines" from a binary file, it would
+     probably generate output that is not useful, and it might even
+     muck up your display.  So GNU `grep' suppresses output from files
+     that appear to be binary files.  To force GNU `grep' to output
+     lines even from files that appear to be binary, use the `-a' or
+     `--binary-files=text' option.  To eliminate the "Binary file
+     matches" messages, use the `-I' or `--binary-files=without-match'
+     option.
+
+  9. Why doesn't `grep -lv' print nonmatching file names?
+
+     `grep -lv' lists the names of all files containing one or more
+     lines that do not match.  To list the names of all files that
+     contain no matching lines, use the `-L' or `--files-without-match'
+     option.
+
+ 10. I can do OR with `|', but what about AND?
+
+          grep 'paul' /etc/motd | grep 'franc,ois'
+
+     finds all lines that contain both `paul' and `franc,ois'.
+
+ 11. How can I search in both standard input and in files?
+
+     Use the special file name `-':
+
+          cat /etc/passwd | grep 'alain' - /etc/motd
+
+ 12. How to express palindromes in a regular expression?
+
+     It can be done by using the back referecences, for example a
+     palindrome of 4 chararcters can be written in BRE.
+
+          grep -w -e '\(.\)\(.\).\2\1' file
+
+     It matches the word "radar" or "civic".
+
+     Guglielmo Bondioni proposed a single RE that finds all the
+     palindromes up to 19 characters long.
+
+          egrep -e '^(.?)(.?)(.?)(.?)(.?)(.?)(.?)(.?)(.?).?\9\8\7\6\5\4\3\2\1$' file
+
+     Note this is done by using GNU ERE extensions, it might not be
+     portable on other greps.
+
+ 13. Why are my expressions whith the vertical bar fail?
+
+          /bin/echo "ba" | egrep '(a)\1|(b)\1'
+
+     The first alternate branch fails then the first group was not in
+     the match this will make the second alternate branch fails.  For
+     example, "aaba" will match, the first group participate in the
+     match and can be reuse in the second branch.
+
+ 14. What do `grep, fgrep, egrep' stand for ?
+
+     grep comes from the way line editing was done on Unix.  For
+     example, `ed' uses this syntax to print a list of matching lines
+     on the screen.
+
+          global/regular expression/print
+          g/re/p
+
+     `fgrep' stands for Fixed `grep', `egrep' Extended `grep'.
+
+
+
+File: grep.info,  Node: Reporting Bugs,  Next: Copying,  Prev: Usage,  Up: Top
+
+Reporting bugs
+**************
+
+   Email bug reports to <bug-gnu-utils@gnu.org>.  Be sure to include
+the word "grep" somewhere in the "Subject:" field.
+
+   Large repetition counts in the `{n,m}' construct may cause `grep' to
+use lots of memory.  In addition, certain other obscure regular
+expressions require exponential time and space, and may cause grep to
+run out of memory.  Back-references are very slow, and may require
+exponential time.
+
+
+File: grep.info,  Node: Copying,  Next: GNU General Public License,  Prev: Reporting Bugs,  Up: Top
+
+Copying
+*******
+
+   GNU grep is licensed under the GNU GPL, which makes it "free
+software".
+
+   Please note that "free" in "free software" refers to liberty, not
+price.  As some GNU project advocates like to point out, think of "free
+speech" rather than "free beer".  The exact and legally binding
+distribution terms are spelled out below; in short, you have the right
+(freedom) to run and change grep and distribute it to other people, and
+even--if you want--charge money for doing either.  The important
+restriction is that you have to grant your recipients the same rights
+and impose the same restrictions.
+
+   This method of licensing software is also known as "open source"
+because, among other things, it makes sure that all recipients will
+receive the source code along with the program, and be able to improve
+it.  The GNU project prefers the term "free software" for reasons
+outlined at
+<http://www.gnu.org/philosophy/free-software-for-freedom.html>.
+
+   The exact license terms are defined by this paragraph and the GNU
+General Public License it refers to:
+
+     GNU grep is free software; you can redistribute it and/or modify it
+     under the terms of the GNU General Public License as published by
+     the Free Software Foundation; either version 2 of the License, or
+     (at your option) any later version.
+
+     GNU grep is distributed in the hope that it will be useful, but
+     WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+     General Public License for more details.
+
+     A copy of the GNU General Public License is included as part of
+     this manual; if you did not receive it, write to the Free Software
+     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+   In addition to this, this manual is free in the same sense:
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.1 or any later version published by the Free Software
+     Foundation; with the Invariant Sections being "GNU General Public
+     License" and "GNU Free Documentation License", with no Front-Cover
+     Texts, and with no Back-Cover Texts.  A copy of the license is
+     included in the section entitled "GNU Free Documentation License".
+
+   The full texts of the GNU General Public License and of the GNU Free
+Documentation License are available below.
+
+* Menu:
+
+* GNU General Public License:: GNU GPL
+* GNU Free Documentation License:: GNU FDL
+

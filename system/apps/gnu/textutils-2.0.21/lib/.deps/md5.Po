@@ -1,0 +1,53 @@
+md5.o : \
+ md5.c ../config.h /include/sys/types.h /include/features.h \
+ /include/sys/cdefs.h /include/gnu/stubs.h /include/bits/types.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h \
+ /include/bits/pthreadtypes.h /include/time.h /include/endian.h \
+ /include/bits/endian.h /include/sys/select.h /include/bits/select.h \
+ /include/bits/sigset.h /include/sys/sysmacros.h /include/stdlib.h \
+ /include/xlocale.h /include/alloca.h /include/string.h \
+ /include/bits/string.h /include/bits/string2.h md5.h /include/stdio.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stdarg.h \
+ /include/libio.h /include/_G_config.h /include/bits/stdio_lim.h \
+ /include/bits/stdio.h /include/limits.h /include/bits/posix1_lim.h \
+ /include/bits/local_lim.h /ainc/posix/limits.h \
+ /include/bits/posix2_lim.h /include/bits/xopen_lim.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/limits.h \
+ unlocked-io.h
+md5.c :
+../config.h :
+/include/sys/types.h :
+/include/features.h :
+/include/sys/cdefs.h :
+/include/gnu/stubs.h :
+/include/bits/types.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h :
+/include/bits/pthreadtypes.h :
+/include/time.h :
+/include/endian.h :
+/include/bits/endian.h :
+/include/sys/select.h :
+/include/bits/select.h :
+/include/bits/sigset.h :
+/include/sys/sysmacros.h :
+/include/stdlib.h :
+/include/xlocale.h :
+/include/alloca.h :
+/include/string.h :
+/include/bits/string.h :
+/include/bits/string2.h :
+md5.h :
+/include/stdio.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stdarg.h :
+/include/libio.h :
+/include/_G_config.h :
+/include/bits/stdio_lim.h :
+/include/bits/stdio.h :
+/include/limits.h :
+/include/bits/posix1_lim.h :
+/include/bits/local_lim.h :
+/ainc/posix/limits.h :
+/include/bits/posix2_lim.h :
+/include/bits/xopen_lim.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/limits.h :
+unlocked-io.h :

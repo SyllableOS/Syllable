@@ -1,0 +1,28 @@
+#!/bin/sh
+
+if test "$VERBOSE" = yes; then
+  set -x
+  cp --version
+fi
+
+suffix=.b
+tmp=b1.$$
+tmp_backup="$tmp$suffix"
+temp_files="$tmp $tmp_backup"
+rm -f $temp_files
+
+fail=0
+echo test > $tmp || fail=1
+
+# Specify both version control and suffix so the environment variables
+# (possibly set by the user running these tests) aren't used.
+cp --force --backup=simple --suffix=$suffix $tmp $tmp \
+  || fail=1
+
+test -f $tmp || fail=1
+test -f $tmp_backup || fail=1
+cmp $tmp $tmp_backup > /dev/null || fail=1
+
+rm -f $temp_files
+
+exit $fail

@@ -1,0 +1,33 @@
+Qt/Embedded Virtual Framebuffer
+===============================
+
+The virtual frame buffer allows a Qt/Embedded program to be developed on your
+desktop machine, without switching between consoles and X11.  The virtual
+framebuffer consists of a shared memory region (the virtual frame buffer)
+and a utility to display the framebuffer in a window.  The display is updated
+periodically, so you will see discrete snapshots of the framebuffer rather
+than each individual drawing operation.  For this reason drawing problems
+such as flickering may not be apparent until the program is run using a real
+framebuffer.
+
+To use the virtual framebuffer:
+
+1. Ensure QT_NO_QWS_VFB is not set in qconfig.h (when you configure Qt,
+    add the -qvfb option).
+2. Start qvfb (qvfb should be compiled as a normal Qt/X11 application,
+    NOT as a Qt/Embedded application!).
+3. Start a Qt/Embedded server (i.e. construct QApplication with
+   QApplication::GuiServer flag, or run a client with the -qws option).
+
+qvfb supports the following command line options:
+
+[-width width]   the width of the virtual framebuffer (default: 240).
+[-height height] the height of the virtual framebuffer (default: 320).
+[-depth depth]   the depth of the virtual framebuffer (1,4,8 or 32, default: 8).
+[-nocursor]      do not display the X11 cursor in the framebuffer window.
+[-qwsdisplay]    the Qt/Embedded display ID, e.g. -qwsdisplay :1 (default :0).
+
+The virtual framebuffer is a development tool only.  No security issues have
+been considered in the virtual framebuffer design.  It should not be used
+in a production environment and QT_NO_QWS_VFB should always be in force
+in production libraries.

@@ -1,0 +1,70 @@
+abrush.lo abrush.o : abrush.cpp /include/stdio.h /include/features.h \
+ /include/sys/cdefs.h /include/gnu/stubs.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stdarg.h \
+ /include/bits/types.h /include/libio.h /include/_G_config.h \
+ /include/bits/stdio_lim.h /include/bits/stdio.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qbrush.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qcolor.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qwindowdefs.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qobjectdefs.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qglobal.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qfeatures.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qconfig.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qstring.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qcstring.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qarray.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qgarray.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qshared.h /include/string.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qnamespace.h \
+ /include/limits.h /include/bits/posix1_lim.h \
+ /include/bits/local_lim.h /ainc/posix/limits.h \
+ /include/bits/posix2_lim.h /usr/glibc2/include/limits.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/limits.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qpixmap.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/../../konq-embed/dropin/atheos/apixmap.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qpaintdevice.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/../../konq-embed/dropin/atheos/apaintdevice.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qsize.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qpoint.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qrect.h
+abrush.cpp :
+/include/stdio.h :
+/include/features.h :
+/include/sys/cdefs.h :
+/include/gnu/stubs.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stdarg.h :
+/include/bits/types.h :
+/include/libio.h :
+/include/_G_config.h :
+/include/bits/stdio_lim.h :
+/include/bits/stdio.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qbrush.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qcolor.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qwindowdefs.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qobjectdefs.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qglobal.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qfeatures.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qconfig.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qstring.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qcstring.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qarray.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qgarray.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qshared.h :
+/include/string.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qnamespace.h :
+/include/limits.h :
+/include/bits/posix1_lim.h :
+/include/bits/local_lim.h :
+/ainc/posix/limits.h :
+/include/bits/posix2_lim.h :
+/usr/glibc2/include/limits.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/limits.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qpixmap.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/../../konq-embed/dropin/atheos/apixmap.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qpaintdevice.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/../../konq-embed/dropin/atheos/apaintdevice.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qsize.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qpoint.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qrect.h :

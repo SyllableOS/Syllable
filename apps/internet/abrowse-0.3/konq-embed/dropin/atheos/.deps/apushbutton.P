@@ -1,0 +1,221 @@
+apushbutton.lo apushbutton.o : apushbutton.cpp \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qpushbutton.h \
+ ../../../konq-embed/dropin/atheos/apushbutton.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qwidget.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/../../konq-embed/dropin/atheos/awidget.h \
+ /ainc/gui/view.h /ainc/atheos/types.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h \
+ /ainc/posix/types.h /ainc/util/handler.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/string \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/std/bastring.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/cstddef \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/std/straits.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/cctype \
+ /include/ctype.h /include/features.h /include/sys/cdefs.h \
+ /include/gnu/stubs.h /include/bits/types.h /include/endian.h \
+ /include/bits/endian.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/cstring \
+ /include/string.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/alloc.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/stl_config.h \
+ /include/_G_config.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/stl_alloc.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/iostream.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/streambuf.h \
+ /include/libio.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stdarg.h \
+ /ainc/atheos/semaphore.h /ainc/atheos/atomic.h /include/errno.h \
+ /include/bits/errno.h /ainc/posix/errno.h /include/stdlib.h \
+ /include/sys/types.h /include/time.h /include/sys/select.h \
+ /include/bits/select.h /include/bits/sigset.h \
+ /include/sys/sysmacros.h /include/alloca.h /include/assert.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/iterator \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/stl_relops.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/stl_iterator.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/std/bastring.cc \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/list \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/stl_algobase.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/stl_pair.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/type_traits.h \
+ /include/limits.h /include/bits/posix1_lim.h \
+ /include/bits/local_lim.h /ainc/posix/limits.h \
+ /include/bits/posix2_lim.h /usr/glibc2/include/limits.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/limits.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/new.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/new \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/exception \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/stl_construct.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/stl_uninitialized.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/stl_list.h \
+ /ainc/gui/guidefines.h /ainc/gui/gfxtypes.h /ainc/gui/region.h \
+ /ainc/gui/rect.h /ainc/gui/point.h /include/math.h \
+ /include/bits/huge_val.h /include/bits/mathdef.h \
+ /include/bits/mathcalls.h \
+ /usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/float.h \
+ /include/bits/mathinline.h /ainc/util/locker.h /include/stdio.h \
+ /include/bits/stdio_lim.h /include/bits/stdio.h /include/sys/debug.h \
+ /ainc/atheos/threads.h /ainc/atheos/typedefs.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qobject.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qobjectdefs.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qglobal.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qfeatures.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qconfig.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qwindowdefs.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qstring.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qcstring.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qarray.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qgarray.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qshared.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qnamespace.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qevent.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/../../konq-embed/dropin/atheos/aevent.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qpoint.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qstringlist.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qvaluelist.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qdatastream.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qiodevice.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qregexp.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qsize.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qpalette.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qcolor.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qbrush.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qpaintdevice.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/../../konq-embed/dropin/atheos/apaintdevice.h \
+ /ainc/gui/button.h /ainc/gui/control.h /ainc/util/invoker.h \
+ /ainc/util/messenger.h /ainc/util/variant.h /ainc/util/string.h \
+ /ainc/util/typecodes.h /ainc/util/message.h apushbutton.moc \
+ apushbutton.h /atheos/src/apps/abrowse/qt-2.3.0/include/qmetaobject.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qconnection.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qstrlist.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qlist.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qglist.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qcollection.h \
+ /atheos/src/apps/abrowse/qt-2.3.0/include/qapplication.h
+apushbutton.cpp :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qpushbutton.h :
+../../../konq-embed/dropin/atheos/apushbutton.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qwidget.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/../../konq-embed/dropin/atheos/awidget.h :
+/ainc/gui/view.h :
+/ainc/atheos/types.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stddef.h :
+/ainc/posix/types.h :
+/ainc/util/handler.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/string :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/std/bastring.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/cstddef :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/std/straits.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/cctype :
+/include/ctype.h :
+/include/features.h :
+/include/sys/cdefs.h :
+/include/gnu/stubs.h :
+/include/bits/types.h :
+/include/endian.h :
+/include/bits/endian.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/cstring :
+/include/string.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/alloc.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/stl_config.h :
+/include/_G_config.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/stl_alloc.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/iostream.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/streambuf.h :
+/include/libio.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/stdarg.h :
+/ainc/atheos/semaphore.h :
+/ainc/atheos/atomic.h :
+/include/errno.h :
+/include/bits/errno.h :
+/ainc/posix/errno.h :
+/include/stdlib.h :
+/include/sys/types.h :
+/include/time.h :
+/include/sys/select.h :
+/include/bits/select.h :
+/include/bits/sigset.h :
+/include/sys/sysmacros.h :
+/include/alloca.h :
+/include/assert.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/iterator :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/stl_relops.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/stl_iterator.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/std/bastring.cc :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/list :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/stl_algobase.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/stl_pair.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/type_traits.h :
+/include/limits.h :
+/include/bits/posix1_lim.h :
+/include/bits/local_lim.h :
+/ainc/posix/limits.h :
+/include/bits/posix2_lim.h :
+/usr/glibc2/include/limits.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/limits.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/new.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/new :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/exception :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/stl_construct.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/stl_uninitialized.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/../../../../include/g++-3/stl_list.h :
+/ainc/gui/guidefines.h :
+/ainc/gui/gfxtypes.h :
+/ainc/gui/region.h :
+/ainc/gui/rect.h :
+/ainc/gui/point.h :
+/include/math.h :
+/include/bits/huge_val.h :
+/include/bits/mathdef.h :
+/include/bits/mathcalls.h :
+/usr/gcc295/lib/gcc-lib/i386-any-atheos/2.95.2/include/float.h :
+/include/bits/mathinline.h :
+/ainc/util/locker.h :
+/include/stdio.h :
+/include/bits/stdio_lim.h :
+/include/bits/stdio.h :
+/include/sys/debug.h :
+/ainc/atheos/threads.h :
+/ainc/atheos/typedefs.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qobject.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qobjectdefs.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qglobal.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qfeatures.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qconfig.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qwindowdefs.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qstring.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qcstring.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qarray.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qgarray.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qshared.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qnamespace.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qevent.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/../../konq-embed/dropin/atheos/aevent.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qpoint.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qstringlist.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qvaluelist.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qdatastream.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qiodevice.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qregexp.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qsize.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qpalette.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qcolor.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qbrush.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qpaintdevice.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/../../konq-embed/dropin/atheos/apaintdevice.h :
+/ainc/gui/button.h :
+/ainc/gui/control.h :
+/ainc/util/invoker.h :
+/ainc/util/messenger.h :
+/ainc/util/variant.h :
+/ainc/util/string.h :
+/ainc/util/typecodes.h :
+/ainc/util/message.h :
+apushbutton.moc :
+apushbutton.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qmetaobject.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qconnection.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qstrlist.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qlist.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qglist.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qcollection.h :
+/atheos/src/apps/abrowse/qt-2.3.0/include/qapplication.h :

@@ -1,0 +1,283 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:563: checking host system type
+configure:615: checking for a BSD compatible install
+configure:672: checking whether build environment is sane
+configure:729: checking whether make sets ${MAKE}
+configure:776: checking for working aclocal
+configure:789: checking for working autoconf
+configure:802: checking for working automake
+configure:815: checking for working autoheader
+configure:828: checking for working makeinfo
+configure:845: checking for gnutar
+configure:895: checking for perl5.003 or newer
+configure:930: checking for gcc
+configure:1043: checking whether the C compiler (gcc   ) works
+configure:1059: gcc -o conftest    conftest.c  1>&5
+configure:1085: checking whether the C compiler (gcc   ) is a cross-compiler
+configure:1090: checking whether we are using GNU C
+configure:1118: checking whether gcc accepts -g
+configure:1150: checking how to run the C preprocessor
+configure:1231: checking whether gcc needs -traditional
+configure:1279: checking for ranlib
+configure:1311: checking for bison
+configure:1342: checking for AIX
+configure:1367: checking for minix/config.h
+configure:1417: checking build system type
+configure:1472: checking for i386-unknown-atheos-getconf
+configure:1502: checking for CFLAGS value to request large file support
+configure:1540: checking for LDFLAGS value to request large file support
+configure:1552: checking for LIBS value to request large file support
+configure:1607: checking for _FILE_OFFSET_BITS
+configure:1632: checking for _LARGEFILE_SOURCE
+configure:1661: checking for _LARGE_FILES
+configure:1696: checking for gcc option to accept ANSI C
+configure:1776: checking for function prototypes
+configure:1938: checking for uname
+configure:1994: checking for chroot
+configure:2050: checking for gethostid
+configure:2104: checking for working const
+configure:2179: checking for ANSI C header files
+configure:2283: checking whether byte ordering is bigendian
+configure:2374: checking whether struct tm is in sys/time.h or time.h
+configure:2408: checking whether time.h and sys/time.h may both be included
+configure:2443: checking for member tm_zone in aggregate type struct tm
+configure:2514: checking whether stat file-mode macros are broken
+configure:2572: checking for inttypes.h
+configure:2607: checking for unsigned long long
+configure:2641: checking for uid_t in sys/types.h
+configure:2689: checking type of array argument to getgroups
+configure:2763: checking for unistd.h
+configure:2800: checking for mode_t
+configure:2839: checking for unistd.h
+configure:2876: checking for off_t
+configure:2915: checking for unistd.h
+configure:2952: checking for pid_t
+configure:2988: checking return type of signal handlers
+configure:3032: checking for unistd.h
+configure:3069: checking for size_t
+configure:3105: checking for uid_t in sys/types.h
+configure:3142: checking for unistd.h
+configure:3179: checking for ino_t
+configure:3218: checking for unistd.h
+configure:3255: checking for ssize_t
+configure:3297: checking for library containing gethostbyname
+configure:3373: checking for dirent.h that defines DIR
+configure:3411: checking for opendir in -ldir
+configure:3497: checking for sys/time.h
+configure:3497: checking for unistd.h
+configure:3536: checking for alarm
+configure:3590: checking for working mktime
+configure:3768: checking for working memcmp
+configure:3827: checking whether we are using the GNU C Library
+configure:3857: checking for version 2 of the GNU C Library
+configure:3890: checking for strerror in -lcposix
+configure:3933: checking whether to enable assertions
+configure:3953: checking for utime.h
+configure:3991: checking for struct utimbuf
+configure:4040: checking for d_type member in directory struct
+configure:4092: checking for d_ino member in directory struct
+configure:4401: checking whether free is declared
+configure:4401: checking whether lseek is declared
+configure:4401: checking whether malloc is declared
+configure:4401: checking whether memchr is declared
+configure:4401: checking whether realloc is declared
+configure:4401: checking whether stpcpy is declared
+configure:4401: checking whether strstr is declared
+configure:4449: checking for strerror
+configure:4449: checking for strerror_r
+configure:4449: checking for vprintf
+configure:4449: checking for doprnt
+configure:4503: checking for ANSI C header files
+configure:4611: checking for bzero
+configure:4611: checking for bcopy
+configure:4611: checking for isascii
+configure:4611: checking for btowc
+configure:4668: checking for alloca.h
+configure:4668: checking for libintl.h
+configure:4668: checking for wctype.h
+configure:4668: checking for wchar.h
+configure:4705: checking for ANSI C header files
+configure:4811: checking for working alloca.h
+configure:4844: checking for alloca
+configure:5050: checking for lchown
+configure:5148: checking for working chown
+configure:5214: checking for localtime_r
+configure:5277: checking whether lstat accepts an empty string
+configure:5326: checking whether stat accepts an empty string
+configure:5380: checking for working realloc
+configure:5431: checking for working malloc
+configure:5480: checking for string.h
+configure:5517: checking for working readdir
+configure:5873: checking whether clearerr_unlocked is declared
+configure:5921: checking for clearerr_unlocked
+configure:5873: checking whether feof_unlocked is declared
+configure:5921: checking for feof_unlocked
+configure:5873: checking whether ferror_unlocked is declared
+configure:5921: checking for ferror_unlocked
+configure:5873: checking whether fflush_unlocked is declared
+configure:5921: checking for fflush_unlocked
+configure:5873: checking whether fputc_unlocked is declared
+configure:5921: checking for fputc_unlocked
+configure:5873: checking whether fread_unlocked is declared
+configure:5921: checking for fread_unlocked
+configure:5873: checking whether fwrite_unlocked is declared
+configure:5921: checking for fwrite_unlocked
+configure:5873: checking whether getc_unlocked is declared
+configure:5921: checking for getc_unlocked
+configure:5873: checking whether getchar_unlocked is declared
+configure:5921: checking for getchar_unlocked
+configure:5873: checking whether putc_unlocked is declared
+configure:5921: checking for putc_unlocked
+configure:5873: checking whether putchar_unlocked is declared
+configure:5921: checking for putchar_unlocked
+configure:5981: checking for working fnmatch
+configure:6029: checking for AFS
+configure:6043: checking for stdlib.h
+configure:6081: checking whether <inttypes.h> defines strtoumax as a macro
+configure:6111: checking for strtoumax
+configure:6253: checking for working re_compile_pattern
+configure:6345: checking for strcasecmp
+configure:6345: checking for strncasecmp
+configure:6403: checking for dup2
+configure:6461: checking for memchr
+configure:6519: checking for memmove
+configure:6577: checking for getpagesize
+configure:6642: checking whether setvbuf arguments are reversed
+configure:6690: checking for getline
+configure:6744: checking for string.h
+configure:6781: checking for working getline function
+configure:6894: checking for strerror in -lcposix
+configure:6937: checking for gethostbyname
+configure:6937: checking for gethostbyaddr
+configure:6937: checking for inet_ntoa
+configure:6997: checking for bcopy
+configure:6997: checking for endgrent
+configure:6997: checking for endpwent
+configure:6997: checking for ftime
+configure:6997: checking for getcwd
+configure:6997: checking for gettimeofday
+configure:6997: checking for isascii
+configure:6997: checking for localeconv
+configure:6997: checking for memcpy
+configure:6997: checking for mempcpy
+configure:6997: checking for sethostname
+configure:6997: checking for strchr
+configure:6997: checking for strrchr
+configure:6997: checking for strerror
+configure:6997: checking for sysinfo
+configure:6997: checking for tzset
+configure:7052: checking whether localtime caches TZ
+configure:7125: checking for initgroups
+configure:7231: checking for syslog
+configure:7341: checking for arpa/inet.h
+configure:7341: checking for fcntl.h
+configure:7341: checking for float.h
+configure:7341: checking for limits.h
+configure:7341: checking for netdb.h
+configure:7341: checking for netinet/in.h
+configure:7341: checking for stdlib.h
+configure:7341: checking for string.h
+configure:7341: checking for sys/param.h
+configure:7341: checking for sys/socket.h
+configure:7341: checking for sys/systeminfo.h
+configure:7341: checking for sys/time.h
+configure:7341: checking for sys/timeb.h
+configure:7341: checking for syslog.h
+configure:7341: checking for unistd.h
+configure:7341: checking for paths.h
+configure:7341: checking for termios.h
+configure:7381: checking for gethostname
+configure:7381: checking for getusershell
+configure:7381: checking for memcpy
+configure:7381: checking for memset
+configure:7439: checking for stime
+configure:7439: checking for strcspn
+configure:7439: checking for stpcpy
+configure:7439: checking for strstr
+configure:7439: checking for strtol
+configure:7439: checking for strtoul
+configure:7497: checking for group_member
+configure:7551: checking for SVID conformant putenv
+configure:7607: checking for error_at_line
+configure:7641: checking for localtime_r
+configure:7700: checking for sys/time.h
+configure:7737: checking for working GNU strftime
+configure:7876: checking for localtime_r
+configure:7941: checking for getgroups
+configure:8046: checking for working getgroups
+configure:8094: checking for vprintf
+configure:8203: checking for working alloca.h
+configure:8236: checking for alloca
+configure:8437: checking for 3-argument setpriority function
+configure:8508: checking for utmpname
+configure:8563: checking ut_host in struct utmp
+configure:8638: checking if we can get the system boot time
+configure:8681: checking for pstat_getdynamic
+configure:8737: checking for kstat_open in -lkstat
+configure:8790: checking for elf_begin in -lelf
+configure:8831: checking for kvm_open in -lkvm
+configure:8872: checking for getloadavg in -lutil
+configure:8919: checking for getloadavg in -lgetloadavg
+configure:8965: checking for getloadavg
+configure:9036: checking for sys/dg_sys_info.h
+configure:9120: checking for locale.h
+configure:9154: checking for setlocale
+configure:9221: checking for inq_stats/cpustats.h
+configure:9264: checking for sys/cpustats.h
+configure:9305: checking for mach/mach.h
+configure:9345: checking for nlist.h
+configure:9415: checking whether getloadavg requires setgid
+configure:9482: checking for /proc/uptime
+configure:9503: checking POSIX termios
+configure:9534: checking whether use of TIOCGWINSZ requires termios.h
+configure:9566: checking whether use of TIOCGWINSZ requires sys/ioctl.h
+configure:9607: checking whether termios.h needs _XOPEN_SOURCE
+configure:9657: checking c_line in struct termios
+configure:9694: checking for sys/ptem.h
+configure:9732: checking whether use of TIOCGWINSZ requires termios.h
+configure:9823: checking for floor
+configure:9823: checking for modf
+configure:9823: checking for rint
+configure:9879: checking for working strtod
+configure:10043: checking for sqrt
+configure:10098: checking for sqrt in -lm
+configure:10144: checking for library containing yp_match
+configure:10219: checking for library containing getspnam
+configure:10299: checking for getspnam
+configure:10360: checking for library containing crypt
+configure:10434: checking for inline
+configure:10477: checking for unistd.h
+configure:10516: checking for getpagesize
+configure:10570: checking for working mmap
+configure:10746: checking for argz.h
+configure:10746: checking for limits.h
+configure:10746: checking for locale.h
+configure:10746: checking for nl_types.h
+configure:10746: checking for malloc.h
+configure:10746: checking for string.h
+configure:10746: checking for unistd.h
+configure:10746: checking for sys/param.h
+configure:10786: checking for getcwd
+configure:10786: checking for munmap
+configure:10786: checking for putenv
+configure:10786: checking for setenv
+configure:10786: checking for setlocale
+configure:10786: checking for strchr
+configure:10786: checking for strcasecmp
+configure:10786: checking for strdup
+configure:10786: checking for __argz_count
+configure:10786: checking for __argz_stringify
+configure:10786: checking for __argz_next
+configure:10907: checking for LC_MESSAGES
+configure:10940: checking whether NLS is requested
+configure:10960: checking whether included gettext is requested
+configure:10979: checking for libintl.h
+configure:11006: checking for gettext in libc
+configure:11130: checking for msgfmt
+configure:11319: checking whether catgets can be used
+configure:11592: checking for msgfmt
+configure:11626: checking for gmsgfmt
+configure:11662: checking for xgettext
+configure:11759: checking for catalogs to be installed
