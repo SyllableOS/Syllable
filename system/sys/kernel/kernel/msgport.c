@@ -553,7 +553,7 @@ status_t make_port_public( port_id hPort )
 	MsgPort_s *psPort;
 	PublicPort_s *psPubPort;
 	int nError = EOK;
-
+	
 	psPort = get_port_from_handle( hPort );
 
 	if ( psPort == NULL )
@@ -583,17 +583,15 @@ status_t make_port_public( port_id hPort )
 	psPubPort->pp_hPortID = psPort->mp_hPortID;
 	psPubPort->pp_pzName = psPort->mp_zName;
 
-	psPubPort->pp_psNext = psPubPort;
-	psPubPort->pp_psPrev = psPubPort;
+	psPubPort->pp_psNext = NULL;
+	psPubPort->pp_psPrev = g_psPubPortListHead;
 
 	lock_mutex( g_hPubPortListSema, true );
 
-	if ( NULL == g_psPubPortListHead )
-		g_psPubPortListHead = psPubPort;
-
-	psPubPort->pp_psNext = g_psPubPortListHead;
-	psPubPort->pp_psPrev = g_psPubPortListHead->pp_psPrev;
-	psPubPort->pp_psPrev->pp_psNext = psPubPort;
+	if ( NULL != g_psPubPortListHead )
+		g_psPubPortListHead->pp_psNext = psPubPort;
+	
+	g_psPubPortListHead = psPubPort;
 
 	unlock_mutex( g_hPubPortListSema );
 
@@ -620,7 +618,7 @@ status_t make_port_private( port_id hPort )
 	int nError = -EINVAL;
 
 	psPort = get_port_from_handle( hPort );
-
+	
 	if ( psPort == NULL )
 	{
 		printk( "Error: make_port_private() called for invalid message port %d\n", hPort );
@@ -632,18 +630,18 @@ status_t make_port_private( port_id hPort )
 
 	psPubPort = g_psPubPortListHead;
 
-	do
+	
+	while ( psPubPort != NULL )
 	{
 
 		if ( psPubPort->pp_hPortID == hPort )
 		{
-			if ( psPubPort->pp_psPrev == psPubPort->pp_psNext )
-				g_psPubPortListHead = NULL;
-			else
-			{
+			if( psPubPort->pp_psPrev )
 				psPubPort->pp_psPrev->pp_psNext = psPubPort->pp_psNext;
+			if( psPubPort->pp_psNext )
 				psPubPort->pp_psNext->pp_psPrev = psPubPort->pp_psPrev;
-			}
+			else
+				g_psPubPortListHead = psPubPort->pp_psPrev;
 
 			kfree( psPubPort );
 
@@ -657,10 +655,10 @@ status_t make_port_private( port_id hPort )
 			break;
 		}
 
-		psPubPort = psPubPort->pp_psNext;
+		psPubPort = psPubPort->pp_psPrev;
 
 	}
-	while ( psPubPort != g_psPubPortListHead );
+	
 
 	unlock_mutex( g_hPubPortListSema );
 
@@ -689,7 +687,7 @@ port_id do_find_port( const char *pzPortname )
 
 	psPubPort = g_psPubPortListHead;
 
-	do
+	while ( psPubPort != NULL )
 	{
 
 		if ( !strcmp( psPubPort->pp_pzName, pzPortname ) )
@@ -698,10 +696,9 @@ port_id do_find_port( const char *pzPortname )
 			break;
 		}
 
-		psPubPort = psPubPort->pp_psNext;
+		psPubPort = psPubPort->pp_psPrev;
 
 	}
-	while ( psPubPort != g_psPubPortListHead );
 
 	unlock_mutex( g_hPubPortListSema );
 
@@ -782,9 +779,40 @@ port_id sys_find_port( const char *pzPortname )
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/
+static void db_list_public_ports( int argc, char **argv )
+{
+	/* Dump all public message ports */
+	PublicPort_s *psPubPort;
+	
+	psPubPort = g_psPubPortListHead;
+
+	while ( psPubPort != NULL )
+	{
+		port_id hPrevious = 0;
+		port_id hNext = 0;
+		if( psPubPort->pp_psPrev )
+			hPrevious = psPubPort->pp_psPrev->pp_hPortID;
+		if( psPubPort->pp_psNext )
+			hNext = psPubPort->pp_psNext->pp_hPortID;
+		
+		dbprintf( DBP_DEBUGGER, "%04i ( Previous %04i Next %04i )\n", psPubPort->pp_hPortID,
+					hPrevious, hNext );
+		
+		psPubPort = psPubPort->pp_psPrev;
+	}
+}
+
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
 
 void InitMsgPorts( void )
 {
+	register_debug_cmd( "ls_pubports", "list all public message ports.", db_list_public_ports );
 	g_hPortListSema = create_semaphore( "port_list__bad1", 1, 0 );
 	g_hPortListSema = create_semaphore( "port_list__bad2", 1, 0 );
 	g_hPortListSema = create_semaphore( "port_list__bad3", 1, 0 );
