@@ -10,5 +10,6 @@ modules
 	apps/gnu/findutils-4.1.20
 	apps/gnu/gzip-1.3.5
 	apps/gnu/sed-4.0.9
+	apps/gnu/tar-1.13.92
 	apps/utils/Preferences/Network
 	apps/utils/dhcpc
