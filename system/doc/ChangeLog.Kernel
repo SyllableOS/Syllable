@@ -1,3 +1,10 @@
+* Jul 16 2003, Kristian Van Der Vliet *
+
+Patches from Arno Klenke <arno_klenke@yahoo.de>
+	* New PCI module which no longer requires a PCI BIOS to function.
+	* CPU capability detection (E.g. CPU type, MMX, SSE[2] support)
+	* Use the APIC when available on single CPU systems
+
 * Jun 26 2003, Kristian Van Der Vliet *
 
 Disabled errent debug output from the IP stack during tcp transmits.
