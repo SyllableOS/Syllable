@@ -94,6 +94,7 @@ public:
     virtual void	AllAttached();
 	virtual void Activated( bool bIsActive );
 	virtual void SetTabOrder( int nOrder = NEXT_TAB_ORDER );
+	virtual void WheelMoved( const Point& cDelta );
 
 private:
     class DropdownView : public View
@@ -108,6 +109,7 @@ private:
 			virtual void	KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
 			virtual void	AllAttached();
 			virtual void	Activated( bool bIsActive );
+			virtual void WheelMoved( const Point& cDelta );
 			
 		    virtual void	HandleMessage( Message* pcMessage );
   
