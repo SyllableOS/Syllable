@@ -1,3 +1,10 @@
+* April 30 2004, Henrik Isaksson *
+
+ - TextView
+	o Patch from Rick to make text selectable even when the textview is disabled.
+ - Popupmenu
+	o Bugfix: GetPreferredSize() (patch from Rick).
+
 * April 25 2004, Henrik Isaksson *
 
  - Message
