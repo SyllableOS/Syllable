@@ -8,7 +8,7 @@
 ** parameters: String(contains the icon name)
 ** returns:   
 */
-IconProp::IconProp(string cIconName, string cExec, Bitmap* cIconPic) : Window(CRect(250,150), "Icon_Properties", "Icon Properties", WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_RESIZABLE)
+IconProp::IconProp(string cIconName, string cExec, Bitmap* cIconPic) : Window(CRect(250,100), "Icon_Properties", "Icon Properties", WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_RESIZABLE)
 {
 
     /* For The Icon Name. */
@@ -41,12 +41,13 @@ IconProp::IconProp(string cIconName, string cExec, Bitmap* cIconPic) : Window(CR
     pcIconExecStr->SetFrame(Rect(0,0,50,20) + Point(10,40));
     AddChild(pcIconExecStr);
 
-    ImageButton* pcImageBut = new ImageButton(Rect(0,0,0,0), "IMAGE_CHANGE", "Change", NULL, NULL, ImageButton::IB_TEXT_BOTTOM, true,true);
+   /* ImageButton* pcImageBut = new ImageButton(Rect(0,0,0,0), "IMAGE_CHANGE", "Change", NULL, (BitmapImage*)cIconPic, ImageButton::IB_TEXT_BOTTOM, true,true);
     pcImageBut->SetFrame(Rect(0,0,46,40) + Point(GetBounds().Width() /2 - 25, GetBounds().Height() - 80) );
     AddChild(pcImageBut);
-    /*pcIconOkBut = new Button(Rect(0,0,0,0),"Icon_OK","OK",new Message(ID_ICON_PROP_OK) );
-    pcIconOkBut->SetFrame(Rect(0,0,40,) + Point (GetBounds().Width() /2 - 25, GetBounds().Height() - 30) );
-    AddChild(pcIconOkBut);*/
+    */
+    pcIconOkBut = new Button(Rect(0,0,0,0),"Icon_OK","OK",new Message(ID_ICON_PROP_OK) );
+    pcIconOkBut->SetFrame(Rect(0,0,25,25) + Point (GetBounds().Width() /2 - 25, GetBounds().Height() - 30) );
+    AddChild(pcIconOkBut);
 
     /*View* pcView = new View(Rect(00,10,32,32),"");
     pcView->DrawBitmap(cIconPic, cIconPic->GetBounds(), pcView->GetBounds());
@@ -96,6 +97,8 @@ void IconProp::HandleMessage(Message* pcMessage)
         break;
     }
 }
+
+
 
 
 

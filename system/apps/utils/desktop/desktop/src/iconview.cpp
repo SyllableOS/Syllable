@@ -1,7 +1,7 @@
 #include "iconview.h"
 #include "loadbitmap.h"
 
-Bitmap* Icon::s_pcBitmap[20] = {NULL,};
+Bitmap* Icon::s_pcBitmap[200] = {NULL,};
 int	Icon::s_nCurBitmap = 0;
 Color32_s fgColor, bgColor;
 bool bTransParent;
@@ -893,6 +893,7 @@ void IconView::DirChanged( const std::string& cNewPath )
     }
 
 }
+
 
 
 

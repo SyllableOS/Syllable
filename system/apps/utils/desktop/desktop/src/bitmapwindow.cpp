@@ -281,6 +281,7 @@ t_Menus BitmapView::AddMenus()
         			pcBitmap = new Bitmap((int)cRect.Width(), (int)cRect.Height(), CS_RGB32);
         			memcpy( pcBitmap->LockRaster(),&nData,sizeof(pcBitmap));
         			*/
+        			delete pcConfig;
         			mAddMenus.push_back(new ImageItem(zExtName.c_str(), pcPrefs, zShort.c_str()));
         		}
         		delete pcNode;
@@ -310,24 +311,17 @@ t_Icon BitmapView::IconList()
     if( pcDir->SetTo( zIconDir.c_str() ) == 0 )
     {
 		
-        while( pcDir->GetNextEntry( &zName ) ){
+        while( pcDir->GetNextEntry( &zName ) )
+        {
         	string zDir = zIconDir + zName;
 			stat(zDir.c_str(), &sStat);
         	FSNode* psNode = new FSNode(zDir);
-        	cout << zDir << " is: " << psNode->IsLink() << endl;
-        	
         	if ( S_ISDIR( sStat.st_mode ) && zName.find( "..",0,1)==string::npos)
-        	{
         		t_icon.push_back(zName);
-        	}
         	
-        	
-        		
-            if (!(zName.find( ".desktop",0)==string::npos) )
-            {
-                t_icon.push_back(zName);
-            }
-            }
+        	if (!(zName.find( ".desktop",0)==string::npos) )
+            	t_icon.push_back(zName);
+        }
     }
 
     delete pcDir;
@@ -976,6 +970,9 @@ bool BitmapWindow::OkToQuit(void)
 	Application::GetInstance()->PostMessage(M_QUIT );
     return (true);
 } /*end of OkToQuit()*/
+
+
+
 
 
 

@@ -37,7 +37,7 @@ public:
     struct stat	m_sStat;
 private:
     float GetStrWidth( Font* pcFont );
-    static Bitmap* s_pcBitmap[20];
+    static Bitmap* s_pcBitmap[200];
     static int s_nCurBitmap;
     Rect	m_cBounds;
     float	m_vStringWidth;
@@ -103,6 +103,7 @@ private:
     void ReadPrefs();
     Color32_s BgColor, FgColor;
 };
+
 
 
 

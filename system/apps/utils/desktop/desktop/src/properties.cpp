@@ -26,6 +26,10 @@ MiscView::MiscView(const Rect & cFrame) : View(cFrame, "MiscView")
     pcTransCheck = new CheckBox(Rect(0,0,0,0),"trans","Make icon background transparent",NULL);
     pcTransCheck->SetFrame(Rect(0,0,GetBounds().Width(),15) + Point (20,80));
     AddChild(pcTransCheck);
+    
+    pcFortuneCheck = new CheckBox(Rect(0,0,0,0),"fortune", "Show a random fortune at login", NULL);
+    pcFortuneCheck->SetFrame(Rect(0,0,GetBounds().Width(), 15) + Point (20,115));
+    AddChild(pcFortuneCheck);
 }
 
 
@@ -350,7 +354,7 @@ void PropWin::Defaults()
     SetDefaultButton(pcSave);
 
     pcPropTab->pcMisc->pcShowVerCheck->SetValue(bShwVr);
-    pcPropTab->pcMisc->pcTransCheck->SetValue(pcSettings->GetTrans());
+    pcPropTab->pcMisc->pcTransCheck->SetValue(bTrans);
 
     string kImage = pcSettings->GetImageDir() + zImage;
     FSNode *pcNode = new FSNode();
@@ -483,6 +487,9 @@ void PropWin::LoadPrefs(void)
     nImageSize = pcSettings->GetImageSize();
     bTrans     = pcSettings->GetTrans();
 }
+
+
+
 
 
 

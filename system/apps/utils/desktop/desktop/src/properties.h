@@ -23,6 +23,7 @@ public:
     CheckBox* pcLoginCheck;
     CheckBox* pcShowVerCheck;
     CheckBox* pcTransCheck;
+    CheckBox* pcFortuneCheck;
 };
 
 
@@ -107,6 +108,7 @@ private:
 };
 
 #endif
+
 
 
 

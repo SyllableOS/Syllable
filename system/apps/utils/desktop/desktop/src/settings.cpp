@@ -30,9 +30,10 @@ void DeskSettings::DefaultSettings()
     zDeskImage= "^";
     bShowVer = false;
     bAlpha = false;
-    cBgColor = Color32_s(200,200,200);
-    cFgColor = Color32_s(0,0,0);
+    cBgColor = Color32_s(0,0,0);
+    cFgColor = Color32_s(255,255,255);
     nSizeImage = 0;
+    bTrans = true;
 }
 
 void DeskSettings::SaveSettings(Message* pcMessage)
@@ -60,7 +61,7 @@ Message* DeskSettings::GetSettings()
     pcReturnMessage->AddColor32("Icon_Color",cFgColor);
     pcReturnMessage->AddBool("ShowVer", bShowVer);
     pcReturnMessage->AddInt32("SizeImage",nSizeImage);
-
+    pcReturnMessage->AddBool("Transparent",bTrans);
     return(pcReturnMessage);
 }
 
@@ -120,6 +121,7 @@ void DeskSettings::ResetSettings()
         pcPrefs->FindBool   ( "ShowVer",    &bShowVer   );
         pcPrefs->FindInt32  ( "SizeImage",  &nSizeImage);
         pcPrefs->FindBool   ( "Alphabet",   &bAlpha);
+        pcPrefs->FindBool  ("Transparent",&bTrans);
 
     }
     else
@@ -169,6 +171,7 @@ int32 DeskSettings::GetImageSize()
 
 bool DeskSettings::GetTrans()
 {
+	cout << bTrans << endl;
     return (bTrans);
 }
 
@@ -181,6 +184,8 @@ bool DeskSettings::GetVersion()
 {
     return (bShowVer);
 }
+
+
 
 
 
