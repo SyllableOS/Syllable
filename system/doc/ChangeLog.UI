@@ -1,8 +1,13 @@
+* August 07, Henrik Isaksson *
+
+ - Decorators
+	o Applied patch by Michael Saunders to the Beish decorator.
+
 * August 02, Henrik Isaksson *
 
  - Decorators
 	o Applied patch by Michael Saunders, "Added minimize; fixed resize; better buttons and
-	  icon; fixed glitches"
+	  icon; fixed glitches" (Win98 decorator)
 
 * July 30, Henrik Isaksson *
 
@@ -761,5 +766,4 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
-
 
