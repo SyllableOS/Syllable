@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.22
+# Version 0.5.23
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -257,10 +257,11 @@ def testPackage target
 end
 
 def installPackage target
-	root = installPath target
-
 	unless
 		if target[-4..-1] == '.tgz' and exists? target  # A distribution package
+			# Packages are currently supposed to contain an unversioned directory
+			root = File.join(File.dirname(installPath(target)), shortName(target))
+
 			if exists? root and not
 				begin
 					@log.header 'Uninstalling ' + shortName(target)
@@ -283,6 +284,8 @@ def installPackage target
 				if exists? dir = buildDir(target) then Dir.chdir dir end
 				action 'make install'
 			else
+				root = installPath target
+
 				if exists? root and not
 					begin
 						@log.header 'Uninstalling ' + shortName(target)
@@ -1057,7 +1060,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.22',
+	puts 'Syllable Build System 0.5.23',
 		'Copyright (c) 2002-2004 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
