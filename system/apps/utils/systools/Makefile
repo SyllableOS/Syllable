@@ -46,9 +46,9 @@ $(OBJDIR)/init: $(init_OBJS)
 $(OBJDIR)/ps: $(ps_OBJS)
 	$(CC) $(ps_OBJS) -o $@
 $(OBJDIR)/ls_ports: $(ls_ports_OBJS)
-	$(CC) $(ls_ports_OBJS) -o $@
+	g++ $(ls_ports_OBJS) -lsyllable -o $@
 $(OBJDIR)/ls_sema: $(ls_sema_OBJS)
-	g++ $(ls_sema_OBJS) -latheos -o $@
+	g++ $(ls_sema_OBJS) -lsyllable -o $@
 $(OBJDIR)/top: $(top_OBJS)
 	$(CC) $(top_OBJS) -o $@
 $(OBJDIR)/reboot: $(reboot_OBJS)
@@ -74,4 +74,6 @@ dist:
 
 clean:
 	-rm -Rv $(OBJDIR)
+
+
 
