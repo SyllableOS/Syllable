@@ -1,6 +1,6 @@
-
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -26,8 +26,8 @@ using namespace os;
 
 class Control::Private
 {
-      public:
-	std::string m_cLabel;
+    public:
+	String m_cLabel;
 	Variant m_cValue;
 	bool m_bIsEnabled;
 };
@@ -39,11 +39,12 @@ class Control::Private
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-Control::Control( const Rect & cFrame, const std::string & cName, const std::string & cLabel, Message * pcMsg, uint32 nResizeMask, uint32 nFlags ):View( cFrame, cName, nResizeMask, nFlags ), Invoker( pcMsg, NULL )
+Control::Control( const Rect & cFrame, const String & cName, const String & cLabel, Message * pcMsg, uint32 nResizeMask, uint32 nFlags ):View( cFrame, cName, nResizeMask, nFlags ), Invoker( pcMsg, NULL )
 {
 	m = new Private;
 	m->m_bIsEnabled = true;
 	m->m_cLabel = cLabel;
+	SetShortcutFromLabel( cLabel );
 }
 
 //----------------------------------------------------------------------------
@@ -73,6 +74,11 @@ void Control::AttachedToWindow( void )
 	{
 		SetTarget( static_cast < Handler * >( GetWindow() ) );
 	}
+}
+
+void Control::DetachedFromWindow()
+{
+	View::DetachedFromWindow();
 }
 
 //----------------------------------------------------------------------------
@@ -123,10 +129,12 @@ bool Control::IsEnabled( void ) const
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-void Control::SetLabel( const std::string & cLabel )
+void Control::SetLabel( const String & cLabel )
 {
 	if( cLabel != m->m_cLabel )
 	{
+		SetShortcutFromLabel( cLabel );
+
 		m->m_cLabel = cLabel;
 		LabelChanged( m->m_cLabel );
 	}
@@ -139,7 +147,7 @@ void Control::SetLabel( const std::string & cLabel )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-std::string Control::GetLabel( void ) const
+String Control::GetLabel( void ) const
 {
 	return ( m->m_cLabel );
 }
@@ -179,10 +187,6 @@ Variant Control::GetValue( void ) const
 	return ( m->m_cValue );
 }
 
-void Control::ValueChanged( Variant * pcNewValue )
-{
-}
-
 bool Control::PreValueChange( Variant * pcNewValue )
 {
 	return ( true );
@@ -192,7 +196,7 @@ void Control::PostValueChange( const Variant & cNewValue )
 {
 }
 
-void Control::LabelChanged( const std::string & cNewLabel )
+void Control::LabelChanged( const String & cNewLabel )
 {
 }
 
@@ -211,3 +215,8 @@ void Control::__CTRL_reserved4__()
 void Control::__CTRL_reserved5__()
 {
 }
+
+
+
+
+
