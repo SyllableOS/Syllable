@@ -1,3 +1,11 @@
+* Nov 18 2003, Kristian Van Der Vliet *
+
+Sound drivers now export their device nodes to different locations to allow
+multiple devices to work at the same time.  DSP devices are created as
+/dev/sound/<name>/dsp/<dsp #> and mixer devices are
+/dev/sound/<name>/mixer/<mixer #>  Old applications which expect /dev/sound/dsp
+& /dev/sound/mixer to be present will no longer work.
+
 * Nov 16 2003, Kaj de Vos *
 
 Fixed a number of build problems due to recent changes to Syllable:
