@@ -1,3 +1,11 @@
+* December 2nd 2004, Henrik Isaksson *
+
+	- Albert
+		o Fixed the crash in the about window. The cause was that the font was set
+		  to an invalid value if the font couldn't be opened. Ideally the appserver
+		  should be fixed so that it doesn't crash when this happens, but I was unable
+		  to trace the crash in the appserver. I'll put it on the fix-later list... :o)
+
 * November 21th 2004, Henrik Isaksson *
 
 	- ATerm
@@ -380,4 +388,5 @@ Network Preferences
 		* Added NetworkPreferences from Daryl Dudey(daryl.dudey@ntlworld.com).
 		* Added SlbMgr(AtheMgr renamed).
 		* Patches by Vanders for AEdit.
+
 

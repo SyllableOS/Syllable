@@ -1,3 +1,7 @@
+* December 2nd 2004, Henrik Isaksson *
+
+	- New decorator: WarpSpeed
+
 * November 21 2004, Henrik Isaksson *
 
  Added ShortcutKey::GetKeyCode() and ShortcutKey::GetQualifiers().
@@ -828,5 +832,6 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
 
