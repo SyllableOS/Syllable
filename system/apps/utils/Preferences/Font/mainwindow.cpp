@@ -35,9 +35,10 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   // Normal
   pcHLNormal = new os::HLayoutNode("HLNormal");
   pcHLNormal->AddChild( new os::HLayoutSpacer("") );
-  pcHLNormal->AddChild( new os::StringView(cRect, "SVNormal", "Normal") );
+  pcHLNormal->AddChild( new os::StringView(cRect, "SVNormal", "N_ormal") );
   pcHLNormal->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLNormal->AddChild( pcDDMNormal = new os::DropdownMenu(cRect, "DDMNormal") );
+  pcDDMNormal->SetShortcut( os::ShortcutKey( "O" ) );
   pcDDMNormal->SetMinPreferredSize(18);
   pcDDMNormal->SetTarget(this);
   pcDDMNormal->SetEditMessage( new os::Message(M_MW_DCNOR) );
@@ -50,9 +51,10 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   // Bold
   pcHLBold = new os::HLayoutNode("HLBold");
   pcHLBold->AddChild( new os::HLayoutSpacer("") );
-  pcHLBold->AddChild( new os::StringView(cRect, "SVBold", "Bold") );
+  pcHLBold->AddChild( new os::StringView(cRect, "SVBold", "_Bold") );
   pcHLBold->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLBold->AddChild( pcDDMBold = new os::DropdownMenu(cRect, "DDMBold") );
+  pcDDMBold->SetShortcut( os::ShortcutKey( "B" ) );
   pcDDMBold->SetMinPreferredSize(18);
   pcDDMBold->SetTarget(this);
   pcDDMBold->SetSelectionMessage( new os::Message(M_MW_DCBLD) );
@@ -65,9 +67,10 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   // Fixed
   pcHLFixed = new os::HLayoutNode("HLFixed");
   pcHLFixed->AddChild( new os::HLayoutSpacer("") );
-  pcHLFixed->AddChild( new os::StringView(cRect, "SVFixed", "Fixed") );
+  pcHLFixed->AddChild( new os::StringView(cRect, "SVFixed", "_Fixed") );
   pcHLFixed->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLFixed->AddChild( pcDDMFixed = new os::DropdownMenu(cRect, "DDMFixed") );
+  pcDDMFixed->SetShortcut( os::ShortcutKey( "F" ) );
   pcDDMFixed->SetMinPreferredSize(18);
   pcDDMFixed->SetTarget(this);
   pcDDMFixed->SetSelectionMessage( new os::Message(M_MW_DCFXD) );
@@ -80,9 +83,10 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   // Window
   pcHLWindow = new os::HLayoutNode("HLWindow");
   pcHLWindow->AddChild( new os::HLayoutSpacer("") );
-  pcHLWindow->AddChild( new os::StringView(cRect, "SVWindow", "Window") );
+  pcHLWindow->AddChild( new os::StringView(cRect, "SVWindow", "_Window") );
   pcHLWindow->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLWindow->AddChild( pcDDMWindow = new os::DropdownMenu(cRect, "DDMWindow") );
+  pcDDMWindow->SetShortcut( os::ShortcutKey( "W" ) );
   pcDDMWindow->SetMinPreferredSize(18);
   pcDDMWindow->SetTarget(this);
   pcDDMWindow->SetSelectionMessage( new os::Message(M_MW_DCWND) );
@@ -95,9 +99,10 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   // Toolwindow
   pcHLTWindow = new os::HLayoutNode("HLTWindow");
   pcHLTWindow->AddChild( new os::HLayoutSpacer("") );
-  pcHLTWindow->AddChild( new os::StringView(cRect, "SVTWindow", "Tool Window") );
+  pcHLTWindow->AddChild( new os::StringView(cRect, "SVTWindow", "_Tool Window") );
   pcHLTWindow->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLTWindow->AddChild( pcDDMTWindow = new os::DropdownMenu(cRect, "DDMTWindow") );
+  pcDDMTWindow->SetShortcut( os::ShortcutKey( "T" ) );
   pcDDMTWindow->SetMinPreferredSize(18);
   pcDDMTWindow->SetTarget(this);
   pcDDMTWindow->SetSelectionMessage( new os::Message(M_MW_DCTWD) );
@@ -109,9 +114,9 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   
   // Anti-aliasing option (global for now, should probably be a per-font setting or based on font size)
   os::LayoutNode *pcHLTAntiAliasing = new os::HLayoutNode("HLTAntiAliasing");
-  pcHLTAntiAliasing->AddChild( new os::HLayoutSpacer("") );
-  pcHLTAntiAliasing->AddChild( ( pcCBAntiAliasing = new os::CheckBox( cRect, "CBAntiAliasing", "Anti-Aliasing (Smooth font edges)", new os::Message( M_MW_ANTIALIASING ) ) ) );
-  pcHLTAntiAliasing->AddChild( new os::HLayoutSpacer("") );
+  pcHLTAntiAliasing->AddChild( new os::HLayoutSpacer("", 100.0f) );
+  pcHLTAntiAliasing->AddChild( ( pcCBAntiAliasing = new os::CheckBox( cRect, "CBAntiAliasing", "A_nti-Aliasing (Smooth font edges)", new os::Message( M_MW_ANTIALIASING ) ) ), true );
+  pcHLTAntiAliasing->AddChild( new os::HLayoutSpacer("", 100.0f) );
 
   // Add types to types layout node
   pcVLTypes = new os::VLayoutNode("VLTypes");
@@ -159,11 +164,11 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
     pcHLButtons = new os::HLayoutNode("HLButtons");
     pcVLRoot->AddChild( new os::VLayoutSpacer("", 10.f, 10.0f));
     pcHLButtons->AddChild( new os::HLayoutSpacer(""));
-    pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", "Apply", new os::Message(M_MW_APPLY) ));
+    pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", "_Apply", new os::Message(M_MW_APPLY) ));
     pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
-    pcHLButtons->AddChild( pcBRevert = new os::Button(cRect, "BRevert", "Revert", new os::Message(M_MW_REVERT) ));
+    pcHLButtons->AddChild( pcBRevert = new os::Button(cRect, "BRevert", "_Revert", new os::Message(M_MW_REVERT) ));
     pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
-    pcHLButtons->AddChild( pcBDefault = new os::Button(cRect, "BDefault", "Default", new os::Message(M_MW_DEFAULT) ));
+    pcHLButtons->AddChild( pcBDefault = new os::Button(cRect, "BDefault", "_Default", new os::Message(M_MW_DEFAULT) ));
     pcHLButtons->SameWidth( "BApply", "BRevert", "BDefault", NULL );
     pcVLRoot->AddChild( pcHLButtons );
   }
@@ -191,6 +196,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
     pcSPWindow->SetTabOrder(iTabOrder++);
     pcDDMTWindow->SetTabOrder(iTabOrder++);
     pcSPTWindow->SetTabOrder(iTabOrder++);
+	pcCBAntiAliasing->SetTabOrder(iTabOrder++);
     pcBApply->SetTabOrder(iTabOrder++);
     pcBRevert->SetTabOrder(iTabOrder++);
     pcBDefault->SetTabOrder(iTabOrder++);
@@ -220,7 +226,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
 void MainWindow::GetCurrentValues()
 {
   // Get defaults
-  std::vector<std::string> cConfigList;
+  std::vector<os::String> cConfigList;
   os::Font::GetConfigNames( &cConfigList );
   for (uint i=0;i< cConfigList.size(); i++) {
 
@@ -549,4 +555,3 @@ bool MainWindow::OkToQuit()
   os::Application::GetInstance()->PostMessage(os::M_QUIT);
   return true;
 }
-
