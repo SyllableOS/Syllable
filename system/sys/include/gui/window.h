@@ -129,6 +129,8 @@ public:
     void		MoveTo( const Point& cPos );
     void		MoveTo( float x, float y );
 
+    void		CenterInWindow( Window* pcWin );
+
     void		ResizeBy( const Point& cDelta );
     void		ResizeBy( float vDeltaW, float vDeltaH );
     void		ResizeTo( const Point& cSize );

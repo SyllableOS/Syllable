@@ -585,6 +585,23 @@ void Window::MoveTo( float x, float y )
     m->m_pcTopView->MoveTo( x, y );
 }
 
+/** Move the window to the centre of another window
+ * \par Description:
+ *	Move the window so the centre of the window is in the centre of the
+ *	the given window.
+ * \param pcWin - The Window to center in.
+ * \sa MoveTo(), MoveBy(), ResizeBy(), ResizeTo(), SetFrame()
+ * \author	Rick Caudill
+ *****************************************************************************/
+void Window::CenterInWindow( Window* pcWin )
+{
+    Rect cBounds = GetBounds();
+    Rect cR = pcWin->GetFrame();
+
+    MoveTo( cR.left + ( cR.Width() - cBounds.Width() ) / 2,
+    	    cR.top  + ( cR.Height() - cBounds.Height() ) / 2 );
+}
+
 /** Resize the window relative to it's current size
  * \param cDelta - The distance to move the lower-right corner of the window.
  * \sa ResizeTo(), MoveBy(), MoveTo(), SetFrame()
