@@ -6,7 +6,7 @@ LIBBIN = /system/libs
 
 LIBNAME = libsyllable.so.4
 
-VPATH = ./ gui storage util translation
+VPATH = ./ gui storage util translation gui/colorselector
 
 CC	= gcc
 LL	= ld
@@ -19,6 +19,8 @@ OBJS	= rect.o region.o desktop.o bitmap.o view.o tabview.o			\
 	  radiobutton.o filerequester.o dropdownmenu.o checkmenu.o splitter.o \
 	  image.o imageview.o imagebutton.o videooverlay.o treeview.o \
       popupmenu.o
+
+OBJS += colorselector.o colorview.o colorwheel.o gradientview.o
 
 OBJS += appserverconfig.o looper.o handler.o application.o message.o messenger.o messagequeue.o	\
 	invoker.o clipboard.o string.o regexp.o variant.o circularbuffer.o	\
@@ -66,4 +68,5 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d
 
 -include $(OBJDIR)/*.d
+
 
