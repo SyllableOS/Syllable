@@ -1,6 +1,10 @@
+* Feb 8 2003, Henrik Isaksson *
+
+Added Rick's ImageButton, fixed bugs in image.cpp and tabview.h.
+
 * Jan 4 2003, Henrik Isaksson *
 
-Appliead Vanders' patch to textview.cpp & textview.h. (Adds public methods
+Applied Vanders' patch to textview.cpp & textview.h. (Adds public methods
 Undo() and Redo()).
 
 * Dec 28 2002, Henrik Isaksson *
