@@ -1,0 +1,27 @@
+/*!
+
+\defgroup gui The Syllable Graphical User Interface API
+
+Here you will find documentation of the various C++ classes involved
+in the Syllable GUI API.
+
+Unlike your favourite UNIX/X11 OS, Syllable has an "integrated" high level
+GUI with a flexible highlevel object oriented API. The GUI is
+implemented as a server/client system, much like X11, but the protocol
+is private to the server (the application server) and the client (The
+highlevel GUI API library) and is never revealed to the applications.
+Applcations only relates to the classes in the GUI toolkit.
+
+NOTE: This documentation is not complete. Our goal is to document
+new classes as they are written, and to add documentation to existing
+classes where it is missing. Many of our classes were inherited from
+Kurt Skauen's AtheOS project, and some of these lack proper
+documentation.
+Until full documentation exists, it is a good idea to take a look at
+the various header files to see what is available and the various
+"example" sources (the application sources available for download) to
+learn how to use it.
+
+*/
+
+
