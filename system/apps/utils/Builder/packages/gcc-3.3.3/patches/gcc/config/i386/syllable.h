@@ -202,14 +202,17 @@ Boston, MA 02111-1307, USA.  */
    -Wl,-V.
 
    When the -shared link option is used a final link is not being
-   done.  */
+   done.
 
-/* If ELF is the default format, we should not use /lib/elf. */
+   On Syllable -shared is always passed due to %{!r:-shared}  This will go
+   away in future versions but is currently needed for backwards compatability.
+*/
 
 #undef	LINK_SPEC
-#define LINK_SPEC "-m elf_i386_syllable %{!r:-shared} %{!plugin:-Bsymbolic --no-undefined} %{kernel:-shared} -L/system/libs/ \
-                  %{shared:-shared} %{!shared: %{!ibcs: %{static:-static}}}"
-
+#define LINK_SPEC "%{!static:--eh-frame-hdr}	-m	elf_i386_syllable	%{shared:-shared}\
+	-L/system/libs/		%{!shared:     %{!ibcs:	%{!static: 	%{rdynamic:-export-dynamic}}\
+	%{static:-static}}}	%{!r:-shared}	%{!plugin:-Bsymbolic --no-undefined}\
+	%{kernel:-shared}"
 
 /* A C statement (sans semicolon) to output to the stdio stream
    FILE the assembler definition of uninitialized global DECL named
