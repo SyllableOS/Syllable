@@ -99,7 +99,7 @@ SysInfoPanel::SysInfoPanel( const Rect & cFrame ):LayoutView( cFrame, "", NULL, 
 
 	m_pcUptimeView = new TextView( Rect( 0, 0, 0, 0 ), "uptime_view", "Test string", CF_FOLLOW_LEFT | CF_FOLLOW_TOP, WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
 
-	m_pcUptime = new StringView( Rect( 0, 0, 0, 0 ), "tm", "Uptime: DDD:HH:MM:SS", ALIGN_LEFT, WID_WILL_DRAW );
+	m_pcUptime = new StringView( Rect( 0, 0, 0, 0 ), "tm", "Uptime: DDD:HH:MM:SS", ALIGN_CENTER, WID_WILL_DRAW );
 
 	/* Configuring m_pcTestView */
 	m_pcUptimeView->SetMultiLine( false );
@@ -115,7 +115,7 @@ SysInfoPanel::SysInfoPanel( const Rect & cFrame ):LayoutView( cFrame, "", NULL, 
 	pcRoot->AddChild( m_pcHDView, 1.0f );
 	pcRoot->AddChild( m_pcAdditionView, 3.0f );
 
-	pcRoot->AddChild( m_pcUptime );
+	pcRoot->AddChild( m_pcUptime, 0.0f );
 
 	//pcRoot->AddChild( m_pcUptimeView );
 
@@ -610,3 +610,5 @@ void SysInfoPanel::HandleMessage( Message * pcMessage )
 		break;
 	}
 }
+
+

@@ -190,3 +190,4 @@ void MemMeter::MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData
     }
     //m_pcPopupMenu->Open( ConvertToScreen( cPosition ) );
 }
+

@@ -63,7 +63,7 @@ DevicesPanel::DevicesPanel( const Rect & cFrame ):LayoutView( cFrame, "", NULL, 
 
 
 	
-	m_pcDevicesList->InsertColumn( "Device", GetBounds().Width() );
+	m_pcDevicesList->InsertColumn( "Device", (int)GetBounds().Width() );
 	
 
 	pcRoot->AddChild( m_pcDevicesList, 1.0f );
@@ -183,4 +183,5 @@ void DevicesPanel::HandleMessage( Message * pcMessage )
 		break;
 	}
 }
+
 

@@ -17,6 +17,8 @@
 #ifndef __VALIDATOR_H_
 #define __VALIDATOR_H_
 
+#include <cstring>
+
 int ValidateIP(const char *);
 
 #endif /* __VALIDATOR_H_ */

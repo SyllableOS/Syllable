@@ -24,7 +24,7 @@
 #include <gui/stringview.h>
 #include <gui/dropdownmenu.h>
 #include <gui/slider.h>
-#include <vector.h>
+#include <vector>
 
 // This is the number of depths, I am only using RGB ones
 const int MAX_DEPTH_COUNT = 7;

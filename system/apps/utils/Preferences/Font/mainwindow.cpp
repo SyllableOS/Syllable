@@ -220,7 +220,7 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   // Show data
   GetCurrentValues();
   ShowData();
-
+  ResizeTo(pcVLRoot->GetPreferredSize(false));  //simple way of making sure the window is no bigger than it needs to dbe
 }
 
 void MainWindow::GetCurrentValues()
@@ -411,7 +411,7 @@ void MainWindow::Default()
   ShowData();
 }
 
-void MainWindow::UpdateExample(const char *pzFont = "", float fNewSize = 0.0) 
+void MainWindow::UpdateExample(const char *pzFont, float fNewSize) 
 {
   static std::string cFontName = "";
   static float fSize = 0;

@@ -15,7 +15,7 @@
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include <dirent.h>
-#include <fstream.h>
+#include <fstream>
 #include <util/application.h>
 #include <util/message.h>
 #include <gui/desktop.h>
@@ -25,6 +25,9 @@
 #include "main.h"
 #include "mainwindow.h"
 #include "messages.h"
+
+using std::ifstream;
+using std::ofstream;
 
 MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow", "Appearance", os::WND_NOT_RESIZABLE)
 {
@@ -377,8 +380,8 @@ void MainWindow::Load()
   strcat(pzFilename, pcDDMTheme->GetCurrentString().c_str());
 
   // Open up for reading
-  fstream fsIn;
-  fsIn.open(pzFilename, _IO_INPUT);
+  ifstream fsIn;
+  fsIn.open(pzFilename);
 
   // Read in magic number first
   if (!fsIn.is_open()) {
@@ -411,8 +414,8 @@ void MainWindow::Save()
   std::string zName = pcDDMTheme->GetCurrentString(); 
 
   // Open up file for writing
-  fstream fsOut;
-  fsOut.open(pzFilename, _IO_OUTPUT);
+  ofstream fsOut;
+  fsOut.open(pzFilename);
   
   // Write out magic number
   fsOut << "SACS" << newl;

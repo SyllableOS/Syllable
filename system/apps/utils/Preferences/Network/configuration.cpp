@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <fstream.h>
+#include <fstream>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <atheos/types.h>
@@ -31,6 +31,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "configuration.h"
+
+using namespace std;
 
 // Constants for stream output
 const char newl = '\n';
@@ -79,9 +81,9 @@ Configuration::~Configuration()
 void Configuration::Load()
 {
   // Attempt to open file
-  fstream fsIn;
+  ifstream fsIn;
   //os::File
-  fsIn.open("/system/config/net.cfg", _IO_INPUT );
+  fsIn.open("/system/config/net.cfg");
 
   if (!fsIn.is_open()) {
 
@@ -166,8 +168,8 @@ void Configuration::Load()
 void Configuration::Save() 
 {
   // Open file for write
-  fstream fsOut;
-  fsOut.open("/system/config/net.cfg", _IO_OUTPUT );
+  ofstream fsOut;
+  fsOut.open("/system/config/net.cfg");
 
   // Host/Domain name first
   fsOut << pzHost << newl << pzDomain << newl;
@@ -227,14 +229,14 @@ void Configuration::Activate()
   int i;
 
   // Okay, first lets create the /etc/hostname file and assign permissions
-  fstream fsOut;
-  fsOut.open("/etc/hostname", _IO_OUTPUT );
+  ofstream fsOut;
+  fsOut.open("/etc/hostname");
   fsOut << pzHost << "." << pzDomain << newl;
   fsOut.close();
   chmod("/etc/hostname", S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 
   // Now, the /etc/hosts file and assign permissions
-  fsOut.open("/etc/hosts", _IO_OUTPUT);
+  fsOut.open("/etc/hosts");
   fsOut << "127.0.0.1 localhost localhost.localdomain" << newl;
   
   for (i=0;i<C_CO_MAXADAPTORS;i++) {
@@ -246,7 +248,7 @@ void Configuration::Activate()
   chmod("/etc/hosts", S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 
   // And, resolv.conf, again right permissions
-  fsOut.open("/etc/resolv.conf", _IO_OUTPUT);
+  fsOut.open("/etc/resolv.conf");
   fsOut << "search " << pzDomain << newl;
   if (strlen(pzName1)>0)
     fsOut << "nameserver " << pzName1 << newl;
@@ -256,7 +258,7 @@ void Configuration::Activate()
   chmod("/etc/resolv.conf", S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
   
   // Next job, create the init_net.sh file containing initialise information
-  fsOut.open("/system/net_init.sh", _IO_OUTPUT);
+  fsOut.open("/system/net_init.sh");
   fsOut << "#!/bin/sh" << newl;
   for (i=0;i<C_CO_MAXADAPTORS;i++) {
     if (pcAdaptors[i].bEnabled) {

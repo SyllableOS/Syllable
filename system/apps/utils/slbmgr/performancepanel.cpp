@@ -125,6 +125,7 @@ PerformancePanel::PerformancePanel( const Rect& cFrame ) : LayoutView( cFrame, "
 
     VLayoutNode* pcMemStr = new VLayoutNode( "memStr", 2.0f, pcMem );
 
+	
     pcMemStr->SetHAlignment( ALIGN_CENTER );
     pcMemStr->AddChild( m_pcMemTitle, 1.0f );    
 
@@ -186,6 +187,7 @@ PerformancePanel::PerformancePanel( const Rect& cFrame ) : LayoutView( cFrame, "
       pcCpuStr->SetBorders( Rect(10.0f,10.0f,10.0f,10.0f), "cpu_str_0", "cpu_str_1", "cpu_title", NULL );							    
     }
     
+    pcRoot->SameWidth( "cpuStr", "memStr", NULL );
     pcMemStr->SetBorders(  Rect(5.0f,5.0f,5.0f,5.0f), "mem_title", NULL );
     pcMemStr1->SetBorders( Rect(5.0f,5.0f,5.0f,5.0f), "mem_usage_str1", "mem_title_str1", NULL );
     pcMemStr2->SetBorders( Rect(5.0f,5.0f,5.0f,5.0f), "mem_usage_str2", "mem_title_str2", NULL );
@@ -358,5 +360,6 @@ void PerformancePanel::HandleMessage( Message* pcMessage )
 	    break;
     }
 }
+
 
 

@@ -51,7 +51,7 @@ private:
   os::TextView *pcTVTest;
 
   int iDelay, iRepeat, iDelay2, iRepeat2;
-  std::string cKeymap;
+  os::String cKeymap;
   int iOrigRow, iOrigRow2;
   int iAmericanRow;
 };

@@ -118,11 +118,11 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcHLButtons = new os::HLayoutNode("HLButtons");
   if (bRoot) {
     pcHLButtons->AddChild( new os::HLayoutSpacer(""));
-    pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", "Apply", new os::Message(M_MW_APPLY)) );
+    pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", "_Apply", new os::Message(M_MW_APPLY)) );
     pcHLButtons->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f) );
-    pcHLButtons->AddChild( pcBUndo = new os::Button(cRect, "BUndo", "Undo", new os::Message(M_MW_UNDO)) );
+    pcHLButtons->AddChild( pcBUndo = new os::Button(cRect, "BUndo", "_Undo", new os::Message(M_MW_UNDO)) );
     pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
-    pcHLButtons->AddChild( pcBDefault = new os::Button(cRect, "BDefault", "Default", new os::Message(M_MW_DEFAULT)) );
+    pcHLButtons->AddChild( pcBDefault = new os::Button(cRect, "BDefault", "_Default", new os::Message(M_MW_DEFAULT)) );
     pcHLButtons->SameWidth( "BApply", "BUndo", "BDefault", NULL );
   }
   pcVLRoot->AddChild(pcHLButtons);
