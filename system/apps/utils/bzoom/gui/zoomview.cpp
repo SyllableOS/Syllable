@@ -219,7 +219,7 @@ void ZoomView::fetchPixels()
 		uint8 *destbfr = m_Bitmap->LockRaster();
 
 		MagnifyBitmap(pBuffer, nMouseX, nMouseY, w, h, zoom,
-			m_ScrMode.m_nWidth*nDepth,
+			m_ScrMode.m_nBytesPerLine,
 			destbfr, m_Bitmap->GetBytesPerRow(), nDepth);
 		m_Bitmap->UnlockRaster();
 	}
@@ -258,7 +258,7 @@ void ZoomView::resizeZoom()
 		delete m_Bitmap;
 	}
 
-	m_Bitmap = new Bitmap(bounds.Width()+1, bounds.Height()+1, m_ColSpace, Bitmap::SHARE_FRAMEBUFFER);
+	m_Bitmap = new Bitmap((int)(bounds.Width())+1, (int)(bounds.Height())+1, m_ColSpace, Bitmap::SHARE_FRAMEBUFFER);
 	// Note: The +1's are necessary, since the Bitmap constructor creates
 	// a bitmap that is 1 pixel smaller in both directions, for some reason.
 	// (Bitmap->GetBounds().Width() returns 1 less than the width you ask
