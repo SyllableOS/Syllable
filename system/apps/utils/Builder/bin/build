@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.3.21
+# Version 0.3.22
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -16,9 +16,10 @@ ENV['CXXFLAGS']	= "-march=i586 -O2 -pipe"
 @workDir		= Dir.getwd
 
 @builderPath	= "/Applications/Builder"
+@packagesPath	= File.join @builderPath, "packages"
 @profilesPath	= File.join @builderPath, "profiles"
 @sourcesPath	= File.join @builderPath, "sources"
-@packagesPath	= File.join @builderPath, "packages"
+@distrosPath	= File.join @builderPath, "distros"
 @logsPath		= File.join @builderPath, "logs"
 
 # Define settings
@@ -84,6 +85,11 @@ def unpackPackage target
 end
 
 def patchPackage target
+	if exists? file = File.join(recipePath(target), fullName(target) + ".patch")
+		logHeader "Applying delta"
+		return false unless action "patch -p1 < " + file
+	end
+
 	if exists? dir = patchesPath(target)
 		logHeader "Applying patches"
 		return false unless action "cp -a #{File.join dir, "*"} ."
@@ -236,7 +242,7 @@ end
 
 def installPackage target
 	unless
-		if target =~ /.*\.tgz$/ and exists? target  # A distribution package
+		if target[-4..-1] = ".tgz" and exists? target  # A distribution package
 			if exists? dir = installPath(target) and not
 				begin
 					logHeader "Uninstalling " + shortName(target)
@@ -252,65 +258,63 @@ def installPackage target
 				end
 			end
 		else
-#			begin
-				Dir.chdir target
-	
-				unless thirdParty?
-					action "make install"
+			Dir.chdir target
+
+			unless thirdParty?
+				action "make install"
+			else
+				if exists? root = installPath(target) and not
+					begin
+						logHeader "Uninstalling " + shortName(target)
+						uninstallPackage target  # Double failure logging!
+					end
+				then
+					false
 				else
-					if exists? root = installPath(target) and not
+					if dirs = (recipe = recipe target)["install-tree"]
+						logHeader "Creating subdirectories"
+						logDetail root
+						Dir.mkdir root
+
+						for dir in toList dirs
+							logDetail d = File.join(root, dir)
+							Dir.mkdir d
+						end
+					end
+
+					if not action (cmdLine = (recipe = recipe target)["install"]) ? toString(cmdLine) :
+						"make" +
+						(	(arg = recipe["install-prefix"]) ? " " + arg + root :
+							@systemBuild ? " prefix=" + root :
+							""
+						) +
+						" install"
+#						" install-strip"
+					then
+						false
+					elsif files = recipe["documentation"] and not
 						begin
-							logHeader "Uninstalling " + shortName(target)
-							uninstallPackage target  # Double failure logging!
+							logHeader "Installing documentation"
+							action "cp -a #{toString files} " + root
+						end
+					then
+						false
+					elsif exists? filesPath = File.join(@packagesPath, fullName(target), "distro") and not
+						begin
+							logHeader "Installing extra files"
+							action "cp -a #{File.join filesPath, "*"} " + root
 						end
 					then
 						false
 					else
-						if dirs = (recipe = recipe target)["install-tree"]
-							logHeader "Creating subdirectories"
-							logDetail root
-							Dir.mkdir root
-
-							for dir in toList dirs
-								logDetail d = File.join(root, dir)
-								Dir.mkdir d
-							end
-						end
-
-						if not action (cmdLine = (recipe = recipe target)["install"]) ? toString(cmdLine) :
-							"make" +
-							(	(arg = recipe["install-prefix"]) ? " " + arg + root :
-								@systemBuild ? " prefix=" + root :
-								""
-							) +
-							" install"
-#							" install-strip"
-						then
-							false
-						elsif files = recipe["documentation"] and not
-							begin
-								logHeader "Installing documentation"
-								action "cp -a #{toString files} " + root
-							end
-						then
-							false
-						elsif exists? filesPath = File.join(@packagesPath, fullName(target), "distro") and not
-							begin
-								logHeader "Installing extra files"
-								action "cp -a #{File.join filesPath, "*"} " + root
-							end
-						then
-							false
-						else
-							@systemBuild or
-							begin
-								logHeader "Registering " + target
-								action "pkgmanager -a " + root
-							end
+						@systemBuild or
+						begin
+							logHeader "Registering " + target
+							action "pkgmanager -a " + root
 						end
 					end
 				end
-#			end
+			end
 		end
 	then
 		logFailure target
@@ -616,6 +620,13 @@ def deleteCVSData
 
 		Dir.delete dir
 	end
+
+	logHeader "Cleaning out .cvsignore files"
+
+	Dir["**/.cvsignore"].each do |file|
+		logDetail file
+		File.delete file
+	end
 end
 
 def exists? file
@@ -722,8 +733,12 @@ def installPath package
 	File.join @installRoot, installName(package)
 end
 
+def recipePath package
+	File.join @packagesPath, fullName(package)
+end
+
 def patchesPath package
-	File.join @packagesPath, fullName(package), "patches"
+	File.join recipePath(package), "patches"
 end
 
 def profile target  # Return the list of packages for the build target
@@ -738,7 +753,7 @@ end
 
 def recipe package  # Load the key/value pairs of a recipe into a hash table
 	package = fullName package
-	if exists? recipe = File.join(@packagesPath, package, package + ".recipe")
+	if exists? recipe = File.join(recipePath(package), package + ".recipe")
 		parseValues load(recipe)
 	else
 		{}
@@ -833,7 +848,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.3.21",
+	puts "Syllable Build System 0.3.22",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
@@ -842,6 +857,7 @@ when "?", "-?", "-h", "-help", "--help"
 		"  -h, --help,   Show this help information",
 		"    -help, ?, -?",
 		"  -v, --version Show version information",
+		"  scrub         Delete CVS control files recursively from the current directory",
 		"  prepare       Initialize system distribution tree",
 		"  get           Fetch and patch sources",
 		"  patch         Patch sources",
@@ -868,7 +884,9 @@ when "log"  then print IO.readlines(File.join(@logsPath, arg2 ? "last-" + arg2 :
 else
 	openLogs
 
-	if arg1 == "prepare"
+	if arg1 == "scrub"
+		deleteCVSData
+	elsif arg1 == "prepare"
 		prepare
 	else
 		profile = profile target = arg2 ? arg2 : arg1 ? arg1 : "default"
