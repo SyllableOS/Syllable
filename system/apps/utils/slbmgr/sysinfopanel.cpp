@@ -72,46 +72,6 @@ void human( char* pzBuffer, off_t nValue )
     }
 }
 
-/*
-   Note:  I can't get this function to work 'cause I don't know what values
- *        APIC_TDCR, APIC_TDCR_MAKE, APIC_TDR_DIV_1, APIC_TMICT, APIC_TMCCT
- *        should be.  Also, I don't know how access to the read_pentium_clock()
- *        stuff.  If I can get Kurt to implement CPUInfo for single CPU machines
- *        or get this data from Kurt, I'll finish this funciton:  John Hall (5/9/01)
- 
- void get_CPUInfo( myCPUInfo* CPU ){
-   
-    uint32 nAPICCount;
-    uint64 nStartPerf;
-    uint64 nEndPerf;
-  
-    uint32 nReg;
-  
-    nReg  = apic_read( APIC_TDCR ) & ~APIC_TDCR_MASK;
-    nReg |= APIC_TDR_DIV_1;
-    apic_write( APIC_TDCR, nReg );
-
-    isa_writeb( 0x43, 0x34 );
-    isa_writeb( 0x40, 0xff );
-    isa_writeb( 0x40, 0xff );
-  
-
-    wait_pit_wrap();
-    apic_write( APIC_TMICT, ~0 ); // Start APIC timer
-    nStartPerf = read_pentium_clock();
-    wait_pit_wrap();
-    nAPICCount = apic_read( APIC_TMCCT );
-    nEndPerf = read_pentium_clock();
-
-    CPU->nBusSpeed = 
-       ((uint32)((uint64)PIT_TICKS_PER_SEC * (0xffffffffLL - nAPICCount) / 0xffff) +
-        500000) / 1000000;
-    CPU->nCoreSpeed = 
-       ((uint32)((uint64)PIT_TICKS_PER_SEC * (nEndPerf - nStartPerf) / 0xffff) +
-        500000) / 1000000;
-   //cout << " " << endl;
-}*/
-
 //---------------------------------------------------------------------------
 SysInfoPanel::SysInfoPanel( const Rect& cFrame ) : LayoutView( cFrame, "", NULL, CF_FOLLOW_NONE )
 {
@@ -185,9 +145,10 @@ ListViewStringRow* SysInfoPanel::AddRow( char* pzCol1, char* pzCol2, char* pzCol
 }
 				       
 void SysInfoPanel::SetUpCPUView(){
-    m_pcCPUView->InsertColumn( "CPU Number", 100 );
-    m_pcCPUView->InsertColumn( "Core Speed", 100 );
-    m_pcCPUView->InsertColumn( "Bus Speed" , 100 );
+    m_pcCPUView->InsertColumn( "CPU", 40 );
+    m_pcCPUView->InsertColumn( "Core Speed", 80 );
+    m_pcCPUView->InsertColumn( "Bus Speed" , 80 );
+    m_pcCPUView->InsertColumn( "Features" , 100 );
 }
 
 void SysInfoPanel::SetUpMemoryView(){
@@ -671,7 +632,7 @@ void SysInfoPanel::SetupPanel()
 
     char        szTmp[512];
    
-    char        szRow1[128],szRow2[128],szRow3[128];
+    char        szRow1[128],szRow2[128],szRow3[128], szRow4[128];
 
 /*
    Quote From Kurt Skauen in an email to the list:
@@ -774,17 +735,6 @@ void SysInfoPanel::SetupPanel()
      ***********************************************************************/
     nCPUCount = sSysInfo.nCPUCount;
     
-    if( nCPUCount == 1 ){
-      ListViewStringRow* pcRow = new ListViewStringRow();
-       
-      sprintf( szRow1, "%d", nCPUCount );
-      sprintf( szRow2, " " );
-      sprintf( szRow3, " " );
-       
-      pcRow = AddRow( szRow1, szRow2, szRow3, 3 );
-       
-      m_pcCPUView->InsertRow( pcRow );
-    }
 
     /*******************************************************************************
      * As it stands now, Kurt only gets CPU info (and stores it in the system_info
@@ -793,21 +743,39 @@ void SysInfoPanel::SetupPanel()
      * use this if():  John Hall (5/9/01)
      *******************************************************************************/
    
-    if( nCPUCount > 1 ){
+  
       
       for( x=0; x < nCPUCount; x++ ){
 	ListViewStringRow* pcRow = new ListViewStringRow();
 	 
-        //get_CPUInfo( &CPUInfo );
-	sprintf( szRow1, "%d", x );
-	sprintf( szRow2, "%lld MHz", sSysInfo.asCPUInfo[x].nCoreSpeed );
-	sprintf( szRow3, "%lld MHz", sSysInfo.asCPUInfo[x].nBusSpeed  );
         
-	pcRow = AddRow( szRow1, szRow2, szRow3, 3 );
+	sprintf( szRow1, "%d", x );
+	sprintf( szRow2, "%lld MHz", ( sSysInfo.asCPUInfo[x].nCoreSpeed + 500000) / 1000000 );
+	sprintf( szRow3, "%lld MHz", ( sSysInfo.asCPUInfo[x].nBusSpeed + 500000) / 1000000 );
+	strcpy( szRow4, "" );
+	
+	if( sSysInfo.nCPUType & CPU_FEATURE_MMX )
+		 strcat( szRow4, "MMX " );
+	if( sSysInfo.nCPUType & CPU_FEATURE_MMX2 )
+		 strcat( szRow4, "MMX2 " );
+	if( sSysInfo.nCPUType & CPU_FEATURE_3DNOW )
+		 strcat( szRow4, "3DNow " );
+	if( sSysInfo.nCPUType & CPU_FEATURE_3DNOWEX )
+		 strcat( szRow4, "3DNowEx " );
+	if( sSysInfo.nCPUType & CPU_FEATURE_SSE )
+		 strcat( szRow4, "SSE " );
+	if( sSysInfo.nCPUType & CPU_FEATURE_SSE2 )
+		 strcat( szRow4, "SSE2 " );
+       
+    pcRow->AppendString( szRow1 );
+    pcRow->AppendString( szRow2 );
+    pcRow->AppendString( szRow3 );
+    pcRow->AppendString( szRow4 ); 
+	
+	//pcRow = AddRow( szRow1, szRow2, szRow3, "", 4 );
 	 
 	m_pcCPUView->InsertRow( pcRow );
       }
-    }
 
     //cout << "HERE\n";
     UpdateMemoryInfo( false );
