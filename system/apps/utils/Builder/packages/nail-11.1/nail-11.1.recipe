@@ -1,6 +1,7 @@
 authors
 	Mike Saunders
 	Kaj de Vos
+status				testing
 notes				Can't find OpenSSL
 
 headline			Command-driven mail client
@@ -12,6 +13,7 @@ home				nail.sourceforge.net
 make-vars
 	PREFIX			/usr/nail
 	SYSCONFDIR		/usr/nail/etc
+;	INCLUDES		-I/usr/local/ssl/include/openssl
 ;install-prefix-var	DESTDIR
 install-vars
 	PREFIX			/usr/nail
