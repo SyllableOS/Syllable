@@ -21,7 +21,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/MediaConverter: $(OBJS)
-	gcc  $(OBJS) -lstdc++ -latheos -lmedia -o MediaConverter
+	gcc  $(OBJS) -lstdc++ -lsyllable -lmedia -o MediaConverter
 
 deps:
 

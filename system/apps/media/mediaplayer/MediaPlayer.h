@@ -73,8 +73,7 @@ enum {
 class MPWindow : public os::Window
 {
 public:
-	MPWindow( const os::Rect& cFrame, const std::string& cName, const std::string& cTitle,
-		uint32 nFlags );
+	MPWindow( const os::Rect& cFrame, const std::string& cName, const std::string& cTitle );
 	~MPWindow();
 	virtual void HandleMessage( os::Message* pcMessage );
 	virtual bool OkToQuit();

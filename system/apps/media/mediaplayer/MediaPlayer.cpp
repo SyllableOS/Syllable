@@ -19,7 +19,7 @@
  */
 
 #include "MediaPlayer.h"
-#include <iostream.h>
+#include <iostream>
 
 /* TODO: 
  * - Reopen streams after track change.
@@ -29,7 +29,7 @@
 
 /* MPWindow class */
 
-MPWindow::MPWindow( const os::Rect & cFrame, const std::string & cName, const std::string & cTitle, uint32 nFlags ):os::Window( cFrame, cName, cTitle, nFlags )
+MPWindow::MPWindow( const os::Rect & cFrame, const std::string & cName, const std::string & cTitle ):os::Window( cFrame, cName, cTitle )
 {
 	m_nState = MP_STATE_STOPPED;
 	m_pcVideo = NULL;
@@ -54,6 +54,7 @@ MPWindow::MPWindow( const os::Rect & cFrame, const std::string & cName, const st
 	pcFileMenu->AddItem( "Open Input...", new os::Message( MP_GUI_OPEN_INPUT ) );
 	pcFileMenu->AddItem( new os::MenuSeparator() );
 	pcFileMenu->AddItem( "Fullscreen", new os::Message( MP_GUI_FULLSCREEN ) );
+	pcFileMenu->GetItemAt( 3 )->SetEnable( false );
 	m_pcMenuBar->AddItem( pcFileMenu );
 	
 	m_pcTracksMenu = new os::Menu( os::Rect(), "Tracks", os::ITEMS_IN_COLUMN );
@@ -103,6 +104,13 @@ MPWindow::MPWindow( const os::Rect & cFrame, const std::string & cName, const st
 	/* Create file selector */
 	m_pcFileDialog = new os::FileRequester( os::FileRequester::LOAD_REQ, new os::Messenger( os::Application::GetInstance() ), NULL, os::FileRequester::NODE_FILE, false );
 	
+	
+	/* Set Icon */
+	os::Resources cCol( get_image_id() );
+	os::ResStream *pcStream = cCol.GetResourceStream( "icon24x24.png" );
+	os::BitmapImage *pcIcon = new os::BitmapImage( pcStream );
+	SetIcon( pcIcon->LockBitmap() );
+	delete( pcIcon );
 }
 
 MPWindow::~MPWindow()
@@ -169,6 +177,7 @@ void MPWindow::HandleMessage( os::Message * pcMessage )
 				SetFrame( cFrame );
 				AddChild( m_pcVideo );
 				SetFlags( GetFlags() & ~os::WND_NOT_RESIZABLE );
+				m_pcMenuBar->GetSubMenuAt( 1 )->GetItemAt( 3 )->SetEnable( true );
 			}
 		}
 		break;
@@ -186,6 +195,7 @@ void MPWindow::HandleMessage( os::Message * pcMessage )
 			cFrame.bottom = cFrame.top + 40 + m_pcMenuBar->GetPreferredSize( false ).y;
 			SetFrame( cFrame );
 			SetFlags( GetFlags() | os::WND_NOT_RESIZABLE );
+			m_pcMenuBar->GetSubMenuAt( 1 )->GetItemAt( 3 )->SetEnable( false );
 		}
 		break;
 	case MP_STATE_CHANGED:
@@ -255,13 +265,13 @@ MPApp::MPApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::App
 
 	if ( !m_pcManager->IsValid() )
 	{
-		cout << "Media server is not running" << endl;
+		std::cout << "Media server is not running" << std::endl;
 		PostMessage( os::M_QUIT );
 		return;
 	}
 
 	/* Create window */
-	m_pcWin = new MPWindow( os::Rect( 100, 100, 400, 400 ), "mp_window", "Media Player", os::WND_NO_ZOOM_BUT | os::WND_NO_DEPTH_BUT );
+	m_pcWin = new MPWindow( os::Rect( 100, 100, 400, 400 ), "mp_window", "Media Player" );
 	m_pcWin->Show();
 	m_pcWin->MakeFocus( true );
 	
@@ -311,7 +321,7 @@ void MPApp::PlayThread()
 	bool bDoubleDraw = false;
 	bool bSkipFrame = false;
 
-	cout << "Play thread running" << endl;
+	std::cout << "Play thread running" << std::endl;
 	/* Seek to last position */
 	if ( !m_bStream )
 		m_pcInput->Seek( m_nLastPosition );
@@ -407,7 +417,7 @@ void MPApp::PlayThread()
 				if ( bNoGrab == true || m_pcInput->GetLength() < 5 )
 				{
 					bStarted = true;
-					cout << "Go" << endl;
+					std::cout << "Go" << std::endl;
 				}
 			}
 			/* If we have started then flush the media data */
@@ -434,19 +444,19 @@ void MPApp::PlayThread()
 
 				if ( nVideo > nAudio )
 				{
-					cout << "AV delay ( Video ahead ): " << nVideo - nAudio << endl;
+					std::cout << "AV delay ( Video ahead ): " << nVideo - nAudio << std::endl;
 					if ( nVideo - nAudio > 100 )
 					{
-						cout << "Draw frame two times" << endl;
+						std::cout << "Draw frame two times" << std::endl;
 						bDoubleDraw = true;
 					}
 				}
 				else
 				{
-					cout << "AV delay ( Audio ahead ): " << nAudio - nVideo << endl;
+					std::cout << "AV delay ( Audio ahead ): " << nAudio - nVideo << std::endl;
 					if ( nAudio - nVideo > 100 )
 					{
-						cout << "Skip frame" << endl;
+						std::cout << "Skip frame" << std::endl;
 						bSkipFrame = true;
 					}
 				}
@@ -470,7 +480,7 @@ void MPApp::PlayThread()
 		}
 	}
 	/* Stop tread */
-	cout << "Stop thread" << endl;
+	std::cout << "Stop thread" << std::endl;
 	if ( !m_bPacket )
 	{
 		m_pcInput->StopTrack();
@@ -512,53 +522,56 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 		m_pcInput = NULL;
 		i++;
 	}
+	
 	if ( m_pcInput == NULL )
 	{
 		/* This should not happen! */
 		return;
 	}
+	
 	/* Open input */
 	if ( m_pcInput->Open( zFileName ) != 0 )
 	{
 		/* This should not happen! */
 		return;
 	}
+	
 	m_bPacket = m_pcInput->PacketBased();
 	m_bStream = m_pcInput->StreamBased();
 
-	cout << zFileName.c_str() << endl;
-	cout << zInput.c_str() << endl;
+	std::cout << zFileName.c_str() << std::endl;
+	std::cout << zInput.c_str() << std::endl;
 	if ( m_bPacket )
-		cout << "Packet based" << endl;
+		std::cout << "Packet based" << std::endl;
 	if ( m_bStream )
-		cout << "Stream based" << endl;
+		std::cout << "Stream based" << std::endl;
 
 	/* Save track information */
 	m_nTrackCount = m_pcInput->GetTrackCount();
 
-	cout << m_nTrackCount << " Tracks" << endl;
+	std::cout << m_nTrackCount << " Tracks" << std::endl;
 
 	/* REMOVE!!! */
 	for ( i = 0; i < m_nTrackCount; i++ )
 	{
 		m_pcInput->SelectTrack( i );
-		cout << "Track " << i << " Length: " << m_pcInput->GetLength() << endl;
+		std::cout << "Track " << i << " Length: " << m_pcInput->GetLength() << std::endl;
 		if ( m_bPacket )
 		{
 			for ( uint32 j = 0; j < m_pcInput->GetStreamCount(); j++ )
 			{
 				if ( m_pcInput->GetStreamFormat( j ).nType == os::MEDIA_TYPE_VIDEO )
 				{
-					cout << "Stream " << j << " " << m_pcInput->GetStreamFormat( j ).zName.c_str() << endl;
-					cout << "BitRate: " << m_pcInput->GetStreamFormat( j ).nBitRate << endl;
-					cout << "Size: " << m_pcInput->GetStreamFormat( j ).nWidth << "x" << m_pcInput->GetStreamFormat( j ).nHeight << endl;
-					cout << "Framerate: " << m_pcInput->GetStreamFormat( j ).vFrameRate << endl;
+					std::cout << "Stream " << j << " " << m_pcInput->GetStreamFormat( j ).zName.c_str() << std::endl;
+					std::cout << "BitRate: " << m_pcInput->GetStreamFormat( j ).nBitRate << std::endl;
+					std::cout << "Size: " << m_pcInput->GetStreamFormat( j ).nWidth << "x" << m_pcInput->GetStreamFormat( j ).nHeight << std::endl;
+					std::cout << "Framerate: " << m_pcInput->GetStreamFormat( j ).vFrameRate << std::endl;
 				}
 				if ( m_pcInput->GetStreamFormat( j ).nType == os::MEDIA_TYPE_AUDIO )
 				{
-					cout << "Stream " << j << " " << m_pcInput->GetStreamFormat( j ).zName.c_str() << endl;
-					cout << "BitRate: " << m_pcInput->GetStreamFormat( j ).nBitRate << endl;
-					cout << "Channels: " << m_pcInput->GetStreamFormat( j ).nChannels << endl;
+					std::cout << "Stream " << j << " " << m_pcInput->GetStreamFormat( j ).zName.c_str() << std::endl;
+					std::cout << "BitRate: " << m_pcInput->GetStreamFormat( j ).nBitRate << std::endl;
+					std::cout << "Channels: " << m_pcInput->GetStreamFormat( j ).nChannels << std::endl;
 				}
 			}
 		}
@@ -602,7 +615,7 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 			m_bVideo = false;
 		}
 		else
-			cout << "Using Video Out " << m_pcVideoOutput->GetIdentifier().c_str(  ) << endl;
+			std::cout << "Using Video Out " << m_pcVideoOutput->GetIdentifier().c_str(  ) << std::endl;
 	}
 	if ( m_bAudio )
 	{
@@ -617,7 +630,7 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 			m_bAudio = false;
 		}
 		else
-			cout << "Using Audio Out " << m_pcAudioOutput->GetIdentifier().c_str(  ) << endl;
+			std::cout << "Using Audio Out " << m_pcAudioOutput->GetIdentifier().c_str(  ) << std::endl;
 	}
 
 	/* Open video codec */
@@ -641,7 +654,7 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 		}
 		else
 		{
-			cout << "Using Video codec " << m_pcVideoCodec->GetIdentifier().c_str(  ) << endl;
+			std::cout << "Using Video codec " << m_pcVideoCodec->GetIdentifier().c_str(  ) << std::endl;
 		}
 	}
 	/* Open audio codec */
@@ -665,7 +678,7 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 		}
 		else
 		{
-			cout << "Using Audio codec " << m_pcAudioCodec->GetIdentifier().c_str(  ) << endl;
+			std::cout << "Using Audio codec " << m_pcAudioCodec->GetIdentifier().c_str(  ) << std::endl;
 		}
 	}
 
@@ -690,8 +703,6 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 		m_pcWin->GetTracksMenu()->AddItem( zTest, pcItemMessage );
 	}
 	m_pcWin->GetTracksMenu()->SetTargetForItems( this );
-	
-	
 	
 	/* Finished! */
 	m_bFileLoaded = true;
@@ -807,7 +818,7 @@ void MPApp::HandleMessage( os::Message * pcMessage )
 			}
 
 
-			m_hPlayThread = spawn_thread( "play_thread", play_thread_entry, 0, 0, this );
+			m_hPlayThread = spawn_thread( "play_thread", (void*)play_thread_entry, 0, 0, this );
 			resume_thread( m_hPlayThread );
 		}
 		else if ( m_nState == MP_STATE_PLAYING )
@@ -834,7 +845,7 @@ void MPApp::HandleMessage( os::Message * pcMessage )
 				wait_for_thread( m_hPlayThread );
 			}
 			m_nLastPosition = m_pcWin->GetSlider()->GetValue(  ).AsInt32(  ) * m_pcInput->GetLength(  ) / 1000;
-			m_hPlayThread = spawn_thread( "play_thread", play_thread_entry, 0, 0, this );
+			m_hPlayThread = spawn_thread( "play_thread", (void*)play_thread_entry, 0, 0, this );
 			resume_thread( m_hPlayThread );
 		}
 		break;
@@ -898,7 +909,7 @@ void MPApp::HandleMessage( os::Message * pcMessage )
 			}
 			/* Set new position */
 			m_nLastPosition = m_pcWin->GetSlider()->GetValue(  ).AsInt32(  ) * m_pcInput->GetLength(  ) / 1000;
-			m_hPlayThread = spawn_thread( "play_thread", play_thread_entry, 0, 0, this );
+			m_hPlayThread = spawn_thread( "play_thread", (void*)play_thread_entry, 0, 0, this );
 			resume_thread( m_hPlayThread );
 		}
 		break;
@@ -927,7 +938,7 @@ void MPApp::HandleMessage( os::Message * pcMessage )
 				/* Start thread if neccessary */
 				if ( bRestart )
 				{
-					m_hPlayThread = spawn_thread( "play_thread", play_thread_entry, 0, 0, this );
+					m_hPlayThread = spawn_thread( "play_thread", (void*)play_thread_entry, 0, 0, this );
 					resume_thread( m_hPlayThread );
 				}
 			}
@@ -982,7 +993,7 @@ void MPApp::HandleMessage( os::Message * pcMessage )
 
 bool MPApp::OkToQuit()
 {
-	cout << "Quit" << endl;
+	std::cout << "Quit" << std::endl;
 	if ( m_pcManager->IsValid() )
 	{
 		Close();
@@ -997,16 +1008,19 @@ int main( int argc, char *argv[] )
 
 	if ( argc > 1 )
 	{
-		pcApp = new MPApp( "application/x-vnd.MediaPlayer", argv[1], true );
+		pcApp = new MPApp( "application/x-vnd.syllable-MediaPlayer", argv[1], true );
 	}
 	else
 	{
-		pcApp = new MPApp( "application/x-vnd.MediaPlayer", "", false );
+		pcApp = new MPApp( "application/x-vnd.syllable-MediaPlayer", "", false );
 	}
 
 	pcApp->Run();
 	return ( 0 );
 }
+
+
+
 
 
 

@@ -21,7 +21,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/MediaPlayer: $(OBJS)
-	gcc  $(OBJS) -lstdc++ -latheos -lmedia -o MediaPlayer
+	gcc  $(OBJS) -lstdc++ -lsyllable -lmedia -o MediaPlayer
 	rescopy -r MediaPlayer *.png
 
 

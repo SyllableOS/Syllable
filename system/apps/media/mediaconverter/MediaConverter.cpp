@@ -19,7 +19,7 @@
  */
 
 #include "MediaConverter.h"
-#include <iostream.h>
+#include <iostream>
 
 /* TODO:
  * - Track selection
@@ -327,7 +327,7 @@ MCApp::MCApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::App
 
 	if ( !m_pcManager->IsValid() )
 	{
-		cout << "Media server is not running" << endl;
+		std::cout << "Media server is not running" << std::endl;
 		PostMessage( os::M_QUIT );
 		return;
 	}
@@ -343,7 +343,7 @@ MCApp::MCApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::App
 		}
 		else
 		{
-			cout << "This file / device is not supported!" << endl;
+			std::cout << "This file / device is not supported!" << std::endl;
 			PostMessage( os::M_QUIT );
 		}
 	}
@@ -408,21 +408,21 @@ void MCApp::Open( os::String zFile, os::String zInput )
 	/* REMOVE!!! */
 
 	m_pcInput->SelectTrack( 0 );
-	cout << "Length: " << m_pcInput->GetLength() << endl;
+	std::cout << "Length: " << m_pcInput->GetLength() <<std:: endl;
 	for ( uint32 j = 0; j < m_pcInput->GetStreamCount(); j++ )
 	{
 		if ( m_pcInput->GetStreamFormat( j ).nType == os::MEDIA_TYPE_VIDEO )
 		{
-			cout << "Stream " << j << " " << m_pcInput->GetStreamFormat( j ).zName.c_str() << endl;
-			cout << "BitRate: " << m_pcInput->GetStreamFormat( j ).nBitRate << endl;
-			cout << "Size: " << m_pcInput->GetStreamFormat( j ).nWidth << "x" << m_pcInput->GetStreamFormat( j ).nHeight << endl;
-			cout << "Framerate: " << ( int )m_pcInput->GetStreamFormat( j ).vFrameRate << endl;
+			std::cout << "Stream " << j << " " << m_pcInput->GetStreamFormat( j ).zName.c_str() << std::endl;
+			std::cout << "BitRate: " << m_pcInput->GetStreamFormat( j ).nBitRate << std::endl;
+			std::cout << "Size: " << m_pcInput->GetStreamFormat( j ).nWidth << "x" << m_pcInput->GetStreamFormat( j ).nHeight << std::endl;
+			std::cout << "Framerate: " << ( int )m_pcInput->GetStreamFormat( j ).vFrameRate << std::endl;
 		}
 		if ( m_pcInput->GetStreamFormat( j ).nType == os::MEDIA_TYPE_AUDIO )
 		{
-			cout << "Stream " << j << " " << m_pcInput->GetStreamFormat( j ).zName.c_str() << endl;
-			cout << "BitRate: " << m_pcInput->GetStreamFormat( j ).nBitRate << endl;
-			cout << "Channels: " << m_pcInput->GetStreamFormat( j ).nChannels << endl;
+			std::cout << "Stream " << j << " " << m_pcInput->GetStreamFormat( j ).zName.c_str() << std::endl;
+			std::cout << "BitRate: " << m_pcInput->GetStreamFormat( j ).nBitRate << std::endl;
+			std::cout << "Channels: " << m_pcInput->GetStreamFormat( j ).nChannels << std::endl;
 		}
 	}
 	/* Select right streams */
@@ -443,7 +443,7 @@ void MCApp::Open( os::String zFile, os::String zInput )
 		}
 	}
 	/* Create main window */
-	m_pcWin = new MCWindow( os::Rect( 100, 100, 450, 250 ), "mc_window", "Select destination - Media Converter", os::WND_NO_ZOOM_BUT | os::WND_NO_DEPTH_BUT | os::WND_NOT_RESIZABLE );
+	m_pcWin = new MCWindow( os::Rect( 100, 100, 450, 250 ), "mc_window", "Select destination - Media Converter", os::WND_NOT_RESIZABLE );
 	m_pcWin->Show();
 	m_pcWin->MakeFocus( true );
 	m_pcWin->SetVideoAudio( m_sVideoFormat, m_sAudioFormat, m_bVideo, m_bAudio );
@@ -488,7 +488,7 @@ void MCApp::Encode()
 	if ( m_bVideo )
 	{
 		/* Open video input codec */
-		memset( &sFormat, 0, sizeof( sFormat ) );
+		MEDIA_CLEAR_FORMAT( sFormat );
 		sFormat.zName = "Raw Video";
 		sFormat.nType = os::MEDIA_TYPE_VIDEO;
 		m_pcInputVideo = m_pcManager->GetBestCodec( m_sVideoFormat, sFormat, false );
@@ -499,7 +499,7 @@ void MCApp::Encode()
 		}
 		/* Open video output codec */
 		os::MediaFormat_s sOutput;
-		memset( &sOutput, 0, sizeof( sOutput ) );
+		MEDIA_CLEAR_FORMAT( sOutput );
 		sOutput.zName = m_pcOutput->GetOutputFormat( m_nVideoOutputFormat ).zName;
 		sOutput.nType = os::MEDIA_TYPE_VIDEO;
 		sOutput.nBitRate = m_nVideoBitRate * 1000;
@@ -523,8 +523,8 @@ void MCApp::Encode()
 			return;
 		}
 
-		cout << "Using Input Video Codec " << m_pcInputVideo->GetIdentifier().c_str(  ) << endl;
-		cout << "Using Output Video Codec " << m_pcOutputVideo->GetIdentifier().c_str(  ) << endl;
+		std::cout << "Using Input Video Codec " << m_pcInputVideo->GetIdentifier().c_str(  ) << std::endl;
+		std::cout << "Using Output Video Codec " << m_pcOutputVideo->GetIdentifier().c_str(  ) << std::endl;
 		m_pcInputVideo->CreateVideoOutputPacket( &sVIPacket );
 		m_pcOutputVideo->CreateVideoOutputPacket( &sVOPacket );
 	}
@@ -533,7 +533,7 @@ void MCApp::Encode()
 	if ( m_bAudio )
 	{
 		/* Open audio input codec */
-		memset( &sFormat, 0, sizeof( sFormat ) );
+		MEDIA_CLEAR_FORMAT( sFormat );
 		sFormat.zName = "Raw Audio";
 		sFormat.nType = os::MEDIA_TYPE_AUDIO;
 		m_pcInputAudio = m_pcManager->GetBestCodec( m_sAudioFormat, sFormat, false );
@@ -545,7 +545,7 @@ void MCApp::Encode()
 
 		/* Open audio output codec */
 		os::MediaFormat_s sOutput;
-		memset( &sOutput, 0, sizeof( sOutput ) );
+		MEDIA_CLEAR_FORMAT( sOutput );
 		sOutput.zName = m_pcOutput->GetOutputFormat( m_nAudioOutputFormat ).zName;
 		sOutput.nType = os::MEDIA_TYPE_AUDIO;
 		sOutput.nBitRate = m_nAudioBitRate * 1000;
@@ -565,8 +565,8 @@ void MCApp::Encode()
 			}
 			return;
 		}
-		cout << "Using Input Audio Codec " << m_pcInputAudio->GetIdentifier().c_str(  ) << endl;
-		cout << "Using Output Audio Codec " << m_pcOutputAudio->GetIdentifier().c_str(  ) << endl;
+		std::cout << "Using Input Audio Codec " << m_pcInputAudio->GetIdentifier().c_str(  ) << std::endl;
+		std::cout << "Using Output Audio Codec " << m_pcOutputAudio->GetIdentifier().c_str(  ) << std::endl;
 		/* Create output packets */
 		m_pcInputAudio->CreateAudioOutputPacket( &sAIPacket );
 		m_pcOutputAudio->CreateAudioOutputPacket( &sAOPacket );
@@ -597,7 +597,7 @@ void MCApp::Encode()
 			}
 			else
 			{
-				cout << "Error decoding" << endl;
+				std::cout << "Error decoding" << std::endl;
 			}
 		}
 		if ( m_bVideo && sPacket.nStream == m_nVideoStream )
@@ -614,7 +614,7 @@ void MCApp::Encode()
 			}
 			else
 			{
-				cout << "Error decoding" << endl;
+				std::cout << "Error decoding" << std::endl;
 			}
 		}
 		m_pcInput->FreePacket( &sPacket );
@@ -659,7 +659,7 @@ void MCApp::Encode()
 	{
 		snooze( 1000 );
 	}
-	cout << "End" << endl;
+	std::cout << "End" << std::endl;
 	return;
 
 }
@@ -705,22 +705,22 @@ void MCApp::HandleMessage( os::Message * pcMessage )
 				m_pcOutput = m_pcManager->GetOutput( nOutput );
 				if ( m_pcOutput != NULL )
 				{
-					cout << "Output: " << m_pcOutput->GetIdentifier().c_str(  ) << endl;
+					std::cout << "Output: " << m_pcOutput->GetIdentifier().c_str(  ) << std::endl;
 					m_bVideo = m_bAudio = false;
 					if ( m_nVideoOutputFormat > -1 )
 					{
 						m_bVideo = true;
-						cout << "Video: " << m_pcOutput->GetOutputFormat( m_nVideoOutputFormat ).zName.c_str() << endl;
+						std::cout << "Video: " << m_pcOutput->GetOutputFormat( m_nVideoOutputFormat ).zName.c_str() << std::endl;
 					}
 					if ( m_nAudioOutputFormat > -1 )
 					{
 						m_bAudio = true;
-						cout << "Audio: " << m_pcOutput->GetOutputFormat( m_nAudioOutputFormat ).zName.c_str() << endl;
+						std::cout << "Audio: " << m_pcOutput->GetOutputFormat( m_nAudioOutputFormat ).zName.c_str() << std::endl;
 					}
 					if ( m_bVideo || m_bAudio )
 					{
 						/* Start encoding thread */
-						m_hEncodeThread = spawn_thread( "mc_encode", encode_thread_entry, 0, 0, this );
+						m_hEncodeThread = spawn_thread( "mc_encode", (void*)encode_thread_entry, 0, 0, this );
 						resume_thread( m_hEncodeThread );
 					}
 				}
@@ -743,7 +743,7 @@ void MCApp::HandleMessage( os::Message * pcMessage )
 
 bool MCApp::OkToQuit()
 {
-	cout << "Quit" << endl;
+	std::cout << "Quit" << std::endl;
 	return ( true );
 }
 
@@ -753,16 +753,19 @@ int main( int argc, char *argv[] )
 
 	if ( argc > 1 )
 	{
-		pcApp = new MCApp( "application/x-vnd.MediaConverter", argv[1], true );
+		pcApp = new MCApp( "application/x-vnd.syllable-MediaConverter", argv[1], true );
 	}
 	else
 	{
-		pcApp = new MCApp( "application/x-vnd.MediaConverter", "", false );
+		pcApp = new MCApp( "application/x-vnd.syllable-MediaConverter", "", false );
 	}
 
 	pcApp->Run();
 	return ( 0 );
 }
+
+
+
 
 
 

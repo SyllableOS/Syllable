@@ -131,6 +131,7 @@ class CFApp:public os::Application
 
 	CFWindow * m_pcWin;
 	uint8 m_nState;
+	os::Rect m_cSavedFrame;
 
 	os::String m_zListName;
 

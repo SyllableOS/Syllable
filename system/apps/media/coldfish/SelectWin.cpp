@@ -28,7 +28,7 @@ enum {
 
 SelectWin::SelectWin( os::Rect cFrame )
 		: os::Window( cFrame, "cf_select_win", "Select Playlist - ColdFish", 
-						os::WND_NO_ZOOM_BUT | os::WND_NO_DEPTH_BUT | os::WND_NOT_V_RESIZABLE )
+						os::WND_NOT_V_RESIZABLE )
 {
 	/* Create file input field */
 	m_pcFileLabel = new os::StringView( os::Rect( 0, 0, 1, 1 ), "file_label", "File" );
