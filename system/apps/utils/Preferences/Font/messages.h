@@ -30,7 +30,9 @@ enum Messages {
   M_MW_SPTWINDOW,
   M_MW_APPLY,
   M_MW_REVERT,
-  M_MW_DEFAULT
+  M_MW_DEFAULT,
+  M_MW_ANTIALIASING
 };
 
 #endif /* __MESSAGES_H */
+

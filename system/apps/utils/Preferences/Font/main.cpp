@@ -40,14 +40,14 @@ PrefsFontApp::PrefsFontApp() : os::Application("application/x-vnd-FontPreference
   os::Desktop *pcDesktop = new os::Desktop();
   int iWidth = pcDesktop->GetScreenMode().m_nWidth;
   int iHeight = pcDesktop->GetScreenMode().m_nHeight;
-  int iLeft = (iWidth-350)/2;
-  int iTop = (iHeight-240)/2;
+  int iLeft = (iWidth-450)/2;
+  int iTop = (iHeight-290)/2;
 
   // Show main window
   if (bRoot) {
-    pcWindow = new MainWindow(os::Rect(iLeft, iTop, iLeft+350, iTop+240));
+    pcWindow = new MainWindow(os::Rect(iLeft, iTop, iLeft+450, iTop+290));
   } else {
-    pcWindow = new MainWindow(os::Rect(iLeft, iTop, iLeft+350, iTop+150));
+    pcWindow = new MainWindow(os::Rect(iLeft, iTop, iLeft+450, iTop+150));
   }
   pcWindow->Show();
   pcWindow->MakeFocus();
@@ -56,13 +56,4 @@ PrefsFontApp::PrefsFontApp() : os::Application("application/x-vnd-FontPreference
 PrefsFontApp::~PrefsFontApp()
 {
 }
-
-
-
-
-
-
-
-
-
 

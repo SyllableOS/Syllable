@@ -26,6 +26,7 @@
 #include <gui/button.h>
 #include <gui/spinner.h>
 #include <gui/font.h>
+#include <gui/checkbox.h>
 
 class MainWindow : public os::Window {
 public:
@@ -41,7 +42,7 @@ private:
   void Apply();
   void Revert();
   void Default();
-  void UpdateExample(const char *, float);
+  void UpdateExample(const char *pzFont = "", float fSize = 0.0);
   bool DecodeFamilyStyle(const char *, float, os::font_properties *);
 
   os::LayoutView *pcLRoot;
@@ -52,6 +53,9 @@ private:
   os::Button *pcBApply, *pcBRevert, *pcBDefault;
   os::Spinner *pcSPNormal, *pcSPBold, *pcSPFixed, *pcSPWindow, *pcSPTWindow;
   os::StringView *pcSVExample;
+  os::CheckBox *pcCBAntiAliasing;
+
+  bool m_bAntiAliasing;
 
   std::string cNorDefFam, cNorDefSty;
   std::string cBldDefFam, cBldDefSty;
@@ -62,16 +66,3 @@ private:
 };
 
 #endif /* __MAINWINDOW_H_ */
-
-
-
-
-
-
-
-
-
-
-
-
-

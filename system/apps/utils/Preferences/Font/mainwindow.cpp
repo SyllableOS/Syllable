@@ -22,7 +22,7 @@
 #include "mainwindow.h"
 #include "messages.h"
 
-MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow", "Font", os::WND_NOT_RESIZABLE)
+MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow", "Font", /*os::WND_NOT_RESIZABLE*/ 0)
 {
   os::Rect cBounds = GetBounds();
   os::Rect cRect = os::Rect(0,0,0,0);
@@ -106,6 +106,12 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcSPTWindow->SetStep( (double)0.5 );
   pcSPTWindow->SetMinPreferredSize(4);
   pcHLTWindow->AddChild( new os::HLayoutSpacer("") );
+  
+  // Anti-aliasing option (global for now, should probably be a per-font setting or based on font size)
+  os::LayoutNode *pcHLTAntiAliasing = new os::HLayoutNode("HLTAntiAliasing");
+  pcHLTAntiAliasing->AddChild( new os::HLayoutSpacer("") );
+  pcHLTAntiAliasing->AddChild( ( pcCBAntiAliasing = new os::CheckBox( cRect, "CBAntiAliasing", "Anti-Aliasing (Smooth font edges)", new os::Message( M_MW_ANTIALIASING ) ) ) );
+  pcHLTAntiAliasing->AddChild( new os::HLayoutSpacer("") );
 
   // Add types to types layout node
   pcVLTypes = new os::VLayoutNode("VLTypes");
@@ -121,7 +127,9 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcVLTypes->AddChild( new os::VLayoutSpacer("", 5.0f, 5.0f) );
   pcVLTypes->AddChild( pcHLTWindow);
   pcVLTypes->AddChild( new os::VLayoutSpacer("") );
-  pcFVTypes = new os::FrameView( cBounds, "FVTypes", "Font Seletion", os::CF_FOLLOW_ALL);
+  pcVLTypes->AddChild( pcHLTAntiAliasing );
+  pcVLTypes->AddChild( new os::VLayoutSpacer("") );
+  pcFVTypes = new os::FrameView( cBounds, "FVTypes", "Font Selection", os::CF_FOLLOW_ALL);
   pcFVTypes->SetRoot(pcVLTypes);
 
   // Set widths the same
@@ -225,6 +233,9 @@ void MainWindow::GetCurrentValues()
       cNorDefFam = pcConfig.m_cFamily;
       cNorDefSty = pcConfig.m_cStyle;
       cNorDefSiz = pcConfig.m_vSize;
+      if( pcConfig.m_nFlags & os::FPF_SMOOTHED ) {
+      		m_bAntiAliasing = true;
+      }
     } else if (cConfigList[i]=="System/Bold") {
       cBldDefFam = pcConfig.m_cFamily;
       cBldDefSty = pcConfig.m_cStyle;
@@ -324,6 +335,8 @@ void MainWindow::ShowData()
   pcSPFixed->SetValue( (double)cFxdDefSiz );
   pcSPWindow->SetValue( (double)cWndDefSiz );
   pcSPTWindow->SetValue( (double)cTWdDefSiz );
+  
+  pcCBAntiAliasing->SetValue( m_bAntiAliasing );
 
 }
 
@@ -368,23 +381,23 @@ void MainWindow::Revert()
 void MainWindow::Default()
 {
   // Set sane system defaults
-  cNorDefFam = "Lucida Sans";
+  cNorDefFam = "Nimbus Sans L";
   cNorDefSty = "Regular";
   cNorDefSiz = 8.0f;
 
-  cBldDefFam = "Lucida Sans";
-  cBldDefSty = "Demibold";
+  cBldDefFam = "Nimbus Sans L";
+  cBldDefSty = "Bold";
   cBldDefSiz = 8.0f;
 
-  cFxdDefFam = "Lucida Sans Typewriter";
+  cFxdDefFam = "Syllable-Console";
   cFxdDefSty = "Regular";
   cFxdDefSiz = 8.0f;
 
-  cWndDefFam = "Lucida Sans";
+  cWndDefFam = "Nimbus Sans L";
   cWndDefSty = "Regular";
   cWndDefSiz = 8.0f;
 
-  cTWdDefFam = "Lucida Sans";
+  cTWdDefFam = "Nimbus Sans L";
   cTWdDefSty = "Regular";
   cTWdDefSiz = 7.0f;
 
@@ -392,14 +405,22 @@ void MainWindow::Default()
   ShowData();
 }
 
-void MainWindow::UpdateExample(const char *pzFont, float fSize) 
+void MainWindow::UpdateExample(const char *pzFont = "", float fNewSize = 0.0) 
 {
+  static std::string cFontName = "";
+  static float fSize = 0;
+
+  if( fNewSize != 0 ) {
+  	fSize = fNewSize;
+  	cFontName = pzFont;
+  }
+
   if (bRoot) {
     // Create properties variable to populate
     os::font_properties cFontProps;
 
     // Now populate from dropdown and spinner
-    if (DecodeFamilyStyle(pzFont, fSize, &cFontProps)==true) {
+    if (DecodeFamilyStyle(cFontName.c_str(), fSize, &cFontProps)==true) {
 
       // Create font
       os::Font *pcFont = new os::Font(cFontProps);
@@ -444,6 +465,10 @@ bool MainWindow::DecodeFamilyStyle(const char *pzFont, float fSize, os::font_pro
 
   // Set size
   pcFontProps->m_vSize = fSize;
+  
+  if( m_bAntiAliasing ) {
+  	pcFontProps->m_nFlags |= os::FPF_SMOOTHED;
+  }
 
   return true;
 }
@@ -495,6 +520,11 @@ void MainWindow::HandleMessage(os::Message* pcMessage)
     UpdateExample(pcDDMTWindow->GetCurrentString().c_str(), (float)pcSPTWindow->GetValue());
     break;
 
+  case M_MW_ANTIALIASING:
+	m_bAntiAliasing = pcCBAntiAliasing->GetValue();
+	UpdateExample();
+	break;
+
   case M_MW_APPLY:
     Apply();
     break;
@@ -519,7 +549,4 @@ bool MainWindow::OkToQuit()
   os::Application::GetInstance()->PostMessage(os::M_QUIT);
   return true;
 }
-
-
-
 
