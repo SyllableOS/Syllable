@@ -1,3 +1,9 @@
+* June 1st 2004, Kristian Van Der Vliet *
+
+	- Bugfix for dhcpc.  Removed the OPTION_ROUTERS option during DHCPREQUEST
+	  stages.  This was causing all sorts of problems for some users.  This
+	  bugfix does not appear to regress the changes made by Ross.
+
 * May 13th 2004, Henrik Isaksson *
 
 	- Updated Albert
