@@ -1,3 +1,30 @@
+* August 25 2003, Henrik Isaksson *
+
+  Filerequester
+  - Moved private members to internal class
+
+  Checkmenu.h
+  - Name change: Highlight() -> SetHighlighted()
+
+  Desktop
+  - New method: Activate(), switches display to a certain desktop
+
+  Application
+  - New method: SwitchDesktop(), used by Desktop::Activate()
+  
+  Image
+  - Bug in GetBounds() fixed.
+  
+  Appserver
+  - Font directory watch patch applied (fonts are scanned automatically when a new font is added to
+    the font directory (Rick).
+  - Alt-Tab Window selector now respects colour preferences (Rick).
+  - SwitchDesktop capability (Rick).
+  
+* August 24 2003, Henrik Isaksson *
+
+  Name change: libatheos is now named libsyllable.
+
 * August 23 2003, Henrik Isaksson *
 
   Filerequester.cpp
