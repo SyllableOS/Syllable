@@ -1,3 +1,8 @@
+* Okt 28 2003, Arno Klenke *
+
+Fixed some bugs in the USB busmanager & in the USB UHCI driver.
+Added first version of the USB mass storage driver.
+
 * Sept 30 2003, Kristian Van Der Vliet *
 
 Small bug fix to get_device_info()
