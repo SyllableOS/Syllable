@@ -1,3 +1,7 @@
+* Nov 22 2003, Henrik Isaksson *
+
+Updated CodeView's Makefile to link against libsyllable.
+
 * Nov 18 2003, Kristian Van Der Vliet *
 
 Sound drivers now export their device nodes to different locations to allow
@@ -416,4 +420,5 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
 
