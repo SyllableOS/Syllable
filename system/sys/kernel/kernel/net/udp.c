@@ -836,6 +836,31 @@ static int udp_rem_select( Socket_s* psSocket, SelectRequest_s* psReq )
     return( nError );
 }
 
+static int udp_setsockopt(bool bKernel, Socket_s* psSocket, int nProtocol, int nOptName, const void* pOptVal, int nOptLen )
+{
+	int nError = -ENOSYS;
+
+	switch(nOptName)
+	{
+		case SO_REUSEADDR:
+		{
+			nError = 0;
+			break;
+		}
+
+		case SO_BROADCAST:
+		{
+			nError = 0;
+			break;
+		}
+
+		default:
+			kerndbg(KERN_WARNING,"udp_setsockopt() got unknown option %i\n",nOptName);
+	}
+
+	return( nError );
+}
+
 static int udp_set_fflags( Socket_s* psSocket, uint32 nFlags )
 {
     UDPEndPoint_s* psUDPCtrl = psSocket->sk_psUDPEndP;
@@ -862,7 +887,7 @@ SocketOps_s g_sUDPOperations =
     udp_rem_select,
     NULL, 	 	// so_listen,
     NULL, 	 	// so_accept
-    NULL, 	 	// so_setsockopt
+    udp_setsockopt,
     udp_set_fflags,	// so_set_fflags
     NULL		// so_ioctl
 };

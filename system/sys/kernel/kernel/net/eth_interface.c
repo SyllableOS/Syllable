@@ -25,6 +25,7 @@
 #include <net/if_ether.h>
 #include <net/sockios.h>
 #include <net/route.h>
+#include <net/ip.h>
 #include <posix/dirent.h>
 #include <posix/errno.h>
 
@@ -95,7 +96,7 @@ static int eth_rx_thread( void* pData )
 		printk( "Received RARP packet\n" );
 		free_pkt_buffer( psPkt );
 		break;
-	    default:
+	    default:	// 2048 == ETH_P_IP == IP packets
 		dispatch_net_packet( psPkt );
 		break;
 	}
@@ -104,7 +105,12 @@ static int eth_rx_thread( void* pData )
 
 static int ether_write( Route_s* psRoute, ipaddr_t pDstAddress, PacketBuf_s* psPkt )
 {
-    if ( psRoute->rt_nFlags & RTF_GATEWAY ) {
+	uint8 anBroadcastAddr[] = { 0xff, 0xff, 0xff, 0xff };
+
+	if( IP_SAMEADDR(anBroadcastAddr, pDstAddress) )
+		return( arp_send_packet( psRoute->rt_psInterface->ni_pInterface, psPkt, pDstAddress ) );
+
+    if ( psRoute->rt_nFlags & RTF_GATEWAY ){
 	return( arp_send_packet( psRoute->rt_psInterface->ni_pInterface, psPkt, psRoute->rt_anGatewayAddr ) );
     } else {
 	return( arp_send_packet( psRoute->rt_psInterface->ni_pInterface, psPkt, pDstAddress ) );

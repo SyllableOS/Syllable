@@ -35,6 +35,8 @@
 static sem_id g_hArpLock = -1;
 
 static void arp_send_request( EthInterface_s* psInterface, ArpEntry_s* psEntry );
+static int arp_do_send( EthInterface_s* psInterface, PacketBuf_s* psPkt, uint8* pHwAddress );
+static void add_arp_entry( EthInterface_s* psInterface, uint8* pHwAddress, int nHwAddrLen, ipaddr_t pIpAddress );
 
 /*****************************************************************************
  * NAME:
@@ -47,6 +49,7 @@ static ArpEntry_s* arp_lookup_address( EthInterface_s* psInterface, ipaddr_t pAd
 {
   ArpEntry_s* psEntry;
   char	      zBuffer[128];
+  uint8      anIPBroadcastAddr[] = { 0xff, 0xff, 0xff, 0xff };
   
   for ( psEntry = psInterface->ei_psFirstARPEntry ; psEntry != NULL ; psEntry = psEntry->ae_psNext )
   {
@@ -74,6 +77,17 @@ static ArpEntry_s* arp_lookup_address( EthInterface_s* psInterface, ipaddr_t pAd
 
   psEntry->ae_psNext = psInterface->ei_psFirstARPEntry;
   psInterface->ei_psFirstARPEntry = psEntry;
+
+  if ( IP_SAMEADDR( pAddress, anIPBroadcastAddr ) )
+  {
+    uint8 anHWBroadcastAddr[] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+
+    kerndbg(KERN_INFO,"Adding ARP entry for broadcast address\n");
+    add_arp_entry( psInterface, anHWBroadcastAddr, ETH_ALEN, pAddress);
+    memcpy( psEntry->ae_anHardwareAddr, anHWBroadcastAddr, ETH_ALEN );
+    psEntry->ae_bIsValid = true;
+    bSendRequest = false;
+  }
 
   if ( bSendRequest ) {
     arp_send_request( psInterface, psEntry );
