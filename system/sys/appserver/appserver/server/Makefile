@@ -35,10 +35,10 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/appserver: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/appserver $(FREETYPE)/objs/libfreetype.a $(LIBS) -lstdc++ -lm
+	gcc $(OBJS) -o $(OBJDIR)/appserver $(FREETYPE)/objs/.libs/libfreetype.a $(LIBS) -lstdc++ -lm
 
 $(OBJDIR)/mini_appserver: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/appserver $(FREETYPE)/objs/libfreetype.a $(LIBS) -lstdc++ -lm
+	gcc $(OBJS) -o $(OBJDIR)/appserver $(FREETYPE)/objs/.libs/libfreetype.a $(LIBS) -lstdc++ -lm
 
 install: $(OBJDIR)/appserver
 	cp -f $(OBJDIR)/appserver /system/appserver
