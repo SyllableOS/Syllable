@@ -28,7 +28,7 @@
 
 class ChangePasswordDlg : public Window {
   public:
-    static void ShowChangePassword( const string& cLogin,
+    static void ShowChangePassword(Window*,const string& cLogin,
                                     Looper *pcNotify,
                                     Message *pcMessage );
 
@@ -56,3 +56,4 @@ class ChangePasswordDlg : public Window {
 };
 
 #endif
+

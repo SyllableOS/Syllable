@@ -32,7 +32,7 @@
 
 using namespace os;
 
-void UserProperties::ShowUserProperties( const struct passwd& sDetails,
+void UserProperties::ShowUserProperties( Window* pcParent, const struct passwd& sDetails,
                                          Looper *pcLooper,
                                          Message *pcMessage ) {
   string cTitle( "Properties for " );
@@ -43,7 +43,7 @@ void UserProperties::ShowUserProperties( const struct passwd& sDetails,
   pcDlg = new UserProperties( cFrame + Point( 100, 100 ), "user_properties",
                               cTitle + sDetails.pw_gecos, sDetails,
                               pcLooper, pcMessage );
-
+  pcDlg->CenterInWindow(pcParent);
   pcDlg->Show();
   pcDlg->MakeFocus( true );
 }
@@ -182,3 +182,4 @@ void UserProperties::HandleMessage( Message *pcMessage ) {
 bool UserProperties::OkToQuit( ) {
   return true;
 }
+

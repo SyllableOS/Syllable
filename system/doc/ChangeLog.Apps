@@ -1,3 +1,12 @@
+* July 14,2003, Rick Caudill *
+	* Users
+		*  All Alerts use the appropriate alert icon.
+		*  All dialogs are now centered in the main window.
+		*  The main window is now centered in the screen.
+		*  Added the key icon back.  The reason why this was broke was the icon
+			had to be put in <Users directory>/share/keys.png, but now it is
+			loaded from a resource.
+		
 * July 14 2003, Kristian Van Der Vliet *
 	* Bugs fixes for dhcpc
 		* Better handling of out-of-sequence replies

@@ -36,7 +36,7 @@ class UserProperties : public Window {
 
     virtual ~UserProperties();
 
-    static void ShowUserProperties( const struct passwd& sDetails,
+    static void ShowUserProperties(Window*, const struct passwd& sDetails,
                                     Looper *pcNotify, Message *pcMessage );
 
     virtual void HandleMessage( Message *pcMessage );
@@ -52,3 +52,4 @@ class UserProperties : public Window {
 };
 
 #endif
+

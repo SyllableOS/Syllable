@@ -37,11 +37,11 @@
 #include <util/application.h>
 #include <util/message.h>
 #include <storage/filereference.h>
+#include <gui/imageview.h>
 
 #include "main.h"
 #include "userswindow.h"
 #include "labelview.h"
-#include "bitmapview.h"
 #include "changepwddlg.h"
 #include "propertiesdlg.h"
 
@@ -148,12 +148,12 @@ void UsersWindow::OnOK( Message *pcMessage ) {
   int fd = mkstemp( tmp );
 
   if( fd < 0 ) {
-    errno_alert( "Save Error", "creating a temporary password file" );
+    errno_alert( "Save Error", "creating a temporary password file",this );
     return;
   }
   
   if( fchmod( fd, 0644 ) < 0 ) {
-    errno_alert( "Save Error", "creating a temporary password file" );
+    errno_alert( "Save Error", "creating a temporary password file",this );
     
     close( fd );
     return;
@@ -162,7 +162,7 @@ void UsersWindow::OnOK( Message *pcMessage ) {
   FILE *fp = fdopen( fd, "w" );
 
   if( fp == NULL ) {
-    errno_alert( "Save Error", "opening a temporary password file" );
+    errno_alert( "Save Error", "opening a temporary password file",this );
     // Close the descriptor?
     return;
   }
@@ -182,7 +182,7 @@ void UsersWindow::OnOK( Message *pcMessage ) {
 
   // Now move it over the old passwd file.
   if( rename( tmp, "/etc/passwd" ) < 0 ) {
-    errno_alert( "Save Error", "replacing the old password file" );
+    errno_alert( "Save Error", "replacing the old password file",this );
 
     unlink( tmp ); // Avoid polluting with files
   }
@@ -204,7 +204,7 @@ void UsersWindow::OnAdd( Message *pcMessage ) {
 
   Message *pcProto = new Message( ID_UPDATE_USER );
 
-  UserProperties::ShowUserProperties( sPwd, this, pcProto );
+  UserProperties::ShowUserProperties(this,sPwd, this, pcProto );
 }
 
 void UsersWindow::OnDelete( Message *pcMessage ) {
@@ -245,7 +245,7 @@ void UsersWindow::OnProperties( Message *pcMessage ) {
   pcProto->AddInt32( "original_uid", sPwd.pw_uid );
   pcProto->AddString( "original_name", sPwd.pw_name );
   
-  UserProperties::ShowUserProperties( sPwd, this, pcProto );
+  UserProperties::ShowUserProperties(this,sPwd, this, pcProto );
 }
 
 /**
@@ -263,7 +263,7 @@ void UsersWindow::OnSetPasswd( Message *pcMessage ) {
 
   pcNew->AddPointer( "original_row", pcRow );
   
-  ChangePasswordDlg::ShowChangePassword( pcRow->GetName(), this, pcNew );
+  ChangePasswordDlg::ShowChangePassword(this,pcRow->GetName(), this, pcNew );
 }
 
 /**
@@ -288,7 +288,7 @@ void UsersWindow::OnChangePwd( Message *pcMessage ) {
 
       pcNew->AddPointer( "original_row", pcRow );
       
-      ChangePasswordDlg::ShowChangePassword( pcRow->GetName(), this, pcNew );
+      ChangePasswordDlg::ShowChangePassword(this,pcRow->GetName(), this, pcNew );
       break;
     }
   }
@@ -359,8 +359,8 @@ void UsersWindow::OnUpdatePwd( Message *pcMessage ) {
     Alert *pcAlert = new Alert( "Concurrency Problem",
                                 "The entry you are trying to change the "
                                 "password for has been deleted.  You will "
-                                "need to re-try.", 0, "OK", NULL );
-
+                                "need to re-try.", Alert::ALERT_WARNING,0, "OK", NULL );
+	pcAlert->CenterInWindow(this);
     pcAlert->Go();
 
     pcMessage->SendReply( M_QUIT );
@@ -374,8 +374,8 @@ void UsersWindow::OnUpdatePwd( Message *pcMessage ) {
       Alert *pcAlert = new Alert( "Program Error",
                                   "The dialog did not send through the old "
                                   "password for this user correctly.  You "
-                                  "will need to re-try.", 0, "OK", NULL );
-
+                                  "will need to re-try.",Alert::ALERT_WARNING, 0, "OK", NULL );
+	  pcAlert->CenterInWindow(this);		
       pcAlert->Go();
 
       pcMessage->SendReply( M_QUIT );
@@ -388,7 +388,8 @@ void UsersWindow::OnUpdatePwd( Message *pcMessage ) {
       Alert *pcAlert = new Alert( "Incorrect Password",
                                   "You have not entered the correct "
                                   "old password.  Please check and "
-                                  "re-try.", 0, "OK", NULL );
+                                  "re-try.", Alert::ALERT_WARNING,0, "OK", NULL );
+      pcAlert->CenterInWindow(this);
       pcAlert->Go();
       return;
     }
@@ -399,8 +400,8 @@ void UsersWindow::OnUpdatePwd( Message *pcMessage ) {
     Alert *pcAlert = new Alert( "Program Error",
                                 "The dialog did not send through the old "
                                 "password for this user correctly.  You "
-                                "will need to re-try.", 0, "OK", NULL );
-
+                                "will need to re-try.",Alert::ALERT_WARNING, 0, "OK", NULL );
+	pcAlert->CenterInWindow(this);
     pcAlert->Go();
   } else {
     pcRow->SetPwdText( pzPasswd );
@@ -480,9 +481,9 @@ void UsersWindow::OnUpdateUser( Message *pcMessage ) {
                                 "properties window has been deleted.\n"
                                 "Would you like to create a new user "
                                 "based on these properties, discard "
-                                "these properties, or cancel?", 0,
+                                "these properties, or cancel?", Alert::ALERT_QUESTION,0,
                                 "Cancel", "Discard", "Create New", NULL );
-
+	pcAlert->CenterInWindow(this);
     switch( pcAlert->Go() ) {
       case 0:
         return;
@@ -531,9 +532,9 @@ void UsersWindow::OnUpdateUser( Message *pcMessage ) {
                "Are you sure you wish to proceed?",
                (bName ? "name" : "id") );
     
-    pcAlert = new Alert( "Duplicate Warning", acMsgBuf, 0, "Cancel", "OK",
+    pcAlert = new Alert( "Duplicate Warning", acMsgBuf, Alert::ALERT_QUESTION,0, "Cancel", "OK",
                          NULL );
-    
+    pcAlert->CenterInWindow(this);
     switch( pcAlert->Go() ) {
       case 0:
         return;
@@ -575,11 +576,11 @@ void UsersWindow::OnUpdateUser( Message *pcMessage ) {
                     pzStart, cErrors[0], cErrors[1], cErrors[2] );
           break;
       }
-
-      pcAlert = new Alert( "Missing Information", acMsgBuf, 0,
+	  
+      pcAlert = new Alert( "Missing Information", acMsgBuf,Alert::ALERT_WARNING,0,
                                   "OK", NULL );
-
-      pcAlert->Go();
+	  pcAlert->CenterInWindow(this);	
+      pcAlert->Go(new Invoker());
       
       return;
     }
@@ -740,9 +741,8 @@ UsersWindow::Content::Content( const Rect& cFrame,
   pcPwdTop->SetVAlignment( ALIGN_TOP );
   
   // Left hand side is an icon
-  Bitmap *pcPwdIcon = LoadPNG( "share/keys.png" );
-  BitmapView *pcPwdIconView
-    = new BitmapView( (pcPwdIcon?pcPwdIcon->GetBounds():Rect( 0, 0, 32, 32 )),
+  BitmapImage *pcPwdIcon = LoadImage( (std::string)"keys.png" );
+  ImageView *pcPwdIconView = new ImageView(Rect(0,0,36,37),
                       "password_icon", pcPwdIcon );
   
   pcPwdTop->AddChild( pcPwdIconView, 0.0f );
@@ -806,3 +806,7 @@ UsersWindow::Content::Content( const Rect& cFrame,
 
 UsersWindow::Content::~Content( ) {
 }
+
+
+
+

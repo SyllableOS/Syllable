@@ -1,0 +1,61 @@
+# Installing from the Source:
+#
+# This file is also a shell script, which you can run to do the install
+# for you.  Type 'sh INSTALL /dest/dir' at the command line to install
+# under /dest/dir.  If you leave out this parameter, the default directory
+# is /Applications/Users.
+#
+# In order to build this program you will need to have the GCC and binutils
+# packages installed as well as the PNG and zlib libraries (PNG typically
+# relies on zlib).
+# 
+# If these elements are all set up, you can build the executable with:
+# 
+#  % make
+#
+# and then copy the executable into its application directory.  You will
+# need to make a subdirectory of that application directory named 'share'
+# and copy in the graphic file 'keys.png'.  If you intend to use pkgmanager
+# to create links for command line use, you will further need to create
+# a 'bin' directory under the application directory that contains a link
+# to the executable.
+#
+# In order for the file to run properly, it must be installed with the user
+# set to 'root' and the application marked 'setuid'.  Otherwise, people will
+# not be able to change their passwords, on root will.
+if [ -z "$1" ]
+then
+  DESTDIR=/Applications/Users
+else
+  DESTDIR="${1%/}"
+fi
+
+echo -n "Building Users package... "
+
+if ! make > build.log 2>&1
+then
+  echo "Failed."
+  echo "Please check the file build.log for errors."
+  exit
+else
+  echo "Done."
+fi
+
+echo "Installing Users package under $DESTDIR."
+
+strip Users
+
+if [ `id -u` -ne 0 ]
+then
+  echo -n "Please provide System Administrator "
+fi
+su <<EOF
+mkdir -p $DESTDIR
+mkdir -p $DESTDIR/bin
+mkdir -p $DESTDIR/share
+cp Users $DESTDIR
+cp keys.png $DESTDIR/share
+ln -s $DESTDIR/Users $DESTDIR/bin/Users
+chmod 4755 $DESTDIR/Users
+pkgmanager -a $DESTDIR
+EOF

@@ -35,7 +35,7 @@
 using namespace os;
 using namespace std;
 
-void ChangePasswordDlg::ShowChangePassword( const string& cLogin,
+void ChangePasswordDlg::ShowChangePassword(Window* pcParent, const string& cLogin,
                                             Looper *pcNotify,
                                             Message *pcMessage ) {
   ChangePasswordDlg *pcDlg;
@@ -43,7 +43,7 @@ void ChangePasswordDlg::ShowChangePassword( const string& cLogin,
   pcDlg = new ChangePasswordDlg( Rect( 100, 100, 300, 200 ),
                                  "change_password", "Change Password",
                                  cLogin, pcNotify, pcMessage );
-
+  pcDlg->CenterInWindow(pcParent);
   pcDlg->Show();
   pcDlg->MakeFocus( true );
 }
@@ -223,3 +223,4 @@ void ChangePasswordDlg::OnCancel( Message *pcMessage ) {
 bool ChangePasswordDlg::OkToQuit( ) {
   return true;
 }
+

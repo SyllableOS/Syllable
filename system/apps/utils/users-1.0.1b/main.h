@@ -19,12 +19,16 @@
 #ifndef WR_USERS_MAIN_H
 #define WR_USERS_MAIN_H
 
-#include <gui/bitmap.h>
+#include <gui/image.h>
+#include <gui/window.h>
 
 bool compare_pwd_to_pwd( const char *pzCmp, const char *pzPwd );
 bool compare_pwd_to_txt( const char *pzCmp, const char *pzTxt );
-os::Bitmap *LoadPNG( const char *pzFile );
-void errno_alert( const char *pzTitle, const char *pzAction );
+os::BitmapImage *LoadImage(const std::string&);
+void errno_alert( const char *pzTitle, const char *pzAction, os::Window* pcWin=NULL );
 
 
 #endif
+
+
+
