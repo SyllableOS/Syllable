@@ -20,6 +20,7 @@ modules
 	apps/utils/archiver
 	apps/utils/aview
 	apps/utils/bzoom
+	apps/utils/charmap
 	apps/utils/cpumon
 	apps/utils/crypt
 	apps/utils/keymapconv

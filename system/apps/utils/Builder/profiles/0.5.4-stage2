@@ -21,4 +21,5 @@ modules
 	apps/utils/Preferences/Network
 	apps/utils/aterm
 	apps/utils/catalog
+	apps/utils/charmap
 	apps/utils/pkgmanager
