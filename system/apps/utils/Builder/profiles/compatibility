@@ -1,0 +1,9 @@
+; Old libraries for compatibility with applications for older versions of Syllable
+
+modules
+	libs/compat-1.0
+	libs/compatibility/libatheos-3
+	libs/compatibility/libsyllable-1
+	libs/compatibility/libsyllable-2
+	libs/compatibility/libsyllable-3
+

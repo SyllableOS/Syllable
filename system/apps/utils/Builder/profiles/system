@@ -158,11 +158,6 @@ modules
 	sys/kernel/fs/iso9660
 	sys/kernel/fs/ramfs
 	libs/glibc2-2.1.2
-	libs/compat-1.0
-	libs/compatibility/libatheos-3
-	libs/compatibility/libsyllable-1
-	libs/compatibility/libsyllable-2
-	libs/compatibility/libsyllable-3
 	libs/libpthread
 	libs/ncurses-5.4
 	libs/zlib-1.2.1
