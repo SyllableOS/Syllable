@@ -17,8 +17,9 @@
  *  MA 02111-1307, USA
  */
 #include <gui/imagebutton.h>
+#include <storage/memfile.h>
 #include <typeinfo>
-
+#include <iostream>
 using namespace os;
 
 /** \internal */
@@ -198,24 +199,7 @@ uint32 ImageButton::GetTextPosition( void )
 /* MouseDown*/
 void ImageButton::MouseDown( const Point& cPosition, uint32 nButton )
 {
-  //  if( bShowFrame == true )
-  //  {
         Button::MouseDown( cPosition, nButton );
- //   }
-/*    else
-    {
-        bool state = GetValue().AsBool();
-
-        if ( nButton != 1 || IsEnabled() == false )
-        {
-            return;
-        }
-
-    //    if(!GetBounds().DoIntersect( cPosition ))
-    //    	return;
-
-        SetValue(!state, true);
-    }*/
 } /*end MouseDown()*/
 
 /* MouseMove */
@@ -238,22 +222,12 @@ void ImageButton::MouseMove(const Point &cNewPos, int nCode, uint32 nButtons, Me
 /*MouseUp*/
 void ImageButton::MouseUp( const Point& cPosition, uint32 nButton, Message* pcData )
 {
-//    if(bShowFrame == true)
-//    {
-        Button::MouseUp( cPosition, nButton, pcData );
-//    }
-//    else
-//    {
-//        View::MouseUp( cPosition, nButton, pcData );
-//    }
+	Button::MouseUp( cPosition, nButton, pcData );
 }/*ehd MouseUp()*/
 
 void ImageButton::Paint( const Rect &cUpdateRect )
 {
-/*        dbprintf("ImageButton::Paint: %p This: %p M: %p\n",
-        	m->GetImage(), this, m );*/
-
-    Rect cBounds = GetBounds( );
+	Rect cBounds = GetBounds( );
     Rect cTextBounds = GetBounds( );
     float vStrWidth = GetStringWidth( GetLabel( ) );
     Point cBitPoint;
@@ -352,9 +326,8 @@ void ImageButton::Paint( const Rect &cUpdateRect )
     	if ( IsEnabled() )
     	{
             if( HasFocus( ) ){
-        	// SetFgColor(255,255,255);
      	         SetFgColor( 0,0,0 );
-   	    	 DrawLine( Point( (cTextBounds.Width()+1.0f)*0.5f - vStrWidth*0.5f, y + sHeight.descender - sHeight.line_gap / 2 - 1.0f ),Point( (cTextBounds.Width()+1.0f)*0.5f + vStrWidth*0.5f, y + sHeight.descender - sHeight.line_gap / 2 - 1.0f ) );
+   	    	 	DrawLine( Point( (cTextBounds.Width()+1.0f)*0.5f - vStrWidth*0.5f, y + sHeight.descender - sHeight.line_gap / 2 - 1.0f ),Point( (cTextBounds.Width()+1.0f)*0.5f + vStrWidth*0.5f, y + sHeight.descender - sHeight.line_gap / 2 - 1.0f ) );
             }
         
             SetFgColor( 0,0,0 );
@@ -375,12 +348,9 @@ void ImageButton::Paint( const Rect &cUpdateRect )
 
     if( pcImg )
     {
-        SetDrawingMode( DM_BLEND );
-/*        dbprintf("Draw Image, this: %p\n", this );
-        dbprintf("Draw Image: %p To: %d - %d In: %p\n",
-        	pcImg, (int)cBitPoint.x, (int)cBitPoint.y, this );*/
-//        pcImg->Draw( Rect(Point(),pcImg->GetSize()-Point(1,1)), Rect(cBitPoint,pcImg->GetSize()+cBitPoint-Point(1,1)), this );
+        SetDrawingMode( DM_BLEND );//DM_BLEND
         pcImg->Draw(cBitPoint,this);
+        SetDrawingMode(DM_OVER);  //sets the mode to dm_over, so that hovering works completely
     }
 }/*end Paint()*/
 
@@ -438,6 +408,14 @@ void ImageButton::SetImageFromImage(Image* pcImage)
     m->SetImage(pcImage);
 } /* end SetImageFromImage()*/
 
+/*this does not work yet*/
+void ImageButton::SetImageFromMemory( const void* pData, int nSize )
+{
+	MemFile*	cMemFile = new MemFile( pData, nSize );
+	Image* vImage = new BitmapImage( cMemFile );
+	SetImageFromImage( vImage );
+}
+ 
 /*reserved*/
 void ImageButton::_reserved1(){}
 void ImageButton::_reserved2(){}
@@ -450,14 +428,4 @@ void ImageButton::_reserved8(){}
 void ImageButton::_reserved9(){}
 void ImageButton::_reserved10(){}
 /*end of file*/
-
-
-
-
-
-
-
-
-
-
 

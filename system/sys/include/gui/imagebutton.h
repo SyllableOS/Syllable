@@ -8,6 +8,7 @@
 #include <gui/font.h>
 #include <storage/file.h>
 #include <util/resources.h>
+#include <storage/memfile.h>
 
 namespace os
 {
@@ -52,6 +53,7 @@ public:
     void SetImageFromFile( const char* pzFile );
     void SetImageFromResource( const char* pzFile );
     void SetImageFromImage( Image* pcImage );
+    void SetImageFromMemory( const void* pData, int nSize );
     Image *GetImage( void );
     void ClearImage();
     
@@ -81,5 +83,4 @@ private:
 }
 
 #endif // __F_GUI_IMAGEBUTTON_H__
-
 
