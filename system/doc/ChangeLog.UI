@@ -1,3 +1,20 @@
+* March 9 2005, Henrik Isaksson *
+
+ Applied a bunch of patches from Vanders:
+ - volumes.cpp, scrollbar.h
+	o Glibc 2.3 compile fixes.
+ - String
+	o Added operator!=.
+ - ListView
+	o Only start a drag operation if the user clicks the left mouse button.
+	o Convert mouse coordinates to parent; context menu opens in correct position.
+ - TreeView
+	o Always draw connect lines.
+ - FileRequester
+	o The "source" pointer now always points to the FileRequester.
+ - Directory
+	o Added Delete() method.
+
 * March 6 2005, Henrik Isaksson *
 
  - StringView
