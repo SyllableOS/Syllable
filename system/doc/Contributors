@@ -1,6 +1,14 @@
 This is an (Almost certainly incomplete!) list of people who have contributed to Syllable:
 
-Drivers
+Graphics Drivers
+
+SiS 3xx		:	Arno Klenke <arno_klenke@yahoo.de>
+nVidia		:	Iain Hutchison <iain_hutchison@yahoo.com>
+
+Sound Drivers
+
+Via686a		:	Arno Klenke <arno_klenke@yahoo.de>
+Via82xxx		:	Arno Klenke <arno_klenke@yahoo.de>
 
 Keymaps
 
@@ -12,7 +20,7 @@ German		:	Daniel Popescu <daniel@popescu.de>
 Hungarian	:	Szekely Krisztian <szekelyk@different.hu>
 Italian		:	Denis Torresan <torresan@e-tree.com>
 Polish		:	Michal Rygorowicz <mandrake@wp.pl>
-Russian		:	Nikolaev Ruslan	<nruslan@hotbox.ru>
+Russian		:	Nikolaev Ruslan <nruslan@hotbox.ru>
 Spanish		:	Chir <chir@geocities.com>
 Swedish		:	Tord Jansson <tord.jansson@swipnet.se>
 
@@ -23,6 +31,7 @@ Henrik Isaksson <henrik@boing.nu>
 Jack Tonkin <lists@tonkin.org.uk>
 Daniel Gryniewicz <dang@fprintf.net>
 Ville Kallioniemi <festivus@mbnet.fi>
+Arno Klenke <arno_klenke@yahoo.de>
 
 Ports
 

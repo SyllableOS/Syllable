@@ -1,22 +1,46 @@
+* Mar 26 2002, Kristian Van Der Vliet *
+
+SiS 3xx video driver and Via82xx audio drivers from Arno Klenke<arno_klenke@yahoo.de>
+
+* Mar 26 2002, Kristian Van Der Vliet *
+
+Changed the default DEBUG_LIMIT limit to KERN_INFO
+
+* Mar 26 2002, Kristian Van Der Vliet *
+
+Cleaned up the formatting of this ChangeLog
+
+* Mar 26 2002, Kristian Van Der Vliet *
+
+Two patches for the ATA driver from Arno Klenke <arno_klenke@yahoo.de>  One fixes a bug in select_drive()
+and the other modifies atapi_packet_command() to handle drives that send their response as multiple chunks
+of data.
+
 * Mar 23 2002, Kristian Van Der Vliet *
 
 Added an ATA/ATAPI driver, and removed the old "ide" driver under syllable/system/sys/kernel/driver/disk/
 
 * Feb 18 2002, Kristian Van Der Vliet *
 
-Patched the Mach64 driver so that it does not attempt to initialise Rage Mobility chipsets (Which do not work with the driver).  Patch from Michael Krueger <invenies@web.de>
+Patched the Mach64 driver so that it does not attempt to initialise Rage Mobility chipsets (Which do not work with
+the driver).  Patch from Michael Krueger <invenies@web.de>
 
 * Jan 11 2002, Kristian Van Der Vliet *
 
-Removed the Lucida fonts from CVS due to licencing issues.  They have been replaced with the Lucidux fonts from XFree86, and the URW fonts taken fron GhostScript.  See the file Copyrights for full copyright and licencing information.
+Removed the Lucida fonts from CVS due to licencing issues.  They have been replaced with the Lucidux fonts
+from XFree86, and the URW fonts taken fron GhostScript.  See the file Copyrights for full copyright and licencing
+information.
 
 * Dec 23 2002, Kristian Van Der Vliet *
 
-Upgraded Grub to 0.92 with a patch from Jack Tonkin <lists@tonkin.org.uk> which adds AFS support from 0.53.  This version of Grub is reported NOT to compile on Syllable currently, although if you wish you can easily build and install it from Linux.
+Upgraded Grub to 0.92 with a patch from Jack Tonkin <lists@tonkin.org.uk> which adds AFS support from 0.53.
+This version of Grub is reported NOT to compile on Syllable currently, although if you wish you can easily build
+and install it from Linux.
 
 * Nov 3 2002, Kristian Van Der Vliet *
 
-Fixed the keyboard driver and appserver.  The NumLock & CapsLock keys now function and are honored by the appserver.  All keymaps now set NumLock on by default.
+Fixed the keyboard driver and appserver.  The NumLock & CapsLock keys now function and are honored by the
+appserver.  All keymaps now set NumLock on by default.
 
 * Oct 24 2002, Kristian Van Der Vliet *
 
@@ -24,23 +48,30 @@ Added a /dev/random character device driver, which makes use of the new kernel r
 
 * Oct 5 2002, Kristian Van Der Vliet *
 
-Added system/libs/libpthread  This is a POSIX threads library which wraps the Syllable kernel threads.  The current code is incomplete but functional.  For more information, see the README and CHANGES files included with libpthread.
+Added system/libs/libpthread  This is a POSIX threads library which wraps the Syllable kernel threads.  The
+current code is incomplete but functional.  For more information, see the README and CHANGES files
+included with libpthread.
 
 * Sep 24 2002, Kristian Van Der Vliet *
 
-Removed the -g flags from the libatheos and appserver Makefiles, which of course reduces the size of the resulting files.
+Removed the -g flags from the libatheos and appserver Makefiles, which of course reduces the size of
+the resulting files.
 
 * Aug 25 2002, Kristian Van Der Vliet *
 
-Updated nVideo driver from Iain Hutchison < iain_hutchison@yahoo.com >.  The driver now supports more cards, including the GeForce 4 and Riva128.  It should also correctly detect if you have an LCD  screen attached and set things up correctly.  The update also includes Joseph's patch to allow multiple video cards in the same PC
+Updated nVideo driver from Iain Hutchison < iain_hutchison@yahoo.com >.  The driver now supports more
+cards, including the GeForce 4 and Riva128.  It should also correctly detect if you have an LCD  screen attached
+and set things up correctly.  The update also includes Joseph's patch to allow multiple video cards in the same PC
 
 * Aug 25 2002, Kristian Van Der Vliet *
 
-Applied a patch from Sebastien Keim < s.keim@laposte.net > for copy.c in Fileutils-4.1 which adds attribute support to cp
+Applied a patch from Sebastien Keim < s.keim@laposte.net > for copy.c in Fileutils-4.1 which adds attribute
+support to cp
 
 * Aug 18 2002, Kristian Van Der Vliet *
 
-I have finally managed to get Glibc fixed!  I have added it back under libs/ & the Makefile is updated.  Not all Makefiles are complete, and the README is also out of date...
+I have finally managed to get Glibc fixed!  I have added it back under libs/ & the Makefile is updated.  Not all
+Makefiles are complete, and the README is also out of date...
 
 * Aug 11 2002, Kristian Van Der Vliet *
 
@@ -57,7 +88,8 @@ files, but I havn't tested it.
 
 * Aug 6 2002, Kristian Van Der Vliet *
 
-Added sed-3.02 in apps/gnu/  Thanks goto Andrew Brown < abrown.taos@bemail.org> for porting & checking
+Added sed-3.02 in apps/gnu/  Thanks goto Andrew Brown < abrown.taos@bemail.org> for porting
+& checking
 
 * Aug 6 2002, Kristian Van Der Vliet *
 
@@ -65,8 +97,8 @@ Removed compile gaurds from pkgmanager.cpp
 
 * Aug 6 2002, Kristian Van Der Vliet *
 
-Moved other/keymaps/Contributors to doc/Contributors.  This will be a more general file to hold details of patch,
-driver, keymap etc. authors.
+Moved other/keymaps/Contributors to doc/Contributors.  This will be a more general file to hold
+details of patch, driver, keymap etc. authors.
 
 * Aug 6 2002, Kristian Van Der Vliet *
 
