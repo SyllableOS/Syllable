@@ -11,7 +11,7 @@ licenses			GPL | LGPL | GFDL | BSD | MIT | OS | custom | PD | freeware | commerc
 ;
 home				syllable.sf.net
 packages			<Deviating tarball name>
-;mirrors				<Download locations>
+;locations			<Download locations>
 ;archives			<Arch archives>
 ;
 ; Dependencies (unimplemented):
@@ -58,6 +58,9 @@ make-vars			VAR="value"
 ;
 ; Non-standard test targets:
 test-targets		check
+;
+install-tree
+	<Extra subdirectories to create>
 ;
 ; Installing:
 ; <install>
