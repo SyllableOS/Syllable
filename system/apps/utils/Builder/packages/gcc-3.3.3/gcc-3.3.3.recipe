@@ -79,5 +79,6 @@ documentation
 links
 	gcc					bin/cc
 	libgcc.a			lib/gcc-lib/i586-pc-syllable/3.3.3/libgcc_static.a
-;	libgcc_s.so.1		/system/libs/libgcc_s.so
-;	libstdc++.so.5.0.5	/system/libs/libstdc++.so.5
+	libgcc_s.so.1		/system/libs/libgcc_s.so
+	libstdc++.so.5.0.5	/system/libs/libstdc++.so.5
+	libstdc++.so.5		/system/libs/libstdc++.so
