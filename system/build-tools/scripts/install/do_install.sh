@@ -1,5 +1,21 @@
 #!/bin/sh
+#
+# Remember to always update the version numbers below!
+BASE_VER=0.5.0
+BASE_PACKAGE=base-syllable-$BASE_VER.tar.gz
 
+# The following packages change versions less often
+# ABrowse
+AB_VER=0.3.4
+AB_PACKAGE=abrowse-$AB_VER.bin.tar.gz
+# Whisper
+WH_VER=0.1.8
+WH_PACKAGE=whisper-$WH_VER.bin.tar.gz
+# Chat
+CH_VER=0.0.1
+CH_PACKAGE=chat-$CH_VER.bin.tar.gz
+
+# Now on with the installation
 clear
 cat doc/partition.txt
 
@@ -44,8 +60,8 @@ mount -t afs $DRIVE /inst
 clear
 cat doc/installation.txt
 
-echo; echo "Please wait..."
-tar -xzpf /boot/Packages/base/base-syllable-0.4.5.tar.gz -C /inst/
+echo; echo "Please wait...";echo
+tar -xzvpf /boot/Packages/base/$BASE_PACKAGE -C /inst/
 
 if [ $? -ne 0 ]; then
 	echo; echo "Failed to extract base package to $DRIVE.  Stopping"
@@ -72,14 +88,26 @@ clear
 
 # Install Syllable-Net packages
 echo; echo "Installing ABrowse"
-tar -xzpf /boot/Packages/net/abrowse-0.3.4.bin.tar.gz -C /inst/atheos/Applications/
+tar -xzpf /boot/Packages/net/$AB_PACKAGE -C /inst/atheos/Applications/
 
 echo; echo "Installing Whisper"
-tar -xzpf /boot/Packages/net/whisper-0.1.8.bin.tar.gz -C /inst/atheos/Applications/
+tar -xzpf /boot/Packages/net/$WH_PACKAGE -C /inst/atheos/Applications/
 
 echo; echo "Installing Chat"
-tar -xzpf /boot/Packages/net/chat-0.0.1.bin.tar.gz -C /inst/atheos/Applications/
+tar -xzpf /boot/Packages/net/$CH_PACKAGE -C /inst/atheos/Applications/
 
-echo
-exit 0
+# Sync disks
+echo; echo "All files have been installed.  Finalising installation."
+echo; echo "Synching disks.  Please wait; this may take some time.."
+echo "WARNING! If you reboot or turn off your computer before Syllable has properly synched the disk, the installation WILL BE CORRUPT and you will not be able to boot your Syllable installation!  DO NOT INTERUPT THE INSTALLATION AT THIS POINT!"
+sync
+
+clear
+echo "Syllable has now been installed!  Please press (R) to reboot your computer (Please remember to install Grub)  Press any other key to exit this installation script."
+read OPTION
+
+if [[ $ANSWER = 'R' || $ANSWER = 'r' ]];then
+	reboot
+fi;
+exit 0;
 
