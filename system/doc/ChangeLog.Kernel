@@ -1,3 +1,8 @@
+* February 6 2005, Jake Hamby *
+
+Updated to Build 0006.  Upgraded get_system_time() and get_real_time() from
+millisecond to microsecond precision.
+
 * February 4 2005, Jake Hamby *
 
 Updated to Build 0005.  The kernel now builds w/o warnings on GCC 3.4.3 and
