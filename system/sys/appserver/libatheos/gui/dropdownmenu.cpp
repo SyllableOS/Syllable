@@ -23,6 +23,8 @@
  * 02-07-24: Added Flush() call to SetEnable(). (So it is rendered in disabled
  *           state immediately.)
  *
+ * 02-11-09: Made the DropdownView scroll if there are more than MAX_DD_HEIGHT items.
+ *
  */
 
 #include <stdio.h>
@@ -36,17 +38,44 @@
 using namespace os;
 
 static uint8 g_anArrow[] = {
-    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-    0xff,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff,
-    0xff,0xff,0x00,0x00,0x00,0x00,0x00,0xff,0xff,
-    0xff,0xff,0xff,0x00,0x00,0x00,0xff,0xff,0xff,
-    0xff,0xff,0xff,0xff,0x00,0xff,0xff,0xff,0xff
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff,
+    0xff,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff,0xff,
+    0xff,0xff,0x00,0x00,0x00,0x00,0x00,0xff,0xff,0xff,
+    0xff,0xff,0xff,0x00,0x00,0x00,0xff,0xff,0xff,0xff,
+    0xff,0xff,0xff,0xff,0x00,0xff,0xff,0xff,0xff,0xff
 };
 
-#define ARROW_WIDTH  9
+
+#define ARROW_WIDTH  10
 #define ARROW_HEIGHT 5
 
+#define MAX_DD_HEIGHT 12
+#define EV_SB_INVOKED 31337
+
 static Bitmap* g_pcArrows = NULL;
+
+
+DropdownMenu::DropdownTextView::DropdownTextView(DropdownMenu *pcParent, const Rect &cFrame, const char *pzTitle, const char *pzBuffer, uint32 nResizeMask=CF_FOLLOW_LEFT|CF_FOLLOW_TOP, uint32 nFlags=WID_WILL_DRAW|WID_FULL_UPDATE_ON_RESIZE) 			
+	: os::TextView( cFrame, pzTitle, pzBuffer, nResizeMask, nFlags )
+{
+	m_pcParent = pcParent;
+}
+
+void DropdownMenu::DropdownTextView::KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers )
+{
+    switch( pzString[0] )
+    {
+		case VK_DOWN_ARROW:
+			m_pcParent->OpenMenu();
+			break;
+
+		default:
+		    TextView::KeyDown( pzString, pzRawString, nQualifiers );
+		    break;
+	}
+				
+}
+
 
 /** DropdownMenu constructor
  * \param cFrame - The size and position of the edit box and it's associated button.
@@ -70,36 +99,36 @@ DropdownMenu::DropdownMenu( const Rect& cFrame, const char* pzName, uint32 nResi
     m_pcMenuWindow   = NULL;
     m_bIsEnabled     = true;
     
-    m_pcEditBox = new TextView( Rect( 0, 0, 1, 1 ), "text_view", NULL );
+    m_pcEditBox = new DropdownTextView( this, Rect( 0, 0, 1, 1 ), "text_view", NULL );
     AddChild( m_pcEditBox );
+    
     FrameSized( Point( 0, 0 ) );
 
     m_pcEditBox->SetMessage( new Message( ID_STRING_CHANGED ) );
   
     if ( g_pcArrows == NULL ) {
-	g_pcArrows = new Bitmap( ARROW_WIDTH, ARROW_HEIGHT * 3, CS_CMAP8, Bitmap::SHARE_FRAMEBUFFER );
-
-	uint8* pRaster = g_pcArrows->LockRaster();
-	for ( int y = 0 ; y < ARROW_HEIGHT ; ++y ) {
-	    for ( int x = 0 ; x < ARROW_WIDTH ; ++x ) {
-		*pRaster++ = g_anArrow[y*ARROW_WIDTH+x];
-	    }
-	    pRaster += g_pcArrows->GetBytesPerRow() - ARROW_WIDTH;
-	}
-	for ( int y = 0 ; y < ARROW_HEIGHT ; ++y ) {
-	    for ( int x = 0 ; x < ARROW_WIDTH ; ++x ) {
-		*pRaster++ = (g_anArrow[y*ARROW_WIDTH+x]==0xff) ? 0xff : 63;
-	    }
-	    pRaster += g_pcArrows->GetBytesPerRow() - ARROW_WIDTH;
-	}
-	for ( int y = 0 ; y < ARROW_HEIGHT ; ++y ) {
-	    for ( int x = 0 ; x < ARROW_WIDTH ; ++x ) {
-		*pRaster++ = (g_anArrow[y*ARROW_WIDTH+x]==0xff) ? 0xff : 14;
-	    }
-	    pRaster += g_pcArrows->GetBytesPerRow() - ARROW_WIDTH;
-	}
+		g_pcArrows = new Bitmap( ARROW_WIDTH , ARROW_HEIGHT * 3, CS_CMAP8, Bitmap::SHARE_FRAMEBUFFER );
 	
-//	memcpy( g_pcArrow->LockRaster(), g_anArrow, 9 * 5 );
+		uint8* pRaster = g_pcArrows->LockRaster();
+		
+		for ( int y = 0 ; y < ARROW_HEIGHT ; ++y ) {
+		    for ( int x = 0 ; x < ARROW_WIDTH ; ++x ) {
+				*pRaster++ = g_anArrow[y*ARROW_WIDTH+x];
+		    }
+		    pRaster += g_pcArrows->GetBytesPerRow() - ARROW_WIDTH;
+		}
+		for ( int y = 0 ; y < ARROW_HEIGHT ; ++y ) {
+		    for ( int x = 0 ; x < ARROW_WIDTH ; ++x ) {
+				*pRaster++ = (g_anArrow[y*ARROW_WIDTH+x]==0xff) ? 0xff : 63;
+		    }
+		    pRaster += g_pcArrows->GetBytesPerRow() - ARROW_WIDTH;
+		}
+		for ( int y = 0 ; y < ARROW_HEIGHT ; ++y ) {
+		    for ( int x = 0 ; x < ARROW_WIDTH ; ++x ) {
+				*pRaster++ = (g_anArrow[y*ARROW_WIDTH+x]==0xff) ? 0xff : 14;
+		    }
+		    pRaster += g_pcArrows->GetBytesPerRow() - ARROW_WIDTH;
+		}
     }
 }
 
@@ -108,6 +137,7 @@ DropdownMenu::~DropdownMenu()
     delete m_pcEditMsg;
     delete m_pcSelectionMsg;
 }
+
 
 void DropdownMenu::SetEnable( bool bEnable )
 {
@@ -491,8 +521,8 @@ void DropdownMenu::Paint( const Rect& cUpdateRect )
 
     Point cBmOffset(0.0f,0.0f);
     if ( m_pcEditBox->IsEnabled() == false ) {
-	nCenterX += 1.0f;
-	cBmOffset.y += ARROW_HEIGHT;
+		nCenterX += 1.0f;
+		cBmOffset.y += ARROW_HEIGHT;
     }
     
     SetFgColor( 0, 0, 0 );
@@ -519,9 +549,6 @@ void DropdownMenu::FrameSized( const Point& cDelta )
     m_pcEditBox->SetFrame( cEditFrame );
 }
 
-void DropdownMenu::KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers )
-{
-}
 
 void DropdownMenu::SetMinPreferredSize( int nWidthChars )
 {
@@ -559,16 +586,17 @@ Point DropdownMenu::GetPreferredSize( bool bLargest ) const
     Point cSize( 30.0f, sFontHeight.ascender + sFontHeight.descender + 7.0f );
 
     if ( (bLargest) ? (m_pcEditBox->GetMaxPreferredSize().x==0) : (m_pcEditBox->GetMinPreferredSize().x==0) ) {
-	for ( uint i = 0 ; i < m_cStringList.size() ; ++i ) {
-	    float vWidth = GetStringWidth( m_cStringList[i] );
-	    if ( vWidth > cSize.x ) {
-		cSize.x = vWidth;
-	    }
-	}
-	cSize.x += 9.0f + cSize.y * 0.9f;
+		for ( uint i = 0 ; i < m_cStringList.size() ; ++i ) {
+		    float vWidth = GetStringWidth( m_cStringList[i] );
+		    if ( vWidth > cSize.x ) {
+				cSize.x = vWidth;
+		    }
+		}
+		cSize.x += 16 + 9.0f + cSize.y * 0.9f;
     } else {
-	cSize.x = 9.0f + cSize.y * 0.9f + m_pcEditBox->GetPreferredSize(bLargest).x;
+		cSize.x = 16 + 9.0f + cSize.y * 0.9f + m_pcEditBox->GetPreferredSize(bLargest).x;
     }
+    cSize.x += cSize.y;
     return( cSize );
 }
 
@@ -587,6 +615,19 @@ void DropdownMenu::OpenMenu()
 
     DropdownView* pcMenuView = new DropdownView( this );
     m_pcMenuWindow->AddChild( pcMenuView );
+    if( m_cStringList.size() > MAX_DD_HEIGHT ) {
+		pcMenuView->m_pcScrollBar = new ScrollBar(Rect(),"ScrollBar", new Message( EV_SB_INVOKED ), 0, m_cStringList.size() - 1 );
+		pcMenuView->m_pcScrollBar->SetTarget( pcMenuView );
+		pcMenuView->m_pcScrollBar->SetValue( m_nSelection );
+		
+		float vSBWidth = pcMenuView->m_pcScrollBar->GetPreferredSize(true).x; 
+		Rect cFrame = pcMenuView->GetFrame();
+		pcMenuView->m_pcScrollBar->SetFrame( Rect( cFrame.Width() - vSBWidth,0,cFrame.Width(), cFrame.Height() ) );
+		cFrame.right -= vSBWidth;
+		pcMenuView->SetFrame( cFrame );
+		
+		m_pcMenuWindow->AddChild( pcMenuView->m_pcScrollBar );
+	}  
     pcMenuView->MakeFocus();
     m_pcMenuWindow->Show();
     m_pcMenuWindow->MakeFocus();
@@ -598,7 +639,15 @@ DropdownMenu::DropdownView::DropdownView( DropdownMenu* pcParent ) : View( Rect(
 {
     m_pcParent = pcParent;
     m_nCurSelection = pcParent->m_nSelection;
-    m_nOldSelection = m_nCurSelection;
+    m_nScrollPos = 0;
+	m_nOldSelection = m_nCurSelection;
+	    
+	m_pcScrollBar = NULL;
+	    
+    if( m_nCurSelection > MAX_DD_HEIGHT ) {
+    	m_nScrollPos = (m_pcParent->m_cStringList.size() - MAX_DD_HEIGHT) < (uint)m_nCurSelection?m_pcParent->m_cStringList.size() - MAX_DD_HEIGHT:m_nCurSelection - 1;
+		m_nCurSelection -= m_nScrollPos;
+	}
 }
 
 void DropdownMenu::DropdownView::Paint( const Rect& cUpdateRect )
@@ -608,35 +657,34 @@ void DropdownMenu::DropdownView::Paint( const Rect& cUpdateRect )
 
     SetFgColor( 0, 0, 0 );
     SetBgColor( 255, 255, 255 );
-
-    float y = 4 + m_sFontHeight.ascender + m_sFontHeight.line_gap / 2;
-    for ( uint i = 0 ; i < m_pcParent->m_cStringList.size() ; ++i ) {
-	if ( i == uint(m_nCurSelection) ) {
-
-	    Rect cItemFrame = GetBounds();
-
-	    cItemFrame.top = y - m_sFontHeight.ascender - m_sFontHeight.line_gap * 0.5f;
-	    cItemFrame.bottom = cItemFrame.top + m_vGlyphHeight - 1;
-	    cItemFrame.left += 2;
-	    cItemFrame.right -= 2;
-	    FillRect( cItemFrame );
       
-	    SetFgColor( 255, 255, 255 );
-	    SetBgColor( 0, 0, 0 );
-	}
-	MovePenTo( 4, y );
-	DrawString( m_pcParent->m_cStringList[i].c_str() );
-	y += m_vGlyphHeight;
-    
-	if ( i == uint(m_nCurSelection) ) {
+	uint nSize = m_pcParent->m_cStringList.size() > MAX_DD_HEIGHT?MAX_DD_HEIGHT:m_pcParent->m_cStringList.size();
+    float y = 4 + m_sFontHeight.ascender + m_sFontHeight.line_gap / 2;
+    for ( uint i = 0 ; i < nSize ; i++ ) {
+		MovePenTo( 4, y );
+		if ( i == uint(m_nCurSelection) ) {
+		    Rect cItemFrame = GetBounds();
+
+	    	cItemFrame.top = y - m_sFontHeight.ascender - m_sFontHeight.line_gap * 0.5f;
+		    cItemFrame.bottom = cItemFrame.top + m_vGlyphHeight - 1;
+		    cItemFrame.left += 2;
+	    	cItemFrame.right -= 2;
+		    FillRect( cItemFrame );
+      
+		    SetFgColor( 255, 255, 255 );
+	    	SetBgColor( 0, 0, 0 );
+		}			
+		DrawString( m_pcParent->m_cStringList[i + m_nScrollPos].c_str() );
 	    SetFgColor( 0, 0, 0 );
 	    SetBgColor( 255, 255, 255 );
-	}
+
+		y += m_vGlyphHeight;   
     }  
 }
 
 void DropdownMenu::DropdownView::Activated( bool bIsActive )
 {
+	return;
     if ( bIsActive == false ) {
 	Message cMsg( DropdownMenu::ID_SELECTION_CHANGED );
 	cMsg.AddInt32( "new_selection", m_nOldSelection );
@@ -648,95 +696,266 @@ void DropdownMenu::DropdownView::Activated( bool bIsActive )
 void DropdownMenu::DropdownView::MouseDown( const Point& cPosition, uint32 nButtons )
 {
     if ( GetBounds().DoIntersect( cPosition ) ) {
-	Message cMsg( DropdownMenu::ID_SELECTION_CHANGED );
-	cMsg.AddInt32( "new_selection", m_nCurSelection );
-	cMsg.AddBool( "final", true );
-	m_pcParent->GetWindow()->PostMessage( &cMsg, m_pcParent );
+    	if( ! (m_nCurSelection == (MAX_DD_HEIGHT-1) && (uint)m_nScrollPos < (m_pcParent->m_cStringList.size() - MAX_DD_HEIGHT) ) && ! ( m_nCurSelection == 0 && m_nScrollPos > 0 ) ) {
+			Message cMsg( DropdownMenu::ID_SELECTION_CHANGED );
+			cMsg.AddInt32( "new_selection", m_nCurSelection + m_nScrollPos );
+			cMsg.AddBool( "final", true );
+			m_pcParent->GetWindow()->PostMessage( &cMsg, m_pcParent );
+		}
     } else {
-	Message cMsg( DropdownMenu::ID_SELECTION_CHANGED );
-	cMsg.AddInt32( "new_selection", m_nOldSelection );
-	m_pcParent->GetWindow()->PostMessage( &cMsg, m_pcParent );
+		Message cMsg( DropdownMenu::ID_SELECTION_CHANGED );
+		cMsg.AddInt32( "new_selection", m_nOldSelection );
+		m_pcParent->GetWindow()->PostMessage( &cMsg, m_pcParent );
+	    m_pcParent->GetWindow()->PostMessage( DropdownMenu::ID_MENU_CLOSED, m_pcParent );;		
     }
-    m_pcParent->GetWindow()->PostMessage( DropdownMenu::ID_MENU_CLOSED, m_pcParent );;
 }
 
 void DropdownMenu::DropdownView::MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData )
 {
     if ( GetBounds().DoIntersect( cPosition ) ) {
-	Message cMsg( DropdownMenu::ID_SELECTION_CHANGED );
-	cMsg.AddInt32( "new_selection", m_nCurSelection );
-	cMsg.AddBool( "final", true );
-	m_pcParent->GetWindow()->PostMessage( &cMsg, m_pcParent );
-	m_pcParent->GetWindow()->PostMessage( DropdownMenu::ID_MENU_CLOSED, m_pcParent );
+    	if( m_nCurSelection == (MAX_DD_HEIGHT-1) && (uint)m_nScrollPos < (m_pcParent->m_cStringList.size() - MAX_DD_HEIGHT) ) {
+    		m_nScrollPos++;
+    	} else if( m_nCurSelection == 0 && m_nScrollPos > 0 ) {
+    		m_nScrollPos--;
+    	} else {
+			Message cMsg( DropdownMenu::ID_SELECTION_CHANGED );
+			cMsg.AddInt32( "new_selection", m_nCurSelection + m_nScrollPos );
+			cMsg.AddBool( "final", true );
+			m_pcParent->GetWindow()->PostMessage( &cMsg, m_pcParent );
+			m_pcParent->GetWindow()->PostMessage( DropdownMenu::ID_MENU_CLOSED, m_pcParent );
+		}
+		if( m_pcScrollBar != NULL ) {
+			m_pcScrollBar->SetValue( m_nScrollPos + m_nCurSelection );
+		}		
+		Invalidate( );
+		Flush();	
     }
 }
 
 void DropdownMenu::DropdownView::MouseMove( const Point& cPosition, int nCode, uint32 nButtons, Message* pcData )
 {
     if ( GetBounds().DoIntersect( cPosition ) == false ) {
-	return;
+		return;
     }
+    
+    if( cPosition == m_cOldPosition ) {
+    	return;
+    }
+	m_cOldPosition.x = cPosition.x;
+	m_cOldPosition.y = cPosition.y;
+    
     int nNewSel = int((cPosition.y - 2) / m_vGlyphHeight);
     if ( nNewSel >= int(m_pcParent->m_cStringList.size()) ) {
-	nNewSel = m_pcParent->m_cStringList.size() - 1;
+		nNewSel = m_pcParent->m_cStringList.size() - 1;
     }
   
     if ( nNewSel != m_nCurSelection ) {
-	int nPrevSel = m_nCurSelection;
-	m_nCurSelection = nNewSel;
-	Rect cItemFrame = GetBounds();
+		int nPrevSel = m_nCurSelection;
+		m_nCurSelection = nNewSel;
+		Rect cItemFrame = GetBounds();
+	
+		cItemFrame.top = nPrevSel * m_vGlyphHeight + 4;
+		cItemFrame.bottom = cItemFrame.top + m_vGlyphHeight - 1;
+		Invalidate( cItemFrame );
+	    
+		cItemFrame.top = m_nCurSelection * m_vGlyphHeight + 4;
+		cItemFrame.bottom = cItemFrame.top + m_vGlyphHeight - 1;
+	    
+		Message cMsg( DropdownMenu::ID_SELECTION_CHANGED );
+		cMsg.AddInt32( "new_selection", nNewSel );
+		m_pcParent->GetWindow()->PostMessage( &cMsg, m_pcParent );
 
-	cItemFrame.top = nPrevSel * m_vGlyphHeight + 4;
-	cItemFrame.bottom = cItemFrame.top + m_vGlyphHeight - 1;
-	Invalidate( cItemFrame );
-    
-	cItemFrame.top = m_nCurSelection * m_vGlyphHeight + 4;
-	cItemFrame.bottom = cItemFrame.top + m_vGlyphHeight - 1;
-    
-	Invalidate( cItemFrame );
-	Flush();
+		if( m_pcScrollBar != NULL ) {
+			m_pcScrollBar->SetValue( m_nScrollPos + m_nCurSelection );
+		}
 
-	Message cMsg( DropdownMenu::ID_SELECTION_CHANGED );
-	cMsg.AddInt32( "new_selection", nNewSel );
-	m_pcParent->GetWindow()->PostMessage( &cMsg, m_pcParent );
+		Invalidate( cItemFrame );
+		Flush();
     }
 }
 
 void DropdownMenu::DropdownView::KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers )
 {
-  
+    switch( pzString[0] )
+    {
+		case VK_DOWN_ARROW:
+			if( (uint)(m_nCurSelection + m_nScrollPos) < m_pcParent->m_cStringList.size() -1 ) {
+				m_nCurSelection++;
+				if( m_nCurSelection == (MAX_DD_HEIGHT - 1) && m_pcParent->m_cStringList.size() > MAX_DD_HEIGHT ) {
+					if( (uint)(m_nScrollPos + MAX_DD_HEIGHT) < m_pcParent->m_cStringList.size() ) {
+						m_nScrollPos++;
+						m_nCurSelection--;
+					}
+				}
+			}
+		    break;
+		case VK_UP_ARROW:
+			if( (m_nCurSelection + m_nScrollPos) > 0 ) {
+				m_nCurSelection--;
+				if( m_nScrollPos > 0 && m_nCurSelection < 1 ) {
+					m_nCurSelection = 1;
+					m_nScrollPos--;
+				}
+			}
+		    break;
+		    
+		case VK_ENTER: {
+			Message cMsg( DropdownMenu::ID_SELECTION_CHANGED );
+			cMsg.AddInt32( "new_selection", m_nCurSelection + m_nScrollPos );
+			cMsg.AddBool( "final", true );
+			m_pcParent->GetWindow()->PostMessage( &cMsg, m_pcParent );
+			m_pcParent->GetWindow()->PostMessage( DropdownMenu::ID_MENU_CLOSED, m_pcParent );
+			break;
+		}
+		
+		case VK_ESCAPE: {
+			Message cMsg( DropdownMenu::ID_SELECTION_CHANGED );
+			cMsg.AddInt32( "new_selection", m_nOldSelection );
+			m_pcParent->GetWindow()->PostMessage( &cMsg, m_pcParent );
+		    m_pcParent->GetWindow()->PostMessage( DropdownMenu::ID_MENU_CLOSED, m_pcParent );
+		    break;
+		}
+			
+		case VK_HOME:
+			m_nCurSelection = 0;
+			m_nScrollPos = 0;
+			break;
+			
+		case VK_END:
+			if( m_pcParent->m_cStringList.size() > MAX_DD_HEIGHT ) {
+				m_nScrollPos = m_pcParent->m_cStringList.size() - MAX_DD_HEIGHT;
+				m_nCurSelection = MAX_DD_HEIGHT - 1;
+			} else {
+				m_nScrollPos = 0;
+				m_nCurSelection = m_pcParent->m_cStringList.size() - 1;
+			}
+			break;
+			
+		case VK_PAGE_UP:
+			if( m_pcParent->m_cStringList.size() > MAX_DD_HEIGHT && m_nScrollPos > 0) {
+				m_nScrollPos -= MAX_DD_HEIGHT;
+				if( m_nScrollPos < 0 ) {
+					m_nScrollPos = 0;
+					m_nCurSelection = 0;
+				}
+			}
+			break;
+			
+		case VK_PAGE_DOWN:
+			if( m_pcParent->m_cStringList.size() > MAX_DD_HEIGHT && (uint)m_nScrollPos < (m_pcParent->m_cStringList.size() - MAX_DD_HEIGHT) ) {
+				m_nScrollPos += MAX_DD_HEIGHT;
+				if( (uint)m_nScrollPos > (m_pcParent->m_cStringList.size() - MAX_DD_HEIGHT) ) {
+					m_nScrollPos = m_pcParent->m_cStringList.size() - MAX_DD_HEIGHT;
+					m_nCurSelection = MAX_DD_HEIGHT - 1;
+				}
+			}
+			break;
+			
+		default: {
+			int nItem;
+			char nKey = pzString[0];
+			if( nKey > 64 && nKey < 91 ) { 
+				nKey += 32;
+			}
+			for( uint i = 1; i < m_pcParent->m_cStringList.size(); i++ ) {
+				nItem = i + m_nScrollPos + m_nCurSelection;
+				if( (uint)nItem >= m_pcParent->m_cStringList.size() ) {
+					nItem -= m_pcParent->m_cStringList.size();
+				}
+						
+				char nChar = m_pcParent->m_cStringList[nItem][0];
+				if( nChar > 64 && nChar < 91 ) { 
+					nChar += 32;
+				}
+				
+				if( nKey == nChar ) {
+					if( m_pcParent->m_cStringList.size() > MAX_DD_HEIGHT ) {
+						m_nScrollPos = nItem;
+						m_nCurSelection = 0;
+					} else {
+						m_nCurSelection = nItem;
+					}
+					if( (uint)m_nScrollPos > (m_pcParent->m_cStringList.size() - MAX_DD_HEIGHT) ) {
+						m_nScrollPos = m_pcParent->m_cStringList.size() - MAX_DD_HEIGHT;
+						m_nCurSelection = nItem - m_nScrollPos;
+					}
+					break;
+				}
+			}
+				
+		    View::KeyDown( pzString, pzRawString, nQualifiers );
+		}
+	}
+	
+	if( m_pcScrollBar != NULL ) {
+		m_pcScrollBar->SetValue( m_nScrollPos + m_nCurSelection );
+	}
+	
+	Invalidate();
+	Flush();
 }
 
 void DropdownMenu::DropdownView::AllAttached()
 {
     Window* pcWindow = GetWindow();
-
+		
     GetFontHeight( &m_sFontHeight );
     m_vGlyphHeight = m_sFontHeight.descender + m_sFontHeight.ascender + m_sFontHeight.line_gap;
-  
-    m_cContentSize.y = m_pcParent->m_cStringList.size() * m_vGlyphHeight;
 
     for ( uint i = 0 ; i < m_pcParent->m_cStringList.size() ; ++i ) {
-	float vLength = GetStringWidth( m_pcParent->m_cStringList[i].c_str() );
-	if ( vLength > m_cContentSize.x ) {
-	    m_cContentSize.x = vLength;
-	}
+		float vLength = GetStringWidth( m_pcParent->m_cStringList[i].c_str() );
+		if ( vLength > m_cContentSize.x ) {
+	    	m_cContentSize.x = vLength;
+		}
     }
     m_cContentSize.x += 8;
-    m_cContentSize.y += 8;
-  
+
     Rect cMenuRect = m_pcParent->GetBounds();
+
+	if ( m_cContentSize.x <= cMenuRect.Width()+1.0f ) {
+		m_cContentSize.x = cMenuRect.Width()+1.0f;
+    }
+    cMenuRect.right = cMenuRect.left + m_cContentSize.x - 1;
+	m_cContentSize.y = (m_pcParent->m_cStringList.size() > MAX_DD_HEIGHT?MAX_DD_HEIGHT * m_vGlyphHeight:m_pcParent->m_cStringList.size() * m_vGlyphHeight) + 8;
+
     cMenuRect.top = cMenuRect.bottom;
     cMenuRect.bottom = cMenuRect.top + m_cContentSize.y - 1;
-
-//  if ( m_cContentSize.x <= m_pcParent->m_pcEditBox->GetBounds().Width() ) {
-//    m_cContentSize.x = m_pcParent->m_pcEditBox->GetBounds().Width();
-      /* } else*/ if ( m_cContentSize.x <= cMenuRect.Width()+1.0f ) {
-	  m_cContentSize.x = cMenuRect.Width()+1.0f;
-      }
-      cMenuRect.right = cMenuRect.left + m_cContentSize.x - 1;
   
-      pcWindow->SetFrame( m_pcParent->ConvertToScreen( cMenuRect ) );
+    pcWindow->SetFrame( m_pcParent->ConvertToScreen( cMenuRect ) );
+}
+
+
+void DropdownMenu::DropdownView::HandleMessage( Message* pcMessage )
+{
+	switch( pcMessage->GetCode() ) {
+		case EV_SB_INVOKED: {
+			int32 nNewVal = m_pcScrollBar->GetValue().AsInt32();
+			int32 nOldVal = m_nScrollPos + m_nCurSelection;
+			int32 nDelta = nNewVal - nOldVal;
+			if( nDelta != 0 ) { // nDelta will be 0 if the scrollbar value was set by the dropdownmenu
+				if( abs(nDelta) == 1 ) {
+					m_nScrollPos += nDelta;
+				} else {
+					m_nScrollPos = nNewVal - (MAX_DD_HEIGHT / 2);
+					m_nCurSelection = nNewVal - m_nScrollPos;
+				}
+				Invalidate();
+				Flush();
+			}
+			
+			if( m_nScrollPos < 0 ) {
+				m_nScrollPos = 0;
+				if( m_nCurSelection > 0 ) {
+					m_nCurSelection--;
+				}
+			} else if( (uint)m_nScrollPos > (m_pcParent->m_cStringList.size() - MAX_DD_HEIGHT ) ) {
+				m_nScrollPos = m_pcParent->m_cStringList.size() - MAX_DD_HEIGHT;
+				m_nCurSelection = nNewVal - m_nScrollPos;
+			}
+			break;
+		}
+	}
+
 }
 
 

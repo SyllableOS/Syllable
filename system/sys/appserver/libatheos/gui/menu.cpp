@@ -867,7 +867,19 @@ void Menu::Open( Point cScrPos )
     }
     Point  cSize = GetPreferredSize( false );
     Rect   cBounds( 0, 0, cSize.x - 1, cSize.y - 1 );
-
+    
+    Desktop cDesktop;
+    IPoint cRes = cDesktop.GetResolution();
+    
+    if( cBounds.bottom + cScrPos.y > cRes.y )
+    	cScrPos.y = cRes.y - cSize.y;
+    if( cBounds.top + cScrPos.y < 0 )
+    	cScrPos.y = 0;
+    if( cBounds.right + cScrPos.x > cRes.x )
+    	cScrPos.x = cRes.x - cSize.x;
+    if( cBounds.left + cScrPos.x < 0 ) 
+    	cScrPos.x = 0;
+        
     m_pcWindow = new MenuWindow( cBounds + cScrPos, this );
 
     m_pcRoot->m->m_cMutex.Lock();
