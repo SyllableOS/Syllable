@@ -1,7 +1,7 @@
-FREETYPE = freetype2-beta8
+FREETYPE = freetype-2.1.3
 SCREENSHOT = y
 
-CFLAGS   = -pipe -O2 -g -I./$(FREETYPE)/include -c -Wall
+CFLAGS   = -pipe -O2 -I./$(FREETYPE)/include -c -Wall
 CPPFLAGS= $(CFLAGS)
 AOPTS   = -c
 
@@ -32,10 +32,10 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/appserver: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/appserver $(FREETYPE)/obj/libfreetype.a -latheos -lpng -lz -lstdc++ -lm
+	gcc $(OBJS) -o $(OBJDIR)/appserver $(FREETYPE)/objs/libfreetype.a -latheos -lpng -lz -lstdc++ -lm
 
 $(OBJDIR)/mini_appserver: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/appserver $(FREETYPE)/obj/libfreetype.a -latheos -lstdc++ -lm
+	gcc $(OBJS) -o $(OBJDIR)/appserver $(FREETYPE)/objs/libfreetype.a -latheos -lstdc++ -lm
 
 install: $(OBJDIR)/appserver
 	cp -f $(OBJDIR)/appserver /system/appserver
@@ -50,3 +50,9 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d $(OBJDIR)/appserver
 
 -include $(OBJDIR)/*.d
+
+
+
+
+
+

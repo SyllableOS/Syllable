@@ -78,13 +78,19 @@ SFontInstance::SFontInstance( SFont* pcFont, int nPointSize, int nRotation, int 
     
     m_nNomWidth	 = psSize->metrics.x_ppem;
     m_nNomHeight = psSize->metrics.y_ppem;
-  
-    m_nAscender  = (psSize->metrics.ascender + 63) / 64;
-//    m_nDescender = (((psSize->metrics.descender) + 63) / 64);
-    m_nLineGap   = (psSize->metrics.height - (psSize->metrics.ascender + psSize->metrics.descender) + 63) / 64;
-    m_nDescender = -(((psSize->metrics.descender) + 63) / 64);
-//    m_nLineGap   = (psSize->metrics.height - (psSize->metrics.ascender - psSize->metrics.descender) + 63) / 64;
 
+    if (psSize->metrics.descender > 0)
+    {
+	m_nDescender = -(psSize->metrics.descender + 63) / 64;
+//	m_nLineGap   = (psSize->metrics.height - (psSize->metrics.ascender + psSize->metrics.descender) + 63) / 64;
+    }
+    else
+    {
+	m_nDescender = (psSize->metrics.descender + 63) / 64;
+//	m_nLineGap   = (psSize->metrics.height - (psSize->metrics.ascender - psSize->metrics.descender) + 63) / 64;
+    }
+	m_nAscender  = (psSize->metrics.ascender  + 63) / 64;
+    m_nLineGap   = (psSize->metrics.height + 63) / 64 - (m_nAscender - m_nDescender);
     m_nAdvance   = (psSize->metrics.max_advance + 63) / 64;
 
 //    printf( "Size1(%d): %ld, %ld, %ld (%ld, %ld, %ld)\n", nPointSize, psSize->metrics.ascender, psSize->metrics.descender, psSize->metrics.height,
@@ -126,18 +132,23 @@ status_t SFontInstance::SetProperties( int nPointSize, int nShear, int nRotation
     m_nNomWidth	   = psSize->metrics.x_ppem;
     m_nNomHeight   = psSize->metrics.y_ppem;
   
-    m_nAscender  = (psSize->metrics.ascender + 63) / 64;
-    m_nDescender = -(((psSize->metrics.descender) + 63) / 64);
-//    m_nLineGap   = (psSize->metrics.height - (psSize->metrics.ascender - psSize->metrics.descender) + 63) / 64;
-
-//    m_nDescender = (((psSize->metrics.descender) + 63) / 64);
-    m_nLineGap   = (psSize->metrics.height - (psSize->metrics.ascender + psSize->metrics.descender) + 63) / 64;
+    if (psSize->metrics.descender > 0)
+    {
+	m_nDescender = -(psSize->metrics.descender + 63) / 64;
+//	m_nLineGap   = (psSize->metrics.height - (psSize->metrics.ascender + psSize->metrics.descender) + 63) / 64;
+    }
+    else
+    {
+	m_nDescender = (psSize->metrics.descender + 63) / 64;
+//	m_nLineGap   = (psSize->metrics.height - (psSize->metrics.ascender - psSize->metrics.descender) + 63) / 64;
+    }
+	m_nAscender  = (psSize->metrics.ascender  + 63) / 64;
+    m_nLineGap   = (psSize->metrics.height + 63) / 64 - (m_nAscender - m_nDescender);
+    m_nAdvance   = (psSize->metrics.max_advance + 63) / 64;
 
 //    printf( "Size2(%d): %ld, %ld, %ld (%ld, %ld, %ld)\n", nPointSize, psSize->metrics.ascender, psSize->metrics.descender, psSize->metrics.height,
 //	    psSize->metrics.ascender / 64, psSize->metrics.descender / 64, psSize->metrics.height / 64 );
     
-    m_nAdvance   = (psSize->metrics.max_advance + 63) / 64;
-  
     for ( int i = 0 ; i < m_nGlyphCount ; ++i ) {
 	if ( m_ppcGlyphTable[i] != NULL ) {
 	    delete[] reinterpret_cast<char*>(m_ppcGlyphTable[i]);
@@ -1013,4 +1024,12 @@ SFont* FontServer::OpenFont( const std::string& cFamily, const std::string& cSty
     }
     return( pcFont );
 }
+
+
+
+
+
+
+
+
 
