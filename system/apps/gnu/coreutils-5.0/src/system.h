@@ -128,7 +128,11 @@ extern int errno;
 #if HAVE_STDBOOL_H
 # include <stdbool.h>
 #else
+# ifdef __ATHEOS__
+#  include <atheos/types.h>
+# else
 typedef enum {false = 0, true = 1} bool;
+# endif
 #endif
 
 #if HAVE_STDLIB_H
