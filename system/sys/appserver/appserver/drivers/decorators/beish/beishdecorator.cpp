@@ -681,9 +681,13 @@ void BeIshDecorator::Render( const Rect& cUpdateRect )
 	//pcView->SetFgColor( 255, 255, 255, 0 );
 	pcView->SetBgColor( sFillColor );
 	pcView->MovePenTo( m_cDragRect.left + 17,
+			   m_cDragRect.Height() / 2 -
+			   (m_sFontHeight.ascender + m_sFontHeight.descender) / 2 +
+			   m_sFontHeight.ascender);
+/*	pcView->MovePenTo( m_cDragRect.left + 17,
 			   (m_cDragRect.Height()+1.0f) / 2 -
 			   (m_sFontHeight.ascender + m_sFontHeight.descender) / 2 + m_sFontHeight.ascender +
-			   m_sFontHeight.line_gap * 0.5f + 1);
+			   m_sFontHeight.line_gap * 0.5f + 1);*/
     
        const char *title = m_cTitle.c_str();
        int titlewidth = pcView->m_pcFont->GetInstance()->GetStringWidth(title,strlen(title));
@@ -728,3 +732,5 @@ extern "C" WindowDecorator* create_decorator( Layer* pcLayer, uint32 nFlags )
 {
     return( new BeIshDecorator( pcLayer, nFlags ) );
 }
+
+

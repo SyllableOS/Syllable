@@ -574,10 +574,8 @@ void MulvaneDecorator::Render( const Rect& cUpdateRect )
 		}
 		pcView->SetBgColor( sFillColor );
 		pcView->MovePenTo( m_cDragRect.left + 5,
-			   m_cDragRect.top +
-			   (m_cDragRect.Height()+1.0f) / 2 -
-			   (m_sFontHeight.ascender + m_sFontHeight.descender) / 2 + m_sFontHeight.ascender +
-			   m_sFontHeight.line_gap * 0.5f );
+			   m_cDragRect.top + m_cDragRect.Height() / 2 -
+			   (m_sFontHeight.ascender + m_sFontHeight.descender) / 2 + m_sFontHeight.ascender );
 		pcView->DrawString( m_cTitle.c_str(), -1 );
 	}
 	else
@@ -604,8 +602,4 @@ extern "C" WindowDecorator* create_decorator( Layer* pcLayer, uint32 nFlags )
 {
     return( new MulvaneDecorator( pcLayer, nFlags ) );
 }
-
-
-
-
 

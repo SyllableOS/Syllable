@@ -101,7 +101,7 @@ void AmigaDecorator::Layout()
     if ( m_nFlags & WND_NO_DEPTH_BUT ) {
 	m_cToggleRect.left = m_cToggleRect.right;
     } else {
-	m_cToggleRect.left = ceil(m_cToggleRect.right - m_vTopBorder * 1.5f);
+	m_cToggleRect.left = ceil(m_cToggleRect.right - m_vTopBorder * 1.2f);
     }
     m_cToggleRect.top = 0;
     m_cToggleRect.bottom = m_vTopBorder - 1;
@@ -116,7 +116,7 @@ void AmigaDecorator::Layout()
 	} else {
 	    m_cZoomRect.right  = m_cToggleRect.left - 1.0f;
 	}
-	m_cZoomRect.left   = ceil( m_cZoomRect.right - m_vTopBorder * 1.5f);
+	m_cZoomRect.left   = ceil( m_cZoomRect.right - m_vTopBorder * 1.2f);
     }
     m_cZoomRect.top  = 0;
     m_cZoomRect.bottom  = m_vTopBorder - 1;
@@ -240,7 +240,7 @@ void AmigaDecorator::SetCloseButtonState( bool bPushed )
 {
     m_bCloseState = bPushed;
     if ( (m_nFlags & WND_NO_CLOSE_BUT) == 0 ) {
-	Color32_s sFillColor =  m_bHasFocus ? GetDefaultColor( PEN_SELWINTITLE ) : GetDefaultColor( PEN_WINTITLE );
+    Color32_s sFillColor =  m_bHasFocus ? get_default_color( COL_SEL_WND_BORDER ) : get_default_color( COL_NORMAL_WND_BORDER );
 	DrawClose( m_cCloseRect, sFillColor, m_bCloseState == 1 );
     }
 }
@@ -249,7 +249,7 @@ void AmigaDecorator::SetZoomButtonState( bool bPushed )
 {
     m_bZoomState = bPushed;
     if ( (m_nFlags & WND_NO_ZOOM_BUT) == 0 ) {
-	Color32_s sFillColor =  m_bHasFocus ? GetDefaultColor( PEN_SELWINTITLE ) : GetDefaultColor( PEN_WINTITLE );
+    Color32_s sFillColor =  m_bHasFocus ? get_default_color( COL_SEL_WND_BORDER ) : get_default_color( COL_NORMAL_WND_BORDER );
 	DrawZoom( m_cZoomRect, sFillColor, m_bZoomState == 1 );
     }
 }
@@ -258,7 +258,7 @@ void AmigaDecorator::SetDepthButtonState( bool bPushed )
 {
     m_bDepthState = bPushed;
     if ( (m_nFlags & WND_NO_DEPTH_BUT) == 0 ) {
-	Color32_s sFillColor =  m_bHasFocus ? GetDefaultColor( PEN_SELWINTITLE ) : GetDefaultColor( PEN_WINTITLE );
+    Color32_s sFillColor =  m_bHasFocus ? get_default_color( COL_SEL_WND_BORDER ) : get_default_color( COL_NORMAL_WND_BORDER );
 	DrawDepth( m_cToggleRect, sFillColor, m_bDepthState == 1 );
     }
 }
@@ -285,18 +285,18 @@ void AmigaDecorator::DrawDepth( const Rect& cRect, const Color32_s& sFillColor, 
     if ( bRecessed )
     {
 	pcView->FillRect( cRect, sFillColor );
-	pcView->DrawFrame( cRect, FRAME_RECESSED | FRAME_TRANSPARENT );
-	pcView->DrawFrame( L, FRAME_RAISED | FRAME_TRANSPARENT );
+	pcView->DrawFrame( cRect, FRAME_RECESSED | FRAME_TRANSPARENT | FRAME_THIN );
+	pcView->DrawFrame( L, FRAME_RAISED | FRAME_TRANSPARENT | FRAME_THIN );
 	pcView->FillRect( R, sFillColor );
-	pcView->DrawFrame( R, FRAME_RAISED | FRAME_TRANSPARENT );
+	pcView->DrawFrame( R, FRAME_RAISED | FRAME_TRANSPARENT | FRAME_THIN );
     }
     else
     {
 	pcView->FillRect( cRect, sFillColor );
-	pcView->DrawFrame( cRect, FRAME_RAISED | FRAME_TRANSPARENT );
-	pcView->DrawFrame( L, FRAME_RECESSED | FRAME_TRANSPARENT );
+	pcView->DrawFrame( cRect, FRAME_RAISED | FRAME_TRANSPARENT | FRAME_THIN );
+	pcView->DrawFrame( L, FRAME_RECESSED | FRAME_TRANSPARENT | FRAME_THIN );
 	pcView->FillRect( R, sFillColor );
-	pcView->DrawFrame( R, FRAME_RAISED | FRAME_TRANSPARENT );
+	pcView->DrawFrame( R, FRAME_RAISED | FRAME_TRANSPARENT | FRAME_THIN );
     }
 }
 
@@ -328,18 +328,18 @@ void AmigaDecorator::DrawZoom( const Rect& cRect, const Color32_s& sFillColor, b
     if ( bRecessed )
     {
 	pcView->FillRect( cRect, sFillColor );
-	pcView->DrawFrame( cRect, FRAME_RECESSED | FRAME_TRANSPARENT );
-	pcView->DrawFrame( R, FRAME_RAISED | FRAME_TRANSPARENT  );
-	pcView->DrawFrame( L, FRAME_RECESSED | FRAME_TRANSPARENT );
+	pcView->DrawFrame( cRect, FRAME_RECESSED | FRAME_TRANSPARENT | FRAME_THIN );
+	pcView->DrawFrame( R, FRAME_RAISED | FRAME_TRANSPARENT | FRAME_THIN  );
+	pcView->DrawFrame( L, FRAME_RECESSED | FRAME_TRANSPARENT | FRAME_THIN );
 
 	pcView->FillRect( Rect( L.left + 1, L.top + 1, L.right - 1, L.bottom - 1 ), sFillColor );
     }
     else
     {
 	pcView->FillRect( cRect, sFillColor );
-	pcView->DrawFrame( cRect, FRAME_RAISED | FRAME_TRANSPARENT );
-	pcView->DrawFrame( L, FRAME_RAISED | FRAME_TRANSPARENT );
-	pcView->DrawFrame( R, FRAME_RECESSED | FRAME_TRANSPARENT  );
+	pcView->DrawFrame( cRect, FRAME_RAISED | FRAME_TRANSPARENT | FRAME_THIN );
+	pcView->DrawFrame( L, FRAME_RAISED | FRAME_TRANSPARENT | FRAME_THIN );
+	pcView->DrawFrame( R, FRAME_RECESSED | FRAME_TRANSPARENT | FRAME_THIN  );
     }
 }
 
@@ -364,12 +364,12 @@ void AmigaDecorator::DrawClose(  const Rect& cRect, const Color32_s& sFillColor,
   
     if ( bRecessed ) {
 	pcView->FillRect( cRect, sFillColor );
-	pcView->DrawFrame( cRect, FRAME_RECESSED | FRAME_TRANSPARENT );
-	pcView->DrawFrame( L, FRAME_RAISED | FRAME_TRANSPARENT );
+	pcView->DrawFrame( cRect, FRAME_RECESSED | FRAME_TRANSPARENT | FRAME_THIN );
+	pcView->DrawFrame( L, FRAME_RAISED | FRAME_TRANSPARENT | FRAME_THIN );
     } else {
 	pcView->FillRect( cRect, sFillColor );
-	pcView->DrawFrame( cRect, FRAME_RAISED | FRAME_TRANSPARENT );
-	pcView->DrawFrame( L, FRAME_RECESSED | FRAME_TRANSPARENT );
+	pcView->DrawFrame( cRect, FRAME_RAISED | FRAME_TRANSPARENT | FRAME_THIN );
+	pcView->DrawFrame( L, FRAME_RECESSED | FRAME_TRANSPARENT | FRAME_THIN );
     }
 }
 
@@ -379,7 +379,7 @@ void AmigaDecorator::Render( const Rect& cUpdateRect )
 	return;
     }
   
-    Color32_s sFillColor =  m_bHasFocus ? GetDefaultColor( PEN_SELWINTITLE ) : GetDefaultColor( PEN_WINTITLE );
+    Color32_s sFillColor =  m_bHasFocus ? get_default_color( COL_SEL_WND_BORDER ) : get_default_color( COL_NORMAL_WND_BORDER );
 
     Layer* pcView = GetLayer();
   
@@ -413,11 +413,17 @@ void AmigaDecorator::Render( const Rect& cUpdateRect )
 	pcView->SetBgColor( sFillColor );
 	pcView->MovePenTo( m_cDragRect.left + 5,
 			   (m_cDragRect.Height()+1.0f) / 2 -
-			   (m_sFontHeight.ascender + m_sFontHeight.descender) / 2 + m_sFontHeight.ascender +
-			   m_sFontHeight.line_gap * 0.5f );
-    
+			   (m_sFontHeight.ascender + m_sFontHeight.descender) / 2 +
+				m_sFontHeight.ascender/* - m_sFontHeight.descender*/ );
+
+/*	pcView->DrawFrame( Rect( m_cDragRect.left + 5, (m_cDragRect.Height()+1.0f) / 2 -
+			   (m_sFontHeight.ascender + m_sFontHeight.descender) / 2,
+				m_cDragRect.right - 5,
+				(m_cDragRect.Height()+1.0f) / 2 -
+			   (m_sFontHeight.ascender + m_sFontHeight.descender) / 2 + m_sFontHeight.ascender + m_sFontHeight.descender), FRAME_RAISED | FRAME_TRANSPARENT | FRAME_THIN );*/
+
 	pcView->DrawString( m_cTitle.c_str(), -1 );
-	pcView->DrawFrame( m_cDragRect, FRAME_RAISED | FRAME_TRANSPARENT );
+	pcView->DrawFrame( m_cDragRect, FRAME_RAISED | FRAME_TRANSPARENT | FRAME_THIN );
     } else {
 	pcView->FillRect( Rect( cOBounds.left + 1, cOBounds.top - 1, cOBounds.right - 1, cIBounds.top + 1 ), sFillColor );
     }
@@ -439,3 +445,4 @@ extern "C" WindowDecorator* create_decorator( Layer* pcLayer, uint32 nFlags )
 {
     return( new AmigaDecorator( pcLayer, nFlags ) );
 }
+

@@ -423,9 +423,8 @@ void NextDecorator::Render( const Rect& cUpdateRect )
 	pcView->SetFgColor( 255, 255, 255, 0 );
 	pcView->SetBgColor( sFillColor );
 	pcView->MovePenTo( m_cDragRect.left + 5,
-			   (m_cDragRect.Height()+1.0f) / 2 -
-			   (m_sFontHeight.ascender + m_sFontHeight.descender) / 2 + m_sFontHeight.ascender +
-			   m_sFontHeight.line_gap * 0.5f );
+			   m_cDragRect.Height() / 2 -
+			   (m_sFontHeight.ascender + m_sFontHeight.descender) / 2 + m_sFontHeight.ascender );
     
 	pcView->DrawString( m_cTitle.c_str(), -1 );
 	pcView->DrawFrame( m_cDragRect, FRAME_RAISED | FRAME_TRANSPARENT );
@@ -450,3 +449,4 @@ extern "C" WindowDecorator* create_decorator( Layer* pcLayer, uint32 nFlags )
 {
     return( new NextDecorator( pcLayer, nFlags ) );
 }
+

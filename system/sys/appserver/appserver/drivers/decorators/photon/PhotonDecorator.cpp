@@ -545,10 +545,8 @@ void PhotonDecorator::Render( const Rect& cUpdateRect )
 		pcView->SetFgColor( 0,0,0,0 );
 		pcView->SetBgColor( sFillColor );
 		pcView->MovePenTo( m_cDragRect.left + 5,
-			1 + 
-			(m_cDragRect.Height()+1.0f) / 2 -
-			(m_sFontHeight.ascender + m_sFontHeight.descender) / 2 + m_sFontHeight.ascender +
-			m_sFontHeight.line_gap * 0.5f );
+			1 + m_cDragRect.Height() / 2 -
+			(m_sFontHeight.ascender + m_sFontHeight.descender) / 2 + m_sFontHeight.ascender );
 		pcView->DrawString( m_cTitle.c_str(), -1 );
 	}
 	else
@@ -597,6 +595,7 @@ extern "C" WindowDecorator* create_decorator( Layer* pcLayer, uint32 nFlags )
 {
     return( new PhotonDecorator( pcLayer, nFlags ) );
 }
+
 
 
 
