@@ -31,6 +31,7 @@ int32 Thread::_Entry( void *pvoid )
  *****************************************************************************/
 Thread::Thread( const char *pzName, int nPriority, int nStackSize )
 {
+	m_iThread = -1;
 	Initialize( pzName, nPriority, nStackSize );
 }
 
@@ -202,4 +203,3 @@ proc_id Thread::GetProcessId()
 		return -1;
 	return get_thread_proc( m_iThread );
 }
-
