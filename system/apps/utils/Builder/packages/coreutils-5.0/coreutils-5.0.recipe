@@ -1,4 +1,8 @@
-authors			Kaj de Vos
+authors
+	Kurt Skauen
+	Sebastien Keim
+	Kaj de Vos
+maintainers		Kaj de Vos
 patch-config	config
 documentation	README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS THANKS-to-translators
 links
