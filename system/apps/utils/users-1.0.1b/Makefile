@@ -43,6 +43,11 @@ $(EXENAME): $(OBJS) Makefile
 su:	$(EXENAME)
 	su root -c "sh -c 'chown root:root $(EXENAME); chmod 4755 $(EXENAME)'"
 
+dist: all
+	mkdir $(DIST_DIR)/atheos/Applications/Users
+	mkdir $(DIST_DIR)/atheos/Applications/Users/bin
+	install -s $(EXENAME) $(DIST_DIR)/atheos/Applications/Users/bin/
+
 clean:
 	rm -rf $(OBJDIR) $(EXENAME)
 
