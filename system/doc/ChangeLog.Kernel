@@ -1,3 +1,13 @@
+* Sept 01 2003, Kristian Van Der Vliet *
+
+The kernel version information has now been changed.  The kernel itself now sets the
+system name and CPU type, as apposed to Glibc.  Changes have been made to Glibc uname.c
+to reflect these changes, and the version and revision fields have been split into two
+distinct fields (Which now contain valid data).  Sample output of uname -a is:
+
+[root@hostname:~]uname -a
+syllable liqwyd.domain 0 0.5 i586 unknown
+
 * Aug 7 2003, Kristian Van Der Vliet *
 
 Applied the GNU Indent styleguide script to all of the kernel source files and applied
