@@ -1,3 +1,9 @@
+* March 24 2005, Henrik Isaksson *
+
+ - Button
+	o Renamed Get/SetToggleMode() to Get/SetInputMode().
+	o Added input modes InputModeNormal, InputModeToggle and InputModeRadio.
+
 * March 20 2005, Henrik Isaksson *
 
  - Button
