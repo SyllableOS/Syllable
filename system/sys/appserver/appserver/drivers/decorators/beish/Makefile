@@ -1,0 +1,40 @@
+
+COPTS   = -I../../../server -I../../../server/freetype2-beta8/include -c -O3 -Wall
+
+DEVBIN = /system/drivers/appserver/decorators
+OBJS =	beishdecorator.o gradient.o
+
+OBJDIR	:= objs
+OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
+
+
+#
+#	rules
+#
+
+$(OBJDIR)/%.o : %.c
+	$(CC) $(COPTS) $< -o $@
+
+$(OBJDIR)/%.o : %.cpp
+	$(CC) $(COPTS) $< -o $@
+
+
+all :	objs $(OBJDIR)/beish
+
+deps:
+
+objs:
+	mkdir objs
+
+$(OBJDIR)/beish: $(OBJS)
+	gcc $(OBJS) -o $(OBJDIR)/beish /system/appserver -latheos -lstdc++
+	gcc -plugin $(OBJS) -o $(OBJDIR)/beish -latheos -lstdc++
+
+install: $(OBJDIR)/beish
+	cp -f $(OBJDIR)/beish $(DEVBIN)/beish
+
+dist: $(OBJDIR)/beish
+	cp -f $(OBJDIR)/beish $(DIST_DIR)/atheos/sys/drivers/appserver/decorators/Beish
+
+clean:
+	-rm $(OBJS) $(OBJDIR)/beish
