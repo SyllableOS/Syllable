@@ -83,9 +83,9 @@ int afs_validate_inode( const AfsVolume_s * psVolume, const AfsInode_s * psInode
 //  int32               ai_nMode;
 //  int32               ai_nFlags;
 
-	if( psInode->ai_nLinkCount < 0 || psInode->ai_nLinkCount > 1 )
+	if( atomic_read( &psInode->ai_nLinkCount ) < 0 || atomic_read( &psInode->ai_nLinkCount ) > 1 )
 	{
-		printk( "Inode %Ld has invalid link count %d\n", nInoNum, psInode->ai_nLinkCount );
+		printk( "Inode %Ld has invalid link count %d\n", nInoNum, atomic_read( &psInode->ai_nLinkCount ) );
 		nError = -EINVAL;
 	}
 
@@ -233,7 +233,7 @@ int afs_create_inode( AfsVolume_s * psVolume, AfsInode_s * psParent, int nMode, 
 	psInode->ai_nMode = nMode;
 	psInode->ai_nFlags = nFlags | INF_USED;
 	psInode->ai_nIndexType = nIndexType;
-	psInode->ai_nLinkCount = 1;
+	atomic_set( &psInode->ai_nLinkCount, 1 );
 	psInode->ai_nCreateTime = get_real_time();
 	psInode->ai_nModifiedTime = psInode->ai_nCreateTime;
 	psInode->ai_nInodeSize = nBlockSize;
@@ -279,9 +279,9 @@ int afs_delete_inode( AfsVolume_s * psVolume, AfsInode_s * psInode )
 	off_t nOldSize;
 	int nError;
 
-	if( psInode->ai_nLinkCount != 0 )
+	if( atomic_read( &psInode->ai_nLinkCount ) != 0 )
 	{
-		panic( "afs_delete_inode() called on inode with link count of %d!!!\n", psInode->ai_nLinkCount );
+		panic( "afs_delete_inode() called on inode with link count of %d!!!\n", atomic_read( &psInode->ai_nLinkCount ) );
 		return( -EINVAL );
 	}
 

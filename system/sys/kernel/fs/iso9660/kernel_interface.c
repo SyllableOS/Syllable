@@ -258,7 +258,7 @@ iso_mount( kdev_t volumeID, const char *devicePath, uint32 flags, void *paramete
 		*data = (void*)volume;
 		volume->id = volumeID;
 
-		kerndbg( KERN_DEBUG_LOW, "iso_mount - cache init: dev %d, max blocks %ld\n", volume->fd, volumeSize );
+		kerndbg( KERN_DEBUG_LOW, "iso_mount - cache init: dev %d, max blocks %Ld\n", volume->fd, volumeSize );
 				
 		// setup_device_cache expects the number of blocks on the device
 		error = setup_device_cache(volume->fd, volume->id, volumeSize );

@@ -133,8 +133,8 @@ struct _AfsTransaction
 	AfsHashEnt_s *at_psLastEntry;
 	off_t at_nLogStart;	// Absolute start block in the log(disk address)
 	int at_nBlockCount;	// Number of blocks in the transaction including index blocks
-	vint at_nPendingLogBlocks;	// Blocks written to the cache but not yet flushed.
-	int at_nWrittenBlocks;	// Number of blocks written to it's final destination.
+	atomic_t at_nPendingLogBlocks;	// Blocks written to the cache but not yet flushed.
+	atomic_t at_nWrittenBlocks;	// Number of blocks written to it's final destination.
 	AfsTransBuffer_s *at_psFirstBuffer;	// Single linked list of 128K transaction buffers
 	bool at_bWrittenToLog;	// true if the transaction is written to the log
 	bool at_bWrittenToDisk;
@@ -168,7 +168,7 @@ typedef struct
 {
 	int av_nDevice;
 	int av_nFsID;
-	int av_nOpenFiles;
+	atomic_t av_nOpenFiles;
 	AfsSuperBlock_s *av_psSuperBlock;
 	sem_id av_hJournalLock;
 	sem_id av_hJournalListsLock;

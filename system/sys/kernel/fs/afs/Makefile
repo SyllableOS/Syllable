@@ -1,4 +1,4 @@
-CFLAGS   = -kernel -D__LOADABLE__ -fno-PIC -c -O3 -g -Wall
+CFLAGS   = -kernel -D__LOADABLE__ -fno-PIC -c -O3 -g -Wall -fno-strict-aliasing
 AFLAGS   = -c
 
 

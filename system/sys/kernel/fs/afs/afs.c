@@ -146,9 +146,9 @@ static int afs_remove_from_deleted_list( AfsVolume_s * psVolume, AfsInode_s * ps
 
 #endif	/*  */
 		psSuperBlock = psVolume->av_psSuperBlock;
-	if( psInode->ai_nLinkCount != 0 )
+	if( atomic_read( &psInode->ai_nLinkCount ) != 0 )
 	{
-		panic( "afs_remove_from_deleted_list() i-node has link count of %d\n", psInode->ai_nLinkCount );
+		panic( "afs_remove_from_deleted_list() i-node has link count of %d\n", atomic_read( &psInode->ai_nLinkCount ) );
 		return ( -EINVAL );
 	}
 	nInodeNum = afs_run_to_num( psSuperBlock, &psInode->ai_sInodeNum );
@@ -384,7 +384,7 @@ static int afs_initialize( const char *pzDevPath, const char *pzVolName, void *p
 	psInode->ai_nFlags = INF_ATTRIBUTES | INF_LOGGED | INF_USED;
 	psInode->ai_nMode = S_IFDIR | S_IRWXUGO;
 	psInode->ai_nIndexType = e_KeyTypeString;
-	psInode->ai_nLinkCount = 1;
+	atomic_set( &psInode->ai_nLinkCount, 1 );
 	psInode->ai_nCreateTime = get_real_time();
 	psInode->ai_nModifiedTime = psInode->ai_nCreateTime;
 	psInode->ai_nInodeSize = nBlockSize;
@@ -572,12 +572,12 @@ static int afs_empty_delme_dir( AfsVolume_s * psVolume )
 			afs_end_transaction( psVolume, false );
 			break;
 		}
-		kassertw( psInode->ai_nLinkCount == 0 );
+		kassertw( atomic_read( &psInode->ai_nLinkCount ) == 0 );
 		printk( "afs_empty_delme_dir() delete inode %Ld (size=%Ld)\n", nInodeNum, psInode->ai_sData.ds_nSize );
 		sprintf( zFileName, "%08x%08x.del", ( int )( nInodeNum >> 32 ), ( int )( nInodeNum & 0xffffffff ) );
-		if( psInode->ai_nLinkCount != 0 )
+		if( atomic_read( &psInode->ai_nLinkCount ) != 0 )
 		{
-			printk( "PANIC: Inode has link count of %d\n", psInode->ai_nLinkCount );
+			printk( "PANIC: Inode has link count of %d\n", atomic_read( &psInode->ai_nLinkCount ) );
 			printk( "PANIC: Parent is %ld:%d:%d\n", psInode->ai_sParent.group, psInode->ai_sParent.start, psInode->ai_sParent.len );
 			printk( "PANIC: UID=%ld GID=%ld mode=%08lx\n", psInode->ai_nUID, psInode->ai_nGID, psInode->ai_nMode );
 			afs_end_transaction( psVolume, false );
@@ -697,7 +697,7 @@ static int afs_mount( kdev_t nFsID, const char *pzDevPath, uint32 nFlags, void *
 	int nDev;
 	int nError = 0;
 
-	printk( "Mount afs on '%s' flags %d\n", pzDevPath, nFlags );
+	printk( "Mount afs on '%s' flags %u\n", pzDevPath, ( unsigned int )nFlags );
 	nDev = open( pzDevPath, O_RDWR );
 	if( nDev < 0 )
 	{
@@ -883,9 +883,9 @@ static int afs_unmount( void *pVolume )
 	{
 		snooze( 100000 );
 	}
-	if( psVolume->av_nOpenFiles > 0 )
+	if( atomic_read( &psVolume->av_nOpenFiles ) > 0 )
 	{
-		printk( "WARNING : Attempt to unmount AFS filesystem while %d files are open!\n", psVolume->av_nOpenFiles );
+		printk( "WARNING : Attempt to unmount AFS filesystem while %d files are open!\n", atomic_read( &psVolume->av_nOpenFiles ) );
 	}
 	printk( "afs_unmount() Shutting down the journal\n" );
 	afs_flush_journal( psVolume );
@@ -967,7 +967,7 @@ static int afs_rstat( void *pVolume, void *pNode, struct stat *psStat )
 	psStat->st_atime = psInode->ai_nModifiedTime / 1000000;
 	psStat->st_mtime = psInode->ai_nModifiedTime / 1000000;
 	psStat->st_ctime = psInode->ai_nCreateTime / 1000000;
-	psStat->st_nlink = psInode->ai_nLinkCount;
+	psStat->st_nlink = atomic_read( &psInode->ai_nLinkCount );
 	psStat->st_uid = psInode->ai_nUID;
 	psStat->st_gid = psInode->ai_nGID;
 	psStat->st_blksize = 16384;	//psVolume->av_psSuperBlock->as_nBlockSize;
@@ -1104,7 +1104,7 @@ static int afs_move_to_delme( AfsVolume_s * psVolume, AfsInode_s * psParent, Afs
 	char zNewName[32];
 	int nError;
 
-	kassertw( psInode->ai_nLinkCount == 0 );
+	kassertw( atomic_read( &psInode->ai_nLinkCount ) == 0 );
 	nInodeNum = afs_run_to_num( psSuperBlock, &psInode->ai_sInodeNum );
 	sprintf( zNewName, "%08x%08x.del", ( int )( nInodeNum >> 32 ), ( int )( nInodeNum & 0xffffffff ) );
 	nError = afs_do_read_inode( psVolume, &psSuperBlock->as_sDeletedFiles, &psDeleteMe );
@@ -1187,7 +1187,7 @@ static int afs_create( void *pVolume, void *pParent, const char *pzName, int nNa
 		goto error2;
 	}
 	AFS_LOCK( psParent->ai_psVNode );
-	if( psParent->ai_nLinkCount > 0 )
+	if( atomic_read( &psParent->ai_nLinkCount ) > 0 )
 	{
 		bParentTouched = true;
 		nError = afs_create_inode( psVolume, psParent, ( nPerms & 0777 ) | S_IFREG, 0, 0, pzName, nNameLen, &psInode );
@@ -1262,7 +1262,7 @@ static int afs_symlink( void *pVolume, void *pParent, const char *pzName, int nN
 	}
 	AFS_LOCK( psParent->ai_psVNode );
 	nParent = afs_run_to_num( psVolume->av_psSuperBlock, &psParent->ai_sInodeNum );
-	if( psParent->ai_nLinkCount > 0 )
+	if( atomic_read( &psParent->ai_nLinkCount ) > 0 )
 	{
 		bParentTouched = true;
 		nError = afs_create_inode( psVolume, psParent, S_IFLNK | 0777, 0, 0, pzName, nNameLen, &psInode );
@@ -1361,7 +1361,7 @@ static int afs_mknod( void *pVolume, void *pParent, const char *pzName, int nNam
 		return ( nError );
 	}
 	AFS_LOCK( psParent->ai_psVNode );
-	if( psParent->ai_nLinkCount > 0 )
+	if( atomic_read( &psParent->ai_nLinkCount ) > 0 )
 	{
 		AfsInode_s * psInode;
 		bParentTouched = true;
@@ -1929,7 +1929,7 @@ static int afs_read_inode( void *pVolume, ino_t nInodeNum, void **ppNode )
 	}
 	psVNode->vn_psInode->ai_psVNode = psVNode;
 	*ppNode = psVNode;
-	atomic_add( &psVolume->av_nOpenFiles, 1 );
+	atomic_inc( &psVolume->av_nOpenFiles );
 	return ( 0 );
       error3:kfree( psVNode->vn_psInode );
       error2:kfree( psVNode );
@@ -1960,7 +1960,7 @@ static int afs_write_inode( void *pVolume, void *pNode )
 		printk( "Error: afs_write_inode() failed to begin transaction: %d\n", nError );
 		return ( nError );
 	}
-	if( psInode->ai_nLinkCount == 0 )
+	if( atomic_read( &psInode->ai_nLinkCount ) == 0 )
 	{
 		nError = afs_delete_file_attribs( psVolume, psInode );
 		if( nError < 0 )
@@ -2000,11 +2000,11 @@ static int afs_write_inode( void *pVolume, void *pNode )
 //  afs_validate_file( psVolume, psInode );
 		afs_end_transaction( psVolume, true );
 	delete_semaphore( psVnode->vn_hMutex );
-	atomic_add( &psVolume->av_nOpenFiles, -1 );
-	if( psVolume->av_nOpenFiles < 0 )
+	atomic_dec( &psVolume->av_nOpenFiles );
+	if( atomic_read( &psVolume->av_nOpenFiles ) < 0 )
 	{
-		printk( "PANIC : afs_write_inode() psVolume->av_nOpenFiles got a count of %d\n", psVolume->av_nOpenFiles );
-		psVolume->av_nOpenFiles = 0;
+		printk( "PANIC : afs_write_inode() psVolume->av_nOpenFiles got a count of %d\n", atomic_read( &psVolume->av_nOpenFiles ) );
+		atomic_set( &psVolume->av_nOpenFiles, 0 );
 	}
 	kfree( pNode );
 	return ( 0 );
@@ -2178,7 +2178,7 @@ static int afs_rmdir( void *pVolume, void *pParent, const char *pzName, int nNam
 		goto error2;
 	}
 	bInodesLocked = true;
-	if( psInode->ai_nLinkCount <= 0 )
+	if( atomic_read( &psInode->ai_nLinkCount ) <= 0 )
 	{
 		printk( "afs_rmdir() Directory already deleted\n" );
 		nError = -ENOENT;
@@ -2193,7 +2193,7 @@ static int afs_rmdir( void *pVolume, void *pParent, const char *pzName, int nNam
 	nError = bt_find_first_key( psVolume, psInode, &sIterator );
 	if( nError == -ENOENT )
 	{
-		atomic_add( &psInode->ai_nLinkCount, -1 );
+		atomic_dec( &psInode->ai_nLinkCount );
 		nError = 0;
 	}
 	else if( nError >= 0 )
@@ -2205,7 +2205,7 @@ static int afs_rmdir( void *pVolume, void *pParent, const char *pzName, int nNam
 	nError = afs_move_to_delme( psVolume, psParent, psInode, pzName, nNameLen );
 	if( nError < 0 )
 	{
-		atomic_add( &psInode->ai_nLinkCount, 1 );
+		atomic_inc( &psInode->ai_nLinkCount );
 		goto error2;
 	}
 	afs_end_transaction( psVolume, true );
@@ -2280,7 +2280,7 @@ static int afs_unlink( void *pVolume, void *pParent, const char *pzName, int nNa
 		goto error2;
 	}
 	bInodesLocked = true;
-	if( psInode->ai_nLinkCount <= 0 )
+	if( atomic_read( &psInode->ai_nLinkCount ) <= 0 )
 	{
 		printk( "afs_unlink() File already deleted\n" );
 		nError = -ENOENT;
@@ -2292,13 +2292,13 @@ static int afs_unlink( void *pVolume, void *pParent, const char *pzName, int nNa
 		nError = -ENOENT;
 		goto error2;
 	}
-	atomic_add( &psInode->ai_nLinkCount, -1 );
+	atomic_dec( &psInode->ai_nLinkCount );
 	bParentTouched = true;
 	nError = afs_move_to_delme( psVolume, psParent, psInode, pzName, nNameLen );
 	if( nError < 0 )
 	{
 		printk( "Error: afs_unlink() failed to move file into delete-me directory! (%d)\n", nError );
-		atomic_add( &psInode->ai_nLinkCount, 1 );
+		atomic_inc( &psInode->ai_nLinkCount );
 		goto error2;
 	}
 	afs_end_transaction( psVolume, true );
@@ -2516,7 +2516,7 @@ static int afs_rename( void *pVolume, void *pOldDir, const char *pzOldName, int 
 
 		// Check that none of the inodes in question are about to be
 		// deleted by another thread.
-		if( psNewDir->ai_nLinkCount < 1 || psInode->ai_nLinkCount < 1 || ( psDstInode != NULL && psDstInode->ai_nLinkCount < 1 ) )
+		if( atomic_read( &psNewDir->ai_nLinkCount ) < 1 || atomic_read( &psInode->ai_nLinkCount ) < 1 || ( psDstInode != NULL && atomic_read( &psDstInode->ai_nLinkCount ) < 1 ) )
 	{
 		nError = -ENOENT;
 		goto error;
@@ -2533,7 +2533,7 @@ static int afs_rename( void *pVolume, void *pOldDir, const char *pzOldName, int 
 	}
 
 		// If we are about to move a directory, we must verify that
-		// we ain't moving it into it self or one of it's childrens.
+		// we aren't moving it into itself or one of its children.
 		nError = afs_rename_is_child( psVolume, psNewDir, psInode );
 	if( nError < 0 )
 	{
@@ -2541,17 +2541,17 @@ static int afs_rename( void *pVolume, void *pOldDir, const char *pzOldName, int 
 	}
 	if( psDstInode != NULL )
 	{
-		if( psDstInode->ai_nLinkCount != 1 )
+		if( atomic_read( &psDstInode->ai_nLinkCount ) != 1 )
 		{
-			panic( "afs_rename_is_child() about to overwrite an inode with link-count = %d\n", psDstInode->ai_nLinkCount );
+			panic( "afs_rename_is_child() about to overwrite an inode with link-count = %d\n", atomic_read( &psDstInode->ai_nLinkCount ) );
 			goto error;
 		}
 		bNewDirTouched = true;
-		atomic_add( &psDstInode->ai_nLinkCount, -1 );
+		atomic_dec( &psDstInode->ai_nLinkCount );
 		nError = afs_move_to_delme( psVolume, psNewDir, psDstInode, pzNewName, nNewNameLen );
 		if( nError < 0 )
 		{
-			atomic_add( &psDstInode->ai_nLinkCount, 1 );
+			atomic_inc( &psDstInode->ai_nLinkCount );
 			goto error;
 		}
 		bDstInodeTouched = true;

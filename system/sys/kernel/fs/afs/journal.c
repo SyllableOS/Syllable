@@ -326,10 +326,10 @@ static void afs_block_flushed_callback( off_t nBlockNum, int nNumBlocks, void *p
 {
 	AfsTransaction_s *psTrans = pArg;
 
-	atomic_add(( atomic_t * )&psTrans->at_nPendingLogBlocks, -1 );
-	if( psTrans->at_nPendingLogBlocks < 0 )
+	atomic_dec( &psTrans->at_nPendingLogBlocks );
+	if( atomic_read( &psTrans->at_nPendingLogBlocks ) < 0 )
 	{
-		panic( "afs_block_flushed_callback() at_nPendingLogBlocks == %d\n", psTrans->at_nPendingLogBlocks );
+		panic( "afs_block_flushed_callback() at_nPendingLogBlocks == %d\n", atomic_read( &psTrans->at_nPendingLogBlocks ) );
 	}
 }
 
@@ -622,7 +622,7 @@ static int afs_write_transaction_to_disk( AfsVolume_s * psVolume, AfsTransaction
 			void *pLogBuffer =( ( uint8 * )psBuf->atb_pBuffer ) + ( i + 1 ) * nBlockSize;
 			int nError;
 
-			if( nIndex++ < psTrans->at_nWrittenBlocks )
+			if( nIndex++ < atomic_read( &psTrans->at_nWrittenBlocks ) )
 			{
 				printk( "afs_write_transaction_to_disk() block %d already written. Skipping\n", nIndex );
 				continue;
@@ -642,8 +642,8 @@ static int afs_write_transaction_to_disk( AfsVolume_s * psVolume, AfsTransaction
 		}
 		kfree( psEntry );
 	    }*/
-			atomic_add(( atomic_t * )&psTrans->at_nPendingLogBlocks, 1 );
-			atomic_add( &psTrans->at_nWrittenBlocks, 1 );
+			atomic_inc( &psTrans->at_nPendingLogBlocks );
+			atomic_inc( &psTrans->at_nWrittenBlocks );
 		}
 	}
 
@@ -718,7 +718,7 @@ static int afs_discard_flushed_journal_entries( AfsVolume_s * psVolume )
 	{
 		return( 0 );
 	}
-	if( psTrans->at_nPendingLogBlocks > 0 )
+	if( atomic_read( &psTrans->at_nPendingLogBlocks ) > 0 )
 	{
 		return( 0 );
 	}

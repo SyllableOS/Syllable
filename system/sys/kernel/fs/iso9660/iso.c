@@ -71,29 +71,29 @@ GetDeviceBlockSize(int fd)
 
 // NOTE: iso9660 seems to store the unicode text in big-endian form 
 #if 0
-#define u_to_utf8(str, uni_str)\ 
-{\ 
-        if ((B_BENDIAN_TO_HOST_INT16(uni_str[0])&0xff80) == 0)\ 
-                *str++ = B_BENDIAN_TO_HOST_INT16(*uni_str++);\ 
-        else if ((B_BENDIAN_TO_HOST_INT16(uni_str[0])&0xf800) == 0) {\ 
-                str[0] = 0xc0|(B_BENDIAN_TO_HOST_INT16(uni_str[0])>>6);\ 
-                str[1] = 0x80|(B_BENDIAN_TO_HOST_INT16(*uni_str++)&0x3f);\ 
-                str += 2;\ 
-        } else if ((B_BENDIAN_TO_HOST_INT16(uni_str[0])&0xfc00) != 0xd800) {\ 
-                str[0] = 0xe0|(B_BENDIAN_TO_HOST_INT16(uni_str[0])>>12);\ 
-                str[1] = 0x80|((B_BENDIAN_TO_HOST_INT16(uni_str[0])>>6)&0x3f);\ 
-                str[2] = 0x80|(B_BENDIAN_TO_HOST_INT16(*uni_str++)&0x3f);\ 
-                str += 3;\ 
-        } else {\ 
-                int   val;\ 
-                val = ((B_BENDIAN_TO_HOST_INT16(uni_str[0])-0xd7c0)<<10) | (B_BENDIAN_TO_HOST_INT16(uni_str[1])&0x3ff);\ 
-                str[0] = 0xf0 | (val>>18);\ 
-                str[1] = 0x80 | ((val>>12)&0x3f);\ 
-                str[2] = 0x80 | ((val>>6)&0x3f);\ 
-                str[3] = 0x80 | (val&0x3f);\ 
-                uni_str += 2; str += 4;\ 
-        }\ 
-}       
+#define u_to_utf8(str, uni_str)\
+{\
+        if ((B_BENDIAN_TO_HOST_INT16(uni_str[0])&0xff80) == 0)\
+                *str++ = B_BENDIAN_TO_HOST_INT16(*uni_str++);\
+        else if ((B_BENDIAN_TO_HOST_INT16(uni_str[0])&0xf800) == 0) {\
+                str[0] = 0xc0|(B_BENDIAN_TO_HOST_INT16(uni_str[0])>>6);\
+                str[1] = 0x80|(B_BENDIAN_TO_HOST_INT16(*uni_str++)&0x3f);\
+                str += 2;\
+        } else if ((B_BENDIAN_TO_HOST_INT16(uni_str[0])&0xfc00) != 0xd800) {\
+                str[0] = 0xe0|(B_BENDIAN_TO_HOST_INT16(uni_str[0])>>12);\
+                str[1] = 0x80|((B_BENDIAN_TO_HOST_INT16(uni_str[0])>>6)&0x3f);\
+                str[2] = 0x80|(B_BENDIAN_TO_HOST_INT16(*uni_str++)&0x3f);\
+                str += 3;\
+        } else {\
+                int   val;\
+                val = ((B_BENDIAN_TO_HOST_INT16(uni_str[0])-0xd7c0)<<10) | (B_BENDIAN_TO_HOST_INT16(uni_str[1])&0x3ff);\
+                str[0] = 0xf0 | (val>>18);\
+                str[1] = 0x80 | ((val>>12)&0x3f);\
+                str[2] = 0x80 | ((val>>6)&0x3f);\
+                str[3] = 0x80 | (val&0x3f);\
+                uni_str += 2; str += 4;\
+        }\
+}
 
 static status_t 
 unicode_to_utf8(const char        *src, int32     *srcLen, char *dst, int32 *dstLen) 

@@ -11,7 +11,7 @@
 
 
 
-CFLAGS   = -kernel -fno-PIC -c -O3 -Wall -Wno-multichar -Itextencoding -I../
+CFLAGS   = -kernel -fno-PIC -c -O3 -Wall -Wno-multichar -fno-strict-aliasing -Itextencoding -I../
 AFLAGS   = -c
 
 OLD_INCLUDE_PATH:=$(C_INCLUDE_PATH)

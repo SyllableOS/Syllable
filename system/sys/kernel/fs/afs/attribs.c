@@ -450,10 +450,9 @@ static int afs_do_remove_attr( AfsVolume_s * psVolume, AfsInode_s * psInode, con
 			goto done;
 		}
 
-		if( psAttrInode->ai_nLinkCount > 0 )
+		// Decrease count and make sure it doesn't go negative.
+		if( !atomic_add_negative( &psAttrInode->ai_nLinkCount, -1 ) )
 		{
-			psAttrInode->ai_nLinkCount--;
-
 			nError = bt_delete_key( psVolume, psAttrDirInode, pzName, nNameLen );
 
 			if( nError < 0 )
@@ -476,6 +475,7 @@ static int afs_do_remove_attr( AfsVolume_s * psVolume, AfsInode_s * psInode, con
 		}
 		else
 		{
+			atomic_inc( &psAttrInode->ai_nLinkCount );
 			printk( "afs_do_remove_attr() Seems like someone else got the same idea!\n" );
 			nError = -ENOENT;
 		}
