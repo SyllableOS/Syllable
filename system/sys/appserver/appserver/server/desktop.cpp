@@ -155,7 +155,7 @@ void set_active_window( SrvWindow* pcWindow, bool bNotifyPrevious )
 class ModeCmp
 {
 public:
-    bool operator () ( const ScreenMode& cMode1, const ScreenMode& cMode2 ) {
+    bool operator () ( const screen_mode& cMode1, const screen_mode& cMode2 ) {
 	if ( BitsPerPixel( cMode1.m_eColorSpace ) != BitsPerPixel( cMode2.m_eColorSpace ) ) {
 	    return( BitsPerPixel( cMode1.m_eColorSpace ) < BitsPerPixel( cMode2.m_eColorSpace ) );
 	} else {
@@ -177,20 +177,13 @@ static bool setup_screenmode( int nDesktop, bool bForce )
 	return( false );
     }
     bool bModeSet = true;
-    if ( g_pcDispDrv->SetScreenMode( g_asDesktops[nDesktop].m_sScreenMode.m_nWidth,
-				     g_asDesktops[nDesktop].m_sScreenMode.m_nHeight,
-				     g_asDesktops[nDesktop].m_sScreenMode.m_eColorSpace,
-				     g_asDesktops[nDesktop].m_sScreenMode.m_vHPos,
-				     g_asDesktops[nDesktop].m_sScreenMode.m_vVPos,
-				     g_asDesktops[nDesktop].m_sScreenMode.m_vHSize,
-				     g_asDesktops[nDesktop].m_sScreenMode.m_vVSize,
-				     g_asDesktops[nDesktop].m_sScreenMode.m_vRefreshRate ) != 0 )
+    if ( g_pcDispDrv->SetScreenMode( g_asDesktops[nDesktop].m_sScreenMode ) != 0 )
     {
 	bModeSet = false;
-	std::vector<ScreenMode> cModes;
+	std::vector<screen_mode> cModes;
 	int nModeCount = g_pcDispDrv->GetScreenModeCount();
 	for ( int i = 0 ; i < nModeCount ; ++i ) {
-	    ScreenMode sMode;
+	    screen_mode sMode;
 	    if ( g_pcDispDrv->GetScreenModeDesc( i, &sMode ) == false ) {
 		continue;
 	    }
@@ -217,9 +210,10 @@ static bool setup_screenmode( int nDesktop, bool bForce )
 		g_asDesktops[nDesktop].m_sScreenMode.m_nWidth  	   = cModes[i].m_nWidth;
 		g_asDesktops[nDesktop].m_sScreenMode.m_nHeight	   = cModes[i].m_nHeight;
 		g_asDesktops[nDesktop].m_sScreenMode.m_eColorSpace = cModes[i].m_eColorSpace;
+		g_asDesktops[nDesktop].m_sScreenMode.m_vRefreshRate = 60.0f;
 
 		  // If this fails we try all the screen-modes before giving up.
-		if ( g_pcDispDrv->SetScreenMode( cModes[i].m_nWidth, cModes[i].m_nHeight, cModes[i].m_eColorSpace, 80, 50, 70, 80, 60.0f ) == 0 ) {
+		if ( g_pcDispDrv->SetScreenMode( g_asDesktops[nDesktop].m_sScreenMode ) == 0 ) {
 		    bModeSet = true;
 		    break;
 		}
@@ -233,8 +227,8 @@ static bool setup_screenmode( int nDesktop, bool bForce )
 		    g_asDesktops[nDesktop].m_sScreenMode.m_nWidth      = cModes[i].m_nWidth;
 		    g_asDesktops[nDesktop].m_sScreenMode.m_nHeight     = cModes[i].m_nHeight;
 		    g_asDesktops[nDesktop].m_sScreenMode.m_eColorSpace = cModes[i].m_eColorSpace;
-		    if ( g_pcDispDrv->SetScreenMode( cModes[i].m_nWidth, cModes[i].m_nHeight, cModes[i].m_eColorSpace,
-						     80, 50, 70, 80, 60.0f ) == 0 ) {
+		    g_asDesktops[nDesktop].m_sScreenMode.m_vRefreshRate = 60.0f;
+		    if ( g_pcDispDrv->SetScreenMode( g_asDesktops[nDesktop].m_sScreenMode ) == 0 ) {
 			bModeSet = true;
 			break;
 		    }
@@ -249,10 +243,10 @@ static bool setup_screenmode( int nDesktop, bool bForce )
 	dbprintf( "Terminate application server...\n" );
 	exit( 1 );
     }
-    g_pcScreenBitmap->m_nWidth	    = g_pcDispDrv->GetHorizontalRes();
-    g_pcScreenBitmap->m_nHeight	    = g_pcDispDrv->GetVerticalRes();
-    g_pcScreenBitmap->m_nBytesPerLine = g_pcDispDrv->GetBytesPerLine();
-    g_pcScreenBitmap->m_eColorSpc     = g_pcDispDrv->GetColorSpace();
+    g_pcScreenBitmap->m_nWidth	    = g_pcDispDrv->GetCurrentScreenMode().m_nWidth;
+    g_pcScreenBitmap->m_nHeight	    = g_pcDispDrv->GetCurrentScreenMode().m_nHeight;
+    g_pcScreenBitmap->m_nBytesPerLine = g_pcDispDrv->GetCurrentScreenMode().m_nBytesPerLine;
+    g_pcScreenBitmap->m_eColorSpc     = g_pcDispDrv->GetCurrentScreenMode().m_eColorSpace;
     g_pcScreenBitmap->m_pRaster	      = ((uint8*)g_sFBAreaInfo.pAddress) + g_pcDispDrv->GetFramebufferOffset();
 	
     if ( g_nActiveDesktop != -1 ) {
@@ -580,3 +574,4 @@ bool init_desktops()
     g_pcDispDrv->MouseOn();
     return( 0 );
 }
+

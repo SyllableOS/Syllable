@@ -22,9 +22,9 @@
 
 #include "ddriver.h"
 
-struct VesaMode : public ScreenMode
-{
-    VesaMode( int w, int h, int bbl, os::color_space cs, int mode, uint32 fb ) : ScreenMode( w,h,bbl,cs ) { m_nVesaMode = mode; m_nFrameBuffer = fb; }
+struct VesaMode : public os::screen_mode
+ {
+    VesaMode( int w, int h, int bbl, os::color_space cs, float rf, int mode, uint32 fb ) : os::screen_mode( w,h,bbl,cs, rf ) { m_nVesaMode = mode; m_nFrameBuffer = fb; }
     int	   m_nVesaMode;
     uint32 m_nFrameBuffer;
 };
@@ -40,25 +40,15 @@ public:
     void	Close();
 
     virtual int	 GetScreenModeCount();
-    virtual bool GetScreenModeDesc( int nIndex, ScreenMode* psMode );
+    virtual bool GetScreenModeDesc( int nIndex, os::screen_mode* psMode );
   
-    int		SetScreenMode( int nWidth, int nHeight, os::color_space eColorSpc,
-			       int nPosH, int nPosV, int nSizeH, int nSizeV, float vRefreshRate );
-
-    virtual int	            GetHorizontalRes();
-    virtual int	            GetVerticalRes();
-    virtual int	            GetBytesPerLine();
-    virtual os::color_space GetColorSpace();
+    int		SetScreenMode( os::screen_mode sMode );
+    os::screen_mode GetCurrentScreenMode();
+   
     virtual int		    GetFramebufferOffset() { return( m_nFrameBufferOffset ); }
-  
-    void		SetColor( int nIndex, const os::Color32_s&	sColor );
 
     bool		IntersectWithMouse( const os::IRect& cRect );
 
-    bool		DrawLine( SrvBitmap* psBitMap, const os::IRect& cClipRect,
-				  const os::IPoint& cPnt1, const os::IPoint& cPnt2, const os::Color32_s& sColor, int nMode );
-    bool		FillRect( SrvBitmap* psBitMap, const os::IRect& cRect, const os::Color32_s& sColor );
-    bool		BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap, os::IRect cSrcRect, os::IPoint cDstPos, int nMode );
 private:
     bool		InitModes();
     bool		SetVesaMode( uint32 nMode );
@@ -70,3 +60,6 @@ private:
 };
 
 #endif // __F_VESADRV_H__
+
+
+

@@ -220,15 +220,18 @@ int Application::GetScreenModeInfo( int nIndex, screen_mode* psMode )
     IPoint cScrRes;
     int    nColorSpace;
     int    nError;
+    float  vRf;
     
     cReply.FindIPoint( "resolution", &cScrRes );
     cReply.FindInt( "bytes_per_line", &psMode->m_nBytesPerLine );
     cReply.FindInt( "color_space", &nColorSpace );
+    cReply.FindFloat( "refresh_rate", &vRf );
     cReply.FindInt( "error", &nError );
 
     psMode->m_nWidth  = cScrRes.x;
     psMode->m_nHeight = cScrRes.y;
     psMode->m_eColorSpace = (color_space) nColorSpace;
+	psMode->m_vRefreshRate = vRf;
 
     if ( nError != 0 ) {
 	errno = nError;
@@ -851,4 +854,5 @@ void Application::__reserved7__() {}
 void Application::__reserved8__() {}
 void Application::__reserved9__() {}
 void Application::__reserved10__() {}
+
 

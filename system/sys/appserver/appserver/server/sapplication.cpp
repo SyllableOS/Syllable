@@ -758,12 +758,13 @@ void SrvApplication::DispatchMessage( Message* pcReq )
 
 	    Message cReply;
 	    
-	    ScreenMode sMode;
+	    screen_mode sMode;
 	    if ( pcReq->FindInt( "index", &nIndex ) == 0 && g_pcDispDrv->GetScreenModeDesc( nIndex, &sMode ) ) {
       
 		cReply.AddIPoint( "resolution", IPoint( sMode.m_nWidth, sMode.m_nHeight ) );
 		cReply.AddInt32( "bytes_per_line", sMode.m_nBytesPerLine );
 		cReply.AddInt32( "color_space", sMode.m_eColorSpace );
+		cReply.AddFloat( "refresh_rate", sMode.m_vRefreshRate );
 		cReply.AddInt32( "error", EOK );
 	    } else {
 		dbprintf( "AR_GET_SCREENMODE_INFO: Invalid index %ld\n", nIndex );
@@ -876,6 +877,119 @@ void SrvApplication::DispatchMessage( Message* pcReq )
 	    g_cLayerGate.Open();
 	    break;
 	}
+	case WR_CREATE_VIDEO_OVERLAY:
+	{
+		IPoint cSize;
+		IRect cDst;
+		int32 nFormat;
+		color_space eFormat;
+		Message cReply;
+		Color32_s sColorKey;
+		area_id hArea;
+		if ( pcReq->FindIPoint( "size", &cSize ) != 0 ) {
+			cReply.AddInt32( "error", EINVAL );
+			pcReq->SendReply( &cReply );
+			break;
+		}
+		if ( pcReq->FindIRect( "dst", &cDst ) != 0 ) {
+			cReply.AddInt32( "error", EINVAL );
+			pcReq->SendReply( &cReply );
+			break;
+		}
+		if ( pcReq->FindInt32( "format", &nFormat ) != 0 ) {
+			cReply.AddInt32( "error", EINVAL );
+			pcReq->SendReply( &cReply );
+			break;
+		}
+		
+		if ( pcReq->FindColor32( "color_key", &sColorKey ) != 0 ) {
+			cReply.AddInt32( "error", EINVAL );
+			pcReq->SendReply( &cReply );
+			break;
+		}
+		
+		eFormat = static_cast<color_space>(nFormat);
+	    
+		g_cLayerGate.Close();
+		if( g_pcDispDrv->CreateVideoOverlay( cSize, cDst, eFormat, sColorKey, &hArea ) ) {
+	    	cReply.AddInt32( "error", 0 );
+	    	cReply.AddInt32( "area", hArea );
+	    	pcReq->SendReply( &cReply );
+		} else {
+			cReply.AddInt32( "error", EINVAL );
+			pcReq->SendReply( &cReply );
+		}
+		g_cLayerGate.Open();
+		break;
+	}
+	case WR_RECREATE_VIDEO_OVERLAY:
+	{
+		IPoint cSize;
+		IRect cDst;
+		int32 nFormat;
+		color_space eFormat;
+		Message cReply;
+		area_id hArea;
+		if ( pcReq->FindIPoint( "size", &cSize ) != 0 ) {
+			cReply.AddInt32( "error", EINVAL );
+			pcReq->SendReply( &cReply );
+			break;
+		}
+		if ( pcReq->FindIRect( "dst", &cDst ) != 0 ) {
+			cReply.AddInt32( "error", EINVAL );
+			pcReq->SendReply( &cReply );
+			break;
+		}
+		if ( pcReq->FindInt32( "format", &nFormat ) != 0 ) {
+			cReply.AddInt32( "error", EINVAL );
+			pcReq->SendReply( &cReply );
+			break;
+		}
+		if ( pcReq->FindInt32( "area", (int32*)&hArea ) != 0 ) {
+			cReply.AddInt32( "error", EINVAL );
+			pcReq->SendReply( &cReply );
+			break;
+		}
+		
+		eFormat = static_cast<color_space>(nFormat);
+	    
+		g_cLayerGate.Close();
+		if( g_pcDispDrv->RecreateVideoOverlay( cSize, cDst, eFormat, &hArea ) ) {
+	    	cReply.AddInt32( "error", 0 );
+	    	cReply.AddInt32( "area", hArea );
+	    	pcReq->SendReply( &cReply );
+		} else {
+			cReply.AddInt32( "error", EINVAL );
+			pcReq->SendReply( &cReply );
+		}
+		g_cLayerGate.Open();
+		break;
+	}
+	case WR_UPDATE_VIDEO_OVERLAY:
+	{
+		area_id hArea;
+		
+		if ( pcReq->FindInt32( "area", (int32*)&hArea ) != 0 ) {
+			break;
+		}
+		g_cLayerGate.Close();
+		g_pcDispDrv->UpdateVideoOverlay( &hArea );
+		g_cLayerGate.Open();
+		break;
+	}
+	case WR_DELETE_VIDEO_OVERLAY:
+	{
+		area_id hArea;
+		
+		if ( pcReq->FindInt32( "area", (int32*)&hArea ) != 0 ) {
+			break;
+		}
+		g_cLayerGate.Close();
+		g_pcDispDrv->DeleteVideoOverlay( &hArea );
+		g_cLayerGate.Open();
+		break;
+	}
+
     }
 }
 
@@ -903,7 +1017,6 @@ bool SrvApplication::DispatchMessage( const void* pMsg, int nCode )
 	case AR_DELETE_FONT:
 	case AR_SET_FONT_FAMILY_AND_STYLE:
 	case AR_SET_FONT_PROPERTIES:
-        case AR_SET_FONT_ANTIALIASING:
 	case AR_LOCK_DESKTOP:
 	case AR_UNLOCK_DESKTOP:
 	case AR_GET_SCREENMODE_COUNT:
@@ -911,6 +1024,10 @@ bool SrvApplication::DispatchMessage( const void* pMsg, int nCode )
 	case AR_SET_SCREEN_MODE:
 	case WR_PUSH_CURSOR:
 	case WR_POP_CURSOR:
+	case WR_CREATE_VIDEO_OVERLAY:
+	case WR_RECREATE_VIDEO_OVERLAY:
+	case WR_UPDATE_VIDEO_OVERLAY:
+	case WR_DELETE_VIDEO_OVERLAY:
 	{
 	    try {
 		Message cReq( pMsg );
@@ -1253,6 +1370,9 @@ SrvApplication* get_active_app()
 	return( pcWnd->GetApp() );
     }
 }
+
+
+
 
 
 

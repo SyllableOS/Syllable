@@ -519,21 +519,6 @@ void DisplayDriver::FillBlit32( uint32 *pDst, int nMod, int W, int H, uint32 nCo
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-bool DisplayDriver::WritePixel16( SrvBitmap* psBitMap, int X, int Y, uint32 nColor )
-{
-    ((uint16*) &psBitMap->m_pRaster[ X * 2 + Y * psBitMap->m_nBytesPerLine ] )[0] = nColor;
-    return( TRUE );
-}
-
-
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
 bool DisplayDriver::FillRect( SrvBitmap* pcBitmap, const IRect& cRect, const Color32_s& sColor )
 {
     int BltX,BltY,BltW,BltH;
@@ -568,29 +553,10 @@ bool DisplayDriver::FillRect( SrvBitmap* pcBitmap, const IRect& cRect, const Col
 	default:
 	    dbprintf( "DisplayDriver::FillRect() unknown color space %d\n", pcBitmap->m_eColorSpc );
     }
-/*  
-    switch( nBytesPerPix )
-    {
-    case 1:
-    FillBlit8( psBitMap->m_pRaster + ((BltY * psBitMap->m_nBytesPerLine) + BltX),
-    psBitMap->m_nBytesPerLine - BltW, BltW, BltH, nColor );
-    break;
-    case 2:
-    FillBlit16( (uint16*) &psBitMap->m_pRaster[ BltY * psBitMap->m_nBytesPerLine + BltX * 2 ],
-    psBitMap->m_nBytesPerLine / 2 - BltW, BltW, BltH, nColor );
-    break;
-    case 3:
-    FillBlit24( &psBitMap->m_pRaster[ BltY * psBitMap->m_nBytesPerLine + BltX * 3 ],
-    psBitMap->m_nBytesPerLine - BltW * 3, BltW, BltH, nColor );
-    break;
-    case 4:
-    FillBlit32( (uint32*) &psBitMap->m_pRaster[ BltY * psBitMap->m_nBytesPerLine + BltX * 4 ],
-    psBitMap->m_nBytesPerLine - BltW * 4, BltW, BltH, nColor );
-    break;
-    }
-    */  
+
     return( true );
 }
+
 
 //----------------------------------------------------------------------------
 // NAME:
@@ -758,6 +724,27 @@ static inline void blit_convert_copy( SrvBitmap* pcDst, SrvBitmap* pcSrc,
      
 	    switch( (int)pcDst->m_eColorSpc )
 	    {
+	    case CS_CMAP8:
+		{
+			if( pcSrc == pcDst )
+			{
+				BitBlit( pcSrc, pcDst, cSrcRect.left, cSrcRect.top, cDstPos.x,
+						cDstPos.y, cSrcRect.Width() + 1, cSrcRect.Height() + 1 );
+				break;
+			}
+			
+		    uint8* pDst = RAS_OFFSET8( pcDst->m_pRaster, cDstPos.x, cDstPos.y, pcDst->m_nBytesPerLine );
+		    int nDstModulo = pcDst->m_nBytesPerLine - (cSrcRect.Width()+1);
+    
+		    for ( int y = cSrcRect.top ; y <= cSrcRect.bottom ; ++y ) {
+		    memcpy( (uint8*)pDst, (uint8*)pSrc, ( cSrcRect.right - cSrcRect.left + 1 ) );
+		    pSrc += ( cSrcRect.right - cSrcRect.left + 1 );
+		    pDst += ( cSrcRect.right - cSrcRect.left + 1 );
+			pSrc = (uint8*)(((uint8*)pSrc) + nSrcModulo);
+			pDst = (uint8*)(((uint8*)pDst) + nDstModulo);
+		    }
+		    break;
+		}
 		case CS_RGB15:
 		case CS_RGBA15:
 		{
@@ -815,6 +802,27 @@ static inline void blit_convert_copy( SrvBitmap* pcDst, SrvBitmap* pcSrc,
      
 	    switch( (int)pcDst->m_eColorSpc )
 	    {
+	    case CS_RGB15:
+	    case CS_RGBA15:
+		{
+			if( pcSrc == pcDst )
+			{
+				BitBlit( pcSrc, pcDst, cSrcRect.left, cSrcRect.top, cDstPos.x,
+						cDstPos.y, cSrcRect.Width() + 1, cSrcRect.Height() + 1 );
+				break;
+			}
+		    uint16* pDst = RAS_OFFSET16( pcDst->m_pRaster, cDstPos.x, cDstPos.y, pcDst->m_nBytesPerLine );
+		    int nDstModulo = pcDst->m_nBytesPerLine - (cSrcRect.Width()+1) * 2;
+    
+		    for ( int y = cSrcRect.top ; y <= cSrcRect.bottom ; ++y ) {
+		    memcpy( (uint8*)pDst, (uint8*)pSrc, 2 * ( cSrcRect.right - cSrcRect.left + 1 ) );
+		    pSrc += ( cSrcRect.right - cSrcRect.left + 1 );
+		    pDst += ( cSrcRect.right - cSrcRect.left + 1 );
+			pSrc = (uint16*)(((uint8*)pSrc) + nSrcModulo);
+			pDst = (uint16*)(((uint8*)pDst) + nDstModulo);
+		    }
+		    break;
+		}
 		case CS_RGB16:
 		{
 		    uint16* pDst = RAS_OFFSET16( pcDst->m_pRaster, cDstPos.x, cDstPos.y, pcDst->m_nBytesPerLine );
@@ -869,6 +877,28 @@ static inline void blit_convert_copy( SrvBitmap* pcDst, SrvBitmap* pcSrc,
 		    }
 		    break;
 		}
+		case CS_RGB16:
+		{
+			
+			if( pcSrc == pcDst )
+			{
+				BitBlit( pcSrc, pcDst, cSrcRect.left, cSrcRect.top, cDstPos.x,
+						cDstPos.y, cSrcRect.Width() + 1, cSrcRect.Height() + 1 );
+				break;
+			}
+			
+		    uint16* pDst = RAS_OFFSET16( pcDst->m_pRaster, cDstPos.x, cDstPos.y, pcDst->m_nBytesPerLine );
+		    int nDstModulo = pcDst->m_nBytesPerLine - (cSrcRect.Width()+1) * 2;
+    		
+		    for ( int y = cSrcRect.top ; y <= cSrcRect.bottom ; ++y ) {
+		    memcpy( (uint8*)pDst, (uint8*)pSrc, 2 * ( cSrcRect.right - cSrcRect.left + 1 ) );
+		    pSrc += ( cSrcRect.right - cSrcRect.left + 1 );
+		    pDst += ( cSrcRect.right - cSrcRect.left + 1 );
+			pSrc = (uint16*)(((uint8*)pSrc) + nSrcModulo);
+			pDst = (uint16*)(((uint8*)pDst) + nDstModulo);
+		    }		   
+		    break;
+		}
 		case CS_RGB32:
 		case CS_RGBA32:
 		{
@@ -895,6 +925,20 @@ static inline void blit_convert_copy( SrvBitmap* pcDst, SrvBitmap* pcSrc,
      
 	    switch( (int)pcDst->m_eColorSpc )
 	    {
+		case CS_RGB15:
+		{
+		    uint16* pDst = RAS_OFFSET16( pcDst->m_pRaster, cDstPos.x, cDstPos.y, pcDst->m_nBytesPerLine );
+		    int nDstModulo = pcDst->m_nBytesPerLine - (cSrcRect.Width()+1) * 2;
+    
+		    for ( int y = cSrcRect.top ; y <= cSrcRect.bottom ; ++y ) {
+			for ( int x = cSrcRect.left ; x <= cSrcRect.right ; ++x ) {
+			    *pDst++ = COL_TO_RGB15( RGB32_TO_COL( *pSrc++ ) );
+			}
+			pSrc = (uint32*)(((uint8*)pSrc) + nSrcModulo);
+			pDst = (uint16*)(((uint8*)pDst) + nDstModulo);
+		    }
+		    break;
+		}
 		case CS_RGB16:
 		{
 		    uint16* pDst = RAS_OFFSET16( pcDst->m_pRaster, cDstPos.x, cDstPos.y, pcDst->m_nBytesPerLine );
@@ -909,17 +953,23 @@ static inline void blit_convert_copy( SrvBitmap* pcDst, SrvBitmap* pcSrc,
 		    }
 		    break;
 		}
-		case CS_RGB15:
+		case CS_RGB32:
 		{
-		    uint16* pDst = RAS_OFFSET16( pcDst->m_pRaster, cDstPos.x, cDstPos.y, pcDst->m_nBytesPerLine );
-		    int nDstModulo = pcDst->m_nBytesPerLine - (cSrcRect.Width()+1) * 2;
+			if( pcSrc == pcDst )
+			{
+				BitBlit( pcSrc, pcDst, cSrcRect.left, cSrcRect.top, cDstPos.x,
+						cDstPos.y, cSrcRect.Width() + 1, cSrcRect.Height() + 1 );
+				break;
+			}
+		    uint32* pDst = RAS_OFFSET32( pcDst->m_pRaster, cDstPos.x, cDstPos.y, pcDst->m_nBytesPerLine );
+		    int nDstModulo = pcDst->m_nBytesPerLine - (cSrcRect.Width()+1) * 4;
     
 		    for ( int y = cSrcRect.top ; y <= cSrcRect.bottom ; ++y ) {
-			for ( int x = cSrcRect.left ; x <= cSrcRect.right ; ++x ) {
-			    *pDst++ = COL_TO_RGB15( RGB32_TO_COL( *pSrc++ ) );
-			}
+		    memcpy( (uint8*)pDst, (uint8*)pSrc, 4 * ( cSrcRect.right - cSrcRect.left + 1 ) );
+		    pSrc += ( cSrcRect.right - cSrcRect.left + 1 );
+		    pDst += ( cSrcRect.right - cSrcRect.left + 1 );
 			pSrc = (uint32*)(((uint8*)pSrc) + nSrcModulo);
-			pDst = (uint16*)(((uint8*)pDst) + nDstModulo);
+			pDst = (uint32*)(((uint8*)pDst) + nDstModulo);
 		    }
 		    break;
 		}
@@ -1141,6 +1191,7 @@ static inline void blit_convert_over( SrvBitmap* pcDst, SrvBitmap* pcSrc,
 		    break;
 		}
 		case CS_RGB32:
+		case CS_RGBA32:
 		{
 		    uint32* pDst = RAS_OFFSET32( pcDst->m_pRaster, cDstPos.x, cDstPos.y, pcDst->m_nBytesPerLine );
 		    int nDstModulo = pcDst->m_nBytesPerLine - (cSrcRect.Width()+1) * 4;
@@ -1302,18 +1353,7 @@ bool DisplayDriver::BltBitmap( SrvBitmap *dstbm, SrvBitmap *srcbm, IRect cSrcRec
     switch( nMode )
     {
 	case DM_COPY:
-	    if ( srcbm->m_eColorSpc == dstbm->m_eColorSpc ) {
-		int sx = cSrcRect.left;
-		int sy = cSrcRect.top;
-		int dx = cDstPos.x;
-		int dy = cDstPos.y;
-		int w  = cSrcRect.Width()+1;
-		int h  = cSrcRect.Height()+1;
-	
-		BitBlit( srcbm, dstbm, sx, sy, dx, dy, w, h );
-	    } else {
 		blit_convert_copy( dstbm, srcbm, cSrcRect, cDstPos );
-	    }
 	    break;
 	case DM_OVER:
 	    blit_convert_over( dstbm, srcbm, cSrcRect, cDstPos );
@@ -1330,281 +1370,184 @@ bool DisplayDriver::BltBitmap( SrvBitmap *dstbm, SrvBitmap *srcbm, IRect cSrcRec
 }
 
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-#if 0
-bool	DisplayDriver::BltBitmapMask( SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap, const Color32_s& sHighColor,
-				      const Color32_s& sLowColor, IRect	cSrcRect, IPoint cDstPos )
+
+/** Create a new Video overlay.
+ * \par Description:
+ * Should create a new video overlay.
+ * \par
+ * \param cSize - Size of the source.
+ * \param cDst - Destination position and size.
+ * \param eFormat - Format of the overlay.
+ * \param phArea - Pointer to the area of the overlay.
+ * \return
+ * true if the call was successful
+ * \sa
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+
+bool DisplayDriver::CreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, 
+										os::color_space eFormat, os::Color32_s sColorKey, area_id *phArea )
 {
-    int	 DX =	cDstPos.x;
-    int	 DY =	cDstPos.y;
-
-    int	 SX =	cSrcRect.left;
-    int	 SY =	cSrcRect.top;
-
-    int	 W = cSrcRect.Width()+1;
-    int	 H = cSrcRect.Height()+1;
-
-    uint32 Fg = ConvertColor32( sHighColor, pcDstBitMap->m_eColorSpc );
-    uint32 Bg = ConvertColor32( sLowColor, pcDstBitMap->m_eColorSpc );
-
-    char	CB;
-    int	X,Y,SBit;
-    int	BytesPerPix = 1;
-
-    uint32	BPR,SByte,DYoff;
-
-    BPR= pcSrcBitMap->m_nBytesPerLine;
-
-    BytesPerPix = BitsPerPixel( pcDstBitMap->m_eColorSpc ) / 8;
-//  if ( pcDstBitMap->m_nBitsPerPixel > 8 )	BytesPerPix++;
-//  if ( pcDstBitMap->m_nBitsPerPixel > 16 )	BytesPerPix++;
-//  if ( pcDstBitMap->m_nBitsPerPixel > 24 )	BytesPerPix++;
-/*
-  if ( BytesPerPix > 1 )
-  {
-  Fg = PenToRGB( DBM->ColorMap, Fg );
-  Bg = PenToRGB( DBM->ColorMap, Bg );
-  }
-  */
-    switch ( BytesPerPix )
-    {
-	case 1:
-	case 2:
-	    DYoff = DY * pcDstBitMap->m_nBytesPerLine / BytesPerPix;
-	    break;
-	case 3:
-	    DYoff = DY * pcDstBitMap->m_nBytesPerLine;
-	    break;
-	default:
-	    DYoff = DY * pcDstBitMap->m_nBytesPerLine;
-	    __assertw( 0 );
-	    break;
-    }
-
-    for ( Y = 0 ; Y < H ; Y++ )
-    {
-	SByte = (SY*BPR)+(SX/8);
-	CB = pcSrcBitMap->m_pRaster[ SByte++ ];
-	SBit=7-(SX % 8);
-
-	switch ( BytesPerPix )
-	{
-	    case 1:
-		for ( X = 0 ; X < W ; X++ )
-		{
-		    if (CB & (1L<<SBit))
-		    {
-			pcDstBitMap->m_pRaster[ DYoff + DX ] = Fg;
-		    }
-		    else
-		    {
-			pcDstBitMap->m_pRaster[ DYoff + DX ] = Bg;
-		    }
-		    SX++;
-		    DX++;
-		    if (!SBit)
-		    {
-			SBit=8;
-			CB = pcSrcBitMap->m_pRaster[ SByte++ ];
-		    }
-		    SBit--;
-		}
-		break;
-	    case 2:
-		for ( X = 0 ; X < W ; X++ )
-		{
-		    if (CB & (1L<<SBit))
-		    {
-			((uint16*)pcDstBitMap->m_pRaster)[ DYoff + DX ] = Fg;
-		    }
-		    else
-		    {
-			((uint16*)pcDstBitMap->m_pRaster)[ DYoff + DX ] = Bg;
-		    }
-		    SX++;
-		    DX++;
-		    if (!SBit)
-		    {
-			SBit=8;
-			CB = pcSrcBitMap->m_pRaster[ SByte++ ];
-		    }
-		    SBit--;
-		}
-		break;
-	    case 3:
-		for (X=0;X<W;X++)
-		{
-		    if (CB & (1L<<SBit))
-		    {
-			pcDstBitMap->m_pRaster[ DYoff + DX * 3 ] = Fg & 0xff;
-			((uint16*)&pcDstBitMap->m_pRaster[ DYoff + DX * 3 + 1 ])[0] = Fg >> 8;
-		    }
-		    else
-		    {
-			pcDstBitMap->m_pRaster[ DYoff + DX * 3 ] = Bg & 0xff;
-			((uint16*)&pcDstBitMap->m_pRaster[ DYoff + DX * 3 + 1 ])[0] = Bg >> 8;
-		    }
-		    SX++;
-		    DX++;
-		    if (!SBit)
-		    {
-			SBit=8;
-			CB = pcSrcBitMap->m_pRaster[ SByte++ ];
-		    }
-		    SBit--;
-		}
-		break;
-	}
-	SX-=W;
-	DX-=W;
-
-	SY++;
-	DY++;
-
-	if ( BytesPerPix == 2)
-	    DYoff	+= pcDstBitMap->m_nBytesPerLine / 2;
-	else
-	    DYoff	+= pcDstBitMap->m_nBytesPerLine;
-    }
-}
-#endif
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-bool DisplayDriver::RenderGlyph( SrvBitmap *pcBitmap, Glyph* pcGlyph,
-				 const IPoint& cPos, const IRect& cClipRect, uint32* anPalette )
-{
-    IRect	cBounds	= pcGlyph->m_cBounds + cPos;
-    IRect	cRect 	= cBounds & cClipRect;
-
-    if ( cRect.IsValid() )
-    {
-	int	sx = cRect.left - cBounds.left;
-	int	sy = cRect.top - cBounds.top;
-
-	int	nWidth	= cRect.Width()+1;
-	int	nHeight	= cRect.Height()+1;
-
-	int	nSrcModulo = pcGlyph->m_nBytesPerLine - nWidth;
-	int	nDstModulo = pcBitmap->m_nBytesPerLine / 2 - nWidth;
-
-	uint8*	pSrc = pcGlyph->m_pRaster + sx + sy * pcGlyph->m_nBytesPerLine;
-	uint16*	pDst = (uint16*)pcBitmap->m_pRaster + cRect.left + (cRect.top * pcBitmap->m_nBytesPerLine / 2);
-
-	for ( int y = 0 ; y < nHeight ; ++y )
-	{
-	    for ( int x = 0 ; x < nWidth ; ++x )
-	    {
-		int nPix = *pSrc++;
-		if ( nPix > 0 ) {
-		    *pDst = anPalette[ nPix - 1 ];
-		}
-		pDst++;
-	    }
-	    pSrc	+= nSrcModulo;
-	    pDst	+= nDstModulo;
-	}
-    }
-    return( true );
-}
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-bool DisplayDriver::RenderGlyph( SrvBitmap *pcBitmap, Glyph* pcGlyph,
-				 const IPoint& cPos, const IRect& cClipRect, const Color32_s& sFgColor )
-{
-    IRect	cBounds	= pcGlyph->m_cBounds + cPos;
-    IRect	cRect 	= cBounds & cClipRect;
-
-    if ( cRect.IsValid() == false ) {
 	return( false );
-    }
-    int	sx = cRect.left - cBounds.left;
-    int	sy = cRect.top - cBounds.top;
-
-    int	nWidth	= cRect.Width()+1;
-    int	nHeight	= cRect.Height()+1;
-
-    int	nSrcModulo = pcGlyph->m_nBytesPerLine - nWidth;
-
-    uint8*  pSrc = pcGlyph->m_pRaster + sx + sy * pcGlyph->m_nBytesPerLine;
-
-    Color32_s	sCurCol;
-    Color32_s	sBgColor;
-  
-    if ( pcBitmap->m_eColorSpc == CS_RGB16 ) {
-	int	nDstModulo = pcBitmap->m_nBytesPerLine / 2 - nWidth;
-	uint16* pDst = (uint16*)pcBitmap->m_pRaster + cRect.left + (cRect.top * pcBitmap->m_nBytesPerLine / 2);
-
-	int nFgClut = COL_TO_RGB16( sFgColor );
-
-	for ( int y = 0 ; y < nHeight ; ++y ) {
-	    for ( int x = 0 ; x < nWidth ; ++x ) {
-		int nAlpha = *pSrc++;
-
-		if ( nAlpha > 0 ) {
-		    if ( nAlpha == 4 ) {
-			*pDst = nFgClut;
-		    } else {
-			int	nClut = *pDst;
-
-			sBgColor = RGB16_TO_COL( nClut );
-
-			sCurCol.red   = sBgColor.red   + (sFgColor.red   - sBgColor.red) * nAlpha / 4;
-			sCurCol.green = sBgColor.green + (sFgColor.green - sBgColor.green) * nAlpha / 4;
-			sCurCol.blue  = sBgColor.blue  + (sFgColor.blue  - sBgColor.blue) * nAlpha / 4;
-			*pDst = COL_TO_RGB16( sCurCol );
-		    }
-		}
-		pDst++;
-	    }
-	    pSrc += nSrcModulo;
-	    pDst += nDstModulo;
-	}
-    } else if ( pcBitmap->m_eColorSpc == CS_RGB32 ) {
-	int	nDstModulo = pcBitmap->m_nBytesPerLine / 4 - nWidth;
-	uint32* pDst = (uint32*)pcBitmap->m_pRaster + cRect.left + (cRect.top * pcBitmap->m_nBytesPerLine / 4);
-
-	int nFgClut = COL_TO_RGB32( sFgColor );
-
-	for ( int y = 0 ; y < nHeight ; ++y ) {
-	    for ( int x = 0 ; x < nWidth ; ++x ) {
-		int nAlpha = *pSrc++;
-
-		if ( nAlpha > 0 ) {
-		    if ( nAlpha == 4 ) {
-			*pDst = nFgClut;
-		    } else {
-			int	nClut = *pDst;
-
-			sBgColor = RGB32_TO_COL( nClut );
-
-			sCurCol.red   = sBgColor.red   + (sFgColor.red   - sBgColor.red) * nAlpha / 4;
-			sCurCol.green = sBgColor.green + (sFgColor.green - sBgColor.green) * nAlpha / 4;
-			sCurCol.blue  = sBgColor.blue  + (sFgColor.blue  - sBgColor.blue) * nAlpha / 4;
-	    
-			*pDst = COL_TO_RGB32( sCurCol );
-		    }
-		}
-		pDst++;
-	    }
-	    pSrc += nSrcModulo;
-	    pDst += nDstModulo;
-	}
-    }
-    return( true );
 }
+
+/** Recreate a Video overlay.
+ * \par Description:
+ * Should recreate a video overlay.
+ * \par
+ * \param cSize - Size of the source.
+ * \param cDst - Destination position and size.
+ * \param eFormat - Format of the overlay.
+ * \param phArea - Pointer to the area of the overlay.
+ * \return
+ * true if the call was successful
+ * \sa
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+
+bool DisplayDriver::RecreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, 
+										os::color_space eFormat, area_id *phArea )
+{
+	return( false );
+}
+
+/** Update a created Video overlay.
+ * \par Description:
+ * Should update the video overlay on the screen. Probably not necessary for hw
+ * accelerated drivers.
+ * \par
+ * \param phArea - Pointer to the area of the overlay.
+ * \sa
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+
+void DisplayDriver::UpdateVideoOverlay( area_id *phArea )
+{
+}
+
+/** Delete a created Video overlay.
+ * \par Description:
+ * Should delete a video overlay.
+ * \par
+ * \param phArea - Pointer to the area of the overlay.
+ * \sa
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+
+void DisplayDriver::DeleteVideoOverlay( area_id *phArea )
+{
+}
+
+
+void DisplayDriver::__VW_reserved1__() {}
+void DisplayDriver::__VW_reserved2__() {}
+void DisplayDriver::__VW_reserved3__() {}
+void DisplayDriver::__VW_reserved4__() {}
+void DisplayDriver::__VW_reserved5__() {}
+void DisplayDriver::__VW_reserved6__() {}
+void DisplayDriver::__VW_reserved7__() {}
+void DisplayDriver::__VW_reserved8__() {}
+void DisplayDriver::__VW_reserved9__() {}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

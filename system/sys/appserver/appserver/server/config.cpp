@@ -40,12 +40,12 @@ AppserverConfig::AppserverConfig()
     m_nDoubleClickDelay	    = 500000LL;
     m_bPopupSelectedWindows = false;
 
-    AddFontConfig( DEFAULT_FONT_REGULAR, os::font_properties( "Lucida Sans", "Regular", FPF_SYSTEM | FPF_SMOOTHED, 8.0f ) );
-    AddFontConfig( DEFAULT_FONT_BOLD, os::font_properties( "Lucida Sans", "Bold", FPF_SYSTEM | FPF_SMOOTHED, 8.0f ) );
-    AddFontConfig( DEFAULT_FONT_FIXED, os::font_properties( "Lucida Sans Typewriter", "Regular", FPF_SYSTEM | FPF_MONOSPACED | FPF_SMOOTHED, 8.0f ) );
-    AddFontConfig( DEFAULT_FONT_WINDOW, os::font_properties( "Lucida Sans", "Regular", FPF_SYSTEM | FPF_SMOOTHED, 8.0f ) );
-    AddFontConfig( DEFAULT_FONT_TOOL_WINDOW, os::font_properties( "Lucida Sans", "Regular", FPF_SYSTEM | FPF_SMOOTHED, 7.0f ) );
-    
+    AddFontConfig( DEFAULT_FONT_REGULAR, os::font_properties( "Nimbus Sans L", "Regular", FPF_SYSTEM | FPF_SMOOTHED, 8.0f ) );
+    AddFontConfig( DEFAULT_FONT_BOLD, os::font_properties( "Nimbus Sans L", "Bold", FPF_SYSTEM | FPF_SMOOTHED, 8.0f ) );
+    AddFontConfig( DEFAULT_FONT_FIXED, os::font_properties( "Syllable-Console", "Regular", FPF_SYSTEM | FPF_MONOSPACED | FPF_SMOOTHED, 8.0f ) );
+    AddFontConfig( DEFAULT_FONT_WINDOW, os::font_properties( "Nimbus Sans L", "Regular", FPF_SYSTEM | FPF_SMOOTHED, 8.0f ) );
+    AddFontConfig( DEFAULT_FONT_TOOL_WINDOW, os::font_properties( "Nimbus Sans L", "Regular", FPF_SYSTEM | FPF_SMOOTHED, 7.0f ) );
+
     m_bDirty = false;
 }
 
@@ -550,6 +550,7 @@ int AppserverConfig::SaveConfig()
     m_bDirty = false;
     return( 0 );
 }
+
 
 
 

@@ -1,9 +1,11 @@
-FREETYPE = freetype-2.1.3
-SCREENSHOT = y
+include makefile.freetype
+
+SCREENSHOT = n
 
 CFLAGS   = -pipe -O2 -I./$(FREETYPE)/include -c -Wall
 CPPFLAGS= $(CFLAGS)
 AOPTS   = -c
+LIBS    = -latheos
 
 CC	= gcc
 LL	= ld
@@ -16,10 +18,11 @@ OBJS =	ddriver.o ddline.o vesadrv.o server.o input.o	\
 
 ifeq ($(SCREENSHOT),y)
 	OBJS += screenshot.o
+	LIBS += -lpng -lz
 endif
 
 ifeq ($(SCREENSHOT),n)
-	CFLAGS += -D__NO_SCREENSHOT_SUPPORT__
+	CFLAGS += -D__NO_SCREENSHOT_SUPPORT__=1
 endif
 
 OBJDIR	:= objs
@@ -32,10 +35,10 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/appserver: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/appserver $(FREETYPE)/objs/libfreetype.a -latheos -lpng -lz -lstdc++ -lm
+	gcc $(OBJS) -o $(OBJDIR)/appserver $(FREETYPE)/objs/libfreetype.a $(LIBS) -lstdc++ -lm
 
 $(OBJDIR)/mini_appserver: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/appserver $(FREETYPE)/objs/libfreetype.a -latheos -lstdc++ -lm
+	gcc $(OBJS) -o $(OBJDIR)/appserver $(FREETYPE)/objs/libfreetype.a $(LIBS) -lstdc++ -lm
 
 install: $(OBJDIR)/appserver
 	cp -f $(OBJDIR)/appserver /system/appserver
@@ -50,9 +53,6 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d $(OBJDIR)/appserver
 
 -include $(OBJDIR)/*.d
-
-
-
 
 
 

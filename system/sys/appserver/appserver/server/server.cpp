@@ -211,7 +211,7 @@ void AppServer::SendKeyCode( int nKeyCode, int nQual )
 	    return;
 	}
     }
-#ifndef __NO_SCREENSHOT_SUPPORT__    
+#ifndef __NO_SCREENSHOT_SUPPORT__
     if ( nKeyCode == 0x0e ) { // Print-screen
 	ScreenShot();
 	return;
@@ -689,4 +689,5 @@ int main( int argc, char** argv )
     dbprintf( "WARNING : layers.device failed to initiate itself!!!\n" );
     return( 0 );
 }
+
 
