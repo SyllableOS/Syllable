@@ -646,7 +646,7 @@ void TermView::MouseDown( const Point & cPosition, uint32 nButtons )
 		{
 			/* User is performing a double click */
 			m_bIsSelectingWords = true;
-			if( m_bIsSelRangeValid = true )
+			if( m_bIsSelRangeValid == true )
 			{
 				HighlightSelection();
 				m_bModified = true;
@@ -2570,7 +2570,7 @@ void TermView::KeyDown( const char *pzString, const char *pzRawString, uint32 nQ
 	{
 		bool bExpandSel = false;
 
-		if( m_bIsSelRangeValid )
+		if( m_bIsSelRangeValid && m_cSelectStart != m_cSelectEnd )
 		{
 			uint32 nButtons;
 
