@@ -166,6 +166,21 @@ WindowDecorator::hit_item PhotonDecorator::HitTest( const Point& cPosition )
 				return( HIT_SIZE_BOTTOM );
 			}
 		}
+		else if ( cPosition.y > m_cBounds.bottom - CORNER_SIZE )
+		{
+			if ( cPosition.x < BORDER_SIZE )
+			{
+				return( HIT_SIZE_LB );
+			}
+			else if ( cPosition.x > m_cBounds.right - CORNER_SIZE )
+			{
+				return( HIT_SIZE_RB );
+			}
+			else
+			{
+				return( HIT_SIZE_BOTTOM );
+			}
+		}
 		else if ( cPosition.x < BORDER_SIZE )
 		{
 			return( HIT_SIZE_LEFT );
@@ -583,11 +598,11 @@ void PhotonDecorator::Render( const Rect& cUpdateRect )
 		buttons.left   = m_cDragRect.right;
 		buttons.top    = cOBounds.top + 1;
 		buttons.right  = cOBounds.right + 1;
-		buttons.bottom = m_cDragRect.bottom + 1;
+		buttons.bottom = m_cDragRect.bottom;
 
 		pcView->FillRect( buttons, col_DShadow );
 
-		buttons.top+=1; buttons.left+=1; buttons.right-=1; buttons.bottom-=1;
+		buttons.top+=1; buttons.left+=1; buttons.right-=1;
 		pcView->DrawFrame( buttons, FRAME_RAISED | FRAME_THIN | FRAME_TRANSPARENT );
 		buttons.top+=1; buttons.left+=1; buttons.right-=1; buttons.bottom-=1;
 		pcView->FillRect( buttons, get_default_color(COL_NORMAL) );
@@ -628,17 +643,3 @@ extern "C" WindowDecorator* create_decorator( Layer* pcLayer, uint32 nFlags )
 {
     return( new PhotonDecorator( pcLayer, nFlags ) );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
