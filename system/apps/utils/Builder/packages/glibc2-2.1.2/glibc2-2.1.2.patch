@@ -1226,6 +1226,20 @@ diff -ru glibc-2.1.2/sysdeps/gnu/errlist.c glibc2-2.1.2/sysdeps/gnu/errlist.c
    };
  
  const int SYS_NERR = sizeof SYS_ERRLIST / sizeof SYS_ERRLIST [0];
+diff -ru glibc2-2.1.2.syllable/sysdeps/gnu/sys/mtio.h glibc2-2.1.2/sysdeps/gnu/sys/mtio.h
+--- glibc2-2.1.2.syllable/sysdeps/gnu/sys/mtio.h	1999-01-24 10:40:26.000000000 +0000
++++ glibc2-2.1.2/sysdeps/gnu/sys/mtio.h	2004-04-27 13:18:45.000000000 +0000
+@@ -195,8 +195,10 @@
+ 
+ 
+ /* Magnetic tape I/O control commands.  */
++#ifndef __SYLLABLE__
+ #define	MTIOCTOP	_IOW('m', 1, struct mtop)	/* Do a mag tape op. */
+ #define	MTIOCGET	_IOR('m', 2, struct mtget)	/* Get tape status.  */
++#endif
+ #define	MTIOCPOS	_IOR('m', 3, struct mtpos)	/* Get tape position.*/
+ 
+ /* The next two are used by the QIC-02 driver for runtime reconfiguration.
 diff -ru glibc-2.1.2/sysdeps/i386/elf/start.S glibc2-2.1.2/sysdeps/i386/elf/start.S
 --- glibc-2.1.2/sysdeps/i386/elf/start.S	1998-06-18 17:29:00.000000000 +0000
 +++ glibc2-2.1.2/sysdeps/i386/elf/start.S	2004-04-27 12:12:53.000000000 +0000
