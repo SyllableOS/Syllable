@@ -4,6 +4,7 @@ home				www.swig.org
 locations			http://prdownloads.sourceforge.net/swig/
 build-recommends
 	ruby
+	ocaml
 	python
 	tcl
 	perl
