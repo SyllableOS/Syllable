@@ -1,3 +1,10 @@
+* March 20 2005, Henrik Isaksson *
+
+ - Button
+	o Added SetToggleMode() and GetToggleMode().
+ - ImageButton
+	o Fixed so that the border is always drawn when in toggle mode and selected.
+
 * March 19 2005, Henrik Isaksson *
 
  Yet another Vanders-patch:
