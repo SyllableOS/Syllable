@@ -67,6 +67,9 @@ $(OBJDIR)/smp_entry.bin: smp_entry.asm
 	nasm smp_entry.asm -o $(OBJDIR)/smp_entry.bin
 
 install: all
+	-mv /system/kernel.so /system/kernel.so.orig
+	-mv /system/drivers/net/if/eth_if /system/drivers/net/if/eth_if.orig
+	-mv /system/libs/libkernel.so /system/libs/libkernel.so.orig
 	cp -f $(OBJDIR)/kernel.so	/system/kernel.so
 	cp -f $(OBJDIR)/eth_if		/system/drivers/net/if/eth_if
 	$(CP) $(OBJDIR)/libkernel.so	/system/libs/libkernel.so
