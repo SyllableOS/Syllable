@@ -1,0 +1,35 @@
+authors
+	Michael Saunders
+	Kaj de Vos
+status				testing
+
+headline			Mail retriever and forwarder
+licenses			GPL other
+home				www.catb.org/~esr/fetchmail/
+
+needs
+	gettext >= 1.10.40
+	MTA | MDA
+build-needs
+	flex >= 2.5.3
+	bison
+recommends
+	procmail | sendmail | maildrop
+	python
+build-recommends	libiconv
+
+patch-config
+no-build-dir
+;configure-options
+;	--enable-NTLM
+;	--with-gssapi=
+;	Doesn't build:
+;	--with-ssl
+;	--enable-fallback=procmail
+;	--enable-fallback=sendmail
+;	--enable-fallback=maildrop
+;	--with-kerberos5=
+;	--enable-inet6
+documentation
+	README README.NTLM README.SSL INSTALL ABOUT-NLS COPYING FAQ FEATURES NEWS TODO NOTES
+	fetchmail-FAQ.html fetchmail-features.html todo.html design-notes.html
