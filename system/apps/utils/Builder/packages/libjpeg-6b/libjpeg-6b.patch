@@ -1,0 +1,16 @@
+diff -ru libjpeg-6b.original/ltconfig libjpeg-6b/ltconfig
+--- libjpeg-6b.original/ltconfig	1998-03-25 15:25:40.000000000 +0000
++++ libjpeg-6b/ltconfig	2004-10-24 20:41:01.000000000 +0000
+@@ -1179,6 +1179,12 @@
+   fi
+   ;;
+ 
++syllable*)
++  version_type=linux
++  library_names_spec='${libname}${release}.so.$versuffix ${libname}${release}.so.$major $libname.so'
++  soname_spec='${libname}${release}.so.$major'
++  ;;
++
+ netbsd* | openbsd*)
+   version_type=sunos
+   library_names_spec='${libname}${release}.so.$versuffix'
