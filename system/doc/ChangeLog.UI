@@ -5,6 +5,8 @@
  Checked in patches from Arno that change the look of selected items in
  ListViewStringRow and TreeViewStringNode.
 
+ Checked in Vanders' "kerning patch".
+
 * November 14 2004, Jake Hamby *
 
  Fix Radeon driver for 1400x1050 resolution and any other resolution whose
@@ -826,4 +828,5 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
