@@ -1,0 +1,10 @@
+#!/bin/sh
+cd zlib-1.1.4
+mkdir /usr/zlib
+mkdir /usr/zlib/include
+mkdir /usr/zlib/lib
+make install
+#make install --prefix=/usr/ruby
+#cp -r /usr/local/lib/ruby /usr/ruby/lib/ruby
+#rm -r /usr/local/lib/ruby
+pkgmanager -a /usr/zlib
