@@ -25,7 +25,7 @@ export TERMINFO=/usr/share/terminfo
 
 case $TERM in 
     xterm | xterm-color)
-	PROMPT_COMMAND="echo -en \"\33]0;$(whoami)@$(hostname):\$PWD - AtheOs Terminal\7\"";;
+	PROMPT_COMMAND="echo -en \"\33]0;$(whoami)@$(hostname):\$PWD - Syllable Terminal\7\"";;
     *)  
 	unset PROMPT_COMMAND;;
 esac
