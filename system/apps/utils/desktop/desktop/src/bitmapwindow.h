@@ -15,6 +15,7 @@
 #include "settings.h"
 
 using namespace os;
+using namespace std;
 
 typedef vector <std::string> t_Icon;
 typedef vector <ImageItem*> t_Menus;

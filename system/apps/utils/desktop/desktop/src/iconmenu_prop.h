@@ -3,7 +3,9 @@
 
 #include "include.h"
 #include "crect.h"
+
 using namespace os;
+using namespace std;
 
 class IconProp : public Window
 {

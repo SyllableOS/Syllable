@@ -1,5 +1,7 @@
 #include "include.h"
+
 using namespace os;
+using namespace std;
 
 class IconView;
 class BitmapView;

@@ -89,7 +89,7 @@ Bitmap *LoadBitmapFromStream(StreamableIO* pcStream)
                     nFrameSize = sFrameHeader.bf_data_size;
                 }
                 uint8 pFrameBuffer[8192];
-                nBytesRead = pcTrans->Read( pFrameBuffer, min( nFrameSize, sizeof(pFrameBuffer) ) );
+                nBytesRead = pcTrans->Read( pFrameBuffer, std::min( nFrameSize, sizeof(pFrameBuffer) ) );
                 if ( nBytesRead <= 0 )
                 {
                     break;
@@ -99,7 +99,7 @@ Bitmap *LoadBitmapFromStream(StreamableIO* pcStream)
                 int nSrcOffset = 0;
                 for ( ; y <= sFrameHeader.bf_frame.bottom && nBytesRead > 0 ; )
                 {
-                    int nLen = min( nBytesRead, sFrameHeader.bf_bytes_per_row - x );
+                    int nLen = std::min( nBytesRead, sFrameHeader.bf_bytes_per_row - x );
                     memcpy( pDstRaster + y * pcBitmap->GetBytesPerRow() + x, pFrameBuffer + nSrcOffset, nLen );
                     if ( x + nLen == sFrameHeader.bf_bytes_per_row )
                     {
@@ -182,7 +182,7 @@ Bitmap *LoadIconFromStream(StreamableIO* pcStream)
                     nFrameSize = sFrameHeader.bf_data_size;
                 }
                 uint8 pFrameBuffer[8192];
-                nBytesRead = pcTrans->Read( pFrameBuffer, min( nFrameSize, sizeof(pFrameBuffer) ) );
+                nBytesRead = pcTrans->Read( pFrameBuffer, std::min( nFrameSize, sizeof(pFrameBuffer) ) );
                 if ( nBytesRead <= 0 )
                 {
                     break;
@@ -192,7 +192,7 @@ Bitmap *LoadIconFromStream(StreamableIO* pcStream)
                 int nSrcOffset = 0;
                 for ( ; y <= sFrameHeader.bf_frame.bottom && nBytesRead > 0 ; )
                 {
-                    int nLen = min( nBytesRead, sFrameHeader.bf_bytes_per_row - x );
+                    int nLen = std::min( nBytesRead, sFrameHeader.bf_bytes_per_row - x );
                     memcpy( pDstRaster + y * pcBitmap->GetBytesPerRow() + x, pFrameBuffer + nSrcOffset, nLen );
                     if ( x + nLen == sFrameHeader.bf_bytes_per_row )
                     {

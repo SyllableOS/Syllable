@@ -434,7 +434,7 @@ void IconView::ReRead()
     }
     m_pcCurReadDirSession = new ReadDirParam( this );
 
-    thread_id hTread = spawn_thread( "read_dir_thread", ReadDirectory, 0, 0, m_pcCurReadDirSession );
+    thread_id hTread = spawn_thread( "read_dir_thread", (void*)ReadDirectory, 0, 0, m_pcCurReadDirSession );
     if ( hTread >= 0 )
     {
         resume_thread( hTread );

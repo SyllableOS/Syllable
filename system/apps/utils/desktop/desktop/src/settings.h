@@ -6,6 +6,7 @@
 #include <gui/gfxtypes.h>
 
 using namespace os;
+using namespace std;
 
 class DeskSettings
 {

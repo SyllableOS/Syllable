@@ -28,7 +28,9 @@
 #include <util/resources.h>
 #include <gui/filerequester.h>
 #include "crect.h"
+
 using namespace os;
+using namespace std;
 
 class DiskInfo;
 class DriveWindow : public Window
