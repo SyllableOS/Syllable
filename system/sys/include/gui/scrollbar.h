@@ -17,8 +17,8 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef	__F_GUI_SLIDER_H__
-#define	__F_GUI_SLIDER_H__
+#ifndef	__F_GUI_SCROLLBAR_H__
+#define	__F_GUI_SCROLLBAR_H__
 
 #include <limits.h>
 
@@ -102,3 +102,4 @@ private:
 }
 
 #endif	// __F_GUI_SLIDER_H__
+
