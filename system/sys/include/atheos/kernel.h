@@ -54,7 +54,7 @@ typedef struct
   bigtime_t	nActiveTime;
 } CPUInfo_s;
 
-enum { SYS_INFO_VERSION = 2 };
+enum { SYS_INFO_VERSION = 3 };
 
 typedef struct
 {
@@ -107,8 +107,41 @@ typedef struct
     int	      nBlockCacheSize;
     int	      nDirtyCacheSize;
     int	      nLockedCacheBlocks;
-} system_info;
+} system_info_v2;
 
+typedef struct
+{
+    int64     nKernelVersion;
+    char      zKernelName[ OS_NAME_LENGTH ];	 	/* Name of kernel image				*/
+    char      zKernelBuildDate[ OS_NAME_LENGTH ];	/* Date of kernel built				*/
+    char      zKernelBuildTime[ OS_NAME_LENGTH ];	/* Time of kernel built				*/
+    char      zKernelCpuArch[ OS_NAME_LENGTH ];		/* CPU this kernel is running on	*/
+    char      zKernelSystem[ OS_NAME_LENGTH ];		/* OS name (E.g. "Syllable")		*/
+    bigtime_t nBootTime;				/* time of boot (# usec since 1/1/70) */
+    int	      nCPUCount;
+    int	      nCPUType;
+    CPUInfo_s asCPUInfo[MAX_CPU_COUNT];
+    int       nMaxPages;				/* total # physical pages		*/
+    int       nFreePages;				/* Number of free physical pages	*/
+    int	      nCommitedPages;				/* Total number of allocated pages	*/
+    int	      nKernelMemSize;
+    int       nPageFaults;				/* Number of page faults		*/
+    int       nUsedSemaphores;				/* Number of semaphores in use		*/
+    int       nUsedPorts;				/* Number of message ports in use	*/
+    int       nUsedThreads;			 	/* Number of living threads		*/
+    int       nUsedProcesses;			 	/* Number of living processes		*/
+
+    int	      nLoadedImageCount;
+    int	      nImageInstanceCount;
+
+    int	      nOpenFileCount;
+    int       nAllocatedInodes;
+    int       nLoadedInodes;
+    int       nUsedInodes;
+    int	      nBlockCacheSize;
+    int	      nDirtyCacheSize;
+    int	      nLockedCacheBlocks;
+} system_info;
 
 /* this struct defines the way the registers are stored on the
    stack during a system call. */
