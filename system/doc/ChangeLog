@@ -1,10 +1,18 @@
+* Sep 22 2003, Kristian Van Der Vliet *
+
+i810 (Intel ICH) audio driver and Intel EtherExpressPro 100 (Speedo3) NIC drivers
+from Michael Krueger <invenies@web.de>
+
 * Sep 21 2003, Kaj de Vos *
+
 Removed grep 2.5 because it was misconfigured in CVS.
 
 * Sep 2 2003, Kaj de Vos *
+
 Fixed several related bugs in the network preferences applet
 
 * Aug 22 20003, Arno Klenke *
+
 Added libmedia, media drivers and media applications
 
 * Aug 20 2003, Kristian Van Der Vliet *
@@ -333,13 +341,4 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
-
-
-
-
-
-
-
-
-
 
