@@ -59,8 +59,8 @@ public:
     void	SetReadOnly( bool bFlag = true );
     bool	GetReadOnly() const;
   
-    void	AppendItem( const char* pzString );
-    void	InsertItem( int nPosition, const char* pzString );
+    void	AppendItem( const String& cString );
+    void	InsertItem( int nPosition, const String& cString );
     bool	DeleteItem( int nPosition );
     int		GetItemCount() const;
     void	Clear();
@@ -93,6 +93,7 @@ public:
     virtual void	KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
     virtual void	AllAttached();
 	virtual void Activated( bool bIsActive );
+	virtual void SetTabOrder( int nOrder = NEXT_TAB_ORDER );
 
 private:
     class DropdownView : public View

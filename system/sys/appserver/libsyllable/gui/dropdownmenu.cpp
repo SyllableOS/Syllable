@@ -181,14 +181,14 @@ bool DropdownMenu::GetReadOnly() const
 }
 
 /** Add a item to the end of the drop down list.
- * \param pzString - The string to be appended
+ * \param cString - The string to be appended
  * \sa InsertItem(), DeleteItem(), GetItemCount(), GetItem()
  * \author	Kurt Skauen (kurt@atheos.cx)
     *//////////////////////////////////////////////////////////////////////////////
 
-void DropdownMenu::AppendItem( const char *pzString )
+void DropdownMenu::AppendItem( const String& cString )
 {
-	m_cStringList.push_back( pzString );
+	m_cStringList.push_back( cString );
 }
 
 /** Insert and item at a given position.
@@ -200,9 +200,9 @@ void DropdownMenu::AppendItem( const char *pzString )
  * \author	Kurt Skauen (kurt@atheos.cx)
     *//////////////////////////////////////////////////////////////////////////////
 
-void DropdownMenu::InsertItem( int nPosition, const char *pzString )
+void DropdownMenu::InsertItem( int nPosition, const String& cString )
 {
-	m_cStringList.insert( m_cStringList.begin() + nPosition, pzString );
+	m_cStringList.insert( m_cStringList.begin() + nPosition, cString );
 }
 
 /** Delete a item
@@ -555,6 +555,12 @@ void DropdownMenu::KeyDown( const char *pzString, const char *pzRawString, uint3
 	}
 }
 
+void DropdownMenu::SetTabOrder( int nOrder )
+{
+	m_pcEditBox->SetTabOrder( nOrder );
+	View::SetTabOrder();
+}
+
 void DropdownMenu::Activated( bool bIsActive )
 {
 	Invalidate();
@@ -566,7 +572,20 @@ void DropdownMenu::Paint( const Rect & cUpdateRect )
 	Rect cBounds = GetBounds();
 
 	SetEraseColor( get_default_color( COL_NORMAL ) );
-	DrawFrame( m_cArrowRect, ( m_bMenuOpen ) ? FRAME_RECESSED : FRAME_RAISED );
+	
+	Rect cArrowRect = m_cArrowRect;
+
+	if( IsEnabled() && HasFocus() )
+	{
+		SetFgColor( 0, 0xAA, 0 );
+		DrawLine( Point( cArrowRect.left, cArrowRect.top ), Point( cArrowRect.right, cArrowRect.top ) );
+		DrawLine( Point( cArrowRect.right, cArrowRect.bottom ) );
+		DrawLine( Point( cArrowRect.left, cArrowRect.bottom ) );
+		DrawLine( Point( cArrowRect.left, cArrowRect.top ) );
+		cArrowRect.Resize( 1, 1, -1, -1 );
+	}
+
+	DrawFrame( cArrowRect, ( m_bMenuOpen ) ? FRAME_RECESSED : FRAME_RAISED );
 
 	float nCenterX = m_cArrowRect.left + ( m_cArrowRect.Width() + 1.0f ) / 2;
 	float nCenterY = m_cArrowRect.top + ( m_cArrowRect.Height() + 1.0f ) / 2;
@@ -578,18 +597,6 @@ void DropdownMenu::Paint( const Rect & cUpdateRect )
 		nCenterX += 1.0f;
 		cBmOffset.y += ARROW_HEIGHT;
 	}
-
-	if( IsEnabled() && HasFocus() )
-	{
-		SetFgColor( 0, 0xAA, 0 );
-	} else {
-		SetFgColor( get_default_color( COL_NORMAL ) );
-	}
-
-	DrawLine( Point( cBounds.left, cBounds.top ), Point( cBounds.right, cBounds.top ) );
-	DrawLine( Point( cBounds.right, cBounds.bottom ) );
-	DrawLine( Point( cBounds.left, cBounds.bottom ) );
-	DrawLine( Point( cBounds.left, cBounds.top ) );
 
 	SetFgColor( 0, 0, 0 );
 	Rect cArrow( 0, 0, ARROW_WIDTH - 1, ARROW_HEIGHT - 1 );
@@ -608,8 +615,6 @@ void DropdownMenu::FrameSized( const Point & cDelta )
 {
 	Rect cEditFrame = GetBounds();
 	
-	cEditFrame.Resize( 1, 1, -1, -1 );
-
 	float vArrowHeight = cEditFrame.Height() + 1.0f;
 
 	m_cArrowRect = Rect( cEditFrame.right - vArrowHeight * 0.9f, 0, cEditFrame.right, cEditFrame.bottom );
@@ -1115,4 +1120,5 @@ void DropdownMenu::DropdownView::HandleMessage( Message * pcMessage )
 	}
 
 }
+
 
