@@ -1,3 +1,4 @@
+
 * Aug 25 2002, Kristian Van Der Vliet *
 
 Updated nVideo driver from Iain Hutchison < iain_hutchison@yahoo.com >.  The driver now supports more cards, including the GeForce 4 and Riva128.  It should also correctly detect if you have an LCD  screen attached and set things up correctly.  The update also includes Joseph's patch to allow multiple video cards in the same PC
