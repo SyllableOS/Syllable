@@ -1,3 +1,10 @@
+* September 6th 2004, Kristian Van Der Vliet *
+
+Removed ATERM_ATTR from setup_environ.sh; no longer required with the updated
+ATerm.  Also cleaned up user_init.sh (Drives can be mounted by the new Desktop)
+and also call /Applications/Preferences/Network instead of the old netprefs binary
+to detect network changes.
+
 * September 5th 2004, Kristian Van Der Vliet *
 
 3Dfx Voodoo 3/4/5 driver from Jan Hauffa <hauffa@in.tum.de>  The driver supports
