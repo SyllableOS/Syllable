@@ -80,10 +80,6 @@ atheos/usr/share
 atheos/usr/share/terminfo
 atheos/usr/share/terminfo/x
 ;
-atheos/usr/zlib
-atheos/usr/zlib/include
-atheos/usr/zlib/lib
-;
 atheos/Applications
 atheos/Applications/Preferences
 atheos/Documentation

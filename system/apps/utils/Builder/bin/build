@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.3.6
+# Version 0.3.6+
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -751,7 +751,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.3.6",
+	puts "Syllable Build System 0.3.6+",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
