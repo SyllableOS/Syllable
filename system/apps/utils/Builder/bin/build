@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.2.7
+# Version 0.3.0
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -15,11 +15,11 @@ ENV['CXXFLAGS']	= "-march=i586 -O2 -pipe"
 
 @workDir		= Dir.getwd
 
-@builderDir	= "/Applications/Builder"
-@profilesDir	= File.join @builderDir, "profiles"
-@sourcesDir	= File.join @builderDir, "sources"
-@packagesDir	= File.join @builderDir, "packages"
-@logDir		= File.join @builderDir, "logs"
+@builderPath	= "/Applications/Builder"
+@profilesPath	= File.join @builderPath, "profiles"
+@sourcesPath	= File.join @builderPath, "sources"
+@packagesPath	= File.join @builderPath, "packages"
+@logsPath		= File.join @builderPath, "logs"
 
 # Define settings
 
@@ -51,10 +51,10 @@ end
 def unpackPackage target
 	Dir.chdir File.dirname(target) if target["/"]
 
-#	file = Dir[File.join(@sourcesDir, fullName target) + ".*"] [0]
+#	file = Dir[File.join(@sourcesPath, fullName target) + ".*"] [0]
 #	case File.basename file
 	unless
-		if exists? file = (base = File.join @sourcesDir, dir = fullName(target)) + ".tar.bz2" or
+		if exists? file = (base = File.join @sourcesPath, dir = fullName(target)) + ".tar.bz2" or
 			exists? file = base + ".tbz2"
 		then
 			action "bzcat #{file} | tar x"
@@ -82,18 +82,18 @@ def unpackPackage target
 end
 
 def patchPackage target
-	if exists? dir = patchesDir(target)
+	if exists? dir = patchesPath(target)
 		logHeader "Patching source"
 		return false unless action "cp -a #{File.join dir, "*"} ."
 	end
 
 	if dir = (recipe = recipe target)["patch-config"]
 		logHeader "Patching configuration"
-		action "cp -a #{File.join @sourcesDir, "config/config.*"} " +
+		action "cp -a #{File.join @sourcesPath, "config/config.*"} " +
 			(dir == "" ? "." : dir)
 	elsif dir = recipe["patch-legacy-config"]
 		logHeader "Patching configuration"
-		action "cp -a #{File.join @sourcesDir, "config/legacy/*"} " +
+		action "cp -a #{File.join @sourcesPath, "config/legacy/*"} " +
 			(dir == "" ? "." : dir)
 	else
 		true
@@ -121,7 +121,7 @@ def getPackage target
 				# Source already prepared
 				true
 			else
-				if Dir[File.join(@sourcesDir, fullName(target) + ".t*")] != []  # Some tarball
+				if Dir[File.join(@sourcesPath, fullName(target) + ".t*")] != []  # Some tarball
 					puts "\nWARNING! This will clobber your CVS repository!"
 					logHeader "Replacing source"
 
@@ -204,64 +204,98 @@ def testPackage target
 end
 
 def installPackage target
-	dir = installDir target
-
-	unless action "make" +
-		(@systemBuild ? " prefix=" + dir : "") +
-		" install"
-#		" install-strip"
+	unless
+		unless thirdParty?
+			action "make install"
+		else
+			if exists? dir = installPath(target) and not
+				begin
+					logHeader "Uninstalling " + target
+					uninstallPackage target
+				end
+			then
+				false
+			else
+				if not action "make" +
+					(@systemBuild ? " prefix=" + dir : "") +
+					" install"
+#					" install-strip"
+				then
+					false
+				elsif files = recipe(target)["documentation"] and not
+					begin
+						logHeader "Installing documentation"
+						action "cp -a #{files} " + dir
+					end
+				then
+					false
+				elsif exists? filesPath = File.join(@packagesPath, fullName(target), "distro") and not
+					begin
+						logHeader "Installing extra files"
+						action "cp -a #{File.join filesPath, "*"} " + dir
+					end
+				then
+					false
+				else
+					@systemBuild or
+					begin
+						logHeader "Registering " + target
+						action "pkgmanager -a " + dir
+					end
+				end
+			end
+		end
 	then
 		logFailure target
 	else
-		logHeader "Installing extra files"
-
-		if files = recipe(target)["documentation"]
-			action "cp -a #{files} " + dir
-		end
-
-		if exists? distroDir = File.join(@packagesDir, fullName(target), "distro")
-			# Extra files available
-			action "cp -a #{File.join distroDir, "*"} " + dir
-		end
-
-		unless @systemBuild
-			logHeader "Registering " + dir
-			logFailure target unless action "pkgmanager -a " + dir
-		end
-
 		action "sync"
 	end
 end
 
 def uninstallPackage target
-	dir = installDir target
-	if @systemBuild or action "pkgmanager -r " + dir
-		logHeader "Deleting " + dir
-		unless action "rm -r " + dir
-			false
+	unless
+		unless thirdParty?
+			action "make uninstall"
 		else
-			action "sync"
+			dir = installPath target
+
+			unless @systemBuild or
+				begin
+					logHeader "Unregistering " + target
+					action "pkgmanager -r " + dir
+				end
+			then
+				false
+			else
+				logHeader "Deleting " + target
+				action "rm -r " + dir
+			end
 		end
+	then
+		false
+	else
+		action "sync"
 	end
 end
 
-def makeDistroPackage target
-	if thirdParty?
-		installPackage target
-	else  # Native package
-		unless
+def makeDistroPackage target  # Should only be called if it's a system build
+	unless
+		if thirdParty?
+			installPackage target
+		else
 			unless action "make dist"
 				false
 			else
-				logHeader "Installing documentation"
-				if action "make doc"
-					action "make install-doc"
-				end
-				action "sync"
+#				logHeader "Installing documentation"
+#				if action "make doc"
+#					action "make install-doc"
+#				end
 			end
-		then
-			logFailure target
 		end
+	then
+		logFailure target
+	else
+		action "sync"
 	end
 end
 
@@ -302,7 +336,7 @@ def prepare
 	if @systemBuild
 #		logHeader "Creating extra directories in source tree"
 
-#		for dir in load File.join(@builderDir, "extra-source-dirs")
+#		for dir in load File.join(@builderPath, "extra-source-dirs")
 #			logDetail dir
 #			Dir.mkdir dir unless exists? dir
 #		end
@@ -317,7 +351,7 @@ def prepare
 		Dir.chdir @distroRoot
 
 #		action File.join(@buildTools, "mkbase.sh") + " " + @distroRoot
-		for dir in load File.join(@builderDir, "distro-tree")
+		for dir in load File.join(@builderPath, "distro-tree")
 			logDetail dir
 			Dir.mkdir dir unless exists? dir
 		end
@@ -463,7 +497,7 @@ def makeDistro target
 					(profile.collect {|package| installName package}).join(" ") +
 				(files = recipe(target)["distro-files"] ? " " + files : "")
 			then
-				if profile.is_a? Array and exists? distroDir = File.join(@packagesDir, name, "distro")
+				if profile.is_a? Array and exists? distroDir = File.join(@packagesPath, name, "distro")
 					# It's a compound package; add extra files
 					Dir.chdir distroDir
 					action "tar rvf #{File.join @workDir, file}.tar *"
@@ -578,18 +612,18 @@ def prefix package
 	File.join "/usr", installName(package)
 end
 
-def installDir package
+def installPath package
 	File.join @installRoot, installName(package)
 end
 
-def patchesDir package
-	File.join @packagesDir, fullName(package), "patches"
+def patchesPath package
+	File.join @packagesPath, fullName(package), "patches"
 end
 
 def profile target  # Return the list of packages for the build target
 	if target["/"]  # A single directory
 		target[-1, 1] == "/" ? target.chop : target
-	elsif exists? file = File.join(@profilesDir, target)  # A profile
+	elsif exists? file = File.join(@profilesPath, target)  # A profile
 		load file
 	else
 		target
@@ -598,7 +632,7 @@ end
 
 def recipe package  # Load the key/value pairs of a recipe into a hash table
 	package = fullName package
-	if exists? recipe = File.join(@packagesDir, package, package + ".recipe")
+	if exists? recipe = File.join(@packagesPath, package, package + ".recipe")
 		parseValues load(recipe)
 	else
 		{}
@@ -621,11 +655,11 @@ end
 def openLogs
 	@failures = []
 
-	Dir.mkdir @logDir unless exists? @logDir
+	Dir.mkdir @logsPath unless exists? @logsPath
 
-	@log		= File.new File.join(@logDir, "last-stdout"), "w"
-	@summary	= File.new File.join(@logDir, "last-summary"), "w"
-	@failLog	= File.new File.join(@logDir, "last-failures"), "w"
+	@log		= File.new File.join(@logsPath, "last-stdout"), "w"
+	@summary	= File.new File.join(@logsPath, "last-summary"), "w"
+	@failLog	= File.new File.join(@logsPath, "last-failures"), "w"
 
 	@log		<< s = "Building in root directory #{@workDir}\n"
 	@summary	<< s
@@ -693,7 +727,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.2.7",
+	puts "Syllable Build System 0.3.0",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
@@ -722,8 +756,8 @@ when "?", "-?", "-h", "-help", "--help"
 		"<log>:          Log name",
 		"  summary       Summarized log",
 		"  failures      Log of failed packages"
-when "list" then print IO.readlines(File.join(@profilesDir, arg2))
-when "log"  then print IO.readlines(File.join(@logDir, arg2 ? "last-" + arg2 : "last-stdout"))
+when "list" then print IO.readlines(File.join(@profilesPath, arg2))
+when "log"  then print IO.readlines(File.join(@logsPath, arg2 ? "last-" + arg2 : "last-stdout"))
 else
 	openLogs
 
@@ -733,7 +767,7 @@ else
 		profile = profile target = arg2 ? arg2 : arg1 ? arg1 : "default"
 
 		if profile.is_a? Array  # Not a single package
-			save profile, File.join(@profilesDir, "last")
+			save profile, File.join(@profilesPath, "last")
 		end
 
 		if @systemBuild
@@ -764,7 +798,7 @@ else
 		end
 
 		if profile.is_a? Array  # Not a single package
-			save @failures, File.join(@profilesDir, "failures")
+			save @failures, File.join(@profilesPath, "failures")
 		end
 
 		if @systemBuild
