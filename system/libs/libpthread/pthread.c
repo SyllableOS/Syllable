@@ -135,6 +135,11 @@ int pthread_key_delete(pthread_key_t key)
 	return( free_tld( key ) );
 }
 
+int pthread_kill(pthread_t thread, int sig)
+{
+	return( kill( (pid_t)thread, sig ) );
+}
+
 int pthread_once(pthread_once_t *once_control, void (*init_routine)(void))
 {
 	if ( atomic_swap( once_control, 1 ) == 0 )
