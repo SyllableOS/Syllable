@@ -39,7 +39,7 @@ public:
 	virtual void	MouseDown(const Point&, uint32);
 	virtual void    MouseUp(const Point& cPosition, uint32 nButtons, Message * pcData );
 	virtual void 	MouseMove( const Point & cPosition, int nCode, uint32 nButtons, Message * pcData );
-	Point			GetPreferredSize( bool bLargest );
+	Point			GetPreferredSize( bool bLargest ) const;
 
     virtual void	__pm_reserved1();
     virtual void	__pm_reserved2();
