@@ -7,7 +7,7 @@ AFLAGS   = -c
 # Enable the following to enable debug output
 CFLAGS += -D__ENABLE_DEBUG__
 
-OBJS := ata.o ata-drive.o atapi-drive.o ata-io.o ata-probe.o
+OBJS := ata.o ata-drive.o atapi-drive.o ata-io.o ata-probe.o ata-dma.o
 
 
 OBJDIR	:= objs

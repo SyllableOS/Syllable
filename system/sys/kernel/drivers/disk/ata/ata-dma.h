@@ -2,6 +2,7 @@
  *  ATA/ATAPI driver for Syllable
  *
  *  Copyright (C) 2003 Kristian Van Der Vliet
+ *  Copyright (C) 2003 Arno Klenke
  *  Copyright (C) 2002 William Rose
  *  Copyright (C) 1999 - 2001 Kurt Skauen
  *
@@ -25,28 +26,40 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __ATA_IO_H_
-#define __ATA_IO_H_
+#ifndef __ATA_DMA_H_
+#define __ATA_DMA_H_
 
 #include "ata.h"
-#include "atapi-drive.h"
 
-int get_data( int controller, int bytes, void *buffer );
-int put_data( int controller, int bytes, void *buffer );
+/* Busmaster registers */
+#define ATA_DMA_CONTROL 0x0
+#define		DMA_CONTROL_STOP			0x00
+#define		DMA_CONTROL_START			0x01
+#define		DMA_CONTROL_READ			0x08
 
-int read_sectors( AtaInode_s* psInode, void* pBuffer, int64 nSector, int nSectorCount );
-int write_sectors( AtaInode_s* psInode, const void* pBuffer, off_t nSector, int nSectorCount );
+#define ATA_DMA_STATUS	0x2
+#define		DMA_STATUS_ACTIVE			0x01
+#define 	DMA_STATUS_ERROR			0x02
+#define		DMA_STATUS_IRQ				0x04
+#define 	DMA_STATUS_DRIVE0_ENABLED	0x20
+#define		DMA_STATUS_DRIVE1_ENABLED	0x40
 
-void timeout( void* data );
-int wait_for_status( int controller, int mask, int value );
-int ata_interrupt( int nIrq, void *pCtrl, SysCallRegs_s* psRegs );
+#define ATA_DMA_TABLE 0x4
 
-void select_drive( int nDrive );
+int ata_dma_check( int drive );
+bool ata_dma_table_prepare( int drive, void *buffer, uint32 len );
+void ata_dma_read( int drive );
+void ata_dma_write( int drive );
+void ata_dma_start( int drive );
+int ata_dma_stop( int drive );
 
-void ata_drive_reset( int controller );
 
-int atapi_reset( int drive );
-int atapi_packet_command( AtapiInode_s *psInode, atapi_packet_s *command );
+/* I/O */
+#define ata_dma_inb( reg )		inb( g_nControllers[controller].dma_base + reg )
+#define ata_dma_inl( reg )		inl( g_nControllers[controller].dma_base + reg )
+
+#define ata_dma_outb( reg, value )	outb( value, g_nControllers[controller].dma_base + reg )
+#define ata_dma_outl( reg, value )	outl( value, g_nControllers[controller].dma_base + reg )
 
 #endif
 

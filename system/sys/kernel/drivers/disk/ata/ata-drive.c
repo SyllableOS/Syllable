@@ -29,6 +29,7 @@
 #include "ata-drive.h"
 #include "ata-io.h"
 #include "ata-probe.h"
+#include "ata-dma.h"
 
 extern int g_nDevices[MAX_DRIVES];
 extern ata_controllers_t g_nControllers[MAX_CONTROLLERS];

@@ -30,6 +30,7 @@
 #include "ata-io.h"
 #include "ata-drive.h"
 #include "atapi-drive.h"
+#include "ata-dma.h"
 
 extern int g_nDevices[MAX_DRIVES];
 extern ata_controllers_t g_nControllers[MAX_CONTROLLERS];
@@ -85,6 +86,22 @@ void ata_detect_pci_controllers( void )
 				g_nControllers[0].irq = ATA_DEFAULT_PRIMARY_IRQ;
 			}
 
+			/* Enable Busmastering , save dma port and request irq */
+			if( g_nControllers[0].io_base != 0x00 )
+			{
+				write_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND, 2, read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND , 2 ) | PCI_COMMAND_MASTER | PCI_COMMAND_IO );
+				g_nControllers[0].dma_base = pcidevice.u.h0.nBase4 & PCI_ADDRESS_IO_MASK;
+
+				/* Disable DMA transfers if the interrupt could not be requested */
+				if( request_irq( g_nControllers[0].irq, ata_interrupt, NULL, 0, "ata_controller0_irq", &g_nControllers[0] ) < 0 )
+				{
+					g_nControllers[0].dma_base = 0x0;
+					kerndbg( KERN_INFO, "ATA IRQ could not be requested. DMA transfers will be disabled\n" );
+				}
+				if( g_nControllers[0].dma_base != 0x0 )
+					kerndbg( KERN_INFO, "DMA busmaster at 0x%x\n", g_nControllers[0].dma_base );
+			}
+ 
 			/* Is the Secondary channel in compatability or PCI native mode? */
 			if( ( read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, 0x09, 1 ) & 0x04 ) != 0x00 )
 			{
@@ -112,6 +129,22 @@ void ata_detect_pci_controllers( void )
 				/* The Secondary channel is in compatability mode */
 				g_nControllers[1].io_base = ATA_DEFAULT_SECONDARY_BASE;
 				g_nControllers[1].irq = ATA_DEFAULT_SECONDARY_IRQ;
+			}
+
+			/* Enable Busmastering, save dma port and request irq */
+			if( g_nControllers[1].io_base != 0x00 )
+			{
+				write_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND, 2, read_pci_config( pcidevice.nBus, pcidevice.nDevice, pcidevice.nFunction, PCI_COMMAND , 2 ) | PCI_COMMAND_MASTER | PCI_COMMAND_IO );
+				g_nControllers[1].dma_base = ( pcidevice.u.h0.nBase4 & PCI_ADDRESS_IO_MASK ) + 0x8;
+
+				/* Disable DMA transfers if the interrupt could not be requested */
+				if( request_irq( g_nControllers[1].irq, ata_interrupt, NULL, 0, "ata_controller1_irq", &g_nControllers[1] ) < 0 )
+				{
+					g_nControllers[1].dma_base = 0x0;
+					kerndbg( KERN_INFO, "ATA IRQ could not be requested. DMA transfers will be disabled\n" );
+				}
+				if( g_nControllers[1].dma_base != 0x0 )
+					kerndbg( KERN_INFO, "DMA busmaster at 0x%x\n", g_nControllers[1].dma_base );
 			}
 
 			break;
@@ -571,6 +604,7 @@ int ata_decode_partitions( AtaInode_s* psInode )
 
 		sprintf( psPartition->bi_zName, "%d", i );
 		psPartition->bi_nDriveNum      = psInode->bi_nDriveNum;
+		psPartition->bi_bDMA		= psInode->bi_bDMA;
 		psPartition->bi_nSectors       = psInode->bi_nSectors;
 		psPartition->bi_nCylinders     = psInode->bi_nCylinders;
 		psPartition->bi_nHeads	       = psInode->bi_nHeads;
@@ -673,6 +707,8 @@ int ata_scan_for_disks( int nDeviceID )
 		char zName[16];
 		char zArgName[32];
 
+		memset( &sDriveParams, 0, sizeof( DriveParams_s ) );
+
 		if( ( g_nDevices[i] == DEVICE_ATA ) || ( g_nDevices[i] == DEVICE_ATAPI ) )
 		{
 			if( g_nDevices[i] == DEVICE_ATA )
@@ -722,6 +758,15 @@ int ata_scan_for_disks( int nDeviceID )
 
 				kerndbg( KERN_INFO, "/dev/disk/ide/%s : (%u) %Ld sectors of %d bytes (%d:%d:%d)\n", zName, psAtaInode->bi_nDriveNum, sDriveParams.nTotSectors, sDriveParams.nBytesPerSector, psAtaInode->bi_nHeads, psAtaInode->bi_nCylinders, psAtaInode->bi_nSectors );
 
+				if( ata_dma_check( i ) == 0 )
+				{
+					psAtaInode->bi_bDMA = true;
+					kerndbg( KERN_INFO, "DMA transfers enabled\n");
+				}
+				else 
+					psAtaInode->bi_bDMA = false;
+
+
 				strcpy( zNodePath, "disk/ide/" );
 				strcat( zNodePath, zName );
 				strcat( zNodePath, "/raw" );
@@ -760,6 +805,14 @@ int ata_scan_for_disks( int nDeviceID )
 				psAtapiInode->bi_bMediaChanged	= false;
 				psAtapiInode->bi_bTocValid		= false;
 
+				if( ata_dma_check( i ) == 0 )
+				{
+					psAtapiInode->bi_bDMA = true;
+					kerndbg( KERN_INFO, "DMA transfers enabled\n");
+				}
+				else 
+					psAtapiInode->bi_bDMA = false;
+ 
 				strcpy( zNodePath, "disk/ide/" );
 				strcat( zNodePath, zName );
 				strcat( zNodePath, "/raw" );

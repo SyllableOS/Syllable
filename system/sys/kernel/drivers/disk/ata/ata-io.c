@@ -27,6 +27,7 @@
 
 #include "ata.h"
 #include "ata-io.h"
+#include "ata-dma.h"
 
 extern int g_nDevices[MAX_DRIVES];
 extern ata_controllers_t g_nControllers[MAX_CONTROLLERS];
@@ -39,7 +40,7 @@ int wait_for_status( int controller, int mask, int value )
 	g_nControllers[controller].state = IDLE;
 
 	timer = create_timer();
-	start_timer( timer, timeout, (void*)&g_nControllers[controller].state, TIMEOUT, true);
+	start_timer( timer, timeout, (void*)&g_nControllers[controller].state, TIMEOUT * 20, true);
 
 	kerndbg( KERN_DEBUG_LOW, "wait_for_status(), timer running\n");
 
@@ -65,6 +66,17 @@ void timeout( void* data )
 	int *state = (int*)data;
 	*state = DEV_TIMEOUT;
 	return;
+}
+
+int ata_interrupt( int nIrq, void *pCtrl, SysCallRegs_s* psRegs )
+{
+	ata_controllers_t *controller = ( ata_controllers_t* )pCtrl;
+
+	/* Check if a dma transfer is active */
+	if( controller->dma_active )
+		wakeup_sem( controller->irq_lock, true );
+
+	return( 0 );
 }
 
 int get_data( int controller, int bytes, void *buffer )
@@ -262,7 +274,8 @@ retry:
 		goto error;
 
 	ctl = psInode->bi_nHeads > 7 ? CTL_EIGHTHEADS : 0;
-	ctl |= CTL_INTDISABLE;
+	if( !psInode->bi_bDMA )
+		ctl |= CTL_INTDISABLE;
 
 	ata_outb( ATA_CTL, ctl );
 	ata_outb( ATA_PRECOMP, 0 );
@@ -271,14 +284,50 @@ retry:
 	ata_outb( ATA_CYL_LO, cyl_lo );
 	ata_outb( ATA_CYL_HI, cyl_hi );
 
-	ata_outb( ATA_COMMAND, CMD_READ );
-
-	if( get_data( controller, transfer_total, pBuffer ) < 0 )
+	if( psInode->bi_bDMA )
 	{
-		if( nRetryCount++ < 3 )
-			goto retry;
+		ata_dma_table_prepare( psInode->bi_nDriveNum, pBuffer, transfer_total );
+		ata_dma_read( psInode->bi_nDriveNum );
+		ata_outb( ATA_COMMAND, CMD_READ_DMA );
+		ata_dma_start( psInode->bi_nDriveNum );
+
+		if( sleep_on_sem( g_nControllers[controller].irq_lock, TIMEOUT * 50 ) < 0 )
+		{
+			kerndbg( KERN_WARNING, "DMA transfer timeout -> falling back to PIO mode!");
+			psInode->bi_bDMA = false;
+			return( -EIO );
+		}
+
+		kerndbg( KERN_DEBUG, "DMA transfer Finished!\n" );
+
+		if( !ata_dma_stop( psInode->bi_nDriveNum ) )
+		{
+			kerndbg( KERN_DEBUG, "DMA transfer successful!\n");
+		}
 		else
-			goto error;
+		{
+			/* DMA Transfers always fail when aterm is opened, but why ? */
+			if( nRetryCount++ < 3 )
+				goto retry;
+			else
+			{
+				kerndbg( KERN_WARNING, "DMA transfer failed -> falling back to PIO mode!\n");
+				psInode->bi_bDMA = false;
+				return( -EIO );
+			}
+		}
+	}
+	else
+	{
+		ata_outb( ATA_COMMAND, CMD_READ );
+
+		if( get_data( controller, transfer_total, pBuffer ) < 0 )
+		{
+			if( nRetryCount++ < 3 )
+				goto retry;
+			else
+				goto error;
+		}
 	}
 
 	return( nSectorCount );
@@ -373,7 +422,8 @@ retry:
 		goto error;
 
 	ctl = psInode->bi_nHeads > 7 ? CTL_EIGHTHEADS : 0;
-	ctl |= CTL_INTDISABLE;
+	if( !psInode->bi_bDMA )
+		ctl |= CTL_INTDISABLE;
 
 	ata_outb( ATA_CTL, ctl );
 	ata_outb( ATA_PRECOMP, 0 );
@@ -382,23 +432,59 @@ retry:
 	ata_outb( ATA_CYL_LO, cyl_lo );
 	ata_outb( ATA_CYL_HI, cyl_hi );
 
-	ata_outb( ATA_COMMAND, CMD_WRITE );
-
-	/* Send the first sector of data to the drive */
-	put_data( controller, 512, (void*)pBuffer );
-
-	transfer_total -= 512;
-	pBuffer += 512;
-
-	/* If more sectors are pending, transfer them to the drive */
-	if( transfer_total > 0 )
+	if( psInode->bi_bDMA )
 	{
-		if( put_data( controller, transfer_total, (void*)pBuffer ) < 0 )
+		ata_dma_table_prepare( psInode->bi_nDriveNum, (void*)pBuffer, transfer_total );
+		ata_dma_write( psInode->bi_nDriveNum );
+		ata_outb( ATA_COMMAND, CMD_WRITE_DMA );
+		ata_dma_start( psInode->bi_nDriveNum );
+
+		if( sleep_on_sem( g_nControllers[controller].irq_lock, TIMEOUT * 50 ) < 0 )
+		{
+			kerndbg( KERN_WARNING, "DMA transfer timeout -> falling back to PIO mode!");
+			psInode->bi_bDMA = false;
+			return( -EIO );
+		}
+
+		kerndbg( KERN_DEBUG, "DMA transfer Finished!\n" );
+
+		if( !ata_dma_stop( psInode->bi_nDriveNum ) )
+		{
+			kerndbg( KERN_DEBUG, "DMA transfer successful!\n");
+		}
+		else
 		{
 			if( nRetryCount++ < 3 )
 				goto retry;
 			else
-				goto error;
+			{
+				kerndbg( KERN_WARNING, "DMA transfer failed -> falling back to PIO mode!\n");
+				psInode->bi_bDMA = false;
+				return( -EIO );
+			}
+				
+		}
+	}
+	else
+	{
+		ata_outb( ATA_COMMAND, CMD_WRITE );
+
+		/* Send the first sector of data to the drive */
+		put_data( controller, 512, (void*)pBuffer );
+
+		transfer_total -= 512;
+		pBuffer += 512;
+
+		/* If more sectors are pending, transfer them to the drive */
+		if( transfer_total > 0 )
+		{
+			if( put_data( controller, transfer_total, (void*)pBuffer ) < 0 )
+			{
+				if( nRetryCount++ < 3 )
+					goto retry;
+				else
+					goto error;
+			}
 		}
 	}
 	return( nSectorCount );
@@ -537,11 +623,24 @@ int atapi_packet_command( AtapiInode_s *psInode, atapi_packet_s *command )
 	if(command->count > 0xFFFE)
 		command->count = 0xFFFE;	/* Max data per interrupt. */
 
-	ata_outb( ATAPI_FEAT, 0);
+	/* Prepare DMA */
+	if( command->packet[0] == GPCMD_READ_10 && psInode->bi_bDMA )
+	{
+		ata_dma_table_prepare( drive, (void*)g_nControllers[controller].data_buffer, command->count );
+		ata_dma_read( drive );
+	}
+
+	ata_outb( ATAPI_FEAT, command->packet[0] == GPCMD_READ_10 && psInode->bi_bDMA );
 	ata_outb( ATAPI_IRR, 0);
 	ata_outb( ATAPI_SAMTAG, 0);
 	ata_outb( ATAPI_CNT_LO, (command->count >> 0) & 0xFF);
 	ata_outb( ATAPI_CNT_HI, (command->count >> 8) & 0xFF);
+
+	if( command->packet[0] == GPCMD_READ_10 && psInode->bi_bDMA )
+		ata_outb( ATA_CTL, CTL_EIGHTHEADS );
+	else
+		ata_outb( ATA_CTL, CTL_EIGHTHEADS | CTL_INTDISABLE );
+
 	ata_outb( ATA_COMMAND, CMD_ATAPI_PACKET);
 
 	/* This function assumes that the higher calling function has already locked the buffer */
@@ -583,6 +682,37 @@ int atapi_packet_command( AtapiInode_s *psInode, atapi_packet_s *command )
 		if( command->count > 0 )
 		{
 			kerndbg( KERN_DEBUG, "Waiting for drive response...\n");
+
+			/* Start DMA transfer if possible */
+			if( command->packet[0] == GPCMD_READ_10 && psInode->bi_bDMA )
+			{
+				kerndbg( KERN_DEBUG, "Starting DMA transfer...\n" );
+				ata_dma_start( drive );
+
+				if( sleep_on_sem( g_nControllers[controller].irq_lock, ATAPI_CMD_TIMEOUT * 50 ) < 0 )
+				{
+					kerndbg( KERN_WARNING, "DMA transfer timeout -> falling back to PIO mode!");
+					psInode->bi_bDMA = false;
+					g_nControllers[controller].state = IDLE;
+					return( -EIO );
+				}
+
+				kerndbg( KERN_DEBUG, "DMA transfer Finished!\n" );
+				g_nControllers[controller].state = IDLE;
+
+				if( !ata_dma_stop( drive ) )
+				{
+					kerndbg( KERN_DEBUG, "DMA transfer successful!\n");
+					return( 0 );
+				}
+				else
+				{
+					kerndbg( KERN_WARNING, "DMA transfer failed -> falling back to PIO mode!");
+					psInode->bi_bDMA = false;
+					g_nControllers[controller].state = IDLE;
+					return( -EIO );
+				}
+			}
 
 			/* Create a new timer, as this is a seperate operation */
 			timer = create_timer();
