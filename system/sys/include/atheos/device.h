@@ -31,9 +31,54 @@ extern "C" {
 #endif
 #endif
 
+#define MAX_BUSMANAGER_NAME_LENGTH 255
+#define MAX_DEVICE_NAME_LENGTH     255
 
+/* Busmanager functions */
+status_t bus_init();
+void     bus_uninit();
+void*    bus_get_hooks( int nVersion );
+
+/* Driver functions */
 status_t device_init( int nDeviceID );
 status_t device_uninit( int nDeviceID );
+
+enum device_type {
+	DEVICE_UNKNOWN,
+	DEVICE_SYSTEM,
+	DEVICE_CONTROLLER,
+	DEVICE_VIDEO,
+	DEVICE_AUDIO,
+	DEVICE_NET,
+	DEVICE_PORT,
+	DEVICE_INPUT,
+	DEVICE_DRIVE,
+	DEVICE_PROCESSOR
+};
+
+typedef struct
+{
+	char             di_zOriginalName[MAX_DEVICE_NAME_LENGTH];
+	char             di_zName[MAX_DEVICE_NAME_LENGTH];
+	char             di_zBus[MAX_BUSMANAGER_NAME_LENGTH];
+	enum device_type di_eType;
+} DeviceInfo_s;
+
+/* Kernel functions */
+void		init_devices_boot();
+void		init_devices();
+void		add_devices_bootmodule( const char* pzPath );
+void		write_devices_config();
+
+int			register_device( const char* pzName, const char* pzBus );
+void		unregister_device( int nHandle );
+status_t	claim_device( int nDeviceID, int nHandle, const char* pzName, enum device_type eType );
+void		release_device( int nHandle );
+status_t	get_device_info( DeviceInfo_s* psInfo, int nIndex );
+
+void*		get_busmanager( const char* pzName, int nVersion );
+void		disable_device( int nDeviceID );
+void		enable_all_devices();
 
 #define MK_IOCT(a,b) (a+b)
 enum
@@ -41,6 +86,8 @@ enum
     IOCTL_GET_DEVICE_GEOMETRY = 1,
     IOCTL_REREAD_PTABLE,
     IOCTL_GET_DEVICE_PATH = MK_IOCTLW( IOCTL_MOD_KERNEL, 0x01, PATH_MAX ),
+	IOCTL_GET_DEVICE_HANDLE = MK_IOCTLR( IOCTL_MOD_KERNEL, 0x02, 4 ),
+   
     IOCTL_USER = 100000000
 };
 
@@ -119,7 +166,7 @@ typedef struct
 
 void init_boot_device( const char* pzPath );
 
-int create_device_node( int nDeviceID, const char* pzPath, const DeviceOperations_s* psOps, void* pCookie );
+int create_device_node( int nDeviceID, int nDeviceHandle, const char* pzPath, const DeviceOperations_s* psOps, void* pCookie );
 int delete_device_node( int nHandle );
 int rename_device_node( int nHandle, const char* pzNewPath );
 

@@ -230,8 +230,11 @@ int 	__kfree( void* pBlock );
 
 #define kfree(p) kassertw( __kfree(p) == 0 )
 
-void*	alloc_real( uint32 RequestSize, uint32	Flags );
+void*	alloc_real( uint32 nSize, uint32 nFlags );
 void	free_real( void* Block );
+
+status_t alloc_physical( uint32* pnAddress, bool bExactAddress, uint32 nSize );
+void     free_physical( uint32 nAddress );
 
 int	Fork( const char* pzName );
 int	reboot( void );

@@ -28,6 +28,7 @@ extern "C" {
 #endif
 
 #include <atheos/pci_vendors.h>
+#include <atheos/device.h>
 
 typedef struct
 {
@@ -69,6 +70,7 @@ typedef struct
 	    uint8	nMaxDMALatency;
 	} h0;
     } u;
+    int nHandle;
 } PCI_Entry_s;
 
 typedef struct
@@ -102,9 +104,24 @@ typedef struct
       uint8	nMaxDMALatency;
     } h0;
   } u;
+  int		nHandle;
 } PCI_Info_s;
 
+/* PCI bus */
 
+#define PCI_BUS_NAME "pci"
+#define PCI_BUS_VERSION 1
+
+typedef struct
+{
+	status_t (*get_pci_info) ( PCI_Info_s* psInfo, int nIndex );
+	uint32 (*read_pci_config)( int nBusNum, int nDevNum, int nFncNum, int nOffset, int nSize );
+	status_t (*write_pci_config)( int nBusNum, int nDevNum, int nFncNum, int nOffset, 
+									int nSize, uint32 nValue );
+	void (*enable_pci_master)( int nBusNum, int nDevNum, int nFncNum );
+	void (*set_pci_latency)( int nBusNum, int nDevNum, int nFncNum, uint8 nLatency );
+	
+} PCI_bus_s;
 
 #define PCI_VENDOR_ID	0x00		/* (2 byte) vendor id */
 #define PCI_DEVICE_ID	0x02		/* (2 byte) device id */
@@ -412,6 +429,7 @@ typedef struct
 #define PCI_ROM_ENABLE		0x00000001	/* 1 = expansion rom decode enabled */
 #define PCI_ROM_ADDRESS_MASK	0xFFFFF800	/* mask to get expansion rom addr */
 
+#ifndef __KERNEL__
 
 status_t get_pci_info( PCI_Info_s* psInfo, int nIndex );
 
@@ -421,8 +439,7 @@ status_t write_pci_config( int nBusNum, int nDevNum, int nFncNum, int nOffset, i
 status_t raw_read_pci_config( int nBusNum, int nDevFnc, int nOffset, int nSize, uint32 *pnRes );
 status_t raw_write_pci_config( int nBusNum, int nDevFnc, int nOffset, int nSize, uint32 nValue );
 
-void	init_pci_module( void );
-
+#endif
 
 #ifdef __cplusplus
 }
