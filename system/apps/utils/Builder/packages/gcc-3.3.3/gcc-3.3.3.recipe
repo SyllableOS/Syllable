@@ -1,0 +1,83 @@
+authors
+	Kurt Skauen
+	Kaj de Vos
+	Arno Klenke
+	Kristian Van Der Vliet
+maintainers			Kaj de Vos
+status				developing
+
+licenses			GPL LGPL GFDL
+home				gcc.gnu.org
+packages
+	gcc-3.3.3
+;	gcc-core-3.3.3
+;	gcc-g++-3.3.3
+;	gcc-objc-3.3.3
+;	gcc-java-3.3.3
+;	gcc-g77-3.3.3
+;	gcc-ada-3.3.3
+;	gcc-testsuite-3.3.3
+locations			ftp://gcc.gnu.org/pub/gcc/releases/gcc-3.3.3/
+
+needs
+;	For -O3 with -fPIC:
+	binutils >= 2.13.1
+;	For libstdc++-v3 >= 3.2.1, for Linux at least:
+	glibc >= 2.2.5
+build-needs
+	autoconf 2.13
+;	For Ada:
+;	gnat >= 3.13 | gcc >= 3.1
+test-needs			dejagnu >= 1.4.1
+
+patch-config
+;	. boehm-gc
+;patch
+;	cd gcc;
+;	autoconf
+
+configure-vars		CXXFLAGS='-march=i586 -O2 -pipe -lstdc++'
+configure-options
+	--enable-languages=c,c++
+;,treelang
+; Won't do --enable-shared:
+;,objc
+;,java,f77,ada
+	--with-arch=i586
+	--enable-sjlj-exceptions
+	--enable-shared
+	--enable-threads
+	--with-system-zlib
+;	--with-local-prefix=/usr/local
+
+; For make bootstrap, to find libgcc_s:
+;make-vars			BOOT_CFLAGS="-march=i586 -O -pipe -L$PWD/gcc"
+;make-options
+;	CFLAGS='-march=i586 -O -pipe'
+;	LIBCFLAGS='-march=i586 -O2 -pipe'
+;	LIBCXXFLAGS='-march=i586 -O2 -pipe'
+;		GCC seems to set this automatically:
+;		' -fno-implicit-templates'
+;make-targets
+;	bootstrap
+;	For printed documentation:
+;	dvi
+;test-vars
+;	TCL_LIBRARY='/usr/tcl'
+;	DEJAGNULIBS='/usr/dejagnu'
+
+test-options		-k
+
+;install-prefix		DESTDIR=
+;install-files
+;	/system/libs
+;		lib/libgcc_s.so.1
+;		lib/libstdc++.so.5.0.5
+documentation
+	README FAQ faq.html BUGS bugs.html COPYING COPYING.LIB ChangeLog MAINTAINERS
+	gcc/ABOUT-NLS gcc/ABOUT-GCC-NLS gcc/NEWS
+links
+	gcc					bin/cc
+	libgcc.a			lib/gcc-lib/i586-pc-syllable/3.3.3/libgcc_static.a
+;	libgcc_s.so.1		/system/libs/libgcc_s.so
+;	libstdc++.so.5.0.5	/system/libs/libstdc++.so.5
