@@ -1,3 +1,10 @@
+* August 8th 2004, Henrik Isaksson *
+	-Aterm
+		o Bugfix: CTRL+C after activating the window by clicking in the TermView
+		  did not work.
+		o Bugfix: found an "if( m_bSelectionValid = true )". Not sure what problems
+		  this may have caused...
+
 * July 29th 2004, Kristian Van Der Vliet *
 	-man2html/manmanager
 		o Removed the old man2html scripts
