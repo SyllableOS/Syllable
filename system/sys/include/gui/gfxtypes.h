@@ -49,6 +49,9 @@ struct Color32_s
        	blue = (uint8)(c);
        	alpha = (uint8)(c >> 24);
     }
+    operator uint32() const {
+    	return ( ( alpha << 24 ) | ( red << 16 ) | ( green << 8 ) | blue );
+    }
     uint8 red;
     uint8 green;
     uint8 blue;
