@@ -1,3 +1,39 @@
+* October 10 2004, Kristian Van Der Vliet *
+
+A whole bunch of patches from Jack Hamby <jhamby@anobject.com>
+
+	o Minor stylistic fixes:
+		* Added "-Wstrict-prototypes" to the Makefile and corrected some warnings
+		  where functions were declared as "foo()" instead of "foo(void)" as is
+		  correct for ANSI C.
+		* I commented out some local functions which were not being used, removing
+		  the remaining GCC warnings
+		* Fixed a typo ("deamon" -> "daemon") in kernel/swap.c
+		* Fixed panic() in to use the va_list macros instead of pointer arithmetic. 
+	o Fix to allow the kernel to build with -O2 instead of -O3
+		* Changed Fork() to a static inline function and commented out the prototype
+		  in include/atheos/kernel.h. 
+	o Upgrade the assembly macros in string.h to the versions in Linux 2.6.8
+		* Removed "cld" instructions from most macros.  They shouldn't be 
+		  necessary as every occurrence of "std" is immediately followed by "cld".
+		* Changed function macros from "extern inline" to "static inline". 
+		* Removed the alternate versions of strcat() and strncat().  Changed a 
+		  value from "0xffffffff" to "0xffffffffu" which perhaps was causing a bug 
+		  in the original versions.
+		* memmove() now calls memcpy() if possible (changed in Linux 2.6.x).
+		* Added an assembly version of strstr(), not inline but in kernel/lib/strstr.c
+		  (and added to Makefile).
+	o Fix a GCC warning in lib/vsprintf.c
+		* va_arg functions can't pass floats (they are promoted to double) or 
+		  short int (promoted to int).  I fixed the "%hd" code based on the Linux 
+		  version and commented out the "%f" handling altogether as the kernel 
+		 really should be avoiding floating point usage.
+
+Including in this changeset are a few minor changes by myself:
+
+	o Changed the Makefile to use "-O2 -mpreferred-stack-boundary=2" instead of -O3
+	o Strip all symbols from kernel.so by default with the "make install" target
+
 ---- 0.5.4 Released -------------------------------------------------------------------
 
 * September 24 2004, Kristian Van Der Vliet *
