@@ -270,7 +270,8 @@ TreeViewStringNode::~TreeViewStringNode()
 
 void TreeViewStringNode::AttachToView( View* pcView, int nColumn )
 {
-    m->m_cStrings[nColumn].second = pcView->GetStringWidth( m->m_cStrings[nColumn].first ) + 5.0f;
+	Point	cSize = pcView->GetTextExtent( m->m_cStrings[nColumn].first );
+    m->m_cStrings[nColumn].second = cSize.x + 5.0f;
 
 	if( nColumn == 0 && GetIcon() ) {
 		m->m_cStrings[0].second += GetIcon()->GetSize().x + 5;
@@ -303,17 +304,20 @@ float TreeViewStringNode::GetWidth( View* pcView, int nIndex )
 
 float TreeViewStringNode::GetHeight( View* pcView )
 {
-    font_height sHeight;
-    pcView->GetFontHeight( &sHeight );
-
-	float vHeight = sHeight.ascender + sHeight.descender;
-       
+	Point	cSize( 0, 0 );
+	uint i;
+	
+	for( i = 0; i < m->m_cStrings.size(); i++ ) {
+		Point s = pcView->GetTextExtent( m->m_cStrings[i].first );
+		if( s.y > cSize.y ) cSize.y = s.y;
+	}
+     
     if( GetIcon() ) {
-    	if( vHeight < GetIcon()->GetSize().y )
-	    	vHeight = GetIcon()->GetSize().y;
+    	if( cSize.y < GetIcon()->GetSize().y )
+	    	cSize.y = GetIcon()->GetSize().y;
     }
 
-    return vHeight;
+    return cSize.y;
 }
 
 void TreeViewStringNode::Paint( const Rect& cFrame, View* pcView, uint nColumn,
@@ -322,7 +326,7 @@ void TreeViewStringNode::Paint( const Rect& cFrame, View* pcView, uint nColumn,
 	TreeView *pcOwner = GetOwner();
 	uint nIndentWidth = 10;
 	bool bExp = false;
-	
+
 	if( pcOwner ) {
 		nIndentWidth = pcOwner->GetIndentWidth();
 		bExp = pcOwner->HasChildren( this );	// FIXME: slow!
@@ -332,6 +336,11 @@ void TreeViewStringNode::Paint( const Rect& cFrame, View* pcView, uint nColumn,
 
 	Rect cItemRect( cFrame );
 
+	Point	cTextSize;
+	if( nColumn <= m->m_cStrings.size() ) {
+		cTextSize = pcView->GetTextExtent( m->m_cStrings[nColumn].first );
+	}
+
 	if( nIndent && !nColumn ) {	
 		cItemRect.left += nIndent + 15;
 		cItemRect.right += nIndent + 15;
@@ -339,25 +348,18 @@ void TreeViewStringNode::Paint( const Rect& cFrame, View* pcView, uint nColumn,
 		nIndent = 0;
 	}
 
-    font_height sHeight;
-    pcView->GetFontHeight( &sHeight );
-
 	pcView->SetDrawingMode( DM_COPY );
 
     pcView->SetFgColor( 255, 255, 255 );
     pcView->FillRect( cFrame );
   //  pcView->DrawFrame( cFrame, FRAME_TRANSPARENT | FRAME_THIN );
 
-    float vFontHeight = sHeight.ascender + sHeight.descender;
-    float vBaseLine = cItemRect.top + (cItemRect.Height()+1.0f) / 2 - vFontHeight / 2 + sHeight.ascender;
 	float vTextPos = cItemRect.left + 3.0f;
 
 	if( GetIcon() && nColumn == 0 ) {
 		vTextPos += GetIcon()->GetSize().x + 5;
 	}
-
-    pcView->MovePenTo( vTextPos, vBaseLine );
-  
+ 
     if ( bHighlighted && nColumn == 0 ) {
 		pcView->SetFgColor( 255, 255, 255 );
 		pcView->SetBgColor( 0, 50, 200 );
@@ -371,13 +373,14 @@ void TreeViewStringNode::Paint( const Rect& cFrame, View* pcView, uint nColumn,
 
     if ( bSelected && nColumn == 0 ) {
 		Rect cRect = cItemRect;
-		cRect.right  = vTextPos + pcView->GetStringWidth( m->m_cStrings[nColumn].first.c_str() ) + 1;
-/*		cRect.top    = vBaseLine - sHeight.ascender - 1;
-		cRect.bottom = vBaseLine + sHeight.descender + 1;*/
+		cRect.right  = vTextPos + cTextSize.x + 1;
 		pcView->FillRect( cRect, Color32_s( 0, 0, 0, 0 ) );
     }
 
-    pcView->DrawString( m->m_cStrings[nColumn].first.c_str() );
+	if( nColumn <= m->m_cStrings.size() ) {
+		Rect cTextRect( vTextPos, cItemRect.top, cItemRect.right, cItemRect.bottom );
+    	pcView->DrawText( cTextRect, m->m_cStrings[nColumn].first, 0 );
+    }
 
 	if( GetIcon() && nColumn == 0 ) {
 		pcView->SetDrawingMode( DM_BLEND );
@@ -1155,3 +1158,4 @@ void TreeView::InsertRow( int nPos, ListViewRow* pcRow, bool bUpdate )
 void TreeView::InsertRow( ListViewRow* pcRow, bool bUpdate )
 {
 }
+
