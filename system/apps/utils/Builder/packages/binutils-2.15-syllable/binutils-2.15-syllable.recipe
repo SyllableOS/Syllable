@@ -1,0 +1,16 @@
+authors				Kaj de Vos
+status				developing
+
+inherits			binutils-2.15
+
+headline			"Cross-assembler for Syllable"
+packages			binutils-2.15
+
+configure-options
+	--target=i586-pc-syllable
+;	--enable-shared
+;	May be needed for porting a limited cross-assembler:
+;	--disable-nls
+
+links
+

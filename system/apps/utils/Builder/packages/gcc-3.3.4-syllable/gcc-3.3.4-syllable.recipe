@@ -6,14 +6,26 @@ notes
 inherits			gcc-3.3.4
 
 headline			"Cross-compiler for Syllable"
-packages			gcc-3.3.4
+packages
+	gcc-3.3.4
+;	gcc-core-3.3.4
+;	gcc-g++-3.3.4
 
 configure-options
-	--enable-languages=c,c++,f77
 	--target=i586-pc-syllable
+;	GLibC headers for Syllable, if building in the system directory of the source tree:
+;	--with-headers=../libs/glibc/include
+	--enable-languages=c,c++
 	--with-arch=i586
 	--enable-sjlj-exceptions
 	--enable-shared
 	--enable-threads
 	--with-system-zlib
+;	May be needed for porting a limited cross-compiler:
+;	--without-headers
+;	--disable-nls
+
+; For porting a limited cross-compiler:
+;make-targets		all-gcc
+;install-targets		install-gcc
 

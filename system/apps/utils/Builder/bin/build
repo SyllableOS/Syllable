@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.68
+# Version 0.5.69
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -409,7 +409,7 @@ def installPackage staging, target
 						end
 					then
 						false
-					elsif links = recipe['links'] and not
+					elsif links = recipe['links'] and links != '' and not
 						begin
 							@log.header 'Creating links'
 
@@ -871,7 +871,7 @@ end
 # Helper functions
 
 def deleteCVSData
-	puts "\nWARNING! This will clobber your CVS repository!"
+	puts "\nWARNING! If this is a CVS repository, it will be clobbered!"
 
 	# Delete all CVS dirs
 	# (They would trigger some packages to reconfigure themselves.)
@@ -1296,7 +1296,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.68',
+	puts 'Syllable Build System 0.5.69',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
