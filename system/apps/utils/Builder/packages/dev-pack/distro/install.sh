@@ -1,15 +1,17 @@
 #! /bin/sh
 
+packages='autoconf automake make binutils gcc patch m4 flex bison cvs indent'
+
 if [ "$USER" != "root" ]
 then
-	echo "You should be running the installation as the administrative user."
+	echo "The installation is not being run by the administrative user."
 	echo "Installation aborted."
-	echo "Log in as the \"root\" user and try again."
+	echo "You can log in as the \"root\" user and try again."
 	exit 1
 fi
 
-echo "This will install the packages in the Developer Pack. Previously"
-echo "installed packages of the same name will be removed first."
+echo "This will install the packages contained in the Developer Pack."
+echo "Previously installed packages of the same name will be removed first."
 echo ""
 read -p "Do you want to continue (y/N)? " -e answer
 
@@ -19,25 +21,35 @@ then
 	exit 1
 fi
 
-for package in autoconf automake make binutils gcc patch m4 flex bison cvs
-do
-	echo ""
+echo ""
 
-	if [ "$PWD" != "/usr" ]
+for package in $packages
+do
+	if [ -e "/usr/$package" ]
 	then
-		if [ -e "/usr/$package" ]
-		then
-			echo "Removing existing /usr/$package."
-			pkgmanager -r /usr/$package
-			rm -r /usr/$package
-		fi
-		echo "Moving $package to /usr."
-		mv $package /usr
+		echo "Uninstalling existing /usr/$package"
+		pkgmanager -r /usr/$package
+		rm -r /usr/$package
+		sync
 	fi
-	echo "Registering $package."
-	pkgmanager -a /usr/$package
 done
 
 echo ""
-sync
-echo "Finished."
+
+for package in `ls *.tgz`
+do
+	echo "Installing $package"
+	tar -C /usr -xpPzf $package
+	sync
+done
+
+for package in $packages
+do
+	echo ""
+	echo "Registering $package"
+	pkgmanager -a /usr/$package
+	sync
+done
+
+echo ""
+echo "Done"

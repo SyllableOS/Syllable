@@ -1,17 +1,17 @@
-Developer Pack for Syllable/AtheOS
-==================================
+Developer Pack for Syllable
+===========================
 
-30 June 2003
+30-Jun-2004
 
 1 Introduction
 ==============
 
 This distribution is a collection of the most important binary
 packages a software developer would want for the Syllable operating
-system. Most of the packages were built on Syllable 0.4.3 and
-optimized for a Pentium CPU. They should also run on other versions
-of Syllable and on the AtheOS operating system, but this has not been
-tested.
+system. Most of the packages were built on Syllable 0.5.3 and
+optimized for a Pentium CPU. Several of the packages do not work on
+older versions of Syllable, but they should run on higher versions,
+although this has not been tested.
 
 If you encounter problems or have any other interesting observations,
 I would be interested to hear about them (see contact information).
@@ -22,52 +22,46 @@ I would be interested to hear about them (see contact information).
 2.1 
 ----
 
-Please note that if you want to use CVS, or if you want to use GCC
-for Java, you will have to install the Zlib library, if it is not
-already installed on your system. Zlib is not included in this
-distribution, so you have to get that package and install it first.
-You need Zlib as a shared library. The Zlib packages for Syllable are
-distributed in this form from version 1.1.4 onwards.
+Please note that if you want to use AutoConf or AutoMake, you should
+install Perl separately.
 
-Now for the Developer Pack installation. You may have to become the
+Now for the developer pack installation. You may have to become the
 root user to perform the following operations:
 
     su -l
 
 You should have unpacked this file with
 
-    tar -xpz
+    tar -xz
 
-or something equivalent. The 'p' option to Tar is important: it
-preserves permissions on the extracted files. Without the proper file
-permissions, the installation will be broken.
+or something equivalent. Unpacking produces a directory with the
+contained packages, this README document, and an install script.
+Being the root user, go into the directory and run the install script:
 
-Unpacking produces a number of directories for the contained
-packages, this README document, and an install script. Being the root
-user, run the install script:
+    cd DevelopersDelight
+    ./install.sh
 
-    install.sh
+The individual packages will be unpacked into /usr. Subsequently, the
+packages will be registered, creating links in Syllable to enable it
+to find the packages' files. If any of the package directories
+already existed under /usr, they will be unregistered and deleted
+first. Please note, though, that no version of any of the packages
+should be previously registered with a different directory name under
+/usr, because that would lead to conflicting package registrations.
 
-The package directories will be moved to /usr, if you didn't unpack
-them there already. Subsequently, the packages will be registered,
-creating links in Syllable to enable it to find the package's files.
-If any of the package directories already existed under /usr, they
-will be unregistered and removed first. Please note, though, that
-this will only work if you didn't unpack the files directly into
-/usr. Also, no version of any of the packages should exist with a
-different directory name under /usr, because that would lead to
-conflicting package registrations.
-
-You should now be able to use the programs in the Developer Pack.
+You should now be able to use the programs in the developer pack.
 
 2.2 Uninstalling & upgrading the Developer Pack
 -----------------------------------------------
 
-After installation, the Developer Pack is effectively no longer one
+2.2.1 
+------
+
+After installation, the developer pack is effectively no longer one
 package, but the individual packages it contained. If you ever want
 to remove one or more of those packages, you should follow the steps
 outlined in the respective README.Syllable documents that are
-included in each package. Usually, you will have to follow the
+included in most packages. Usually, you will have to follow the
 standard procedure. Again, you may have to become root first:
 
     su
@@ -80,7 +74,23 @@ To delete the files belonging to the package, run:
 
     rm -r /usr/<package>
 
-Upgrading to a new version of the Developer Pack is easy, since the
+2.2.2 Uninstalling individual packages with the Syllable build system
+---------------------------------------------------------------------
+
+If you have the Syllable build system installed, it can do the
+previous steps for you. Also, if you install an individual package
+with the Syllable build system, it will check if the package was
+already installed and remove the previous version automatically.
+
+If you just want to uninstall an individual package, do:
+
+    su
+    build uninstall <package>
+
+2.2.3 Upgrading the entire Developer Pack
+-----------------------------------------
+
+Upgrading to a new version of the developer pack is easy, since the
 install script will remove the existing packages and replace them
 with the new ones.
 
@@ -93,13 +103,13 @@ that are included in each separate package.
 4 Contact information
 =====================
 
-This Developer Pack was put together by Kaj de Vos. You can send me
-problem reports, fixes and the like at
+This Developer's Delight was put together by Kaj de Vos. You can send
+me problem reports, fixes and the like at
 
     developerpack@syllable.info
 
 This distribution can be found in the download section of the
 Syllable web site:
 
-    http://syllable.sourceforge.net
+    http://syllable.org
 
