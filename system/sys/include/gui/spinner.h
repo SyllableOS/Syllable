@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 1999 - 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -17,8 +18,8 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef __F_SPINNER_H__
-#define __F_SPINNER_H__
+#ifndef __F_GUI_SPINNER_H__
+#define __F_GUI_SPINNER_H__
 
 #include <gui/control.h>
 
@@ -42,15 +43,16 @@ class TextView;
 class Spinner : public Control
 {
 public:
-    Spinner( Rect cFrame, const char* pzName, double vValue, Message* pcMessage,
+    Spinner( Rect cFrame, const String& cName, double vValue, Message* pcMessage,
 	     uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP, uint32 nFlags  = WID_WILL_DRAW | WID_CLEAR_BACKGROUND );
 
+	virtual ~Spinner();
 
     void		SetEnable( bool bEnabled = true );
     bool		IsEnabled() const;
     
     void	       SetFormat( const char* pzStr );
-    const std::string& GetFormat() const;
+    const String& GetFormat() const;
     void	       SetMinValue( double vValue );
     void	       SetMaxValue( double vValue );
     void	       SetMinMax( double vMin, double vMax ) { SetMinValue( vMin ); SetMaxValue( vMax ); }
@@ -67,7 +69,7 @@ public:
 
 
     virtual void PostValueChange( const Variant& cNewValue );
-    virtual void LabelChanged( const std::string& cNewLabel );
+    virtual void LabelChanged( const String& cNewLabel );
     virtual void EnableStatusChanged( bool bIsEnabled );
     virtual bool Invoked( Message* pcMessage );    
   
@@ -81,27 +83,21 @@ public:
     virtual void  Paint( const os::Rect& cUpdateRect );
     virtual void  FrameSized( const Point& cDelta );
     virtual Point GetPreferredSize( bool bLargest ) const;
+	virtual void  Activated( bool bIsActive );
+    virtual void  KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
+    virtual void  KeyUp( const char* pzString, const char* pzRawString, uint32 nQualifiers );
 
 protected:
-    virtual std::string	FormatString( double vValue );
+    virtual String	FormatString( double vValue );
   
 private:
     void UpdateEditBox();
-    double	m_vMinValue;
-    double	m_vMaxValue;
-    double	m_vSpeedScale;
-    double	m_vStep;
-    double 	m_vHitValue;
-    Point 	m_cHitPos;
-    std::string	m_cStrFormat;
-    Rect	m_cEditFrame;
-    Rect	m_cUpArrowRect;
-    Rect	m_cDownArrowRect;
-    bool	m_bUpButtonPushed;
-    bool	m_bDownButtonPushed;
-    TextView*   m_pcEditBox;
+    
+    class Private;
+    Private *m;    
 };
 
 } // end of namespace os
 
 #endif // __F_SPINNER_H__
+
