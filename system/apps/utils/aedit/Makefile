@@ -15,13 +15,7 @@ deps:
 
 install: $(EXE)
 	-strip --strip-all $(EXE)
-	-mkdir /usr/aedit
-	-mkdir /usr/aedit/bin
-	-cp $(EXE) /usr/aedit/bin/
-
-dist: $(EXE)
-	-strip --strip-all $(EXE)
-	-cp -f $(EXE) $(DIST_DIR)/atheos/sys/bin/$(EXE)
+	-cp $(EXE) /system/bin/
 
 clean:
 	-rm $(OBJS)

@@ -84,6 +84,7 @@ class AEditWindow : public Window
 		std::string zFamily;				// Font family currently selected
 		std::string zStyle;					// Font style currently selected
 		float vSize;						// Font size currently selectes
+		uint32 nFlags;					// Font flags (E.g. FPF_SMOOTHED)
 };
 
 #endif /* __APPWINDOW_H_ */

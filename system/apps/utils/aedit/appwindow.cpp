@@ -30,7 +30,7 @@
 #include <util/invoker.h>
 #include <util/application.h>
 
-AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", "AEdit V1.2")
+AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", "AEdit V1.3")
 {
 	Rect cWinSize;
 	pcSettings=new AEditSettings();
@@ -73,18 +73,6 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", "AE
 	pcEditView->SetMessage(new Message(M_EDITOR_INVOKED));
 	pcEditView->SetEventMask(TextView::EI_CONTENT_CHANGED | TextView::EI_CURSOR_MOVED);
 	pcEditView->SetMultiLine(true);
-
-#if 0
-	zFamily="Lucida Sans Typewriter";
-	zStyle="Regular";
-	vSize=8;
-
-	Font *font = new Font();
-	font->SetFamilyAndStyle(zFamily.c_str(),zStyle.c_str());
-	font->SetSize(vSize);
-	pcEditView->SetFont(font);
-	font->Release();
-#endif
 
 	pcVLayoutRoot->AddChild(pcEditView);
 
@@ -159,28 +147,29 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", "AE
 	// Add Family and Style Menu
 	int fc = Font::GetFamilyCount();
 	int sc,i=0,j=0;
-	uint32 nFlags;
-	char zFamily[FONT_FAMILY_LENGTH],zStyle[FONT_STYLE_LENGTH];
+	char zFFamily[FONT_FAMILY_LENGTH],zFStyle[FONT_STYLE_LENGTH];
+	uint32 flags;
 
 	Menu *pcFamilyMenu;
 	Message *pcFontMsg;
 
 	for (i=0; i<fc; i++)
 	{
-		if (Font::GetFamilyInfo(i,zFamily) == 0)
+		if (Font::GetFamilyInfo(i,zFFamily) == 0)
 		{
-			sc = Font::GetStyleCount(zFamily);
-			pcFamilyMenu = new Menu(Rect(0,0,1,1),zFamily,ITEMS_IN_COLUMN);
+			sc = Font::GetStyleCount(zFFamily);
+			pcFamilyMenu = new Menu(Rect(0,0,1,1),zFFamily,ITEMS_IN_COLUMN);
 
 			for (j=0; j<sc; j++)
 			{
-				if (Font::GetStyleInfo(zFamily,j,zStyle,&nFlags) == 0)
+				if (Font::GetStyleInfo(zFFamily,j,zFStyle,&flags) == 0)
 				{
 					pcFontMsg = new Message(M_MENU_FONT_FAMILY_AND_STYLE);
-					pcFontMsg->AddString("family",zFamily);
-					pcFontMsg->AddString("style",zStyle);
+					pcFontMsg->AddString("family",zFFamily);
+					pcFontMsg->AddString("style",zFStyle);
+					pcFontMsg->AddInt32("flags", flags);
 
-					pcFamilyMenu->AddItem(zStyle,pcFontMsg);
+					pcFamilyMenu->AddItem(zFStyle,pcFontMsg);
 				}
 			}
 
@@ -190,6 +179,22 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", "AE
 	}
 
 	bSaveOnExit=pcSettings->GetSaveOnExit();
+
+#if 1
+	Font *font = new Font();
+	font_properties cProperties;
+
+	font->GetDefaultFont( DEFAULT_FONT_FIXED, &cProperties );
+
+	zFamily=cProperties.m_cFamily;
+	zStyle=cProperties.m_cStyle;
+	vSize=cProperties.m_vSize;
+	nFlags=cProperties.m_nFlags;
+
+	font->SetProperties( cProperties );
+	pcEditView->SetFont(font);
+	font->Release();
+#endif
 
 	// Create the Settings menu
 	pcSettingsMenu=new Menu(Rect(0,0,1,1),"Settings",ITEMS_IN_COLUMN);
@@ -553,6 +558,7 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 				Font *font = new Font();
 				font->SetFamilyAndStyle(zFamily.c_str(),zStyle.c_str());
 				font->SetSize(size);
+				font->SetFlags(nFlags);
 				pcEditView->SetFont(font);
 				font->Release();
 
@@ -565,17 +571,21 @@ void AEditWindow::HandleMessage(Message* pcMessage)
 		case M_MENU_FONT_FAMILY_AND_STYLE:
 		{
 			const char *family,*style;
-				
-			if (pcMessage->FindString("family",&family) == 0 && pcMessage->FindString("style",&style) == 0)
+			int32 flags;
+
+			if (pcMessage->FindString("family",&family) == 0 && pcMessage->FindString("style",&style) == 0 && pcMessage->FindInt32( "flags", &flags) == 0 )
 			{
 				Font *font = new Font();
 				font->SetFamilyAndStyle(family,style);
 				font->SetSize(vSize);
+				flags |= FPF_SMOOTHED;
+				font->SetFlags(flags);
 				pcEditView->SetFont(font);
 				font->Release();
 
 				zFamily.assign(family);
 				zStyle.assign(style);
+				nFlags = flags;
 			}
 
 			break;
