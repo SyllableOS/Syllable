@@ -1,8 +1,12 @@
-* January 11 2002, Kristian Van Der Vliet *
+* February 18 2003, Kristian Van Der Vliet *
+
+	* Fixed a braindead bug in dhcpc interface.c
+
+* January 11 2003, Kristian Van Der Vliet *
 
 	* Added the dhcpc v1.0 DHCP client for Syllable
 
-* January 11 2002, Kristian Van Der Vliet *
+* January 11 2003, Kristian Van Der Vliet *
 
 	* Brought AEdit upto V1.2 with the following changes
 		* Enable Undo/Redo Buttons, Menu items and Context Menu items.

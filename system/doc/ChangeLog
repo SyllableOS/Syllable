@@ -1,3 +1,7 @@
+* Feb 18 2002, Kristian Van Der Vliet *
+
+Patched the Mach64 driver so that it does not attempt to initialise Rage Mobility chipsets (Which do not work with the driver).  Patch from Michael Krueger <invenies@web.de>
+
 * Jan 11 2002, Kristian Van Der Vliet *
 
 Removed the Lucida fonts from CVS due to licencing issues.  They have been replaced with the Lucidux fonts from XFree86, and the URW fonts taken fron GhostScript.  See the file Copyrights for full copyright and licencing information.
