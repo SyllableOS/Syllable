@@ -5,7 +5,9 @@ notes				Waiting for ftruncate() implementation in AFS
 ;name				arch
 licenses			GPL GFDL
 
-;build-needs		gawk
+;build-needs
+;	gawk
+;	findutils
 run-needs
 	diffutils
 	patch
