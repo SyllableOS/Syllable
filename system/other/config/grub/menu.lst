@@ -1,0 +1,11 @@
+	timeout 5
+
+	title  Syllable
+	root   (hd0,0)
+	kernel /atheos/sys/kernel.so root=/dev/disk/ata/hda/0
+	module /atheos/sys/config/kernel.cfg
+	module /atheos/sys/drivers/bus/pci
+	module /atheos/sys/drivers/bus/ata
+	module /atheos/sys/drivers/dev/hcd/ata_pci
+	module /atheos/sys/drivers/fs/afs
+
