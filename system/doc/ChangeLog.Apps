@@ -1,3 +1,9 @@
+* October 6th 2004, Kristian Van Der Vliet *
+
+	- BZoom
+		o Cleanup the GUI; removed "   >" from the Magnification menu and replaced
+		  the About window with a proper Alert dialog.
+
 ---- 0.5.4 Released -------------------------------------------------------------------
 
 * September 24th 2004, Kristian Van Der Vliet *
