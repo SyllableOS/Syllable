@@ -1,3 +1,10 @@
+* December 2nd 2004, Kristian Van Der Vliet *
+
+SiS 900 and nVidia "nForce" NIC drivers from from Michael Krueger <invenies@web.de>.
+The SiS driver is considered experimental due to lack of positive testing.  The nVidia
+driver is a port of the Linux forcedeth driver, which was written from a reverse engineering
+effort of the nVidia binary drivers.
+
 * October 30th 2004, Kristian Van Der Vliet *
 
 Removed the S3 Savage IX/MX driver.  This driver was buggy and largly non-functional.
