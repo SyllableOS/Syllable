@@ -1,3 +1,7 @@
+* September 24th 2004, Kristian Van Der Vliet *
+	- systools
+		o Rewrote strace to use the new strace functionality.
+
 * September 19th 2004, Kristian Van Der Vliet *
 	- fsutils
 		o Added a new dumpattrib utility and updated lsattrib with bug fixes.  Both

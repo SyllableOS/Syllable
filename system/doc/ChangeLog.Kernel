@@ -1,3 +1,17 @@
+* September 24 2004, Kristian Van Der Vliet *
+
+Complete strace rewrite.  The new strace() is a table driven function which is much easier
+to keep upto date.  set_strace_level() has been removed (Breaking binary compatability with
+any code that calls set_strace_level()) and a new syscall strace() replaces it.
+
+All current syscalls are now understood by handle_strace() and the syscalls have
+been grouped by function.  strace can be set to trace only functions within specified groups.
+Two new syscalls, strace_exclude() and strace_include() allow specific syscalls to be
+excluded or included in the trace.
+
+A new file, ptrace.c, has been added as a syscall stub for an eventual ptrace()
+implementation.
+
 * August 4 2004, Kristian Van Der Vliet *
 
 Streamlined find_boot_dev() which doesn't need to be so complex with the new ATAPI stuff.
