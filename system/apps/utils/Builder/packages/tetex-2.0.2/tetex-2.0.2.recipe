@@ -1,0 +1,43 @@
+authors				Kaj de Vos
+status				broken
+notes				Some header problem with /include/bits/stdio.h
+
+licenses			other
+home				tug.org/teTeX/
+packages
+	tetex-src-2.0.2
+	tetex-texmf-2.0.2		/usr/tetex/share/texmf
+;	tetex-texmfsrc-2.0.2	/usr/tetex/share/texmf
+;	texklib
+locations			ftp://tug.ctan.org/tex-archive/systems/unix/teTeX/
+
+build-needs
+	gawk
+	flex
+	bison
+;	perl
+;	tk
+recommends
+	texinfo
+	ghostscript
+
+patch-config
+	config
+	libs/ncurses
+	utils/texinfo
+	texk
+
+no-build-dir
+
+configure-options
+;	--datadir=/usr/tetex/share/texmf
+;	--disable-multiplatform
+	--with-system-zlib
+	--with-system-ncurses
+	--with-system-pnglib
+	--without-texinfo
+documentation
+	README QuickInstall INSTALL LICENSE.src LICENSE.texmf LICENSE.texmfsrc NEWS ChangeLog CREDITS
+;	PROBLEMS
+;	doc
+
