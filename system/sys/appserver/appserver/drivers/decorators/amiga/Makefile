@@ -26,8 +26,8 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/amiga: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/amiga /system/appserver -latheos -lstdc++ -lz
-	gcc -plugin $(OBJS) -o $(OBJDIR)/amiga -latheos -lstdc++
+	gcc $(OBJS) -o $(OBJDIR)/amiga /system/appserver -lsyllable -lstdc++ -lz
+	gcc -plugin $(OBJS) -o $(OBJDIR)/amiga -lsyllable -lstdc++
 
 deps:
 
@@ -39,3 +39,4 @@ dist: $(OBJDIR)/amiga
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/amiga
+

@@ -37,26 +37,20 @@ public:
     virtual void SetTitle( const char* pzTitle );
     virtual void SetWindowFlags( uint32 nFlags );
     virtual void SetFocusState( bool bHasFocus );
-    virtual void SetCloseButtonState( bool bPushed );
-    virtual void SetZoomButtonState( bool bPushed );
-    virtual void SetDepthButtonState( bool bPushed );
+    virtual void SetButtonState( uint32 nButton, bool bPushed );
     virtual void Render( const Rect& cUpdateRect );
 private:
     void CalculateBorderSizes();
     void Layout();
-    void DrawDepth( const Rect& cRect, const Color32_s& sFillColor, bool bRecessed );
-    void DrawZoom(  const Rect& cRect, const Color32_s& sFillColor, bool bRecessed );
-    void DrawClose(  const Rect& cRect, const Color32_s& sFillColor, bool bRecessed );
+	void DrawButton( uint32 nButton, const os::Color32_s& sFillColor );
+	uint32 CheckIndex( uint32 nButton );
   
     os::font_height m_sFontHeight;
     Rect	    m_cBounds;
     std::string	    m_cTitle;
     uint32	    m_nFlags;
 
-    Rect   m_cCloseRect;
-    Rect   m_cZoomRect;
-    Rect   m_cToggleRect;
-    Rect   m_cDragRect;
+	os::Rect	m_cObjectFrame[ HIT_DRAG+1 ];
   
     float  m_vLeftBorder;
     float  m_vTopBorder;
@@ -64,9 +58,10 @@ private:
     float  m_vBottomBorder;
 
     bool   m_bHasFocus;
-    bool   m_bCloseState;
-    bool   m_bZoomState;
-    bool   m_bDepthState;
+
+    bool		m_bObjectState[ HIT_DRAG+1 ];
 };
 
 #endif // __F_AMIGADECORATOR_H__
+
+
