@@ -1,0 +1,9 @@
+These are the changes made to ZoomView, from AZoom V0.1:
+
++ Faster zooming, using a bitmap scaling algorithm
++ Shorter update interval (50 ms => 25 Hz)
++ Longer update interval when the mouse pointer is not moved (750 ms)
++ Zooms in more while the right mouse button is held down
++ Works in both 15, 16 and 32 bit modes. Should work in 8 and 24 bit too.
+- If the screen mode changes, AZoom will have to be restarted.
+
