@@ -61,13 +61,6 @@ int wait_for_status( int controller, int mask, int value )
 	return( 0 );
 }
 
-void timeout( void* data )
-{
-	int *state = (int*)data;
-	*state = DEV_TIMEOUT;
-	return;
-}
-
 int ata_interrupt( int nIrq, void *pCtrl, SysCallRegs_s* psRegs )
 {
 	ata_controllers_t *controller = ( ata_controllers_t* )pCtrl;
@@ -83,11 +76,17 @@ int get_data( int controller, int bytes, void *buffer )
 {
 	/* Poll for bytes of data from the controller controller */
 	/* Assumes the data buffer is locked */
-	uint8 status, error = 0;
+	uint8 status = 0, error = 0;
 	int transfer_count = 0;
 	uint16 *offset = (uint16*)buffer;
+	ktimer_t timer = NULL;
 
 	g_nControllers[controller].state = BUSY;
+
+	timer = create_timer();
+	start_timer( timer, timeout, (void*)&g_nControllers[controller].state, TIMEOUT, true);
+
+	kerndbg( KERN_DEBUG, "get_data() timer running\n" );
 
 	while( g_nControllers[controller].state == BUSY )
 	{
@@ -96,6 +95,13 @@ int get_data( int controller, int bytes, void *buffer )
 			continue;
 		else
 		{
+			/* The drive has responded either with data or an error status */
+			if( timer != NULL )
+			{
+				delete_timer( timer );
+				timer = NULL;
+			}
+
 			if( status & STATUS_ERR )
 			{
 				error = ata_inb( ATA_ERROR );
@@ -125,6 +131,12 @@ int get_data( int controller, int bytes, void *buffer )
 		}
 	}
 
+	if( g_nControllers[controller].state == DEV_TIMEOUT )
+	{
+		kerndbg( KERN_WARNING, "get_data() Drive timed out waiting for data.\n" );
+		return( -2 );
+	}
+	
 	if( g_nControllers[controller].state == ERROR )
 	{
 		kerndbg( KERN_WARNING, "get_data() Status = 0x%4x Error = 0x%4x\n", status, error );
@@ -492,6 +504,13 @@ retry:
 error:
 	kerndbg( KERN_WARNING, "write_sectors() : Failed to write sector for drive %u\n", drive );
 	return( -EIO );
+}
+
+void timeout( void* data )
+{
+	int *state = (int*)data;
+	*state = DEV_TIMEOUT;
+	return;
 }
 
 void select_drive( int nDrive )

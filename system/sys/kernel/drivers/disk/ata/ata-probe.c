@@ -417,27 +417,27 @@ void ata_init_controllers( void )
 	{
 		switch( g_nDevices[controller*2] )
 		{
-			case DEVICE_NONE:
-				sprintf( master_type, "%s", "None  " );
-				break;
 			case DEVICE_ATA:
 				sprintf( master_type, "%s", "ATA   " );
 				break;
 			case DEVICE_ATAPI:
 				sprintf( master_type, "%s", "ATAPI " );
 				break;
+			default:
+				sprintf( master_type, "%s", "None  " );
+				break;
 		}
 
 		switch( g_nDevices[(controller*2)+1] )
 		{
-			case DEVICE_NONE:
-				sprintf( slave_type, "%s", "None  " );
-				break;
 			case DEVICE_ATA:
 				sprintf( slave_type, "%s", "ATA   " );
 				break;
 			case DEVICE_ATAPI:
 				sprintf( slave_type, "%s", "ATAPI " );
+				break;
+			default:
+				sprintf( slave_type, "%s", "None  " );
 				break;
 		}
 
@@ -449,7 +449,7 @@ void ata_init_controllers( void )
 int get_drive_params( int nDrive, DriveParams_s* psParams )
 {
 	/* Get drive size etc. */
-	int controller = get_controller( nDrive );
+	int ret, controller = get_controller( nDrive );
 	ata_identify_info_t *info = NULL; 
 	char name[40];
 
@@ -468,9 +468,20 @@ int get_drive_params( int nDrive, DriveParams_s* psParams )
 		ata_outb( ATA_COMMAND, CMD_ATAPI_IDENTIFY );
 
 	LOCK( g_nControllers[controller].buf_lock );
-	if( get_data( controller, 512, g_nControllers[controller].data_buffer ) < 0 )
+	ret = get_data( controller, 512, g_nControllers[controller].data_buffer );
+	if( ret < 0 )
+	{
+		if( ret == -2 )
+		{
+			/* The drive failed to send any data.  This may be a "phantom" slave
+			device which we probed earlier.  The device should be disabled to stop
+			further problems */
+			kerndbg( KERN_WARNING, "ata%i %s did not respond to an identify command.  Disabling drive.\n", controller, get_drive(nDrive) ? "Slave" : "Master" );
+			g_nDevices[nDrive] = DEVICE_NONE;
+		}
 		goto error1;
-
+	}
+	
 	info = (ata_identify_info_t*)g_nControllers[controller].data_buffer;
 
 	psParams->nStructSize = sizeof(DriveParams_s);
