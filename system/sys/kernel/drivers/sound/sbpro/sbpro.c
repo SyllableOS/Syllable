@@ -21,6 +21,7 @@
  *							<joels@mobyfoo.org>
  *
  *		29/12/00      Fixed for AtheOS 0.3.0    Kristian Van Der Vliet
+ *		08/07/02      Initalise correctly	Kristian Van Der Vliet
  */
                  
 #include <posix/errno.h>
@@ -65,6 +66,8 @@ static int open_mode = 0;
 
 static int irq_handle;
 static int irq_lock;
+
+static int nDeviceNode = 0;
 
 static int
 sb_dsp_command( int com )
@@ -482,12 +485,13 @@ DeviceOperations_s dsp_ops = {
 status_t 
 device_init( int nDeviceID )
 {
-	int nError;
+	int nError = -1;
 	
 	DEBUG( "Initializing device\n" );
-	
-	nError = create_device_node( nDeviceID, "sound/dsp", 
-		&dsp_ops, NULL );
+	/* See if we can find an SB Pro device */
+	if( sb_dsp_init() )
+		nError = nDeviceNode = create_device_node( nDeviceID, "sound/dsp", &dsp_ops, NULL );
+	else
 	
 	if ( nError < 0 )
 		DEBUG( "Failed to create 1 node %d\n", nError );
@@ -499,7 +503,10 @@ status_t
 device_uninit( int nDeviceID )
 {
 	DEBUG( "Unitializing device\n" );
+	delete_device_node( nDeviceNode );
+
         return( 0 );
 }
+
 
 
