@@ -356,7 +356,6 @@ struct sockaddr_in *from;
 	struct timeval *tp;
 	int hlen, triptime;
 
-	from->sin_addr.s_addr = ntohl( from->sin_addr.s_addr );
 	gettimeofday( &tv, &tz );
 
 	ip = (struct ip *) buf;
