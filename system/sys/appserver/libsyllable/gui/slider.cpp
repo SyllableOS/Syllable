@@ -1,7 +1,6 @@
-
 /*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
- *  Copyright (C) 2003 The Syllable Team
+ *  Copyright (C) 2003 - 2004 The Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -19,15 +18,6 @@
  *  MA 02111-1307, USA
  */
 
-/*
- * Changes:
- *
- * 02-07-24: Added code for disabling. (not greying though)
- *           Added _ResfreshDisplay() call to AttachedToWindow() (slider was
- *           initially rendered as a black box)
- *
- */
-
 #include <assert.h>
 #include <stdio.h>
 
@@ -43,6 +33,45 @@
 
 using namespace os;
 
+class Slider::Private
+{
+	public:
+	Private() {
+		m_vMin = 0.0f;
+		m_vMax = 1.0f;
+		m_vSmallStep = 0.05f;
+		m_vBigStep = 0.1f;
+		m_bTrack = false;
+		m_bChanged = false;
+		m_vSliderSize = 5.0f;
+		m_nNumSteps = 0;
+	}
+
+	public:
+    String m_cMinLabel;
+    String m_cMaxLabel;
+    String m_cProgressFormat;
+
+    Color32_s	m_sSliderColor1;
+    Color32_s	m_sSliderColor2;
+    View*	m_pcRenderView;
+    Bitmap*	m_pcRenderBitmap;
+    float	m_vSliderSize;
+    int		m_nNumSteps;
+    int		m_nNumTicks;
+    int		m_nTickFlags;
+    knob_mode	m_eKnobMode;
+    float	m_vMin;
+    float	m_vMax;
+    float	m_vSmallStep;
+    float	m_vBigStep;
+    orientation	m_eOrientation;
+    
+    bool	m_bChanged;
+    bool	m_bTrack;
+    Point	m_cHitPos;
+};
+
 #define TICK_LENGTH	4.0f
 #define TICK_SPACING	3.0f
 #define VLABEL_SPACING	3.0f
@@ -55,39 +84,32 @@ using namespace os;
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-Slider::Slider( const Rect & cFrame, const std::string & cName, Message * pcMsg, uint32 nTickFlags, int nTickCount, knob_mode eKnobMode, orientation eOrientation, uint32 nResizeMask ):Control( cFrame, cName.c_str(), "", pcMsg, nResizeMask, WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE )
+Slider::Slider( const Rect & cFrame, const String & cName, Message * pcMsg, uint32 nTickFlags, int nTickCount, knob_mode eKnobMode, orientation eOrientation, uint32 nResizeMask ):Control( cFrame, cName.c_str(), "", pcMsg, nResizeMask, WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE )
 {
-	m_eOrientation = eOrientation;
-	m_eKnobMode = eKnobMode;
-	m_vMin = 0.0f;
-	m_vMax = 1.0f;
-	m_vSmallStep = 0.05f;
-	m_vBigStep = 0.1f;
-//    m_vValue     = m_vMin;
-	m_bTrack = false;
-	m_bChanged = false;
-	m_vSliderSize = 5.0f;
-	m_nNumSteps = 0;
-	m_nNumTicks = nTickCount;
-	m_nTickFlags = nTickFlags;
+	m = new Private;
 
-	m_sSliderColor1 = get_default_color( COL_SCROLLBAR_BG );;
-	m_sSliderColor2 = m_sSliderColor1;
+	m->m_eOrientation = eOrientation;
+	m->m_eKnobMode = eKnobMode;
+	m->m_nNumTicks = nTickCount;
+	m->m_nTickFlags = nTickFlags;
 
-	SetValue( m_vMin, false );
+	m->m_sSliderColor1 = get_default_color( COL_SCROLLBAR_BG );;
+	m->m_sSliderColor2 = m->m_sSliderColor1;
 
-	m_pcRenderView = new View( cFrame.Bounds(), cName );
+	SetValue( m->m_vMin, false );
+
+	m->m_pcRenderView = new View( cFrame.Bounds(), cName );
 	if( cFrame.IsValid() )
 	{
-		m_pcRenderBitmap = new Bitmap( int ( cFrame.Width() ) + 1, int ( cFrame.Height(  ) ) + 1, CS_RGB16, Bitmap::ACCEPT_VIEWS );
+		m->m_pcRenderBitmap = new Bitmap( int ( cFrame.Width() ) + 1, int ( cFrame.Height(  ) ) + 1, CS_RGB16, Bitmap::ACCEPT_VIEWS );
 
-		m_pcRenderBitmap->AddChild( m_pcRenderView );
+		m->m_pcRenderBitmap->AddChild( m->m_pcRenderView );
 
 		_RefreshDisplay();
 	}
 	else
 	{
-		m_pcRenderBitmap = NULL;
+		m->m_pcRenderBitmap = NULL;
 	}
 }
 
@@ -100,13 +122,15 @@ Slider::Slider( const Rect & cFrame, const std::string & cName, Message * pcMsg,
 
 Slider::~Slider()
 {
-	if( m_pcRenderBitmap != NULL )
+	delete m;
+
+	if( m->m_pcRenderBitmap != NULL )
 	{
-		delete m_pcRenderBitmap;
+		delete m->m_pcRenderBitmap;
 	}
 	else
 	{
-		delete m_pcRenderView;
+		delete m->m_pcRenderView;
 	}
 }
 
@@ -123,28 +147,28 @@ void Slider::AttachedToWindow()
 void Slider::FrameSized( const Point & cDelta )
 {
 	Sync();
-	if( m_pcRenderBitmap != NULL )
+	if( m->m_pcRenderBitmap != NULL )
 	{
-		m_pcRenderBitmap->RemoveChild( m_pcRenderView );
-		delete m_pcRenderBitmap;
+		m->m_pcRenderBitmap->RemoveChild( m->m_pcRenderView );
+		delete m->m_pcRenderBitmap;
 	}
 
 	Rect cBounds( GetNormalizedBounds() );
 
 	if( cBounds.IsValid() )
 	{
-		m_pcRenderView->SetFrame( cBounds );
-		m_pcRenderBitmap = new Bitmap( int ( cBounds.Width() ) + 1, int ( cBounds.Height(  ) ) + 1, CS_RGB16, Bitmap::ACCEPT_VIEWS );
+		m->m_pcRenderView->SetFrame( cBounds );
+		m->m_pcRenderBitmap = new Bitmap( int ( cBounds.Width() ) + 1, int ( cBounds.Height(  ) ) + 1, CS_RGB16, Bitmap::ACCEPT_VIEWS );
 
-		m_pcRenderBitmap->AddChild( m_pcRenderView );
+		m->m_pcRenderBitmap->AddChild( m->m_pcRenderView );
 
-		RenderSlider( m_pcRenderView );
-		m_pcRenderBitmap->Sync();
+		RenderSlider( m->m_pcRenderView );
+		m->m_pcRenderBitmap->Sync();
 		Invalidate();
 	}
 	else
 	{
-		m_pcRenderBitmap = NULL;
+		m->m_pcRenderBitmap = NULL;
 	}
 }
 
@@ -161,7 +185,7 @@ Point Slider::GetPreferredSize( bool bLargest ) const
 
 	GetFontHeight( &sHeight );
 
-	if( m_eOrientation == HORIZONTAL )
+	if( m->m_eOrientation == HORIZONTAL )
 	{
 		Point cSize( 100.0f, GetSliderSize() );
 		Rect cSliderFrame = GetSliderFrame();
@@ -169,9 +193,9 @@ Point Slider::GetPreferredSize( bool bLargest ) const
 
 		float vCenter = ceil( cSliderFrame.top + ( cSliderFrame.Height() + 1.0f ) * 0.5f );
 
-		if( m_cMinLabel.size() > 0 && m_cMaxLabel.size(  ) > 0 )
+		if( m->m_cMinLabel.size() > 0 && m->m_cMaxLabel.size(  ) > 0 )
 		{
-			float vStrWidth = GetStringWidth( m_cMinLabel ) + GetStringWidth( m_cMaxLabel ) + 20.0f;
+			float vStrWidth = GetStringWidth( m->m_cMinLabel ) + GetStringWidth( m->m_cMaxLabel ) + 20.0f;
 
 			if( vStrWidth > cSize.x )
 			{
@@ -179,7 +203,7 @@ Point Slider::GetPreferredSize( bool bLargest ) const
 			}
 			cSliderFrame.bottom += sHeight.ascender + sHeight.descender + TICK_SPACING + TICK_LENGTH + HLABEL_SPACING;
 		}
-		else if( m_nTickFlags & TICKS_BELOW )
+		else if( m->m_nTickFlags & TICKS_BELOW )
 		{
 			cSliderFrame.bottom += TICK_SPACING + TICK_LENGTH;
 		}
@@ -198,18 +222,18 @@ Point Slider::GetPreferredSize( bool bLargest ) const
 	{
 		Point cSize( GetSliderSize(), 100.0f );
 
-		if( m_nTickFlags & TICKS_LEFT )
+		if( m->m_nTickFlags & TICKS_LEFT )
 		{
 			cSize.x += TICK_SPACING + TICK_LENGTH + 1.0f;
 		}
-		if( m_nTickFlags & TICKS_RIGHT )
+		if( m->m_nTickFlags & TICKS_RIGHT )
 		{
 			cSize.x += TICK_SPACING + TICK_LENGTH + 1.0f;
 		}
 
-		if( m_cMinLabel.size() > 0 )
+		if( m->m_cMinLabel.size() > 0 )
 		{
-			float vStrWidth = GetStringWidth( m_cMinLabel );
+			float vStrWidth = GetStringWidth( m->m_cMinLabel );
 
 			if( vStrWidth > cSize.x )
 			{
@@ -217,9 +241,9 @@ Point Slider::GetPreferredSize( bool bLargest ) const
 			}
 			cSize.y += sHeight.ascender + sHeight.descender + VLABEL_SPACING;
 		}
-		if( m_cMaxLabel.size() > 0 )
+		if( m->m_cMaxLabel.size() > 0 )
 		{
-			float vStrWidth = GetStringWidth( m_cMaxLabel );
+			float vStrWidth = GetStringWidth( m->m_cMaxLabel );
 
 			if( vStrWidth > cSize.x )
 			{
@@ -248,7 +272,7 @@ Point Slider::GetPreferredSize( bool bLargest ) const
 
 bool Slider::Invoked( Message * pcMsg )
 {
-	if( m_bTrack )
+	if( m->m_bTrack )
 	{
 		pcMsg->AddBool( "final", false );
 	}
@@ -266,7 +290,7 @@ bool Slider::Invoked( Message * pcMsg )
     {
 	Message* pcMsg = new Message( *a_pcMessage );
 
-	if ( m_bTrack ) {
+	if ( m->m_bTrack ) {
 	    pcMsg->AddBool( "final", false );
 	} else {
 	    pcMsg->AddBool( "final", true );
@@ -279,7 +303,7 @@ bool Slider::Invoked( Message * pcMsg )
 
 void Slider::PostValueChange( const Variant & cNewValue )
 {
-	m_bChanged = true;
+	m->m_bChanged = true;
 	_RefreshDisplay();
 }
 
@@ -298,8 +322,8 @@ void Slider::SetCurValue( float vValue, bool bInvoke )
     }
 //    Control::SetValue( nValue );
 
-    m_vValue = vValue;
-    m_bChanged = true;
+    m->m_vValue = vValue;
+    m->m_bChanged = true;
     _RefreshDisplay();
     
     if ( bInvoke == false ) {
@@ -323,7 +347,7 @@ void Slider::SetCurValue( float vValue )
 
 float Slider::GetCurValue() const
 {
-    return( m_vValue );
+    return( m->m_vValue );
 }
 */
 
@@ -341,8 +365,8 @@ float Slider::GetCurValue() const
 
 void Slider::SetSliderColors( const Color32_s & sColor1, const Color32_s & sColor2 )
 {
-	m_sSliderColor1 = sColor1;
-	m_sSliderColor2 = sColor2;
+	m->m_sSliderColor1 = sColor1;
+	m->m_sSliderColor2 = sColor2;
 	_RefreshDisplay();
 }
 
@@ -360,11 +384,11 @@ void Slider::GetSliderColors( Color32_s * psColor1, Color32_s * psColor2 ) const
 {
 	if( psColor1 != NULL )
 	{
-		*psColor1 = m_sSliderColor1;
+		*psColor1 = m->m_sSliderColor1;
 	}
 	if( psColor2 != NULL )
 	{
-		*psColor2 = m_sSliderColor2;
+		*psColor2 = m->m_sSliderColor2;
 	}
 }
 
@@ -381,7 +405,7 @@ void Slider::GetSliderColors( Color32_s * psColor1, Color32_s * psColor2 ) const
 
 void Slider::SetSliderSize( float vSize )
 {
-	m_vSliderSize = vSize;
+	m->m_vSliderSize = vSize;
 	_RefreshDisplay();
 }
 
@@ -396,7 +420,7 @@ void Slider::SetSliderSize( float vSize )
 
 float Slider::GetSliderSize() const
 {
-	return ( m_vSliderSize );
+	return ( m->m_vSliderSize );
 }
 
 /** Set format string for the progress label.
@@ -415,29 +439,29 @@ float Slider::GetSliderSize() const
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-void Slider::SetProgStrFormat( const std::string & cFormat )
+void Slider::SetProgStrFormat( const String & cFormat )
 {
-	m_cProgressFormat = cFormat;
+	m->m_cProgressFormat = cFormat;
 	_RefreshDisplay();
 }
 
-std::string Slider::GetProgStrFormat() const
+String Slider::GetProgStrFormat() const
 {
-	return ( m_cProgressFormat );
+	return ( m->m_cProgressFormat );
 }
 
-std::string Slider::GetProgressString() const
+String Slider::GetProgressString() const
 {
-	if( m_cProgressFormat.size() == 0 )
+	if( m->m_cProgressFormat.size() == 0 )
 	{
 		return ( "" );
 	}
 	else
 	{
-		char *pzString = new char[m_cProgressFormat.size() + 32];
+		char *pzString = new char[m->m_cProgressFormat.size() + 32];
 
-		sprintf( pzString, m_cProgressFormat.c_str(), GetValue(  ).AsDouble(  ) );
-		std::string cLabel( pzString );
+		sprintf( pzString, m->m_cProgressFormat.c_str(), GetValue(  ).AsDouble(  ) );
+		String cLabel( pzString );
 		delete[]pzString;
 		return ( cLabel );
 	}
@@ -459,7 +483,7 @@ std::string Slider::GetProgressString() const
 
 void Slider::SetStepCount( int nCount )
 {
-	m_nNumSteps = nCount;
+	m->m_nNumSteps = nCount;
 }
 
 /** Obtain the step-count as set by SetStepCount()
@@ -470,7 +494,7 @@ void Slider::SetStepCount( int nCount )
 
 int Slider::GetStepCount() const
 {
-	return ( m_nNumSteps );
+	return ( m->m_nNumSteps );
 }
 
 /** Set number of "ticks" rendered along the slider.
@@ -487,7 +511,7 @@ int Slider::GetStepCount() const
 
 void Slider::SetTickCount( int nCount )
 {
-	m_nNumTicks = nCount;
+	m->m_nNumTicks = nCount;
 	_RefreshDisplay();
 }
 
@@ -499,7 +523,7 @@ void Slider::SetTickCount( int nCount )
 
 int Slider::GetTickCount() const
 {
-	return ( m_nNumTicks );
+	return ( m->m_nNumTicks );
 }
 
 /** Configure where the slider ticks should be rendered.
@@ -516,7 +540,7 @@ int Slider::GetTickCount() const
 
 void Slider::SetTickFlags( uint32 nFlags )
 {
-	m_nTickFlags = nFlags;
+	m->m_nTickFlags = nFlags;
 	_RefreshDisplay();
 }
 
@@ -528,7 +552,7 @@ void Slider::SetTickFlags( uint32 nFlags )
 
 uint32 Slider::GetTickFlags() const
 {
-	return ( m_nTickFlags );
+	return ( m->m_nTickFlags );
 }
 
 /** Set the static labels rendere at each end of the slider.
@@ -543,10 +567,10 @@ uint32 Slider::GetTickFlags() const
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-void Slider::SetLimitLabels( const std::string & cMinLabel, const std::string & cMaxLabel )
+void Slider::SetLimitLabels( const String & cMinLabel, const String & cMaxLabel )
 {
-	m_cMinLabel = cMinLabel;
-	m_cMaxLabel = cMaxLabel;
+	m->m_cMinLabel = cMinLabel;
+	m->m_cMaxLabel = cMaxLabel;
 	_RefreshDisplay();
 }
 
@@ -557,15 +581,15 @@ void Slider::SetLimitLabels( const std::string & cMinLabel, const std::string & 
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-void Slider::GetLimitLabels( std::string * pcMinLabel, std::string * pcMaxLabel )
+void Slider::GetLimitLabels( String * pcMinLabel, String * pcMaxLabel )
 {
 	if( pcMinLabel != NULL )
 	{
-		*pcMinLabel = m_cMinLabel;
+		*pcMinLabel = m->m_cMinLabel;
 	}
 	if( pcMaxLabel != NULL )
 	{
-		*pcMaxLabel = m_cMaxLabel;
+		*pcMaxLabel = m->m_cMaxLabel;
 	}
 }
 
@@ -597,9 +621,9 @@ void Slider::MouseDown( const Point & cPosition, uint32 nButtons )
 		return;
 	}
 
-	m_cHitPos = cPosition - ValToPos( GetValue() );;
-	m_bTrack = true;
-	m_bChanged = false;
+	m->m_cHitPos = cPosition - ValToPos( GetValue() );;
+	m->m_bTrack = true;
+	m->m_bChanged = false;
 	MakeFocus( true );
 }
 
@@ -618,11 +642,11 @@ void Slider::MouseUp( const Point & cPosition, uint32 nButtons, Message * pcData
 		return;
 	}
 
-	m_bTrack = false;
-	if( m_bChanged )
+	m->m_bTrack = false;
+	if( m->m_bChanged )
 	{
 		Invoke();	// Send a 'final' message
-		m_bChanged = false;
+		m->m_bChanged = false;
 	}
 	MakeFocus( false );
 }
@@ -642,9 +666,9 @@ void Slider::MouseMove( const Point & cNewPos, int nCode, uint32 nButtons, Messa
 		return;
 	}
 
-	if( m_bTrack )
+	if( m->m_bTrack )
 	{
-		SetValue( PosToVal( cNewPos - m_cHitPos ) );
+		SetValue( PosToVal( cNewPos - m->m_cHitPos ) );
 	}
 }
 
@@ -670,7 +694,7 @@ void Slider::RenderSlider( View * pcRenderView )
 
 		Rect cSliderBounds2 = cSliderBounds;
 
-		if( m_eOrientation == HORIZONTAL )
+		if( m->m_eOrientation == HORIZONTAL )
 		{
 			cSliderBounds2.left = cPos.x;
 			if( cPos.x + 1.0f < cSliderBounds.right )
@@ -695,11 +719,11 @@ void Slider::RenderSlider( View * pcRenderView )
 		}
 		if( cSliderBounds.IsValid() )
 		{
-			pcRenderView->FillRect( cSliderBounds, m_sSliderColor1 );
+			pcRenderView->FillRect( cSliderBounds, m->m_sSliderColor1 );
 		}
 		if( cSliderBounds2.IsValid() )
 		{
-			pcRenderView->FillRect( cSliderBounds2, m_sSliderColor2 );
+			pcRenderView->FillRect( cSliderBounds2, m->m_sSliderColor2 );
 		}
 	}
 	RenderTicks( pcRenderView );
@@ -711,7 +735,7 @@ void Slider::RenderKnob( View * pcRenderView )
 {
 	Rect cKnobFrame = GetKnobFrame() + ValToPos( GetValue(  ) );
 
-	if( m_eKnobMode == KNOB_SQUARE )
+	if( m->m_eKnobMode == KNOB_SQUARE )
 	{
 		pcRenderView->SetEraseColor( get_default_color( COL_SCROLLBAR_KNOB ) );
 		pcRenderView->DrawFrame( cKnobFrame, FRAME_RAISED );
@@ -720,7 +744,7 @@ void Slider::RenderKnob( View * pcRenderView )
 	{
 		Point cCenter = ValToPos( GetValue() );
 
-		if( m_eOrientation == HORIZONTAL )
+		if( m->m_eOrientation == HORIZONTAL )
 		{
 			pcRenderView->SetFgColor( GetBgColor() );
 			for( int i = 1; i < 6; ++i )
@@ -758,20 +782,20 @@ void Slider::RenderLabels( View * pcRenderView )
 	pcRenderView->GetFontHeight( &sHeight );
 
 	pcRenderView->SetFgColor( 0, 0, 0 );
-	if( m_eOrientation == HORIZONTAL )
+	if( m->m_eOrientation == HORIZONTAL )
 	{
-		if( m_cMinLabel.size() > 0 && m_cMaxLabel.size(  ) > 0 )
+		if( m->m_cMinLabel.size() > 0 && m->m_cMaxLabel.size(  ) > 0 )
 		{
 			pcRenderView->MovePenTo( 0.0f, cSliderFrame.bottom + sHeight.ascender + TICK_SPACING + TICK_LENGTH + HLABEL_SPACING );
-			pcRenderView->DrawString( m_cMinLabel );
-			pcRenderView->MovePenTo( cBounds.right - GetStringWidth( m_cMaxLabel.c_str() ), cSliderFrame.bottom + sHeight.ascender + TICK_SPACING + TICK_LENGTH + HLABEL_SPACING );
-			pcRenderView->DrawString( m_cMaxLabel );
+			pcRenderView->DrawString( m->m_cMinLabel );
+			pcRenderView->MovePenTo( cBounds.right - GetStringWidth( m->m_cMaxLabel.c_str() ), cSliderFrame.bottom + sHeight.ascender + TICK_SPACING + TICK_LENGTH + HLABEL_SPACING );
+			pcRenderView->DrawString( m->m_cMaxLabel );
 		}
-		std::string cProgress = GetProgressString();
+		String cProgress = GetProgressString();
 		if( cProgress.size() > 0 )
 		{
 			pcRenderView->MovePenTo( 0.0f, cSliderFrame.top - sHeight.descender - TICK_SPACING - TICK_LENGTH - HLABEL_SPACING );
-			pcRenderView->DrawString( cProgress.c_str(), cProgress.size(  ) );
+			pcRenderView->DrawString( cProgress );
 		}
 	}
 	else
@@ -779,15 +803,15 @@ void Slider::RenderLabels( View * pcRenderView )
 		Rect cSliderBounds = GetSliderFrame();
 		float vOffset = ceil( GetKnobFrame().Height(  ) * 0.5f ) + VLABEL_SPACING;
 
-		if( m_cMaxLabel.size() > 0 )
+		if( m->m_cMaxLabel.size() > 0 )
 		{
-			pcRenderView->MovePenTo( cCenter.x - GetStringWidth( m_cMaxLabel ) * 0.5f, cSliderBounds.top + sHeight.descender - vOffset );
-			pcRenderView->DrawString( m_cMaxLabel );
+			pcRenderView->MovePenTo( cCenter.x - GetStringWidth( m->m_cMaxLabel ) * 0.5f, cSliderBounds.top + sHeight.descender - vOffset );
+			pcRenderView->DrawString( m->m_cMaxLabel );
 		}
-		if( m_cMinLabel.size() > 0 )
+		if( m->m_cMinLabel.size() > 0 )
 		{
-			pcRenderView->MovePenTo( cCenter.x - GetStringWidth( m_cMinLabel ) * 0.5f, cSliderBounds.bottom + sHeight.ascender + vOffset );
-			pcRenderView->DrawString( m_cMinLabel );
+			pcRenderView->MovePenTo( cCenter.x - GetStringWidth( m->m_cMinLabel ) * 0.5f, cSliderBounds.bottom + sHeight.ascender + vOffset );
+			pcRenderView->DrawString( m->m_cMinLabel );
 		}
 	}
 
@@ -795,13 +819,13 @@ void Slider::RenderLabels( View * pcRenderView )
 
 void Slider::RenderTicks( View * pcRenderView )
 {
-	if( m_nNumTicks > 0 )
+	if( m->m_nNumTicks > 0 )
 	{
 		Rect cSliderFrame( GetSliderFrame() );
 
-		float vScale = 1.0f / float ( m_nNumTicks - 1 );
+		float vScale = 1.0f / float ( m->m_nNumTicks - 1 );
 
-		if( m_eOrientation == HORIZONTAL )
+		if( m->m_eOrientation == HORIZONTAL )
 		{
 			float vWidth = floor( cSliderFrame.Width() - 1.0f );
 
@@ -811,29 +835,29 @@ void Slider::RenderTicks( View * pcRenderView )
 			float y3 = y4 + TICK_LENGTH;
 
 			pcRenderView->SetFgColor( get_default_color( COL_SHADOW ) );
-			for( float i = 0; i < m_nNumTicks; i += 1.0f )
+			for( float i = 0; i < m->m_nNumTicks; i += 1.0f )
 			{
 				float x = floor( cSliderFrame.left + vWidth * i * vScale );
 
-				if( m_nTickFlags & TICKS_ABOVE )
+				if( m->m_nTickFlags & TICKS_ABOVE )
 				{
 					pcRenderView->DrawLine( Point( x, y1 ), Point( x, y2 ) );
 				}
-				if( m_nTickFlags & TICKS_BELOW )
+				if( m->m_nTickFlags & TICKS_BELOW )
 				{
 					pcRenderView->DrawLine( Point( x, y3 ), Point( x, y4 ) );
 				}
 			}
 			pcRenderView->SetFgColor( get_default_color( COL_SHINE ) );
-			for( float i = 0; i < m_nNumTicks; i += 1.0f )
+			for( float i = 0; i < m->m_nNumTicks; i += 1.0f )
 			{
 				float x = floor( cSliderFrame.left + vWidth * i * vScale ) + 1.0f;
 
-				if( m_nTickFlags & TICKS_ABOVE )
+				if( m->m_nTickFlags & TICKS_ABOVE )
 				{
 					pcRenderView->DrawLine( Point( x, y1 ), Point( x, y2 ) );
 				}
-				if( m_nTickFlags & TICKS_BELOW )
+				if( m->m_nTickFlags & TICKS_BELOW )
 				{
 					pcRenderView->DrawLine( Point( x, y3 ), Point( x, y4 ) );
 				}
@@ -849,29 +873,29 @@ void Slider::RenderTicks( View * pcRenderView )
 			float x3 = x4 + TICK_LENGTH;
 
 			pcRenderView->SetFgColor( get_default_color( COL_SHADOW ) );
-			for( float i = 0; i < m_nNumTicks; i += 1.0f )
+			for( float i = 0; i < m->m_nNumTicks; i += 1.0f )
 			{
 				float y = floor( cSliderFrame.top + vHeight * i * vScale );
 
-				if( m_nTickFlags & TICKS_ABOVE )
+				if( m->m_nTickFlags & TICKS_ABOVE )
 				{
 					pcRenderView->DrawLine( Point( x1, y ), Point( x2, y ) );
 				}
-				if( m_nTickFlags & TICKS_BELOW )
+				if( m->m_nTickFlags & TICKS_BELOW )
 				{
 					pcRenderView->DrawLine( Point( x3, y ), Point( x4, y ) );
 				}
 			}
 			pcRenderView->SetFgColor( get_default_color( COL_SHINE ) );
-			for( float i = 0; i < m_nNumTicks; i += 1.0f )
+			for( float i = 0; i < m->m_nNumTicks; i += 1.0f )
 			{
 				float y = floor( cSliderFrame.top + vHeight * i * vScale ) + 1.0f;
 
-				if( m_nTickFlags & TICKS_ABOVE )
+				if( m->m_nTickFlags & TICKS_ABOVE )
 				{
 					pcRenderView->DrawLine( Point( x1, y ), Point( x2, y ) );
 				}
-				if( m_nTickFlags & TICKS_BELOW )
+				if( m->m_nTickFlags & TICKS_BELOW )
 				{
 					pcRenderView->DrawLine( Point( x3, y ), Point( x4, y ) );
 				}
@@ -888,33 +912,33 @@ float Slider::PosToVal( const Point & a_cPos ) const
 
 	Point cPos = a_cPos - cSliderFrame.LeftTop();
 
-	if( m_eOrientation == HORIZONTAL )
+	if( m->m_eOrientation == HORIZONTAL )
 	{
-		if( m_nNumSteps > 1 )
+		if( m->m_nNumSteps > 1 )
 		{
-			float vAlign = ( cSliderFrame.Width() + 1.0f ) / float ( m_nNumSteps - 1 );
+			float vAlign = ( cSliderFrame.Width() + 1.0f ) / float ( m->m_nNumSteps - 1 );
 
 			cPos.x = floor( ( cPos.x + vAlign * 0.5f ) / vAlign ) * vAlign;
 		}
-		vValue = m_vMin + ( cPos.x / ( cSliderFrame.Width() + 1.0f ) ) * ( m_vMax - m_vMin );
+		vValue = m->m_vMin + ( cPos.x / ( cSliderFrame.Width() + 1.0f ) ) * ( m->m_vMax - m->m_vMin );
 	}
 	else
 	{
-		if( m_nNumSteps > 1 )
+		if( m->m_nNumSteps > 1 )
 		{
-			float vAlign = ( cSliderFrame.Height() + 1.0f ) / float ( m_nNumSteps - 1 );
+			float vAlign = ( cSliderFrame.Height() + 1.0f ) / float ( m->m_nNumSteps - 1 );
 
 			cPos.y = floor( ( cPos.y + vAlign * 0.5f ) / vAlign ) * vAlign;
 		}
-		vValue = m_vMax + ( cPos.y / ( cSliderFrame.Height() + 1.0f ) ) * ( m_vMin - m_vMax );
+		vValue = m->m_vMax + ( cPos.y / ( cSliderFrame.Height() + 1.0f ) ) * ( m->m_vMin - m->m_vMax );
 	}
-	if( vValue < m_vMin )
+	if( vValue < m->m_vMin )
 	{
-		return ( m_vMin );
+		return ( m->m_vMin );
 	}
-	else if( vValue > m_vMax )
+	else if( vValue > m->m_vMax )
 	{
-		return ( m_vMax );
+		return ( m->m_vMax );
 	}
 	else
 	{
@@ -926,9 +950,9 @@ Point Slider::ValToPos( float vVal ) const
 {
 	Rect cBounds = GetSliderFrame();
 	Rect cSliderFrame = GetSliderFrame();
-	float vPos = ( vVal - m_vMin ) / ( m_vMax - m_vMin );
+	float vPos = ( vVal - m->m_vMin ) / ( m->m_vMax - m->m_vMin );
 
-	if( m_eOrientation == HORIZONTAL )
+	if( m->m_eOrientation == HORIZONTAL )
 	{
 		return ( Point( cSliderFrame.left + ( cSliderFrame.Width() ) * vPos, cBounds.top + ( cBounds.Height(  ) + 1.0f ) * 0.5f ) );
 	}
@@ -941,7 +965,7 @@ Point Slider::ValToPos( float vVal ) const
 
 Rect Slider::GetKnobFrame() const
 {
-	if( m_eOrientation == HORIZONTAL )
+	if( m->m_eOrientation == HORIZONTAL )
 	{
 		return ( Rect( -5.0f, -7.0f, 5.0f, 7.0f ) );
 	}
@@ -960,20 +984,20 @@ Rect Slider::GetSliderFrame() const
 
 	float vSize = ceil( GetSliderSize() * 0.5f );
 
-	if( m_eOrientation == HORIZONTAL )
+	if( m->m_eOrientation == HORIZONTAL )
 	{
 		float vKWidth = ceil( ( cKnobFrame.Width() + 1.0f ) * 0.5f );
 		float vKHeight = ceil( ( cKnobFrame.Height() + 1.0f ) * 0.5f );
 		float vCenter = vSize;
 
-		if( m_nTickFlags & TICKS_ABOVE )
+		if( m->m_nTickFlags & TICKS_ABOVE )
 		{
 			vCenter += TICK_SPACING + TICK_LENGTH;
 		}
 
 
 		cSliderBounds.top = 0;
-		std::string cProgress = GetProgressString();
+		String cProgress = GetProgressString();
 		if( cProgress.size() > 0 )
 		{
 			font_height sHeight;
@@ -1006,11 +1030,11 @@ Rect Slider::GetSliderFrame() const
 
 		GetFontHeight( &sHeight );
 
-		if( m_cMinLabel.size() > 0 )
+		if( m->m_cMinLabel.size() > 0 )
 		{
 			vBFHeight = sHeight.ascender + sHeight.descender + VLABEL_SPACING;
 		}
-		if( m_cMaxLabel.size() > 0 )
+		if( m->m_cMaxLabel.size() > 0 )
 		{
 			vTFHeight = sHeight.ascender + sHeight.descender + VLABEL_SPACING;
 		}
@@ -1029,9 +1053,9 @@ Rect Slider::GetSliderFrame() const
 
 void Slider::Paint( const Rect & cUpdateRect )
 {
-	if( m_pcRenderBitmap != NULL )
+	if( m->m_pcRenderBitmap != NULL )
 	{
-		DrawBitmap( m_pcRenderBitmap, cUpdateRect, cUpdateRect );
+		DrawBitmap( m->m_pcRenderBitmap, cUpdateRect, cUpdateRect );
 	}
 }
 
@@ -1042,8 +1066,25 @@ void Slider::_RefreshDisplay()
 		return;
 	}
 	Sync();
-	RenderSlider( m_pcRenderView );
-	m_pcRenderBitmap->Sync();
+	RenderSlider( m->m_pcRenderView );
+	m->m_pcRenderBitmap->Sync();
 	Invalidate();
 	Flush();
 }
+
+void Slider::SetSteps( float vSmall, float vBig )
+{
+	m->m_vSmallStep = vSmall; m->m_vBigStep = vBig;
+}
+
+void Slider::GetSteps( float* pvSmall, float* pvBig ) const
+{
+	*pvSmall = m->m_vSmallStep; *pvBig = m->m_vBigStep;
+}
+
+void Slider::SetMinMax( float vMin, float vMax )
+{
+	m->m_vMin = vMin; m->m_vMax = vMax;
+}
+
+
