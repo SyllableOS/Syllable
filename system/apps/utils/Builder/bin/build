@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.2.6
+# Version 0.2.7
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -35,8 +35,8 @@ else
 
 	@installRoot = File.join(@distroRoot, "atheos/usr")
 
-	ENV['DIST_VER']  = "0.5.1+"
-	ENV['DIST_NAME'] = "base-syllable-0.5.1+.tgz"
+	ENV['DIST_VER']  = "0.5.2+"
+	ENV['DIST_NAME'] = "base-syllable-0.5.2+.tgz"
 
 	ENV['ATHEOS_SRC']				= @workDir
 	ENV['ATHEOS_INCLUDE_PATH']	= File.join @workDir, "sys/include"
@@ -121,7 +121,7 @@ def getPackage target
 				# Source already prepared
 				true
 			else
-				if Dir[File.join(@sourcesDir, fullName(target) + ".*")] != []
+				if Dir[File.join(@sourcesDir, fullName(target) + ".t*")] != []  # Some tarball
 					puts "\nWARNING! This will clobber your CVS repository!"
 					logHeader "Replacing source"
 
@@ -693,7 +693,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.2.6",
+	puts "Syllable Build System 0.2.7",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
