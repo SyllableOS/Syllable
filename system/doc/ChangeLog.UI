@@ -1,3 +1,9 @@
+* April 17 2004, Henrik Isaksson *
+
+ - Slider
+	o Bugfix: Invoked() now calls Control::Invoked() so that "value" is added to the message.
+	o Bugfix: Made Invoked() virtual.
+
 * April 1 2004, Henrik Isaksson *
 
  - Fixed problem with catalog.h from the last commit.
@@ -601,5 +607,4 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
-
 
