@@ -599,7 +599,7 @@ static void state_requesting( void )
 	option = NULL;
 	options_head = option;
 
-	for( current_option = 1; current_option <= 7; current_option++ )
+	for( current_option = 1; current_option <= 6; current_option++ )
 	{
 		if( option == NULL )
 		{
@@ -720,29 +720,7 @@ static void state_requesting( void )
 				break;
 			}
 
-			case 6:	// Please give us a list of DNS servers & gateways
-			{
-				uint8 dns_val = OPTION_DNSSERVERS;
-				uint8 routers_val = OPTION_ROUTERS;
-
-				option->type = OPTION_PARLIST;
-				option->length = 2;
-				option->data = (uint8*)malloc(option->length);
-				if( option->data == NULL )
-				{
-					debug(PANIC,__FUNCTION__,"unable to allocate data for paramter list option\n");
-					free( packet );
-					freeoptions( options_head );
-					return;
-				}
-				memcpy(option->data,&dns_val,1);
-				memcpy((option->data + 1),&routers_val,1);
-
-				option->next = NULL;
-				break;
-			}
-
-			case 7: // End option
+			case 6: // End option
 			{
 				option->type = OPTION_END;
 				option->length = 1;
