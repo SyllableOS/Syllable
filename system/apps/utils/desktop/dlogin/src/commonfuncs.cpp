@@ -81,13 +81,11 @@ const char* ReadLoginOption()
 
 os::String GetSyllableVersion()
 {
-    char zTemp[10], zReturn[100];
-
-    FILE* fin = popen("/usr/bin/uname -vr 2>&1","r");
-    fgets(zTemp, sizeof(zTemp),fin);
-    pclose(fin);
-	sprintf(zReturn,"Syllable v%c.%c.%c",zTemp[2],zTemp[4],zTemp[0]);
-	return (os::String(zReturn));
+	String cReturn;
+	system_info sSysInfo;
+	get_system_info(&sSysInfo);
+	cReturn.Format("%s%d.%d.%d", "Syllable v",( int )( ( sSysInfo.nKernelVersion >> 32 ) & 0xffff ), ( int )( ( sSysInfo.nKernelVersion >> 16 ) % 0xffff ), ( int )( sSysInfo.nKernelVersion & 0xffff ));	
+	return cReturn;
 }
 
 /************************************************
