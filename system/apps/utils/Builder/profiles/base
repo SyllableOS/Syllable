@@ -1,7 +1,6 @@
 ; Syllable base system
 ;
 sys/include
-build-tools/floppy/src
 other/config/default
 other/config/etc
 other/fonts
@@ -9,7 +8,6 @@ other/icons
 other/init
 other/keymaps
 sys/kernel/kernel
-sys/kernel/boot
 sys/kernel/drivers/bus/pci
 sys/kernel/drivers/bus/scsi
 sys/kernel/drivers/bus/usb
