@@ -1,0 +1,10 @@
+authors				Kaj de Vos
+status				broken
+notes				Examples cannot find -lm
+licenses			BSD GPL
+home				www.xiph.org/ogg/vorbis/
+build-needs
+	libogg
+patch-config
+;configure-options	--enable-docs
+documentation		README COPYING todo.txt AUTHORS HACKING

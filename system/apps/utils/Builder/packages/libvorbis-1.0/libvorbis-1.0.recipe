@@ -1,0 +1,7 @@
+authors			Kaj de Vos
+licenses		BSD GPL
+home			www.xiph.org/ogg/vorbis/
+build-needs
+	libogg
+patch-config
+documentation	README COPYING todo.txt AUTHORS HACKING
