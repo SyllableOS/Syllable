@@ -35,14 +35,16 @@ class BitmapView : public View {
 		: View(cFrame, cName, CF_FOLLOW_NONE, WID_WILL_DRAW)
 	{
 		m_pcImage = img;
-		m_Font = new Font;
-		m_Font->SetFamilyAndStyle(DEFAULT_FONT_REGULAR, "Regular");
-		m_Font->SetSize(7);
+
+/*		Font* pcFont = new Font;
+		pcFont->SetFamilyAndStyle(DEFAULT_FONT_REGULAR, "Regular");
+		pcFont->SetSize(7);
+		SetFont(pcFont);
+		pcFont->Release();*/
 	}
 
 	~BitmapView()
 	{
-		m_Font->Release();
 		delete m_pcImage;
 	}
 
@@ -54,7 +56,6 @@ class BitmapView : public View {
 		m_pcImage->Draw( Point( 0, 0 ), this  );
 
 		SetDrawingMode(DM_OVER);
-		SetFont(m_Font);
 		
 		font_height fh;
 		GetFontHeight(&fh);
@@ -69,7 +70,6 @@ class BitmapView : public View {
 
 	private:
 	Image		*m_pcImage;
-	Font		*m_Font;
 };
 
 AboutWindow::AboutWindow(const Rect & r)
@@ -113,6 +113,8 @@ void AboutWindow::HandleMessage(Message *msg)
 {
 	Window::HandleMessage(msg);
 }
+
+
 
 
 
