@@ -1,7 +1,14 @@
+* November 14 2004, Jake Hamby *
+
+ Fix Radeon driver for 1400x1050 resolution and any other resolution whose
+ width isn't an even multiple of 64 pixels.
+
+ Patch contributed by Nicolai Haehnle.
+
 * November 6 2004, Jake Hamby *
 
-Fix a couple of sprintf "warning: int format, different type arg" bugs in
-libsyllable "gui/icondirview.cpp" and "storage/filereference_info.cpp".
+ Fix a couple of sprintf "warning: int format, different type arg" bugs in
+ libsyllable "gui/icondirview.cpp" and "storage/filereference_info.cpp".
 
 * October 24 2004, Kristian Van Der Vliet *
 
