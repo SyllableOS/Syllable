@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 1999 - 2000  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -49,7 +50,7 @@ class DropdownMenu;
 class DropdownMenu : public View, public Invoker
 {
 public:
-    DropdownMenu( const Rect& cFrame, const char* pzName, uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP,
+    DropdownMenu( const Rect& cFrame, const String& cName, uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP,
 		  uint32 nFlags = WID_WILL_DRAW | WID_FULL_UPDATE_ON_RESIZE );
     ~DropdownMenu();
 
@@ -63,13 +64,13 @@ public:
     bool	DeleteItem( int nPosition );
     int		GetItemCount() const;
     void	Clear();
-    const std::string& GetItem( int nItem ) const;
+    const String& GetItem( int nItem ) const;
 
     int		GetSelection() const;
     void	SetSelection( int nItem, bool bNotify = true );
 
-    const std::string&	GetCurrentString() const;
-    void		SetCurrentString( const std::string& cString );
+    const String&	GetCurrentString() const;
+    void		SetCurrentString( const String& cString );
 
     void 	SetMinPreferredSize( int nWidthChars );
     int		GetMinPreferredSize() const;
@@ -89,9 +90,10 @@ public:
     virtual Point	GetPreferredSize( bool bLargest ) const;
     virtual void	FrameSized( const Point& cDelta );
     virtual void	MouseDown( const Point& cPosition, uint32 nButtons );
-//    virtual void	KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
+    virtual void	KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
     virtual void	AllAttached();
-  
+	virtual void Activated( bool bIsActive );
+
 private:
     class DropdownView : public View
     {
@@ -139,7 +141,7 @@ private:
     Window*   		     m_pcMenuWindow;
     DropdownTextView*    m_pcEditBox;
     Rect	    	     m_cArrowRect;
-    std::vector<std::string> m_cStringList;
+    std::vector<String> m_cStringList;
     Message*		     m_pcSelectionMsg;
     Message*		     m_pcEditMsg;
     int			     m_nSelection;
