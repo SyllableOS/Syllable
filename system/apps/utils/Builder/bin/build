@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.24
+# Version 0.5.25
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -636,8 +636,8 @@ def makeDistro target
 						links.collect { |link|
 							(destination = toList(link)[1])[0, 1] == '/' ?  # A link into the system
 								destination :
-								[]
-						} :
+								nil
+						}.compact :
 						[]
 					) == [] ?
 						'' :
@@ -1060,7 +1060,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.24',
+	puts 'Syllable Build System 0.5.25',
 		'Copyright (c) 2002-2004 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
