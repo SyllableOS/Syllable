@@ -1,3 +1,7 @@
+* March 25 2005, Jake Hamby *
+
+Updated libpthread with a simple implementation of pthread_kill().
+
 * March 24 2005, Henrik Isaksson *
 
 Added warpspeed to decorators Makefile.
