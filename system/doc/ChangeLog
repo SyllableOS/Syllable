@@ -1,3 +1,8 @@
+* Dec 31 2003, Kristian Van Der Vliet *
+
+Improved IMPS2/PS2 mouse detection in the PS/2 mouse driver from Damien Danneels
+<ddanneels@free.fr>
+
 * Dec 2 2003, Kaj de Vos *
 
 Fixed and cleaned up many build problems of several sorts all over the system
