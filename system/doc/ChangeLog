@@ -1,3 +1,19 @@
+* April 29 2004. Kristian Van Der Vliet *
+
+nVidia driver
+	o Remove NV30Setup() (NV30 chipsets are handled by the GeForceFX driver)
+	o Cleaned up the NV??Setup() calls in NVidia::Nvidia()
+	o The code cleanup fixes a bug where the following chipsets were not initialised
+	  correctly:
+		* GeForce4 MX 440 with AGP8X
+		* GeForce4 MX 440SE with AGP8X
+		* GeForce4 MX 420 with AGP8X
+		* GeForce4 448 Go
+		* GeForce4 488 Go
+		* Quadro4 580 XGL
+		* Quadro4 280 NVS
+		* Quadro4 380 XGL
+
 * April 25 2004, Kristian Van Der Vliet *
 
 ATi Radeon driver from Michael Krueger <invenies@web.de>  The driver supports all
