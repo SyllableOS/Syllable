@@ -30,6 +30,7 @@
 #include <macros.h>
 
 #include "inc/scheduler.h"
+#include "inc/io_ports.h"
 
 static IrqAction_s *g_psIrqHandlerLists[IRQ_COUNT] = { 0, };
 
@@ -53,11 +54,11 @@ void disable_8259A_irq( int irq )
 	cached_irq_mask |= mask;
 	if ( irq & 8 )
 	{
-		outb( cached_A1, 0xA1 );
+		outb( cached_A1, PIC_SLAVE_IMR );
 	}
 	else
 	{
-		outb( cached_21, 0x21 );
+		outb( cached_21, PIC_MASTER_IMR );
 	}
 }
 
@@ -75,11 +76,11 @@ static void enable_8259A_irq( int irq )
 	cached_irq_mask &= mask;
 	if ( irq & 8 )
 	{
-		outb( cached_A1, 0xA1 );
+		outb( cached_A1, PIC_SLAVE_IMR );
 	}
 	else
 	{
-		outb( cached_21, 0x21 );
+		outb( cached_21, PIC_MASTER_IMR );
 	}
 }
 
@@ -242,16 +243,16 @@ static inline void mask_and_ack_8259A( int irq )
 	cached_irq_mask |= 1 << irq;
 	if ( irq & 8 )
 	{
-		inb( 0xA1 );	/* DUMMY */
-		outb( cached_A1, 0xA1 );
-		outb( 0x62, 0x20 );	/* Specific EOI to cascade */
-		outb( 0x20, 0xA0 );
+		inb( PIC_SLAVE_IMR );	/* DUMMY */
+		outb( cached_A1, PIC_SLAVE_IMR );
+		outb( 0x62, PIC_MASTER_CMD );	/* Specific EOI to cascade */
+		outb( 0x20, PIC_SLAVE_CMD );
 	}
 	else
 	{
-		inb( 0x21 );	/* DUMMY */
-		outb( cached_21, 0x21 );
-		outb( 0x20, 0x20 );
+		inb( PIC_MASTER_IMR );	/* DUMMY */
+		outb( cached_21, PIC_MASTER_IMR );
+		outb( 0x20, PIC_MASTER_CMD );
 	}
 }
 

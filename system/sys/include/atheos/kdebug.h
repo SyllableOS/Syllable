@@ -59,7 +59,7 @@ void init_debugger( int nBaudRate, int nSerialPort );
 int  register_debug_cmd( const char* pzName, const char* pzDesc, dbg_fnc* pFunc );
 
 void dbcon_write( const char* pData, int nSize );
-void dbcon_clear();
+void dbcon_clear( void );
 
 enum debug_level{
 	KERN_DEBUG_LOW,

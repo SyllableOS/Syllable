@@ -248,7 +248,7 @@ extern __inline int get_processor_id( void )
 }
 #endif
 
-int logig_to_physical_cpu_id( int nLogicID );
+int logical_to_physical_cpu_id( int nLogicalID );
 
 
 #define NO_PROC_ID		0xFF	/* No processor magic marker */

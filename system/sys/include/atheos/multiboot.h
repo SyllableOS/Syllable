@@ -42,7 +42,7 @@ struct AddrRangeDesc
  *  MultiBoot Info description
  *
  *  This is the struct passed to the boot image.  This is done by placing
- *  its address in the EAX register.
+ *  its address in the EBX register.
  */
 
 typedef struct

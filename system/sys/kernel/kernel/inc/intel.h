@@ -140,6 +140,42 @@ struct i3Desc
 	uint8 desc_bsh;		/* base 24-31           */
 };
 
+struct i387_fsave_struct
+{
+	long cwd;
+	long swd;
+	long twd;
+	long fip;
+	long fcs;
+	long foo;
+	long fos;
+	long st_space[20];	/* 8*10 bytes for each FP-reg = 80 bytes */
+	long status;		/* software status information		 */
+};
+
+struct i387_fxsave_struct
+{
+	unsigned short cwd;
+	unsigned short swd;
+	unsigned short twd;
+	unsigned short fop;
+	long fip;
+	long fcs;
+	long foo;
+	long fos;
+	long mxcsr;
+	long mxcsr_mask;
+	long st_space[32];	/* 8*16 bytes for each FP-reg = 128 bytes */
+	long xmm_space[32];	/* 8*16 bytes for each XMM-reg = 128 bytes */
+	long padding[56];
+}; // __attribute__ ((aligned (16)));
+
+union i387_union
+{
+	struct i387_fsave_struct	fsave;
+	struct i387_fxsave_struct	fxsave;
+};
+
 #define	PTE_PRESENT	0x001	/* dir/page is present/valid                    */
 #define	PTE_WRITE	0x002	/* dir/page is writeable                        */
 #define	PTE_USER	0x004	/* only accessible by supervisor                */
@@ -168,26 +204,99 @@ struct i3Desc
 
 /*void	sys_FlushCaches( void );*/
 
+extern bool g_bHasFXSR;		// CPU has fast FPU save and restore
+extern bool g_bHasXMM;		// CPU has SSE extensions
 
-void set_page_directory_base_reg( void *pPageTable );
-void *get_page_directory_base_reg( void );
+static inline void set_page_directory_base_reg( void *pPageTable )
+{
+	__asm__ __volatile__( "movl %0,%%cr3" : : "r" (pPageTable) );
+}
 
-void load_fpu_state( void *pState );
-void save_fpu_state( void *pState );
+static inline void load_fpu_state( union i387_union *pState )
+{
+	if ( g_bHasFXSR )
+	{
+		if ( ( ( unsigned int )&pState->fxsave & 0x0000000f ) != 0 )
+		{
+			printk( "Panic: fxsave struct is misaligned: %p\n", &pState->fxsave );
+			return;
+		}
+		__asm__ __volatile__( "fxrstor %0" : : "m" ( pState->fxsave ) );
+	}
+	else
+	{
+		__asm__ __volatile__( "frstor %0" : : "m" ( pState->fsave ) );
+	}
+}
 
+static inline void save_fpu_state( union i387_union *pState )
+{
+	if ( g_bHasFXSR )
+	{
+		if ( ( ( unsigned int )&pState->fxsave & 0x0000000f ) != 0 )
+		{
+			printk( "Panic: fxsave struct is misaligned: %p\n", &pState->fxsave );
+			return;
+		}
+		__asm__ __volatile__( "fxsave %0; fnclex" : "=m" ( pState->fxsave ) );
+	}
+	else
+	{
+		__asm__ __volatile__( "fnsave %0; fwait" : "=m" ( pState->fsave ) );
+	}
+}
 
+static inline void clts( void )
+{
+	__asm__ __volatile__( "clts" );		// Clear TS bit -- enable FPU
+}
 
-void GetIDT( DescriptorTable_s * psTable );
-void SetIDT( DescriptorTable_s * psTable );
-void GetGDT( DescriptorTable_s * psTable );
-void SetGDT( DescriptorTable_s * psTable );
+static inline void stts( void )
+{
+	unsigned int dummy;			// Set TS bit -- disable FPU
+	__asm__ __volatile__( "movl %%cr0,%0; orl $0x08,%0; movl %0,%%cr0" : "=r" (dummy) );
+}
 
-void SetTR( int nTaskReg );
+static inline void SetIDT( DescriptorTable_s * psTable )
+{
+	__asm__ __volatile__( "lidt %0" : : "m" ( *psTable ) );
+}
 
-void SetupDataSelectors( void );
-void enable_mmu( void );
+static inline void SetGDT( DescriptorTable_s * psTable )
+{
+	__asm__ __volatile__( "lgdt %0" : : "m" ( *psTable ) );
+}
 
-void InitIDT( void );
+static inline void SetTR( int nTaskReg )
+{
+	__asm__ __volatile__( "ltr %%ax" : : "a" (nTaskReg) );
+}
+
+static inline void enable_mmu( void )
+{
+	unsigned int dummy;
+	__asm__ __volatile__( "movl %%cr0,%0; orl $0x80010000,%0; movl %0,%%cr0" : "=r" (dummy) );	// set PG & WP bit in cr0
+}
+
+#define X86_CR4_VME		0x0001	// enable vm86 extensions
+#define X86_CR4_PVI		0x0002	// enable virtual interrupts flag
+#define X86_CR4_TSD		0x0004	// disable time stamp at ipl 3
+#define X86_CR4_DE		0x0008	// enable debugging extensions
+#define X86_CR4_PSE		0x0010	// enable page size extensions
+#define X86_CR4_PAE		0x0020	// enable physical address extensions
+#define X86_CR4_MCE		0x0040	// enable machine check exceptions
+#define X86_CR4_PGE		0x0080	// enable global page feature
+#define X86_CR4_PCE		0x0100	// enable perf counters at ipl 3
+#define X86_CR4_OSFXSR		0x0200	// enable fast FPU save and restore
+#define X86_CR4_OSXMMEXCPT	0x0400	// enable unmasked SSE exceptions
+
+static inline void set_in_cr4( unsigned int nFlags )
+{
+	uint32 nCR4;
+	__asm__ __volatile__( "movl %%cr4,%0" : "=r" (nCR4) );
+	__asm__ __volatile__( "movl %0,%%cr4" : : "r" ( nCR4 | nFlags ) );
+}
+
 bool Desc_SetBase( uint16 desc, uint32 base );
 uint32 Desc_GetBase( uint16 desc );
 bool Desc_SetLimit( uint16 desc, uint32 limit );
@@ -198,15 +307,29 @@ uint16 Desc_Alloc( int32 table );
 void Desc_Free( uint16 desc );
 #endif /* __KERNEL__ */
 
+// Read the TSC clock
+
+#define rdtsc(low,high) \
+     __asm__ __volatile__( "rdtsc" : "=a" (low), "=d" (high) )
+
+#define rdtscl(low) \
+     __asm__ __volatile__( "rdtsc" : "=a" (low) : : "edx" )
+
+#define rdtscll(val) \
+     __asm__ __volatile__( "rdtsc" : "=A" (val) )
+
 
 static inline uint64 read_pentium_clock( void )
 {
-	register uint32 nLow;
-	register uint32 nHigh;
+	unsigned long long val;
+	rdtscll( val );
+	return val;
+}
 
-	__asm__ __volatile__( "rdtsc":"=a"( nLow ), "=d"( nHigh ) );
-
-	return ( ( ( uint64 )nHigh ) << 32 | nLow );
+// REP NOP (PAUSE) is a good thing to insert into busy-wait loops.
+static inline void rep_nop( void )
+{
+	__asm__ __volatile__( "rep; nop" : : : "memory" );
 }
 
 #ifdef __cplusplus

@@ -313,6 +313,7 @@ int sys_execve( const char *a_pzPath, char *const *argv, char *const *envv )
 	}
 	exec_free_semaphores( psProc );
 
+	psThread->tr_nFlags = 0;	// clear FPU usage flags
 	psThread->tr_nUStackSize = MAIN_THREAD_STACK_SIZE;
 	psThread->tr_pUserStack = NULL;
 	nStackArea = create_area( "main_stack", &psThread->tr_pUserStack, psThread->tr_nUStackSize, psThread->tr_nUStackSize, AREA_FULL_ACCESS | AREA_ANY_ADDRESS | AREA_TOP_DOWN, AREA_NO_LOCK );

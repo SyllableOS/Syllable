@@ -98,8 +98,8 @@ int do_exit( int nErrorCode )
 	Process_s *psParentProc;
 	thread_id hChild;
 	thread_id hOurPGrp;
-	bool bHasStoppedChilds = false;
-	bool bChildsLeft = false;
+	bool bHasStoppedChildren = false;
+	bool bChildrenLeft = false;
 
 	if ( psThread == NULL )
 	{
@@ -128,9 +128,9 @@ int do_exit( int nErrorCode )
 		port_id hAppServerPort = get_app_server_port();
 		uint32 nFlags;
 
-		// We delete the heap as soon as possible. This help prevent a
+		// We delete the heap as soon as possible. This helps prevent a
 		// deadlock if we are out of memory and the process was killed
-		// in an attempt to free up some. This way we hopefully wont end
+		// in an attempt to free some. This way we hopefully won't end
 		// up waiting for more RAM ourself when starting to close files
 		// and sending the leave message to the application server.
 
@@ -167,7 +167,7 @@ int do_exit( int nErrorCode )
 		}
 	}
 
-	// Hand childs over to the psyko killer
+	// Hand children over to the psycho killer (init thread)
 	cli();
 	sched_lock();
 	for ( hChild = 0; -1 != hChild; hChild = get_next_thread( hChild ) )
@@ -187,11 +187,11 @@ int do_exit( int nErrorCode )
 		{
 			if ( psChild->tr_psProcess->pr_hPGroupID == hOurPGrp && psChild->tr_nState == TS_STOPPED )
 			{
-				bHasStoppedChilds = true;
+				bHasStoppedChildren = true;
 			}
 
-			psChild->tr_hParent = 1;	/* Hand all childs over to psyko_killer */
-			bChildsLeft = true;
+			psChild->tr_hParent = 1;	/* Hand all children over to psycho_killer */
+			bChildrenLeft = true;
 		}
 	}
 //  sched_unlock();
@@ -209,7 +209,7 @@ int do_exit( int nErrorCode )
 	 */
 
 /*
-  if ( bHasStoppedChilds &&
+  if ( bHasStoppedChildren &&
   (psParentProc->pr_hPGroupID != pr_hGroupID) &&
   (psParentProc->session == psProc->session) &&
   will_become_orphaned_pgrp( psProc->pr_hPGroupID, psProc ))
@@ -217,7 +217,7 @@ int do_exit( int nErrorCode )
   sys_killpg( psProc->pr_hPGroupID, SIGHUP );
   sys_killpg( psProc->pr_hPGroupID, SIGCONT );
   }
-  if ( bHasStoppedChilds && psParentProc->pr_hPGroupID != pr_hPGroupID && psParentProc->session == psProc->session )
+  if ( bHasStoppedChildren && psParentProc->pr_hPGroupID != pr_hPGroupID && psParentProc->session == psProc->session )
   bGrpOrphaned = true;
   cli();
   sched_lock();
@@ -243,7 +243,7 @@ int do_exit( int nErrorCode )
   }
   }
   */
-	if ( bChildsLeft )
+	if ( bChildrenLeft )
 	{
 		sys_kill( 1, SIGCHLD );
 
@@ -598,6 +598,19 @@ thread_id sys_Fork( const char *const pzName )
 			put_area( psArea );
 		}
 	}
+
+	/* Copy FPU state and flags */
+	if ( psParentThread->tr_nFlags & TF_FPU_USED )
+	{
+		if ( psParentThread->tr_nFlags & TF_FPU_DIRTY )
+		{
+			save_fpu_state( &psParentThread->tc_FPUState );
+			psParentThread->tr_nFlags &= ~TF_FPU_DIRTY;
+			stts();
+		}
+		memcpy( &psNewThread->tc_FPUState, &psParentThread->tc_FPUState, sizeof( union i387_union ) );
+	}
+	psNewThread->tr_nFlags = psParentThread->tr_nFlags;
 
 	tss->esp -= sizeof( SysCallRegs_s );
 	memcpy( tss->esp, psRegs, sizeof( SysCallRegs_s ) );

@@ -137,7 +137,7 @@ status_t sys_get_system_info( system_info * psInfo, int nVersion )
 
 			for ( i = 0; i < g_nActiveCPUCount; ++i )
 			{
-				int nID = logig_to_physical_cpu_id( i );
+				int nID = logical_to_physical_cpu_id( i );
 
 				sInfo.asCPUInfo[i].nCoreSpeed = g_asProcessorDescs[nID].pi_nCoreSpeed;
 				sInfo.asCPUInfo[i].nBusSpeed = g_asProcessorDescs[nID].pi_nBusSpeed;
@@ -184,7 +184,7 @@ status_t sys_get_system_info( system_info * psInfo, int nVersion )
 
 			for ( i = 0; i < g_nActiveCPUCount; ++i )
 			{
-				int nID = logig_to_physical_cpu_id( i );
+				int nID = logical_to_physical_cpu_id( i );
 
 				sInfo.asCPUInfo[i].nCoreSpeed = g_asProcessorDescs[nID].pi_nCoreSpeed;
 				sInfo.asCPUInfo[i].nBusSpeed = g_asProcessorDescs[nID].pi_nBusSpeed;
@@ -233,7 +233,7 @@ status_t sys_get_system_info( system_info * psInfo, int nVersion )
 
 			for ( i = 0; i < g_nActiveCPUCount; ++i )
 			{
-				int nID = logig_to_physical_cpu_id( i );
+				int nID = logical_to_physical_cpu_id( i );
 
 				sInfo.asCPUInfo[i].nCoreSpeed = g_asProcessorDescs[nID].pi_nCoreSpeed;
 				sInfo.asCPUInfo[i].nBusSpeed = g_asProcessorDescs[nID].pi_nBusSpeed;

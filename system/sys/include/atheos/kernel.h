@@ -25,6 +25,7 @@
 #include <atheos/schedule.h>
 #include <atheos/v86.h>
 #include <atheos/areas.h>
+#include <atheos/isa_io.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,10 +42,11 @@ enum
 	CPU_FEATURE_MMX 	= 0x01,
 	CPU_FEATURE_MMX2	= 0x02,
 	CPU_FEATURE_3DNOW	= 0x04,
-	CPU_FEATURE_3DNOWEX = 0x08,
+	CPU_FEATURE_3DNOWEX	= 0x08,
 	CPU_FEATURE_SSE		= 0x10,
 	CPU_FEATURE_SSE2	= 0x20,
-	CPU_FEATURE_APIC	= 0x40
+	CPU_FEATURE_APIC	= 0x40,
+	CPU_FEATURE_FXSAVE	= 0x80
 };
 
 typedef struct
@@ -179,12 +181,12 @@ typedef	struct
 } DR_ThreadDied_s;
 
 
-int  isa_readb( int nPort );
-int  isa_readw( int nPort );
-int  isa_readl( int nPort );
-int  isa_writeb( int nPort, int nValue );
-int  isa_writew( int nPort, int nValue );
-int  isa_writel( int nPort, int nValue );
+static inline int   isa_readb( int nPort )		{ return inb( nPort ); }
+static inline int   isa_readw( int nPort )		{ return inw( nPort ); }
+static inline int   isa_readl( int nPort )		{ return inl( nPort ); }
+static inline void  isa_writeb( int nPort, int nValue )	{ outb( nValue, nPort ); }
+static inline void  isa_writew( int nPort, int nValue )	{ outw( nValue, nPort ); }
+static inline void  isa_writel( int nPort, int nValue )	{ outl( nValue, nPort ); }
 
 
 uint32	GetCMOSTime( void );
@@ -200,16 +202,25 @@ void	init_pci_module( void );
 
 void	SwitchCont( int nDesc );
 
-uint32 Delay( uint32	nMicros );
+uint32	old_Delay( const uint32 nMicros );
 
 status_t snooze( bigtime_t nTimeout );
 
 int	exit_from_sys_call( void );
 
 
-void	flush_tlb( void );			  /* Invalidate local page table 		*/
-void	flush_tlb_global( void );		  /* Invalidate page table on all processors	*/
-void	flush_tlb_page( uint32 nVirtualAddress ); /* Flush one local pte 			*/
+static inline void flush_tlb( void )			     /* Invalidate local page table */
+{
+	unsigned int dummy;
+	__asm__ __volatile__( "movl %%cr3,%0; movl %0,%%cr3" : "=r" (dummy) : : "memory" );
+}
+
+static inline void flush_tlb_page( uint32 nVirtualAddress )  /* Flush one local pte */
+{
+	__asm__ __volatile__( "invlpg %0" : : "m" ( *( char * ) nVirtualAddress ) );
+}
+
+void	flush_tlb_global( void );			     /* Invalidate page table on all processors	*/
 
 int	realint( int num, struct RMREGS *rm );
 

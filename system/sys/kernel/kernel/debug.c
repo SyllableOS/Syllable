@@ -177,7 +177,7 @@ static bool g_bInitialized = false;
 #define ser_in( reg )       isa_readb( g_nPortBase + (reg) )
 
 
-SPIN_LOCK( g_sSPinLock, "dbg_slock" );
+SPIN_LOCK( g_sDebugSpinLock, "dbg_slock" );
 
 struct _DbgCmd
 {
@@ -408,9 +408,7 @@ static int write_packet( int nPort, const char *pBuffer, int nSize )
 
 void debug_write( const char *pBuffer, int nSize )
 {
-	int nFlg = cli();
-
-	spinlock( &g_sSPinLock );
+	int nFlg = spinlock_disable( &g_sDebugSpinLock );
 
 	dbcon_write( pBuffer, nSize );
 
@@ -422,16 +420,13 @@ void debug_write( const char *pBuffer, int nSize )
 		nSize -= nCurSize;
 		pBuffer += nCurSize;
 	}
-	spinunlock( &g_sSPinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sDebugSpinLock, nFlg );
 }
 
 int sys_debug_write( int nPort, const char *pBuffer, int nSize )
 {
 	int nError = nSize;
-	int nFlg = cli();
-
-	spinlock( &g_sSPinLock );
+	int nFlg = spinlock_disable( &g_sDebugSpinLock );
 
 	while ( nSize > 0 )
 	{
@@ -441,8 +436,7 @@ int sys_debug_write( int nPort, const char *pBuffer, int nSize )
 		nSize -= nCurSize;
 		pBuffer += nCurSize;
 	}
-	spinunlock( &g_sSPinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sDebugSpinLock, nFlg );
 	return ( nError );
 }
 
@@ -456,12 +450,10 @@ int sys_debug_read( int nPort, char *pBuffer, int nSize )
 		return ( -EINVAL );
 	}
 
-	nFlg = cli();
-	spinlock( &g_sSPinLock );
+	nFlg = spinlock_disable( &g_sDebugSpinLock );
 
 	nBytesRead = read_buffer( &g_asBuffers[nPort], pBuffer, nSize );
-	spinunlock( &g_sSPinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sDebugSpinLock, nFlg );
 	return ( nBytesRead );
 }
 
@@ -473,9 +465,7 @@ static void receive_serial_data( void )
 	static int nCurPos = 0;
 	static int nCRC = 0;
 	uint8 nChar;
-	int nFlg;
-
-	spinlock_cli( &g_sSPinLock, nFlg );
+	int nFlg = spinlock_disable( &g_sDebugSpinLock );
 
 	if ( g_bPlainTextDebug )
 	{
@@ -615,7 +605,7 @@ static void receive_serial_data( void )
 			}
 		}
 	}
-	spinunlock_restore( &g_sSPinLock, nFlg );
+	spinunlock_enable( &g_sDebugSpinLock, nFlg );
 }
 
 static int com2_irq( int nIrqNum, void *pData, SysCallRegs_s * psRegs )
@@ -856,9 +846,7 @@ static int debugger_thread( void *pData )
 
 void set_debug_port_params( int nBaudRate, int nPort, bool bPlainTextDebug )
 {
-	uint32 nFlg;
-
-	spinlock_cli( &g_sSPinLock, nFlg );
+	uint32 nFlg = spinlock_disable( &g_sDebugSpinLock );
 
 	if ( nBaudRate == 0 || nPort != g_nDebugPort )
 	{
@@ -914,7 +902,7 @@ void set_debug_port_params( int nBaudRate, int nPort, bool bPlainTextDebug )
 	g_nDebugBaudRate = nBaudRate;
 	g_bPlainTextDebug = bPlainTextDebug;
 
-	spinunlock_restore( &g_sSPinLock, nFlg );
+	spinunlock_enable( &g_sDebugSpinLock, nFlg );
 }
 
 static void dbg_port( int argc, char **argv )

@@ -1389,7 +1389,7 @@ int ymfpci_read( void *pNode, void *pCookie, off_t nPos, void *pBuffer, size_t n
 			   NOTHING we can do to prevent it. */
 			sleep_on_sem(dmabuf->wait, tmo);
 
-			if (is_signals_pending()) {
+			if (is_signal_pending()) {
 				if (!ret) ret = -ERESTARTSYS;
 				break;
 			}
@@ -1499,7 +1499,7 @@ int ymfpci_write( void *pNode, void *pCookie, off_t nPos, const void *pBuffer, s
 			}
 			spinunlock_restore(&device->reg_lock, flags);
 			sleep_on_sem(dmabuf->wait, INFINITE_TIMEOUT);
-			if (is_signals_pending()) {
+			if (is_signal_pending()) {
 				if (!ret) ret = -ERESTARTSYS;
 				break;
 			}

@@ -274,7 +274,7 @@ status_t send_msg_x( port_id hPort, uint32 nCode, const void *pBuffer, int nSize
 
 	if ( psPort == NULL )
 	{
-		printk( "Error: send_msg_x() attempt to send to invalide port %d\n", hPort );
+		printk( "Error: send_msg_x() attempt to send to invalid port %d\n", hPort );
 		nError = -EINVAL;
 		goto error;
 	}
@@ -322,7 +322,7 @@ status_t get_msg_x( port_id hPort, uint32 *pnCode, void *pBuffer, int nSize, big
 
 	if ( NULL == psPort )
 	{
-		printk( "Error: get_msg_x() attempt to receive message from invalide port %d\n", hPort );
+		printk( "Error: get_msg_x() attempt to receive message from invalid port %d\n", hPort );
 		nError = -EINVAL;
 		goto error1;
 	}

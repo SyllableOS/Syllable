@@ -293,15 +293,17 @@ void *kmalloc( size_t size, int priority )
 		//printk( "Error: kmalloc() attempt to alloc memory while holding %d cache blocks locked. Could may lead to deadlock\n", CURRENT_THREAD->tr_nNumLockedCacheBlocks );
 		//trace_stack( 0, NULL );
 	}
-	if ( size > PAGE_SIZE * 32 && ( priority & ( MEMF_NOBLOCK | MEMF_OKTOFAILHACK ) ) == 0 )
-	{
-		printk( "Warning: kmalloc() of oversized block (%d bytes). Could cause fragmentation problems\n", size );
-		trace_stack( 0, NULL );
-	}
 	/* Get order */
 	order = 0;
 	{
 		unsigned int realsize = size + sizeof( struct block_header );
+
+		// kmalloc() is inefficient for allocations >= 128K
+		if ( realsize > BLOCKSIZE( 12 ) )
+		{
+			printk( "Warning: kmalloc() of oversized block (%d bytes). Could cause fragmentation problems\n", size );
+			trace_stack( 0, NULL );
+		}
 
 		for ( ;; )
 		{
@@ -333,8 +335,7 @@ void *kmalloc( size_t size, int priority )
 
 /* Sanity check... */
 
-	flags = cli();
-	spinlock( &g_sMemSpinLock );
+	flags = spinlock_disable( &g_sMemSpinLock );
 	page = *pg;
 	if ( !page )
 		goto no_bucket_page;
@@ -351,8 +352,7 @@ void *kmalloc( size_t size, int priority )
 	if ( !page->nfree )
 		*pg = page->next;
 
-	spinunlock( &g_sMemSpinLock );
-	put_cpu_flags( flags );
+	spinunlock_enable( &g_sMemSpinLock, flags );
 	bucket->nmallocs++;
 	bucket->nbytesmalloced += size;
 	p->bh_flags = type;	/* As of now this block is officially in use */
@@ -371,8 +371,7 @@ void *kmalloc( size_t size, int priority )
 	 *
 	 * This can be done with ints on: it is private to this invocation
 	 */
-	spinunlock( &g_sMemSpinLock );
-	put_cpu_flags( flags );
+	spinunlock_enable( &g_sMemSpinLock, flags );
 
 	{
 		int i, sz;
@@ -409,8 +408,7 @@ void *kmalloc( size_t size, int priority )
 	 * Now we're going to muck with the "global" freelist
 	 * for this size: this should be uninterruptible
 	 */
-	cli();
-	spinlock( &g_sMemSpinLock );
+	flags = spinlock_disable( &g_sMemSpinLock );
 	page->next = *pg;
 	*pg = page;
 	goto found_it;
@@ -433,8 +431,7 @@ void *kmalloc( size_t size, int priority )
 
 
       not_free_on_freelist:
-	spinunlock( &g_sMemSpinLock );
-	put_cpu_flags( flags );
+	spinunlock_enable( &g_sMemSpinLock, flags );
 	printk( "Problem: block on freelist at %08lx isn't free.\n", ( long )p );
 	printk( "%p\n%p\n%p\n", __builtin_return_address( 0 ), __builtin_return_address( 1 ), __builtin_return_address( 2 ) );
 	return NULL;
@@ -474,8 +471,7 @@ int __kfree( void *__ptr )
 		goto bad_order;
 	}
 	ptr->bh_flags = MF_FREE;	/* As of now this block is officially free */
-	flags = cli();
-	spinlock( &g_sMemSpinLock );
+	flags = spinlock_disable( &g_sMemSpinLock );
 
 	atomic_sub( &g_sSysBase.ex_nKernelMemSize, ptr->bh_length );
 
@@ -515,8 +511,7 @@ int __kfree( void *__ptr )
 		free_kmalloc_pages( page, bucket->gfporder, dma );
 	}
 
-	spinunlock( &g_sMemSpinLock );
-	put_cpu_flags( flags );
+	spinunlock_enable( &g_sMemSpinLock, flags );
       null_kfree:
 	return ( 0 );
 
@@ -526,7 +521,6 @@ int __kfree( void *__ptr )
 
       not_on_freelist:
 	printk( "Ooops. page %p doesn't show on freelist.\n", page );
-	spinunlock( &g_sMemSpinLock );
-	put_cpu_flags( flags );
+	spinunlock_enable( &g_sMemSpinLock, flags );
 	return ( -EINVAL );
 }

@@ -27,6 +27,7 @@
 
 #ifdef __BUILD_KERNEL__
 #include "inc/smp.h"
+#include "inc/intel.h"
 #else
 #include <atheos/smp.h>
 #endif
@@ -64,7 +65,6 @@ extern inline void spinlock_init( SpinLock_s* psLock, const char* pzName )
 extern inline int spinlock( SpinLock_s* psLock )
 {
     int	nProcID = get_processor_id();
-    int   nError = 0;
 
 #ifdef DEBUG_SPINLOCKS  
     kassertw( (get_cpu_flags() & EFLG_IF) == 0 );
@@ -82,18 +82,18 @@ extern inline int spinlock( SpinLock_s* psLock )
     }
     psLock->sl_nProc = nProcID;
     atomic_inc( &psLock->sl_nNest );
-    if ( atomic_read(&psLock->sl_nNest) > 50 ) {
-	return( -1 );
-    }
-    return( nError );
+#ifdef DEBUG_SPINLOCKS
+    kassertw( atomic_read( &psLock->sl_nNest ) == 1 );
+#endif
+    return( 0 );
 }
 
 extern inline void spinunlock( SpinLock_s* psLock )
 {
 #ifdef DEBUG_SPINLOCKS  
-  kassertw( psLock->sl_nLocked >= 1 );
+  kassertw( atomic_read( &psLock->sl_nLocked ) >= 1 );
   kassertw( psLock->sl_nProc == get_processor_id() );
-  kassertw( psLock->sl_nNest > 0 );
+  kassertw( atomic_read( &psLock->sl_nNest ) > 0 );
   kassertw( (get_cpu_flags() & EFLG_IF) == 0 );
 #endif /* DEBUG_SPINLOCKS */
   
@@ -102,6 +102,35 @@ extern inline void spinunlock( SpinLock_s* psLock )
     psLock->sl_nProc = -1;
     atomic_set( &psLock->sl_nLocked, 0 );
   }
+}
+
+/*
+ * Try to get the lock.
+ * Returns 0 on success, -1 on failure.
+ */
+static inline int spin_trylock( SpinLock_s* psLock )
+{
+	int nProcID = get_processor_id();
+
+#ifdef DEBUG_SPINLOCKS
+	kassertw( ( get_cpu_flags() & EFLG_IF ) == 0 );
+#endif
+
+	if ( atomic_swap( &psLock->sl_nLocked, 1 ) == 1 )
+	{
+		if ( psLock->sl_nProc == nProcID )
+		{
+			atomic_inc( &psLock->sl_nNest );
+			return( 0 );
+		}
+		else
+		{
+			return( -1 );
+		}
+	}
+	psLock->sl_nProc = nProcID;
+	atomic_inc( &psLock->sl_nNest );
+	return( 0 );
 }
 
 static inline int spinlock_disable( SpinLock_s* psLock )

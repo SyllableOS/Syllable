@@ -101,7 +101,7 @@ int get_signal_mode( int nSigNum );
 
 int	sys_kill( const thread_id hThread, const int nSigNum );
 int	sys_sigaction( const int nSigNum, const struct sigaction * const psAction, struct sigaction * const psOldAct );
-int	is_signals_pending( void );
+int	is_signal_pending( void );
 void	send_alarm_signals( bigtime_t nCurTime );
 
 int	raise(int _sig);

@@ -29,41 +29,42 @@
 	.global	_C_SYM( exc3 )
 	.global	_C_SYM( exc4 )
 	.global	_C_SYM( exc5 )
-	.global	_C_SYM( exc7 )
 	.global	_C_SYM( exc8 )
 	.global	_C_SYM( exc9 )
 	.global	_C_SYM( exca )
 	.global	_C_SYM( excb )
 	.global	_C_SYM( excc )
+	.global _C_SYM( exc11 )
+	.global _C_SYM( exc12 )
 
 	.global	_C_SYM( irq0 )
 
 	.global	_C_SYM( SwitchCont )
 
 
-	.global	_C_SYM( ReadFlags )
+#	.global	_C_SYM( ReadFlags )
 
 
-	.global	_C_SYM( SetTR )
-	.global	_C_SYM( SetIDT )
-	.global	_C_SYM( SetLDT )
-	.global	_C_SYM( SetGDT )
+#	.global	_C_SYM( SetTR )
+#	.global	_C_SYM( SetIDT )
+#	.global	_C_SYM( SetLDT )
+#	.global	_C_SYM( SetGDT )
 
 
-	.global	_C_SYM( set_page_directory_base_reg )
-	.global	_C_SYM( enable_mmu )
-	.global	_C_SYM( disable_mmu )
+#	.global	_C_SYM( set_page_directory_base_reg )
+#	.global	_C_SYM( enable_mmu )
+#	.global	_C_SYM( disable_mmu )
 
 
-	.global	_C_SYM( _GETDS )
-	.global	_C_SYM( save_fpu_state )
-	.global	_C_SYM( load_fpu_state )
+#	.global	_C_SYM( _GETDS )
+#	.global	_C_SYM( save_fpu_state )
+#	.global	_C_SYM( load_fpu_state )
 
-	.global	_C_SYM( flush_tlb )
-	.global	_C_SYM( flush_tlb_page )
+#	.global	_C_SYM( flush_tlb )
+#	.global	_C_SYM( flush_tlb_page )
 
-	.global _C_SYM( GetFlags )
-	.global _C_SYM( PutFlags )
+#	.global _C_SYM( GetFlags )
+#	.global _C_SYM( PutFlags )
 
 	.global	_C_SYM( put_cpu_flags )
 	.global	_C_SYM( get_cpu_flags )
@@ -76,13 +77,13 @@
 #	.global	_C_SYM( atomic_add )
 #	.global	_C_SYM( atomic_swap )
 
-	.global	isa_readb
-	.global	isa_readw
-	.global	isa_readl
+#	.global	isa_readb
+#	.global	isa_readw
+#	.global	isa_readl
 	
-	.global	isa_writeb
-	.global	isa_writew
-	.global	isa_writel
+#	.global	isa_writeb
+#	.global	isa_writew
+#	.global	isa_writel
 	
 
 _start:
@@ -90,7 +91,8 @@ _start:
 	cmpl	$0x2BADB002,%eax
 	je	multiboot
 	movl	%cr0,%eax
-	andb	$0xf9,%al	# clear EM and PM flags
+	andb	$0xfb,%al	# clear EM flag
+	orb	$0x22,%al	# set NE and MP flags
 	movl	%eax,%cr0
 
 	movl	%esp,%eax
@@ -103,7 +105,8 @@ _start:
 	call	_C_SYM( init_kernel )
 multiboot:
 	movl	%cr0,%eax
-	andb	$0xf9,%al	# clear EM and PM flags
+	andb	$0xfb,%al	# clear EM flag
+	orb	$0x22,%al	# set NE and MP flags
 	movl	%eax,%cr0
 	movl	$g_anKernelStackEnd,%esp
 
@@ -191,12 +194,6 @@ _C_SYM( exc5 ):
 	pushl	$0	# pseudo error code
 	pushl	$0x05
 	jmp	exc
-_C_SYM( exc7 ):
-	clts
-	iret
-
-	pushl	$0x07
-	jmp	exc
 _C_SYM( exc8 ):
 	pushl	$0x08
 	jmp	exc
@@ -212,6 +209,13 @@ _C_SYM( excb ):
 	jmp	exc
 _C_SYM( excc ):
 	pushl	$0x0c
+	jmp	exc
+_C_SYM( exc11 ):
+	pushl	$0x11
+	jmp	exc
+_C_SYM( exc12 ):
+	pushl	$0	# pseudo error code
+	pushl	$0x12
 	jmp	exc
 _C_SYM( unexp ):                                  # Unexpected interrupt
 	push	$0	# pseudo error code
@@ -300,50 +304,50 @@ _C_SYM( sti ):
 .Lfe_sti:
 	.size	 sti,.Lfe_sti - sti
 	
-_C_SYM( LoadTaskReg ):
-	mov	4(%esp),%ax
-	ltr	%ax
-	ret
+#_C_SYM( LoadTaskReg ):
+#	mov	4(%esp),%ax
+#	ltr	%ax
+#	ret
 
 _C_SYM( SwitchCont ):
 	ljmp	*(%esp)
 	ret
 
-_C_SYM( SetTR ):
-	mov	4(%esp),%eax
-	ltr	%ax
-	ret
+#_C_SYM( SetTR ):
+#	mov	4(%esp),%eax
+#	ltr	%ax
+#	ret
 
-_C_SYM( SetIDT ):
-	mov	4(%esp),%eax
-	lidt	(%eax)
-	ret
-_C_SYM( SetGDT ):
-	mov	4(%esp),%eax
-	lgdt	(%eax)
-	ret
-_C_SYM( SetLDT ):
-	mov	4(%esp),%eax
-	lldt	(%eax)
-	ret
-_C_SYM( set_page_directory_base_reg ):
-	movl	4(%esp),%eax
-	movl	%eax,%cr3
-	ret
-_C_SYM( enable_mmu ):
-	pushl	%eax
-	movl	%cr0,%eax
-	orl	$0x80010000,%eax	# set PG & WP bit in cr0
-	movl	%eax,%cr0
-	popl	%eax
-	ret
-_C_SYM( disable_mmu ):
-	pushl	%eax
-	mov	%cr0,%eax
-	and	$0x7FFeFFFF,%eax	# clr PG & WP bit in cr0
-	mov	%eax,%cr0
-	popl	%eax
-	ret
+#_C_SYM( SetIDT ):
+#	mov	4(%esp),%eax
+#	lidt	(%eax)
+#	ret
+#_C_SYM( SetGDT ):
+#	mov	4(%esp),%eax
+#	lgdt	(%eax)
+#	ret
+#_C_SYM( SetLDT ):
+#	mov	4(%esp),%eax
+#	lldt	(%eax)
+#	ret
+#_C_SYM( set_page_directory_base_reg )
+#	movl	4(%esp),%eax
+#	movl	%eax,%cr3
+#	ret
+#_C_SYM( enable_mmu ):
+#	pushl	%eax
+#	movl	%cr0,%eax
+#	orl	$0x80010000,%eax	# set PG & WP bit in cr0
+#	movl	%eax,%cr0
+#	popl	%eax
+#	ret
+#_C_SYM( disable_mmu ):
+#	pushl	%eax
+#	mov	%cr0,%eax
+#	and	$0x7FFeFFFF,%eax	# clr PG & WP bit in cr0
+#	mov	%eax,%cr0
+#	popl	%eax
+#	ret
 
 
 _C_SYM( _GETDS ):
@@ -356,29 +360,29 @@ _C_SYM( _GETDS ):
 	pushl	$0x20
 	popl	%ds
 	ret
-_C_SYM( save_fpu_state ):
-	mov	4(%esp),%eax
-	fsave	(%eax)
-	ret
-_C_SYM( load_fpu_state ):
-	mov	4(%esp),%eax
-	frstor	(%eax)
-	ret
-_C_SYM( flush_tlb ):
-	pushl	%eax
-	movl	%cr3,%eax
-	movl	%eax,%cr3
-	popl	%eax
-	ret
-_C_SYM( flush_tlb_page ):
-	pushl	 %ebp
-	movl	 %esp,%ebp
-	pushl	 %ebx
-	movl	 8(%ebp),%ebx	# address
-	invlpg	 (%ebx)
-	popl	 %ebx
-	popl	 %ebp
-	ret
+#_C_SYM( save_fpu_state ):
+#	mov	4(%esp),%eax
+#	fsave	(%eax)
+#	ret
+#_C_SYM( load_fpu_state ):
+#	mov	4(%esp),%eax
+#	frstor	(%eax)
+#	ret
+#_C_SYM( flush_tlb ):
+#	pushl	%eax
+#	movl	%cr3,%eax
+#	movl	%eax,%cr3
+#	popl	%eax
+#	ret
+#_C_SYM( flush_tlb_page ):
+#	pushl	 %ebp
+#	movl	 %esp,%ebp
+#	pushl	 %ebx
+#	movl	 8(%ebp),%ebx	# address
+#	invlpg	 (%ebx)
+#	popl	 %ebx
+#	popl	 %ebp
+#	ret
 	
 #_C_SYM( atomic_add ):
 #	.type	 atomic_add,@function
@@ -434,77 +438,77 @@ _C_SYM( flush_tlb_page ):
 #.Lfe_atomic_swap:
 #	.size	 atomic_swap,.Lfe_atomic_swap - atomic_swap
 
-isa_readb:
-	pushl	%ebp
-	movl	%esp,%ebp
-	push	%edx
-	movl	8(%ebp),%edx
-	xorl	%eax,%eax
-	inb	%dx,%al
-	pop	%edx
-	pop	%ebp
-	ret
+#isa_readb:
+#	pushl	%ebp
+#	movl	%esp,%ebp
+#	push	%edx
+#	movl	8(%ebp),%edx
+#	xorl	%eax,%eax
+#	inb	%dx,%al
+#	pop	%edx
+#	pop	%ebp
+#	ret
 
-isa_readw:
-	pushl	%ebp
-	movl	%esp,%ebp
-	push	%edx
-	movl	8(%ebp),%edx
-	xorl	%eax,%eax
-	inw	%dx,%ax
-	pop	%edx
-	pop	%ebp
-	ret
+#isa_readw:
+#	pushl	%ebp
+#	movl	%esp,%ebp
+#	push	%edx
+#	movl	8(%ebp),%edx
+#	xorl	%eax,%eax
+#	inw	%dx,%ax
+#	pop	%edx
+#	pop	%ebp
+#	ret
 
-isa_readl:
-	pushl	%ebp
-	movl	%esp,%ebp
-	push	%edx
-	movl	8(%ebp),%edx
-	xorl	%eax,%eax
-	inl	%dx,%eax
-	pop	%edx
-	pop	%ebp
-	ret
+#isa_readl:
+#	pushl	%ebp
+#	movl	%esp,%ebp
+#	push	%edx
+#	movl	8(%ebp),%edx
+#	xorl	%eax,%eax
+#	inl	%dx,%eax
+#	pop	%edx
+#	pop	%ebp
+#	ret
 
-isa_writeb:
-	pushl	%ebp
-	movl	%esp,%ebp
-	pushl	%eax
-	pushl	%edx
-	movl	8(%ebp),%edx	# Port address
-	movl	12(%ebp),%eax	# Value
-	outb	%al,%dx
-	popl	%edx
-	popl	%eax
-	popl	%ebp
-	ret
+#isa_writeb:
+#	pushl	%ebp
+#	movl	%esp,%ebp
+#	pushl	%eax
+#	pushl	%edx
+#	movl	8(%ebp),%edx	# Port address
+#	movl	12(%ebp),%eax	# Value
+#	outb	%al,%dx
+#	popl	%edx
+#	popl	%eax
+#	popl	%ebp
+#	ret
 
-isa_writew:
-	pushl	%ebp
-	movl	%esp,%ebp
-	pushl	%eax
-	pushl	%edx
-	movl	8(%ebp),%edx	# Port address
-	movl	12(%ebp),%eax	# Value
-	outw	%ax,%dx
-	popl	%edx
-	popl	%eax
-	popl	%ebp
-	ret
+#isa_writew:
+#	pushl	%ebp
+#	movl	%esp,%ebp
+#	pushl	%eax
+#	pushl	%edx
+#	movl	8(%ebp),%edx	# Port address
+#	movl	12(%ebp),%eax	# Value
+#	outw	%ax,%dx
+#	popl	%edx
+#	popl	%eax
+#	popl	%ebp
+#	ret
 
-isa_writel:
-	pushl	%ebp
-	movl	%esp,%ebp
-	pushl	%eax
-	pushl	%edx
-	movl	8(%ebp),%edx	# Port address
-	movl	12(%ebp),%eax	# Value
-	outl	%eax,%dx
-	popl	%edx
-	popl	%eax
-	popl	%ebp
-	ret
+#isa_writel:
+#	pushl	%ebp
+#	movl	%esp,%ebp
+#	pushl	%eax
+#	pushl	%edx
+#	movl	8(%ebp),%edx	# Port address
+#	movl	12(%ebp),%eax	# Value
+#	outl	%eax,%dx
+#	popl	%edx
+#	popl	%eax
+#	popl	%ebp
+#	ret
 
 .bss
 g_KernelStack:

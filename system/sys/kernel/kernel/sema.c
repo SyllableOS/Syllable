@@ -49,11 +49,11 @@ static int g_nDeadLockDetectRun = 1;
 
 //static int    g_nSemListSpinLock = 0;
 
-//SPIN_LOCK( g_sSemListSpinLock, "semlist_slock" );
+SPIN_LOCK( g_sSemListSpinLock, "semlist_slock" );
 
-extern SpinLock_s g_sSchedSpinLock;
+//extern SpinLock_s g_sSchedSpinLock;
 
-#define g_sSemListSpinLock g_sSchedSpinLock
+//#define g_sSemListSpinLock g_sSchedSpinLock
 
 void dump_semaphore( Semaphore_s *psSema, bool bShort );
 
@@ -147,8 +147,7 @@ SemContext_s *clone_semaphore_context( SemContext_s * psOrig, proc_id hNewOwner 
 	}
 
       retry:
-	nFlg = cli();
-	spinlock( &g_sSemListSpinLock );
+	nFlg = spinlock_disable( &g_sSemListSpinLock );
 
 	psCtx->sc_nLastID = psOrig->sc_nLastID;
 	psCtx->sc_nAllocCount = psOrig->sc_nAllocCount;
@@ -184,8 +183,7 @@ SemContext_s *clone_semaphore_context( SemContext_s * psOrig, proc_id hNewOwner 
 		}
 	}
       error:
-	spinunlock( &g_sSemListSpinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 	if ( nError < 0 )
 	{
@@ -263,7 +261,7 @@ static status_t expand_sem_context( SemContext_s * psCtx )
  * kernel semaphore context (if bKernel), or the current process semaphore
  * context (otherwise).
  *
- * This function may only be called while the scheduler lock is held.
+ * This function may only be called while the semaphore list lock is held.
  *
  * \return The new semaphore id is returned, combined with the appropriate
  * type bits.  If an error occurs the result will be a negated errno error
@@ -353,9 +351,9 @@ static void remove_semaphore( sem_id hSema )
 /**
  * \par Description:
  * Returns a pointer to the semaphore structure for the id hSema.
- * This function must only be executed while the scheduler/semaphore
- * list lock is held.  The pointer returned is only valid while that
- * lock is still held.
+ * This function must only be executed while the semaphore list lock
+ * is held.  The pointer returned is only valid while that lock
+ * is still held.
  */
 Semaphore_s *get_semaphore_by_handle( proc_id hProcess, sem_id hSema )
 {
@@ -403,6 +401,7 @@ Semaphore_s *get_semaphore_by_handle( proc_id hProcess, sem_id hSema )
 
 /** Create a semaphore.
  * \ingroup DriverAPI
+ * \ingroup SysCalls
  * \par Description:
  *	Create a kernel semaphore. Since AtheOS is heavily
  *	multithreaded semaphores are a frequently used object both in
@@ -504,13 +503,11 @@ static sem_id do_create_semaphore( bool bKernel, const char *pzName, int nCount,
 
 	/* Try to insert into the appropriate semaphore context */
       again:
-	nFlg = cli();
-	spinlock( &g_sSemListSpinLock );
+	nFlg = spinlock_disable( &g_sSemListSpinLock );
 
 	psSema->ss_hSemaID = add_semaphore( bKernel, psSema, ( nFlags & SEM_GLOBAL ) != 0 );
 
-	spinunlock( &g_sSemListSpinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 	/* If there was not enough memory to expand the current context,
 	 * shrink caches and try again.
@@ -575,9 +572,7 @@ sem_id sys_create_semaphore( const char *pzName, int nCount, int nFlags )
 	{
 		Process_s *psProc = CURRENT_PROC;
 		Semaphore_s *psSema;
-		int nFlg = cli();
-
-		spinlock( &g_sSemListSpinLock );
+		int nFlg = spinlock_disable( &g_sSemListSpinLock );
 
 		psSema = get_semaphore_by_handle( -1, hSema );
 
@@ -596,8 +591,7 @@ sem_id sys_create_semaphore( const char *pzName, int nCount, int nFlags )
 			psProc->pr_psLastSema = psSema;
 			psProc->pr_nSemaCount++;
 		}
-		spinunlock( &g_sSemListSpinLock );
-		put_cpu_flags( nFlg );
+		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 	}
 
 	return ( hSema );
@@ -610,7 +604,7 @@ sem_id sys_create_semaphore( const char *pzName, int nCount, int nFlags )
 static status_t do_delete_semaphore( sem_id hSema )
 {
 	Semaphore_s *psSema;
-	int nFlg = cli();
+	int nFlg;
 
 	if ( 0 == hSema )
 	{
@@ -618,14 +612,13 @@ static status_t do_delete_semaphore( sem_id hSema )
 		return ( -EINVAL );
 	}
 
-	spinlock( &g_sSemListSpinLock );
+	nFlg = spinlock_disable( &g_sSemListSpinLock );
 	psSema = get_semaphore_by_handle( -1, hSema );
 	if ( psSema != NULL )
 	{
 		remove_semaphore( hSema );
 	}
-	spinunlock( &g_sSemListSpinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 	if ( psSema != NULL )
 	{
@@ -669,6 +662,7 @@ static status_t do_delete_semaphore( sem_id hSema )
 
 /** Delete a kernel semaphore.
  * \ingroup DriverAPI
+ * \ingroup SysCalls
  * \par Description:
  *	Delete a semaphore previously created with create_semaphore().
  *	Resources consumed by the semaphore will be released and
@@ -743,7 +737,7 @@ status_t sys_delete_semaphore( sem_id hSema )
 {
 	Process_s *psProc = CURRENT_PROC;
 	Semaphore_s *psSema;
-	int nFlg = cli();
+	int nFlg;
 
 	if ( ( hSema & SEM_TYPE_MASK ) == SEMTYPE_KERNEL )
 	{
@@ -751,31 +745,28 @@ status_t sys_delete_semaphore( sem_id hSema )
 		return ( -EINVAL );
 	}
 
-	spinlock( &g_sSemListSpinLock );
+	nFlg = spinlock_disable( &g_sSemListSpinLock );
 
 	psSema = get_semaphore_by_handle( -1, hSema );
 
 	if ( psSema == NULL )
 	{
 		printk( "Error : attempt to delete invalid semaphore %d\n", hSema );
-		spinunlock( &g_sSemListSpinLock );
-		put_cpu_flags( nFlg );
+		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 		return ( -EINVAL );
 	}
 
 	if ( psProc->tc_hProcID != psSema->ss_hOwner )
 	{
 		printk( "Error: sys_delete_semaphore() attempt to delete semaphore %s not owned by us\n", psSema->ss_zName );
-		spinunlock( &g_sSemListSpinLock );
-		put_cpu_flags( nFlg );
+		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 		return ( -EPERM );
 	}
 	if ( ( hSema & SEM_TYPE_MASK ) == SEMTYPE_GLOBAL )
 	{
 		unlink_sema( psProc, psSema );
 	}
-	spinunlock( &g_sSemListSpinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 	return ( do_delete_semaphore( hSema ) );
 }
@@ -793,17 +784,16 @@ void exit_free_semaphores( Process_s *psProc )
 
 	while ( psProc->pr_psFirstSema != NULL )
 	{
-		int nFlg = cli();
+		int nFlg;
 		Semaphore_s *psSema;
 		sem_id hSema;
 
-		spinlock( &g_sSemListSpinLock );
+		nFlg = spinlock_disable( &g_sSemListSpinLock );
 		psSema = psProc->pr_psFirstSema;
 		hSema = psSema->ss_hSemaID;
 		unlink_sema( psProc, psSema );
 
-		spinunlock( &g_sSemListSpinLock );
-		put_cpu_flags( nFlg );
+		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 		do_delete_semaphore( hSema );
 	}
@@ -834,17 +824,16 @@ void exec_free_semaphores( Process_s *psProc )
 
 	while ( psProc->pr_psFirstSema != NULL )
 	{
-		int nFlg = cli();
+		int nFlg;
 		Semaphore_s *psSema;
 		sem_id hSema;
 
-		spinlock( &g_sSemListSpinLock );
+		nFlg = spinlock_disable( &g_sSemListSpinLock );
 		psSema = psProc->pr_psFirstSema;
 		hSema = psSema->ss_hSemaID;
 		unlink_sema( psProc, psSema );
 
-		spinunlock( &g_sSemListSpinLock );
-		put_cpu_flags( nFlg );
+		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 		do_delete_semaphore( hSema );
 	}
@@ -1185,12 +1174,11 @@ static status_t do_lock_semaphore_ex( bool bKernel, sem_id hSema, int nCount, ui
 		return ( -EINVAL );
 	}
 
-	nFlg = cli();
-	spinlock( &g_sSemListSpinLock );
+	nFlg = spinlock_disable( &g_sSemListSpinLock );
 
-	if ( atomic_read(&g_sSchedSpinLock.sl_nNest) != 1 )
+	if ( atomic_read(&g_sSemListSpinLock.sl_nNest) != 1 )
 	{
-		printk( "Panic: do_lock_semaphore_ex() spinlock nest count is %d, dumping call-stack...\n", atomic_read(&g_sSchedSpinLock.sl_nNest) );
+		printk( "Panic: do_lock_semaphore_ex() spinlock nest count is %d, dumping call-stack...\n", atomic_read(&g_sSemListSpinLock.sl_nNest) );
 		bDumpStack = true;
 	}
 
@@ -1283,13 +1271,11 @@ static status_t do_lock_semaphore_ex( bool bKernel, sem_id hSema, int nCount, ui
 			}
 			add_to_waitlist( &psSema->ss_psWaitQueue, &sWaitNode );
 
-			spinunlock( &g_sSemListSpinLock );
-			put_cpu_flags( nFlg );
+			spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 			Schedule();
 
-			nFlg = cli();
-			spinlock( &g_sSemListSpinLock );
+			nFlg = spinlock_disable( &g_sSemListSpinLock );
 
 			if ( INFINITE_TIMEOUT != nTimeOut )
 			{
@@ -1311,7 +1297,7 @@ static status_t do_lock_semaphore_ex( bool bKernel, sem_id hSema, int nCount, ui
 			nRestDelay = nResumeTime - get_system_time();
 			psMyThread->tr_hBlockSema = -1;
 
-			if ( ( nFlags & SEM_NOSIG ) == 0 && is_signals_pending() )
+			if ( ( nFlags & SEM_NOSIG ) == 0 && is_signal_pending() )
 			{
 				nError = -EINTR;
 			}
@@ -1324,8 +1310,7 @@ static status_t do_lock_semaphore_ex( bool bKernel, sem_id hSema, int nCount, ui
 			break;
 		}
 	}
-	spinunlock( &g_sSemListSpinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 //    if ( bDumpStack ) {
 //      trace_stack( 0, NULL );
@@ -1335,6 +1320,7 @@ static status_t do_lock_semaphore_ex( bool bKernel, sem_id hSema, int nCount, ui
 
 /** Acquire a semaphore.
  * \ingroup DriverAPI
+ * \ingroup SysCalls
  * \par Description:
  *	Acquire a semaphore. lock_semaphore_ex() will decrease the
  *	semaphore's nesting counter with "nCount".
@@ -1438,16 +1424,14 @@ status_t lock_mutex( sem_id hSema, bool bIgnoreSignals )
 		return ( -EINVAL );
 	}
 
-	nFlg = cli();
-	spinlock( &g_sSemListSpinLock );
+	nFlg = spinlock_disable( &g_sSemListSpinLock );
 	psSema = get_semaphore_by_handle( -1, hSema );
 
 	if ( ( psSema->ss_nFlags & SEM_STYLE_MASK ) != SEMSTYLE_COUNTING )
 	{
 		kerndbg( KERN_DEBUG, __FUNCTION__ "(): Incorrect semaphore style.\n" );
 
-		spinunlock( &g_sSemListSpinLock );
-		put_cpu_flags( nFlg );
+		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 		return ( -EINVAL );
 	}
@@ -1462,13 +1446,11 @@ status_t lock_mutex( sem_id hSema, bool bIgnoreSignals )
 
 		add_to_waitlist( &psSema->ss_psWaitQueue, &sWaitNode );
 
-		spinunlock( &g_sSemListSpinLock );
-		put_cpu_flags( nFlg );
+		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 		Schedule();
 
-		nFlg = cli();
-		spinlock( &g_sSemListSpinLock );
+		nFlg = spinlock_disable( &g_sSemListSpinLock );
 
 	  /*** We must make sure nobody deleted the semaphore while we snoozed! ***/
 
@@ -1484,7 +1466,7 @@ status_t lock_mutex( sem_id hSema, bool bIgnoreSignals )
 
 		psMyThread->tr_hBlockSema = -1;
 
-		if ( bIgnoreSignals == false && is_signals_pending() )
+		if ( bIgnoreSignals == false && is_signal_pending() )
 		{
 			nError = -EINTR;
 			break;
@@ -1501,8 +1483,7 @@ status_t lock_mutex( sem_id hSema, bool bIgnoreSignals )
 	{
 		psSema->ss_lNestCount--;
 	}
-	spinunlock( &g_sSemListSpinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 	return ( nError );
 }
 
@@ -1524,14 +1505,12 @@ status_t unlock_mutex( sem_id hSema )
 		return ( -EINVAL );
 	}
 
-	nFlg = cli();
-	spinlock( &g_sSemListSpinLock );
+	nFlg = spinlock_disable( &g_sSemListSpinLock );
 
 	psSema = get_semaphore_by_handle( -1, hSema );
 	if ( psSema == NULL )
 	{
-		spinunlock( &g_sSemListSpinLock );
-		put_cpu_flags( nFlg );
+		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 		printk( "Error : ReleaseSemaphore() called with invalid semaphore %d!!\n", hSema );
 		return ( -EINVAL );
 	}
@@ -1540,8 +1519,7 @@ status_t unlock_mutex( sem_id hSema )
 	{
 		kerndbg( KERN_DEBUG, __FUNCTION__ "(): Incorrect semaphore style.\n" );
 
-		spinunlock( &g_sSemListSpinLock );
-		put_cpu_flags( nFlg );
+		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 		return ( -EINVAL );
 	}
@@ -1553,14 +1531,14 @@ status_t unlock_mutex( sem_id hSema )
 		psSema->ss_hHolder = -1;
 		wake_up_queue( psSema->ss_psWaitQueue, 0, false );
 	}
-	spinunlock( &g_sSemListSpinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 	return ( 0 );
 }
 
 /** Lock a semaphore.
  * \ingroup DriverAPI
+ * \ingroup SysCalls
  * \par Description:
  *	Locks a semaphore. Equivalent of calling lock_semaphore_ex()
  *	with a count of 1.
@@ -1665,11 +1643,6 @@ status_t sys_raw_lock_semaphore_x( sem_id hSema, int nCount, uint32 nFlags, cons
  * SEE ALSO:
  ****************************************************************************/
 
-status_t LockSemaphore( sem_id hSema, uint32 nFlags, uint64 nTimeOut )
-{
-	return ( lock_semaphore( hSema, nFlags, nTimeOut ) );
-}
-
 static status_t do_unlock_semaphore_ex( bool bKernel, sem_id hSema, int nCount )
 {
 	Thread_s *psThread = CURRENT_THREAD;
@@ -1682,14 +1655,12 @@ static status_t do_unlock_semaphore_ex( bool bKernel, sem_id hSema, int nCount )
 		return ( -EINVAL );
 	}
 
-	nFlg = cli();
-	spinlock( &g_sSemListSpinLock );
+	nFlg = spinlock_disable( &g_sSemListSpinLock );
 
 	psSema = get_semaphore_by_handle( -1, hSema );
 	if ( psSema == NULL )
 	{
-		spinunlock( &g_sSemListSpinLock );
-		put_cpu_flags( nFlg );
+		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 		kerndbg( KERN_DEBUG, __FUNCTION__ "(): Called with invalid semaphore %d!\n", hSema );
 
@@ -1700,8 +1671,7 @@ static status_t do_unlock_semaphore_ex( bool bKernel, sem_id hSema, int nCount )
 	{
 		kerndbg( KERN_DEBUG, __FUNCTION__ "(): Incorrect semaphore style.\n" );
 
-		spinunlock( &g_sSemListSpinLock );
-		put_cpu_flags( nFlg );
+		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 		return ( -EINVAL );
 	}
@@ -1746,13 +1716,13 @@ static status_t do_unlock_semaphore_ex( bool bKernel, sem_id hSema, int nCount )
 #endif // __DETECT_DEADLOCK
 		wake_up_queue( psSema->ss_psWaitQueue, 0, nCount > 1 );
 	}
-	spinunlock( &g_sSemListSpinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 	return ( 0 );
 }
 
 /** Release a semaphore.
  * \ingroup DriverAPI
+ * \ingroup SysCalls
  * \par Description:
  *	Release a semaphore "nCount" number of times. The value of "nCount"
  *	will be added to the semaphores nesting counter and if the counter
@@ -1789,6 +1759,7 @@ status_t unlock_semaphore_ex( sem_id hSema, int nCount )
 
 /** Release a semaphore.
  * \ingroup DriverAPI
+ * \ingroup SysCalls
  * \par Description:
  *	Same as unlock_semaphore_x() with a count of 1.
  * \sa unlock_semaphore_x()
@@ -1853,8 +1824,7 @@ status_t unlock_and_suspend( sem_id hWaitQueue, sem_id hSema )
 
 	sWaitNode.wq_hThread = psThread->tr_hThreadID;
 
-	nFlg = cli();
-	spinlock( &g_sSemListSpinLock );
+	nFlg = spinlock_disable( &g_sSemListSpinLock );
 
 	psWaitQueue = get_semaphore_by_handle( -1, hWaitQueue );
 	if ( psWaitQueue == NULL )
@@ -1909,15 +1879,13 @@ status_t unlock_and_suspend( sem_id hWaitQueue, sem_id hSema )
 
 	Schedule();
 
-	nFlg = cli();
-	spinlock( &g_sSemListSpinLock );
+	nFlg = spinlock_disable( &g_sSemListSpinLock );
 
 	remove_from_waitlist( &psWaitQueue->ss_psWaitQueue, &sWaitNode );
 
-	spinunlock( &g_sSemListSpinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
-	if ( nError == 0 && is_signals_pending() )
+	if ( nError == 0 && is_signal_pending() )
 	{
 		return ( -EINTR );
 	}
@@ -1926,8 +1894,7 @@ status_t unlock_and_suspend( sem_id hWaitQueue, sem_id hSema )
 		return ( nError );
 	}
       error:
-	spinunlock( &g_sSemListSpinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 	return ( nError );
 }
 
@@ -1946,30 +1913,19 @@ status_t unlock_and_suspend( sem_id hWaitQueue, sem_id hSema )
  *	This function can only be called from the kernel, or from device
  *	drivers. From user-space you should use unlock_and_suspend()
  * \par Warning:
- * \param hWaitQueue
- *	Handle to the wait-queue to block on (created earlier with
- *	create_semaphore()).
- * \param psLock
- *	Spinlock to release.
- * \param nCPUFlags
- * 	The CPU flags to restore before returning.
- * \param nTimeOut
- *	Maximum number of microseconds to wait for someone to wake us
- *	up before ETIME is returned.
+ * \param
  * \return
- *	On success 0 is returned.
- *	On error a negative error code is returned.
  * \sa unlock_and_suspend()
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-status_t spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s * psLock, uint32 nCPUFlags, bigtime_t nTimeOut )
+status_t spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s * psLock, uint32 nCPUFlags, bigtime_t nTimeout )
 {
 	Semaphore_s *psWaitQueue;
 	Thread_s *psThread = CURRENT_THREAD;
 	WaitQueue_s sWaitNode;
 	WaitQueue_s sSleepNode;
-	bigtime_t nResumeTime = get_system_time() + nTimeOut;
+	bigtime_t nResumeTime = get_system_time() + nTimeout;
 	int nError;
 
 	sWaitNode.wq_hThread = psThread->tr_hThreadID;
@@ -1998,7 +1954,7 @@ status_t spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s * psLock, uint32 
 
 	psThread->tr_hBlockSema = hWaitQueue;
 
-	if ( nTimeOut == INFINITE_TIMEOUT )
+	if ( nTimeout == INFINITE_TIMEOUT )
 	{
 		psThread->tr_nState = TS_WAIT;
 	}
@@ -2032,7 +1988,7 @@ status_t spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s * psLock, uint32 
 	cli();
 	spinlock( &g_sSemListSpinLock );
 
-	if ( INFINITE_TIMEOUT != nTimeOut )
+	if ( INFINITE_TIMEOUT != nTimeout )
 	{
 		remove_from_sleeplist( &sSleepNode );
 	}
@@ -2050,11 +2006,11 @@ status_t spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s * psLock, uint32 
 	spinunlock( &g_sSemListSpinLock );
 	put_cpu_flags( nCPUFlags );
 
-	if ( is_signals_pending() )
+	if ( is_signal_pending() )
 	{
 		return ( -EINTR );
 	}
-	else if ( nTimeOut != INFINITE_TIMEOUT && get_system_time() > nResumeTime )
+	else if ( nTimeout != INFINITE_TIMEOUT && get_system_time() > nResumeTime )
 	{
 		return ( -ETIME );
 	}
@@ -2123,9 +2079,9 @@ status_t sleep_on_sem( sem_id hSema, bigtime_t nTimeOut )
 
 	nFlg = spinlock_disable( &g_sSemListSpinLock );
 
-	if ( atomic_read(&g_sSchedSpinLock.sl_nNest) != 1 )
+	if ( atomic_read(&g_sSemListSpinLock.sl_nNest) != 1 )
 	{
-		printk( "PANIC: sleep_on_sem() spinlock nest count is %d\n", atomic_read(&g_sSchedSpinLock.sl_nNest) );
+		printk( "PANIC: sleep_on_sem() spinlock nest count is %d\n", atomic_read(&g_sSemListSpinLock.sl_nNest) );
 	}
 
 	psSema = get_semaphore_by_handle( -1, hSema );
@@ -2175,13 +2131,11 @@ status_t sleep_on_sem( sem_id hSema, bigtime_t nTimeOut )
 	}
 	add_to_waitlist( &psSema->ss_psWaitQueue, &sWaitNode );
 
-	spinunlock( &g_sSemListSpinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 	Schedule();
 
-	nFlg = cli();
-	spinlock( &g_sSemListSpinLock );
+	nFlg = spinlock_disable( &g_sSemListSpinLock );
 
 	if ( INFINITE_TIMEOUT != nTimeOut )
 	{
@@ -2204,8 +2158,7 @@ status_t sleep_on_sem( sem_id hSema, bigtime_t nTimeOut )
 	psMyThread->tr_hBlockSema = -1;
 
       error:
-	spinunlock( &g_sSemListSpinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 	return ( nError );
 }
 
@@ -2255,8 +2208,7 @@ status_t wakeup_sem( sem_id hSema, bool bAll )
 		return ( -EINVAL );
 	}
 
-	nFlg = cli();
-	spinlock( &g_sSemListSpinLock );
+	nFlg = spinlock_disable( &g_sSemListSpinLock );
 
 	psSema = get_semaphore_by_handle( -1, hSema );
 	if ( psSema == NULL )
@@ -2281,8 +2233,7 @@ status_t wakeup_sem( sem_id hSema, bool bAll )
 	}
 
       error:
-	spinunlock( &g_sSemListSpinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 /*  
     if ( bNeetSchedule ) {
@@ -2319,11 +2270,11 @@ status_t wakeup_sem( sem_id hSema, bool bAll )
 status_t get_semaphore_info( sem_id hSema, proc_id hOwner, sem_info * psInfo )
 {
 	Semaphore_s *psSema;
-	int nFlg = cli();
+	int nFlg;
 	sem_id hRealSema = hSema;
 	int nError;
 
-	spinlock( &g_sSemListSpinLock );
+	nFlg = spinlock_disable( &g_sSemListSpinLock );
 
 	if ( hSema == -1 )
 	{
@@ -2397,8 +2348,7 @@ status_t get_semaphore_info( sem_id hSema, proc_id hOwner, sem_info * psInfo )
 		nError = -EINVAL;
 	}
 
-	spinunlock( &g_sSemListSpinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 	return ( nError );
 }
@@ -2407,10 +2357,10 @@ static status_t do_get_next_semaphore_info( proc_id hOwner, sem_id hPrevSema, se
 {
 	Semaphore_s *psSema;
 	sem_id hSema = -1;
-	int nFlg = cli();
+	int nFlg;
 	int nError;
 
-	spinlock( &g_sSemListSpinLock );
+	nFlg = spinlock_disable( &g_sSemListSpinLock );
 
 	if ( ( hPrevSema & SEM_TYPE_MASK ) == SEMTYPE_GLOBAL )
 	{
@@ -2477,8 +2427,7 @@ static status_t do_get_next_semaphore_info( proc_id hOwner, sem_id hPrevSema, se
 		nError = -EINVAL;
 	}
       done:
-	spinunlock( &g_sSemListSpinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 	return ( nError );
 }
@@ -2543,7 +2492,7 @@ static int do_get_semaphore_count( bool bKernel, sem_id hSema )
 {
 	int nCount = 1;
 	Semaphore_s *psSema;
-	int nFlg = cli();
+	int nFlg;
 
 	if ( 0 == hSema )
 	{
@@ -2551,7 +2500,7 @@ static int do_get_semaphore_count( bool bKernel, sem_id hSema )
 		return ( -EINVAL );
 	}
 
-	spinlock( &g_sSemListSpinLock );
+	nFlg = spinlock_disable( &g_sSemListSpinLock );
 
 	if ( ( psSema = get_semaphore_by_handle( -1, hSema ) ) )
 	{
@@ -2565,8 +2514,7 @@ static int do_get_semaphore_count( bool bKernel, sem_id hSema )
 		nCount = -EINVAL;
 	}
 
-	spinunlock( &g_sSemListSpinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 	return ( nCount );
 }
@@ -2574,11 +2522,6 @@ static int do_get_semaphore_count( bool bKernel, sem_id hSema )
 int get_semaphore_count( sem_id hSema )
 {
 	return ( do_get_semaphore_count( true, hSema ) );
-}
-
-int sys_get_semaphore_count( sem_id hSema )
-{
-	return ( do_get_semaphore_count( false, hSema ) );
 }
 
 /*****************************************************************************
@@ -2592,9 +2535,9 @@ static thread_id do_get_semaphore_owner( bool bKernel, sem_id hSema )
 {
 	thread_id hOwner = -1;
 	Semaphore_s *psSema;
-	int nFlg = cli();
+	int nFlg;
 
-	spinlock( &g_sSemListSpinLock );
+	nFlg = spinlock_disable( &g_sSemListSpinLock );
 
 	if ( ( psSema = get_semaphore_by_handle( -1, hSema ) ) )
 	{
@@ -2608,8 +2551,7 @@ static thread_id do_get_semaphore_owner( bool bKernel, sem_id hSema )
 		hOwner = -1;
 	}
 
-	spinunlock( &g_sSemListSpinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 	return ( hOwner );
 }
@@ -2635,9 +2577,9 @@ int is_semaphore_locked( sem_id hSema )
 	Semaphore_s *psSema;
 	RWLock_s *psRWLock;
 	int nResult;
-	int nFlg = cli();
+	int nFlg;
 
-	spinlock( &g_sSemListSpinLock );
+	nFlg = spinlock_disable( &g_sSemListSpinLock );
 
 	psSema = get_semaphore_by_handle( -1, hSema );
 	psRWLock = ( RWLock_s * ) psSema;
@@ -2665,8 +2607,7 @@ int is_semaphore_locked( sem_id hSema )
 		nResult = 0;
 	}
 
-	spinunlock( &g_sSemListSpinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 	return ( nResult );
 }
@@ -2770,7 +2711,7 @@ static status_t rwlock_rem_thread_hold( RWLock_s * psRWLock, thread_id hMyThread
  * the waiting list as well as the wait queue when it is ready to leave
  * do_rwlock_lock().
  *
- * This function must only be called from when the scheduler lock is held.
+ * This function must only be called from when the semaphore list lock is held.
  */
 static status_t rwlock_remove_wait_node( RWLock_s * psRWLock, RWWaiter_s * psWaiter )
 {
@@ -2868,16 +2809,14 @@ static status_t do_rwlock_get_count( sem_id hSema, bool bShared, bool bAll )
 	int nCount = 0;
 	int nFlg;
 
-	nFlg = cli();
 	if ( 0 == hSema )
 	{
 		kerndbg( KERN_DEBUG, __FUNCTION__ "(): Attempt to get count for semaphore 0\n" );
-		put_cpu_flags( nFlg );
 
 		return ( -EINVAL );
 	}
 
-	spinlock( &g_sSemListSpinLock );
+	nFlg = spinlock_disable( &g_sSemListSpinLock );
 
 	if ( ( psSema = get_semaphore_by_handle( -1, hSema ) ) )
 	{
@@ -2912,8 +2851,7 @@ static status_t do_rwlock_get_count( sem_id hSema, bool bShared, bool bAll )
 		nCount = -EINVAL;
 	}
 
-	spinunlock( &g_sSemListSpinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 	return ( nCount );
 }
@@ -2962,13 +2900,12 @@ static status_t do_rwlock_lock( bool bIgnored, sem_id hSema, bool bWantShared, u
 		return ( -EINVAL );
 	}
 
-	/* Disable interrupts and acquire scheduler lock */
-	nFlg = cli();
-	spinlock( &g_sSemListSpinLock );
+	/* Disable interrupts and acquire semaphore list lock */
+	nFlg = spinlock_disable( &g_sSemListSpinLock );
 
-	if ( atomic_read(&g_sSchedSpinLock.sl_nNest) != 1 )
+	if ( atomic_read(&g_sSemListSpinLock.sl_nNest) != 1 )
 	{
-		kerndbg( KERN_FATAL, __FUNCTION__ "(): Scheduler spinlock held more than once - BAD.\n" );
+		kerndbg( KERN_FATAL, __FUNCTION__ "(): Semaphore list spinlock held more than once - BAD.\n" );
 	}
 
 	/* Calculate resume time (ignored if nTimeOut == INFINITE_TIMEOUT) */
@@ -3274,14 +3211,12 @@ static status_t do_rwlock_lock( bool bIgnored, sem_id hSema, bool bWantShared, u
 
 		add_to_waitlist( ppsWaitQueue, &sWaitNode );
 
-		/* Unlock scheduler lock, yield processor until we are woken up */
-		spinunlock( &g_sSemListSpinLock );
-		put_cpu_flags( nFlg );
+		/* Unlock semaphore list lock, yield processor until we are woken up */
+		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 		Schedule();
 
-		nFlg = cli();
-		spinlock( &g_sSemListSpinLock );
+		nFlg = spinlock_disable( &g_sSemListSpinLock );
 
 		/**
 		 * Okay, someone has woken us up.  Check our initial assumptions,
@@ -3307,7 +3242,7 @@ static status_t do_rwlock_lock( bool bIgnored, sem_id hSema, bool bWantShared, u
 		remove_from_waitlist( ppsWaitQueue, &sWaitNode );
 		psMyThread->tr_hBlockSema = -1;
 
-		if ( ( nFlags & SEM_NOSIG ) == 0 && is_signals_pending() )
+		if ( ( nFlags & SEM_NOSIG ) == 0 && is_signal_pending() )
 		{
 			nError = -EINTR;
 			break;
@@ -3337,8 +3272,7 @@ static status_t do_rwlock_lock( bool bIgnored, sem_id hSema, bool bWantShared, u
 		}
 	}
 
-	spinunlock( &g_sSemListSpinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 	return ( nError );
 }
@@ -3387,16 +3321,14 @@ status_t rwl_convert_to_anon( sem_id hSema )
 		return ( -EINVAL );
 	}
 
-	/* Acquire scheduler lock */
-	nFlg = cli();
-	spinlock( &g_sSemListSpinLock );
+	/* Acquire semaphore list lock */
+	nFlg = spinlock_disable( &g_sSemListSpinLock );
 
 	psSema = get_semaphore_by_handle( -1, hSema );
 	psRWLock = ( RWLock_s * ) psSema;
 	if ( psSema == NULL )
 	{
-		spinunlock( &g_sSemListSpinLock );
-		put_cpu_flags( nFlg );
+		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 		kerndbg( KERN_DEBUG, __FUNCTION__ "(): Called with invalid r-w lock %d!\n", hSema );
 		return ( -EINVAL );
@@ -3404,8 +3336,7 @@ status_t rwl_convert_to_anon( sem_id hSema )
 
 	if ( ( psSema->ss_nFlags & SEM_STYLE_MASK ) != SEMSTYLE_RWLOCK )
 	{
-		spinunlock( &g_sSemListSpinLock );
-		put_cpu_flags( nFlg );
+		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 		kerndbg( KERN_DEBUG, __FUNCTION__ "(): Called with invalid semaphore style.\n" );
 
@@ -3415,8 +3346,7 @@ status_t rwl_convert_to_anon( sem_id hSema )
 	/* Check that we hold the kind of lock we are unlocking */
 	if ( rwlock_rem_thread_hold( psRWLock, hMyThread, true ) < 0 )
 	{
-		spinunlock( &g_sSemListSpinLock );
-		put_cpu_flags( nFlg );
+		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 		kerndbg( KERN_DEBUG, __FUNCTION__ "(): Thread ID %d does not hold read lock for sema %d.\n", hMyThread, hSema );
 
@@ -3428,8 +3358,7 @@ status_t rwl_convert_to_anon( sem_id hSema )
 	/* Check if upgrade is in progress */
 	if ( rwlock_add_thread_hold( psRWLock, -2, true ) < 0 )
 	{
-		spinunlock( &g_sSemListSpinLock );
-		put_cpu_flags( nFlg );
+		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 		kerndbg( KERN_DEBUG, __FUNCTION__ "(): Lock conversion failed due to insufficient memory.\n" );
 
@@ -3438,8 +3367,7 @@ status_t rwl_convert_to_anon( sem_id hSema )
 		return ( -ENOMEM );
 	}
 
-	spinunlock( &g_sSemListSpinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 	return ( 0 );
 }
@@ -3462,16 +3390,14 @@ status_t rwl_convert_from_anon( sem_id hSema )
 		return ( -EINVAL );
 	}
 
-	/* Acquire scheduler lock */
-	nFlg = cli();
-	spinlock( &g_sSemListSpinLock );
+	/* Acquire semaphore list lock */
+	nFlg = spinlock_disable( &g_sSemListSpinLock );
 
 	psSema = get_semaphore_by_handle( -1, hSema );
 	psRWLock = ( RWLock_s * ) psSema;
 	if ( psSema == NULL )
 	{
-		spinunlock( &g_sSemListSpinLock );
-		put_cpu_flags( nFlg );
+		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 		kerndbg( KERN_DEBUG, __FUNCTION__ "(): Called with invalid r-w lock %d!\n", hSema );
 		return ( -EINVAL );
@@ -3479,8 +3405,7 @@ status_t rwl_convert_from_anon( sem_id hSema )
 
 	if ( ( psSema->ss_nFlags & SEM_STYLE_MASK ) != SEMSTYLE_RWLOCK )
 	{
-		spinunlock( &g_sSemListSpinLock );
-		put_cpu_flags( nFlg );
+		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 		kerndbg( KERN_DEBUG, __FUNCTION__ "(): Called with invalid semaphore style.\n" );
 
@@ -3490,8 +3415,7 @@ status_t rwl_convert_from_anon( sem_id hSema )
 	/* Check that we hold the kind of lock we are unlocking */
 	if ( rwlock_rem_thread_hold( psRWLock, -2, true ) < 0 )
 	{
-		spinunlock( &g_sSemListSpinLock );
-		put_cpu_flags( nFlg );
+		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 		kerndbg( KERN_DEBUG, __FUNCTION__ "(): No anonymous read locks held for sema %d.\n", hSema );
 
@@ -3503,8 +3427,7 @@ status_t rwl_convert_from_anon( sem_id hSema )
 	/* Check if upgrade is in progress */
 	if ( rwlock_add_thread_hold( psRWLock, hMyThread, true ) < 0 )
 	{
-		spinunlock( &g_sSemListSpinLock );
-		put_cpu_flags( nFlg );
+		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 		kerndbg( KERN_DEBUG, __FUNCTION__ "(): Lock conversion failed due to insufficient memory.\n" );
 
@@ -3513,8 +3436,7 @@ status_t rwl_convert_from_anon( sem_id hSema )
 		return ( -ENOMEM );
 	}
 
-	spinunlock( &g_sSemListSpinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 	return ( 0 );
 }
@@ -3538,16 +3460,14 @@ static status_t do_rwlock_unlock( bool bIgnored, sem_id hSema, bool bShared )
 		return ( -EINVAL );
 	}
 
-	/* Acquire scheduler lock */
-	nFlg = cli();
-	spinlock( &g_sSemListSpinLock );
+	/* Acquire semaphore list lock */
+	nFlg = spinlock_disable( &g_sSemListSpinLock );
 
 	psSema = get_semaphore_by_handle( -1, hSema );
 	psRWLock = ( RWLock_s * ) psSema;
 	if ( psSema == NULL )
 	{
-		spinunlock( &g_sSemListSpinLock );
-		put_cpu_flags( nFlg );
+		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 		kerndbg( KERN_DEBUG, __FUNCTION__ "(): Called with invalid r-w lock %d!\n", hSema );
 		return ( -EINVAL );
@@ -3555,8 +3475,7 @@ static status_t do_rwlock_unlock( bool bIgnored, sem_id hSema, bool bShared )
 
 	if ( ( psSema->ss_nFlags & SEM_STYLE_MASK ) != SEMSTYLE_RWLOCK )
 	{
-		spinunlock( &g_sSemListSpinLock );
-		put_cpu_flags( nFlg );
+		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 		kerndbg( KERN_DEBUG, __FUNCTION__ "(): Called with invalid semaphore style.\n" );
 
@@ -3566,8 +3485,7 @@ static status_t do_rwlock_unlock( bool bIgnored, sem_id hSema, bool bShared )
 	/* Check that we hold the kind of lock we are unlocking */
 	if ( rwlock_rem_thread_hold( psRWLock, hMyThread, bShared ) < 0 )
 	{
-		spinunlock( &g_sSemListSpinLock );
-		put_cpu_flags( nFlg );
+		spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 		kerndbg( KERN_DEBUG, __FUNCTION__ "(): Thread ID %d does not hold %s lock for sema %d.\n", hMyThread, bShared ? "read" : "write", hSema );
 
@@ -3615,8 +3533,7 @@ static status_t do_rwlock_unlock( bool bIgnored, sem_id hSema, bool bShared )
 	if ( psWaitQueue != NULL )
 		wake_up_queue( psWaitQueue, 0, true );
 
-	spinunlock( &g_sSemListSpinLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
 
 	return ( 0 );
 }
@@ -3628,11 +3545,6 @@ static status_t do_rwlock_unlock( bool bIgnored, sem_id hSema, bool bShared )
 status_t rwl_unlock_read( sem_id hSema )
 {
 	return do_rwlock_unlock( true, hSema, true );
-}
-
-status_t rwl_unlock_read_anon( sem_id hSema )
-{
-	return do_rwlock_unlock( false, hSema, true );
 }
 
 /**

@@ -180,7 +180,7 @@ static int clear_pagedir( pgd_t * pPgd, int nAddress, int nSize )
 				printk( "panic: clear_pagedir() page %08lx got ref count of %d\n", nPage, atomic_read( &g_psFirstPage[nPageNr].p_nCount ) - 1 );
 				atomic_set( &g_psFirstPage[nPageNr].p_nCount, 1000 );
 			}
-			free_pages( nPage, 1 );
+			do_free_pages( nPage, 1 );
 		}
 		else
 		{
@@ -193,6 +193,8 @@ static int clear_pagedir( pgd_t * pPgd, int nAddress, int nSize )
 		nAddress += PAGE_SIZE;
 	}
 	while ( nAddress < nEnd );
+	flush_tlb_global();
+
 	return ( 0 );
 }
 
@@ -272,7 +274,7 @@ static void free_area_page_tables( MemArea_s *psArea, uint32 nStart, uint32 nEnd
 			printk( "Error: free_area_page_tables() found NULL pointer in page table\n" );
 			continue;
 		}
-		free_pages( nPage, 1 );
+		do_free_pages( nPage, 1 );
 		PGD_VALUE( psCtx->mc_pPageDir[i] ) = 0;
 		if ( nCurEnd < AREA_FIRST_USER_ADDRESS )
 		{
@@ -284,6 +286,7 @@ static void free_area_page_tables( MemArea_s *psArea, uint32 nStart, uint32 nEnd
 			}
 		}
 	}
+	flush_tlb_global();
 }
 
 //****************************************************************************/
@@ -321,7 +324,7 @@ static int do_delete_area( MemContext_s *psCtx, MemArea_s *psArea )
 	psArea->a_psPrevShared->a_psNextShared = psArea->a_psNextShared;
 	psArea->a_psNextShared->a_psPrevShared = psArea->a_psPrevShared;
 
-	psArea->a_bDeleted = true;	// Make sure nobody maps in pages while we waits for IO
+	psArea->a_bDeleted = true;	// Make sure nobody maps in pages while we wait for IO
 
 	while ( atomic_read( &psArea->a_nIOPages ) > 0 )
 	{
@@ -981,7 +984,7 @@ static void delete_all_areas( MemContext_s *psCtx )
 		if ( 0 != nPage )
 		{
 			printk( "delete_all_areas() page-table at %d forgotten\n", i );
-			free_pages( nPage, 1 );
+			do_free_pages( nPage, 1 );
 		}
 		PGD_VALUE( psCtx->mc_pPageDir[i] ) = 0;
 	}
@@ -1302,7 +1305,7 @@ static int unmap_pagedir( pgd_t * pPgd, uint32 nAddress, int nSize, bool bFreeOl
 					{
 						unregister_swap_page( nOldPage );
 					}
-					free_pages( nOldPage, 1 );
+					do_free_pages( nOldPage, 1 );
 				}
 			}
 		}
@@ -1312,6 +1315,7 @@ static int unmap_pagedir( pgd_t * pPgd, uint32 nAddress, int nSize, bool bFreeOl
 		nAddress += PAGE_SIZE;
 	}
 	while ( nAddress < nEnd );
+	flush_tlb_global();
 
 	return ( 0 );
 }
@@ -2017,7 +2021,7 @@ static int remap_pagedir( pgd_t * pPgd, int nAddress, int nSize, int nPhysAddres
 					{
 						unregister_swap_page( nOldPage );
 					}
-					free_pages( nOldPage, 1 );
+					do_free_pages( nOldPage, 1 );
 				}
 			}
 		}
@@ -2028,6 +2032,7 @@ static int remap_pagedir( pgd_t * pPgd, int nAddress, int nSize, int nPhysAddres
 		nAddress += PAGE_SIZE;
 	}
 	while ( nAddress < nEnd );
+	flush_tlb_global();
 
 	return ( 0 );
 }
@@ -2513,7 +2518,7 @@ void *sys_sbrk( int nDelta )
 	}
 	else
 	{
-		nDelta = -( ( ( -nDelta ) + PAGE_SIZE - 1 ) & PAGE_MASK );
+		nDelta = -( ( -nDelta ) & PAGE_MASK );
 	}
       again:
 	LOCK( g_hAreaTableSema );
@@ -2665,9 +2670,13 @@ void db_list_proc_areas( MemContext_s *psCtx )
  *****************************************************************************/
 static void db_list_areas( int argc, char **argv )
 {
-	if ( argc == 3 && strcmp( argv[1], "-p" ) == 0 )
+	if ( argc != 2 )
 	{
-		proc_id hProc = atol( argv[2] );
+		dbprintf( DBP_DEBUGGER, "Usage: %s proc_id\n", argv[0] );
+	}
+	else
+	{
+		proc_id hProc = atol( argv[1] );
 		Process_s *psProc = get_proc_by_handle( hProc );
 
 		if ( NULL == psProc )

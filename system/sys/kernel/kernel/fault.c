@@ -198,6 +198,7 @@ void print_registers( SysCallRegs_s * psRegs )
 
 void handle_general_protection( SysCallRegs_s * psRegs, int nErrorCode )
 {
+	Process_s *psProc = CURRENT_PROC;
 	if ( psRegs->eflags & EFLG_VM )
 	{
 		handle_v86_fault( ( Virtual86Regs_s * ) psRegs, nErrorCode );
@@ -209,7 +210,9 @@ void handle_general_protection( SysCallRegs_s * psRegs, int nErrorCode )
 	print_registers( psRegs );
 	printk( "\n" );
 
-	do_exit( 12 << 8 );
+	sys_kill_proc( psProc->tc_hProcID, SIGSEGV );
+
+//	do_exit( 12 << 8 );
 }
 
 /*****************************************************************************
@@ -221,6 +224,7 @@ void handle_general_protection( SysCallRegs_s * psRegs, int nErrorCode )
 
 void handle_divide_exception( SysCallRegs_s * psRegs, int nErrorCode )
 {
+	Process_s *psProc = CURRENT_PROC;
 	if ( psRegs->eflags & EFLG_VM )
 	{
 		handle_v86_divide_exception( ( Virtual86Regs_s * ) psRegs, nErrorCode );
@@ -235,7 +239,9 @@ void handle_divide_exception( SysCallRegs_s * psRegs, int nErrorCode )
 //  printk( "Areas :\n" );
 //  list_areas( CURRENT_PROC->tc_psMemSeg );
 
-	do_exit( 12 << 8 );
+	sys_kill_proc( psProc->tc_hProcID, SIGFPE );
+
+//	do_exit( 12 << 8 );
 }
 
 /*****************************************************************************
@@ -245,8 +251,96 @@ void handle_divide_exception( SysCallRegs_s * psRegs, int nErrorCode )
  * SEE ALSO:
  ****************************************************************************/
 
-void handle_illega_inst_exception( SysCallRegs_s * psRegs, int nErrorCode )
+void handle_fpu_exception( SysCallRegs_s * psRegs, int nErrorCode )
 {
+	Thread_s *psThread = CURRENT_THREAD;
+	Process_s *psProc = psThread->tr_psProcess;
+	printk( "**Floating-point error**\n" );
+	printk( "ERROR CODE = %08x\n", nErrorCode );
+	print_registers( psRegs );
+	printk( "\n" );
+
+	save_fpu_state( &psThread->tc_FPUState );
+	stts();
+
+//  printk( "Areas :\n" );
+//  list_areas( CURRENT_PROC->tc_psMemSeg );
+
+	sys_kill_proc( psProc->tc_hProcID, SIGFPE );
+
+//	do_exit( 12 << 8 );
+}
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+
+void math_state_restore( SysCallRegs_s * psRegs, int nErrorCode )
+{
+	Thread_s *psThread = CURRENT_THREAD;
+	clts();		// Allow math ops (or we recurse)
+	if ( ( psThread->tr_nFlags & TF_FPU_USED ) == 0 )
+	{
+		// Initialize the FPU state
+		if ( g_bHasFXSR )
+		{
+			memset( &psThread->tc_FPUState.fxsave, 0, sizeof( struct i387_fxsave_struct ) );
+			psThread->tc_FPUState.fxsave.cwd = 0x37f;
+			if ( g_bHasXMM )
+			{
+				psThread->tc_FPUState.fxsave.mxcsr = 0x1f80;
+			}
+		}
+		else
+		{
+			memset( &psThread->tc_FPUState.fsave, 0, sizeof( struct i387_fsave_struct ) );
+			psThread->tc_FPUState.fsave.cwd = 0xffff037fu;
+			psThread->tc_FPUState.fsave.swd = 0xffff0000u;
+			psThread->tc_FPUState.fsave.twd = 0xffffffffu;
+			psThread->tc_FPUState.fsave.fos = 0xffff0000u;
+		}
+		psThread->tr_nFlags |= TF_FPU_USED;
+	}
+	load_fpu_state( &psThread->tc_FPUState );
+	psThread->tr_nFlags |= TF_FPU_DIRTY;
+}
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+
+void handle_sse_exception( SysCallRegs_s * psRegs, int nErrorCode )
+{
+	Process_s *psProc = CURRENT_PROC;
+	printk( "**SSE floating-point error**\n" );
+	printk( "ERROR CODE = %08x\n", nErrorCode );
+	print_registers( psRegs );
+	printk( "\n" );
+
+//  printk( "Areas :\n" );
+//  list_areas( CURRENT_PROC->tc_psMemSeg );
+
+	sys_kill_proc( psProc->tc_hProcID, SIGFPE );
+
+//	do_exit( 12 << 8 );
+}
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+
+void handle_illegal_inst_exception( SysCallRegs_s * psRegs, int nErrorCode )
+{
+	Process_s *psProc = CURRENT_PROC;
 	printk( "**Illegal instruction**\n" );
 	printk( "ERROR CODE = %08x\n", nErrorCode );
 	print_registers( psRegs );
@@ -255,7 +349,9 @@ void handle_illega_inst_exception( SysCallRegs_s * psRegs, int nErrorCode )
 	printk( "Areas :\n" );
 	list_areas( CURRENT_PROC->tc_psMemSeg );
 
-	do_exit( 12 << 8 );
+	sys_kill_proc( psProc->tc_hProcID, SIGILL );
+
+//	do_exit( 12 << 8 );
 }
 
 

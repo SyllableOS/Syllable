@@ -41,6 +41,7 @@ SPIN_LOCK( g_sPageListSpinLock, "page_list_slock" );
 
 int g_nAllocatedPages = 0;
 
+/*
 void lock_pagelist( void )
 {
 	spinlock( &g_sPageListSpinLock );
@@ -51,7 +52,6 @@ void unlock_pagelist( void )
 	spinunlock( &g_sPageListSpinLock );
 }
 
-/*
 uint32	get_free_pages( int nPageCount, int nFlags )
 {
   int i = 0;
@@ -149,8 +149,6 @@ void protect_phys_pages( iaddr_t nAddress, int nCount )
 {
 	int i;
 
-	return;
-
 	for ( i = 0; i < nCount; ++i )
 	{
 		pgd_t *pPgd = pgd_offset( g_psKernelSeg, nAddress );
@@ -164,8 +162,6 @@ void protect_phys_pages( iaddr_t nAddress, int nCount )
 void unprotect_phys_pages( iaddr_t nAddress, int nCount )
 {
 	int i;
-
-	return;
 
 	for ( i = 0; i < nCount; ++i )
 	{
@@ -192,9 +188,7 @@ uint32 get_free_pages( int nPageCount, int nFlags )
 	uint32 nPage = 0;
 	uint32 nEFlg;
 
-	nEFlg = get_cpu_flags();
-	cli();
-	spinlock( &g_sPageListSpinLock );
+	nEFlg = spinlock_disable( &g_sPageListSpinLock );
 
 	if ( NULL != g_psFirstFreePage )
 	{
@@ -263,8 +257,7 @@ uint32 get_free_pages( int nPageCount, int nFlags )
 	{
 		unprotect_phys_pages( nPage, nPageCount );
 	}
-	spinunlock( &g_sPageListSpinLock );
-	put_cpu_flags( nEFlg );
+	spinunlock_enable( &g_sPageListSpinLock, nEFlg );
 
 	if ( 0 != nPage )
 	{
@@ -282,49 +275,65 @@ uint32 get_free_pages( int nPageCount, int nFlags )
  * SEE ALSO:
  ****************************************************************************/
 
-void free_page( uint32 nPage )
+void do_free_pages( uint32 nPage, int nCount )
 {
 	Page_s *psPage = &g_psFirstPage[nPage >> PAGE_SHIFT];
-	uint32 nEFlg = cli();
+	Page_s **ppsNext = NULL;
+	uint32 nEFlg;
 	int i;
 
-	spinlock( &g_sPageListSpinLock );
+	nEFlg = spinlock_disable( &g_sPageListSpinLock );
 
-	atomic_dec( &psPage->p_nCount );
-
-	kassertw( atomic_read( &psPage->p_nCount ) >= 0 );
-
-	if ( 0 == atomic_read( &psPage->p_nCount ) )
+	for ( i = 0; i < nCount; ++i, ++psPage, nPage += PAGE_SIZE )
 	{
-		g_nAllocatedPages--;
-		atomic_inc( &g_sSysBase.ex_nFreePageCount );
+		atomic_dec( &psPage->p_nCount );
 
-		if ( NULL == g_psFirstFreePage || psPage < g_psFirstFreePage )
+		kassertw( atomic_read( &psPage->p_nCount ) >= 0 );
+
+		if ( 0 == atomic_read( &psPage->p_nCount ) )
 		{
-			psPage->p_psNext = g_psFirstFreePage;
-			g_psFirstFreePage = psPage;
-		}
-		else
-		{
-			for ( i = psPage->p_nPageNum - 1; i >= 0; --i )
+			g_nAllocatedPages--;
+			atomic_inc( &g_sSysBase.ex_nFreePageCount );
+			protect_phys_pages( nPage, 1 );
+
+			if ( ppsNext == NULL )
 			{
-				if ( 0 == atomic_read( &g_psFirstPage[i].p_nCount ) )
+				if ( g_psFirstFreePage == NULL || psPage < g_psFirstFreePage )
 				{
-					psPage->p_psNext = g_psFirstPage[i].p_psNext;
-					g_psFirstPage[i].p_psNext = psPage;
-					break;
+					psPage->p_psNext = g_psFirstFreePage;
+					g_psFirstFreePage = psPage;
+					ppsNext = &psPage->p_psNext;
+				}
+				else
+				{
+					int j = psPage->p_nPageNum - 1;
+					Page_s *psPrev = &g_psFirstPage[j];
+
+					for ( ; j >= 0; --j, --psPrev )
+					{
+						if ( 0 == atomic_read( &psPrev->p_nCount ) )
+						{
+							psPage->p_psNext = psPrev->p_psNext;
+							psPrev->p_psNext = psPage;
+							ppsNext = &psPage->p_psNext;
+							break;
+						}
+					}
+					if ( j < 0 )
+					{
+						printk( "PANIC : free_page() failed to link page %p to free list\n", ( void * )nPage );
+					}
 				}
 			}
-			if ( i < 0 )
+			else
 			{
-				printk( "PANIC : free_page() failed to link page %p to free list\n", ( void * )nPage );
+				psPage->p_psNext = *ppsNext;
+				*ppsNext = psPage;
+				ppsNext = &psPage->p_psNext;
 			}
 		}
-		protect_phys_pages( nPage, 1 );
 	}
-	spinunlock( &g_sPageListSpinLock );
-	put_cpu_flags( nEFlg );
-	flush_tlb_global();
+	spinunlock_enable( &g_sPageListSpinLock, nEFlg );
 }
 
 /*****************************************************************************
@@ -334,17 +343,11 @@ void free_page( uint32 nPage )
  * SEE ALSO:
  ****************************************************************************/
 
-void free_pages( uint32 nPages, int nCount )
+void free_pages( uint32 nPage, int nCount )
 {
-	int i;
-
-	for ( i = 0; i < nCount; ++i )
-	{
-		free_page( nPages );
-		nPages += PAGE_SIZE;
-	}
+	do_free_pages( nPage, nCount );
+	flush_tlb_global();
 }
-
 
 int shrink_caches( int nBytesNeeded )
 {

@@ -170,7 +170,11 @@ struct _Thread
 	int tr_nExitCode;
 
 	TaskStateSeg_s tc_sTSS;	/* Intel 386 specific task state buffer */
-	uint8 tc_FPUState[128];	/* Intel 387 specific FPU state buffer  */
+
+	// Hack alert!  kmalloc() alignment is off by 8 due to block_header,
+	// and we need 16 byte alignment in order to use fxsave.
+	long padding[2] __attribute__(( aligned(16) ));
+	union i387_union tc_FPUState;	/* Intel 387 specific FPU state buffer  */
 	int32 tr_nState;	/* Current task state.                  */
 	uint32 tr_nFlags;
 
@@ -239,8 +243,9 @@ struct _Thread
 	int tr_nNumLockedCacheBlocks;
 };
 
-#define	TF_TRACED	0x0001
-
+#define	TF_TRACED	0x0001		/* ???				 */
+#define TF_FPU_USED	0x0002		/* thread has used FPU		 */
+#define TF_FPU_DIRTY	0x0004		/* thread is currently using FPU */
 
 struct _Process
 {

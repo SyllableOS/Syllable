@@ -37,6 +37,7 @@ typedef struct _CacheBlock CacheBlock_s;
 typedef struct
 {
 	CacheBlock_s **ht_apsTable;
+	area_id ht_hArea;	/* Area for ht_apsTable */
 	int ht_nSize;		/* Size of ht_apsTable */
 	int ht_nMask;		/* Used to mask out overflowing bits from the hash value */
 	int ht_nCount;		/* Number of inserted elements */

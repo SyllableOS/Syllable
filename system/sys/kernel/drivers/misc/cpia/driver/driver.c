@@ -236,7 +236,7 @@ static status_t cpia_control( void *node, void *cookie, uint32 msg, void *buf, s
 		    return -1;
 		}
 
-		if( is_signals_pending() )
+		if( is_signal_pending() )
 		{
 		    ERROR(( "cpia:control(): got signal while waiting for frame\n" ));
 		    return -EINTR;

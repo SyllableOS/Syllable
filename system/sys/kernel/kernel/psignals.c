@@ -63,7 +63,7 @@ SPIN_LOCK( g_sAlarmListSpinLock, "alarm_list_slock" );
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/
-
+#if 0
 void signal_parent( Thread_s *psThread )
 {
 	if ( -1 != psThread->tr_hParent )
@@ -71,6 +71,7 @@ void signal_parent( Thread_s *psThread )
 		sys_kill( psThread->tr_hParent, SIGCHLD );
 	}
 }
+#endif
 
 /*****************************************************************************
  * NAME:
@@ -119,7 +120,7 @@ void ExitSyscall( int dummy )
  * SEE ALSO:
  ****************************************************************************/
 
-int is_signals_pending( void )
+int is_signal_pending( void )
 {
 	Thread_s *psThread = CURRENT_THREAD;
 
@@ -165,6 +166,219 @@ int get_signal_mode( int nSigNum )
 	}
 }
 
+/*****************************************************************************
+ * NAME:
+ * DESC:    Save i387 state into FPUState_s.
+ * NOTE:    Based on Linux.
+ * SEE ALSO:
+ ****************************************************************************/
+
+static inline unsigned long twd_fxsr_to_i387( struct i387_fxsave_struct *fxsave )
+{
+	struct _fpxreg *st = NULL;
+	unsigned long twd = (unsigned long)fxsave->twd;
+	unsigned long tag;
+	unsigned long ret = 0xffff0000u;
+	int i;
+
+#define FPREG_ADDR(f, n)	((char *)&(f)->st_space + (n) * 16);
+
+	for ( i = 0; i < 8; i++ )
+	{
+		if ( twd & 0x1 )
+		{
+			st = (struct _fpxreg *) FPREG_ADDR( fxsave, i );
+
+			switch ( st->exponent & 0x7fff )
+			{
+				case 0x7fff:
+					tag = 2;		// Special
+					break;
+				case 0x0000:
+					if ( !st->significand[0] &&
+					     !st->significand[1] &&
+					     !st->significand[2] &&
+					     !st->significand[3] )
+					{
+						tag = 1;	// Zero
+					}
+					else
+					{
+						tag = 2;	// Special
+					}
+					break;
+				default:
+					if ( st->significand[3] & 0x8000 )
+					{
+						tag = 0;	// Valid
+					}
+					else
+					{
+						tag = 2;	// Special
+					}
+					break;
+			}
+		}
+		else
+		{
+			tag = 3;	// Empty
+		}
+		ret |= (tag << (2 * i));
+		twd = twd >> 1;
+	}
+	return ret;
+}
+
+static inline void convert_fxsr_to_user( struct _fpstate *buf, struct i387_fxsave_struct *fxsave )
+{
+	unsigned long env[7];
+	struct _fpreg *to;
+	struct _fpxreg *from;
+	int i;
+
+	env[0] = (unsigned long)fxsave->cwd | 0xffff0000ul;
+	env[1] = (unsigned long)fxsave->swd | 0xffff0000ul;
+	env[2] = twd_fxsr_to_i387(fxsave);
+	env[3] = fxsave->fip;
+	env[4] = fxsave->fcs | ((unsigned long)fxsave->fop << 16);
+	env[5] = fxsave->foo;
+	env[6] = fxsave->fos;
+
+	memcpy_to_user( buf, env, 7 * sizeof( unsigned long ) );
+
+	to = &buf->_st[0];
+	from = (struct _fpxreg *) &fxsave->st_space[0];
+	for ( i = 0; i < 8; i++, to++, from++ )
+	{
+		unsigned long *t = (unsigned long *)to;
+		unsigned long *f = (unsigned long *)from;
+		*t = *f;
+		*(t + 1) = *(f + 1);
+		to->exponent = from->exponent;
+	}
+}
+
+static inline void save_i387_fxsave( struct _fpstate *buf, Thread_s *psThread )
+{
+	convert_fxsr_to_user( buf, &psThread->tc_FPUState.fxsave );
+	buf->status = psThread->tc_FPUState.fxsave.swd;
+	buf->magic = X86_FXSR_MAGIC;
+	memcpy_to_user( &buf->_fxsr_env[0], &psThread->tc_FPUState.fxsave, sizeof( struct i387_fxsave_struct ) );
+}
+
+static inline void save_i387_fsave( struct _fpstate *buf, Thread_s *psThread )
+{
+	psThread->tc_FPUState.fsave.status = psThread->tc_FPUState.fsave.swd;
+	memcpy_to_user( buf, &psThread->tc_FPUState.fsave, sizeof( struct i387_fsave_struct ) );
+}
+
+static inline void save_i387( struct _fpstate *buf )
+{
+	Thread_s *psThread = CURRENT_THREAD;
+	if ( ( psThread->tr_nFlags & TF_FPU_USED ) == 0 )
+	{
+		return;
+	}
+
+	// This will cause a "finit" to be triggered by the next
+	// attempted FPU operation by the current thread.
+	psThread->tr_nFlags &= ~TF_FPU_USED;
+
+	if ( psThread->tr_nFlags & TF_FPU_DIRTY )
+	{
+		save_fpu_state( &psThread->tc_FPUState );
+		psThread->tr_nFlags &= ~TF_FPU_DIRTY;
+		stts();
+	}
+
+	if ( g_bHasFXSR )
+		save_i387_fxsave( buf, psThread );
+	else
+		save_i387_fsave( buf, psThread );
+}
+
+
+/*****************************************************************************
+ * NAME:
+ * DESC:    Restore i387 state from FPUState_s.
+ * NOTE:    Based on Linux.
+ * SEE ALSO:
+ ****************************************************************************/
+
+static inline unsigned short twd_i387_to_fxsr( unsigned short twd )
+{
+	unsigned int tmp;	// to avoid 16 bit prefixes in the code
+
+	// Transform each pair of bits into 01 (valid) or 00 (empty)
+	tmp = ~twd;
+	tmp = (tmp | (tmp >> 1)) & 0x5555;	// 0V0V0V0V0V0V0V0V
+	// and move the valid bits to the lower byte.
+	tmp = (tmp | (tmp >> 1)) & 0x3333;	// 00VV00VV00VV00VV
+	tmp = (tmp | (tmp >> 2)) & 0x0f0f;	// 0000VVVV0000VVVV
+	tmp = (tmp | (tmp >> 4)) & 0x00ff;	// 00000000VVVVVVVV
+	return tmp;
+}
+
+static inline void convert_fxsr_from_user( struct i387_fxsave_struct *fxsave, struct _fpstate *buf )
+{
+	unsigned long env[7];
+	struct _fpxreg *to;
+	struct _fpreg *from;
+	int i;
+
+	memcpy_from_user( env, buf, 7 * sizeof(long) );
+
+	fxsave->cwd = (unsigned short)( env[0] & 0xffff );
+	fxsave->swd = (unsigned short)( env[1] & 0xffff );
+	fxsave->twd = twd_i387_to_fxsr( (unsigned short)( env[2] & 0xffff ) );
+	fxsave->fip = env[3];
+	fxsave->fop = (unsigned short)( ( env[4] & 0xffff0000ul ) >> 16 );
+	fxsave->fcs = ( env[4] & 0xffff );
+	fxsave->foo = env[5];
+	fxsave->fos = env[6];
+
+	to = (struct _fpxreg *) &fxsave->st_space[0];
+	from = &buf->_st[0];
+	for ( i = 0; i < 8; i++, to++, from++ )
+	{
+		unsigned long *t = (unsigned long *)to;
+		unsigned long *f = (unsigned long *)from;
+		*t = *f;
+		*(t + 1) = *(f + 1);
+		to->exponent = from->exponent;
+	}
+}
+
+static inline void restore_i387_fxsave( struct _fpstate *buf, Thread_s *psThread )
+{
+	memcpy_from_user( &psThread->tc_FPUState.fxsave, &buf->_fxsr_env[0], sizeof( struct i387_fxsave_struct ) );
+	// mxcsr reserved bits must be masked to zero for security reasons
+	psThread->tc_FPUState.fxsave.mxcsr &= 0x0000ffbf;
+}
+
+static inline void restore_i387_fsave( struct _fpstate *buf, Thread_s *psThread )
+{
+	memcpy_from_user( &psThread->tc_FPUState.fsave, buf, sizeof( struct i387_fsave_struct ) );
+}
+
+static inline void restore_i387( struct _fpstate *buf )
+{
+	Thread_s *psThread = CURRENT_THREAD;
+	if ( psThread->tr_nFlags & TF_FPU_DIRTY )
+	{
+		__asm__ __volatile__( "fnclex; fwait" );
+		psThread->tr_nFlags &= ~TF_FPU_DIRTY;
+		stts();
+	}
+
+	if ( g_bHasFXSR )
+		restore_i387_fxsave( buf, psThread );
+	else
+		restore_i387_fsave( buf, psThread );
+
+	psThread->tr_nFlags |= TF_FPU_USED;
+}
+
 /*
  * POSIX 3.3.1.3:
  *  "Setting a signal action to SIG_IGN for a signal that is pending
@@ -205,7 +419,7 @@ int sys_sig_return( const int dummy )
 	psRegs->edi = sContext.edi;
 	psRegs->esi = sContext.esi;
 
-	load_fpu_state( sContext.fpstate );
+	restore_i387( sContext.fpstate );
 
 	psRegs->eflags = sContext.eflags;
 
@@ -228,48 +442,48 @@ void AddSigHandlerFrame( Thread_s *psThread, SysCallRegs_s * psRegs, SigAction_s
 	uint32 *pStack = ( uint32 * )psRegs->oldesp;
 	uint32 *pCode;
 	uint32 *pFpuState;
+	uint32 *pStackTop;	// top of stack after parameters pushed
 
-	pStack -= 64;
-	pCode = pStack + 24;
-	pFpuState = pStack + 32;
+	pStack -= (22 + 2 + 156);    // SigContext_s + trampoline + FPUState_s
+	pCode = pStack + 22;
+	pFpuState = pStack + 24;
+	pStackTop = pStack - 2;		// subtract 4 for SA_SIGINFO
 
-	pStack[0] = ( uint32 )pCode;
-	pStack[1] = nSigNum;
-	pStack[2] = psRegs->gs;
-	pStack[3] = psRegs->fs;
-	pStack[4] = psRegs->es;
-	pStack[5] = psRegs->ds;
-	pStack[6] = psRegs->edi;
-	pStack[7] = psRegs->esi;
-	pStack[8] = psRegs->ebp;
-	pStack[9] = psRegs->oldesp;
-	pStack[10] = psRegs->ebx;
-	pStack[11] = psRegs->edx;
-	pStack[12] = psRegs->ecx;
-	pStack[13] = psRegs->eax;
+	pStackTop[0] = ( uint32 )pCode;	// return trampoline address
+	pStackTop[1] = nSigNum;
+	// pStackTop[2] = siginfo_t;
+	// pStackTop[3] = ucontext_t;
 
-/*		
-		pStack[14] = psRegs->trap num
-		pStack[15] = psRegs->error code
-		*/
-	pStack[16] = psRegs->eip;
-	pStack[17] = psRegs->cs;
-	pStack[18] = psRegs->eflags;
-	pStack[19] = psRegs->oldesp;
-	pStack[20] = psRegs->oldss;
-	pStack[21] = ( uint32 )pFpuState;
-	pStack[22] = nOldBlockMask;
+	pStack[0] = psRegs->gs;
+	pStack[1] = psRegs->fs;
+	pStack[2] = psRegs->es;
+	pStack[3] = psRegs->ds;
+	pStack[4] = psRegs->edi;
+	pStack[5] = psRegs->esi;
+	pStack[6] = psRegs->ebp;
+	pStack[7] = psRegs->oldesp;
+	pStack[8] = psRegs->ebx;
+	pStack[9] = psRegs->edx;
+	pStack[10] = psRegs->ecx;
+	pStack[11] = psRegs->eax;
+	pStack[12] = nSigNum;
+	pStack[13] = 0;			// error code
+	pStack[14] = psRegs->eip;
+	pStack[15] = psRegs->cs;
+	pStack[16] = psRegs->eflags;
+	pStack[17] = psRegs->oldesp;
+	pStack[18] = psRegs->oldss;
+	pStack[19] = ( uint32 )pFpuState;
+	pStack[20] = nOldBlockMask;
+	pStack[21] = CURRENT_THREAD->tr_nCR2;
 
-/*
-  pStack[23] = psRegs->cr2;
-  */
 	pCode[0] = 0x0000b858;	/* popl %eax ; movl $,%eax */
 	pCode[1] = 0x80cd0000;	/* int $0x80 */
 	( ( uint32 * )( ( ( uint32 )pCode ) + 2 ) )[0] = __NR_sig_return;
 
-	save_fpu_state( pFpuState );
+	save_i387( (struct _fpstate * )pFpuState );
 
-	psRegs->oldesp = ( uint32 )pStack;
+	psRegs->oldesp = ( uint32 )pStackTop;
 	psRegs->eip = ( uint32 )psHandler->sa_handler;
 
 /*
@@ -487,10 +701,10 @@ int handle_signals( int dummy )
 
 void send_alarm_signals( bigtime_t nCurTime )
 {
-	int nOldFlags = cli();
+	int nOldFlags;
 	int i = 0;
 
-	spinlock( &g_sAlarmListSpinLock );
+	nOldFlags = spinlock_disable( &g_sAlarmListSpinLock );
 	while ( g_psFirstAlarmNode != NULL && g_psFirstAlarmNode->nTimeOut <= nCurTime )
 	{
 		AlarmNode_s *psNode = g_psFirstAlarmNode;
@@ -513,8 +727,7 @@ void send_alarm_signals( bigtime_t nCurTime )
 		}
 	}
 
-	spinunlock( &g_sAlarmListSpinLock );
-	put_cpu_flags( nOldFlags );
+	spinunlock_enable( &g_sAlarmListSpinLock, nOldFlags );
 }
 
 /*****************************************************************************
@@ -534,8 +747,7 @@ unsigned int sys_alarm( const unsigned int nSeconds )
 	int nPrevTime = 0;
 	bigtime_t nCurTime = get_system_time();
 
-	nOldFlags = cli();
-	spinlock( &g_sAlarmListSpinLock );
+	nOldFlags = spinlock_disable( &g_sAlarmListSpinLock );
 
 	for ( ppsTmp = &g_psFirstAlarmNode; *ppsTmp != NULL; ppsTmp = &( *ppsTmp )->psNext )
 	{
@@ -574,8 +786,7 @@ unsigned int sys_alarm( const unsigned int nSeconds )
 			g_psFirstFreeAlarmNode = psNode->psNext;
 		}
 	}
-	spinunlock( &g_sAlarmListSpinLock );
-	put_cpu_flags( nOldFlags );
+	spinunlock_enable( &g_sAlarmListSpinLock, nOldFlags );
 
 	if ( nSeconds == 0 )
 	{
@@ -593,8 +804,7 @@ unsigned int sys_alarm( const unsigned int nSeconds )
 		psNode->hThread = sys_get_thread_id( NULL );
 
 
-		nOldFlags = cli();
-		spinlock( &g_sAlarmListSpinLock );
+		nOldFlags = spinlock_disable( &g_sAlarmListSpinLock );
 
 		if ( g_psFirstAlarmNode == NULL || psNode->nTimeOut <= g_psFirstAlarmNode->nTimeOut )
 		{
@@ -641,8 +851,7 @@ unsigned int sys_alarm( const unsigned int nSeconds )
   psNode->psNext     = g_psFirstAlarmNode;
   g_psFirstAlarmNode = psNode;
   */
-		spinunlock( &g_sAlarmListSpinLock );
-		put_cpu_flags( nOldFlags );
+		spinunlock_enable( &g_sAlarmListSpinLock, nOldFlags );
 
 		return ( 0 );
 	}

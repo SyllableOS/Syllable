@@ -103,6 +103,10 @@ extern void excb( void );
 extern void excc( void );
 extern void excd( void );
 extern void exce( void );
+extern void exc10( void );
+extern void exc11( void );
+extern void exc12( void );
+extern void exc13( void );
 
 extern void irq0( void );
 extern void irq1( void );
@@ -248,6 +252,10 @@ static void init_interrupt_table( void )
 	set_trap_gate( 0x0c, excc );
 	set_trap_gate( 0x0d, excd );
 	set_trap_gate( 0x0e, exce );
+	set_trap_gate( 0x10, exc10 );
+	set_trap_gate( 0x11, exc11 );
+	set_trap_gate( 0x12, exc12 );
+	set_trap_gate( 0x13, exc13 );
 
 	set_interrupt_gate( INT_SCHEDULE, smp_preempt );
 	set_interrupt_gate( INT_INVAL_PGT, smp_invalidate_pgt );

@@ -434,8 +434,8 @@ static int handle_not_present( MemArea_s *psArea, pte_t * pPte, iaddr_t nAddress
 		return ( -EAGAIN );
 
 /*	
-	panic( "Swapping mecanisem is currently broken, and disabled."
-	       "Newer the less someone pretends to have swapped out a page at %08lx\n", nAddress );
+	panic( "Swapping mechanism is currently broken, and disabled."
+	       "Nevertheless someone pretends to have swapped out a page at %08lx\n", nAddress );
 	return( -EFAULT );
 	UNLOCK( g_hAreaTableSema );
 	nError = swap_in( pPte );
@@ -483,7 +483,7 @@ static int handle_write_prot( MemArea_s *psArea, pte_t * pPte, iaddr_t nAddress 
 /** 
  * \par Description:
  *	Make the page accessible. This means allocating a new page and
- *	eighter perform a copy on write or load the page from disk.
+ *	either perform a copy on write or load the page from disk.
  * \par Note:
  *	The given address is NULL based and must be between psArea->a_nStart
  *	and psArea->a_nEnd

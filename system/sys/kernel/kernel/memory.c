@@ -279,17 +279,16 @@ status_t FreeHeapMem( MemHeader_s *psHeader, uint32 nAddress )
 void *alloc_real( uint32 nSize, uint32 nFlags )
 {
 	uint32 nMemAddr = 0;
-	int nFlg = cli();
+	int nFlg;
 	status_t nReturn;
 
-	spinlock( &g_sRealPoolLock );
+	nFlg = spinlock_disable( &g_sRealPoolLock );
 
 	nSize = ( nSize + 0x07 ) & ~0x07;
 
 	nReturn = AllocateHeapMem( &g_sSysBase.ex_sRealMemHdr, &nMemAddr, false, false, nSize );
 
-	spinunlock( &g_sRealPoolLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sRealPoolLock, nFlg );
 
 	if ( nReturn == 0 )
 	{
@@ -331,12 +330,10 @@ void free_real( void *pAddress )
 	}
 
 
-	nFlg = cli();
-	spinlock( &g_sRealPoolLock );
+	nFlg = spinlock_disable( &g_sRealPoolLock );
 	nReturn = FreeHeapMem( &g_sSysBase.ex_sRealMemHdr, nMemAddr );
 
-	spinunlock( &g_sRealPoolLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sRealPoolLock, nFlg );
 
 	if ( nReturn != 0 )
 	{
@@ -360,15 +357,14 @@ void free_real( void *pAddress )
  *****************************************************************************/
 status_t alloc_physical( uint32 *pnAddress, bool bExactAddress, uint32 nSize )
 {
-	int nFlg = cli();
+	int nFlg;
 	status_t nReturn;
 
-	spinlock( &g_sPhysicalPoolLock );
+	nFlg = spinlock_disable( &g_sPhysicalPoolLock );
 
 	nReturn = AllocateHeapMem( &g_sSysBase.ex_sPhysicalMemHdr, pnAddress, bExactAddress, true, nSize );
 
-	spinunlock( &g_sPhysicalPoolLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sPhysicalPoolLock, nFlg );
 
 	if ( nReturn != 0 )
 	{
@@ -396,12 +392,10 @@ void free_physical( uint32 nAddress )
 	int nFlg;
 	status_t nReturn;
 
-	nFlg = cli();
-	spinlock( &g_sPhysicalPoolLock );
+	nFlg = spinlock_disable( &g_sPhysicalPoolLock );
 	nReturn = FreeHeapMem( &g_sSysBase.ex_sPhysicalMemHdr, nAddress );
 
-	spinunlock( &g_sPhysicalPoolLock );
-	put_cpu_flags( nFlg );
+	spinunlock_enable( &g_sPhysicalPoolLock, nFlg );
 
 	if ( nReturn != 0 )
 	{

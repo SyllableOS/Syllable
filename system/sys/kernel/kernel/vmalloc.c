@@ -61,18 +61,13 @@ MemArea_s *get_area_from_handle( area_id hArea )
 
 	kassertw( is_semaphore_locked( g_hAreaTableSema ) );
 
-	for ( ;; )
-	{
-		psArea = MArray_GetObj( &g_sAreas, hArea );
+	psArea = MArray_GetObj( &g_sAreas, hArea );
 
-		if ( NULL == psArea )
-		{
-			goto error;
-		}
+	if ( psArea != NULL )
+	{
 		atomic_inc( &psArea->a_nRefCount );
-		break;
 	}
-      error:
+	
 	return ( psArea );
 }
 
@@ -406,7 +401,7 @@ uint32 find_unmapped_area( MemContext_s *psCtx, int nAllocMode, uint32 nSize, ui
 				}
 			}
 		}
-		panic( "find_unmapped_area() someting whent wrong while searcing backwards\n" );
+		panic( "find_unmapped_area() something went wrong while searching backwards\n" );
 		return ( -1 );
 	}
 	else

@@ -473,7 +473,7 @@ status_t sys_send_data( const thread_id hThread, const uint32 nCode, void *const
 			goto error;
 		}
 		remove_from_waitlist( &psThread->tr_psSendWaitQueue, &sWaitNode );
-		if ( psThread->tr_pData != NULL && is_signals_pending() )
+		if ( psThread->tr_pData != NULL && is_signal_pending() )
 		{
 			nError = -EINTR;
 			goto error;
@@ -673,7 +673,7 @@ Thread_s *Thread_New( Process_s *psProc )
 	tss->esp = psThread->tc_plKStack;
 	tss->esp0 = psThread->tc_plKStack;
 
-	save_fpu_state( psThread->tc_FPUState );
+//	save_fpu_state( &psThread->tc_FPUState );
 
 	tss->ss0 = 0x18;
 

@@ -25,12 +25,13 @@
 #include <atheos/time.h>
 #include <atheos/irq.h>
 #include <atheos/smp.h>
-#include <atheos/spinlock.h>
+#include <atheos/seqlock.h>
 
 #include <macros.h>
 
 #include "inc/scheduler.h"
 #include "inc/sysbase.h"
+#include "inc/io_ports.h"
 #include "inc/pit_timer.h"
 #include "inc/mc146818.h"
 #include "inc/global.h"
@@ -40,7 +41,7 @@
 
 int g_bNeedSchedule;		/* If true the scheduler will be called when returning from syscall     */
 
-SPIN_LOCK( g_sTimerSpinLock, "timer_slock" );
+SEQ_LOCK( g_sTimerSeqLock, "timer_slock" );
 
 
 /*****************************************************************************
@@ -53,11 +54,15 @@ SPIN_LOCK( g_sTimerSpinLock, "timer_slock" );
 bigtime_t get_system_time( void )
 {
 	bigtime_t nTime;
-	uint32 nFlags;
+	uint32 nSeq;
 
-	nFlags = spinlock_disable( &g_sTimerSpinLock );
-	nTime = g_sSysBase.ex_nRealTime - g_sSysBase.ex_nBootTime;
-	spinunlock_enable( &g_sTimerSpinLock, nFlags );
+	do
+	{
+		nSeq = read_seqbegin( &g_sTimerSeqLock );
+		nTime = g_sSysBase.ex_nRealTime - g_sSysBase.ex_nBootTime;
+	}
+	while ( read_seqretry( &g_sTimerSeqLock, nSeq ) );
+
 	return ( nTime );
 }
 
@@ -71,11 +76,14 @@ bigtime_t get_system_time( void )
 bigtime_t get_real_time( void )
 {
 	bigtime_t nTime;
-	uint32 nFlags;
+	uint32 nSeq;
 
-	nFlags = spinlock_disable( &g_sTimerSpinLock );
-	nTime = g_sSysBase.ex_nRealTime;
-	spinunlock_enable( &g_sTimerSpinLock, nFlags );
+	do
+	{
+		nSeq = read_seqbegin( &g_sTimerSeqLock );
+		nTime = g_sSysBase.ex_nRealTime;
+	}
+	while ( read_seqretry( &g_sTimerSeqLock, nSeq ) );
 
 	return ( nTime );
 }
@@ -93,7 +101,8 @@ bigtime_t get_idle_time( int nProcessor )
 	{
 		return ( 0 );
 	}
-	return ( g_asProcessorDescs[logig_to_physical_cpu_id( nProcessor )].pi_nIdleTime );
+	// this needs to be locked...
+	return ( g_asProcessorDescs[logical_to_physical_cpu_id( nProcessor )].pi_nIdleTime );
 }
 
 /*****************************************************************************
@@ -166,10 +175,10 @@ int sys_set_real_time( bigtime_t nTime )
 {
 	uint32 nFlags;
 
-	nFlags = spinlock_disable( &g_sTimerSpinLock );
+	nFlags = write_seqlock_disable( &g_sTimerSeqLock );
 	g_sSysBase.ex_nBootTime += nTime - g_sSysBase.ex_nRealTime;
 	g_sSysBase.ex_nRealTime = nTime;
-	spinunlock_enable( &g_sTimerSpinLock, nFlags );
+	write_sequnlock_enable( &g_sTimerSeqLock, nFlags );
 	return ( 0 );
 }
 
@@ -184,10 +193,10 @@ void starttimer1( void )
 {
 	int speed = PIT_TICKS_PER_SEC / INT_FREQ;
 
-	/*	outb_p( 0x30, 0x43 );	*//*      One shot mode   */
-	outb_p( 0x34, 0x43 );	/* Loop mode    */
-	outb_p( speed & 0xff, 0x40 );
-	outb_p( speed >> 8, 0x40 );
+	/*	outb_p( 0x30, PIT_MODE );	*//*      One shot mode   */
+	outb_p( 0x34, PIT_MODE );	/* Loop mode    */
+	outb_p( speed & 0xff, PIT_CH0 );
+	outb_p( speed >> 8, PIT_CH0 );
 }
 
 /*****************************************************************************
@@ -199,9 +208,9 @@ void starttimer1( void )
 
 void starttimer2( void )
 {
-	outb_p( 0xB4, 0x43 );
-	outb_p( 0, 0x42 );
-	outb_p( 0, 0x42 );
+	outb_p( 0xB4, PIT_MODE );
+	outb_p( 0, PIT_CH2 );
+	outb_p( 0, PIT_CH2 );
 }
 
 /*****************************************************************************
@@ -215,9 +224,9 @@ static uint16 readtimer1( void )
 {
 	uint16 n;
 
-	outb_p( 0, 0x43 );
-	n = inb_p( 0x40 );
-	n += inb_p( 0x40 ) << 8;
+	outb_p( 0, PIT_MODE );
+	n = inb_p( PIT_CH0 );
+	n += inb_p( PIT_CH0 ) << 8;
 	return 0x10000L - n;
 }
 #endif
@@ -234,9 +243,9 @@ uint32 readtimer2( void )
 	uint16 n;
 	static	uint16	Last=0;
 
-	outb_p( 0x80, 0x43 );
-	n = inb_p( 0x42 );
-	n += inb( 0x42 ) << 8;
+	outb_p( 0x80, PIT_MODE );
+	n = inb_p( PIT_CH2 );
+	n += inb( PIT_CH2 ) << 8;
 
 	n = 0x10000L - n;
 
@@ -265,26 +274,26 @@ void TimerInterrupt( int dummy )
 	if ( get_processor_id() != g_nBootCPU )
 	{
 		printk( "Got timer IRQ to CPU %d (Booted on %d)\n", get_processor_id(), g_nBootCPU );
+		put_cpu_flags( nFlg );
 		return;
 	}
 
-	outb( 0x20, 0x20 );	/* Give handshake to interupt controller        */
+	outb( 0x20, PIC_MASTER_CMD );	/* Give handshake to interupt controller        */
 	
 	put_cpu_flags( nFlg );
 
-	spinlock( &g_sTimerSpinLock );
+	nFlg = write_seqlock_disable( &g_sTimerSeqLock );
 	g_sSysBase.ex_nRealTime += ( uint64 )( 1000000 / INT_FREQ );
 	nCurTime = g_sSysBase.ex_nRealTime - g_sSysBase.ex_nBootTime;
-	spinunlock( &g_sTimerSpinLock );
+	write_sequnlock_enable( &g_sTimerSeqLock, nFlg );
 
+	// todo: move this to a separate thread
 	send_alarm_signals( nCurTime );
 	wake_up_sleepers( nCurTime );
 	if ( g_bAPICPresent == false )
 	{
 		Schedule();
 	}
-
-	
 }
 
 /*****************************************************************************
@@ -313,9 +322,9 @@ bool StartTimerInt( void )
 
 void StopTimerInt( void )
 {
-	outb_p( 0x34, 0x43 );
-	outb_p( 0, 0x40 );
-	outb_p( 0, 0x40 );
+	outb_p( 0x34, PIT_MODE );
+	outb_p( 0, PIT_CH0 );
+	outb_p( 0, PIT_CH0 );
 }
 
 

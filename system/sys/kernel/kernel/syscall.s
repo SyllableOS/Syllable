@@ -53,8 +53,11 @@
 	.global	_C_SYM( TSIHand )
 	.global	_C_SYM( exc0 )
 	.global	_C_SYM( exc6 )
+	.global	_C_SYM( exc7 )
 	.global	_C_SYM( excd )
 	.global	_C_SYM( exce )
+	.global	_C_SYM( exc10 )
+	.global	_C_SYM( exc13 )
 
 _C_SYM( g_nDisableTS ):
 .long	0
@@ -390,7 +393,11 @@ _C_SYM( exc0 ):
 	jmp	error_code
 _C_SYM( exc6 ):
 	pushl	$0	/* Fake error code */
-	pushl	$_C_SYM( handle_illega_inst_exception )
+	pushl	$_C_SYM( handle_illegal_inst_exception )
+	jmp	error_code
+_C_SYM( exc7 ):
+	pushl	$0	/* Fake error code */
+	pushl	$_C_SYM( math_state_restore )
 	jmp	error_code
 		
 _C_SYM( excd ):
@@ -400,6 +407,14 @@ _C_SYM( exce ):
 	pushl	$_C_SYM( handle_page_fault )
 	jmp	error_code
 	
+_C_SYM( exc10 ):
+	pushl	$0	/* Fake error code */
+	pushl	$_C_SYM( handle_fpu_exception )
+	jmp	error_code
+_C_SYM( exc13 ):
+	pushl	$0	/* Fake error code */
+	pushl	$_C_SYM( handle_sse_exception )
+	jmp	error_code
 
 error_code:
 	push	%fs

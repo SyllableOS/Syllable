@@ -63,7 +63,7 @@ static DeviceEntry_s g_asDevices[MAX_DEVICES];
  * SEE ALSO:
  ****************************************************************************/
 
-#define HT_DEFAULT_SIZE   128
+#define HT_DEFAULT_SIZE   1024
 #define HASH(d, b)   ((((off_t)d) << (sizeof(off_t)*8 - 6)) | (b))
 
 /*****************************************************************************
@@ -78,10 +78,11 @@ static int init_hash_table( HashTable_s * psTable )
 	psTable->ht_nSize = HT_DEFAULT_SIZE;
 	psTable->ht_nMask = psTable->ht_nSize - 1;
 	psTable->ht_nCount = 0;
+	psTable->ht_apsTable = NULL;
 
-	psTable->ht_apsTable = kmalloc( psTable->ht_nSize * sizeof( CacheBlock_s * ), MEMF_KERNEL | MEMF_NOBLOCK | MEMF_CLEAR );
+	psTable->ht_hArea = create_area( "bcache_hash_table", ( void ** )&psTable->ht_apsTable, psTable->ht_nSize * sizeof( CacheBlock_s * ), psTable->ht_nSize * sizeof( CacheBlock_s * ), AREA_ANY_ADDRESS | AREA_FULL_ACCESS | AREA_KERNEL, AREA_FULL_LOCK );
 
-	if ( NULL == psTable->ht_apsTable )
+	if ( psTable->ht_hArea < 0 )
 	{
 		return ( -ENOMEM );
 	}
@@ -105,6 +106,7 @@ static int resize_hash_table( HashTable_s * psTable )
 	int nNewMask;
 	int i;
 	int nHash;
+	area_id hNewArea;
 	CacheBlock_s **pasNewTable;
 
 	if ( psTable->ht_nSize & psTable->ht_nMask )
@@ -115,10 +117,11 @@ static int resize_hash_table( HashTable_s * psTable )
 	nPrevSize = psTable->ht_nSize;
 	nNewSize = nPrevSize * 2;
 	nNewMask = nNewSize - 1;
+	pasNewTable = NULL;
 
-	pasNewTable = kmalloc( nNewSize * sizeof( CacheBlock_s * ), MEMF_KERNEL | MEMF_NOBLOCK | MEMF_CLEAR );
+	hNewArea = create_area( "bcache_hash_table", ( void ** )&pasNewTable, nNewSize * sizeof( CacheBlock_s * ), nNewSize * sizeof( CacheBlock_s * ), AREA_ANY_ADDRESS | AREA_FULL_ACCESS | AREA_KERNEL, AREA_FULL_LOCK );
 
-	if ( NULL == pasNewTable )
+	if ( hNewArea < 0 )
 	{
 		return ( -ENOMEM );
 	}
@@ -137,8 +140,9 @@ static int resize_hash_table( HashTable_s * psTable )
 			pasNewTable[nHash] = psEntry;
 		}
 	}
-	kfree( psTable->ht_apsTable );
+	delete_area( psTable->ht_hArea );
 	psTable->ht_apsTable = pasNewTable;
+	psTable->ht_hArea = hNewArea;
 	psTable->ht_nSize = nNewSize;
 	psTable->ht_nMask = nNewMask;
 

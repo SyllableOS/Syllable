@@ -22,6 +22,7 @@
 #include <atheos/kernel.h>
 #include <atheos/smp.h>
 #include <atheos/kdebug.h>
+#include <atheos/atomic.h>
 #include <posix/errno.h>
 
 #include <macros.h>
@@ -29,48 +30,13 @@
 #include "inc/array.h"
 
 static void *g_pMagic[256];
-static int g_nUsedMem = 0;
-static int g_nTotObjects = 0;
+static atomic_t g_nUsedMem = ATOMIC_INIT( 0 );
+static atomic_t g_nTotObjects = ATOMIC_INIT( 0 );
 
 static void dbg_print_stats( int argc, char **argv )
 {
-	dbprintf( DBP_DEBUGGER, "Memory used: %d\n", g_nUsedMem );
-	dbprintf( DBP_DEBUGGER, "Num objects: %d\n", g_nTotObjects );
-}
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
-static void MArray_IncCount( MultiArray_s * psArray )
-{
-	psArray->nTabCount++;
-
-	psArray->nAvgCount = ( psArray->nAvgCount + psArray->nTabCount ) / 2;
-
-	if ( psArray->nTabCount > psArray->nMaxCount )
-	{
-		psArray->nMaxCount = psArray->nTabCount;
-	}
-	g_nTotObjects++;
-}
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
-static void MArray_DecCount( MultiArray_s * psArray )
-{
-	psArray->nTabCount--;
-
-	psArray->nAvgCount = ( psArray->nAvgCount + psArray->nTabCount ) / 2;
-	g_nTotObjects--;
+	dbprintf( DBP_DEBUGGER, "Memory used: %d\n", atomic_read( &g_nUsedMem ) );
+	dbprintf( DBP_DEBUGGER, "Num objects: %d\n", atomic_read( &g_nTotObjects ) );
 }
 
 /*****************************************************************************
@@ -82,19 +48,15 @@ static void MArray_DecCount( MultiArray_s * psArray )
 
 void MArray_Init( MultiArray_s * psArray )
 {
-	static bool bInititated = false;
+	static bool bInitialized = false;
 	int i;
 
 	psArray->nLastID = 0;
 
-	psArray->nTabCount = 0;
-	psArray->nMaxCount = 0;
-	psArray->nAvgCount = 0;
-
-	if ( bInititated == false )
+	if ( bInitialized == false )
 	{
-		bInititated = true;
-		register_debug_cmd( "array_stat", "print stats about the multi-dimentional arrays tracking kernel-handles", dbg_print_stats );
+		bInitialized = true;
+		register_debug_cmd( "array_stat", "print stats about the multi-dimensional arrays tracking kernel-handles", dbg_print_stats );
 
 		for ( i = 0; i < 256; ++i )
 		{
@@ -174,16 +136,16 @@ int MArray_Insert( MultiArray_s * psArray, void *pObject, bool bNoBlock )
 				}
 
 				psArray->pArray[( nIndex >> 16 ) & 0xff] = pBlock1;
-				g_nUsedMem += sizeof( void * ) * 256;
-				MArray_IncCount( psArray );
+				atomic_inc( &g_nTotObjects );
+				atomic_add( &g_nUsedMem, sizeof( void * ) * 256 );
 
 				for ( i = 0; i < 256; ++i )
 				{
 					psArray->pArray[( nIndex >> 16 ) & 0xff][i] = g_pMagic;
 				}
 				psArray->pArray[( nIndex >> 16 ) & 0xff][( nIndex >> 8 ) & 0xff] = pBlock2;
-				MArray_IncCount( psArray );
-				g_nUsedMem += sizeof( void * ) * 256;
+				atomic_inc( &g_nTotObjects );
+				atomic_add( &g_nUsedMem, sizeof( void * ) * 256 );
 
 				for ( i = 0; i < 256; ++i )
 				{
@@ -202,8 +164,8 @@ int MArray_Insert( MultiArray_s * psArray, void *pObject, bool bNoBlock )
 				}
 
 				psArray->pArray[( nIndex >> 16 ) & 0xff][( nIndex >> 8 ) & 0xff] = pBlock;
-				MArray_IncCount( psArray );
-				g_nUsedMem += sizeof( void * ) * 256;
+				atomic_inc( &g_nTotObjects );
+				atomic_add( &g_nUsedMem, sizeof( void * ) * 256 );
 
 				for ( i = 0; i < 256; ++i )
 				{
@@ -253,8 +215,8 @@ void MArray_Remove( MultiArray_s * psArray, int nIndex )
 	}
 
 	ma_free_block( psArray->pArray[( nIndex >> 16 ) & 0xff][( nIndex >> 8 ) & 0xff] );
-	MArray_DecCount( psArray );
-	g_nUsedMem -= sizeof( void * ) * 256;
+	atomic_dec( &g_nTotObjects );
+	atomic_sub( &g_nUsedMem, sizeof( void * ) * 256 );
 
 	psArray->pArray[( nIndex >> 16 ) & 0xff][( nIndex >> 8 ) & 0xff] = g_pMagic;
 
@@ -268,9 +230,8 @@ void MArray_Remove( MultiArray_s * psArray, int nIndex )
 	}
 
 	ma_free_block( psArray->pArray[( nIndex >> 16 ) & 0xff] );
-	MArray_DecCount( psArray );
-	g_nUsedMem -= sizeof( void * ) * 256;
-
+	atomic_dec( &g_nTotObjects );
+	atomic_sub( &g_nUsedMem, sizeof( void * ) * 256 );
 
 	psArray->pArray[( nIndex >> 16 ) & 0xff] = ( void *** )g_pMagic;
 }

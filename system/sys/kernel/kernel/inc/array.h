@@ -34,9 +34,6 @@ extern "C"
 typedef struct
 {
 	int nLastID;
-	int nTabCount;
-	int nMaxCount;
-	int nAvgCount;
 	void ***pArray[256];
 
 } MultiArray_s;

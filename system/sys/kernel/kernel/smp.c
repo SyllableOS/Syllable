@@ -30,15 +30,15 @@
 #include "inc/mc146818.h"
 #include "inc/smp.h"
 #include "inc/pit_timer.h"
+#include "inc/io_ports.h"
 
 //#define SMP_DEBUG
-
-
-
 
 static uint32 g_nIoAPICAddr = 0xFEC00000;	// Address of the I/O apic (not yet used)
 bool g_bAPICPresent = false;
 static bool g_bSmpActivated = false;
+bool g_bHasFXSR = false;
+bool g_bHasXMM = false;
 int g_nActiveCPUCount = 1;
 int g_nBootCPU = 0;
 ProcessorInfo_s g_asProcessorDescs[MAX_CPU_COUNT];
@@ -108,9 +108,9 @@ static int read_pit_timer( void )
 {
 	int nCount;
 
-	isa_writeb( 0x43, 0 );
-	nCount = isa_readb( 0x40 );
-	nCount += isa_readb( 0x40 ) << 8;
+	isa_writeb( PIT_MODE, 0 );
+	nCount = isa_readb( PIT_CH0 );
+	nCount += isa_readb( PIT_CH0 ) << 8;
 	return ( nCount );
 }
 
@@ -160,9 +160,9 @@ static void calibrate_delay( void )
 
 	while ( nLoopsPerSec <<= 1 )
 	{
-		isa_writeb( 0x43, 0x30 );	// one-shot mode
-		isa_writeb( 0x40, 0xff );
-		isa_writeb( 0x40, 0xff );
+		isa_writeb( PIT_MODE, 0x30 );	// one-shot mode
+		isa_writeb( PIT_CH0, 0xff );
+		isa_writeb( PIT_CH0, 0xff );
 
 		__delay( nLoopsPerSec );
 
@@ -179,9 +179,9 @@ static void calibrate_delay( void )
 	{
 		nLoopsPerSec |= nLoopBit;
 
-		isa_writeb( 0x43, 0x30 );	// one-shot mode
-		isa_writeb( 0x40, 0xff );
-		isa_writeb( 0x40, 0xff );
+		isa_writeb( PIT_MODE, 0x30 );	// one-shot mode
+		isa_writeb( PIT_CH0, 0xff );
+		isa_writeb( PIT_CH0, 0xff );
 		__delay( nLoopsPerSec );
 		if ( read_pit_timer() < 64000 )
 		{		// to long
@@ -189,9 +189,9 @@ static void calibrate_delay( void )
 		}
 	}
 
-	isa_writeb( 0x43, 0x34 );	// loop mode
-	isa_writeb( 0x40, 0x0 );
-	isa_writeb( 0x40, 0x0 );
+	isa_writeb( PIT_MODE, 0x34 );	// loop mode
+	isa_writeb( PIT_CH0, 0x0 );
+	isa_writeb( PIT_CH0, 0x0 );
 
 	// Get loops per sec, instead of loops per 65535 - 64000 pit ticks.
 	nLoopsPerSec *= PIT_TICKS_PER_SEC / ( 65535 - 64000 );
@@ -241,6 +241,8 @@ static void set_cpu_features( void )
 		read_cpu_id( 0x00000001, nRegs2 );
 		if ( nRegs2[3] & ( 1 << 23 ) )
 			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_MMX;
+		if ( nRegs2[3] & ( 1 << 24 ) )
+			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_FXSAVE;
 		if ( nRegs2[3] & ( 1 << 25 ) )
 			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_SSE;
 		g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_MMX2;
@@ -301,15 +303,23 @@ static void set_cpu_features( void )
 		printk( "3DNOW supported\n" );
 	if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_3DNOWEX )
 		printk( "3DNOWEX supported\n" );
-	if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_SSE )
+	if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_FXSAVE )
 	{
-		/* Set default SSE state ( from linux kernel ) DOES NOT WORK YET */
-		//unsigned long nReg = ( ( unsigned long )( 0x1f80 ) & 0xffbf );
-		//asm volatile( "ldmxcsr %0" : : "m" ( nReg ) );
-		printk( "SSE supported\n" );
+		// enable fast FPU save and restore
+		g_bHasFXSR = true;
+		set_in_cr4( X86_CR4_OSFXSR );
+		printk( "FXSAVE supported\n" );
+
+		if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_SSE )
+		{
+			// enable SSE support
+			g_bHasXMM = true;
+			set_in_cr4( X86_CR4_OSXMMEXCPT );
+			printk( "SSE supported\n" );
+		}
+		if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_SSE2 )
+			printk( "SSE2 supported\n" );
 	}
-	if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_SSE2 )
-		printk( "SSE2 supported\n" );
 	if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_APIC )
 		printk( "APIC present\n" );
 }
@@ -337,9 +347,9 @@ static void calibrate_apic_timer( int nProcessor )
 	nReg |= APIC_TDR_DIV_1;
 	apic_write( APIC_TDCR, nReg );
 
-	isa_writeb( 0x43, 0x34 );	// loop mode
-	isa_writeb( 0x40, 0xff );
-	isa_writeb( 0x40, 0xff );
+	isa_writeb( PIT_MODE, 0x34 );	// loop mode
+	isa_writeb( PIT_CH0, 0xff );
+	isa_writeb( PIT_CH0, 0xff );
 
 
 	wait_pit_wrap();
@@ -377,8 +387,18 @@ static void ap_entry_proc( void )
 	printk( "CPU %d joins the party.\n", nProcessor );
 
 	// Workaround for lazy bios'es that forget to enable the cache on AP processors.
-      __asm__( "movl %%cr0,%0":"=r"( nCR0 ) );
+	__asm__( "movl %%cr0,%0":"=r"( nCR0 ) );
 	__asm__ __volatile__( "movl %0,%%cr0"::"r"( nCR0 & 0x9fffffff ) );
+
+	// Enable SSE support
+	if ( g_bHasFXSR )
+	{
+		set_in_cr4( X86_CR4_OSFXSR );
+	}
+	if ( g_bHasXMM )
+	{
+		set_in_cr4( X86_CR4_OSXMMEXCPT );
+	}
 
 	sIDT.Base = ( uint32 )g_sSysBase.ex_GDT;
 	sIDT.Limit = 0xffff;
@@ -1194,9 +1214,9 @@ void boot_ap_processors( void )
 	put_cpu_flags( nFlg );
 }
 
-int logig_to_physical_cpu_id( int nLogicID )
+int logical_to_physical_cpu_id( int nLogicalID )
 {
-	return ( g_anLogicToRealID[nLogicID] );
+	return ( g_anLogicToRealID[nLogicalID] );
 }
 
 Thread_s *get_current_thread( void )

@@ -24,7 +24,7 @@
 typedef void* ktimer_t;
 typedef void timer_callback( void* pData );
 
-ktimer_t create_timer();
+ktimer_t create_timer( void );
 void start_timer( ktimer_t hTimer, timer_callback* pfCallback, void* pData, bigtime_t nPeriode, bool bOneShot );
 void delete_timer( ktimer_t hTimer );
 

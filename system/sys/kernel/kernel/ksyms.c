@@ -87,7 +87,7 @@ int get_processor_id( void )
 
 static KernelSymbol_s g_asKernelSymbols[] = {
 	KSYMBOL( get_processor_id ),
-	KSYMBOL( is_signals_pending ),
+	KSYMBOL( is_signal_pending ),
 	KSYMBOL( MArray_Destroy ),
 	KSYMBOL( MArray_GetNextIndex ),
 	KSYMBOL( MArray_GetObj ),

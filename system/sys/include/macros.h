@@ -35,15 +35,21 @@
 #define	min(a,b)	(((a)<(b)) ? (a) : (b) )
 #define	max(a,b)	(((a)>(b)) ? (a) : (b) )
 
+#if ( __GNUC__ >= 3 )
+#define __likely( expr )	__builtin_expect( !!(expr), 1 )
+#else
+#define __likely( expr )	(expr)
+#endif
+
 #ifdef __KERNEL__
-#define	kassertw( expr ) do {if ( !(expr) ) { 			\
+#define	kassertw( expr ) do {if ( !( __likely(expr) ) ) { 	\
   printk( "Assertion failure (" #expr ")\n"			\
 	  "file: " __FILE__ " function: %s() line: %d\n",	\
 	  __FUNCTION__, __LINE__ ); trace_stack( 0, NULL ); } } while(0)
 #else
-#define	__assertw( expr ) do {if ( !(expr) ) 							\
+#define	__assertw( expr ) do {if ( !( __likely(expr) ) ) 					\
   dbprintf( "Assertion failure (" #expr ")\n"							\
-	  "file: " __FILE__ " function: %s() line: %d\n%p\n%p\n%p\n%p\n",			\
-	  __FUNCTION__, __LINE__, __builtin_return_address(0), __builtin_return_address(1),	\
-	  __builtin_return_address(2), __builtin_return_address(3)  ); } while(0)
+	  "file: " __FILE__ " function: %s() line: %d\n%p\n%p\n",				\
+	  __FUNCTION__, __LINE__, __builtin_return_address(0), __builtin_return_address(1)	\
+	  ); } while(0)
 #endif

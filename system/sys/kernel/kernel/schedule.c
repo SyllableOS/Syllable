@@ -60,7 +60,14 @@ void db_print_sleep_list( int argc, char **argv )
 
 		psThread = get_thread_by_handle( psTmp->wq_hThread );
 
-		printk( " %d ->  %d - %s(%d)\n", i++, ( int )( psTmp->wq_nResumeTime / 1000000 ), psThread->tr_zName, psTmp->wq_hThread );
+		if ( psTmp->wq_hThread < 0 )
+		{
+			printk( " %d ->  %d.%06d - (%d)\n", i++, ( int )( psTmp->wq_nResumeTime / 1000000 ), ( int )( psTmp->wq_nResumeTime % 1000000 ), psTmp->wq_hThread );
+		}
+		else
+		{
+			printk( " %d ->  %d.%06d - %s(%d)\n", i++, ( int )( psTmp->wq_nResumeTime / 1000000 ), ( int )( psTmp->wq_nResumeTime % 1000000 ), psThread->tr_zName, psTmp->wq_hThread );
+		}
 	}
 	sched_unlock();
 	put_cpu_flags( nFlg );
@@ -713,7 +720,7 @@ status_t suspend( void )
 
 	sched_lock();
 
-	if ( is_signals_pending() == false )
+	if ( is_signal_pending() == false )
 	{
 		psMyThread->tr_nState = TS_WAIT;
 
@@ -727,7 +734,7 @@ status_t suspend( void )
 		put_cpu_flags( nFlg );
 	}
 
-	if ( is_signals_pending() )
+	if ( is_signal_pending() )
 	{
 		nError = -EINTR;
 	}
@@ -759,7 +766,7 @@ status_t sys_suspend_thread( const thread_id hThread )
 
 	if ( hThread == psMyThread->tr_hThreadID )	/* We are about to suspend our self     */
 	{
-		if ( is_signals_pending() == false )
+		if ( is_signal_pending() == false )
 		{
 			psMyThread->tr_nState = TS_WAIT;
 
@@ -773,7 +780,7 @@ status_t sys_suspend_thread( const thread_id hThread )
 			put_cpu_flags( nFlg );
 		}
 
-		if ( is_signals_pending() )
+		if ( is_signal_pending() )
 		{
 			nError = -EINTR;
 		}
@@ -813,10 +820,10 @@ status_t stop_thread( bool bNotifyParent )
 
 	psThread->tr_nState = TS_STOPPED;
 	sched_unlock();
+	put_cpu_flags( nFlg );
 
 	Schedule();
 
-	put_cpu_flags( nFlg );
 	return ( 0 );
 }
 
@@ -973,7 +980,7 @@ static Thread_s *find_dead_child( pid_t hPid, pid_t hGroup, int nOptions )
 				}
 			}
 			if ( hPid < -1 || 0 == hPid )
-			{	/* Any childs belonging to group -hPid, or same group as us */
+			{	/* Any children belonging to group -hPid, or same group as us */
 				if ( psChild->tr_psProcess->pr_hPGroupID == hGroup )
 				{
 					return ( psChild );
@@ -1014,7 +1021,7 @@ pid_t sys_wait4( const pid_t hPid, int *const pnStatLoc, const int nOptions, str
 	else
 	{
 		if ( hPid < -1 || 0 == hPid )
-		{		/* Any childs belonging to group -hPid, or same group as us */
+		{		/* Any children belonging to group -hPid, or same group as us */
 			hGroup = ( 0 == hPid ) ? psProc->pr_hPGroupID : -hPid;
 
 			FOR_EACH_THREAD( hTmpID, psTmp )
@@ -1029,7 +1036,7 @@ pid_t sys_wait4( const pid_t hPid, int *const pnStatLoc, const int nOptions, str
 		else
 		{
 			if ( -1 == hPid )
-			{	/* Wait for any childs */
+			{	/* Wait for any children */
 				FOR_EACH_THREAD( hTmpID, psTmp )
 				{
 					if ( psTmp->tr_hParent == psThread->tr_hThreadID )
@@ -1084,7 +1091,7 @@ pid_t sys_wait4( const pid_t hPid, int *const pnStatLoc, const int nOptions, str
 			case TS_ZOMBIE:
 				{
 
-		      /*** TODO: Add childs rusage to our's ***/
+		      /*** TODO: Add child's rusage to ours ***/
 
 					sched_unlock();
 					put_cpu_flags( nOldFlg );
@@ -1120,7 +1127,7 @@ pid_t sys_wait4( const pid_t hPid, int *const pnStatLoc, const int nOptions, str
 			put_cpu_flags( nOldFlg );
 			return ( 0 );
 		}
-		if ( is_signals_pending() == false )
+		if ( is_signal_pending() == false )
 		{
 			psThread->tr_nState = TS_WAIT;
 			sched_unlock();
@@ -1191,7 +1198,7 @@ int sys_wait_for_thread( const thread_id hThread )
 			remove_from_waitlist( &psThread->tr_psTermWaitList, &sWaitNode );
 		}
 
-		nResult = ( is_signals_pending() )? -EINTR : sWaitNode.wq_nCode;
+		nResult = ( is_signal_pending() )? -EINTR : sWaitNode.wq_nCode;
 	}
 	else
 	{
@@ -1479,12 +1486,17 @@ void Schedule( void )
 
 	if ( psPrev != NULL )
 	{
-		save_fpu_state( psPrev->tc_FPUState );
+		if ( psPrev->tr_nFlags & TF_FPU_DIRTY )
+		{
+			save_fpu_state( &psPrev->tc_FPUState );
+			psPrev->tr_nFlags &= ~TF_FPU_DIRTY;
+			stts();
+		}
 		__asm__ __volatile__( "movl %%cr2,%0":"=r"( psPrev->tr_nCR2 ) );
 	}
 	g_asProcessorDescs[nThisProc].pi_psCurrentThread = psNext;
 
-	load_fpu_state( psNext->tc_FPUState );
+//	load_fpu_state( psNext->tc_FPUState );
 	__asm__ __volatile__( "movl %0,%%cr2"::"r"( psNext->tr_nCR2 ) );
 
 	psNext->tr_nCurrentCPU = nThisProc;
