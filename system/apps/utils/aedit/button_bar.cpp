@@ -69,7 +69,7 @@ void ButtonBar::AddButton(const void* pnData, const char* pzName, Message* pcMes
     {
 		ImageButton* pcCurrentButton;
         ImageButton* pcTempButton = new ImageButton(Rect(1,0,BUTTON_WIDTH,BUTTON_HEIGHT+4),pzName,"",pcMessage,NULL, ImageButton::IB_TEXT_BOTTOM,true,false,true);
-        pcTempButton->SetImageFromImage(pcImage);
+        pcTempButton->SetImage(pcImage);
         vButtons.push_back(pcTempButton);
         
         pcCurrentButton=vButtons[nNumButtons];
@@ -80,7 +80,7 @@ void ButtonBar::AddButton(const void* pnData, const char* pzName, Message* pcMes
     {
 		ImageButton* pcCurrentButton;
         ImageButton* pcTempButton = new ImageButton(Rect( ( (BUTTON_WIDTH*nNumButtons)+1),0,(BUTTON_WIDTH*(nNumButtons+1)),BUTTON_HEIGHT+4),pzName,"",pcMessage,NULL, ImageButton::IB_TEXT_BOTTOM,true,false,true);
-        pcTempButton->SetImageFromImage(pcImage);
+        pcTempButton->SetImage(pcImage);
         vButtons.push_back(pcTempButton);
         
         pcCurrentButton=vButtons[nNumButtons];
@@ -90,12 +90,3 @@ void ButtonBar::AddButton(const void* pnData, const char* pzName, Message* pcMes
 
     return;
 }
-
-
-
-
-
-
-
-
-
