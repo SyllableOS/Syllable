@@ -1,0 +1,60 @@
+catalogtool
+===========
+
+Simple tool used to manipulate .catalog files. With it, you can:
+
+* List the contents of a catalog, eg:
+
+	catalogtool --list catcomp.catalog
+
+* Add or change a string in a catalog:
+
+	catalogtool --set catcomp.catalog 5000 Hello!
+
+	(This will set string 5000 in catcomp.catalog to "Hello!")
+
+	If the file doesn't exist, a new catalog file is created.
+
+* Get a string from a catalog:
+
+	catalogtool --get catcomp.catalog 5000
+
+	(This will print out string 5000. Could perhaps be used to localise scripts).
+
+catcomp
+=======
+
+The catalog compiler. Compiles catalog description (.cd) files to binary .catalog
+files. It will also create a header file that you should include in your projects
+to be able to use the translated strings.
+
+	catcomp -c catcomp.cd
+
+Creates two files, catcomp.catalog and catcomp.h.
+
+	catcomp -t catcomp.cd
+
+Creates one file, catcomp.catalog.
+
+The .cd files should contain ID-string mappings of the form:
+
+NAME[=ID]	STRING
+
+The file can also contain C++ style comments. '\n' is converted to a line feed
+character (LF).
+
+Here's an example:
+
+//
+// String catalog for Catalog Compiler
+//
+
+MSG_SYNTAX_ERROR		Syntax error on line %d
+MSG_ID_NUMBER_MISSING	ID number is missing.
+MSG_NO_TEXT_STRING		No text string found.
+MSG_CANT_OPEN_FILE		Can't open file %s!
+
+MSG_HELP_COMPILE=100	Compile catalog and header file.
+MSG_HELP_TRANSLATE		Compile translated catalog to binary format.
+MSG_HELP_HELP			Print this help message.
+

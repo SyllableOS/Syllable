@@ -1,0 +1,18 @@
+//
+// String catalog for Catalog Compiler
+//
+
+MSG_SYNTAX_ERROR		Syntax error on line %d
+MSG_ID_NUMBER_MISSING	ID number is missing.
+MSG_NO_TEXT_STRING		No text string found.
+MSG_CANT_OPEN_FILE		Can't open file %s!
+
+MSG_HELP_COMPILE=100	Compile catalog and header file.
+MSG_HELP_TRANSLATE		Compile translated catalog to binary format.
+MSG_HELP_HELP			Print this help message.
+
+MSG_CREATING_CATALOG_FILE=200	Creating catalog file:
+MSG_CREATING_HEADER_FILE		Creating header file:
+MSG_DESCR						Tool used to create string catalogs used when translating software.
+
+

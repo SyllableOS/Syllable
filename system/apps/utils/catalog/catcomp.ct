@@ -1,0 +1,21 @@
+//
+// String catalog for Catalog Compiler
+//
+
+MSG_CANT_OPEN_FILE		Can't open file %s!
+MSG_HELP_COMPILE		Compile catalog and header file.
+
+MSG_CREATING_CATALOG_FILE	Skapar katalog-fil:
+MSG_CREATING_HEADER_FILE	Skapar header-fil:
+
+//
+
+
+MSG_SYNTAX_ERROR=100	Syntax error on line %d!           		
+//   Whitespace at the end of a line is ignored  ^^^
+
+MSG_LONG_MESSAGE=200	Another message here.
+
+
+
+
