@@ -39,6 +39,9 @@ class ShortcutKey {
 	
 	bool IsValid() const;
 
+	uint32 GetKeyCode() const;
+	uint32 GetQualifiers() const;
+
 	bool operator<( const ShortcutKey& c ) const;
 	bool operator==( const ShortcutKey& c ) const;
 	

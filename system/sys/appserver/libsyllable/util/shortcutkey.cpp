@@ -102,3 +102,14 @@ void ShortcutKey::_SetKey( const char* pzKey )
 
 	m_nKey = towupper( unicode );
 }
+
+uint32 ShortcutKey::GetKeyCode() const
+{
+	return m_nKey;
+}
+
+uint32 ShortcutKey::GetQualifiers() const
+{
+	return m_nQualifiers;
+}
+
