@@ -2200,6 +2200,7 @@ bool TextEdit::HandleKeyDown( const char* pzString, const char* pzRawString, uin
     bool bShift = nQualifiers & QUAL_SHIFT;
     bool bAlt = nQualifiers & QUAL_ALT;
     bool bCtrl = nQualifiers & QUAL_CTRL;
+    bool bDead = nQualifiers & QUAL_DEADKEY;
 
     if ( m_bEnabled == false ) {
 	return( false );
@@ -2286,30 +2287,6 @@ bool TextEdit::HandleKeyDown( const char* pzString, const char* pzRawString, uin
     if( m_bReadOnly )
 	return false;
 
-  /*  if ( nQualifiers & QUAL_CTRL ) {
- else if ( pzString[0] == 'c' ) {
-    }
-    if ( nQualifiers & QUAL_SHIFT ) {
-	if ( pzString[0] == VK_INSERT ) {
-	    const char* pzBuffer;
-	    int nError;
-	    Clipboard cClipboard;
-	    cClipboard.Lock();
-	    Message* pcData = cClipboard.GetData();
-	    nError = pcData->FindString( "text/plain", &pzBuffer );
-	    if ( nError == 0 ) {
-		if ( m_bRegionActive ) {
-		    Delete();
-		}
-		InsertString( NULL, pzBuffer );
-	    }
-	    cClipboard.Unlock();
-	    CommitEvents();
-	    return( true );
-	}
-	
-    }
-    */
     switch( pzString[0] ) {
 	case 0:
 	    break;
@@ -2421,6 +2398,23 @@ bool TextEdit::HandleKeyDown( const char* pzString, const char* pzRawString, uin
 	    }
 	    break;
     }
+
+    if( bDead ) {
+    	dbprintf("DeadKey. Qual = %x, str = %s\n", nQualifiers, pzString);
+    	/* Note: this is a bit of hack. It marks the entered character, if it's a deadkey, */
+    	/* so that it will be overwritten by the next char. */
+	int nDelta = -1;
+	while( m_cCsrPos.x + nDelta > 0 ) {
+	    if ( is_first_utf8_byte( m_cBuffer[m_cCsrPos.y][m_cCsrPos.x+nDelta] ) ) {
+		break;
+	    }
+	    nDelta--;
+	}
+	MoveHoriz( nDelta, false );
+	MoveHoriz( utf8_char_length( m_cBuffer[m_cCsrPos.y][m_cCsrPos.x] ), true );
+	m_vCsrGfxPos = -1.0f;
+    }
+
     CommitEvents();
     return( true );
 }
@@ -2506,26 +2500,6 @@ void TextView::__TV_reserved2__() {}
 void TextView::__TV_reserved3__() {}
 /** \internal */
 void TextView::__TV_reserved4__() {}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

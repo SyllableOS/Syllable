@@ -63,13 +63,13 @@ Font::Font( const Font& cOrig )
 {
     _CommonInit();
 
-      // Make sure SetProperties() realy takes action
+      // Make sure SetProperties() really takes action
     m_vSize     = -1.0f;
     m_vRotation = -2.0f;
     m_vShear    = -3.0f;
   
     SetFamilyAndStyle( cOrig.m_cFamily.c_str(), cOrig.m_cStyle.c_str() );
-    SetProperties( cOrig.m_vSize, cOrig.m_vShear, cOrig.m_vRotation );
+    _SetProperties( cOrig.m_vSize, cOrig.m_vShear, cOrig.m_vRotation, cOrig.m_nFlags );
 }
 
 Font::Font( const std::string& cConfigName )
@@ -168,7 +168,7 @@ status_t Font::SetProperties( const font_properties& sProps )
     if ( nError < 0 ) {
 	return( nError );
     }
-    return( SetProperties( sProps.m_vSize, sProps.m_vShear, sProps.m_vRotation ) );
+    return( _SetProperties( sProps.m_vSize, sProps.m_vShear, sProps.m_vRotation, sProps.m_nFlags ) );
 }
 
 status_t Font::SetFamilyAndStyle( const char* pzFamily, const char* pzStyle )
@@ -212,22 +212,33 @@ status_t Font::SetFamilyAndStyle( const char* pzFamily, const char* pzStyle )
 
 void Font::SetSize( float vSize )
 {
-    SetProperties( vSize, m_vShear, m_vRotation );
+    _SetProperties( vSize, m_vShear, m_vRotation, m_nFlags );
 }
 
 void Font::SetShear( float vShear )
 {
-    SetProperties( m_vSize, vShear, m_vRotation );
+    _SetProperties( m_vSize, vShear, m_vRotation, m_nFlags );
 }
 
 void Font::SetRotation( float vRotation )
 {
-    SetProperties( m_vSize, m_vShear, vRotation );
+    _SetProperties( m_vSize, m_vShear, vRotation, m_nFlags );
 }
+
+void Font::SetFlags( uint32 nFlags )
+{
+    _SetProperties( m_vSize, m_vShear, m_vRotation, nFlags );
+}
+
 
 status_t Font::SetProperties( float vSize, float vShear, float vRotation )
 {
-    if ( vSize != m_vSize || vShear != m_vShear || vRotation != vRotation )
+	return _SetProperties( vSize, vShear, vRotation, m_nFlags );
+}
+
+status_t Font::_SetProperties( float vSize, float vShear, float vRotation, uint32 nFlags )
+{
+    if ( vSize != m_vSize || vShear != m_vShear || vRotation != m_vRotation || nFlags != m_nFlags )
     {
 	Message cReq( AR_SET_FONT_PROPERTIES );
 	Message cReply;
@@ -236,6 +247,7 @@ status_t Font::SetProperties( float vSize, float vShear, float vRotation )
 	cReq.AddFloat( "size", vSize );
 	cReq.AddFloat( "rotation", vRotation );
 	cReq.AddFloat( "shear", vShear );
+	cReq.AddInt32( "flags", nFlags );
 
 	port_id hPort = Application::GetInstance()->GetAppPort();
 	Messenger( hPort ).SendMessage( &cReq, &cReply );
@@ -260,6 +272,7 @@ status_t Font::SetProperties( float vSize, float vShear, float vRotation )
 	    m_vSize	= vSize;
 	    m_vRotation	= vRotation;
 	    m_vShear	= vShear;
+	    m_nFlags    = nFlags;
 
 	    return( 0 );
 	} else {
@@ -421,7 +434,7 @@ void Font::GetStringLengths( const char** apzStringArray, const int* anLengthArr
     psReq->hReply 	= m_hReplyPort;
     psReq->hFontToken	= m_hFontHandle;
     psReq->nStringCount	= nStringCount;
-    psReq->nWidth	= vWidth;
+    psReq->nWidth	= (int)vWidth;
     psReq->bIncludeLast	= bIncludeLast;
 
     int* pnLen = &psReq->sFirstHeader.nLength;
@@ -616,3 +629,4 @@ bool Font::Rescan()
 	return( false );
     }
 }
+

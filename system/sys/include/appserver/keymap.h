@@ -22,8 +22,10 @@
 
 #include <atheos/types.h>
 
-#define CURRENT_KEYMAP_VERSION 1
-#define KEYMAP_MAGIC	0x4d7f98c5
+#define CURRENT_KEYMAP_VERSION	2
+#define KEYMAP_MAGIC		0x4d7f98c5
+#define DEADKEY_ID		0x02
+
 enum
 {
     CM_NORMAL,
@@ -43,6 +45,19 @@ enum {
     KLOCK_NUMLOCK    = 0x0004
 };
 
+struct keymap_header {
+	uint32	m_nMagic;
+	uint32	m_nVersion;
+	uint32	m_nSize;
+};
+
+typedef struct keymap_deadkey {
+    uint8  m_nRawKey;
+    uint8  m_nQualifier;
+    int32  m_nKey;
+    int32  m_nValue;
+} deadkey;
+
 struct keymap
 {
     int16  m_nCapsLock;
@@ -60,8 +75,11 @@ struct keymap
     uint32 m_nLockSetting;
     
     int32 m_anMap[128][9];
+
+    uint32 m_nNumDeadKeys;
+    deadkey m_sDeadKey[];
 };
 
-
-
 #endif // __F_APPSERVER_KEYMAP_H__
+
+
