@@ -11,6 +11,7 @@ LL	= ld
 JPGOBJS = jpegtrans.o
 PNGOBJS = pngtrans.o
 GIFOBJS = giftrans.o
+ICONOBJS = icontrans.o
 
 OBJS = $(JPGOBJS) $(PNGOBJS) $(GIFOBJS)
 
@@ -18,7 +19,7 @@ OBJDIR	:= objs
 
 include $(ATHEOS_SRC)/makefile.rules
 
-all :	$(OBJDIR) $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so
+all :	$(OBJDIR) $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so $(OBJDIR)/icontrans.o
 
 $(OBJDIR):
 	mkdir $(OBJDIR)
@@ -32,11 +33,14 @@ $(OBJDIR)/pngtrans.so: $(PNGOBJS)
 $(OBJDIR)/giftrans.so: $(GIFOBJS)
 	g++ -shared $(GIFOBJS) -latheos -lungif -lz -L/usr/lib/ -o $(OBJDIR)/giftrans.so
 
-install: $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so
-	install -s $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so $(TRANSDIR)/
+$(OBJDIR)/icontrans.so: $(GIFOBJS)
+	g++ -shared $(ICONOBJS) -latheos -L/usr/lib/ -o $(OBJDIR)/icontrans.so
 
-dist: $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so
-	install -s $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so $(DIST_DIR)/atheos/sys/translators/
+install: $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so $(OBJDIR)/icontrans.so
+	install -s $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so $(OBJDIR)/icontrans.so $(TRANSDIR)/
+
+dist: $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so $(OBJDIR)/icontrans.so
+	install -s $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so $(OBJDIR)/icontrans.so $(DIST_DIR)/atheos/sys/translators/
 
 deps: $(OBJDIR) $(DEPS)
 
@@ -44,3 +48,4 @@ clean:
 	rm -f *.o $(OBJDIR)/*.d $(OBJDIR)/*.so
 
 -include $(OBJDIR)/*.d
+
