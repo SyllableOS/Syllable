@@ -4,7 +4,6 @@ authors
 	Arno Klenke
 	Kristian Van Der Vliet
 maintainers			Kaj de Vos
-status				testing
 
 licenses			GPL LGPL
 home				www.gnu.org/software/binutils/
@@ -16,9 +15,9 @@ build-needs
 
 patch-config
 patch
-	cd ld;
-	automake;
-	cd ../gas;
+	cd ld
+	automake
+	cd ../gas
 	autoconf
 
 ;configure-options	--enable-shared
