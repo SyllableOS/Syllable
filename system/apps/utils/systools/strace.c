@@ -7,6 +7,7 @@
 #include <atheos/types.h>
 #include <atheos/threads.h>
 #include <atheos/strace.h>
+#include <atheos/syscalltable.h>
 
 int parse_groups( char *zList );
 
