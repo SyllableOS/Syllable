@@ -1,3 +1,10 @@
+* Oct 5 2002, Kristian Van Der Vliet *
+
+Added system/libs/libpthread  This is a POSIX threads library which wraps the Syllable kernel threads.  The current code is incomplete but functional.  For more information, see the README and CHANGES files included with libpthread.
+
+* Sep 24 2002, Kristian Van Der Vliet *
+
+Removed the -g flags from the libatheos and appserver Makefiles, which of course reduces the size of the resulting files.
 
 * Aug 25 2002, Kristian Van Der Vliet *
 
