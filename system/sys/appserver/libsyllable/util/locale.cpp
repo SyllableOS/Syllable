@@ -21,6 +21,7 @@
 #include <util/resources.h>
 #include <storage/file.h>
 #include <locale.h>
+#include <util/catalog.h>
 
 using namespace os;
 
@@ -113,7 +114,7 @@ StreamableIO* Locale::GetResourceStream( const String& cName )
 
 	if( !pcStream ) {
 		try {
-			pcStream = new File( String("resources/") + cName );
+			pcStream = new File( String("^/resources/") + cName );
 		} catch( ... ) {
 			if( pcStream ) delete pcStream;
 			pcStream = NULL;
@@ -134,4 +135,32 @@ StreamableIO* Locale::GetLocalizedResourceStream( const String& cName )
 	}
 
 	return pcStream;
+}
+
+Catalog* Locale::GetLocalizedCatalog( const String& cName )
+{
+	StreamableIO* pcStream;
+	Catalog* pcCatalog = new Catalog;
+	bool bDef = false, bLoc = false;
+
+	pcStream = GetResourceStream( cName );
+	if( pcStream ) {
+		pcCatalog->Load( pcStream );
+		delete pcStream;
+		bDef = true;
+	}
+
+	pcStream = GetResourceStream( m->m_cName + String("/") + cName );
+	if( pcStream ) {
+		pcCatalog->Load( pcStream );
+		delete pcStream;
+		bLoc = true;
+	}
+
+	if( bLoc || bDef ) {
+		return pcCatalog;
+	} else {
+		delete pcCatalog;
+		return NULL;
+	}
 }
