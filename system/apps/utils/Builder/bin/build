@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.5.6
+# Version 0.5.7
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -71,7 +71,7 @@ def unpackPackage target
 			gzip = true
 			action 'tar xzf ' + file
 		else
-			logError "Source package #{base}.* not found"
+			@log.error "Source package #{base}.* not found"
 			false
 		end
 	then
@@ -80,7 +80,7 @@ def unpackPackage target
 		if exists? dir = fullName(target)
 			true
 		else  # Tarball content has a deviating name
-			logSubheader 'Renaming source'
+			@log.subheader 'Renaming source'
 
 			unless result = action(gzip ? 'tar tzf ' + file : "bzcat #{file} | tar t")
 				false
@@ -93,12 +93,12 @@ end
 
 def patchPackage target
 	if exists? file = File.join(recipePath(target), fullName(target) + '.patch')
-		logHeader 'Applying delta'
+		@log.header 'Applying delta'
 		return false unless action 'patch --strip=1 < ' + file
 	end
 
 	if exists? dir = patchesPath(target)
-		logHeader 'Applying patches'
+		@log.header 'Applying patches'
 		return false unless action "cp -a #{File.join dir, '*'} ." and
 			# Crude way to remove possible CVS dirs from patches - to be fixed
 			deleteCVSData
@@ -106,7 +106,7 @@ def patchPackage target
 
 	unless
 		if dirs = (recipe = getRecipe target)['patch-config']
-			logHeader 'Patching configuration'
+			@log.header 'Patching configuration'
 			files = File.join @sourcesPath, 'config/config.*'
 	
 			if dirs == ''
@@ -117,7 +117,7 @@ def patchPackage target
 				end
 			end
 		elsif dir = recipe['patch-legacy-config']
-			logHeader 'Patching configuration'
+			@log.header 'Patching configuration'
 
 			action "cp -a #{File.join @sourcesPath, 'config/legacy/*'} " +
 				(dir == '' ? '.' : dir)
@@ -128,7 +128,7 @@ def patchPackage target
 		false
 	else
 		if cmdLine = recipe['patch']
-			logHeader 'Executing patch instructions'
+			@log.header 'Executing patch instructions'
 			action toCommand cmdLine
 		else
 			true
@@ -139,7 +139,7 @@ end
 def getPackage target
 	unless
 		unless exists? target
-			logHeader 'Installing source'
+			@log.header 'Installing source'
 
 			unless exists? dir = File.dirname(target) or action 'mkdir --parents ' + dir
 				false
@@ -160,10 +160,10 @@ def getPackage target
 			else
 				if Dir[File.join(@sourcesPath, fullName(target) + '.t*')] != []  # Some tarball
 					puts "\nWARNING! This will clobber your CVS repository!"
-					logHeader 'Replacing source'
+					@log.header 'Replacing source'
 
 					unless action 'rm -r ' + target
-						logError 'Failed to delete source'
+						@log.error 'Failed to delete source'
 						false
 					else
 						unless unpackPackage target
@@ -187,8 +187,8 @@ def getPackage target
 			end
 		end
 	then
-		logError 'Source not installed'
-		logFailure target
+		@log.error 'Source not installed'
+		@log.failure target
 		false
 	else
 		action 'sync'
@@ -197,14 +197,14 @@ end
 
 def configurePackage target
 	unless thirdParty?
-		logHeader 'Building dependencies'
+		@log.header 'Building dependencies'
 		action 'make deps'
 
 		true  # Continue building even if dependencies failed
 	else
 		unless
 			if cmdLine = (recipe = getRecipe target)['configure']
-				logHeader 'Configuring'
+				@log.header 'Configuring'
 				action toCommand cmdLine
 			else
 				unless exists? cmd = (cmd = recipe['configure-cmd']) ? toString(cmd) : 'configure'
@@ -213,13 +213,13 @@ def configurePackage target
 				else
 					unless noBuildDir = recipe['no-build-dir'] or exists? dir = buildDir(target) or
 						begin
-							logHeader 'Creating build directory'
+							@log.header 'Creating build directory'
 							action 'mkdir ' + dir
 						end
 					then
 						false
 					else
-						logHeader 'Configuring'
+						@log.header 'Configuring'
 	
 						# Some packages require an absolute path to the configure command
 						cmdPath = File.join(Dir.getwd, File.dirname cmd)
@@ -248,7 +248,7 @@ def configurePackage target
 				end
 			end
 		then
-			logFailure target
+			@log.failure target
 			false
 		else
 			true
@@ -259,13 +259,13 @@ end
 def cleanPackage target
 	unless
 		if exists? dir = buildDir(target)
-			logHeader 'Deleting build directory'
+			@log.header 'Deleting build directory'
 			action 'rm -r ' + dir
 		else
 			action 'make clean'
 		end
 	then
-#		logFailure target
+#		@log.failure target
 		false
 	else
 		action 'sync'
@@ -281,7 +281,7 @@ def makePackage target
 		((options = recipe['make-options']) ? ' ' + toString(options) : '') +
 		((targets = recipe['make-targets']) ? ' ' + toString(targets) : '')
 	)
-		logFailure target
+		@log.failure target
 		false
 	else
 		action 'sync'
@@ -295,7 +295,7 @@ def testPackage target
 		((options = (recipe = getRecipe(target))['test-options']) ? toString(options) + ' ' : '') +
 		((targets = recipe['test-targets']) ? toString(targets) : 'check')
 	then
-		logFailure target
+		@log.failure target
 		false
 	else
 		action 'sync'
@@ -309,7 +309,7 @@ def installPackage target
 		if target[-4..-1] == '.tgz' and exists? target  # A distribution package
 			if exists? root and not
 				begin
-					logHeader 'Uninstalling ' + shortName(target)
+					@log.header 'Uninstalling ' + shortName(target)
 					uninstallPackage target  # Double failure logging!
 				end
 			then
@@ -317,7 +317,7 @@ def installPackage target
 			else
 				action 'tar -C /usr -xpzf ' + target and
 				begin
-					logHeader 'Registering ' + target
+					@log.header 'Registering ' + target
 					action 'pkgmanager -a ' + root
 				end
 			end
@@ -330,19 +330,19 @@ def installPackage target
 			else
 				if exists? root and not
 					begin
-						logHeader 'Uninstalling ' + shortName(target)
+						@log.header 'Uninstalling ' + shortName(target)
 						uninstallPackage target  # Double failure logging!
 					end
 				then
 					false
 				else
 					if dirs = (recipe = getRecipe target)['install-tree']
-						logHeader 'Creating subdirectories'
-						logDetail root
+						@log.header 'Creating subdirectories'
+						@log.detail root
 						Dir.mkdir root
 
 						for dir in toList dirs
-							logDetail d = File.join(root, dir)
+							@log.detail d = File.join(root, dir)
 							Dir.mkdir d
 						end
 					end
@@ -361,7 +361,7 @@ def installPackage target
 						false
 					elsif files = recipe['documentation'] and not
 						begin
-							logHeader 'Installing documentation'
+							@log.header 'Installing documentation'
 							Dir.chdir @workDir
 							Dir.chdir target
 							action "cp -a #{toString files} " + root
@@ -370,14 +370,14 @@ def installPackage target
 						false
 					elsif exists? filesPath = File.join(@packagesPath, fullName(target), 'distro') and not
 						begin
-							logHeader 'Installing extra files'
+							@log.header 'Installing extra files'
 							action "cp -a #{File.join filesPath, '*'} " + root
 						end
 					then
 						false
 					elsif links = recipe['links'] and not
 						begin
-							logHeader 'Creating links'
+							@log.header 'Creating links'
 
 							for link in parseList links
 								original, destination = toList link
@@ -399,7 +399,7 @@ def installPackage target
 					else
 						@systemBuild or
 						begin
-							logHeader 'Registering ' + target
+							@log.header 'Registering ' + target
 							action 'pkgmanager -a ' + root
 						end
 					end
@@ -407,7 +407,7 @@ def installPackage target
 			end
 		end
 	then
-		logFailure target
+		@log.failure target
 	else
 		action 'sync'
 	end
@@ -429,18 +429,18 @@ def uninstallPackage target
 
 			unless @systemBuild or
 				begin
-					logHeader 'Unregistering ' + name
+					@log.header 'Unregistering ' + name
 					action 'pkgmanager -r ' + dir
 				end
 			then
 				false
 			else
-				logHeader 'Deleting ' + name
+				@log.header 'Deleting ' + name
 				action 'rm -r ' + dir
 			end
 		end
 	then
-		logFailure target
+		@log.failure target
 		false
 	else
 		action 'sync'
@@ -457,7 +457,7 @@ def makeDistroPackage target  # Should only be called if it's a system build
 			unless action 'make dist'
 				false
 			else
-#				logHeader 'Installing documentation'
+#				@log.header 'Installing documentation'
 #				if action 'make doc'
 #					action 'make install-doc'
 #				end
@@ -465,7 +465,7 @@ def makeDistroPackage target  # Should only be called if it's a system build
 				true
 			end
 		then
-			logFailure target
+			@log.failure target
 		else
 			action 'sync'
 		end
@@ -477,12 +477,12 @@ def buildPackage target
 		Dir.chdir @workDir  # Target path may be relative or absolute
 		Dir.chdir target
 
-		logHeader 'Cleaning'
+		@log.header 'Cleaning'
 		cleanPackage target
 
 		if configurePackage target  # No failed configuration
 			# Build the directory
-			logHeader 'Making'
+			@log.header 'Making'
 			makePackage target
 		end
 	end
@@ -497,7 +497,7 @@ def doModules command, target
 	# Visit all directories
 
 	for package in getModules target
-		logEntry package
+		@log.entry package
 
 		Dir.chdir package
 		action command
@@ -507,7 +507,7 @@ end
 
 def prepare target
 	if @systemBuild and tree = getRecipe(target)['distro-tree']
-		logHeader 'Building distribution tree'
+		@log.header 'Building distribution tree'
 
 		if exists? @distroRoot
 			action 'rm -r ' + File.join(@distroRoot, '*')
@@ -518,7 +518,7 @@ def prepare target
 
 #		action File.join(@buildTools, 'mkbase.sh') + ' ' + @distroRoot
 		for dir in toList tree
-			logDetail dir
+			@log.detail dir
 			Dir.mkdir dir unless exists? dir
 		end
 
@@ -528,45 +528,45 @@ def prepare target
 end
 
 def patch target
-	logHeader 'Patching ' + target
+	@log.header 'Patching ' + target
 
 	# Patch all directories
 
 	for package in getModules target
-		logEntry package
+		@log.entry package
 
 		Dir.chdir package
 		unless patchPackage package
-			logError 'Source not patched'
-			logFailure target
+			@log.error 'Source not patched'
+			@log.failure target
 		end
 		Dir.chdir @workDir
 	end
 end
 
 def get target
-	logHeader 'Fetching ' + target
+	@log.header 'Fetching ' + target
 
 	# Fetch all directories
 
 	for package in getModules target
-		logEntry package
+		@log.entry package
 		getPackage package
 	end
 end
 
 def distclean target
-	logHeader 'Cleaning distribution ' + target
+	@log.header 'Cleaning distribution ' + target
 	doModules 'make distclean', target
 end
 
 def configure target
-	logHeader 'Configuring ' + target
+	@log.header 'Configuring ' + target
 
 	# Configure all directories
 
 	for package in getModules target
-		logEntry package
+		@log.entry package
 
 		Dir.chdir package
 		configurePackage package
@@ -575,12 +575,12 @@ def configure target
 end
 
 def clean target
-	logHeader 'Cleaning ' + target
+	@log.header 'Cleaning ' + target
 
 	# Clean all directories
 
 	for package in getModules target
-		logEntry package
+		@log.entry package
 
 		Dir.chdir package
 		cleanPackage package
@@ -589,12 +589,12 @@ def clean target
 end
 
 def make target
-	logHeader 'Making ' + target
+	@log.header 'Making ' + target
 
 	# Make all directories
 
 	for package in getModules target
-		logEntry package
+		@log.entry package
 
 		Dir.chdir package
 		makePackage package
@@ -603,12 +603,12 @@ def make target
 end
 
 def test target
-	logHeader 'Testing ' + target
+	@log.header 'Testing ' + target
 
 	# Test all directories
 
 	for package in getModules target
-		logEntry package
+		@log.entry package
 
 		Dir.chdir package
 		testPackage package
@@ -617,12 +617,12 @@ def test target
 end
 
 def install target
-	logHeader 'Installing ' + target
+	@log.header 'Installing ' + target
 
 	# Install all directories or distribution packages
 
 	for package in getModules target
-		logEntry package
+		@log.entry package
 
 		installPackage package
 		Dir.chdir @workDir
@@ -630,12 +630,12 @@ def install target
 end
 
 def uninstall target
-	logHeader 'Uninstalling ' + target
+	@log.header 'Uninstalling ' + target
 
 	# Uninstall all directories
 
 	for package in getModules target
-		logEntry package
+		@log.entry package
 
 		uninstallPackage package
 		Dir.chdir @workDir
@@ -643,14 +643,14 @@ def uninstall target
 end
 
 def makeDistro target
-	logHeader 'Making distribution ' + target
+	@log.header 'Making distribution ' + target
 
 	modules = getModules(target)
 	if @systemBuild
 		# Visit all directories
 
 		for package in modules
-			logEntry package
+			@log.entry package
 			Dir.chdir package
 			makeDistroPackage package
 			Dir.chdir @workDir
@@ -683,12 +683,12 @@ def makeDistro target
 end
 
 def build target
-	logHeader 'Building ' + target
+	@log.header 'Building ' + target
 
 	# Build all directories
 
 	for package in getModules target
-		logEntry package
+		@log.entry package
 		buildPackage package
 	end
 end
@@ -701,10 +701,10 @@ def deleteCVSData
 
 	# Delete all CVS dirs
 	# (They would trigger some packages to reconfigure themselves.)
-	logHeader 'Cleaning out CVS dirs'
+	@log.header 'Cleaning out CVS dirs'
 
 	Dir['**/CVS'].each do |dir|
-		logDetail dir
+		@log.detail dir
 
 		# Delete all files in the CVS dir first
 		Dir.foreach dir do |file|
@@ -715,10 +715,10 @@ def deleteCVSData
 		Dir.delete dir
 	end
 
-	logHeader 'Cleaning out .cvsignore files'
+	@log.header 'Cleaning out .cvsignore files'
 
 	Dir['**/.cvsignore'].each do |file|
-		logDetail file
+		@log.detail file
 		File.delete file
 	end
 end
@@ -731,7 +731,7 @@ def dir? file
 	FileTest.directory? file
 end
 
-def load file  # Load the lines of a file into an array, discarding comments and empty lines
+def loadFile file  # Load the lines of a file into an array, discarding comments and empty lines
 	lines = []
 
 	File.open file do |file|
@@ -874,7 +874,7 @@ end
 
 def loadProfile target  # Read a profile file
 	if exists? file = File.join(@profilesPath, target)
-		load file
+		loadFile file
 	else
 		nil
 	end
@@ -892,7 +892,7 @@ end
 
 def loadRecipe package  # Read a recipe file
 	if exists? file = File.join(recipePath(package = fullName(package)), package + '.recipe')
-		load file
+		loadFile file
 	else
 		[]
 	end
@@ -910,84 +910,88 @@ def overlayRecipe recipe, overlay
 end
 
 def action command  # Return the output of the shell command, or false if unsuccessful
-	logAction command
+	@log.action command
 	stdout = `#{command}`
 	if (status = $? >> 8) == 0  # OK
-		logResult stdout
+		@log.result stdout
 		stdout
 	else
-		logError status
-		logResult stdout
+		@log.error status
+		@log.result stdout
 		false
 	end
 end
 
-def openLogs
-	@failures = []
+class Log
+attr_reader :failures
 
-	Dir.mkdir @logsPath unless exists? @logsPath
+	def initialize path
+		@failures = []
 
-	@log		= File.new File.join(@logsPath, 'last-stdout'), 'w'
-	@summary	= File.new File.join(@logsPath, 'last-summary'), 'w'
-	@failLog	= File.new File.join(@logsPath, 'last-failures'), 'w'
+		Dir.mkdir path unless exists? path
 
-	@log		<< s = "Building in root directory #{@workDir}\n"
-	@summary	<< s
-	@failLog	<< s
-end
+		@log		= File.new File.join(path, 'last-stdout'), 'w'
+		@summary	= File.new File.join(path, 'last-summary'), 'w'
+		@failLog	= File.new File.join(path, 'last-failures'), 'w'
 
-def closeLogs
-	@log		<< s = "\nFinished\n"
-	@summary	<< s
+		@log		<< s = "Building in root directory #{Dir.getwd}\n"
+		@summary	<< s
+		@failLog	<< s
+	end
 
-	@log.close
-	@summary.close
-	@failLog.close
-end
+	def close
+		@log		<< s = "\nFinished\n"
+		@summary	<< s
 
-def logHeader header
-	print		"\n" + s = header + "\n"
-	@log		<< "\n#{s}\n"
-	@summary	<< s
-end
+		@log.close
+		@summary.close
+		@failLog.close
+	end
 
-def logSubheader header
-	print		"\n" + s = header + "\n"
-	@log		<< "\n" + s
-	@summary	<< s
-end
+	def header header
+		print		"\n" + s = header + "\n"
+		@log		<< "\n#{s}\n"
+		@summary	<< s
+	end
 
-def logEntry entry
-	print		s = "\n#{entry}\n"
-	@log		<< s
-	@summary	<< s
-end
+	def subheader header
+		print		"\n" + s = header + "\n"
+		@log		<< "\n" + s
+		@summary	<< s
+	end
 
-def logDetail detail
-	puts		detail
-	@log		<< detail + "\n"
-end
+	def entry entry
+		print		s = "\n#{entry}\n"
+		@log		<< s
+		@summary	<< s
+	end
 
-def logAction action
-	puts		"\n#{action}\n"
-	@log		<< action + ': '
-	@summary	<< action
-end
+	def detail detail
+		puts		detail
+		@log		<< detail + "\n"
+	end
 
-def logError error
-	puts		"\n" + s = "Error: #{error}"
-	@log		<< s + ':'
-	@summary	<< ': ' + s
-end
+	def action action
+		puts		"\n#{action}\n"
+		@log		<< action + ': '
+		@summary	<< action
+	end
 
-def logResult result
-	@log		<< "\n\n" << result
-	@summary	<< "\n"
-end
+	def error error
+		puts		"\n" + s = "Error: #{error}"
+		@log		<< s + ':'
+		@summary	<< ': ' + s
+	end
 
-def logFailure target
-	@failLog	<< target + "\n"
-	@failures	<< target
+	def result result
+		@log		<< "\n\n" << result
+		@summary	<< "\n"
+	end
+
+	def failure target
+		@failLog	<< target + "\n"
+		@failures	<< target
+	end
 end
 
 
@@ -997,7 +1001,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.6',
+	puts 'Syllable Build System 0.5.7',
 		'Copyright (c) 2002-2004 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1031,10 +1035,10 @@ when '?', '-?', '-h', '-help', '--help'
 		'  failures      Log of failed modules'
 when 'profile'	then puts loadProfile arg2
 when 'recipe'	then puts loadRecipe arg2
-when 'overlay'	then p overlayRecipe getRecipe(arg2), getRecipe(arg3)
+when 'overlay'	then puts overlayRecipe(getRecipe(arg2), getRecipe(arg3)).to_a
 when 'log'		then print IO.readlines(File.join(@logsPath, arg2 ? 'last-' + arg2 : 'last-stdout'))
 else
-	openLogs
+	@log = Log.new @logsPath
 
 	if arg1 == 'scrub'
 		deleteCVSData
@@ -1044,7 +1048,7 @@ else
 		save profile, File.join(@profilesPath, 'last') if profile  # Not a single module
 
 		if @systemBuild
-			logHeader 'Temporarily replacing system headers'
+			@log.header 'Temporarily replacing system headers'
 			File.delete '/ainc' if exists? '/ainc'
 			action "ln -s #{File.join @workDir, 'sys/include'} /ainc"
 
@@ -1065,7 +1069,7 @@ else
 		when 'distro'		then makeDistro arg2
 		else
 			if arg2
-				logError 'Unrecognized command'
+				@log.error 'Unrecognized command'
 				exit
 			else
 				build target
@@ -1073,12 +1077,12 @@ else
 		end
 
 		if profile  # Not a single module
-			save ['modules'] + @failures.collect {|line| "\t" + line},
+			save ['modules'] + @log.failures.collect {|line| "\t" + line},
 				File.join(@profilesPath, 'failures')
 		end
 
 		if @systemBuild
-			logHeader 'Restoring system headers'
+			@log.header 'Restoring system headers'
 			File.delete '/ainc'
 			action 'ln -s /system/include /ainc'
 		end
@@ -1086,5 +1090,5 @@ else
 		action 'sync'
 	end
 
-	closeLogs
+	@log.close
 end
