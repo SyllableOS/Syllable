@@ -19,8 +19,8 @@
 
 #include "image_button.h"
 
-ImageButton::ImageButton( Rect cFrame, const char *pzName, const char *pzLabel, Message *pcMessage, uint32 nTextPosition = IB_TEXT_RIGHT, bool bDrawBorder = true,
-		             uint32 nResizeMask = CF_FOLLOW_LEFT|CF_FOLLOW_TOP, uint32 nFlags=WID_WILL_DRAW|WID_CLEAR_BACKGROUND|WID_FULL_UPDATE_ON_RESIZE) : 
+ImageButton::ImageButton( Rect cFrame, const char *pzName, const char *pzLabel, Message *pcMessage, uint32 nTextPosition, bool bDrawBorder,
+		             uint32 nResizeMask, uint32 nFlags) : 
 				Button( cFrame, pzName, pzLabel, pcMessage, nResizeMask, nFlags )
 {
 	m_nTextPosition = nTextPosition;
@@ -30,8 +30,8 @@ ImageButton::ImageButton( Rect cFrame, const char *pzName, const char *pzLabel, 
 
 
 
-ImageButton::ImageButton( Rect cFrame, const char *pzName, const char *pzLabel, Message *pcMessage, Bitmap *pcBitmap, uint32 nTextPosition = IB_TEXT_RIGHT, bool bDrawBorder = true,
-		             uint32 nResizeMask = CF_FOLLOW_LEFT|CF_FOLLOW_TOP, uint32 nFlags=WID_WILL_DRAW|WID_CLEAR_BACKGROUND|WID_FULL_UPDATE_ON_RESIZE) : 
+ImageButton::ImageButton( Rect cFrame, const char *pzName, const char *pzLabel, Message *pcMessage, Bitmap *pcBitmap, uint32 nTextPosition, bool bDrawBorder,
+		             uint32 nResizeMask, uint32 nFlags) : 
 				Button( cFrame, pzName, pzLabel, pcMessage, nResizeMask, nFlags )
 {
 	m_nTextPosition = nTextPosition;
@@ -42,8 +42,8 @@ ImageButton::ImageButton( Rect cFrame, const char *pzName, const char *pzLabel, 
 
 
 
-ImageButton::ImageButton( Rect cFrame, const char *pzName, const char *pzLabel, Message *pcMessage, uint32 nWidth, uint32 nHeight, uint8 *pnBuffer, uint32 nTextPosition = IB_TEXT_RIGHT,bool bDrawBorder = true, 
-		             uint32 nResizeMask = CF_FOLLOW_LEFT|CF_FOLLOW_TOP, uint32 nFlags=WID_WILL_DRAW|WID_CLEAR_BACKGROUND|WID_FULL_UPDATE_ON_RESIZE) : 
+ImageButton::ImageButton( Rect cFrame, const char *pzName, const char *pzLabel, Message *pcMessage, uint32 nWidth, uint32 nHeight, uint8 *pnBuffer, uint32 nTextPosition,bool bDrawBorder, 
+		             uint32 nResizeMask, uint32 nFlags) : 
 				Button( cFrame, pzName, pzLabel, pcMessage, nResizeMask, nFlags )
 {
 	m_nTextPosition = nTextPosition;
@@ -354,5 +354,3 @@ void ImageButton::ClearImage( void )
 	Invalidate();
 	Flush();
 }
-
-

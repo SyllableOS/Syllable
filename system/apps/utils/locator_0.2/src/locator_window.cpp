@@ -259,7 +259,7 @@ void LocatorWindow::HandleMessage( Message *pcMessage )
       break;
 
     case EV_SEARCH_STRING_CHANGED:
-      if( pcSearch->GetCurrentString( ) != "" )
+      if( !(pcSearch->GetCurrentString( ) == "") )
       {
 
         pcSearchButton->SetEnable( true );
@@ -332,7 +332,7 @@ void LocatorWindow::HandleMessage( Message *pcMessage )
     case ERR_INDEX_FILE:
       pcStatusString->SetString("Could Not Open Index File.");
       pcSearchThread = NULL;
-      if( pcSearch->GetCurrentString( ) != "" )
+      if( !(pcSearch->GetCurrentString( ) == "") )
       {
         pcSearchButton->SetEnable( true );
         bSafeToSearch = true;
@@ -417,7 +417,7 @@ void LocatorWindow::StartSearch( Message *pcMessage )
       pcSearch->DeleteItem( MAX_HISTORY );
 
 
-    if( pcSearchDir->GetCurrentString( ) != "" )
+    if( !( pcSearchDir->GetCurrentString( ) == "" ) )
     {
 
       pcTemp = pcSearchDir->GetCurrentString( );
@@ -890,5 +890,4 @@ void LocatorPrefWindow::HandleMessage( Message *pcMessage )
 	pcParentInvoker->Invoke();
 
 }
-	
-											
+

@@ -25,6 +25,7 @@
 #include <gui/window.h>
 
 using namespace os;
+using namespace std;
 
 class ImageButton;
 
@@ -61,16 +62,3 @@ class ImageButton : public Button
 		uint32 m_nTextPosition;
 		bool m_bDrawBorder;
 };
-		             
-
-
-
-
-
-
-
-
-
-
-
-

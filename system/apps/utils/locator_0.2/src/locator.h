@@ -37,6 +37,8 @@
 #include <vector>
 #include <string>
 
+using namespace std;
+
 #define APP_NAME "Locator 0.2"
 #define APP_VERSION "0.2"
 
@@ -92,5 +94,3 @@ class SearchThread : public Looper
     bool Match( string zString );
     void Log( string zMessage );
 };
-
-

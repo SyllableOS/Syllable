@@ -20,6 +20,7 @@
 
 #include "util.h"
 
+using namespace std;
 
 os::Rect center_frame( const os::Rect &cFrame )
 {
@@ -43,7 +44,7 @@ os::Rect center_frame( const os::Rect &cFrame )
 	// Convert to an absolute path (resolve ~/^)
 std::string convert_path( std::string zPath )
 {
-	string zTmpPath = "";	
+	os::String zTmpPath = "";	
 	
 	if( zPath.length() > 0 ) {
 		int n = 0;
@@ -55,13 +56,13 @@ std::string convert_path( std::string zPath )
 		Directory *pcDir = new Directory( );
 		if( pcDir->SetTo( zTmpPath.c_str() ) == 0 ) {
 			pcDir->GetPath( &zTmpPath );
-			zTmpPath = zTmpPath + (string)"/" + zPath.substr( n );
+			zTmpPath = zTmpPath + (os::String)"/" + zPath.substr( n );
 		}
 			
 		delete pcDir;
 	}
 		
-	return zTmpPath;
+	return zTmpPath.str();
 }
 
 
@@ -76,6 +77,3 @@ std::string app_path( void )
 	
 	return zLauncherPath;
 }
-
-
-
