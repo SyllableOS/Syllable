@@ -1,0 +1,25 @@
+authors
+	Jan L. Hauffa
+	Kaj de Vos
+status				testing
+
+licenses			Apache other
+home				apr.apache.org
+locations			http://www.apache.org/dist/apr/
+
+build-needs			apr
+build-recommends
+	db
+	expat
+
+patch-config
+	build
+	xml/expat/conftools
+no-build-dir
+configure-options
+	--with-apr=/usr/apr
+	--with-berkeley-db=/usr/db
+;	--with-expat=
+;	--with-ldap=
+;	--with-iconv=
+documentation		CHANGES LICENSE STATUS renames_pending
