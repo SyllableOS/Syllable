@@ -1,6 +1,6 @@
 /*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
- *  Copyright (C) 2003 Syllable Team
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -73,7 +73,9 @@ public:
     virtual void	MouseMove( const Point& cNewPos, int nCode, uint32 nButtons, Message* pcData );
     virtual void	MouseDown( const Point& cPosition, uint32 nButtons );
     virtual void	MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData );
+	virtual void	KeyDown( const char *pzString, const char *pzRawString, uint32 nQualifiers );
     virtual void	WheelMoved( const Point& cDelta );
+	virtual void	Activated( bool bIsActive );
 
     virtual void	Paint( const Rect& cUpdateRect );
 

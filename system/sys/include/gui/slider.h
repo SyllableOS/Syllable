@@ -107,9 +107,11 @@ public:
     virtual void  MouseMove( const Point& cNewPos, int nCode, uint32 nButtons, Message* pcData );
     virtual void  MouseDown( const Point& cPosition, uint32 nButtons );
     virtual void  MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData );
+    virtual void  KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
     virtual void  FrameSized( const Point& cDelta );
     virtual void  Paint( const Rect& cUpdateRect );
     virtual Point GetPreferredSize( bool bLargest ) const;
+   	virtual void Activated( bool bIsActive );
 
 private:
     void _RefreshDisplay();

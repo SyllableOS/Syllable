@@ -535,6 +535,25 @@ void ScrollBar::MouseMove( const Point & cNewPos, int nCode, uint32 nButtons, Me
 	}
 }
 
+void ScrollBar::KeyDown( const char *pzString, const char *pzRawString, uint32 nQualifiers )
+{
+	if( IsEnabled() == false )
+	{
+		View::KeyDown( pzString, pzRawString, nQualifiers );
+		return;
+	}
+	if( GetShortcut() == ShortcutKey( pzRawString, nQualifiers ) )
+	{
+		MakeFocus();
+	} else if( pzString[1] == 0 && ( pzString[0] == 0x1E || pzString[0] == 0x1D ) ) {
+		SetValue( min( GetValue().AsFloat() + m->m_vSmallStep, m->m_vMax ) );
+	} else if( pzString[1] == 0 && ( pzString[0] == 0x1F || pzString[0] == 0x1C ) ) {
+		SetValue( max( GetValue().AsFloat() - m->m_vSmallStep, m->m_vMin ) );
+	} else {
+		Control::KeyDown( pzString, pzRawString, nQualifiers );
+	}
+}
+
 void ScrollBar::WheelMoved( const Point & cDelta )
 {
 	float vValue = GetValue();
@@ -565,6 +584,12 @@ void ScrollBar::WheelMoved( const Point & cDelta )
 	SetValue( vValue );
 }
 
+void ScrollBar::Activated( bool bIsActive )
+{
+	Invalidate();
+	Flush();
+}
+
 //----------------------------------------------------------------------------
 // NAME:
 // DESC:
@@ -590,6 +615,15 @@ void ScrollBar::Paint( const Rect & cUpdateRect )
 		SetEraseColor( get_default_color( COL_NORMAL ) );
 	}
 
+	if( IsEnabled() && HasFocus() )
+	{
+		SetFgColor( 0, 0xAA, 0 );
+		DrawLine( Point( cKnobFrame.left, cKnobFrame.top ), Point( cKnobFrame.right, cKnobFrame.top ) );
+		DrawLine( Point( cKnobFrame.right, cKnobFrame.bottom ) );
+		DrawLine( Point( cKnobFrame.left, cKnobFrame.bottom ) );
+		DrawLine( Point( cKnobFrame.left, cKnobFrame.top ) );
+		cKnobFrame.Resize(1, 1, -1, -1);
+	}
 
 	DrawFrame( cKnobFrame, FRAME_RAISED );
 

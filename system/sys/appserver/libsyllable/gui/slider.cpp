@@ -648,7 +648,26 @@ void Slider::MouseUp( const Point & cPosition, uint32 nButtons, Message * pcData
 		Invoke();	// Send a 'final' message
 		m->m_bChanged = false;
 	}
-	MakeFocus( false );
+	//MakeFocus( false );
+}
+
+void Slider::KeyDown( const char *pzString, const char *pzRawString, uint32 nQualifiers )
+{
+	if( IsEnabled() == false )
+	{
+		View::KeyDown( pzString, pzRawString, nQualifiers );
+		return;
+	}
+	if( GetShortcut() == ShortcutKey( pzRawString, nQualifiers ) )
+	{
+		MakeFocus();
+	} else if( pzString[1] == 0 && ( pzString[0] == 0x1E || pzString[0] == 0x1D ) ) {
+		SetValue( min( GetValue().AsFloat() + m->m_vSmallStep, m->m_vMax ) );
+	} else if( pzString[1] == 0 && ( pzString[0] == 0x1F || pzString[0] == 0x1C ) ) {
+		SetValue( max( GetValue().AsFloat() - m->m_vSmallStep, m->m_vMin ) );
+	} else {
+		Control::KeyDown( pzString, pzRawString, nQualifiers );
+	}
 }
 
 //----------------------------------------------------------------------------
@@ -737,6 +756,16 @@ void Slider::RenderKnob( View * pcRenderView )
 
 	if( m->m_eKnobMode == KNOB_SQUARE )
 	{
+		if( IsEnabled() && HasFocus() )
+		{
+			pcRenderView->SetFgColor( 0, 0xAA, 0 );
+			pcRenderView->DrawLine( Point( cKnobFrame.left, cKnobFrame.top ), Point( cKnobFrame.right, cKnobFrame.top ) );
+			pcRenderView->DrawLine( Point( cKnobFrame.right, cKnobFrame.bottom ) );
+			pcRenderView->DrawLine( Point( cKnobFrame.left, cKnobFrame.bottom ) );
+			pcRenderView->DrawLine( Point( cKnobFrame.left, cKnobFrame.top ) );
+			cKnobFrame.Resize(1, 1, -1, -1);
+		}
+
 		pcRenderView->SetEraseColor( get_default_color( COL_SCROLLBAR_KNOB ) );
 		pcRenderView->DrawFrame( cKnobFrame, FRAME_RAISED );
 	}
@@ -1087,4 +1116,8 @@ void Slider::SetMinMax( float vMin, float vMax )
 	m->m_vMin = vMin; m->m_vMax = vMax;
 }
 
+void Slider::Activated( bool bIsActive )
+{
+	_RefreshDisplay();
+}
 
