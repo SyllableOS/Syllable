@@ -15,3 +15,7 @@ pre-configure		cp ../db-4.2.52/build_unix/* .
 configure-cmd		dist/configure
 configure-options	--enable-cxx
 documentation		README LICENSE docs examples_c examples_cxx
+links
+;	Optimize wasteful duplicates:
+	libdb-4.2.a		lib/libdb.a
+	libdb_cxx-4.2.a	lib/libdb_cxx.a
