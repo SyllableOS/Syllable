@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.4.7
+# Version 0.4.8
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -97,7 +97,12 @@ def patchPackage target
 
 	if exists? dir = patchesPath(target)
 		logHeader "Applying patches"
-		return false unless action "cp -a #{File.join dir, "*"} ."
+		unless action "cp -a #{File.join dir, "*"} ."
+			return false
+		else
+			# Crude way to remove possible CVS dirs from patches - to be fixed
+			deleteCVSData
+		end
 	end
 
 	if cmdLine = (recipe = getRecipe target)["patch"]
@@ -169,7 +174,6 @@ def getPackage target
 					unless thirdParty?
 						true
 					else
-						puts "\nWARNING! This will clobber your CVS repository!"
 						deleteCVSData
 						patchPackage target
 					end
@@ -211,12 +215,14 @@ def configurePackage target
 
 					action((cmdLine = recipe["configure"]) ? toString(cmdLine) :
 						((vars = recipe["configure-vars"]) ? toString(vars) + " " : "") +
-#						(noBuildDir ? cmd : File.join("..", fullName(target), cmd)) +
-						(noBuildDir ? cmd :
+						File.join((
+							noBuildDir ?
+								"." :
+							# Some packages require an absolute path
 							target[0, 1] == "/" ?
-								File.join(target, cmd) :
-								File.join(@workDir, target, cmd)
-						) +
+								target :
+								File.join(@workDir, target)
+						), cmd) +
 						((args = recipe["configure-args"]) ?
 							" " + toString(args) :
 							((p = recipe["configure-prefix"]) ?
@@ -668,6 +674,7 @@ def deleteCVSData
 	# (They would trigger some packages to reconfigure themselves.)
 
 	logHeader "Cleaning out CVS dirs"
+	puts "\nWARNING! This will clobber your CVS repository!"
 
 	Dir["**/CVS"].each do |dir|
 		logDetail dir
@@ -915,7 +922,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.4.7",
+	puts "Syllable Build System 0.4.8",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
