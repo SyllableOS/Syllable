@@ -47,7 +47,7 @@ class Settings : public Message
 {
 public:
     Settings();
-    Settings( const std::string& cFile, const std::string& cPath = "" );
+    Settings( const String& cFile, const String& cPath = "" );
     Settings( SeekableIO *pcFile );
     ~Settings();
 
@@ -57,12 +57,12 @@ public:
     Settings&	operator=( const Settings& cSource );
     Settings&	operator=( const Message& cSource );
     
-    std::string	GetPath() const;
-    std::string	GetFile() const;
-    void	SetPath( const std::string& cPath = "" );
-    void	SetFile( const std::string& cFile = "Settings" );
+    String	GetPath() const;
+    String	GetFile() const;
+    void	SetPath( const String& cPath = "" );
+    void	SetFile( const String& cFile = "Settings" );
 
-    std::string	GetString( const char* pzName, const char* pzDefault = "", int nIndex = 0 ) const;
+    String	GetString( const char* pzName, const char* pzDefault = "", int nIndex = 0 ) const;
     int8	GetInt8( const char* pzName, int8 nDefault, int nIndex = 0 ) const;
     int16	GetInt16( const char* pzName, int16 nDefault, int nIndex = 0 ) const;
     int32	GetInt32( const char* pzName, int32 nDefault, int nIndex = 0 ) const;
@@ -82,7 +82,7 @@ public:
 	// which can grow pretty big. Use Message::FindMessage() instead.
 
     status_t	SetData( const char* pzName, int nType, const void* pData, uint32 nSize, int nIndex = 0, bool bFixedSize = true, int nMaxCountHint = 1 );
-    status_t	SetString( const char* pzName, const std::string& cValue, int nIndex = 0 );
+    status_t	SetString( const char* pzName, const String& cValue, int nIndex = 0 );
     status_t	SetInt8( const char* pzName, int8 cValue, int nIndex = 0 );
     status_t	SetInt16( const char* pzName, int16 cValue, int nIndex = 0 );
     status_t	SetInt32( const char* pzName, int32 cValue, int nIndex = 0 );

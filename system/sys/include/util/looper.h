@@ -1,6 +1,6 @@
 /*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
- *  Copyright (C) 2003 Syllable Team
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -27,6 +27,7 @@
 #include <util/handler.h>
 #include <util/messagequeue.h>
 #include <util/locker.h>
+#include <util/string.h>
 
 #include <map>
 
@@ -50,11 +51,11 @@ class	Looper : public Handler
 public:
     typedef std::map<int,Handler*> handler_map;
   
-    Looper( const std::string& cName, int nPriority = NORMAL_PRIORITY, int nPortSize = DEFAULT_PORT_SIZE );
+    Looper( const String& cName, int nPriority = NORMAL_PRIORITY, int nPortSize = DEFAULT_PORT_SIZE );
     virtual ~Looper();
 
-    void	SetName( const std::string& cName );
-    std::string GetName() const;
+    void	SetName( const String& cName );
+    String GetName() const;
 
 	bool IsPublic() const;
 	void SetPublic( bool bPublic );
@@ -114,7 +115,7 @@ public:
     const handler_map&	GetHandlerMap() const;
     void		AddHandler( Handler* pcHandler );
     bool		RemoveHandler( Handler* pcHandler );
-    Handler*		FindHandler( const std::string& cName ) const;
+    Handler*		FindHandler( const String& cName ) const;
     int			GetHandlerCount() const;
 
     void		SetDefaultHandler( Handler* pcHandler );
@@ -173,4 +174,3 @@ private:
 }
 
 #endif	// __F_UTIL_LOOPER_H__
-

@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -23,9 +24,9 @@
 #include <util/looper.h>
 #include <gui/window.h>
 #include <gui/font.h>
+#include <util/string.h>
 
 #include <vector>
-#include <string>
 
 namespace os {
     class Window;
@@ -89,7 +90,7 @@ public:
     void PopCursor();
     
     bigtime_t	GetIdleTime();
-    void	GetKeyboardConfig( std::string* pcKeymapName, int* pnKeyDelay, int* pnKeyRepeat );
+    void	GetKeyboardConfig( String* pcKeymapName, int* pnKeyDelay, int* pnKeyRepeat );
     status_t	SetKeymap( const char* pzName );
     status_t	SetKeyboardTimings( int nDelay, int nRepeat );
     
@@ -114,7 +115,7 @@ private:
     friend class AppserverConfig;
   
       // Support for the Window class:
-    port_id CreateWindow( View* pcTopView, const Rect& cFrame, const std::string& cTitle,
+    port_id CreateWindow( View* pcTopView, const Rect& cFrame, const String& cTitle,
 			  uint32 nFlags, uint32 nDesktopMask, port_id hEventPort, int* phTopView );
     port_id CreateWindow( View* pcTopView, int hBitmapHandle, int* phTopView );
 
@@ -122,10 +123,10 @@ private:
     void  RemoveWindow( Window* pcWindow );
 
       // Support for the Font class:
-    int		GetFontConfigNames( std::vector<string>* pcTable ) const;
-    int		GetDefaultFont( const std::string& cName, font_properties* psProps ) const;
-    int		SetDefaultFont( const std::string& cName, const font_properties& sProps );
-    int		AddDefaultFont( const std::string& cName, const font_properties& sProps );
+    int		GetFontConfigNames( std::vector<String>* pcTable ) const;
+    int		GetDefaultFont( const String& cName, font_properties* psProps ) const;
+    int		SetDefaultFont( const String& cName, const font_properties& sProps );
+    int		AddDefaultFont( const String& cName, const font_properties& sProps );
     
     int		GetFontFamilyCount();
     status_t	GetFontFamily( int nIndex, char* pzFamily );
@@ -149,16 +150,8 @@ private:
 
     class Private;
     Private* m;
-//    uint32   __reserver__[5];
-/*    port_id		 m_hServerPort;
-    port_id		 m_hSrvAppPort;
-    port_id		 m_hReplyPort;
-    std::vector<Window*> m_cWindows;*/
 };
 
 }
 
 #endif	// __F_UTIL_APPLICATION_H__
-
-
-

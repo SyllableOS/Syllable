@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
- *  Copyright (C) 1999 - 2001  Kurt Skauen
+/*  libsyllable.so - the highlevel API library for Syllable
+ *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -24,7 +25,7 @@
 #include <atheos/types.h>
 #include <util/typecodes.h>
 
-#include <string>
+#include <util/string.h>
 
 namespace os
 {
@@ -119,6 +120,7 @@ public:
     status_t	AddColor32( const char* pzName, const Color32_s& cVal );
     status_t	AddString( const char* pzName, const char* pzString );
     status_t	AddString( const char* pzName, const std::string& cString );
+    status_t	AddString( const char* pzName, const String& cString );
     status_t	AddVariant( const char* pzName, const Variant& cVal );
 
     status_t	FindData( const char* pzName, int nType, const void** ppData, size_t* pnSize, int nIndex = 0 ) const;
@@ -139,6 +141,7 @@ public:
     status_t	FindColor32( const char* pzName, Color32_s* pcVal, int nIndex = 0 ) const;
     status_t	FindString( const char* pzName, const char** pzString, int nIndex = 0 ) const;
     status_t	FindString( const char* pzName, std::string* pcString, int nIndex = 0 ) const;
+    status_t	FindString( const char* pzName, String* pcString, int nIndex = 0 ) const;
     status_t	FindVariant( const char* pzName, Variant* pcVal, int nIndex = 0 ) const;
     
     template<class T> status_t FindInt(  const char* pzName, T* pnVal, int nIndex = 0 ) const {
@@ -154,7 +157,7 @@ public:
 
     status_t	GetNameInfo( const char* pzName, int* pnType = NULL, int* pnCount = NULL ) const;
     int		CountNames( void ) const;
-    std::string GetName( int nIndex ) const;
+    String GetName( int nIndex ) const;
     
     void	MakeEmpty( void );
     bool	IsEmpty( void ) const;
@@ -233,4 +236,3 @@ private:
 }
 
 #endif	// __F_UTIL_MESSAGE_H__
-

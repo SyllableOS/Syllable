@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -17,11 +18,11 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef	GUI_HANDLER_HPP
-#define	GUI_HANDLER_HPP
+#ifndef	__F_GUI_HANDLER_H__
+#define	__F_GUI_HANDLER_H__
 
 #include <atheos/types.h>
-#include <string>
+#include <util/string.h>
 #include <list>
 
 namespace os
@@ -47,7 +48,7 @@ typedef std::list<MessageFilter*> MsgFilterList;
 class Handler
 {
 public:
-    Handler( const std::string& cName );
+    Handler( const String& cName );
     virtual ~Handler();
     virtual void TimerTick( int nID );
     virtual void HandleMessage( Message* pcMessage );
@@ -59,8 +60,8 @@ private:
     virtual void __HA_reserved5__();
 public:
     
-    std::string	 GetName() const;
-    void	 SetName( const std::string& cName );
+    String	 GetName() const;
+    void	 SetName( const String& cName );
     Looper*	 GetLooper() const;
     void	 SetNextHandler( Handler* pcNextHandler );
     Handler*	 GetNextHandler() const;
@@ -77,7 +78,7 @@ private:
     friend class NodeMonitor;
     friend class Window;
     
-    std::string	  m_cName;
+    String	  m_cName;
     Handler*	  m_pcNextHandler;	// Next handler for unknown messages.
     Looper*	  m_pcLooper;
     uint32	  m_nToken;
@@ -88,3 +89,4 @@ private:
 }
 
 #endif	//	GUI_HANDLER_HPP
+
