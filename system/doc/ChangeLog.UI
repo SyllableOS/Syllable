@@ -1,3 +1,7 @@
+* Aug 4th 2002, Kristian Van Der Vliet *
+
+Added the CheckMenu class.
+
 * Aug 3rd 2002, Kristian Van Der Vliet *
 
 Aplied a series of patches from Henrik Isaksson, which adds a "Grayed out" look to
