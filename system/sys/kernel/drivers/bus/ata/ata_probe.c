@@ -188,6 +188,7 @@ void ata_probe_port( ATA_port_s* psPort )
 {
 	uint8 nLbaHigh, nLbaMid, nStatus;
 	uint8 nID[512];
+	char zNode[10];
 	ATA_identify_info_s* psID;
 	
 	if( psPort->bConfigured )
@@ -256,7 +257,13 @@ void ata_probe_port( ATA_port_s* psPort )
 	/* Get drive name */
 	extract_model_id( psPort->zDeviceName, psID->model_id );
 	
-	kerndbg( KERN_INFO, "Name: %s\n", psPort->zDeviceName );
+	/* Get node name */
+	if( psPort->nDevice == ATA_DEV_ATAPI )
+		sprintf( zNode, "cd%c", 'a' + psPort->nID );
+	else
+		sprintf( zNode, "hd%c", 'a' + psPort->nID );
+	
+	kerndbg( KERN_INFO, "Name: %s (%s)\n", psPort->zDeviceName, zNode );
 	
 	/* Check that the device supports LBA */
 	if( psPort->nDevice == ATA_DEV_ATA && !( psID->capabilities & 0x02 ) ) {
@@ -286,11 +293,14 @@ void ata_probe_port( ATA_port_s* psPort )
 	
 	if( psPort->nDevice == ATA_DEV_ATA && ( psID->command_set_2 & 0x400 ) )
 	{
-		kerndbg( KERN_INFO, "%s: Drive uses 48bit addressing", g_bEnableLBA48bit ? "Warning" : "Error" );
+		
 		kerndbg( KERN_INFO, "Capacity: %i Mb\n", (int)( psID->lba_capacity_48 / 1000 * 512 / 1000 ) );
 		psPort->bLBA48bit = true;
 		if( !g_bEnableLBA48bit )
+		{
+			kerndbg( KERN_INFO, "Error: Drive uses 48bit addressing\n" );
 			goto err_id;
+		}
 	} else if( psPort->nDevice == ATA_DEV_ATA )
 		if( psID->lba_sectors )
 			kerndbg( KERN_INFO, "Capacity: %i Mb\n", (int)( psID->lba_sectors / 1000 * 512 / 1000 ) );

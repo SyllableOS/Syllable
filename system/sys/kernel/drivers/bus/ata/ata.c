@@ -29,7 +29,7 @@
 #include "ata_private.h"
 
 
-bool g_bEnableLBA48bit = false;
+bool g_bEnableLBA48bit = true;
 bool g_bEnablePIO32bit = true;
 bool g_bEnableDMA = true;
 bool g_bEnableDirect = false;
@@ -315,9 +315,9 @@ status_t bus_init()
 				return ( -1 );
 			}
 		if ( get_bool_arg( &g_bEnableLBA48bit, "enable_ata_lba48=", argv[i], strlen( argv[i] ) ) )
-			if ( g_bEnableLBA48bit )
+			if ( !g_bEnableLBA48bit )
 			{
-				printk( "Warning: Untested 48bit LBA code enabled\n" );
+				printk( "48bit LBA support disabled\n" );
 			}
 		if ( get_bool_arg( &g_bEnablePIO32bit, "enable_ata_pio32=", argv[i], strlen( argv[i] ) ) )
 			if ( !g_bEnablePIO32bit )
