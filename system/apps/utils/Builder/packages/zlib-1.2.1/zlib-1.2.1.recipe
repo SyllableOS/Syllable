@@ -7,3 +7,6 @@ home				www.zlib.org
 no-build-dir
 configure-options	--shared
 documentation		README ChangeLog FAQ algorithm.txt
+;links
+;	lib/libz.so.1	/system/libs/libz.so.1
+;	libz.so.1		/system/libs/libz.so
