@@ -5,8 +5,8 @@ libraries/libpng-1.0.5
 libraries/libungif-4.1.0
 libraries/libogg-1.0
 libraries/libvorbis-1.0
-applications/develop/nasm-0.98
+applications/develop/nasm-0.98.38
 applications/develop/ruby-1.6.7
 applications/gnu/gettext-0.10.35
-;applications/gnu/texinfo-4.2
+;applications/gnu/texinfo-4.6
 
