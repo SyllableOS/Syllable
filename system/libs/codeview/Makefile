@@ -10,19 +10,21 @@ LIB = libcodeview.so
 INSTALLDIR = /system/libs/
 
 
+all: $(LIB)
+
 $(EXE): $(OBJS) $(LOBJS)
 	$(LL) $(OBJS) $(LOBJS) -lsyllable -o $(EXE)
 
-#$(EXE): $(OBJS) lib
+#$(EXE): $(OBJS) $(LIB)
 #	$(LL) $(OBJS) -lsyllable -L. -lcodeview -o $(EXE)
 
 
-lib: $(LOBJS)
+$(LIB): $(LOBJS)
 	$(LL) $(LOBJS) -lsyllable -shared -Wl,-soname,$(LIB).$(VERSION_MAJOR) -o $(LIB)
 
 
 .PHONY : install
-install: lib
+install: all
 
 	-cp -f $(LIB) $(INSTALLDIR)$(LIB).$(VERSION_MAJOR).$(VERSION_MINOR)
 	-ln -fs $(INSTALLDIR)$(LIB).$(VERSION_MAJOR).$(VERSION_MINOR) \
