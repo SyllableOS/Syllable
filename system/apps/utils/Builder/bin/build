@@ -9,1125 +9,1125 @@
 # Functions for single modules
 
 def unpackPackage target
- Dir.chdir File.dirname(target) if target['/']
+	Dir.chdir File.dirname(target) if target['/']
 
- files = []
+	files = []
 
- unless
-  for pack in (packages = getRecipe(target)['packages']) ?
-   parseList(packages) :
-   [fullName(target)]
+	unless
+		for pack in (packages = getRecipe(target)['packages']) ?
+			parseList(packages) :
+			[fullName(target)]
 
-   pack, dir = pack.split
-   base = File.join @sourcesPath, pack
-   option = dir ? ' --directory=' + dir : ''
+			pack, dir = pack.split
+			base = File.join @sourcesPath, pack
+			option = dir ? ' --directory=' + dir : ''
 
-#   file = Dir[File.join(@sourcesPath, fullName target) + '.*'] [0]
-#   case File.basename file
+#			file = Dir[File.join(@sourcesPath, fullName target) + '.*'] [0]
+#			case File.basename file
 
-   if exists? file = base + '.zip'
-    type = :zip
-    break unless action 'unzip ' + file + dir ? ' -d ' + dir : ''
-   elsif exists? file = base + '.tar.bz2' or exists? file = base + '.tbz2'
-    type = :bzip
-    break unless action "bzcat #{file} | tar#{option} -x"
-   elsif exists? file = base + '.tar.gz' or exists? file = base + '.tgz'
-    type = :gzip
-    break unless action "tar#{option} -xzf " + file
-   else
-    @log.error "Source package #{base}.* not found"
-    break
-   end
+			if exists? file = base + '.zip'
+				type = :zip
+				break unless action 'unzip ' + file + dir ? ' -d ' + dir : ''
+			elsif exists? file = base + '.tar.bz2' or exists? file = base + '.tbz2'
+				type = :bzip
+				break unless action "bzcat #{file} | tar#{option} -x"
+			elsif exists? file = base + '.tar.gz' or exists? file = base + '.tgz'
+				type = :gzip
+				break unless action "tar#{option} -xzf " + file
+			else
+				@log.error "Source package #{base}.* not found"
+				break
+			end
 
-   files << [file, type]
-   action 'sync'
-  end
- then
-  false
- else
-  if exists? dir = fullName(target)
-   true
-  else  # Source package content has a deviating subdirectory name
-   @log.subheader 'Renaming source'
+			files << [file, type]
+			action 'sync'
+		end
+	then
+		false
+	else
+		if exists? dir = fullName(target)
+			true
+		else  # Source package content has a deviating subdirectory name
+			@log.subheader 'Renaming source'
 
-   file, type = files.first
-   result = `#{case type
-    when :zip  then 'unzip -lqq ' + file
-    when :bzip then "bzcat #{file} | tar --list"
-    when :gzip then 'tar tzf ' + file
-    end
-   }`
-   unless (status = $? >> 8) == 0
-    @log.error status
-    false
-   else  # Get the directory name from the package listing
-    action "mv #{type == :zip ?
-     result.first.split.last :
-     result.split("/").first
-    } " + dir
-   end
-  end
- end
+			file, type = files.first
+			result = `#{case type
+				when :zip  then 'unzip -lqq ' + file
+				when :bzip then "bzcat #{file} | tar --list"
+				when :gzip then 'tar tzf ' + file
+				end
+			}`
+			unless (status = $? >> 8) == 0
+				@log.error status
+				false
+			else  # Get the directory name from the package listing
+				action "mv #{type == :zip ?
+					result.first.split.last :
+					result.split("/").first
+				} " + dir
+			end
+		end
+	end
 end
 
 def patchPackage target
- if exists? file = File.join(recipePath(target), fullName(target) + '.patch')
-  @log.header 'Applying delta'
-  return false unless action 'patch --strip=1 < ' + file
- end
+	if exists? file = File.join(recipePath(target), fullName(target) + '.patch')
+		@log.header 'Applying delta'
+		return false unless action 'patch --strip=1 < ' + file
+	end
 
- if exists? dir = patchesPath(target)
-  @log.header 'Applying patches'
-  return false unless action "cp -a #{File.join dir, '*'} ." and
-   # FIXME: crude way to remove possible CVS dirs from patches
-   deleteCVSData
- end
+	if exists? dir = patchesPath(target)
+		@log.header 'Applying patches'
+		return false unless action "cp -a #{File.join dir, '*'} ." and
+			# FIXME: crude way to remove possible CVS dirs from patches
+			deleteCVSData
+	end
 
- unless
-  if dirs = (recipe = getRecipe target)['patch-config']
-   @log.header 'Patching configuration'
-   files = File.join @sourcesPath, 'config/config.*'
- 
-   if dirs == ''
-    action "cp -a --force #{files} ."
-   else
-    for dir in toList dirs
-     return false unless action "cp -a --force #{files} #{dir}/"
-    end
-   end
-  elsif dir = recipe['patch-legacy-config']
-   @log.header 'Patching configuration'
+	unless
+		if dirs = (recipe = getRecipe target)['patch-config']
+			@log.header 'Patching configuration'
+			files = File.join @sourcesPath, 'config/config.*'
+	
+			if dirs == ''
+				action "cp -a --force #{files} ."
+			else
+				for dir in toList dirs
+					return false unless action "cp -a --force #{files} #{dir}/"
+				end
+			end
+		elsif dir = recipe['patch-legacy-config']
+			@log.header 'Patching configuration'
 
-   action "cp -a #{File.join @sourcesPath, 'config/legacy/*'} " +
-    (dir == '' ? '.' : dir)
-  else
-   true
-  end
- then
-  false
- else
-  if cmdLine = recipe['patch']
-   @log.header 'Executing patch instructions'
-   action toCommand(cmdLine)
-  else
-   true
-  end
- end
+			action "cp -a #{File.join @sourcesPath, 'config/legacy/*'} " +
+				(dir == '' ? '.' : dir)
+		else
+			true
+		end
+	then
+		false
+	else
+		if cmdLine = recipe['patch']
+			@log.header 'Executing patch instructions'
+			action toCommand(cmdLine)
+		else
+			true
+		end
+	end
 end
 
 def getPackage target
- unless
-  unless exists? target
-   @log.header 'Installing source'
+	unless
+		unless exists? target
+			@log.header 'Installing source'
 
-   unless exists? dir = File.dirname(target) or action 'mkdir --parents ' + dir
-    false
-   else  # We have a destination dir
-    unless unpackPackage target
-     false
-    else
-     Dir.chdir @workDir
-     Dir.chdir target
+			unless exists? dir = File.dirname(target) or action 'mkdir --parents ' + dir
+				false
+			else  # We have a destination dir
+				unless unpackPackage target
+					false
+				else
+					Dir.chdir @workDir
+					Dir.chdir target
 
-     patchPackage target
-    end
-   end
-  else
-   unless exists? File.join(target, 'CVS')
-    # Source already prepared
-    true
-   else
-    if Dir[File.join(@sourcesPath, fullName(target) + '.t*')] != []  # Some tarball
-     puts "\nWARNING! This will clobber your CVS repository!"
-     @log.header 'Replacing source'
+					patchPackage target
+				end
+			end
+		else
+			unless exists? File.join(target, 'CVS')
+				# Source already prepared
+				true
+			else
+				if Dir[File.join(@sourcesPath, fullName(target) + '.t*')] != []  # Some tarball
+					puts "\nWARNING! This will clobber your CVS repository!"
+					@log.header 'Replacing source'
 
-     unless action 'rm -r ' + target
-      @log.error 'Failed to delete source'
-      false
-     else
-      unless unpackPackage target
-       false
-      else
-       Dir.chdir @workDir
-       Dir.chdir target
+					unless action 'rm -r ' + target
+						@log.error 'Failed to delete source'
+						false
+					else
+						unless unpackPackage target
+							false
+						else
+							Dir.chdir @workDir
+							Dir.chdir target
 
-       patchPackage target
-      end
-     end
-    else
-     Dir.chdir target
-     if native?
-      true
-     else
-      deleteCVSData
-      patchPackage target
-     end
-    end
-   end
-  end
- then
-  # FIXME: cascading error reporting
-  @log.error 'Source not (completely) installed'
-  @log.failure target
-  false
- else
-  action 'sync'
- end
+							patchPackage target
+						end
+					end
+				else
+					Dir.chdir target
+					if native?
+						true
+					else
+						deleteCVSData
+						patchPackage target
+					end
+				end
+			end
+		end
+	then
+		# FIXME: cascading error reporting
+		@log.error 'Source not (completely) installed'
+		@log.failure target
+		false
+	else
+		action 'sync'
+	end
 end
 
 def configurePackage target
- if native?
-  @log.header 'Building dependencies'
-  action makeCommand(target) + ' deps'
+	if native?
+		@log.header 'Building dependencies'
+		action makeCommand(target) + ' deps'
 
-  true  # Continue building even if dependencies failed
- else
-  unless
-   if cmdLine = (recipe = getRecipe target)['configure']
-    @log.header 'Configuring'
-    action toCommand(cmdLine)
-   else
-    unless exists? cmd = (cmd = recipe['configure-cmd']) ? toString(cmd) : 'configure'
-     # Nothing to be done here
-     true
-    else
-     unless noBuildDir = recipe['no-build-dir'] or exists? dir = buildDir(target) or
-      begin
-       @log.header 'Creating build directory'
-       action 'mkdir ' + dir
-      end
-     then
-      false
-     else
-      @log.header 'Configuring'
- 
-      # Some packages require an absolute path to the configure command
-      cmdPath = File.join(Dir.getwd, File.dirname(cmd))
-      Dir.chdir noBuildDir ? File.dirname(cmd) : dir
- 
-      if exists? 'config.cache' and not action 'rm config.cache'
-       false
-      else
-       if cmdLine = recipe['pre-configure'] and not action toCommand(cmdLine)
-        false
-       else
-        action(((vars = recipe['configure-env']) ? toVariables(vars) + ' ' : '') +
-         File.join((noBuildDir ? '.' : cmdPath), File.basename(cmd)) +
-         ((args = recipe['configure-args']) ?
-          ' ' + toString(args) :
-          ((p = recipe['configure-prefix']) ?
-           ' ' + p :
-           ' --prefix='
-          ) + prefix(target)
-         ) +
-         ((options = recipe['configure-options']) ? ' ' + toString(options) : '')
-        )
-       end
-      end
-     end
-    end
-   end
-  then
-   @log.failure target
-   false
-  else
-   true
-  end
- end
+		true  # Continue building even if dependencies failed
+	else
+		unless
+			if cmdLine = (recipe = getRecipe target)['configure']
+				@log.header 'Configuring'
+				action toCommand(cmdLine)
+			else
+				unless exists? cmd = (cmd = recipe['configure-cmd']) ? toString(cmd) : 'configure'
+					# Nothing to be done here
+					true
+				else
+					unless noBuildDir = recipe['no-build-dir'] or exists? dir = buildDir(target) or
+						begin
+							@log.header 'Creating build directory'
+							action 'mkdir ' + dir
+						end
+					then
+						false
+					else
+						@log.header 'Configuring'
+	
+						# Some packages require an absolute path to the configure command
+						cmdPath = File.join(Dir.getwd, File.dirname(cmd))
+						Dir.chdir noBuildDir ? File.dirname(cmd) : dir
+	
+						if exists? 'config.cache' and not action 'rm config.cache'
+							false
+						else
+							if cmdLine = recipe['pre-configure'] and not action toCommand(cmdLine)
+								false
+							else
+								action(((vars = recipe['configure-env']) ? toVariables(vars) + ' ' : '') +
+									File.join((noBuildDir ? '.' : cmdPath), File.basename(cmd)) +
+									((args = recipe['configure-args']) ?
+										' ' + toString(args) :
+										((p = recipe['configure-prefix']) ?
+											' ' + p :
+											' --prefix='
+										) + prefix(target)
+									) +
+									((options = recipe['configure-options']) ? ' ' + toString(options) : '')
+								)
+							end
+						end
+					end
+				end
+			end
+		then
+			@log.failure target
+			false
+		else
+			true
+		end
+	end
 end
 
 def cleanPackage target
- unless
-  if exists? dir = buildDir(target)
-   @log.header 'Deleting build directory'
-   action 'rm --recursive --force ' + dir
-  else
-   action makeCommand(target) + ' clean'
-  end
- then
-#  @log.failure target
-  false
- else
-  action 'sync'
- end
+	unless
+		if exists? dir = buildDir(target)
+			@log.header 'Deleting build directory'
+			action 'rm --recursive --force ' + dir
+		else
+			action makeCommand(target) + ' clean'
+		end
+	then
+#		@log.failure target
+		false
+	else
+		action 'sync'
+	end
 end
 
 def makePackage target
- if exists? dir = buildDir(target) then Dir.chdir dir end
+	if exists? dir = buildDir(target) then Dir.chdir dir end
 
- unless
-  if (cmdLine = (recipe = getRecipe(target))['pre-make']) and not action toCommand(cmdLine)
-   false
-  else
-   unless action(
-    ((vars = recipe['make-env']) ? toVariables(vars) + ' ' : '') +
-    makeCommand(target) +
-    ((vars = recipe['make-vars']) ? ' ' + toVariables(vars) : '') +
-    ((options = recipe['make-options']) ? ' ' + toString(options) : '') +
-    ((targets = recipe['make-targets']) ? ' ' + toString(targets) : '')
-   )
-    false
-   else
-    not (cmdLine = recipe['post-make']) or action toCommand(cmdLine)
-   end
-  end
- then
-  @log.failure target
-  false
- else
-  action 'sync'
- end
+	unless
+		if (cmdLine = (recipe = getRecipe(target))['pre-make']) and not action toCommand(cmdLine)
+			false
+		else
+			unless action(
+				((vars = recipe['make-env']) ? toVariables(vars) + ' ' : '') +
+				makeCommand(target) +
+				((vars = recipe['make-vars']) ? ' ' + toVariables(vars) : '') +
+				((options = recipe['make-options']) ? ' ' + toString(options) : '') +
+				((targets = recipe['make-targets']) ? ' ' + toString(targets) : '')
+			)
+				false
+			else
+				not (cmdLine = recipe['post-make']) or action toCommand(cmdLine)
+			end
+		end
+	then
+		@log.failure target
+		false
+	else
+		action 'sync'
+	end
 end
 
 def testPackage target
- if exists? dir = buildDir(target) then Dir.chdir dir end
+	if exists? dir = buildDir(target) then Dir.chdir dir end
 
- unless action makeCommand(target) +
-  ((options = (recipe = getRecipe(target))['test-options']) ? toString(options) + ' ' : '') +
-  ((targets = recipe['test-targets']) ? toString(targets) : 'check')
- then
-  @log.failure target
-  false
- else
-  action 'sync'
- end
+	unless action makeCommand(target) +
+		((options = (recipe = getRecipe(target))['test-options']) ? toString(options) + ' ' : '') +
+		((targets = recipe['test-targets']) ? toString(targets) : 'check')
+	then
+		@log.failure target
+		false
+	else
+		action 'sync'
+	end
 end
 
 def installPackage stage, target
- unless
-  if target =~ /\.(zip|tgz)$/ and exists? target  # A distribution package
-   # Packages are currently supposed to contain an unversioned directory
-   root = File.join(File.dirname(installPath(false, target)), shortName(target))
+	unless
+		if target =~ /\.(zip|tgz)$/ and exists? target  # A distribution package
+			# Packages are currently supposed to contain an unversioned directory
+			root = File.join(File.dirname(installPath(false, target)), shortName(target))
 
-   if exists? root and not
-    begin
-     @log.header 'Uninstalling ' + shortName(target)
-     uninstallPackage false, target  # FIXME: double failure logging!
-    end
-   then
-    false
-   else
-    @log.header 'Unpacking ' + target
-    action (target[-3..-1] == 'zip' ?
-     "unzip #{target} -d /usr" :
-     'tar --directory=/usr -xpPzf ' + target
-    ) and
-    begin
-     @log.header 'Registering ' + target
-     action 'pkgmanager --add ' + root
-    end
-   end
-  else
-   Dir.chdir target
+			if exists? root and not
+				begin
+					@log.header 'Uninstalling ' + shortName(target)
+					uninstallPackage false, target  # FIXME: double failure logging!
+				end
+			then
+				false
+			else
+				@log.header 'Unpacking ' + target
+				action (target[-3..-1] == 'zip' ?
+					"unzip #{target} -d /usr" :
+					'tar --directory=/usr -xpPzf ' + target
+				) and
+				begin
+					@log.header 'Registering ' + target
+					action 'pkgmanager --add ' + root
+				end
+			end
+		else
+			Dir.chdir target
 
-   if native?
-    if exists? dir = buildDir(target) then Dir.chdir dir end
-    action makeCommand(target) + ' install'
-   else
-    root = installPath stage, target
+			if native?
+				if exists? dir = buildDir(target) then Dir.chdir dir end
+				action makeCommand(target) + ' install'
+			else
+				root = installPath stage, target
 
-    if exists? root and not
-     begin
-      @log.header 'Uninstalling ' + shortName(target)
-      uninstallPackage stage, target  # FIXME: double failure logging!
-     end
-    then
-     false
-    else
-     if dirs = (recipe = getRecipe target)['install-tree']
-      @log.header 'Creating subdirectories'
-      @log.detail root
-      Dir.mkdir root
+				if exists? root and not
+					begin
+						@log.header 'Uninstalling ' + shortName(target)
+						uninstallPackage stage, target  # FIXME: double failure logging!
+					end
+				then
+					false
+				else
+					if dirs = (recipe = getRecipe target)['install-tree']
+						@log.header 'Creating subdirectories'
+						@log.detail root
+						Dir.mkdir root
 
-      for dir in toList dirs
-       @log.detail d = File.join(root, dir)
-       Dir.mkdir d
-      end
-     end
+						for dir in toList dirs
+							@log.detail d = File.join(root, dir)
+							Dir.mkdir d
+						end
+					end
 
-     if exists? dir = buildDir(target) then Dir.chdir dir end
+					if exists? dir = buildDir(target) then Dir.chdir dir end
 
-     if not action(
-      if cmdLine = recipe['install']
-       toCommand cmdLine
-      else
-       ((vars = recipe['install-env']) ? toVariables(vars) + ' ' : '') +
-       makeCommand(target) +
-       ( (var = recipe['install-prefix-var']) ? " #{var}=" + root :
-        @systemBuild || stage ? ' prefix=' + root :
-        ''
-       ) +
-       ((vars = recipe['install-vars']) ? ' ' + toVariables(vars) : '') +
-       ' ' + ((targets = recipe['install-targets']) ? toString(targets) : 'install')
-      end
-     )
-      false
-     elsif files = recipe['install-files'] and not
-      begin
-       @log.header 'Installing files'
+					if not action(
+						if cmdLine = recipe['install']
+							toCommand cmdLine
+						else
+							((vars = recipe['install-env']) ? toVariables(vars) + ' ' : '') +
+							makeCommand(target) +
+							( (var = recipe['install-prefix-var']) ? " #{var}=" + root :
+								@systemBuild || stage ? ' prefix=' + root :
+								''
+							) +
+							((vars = recipe['install-vars']) ? ' ' + toVariables(vars) : '') +
+							' ' + ((targets = recipe['install-targets']) ? toString(targets) : 'install')
+						end
+					)
+						false
+					elsif files = recipe['install-files'] and not
+						begin
+							@log.header 'Installing files'
 
-       for line in parseList files
-        source, destination = toList line
-        break unless action "cp -a #{source} " + File.join(root, destination)
-       end
-      end
-     then
-      false
-     elsif files = recipe['documentation'] and not
-      begin
-       @log.header 'Installing documentation'
-       Dir.chdir @workDir
-       Dir.chdir target
-       action "cp -a #{toString files} " + root
-      end
-     then
-      false
-     elsif exists? filesPath = File.join(@packagesPath, fullName(target), 'distro') and not
-      begin
-       @log.header 'Installing extra files'
-       action "cp -a #{File.join filesPath, '*'} " + root and
-       begin
-        # FIXME: crude way to remove possible CVS dirs from files
-        Dir.chdir root
-        deleteCVSData
-       end
-      end
-     then
-      false
-     elsif links = recipe['links'] and not
-      begin
-       @log.header 'Creating links'
+							for line in parseList files
+								source, destination = toList line
+								break unless action "cp -a #{source} " + File.join(root, destination)
+							end
+						end
+					then
+						false
+					elsif files = recipe['documentation'] and not
+						begin
+							@log.header 'Installing documentation'
+							Dir.chdir @workDir
+							Dir.chdir target
+							action "cp -a #{toString files} " + root
+						end
+					then
+						false
+					elsif exists? filesPath = File.join(@packagesPath, fullName(target), 'distro') and not
+						begin
+							@log.header 'Installing extra files'
+							action "cp -a #{File.join filesPath, '*'} " + root and
+							begin
+								# FIXME: crude way to remove possible CVS dirs from files
+								Dir.chdir root
+								deleteCVSData
+							end
+						end
+					then
+						false
+					elsif links = recipe['links'] and not
+						begin
+							@log.header 'Creating links'
 
-       for link in parseList links
-        original, destination = toList link
-        linkPath = File.dirname destination
-        linkFile = File.basename destination
+							for link in parseList links
+								original, destination = toList link
+								linkPath = File.dirname destination
+								linkFile = File.basename destination
 
-        if linkPath[0, 1] == '/'  # A link into the system
-         original = File.join prefix(target), original if original['/']
+								if linkPath[0, 1] == '/'  # A link into the system
+									original = File.join prefix(target), original if original['/']
 
-         if @systemBuild
-          linkPath = File.join @systemRoot,
-           linkPath[0, 4] == '/usr' ?
-            '' :
-            'sys',  # A link into the core system
-           linkPath
-         end
-        else  # A link within the package
-         linkPath = File.join root, linkPath
-        end
+									if @systemBuild
+										linkPath = File.join @systemRoot,
+											linkPath[0, 4] == '/usr' ?
+												'' :
+												'sys',  # A link into the core system
+											linkPath
+									end
+								else  # A link within the package
+									linkPath = File.join root, linkPath
+								end
 
-        break unless action "cd #{linkPath} && ln -sf #{original} " + linkFile
-       end
-      end
-     then
-      false
-     else
-      @systemBuild or stage or
-      begin
-       @log.header 'Registering ' + target
-       action 'pkgmanager --add ' + root
-      end
-     end
-    end
-   end
-  end
- then
-  @log.failure target
- else
-  action 'sync'
- end
+								break unless action "cd #{linkPath} && ln -sf #{original} " + linkFile
+							end
+						end
+					then
+						false
+					else
+						@systemBuild or stage or
+						begin
+							@log.header 'Registering ' + target
+							action 'pkgmanager --add ' + root
+						end
+					end
+				end
+			end
+		end
+	then
+		@log.failure target
+	else
+		action 'sync'
+	end
 end
 
 def uninstallPackage stage, target
- unless
-  if dir? target and
-   begin
-    Dir.chdir target
-    native?
-   end
-  then  # A native module
-   if exists? dir = buildDir(target) then Dir.chdir dir end
-   action makeCommand(target) + ' uninstall'
-  else
-   dir = installPath stage, target
-   name = shortName target
+	unless
+		if dir? target and
+			begin
+				Dir.chdir target
+				native?
+			end
+		then  # A native module
+			if exists? dir = buildDir(target) then Dir.chdir dir end
+			action makeCommand(target) + ' uninstall'
+		else
+			dir = installPath stage, target
+			name = shortName target
 
-   unless @systemBuild or stage or
-    begin
-     @log.header 'Unregistering ' + name
-     action 'pkgmanager --remove ' + dir
-    end
-   then
-    false
-   else
-    @log.header 'Deleting ' + name
-    action 'rm --recursive --force ' + dir
-   end
-  end
- then
-  @log.failure target
-  false
- else
-  action 'sync'
- end
+			unless @systemBuild or stage or
+				begin
+					@log.header 'Unregistering ' + name
+					action 'pkgmanager --remove ' + dir
+				end
+			then
+				false
+			else
+				@log.header 'Deleting ' + name
+				action 'rm --recursive --force ' + dir
+			end
+		end
+	then
+		@log.failure target
+		false
+	else
+		action 'sync'
+	end
 end
 
 def makeDistroPackage target
- unless exists? target
-  @log.error 'Source not installed'
-  @log.failure target
- else
-  Dir.chdir target
+	unless exists? target
+		@log.error 'Source not installed'
+		@log.failure target
+	else
+		Dir.chdir target
 
-  unless native?
-   Dir.chdir @workDir
-   installPackage true, target
-  else
-   if exists? dir = buildDir(target) then Dir.chdir dir end
+		unless native?
+			Dir.chdir @workDir
+			installPackage true, target
+		else
+			if exists? dir = buildDir(target) then Dir.chdir dir end
 
-   unless
-    unless action makeCommand(target) + ' dist'
-     false
-    else
-#     @log.header 'Installing documentation'
-#     if action makeCommand(target) + ' doc'
-#      action makeCommand(target) + ' install-doc'
-#     end
+			unless
+				unless action makeCommand(target) + ' dist'
+					false
+				else
+#					@log.header 'Installing documentation'
+#					if action makeCommand(target) + ' doc'
+#						action makeCommand(target) + ' install-doc'
+#					end
 
-     true
-    end
-   then
-    @log.failure target
-   else
-    action 'sync'
-   end
-  end
- end
+					true
+				end
+			then
+				@log.failure target
+			else
+				action 'sync'
+			end
+		end
+	end
 end
 
 def buildPackage stage, target
- if getPackage target  # Source is available
-  Dir.chdir @workDir  # Target path may be relative or absolute
-  Dir.chdir target
+	if getPackage target  # Source is available
+		Dir.chdir @workDir  # Target path may be relative or absolute
+		Dir.chdir target
 
-  @log.header 'Cleaning'
-  cleanPackage target
+		@log.header 'Cleaning'
+		cleanPackage target
 
-  if configurePackage target  # No failed configuration
-   @log.header 'Making'
+		if configurePackage target  # No failed configuration
+			@log.header 'Making'
 
-   if makePackage(target) and stage
-    @log.header 'Installing in staging area'
-    Dir.chdir @workDir
-    makeDistroPackage target
-   end
-  end
- end
+			if makePackage(target) and stage
+				@log.header 'Installing in staging area'
+				Dir.chdir @workDir
+				makeDistroPackage target
+			end
+		end
+	end
 
- Dir.chdir @workDir
+	Dir.chdir @workDir
 end
 
 
 # Functions for multiple modules
 
 def doModules command, target
- # Visit all directories
+	# Visit all directories
 
- for package in target.modules
-  @log.entry package
+	for package in target.modules
+		@log.entry package
 
-  Dir.chdir package
-  action command
-  Dir.chdir @workDir
- end
+		Dir.chdir package
+		action command
+		Dir.chdir @workDir
+	end
 end
 
 def prepare target
- if @systemBuild and target.profile and tree = target.profile['distro-tree']
-  @log.header 'Building distribution tree'
+	if @systemBuild and target.profile and tree = target.profile['distro-tree']
+		@log.header 'Building distribution tree'
 
-  if exists? @stage
-   action 'rm -r ' + File.join(@stage, '*')
-  else
-   Dir.mkdir @stage
-  end
-  Dir.chdir @stage
+		if exists? @stage
+			action 'rm -r ' + File.join(@stage, '*')
+		else
+			Dir.mkdir @stage
+		end
+		Dir.chdir @stage
 
-#  action File.join(@buildTools, 'mkbase.sh') + ' ' + @stage
-  for dir in toList tree
-   @log.detail dir
-   Dir.mkdir dir unless exists? dir
-  end
+#		action File.join(@buildTools, 'mkbase.sh') + ' ' + @stage
+		for dir in toList tree
+			@log.detail dir
+			Dir.mkdir dir unless exists? dir
+		end
 
-  Dir.chdir @workDir
-  action 'sync'
- end
+		Dir.chdir @workDir
+		action 'sync'
+	end
 end
 
 def patch target
- @log.header 'Patching ' + target.to_s
+	@log.header 'Patching ' + target.to_s
 
- # Patch all directories
+	# Patch all directories
 
- for package in target.modules
-  @log.entry package
+	for package in target.modules
+		@log.entry package
 
-  Dir.chdir package
-  unless patchPackage package
-   @log.error 'Source not patched'
-   @log.failure target.to_s
-  end
-  Dir.chdir @workDir
- end
+		Dir.chdir package
+		unless patchPackage package
+			@log.error 'Source not patched'
+			@log.failure target.to_s
+		end
+		Dir.chdir @workDir
+	end
 end
 
 def get target
- @log.header 'Fetching ' + target.to_s
+	@log.header 'Fetching ' + target.to_s
 
- # Fetch all directories
+	# Fetch all directories
 
- for package in target.modules
-  @log.entry package
-  getPackage package
- end
+	for package in target.modules
+		@log.entry package
+		getPackage package
+	end
 end
 
 def distclean target
- @log.header 'Cleaning distribution ' + target.to_s
- doModules makeCommand(target) + ' distclean', target
+	@log.header 'Cleaning distribution ' + target.to_s
+	doModules makeCommand(target) + ' distclean', target
 end
 
 def configure target
- @log.header 'Configuring ' + target.to_s
+	@log.header 'Configuring ' + target.to_s
 
- # Configure all directories
+	# Configure all directories
 
- for package in target.modules
-  @log.entry package
+	for package in target.modules
+		@log.entry package
 
-  Dir.chdir package
-  configurePackage package
-  Dir.chdir @workDir
- end
+		Dir.chdir package
+		configurePackage package
+		Dir.chdir @workDir
+	end
 end
 
 def clean target
- @log.header 'Cleaning ' + target.to_s
+	@log.header 'Cleaning ' + target.to_s
 
- # Clean all directories
+	# Clean all directories
 
- for package in target.modules
-  @log.entry package
+	for package in target.modules
+		@log.entry package
 
-  Dir.chdir package
-  cleanPackage package
-  Dir.chdir @workDir
- end
+		Dir.chdir package
+		cleanPackage package
+		Dir.chdir @workDir
+	end
 end
 
 def make target
- @log.header 'Making ' + target.to_s
+	@log.header 'Making ' + target.to_s
 
- # Make all directories
+	# Make all directories
 
- for package in target.modules
-  @log.entry package
+	for package in target.modules
+		@log.entry package
 
-  Dir.chdir package
-  makePackage package
-  Dir.chdir @workDir
- end
+		Dir.chdir package
+		makePackage package
+		Dir.chdir @workDir
+	end
 end
 
 def test target
- @log.header 'Testing ' + target.to_s
+	@log.header 'Testing ' + target.to_s
 
- # Test all directories
+	# Test all directories
 
- for package in target.modules
-  @log.entry package
+	for package in target.modules
+		@log.entry package
 
-  Dir.chdir package
-  testPackage package
-  Dir.chdir @workDir
- end
+		Dir.chdir package
+		testPackage package
+		Dir.chdir @workDir
+	end
 end
 
 def install target
- @log.header 'Installing ' + target.to_s
+	@log.header 'Installing ' + target.to_s
 
- # Install all directories or distribution packages
+	# Install all directories or distribution packages
 
- for package in target.modules
-  @log.entry package
+	for package in target.modules
+		@log.entry package
 
-  installPackage false, package
-  Dir.chdir @workDir
- end
+		installPackage false, package
+		Dir.chdir @workDir
+	end
 end
 
 def uninstall target
- @log.header 'Uninstalling ' + target.to_s
+	@log.header 'Uninstalling ' + target.to_s
 
- # Uninstall all directories
+	# Uninstall all directories
 
- for package in target.modules
-  @log.entry package
+	for package in target.modules
+		@log.entry package
 
-  uninstallPackage false, package
-  Dir.chdir @workDir
- end
+		uninstallPackage false, package
+		Dir.chdir @workDir
+	end
 end
 
 def makeDistro target
- @log.header 'Making distribution ' + target.to_s
+	@log.header 'Making distribution ' + target.to_s
 
- modules = target.modules
+	modules = target.modules
 
- if @systemBuild
-  # Visit all directories
+	if @systemBuild
+		# Visit all directories
 
-  for package in modules
-   @log.entry package
-   makeDistroPackage package
-   Dir.chdir @workDir
-  end
- else  # Create a single package
-  file = (name = fullName target.to_s) + '.bin.1.zip'
+		for package in modules
+			@log.entry package
+			makeDistroPackage package
+			Dir.chdir @workDir
+		end
+	else  # Create a single package
+		file = (name = fullName target.to_s) + '.bin.1.zip'
 
-  unless
-   unless modules.is_a? Array and exists? distroDir = File.join(@packagesPath, name, 'distro')
-    if exists? file and not action 'rm ' + file  # Zip would add to the existing package
-     false
-    else
-     Dir.chdir root = installRoot(false)
+		unless
+			unless modules.is_a? Array and exists? distroDir = File.join(@packagesPath, name, 'distro')
+				if exists? file and not action 'rm ' + file  # Zip would add to the existing package
+					false
+				else
+					Dir.chdir root = installRoot(false)
 
-#     action 'tar -cvzf ' + file +
-#      " --directory=#{root} " +
-     action 'zip -ry' +
-#      ' -b ' + dereference(root) +  # Doesn't work
-      " #{File.join @workDir, file} " +
-       installName(name)
-##       toString(modules.collect {|package| installName package}) +
-#     Doesn't work with Zip:
-#      ( (links = (links = parseList(getRecipe(name)['links'])) ?
-#        links.collect { |link|
-#         (destination = toList(link)[1])[0, 1] == '/' ?  # A link into the system
-#          destination :
-#          nil
-#        }.compact :
-#        []
-#       ) == [] ?
-#        '' :
-##        ' --absolute-names ' + toString(links)
-#        ' ' + toString(links)
-#      )
-    end
-   else  # A compound package
-    unless action "mkdir " + name
-     false
-    else
-     unless action "cp -a #{File.join distroDir, '*'} " + name
-      false
-     else
-      Dir.chdir name
+#					action 'tar -cvzf ' + file +
+#						" --directory=#{root} " +
+					action 'zip -ry' +
+#						' -b ' + dereference(root) +  # Doesn't work
+						" #{File.join @workDir, file} " +
+							installName(name)
+##							toString(modules.collect {|package| installName package}) +
+#					Doesn't work with Zip:
+#						( (links = (links = parseList(getRecipe(name)['links'])) ?
+#								links.collect { |link|
+#									(destination = toList(link)[1])[0, 1] == '/' ?  # A link into the system
+#										destination :
+#										nil
+#								}.compact :
+#								[]
+#							) == [] ?
+#								'' :
+##								' --absolute-names ' + toString(links)
+#								' ' + toString(links)
+#						)
+				end
+			else  # A compound package
+				unless action "mkdir " + name
+					false
+				else
+					unless action "cp -a #{File.join distroDir, '*'} " + name
+						false
+					else
+						Dir.chdir name
 
-      unless
-       deleteCVSData
-      then
-       false
-      else
-       Dir.chdir @workDir
+						unless
+							deleteCVSData
+						then
+							false
+						else
+							Dir.chdir @workDir
 
-       unless
-        for package in modules
-         # Try to find the latest release
-         break unless action "ln -s #{Dir[
-           File.join(@distrosPath, fullName(package)) + '.bin.*.*z*'
-          ].last
-         } " + name
-        end
-       then
-        false
-       else
-#        action "tar --dereference --remove-files -cvzf #{file}.tgz " + name
-        action "zip -rm #{file} " + name
-       end
-      end
-     end
-    end
-   end
-  then
-   @log.failure target.to_s
-  else
-   action 'sync'
-  end
- end
+							unless
+								for package in modules
+									# Try to find the latest release
+									break unless action "ln -s #{Dir[
+											File.join(@distrosPath, fullName(package)) + '.bin.*.*z*'
+										].last
+									} " + name
+								end
+							then
+								false
+							else
+#								action "tar --dereference --remove-files -cvzf #{file}.tgz " + name
+								action "zip -rm #{file} " + name
+							end
+						end
+					end
+				end
+			end
+		then
+			@log.failure target.to_s
+		else
+			action 'sync'
+		end
+	end
 end
 
 def build stage, target
- @log.header 'Building ' + target.to_s
+	@log.header 'Building ' + target.to_s
 
- # Build all directories
+	# Build all directories
 
- for package in target.modules
-  @log.entry package
-  buildPackage stage, package
- end
+	for package in target.modules
+		@log.entry package
+		buildPackage stage, package
+	end
 end
 
 
 # Helper functions
 
 def deleteCVSData
- puts "\nWARNING! This will clobber your CVS repository!"
+	puts "\nWARNING! This will clobber your CVS repository!"
 
- # Delete all CVS dirs
- # (They would trigger some packages to reconfigure themselves.)
- @log.header 'Cleaning out CVS directories'
+	# Delete all CVS dirs
+	# (They would trigger some packages to reconfigure themselves.)
+	@log.header 'Cleaning out CVS directories'
 
- Dir['**/CVS'].each do |dir|
-  @log.detail dir
+	Dir['**/CVS'].each do |dir|
+		@log.detail dir
 
-  # Delete all files in the CVS dir first
-  Dir.foreach dir do |file|
-   f = File.join dir, file
-   File.delete f if File.stat(f).file?
-  end
+		# Delete all files in the CVS dir first
+		Dir.foreach dir do |file|
+			f = File.join dir, file
+			File.delete f if File.stat(f).file?
+		end
 
-  Dir.delete dir
- end
+		Dir.delete dir
+	end
 
- @log.header 'Cleaning out .cvsignore files'
+	@log.header 'Cleaning out .cvsignore files'
 
- Dir['**/.cvsignore'].each do |file|
-  @log.detail file
-  File.delete file
- end
+	Dir['**/.cvsignore'].each do |file|
+		@log.detail file
+		File.delete file
+	end
 end
 
 def exists? file
- FileTest.exists? file
+	FileTest.exists? file
 end
 
 def dir? file
- FileTest.directory? file
+	FileTest.directory? file
 end
 
 def dereference file
- FileTest.symlink?(file) ?
-  (file[0, 1] == '/' ?
-   ('/' + dereference(File.readlink(file))) :
-   dereference(File.readlink(file))
-  ) :
-  file
+	FileTest.symlink?(file) ?
+		(file[0, 1] == '/' ?
+			('/' + dereference(File.readlink(file))) :
+			dereference(File.readlink(file))
+		) :
+		file
 end
 
 def loadFile file  # Load the lines of a file into an array, discarding comments and empty lines
- lines = []
+	lines = []
 
- File.open file do |file|
-  file.each do |line|
-   # Get rid of record delimiter, comments and empty lines
-   lines += [line.chomp] unless line.chomp == '' or line[0, 1] == ';'
-  end
- end
+	File.open file do |file|
+		file.each do |line|
+			# Get rid of record delimiter, comments and empty lines
+			lines += [line.chomp] unless line.chomp == '' or line[0, 1] == ';'
+		end
+	end
 
- lines
+	lines
 end
 
 def saveFile data, file  # Write an array to a text file
- File.open file, 'w' do |file|
-  for line in data
-   file << line + "\n"
-  end
- end
+	File.open file, 'w' do |file|
+		for line in data
+			file << line + "\n"
+		end
+	end
 end
 
 def parseDictionary text  # Load key/value pairs into a hash table
- hash = {}
+	hash = {}
 
- for line in text
-  if line !~ /^\s+/  # A key line
-   unless line[/\s/]  # A single key
-    hash[lastKey = line] = ''
-   else  # A key with a single value
-    key, value = splitLine line
-    hash[key] = value
-   end
-  else  # Starts with whitespace, so it's a list value
-   if hash[lastKey] == ''
-    hash[lastKey] = [line.strip]
-#    margin = $&
-   else
-    hash[lastKey] << line.strip
-   end
-  end
- end
+	for line in text
+		if line !~ /^\s+/  # A key line
+			unless line[/\s/]  # A single key
+				hash[lastKey = line] = ''
+			else  # A key with a single value
+				key, value = splitLine line
+				hash[key] = value
+			end
+		else  # Starts with whitespace, so it's a list value
+			if hash[lastKey] == ''
+				hash[lastKey] = [line.strip]
+#				margin = $&
+			else
+				hash[lastKey] << line.strip
+			end
+		end
+	end
 
- hash
+	hash
 end
 
 def parseList value  # Normalize value into an array
- if value.is_a? String
-  if value == ''
-   []
-  else
-   [value]
-  end
- else  # Assume it's already an array, or nil
-  value
- end
+	if value.is_a? String
+		if value == ''
+			[]
+		else
+			[value]
+		end
+	else  # Assume it's already an array, or nil
+		value
+	end
 end
 
 def splitLine line
- i = line.index(/\s/)  # First whitespace
- [line[0, i], line[i + 1 .. line.length - 1].strip]
+	i = line.index(/\s/)  # First whitespace
+	[line[0, i], line[i + 1 .. line.length - 1].strip]
 end
 
 def toList value  # Force values into an array
- if value.is_a? String
-  if value == ''
-   []
-  else
-   value.split
-  end
- else  # Assume it's already an array, or nil
-  value
- end
+	if value.is_a? String
+		if value == ''
+			[]
+		else
+			value.split
+		end
+	else  # Assume it's already an array, or nil
+		value
+	end
 end
 
 def toString value  # Join list value into a space-separated string
- if value.is_a? Array
-  value.join(' ')
- else  # Assume it's already a string, or nil
-  value
- end
+	if value.is_a? Array
+		value.join(' ')
+	else  # Assume it's already a string, or nil
+		value
+	end
 end
 
 def toCommand value  # Join list value into a semicolon-separated shell command string
- if value.is_a? Array
-  value.join(' && ')
- else  # Assume it's already a string, or nil
-  value
- end
+	if value.is_a? Array
+		value.join(' && ')
+	else  # Assume it's already a string, or nil
+		value
+	end
 end
 
 def toVariables value  # Join an array of environment variables into shell syntax
- toString((parseList value).collect do |line|
-  var, value = splitLine line
-  var + '=' + value
- end)
+	toString((parseList value).collect do |line|
+		var, value = splitLine line
+		var + '=' + value
+	end)
 end
 
 def fullName package
- # Extract name including version, if necessary
- File.basename package[-1, 1] == '/' ? package.chop : package
+	# Extract name including version, if necessary
+	File.basename package[-1, 1] == '/' ? package.chop : package
 end
 
 def shortName package
- # Extract name without version
- /(-\d)|$/.match(fullName(package)).pre_match
+	# Extract name without version
+	/(-\d)|$/.match(fullName(package)).pre_match
 end
 
 def installName package
- package = fullName package
- @includeVersion && ! @systemBuild ?
-  package :
-  shortName(package)
+	package = fullName package
+	@includeVersion && ! @systemBuild ?
+		package :
+		shortName(package)
 end
 
 def prefix package
- File.join '/usr', installName(package)
+	File.join '/usr', installName(package)
 end
 
 def installRoot stage
- @systemBuild ?
-  File.join(@systemRoot, 'usr') :
- stage ?
-  @stage :
-  '/usr'
+	@systemBuild ?
+		File.join(@systemRoot, 'usr') :
+	stage ?
+		@stage :
+		'/usr'
 end
 
 def installPath stage, package
- File.join installRoot(stage), installName(package)
+	File.join installRoot(stage), installName(package)
 end
 
 def recipePath package
- File.join @packagesPath, fullName(package)
+	File.join @packagesPath, fullName(package)
 end
 
 def patchesPath package
- File.join recipePath(package), 'patches'
+	File.join recipePath(package), 'patches'
 end
 
 def buildDir package
- '../=' + fullName(package)
+	'../=' + fullName(package)
 end
 
 def native?
- not exists? 'configure' and not
-  # Currently look for a recipe to distinguish from meta-packages:
-  exists? File.join(@packagesPath, package = fullName(Dir.getwd), package + '.recipe')
+	not exists? 'configure' and not
+		# Currently look for a recipe to distinguish from meta-packages:
+		exists? File.join(@packagesPath, package = fullName(Dir.getwd), package + '.recipe')
 end
 
 class Profile
 attr_reader :profile
 
- def Profile.path= path
-  @@profilesPath = path
- end
+	def Profile.path= path
+		@@profilesPath = path
+	end
 
- def initialize target
-  @profile = exists?(@file = File.join(@@profilesPath, target)) ?
-   parseDictionary(loadFile(@file)) :
-   nil
- end
+	def initialize target
+		@profile = exists?(@file = File.join(@@profilesPath, target)) ?
+			parseDictionary(loadFile(@file)) :
+			nil
+	end
 
- def [] key
-  (value = @profile[key]) ?
-   value :
-  exists?(file = File.join(@file, key)) ?
-   loadFile(file) :
-   nil
- end
+	def [] key
+		(value = @profile[key]) ?
+			value :
+		exists?(file = File.join(@file, key)) ?
+			loadFile(file) :
+			nil
+	end
 
- def []= key, value
-  saveFile [key] + value.collect {|line| "\t" + line}, @file  # File.join(@file, key)
- end
+	def []= key, value
+		saveFile [key] + value.collect {|line| "\t" + line}, @file  # File.join(@file, key)
+	end
 end
 
 def getTarget target
- profile = nil
- Struct.new(:to_s, :modules, :profile).new(
-  target,
-  # Get the list of modules for the build target, or a single module
-  if target['/']  # A single target directory
-   target[-1, 1] == '/' ? target.chop : target
-  elsif (p = Profile.new target).profile  # A profile
-   toList (profile = p)['modules']
-  else
-   target
-  end,
-  profile
- )
+	profile = nil
+	Struct.new(:to_s, :modules, :profile).new(
+		target,
+		# Get the list of modules for the build target, or a single module
+		if target['/']  # A single target directory
+			target[-1, 1] == '/' ? target.chop : target
+		elsif (p = Profile.new target).profile  # A profile
+			toList (profile = p)['modules']
+		else
+			target
+		end,
+		profile
+	)
 end
 
 def loadRecipe package  # Read a recipe file
- if exists? file = File.join(recipePath(package = fullName(package)), package + '.recipe')
-  loadFile file
- else
-  []
- end
+	if exists? file = File.join(recipePath(package = fullName(package)), package + '.recipe')
+		loadFile file
+	else
+		[]
+	end
 end
 
 def getRecipe package  # Load the key/value pairs of a recipe into a hash table
- parseDictionary loadRecipe(package)
+	parseDictionary loadRecipe(package)
 end
 
 def overlayRecipe recipe, overlay
- for key, value in overlay
-  recipe[key] = value
- end
- recipe
+	for key, value in overlay
+		recipe[key] = value
+	end
+	recipe
 end
 
 def makeCommand package
- 'make' + ((file = (getRecipe package)['makefile']) ? ' -f ' + file : '')
+	'make' + ((file = (getRecipe package)['makefile']) ? ' -f ' + file : '')
 end
 
 def action command  # Return the output of the shell command, or false if unsuccessful
- @log.action command
- stdout = `#{command}`
- if (status = $? >> 8) == 0  # OK
-  @log.result stdout
-  stdout
- else
-  @log.error status
-  @log.result stdout
-  false
- end
+	@log.action command
+	stdout = `#{command}`
+	if (status = $? >> 8) == 0  # OK
+		@log.result stdout
+		stdout
+	else
+		@log.error status
+		@log.result stdout
+		false
+	end
 end
 
 class Log
 attr_reader :failures
 
- def Log.path= path
-  Dir.mkdir path unless exists? path
+	def Log.path= path
+		Dir.mkdir path unless exists? path
 
-  @@logsPath = path
- end
+		@@logsPath = path
+	end
 
- def Log.[] log
-  IO.readlines File.join(@@logsPath, log)
- end
+	def Log.[] log
+		IO.readlines File.join(@@logsPath, log)
+	end
 
- def initialize
-  @failures = []
+	def initialize
+		@failures = []
 
-  @log  = File.new File.join(@@logsPath, 'stdout'), 'w'
-  @summary = File.new File.join(@@logsPath, 'summary'), 'w'
-  @failLog = File.new File.join(@@logsPath, 'failures'), 'w'
+		@log  = File.new File.join(@@logsPath, 'stdout'), 'w'
+		@summary = File.new File.join(@@logsPath, 'summary'), 'w'
+		@failLog = File.new File.join(@@logsPath, 'failures'), 'w'
 
-  @log  << s = "Building in root directory #{Dir.getwd}\n"
-  @summary << s
-  @failLog << s
- end
+		@log  << s = "Building in root directory #{Dir.getwd}\n"
+		@summary << s
+		@failLog << s
+	end
 
- def close
-  @log  << s = "\nFinished\n"
-  @summary << s
+	def close
+		@log  << s = "\nFinished\n"
+		@summary << s
 
-  @log.close
-  @summary.close
-  @failLog.close
- end
+		@log.close
+		@summary.close
+		@failLog.close
+	end
 
- def header header
-  print  "\n" + s = header + "\n"
-  @log  << "\n#{s}\n"
-  @summary << s
- end
+	def header header
+		print  "\n" + s = header + "\n"
+		@log  << "\n#{s}\n"
+		@summary << s
+	end
 
- def subheader header
-  print  "\n" + s = header + "\n"
-  @log  << "\n#{s}\n"
-  @summary << s
- end
+	def subheader header
+		print  "\n" + s = header + "\n"
+		@log  << "\n#{s}\n"
+		@summary << s
+	end
 
- def entry entry
-  print  s = "\n#{entry}\n"
-  @log  << s
-  @summary << s
- end
+	def entry entry
+		print  s = "\n#{entry}\n"
+		@log  << s
+		@summary << s
+	end
 
- def detail detail
-  puts  detail
-  @log  << detail + "\n"
- end
+	def detail detail
+		puts  detail
+		@log  << detail + "\n"
+	end
 
- def action action
-  puts  "\n#{action}\n"
-  @log  << action + ': '
-  @summary << action
- end
+	def action action
+		puts  "\n#{action}\n"
+		@log  << action + ': '
+		@summary << action
+	end
 
- def error error
-  puts  "\n" + s = "Error: #{error}"
-  @log  << s + ':'
-  @summary << ": #{s}\n"
- end
+	def error error
+		puts  "\n" + s = "Error: #{error}"
+		@log  << s + ':'
+		@summary << ": #{s}\n"
+	end
 
- def result result
-  @log  << "\n\n" << result
-  @summary << "\n"
- end
+	def result result
+		@log  << "\n\n" << result
+		@summary << "\n"
+	end
 
- def failure target
-  @failLog << target + "\n"
-  @failures << target
- end
+	def failure target
+		@failLog << target + "\n"
+		@failures << target
+	end
 end
 
 
@@ -1153,27 +1153,27 @@ end
 @includeVersion = @settings['include-version']
 
 unless @systemBuild = File.basename(@workDir) == 'system'
- @systemRoot = '/'
- @stage = File.join @workDir, 'stage'
+	@systemRoot = '/'
+	@stage = File.join @workDir, 'stage'
 else
- @systemRoot = File.join @stage, 'atheos'
+	@systemRoot = File.join @stage, 'atheos'
 
- @stage = File.join @workDir, 'dist-root'
-# @buildTools = File.join @workDir, 'build-tools'
+	@stage = File.join @workDir, 'dist-root'
+#	@buildTools = File.join @workDir, 'build-tools'
 
- ENV['DIST_VER']  = '0.5.4+'
- ENV['DIST_NAME'] = 'base-syllable-0.5.4+.zip'
+	ENV['DIST_VER']  = '0.5.4+'
+	ENV['DIST_NAME'] = 'base-syllable-0.5.4+.zip'
 
- ENV['ATHEOS_SRC'] = @workDir
- ENV['BUILD_TOOLS'] = File.join @workDir, 'build-tools'
- ENV['DIST_DIR']  = @stage
+	ENV['ATHEOS_SRC'] = @workDir
+	ENV['BUILD_TOOLS'] = File.join @workDir, 'build-tools'
+	ENV['DIST_DIR']  = @stage
 end
 
 # Set environment variables
 
 for line in parseList @settings['environment']
- var, value = splitLine line
- ENV[var] = value
+	var, value = splitLine line
+	ENV[var] = value
 end
 
 
@@ -1183,167 +1183,167 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
- puts 'Syllable Build System 0.5.56',
-  'Copyright (c) 2002-2004 Kaj de Vos',
-  'License: GPL 2'
+	puts 'Syllable Build System 0.5.56',
+		'Copyright (c) 2002-2004 Kaj de Vos',
+		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
- puts 'Usage: build [<command>] [<module> | <profile> | <package> | <log>]',
-  '<command>:',
-  '  -h, --help,   Show this help information',
-  '    -help, ?, -?',
-  '  -v, --version Show version information',
-  '  scrub         Delete CVS control files recursively from the current directory',
-  '  prepare       Initialize system distribution tree in staging area',
-  '  get           Fetch and patch sources',
-#  '  download      Download sources',
-#  '  unpack        Unpack sources',
-  '  patch         Patch sources',
-#  '  update        Update sources, or the build system itself, from repositories',
-#  '  delete        Delete sources and build directories (or installation?)',
-  '  distclean',
-  '  clean',
-  '  configure',
-  '  make',
-  '  test',
-  '  install       (Run as super user)',
-  '  uninstall     (Run as super user)',
-#  '  register      (Run as super user)',
-#  '  activate      (Run as super user)',
-#  '  unregister    (Run as super user)',
-  '  stage         Build and install in the staging area',
-  '  distro        Build a distribution package or a system distribution',
-#  '  package       ',
-#  '  release       ',
-  '  modules       List the modules of a profile',
-  '  recipe        List a recipe',
-  '  log           Show the last log',
-  '<module>:       Module subdirectory',
-  '<profile>:      Profile name',
-  '  last          Last used profile',
-  '  failures      Profile for last failures',
-  '<package>:      Distribution package (install command only)',
-  '<log>:          Log name',
-  '  summary       Summarized log',
-  '  failures      Log of failed modules'
+	puts 'Usage: build [<command>] [<module> | <profile> | <package> | <log>]',
+		'<command>:',
+		'  -h, --help,   Show this help information',
+		'    -help, ?, -?',
+		'  -v, --version Show version information',
+		'  scrub         Delete CVS control files recursively from the current directory',
+		'  prepare       Initialize system distribution tree in staging area',
+		'  get           Fetch and patch sources',
+#		'  download      Download sources',
+#		'  unpack        Unpack sources',
+		'  patch         Patch sources',
+#		'  update        Update sources, or the build system itself, from repositories',
+#		'  delete        Delete sources and build directories (or installation?)',
+		'  distclean',
+		'  clean',
+		'  configure',
+		'  make',
+		'  test',
+		'  install       (Run as super user)',
+		'  uninstall     (Run as super user)',
+#		'  register      (Run as super user)',
+#		'  activate      (Run as super user)',
+#		'  unregister    (Run as super user)',
+		'  stage         Build and install in the staging area',
+		'  distro        Build a distribution package or a system distribution',
+#		'  package       ',
+#		'  release       ',
+		'  modules       List the modules of a profile',
+		'  recipe        List a recipe',
+		'  log           Show the last log',
+		'<module>:       Module subdirectory',
+		'<profile>:      Profile name',
+		'  last          Last used profile',
+		'  failures      Profile for last failures',
+		'<package>:      Distribution package (install command only)',
+		'<log>:          Log name',
+		'  summary       Summarized log',
+		'  failures      Log of failed modules'
 when 'modules' then puts Profile.new(arg2)['modules']
 when 'recipe'  then puts loadRecipe(arg2)
 when 'overlay' then puts overlayRecipe(getRecipe(arg2), getRecipe(arg3)).to_a
 when 'log'     then print Log[arg2 ? arg2 : 'stdout']
 else
- @log = Log.new
+	@log = Log.new
 
- if arg1 == 'scrub'
-  deleteCVSData
- else
-  target  = getTarget arg2 ? arg2 : arg1 ? arg1 : 'default'
-  profile = target.profile
+	if arg1 == 'scrub'
+		deleteCVSData
+	else
+		target  = getTarget arg2 ? arg2 : arg1 ? arg1 : 'default'
+		profile = target.profile
 
-  Profile.new('last')['modules'] = profile['modules'] if profile  # Processing a profile
+		Profile.new('last')['modules'] = profile['modules'] if profile  # Processing a profile
 
-  if arg1 == 'prepare'
-   prepare target
-  else
-   if @systemBuild
-    if exists? '/ainc'
-     @log.header 'Temporarily replacing system headers'
-     action "ln -snf #{File.join @workDir, 'sys/include'} /ainc"
-    end
+		if arg1 == 'prepare'
+			prepare target
+		else
+			if @systemBuild
+				if exists? '/ainc'
+					@log.header 'Temporarily replacing system headers'
+					action "ln -snf #{File.join @workDir, 'sys/include'} /ainc"
+				end
 
-	# Pick up executables from the staging area
+				# Pick up executables from the staging area
 
-    ENV['PATH'] =
-     (File.join @stage, 'atheos/sys/bin') +
-#     Executables may not be position-independent:
-#     ':' + (File.join @stage, 'atheos/usr/glibc2/bin') +
-#     ':' + (File.join @stage, 'atheos/usr/glibc2/sbin') +
-#     Links don't point right:
-#     ':' + (File.join @stage, 'atheos/autolnk/bin') +
-#     ':' + (File.join @stage, 'atheos/autolnk/sbin') +
-#     Shouldn't really be used:
-#     ':' + (File.join @stage, 'atheos/usr/local/bin') +
-#     ':' + (File.join @stage, 'atheos/usr/bin') +
-#     ':' + (File.join @stage, 'atheos/usr/sbin') +
-     ':' + ENV['PATH']
+				ENV['PATH'] =
+					(File.join @stage, 'atheos/sys/bin') +
+#					Executables may not be position-independent:
+#					':' + (File.join @stage, 'atheos/usr/glibc2/bin') +
+#					':' + (File.join @stage, 'atheos/usr/glibc2/sbin') +
+#					Links don't point right:
+#					':' + (File.join @stage, 'atheos/autolnk/bin') +
+#					':' + (File.join @stage, 'atheos/autolnk/sbin') +
+#					Shouldn't really be used:
+#					':' + (File.join @stage, 'atheos/usr/local/bin') +
+#					':' + (File.join @stage, 'atheos/usr/bin') +
+#					':' + (File.join @stage, 'atheos/usr/sbin') +
+					':' + ENV['PATH']
 
-	# Pick up headers from the system repository and staging area
+				# Pick up headers from the system repository and staging area
 
-    headers =
-     # C library headers
-     (File.join @stage, 'atheos/usr/glibc2/include') +
-#     ':' + (File.join @workDir, 'libs/glibc/include') +
-     ':' + 'Programs/Glibc/Current/include' +  # For GoboLinux
-     # System headers
-     ':' + (File.join @stage, 'atheos/sys/include') +
-     ':' + (File.join @workDir, 'sys/include')
-     # Linked headers
-#     ':' + (File.join @stage, 'atheos/autolnk/include') +
-     # Extra headers
-#     ':' + (File.join @stage, 'atheos/usr/local/include') +
-#     ':' + (File.join @stage, 'atheos/usr/include')
+				headers =
+					# C library headers
+					(File.join @stage, 'atheos/usr/glibc2/include') +
+#					':' + (File.join @workDir, 'libs/glibc/include') +
+					':' + 'Programs/Glibc/Current/include' +  # For GoboLinux
+					# System headers
+					':' + (File.join @stage, 'atheos/sys/include') +
+					':' + (File.join @workDir, 'sys/include')
+					# Linked headers
+#					':' + (File.join @stage, 'atheos/autolnk/include') +
+					# Extra headers
+#					':' + (File.join @stage, 'atheos/usr/local/include') +
+#					':' + (File.join @stage, 'atheos/usr/include')
 
-    ENV['ATHEOS_INCLUDE_PATH'] = File.join @workDir, 'sys/include'
-    ENV['C_INCLUDE_PATH'] = headers + (var = ENV['C_INCLUDE_PATH']) ? ':' + var : ''
-    ENV['CPLUS_INCLUDE_PATH'] = headers + (var = ENV['CPLUS_INCLUDE_PATH']) ? ':' + var : ''
+				ENV['ATHEOS_INCLUDE_PATH'] = File.join @workDir, 'sys/include'
+				ENV['C_INCLUDE_PATH'] = headers + (var = ENV['C_INCLUDE_PATH']) ? ':' + var : ''
+				ENV['CPLUS_INCLUDE_PATH'] = headers + (var = ENV['CPLUS_INCLUDE_PATH']) ? ':' + var : ''
 
-	# Pick up libraries from the staging area
+				# Pick up libraries from the staging area
 
-    ENV['ATHEOS_LIB_PATH'] = File.join @stage, 'atheos/sys/libs'
-    ENV['DLL_PATH'] =
-     (File.join @stage, 'atheos/sys/libs') +
-     ':' + (File.join @stage, 'atheos/sys') +
-#     ':' + (File.join @stage, 'atheos/autolnk/lib') +
-     ((var = ENV['DLL_PATH']) ? ':' + var : '')
-    ENV[name = (@syllable ? '' : 'LD_') + 'LIBRARY_PATH'] =
-     (File.join @stage, 'atheos/sys/libs') +
-     ':' + (@syllable ? '' : ':' + File.join(@stage, 'atheos/sys')) +
-     ':' + (File.join @stage, 'atheos/usr/glibc2/lib') +
-#     ':' + (File.join @stage, 'atheos/autolnk/lib') +
-#     ':' + (File.join @stage, 'atheos/usr/local/lib') +
-#     ':' + (File.join @stage, 'atheos/usr/lib') +
-     ':' + ENV[name]
+				ENV['ATHEOS_LIB_PATH'] = File.join @stage, 'atheos/sys/libs'
+				ENV['DLL_PATH'] =
+					(File.join @stage, 'atheos/sys/libs') +
+					':' + (File.join @stage, 'atheos/sys') +
+#					':' + (File.join @stage, 'atheos/autolnk/lib') +
+					((var = ENV['DLL_PATH']) ? ':' + var : '')
+				ENV[name = (@syllable ? '' : 'LD_') + 'LIBRARY_PATH'] =
+					(File.join @stage, 'atheos/sys/libs') +
+					':' + (@syllable ? '' : ':' + File.join(@stage, 'atheos/sys')) +
+					':' + (File.join @stage, 'atheos/usr/glibc2/lib') +
+#					':' + (File.join @stage, 'atheos/autolnk/lib') +
+#					':' + (File.join @stage, 'atheos/usr/local/lib') +
+#					':' + (File.join @stage, 'atheos/usr/lib') +
+					':' + ENV[name]
 
-    prepare target unless exists? @stage
-   end
+				prepare target unless exists? @stage
+			end
 
-   case arg1
-   when 'get'   then get  target
-   when 'patch'  then patch  target
-   when 'distclean' then distclean target
-   when 'clean'  then clean  target
-   when 'configure' then configure target
-   when 'make'   then make  target
-   when 'test'   then test  target
-   when 'install'  then install target
-   when 'uninstall' then uninstall target
-   when 'stage'
-    if exists? @stage or
-     begin
-      @log.header 'Creating staging area'
-      action 'mkdir ' + @stage
-     end
-    then
-     build true, target
-    end
-   when 'distro'  then makeDistro target
-   else
-    if arg2
-     @log.error 'Unrecognized command'
-     exit
-    else
-     build false, target
-    end
-   end
+			case arg1
+			when 'get'   then get  target
+			when 'patch'  then patch  target
+			when 'distclean' then distclean target
+			when 'clean'  then clean  target
+			when 'configure' then configure target
+			when 'make'   then make  target
+			when 'test'   then test  target
+			when 'install'  then install target
+			when 'uninstall' then uninstall target
+			when 'stage'
+				if exists? @stage or
+					begin
+						@log.header 'Creating staging area'
+						action 'mkdir ' + @stage
+					end
+				then
+					build true, target
+				end
+			when 'distro'  then makeDistro target
+			else
+				if arg2
+					@log.error 'Unrecognized command'
+					exit
+				else
+					build false, target
+				end
+			end
 
-   if @systemBuild and exists? '/ainc'
-    @log.header 'Restoring system headers'
-    action 'ln -snf /system/include /ainc'
-   end
+			if @systemBuild and exists? '/ainc'
+				@log.header 'Restoring system headers'
+				action 'ln -snf /system/include /ainc'
+			end
 
-   Profile.new('failures')['modules'] = @log.failures if profile  # Processing a profile
-  end
- end
+			Profile.new('failures')['modules'] = @log.failures if profile  # Processing a profile
+		end
+	end
 
- action 'sync'
- @log.close
+	action 'sync'
+	@log.close
 end
 
