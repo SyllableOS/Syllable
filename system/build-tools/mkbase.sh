@@ -74,16 +74,21 @@ mkdir $ROOT/atheos/sys/drivers/fs
 
 mkdir $ROOT/atheos/usr
 mkdir $ROOT/atheos/usr/bin
+mkdir $ROOT/atheos/usr/share
+mkdir $ROOT/atheos/usr/share/terminfo
+mkdir $ROOT/atheos/usr/share/terminfo/x
 
 mkdir $ROOT/Install/
 
 mkdir $ROOT/Packages/
 mkdir $ROOT/Packages/base
+mkdir $ROOT/Packages/net
 
 echo "Copying files from $BASE"
 
 cp -p $BASE/atheos/etc/profile $ROOT/atheos/etc/
 cp -p $BASE/atheos/etc/passwd $ROOT/atheos/etc/
+cp -p $BASE/atheos/etc/termcap $ROOT/atheos/etc/
 
 cp -p $BASE/atheos/home/root/.profile $ROOT/atheos/home/root/
 
@@ -148,6 +153,8 @@ cp -p $BASE/atheos/usr/bin/tar $ROOT/atheos/usr/bin/
 cp -p $BASE/atheos/usr/bin/whoami $ROOT/atheos/usr/bin/
 cp -p $BASE/atheos/usr/bin/uname $ROOT/atheos/usr/bin/
 
+cp -p $BASE/atheos/usr/share/terminfo/x/xterm $ROOT/atheos/usr/share/terminfo/x/
+
 echo "Creating links"
 
 cd $ROOT/atheos/usr/bin
@@ -172,9 +179,7 @@ echo "Copying $TARBALL base package"
 cp $TARBALL $ROOT/Packages/base/
 
 echo "Copying floppy images"
-cp objs/syllable1.img $ROOT/Packages/base/
-cp objs/syllable2.img $ROOT/Packages/base/
-cp objs/syllable3.img $ROOT/Packages/base/
+cp objs/syllable* $ROOT/Packages/base/
 
 echo "Copying installation scripts"
 cp -dpr scripts/install/* $ROOT/Install/
@@ -188,6 +193,8 @@ if [ ! -e "$NET" ]; then
 	echo "$NET does not exist.  Stoping."
 	exit 1;
 fi;
+
+cp -r $NET/* $ROOT/Packages/net/
 
 echo "Building ISO image"
 ./mkiso.sh $ROOT $VER

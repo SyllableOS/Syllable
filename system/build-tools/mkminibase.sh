@@ -63,6 +63,12 @@ mkdir $ROOT/disk2/atheos/sys/bin
 mkdir $ROOT/disk2/atheos/sys/libs
 mkdir $ROOT/disk2/atheos/sys/keymaps
 mkdir $ROOT/disk2/atheos/sys/config
+mkdir $ROOT/disk2/atheos/sys/drivers
+mkdir $ROOT/disk2/atheos/sys/drivers/appserver
+mkdir $ROOT/disk2/atheos/sys/drivers/appserver/video
+mkdir $ROOT/disk2/atheos/sys/drivers/dev
+mkdir $ROOT/disk2/atheos/sys/drivers/dev/disk
+mkdir $ROOT/disk2/atheos/sys/drivers/dev/misc
 mkdir $ROOT/disk2/atheos/etc
 mkdir $ROOT/disk2/atheos/home
 mkdir $ROOT/disk2/atheos/home/root
@@ -82,6 +88,15 @@ cp -p $BASE/atheos/sys/keymaps/American $DISK/atheos/sys/keymaps/
 
 cp -p $BASE/atheos/sys/config/appserver $DISK/atheos/sys/config/
 
+cp -p $BASE/atheos/sys/drivers/appserver/video/sis3xx $DISK/atheos/sys/drivers/appserver/video/
+cp -p $BASE/atheos/sys/drivers/appserver/video/trident $DISK/atheos/sys/drivers/appserver/video/
+
+cp -p $BASE/atheos/sys/drivers/dev/keybd $DISK/atheos/sys/drivers/dev/
+
+cp -p $BASE/atheos/sys/drivers/dev/disk/bios $DISK/atheos/sys/drivers/dev/disk/
+
+cp -p $BASE/atheos/sys/drivers/dev/misc/ps2aux $DISK/atheos/sys/drivers/dev/misc/
+
 cp -p $BASE/atheos/etc/profile $DISK/atheos/etc/
 cp -p $BASE/atheos/etc/passwd $DISK/atheos/etc/
 
@@ -97,9 +112,6 @@ mkdir $ROOT/disk3/atheos/sys/drivers
 mkdir $ROOT/disk3/atheos/sys/drivers/appserver
 mkdir $ROOT/disk3/atheos/sys/drivers/appserver/input
 mkdir $ROOT/disk3/atheos/sys/drivers/appserver/video
-mkdir $ROOT/disk3/atheos/sys/drivers/dev
-mkdir $ROOT/disk3/atheos/sys/drivers/dev/disk
-mkdir $ROOT/disk3/atheos/sys/drivers/dev/misc
 mkdir $ROOT/disk3/atheos/sys/drivers/fs
 mkdir $ROOT/disk3/atheos/usr
 mkdir $ROOT/disk3/atheos/usr/bin
@@ -111,13 +123,9 @@ strip --strip-all $DISK/atheos/sys/libs/libatheos.so.3
 
 cp -p $BASE/atheos/sys/drivers/appserver/input/* $DISK/atheos/sys/drivers/appserver/input/
 
-cp -p $BASE/atheos/sys/drivers/appserver/video/* $DISK/atheos/sys/drivers/appserver/video/
-
-cp -p $BASE/atheos/sys/drivers/dev/keybd $DISK/atheos/sys/drivers/dev/
-
-cp -p $BASE/atheos/sys/drivers/dev/disk/bios $DISK/atheos/sys/drivers/dev/disk/
-
-cp -p $BASE/atheos/sys/drivers/dev/misc/ps2aux $DISK/atheos/sys/drivers/dev/misc/
+cp -p $BASE/atheos/sys/drivers/appserver/video/mach64 $DISK/atheos/sys/drivers/appserver/video/
+cp -p $BASE/atheos/sys/drivers/appserver/video/nvidia $DISK/atheos/sys/drivers/appserver/video/
+cp -p $BASE/atheos/sys/drivers/appserver/video/s3_virge $DISK/atheos/sys/drivers/appserver/video/
 
 cp -p $BASE/atheos/sys/drivers/fs/afs $DISK/atheos/sys/drivers/fs/
 cp -p $BASE/atheos/sys/drivers/fs/fatfs $DISK/atheos/sys/drivers/fs/
@@ -147,27 +155,27 @@ echo "Building ramdisk image 1"
 bin/makeramdisk $ROOT/disk1 bimage1
 gzip -9 bimage1
 rm -rf $ROOT/disk1
-mv bimage1.gz objs/
+mv bimage1.gz objs/bimage1.bin.gz
 
 echo "Building ramdisk image 2"
 bin/makeramdisk $ROOT/disk2 bimage2
 gzip -9 bimage2
 rm -rf $ROOT/disk2
-mv bimage2.gz objs/
+mv bimage2.gz objs/bimage2.bin.gz
 
 echo "Building ramdisk image 3"
 bin/makeramdisk $ROOT/disk3 bimage3
 gzip -9 bimage3
 rm -rf $ROOT/disk3
-mv bimage3.gz objs/
+mv bimage3.gz objs/bimage3.bin.gz
 
 echo "Building floppies"
 ./mkfloppies.sh
 
 echo "Cleaning up"
-rm objs/bimage1.gz
-rm objs/bimage2.gz
-rm objs/bimage3.gz
+rm objs/bimage1.bin.gz
+rm objs/bimage2.bin.gz
+rm objs/bimage3.bin.gz
 
 rm -rf $ROOT
 

@@ -16,4 +16,5 @@ export SHELL=bash
 export TEMP=/tmp
 
 aterm &
+aterm /boot/Install/install.sh &
 

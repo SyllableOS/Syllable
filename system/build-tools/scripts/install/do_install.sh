@@ -1,9 +1,7 @@
 #!/bin/sh
 
-TEST=1
-
 clear
-cat partition.txt
+cat doc/partition.txt
 
 echo -n "Do you need to create a new partition? (Y/n) "
 read ANSWER
@@ -33,11 +31,7 @@ do
 
 done
 
-if [[ $TEST -ne 1 ]]; then
-	format $DRIVE afs "Syllable"
-else
-	echo "Test mode enabled, not formatting $DRIVE"
-fi;
+format $DRIVE afs "Syllable"
 
 if [ $? -ne 0 ]; then
 	echo; echo "Failed to format $DRIVE.  Stopping"
@@ -51,7 +45,7 @@ clear
 cat doc/installation.txt
 
 echo; echo "Please wait..."
-tar -xzpf /boot/Packages/base/base-syllable-0.4.3.tar.gz -C /inst/
+tar -xzpf /boot/Packages/base/base-syllable-0.4.4.tar.gz -C /inst/
 
 if [ $? -ne 0 ]; then
 	echo; echo "Failed to extract base package to $DRIVE.  Stopping"
@@ -78,13 +72,13 @@ clear
 
 # Install Syllable-Net packages
 echo; echo "Installing ABrowse"
-tar -xzpf /boot/Packages/net/abrowse-0.3.4.bin.tar.gz
+tar -xzpf /boot/Packages/net/abrowse-0.3.4.bin.tar.gz -C /inst/atheos/Applications/
 
 echo; echo "Installing Whisper"
-tar -xzpf /boot/Packages/net/whisper-0.1.6.bin.tar.gz
+tar -xzpf /boot/Packages/net/whisper-0.1.6.bin.tar.gz -C /inst/atheos/Applications/
 
 echo; echo "Installing Chat"
-tar -xzpf /boot/Packages/net/chat-0.0.1.bin.tar.gz
+tar -xzpf /boot/Packages/net/chat-0.0.1.bin.tar.gz -C /inst/atheos/Applications/
 
 echo
 exit 0
