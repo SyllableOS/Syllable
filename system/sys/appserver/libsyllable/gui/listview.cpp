@@ -308,6 +308,15 @@ bool ListViewRow::HitTest( View * pcView, const Rect & cFrame, int nColumn, Poin
 	return ( true );
 }
 
+void ListViewRow::SetCookie( Variant cCookie )
+{
+	m_cCookie = cCookie;
+}
+
+Variant ListViewRow::GetCookie( void )
+{
+	return m_cCookie;
+}
 
 void ListViewRow::SetIsSelectable( bool bSelectable )
 {

@@ -86,7 +86,6 @@ protected:
 	void				_SetLastSibling( bool bIsLast );
 
 private:
-    TreeViewNode& operator=( const TreeViewNode& );
     TreeViewNode( const TreeViewNode& );
 
 	class Private;

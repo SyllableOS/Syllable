@@ -22,6 +22,7 @@
 #define __F_GUI_LISTVIEW_H__
 
 #include <gui/control.h>
+#include <util/variant.h>
 
 #include <vector>
 #include <string>
@@ -64,6 +65,9 @@ public:
     virtual bool  HitTest( View* pcView, const Rect& cFrame, int nColumn, Point cPos );
     virtual bool  IsLessThan( const ListViewRow* pcOther, uint nColumn ) const = 0;
     
+    virtual void	SetCookie( Variant cCookie );
+    virtual Variant	GetCookie( void );
+
     void		SetIsSelectable( bool bSelectable );
     bool		IsSelectable() const;
     bool		IsSelected() const;
@@ -75,7 +79,10 @@ private:
     virtual void	__LVR_reserved_2__();
 
 private:
-    ListViewRow& operator=( const ListViewRow& );
+    ListViewRow& operator=( const ListViewRow &cRow )
+	{
+		m_cCookie = cRow.m_cCookie;
+	};
     ListViewRow( const ListViewRow& );
 
     friend class ListView;
@@ -98,6 +105,7 @@ private:
 	};
 
     uint16	m_nFlags;
+    Variant m_cCookie;
     uint16	m_nReserved1;
     uint32	m_nReserved2[4];
 };
