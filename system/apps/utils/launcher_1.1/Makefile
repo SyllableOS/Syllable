@@ -1,5 +1,5 @@
 COPTS	= -Wall -c -O2
-LIBINC  = -Llib -latheos -lm -lstdc++
+LIBINC  = -Llib -lsyllable -lm -lstdc++
 
 OBJS	= obj/main.o obj/launcher_window.o obj/launcher_prefs.o
 LIBOBJS = lib/obj/launcher_plugin.o lib/obj/launcher_bar.o lib/obj/launcher_mime.o
