@@ -111,7 +111,7 @@ cp -dpr $BASE/atheos/sys/libs/* $ROOT/atheos/sys/libs/
 cp -dpr $BASE/atheos/usr/zlib/lib/* $ROOT/atheos/sys/libs/
 
 cp -p $BASE/atheos/sys/fonts/NimbusSanL-Regu.ttf $ROOT/atheos/sys/fonts/
-cp -p $BASE/atheos/sys/fonts/SyllableConsole-Regu.ttf $ROOT/atheos/sys/fonts/
+cp -p $BASE/atheos/sys/fonts/VeraMono.ttf $ROOT/atheos/sys/fonts/
 
 cp -p $BASE/atheos/sys/keymaps/American $ROOT/atheos/sys/keymaps/
 
