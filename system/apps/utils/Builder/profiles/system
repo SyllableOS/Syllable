@@ -91,13 +91,18 @@ distro-tree
 	atheos/Documentation
 
 modules
-	sys/include
+;	Hangs during configuring:
+;	sys/boot/grub-0.95
+	grub-binaries-0.95
+	other/config/grub
 	other/config/default
 	other/config/etc
 	other/fonts
 	other/icons
 	other/init
 	other/keymaps
+	sys/include
+	gcc-libraries-3.3.4
 	sys/kernel/kernel
 	sys/kernel/drivers/bus/ata
 	sys/kernel/drivers/bus/pci
@@ -152,8 +157,6 @@ modules
 	sys/kernel/fs/fatfs
 	sys/kernel/fs/iso9660
 	sys/kernel/fs/ramfs
-;	Hangs during configuring:
-;	sys/boot/grub
 	libs/glibc2-2.1.2
 	libs/compat-1.0
 	libs/compatibility/libatheos-3
