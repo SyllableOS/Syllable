@@ -1,0 +1,258 @@
+diff -ru tar-1.13.orig/src/buffer.c tar-1.13/src/buffer.c
+--- tar-1.13.orig/src/buffer.c	1999-07-05 06:48:00.000000000 +0000
++++ tar-1.13/src/buffer.c	2002-06-28 21:18:56.000000000 +0000
+@@ -1347,19 +1347,6 @@
+ static void
+ backspace_output (void)
+ {
+-#ifdef MTIOCTOP
+-  {
+-    struct mtop operation;
+-
+-    operation.mt_op = MTBSR;
+-    operation.mt_count = 1;
+-    if (rmtioctl (archive, MTIOCTOP, (char *) &operation) >= 0)
+-      return;
+-    if (errno == EIO && rmtioctl (archive, MTIOCTOP, (char *) &operation) >= 0)
+-      return;
+-  }
+-#endif
+-
+   {
+     off_t position = rmtlseek (archive, (off_t) 0, SEEK_CUR);
+ 
+diff -ru tar-1.13.orig/src/compare.c tar-1.13/src/compare.c
+--- tar-1.13.orig/src/compare.c	1999-07-05 06:07:05.000000000 +0000
++++ tar-1.13/src/compare.c	2002-06-28 21:18:58.000000000 +0000
+@@ -828,20 +828,6 @@
+   ioctl (archive, FDFLUSH);
+ #endif
+ 
+-#ifdef MTIOCTOP
+-  {
+-    struct mtop operation;
+-    int status;
+-
+-    operation.mt_op = MTBSF;
+-    operation.mt_count = 1;
+-    if (status = rmtioctl (archive, MTIOCTOP, (char *) &operation), status < 0)
+-      {
+-	if (errno != EIO
+-	    || (status = rmtioctl (archive, MTIOCTOP, (char *) &operation),
+-		status < 0))
+-	  {
+-#endif
+ 	    if (rmtlseek (archive, (off_t) 0, SEEK_SET) != 0)
+ 	      {
+ 		/* Lseek failed.  Try a different method.  */
+@@ -850,11 +836,6 @@
+ 		       _("Could not rewind archive file for verify")));
+ 		return;
+ 	      }
+-#ifdef MTIOCTOP
+-	  }
+-      }
+-  }
+-#endif
+ 
+   access_mode = ACCESS_READ;
+   now_verifying = 1;
+diff -ru tar-1.13.orig/src/delete.c tar-1.13/src/delete.c
+--- tar-1.13.orig/src/delete.c	1999-07-01 23:30:36.000000000 +0000
++++ tar-1.13/src/delete.c	2002-06-28 21:19:02.000000000 +0000
+@@ -42,36 +42,6 @@
+ static void
+ move_archive (off_t count)
+ {
+-#ifdef MTIOCTOP
+-  {
+-    struct mtop operation;
+-    int status;
+-
+-    if (count > 0)
+-      {
+-	operation.mt_op = MTFSR;
+-	operation.mt_count = count;
+-	if (operation.mt_count != count)
+-	  FATAL_ERROR ((0, 0, _("Could not re-position archive file")));
+-      }
+-    else
+-      {
+-	operation.mt_op = MTBSR;
+-	operation.mt_count = -count;
+-	if (operation.mt_count != -count)
+-	  FATAL_ERROR ((0, 0, _("Could not re-position archive file")));
+-      }
+-
+-    if (status = rmtioctl (archive, MTIOCTOP, (char *) &operation),
+-	status >= 0)
+-      return;
+-
+-    if (errno == EIO)
+-      if (status = rmtioctl (archive, MTIOCTOP, (char *) &operation),
+-	  status >= 0)
+-      return;
+-  }
+-#endif /* MTIOCTOP */
+ 
+   {
+     off_t position0 = rmtlseek (archive, (off_t) 0, SEEK_CUR);
+diff -ru tar-1.13.orig/src/rmt.c tar-1.13/src/rmt.c
+--- tar-1.13.orig/src/rmt.c	1999-07-07 06:11:03.000000000 +0000
++++ tar-1.13/src/rmt.c	2002-06-28 21:19:11.000000000 +0000
+@@ -375,53 +375,6 @@
+ 	get_string  (count_string);
+ 	DEBUG2 ("rmtd: I %s %s\n", operation_string, count_string);
+ 
+-#ifdef MTIOCTOP
+-	{
+-	  struct mtop mtop;
+-	  const char *p;
+-	  off_t count = 0;
+-	  int negative;
+-
+-	  /* Parse count_string, taking care to check for overflow.
+-	     We can't use standard functions,
+-	     since off_t might be longer than long.  */
+-	  
+-	  for (p = count_string;  *p == ' ' || *p == '\t';  p++)
+-	    continue;
+-	  
+-	  negative = *p == '-';
+-	  p += negative || *p == '+';
+-	  
+-	  for (;;)
+-	    {
+-	      int digit = *p++ - '0';
+-	      if (9 < (unsigned) digit)
+-		break;
+-	      else
+-		{
+-		  off_t c10 = 10 * count;
+-		  off_t nc = negative ? c10 - digit : c10 + digit;
+-		  if (c10 / 10 != count || (negative ? c10 < nc : nc < c10))
+-		    {
+-		      report_error_message (N_("Seek offset out of range"));
+-		      exit (EXIT_FAILURE);
+-		    }
+-		  count = nc;
+-		}
+-	    }
+-
+-	  mtop.mt_count = count;
+-	  if (mtop.mt_count != count)
+-	    {
+-	      report_error_message (N_("Seek offset out of range"));
+-	      exit (EXIT_FAILURE);
+-	    }
+-	  mtop.mt_op = atoi (operation_string);
+-
+-	  if (ioctl (tape, MTIOCTOP, (char *) &mtop) < 0)
+-	    goto ioerror;
+-	}
+-#endif
+ 	goto respond;
+       }
+ 
+@@ -429,18 +382,6 @@
+       {
+ 	DEBUG ("rmtd: S\n");
+ 
+-#ifdef MTIOCGET
+-	{
+-	  struct mtget operation;
+-
+-	  if (ioctl (tape, MTIOCGET, (char *) &operation) < 0)
+-	    goto ioerror;
+-	  status = sizeof (operation);
+-	  sprintf (reply_buffer, "A%ld\n", status);
+-	  full_write (STDOUT_FILENO, reply_buffer, strlen (reply_buffer));
+-	  full_write (STDOUT_FILENO, (char *) &operation, sizeof (operation));
+-	}
+-#endif
+ 	goto top;
+       }
+ 
+diff -ru tar-1.13.orig/src/rtapelib.c tar-1.13/src/rtapelib.c
+--- tar-1.13.orig/src/rtapelib.c	1999-07-07 06:10:38.000000000 +0000
++++ tar-1.13/src/rtapelib.c	2002-06-28 21:19:12.000000000 +0000
+@@ -619,79 +619,5 @@
+       errno = EOPNOTSUPP;	/* FIXME: errno should be read-only */
+       return -1;
+ 
+-#ifdef MTIOCTOP
+-    case MTIOCTOP:
+-      {
+-	char command_buffer[COMMAND_BUFFER_SIZE];
+-	char operand_buffer[UINTMAX_STRSIZE_BOUND];
+-	uintmax_t u = (((struct mtop *) argument)->mt_count < 0
+-		       ? - (uintmax_t) ((struct mtop *) argument)->mt_count
+-		       : (uintmax_t) ((struct mtop *) argument)->mt_count);
+-	char *p = operand_buffer + sizeof operand_buffer;
+-	
+-	do
+-	  *--p = '0' + (int) (u % 10);
+-	while ((u /= 10) != 0);
+-	if (((struct mtop *) argument)->mt_count < 0)
+-	  *--p = '-';
+-
+-	/* MTIOCTOP is the easy one.  Nothing is transfered in binary.  */
+-
+-	sprintf (command_buffer, "I%d\n%s\n",
+-		 ((struct mtop *) argument)->mt_op, p);
+-	if (do_command (handle, command_buffer) == -1)
+-	  return -1;
+-
+-	return get_status (handle);
+-      }
+-#endif /* MTIOCTOP */
+-
+-#ifdef MTIOCGET
+-    case MTIOCGET:
+-      {
+-	ssize_t status;
+-	ssize_t counter;
+-
+-	/* Grab the status and read it directly into the structure.  This
+-	   assumes that the status buffer is not padded and that 2 shorts
+-	   fit in a long without any word alignment problems; i.e., the
+-	   whole struct is contiguous.  NOTE - this is probably NOT a good
+-	   assumption.  */
+-
+-	if (do_command (handle, "S") == -1
+-	    || (status = get_status (handle), status == -1))
+-	  return -1;
+-
+-	for (; status > 0; status -= counter, argument += counter)
+-	  {
+-	    counter = safe_read (READ_SIDE (handle),
+-				 argument, (size_t) status);
+-	    if (counter <= 0)
+-	      {
+-		_rmt_shutdown (handle, EIO);
+-		return -1;
+-	      }
+-	  }
+-
+-	/* Check for byte position.  mt_type (or mt_model) is a small integer
+-	   field (normally) so we will check its magnitude.  If it is larger
+-	   than 256, we will assume that the bytes are swapped and go through
+-	   and reverse all the bytes.  */
+-
+-	if (((struct mtget *) argument)->MTIO_CHECK_FIELD < 256)
+-	  return 0;
+-
+-	for (counter = 0; counter < status; counter += 2)
+-	  {
+-	    char copy = argument[counter];
+-
+-	    argument[counter] = argument[counter + 1];
+-	    argument[counter + 1] = copy;
+-	  }
+-
+-	return 0;
+-      }
+-#endif /* MTIOCGET */
+-
+     }
+ }
