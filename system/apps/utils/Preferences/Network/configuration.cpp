@@ -262,7 +262,7 @@ void Configuration::Activate()
     if (pcAdaptors[i].bEnabled) {
       if( pcAdaptors[i].bUseDHCP )
       {
-        fsOut << "dhcp -d " << pcAdaptors[i].pzDescription << " 2>>/var/log/dhcpc" << newl;
+        fsOut << "dhcpc -d " << pcAdaptors[i].pzDescription << " 2>>/var/log/dhcpc" << newl;
       }
       else
       {
