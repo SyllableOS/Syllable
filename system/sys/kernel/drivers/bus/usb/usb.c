@@ -77,13 +77,15 @@ status_t usb_register_driver( USB_driver_s* psDriver )
 			if( usb_find_driver( g_psUSBBus[i]->psRootHUB ) == 0 )
 				bFound = true; 
 	}
-	UNLOCK( g_hUSBLock );
 	
-	if( bFound == true )
+	if( bFound == true ) {
+		UNLOCK( g_hUSBLock );
 		return( 0 );
+	}
 	/* No new driver for any device found -> driver is unnecessary */
 	printk( "USB: %s driver unnecessary\n", g_psFirstUSBDriver->zName );
 	g_psFirstUSBDriver = psDriver->psNext;
+	UNLOCK( g_hUSBLock );
 	return( -1 );
 }
 
@@ -175,7 +177,6 @@ void usb_deregister_driver( USB_driver_s* psDriver )
 	/* Remove driver from the list */
 	USB_driver_s* psPrevDriver = NULL;
 	USB_driver_s* psNextDriver = g_psFirstUSBDriver;
-	LOCK( g_hUSBLock );
 	while( psNextDriver != NULL )
 	{
 		if( psNextDriver == psDriver )
@@ -189,14 +190,12 @@ void usb_deregister_driver( USB_driver_s* psDriver )
 				if( g_bUSBBusMap[i] )
 					usb_remove_driver( psDriver, g_psUSBBus[i]->psRootHUB ); 
 			}
-			UNLOCK( g_hUSBLock );
 			printk( "USB: %s driver deregistered\n", psDriver->zName );
 			return;
 		}
 		psPrevDriver = psNextDriver;
 		psNextDriver = psNextDriver->psNext;
 	}
-	UNLOCK( g_hUSBLock );
 	printk( "USB: Could not deregister not registered %s driver\n", psDriver->zName );
 }
 
@@ -221,6 +220,7 @@ USB_bus_driver_s* usb_alloc_bus()
 	psBus->nBusNum = -1;
 	atomic_and( &psBus->nRefCount, 0 );
 	atomic_add( &psBus->nRefCount, 1 );
+	
 	psBus->psRootHUB = NULL;
 	psBus->pHCPrivate = NULL;
 	psBus->nBandWidthAllocated = 0;
@@ -316,6 +316,7 @@ status_t usb_find_interface_driver( USB_device_s* psDev, int nIFNum )
 	
 	
 	LOCK( psDev->hLock );
+	
 	psIF = psDev->psActConfig->psInterface + nIFNum;
 	
 	if( psIF->psDriver != NULL ) {
@@ -323,6 +324,7 @@ status_t usb_find_interface_driver( USB_device_s* psDev, int nIFNum )
 		UNLOCK( psDev->hLock );
 		return( -1 );
 	}
+	
 	/* Go through all registered driver */
 	psDriver = g_psFirstUSBDriver;
 	
@@ -333,7 +335,6 @@ status_t usb_find_interface_driver( USB_device_s* psDev, int nIFNum )
 		UNLOCK( psDriver->hLock );
 		
 		psIF = psDev->psActConfig->psInterface + nIFNum;
-		
 		if( bSuccess ) {
 			UNLOCK( psDev->hLock );
 			psIF->psDriver = psDriver;
@@ -341,10 +342,8 @@ status_t usb_find_interface_driver( USB_device_s* psDev, int nIFNum )
 			printk( "USB: Device claimed by %s driver\n", psDriver->zName );
 			return( 0 );
 		}
-		
 		psDriver = psDriver->psNext;
 	}
-	
 	UNLOCK( psDev->hLock );
 	printk("USB: No driver found\n");
 	return( -1 );
@@ -392,9 +391,7 @@ status_t usb_find_driver( USB_device_s* psDev )
 void usb_find_drivers_for_new_device( USB_device_s* psDev )
 {
 	uint32 i;
-	//printk( "Adding device %i ( VendorID 0x%x, DeviceID 0x%x )\n",
-			//psDev->nDeviceNum, psDev->sDeviceDesc.nVendorID, psDev->sDeviceDesc.nDeviceID );
-
+	
 	for( i = 0; i < psDev->psActConfig->nNumInterfaces; i++ )
 	{
 		if( ( psDev->psActConfig->psInterface + i )->psDriver == NULL )
@@ -584,7 +581,7 @@ void usb_free_device( USB_device_s* psDevice )
 		atomic_add( &psDevice->psBus->nRefCount, -1 );
 		kfree( psDevice );
 		
-		printk( "USB: TODO: usb_free_device()\n" );
+		//printk( "USB: TODO: usb_free_device()\n" );
 		// TODO !!!
 	}
 }
@@ -602,7 +599,7 @@ USB_packet_s* usb_alloc_packet( int nISOPackets )
 	USB_packet_s* psPacket;
 	
 	psPacket = ( USB_packet_s* )kmalloc( sizeof( USB_packet_s ) + nISOPackets * sizeof( USB_ISO_frame_s ), MEMF_KERNEL | MEMF_NOBLOCK );
-	memset( psPacket, 0, sizeof( USB_packet_s ) );
+	memset( psPacket, 0, sizeof( USB_packet_s ) + nISOPackets * sizeof( USB_ISO_frame_s ) );
 	
 	psPacket->hLock = INIT_SPIN_LOCK( "packet_lock" );
 	
@@ -874,6 +871,7 @@ int usb_parse_interface( USB_interface_s* psIF, uint8* pBuffer, int nSize )
 		printk( "USB: Out of memory!\n" );
 		return( -1 );
 	}
+	memset( psIF->psSetting, 0, sizeof( USB_desc_interface_s ) * psIF->nMaxSetting );
 	
 	while( nSize > 0 ) {
 		if( psIF->nNumSetting >= psIF->nMaxSetting )
@@ -933,6 +931,7 @@ int usb_parse_interface( USB_interface_s* psIF, uint8* pBuffer, int nSize )
 				printk( "USB: Out of memory!\n" );
 				return( -1 );
 			}
+			memset( psIFDesc->pExtra, 0, nLen );
 			memcpy( psIFDesc->pExtra, pBegin, nLen );
 			psIFDesc->nExtraLen = nLen;
 		}
@@ -1045,6 +1044,7 @@ int usb_parse_config( USB_desc_config_s* psConfig, uint8* pBuffer )
 					printk( "USB: Out of memory!\n" );
 					return( -1 );
 				}
+				memset( psConfig->pExtra, 0, nLen );
 				memcpy( psConfig->pExtra, pBegin, nLen );
 				psConfig->nExtraLen = nLen;
 			}
@@ -1271,6 +1271,7 @@ int usb_clear_halt( USB_device_s* psDevice, int nPipe )
 		printk( "USB: unable to allocate memory for configuration descriptors\n" );
 		return( -ENOMEM );
 	}
+	memset( pBuffer, 0, sizeof( nStatus ) );
 
 	nResult = usb_control_msg( psDevice, usb_rcvctrlpipe( psDevice, 0 ),
 		USB_REQ_GET_STATUS, USB_DIR_IN | USB_RECIP_ENDPOINT, 0, nEndp,
@@ -1466,12 +1467,15 @@ int usb_get_configuration( USB_device_s* psDevice )
 		printk( "USB: Out of memory\n" );
 		return( -ENOMEM );
 	}
+	memset( psDevice->pRawDescs, 0, sizeof( char* ) *
+		psDevice->sDeviceDesc.nNumConfigurations );
 
 	pBuffer = kmalloc( 8, MEMF_KERNEL | MEMF_NOBLOCK );
 	if( !pBuffer ) {
 		printk( "USB: Unable to allocate memory for configuration descriptors\n" );
 		return( -ENOMEM );
 	}
+	memset( pBuffer, 0, 8 );
 	psConfigDesc = ( USB_desc_config_s* )pBuffer;
 
 	for( nCfgNo = 0; nCfgNo < psDevice->sDeviceDesc.nNumConfigurations; nCfgNo++ ) {
@@ -1497,6 +1501,7 @@ int usb_get_configuration( USB_device_s* psDevice )
 			nResult = -ENOMEM;
 			goto err;
 		}
+		memset( pBigbuffer, 0, nLength );
 
 		/* Now that we know the length, get the whole thing */
 		nResult = usb_get_descriptor( psDevice, USB_DT_CONFIG, nCfgNo, pBigbuffer, nLength );
@@ -1714,10 +1719,10 @@ int usb_new_device( USB_device_s* psDevice )
 		usb_show_string( psDevice, "Product", psDevice->sDeviceDesc.nProduct );
 	if( psDevice->sDeviceDesc.nSerialNumber )
 		usb_show_string( psDevice, "SerialNumber", psDevice->sDeviceDesc.nSerialNumber );
-
+		
 	/* find drivers willing to handle this device */
 	usb_find_drivers_for_new_device( psDevice );
-
+	
 	return( 0 );
 }
 
@@ -1829,6 +1834,24 @@ void* bus_get_hooks( int nVersion )
 		return( NULL );
 	return( &sBus );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -173,7 +173,6 @@ struct USB_hub_t
 	bool bNeedsAttention;
 	USB_device_s* psDevice;
 	USB_desc_hub* psDesc;
-	sem_id hLock;
 	char nBuffer[(16 + 1 + 7) / 8]; /* add 1 bit for hub status change */
 	USB_packet_s* psPacket;
 	int nError;
@@ -185,7 +184,8 @@ typedef struct USB_hub_t USB_hub;
 static USB_hub* g_psFirstHub;
 static sem_id g_hHubWait; 
 static SpinLock_s g_hHubLock;
-
+static sem_id g_hHubAddressLock;
+static sem_id g_hHubListLock;
 
 /* USB 2.0 spec Section 11.24.4.5 */
 int usb_get_hub_descriptor( USB_device_s* psDevice, void *pData, int nSize )
@@ -263,6 +263,7 @@ void usb_hub_irq( USB_packet_s* psPacket )
 	/* We need attention */
 	psHub->bNeedsAttention = true;
 	wakeup_sem( g_hHubWait, false );
+	
 	spinunlock_restore( &g_hHubLock, nFlags );
 }
 
@@ -286,6 +287,7 @@ int usb_hub_configure( USB_hub* psHub, USB_desc_endpoint_s* psEndpoint )
 	USB_hub_status sStatus;
 	char portstr[16 + 1];
 	unsigned int nPipe;
+	//unsigned long nFlags;
 	int i, nMaxp, nRet;
 
 	psHub->psDesc = kmalloc( sizeof( *psHub->psDesc ), MEMF_KERNEL | MEMF_NOBLOCK );
@@ -293,6 +295,7 @@ int usb_hub_configure( USB_hub* psHub, USB_desc_endpoint_s* psEndpoint )
 		printk( "USB: Unable to kmalloc %Zd bytes for hub descriptor\n", sizeof( *psHub->psDesc ) );
 		return( -1 );
 	}
+	memset( psHub->psDesc, 0, sizeof( *psHub->psDesc ) );
 
 	/* Request the entire hub descriptor. */
 	nRet = usb_get_hub_descriptor( psDevice, psHub->psDesc, sizeof( *psHub->psDesc ) );
@@ -305,9 +308,8 @@ int usb_hub_configure( USB_hub* psHub, USB_desc_endpoint_s* psEndpoint )
 	}
 
 	psDevice->nMaxChild = psHub->psDesc->nNbrPorts;
-	
-	//printk( "%d port%s detected\n", psHub->psDesc->nNbrPorts, (psHub->psDesc->nNbrPorts == 1) ? "" : "s" );
 #if 0
+	//printk( "%d port%s detected\n", psHub->psDesc->nNbrPorts, (psHub->psDesc->nNbrPorts == 1) ? "" : "s" )
 	if( psHub->psDesc->nHubCharacteristics & HUB_CHAR_COMPOUND )
 		printk( "Part of a compound device\n" );
 	else
@@ -383,14 +385,17 @@ int usb_hub_configure( USB_hub* psHub, USB_desc_endpoint_s* psEndpoint )
 	}
 	
 	/* Now we know that we had success -> add ourself to the list */
-	psHub->psNext = g_psFirstHub;
-	psHub->bNeedsAttention = true;
-	g_psFirstHub = psHub;
 	
-		
-	/* Wake up khubd */
+	LOCK( g_hHubListLock );
+	psHub->psNext = g_psFirstHub;
+	g_psFirstHub = psHub;
+	UNLOCK( g_hHubListLock );
+	/*spinlock_cli( &g_hHubLock, nFlags );
+	psHub->bNeedsAttention = true;
 	wakeup_sem( g_hHubWait, false );
-
+	spinunlock_restore( &g_hHubLock, nFlags );
+	*/
+	
 	usb_hub_power_on( psHub );
 
 	return( 0 );
@@ -466,7 +471,6 @@ bool usb_hub_add( USB_device_s* psDevice, unsigned int nIF,
 
 	memset( psHub, 0, sizeof( *psHub ) );
 	psHub->psDevice = psDevice;
-	psHub->hLock = create_semaphore( "usb_hub_lock", 1, 0 );
 
 	if( usb_hub_configure( psHub, psEndpoint ) >= 0 ) {
 		/* We found a hub -> claim the device */
@@ -493,6 +497,8 @@ void usb_hub_remove( USB_device_s* psDevice, void* pPrivate )
 	USB_hub* psPrevHub = NULL;
 	USB_hub* psNextHub = g_psFirstHub;
 	
+	LOCK( g_hHubListLock );
+	
 	release_device( psDevice->nHandle );
 	
 	while( psNextHub != NULL )
@@ -513,11 +519,13 @@ void usb_hub_remove( USB_device_s* psDevice, void* pPrivate )
 					psHub->psDesc = NULL;
 				}
 			kfree( psHub );
+			UNLOCK( g_hHubListLock );
 			return;
 		}
 		psPrevHub = psNextHub;
 		psNextHub = psNextHub->psNext;
 	}
+	UNLOCK( g_hHubListLock );
 }
 
 inline char *portspeed (int portstatus)
@@ -645,11 +653,10 @@ void usb_hub_port_connect_change( USB_device_s* psHub, int nPort,
 	/* Clear the connection change status */
 	usb_clear_port_feature( psHub, nPort + 1, USB_PORT_FEAT_C_CONNECTION );
 	
-
 	/* Disconnect any existing devices under this port */
 	if( psHub->psChildren[nPort] )
 		usb_disconnect( &psHub->psChildren[nPort] );
-
+		
 	/* Return now if nothing is connected */
 	if( !(portstatus & USB_PORT_STAT_CONNECTION)) {
 		if (portstatus & USB_PORT_STAT_ENABLE)
@@ -664,10 +671,12 @@ void usb_hub_port_connect_change( USB_device_s* psHub, int nPort,
 		snooze( 400 * 1000 );
 		delay = 200;
 	}
+	
+	LOCK( g_hHubAddressLock );
 
-	tempstr = kmalloc( 1024, MEMF_KERNEL | MEMF_NOBLOCK );
-	portstr = kmalloc( 1024, MEMF_KERNEL | MEMF_NOBLOCK );
-
+	tempstr = kmalloc( 1024, MEMF_KERNEL | MEMF_NOBLOCK | MEMF_CLEAR );
+	portstr = kmalloc( 1024, MEMF_KERNEL | MEMF_NOBLOCK | MEMF_CLEAR );
+	
 	for( i = 0; i < 2; i++ ) {
 		USB_device_s* psPDev;
 		USB_device_s* psCDev;
@@ -678,7 +687,7 @@ void usb_hub_port_connect_change( USB_device_s* psHub, int nPort,
 			printk("USB: Couldn't allocate usb_device\n");
 			break;
 		}
-
+		
 		psHub->psChildren[nPort] = psDevice;
 
 		/* Reset the device */
@@ -686,10 +695,10 @@ void usb_hub_port_connect_change( USB_device_s* psHub, int nPort,
 			usb_free_device( psDevice );
 			break;
 		}
-
+		
 		/* Find a new device ID for it */
 		usb_connect( psDevice );
-
+		
 		/* Create a readable topology string */
 		psCDev = psDevice;
 		psPDev = psDevice->psParent;
@@ -711,31 +720,35 @@ void usb_hub_port_connect_change( USB_device_s* psHub, int nPort,
 				psCDev = psPDev;
 				psPDev = psPDev->psParent;
 			}
-			printk("USB new device connect on bus%d/%s, assigned device number %d\n",
-				psDevice->psBus->nBusNum, portstr, psDevice->nDeviceNum );
-		} else
+			/*printk("USB new device connect on bus%d/%s, assigned device number %d\n",
+				psDevice->psBus->nBusNum, portstr, psDevice->nDeviceNum );*/
+		} /*else
 			printk("USB new device connect on bus%d, assigned device number %d\n",
 				psDevice->psBus->nBusNum, psDevice->nDeviceNum );
+		*/	
 
 		/* Run it through the hoops (find a driver, etc) */
-		if ( !usb_new_device( psDevice ) )
+		if ( !usb_new_device( psDevice ) ) {
 			goto done;
-
+		}
+			
 		/* Free the configuration if there was an error */
 		usb_free_device( psDevice );
-
+		
 		/* Switch to a long reset time */
 		delay = 200;
 	}
-
 	psHub->psChildren[nPort] = NULL;
 	usb_hub_port_disable( psHub, nPort );
 done:
+	UNLOCK( g_hHubAddressLock );
 	if (portstr)
 		kfree(portstr);
 	if (tempstr)
 		kfree(tempstr);
 }
+
+
 
 void usb_hub_thread_worker()
 {
@@ -750,9 +763,15 @@ void usb_hub_thread_worker()
 	
 	while( 1 )
 	{
+		
+		//printk( "Hub needs attention\n" );
+		
+		LOCK( g_hHubListLock );
+		
 		spinlock_cli( &g_hHubLock, nFlags );
 		/* Look if any of our hubs needs attention */
 		bFound = false;
+		
 		psHub = g_psFirstHub;
 		while( psHub != NULL && !bFound )
 		{
@@ -762,12 +781,18 @@ void usb_hub_thread_worker()
 			if( !bFound )
 				psHub = psHub->psNext;
 		}
-		if( !bFound ) 
+		if( !bFound ) {
+			spinunlock_restore( &g_hHubLock, nFlags );
+			UNLOCK( g_hHubListLock );
 			break;
+		}
 		
 		psHub->bNeedsAttention = false;
 		psDevice = psHub->psDevice;
+		
 		spinunlock_restore( &g_hHubLock, nFlags );
+		
+		UNLOCK( g_hHubListLock );
 		
 		//printk( "Hub needs attention\n" );
 		
@@ -850,6 +875,7 @@ void usb_hub_thread_worker()
 int usb_hub_thread( void* pData )
 {
 	//printk( "USB hub thread running\n" );
+	snooze( 2 * 1000 * 1000 );
 	while( 1 ) {
 		usb_hub_thread_worker();
 		sleep_on_sem( g_hHubWait, INFINITE_TIMEOUT );
@@ -866,6 +892,8 @@ void usb_hub_init()
 	g_psFirstHub = NULL;
 	g_hHubWait = create_semaphore( "hub_wait", 0, 0 );
 	g_hHubLock = INIT_SPIN_LOCK( "usb_hub_lock" );
+	g_hHubAddressLock = create_semaphore( "hub_address_lock", 1, 0 );
+	g_hHubListLock = create_semaphore( "hub_list_lock", 1, 0 );
 	
 	strcpy( pcDriver->zName, "USB HUB" );
 	pcDriver->AddDevice = usb_hub_add;
@@ -876,6 +904,38 @@ void usb_hub_init()
 	/* Start thread */
 	wakeup_thread( spawn_kernel_thread( "usb_hub_thread", usb_hub_thread, 0, 4096, NULL ), true );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

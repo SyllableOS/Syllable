@@ -61,6 +61,8 @@ void wakeup_hc(struct uhci *uhci);
 PCI_bus_s* g_psPCIBus;
 USB_bus_s* g_psUSBBus;
 
+#define mb() 	__asm__ __volatile__ ("lock; addl $0,0(%%esp)": : :"memory")
+
 /*
  * Only the USB core should call uhci_alloc_dev and uhci_free_dev
  */
@@ -123,7 +125,7 @@ struct uhci_td *uhci_alloc_td(struct uhci *uhci, USB_device_s *dev)
 	INIT_LIST_HEAD(&td->list);
 	INIT_LIST_HEAD(&td->fl_list);
 
-	atomic_add( &dev->nRefCount, -1 );
+	atomic_add( &dev->nRefCount, 1 );
 
 	return td;
 }
@@ -147,7 +149,7 @@ void uhci_insert_td(struct uhci *uhci, struct uhci_td *skeltd, struct uhci_td *t
 	ltd = list_entry(skeltd->fl_list.prev, struct uhci_td, fl_list);
 
 	td->link = ltd->link;
-	//mb();
+	mb();
 	ltd->link = td->dma_handle;
 
 	list_add_tail(&td->fl_list, &skeltd->fl_list);
@@ -182,11 +184,11 @@ void uhci_insert_td_frame_list(struct uhci *uhci, struct uhci_td *td, unsigned f
 		list_add_tail(&td->fl_list, &ftd->fl_list);
 
 		td->link = ltd->link;
-		//mb();
+		mb();
 		ltd->link = td->dma_handle;
 	} else {
 		td->link = uhci->fl->frame[framenum];
-		//mb();
+		mb();
 		uhci->fl->frame[framenum] = td->dma_handle;
 		uhci->fl->frame_cpu[framenum] = td;
 	}
@@ -221,7 +223,7 @@ void uhci_remove_td(struct uhci *uhci, struct uhci_td *td)
 		ptd->link = td->link;
 	}
 
-	//mb();
+	mb();
 	td->link = UHCI_PTR_TERM;
 
 	list_del_init(&td->fl_list);
@@ -354,7 +356,7 @@ void _uhci_insert_qh(struct uhci *uhci, struct uhci_qh *skelqh, USB_packet_s *ur
 	}
 
 	urbp->qh->link = lqh->link;
-	//mb();				/* Ordering is important */
+	mb();				/* Ordering is important */
 	lqh->link = urbp->qh->dma_handle | UHCI_PTR_QH;
 
 	list_add_tail(&urbp->qh->list, &skelqh->list);
@@ -402,7 +404,7 @@ void uhci_remove_qh(struct uhci *uhci, USB_packet_s *urb)
 		}
 
 		pqh->link = qh->link;
-		//mb();
+		mb();
 		qh->element = qh->link = UHCI_PTR_TERM;
 
 		list_del_init(&qh->list);
@@ -489,7 +491,7 @@ void uhci_append_queued_urb(struct uhci *uhci, USB_packet_s *eurb, USB_packet_s 
 	/* All qh's in the queue need to link to the next queue */
 	urbp->qh->link = eurbp->qh->link;
 
-	//mb();			/* Make sure we flush everything */
+	mb();			/* Make sure we flush everything */
 	/* Only support bulk right now, so no depth */
 	lltd->link = urbp->qh->dma_handle | UHCI_PTR_QH;
 
@@ -2788,6 +2790,9 @@ status_t device_uninit( int nDeviceID)
 {
 	return( 0 );
 }
+
+
+
 
 
 
