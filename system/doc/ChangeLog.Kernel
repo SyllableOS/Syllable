@@ -1,3 +1,10 @@
+* Feb 11 2004, Kristian Van Der Vliet *
+
+The ELF loader memmap_instance() now "ignores" any text segments which might occure between the first
+and last data segments.  Any non-data segments inside of data segments will become part of the data
+segment.  This shouldn't be an issue for the majority of libraries and executables but it is required
+in order to load Glibc 2.3.2 libc.so.2
+
 * Feb 1 2004, Kristian Van Der Vliet *
 
 Patch PCI bus manager so that it can detect the (buggy) PCI controller emulated by
