@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.64
+# Version 0.5.65
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -308,7 +308,7 @@ def testPackage target
 	end
 end
 
-def installPackage stage, target
+def installPackage staging, target
 	unless
 		if target =~ /\.(zip|tgz)$/ and exists? target  # A distribution package
 			# Packages are currently supposed to contain an unversioned directory
@@ -339,12 +339,12 @@ def installPackage stage, target
 				if exists? dir = buildDir(target) then Dir.chdir dir end
 				action makeCommand(target) + ' install'
 			else
-				root = installPath stage, target
+				root = installPath staging, target
 
 				if exists? root and not
 					begin
 						@log.header 'Uninstalling ' + shortName(target)
-						uninstallPackage stage, target  # FIXME: double failure logging!
+						uninstallPackage staging, target  # FIXME: double failure logging!
 					end
 				then
 					false
@@ -369,7 +369,7 @@ def installPackage stage, target
 							((vars = recipe['install-env']) ? toVariables(vars) + ' ' : '') +
 							makeCommand(target) +
 							( (var = recipe['install-prefix-var']) ? " #{var}=" + root :
-								@systemBuild || stage ? ' prefix=' + root :
+								@systemBuild || staging ? ' prefix=' + root :
 								''
 							) +
 							((vars = recipe['install-vars']) ? ' ' + toVariables(vars) : '') +
@@ -438,7 +438,7 @@ def installPackage stage, target
 					then
 						false
 					else
-						@systemBuild or stage or
+						@systemBuild or staging or
 						begin
 							@log.header 'Registering ' + target
 							action 'pkgmanager --add ' + root
@@ -454,7 +454,7 @@ def installPackage stage, target
 	end
 end
 
-def uninstallPackage stage, target
+def uninstallPackage staging, target
 	unless
 		if dir? target and
 			begin
@@ -465,10 +465,10 @@ def uninstallPackage stage, target
 			if exists? dir = buildDir(target) then Dir.chdir dir end
 			action makeCommand(target) + ' uninstall'
 		else
-			dir = installPath stage, target
+			dir = installPath staging, target
 			name = shortName target
 
-			unless @systemBuild or stage or
+			unless @systemBuild or staging or
 				begin
 					@log.header 'Unregistering ' + name
 					action 'pkgmanager --remove ' + dir
@@ -521,7 +521,7 @@ def makeDistroPackage target
 	end
 end
 
-def buildPackage stage, target
+def buildPackage staging, target
 	if getPackage target  # Source is available
 		Dir.chdir @workDir  # Target path may be relative or absolute
 		Dir.chdir target
@@ -532,7 +532,7 @@ def buildPackage stage, target
 		if configurePackage target  # No failed configuration
 			@log.header 'Making'
 
-			if makePackage(target) and stage
+			if makePackage(target) and staging
 				@log.header 'Installing in staging area'
 				Dir.chdir @workDir
 				makeDistroPackage target
@@ -559,7 +559,7 @@ def doModules command, target
 end
 
 def prepare target
-	if @systemBuild and target.profile and tree = target.profile['distro-tree']
+	if @systemBuild and target.profile and tree = target.profile['tree']
 		@log.header 'Building distribution tree'
 
 		if exists? @stage
@@ -569,7 +569,6 @@ def prepare target
 		end
 		Dir.chdir @stage
 
-#		action File.join(@buildTools, 'mkbase.sh') + ' ' + @stage
 		for line in toList tree
 			dir, icon = line.split
 			@log.detail dir
@@ -787,14 +786,39 @@ def makeDistro target
 	end
 end
 
-def build stage, target
+def build staging, target
 	@log.header 'Building ' + target.to_s
+
+	if staging and target.profile and resources = target.profile['resources']
+		@log.header 'Installing resources'
+
+		Dir.chdir @stage
+
+		for line in toList resources
+			dir, resource = line.split
+			file = File.join @resourcesPath, resource
+
+			unless
+				if exists? file
+					action "cp -a #{file} " + dir
+				else
+					action "unzip #{file}.zip -d " + dir
+				end
+			then
+				@log.failure target.to_s
+				return
+			end
+		end
+
+		Dir.chdir @workDir
+		action 'sync'
+	end
 
 	# Build all directories
 
 	for package in target.modules
 		@log.entry package
-		buildPackage stage, package
+		buildPackage staging, package
 	end
 end
 
@@ -1162,8 +1186,8 @@ end
 # build should not be called from a relative path!
 @builderPath = File.dirname File.dirname(dereference($0))
 
-@packagesPath, Profile.path, @sourcesPath, @distrosPath,    Log.path = [
-'packages',    'profiles',   'sources',    'distributions', 'logs'
+@packagesPath, Profile.path, @sourcesPath, @resourcesPath, @distrosPath,    Log.path = [
+'packages',    'profiles',   'sources',    'resources',    'distributions', 'logs'
 ].collect {|dir| File.join @builderPath, dir}
 
 @iconsPath = '/system/icons'
@@ -1183,11 +1207,12 @@ end
 unless @systemBuild = File.basename(@workDir) == 'system'
 	@crossCompile = false
 	@systemRoot = '/'
+	@systemImage = '/boot'
 else
 	# System build; assume we're building Syllable for now
 	@crossCompile = ! @syllable
 
-	@stage = File.join @stage, 'image'
+	@systemImage = @stage = File.join(@stage, 'image')
 	@systemRoot = File.join @stage, 'atheos'
 
 #	@buildTools = File.join @workDir, 'build-tools'
@@ -1214,7 +1239,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.64',
+	puts 'Syllable Build System 0.5.65',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
