@@ -1,3 +1,20 @@
+* March 6 2005, Henrik Isaksson *
+
+ - StringView
+	o Added option to draw a border.
+	o Uses BgColor of parent
+	o Size calculation improved
+ - StatusBar
+	o Initial check-in
+ - View
+	o Bugfix: DrawFrame() does no longer destroy Fg/BgColor
+ - Popupmenu
+	o Renamed DrawArrow() to SetDrawArrow()
+ - GUI classes (all starting with letters f - v)
+	o Added reserved virtual methods.
+	o Added const to get methods where appropriate.
+	o Added private copy constructors.
+
 * February 14 2005, Henrik Isaksson *
 
  - GUI classes (gui/s*, gui/t* except TableView)
