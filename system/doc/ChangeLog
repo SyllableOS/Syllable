@@ -1,3 +1,9 @@
+* Jan 2 2003, Kristian Van Der Vliet *
+
+Updates to the i810 ICH audio driver by Michael Krueger <invenies@web.de>  It
+incorporates some cleanups from Linux 2.4 upstream patches by Herbert Xu and a
+important fix for proper AC97 codec initialization.
+
 * Dec 31 2003, Kristian Van Der Vliet *
 
 Updates to the Savage IX/MX driver using the latest code from the official S3/Via
