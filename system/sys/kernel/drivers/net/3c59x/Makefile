@@ -38,7 +38,7 @@ install: all
 	cp -f $(OBJDIR)/3c59x /system/drivers/dev/net/eth/3c59x
 
 dist: all
-	cp -f $(OBJDIR)/$(DRIVER) /system/drivers/dev/net/eth/$(DRIVER)
+	cp -f $(OBJDIR)/$(DRIVER) $(DIST_DIR)/atheos/sys/drivers/dev/net/eth/$(DRIVER)
 
 clean:
 	-rm $(OBJS)

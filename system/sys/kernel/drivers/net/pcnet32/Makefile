@@ -37,7 +37,7 @@ install: all
 	cp -f $(OBJDIR)/pcnet32 /system/drivers/dev/net/eth/pcnet32
 
 dist: all
-	cp -f $(OBJDIR)/$(DRIVER) /system/drivers/dev/net/eth/$(DRIVER)
+	cp -f $(OBJDIR)/$(DRIVER) $(DIST_DIR)/atheos/sys/drivers/dev/net/eth/$(DRIVER)
 
 clean:
 	-rm $(OBJS)

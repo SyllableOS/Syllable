@@ -41,7 +41,7 @@ install: all
 	cp -f $(OBJDIR)/es1371 /system/drivers/dev/sound/es1371
 
 dist: all
-	cp -f $(DRIVER) $(DIST_DIR)/atheos/sys/drivers/dev/sound/$(DRIVER)
+	cp -f $(OBJDIR)/$(DRIVER) $(DIST_DIR)/atheos/sys/drivers/dev/sound/$(DRIVER)
 
 clean:
 	-rm $(OBJS)
