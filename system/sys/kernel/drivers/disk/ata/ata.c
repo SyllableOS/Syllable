@@ -46,6 +46,20 @@ status_t device_init( int nDeviceID )
 
 		g_nControllers[controller].data_buffer = (uint8*) (((uint32)g_nControllers[controller].raw_data_buffer + 65535) & ~65535);
 
+		g_nControllers[controller].raw_dma_buffer = (uint8*) alloc_real( PAGE_SIZE / 2 + 4, 0 );
+		if ( g_nControllers[controller].raw_dma_buffer == NULL )
+		{
+			kerndbg( KERN_PANIC, "device_init() : Failed to alloc DMA buffer\n" );
+			free_real( g_nControllers[controller].raw_data_buffer );
+			return( -ENOMEM );
+		}
+
+		g_nControllers[controller].dma_buffer = (uint8*) (((uint32)g_nControllers[controller].raw_dma_buffer + 4) & ~4);
+ 
+ 		g_nControllers[controller].buf_lock = create_semaphore( "ata_buffer_lock", 1, 0 );
+		g_nControllers[controller].irq_lock = create_semaphore( "ata_irq_lock", 0, 0 );
+		g_nControllers[controller].dma_active = 0;
+ 
 		g_nControllers[controller].buf_lock = create_semaphore( "ata_buffer_lock", 1, 0 );
 
 		if ( g_nControllers[controller].buf_lock < 0 )
@@ -69,6 +83,7 @@ status_t device_uninit( int nDeviceID )
 	for( controller = 0; controller < MAX_CONTROLLERS; controller++ )
 	{
 		free_real( g_nControllers[controller].raw_data_buffer );
+		free_real( g_nControllers[controller].raw_dma_buffer );
 		delete_semaphore( g_nControllers[controller].buf_lock );
 	}
 

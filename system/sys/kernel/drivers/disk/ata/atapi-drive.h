@@ -38,6 +38,7 @@ struct _AtapiInode
 	AtapiInode_s*	bi_psFirstPartition;
 	AtapiInode_s*	bi_psNext;
 	char			bi_zName[16];
+	bool			bi_bDMA;
 	int				bi_nOpenCount;
 	int				bi_nDriveNum;	/* The drive number */
 	int				bi_nNodeHandle;
@@ -110,7 +111,10 @@ int atapi_request_sense( AtapiInode_s *psInode, request_sense_s *psSense );
    an ISO9660 disc, which is double-encoded!) */
 static inline uint32 be32_to_cpu(uint32 be_val)
 {
-	return( ( be_val & 0xffff0000 ) >> 8 | ( be_val & 0x0000ffff ) << 8 );
+	return( ( be_val & 0xff000000 ) >> 24 |
+		    ( be_val & 0x00ff0000 ) >> 8 |
+		    ( be_val & 0x0000ff00 ) << 8 |
+		    ( be_val & 0x000000ff ) << 24 );
 }
 
 /* ATAPI Packet Commands */

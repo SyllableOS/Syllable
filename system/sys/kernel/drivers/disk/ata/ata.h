@@ -33,6 +33,7 @@
 #include <atheos/device.h>
 #include <atheos/timer.h>
 #include <atheos/semaphore.h>
+#include <atheos/irq.h>
 #include <atheos/isa_io.h>
 #include <atheos/bootmodules.h>
 #include <atheos/udelay.h>
@@ -65,11 +66,16 @@
 
 struct ata_controllers_s{
 	int io_base;
+	int dma_base;
 	int irq;
 	int state;
 	sem_id buf_lock;
+	sem_id irq_lock;
+	int dma_active;
 	uint8 *raw_data_buffer;
 	uint8 *data_buffer;
+	uint8 *raw_dma_buffer;
+	uint8 *dma_buffer;
 };
 
 typedef struct ata_controllers_s ata_controllers_t;
@@ -129,7 +135,9 @@ typedef struct ata_controllers_s ata_controllers_t;
 #define   CMD_IDENTIFY			0xEC	/* identify drive */
 #define   CMD_READ_MULTIPLE		0xc4	/* Read multiple sectors */
 #define   CMD_WRITE_MULTIPLE	0xc5	/* Write multiple sectors */
-
+#define   CMD_READ_DMA			0xC8
+#define   CMD_WRITE_DMA			0xCA
+ 
 #define   CMD_ATAPI_RESET		0x08	/* Reset an ATAPI device */
 #define   CMD_ATAPI_PACKET		0xA0	/* ATAPI packet command */
 #define   CMD_ATAPI_IDENTIFY	0xA1	/* ATAPI identify drive */
@@ -195,6 +203,7 @@ struct _AtaInode
     char	bi_zName[16];
     int		bi_nOpenCount;
     int		bi_nDriveNum;	/* The drive number */
+    bool		bi_bDMA;
     int		bi_nNodeHandle;
     int		bi_nPartitionType;
     int		bi_nSectorSize;
