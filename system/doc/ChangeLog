@@ -1,3 +1,8 @@
+* Nov 30 2003, Henrik Isaksson *
+
+Added some command line options to ls_ports, and made it recognize the new
+format of message port flag bits.
+
 * Nov 22 2003, Henrik Isaksson *
 
 Updated CodeView's Makefile to link against libsyllable.
@@ -420,5 +425,6 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
 
 

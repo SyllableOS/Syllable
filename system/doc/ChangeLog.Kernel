@@ -1,3 +1,8 @@
+* Nov 30 2003, Henrik Isaksson *
+
+o Public/private state for message ports is now represented by one bit only.
+  (MSG_PORT_PUBLIC)
+
 * Okt 29 2003, Arno Klenke *
 
 Updated device driver documentation.
@@ -191,6 +196,7 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
 
 
 
