@@ -1,7 +1,7 @@
 CFLAGS	= -O3 -c
 
 OBJDIR = objs
-EXES	= $(OBJDIR)/fsprobe $(OBJDIR)/mount $(OBJDIR)/unmount $(OBJDIR)/format $(OBJDIR)/addattrib $(OBJDIR)/lsattribs $(OBJDIR)/mkindex $(OBJDIR)/devstat
+EXES	= $(OBJDIR)/fsprobe $(OBJDIR)/mount $(OBJDIR)/unmount $(OBJDIR)/format $(OBJDIR)/addattrib $(OBJDIR)/lsattribs $(OBJDIR)/mkindex $(OBJDIR)/devstat $(OBJDIR)/rmattrib
 
 fsprobe_OBJS   = fsprobe.o
 mount_OBJS     = mount.o
@@ -9,6 +9,7 @@ unmount_OBJS   = unmount.o
 format_OBJS    = format.o
 addattrib_OBJS = addattrib.o
 lsattribs_OBJS = lsattribs.o
+rmattrib_OBJS  = rmattrib.o
 mkindex_OBJS   = mkindex.o
 devstat_OBJS   = devstat.o
 
@@ -18,6 +19,7 @@ unmount_OBJS	:= $(addprefix $(OBJDIR)/,$(unmount_OBJS))
 format_OBJS	:= $(addprefix $(OBJDIR)/,$(format_OBJS))
 addattrib_OBJS	:= $(addprefix $(OBJDIR)/,$(addattrib_OBJS))
 lsattribs_OBJS	:= $(addprefix $(OBJDIR)/,$(lsattribs_OBJS))
+rmattrib_OBJS	:= $(addprefix $(OBJDIR)/,$(rmattrib_OBJS))
 mkindex_OBJS	:= $(addprefix $(OBJDIR)/,$(mkindex_OBJS))
 devstat_OBJS	:= $(addprefix $(OBJDIR)/,$(devstat_OBJS))
 
@@ -41,6 +43,8 @@ $(OBJDIR)/format: $(format_OBJS)
 	$(CC) $(format_OBJS) -o $@
 $(OBJDIR)/addattrib: $(addattrib_OBJS)
 	$(CC) $(addattrib_OBJS) -o $@
+$(OBJDIR)/rmattrib: $(rmattrib_OBJS)
+	$(CC) $(rmattrib_OBJS) -o $@
 $(OBJDIR)/lsattribs: $(lsattribs_OBJS)
 	$(CC) $(lsattribs_OBJS) -o $@
 $(OBJDIR)/mkindex: $(mkindex_OBJS)
