@@ -247,5 +247,6 @@ int init_net_core()
     init_sockets();
     init_udp();
     init_tcp();
+    init_raw();
     return( 0 );
 }

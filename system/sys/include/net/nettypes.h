@@ -22,17 +22,19 @@
 
 #include <atheos/types.h>
 
-typedef struct _Socket		Socket_s;
-typedef struct _NetInterface	NetInterface_s;
-typedef struct _EthernetHeader	EthernetHeader_s;
-typedef struct _ArpHeader	ArpHeader_s;
-typedef struct _IpHeader	IpHeader_s;
-typedef struct _ICMPHeader	ICMPHeader_s;
-typedef struct _TCPHeader	TCPHeader_s;
-typedef struct _UDPHeader	UDPHeader_s;
-typedef struct _TCPCtrl		TCPCtrl_s;
-typedef struct _UDPEndPoint	UDPEndPoint_s;
-typedef struct _UDPPort		UDPPort_s;
+typedef struct _Socket Socket_s;
+typedef struct _NetInterface NetInterface_s;
+typedef struct _EthernetHeader EthernetHeader_s;
+typedef struct _ArpHeader ArpHeader_s;
+typedef struct _IpHeader IpHeader_s;
+typedef struct _ICMPHeader ICMPHeader_s;
+typedef struct _TCPHeader TCPHeader_s;
+typedef struct _UDPHeader UDPHeader_s;
+typedef struct _TCPCtrl TCPCtrl_s;
+typedef struct _UDPEndPoint UDPEndPoint_s;
+typedef struct _UDPPort UDPPort_s;
+typedef struct _RawEndPoint RawEndPoint_s;
+typedef struct _RawPort RawPort_s;
 
 typedef struct _ArpEntry ArpEntry_s;
 
@@ -42,4 +44,4 @@ typedef struct _PacketBuf PacketBuf_s;
 #define IP_ADR_LEN	4
 typedef uint8 ipaddr_t[IP_ADR_LEN];
 
-#endif /* __F_ATHEOS_NETTYPES_H__ */
+#endif				/* __F_ATHEOS_NETTYPES_H__ */

@@ -108,6 +108,8 @@ int create_socket( bool bKernel, int nFamily, int nType, int nProtocol, bool bIn
 void ip_in( PacketBuf_s* psPkt, int nPktSize );
 void tcp_in( PacketBuf_s* psPkt, int nDataLen );
 void udp_in( PacketBuf_s* psPkt, int nDataLen );
+void raw_in(PacketBuf_s * psPkt, int nDataLen);
+RawPort_s *raw_find_port(uint8 a_nIPProtocol);
 
 void format_ipaddress( char* pzBuffer, ipaddr_t pAddress );
 int parse_ipaddress( ipaddr_t pAddress, const char* pzBuffer );
@@ -116,6 +118,7 @@ Route_s*     ip_find_route( ipaddr_t pDstAddr );
 void 	     ip_release_route( Route_s* psRoute );
 
 PacketBuf_s* alloc_pkt_buffer( int nSize );
+PacketBuf_s* clone_pkt_buffer(PacketBuf_s * psBuf);
 void	     free_pkt_buffer( PacketBuf_s* psBuf );
 void	     reserve_pkt_header( PacketBuf_s* psBuf, int nSize );
 

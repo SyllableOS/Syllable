@@ -20,11 +20,11 @@
 #ifndef __ATHEOS_F_IP_H__
 #define __ATHEOS_F_IP_H__
 
-#define	IP_CLASSA(x)	((x[0] & 0x80) == 0x00)	/* IP Class A address	*/
-#define	IP_CLASSB(x)	((x[0] & 0xc0) == 0x80)	/* IP Class B address	*/
-#define	IP_CLASSC(x)	((x[0] & 0xe0) == 0xc0)	/* IP Class C address	*/
-#define	IP_CLASSD(x)	((x[0] & 0xf0) == 0xe0)	/* IP Class D address	*/
-#define	IP_CLASSE(x)	((x[0] & 0xf8) == 0xf0)	/* IP Class E address	*/
+#define	IP_CLASSA(x)	((x[0] & 0x80) == 0x00)	/* IP Class A address   */
+#define	IP_CLASSB(x)	((x[0] & 0xc0) == 0x80)	/* IP Class B address   */
+#define	IP_CLASSC(x)	((x[0] & 0xe0) == 0xc0)	/* IP Class C address   */
+#define	IP_CLASSD(x)	((x[0] & 0xf0) == 0xe0)	/* IP Class D address   */
+#define	IP_CLASSE(x)	((x[0] & 0xf8) == 0xf0)	/* IP Class E address   */
 
 #define IP_SAMEADDR(ip1,ip2) 	 (*((uint32 *) ip1) == *((uint32 *) ip2))
 #define IP_COPYADDR(ipto,ipfrom) (*((uint32 *) ipto) = *((uint32 *) ipfrom))
@@ -35,39 +35,38 @@
 /* Some Assigned Protocol Numbers */
 
 
-#define IP_FRAG_TIME	(30LL * 1000000LL) /* Time before discarding partly received packets */
+#define IP_FRAG_TIME	(30LL * 1000000LL)	/* Time before discarding partly received packets */
 
 
-#define	IPT_ICMP	1	/* protocol type for ICMP packets	*/
-#define	IPT_TCP		6	/* protocol type for TCP packets	*/
-#define IPT_EGP		8	/* protocol type for EGP packets	*/
-#define	IPT_UDP		17	/* protocol type for UDP packets	*/
+#define	IPT_ICMP	1	/* protocol type for ICMP packets       */
+#define	IPT_TCP	6		/* protocol type for TCP packets        */
+#define 	IPT_EGP	8	/* protocol type for EGP packets        */
+#define	IPT_UDP	17		/* protocol type for UDP packets        */
+#define 	IPT_RAW	255
 
-
-#define IP_VERSION 4	/* Current protocol version */
-#define IP_MIN_SIZE 5	/* Minimum header size */
-//#define IP_TTL	    255	/* Initial time-to-live */
+#define IP_VERSION 4		/* Current protocol version */
+#define IP_MIN_SIZE 5		/* Minimum header size */
+//#define IP_TTL            255 /* Initial time-to-live */
 
 #define IP_MORE_FRAGMENTS	0x2000
 #define IP_DONT_FRAGMENT	0x4000
 #define IP_FRAGOFF_MASK		0x1fff
 
-struct _IpHeader
-{
+struct _IpHeader {
     /* WARNING: size/version Works for little-endian only */
-  uint8		iph_nHdrSize : 4, /* Header size (in int32's) */
-		iph_nVersion : 4;
-  
-  uint8		iph_nTypeOfService;
-  uint16	iph_nPacketSize;
-  uint16	iph_nPacketId;
-  uint16	iph_nFragOffset;
-  uint8		iph_nTimeToLive;
-  uint8		iph_nProtocol;
-  uint16	iph_nCheckSum;
-  ipaddr_t	iph_nSrcAddr;
-  ipaddr_t	iph_nDstAddr;
-	/*The options start here. */
+    uint8 iph_nHdrSize:4,	/* Header size (in int32's) */
+     iph_nVersion:4;
+
+    uint8 iph_nTypeOfService;
+    uint16 iph_nPacketSize;
+    uint16 iph_nPacketId;
+    uint16 iph_nFragOffset;
+    uint8 iph_nTimeToLive;
+    uint8 iph_nProtocol;
+    uint16 iph_nCheckSum;
+    ipaddr_t iph_nSrcAddr;
+    ipaddr_t iph_nDstAddr;
+    /*The options start here. */
 };
 
-#endif /* __ATHEOS_F_IP_H__ */
+#endif				/* __ATHEOS_F_IP_H__ */
