@@ -22,6 +22,7 @@
 #include <atheos/device.h>
 #include <atheos/semaphore.h>
 #include <atheos/image.h>
+#include <atheos/udelay.h>
 #include <posix/limits.h>
 #include <posix/errno.h>
 
@@ -1511,6 +1512,7 @@ static int do_mount( const char* pzDevName, const char* pzDirName,
     Inode_s*	 psDir;
     int		 nError;
     int		 nArgLen = 123;	/* FIXME : This should be a parameter */
+    int 	 nRetries;
 
     nError = get_named_inode( NULL, pzDirName, &psDir, false, false );
 
@@ -1559,8 +1561,22 @@ static int do_mount( const char* pzDevName, const char* pzDirName,
 	pzDevName = "";
     }
     
-    nError = psDesc->fs_psOperations->mount( psVol->v_nDevNum, pzDevName, nFlags, pData,nArgLen,
-					     &psVol->v_pFSData, &psVol->v_nRootInode );
+	if( nFlags & MNTF_SLOW_DEVICE )
+	{
+		for( nRetries = 0; nRetries < 5; nRetries++ )
+		{
+		    nError = psDesc->fs_psOperations->mount( psVol->v_nDevNum, pzDevName, nFlags, pData,nArgLen, &psVol->v_pFSData, &psVol->v_nRootInode );
+
+			if( nError >= 0 )
+				break;
+
+			udelay(1000000);
+			Schedule();
+		}
+	}
+	else
+	    nError = psDesc->fs_psOperations->mount( psVol->v_nDevNum, pzDevName, nFlags, pData,nArgLen, &psVol->v_pFSData, &psVol->v_nRootInode );
+
     if ( nError < 0 ) {
 	psDir->i_bBusy = false;
 	LOCK( g_hInodeHashSem );
