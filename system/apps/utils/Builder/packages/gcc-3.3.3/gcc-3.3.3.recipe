@@ -4,7 +4,7 @@ authors
 	Arno Klenke
 	Kristian Van Der Vliet
 maintainers			Kaj de Vos
-status				developing
+status				testing
 
 licenses			GPL LGPL GFDL
 home				gcc.gnu.org
@@ -37,7 +37,10 @@ patch-config		. boehm-gc
 ;	cd gcc;
 ;	autoconf
 
+
 ; When compiling with GCC 2.95.x:
+pre-configure		rm /system/libs/libstdc++.so
+; Dirty alternative for replacing libstdc++.so, when compiling with GCC 2.95.x:
 ;configure-vars		CXXFLAGS='-march=i586 -O2 -pipe -lstdc++'
 configure-options
 	--enable-languages=c,c++
@@ -52,17 +55,19 @@ configure-options
 	--with-system-zlib
 ;	--with-local-prefix=/usr/local
 
-; For make bootstrap when compiling with GCC 2.95.x, to find libgcc_s:
-;make-vars			BOOT_CFLAGS="-march=i586 -O -pipe -L$PWD/gcc"
-;make-options
-;	CFLAGS='-march=i586 -O -pipe'
-;	LIBCFLAGS='-march=i586 -O2 -pipe'
-;	LIBCXXFLAGS='-march=i586 -O2 -pipe'
+make-vars
+	BOOT_CFLAGS='-march=i586 -O -pipe'
+;	For make bootstrap when compiling with GCC 2.95.x, to find libgcc_s:
+;	BOOT_CFLAGS="-march=i586 -O -pipe -L$PWD/gcc"
+make-options
+	CFLAGS='-march=i586 -O -pipe'
+	LIBCFLAGS='-march=i586 -O2 -pipe'
+	LIBCXXFLAGS='-march=i586 -O2 -pipe'
 ;		GCC seems to set this automatically:
 ;		' -fno-implicit-templates'
-make-targets
+;make-targets
 ;	When compiling with GCC 3.x:
-	bootstrap
+;	bootstrap
 ;	For printed documentation:
 ;	dvi
 
