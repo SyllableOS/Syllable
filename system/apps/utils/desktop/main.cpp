@@ -47,6 +47,7 @@ void SetConfigFileNames()
 	sprintf(pzConfigFile,"%s/config/desktop/config/desktop.cfg",getenv("HOME"));
 	sprintf(pzConfigDir, "%s/config/desktop/config/",getenv("HOME"));
 	sprintf(pzImageDir, "%s/config/desktop/pictures/",getenv("HOME"));
+	sprintf(pzIconDir, "%s/Desktop",getenv("HOME"));
 }
 
 
@@ -240,6 +241,7 @@ void SetDefaults()
     system("mkdir ~/config/desktop/startup 2> /dev/null");
     system("mkdir ~/config/desktop/pictures 2> /dev/null");
     system("mkdir ~/config/desktop/disks 2> /dev/null");
+	system("mkdir ~/Desktop 2> /dev/null");
     
     CheckConfig();
 }
@@ -304,25 +306,23 @@ BitmapView::BitmapView( const Rect& cFrame ) :
 	pcIconMenu = new IconMenu();
 	pcIconMenu->SetTargetForItems(this); 
 	
-    struct stat sStat;
-
-    m_cIcons.push_back( new Icon("Home","/system/icons/root.icon", sStat ) );
-    m_cIcons.push_back( new Icon( "ABrowse", "/system/icons/ABrowse.icon", sStat ) );
-    m_cIcons.push_back( new Icon( "Terminal", "/system/icons/terminal.icon", sStat ) );
 
     m_bCanDrag = false;
     m_bSelRectActive = false;
 
     Point cPos( 20, 20 );
     
+    
     ReadPrefs();
+    
+    SetIcons();
    
     for ( uint i = 0 ; i < m_cIcons.size() ; ++i )
     {
-        m_cIcons[i]->m_cPosition.x = cPos.x + 16;
-        m_cIcons[i]->m_cPosition.y = cPos.y;
+        //m_cIcons[i]->m_cPosition.x = cPos.x + 16;
+       //m_cIcons[i]->m_cPosition.y = cPos.y;
 
-        cPos.y += 50;
+       cPos.y += 50;
         if ( cPos.y > 500 ) {
             cPos.y = 20;
             cPos.x += 50;
@@ -346,6 +346,67 @@ BitmapView::~BitmapView()
     delete m_pcBitmap;
 }
 
+t_Icon BitmapView::IconList()
+{
+		string zName;
+		t_Icon t_icon;
+	Directory *pcDir = new Directory( );
+    if( pcDir->SetTo( pzIconDir ) == 0 ) {  // Read the Directory.
+   		//pcDir->GetPath( &pzIconDir );
+    	while( pcDir->GetNextEntry( &zName ) )
+    	
+    	if (!(zName.find( ".desktop",0)==string::npos) )
+    	{
+    		t_icon.push_back(zName);
+    	}
+ 	}
+ 
+ 	delete pcDir;
+ 	return (t_icon);
+ }
+ 
+
+void BitmapView::SetIcons()
+{
+	char zIconName[1024];
+	char zIconImage[1024];
+ 	char zIconExec[1024];
+ 	char zPos[1024];
+	char junk[1024];
+	struct stat sStat;
+	Point zIconPoint;
+    
+   // m_cIcons.push_back( new Icon("Home","/system/icons/root.icon", sStat ) );
+    //m_cIcons.push_back( new Icon( "ABrowse", "/system/icons/ABrowse.icon", sStat ) );
+    //m_cIcons.push_back( new Icon( "Terminal", "/system/icons/terminal.icon", sStat ) );
+
+	uint iconExec = 0;
+	for (iconExec = 0; iconExec < IconList().size(); iconExec++)
+		{
+			ifstream filRead;
+			string pzIconPath = (string)pzIconDir + (string) "/" + IconList()[iconExec].c_str();
+			filRead.open(pzIconPath.c_str());
+			filRead.getline(junk,1024);
+    		filRead.getline(zIconName,1024);
+    		filRead.getline(junk,1024);
+    		filRead.getline(zIconImage,1024);
+    		filRead.getline(junk,1024);
+    		filRead.getline(zIconExec,1024);
+    		filRead.getline(junk,1024);
+    		filRead.getline(zPos,1024);
+    		filRead.close();
+    
+    	   	
+    	   	sscanf(zPos,"%f %f\n",&zIconPoint.x,&zIconPoint.y);
+    	    printf("The Width of the Point is: %f\nThe Height of the Point is: %f\n",zIconPoint.x,zIconPoint.y);
+    	   m_cIcons.push_back(new Icon(zIconName, zIconImage,zIconExec, zIconPoint,sStat));
+    	}
+    	
+ }
+			
+			
+	
+	
 void BitmapView::Paint( const Rect& cUpdateRect)
 {
     Rect cBounds = GetBounds();
@@ -424,33 +485,13 @@ void BitmapView::MouseDown( const Point& cPosition, uint32 nButtons )
         {
             if (  pcIcon->m_bSelected ) {
                 if ( m_nHitTime + 500000 >= get_system_time() ) {
-                    if ( pcIcon->GetName() == "Home" ) {
-
-                        pid_t nPid = fork();
+                 		 pid_t nPid = fork();
                         if ( nPid == 0 ) {
                             set_thread_priority( -1, 0 );
-                            execlp( "LBrowser", "LBrowser",getenv("HOME"), NULL );
-                            exit( 1 );
-                        }
-                    } else  if ( pcIcon->GetName() == "Terminal" ) {
-                        pid_t nPid = fork();
-                        if ( nPid == 0 ) {
-                            set_thread_priority( -1, 0 );
-                            execlp( "aterm", "aterm", "-i", NULL );
-                            exit( 1 );
-                        }
-                    } else  if ( pcIcon->GetName() == "ABrowse" ) {
-                        pid_t nPid = fork();
-                        if ( nPid == 0 ) {
-                            set_thread_priority( -1, 0 );
-                            execlp( "/Applications/ABrowse/ABrowse", "ABrowse", NULL );
+                            execlp( pcIcon->GetExecName().c_str(), pcIcon->GetExecName().c_str(), NULL );
                             exit( 1 );
 
-
-                        }
-                    }
-
-                } else {
+                }} else {
                     m_bCanDrag = true;
                 }
                 m_nHitTime = get_system_time();
@@ -824,6 +865,11 @@ int main( int argc, char** argv )
   	
 	return( 0 );
 }
+
+
+
+
+
 
 
 

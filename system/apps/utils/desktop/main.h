@@ -14,6 +14,7 @@
 #include "iconmenu_prop.h"
 using namespace os;
 
+typedef vector <std::string> t_Icon;
 
 struct mounted_drives{
 	char zMenu[1024];  
@@ -30,6 +31,7 @@ struct mounted_drives{
 char pzConfigFile[1024];
 char pzConfigDir[1024];
 char pzImageDir[1024];
+char pzIconDir[1024];
 int32   nSizeImage;
 
 
@@ -54,21 +56,23 @@ private:
     Point		     m_cDragStartPos;
     Rect		     m_cSelRect;
     bigtime_t	     m_nHitTime;
-    Bitmap*	     m_pcBitmap;
+    Bitmap*	     	 m_pcBitmap;
     std::vector<Icon*> m_cIcons;
     bool		     m_bCanDrag;
     bool		     m_bSelRectActive;
-    Menu*	     pcMountMenu;
+    Menu*	     	 pcMountMenu;
     Menu*            pcLineIcons;
     Menu*            pcMainMenu;
     void             HandleMessage(Message* pcMessage);
-    mounted_drives			 m_drives;
-    PropWin* pcProp;
-    string pzSyllableVer;
-    string zDImage;
-    bool bShow;
-    IconMenu* pcIconMenu;
-    string cIconName;
+    mounted_drives	 m_drives;
+    PropWin* 		 pcProp;
+    string 			 pzSyllableVer;
+    string 			 zDImage;
+    bool 			 bShow;
+    IconMenu* 		 pcIconMenu;
+    string 			 cIconName;
+    t_Icon 			 IconList();
+    void 			 SetIcons();
     
 };
 
@@ -86,6 +90,9 @@ private:
 };
 
 #endif
+
+
+
 
 
 
