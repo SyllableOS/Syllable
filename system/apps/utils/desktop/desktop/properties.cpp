@@ -1,9 +1,10 @@
 #include "properties.h"
-#include "debug.h"
+
 char pzCgFile[1024];
 char junk2[1024];
 Color32_s c_bgColor, c_fgColor;
 int32 nImageSize = 0;
+
 
 MiscView::MiscView(const Rect & cFrame) : View(cFrame, "MiscView")
 {
@@ -103,6 +104,13 @@ void BackView::Paint(const Rect& cUpdate)
 }
 
 
+
+BackView::~BackView()
+{
+	delete pcScreenBmp;
+}
+
+
 ColorView::ColorView(const Rect & cFrame) : View(cFrame, "ColorView",CF_FOLLOW_ALL)
 {
     pcScreenBmp = LoadBitmapFromResource("screen.png");
@@ -120,9 +128,7 @@ ColorView::ColorView(const Rect & cFrame) : View(cFrame, "ColorView",CF_FOLLOW_A
     pcColorEdit = new ColorEdit(Rect(0,0,0,0),"Col",c_bgColor);
     pcColorEdit->SetFrame(Rect(0,0,150,90) + Point(225,225));
     AddChild(pcColorEdit);
-
-
-    Debug("ColorView::ColorView : Just added the coloredit");
+    
     pcColorDrop->SetReadOnly();
     pcColorDrop->AppendItem("Icon Background Color");
     pcColorDrop->AppendItem("Icon Text Color");
@@ -143,6 +149,12 @@ void ColorView::Paint(const Rect& cUpdate)
     DrawBitmap(pcScreenBmp,pcScreenBmp->GetBounds(),Rect(GetBounds().Width()/2-pcScreenBmp->GetBounds().Width()/2,10,pcScreenBmp->GetBounds().Height(),pcScreenBmp->GetBounds().Width()));
     Flush ();
     Sync();
+}
+
+
+ColorView::~ColorView()
+{
+	delete pcScreenBmp;
 }
 
 
@@ -274,13 +286,24 @@ void PropWin::Defaults()
 
     pcPropTab->pcMisc->pcShowVerCheck->SetValue(bShwVr);
 
-    do
-    {
-        nImageList = nImageList + 1;
-    }
-    while ( strcmp(t_list[nImageList].c_str(),zImage.c_str())!=0);
-
-    pcPropTab->pcBack->pcList->Select(nImageList,true,true);
+	string kImage = pcSettings->GetImageDir() + zImage;
+	FSNode *pcNode = new FSNode();
+    
+    if( pcNode->SetTo(kImage.c_str()) == 0 )
+    	{
+   			do{
+        		nImageList = nImageList + 1;
+    		  }
+    
+    		while ( strcmp(t_list[nImageList].c_str(),zImage.c_str())!=0);
+    
+    		pcPropTab->pcBack->pcList->Select(nImageList,true,true);
+		}
+		
+	
+	else {
+			pcPropTab->pcBack->pcList->Select(0,true,true);
+		 }
 
 }
 
@@ -391,6 +414,11 @@ void PropWin::LoadPrefs(void)
     
 
 }
+
+
+
+
+
 
 
 

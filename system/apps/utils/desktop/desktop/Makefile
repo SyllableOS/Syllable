@@ -15,12 +15,12 @@ $(OBJDIR)/%.o : %.cpp
 	$(CC) $(OPTS) $< -o $@
 
 
-OBJS := main.o settings.o login.o bitmapwindow.o iconview.o iconmenu.o iconmenu_prop.o loadbitmap.o imageitem.o properties.o colorbutton.o coloredit.o bitmapscale.o disabled_textview.o drives.o debug.o
+OBJS := main.o settings.o bitmapwindow.o iconview.o iconmenu.o iconmenu_prop.o loadbitmap.o imageitem.o properties.o bitmapscale.o drives.o coloredit.o
 OBJS := $(addprefix $(OBJDIR)/,$(OBJS))
 
 
 $(EXE): objs $(OBJS)
-	gcc $(OBJS) -L/usr/local/lib -lstdc++ -latheos -lcrypt -lm -o $(EXE)
+	gcc $(OBJS) -L/usr/local/lib -lstdc++ -latheos -lm -o $(EXE)
 	rescopy -r $(EXE) ./images/*.jpg ./images/*.png
 
 deps:
@@ -34,4 +34,13 @@ install:
 	strip --strip-all /bin/desktop
 clean:
 	-rm $(OBJS)
+
+
+
+
+
+
+
+
+
 

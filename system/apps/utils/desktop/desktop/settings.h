@@ -13,6 +13,7 @@ public:
 	DeskSettings();
 	void SaveSettings(Message* pcMessage);
 	void ReadSettings();
+	void ResetSettings();
 	Message* GetSettings();
 	const char* GetIconDir();
 	const char* GetSetDir();
@@ -21,6 +22,7 @@ public:
 	Color32_s GetBgColor();
 	Color32_s GetFgColor();
 	int32 GetImageSize();
+	
 	
 private:
 	string zDeskImage;
@@ -34,11 +36,14 @@ private:
 	char pzConfigDir[1024];
 	char pzImageDir[1024];
 	char pzIconDir[1024];
+	void DefaultSettings();
 	
 		
 };
 	
 #endif
+
+
 
 
 

@@ -1,7 +1,7 @@
 #ifndef BITMAP_WINDOW_H
 #define BITMAP_WINDOW_H
 
-//#define _GNU_SOURCE
+#define _GNU_SOURCE
 
 #include "include.h"
 #include "iconview.h"
@@ -56,7 +56,6 @@ class BitmapView : public View
         Menu*            pcLineIcons;
         Menu*            pcMainMenu;
         void             HandleMessage(Message* pcMessage);
-       // mounted_drives	 m_drives;
         PropWin* 		 pcProp;
         string 			 pzSyllableVer;
         string 			 zDImage;
@@ -64,10 +63,12 @@ class BitmapView : public View
         IconMenu* 		 pcIconMenu;
         string 			 cIconName;
         string			 cIconExec;
+        Bitmap*          cIconPic;
         t_Icon 			 IconList();
         bool             bAlphbt;
         DeskSettings* pcSettings;
         Message* pcSetPrefs;
+        
         
 
 };
@@ -82,9 +83,14 @@ class BitmapWindow : public Window
         NodeMonitor*     pcConfigChange;
         NodeMonitor*     pcIconChange;
         BitmapView*		 pcBitmapView;
+        virtual bool     OkToQuit();
 };
 
 #endif
+
+
+
+
 
 
 

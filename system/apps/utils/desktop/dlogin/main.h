@@ -1,4 +1,3 @@
-//#ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 
 #ifndef LOGIN_H
@@ -9,7 +8,7 @@
 #include "crect.h"
 #include "colorbutton.h"
 #include "loadbitmap.h"
-#include "bitmapwindow.h"
+
 
 
 using namespace os;
@@ -21,7 +20,7 @@ static std::string cPassword;
 #define ID_CANCEL 2
 
 static bool g_bRun      = true;
-static bool g_bSelected = false;
+//static bool g_bSelected = false;
 
 
 
@@ -58,15 +57,37 @@ class LoginWindow : public Window
     public:
         LoginWindow( const Rect& cFrame );
 		 ~LoginWindow();
-        virtual bool	OkToQuit() { g_bRun = false; return( true ); }
+        virtual bool	OkToQuit() {  Application::GetInstance()->PostMessage(M_QUIT ); return( true ); }
         virtual void	HandleMessage( Message* pcMessage );
-		 virtual void Close();
+		 LoginView* 	m_pcView;
     private:
-        LoginView* m_pcView;
-		 void          Authorize(const char* pzLoginName);
+        
+		 void       Authorize(const char* pzLoginName);
+};
+
+
+
+
+class LoginApp : public Application
+{
+	public:
+		LoginApp();
+	
+	private:
+		LoginWindow* pcWindow;
 };
 
 #endif
+
+
+
+
+
+
+
+
+
+
 
 
 

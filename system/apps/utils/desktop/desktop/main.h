@@ -4,7 +4,7 @@
 
 
 #include "include.h"
-#include "login.h"
+#include "bitmapwindow.h"
 
 class DeskApp : public Application
 {
@@ -12,11 +12,12 @@ class DeskApp : public Application
 		DeskApp();
 		~DeskApp();
 	private:
-		Window* pcLogin;
+		BitmapWindow* pcWindow;
 		
 };
 
 #endif
+
 
 
 

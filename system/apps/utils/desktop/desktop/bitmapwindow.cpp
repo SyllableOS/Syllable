@@ -1,8 +1,7 @@
 #include "bitmapwindow.h"
 #include "iconmenu_messages.h"
-#include "login.h"
-//#include "drives.h"
-#include "debug.h"
+#include "drives.h"
+
 
 /*
 ** name:       LaunchFiles
@@ -84,82 +83,67 @@ Bitmap* ReadBitmap(const char* zImageName)
     ifstream fs_image;
     Bitmap* pcBitmap = NULL;
     DeskSettings* pcSet = new  DeskSettings();
+    
+    if ( strcmp(zImageName,"^") != 0){
+    
+    	
     string zImagePath = (string)pcSet->GetImageDir() +  (string)zImageName;
+	
+	
 	fs_image.open(zImagePath.c_str());
 
-    if(fs_image == NULL)
-    {
-        fs_image.close();
-        pcBitmap = LoadBitmapFromResource("logo_atheos.jpg");
+    if (fs_image == NULL)  
+    	{
+        	fs_image.close();
+       	 	pcBitmap = LoadBitmapFromResource("background.jpg");
 
-    }
+    	}
 
-    else
-    {
-        fs_image.close();
+    
+    else{
+		
+		fs_image.close();
 
+		if (pcSet->GetImageSize() == 0)
+        	{  
+        
+        		if ( (LoadBitmapFromFile(zImagePath.c_str())->GetBounds().Width() > ScreenRes().x )  || (LoadBitmapFromFile(zImagePath.c_str())->GetBounds().Height() > ScreenRes().y )  || (LoadBitmapFromFile(zImagePath.c_str())->GetBounds().Height() < ScreenRes().y ) || (LoadBitmapFromFile(zImagePath.c_str())->GetBounds().Width() > ScreenRes().x ))
+        			{
+            			Bitmap* pcLargeBitmap = new Bitmap(ScreenRes().x, ScreenRes().y, CS_RGB32,Bitmap::SHARE_FRAMEBUFFER);
+            			Scale(LoadBitmapFromFile(zImagePath.c_str()), pcLargeBitmap, filter_mitchell, 0);
+            			pcBitmap = pcLargeBitmap;
 
-
-        if (pcSet->GetImageSize() == 0)
-        {
-            Bitmap* pcLargeBitmap = new Bitmap(ScreenRes().x, ScreenRes().y, CS_RGB32,Bitmap::SHARE_FRAMEBUFFER);
-            Scale(LoadBitmapFromFile(zImagePath.c_str()), pcLargeBitmap, filter_mitchell, 0);
-            pcBitmap = pcLargeBitmap;
-
-        }
-        else
-        {
-            pcBitmap = LoadBitmapFromFile(zImagePath.c_str() );
-        }
-    }
-
-    return (pcBitmap);
+        			}
+        
+        
+        		else
+        			{
+            			pcBitmap = LoadBitmapFromFile(zImagePath.c_str() );
+        			}
+    	
+    	
+    		
+    		}
+    		
+		
+		else
+			{
+    			pcBitmap = LoadBitmapFromFile(zImagePath.c_str() );
+			}	
+	
+	  }
+}
+	
+	else {
+				Bitmap* pcLargeBitmap = new Bitmap(ScreenRes().x, ScreenRes().y, CS_RGB32,Bitmap::SHARE_FRAMEBUFFER);
+            	Scale(LoadBitmapFromResource("background.jpg"), pcLargeBitmap, filter_mitchell, 0);
+            	pcBitmap = pcLargeBitmap;
+		}
+		
+     return (pcBitmap);
 }
 
 
-/*
-** name:       CheckConfig
-** purpose:    Checks to see if the config file exsists.  If it doesn't, it will create
-**			   one with WriteConfigFile().  If it does exsist, it just exits.
-** parameters: 
-** returns:    
-*/
-void CheckConfig()
-{
-    ifstream filestr;
-    DeskSettings* pcSet = new DeskSettings();
-    filestr.open(pcSet->GetConfigFile());
-
-    if(filestr == NULL)
-    {
-        filestr.close();
-        //WriteConfigFile();
-    }
-
-    else
-    {
-        filestr.close();
-    }
-}
-
-/*
-** name:       SetDefaults
-** purpose:    Makes sure that all directories are created and also Runs CheckConfig
-** parameters: 
-** returns:
-*/
-void SetDefaults()
-{
-    system("mkdir ~/config 2> /dev/null");
-    system("mkdir ~/config/desktop 2> /dev/null");
-    system("mkdir ~/config/desktop/config 2> /dev/null");
-    system("mkdir ~/config/desktop/startup 2> /dev/null");
-    system("mkdir ~/config/desktop/pictures 2> /dev/null");
-    system("mkdir ~/config/desktop/disks 2> /dev/null");
-    system("mkdir ~/Desktop 2> /dev/null");
-
-    //CheckConfig();
-}
 
 /*
 ** name:       Icon::Select
@@ -190,28 +174,28 @@ void Icon::Select( BitmapView* pcView, bool bSelected )
 BitmapView::BitmapView( const Rect& cFrame ) :
         View( cFrame, "_bitmap_view", CF_FOLLOW_ALL)
 {
-
-
-    //m_drives = mounteddrives();
-    pcSettings = new DeskSettings();
+	pcSettings = new DeskSettings();
     ReadPrefs();
 	pcMainMenu = new Menu(Rect(0,0,0,0),"",ITEMS_IN_COLUMN);
     pcMountMenu = new Menu(Rect(0,0,0,0),"Mount Drives    ",ITEMS_IN_COLUMN);
 
-   /* Menu* pcAtheMenu = new Menu(Rect(0,0,0,0), m_drives.zMenu,ITEMS_IN_COLUMN);
-    pcAtheMenu->AddItem("Show Info...",new Message(M_SHOW_DRIVE_INFO));
-    pcAtheMenu->AddItem("Unmount...", new Message(M_DRIVES_UNMOUNT));
-    pcMountMenu->AddItem(new ImageItem(pcAtheMenu,NULL,LoadBitmapFromResource("mount.png")));
+    //Drives* pcAtheMenu = new Drives();
+    
+   
+    	
+    //pcAtheMenu->AddItem("Show Info...",new Message(M_SHOW_DRIVE_INFO));
+    //pcAtheMenu->AddItem("Unmount...", new Message(M_DRIVES_UNMOUNT));
+    //pcMountMenu->AddItem(new ImageItem(pcAtheMenu,NULL,LoadBitmapFromResource("mount.png")));
 
-    pcMountMenu->AddItem(new MenuSeparator());
-    pcMountMenu->AddItem("Settings...",NULL);
+    //pcMountMenu->AddItem(new MenuSeparator());
+    //pcMountMenu->AddItem("Settings...",NULL);
 
-    pcMainMenu->AddItem(new ImageItem(pcMountMenu,NULL,LoadBitmapFromResource("mount.png")));
-    */
+    //pcMainMenu->AddItem(new ImageItem(pcAtheMenu,NULL,LoadBitmapFromResource("mount.png")));
+    
     pcMainMenu->AddItem(new MenuSeparator());
     pcMainMenu->AddItem(new ImageItem("Properties", new Message(M_PROPERTIES_SHOW),"", LoadBitmapFromResource("kcontrol.png")));
     pcMainMenu->AddItem(new MenuSeparator());
-    pcMainMenu->AddItem(new ImageItem("Logout",new Message(M_LOGOUT_USER),"", LoadBitmapFromResource("exit.png")));
+    pcMainMenu->AddItem(new ImageItem("Logout",new Message(M_LOGOUT_ALERT),"", LoadBitmapFromResource("exit.png")));
     pcMainMenu->GetPreferredSize(true);
 
     pcIconMenu = new IconMenu();
@@ -241,6 +225,8 @@ BitmapView::BitmapView( const Rect& cFrame ) :
 BitmapView::~BitmapView()
 {
     delete m_pcBitmap;
+    RemoveIcons();
+    	
 }
 
 
@@ -290,8 +276,6 @@ void BitmapView::SetIcons()
     Point zIconPoint;
     uint iconExec = 0;
     Point cPos( 20, 20 );
-    
-    //RemoveIcons();
     
     for (iconExec = 0; iconExec < IconList().size(); iconExec++)
     {
@@ -498,9 +482,10 @@ void BitmapView::MouseDown( const Point& cPosition, uint32 nButtons )
             if (  pcIcon->m_bSelected )
                 cIconName = pcIcon->GetName();
                 cIconExec = pcIcon->GetExecName();
-
-            pcIconMenu->Open(ConvertToScreen(cPosition));
-            pcIconMenu->SetTargetForItems(this);
+                cIconPic  = pcIcon->GetBitmap();
+            
+            	pcIconMenu->Open(ConvertToScreen(cPosition));
+            	pcIconMenu->SetTargetForItems(this);     
         }
 
         else if(pcIcon == NULL)
@@ -713,16 +698,16 @@ void BitmapView::MouseMove( const Point& cNewPos, int nCode, uint32 nButtons, Me
 */
 void BitmapView::ReadPrefs(void)
 {
+	pcSettings = NULL;
+	pcSettings = new DeskSettings();
 	pcSetPrefs = NULL;
 	pcSetPrefs =  pcSettings->GetSettings();
    	pcSetPrefs->FindColor32( "Back_Color", &zBgColor );
   	pcSetPrefs->FindColor32( "Icon_Color",   &zFgColor );
    	pcSetPrefs->FindString ( "DeskImage",  &zDImage  );
 	pcSetPrefs->FindBool   ( "ShowVer",    &bShow   );
- 	//pcSetPrefs->FindInt32  ( "SizeImage",  &nSizeImage);
    	pcSetPrefs->FindBool   ( "Alphabet",   &bAlphbt);
    	
-   	Debug(zDImage.c_str());
 	m_pcBitmap = ReadBitmap(zDImage.c_str());
     
 }
@@ -735,13 +720,13 @@ void BitmapView::ReadPrefs(void)
 */
 void BitmapView::HandleMessage(Message* pcMessage)
 {
-    Alert* pcAlert;
+    Alert* pcAlert = NULL;
     switch (pcMessage->GetCode())
     {
 
     case ID_ICON_PROPERTIES:
         {
-            Window* pcIconProp = new IconProp(cIconName, cIconExec);
+            Window* pcIconProp = new IconProp(cIconName, cIconExec, cIconPic);
             pcIconProp->Show();
             pcIconProp->MakeFocus();
         }
@@ -757,16 +742,20 @@ void BitmapView::HandleMessage(Message* pcMessage)
 
     case M_LOGOUT_USER:
     	{
-    		GetWindow()->Hide();
-    		Window* pcLoginWindow = new LoginWindow(CRect(470,195));
-    		pcLoginWindow->Show();
-    		pcLoginWindow->MakeFocus();
-    		GetWindow()->Close();
-        }
-        break;
-
-    case M_LOGOUT_FOCUS:
-        break;
+    		int32 nAlertBut;
+    		pcMessage->FindInt32( "which", &nAlertBut );
+    		
+    		if ( nAlertBut == 0){
+    		GetWindow()->OkToQuit();
+    		
+    		}
+    		break;
+    	}
+        
+	case M_LOGOUT_ALERT:
+    		pcAlert = new Alert("Question:","Do you really want to logout?\n\nRemember that all applications\nwill be closed when you log out.\n",Alert::ALERT_INFO,0, "Yes","No",NULL);
+    		pcAlert->Go(new Invoker(new Message (M_LOGOUT_USER), this));
+    	break;
 
     case M_PROPERTIES_FOCUS:
         break;
@@ -813,12 +802,11 @@ BitmapWindow::BitmapWindow() : Window(Rect( 0, 0, 1599, 1199 ), "_bitmap_window"
 {
 	DeskSettings* pcSet = new DeskSettings();
 
-   pcConfigChange = new NodeMonitor(pcSet->GetSetDir(),NWATCH_ALL,this);
-   pcIconChange = new NodeMonitor(pcSet->GetIconDir(),NWATCH_ALL,this);
+   pcConfigChange = new NodeMonitor(pcSet->GetSetDir(),NWATCH_DIR,this);
+   pcIconChange = new NodeMonitor(pcSet->GetIconDir(),NWATCH_DIR,this);
   
-   pcBitmapView = new BitmapView( GetBounds());//Rect( 0, 0, 1599, 1199 ) );
+   pcBitmapView = new BitmapView( GetBounds());
    AddChild( pcBitmapView ); 
-   //pcBitmapView->Paint(GetBounds());
 }
 
 /*
@@ -845,6 +833,59 @@ void BitmapWindow::HandleMessage(Message* pcMessage)
     	break;
     }
 }
+
+
+bool BitmapWindow::OkToQuit(void)
+{	
+	
+    Application::GetInstance()->PostMessage(M_QUIT );
+  	return (true);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

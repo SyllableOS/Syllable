@@ -30,7 +30,7 @@ Icon::Icon( const char* pzTitle, const char* pzPath, const char* pzExec, Point c
         }
     }
 
-
+   //LoadBitmapFromFile(pzPath);
     IconDir sDir;
     IconHeader sHeader;
 
@@ -868,6 +868,7 @@ void IconView::DirChanged( const std::string& cNewPath )
     }
 
 }
+
 
 
 

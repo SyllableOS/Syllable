@@ -28,6 +28,7 @@ class BackView : public View
 {
     public:
         BackView(const Rect & cFrame);
+        ~BackView();
         ListView* pcList;
         DropdownMenu* pcSizeDrop;
         t_List ImageList();
@@ -51,6 +52,7 @@ class ColorView : public View
 {
     public:
         ColorView(const Rect& cFrame);
+        ~ColorView();
         DropdownMenu* pcColorDrop;
         ListView* pcListTheme;
         ColorEdit* pcColorEdit;
@@ -98,6 +100,10 @@ class PropWin : public Window
 };
 
 #endif
+
+
+
+
 
 
 

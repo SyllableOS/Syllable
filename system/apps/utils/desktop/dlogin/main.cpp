@@ -1,5 +1,90 @@
-#include "login.h"
-#include "debug.h"
+#include "main.h"
+#include "include.h"
+
+
+
+int Become_User( struct passwd *psPwd, LoginWindow* pcWindow ) {
+  int nStatus;
+  pid_t nError = waitpid(-1, &nStatus, WNOHANG);
+  
+
+  switch( (nError = fork()) ) {
+    case -1:
+      break;
+
+    case 0: /* child process */
+    	
+      setuid( psPwd->pw_uid );
+      setgid( psPwd->pw_gid );
+      chdir( psPwd->pw_dir );
+      setenv( "HOME", psPwd->pw_dir,true );
+      setenv( "USER", psPwd->pw_name,true );
+      setenv( "SHELL", psPwd->pw_shell,true );
+      setenv( "PATH", "/bin:/atheos/autolnk/bin",true);
+      execl( "/bin/desktop", "desktop", NULL );
+      
+      
+      break;
+     
+    	
+    default: /* parent process */
+      // hide login box
+       pcWindow->Hide();
+       pcWindow->m_pcView->m_pcPasswordView->Clear();
+      int nDesktopPid, nExitStatus;
+     
+      nDesktopPid = nError;
+     
+      nError = waitpid( nDesktopPid, &nExitStatus, 0 );
+     
+      if( nError < 0 || nError != nDesktopPid ) // Something went wrong ;-)
+         break;
+     
+      // Show the login window again
+     
+     	pcWindow->Show();
+      return 0;
+      //return nError;
+      
+  	}
+ 
+ return -errno;
+}
+
+
+/*
+** name:       UpdateLoginConfig
+** purpose:    Updates /system/config/login.cfg with the newest person who loggd in.
+** parameters: A string that represents the newest person
+** returns:
+*/
+void UpdateLoginConfig(string zName)
+{
+    char junk[1024];
+    char login_info[1024];
+    char login_name[1024];
+
+    ifstream filRead;
+    filRead.open("/boot/atheos/sys/config/login.cfg");
+
+    filRead.getline(junk,1024);
+    filRead.getline((char*)login_info,1024);
+    filRead.getline(junk,1024);
+    filRead.getline(junk,1024);
+    filRead.getline((char*)login_name,1024);
+    filRead.close();
+
+
+    FILE* fin;
+    fin = fopen("/boot/atheos/sys/config/login.cfg","w");
+
+    fprintf(fin,"<Login Name Option>\n");
+    fprintf(fin, login_info);
+    fprintf(fin, "\n\n<Login Name>\n");
+    fprintf(fin,zName.c_str());
+    fprintf(fin,"\n");
+    fclose(fin);
+}
 
 /*
 ** name:       WriteLoginConfigFile
@@ -37,7 +122,6 @@ void CheckLoginConfig()
     if(filestr == NULL)
     {
         filestr.close();
-        Debug("CheckLoginConfig did not find /boot/atheos/sys/config/login.cfg,\n   so it is attempting to create a new one");
         WriteLoginConfigFile();
     }
 
@@ -129,26 +213,9 @@ void LoginView::Paint(const Rect & cUpdate)
 {
     FillRect(cUpdate, Color32_s(239,236,231,0));
     SetFgColor(0,0,0);
-
-    String sLogin = "Login Name:";
-    String sPass = "Password:";
-    String sWarning = "Hint: Hitting Ctrl-Alt-Delete will reboot the machine";
-    font_height sHight;
-
-    float vStrWidth = GetStringWidth(sLogin);
-    float f_warning, f_login;
-    GetFontHeight(&sHight);
-
-    f_warning = GetBounds().Width() -250.0f - vStrWidth;
-    f_login = GetBounds().Width() - 190 - vStrWidth;
-
-
-    DrawString(sLogin, Point(f_login, (GetBounds().Height()-100.0f)/2 - (sHight.ascender + sHight.descender)/2 + sHight.ascender) );
-    DrawString(sPass, Point(f_login, (GetBounds().Height()-0.0f)/2 - (sHight.ascender + sHight.descender)/2 + sHight.ascender) );
-    DrawString(sWarning, Point(f_warning, (GetBounds().Height()+180.0f) /2 - (sHight.ascender - sHight.descender)/2 + sHight.ascender));
-
-    DrawBitmap(pcLoginImage,pcLoginImage->GetBounds(),Rect(0,0,380,45));
-    DrawBitmap(pcAtheImage,pcAtheImage->GetBounds(),Rect(45,0,164,140));
+    SetDrawingMode(DM_OVER);
+    DrawBitmap(pcLoginImage,pcLoginImage->GetBounds(),Rect(0,0,pcLoginImage->GetBounds().Width(),pcLoginImage->GetBounds().Height()));
+    
 }
 
 
@@ -160,7 +227,7 @@ void LoginView::Paint(const Rect & cUpdate)
 */
 LoginView::~LoginView()
 {
-	
+	delete pcLoginImage;
 }
 
 
@@ -199,9 +266,9 @@ void LoginView::FrameSized( const Point& cDelta )
 */
 void LoginView::Layout()
 {
-    m_pcNameView->SetFrame(Rect(0,0,170,25) + Point(290,35));
-    m_pcPasswordView->SetFrame(Rect(0,0,170,25) + Point(290,85));
-    m_pcOkBut->SetFrame(Rect(0,0,60,25) + Point(400,120));
+    m_pcNameView->SetFrame(Rect(0,0,170,25) + Point(270,175));  //290
+    m_pcPasswordView->SetFrame(Rect(0,0,170,25) + Point(270,204));
+    m_pcOkBut->SetFrame(Rect(0,0,60,25) + Point(380,240));
 
 
     m_pcNameView->Set(ReadLoginOption(),true);
@@ -216,8 +283,8 @@ void LoginView::Layout()
 */
 void LoginView::LoadImages()
 {
-    pcLoginImage = LoadBitmapFromResource("syllable.jpg");
-    pcAtheImage = LoadBitmapFromResource("logo_atheos.jpg");
+    pcLoginImage = LoadBitmapFromResource("syllable.gif");
+
 }
 
 
@@ -227,9 +294,9 @@ void LoginView::LoadImages()
 ** parameters: Rect(determinies the size of the window)
 ** returns:	   
 */
-LoginWindow::LoginWindow( const Rect& cFrame ) : Window( cFrame, "login_window", "Login:", WND_NO_BORDER | WND_BACKMOST )
+LoginWindow::LoginWindow( const Rect& cFrame ) : Window( cFrame, "login_window", "Login:",WND_NO_BORDER | WND_BACKMOST )
 {
-    Rect cRect(0,0,470,195);
+    Rect cRect(0,0,500,300);
     m_pcView = new LoginView(cRect);
     m_pcView->FillRect(cRect, Color32_s(239,236,231));
     AddChild( m_pcView );
@@ -247,11 +314,6 @@ LoginWindow::LoginWindow( const Rect& cFrame ) : Window( cFrame, "login_window",
 
 }
 
-void LoginWindow::Close()
-{
-	
-}
-
 
 /*
 ** name:       LoginWindow::HandleMessage
@@ -264,12 +326,9 @@ void LoginWindow::HandleMessage( Message* pcMsg )
     switch( pcMsg->GetCode() )
     {
     case ID_OK:
-    	
-        
         pzLogin = (string)m_pcView->m_pcNameView->GetBuffer()[0];
         cPassword = (string)m_pcView->m_pcPasswordView->GetBuffer()[0];
         Authorize(pzLogin.c_str());
-        
         break;
     case ID_CANCEL:
         PostMessage( M_QUIT );
@@ -279,6 +338,8 @@ void LoginWindow::HandleMessage( Message* pcMsg )
         break;
     }
 }
+
+
 
 LoginWindow::~LoginWindow()
 {
@@ -302,7 +363,7 @@ void LoginWindow::Authorize( const char* pzLoginName )
                 psPass = getpwnam( pzLoginName );
             }
 
-            if ( psPass != NULL )
+            if ( psPass != NULL ) 
             {
                 const char* pzPassWd = crypt(  cPassword.c_str(), "$1$" );
 
@@ -314,37 +375,124 @@ void LoginWindow::Authorize( const char* pzLoginName )
                 }
 
                 if (strcmp( pzPassWd, psPass->pw_passwd ) == 0 )
-                {
-                    setgid( psPass->pw_gid );
-                    setuid( psPass->pw_uid );
-                    setenv( "HOME", psPass->pw_dir, true );
-                    chdir( psPass->pw_dir );
-                    g_bSelected = true;
-                    
-                    BitmapWindow* pcBitmapWindow = new BitmapWindow();
-					pcBitmapWindow->Show();
-					pcBitmapWindow->MakeFocus();
-    				Quit();
+                {	
+                	if (Become_User(psPass,this))
+                		UpdateLoginConfig(pzLoginName);
                     break;
                 }
                 else
                 {
-                    Alert* pcAlert = new Alert( "Login failed:",  "Incorrect password!!!", 0, "Sorry", NULL );
-                    pcAlert->Go();
+                    Alert* pcAlert = new Alert( "Login failed:",  "Incorrect password!!!\n",Alert::ALERT_WARNING,0, "Sorry", NULL );
+                    pcAlert->Go(new Invoker());
                 }
                 break;
             }
             else
             {
 
-                Alert* pcAlert = new Alert( "Login failed:",  "No such user!!!", 0, "Sorry", NULL );
-                pcAlert->Go();
+                Alert* pcAlert = new Alert( "Login failed:",  "Please be advised!!!\n\nNo such user is\nregistered to use\nthis computer!!!\n",Alert::ALERT_WARNING, 0, "OK", NULL );
+                pcAlert->Go(new Invoker());
             }
         	break;
         }
         pzLoginName = NULL;
 }
 }
+
+
+LoginApp::LoginApp() : Application("application./x-vnd.RGC-desktop-login")
+{
+	pcWindow = new LoginWindow(CRect(500,300));
+	pcWindow->Show();
+    pcWindow->MakeFocus();
+}
+
+
+int main()
+{
+	LoginApp* thisApp;
+	thisApp = new LoginApp();
+	
+	thisApp->Run();
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -3,8 +3,10 @@
 
 #include "include.h"
 
+using namespace os;
 
-struct mounted_drives
+
+static struct mounted_drives
 {
     char zMenu[1024];
     char zSize[64];
@@ -13,20 +15,23 @@ struct mounted_drives
     char vol_name[256];
     char zType[64];
     char zPer[1024];
-}
-drives;
-
+}drives;
 
 typedef vector <mounted_drives> t_Info;
 
 
-class Drives {
+
+class Drives : public Menu {
+	
 	public:
 		Drives();
-		t_Info GetDrivesInfo();
 		void Unmount(int32 nUnmount);
 		void Mount();
+		t_Info GetDrivesInfo();
 };
 #endif
+
+
+
 
 

@@ -27,23 +27,28 @@ void human( char* pzBuffer, off_t nValue )
     }
 }
 
-Drives::Drives()
+Drives::Drives() : Menu(Rect(0,0,0,0),"Mounted Drives  ",ITEMS_IN_COLUMN)
 {
+	
+	t_Info me = GetDrivesInfo();
+	for (uint32 i =0; i < me.size(); i++){
+		printf("%s\n",me[i].vol_name);
+		}
 }
 
 t_Info Drives::GetDrivesInfo()
 {
 
-   /* t_Info   d_drives
+    mounted_drives   d_drives;
     fs_info     fsInfo;
-    int		 nMountCount;
+    int		 nMountCount = 0;
     char        szTmp[1024];
     char zSize[64];
     char        zUsed[64];
     char zAvail[64];
-
+    int nInt = 1;
     int x = get_mount_point_count();
-
+    
     nMountCount = 0;
 
     for( int i = 0; i < x; i++ )
@@ -61,15 +66,28 @@ t_Info Drives::GetDrivesInfo()
         close( nFD );
     }
 
+
+	    for ( int i = 0 ; i < nMountCount ; ++i ) {
+      if ( get_mount_point( i, szTmp, PATH_MAX ) < 0 ) {
+        continue;
+      }
+      
+      
+	
+	
+	
+	
     for ( int i = 0 ; i < nMountCount ; ++i )
     {
         if ( get_mount_point( i, szTmp, PATH_MAX ) < 0 )
         {
-			
+        	   
+     
             continue;
         }
 
         int nFD = open( szTmp, O_RDONLY );
+        
         if ( nFD < 0 )
         {	
             continue;
@@ -77,12 +95,14 @@ t_Info Drives::GetDrivesInfo()
 
         if ( get_fs_info( nFD, &fsInfo ) >= 0 )
         {
-            human( zSize, fsInfo.fi_total_blocks * fsInfo.fi_block_size );
-            human( zUsed, (fsInfo.fi_total_blocks - fsInfo.fi_free_blocks) *fsInfo.fi_block_size );
-            human( zAvail, fsInfo.fi_free_blocks * fsInfo.fi_block_size );
-        }
-
+            
+               
+               
+        
+        
+       
         d_drives.vol_name = fsInfo.fi_volume_name;
+        printf(d_drives.vol_name);
         d_drives.zSize = zSize;
         d_drives.zUsed = zUsed;
         d_drives.zAvail = zAvail;
@@ -91,10 +111,16 @@ t_Info Drives::GetDrivesInfo()
         sprintf(d_drives.zPer,"%.1f%%", ((double)fsInfo.fi_free_blocks / ((double)fsInfo.fi_total_blocks)) * 100.0);
 
         sprintf(d_drives.zMenu,"%s     ",fsInfo.fi_volume_name);
-    }
+			nInt = nInt + 1;
+            //human( zSize, fsInfo.fi_total_blocks * fsInfo.fi_block_size );
+            //human( zUsed, (fsInfo.fi_total_blocks - fsInfo.fi_free_blocks) *fsInfo.fi_block_size );
+            //human( zAvail, fsInfo.fi_free_blocks * fsInfo.fi_block_size );
+        }
 
-    return(d_drives);
-}*/
+     
+   		
+   }
+}
 }
 
 void Drives::Unmount(int32 nUnmount)
@@ -104,5 +130,12 @@ void Drives::Unmount(int32 nUnmount)
 void Drives::Mount()
 {
 }
+
+
+
+
+
+
+
 
 
