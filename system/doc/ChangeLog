@@ -19,6 +19,10 @@ the ATA driver you would pass:
 
 ata0=disabled hda=bios hdb=bios
 
+* May 11 2003, Henrik Isaksson *
+
+Checked in CodeView class.
+
 * Apr 27 2003, Henrik Isaksson *
 
 Updated keymaps for the new keymap format.
