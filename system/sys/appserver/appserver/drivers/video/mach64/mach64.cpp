@@ -46,8 +46,6 @@ static const char m64n_gtc_ppl[]  = "3D RAGE PRO (PQFP, PCI, limited 3D)";
 static const char m64n_xl[]  = "3D RAGE (XL)";
 static const char m64n_ltp_a[]  = "3D RAGE LT PRO (AGP)";
 static const char m64n_ltp_p[]  = "3D RAGE LT PRO (PCI)";
-static const char m64n_mob_p[]  = "3D RAGE Mobility (PCI)";
-static const char m64n_mob_a[]  = "3D RAGE Mobility (AGP)";
 
 struct ati_features aty_chips[] = {
 	 /* Mach64 GX */
@@ -93,10 +91,6 @@ struct ati_features aty_chips[] = {
 	{ 0x4c44, 0x4c44, 0x00, 0x00, m64n_ltp_p,   230, 63, M64F_GT | M64F_INTEGRATED | M64F_RESET_3D | M64F_GTB_DSP },
 	{ 0x4c49, 0x4c49, 0x00, 0x00, m64n_ltp_p,   230, 63, M64F_GT | M64F_INTEGRATED | M64F_RESET_3D | M64F_GTB_DSP | M64F_EXTRA_BRIGHT | M64F_G3_PB_1_1 | M64F_G3_PB_1024x768 },
 	{ 0x4c50, 0x4c50, 0x00, 0x00, m64n_ltp_p,   230, 63, M64F_GT | M64F_INTEGRATED | M64F_RESET_3D | M64F_GTB_DSP },
-
-	/* 3D RAGE Mobility */
-	{ 0x4c4d, 0x4c4d, 0x00, 0x00, m64n_mob_p,   230,  50, M64F_GT | M64F_INTEGRATED | M64F_RESET_3D | M64F_GTB_DSP | M64F_MOBIL_BUS },
-	{ 0x4c4e, 0x4c4e, 0x00, 0x00, m64n_mob_a,   230,  50, M64F_GT | M64F_INTEGRATED | M64F_RESET_3D | M64F_GTB_DSP | M64F_MOBIL_BUS },
 
 	{ 0xffff, 0xffff, 0x00, 0x00, NULL, 0, 0, 0 },
 };
