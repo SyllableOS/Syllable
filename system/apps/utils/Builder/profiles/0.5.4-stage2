@@ -55,3 +55,4 @@ modules
 	apps/utils/man2html
 	apps/utils/pkgmanager
 	apps/utils/slbmgr
+	apps/utils/systools
