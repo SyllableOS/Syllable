@@ -60,6 +60,10 @@ public:
 
     void	 SetAlignment( alignment eAlign );
     alignment	 GetAlignment( void ) const;
+
+    bool HasBorder() const;
+    void SetRenderBorder( bool bRender );
+
     virtual void AttachedToWindow();
 
 private:
