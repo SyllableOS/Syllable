@@ -19,6 +19,7 @@
 
 #include <util/catalog.h>
 #include <util/application.h>
+#include <gui/exceptions.h>
 #include <map>
 
 using namespace os;
@@ -76,14 +77,14 @@ Catalog::~Catalog()
 	delete m;
 }
 
-const String& Catalog::GetString( uint32 nID, const char* pzDefault ) const
+const String& Catalog::GetString( uint32 nID ) const
 {
 	Lock();
 
 	const_iterator i = m->m_cStrings.find( nID );
 
 	if( i == m->m_cStrings.end() ) {
-		m->m_cStrings[ nID ] = pzDefault;
+		m->m_cStrings[ nID ] = "(?)";
 	}
 
 	const String& cStr = m->m_cStrings[ nID ];
@@ -187,13 +188,13 @@ int Catalog::Unlock() const
 }
 
 
-LString::LString( uint32 nID, const char* pzDefault )
+LString::LString( uint32 nID )
 {
 	const Catalog* pcCat = Application::GetInstance()->GetCatalog();
 
 	if( pcCat ) {
-		String::operator=( pcCat->GetString( nID, pzDefault ) );
+		String::operator=( pcCat->GetString( nID ) );
 	} else {
-		String::operator=( pzDefault );
+		throw GeneralFailure( "Catalog not loaded!", 0 );
 	}
 }

@@ -7,8 +7,9 @@
 
 using namespace os;
 
-ShortcutKey::ShortcutKey( const char* pzKey, uint32 nQualifiers )
+ShortcutKey::ShortcutKey( const String& cKey, uint32 nQualifiers )
 {
+	const char *pzKey = cKey.c_str();
 	if( ( strncasecmp( pzKey, "ALT+", 4 ) == 0 ) ) {
 		pzKey += 4;
 		nQualifiers |= QUAL_ALT;
