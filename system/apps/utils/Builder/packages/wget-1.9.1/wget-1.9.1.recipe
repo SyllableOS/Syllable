@@ -1,0 +1,4 @@
+authors Kaj de Vos
+patch-config
+;configure-options --with-ssl=
+documentation README INSTALL COPYING NEWS ChangeLog.README ChangeLog TODO AUTHORS MAILING-LIST PATCHES
