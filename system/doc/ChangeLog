@@ -1,44 +1,43 @@
-!!! Note to Vanders: Your dates are off by one year... It's 2003 now! ;-)
 
 
 * Apr 01 2003, Henrik Isaksson *
 
 Updated emu10k1 driver for Audigy support, and finally, got rid of the Bad Noise(tm)!!!
 
-* Mar 29 2002, Kristian Van Der Vliet *
+* Mar 29 2003, Kristian Van Der Vliet *
 
 Two more patchs from Arno Klenke<arno_klenke@yahoo.de> for the ATA[PI] driver which fixes some
 bugs in atapi_read(), atapi_readv() and atapi_packet_command().  It is now possible to mount, read
 and unmount an ISO9660 formatted disc under Syllable.
 
-* Mar 26 2002, Kristian Van Der Vliet *
+* Mar 26 2003, Kristian Van Der Vliet *
 
 SiS 3xx video driver and Via82xx audio drivers from Arno Klenke<arno_klenke@yahoo.de>
 
-* Mar 26 2002, Kristian Van Der Vliet *
+* Mar 26 2003, Kristian Van Der Vliet *
 
 Changed the default DEBUG_LIMIT limit to KERN_INFO
 
-* Mar 26 2002, Kristian Van Der Vliet *
+* Mar 26 2003, Kristian Van Der Vliet *
 
 Cleaned up the formatting of this ChangeLog
 
-* Mar 26 2002, Kristian Van Der Vliet *
+* Mar 26 2003, Kristian Van Der Vliet *
 
 Two patches for the ATA driver from Arno Klenke <arno_klenke@yahoo.de>  One fixes a bug in select_drive()
 and the other modifies atapi_packet_command() to handle drives that send their response as multiple chunks
 of data.
 
-* Mar 23 2002, Kristian Van Der Vliet *
+* Mar 23 2003, Kristian Van Der Vliet *
 
 Added an ATA/ATAPI driver, and removed the old "ide" driver under syllable/system/sys/kernel/driver/disk/
 
-* Feb 18 2002, Kristian Van Der Vliet *
+* Feb 18 2003, Kristian Van Der Vliet *
 
 Patched the Mach64 driver so that it does not attempt to initialise Rage Mobility chipsets (Which do not work with
 the driver).  Patch from Michael Krueger <invenies@web.de>
 
-* Jan 11 2002, Kristian Van Der Vliet *
+* Jan 11 2003, Kristian Van Der Vliet *
 
 Removed the Lucida fonts from CVS due to licencing issues.  They have been replaced with the Lucidux fonts
 from XFree86, and the URW fonts taken fron GhostScript.  See the file Copyrights for full copyright and licencing
