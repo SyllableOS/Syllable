@@ -1,16 +1,17 @@
 ; Recipe information
 authors				<Recipe and patches authors, in historical order>
 maintainers			<Recipe maintainers, if not first author>
-status				broken | incomplete | developing | testing
+status				broken | deprecated | incomplete | developing | testing
 notes				<Internal notes>
 ;
 ; Package information
-summary				<Brief headline>
+name				<Display name of the package, if different from the file name>
+headline			<Brief description>
 description			<Full description>
 licenses			GPL LGPL GFDL BSD MIT Apache Artistic Python MPL QPL OS custom PD freeware commercial
 ;
 home				syllable.sf.net
-packages			<Deviating tarball name>
+packages			<Tarball names, if different from the package file name>
 ;locations			<Download locations>
 ;archives			<Arch archives>
 ;

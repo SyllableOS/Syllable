@@ -1,0 +1,319 @@
+diff -ruN gcc-2.95.3.orig/Makefile.in gcc-2.95.3/Makefile.in
+--- gcc-2.95.3.orig/Makefile.in	1999-06-22 22:44:43.000000000 +0000
++++ gcc-2.95.3/Makefile.in	2004-02-10 21:01:41.000000000 +0000
+@@ -1482,7 +1482,8 @@
+ 	esac; \
+ 	$(SET_LIB_PATH) \
+ 	echo "$$msg"; \
+-	cd gcc; $(MAKE) $(GCC_FLAGS_TO_PASS) $$compare
++	cd gcc; $(MAKE)
++# $(GCC_FLAGS_TO_PASS) $$compare
+ 	@r=`pwd`; export r; \
+ 	s=`cd $(srcdir); pwd` ; export s; \
+ 	$(SET_LIB_PATH) \
+diff -ruN gcc-2.95.3.orig/configure.in gcc-2.95.3/configure.in
+--- gcc-2.95.3.orig/configure.in	1999-06-22 22:44:41.000000000 +0000
++++ gcc-2.95.3/configure.in	2004-02-10 21:03:56.000000000 +0000
+@@ -270,6 +270,7 @@
+   case "${target}" in
+     alpha*-dec-osf*)	enable_shared=yes ;;
+     alpha*-*-linux*)	enable_shared=yes ;;
++    *-*-syllable*)	enable_shared=yes ;;
+     mips-sgi-irix5*)	enable_shared=yes ;;
+     *)			enable_shared=no ;;
+   esac
+@@ -340,6 +341,9 @@
+   *-*-linux-gnu)
+     target_makefile_frag="${target_makefile_frag} config/mt-linux"
+     ;;
++  *-*-syllable)
++    target_makefile_frag="${target_makefile_frag} config/mt-syllable"
++    ;;
+ esac
+ 
+ # If --enable-target-optspace always use -Os instead of -O2 to build
+diff -ruN gcc-2.95.3.orig/gcc/configure.in gcc-2.95.3/gcc/configure.in
+--- gcc-2.95.3.orig/gcc/configure.in	2001-01-25 14:03:03.000000000 +0000
++++ gcc-2.95.3/gcc/configure.in	2004-02-10 21:03:56.000000000 +0000
+@@ -523,6 +523,9 @@
+ 	*-*-linux-gnu*)
+ 		xm_defines="HAVE_ATEXIT POSIX BSTRING"
+ 		;;
++	*-*-syllable)
++		xm_defines="HAVE_ATEXIT POSIX BSTRING"
++		;;
+ 	*-*-openbsd*)
+ 		tm_file=${cpu_type}/openbsd.h
+ 		tmake_file="t-libc-ok t-openbsd"
+@@ -1264,6 +1267,19 @@
+  		fi
+ 		;;
+ changequote(,)dnl
++	i[34567]86-*-syllable)	        # Intel 80386's running Syllable
++changequote([,])dnl			# with ELF format using glibc 2
++		xmake_file=x-syllable
++		tm_file=i386/syllable.h
++		tmake_file="t-syllable i386/t-crtstuff"
++		extra_parts="crtbegin.o crtbeginS.o crtend.o crtendS.o"
++		gnu_ld=yes
++		float_format=i386
++ 		if test x$enable_threads = xyes; then
++ 			thread_file='posix'
++ 		fi
++		;;
++changequote(,)dnl
+ 	i[34567]86-*-gnu*)
+ 		float_format=i386
+ changequote([,])dnl
+diff -ruN gcc-2.95.3.orig/gcc/gthr.h gcc-2.95.3/gcc/gthr.h
+--- gcc-2.95.3.orig/gcc/gthr.h	1998-12-16 20:56:43.000000000 +0000
++++ gcc-2.95.3/gcc/gthr.h	2004-02-10 21:03:56.000000000 +0000
+@@ -81,7 +81,9 @@
+ */
+ 
+ /* Check first for thread specific defines. */
+-#if _PTHREADS
++#ifdef __SYLLABLE__
++#include "gthr-syllable.h"
++#elif _PTHREADS
+ #include "gthr-posix.h"
+ #elif _DCE_THREADS
+ #include "gthr-dce.h"
+diff -ruN gcc-2.95.3.orig/libio/configure.in gcc-2.95.3/libio/configure.in
+--- gcc-2.95.3.orig/libio/configure.in	1999-06-29 02:31:47.000000000 +0000
++++ gcc-2.95.3/libio/configure.in	2004-02-10 21:03:56.000000000 +0000
+@@ -57,6 +57,7 @@
+   *-linux-gnulibc1)
+ 		 frags=linuxlibc1.mt ;;
+   *-linux-gnu)   frags="linux.mt mtsafe.mt" ;;
++  *-syllable)       frags="syllable.mt mtsafe.mt" ;;
+   *-sco3.2v[45]*)   frags=sco4.mt ;;
+   *-isc*)        frags=isc.mt ;;
+   *-netware*)    frags=netware.mt ;;
+diff -ruN gcc-2.95.3.orig/libio/libio.h gcc-2.95.3/libio/libio.h
+--- gcc-2.95.3.orig/libio/libio.h	2000-12-10 17:45:09.000000000 +0000
++++ gcc-2.95.3/libio/libio.h	2004-02-10 21:03:56.000000000 +0000
+@@ -163,11 +163,21 @@
+ /* Handle lock.  */
+ #ifdef _IO_MTSAFE_IO
+ # if defined __GLIBC__ && __GLIBC__ >= 2
++#ifdef __SYLLABLE__
++# include <bits/libc-lock.h>
++#  define _IO_lock_t __libc_lock_t
++#  define _IO_lock_init	__libc_lock_init
++#  define _IO_lock_fini	__libc_lock_fini
++#  define _IO_lock_initializer MUTEX_INITIALIZER
++#  define _IO_cleanup_region_start __libc_cleanup_region_start
++#  define _IO_cleanup_region_end   __libc_cleanup_region_end
++#else /* __SYLLABLE__ */
+ #  if __GLIBC_MINOR__ > 0
+ #   include <bits/stdio-lock.h>
+ #  else
+ #   include <stdio-lock.h>
+ #  endif
++#endif /* __SYLLABLE__ */
+ #  define _IO_LOCK_T _IO_lock_t *
+ # else
+ /*# include <comthread.h>*/
+diff -ruN gcc-2.95.3.orig/libstdc++/configure.in gcc-2.95.3/libstdc++/configure.in
+--- gcc-2.95.3.orig/libstdc++/configure.in	1999-06-07 23:28:11.000000000 +0000
++++ gcc-2.95.3/libstdc++/configure.in	2004-02-10 21:03:56.000000000 +0000
+@@ -74,6 +74,7 @@
+     *-*-freebsd2*)	;;
+     *-*-freebsd*)	frags="${frags} freebsd.ml" ;;
+     *-*-linux*)		frags="${frags} linux.ml" ;;
++    *-*-syllable)		frags="${frags} syllable.ml" ;;
+     *-*-openbsd*)		frags="${frags} openbsd.ml" ;;
+     *-*-sysv[45]*|*-*-udk*)	frags="${frags} elf.ml" ;;
+     *-*-solaris*)	frags="${frags} sol2shm.ml" ;;
+@@ -89,6 +90,7 @@
+   alpha*-*-linux-gnulibc1)	frags="${frags} linux.mt" ;;
+   powerpc*-*-linux-gnulibc1)	frags="${frags} linux.mt" ;;
+   *-*-linux-gnu)		frags="${frags} linux.mt" ;;
++  *-*-syllable)			frags="${frags} syllable.mt" ;;
+   *-*-openbsd*)		
+   	case "x${enable_threads}" in
+ 		xyes|xposix)	frags="${frags} openbsd.mt" ;;
+diff -ruN gcc-2.95.3.orig/libstdc++/stl/stl_alloc.h gcc-2.95.3/libstdc++/stl/stl_alloc.h
+--- gcc-2.95.3.orig/libstdc++/stl/stl_alloc.h	1999-05-07 10:13:29.000000000 +0000
++++ gcc-2.95.3/libstdc++/stl/stl_alloc.h	2004-02-10 21:03:56.000000000 +0000
+@@ -50,6 +50,20 @@
+ #   include <windows.h>
+ #endif
+ 
++#ifdef __SYLLABLE__
++#   include <atheos/semaphore.h>
++#   include <atheos/atomic.h>
++#   include <errno.h>
++void __alloc_lock();
++void __alloc_unlock();
++
++typedef struct
++{
++    atomic_t count;
++    sem_id   mutex;
++} __stl_mutex_t;
++#endif
++
+ #include <stddef.h>
+ #include <stdlib.h>
+ #include <string.h>
+@@ -60,7 +74,7 @@
+ 
+ #if !defined(__STL_PTHREADS) && !defined(__STL_SOLTHREADS) \
+  && !defined(_NOTHREADS) \
+- && !defined(__STL_SGI_THREADS) && !defined(__STL_WIN32THREADS)
++ && !defined(__STL_SGI_THREADS) && !defined(__STL_WIN32THREADS) && !defined(__SYLLABLE__)
+ #   define _NOTHREADS
+ #endif
+ 
+@@ -113,6 +127,40 @@
+ #   define __NODE_ALLOCATOR_THREADS true
+ #   define __VOLATILE volatile  // Needed at -O3 on SGI
+ # endif
++# ifdef __SYLLABLE__
++    // The lock needs to be initialized by constructing an allocator
++    // objects of the right type.  We do that here explicitly for alloc.
++
++#   define __NODE_ALLOCATOR_LOCK __alloc_lock()
++/*
++#   define __NODE_ALLOCATOR_LOCK \
++    do {				\
++	atomic_t old = atomic_add( &_S_node_allocator_lock.count, 1 );	\
++	if ( old > 0 ) {	\
++	    for (;;) {		\
++		int error = lock_semaphore( _S_node_allocator_lock.mutex );	\
++		if ( error >= 0 || errno != EINTR ) {	\
++		    break;	\
++		}		\
++	    }			\
++	}			\
++    } while( 0 )
++    */
++//        _S_node_allocator_lock.Lock()
++#   define __NODE_ALLOCATOR_UNLOCK __alloc_unlock()
++/*
++#   define __NODE_ALLOCATOR_UNLOCK \
++    do {				\
++	atomic_t old = atomic_add( &_S_node_allocator_lock.count, -1 );	\
++	if ( old > 1) {					\
++	    unlock_semaphore( _S_node_allocator_lock.mutex );		\
++	}						\
++    } while( 0 )
++    */
++//        _S_node_allocator_lock.Unlock()
++#   define __NODE_ALLOCATOR_THREADS true
++#   define __VOLATILE volatile  // may not be needed
++# endif
+ # ifdef _NOTHREADS
+ //  Thread-unsafe
+ #   define __NODE_ALLOCATOR_LOCK
+@@ -388,6 +436,23 @@
+   private:
+ # endif
+ 
++# ifdef __SYLLABLE__
++//    static os::Locker _S_node_allocator_lock;
++    static __stl_mutex_t _S_node_allocator_lock;
++    static bool _S_node_allocator_lock_initialized;
++
++  public:
++    __default_alloc_template() {
++	// This assumes the first constructor is called before threads
++	// are started.
++        if (!_S_node_allocator_lock_initialized) {
++	    _S_node_allocator_lock.count = 0;
++	    _S_node_allocator_lock.mutex = create_semaphore( "stl_mutex", 0, 0 );
++            _S_node_allocator_lock_initialized = true;
++        }
++    }
++  private:
++# endif
+     class _Lock {
+         public:
+             _Lock() { __NODE_ALLOCATOR_LOCK; }
+@@ -601,6 +666,23 @@
+ 	= false;
+ #endif
+ 
++#ifdef __SYLLABLE__
++    template <bool __threads, int __inst>
++    __stl_mutex_t
++    __default_alloc_template<__threads, __inst>::
++    _S_node_allocator_lock;
++
++    template <bool __threads, int __inst>
++    bool
++    __default_alloc_template<__threads, __inst>::
++      _S_node_allocator_lock_initialized
++	= false;
++
++//    template <bool __threads, int __inst>
++//    os::Locker
++//    __default_alloc_template<__threads, __inst>::_S_node_allocator_lock( "stl_lock" );
++#endif
++
+ #ifdef __STL_SGI_THREADS
+ __STL_END_NAMESPACE
+ #include <mutex.h>
+@@ -706,7 +788,7 @@
+ // compiler happy.  Otherwise it appears to allocate too little
+ // space for the array.
+ 
+-# ifdef __STL_WIN32THREADS
++# if defined(__STL_WIN32THREADS) || defined(__SYLLABLE__)
+   // Create one to get critical section initialized.
+   // We do this onece per file, but only the first constructor
+   // does anything.
+diff -ruN gcc-2.95.3.orig/libstdc++/stl/stl_rope.h gcc-2.95.3/libstdc++/stl/stl_rope.h
+--- gcc-2.95.3.orig/libstdc++/stl/stl_rope.h	2001-01-01 17:48:23.000000000 +0000
++++ gcc-2.95.3/libstdc++/stl/stl_rope.h	2004-02-10 21:03:56.000000000 +0000
+@@ -32,7 +32,9 @@
+ # ifdef __STL_SGI_THREADS
+ #    include <mutex.h>
+ # endif
+-
++# ifdef __SYLLABLE__
++#    include <atheos/atomic.h>
++# endif
+ __STL_BEGIN_NAMESPACE
+ 
+ #if defined(__sgi) && !defined(__GNUC__) && (_MIPS_SIM != _MIPS_SIM_ABI32)
+@@ -397,6 +399,8 @@
+ #   ifndef __GC
+ #       if defined(__STL_WIN32THREADS)
+             long _M_refcount;   // InterlockedIncrement wants a long *
++#	elif defined(__SYLLABLE__)
++            atomic_t _M_refcount; // The atomic_* functions all work on atomic_t's
+ #       else
+             size_t _M_refcount;
+ #       endif
+@@ -444,6 +448,16 @@
+             {
+                 return InterlockedDecrement(&_M_refcount);
+             }
++#	elif defined(__SYLLABLE__)
++            void _M_init_refcount_lock() {}
++            void _M_incr_refcount ()
++            {
++                atomic_add( &_M_refcount, 1 );
++            }
++            size_t _M_decr_refcount ()
++            {
++		return atomic_add( ,&_M_refcount, -1 ) - 1;
++            }
+ #	elif defined(__STL_PTHREADS)
+             // This should be portable, but performance is expected
+             // to be quite awful.  This really needs platform specific
+@@ -1302,6 +1316,11 @@
+                 return (_Cstrptr) InterlockedExchange(
+                   (LPLONG)__p, (LONG)__q);
+             }
++#	elif defined(__SYLLABLE__)
++            static _Cstrptr _S_atomic_swap(_Cstrptr* __p, _Cstrptr __q) {
++		return atomic_swap( __p, __q );
++            }
++    
+ #       elif defined(__STL_PTHREADS)
+             // This should be portable, but performance is expected
+             // to be quite awful.  This really needs platform specific

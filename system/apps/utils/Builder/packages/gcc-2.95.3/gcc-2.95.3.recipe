@@ -1,0 +1,42 @@
+authors
+	Kurt Skauen
+	Kaj de Vos
+maintainers			Kaj de Vos
+licenses			GPL LGPL
+home				gcc.gnu.org
+packages			gcc-everything-2.95.3
+locations			ftp://gcc.gnu.org/pub/gcc/releases/gcc-2.95.3/
+needs
+	binutils
+build-needs
+	autoconf 2.13
+patch-config
+patch
+	cd gcc;
+	autoconf
+configure-vars		CXXFLAGS="-march=i586 -O2 -idirafter /include -idirafter /ainc"
+configure-options
+	--with-arch=i586
+;	--with-cpu=pentium
+;	--enable-languages=c,c++,java,objc,f77,chill
+;	--enable-shared
+; Seems to affect only libobjc:
+	--enable-threads
+; A fix that doesn't seem to make a difference:
+;post-configure		cp ../gcc-2.95.3/gcc/fixinc/inclhack.sh gcc/fixinc.sh
+;make-vars			BOOT_CFLAGS="-march=i586 -O2"
+make-options
+	CFLAGS='-march=i586 -O'
+	LIBCFLAGS="-march=i586 -O2"
+;	LIBCXXFLAGS="-march=i586 -O2"
+; GCC seems to set this automatically:
+;		" -fno-implicit-templates"
+make-targets		bootstrap
+;test-options		-k
+;install-prefix		DESTDIR=
+documentation
+	README FAQ faq.html COPYING COPYING.LIB ChangeLog MAINTAINERS
+	gcc/ABOUT-NLS gcc/ABOUT-GCC-NLS gcc/NEWS gcc/BUGS gcc/TESTS.FLUNK gcc/README.DWARF
+links
+	bin/gcc bin/cc
+	lib/gcc-lib/i586-pc-syllable/2.95.3/libgcc.a lib/gcc-lib/i586-pc-syllable/2.95.3/libgcc_static.a
