@@ -1,0 +1,57 @@
+dhcpc 1.0 -:- A DHCP client for Syllable
+
+dhcpc is a simple DHCP/BOOTP client for Syllable 0.4.3 and later.  dhcpc is
+released under the GNU General Public Licencse.  See the file COPYING for more
+information.  dhcpc is ©2002 - 2003 Kristian Van Der Vliet
+(vanders@users.sourceforge.net)
+
+dhcpc is included with all versions of Syllable starting with 0.4.3  The
+source code for the latest version of dhcpc can be retrieved from the Syllable
+CVS servers.  See the Syllable website at http://syllable.sourceforge.net
+for more information.
+
+Usage
+
+dhcpc can configure your IP address, subnet mask, gateway address and DNS
+server entries from a DHCP server.  dhcpc can be started either as a
+normal process, or as a background deamon process.
+
+Normally, you should use the Network Preferences application to enable or
+disable DHCP for a network interface.  However, if you wish to start dhcpc
+manually, then please read the following.
+
+To start dhcpc as a deamon, on the Ethernet interface 'eth1':
+
+$ dhcpc -d eth1
+
+To start dhcpc as a normal process, simply omit the '-d' flag.
+
+Depending on the compilation options used, dhcpc may produce a lot of
+debugging output.  You can choose to redirect the output to a logfile
+(E.g. /var/log/dhcpc) with E.g.
+
+$ dhcpc -d eth1 2>>/var/log/dhcpc
+
+or to /dev/null with
+
+$ dhcpc -d eth1 2>>/dev/null
+
+If the DHCP server responds with a list of available DNS servers,
+then dhcpc will overwrite /etc/resolv.conf with the DNS server entries.
+
+dhcpc will automatically add a gateway route entry if a gateway address
+is supplied by the DHCP server.
+
+TODO
+
+o Currently the client always releases the IP address when it catches
+   SIGTERM.  It would be preferable if we stored the lease details and sent
+   a renewal request when the client was started next.
+
+o The client can not always deal with packets arriving out of sequence.
+
+o It would be nice if the user could supply various details at startup,
+   E.g. requested IP, lease time etc.
+
+o There are probably some bugs!
+
