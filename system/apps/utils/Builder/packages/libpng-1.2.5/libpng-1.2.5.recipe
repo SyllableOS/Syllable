@@ -1,8 +1,11 @@
 authors			Kaj de Vos
 status			testing
 notes			See contrib/gregbook/ to build examples
+
 licenses		OS
 home			www.libpng.org
+
+no-build-dir
 configure		cp scripts/makefile.gcc makefile
 test-targets	test
 install
