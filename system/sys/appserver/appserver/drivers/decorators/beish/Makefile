@@ -18,23 +18,23 @@ $(OBJDIR)/%.o : %.cpp
 	$(CC) $(COPTS) $< -o $@
 
 
-all :	objs $(OBJDIR)/beish
+all :	objs $(OBJDIR)/Beish
 
 deps:
 
 objs:
 	mkdir objs
 
-$(OBJDIR)/beish: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/beish /system/appserver -lsyllable -lstdc++ -lz
-	gcc -plugin $(OBJS) -o $(OBJDIR)/beish -lsyllable -lstdc++
+$(OBJDIR)/Beish: $(OBJS)
+	gcc $(OBJS) -o $(OBJDIR)/Beish /system/appserver -lsyllable -lstdc++ -lz
+	gcc -plugin $(OBJS) -o $(OBJDIR)/Beish -lsyllable -lstdc++
 
-install: $(OBJDIR)/beish
-	cp -f $(OBJDIR)/beish $(DEVBIN)/beish
+install: $(OBJDIR)/Beish
+	cp -f $(OBJDIR)/Beish $(DEVBIN)/Beish
 
-dist: $(OBJDIR)/beish
-	cp -f $(OBJDIR)/beish $(DIST_DIR)/atheos/sys/drivers/appserver/decorators/Beish
+dist: $(OBJDIR)/Beish
+	cp -f $(OBJDIR)/Beish $(DIST_DIR)/atheos/sys/drivers/appserver/decorators/Beish
 
 clean:
-	-rm $(OBJS) $(OBJDIR)/beish
+	-rm $(OBJS) $(OBJDIR)/Beish
 
