@@ -32,7 +32,13 @@ configure-options
 install-tree	include lib
 install-files
 	libavcodec/avcodec.h		include
+	libavcodec/common.h			include
+	libavcodec/rational.h		include
 	libavformat/avformat.h		include
+	libavformat/avio.h			include
+	libavformat/rtp.h			include
+	libavformat/rtsp.h			include
+	libavformat/rtspcodes.h		include
 	libavcodec/libavcodec.a		lib
 	libavformat/libavformat.a	lib
 documentation
