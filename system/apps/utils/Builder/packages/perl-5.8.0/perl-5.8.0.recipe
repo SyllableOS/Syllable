@@ -1,0 +1,36 @@
+authors
+	Kurt Skauen
+	Kaj de Vos
+maintainers			Kaj de Vos
+
+licenses			Artistic GPL
+home				www.perl.org
+
+;configure
+;	rm -f config.sh Policy.sh;
+;	sh Configure
+configure-cmd
+;	configure.gnu
+	Configure
+configure-prefix	-Dprefix=
+configure-options
+	-des
+	-Dmksymlinks
+	-Accflags="-march=i586 -pipe"
+	-Aoptimize="-O2"
+;	-Dinstallprefix=
+;	-Dnoextensions=
+;	-Duseshrplib
+;	-Uusemymalloc
+;	-Dusethreads
+;	-Duseperlio -Dusesfio
+
+test-targets
+	test
+;	minitest
+
+strip-files			bin/perl5.8.0
+documentation		README README.Y2K INSTALL Artistic Copying Changes AUTHORS
+links
+	bin/perl /usr/bin/perl
+;	bin/perl /usr/local/bin/perl

@@ -83,10 +83,12 @@ install-prefix		prefix=
 ; Non-standard install targets:
 ;install-targets		install
 
-; Extra files to install:
+;install-files		<Extra files to install>
+;strip-files			<Binary files to strip>
+; Documentation to install:
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
 ; Links to create:
-;links
-;	<Source> <Destination>
+links
+	<Source> <Destination>
 ;	<Destination>
 ;		<Source>
