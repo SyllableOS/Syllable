@@ -34,7 +34,7 @@ modules
 	sys/media/drivers/vorbis
 	apps/gnu/coreutils-5.2.1
 	apps/gnu/less-382
-	apps/gnu/sed-4.1
+	apps/gnu/sed-4.1.1
 	apps/gnu/tar-1.14
 	apps/media/coldfish
 	apps/media/mediaplayer
