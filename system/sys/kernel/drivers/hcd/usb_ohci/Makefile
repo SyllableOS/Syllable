@@ -42,22 +42,9 @@ install: all
 	cp -f $(OBJDIR)/usb_ohci /system/drivers/dev/hcd/usb_ohci
 
 dist: all
-	mkdir -p $(DIST_DIR)/system/drivers/dev/hcd
-	cp -f $(OBJDIR)/usb_ohci $(DIST_DIR)/system/drivers/dev/hcd/usb_ohci
+	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/hcd
+	cp -f $(OBJDIR)/usb_ohci $(DIST_DIR)/atheos/sys/drivers/dev/hcd/usb_ohci
 
 clean:
 	rm -f $(OBJS) $(OBJDIR)/usb_ohci
-
-
-
-
-
-
-
-
-
-
-
-
-
 
