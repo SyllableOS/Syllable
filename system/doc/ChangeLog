@@ -1,5 +1,10 @@
 * September 5th 2004, Kristian Van Der Vliet *
 
+3Dfx Voodoo 3/4/5 driver from Jan Hauffa <hauffa@in.tum.de>  The driver supports
+full 2D acceleration and video overlays on all Voodoo 3, 4 and 5 boards.
+
+* September 5th 2004, Kristian Van Der Vliet *
+
 Updated Danish keymap with Greenland support and a new Faeroese keymap, both from
 Flemming "BurningShadow" H. Sørensen
 
