@@ -1,3 +1,11 @@
+* July 30, Henrik Isaksson *
+
+ - Decorators
+	o Applied Photon decorator patch by Michael Saunders.
+
+ - ColorSelector
+	o Checked in the initial version of ColorSelector and related classes.
+
 * July 25, Henrik Isaksson *
 
  - Font
