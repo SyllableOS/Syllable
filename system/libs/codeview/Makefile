@@ -11,14 +11,14 @@ INSTALLDIR = /system/libs/
 
 
 $(EXE): $(OBJS) $(LOBJS)
-	$(LL) $(OBJS) $(LOBJS) -latheos -o $(EXE)
+	$(LL) $(OBJS) $(LOBJS) -lsyllable -o $(EXE)
 
 #$(EXE): $(OBJS) lib
-#	$(LL) $(OBJS) -latheos -L. -lcodeview -o $(EXE)
+#	$(LL) $(OBJS) -lsyllable -L. -lcodeview -o $(EXE)
 
 
 lib: $(LOBJS)
-	$(LL) $(LOBJS) -latheos -shared -Wl,-soname,$(LIB).$(VERSION_MAJOR) -o $(LIB)
+	$(LL) $(LOBJS) -lsyllable -shared -Wl,-soname,$(LIB).$(VERSION_MAJOR) -o $(LIB)
 
 
 .PHONY : install
@@ -70,5 +70,3 @@ objs/format_perl.o:  format_perl.cpp format_perl.h format.h
 objs/format_html.o:  format_html.cpp format_html.h format.h
 objs/format_java.o:  format_c.cpp format_c.h format_java.cpp \
 	format_java.h format.h
-
-
