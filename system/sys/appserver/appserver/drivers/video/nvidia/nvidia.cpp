@@ -752,7 +752,7 @@ bool NVidia::CreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst,
 		
 		dbprintf("Offset %i\n", (int)offset );
 		
-		*pBuffer = create_area( "nvidia_overlay", NULL, totalSize, AREA_FULL_ACCESS, AREA_NO_LOCK );
+		*pBuffer = create_area( "nvidia_overlay", NULL, PAGE_ALIGN( totalSize ), AREA_FULL_ACCESS, AREA_NO_LOCK );
 		remap_area( *pBuffer, (void*)((m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK) + offset) );
 		
 		
@@ -854,7 +854,7 @@ bool NVidia::RecreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDs
     	
     	uint32 offset = PAGE_ALIGN( ( m_sRiva.riva.RamAmountKBytes - 128 ) * 1024 - totalSize - PAGE_SIZE );
 		
-		*pBuffer = create_area( "nvidia_overlay", NULL, totalSize, AREA_FULL_ACCESS, AREA_NO_LOCK );
+		*pBuffer = create_area( "nvidia_overlay", NULL, PAGE_ALIGN( totalSize ), AREA_FULL_ACCESS, AREA_NO_LOCK );
 		remap_area( *pBuffer, (void*)((m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK) + offset) );
 		
 		if( m_sRiva.riva.Architecture >= NV_ARCH_10 ) {
@@ -1237,6 +1237,7 @@ extern "C" DisplayDriver* init_gfx_driver()
 	    return NULL;
     }
 }
+
 
 
 
