@@ -371,6 +371,35 @@ void remove_window_from_desktop( SrvWindow* pcWindow )
 }
 
 //----------------------------------------------------------------------------
+// NAME: remove_from_focusstack
+// DESC: Removes a window from the focus history, called when window is hidden.
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
+void remove_from_focusstack( SrvWindow* pcWindow )
+{
+    uint32 nMask = pcWindow->GetDesktopMask();
+
+    for ( int i = 0 ; i < 32 ; ++i ) {
+	if ( nMask & (1 << i) )	{
+	    for ( int j = 0 ; j < FOCUS_STACK_SIZE ; ++j ) {
+		if ( g_asDesktops[i].m_apcFocusStack[j] == pcWindow ) {
+		    for ( int k = j ; k < FOCUS_STACK_SIZE - 1 ; ++k ) {
+			g_asDesktops[i].m_apcFocusStack[k] = g_asDesktops[i].m_apcFocusStack[k+1];
+		    }
+		    g_asDesktops[i].m_apcFocusStack[FOCUS_STACK_SIZE-1] = NULL;
+		}
+	    }
+	}
+    }
+
+    if ( pcWindow == get_active_window(true) ) {
+	set_active_window( NULL, false );
+    }
+}
+
+//----------------------------------------------------------------------------
 // NAME:
 // DESC:
 // NOTE:

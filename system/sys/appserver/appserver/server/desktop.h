@@ -36,6 +36,7 @@ void set_active_window( SrvWindow* pcWindow, bool bNotifyPrevious = true );
 
 void add_window_to_desktop( SrvWindow* pcWindow );
 void remove_window_from_desktop( SrvWindow* pcWindow );
+void remove_from_focusstack( SrvWindow* pcWindow );
 void set_desktop( int nNum );
 bool toggle_desktops();
 

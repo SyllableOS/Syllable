@@ -576,10 +576,13 @@ void SrvWindow::R_Render( WR_Render_s* psPkt )
 		GRndShowView_s* psMsg = static_cast<GRndShowView_s*>(psHdr);
 
 		if ( m_pcWndBorder != NULL && pcView == m_pcTopView ) {
-		    m_pcWndBorder->Show( psMsg->bVisible );
-		    if ( psMsg->bVisible ) {
-			m_pcWndBorder->MoveToFront();
-		    }
+			m_pcWndBorder->Show( psMsg->bVisible );
+			if ( psMsg->bVisible ) {
+				m_pcWndBorder->MoveToFront();
+			} else {
+				remove_from_focusstack( this );
+			}
+
 		    Layer* pcParent = m_pcWndBorder->GetParent();
 		    if ( pcParent != NULL ) { // Cant show not attached to a desktop
 			nLowest = 0;
