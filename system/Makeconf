@@ -5,7 +5,7 @@ export ATHEOS_INCLUDE_PATH := $(PWD)/sys/include
 export ATHEOS_LIB_PATH := $(PWD)/libs
 
 export BUILD_TOOLS := $(ATHEOS_SRC)/build-tools
-export DIST_DIR := $(PWD)/dist-root
+export DIST_DIR := $(PWD)/stage/image
 
 # Change this line to 'n' if you do not want to build
 # Glibc from source.
@@ -16,5 +16,4 @@ export BUILD_LIBC := y
 
 DIST_VER:=0.4.2a
 export DIST_NAME=base-syllable-$(DIST_VER).tgz
-
 
