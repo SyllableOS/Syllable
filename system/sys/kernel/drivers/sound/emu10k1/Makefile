@@ -8,7 +8,7 @@ deps:
 $(OBJDIR):
 	mkdir $(OBJDIR)
 
-$(OBJDIR)/$(DRIVER):
+$(DRIVER):
 	@cd src/ && $(MAKE)
 
 clean:
