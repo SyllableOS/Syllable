@@ -23,9 +23,9 @@ ln -s atheos/Applications /Applications
 if test "$1" = safe; then
     aterm &
 else
-    if [ -e /bin/desktop ]; then
+    if [ -e /bin/dlogin ]; then
 	. /etc/profile
-	/bin/desktop </dev/null >>/var/log/desktop.log 2>&1 &
+	/bin/dlogin </dev/null >>/var/log/desktop.log 2>&1 &
     else
 	aterm &
     fi
