@@ -51,7 +51,7 @@ static void usage( OptionParser& cOpts, bool bFull )
 
 status_t create_dir( const std::string& cPath )
 {
-    struct ::stat sStat;
+    struct stat sStat;
     if ( lstat( cPath.c_str(), &sStat ) >= 0 ) {
 	if ( S_ISDIR( sStat.st_mode ) == false ) {
 	    fprintf( stderr, "Error: %s already exists but is not a directory\n", cPath.c_str() );
@@ -105,7 +105,7 @@ else {
 		fprintf( stderr, "Error: failed to open destination directory %s : %s\n", cDst.c_str(), strerror(errno) );
 		return( -1 );
 	    }
-	    std::string cRealPath;
+	    os::String cRealPath;
 	    if ( cDstDir.GetPath( &cRealPath ) < 0 ) {
 		fprintf( stderr, "Error: failed to get real path to destination directory %s : %s\n", cDst.c_str(), strerror(errno) );
 		return( -1 );
@@ -118,7 +118,7 @@ else {
 		fprintf( stderr, "Error: failed to create destination directory %s : %s\n", cDst.c_str(), strerror(errno) );
 		return( -1 );
 	    }
-	    if ( link_directory( cRealPath, cDst ) < 0 ) {
+	    if ( link_directory( cRealPath.str(), cDst ) < 0 ) {
 		fprintf( stderr, "Error: failed to convert destination symlink to directory %s : %s\n", cDst.c_str(), strerror(errno) );
 		return( -1 );
 	    }
@@ -134,29 +134,29 @@ else {
 	if ( g_bVerbose ) {
 	    printf( "Link files from %s\n", cSrc.c_str() );
 	}
-	std::string cName;
+	os::String cName;
 	while( cDir.GetNextEntry( &cName ) == 1 ) {
 	    if ( cName == "." || cName == ".." ) {
 		continue;
 	    }
-	    struct ::stat sStat;
+	    struct stat sStat;
 	    try {
 		FSNode cNode( cDir, cName, O_RDONLY | O_NONBLOCK | O_NOTRAVERSE );
 		cNode.GetStat( &sStat, false );
 	    } catch( os::errno_exception& cExc ) {
-		fprintf( stderr, "Error: failed to open file %s : %s\n", (cSrc + "/" + cName).c_str(), cExc.error_str() );
+		fprintf( stderr, "Error: failed to open file %s : %s\n", (cSrc + "/" + cName.str()).c_str(), cExc.error_str() );
 		continue;
 	    } catch(...) {
-		fprintf( stderr, "Error: failed to open file %s : unknown error\n", (cSrc + "/" + cName).c_str() );
+		fprintf( stderr, "Error: failed to open file %s : unknown error\n", (cSrc + "/" + cName.str()).c_str() );
 		continue;
 	    }
-	    std::string cSrcPath = cSrc + "/" + cName;
-	    std::string cDstPath = cDst + "/" + cName;
+	    std::string cSrcPath = cSrc + "/" + cName.str();
+	    std::string cDstPath = cDst + "/" + cName.str();
 	    if ( S_ISDIR( sStat.st_mode ) ) {
 		link_directory( cSrcPath, cDstPath );
 	    }  else {
 		bool bReplace = false;
-		struct ::stat sDstStat;
+		struct stat sDstStat;
 		if ( lstat( cDstPath.c_str(), &sDstStat ) < 0 ) {
 		    if ( errno != ENOENT ) {
 			fprintf( stderr, "Error: failed to stat %s : %s\n", cDstPath.c_str(), strerror(errno) );
@@ -203,7 +203,7 @@ std::string operator+(const char* pzStr1, const std::string& cStr2 )
 
 status_t add_packages( OptionParser& cOpts )
 {
-    const std::vector<std::string>& cDirs = cOpts.GetFileArgs();
+    const std::vector<os::String>& cDirs = cOpts.GetFileArgs();
     
     if ( cDirs.empty() ) {
 	fprintf( stderr, "Error: no package directories specified.\n" );
@@ -235,13 +235,13 @@ status_t add_packages( OptionParser& cOpts )
 	try {
 	    Directory cDir( cPath );
 
-	    std::string cName;
+	    os::String cName;
 	    while( cDir.GetNextEntry( &cName ) == 1 ) {
 		if ( cName == ".." || cName == "." ) {
 		    continue;
 		}
-		struct ::stat sStat;
-		std::string cSource = cPath + "/" + cName;
+		struct stat sStat;
+		os::String cSource = os::String( cPath ) + os::String( "/" ) + cName;
 		if ( stat( cSource.c_str(), &sStat ) < 0 ) {
 		    fprintf( stderr, "Error: Failed to stat %s : %s\n", cSource.c_str(), strerror(errno) );
 		    continue;
@@ -275,7 +275,7 @@ status_t add_packages( OptionParser& cOpts )
 	    if ( g_bRunScripts ) {
 		std::string cScriptArgs = cPath;
 		cScriptArgs += "/pkgsetup.sh";
-		struct ::stat sStat;
+		struct stat sStat;
 		if ( stat( cScriptArgs.c_str(), &sStat ) >= 0 ) {
 		    if ( g_bQuiet == false ) {
 			printf( "Run setup script: %s\n", cScriptArgs.c_str() );
@@ -297,9 +297,9 @@ static status_t unlink_directory( const std::string& cPath, const std::string& c
 {
     try {
 	Directory cDir( cPath, O_RDONLY | O_NOTRAVERSE );
-	std::string cName;
+	os::String cName;
 
-	std::vector<std::string> cFiles;
+	std::vector<os::String> cFiles;
 	
 	while( cDir.GetNextEntry( &cName ) == 1 ) {
 	    if ( cName == "." || cName == ".." ) {
@@ -310,18 +310,18 @@ static status_t unlink_directory( const std::string& cPath, const std::string& c
 	bool bLinksRemoved = false;
 	for ( uint i = 0 ; i < cFiles.size() ; ++i ) {
 	    cName = cFiles[i];
-	    struct ::stat sStat;
+	    struct stat sStat;
 	    try {
 		FSNode cNode( cDir, cName, O_RDONLY | O_NONBLOCK | O_NOTRAVERSE );
 		cNode.GetStat( &sStat, false );
 	    } catch( os::errno_exception& cExc ) {
-		fprintf( stderr, "Error: failed to open file %s : %s\n", (cPath + "/" + cName).c_str(), cExc.error_str() );
+		fprintf( stderr, "Error: failed to open file %s : %s\n", (cPath + "/" + cName.str()).c_str(), cExc.error_str() );
 		continue;
 	    } catch(...) {
-		fprintf( stderr, "Error: failed to open file %s : unknown error\n", (cPath + "/" + cName).c_str() );
+		fprintf( stderr, "Error: failed to open file %s : unknown error\n", (cPath + "/" + cName.str()).c_str() );
 		continue;
 	    }
-	    std::string cDstPath = cPath + "/" + cName;
+	    std::string cDstPath = cPath + "/" + cName.str();
 	    if ( S_ISDIR( sStat.st_mode ) ) {
 		unlink_directory( cDstPath, cBasePath );
 	    }  else if ( S_ISLNK( sStat.st_mode ) ) {
@@ -370,7 +370,7 @@ static status_t unlink_directory( const std::string& cPath, const std::string& c
 
 status_t remove_packages( OptionParser& cOpts )
 {
-    const std::vector<std::string>& cDirs = cOpts.GetFileArgs();
+    const std::vector<os::String>& cDirs = cOpts.GetFileArgs();
     
     if ( cDirs.empty() ) {
 	fprintf( stderr, "Error: no package directories specified.\n" );
@@ -405,7 +405,7 @@ status_t remove_packages( OptionParser& cOpts )
 	    if ( g_bRunScripts ) {
 		std::string cScriptArgs = cPath;
 		cScriptArgs += "pkgcleanup.sh";
-		struct ::stat sStat;
+		struct stat sStat;
 		if ( stat( cScriptArgs.c_str(), &sStat ) >= 0 ) {
 		    if ( g_bQuiet == false ) {
 			printf( "Run cleanup script: %s\n", cScriptArgs.c_str() );
