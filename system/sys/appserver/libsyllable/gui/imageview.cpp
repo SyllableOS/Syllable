@@ -149,3 +149,51 @@ Image *ImageView::GetImage( void ) const
 	return m->m_pcImage;
 }
 
+/** Refresh image
+ * \par 	Description:
+ *		This method is intended for use with double buffered animation. Call
+ *		Refresh() after changing the attached image. The difference between
+ *		this method and Invalidate(), is that this method will not clear the
+ *		background.
+ * \note Refresh() does not work with transparent bitmaps.
+ * \sa os::Image, os::View
+ * \author Henrik Isaksson (henrik@isaksson.tk)
+ *****************************************************************************/
+void ImageView::Refresh()
+{
+	if( !m->m_pcImage )
+		return;
+
+	Rect cBounds( GetBounds() );
+	Point cImgSize( m->m_pcImage->GetSize() );
+
+	SetDrawingMode( DM_COPY );
+
+	if( m->m_nMode & TILE )
+	{
+		Point n( cBounds.Width(), cBounds.Height(  ) );
+		Point p;
+
+		n.x /= cImgSize.x;
+		n.y /= cImgSize.y;
+		for( p.y = 0; p.y < n.y; p.y++ )
+		{
+			for( p.x = 0; p.x < n.x; p.x++ )
+			{
+				m->m_pcImage->Draw( Point( cImgSize.x * p.x, cImgSize.y * p.y ), this );
+			}
+		}
+	}
+	else if( m->m_nMode & STRETCH )
+	{
+		/* TODO: First rect should be changed to the section of the Image that will result    */
+		/* in cUpdateRect when scaled according to the ration between CBounds and Image size. */
+		/* NOTE: View->DrawBitmap() scaling must be implemented first! */
+		m->m_pcImage->Draw( cBounds, cBounds, this );
+	}
+	else
+	{
+		m->m_pcImage->Draw( cBounds, cBounds, this );
+	}
+}
+
