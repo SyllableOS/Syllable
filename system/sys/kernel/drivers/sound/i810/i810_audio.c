@@ -63,8 +63,8 @@
  *
  *	If you need to force a specific rate set the clocking= option
  */
- 
- 
+
+
 #include <posix/errno.h>
 #include <posix/ioctls.h>
 #include <posix/fcntl.h>
@@ -305,9 +305,9 @@ static struct pci_audio_info pci_audio_devices[] = {
 	{PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH5, INTELICH5, "Intel ICH5"},
 	{PCI_VENDOR_ID_SI, PCI_DEVICE_ID_SI_7012, SI7012,"SiS 7012"},
 	{PCI_VENDOR_ID_NVIDIA, PCI_DEVICE_ID_NVIDIA_MCP1_AUDIO, NVIDIA_NFORCE, "NVIDIA nForce Audio"},
-	{PCI_VENDOR_ID_NVIDIA, PCI_DEVICE_ID_NVIDIA_MCP2_AUDIO, NVIDIA_NFORCE, "NVIDIA nForce Audio"},
-	{PCI_VENDOR_ID_NVIDIA, PCI_DEVICE_ID_NVIDIA_MCP3_AUDIO, NVIDIA_NFORCE, "NVIDIA nForce Audio"},
-	{PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_768_AUDIO, AMD768, "AMD 768"},	
+	{PCI_VENDOR_ID_NVIDIA, PCI_DEVICE_ID_NVIDIA_MCP2_AUDIO, NVIDIA_NFORCE, "NVIDIA nForce2 Audio"},
+	{PCI_VENDOR_ID_NVIDIA, PCI_DEVICE_ID_NVIDIA_MCP3_AUDIO, NVIDIA_NFORCE, "NVIDIA nForce3 Audio"},
+	{PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_768_AUDIO, AMD768, "AMD 768"},
 	{PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_8111_AC97, AMD8111, "AMD-8111 IoHub"},
 };
 
@@ -494,7 +494,7 @@ static int i810_valid_spdif_rate ( struct ac97_codec *codec, int rate )
 				return 1;
 			}
 			break;
-		default: /* all other codecs, until we know otherwiae */
+		default: /* all other codecs, until we know otherwise */
 			if (rate == 48000 || rate == 44100 || rate == 32000) {
 				return 1;
 			}
@@ -596,8 +596,8 @@ static unsigned int i810_set_adc_rate(struct i810_state * state, unsigned int ra
 	/*
 	 *	Adjust for misclocked crap
 	 */
-	 
-	rate = ( rate * clocking)/48000;
+	
+	rate = (rate * clocking)/48000;
 	if(strict_clocking && rate < 8000) {
 		rate = 8000;
 		dmabuf->rate = (rate * 48000)/clocking;
@@ -618,7 +618,7 @@ static unsigned int i810_set_adc_rate(struct i810_state * state, unsigned int ra
 
 /* get current playback/recording dma buffer pointer (byte offset from LBA),
    called with spinlock held! */
-   
+
 static inline unsigned i810_get_dma_addr(struct i810_state *state, int rec)
 {
 	struct dmabuf *dmabuf = &state->dmabuf;
@@ -643,7 +643,7 @@ static inline unsigned i810_get_dma_addr(struct i810_state *state, int rec)
 		offset = inw(port_picb);
 		/* Must have a delay here! */ 
 		if(offset == 0)
-			udelay(1);
+			udelay(10);
 		/* Reread both registers and make sure that that total
 		 * offset from the first reading to the second is 0.
 		 * There is an issue with SiS hardware where it will count
@@ -655,12 +655,12 @@ static inline unsigned i810_get_dma_addr(struct i810_state *state, int rec)
 		 * be back in the right place, and we will suddenly think
 		 * we just went forward dmasize - fragsize bytes, causing
 		 * totally stupid *huge* dma overrun messages.  We are
-		 * assuming that the 1us delay is more than long enough
+		 * assuming that the 10us delay is more than long enough
 		 * that we won't have to worry about the chip still being
 		 * out of sync with reality ;-)
 		 */
 	} while (civ != GET_CIV(port) || offset != inw(port_picb));
-		 
+	
 	return (((civ + 1) * dmabuf->fragsize - (bytes * offset))
 		% dmabuf->dmasize);
 }
@@ -765,7 +765,7 @@ static void start_dac(struct i810_state *state)
 	__start_dac(state);
 	spin_unlock_irqrestore(&card->lock, flags);
 }
-	
+
 #define DMABUF_DEFAULTORDER (15-PAGE_SHIFT)
 #define DMABUF_MINORDER 1
 
@@ -1310,7 +1310,6 @@ static int i810_dsp_read(void *node, void *cookie, off_t ppos, void *buffer, siz
 	unsigned int swptr;
 	int cnt;
 	int pending;
-        //DECLARE_WAITQUEUE(waita, current);
 
 #ifdef DEBUG2
 	printk("i810_audio: i810_read called, count = %d\n", count);
@@ -1430,7 +1429,6 @@ int i810_dsp_write(void *node, void *cookie, off_t ppos, const void *buffer, siz
 	unsigned int swptr = 0;
 	int cnt;
 	int pending;
-        //DECLARE_WAITQUEUE(waita, current);
 
 #ifdef DEBUG2
 	printk("i810_audio: i810_write called, count = %d\n", count);
@@ -1909,7 +1907,6 @@ int i810_dsp_ioctl(void *node, void *cookie, uint32 cmd, void *args, bool b_from
 }
 
 
-//static int i810_open(struct inode *inode, struct file *file)
 static status_t i810_dsp_open (void* pNode, uint32 nFlags, void **pCookie )
 {
 	int i = 0;
@@ -1984,7 +1981,6 @@ found_virt:
 	return 0;
 }
 
-//static int i810_release(struct inode *inode, struct file *file)
 static status_t i810_dsp_release( void *pNode, void *pCookie )
 {
 	struct i810_state *state = (struct i810_state *) i810_state_data;
@@ -2038,7 +2034,6 @@ static void i810_ac97_set(struct ac97_codec *dev, u8 reg, u16 data)
 
 /* OSS /dev/mixer file operation methods */
 
-//static int i810_open_mixdev(struct inode *inode, struct file *file)
 static status_t i810_mixer_open(void* pNode, uint32 nFlags, void **pCookie)
 {
 	int i;
@@ -2059,8 +2054,6 @@ static status_t i810_mixer_release(void *pNode, void *pCookie)
 	return 0;
 }
 
-//static int i810_ioctl_mixdev(struct inode *inode, struct file *file, unsigned int cmd,
-//				unsigned long arg)
 static status_t i810_mixer_ioctl (void *node, void *cookie, uint32 cmd, void *args, bool b_fromkernel)
 {
 	unsigned long arg = (unsigned long)args;
@@ -2132,7 +2125,7 @@ static int i810_ac97_init(struct i810_card *card)
 		reg|=2;
 	else
 		reg|=4;	/* Warm */
-		
+	
 	reg&=~8;	/* ACLink on */
 	outl(reg , card->iobase + GLOB_CNT);
 	
@@ -2151,7 +2144,7 @@ static int i810_ac97_init(struct i810_card *card)
 	}
 
 	//schedule_timeout(HZ/5);
-	udelay(500000);
+	udelay(200000);
 	
 	inw(card->ac97base);
 	
@@ -2294,7 +2287,6 @@ config_out_nodmabuf:
 /* install the driver, we do not allocate hardware channel nor DMA buffer now, they are defered 
    until "ACCESS" time (in prog_dmabuf called by open/read/write/ioctl/mmap) */
    
-//static int i810_probe(struct pci_dev *pci_dev, const struct pci_device_id *pci_id)
 static int i810_probe(PCI_Info_s *pci_dev, int pci_id, int nDeviceID, struct pci_audio_info *pci_info)
 {
 	struct i810_card *card;
@@ -2369,7 +2361,6 @@ static int i810_probe(PCI_Info_s *pci_dev, int pci_id, int nDeviceID, struct pci
 		goto out_mem;
 	}
 
-	printk("##1##");
 	{ /* We may dispose of this altogether some time soon, so... */
 		struct i810_channel *cp = card->channel;
 
@@ -2390,15 +2381,13 @@ static int i810_probe(PCI_Info_s *pci_dev, int pci_id, int nDeviceID, struct pci
 		goto out_pio;
 	}
 
-	printk("##2##");
-
 	/* initialize AC97 codec and register /dev/mixer */
 	if (i810_ac97_init(card) <= 0) {
 		release_irq(card->irq, 0);
 		goto out_iospace;
 	}
 
-	udelay(100000);
+	udelay(10000);
 	
 	if(clocking == 0) {
 		clocking = 48000;
@@ -2406,7 +2395,6 @@ static int i810_probe(PCI_Info_s *pci_dev, int pci_id, int nDeviceID, struct pci
 	}
 
 	/* register /dev/dsp */
-	//if ((card->dev_audio = register_sound_dsp(&i810_audio_fops, -1)) < 0) {
 #ifdef ENABLE_DEVNODE_052
 	if( create_device_node( nDeviceID, pci_dev->nHandle,"sound/i810/dsp/0",
 #else
@@ -2424,7 +2412,7 @@ static int i810_probe(PCI_Info_s *pci_dev, int pci_id, int nDeviceID, struct pci
 	}
 
 	printk("i810_audio: Card initialization successful.\n");
-	udelay(50000);
+
 	card->initializing = 0;
 	return 1;
 
