@@ -1,0 +1,5 @@
+authors			Kaj de Vos
+licenses		BSD
+home			www.xiph.org/ogg/
+patch-config
+documentation	README COPYING CHANGES AUTHORS
