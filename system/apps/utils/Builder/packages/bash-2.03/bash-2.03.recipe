@@ -4,5 +4,5 @@ patch-config		support
 configure-options	--without-gnu-malloc
 documentation		README COPYING NEWS CHANGES COMPAT NOTES Y2K AUTHORS doc/FAQ doc/INTRO examples
 links
-	bin/bash	/bin
-	bin/bash	/bin/sh
+	bin/bash		/bin/bash
+	bin/bash		/bin/sh

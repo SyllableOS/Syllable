@@ -1,9 +1,13 @@
 authors				Kaj de Vos
-status				testing
+status				broken
+warnings			Prevents compiling some packages.
+
+licenses			GPL
+home				www.gnu.org/software/bash/
 
 patch-config		support
 configure-options	--without-bash-malloc
 documentation		README POSIX RBASH COPYING NEWS CHANGES COMPAT NOTES Y2K AUTHORS doc/FAQ doc/INTRO examples
 links
-	bin/bash	/bin
-	bin/bash	/bin/sh
+	bin/bash		/bin/bash
+	bin/bash		/bin/sh
