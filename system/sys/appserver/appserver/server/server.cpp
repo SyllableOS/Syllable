@@ -469,7 +469,7 @@ void AppServer::DispatchMessage( Message* pcReq )
 	    cReply.AddFloat( "size", psProps->m_vSize );
 	    cReply.AddFloat( "shear", psProps->m_vShear );
 	    cReply.AddFloat( "rotation", psProps->m_vRotation );
-	    cReply.AddInt32( "rotation", psProps->m_nFlags );
+	    cReply.AddInt32( "flags", psProps->m_nFlags );
 	    cReply.AddInt32( "error", 0 );
 	    pcReq->SendReply( &cReply );
 	    break;
@@ -691,6 +691,7 @@ int main( int argc, char** argv )
     dbprintf( "WARNING : layers.device failed to initiate itself!!!\n" );
     return( 0 );
 }
+
 
 
 
