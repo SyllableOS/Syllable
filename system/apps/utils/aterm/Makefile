@@ -8,14 +8,14 @@ LL	= gcc
 
 $(EXE): $(OBJS)
 	$(CC) $(OBJS) -lsyllable -lstdc++ -o $(EXE)
+	strip --strip-all $(EXE)
+	rescopy -r $(EXE) *.png
 
 install: $(EXE)
 	cp -f $(EXE) /bin/aterm
-	strip --strip-all /bin/aterm
 
 dist: $(EXE)
 	cp -f $(EXE) $(DIST_DIR)/atheos/sys/bin/aterm
-	strip --strip-all $(DIST_DIR)/atheos/sys/bin/aterm
 
 clean:
 	-rm $(OBJS)

@@ -42,6 +42,7 @@
 #include <util/application.h>
 #include <util/message.h>
 #include <gui/guidefines.h>
+#include <util/resources.h>
 
 #include "tview.h"
 #include "messages.h"
@@ -129,6 +130,12 @@ void MyApp::HandleMessage( Message * pcMsg )
  */
 MyWindow::MyWindow( Rect cFrame, const char *pzName, const char *pzTitle, int nFlags, uint32 nDesktopMask ):Window( cFrame, pzName, pzTitle, nFlags, nDesktopMask )
 {
+	/* Set Dock icon */
+	os::BitmapImage *pcImage = new os::BitmapImage();
+	os::Resources cRes( get_image_id() );
+	pcImage->Load( cRes.GetResourceStream( "icon24x24.png" ) );
+	SetIcon(pcImage->LockBitmap());
+	delete(pcImage);
 }
 
 /**
