@@ -575,6 +575,50 @@ void Font::GetStringLengths( const char **apzStringArray, const int *anLengthArr
 	delete[]pBuffer;
 }
 
+std::vector<uint32> Font::GetSupportedCharacters() const
+{
+	std::vector<uint32> cCharCodes;
+	int32 nCharCode = 0;
+	bool bMoreChars;
+
+	do {
+		Message cReq( AR_GET_FONT_CHARACTERS );
+		Message cReply;
+
+		cReq.AddInt32( "handle", m_hFontHandle );
+		cReq.AddInt32( "lastchar", nCharCode );
+		cReq.AddInt32( "maxchars", 1000 );
+
+		port_id hPort = Application::GetInstance()->GetAppPort(  );
+
+		Messenger( hPort ).SendMessage( &cReq, &cReply );
+
+		int nError = -EINVAL;
+
+		cReply.FindInt( "error", &nError );
+
+		if( nError >= 0 )
+		{
+			int i = 0;
+	
+			while( cReply.FindInt32( "character_code", &nCharCode, i++ ) == 0 ) {
+				cCharCodes.push_back( nCharCode );
+			}
+		}
+		else
+		{
+			errno = -nError;
+			dbprintf("Font::GetSupportedCharacters() failed: %d\n", nError);
+			break;
+		}
+		
+		bMoreChars = false;
+		cReply.FindBool( "more_chars", &bMoreChars );
+	} while( bMoreChars );
+
+	return ( cCharCodes );
+}
+
 
 /** Get a list of default font names.
  * \par Description:

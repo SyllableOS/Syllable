@@ -289,6 +289,8 @@ public:
 
     void	GetHeight( font_height* psHeight ) const	{ *psHeight = m_sHeight;	}
 
+	std::vector<uint32> GetSupportedCharacters() const;
+
     int		GetFontID( void ) const { return( m_hFontHandle ); }
 
     bool  operator==( const Font& cOther );
