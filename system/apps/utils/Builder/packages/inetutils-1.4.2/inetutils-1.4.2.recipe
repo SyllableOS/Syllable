@@ -1,5 +1,7 @@
 authors				Kaj de Vos
 warnings			The servers reportedly don't work.
+notes
+	configure misgenerates some path definition files, except with Bash 2.03. Possibly a problem with echo.
 
 licenses			GPL
 home				www.gnu.org/software/inetutils/
