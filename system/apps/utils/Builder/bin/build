@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.2.2
+# Version 0.2.3
 # Copyright (c) 2002, 2003 Kaj de Vos
 # License: GPL 2
 
@@ -49,7 +49,7 @@ end
 # Functions for single packages
 
 def unpackPackage target
-	Dir.chdir File.dirname target if target["/"]
+	Dir.chdir File.dirname(target) if target["/"]
 
 #	file = Dir[File.join(@sourcesDir, fullName target) + ".*"] [0]
 #	case File.basename file
@@ -117,11 +117,11 @@ def getPackage target
 				end
 			end
 		else
-			unless exists? File.join target, "CVS"
+			unless exists? File.join(target, "CVS")
 				# Source already prepared
 				true
 			else
-				if Dir[File.join @sourcesDir, fullName(target) + ".*"] != []
+				if Dir[File.join(@sourcesDir, fullName(target) + ".*")] != []
 					puts "\nWARNING! This will clobber your CVS repository!"
 					logHeader "Replacing source"
 
@@ -140,9 +140,9 @@ def getPackage target
 					end
 				else
 					Dir.chdir target
-					unless exists? "configure"
+					unless thirdParty?
 						true
-					else  # 3rd-party package
+					else
 						puts "\nWARNING! This will clobber your CVS repository!"
 						deleteCVSData
 						patchPackage target
@@ -160,9 +160,9 @@ def getPackage target
 end
 
 def configurePackage target
-	if exists? "configure"  # configure command available
+	if thirdParty?
 		logHeader "Configuring"
-		action "rm config.cache"
+		action "rm config.cache" if exists? "config.cache"
 		name = shortName package = fullName(target)
 		if action "./configure" +
 			((options = recipe(package)["configure-options"]) ? " " + options : "") +
@@ -219,6 +219,8 @@ def installPackage target
 			logHeader "Registering " + dir
 			logFailure target unless action "pkgmanager -a " + dir
 		end
+
+		action "sync"
 	end
 end
 
@@ -226,20 +228,29 @@ def uninstallPackage target
 	dir = installDir target
 	if @systemBuild or action "pkgmanager -r " + dir
 		logHeader "Deleting " + dir
-		action "rm -r " + dir
+		unless action "rm -r " + dir
+			false
+		else
+			action "sync"
+		end
 	end
 end
 
 def makeDistroPackage target
-	if exists? "configure"  # 3rd-party package
+	if thirdParty?
 		installPackage target
 	else  # Native package
-		if action "make dist"
-			logHeader "Installing documentation"
-			if action "make doc"
-				action "make install-doc"
+		unless
+			unless action "make dist"
+				false
+			else
+				logHeader "Installing documentation"
+				if action "make doc"
+					action "make install-doc"
+				end
+				action "sync"
 			end
-		else
+		then
 			logFailure target
 		end
 	end
@@ -532,6 +543,10 @@ def parseValues text  # Load key/value pairs into a hash table
 	hash
 end
 
+def thirdParty?
+	exists? "configure"
+end
+
 def fullName package
 	# Extract name including version, if necessary
 	File.basename package[-1, 1] == "/" ? package.chop : package
@@ -572,7 +587,7 @@ end
 def recipe package  # Load the key/value pairs of a recipe into a hash table
 	package = fullName package
 	if exists? recipe = File.join(@packagesDir, package, package + ".recipe")
-		parseValues load recipe
+		parseValues load(recipe)
 	else
 		{}
 	end
@@ -666,34 +681,35 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "--version"
-	puts "Syllable Build System 0.2.2",
+	puts "Syllable Build System 0.2.3",
 		"Copyright (c) 2002, 2003 Kaj de Vos",
 		"License: GPL 2"
-when "--help"
+when "?", "-?", "-h", "-help", "--help"
 	puts "Usage: build [<command>] [<package> | <profile> | <log>]",
 		"<command>:",
-		"  --version      Show version information",
-		"  --help         Show help information",
-		"  prepare        Initialize system distribution tree",
-		"  get            Fetch and patch sources",
-		"  patch          Patch sources",
+		"  ?, -?, -h,    Show this help information",
+		"  -help, --help",
+		"  --version     Show version information",
+		"  prepare       Initialize system distribution tree",
+		"  get           Fetch and patch sources",
+		"  patch         Patch sources",
 		"  distclean",
 		"  clean",
 		"  configure",
 		"  make",
 		"  test",
-		"  install        (Run as super-user)",
-		"  uninstall      (Run as super-user)",
-		"  distro         Build a distribution package or a system distribution",
-		"  list           List a profile",
-		"  log            Show the last log",
-		"<package>:       Package subdirectory",
-		"<profile>:       Profile name",
-		"  last           Last used profile",
-		"  failures       Profile for last failures",
-		"<log>:           Log name",
-		"  summary        Summarized log",
-		"  failures       Log of failed packages"
+		"  install       (Run as super-user)",
+		"  uninstall     (Run as super-user)",
+		"  distro        Build a distribution package or a system distribution",
+		"  list          List a profile",
+		"  log           Show the last log",
+		"<package>:      Package subdirectory",
+		"<profile>:      Profile name",
+		"  last          Last used profile",
+		"  failures      Profile for last failures",
+		"<log>:          Log name",
+		"  summary       Summarized log",
+		"  failures      Log of failed packages"
 when "list" then print IO.readlines(File.join(@profilesDir, arg2))
 when "log"  then print IO.readlines(File.join(@logDir, arg2 ? "last-" + arg2 : "last-stdout"))
 else
