@@ -34,7 +34,7 @@ using namespace os;
 class Button::Private {
 	public:
 	bool m_bClicked;
-	bool m_bIsToggle;
+	InputMode m_eInputMode;
 };
 
 //----------------------------------------------------------------------------
@@ -49,7 +49,7 @@ Button::Button( Rect cFrame, const String& cName, const String& cLabel, Message 
 {
 	m = new Private;
 	m->m_bClicked = false;
-	m->m_bIsToggle = false;
+	m->m_eInputMode = InputModeNormal;
 }
 
 //----------------------------------------------------------------------------
@@ -125,7 +125,7 @@ void Button::KeyDown( const char *pzString, const char *pzRawString, uint32 nQua
 	if( ( pzString[1] == '\0' && ( pzString[0] == VK_ENTER || pzString[0] == ' ' ) ) ||
 		( GetShortcut() == ShortcutKey( pzRawString, nQualifiers ) ) )
 	{
-		if( m->m_bIsToggle ) {
+		if( m->m_eInputMode == InputModeToggle ) {
 			SetValue( GetValue().AsBool() ? 0 : 1, false );
 		} else {
 			SetValue( 1, false );
@@ -134,7 +134,7 @@ void Button::KeyDown( const char *pzString, const char *pzRawString, uint32 nQua
 	}
 	else
 	{
-		if( !m->m_bIsToggle ) SetValue( 0, false );
+		if( m->m_eInputMode == InputModeNormal ) SetValue( 0, false );
 		Control::KeyDown( pzString, pzRawString, nQualifiers );
 	}
 }
@@ -149,7 +149,7 @@ void Button::KeyUp( const char *pzString, const char *pzRawString, uint32 nQuali
 	if( ( pzString[1] == '\0' && ( pzString[0] == VK_ENTER || pzString[0] == ' ' ) ) ||
 		( GetShortcut() == ShortcutKey( pzRawString, nQualifiers ) ) )
 	{
-		if( !m->m_bIsToggle && GetValue().AsBool(  ) == true )
+		if( m->m_eInputMode == InputModeNormal && GetValue().AsBool(  ) == true )
 		{
 			SetValue( false );
 		}
@@ -178,10 +178,12 @@ void Button::MouseDown( const Point & cPosition, uint32 nButton )
 	MakeFocus( true );
 
 	m->m_bClicked = GetBounds().DoIntersect( cPosition );
-	if( m->m_bIsToggle ) {
+	if( m->m_eInputMode == InputModeToggle ) {
 		if( m->m_bClicked ) {
 			SetValue( GetValue().AsBool() ? 0 : 1 );
 		}
+	} else if( m->m_eInputMode == InputModeRadio ) {
+		SetValue( m->m_bClicked );
 	} else {
 		SetValue( m->m_bClicked, false );
 	}
@@ -201,7 +203,7 @@ void Button::MouseUp( const Point & cPosition, uint32 nButton, Message * pcData 
 		View::MouseUp( cPosition, nButton, pcData );
 		return;
 	}
-	if( !m->m_bIsToggle ) {
+	if( m->m_eInputMode == InputModeNormal ) {
 		if( GetValue().AsBool(  ) != false )
 		{
 			SetValue( false );
@@ -225,7 +227,7 @@ void Button::MouseMove( const Point & cPosition, int nCode, uint32 nButtons, Mes
 		return;
 	}
 
-	if( m->m_bClicked && !m->m_bIsToggle)
+	if( m->m_bClicked && m->m_eInputMode == InputModeNormal )
 	{
 		uint32 nButtons;
 
@@ -303,14 +305,14 @@ void Button::Paint( const Rect & cUpdateRect )
 	}
 }
 
-void Button::SetToggleMode(bool bToggle)
+void Button::SetInputMode( InputMode eInputMode )
 {
-	m->m_bIsToggle = bToggle;
+	m->m_eInputMode = eInputMode;
 	Flush();
 }
 
-bool Button::GetToggleMode() const
+Button::InputMode Button::GetInputMode() const
 {
-	return m->m_bIsToggle;
+	return m->m_eInputMode;
 }
 
