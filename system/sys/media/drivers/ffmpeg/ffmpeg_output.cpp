@@ -182,7 +182,15 @@ void FFMpegOutput::Clear()
 
 uint32 FFMpegOutput::GetOutputFormatCount()
 {
-	return( 8 );
+	uint32 nCount = 0;
+	AVCodec* psCodec = first_avcodec;
+	while( psCodec )
+	{
+		if( psCodec->encode )
+			nCount++;
+		psCodec = psCodec->next;
+	}
+	return( nCount );
 }
 
 os::MediaFormat_s FFMpegOutput::GetOutputFormat( uint32 nIndex )
@@ -190,40 +198,27 @@ os::MediaFormat_s FFMpegOutput::GetOutputFormat( uint32 nIndex )
 	os::MediaFormat_s sFormat;
 	MEDIA_CLEAR_FORMAT( sFormat );
 	
-	switch( nIndex )
+	uint32 nCount = 0;
+	AVCodec* psCodec = first_avcodec;
+	while( psCodec )
 	{
-		/* No all ffmpeg formats are supported when encoding */
-		case 0:
-			sFormat.zName = "MPEG1 Video";
-			sFormat.nType = os::MEDIA_TYPE_VIDEO;
-		break;
-		case 1:
-			sFormat.zName = "MS MPEG4V2 Video";
-			sFormat.nType = os::MEDIA_TYPE_VIDEO;
-		break;
-		case 2:
-			sFormat.zName = "MS MPEG4V3 Video";
-			sFormat.nType = os::MEDIA_TYPE_VIDEO;
-		break;
-		case 3:
-			sFormat.zName = "MP2 Audio";
-			sFormat.nType = os::MEDIA_TYPE_AUDIO;
-		break;
-		case 4:
-			sFormat.zName = "PCM_S16LE Audio";
-			sFormat.nType = os::MEDIA_TYPE_AUDIO;
-		break;
-		case 5:
-			sFormat.zName = "PCM_U8 Audio";
-			sFormat.nType = os::MEDIA_TYPE_AUDIO;
-		break;
-		case 6:
-			sFormat.zName = "MJPEG Video";
-			sFormat.nType = os::MEDIA_TYPE_VIDEO;
-		break;
-		break;
-		
+		if( psCodec->encode )
+		{
+			if( nCount == nIndex )
+			{
+				sFormat.zName = psCodec->name;
+				if( psCodec->type == CODEC_TYPE_VIDEO )
+					sFormat.nType = os::MEDIA_TYPE_VIDEO;
+				else if( psCodec->type == CODEC_TYPE_AUDIO )
+					sFormat.nType = os::MEDIA_TYPE_AUDIO;
+				else
+					sFormat.nType = os::MEDIA_TYPE_OTHER;
+			}
+			nCount++;
+		}
+		psCodec = psCodec->next;
 	}
+	
 	return( sFormat );
 }
 

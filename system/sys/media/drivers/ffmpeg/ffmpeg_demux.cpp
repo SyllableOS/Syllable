@@ -117,7 +117,7 @@ status_t FFMpegDemuxer::Open( os::String zFileName )
 		m_nLength = (int)m_psContext->duration / AV_TIME_BASE;
 		
 		if( !m_bStream && m_psContext->start_time != AV_NOPTS_VALUE )
-			av_seek_frame( m_psContext, -1, m_psContext->start_time );
+			av_seek_frame( m_psContext, -1, m_psContext->start_time, 0 );
 		
 		m_nCurrentPosition = 0;
 		
@@ -218,7 +218,7 @@ uint64 FFMpegDemuxer::Seek( uint64 nPosition )
 	nPosition *= AV_TIME_BASE;
 	if( m_psContext->start_time != AV_NOPTS_VALUE )
 		nPosition += m_psContext->start_time;
-	av_seek_frame( m_psContext, -1, nPosition );
+	av_seek_frame( m_psContext, -1, nPosition, 0 );
 	
 //	m_nCurrentPosition = url_fseek( &m_psContext->pb, nPosition * m_nBitRate / 8, SEEK_SET ) * 8 / m_nBitRate;
 	return( nPosition );
@@ -241,97 +241,12 @@ os::MediaFormat_s FFMpegDemuxer::GetStreamFormat( uint32 nIndex )
 	else
 		sFormat.nType = os::MEDIA_TYPE_OTHER;
 		
-	/* Save codec identifier ( really incomplete! ) */
-	switch( m_psContext->streams[nIndex]->codec.codec_id )
+	if( avcodec_find_decoder( m_psContext->streams[nIndex]->codec.codec_id ) == NULL )
 	{
-		case CODEC_ID_MPEG1VIDEO:
-			sFormat.zName = "MPEG1 Video";
-		break;
-		case CODEC_ID_MPEG2VIDEO:
-			sFormat.zName = "MPEG2 Video";
-		break;
-		case CODEC_ID_H263:
-			sFormat.zName = "H263 Video";
-		break;
-		case CODEC_ID_RV10:
-			sFormat.zName = "RV10 Video";
-		break;
-		case CODEC_ID_MP2:
-			sFormat.zName = "MP2 Audio";
-		break;
-		case CODEC_ID_MP3LAME:
-			sFormat.zName = "MP3 Audio";
-		break;
-		case CODEC_ID_MJPEG:
-			sFormat.zName = "MJPEG Video";
-		break;
-		case CODEC_ID_MPEG4:
-			sFormat.zName = "MPEG4 Video";
-		break;
-		case CODEC_ID_MSMPEG4V1:
-			sFormat.zName = "MS MPEG4V1 Video";
-		break;
-		case CODEC_ID_MSMPEG4V2:
-			sFormat.zName = "MS MPEG4V2 Video";
-		break;
-		case CODEC_ID_MSMPEG4V3:
-			sFormat.zName = "MS MPEG4V3 Video";
-		break;
-		case CODEC_ID_WMV1:
-			sFormat.zName = "WMV1 Video";
-		break;
-		case CODEC_ID_WMV2:
-			sFormat.zName = "WMV2 Video";
-		break;
-		case CODEC_ID_PCM_S16LE:
-			sFormat.zName = "PCM_S16LE Audio";
-		break;
-		case CODEC_ID_AC3:
-			sFormat.zName = "AC3 Audio";
-		break;
-		case CODEC_ID_WMAV1:
-			sFormat.zName = "WMAV1 Audio";
-		break;
-		case CODEC_ID_WMAV2:
-			sFormat.zName = "WMAV2 Audio";
-		break;
-		case CODEC_ID_DVVIDEO:
-			sFormat.zName = "DV Video";
-		break;
-		case CODEC_ID_DVAUDIO:
-			sFormat.zName = "DV Audio";
-		break;
-		case CODEC_ID_SVQ1:
-			sFormat.zName = "SVQ1 Video";
-		break;
-		case CODEC_ID_SVQ3:
-			sFormat.zName = "SVQ3 Video";
-		break;
-		case CODEC_ID_VP3:
-			sFormat.zName = "VP3 Video";
-		break;
-		case CODEC_ID_H264:
-			sFormat.zName = "H264 Video";
-		break;
-		case CODEC_ID_INDEO3:
-			sFormat.zName = "INDEO3 Video";
-		break;
-		case CODEC_ID_PCM_U8:
-			sFormat.zName = "PCM_U8 Audio";
-		break;
-		case CODEC_ID_ADPCM_IMA_QT:
-			sFormat.zName = "QT Audio";
-		break;
-		case CODEC_ID_ADPCM_IMA_WAV:
-			sFormat.zName = "WAV Audio";
-		break;
-		case CODEC_ID_ADPCM_MS:
-			sFormat.zName = "MS PCM Audio";
-		break;
-		default:
-			sFormat.zName = "Unknown";
-			std::cout<<"Warning Unknown Codec ( please add to ffmpeg_demux.c ) :"<<m_psContext->streams[nIndex]->codec.codec_id<<std::endl;
-			
+		std::cout<<"Warning Unknown Codec :"<<m_psContext->streams[nIndex]->codec.codec_id<<std::endl;
+		sFormat.zName = "Unknown";
+	} else {
+		sFormat.zName = avcodec_find_decoder( m_psContext->streams[nIndex]->codec.codec_id )->name;
 	}
 
 	sFormat.nBitRate = m_psContext->streams[nIndex]->codec.bit_rate;

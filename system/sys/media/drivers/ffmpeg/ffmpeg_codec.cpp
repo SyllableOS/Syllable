@@ -88,68 +88,19 @@ os::View* FFMpegCodec::GetConfigurationView()
 
 status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExternal, bool bEncode )
 {
-	/* TODO: Add more codecs */
 	CodecID id;
-	if( sFormat.zName == "MPEG1 Video" )
-		id = CODEC_ID_MPEG1VIDEO;
-	else if( sFormat.zName == "MPEG2 Video" )
-		id = CODEC_ID_MPEG2VIDEO;
-	else if( sFormat.zName == "H263 Video" )
-		id = CODEC_ID_H263;
-	else if( sFormat.zName == "RV10 Video" )
-		id = CODEC_ID_RV10;
-	else if( sFormat.zName == "MP2 Audio" )
-		id = CODEC_ID_MP2;
-	else if( sFormat.zName == "MP3 Audio" )
-		id = CODEC_ID_MP3LAME;
-	else if( sFormat.zName == "MJPEG Video" )
-		id = CODEC_ID_MJPEG;
-	else if( sFormat.zName == "MPEG4 Video" )
-		id = CODEC_ID_MPEG4;
-	else if( sFormat.zName == "MS MPEG4V1 Video" )
-		id = CODEC_ID_MSMPEG4V1;
-	else if( sFormat.zName == "MS MPEG4V2 Video" )
-		id = CODEC_ID_MSMPEG4V2;
-	else if( sFormat.zName == "MS MPEG4V3 Video" )
-		id = CODEC_ID_MSMPEG4V3;
-	else if( sFormat.zName == "WMV1 Video" )
-		id = CODEC_ID_WMV1;
-	else if( sFormat.zName == "WMV2 Video" )
-		id = CODEC_ID_WMV2;
-	else if( sFormat.zName == "SVQ1 Video" )
-		id = CODEC_ID_SVQ1;
-	else if( sFormat.zName == "SVQ3 Video" )
-		id = CODEC_ID_SVQ3;
-	else if( sFormat.zName == "VP3 Video" )
-		id = CODEC_ID_VP3;
-	else if( sFormat.zName == "H264 Video" )
-		id = CODEC_ID_H264;
-	else if( sFormat.zName == "INDEO3 Video" )
-		id = CODEC_ID_INDEO3;
-	else if( sFormat.zName == "PCM_S16LE Audio" )
-		id = CODEC_ID_PCM_S16LE;
-	else if( sFormat.zName == "AC3 Audio" )
-		id = CODEC_ID_AC3;
-	else if( sFormat.zName == "WMAV1 Audio" )
-		id = CODEC_ID_WMAV1;
-	else if( sFormat.zName == "WMAV2 Audio" )
-		id = CODEC_ID_WMAV2;
-	else if( sFormat.zName == "DV Video" )
-		id = CODEC_ID_DVVIDEO;
-	else if( sFormat.zName == "DV Audio" )
-		id = CODEC_ID_DVAUDIO;
-	else if( sFormat.zName == "PCM_U8 Audio" )
-		id = CODEC_ID_PCM_U8;
-	else if( sFormat.zName == "QT Audio" )
-		id = CODEC_ID_ADPCM_IMA_QT;
-	else if( sFormat.zName == "WAV Audio" )
-		id = CODEC_ID_ADPCM_IMA_WAV;
-	else if( sFormat.zName == "MS PCM Audio" )
-		id = CODEC_ID_ADPCM_MS;
+	AVCodec* psCodec;
+	
+	if( bEncode )
+		psCodec = avcodec_find_encoder_by_name( sFormat.zName.c_str() );
 	else
+		psCodec = avcodec_find_decoder_by_name( sFormat.zName.c_str() );
+	
+	if( psCodec == NULL )
 		return( -1 );
 		
-	
+	id = psCodec->id;
+
 	if( sExternal.zName.str() != "Raw Audio" && sExternal.zName.str() != "Raw Video" )
 		return( -1 );
 		
@@ -618,13 +569,14 @@ status_t FFMpegCodec::EncodePacket( os::MediaPacket_s* psPacket, os::MediaPacket
 	} else {
 		/* Encode frame */
 		AVFrame sFrame;
-		memset( &sFrame, 0, sizeof( sFrame ) );
+		avcodec_get_frame_defaults( &sFrame );
 		for( int i = 0; i < 4; i++ ) {
 			sFrame.data[i] = psPacket->pBuffer[i];
 			sFrame.linesize[i] = psPacket->nSize[i]; 
 		}
 		sFrame.quality = m_sEncodeStream.quality;
-		psOutput->nSize[0] = avcodec_encode_video( &m_sEncodeStream.codec, psOutput->pBuffer[0], m_sInternalFormat.nWidth * m_sInternalFormat.nHeight * 4, &sFrame );
+		AVCodecContext *sEnc = &m_sEncodeStream.codec;
+		psOutput->nSize[0] = avcodec_encode_video( &m_sEncodeStream.codec, psOutput->pBuffer[0], psPacket->nSize[0] * sEnc->height, &sFrame );
 		if( psOutput->nSize[0] < 0 )
 			return( -1 );
 		return( 0 );
