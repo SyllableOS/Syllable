@@ -7,6 +7,10 @@ EXE = prefsnet
 $(EXE): $(OBJS)
 	$(LL) $(OBJS) -latheos -o $(EXE)
 	strip --strip-all $(EXE)
+dist:
+	mkdir $(DIST_DIR)/Applications/NetworkPreferences
+	mkdir $(DIST_DIR)/Applications/NetworkPreferences/bin
+	cp -f prefsnet $(DIST_DIR)/Applications/NetworkPreferences/bin
 
 clean:
 	-rm $(OBJS)
