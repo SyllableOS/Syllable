@@ -1109,6 +1109,9 @@ EOF
     i*86:atheos:*:*)
 	echo ${UNAME_MACHINE}-unknown-atheos
 	exit 0 ;;
+    i*86:syllable:*:*)
+	echo ${UNAME_MACHINE}-pc-syllable
+	exit 0 ;;
 esac
 
 #echo '(No uname command or uname output not recognized.)' 1>&2
