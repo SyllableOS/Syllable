@@ -1,0 +1,13 @@
+authors			Kristian Van Der Vliet
+status			testing
+
+licenses		GPL
+description		SPLint is an extended implementation of the "lint" C code checker.
+home			www.splint.org
+packages		splint-3.1.1.src
+
+build-needs		flex
+
+patch-config	config
+no-build-dir
+documentation	README doc/html

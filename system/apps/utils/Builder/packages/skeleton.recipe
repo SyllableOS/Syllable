@@ -19,9 +19,11 @@ packages			<Tarball names, if different from the package file name>
 ; Dependencies (unimplemented):
 ;needs
 ;	<Build- and run-time Dependencies>
-;	<Package> [[> | >= | < | <=] <Version>]
+;	<Package> [[> | >= | < | <= | <>] <Version>]
+;	Assumed to be always available: SEd, GRep, ZLib
 ;build-needs
 ;	<Build-time dependencies>
+;	Assumed to be always available: GNU Make, BinUtils, GCC
 ;test-needs
 ;	<Test-time dependencies>
 ;run-needs
