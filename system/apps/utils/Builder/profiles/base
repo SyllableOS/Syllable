@@ -50,7 +50,7 @@ libs/glibc
 libs/compat-1.0
 libs/libpthread
 libs/ncurses-5.3
-libs/zlib-1.1.4
+libs/zlib-1.2.1
 sys/translators
 sys/appserver/libsyllable
 sys/appserver/appserver/server/freetype-2.1.5
