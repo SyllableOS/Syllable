@@ -6,9 +6,9 @@ EXE	= ../objs/aview
 CC	= g++
 LL	= g++
 
-$(EXE) : $(OBJS)
+$(EXE): deps $(OBJS)
 	@echo Building : $(EXE)
-	@g++ $(OBJS) -latheos -o $(EXE)
+	@g++ $(OBJS) -lsyllable -o $(EXE)
 	@echo Adding images into : $(EXE)
 	@rescopy -r ../objs/aview ./images/*.png
 
@@ -18,10 +18,9 @@ clean:
 	@-rm $(EXE)
 
 deps:	
-	@echo Making $(OBJDIR) directory
-	@mkdir ../objs
+	mkdir -p ../objs
 
-dist:
+dist: $(EXE)
 	mkdir $(DIST_DIR)/Applications/AView
 	mkdir $(DIST_DIR)/Applications/AView/bin
 	cp -f  $(EXE) $(DIST_DIR)/Applications/AView/bin/$(EXE)
