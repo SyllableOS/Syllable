@@ -1103,7 +1103,7 @@ status_t Message::AddVariant( const char *pzName, const Variant & cVal )
 
 	if( psArray == NULL )
 	{
-		pBuffer = _CreateArray( pzName, T_MESSAGE, NULL, nSize, false, 1 );
+		pBuffer = _CreateArray( pzName, T_VARIANT, NULL, nSize, false, 1 );
 	}
 	else
 	{
@@ -1981,5 +1981,6 @@ status_t Message::_ReadPort( port_id hPort )
 
 	return ( nError );
 }
+
 
 
