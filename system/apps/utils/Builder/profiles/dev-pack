@@ -1,14 +1,14 @@
 ; The Developer Pack
 ;
-;apps/gnu/autoconf-2.57
-apps/gnu/autoconf-2.13
-;apps/gnu/automake-1.7.5
-apps/gnu/automake-1.4-p6
-apps/gnu/make-3.79
-apps/gnu/binutils-2.10
-apps/gnu/gcc-2.95.3
-apps/gnu/patch-2.5.4
-apps/gnu/m4-1.4
-apps/develop/flex-2.5.4a
-apps/gnu/bison-1.875
-apps/develop/cvs-1.12.1
+;applications/gnu/autoconf-2.57
+applications/gnu/autoconf-2.13
+;applications/gnu/automake-1.7.5
+applications/gnu/automake-1.4-p6
+applications/gnu/make-3.79
+applications/gnu/binutils-2.10
+applications/gnu/gcc-2.95.3
+applications/gnu/patch-2.5.4
+applications/gnu/m4-1.4
+applications/develop/flex-2.5.4a
+applications/gnu/bison-1.875
+applications/develop/cvs-1.12.1

@@ -68,6 +68,7 @@ sys/appserver/appserver/drivers/decorators/win98
 sys/appserver/appserver/drivers/input/ps2mouse
 sys/appserver/appserver/drivers/input/sermouse
 sys/appserver/appserver/drivers/input/usbmouse
+sys/appserver/appserver/drivers/video/geforcefx
 sys/appserver/appserver/drivers/video/mach64
 sys/appserver/appserver/drivers/video/mga
 sys/appserver/appserver/drivers/video/nvidia
