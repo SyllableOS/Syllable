@@ -157,6 +157,7 @@ void Window::_Cleanup()
 		if( ( (*i).second.m_nFlags & SDF_DELETE ) && ( (*i).second.m_pcMessage ) ) {
 			delete (*i).second.m_pcMessage;
 		}
+		m->m_cShortcuts.erase(i);
 	}
 
 	if( m->m_pcIcon != NULL ) {
@@ -922,24 +923,33 @@ void Window::_ViewDeleted( View * pcView )
 
 void Window::AddShortcut( const ShortcutKey& cKey, Message* pcMsg )
 {
-	RemoveShortcut( cKey );
-	m->m_cShortcuts[ cKey ] = ShortcutData( pcMsg );
+	if( cKey.IsValid() ) {
+		RemoveShortcut( cKey );
+		m->m_cShortcuts[ cKey ] = ShortcutData( pcMsg );
+	}
 }
 
 void Window::AddShortcut( const ShortcutKey& cKey, View* pcView )
 {
-	RemoveShortcut( cKey );
-	m->m_cShortcuts[ cKey ] = ShortcutData( pcView );
+	if( cKey.IsValid() ) {
+		RemoveShortcut( cKey );
+		m->m_cShortcuts[ cKey ] = ShortcutData( pcView );
+	}
 }
 
 void Window::RemoveShortcut( const ShortcutKey& cKey )
 {
-	shortcut_map::iterator cItem = m->m_cShortcuts.find( cKey );
-	if( cItem != m->m_cShortcuts.end() ) {
-		if( ( (*cItem).second.m_nFlags & SDF_DELETE ) && ( (*cItem).second.m_pcMessage ) ) {
-			delete (*cItem).second.m_pcMessage;
+	if( cKey.IsValid() ) {
+//				dbprintf("valid\n");
+		shortcut_map::iterator cItem = m->m_cShortcuts.find( cKey );
+		if( cItem != m->m_cShortcuts.end() ) {
+			if( ( (*cItem).second.m_nFlags & SDF_DELETE ) && ( (*cItem).second.m_pcMessage ) ) {
+//				dbprintf("del: %p\n",(*cItem).second.m_pcMessage);
+				delete (*cItem).second.m_pcMessage;
+			}
+//				dbprintf("erase\n");
+			m->m_cShortcuts.erase( cItem );
 		}
-		m->m_cShortcuts.erase( cItem );
 	}
 }
 
@@ -1293,7 +1303,7 @@ View *Window::_GetNextTabView( View * pcCurrent )
 void Window::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 {
 	View *pcView;
-	
+
 	if( pcMsg->FindPointer( "_widget", ( void ** )&pcView ) == 0 && pcView != NULL && _FindHandler( pcView->m_nToken ) == pcView )
 	{
 		switch ( pcMsg->GetCode() )
@@ -1746,13 +1756,17 @@ void Window::_DeleteViewFromServer( View * pcView )
 void Window::_HandleShortcuts( const char* pzString, const char* pzRawString, uint32 nQualifiers )
 {
 	ShortcutKey cKey( pzRawString, nQualifiers );
-	shortcut_map::iterator cItem = m->m_cShortcuts.find( cKey );
+	
+	if( !cKey.IsValid() ) return;
+	
+//	shortcut_map::iterator cItem = m->m_cShortcuts.find( cKey );
+	shortcut_map::iterator cItem = m->m_cShortcuts.begin();
 	while( cItem != m->m_cShortcuts.end() ) {
 		if( (*cItem).first == cKey ) break;
-		if( cKey < (*cItem).first ) {
+/*		if( cKey < (*cItem).first ) {
 			cItem = m->m_cShortcuts.end();
 			break;
-		}
+		}*/
 		cItem++;
 	}
 	if( cItem != m->m_cShortcuts.end() ) {
