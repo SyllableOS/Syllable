@@ -19,6 +19,9 @@ Linux for atheos/isa_io.h.  "macros.h" now uses a macro called __likely()
 on GCC 3.0 and above as a hint to the compiler in kassertw() that the
 expression asserted is expected to be true.
 
+NOTE: You should install the new header files from the sys/include directory
+with "make dist" and then rebuild your drivers along with the kernel.
+
 * October 24 2004, Kristian Van Der Vliet *
 
 A series of patches from Jake Hamby <jhamby@anobject.com> which changes the
