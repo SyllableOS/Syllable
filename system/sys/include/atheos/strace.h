@@ -286,7 +286,6 @@ static struct SysCall_info g_sSysCallTable[] = {
  {__NR_DebugPrint,"DebugPrint", SYSC_GROUP_DEBUG, 0, SYSC_ARG_T_INT, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE},
  {__NR_debug_write,"debug_write", SYSC_GROUP_DEBUG, 0, SYSC_ARG_T_INT, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE},
  {__NR_debug_read,"debug_read", SYSC_GROUP_DEBUG, 0, SYSC_ARG_T_INT, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE},
- {__NR_set_strace_level,"set_strace_level", SYSC_GROUP_DEBUG, 0, SYSC_ARG_T_INT, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE},
  {__NR_strace,"strace", SYSC_GROUP_DEBUG, 3, SYSC_ARG_T_INT, SYSC_ARG_T_INT, SYSC_ARG_T_INT, SYSC_ARG_T_INT, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE },
  {__NR_strace_exclude,"strace_exclude", SYSC_GROUP_DEBUG, 2, SYSC_ARG_T_INT, SYSC_ARG_T_INT, SYSC_ARG_T_INT, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE },
  {__NR_strace_include,"strace_include", SYSC_GROUP_DEBUG, 2, SYSC_ARG_T_INT, SYSC_ARG_T_INT, SYSC_ARG_T_INT, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE },
@@ -457,7 +456,7 @@ static struct Errno_info g_sErrnoTable[] = {
 };
 
 /* Userspace STrace API */
-status_t_strace( thread_id hThread, int nTraceMask, int nTraceFlags );
+status_t strace( thread_id hThread, int nTraceMask, int nTraceFlags );
 status_t strace_exclude( thread_id hThread, int nSyscall );
 status_t strace_include( thread_id hThread, int nSyscall );
 
