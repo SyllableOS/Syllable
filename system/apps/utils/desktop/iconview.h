@@ -7,9 +7,11 @@ class BitmapView;
 class Icon
 {
 public:
-    Icon( const char* pzTitle, const char* pzPath, const struct stat& sStat );
+    Icon( const char* pzTitle, const char* pzPath, const char* pzExec, Point cPoint, const struct stat& sStat );
     ~Icon();
     const std::string& GetName() const { return( m_cTitle ); }
+    const std::string& GetExecName() const { return(m_cExec); }
+    const Point& GetPosition() const {return(m_cPosition);}
     Rect 		     GetBounds( Font* pcFont );
     Rect 		     GetFrame( Font* pcFont );
     void 		     Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendText, Color32_s bClr, Color32_s fClr );
@@ -31,6 +33,7 @@ private:
     bool	m_bBoundsValid;
     bool	m_bStrWidthValid;
     std::string	m_cTitle;
+    std::string m_cExec;
     uint8	m_anSmall[16*16*4];
     uint8	m_anLarge[32*32*4];
     void ReadColor();
@@ -83,6 +86,7 @@ private:
     void ReadPrefs();
     Color32_s BgColor, FgColor;
 };
+
 
 
 

@@ -192,9 +192,6 @@ PropWin::PropWin() : Window(CRect(400,395), "Desktop Properties", "Desktop Prope
 	pcPropTab->pcColor->pcColorDrop->SetSelectionMessage( new Message(ID_PEN_CHANGED));
 	pcPropTab->pcBack->pcSizeDrop->SetSelection(nImageSize);
 	pcPropTab->pcBack->pcList->SetSelChangeMsg(new Message(ID_PROP_LIST));
-	
-	
-	
 		
 }
 
@@ -240,12 +237,8 @@ void PropWin::HandleMessage(Message* pcMessage)
 			break;
 			
 		case ID_PROP_LIST:
-			
-				string zPath;
-				zImage = pcPropTab->pcBack->ImageList()[pcPropTab->pcBack->pcList->GetLastSelected()];
-				sprintf((char*)zPath.c_str(),"%s/config/desktop/pictures/",getenv("HOME")); 
-				strcat((char*)zPath.c_str(),zImage.c_str());
-				
+			{
+				string zPath = (string) getenv("HOME") + (string) "/config/desktop/pictures/" + pcPropTab->pcBack->ImageList()[pcPropTab->pcBack->pcList->GetLastSelected()];
 				Bitmap* pcBitmap = LoadBitmapFromFile(zPath.c_str());
 				Bitmap* pcSBitmap = new Bitmap (154, 114, CS_RGB32,Bitmap::SHARE_FRAMEBUFFER); 
 		       
@@ -253,8 +246,13 @@ void PropWin::HandleMessage(Message* pcMessage)
 				
 				pcPropTab->pcBack->Paint(pcPropTab->pcBack->GetBounds());
 				pcPropTab->pcBack->DrawBitmap(pcSBitmap,pcSBitmap->GetBounds(),Rect(118,25,153,113));
-			
+			}
+	            break;		
+		
+		default:
+			HandleMessage(pcMessage);
 			break;
+				
 	}
 }
  
@@ -391,4 +389,6 @@ void PropWin::LoadPrefs(void)
 		}
 		
 }
+
+
 

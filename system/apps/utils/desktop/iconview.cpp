@@ -4,12 +4,15 @@ Bitmap* Icon::s_pcBitmap[16] = {NULL,};
 int	Icon::s_nCurBitmap = 0;
 Color32_s fgColor, bgColor;
 
-Icon::Icon( const char* pzTitle, const char* pzPath, const struct stat& sStat ) : m_cTitle( pzTitle )
+Icon::Icon( const char* pzTitle, const char* pzPath, const char* pzExec, Point cPoint, const struct stat& sStat ) : m_cTitle( pzTitle)
 {
     m_bSelected = false;
     m_sStat     = sStat;
     m_bBoundsValid = false;
     m_bStrWidthValid = false;
+    m_cExec = pzExec;
+    m_cPosition = cPoint;
+    
     if ( s_pcBitmap[0] == NULL ) {
         for ( int i = 0 ; i < 16 ; ++i ) {
             s_pcBitmap[i] = new Bitmap( 32,32, CS_RGB32 );
@@ -203,8 +206,8 @@ void IconView::LayoutIcons()
 
     for ( uint i = 0 ; i < m_cIcons.size() ; ++i )
     {
-        m_cIcons[i]->m_cPosition.x = cPos.x + 16;
-        m_cIcons[i]->m_cPosition.y = cPos.y;
+        m_cIcons[i]->m_cPosition.x = cPos.x + 100; //16
+        m_cIcons[i]->m_cPosition.y = cPos.y + 100;//not
 
         Rect cIconFrame = m_cIcons[i]->GetFrame( GetFont() );
 
@@ -260,11 +263,11 @@ int32 IconView::ReadDirectory( void* pData )
 
         Icon* pcIcon;
 
-        if ( S_ISDIR( sStat.st_mode ) == false ) {
-            pcIcon = new Icon( psEnt->d_name, "/system/icons/file.icon", sStat );
+        /*if ( S_ISDIR( sStat.st_mode ) == false ) {
+            pcIcon = new Icon( psEnt->d_name, "/system/icons/file.icon", NULL, , sStat );
         } else {
-            pcIcon = new Icon( psEnt->d_name, "/system/icons/folder.icon", sStat );
-        }
+            pcIcon = new Icon( psEnt->d_name, "/system/icons/folder.icon", NULL, NULL, sStat );
+        }*/
 
         pcWnd->Lock();
         pcView->m_cIcons.push_back( pcIcon );
@@ -719,6 +722,8 @@ void IconView::DirChanged( const std::string& cNewPath )
     }
 
 }
+
+
 
 
 
