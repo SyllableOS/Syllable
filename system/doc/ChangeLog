@@ -1,3 +1,10 @@
+* May 5 2004, Henrik Isaksson *
+
+- Added ATERM_ATTR=0x80 to setup_environ.sh to get rid of that awful cyan background
+  colour, often seen on screen shots... .o)
+- Added "0.5.3 Released" to all changelogs at appropriate locations. Should make a bit
+  easier to see what has been done since the last release...
+
 * May 2 2004, Kaj de Vos *
 
 Spring cleaning. Now that Syllable 0.5.3 is out, I deleted most remaining
