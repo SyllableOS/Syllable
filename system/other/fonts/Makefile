@@ -4,6 +4,8 @@
 # REMEMBER: Add the new directory to the Makefile in the parent
 # directory!
 
+# 140603 Added Vera fonts			- Kaj
+
 DIST_TARGET_PATH := $(DIST_DIR)/atheos/sys/fonts/
 
 all:
@@ -17,7 +19,7 @@ doc:
 install-doc:
 
 dist:
-	@-cp -r base/* $(DIST_TARGET_PATH)
+	@-cp -r base/* vera/*.ttf $(DIST_TARGET_PATH)
 
 clean:
 
