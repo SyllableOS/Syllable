@@ -209,6 +209,7 @@ modules
 	apps/desktop/desktop
 	apps/desktop/dock
 	apps/desktop/dock_plugins/clock
+	apps/desktop/dock_plugins/mixer
 	apps/desktop/file_browser
 	apps/gnu/bash-2.03
 	apps/gnu/coreutils-5.2.1
