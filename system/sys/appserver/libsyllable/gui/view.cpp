@@ -24,6 +24,7 @@
 #include <gui/window.h>
 #include <gui/view.h>
 #include <gui/scrollbar.h>
+#include <gui/menu.h>
 #include <util/application.h>
 #include <util/message.h>
 #include <util/string.h>
@@ -151,6 +152,7 @@ class View::Private
 	int m_nTabOrder;	// Sorting order for keyboard manouvering
 
 	ShortcutKey	m_cKey;	// Keyboard shortcut
+	Menu* m_pcContextMenu; // Popup menu for this view.
 };
 
 
@@ -173,6 +175,8 @@ View::View( const Rect & cFrame, const String & cTitle, uint32 nResizeMask, uint
 	m = new Private;
 
 	m->m_hReplyPort = create_port( "view_reply", DEFAULT_PORT_SIZE );
+
+	m->m_pcContextMenu = NULL;
 
 	m->m_cFrame = cFrame;
 	m->m_cTitle = cTitle;
@@ -306,11 +310,53 @@ void View::SetTabOrder( int nOrder )
 	m->m_nTabOrder = nOrder;
 }
 
+/** Set popup menu for a View.
+ * \par Description:
+ *	Set a popup menu to be used for this View. The popup menu is opened when
+ * the user right-clicks inside the View, unless the right-click event is
+ * consumed by the subclass.
+ * \param
+ *	pcMenu - popup menu for this View. Deleted automatically.
+ * \sa GetContextMenu()
+ * \author Henrik Isaksson (henrik@isaksson.tk)
+ *****************************************************************************/
+void View::SetContextMenu( Menu* pcMenu )
+{
+	if( m->m_pcContextMenu ) delete m->m_pcContextMenu;
+	m->m_pcContextMenu = pcMenu;
+}
+
+/** Get popup menu.
+ * \par Description:
+ *	Returns the popup menu assigned to this View, or null if no popup menu is
+ * assigned.
+ * \sa SetContextMenu()
+ * \author Henrik Isaksson (henrik@isaksson.tk)
+ *****************************************************************************/
+Menu* View::GetContextMenu() const
+{
+	return m->m_pcContextMenu;
+}
+
 const ShortcutKey& View::GetShortcut() const
 {
 	return ( m->m_cKey );
 }
 
+/** Set keyboard shortcut.
+ * \par Description:
+ *	Sets a shortcut that activates the View. The exact behaviour of shortcuts
+ * is defined in the various subclasses. For a Button, for instance, pressing
+ * the associated key will "push" the button, releasing the associated key will
+ * "release" the button and send the associated message. Pressing any other key
+ * while the shortcut key is still held, will cancel the operation. Please note
+ * that most widgets (including Button) will automatically extract keyboard
+ * shortcuts from their labels.
+ * \param
+ *	cShortcut - key combination to activate View.
+ * \sa Control::SetLabel(), GetShortcut(), SetShortcutFromLabel(), ShortcutKey
+ * \author Henrik Isaksson (henrik@isaksson.tk)
+ *****************************************************************************/
 void View::SetShortcut( const ShortcutKey& cShortcut )
 {
 	if( m->m_cKey.IsValid() && GetWindow() ) {
@@ -322,6 +368,15 @@ void View::SetShortcut( const ShortcutKey& cShortcut )
 	}
 }
 
+/** Set keyboard shortcut from Label.
+ * \par Description:
+ *	Like SetShortcut(), but the key is extracted from a text label. The
+ * character following the first unescaped underscore character (_) is used.
+ * \param
+ *	cLabel - text string containing shortcut.
+ * \sa GetShortcut(), SetShortcutFromLabel(), ShortcutKey
+ * \author Henrik Isaksson (henrik@isaksson.tk)
+ *****************************************************************************/
 void View::SetShortcutFromLabel( const String& cLabel )
 {
 	if( m->m_cKey.IsValid() && GetWindow() ) {
@@ -1187,7 +1242,9 @@ void View::MouseMove( const Point & cNewPos, int nCode, uint32 nButtons, Message
 
 void View::MouseDown( const Point & cPosition, uint32 nButtons )
 {
-	if( m->m_pcParent != NULL )
+	if( nButtons == 2 && m->m_pcContextMenu != NULL ) {
+		m->m_pcContextMenu->Open( ConvertToScreen( cPosition ) );
+	} else if( m->m_pcParent != NULL )
 	{
 		m->m_pcParent->MouseDown( ConvertToParent( cPosition ), nButtons );
 	}
@@ -3666,3 +3723,5 @@ void View::__VW_reserved19__()
 void View::__VW_reserved20__()
 {
 }
+
+

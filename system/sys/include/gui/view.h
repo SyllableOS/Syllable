@@ -110,6 +110,7 @@ enum
 class	Window;
 class	Message;
 class	Font;
+class	Menu;
 
 
 enum
@@ -267,6 +268,9 @@ public:
 	virtual const ShortcutKey& GetShortcut() const;
 	virtual void SetShortcut( const ShortcutKey& cShortcut );
 	virtual void SetShortcutFromLabel( const String& cLabel );
+
+	void		SetContextMenu( Menu* pcMenu );
+	Menu*		GetContextMenu() const;
   
     uint32		GetQualifiers() const;
     void		GetMouse( Point* pcPosition, uint32* pnButtons );
@@ -451,5 +455,6 @@ private:
 } // end of namespace
 
 #endif	// __F_GUI_VIEW_H__
+
 
 
