@@ -25,6 +25,8 @@
 #include <gui/window.h>
 #include <gui/font.h>
 #include <util/string.h>
+#include <util/locale.h>
+#include <util/catalog.h>
 
 #include <vector>
 
@@ -90,20 +92,24 @@ public:
     void PopCursor();
     
     bigtime_t	GetIdleTime();
-    void	GetKeyboardConfig( String* pcKeymapName, int* pnKeyDelay, int* pnKeyRepeat );
+    void		GetKeyboardConfig( String* pcKeymapName, int* pnKeyDelay, int* pnKeyRepeat );
     status_t	SetKeymap( const char* pzName );
     status_t	SetKeyboardTimings( int nDelay, int nRepeat );
     
-    int		GetScreenModeCount();
-    int		GetScreenModeInfo( int nIndex, screen_mode* psMode );
+    int			GetScreenModeCount();
+    int			GetScreenModeInfo( int nIndex, screen_mode* psMode );
 
-    void	SetWindowDecorator( const char* pzPath );
-    void	CommitColorConfig();
+    void		SetWindowDecorator( const char* pzPath );
+    void		CommitColorConfig();
   
     thread_id	Run();
 
-   port_id		GetServerPort()	const;
-   port_id		GetAppPort() const;
+	port_id		GetServerPort()	const;
+	port_id		GetAppPort() const;
+
+	const Catalog* GetCatalog() const;
+	void SetCatalog( Catalog* pcCatalog );
+	bool SetCatalog( const String& cCatalogName );
 
 private:
     friend class Window;

@@ -39,11 +39,13 @@ Application *Application::s_pcInstance = NULL;
 
 class Application::Private
 {
-      public:
+	public:
 	port_id m_hServerPort;
 	port_id m_hSrvAppPort;
 	port_id m_hReplyPort;
 	std::vector < Window * >m_cWindows;
+	Locale m_cLocale;
+	Catalog* m_pcCatalog;
 };
 
 //----------------------------------------------------------------------------
@@ -58,6 +60,8 @@ Application::Application( const char *pzName ):Looper( pzName )
 	m = new Private;
 	Message cReq( DR_CREATE_APP );
 
+	m->m_pcCatalog = NULL;
+	
 	assert( NULL == s_pcInstance );
 
 	m->m_hReplyPort = create_port( "app_reply", DEFAULT_PORT_SIZE );
@@ -126,6 +130,9 @@ Application::~Application()
 
 	s_pcInstance = NULL;
 
+	if( m->m_pcCatalog )
+		m->m_pcCatalog->Release();
+
 	Unlock();
 	delete m;
 }
@@ -147,6 +154,53 @@ Application *Application::GetInstance()
 {
 	return ( s_pcInstance );
 }
+
+const Catalog* Application::GetCatalog() const
+{
+	return m->m_pcCatalog;
+}
+
+void Application::SetCatalog( Catalog* pcCatalog )
+{
+	Lock();
+
+	if( m->m_pcCatalog )
+		m->m_pcCatalog->Release();
+
+	m->m_pcCatalog = pcCatalog;
+
+	if( m->m_pcCatalog )
+		m->m_pcCatalog->AddRef();
+
+	Unlock();
+}
+
+bool Application::SetCatalog( const String& cCatalogName )
+{
+	Catalog *pcCat;
+	bool ret = false;
+
+	StreamableIO* pcStream = m->m_cLocale.GetLocalizedResourceStream( cCatalogName );
+	if( pcStream ) {
+		pcCat = new Catalog;
+		pcCat->Load( pcStream );
+		delete pcStream;
+		SetCatalog( pcCat );
+		ret = true;
+	}
+
+	return ret;
+}
+
+/*const Locale& Application::GetDefaultLocale() const
+{
+	return m->m_cLocale;
+}
+
+void Application::SetDefaultLocale( Locale cLocale )
+{
+	m->m_cLocale = cLocale;
+}*/
 
 /** \brief Return the appserver message port.
  *
@@ -969,3 +1023,6 @@ void Application::__reserved9__()
 void Application::__reserved10__()
 {
 }
+
+
+
