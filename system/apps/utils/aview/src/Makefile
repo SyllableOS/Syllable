@@ -1,7 +1,7 @@
 COPTS	= -Wall -c
 
 OBJS	= ../objs/main.o ../objs/mainapp.o ../objs/appwindow.o ../objs/bitmapview.o ../objs/loadbitmap.o ../objs/statusbar.o ../objs/settingswindow.o
-EXE	= ../objs/aview
+EXE	= ../objs/AView
 
 CC	= g++
 LL	= g++
@@ -22,8 +22,7 @@ deps:
 
 dist: $(EXE)
 	mkdir $(DIST_DIR)/atheos/Applications/AView
-	mkdir $(DIST_DIR)/atheos/Applications/AView/bin
-	cp -f  $(EXE) $(DIST_DIR)/atheos/Applications/AView/bin/
+	cp -f  $(EXE) $(DIST_DIR)/atheos/Applications/AView/
 
 astyle:
 	@echo Cleaning up all the source
@@ -60,15 +59,4 @@ astyle:
 ../objs/settingswindow.o: settingswindow.cpp
 	@echo Compiling : $<
 	@$(CC) $(COPTS) $< -o $@
-
-
-
-
-
-
-
-
-
-
-
 

@@ -45,8 +45,7 @@ su:	$(EXENAME)
 
 dist: all
 	mkdir $(DIST_DIR)/atheos/Applications/Users
-	mkdir $(DIST_DIR)/atheos/Applications/Users/bin
-	install -s $(EXENAME) $(DIST_DIR)/atheos/Applications/Users/bin/
+	install -s $(EXENAME) $(DIST_DIR)/atheos/Applications/Users/
 
 clean:
 	rm -rf $(OBJDIR) $(EXENAME)
@@ -62,5 +61,4 @@ clobber: clean
 	[ -s $@ ] || rm -f $@
 
 include $(CXXSRC:.cpp=.d)
-
 

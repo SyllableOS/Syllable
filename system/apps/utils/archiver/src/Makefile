@@ -1,12 +1,12 @@
 OPTS   = -Wall -c --no-warn
 
 CC	= g++
-EXE	= ../objs/archiver
+EXE	= ../objs/Archiver
 
 OBJDIR	:= ../objs
 
 
-OBJS := ../objs/main.o ../objs/toolbar.o ../objs/archiver.o ../objs/new.o ../objs/options.o ../objs/exe.o ../objs/extract.o ../objs/statusbar.o ../objs/loadbitmap.o ../objs/settings.o ../objs/flowlayout.o 
+OBJS := ../objs/main.o ../objs/toolbar.o ../objs/archiver.o ../objs/new.o ../objs/options.o ../objs/exe.o ../objs/extract.o ../objs/statusbar.o ../objs/loadbitmap.o ../objs/settings.o ../objs/flowlayout.o
 
 
 
@@ -14,7 +14,7 @@ $(EXE): $(OBJS)
 	@echo Building : $(EXE)
 	@g++ $(OBJS) -lsyllable -o $(EXE)
 	@echo Adding images into : $(EXE)
-	@rescopy -r ../objs/archiver ./images/*.png
+	@rescopy -r $(EXE) ./images/*.png
 
 deps:
 	@echo Making $(OBJDIR) directory
@@ -26,7 +26,7 @@ dist:
 	@echo Making $(DIST_DIR)/atheos/Applications/Archiver/bin
 	@mkdir $(DIST_DIR)/atheos/Applications/Archiver/bin
 	@echo Coping $(EXE) to $(DIST_DIR)/atheos/Applications/Archiver/
-	@cp -f ../objs/archiver $(DIST_DIR)/atheos/Applications/Archiver/
+	@cp -f $(EXE) $(DIST_DIR)/atheos/Applications/Archiver/
 
 clean:
 	@echo Removing all objects and executable.
@@ -79,5 +79,4 @@ clean:
 ../objs/flowlayout.o : flowlayout.cpp
 	@echo Compiling : $<
 	@$(CC) $(OPTS) $< -o $@
-
 
