@@ -125,6 +125,7 @@ private:
     void	_AddedToView( LayoutView* pcView );
     void	_AddedToParent( LayoutNode* pcParent );
     void	_RemovedFromParent();
+	void	_RemovedFromView();
 
     struct ShareNode {
 	LayoutNode* m_pcNext;
@@ -285,3 +286,4 @@ private:
 
 
 #endif // __F_GUI_LAYOUTVIEW_H__
+
