@@ -15,6 +15,7 @@ export BUILD_LIBC := n
 
 # Set this to the version of the distribution you are building
 
-DIST_VER:=0.4.0
+DIST_VER:=0.4.0a
 export DIST_NAME=base-syllable-$(DIST_VER).tgz
+
 
