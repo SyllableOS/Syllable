@@ -1,6 +1,7 @@
 /*
- *  The AtheOS application server
+ *  The Syllable application server
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2004 Syllable Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -29,13 +30,19 @@ namespace os {
 #if 0
 } // Fool Emacs auto-indent
 #endif
-  enum { WNDDECORATOR_APIVERSION = 5 };
+  enum { WNDDECORATOR_APIVERSION = 6 };
   
 class WindowDecorator
 {
 public:
-    enum hit_item { HIT_NONE, HIT_CLOSE, HIT_ZOOM, HIT_DEPTH, HIT_DRAG, HIT_SIZE_LEFT, HIT_SIZE_TOP,
-		    HIT_SIZE_RIGHT, HIT_SIZE_BOTTOM, HIT_SIZE_LT, HIT_SIZE_RT, HIT_SIZE_LB, HIT_SIZE_RB };
+    enum hit_item {
+			HIT_NONE,
+			HIT_CLOSE, HIT_ZOOM, HIT_DEPTH, HIT_MINIMIZE, HIT_STICKY, HIT_DRAG,
+			// Note!
+			// Keep these items in sequence, especially those above this line.
+			HIT_SIZE_LEFT, HIT_SIZE_TOP, HIT_SIZE_RIGHT, HIT_SIZE_BOTTOM,
+			HIT_SIZE_LT, HIT_SIZE_RT, HIT_SIZE_LB, HIT_SIZE_RB,
+			HIT_MAX_ITEMS };
   
     WindowDecorator( Layer* pcLayer, uint32 nWndFlags );
     virtual ~WindowDecorator();
@@ -51,10 +58,9 @@ public:
     virtual void FontChanged() = 0;
     virtual void SetWindowFlags( uint32 nFlags ) = 0;
     virtual void SetFocusState( bool bHasFocus ) = 0;
-    virtual void SetCloseButtonState( bool bPushed ) = 0;
-    virtual void SetZoomButtonState( bool bPushed ) = 0;
-    virtual void SetDepthButtonState( bool bPushed ) = 0;
+    virtual void SetButtonState( uint32 nButton, bool bPushed ) = 0;
     virtual void Render( const Rect& cUpdateRect ) = 0;
+
 private:
     Layer* m_pcLayer;
 };
@@ -65,3 +71,4 @@ typedef WindowDecorator* op_create_decorator( Layer* pcView, uint32 nFlags );
 }
 
 #endif // __F_WINDOWDECORATOR_H__
+

@@ -42,36 +42,31 @@ public:
     virtual void SetTitle( const char* pzTitle );
     virtual void SetWindowFlags( uint32 nFlags );
     virtual void SetFocusState( bool bHasFocus );
-    virtual void SetCloseButtonState( bool bPushed );
-    virtual void SetZoomButtonState( bool bPushed );
-    virtual void SetDepthButtonState( bool bPushed );
+    virtual void SetButtonState( uint32 nButton, bool bPushed );
     virtual void Render( const os::Rect& cUpdateRect );
 private:
     void CalculateBorderSizes();
     void Layout();
-    void DrawDepth( const os::Rect& cRect, const os::Color32_s& sFillColor, bool bRecessed );
-    void DrawZoom(  const os::Rect& cRect, const os::Color32_s& sFillColor, bool bRecessed );
-    void DrawClose(  const os::Rect& cRect, const os::Color32_s& sFillColor, bool bRecessed );
+	void DrawButton( uint32 nButton, const os::Color32_s& sFillColor );
+	uint32 CheckIndex( uint32 nButton );
   
-    os::font_height m_sFontHeight;
-    os::Rect	 m_cBounds;
-    std::string  m_cTitle;
-    uint32	 m_nFlags;
+    os::font_height	m_sFontHeight;
+    os::Rect	m_cBounds;
+    std::string	m_cTitle;
+    uint32		m_nFlags;
 
-    os::Rect   m_cCloseRect;
-    os::Rect   m_cZoomRect;
-    os::Rect   m_cToggleRect;
-    os::Rect   m_cDragRect;
+	os::Rect	m_cObjectFrame[ HIT_DRAG+1 ];
   
-    float  m_vLeftBorder;
-    float  m_vTopBorder;
-    float  m_vRightBorder;
-    float  m_vBottomBorder;
-
-    bool   m_bHasFocus;
-    bool   m_bCloseState;
-    bool   m_bZoomState;
-    bool   m_bDepthState;
+    float		m_vLeftBorder;
+    float		m_vTopBorder;
+    float		m_vRightBorder;
+    float		m_vBottomBorder;
+    
+    bool		m_bHasFocus;
+    
+    bool		m_bObjectState[ HIT_DRAG+1 ];
 };
 
 #endif // __F_DEFAULTDECORATOR_H__
+
+

@@ -59,9 +59,11 @@ private:
     IPoint     		    m_cHitOffset;
     WindowDecorator::hit_item m_eHitItem; // Item hit by the intital mouse-down event.
     WindowDecorator::hit_item m_eCursorHitItem;
-    int	     		    m_nCloseDown;
+/*    int	     		    m_nCloseDown;
     int	     		    m_nZoomDown;
-    int	     		    m_nToggleDown;
+    int	     		    m_nMinimizeDown;
+    int	     		    m_nToggleDown;*/
+	int				m_nButtonDown[ WindowDecorator::HIT_MAX_ITEMS ];
     bool	    	    m_bWndMovePending;
     bool		    m_bFrameUpdated;
     IPoint  		    m_cMinSize;
@@ -78,3 +80,4 @@ private:
 };
 
 #endif // __F_WNDBORDER_H__
+
