@@ -1,3 +1,9 @@
+* January 23th 2005, Arno Klenke *
+
+Added the new MediaTimeSource class which can be used to sync audio and video streams
+Changed alignment of the video data in the video overlay which fixes a lot of display errors
+Plugin support for ColdFish
+
 ---- 0.5.5 Released -------------------------------------------------------------------
 
 * October 6th 2004, Kristian Van Der Vliet *
