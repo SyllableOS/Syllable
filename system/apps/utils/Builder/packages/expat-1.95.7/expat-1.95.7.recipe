@@ -1,0 +1,8 @@
+authors				Kaj de Vos
+licenses			MIT
+home				www.libexpat.org
+patch-config		conftools
+;configure-vars		CPPFLAGS="-DXML_UNICODE"
+;make-targets		buildlib
+;install-targets		installlib
+documentation		README COPYING Changes doc examples
