@@ -30,6 +30,10 @@
 #include "bitmap.h"
 #include "sprite.h"
 
+extern "C" {
+	#include "ddriver_mmx.h"
+}
+
 #include <gui/bitmap.h>
 
 #define RAS_OFFSET8( ptr, x, y, bpl )  (((uint8*)(ptr)) + (x) + (y) * (bpl))
@@ -296,6 +300,7 @@ Color32_s g_asDefaultPallette[] = {
     Color32_s( 0xff, 0xff, 0xff, 0xff )
 };
 
+static bool g_bUseMMX = false;
 
 //----------------------------------------------------------------------------
 // NAME:
@@ -308,6 +313,11 @@ DisplayDriver::DisplayDriver() : m_cCursorHotSpot(0,0)
 {
     m_pcMouseImage = NULL;
     m_pcMouseSprite = NULL;
+    
+    /* Get system information and check if we have MMX support */
+    system_info sSysInfo;
+    if( get_system_info( &sSysInfo ) == 0 && sSysInfo.nCPUType & CPU_FEATURE_MMX )
+    	g_bUseMMX = true;
 }
 
 //----------------------------------------------------------------------------
@@ -945,11 +955,17 @@ static inline void blit_convert_copy( SrvBitmap* pcDst, SrvBitmap* pcSrc,
 		    int nDstModulo = pcDst->m_nBytesPerLine - (cSrcRect.Width()+1) * 2;
 
 		    for ( int y = cSrcRect.top ; y <= cSrcRect.bottom ; ++y ) {
-			for ( int x = cSrcRect.left ; x <= cSrcRect.right ; ++x ) {
-			    *pDst++ = COL_TO_RGB16( RGB32_TO_COL( *pSrc++ ) );
-			}
-			pSrc = (uint32*)(((uint8*)pSrc) + nSrcModulo);
-			pDst = (uint16*)(((uint8*)pDst) + nDstModulo);
+				if( g_bUseMMX ) {
+		    		mmx_rgb32_to_rgb16( (uint8*)pSrc, (uint8*)pDst, cSrcRect.Width() + 1 );
+		    		pSrc += cSrcRect.Width() + 1;
+		    		pDst += cSrcRect.Width() + 1;
+		   		} else {
+					for ( int x = cSrcRect.left ; x <= cSrcRect.right ; ++x ) {
+			    		*pDst++ = COL_TO_RGB16( RGB32_TO_COL( *pSrc++ ) );
+					}
+				}
+				pSrc = (uint32*)(((uint8*)pSrc) + nSrcModulo);
+				pDst = (uint16*)(((uint8*)pDst) + nDstModulo);
 		    }
 		    break;
 		}

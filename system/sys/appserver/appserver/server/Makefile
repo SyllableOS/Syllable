@@ -2,7 +2,7 @@ include makefile.freetype
 
 SCREENSHOT = y
 
-CFLAGS   = -pipe -O2 -I./$(FREETYPE)/include -c -Wall
+CFLAGS   = -Wall -c -O4 -pipe -fexceptions -march=i586 -mcpu=i586 -ffast-math -fomit-frame-pointer -I./$(FREETYPE)/include
 CPPFLAGS= $(CFLAGS)
 AOPTS   = -c
 LIBS    = -latheos
@@ -10,7 +10,7 @@ LIBS    = -latheos
 CC	= gcc
 LL	= ld
 
-OBJS =	ddriver.o ddline.o vesadrv.o server.o input.o	\
+OBJS = ddriver_mmx.o ddriver.o ddline.o vesadrv.o server.o input.o	\
 	config.o keyboard.o keymap.o defaultkeymap.o			\
 	sapplication.o swindow.o layer.o render.o bitmap.o crdtrans.o	\
 	sfont.o fontnode.o wndborder.o desktop.o winselect.o sprite.o	\
