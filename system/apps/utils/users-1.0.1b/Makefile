@@ -1,5 +1,5 @@
 CFLAGS  := 
-LIBS    := -latheos -lstdc++ -lz -lcrypt
+LIBS    := -lsyllable -lstdc++ -lz -lcrypt
 LDFLAGS := $(LIBS)
 
 ifeq ($(DEBUG),false)
