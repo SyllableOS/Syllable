@@ -1,0 +1,177 @@
+Ruby for Syllable
+=================
+
+6-Feb-2005
+
+1 Introduction
+==============
+
+This is a binary distribution of version 1.8.2 of the Ruby
+programming language for the Syllable operating system. This
+distribution was built on Syllable 0.5.6 with GCC 3.4.3, and was
+optimized for a Pentium CPU.
+
+If you encounter problems or have any other interesting observations,
+I would be interested to hear about them (see contact information).
+
+See the file README for more information on Ruby.
+
+2 How to install Ruby on Syllable
+=================================
+
+2.1 
+----
+
+2.1.1 
+------
+
+You may have to become the root user to perform the following
+operations:
+
+    su
+
+You should have unpacked this file with
+
+    tar -xpz
+
+or something equivalent. The 'p' option to tar is important: it
+preserves permissions on the extracted files. Without the proper file
+permissions, the installation will be broken.
+
+Unpacking produces the directory ruby. This should be installed under
+/usr. If you unpacked it somewhere else, do:
+
+    mv ruby /usr
+
+Then run:
+
+    pkgmanager -a /usr/ruby
+
+This creates links in Syllable to enable it to find Ruby's files. You
+should now be able to start Ruby; for example:
+
+    ruby -v
+
+(You may have to restart your shell/terminal program first.)
+
+2.1.2 Installing with the Syllable build system
+-----------------------------------------------
+
+If you have the Syllable build system installed, it can do the above
+steps for you. Just do:
+
+    su
+    build install ruby-1.8.1.bin.1.tgz
+
+2.2 Uninstalling & upgrading Ruby
+---------------------------------
+
+2.2.1 
+------
+
+If you ever want to remove Ruby, follow these steps. For example, you
+should do this before you install a new version of Ruby. Again, you
+may have to become root first:
+
+    su
+
+Then you should remove the links to Ruby from Syllable. You should
+even do this when you want to upgrade Ruby, because the links will
+most likely have changed for the new version.
+
+    pkgmanager -r /usr/ruby
+
+To delete the files belonging to Ruby, run:
+
+    rm -r /usr/ruby
+
+2.2.2 Uninstalling & upgrading with the Syllable build system
+-------------------------------------------------------------
+
+If you install a package with the Syllable build system, it will
+check if the package was already installed and remove the previous
+version automatically.
+
+If you just want to uninstall Ruby, do:
+
+    su
+    build uninstall ruby
+
+2.3 Getting started with sample scripts
+---------------------------------------
+
+/usr/ruby/sample contains some sample Ruby programs. Note that most
+scripts don't run as is, because they contain a hardcoded path to the
+Ruby executable in the first line of the script. This is unfortunate,
+as this location varies among installations (Syllable likes to put it
+in /usr/ruby/bin). You can change the first line of the scripts, or
+you can run them like this:
+
+    ruby sample.rb
+
+When writing your own scripts, you could keep them portable by not
+hardcoding a path in the first line:
+
+    #! ruby
+
+Have fun!
+
+3 Building Ruby on Syllable
+===========================
+
+Normally you don't have to, but if you want to compile Ruby yourself,
+you need to get the source distribution. You can get the Ruby
+distribution through its home page:
+
+    http://www.ruby-lang.org
+
+See the file README for details. Additionally, you need patches to
+the source that are specific to Syllable. These patches are kept in
+the Syllable build system. The build system also knows all other
+specifics for building Ruby.
+
+When you have the build system installed, you should first provide it
+with the Ruby source package:
+
+    cp ruby-1.8.2.tar.gz /usr/Builder/sources/
+
+To configure and compile Ruby, do
+
+    build ruby-1.8.2
+
+from your work directory. If that succeeds, you can optionally run
+the testsuite:
+
+    build test ruby-1.8.2
+
+To install and register the package, become root first:
+
+    su
+
+then do:
+
+    build install ruby-1.8.2
+
+After the installation, you could even create a distribution package:
+
+    build distro ruby-1.8.2
+
+4 Known problems and limitations
+================================
+
+Obviously, features that are not implemented in Syllable (yet) will
+not work from Ruby.
+
+5 Contact information
+=====================
+
+Ruby was ported to AtheOS/Syllable by Kaj de Vos. You can send me
+problem reports, fixes and the like at
+
+    ruby@syllable.info
+
+This distribution can be found in the download section of the
+Syllable web site:
+
+    http://syllable.org
+

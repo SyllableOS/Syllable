@@ -1,0 +1,18 @@
+authors			Kaj de Vos
+status			testing
+
+licenses		GPL LGPL BSD Artistic other PD
+home			www.ruby-lang.org
+locations		ftp://ftp.ruby-lang.org/pub/ruby/
+
+; Syllable's GCC 3 doesn't work yet:
+;build-needs		gcc < 3
+
+patch-config
+;configure-options
+;	--disable-ipv6
+;	--with-static-linked-ext
+;	--enable-shared
+;	--enable-pthread
+test-targets	test
+documentation	README README.EXT COPYING LEGAL GPL LGPL ChangeLog ToDo sample
