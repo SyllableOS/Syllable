@@ -37,6 +37,11 @@ int ATImach64::aty_dsp_gt(uint8 bpp, struct pll_ct *pll)
 	}
 	dsp_precision = 0;
 	y = (xclks_per_row*fifo_size)>>11;
+	if( info.lcd.panel_id >= 0 ) {
+		y *= info.lcd.horizontal;
+		y /= info.par.crtc.vxres & ~7;
+	
+	}
 	while (y) {
 		y >>= 1;
 		dsp_precision++;

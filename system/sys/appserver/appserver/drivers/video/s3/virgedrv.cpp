@@ -1050,26 +1050,31 @@ area_id VirgeDriver::Open( void )
     vid_checkmem();
 
     dbprintf( "Available VideMemory: %d\n", sCardInfo.theMem );
+    
+    float rf[] = { 60.0f, 75.0f, 85.0f };
+    for( int i = 0; i < 3; i++ )
+    {
 
     if ( sCardInfo.theMem >= 1024 ) {
-	m_cModes.push_back( ScreenMode( 640,  480,  640,  CS_CMAP8 ) );
-	m_cModes.push_back( ScreenMode( 800,  600,  800,  CS_CMAP8 ) );
-	m_cModes.push_back( ScreenMode( 1024, 768,  1024, CS_CMAP8 ) );
-	m_cModes.push_back( ScreenMode( 1152, 900,  1152, CS_CMAP8 ) );
+	m_cModes.push_back( os::screen_mode( 640,  480,  640,  CS_CMAP8, rf[i] ) );
+	m_cModes.push_back( os::screen_mode( 800,  600,  800,  CS_CMAP8, rf[i] ) );
+	m_cModes.push_back( os::screen_mode( 1024, 768,  1024, CS_CMAP8, rf[i] ) );
+	m_cModes.push_back( os::screen_mode( 1152, 900,  1152, CS_CMAP8, rf[i] ) );
       
-	m_cModes.push_back( ScreenMode( 640,  480,  640*2,  CS_RGB16 ) );
-	m_cModes.push_back( ScreenMode( 800,  600,  800*2,  CS_RGB16 ) );
+	m_cModes.push_back( os::screen_mode( 640,  480,  640*2,  CS_RGB16, rf[i] ) );
+	m_cModes.push_back( os::screen_mode( 800,  600,  800*2,  CS_RGB16, rf[i] ) );
     }
     if ( sCardInfo.theMem >= 2048 ) {
-	m_cModes.push_back( ScreenMode( 1280, 1024, 1280, CS_CMAP8 ) );
-	m_cModes.push_back( ScreenMode( 1600, 1200, 1600, CS_CMAP8 ) );
+	m_cModes.push_back( os::screen_mode( 1280, 1024, 1280, CS_CMAP8, rf[i] ) );
+	m_cModes.push_back( os::screen_mode( 1600, 1200, 1600, CS_CMAP8, rf[i] ) );
 
-	m_cModes.push_back( ScreenMode( 1024, 768,  1024*2, CS_RGB16 ) );
-	m_cModes.push_back( ScreenMode( 1152, 900,  1152*2, CS_RGB16 ) );
+	m_cModes.push_back( os::screen_mode( 1024, 768,  1024*2, CS_RGB16, rf[i] ) );
+	m_cModes.push_back( os::screen_mode( 1152, 900,  1152*2, CS_RGB16, rf[i] ) );
     }
     if ( sCardInfo.theMem >= 4096 ) {
-	m_cModes.push_back( ScreenMode( 1280, 1024, 1280*2, CS_RGB16 ) );
-	m_cModes.push_back( ScreenMode( 1600, 1200, 1600*2, CS_RGB16 ) );
+	m_cModes.push_back( os::screen_mode( 1280, 1024, 1280*2, CS_RGB16, rf[i] ) );
+	m_cModes.push_back( os::screen_mode( 1600, 1200, 1600*2, CS_RGB16, rf[i] ) );
+    }
     }
     
     sCardInfo.scrnBufBase = (uchar*) m_pFrameBuffer + (sCardInfo.theMem * 1024) - 1024;
@@ -1105,20 +1110,19 @@ void VirgeDriver::Close( void )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-int VirgeDriver::SetScreenMode( int nWidth, int nHeight, color_space eColorSpc,
-				int nPosH, int nPosV, int nSizeH, int nSizeV, float vRefreshRate )
+int VirgeDriver::SetScreenMode( os::screen_mode sMode )
 {
-    sCardInfo.crtPosH     = nPosH;
-    sCardInfo.crtSizeH    = nSizeH;
-    sCardInfo.crtPosV     = nPosV;
-    sCardInfo.crtSizeV    = nSizeV;
-    sCardInfo.scrnRate	  = vRefreshRate;
-    sCardInfo.scrnWidth   = nWidth;
-    sCardInfo.scrnHeight  = nHeight;
-    sCardInfo.scrnRowByte = nWidth;
-    sCardInfo.colorspace  = eColorSpc;
+    sCardInfo.crtPosH     = (int)sMode.m_vHPos;
+    sCardInfo.crtSizeH    = (int)sMode.m_vHSize;
+    sCardInfo.crtPosV     = (int)sMode.m_vVPos;
+    sCardInfo.crtSizeV    = (int)sMode.m_vVSize;
+    sCardInfo.scrnRate	  = sMode.m_vRefreshRate;
+    sCardInfo.scrnWidth   = sMode.m_nWidth;
+    sCardInfo.scrnHeight  = sMode.m_nHeight;
+    sCardInfo.scrnRowByte = sMode.m_nWidth;
+    sCardInfo.colorspace  = sMode.m_eColorSpace;
   
-    switch( eColorSpc )
+    switch( sMode.m_eColorSpace )
     {
 	case CS_CMAP8:
 	    sCardInfo.scrnColors = 8;
@@ -1132,20 +1136,20 @@ int VirgeDriver::SetScreenMode( int nWidth, int nHeight, color_space eColorSpc,
 	    return( -1 );
     }
 
-    if ( nWidth == 640 && nHeight == 480 ) {
+    if ( sMode.m_nWidth == 640 && sMode.m_nHeight == 480 ) {
 	sCardInfo.scrnResNum = 0;
-    } else if ( nWidth == 800 && nHeight == 600 ) {
+    } else if ( sMode.m_nWidth == 800 && sMode.m_nHeight == 600 ) {
 	sCardInfo.scrnResNum = 1;
-    } else if ( nWidth == 1024 && nHeight == 768 ) {
+    } else if ( sMode.m_nWidth == 1024 && sMode.m_nHeight == 768 ) {
        sCardInfo.scrnResNum = 2;
-    } else if ( nWidth == 1152 && nHeight == 900 ) {
+    } else if ( sMode.m_nWidth == 1152 && sMode.m_nHeight == 900 ) {
 	sCardInfo.scrnResNum = 2;
-    } else if ( nWidth == 1280 && nHeight == 1024 ) {
+    } else if ( sMode.m_nWidth == 1280 && sMode.m_nHeight == 1024 ) {
 	sCardInfo.scrnResNum = 3;
-    } else if ( nWidth == 1600 && nHeight == 1200 ) {
+    } else if ( sMode.m_nWidth == 1600 && sMode.m_nHeight == 1200 ) {
 	sCardInfo.scrnResNum = 4;
     } else  {
-	dbprintf( "Invalid resolution %d-%d\n", nWidth, nHeight );
+	dbprintf( "Invalid resolution %d-%d\n", sMode.m_nWidth, sMode.m_nHeight );
 	return( -1 );
     }
     if ( sCardInfo.scrnColors == 16 ) {
@@ -1158,6 +1162,9 @@ int VirgeDriver::SetScreenMode( int nWidth, int nHeight, color_space eColorSpc,
     sCardInfo.offscrnHeight = sCardInfo.scrnHeight;
     sCardInfo.scrnPosH = 0;
     sCardInfo.scrnPosV = 0;
+    
+    m_sCurrentMode = sMode;
+    m_sCurrentMode.m_nBytesPerLine = sMode.m_nWidth * sCardInfo.scrnColors / 8;
 
     dprintf("Setting mode: %dx%dx%d@%f\n",
 	    sCardInfo.scrnWidth, sCardInfo.scrnHeight, sCardInfo.scrnColors, sCardInfo.scrnRate);
@@ -1180,7 +1187,7 @@ int VirgeDriver::GetScreenModeCount()
     return( m_cModes.size() );
 }
 
-bool VirgeDriver::GetScreenModeDesc( int nIndex, ScreenMode* psMode )
+bool VirgeDriver::GetScreenModeDesc( int nIndex, os::screen_mode* psMode )
 {
     if ( uint(nIndex) < m_cModes.size() ) {
 	*psMode = m_cModes[nIndex];
@@ -1190,68 +1197,11 @@ bool VirgeDriver::GetScreenModeDesc( int nIndex, ScreenMode* psMode )
     }
 }
 
-int VirgeDriver::GetHorizontalRes()
+os::screen_mode VirgeDriver::GetCurrentScreenMode()
 {
-    return( sCardInfo.scrnWidth );
+    return( m_sCurrentMode );
 }
 
-int VirgeDriver::GetVerticalRes()
-{
-    return( sCardInfo.scrnHeight );
-}
-
-int VirgeDriver::GetBytesPerLine()
-{
-    return( sCardInfo.scrnRowByte );
-}
-
-color_space VirgeDriver::GetColorSpace()
-{
-    return( sCardInfo.colorspace );
-}
-#if 0
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-void VirgeDriver::MouseOn( void )
-{
-//  if ( NULL != m_pcMouse ) {
-//    m_pcMouse->Show();
-//  }
-}
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-void	VirgeDriver::MouseOff( void )
-{
-//  if ( NULL != m_pcMouse ) {
-//    m_pcMouse->Hide();
-//  }
-}
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-void VirgeDriver::SetMousePos( IPoint cNewPos )
-{
-    if ( NULL != m_pcMouseSprite ) {
-	m_pcMouseSprite->MoveTo( cNewPos );
-    }
-}
-#endif
 
 //----------------------------------------------------------------------------
 // NAME:
@@ -1268,23 +1218,6 @@ bool VirgeDriver::IntersectWithMouse( const IRect& cRect )
 //  } else {
 //    return( false );
 //  }
-}
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-void VirgeDriver::SetColor( int nIndex, const Color32_s& sColor )
-{
-/*  
-  outb_p( nIndex, 0x3c8 );
-  outb_p( sColor.anRGBA[0] >> 2, 0x3c9 );
-  outb_p( sColor.anRGBA[1] >> 2, 0x3c9 );
-  outb_p( sColor.anRGBA[2] >> 2, 0x3c9 );
-  */  
 }
 
 //----------------------------------------------------------------------------

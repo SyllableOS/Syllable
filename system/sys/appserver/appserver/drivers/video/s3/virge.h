@@ -170,18 +170,12 @@ public:
     area_id	 Open();
     void	 Close();
     virtual int	 GetScreenModeCount();
-    virtual bool GetScreenModeDesc( int nIndex, ScreenMode* psMode );
+    virtual bool GetScreenModeDesc( int nIndex, os::screen_mode* psMode );
   
-    int		SetScreenMode(  int nWidth, int nHeight, color_space eColorSpc,
-				int nPosH, int nPosV, int nSizeH, int nSizeV, float vRefreshRate );
+    int		SetScreenMode( os::screen_mode sMode );
 
-    virtual int GetHorizontalRes();
-    virtual int GetVerticalRes();
-    virtual int GetBytesPerLine();
-    virtual color_space  GetColorSpace();
-  
-    void		SetColor( int nIndex, const Color32_s&	sColor );
-
+    virtual os::screen_mode GetCurrentScreenMode();
+   
 //    void		MouseOn( void );
 //    void		MouseOff( void );
 //    void		SetMousePos( IPoint cNewPos );
@@ -193,7 +187,8 @@ public:
     bool		BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap, IRect cSrcRect, IPoint cDstPos, int nMode );
 
 private:
-    std::vector<ScreenMode>	m_cModes;
+    std::vector<os::screen_mode>	m_cModes;
+    os::screen_mode	m_sCurrentMode;
     uint32    m_nFrameBufferSize;
     uint8*    m_pFrameBuffer;
 //    SrvBitmap*   m_pcMouseImage;

@@ -33,13 +33,9 @@ public:
     virtual area_id	Open();
 
     virtual int         GetScreenModeCount();
-    virtual bool        GetScreenModeDesc( int nIndex, ScreenMode* psMode );
-    virtual int		SetScreenMode( int nWidth, int nHeight, os::color_space eColorSpc,
-				       int nPosH, int nPosV, int nSizeH, int nSizeV, float vRefreshRate );
-    virtual int         GetHorizontalRes();
-    virtual int         GetVerticalRes();
-    virtual int         GetBytesPerLine();
-    virtual os::color_space GetColorSpace();  
+    virtual bool        GetScreenModeDesc( int nIndex, os::screen_mode* psMode );
+    virtual int		SetScreenMode( os::screen_mode );
+    virtual os::screen_mode GetCurrentScreenMode();
 
     virtual void	SetCursorBitmap( os::mouse_ptr_mode eMode, const os::IPoint& cHotSpot, const void* pRaster, int nWidth, int nHeight );
     virtual void        MouseOn( void );
@@ -86,8 +82,8 @@ private:
 
     enum CRTCScheme { CRTC_VESA, CRTC_GX00 };
     CRTCScheme  m_nCRTCScheme;
-    int         m_nCurrentMode;
-    std::vector<ScreenMode> m_cScreenModeList;
+    os::screen_mode         m_sCurrentMode;
+    std::vector<os::screen_mode> m_cScreenModeList;
 };
 
 #endif // __F_MGA_MGA_H__

@@ -166,18 +166,9 @@ public:
     virtual area_id Open();
     virtual void    Close();
     virtual int     GetScreenModeCount();
-    virtual bool    GetScreenModeDesc( int nIndex, ScreenMode* psMode );
-    virtual int     SetScreenMode( int nWidth, int nHeight,
-                                   color_space eColorSpc,
-                                   int nPosH, int nPosV,
-                                   int nSizeH, int nSizeV,
-                                   float vRefreshRate );
-    virtual int     GetHorizontalRes();
-    virtual int     GetVerticalRes();
-    virtual int     GetBytesPerLine();
-
-    virtual os::color_space  GetColorSpace();
-    virtual void    SetColor( int nIndex, const Color32_s& sColor );
+    virtual bool    GetScreenModeDesc( int nIndex, os::screen_mode* psMode );
+    virtual int     SetScreenMode( os::screen_mode sMode );
+    virtual os::screen_mode     GetCurrentScreenMode();
 
     virtual bool    DrawLine( SrvBitmap* psBitMap, const IRect& cClipRect,
                               const IPoint& cPnt1, const IPoint& cPnt2,
@@ -207,7 +198,8 @@ private:
     inline uint32 inl( uint32 nAddress ) const;
     inline uint8  inb( uint32 nAddress ) const;
 
-    std::vector<ScreenMode>	 m_cModes;
+    std::vector<os::screen_mode>	 m_cModes;
+    os::screen_mode			m_sCurrentMode;
     
     // As a rule, we will only lock and unlock in public methods
     // of this driver because they are topmost and atomic functions
@@ -227,7 +219,6 @@ private:
     uint32      m_nVideoMemory;
     BusType     m_nBusType;
 
-    int8        m_nCurrentMode;
 };
 
 

@@ -239,22 +239,26 @@ Millenium2::Millenium2() : m_cGELock( "mill2_ge_lock" ), m_cCursorHotSpot(0,0)
 	// TODO: find out if the actualy is ram for the resolution...
 	color_space colspace[3] = { CS_RGB15, CS_RGB16, CS_RGB32 };
 	int bpp[3] = { 2, 2, 4 };
+	float rf[] = { 60.0f, 75.0f, 85.0f, 100.0f };
 	for( int i=0; i<3; i++ )
 	{
-	    m_cScreenModeList.push_back( ScreenMode(128, 88, (128*bpp[i]+15)&~15, colspace[i]) ); // broken??!?
-	    m_cScreenModeList.push_back( ScreenMode(160, 120, (160*bpp[i]+15)&~15, colspace[i]) );
-	    m_cScreenModeList.push_back( ScreenMode(320, 240, (320*bpp[i]+15)&~15, colspace[i]) );
-	    m_cScreenModeList.push_back( ScreenMode(512, 350, (512*bpp[i]+15)&~15, colspace[i]) ); // broken??!?
-	    m_cScreenModeList.push_back( ScreenMode(640, 480, (640*bpp[i]+15)&~15, colspace[i]) );
-	    m_cScreenModeList.push_back( ScreenMode(800, 600, (800*bpp[i]+15)&~15, colspace[i]) );
-	    m_cScreenModeList.push_back( ScreenMode(1024, 768, (1024*bpp[i]+15)&~15, colspace[i]) );
-	    m_cScreenModeList.push_back( ScreenMode(1152, 864, (1152*bpp[i]+15)&~15, colspace[i]) );
-	    m_cScreenModeList.push_back( ScreenMode(1280, 1024, (1280*bpp[i]+15)&~15, colspace[i]) );
-	    m_cScreenModeList.push_back( ScreenMode(1376, 1068, (1376*bpp[i]+15)&~15, colspace[i]) );
-	    m_cScreenModeList.push_back( ScreenMode(1440, 1112, (1440*bpp[i]+15)&~15, colspace[i]) );
-	    m_cScreenModeList.push_back( ScreenMode(1536, 1156, (1536*bpp[i]+15)&~15, colspace[i]) );
-	    m_cScreenModeList.push_back( ScreenMode(1600, 1200, (1600*bpp[i]+15)&~15, colspace[i]) );
-	    m_cScreenModeList.push_back( ScreenMode(2048, 1536, (2048*bpp[i]+15)&~15, colspace[i]) );
+		for( int j = 0; j < 4; j++ ) 
+		{
+	    m_cScreenModeList.push_back( os::screen_mode(128, 88, (128*bpp[i]+15)&~15, colspace[i], rf[j]) ); // broken??!?
+	    m_cScreenModeList.push_back( os::screen_mode(160, 120, (160*bpp[i]+15)&~15, colspace[i], rf[j]) );
+	    m_cScreenModeList.push_back( os::screen_mode(320, 240, (320*bpp[i]+15)&~15, colspace[i], rf[j]) );
+	    m_cScreenModeList.push_back( os::screen_mode(512, 350, (512*bpp[i]+15)&~15, colspace[i], rf[j]) ); // broken??!?
+	    m_cScreenModeList.push_back( os::screen_mode(640, 480, (640*bpp[i]+15)&~15, colspace[i], rf[j]) );
+	    m_cScreenModeList.push_back( os::screen_mode(800, 600, (800*bpp[i]+15)&~15, colspace[i], rf[j]) );
+	    m_cScreenModeList.push_back( os::screen_mode(1024, 768, (1024*bpp[i]+15)&~15, colspace[i], rf[j]) );
+	    m_cScreenModeList.push_back( os::screen_mode(1152, 864, (1152*bpp[i]+15)&~15, colspace[i], rf[j]) );
+	    m_cScreenModeList.push_back( os::screen_mode(1280, 1024, (1280*bpp[i]+15)&~15, colspace[i], rf[j]) );
+	    m_cScreenModeList.push_back( os::screen_mode(1376, 1068, (1376*bpp[i]+15)&~15, colspace[i], rf[j]) );
+	    m_cScreenModeList.push_back( os::screen_mode(1440, 1112, (1440*bpp[i]+15)&~15, colspace[i], rf[j]) );
+	    m_cScreenModeList.push_back( os::screen_mode(1536, 1156, (1536*bpp[i]+15)&~15, colspace[i], rf[j]) );
+	    m_cScreenModeList.push_back( os::screen_mode(1600, 1200, (1600*bpp[i]+15)&~15, colspace[i], rf[j]) );
+	    m_cScreenModeList.push_back( os::screen_mode(2048, 1536, (2048*bpp[i]+15)&~15, colspace[i], rf[j]) );
+		}
 	}
 
 	m_hFrameBufferArea = create_area( "mill2_gramebuffer",(void**) &m_pFrameBufferBase, 32*1024*1024,
@@ -314,7 +318,7 @@ int Millenium2::GetScreenModeCount()
 	return VesaDriver::GetScreenModeCount();
 }
 
-bool Millenium2::GetScreenModeDesc( int nIndex, ScreenMode* psMode )
+bool Millenium2::GetScreenModeDesc( int nIndex, os::screen_mode* psMode )
 {
     if( m_nCRTCScheme == CRTC_GX00 )
     {
@@ -329,44 +333,42 @@ bool Millenium2::GetScreenModeDesc( int nIndex, ScreenMode* psMode )
     }
 }
 
-int Millenium2::SetScreenMode( int nWidth, int nHeight, color_space eColorSpc,
-			       int nPosH, int nPosV, int nSizeH, int nSizeV, float vRefreshRate )
+int Millenium2::SetScreenMode( os::screen_mode sMode )
 {
     int nError = -1;
+    bool bModeFound = false;
 
-    printf( "Millenium2::SetScreenMode(vRefreshRate=%f)\n", vRefreshRate );
+    printf( "Millenium2::SetScreenMode(vRefreshRate=%f)\n", sMode.m_vRefreshRate );
 
     // Anti appserver hack 
-    if( vRefreshRate == 55 )
-	vRefreshRate = 70;
+    if( sMode.m_vRefreshRate == 55 )
+	sMode.m_vRefreshRate = 70;
     if( m_nCRTCScheme == CRTC_GX00 )
     {
-	m_nCurrentMode = -1;
 	for( uint i=0; i<m_cScreenModeList.size(); i++ )
 	{
-	    if( m_cScreenModeList[i].m_nWidth == nWidth &&
-		m_cScreenModeList[i].m_nHeight == nHeight &&
-		m_cScreenModeList[i].m_eColorSpace == eColorSpc )
+	    if( m_cScreenModeList[i].m_nWidth == sMode.m_nWidth &&
+		m_cScreenModeList[i].m_nHeight == sMode.m_nHeight &&
+		m_cScreenModeList[i].m_eColorSpace == sMode.m_eColorSpace )
 	    {
-		m_nCurrentMode = i;
+		bModeFound = true;
 		break;
 	    }
         }
-	if( m_nCurrentMode >= 0 )
+	if( bModeFound )
 	{
 	    CGx00CRTC1 crtc( *this );
-	    if( eColorSpc == CS_RGB15 )
-	        nError = crtc.SetMode( nWidth, nHeight, 15, vRefreshRate ) ? 0 : -1;
-	    if( eColorSpc == CS_RGB16 )
-	        nError = crtc.SetMode( nWidth, nHeight, 16, vRefreshRate ) ? 0 : -1;
-	    if( eColorSpc == CS_RGB32 )
-	        nError = crtc.SetMode( nWidth, nHeight, 32, vRefreshRate ) ? 0 : -1;
+	    if( sMode.m_eColorSpace == CS_RGB15 )
+	        nError = crtc.SetMode( sMode.m_nWidth, sMode.m_nHeight, 15, sMode.m_vRefreshRate ) ? 0 : -1;
+	    if( sMode.m_eColorSpace == CS_RGB16 )
+	        nError = crtc.SetMode( sMode.m_nWidth, sMode.m_nHeight, 16, sMode.m_vRefreshRate ) ? 0 : -1;
+	    if( sMode.m_eColorSpace == CS_RGB32 )
+	        nError = crtc.SetMode( sMode.m_nWidth, sMode.m_nHeight, 32, sMode.m_vRefreshRate ) ? 0 : -1;
 	}
     }
     else
     {
-        nError = VesaDriver::SetScreenMode( nWidth, nHeight, eColorSpc, nPosH, nPosV,
-						nSizeH, nSizeV, vRefreshRate );
+        nError = VesaDriver::SetScreenMode( sMode );
     }
 
     if( m_nPointerScheme == POINTER_MILLENIUM )
@@ -379,42 +381,17 @@ int Millenium2::SetScreenMode( int nWidth, int nHeight, color_space eColorSpc,
         outb( TVP3026_INDEX, TVP3026_CURSOR_CTL );
         outb( TVP3026_DATA, tmp|0x13 );
     }
+    m_sCurrentMode = sMode;
+    m_sCurrentMode.m_nBytesPerLine = sMode.m_nWidth * ( ( BitsPerPixel( sMode.m_eColorSpace ) + 1 ) / 8 );
     
     return( nError );
 }
 
-int Millenium2::GetHorizontalRes()
+os::screen_mode Millenium2::GetCurrentScreenMode()
 {
-    if( m_nCRTCScheme == CRTC_GX00 )
-	return m_cScreenModeList[m_nCurrentMode].m_nWidth;
-    else
-	return VesaDriver::GetHorizontalRes();
+    return( m_sCurrentMode );
 }
 
-int Millenium2::GetVerticalRes()
-{
-    if( m_nCRTCScheme == CRTC_GX00 )
-	return m_cScreenModeList[m_nCurrentMode].m_nHeight;
-    else
-	return VesaDriver::GetVerticalRes();
-}
-
-int Millenium2::GetBytesPerLine()
-{
-    if( m_nCRTCScheme == CRTC_GX00 )
-	return m_cScreenModeList[m_nCurrentMode].m_nBytesPerLine;
-    else
-	return VesaDriver::GetBytesPerLine();
-}
-
-color_space Millenium2::GetColorSpace()
-{
-    if( m_nCRTCScheme == CRTC_GX00 )
-	return m_cScreenModeList[m_nCurrentMode].m_eColorSpace;
-    else
-	return VesaDriver::GetColorSpace();
-}
- 
 //-----------------------------------------------------------------------------
 
 void Millenium2::MouseOn( void )

@@ -36,6 +36,19 @@ void ATImach64::aty_st_8(int regindex, uint8 val)
 	outb (val, regindex);
 }
 //-------------------------------------------------------------------
+uint8 ATImach64::aty_ld_lcd( int regindex )
+{
+	aty_st_8( LCD_INDEX, SetBits( regindex, LCD_INDEX_MASK ) );
+	return( aty_ld_8( LCD_DATA ) );
+}
+//-------------------------------------------------------------------
+void ATImach64::aty_st_lcd(int regindex, uint8 val)
+{
+	aty_st_8( LCD_INDEX, SetBits( regindex, LCD_INDEX_MASK ) );
+	aty_st_8( LCD_DATA, val );
+}
+
+//-------------------------------------------------------------------
 void ATImach64::wait_for_fifo(uint16 entries)
 {
 	while( (aty_ld_le32(FIFO_STAT) & 0xffff) >
@@ -46,6 +59,16 @@ void ATImach64::wait_for_idle()
 {
 	wait_for_fifo(16);
 	while( (aty_ld_le32(GUI_STAT) & 1)!= 0 );
+}
+//-------------------------------------------------------------------
+void ATImach64::wait_for_vblank()
+{
+	int i;
+
+    for(i=0; i<2000000; i++)
+	if( (aty_ld_le32(CRTC_INT_CNTL)&CRTC_VBLANK)==0 ) break;
+    for(i=0; i<2000000; i++)
+	if( (aty_ld_le32(CRTC_INT_CNTL)&CRTC_VBLANK) ) break;
 }
 //-------------------------------------------------------------------
 uint8 ATImach64::aty_ld_pll(int offset)

@@ -1090,7 +1090,8 @@ int sis_init()
 	
 	/* Initialize BIOS emulation */
 	sishw_ext.jChipType = si.chip;
-	sishw_ext.ulIOAddress = SiS_Pr.RelIO = si.io_base + 0x30;
+	sishw_ext.ulIOAddress = SiS_Pr.RelIO = si.io_base;
+	sishw_ext.ulIOAddress += 0x30;
 	SiS_Pr.SiS_Backup70xx = 0xff;
 	SiS_Pr.SiS_CHOverScan = -1;
 	SiS_Pr.SiS_ChSW = FALSE;
@@ -1271,17 +1272,19 @@ int sis_init()
 	} else {
 		si.disp_state = DISPMODE_SINGLE | DISPTYPE_CRT1;
 	}
-
+	
 	if( si.disp_state & DISPTYPE_LCD ) {
 		inSISIDXREG( SISCR, IND_SIS_LCD_PANEL, reg );
-		reg &= 0x0f;
 		if( si.vga_engine == SIS_300_VGA ) {
-		    sishw_ext.ulCRT2LCDType = sis300paneltype[reg];
+ 			si.LCDheight = SiS300_LCD_Type[(reg & 0x0f)].LCDheight;
+	    	si.LCDwidth = SiS300_LCD_Type[(reg & 0x0f)].LCDwidth;
+			sishw_ext.ulCRT2LCDType = SiS300_LCD_Type[(reg & 0x0f)].LCDtype;
 		} else {
-		    sishw_ext.ulCRT2LCDType = sis310paneltype[reg];
-	    }
+			si.LCDheight = SiS310_LCD_Type[(reg & 0x0f)].LCDheight;
+	    	si.LCDwidth = SiS310_LCD_Type[(reg & 0x0f)].LCDwidth;	
+			sishw_ext.ulCRT2LCDType = SiS310_LCD_Type[(reg & 0x0f)].LCDtype;
+		}
 	}
-	
 	/* Save the current PanelDelayCompensation if the LCD is currently used */
 	if( si.vga_engine == SIS_300_VGA) {
 		if( (sishw_ext.usExternalChip == 0x01) ||   /* LVDS */

@@ -12,36 +12,17 @@ int ATImach64::GetScreenModeCount() {
 	return( m_cScreenModeList.size() );
 }
 //----------------------------------------------------------------
-bool ATImach64::GetScreenModeDesc(int nIndex, ScreenMode *psMode) {
+bool ATImach64::GetScreenModeDesc(int nIndex, os::screen_mode *psMode) {
 	if( nIndex < 0 || unsigned (nIndex) > m_cScreenModeList.size() )
 		return( false );
 	*psMode = m_cScreenModeList[nIndex];
 		return( true );
 }
 //-----------------------------------------------------------------
-int ATImach64::GetHorizontalRes() {
-	if( unsigned(m_nCurrentMode) < m_cScreenModeList.size() )
-		return( m_cScreenModeList[m_nCurrentMode].m_nWidth );
-	return( -1 );
+os::screen_mode ATImach64::GetCurrentScreenMode() {
+	return( m_sCurrentMode );
 }
-// ----------------------------------------------------------------
-int ATImach64::GetVerticalRes() {
-	if( unsigned(m_nCurrentMode) < m_cScreenModeList.size() )
-		return( m_cScreenModeList[m_nCurrentMode].m_nHeight );
-	return( -1 );
-}
-// ----------------------------------------------------------------
-int ATImach64::GetBytesPerLine() { 
-	if( unsigned (m_nCurrentMode) < m_cScreenModeList.size() )
-		return( m_cScreenModeList[m_nCurrentMode].m_nBytesPerLine );
-	return( -1 );
-}
-// ----------------------------------------------------------------
-color_space ATImach64::GetColorSpace() {
-	if( unsigned(m_nCurrentMode) < m_cScreenModeList.size() )
-		return( m_cScreenModeList[m_nCurrentMode].m_eColorSpace );
-	return( CS_CMAP8 );
-}
+
 // -----------------------------------------------------------------
 int ATImach64::BytesPerPixel (color_space cs) {
 	switch( cs ) {

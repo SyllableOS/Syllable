@@ -32,6 +32,7 @@
 #ifdef SYLLABLE
 #include <atheos/types.h>
 #include <atheos/pci.h>
+#include "sis_video.h"
 #include "sis.h"
 #endif
 

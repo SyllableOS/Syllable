@@ -16,13 +16,6 @@ struct chip_info
 	uint16 nDeviceId;
 };
 
-struct video_mode
-{
-	int nXres, nYres;
-	int nBpp; // bytes per pixel
-	os::color_space eColorSpace;
-};
-
 class SiS3xx : public DisplayDriver
 {
 public:
@@ -33,15 +26,11 @@ public:
 	virtual void	Close();
 
     virtual int	GetScreenModeCount();
-	virtual bool    GetScreenModeDesc( int nIndex, ScreenMode* psMode );
+	virtual bool    GetScreenModeDesc( int nIndex, os::screen_mode* psMode );
 
-	virtual int	SetScreenMode( int nWidth, int nHeight, os::color_space eColorSpc,
-				       int nPosH, int nPosV, int nSizeH, int nSizeV, float vRefreshRate );
-	virtual int	GetHorizontalRes();
-	virtual int	GetVerticalRes();
-	virtual int	GetBytesPerLine();
-	virtual os::color_space GetColorSpace();  
-	virtual void	SetColor(int nIndex, const Color32_s& sColor);
+	virtual int	SetScreenMode( os::screen_mode sMode );
+	virtual os::screen_mode GetCurrentScreenMode();
+	
 
 	virtual void	SetCursorBitmap( os::mouse_ptr_mode eMode, const os::IPoint& cHotSpot, const void* pRaster, int nWidth, int nHeight );
 	virtual void	MouseOn( void );
@@ -54,6 +43,11 @@ public:
 				  const os::IPoint& cPnt1, const os::IPoint& cPnt2, const os::Color32_s& sColor, int nMode );
 	virtual bool	FillRect( SrvBitmap* psBitMap, const os::IRect& cRect, const os::Color32_s& sColor );
 	virtual bool	BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap, os::IRect cSrcRect, os::IPoint cDstPos, int nMode );
+	
+	virtual bool	CreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, os::color_space eFormat, os::Color32_s sColorKey, area_id *pBuffer );
+	virtual bool	RecreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, os::color_space eFormat, area_id *pBuffer );
+	virtual void	DeleteVideoOverlay( area_id *pBuffer );
+	virtual void	UpdateVideoOverlay( area_id *pBuffer );
 
 	bool		IsInitiated() const { return( m_bIsInitiated ); }
 private:
@@ -72,12 +66,16 @@ private:
 
 	vuint8*			m_pFrameBufferBase;
 	area_id			m_hFrameBufferArea;
-	std::vector<ScreenMode> m_cScreenModeList;
+	std::vector<os::screen_mode> m_cScreenModeList;
+	os::screen_mode m_sCurrentMode;
     
 	bool			m_bCursorIsOn;
 	os::IPoint		m_cCursorPos;
 	os::IPoint		m_cCursorHotSpot;
 	uint8			m_anCursorShape[64*64*4];
+	
+	uint32			m_nColorKey;
+	bool			m_bVideoOverlayUsed;
 	
 };
 

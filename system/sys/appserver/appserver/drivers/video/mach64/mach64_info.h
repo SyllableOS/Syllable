@@ -1,10 +1,6 @@
 #ifndef _ATI_INFO_H_
 #define _ATI_INFO_H_
 
-
-#define DAC_UNSUPPORTED		0x60
-#define CLK_UNSUPPORTED		8
-
     /*
      *  ATI Mach64 features
      */
@@ -30,8 +26,7 @@
 #define M64F_G3_PB_1024x768	0x00010000
 #define M64F_EXTRA_BRIGHT	0x00020000
 #define M64F_LT_SLEEP		0x00040000
-#define M64F_XL_DLL		0x00080000
-
+#define M64F_XL_DLL			0x00080000
 
 
 /* Make sure n * PAGE_SIZE is protected at end of Aperture for GUI-regs */
@@ -54,20 +49,15 @@ struct crtc {
     uint32 gen_cntl;
     uint32 dp_pix_width;	/* acceleration */
     uint32 dp_chain_mask;	/* acceleration */
+    
+    uint32 lcd_index;
+    uint32 config_panel;
+    uint32 lcd_gen_ctrl;
+    uint32 horz_stretching;
+    uint32 vert_stretching;
+    uint32 ext_vert_stretch;
 };
 
-struct pll_514 {
-    uint8 m;
-    uint8 n;
-};
-
-struct pll_18818
-{
-    uint32 program_bits;
-    uint32 locationAddr;
-    uint32 period_in_ps;
-    uint32 post_divider;
-};
 
 struct pll_ct {
     uint8 pll_ref_div;
@@ -85,8 +75,6 @@ struct pll_ct {
 
 union ati_pll {
     struct pll_ct ct;
-    struct pll_514 ibm514;
-    struct pll_18818 ics2595;
 };
 
 
@@ -100,6 +88,19 @@ struct ati_par {
     uint32 accel_flags;
 };
 
+struct ati_lcd {
+	int panel_id;
+	int clock;
+	int horizontal;
+	int vertical;
+	int hsync_start;
+	int hsync_width;
+	int hblank_width;
+	int vsync_start;
+	int vsync_width;
+	int vblank_width;
+	int blend_fifo_size;
+};
 
 
 struct ati_cursor {
@@ -111,20 +112,20 @@ struct ati_cursor {
 };
 
 struct ati_info {
+	uint8 chip;
     unsigned long ati_regbase_phys;
     vuint8 *ati_regbase;
     unsigned long frame_buffer_phys;
     vuint8 *frame_buffer;
     unsigned long clk_wr_offset;
     struct ati_cursor *cursor;
-    struct ati_par default_par;
-    struct ati_par current_par;
+    struct ati_par par;
+    struct ati_lcd lcd;
     uint32 features;
     uint32 total_vram;
     uint32 ref_clk_per;
     uint32 pll_per;
     uint32 mclk_per;
-    uint8 bus_type;
     uint8 ram_type;
     uint8 mem_refresh_rate;
     int dac_type;
@@ -133,6 +134,7 @@ struct ati_info {
 };
 
 struct ati_features {
+	uint8 chip;
     uint16 pci_id, chip_type;
     uint8 rev_mask, rev_val;
     const char *name;

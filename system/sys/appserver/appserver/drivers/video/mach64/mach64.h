@@ -46,6 +46,15 @@
 #define V_DBLSCAN	0x00000020
 #define V_CLKDIV2		0x00004000
 
+#define UnitOf(___Value)                                \
+        (((((___Value) ^ ((___Value) - 1)) + 1) >> 1) | \
+         ((((___Value) ^ ((___Value) - 1)) >> 1) + 1))
+
+#define GetBits(__Value, _Mask) (((__Value) & (_Mask)) / UnitOf(_Mask))
+#define SetBits(__Value, _Mask) (((__Value) * UnitOf(_Mask)) & (_Mask))
+#define MaxBits(__Mask)         GetBits(__Mask, __Mask)
+
+
 struct VideoMode {
 	int		Width;			/* width 						*/
 	int		Height;			/* height						*/
@@ -76,15 +85,11 @@ public:
 	area_id Open();
 	virtual void Close();
 
-	virtual int SetScreenMode(int nWidth, int nHeight, color_space eColorSpc, int nPosH,
-		int nPosV, int nSizeH, int nSizeV, float vRefreshRate);
+	virtual int SetScreenMode( os::screen_mode sMode );
 
 	virtual int GetScreenModeCount();
-	virtual bool GetScreenModeDesc(int nIndex, ScreenMode *psMode);
-	virtual int GetHorizontalRes();
-	virtual int GetVerticalRes();
-	virtual int GetBytesPerLine();
-	virtual os::color_space GetColorSpace();
+	virtual bool GetScreenModeDesc(int nIndex, os::screen_mode *psMode);
+	virtual os::screen_mode GetCurrentScreenMode();
 
 	int BytesPerPixel(color_space cs);
 	int BitsPerPixel(color_space cs);
@@ -102,6 +107,10 @@ public:
 		const IPoint &cPnt1, const IPoint &cPnt2, const Color32_s &sColor, int nMode);
 	virtual bool BltBitmap(SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap,
 		IRect cSrcRect, IPoint cDstPos, int nMode);
+	virtual bool	CreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, os::color_space eFormat, os::Color32_s sColorKey, area_id *pBuffer );
+	virtual bool	RecreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, os::color_space eFormat, area_id *pBuffer );
+	virtual void	DeleteVideoOverlay( area_id *pBuffer );
+	virtual void	UpdateVideoOverlay( area_id *pBuffer );
 	bool IsInitialized();
 
 	//--------------------------------------------------------------------
@@ -125,11 +134,15 @@ private:
 	bool HWcursor;
 
 	// *** screen modes ***
-	std::vector<ScreenMode> m_cScreenModeList; // list of the screen modes
+	std::vector<os::screen_mode> m_cScreenModeList; // list of the screen modes
 
 	// current mode
-	int     m_nCurrentMode;        // current video mode number
-	float   m_vCurrentRefresh;      // current refresh of the screen
+	os::screen_mode     m_sCurrentMode;        // current video mode
+	
+	// Video Overlay
+	bool				m_bSupportsYUV;
+	uint32				m_nColorKey;
+	bool				m_bVideoOverlayUsed;
 
 	// I / O
 
@@ -142,8 +155,12 @@ private:
 	void aty_st_le32(int regindex, uint32 val);
 	uint8 aty_ld_8(int regindex);
 	void aty_st_8(int regindex, uint8 val);
+	uint8 aty_ld_lcd( int regindex );
+	void aty_st_lcd(int regindex, uint8 val);
+	
 	void wait_for_fifo(uint16 entries);
 	void wait_for_idle();
+	void wait_for_vblank();
 	uint8 aty_ld_pll(int offset);
 	void reset_GTC_3D_engine();
 	void reset_engine();
@@ -153,36 +170,6 @@ private:
 
 	int aty_var_to_crtc(const struct VideoMode *var, int var_bpp, struct crtc *crtc);
 	void aty_set_crtc(const struct crtc *crtc);
-
-	// Mach64 GX support
-
-	void aty_dac_waste4();
-	void aty_StrobeClock();
-	void aty_st_514(int offset, uint8 val);
-	int aty_set_dac_514(const union ati_pll *pll, uint32 bpp, uint32 accel);
-	int aty_var_to_pll_514(uint32 vclk_per, uint8 bpp, union ati_pll *pll);
-	void aty_set_pll_514(const union ati_pll *pll);
-
-	int aty_set_dac_ATI68860_B(const union ati_pll *pll, uint32 bpp, uint32 AccelMode);
-
-	int aty_set_dac_ATT21C498(const union ati_pll *pll, uint32 bpp, uint32 accel);
-
-	int aty_var_to_pll_18818(uint32 vclk_per, uint8 bpp, union ati_pll *pll);
-	void aty_ICS2595_put1bit(uint8 data);
-	void aty_set_pll18818(const union ati_pll *pll);
-
-	int aty_var_to_pll_1703(uint32 vclk_per, uint8 bpp, union ati_pll *pll);
-	void aty_set_pll_1703(const union ati_pll *pll);
-
-	int aty_var_to_pll_8398(uint32 vclk_per, uint8 bpp, union ati_pll *pll);
-	void aty_set_pll_8398(const union ati_pll *pll);
-
-	int aty_var_to_pll_408(uint32 vclk_per, uint8 bpp, union ati_pll *pll);
-	void aty_set_pll_408(const union ati_pll *pll);
-
-	int aty_set_dac_unsupported(const union ati_pll *pll, uint32 bpp,
-				   uint32 accel);
-
 
 	// Mach64 CT support
 

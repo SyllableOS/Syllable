@@ -1,7 +1,7 @@
 COPTS   = -I$(TOP)/src  -c -O2 -Wall
 
 DEVBIN = /system/drivers/appserver/video
-OBJS = mach64_accel.o mach64_crtc.o mach64_cursor.o mach64_io.o mach64_misc.o mach64_gx.o mach64_ct.o mach64.o
+OBJS = mach64_accel.o mach64_crtc.o mach64_cursor.o mach64_io.o mach64_misc.o mach64_video.o mach64_ct.o mach64.o
 
 OBJDIR	:= objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
@@ -36,4 +36,5 @@ dist: $(OBJDIR)/mach64
 
 clean:
 	rm $(OBJDIR)/*
+
 

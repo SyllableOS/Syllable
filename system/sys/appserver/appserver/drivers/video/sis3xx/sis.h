@@ -33,7 +33,7 @@
 #define VB_PART4_ADR              (0x14-0x30)
 #define VB_PART4_DATA             (0x15-0x30)
 
-#define SISSR			  SiS_Pr.SiS_P3c4
+#define SISSR			  		  SiS_Pr.SiS_P3c4
 #define SISCR                     SiS_Pr.SiS_P3d4
 #define SISDACA                   SiS_Pr.SiS_P3c8
 #define SISDACD                   SiS_Pr.SiS_P3c9
@@ -44,7 +44,9 @@
 #define SISPART5                  SiS_Pr.SiS_Part5Port
 #define SISDAC2A                  SISPART5
 #define SISDAC2D                  (SISPART5 + 1)
-#define SISMISCR                  (SiS_Pr.RelIO + 0x1c)
+#define SISMISCR                  (SiS_Pr.RelIO + 0x4c)
+#define SISVID					  (SiS_Pr.RelIO + 0x02)
+#define SISINPSTAT				  (SiS_Pr.RelIO + 0x5a)
 
 #define IND_SIS_PASSWORD          0x05  /* SRs */
 #define IND_SIS_COLOR_MODE        0x06
@@ -71,6 +73,22 @@
 #define IND_SIS_AGP_IO_PAD        0x48
 
 #define IND_BRI_DRAM_STATUS       0x63 /* PCI config memory size offset */
+
+/*
+ *  CRT_2 function control register ---------------------------------
+ */
+#define  Index_CRT2_FC_CONTROL                  0x00
+#define  Index_CRT2_FC_SCREEN_HIGH              0x04
+#define  Index_CRT2_FC_SCREEN_MID               0x05
+#define  Index_CRT2_FC_SCREEN_LOW               0x06
+#define  Index_CRT2_FC_ENABLE_WRITE             0x24
+#define  Index_CRT2_FC_VR                       0x25
+#define  Index_CRT2_FC_VCount                   0x27
+#define  Index_CRT2_FC_VCount1                  0x28
+
+#define  Index_310_CRT2_FC_VR                   0x30  /* d[1] = vertical retrace */
+#define  Index_310_CRT2_FC_RT			0x33  /* d[7] = retrace in progress */
+
 
 #define MMIO_QUEUE_PHYBASE        0x85C0
 #define MMIO_QUEUE_WRITEPORT      0x85C4
@@ -275,19 +293,71 @@ struct _sisbios_mode {
 
 extern struct _sisbios_mode sisbios_mode[];
 
+#define VB_LCD_320x480			0x00000001	/* TW: DSTN/FSTN for 550 */
+#define VB_LCD_640x480          0x00000002
+#define VB_LCD_800x600          0x00000004
+#define VB_LCD_1024x768         0x00000008
+#define VB_LCD_1280x1024        0x00000010
+#define VB_LCD_1280x960   	 	0x00000020
+#define VB_LCD_1600x1200		0x00000040
+#define VB_LCD_2048x1536		0x00000080
+#define VB_LCD_1400x1050        0x00000100
+#define VB_LCD_1152x864         0x00000200
+#define VB_LCD_1152x768         0x00000400
+#define VB_LCD_1280x768         0x00000800
+#define VB_LCD_1024x600         0x00001000
+
+typedef struct _SiS_LCD_StStruct
+{
+	ULONG  VBLCD_lcdflag;
+	USHORT LCDwidth;
+	USHORT LCDheight;
+	USHORT LCDtype;
+	UCHAR  LCDrestextindex;
+} SiS_LCD_StStruct;
+
 
 /* TW: CR36 evaluation */
-static const unsigned short sis300paneltype[] =
-    { LCD_UNKNOWN,   LCD_800x600,  LCD_1024x768,  LCD_1280x1024,
-      LCD_1280x960,  LCD_640x480,  LCD_1024x600,  LCD_1152x768,
-      LCD_320x480,   LCD_1024x768, LCD_1024x768,  LCD_1024x768,
-      LCD_1024x768,  LCD_1024x768, LCD_1024x768,  LCD_1024x768 };
 
-static const unsigned short sis310paneltype[] =
-    { LCD_UNKNOWN,   LCD_800x600,  LCD_1024x768,  LCD_1280x1024,
-      LCD_640x480,   LCD_1024x600, LCD_1152x864,  LCD_1280x960,
-      LCD_1152x768,  LCD_1400x1050,LCD_1280x768,  LCD_1600x1200,
-      LCD_320x480,   LCD_1024x768, LCD_1024x768,  LCD_1024x768 };
+static const SiS_LCD_StStruct SiS300_LCD_Type[]=
+{
+    { VB_LCD_1024x768, 1024,  768, LCD_1024x768,  1},  /* 0 - invalid */
+	{ VB_LCD_800x600,   800,  600, LCD_800x600,   0},  /* 1 */
+	{ VB_LCD_1024x768, 1024,  768, LCD_1024x768,  1},  /* 2 */
+	{ VB_LCD_1280x1024,1280, 1024, LCD_1280x1024, 2},  /* 3 */
+	{ VB_LCD_1280x960, 1280,  960, LCD_1280x960,  3},  /* 4 */
+	{ VB_LCD_640x480,   640,  480, LCD_640x480,   4},  /* 5 */
+	{ VB_LCD_1024x600, 1024,  600, LCD_1024x600, 10},  /* 6 */
+	{ VB_LCD_1152x768, 1152,  768, LCD_1152x768,  7},  /* 7 */
+	{ VB_LCD_320x480,   320,  480, LCD_320x480,   6},  /* 8 */
+	{ VB_LCD_1024x768, 1024,  768, LCD_1024x768,  1},  /* 9 */
+	{ VB_LCD_1024x768, 1024,  768, LCD_1024x768,  1},  /* a */
+	{ VB_LCD_1024x768, 1024,  768, LCD_1024x768,  1},  /* b */
+	{ VB_LCD_1024x768, 1024,  768, LCD_1024x768,  1},  /* c */
+	{ VB_LCD_1024x768, 1024,  768, LCD_1024x768,  1},  /* d */
+	{ VB_LCD_1024x768, 1024,  768, LCD_1024x768,  1},  /* e */
+	{ VB_LCD_1024x768, 1024,  768, LCD_1024x768,  1},  /* f */
+};
+
+static const SiS_LCD_StStruct SiS310_LCD_Type[]=
+{
+        { VB_LCD_1024x768,  1024, 768, LCD_1024x768,  1},  /* 0 - invalid */
+	{ VB_LCD_800x600,    800, 600, LCD_800x600,   0},  /* 1 */
+	{ VB_LCD_1024x768,  1024, 768, LCD_1024x768,  1},  /* 2 */
+	{ VB_LCD_1280x1024, 1280,1024, LCD_1280x1024, 2},  /* 3 */
+	{ VB_LCD_640x480,    640, 480, LCD_640x480,   4},  /* 4 */
+	{ VB_LCD_1024x600,  1024, 600, LCD_1024x600, 10},  /* 5 */
+	{ VB_LCD_1152x864,  1152, 864, LCD_1152x864, 11},  /* 6 */
+	{ VB_LCD_1280x960,  1280, 960, LCD_1280x960,  3},  /* 7 */
+	{ VB_LCD_1152x768,  1152, 768, LCD_1152x768,  7},  /* 8 */
+	{ VB_LCD_1400x1050, 1400,1050, LCD_1400x1050, 8},  /* 9 */
+	{ VB_LCD_1280x768,  1280, 768, LCD_1280x768,  9},  /* a */
+	{ VB_LCD_1600x1200, 1600,1200, LCD_1600x1200, 5},  /* b */
+	{ VB_LCD_320x480,    320, 480, LCD_320x480,   6},  /* c */
+	{ VB_LCD_1024x768,  1024, 768, LCD_1024x768,  1},  /* d */
+	{ VB_LCD_1024x768,  1024, 768, LCD_1024x768,  1},  /* e */
+	{ VB_LCD_1024x768,  1024, 768, LCD_1024x768,  1}   /* f */
+};
       
 static const struct _sis_crt2type {
 	char name[10];
@@ -552,11 +622,17 @@ typedef struct
 	unsigned char TV_type;
 	unsigned char TV_plug;
 	int	CRT2_enable;
+	unsigned short width;
+	unsigned short height;
+	uint8 bpp;
+	unsigned short LCDwidth;
+	unsigned short LCDheight;
 	uint32 AccelDepth;
 	uint16 DstColor;
 	uint32 CmdReg;
 	int filter;
 	unsigned char filter_tb;
+	SISPortPrivRec video_port;
 } shared_info;
 
 

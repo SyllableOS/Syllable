@@ -1,2 +1,4 @@
-SUBDIRS = mach64 mga nvidia s3 sis3xx trident
+SUBDIRS = input video decorators
+
 include $(ATHEOS_SRC)/recurse.rules
+

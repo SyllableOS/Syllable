@@ -397,10 +397,10 @@ TridentDriver::TridentDriver()
   for ( int i = 0; TridentModes[i].ModeID > 0 ; ++i ) {
     if ( ( TridentModes[i].BPL * TridentModes[i].Height ) / 1024u
          <= m_nVideoMemory ) {
-      m_cModes.push_back( ScreenMode( TridentModes[i].Width,
+      m_cModes.push_back( os::screen_mode( TridentModes[i].Width,
                                       TridentModes[i].Height,
                                       TridentModes[i].BPL,
-                                      TridentModes[i].ColorSpace ) );
+                                      TridentModes[i].ColorSpace, 60.0f ) );
     }
   }
 
@@ -451,14 +451,14 @@ void TridentDriver::Close( void )
 {
 }
 
-int TridentDriver::SetScreenMode( int nWidth, int nHeight, color_space eColorSpc,
-				int nPosH, int nPosV, int nSizeH, int nSizeV, float vRefreshRate )
+int TridentDriver::SetScreenMode( os::screen_mode sMode )
 {
   char* clr = "INVALID DEPTH";
+  int nTridentMode = 0;
 
   // This long switch is used only to format ColorSpace to string for
   // the next dbprintf().
-  switch( eColorSpc ) {
+  switch( sMode.m_eColorSpace ) {
     case CS_CMAP8:
       clr = "CMAP8";
       break;
@@ -478,27 +478,28 @@ int TridentDriver::SetScreenMode( int nWidth, int nHeight, color_space eColorSpc
       break;
   }
 
-  dbprintf("SetScreenMode( %d, %d, %s ) called.\n", nWidth, nHeight, clr);
+  dbprintf("SetScreenMode( %d, %d, %s ) called.\n", sMode.m_nWidth, sMode.m_nHeight, clr);
 
-  m_nCurrentMode = 0;
   
   for ( int i = 0 ; TridentModes[i].ModeID > 0 ; ++i ) {
-    if ( TridentModes[i].Width == nWidth
-         && TridentModes[i].Height == nHeight
-         && TridentModes[i].ColorSpace == eColorSpc ) {
-      m_nCurrentMode = TridentModes[i].ModeID;
+    if ( TridentModes[i].Width == sMode.m_nWidth
+         && TridentModes[i].Height == sMode.m_nHeight
+         && TridentModes[i].ColorSpace == sMode.m_eColorSpace ) {
+      nTridentMode = TridentModes[i].ModeID;
     }
   }
 
-  if ( m_nCurrentMode != 0 ) {
+  if ( nTridentMode != 0 ) {
     // ### LOCK
     m_cLock.Lock();
 
-    SetBIOSMode( m_nCurrentMode );
+    SetBIOSMode( nTridentMode );
     EnableFrameBuffer();
     
     // ### UNLOCK
     m_cLock.Unlock();
+    m_sCurrentMode = sMode;
+    m_sCurrentMode.m_nBytesPerLine = sMode.m_nWidth * ( ( BitsPerPixel( sMode.m_eColorSpace ) + 1 ) / 8 );
     return 0;
   } else {
     dbprintf( "Invalid mode.\n" );
@@ -511,7 +512,7 @@ int TridentDriver::GetScreenModeCount()
   return( m_cModes.size() );
 }
 
-bool TridentDriver::GetScreenModeDesc( int nIndex, ScreenMode* psMode )
+bool TridentDriver::GetScreenModeDesc( int nIndex, os::screen_mode* psMode )
 {
   if ( uint(nIndex) < m_cModes.size() ) {
     *psMode = m_cModes[nIndex];
@@ -521,64 +522,18 @@ bool TridentDriver::GetScreenModeDesc( int nIndex, ScreenMode* psMode )
   }
 }
 
-int TridentDriver::GetHorizontalRes()
+os::screen_mode TridentDriver::GetCurrentScreenMode()
 {
-  for ( int i = 0 ; TridentModes[i].ModeID > 0 ; ++i ) {
-    if ( TridentModes[i].ModeID == m_nCurrentMode ) {
-      return TridentModes[i].Width;
-    }
-  }
-  return 0;
+  return( m_sCurrentMode );
 }
 
-int TridentDriver::GetVerticalRes()
-{
-  for ( int i = 0 ; TridentModes[i].ModeID > 0 ; ++i ) {
-    if ( TridentModes[i].ModeID == m_nCurrentMode ) {
-      return TridentModes[i].Height;
-    }
-  }
-  return 0;
-}
 
-int TridentDriver::GetBytesPerLine()
-{
-  for ( int i = 0 ; TridentModes[i].ModeID > 0 ; ++i ) {
-    if ( TridentModes[i].ModeID == m_nCurrentMode ) {
-      return TridentModes[i].BPL;
-    }
-  }
-  return 0;
-}
-
-color_space TridentDriver::GetColorSpace()
-{
-  for ( int i = 0 ; TridentModes[i].ModeID > 0 ; ++i ) {
-    if ( TridentModes[i].ModeID == m_nCurrentMode ) {
-      return TridentModes[i].ColorSpace;
-    }
-  }
-  return CS_RGB16;
-}
 
 bool TridentDriver::IntersectWithMouse( const IRect& cRect )
 {
   return( false );
 }
 
-void TridentDriver::SetColor( int nIndex, const Color32_s& sColor )
-{
-  // ### LOCK
-  m_cLock.Lock();
-
-  outb( 0x3c8, nIndex);
-  outb( 0x3c9, sColor.red >> 2);
-  outb( 0x3c9, sColor.green >> 2 );
-  outb( 0x3c9, sColor.blue >> 2 );
-
-  // ### UNLOCK
-  m_cLock.Unlock();
-}
 
 bool TridentDriver::DrawLine( SrvBitmap* psBitMap, const IRect& cClipRect,
 			    const IPoint& cPnt1, const IPoint& cPnt2, const Color32_s& sColor, int nMode )

@@ -52,8 +52,6 @@
 #include "sis_cursor.h"
 
 
-static video_mode g_sCurrentMode;
-
 static const struct chip_info asChipInfos[] = {
 	{ 0x0300 }, /* SIS 300 */
 	{ 0x5300 }, /* SIS 540 VGA */
@@ -140,6 +138,7 @@ SiS3xx::SiS3xx() : m_cGELock("sis3xx_ge_lock"), m_cCursorHotSpot(0,0)
 	
 	/* Initialize shared info */
 	m_pHw = &si;
+	m_pHw->pci_dev = m_cPCIInfo;
 	m_pHw->device_id = m_cPCIInfo.nDeviceID;
 	m_pHw->regs = ( vuint32* )m_pRegisterBase;
 	m_pHw->framebuffer = (uint8*)m_pFrameBufferBase;
@@ -158,14 +157,16 @@ SiS3xx::SiS3xx() : m_cGELock("sis3xx_ge_lock"), m_cCursorHotSpot(0,0)
 	
 	os::color_space colspace[] = {CS_RGB16, CS_RGB32};
 	int bpp[] = {2, 4};
+	float rf[] = { 60.0f, 75.0f, 85.0f, 100.0f };
 	for (int i=0; i<int(sizeof(bpp)/sizeof(bpp[0])); i++) {
-		m_cScreenModeList.push_back(ScreenMode(640, 480, 640*bpp[i], colspace[i]));
-		m_cScreenModeList.push_back(ScreenMode(800, 600, 800*bpp[i], colspace[i]));
-		m_cScreenModeList.push_back(ScreenMode(1024, 768, 1024*bpp[i], colspace[i]));
-		m_cScreenModeList.push_back(ScreenMode(1280, 1024, 1280*bpp[i], colspace[i]));
-		m_cScreenModeList.push_back(ScreenMode(1600, 1200, 1600*bpp[i], colspace[i]));
+		for( int j = 0; j < 4; j++ ) {
+		m_cScreenModeList.push_back(os::screen_mode(640, 480, 640*bpp[i], colspace[i], rf[j]));
+		m_cScreenModeList.push_back(os::screen_mode(800, 600, 800*bpp[i], colspace[i], rf[j]));
+		m_cScreenModeList.push_back(os::screen_mode(1024, 768, 1024*bpp[i], colspace[i], rf[j]));
+		m_cScreenModeList.push_back(os::screen_mode(1280, 1024, 1280*bpp[i], colspace[i], rf[j]));
+		m_cScreenModeList.push_back(os::screen_mode(1600, 1200, 1600*bpp[i], colspace[i], rf[j]));
+		}
 	}
-	
 	/* Initialize HW cursor */
 	m_bUsingHWCursor = true;
 	m_pHw->mem_size -= 64 * 64 * 4;
@@ -183,6 +184,7 @@ SiS3xx::SiS3xx() : m_cGELock("sis3xx_ge_lock"), m_cCursorHotSpot(0,0)
 		close( mtrr_fd );
 	}
 	#endif
+	
 
 	m_bIsInitiated = true;
 }
@@ -233,7 +235,7 @@ int SiS3xx::GetScreenModeCount()
 // SEE ALSO:
 //-----------------------------------------------------------------------------
 
-bool SiS3xx::GetScreenModeDesc(int nIndex, ScreenMode* psMode)
+bool SiS3xx::GetScreenModeDesc(int nIndex, os::screen_mode* psMode)
 {
 	if (nIndex<0 || uint(nIndex)>=m_cScreenModeList.size()) {
 		return false;
@@ -249,10 +251,9 @@ bool SiS3xx::GetScreenModeDesc(int nIndex, ScreenMode* psMode)
 // SEE ALSO:
 //-----------------------------------------------------------------------------
 
-int SiS3xx::SetScreenMode(int nWidth, int nHeight, color_space eColorSpc,
-                          int nPosH, int nPosV, int nSizeH, int nSizeV, float vRefreshRate)
+int SiS3xx::SetScreenMode( os::screen_mode sMode )
 {
-	int bpp = (eColorSpc == CS_RGB32) ? 4 : 2;
+	int bpp = (sMode.m_eColorSpace == CS_RGB32) ? 4 : 2;
 	int mode_idx = 0;
 	int rate_idx = 0;
 	uint8 mode_no = 0;
@@ -263,9 +264,9 @@ int SiS3xx::SetScreenMode(int nWidth, int nHeight, color_space eColorSpc,
 	
 	/* Search mode */
 	while( (sisbios_mode[mode_idx].mode_no != 0) &&
-	       (sisbios_mode[mode_idx].xres <= nWidth) ) {
-		if( (sisbios_mode[mode_idx].xres == nWidth) &&
-		    (sisbios_mode[mode_idx].yres == nHeight) &&
+	       (sisbios_mode[mode_idx].xres <= sMode.m_nWidth) ) {
+		if( (sisbios_mode[mode_idx].xres == sMode.m_nWidth) &&
+		    (sisbios_mode[mode_idx].yres == sMode.m_nHeight) &&
 		    (sisbios_mode[mode_idx].bpp == bpp * 8) &&
 		    (sisbios_mode[mode_idx].chipset & m_pHw->vga_engine)) {
 			mode_no = sisbios_mode[mode_idx].mode_no;
@@ -278,7 +279,7 @@ int SiS3xx::SetScreenMode(int nWidth, int nHeight, color_space eColorSpc,
 		dbprintf("Error setting video mode!\n");
 		return -1;
 	}
-	refresh_rate = (int)(vRefreshRate);
+	refresh_rate = (int)(sMode.m_vRefreshRate);
 	
 	/* Search refresh rate */
 	xres = sisbios_mode[mode_idx].xres;
@@ -311,7 +312,8 @@ int SiS3xx::SetScreenMode(int nWidth, int nHeight, color_space eColorSpc,
 		return -1;
 	}
 	outSISIDXREG( SISSR, IND_SIS_PASSWORD, SIS_PASSWORD );
-	sis_post_setmode( bpp * 8, nWidth );
+	sis_post_setmode( bpp * 8, sMode.m_nWidth );
+	outSISIDXREG( SISSR, IND_SIS_PASSWORD, SIS_PASSWORD );
 	
 	switch( bpp ) {
 		case 2:
@@ -326,11 +328,16 @@ int SiS3xx::SetScreenMode(int nWidth, int nHeight, color_space eColorSpc,
 			dbprintf( "Unsupported color depth!\n" );
 		break;
 	}
+	m_sCurrentMode = sMode;
+	m_sCurrentMode.m_nBytesPerLine = m_sCurrentMode.m_nWidth * bpp;
 	
-	g_sCurrentMode.nXres = nWidth;
-	g_sCurrentMode.nYres = nHeight;
-	g_sCurrentMode.nBpp = bpp;
-	g_sCurrentMode.eColorSpace = eColorSpc;
+	si.width = m_sCurrentMode.m_nWidth;
+	si.height = m_sCurrentMode.m_nHeight;
+	si.bpp = bpp;
+	
+	/* Initialize Video overlay */
+	SISSetupImageVideo();
+	m_bVideoOverlayUsed = false;
 	
 	return 0;
 }
@@ -342,59 +349,10 @@ int SiS3xx::SetScreenMode(int nWidth, int nHeight, color_space eColorSpc,
 // SEE ALSO:
 //-----------------------------------------------------------------------------
 
-int SiS3xx::GetHorizontalRes()
+os::screen_mode SiS3xx::GetCurrentScreenMode()
 {
-	return g_sCurrentMode.nXres;
+	return m_sCurrentMode;
 }
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-int SiS3xx::GetVerticalRes()
-{
-	return g_sCurrentMode.nYres;
-}
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-int SiS3xx::GetBytesPerLine()
-{
-	return g_sCurrentMode.nXres * g_sCurrentMode.nBpp;
-}
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-os::color_space SiS3xx::GetColorSpace()
-{
-	return g_sCurrentMode.eColorSpace;
-}
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-void SiS3xx::SetColor(int nIndex, const Color32_s& sColor)
-{
-
-}
-
 //-----------------------------------------------------------------------------
 // NAME:
 // DESC:
@@ -505,8 +463,8 @@ void SiS3xx::SetMousePos(os::IPoint cNewPos)
 	int xp = cNewPos.x - m_cCursorHotSpot.x;
 	int yp = cNewPos.y - m_cCursorHotSpot.y;
 	/* clamp cursor to virtual display */
-	if( xp >= g_sCurrentMode.nXres ) xp = g_sCurrentMode.nXres - 1;
-	if( yp >= g_sCurrentMode.nYres ) yp = g_sCurrentMode.nYres - 1;
+	if( xp >= m_sCurrentMode.m_nWidth ) xp =m_sCurrentMode.m_nWidth - 1;
+	if( yp >= m_sCurrentMode.m_nHeight ) yp = m_sCurrentMode.m_nHeight - 1;
 	if( xp < 0 ) {
 		xpre = (-xp);
 		xp = 0;
@@ -623,14 +581,14 @@ bool SiS3xx::DrawLine(SrvBitmap* pcBitMap, const IRect& cClipRect,
 	if( m_pHw->vga_engine == SIS_315_VGA ) {
 		SiS310SetupLineCount( 1 )
 		SiS310SetupPATFG( nColor )
-		SiS310SetupDSTRect( g_sCurrentMode.nXres * g_sCurrentMode.nBpp, -1 );
+		SiS310SetupDSTRect( m_sCurrentMode.m_nBytesPerLine, -1 );
 		SiS310SetupDSTColorDepth( m_pHw->DstColor );
 		SiS310SetupROP( 0xF0 )
 		SiS310SetupCMDFlag( PATFG | LINE | m_pHw->AccelDepth )
 	} else {
 		SiS300SetupLineCount( 1 )
 		SiS300SetupPATFG( nColor )
-		SiS300SetupDSTRect( g_sCurrentMode.nXres * g_sCurrentMode.nBpp, -1 );
+		SiS300SetupDSTRect( m_sCurrentMode.m_nBytesPerLine, -1 );
 		SiS300SetupDSTColorDepth( m_pHw->DstColor );
 		SiS300SetupROP( 0xF0 )
 		SiS300SetupCMDFlag( PATFG | LINE )
@@ -640,7 +598,7 @@ bool SiS3xx::DrawLine(SrvBitmap* pcBitMap, const IRect& cClipRect,
 	int nMinY = ( y1 > y2 ) ? y2 : y1;
 	int nMaxY = ( y1 > y2 ) ? y1 : y2;
 	if( nMaxY >= 2048 ) {
-		nDstBase = g_sCurrentMode.nXres * g_sCurrentMode.nBpp * nMaxY;
+		nDstBase = m_sCurrentMode.m_nBytesPerLine * nMaxY;
 		y1 -= nMinY;
 		y2 -= nMinY;
 	}
@@ -681,7 +639,8 @@ bool SiS3xx::FillRect(SrvBitmap *pcBitMap, const IRect& cRect, const Color32_s& 
 	int nWidth = cRect.Width()+1;
 	int nHeight = cRect.Height()+1;
 	uint32 nColor;
-	if (pcBitMap->m_eColorSpc == CS_RGB32) {
+	if (pcBitMap->m_eColorSpc == CS_RGB32 || 
+		( ( COL_TO_RGB32(sColor) & 0xffffff ) ==  ( m_nColorKey & 0xffffff ) ) ) {
 		nColor = COL_TO_RGB32(sColor);
 	} else {
 		// we only support CS_RGB32 and CS_RGB16
@@ -692,13 +651,13 @@ bool SiS3xx::FillRect(SrvBitmap *pcBitMap, const IRect& cRect, const Color32_s& 
 	
 	if( m_pHw->vga_engine == SIS_315_VGA ) {
 		SiS310SetupPATFG( nColor )
-		SiS310SetupDSTRect( g_sCurrentMode.nXres * g_sCurrentMode.nBpp, -1 );
+		SiS310SetupDSTRect( m_sCurrentMode.m_nBytesPerLine, -1 );
 		SiS310SetupDSTColorDepth( m_pHw->DstColor );
 		SiS310SetupROP( 0xF0 )
 		SiS310SetupCMDFlag( PATFG | m_pHw->AccelDepth )
 	} else {
 		SiS300SetupPATFG( nColor )
-		SiS300SetupDSTRect( g_sCurrentMode.nXres * g_sCurrentMode.nBpp, -1 );
+		SiS300SetupDSTRect( m_sCurrentMode.m_nBytesPerLine, -1 );
 		SiS300SetupDSTColorDepth( m_pHw->DstColor );
 		SiS300SetupROP( 0xF0 )
 		SiS300SetupCMDFlag( PATFG )
@@ -706,7 +665,7 @@ bool SiS3xx::FillRect(SrvBitmap *pcBitMap, const IRect& cRect, const Color32_s& 
 	
 	long nDstBase = 0;
 	if( cRect.top >= 2048 ) {
-		nDstBase = g_sCurrentMode.nXres * g_sCurrentMode.nBpp * cRect.top;
+		nDstBase = m_sCurrentMode.m_nBytesPerLine * cRect.top;
 	}
 	if( m_pHw->vga_engine == SIS_315_VGA ) {
 		SiS310SetupDSTBase( nDstBase )
@@ -748,28 +707,28 @@ bool SiS3xx::BltBitmap(SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap,
 	
 	if( m_pHw->vga_engine == SIS_315_VGA ) {
 		SiS310SetupDSTColorDepth( m_pHw->DstColor );
-		SiS310SetupSRCPitch( g_sCurrentMode.nXres * g_sCurrentMode.nBpp );
-		SiS310SetupDSTRect( g_sCurrentMode.nXres * g_sCurrentMode.nBpp, -1 );
+		SiS310SetupSRCPitch( m_sCurrentMode.m_nBytesPerLine );
+		SiS310SetupDSTRect( m_sCurrentMode.m_nBytesPerLine, -1 );
 		SiS310SetupROP( 0xCC );
 		SiS310SetupClipLT( 0, 0 );
-		SiS310SetupClipRB( (g_sCurrentMode.nXres - 1), (g_sCurrentMode.nYres - 1) );
+		SiS310SetupClipRB( (m_sCurrentMode.m_nWidth - 1), (m_sCurrentMode.m_nHeight - 1) );
 		SiS310SetupCMDFlag( m_pHw->AccelDepth )
 	} else {
 		SiS300SetupDSTColorDepth( m_pHw->DstColor );
-		SiS300SetupSRCPitch( g_sCurrentMode.nXres * g_sCurrentMode.nBpp );
-		SiS300SetupDSTRect( g_sCurrentMode.nXres * g_sCurrentMode.nBpp, -1 );
+		SiS300SetupSRCPitch( m_sCurrentMode.m_nBytesPerLine );
+		SiS300SetupDSTRect( m_sCurrentMode.m_nBytesPerLine, -1 );
 		SiS300SetupROP( 0xCC );
 		SiS300SetupClipLT( 0, 0 );
-		SiS300SetupClipRB( (g_sCurrentMode.nXres - 1), (g_sCurrentMode.nYres - 1) );
+		SiS300SetupClipRB( (m_sCurrentMode.m_nWidth - 1), (m_sCurrentMode.m_nHeight - 1) );
 	}
 	
 	long nSrcBase = 0;
 	if( cSrcRect.top >= 2048 ) {
-		nSrcBase = g_sCurrentMode.nXres * g_sCurrentMode.nBpp * cSrcRect.top;
+		nSrcBase = m_sCurrentMode.m_nBytesPerLine * cSrcRect.top;
 	}
 	long nDstBase = 0;
 	if( cDstPos.y >= 2048 ) {
-		nDstBase = g_sCurrentMode.nXres * g_sCurrentMode.nBpp * cDstPos.y;
+		nDstBase = m_sCurrentMode.m_nBytesPerLine * cDstPos.y;
 	}
 	if( m_pHw->vga_engine == SIS_315_VGA ) {
 		SiS310SetupSRCBase( nSrcBase )
@@ -810,6 +769,88 @@ bool SiS3xx::BltBitmap(SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap,
 	
 	m_cGELock.Unlock();
 	return true;
+}
+
+//-----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//-----------------------------------------------------------------------------
+
+bool SiS3xx::CreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, 
+								os::color_space eFormat, os::Color32_s sColorKey, area_id *pBuffer )
+{
+	if( eFormat == CS_YUV12 && !m_bVideoOverlayUsed ) {
+		m_nColorKey = COL_TO_RGB32( sColorKey );
+		*pBuffer = SISStartVideo( 0, 0, cDst.left, cDst.top, cSize.x, cSize.y, cDst.Width(), 
+							cDst.Height(), 0x01, cSize.x, cSize.y, m_nColorKey );
+		m_bVideoOverlayUsed = true;
+		return( true );
+	} else if ( eFormat == CS_YUV422 && !m_bVideoOverlayUsed ) {
+		m_nColorKey = COL_TO_RGB32( sColorKey );
+		*pBuffer = SISStartVideo( 0, 0, cDst.left, cDst.top, cSize.x, cSize.y, cDst.Width(), 
+							cDst.Height(), 0x02, cSize.x, cSize.y, m_nColorKey );
+		m_bVideoOverlayUsed = true;
+		return( true );
+	}
+	return( false );
+}
+
+
+//-----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//-----------------------------------------------------------------------------
+
+bool SiS3xx::RecreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, 
+								os::color_space eFormat, area_id *pBuffer )
+{
+	
+	if( eFormat == CS_YUV12 ) {
+		delete_area( *pBuffer );
+		*pBuffer = SISStartVideo( 0, 0, cDst.left, cDst.top, cSize.x, cSize.y, cDst.Width(), 
+							cDst.Height(), 0x01, cSize.x, cSize.y, m_nColorKey );
+		m_bVideoOverlayUsed = true;
+		return( true );
+	} else if( eFormat == CS_YUV422 ) {
+		delete_area( *pBuffer );
+		*pBuffer = SISStartVideo( 0, 0, cDst.left, cDst.top, cSize.x, cSize.y, cDst.Width(), 
+							cDst.Height(), 0x02, cSize.x, cSize.y, m_nColorKey );
+		m_bVideoOverlayUsed = true;
+		return( true );
+	}
+	return( false );
+}
+
+
+//-----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//-----------------------------------------------------------------------------
+
+void SiS3xx::UpdateVideoOverlay( area_id *pBuffer )
+{
+}
+
+//-----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//-----------------------------------------------------------------------------
+
+void SiS3xx::DeleteVideoOverlay( area_id *pBuffer )
+{
+	if( m_bVideoOverlayUsed ) {
+		delete_area( *pBuffer );
+		SISStopVideo();
+	}
+	m_bVideoOverlayUsed = false;
 }
 
 

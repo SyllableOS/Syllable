@@ -35,6 +35,7 @@
 #include <atheos/kdebug.h>
 #include <atheos/isa_io.h>
 #include <atheos/pci.h>
+#include "sis_video.h"
 #include "sis.h"
 #include "sis_accel.h"
 #endif

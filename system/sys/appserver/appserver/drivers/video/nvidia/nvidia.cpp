@@ -3,6 +3,7 @@
  *  Copyright (C) 2001  Joseph Artsimovich (joseph_a@mail.ru)
  *
  *  Based on the rivafb linux kernel driver and the xfree86 nv driver.
+ *  Video overlay code is from the rivatv project.
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -41,8 +42,6 @@
 #include "nvreg.h"
 #include "nv_pci_ids.h"
 #include "nv_type.h"
-
-static video_mode g_sCurrentMode;
 
 static const struct chip_info asChipInfos[] = {
     {NV_CHIP_RIVA_128,           NV_ARCH_03, "RIVA 128"},
@@ -200,6 +199,7 @@ NVidia::NVidia()
 	PCI_Info_s *pcPrimaryCardPCIInfo = &cCandidates[nPrimaryCardIndex];
 	m_sRiva.Chipset				= cCandidatesInfo[nPrimaryCardIndex].nDeviceId;
 	m_sRiva.riva.Architecture	= cCandidatesInfo[nPrimaryCardIndex].nArchRev;
+	m_cPCIInfo = cCandidates[nPrimaryCardIndex];
 	
 	int nIoSize = get_pci_memory_size(&m_cPCIInfo, 0); 
 	m_hRegisterArea = create_area("nvidia_regs", (void**)&m_pRegisterBase, nIoSize,
@@ -240,12 +240,15 @@ NVidia::NVidia()
 	
 	os::color_space colspace[] = {CS_RGB16, CS_RGB32};
 	int bpp[] = {2, 4};
+	float rf[] = { 60.0f, 75.0f, 85.0f, 100.0f };
 	for (int i=0; i<int(sizeof(bpp)/sizeof(bpp[0])); i++) {
-		m_cScreenModeList.push_back(ScreenMode(640, 480, 640*bpp[i], colspace[i]));
-		m_cScreenModeList.push_back(ScreenMode(800, 600, 800*bpp[i], colspace[i]));
-		m_cScreenModeList.push_back(ScreenMode(1024, 768, 1024*bpp[i], colspace[i]));
-		m_cScreenModeList.push_back(ScreenMode(1280, 1024, 1280*bpp[i], colspace[i]));
-		m_cScreenModeList.push_back(ScreenMode(1600, 1200, 1600*bpp[i], colspace[i]));
+		for( int j = 0; j < 4; j++ ) {
+		m_cScreenModeList.push_back(os::screen_mode(640, 480, 640*bpp[i], colspace[i], rf[j]));
+		m_cScreenModeList.push_back(os::screen_mode(800, 600, 800*bpp[i], colspace[i], rf[j]));
+		m_cScreenModeList.push_back(os::screen_mode(1024, 768, 1024*bpp[i], colspace[i], rf[j]));
+		m_cScreenModeList.push_back(os::screen_mode(1280, 1024, 1280*bpp[i], colspace[i], rf[j]));
+		m_cScreenModeList.push_back(os::screen_mode(1600, 1200, 1600*bpp[i], colspace[i], rf[j]));
+		}
 	}
 	
 	memset(m_anCursorShape, 0, sizeof(m_anCursorShape));
@@ -302,7 +305,7 @@ int NVidia::GetScreenModeCount()
 // SEE ALSO:
 //-----------------------------------------------------------------------------
 
-bool NVidia::GetScreenModeDesc(int nIndex, ScreenMode* psMode)
+bool NVidia::GetScreenModeDesc(int nIndex, os::screen_mode* psMode)
 {
 	if (nIndex<0 || uint(nIndex)>=m_cScreenModeList.size()) {
 		return false;
@@ -318,24 +321,23 @@ bool NVidia::GetScreenModeDesc(int nIndex, ScreenMode* psMode)
 // SEE ALSO:
 //-----------------------------------------------------------------------------
 
-int NVidia::SetScreenMode(int nWidth, int nHeight, color_space eColorSpc,
-                          int nPosH, int nPosV, int nSizeH, int nSizeV, float vRefreshRate)
+int NVidia::SetScreenMode(os::screen_mode sMode)
 {
 	struct riva_regs newmode;
 	memset(&newmode, 0, sizeof(struct riva_regs));
 	
-	int nBpp = (eColorSpc == CS_RGB32) ? 4 : 2;
-	int nHTotal = int(nWidth*1.3);
-	int nVTotal = int(nHeight*1.1);
-	int nHFreq = int((vRefreshRate+0.2)*nVTotal);
+	int nBpp = (sMode.m_eColorSpace == CS_RGB32) ? 4 : 2;
+	int nHTotal = int(sMode.m_nWidth*1.3);
+	int nVTotal = int(sMode.m_nHeight*1.1);
+	int nHFreq = int((sMode.m_vRefreshRate+0.2)*nVTotal);
 	int nPixClock = nHFreq*nHTotal/1000;
-	int nHSyncLength = (nHTotal-nWidth)/2;
-	int nRightBorder = (nHTotal-nWidth-nHSyncLength)/3;
+	int nHSyncLength = (nHTotal-sMode.m_nWidth)/2;
+	int nRightBorder = (nHTotal-sMode.m_nWidth-nHSyncLength)/3;
 	int nVSyncLength = 2;
-	int nBottomBorder = (nVTotal-nHeight-nVSyncLength)/3;
-	
-	int nHSyncStart = nWidth+nRightBorder;
-	int nVSyncStart = nHeight+nBottomBorder;
+	int nBottomBorder = (nVTotal-sMode.m_nHeight-nVSyncLength)/3;	
+
+	int nHSyncStart = sMode.m_nWidth+nRightBorder;
+	int nVSyncStart = sMode.m_nHeight+nBottomBorder;
 	int nHSyncEnd = nHSyncStart+nHSyncLength;
 	int nVSyncEnd = nVSyncStart+nVSyncLength;
 	
@@ -349,16 +351,16 @@ int NVidia::SetScreenMode(int nWidth, int nHeight, color_space eColorSpc,
 //	int nVEnd = nVSyncEnd-1;
 	
 	int horizTotal		= (nHTotal/8-1) - 4;
-	int horizDisplay	= nWidth/8-1;
+	int horizDisplay	= sMode.m_nWidth/8-1;
 	int horizStart		= nHSyncStart/8-1;
 	int horizEnd		= nHSyncEnd/8-1;
-	int horizBlankStart	= nWidth/8-1;
+	int horizBlankStart	= sMode.m_nWidth/8-1;
 	int horizBlankEnd	= nHTotal/8-1;
 	int vertTotal		= nVTotal-2;
-	int vertDisplay		= nHeight-1;
+	int vertDisplay		= sMode.m_nHeight-1;
 	int vertStart		= nVSyncStart-1;
 	int vertEnd			= nVSyncEnd-1;
-	int vertBlankStart	= nHeight-1;
+	int vertBlankStart	= sMode.m_nHeight-1;
 	int vertBlankEnd	= (nVTotal-2) + 1;
 	
 	newmode.crtc[0x00] = Set8Bits(horizTotal);
@@ -383,7 +385,7 @@ int NVidia::SetScreenMode(int nWidth, int nHeight, color_space eColorSpc,
 	newmode.crtc[0x10] = Set8Bits(vertStart);
 	newmode.crtc[0x11] = SetBitField(vertEnd, 3:0, 3:0) | SetBit(5);
 	newmode.crtc[0x12] = Set8Bits(vertDisplay);
-	newmode.crtc[0x13] = Set8Bits((nWidth/8)*nBpp);
+	newmode.crtc[0x13] = Set8Bits((sMode.m_nWidth/8)*nBpp);
 	newmode.crtc[0x15] = Set8Bits(vertBlankStart);
 	newmode.crtc[0x16] = Set8Bits(vertBlankEnd);
 	newmode.crtc[0x17] = 0xc3;
@@ -408,8 +410,8 @@ int NVidia::SetScreenMode(int nWidth, int nHeight, color_space eColorSpc,
 	newmode.seq[0x04] = 0x0e;
 	
 	newmode.ext.bpp = nBpp*8;
-	newmode.ext.width = nWidth;
-	newmode.ext.height = nHeight;
+	newmode.ext.width = sMode.m_nWidth;
+	newmode.ext.height = sMode.m_nHeight;
 
     newmode.ext.screen = SetBitField(horizBlankEnd,6:6,4:4)
 						 | SetBitField(vertBlankStart,10:10,3:3)
@@ -431,7 +433,7 @@ int NVidia::SetScreenMode(int nWidth, int nHeight, color_space eColorSpc,
 	
 	newmode.misc_output = 0x2f;
 	
-	m_sRiva.riva.CalcStateExt(&m_sRiva.riva, &newmode.ext, nBpp*8, nWidth, nWidth, nHeight, nPixClock, 0);
+	m_sRiva.riva.CalcStateExt(&m_sRiva.riva, &newmode.ext, nBpp*8, sMode.m_nWidth, sMode.m_nWidth, sMode.m_nHeight, nPixClock, 0);
 			     
 	LoadState(&newmode);
 	
@@ -457,10 +459,8 @@ int NVidia::SetScreenMode(int nWidth, int nHeight, color_space eColorSpc,
 	}
 #endif
 
-	g_sCurrentMode.nXres = nWidth;
-	g_sCurrentMode.nYres = nHeight;
-	g_sCurrentMode.nBpp = nBpp;
-	g_sCurrentMode.eColorSpace = eColorSpc;
+	m_sCurrentMode = sMode;
+	m_sCurrentMode.m_nBytesPerLine = sMode.m_nWidth * nBpp;
 	
 	return 0;
 }
@@ -472,45 +472,10 @@ int NVidia::SetScreenMode(int nWidth, int nHeight, color_space eColorSpc,
 // SEE ALSO:
 //-----------------------------------------------------------------------------
 
-int NVidia::GetHorizontalRes()
+os::screen_mode NVidia::GetCurrentScreenMode()
 {
-	return g_sCurrentMode.nXres;
-}
 
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-int NVidia::GetVerticalRes()
-{
-	return g_sCurrentMode.nYres;
-}
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-int NVidia::GetBytesPerLine()
-{
-	return g_sCurrentMode.nXres * g_sCurrentMode.nBpp;
-}
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-os::color_space NVidia::GetColorSpace()
-{
-	return g_sCurrentMode.eColorSpace;
+	return m_sCurrentMode;
 }
 
 //-----------------------------------------------------------------------------
@@ -762,6 +727,233 @@ bool NVidia::BltBitmap(SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap,
 	m_cGELock.Unlock();
 	return true;
 }
+
+
+//-----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//-----------------------------------------------------------------------------
+
+bool NVidia::CreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, 
+								os::color_space eFormat, os::Color32_s sColorKey, area_id *pBuffer )
+{
+	if( eFormat == CS_YUV422 && !m_bVideoOverlayUsed ) {
+		delete_area( *pBuffer );
+		/* Calculate offset */
+    	uint32 pitch = 0; 
+    	uint32 totalSize = 0;
+    	
+    	pitch = ( ( cSize.x << 1 ) + 3 )  & ~3;
+    	totalSize = pitch * cSize.y;
+    	
+    	uint32 offset = PAGE_ALIGN( ( m_sRiva.riva.RamAmountKBytes - 128 ) * 1024 - totalSize - PAGE_SIZE );
+		
+		dbprintf("Offset %i\n", (int)offset );
+		
+		*pBuffer = create_area( "nvidia_overlay", NULL, totalSize, AREA_FULL_ACCESS, AREA_NO_LOCK );
+		remap_area( *pBuffer, (void*)((m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK) + offset) );
+		
+		
+		/* Start video */
+		
+		switch( BitsPerPixel( m_sCurrentMode.m_eColorSpace ) )
+		{
+			case 16:
+				m_nColorKey = COL_TO_RGB16( sColorKey );
+			break;
+			case 32:
+				m_nColorKey = COL_TO_RGB32( sColorKey );
+			break;
+			
+			default:
+				delete_area( *pBuffer );
+				return( false );
+		}
+		if( m_sRiva.riva.Architecture >= NV_ARCH_10 ) {
+			/* NV10/NV20 Overlay */
+			m_sRiva.riva.PMC[0x00008910/4] = 4096;
+			m_sRiva.riva.PMC[0x00008914/4] = 4096;
+			m_sRiva.riva.PMC[0x00008918/4] = 4096;
+			m_sRiva.riva.PMC[0x0000891C/4] = 4096;
+			m_sRiva.riva.PMC[0x00008b00/4] = m_nColorKey & 0xffffff;
+		
+			m_sRiva.riva.PMC[0x8900/4] = offset;
+			m_sRiva.riva.PMC[0x8908/4] = offset + totalSize;
+		
+			if( m_sRiva.riva.Architecture == NV_ARCH_20 ) {
+				m_sRiva.riva.PMC[0x8800/4] = offset;
+				m_sRiva.riva.PMC[0x8808/4] = offset + totalSize;
+			}
+			m_sRiva.riva.PMC[0x8920/4] = 0;
+		
+			m_sRiva.riva.PMC[0x8928/4] = (cSize.y << 16) | cSize.x;
+			m_sRiva.riva.PMC[0x8930/4] = 0;
+			m_sRiva.riva.PMC[0x8938/4] = (cSize.x << 20) / cDst.Width();
+			m_sRiva.riva.PMC[0x8940/4] = (cSize.y << 20) / cDst.Height();
+			m_sRiva.riva.PMC[0x8948/4] = (cDst.top << 16) | cDst.left;
+			m_sRiva.riva.PMC[0x8950/4] = (cDst.Height() << 16) | cDst.Width();
+		
+			uint32 dstPitch = ( pitch ) | 1 << 20;
+			m_sRiva.riva.PMC[0x8958/4] = dstPitch;	
+			m_sRiva.riva.PMC[0x8704/4] = 0;
+			m_sRiva.riva.PMC[0x8700/4] = 1;
+		} else {
+			/* NV3/NV4 Overlay */
+			m_sRiva.riva.PMC[0x00680224/4] = 0;
+			m_sRiva.riva.PMC[0x00680228/4] = 0;
+			m_sRiva.riva.PMC[0x0068022C/4] = 0;
+			m_sRiva.riva.PMC[0x0068020C/4] = offset;
+			m_sRiva.riva.PMC[0x00680210/4] = offset;
+			m_sRiva.riva.PMC[0x00680214/4] = pitch;
+			m_sRiva.riva.PMC[0x00680218/4] = pitch;
+			m_sRiva.riva.PMC[0x00680230/4] = (cDst.top << 16) | cDst.left;
+			m_sRiva.riva.PMC[0x00680234/4] = (cDst.Height() << 16) | cDst.Width();
+			m_sRiva.riva.PMC[0x00680200/4] = ( (uint16)(((cSize.y) << 11) / cDst.Height() ) << 16 ) | (uint16)( ((cSize.x) << 11) / cDst.Width() );
+			m_sRiva.riva.PMC[0x00680280/4] = 0x69;
+			m_sRiva.riva.PMC[0x00680284/4] = 0x3e;
+			m_sRiva.riva.PMC[0x00680288/4] = 0x89;
+			m_sRiva.riva.PMC[0x0068028C/4] = 0x00000;
+			m_sRiva.riva.PMC[0x00680204/4] = 0x001;
+			m_sRiva.riva.PMC[0x00680208/4] = 0x111;
+			m_sRiva.riva.PMC[0x0068023C/4] = 0x03;
+			m_sRiva.riva.PMC[0x00680238/4] = 0x38;
+			m_sRiva.riva.PMC[0x0068021C/4] = 0;
+			m_sRiva.riva.PMC[0x00680220/4] = 0;
+			m_sRiva.riva.PMC[0x00680240/4] = m_nColorKey & 0xffffff;
+			m_sRiva.riva.PMC[0x00680244/4] = 0x11;
+			m_sRiva.riva.PMC[0x00680228/4] = 1 << 16;
+		}
+		m_bVideoOverlayUsed = true;
+		return( true );
+	}
+	return( false );
+}
+
+
+//-----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//-----------------------------------------------------------------------------
+
+bool NVidia::RecreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, 
+								os::color_space eFormat, area_id *pBuffer )
+{
+	
+	if( eFormat == CS_YUV422 ) {
+		delete_area( *pBuffer );
+		/* Calculate offset */
+    	uint32 pitch = 0; 
+    	uint32 totalSize = 0;
+    	
+    	pitch = ( ( cSize.x << 1 ) + 3 )  & ~3;
+    	totalSize = pitch * cSize.y;
+    	
+    	uint32 offset = PAGE_ALIGN( ( m_sRiva.riva.RamAmountKBytes - 128 ) * 1024 - totalSize - PAGE_SIZE );
+		
+		*pBuffer = create_area( "nvidia_overlay", NULL, totalSize, AREA_FULL_ACCESS, AREA_NO_LOCK );
+		remap_area( *pBuffer, (void*)((m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK) + offset) );
+		
+		if( m_sRiva.riva.Architecture >= NV_ARCH_10 ) {
+			m_sRiva.riva.PMC[0x00008910/4] = 4096;
+			m_sRiva.riva.PMC[0x00008914/4] = 4096;
+			m_sRiva.riva.PMC[0x00008918/4] = 4096;
+			m_sRiva.riva.PMC[0x0000891C/4] = 4096;
+			m_sRiva.riva.PMC[0x00008b00/4] = m_nColorKey & 0xffffff;
+		
+			m_sRiva.riva.PMC[0x8900/4] = offset;
+			m_sRiva.riva.PMC[0x8908/4] = offset + totalSize;
+		
+			if( m_sRiva.riva.Architecture == NV_ARCH_20 ) {
+				m_sRiva.riva.PMC[0x8800/4] = offset;
+				m_sRiva.riva.PMC[0x8808/4] = offset + totalSize;
+			}
+			m_sRiva.riva.PMC[0x8920/4] = 0;
+		
+			m_sRiva.riva.PMC[0x8928/4] = (cSize.y << 16) | cSize.x;
+			m_sRiva.riva.PMC[0x8930/4] = 0;
+			m_sRiva.riva.PMC[0x8938/4] = (cSize.x << 20) / cDst.Width();
+			m_sRiva.riva.PMC[0x8940/4] = (cSize.y << 20) / cDst.Height();
+			m_sRiva.riva.PMC[0x8948/4] = (cDst.top << 16) | cDst.left;
+			m_sRiva.riva.PMC[0x8950/4] = (cDst.Height() << 16) | cDst.Width();
+		
+			uint32 dstPitch = ( ( ( cSize.x << 1 ) + 63 )  & ~63 ) | 1 << 20;
+			m_sRiva.riva.PMC[0x8958/4] = dstPitch;	
+			m_sRiva.riva.PMC[0x00008704/4] = 0;
+			m_sRiva.riva.PMC[0x8704/4] = 0xfffffffe;
+			m_sRiva.riva.PMC[0x8700/4] = 1;
+		} else {
+			/* NV3/NV4 Overlay */
+			m_sRiva.riva.PMC[0x00680224/4] = 0;
+			m_sRiva.riva.PMC[0x00680228/4] = 0;
+			m_sRiva.riva.PMC[0x0068022C/4] = 0;
+			m_sRiva.riva.PMC[0x0068020C/4] = offset;
+			m_sRiva.riva.PMC[0x00680210/4] = offset;
+			m_sRiva.riva.PMC[0x00680214/4] = pitch;
+			m_sRiva.riva.PMC[0x00680218/4] = pitch;
+			m_sRiva.riva.PMC[0x00680230/4] = (cDst.top << 16) | cDst.left;
+			m_sRiva.riva.PMC[0x00680234/4] = (cDst.Height() << 16) | cDst.Width();
+			m_sRiva.riva.PMC[0x00680200/4] = ( (uint16)(((cSize.y) << 11) / cDst.Height() ) << 16 ) | (uint16)( ((cSize.x) << 11) / cDst.Width() );
+			m_sRiva.riva.PMC[0x00680280/4] = 0x69;
+			m_sRiva.riva.PMC[0x00680284/4] = 0x3e;
+			m_sRiva.riva.PMC[0x00680288/4] = 0x89;
+			m_sRiva.riva.PMC[0x0068028C/4] = 0x00000;
+			m_sRiva.riva.PMC[0x00680204/4] = 0x001;
+			m_sRiva.riva.PMC[0x00680208/4] = 0x111;
+			m_sRiva.riva.PMC[0x0068023C/4] = 0x03;
+			m_sRiva.riva.PMC[0x00680238/4] = 0x38;
+			m_sRiva.riva.PMC[0x0068021C/4] = 0;
+			m_sRiva.riva.PMC[0x00680220/4] = 0;
+			m_sRiva.riva.PMC[0x00680240/4] = m_nColorKey & 0xffffff;
+			m_sRiva.riva.PMC[0x00680244/4] = 0x11;
+			m_sRiva.riva.PMC[0x00680228/4] = 1 << 16;
+		}
+		
+		m_bVideoOverlayUsed = true;
+		return( true );
+	}
+	return( false );
+}
+
+
+//-----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//-----------------------------------------------------------------------------
+
+void NVidia::UpdateVideoOverlay( area_id *pBuffer )
+{
+}
+
+//-----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//-----------------------------------------------------------------------------
+
+void NVidia::DeleteVideoOverlay( area_id *pBuffer )
+{
+	if( m_bVideoOverlayUsed ) {
+		delete_area( *pBuffer );
+		
+		if( m_sRiva.riva.Architecture >= NV_ARCH_10 ) {
+			m_sRiva.riva.PMC[0x00008704/4] = 1;
+		} else {
+			m_sRiva.riva.PMC[0x00680244/4] = m_sRiva.riva.PMC[0x00680244/4] & ~1;
+			m_sRiva.riva.PMC[0x00680224/4] = 0;
+			m_sRiva.riva.PMC[0x00680228/4] = 0;
+			m_sRiva.riva.PMC[0x0068022C/4] = 0;
+		}
+	}
+	m_bVideoOverlayUsed = false;
+}
+
 
 //-----------------------------------------------------------------------------
 //                          Private Functions
@@ -1045,6 +1237,7 @@ extern "C" DisplayDriver* init_gfx_driver()
 	    return NULL;
     }
 }
+
 
 
 

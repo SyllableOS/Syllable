@@ -134,7 +134,7 @@ void ATImach64::MouseOn( void )
 		uint16 xoff, yoff;
 		int x, y;
 		
-		x = info.cursor->pos.x - info.cursor->hot.x - info.current_par.crtc.xoffset;
+		x = info.cursor->pos.x - info.cursor->hot.x - info.par.crtc.xoffset;
 		if (x < 0) {
 			xoff = -x;
 			x = 0;
@@ -142,7 +142,7 @@ void ATImach64::MouseOn( void )
 			xoff = 0;
 		}
 
-		y = info.cursor->pos.y - info.cursor->hot.y - info.current_par.crtc.yoffset;
+		y = info.cursor->pos.y - info.cursor->hot.y - info.par.crtc.yoffset;
 		if (y < 0) {
 			yoff = -y;
 			y = 0;
