@@ -73,7 +73,7 @@ public:
     FSNode( const FSNode& cNode );
     virtual ~FSNode();
 
-    virtual status_t FDChanged( int nNewFD, const struct ::stat& sStat );
+    virtual status_t FDChanged( int nNewFD, const struct stat& sStat );
     
     virtual status_t SetTo( const String& cPath, int nOpenMode = O_RDONLY );
     virtual status_t SetTo( const Directory& cDir, const String& cPath, int nOpenMode = O_RDONLY );
@@ -84,7 +84,7 @@ public:
     
     virtual bool     IsValid() const;
     
-    virtual status_t GetStat( struct ::stat* psStat, bool bUpdateCache = true ) const;
+    virtual status_t GetStat( struct stat* psStat, bool bUpdateCache = true ) const;
     virtual ino_t    GetInode() const;
     virtual dev_t    GetDev() const;
     virtual int	     GetMode( bool bUpdateCache = false ) const;
@@ -118,7 +118,7 @@ friend class Directory;
     
     void _SetFD( int nFD );
 
-    mutable struct ::stat m_sStatCache;
+    mutable struct stat m_sStatCache;
     
     class Private;
     Private *m;

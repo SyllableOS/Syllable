@@ -74,7 +74,7 @@ public:
     int	     Rename( const String& cNewName );
     status_t Delete();
 
-    status_t GetStat( struct ::stat* psStat ) const;
+    status_t GetStat( struct stat* psStat ) const;
 
     const Directory& GetDirectory() const;
 private:

@@ -52,7 +52,7 @@ public:
     virtual ~File();
     
       // From FSNode
-    virtual status_t FDChanged( int nNewFD, const struct ::stat& sStat );
+    virtual status_t FDChanged( int nNewFD, const struct stat& sStat );
     virtual off_t GetSize( bool bUpdateCache = true ) const;
     
       // From StreamableIO

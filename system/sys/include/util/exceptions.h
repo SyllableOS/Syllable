@@ -32,7 +32,7 @@ namespace os {
 } // Fool Emacs autoindent
 #endif
 
-class errno_exception : public exception
+class errno_exception : public std::exception
 {
 public:
     errno_exception( const String& cMessage, int nErrorCode ) : m_cMessage(cMessage) {
@@ -41,8 +41,11 @@ public:
     errno_exception( const String& cMessage ) : m_cMessage(cMessage) {
 	m_nErrorCode = errno;
     }
+    virtual ~errno_exception() throw() {
+		//
+    }
 
-    virtual const char* what () const { return( m_cMessage.c_str() ); }
+    virtual const char* what () const throw() { return( m_cMessage.c_str() ); }
     char* error_str() const { return( strerror( m_nErrorCode ) ); }
     int error() const { return( m_nErrorCode ); }
 private:
@@ -54,5 +57,3 @@ private:
 } // end of namespace
 
 #endif // __UTIL_EXCEPTIONS_H__
-
-

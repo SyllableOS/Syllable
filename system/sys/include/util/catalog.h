@@ -53,7 +53,7 @@ public:
 	Catalog( String& cName, Locale *pcLocale = NULL );
     ~Catalog();
 
-	const String& GetString( uint32 nID ) const;
+	const String& GetString( uint32 nID, const char* pzDefault ) const;
 	void SetString( uint32 nID, const String& cStr ) const;
 
 	status_t Load( StreamableIO* pcSource );
@@ -87,7 +87,7 @@ private:
 class LString : public String
 {
 	public:
-	LString( uint32 nID, const Catalog* pcCatalog = NULL );
+	LString( uint32 nID, const char* pzDefault );
 };
 
 } // end of namespace

@@ -57,7 +57,7 @@ public:
     Directory( const Directory& cDir );
     virtual ~Directory();
 
-    virtual status_t FDChanged( int nNewFD, const struct ::stat& sStat );
+    virtual status_t FDChanged( int nNewFD, const struct stat& sStat );
     
     virtual status_t GetNextEntry( String* pcName );
     virtual status_t GetNextEntry( FileReference* pcRef );
