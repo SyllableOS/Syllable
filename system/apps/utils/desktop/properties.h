@@ -5,7 +5,7 @@
 #include "crect.h"
 #include "properties_messages.h"
 #include "loadbitmap.h"
-#include "scaledbitmap.h"
+#include "bitmapscale.h"
 #include "coloredit.h"
 using namespace os;
 
@@ -89,7 +89,7 @@ private:
 	void SaveLoginConfig(bool b_Login, const char* zName);
 	bool OkToQuit();
 	void LoadPrefs();
-	void SavePrefs(bool bShow, bool bLogin, string zPic);
+	void SavePrefs(bool bShow, bool bLogin, string zPic, int32 nNewImageSize);
 	
 	bool bShwVr;
 	const char* dImage;
@@ -97,6 +97,7 @@ private:
 };
 
 #endif
+
 
 
 

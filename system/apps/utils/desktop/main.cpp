@@ -1,5 +1,5 @@
 #include "main.h"
-
+#include "iconmenu_messages.h"
 
 void UpdateLoginConfig(string zName)
 {
@@ -61,6 +61,7 @@ void WriteConfigFile()
 	pcPrefs->AddColor32( "IconText",   fColor );
 	pcPrefs->AddString ( "DeskImage",  "logo_atheos.jpg"  );
 	pcPrefs->AddBool   ( "ShowVer",    false);
+	pcPrefs->AddInt32  ( "SizeImage",    0);
 	
 	
 	File *pcConfig = new File(pzConfigFile, O_WRONLY | O_CREAT );  
@@ -107,33 +108,11 @@ void LaunchFiles()
 }
 	
 
-string AtheosInfo()
+string SyllableInfo()
 {
-    FILE* f_uname = popen("uname -v 2>&1", "r");
-    char pzUname[1024];
-    const char* pzUnamePrint = fgets(pzUname, sizeof(pzUname),f_uname);
     string return_version;
-
-    if( strstr(pzUnamePrint, "0.3.7")){
-        return_version = "AtheOS V0.3.7, Desktop V0.3";
-    }
-
-    else if (strstr(pzUnamePrint, "0.3.6"))
-    {
-     	return_version = "AtheOS V0.3.6, Desktop V0.3";
-    }
-
-    else if(strstr(pzUnamePrint, "0.3.5"))
-    {
-        return_version = "AtheOS V0.3.5, Desktop V0.3";
-    }
-
-    else
-    {
-       return_version = "AtheOS Version UnKnown, Desktop V0.3";
-    }
-
-    return (return_version);
+	return_version = "Syllable 0.3.9, Desktop V0.3.5";
+   	return (return_version);
 }
 
 mounted_drives mounteddrives()
@@ -190,7 +169,8 @@ mounted_drives mounteddrives()
       
       sprintf(d_drives.zMenu,"%s     ",fsInfo.fi_volume_name);  
       }
-return(d_drives);
+      
+	return(d_drives);
 }
 
 
@@ -204,7 +184,7 @@ IPoint ScreenRes()
 Bitmap* ReadBitmap(const char* zImageName)
 {
 	ifstream fs_image;
-    Bitmap* pcBitmap;
+    Bitmap* pcBitmap = NULL;
     string zImagePath = pzImageDir + (string)zImageName;
 	fs_image.open(zImagePath.c_str());
 
@@ -218,8 +198,16 @@ Bitmap* ReadBitmap(const char* zImageName)
     else
     {
         fs_image.close();
-        pcBitmap = LoadBitmapFromFile(zImagePath.c_str() );
         
+       
+       
+        if (nSizeImage == 0){
+        Bitmap* pcLargeBitmap = new Bitmap(ScreenRes().x, ScreenRes().y, CS_RGB32,Bitmap::SHARE_FRAMEBUFFER);
+        Scale(LoadBitmapFromFile(zImagePath.c_str()), pcLargeBitmap, filter_mitchell, 0);
+        pcBitmap = pcLargeBitmap;
+        
+        }else {
+        pcBitmap = LoadBitmapFromFile(zImagePath.c_str() ); }
 	}
 	
 	return (pcBitmap);
@@ -313,6 +301,8 @@ BitmapView::BitmapView( const Rect& cFrame ) :
     pcMainMenu->AddItem(new ImageItem("Logout",new Message(M_LOGOUT_SHOW),"", LoadBitmapFromResource("exit.png")));
 	pcMainMenu->GetPreferredSize(true);
 	
+	pcIconMenu = new IconMenu();
+	pcIconMenu->SetTargetForItems(this); 
 	
     struct stat sStat;
 
@@ -337,7 +327,7 @@ BitmapView::BitmapView( const Rect& cFrame ) :
             cPos.y = 20;
             cPos.x += 50;
         
-	//m_cIcons[i]->Paint( this, Point(0,0), true, true, zBgColor, zFgColor );
+	m_cIcons[i]->Paint( this, Point(0,0), true, true, zBgColor, zFgColor );
 	
 	}
     }
@@ -345,7 +335,7 @@ BitmapView::BitmapView( const Rect& cFrame ) :
     
     
     
-    pzAtheosVer = AtheosInfo();
+    pzSyllableVer = SyllableInfo();
    
     
    
@@ -373,9 +363,10 @@ void BitmapView::Paint( const Rect& cUpdateRect)
     
     
     if (bShow == true){
+    	SetFgColor(0,0,0);
     	SetDrawingMode(DM_BLEND);
-    	MovePenTo(ScreenRes().x - 15 - GetStringWidth(pzAtheosVer) , ScreenRes().y -10);
-    	DrawString(pzAtheosVer);
+    	MovePenTo(ScreenRes().x - 15 - GetStringWidth(pzSyllableVer) , ScreenRes().y -10);
+    	DrawString(pzSyllableVer);
     	}
 }
 
@@ -438,7 +429,7 @@ void BitmapView::MouseDown( const Point& cPosition, uint32 nButtons )
                         pid_t nPid = fork();
                         if ( nPid == 0 ) {
                             set_thread_priority( -1, 0 );
-                            execlp( "Manager", "Manager", NULL );
+                            execlp( "LBrowser", "LBrowser",getenv("HOME"), NULL );
                             exit( 1 );
                         }
                     } else  if ( pcIcon->GetName() == "Terminal" ) {
@@ -484,10 +475,31 @@ void BitmapView::MouseDown( const Point& cPosition, uint32 nButtons )
     }
 
     else if (nButtons == 2){
-        pcMainMenu->Open(ConvertToScreen(cPosition));
-        pcMainMenu->SetTargetForItems(this);
-    }
+    	
+    	if (pcIcon !=NULL){
+    		
+    	 	m_bSelRectActive = true;
+            m_cSelRect = Rect( cPosition.x, cPosition.y, cPosition.x, cPosition.y );
+            SetDrawingMode( DM_INVERT );
+            DrawFrame( m_cSelRect, FRAME_TRANSPARENT | FRAME_THIN );
+            pcIcon->Select( this,true );
+            Flush();
+            
+             if (  pcIcon->m_bSelected )
+             	cIconName = pcIcon->GetName(); 
+             	
+            	pcIconMenu->Open(ConvertToScreen(cPosition));
+            	pcIconMenu->SetTargetForItems(this);
+            }	
+            	
+          else if(pcIcon == NULL){
+          	pcMainMenu->Open(ConvertToScreen(cPosition));
+          	pcMainMenu->SetTargetForItems(this);
+          	 }
+            	
 }
+}
+
 
 void BitmapView::MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData )
 {
@@ -524,6 +536,7 @@ void BitmapView::MouseUp( const Point& cPosition, uint32 nButtons, Message* pcDa
             Erase( cFrame );
         }
         Flush();
+        
         for ( uint i = 0 ; i < m_cIcons.size() ; ++i ) {
             if ( m_cIcons[i]->m_bSelected ) {
                 m_cIcons[i]->m_cPosition += cPosition - m_cDragStartPos;
@@ -646,6 +659,7 @@ void BitmapView::ReadPrefs(void)
 		pcPrefs->FindColor32( "IconText",   &zFgColor );
 		pcPrefs->FindString ( "DeskImage",  &zDImage  );
 		pcPrefs->FindBool   ( "ShowVer",    &bShow   );
+		pcPrefs->FindInt32    ( "SizeImage",  &nSizeImage);
 		
 		m_pcBitmap = ReadBitmap(zDImage.c_str());
 }
@@ -657,7 +671,14 @@ void BitmapView::HandleMessage(Message* pcMessage)
     switch (pcMessage->GetCode())
     {
     	
-  
+    case ID_ICON_PROPERTIES:
+    	{
+    		Window* pcIconProp = new IconProp(cIconName);
+    		pcIconProp->Show();
+    		pcIconProp->MakeFocus();
+    	}
+    	//printf("\nIt works!!!\n");
+    	break;
     	
     case M_PROPERTIES_SHOW:
         
@@ -682,7 +703,7 @@ void BitmapView::HandleMessage(Message* pcMessage)
     	    char vol_info[1024];
     	    
     	    sprintf(vol_info," %s info",m_drives.vol_name);
-    		sprintf(info,"Type:   %s    \n\nSize:  %s    \n\nUsed:   %s    \n\nAvailable:   %s    \n\nPercent Free:   %s    \n",m_drives.zType, m_drives.zSize, m_drives.zUsed,m_drives.zAvail, m_drives.zPer );
+    		sprintf(info,"Type:   %s    \n\nSize:  %s    \n\nUsed:   %s    \n\nAvailable:   %s    \n\nPercent Free:   %s    ",m_drives.zType, m_drives.zSize, m_drives.zUsed,m_drives.zAvail, m_drives.zPer );
     		
     		
     		pcAlert  = new Alert(vol_info,info, 0, "OK", NULL );
@@ -697,7 +718,9 @@ void BitmapView::HandleMessage(Message* pcMessage)
         break;
         
     
-                    
+      default:
+      	View::HandleMessage(pcMessage);
+      	break;              
     }
 }
 
@@ -801,6 +824,31 @@ int main( int argc, char** argv )
   	
 	return( 0 );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

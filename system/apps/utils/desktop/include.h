@@ -25,6 +25,7 @@
 
 #include <storage/path.h>
 #include <string>
+#include <math.h>
 
 #include <gui/desktop.h>
 #include <gui/window.h>

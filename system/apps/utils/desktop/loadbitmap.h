@@ -1,4 +1,3 @@
-
 #ifndef LOADBITMAP_H
 #define LOADBITMAP_H
 
@@ -18,8 +17,10 @@ using namespace os;
 Bitmap *LoadBitmapFromFile(const char *name);
 Bitmap *LoadBitmapFromResource(const char *name);
 Bitmap *LoadBitmapFromStream(StreamableIO* pcStream);
-
+Bitmap *LoadIconFromStream(StreamableIO* pcStream);
+Bitmap *LoadIconFromFile(const char*name);
 #endif
+
 
 
 

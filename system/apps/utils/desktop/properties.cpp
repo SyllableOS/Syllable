@@ -2,6 +2,7 @@
 char pzCgFile[1024];
 char junk2[1024];
 Color32_s c_bgColor, c_fgColor;
+int32 nImageSize = 0;
 
 
 MiscView::MiscView(const Rect & cFrame) : View(cFrame, "MiscView")
@@ -35,15 +36,16 @@ BackView::BackView(const Rect & cFrame) : View(cFrame, "BackView", CF_FOLLOW_ALL
 	pcSizeDrop->SetFrame(Rect(0,0,97,15) + Point(225,205));
 	AddChild(pcSizeDrop);
 	
-	pcSizeDrop->InsertItem(0,"Center Picture");
-	pcSizeDrop->InsertItem(1,"Stretch Picture");
-	pcSizeDrop->InsertItem(2,"Tile Picture");
+	pcSizeDrop->InsertItem(0,"Stretch Picture");
+	pcSizeDrop->InsertItem(1,"Tile Picture");
 	
 	Paint(GetBounds());
 	Defaults();	
 	ListFiles();
 	
-	pcList->SetSelChangeMsg(new Message(ID_PROP_LIST));
+	
+	
+	
 }
 
 
@@ -154,7 +156,7 @@ PropTab::PropTab(const Rect & cFrame) : TabView(cFrame, "MiscView",CF_FOLLOW_ALL
 	InsertTab(1,"Appearance",pcColor);
 	InsertTab(2,"Other Options",pcMisc);
 	
-
+    
 }
 
 
@@ -184,10 +186,16 @@ PropWin::PropWin() : Window(CRect(400,395), "Desktop Properties", "Desktop Prope
 	AddChild(pcSave);
 	AddChild(pcClose);
 	
+	Defaults();
+	
 	pcPropTab->pcColor->pcColorDrop->SetTarget(this);
 	pcPropTab->pcColor->pcColorDrop->SetSelectionMessage( new Message(ID_PEN_CHANGED));
+	pcPropTab->pcBack->pcSizeDrop->SetSelection(nImageSize);
+	pcPropTab->pcBack->pcList->SetSelChangeMsg(new Message(ID_PROP_LIST));
 	
-	Defaults();
+	
+	
+		
 }
 
 
@@ -237,24 +245,14 @@ void PropWin::HandleMessage(Message* pcMessage)
 				zImage = pcPropTab->pcBack->ImageList()[pcPropTab->pcBack->pcList->GetLastSelected()];
 				sprintf((char*)zPath.c_str(),"%s/config/desktop/pictures/",getenv("HOME")); 
 				strcat((char*)zPath.c_str(),zImage.c_str());
+				
 				Bitmap* pcBitmap = LoadBitmapFromFile(zPath.c_str());
-				Bitmap* pcSBitmap; 
+				Bitmap* pcSBitmap = new Bitmap (154, 114, CS_RGB32,Bitmap::SHARE_FRAMEBUFFER); 
 		       
-				if ((pcBitmap->GetBounds().Width() > 153) || (pcBitmap->GetBounds().Height() > 113)){
-					pcSBitmap = new ScaledBitmap(pcBitmap,154,114);
-					pcPropTab->pcBack->Paint(pcPropTab->pcBack->GetBounds());
-					pcPropTab->pcBack->DrawBitmap(pcSBitmap,pcSBitmap->GetBounds(),Rect(118,25,153,113));
-					}
-			
+				Scale(pcBitmap,pcSBitmap, filter_mitchell, 0);
 				
-				
-			else{
-				pcSBitmap = pcBitmap;
 				pcPropTab->pcBack->Paint(pcPropTab->pcBack->GetBounds());
 				pcPropTab->pcBack->DrawBitmap(pcSBitmap,pcSBitmap->GetBounds(),Rect(118,25,153,113));
-				}
-		
-			    
 			
 			break;
 	}
@@ -264,9 +262,20 @@ void PropWin::HandleMessage(Message* pcMessage)
 
 void PropWin::Defaults()
 {
+	int nImageList = -1;
+	t_List t_list = pcPropTab->pcBack->ImageList();
+	
 	ReadLoginConfig();
+	
 	SetDefaultButton(pcSave);
+	
 	pcPropTab->pcMisc->pcShowVerCheck->SetValue(bShwVr);
+	
+	do { nImageList = nImageList + 1;
+	} while ( strcmp(t_list[nImageList].c_str(),zImage.c_str())!=0);
+	
+	pcPropTab->pcBack->pcList->Select(nImageList,true,true);
+	
 }
 
 
@@ -318,6 +327,7 @@ void PropWin::Save()
 	bool bShowVer = pcPropTab->pcMisc->pcShowVerCheck->GetValue();
 	bool bLogin = pcPropTab->pcMisc->pcLoginCheck->GetValue();
 	string zPicSave;
+	int32 nNewImageSize = pcPropTab->pcBack->pcSizeDrop->GetSelection();
 	
 	if (pcPropTab->pcBack->pcList->GetLastSelected() == -1)
 	 	zPicSave = zImage;
@@ -325,14 +335,13 @@ void PropWin::Save()
 	else 	
 	 	zPicSave = pcPropTab->pcBack->ImageList()[pcPropTab->pcBack->pcList->GetLastSelected()];
 	 	
-   SavePrefs(bShowVer,bLogin,zPicSave);
+   SavePrefs(bShowVer,bLogin,zPicSave, nNewImageSize);
    SaveLoginConfig(bLogin, zLoginName);
 }
 
 
-void PropWin::SavePrefs(bool bShow, bool bLogin, string zPic )
+void PropWin::SavePrefs(bool bShow, bool bLogin, string zPic, int32 nNewImageSize )
 {
-	
 	switch(pcPropTab->pcColor->pcColorDrop->GetSelection())
 	{
 		case 0: c_bgColor = pcPropTab->pcColor->pcColorEdit->GetValue(); break;
@@ -344,6 +353,7 @@ void PropWin::SavePrefs(bool bShow, bool bLogin, string zPic )
 	pcPrefs->AddColor32( "IconText",   c_fgColor );
 	pcPrefs->AddString ( "DeskImage",  zPic  );
 	pcPrefs->AddBool   ( "ShowVer",    bShow   );
+	pcPrefs->AddInt32  ( "SizeImage",  nNewImageSize);
 	
 	
 	File *pcConfig = new File("/tmp/desktop.cfg", O_WRONLY | O_CREAT );  
@@ -377,51 +387,8 @@ void PropWin::LoadPrefs(void)
 		pcPrefs->FindColor32( "IconText",   &c_fgColor );
 		pcPrefs->FindString ( "DeskImage",  &zImage  );
 		pcPrefs->FindBool   ( "ShowVer",    &bShwVr   );
-		
-		
-		
+		pcPrefs->FindInt32   ("SizeImage",   &nImageSize);
+		}
 		
 }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

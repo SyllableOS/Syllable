@@ -89,17 +89,12 @@ private:
 LoginView::LoginView( const Rect& cFrame ) : View( cFrame, "password_view", CF_FOLLOW_NONE )
 {
     Color32_s bg(239,236,231,255);
-    //Color32_s fg(0,0,0,255);     
+    
     m_pcOkBut        = new ColorButton( Rect( 0, 0, 0, 0 ),"ok", "Login", new Message( ID_OK ),bg);
     m_pcNameView     = new TextView( Rect( 0, 0, 0, 0 ), "name_view", "", CF_FOLLOW_NONE );
     m_pcPasswordView = new TextView( Rect( 0, 0, 0, 0 ), "pasw_view", "", CF_FOLLOW_NONE );
 
-	
-
-    m_pcPasswordView->SetPasswordMode( true );
-
-    //m_pcOkBut->SetFgColor(0,0,0);
-    //m_pcOkBut->SetBgColor(239,236,231);
+	m_pcPasswordView->SetPasswordMode( true );
 
     AddChild( m_pcNameView, true );
     AddChild( m_pcPasswordView, true );
@@ -114,9 +109,6 @@ LoginView::LoginView( const Rect& cFrame ) : View( cFrame, "password_view", CF_F
     m_pcNameView->SetTabOrder(0);
     m_pcPasswordView->SetTabOrder(1);
     m_pcOkBut->SetTabOrder(2);
-    
-    
-    
     
 }
 
@@ -179,30 +171,8 @@ void LoginView::Layout()
 
 void LoginView::LoadImages()
 {
-    FILE* f_uname = popen("uname -v 2>&1", "r");
-    char pzUname[1024];
-    const char* pzUnamePrint = fgets(pzUname, sizeof(pzUname),f_uname);
-
-    if( strstr(pzUnamePrint, "0.3.7")){
-        pcLoginImage = LoadBitmapFromResource("atheos_0.3.7.jpg");
-    }
-
-    else if (strstr(pzUnamePrint, "0.3.6"))
-    {
-        pcLoginImage = LoadBitmapFromResource("atheos_0.3.6.jpg");
-    }
-
-    else if(strstr(pzUnamePrint, "0.3.5"))
-    {
-        pcLoginImage = LoadBitmapFromResource("atheos_0.3.5.jpg");
-    }
-
-    else
-    {
-        pcLoginImage = LoadBitmapFromResource("atheos_0.undetermined.jpg");
-    }
-
-    pcAtheImage = LoadBitmapFromResource("logo_atheos.jpg");
+	pcLoginImage = LoadBitmapFromResource("syllable.jpg");
+ 	pcAtheImage = LoadBitmapFromResource("logo_atheos.jpg");
 }
 
 class LoginWindow : public Window
@@ -276,6 +246,8 @@ bool get_login( std::string* pcName, std::string* pcPassword )
     *pcPassword = g_cPassword;
     return( g_bSelected );
 }
+
+
 
 
 

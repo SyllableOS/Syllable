@@ -1,6 +1,6 @@
 
-#COPTS   = -c -O3 -Wall -g
-OPTS   = -c -O -Wall
+#COPTS   = -c -o3 -Wall
+OPTS   = -c -o3 -Wall
 
 CC	= gcc
 EXE	= desktop
@@ -9,23 +9,25 @@ OBJDIR	:= objs
 
 
 $(OBJDIR)/%.o : %.c
-	$(CC) $(COPTS) $< -o $@
+	$(CC) $(OPTS) $< -o $@
 
 $(OBJDIR)/%.o : %.cpp
-	$(CC) $(COPTS) $< -o $@
+	$(CC) $(OPTS) $< -o $@
 
 
-OBJS := main.o iconview.o login.o loadbitmap.o imageitem.o properties.o scaledbitmap.o colorbutton.o coloredit.o
+OBJS := main.o iconview.o iconmenu.o iconmenu_prop.o login.o loadbitmap.o imageitem.o properties.o colorbutton.o coloredit.o bitmapscale.o disabled_textview.o
 OBJS := $(addprefix $(OBJDIR)/,$(OBJS))
 
 
 $(EXE): objs $(OBJS)
-	gcc $(OBJS) -L/usr/local/lib -lstdc++ -latheos -lcrypt -o $(EXE)
+	gcc $(OBJS) -L/usr/local/lib -lstdc++ -latheos -lcrypt -lm -o $(EXE)
 	rescopy -r $(EXE) ./images/*.jpg ./images/*.png
-objs:
-	mkdir objs
 
 deps:
+	mkdir objs
+	
+dist:
+	cp  -f $(EXE) $(DIST_DIR)/atheos/sys/bin
 
 install:
 	cp -f desktop /bin/

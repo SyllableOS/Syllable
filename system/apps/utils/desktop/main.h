@@ -9,6 +9,9 @@
 #include "messages.h"
 #include "properties.h"
 #include "imageitem.h"
+#include "bitmapscale.h"
+#include "iconmenu.h"
+#include "iconmenu_prop.h"
 using namespace os;
 
 
@@ -27,6 +30,7 @@ struct mounted_drives{
 char pzConfigFile[1024];
 char pzConfigDir[1024];
 char pzImageDir[1024];
+int32   nSizeImage;
 
 
 class BitmapView : public View
@@ -44,6 +48,7 @@ public:
     virtual void	Paint( const Rect& cUpdateRect);
     void ReadPrefs();
     Color32_s zBgColor, zFgColor;
+   
 private:
     Point		     m_cLastPos;
     Point		     m_cDragStartPos;
@@ -59,9 +64,11 @@ private:
     void             HandleMessage(Message* pcMessage);
     mounted_drives			 m_drives;
     PropWin* pcProp;
-    string pzAtheosVer;
+    string pzSyllableVer;
     string zDImage;
     bool bShow;
+    IconMenu* pcIconMenu;
+    string cIconName;
     
 };
 
@@ -79,6 +86,15 @@ private:
 };
 
 #endif
+
+
+
+
+
+
+
+
+
 
 
 

@@ -89,11 +89,11 @@ void ImageItem::Draw()
         
 	Rect textrect(bounds);
 	if(m_HasIcon) {
-		textrect.left += m_IconWidth + 3;
+		textrect.left += m_IconWidth + 4;
 		m->EraseRect(textrect);
 	} else {
 		m->EraseRect(textrect);
-		textrect.left += m_IconWidth + 3;
+		textrect.left += m_IconWidth + 4;
 	}
 
 	font_height fh;
@@ -121,9 +121,9 @@ void ImageItem::Draw()
 		else
 			m->EraseRect(bounds);
 
-		bmrect.left = bounds.left + bounds.Width()/2 - bmrect.Width()/2;
+		bmrect.left = bounds.left + bounds.Width()/2 - bmrect.Width()/2 + 2;
 		bmrect.right += bmrect.left;
-		bmrect.top = bounds.top + bounds.Height()/2 - bmrect.Height()/2;
+		bmrect.top = bounds.top + bounds.Height()/2 - bmrect.Height()/2 +2;
 		bmrect.bottom += bmrect.top;
 
 		m->SetDrawingMode(DM_BLEND);
@@ -156,6 +156,7 @@ void ImageItem::Highlight(bool bHighlight)
 	m_Highlighted = bHighlight;
 	MenuItem::Highlight(bHighlight);
 }
+
 
 
 

@@ -19,7 +19,7 @@ Icon::Icon( const char* pzTitle, const char* pzPath, const struct stat& sStat ) 
 
     IconDir sDir;
     IconHeader sHeader;
-
+	
     FILE* hFile = fopen( pzPath, "r" );
 
     if ( hFile == NULL ) {
@@ -35,7 +35,7 @@ Icon::Icon( const char* pzTitle, const char* pzPath, const struct stat& sStat ) 
         return;
     }
     for ( int i = 0 ; i < sDir.nNumImages ; ++i ) {
-        if ( fread( &sHeader, sizeof( sHeader ), 1, hFile ) != 1 ) {
+         if ( fread( &sHeader, sizeof( sHeader ), 1, hFile ) != 1 ) {
             printf( "Failed to read icon header\n" );
         }
         if ( sHeader.nWidth == 32 ) {
@@ -467,7 +467,8 @@ void IconView::MouseDown( const Point& cPosition, uint32 nButtons )
             if (  pcIcon->m_bSelected ) {
                 if ( m_nHitTime + 500000 >= get_system_time() ) {
                     Invoked();
-                } else {
+                } 
+                else {
                     m_bCanDrag = true;
                 }
                 m_nHitTime = get_system_time();
@@ -491,6 +492,10 @@ void IconView::MouseDown( const Point& cPosition, uint32 nButtons )
         m_nHitTime = get_system_time();
     }
     
+   //if (nButtons == 2){
+    	//Invoked();
+          //  }
+    //
 }
 
 //----------------------------------------------------------------------------
@@ -714,6 +719,10 @@ void IconView::DirChanged( const std::string& cNewPath )
     }
 
 }
+
+
+
+
 
 
 

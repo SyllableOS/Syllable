@@ -1,6 +1,7 @@
 
 #include "colorbutton.h"
 #include <gui/font.h>
+#include <math.h>
 
 ColorButton::ColorButton(const Rect& cFrame, char* s1, char* s2,Message* pcMess, Color32_s bColor, Color32_s fColor) : Button(cFrame, s1, s2, pcMess)
 {
@@ -41,7 +42,8 @@ void ColorButton::Paint(const Rect & cUpdateRect)
     View::SetFgColor( sTextColor );
     View::SetBgColor( sBgColor );
     MovePenTo( x, y );
-    //SetDrawingMode(DM_OVER);
+    
+    SetDrawingMode(DM_OVER);
     DrawString( GetLabel() );
 
 }
