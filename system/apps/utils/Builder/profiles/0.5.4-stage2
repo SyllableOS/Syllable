@@ -14,6 +14,7 @@ modules
 	sys/kernel/drivers/hcd/usb_ehci
 	sys/kernel/drivers/hcd/usb_ohci
 	sys/kernel/drivers/hcd/usb_uhci
+	sys/kernel/drivers/sound/i810
 	sys/kernel/fs/ext2
 	libs/ncurses-5.4
 	sys/appserver/libsyllable
