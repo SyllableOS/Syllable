@@ -18,6 +18,7 @@
  */
 
 #include "mywindow.h"
+#include <gui/requesters.h>
 
 // ---------------------------------------------------------------------------
 
@@ -36,7 +37,7 @@ MyWindow::MyWindow( const Rect& cFrame ) : Window( cFrame, "main_window", "Zoom"
    pcMenuBar->AddItem( pcFileMenu );
    
    Menu* pcViewMenu = new Menu( Rect(0,0,1,1), "View", ITEMS_IN_COLUMN );
-   Menu* pcScaleMenu = new Menu( Rect(0,0,1,1), "Magnification  >>", ITEMS_IN_COLUMN );
+   Menu* pcScaleMenu = new Menu( Rect(0,0,1,1), "Magnification", ITEMS_IN_COLUMN );
    
    pcScaleMenu->AddItem( "2x", new Message( ID_VIEW_SCALE_2 ) );   
    pcScaleMenu->AddItem( "3x", new Message( ID_VIEW_SCALE_3 ) );
@@ -96,17 +97,9 @@ void MyWindow::HandleMessage( Message* pcMessage )
         break;
       case ID_HELP_ABOUT:
     {
-         Window* pcAboutWindow = new Window( Rect(325,225,500,325),"about","About BZoom", WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_H_RESIZABLE | WND_NOT_V_RESIZABLE );
-         Rect pcAboutBounds = pcAboutWindow->GetBounds();
-
-         TextView* pcAboutText = new TextView(pcAboutBounds,"about_text", "\t    BZoom V1.0\n\nA simple pixel zoomer for AtheOS.\nBased on AZoom by Chir.\nBZoom is released under the\nGNU GPL", CF_FOLLOW_LEFT, WID_WILL_DRAW);
-         pcAboutText->SetReadOnly( true );
-         pcAboutText->SetMultiLine( true );
-
-         pcAboutWindow->AddChild( pcAboutText, false );
-
-         pcAboutWindow->Show();
-         pcAboutWindow->MakeFocus();
+         Alert* pcAboutAlert=new Alert("About BZoom","\t    BZoom V1.0\n\nA simple pixel zoomer for AtheOS.\nBased on AZoom by Chir.\nBZoom is released under the\nGNU GPL",Alert::ALERT_INFO,0x00,"O.K",NULL);
+         pcAboutAlert->CenterInWindow(this);
+         pcAboutAlert->Go(new Invoker());
     }
     break;
       default:
