@@ -1,3 +1,9 @@
+* October 3 2003. Kristian Van Der Vliet *
+
+Network Preferences
+	* Re-add missing code for "Use DHCP" checkbox
+	* Change net_init.sh to use new ifconfig & route syntax
+	
 * September 18 2003, Rick Caudill *
 	* Added VirtualDesktop.cpp to launcher/plugins/src.  It is a virtual desktop manager.
 * September 7 2003, Rick Caudill *
