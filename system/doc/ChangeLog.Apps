@@ -1,3 +1,22 @@
+* June 19th 2004, Henrik Isaksson *
+
+	- AClock
+		o Fixed crash on exit with new libsyllable
+
+	- AEdit
+		o Added translations
+
+	- BZoom
+		o Fixed crash on exit with new libsyllable
+
+	- ColdFish
+		o Added localisation
+		o Fixed crash when exiting
+		o Fixed layout to be font & translation sensitive
+
+	- SlbMgr
+		o Moved drives to a separate panel (making the first panel readable)
+
 * June 12th 2004, Henrik Isaksson *
 
 	- CodeView:
@@ -269,4 +288,5 @@ Network Preferences
 		* Added NetworkPreferences from Daryl Dudey(daryl.dudey@ntlworld.com).
 		* Added SlbMgr(AtheMgr renamed).
 		* Patches by Vanders for AEdit.
+
 
