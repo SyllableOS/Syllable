@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.69
+# Version 0.5.70
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -198,8 +198,12 @@ def configurePackage target
 	else
 		unless
 			if cmdLine = (recipe = getRecipe target)['configure']
-				@log.header 'Configuring'
-				action toCommand(cmdLine)
+				if cmdLine == ''
+					@log.header 'Skipping configuring'
+				else
+					@log.header 'Configuring'
+					action toCommand(cmdLine)
+				end
 			else
 				unless exists? cmd = (cmd = recipe['configure-cmd']) ? toString(cmd) : 'configure'
 					# Nothing to be done here
@@ -1296,7 +1300,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.69',
+	puts 'Syllable Build System 0.5.70',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'

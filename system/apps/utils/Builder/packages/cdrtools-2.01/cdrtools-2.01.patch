@@ -1,0 +1,15 @@
+diff -ru cdrtools-2.01.original/libscg/scsihack.c cdrtools-2.01/libscg/scsihack.c
+--- cdrtools-2.01.original/libscg/scsihack.c	2003-11-28 01:33:19.000000000 +0000
++++ cdrtools-2.01/libscg/scsihack.c	2005-01-20 16:17:07.000000000 +0000
+@@ -250,6 +250,11 @@
+ #include "scsi-dos.c"
+ #endif
+ 
++#ifdef	__SYLLABLE__	/* We have a SCSI implementation for Syllable */
++#define	SCSI_IMPL
++#include "scsi-syllable.c"
++#endif
++
+ #ifdef	__NEW_ARCHITECTURE
+ #define	SCSI_IMPL		/* We have a SCSI implementation for XXX */
+ /*

@@ -1,0 +1,24 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+status				developing
+
+licenses			GPL
+
+home				www.fokus.fhg.de/research/cc/glone/employees/joerg.schilling/private/cdrecord.html
+locations			ftp://ftp.berlios.de/pub/cdrecord/
+
+; Prevent configure - it's deliberately broken:
+configure
+
+;install-tree		bin include lib man man/man1 man/man5 man/man8 sbin
+;install-prefix-var	INS_BASE
+
+;documentation
+;	ABOUT README COPYING AN-2.01 AN-2.0 Changelog
+;	README.ATAPI README.WORM
+;	README.copy README.clone README.mkisofs README.audio README.cdtext README.verify
+;	README.multi README.cdplus README.cdrw
+;	README.raw README.sony README.DiskT@2 README.rscsi
+;	doc
+

@@ -54,7 +54,7 @@ makefile			Makefile
 ; [<pre-configure>]
 ; [<configure-env>] <configure-cmd> ([<configure-prefix>] | [<configure-args>]) [<configure-options>]
 
-configure			<Configuration commands>
+configure			[<Configuration commands override; possibly empty>]
 
 pre-configure		<Commands preceding configuration>
 ; Extra environment variables for configure:
@@ -101,7 +101,7 @@ install-tree		<Extra subdirectories to create>
 ; <install>
 ; [<install-env>] <make> [<install-prefix-var>=<Installation path>] [<install-vars>] <install-targets>
 
-install				<Installation commands>
+install				<Installation commands override>
 
 ; Extra environment variables for make install:
 install-env

@@ -1,0 +1,37 @@
+#ident "%W% %E% %Q%"
+###########################################################################
+#
+# global definitions for Syllable
+#
+###########################################################################
+#
+# Compiler stuff
+#
+###########################################################################
+DEFCCOM=	gcc
+###########################################################################
+#
+# If the next line is commented out, compilation is done with max warn level
+# If the next line is uncommented, compilation is done with minimal warnings
+#
+###########################################################################
+CWARNOPTS=
+
+DEFINCDIRS=	$(SRCROOT)/include /ainc
+LDPATH=		-L$(INS_BASE)/lib
+RUNPATH=	-R $(INS_BASE)/lib -R $(INS_BASE)/lib -R $(OLIBSDIR)
+
+###########################################################################
+#
+# Installation config stuff
+#
+###########################################################################
+INS_BASE=	/usr/cdrtools
+INS_KBASE=	/
+#
+DEFUMASK=	002
+#
+DEFINSMODEF=	444
+DEFINSMODEX=	755
+DEFINSUSR=	bin
+DEFINSGRP=	bin
