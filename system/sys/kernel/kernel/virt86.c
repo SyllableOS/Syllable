@@ -307,7 +307,7 @@ static int do_call_v86( Virtual86Struct_s * psState, SysCallRegs_s * psCallRegs 
 		Schedule();
 	}
 
-      printk( "Enter v86\n" );
+      //printk( "Enter v86\n" );
 
 	memcpy( &sState.regs, &psState->regs, sizeof( sState.regs ) );
 
@@ -498,7 +498,7 @@ int sys_realint( int num, struct RMREGS *rm )
 	sRegs.regs.eip = pIntVects[num] & 0xffff;
 	sRegs.regs.cs = pIntVects[num] >> 16;
 
-	printk( "sys_realint(%d) -> %04x:%04lx\n", num, sRegs.regs.cs, sRegs.regs.eip );
+	//printk( "sys_realint(%d) -> %04x:%04lx\n", num, sRegs.regs.cs, sRegs.regs.eip );
 
 	atomic_inc( &psThread->tr_nInV86 );
 
