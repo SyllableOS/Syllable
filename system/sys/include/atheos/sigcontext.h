@@ -105,6 +105,7 @@ typedef struct sigcontext
     FPUState_s*    fpstate;
     unsigned long  oldmask;
     unsigned long  cr2;
+    unsigned long  oldmask2;	// mask for signals 33-64
 } SigContext_s;
 
 #ifdef __cplusplus

@@ -92,13 +92,6 @@ typedef struct { volatile int_fast32_t counter; } atomic_t;
 
 #define INFINITE_TIMEOUT		(9223372036854775807LL)
 
-/// Declare both p() and kernel sys_p() prototypes.
-#ifdef __KERNEL__
-#define __SYSCALL(r,p)	r p;	r sys_ ## p;
-#else
-#define __SYSCALL(r,p)	r p;
-#endif
-
 #ifndef NULL
 #define NULL ((void*)0)
 #endif

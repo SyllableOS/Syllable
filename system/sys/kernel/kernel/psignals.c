@@ -81,7 +81,7 @@ void signal_parent( Thread_s *psThread )
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/
-
+#if 0
 void EnterSyscall( int dummy )
 {
 	Thread_s *psThread = CURRENT_THREAD;
@@ -94,6 +94,7 @@ void EnterSyscall( int dummy )
 		psThread->tr_pLastEIP = ( void * )psRegs->eip;
 	}
 }
+#endif
 
 /*****************************************************************************
  * NAME:
@@ -101,7 +102,7 @@ void EnterSyscall( int dummy )
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/
-
+#if 0
 void ExitSyscall( int dummy )
 {
 	Thread_s *psThread = CURRENT_THREAD;
@@ -109,11 +110,12 @@ void ExitSyscall( int dummy )
 
 	if ( psRegs->cs == 0x13 && ( psRegs->eflags & EFLG_IF ) == 0 && psRegs->orig_eax >= 0 )
 	{
-		printk( "PANIC : return from syscall whith interrupts disabled!! I turn them on again.\n" );
+		printk( "PANIC : return from syscall with interrupts disabled!! I turn them on again.\n" );
 		psRegs->eflags |= EFLG_IF;
 		psThread->tr_nSysTraceMask = SYSC_GROUP_ALL;	/* Temporary strace (this function only) */
 	}
 }
+#endif
 
 /*****************************************************************************
  * NAME:
@@ -126,7 +128,15 @@ int is_signal_pending( void )
 {
 	Thread_s *psThread = CURRENT_THREAD;
 
-	return ( 0 != ( psThread->tr_nSigPend & ~psThread->tr_nSigBlock ) );
+	if ( psThread->tr_sSigPend.__val[0] & ~psThread->tr_sSigBlock.__val[0] ||
+	     psThread->tr_sSigPend.__val[1] & ~psThread->tr_sSigBlock.__val[1] )
+	{
+		return ( 1 );
+	}
+	else
+	{
+		return ( 0 );
+	}
 }
 
 /*****************************************************************************
@@ -140,12 +150,12 @@ int get_signal_mode( int nSigNum )
 {
 	Thread_s *psThread = CURRENT_THREAD;
 
-	if ( nSigNum < 1 || nSigNum >= NSIG )
+	if ( nSigNum < 1 || nSigNum > _NSIG )
 	{
 		return ( -EINVAL );
 	}
 
-	if ( psThread->tr_nSigBlock & ( 1L << ( nSigNum - 1 ) ) )
+	if ( sigismember( &psThread->tr_sSigBlock, nSigNum ) )
 	{
 		return ( SIG_BLOCKED );
 	}
@@ -192,7 +202,9 @@ int sys_sig_return( const int dummy )
 
 	memcpy( &sContext, ( void * )psRegs->oldesp, sizeof( sContext ) );
 
-	psThread->tr_nSigBlock = sContext.oldmask & _BLOCKABLE;
+	psThread->tr_sSigBlock.__val[0]	= sContext.oldmask & _BLOCKABLE;
+	psThread->tr_sSigBlock.__val[1]	= sContext.oldmask2;
+	psThread->tr_nCR2 = sContext.cr2;
 
 	psRegs->ds = sContext.ds;
 	psRegs->es = sContext.es;
@@ -227,22 +239,46 @@ int sys_sig_return( const int dummy )
  * SEE ALSO:
  ****************************************************************************/
 
-void AddSigHandlerFrame( Thread_s *psThread, SysCallRegs_s * psRegs, SigAction_s * psHandler, int nSigNum, sigset_t nOldBlockMask )
+void AddSigHandlerFrame( Thread_s *psThread, SysCallRegs_s * psRegs, SigAction_s * psHandler, int nSigNum, sigset_t sOldBlockMask )
 {
 	uint32 *pStack = ( uint32 * )psRegs->oldesp;
 	uint32 *pCode;
 	uint32 *pFpuState;
+	uint32 *pSigInfo;	// pointer to siginfo_t on stack
 	uint32 *pStackTop;	// top of stack after parameters pushed
 
-	pStack -= (22 + 2 + 156);    // SigContext_s + trampoline + FPUState_s
-	pCode = pStack + 22;
-	pFpuState = pStack + 24;
-	pStackTop = pStack - 2;		// subtract 4 for SA_SIGINFO
+	pStack -= (23 + 3 + 156);    // SigContext_s + trampoline + FPUState_s
+	pStackTop = pStack - 2;		// return trampoline and signal number
 
-	pStackTop[0] = ( uint32 )pCode;	// return trampoline address
-	pStackTop[1] = nSigNum;
-	// pStackTop[2] = siginfo_t;
-	// pStackTop[3] = ucontext_t;
+	if ( psHandler->sa_flags & SA_SIGINFO )
+	{
+		pStack -= 32;			// size of siginfo_t struct
+		pStackTop = pStack - 9;		// 2nd and 3rd arg and ucontext
+		pCode = pStack + 22;
+		pSigInfo = pStack + 181;	// siginfo_t struct
+		pStackTop[0] = ( uint32 )pCode;	// return trampoline address
+		pStackTop[1] = nSigNum;
+		pStackTop[2] = ( uint32 )pSigInfo;
+		pStackTop[3] = ( uint32 )(&pStackTop[4]);
+		pStackTop[4] = 0x0;		// uc_flags
+		pStackTop[5] = 0x0;		// uc_link
+		pStackTop[6] = 0x0;		// stack_t.ss_sp
+		pStackTop[7] = 0x0;		// stack_t.ss_size
+		pStackTop[8] = 0x0;		// stack_t.ss_flags
+		pSigInfo[0]  = nSigNum;		// si_signo
+		pSigInfo[1]  = 0x0;		// si_errno
+		pSigInfo[2]  = 0x0;		// si_code
+		// TODO fill in the rest of siginfo for different signals
+	}
+	else
+	{
+		pStackTop = pStack - 2;		// return trampoline and signal
+		pCode = pStack + 22;
+		pStackTop[0] = ( uint32 )( &pCode[1] );	// only pop 1 arg
+		pStackTop[1] = nSigNum;
+	}
+
+	pFpuState = pStack + 25;
 
 	pStack[0] = psRegs->gs;
 	pStack[1] = psRegs->fs;
@@ -264,12 +300,14 @@ void AddSigHandlerFrame( Thread_s *psThread, SysCallRegs_s * psRegs, SigAction_s
 	pStack[17] = psRegs->oldesp;
 	pStack[18] = psRegs->oldss;
 	pStack[19] = ( uint32 )pFpuState;
-	pStack[20] = nOldBlockMask;
+	pStack[20] = sOldBlockMask.__val[0];
 	pStack[21] = CURRENT_THREAD->tr_nCR2;
+	pStack[22] = sOldBlockMask.__val[1];
 
-	pCode[0] = 0x0000b858;	/* popl %eax ; movl $,%eax */
-	pCode[1] = 0x80cd0000;	/* int $0x80 */
-	( ( uint32 * )( ( ( uint32 )pCode ) + 2 ) )[0] = __NR_sig_return;
+	pCode[0] = 0x1cc48390;	/* add $0x1c,%esp */
+	pCode[1] = 0x0000b858;	/* popl %eax ; movl $,%eax */
+	pCode[2] = 0x80cd0000;	/* int $0x80 */
+	( ( uint32 * )( ( ( uintptr_t )pCode ) + 6 ) )[0] = __NR_sig_return;
 
 	if ( save_i387( (struct _fpstate * )pFpuState ) == 0 )
 	{
@@ -296,7 +334,7 @@ void AddSigHandlerFrame( Thread_s *psThread, SysCallRegs_s * psRegs, SigAction_s
  * SEE ALSO:
  ****************************************************************************/
 
-static void handle_signal( int nSigNum, SigAction_s * psHandler, SysCallRegs_s * psRegs, uint32 nOldBlockMask )
+static void handle_signal( int nSigNum, SigAction_s * psHandler, SysCallRegs_s * psRegs, sigset_t sOldBlockMask )
 {
 	Thread_s *psThread = CURRENT_THREAD;
 
@@ -320,7 +358,7 @@ static void handle_signal( int nSigNum, SigAction_s * psHandler, SysCallRegs_s *
 			/* fallthrough */
 		case -ERESTARTNOINTR:
 
-/*				printk( "handle_signal() : Restart syscall %d after sig %d\n", psRegs->orig_eax, nSigNum + 1 ); */
+/*				printk( "handle_signal() : Restart syscall %d after sig %d\n", psRegs->orig_eax, nSigNum ); */
 			psRegs->eax = psRegs->orig_eax;
 			psRegs->eip -= 2;
 
@@ -329,7 +367,7 @@ static void handle_signal( int nSigNum, SigAction_s * psHandler, SysCallRegs_s *
 		}
 	}
 
-	AddSigHandlerFrame( psThread, psRegs, psHandler, nSigNum + 1, nOldBlockMask );
+	AddSigHandlerFrame( psThread, psRegs, psHandler, nSigNum, sOldBlockMask );
 
 	if ( psHandler->sa_flags & SA_ONESHOT )
 	{
@@ -338,7 +376,9 @@ static void handle_signal( int nSigNum, SigAction_s * psHandler, SysCallRegs_s *
 
 	if ( !( psHandler->sa_flags & SA_NOMASK ) )
 	{
-		psThread->tr_nSigBlock |= ( psHandler->sa_mask | ( 1L << nSigNum ) ) & _BLOCKABLE;
+		sigaddset( &psThread->tr_sSigBlock, nSigNum );
+		sigorset( &psThread->tr_sSigBlock, &psThread->tr_sSigBlock, &psHandler->sa_mask );
+		psThread->tr_sSigBlock.__val[0]	&= _BLOCKABLE;
 	}
 }
 
@@ -351,11 +391,10 @@ static void handle_signal( int nSigNum, SigAction_s * psHandler, SysCallRegs_s *
 
 int handle_signals( int dummy )
 {
-	int nSigCount = 0;
 	SysCallRegs_s *psRegs = ( SysCallRegs_s * ) & dummy;
 	Thread_s *psThread = CURRENT_THREAD;
 	Process_s *psProc = psThread->tr_psProcess;
-	sigset_t nOldBlockMask = psThread->tr_nSigBlock;
+	sigset_t sOldBlockMask = psThread->tr_sSigBlock;
 
 	if ( psRegs->eflags & EFLG_VM )
 	{
@@ -370,13 +409,12 @@ int handle_signals( int dummy )
 	{
 		return ( -EINVAL );	/* Dont do anything silly with the idle thread */
 	}
-	if ( psThread->tr_nSigPend & ( ~nOldBlockMask ) )
+	if ( is_signal_pending() )
 	{
-		uint32 nSigMask = psThread->tr_nSigPend & ( ~nOldBlockMask );
-		int i;
-
-/*				psThread->tr_nSigPend &= ~nSigMask; */
-		for ( i = 0; i < NSIG; ++i )
+		// copy signal mask into a 64-bit variable
+		uint64_t nSigMask = ( psThread->tr_sSigPend.__val[0] & ( ~sOldBlockMask.__val[0] ) ) |
+			( ( uint64_t )( psThread->tr_sSigPend.__val[1] & ( ~sOldBlockMask.__val[1] ) ) << 32 );
+		for ( int i = 0; i < _NSIG; ++i )
 		{
 			if ( nSigMask & 0x01 )
 			{
@@ -385,17 +423,11 @@ int handle_signals( int dummy )
 
 				nSigMask >>= 1;
 
-				psThread->tr_nSigPend &= ~( 1L << i );
-
-				if ( i == ( SIGCHLD - 1 ) )
-				{
-
-/*								printk( "Got SIGCHLD\n" ); */
-				}
+				sigdelset( &psThread->tr_sSigPend, nSigNum );
 
 				if ( SIG_IGN == psHandler->sa_handler )
 				{
-					if ( i != ( SIGCHLD - 1 ) )
+					if ( nSigNum != SIGCHLD )
 					{
 						continue;
 					}
@@ -455,9 +487,16 @@ int handle_signals( int dummy )
 						do_exit( nSigNum );
 					}
 				}
-				handle_signal( i, psHandler, psRegs, nOldBlockMask );
-				return ( 1 );
-				nSigCount++;
+				if ( nSigNum == SIGCHLD && psHandler->sa_flags & SA_NOCLDWAIT )
+				{
+					while ( sys_waitpid( -1, NULL, WNOHANG ) > 0 )
+						/* EMPTY */ ;
+				}
+				else
+				{
+					handle_signal( nSigNum, psHandler, psRegs, sOldBlockMask );
+					return ( 1 );
+				}
 			}
 			else
 			{
@@ -690,8 +729,7 @@ int send_signal( Thread_s *psThread, int nSigNum, bool bBypassChecks )
 	// Signals to 'init' will only wake it up. We dont change the signal mask
 	if ( 1 != psThread->tr_hThreadID )
 	{
-		psThread->tr_nSigPend |= 1L << ( nSigNum - 1 );
-
+		sigaddset( &psThread->tr_sSigPend, nSigNum );
 
 		if ( nSigNum == SIGCONT || nSigNum == SIGKILL )
 		{
@@ -699,7 +737,8 @@ int send_signal( Thread_s *psThread, int nSigNum, bool bBypassChecks )
 		}
 		else
 		{
-			if ( psThread->tr_nSigPend & ( ( ~psThread->tr_nSigBlock ) | ( 1L << ( SIGCHLD - 1 ) ) ) )
+			if ( psThread->tr_sSigPend.__val[0] & ( ( ~psThread->tr_sSigBlock.__val[0] ) | ( 1L << ( SIGCHLD - 1 ) ) ) ||
+			     psThread->tr_sSigPend.__val[1] & ( ~psThread->tr_sSigBlock.__val[1] ) )
 			{
 				wakeup_thread( psThread->tr_hThreadID, false );
 			}
@@ -727,7 +766,7 @@ int sys_killpg( const pid_t nGrp, const int nSigNum )
 	bool bPermError = false;
 	int nFlg = cli();
 
-	if ( nSigNum < 0 || nSigNum > NSIG )
+	if ( nSigNum < 0 || nSigNum > _NSIG )
 	{
 		return ( -EINVAL );
 	}
@@ -764,7 +803,7 @@ int sys_kill_proc( proc_id hProcess, int nSigNum )
 	bool bPermError = false;
 	int nFlg = cli();
 
-	if ( nSigNum < 0 || nSigNum > NSIG )
+	if ( nSigNum < 0 || nSigNum > _NSIG )
 	{
 		return ( -EINVAL );
 	}
@@ -797,7 +836,7 @@ int sys_kill( const thread_id hThread, const int nSigNum )
 {
 	int nError = 0;
 
-	if ( nSigNum < 0 || nSigNum > NSIG )
+	if ( nSigNum < 0 || nSigNum > _NSIG )
 	{
 		return ( -EINVAL );
 	}
@@ -846,8 +885,8 @@ int sys_kill( const thread_id hThread, const int nSigNum )
 
 void ( *sys_signal( const int nSigNum, void ( *const pHandler ) ( int ) ) ) ( int )
 {
-	struct sigaction sNew;
-	struct sigaction sOld;
+	struct libc_sigaction sNew;
+	struct libc_sigaction sOld;
 	int nError;
 
 	memset( &sNew, 0, sizeof( sNew ) );
@@ -874,13 +913,14 @@ void ( *sys_signal( const int nSigNum, void ( *const pHandler ) ( int ) ) ) ( in
  * SEE ALSO:
  ****************************************************************************/
 
-int sys_sigaction( const int nSigNum, const struct sigaction *const psAction, struct sigaction *const psOldAct )
+int sys_sigaction( int nSigNum, const struct libc_sigaction *__restrict psAction,
+		   struct libc_sigaction *__restrict psOldAct )
 {
 	Thread_s *psThread = CURRENT_THREAD;
 	SigAction_s *psHandler;
-	SigAction_s sNewHandler;
+	struct libc_sigaction sNewHandler;
 
-	if ( nSigNum < 1 || nSigNum > NSIG )
+	if ( nSigNum < 1 || nSigNum > _NSIG )
 	{
 		return ( -EINVAL );
 	}
@@ -894,7 +934,15 @@ int sys_sigaction( const int nSigNum, const struct sigaction *const psAction, st
 
 	if ( NULL != psOldAct )
 	{
-		if ( memcpy_to_user( psOldAct, psHandler, sizeof( *psHandler ) ) < 0 )
+		struct libc_sigaction sOldAction;
+		memset( &sOldAction, 0, sizeof( sOldAction ) );
+		sOldAction.sa_handler = psHandler->sa_handler;
+		sOldAction.sa_mask.__val[0] = psHandler->sa_mask.__val[0];
+		sOldAction.sa_mask.__val[1] = psHandler->sa_mask.__val[1];
+		sOldAction.sa_flags = psHandler->sa_flags;
+		sOldAction.sa_restorer = psHandler->sa_restorer;
+
+		if ( memcpy_to_user( psOldAct, &sOldAction, sizeof( sOldAction) ) < 0 )
 		{
 			return ( -EFAULT );
 		}
@@ -906,11 +954,15 @@ int sys_sigaction( const int nSigNum, const struct sigaction *const psAction, st
 		{
 			return ( -EFAULT );
 		}
-		*psHandler = sNewHandler;
+		psHandler->sa_handler = sNewHandler.sa_handler;
+		psHandler->sa_mask.__val[0] = sNewHandler.sa_mask.__val[0];
+		psHandler->sa_mask.__val[1] = sNewHandler.sa_mask.__val[1];
+		psHandler->sa_flags = sNewHandler.sa_flags;
+		psHandler->sa_restorer = sNewHandler.sa_restorer;
 
 		if ( SIG_IGN == psHandler->sa_handler )
 		{
-			psThread->tr_nSigPend &= ~( 1L << ( nSigNum - 1 ) );
+			sigdelset( &psThread->tr_sSigPend, nSigNum );
 		}
 		if ( SIG_DFL == psHandler->sa_handler )
 		{
@@ -918,7 +970,7 @@ int sys_sigaction( const int nSigNum, const struct sigaction *const psAction, st
 			{
 				return ( 0 );
 			}
-			psThread->tr_nSigPend &= ~( 1L << ( nSigNum - 1 ) );
+			sigdelset( &psThread->tr_sSigPend, nSigNum );
 			return ( 0 );
 		}
 	}
@@ -934,8 +986,7 @@ int sys_sigaction( const int nSigNum, const struct sigaction *const psAction, st
 
 int sys_sigaddset( sigset_t *const pSet, const int nSigNum )
 {
-	*pSet |= 1L << ( nSigNum - 1 );
-	return ( 0 );
+	return sigaddset( pSet, nSigNum );
 }
 
 /*****************************************************************************
@@ -947,8 +998,7 @@ int sys_sigaddset( sigset_t *const pSet, const int nSigNum )
 
 int sys_sigdelset( sigset_t *const pSet, const int nSigNum )
 {
-	*pSet &= ~( 1L << ( nSigNum - 1 ) );
-	return ( 0 );
+	return sigdelset( pSet, nSigNum );
 }
 
 /*****************************************************************************
@@ -960,8 +1010,7 @@ int sys_sigdelset( sigset_t *const pSet, const int nSigNum )
 
 int sys_sigemptyset( sigset_t *const pSet )
 {
-	*pSet = 0;
-	return ( 0 );
+	return sigemptyset( pSet );
 }
 
 /*****************************************************************************
@@ -973,8 +1022,7 @@ int sys_sigemptyset( sigset_t *const pSet )
 
 int sys_sigfillset( sigset_t *const pSet )
 {
-	*pSet = ~0;
-	return ( 0 );
+	return sigfillset( pSet );
 }
 
 /*****************************************************************************
@@ -984,16 +1032,9 @@ int sys_sigfillset( sigset_t *const pSet )
  * SEE ALSO:
  ****************************************************************************/
 
-int sys_sigismember( const sigset_t *const pSet, const int nSigNum )
+int sys_sigismember( const sigset_t *pSet, int nSigNum )
 {
-	if ( *pSet & ( 1L << ( nSigNum - 1 ) ) )
-	{
-		return ( 1 );
-	}
-	else
-	{
-		return ( 0 );
-	}
+	return sigismember( pSet, nSigNum );
 }
 
 /*****************************************************************************
@@ -1003,12 +1044,14 @@ int sys_sigismember( const sigset_t *const pSet, const int nSigNum )
  * SEE ALSO:
  ****************************************************************************/
 
-int sys_sigpending( sigset_t *const pSet )
+int sys_sigpending( libc_sigset_t *pSet )
 {
 	Thread_s *psThread = CURRENT_THREAD;
-	sigset_t nSet = psThread->tr_nSigPend & psThread->tr_nSigBlock;
+	sigset_t sSet;
+       	sigandset( &sSet, &psThread->tr_sSigPend, &psThread->tr_sSigBlock );
 
-	if ( memcpy_to_user( pSet, &nSet, sizeof( nSet ) ) < 0 )
+	// Copies sigset_t into user's larger libc_sigset_t structure.
+	if ( memcpy_to_user( pSet, &sSet, sizeof( sSet ) ) < 0 )
 	{
 		return ( -EFAULT );
 	}
@@ -1023,12 +1066,13 @@ int sys_sigpending( sigset_t *const pSet )
  * SEE ALSO:
  ****************************************************************************/
 
-int sys_sigprocmask( const int nHow, const sigset_t *const pSet, sigset_t *const pOldSet )
+int sys_sigprocmask( int nHow, const libc_sigset_t *__restrict pSet,
+		     libc_sigset_t *__restrict pOldSet )
 {
 	Thread_s *psThread = CURRENT_THREAD;
 
 	sigset_t new_set;
-	sigset_t old_set = psThread->tr_nSigBlock;
+	sigset_t old_set = psThread->tr_sSigBlock;
 
 	if ( NULL != pSet )
 	{
@@ -1036,18 +1080,18 @@ int sys_sigprocmask( const int nHow, const sigset_t *const pSet, sigset_t *const
 		{
 			return ( -EFAULT );
 		}
-		new_set &= _BLOCKABLE;
+		new_set.__val[0] &= _BLOCKABLE;
 
 		switch ( nHow )
 		{
 		case SIG_BLOCK:
-			psThread->tr_nSigBlock |= new_set;
+			sigorset( &psThread->tr_sSigBlock, &psThread->tr_sSigBlock, &new_set );
 			break;
 		case SIG_UNBLOCK:
-			psThread->tr_nSigBlock &= ~new_set;
+			sigandnotset( &psThread->tr_sSigBlock, &psThread->tr_sSigBlock, &new_set );
 			break;
 		case SIG_SETMASK:
-			psThread->tr_nSigBlock = new_set;
+			psThread->tr_sSigBlock = new_set;
 			break;
 		default:
 			return ( -EINVAL );
@@ -1056,6 +1100,7 @@ int sys_sigprocmask( const int nHow, const sigset_t *const pSet, sigset_t *const
 
 	if ( NULL != pOldSet )
 	{
+		// Copies sigset_t into user's larger libc_sigset_t structure.
 		if ( memcpy_to_user( pOldSet, &old_set, sizeof( old_set ) ) < 0 )
 		{
 			return ( -EFAULT );
@@ -1072,16 +1117,15 @@ int sys_sigprocmask( const int nHow, const sigset_t *const pSet, sigset_t *const
  * SEE ALSO:
  ****************************************************************************/
 
-//int sys_sigsuspend( const sigset_t* const pSet )
-int sys_sigsuspend( uint32 nSetHigh, uint32 nSetMid, sigset_t nSet )
+int sys_sigsuspend( unsigned long int nSetHigh, unsigned long int nSetMid,
+		    unsigned long int nSetLow )
 {
 	Thread_s *psThread = CURRENT_THREAD;
 
-//    sigset_t new_set;
-	sigset_t old_set = psThread->tr_nSigBlock;
+	sigset_t old_set = psThread->tr_sSigBlock;
 
 /*
-    sys_sigemptyset( &new_set );
+    sigemptyset( &new_set );
 
     if ( pSet != NULL ) {
 	if ( memcpy_from_user( &new_set, pSet, sizeof(new_set) ) < 0 ) {
@@ -1091,11 +1135,12 @@ int sys_sigsuspend( uint32 nSetHigh, uint32 nSetMid, sigset_t nSet )
 	printk( "Warning: sys_sigsuspend() called with pSet == NULL\n" );
     }
     */
-	psThread->tr_nSigBlock = nSet & _BLOCKABLE;
-
+	psThread->tr_sSigBlock.__val[0] = nSetLow & _BLOCKABLE;
+	psThread->tr_sSigBlock.__val[1] = nSetMid;
+	
 	suspend();
 
-	psThread->tr_nSigBlock = old_set;
+	psThread->tr_sSigBlock = old_set;
 
 	return ( 0 );
 }

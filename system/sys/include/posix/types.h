@@ -84,4 +84,11 @@ typedef int ssize_t;
 
 #endif /* __KERNEL__ */
 
+/// Declare both p() and kernel sys_p() prototypes.
+#ifdef __KERNEL__
+#define __SYSCALL(r,p)	r p;	r sys_ ## p;
+#else
+#define __SYSCALL(r,p)	r p;
+#endif
+
 #endif /* __F_ATHEOS_POSIX_TYPES_H__ */

@@ -577,7 +577,7 @@ thread_id sys_Fork( const char *const pzName )
 
       /*** Clone signal handlers ***/
 
-	for ( i = 0; i < NSIG; ++i )
+	for ( i = 0; i < _NSIG; ++i )
 	{
 		psNewThread->tr_apsSigHandlers[i] = psParentThread->tr_apsSigHandlers[i];
 	}

@@ -162,6 +162,7 @@ void	*pthread_getspecific(pthread_key_t);
 int		pthread_join(pthread_t, void **);
 int		pthread_key_create(pthread_key_t *, void (*)(void *));
 int		pthread_key_delete(pthread_key_t);
+int		pthread_kill(pthread_t, int);
 
 int		pthread_mutex_destroy(pthread_mutex_t *);
 int		pthread_mutex_getprioceiling(const pthread_mutex_t *, int *);

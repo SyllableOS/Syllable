@@ -152,10 +152,10 @@ struct _Thread
 
 	int tr_nUMask;
 
-	sigset_t tr_nSigPend;
-	sigset_t tr_nSigBlock;
+	sigset_t tr_sSigPend;
+	sigset_t tr_sSigBlock;
 
-	SigAction_s tr_apsSigHandlers[NSIG];
+	SigAction_s tr_apsSigHandlers[_NSIG];
 
 	/* SMP stuff */
 	int tr_nCurrentCPU;

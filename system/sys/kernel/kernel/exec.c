@@ -347,10 +347,9 @@ int sys_execve( const char *a_pzPath, char *const *argv, char *const *envv )
 	memset( psProc->pr_anTLDBitmap, 0, sizeof( psProc->pr_anTLDBitmap ) );
 
 	/* Reset signal handlers */
-	memset( psThread->tr_apsSigHandlers, 0, sizeof( SigAction_s ) * NSIG );
-	psThread->tr_nSigPend = 0;
-	psThread->tr_nSigBlock = 0;
-
+	memset( psThread->tr_apsSigHandlers, 0, sizeof( SigAction_s ) * _NSIG );
+	sigemptyset( &psThread->tr_sSigPend );
+	sigemptyset( &psThread->tr_sSigBlock );
 
 	{
 		char **apNewEnv = ( char ** )( ( ( int )plUserStack ) - ( ( nEnvSize + 3 ) & ~3 ) );

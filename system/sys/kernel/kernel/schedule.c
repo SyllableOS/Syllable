@@ -1193,8 +1193,14 @@ pid_t sys_wait4( const pid_t hPid, int *const pnStatLoc, const int nOptions, str
 	bool bFound = false;
 	pid_t nRes = -1;
 	pid_t hGroup = -1;
-	int nFlg = cli();
 
+	/* Return immediately if SA_NOCLDWAIT is set on SIGCHLD handler.  */
+	if ( psThread->tr_apsSigHandlers[SIGCHLD - 1].sa_flags & SA_NOCLDWAIT )
+	{
+		return ( -ECHILD );
+	}
+
+	int nFlg = cli();
 	sched_lock();
 
       /*** First we verify that we have a child that can satisfy wait4() ***/
@@ -1236,7 +1242,6 @@ pid_t sys_wait4( const pid_t hPid, int *const pnStatLoc, const int nOptions, str
 
 	sched_unlock();
 	put_cpu_flags( nFlg );
-
 
 	if ( bFound == false )
 	{
