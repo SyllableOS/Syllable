@@ -1,13 +1,13 @@
 COPTS	= -Wall -c
 
-OBJS	= main.o sysinfopanel.o processpanel.o memview.o cpuview.o performancepanel.o
+OBJS	= main.o sysinfopanel.o processpanel.o memview.o cpuview.o performancepanel.o devicespanel.o
 EXE	= SlbMgr
 
 CC	= g++
 LL	= g++
 
 $(EXE) : $(OBJS)
-	$(LL) $(OBJS) -latheos -o $@
+	$(LL) $(OBJS) -lsyllable -o $@
 
 dist: $(EXE)
 	cp -f $(EXE) %(DIST_DIR)/sys/bin/$(EXE)
@@ -33,5 +33,10 @@ memview.o : memview.cpp
 	
 cpuview.o : cpuview.cpp
 	$(CC) $(COPTS) $< -o $@
+
+devicespanel.o : devicespanel.cpp
+	$(CC) $(COPTS) $< -o $@
+
+
 
 

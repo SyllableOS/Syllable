@@ -37,7 +37,7 @@
 #include "processpanel.h"
 #include "sysinfopanel.h"
 #include "performancepanel.h"
-
+#include "devicespanel.h"
 
 #include <gui/tabview.h>
 using namespace os;
@@ -85,6 +85,7 @@ class MyWindow:public os::Window
 	ProcessPanel *pcProcessPanel;
 	SysInfoPanel *pcSysInfoPanel;
 	PerformancePanel *pcPerformancePanel;
+	DevicesPanel *pcDevicesPanel;
 	CheckMenu*	m_pcMenuMedium;
 	CheckMenu*	m_pcMenuLow;
 	CheckMenu*	m_pcMenuHigh;
@@ -195,7 +196,7 @@ void MyWindow::ShowAbout()
 	sprintf( szTitle, "About Syllable Manager v.%s", APP_VERSION );
 	sprintf( szMessage, "SLBMgr v.%s\n\nResource Manager For Syllable\nJohn Hall, 2001\n\nAtheMgr is released under the GNU Public License (GPL)\n\nAtheMgr: http://www.triumvirate.net/athemgr.htm\nGNU: http://www.gnu.org/", APP_VERSION );
 
-	Alert *sAbout = new Alert( szTitle, szMessage, 0x00, "O.K", NULL );
+	Alert *sAbout = new Alert( szTitle, szMessage, Alert::ALERT_INFO, 0x00, "O.K", NULL );
 
 	sAbout->Go( new Invoker(NULL) );
 }
@@ -210,9 +211,12 @@ void MyWindow::SetupMenus()
 
 	m_pcMenu = new Menu( cMenuFrame, "Menu", ITEMS_IN_ROW, CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT | CF_FOLLOW_TOP, WID_FULL_UPDATE_ON_H_RESIZE );
 
-	Menu *pcFile = new Menu( Rect(), "File", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
-
-	pcFile->AddItem( "Quit", new Message( ID_QUIT ) );
+	Menu *pcApp = new Menu( Rect(), "Application", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
+	pcApp->AddItem( new MenuItem( "About", new Message( ID_ABOUT ) ) );
+	pcApp->AddItem( new MenuSeparator() );
+	pcApp->AddItem( "Quit", new Message( ID_QUIT ) );
+	
+	
 	Menu *pcOption = new Menu( Rect(), "Options", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
 	Menu *pcSpeed = new Menu( Rect(), "Speed", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
 
@@ -233,13 +237,10 @@ void MyWindow::SetupMenus()
 	   pcOption->AddItem( pcDetail );
 
 	 */
-	Menu *pcHelp = new Menu( Rect(), "Help", ITEMS_IN_COLUMN, CF_FOLLOW_LEFT | CF_FOLLOW_TOP );
+	
 
-	pcHelp->AddItem( new MenuItem( "About", new Message( ID_ABOUT ) ) );
-
-	m_pcMenu->AddItem( pcFile );
+	m_pcMenu->AddItem( pcApp );
 	m_pcMenu->AddItem( pcOption );
-	m_pcMenu->AddItem( pcHelp );
 
 	cMenuFrame.bottom = m_pcMenu->GetPreferredSize( false ).y - 1;
 	cMainFrame.top = cMenuFrame.bottom + 1;
@@ -270,8 +271,10 @@ MyWindow::MyWindow():Window( Rect(), "athe_wnd", APP_WINDOW_TITLE, 0 )
 	pcProcessPanel = new ProcessPanel( cMainFrame );
 	pcSysInfoPanel = new SysInfoPanel( cMainFrame );
 	pcPerformancePanel = new PerformancePanel( cMainFrame );
+	pcDevicesPanel = new DevicesPanel( cMainFrame );
 
 	m_pcView->AppendTab( "System Info", pcSysInfoPanel );
+	m_pcView->AppendTab( "Devices", pcDevicesPanel );
 	m_pcView->AppendTab( "Processes", pcProcessPanel );
 	m_pcView->AppendTab( "Performance", pcPerformancePanel );
 	
