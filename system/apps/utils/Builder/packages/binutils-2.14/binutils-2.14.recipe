@@ -25,5 +25,13 @@ patch
 documentation
 	README COPYING COPYING.LIB
 	binutils/NEWS binutils/ChangeLog binutils/MAINTAINERS
-; For OpenSSL:
-links				bin/ranlib /usr/bin/ranlib
+links
+;	Optimize wasteful duplicates:
+	bin/ar		i586-pc-syllable/bin/ar
+	bin/as		i586-pc-syllable/bin/as
+	bin/ld		i586-pc-syllable/bin/ld
+	bin/nm		i586-pc-syllable/bin/nm
+	bin/ranlib	i586-pc-syllable/bin/ranlib
+	bin/strip	i586-pc-syllable/bin/strip
+;	For OpenSSL:
+	bin/ranlib	/usr/bin/ranlib
