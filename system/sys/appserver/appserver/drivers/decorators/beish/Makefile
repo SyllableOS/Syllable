@@ -1,5 +1,6 @@
+include ../freetype.makefile
 
-COPTS   = -I../../../server -I../../../server/freetype2-beta8/include -c -O3 -Wall
+COPTS   = -I../../../server -I$(FREETYPEINCLUDE) -c -O3 -Wall
 
 DEVBIN = /system/drivers/appserver/decorators
 OBJS =	beishdecorator.o gradient.o
