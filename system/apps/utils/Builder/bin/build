@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.3.9
+# Version 0.3.10
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -89,10 +89,17 @@ def patchPackage target
 		return false unless action "cp -a #{File.join dir, "*"} ."
 	end
 
-	if dir = (recipe = recipe target)["patch-config"]
+	if dirs = toList((recipe = recipe target)["patch-config"])
 		logHeader "Patching configuration"
-		action "cp -a #{File.join @sourcesPath, "config/config.*"} " +
-			(dir == "" ? "." : dir)
+		files = File.join @sourcesPath, "config/config.*"
+
+		if dirs == []
+			action "cp -a #{files} ."
+		else
+			for dir in dirs
+				action "cp -a #{files} #{dir}/"
+			end
+		end
 	elsif dir = recipe["patch-legacy-config"]
 		logHeader "Patching configuration"
 		action "cp -a #{File.join @sourcesPath, "config/legacy/*"} " +
@@ -585,7 +592,7 @@ def load file  # Load the lines of a file into an array, leaving out comments
 	File.open file do |file|
 		file.each do |line|
 			# Get rid of record delimiter and comments
-			lines += [line.chomp] unless line =~ /\s*;/
+			lines += [line.chomp] unless line =~ /^\s*;/
 		end
 	end
 
@@ -604,14 +611,35 @@ def parseValues text  # Load key/value pairs into a hash table
 	hash = {}
 
 	for line in text
-		if i = line.index(/\s/)
-			hash[line[0, i]] = line[i + 1 .. line.length - 1].strip
-		else
-			hash[line] = ""
+		if line !~ /^\s+/  # A key line
+			unless i = line.index(/\s/)  # A single key
+				hash[lastKey = line] = ""
+			else  # A key with a single value
+				hash[line[0, i]] = line[i + 1 .. line.length - 1].strip
+			end
+		else  # Starts with whitespace, so it's a list value
+			if hash[lastKey] == ""
+				hash[lastKey] = [line.strip]
+#				margin = $&
+			else
+				hash[lastKey] << line.strip
+			end
 		end
 	end
 
 	hash
+end
+
+def toList value  # Normalize value into an array
+	if value.is_a? String
+		if value == ""
+			[]
+		else
+			[value]
+		end
+	else  # Assume it's already an array, or nil
+		value
+	end
 end
 
 def thirdParty?
@@ -757,7 +785,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.3.9",
+	puts "Syllable Build System 0.3.10",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
@@ -841,4 +869,3 @@ else
 
 	closeLogs
 end
-
