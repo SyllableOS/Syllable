@@ -119,8 +119,16 @@ namespace os_priv
 		{
 			MonitoringFileNode( const std::string & cName, dev_t nDevice, ino_t nInode ):FileNode( cName, nDevice, nInode )
 			{
+				m_pcMonitor = NULL;
 			}
-			mutable NodeMonitor m_cMonitor;
+			
+			~MonitoringFileNode() {
+				if( m_pcMonitor ) {
+					delete m_pcMonitor;
+				}
+			}
+			
+			mutable NodeMonitor* m_pcMonitor;
 		};
 
 
@@ -224,7 +232,7 @@ void DirKeeper::HandleMessage( Message * pcMessage )
 	{
 	case M_CHANGE_DIR:
 		{
-			std::string cNewPath;
+			String cNewPath;
 			pcMessage->FindString( "path", &cNewPath );
 			try
 			{
@@ -543,7 +551,7 @@ void DirKeeper::SendAddMsg( const std::string & cName )
 			return;
 		}
 //      cMFileNode.m_cMonitor.SetTo( &cNode, NWATCH_STAT, this, this );
-		( *m_cFileMap.insert( cMFileNode ).first ).m_cMonitor.SetTo( &cNode, NWATCH_STAT, this, this );
+		( *m_cFileMap.insert( cMFileNode ).first ).m_pcMonitor = new NodeMonitor( &cNode, NWATCH_STAT, this, this );
 
 		if( m_bWaitForAddReply )
 		{
