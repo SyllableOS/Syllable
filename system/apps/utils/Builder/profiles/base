@@ -23,7 +23,7 @@ modules
 	apps/utils/cpumon
 	apps/utils/crypt
 	apps/utils/keymapconv
-	apps/utils/launcher_1.1
+;	apps/utils/launcher_1.1
 	apps/utils/locator_0.2
 	apps/utils/memmon
 	apps/utils/mixer
