@@ -1,0 +1,4 @@
+authors				Kaj de Vos
+patch-config		support
+configure-options	--without-bash-malloc
+documentation		README POSIX RBASH COPYING NEWS CHANGES COMPAT NOTES Y2K AUTHORS doc/FAQ doc/INTRO examples
