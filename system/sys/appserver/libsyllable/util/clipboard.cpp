@@ -25,8 +25,6 @@
 
 using namespace os;
 
-
-
 Clipboard::Clipboard():m_cMutex( "clipboard_lock" ), m_cName( "__system_clipboard__" ), m_cBuffer( 0 )
 {
 	m_hReplyPort = create_port( "app_reply", DEFAULT_PORT_SIZE );
@@ -34,7 +32,7 @@ Clipboard::Clipboard():m_cMutex( "clipboard_lock" ), m_cName( "__system_clipboar
 	m_bCleared = false;
 }
 
-Clipboard::Clipboard( const char *pzName ):m_cMutex( "clipboard_lock" ), m_cName( pzName ), m_cBuffer( 0 )
+Clipboard::Clipboard( const String& cName ):m_cMutex( "clipboard_lock" ), m_cName( cName ), m_cBuffer( 0 )
 {
 	m_hReplyPort = create_port( "app_reply", DEFAULT_PORT_SIZE );
 	m_hServerPort = get_app_server_port();
