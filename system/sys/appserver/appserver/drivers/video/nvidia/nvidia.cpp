@@ -199,13 +199,14 @@ NVidia::NVidia()
 	PCI_Info_s *pcPrimaryCardPCIInfo = &cCandidates[nPrimaryCardIndex];
 	m_sRiva.Chipset				= cCandidatesInfo[nPrimaryCardIndex].nDeviceId;
 	m_sRiva.riva.Architecture	= cCandidatesInfo[nPrimaryCardIndex].nArchRev;
+	m_cPCIInfo = cCandidates[nPrimaryCardIndex];
 	
-	int nIoSize = get_pci_memory_size(pcPrimaryCardPCIInfo, 0); 
+	int nIoSize = get_pci_memory_size(&m_cPCIInfo, 0); 
 	m_hRegisterArea = create_area("nvidia_regs", (void**)&m_pRegisterBase, nIoSize,
 	                              AREA_FULL_ACCESS, AREA_NO_LOCK);
 	remap_area(m_hRegisterArea, (void*)(pcPrimaryCardPCIInfo->u.h0.nBase0 & PCI_ADDRESS_IO_MASK));
 	
-	int nMemSize = get_pci_memory_size(pcPrimaryCardPCIInfo, 1);
+	int nMemSize = get_pci_memory_size(&m_cPCIInfo, 1);
 	m_hFrameBufferArea = create_area("nvidia_framebuffer", (void**)&m_pFrameBufferBase,
 	                                 nMemSize, AREA_FULL_ACCESS, AREA_NO_LOCK);
 	remap_area(m_hFrameBufferArea, (void*)(pcPrimaryCardPCIInfo->u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK));
