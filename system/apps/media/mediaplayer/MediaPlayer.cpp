@@ -1,4 +1,3 @@
-
 /*  Syllable Media Player
  *  Copyright (C) 2003 Arno Klenke
  *
@@ -453,8 +452,8 @@ void MPApp::PlayThread()
 			//cout<<"Position "<<m_pcInput->GetCurrentPosition()<<endl;
 			if ( m_bPacket && m_bVideo && m_bAudio )
 			{
-				double nVideo = ( ( double )nVideoFrames / ( double )m_sVideoFormat.vFrameRate - ( double )m_pcVideoOutput->GetDelay() );
-				double nAudio = ( ( double )nAudioBytes / 2 / ( double )m_sAudioFormat.nSampleRate / ( double )m_sAudioFormat.nChannels - m_pcAudioOutput->GetDelay() );
+				double nVideo = ( ( double )nVideoFrames * 1000 / ( double )m_sVideoFormat.vFrameRate - ( double )m_pcVideoOutput->GetDelay() );
+				double nAudio = ( ( double )nAudioBytes * 1000 / 2 / ( double )m_sAudioFormat.nSampleRate / ( double )m_sAudioFormat.nChannels - m_pcAudioOutput->GetDelay() );
 
 				if ( nVideo > nAudio )
 				{
@@ -1033,6 +1032,8 @@ int main( int argc, char *argv[] )
 	delete( pcApp );
 	return ( 0 );
 }
+
+
 
 
 
