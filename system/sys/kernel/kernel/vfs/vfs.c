@@ -1512,7 +1512,7 @@ IoContext_s *fs_alloc_ioctx( int nCount )
 		return ( NULL );
 	}
 
-	psCtx->ic_hLock = create_semaphore( "io_ctx", 1, SEM_REQURSIVE );
+	psCtx->ic_hLock = create_semaphore( "io_ctx", 1, SEM_RECURSIVE );
 
 	if ( psCtx->ic_hLock < 0 )
 	{

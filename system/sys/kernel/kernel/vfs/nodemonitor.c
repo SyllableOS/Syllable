@@ -450,7 +450,7 @@ void nwatch_exit( IoContext_s * psCtx )
 
 status_t nwatch_init( void )
 {
-	g_hNodeMonitorMutex = create_semaphore( "node_monitor", 1, SEM_REQURSIVE );
+	g_hNodeMonitorMutex = create_semaphore( "node_monitor", 1, SEM_RECURSIVE );
 	if ( g_hNodeMonitorMutex < 0 )
 	{
 		return ( g_hNodeMonitorMutex );

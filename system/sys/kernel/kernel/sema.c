@@ -451,7 +451,7 @@ Semaphore_s *get_semaphore_by_handle( proc_id hProcess, sem_id hSema )
  *	is not used.
  * \param nFlags
  *	Various flags describing how to create the semaphore.
- *		- SEM_REQURSIVE	Don't block if the semaphore is
+ *		- SEM_RECURSIVE	Don't block if the semaphore is
  *				aquired multiple times by the same
  *				thread.
  * \return
@@ -1736,7 +1736,7 @@ static status_t do_unlock_semaphore_ex( bool bKernel, sem_id hSema, int nCount )
 		}
 
 #ifdef __DETECT_DEADLOCK
-		if ( psSema->ss_nFlags & SEM_REQURSIVE )
+		if ( psSema->ss_nFlags & SEM_RECURSIVE )
 		{
 			for ( i = 0; i < 256; ++i )
 			{

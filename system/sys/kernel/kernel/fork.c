@@ -312,7 +312,7 @@ static Process_s *alloc_process( MemContext_s *psMemSeg )
 	}
 	psProc->tc_psMemSeg = psMemSeg;
 
-	psProc->pr_hSem = create_semaphore( "Process", 1, SEM_REQURSIVE );
+	psProc->pr_hSem = create_semaphore( "Process", 1, SEM_RECURSIVE );
 
 	if ( psProc->pr_hSem < 0 )
 	{

@@ -2363,7 +2363,7 @@ void InitAreaManager( void )
 {
 	register_debug_cmd( "ls_area", "list all memory areas created by a given process.", db_list_areas );
 	MArray_Init( &g_sAreas );
-	g_hAreaTableSema = create_semaphore( "area_table", 1, SEM_REQURSIVE );
+	g_hAreaTableSema = create_semaphore( "area_table", 1, SEM_RECURSIVE );
 
 	do_create_area( g_psKernelSeg, 0, 1024 * 1024, 1024 * 1024, false, AREA_KERNEL | AREA_READ | AREA_WRITE | AREA_EXEC | AREA_CONTIGUOUS, AREA_FULL_LOCK );
 	do_create_area( g_psKernelSeg, 1024 * 1024, g_sSysBase.ex_nTotalPageCount * PAGE_SIZE - 1024 * 1024, g_sSysBase.ex_nTotalPageCount * PAGE_SIZE - 1024 * 1024, false, AREA_KERNEL | AREA_READ | AREA_WRITE | AREA_EXEC | AREA_CONTIGUOUS, AREA_FULL_LOCK );

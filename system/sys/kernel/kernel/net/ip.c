@@ -770,7 +770,7 @@ void init_ip()
 {
 	thread_id hThread;
 
-	g_hFragListLock = create_semaphore( "frglst_lock", 1, SEM_REQURSIVE );
+	g_hFragListLock = create_semaphore( "frglst_lock", 1, SEM_RECURSIVE );
 	init_route_table();
 	init_net_core();
 	hThread = spawn_kernel_thread( "ip_timer", ip_timer, 200, 0, NULL );

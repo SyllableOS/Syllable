@@ -1028,7 +1028,7 @@ SocketOps_s g_sUDPOperations = {
 
 int init_udp( void )
 {
-	g_hUDPPortLock = create_semaphore( "udp_portlist", 1, SEM_REQURSIVE );
+	g_hUDPPortLock = create_semaphore( "udp_portlist", 1, SEM_RECURSIVE );
 	if ( g_hUDPPortLock < 0 )
 	{
 		return ( g_hUDPPortLock );

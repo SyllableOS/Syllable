@@ -571,7 +571,7 @@ TCPCtrl_s *tcb_alloc()
 		return ( NULL );
 	}
 	psTCPCtrl->tcb_nState = TCPS_CLOSED;
-	psTCPCtrl->tcb_hMutex = create_semaphore( "tcp_tcb_mutex", 1, SEM_REQURSIVE );
+	psTCPCtrl->tcb_hMutex = create_semaphore( "tcp_tcb_mutex", 1, SEM_RECURSIVE );
 	psTCPCtrl->tcb_hRecvQueue = -1;
 	psTCPCtrl->tcb_hSendQueue = -1;
 	psTCPCtrl->tcb_hListenSem = -1;
@@ -2442,7 +2442,7 @@ void tcp_in( PacketBuf_s *psPkt, int nDataLen )
 
 int init_tcp()
 {
-	g_hConnListMutex = create_semaphore( "tcp_conn_list_mutex", 1, SEM_REQURSIVE );
+	g_hConnListMutex = create_semaphore( "tcp_conn_list_mutex", 1, SEM_RECURSIVE );
 
 	register_debug_cmd( "ls_tcp", "List existing TCP connections", dbg_list_connections );
 	init_tcp_out();

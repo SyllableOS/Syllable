@@ -150,12 +150,12 @@ static FileNode_s *pty_create_node( FileNode_s *psParent, const char *pzName, in
 	{
 		return ( NULL );
 	}
-	psNode->fn_hMutex = create_semaphore( "pty_node_mutex", 1, SEM_REQURSIVE );
+	psNode->fn_hMutex = create_semaphore( "pty_node_mutex", 1, SEM_RECURSIVE );
 	if ( psNode->fn_hMutex < 0 )
 	{
 		goto error1;
 	}
-	psNode->fn_hWriteMutex = create_semaphore( "pty_write_mutex", 1, SEM_REQURSIVE );
+	psNode->fn_hWriteMutex = create_semaphore( "pty_write_mutex", 1, SEM_RECURSIVE );
 	if ( psNode->fn_hWriteMutex < 0 )
 	{
 		goto error2;
@@ -253,8 +253,8 @@ static int pty_mount( kdev_t nDevNum, const char *pzDevPath, uint32 nFlags, void
 
 		psRootNode->fn_psNextSibling = NULL;
 		psRootNode->fn_psParent = NULL;
-		psRootNode->fn_hMutex = create_semaphore( "pty_root", 1, SEM_REQURSIVE );
-		psRootNode->fn_hWriteMutex = create_semaphore( "pty_root_write", 1, SEM_REQURSIVE );
+		psRootNode->fn_hMutex = create_semaphore( "pty_root", 1, SEM_RECURSIVE );
+		psRootNode->fn_hWriteMutex = create_semaphore( "pty_root_write", 1, SEM_RECURSIVE );
 
 		psVolume->nDevNum = nDevNum;
 
@@ -1960,6 +1960,6 @@ static FSOperations_s g_sOperations = {
 
 void init_pty( void )
 {
-	g_hCTTYMutex = create_semaphore( "ctty_mutex", 1, SEM_REQURSIVE );
+	g_hCTTYMutex = create_semaphore( "ctty_mutex", 1, SEM_RECURSIVE );
 	register_file_system( "_pty_device_", &g_sOperations );
 }

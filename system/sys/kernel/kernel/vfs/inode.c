@@ -2207,8 +2207,8 @@ void init_vfs_module( void )
 
 	memset( &g_sDummyOperations, 0, sizeof( g_sDummyOperations ) );
 
-	g_hInodeHashSem = create_semaphore( "vfs_mutex", 1, SEM_REQURSIVE );
-	g_hFSListSema = create_semaphore( "fs_driver_list_mutex", 1, SEM_REQURSIVE );
+	g_hInodeHashSem = create_semaphore( "vfs_mutex", 1, SEM_RECURSIVE );
+	g_hFSListSema = create_semaphore( "fs_driver_list_mutex", 1, SEM_RECURSIVE );
 	g_sFreeList.il_psLRU = NULL;
 	g_sFreeList.il_psMRU = NULL;
 

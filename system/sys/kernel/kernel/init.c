@@ -962,7 +962,7 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 	}
 	g_bFoundSmpConfig = init_smp( g_bDisableSMP == false );
 
-	g_psKernelSeg->mc_hSema = create_semaphore( "krn_seg_lock", 1, SEM_REQURSIVE );
+	g_psKernelSeg->mc_hSema = create_semaphore( "krn_seg_lock", 1, SEM_RECURSIVE );
 
 	if ( g_psKernelSeg->mc_hSema < 0 )
 	{

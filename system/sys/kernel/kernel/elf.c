@@ -1659,7 +1659,7 @@ ImageContext_s *create_image_ctx( void )
 		printk( "create_image_ctx() out of memory\n" );
 		return ( NULL );
 	}
-	psCtx->ic_hLock = create_semaphore( "proc_images", 1, SEM_REQURSIVE );
+	psCtx->ic_hLock = create_semaphore( "proc_images", 1, SEM_RECURSIVE );
 	if ( psCtx->ic_hLock < 0 )
 	{
 		kfree( psCtx );
@@ -2541,7 +2541,7 @@ void init_elf_loader()
 {
 	register_debug_cmd( "ls_images", "list the images loaded by a process", db_list_images );
 
-	g_hImageList = create_semaphore( "image_list", 1, SEM_REQURSIVE );
+	g_hImageList = create_semaphore( "image_list", 1, SEM_RECURSIVE );
 	kassertw( g_hImageList >= 0 );
 	create_kernel_image();
 	init_boot_modules();

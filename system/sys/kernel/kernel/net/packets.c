@@ -164,7 +164,7 @@ int init_net_queue( NetQueue_s *psQueue )
 	psQueue->nq_psTail = NULL;
 	psQueue->nq_nCount = 0;
 	psQueue->nq_hSyncSem = create_semaphore( "netq_sync", 0, 0 );
-//  psQueue->nq_hProtSem = create_semaphore( "netq_prot", 1, SEM_REQURSIVE );
+//  psQueue->nq_hProtSem = create_semaphore( "netq_prot", 1, SEM_RECURSIVE );
 	return ( 0 );
 }
 

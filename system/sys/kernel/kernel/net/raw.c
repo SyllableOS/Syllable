@@ -809,7 +809,7 @@ SocketOps_s g_sRawOperations = {
 
 int init_raw( void )
 {
-	g_hRawPortLock = create_semaphore( "raw_portlist", 1, SEM_REQURSIVE );
+	g_hRawPortLock = create_semaphore( "raw_portlist", 1, SEM_RECURSIVE );
 
 	if ( g_hRawPortLock < 0 )
 	{
