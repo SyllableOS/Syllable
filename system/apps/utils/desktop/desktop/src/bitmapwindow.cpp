@@ -431,7 +431,7 @@ void BitmapView::Paint( const Rect& cUpdateRect)
     if (bShow == true)
     {
         SetFgColor(0,0,0);
-        SetDrawingMode(DM_BLEND);  // BLEND
+        SetDrawingMode(DM_OVER);  // BLEND
         MovePenTo(ScreenRes().x - 15 - GetStringWidth(pzSyllableVer) , ScreenRes().y -10);
         DrawString(pzSyllableVer);
     }

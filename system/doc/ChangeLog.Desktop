@@ -1,3 +1,6 @@
+* August 18,    2003, Rick Caudill *
+	* Fixed a rendering bug that happened when you showed the desktop information on a 32bit desktop.
+
 * July 14,      2003, Rick Caudill *
 	* Pablo removed the syllable version number from the login image. 
 	* Added DrawString() to the login view, so that you can still see the version number. 
