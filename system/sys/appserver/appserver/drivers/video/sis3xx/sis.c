@@ -1063,7 +1063,7 @@ int sis_init()
 			si.CRT2_enable = IND_SIS_CRT2_WRITE_ENABLE_315;
 			strcpy( si.name, "315 PRO" );
 		break; 
-		case 0x650: /* SIS 650/740 */
+		case 0x6325: /* SIS 650/740 */
 			si.chip = SIS_650;
 			sis_set_reg4( 0xCF8, 0x80000000 );
 			reg32 = sis_get_reg3( 0xCFC );
@@ -1213,10 +1213,10 @@ int sis_init()
 	}
 	/* Initialize video bridge */
 	if( si.vga_engine == SIS_315_VGA ) {
-		sis_get_VB_type_300();
+		sis_get_VB_type_315();
 	}
 	if( si.vga_engine == SIS_300_VGA ) {
-		sis_get_VB_type_315();
+		sis_get_VB_type_300();
 	}
 	
 	sishw_ext.ujVBChipID = VB_CHIP_UNKNOWN;
@@ -1322,6 +1322,7 @@ int sis_init()
 	}
 	return 0;
 }
+
 
 
 

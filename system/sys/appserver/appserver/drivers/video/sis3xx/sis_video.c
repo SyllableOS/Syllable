@@ -933,7 +933,6 @@ area_id SISStartVideo( short src_x, short src_y,
 {
 	int totalSize=0;
 	area_id hArea;
-    void* test;
    si.video_port.drw_x = drw_x;
    si.video_port.drw_y = drw_y;
    si.video_port.drw_w = drw_w;
@@ -979,6 +978,7 @@ area_id SISStartVideo( short src_x, short src_y,
    
    return( hArea );
 }
+
 
 
 

@@ -60,7 +60,7 @@ static const struct chip_info asChipInfos[] = {
 	{ 0x0315 }, /* SIS 315 */
 	{ 0x0325 }, /* SIS 315 PRO */
 	{ 0x0550 }, /* SIS 550 VGA */
-	{ 0x0650 }, /* SIS 650/740 */
+	{ 0x6325 }, /* SIS 650/740 */
 	{ 0x0330 }, /* SIS 330 ( Xabre ) */
 	{ 0x6330 }  /* SIS 660/760 */
 };
@@ -873,6 +873,7 @@ extern "C" DisplayDriver* init_gfx_driver()
 	    return NULL;
     }
 }
+
 
 
 
