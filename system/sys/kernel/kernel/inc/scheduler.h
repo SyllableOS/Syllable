@@ -26,6 +26,7 @@
 #include <atheos/types.h>
 #include <atheos/tld.h>
 #include <atheos/filesystem.h>
+#include <atheos/strace.h>
 
 #include <posix/param.h>
 #include <posix/signal.h>
@@ -228,8 +229,10 @@ struct _Thread
 	int tr_nPrevCPU;
 	int tr_nInV86;
 
-      /*** Debugging ***/
-	int tr_nSysTraceLevel;
+	/* Debugging */
+	int tr_nSysTraceMask;
+	SyscallExc_s *psExc;
+
 	int tr_nLastCS;
 	void *tr_pLastEIP;
 	int tr_nAfsInodeLockCount;
