@@ -175,11 +175,13 @@ enum {
  */
 
 #define USB_DISABLE_SPD			0x0001
+#define USB_SHORT_NOT_OK		0x0001
 #define USB_ISO_ASAP			0x0002
 #define USB_ASYNC_UNLINK		0x0008
 #define USB_QUEUE_BULK			0x0010
 #define USB_NO_FSBR				0x0020
 #define USB_ZERO_PACKET			0x0040  
+#define USB_NO_INTERRUPT		0x0080
 #define USB_TIMEOUT_KILLED		0x1000
 
 /*
@@ -313,6 +315,8 @@ enum {
 #endif
 
 #endif /* _SYLLABLE_USB_DEFS_H_ */
+
+
 
 
 

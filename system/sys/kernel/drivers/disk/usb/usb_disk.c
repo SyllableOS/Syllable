@@ -3,6 +3,7 @@
 #include "usb_disk.h"
 #include "transport.h"
 #include "protocol.h"
+#include "jumpshot.h"
 
 USB_driver_s *g_pcDriver;
 USB_bus_s *g_psBus = NULL;
@@ -35,7 +36,7 @@ int usbdisk_scsi_get_max_cd()
 int usbdisk_scsi_command( SCSI_cmd * psCommand )
 {
 	USB_disk_s *psDisk = psCommand->psHost->pPrivate;
-
+	
 	psDisk->srb = psCommand;
 
 	if ( psCommand->nLun > psDisk->max_lun )
@@ -114,7 +115,19 @@ bool usbdisk_add( USB_device_s * psDevice, unsigned int nIfnum, void **pPrivate 
 
 
 	psIface = psDevice->psActConfig->psInterface + nIfnum;
-
+	
+	if( psDevice->sDeviceDesc.nVendorID == 0x05dc )
+	{
+		printk( "Lexar Jumpshot USB CF Reader detected\n" );
+		psInterface = &psIface->psSetting[psIface->nActSetting];
+		subclass = US_SC_SCSI;
+		protocol = US_PR_JUMPSHOT;
+		bFound = true;
+		
+	}
+	
+	if( !bFound )
+	{
 	for ( i = 0; i < psIface->nNumSetting; i++ )
 	{
 		psIface->nActSetting = i;
@@ -126,6 +139,7 @@ bool usbdisk_add( USB_device_s * psDevice, unsigned int nIfnum, void **pPrivate 
 			break;
 		}
 	}
+	}
 	if ( !bFound )
 		return ( false );
 
@@ -135,8 +149,10 @@ bool usbdisk_add( USB_device_s * psDevice, unsigned int nIfnum, void **pPrivate 
 	memset( serial, 0, sizeof( serial ) );
 
 	/* Determine subclass and protocol, or copy from the interface */
-	subclass = psInterface->nInterfaceSubClass;
-	protocol = psInterface->nInterfaceProtocol;
+	if( subclass == 0 )
+		subclass = psInterface->nInterfaceSubClass;
+	if( protocol == 0 )
+		protocol = psInterface->nInterfaceProtocol;
 	flags = 0;
 
 	printk( "USB disk connected\n" );
@@ -271,6 +287,12 @@ bool usbdisk_add( USB_device_s * psDevice, unsigned int nIfnum, void **pPrivate 
 		psDisk->transport = usb_stor_Bulk_transport;
 		psDisk->transport_reset = usb_stor_Bulk_reset;
 		psDisk->max_lun = usb_stor_Bulk_max_lun( psDisk );
+		break;
+	case US_PR_JUMPSHOT:
+		psDisk->transport_name = "Lexar Jumpshot Control/Bulk";
+		psDisk->transport = jumpshot_transport;
+		psDisk->transport_reset = usb_stor_Bulk_reset;
+		psDisk->max_lun = 1;
 		break;
 	default:
 		psDisk->transport_name = "Unknown";
@@ -427,5 +449,10 @@ status_t device_uninit( int nDeviceID )
 		g_psBus->remove_driver( g_pcDriver );
 	return ( 0 );
 }
+
+
+
+
+
 
 

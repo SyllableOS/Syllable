@@ -112,6 +112,21 @@ static __inline__ int list_empty(struct list_head *head)
 	return head->next == head;
 }
 
+
+static inline void __list_splice(struct list_head *list,
+				 struct list_head *head)
+{
+	struct list_head *first = list->next;
+	struct list_head *last = list->prev;
+	struct list_head *at = head->next;
+
+	first->prev = head;
+	head->next = first;
+
+	last->next = at;
+	at->prev = last;
+}
+
 /**
  * list_splice - join two lists
  * @list: the new list to add.
@@ -148,8 +163,8 @@ static __inline__ void list_splice(struct list_head *list, struct list_head *hea
  * @head:	the head for your list.
  */
 #define list_for_each(pos, head) \
-	for (pos = (head)->next, prefetch(pos->next); pos != (head); \
-        	pos = pos->next, prefetch(pos->next))
+	for (pos = (head)->next; pos != (head); \
+        	pos = pos->next)
         	
 /**
  * list_for_each_safe	-	iterate over a list safe against removal of list entry
@@ -167,12 +182,14 @@ static __inline__ void list_splice(struct list_head *list, struct list_head *hea
  * @head:	the head for your list.
  */
 #define list_for_each_prev(pos, head) \
-	for (pos = (head)->prev, prefetch(pos->prev); pos != (head); \
-        	pos = pos->prev, prefetch(pos->prev))
+	for (pos = (head)->prev; pos != (head); \
+        	pos = pos->prev)
         	
 
 #endif /* __KERNEL__ || _LVM_H_INCLUDE */
 
 #endif
+
+
 
 

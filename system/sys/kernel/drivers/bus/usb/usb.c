@@ -46,9 +46,17 @@
 bool g_bUSBBusMap[64]; /* bitmap of all buses */
 USB_bus_driver_s* g_psUSBBus[64];
 USB_driver_s* g_psFirstUSBDriver; /* Head of the list of all registered drivers */
-sem_id g_hUSBLock;
+SpinLock_s g_hUSBLock;
+
+#define USB_LOCK spinlock( &g_hUSBLock )
+#define USB_UNLOCK spinunlock( &g_hUSBLock );
+
+#define mb() 	__asm__ __volatile__ ("lock; addl $0,0(%%esp)": : :"memory")
+#define wmb()	__asm__ __volatile__ ("": : :"memory")
+#define rmb()	mb()
 
 status_t usb_find_driver( USB_device_s* psDevice );
+
 
 /** 
  * \par Description: Registers one driver.
@@ -64,12 +72,14 @@ status_t usb_register_driver( USB_driver_s* psDriver )
 	uint32 i;
 	bool bFound = false;
 	
+	USB_LOCK;
+	
 	/* Create semaphore */
 	psDriver->hLock = create_semaphore( "usb_driver_lock", 1, 0 );
 	/* Move driver at the first position */
-	LOCK( g_hUSBLock );
 	psDriver->psNext = g_psFirstUSBDriver;
 	g_psFirstUSBDriver = psDriver;
+	
 	
 	kerndbg( KERN_INFO, "USB: %s driver added\n", g_psFirstUSBDriver->zName );
 	
@@ -81,13 +91,13 @@ status_t usb_register_driver( USB_driver_s* psDriver )
 	}
 	
 	if( bFound == true ) {
-		UNLOCK( g_hUSBLock );
+		USB_UNLOCK;
 		return( 0 );
 	}
 	/* No new driver for any device found -> driver is unnecessary */
 	kerndbg( KERN_INFO, "USB: %s driver unnecessary\n", g_psFirstUSBDriver->zName );
 	g_psFirstUSBDriver = psDriver->psNext;
-	UNLOCK( g_hUSBLock );
+	USB_UNLOCK;
 	return( -1 );
 }
 
@@ -104,23 +114,25 @@ status_t usb_register_driver( USB_driver_s* psDriver )
 void usb_register_driver_force( USB_driver_s* psDriver )
 {
 	uint32 i;
+	USB_LOCK;
 	
 	/* Create semaphore */
 	psDriver->hLock = create_semaphore( "usb_driver_lock", 1, 0 );
 	/* Move driver at the first position */
-	LOCK( g_hUSBLock );
+	
 	psDriver->psNext = g_psFirstUSBDriver;
 	g_psFirstUSBDriver = psDriver;
 	
+	
 	kerndbg( KERN_INFO, "USB: %s driver registered\n", g_psFirstUSBDriver->zName );
+	
 	
 	for( i = 0; i < 64; i++ )
 	{
 		if( g_bUSBBusMap[i] )
 			usb_find_driver( g_psUSBBus[i]->psRootHUB );
-				
 	}
-	UNLOCK( g_hUSBLock );
+	USB_UNLOCK;
 }
 
 
@@ -179,7 +191,7 @@ void usb_deregister_driver( USB_driver_s* psDriver )
 	/* Remove driver from the list */
 	USB_driver_s* psPrevDriver = NULL;
 	USB_driver_s* psNextDriver = g_psFirstUSBDriver;
-	LOCK( g_hUSBLock );
+	USB_LOCK;
 	while( psNextDriver != NULL )
 	{
 		if( psNextDriver == psDriver )
@@ -196,13 +208,13 @@ void usb_deregister_driver( USB_driver_s* psDriver )
 					usb_remove_driver( psDriver, g_psUSBBus[i]->psRootHUB ); 
 			}
 			kerndbg( KERN_INFO, "USB: %s driver deregistered\n", psDriver->zName );
-			UNLOCK( g_hUSBLock );
+			USB_UNLOCK;
 			return;
 		}
 		psPrevDriver = psNextDriver;
 		psNextDriver = psNextDriver->psNext;
 	}
-	UNLOCK( g_hUSBLock );
+	USB_UNLOCK;
 	kerndbg( KERN_WARNING, "USB: Could not deregister not registered %s driver\n", psDriver->zName );
 }
 
@@ -263,19 +275,22 @@ void usb_free_bus( USB_bus_driver_s* psBus )
 void usb_register_bus( USB_bus_driver_s* psBus )
 {
 	uint32 i;
+	USB_LOCK;
 	/* Find busnumber */
 	for( i = 0; i < 64; i++ )
 		if( !g_bUSBBusMap[i] ) {
 			break;
 		}
 	if( i == 64 ) {
+		USB_UNLOCK;
 		return;
 	}
-	LOCK( g_hUSBLock );
+	
 	g_bUSBBusMap[i] = true;
 	g_psUSBBus[i] = psBus;
 	psBus->nBusNum = i;
-	UNLOCK( g_hUSBLock );
+	atomic_add( &psBus->nRefCount, 1 );
+	USB_UNLOCK;
 	
 	kerndbg( KERN_INFO, "USB: Bus %i registered\n", (int)i );
 }
@@ -291,19 +306,20 @@ void usb_register_bus( USB_bus_driver_s* psBus )
 void usb_deregister_bus( USB_bus_driver_s* psBus )
 {
 	uint32 i;
+	USB_LOCK;
 	/* Find busnumber */
 	for( i = 0; i < 64; i++ )
 		if( g_bUSBBusMap[i] && g_psUSBBus[i] == psBus ) {
-			LOCK( g_hUSBLock );
 			g_bUSBBusMap[i] = false;
 			g_psUSBBus[i] = NULL;
-			UNLOCK( g_hUSBLock );
 			
 			atomic_add( &psBus->nRefCount, -1 );
 			if( psBus->nRefCount == 0 )
 				kfree( psBus );
+			USB_UNLOCK;
 			return;
 		}
+	USB_UNLOCK;
 }
 
 
@@ -321,7 +337,6 @@ status_t usb_find_interface_driver( USB_device_s* psDev, int nIFNum )
 	USB_driver_s* psDriver;
 	bool bSuccess;
 	void* pPrivate;
-	
 	
 	LOCK( psDev->hLock );
 	
@@ -428,41 +443,63 @@ void usb_find_drivers_for_new_device( USB_device_s* psDev )
 
 #define NS_TO_US(ns)	((ns + 500L) / 1000L)
 			/* convert & round nanoseconds to microseconds */
+
 /*
- * usb_calc_bus_time:
- *
- * returns (approximate) USB bus time in nanoseconds for a USB transaction.
+ * Ceiling microseconds (typical) for that many bytes at high speed
+ * ISO is a bit less, no ACK ... from USB 2.0 spec, 5.11.3 (and needed
+ * to preallocate bandwidth)
  */
-long usb_calc_bus_time( int low_speed, int input_dir, int isoc, int bytecount )
+#define USB2_HOST_DELAY	5	/* nsec, guess */
+#define HS_USECS(bytes) NS_TO_US ( ((55 * 8 * 2083)/1000) \
+	+ ((2083UL * (3167 + BitTime (bytes)))/1000) \
+	+ USB2_HOST_DELAY)
+#define HS_USECS_ISO(bytes) NS_TO_US ( ((long)(38 * 8 * 2.083)) \
+	+ ((2083UL * (3167 + BitTime (bytes)))/1000) \
+	+ USB2_HOST_DELAY)	
+			
+/*
+ * usb_calc_bus_time - approximate periodic transaction time in nanoseconds
+ * @speed: from dev->speed; USB_SPEED_{LOW,FULL,HIGH}
+ * @is_input: true iff the transaction sends data to the host
+ * @isoc: true for isochronous transactions, false for interrupt ones
+ * @bytecount: how many bytes in the transaction.
+ *
+ * Returns approximate bus time in nanoseconds for a periodic transaction.
+ * See USB 2.0 spec section 5.11.3; only periodic transfers need to be
+ * scheduled in software, this function is only used for such scheduling.
+ */
+long usb_calc_bus_time (int speed, int is_input, int isoc, int bytecount)
 {
 	unsigned long	tmp;
 
-	if (low_speed)		/* no isoc. here */
-	{
-		if (input_dir)
-		{
+	switch (speed) {
+	case USB_SPEED_LOW: 	/* INTR only */
+		if (is_input) {
 			tmp = (67667L * (31L + 10L * BitTime (bytecount))) / 1000L;
 			return (64060L + (2 * BW_HUB_LS_SETUP) + BW_HOST_DELAY + tmp);
-		}
-		else
-		{
+		} else {
 			tmp = (66700L * (31L + 10L * BitTime (bytecount))) / 1000L;
 			return (64107L + (2 * BW_HUB_LS_SETUP) + BW_HOST_DELAY + tmp);
 		}
+	case USB_SPEED_FULL:	/* ISOC or INTR */
+		if (isoc) {
+			tmp = (8354L * (31L + 10L * BitTime (bytecount))) / 1000L;
+			return (((is_input) ? 7268L : 6265L) + BW_HOST_DELAY + tmp);
+		} else {
+			tmp = (8354L * (31L + 10L * BitTime (bytecount))) / 1000L;
+			return (9107L + BW_HOST_DELAY + tmp);
+		}
+	case USB_SPEED_HIGH:	/* ISOC or INTR */
+		// FIXME adjust for input vs output
+		if (isoc)
+			tmp = HS_USECS (bytecount);
+		else
+			tmp = HS_USECS_ISO (bytecount);
+		return tmp;
+	default:
+		kerndbg( KERN_WARNING, "USB: Bogus device speed!\n" );
+		return -1;
 	}
-
-	/* for full-speed: */
-
-	if (!isoc)		/* Input or Output */
-	{
-		tmp = (8354L * (31L + 10L * BitTime (bytecount))) / 1000L;
-		return (9107L + BW_HOST_DELAY + tmp);
-	} /* end not Isoc */
-
-	/* for isoc: */
-
-	tmp = (8354L * (31L + 10L * BitTime (bytecount))) / 1000L;
-	return (((input_dir) ? 7268L : 6265L) + BW_HOST_DELAY + tmp);
 }
 
 /** 
@@ -482,7 +519,7 @@ int usb_check_bandwidth( USB_device_s* psDevice, USB_packet_s* psPacket )
 	unsigned int nPipe = psPacket->nPipe;
 	long		nBusTime;
 
-	nBusTime = usb_calc_bus_time( usb_pipeslow( nPipe ), usb_pipein( nPipe ),
+	nBusTime = usb_calc_bus_time( psDevice->eSpeed, usb_pipein( nPipe ),
 			usb_pipeisoc( nPipe ), usb_maxpacket( psDevice, nPipe, usb_pipeout( nPipe ) ) );
 	if( usb_pipeisoc( nPipe ) )
 		nBusTime = NS_TO_US( nBusTime ) / psPacket->nPacketNum;
@@ -609,7 +646,7 @@ USB_packet_s* usb_alloc_packet( int nISOPackets )
 	psPacket = ( USB_packet_s* )kmalloc( sizeof( USB_packet_s ) + nISOPackets * sizeof( USB_ISO_frame_s ), MEMF_KERNEL | MEMF_NOBLOCK );
 	memset( psPacket, 0, sizeof( USB_packet_s ) + nISOPackets * sizeof( USB_ISO_frame_s ) );
 	
-	psPacket->hLock = INIT_SPIN_LOCK( "packet_lock" );
+	psPacket->hLock = INIT_SPIN_LOCK( "usb_packet_lock" );
 	
 	return( psPacket );
 }
@@ -660,6 +697,7 @@ status_t usb_cancel_packet( USB_packet_s* psPacket )
 void usb_blocked_complete( USB_packet_s* psPacket )
 {
 	psPacket->bDone = true;
+	wmb();
 	wakeup_sem( psPacket->hWait, false );
 	
 }
@@ -686,6 +724,7 @@ int usb_submit_packet_blocked( USB_packet_s* psPacket, bigtime_t nTimeOut, int* 
 	while( nTime > get_system_time() && !psPacket->bDone )
 	{
 		sleep_on_sem( psPacket->hWait, nTimeOut );
+		rmb();
 	}
 	kerndbg( KERN_DEBUG, "usb_submit_packet_blocked(): Done!\n" );
 	
@@ -978,6 +1017,8 @@ int usb_parse_interface( USB_interface_s* psIF, uint8* pBuffer, int nSize )
 				return( -1 );
 			}
 			nResult = usb_parse_endpoint( psIFDesc->psEndpoint + i, pBuffer, nSize );
+			if( nResult < 0)
+				return( nResult );
 			pBuffer += nResult;
 			nSize -= nResult;
 			nParsed += nResult;
@@ -1797,7 +1838,7 @@ status_t bus_init()
 	}
 	g_psFirstUSBDriver = NULL;
 	
-	g_hUSBLock = create_semaphore( "usb_lock", 1, 0 );
+	g_hUSBLock = INIT_SPIN_LOCK( "usb_lock" );
 	
 	kerndbg( KERN_INFO, "USB: Busmanager initialized\n" );
 	
@@ -1853,6 +1894,9 @@ void* bus_get_hooks( int nVersion )
 		return( NULL );
 	return( &sBus );
 }
+
+
+
 
 
 

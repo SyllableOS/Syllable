@@ -21,7 +21,7 @@ typedef uint16 __u16;
 #define cpu_to_le16(x) x
 #define le16_to_cpu(x) x
 
-#define dbg(x...) //kerndbg( KERN_DEBUG, ## x )
+//#define dbg(x...) kerndbg( KERN_DEBUG, ## x )
 #define dbg(x...)
 
 #define wmb() 	__asm__ __volatile__ ("lock; addl $0,0(%%esp)": : :"memory")
@@ -330,6 +330,9 @@ typedef struct uhci {
 #define RH_NACK                    0x00
 
 #endif
+
+
+
 
 
 

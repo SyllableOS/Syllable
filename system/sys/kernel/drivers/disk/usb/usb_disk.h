@@ -141,7 +141,6 @@ extern sem_id us_list_semaphore;
 /* The structure which defines our driver */
 extern USB_driver_s usb_storage_driver;
 
-/* Function to fill an inquiry response. See usb.c for details */
-extern void fill_inquiry_response( USB_disk_s * us, unsigned char *data, unsigned int data_len );
 #endif
+
 

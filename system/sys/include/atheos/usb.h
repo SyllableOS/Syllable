@@ -129,6 +129,8 @@ struct USB_device_t
 {
 	struct USB_bus_driver_t*	psBus;
 	struct USB_device_t*	psParent;
+	
+	
 	int				nDeviceNum;
 	int				eSpeed;
 	atomic_t		nRefCount;
@@ -149,6 +151,11 @@ struct USB_device_t
 	
 	int				nMaxChild;
 	struct USB_device_t*	psChildren[16];
+	
+	struct USB_device_t* psTT;
+	//void* psTT;
+	int nTTPort;
+	
 	
 	int				nHandle;
 };
@@ -374,6 +381,11 @@ static inline unsigned int __default_pipe( USB_device_s *psDev )
 #endif
 
 #endif /* _SYLLABLE_USB_H_ */
+
+
+
+
+
 
 
 

@@ -52,7 +52,8 @@
 #define US_PR_CB	0x01	/* Control/Bulk w/o interrupt */
 #define US_PR_BULK	0x50	/* bulk only */
 
-#define US_PR_DPCM_USB  0xf0	/* Combination CB/SDDR09 */
+#define US_PR_DPCM_USB 0xf0	/* Combination CB/SDDR09 */
+#define US_PR_JUMPSHOT 0xf3 /* Lexar Jumpshot */
 
 
 /*
@@ -137,3 +138,4 @@ extern int usb_stor_control_msg( USB_disk_s *, unsigned int, uint8, uint8, uint1
 extern void usb_stor_transfer( SCSI_cmd_s *, USB_disk_s * );
 extern int usb_stor_clear_halt( USB_device_s *, int );
 #endif
+

@@ -18,6 +18,8 @@
  *
  * $Id$
  */
+ 
+//#define DEBUG_LIMIT KERN_DEBUG
 
 #include <atheos/udelay.h>
 #include <atheos/isa_io.h>
@@ -3071,6 +3073,8 @@ status_t device_uninit( int nDeviceID)
 {
 	return( 0 );
 }
+
+
 
 
 

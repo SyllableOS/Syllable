@@ -180,6 +180,8 @@ struct USB_hub_t
 	USB_packet_s* psPacket;
 	int nError;
 	int nErrors;
+	USB_device_s* psTT;
+	int nTTMulti;
 };
 
 typedef struct USB_hub_t USB_hub;
@@ -188,7 +190,6 @@ static USB_hub* g_psFirstHub;
 static sem_id g_hHubWait; 
 static SpinLock_s g_hHubLock;
 static sem_id g_hHubAddressLock;
-static sem_id g_hHubListLock;
 
 /* USB 2.0 spec Section 11.24.4.5 */
 int usb_get_hub_descriptor( USB_device_s* psDevice, void *pData, int nSize )
@@ -355,6 +356,25 @@ int usb_hub_configure( USB_hub* psHub, USB_desc_endpoint_s* psEndpoint )
 	printk( "Hub controller current requirement: %dmA\n", psHub->psDesc->nHubContrCurrent );
 	}
 	#endif
+	
+	switch ( psDevice->sDeviceDesc.nDeviceProtocol ) {
+		case 0:
+			break;
+		case 1:
+			kerndbg( KERN_DEBUG, "Single TT\n" );
+			psHub->psTT = psDevice;
+			break;
+		case 2:
+			kerndbg( KERN_DEBUG, "TT per port\n" );
+			psHub->psTT = psDevice;
+			psHub->nTTMulti = 1;
+			break;
+		default:
+			kerndbg( KERN_WARNING, "Unrecognized hub protocol %d\n",
+				psDevice->sDeviceDesc.nDeviceProtocol );
+			break;
+	}
+	
 	for( i = 0; i < psDevice->nMaxChild; i++ )
 		portstr[i] = psHub->psDesc->bDeviceRemovable[((i + 1) / 8)] & (1 << ((i + 1) % 8)) ? 'F' : 'R';
 	portstr[psDevice->nMaxChild] = 0;
@@ -392,18 +412,6 @@ int usb_hub_configure( USB_hub* psHub, USB_desc_endpoint_s* psEndpoint )
 		return( -1 );
 	}
 	
-	/* Now we know that we had success -> add ourself to the list */
-	
-	LOCK( g_hHubListLock );
-	psHub->psNext = g_psFirstHub;
-	g_psFirstHub = psHub;
-	UNLOCK( g_hHubListLock );
-	/*spinlock_cli( &g_hHubLock, nFlags );
-	psHub->bNeedsAttention = true;
-	wakeup_sem( g_hHubWait, false );
-	spinunlock_restore( &g_hHubLock, nFlags );
-	*/
-	
 	usb_hub_power_on( psHub );
 
 	return( 0 );
@@ -418,6 +426,7 @@ bool usb_hub_add( USB_device_s* psDevice, unsigned int nIF,
 	USB_interface_s* psIF;
 	int i;
 	bool bFound = false;
+	uint32 nFlags;
 	
 	psIF = psDevice->psActConfig->psInterface + nIF;
 	
@@ -479,6 +488,13 @@ bool usb_hub_add( USB_device_s* psDevice, unsigned int nIF,
 
 	memset( psHub, 0, sizeof( *psHub ) );
 	psHub->psDevice = psDevice;
+	
+	/* Now we know that we had success -> add ourself to the list */
+	
+	nFlags = spinlock_disable( &g_hHubLock );
+	psHub->psNext = g_psFirstHub;
+	g_psFirstHub = psHub;
+	spinunlock_enable( &g_hHubLock, nFlags );
 
 	if( usb_hub_configure( psHub, psEndpoint ) >= 0 ) {
 		/* We found a hub -> claim the device */
@@ -504,8 +520,7 @@ void usb_hub_remove( USB_device_s* psDevice, void* pPrivate )
 	/* Delete hub */
 	USB_hub* psPrevHub = NULL;
 	USB_hub* psNextHub = g_psFirstHub;
-	
-	LOCK( g_hHubListLock );
+	uint32 nFlags = spinlock_disable( &g_hHubLock );
 	
 	release_device( psDevice->nHandle );
 	
@@ -527,13 +542,13 @@ void usb_hub_remove( USB_device_s* psDevice, void* pPrivate )
 					psHub->psDesc = NULL;
 				}
 			kfree( psHub );
-			UNLOCK( g_hHubListLock );
+			spinunlock_enable( &g_hHubLock, nFlags );
 			return;
 		}
 		psPrevHub = psNextHub;
 		psNextHub = psNextHub->psNext;
 	}
-	UNLOCK( g_hHubListLock );
+	spinunlock_enable( &g_hHubLock, nFlags );
 }
 
 inline char *portspeed (int portstatus)
@@ -576,6 +591,10 @@ int usb_hub_port_wait_reset( USB_device_s* psHub, int nPort,
 		portchange = portsts.nPortChange;
 		kerndbg( KERN_DEBUG, "Port %d, portstatus %x, change %x, %s\n", nPort + 1,
 			portstatus, portchange, portspeed (portstatus));
+		
+		/* Device went away? */
+		if( !( portstatus & USB_PORT_STAT_CONNECTION ) )
+			return 1;
 
 		/* bomb out completely if something weird happened */
 		if( ( portchange & USB_PORT_STAT_C_CONNECTION ) )
@@ -634,6 +653,7 @@ int usb_hub_port_reset( USB_device_s* psHub, int nPort,
 }
 
 
+
 void usb_hub_port_disable( USB_device_s* psHub, int nPort )
 {
 	int nRet;
@@ -644,9 +664,58 @@ void usb_hub_port_disable( USB_device_s* psHub, int nPort )
 			nPort + 1, psHub->nDeviceNum, nRet );
 }
 
-void usb_hub_port_connect_change( USB_device_s* psHub, int nPort,
+
+/* USB 2.0 spec, 7.1.7.3 / fig 7-29:
+ *
+ * Between connect detection and reset signaling there must be a delay
+ * of 100ms at least for debounce and power-settling. The corresponding
+ * timer shall restart whenever the downstream port detects a disconnect.
+ * 
+ * Apparently there are some bluetooth and irda-dongles and a number
+ * of low-speed devices which require longer delays of about 200-400ms.
+ * Not covered by the spec - but easy to deal with.
+ *
+ * This implementation uses 400ms minimum debounce timeout and checks
+ * every 100ms for transient disconnects to restart the delay.
+ */
+
+#define USB_HUB_DEBOUNCE_TIMEOUT	400
+#define USB_HUB_DEBOUNCE_STEP	100
+
+/* return: -1 on error, 0 on success, 1 on disconnect.  */
+static int usb_hub_port_debounce( USB_device_s* psDevice, int nPort )
+{
+	int nRet;
+	unsigned nDelayTime;
+	USB_port_status portsts;
+	uint16 portchange, portstatus;
+
+	for( nDelayTime = 0; nDelayTime < USB_HUB_DEBOUNCE_TIMEOUT; /* empty */ ) {
+
+		/* wait debounce step increment */
+		snooze( USB_HUB_DEBOUNCE_STEP * 1000 );
+
+		nRet = usb_get_port_status( psDevice, nPort + 1, &portsts );
+		if( nRet < 0 )
+			return -1;
+			
+		portstatus = portsts.nPortStatus;
+		portchange = portsts.nPortChange;
+
+		if( ( portchange & USB_PORT_STAT_C_CONNECTION ) ) {
+			usb_clear_port_feature( psDevice, nPort + 1, USB_PORT_FEAT_C_CONNECTION );
+			nDelayTime = 0;
+		}
+		else
+			nDelayTime += USB_HUB_DEBOUNCE_STEP;
+	}
+	return ( ( portstatus & USB_PORT_STAT_CONNECTION ) ) ? 0 : 1;
+}
+
+void usb_hub_port_connect_change( USB_hub* psH, int nPort,
 					USB_port_status *psPortsts )
 {
+	USB_device_s* psHub = psH->psDevice;
 	USB_device_s* psDevice;
 	unsigned short portstatus, portchange;
 	unsigned int delay = 10;
@@ -673,11 +742,10 @@ void usb_hub_port_connect_change( USB_device_s* psHub, int nPort,
 		return;
 	}
 
-	/* Some low speed devices have problems with the quick delay, so */
-	/*  be a bit pessimistic with those devices. RHbug #23670 */
-	if( portstatus & USB_PORT_STAT_LOW_SPEED ) {
-		snooze( 400 * 1000 );
-		delay = 200;
+	if ( usb_hub_port_debounce( psHub, nPort ) ) {
+		kerndbg( KERN_FATAL, "USB: connect-debounce failed, port %d disabled\n", nPort + 1 );
+		usb_hub_port_disable( psHub, nPort);
+		return;
 	}
 	
 	LOCK( g_hHubAddressLock );
@@ -706,6 +774,16 @@ void usb_hub_port_connect_change( USB_device_s* psHub, int nPort,
 		
 		/* Find a new device ID for it */
 		usb_connect( psDevice );
+		
+		/* Set up TT records, if needed  */
+		if( psH->psTT ) {
+			psDevice->psTT = psHub->psTT;
+			psDevice->nTTPort = psHub->nTTPort;
+		} else if( psDevice->eSpeed != USB_SPEED_HIGH
+					&& psHub->eSpeed == USB_SPEED_HIGH ) {
+			psDevice->psTT = psH->psTT;
+			psDevice->nTTPort = nPort + 1;
+		}
 		
 		/* Create a readable topology string */
 		psCDev = psDevice;
@@ -776,8 +854,6 @@ void usb_hub_thread_worker()
 		
 		kerndbg( KERN_DEBUG, "Hub needs attention\n" );
 		
-		LOCK( g_hHubListLock );
-		
 		spinlock_cli( &g_hHubLock, nFlags );
 		/* Look if any of our hubs needs attention */
 		bFound = false;
@@ -792,8 +868,6 @@ void usb_hub_thread_worker()
 				psHub = psHub->psNext;
 		}
 		if( !bFound ) {
-			spinunlock_restore( &g_hHubLock, nFlags );
-			UNLOCK( g_hHubListLock );
 			break;
 		}
 		
@@ -801,9 +875,7 @@ void usb_hub_thread_worker()
 		psDevice = psHub->psDevice;
 		
 		spinunlock_restore( &g_hHubLock, nFlags );
-		
-		UNLOCK( g_hHubListLock );
-		
+	
 		kerndbg( KERN_DEBUG, "Working...\n" );
 		
 		if( psHub->nError ) {
@@ -827,7 +899,7 @@ void usb_hub_thread_worker()
 			if( portchange & USB_PORT_STAT_C_CONNECTION ) {
 				kerndbg( KERN_DEBUG, "Port %d connection change\n", i + 1);
 
-				usb_hub_port_connect_change( psDevice, i, &sPortsts );
+				usb_hub_port_connect_change( psHub, i, &sPortsts );
 			} else if( portchange & USB_PORT_STAT_C_ENABLE ) {
 				kerndbg( KERN_DEBUG, "Port %d enable change, status %x\n", i + 1, portstatus);
 				usb_clear_port_feature( psDevice, i + 1, USB_PORT_FEAT_C_ENABLE );
@@ -841,7 +913,7 @@ void usb_hub_thread_worker()
 				    (portstatus & USB_PORT_STAT_CONNECTION) && (psDevice->psChildren[i])) {
 					kerndbg( KERN_WARNING, "USB: Already running port %i disabled by hub (EMI?), re-enabling...",
 						i + 1);
-					usb_hub_port_connect_change( psDevice, i, &sPortsts );
+					usb_hub_port_connect_change( psHub, i, &sPortsts );
 				}
 			}
 
@@ -880,6 +952,7 @@ void usb_hub_thread_worker()
 			}
 		}
 	}
+	spinunlock_restore( &g_hHubLock, nFlags );
 }
 
 int usb_hub_thread( void* pData )
@@ -901,10 +974,9 @@ void usb_hub_init()
 	USB_driver_s* pcDriver = ( USB_driver_s* )kmalloc( sizeof( USB_driver_s ), MEMF_KERNEL | MEMF_NOBLOCK );
 	
 	g_psFirstHub = NULL;
-	g_hHubWait = create_semaphore( "hub_wait", 0, 0 );
+	g_hHubWait = create_semaphore( "usb_hub_wait", 0, 0 );
 	g_hHubLock = INIT_SPIN_LOCK( "usb_hub_lock" );
-	g_hHubAddressLock = create_semaphore( "hub_address_lock", 1, 0 );
-	g_hHubListLock = create_semaphore( "hub_list_lock", 1, 0 );
+	g_hHubAddressLock = create_semaphore( "usb_hub_address_lock", 1, 0 );
 	
 	strcpy( pcDriver->zName, "USB HUB" );
 	pcDriver->AddDevice = usb_hub_add;
@@ -915,6 +987,9 @@ void usb_hub_init()
 	/* Start thread */
 	wakeup_thread( spawn_kernel_thread( "usb_hub_thread", usb_hub_thread, 0, 4096, NULL ), true );
 }
+
+
+
 
 
 
