@@ -1,0 +1,23 @@
+authors
+	Mike Saunders
+	Kaj de Vos
+notes				Can't find OpenSSL
+
+headline			Command-driven mail client
+licenses			BSD
+home				nail.sourceforge.net
+
+;build-needs			openssl
+
+make-vars
+	PREFIX			/usr/nail
+	SYSCONFDIR		/usr/nail/etc
+;install-prefix-var	DESTDIR
+install-vars
+	PREFIX			/usr/nail
+	SYSCONFDIR		/usr/nail/etc
+	UCBINSTALL		/atheos/autolnk/bin/install
+documentation		README I18N INSTALL COPYING ChangeLog TODO AUTHORS nail.1.html
+post-install
+	mv /usr/nail/share/man /usr/nail
+	rm /usr/nail/share
