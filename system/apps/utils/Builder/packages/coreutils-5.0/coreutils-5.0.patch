@@ -1,3 +1,124 @@
+diff -ru coreutils-5.0.orig/lib/fsusage.c coreutils-5.0/lib/fsusage.c
+--- coreutils-5.0.orig/lib/fsusage.c	2003-02-06 05:39:01.000000000 +0000
++++ coreutils-5.0/lib/fsusage.c	2004-02-18 23:23:11.000000000 +0000
+@@ -42,6 +42,10 @@
+ # define CHAR_BIT 8
+ #endif
+ 
++#ifdef __SYLLABLE__
++# include <atheos/filesystem.h>
++#endif
++
+ #if HAVE_SYS_PARAM_H
+ # include <sys/param.h>
+ #endif
+@@ -115,6 +119,31 @@
+ int
+ get_fs_usage (const char *path, const char *disk, struct fs_usage *fsp)
+ {
++#ifdef __SYLLABLE__
++  {
++    fs_info info;
++    int mnt;
++
++    mnt = open( path, O_RDONLY );
++    if ( mnt < 0 ) {
++      return( -1 );
++    }
++    if ( get_fs_info( mnt, &info ) < 0 ) {
++      close( mnt );
++      return( -1 );
++    }
++    close( mnt );
++    fsp->fsu_blocksize = info.fi_block_size;
++    fsp->fsu_blocks = PROPAGATE_ALL_ONES (info.fi_total_blocks);
++    fsp->fsu_bfree = PROPAGATE_ALL_ONES (info.fi_free_blocks);
++    fsp->fsu_bavail = PROPAGATE_TOP_BIT (info.fi_free_user_blocks);
++    fsp->fsu_bavail_top_bit_set = EXTRACT_TOP_BIT (info.fi_free_user_blocks) != 0;
++    fsp->fsu_files = PROPAGATE_ALL_ONES (info.fi_total_inodes);
++    fsp->fsu_ffree = PROPAGATE_ALL_ONES (info.fi_free_inodes);
++    return( 0 );
++  }
++#endif
++
+ #ifdef STAT_STATFS3_OSF1
+ 
+   struct statfs fsd;
+@@ -253,7 +282,7 @@
+ 
+ #endif /* STAT_STATVFS */
+ 
+-#if !defined STAT_STATFS2_FS_DATA && !defined STAT_READ_FILSYS
++#if !defined STAT_STATFS2_FS_DATA && !defined STAT_READ_FILSYS && !defined __SYLLABLE__
+ 				/* !Ultrix && !SVR2 */
+ 
+   fsp->fsu_blocks = PROPAGATE_ALL_ONES (fsd.f_blocks);
+diff -ru coreutils-5.0.orig/lib/mountlist.c coreutils-5.0/lib/mountlist.c
+--- coreutils-5.0.orig/lib/mountlist.c	2003-03-18 17:43:00.000000000 +0000
++++ coreutils-5.0/lib/mountlist.c	2004-02-18 23:05:26.000000000 +0000
+@@ -35,6 +35,10 @@
+ #endif
+ #include "xalloc.h"
+ 
++#ifdef __SYLLABLE__
++# include <atheos/filesystem.h>
++#endif
++
+ #ifndef strstr
+ char *strstr ();
+ #endif
+@@ -311,6 +315,51 @@
+   struct mount_entry *me;
+   struct mount_entry **mtail = &mount_list;
+ 
++#ifdef __SYLLABLE__
++  {
++    int count = get_mount_point_count();
++    int i;
++
++    if ( count < 0 ) {
++      return -1;
++    }
++    for ( i = 0 ; i < count ; ++i )
++    {
++      fs_info info;
++      int mnt;
++      char path[PATH_MAX];
++
++      if ( get_mount_point( i, path, PATH_MAX ) < 0 ) {
++        goto free_then_fail;
++      }
++
++      mnt = open( path, O_RDONLY );
++      if ( mnt < 0 ) {
++        goto free_then_fail;
++      }
++      if ( get_fs_info( mnt, &info ) < 0 ) {
++        close( mnt );
++        continue;
++      }
++      close( mnt );
++
++      me = (struct mount_entry *) xmalloc (sizeof (struct mount_entry));
++      me->me_devname = xstrdup (info.fi_device_path);
++      me->me_mountdir = xstrdup (path);
++      me->me_type = xstrdup (info.fi_driver_name);
++      me->me_dummy = ME_DUMMY (info.fi_device_path, info.fi_driver_name);
++      me->me_remote = (info.fi_flags & FS_IS_SHARED) != 0;
++      me->me_dev = info.fi_dev;
++
++      /* Add to the linked list. */
++      *mtail = me;
++      mtail = &me->me_next;
++    }
++    *mtail = NULL;
++    return( mount_list );
++  }
++#endif
++
+ #ifdef MOUNTED_LISTMNTENT
+   {
+     struct tabmntent *mntlist, *p;
 diff -ru coreutils-5.0.orig/src/copy.c coreutils-5.0/src/copy.c
 --- coreutils-5.0.orig/src/copy.c	2003-03-11 18:02:24.000000000 +0000
 +++ coreutils-5.0/src/copy.c	2003-10-07 14:20:49.000000000 +0000
@@ -93,9 +214,38 @@ diff -ru coreutils-5.0.orig/src/copy.c coreutils-5.0/src/copy.c
    /* Permissions of newly-created regular files were set upon `open' in
       copy_reg.  But don't return early if there were any special bits and
       we had to run chown, because the chown must have reset those bits.  */
+diff -ru coreutils-5.0.orig/src/df.c coreutils-5.0/src/df.c
+--- coreutils-5.0.orig/src/df.c	2003-03-04 21:07:54.000000000 +0000
++++ coreutils-5.0/src/df.c	2004-02-18 23:46:11.000000000 +0000
+@@ -320,19 +320,19 @@
+     {
+       int disk_name_len = (int) strlen (disk);
+       int fstype_len = (int) strlen (fstype);
+-      if (disk_name_len + fstype_len + 2 < 20)
+-	printf ("%s%*s  ", disk, 18 - disk_name_len, fstype);
++      if (disk_name_len + fstype_len + 2 < 30)
++	printf ("%s%*s  ", disk, 28 - disk_name_len, fstype);
+       else if (!posix_format)
+-	printf ("%s\n%18s  ", disk, fstype);
++	printf ("%s\n%28s  ", disk, fstype);
+       else
+ 	printf ("%s %s", disk, fstype);
+     }
+   else
+     {
+-      if ((int) strlen (disk) > 20 && !posix_format)
+-	printf ("%s\n%20s", disk, "");
++      if ((int) strlen (disk) > 30 && !posix_format)
++	printf ("%s\n%30s", disk, "");
+       else
+-	printf ("%-20s", disk);
++	printf ("%-30s", disk);
+     }
+ 
+   if (inode_format)
 diff -ru coreutils-5.0.orig/src/system.h coreutils-5.0/src/system.h
 --- coreutils-5.0.orig/src/system.h	2003-04-02 10:13:51.000000000 +0000
-+++ coreutils-5.0/src/system.h	2003-10-07 14:20:49.000000000 +0000
++++ coreutils-5.0/src/system.h	2004-02-18 22:28:05.000000000 +0000
 @@ -128,7 +128,11 @@
  #if HAVE_STDBOOL_H
  # include <stdbool.h>
@@ -108,3 +258,18 @@ diff -ru coreutils-5.0.orig/src/system.h coreutils-5.0/src/system.h
  #endif
  
  #if HAVE_STDLIB_H
+@@ -285,8 +289,12 @@
+ # endif /* !hpux */
+ #endif /* HAVE_STRUCT_STAT_ST_BLOCKS */
+ 
+-#ifndef ST_NBLOCKS
+-# define ST_NBLOCKS(statbuf) ((statbuf).st_blocks)
++#ifdef __SYLLABLE__
++# define ST_NBLOCKS(statbuf) ((statbuf).st_size / ST_NBLOCKSIZE + ((statbuf).st_size % ST_NBLOCKSIZE != 0))
++#else
++# ifndef ST_NBLOCKS
++#  define ST_NBLOCKS(statbuf) ((statbuf).st_blocks)
++# endif
+ #endif
+ 
+ #ifndef ST_NBLOCKSIZE
