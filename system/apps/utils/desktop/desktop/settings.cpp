@@ -12,6 +12,8 @@ DeskSettings::DeskSettings()
     mkdir ((cString + (string)"/Documents/Pictures").c_str(), 0700);
     mkdir ((cString + "/Desktop").c_str(), 0700);
     mkdir ((cString + "/Trash").c_str(), 0700);
+    
+    //system("/usr/bin/ln -s /Applications/Launcher/bin/launcher ~/Settings/Desktop/Startup");
 	
 	sprintf(pzConfigFile,"%s/Settings/Desktop/desktop.cfg",getenv("HOME"));
     sprintf(pzConfigDir, "%s/Settings/Desktop/",getenv("HOME"));
@@ -48,7 +50,6 @@ void DeskSettings::SaveSettings(Message* pcMessage)
         delete pcConfig;
         free( pBuffer );
     }
-    
      system("/usr/bin/mv -f /tmp/desktop.cfg ~/Settings/Desktop/desktop.cfg");
   
 }
@@ -158,6 +159,10 @@ int32 DeskSettings::GetImageSize()
 {
 	return (nSizeImage);
 }
+
+
+
+
 
 
 

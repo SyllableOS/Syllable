@@ -157,7 +157,7 @@ const char* ReadLoginOption()
 
     filRead.close();
 
-    if (strcmp(login_info,"true") == 0)
+    if (!strcmp(login_info,"true") == 0)
     {
         return_name = login_name;
     }
@@ -417,6 +417,7 @@ int main()
 	thisApp->Run();
 	
 }
+
 
 
 

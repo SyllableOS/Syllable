@@ -45,6 +45,12 @@ IconProp::IconProp(string cIconName, string cExec, Bitmap* cIconPic) : Window(CR
     pcIconOkBut->SetFrame(Rect(0,0,40,25) + Point (GetBounds().Width() /2 - 25, GetBounds().Height() - 30) );
     AddChild(pcIconOkBut);
     
+    View* pcView = new View(Rect(200,10,32,32),"");
+    pcView->DrawBitmap(cIconPic, cIconPic->GetBounds(), pcView->GetBounds());
+    AddChild(pcView);
+    //DrawBitmap(cIconPic);
+    
+    
 }
 
 
@@ -88,6 +94,7 @@ void IconProp::HandleMessage(Message* pcMessage)
         break;
     }
 }
+
 
 
 

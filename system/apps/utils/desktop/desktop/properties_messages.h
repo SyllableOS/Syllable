@@ -10,9 +10,12 @@ enum
     ID_PROP_LIST_INIT = 1013,
 
     ID_PEN_CHANGED = 1014,
-    ID_PROP_LOGIN_CHECK = 1015
+    ID_PROP_LOGIN_CHECK = 1015,
+    ID_PROP_TEST = 1555
 
 };
+
+
 
 
 

@@ -36,7 +36,7 @@ BackView::BackView(const Rect & cFrame) : View(cFrame, "BackView", CF_FOLLOW_ALL
     pcSizeDrop = new DropdownMenu(Rect(0,0,0,0),"Size_Drop");
     pcSizeDrop->SetFrame(Rect(0,0,97,15) + Point(225,205));
     AddChild(pcSizeDrop);
-    
+
     pcSizeDrop->InsertItem(0,"Stretch Picture");
     pcSizeDrop->InsertItem(1,"Tile Picture");
 
@@ -196,12 +196,9 @@ void ColorView::SwitchList()
 {
 	/*uint32 nSwitch = pcListTheme->GetSelection();
 	t_List t_ImageList = PopulateFolderList();
-	//if (nSwitch != -1){
-		printf("This is the switch to %d\n", nSwitch);
-		printf("Name is: %s",t_ImageList[nSwitch].c_str());
-		//}*/
-		
-		
+	if (nSwitch != -1){
+		new Alert("","","OK")->Go());
+		}*/
 }
 
 ColorView::~ColorView()
@@ -485,3 +482,4 @@ void PropWin::LoadPrefs(void)
     
 
 }
+

@@ -28,8 +28,10 @@ class Drives : public Menu {
 		void Unmount(int32 nUnmount);
 		void Mount();
 		void GetDrivesInfo();
+		void TimerTick(int nID);
 };
 #endif
+
 
 
 

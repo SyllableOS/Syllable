@@ -25,7 +25,7 @@ class Icon
         struct stat	m_sStat;
     private:
         float GetStrWidth( Font* pcFont );
-        static Bitmap* s_pcBitmap[16];
+        static Bitmap* s_pcBitmap[20];
         static int s_nCurBitmap;
         Rect	m_cBounds;
         float	m_vStringWidth;
@@ -87,6 +87,7 @@ class IconView : public View, public Invoker
         void ReadPrefs();
         Color32_s BgColor, FgColor;
 };
+
 
 
 

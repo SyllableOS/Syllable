@@ -121,6 +121,13 @@ void Drives::Mount()
 {
 }
 
+void Drives::TimerTick(int nID)
+{
+	printf("hi\n");
+}
+
+
+
 
 
 

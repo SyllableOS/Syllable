@@ -3,7 +3,7 @@
 OPTS   = -c -o3 -Wall
 
 CC	= gcc
-EXE	= desktop
+EXE	= objs/desktop
 
 OBJDIR	:= objs
 
@@ -27,13 +27,15 @@ deps:
 	mkdir objs
 	
 dist:
-	cp  -f $(EXE) $(DIST_DIR)/atheos/sys/bin/
+	cp  -f $(EXE) $(DIST_DIR)/atheos/sys/bin
 
 install:
 	cp -f desktop /bin/
 	strip --strip-all /bin/desktop
 clean:
 	-rm $(OBJS)
+
+
 
 
 

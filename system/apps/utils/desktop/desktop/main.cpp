@@ -12,7 +12,7 @@ DeskApp::DeskApp() : Application("application/x-vnd.RGC-desktop_manager")
 }
 
 DeskApp::~DeskApp()
-{;
+{
 	
 }
 	 
@@ -30,6 +30,7 @@ int main( int argc, char** argv )
     pcApp->Run();
 	return( 0 );
 }
+
 
 
 

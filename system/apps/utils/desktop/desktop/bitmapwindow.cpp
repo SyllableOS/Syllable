@@ -16,7 +16,7 @@ void LaunchFiles()
     string zPath;
     Directory* pcDir = new Directory();
 
-    if(pcDir->SetTo("~/config/desktop/startup")==0)
+    if(pcDir->SetTo("~/Settings/Desktop/Startup")==0)
     {
         pcDir->GetPath(&zName);
         while (pcDir->GetNextEntry(&zName))
@@ -51,7 +51,7 @@ void LaunchFiles()
 string SyllableInfo()
 {
     string return_version;
-    return_version = "Syllable 0.4.1, Desktop V0.5";
+    return_version = "Syllable 0.4.2, Desktop V0.5";
     return (return_version);
 }
 
@@ -746,6 +746,7 @@ void BitmapView::HandleMessage(Message* pcMessage)
     		pcMessage->FindInt32( "which", &nAlertBut );
     		
     		if ( nAlertBut == 0){
+    		printf("%d\n", getsid(0));
     		GetWindow()->OkToQuit();
     		
     		}
@@ -799,10 +800,12 @@ BitmapWindow::BitmapWindow() : Window(Rect( 0, 0, 1599, 1199 ), "_bitmap_window"
 {
 	DeskSettings* pcSet = new DeskSettings();
 
+   
    pcConfigChange = new NodeMonitor(pcSet->GetSetDir(),NWATCH_DIR,this);
    pcIconChange = new NodeMonitor(pcSet->GetIconDir(),NWATCH_DIR,this);
   
    pcBitmapView = new BitmapView( GetBounds());
+   AddTimer(pcBitmapView,5,5,true);
    AddChild( pcBitmapView ); 
 }
 
@@ -838,6 +841,10 @@ bool BitmapWindow::OkToQuit(void)
     Application::GetInstance()->PostMessage(M_QUIT );
   	return (true);
 }
+
+
+
+
 
 
 

@@ -1,7 +1,7 @@
 #include "iconview.h"
 #include "loadbitmap.h"
 
-Bitmap* Icon::s_pcBitmap[16] = {NULL,};
+Bitmap* Icon::s_pcBitmap[20] = {NULL,};
 int	Icon::s_nCurBitmap = 0;
 Color32_s fgColor, bgColor;
 
@@ -24,7 +24,7 @@ Icon::Icon( const char* pzTitle, const char* pzPath, const char* pzExec, Point c
 
     if ( s_pcBitmap[0] == NULL )
     {
-        for ( int i = 0 ; i < 16 ; ++i )
+        for ( int i = 0 ; i < 20 ; ++i )
         {
             s_pcBitmap[i] = new Bitmap( 32,32, CS_RGBA32 );
         }
@@ -213,7 +213,7 @@ void Icon::Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendTe
 
         pcView->SetDrawingMode( DM_BLEND );  //DM_BLEND
 
-        if ( s_nCurBitmap == 16 )
+        if ( s_nCurBitmap == 20 )
         {
             s_nCurBitmap = 0;
             pcView->Sync();
@@ -234,7 +234,7 @@ void Icon::Paint( View* pcView, const Point& cOffset, bool bLarge, bool bBlendTe
 */
 Bitmap* Icon::GetBitmap()
 {
-    if ( s_nCurBitmap == 16 )
+    if ( s_nCurBitmap == 20 )
     {
         s_nCurBitmap = 0;
     }
@@ -868,6 +868,7 @@ void IconView::DirChanged( const std::string& cNewPath )
     }
 
 }
+
 
 
 
