@@ -188,6 +188,11 @@ cp objs/syllable* $ROOT/Packages/base/
 echo "Copying installation scripts"
 cp -dpr scripts/install/* $ROOT/Install/
 
+# Run the documentation through sed to set the correct version number
+sed -e "s/VER/$VER/" $ROOT/Install/doc/welcome-template.txt > $ROOT/Install/doc/welcome.txt
+rm $ROOT/Install/doc/welcome-template.txt
+
+# Copy Net files
 NET=""
 
 echo -n "Enter the path to the Syllable-Net directory:"
