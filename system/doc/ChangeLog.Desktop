@@ -1,3 +1,10 @@
+* January 9th 2005, Kristian Van Der Vliet
+
+	* Added a simple Mixer dock plugin which calls the Media Server to display the mixer/stream controls window.
+	* Cleaned this ChangeLog
+
+---- 0.5.5 Released -------------------------------------------------------------------
+
 ---- 0.5.4 Released -------------------------------------------------------------------
 
 * September 19th 2004, Arno Klenke *
