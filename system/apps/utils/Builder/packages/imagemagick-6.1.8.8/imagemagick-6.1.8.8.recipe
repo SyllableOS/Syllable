@@ -1,0 +1,56 @@
+authors
+	Nicolas Mougel
+	Kaj de Vos
+status				contributed
+notes				Bombs out on PERL 5.0
+
+licenses			OSI other
+
+home				imagemagick.org
+packages			ImageMagick-6.1.8-8
+locations
+	http://www.imagemagick.org/download/
+	ftp://ftp.imagemagick.org/pub/ImageMagick/
+
+build-recommends
+	bzip2
+	freetype
+	libxml
+recommends
+;	perl
+	libpng
+	libtiff
+	libjpeg
+	jasper
+	ralcgm
+	ghostscript >= 8.10
+	gnuplot
+	libexif
+	libwmf
+	libfpx
+	html2ps
+	mpeg2vidcodec
+	sane
+	dcraw
+	fig2dev
+	ghostpcl >= 1.40
+	hp2xx
+	lcms
+	jbigkit
+	radiance
+	urt
+
+patch-config
+
+configure-options
+	--disable-installed
+;	--enable-shared
+;	--disable-static
+;	--with-modules
+;	--without-threads
+	--without-perl
+;	--with-perl-options=PREFIX=/usr/imagemagick/perl/
+
+documentation		README.txt QuickStart.txt LICENSE NOTICE NEWS ChangeLog AUTHORS
+; HTML docs in share/ImageMagick-6.1.8: index.html www
+
