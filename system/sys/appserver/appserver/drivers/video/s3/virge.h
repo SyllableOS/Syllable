@@ -120,9 +120,9 @@ static inline void noprint( char* pzFormat, ... ) {}
 typedef struct {
 	int nFd;
     PCI_Info_s	pcii;
-    vuchar	*base0;
+    volatile uint8_t	*base0;
 #if !defined(__INTEL__)
-    vuchar	*isa_io;
+    volatile uint8_t	*isa_io;
 #endif
     int     theMem;
     int	    scrnRowByte;

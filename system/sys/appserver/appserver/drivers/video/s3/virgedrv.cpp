@@ -237,10 +237,10 @@ void unlock_io();
 void lock_ge();
 void unlock_ge();
 
-#define v_inb(a)	*((vuchar *)(sCardInfo.base0 + (a)))
-#define v_outb(a, b)	*((vuchar *)(sCardInfo.base0 + (a))) = (b)
-#define v_inl(a)	*((vuint32 *)(sCardInfo.base0 + (a)))
-#define v_outl(a, l)	*((vuint32 *)(sCardInfo.base0 + (a))) = (l)
+#define v_inb(a)	*((volatile uint8_t *)(sCardInfo.base0 + (a)))
+#define v_outb(a, b)	*((volatile uint8_t *)(sCardInfo.base0 + (a))) = (b)
+#define v_inl(a)	*((volatile uint32_t *)(sCardInfo.base0 + (a)))
+#define v_outl(a, l)	*((volatile uint32_t *)(sCardInfo.base0 + (a))) = (l)
 
 static area_id	g_nFrameBufArea = -1;
 
@@ -279,7 +279,8 @@ static void set_attr_table( uint16* ptr )
 // Save the initial index set in ATTR_REG
     v = v_inb(ATTR_REG);
 
-    while (TRUE) {
+    for ( ;; )
+    {
 	p1 = *ptr++;
 	p2 = *ptr++;
 	if (p1 == 0xff && p2 == 0xff) {
@@ -726,7 +727,7 @@ void DoSelectMode()
 static void vid_checkmem (void)
 {
 //  ulong      i, j;
-    vuchar *scrn;
+    volatile uint8_t *scrn;
 
     dprintf("vid_checkmem()\n");
     SCREEN_OFF;
@@ -748,7 +749,7 @@ static void vid_checkmem (void)
     sCardInfo.scrnColors = 0;
 //  sCardInfo.scrnRes = -1;
 	
-    scrn = (vuchar *)sCardInfo.scrnBase;
+    scrn = (volatile uint8_t *)sCardInfo.scrnBase;
     scrn += 2 * 1024 * 1024;
     *scrn = 0xab;
     scrn -= 2 * 1024 * 1024;
@@ -898,7 +899,7 @@ area_id VirgeDriver::Open( void )
     dprintf("ViRGE found at pci index %d\n", index);
 
       // This is the pointer for memory mapped IO
-    sCardInfo.base0 = (vuchar *)(m_pFrameBuffer) + 0x01000000;	// little endian area
+    sCardInfo.base0 = (volatile uint8_t *)(m_pFrameBuffer) + 0x01000000;	// little endian area
 
       // This is the pointer to the beginning of the video memory, as mapped in
       // the add-on memory adress space. This add-on puts the frame buffer just at

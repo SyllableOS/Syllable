@@ -217,7 +217,7 @@ bool i855::SetCoeffRegs( double *coeff, int mantSize, coeffPtr pCoeff, int pos )
 	else
 	{
 		/* Coeff out of range */
-		return FALSE;
+		return false;
 	}
 
 	pCoeff[pos].sign = sign;
@@ -473,8 +473,8 @@ bool i855::SetupVideo( const os::IPoint & cSize, const os::IRect & cDst, os::col
 			if ( fCutoffUV > MAX_CUTOFF_FREQ )
 				fCutoffUV = MAX_CUTOFF_FREQ;
 
-			UpdateCoeff( N_HORIZ_Y_TAPS, fCutoffY, TRUE, TRUE, xcoeffY );
-			UpdateCoeff( N_HORIZ_UV_TAPS, fCutoffUV, TRUE, FALSE, xcoeffUV );
+			UpdateCoeff( N_HORIZ_Y_TAPS, fCutoffY, true, true, xcoeffY );
+			UpdateCoeff( N_HORIZ_UV_TAPS, fCutoffUV, true, false, xcoeffUV );
 
 			for ( i = 0; i < N_PHASES; i++ )
 			{

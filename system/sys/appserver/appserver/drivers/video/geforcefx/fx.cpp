@@ -1646,7 +1646,7 @@ void FX::CommonSetup()
 		dbprintf( "GeForce FX :: Panel size is %i x %i\n", m_sHW.fpWidth, m_sHW.fpHeight );
 	}
 
-	m_sHW.FPDither = FALSE;
+	m_sHW.FPDither = false;
 }
 
 
