@@ -501,7 +501,9 @@ count_entry (const char *ent, int top, dev_t last_dev, int depth)
     }
 
   if (!opt_count_all
+#ifndef __ATHEOS__
       && stat_buf.st_nlink > 1
+#endif
       && hash_insert (stat_buf.st_ino, stat_buf.st_dev))
     return 0;			/* Have counted this already.  */
 
