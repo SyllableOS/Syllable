@@ -38,8 +38,8 @@ extern "C" {
 #define MAX_DEVICE_NAME_LENGTH     255
 
 /* Busmanager functions */
-status_t bus_init();
-void     bus_uninit();
+status_t bus_init( void );
+void     bus_uninit( void );
 void*    bus_get_hooks( int nVersion );
 
 /* Driver functions */
@@ -70,10 +70,10 @@ typedef struct
 } DeviceInfo_s;
 
 /* Kernel functions */
-void		init_devices_boot();
-void		init_devices();
+void		init_devices_boot( void );
+void		init_devices( void );
 void		add_devices_bootmodule( const char* pzPath );
-void		write_devices_config();
+void		write_devices_config( void );
 
 int			register_device( const char* pzName, const char* pzBus );
 void		unregister_device( int nHandle );
@@ -83,7 +83,7 @@ status_t	get_device_info( DeviceInfo_s* psInfo, int nIndex );
 
 void*		get_busmanager( const char* pzName, int nVersion );
 void		disable_device( int nDeviceID );
-void		enable_all_devices();
+void		enable_all_devices( void );
 
 #define MK_IOCT(a,b) (a+b)
 enum

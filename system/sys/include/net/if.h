@@ -201,7 +201,7 @@ typedef struct
 } NetInterfaceOps_s;
 
 /* Interface driver initialisation function prototype */
-typedef NetInterfaceOps_s* ni_init();
+typedef NetInterfaceOps_s* ni_init( void );
 
 /* Kernel interface structure definition */
 struct _NetInterface

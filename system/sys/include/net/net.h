@@ -80,9 +80,9 @@ struct _ArpEntry
 };
 
 
-void init_ip();
-void init_arp();
-int  init_net_core();
+void init_ip( void );
+void init_arp( void );
+int  init_net_core( void );
 
 
 enum

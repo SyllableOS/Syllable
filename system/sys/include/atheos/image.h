@@ -64,7 +64,7 @@ int load_library( const char* pzPath, uint32 nFlags );
 int unload_library( int nLibrary );
 int get_library_info( int nLibrary, image_info* psInfo );
 int get_symbol_address( int nLibrary, const char* pzName, int nIndex, void** pPtr );
-int get_image_id();
+int get_image_id( void );
 
 #ifdef __KERNEL__
 int get_image_info( bool bKernel, int nImage, int nSubImage, image_info* psInfo );

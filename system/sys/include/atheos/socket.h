@@ -249,7 +249,7 @@ struct msghdr {
 #define	TCP_NODELAY	0x01	/* don't delay send to coalesce packets */
 #define	TCP_MAXSEG	0x02	/* set maximum segment size */
 
-void init_sockets();
+void init_sockets( void );
 
 void ne_get_ether_address(uint8 * pBuffer);
 int ne_read(void *pBuffer, int nSize);

@@ -34,8 +34,8 @@ extern "C" {
 status_t write_kernel_config_entry_header( char* pzName, size_t nSize );
 status_t write_kernel_config_entry_data( uint8* pBuffer, size_t nSize );
 status_t read_kernel_config_entry( char* pzName, uint8** pBuffer, size_t* pnSize );
-void write_kernel_config();
-void init_kernel_config();
+void write_kernel_config( void );
+void init_kernel_config( void );
 
 #endif
 

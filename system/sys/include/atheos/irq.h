@@ -80,7 +80,7 @@ struct irqaction
 uint32	cli( void );
 void	sti( void );
 void	put_cpu_flags( int nFlags );
-int	get_cpu_flags();
+int	get_cpu_flags( void );
 
 void disable_irq_nosync( int nIrqNum );
 void enable_irq( int nIrqNum );

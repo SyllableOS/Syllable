@@ -39,9 +39,9 @@ extern "C" {
 
 typedef struct
 {
-  volatile atomic_t sl_nLocked;
+  atomic_t sl_nLocked;
   vint		    sl_nProc;
-  volatile atomic_t sl_nNest;
+  atomic_t sl_nNest;
   const char*	    sl_pzName;
 } SpinLock_s;
 

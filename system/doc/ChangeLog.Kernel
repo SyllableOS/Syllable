@@ -1,5 +1,11 @@
 * January 29 2005, Jake Hamby *
 
+Updated to Build 0002.  Patch from Daniel Gryniewicz to fix GCC 3.4.3
+compiler warnings and to fix an initialization bug in <atheos/seqlock.h>.
+Also added Daniel's double-linked list implementation at <atheos/dlist.h>.
+
+* January 29 2005, Jake Hamby *
+
 Build 0001:
     * New 4-digit build version printed at system startup and logged to
 	/var/log/kernel.  Anyone checking a kernel change into CVS must

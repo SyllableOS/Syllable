@@ -51,7 +51,7 @@ typedef struct {
 static inline void seqlock_init( SeqLock_s *psLock, const char *pzName )
 {
 	psLock->sl_nSequence = 0;
-	spinlock_init( psLock, pzName );
+	spinlock_init( &psLock->sl_sLock, pzName );
 }
 
 /* Lock out other writers and update the count.
