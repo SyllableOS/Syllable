@@ -14,6 +14,7 @@ modules
 	sys/appserver/libsyllable
 	sys/appserver/appserver/server
 	sys/appserver/appserver/drivers/decorators/photon
+	sys/appserver/appserver/drivers/decorators/win98
 	sys/media/mediaserver
 	sys/media/drivers/ffmpeg
 	sys/media/drivers/oss
