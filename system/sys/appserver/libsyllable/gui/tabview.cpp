@@ -544,7 +544,7 @@ int TabView::GetTabCount() const
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-uint TabView::GetSelection()
+uint TabView::GetSelection() const
 {
 	return ( m->m_nSelectedTab );
 }
@@ -922,4 +922,45 @@ void TabView::Paint( const Rect & cUpdateRect )
 		DrawLine( Point( 1, m->m_vTabHeight - 1 ), Point( 8, m->m_vTabHeight - 1 ) );
 		DrawLine( Point( cBounds.right - 8, m->m_vTabHeight - 1 ), Point( cBounds.right, m->m_vTabHeight - 1 ) );
 	}
+}
+
+
+void TabView::__TABV_reserved1__()
+{
+}
+
+void TabView::__TABV_reserved2__()
+{
+}
+
+void TabView::__TABV_reserved3__()
+{
+}
+
+void TabView::__TABV_reserved4__()
+{
+}
+
+void TabView::__TABV_reserved5__()
+{
+}
+
+void TabViewTab::__TABT_reserved1__()
+{
+}
+
+void TabViewTab::__TABT_reserved2__()
+{
+}
+
+void TabViewTab::__TABT_reserved3__()
+{
+}
+
+void TabViewTab::__TABT_reserved4__()
+{
+}
+
+void TabViewTab::__TABT_reserved5__()
+{
 }

@@ -75,7 +75,7 @@ namespace os
 		{
 			m_bMultiLine = bMultiLine;
 		}
-		bool GetMultiLine()
+		bool GetMultiLine() const
 		{
 			return ( m_bMultiLine );
 		}
@@ -109,8 +109,8 @@ namespace os
 		void SetMaxPreferredSize( int nWidthChars, int nHeightChars );
 		IPoint GetMaxPreferredSize() const;
 
-		void GetRegion( IPoint cStart, IPoint cEnd, String *pcBuffer, bool bAddToClipboard = true );
-		void GetRegion( String *pcBuffer, bool bAddToClipboard = true );
+		void GetRegion( IPoint cStart, IPoint cEnd, String *pcBuffer, bool bAddToClipboard = true ) const;
+		void GetRegion( String *pcBuffer, bool bAddToClipboard = true ) const;
 		void MakeCsrVisible();
 		void InsertString( IPoint * pcPos, const char *pzBuffer, bool bMakeUndo = true );
 		void Delete( IPoint cStart, IPoint cEnd, bool bMakeUndo = true );
@@ -120,7 +120,7 @@ namespace os
 		void Select( const IPoint & cStart, const IPoint & cEnd );
 		void SelectAll();
 		void ClearSelection();
-		bool GetSelection( IPoint * pcStart, IPoint * pcEnd );
+		bool GetSelection( IPoint * pcStart, IPoint * pcEnd ) const;
 		void SetCursor( const IPoint & cPos, bool bSelect );
 		IPoint GetCursor() const;
 
@@ -513,7 +513,7 @@ void TextView::SetMultiLine( bool bMultiLine )
  *****************************************************************************/
 
 
-bool TextView::GetMultiLine()
+bool TextView::GetMultiLine() const
 {
 	return ( m_pcEditor->GetMultiLine() );
 }
@@ -635,7 +635,7 @@ IPoint TextView::GetMaxPreferredSize() const
 	return ( m_pcEditor->GetMaxPreferredSize() );
 }
 
-void TextView::GetRegion( String *pcBuffer )
+void TextView::GetRegion( String *pcBuffer ) const
 {
 	m_pcEditor->GetRegion( pcBuffer );
 }
@@ -712,7 +712,7 @@ void TextView::ClearSelection( bool bSendNotify )
 	}
 }
 
-bool TextView::GetSelection( IPoint * pcStart, IPoint * pcEnd )
+bool TextView::GetSelection( IPoint * pcStart, IPoint * pcEnd ) const
 {
 	return ( m_pcEditor->GetSelection( pcStart, pcEnd ) );
 }
@@ -1470,7 +1470,7 @@ void TextEdit::ClearSelection()
 	}
 }
 
-bool TextEdit::GetSelection( IPoint * pcStart, IPoint * pcEnd )
+bool TextEdit::GetSelection( IPoint * pcStart, IPoint * pcEnd ) const
 {
 	if( m_bRegionActive )
 	{
@@ -1730,7 +1730,7 @@ void TextEdit::InsertString( IPoint * pcPos, const char *pzBuffer, bool bMakeUnd
 	}
 }
 
-void TextEdit::GetRegion( IPoint cStart, IPoint cEnd, String *pcBuffer, bool bAddToClipboard )
+void TextEdit::GetRegion( IPoint cStart, IPoint cEnd, String *pcBuffer, bool bAddToClipboard ) const
 {
 	IPoint cRegStart;
 	IPoint cRegEnd;
@@ -1752,7 +1752,7 @@ void TextEdit::GetRegion( IPoint cStart, IPoint cEnd, String *pcBuffer, bool bAd
 	}
 	else if( cStart == IPoint( 0, 0 ) && cEnd == IPoint( -1, -1 ) )
 	{
-		TextView::buffer_type::iterator iBfr = m_cBuffer.begin();
+		TextView::buffer_type::const_iterator iBfr = m_cBuffer.begin();
 
 		*pcBuffer = String ( "" );
 		bool first = true;
@@ -1794,7 +1794,7 @@ void TextEdit::GetRegion( IPoint cStart, IPoint cEnd, String *pcBuffer, bool bAd
 	}
 }
 
-void TextEdit::GetRegion( String *pcBuffer, bool bAddToClipboard )
+void TextEdit::GetRegion( String *pcBuffer, bool bAddToClipboard ) const
 {
 	GetRegion( m_cRegionStart, m_cRegionEnd, pcBuffer, bAddToClipboard );
 }
@@ -2986,5 +2986,10 @@ void TextView::__TV_reserved3__()
 
 /** \internal */
 void TextView::__TV_reserved4__()
+{
+}
+
+/** \internal */
+void TextView::__TV_reserved5__()
 {
 }

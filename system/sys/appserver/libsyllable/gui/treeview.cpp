@@ -1205,3 +1205,39 @@ void TreeView::InsertRow( int nPos, ListViewRow* pcRow, bool bUpdate )
 void TreeView::InsertRow( ListViewRow* pcRow, bool bUpdate )
 {
 }
+
+void TreeView::__TVW_reserved1__()
+{
+}
+
+void TreeView::__TVW_reserved2__()
+{
+}
+
+void TreeView::__TVW_reserved3__()
+{
+}
+
+void TreeView::__TVW_reserved4__()
+{
+}
+
+void TreeView::__TVW_reserved5__()
+{
+}
+
+void TreeViewNode::__TVN_reserved1__()
+{
+}
+
+void TreeViewNode::__TVN_reserved2__()
+{
+}
+
+void TreeViewStringNode::__TVS_reserved1__()
+{
+}
+
+void TreeViewStringNode::__TVS_reserved2__()
+{
+}
