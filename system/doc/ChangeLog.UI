@@ -1,3 +1,7 @@
+* May 9th 2004, Kristiam Van Der Vliet *
+
+ - Drow & Beish decorators now create their binary files with an initial capital letter,
+   not "drow" and "beish".
 
 ---- 0.5.3 Released -------------------------------------------------------------------
 
