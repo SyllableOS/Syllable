@@ -29,7 +29,15 @@ mkdir $ROOT_DIR/atheos
 
 mkdir $ROOT_DIR/atheos/Applications
 mkdir $ROOT_DIR/atheos/Documentation
+
 mkdir $ROOT_DIR/atheos/autolnk
+mkdir $ROOT_DIR/atheos/autolnk/bin
+mkdir $ROOT_DIR/atheos/autolnk/include
+mkdir $ROOT_DIR/atheos/autolnk/info
+mkdir $ROOT_DIR/atheos/autolnk/lib
+mkdir $ROOT_DIR/atheos/autolnk/libexec
+mkdir $ROOT_DIR/atheos/autolnk/man
+
 mkdir $ROOT_DIR/atheos/etc
 
 mkdir $ROOT_DIR/atheos/home
@@ -57,6 +65,7 @@ mkdir $ROOT_DIR/atheos/sys/drivers/dev/misc
 mkdir $ROOT_DIR/atheos/sys/drivers/dev/net
 mkdir $ROOT_DIR/atheos/sys/drivers/dev/net/eth
 mkdir $ROOT_DIR/atheos/sys/drivers/dev/video
+mkdir $ROOT_DIR/atheos/sys/drivers/dev/sound
 
 mkdir $ROOT_DIR/atheos/sys/drivers/fs
 

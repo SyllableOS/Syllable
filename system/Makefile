@@ -15,6 +15,9 @@ include recurse.rules
 # built
 
 distribution:
+	@echo Running pre-build cleanup
+	@$(BUILD_TOOLS)/prebuild.sh
+
 	@echo Building distribution in $(DIST_DIR);\echo
 	@$(BUILD_TOOLS)/mkdisttree.sh $(DIST_DIR)
 
@@ -24,6 +27,15 @@ distribution:
 	@echo;\echo Making all;\echo
 	@$(MAKE)
 
+	@echo;\echo Building distribution;\echo
+	@$(MAKE) dist
+
+	@echo;echo Finalising and cleaning up;\echo
+	@$(BUILD_TOOLS)/finalise.sh
+
+	@echo;\echo ################;\echo Stick a fork in it!;\echo ################;\echo
+
+assemble-dist:
 	@echo;\echo Building distribution;\echo
 	@$(MAKE) dist
 

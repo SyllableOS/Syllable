@@ -11,10 +11,20 @@ cd $LOCAL
 # Clean out ALL Makefiles
 cd $DIST_DIR
 
+echo Removing Makefiles
+
 for file in $(find * | grep -w Makefile )
 do
 	echo "Removing $file"
 	rm $file
+done
+
+echo "Removing any CVS dirs"
+
+for file in $(find * | grep -w CVS )
+do
+	echo "Removing $file"
+	rm -r $file
 done
 
 # Make the tarball
