@@ -10,23 +10,26 @@
 
 typedef long long dr9_off_t;
 
-#define MIME_STRING_TYPE 'MIMS'
+#include <atheos/stdlib.h>
+#include <atheos/string.h>
+#include <atheos/kernel.h>
+#include <atheos/device.h>
 
-#include <SupportDefs.h>
-#include <KernelExport.h>
+#include <posix/stat.h>
+#include <posix/errno.h>
+#include <posix/ioctl.h>
 
-#include <dirent.h>
-#include <fs_attr.h>
-#include <string.h>
-#include <malloc.h>
+#include <atheos/time.h>
 
-#include <fsproto.h>
-#include <lock.h>
+#include <atheos/filesystem.h>
+#include <atheos/bcache.h>
+
+#include <macros.h>
 
 #include "dosfs.h"
 #include "attr.h"
 
-#define DPRINTF(a,b) if (debug_attr > (a)) dprintf b
+#define DPRINTF(a,b) if (debug_dir > (a)) printk b
 
 struct ext_mime {
 	char *extension;
@@ -119,7 +122,7 @@ status_t set_mime_type(vnode *node, const char *filename)
 		if (filename[namelen-ext_len-1] != '.')
 			continue;
 		
-		if (!strcasecmp(filename + namelen - ext_len, p->extension))
+		if (!strcmp(filename + namelen - ext_len, p->extension))
 			break;
 	}
 
@@ -171,6 +174,8 @@ int dosfs_close_attrdir(void *_vol, void *_node, void *_cookie)
 
 	*(int32 *)_cookie = 1;
 	
+	kfree( _cookie );
+	
 	UNLOCK_VOL(vol);
 	
 	return 0;
@@ -183,7 +188,7 @@ int dosfs_free_attrcookie(void *_vol, void *_node, void *_cookie)
 	DPRINTF(0, ("dosfs_free_attrcookie called\n"));
 
 	if (_cookie == NULL) {
-		dprintf("error: dosfs_free_attrcookie called with null cookie\n");
+		printk("error: dosfs_free_attrcookie called with null cookie\n");
 		return -EINVAL;
 	}
 
@@ -200,7 +205,7 @@ int dosfs_rewind_attrdir(void *_vol, void *_node, void *_cookie)
 	DPRINTF(0, ("dosfs_rewind_attrdir called\n"));
 
 	if (_cookie == NULL) {
-		dprintf("error: dosfs_rewind_attrcookie called with null cookie\n");
+		printk("error: dosfs_rewind_attrcookie called with null cookie\n");
 		return -EINVAL;
 	}
 
@@ -208,19 +213,17 @@ int dosfs_rewind_attrdir(void *_vol, void *_node, void *_cookie)
 	return 0;
 }
 
-int dosfs_read_attrdir(void *_vol, void *_node, void *_cookie, long *num, 
-	struct dirent *entry, size_t bufsize)
+int dosfs_read_attrdir(void *_vol, void *_node, void *_cookie, struct kernel_dirent *entry, size_t bufsize)
 {
 	nspace *vol = (nspace *)_vol;
 	vnode *node = (vnode *)_node;
 	int32 *cookie = (int32 *)_cookie;
+	int num = 0;
 
 	TOUCH(bufsize);
 
 	DPRINTF(0, ("dosfs_read_attrdir called\n"));
-
-	*num = 0;
-
+	
 	LOCK_VOL(vol);
 
 	if (check_nspace_magic(vol, "dosfs_read_attrdir") ||
@@ -230,29 +233,28 @@ int dosfs_read_attrdir(void *_vol, void *_node, void *_cookie, long *num,
 	}
 
 	if ((*cookie == 0) && (node->mime)) {
-		*num = 1;
+		num = 1;
 		
 		entry->d_ino = node->vnid;
-		entry->d_dev = vol->id;
-		entry->d_reclen = 10;
-		strcpy(entry->d_name, "BEOS:TYPE");
+		entry->d_namlen = 14;
+		strcpy(entry->d_name, "os::MimeType");
 	}
 
 	*cookie = 1;
 
 	UNLOCK_VOL(vol);
 	
-	return 0;
+	return num;
 }
 
-int dosfs_stat_attr(void *_vol, void *_node, const char *name, struct attr_info *buf)
+int dosfs_stat_attr(void *_vol, void *_node, const char *name, int namelen, struct attr_info *buf)
 {
 	nspace *vol = (nspace *)_vol;
 	vnode *node = (vnode *)_node;
 
 	DPRINTF(0, ("dosfs_stat_attr (%s)\n", name));
 
-	if (strcmp(name, "BEOS:TYPE"))
+	if (strncmp(name, "os::MimeType", min( strlen( "os::MimeType" ), namelen)))
 		return -ENOENT;
 
 	LOCK_VOL(vol);
@@ -268,25 +270,26 @@ int dosfs_stat_attr(void *_vol, void *_node, const char *name, struct attr_info 
 		return -ENOENT;
 	}
 	
-	buf->type = MIME_STRING_TYPE;
-	buf->size = strlen(node->mime) + 1;
+	buf->ai_type = ATTR_TYPE_STRING;
+	buf->ai_size = strlen(node->mime) + 1;
 
 	UNLOCK_VOL(vol);
 	return 0;
 }
 
-int dosfs_read_attr(void *_vol, void *_node, const char *name, int type, void *buf, 
-	size_t *len, off_t pos)
+int dosfs_read_attr(void *_vol, void *_node, const char *name, int namelen, int type, void *buf, 
+	off_t pos, size_t len )
 {
 	nspace *vol = (nspace *)_vol;
 	vnode *node = (vnode *)_node;
+	int attrib_len = node->mime ? strlen( node->mime ) : NULL;
 
 	DPRINTF(0, ("dosfs_read_attr (%s)\n", name));
 
-	if (strcmp(name, "BEOS:TYPE"))
+	if (strncmp(name, "os::MimeType", min( strlen( "os::MimeType" ), namelen )))
 		return -ENOENT;
 		
-	if (type != MIME_STRING_TYPE)
+	if (type != ATTR_TYPE_STRING)
 		return -ENOENT;
 
 	LOCK_VOL(vol);
@@ -297,23 +300,28 @@ int dosfs_read_attr(void *_vol, void *_node, const char *name, int type, void *b
 		return -EINVAL;
 	}
 
-	if (node->mime == NULL) {
+	if( node->mime == NULL) {
 		UNLOCK_VOL(vol);
 		return -ENOENT;
 	}
-
-	strncpy(buf, node->mime + pos, *len - 1);
-	((char *)buf)[*len - 1] = 0;
-	*len = strlen(buf) + 1;
+	
+	if( pos + len > attrib_len )
+	{
+		len = ( attrib_len > pos ) ? ( attrib_len - pos ) : 0;
+	}
+	if( len > 0 )
+	{
+		memcpy( buf, node->mime + pos, len );
+	}
 
 	UNLOCK_VOL(vol);
-	return 0;
+	return len;
 }
-
+#ifndef __SYLLABLE__
 // suck up application attempts to set mime types; this hides an unsightly
 // error message printed out by zip
-int dosfs_write_attr(void *_vol, void *_node, const char *name, int type,
-	const void *buf, size_t *len, off_t pos)
+int dosfs_write_attr(void *_vol, void *_node, const char *name, int namelen, int type,
+	const void *buf, off_t pos, size_t len )
 {
 	TOUCH(_vol); TOUCH(_node); TOUCH(name); TOUCH(type); TOUCH(buf);
 	TOUCH(len); TOUCH(pos);
@@ -330,3 +338,4 @@ int dosfs_write_attr(void *_vol, void *_node, const char *name, int type,
 
 	return 0;
 }
+#endif

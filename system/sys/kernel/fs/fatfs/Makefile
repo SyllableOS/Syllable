@@ -13,7 +13,7 @@ AFLAGS   = -c
 VPATH =	./ textencoding
 
 
-OBJS := dosfs.o dir.o dlist.o fat.o file.o iter.o util.o vcache.o encodings.o EncodingConversions.o UnicodeMappings.o version.o
+OBJS := dosfs.o dir.o dlist.o fat.o file.o iter.o util.o vcache.o encodings.o EncodingConversions.o UnicodeMappings.o version.o attr.o
 #       dosfs.o dir.o dlist.o fat.o file.o iter.o util.o vcache.o encodings.o EncodingConversions.o UnicodeMappings.o version.o
 #  attr.o
 
@@ -57,5 +57,5 @@ dist: all
 	cp -f $(OBJDIR)/fatfs $(DIST_DIR)/atheos/sys/drivers/fs/fatfs
 
 clean:
-	rm $(OBJS)
+	rm $(OBJS) $(OBJDIR)/fatfs
 

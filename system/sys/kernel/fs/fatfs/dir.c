@@ -5,8 +5,6 @@
 
 typedef long long dr9_off_t;
 
-//#include <KernelExport.h> 
-
 #include <atheos/filesystem.h>
 #include <atheos/semaphore.h>
 #include <atheos/bcache.h>
@@ -831,9 +829,9 @@ int dosfs_read_vnode(void *_vol, ino_t vnid/*, char reenter*/, void **_node)
     else
 	entry->end_cluster = 0;
     entry->st_time = dos2time_t(info.time);
-#ifndef __ATHEOS__	
+
     set_mime_type(entry, filename);
-#endif
+
     *_node = entry;
 
     if (!reenter) UNLOCK_VOL(vol);

@@ -100,9 +100,9 @@ status_t write_vnode_entry(nspace *vol, vnode *node)
 
 	diri_mark_dirty(&diri);
 	diri_free(&diri);
-#ifndef __ATHEOS__
-	notify_listener(B_STAT_CHANGED, vol->id, 0, 0, node->vnid, NULL);
-#endif
+
+	notify_node_monitors( NWEVENT_STAT_CHANGED, vol->id, 0, 0, node->vnid, NULL, 0 );
+
 	return B_OK;
 }
 
@@ -232,9 +232,8 @@ int dosfs_wstat(void *_vol, void *_node, const struct stat *st, uint32 mask)
 
 	if (dirty) {
 		write_vnode_entry(vol, node);
-#ifndef __ATHEOS__		
-		notify_listener(B_STAT_CHANGED, vol->id, 0, 0, node->vnid, NULL);
-#endif		
+
+		notify_node_monitors( NWEVENT_STAT_CHANGED, vol->id, 0, 0, node->vnid, NULL, 0 );	
 	}
 
 	if (err != B_OK) DPRINTF(0, ("dosfs_wstat (%s)\n", strerror(err)));
@@ -807,10 +806,8 @@ int dosfs_create(void *_vol, void *_dir, const char* pzName, int nNameLen, int o
 
 	put_vnode(vol->id, *vnid);
 
+	notify_node_monitors( NWEVENT_CREATED, vol->id, dir->vnid, 0, *vnid, pzName, nNameLen );
 
-#ifndef __ATHEOS__
-	notify_listener(B_ENTRY_CREATED, vol->id, dir->vnid, 0, *vnid, name);
-#endif
 	result = 0;
 
 bi:	if (result != B_OK) free(cookie);
@@ -950,9 +947,9 @@ int dosfs_mkdir(void *_vol, void *_dir, const char* pzName, int nNameLen, int pe
     }
 
     free(buffer);
-#ifndef __ATHEOS__
-    notify_listener(B_ENTRY_CREATED, vol->id, dir->vnid, 0, dummy.vnid, name);
-#endif
+
+	notify_node_monitors( NWEVENT_CREATED, vol->id, dir->vnid, 0, dummy.vnid, pzName, nNameLen );
+
     result = B_OK;
 
     UNLOCK_VOL(vol);
@@ -1096,12 +1093,12 @@ int dosfs_rename( void *_vol, void *_odir, const char* pzOldName, int nOldNameLe
 		diri_free(&diri);
 	}
 	
-#ifndef __ATHEOS__
+
 	// update MIME information
 	set_mime_type(file, newname);
-	notify_listener(B_ENTRY_MOVED, vol->id, odir->vnid, ndir->vnid, file->vnid, newname);
-	notify_listener(B_ATTR_CHANGED, vol->id, 0, 0, file->vnid, "BEOS:TYPE");
-#endif
+
+	notify_node_monitors( NWEVENT_MOVED, vol->id, odir->vnid, ndir->vnid, file->vnid, newname, nNewNameLen );
+
 	result = 0;
 	
 bi2:if (result != B_OK) put_vnode(vol->id, file2->vnid);
@@ -1230,9 +1227,9 @@ static int do_unlink(void *_vol, void *_dir, const char *name, bool is_file)
 
 	// shrink the parent directory (errors here are not disastrous)
 	compact_directory(vol, dir);
-#ifndef __ATHEOS__
-	notify_listener(B_ENTRY_REMOVED, vol->id, dir->vnid, 0, file->vnid, NULL);
-#endif
+
+	notify_node_monitors( NWEVENT_DELETED, vol->id, dir->vnid, 0, file->vnid, name, strlen( name ) );
+
 	/* Set the loc to a unique value. This effectively removes it from the
 	 * vcache without releasing its vnid for reuse. This is okay because the
 	 * vnode is locked in memory after this point and loc will not be

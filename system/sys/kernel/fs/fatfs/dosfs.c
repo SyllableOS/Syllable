@@ -961,15 +961,15 @@ static FSOperations_s	g_sOperations =
     NULL,    			/* op_add_select_req	*/
     NULL,    			/* op_rem_select_req	*/
   
-    NULL,			/* op_open_attrdir 	*/
-    NULL,			/* op_close_attrdir 	*/
-    NULL,    			/* op_rewind_attrdir 	*/
-    NULL,			/* op_read_attrdir 	*/
+    NULL/*dosfs_open_attrdir*/,			/* op_open_attrdir 	*/
+    NULL/*dosfs_close_attrdir*/,			/* op_close_attrdir 	*/
+    NULL/*dosfs_rewind_attrdir*/,    			/* op_rewind_attrdir 	*/
+    NULL/*dosfs_read_attrdir*/,			/* op_read_attrdir 	*/
     NULL,			/* op_remove_attr 	*/
     NULL,    			/* op_rename_attr 	*/
-    NULL,			/* op_stat_attr 	*/
+    NULL/*dosfs_stat_attr*/,			/* op_stat_attr 	*/
     NULL,			/* op_write_attr 	*/
-    NULL,			/* op_read_attr 	*/
+    NULL/*dosfs_read_attr*/,			/* op_read_attr 	*/
   
     NULL,    			/* op_open_indexdir 	*/
     NULL,    			/* op_close_indexdir 	*/
