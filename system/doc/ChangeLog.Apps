@@ -1,5 +1,14 @@
+* July 2  2003, Rick Caudill *
+	* Aedit 1.4
+		* Aedit is now uses the standard imagebutton(which also means that I had to patch buttonbar up)
+		* All dialogs are centered in the main application window.  
+		* About box has the info icon on it.
+		* Menus are size by GetPreferredSize()
+		* Resize bug is now fixed.
+
 * July 1  2003, Rick Caudill *
-	* Final patches to AView.  This source is the latest that is uploaded to my website.
+	* AView
+		* Final patches to AView.  This source is the latest that is uploaded to my website.
 
 * June 24 2003, Kristian Van Der Vliet *
 	* Bug fixes to dhcpc
