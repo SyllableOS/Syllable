@@ -1,3 +1,10 @@
+* August 08, Henrik Isaksson *
+
+ - Decorators
+	o Applied two more patches by Michael Saunders to Beish and Photon.
+	o Fixed a bug in the Amiga decorator (the buttons where drawn in the wrong colour when
+	  clicked).
+
 * August 07, Henrik Isaksson *
 
  - Decorators
