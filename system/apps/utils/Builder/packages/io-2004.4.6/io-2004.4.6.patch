@@ -1,0 +1,47 @@
+diff -ru IoDesktop-2004-04-06/IoDesktop/Makefile IoDesktop-Syllable/IoDesktop/Makefile
+--- IoDesktop-2004-04-06/IoDesktop/Makefile	2004-04-06 10:10:44.000000000 +0000
++++ IoDesktop-Syllable/IoDesktop/Makefile	2004-04-07 15:17:37.000000000 +0000
+@@ -1,7 +1,7 @@
+ # Thanks to Dru Nelson and Mike Austin for help with this makefile
+ 
+ CFLAGS := -Os -g -I../IoVM -I../IoVM/base
+-ADDONS  = OpenGL FreeType Image Movie Compression Audio 
++ADDONS  = Compression
+ 
+ PLATFORM := $(shell uname)
+ 
+@@ -11,6 +11,10 @@
+ 
+ CFLAGS += $(addsuffix $(PLATFORM), -DPLATFORM_)
+ 
++ifneq ($(PLATFORM), syllable)
++  ADDONS += OpenGL FreeType Image Movie Audio
++endif
++
+ ifeq ($(PLATFORM), Darwin)
+   ADDONS += ObjcBridge
+ endif
+diff -ru IoDesktop-2004-04-06/IoServer/Makefile IoDesktop-Syllable/IoServer/Makefile
+--- IoDesktop-2004-04-06/IoServer/Makefile	2004-04-06 10:11:27.000000000 +0000
++++ IoDesktop-Syllable/IoServer/Makefile	2004-04-07 15:14:50.000000000 +0000
+@@ -11,7 +11,7 @@
+ LIBS := -L_libs
+ LIBSTOCOPY := 
+ 
+-ifneq ($(findstring MINGW, $(PLATFORM)), MINGW)
++ifeq (,$(findstring $(PLATFORM), MINGW syllable))
+   ADDONS += SleepyCat SQLite Regex
+ endif
+ 
+@@ -24,6 +24,11 @@
+   CCLIBS += -ldl
+ endif
+ 
++ifeq ($(PLATFORM), syllable)
++  ADDONS += SQLite Regex Fnmatch Curses
++  CCLIBS += -ldl
++endif
++
+ # NetBSD, FreeBSD, OpenBSD, etc.
+ ifeq ($(findstring BSD, $(PLATFORM)), BSD)
+   CCLIBS += -L/usr/pkg/lib  
