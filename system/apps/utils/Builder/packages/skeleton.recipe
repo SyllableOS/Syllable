@@ -1,5 +1,6 @@
 authors				
 maintainers			
+status				testing | broken
 package-name		<Deviating tarball name>
 ;
 ; Patching options:
@@ -28,5 +29,3 @@ install-prefix		prefix=
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
 ; Extra files to pack:
 distro-files		
-
-

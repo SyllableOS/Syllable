@@ -1,4 +1,5 @@
 authors				Kaj de Vos
+status				testing
 patch-config
 configure-options	--with-libs=-lcrypt
 documentation		README* INSTALL WARNING.RNG OVERVIEW RFC.nroff LICENCE ChangeLog TODO CREDITS

@@ -1,4 +1,5 @@
 authors			Kaj de Vos
+status			testing
 patch-config	autoconf
 ;test-targets	runtests
 ;install			make install && make elf && make install-elf && make install-links

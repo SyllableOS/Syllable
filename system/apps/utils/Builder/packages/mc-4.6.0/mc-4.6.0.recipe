@@ -1,4 +1,5 @@
 authors				Kaj de Vos
+status				broken
 patch-config		config
 configure-vars		PKG_CONFIG_PATH="/usr/glib/lib/pkgconfig"
 configure-options	--without-subshell --with-mcfs

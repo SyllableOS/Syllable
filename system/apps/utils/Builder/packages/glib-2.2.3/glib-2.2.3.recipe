@@ -1,4 +1,5 @@
 authors				Kaj de Vos
+status				testing
 patch-config
 configure-options	--with-threads=none
 documentation		README INSTALL COPYING NEWS ChangeLog AUTHORS
