@@ -42,6 +42,8 @@ configure-options
 
 install-env			CFLAGS '-D__SYLLABLE__ -march=i586 -O2 -pipe'
 ;install-prefix-var	install_root
-system-files		lib/lib*.so* system/libs
+system-files
+	lib/*.so	system/libs
+	lib/*.so.*	system/libs
 documentation		README BUGS INSTALL COPYING COPYING.LIB NEWS ChangeLog FAQ INTERFACE CONFORMANCE README.libm PROJECTS NOTES
 ;	manual
