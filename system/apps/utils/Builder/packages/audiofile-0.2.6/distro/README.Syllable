@@ -1,0 +1,111 @@
+audiofile for Syllable
+========================
+
+14 October 2004
+
+1 Introduction
+==============
+
+This is a binary distribution of the audiofile library.
+
+Apparently two tests fail during 'make check', but I have
+no knowledge of how to fix them or if they are important.
+I'm guessing if you run into problems due to them, you'll
+know how to fix it.
+
+See the file README for more information on audiofile.
+
+2 How to install audiofile on Syllable
+=================================
+
+2.1 
+----
+
+You may have to become the root user to perform the following
+operations:
+
+    su
+
+You should have unpacked this file with
+
+    tar -xpz
+
+or something equivalent. The 'p' option to tar is important: it
+preserves permissions on the extracted files. Without the proper file
+permissions, the installation will be broken.
+
+Unpacking produces the directory audiofile. This should be installed under
+/usr. If you unpacked it somewhere else, do:
+
+    mv audiofile /usr
+
+Then run:
+
+    pkgmanager -a /usr/audiofile
+
+This creates links in Syllable to enable it to find audiofile's files.
+
+You should now be able to link your programs with the audiofile library
+and run the various utilities from a terminal. 
+
+2.2 Uninstalling & upgrading audiofile
+---------------------------------
+
+If you ever want to remove audiofile, follow these steps. For example, you
+should do this before you install a new version of audiofile. Again, you
+may have to become root first:
+
+    su
+
+Then you should remove the links to audiofile from Syllable. You should
+even do this when you want to upgrade audiofile, because the links will
+most likely have changed for the new version.
+
+    pkgmanager -r /usr/audiofile
+
+To delete the files belonging to audiofile, run:
+
+    rm -r /usr/audiofile
+
+3 Building audiofile on Syllable
+===========================
+
+Normally you don't have to, but if you want to build audiofile yourself,
+you need to get the source distribution. You can get the audiofile
+distribution through its home page:
+
+    http://www.68k.org/~michael/audiofile/
+
+See the file README for details.
+
+    configure --prefix=/usr/audiofile
+
+to target it for /usr/audiofile.
+
+Now you can do
+
+    make
+
+and optionally
+
+    make check
+
+After becoming root,
+
+    make install
+
+will install audiofile's files. If you configured to install in /usr/audiofile,
+you will have to let Syllable know:
+
+    pkgmanager -a /usr/audiofile
+
+If you had a previous installation in /usr/audiofile, it would be wise to
+uninstall it before running make install:
+
+    pkgmanager -r /usr/audiofile
+    rm -r /usr/audiofile
+
+4 Contact information
+=====================
+
+
