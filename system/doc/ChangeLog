@@ -1,3 +1,15 @@
+* June 9 2004, Kristian Van Der Vliet *
+
+Synched the changes required for Glibc 2.3.2 in the following header files:
+
+atheos/atomic.h
+atheos/semaphore.h
+posix/param.h
+posix/signal.h
+posix/stat.h
+posix/types.h
+util/locker.h
+
 * June 7 2004, Kristian Van Der Vliet *
 
 Glibc 2.3.2 source finally checked in under syllable/system/lib/glibc-2.3.2  This
