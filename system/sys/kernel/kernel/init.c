@@ -28,7 +28,7 @@
 #include <posix/stat.h>
 
 #include <atheos/kernel.h>
-#include <atheos/kdebug.h>
+//#include <atheos/kdebug.h>
 #include <atheos/syscall.h>
 #include <atheos/smp.h>
 #include <atheos/irq.h>
@@ -302,20 +302,45 @@ int get_kernel_arguments( int *argc, const char *const **argv )
  * SEE ALSO:
  ****************************************************************************/
 
+#ifndef __ENABLE_DEBUG__
+#define __ENABLE_DEBUG__
+#endif
+
+#include <atheos/kdebug.h>
+#include <atheos/udelay.h>
+
+#undef DEBUG_LIMIT
+#define DEBUG_LIMIT	KERN_DEBUG_LOW
+
 static int find_boot_dev()
 {
 	int nBaseDir;
 	struct kernel_dirent sDevDirEnt;
 	char *pzDevPathBuf, *pzDiskPathBuf;
+	uint8 *pnHeaderBuf;
 	bool bFound = false;
 
 	pzDevPathBuf = kmalloc( 4096, MEMF_KERNEL );
 	pzDiskPathBuf = kmalloc( 4096, MEMF_KERNEL );
+	pnHeaderBuf = kmalloc( 512, MEMF_KERNEL );
+
+	if( NULL == pzDevPathBuf || NULL == pzDiskPathBuf || NULL == pnHeaderBuf )
+	{
+		kerndbg( KERN_PANIC, "Unable to allocate buffer memory.\n" );
+		if( NULL != pzDevPathBuf )
+			kfree( pzDevPathBuf );
+		if( NULL != pzDiskPathBuf )
+			kfree( pzDiskPathBuf );
+		if( NULL != pnHeaderBuf )
+			kfree( pnHeaderBuf );
+
+		return( ENOMEM );
+	}
 
 	nBaseDir = open( "/dev/disk", O_RDONLY );
 	if ( nBaseDir < 0 )
 	{
-		printk( "Unable to open directory /dev/disk\n" );
+		kerndbg( KERN_PANIC, "Unable to open directory /dev/disk\n" );
 		return ( nBaseDir );
 	}
 
@@ -336,11 +361,14 @@ static int find_boot_dev()
 		else
 		{
 			struct kernel_dirent sDiskDirEnt;
-			struct stat sStat;
+			int hDisk, nAttempt;
 
-			while ( getdents( nDevDir, &sDiskDirEnt, sizeof( sDiskDirEnt ) ) == 1 && bFound == false )
+			while( getdents( nDevDir, &sDiskDirEnt, sizeof( sDiskDirEnt ) ) == 1 && bFound == false )
 			{
-				if ( strcmp( sDiskDirEnt.d_name, "." ) == 0 || strcmp( sDiskDirEnt.d_name, ".." ) == 0 )
+				if( strcmp( sDiskDirEnt.d_name, "." ) == 0 || strcmp( sDiskDirEnt.d_name, ".." ) == 0 )
+					continue;
+
+				if( sDiskDirEnt.d_name[0] != 'c' )	/* Ignore any drives which are not CD's */
 					continue;
 
 				strcpy( pzDiskPathBuf, pzDevPathBuf );
@@ -348,26 +376,55 @@ static int find_boot_dev()
 				strcat( pzDiskPathBuf, sDiskDirEnt.d_name );
 				strcat( pzDiskPathBuf, "/raw" );
 
-				printk( "Checking %s\n", pzDiskPathBuf );
+				kerndbg( KERN_INFO, "Checking for boot disk in %s\n", pzDiskPathBuf );
 
+				/* Attempt to open & read 512 bytes from the disk */
+				/* FIXME: Work around a bug with the ATA driver & some very slow CD-ROM drives
+				   which causes the ATA driver to fail to read the capacity instead of waiting
+				   for them to spin up */
+				for( nAttempt = 0; nAttempt < 5; nAttempt++ )
+				{
+					nError = open( pzDiskPathBuf, O_RDONLY );
+					if( nError >= 0 )
+						break;
+
+					udelay( 2000000 );	/* 5 seconds.  My ancient 32x CD-ROM takes about this long(!) to spin up.. */
+				}
+
+				if( nError < 0 )
+				{
+					kerndbg( KERN_DEBUG_LOW, "Could not open %s\n", pzDiskPathBuf );
+					continue;		/* No disk in that drive */
+				}
+
+				hDisk = nError;
+
+				kerndbg( KERN_DEBUG_LOW, "Opened %s\n", pzDiskPathBuf );
+
+				/* Attempt the read */
+				nError = read( hDisk, pnHeaderBuf, 512 );
+
+				/* Close the device so that we can access it later if we need to */
+				close( hDisk );
+
+				if( nError < 512 )
+				{
+					kerndbg( KERN_DEBUG_LOW, "Read %i bytes from %s but I wanted 512 (Not fair!)\n", nError, pzDiskPathBuf );
+					continue;
+				}
+
+				/* There is a disk in the drive, so lets try to mount it */
 				nError = sys_mount( pzDiskPathBuf, "/boot", g_zBootFS, MNTF_SLOW_DEVICE, g_zBootFSArgs );
 
 				if ( nError < 0 )
+				{
+					kerndbg( KERN_WARNING, "Unable to mount %s\n", pzDiskPathBuf );
 					continue;
-
-				printk( "Checking for boot disk in %s\n", pzDiskPathBuf );
-
-				nError = stat( "/boot/SYLLABLE", &sStat );
-				if ( nError >= 0 )
-				{
-					printk( "Found boot disk in %s\n", pzDiskPathBuf );
-					strcpy( g_zBootDev, pzDiskPathBuf );
-					bFound = true;
 				}
-				else
-				{
-					sys_unmount( "/boot", true );
-				}
+
+				kerndbg( KERN_INFO, "Found boot disk in %s\n", pzDiskPathBuf );
+				strcpy( g_zBootDev, pzDiskPathBuf );
+				bFound = true;
 			}
 
 			close( nDevDir );
@@ -378,6 +435,7 @@ static int find_boot_dev()
 
 	kfree( pzDevPathBuf );
 	kfree( pzDiskPathBuf );
+	kfree( pnHeaderBuf );
 
 	return ( bFound ? 0 : -1 );
 }
