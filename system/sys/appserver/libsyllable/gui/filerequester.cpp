@@ -464,14 +464,16 @@ void FileRequester::HandleMessage( Message * pcMessage )
 
 			if( m->m_nMode == LOAD_REQ )
 			{
-				Path cPath( m->m_pcDirView->GetPath() );
 				for( uint i = 0; i < m->m_pcDirView->GetIconCount(); i++ )
 				{
+					Path cDirPath( m->m_pcDirView->GetPath() );
+
 					if( m->m_pcDirView->GetIconSelected( i ) )
 					{
 						IconData* pcIconData = m->m_pcDirView->GetIconData( i );
 						DirectoryIconData *pcData = static_cast < DirectoryIconData * >( pcIconData );
 						
+						Path cPath = cDirPath;
 						cPath.Append( pcData->m_zPath );
 						pcMsg->AddString( "file/path", cPath.GetPath() );
 					}
