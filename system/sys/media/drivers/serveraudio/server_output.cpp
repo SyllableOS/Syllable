@@ -182,6 +182,8 @@ status_t ServerOutput::AddStream( os::String zName, os::MediaFormat_s sFormat )
 						m_hServerArea );
 	if( m_hArea < 0 )
 		return( -1 );
+		
+	return( 0 );
 }
 
 status_t ServerOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket )
@@ -234,6 +236,7 @@ extern "C"
 	}
 
 }
+
 
 
 
