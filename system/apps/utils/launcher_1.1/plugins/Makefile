@@ -19,11 +19,11 @@ clean:
 
 install: all
 	strip --strip-all *.so
-	cp *.so $(INSTDIR)/plugins
+	cp *.so $(INSTDIR)/plugins/
 
 dist: all
 	strip --strip-all *.so
-	cp *.so $(DIST_DIR)$(INSTDIR)/plugins
+	cp *.so $(DIST_DIR)/atheos$(INSTDIR)/plugins/
 
 obj/gbar.o: src/gbar.cpp src/gbar.h src/blendablecolor.h
 	$(CC) src/gbar.cpp $(COPTS) -o obj/gbar.o
