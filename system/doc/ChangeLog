@@ -1,3 +1,8 @@
+* Aug 20 2003, Kristian Van Der Vliet *
+
+Patched ping.c to fix the byte order in the ping output.  Patch from Daniel Gryniewicz
+<dang@fprintf.net>
+
 * Aug 15 2003, Kristian Van Der Vliet *
 
 Patch from William Rose <wrose@zip-it.org> which adds an appserver= argument to the
