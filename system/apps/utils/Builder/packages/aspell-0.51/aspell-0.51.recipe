@@ -1,6 +1,6 @@
 authors			Kaj de Vos
 status			developing
-warning			Our GCC 3 doesn't work with this yet
+warnings		Our GCC 3 doesn't work with this yet
 
 licenses		LGPL
 
