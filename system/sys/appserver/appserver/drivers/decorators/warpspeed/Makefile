@@ -18,23 +18,23 @@ $(OBJDIR)/%.o : %.cpp
 	$(CC) $(COPTS) $< -o $@
 
 
-all :	objs $(OBJDIR)/warpspeed
+all :	objs $(OBJDIR)/WarpSpeed
 
 objs:
 	mkdir objs
 
-$(OBJDIR)/warpspeed: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/warpspeed /system/appserver -lsyllable -lstdc++ -lz
-	gcc -plugin $(OBJS) -o $(OBJDIR)/warpspeed -lsyllable -lstdc++
+$(OBJDIR)/WarpSpeed: $(OBJS)
+	gcc $(OBJS) -o $(OBJDIR)/WarpSpeed /system/appserver -lsyllable -lstdc++ -lz
+	gcc -plugin $(OBJS) -o $(OBJDIR)/WarpSpeed -lsyllable -lstdc++
 
 deps:
 
-install: $(OBJDIR)/warpspeed
-	cp -f $(OBJDIR)/warpspeed $(DEVBIN)/WarpSpeed
+install: $(OBJDIR)/WarpSpeed
+	cp -f $(OBJDIR)/WarpSpeed $(DEVBIN)/WarpSpeed
 
-dist: $(OBJDIR)/warpspeed
-	cp -f $(OBJDIR)/warpspeed $(DIST_DIR)/atheos/sys/drivers/appserver/decorators/amiga
+dist: $(OBJDIR)/WarpSpeed
+	cp -f $(OBJDIR)/WarpSpeed $(DIST_DIR)/atheos/sys/drivers/appserver/decorators/WarpSpeed
 
 clean:
-	-rm $(OBJS) $(OBJDIR)/warpspeed
+	-rm $(OBJS) $(OBJDIR)/WarpSpeed
 
