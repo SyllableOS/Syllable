@@ -701,7 +701,8 @@ static inline void BitBlit( SrvBitmap * sbm, SrvBitmap * dbm, int sx, int sy, in
 	{
 		BytesPerPix = nBitsPerPix / 8;
 	}
-
+	
+	
 	sx *= BytesPerPix;
 	dx *= BytesPerPix;
 	w *= BytesPerPix;
@@ -781,12 +782,17 @@ static inline void blit_convert_copy( SrvBitmap * pcDst, SrvBitmap * pcSrc, cons
 
 					for( int y = cSrcRect.top; y <= cSrcRect.bottom; ++y )
 					{
-						memcpy( ( uint8 * )pDst, ( uint8 * )pSrc, ( cSrcRect.right - cSrcRect.left + 1 ) );
+						if( g_bUseMMX )
+							mmx_memcpy( ( uint8 * )pDst, ( uint8 * )pSrc, ( cSrcRect.right - cSrcRect.left + 1 ) );
+						else
+							memcpy( ( uint8 * )pDst, ( uint8 * )pSrc, ( cSrcRect.right - cSrcRect.left + 1 ) );
 						pSrc += ( cSrcRect.right - cSrcRect.left + 1 );
 						pDst += ( cSrcRect.right - cSrcRect.left + 1 );
 						pSrc = ( uint8 * )( ( ( uint8 * )pSrc ) + nSrcModulo );
 						pDst = ( uint8 * )( ( ( uint8 * )pDst ) + nDstModulo );
 					}
+					if( g_bUseMMX )
+						mmx_end();
 					break;
 				}
 			case CS_RGB15:
@@ -865,12 +871,17 @@ static inline void blit_convert_copy( SrvBitmap * pcDst, SrvBitmap * pcSrc, cons
 
 					for( int y = cSrcRect.top; y <= cSrcRect.bottom; ++y )
 					{
-						memcpy( ( uint8 * )pDst, ( uint8 * )pSrc, 2 * ( cSrcRect.right - cSrcRect.left + 1 ) );
+						if( g_bUseMMX )
+							mmx_memcpy( ( uint8 * )pDst, ( uint8 * )pSrc, 2 * ( cSrcRect.right - cSrcRect.left + 1 ) );
+						else
+							memcpy( ( uint8 * )pDst, ( uint8 * )pSrc, 2 * ( cSrcRect.right - cSrcRect.left + 1 ) );
 						pSrc += ( cSrcRect.right - cSrcRect.left + 1 );
 						pDst += ( cSrcRect.right - cSrcRect.left + 1 );
 						pSrc = ( uint16 * )( ( ( uint8 * )pSrc ) + nSrcModulo );
 						pDst = ( uint16 * )( ( ( uint8 * )pDst ) + nDstModulo );
 					}
+					if( g_bUseMMX )
+						mmx_end();
 					break;
 				}
 			case CS_RGB16:
@@ -947,12 +958,17 @@ static inline void blit_convert_copy( SrvBitmap * pcDst, SrvBitmap * pcSrc, cons
 
 					for( int y = cSrcRect.top; y <= cSrcRect.bottom; ++y )
 					{
-						memcpy( ( uint8 * )pDst, ( uint8 * )pSrc, 2 * ( cSrcRect.right - cSrcRect.left + 1 ) );
+						if( g_bUseMMX )
+							mmx_memcpy( ( uint8 * )pDst, ( uint8 * )pSrc, 2 * ( cSrcRect.right - cSrcRect.left + 1 ) );
+						else
+							memcpy( ( uint8 * )pDst, ( uint8 * )pSrc, 2 * ( cSrcRect.right - cSrcRect.left + 1 ) );
 						pSrc += ( cSrcRect.right - cSrcRect.left + 1 );
 						pDst += ( cSrcRect.right - cSrcRect.left + 1 );
 						pSrc = ( uint16 * )( ( ( uint8 * )pSrc ) + nSrcModulo );
 						pDst = ( uint16 * )( ( ( uint8 * )pDst ) + nDstModulo );
 					}
+					if( g_bUseMMX )
+						mmx_end();
 					break;
 				}
 			case CS_RGB32:
@@ -963,13 +979,24 @@ static inline void blit_convert_copy( SrvBitmap * pcDst, SrvBitmap * pcSrc, cons
 
 					for( int y = cSrcRect.top; y <= cSrcRect.bottom; ++y )
 					{
-						for( int x = cSrcRect.left; x <= cSrcRect.right; ++x )
+						if( g_bUseMMX )
 						{
-							*pDst++ = COL_TO_RGB32( RGB16_TO_COL( *pSrc++ ) );
+							mmx_rgb16_to_rgb32( ( uint8 * )pSrc, ( uint8 * )pDst, cSrcRect.Width() + 1 );
+							pSrc += cSrcRect.Width() + 1;
+							pDst += cSrcRect.Width() + 1;
+						}
+						else
+						{
+							for( int x = cSrcRect.left; x <= cSrcRect.right; ++x )
+							{
+								*pDst++ = COL_TO_RGB32( RGB16_TO_COL( *pSrc++ ) );
+							}
 						}
 						pSrc = ( uint16 * )( ( ( uint8 * )pSrc ) + nSrcModulo );
 						pDst = ( uint32 * )( ( ( uint8 * )pDst ) + nDstModulo );
 					}
+					if( g_bUseMMX )
+						mmx_end();
 					break;
 				}
 			}
@@ -1022,6 +1049,8 @@ static inline void blit_convert_copy( SrvBitmap * pcDst, SrvBitmap * pcSrc, cons
 						pSrc = ( uint32 * )( ( ( uint8 * )pSrc ) + nSrcModulo );
 						pDst = ( uint16 * )( ( ( uint8 * )pDst ) + nDstModulo );
 					}
+					if( g_bUseMMX )
+						mmx_end();
 					break;
 				}
 			case CS_RGB32:
@@ -1037,12 +1066,17 @@ static inline void blit_convert_copy( SrvBitmap * pcDst, SrvBitmap * pcSrc, cons
 
 					for( int y = cSrcRect.top; y <= cSrcRect.bottom; ++y )
 					{
-						memcpy( ( uint8 * )pDst, ( uint8 * )pSrc, 4 * ( cSrcRect.right - cSrcRect.left + 1 ) );
+						if( g_bUseMMX )
+							mmx_memcpy( ( uint8 * )pDst, ( uint8 * )pSrc, 4 * ( cSrcRect.right - cSrcRect.left + 1 ) );
+						else
+							memcpy( ( uint8 * )pDst, ( uint8 * )pSrc, 4 * ( cSrcRect.right - cSrcRect.left + 1 ) );
 						pSrc += ( cSrcRect.right - cSrcRect.left + 1 );
 						pDst += ( cSrcRect.right - cSrcRect.left + 1 );
 						pSrc = ( uint32 * )( ( ( uint8 * )pSrc ) + nSrcModulo );
 						pDst = ( uint32 * )( ( ( uint8 * )pDst ) + nDstModulo );
 					}
+					if( g_bUseMMX )
+						mmx_end();
 					break;
 				}
 			}
@@ -1417,7 +1451,7 @@ static inline void blit_convert_alpha( SrvBitmap * pcDst, SrvBitmap * pcSrc, con
 				{
 					uint32 nSrcColor = *pSrc++;
 					uint32 nAlpha = nSrcColor >> 24;
-					
+				
 					if( nAlpha == 0xff )
 					{
 						*pDst = nSrcColor;
@@ -1428,7 +1462,7 @@ static inline void blit_convert_alpha( SrvBitmap * pcDst, SrvBitmap * pcSrc, con
 						uint32 nSrc1;
 						uint32 nDst1;
 						uint32 nDstAlpha = nDstColor & 0xff000000;
-						
+
 						nSrc1 = nSrcColor & 0xff00ff;
 						nDst1 = nDstColor & 0xff00ff;
 						nDst1 = ( nDst1 + ( ( nSrc1 - nDst1 ) * nAlpha >> 8 ) ) & 0xff00ff;
