@@ -381,7 +381,7 @@ static CacheBlock_s *lookup_block( int nDev, off_t nBlockNum )
 			panic( "lookup_block() requested %d::%Ld got %d::%Ld!!!\n", nDev, nBlockNum, psBlock->cb_nDevice, psBlock->cb_nBlockNum );
 			if ( bWarned )
 			{
-				printk( "Phew! lookup_block() block %d::%Ld previously stucked in busy state got free!\n", nDev, nBlockNum );
+				printk( "Phew! lookup_block() block %d::%Ld previously stuck in busy state got free!\n", nDev, nBlockNum );
 			}
 			return ( NULL );
 		}
@@ -397,7 +397,7 @@ static CacheBlock_s *lookup_block( int nDev, off_t nBlockNum )
 		{
 			if ( bWarned == false )
 			{
-				printk( "Panic : lookup_block() block %d::%Ld stucked in busy state!\n", nDev, nBlockNum );
+				printk( "Panic : lookup_block() block %d::%Ld stuck in busy state!\n", nDev, nBlockNum );
 				trace_stack( 0, NULL );
 				bWarned = true;
 			}
@@ -412,7 +412,7 @@ static CacheBlock_s *lookup_block( int nDev, off_t nBlockNum )
 	}
 	if ( bWarned )
 	{
-		printk( "Phew! lookup_block() block %d::%Ld previously stucked in busy state got free!\n", nDev, nBlockNum );
+		printk( "Phew! lookup_block() block %d::%Ld previously stuck in busy state got free!\n", nDev, nBlockNum );
 	}
 	return ( psBlock );
 }

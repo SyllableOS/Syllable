@@ -156,7 +156,7 @@ TCPCtrl_s *tcp_lookup( uint32 nLocalAddr, uint16 nLocalPort, uint32 nRemoteAddr,
 //      printk( "tcp_demux() Wait for connection to become unbusy\n" );
 		if ( nRetries++ > 5000 )
 		{
-			printk( "Error: tcp_demux() tcp connection stucked in busy state\n" );
+			printk( "Error: tcp_demux() tcp connection stuck in busy state\n" );
 			return ( NULL );
 		}
 		goto again;
