@@ -1,3 +1,8 @@
+* March 22 2004, Arno Klenke *
+
+Updates to work with gcc3 and current libsyllable
+New icons
+
 * Dec 21 2003, Arno Klenke *
 
 Coldfish saves the size of the file list when you hide the list.
@@ -21,3 +26,4 @@ Added multiple soundcard support to the media server
 * Nov 18 2003, Kristian Van Der Vliet *
 
 Created this ChangeLog for changes specific to the media framework.
+
