@@ -1,8 +1,6 @@
-include makefile.freetype
-
 SCREENSHOT = y
 
-CFLAGS   = -Wall -c -O4 -pipe -fexceptions -march=i586 -mcpu=i586 -ffast-math -fomit-frame-pointer -I./$(FREETYPE)/include
+CFLAGS   = -Wall -c -O4 -pipe -fexceptions -march=i586 -mcpu=i586 -ffast-math -fomit-frame-pointer $(shell freetype-config --cflags)
 CPPFLAGS= $(CFLAGS)
 AOPTS   = -c
 LIBS    = -lsyllable
@@ -35,10 +33,10 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/appserver: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/appserver $(FREETYPE)/objs/.libs/libfreetype.a $(LIBS) -lstdc++ -lm
+	gcc $(OBJS) -o $(OBJDIR)/appserver $(shell freetype-config --libs) $(LIBS) -lstdc++ -lm
 
 $(OBJDIR)/mini_appserver: $(OBJS)
-	gcc $(OBJS) -o $(OBJDIR)/appserver $(FREETYPE)/objs/.libs/libfreetype.a $(LIBS) -lstdc++ -lm
+	gcc $(OBJS) -o $(OBJDIR)/appserver $(shell freetype-config --libs) $(LIBS) -lstdc++ -lm
 
 install: $(OBJDIR)/appserver
 	cp -f $(OBJDIR)/appserver /system/appserver
@@ -46,15 +44,9 @@ install: $(OBJDIR)/appserver
 dist: $(OBJDIR)/appserver
 	cp -f $(OBJDIR)/appserver $(DIST_DIR)/atheos/sys/appserver
 
-deps: $(OBJDIR) $(DEPS)
-	$(MAKE) -C $(FREETYPE)/
+deps:
 
 clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d $(OBJDIR)/appserver
 
 -include $(OBJDIR)/*.d
-
-
-
-
-

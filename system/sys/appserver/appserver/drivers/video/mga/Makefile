@@ -1,6 +1,4 @@
-include ../freetype.makefile
-
-COPTS   = -I$(TOP)/src -I$(FREETYPEINCLUDE) -c -O2 -Wall -fexceptions
+COPTS   = -I$(TOP)/src $(shell freetype-config --cflags) -c -O2 -Wall -fexceptions
 
 DEVBIN = /system/drivers/appserver/video
 OBJS =	mga.o mga_crtc.o mga_gx00.o mga_tvp3026.o

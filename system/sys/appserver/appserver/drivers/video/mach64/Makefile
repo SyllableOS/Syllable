@@ -1,6 +1,4 @@
-include ../freetype.makefile
-
-COPTS   = -I$(TOP)/src -I$(FREETYPEINCLUDE) -c -O2 -Wall
+COPTS   = -I$(TOP)/src $(shell freetype-config --cflags) -c -O2 -Wall
 
 DEVBIN = /system/drivers/appserver/video
 OBJS = mach64_vesa.o mach64_accel.o mach64_crtc.o mach64_cursor.o mach64_io.o mach64_misc.o mach64_video.o mach64_ct.o mach64.o
