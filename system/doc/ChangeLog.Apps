@@ -1,3 +1,15 @@
+* June 9 2003, Rick Caudill    *
+	* Patched up Diskmanager.  Now all the dialogs are friendlier
+
+* June 8 2003, Rick Caudill    *
+	* AView updates
+		* New Features:
+			Finished adding scrollbar support.  
+			Now if the image is greater than the application window, the window will resize to half of the image size
+			Added a statusbar
+			Many other fixes
+
+
 * June 6 2003, Rick Caudill    *
 	* Patched Launcher so that images will not be drawn with a little fuzz(tm) on them.
 	* Patched Launcher's Clock so that the text will align right with the new freetype.
