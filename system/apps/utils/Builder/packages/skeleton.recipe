@@ -1,6 +1,7 @@
 authors				
 maintainers			
-status				testing | developing | broken
+status				testing | developing | incomplete | broken
+licenses			gpl | lgpl | bsd | mit | freeware | pd
 packages			<Deviating tarball name>
 ;
 ; Patching options:
@@ -19,11 +20,25 @@ configure-args		--prefix=/usr/foo
 ; Extra configure options:
 configure-options	
 ;
+; Building:
+; make <make-targets>
+;
+; Non-standard make targets:
+make-targets		all
+;
+; Testing:
+; make <test-targets>
+;
+; Non-standard test targets:
+test-targets		check
+;
 ; Installing:
-; make install [<install-prefix>]
+; make [<install-prefix>] <install-targets>
 ;
 ; Non-standard install prefix option:
 install-prefix		prefix=
+; Non-standard install targets:
+install-targets		install
 ;
 ; Extra files to install:
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
