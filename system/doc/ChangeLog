@@ -1,6 +1,18 @@
+* June 14 2003, Kaj de Vos *
+
+Imported tar 1.13.25 and coreutils 5.0.
+Imported zlib 1.1.4. This is supposed to be built as a shared library. Didn't adapt the
+makefiles, as the new build system will take care of this.
+
 * June 10 2003, Kristian Van Der Vliet *
 
 Put the Icon Translator back into the base distribution.
+
+* June 9 2003, Kaj de Vos *
+
+Imported ncurses 5.3.
+Removed man, groff and diffutils.
+Removed sed 3.02 after importing 4.0.7 a while ago.
 
 * May 22 2003, Henrik Isaksson *
 
