@@ -161,6 +161,8 @@ public:
     TreeViewNode*	RemoveNode( int nIndex, bool bUpdate = true );
     ListViewRow*	RemoveRow( int nIndex, bool bUpdate = true );
 
+	void			Clear();
+
 	void			Expand( TreeViewNode* pcNode );
 	void			Collapse( TreeViewNode* pcNode );
 

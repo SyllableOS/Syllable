@@ -65,6 +65,7 @@ public:
     virtual status_t GetNextEntry( String* pcName );
     virtual status_t GetNextEntry( FileReference* pcRef );
     virtual status_t Rewind();
+    virtual status_t Delete();
 
     status_t CreateFile( const String& cName, os::File* pcFile, int nAccessMode = S_IRWXU);
     status_t CreateDirectory( const String& cName, os::Directory* pcDir, int nAccessMode = S_IRWXU );

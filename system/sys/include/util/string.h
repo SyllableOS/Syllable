@@ -104,6 +104,10 @@ public:
     bool operator==( const std::string& cString ) const;
     bool operator==( const String& cString ) const;
 
+    bool operator!=( const char* pzString ) const;
+    bool operator!=( const std::string& cString ) const;
+    bool operator!=( const String& cString ) const;
+
     bool operator<( const char* pzString ) const;
     bool operator<( const std::string& cString ) const;
     bool operator<( const String& cString ) const;

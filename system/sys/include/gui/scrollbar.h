@@ -22,6 +22,7 @@
 #define	__F_GUI_SCROLLBAR_H__
 
 #include <limits.h>
+#include <values.h>
 
 #include <atheos/types.h>
 #include <gui/control.h>
