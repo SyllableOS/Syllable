@@ -270,7 +270,7 @@ status_t CddaInput::ReadPacket( os::MediaPacket_s* psPacket )
 		m_nAvailBlocks = i;
 		m_nOutBlock = 0;
 
-		for( j = i; j < NUM_BUFS; j++ )
+		for( j = 0; j < NUM_BUFS; j++ )
 			free( m_nLastBlocks[j] );
 
 		/* Copy the buffer pointers from these_blocks[] to last_blocks[]
