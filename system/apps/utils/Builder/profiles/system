@@ -234,7 +234,7 @@ modules
 	apps/utils/debug
 	apps/utils/dhcpc
 	apps/utils/fsutils
-	apps/utils/guiprefs
+;	apps/utils/guiprefs
 	apps/utils/man2html
 	apps/utils/nettools
 	apps/utils/pkgmanager
