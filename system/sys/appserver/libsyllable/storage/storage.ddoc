@@ -1,0 +1,54 @@
+/*!
+
+\defgroup storage The Syllable high level filesystem API
+
+This section will take you trough the Syllable highlevel filesystem API.
+Syllable has both a low-level API, that is mostly POSIX/ANSI compliant,
+and is available to both C and C++ programs. In addition, C++ programs
+can take advantage of the more highlevel C++ filesystem API, to get easy
+access to the filesystem.
+
+This section will concentrate mostly on the highlevel C++ API. To find
+documentation of the lowlevel API take a look at the Syllable syscall
+documentation and possibly any POSIX/ANSI documentation you might have
+available. Since the syscall and libc functions still are very poorly
+documented and since many of them are compliant with the POSIX and
+ANSI standards I recommend locating the standard "man" pages from a
+*BSD or Linux distribution and install them under Syllable. The "man"
+utility is part of the standard Syllable installation so simply adding
+the install location to the MANPATH environment variable will give you
+easy access to the documentation.
+
+The Syllable filesystem is organised much like the UNIX filesystem. The
+entire filesystem has exactly one root, named "/", and all other nodes
+in the FS can be located by traversing from here. Since Syllable
+supports mounting an arbritary number of filesystems (or volumes)
+simultanously, a mechanism is needed to "mount" one filesystem inside
+another. This mechanism is called "mount points". A mount point is
+simply a existing directory in one of the already mounted
+filesystems. When a new FS is mounted on a directory, that directory
+will serve as the root of the new filesystem and the previous content
+(if any) of the mount point will be inaccessible, until the new FS is
+unmounted.
+
+There are two main differences between a normal UNIX filesystem and the
+Syllable filesystem. The first is the virtual root-FS, the second is the
+virtual device-FS. The root directory in AtheOS is not located on a
+regular filesystem and it's not persistant during reboots. The root-FS
+is only backed in RAM and only support directories (used as mount
+points) and symlinks. The boot-FS is mounted as /boot/ and most of
+the time the FS is accessed through a set of symlinks created in the
+root by the bootup scripts. Normally extra volumes are also mounted in
+this virtual root-FS. The virtual device-FS is mounted as /dev/ and
+controls the AtheOS device drivers. The device-FS can be hierarchial
+to categorice the device drivers. All nodes inside the device-FS are
+created by the kernel itself on request from the device-drivers.
+
+NOTE: Throughout this documentation the name "file" might be used on
+any nodes located in the FS, so a "file" might not be a regular file
+but can also be a directory or symlink depending on the context where
+the name is used.
+
+
+*/
+
