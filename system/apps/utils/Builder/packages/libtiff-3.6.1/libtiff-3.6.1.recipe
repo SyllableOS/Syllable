@@ -1,5 +1,6 @@
 authors				Kaj de Vos
 status				incomplete
+
 ; BSD?
 licenses			custom
 home				www.remotesensing.org/libtiff/
@@ -8,13 +9,14 @@ packages			tiff-v3.6.1
 locations
 	ftp://ftp.remotesensing.org/pub/libtiff/
 	http://libtiff.maptools.org/dl/
+
 ;build-needs
 ;	libjpeg
 patch-config
-;configure-vars
-;	DIRS_LIBINC="/usr/libjpeg/include /usr/zlib/include"
-;	DIR_JPEGLIB="/usr/libjpeg/lib"
-;	DIR_GZLIB="/usr/zlib/lib"
+;configure-env
+;	DIRS_LIBINC		'/usr/libjpeg/include /usr/zlib/include'
+;	DIR_JPEGLIB		'/usr/libjpeg/lib'
+;	DIR_GZLIB		'/usr/zlib/lib'
 configure-options	--noninteractive --with-JPEG --with-ZIP
-; --with-DSO
+;	--with-DSO
 documentation		README RELEASE-DATE VERSION COPYRIGHT TODO html

@@ -36,6 +36,6 @@ configure-options
 ;	For printed documentation:
 ;	dvi
 
-;install-prefix		install_root=
+;install-prefix-var	install_root
 documentation		README BUGS INSTALL COPYING COPYING.LIB NEWS ChangeLog FAQ INTERFACE CONFORMANCE README.libm PROJECTS NOTES
 ;	manual

@@ -40,13 +40,13 @@ no-build-dir
 ; Configuring:
 ; <configure>
 ; [<pre-configure>]
-; [<configure-vars>] <configure-cmd> ([<configure-prefix>] | [<configure-args>]) [<configure-options>]
+; [<configure-env>] <configure-cmd> ([<configure-prefix>] | [<configure-args>]) [<configure-options>]
 
 configure			<Configuration commands>
 
 pre-configure		<Commands preceding configuration>
-; Extra variables for configure:
-configure-vars		VAR='value'
+; Extra environment variables for configure:
+configure-env		VAR='value'
 ; Non-standard configure command:
 configure-cmd		configure
 ; Non-standard prefix option:
@@ -57,12 +57,14 @@ configure-args		--prefix=/usr/foo
 configure-options	--with-option
 
 ; Building:
-; [<make-vars>] make [<make-options>] <make-targets>
+; [<make-env>] make [<make-vars>] [<make-options>] <make-targets>
 
+; Extra environment variables for make:
+make-env			VAR='value'
 ; Extra variables for make:
 make-vars			VAR='value'
 ; Extra make options:
-make-options		VAR='value'
+make-options		-option
 ; Non-standard make targets:
 ;make-targets		all
 
@@ -78,12 +80,12 @@ install-tree		<Extra subdirectories to create>
 
 ; Installing:
 ; <install>
-; make [<install-prefix>] <install-targets>
+; make [<install-prefix-var>] <install-targets>
 
 install				<Installation commands>
 
-; Non-standard install prefix option:
-install-prefix		prefix=
+; Non-standard install prefix variable:
+;install-prefix-var	prefix
 ; Non-standard install targets:
 ;install-targets		install
 

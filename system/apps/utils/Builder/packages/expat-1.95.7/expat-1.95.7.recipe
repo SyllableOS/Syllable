@@ -1,9 +1,11 @@
 authors				Kaj de Vos
+
 licenses			MIT
 home				www.libexpat.org
+
 test-needs			check
 patch-config		conftools
-;configure-vars		CPPFLAGS="-DXML_UNICODE"
+;configure-env		CPPFLAGS '-DXML_UNICODE'
 ;make-targets		buildlib
 ;install-targets		installlib
 documentation		README COPYING Changes doc examples

@@ -1,16 +1,18 @@
 authors
 	Octavian Cerna
 	Kaj de Vos
-maintainers		Kaj de Vos
-status			broken
-notes			See README for GLibC issues
-licenses		OS
-home			www.python.org
-packages		Python-2.3.3
+maintainers			Kaj de Vos
+status				broken
+notes				See README for GLibC issues
+
+licenses			OS
+home				www.python.org
+packages			Python-2.3.3
+
 build-recommends
 	readline
-configure-vars
-	CC="gcc -lc -I/include -I/ainc -I/usr/include -I/atheos/autolnk/include -L/system/libs -L/usr/glibc2/lib -L/atheos/autolnk/lib -L/usr/lib"
+configure-env
+	CC 'gcc -lc -I/include -I/ainc -I/usr/include -I/atheos/autolnk/include -L/system/libs -L/usr/glibc2/lib -L/atheos/autolnk/lib -L/usr/lib'
 configure-options
 ;	--with-libc="-lc"
 ;	--with-libc="-lc_nonshared"
@@ -18,7 +20,7 @@ configure-options
 ;	--enable-shared
 	--without-threads
 	--disable-ipv6
-test-targets	test
-;install-prefix	DESTDIR=
-;install-targets	altinstall
-documentation	README LICENSE Misc/NEWS Misc/HISTORY
+test-targets		test
+;install-prefix-var	DESTDIR
+;install-targets		altinstall
+documentation		README LICENSE Misc/NEWS Misc/HISTORY
