@@ -37,15 +37,20 @@
 SPIN_LOCK( g_sRealPoolLock, "real_pool_slock" );
 SPIN_LOCK( g_sPhysicalPoolLock, "physical_pool_slock" );
 
-/** Allocate memory of one memory heap.
- * \par Description:
- * Allocates memory according to the parameter.
- * \param psHeader - Memory pool.
- * \param nAddress - Address of the memory, only used if bExactAddress is true.
- *                   Will be set to the _real_ address if the call is successful.
- * \param bExactAddress - Whether use nAddress.
- * \param bHighest - If true then the memory at the highest address will be returned.
- * \return 0 if successful.
+
+//****************************************************************************/
+/** Allocates memory for a new memory heap.
+ * \internal
+ * \ingroup Memory
+ * \param psHeader the memory pool to use.
+ * \param pnAddress a pointer to the address of the memory to use; only used if
+ *     <i>bExactAddress</i> is true.  Will be set to the <b>real</b> address if
+ *     the call is successful.
+ * \param bExactAddress <code>true</code> to use <i>pnAddress</i>.
+ * \param bHighest if <code>true</code> then the memory at the highest address
+ *     will be returned.
+ * \param nSize the size in bytes to allocate.
+ * \return <code>0</code> if successful.
  * \sa FreeHeapMem()
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
@@ -188,8 +193,11 @@ void DumpHeapMem( MemHeader_s *psHeader )
 	}
 }
 
+//****************************************************************************/
 /* Tries to defragment a memory heap.
- * \param psHeader - Memory pool.
+ * \internal
+ * \ingroup Memory
+ * \param psHeader the memory pool to defragment.
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
 void DefragmentHeapMem( MemHeader_s *psHeader )
@@ -222,12 +230,13 @@ void DefragmentHeapMem( MemHeader_s *psHeader )
 	}
 }
 
-/** Free memory from of one memory heap.
- * \par Description:
- * Frees memory according to the parameter.
- * \param psHeader - Memory pool.
- * \param nAddress - Address of the memory.
- * \return 0 if successful.
+//****************************************************************************/
+/** Frees memory from the specified memory heap.
+ * \internal
+ * \ingroup Memory
+ * \param psHeader the memory pool to use.
+ * \param nAddress the address of the memory to free.
+ * \return <code>0</code> if successful.
  * \sa AllocateHeapMem()
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
@@ -258,13 +267,12 @@ status_t FreeHeapMem( MemHeader_s *psHeader, uint32 nAddress )
 }
 
 
-/** Allocate real memory.
+//****************************************************************************/
+/** Allocates memory in the real memory region.
  * \ingroup DriverAPI
- * \par Description:
- * Allocates memory in the real memory region.
- * \param nSize - Size.
- * \param nFlags - MEMF_CLEAR is valid.
- * \return A pointer to the memory.
+ * \param nSize the size in bytes to allocate.
+ * \param nFlags <code>MEMF_CLEAR</code> is valid.
+ * \return a pointer to the allocated memory.
  * \sa free_real()
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
@@ -303,11 +311,10 @@ void *alloc_real( uint32 nSize, uint32 nFlags )
 }
 
 
-/** Free real memory.
+//****************************************************************************/
+/** Frees memory in the real memory region.
  * \ingroup DriverAPI
- * \par Description:
- * Frees memory in the real memory region.
- * \param pAddress - Pointer to the allocated memory.
+ * \param pAddress a pointer to the allocated memory.
  * \sa alloc_real()
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
@@ -338,17 +345,16 @@ void free_real( void *pAddress )
 }
 
 
-/** Allocate physical memory.
+//****************************************************************************/
+/** Allocates memory in the physical memory region.  Please note that physical 
+ *  does not necessarily mean RAM;  it can be any region inside the memory map
+ *  of the PC (RAM, PCI memory, etc.).
  * \ingroup DriverAPI
- * \par Description:
- * Allocates memory in the physical memory region. Please note that physical 
- * does not mean that memory in the RAM is allocated, but a region inside the
- * whole memory area ( RAM, PCI memory... ).
- * \param pnAddress - Will be set to the _real_ address if the call is successful.
- * \param bExactAddress - If true, then the memory will be allocated at the address
- *                        specified by the pnAddress parameter.
- * \param nSize - Size.
- * \return 0 if successful.
+ * \param pnAddress will be set to the <b>real</b> address if the call is successful.
+ * \param bExactAddress if <code>true</code>, the memory will be allocated at
+ *     the address specified by the <i>pnAddress</i> parameter.
+ * \param nSize the size in bytes to allocate.
+ * \return <code>0</code> if successful.
  * \sa free_physical()
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
@@ -378,11 +384,10 @@ status_t alloc_physical( uint32 *pnAddress, bool bExactAddress, uint32 nSize )
 }
 
 
-/** Free physical memory.
+//****************************************************************************/
+/** Frees a region of physical memory.
  * \ingroup DriverAPI
- * \par Description:
- * Frees memory in the physical memory region.
- * \param nAddress - Address of the allocated memory.
+ * \param nAddress the address of the allocated memory.
  * \sa alloc_real()
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/

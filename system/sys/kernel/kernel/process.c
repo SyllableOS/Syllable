@@ -30,8 +30,8 @@
 #include "inc/sysbase.h"
 #include "inc/mman.h"
 #include "inc/array.h"
-	MultiArray_s g_sProcessTable;
-
+	MultiArray_s g_sProcessTable;
+
 
 /*****************************************************************************
  * NAME:
@@ -39,15 +39,15 @@
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/ 
-void remove_process( Process_s *psProc ) 
+void remove_process( Process_s *psProc ) 
 {
-	uint32 nFlg = cli();
+	uint32 nFlg = cli();
 
-	sched_lock();
-	MArray_Remove( &g_sProcessTable, psProc->tc_hProcID );
-	sched_unlock();
-	put_cpu_flags( nFlg );
-} 
+	sched_lock();
+	MArray_Remove( &g_sProcessTable, psProc->tc_hProcID );
+	sched_unlock();
+	put_cpu_flags( nFlg );
+} 
 
 /*****************************************************************************
  * NAME:
@@ -55,19 +55,19 @@
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/ 
-Process_s *get_proc_by_handle( proc_id hProcID ) 
+Process_s *get_proc_by_handle( proc_id hProcID ) 
 {
-	Process_s *psProc;
-	uint32 nFlg = cli();
+	Process_s *psProc;
+	uint32 nFlg = cli();
 
-	sched_lock();
-	psProc = MArray_GetObj( &g_sProcessTable, hProcID );
-	sched_unlock();
-	put_cpu_flags( nFlg );
-	return ( psProc );
-}
+	sched_lock();
+	psProc = MArray_GetObj( &g_sProcessTable, hProcID );
+	sched_unlock();
+	put_cpu_flags( nFlg );
+	return ( psProc );
+}
 
-
+
 
 /*****************************************************************************
  * NAME:
@@ -75,19 +75,19 @@
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/ 
-proc_id sys_get_next_proc( const proc_id hPrev ) 
+proc_id sys_get_next_proc( const proc_id hPrev ) 
 {
-	proc_id hNext;
-	int nFlg = cli();
+	proc_id hNext;
+	int nFlg = cli();
 
-	sched_lock();
-	hNext = MArray_GetNextIndex( &g_sProcessTable, hPrev );
-	sched_unlock();
-	put_cpu_flags( nFlg );
-	return ( hNext );
-}
+	sched_lock();
+	hNext = MArray_GetNextIndex( &g_sProcessTable, hPrev );
+	sched_unlock();
+	put_cpu_flags( nFlg );
+	return ( hNext );
+}
 
-
+
 
 /*****************************************************************************
  * NAME:
@@ -95,19 +95,19 @@
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/ 
-proc_id sys_get_prev_proc( const proc_id hProc ) 
+proc_id sys_get_prev_proc( const proc_id hProc ) 
 {
-	proc_id hPrev;
-	int nFlg = cli();
+	proc_id hPrev;
+	int nFlg = cli();
 
-	sched_lock();
-	hPrev = MArray_GetPrevIndex( &g_sProcessTable, hProc );
-	sched_unlock();
-	put_cpu_flags( nFlg );
-	return ( hPrev );
-}
+	sched_lock();
+	hPrev = MArray_GetPrevIndex( &g_sProcessTable, hProc );
+	sched_unlock();
+	put_cpu_flags( nFlg );
+	return ( hPrev );
+}
 
-
+
 
 /*****************************************************************************
  * NAME:
@@ -115,49 +115,24 @@
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/ 
-static Process_s *get_process_by_name( const char *pzName ) 
+static Process_s *get_process_by_name( const char *pzName ) 
 {
-	Process_s *psProc = NULL;
-	Thread_s *psThread;
-	int nFlg = cli();
+	Process_s *psProc = NULL;
+	Thread_s *psThread;
+	int nFlg = cli();
 
-	sched_lock();
-	psThread = get_thread_by_name( pzName );
-	if ( NULL != psThread )
+	sched_lock();
+	psThread = get_thread_by_name( pzName );
+	if ( NULL != psThread )
 	{
-		psProc = psThread->tr_psProcess;
-	}
-	sched_unlock();
-	put_cpu_flags( nFlg );
-	return ( psProc );
-}
+		psProc = psThread->tr_psProcess;
+	}
+	sched_unlock();
+	put_cpu_flags( nFlg );
+	return ( psProc );
+}
 
-
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/ 
-proc_id sys_get_process_id( const char *pzName ) 
-{
-	Process_s *psProc;
-	proc_id hProcID = -1;
-	int nFlg = cli();
-
-	sched_lock();
-	psProc = get_process_by_name( pzName );
-	if ( NULL != psProc )
-	{
-		hProcID = psProc->tc_hProcID;
-	}
-	sched_unlock();
-	put_cpu_flags( nFlg );
-	return ( hProcID );
-}
-
-
 
 /*****************************************************************************
  * NAME:
@@ -165,34 +140,58 @@
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/ 
-status_t sys_rename_process( int nProcessID, const char *pzName ) 
+proc_id sys_get_process_id( const char *pzName ) 
 {
-	Process_s *psProc;
+	Process_s *psProc;
+	proc_id hProcID = -1;
+	int nFlg = cli();
 
-	if ( nProcessID != -1 )
+	sched_lock();
+	psProc = get_process_by_name( pzName );
+	if ( NULL != psProc )
 	{
-		psProc = get_proc_by_handle( nProcessID );
-	}
+		hProcID = psProc->tc_hProcID;
+	}
+	sched_unlock();
+	put_cpu_flags( nFlg );
+	return ( hProcID );
+}
+
+
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/ 
+status_t sys_rename_process( int nProcessID, const char *pzName ) 
+{
+	Process_s *psProc;
+
+	if ( nProcessID != -1 )
+	{
+		psProc = get_proc_by_handle( nProcessID );
+	}
 	else
 	{
-		psProc = CURRENT_PROC;
-	}
-	if ( NULL != psProc )
+		psProc = CURRENT_PROC;
+	}
+	if ( NULL != psProc )
 	{
-		strncpy_from_user( psProc->tc_zName, pzName, OS_NAME_LENGTH );
-		return ( 0 );
-	}
+		strncpy_from_user( psProc->tc_zName, pzName, OS_NAME_LENGTH );
+		return ( 0 );
+	}
 	else
 	{
-		return ( -ESRCH );
-	}
-}
+		return ( -ESRCH );
+	}
+}
 
-
 
+//****************************************************************************/
 /** Rename a process.
  * \ingroup DriverAPI
- * \ingroup SysCalls
  * \par Description:
  *      All processes have a name to aid debugging and to some degree
  *	make it possible to search for a process by name. The name
@@ -228,45 +227,45 @@
  * \sa rename_thread(), get_process_id()
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/ 
-status_t rename_process( int nProcessID, const char *pzName ) 
+status_t rename_process( int nProcessID, const char *pzName ) 
 {
-	Process_s *psProc;
+	Process_s *psProc;
 
-	if ( nProcessID != -1 )
+	if ( nProcessID != -1 )
 	{
-		psProc = get_proc_by_handle( nProcessID );
-	}
+		psProc = get_proc_by_handle( nProcessID );
+	}
 	else
 	{
-		psProc = CURRENT_PROC;
-	}
-	if ( NULL != psProc )
+		psProc = CURRENT_PROC;
+	}
+	if ( NULL != psProc )
 	{
-		strncpy( psProc->tc_zName, pzName, OS_NAME_LENGTH );
-		psProc->tc_zName[OS_NAME_LENGTH - 1] = '\0';
-		return ( 0 );
-	}
+		strncpy( psProc->tc_zName, pzName, OS_NAME_LENGTH );
+		psProc->tc_zName[OS_NAME_LENGTH - 1] = '\0';
+		return ( 0 );
+	}
 	else
 	{
-		return ( -ESRCH );
-	}
-}
+		return ( -ESRCH );
+	}
+}
 
-
 
-/** Allocate a TLD slot.
+//****************************************************************************/
+/** Allocates a TLD slot.
  * \ingroup DriverAPI
- * \ingroup SysCalls
+ * \ingroup Syscalls
  * \par Description:
- *	Allocate a TLD. A TLD (thread local storage) is a integer that
+ *	Allocates a TLD. A TLD (thread local storage) is an integer that
  *	is allocated on the process level but accessed by threads.
- *	A thread can assign an arbritary value to a TLD and then
+ *	A thread can assign an arbitrary value to a TLD and then
  *	retrieve the value later. The TLD handle can be distributed
- *	among the threads but each thread will have their own privat
+ *	among the threads but each thread will have its own private
  *	storage for the TLD. This means that both thread A and thread
  *	B can store different values to the same TLD without overwriting
  *	each other's TLD. This is for example used to give each thread
- *	a privat "errno" global variable.
+ *	a private "errno" global variable.
  *
  * \return
  *	On success a positive handle is returned.
@@ -274,107 +273,104 @@
  *	On error a negative error code is returned.
  *	\endif
  *	\if document_syscalls
- *	On error -1 is returned "errno" will receive the error code.
+ *	On error <code>-1</code> is returned; "errno" will receive the error code.
  *	\endif
  * \par Error codes:
- *	\b ENOMEM All TLD slots are in use.
+ *	\b <code>ENOMEM</code> All TLD slots are in use.
  * \sa free_tld(), set_tld(), get_tld()
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/ 
-int alloc_tld( void ) 
+int alloc_tld( void ) 
 {
-	Process_s *psProc = CURRENT_PROC;
-	int i;
+	Process_s *psProc = CURRENT_PROC;
+	int i;
 
-	LOCK( psProc->pr_hSem );
-	for ( i = TLD_USER / ( sizeof( int ) * 32 ); i < TLD_SIZE / ( sizeof( int ) * 32 ); ++i )
+	LOCK( psProc->pr_hSem );
+	for ( i = TLD_USER / ( sizeof( int ) * 32 ); i < TLD_SIZE / ( sizeof( int ) * 32 ); ++i )
 	{
-		if ( psProc->pr_anTLDBitmap[i] != ~0 )
+		if ( psProc->pr_anTLDBitmap[i] != ~0 )
 		{
-			uint32 nMask;
-			int j;
+			uint32 nMask;
+			int j;
 
-			for ( j = 0, nMask = 1; j < 32; ++j, nMask <<= 1 )
+			for ( j = 0, nMask = 1; j < 32; ++j, nMask <<= 1 )
 			{
-				if ( ( psProc->pr_anTLDBitmap[i] & nMask ) == 0 )
+				if ( ( psProc->pr_anTLDBitmap[i] & nMask ) == 0 )
 				{
-					psProc->pr_anTLDBitmap[i] |= nMask;
-					UNLOCK( psProc->pr_hSem );
-					return ( ( i * 32 + j ) * 4 );
-				}
-			}
-		}
-	}
-	UNLOCK( psProc->pr_hSem );
-	return ( -1 );
-}
-int sys_alloc_tld( void ) 
+					psProc->pr_anTLDBitmap[i] |= nMask;
+					UNLOCK( psProc->pr_hSem );
+					return ( ( i * 32 + j ) * 4 );
+				}
+			}
+		}
+	}
+	UNLOCK( psProc->pr_hSem );
+	return ( -1 );
+}
+int sys_alloc_tld( void ) 
 {
-	return ( alloc_tld() );
-}
+	return ( alloc_tld() );
+}
 
-
 
-/** Release a TLD slot
+//****************************************************************************/
+/** Releases a TLD slot previously allocated with alloc_tld().
  * \ingroup DriverAPI
- * \ingroup SysCalls
- * \par Description:
- *	Release a TLD slot previously allocated with alloc_tld().
+ * \ingroup Syscalls
  * \param nHandle
  *	The TLD slot to release.
  * \return
- *	On success 0 is returned.
+ *	On success <code>0</code> is returned.
  *	\if document_driver_api
  *	On error a negative error code is returned.
  *	\endif
  *	\if document_syscalls
- *	On error -1 is returned "errno" will receive the error code.
+ *	On error <code>-1</code> is returned "errno" will receive the error code.
  *	\endif
  *	
  * \par Error codes:
- *	- \b EINVAL Invalid TLD handle.
+ *	- \b <code>EINVAL</code> Invalid TLD handle.
  * \sa alloc_tld(), set_tld(), get_tld()
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/ 
-int free_tld( int nHandle ) 
+int free_tld( int nHandle ) 
 {
-	Process_s *psProc = CURRENT_PROC;
-	int nError = 0;
+	Process_s *psProc = CURRENT_PROC;
+	int nError = 0;
 
-	if ( ( nHandle & 3 ) || nHandle < TLD_USER || nHandle >= TLD_SIZE )
+	if ( ( nHandle & 3 ) || nHandle < TLD_USER || nHandle >= TLD_SIZE )
 	{
-		return ( -EINVAL );
-	}
-	LOCK( psProc->pr_hSem );
-	if ( psProc->pr_anTLDBitmap[( nHandle / 4 ) / 32] & ( 1 << ( ( nHandle / 4 ) % 32 ) ) )
+		return ( -EINVAL );
+	}
+	LOCK( psProc->pr_hSem );
+	if ( psProc->pr_anTLDBitmap[( nHandle / 4 ) / 32] & ( 1 << ( ( nHandle / 4 ) % 32 ) ) )
 	{
-		psProc->pr_anTLDBitmap[( nHandle / 4 ) / 32] &= ~( 1 << ( ( nHandle / 4 ) % 32 ) );
-	}
+		psProc->pr_anTLDBitmap[( nHandle / 4 ) / 32] &= ~( 1 << ( ( nHandle / 4 ) % 32 ) );
+	}
 	else
 	{
-		nError = -EINVAL;
-	}
-	UNLOCK( psProc->pr_hSem );
-	return ( nError );
-}
-int sys_free_tld( int nHandle ) 
+		nError = -EINVAL;
+	}
+	UNLOCK( psProc->pr_hSem );
+	return ( nError );
+}
+int sys_free_tld( int nHandle ) 
 {
-	return ( free_tld( nHandle ) );
-}
+	return ( free_tld( nHandle ) );
+}
 
-
 
 /* NOTE: set_tld() is implemented as a inline function in <atheos/tld.h> */ 
-	
 
+//****************************************************************************/
 /** \fn void set_tld( int nHandle, int nValue )
- * \ingroup SysCalls
+ * \ingroup Syscalls
  * \brief Assign a value to a TLD slot.
  * \par Description:
- *	Assigne a value to the calling threads storage associated with the
+ *	Assign a value to the calling thread's storage associated with the
  *	given TLD handle. This will not affect the value of the same TLD
  *	in another thread and the value can only be read back by the
- *	thread who actually assigned it.
+ *	thread that actually assigned it.
  *
  * \param nHandle
  *	Handle to a TLD slot previously allocated by alloc_tld()
@@ -389,14 +385,14 @@
 void set_tld( int nHandle, int nValue )
 {
 } 
-#endif	/*  */
+#endif	/*  */
 	
 
 /* NOTE: get_tld() is implemented as a inline function in <atheos/tld.h> */ 
-	
 
+//****************************************************************************/
 /** \fn int get_tld( int nHandle )
- * \ingroup SysCalls
+ * \ingroup Syscalls
  * \brief Retrieve the value stored in a TLD.
  * \par Description:
  *	Retrieve the value stored earlier by *this* thread.
@@ -411,7 +407,7 @@ void set_tld( int nHandle, int nValue )
 int get_tld( int nHandle )
 {
 } 
-#endif	/*  */
+#endif	/*  */
 	
 
 /*****************************************************************************
@@ -420,7 +416,7 @@ int get_tld( int nHandle )
  * NOTE:
  * SEE ALSO:
  ****************************************************************************/ 
-void InitProcesses( void ) 
+void InitProcesses( void ) 
 {
-	MArray_Init( &g_sProcessTable );
-} 
+	MArray_Init( &g_sProcessTable );
+} 

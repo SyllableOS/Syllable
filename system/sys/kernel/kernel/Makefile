@@ -91,9 +91,10 @@ version.c:	$(OBJS) $(OBJDIR)/kernel.exports.c Makefile
 #intel.o:	intel.s
 
 doc:
-	-rm -R docs/DriverAPI/* docs/Syscalls/*
+	-rm -R docs/DriverAPI/* docs/Syscalls/* docs/Private/*
 	doxygen driverapi.dox
 	doxygen syscalls.dox
+	doxygen private.dox
 
 install-doc:
 	-rm -R /atheos/Documentation/kernel/*

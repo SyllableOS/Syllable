@@ -403,7 +403,6 @@ Semaphore_s *get_semaphore_by_handle( proc_id hProcess, sem_id hSema )
 
 /** Create a semaphore.
  * \ingroup DriverAPI
- * \ingroup SysCalls
  * \par Description:
  *	Create a kernel semaphore. Since AtheOS is heavily
  *	multithreaded semaphores are a frequently used object both in
@@ -670,7 +669,6 @@ static status_t do_delete_semaphore( sem_id hSema )
 
 /** Delete a kernel semaphore.
  * \ingroup DriverAPI
- * \ingroup SysCalls
  * \par Description:
  *	Delete a semaphore previously created with create_semaphore().
  *	Resources consumed by the semaphore will be released and
@@ -1337,7 +1335,6 @@ static status_t do_lock_semaphore_ex( bool bKernel, sem_id hSema, int nCount, ui
 
 /** Acquire a semaphore.
  * \ingroup DriverAPI
- * \ingroup SysCalls
  * \par Description:
  *	Acquire a semaphore. lock_semaphore_ex() will decrease the
  *	semaphore's nesting counter with "nCount".
@@ -1564,7 +1561,6 @@ status_t unlock_mutex( sem_id hSema )
 
 /** Lock a semaphore.
  * \ingroup DriverAPI
- * \ingroup SysCalls
  * \par Description:
  *	Locks a semaphore. Equivalent of calling lock_semaphore_ex()
  *	with a count of 1.
@@ -1757,7 +1753,6 @@ static status_t do_unlock_semaphore_ex( bool bKernel, sem_id hSema, int nCount )
 
 /** Release a semaphore.
  * \ingroup DriverAPI
- * \ingroup SysCalls
  * \par Description:
  *	Release a semaphore "nCount" number of times. The value of "nCount"
  *	will be added to the semaphores nesting counter and if the counter
@@ -1794,7 +1789,6 @@ status_t unlock_semaphore_ex( sem_id hSema, int nCount )
 
 /** Release a semaphore.
  * \ingroup DriverAPI
- * \ingroup SysCalls
  * \par Description:
  *	Same as unlock_semaphore_x() with a count of 1.
  * \sa unlock_semaphore_x()
@@ -1937,7 +1931,7 @@ status_t unlock_and_suspend( sem_id hWaitQueue, sem_id hSema )
 	return ( nError );
 }
 
-/** Release a sinlock and block on a wait-queue in one atomic operation.
+/** Release a spinlock and block on a wait-queue in one atomic operation.
  * \ingroup DriverAPI
  * \par Description:
  *	Same as unlock_and_suspend() except that it releases a spinlock
@@ -1952,19 +1946,30 @@ status_t unlock_and_suspend( sem_id hWaitQueue, sem_id hSema )
  *	This function can only be called from the kernel, or from device
  *	drivers. From user-space you should use unlock_and_suspend()
  * \par Warning:
- * \param
+ * \param hWaitQueue
+ *	Handle to the wait-queue to block on (created earlier with
+ *	create_semaphore()).
+ * \param psLock
+ *	Spinlock to release.
+ * \param nCPUFlags
+ * 	The CPU flags to restore before returning.
+ * \param nTimeOut
+ *	Maximum number of microseconds to wait for someone to wake us
+ *	up before ETIME is returned.
  * \return
+ *	On success 0 is returned.
+ *	On error a negative error code is returned.
  * \sa unlock_and_suspend()
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
-status_t spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s * psLock, uint32 nCPUFlags, bigtime_t nTimeout )
+status_t spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s * psLock, uint32 nCPUFlags, bigtime_t nTimeOut )
 {
 	Semaphore_s *psWaitQueue;
 	Thread_s *psThread = CURRENT_THREAD;
 	WaitQueue_s sWaitNode;
 	WaitQueue_s sSleepNode;
-	bigtime_t nResumeTime = get_system_time() + nTimeout;
+	bigtime_t nResumeTime = get_system_time() + nTimeOut;
 	int nError;
 
 	sWaitNode.wq_hThread = psThread->tr_hThreadID;
@@ -1993,7 +1998,7 @@ status_t spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s * psLock, uint32 
 
 	psThread->tr_hBlockSema = hWaitQueue;
 
-	if ( nTimeout == INFINITE_TIMEOUT )
+	if ( nTimeOut == INFINITE_TIMEOUT )
 	{
 		psThread->tr_nState = TS_WAIT;
 	}
@@ -2027,7 +2032,7 @@ status_t spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s * psLock, uint32 
 	cli();
 	spinlock( &g_sSemListSpinLock );
 
-	if ( INFINITE_TIMEOUT != nTimeout )
+	if ( INFINITE_TIMEOUT != nTimeOut )
 	{
 		remove_from_sleeplist( &sSleepNode );
 	}
@@ -2049,7 +2054,7 @@ status_t spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s * psLock, uint32 
 	{
 		return ( -EINTR );
 	}
-	else if ( nTimeout != INFINITE_TIMEOUT && get_system_time() > nResumeTime )
+	else if ( nTimeOut != INFINITE_TIMEOUT && get_system_time() > nResumeTime )
 	{
 		return ( -ETIME );
 	}
@@ -2078,7 +2083,7 @@ status_t spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s * psLock, uint32 
  *	with sleep_on_sem()/wakeup_sem().
  * \param hSema
  *	The wait-queue to sleep on (created with create_semaphore()).
- * \param nTimeout
+ * \param nTimeOut
  *	Maximum number of microseconds to wait for someone to wake us
  *	up before ETIME is returned.
  *	

@@ -82,13 +82,13 @@ DeviceHandle_s *g_psFirstDevice;
 uint32 g_nDriverHandle = 0;
 sem_id g_hDeviceListLock;
 
-/** Register a device.
+//****************************************************************************/
+/** Registers a device and returns a handle to it.
  * \ingroup DriverAPI
- * \par Description:
- * Registers a device and returns a handle to it.
- * \param pzName - Name of the device, will be overwritten after calling claim_device().
- * \param pzBus  - Name of the bus the device is attached to.
- * \return Handle to the device.
+ * \param pzName the name of the device; will be overwritten after calling
+ *     claim_device().
+ * \param pzBus the name of the bus the device is attached to.
+ * \return a handle to the device.
  * \sa claim_device(), unregister_device()
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
@@ -124,13 +124,12 @@ int register_device( const char *pzName, const char *pzBus )
 	return ( psDevice->d_nHandle );
 }
 
-/** Unregister a device.
+//****************************************************************************/
+/** Unregisters a previously registered device.
  * \ingroup DriverAPI
- * \par Description:
- * Unregisters a previously registered device.
  * \par Note:
  * An error message will be written to the kernel log if the device is still claimed.
- * \param nHandle - Handle returned by the register_device() call.
+ * \param nHandle the handle returned by the register_device() call.
  * \sa register_device(), release_device()
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
@@ -164,15 +163,15 @@ void unregister_device( int nHandle )
 	printk( "Error: unregister_device() called with invalid device\n" );
 }
 
-/** Claim one device.
+//****************************************************************************/
+/** Claims a registered device.
  * \ingroup DriverAPI
- * \par Description:
- * Claims a registered device.
- * \param nDeviceID - device id of the driver.
- * \param nHandle - Handle returned by the register_device() call.
- * \param pzName  - New name of the device.
- * \param eType - Type of the device.
- * \return 0 if successful or another value if the device is already claimed.
+ * \param nDeviceID the device id of the driver.
+ * \param nHandle the handle returned by the register_device() call.
+ * \param pzName the new name of the device.
+ * \param eType the type of the device.
+ * \return <code>0</code> if successful or another value if the device is already
+ *     claimed.
  * \sa register_device(), release_device()
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
@@ -211,11 +210,10 @@ status_t claim_device( int nDeviceID, int nHandle, const char *pzName, enum devi
 	return ( -1 );
 }
 
-/** Release one device.
+//****************************************************************************/
+/** Releases a device.
  * \ingroup DriverAPI
- * \par Description:
- * Releases a device.
- * \param nHandle - Handle returned by the register_device() call.
+ * \param nHandle the handle returned by the register_device() call.
  * \sa claim_device(), unregister_device()
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
@@ -250,15 +248,12 @@ void release_device( int nHandle )
 	return;
 }
 
-/** Return device informations.
+//****************************************************************************/
+/** Returns a <code>DeviceInfo_s</code> structure for a registered device.
  * \ingroup DriverAPI
- * \ingroup SysCalls
- * \par Description:
- * Returns some informations about one registered device.
- * \param psInfo - Pointer to a DeviceInfo_s structure, which will be filled
- *                with the information.
- * \param nIndex - Index of the device.
- * \return 0 if successful.
+ * \param psInfo a pointer to the <code>DeviceInfo_s</code> structure to fill.
+ * \param nIndex the index of the device.
+ * \return <code>0</code> if successful.
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
 status_t get_device_info( DeviceInfo_s * psInfo, int nIndex )
@@ -290,13 +285,14 @@ status_t get_device_info( DeviceInfo_s * psInfo, int nIndex )
 	return ( -1 );
 }
 
-/** Get one busmanager.
- * \ingroup DriverAPI
- * \par Description:
- * Returns a pointer to a structure, which will probably contain pointers
- * to the busmanager's functions.
- * \param pzName - Name of the bus.
- * \param nVersion - Version of the busmanager.
+//****************************************************************************/
+/** Returns a pointer to a structure containing function pointers for the
+ *  the specified busmanager.
+ * \internal
+ * \ingroup Devices
+ * \param pzName the name of the bus.
+ * \param nVersion the version of the busmanager.
+ * \return a pointer to the busmanager's function pointer structure.
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
 void *get_busmanager( const char *pzName, int nVersion )
@@ -312,9 +308,12 @@ void *get_busmanager( const char *pzName, int nVersion )
 	return ( NULL );
 }
 
-/** Load one busmanager.
- * \param pzPath - Path of the busmanager.
- * \param pzName - Name of the busmanager.
+//****************************************************************************/
+/** Loads the specified busmanager.
+ * \internal
+ * \ingroup Devices
+ * \param pzPath the path of the busmanager.
+ * \param pzName the name of the busmanager.
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
 void load_busmanager( const char *pzPath, char *pzName )
@@ -382,8 +381,11 @@ void load_busmanager( const char *pzPath, char *pzName )
 	}
 }
 
-/** Load busmanager of one directory.
- * \param pzPath - Path of the directory.
+//****************************************************************************/
+/** Loads all busmanagers in the specified directory.
+ * \internal
+ * \ingroup Devices
+ * \param pzPath the path of the directory to load.
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
 void load_busmanagers( char *pzPath )
@@ -450,7 +452,10 @@ void load_busmanagers( char *pzPath )
 }
 
 
-/** Called by write_kernel_config() ( config.c ) to save the configuration.
+//****************************************************************************/
+/** Called by write_kernel_config() to save the configuration.
+ * \internal
+ * \ingroup Devices
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
 void write_devices_config( void )
@@ -474,8 +479,11 @@ void write_devices_config( void )
 	}
 }
 
-/** Called by init_boot_modules() ( elf.c ) to add one bootmodule.
- * \param pzPath - Path of the busmanager.
+//****************************************************************************/
+/** Called by init_boot_modules() to add the specified bootmodule.
+ * \internal
+ * \ingroup Devices
+ * \param pzPath the path of the busmanager to add.
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
 void add_devices_bootmodule( const char *pzPath )
@@ -500,10 +508,12 @@ void add_devices_bootmodule( const char *pzPath )
 		/* Load busmanager */
 		load_busmanager( pzPath, zName );
 	}
-
 }
 
+//****************************************************************************/
 /** Set defaults.
+ * \internal
+ * \ingroup Devices
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
 void init_devices_boot( void )
@@ -535,7 +545,10 @@ static int dummy ( const char *pzPath, struct stat *psStat, void *pArg )
 	return ( 0 );
 }
 
+//****************************************************************************/
 /** Initialize all devices after the root volume has been mounted.
+ * \internal
+ * \ingroup Devices
  * \author Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
 void init_devices( void )

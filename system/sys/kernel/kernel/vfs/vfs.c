@@ -1158,7 +1158,6 @@ int open( const char *pzPath, int nFlags, ... )
 
 /** Open a file relative to a given directory.
  * \ingroup DriverAPI
- * \ingroup SysCalls
  * \par Description:
  *	based_open() have the same semantics as open() except that you
  *	can specify the "current working directory" as a parameter.
@@ -1799,7 +1798,6 @@ int do_freadlink( bool bKernel, int nFile, char *pzBuffer, size_t nBufSize )
 
 /** Read the content of an previously opened symlink.
  * \ingroup DriverAPI
- * \ingroup SysCalls
  * \par Description:
  *	Read the content of a symlink previously opened with
  *	open( path, O_NOTRAVERSE ).

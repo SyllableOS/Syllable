@@ -88,6 +88,8 @@ devices.
 A typical device driver will create one node in device_init() and
 delete it again in device_uninit().
 
+\code
+
 int g_nMyDeviceNode = -1;
 
 status_t device_init( int nDeviceID )
@@ -108,6 +110,7 @@ status_t device_uninit( int nDeviceID )
 	return( EOK );
 }
 
+\endcode
 
 \section sec3 How a driver is located
 

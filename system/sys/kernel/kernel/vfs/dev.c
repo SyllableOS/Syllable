@@ -1573,7 +1573,7 @@ static int link_device_node( const char *pzPath, FileNode_s *psNode )
  *	This is the unique device ID passed to the driver in the "device_init()"
  *	funcion.
  *
- * \param nDeviceHandle.
+ * \param nDeviceHandle
  *  The device handle for your device. You can probably
  *  ask the busmanager to get it. If you do not have a handle then you can also
  *  pass -1.
@@ -1828,7 +1828,7 @@ int rename_device_node( int nHandle, const char *pzNewPath )
  *	The returned count only indicate the highest used partition number
  *	and the caller must check each returned partition and filter out
  *	partitions where the type-field is '0'.
- * \param psDevice
+ * \param psDiskGeom
  *	Pointer to a device_geometry structure describing the disk's geometry.
  * \param pasPartitions
  *	Pointer to an array of partition descriptors that will be filled in.
