@@ -9,7 +9,7 @@ VPATH = ./
 CC	= gcc
 LL	= ld
 
-OBJS	= ffmpeg_demux.o ffmpeg_output.o ffmpeg_codec.o
+OBJS	= ffmpeg_demux.o ffmpeg_output.o ffmpeg_codec.o ffmpeg_addon.o
 LIBS	:= ffmpeg/libavcodec/libavcodec.a ffmpeg/libavformat/libavformat.a
 
 OBJDIR	:= objs
@@ -46,6 +46,7 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*
 
 -include $(OBJDIR)/*.d
+
 
 
 
