@@ -1,4 +1,4 @@
-SUBDIRS = bios ata usb
+SUBDIRS = bios usb
 include $(ATHEOS_SRC)/recurse.rules
 
 

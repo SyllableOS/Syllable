@@ -976,7 +976,7 @@ static void unlink_complete (USB_packet_s *urb)
 
 	/* then let the synchronous unlink call complete */
 	
-	wakeup_sem( splice->done, true );
+	UNLOCK( splice->done );
 	//complete (&splice->done);
 }
 
@@ -1086,7 +1086,7 @@ static int hcd_unlink_urb (USB_packet_s *urb)
 		if (!(urb->nTransferFlags & (USB_ASYNC_UNLINK|USB_TIMEOUT_KILLED))
 			&& HCD_IS_RUNNING (hcd->state)
 			&& !retval) {
-		sleep_on_sem( splice.done, INFINITE_TIMEOUT );
+		LOCK( splice.done );
 		//wait_for_completion (&splice.done);
 	} else if ((urb->nTransferFlags & USB_ASYNC_UNLINK) && retval == 0) {
 		return -EINPROGRESS;

@@ -3,7 +3,7 @@ CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
 AFLAGS   = -c
 
 
-OBJS := scsi_convert.o transport.o protocol.o usb_disk.o
+OBJS := scsi_convert.o transport.o protocol.o jumpshot.o usb_disk.o
 
 
 OBJDIR	:= objs

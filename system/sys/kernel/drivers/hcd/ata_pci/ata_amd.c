@@ -185,7 +185,6 @@ status_t amd_port_configure( ATA_port_s* psPort )
 
 void init_amd_controller( PCI_Info_s sDevice, ATA_controller_s* psCtrl )
 {
-	PCI_Info_s sBridgeDev;
 	int i;
 	int j;
 	bool bFound = false;
@@ -198,7 +197,7 @@ void init_amd_controller( PCI_Info_s sDevice, ATA_controller_s* psCtrl )
 	/* Scan controllers */
 	for( j = 0; j < ( sizeof( g_sAMDBridges ) / sizeof( struct AMD_bridge_s ) ); j++ )
 	{
-		if( sBridgeDev.nVendorID == g_sAMDBridges[j].nVendorID && sBridgeDev.nDeviceID == g_sAMDBridges[j].nDeviceID )
+		if( sDevice.nVendorID == g_sAMDBridges[j].nVendorID && sDevice.nDeviceID == g_sAMDBridges[j].nDeviceID )
 		{
 			psBridge = &g_sAMDBridges[j];
 			bFound = true;

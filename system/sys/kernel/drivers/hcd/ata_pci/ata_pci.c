@@ -425,6 +425,102 @@ status_t ata_pci_add_controller( int nDeviceID, PCI_Info_s sDevice, init_ata_con
 	return( 0 );
 }
 
+
+status_t ata_legacy_add_controller( int nDeviceID )
+{
+	int i;
+	uint32 nCommand1, nCommand2, nControl1, nControl2;
+	int nIrq1, nIrq2;
+	sem_id hLock1, hLock2;
+	sem_id hIRQWait1, hIRQWait2;
+	ATA_controller_s* psCtrl;
+	const char* const *argv;
+	int argc;
+	
+	printk( "Assuming generic legacy ata controller\n" );
+			
+	
+	/* Default legacy ATA registers */
+	nCommand1 = 0x1f0;
+	nCommand2 = 0x170;
+	nControl1 = 0x3f6;
+	nControl2 = 0x376;
+	nIrq1 = 14;
+	nIrq2 = 15;
+			
+			
+	get_kernel_arguments( &argc, &argv );
+
+	/* Let the user override the base address */
+	for( i = 0; i < argc; ++i )
+	{
+		if( get_num_arg( &nCommand1, "ata_pci_legacy_cmd1=", argv[i], strlen( argv[i] ) ) )
+			kerndbg( KERN_WARNING, "User specified command register base for channel 0\n" );
+		if( get_num_arg( &nCommand2, "ata_pci_legacy_cmd2=", argv[i], strlen( argv[i] ) ) )
+			kerndbg( KERN_WARNING, "User specified command register base for channel 1\n" );
+		if( get_num_arg( &nControl1, "ata_pci_legacy_ctrl1=", argv[i], strlen( argv[i] ) ) )
+			kerndbg( KERN_WARNING, "User specified control register base for channel 0\n" );
+		if( get_num_arg( &nControl2, "ata_pci_legacy_ctrl2=", argv[i], strlen( argv[i] ) ) )
+			kerndbg( KERN_WARNING, "User specified control register base for channel 1\n" );
+	}
+	g_bLegacyController = true;
+	
+	/* Print out data */
+	kerndbg( KERN_INFO, "Channel 0: %s Cmd @ %x Ctrl @ %x IRQ @ %i\n", "PIO",
+					(uint)nCommand1, (uint)nControl1, nIrq1 );
+	kerndbg( KERN_INFO, "Channel 1: %s Cmd @ %x Ctrl @ %x IRQ @ %i\n", "PIO",
+					(uint)nCommand2, (uint)nControl2, nIrq2 );			
+	
+	
+	/* Create locks */
+	hLock1 = create_semaphore( "ata_pci_port_lock", 1, 0 );
+	hLock2 = create_semaphore( "ata_pci_port_lock", 1, 0 );
+	hIRQWait1 = create_semaphore( "ata_pci_irq_wait", 0, 0 );
+	hIRQWait2 = create_semaphore( "ata_pci_irq_wait", 0, 0 );
+	
+	
+	/* Allocate controller */
+	psCtrl = g_psBus->alloc_controller( nDeviceID, 2, 2 );
+	strcpy( psCtrl->zName, "Legacy ATA controller" );
+	
+	/* Allocate and register port */
+	for( i = 0; i < 4; i++ )
+	{
+		int j;
+		ATA_port_s* psPort = g_psBus->alloc_port( psCtrl );
+		uint32 nRegBase = ( i & 2 ) ? nCommand2 : nCommand1;
+		sem_id hLock = ( i & 2 ) ? hLock2 : hLock1;
+		sem_id hIRQWait = ( i & 2 ) ? hIRQWait2 : hIRQWait1;
+		
+		psPort->hPortLock = hLock;
+		psPort->hIRQWait = hIRQWait;
+		psPort->sOps.reset = ata_pci_reset;
+		psPort->bMMIO = false;
+		psPort->nSupportedPortSpeed = ( 1 << ATA_SPEED_PIO );
+		
+		psPort->nType = ATA_PATA;
+		psPort->nCable = ATA_CABLE_UNKNOWN;
+		psPort->pDMATable = alloc_real( PAGE_SIZE / 2 + 4, 0 );
+		if( !psPort->pDMATable )
+		{
+			kerndbg( KERN_FATAL, "Failed to allocate DMA buffer\n" );
+			return( -1 );
+		}
+		psPort->pDMATable = ( uint8* )( ( (uint32)psPort->pDMATable + 4 ) & ~3 );
+		
+		/* Fill registers */
+		for( j = 0; j < 8; j++ )
+			psPort->nRegs[j] = nRegBase + j;
+		psPort->nRegs[ATA_REG_CONTROL] = ( i & 2 ) ? nControl2 : nControl1;
+		psCtrl->psPort[i] = psPort;
+		
+	}
+	
+	g_psBus->add_controller( psCtrl );
+	
+	return( 0 );
+}
+
 status_t device_init( int nDeviceID )
 {
 	PCI_Info_s sDevice;
@@ -484,18 +580,18 @@ status_t device_init( int nDeviceID )
 		}
 	}
 	
-	/* Get PCI busmanager */
-	g_psPCIBus = ( PCI_bus_s* )get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
-	if( g_psPCIBus == NULL ) {
-		printk( "Error: Could not get PCI busmanager!\n" );
-		return( -ENODEV );
-	}
-	
 	/* Get ATA busmanager */
 	g_psBus = ( ATA_bus_s* )get_busmanager( ATA_BUS_NAME, ATA_BUS_VERSION );
 	if( g_psBus == NULL ) {
 		printk( "Error: Could not get ATA busmanager!\n" );
 		return( -ENODEV );
+	}
+	
+	/* Get PCI busmanager */
+	g_psPCIBus = ( PCI_bus_s* )get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
+	if( g_psPCIBus == NULL ) {
+		printk( "Error: Could not get PCI busmanager!\n" );
+		return( ata_legacy_add_controller( nDeviceID ) );
 	}
 	
 	for( i = 0; g_psPCIBus->get_pci_info( &sDevice, i ) == 0; ++i )

@@ -775,28 +775,28 @@ static int afs_mount( kdev_t nFsID, const char *pzDevPath, uint32 nFlags, void *
 		printk( "Error: afs_mount() failed to setup device cache\n" );
 		goto error4;
 	}
-	psVolume->av_hJournalLock = create_semaphore( "afs_journal_mutex", 1, SEM_REQURSIVE );
+	psVolume->av_hJournalLock = create_semaphore( "afs_journal_mutex", 1, SEM_RECURSIVE );
 	if( psVolume->av_hJournalLock < 0 )
 	{
 		printk( "Error : afs_mount() failed to create journal semaphore\n" );
 		nError = psVolume->av_hJournalLock;
 		goto error4;
 	}
-	psVolume->av_hJournalListsLock = create_semaphore( "afs_journal_lists_mutex", 1, SEM_REQURSIVE );
+	psVolume->av_hJournalListsLock = create_semaphore( "afs_journal_lists_mutex", 1, SEM_RECURSIVE );
 	if( psVolume->av_hJournalLock < 0 )
 	{
 		printk( "Error : afs_mount() failed to create journal lists semaphore\n" );
 		nError = psVolume->av_hJournalLock;
 		goto error5;
 	}
-	psVolume->av_hBlockListMutex = create_semaphore( "afs_buffer_lock", 1, SEM_REQURSIVE );
+	psVolume->av_hBlockListMutex = create_semaphore( "afs_buffer_lock", 1, SEM_RECURSIVE );
 	if( psVolume->av_hBlockListMutex < 0 )
 	{
 		printk( "Error : afs_mount() failed to create block list semaphore\n" );
 		nError = psVolume->av_hBlockListMutex;
 		goto error6;
 	}
-	psVolume->av_hIndexDirMutex = create_semaphore( "afs_buffer_lock", 1, SEM_REQURSIVE );
+	psVolume->av_hIndexDirMutex = create_semaphore( "afs_buffer_lock", 1, SEM_RECURSIVE );
 	if( psVolume->av_hIndexDirMutex < 0 )
 	{
 		printk( "Error : afs_mount() failed to create file-index semaphore\n" );
@@ -1920,7 +1920,7 @@ static int afs_read_inode( void *pVolume, ino_t nInodeNum, void **ppNode )
 		printk( "Error: afs_read_inode() failed to load inode!\n" );
 		goto error2;
 	}
-	psVNode->vn_hMutex = create_semaphore( "afs_inode_lock", 1, SEM_REQURSIVE );
+	psVNode->vn_hMutex = create_semaphore( "afs_inode_lock", 1, SEM_RECURSIVE );
 	if( psVNode->vn_hMutex < 0 )
 	{
 		printk( "Error: afs_read_inode() failed to create semaphore!\n" );

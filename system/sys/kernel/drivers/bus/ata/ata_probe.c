@@ -196,7 +196,6 @@ void ata_probe_port( ATA_port_s* psPort )
 	/* Lock port */
 	LOCK( psPort->hPortLock );
 	
-	
 	/* Reset port */
 	if( psPort->sOps.reset( psPort ) != 0 )
 	{
@@ -284,14 +283,15 @@ void ata_probe_port( ATA_port_s* psPort )
 	ata_print_drive_speed( psPort );
 	
 	/* Check for 48bit addressing */
-	if( psID->command_set_2 & 0x400 )
+	
+	if( psPort->nDevice == ATA_DEV_ATA && ( psID->command_set_2 & 0x400 ) )
 	{
 		kerndbg( KERN_INFO, "%s: Drive uses 48bit addressing", g_bEnableLBA48bit ? "Warning" : "Error" );
 		kerndbg( KERN_INFO, "Capacity: %i Mb\n", (int)( psID->lba_capacity_48 / 1000 * 512 / 1000 ) );
 		psPort->bLBA48bit = true;
 		if( !g_bEnableLBA48bit )
 			goto err_id;
-	} else
+	} else if( psPort->nDevice == ATA_DEV_ATA )
 		if( psID->lba_sectors )
 			kerndbg( KERN_INFO, "Capacity: %i Mb\n", (int)( psID->lba_sectors / 1000 * 512 / 1000 ) );
 

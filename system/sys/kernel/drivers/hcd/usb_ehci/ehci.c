@@ -565,9 +565,6 @@ static void ehci_stop (struct usb_hcd *hcd)
 	remove_debug_files (ehci);
 
 	/* root hub is shut down separately (first, when possible) */
-	spinlock(&ehci->lock);
-	ehci_work (ehci, NULL);
-	spinunlock(&ehci->lock);
 	ehci_mem_cleanup (ehci);
 
 #ifdef	EHCI_STATS

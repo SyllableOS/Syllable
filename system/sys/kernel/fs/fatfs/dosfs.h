@@ -9,10 +9,10 @@
 #include <atheos/semaphore.h>
 #include <atheos/bcache.h>
 
-#define new_lock( id, name ) ( (((*(id))=create_semaphore( (name), 1, SEM_REQURSIVE )) < 0) ? -EINVAL : 0 )
+#define new_lock( id, name ) ( (((*(id))=create_semaphore( (name), 1, SEM_RECURSIVE )) < 0) ? -EINVAL : 0 )
 #define free_lock(lock) delete_semaphore( *(lock) )
 
-#define create_sem( count, name ) create_semaphore( (name), (count), SEM_REQURSIVE )
+#define create_sem( count, name ) create_semaphore( (name), (count), SEM_RECURSIVE )
 #define delete_sem		  delete_semaphore
 
 #define acquire_sem( id )	LOCK( (id) )

@@ -26,20 +26,6 @@
 #include "ata.h"
 #include "ata_private.h"
 
-/* Default lock function */
-status_t ata_port_lock( ATA_port_s* psPort )
-{
-	LOCK( psPort->hPortLock );
-	return( 0 );
-}
-
-/* Default unlock function */
-status_t ata_port_unlock( ATA_port_s* psPort )
-{
-	UNLOCK( psPort->hPortLock );
-	return( 0 );
-}
-
 /* Default configure function */
 status_t ata_port_configure( ATA_port_s* psPort )
 {

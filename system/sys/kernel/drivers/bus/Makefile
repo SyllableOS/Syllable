@@ -1,4 +1,4 @@
-SUBDIRS = pci usb scsi
+SUBDIRS = pci ata usb scsi
 include $(ATHEOS_SRC)/recurse.rules
 
 

@@ -320,7 +320,7 @@ static int ext2_walk(void * _vol, void * _parent, const char * name, int name_le
 #ifdef EXT2_DEBUG
 					strncpy(n, dirent->name, dirent->name_len);
 					n[dirent->name_len] = 0;
-					printk("ext2: %s in inode %d\n", n, dirent->inode);
+					printk("ext2: %s in inode %d block %d totalpos %d\n", n, dirent->inode, i, totalpos);
 #endif
 
 					*inode = dirent->inode;
@@ -515,7 +515,7 @@ static int ext2_read(void * _vol, void * _node, void * _cookie, off_t pos, void 
 		if(block < 0) return -EIO;
 		b = (char *)get_cache_block(vol->fd, block, vol->b_size);
 		if(!b) return -EIO;
-		memcpy(buf + pos_in_buf, b, vol->b_size - endpos);
+		memcpy(buf + pos_in_buf, b, endpos);
 		release_cache_block(vol->fd, block);
 	}
 
@@ -555,13 +555,13 @@ static int ext2_read_dir(void * _vol, void * _node, void * _cookie, int po, stru
 	int ba = node->n.blocks * (vol->b_size >> 9);
 
 #ifdef EXT2_DEBUG
-	printk("ext2_read_dir - pos %d, block %d, nodeblocks %d\n", cookie->pos, cookie->block, node->n.blocks);
+	printk("ext2_read_dir - pos %d, block %d, nodeblocks %d size %d total %d\n", cookie->pos, cookie->block, node->n.blocks, node->n.size, cookie->totalpos);
 #endif
 	
 	while(cookie->block < ba) {
 		if(cookie->totalpos >= node->n.size) {
 #ifdef EXT2_DEBUG
-			printk("ext2: Read past end of directory. Stop here.\n");
+			printk("ext2: Read past end of directory. Stop here. %d %d\n", cookie->totalpos, node->n.size);
 #endif
 			return 0;
 		}
@@ -573,8 +573,8 @@ static int ext2_read_dir(void * _vol, void * _node, void * _cookie, int po, stru
 
 		block += cookie->pos;
 		dirent = (ext2_dirent *)block;
-
-		if(dirent->inode && (cookie->pos + dirent->rec_len) < vol->b_size) {
+		
+		if(dirent->inode && (cookie->pos + dirent->rec_len) <= vol->b_size) {
 			int name_buf_size = (entsize - ((sizeof(dev_t) << 1) + (sizeof(ino_t) << 1) +
 					sizeof(unsigned short)));
 
@@ -582,7 +582,7 @@ static int ext2_read_dir(void * _vol, void * _node, void * _cookie, int po, stru
 			ent->d_ino = dirent->inode;
 			ent->d_namlen = name_buf_size;
 			strncpy(ent->d_name, dirent->name, name_buf_size);
-
+			
 			cookie->pos += dirent->rec_len;
 			cookie->totalpos += dirent->rec_len;
 			release_cache_block(vol->fd, b);
@@ -591,6 +591,7 @@ static int ext2_read_dir(void * _vol, void * _node, void * _cookie, int po, stru
 		} else {
 			cookie->pos = 0;
 			cookie->block++;
+			
 			cookie->totalpos = cookie->block  * vol->b_size;
 			if(!dirent->inode) cookie->block = ba;
 		}

@@ -809,7 +809,7 @@ static int rfs_mount( kdev_t nDevNum, const char* pzDevPath,
 	kfree( psVolume );
 	return( -ENOMEM );
     }
-    psVolume->rv_hMutex = create_semaphore( "ramfs_mutex", 1, SEM_REQURSIVE );
+    psVolume->rv_hMutex = create_semaphore( "ramfs_mutex", 1, SEM_RECURSIVE );
     if ( psVolume->rv_hMutex < 0 ) {
 	kfree( psVolume );
 	kfree( psRootNode );
