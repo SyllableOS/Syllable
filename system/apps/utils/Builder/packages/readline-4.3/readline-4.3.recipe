@@ -1,0 +1,10 @@
+authors			Kaj de Vos
+status			testing
+licenses		GPL
+patch-config	support
+configure-options
+	--disable-shared
+;	--with-curses
+;make-targets	everything shared
+;install-targets	install install-static install-shared
+documentation	README INSTALL USAGE COPYING CHANGES CHANGELOG
