@@ -268,7 +268,7 @@ void Configuration::Activate()
       {
        fsOut << "ifconfig " << pcAdaptors[i].pzDescription << " inet " << pcAdaptors[i].pzIP << " netmask " << pcAdaptors[i].pzSN << newl;
        if (strlen(pcAdaptors[i].pzGW)>0 && strcmp(pcAdaptors[i].pzGW, "0.0.0.0")!=0) 
-         fsOut << "route add " << pcAdaptors[i].pzIP << " netmask " << pcAdaptors[i].pzSN << " gateway " << pcAdaptors[i].pzGW << newl;
+         fsOut << "route add net " << pcAdaptors[i].pzIP << " mask 0.0.0.0 gw " << pcAdaptors[i].pzGW << newl;
       }
     }
   }
