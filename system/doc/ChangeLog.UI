@@ -1,6 +1,6 @@
 * February 14 2005, Henrik Isaksson *
 
- - GUI classes (gui/s*.h)
+ - GUI classes (gui/s*, gui/t* except TableView)
 	o Added reserved virtual methods.
 	o Added const to get methods where appropriate.
 	o Added private copy constructors.
