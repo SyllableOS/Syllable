@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.6
+# Version 0.6.7
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -182,7 +182,7 @@ def getModule target
 		unless exists? target
 			@log.subheader 'Installing source'
 
-			if Dir[File.join(@sourcesPath, fullName(target) + '.t*')] != []  # We have a tarball
+			if sourcePackagesAvailable? target
 				unpackModule target
 			else
 				downloadModule target and
@@ -203,7 +203,7 @@ def getModule target
 				# Source already prepared
 				true
 			else
-				if Dir[File.join(@sourcesPath, fullName(target) + '.t*')] != []  # We have a tarball
+				if sourcePackagesAvailable? target
 					puts "\nWARNING! If this is a CVS repository, it will be clobbered!"
 					@log.subheader 'Replacing source'
 
@@ -236,7 +236,7 @@ def getModule target
 		@log.failure target
 		false
 	else
-		action 'sync'
+		true
 	end
 end
 
@@ -1166,18 +1166,12 @@ def getTarget target
 	)
 end
 
-def loadRecipe port  # Read a recipe file
-	if exists? file = File.join(recipePath(port = fullName(port)), port + '.recipe')
+def loadRecipe target  # Read a recipe file
+	if exists? file = File.join(recipePath(target = fullName(target)), target + '.recipe')
 		loadFile file
-	else
+	else  # No recipe
 		[]
 	end
-end
-
-def getRecipe port  # Load the key/value pairs of a recipe into a hash table
-	(parent = (recipe = parseDictionary loadRecipe(port))['inherits']) ?
-		overlayRecipe(getRecipe(parent), recipe) :
-		recipe
 end
 
 def overlayRecipe recipe, overlay
@@ -1187,8 +1181,21 @@ def overlayRecipe recipe, overlay
 	recipe
 end
 
+def getRecipe target  # Load the key/value pairs of a recipe into a hash table
+	(parent = (recipe = parseDictionary loadRecipe(target))['inherits']) ?
+		overlayRecipe(getRecipe(parent), recipe) :
+		recipe
+end
+
 def makeCommand port
 	'make' + ((file = (getRecipe port)['makefile']) ? ' -f ' + file : '')
+end
+
+def sourcePackagesAvailable? target
+	package = (packages = (getRecipe target)['packages']) ?
+		(parseList packages).first :
+		fullName(target)
+	Dir[File.join(@sourcesPath, package + '*')] != []
 end
 
 def action command  # Return the output of the shell command, or false if unsuccessful
@@ -1367,7 +1374,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.6',
+	puts 'Syllable Build System 0.6.7',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
