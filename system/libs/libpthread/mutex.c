@@ -16,6 +16,7 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <posix/errno.h>
+#include <atheos/atomic.h>
 #include <atheos/semaphore.h>
 #include <stdio.h>
 
