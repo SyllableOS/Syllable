@@ -1,3 +1,7 @@
+* Nov 3 2002, Kristian Van Der Vliet *
+
+Fixed the keyboard driver and appserver.  The NumLock & CapsLock keys now function and are honored by the appserver.  All keymaps now set NumLock on by default.
+
 * Oct 24 2002, Kristian Van Der Vliet *
 
 Added a /dev/random character device driver, which makes use of the new kernel rand() function.

@@ -1,3 +1,8 @@
+* Nov 3 2002, Kristian Van Der Vliet *
+
+Added a kerndbg() macro to kdebug.h  Kernel output can now be controlled
+by defining the DEBUG_LIMIT macro at compile time. 
+
 * Oct 24 2002, Kristian Van Der Vliet *
 
 Added random.c which adds two functions, seed() and rand().  These can be
