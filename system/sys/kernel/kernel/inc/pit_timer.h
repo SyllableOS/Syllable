@@ -21,12 +21,14 @@
 #ifndef __F_ATHEOS_PIT_TIMER_H__
 #define __F_ATHEOS_PIT_TIMER_H__
 
-#define	PIT_TICKS_PER_SEC	0x1234ddL
-#define	PIT_TICKS_PER_MIL	(0x1234ddL/1000)
+#define	PIT_TICKS_PER_SEC	1193182
 
 #define	INT_FREQ		1000
 
+/* Countdown value to load into PIT timer, rounded to nearest integer. */
+#define LATCH		( ( PIT_TICKS_PER_SEC + INT_FREQ/2 ) / INT_FREQ )
+
 void start_timer_int( void );
-uint32 get_cmos_time( void );
+void get_cmos_time( void );
 
 #endif /* __F_ATHEOS_PIT_TIMER_H__ */

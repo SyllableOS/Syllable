@@ -2,6 +2,7 @@
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2005 Jake Hamby
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -18,6 +19,11 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+/** \file timer.c
+ * This file contains the timer interrupt handler and functions to return
+ * the system time (time elapsed since boot), real time (since 1970-01-01),
+ * and per-CPU idle time.  All time values are returned in microseconds.
+ */
 
 #include <atheos/types.h>
 #include <atheos/isa_io.h>
@@ -37,20 +43,41 @@
 #include "inc/global.h"
 #include "inc/smp.h"
 
-//#define INT_FREQ 1000		// moved to "inc/pit_timer.h"
-
-int g_bNeedSchedule;		/* If true the scheduler will be called when returning from syscall     */
+/** If true, the scheduler will be called when returning from syscall. */
+int g_bNeedSchedule;
 
 SEQ_LOCK( g_sTimerSeqLock, "timer_slock" );
+SPIN_LOCK( g_sPitTimerSpinLock, "i8253_slock" );
 
+//****************************************************************************/
+/** Returns the number of microseconds since the last clock tick.
+ * \internal
+ * \ingroup Timers
+ * \return the number of microseconds since the last clock tick.
+ * \author Jake Hamby (jhamby@pobox.com), based on Linux kernel.
+ *****************************************************************************/
+static uint32 get_pit_offset( void )
+{
+	uint32 nCount;
+	uint32 nFlg = spinlock_disable( &g_sPitTimerSpinLock );
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+	outb_p( 0x00, PIT_MODE );	// latch the count
+	nCount = inb_p( PIT_CH0 );
+	nCount |= inb_p( PIT_CH0 ) << 8;
 
+	spinunlock_enable( &g_sPitTimerSpinLock, nFlg );
+
+	nCount = ( ( LATCH - 1 ) - nCount ) * ( 1000000 / INT_FREQ );
+	nCount = ( nCount + LATCH / 2 ) / LATCH;
+	return nCount;
+}
+
+//****************************************************************************/
+/** Returns the time elapsed since last system boot.
+ * \ingroup Timers
+ * \return Time since last system boot, in microseconds.
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
 bigtime_t get_system_time( void )
 {
 	bigtime_t nTime;
@@ -60,19 +87,19 @@ bigtime_t get_system_time( void )
 	{
 		nSeq = read_seqbegin( &g_sTimerSeqLock );
 		nTime = g_sSysBase.ex_nRealTime - g_sSysBase.ex_nBootTime;
+		nTime += get_pit_offset();
 	}
 	while ( read_seqretry( &g_sTimerSeqLock, nSeq ) );
 
 	return ( nTime );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+//****************************************************************************/
+/** Returns the number of microseconds since 1970-01-01.
+ * \ingroup Timers
+ * \return The number of microseconds since 1970-01-01.
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
 bigtime_t get_real_time( void )
 {
 	bigtime_t nTime;
@@ -82,19 +109,21 @@ bigtime_t get_real_time( void )
 	{
 		nSeq = read_seqbegin( &g_sTimerSeqLock );
 		nTime = g_sSysBase.ex_nRealTime;
+		nTime += get_pit_offset();
 	}
 	while ( read_seqretry( &g_sTimerSeqLock, nSeq ) );
 
 	return ( nTime );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
 
+//****************************************************************************/
+/** Returns the total idle time for the given CPU.
+ * \ingroup Timers
+ * \param nProcessor the processor for which to return the idle time.
+ * \return Idle time for the given CPU, in microseconds.
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
 bigtime_t get_idle_time( int nProcessor )
 {
 	if ( nProcessor < 0 || nProcessor >= g_nActiveCPUCount )
@@ -105,13 +134,12 @@ bigtime_t get_idle_time( int nProcessor )
 	return ( g_asProcessorDescs[logical_to_physical_cpu_id( nProcessor )].pi_nIdleTime );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+//****************************************************************************/
+/** Returns the time elapsed since last system boot, in microseconds.
+ * \ingroup Syscalls
+ * \param pRes a pointer to the bigtime_t in which to store the system time.
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
 int sys_get_raw_system_time( bigtime_t *pRes )
 {
 	int nError = 0;
@@ -127,13 +155,12 @@ int sys_get_raw_system_time( bigtime_t *pRes )
 	return ( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+//****************************************************************************/
+/** Returns the number of microseconds since 1970-01-01.
+ * \ingroup Syscalls
+ * \param pRes a pointer to the bigtime_t in which to store the current time.
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
 int sys_get_raw_real_time( bigtime_t *pRes )
 {
 	int nError = 0;
@@ -149,13 +176,13 @@ int sys_get_raw_real_time( bigtime_t *pRes )
 	return ( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+//****************************************************************************/
+/** Returns the total idle time for the given CPU, in microseconds.
+ * \ingroup Syscalls
+ * \param pRes a pointer to the bigtime_t in which to store the CPU idle time.
+ * \param nProcessor the processor for which to return the idle time.
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
 int sys_get_raw_idle_time( bigtime_t *pRes, int nProcessor )
 {
 	int nError = 0;
@@ -171,6 +198,14 @@ int sys_get_raw_idle_time( bigtime_t *pRes, int nProcessor )
 	return ( nError );
 }
 
+//****************************************************************************/
+/** Sets the system clock to a new time.  Does not set the RTC.
+ * \ingroup Syscalls
+ * \param nTime the new system time, in microseconds since 1970-01-01.
+ * \return Always returns 0.
+ * \attention Missing check for sufficient privileges to set the system clock.
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
 int sys_set_real_time( bigtime_t nTime )
 {
 	uint32 nFlags;
@@ -182,88 +217,45 @@ int sys_set_real_time( bigtime_t nTime )
 	return ( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
-void starttimer1( void )
+//****************************************************************************/
+/** Starts PIT timer 1 and sets the latch value to trigger an interrupt at a
+ *  frequency of INT_FREQ Hz.
+ * \internal
+ * \ingroup Timers
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
+static void init_timer1( void )
 {
-	int speed = PIT_TICKS_PER_SEC / INT_FREQ;
-
 	/*	outb_p( 0x30, PIT_MODE );	*//*      One shot mode   */
 	outb_p( 0x34, PIT_MODE );	/* Loop mode    */
-	outb_p( speed & 0xff, PIT_CH0 );
-	outb_p( speed >> 8, PIT_CH0 );
+	outb_p( LATCH & 0xff, PIT_CH0 );
+	outb_p( LATCH >> 8, PIT_CH0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
-void starttimer2( void )
+//****************************************************************************/
+/** Initializes PIT timer 2 to the disabled state.
+ * \internal
+ * \ingroup Timers
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
+static void init_timer2( void )
 {
 	outb_p( 0xB4, PIT_MODE );
 	outb_p( 0, PIT_CH2 );
 	outb_p( 0, PIT_CH2 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-#if 0
-static uint16 readtimer1( void )
-{
-	uint16 n;
-
-	outb_p( 0, PIT_MODE );
-	n = inb_p( PIT_CH0 );
-	n += inb_p( PIT_CH0 ) << 8;
-	return 0x10000L - n;
-}
-#endif
-
-/******************************************************************************
-		read counter value of PIT timer 2, and update g_sSysBase.ex_lTicksElapsed.
-		This function must be called 18.2 times or more per second
- ******************************************************************************/
-#if 0
-uint32 readtimer2( void )
-{
-
-/*
-	uint16 n;
-	static	uint16	Last=0;
-
-	outb_p( 0x80, PIT_MODE );
-	n = inb_p( PIT_CH2 );
-	n += inb( PIT_CH2 ) << 8;
-
-	n = 0x10000L - n;
-
-	g_sSysBase.ex_lTicksElapsed += ( n < Last ) ? (0x10000 - Last + n) : (n - Last);
-
-	Last = n;
-*/
-	return ( g_sSysBase.ex_lTicksElapsed );
-}
-#endif
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+//****************************************************************************/
+/** This is the timer interrupt handler, called INT_FREQ times per second.  It
+ *  updates the system time and calls functions send_alarm_signals() and
+ *  wake_up_sleepers().  If there is no APIC present, Schedule() is also
+ *  called here; otherwise, Schedule() is called for each CPU via
+ *  do_smp_preempt(), which is triggered by the APIC timer.
+ * \ingroup Timers
+ * \param dummy unused.
+ * \sa idle_loop()
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
 void TimerInterrupt( int dummy )
 {
 	bigtime_t nCurTime;
@@ -296,74 +288,47 @@ void TimerInterrupt( int dummy )
 	}
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+//****************************************************************************/
+/** Initializes the PIT timers.
+ * \ingroup Timers
+ * \sa kernel_init()
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
 void start_timer_int( void )
 {
+	uint32 nFlg = spinlock_disable( &g_sPitTimerSpinLock );
+
 	outb_p( inb_p( 0x61 ) | 1, 0x61 );
 
-	starttimer1();
-	starttimer2();
+	init_timer1();
+	init_timer2();
 
+	spinunlock_enable( &g_sPitTimerSpinLock, nFlg );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+#if 0
+//****************************************************************************/
+/** Stops the PIT timer (currently unused).
+ * \ingroup Timers
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
 void stop_timer_int( void )
 {
+	uint32 nFlg = spinlock_disable( &g_sPitTimerSpinLock );
 	outb_p( 0x34, PIT_MODE );
 	outb_p( 0, PIT_CH0 );
 	outb_p( 0, PIT_CH0 );
+	spinunlock_enable( &g_sPitTimerSpinLock, nFlg );
 }
+#endif
 
-
-/* Converts Gregorian date to seconds since 1970-01-01 00:00:00.
- * Assumes input in normal date format, i.e. 1980-12-31 23:59:59
- * => year=1980, mon=12, day=31, hour=23, min=59, sec=59.
- *
- * [For the Julian calendar (which was used in Russia before 1917,
- * Britain & colonies before 1752, anywhere else before 1582,
- * and is still in use by some communities) leave out the
- * -year/100+year/400 terms, and add 10.]
- *
- * This algorithm was first published by Gauss (I think).
- *
- * WARNING: this function will overflow on 2106-02-07 06:28:16 on
- * machines were long is 32-bit! (However, as time_t is signed, we
- * will already get problems at other places on 2038-01-19 03:14:08)
- */
-
-
-
-static inline uint32 maketime( uint32 year, uint32 mon, uint32 day, uint32 hour, uint32 min, uint32 sec )
-{
-	if ( 0 >= ( int )( mon -= 2 ) )	/* 1..12 -> 11,12,1..10 */
-	{
-		mon += 12;	/* Puts Feb last since it has leap day */
-		year -= 1;
-	}
-	return ( ( ( ( uint32 )( year / 4 - year / 100 + year / 400 + 367 * mon / 12 + day ) + year * 365 - 719499 ) * 24 + hour	/* now have hours */
-		 ) * 60 + min	/* now have minutes */
-		 ) * 60 + sec;	/* finally seconds */
-}
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
-uint32 get_cmos_time( void )
+//****************************************************************************/
+/** Sets the system time from the battery-backed CMOS clock.
+ * \ingroup Timers
+ * \sa kernel_init()
+ * \author Kurt Skauen (kurt@atheos.cx)
+ *****************************************************************************/
+void get_cmos_time( void )
 {
 	ClockTime_s sTime;
 	uint32 year, mon, day, hour, min, sec;
@@ -450,5 +415,5 @@ uint32 get_cmos_time( void )
 	b += c;
 	kassertw( a == b );
 
-	return ( ( uint32 )( g_sSysBase.ex_nRealTime / 1000000 ) );
+//	return ( ( uint32 )( g_sSysBase.ex_nRealTime / 1000000 ) );
 }
