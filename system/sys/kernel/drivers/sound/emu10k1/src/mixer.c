@@ -949,9 +949,9 @@ status_t emu10k1_mixer_ioctl(void *node, void *cookie, uint32 cmd, void *arg, si
 			strncpy(info.id, card->ac97.name, sizeof(info.id));
 
 			if (card->is_audigy)
-				strncpy(info.name, "Audigy - Emu10k1", sizeof(info.name));
+				strncpy(info.name, "Creative Audigy", sizeof(info.name));
 			else
-				strncpy(info.name, "Creative SBLive - Emu10k1", sizeof(info.name));
+				strncpy(info.name, "Creative SBLive!", sizeof(info.name));
 
 			info.modify_counter = card->ac97.modcnt;
 

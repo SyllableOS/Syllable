@@ -355,6 +355,65 @@ status_t emu10k1_audio_ioctl(void *node, void *cookie, uint32 cmd, void *arg, si
 			break;
 		}
 
+
+		case SNDCTL_DSP_GETOSPACE:
+		{
+			audio_buf_info info;
+			uint32 bytestocopy;
+
+			DPF(4, "SNDCTL_DSP_GETOSPACE:\n");
+
+			spinlock_cli(&woinst->lock, flags);
+
+			if (woinst->state & WAVE_STATE_OPEN)
+			{
+				emu10k1_waveout_update(woinst);
+				emu10k1_waveout_getxfersize(woinst, &bytestocopy);
+
+				info.bytes = bytestocopy;
+			}
+			else
+			{
+				calculate_ofrag(woinst);
+				info.bytes = woinst->buffer.size;
+			}
+			spinunlock_restore(&woinst->lock, flags);
+
+			info.bytes *= woinst->num_voices;
+			info.fragsize = woinst->buffer.fragment_size * woinst->num_voices;
+			info.fragstotal = woinst->buffer.numfrags * woinst->num_voices;
+			info.fragments = info.bytes / info.fragsize;
+
+			if (memcpy_to_user((int *) arg, &info, sizeof(info)))
+				return -EFAULT;
+
+			break;
+		}
+
+		case SNDCTL_DSP_GETODELAY:
+		{
+			uint32 bytestocopy;
+
+			DPF(4, "SNDCTL_DSP_GETODELAY:\n");
+
+			spinlock_cli(&woinst->lock, flags);
+			if (woinst->state & WAVE_STATE_OPEN) {
+				emu10k1_waveout_update(woinst);
+				emu10k1_waveout_getxfersize(woinst, &bytestocopy);
+
+				val = woinst->buffer.size - bytestocopy;
+			} else
+				val = 0;
+
+			val *= woinst->num_voices;
+			spinunlock_restore(&woinst->lock, flags);
+
+			if(memcpy_to_user((unsigned long *)arg,&val,sizeof(val))!=0)
+				return -EFAULT;
+
+			return 0;
+		}
+
 		default:		/* Default is unrecognized command */
 		{
 			debug_ioctl(cmd);

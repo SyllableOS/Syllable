@@ -125,7 +125,7 @@ enum {
 };
 
 static char *card_names[] = {
-	"EMU10K1",
+	"SBLive!",
 	"Audigy",
 };
 
