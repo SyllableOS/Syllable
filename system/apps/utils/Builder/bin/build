@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.1.2
+# Version 0.1.3
 # Copyright (c) 2002, 2003 Kaj de Vos
 # License: GPL 2
 
@@ -251,11 +251,12 @@ end
 
 def prepare
 	if @systemBuild
-		logHeader "Creating extra directories"
+#		logHeader "Creating extra directories in source tree"
 
-		for dir in load File.join(@builderDir, "extra-source-dirs")
-			Dir.mkdir dir unless exists dir
-		end
+#		for dir in load File.join(@builderDir, "extra-source-dirs")
+#			logDetail dir
+#			Dir.mkdir dir unless exists dir
+#		end
 
 		logHeader "Building distribution tree"
 
@@ -268,8 +269,11 @@ def prepare
 
 #		action File.join(@buildTools, "mkbase.sh") + " " + @distroRoot
 		for dir in load File.join(@builderDir, "distro-dirs")
+			logDetail dir
 			Dir.mkdir dir unless exists dir
 		end
+
+		Dir.chdir @workDir
 	end
 end
 
@@ -448,7 +452,7 @@ def deleteCVSData
 	logHeader "Cleaning out CVS dirs"
 
 	Dir["**/CVS"].each do |dir|
-		@log << dir + "\n"
+		logDetail dir
 
 		# Delete all files in the CVS dir first
 		Dir.foreach dir do |file|
@@ -595,6 +599,11 @@ def logEntry entry
 	@summary	<< s
 end
 
+def logDetail detail
+	puts			detail
+	@log		<< detail + "\n"
+end
+
 def logAction action
 	puts			"\n#{action}\n"
 	@log		<< action + ": "
@@ -608,7 +617,7 @@ def logError error
 end
 
 def logResult result
-	@log		<< "\n\n#{result}\n\n"
+	@log		<< "\n\n" << result
 	@summary	<< "\n"
 end
 
@@ -624,7 +633,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "--version"
-	puts "Syllable Build System 0.1.2",
+	puts "Syllable Build System 0.1.3",
 		"Copyright (c) 2002, 2003 Kaj de Vos",
 		"License: GPL 2"
 when "--help"
@@ -632,7 +641,7 @@ when "--help"
 		"<command>:",
 		"  --version",
 		"  --help",
-		"  prepare:       Initialize source and distribution trees",
+		"  prepare:       Initialize distribution tree",
 		"  get:           Fetch and patch sources",
 		"  patch:         Patch sources",
 		"  distclean",
@@ -654,39 +663,46 @@ when "log"		then print IO.readlines(File.join(@logDir, "last-stdout"))
 when "summary"	then print IO.readlines(File.join(@logDir, "last-summary"))
 when "failures"	then print IO.readlines(File.join(@logDir, "last-failures"))
 else
-	target = arg2 ? arg2 : arg1 ? arg1 : "default"
-
 	openLogs
 
-	save profile(target), File.join(@profilesDir, "last")
+	if arg1 == "prepare"
+		prepare
+	else
+		target = arg2 ? arg2 : arg1 ? arg1 : "default"
 
-	if @systemBuild
-#		File.delete "/ainc" if exists "/ainc"
-#		action "ln -s #{File.join @workDir, "sys/include"} /ainc"
+		if (profile = profile target).is_a? Array  # Not a single package
+			save profile, File.join(@profilesDir, "last")
+		end
 
-		prepare unless exists @distroRoot
-	end
+		if @systemBuild
+#			File.delete "/ainc" if exists "/ainc"
+#			action "ln -s #{File.join @workDir, "sys/include"} /ainc"
 
-	case arg1
-	when "prepare"	then prepare
-	when "get"		then get target
-	when "patch"		then patch target
-	when "distclean"	then distclean target
-	when "clean"		then clean target
-	when "configure"	then configure target
-	when "make"		then make target
-	when "test"		then test target
-	when "install"		then install target
-	when "uninstall"	then uninstall target
-	when "distro"		then makeDistro target
-	else build arg1 ? arg1 : "default"
-	end
+			prepare unless exists @distroRoot
+		end
 
-	save @failures, File.join(@profilesDir, "last-failures")
+		case arg1
+		when "get"		then get target
+		when "patch"		then patch target
+		when "distclean"	then distclean target
+		when "clean"		then clean target
+		when "configure"	then configure target
+		when "make"		then make target
+		when "test"		then test target
+		when "install"		then install target
+		when "uninstall"	then uninstall target
+		when "distro"		then makeDistro target
+		else build arg1 ? arg1 : "default"
+		end
 
-	if @systemBuild
-#		File.delete "/ainc"
-#		action "ln -s /system/include /ainc"
+		if profile.is_a? Array  # Not a single package
+			save @failures, File.join(@profilesDir, "last-failures")
+		end
+
+		if @systemBuild
+#			File.delete "/ainc"
+#			action "ln -s /system/include /ainc"
+		end
 	end
 
 	closeLogs
