@@ -1,13 +1,13 @@
 * May 24 2003, Henrik Isaksson *
 
+Changed view.cpp so it adheres flags of the default font (anti-AA).
+
 Added flags field to SET/GET_DEFAULT_FONTS message (passed to the appserver
 to access default fonts). Adding the flags field makes it possible to for
 a prefs programme to enable/disable anti-aliasing.
 
 Re-enabled screenshot support in appserver makefile (turned it off by
 accident...)
-
-* May 24 2003, Henrik Isaksson *
 
 Fixed a bug in keyboard.cpp (appserver) concerning dead keys with qualifiers.
 

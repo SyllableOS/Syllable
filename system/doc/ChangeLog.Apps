@@ -1,3 +1,7 @@
+* May 24 2003, Henrik Isaksson *
+
+	* Patched Font prefs for Anti-AA option, made window larger and resizable.
+
 * May 22 2003, Henrik Isaksson *
 
 	* Applied patch from Arno to Screen prefs, so that it will work with
