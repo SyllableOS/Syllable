@@ -1,7 +1,27 @@
+* May 09, Henrik Isaksson *
+
+ - Splitter
+	o Added SetSplitRatio() and GetSplitRatio().
+ - TextView
+	o Bugfix: the mouse cursor is now "normal" when it's over the scrollbars.
+ - Menu
+	o Increased the size of the selection highlight in menu bar mode and reduced the height
+	  of the menu bar to make the gap between menu bar and menu less obvious.
+	o Changed the behaviour, should make the menus a little less "jumpy"...
+
 * May 9th 2004, Kristiam Van Der Vliet *
 
  - Drow & Beish decorators now create their binary files with an initial capital letter,
    not "drow" and "beish".
+
+* May 08, Henrik Isaksson *
+
+ - String
+	o operator+() changed to const
+ - Thread
+	o Bugfix: uninitialized variable could cause threads to terminate the parent proess.
+ - ImageView
+	o Checked in missing changes that should have been there in 0.5.3... (Refresh() etc.)
 
 ---- 0.5.3 Released -------------------------------------------------------------------
 
@@ -637,5 +657,7 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
+
 
 
