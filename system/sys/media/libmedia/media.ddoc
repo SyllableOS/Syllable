@@ -1,0 +1,26 @@
+/*! \mainpage Documentation of the AtheOS highlevel C++ API
+
+
+
+\ref media "The Syllable Media API"
+
+*/
+
+
+/*!
+
+\defgroup media The Syllable Media API
+
+Here you will find documentation of the various C++ classes involved
+in the Media API
+
+The Media API can be used to play or record audio and video content 
+aswell as converting media data from one format to the other. Your
+starting point should be the MediaManager class, but you should also
+look at the example applications.
+
+*/
+
+
+
+
