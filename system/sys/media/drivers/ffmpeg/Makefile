@@ -22,7 +22,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/ffmpeg.so: $(OBJS) $(LIBS)
-	gcc -shared -Xlinker "-soname=ffmpeg.so" $(OBJS) -lm -lstdc++ -lsyllable -lmedia -lavformat -Lffmpeg/libavcodec -Lffmpeg/libavformat -lavcodec -L/usr/lib/ -o $(OBJDIR)/ffmpeg.so
+	gcc -shared -Xlinker "-soname=ffmpeg.so" $(OBJS) -lm -lz -lstdc++ -lsyllable -lmedia -lavformat -Lffmpeg/libavcodec -Lffmpeg/libavformat -lavcodec -L/usr/lib/ -o $(OBJDIR)/ffmpeg.so
 
 ffmpeg/libavcodec/libavcodec.a:
 	make -C ffmpeg
