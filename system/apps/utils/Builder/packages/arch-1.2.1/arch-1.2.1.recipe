@@ -1,0 +1,27 @@
+authors				Kaj de Vos
+status				testing
+notes				Waiting for ftruncate() implementation in AFS
+
+licenses			GPL GFDL
+home				www.gnuarch.org
+packages			tla-1.2.1
+
+build-needs
+	make <> 3.80
+;	gawk
+;	findutils
+run-needs
+	diffutils
+	patch
+	tar
+run-recommends
+	openssh
+	gnupg
+
+patch-config		src/build-tools/gnu
+configure-cmd		src/configure
+;configure-options	--yes ssh-is-lsh
+test-targets		test
+documentation
+	=ARCH-USERS-README COPYING src/tla/ChangeLog src/tla/=TODO src/tla/=THANKS
+	src/docs-tla/HOWTO.crypto src/docs-tla/html

@@ -1,0 +1,196 @@
+Arch for Syllable
+The wedding release
+===================
+
+18-Aug-2004
+
+This release is dedicated to Rick Caudill and his new wife Lana. Live
+long and prosper!
+
+1 Introduction
+==============
+
+This is a binary distribution of version 1.2.1 of Tom Lord's Arch
+revision control system for the Syllable operating system. This
+distribution was built on Syllable 0.5.3 with GCC 3.3.4, and was
+optimized for a Pentium CPU. It should also run on other versions
+of Syllable, but this has not been tested.
+
+If you encounter problems or have any other interesting observations,
+I would be interested to hear about them (see contact information).
+
+See the file =ARCH-USERS-README for more information on Arch.
+
+2 How to install Arch on Syllable
+=================================
+
+2.1 
+----
+
+2.1.1 
+------
+
+You may have to become the root user to perform the following
+operations:
+
+    su
+
+You should have unpacked this file with
+
+    tar -xpz
+
+or something equivalent. The 'p' option to tar is important: it
+preserves permissions on the extracted files. Without the proper file
+permissions, the installation will be broken.
+
+Unpacking produces the directory arch. This should be installed under
+/usr. If you unpacked it somewhere else, do:
+
+    mv arch /usr
+
+Then run:
+
+    pkgmanager -a /usr/arch
+
+This creates links in Syllable to enable it to find Arch's files. You
+should now be able to start Arch; for example:
+
+    tla --help
+
+To get started with Arch, please make sure you read the section about
+known problems.
+
+2.1.2 Installing with the Syllable build system
+-----------------------------------------------
+
+If you have the Syllable build system installed, it can do the above
+steps for you. Just do:
+
+    su
+    build install arch-1.2.1.bin.1.tgz
+
+2.2 Uninstalling & upgrading Arch
+---------------------------------
+
+2.2.1 
+------
+
+If you ever want to remove Arch, follow these steps. For example, you
+should do this before you install a new version of Arch. Again, you
+may have to become root first:
+
+    su
+
+Then you should remove the links to Arch from Syllable. You should
+even do this when you want to upgrade Arch, because the links will
+most likely have changed for the new version.
+
+    pkgmanager -r /usr/arch
+
+To delete the files belonging to Arch, run:
+
+    rm -r /usr/arch
+
+2.2.2 Uninstalling & upgrading with the Syllable build system
+-------------------------------------------------------------
+
+If you install a package with the Syllable build system, it will
+check if the package was already installed and remove the previous
+version automatically.
+
+If you just want to uninstall Arch, do:
+
+    su
+    build uninstall arch
+
+3 Building Arch on Syllable
+===========================
+
+Normally you don't have to, but if you want to compile Arch yourself,
+you need to get the source distribution. You can get the Arch
+distribution through its home page:
+
+    http://www.gnuarch.org
+
+The Syllable build system knows all specifics for building Arch. When
+you have the build system installed, you should first provide it with
+the Arch source package:
+
+    mv tla-1.2.1.tar.gz /usr/Builder/sources
+
+To configure and compile Arch, do
+
+    build arch-1.2.1
+
+from your work directory. If that succeeds, you can optionally run
+the testsuite:
+
+    build test arch-1.2.1
+
+To install and register the package, become root first:
+
+    su
+
+then do:
+
+    build install arch-1.2.1
+
+After the installation, you could even create a distribution package:
+
+    build distro arch-1.2.1
+
+4 Known problems and limitations
+================================
+
+Syllable lacks support for the ftruncate() filesystem function, and
+Arch fails to recognize this. What this means is that you need a
+workaround for a few Arch commands that try to use this
+functionality. If you want to create your own archives, Arch needs to
+have an ID for you. This ID should have the form of an email address
+and is normally given by the my-id command:
+
+    tla my-id 'Lana Stevens <lana.stevens@syllable.org>'
+
+Instead, you should enter this ID directly into the internal Arch
+file that holds this information. You can edit the following file:
+
+    ~/.arch-params/=id
+
+and enter your ID on one line like this:
+
+    Lana Stevens <lana.stevens@syllable.org>
+
+Or you could create the file like this:
+
+    echo 'Lana Stevens <lana.stevens@syllable.org>' > \
+        ~/.arch-params/=id
+
+Similarly, if you want to set a default archive (to shorten
+subsequent Arch commands), you should edit the file
+
+    ~/.arch-params/=default-archive
+
+and enter the archive name on one line:
+
+    rick@caudill.com--Sourcery-2004
+
+Or create the file like this:
+
+    echo 'rick@caudill.com--Sourcery-2004' > \
+        ~/.arch-params/=default-archive
+
+5 Contact information
+=====================
+
+Arch was ported to Syllable by Kaj de Vos. Special thanks to Kristian
+Van Der Vliet for implementing a missing feature in Syllable's
+network stack, needed by the Neon library included in Arch. You can
+send me problem reports, fixes and the like at
+
+    arch@syllable.info
+
+This distribution can be found in the download section of the
+Syllable web site:
+
+    http://syllable.org
+
