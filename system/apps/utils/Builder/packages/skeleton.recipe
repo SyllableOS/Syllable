@@ -1,11 +1,15 @@
-authors 
-maintainers 
+authors				
+maintainers			
 ; Patching options:
-patch-config
+patch-config		[directory]
 patch-legacy-config
+; Non-standard configure command:
+configure-cmd		configure
 ; Extra configure options:
-configure-options 
+configure-options	
+; Non-standard install prefix option:
+install-prefix		prefix=
 ; Extra files to install:
-documentation README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
+documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
 ; Extra files to pack:
-distro-files 
+distro-files		
