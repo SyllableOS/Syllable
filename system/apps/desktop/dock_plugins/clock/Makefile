@@ -48,5 +48,3 @@ install: all
 	@mkdir -p /system/drivers/dock
 	@cp Clock.so /system/drivers/dock/Clock.so
 
-
-

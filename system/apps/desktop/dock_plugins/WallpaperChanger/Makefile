@@ -1,10 +1,8 @@
-CFLAGS   = -Wall -c -O4 -pipe -fexceptions -march=i586 -mcpu=i586 -ffast-math -fomit-frame-pointer
-CPPFLAGS = $(CFLAGS)
+CFLAGS   = -Wall -c -O3 -pipe -fexceptions -ffast-math -fomit-frame-pointer
+CXXFLAGS = $(CFLAGS)
 AOPTS   = -c
 APPBIN = /system/drivers/dock
 VPATH = ./
-CC	= gcc
-LL	= ld
 OBJDIR	:= objs
 OBJS = WallpaperChanger.o WallpaperChangerLooper.o WallpaperChangerSettings.o bitmapscale.o
 
@@ -14,7 +12,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/WallpaperChanger.so: $(OBJS)
-	gcc -shared -Xlinker "-soname=WallpaperChanger.so" $(OBJS) -lstdc++ -lsyllable -o $(OBJDIR)/WallpaperChanger.so
+	$(CXX) -shared -Xlinker "-soname=WallpaperChanger.so" $(OBJS) -lsyllable -o $(OBJDIR)/WallpaperChanger.so
 	rescopy -r $(OBJDIR)/WallpaperChanger.so images/*.png
 
 install:  $(OBJDIR)/WallpaperChanger.so
@@ -22,7 +20,7 @@ install:  $(OBJDIR)/WallpaperChanger.so
 	install -s $(OBJDIR)/WallpaperChanger.so $(APPBIN)/WallpaperChanger.so
 
 dist:  $(OBJDIR)/WallpaperChanger.so
-	mkdir -p $(DIST_DIR)/system/drivers/dock
+	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dock
 	install -s $(OBJDIR)/WallpaperChanger.so $(DIST_DIR)/atheos/sys/drivers/dock/WallpaperChanger.so
 
 deps: $(OBJDIR)
@@ -31,5 +29,4 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d $(OBJDIR)/WallpaperChanger.so
 
 -include $(OBJDIR)/*.d
-
 
