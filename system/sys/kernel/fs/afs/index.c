@@ -94,6 +94,9 @@ int afs_create_index( void* pVolume, const char* pzName, int nNameLen, int nType
     AfsInode_s*      psIndexDir;
     int		     nError;
 
+	if (psVolume->av_nFlags & FS_IS_READONLY)
+		return( -EROFS );
+
     LOCK( psVolume->av_hIndexDirMutex );
     
     nError = afs_begin_transaction( psVolume );

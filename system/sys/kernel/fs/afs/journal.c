@@ -348,6 +348,12 @@ int afs_replay_log( AfsVolume_s* psVolume )
 	psSuperBlock->as_nLogStart = psVolume->av_nLoggStart;
 	return( 0 );
     }
+
+	if (psVolume->av_nFlags & FS_IS_READONLY) {
+		printk( "afs_replay_log() Trying to replay log on read-only FS\n" );
+		return( -EROFS );
+	}
+
     printk( "afs_replay_log() %d log blocks from %d\n",
 	    psSuperBlock->as_nValidLogBlocks, (int)psSuperBlock->as_nLogStart );
 

@@ -62,6 +62,12 @@ typedef struct
 
 enum
 {
+    AFS_FLAG_NONE = 0,
+    AFS_FLAG_READ_ONLY = 1
+};
+
+enum
+{
     BO_LITTLE_ENDIAN,
     BO_BIG_ENDIAN
 };
@@ -188,6 +194,7 @@ typedef struct
       // (not including blocks in the av_psFirstLogBlock list)
     bigtime_t	       av_nLastJournalAccesTime;
     volatile bool      av_bRunJournalFlusher;
+	int				av_nFlags;		// Mount flags
 } AfsVolume_s;
 
 

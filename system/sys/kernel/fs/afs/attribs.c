@@ -466,6 +466,9 @@ int afs_remove_attr( void* pVolume, void* pNode, const char* pzName, int nNameLe
     AfsInode_s* 	     psInode    = psVnode->vn_psInode;
     int 		     nError;
   
+	if (psVolume->av_nFlags & FS_IS_READONLY)
+		return( -EROFS );
+
     nError = afs_begin_transaction( psVolume );
 
     if ( nError < 0 ) {
@@ -710,6 +713,8 @@ int afs_write_attr( void* pVolume, void* pNode, const char* pzName, int nNameLen
     if ( nType >= ATTR_TYPE_COUNT ) {
 	return( -EINVAL );
     }
+	if (psVolume->av_nFlags & FS_IS_READONLY)
+		return( -EROFS );
 
     if ( nPos > nSDSize ) {
 	nSmallDataSize = nSDSize + 1;

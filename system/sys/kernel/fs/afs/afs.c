@@ -546,6 +546,10 @@ static int afs_empty_delme_dir( AfsVolume_s* psVolume )
 	    afs_end_transaction( psVolume, false );
 	    break;
 	}
+	if (psVolume->av_nFlags & FS_IS_READONLY) {
+		nError = -EROFS;
+		break;
+	}
 	nInodeNum = sIterator.bi_nCurValue;
 	afs_num_to_run( psVolume->av_psSuperBlock, &sInodeNum, nInodeNum );
 	nError = afs_do_read_inode( psVolume, &sInodeNum, &psInode );
@@ -687,7 +691,7 @@ static int afs_mount( kdev_t nFsID, const char* pzDevPath, uint32 nFlags, void* 
     int			nDev;
     int			nError = 0;
 
-    printk( "Mount afs on '%s'\n", pzDevPath );
+    printk( "Mount afs on '%s' flags %d\n", pzDevPath, nFlags );
 
     nDev = open( pzDevPath, O_RDWR );
 
@@ -789,28 +793,34 @@ static int afs_mount( kdev_t nFsID, const char* pzDevPath, uint32 nFlags, void* 
 	nError = psVolume->av_hJournalLock;
 	goto error5;
     }
-  
-  
+
+
     psVolume->av_hBlockListMutex = create_semaphore( "afs_buffer_lock", 1, SEM_REQURSIVE );
     if ( psVolume->av_hBlockListMutex < 0 ) {
 	printk( "Error : afs_mount() failed to create block list semaphore\n" );
 	nError = psVolume->av_hBlockListMutex;
 	goto error6;
     }
-  
+
     psVolume->av_hIndexDirMutex = create_semaphore( "afs_buffer_lock", 1, SEM_REQURSIVE );
     if ( psVolume->av_hIndexDirMutex < 0 ) {
 	printk( "Error : afs_mount() failed to create file-index semaphore\n" );
 	nError = psVolume->av_hIndexDirMutex;
 	goto error7;
     }
+
+	if (nFlags & MNTF_READONLY) {
+		psVolume->av_nFlags |= FS_IS_READONLY;
+		printk( "Info: Setting fs read only\n");
+	}
+
     nError = afs_replay_log( psVolume );
     if ( nError < 0 ) {
 	printk( "Error: afs_mount() failed to replay journal\n" );
 	goto error8;
     }
-    
-    
+
+
     *ppVolData = psVolume;
     *pnRootIno = afs_run_to_num( psSuperBlock, &psSuperBlock->as_sRootDir );
 
@@ -822,7 +832,7 @@ static int afs_mount( kdev_t nFsID, const char* pzDevPath, uint32 nFlags, void* 
 	printk( "Bitmap:     %Ld used blocks\n", nUsedBlocks );
 	psSuperBlock->as_nUsedBlocks = nUsedBlocks;
     }
-    
+
     printk( "afs_mount() : filesystem has %Ld free blocks (of %Ld)\n",
 	    (psSuperBlock->as_nNumBlocks - psSuperBlock->as_nUsedBlocks), psSuperBlock->as_nNumBlocks );
 
@@ -924,7 +934,8 @@ int afs_rfsstat( void* pVolume, fs_info* psInfo )
     
     psInfo->fi_dev		= psVolume->av_nFsID;
     psInfo->fi_root		= afs_run_to_num( psSuperBlock, &psSuperBlock->as_sRootDir );
-    psInfo->fi_flags		= FS_IS_PERSISTENT | FS_IS_BLOCKBASED | FS_HAS_MIME | FS_HAS_ATTR;
+    psInfo->fi_flags		= FS_IS_PERSISTENT | FS_IS_BLOCKBASED | FS_HAS_MIME
+		| FS_HAS_ATTR | psVolume->av_nFlags;
     psInfo->fi_block_size	= psSuperBlock->as_nBlockSize;
     psInfo->fi_io_size		= 65536;
     psInfo->fi_total_blocks	= psSuperBlock->as_nNumBlocks;	
@@ -1011,6 +1022,9 @@ static int afs_wstat( void* pVolume, void* pNode, const struct stat* psStat, uin
     AfsVNode_s*  psVNode = pNode;
     int	       nError;
   
+	if (psVolume->av_nFlags & FS_IS_READONLY)
+		return( -EROFS );
+
     AFS_LOCK( psVNode );
     if ( nMask & WSTAT_MODE ) {
 	psVNode->vn_psInode->ai_nMode = (psVNode->vn_psInode->ai_nMode & S_IFMT) | (psStat->st_mode & ~S_IFMT);
@@ -1166,11 +1180,13 @@ static int afs_create( void* pVolume, void* pParent, const char* pzName, int nNa
     AfsInode_s*	     psInode;
     AfsFileCookie_s* psCookie;
     bool	     bParentTouched = false;
-    int 	     nError;
+    int		     nError;
 
     if ( pzName[0] == '.' && (nNameLen == 1 || (nNameLen == 2 && pzName[1] == '.' ) ) ) {
 	return( -EEXIST );
     }
+	if (psVolume->av_nFlags & FS_IS_READONLY)
+		return( -EROFS );
   
     psCookie = kmalloc( sizeof( AfsFileCookie_s ), MEMF_KERNEL | MEMF_OKTOFAILHACK );
 
@@ -1247,6 +1263,8 @@ static int afs_symlink( void* pVolume, void* pParent, const char* pzName, int nN
     if ( pzName[0] == '.' && (nNameLen == 1 || (nNameLen == 2 && pzName[1] == '.' ) ) ) {
 	return( -EEXIST );
     }
+	if (psVolume->av_nFlags & FS_IS_READONLY)
+		return( -EROFS );
   
     nError = afs_begin_transaction( psVolume );
     if ( nError < 0 ) {
@@ -1326,6 +1344,8 @@ static int afs_mknod( void* pVolume, void* pParent, const char* pzName, int nNam
 	printk( "Error: afs_mknod() can't make node with mode %08x\n", nMode );
 	return( -EINVAL );
     }
+	if (psVolume->av_nFlags & FS_IS_READONLY)
+		return( -EROFS );
   
     if ( pzName[0] == '.' && (nNameLen == 1 || (nNameLen == 2 && pzName[1] == '.' ) ) ) {
 	return( -EEXIST );
@@ -1543,6 +1563,9 @@ static int afs_write( void* pVolume, void* pNode, void* pCookie, off_t nPos, con
 	printk( "Error: afs_write() attempt to write to non-file (%08lx)\n", psInode->ai_nMode );
 	return( -EINVAL );
     }
+	
+	if (psVolume->av_nFlags & FS_IS_READONLY)
+		return( -EROFS );
   
     AFS_LOCK( psInode->ai_psVNode );
 
@@ -1582,6 +1605,9 @@ static int afs_writev( void* pVolume, void* pNode, void* pCookie, off_t nPos, co
 	printk( "Error: afs_writev() attempt to write to non-file (%08lx)\n", psInode->ai_nMode );
 	return( -EINVAL );
     }
+	
+	if (psVolume->av_nFlags & FS_IS_READONLY)
+		return( -EROFS );
     
     for ( i = 0 ; i < nCount ; ++i ) {
 	if ( psVector[i].iov_len < 0 ) {
@@ -1724,6 +1750,10 @@ static int afs_open( void* pVolume, void* pNode, int nMode, void** ppCookie )
     AfsInode_s*      psInode  = ((AfsVNode_s*)pNode)->vn_psInode;
     AfsFileCookie_s* psCookie;
     int	             nError;
+
+	if (psVolume->av_nFlags & FS_IS_READONLY && ((nMode & O_TRUNC) || (nMode &
+					O_RWMASK) || (nMode & O_APPEND))) 
+		return( -EROFS );
 
     if ( nMode & O_TRUNC && psInode->ai_sData.ds_nSize != 0 ) {
 	off_t nOldSize;
@@ -1883,6 +1913,8 @@ static int afs_write_inode( void* pVolume, void* pNode )
     AfsInode_s*  psInode  = psVnode->vn_psInode;
     int		 nError = 0;
     
+	if (psVolume->av_nFlags & FS_IS_READONLY)
+		return( -EROFS );
     nError = afs_begin_transaction( psVolume );
     if ( nError < 0 ) {
 	printk( "Error: afs_write_inode() failed to begin transaction: %d\n", nError );
@@ -1952,6 +1984,8 @@ static int afs_make_dir( void* pVolume, void* pParent, const char *pzName, int n
     if ( pzName[0] == '.' && (nNameLen == 1 || (nNameLen == 2 && pzName[1] == '.' ) ) ) {
 	return( -EEXIST );
     }
+	if (psVolume->av_nFlags & FS_IS_READONLY)
+		return( -EROFS );
   
     nError = afs_begin_transaction( psVolume );
 
@@ -2047,6 +2081,9 @@ static int afs_rmdir( void* pVolume, void* pParent, const char *pzName, int nNam
     bool	 bInodesLocked = false;
     int 	 nError;
 
+	if (psVolume->av_nFlags & FS_IS_READONLY)
+		return( -EROFS );
+
     AFS_LOCK( psParent->ai_psVNode );
     nError = afs_lookup_inode( psVolume, psParent, pzName, nNameLen, &nInodeNum );
     if ( nError >= 0 ) {
@@ -2137,6 +2174,9 @@ static int afs_unlink( void* pVolume, void* pParent, const char *pzName, int nNa
     bool	 bParentTouched = false;
     bool	 bInodesLocked  = false;
     int 	 nError;
+
+	if (psVolume->av_nFlags & FS_IS_READONLY)
+		return( -EROFS );
 
     AFS_LOCK( psParent->ai_psVNode );
     nError = afs_lookup_inode( psVolume, psParent, pzName, nNameLen, &nInodeNum );
@@ -2314,6 +2354,8 @@ static int afs_rename( void* pVolume, void* pOldDir, const char* pzOldName, int 
     bool	 bInodesLocked    = false;
     int	         nError;
 
+	if (psVolume->av_nFlags & FS_IS_READONLY)
+		return( -EROFS );
   
     if ( nOldNameLen <= 0 || nNewNameLen <= 0 ) {
 	return( -EINVAL );
