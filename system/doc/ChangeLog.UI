@@ -1,6 +1,10 @@
 * January 27 2004, Henrik Isaksson *
 
  * Fixed stupid mistake in NodeMonitor; m was being deleted too soon.
+ * Fixed crash in DirectoryView when changing dirs.
+ * Fixed layout problem with TextView (GetPreferredSize(false) was
+   returning actual content size, not minimum size). This caused Whisper
+   to resize the mail view larger than the window sometimes.
 
 * January 25 2004, Henrik Isaksson *
 
@@ -481,6 +485,7 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
 
 
