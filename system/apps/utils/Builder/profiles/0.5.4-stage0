@@ -2,4 +2,5 @@
 
 modules
 	sys/kernel/kernel
+	libs/glibc2-2.1.2
 
