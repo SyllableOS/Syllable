@@ -1,6 +1,15 @@
+; Include version number in the installation prefix of ports:
 ;include-version
 
 environment
+;	For some strange reason, Linux defines OSTYPE and MACHTYPE, but doesn't pass them to child processes.
+;	If you have the misfortune of running it, define them here:
+	OSTYPE		linux-gnu
+	MACHTYPE	i586-pc-linux-gnu
+
 	CFLAGS		-march=i586 -O2 -pipe
 	CXXFLAGS	-march=i586 -O2 -pipe
+
+; For cross-compilation:
+;target			i586-pc-syllable
 

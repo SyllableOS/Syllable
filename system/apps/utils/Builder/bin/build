@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.5.71
+# Version 0.5.72
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -237,7 +237,7 @@ def configurePackage target
 											' ' + p :
 											' --prefix='
 										) + prefix(target) +
-										(@crossCompile ? " --build=#{ENV['MACHTYPE']} --host=i586-pc-syllable" : '')
+										(@crossCompile ? " --build=#{ENV['MACHTYPE']} --host=" + @target : '')
 									) +
 									((options = recipe['configure-options']) ? ' ' + toString(options) : '')
 								)
@@ -1252,11 +1252,18 @@ end
 @iconsPath = '/system/icons'
 
 
+# Set environment variables
+
+@settings = parseDictionary loadFile(File.join(@builderPath, 'settings'))
+
+for line in parseList @settings['environment']
+	var, value = splitLine line
+	ENV[var] = value
+end
+
 # Define settings
 
 @syllable = ENV['OSTYPE'] == 'syllable'
-
-@settings = parseDictionary loadFile(File.join(@builderPath, 'settings'))
 
 # Include version number on installed packages?
 @includeVersion = @settings['include-version']
@@ -1286,11 +1293,11 @@ end
 
 @indexesRoot = File.join @systemImage, 'atheos/autolnk'
 
-# Set environment variables
+if @crossCompile
+	@target = @settings['target']
 
-for line in parseList @settings['environment']
-	var, value = splitLine line
-	ENV[var] = value
+	ENV['CFLAGS'] = '-b ' + @target + ENV['CFLAGS']
+	ENV['CXXFLAGS'] = '-b ' + @target + ENV['CXXFLAGS']
 end
 
 
@@ -1300,11 +1307,13 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.71',
+	puts 'Syllable Build System 0.5.72',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
-	puts 'Usage: build [<command>] [<module> | <profile> | <package> | <log>]',
+	puts 'Usage:',
+		'  build [<command>] [<module> | <profile> | <package> | <log>]',
+		'  stage [<module> | <profile> | <package>]',
 		'<command>:',
 		'  -h, --help,   Show this help information',
 		'    -help, ?, -?',
@@ -1405,9 +1414,9 @@ else
 
 				ENV['ATHEOS_INCLUDE_PATH'] = File.join @workDir, 'sys/include'
 				ENV['C_INCLUDE_PATH'] = headers +
-					(var = ENV['C_INCLUDE_PATH']) && !@crossCompile ? ':' + var : ''
+					((var = ENV['C_INCLUDE_PATH']) && !@crossCompile ? ':' + var : '')
 				ENV['CPLUS_INCLUDE_PATH'] = headers +
-					(var = ENV['CPLUS_INCLUDE_PATH']) && !@crossCompile ? ':' + var : ''
+					((var = ENV['CPLUS_INCLUDE_PATH']) && !@crossCompile ? ':' + var : '')
 
 				# Pick up libraries from the staging area
 
@@ -1419,7 +1428,7 @@ else
 					((var = ENV['DLL_PATH']) && !@crossCompile ? ':' + var : '')
 				ENV[name = (@syllable ? '' : 'LD_') + 'LIBRARY_PATH'] =
 					(File.join @stage, 'atheos/sys/libs') +
-					':' + (@syllable ? '' : ':' + File.join(@stage, 'atheos/sys')) +
+					(@syllable ? '' : ':' + File.join(@stage, 'atheos/sys')) +
 					':' + (File.join @stage, 'atheos/usr/glibc/lib') +
 					':' + (File.join @stage, 'atheos/usr/glibc2/lib') +
 #					':' + (File.join @stage, 'indexes/lib') +

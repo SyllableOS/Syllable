@@ -1,8 +1,8 @@
 authors				Kaj de Vos
 status				testing
 warnings
+	The Syllable source tree "system" directory needs to be in your working directory.
 	/ainc needs to be linked to the Syllable system headers.
-	The path to the Syllable GLibC headers needs to be defined.
 
 inherits			gcc-3.3.4
 
