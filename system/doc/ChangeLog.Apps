@@ -1,3 +1,5 @@
+* July 9  2003, Rick Caudill *
+	* Patched Diskmanager to say: "Syllable Partition Editor" instead of "AtheOS partition editor". 
 * July 2  2003, Rick Caudill *
 	* Aedit 1.4
 		* Aedit is now uses the standard imagebutton(which also means that I had to patch buttonbar up)
