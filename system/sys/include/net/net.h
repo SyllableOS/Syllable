@@ -27,25 +27,25 @@ static inline uint16 ip_fast_csum( uint8 * iph, uint32 ihl )
 {
   uint32 sum;
 
-  __asm__ __volatile__("
-	    movl (%1), %0
-	    subl $4, %2
-	    jbe 2f
-	    addl 4(%1), %0
-	    adcl 8(%1), %0
-	    adcl 12(%1), %0
-1:	    adcl 16(%1), %0
-	    lea 4(%1), %1
-	    decl %2
-	    jne	1b
-	    adcl $0, %0
-	    movl %0, %2
-	    shrl $16, %0
-	    addw %w2, %w0
-	    adcl $0, %0
-	    notl %0
-2:
-	    "
+  __asm__ __volatile__(
+"	    movl (%1), %0"
+"	    subl $4, %2"
+"	    jbe 2f"
+"	    addl 4(%1), %0"
+"	    adcl 8(%1), %0"
+"	    adcl 12(%1), %0"
+"1:	    adcl 16(%1), %0"
+"	    lea 4(%1), %1"
+"	    decl %2"
+"	    jne	1b"
+"	    adcl $0, %0"
+"	    movl %0, %2"
+"	    shrl $16, %0"
+"	    addw %w2, %w0"
+"	    adcl $0, %0"
+"	    notl %0"
+"2:"
+	    
 	/* Since the input registers which are loaded with iph and ipl
 	   are modified, we must also specify them as outputs, or gcc
 	   will assume they contain their original values. */
@@ -146,3 +146,4 @@ int ip_send_via( PacketBuf_s* psPkt, Route_s* psRoute );
 #endif /* __KERNEL__ */
 
 #endif /* __F_ATHEOS_NET_H__ */
+
