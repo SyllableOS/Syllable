@@ -59,9 +59,6 @@ bool VMware::Fifo_DefineCursor(uint32 cursorId, CursorInfo *cursInfo)
 	Fifo_WriteWord(cursInfo->andDepth);		// Depth of AND mask
 	Fifo_WriteWord(cursInfo->xorDepth);		// Depth of XOR mask
 
-	// makeAnd1((uint8 *)andMask, cursorRaster, cursInfo->cursWidth, cursInfo->cursHeight);
-	// makeXor1((uint8 *)xorMask, cursorRaster, cursInfo->cursWidth, cursInfo->cursHeight);
-
 	/* Write out the AND mask */
 	for(i = 0; i < andLength; i++)
 	{
@@ -72,6 +69,35 @@ bool VMware::Fifo_DefineCursor(uint32 cursorId, CursorInfo *cursInfo)
 	for(i = 0; i < xorLength; i++)
 	{
 		Fifo_WriteWord(cursInfo->xorMask[i]);
+	}
+
+	/* Sync the FIFO before any reference to the cursor is used */
+	FifoSync();
+
+	return true;
+}
+
+
+bool VMware::Fifo_DefineAlphaCursor(uint32 cursorId, CursorInfo *cursInfo)
+{
+	int i;
+
+	if((cursInfo == NULL) || (cursInfo->andMask == NULL))
+		return false;
+
+	/* Length of pixmap in words(32 bits) */
+	int pixSize = SVGA_PIXMAP_SIZE(cursInfo->cursWidth, cursInfo->cursHeight, 32);
+
+	Fifo_WriteWord(SVGA_CMD_DEFINE_ALPHA_CURSOR);
+	Fifo_WriteWord(cursorId);				// Cursor Id
+	Fifo_WriteWord(cursInfo->hotSpotX);	// HotX
+	Fifo_WriteWord(cursInfo->hotSpotY);	// HotY
+	Fifo_WriteWord(cursInfo->cursWidth);	// Cursor width
+	Fifo_WriteWord(cursInfo->cursHeight);	// Cursor height
+
+	for(i = 0; i < pixSize; i++)
+	{
+		Fifo_WriteWord(cursInfo->andMask[i]);
 	}
 
 	/* Sync the FIFO before any reference to the cursor is used */

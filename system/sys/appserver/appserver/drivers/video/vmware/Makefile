@@ -40,3 +40,7 @@ dist: $(DRIVER)
 
 clean:
 	-rm $(OBJS) $(OBJDIR)/vmware
+
+install:
+	cp -f $(OBJDIR)/vmware /system/drivers/appserver/video/
+

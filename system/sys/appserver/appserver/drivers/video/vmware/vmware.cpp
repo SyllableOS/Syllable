@@ -338,60 +338,129 @@ static int makeXor1(uint8* cursRaster, CursorInfo *cursInfo)
 void VMware::SetCursorBitmap(os::mouse_ptr_mode eMode, const os::IPoint& cHotSpot,
 	const void* pRaster, int nWidth, int nHeight)
 {
-	if(eMode != MPTR_MONO)
+	CursorInfo cursorInfo;
+	bool cursorIsVisible = m_bCursorIsOn;
+	bool supportHw_MptrMono = SVGA_CAP_CURSOR & m_regCapabilities;
+	bool supportHw_MptrRGB32 = SVGA_CAP_ALPHA_CURSOR & m_regCapabilities;
+	bool accelCursor = ((eMode == MPTR_MONO) && supportHw_MptrMono)
+						|| ((eMode == MPTR_RGB32) && supportHw_MptrRGB32);
+
+
+	if((m_bUsingHwCursor && !accelCursor) || (!m_bUsingHwCursor && accelCursor))
 	{
-		dbprintf("VMware::SetCursorBitmap() - Unsupported eMode(%d), passing to "
-					"DisplayDriver::SetCursorBitmap()\n", eMode);
-		DisplayDriver::SetCursorBitmap(eMode, cHotSpot, pRaster, nWidth, nHeight);
-		return;
+		/* If switching from accel to non-accel *
+		 * OR switching from accel to non-accel *
+		 * then the cursor must be turned off   */
+		MouseOff();
 	}
 
-	CursorInfo cursorInfo;
-	uint32 andMask[SVGA_BITMAP_SIZE(nWidth, nHeight)];
-	uint32 xorMask[SVGA_BITMAP_SIZE(nWidth, nHeight)];
+	if(accelCursor == true)
+	{
+		m_bUsingHwCursor = true;
+		cursorInfo.hotSpotX = cHotSpot.x;
+		cursorInfo.hotSpotY = cHotSpot.y;
+		cursorInfo.cursWidth = nWidth;
+		cursorInfo.cursHeight = nHeight;
 
-	cursorInfo.hotSpotX = cHotSpot.x;
-	cursorInfo.hotSpotY = cHotSpot.y;
-	cursorInfo.cursWidth = nWidth;
-	cursorInfo.cursHeight = nHeight;
+		cursorInfo.andMask = NULL;
+		cursorInfo.xorMask = NULL;
+	}
 
-	cursorInfo.andDepth = cursorInfo.xorDepth = 1;
-	cursorInfo.andSize = cursorInfo.xorSize = SVGA_BITMAP_SIZE(nWidth, nHeight);
-	cursorInfo.andMask = andMask;
-	cursorInfo.xorMask = xorMask;
 
-	makeAnd1((uint8 *)pRaster, &cursorInfo);
-	makeXor1((uint8 *)pRaster, &cursorInfo);
+	if((eMode == MPTR_RGB32) && supportHw_MptrRGB32)
+	{
+		/** Hardware accelerated MPTR_RGB32 **/
+		cursorInfo.andMask = (uint32 *)pRaster;
 
-	// ACQUIRE lock
-	m_cGELock.Lock();
+		// ACQUIRE lock
+		m_cGELock.Lock();
 
-	Fifo_DefineCursor(0, &cursorInfo);
-	vmwareWriteReg(SVGA_REG_CURSOR_ID, 0);
-	vmwareWriteReg(SVGA_REG_CURSOR_ON, SVGA_CURSOR_ON_SHOW);
+		Fifo_DefineAlphaCursor(0, &cursorInfo);
+		vmwareWriteReg(SVGA_REG_CURSOR_ID, 0);
+		SetMousePos(m_CursorPos);
 
-	// RELEASE lock
-	m_cGELock.Unlock();
+		// RELEASE lock
+		m_cGELock.Unlock();
+	}
+	else if((eMode == MPTR_MONO) && supportHw_MptrMono)
+	{
+		/** Hardware accelerated MPTR_MONO **/
+		uint32 andMask[SVGA_BITMAP_SIZE(nWidth, nHeight)];
+		uint32 xorMask[SVGA_BITMAP_SIZE(nWidth, nHeight)];
+
+		cursorInfo.andDepth = cursorInfo.xorDepth = 1;
+		cursorInfo.andSize = cursorInfo.xorSize = SVGA_BITMAP_SIZE(nWidth, nHeight);
+		cursorInfo.andMask = andMask;
+		cursorInfo.xorMask = xorMask;
+
+		makeAnd1((uint8 *)pRaster, &cursorInfo);
+		makeXor1((uint8 *)pRaster, &cursorInfo);
+
+		// ACQUIRE lock
+		m_cGELock.Lock();
+
+		Fifo_DefineCursor(0, &cursorInfo);
+		vmwareWriteReg(SVGA_REG_CURSOR_ID, 0);
+		SetMousePos(m_CursorPos);
+
+		// RELEASE lock
+		m_cGELock.Unlock();
+	}
+	else
+	{
+		/** Software fallback for unsupported cursor eMode **/
+		m_bUsingHwCursor = false;
+		dbprintf("VMware::SetCursorBitmap() - Switching to unaccelerated cursor.\n"
+					"\teMode = %d is unknown or unsupported\n", eMode);
+		SetMousePos(m_CursorPos);
+		DisplayDriver::SetCursorBitmap(eMode, cHotSpot, pRaster, nWidth, nHeight);
+	}
+
+	//m_bCursorIsOn = cursorIsVisible;
+	if(cursorIsVisible)
+	{
+		/* Restore the cursor if we switched it off */
+		MouseOn();
+	}
+
 }
 
 
 void VMware::MouseOn()
 {
-	vmwareWriteReg(SVGA_REG_CURSOR_ON, SVGA_CURSOR_ON_SHOW);
+	if(m_bUsingHwCursor)
+		vmwareWriteReg(SVGA_REG_CURSOR_ON, SVGA_CURSOR_ON_SHOW);
+	else
+		DisplayDriver::MouseOn();
+	m_bCursorIsOn = true;
 }
 
 
 void VMware::MouseOff()
 {
-	vmwareWriteReg(SVGA_REG_CURSOR_ON, SVGA_CURSOR_ON_HIDE);
+	if(m_bUsingHwCursor)
+		vmwareWriteReg(SVGA_REG_CURSOR_ON, SVGA_CURSOR_ON_HIDE);
+	else
+		DisplayDriver::MouseOff();
+	m_bCursorIsOn = false;
 }
 
 
 void VMware::SetMousePos(os::IPoint cNewPos)
 {
-	vmwareWriteReg(SVGA_REG_CURSOR_X, cNewPos.x);
-	vmwareWriteReg(SVGA_REG_CURSOR_Y, cNewPos.y);
-	vmwareWriteReg(SVGA_REG_CURSOR_ON, SVGA_CURSOR_ON_SHOW);
+	m_CursorPos = cNewPos;
+	if(m_bUsingHwCursor)
+	{
+		vmwareWriteReg(SVGA_REG_CURSOR_X, cNewPos.x);
+		vmwareWriteReg(SVGA_REG_CURSOR_Y, cNewPos.y);
+
+		if(m_bCursorIsOn)
+			vmwareWriteReg(SVGA_REG_CURSOR_ON, SVGA_CURSOR_ON_SHOW);
+	}
+	else
+	{
+		DisplayDriver::SetMousePos(cNewPos);
+	}
 }
 
 
@@ -699,6 +768,9 @@ void VMware::InitMembers(void)
 	m_regCursorY = 0;
 	m_regCursorOn = 0;
 	m_regHostBPP = 0;
+
+	m_bCursorIsOn = false;
+	m_bUsingHwCursor = false;
 }
 
 

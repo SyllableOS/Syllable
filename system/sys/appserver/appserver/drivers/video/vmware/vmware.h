@@ -134,6 +134,11 @@ private:
 	uint32 m_regCursorOn;		/* SVGA_REG_CURSOR_ON 27 Turn cursor on/off */
 	uint32 m_regHostBPP;		/* SVGA_REG_HOST_BITS_PER_PIXEL 28 Current bpp in the host */
 
+	bool m_bCursorIsOn;
+	bool m_bUsingHwCursor;
+	os::IPoint m_CursorPos;
+	os::IPoint m_CursorHotSpot;
+
 	/* These methods are implemented in vmware_fb.cpp */
 	/**************************************************/
 	bool CreateFb(void);
@@ -162,6 +167,7 @@ private:
 	/* These methods are implemented in vmware_cursor.cpp */
 	/******************************************************/
 	bool Fifo_DefineCursor(uint32 cursorId, CursorInfo *cursInfo);
+	bool Fifo_DefineAlphaCursor(uint32 cursorId, CursorInfo *cursInfo);
 	/******************************************************/
 	/******************************************************/
 
