@@ -1,0 +1,12 @@
+diff -ru IoVM-2004-03-27/IoVM/Makefile IoVM/IoVM/Makefile
+--- IoVM-2004-03-27/IoVM/Makefile	2004-03-27 11:26:32.000000000 +0000
++++ IoVM/IoVM/Makefile	2004-03-31 01:46:00.000000000 +0000
+@@ -28,7 +28,7 @@
+ #   SANE_POPEN - popen() can return a bidirectional FILE*
+ #
+ 
+-NEEDS_DL	:= Linux
++NEEDS_DL	:= Linux syllable
+ SANE_POPEN	:= FreeBSD Darwin
+ OS		:= $(shell uname -s)
+ 
