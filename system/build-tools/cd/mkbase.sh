@@ -187,7 +187,7 @@ echo "Copying boot image"
 cp objs/boot.img $CDROOT/boot/boot.img
 
 echo "Copying $TARBALL base package"
-cp $TARBALL $CDROOT/Packages//
+cp $TARBALL $CDROOT/Packages/base/
 
 echo "Copying installation scripts"
 cp -dpr ../scripts/install/* $CDROOT/Install/
