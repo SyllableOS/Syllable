@@ -1,9 +1,14 @@
 * February 6 2005, Henrik Isaksson *
 
+ - GUI classes
+	o Applied patches from Jake, adding private copy constructors.
+	o DropdownMenu::WheelMoved() was missing in headers in CVS??
  - Desktop
 	o Applied patch from Jake regarding bytes per line value.
  - AppServer
 	o Applied patch from Jake regarding bytes per line value. (desktop, sapplication)
+ - LibSyllable
+	o Bumped to version 6
 
 * January 26 2005, Henrik Isaksson *
 
