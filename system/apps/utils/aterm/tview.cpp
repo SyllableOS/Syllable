@@ -1610,7 +1610,7 @@ void TermView::PutChar( int32 nChar )
 				// mc sends to many to bother prints them. Dont know what they are for yet :(
 				break;
 			default:
-				DEBUG( 2, "Unknown control code %d\n", nChar );
+				DEBUG( 2, "Unknown control code %ld\n", nChar );
 				break;
 			}
 		}
@@ -2558,6 +2558,10 @@ void TermView::KeyDown( const char *pzString, const char *pzRawString, uint32 nQ
 {
 	uint32 nChar;
 
+	if( nQualifiers & QUAL_DEADKEY ) {
+		return;
+	}
+
 	if( ( nQualifiers & QUAL_SHIFT ) && pzRawString[0] == VK_INSERT )
 	{
 		Paste();
@@ -2905,4 +2909,6 @@ void TermView::KeyDown( const char *pzString, const char *pzRawString, uint32 nQ
 		}
 	}
 }
+
+
 
