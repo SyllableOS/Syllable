@@ -1,7 +1,9 @@
-; Libraries to install or (re)build for Syllable 0.5.4
+; Libraries to install or rebuild that Syllable 0.5.4 depends on
 
 modules
+;	Requires Make 3.80 (which is otherwise unreliable):
 	libs/ffmpeg-0.4.9-pre1
+
 	libs/freetype-2.1.9
 	sys/appserver/libsyllable
 	libs/codeview
