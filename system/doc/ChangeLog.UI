@@ -1,3 +1,16 @@
+* December 25 2004, Henrik Isaksson *
+
+ - View
+	o Added documentation to shortcut methods.
+	o Added Set/GetContextMenu().
+	o Added context menu handling to MouseDown() method.
+
+ - TabView
+	o Moved private variables to private class.
+	o Replaced the private struct Tab with a public class TabViewTab.
+	o Changed MouseDown() so it passes on RMB events (for the contextmenu).
+	o Moved rendering into TabViewTab::Paint().
+
 ---- 0.5.5 Released -------------------------------------------------------------------
 
 * December 2nd 2004, Henrik Isaksson *
@@ -834,6 +847,3 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
-
-
-
