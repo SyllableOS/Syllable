@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.5.11
+# Version 0.5.12
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -916,28 +916,21 @@ attr_reader :profile
 	end
 end
 
-class Target
-attr_reader :profile, :modules
-
-	def initialize target
-		@name = target
-
-		# The list of modules for the build target, or a single module
-		@profile = nil
-		@modules =
-			if target['/']  # A single target directory
-				target[-1, 1] == '/' ? target.chop : target
-			elsif (profile = Profile.new target).profile  # A profile
-				@profile = profile
-				toList profile['modules']
-			else
-				target
-			end
-	end
-
-	def to_s
-		@name
-	end
+def getTarget target
+	profile = nil
+	Struct.new(:to_s, :modules, :profile).new(
+		target,
+		# Get the list of modules for the build target, or a single module
+		if target['/']  # A single target directory
+			target[-1, 1] == '/' ? target.chop : target
+		elsif (profile = Profile.new target).profile  # A profile
+			@profile = profile
+			toList profile['modules']
+		else
+			target
+		end,
+		profile
+	)
 end
 
 def loadRecipe package  # Read a recipe file
@@ -1051,7 +1044,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.5.11',
+	puts 'Syllable Build System 0.5.12',
 		'Copyright (c) 2002-2004 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1093,7 +1086,7 @@ else
 	if arg1 == 'scrub'
 		deleteCVSData
 	else
-		target  = Target.new arg2 ? arg2 : arg1 ? arg1 : 'default'
+		target  = getTarget arg2 ? arg2 : arg1 ? arg1 : 'default'
 		profile = target.profile
 
 		Profile.new('last')['modules'] = profile['modules'] if profile  # Processing a profile
