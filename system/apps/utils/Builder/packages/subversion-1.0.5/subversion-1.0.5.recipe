@@ -36,7 +36,7 @@ configure-options
 ;	--with-apr=/usr/apr
 ;	--with-apr-util=/usr/apr-util
 	--with-berkeley-db=/usr/db
-;	--with-expat=
+	--with-expat=/usr/expat
 	--with-neon=/usr/neon
 ;	For Windows?
 ;	--with-zlib

@@ -7,6 +7,7 @@ licenses			LGPL GFDL
 home				www.webdav.org/neon/
 locations			http://www.webdav.org/neon/
 
+; Is this a runtime need?
 needs				openssl
 build-needs			expat | libxml2
 
@@ -14,7 +15,7 @@ patch-config
 configure-options
 ;	--enable-shared
 ;	--disable-debug
-;	--with-expat
+	--with-expat
 	--with-ssl
 	--with-libs=/usr/local/ssl
 ;	For Windows?

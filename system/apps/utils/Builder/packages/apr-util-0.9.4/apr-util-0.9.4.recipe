@@ -14,12 +14,13 @@ build-recommends
 
 patch-config
 	build
+;	When using internal Expat:
 	xml/expat/conftools
 no-build-dir
 configure-options
 	--with-apr=/usr/apr
 	--with-berkeley-db=/usr/db
-;	--with-expat=
+	--with-expat=/usr/expat
 ;	--with-ldap=
 ;	--with-iconv=
 documentation		CHANGES LICENSE STATUS renames_pending
