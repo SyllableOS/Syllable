@@ -735,6 +735,7 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 
 	set_debug_port_params( g_nDebugBaudRate, g_nDebugSerialPort, g_bPlainTextDebug );
 
+#if 0
 	if ( sizeof( DescriptorTable_s ) == 8 )
 	{
 		int nCol;
@@ -754,6 +755,7 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 			SetColor( 0, nCol++, 0, 0 );
 		}
 	}
+#endif
 
 	g_sSysBase.ex_nTotalPageCount = g_nMemSize / PAGE_SIZE;
 
@@ -978,7 +980,7 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 		printk( "Panic : Unable to create semaphore for kernel segment!\n" );
 	}
 
-	SetColor( 0, 255, 255, 0 );
+	SetColor( 0, 0, 0, 170 );
 
 
 	create_init_proc( "kernel" );
