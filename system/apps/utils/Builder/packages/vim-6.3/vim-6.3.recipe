@@ -1,0 +1,18 @@
+authors
+	Rodrigo Parra Novo
+	Kaj de Vos
+maintainers			Kaj de Vos
+
+licenses			other
+home				www.vim.org
+packages
+	vim-6.3
+	vim-6.3-lang
+
+build-needs			ruby
+no-build-dir
+configure-options
+	--with-features=big
+	--enable-rubyinterp
+documentation		README.txt
+links				vim bin/vi
