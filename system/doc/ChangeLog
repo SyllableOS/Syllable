@@ -1,5 +1,10 @@
 * Aug 14 2003, Kristian Van Der Vliet *
 
+Backed out the earlier patch the nVidia driver (Aug 7, 2003).  nvidia.cpp reverted to
+version 1.4
+
+* Aug 14 2003, Kristian Van Der Vliet *
+
 Patch to the media detection code of the Tulip NIC driver in an attempt to fix problems
 with 10BaseT/10Base2 detection.
 
