@@ -17,6 +17,7 @@ build-needs
 ;	This problem is patched:
 ;	gcc 2.95.2
 	gcc < 3
+	gawk
 	gettext >= 0.10.35
 ;build-recommends	texinfo <
 test-needs
@@ -28,7 +29,7 @@ patch				autoconf
 
 no-build-dir
 
-configure-env		CFLAGS '-D__SYLLABLE__ -march=i586 -O2 -pipe'
+configure-env		CC 'gcc -D__SYLLABLE__'
 configure-options
 	--disable-versioning
 ;	--enable-add-ons
@@ -42,7 +43,6 @@ configure-options
 ;	For printed documentation:
 ;	dvi
 
-install-env			CFLAGS '-D__SYLLABLE__ -march=i586 -O2 -pipe'
 ;install-prefix-var	install_root
 system-files
 	lib/*.so	system/libs
