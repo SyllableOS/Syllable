@@ -1,7 +1,7 @@
 #! ruby
 
 # Syllable Build System
-# Version 0.4.6
+# Version 0.4.7
 # Copyright (c) 2002-2004 Kaj de Vos
 # License: GPL 2
 
@@ -211,7 +211,12 @@ def configurePackage target
 
 					action((cmdLine = recipe["configure"]) ? toString(cmdLine) :
 						((vars = recipe["configure-vars"]) ? toString(vars) + " " : "") +
-						(noBuildDir ? cmd : File.join("..", fullName(target), cmd)) +
+#						(noBuildDir ? cmd : File.join("..", fullName(target), cmd)) +
+						(noBuildDir ? cmd :
+							target[0, 1] == "/" ?
+								File.join(target, cmd) :
+								File.join(@workDir, target, cmd)
+						) +
 						((args = recipe["configure-args"]) ?
 							" " + toString(args) :
 							((p = recipe["configure-prefix"]) ?
@@ -910,7 +915,7 @@ arg1, arg2 = ARGV[0], ARGV[1]
 
 case arg1
 when "-v", "--version"
-	puts "Syllable Build System 0.4.6",
+	puts "Syllable Build System 0.4.7",
 		"Copyright (c) 2002-2004 Kaj de Vos",
 		"License: GPL 2"
 when "?", "-?", "-h", "-help", "--help"
