@@ -877,11 +877,11 @@ AlertView::AlertView( const std::string & cText, va_list pButtons, Bitmap * pcBi
 
 		if( cSize.x > m_cButtonSize.x )
 		{
-			m_cButtonSize.x = cSize.x;
+			m_cButtonSize.x = (float)((uint)cSize.x);
 		}
 		if( cSize.y > m_cButtonSize.y )
 		{
-			m_cButtonSize.y = cSize.y;
+			m_cButtonSize.y = (float)((uint)cSize.y);
 		}
 	}
 

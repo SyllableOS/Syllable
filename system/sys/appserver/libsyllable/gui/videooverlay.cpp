@@ -144,7 +144,8 @@ void VideoOverlayView::DetachedFromWindow()
 
 	if( m_sOverlay.m_hArea > 0 )
 		delete_area( m_sOverlay.m_hArea );
-
+	m_sOverlay.m_hArea = -1;
+		
 	cReq.AddInt32( "area", m_sOverlay.m_hPhysArea );
 	Application *pcApp = Application::GetInstance();
 
@@ -182,6 +183,7 @@ void VideoOverlayView::Recreate( const IPoint & cSrcSize, const IRect & cDstRect
 
 	if( m_sOverlay.m_hArea > 0 )
 		delete_area( m_sOverlay.m_hArea );
+	m_sOverlay.m_hArea = -1;
 
 	int32 nFormat = static_cast < int32 >( m_sOverlay.m_eFormat );
 

@@ -27,13 +27,30 @@
 #include <gui/guidefines.h>
 #include <util/application.h>
 #include <util/message.h>
+#include <util/messenger.h>
 
 using namespace os;
 
+class Desktop::Private
+{
+public:
+	int		 m_nCookie;
+    int		 m_nDesktop;
+    screen_mode* m_psScreenMode;
+    void*	 m_pFrameBuffer;
+    uint32	 unused[6];
+
+    area_id	m_hServerAreaID;
+    area_id	m_hLocalAreaID;
+};
+
+
 Desktop::Desktop( int nDesktop )
 {
-	m_psScreenMode = new screen_mode;
-	m_hServerAreaID = -1;
+	m = new Private;
+	
+	m->m_psScreenMode = new screen_mode;
+	m->m_hServerAreaID = -1;
 
 	Message cDesktopParams;
 
@@ -41,105 +58,154 @@ Desktop::Desktop( int nDesktop )
 
 	int32 nColorSpace;
 
-	m_pFrameBuffer = NULL;
-	m_hServerAreaID = -1;
-	m_hLocalAreaID = -1;
+	m->m_pFrameBuffer = NULL;
+	m->m_hServerAreaID = -1;
+	m->m_hLocalAreaID = -1;
 
 	IPoint cResolution;
 
-	cDesktopParams.FindInt( "desktop", &m_nDesktop );
+	cDesktopParams.FindInt( "desktop", &m->m_nDesktop );
 	cDesktopParams.FindIPoint( "resolution", &cResolution );
 	cDesktopParams.FindInt32( "color_space", &nColorSpace );
-	cDesktopParams.FindFloat( "refresh_rate", &m_psScreenMode->m_vRefreshRate );
-	cDesktopParams.FindFloat( "h_pos", &m_psScreenMode->m_vHPos );
-	cDesktopParams.FindFloat( "v_pos", &m_psScreenMode->m_vVPos );
-	cDesktopParams.FindFloat( "h_size", &m_psScreenMode->m_vHSize );
-	cDesktopParams.FindFloat( "v_size", &m_psScreenMode->m_vVSize );
+	cDesktopParams.FindFloat( "refresh_rate", &m->m_psScreenMode->m_vRefreshRate );
+	cDesktopParams.FindFloat( "h_pos", &m->m_psScreenMode->m_vHPos );
+	cDesktopParams.FindFloat( "v_pos", &m->m_psScreenMode->m_vVPos );
+	cDesktopParams.FindFloat( "h_size", &m->m_psScreenMode->m_vHSize );
+	cDesktopParams.FindFloat( "v_size", &m->m_psScreenMode->m_vVSize );
 
-	m_psScreenMode->m_nWidth = cResolution.x;
-	m_psScreenMode->m_nHeight = cResolution.y;
-	m_psScreenMode->m_eColorSpace = ( color_space ) nColorSpace;
-	cDesktopParams.FindInt( "screen_area", &m_hServerAreaID );
+	m->m_psScreenMode->m_nWidth = cResolution.x;
+	m->m_psScreenMode->m_nHeight = cResolution.y;
+	m->m_psScreenMode->m_eColorSpace = ( color_space ) nColorSpace;
+	cDesktopParams.FindInt( "screen_area", &m->m_hServerAreaID );
 }
 
 Desktop::~Desktop()
 {
-	delete m_psScreenMode;
+	delete m->m_psScreenMode;
 
 //    Application::GetInstance()->UnlockDesktop( m_nCookie );
-	if( m_hLocalAreaID != -1 )
+	if( m->m_hLocalAreaID != -1 )
 	{
-		delete_area( m_hLocalAreaID );
+		delete_area( m->m_hLocalAreaID );
 	}
+	delete m;
 }
 
 screen_mode Desktop::GetScreenMode() const
 {
-	return ( *m_psScreenMode );
+	return ( *m->m_psScreenMode );
 }
 
 IPoint Desktop::GetResolution() const
 {
-	return ( IPoint( m_psScreenMode->m_nWidth, m_psScreenMode->m_nHeight ) );
+	return ( IPoint( m->m_psScreenMode->m_nWidth, m->m_psScreenMode->m_nHeight ) );
 }
 
 color_space Desktop::GetColorSpace() const
 {
-	return ( m_psScreenMode->m_eColorSpace );
+	return ( m->m_psScreenMode->m_eColorSpace );
 }
 
 void *Desktop::GetFrameBuffer()
 {
-	if( m_pFrameBuffer != NULL )
+	if( m->m_pFrameBuffer != NULL )
 	{
-		return ( m_pFrameBuffer );
+		return ( m->m_pFrameBuffer );
 	}
-	if( m_hServerAreaID != -1 )
+	if( m->m_hServerAreaID != -1 )
 	{
-		m_hLocalAreaID = clone_area( "fb_clone", ( void ** )&m_pFrameBuffer, AREA_FULL_ACCESS, AREA_NO_LOCK, m_hServerAreaID );
+		m->m_hLocalAreaID = clone_area( "fb_clone", ( void ** )&m->m_pFrameBuffer, AREA_FULL_ACCESS, AREA_NO_LOCK, m->m_hServerAreaID );
 	}
-	return ( m_pFrameBuffer );
+	return ( m->m_pFrameBuffer );
 }
 
 bool Desktop::SetScreenMode( screen_mode * psMode )
 {
-	m_psScreenMode->m_nWidth = psMode->m_nWidth;
-	m_psScreenMode->m_nHeight = psMode->m_nHeight;
-	m_psScreenMode->m_eColorSpace = psMode->m_eColorSpace;
-	m_psScreenMode->m_vRefreshRate = psMode->m_vRefreshRate;
-	m_psScreenMode->m_vHPos = psMode->m_vHPos;
-	m_psScreenMode->m_vVPos = psMode->m_vVPos;
-	m_psScreenMode->m_vHSize = psMode->m_vHSize;
-	m_psScreenMode->m_vVSize = psMode->m_vVSize;
-	Application::GetInstance()->SetScreenMode( m_nDesktop, SCRMF_RES | SCRMF_COLORSPACE | SCRMF_REFRESH | SCRMF_POS | SCRMF_SIZE, m_psScreenMode );
+	m->m_psScreenMode->m_nWidth = psMode->m_nWidth;
+	m->m_psScreenMode->m_nHeight = psMode->m_nHeight;
+	m->m_psScreenMode->m_eColorSpace = psMode->m_eColorSpace;
+	m->m_psScreenMode->m_vRefreshRate = psMode->m_vRefreshRate;
+	m->m_psScreenMode->m_vHPos = psMode->m_vHPos;
+	m->m_psScreenMode->m_vVPos = psMode->m_vVPos;
+	m->m_psScreenMode->m_vHSize = psMode->m_vHSize;
+	m->m_psScreenMode->m_vVSize = psMode->m_vVSize;
+	Application::GetInstance()->SetScreenMode( m->m_nDesktop, 0, m->m_psScreenMode );
 	return ( true );
 }
 
 bool Desktop::SetResoulution( int nWidth, int nHeight )
 {
-	m_psScreenMode->m_nWidth = nWidth;
-	m_psScreenMode->m_nHeight = nHeight;
+	m->m_psScreenMode->m_nWidth = nWidth;
+	m->m_psScreenMode->m_nHeight = nHeight;
 
-	Application::GetInstance()->SetScreenMode( m_nDesktop, SCRMF_RES, m_psScreenMode );
+	Application::GetInstance()->SetScreenMode( m->m_nDesktop, 0, m->m_psScreenMode );
 	return ( true );
 }
 
 bool Desktop::SetColorSpace( color_space eColorSpace )
 {
-	m_psScreenMode->m_eColorSpace = eColorSpace;
-	Application::GetInstance()->SetScreenMode( m_nDesktop, SCRMF_COLORSPACE, m_psScreenMode );
+	m->m_psScreenMode->m_eColorSpace = eColorSpace;
+	Application::GetInstance()->SetScreenMode( m->m_nDesktop, 0, m->m_psScreenMode );
 	return ( true );
 }
 
 bool Desktop::SetRefreshRate( float vRefreshRate )
 {
-	m_psScreenMode->m_vRefreshRate = vRefreshRate;
-	Application::GetInstance()->SetScreenMode( m_nDesktop, SCRMF_REFRESH, m_psScreenMode );
+	m->m_psScreenMode->m_vRefreshRate = vRefreshRate;
+	Application::GetInstance()->SetScreenMode( m->m_nDesktop, 0, m->m_psScreenMode );
 	return ( true );
 }
 
 bool Desktop::Activate()
 {
-	Application::GetInstance()->SwitchDesktop( m_nDesktop );
+	Application::GetInstance()->SwitchDesktop( m->m_nDesktop );
 	return ( true );
+}
+
+
+
+/** Return the windows on the desktop.
+ * \par Description:
+ * GetWindows( Message* pcMsg ) puts the information about the windows on
+ * the desktop into the message pointed to by the pcMsg parameter. The message
+ * contains string members with the name "title" that contain the titles of the
+ * windows.
+ * \param pcMsg - Pointer to a message, which will be filled with the information.
+ * \return Number of windows on the desktop.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+int32 Desktop::GetWindows( Message* pcMsg )
+{
+	int32 nCount;
+	Message cReq( DR_GET_WINDOW_LIST );
+	Message cReply;
+	Application* pcApp = Application::GetInstance();
+	
+	/* Send message */
+	cReq.AddInt32( "desktop", m->m_nDesktop );
+	Messenger( pcApp->GetServerPort() ).SendMessage( &cReq, &cReply );
+	
+	if( cReply.FindInt32( "count", &nCount ) != 0 )
+		return( -1 );
+		
+	*pcMsg = Message( cReply );
+			
+	return( nCount );
+}
+
+
+/** Activates one window on the desktop.
+ * \par Description:
+ * ActivateWindow() activates the window according to the nWindow parameter.
+ * \param nWindow - The window.
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+void Desktop::ActivateWindow( int32 nWindow )
+{
+	Message cReq( DR_ACTIVATE_WINDOW );
+	cReq.AddInt32( "window", nWindow );
+				
+	Application* pcApp = Application::GetInstance();
+	cReq.AddInt32( "desktop", m->m_nDesktop );
+	Messenger( pcApp->GetServerPort() ).SendMessage( &cReq );
 }
