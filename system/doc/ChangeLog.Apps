@@ -1,5 +1,11 @@
+* July 14 2003, Kristian Van Der Vliet *
+	* Bugs fixes for dhcpc
+		* Better handling of out-of-sequence replies
+		* Do not segfault on an unusual exit situations (E.g catching SIGTERM while waiting for a reply from the server)
+
 * July 9  2003, Rick Caudill *
 	* Patched Diskmanager to say: "Syllable Partition Editor" instead of "AtheOS partition editor". 
+
 * July 2  2003, Rick Caudill *
 	* Aedit 1.4
 		* Aedit is now uses the standard imagebutton(which also means that I had to patch buttonbar up)
