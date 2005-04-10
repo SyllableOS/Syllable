@@ -53,6 +53,13 @@ Changed occurrences of O4 to O3. Higher than O3 doesn't exist as an optimization
 for GCC. Replaced a lot of occurrences of CPPLAGS with CXXFLAGS. CPPFLAGS is for the
 preprocesser, not for C++. This probably means that the media framework was never optimized.
 
+* February 5 2005, Kristian Van Der Vliet *
+
+Added libdl, which is a simple wrapper around Syllable native functionality and provides
+a POSIX dlfcn API.
+Cleaned up the libpthread Makefile and bumped the library version to 1 to handle libc ABI
+breakage.
+
 * January 29 2005, Jake Hamby *
 
 Removed binary keymap files from CVS and replaced them with their ASCII
