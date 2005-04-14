@@ -1,9 +1,13 @@
 authors
 	Arno Klenke
 	Kaj de Vos
-status			testing
+status			developing
 
 licenses		LGPL GPL
+
+home			ffmpeg.org
+packages		FFMpeg-current
+locations		http://mplayerhq.hu/MPlayer/cvs/
 
 ; For MMX:
 build-needs		make >= 3.80
@@ -15,7 +19,6 @@ configure-options
 ;	--enable-shared
 ;	--enable-pthreads
 	--disable-debug
-;	--enable-gpl
 ;	MMX fails assertion in Make 3.79.x:
 ;	--disable-mmx
 	--disable-v4l
@@ -23,9 +26,14 @@ configure-options
 ;	--disable-audio-beos
 	--disable-vhook
 	--disable-dv1394
+;	Non-free stuff:
 	--disable-risky
-;	--enable-mp3lame
+;	--enable-gpl
+;	--enable-libogg
 ;	--enable-vorbis
+;	--enable-theora
+;	--enable-mp3lame
+;	--enable-xvid
 ;	--disable-ffserver
 ;	--disable-ffplay
 
