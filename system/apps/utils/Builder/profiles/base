@@ -11,6 +11,7 @@ modules
 	apps/other/unzip-5.51
 	apps/other/zip-2.3
 	apps/desktop/dock_plugins/clock
+	apps/desktop/dock_plugins/Address
 	apps/desktop/dock_plugins/Camera
 	apps/desktop/dock_plugins/Meter
 	apps/desktop/dock_plugins/WallpaperChanger
