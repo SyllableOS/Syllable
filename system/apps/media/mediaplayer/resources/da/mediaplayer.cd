@@ -1,0 +1,29 @@
+//
+// Media Player string catalog
+//
+
+MSG_MAINWND_TITLE=100						Media Player
+
+
+MSG_MAINWND_MENU_APPLICATION=200			Program
+MSG_MAINWND_MENU_APPLICATION_ABOUT			Om...
+MSG_MAINWND_MENU_APPLICATION_QUIT			Afslut
+
+MSG_MAINWND_MENU_FILE=300					Filer
+MSG_MAINWND_MENU_FILE_OPEN					Åbn...
+MSG_MAINWND_MENU_FILE_OPEN_INPUT			Åbn medietype...
+MSG_MAINWND_MENU_FILE_FULLSCREEN			Fuld skærm
+
+MSG_MAINWND_MENU_TRACKS=400					Spor
+
+MSG_ABOUTWND_TITLE=1000						Om Media Player
+MSG_ABOUTWND_TEXT							\nEn video afspiller\nCopyright 2003 Arno Klenke\n\nMedia Player er udgivet under LGPL.
+MSG_ABOUTWND_OK								OK
+
+MSG_ERRWND_TITLE=1100						Fejl
+MSG_ERRWND_OK								OK
+MSG_ERRWND_CANTPLAY							Filen kan ikke Åbnes.\n Kontroller dine indstillinger.
+
+MSG_TRACK_MENU_ITEM=2000					Spor
+
+// Oversat af BurningShadow 2005
