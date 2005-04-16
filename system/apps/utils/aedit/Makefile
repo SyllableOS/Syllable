@@ -26,7 +26,9 @@ $(EXE): $(OBJS)
 deps:
 
 install: all
-	cp $(EXE) /system/bin/
+	mkdir -p /Applications/AEdit
+	cp -pf $(EXE) /Applications/AEdit/AEdit
+	ln -sf /Applications/AEdit/AEdit /system/bin/aedit 
 
 dist: all
 	install -s $(EXE) $(DIST_DIR)/atheos/sys/bin/$(EXE)
