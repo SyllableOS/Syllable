@@ -2,9 +2,6 @@
 
 		1.		WILL SYLLABLE RUN ON MY COMPUTER?
 		2.		INSTALLING SYLLABLE
-		2.1.		INSTALLING FROM THE CD
-		2.2.		INSTALLING FROM FLOPPY DISKS
-		2.2.1.			INSTALLING THE OS FILES
 		3.		CONFIGURING THE BOOTLOADER
 		3.1.		INSTALLING THE BOOTLOADER
 		3.1.1.		NOTES ON GRUB
@@ -33,18 +30,6 @@ run.
 
 
 		2. INSTALLING SYLLABLE
-
-You can install Syllable from a bootable CD.  You can either purchase
-a CD for $10 or burn your own CD.  Please see section 2.1 for more
-information.
-
-If for some reason you cannot boot from a CD you may be able to install
-Syllable by booting from a set of floppy disks.  Please see section 2.2
-for more information.
-
-
-
-		2.1. INSTALLING FROM THE CD
 
 Syllable is normally installed from a bootable CD which is a simple
 and painless way to install Syllable.  You can either download a disc
@@ -78,105 +63,6 @@ bootloader.  See section 3. "CONFIGURING THE BOOTLOADER"
 
 
 
-		2.2. INSTALLING FROM FLOPPY DISKS
-
-First you must write the floppy disk images to a set of three
-floppy disks. From Linux, BeOS, Syllable, and most other OS's you can do
-this with "dd" from a shell. On Windows you will need a special
-program that can write a raw disk image to a floppy. There is a
-free utility named "rawrite" that can be used to create the floppies
-under Windows.
-
-After creating the boot-floppies you should be able to boot Syllable
-and continue with the installation.
-
-If you don't already have a partition ready for the AFS filesystem you
-must first create one with the "DiskManager" tool that is included on
-the boot floppies. Just run "DiskManager &" from the shell. The
-partition editor has a fairly self-explanatory GUI where you first
-select the disk to edit and then edit the partitions either
-graphically by dragging the partition indicators or by explicitly
-typing start and end positions for each partition.
-
-Then you must get access to the archive containing the installation.
-There are several ways to do this. If possible the best way to
-achieve this is to put the base-syllable-#.#.#.tgz file on a FAT
-partition before booting Syllable and then mount that partition under
-Syllable. If you don't have a FAT partition and are not able to create
-one you must resort to floppy disks. You must then split the archive
-into files that can fit on a floppy. The simplest way to do this is
-probably to write the segments to raw floppies, but you can also make
-a FAT filesystem on the floppy and put each segment as a normal file
-inside that FS (it will be annoying to mount/copy/unmount all the
-floppies under Syllable though).
-
-To mount a FAT partition you must first make a mount-point and then
-mount the right partition. A mount-point is simply a directory and
-can be made with "mkdir". To mount the partition you must first figure
-out what the path is for that partition inside the /dev/ directory
-hierarchy and then mount it with the "mount" command.
-
-The /dev/ directory in Syllable is not flat like for example under Linux
-but hierarchical, and the disk block-devices are located under /dev/disk/.
-
-Currently the only driver available when you boot from the floppy disks
-is the BIOS disk-device so all disks are located under /dev/disk/bios/
-and are named hda, hdb, hdc, etc etc.  These disk-names are themselves
-directories that contain the actual device nodes. Under each drive you
-will find at least one node named "raw" that represent the whole disk
-and if the disk has a valid partition table you will find one node for
-each partition named "0", "1", etc etc. So to get the second partition
-on the third drive you will have to write /dev/disk/bios/hdc/1 (partition
-numbers start at 0).  The disks are listed in the order they were reported
-by the BIOS so drive 0x80 is hda, 0x81 is hdb and so on.
-
-In the following example I will assume that the base archive is
-located at /download/syllable-base-0.4.2.tgz on a FAT partition on the
-first partition (0) on the first drive (hda) and that we want to
-install the OS on the second partition (1) on the first drive (still
-hda :).
-
-
-
-		2.2.1. INSTALLING THE OS FILES
-
-First we make a mount-point for the FAT partition and mount it:
-
-bash-2.03$ mkdir dos
-bash-2.03$ mount /dev/disk/bios/hda/0 dos
-
-Then we must create and mount the native FS, be 100% sure you select
-the right partition before formatting it.  There is a couple of tools
-on the floppy that can help you find the right partition. To find an
-existing filesystem you can use "fsprobe".  "fsprobe" takes a block-device
-path as it's only parameter and will ask each filesystem driver if they
-recognise the partition and, if one of them do, it will print the FS-type,
-the volume label and some size/usage stats. The other tool is "devstat"
-that also takes a block-device path and prints the size and geometry of
-the disk/partition.  This can be useful to verify that the partition you
-are about to format is really the one you intend to format.
-
-Once you have found the partition you intend to use, you must format and
-mount it:
-
-bash-2.03$ format /dev/disk/bios/hda/1 afs MySyllablePartition
-bash-2.03$ mkdir afs
-bash-2.03$ mount /dev/disk/bios/hda/1 afs
-
-Now we are ready to unpack the base archive to install the FS:
-
-bash-2.03$ cd /afs
-bash-2.03$ tar -xvpzf /dos/download/syllable-base-0.4.2.tgz
-
-This should create an "syllable" directory containing well... Syllable and a
-"boot" directory containing the GRUB bootloader inside the /afs/
-mount-point.
-
-You must manually configure the GRUB boot loader.  See section 2 for more
-information.  To edit the GRUB config file you can use "aedit" which is a
-easy-to-use text editor included on the boot-floppies.
-
-
 		3. CONFIGURING THE BOOTLOADER
 
 The next step is to configure and install the bootloader.
@@ -193,11 +79,12 @@ the installation described above:
 
      title  Syllable
      root   (hd0,1)
-     kernel /atheos/sys/kernel.so root=/dev/disk/ide/hda/1
+     kernel /atheos/sys/kernel.so root=/dev/disk/ata/hda/1
      module /atheos/sys/config/kernel.cfg
      module /atheos/sys/drivers/bus/pci
+     module /atheos/sys/drivers/bus/ata
+     module /atheos/sys/drivers/dev/hcd/ata_pci
      module /atheos/sys/drivers/fs/afs
-     module /atheos/sys/drivers/dev/disk/ata
 
 This will tell GRUB to boot partition number 2 on the first drive
 through the "root (hd0,1)" command and where to find the kernel, the
