@@ -7,7 +7,7 @@
 		3.		THE COMMUNITY
 		3.1.		SYLLABLE.ORG
 		3.2.		MAILING LISTS
-		3.3.		AZAKA
+		3.3.		HARDWARE DATABASE
 		3.4.		KAMIDAKE
 		3.5.		THE WIKI
 		4.		DEVELOPING FOR SYLLABLE
@@ -55,15 +55,18 @@ the correct method depending on the type of software you are installing.
 Applications which have been written for Syllable can be installed anywhere
 you wish, although the usual location is in the /Applications directory.  Most
 applications come as a single archive, which can be unpacked wherever you wish
-to install the software.  For example, if we wanted to install the ABrowse web
-browser:
+to install the software.  Syllable now favours the ZIP archive format, but older
+software may still be distributed in GZiped TAR files.  For example, if we
+wanted to install the ABrowse web browser:
+
+	$ cd /Applications
+	$ unzip abrowse-0.4.0a.bin.zip
+
+Older software can be installed using tar:
 
 	$ tar -xzvpf abrowse-0.3.4.bin.1.tar.gz -C /Applications
 
-You can then add a new shortcut to the application in the Dock or Launcher, if
-you wish.
-
-Uninstalling such software is equally simple.  Just delete the application
+Uninstalling native software is equally simple.  Just delete the application
 directory:
 
 	$ rm -r /Applications/ABrowse
@@ -74,9 +77,17 @@ directory:
 
 Unix or POSIX style applications usually come as a single archive which
 contains all of the files the application needs in one self contained
-distribution.  To install a package you simply open an ATerm, log in as
+distribution.  Syllable now favours the ZIP archive format, but older
+software may still be distributed in GZiped TAR files.
+
+To install a package you simply open an ATerm, log in as
 the root user if you are not already, and unpack the archive with a command
 such as:
+
+	$ cd /usr
+	$ unzip gcc-3.4.3.bin.1.zip
+
+Older software can be installed using tar:
 
 	$ tar -xvpzf binutils-2.14.bin.1.tgz -C /usr/
 
@@ -85,7 +96,7 @@ with the system. For example, to install binutils, run:
 
 	$ pkgmanager -a /usr/binutils
 
-This will make a bunch of symbolic links in various subdirectories of
+This will create a series of symbolic links in various subdirectories of
 /atheos/autolnk/ to make it possible for the system to find executables and
 other files belonging to the package.
 
@@ -147,16 +158,13 @@ read-only and is only used to announce new releases of Syllable.
 
 
 
-		3.3. AZAKA
+		3.3. HARDWARE DATABASE
 
-		http://azaka.nutus.com.ar
+		http://www.syllable-hardware.info
 
-Azaka is a list of hardware which is known to work (Or not!) with Syllable.  Once
-you have installed Syllable on your computer, please take a few moments to check
-if your hardware is already listed.  If you have hardware which is not listed on
-Azaka please add it to the list, wether it works, or not!  Not only will you help
-future users but the Syllable developers can also use Azaka to find popular but
-currently unsupported hardware.    
+Syllable-hardware.info is a list of hardware which is known to work (Or not!) with
+Syllable.  Once you have installed Syllable on your computer, please take a few
+moments to add your hardware to the database.
 
 
 
