@@ -4,7 +4,7 @@ AOPTS   = -c
 
 LIBBIN = /system/libs
 
-LIBNAME = libsyllable.so.6
+LIBNAME = libsyllable.so.7
 
 VPATH = ./ gui storage util translation gui/colorselector
 
