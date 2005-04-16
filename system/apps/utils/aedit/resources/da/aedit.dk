@@ -66,3 +66,6 @@ MSG_REPLACE_CASE_SENSITIVE			Forskel på store og små bogstaver
 MSG_REPLACE_FIND					_Find
 MSG_REPLACE_FIND_NEXT				Find _næste
 MSG_REPLACE_REPLACE					_Erstat
+MSG_REPLACE_CLOSE				    _Afslut
+
+// Oversat af BurningShadowm 2004,2005
