@@ -1,6 +1,7 @@
 authors
 	Arno Klenke
 	Kaj de Vos
+	Kristian Van Der Vliet
 status			developing
 
 licenses		LGPL GPL
@@ -9,18 +10,14 @@ home			ffmpeg.org
 packages		FFMpeg-current
 locations		http://mplayerhq.hu/MPlayer/cvs/
 
-; For MMX:
-build-needs		make >= 3.80
-
-no-build-dir
 configure-options
 	--extra-cflags='-DPIC -fomit-frame-pointer'
 	--extra-libs='-ldl'
 ;	--enable-shared
 ;	--enable-pthreads
 	--disable-debug
-;	MMX fails assertion in Make 3.79.x:
-;	--disable-mmx
+;	IPv6 code fails:
+	--disable-network
 	--disable-v4l
 	--disable-audio-oss
 ;	--disable-audio-beos
@@ -39,16 +36,16 @@ configure-options
 
 install-tree	include lib
 install-files
-	libavcodec/avcodec.h		include
-	libavcodec/common.h			include
-	libavcodec/rational.h		include
-	libavformat/avformat.h		include
-	libavformat/avio.h			include
-	libavformat/rtp.h			include
-	libavformat/rtsp.h			include
-	libavformat/rtspcodes.h		include
-	libavcodec/libavcodec.a		lib
-	libavformat/libavformat.a	lib
+	../ffmpeg-current/libavcodec/avcodec.h		include
+	../ffmpeg-current/libavcodec/common.h		include
+	../ffmpeg-current/libavcodec/rational.h		include
+	../ffmpeg-current/libavformat/avformat.h	include
+	../ffmpeg-current/libavformat/avio.h		include
+	../ffmpeg-current/libavformat/rtp.h			include
+	../ffmpeg-current/libavformat/rtsp.h		include
+	../ffmpeg-current/libavformat/rtspcodes.h	include
+	libavcodec/libavcodec.a						lib
+	libavformat/libavformat.a					lib
 documentation
 	README COPYING Changelog CREDITS doc/TODO
 ;	doc/*.txt
