@@ -541,7 +541,7 @@ static int afs_empty_delme_dir( AfsVolume_s * psVolume )
 		nError = afs_begin_transaction( psVolume );
 		if( nError < 0 )
 		{
-			printk( "Error: afs_empty_delme_dir() failed to start transaction\n" );
+			printk( "Error: afs_empty_delme_dir() failed to start transaction %d\n", nError );
 			break;
 		}
 		nError = bt_find_first_key( psVolume, psDeleteMe, &sIterator );
@@ -568,7 +568,7 @@ static int afs_empty_delme_dir( AfsVolume_s * psVolume )
 		nError = afs_do_read_inode( psVolume, &sInodeNum, &psInode );
 		if( nError < 0 )
 		{
-			printk( "Error: afs_empty_delme_dir() failed to load inode %Ld\n", nInodeNum );
+			printk( "Error: afs_empty_delme_dir() failed to load inode %Ld %d\n", nInodeNum, nError );
 			afs_end_transaction( psVolume, false );
 			break;
 		}
@@ -587,7 +587,7 @@ static int afs_empty_delme_dir( AfsVolume_s * psVolume )
 		nError = afs_delete_file_attribs( psVolume, psInode );
 		if( nError < 0 )
 		{
-			printk( "PANIC : afs_empty_delme_dir() Failed to delete file attributes\n" );
+			printk( "PANIC : afs_empty_delme_dir() Failed to delete file attributes %d\n", nError );
 			afs_end_transaction( psVolume, false );
 			kfree( psInode );
 			break;
@@ -598,7 +598,7 @@ static int afs_empty_delme_dir( AfsVolume_s * psVolume )
 		if( nError < 0 )
 		{
 			psInode->ai_sData.ds_nSize = nOldSize;
-			printk( "Error: afs_empty_delme_dir() failed to truncate file\n" );
+			printk( "Error: afs_empty_delme_dir() failed to truncate file %d\n", nError );
 			afs_end_transaction( psVolume, false );
 			kfree( psInode );
 			break;
@@ -606,7 +606,7 @@ static int afs_empty_delme_dir( AfsVolume_s * psVolume )
 		nError = bt_delete_key( psVolume, psDeleteMe, zFileName, strlen( zFileName ) );
 		if( nError < 0 )
 		{
-			printk( "Error: afs_empty_delme_dir() Failed to delete file.\n" );
+			printk( "Error: afs_empty_delme_dir() Failed to delete file. %d\n", nError );
 			afs_end_transaction( psVolume, false );
 			kfree( psInode );
 			break;
@@ -614,7 +614,7 @@ static int afs_empty_delme_dir( AfsVolume_s * psVolume )
 		nError = afs_delete_inode( psVolume, psInode );
 		if( nError < 0 )
 		{
-			printk( "Error: afs_empty_delme_dir() Failed to delete inode\n" );
+			printk( "Error: afs_empty_delme_dir() Failed to delete inode %d\n", nError );
 			afs_end_transaction( psVolume, false );
 			kfree( psInode );
 			break;
