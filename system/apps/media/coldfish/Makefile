@@ -23,6 +23,7 @@ $(OBJDIR)/ColdFish: $(OBJS)
 	rescopy -a ColdFish resources/coldfish.catalog
 	rescopy -a ColdFish sv/coldfish.catalog=resources/sv/coldfish.catalog
 	rescopy -a ColdFish de/coldfish.catalog=resources/de/coldfish.catalog
+	rescopy -a ColdFish da/coldfish.catalog=resources/da/coldfish.catalog
 
 deps:
 

@@ -22,6 +22,7 @@ $(OBJDIR)/MediaPlayer: $(OBJS)
 	rescopy -r MediaPlayer *.png
 	rescopy -a MediaPlayer resources/mediaplayer.catalog
 	rescopy -a MediaPlayer de/mediaplayer.catalog=resources/de/mediaplayer.catalog
+	rescopy -a MediaPlayer da/mediaplayer.catalog=resources/da/mediaplayer.catalog
 
 deps:
 
