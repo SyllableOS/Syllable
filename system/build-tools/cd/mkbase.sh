@@ -73,6 +73,8 @@ mkdir $CDROOT/atheos/sys/drivers/dev
 mkdir $CDROOT/atheos/sys/drivers/dev/disk
 mkdir $CDROOT/atheos/sys/drivers/dev/misc
 mkdir $CDROOT/atheos/sys/drivers/dev/graphics
+mkdir $CDROOT/atheos/sys/drivers/dev/hcd
+mkdir $CDROOT/atheos/sys/drivers/dev/input
 
 mkdir $CDROOT/atheos/sys/drivers/fs
 mkdir $CDROOT/atheos/sys/drivers/bus
@@ -109,11 +111,18 @@ cp -p $ROOT/atheos/sys/drivers/dev/misc/serial $CDROOT/atheos/sys/drivers/dev/mi
 
 cp -dpr $ROOT/atheos/sys/drivers/dev/graphics/* $CDROOT/atheos/sys/drivers/dev/graphics/
 
+cp -p $ROOT/atheos/sys/drivers/dev/hcd/usb_ehci $CDROOT/atheos/sys/drivers/dev/hcd/
+cp -p $ROOT/atheos/sys/drivers/dev/hcd/usb_uhci $CDROOT/atheos/sys/drivers/dev/hcd/
+cp -p $ROOT/atheos/sys/drivers/dev/hcd/usb_ohci $CDROOT/atheos/sys/drivers/dev/hcd/
+
+cp -p $ROOT/atheos/sys/drivers/dev/input/usb_mouse $CDROOT/atheos/sys/drivers/dev/input/
+
 cp -p $ROOT/atheos/sys/drivers/fs/afs $CDROOT/atheos/sys/drivers/fs/
 cp -p $ROOT/atheos/sys/drivers/fs/fatfs $CDROOT/atheos/sys/drivers/fs/
 cp -p $ROOT/atheos/sys/drivers/fs/ext2 $CDROOT/atheos/sys/drivers/fs/
 
 cp -p $ROOT/atheos/sys/drivers/bus/pci $CDROOT/atheos/sys/drivers/bus/
+cp -p $ROOT/atheos/sys/drivers/bus/usb $CDROOT/atheos/sys/drivers/bus/
 
 cp -dpr $ROOT/atheos/sys/libs/* $CDROOT/atheos/sys/libs/
 cp -dpr $ROOT/atheos/usr/zlib/lib/* $CDROOT/atheos/sys/libs/
