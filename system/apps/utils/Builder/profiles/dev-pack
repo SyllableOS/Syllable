@@ -12,6 +12,7 @@ modules
 	programming/indent-2.2.9
 	programming/splint-3.1.1
 	programming/languages/binutils-2.15
-	programming/languages/gcc-3.3.4
+	programming/languages/gcc-3.4.3
 	file/versioning/patch-2.5.4
 	file/versioning/cvs-1.12.9
+
