@@ -3,8 +3,12 @@ authors
 	Kaj de Vos
 	Arno Klenke
 	Kristian Van Der Vliet
+	Jake Hamby
 maintainers			Kaj de Vos
 status				testing
+warnings
+	GCC has a circular dependency on GLibC.
+	LibIberty is both in BinUtils and in GCC.
 
 licenses			GPL LGPL GFDL
 home				gcc.gnu.org
@@ -21,31 +25,26 @@ locations			ftp://gcc.gnu.org/pub/gcc/releases/gcc-3.4.3/
 needs
 ;	Due to new atomics definitions:
 	Syllable >= 0.5.5
-;	For -O3 with -fPIC:
+;	For -O3 with -fpic:
 	binutils >= 2.13.1
-;	Syllable switched to the new Glibc ABI in combination with this version of Gcc:
+;	Syllable switched to the new GLibC ABI in combination with this version of GCC:
 	glibc >= 2.3.3
 build-needs
 ;	autoconf 2.57
 ;	Without make bootstrap:
-	gcc >= 2.95
+;	gcc >= 2.95
 ;	For Ada:
 ;	gnat >= 3.13 | gcc >= 3.1
 	gawk
 test-needs			dejagnu >= 1.4.1
+conflicts			binutils
 
-patch-config		. boehm-gc
 ;patch
 ;	cd gcc
 ;	autoconf
 
-
-; When compiling with GCC 2.95.x installed in the system:
-;pre-configure		rm -f /system/libs/libstdc++.so
-; Dirty alternative for replacing libstdc++.so, when compiling with GCC 2.95.x:
-;configure-env		CXXFLAGS '-march=i586 -O2 -pipe -lstdc++'
 configure-options
-	--enable-languages=c,c++
+	--enable-languages=c,c++,f77
 ;		,treelang
 ;		Won't do --enable-shared:
 ;		,objc
@@ -60,9 +59,6 @@ configure-options
 
 make-env
 	BOOT_CFLAGS		'-march=i586 -O -pipe'
-;	For make bootstrap when compiling with GCC 2.95.x:
-;	BOOT_CFLAGS		"-march=i586 -O -pipe -L$PWD/gcc"
-;	DLL_PATH		"$DLL_PATH:$PWD/gcc"
 make-vars
 	CFLAGS			'-march=i586 -O -pipe'
 	LIBCFLAGS		'-march=i586 -O2 -pipe'
@@ -70,7 +66,7 @@ make-vars
 ;					GCC seems to set this automatically:
 ;					' -fno-implicit-templates'
 make-targets
-;	When compiling with GCC 3.x:
+;	Safest when compiling natively:
 	bootstrap
 ;	For printed documentation:
 ;	dvi
@@ -94,7 +90,7 @@ links
 system-links
 	lib/libgcc_s.so.2		/system/libs/libgcc_s.so.2
 	libgcc_s.so.2			/system/libs/libgcc_s.so
-;	lib/libstdc++.so.6.0.3	/system/libs/libstdc++.so.6.0.3
-;	libstdc++.so.6.0.3		/system/libs/libstdc++.so.6
-;	libstdc++.so.6.0.3		/system/libs/libstdc++.so
+	lib/libstdc++.so.6.0.3	/system/libs/libstdc++.so.6.0.3
+	libstdc++.so.6.0.3		/system/libs/libstdc++.so.6
+	libstdc++.so.6.0.3		/system/libs/libstdc++.so
 
