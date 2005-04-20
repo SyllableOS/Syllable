@@ -169,7 +169,7 @@ modules
 	sys/kernel/fs/ramfs
 	libs/libdl
 	libs/libpthread
-	libs/glibc2-2.1.2
+	libs/glibc-2.3.4
 	libs/zlib-1.2.2
 	libs/ncurses-5.4
 	sys/appserver/libsyllable
