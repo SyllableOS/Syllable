@@ -1,3 +1,6 @@
+
+---- 0.5.6 Released -------------------------------------------------------------------
+
 * March 19th 2005 Arno Klenke *
 Added Get()/Put() methods to the media manager class
 Merged videobitmap and videooverlay driver into a screen driver
