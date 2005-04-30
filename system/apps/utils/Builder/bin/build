@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.12
+# Version 0.6.13
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -379,8 +379,8 @@ def installModule staging, target
 			else
 				@log.header 'Unpacking ' + target
 				action (target[-3..-1] == 'zip' ?
-					"unzip #{target} -d /usr" :
-					'tar --directory=/usr -xpPzf ' + target
+					"unzip '#{target}' -d /usr" :
+					"tar --directory=/usr -xpPzf '#{target}'"
 				) and
 				begin
 					@log.header 'Registering ' + target
@@ -1375,7 +1375,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.12',
+	puts 'Syllable Build System 0.6.13',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
