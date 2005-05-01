@@ -78,9 +78,9 @@ public:
 		m_bScrollUp = false;
 		m_bAdjusting = false;
 		m_pcBackground = NULL;
-		m_sTextColor = os::Color32_s( 0, 0, 0 );
-		m_sBackgroundColor = os::Color32_s( 255, 255, 255 );
-		m_sSelectionColor = os::Color32( 186, 199, 227 );
+		m_sTextColor = get_default_color(COL_ICON_TEXT);  //os::Color32_s( 0, 0, 0 );
+		m_sBackgroundColor = get_default_color(COL_ICON_BG); //os::Color32_s( 255, 255, 255 );
+		m_sSelectionColor = get_default_color(COL_ICON_SELECTED);  //os::Color32( 186, 199, 227 );
 		m_cIcons.clear();
 		m_pcIconLock = new os::Locker( "iconview_lock" );
 		m_bSingleClick = false;
@@ -1582,3 +1582,4 @@ void IconView::__ICV_reserved2__() {}
 void IconView::__ICV_reserved3__() {}
 void IconView::__ICV_reserved4__() {}
 void IconView::__ICV_reserved5__() {}
+
