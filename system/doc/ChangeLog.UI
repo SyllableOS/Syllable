@@ -1,4 +1,9 @@
 
+* May 1 2005, Henrik Isaksson *
+
+ - View, IconView
+	o Added COL_ICON* (Rick) and COL_FOCUS
+
 ---- 0.5.6 Released -------------------------------------------------------------------
 
 * March 25 2005, Henrik Isaksson *
