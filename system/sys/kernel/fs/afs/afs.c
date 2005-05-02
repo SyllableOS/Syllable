@@ -828,8 +828,8 @@ static int afs_mount( kdev_t nFsID, const char *pzDevPath, uint32 nFlags, const 
 	nError = afs_empty_delme_dir( psVolume );
 	if( nError < 0 )
 	{
-		printk( "Error: failed to cleanup delete-me directory!\n" );
-		goto error8;
+		printk( "Error: failed to cleanup delete-me directory! Degrading mount to read only\n" );
+		psVolume->av_nFlags |= FS_IS_READONLY;
 	}
 	psVolume->av_bRunJournalFlusher = true;
 	nError = afs_start_journal_flusher( psVolume );
