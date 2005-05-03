@@ -1,0 +1,8 @@
+; Modules to (re)build for Syllable 0.5.7
+
+modules
+	sys/include
+	sys/appserver/libsyllable
+;	Missed in Syllable 0.5.6:
+	sys/media/drivers/cdrom
+
