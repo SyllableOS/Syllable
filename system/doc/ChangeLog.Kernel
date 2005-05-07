@@ -1,3 +1,8 @@
+* May 7 2005, Kristian Van Der Vliet *
+
+Build 0015.  Added a new syscall, get_tld_addr() which as the name suggests,
+returns the void * address for the given TLD handle.  This functionality is
+required by the TLD implementation of Glibc.
 
 ---- 0.5.6 Released -------------------------------------------------------------------
 
