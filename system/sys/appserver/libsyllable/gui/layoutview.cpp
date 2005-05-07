@@ -54,8 +54,8 @@ class LayoutNode::Private
     std::vector<LayoutNode*> m_cChildList;
     float		    m_vWeight;
     Point		    m_cMinSize;
-    Point		    m_cMaxSizeExtend;
     Point		    m_cMaxSizeLimit;
+    Point		    m_cMaxSizeExtend;
     alignment		m_eHAlign;
     alignment	    m_eVAlign;
     ShareNode	    m_sWidthRing;
@@ -289,6 +289,11 @@ void LayoutNode::SetView( View * pcView )
 	}
 }
 
+View* LayoutNode::GetView() const
+{
+	return m->m_pcView;
+}
+
 void LayoutNode::Layout()
 {
 	Rect cFrame( m->m_cFrame );
@@ -414,6 +419,7 @@ Point LayoutNode::CalculatePreferredSize( bool bLargest )
 		cSize.x = ceil( cSize.x );
 		cSize.y = ceil( cSize.y );
 	}
+
 	return ( cSize + Point( m->m_cBorders.left + m->m_cBorders.right, m->m_cBorders.top + m->m_cBorders.bottom ) );
 }
 
