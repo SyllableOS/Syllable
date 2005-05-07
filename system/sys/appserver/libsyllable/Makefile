@@ -15,7 +15,7 @@ OBJS	= rect.o region.o desktop.o bitmap.o view.o tabview.o			\
 	  listview.o requesters.o layoutview.o			\
 	  radiobutton.o filerequester.o dropdownmenu.o checkmenu.o splitter.o \
 	  image.o imageview.o imagebutton.o videooverlay.o treeview.o \
-      popupmenu.o iconview.o icondirview.o statusbar.o
+      popupmenu.o iconview.o icondirview.o statusbar.o toolbar.o separator.o
 
 OBJS += colorselector.o colorview.o colorwheel.o gradientview.o
 
