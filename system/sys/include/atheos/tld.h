@@ -36,17 +36,16 @@ extern "C" {
 #ifdef __KERNEL__
 
 int alloc_tld( void );
-void  set_tld( int nHandle, const void* pValue );
-void* get_tld( int nHandle );
+void * get_tld_addr( int nHandle );
 
 #else /* __KERNEL__ */
 
 int   alloc_tld( void* pDestructor );
-void  set_tld( int nHandle, const void* pValue );
-void* get_tld( int nHandle );
 
 #endif /* __KERNEL__ */
 
+void  set_tld( int nHandle, const void* pValue );
+void* get_tld( int nHandle );
 int free_tld( int nHandle );
 
 #ifdef __cplusplus

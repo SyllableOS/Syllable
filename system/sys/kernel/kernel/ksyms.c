@@ -288,6 +288,7 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	// TLD functions
 	KSYMBOL( alloc_tld ),
 	KSYMBOL( free_tld ),
+	KSYMBOL( get_tld_addr ),
 
 	// Memory-area functions:
 

@@ -312,6 +312,41 @@ int sys_alloc_tld( void )
 	return ( alloc_tld() );
 }
 
+//****************************************************************************/
+/** Gives the address on the stack of the TLD.
+ * \ingroup DriverAPI
+ * \ingroup Syscalls
+ * \param nHandle
+ *	The TLD to calculate the address for.
+ * \return
+ *	On success the address of the TLD is returned.
+ *	On failure, NULL is returned.
+ *	
+ * \par Error codes:
+ *	- \b NULL Invalid TLD handle.
+ * \sa alloc_tld(), set_tld(), get_tld()
+ * \author	Kristian Van Der Vliet (vanders@liqwyd.com)
+ *****************************************************************************/ 
+void * get_tld_addr( int nHandle )
+{
+	Process_s *psProc = CURRENT_PROC;
+	Thread_s *psThread = CURRENT_THREAD;
+	void *pAddr;
+
+	if ( ( nHandle & 3 ) || nHandle < TLD_USER || nHandle >= TLD_SIZE )
+		return NULL;
+
+	LOCK( psProc->pr_hSem );
+	pAddr = ( void* )( psThread->tr_pThreadData + nHandle );
+	UNLOCK( psProc->pr_hSem );
+
+	return pAddr;
+}
+
+void * sys_get_tld_addr( int nHandle )
+{
+	return get_tld_addr( nHandle );
+}
 
 //****************************************************************************/
 /** Releases a TLD slot previously allocated with alloc_tld().

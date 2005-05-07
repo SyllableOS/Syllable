@@ -254,9 +254,11 @@ int	kill_proc( proc_id hProcess, int nSigNum );
 
 int 	initialize_fs( const char* pzDevPath, const char* pzFsType, const char* pzVolName, void* pArgs, int nArgLen 
 );
+#ifdef __KERNEL__
 int 	mount( const char* pzDevName, const char* pzDirName,
 	   const char* pzFSName, int nFlags, const void* pData );
 int	sys_unmount( const char* pzPath, bool bForce );
+#endif
 
 int	sys_initialize_fs( const char* pzDevPath, const char* pzFsType, const char* pzVolName, void* pArgs, int 
 nArgLen );

@@ -775,4 +775,6 @@ SysCallTable:
 .long	_C_SYM( sys_ptrace )
 .long	_C_SYM( sys_ftruncate )
 .long	_C_SYM( sys_truncate )
-.long	_C_SYM( sys_sigaltstack )	/* 215 */
+.long	_C_SYM( sys_sigaltstack )
+
+.long	_C_SYM( sys_get_tld_addr )	/* 216 */
