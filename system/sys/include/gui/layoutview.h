@@ -73,10 +73,15 @@ public:
     virtual ~LayoutNode();
 
     virtual void SetView( View* pcView );
+    View* GetView() const;
     virtual void Layout();
     
     virtual void SetBorders( const Rect& cBorder );
     virtual Rect GetBorders() const;
+
+    void ExtendMinSize( const Point& cMinSize );
+    void LimitMaxSize( const Point& cMaxSize );
+    void ExtendMaxSize( const Point& cMaxSize );
 
     float GetWeight() const;
     void SetWeight( float vWeight );
@@ -84,10 +89,6 @@ public:
     virtual Rect GetFrame() const;
     virtual Rect GetBounds() const;
     Rect GetAbsFrame() const;
-
-    void ExtendMinSize( const Point& cMinSize );
-    void LimitMaxSize( const Point& cMaxSize );
-    void ExtendMaxSize( const Point& cMaxSize );
 
     void SetHAlignment( alignment eAlignment );
     void SetVAlignment( alignment eAlignment );
@@ -117,7 +118,7 @@ public:
 
     void AddToWidthRing( LayoutNode* pcRing );
     void AddToHeightRing( LayoutNode* pcRing );
-    
+  
 protected:    
     virtual Point    CalculatePreferredSize( bool bLargest );
 private:
