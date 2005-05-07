@@ -28,10 +28,12 @@ deps:
 install: all
 	mkdir -p /Applications/AEdit
 	cp -pf $(EXE) /Applications/AEdit/AEdit
-	ln -sf /Applications/AEdit/AEdit /system/bin/aedit 
+	ln -sf /Applications/AEdit/AEdit /system/bin/aedit
 
 dist: all
-	install -s $(EXE) $(DIST_DIR)/atheos/sys/bin/$(EXE)
+	mkdir $(DIST_DIR)/atheos/Applications/AEdit
+	install -s $(EXE) $(DIST_DIR)/atheos/Applications/AEdit/AEdit
+	ln -sf /Applications/AEdit/AEdit $(DIST_DIR)/atheos/sys/bin/aedit
 
 clean:
 	-rm $(OBJS)
