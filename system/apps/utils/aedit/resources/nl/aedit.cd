@@ -41,7 +41,7 @@ MSG_MENU_HELP_TABLE_OF_CONTENTS		Handleiding...
 MSG_MENU_HELP_HOMEPAGE				AEdit-webpagina...
 
 MSG_ABOUT_TITLE=800					Over
-MSG_ABOUT_TEXT						\n\nEenvoudige tekstverwerker voor Syllable\nAuteursrecht 2000-2003 Kristian Van Der Vliet\n\nAEdit is gepubliceerd onder de\nGNU General Public License. Gelieve het bestand\nCOPYING, gedistribueerd samen met AEdit, of\nhttp://www.gnu.org\nte raadplegen voor meer informatie.
+MSG_ABOUT_TEXT						\n\nEenvoudige tekstverwerker voor Syllable\nAuteursrecht 2000-2003 Kristian Van Der Vliet\n\nAEdit is gepubliceerd onder de GNU\nGeneral Public License. Gelieve het bestand\nCOPYING, gedistribueerd samen met AEdit, of\nhttp://www.gnu.org\nte raadplegen voor meer informatie.
 MSG_ABOUT_CLOSE						OK
 
 MSG_ERROR_TITLE=900					Opslaan
