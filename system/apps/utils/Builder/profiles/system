@@ -230,7 +230,6 @@ modules
 	apps/utils/Preferences/Network
 	apps/utils/Preferences/Screen
 	apps/utils/aterm
-	apps/utils/catalog
 	apps/utils/debug
 	apps/utils/dhcpc
 	apps/utils/fsutils
