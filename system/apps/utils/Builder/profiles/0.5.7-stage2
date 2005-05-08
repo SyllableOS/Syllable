@@ -5,11 +5,11 @@ modules
 	sys/appserver/libsyllable
 ;	Missed in Syllable 0.5.6:
 	sys/media/drivers/cdrom
+	apps/utils/Preferences/Locale
 	apps/utils/aedit
 
 ; To do:
 ; - Persistent disk mounting
 ; - Fix locale preference applet
 ;   - Create ~/Settings/System/
-;   - Include all flags
 

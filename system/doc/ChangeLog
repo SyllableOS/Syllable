@@ -1,3 +1,8 @@
+* May 8 2005, Kaj de Vos *
+
+Added Frisian flag to locale preference applet. Enabled several more flags we already had,
+except for Russian because it doesn't seem to be the right one. Corrected spelling of
+some languages.
 
 ---- 0.5.6 Released -------------------------------------------------------------------
 
