@@ -37,11 +37,11 @@ MSG_MENU_SETTINGS_SAVE_NOW			Instellingen nu opslaan
 MSG_MENU_SETTINGS_RESET				Instellingen herstellen
 
 MSG_MENU_HELP=700					Help
-MSG_MENU_HELP_TABLE_OF_CONTENTS		Inhoudsopgave...
+MSG_MENU_HELP_TABLE_OF_CONTENTS		Handleiding...
 MSG_MENU_HELP_HOMEPAGE				AEdit-webpagina...
 
-MSG_ABOUT_TITLE=800					Over AEdit
-MSG_ABOUT_TEXT						\n\nEenvoudige tekstverwerker voor Syllable\nAuteursrecht 2000-2003 Kristian Van Der Vliet\n\nAEdit is gepubliceerd onder de GNU General\nPublic License.  Gelieve het bestand COPYING,\ngedistribueerd samen met AEdit, of\nhttp://www.gnu.org\nte raadplegen voor meer informatie.
+MSG_ABOUT_TITLE=800					Over
+MSG_ABOUT_TEXT						\n\nEenvoudige tekstverwerker voor Syllable\nAuteursrecht 2000-2003 Kristian Van Der Vliet\n\nAEdit is gepubliceerd onder de\nGNU General Public License. Gelieve het bestand\nCOPYING, gedistribueerd samen met AEdit, of\nhttp://www.gnu.org\nte raadplegen voor meer informatie.
 MSG_ABOUT_CLOSE						OK
 
 MSG_ERROR_TITLE=900					Opslaan
@@ -52,7 +52,7 @@ MSG_FIND_TITLE=1000					Zoeken
 MSG_FIND_FIND_LABEL					Zoek
 MSG_FIND_CASE_SENSITIVE				_Hoofdlettergevoelig zoeken
 MSG_FIND_FIND						_Zoek eerste
-MSG_FIND_FIND_NEXT					Zoek Volge_nde
+MSG_FIND_FIND_NEXT					Zoek volge_nde
 MSG_FIND_CLOSE						_Sluiten
 
 MSG_GOTO_TITLE=1100					Ga naar regel
@@ -64,7 +64,7 @@ MSG_REPLACE_LBLFIND					Zoek
 MSG_REPLACE_WITH					Vervangen door
 MSG_REPLACE_CASE_SENSITIVE			_Hoofdlettergevoelig zoeken
 MSG_REPLACE_FIND					_Zoek eerste
-MSG_REPLACE_FIND_NEXT				Zoek Volge_nde
+MSG_REPLACE_FIND_NEXT				Zoek volge_nde
 MSG_REPLACE_REPLACE					_Vervangen
 MSG_REPLACE_CLOSE					_Sluiten
 

@@ -22,6 +22,7 @@ $(EXE): $(OBJS)
 	rescopy -a $(EXE) es/aedit.catalog=resources/es/aedit.catalog
 	rescopy -a $(EXE) fr/aedit.catalog=resources/fr/aedit.catalog
 	rescopy -a $(EXE) da/aedit.catalog=resources/da/aedit.catalog
+	rescopy -a $(EXE) fy/aedit.catalog=resources/fy/aedit.catalog
 
 deps:
 
