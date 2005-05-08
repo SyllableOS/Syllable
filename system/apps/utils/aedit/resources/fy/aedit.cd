@@ -44,7 +44,7 @@ MSG_MENU_HELP_TABLE_OF_CONTENTS		_Hânboek...
 MSG_MENU_HELP_HOMEPAGE				AEdit _webskerm...
 
 MSG_ABOUT_TITLE=800					Ynfo oer
-MSG_ABOUT_TEXT						\n\nTekstferwurker foar Syllable\nMakke troch Kristian Van Der Vliet, 2000-2003\n\nAEdit is ferspraat ûnder de betingsten fan de\nGNU General Public License.\nSjoch it triem COPYING by dit programma, of op\nhttp://www.gnu.org\nfoar mear ynformaasje.
+MSG_ABOUT_TEXT						\n\nTekstferwurker foar Syllable\nMakke troch Kristian Van Der Vliet, 2000-2003\n\nAEdit is ferspraat ûnder de betingsten fan de\nGNU General Public License. Sjoch it\ntriem COPYING by dit programma, of op\nhttp://www.gnu.org\nfoar mear ynformaasje.
 MSG_ABOUT_CLOSE						S_lúte
 
 MSG_ERROR_TITLE=900					Opslaan
