@@ -1,4 +1,4 @@
-COPTS   = -I$(TOP)/src $(shell freetype-config --cflags) -c -O2 -Wall -fexceptions
+COPTS   = -I$(TOP)/src $(shell freetype-config --cflags) -c -fexceptions
 
 DEVBIN = /system/drivers/appserver/video
 OBJS =	mga.o mga_crtc.o mga_gx00.o mga_tvp3026.o
@@ -16,7 +16,7 @@ $(OBJDIR)/%.o : %.c
 	$(CC) $(COPTS) $< -o $@
 
 $(OBJDIR)/%.o : %.cpp
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 
 
 all :	objs $(DRIVER)

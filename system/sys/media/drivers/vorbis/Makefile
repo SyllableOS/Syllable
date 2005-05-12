@@ -1,6 +1,6 @@
-CFLAGS   = -Wall -c -O3 -pipe -fexceptions -ffast-math -fomit-frame-pointer
-CXXFLAGS = $(CFLAGS)
-AOPTS   = -c
+CFLAGS   += -c -fexceptions -ffast-math
+CXXFLAGS += -c -fexceptions -ffast-math
+AOPTS    = -c
 
 DRIVERBIN = /system/drivers/media
 
@@ -24,7 +24,6 @@ $(OBJDIR)/vorbis.so: $(OBJS)
 deps:
 
 install:  $(OBJDIR)/vorbis.so
-	
 	install -s $(OBJDIR)/vorbis.so $(DRIVERBIN)/vorbis.so
 
 dist:  $(OBJDIR)/vorbis.so

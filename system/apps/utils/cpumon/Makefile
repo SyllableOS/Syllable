@@ -1,4 +1,4 @@
-COPTS	= -Wall -c -I../../kernel/drivers/misc/w8378x/
+COPTS	= -c -I../../kernel/drivers/misc/w8378x/
 
 OBJS	= main.o graphview.o barview.o
 EXE	= cpu
@@ -19,12 +19,12 @@ clean:
 	-rm $(EXE)
 
 .cpp.o:
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 
 main.o : main.cpp
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 barview.o : barview.cpp barview.h
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 graphview.o : graphview.cpp graphview.h
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 

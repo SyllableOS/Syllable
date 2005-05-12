@@ -1,4 +1,4 @@
-COPTS   = -I../../../server  -c -O2 -Wall
+COPTS   = -I../../../server -c
 
 DEVBIN = /system/drivers/appserver/input
 OBJS =	ps2mouse.o
@@ -15,7 +15,7 @@ $(OBJDIR)/%.o : %.c
 	$(CC) $(COPTS) $< -o $@
 
 $(OBJDIR)/%.o : %.cpp
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 
 
 all :	objs $(OBJDIR)/ps2mouse

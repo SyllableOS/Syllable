@@ -1,6 +1,6 @@
-CFLAGS   = -Wall -c -O3 -pipe -fexceptions -ffast-math -fomit-frame-pointer
-CXXFLAGS = $(CFLAGS)
-AOPTS   = -c
+CFLAGS   += -c -fexceptions -ffast-math
+CXXFLAGS += -c -fexceptions -ffast-math
+AOPTS    = -c
 
 LIBBIN = /system/libs
 

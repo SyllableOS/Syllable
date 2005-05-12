@@ -1,4 +1,4 @@
-CFLAGS   = -kernel -fno-PIC -c -O3 -Wall
+CFLAGS   += -kernel -fno-PIC -c
 AFLAGS   = -c
 
 C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
@@ -24,7 +24,7 @@ $(OBJDIR)/%.o : %.c
 	$(CC) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/%.o : %.cpp
-	$(CC) $(CFLAGS) $< -o $@
+	$(CXX) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/%.o : %.s
 	$(CC) $(AFLAGS) -x assembler-with-cpp $< -o $@
@@ -41,7 +41,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/ata: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/ata
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/ata
 
 install: all
 	cp -f $(OBJDIR)/ata /system/drivers/dev/disk/ata
@@ -52,5 +52,4 @@ dist: all
 clean:
 	-rm -f $(OBJS)
 	-rm -f $(OBJDIR)/ata
-
 

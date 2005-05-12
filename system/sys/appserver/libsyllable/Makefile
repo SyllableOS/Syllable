@@ -1,6 +1,6 @@
-CFLAGS   = -Wall -c -O2 -pipe -fexceptions
-CXXFLAGS = $(CFLAGS)
-AOPTS   = -c
+CFLAGS   += -c -fexceptions
+CXXFLAGS += -c -fexceptions
+AOPTS    = -c
 
 LIBBIN = /system/libs
 

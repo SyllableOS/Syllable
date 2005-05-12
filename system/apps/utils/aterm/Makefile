@@ -1,4 +1,4 @@
-COPTS	= -c -O3 -Wall
+COPTS	= -c
 
 OBJS	= main.o tview.o settings.o swindow.o
 EXE	= aterm.new
@@ -24,7 +24,7 @@ deps:
 	$(CC) $(COPTS) $< -o $@
 
 %.o : %.cpp
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 
 settings.o:	settings.cpp settings.h
 main.o:		main.cpp tview.h messages.h

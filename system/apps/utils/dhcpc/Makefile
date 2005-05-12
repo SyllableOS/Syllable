@@ -1,4 +1,4 @@
-COPTS := -Wall -O3 -c
+COPTS := -c
 LOPTS :=
 
 OBJDIR := objs

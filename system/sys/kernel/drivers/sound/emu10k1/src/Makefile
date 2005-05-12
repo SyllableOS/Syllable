@@ -1,11 +1,8 @@
-CC := gcc
-LL := gcc
-
 OBJSDIR := ../objs/
 
 EMU10K1_MOD := ../emu10k1
 
-CFLAGS := -Wall -Wstrict-prototypes -Wno-trigraphs -O2 -fomit-frame-pointer -fno-strict-aliasing -fno-common -pipe -mpreferred-stack-boundary=2
+CFLAGS += -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -mpreferred-stack-boundary=2
 CFLAGS += -kernel -fno-PIC -ffreestanding
 
 LFLAGS := -kernel
@@ -31,7 +28,7 @@ all: $(EMU10K1_MOD) $(AC97_MOD)
 	@echo "Done"
 
 $(EMU10K1_MOD): $(OBJS)
-	$(LL) $(LFLAGS) $(OBJS) -o $@
+	$(LD) $(LFLAGS) $(OBJS) -o $@
 
 clean:
 	@rm -rf $(OBJSDIR)*

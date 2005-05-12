@@ -1,4 +1,4 @@
-COPTS   = -c -O2 -Wall -fexceptions
+COPTS   = -c -fexceptions
 
 OBJS = mixer.o
 
@@ -15,7 +15,7 @@ $(OBJDIR)/%.o : %.c
 	$(CC) $(COPTS) $< -o $@
 
 $(OBJDIR)/%.o : %.cpp
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 
 all :	objs $(EXE) $(PLUGIN)
 

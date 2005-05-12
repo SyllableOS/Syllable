@@ -1,4 +1,4 @@
-CFLAGS   = -kernel -fno-PIC -c -O3 -Wall -fno-strict-aliasing -Wno-trigraphs -fno-common -D__ENABLE_DEBUG__ -Wstrict-prototypes -fomit-frame-pointer
+CFLAGS   += -Wstrict-prototypes -kernel -fno-PIC -c -fno-strict-aliasing -Wno-trigraphs -fno-common -D__ENABLE_DEBUG__
 AFLAGS   = -c
 
 C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
@@ -18,7 +18,7 @@ $(OBJDIR)/%.o : %.c
 	$(CC) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/%.o : %.cpp
-	$(CC) $(CFLAGS) $< -o $@
+	$(CXX) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/%.o : %.s
 	$(CC) $(AFLAGS) -x assembler-with-cpp $< -o $@

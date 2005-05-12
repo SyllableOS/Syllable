@@ -1,6 +1,6 @@
-CFLAGS   = -Wall -c -O3 -pipe -fexceptions -ffast-math -fomit-frame-pointer
-CXXFLAGS = $(CFLAGS)
-AOPTS   = -c
+CFLAGS   += -c -fexceptions -ffast-math
+CXXFLAGS += -c -fexceptions -ffast-math
+AOPTS    = -c
 
 DRIVERBIN = /system/drivers/media
 
@@ -24,7 +24,6 @@ $(OBJDIR)/screen.so: $(OBJS)
 deps:
 
 install:  $(OBJDIR)/screen.so
-	
 	install -s $(OBJDIR)/screen.so $(DRIVERBIN)/screen.so
 
 dist:  $(OBJDIR)/screen.so

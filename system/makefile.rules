@@ -1,4 +1,3 @@
-
 #
 # Makefile standard rules and default targets
 #
@@ -24,7 +23,7 @@ $(OBJDIR)/%.o : %.c
 	@$(CC) $(CFLAGS) $< -o $@
 $(OBJDIR)/%.o : %.cpp
 	@echo Compiling : $<
-	@$(CC) $(CXXFLAGS) $< -o $@
+	@$(CXX) $(CXXFLAGS) $< -o $@
 $(OBJDIR)/%.o : %.s
 	@echo Assembling: $<
 	@$(CC) $(AFLAGS) -x assembler-with-cpp $< -o $@
@@ -39,7 +38,7 @@ $(OBJDIR)/%.d : %.c
 	@$(CC) $(CFLAGS) -M $< | sed 's%^\(.*\):%$(OBJDIR)\/\1:%' > $@
 $(OBJDIR)/%.d : %.cpp
 	@echo Making dependencies for : $<
-	@$(CC) $(CXXFLAGS) -M $< | sed 's%^\(.*\):%$(OBJDIR)\/\1:%' > $@
+	@$(CXX) $(CXXFLAGS) -M $< | sed 's%^\(.*\):%$(OBJDIR)\/\1:%' > $@
 $(OBJDIR)/%.d : %.s
 	@touch $@
 $(OBJDIR)/%.d : %.S

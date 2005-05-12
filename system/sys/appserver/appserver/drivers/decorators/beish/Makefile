@@ -1,4 +1,4 @@
-COPTS   = -I../../../server $(shell freetype-config --cflags) -c -O3 -Wall
+COPTS   = -I../../../server $(shell freetype-config --cflags) -c
 
 DEVBIN = /system/drivers/appserver/decorators
 OBJS =	beishdecorator.o gradient.o
@@ -15,7 +15,7 @@ $(OBJDIR)/%.o : %.c
 	$(CC) $(COPTS) $< -o $@
 
 $(OBJDIR)/%.o : %.cpp
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 
 
 all :	objs $(OBJDIR)/Beish

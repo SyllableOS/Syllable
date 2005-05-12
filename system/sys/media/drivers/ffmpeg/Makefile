@@ -1,6 +1,6 @@
-CFLAGS   = -Wall -c -O3 -pipe -fexceptions -ffast-math -fomit-frame-pointer -Iffmpeg/libavcodec -Iffmpeg/libavformat
-CXXFLAGS = $(CFLAGS)
-AOPTS   = -c
+CFLAGS   += -c -fexceptions -ffast-math -Iffmpeg/libavcodec -Iffmpeg/libavformat
+CXXFLAGS += -c -fexceptions -ffast-math -Iffmpeg/libavcodec -Iffmpeg/libavformat
+AOPTS    = -c
 
 DRIVERBIN = /system/drivers/media
 
@@ -23,7 +23,6 @@ $(OBJDIR)/ffmpeg.so: $(OBJS)
 deps: $(LIBS)
 
 install:  $(OBJDIR)/ffmpeg.so
-	
 	install -s $(OBJDIR)/ffmpeg.so $(DRIVERBIN)/ffmpeg.so
 
 dist:  $(OBJDIR)/ffmpeg.so

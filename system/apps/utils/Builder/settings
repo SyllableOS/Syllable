@@ -9,9 +9,9 @@ environment
 ;	If you have write access:
 ;	CVSROOT		:ext:<Your SF user name here>@cvs.sourceforge.net:/cvsroot/syllable
 
-;	Default compiler optimization settings:
-	CFLAGS		-march=i586 -O2 -pipe
-	CXXFLAGS	-march=i586 -O2 -pipe
+;	Default compiler settings:
+	CFLAGS		-Wall -pipe -march=i586 -O2 -fomit-frame-pointer
+	CXXFLAGS	-Wall -pipe -march=i586 -O2 -fomit-frame-pointer
 
 ; Location in CVS we want, if not the CVS root:
 cvs-path		syllable/system

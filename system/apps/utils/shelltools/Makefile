@@ -1,4 +1,4 @@
-OPTS   = -c -Wall --no-warn
+OPTS   = -c --no-warn
 
 EXE	= objs/alert
 
@@ -10,7 +10,7 @@ $(OBJDIR)/%.o : %.c
 
 $(OBJDIR)/%.o : %.cpp
 	@echo Compiling : $<
-	@$(CC) $(OPTS) $< -o $@
+	@$(CXX) $(OPTS) $< -o $@
 
 
 

@@ -1,5 +1,5 @@
-CFLAGS   = -Wall -c -O2 -pipe -fexceptions
-CXXFLAGS = $(CFLAGS)
+CFLAGS   += -c -fexceptions
+CXXFLAGS += -c -fexceptions
 AOPTS   = -c
 
 DRIVERBIN = /Applications/Media/Plugins/

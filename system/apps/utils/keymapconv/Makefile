@@ -1,4 +1,4 @@
-COPTS	= -Wall -c
+COPTS	= -c
 
 OBJS	= keymapconv.o
 EXE	= keymapconv
@@ -20,8 +20,8 @@ clean:
 	-rm $(OBJS)
 
 .cpp.o:
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 
 main.o : main.cpp
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 

@@ -1,6 +1,6 @@
-CFLAGS   = -Wall -c -O3 -pipe -fexceptions -ffast-math -fomit-frame-pointer
-CXXFLAGS = $(CFLAGS)
-AOPTS   = -c
+CFLAGS   += -c -fexceptions -ffast-math
+CXXFLAGS += -c -fexceptions -ffast-math
+AOPTS    = -c
 
 DRIVERBIN = /system/drivers/media
 
@@ -24,7 +24,6 @@ $(OBJDIR)/raw.so: $(OBJS)
 deps:
 
 install:  $(OBJDIR)/raw.so
-	
 	install -s $(OBJDIR)/raw.so $(DRIVERBIN)/raw.so
 
 dist:  $(OBJDIR)/raw.so

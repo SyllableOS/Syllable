@@ -1,5 +1,5 @@
-CFLAGS	= -O3 -c
-CXXFLAGS= -O3 -c
+CFLAGS	+= -c
+CXXFLAGS += -c
 OBJDIR = objs
 
 EXES	= $(OBJDIR)/init $(OBJDIR)/ps $(OBJDIR)/ls_ports $(OBJDIR)/ls_sema	\

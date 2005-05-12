@@ -1,4 +1,4 @@
-COPTS	= -Wall -c -fPIC
+COPTS	= -c -fPIC
 
 all: route ifconfig ping
 
@@ -27,8 +27,8 @@ clean:
 	-rm ifconfig.o route.o ping.o
 
 .cpp.o:
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 
 main.o : main.cpp
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 

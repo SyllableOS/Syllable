@@ -1,4 +1,4 @@
-COPTS = -Wall -c -O2
+COPTS = -c
 
 OBJDIR = objs/
 
@@ -28,17 +28,17 @@ clean:
 	-rm $(EXE)
 
 $(OBJDIR)main.o: main.cpp
-	$(CC) $(COPTS) main.cpp -o $@
+	$(CXX) $(COPTS) main.cpp -o $@
 
 $(OBJDIR)appwindow.o: appwindow.cpp appwindow.h
-	$(CC) $(COPTS) appwindow.cpp -o $@
+	$(CXX) $(COPTS) appwindow.cpp -o $@
 
 $(OBJDIR)iview.o: iview.cpp iview.h
-	$(CC) $(COPTS) iview.cpp -o $@
+	$(CXX) $(COPTS) iview.cpp -o $@
 
 $(OBJDIR)statusbar.o: statusbar.cpp statusbar.h
-	$(CC) $(COPTS) statusbar.cpp -o $@
+	$(CXX) $(COPTS) statusbar.cpp -o $@
 
 $(OBJDIR)toolbar.o: toolbar.cpp toolbar.h
-	$(CC) $(COPTS) toolbar.cpp -o $@
+	$(CXX) $(COPTS) toolbar.cpp -o $@
 

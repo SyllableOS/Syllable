@@ -1,4 +1,4 @@
-OPTS   = -Wall -c --no-warn
+OPTS   = -c --no-warn
 
 EXE	= ../objs/Archiver
 
@@ -33,49 +33,49 @@ clean:
 	@rm $(EXE)
 
 ../objs/.cpp.o:
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 
 ../objs/main.o : main.cpp
 	@echo Compiling : $<
-	@$(CC) $(OPTS) $< -o $@
+	@$(CXX) $(OPTS) $< -o $@
 
 ../objs/archiver.o : archiver.cpp
 	@echo Compiling : $<
-	@$(CC) $(OPTS) $< -o $@
+	@$(CXX) $(OPTS) $< -o $@
 
 ../objs/new.o : new.cpp
 	@echo Compiling : $<
-	@$(CC) $(OPTS) $< -o $@
+	@$(CXX) $(OPTS) $< -o $@
 
 ../objs/options.o : options.cpp
 	@echo Compiling : $<
-	@$(CC) $(OPTS) $< -o $@
+	@$(CXX) $(OPTS) $< -o $@
 
 ../objs/extract.o : extract.cpp
 	@echo Compiling : $<
-	@$(CC) $(OPTS) $< -o $@
+	@$(CXX) $(OPTS) $< -o $@
 
 ../objs/exe.o : exe.cpp
 	@echo Compiling : $<
-	@$(CC) $(OPTS) $< -o $@
+	@$(CXX) $(OPTS) $< -o $@
 
 ../objs/statusbar.o : statusbar.cpp
 	@echo Compiling : $<
-	@$(CC) $(OPTS) $< -o $@
+	@$(CXX) $(OPTS) $< -o $@
 
 ../objs/loadbitmap.o : loadbitmap.cpp
 	@echo Compiling : $<
-	@$(CC) $(OPTS) $< -o $@
+	@$(CXX) $(OPTS) $< -o $@
 
 ../objs/toolbar.o : toolbar.cpp
 	@echo Compiling : $<
-	@$(CC) $(OPTS) $< -o $@
+	@$(CXX) $(OPTS) $< -o $@
 
 ../objs/settings.o : settings.cpp
 	@echo Compiling : $<
-	@$(CC) $(OPTS) $< -o $@
+	@$(CXX) $(OPTS) $< -o $@
 
 ../objs/flowlayout.o : flowlayout.cpp
 	@echo Compiling : $<
-	@$(CC) $(OPTS) $< -o $@
+	@$(CXX) $(OPTS) $< -o $@
 

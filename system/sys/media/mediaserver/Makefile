@@ -1,6 +1,6 @@
-CFLAGS   = -Wall -c -O2 -pipe -fexceptions
-CXXFLAGS = $(CFLAGS)
-AOPTS   = -c
+CFLAGS   += -c -fexceptions
+CXXFLAGS += -c -fexceptions
+AOPTS    = -c
 
 APPBIN = /system
 
@@ -24,7 +24,6 @@ $(OBJDIR)/mediaserver: $(OBJS)
 deps:
 
 install:  $(OBJDIR)/mediaserver
-	
 	install -s mediaserver $(APPBIN)/mediaserver
 
 dist:  $(OBJDIR)/mediaserver

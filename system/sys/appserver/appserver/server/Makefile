@@ -1,9 +1,9 @@
 SCREENSHOT = y
 
-CFLAGS   = -Wall -c -O3 -pipe -fexceptions -ffast-math -fomit-frame-pointer $(shell freetype-config --cflags)
-CXXFLAGS= $(CFLAGS)
-AOPTS   = -c
-LIBS    = -lsyllable
+CFLAGS   += -c -fexceptions -ffast-math $(shell freetype-config --cflags)
+CXXFLAGS += -c -fexceptions -ffast-math $(shell freetype-config --cflags)
+AOPTS    = -c
+LIBS     = -lsyllable
 
 OBJS =  ddriver.o ddline.o vesadrv.o server.o input.o			\
 	config.o keyboard.o keymap.o defaultkeymap.o			\

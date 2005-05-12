@@ -1,6 +1,6 @@
-CFLAGS   = -Wall -c -O3 -pipe -fexceptions -ffast-math -fomit-frame-pointer
-CXXFLAGS = $(CFLAGS)
-AOPTS   = -c
+CFLAGS   += -c -fexceptions -ffast-math
+CXXFLAGS += -c -fexceptions -ffast-math
+AOPTS    = -c
 
 DRIVERBIN = /system/drivers/media
 
@@ -24,7 +24,6 @@ $(OBJDIR)/cdrom.so: $(OBJS)
 deps:
 
 install:  $(OBJDIR)/cdrom.so
-	
 	install -s $(OBJDIR)/cdrom.so $(DRIVERBIN)/cdrom.so
 
 dist:  $(OBJDIR)/cdrom.so

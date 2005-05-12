@@ -1,5 +1,5 @@
-CFLAGS   = -Wall -c -g -O3 -pipe
-CXXFLAGS = $(CFLAGS)
+CFLAGS   += -c
+CXXFLAGS += -c
 
 TRANSDIR = /system/drivers/translators
 

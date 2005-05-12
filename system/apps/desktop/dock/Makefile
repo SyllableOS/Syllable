@@ -1,5 +1,5 @@
 #Makefile for Dock
-COPTS = -Wall -c -O3 -pipe -fexceptions -ffast-math -fomit-frame-pointer
+COPTS = -c -fexceptions -ffast-math
 
 APPBIN = /system/bin
 OBJS = Dock.o DirMenu.o
@@ -14,7 +14,7 @@ $(OBJDIR)/%.o : %.c
 
 $(OBJDIR)/%.o : %.cpp
 	@echo Compiling : $<
-	@$(CC) $(COPTS) $< -o $@
+	@$(CXX) $(COPTS) $< -o $@
 
 $(OBJDIR)/%.o : %.s
 	@echo Assembling : $<

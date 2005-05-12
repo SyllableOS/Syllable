@@ -1,12 +1,11 @@
-CFLAGS  := 
+ifeq ($(DEBUG),false)
+CFLAGS  += -DDEBUG=false
+else
+CFLAGS  += -g -DDEBUG=true
+endif
+
 LIBS    := -lsyllable -lz -lcrypt
 LDFLAGS := $(LIBS)
-
-ifeq ($(DEBUG),false)
-CFLAGS  := $(CFLAGS) -DDEBUG=false
-else
-CFLAGS  := $(CFLAGS) -g -DDEBUG=true
-endif
 
 CXXSRC := main.cpp userswindow.cpp labelview.cpp \
           userlistview.cpp changepwddlg.cpp propertiesdlg.cpp

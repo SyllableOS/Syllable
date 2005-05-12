@@ -1,4 +1,4 @@
-CFLAGS	= -O3 -c
+CFLAGS	= -c
 
 OBJDIR = objs
 EXES	= $(OBJDIR)/fsprobe $(OBJDIR)/mount $(OBJDIR)/unmount $(OBJDIR)/format $(OBJDIR)/addattrib $(OBJDIR)/lsattribs $(OBJDIR)/mkindex $(OBJDIR)/devstat $(OBJDIR)/rmattrib $(OBJDIR)/dumpattrib

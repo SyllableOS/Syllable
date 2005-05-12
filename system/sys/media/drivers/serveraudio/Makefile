@@ -1,6 +1,6 @@
-CFLAGS   = -Wall -c -O2 -pipe -fexceptions
-CXXFLAGS = $(CFLAGS)
-AOPTS   = -c
+CFLAGS   += -c -fexceptions
+CXXFLAGS += -c -fexceptions
+AOPTS    = -c
 
 DRIVERBIN = /system/drivers/media
 
@@ -24,7 +24,6 @@ $(OBJDIR)/serveraudio.so: $(OBJS)
 deps:
 
 install:  $(OBJDIR)/serveraudio.so
-	
 	install -s $(OBJDIR)/serveraudio.so $(DRIVERBIN)/serveraudio.so
 
 dist:  $(OBJDIR)/serveraudio.so

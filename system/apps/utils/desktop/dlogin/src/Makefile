@@ -1,4 +1,4 @@
-COPTS	= -Wall -c --no-warn
+COPTS	= -c --no-warn
 
 OBJDIR	:= ../objs
 OBJS	= ../objs/main.o ../objs/commonfuncs.o ../objs/mainwindow.o ../objs/colorbutton.o ../objs/imagebutton.o
@@ -32,21 +32,21 @@ astyle:
 
 ../objs/main.o : main.cpp
 	@echo Compiling : $<
-	@$(CC) $(COPTS) $< -o $@
+	@$(CXX) $(COPTS) $< -o $@
 
 ../objs/commonfuncs.o : commonfuncs.cpp
 	@echo Compiling : $<
-	@$(CC) $(COPTS) $< -o $@
+	@$(CXX) $(COPTS) $< -o $@
 
 ../objs/mainwindow.o : mainwindow.cpp
 	@echo Compiling : $<
-	@$(CC) $(COPTS) $< -o $@
+	@$(CXX) $(COPTS) $< -o $@
 
 ../objs/colorbutton.o : colorbutton.cpp
 	@echo Compiling : $<
-	@$(CC) $(COPTS) $< -o $@
+	@$(CXX) $(COPTS) $< -o $@
 
 ../objs/imagebutton.o : imagebutton.cpp
 	@echo Compiling : $<
-	@$(CC) $(COPTS) $< -o $@
+	@$(CXX) $(COPTS) $< -o $@
 

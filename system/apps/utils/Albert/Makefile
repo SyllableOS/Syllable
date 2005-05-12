@@ -1,4 +1,4 @@
-COPTS	= -Wall -c
+COPTS	= -c
 
 OBJS	= calc.o calculator.o stack.o calcbuttons.o calcdisplay.o togglebutton.o remsa.o base-n.o postoffice.o aboutwin.o
 EXE	= Albert
@@ -25,7 +25,7 @@ deps:
 #.c.o :
 #	$(CC) $(COPTS) $< -o $@
 .cpp.o:
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 
 calc.o:		calc.cpp calculator.h stack.h calcbuttons.h calcdisplay.h calc.h togglebutton.h remsa.h base-n.h
 calculator.o:	calculator.cpp calculator.h stack.h

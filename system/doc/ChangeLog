@@ -1,3 +1,12 @@
+* May 12 2005, Kaj de Vos *
+
+Generalized the makefiles more. Removed generic hardwired optimization and debug options.
+Changed more occurrences of $(CC) to $(CXX). Some rules probably still need to be
+differentiated between C and C++.
+
+From now on, please don't hardwire optimization options that aren't specific to your code.
+Consult Builder/settings to see which options are used by default globally.
+
 * May 8 2005, Kaj de Vos *
 
 Added Frisian flag to locale preference applet. Enabled several more flags we already had,

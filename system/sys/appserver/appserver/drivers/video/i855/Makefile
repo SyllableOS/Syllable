@@ -1,4 +1,4 @@
-COPTS   = -I$(TOP)/src $(shell freetype-config --cflags) -c -O2 -Wall
+COPTS   = -I$(TOP)/src $(shell freetype-config --cflags) -c
 
 DEVBIN = /system/drivers/appserver/video
 OBJS =	i855.o i855_video.o
@@ -15,7 +15,7 @@ $(OBJDIR)/%.o : %.c
 	$(CC) $(COPTS) $< -o $@
 
 $(OBJDIR)/%.o : %.cpp
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 
 
 all :	objs $(OBJDIR)/i855

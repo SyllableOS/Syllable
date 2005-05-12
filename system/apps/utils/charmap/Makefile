@@ -1,4 +1,4 @@
-OPTS   = -c -Wall
+OPTS   = -c
 
 EXE	= CharMap
 
@@ -9,7 +9,7 @@ $(OBJDIR)/%.o : %.c
 	$(CC) $(OPTS) $< -o $@
 
 $(OBJDIR)/%.o : %.cpp
-	$(CC) $(OPTS) $< -o $@
+	$(CXX) $(OPTS) $< -o $@
 
 OBJS := ./objs/main.o ./objs/mainwin.o ./objs/charmap.o
 

@@ -1,4 +1,4 @@
-COPTS   = -I$(TOP)/src $(shell freetype-config --cflags) -c -O2 -Wall
+COPTS   = -I$(TOP)/src $(shell freetype-config --cflags) -c
 
 DEVBIN = /system/drivers/appserver/video
 OBJS = mach64_vesa.o mach64_accel.o mach64_crtc.o mach64_cursor.o mach64_io.o mach64_misc.o mach64_video.o mach64_ct.o mach64.o
@@ -15,7 +15,7 @@ $(OBJDIR)/%.o : %.c
 	$(CC) $(COPTS) $< -o $@
 
 $(OBJDIR)/%.o : %.cpp
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 
 
 all :	objs $(OBJDIR)/mach64

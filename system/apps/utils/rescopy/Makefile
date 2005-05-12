@@ -1,5 +1,5 @@
-CFLAGS   = -pipe -O2 -c -Wall
-CXXFLAGS= $(CFLAGS)
+CFLAGS   += -c
+CXXFLAGS += -c
 
 EXE = rescopy
 

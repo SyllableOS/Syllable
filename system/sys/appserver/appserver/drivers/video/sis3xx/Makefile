@@ -1,4 +1,4 @@
-COPTS   = -I$(TOP)/src $(shell freetype-config --cflags) -c -O2
+COPTS   = -I$(TOP)/src $(shell freetype-config --cflags) -c
 
 DEVBIN = /system/drivers/appserver/video
 OBJS = init301.o init.o sis_video.o sis.o sis3xx.o
@@ -15,7 +15,7 @@ $(OBJDIR)/%.o : %.c
 	$(CC) $(COPTS) $< -o $@
 
 $(OBJDIR)/%.o : %.cpp
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 
 
 all :	objs $(OBJDIR)/sis3xx

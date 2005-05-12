@@ -1,4 +1,4 @@
-COPTS = -Wall -c
+COPTS = -c
 OBJS = main.o mainwindow.o datepicker.o timepicker.o
 EXE = DateTime
 
@@ -14,5 +14,5 @@ clean:
 	-rm $(EXE)
 
 .cpp.o:
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 

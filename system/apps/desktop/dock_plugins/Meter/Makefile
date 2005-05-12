@@ -3,7 +3,7 @@ Meter: meter.o
 	rescopy meter.so -r images/*.png
 
 meter.o: meter.cpp meter.h
-	$(CC) -Wall -c meter.cpp
+	$(CXX) -c meter.cpp
 
 install: Meter
 	if [ -e /system/drivers/dock/meter.so ]; then rm /system/drivers/dock/meter.so; fi

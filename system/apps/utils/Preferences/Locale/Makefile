@@ -1,4 +1,4 @@
-COPTS = -Wall -c
+COPTS = -c
 OBJS = main.o mainwindow.o 
 EXE = Locale
 
@@ -16,5 +16,5 @@ clean:
 	-rm $(EXE)
 
 .cpp.o:
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 

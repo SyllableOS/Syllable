@@ -1,4 +1,4 @@
-COPTS	= -Wall -c
+COPTS	= -c
 
 OBJS	= main.o gui/zoomview.o
 EXE	= BZoom
@@ -18,7 +18,7 @@ clean:
 #.c.o :
 #	$(CC) $(COPTS) $< -o $@
 .cpp.o:
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 
 main.o:		main.cpp mywindow.h gui/zoomview.h
 

@@ -1,4 +1,4 @@
-COPTS = -Wall -c
+COPTS = -c
 OBJS = main.o mainwindow.o
 EXE = Font
 
@@ -15,5 +15,5 @@ clean:
 	-rm $(EXE)
 
 .cpp.o:
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 

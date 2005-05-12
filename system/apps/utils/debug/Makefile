@@ -1,4 +1,4 @@
-COPTS	= -c -Wall
+COPTS	= -c
 
 OBJS	= term.o
 EXE	= dbterm
@@ -12,7 +12,7 @@ ftp:	ftp.o
 	$(CC) ftp.o -o ftp
 
 .cpp.o :
-	$(CC) $(COPTS) $< -o $@
+	$(CXX) $(COPTS) $< -o $@
 .c.o :
 	$(CC) $(COPTS) $< -o $@
 

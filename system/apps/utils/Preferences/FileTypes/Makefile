@@ -1,5 +1,5 @@
 #Makefile for FileTypes
-COPTS = -Wall -c
+COPTS = -c
 
 APPBIN = /atheos/Applications/Preferences/
 OBJS = main.o application.o mainwindow.o newtype.o
@@ -14,7 +14,7 @@ $(OBJDIR)/%.o : %.c
 
 $(OBJDIR)/%.o : %.cpp
 	@echo Compiling : $<
-	@$(CC) $(COPTS) $< -o $@
+	@$(CXX) $(COPTS) $< -o $@
 
 $(OBJDIR)/%.o : %.s
 	@echo Assembling : $<

@@ -1,5 +1,5 @@
-CFLAGS	= -O3 -c
-CXXFLAGS= -O3 -c
+CFLAGS	+= -c
+CXXFLAGS += -c
 OBJDIR = objs
 
 EXES	= $(OBJDIR)/catalogtool $(OBJDIR)/catcomp

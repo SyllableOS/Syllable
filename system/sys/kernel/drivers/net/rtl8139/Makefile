@@ -1,4 +1,4 @@
-CFLAGS   = -kernel -fno-PIC -c -O3	# -Wall
+CFLAGS   += -kernel -fno-PIC -c
 
 C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
 
@@ -12,7 +12,7 @@ $(OBJDIR)/%.o : %.c
 	$(CC) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/%.o : %.cpp
-	$(CC) $(CFLAGS) $< -o $@
+	$(CXX) $(CFLAGS) $< -o $@
 
 
 $(OBJDIR)/%.o : %.s

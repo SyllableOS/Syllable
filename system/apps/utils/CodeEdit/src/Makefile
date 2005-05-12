@@ -1,6 +1,6 @@
 OBJS = ../objs/App.o ../objs/EditWin.o ../objs/StatusBar.o ../objs/KeyMap.o ../objs/Dialogs.o ../objs/SettingsDialog.o ../objs/SettingsTab_Key.o ../objs/SettingsTab_Formats.o ../objs/FavoriteMenu.o ../objs/ToolBar.o ../objs/ImageItem.o ../objs/LoadBitmap.o ../objs/Version.o ../objs/SettingsTab_Font.o
 
-COPTS = -Wall --no-warn
+COPTS = --no-warn
 LOPTS = -lsyllable -lcodeview
 
 EXE = ../objs/CodeEdit
@@ -34,7 +34,7 @@ astyle:
 ../objs/%.o: %.cpp
 	@mkdir -p ../objs
 	@echo Compiling:  $<
-	@$(CC) $< $(COPTS) -c -o $@
+	@$(CXX) $< $(COPTS) -c -o $@
 
 ../objs/App.o: App.h App.cpp EditWin.h SettingsDialog.h KeyMap.h Dialogs.h
 ../objs/EditWin.o: EditWin.h EditWin.cpp App.h StatusBar.h KeyMap.h Dialogs.h
