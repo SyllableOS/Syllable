@@ -28,7 +28,7 @@ all: $(EMU10K1_MOD) $(AC97_MOD)
 	@echo "Done"
 
 $(EMU10K1_MOD): $(OBJS)
-	$(LD) $(LFLAGS) $(OBJS) -o $@
+	$(CC) $(LFLAGS) $(OBJS) -o $@
 
 clean:
 	@rm -rf $(OBJSDIR)*
