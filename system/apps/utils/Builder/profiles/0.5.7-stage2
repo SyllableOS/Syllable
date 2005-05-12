@@ -12,4 +12,6 @@ modules
 ; - Persistent disk mounting
 ; - Fix locale preference applet
 ;   - Create ~/Settings/System/
+; - Fix live CD media plug-in loading
+;   - ISO9660 get directory path bug
 
