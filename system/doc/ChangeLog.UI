@@ -1,3 +1,8 @@
+* May 13 (friday 13th) 2005, Henrik Isaksson *
+
+ - Toolbar, Statusbar
+	o Fixed "attempt to remove view not belonging to this window" error.
+
 * May 7 2005, Henrik Isaksson *
 
  - View
