@@ -36,9 +36,9 @@ struct iovec
 #define UIO_FASTIOV	8
 #define UIO_MAXIOV	1024
 
-
+#ifdef __KERNEL__
 ssize_t	readv( int nFile, const struct iovec* psVector, int nCount );
 ssize_t	writev( int nFile, const struct iovec* psVector, int nCount );
-
+#endif
 
 #endif /* __F_ATHEOS_POSIX_UIO_H__ */
