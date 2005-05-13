@@ -82,6 +82,7 @@ LayoutNode* StatusBar::AddPanel( const String& cName, const String& cText, doubl
 
 LayoutNode* StatusBar::AddPanel( StatusPanel* pcPanel )
 {
+	SetRoot( NULL );
 	LayoutNode* pcLayoutNode = m->m_pcRoot->AddChild( pcPanel, 100.0f );
 	pcLayoutNode->SetBorders( Rect( 2, 2, 2, 2 ) );
 	SetRoot( m->m_pcRoot );

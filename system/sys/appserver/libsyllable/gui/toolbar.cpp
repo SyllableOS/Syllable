@@ -103,6 +103,8 @@ LayoutNode* ToolBar::AddSeparator( const String& cName )
  *****************************************************************************/
 LayoutNode* ToolBar::AddChild( View* pcView, ToolBarObjectMode eMode, float vWeight )
 {
+	SetRoot( NULL );
+
 	LayoutNode* pcLayoutNode = m->m_pcRoot->AddChild( pcView, ( eMode == TB_FIXED_WIDTH ? 0.0f : eMode == TB_FIXED_MINIMUM ? 0.1f : vWeight ) );
 	pcLayoutNode->SetBorders( Rect( 2, 2, 2, 2 ) );
 
