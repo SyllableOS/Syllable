@@ -1,3 +1,8 @@
+* May 14 2005, Henrik Isaksson *
+
+ - AppServer
+	o Fixed GCC 3.4 compile errors and warnings.
+
 * May 13 (friday 13th) 2005, Henrik Isaksson *
 
  - Toolbar, Statusbar
