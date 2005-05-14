@@ -1,3 +1,9 @@
+* May 14 2005, Henrik Isaksson *
+
+ - Locale prefs
+	o Added catalogue file
+	o Moved language info into resource "languages.db"
+
 * May 8 2005, Kaj de Vos *
 
 Improved Dutch translation of AEdit. Added Frisian translation.
