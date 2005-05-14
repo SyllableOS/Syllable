@@ -38,7 +38,7 @@ bool TreeViewNode::HitTest( View* pcView, const Rect& cFrame, int nColumn, Point
 {
 	if( nColumn == 0 ) {
 		Rect r2 = _ExpanderCrossPos( cFrame );
-		r2 += Point( cFrame.left, cFrame.top );
+		//r2 += Point( cFrame.left, cFrame.top );
 		if( r2.DoIntersect( cPos ) && m->m_pcOwner ) {
 			if( IsExpanded() ) {
 				m->m_pcOwner->Collapse( this );
