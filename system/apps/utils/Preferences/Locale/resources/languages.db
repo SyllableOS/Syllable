@@ -1,0 +1,34 @@
+#
+# Language database for Locale Prefs - V0.1
+# Copyright (C)2005 Syllable Team
+#
+# Tabsize = 4
+#
+# Name				Continent		Country				Family						Code		Flag
+Česká				EUROPE			Česká Republika		INDO_EUROPEAN/SLAVONIC		cz			cz.png
+Deutsch				EUROPE			Deutschland			INDO_EUROPEAN/GERMANIC		de			de.png
+Deutsch/Schweiz		EUROPE			Der Schweiz			INDO_EUROPEAN/GERMANIC		de-ch		de-ch.png
+Dansk				EUROPE			Danmark				INDO_EUROPEAN/GERMANIC		da			da.png
+Eesti				EUROPE			Estonia				INDO_EUROPEAN				ee			ee.png
+English				EUROPE			United Kingdom		INDO_EUROPEAN/GERMANIC		en			en-uk.png
+English/British		EUROPE			United Kingdom		INDO_EUROPEAN/GERMANIC		en-uk		en-uk.png
+English/American	NORTH_AMERICA	United States		INDO_EUROPEAN/GERMANIC		en-us		en-us.png
+English/Australian	OCEANIA			Australia			INDO_EUROPEAN/GERMANIC		en-au		en-au.png
+English/New Zealand	OCEANIA			New Zealand			INDO_EUROPEAN/GERMANIC		en-nz		en-nz.png
+Español				EUROPE			España				INDO_EUROPEAN/ROMANCE		es			es.png
+Føroysku			EUROPE			Färöarna			INDO_EUROPEAN/GERMANIC		fo			fo.png
+Français			EUROPE			France				INDO_EUROPEAN/ROMANCE		fr			fr.png
+Frysk				EUROPE			?					INDO_EUROPEAN				fy			fy.png
+Íslenska			EUROPE			Island				INDO_EUROPEAN/GERMANIC		is			is.png
+Italiano			EUROPE			Italia				INDO_EUROPEAN/ROMANCE		it			it.png
+日本語 (Japanese)		ASIA			Japan				?							ja			ja.png
+Nederlands			EUROPE			Holland				INDO_EUROPEAN/GERMANIC		nl			nl.png
+Norsk/Bokmål		EUROPE			Norge				INDO_EUROPEAN/GERMANIC		nb			no.png
+Norsk/Nynorsk		EUROPE			Norge				INDO_EUROPEAN/GERMANIC		nn			no.png
+Polski				EUROPE			Poland				INDO_EUROPEAN/SLAVONIC		pl			pl.png
+Português			EUROPE			Portugal			INDO_EUROPEAN/ROMANCE		pt			pt.png
+Română				EUROPE			Romania				INDO_EUROPEAN/ROMANCE		ro			ro.png
+Русский (Russian)	EUROPE			Russia				INDO_EUROPEAN/SLAVONIC		ru			ru.png
+Suomi				EUROPE			Soumi				?							fi			fi.png
+Slovenčina			EUROPE			Slovensko			INDO_EUROPEAN/SLAVONIC		sk			sk.png
+Svenska				EUROPE			Sverige				INDO_EUROPEAN/GERMANIC		sv			sv.png
