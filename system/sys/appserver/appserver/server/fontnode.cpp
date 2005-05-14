@@ -254,7 +254,7 @@ void FontNode::SnapPointSize( float *pvSize ) const
 	const Font::size_list_t &cSizeList = m_pcFont->GetBitmapSizes();
 	float vSize = *pvSize;
 	float vClosest = vSize;
-	float vMinDelta = FLT_MAX;
+	float vMinDelta = __FLT_MAX__;
 
 	for( uint i = 0; i < cSizeList.size(); ++i )
 	{

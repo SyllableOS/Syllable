@@ -652,7 +652,9 @@ bool init_desktops()
 	dbprintf( "Initialize graphics driver...\n" );
 
 	/* Iterate through the graphics driver nodes in /dev/graphics */
-	DIR *pKernelDriverDir = opendir( "/dev/graphics" );
+	DIR *pKernelDriverDir = NULL;
+
+	pKernelDriverDir = opendir( "/dev/graphics" );
 
 	if( pKernelDriverDir != NULL )
 	{
@@ -695,7 +697,9 @@ bool init_desktops()
 			dbprintf( "Using appserver driver %s\n", zDriverPath );
 
 			/* Open the appserver driver */
-			int nLib = load_library( zAppserverDriverPath, 0 );
+			int nLib = -1;
+
+			nLib = load_library( zAppserverDriverPath, 0 );
 
 			if( nLib < 0 )
 			{

@@ -34,7 +34,6 @@
 #include <atheos/image.h>
 #include <atheos/msgport.h>
 
-#include <macros.h>
 
 #include <gui/guidefines.h>
 #include <gui/window.h>
@@ -864,7 +863,7 @@ void AppServer::Run( void )
 					}
 					catch( ... )
 					{
-						dbprintf( "Error: Catched exception while handling request %ld\n", nCode );
+						dbprintf( "Error: Catched exception while handling request %ld\n", (long)nCode );
 					}
 					break;
 				}
@@ -896,7 +895,7 @@ void AppServer::Run( void )
 
 						while( nSize > 0 )
 						{
-							int nCurSize = min( CLIPBOARD_FRAGMENT_SIZE, nSize );
+							int nCurSize = std::min( CLIPBOARD_FRAGMENT_SIZE, nSize );
 
 							memcpy( sReply.m_anBuffer, pData + nOffset, nCurSize );
 							sReply.m_nFragmentSize = nCurSize;
@@ -921,7 +920,7 @@ void AppServer::Run( void )
 					break;
 				}
 			default:
-				dbprintf( "WARNING : AppServer::Run() Unknown command %ld\n", nCode );
+				dbprintf( "WARNING : AppServer::Run() Unknown command %ld\n", (long)nCode );
 				break;
 			}
 		}
