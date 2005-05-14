@@ -6,6 +6,7 @@ $(EXE): $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -o $(EXE)
 	strip --strip-all $(EXE)
 	rescopy -r $(EXE) resources/*.png *.png
+	rescopy -a $(EXE) resources/languages.db
 
 dist: $(EXE)
 	mkdir -p $(DIST_DIR)/atheos/Applications/Preferences

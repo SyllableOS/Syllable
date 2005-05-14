@@ -40,6 +40,9 @@ int main( int argc, char *argv[] )
 PrefsLocaleApp::PrefsLocaleApp()
 :Application( "application/x-vnd-LocalePreferences" )
 {
+	// Load catalog
+	SetCatalog( "Locale.catalog" );
+	
 	// Now show main window
 	pcWindow = new MainWindow();
 	pcWindow->Show();
@@ -48,14 +51,12 @@ PrefsLocaleApp::PrefsLocaleApp()
 
 bool PrefsLocaleApp::OkToQuit()
 {
-	printf( "OkToQuit\n" );
 	return true;
 }
 
 
 PrefsLocaleApp::~PrefsLocaleApp()
 {
-	printf( "~\n" );
 }
 
 
