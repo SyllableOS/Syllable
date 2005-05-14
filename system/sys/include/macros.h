@@ -32,8 +32,10 @@
 #define	ABS(a)	(((a)>=0) ? (a) : (-(a)))
 #define	SUMADR(a,b)	((void*)(((uintptr_t)(a))+((uintptr_t)(b))))
 
+#ifdef __KERNEL__
 #define	min(a,b)	(((a)<(b)) ? (a) : (b) )
 #define	max(a,b)	(((a)>(b)) ? (a) : (b) )
+#endif
 
 #if ( __GNUC__ >= 3 )
 #define __likely( expr )	__builtin_expect( !!(expr), 1 )
