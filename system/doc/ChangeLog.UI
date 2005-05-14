@@ -2,6 +2,8 @@
 
  - AppServer
 	o Fixed GCC 3.4 compile errors and warnings.
+ - TreeView
+	o Fixed bug: it was only possible to expand the first item.
 
 * May 13 (friday 13th) 2005, Henrik Isaksson *
 
