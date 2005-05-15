@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.14
+# Version 0.6.15
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -509,6 +509,20 @@ def installModule staging, target
 								end
 
 								break unless action "cd #{linkPath} && ln -sf #{original} " + linkFile
+							end
+						end
+					then
+						false
+					elsif files = recipe['system-libs'] and not
+						begin
+							@log.header 'Moving system libraries'
+
+							for libs in toList files
+								break unless action "mv #{File.join(root, 'lib', libs)} " +
+									(staging && @systemBuild ?
+										File.join(@systemRoot, 'sys/libs/') :
+										'/system/libs/'
+									)
 							end
 						end
 					then
@@ -1352,11 +1366,11 @@ else
 
 #	@buildTools = File.join @workDir, 'build-tools'
 
-	ENV['DIST_VER'] = '0.5.5+'
-	ENV['DIST_NAME'] = 'base-syllable-0.5.5+.zip'
+#	ENV['DIST_VER'] = '0.5.6+'
+#	ENV['DIST_NAME'] = 'base-syllable-0.5.6+.zip'
 
 	ENV['ATHEOS_SRC'] = @workDir
-	ENV['BUILD_TOOLS'] = File.join @workDir, 'build-tools'
+#	ENV['BUILD_TOOLS'] = File.join @workDir, 'build-tools'
 	ENV['DIST_DIR'] = @stage
 end
 
@@ -1381,7 +1395,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.14',
+	puts 'Syllable Build System 0.6.15',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
