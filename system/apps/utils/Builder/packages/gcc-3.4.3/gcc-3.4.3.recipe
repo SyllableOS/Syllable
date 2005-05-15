@@ -58,11 +58,11 @@ configure-options
 ;	--with-local-prefix=/usr/local
 
 make-env
-	BOOT_CFLAGS		'-march=i586 -O -pipe'
+	BOOT_CFLAGS		'-O'
 make-vars
-	CFLAGS			'-march=i586 -O -pipe'
-	LIBCFLAGS		'-march=i586 -O2 -pipe'
-	LIBCXXFLAGS		'-march=i586 -O2 -pipe'
+	CFLAGS			'-O'
+	LIBCFLAGS		'-O2'
+	LIBCXXFLAGS		'-O2'
 ;					GCC seems to set this automatically:
 ;					' -fno-implicit-templates'
 make-targets
@@ -77,20 +77,13 @@ make-targets
 test-options		-k
 
 ;install-prefix-var	DESTDIR
-;system-files
-;	/system/libs
-;		lib/libgcc_s.so*
-;		lib/libstdc++.so*
 documentation
 	README FAQ faq.html BUGS bugs.html COPYING COPYING.LIB NEWS ChangeLog MAINTAINERS
 	gcc/ABOUT-GCC-NLS
 links
-	gcc						bin/cc
-	libgcc.a				lib/gcc/i586-pc-syllable/3.4.3/libgcc_static.a
-system-links
-	lib/libgcc_s.so.2		/system/libs/libgcc_s.so.2
-	libgcc_s.so.2			/system/libs/libgcc_s.so
-	lib/libstdc++.so.6.0.3	/system/libs/libstdc++.so.6.0.3
-	libstdc++.so.6.0.3		/system/libs/libstdc++.so.6
-	libstdc++.so.6.0.3		/system/libs/libstdc++.so
+	gcc				bin/cc
+	libgcc.a		lib/gcc/i586-pc-syllable/3.4.3/libgcc_static.a
+system-libs
+	libgcc_s.so*
+	libstdc++.so*
 

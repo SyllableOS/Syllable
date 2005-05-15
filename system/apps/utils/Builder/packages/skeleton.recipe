@@ -131,7 +131,7 @@ links
 ; Files to copy to the staging area, if used, after the main installation:
 ;stage-files
 ;	<Original> <Destination>
-; Files to move to the system area, after the main installation:
-;system-files
-;	<Source> <Destination>
+; Files to move to the system libraries area, after the main installation:
+system-libs			<Libraries and links from the lib subdirectory>
 ;post-install		<Commands after installation, before registration>
+
