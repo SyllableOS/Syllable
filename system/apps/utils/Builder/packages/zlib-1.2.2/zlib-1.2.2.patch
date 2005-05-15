@@ -1,0 +1,12 @@
+diff -ru zlib-1.2.2.original/configure zlib-1.2.2/configure
+--- zlib-1.2.2.original/configure	2004-09-07 05:50:07.000000000 +0000
++++ zlib-1.2.2/configure	2005-05-15 02:16:23.000000000 +0000
+@@ -76,7 +76,7 @@
+   SFLAGS=${CFLAGS-"-fPIC -O3"}
+   CFLAGS="$cflags"
+   case `(uname -s || echo unknown) 2>/dev/null` in
+-  Linux | linux | GNU | GNU/*) LDSHARED=${LDSHARED-"$cc -shared -Wl,-soname,libz.so.1"};;
++  Linux | linux | GNU | GNU/* | syllable*) LDSHARED=${LDSHARED-"$cc -shared -Wl,-soname,libz.so.1"};;
+   CYGWIN* | Cygwin* | cygwin* | OS/2* )
+              EXE='.exe';;
+   QNX*)  # This is for QNX6. I suppose that the QNX rule below is for QNX2,QNX4
