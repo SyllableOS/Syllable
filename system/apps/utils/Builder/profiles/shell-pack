@@ -3,6 +3,7 @@
 modules
 	system/gettext-0.14.3
 	system/libraries/slang-1.4.9
+;	shell/man-1.5m2
 	shell/which-2.16
 	file/file-4.07
 	file/mc-4.1
