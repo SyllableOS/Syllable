@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.13
+# Version 0.6.14
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -220,10 +220,9 @@ def getModule target
 						end
 					end
 				else
-					Dir.chdir target
-					if native?
-						true
-					else
+					native? target or
+					begin
+						Dir.chdir target
 						deleteCVSData
 						patchModule target
 					end
@@ -241,12 +240,16 @@ def getModule target
 end
 
 def configureModule target
-	if native?
+	if native? target
 		@log.header 'Building dependencies'
+
+		Dir.chdir target
 		action makeCommand(target) + ' deps'
 		# Continue building even if dependencies failed
 		action 'sync'
 	else
+		Dir.chdir target
+
 		unless
 			if cmdLine = (recipe = getRecipe target)['configure']
 				if cmdLine == ''
@@ -388,9 +391,8 @@ def installModule staging, target
 				end
 			end
 		else
-			Dir.chdir target
-
-			if native?
+			if native? target
+				Dir.chdir target
 				if exists? dir = buildDir(target) then Dir.chdir dir end
 
 				unless staging
@@ -403,7 +405,7 @@ def installModule staging, target
 #						if action makeCommand(target) + ' doc'
 #							action makeCommand(target) + ' install-doc'
 #						end
-	
+
 						true
 					end
 				end
@@ -429,44 +431,49 @@ def installModule staging, target
 						end
 					end
 
-					if exists? dir = buildDir(target) then Dir.chdir dir end
-
-					if not action(
-						if cmdLine = recipe['install']
-							toCommand cmdLine
+					unless exists? target
+						true
+					else
+						Dir.chdir target
+						if exists? dir = buildDir(target) then Dir.chdir dir end
+	
+						if not action(
+							if cmdLine = recipe['install']
+								toCommand cmdLine
+							else
+								((vars = recipe['install-env']) ? toVariables(vars) + ' ' : '') +
+								makeCommand(target) +
+								( (var = recipe['install-prefix-var']) ? " #{var}=" + root :
+									staging ? ' prefix=' + root :
+									''
+								) +
+								((vars = recipe['install-vars']) ? ' ' + toVariables(vars) : '') +
+								' ' + ((targets = recipe['install-targets']) ? toString(targets) : 'install')
+							end
+						)
+							false
+						elsif files = recipe['install-files'] and not
+							begin
+								@log.header 'Installing files'
+	
+								for line in parseList files
+									source, destination = toList line
+									break unless action "cp -a #{source} " + File.join(root, destination)
+								end
+							end
+						then
+							false
 						else
-							((vars = recipe['install-env']) ? toVariables(vars) + ' ' : '') +
-							makeCommand(target) +
-							( (var = recipe['install-prefix-var']) ? " #{var}=" + root :
-								staging ? ' prefix=' + root :
-								''
-							) +
-							((vars = recipe['install-vars']) ? ' ' + toVariables(vars) : '') +
-							' ' + ((targets = recipe['install-targets']) ? toString(targets) : 'install')
-						end
-					)
-						false
-					elsif files = recipe['install-files'] and not
-						begin
-							@log.header 'Installing files'
-
-							for line in parseList files
-								source, destination = toList line
-								break unless action "cp -a #{source} " + File.join(root, destination)
+							not files = recipe['documentation'] or
+							begin
+								@log.header 'Installing documentation'
+								Dir.chdir @workDir
+								Dir.chdir target
+								action "cp -a #{toString files} " + root
 							end
 						end
-					then
-						false
-					elsif files = recipe['documentation'] and not
-						begin
-							@log.header 'Installing documentation'
-							Dir.chdir @workDir
-							Dir.chdir target
-							action "cp -a #{toString files} " + root
-						end
-					then
-						false
-					elsif exists? filesPath = File.join(@portsPath, fullName(target), 'distro') and not
+					end and
+					if exists? filesPath = File.join(@portsPath, fullName(target), 'distro') and not
 						begin
 							@log.header 'Installing extra files'
 							action "cp -a #{File.join filesPath, '*'} " + root and
@@ -527,13 +534,11 @@ end
 
 def uninstallModule staging, target
 	unless
-		if dir? target and
-			begin
-				Dir.chdir target
-				native?
-			end
+		if dir? target and native? target
 		then  # A native module
+			Dir.chdir target
 			if exists? dir = buildDir(target) then Dir.chdir dir end
+
 			action makeCommand(target) + ' uninstall'
 		else
 			dir = installPath staging, target
@@ -643,17 +648,19 @@ end
 def buildModule staging, target
 	if getModule target  # Source is available
 		Dir.chdir @workDir  # Target path may be relative or absolute
-		Dir.chdir target
 
 		@log.header 'Cleaning'
+		Dir.chdir target
 		cleanModule target
+		Dir.chdir @workDir
 
 		if configureModule target  # No failed configuration
 			@log.header 'Making'
 
 			if makeModule(target) and staging
-				@log.header 'Installing in staging area'
 				Dir.chdir @workDir
+
+				@log.header 'Installing in staging area'
 				installModule true, target
 			end
 		end
@@ -765,7 +772,6 @@ def configure targets
 	for target in targets.modules
 		@log.entry target
 
-		Dir.chdir target
 		configureModule target
 		Dir.chdir @workDir
 	end
@@ -1118,10 +1124,10 @@ def buildDir target
 	'../=' + fullName(target)
 end
 
-def native?
-	not exists? 'configure' and not
+def native? target
+	not exists? File.join(target, 'configure') and not
 		# Currently look for a recipe to distinguish from meta-packages:
-		exists? File.join(@portsPath, port = fullName(Dir.getwd), port + '.recipe')
+		exists? File.join(@portsPath, port = fullName(target), port + '.recipe')
 end
 
 class Profile
@@ -1375,7 +1381,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.13',
+	puts 'Syllable Build System 0.6.14',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
