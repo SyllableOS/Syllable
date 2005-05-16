@@ -1,3 +1,8 @@
+* May 16 2005, Henrik Isaksson *
+
+ - AppServer & Libsyllable
+	o Jake's patch for GCC 3.4 compile warnings.
+
 * May 14 2005, Henrik Isaksson *
 
  - AppServer
