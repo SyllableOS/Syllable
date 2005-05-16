@@ -922,7 +922,7 @@ status_t RegistrarManager::Launch( Window* pcParentWindow, String zFile, bool bV
 		}
 	}
 	
-	/* If we haven’t launched anything yet, then we stop if in non-verbose mode */
+	/* If we haven't launched anything yet, then we stop if in non-verbose mode */
 	if( !bVerbose )
 		return( -EIO );	
 	

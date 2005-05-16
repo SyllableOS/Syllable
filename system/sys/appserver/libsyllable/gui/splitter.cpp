@@ -97,22 +97,6 @@ static uint8 g_anMouseImgV[]=
 
 */
 
-	inline float min( float a, float b )
-	{
-		if( a < b )
-			return a;
-		else
-			return b;
-	}
-	inline float max( float a, float b )
-	{
-		if( a > b )
-			return a;
-		else
-			return b;
-	}
-
-
 //**********************************************************************
 //   SplitterSeparator
 //**********************************************************************
@@ -136,8 +120,8 @@ static uint8 g_anMouseImgV[]=
 
 			if( m_eOrientation == HORIZONTAL )
 			{
-				float x1 = max( r.left, cUpdateRect.left );
-				float x2 = min( r.right, cUpdateRect.right );
+				float x1 = std::max( r.left, cUpdateRect.left );
+				float x2 = std::min( r.right, cUpdateRect.right );
 				float y1 = ( r.bottom - r.top ) / 2 - 2;
 				float y2 = ( r.bottom - r.top ) / 2 + 2;
 
@@ -155,8 +139,8 @@ static uint8 g_anMouseImgV[]=
 			}
 			else
 			{
-				float y1 = max( r.top, cUpdateRect.top );
-				float y2 = min( r.bottom, cUpdateRect.bottom );
+				float y1 = std::max( r.top, cUpdateRect.top );
+				float y2 = std::min( r.bottom, cUpdateRect.bottom );
 				float x1 = ( r.right - r.left ) / 2 - 2;
 				float x2 = ( r.right - r.left ) / 2 + 2;
 
@@ -320,8 +304,8 @@ void Splitter::AdjustLayout()
 
 	if( m->m_eOrientation == VERTICAL )
 	{
-		float	vLimit1 = max( m->m_vLimit1, m->m_pView1->GetPreferredSize( false ).y );
-		float	vLimit2 = max( m->m_vLimit2, m->m_pView2->GetPreferredSize( false ).y );
+		float	vLimit1 = std::max( m->m_vLimit1, m->m_pView1->GetPreferredSize( false ).y );
+		float	vLimit2 = std::max( m->m_vLimit2, m->m_pView2->GetPreferredSize( false ).y );
 		float	vMinSpace = vLimit1 + vLimit2 + m->m_SeparatorWidth;
 		float	vFreeSpace = r.Height() - vMinSpace;
 		float	vSize1 = vLimit1 + k * vFreeSpace;
@@ -336,8 +320,8 @@ void Splitter::AdjustLayout()
 	}
 	else
 	{
-		float	vLimit1 = max( m->m_vLimit1, m->m_pView1->GetPreferredSize( false ).x );
-		float	vLimit2 = max( m->m_vLimit2, m->m_pView2->GetPreferredSize( false ).x );
+		float	vLimit1 = std::max( m->m_vLimit1, m->m_pView1->GetPreferredSize( false ).x );
+		float	vLimit2 = std::max( m->m_vLimit2, m->m_pView2->GetPreferredSize( false ).x );
 		float	vMinSpace = vLimit1 + vLimit2 + m->m_SeparatorWidth;
 		float	vFreeSpace = r.Width() - vMinSpace;
 		float	vSize1 = vLimit1 + k * vFreeSpace;
@@ -381,7 +365,7 @@ void Splitter::SplitBy( float fValue )
 		if( fValue < 0 )
 		{
 			float	vLimit = m->m_pView1->GetPreferredSize( false ).y;
-			vLimit = max( m->m_vLimit1, vLimit );
+			vLimit = std::max( m->m_vLimit1, vLimit );
 			
 			if( f1.bottom - f1.top + fValue < vLimit )
 			{
@@ -396,7 +380,7 @@ void Splitter::SplitBy( float fValue )
 		else if( fValue > 0 )
 		{
 			float	vLimit = m->m_pView2->GetPreferredSize( false ).y;
-			vLimit = max( m->m_vLimit2, vLimit );
+			vLimit = std::max( m->m_vLimit2, vLimit );
 			
 			if( f2.bottom - f2.top - fValue < vLimit )
 			{
@@ -409,8 +393,8 @@ void Splitter::SplitBy( float fValue )
 			m->m_pView1->ResizeBy( Point( 0, fValue ) );
 		}
 
-		float	vLimit1 = max( m->m_vLimit1, m->m_pView1->GetPreferredSize( false ).y );
-		float	vLimit2 = max( m->m_vLimit2, m->m_pView2->GetPreferredSize( false ).y );
+		float	vLimit1 = std::max( m->m_vLimit1, m->m_pView1->GetPreferredSize( false ).y );
+		float	vLimit2 = std::max( m->m_vLimit2, m->m_pView2->GetPreferredSize( false ).y );
 		m->m_vSplitPos = (f1.Height() - vLimit1) / (GetBounds().Height() - vLimit1 - vLimit2 - m->m_SeparatorWidth);
 	}
 	else
@@ -418,7 +402,7 @@ void Splitter::SplitBy( float fValue )
 		if( fValue < 0 )
 		{
 			float	vLimit = m->m_pView1->GetPreferredSize( false ).x;
-			vLimit = max( m->m_vLimit1, vLimit );
+			vLimit = std::max( m->m_vLimit1, vLimit );
 
 			if( f1.right - f1.left + fValue < vLimit )
 			{
@@ -433,7 +417,7 @@ void Splitter::SplitBy( float fValue )
 		else if( fValue > 0 )
 		{
 			float	vLimit = m->m_pView2->GetPreferredSize( false ).x;
-			vLimit = max( m->m_vLimit2, vLimit );
+			vLimit = std::max( m->m_vLimit2, vLimit );
 			
 			if( f2.right - f2.left - fValue < vLimit )
 			{
@@ -446,8 +430,8 @@ void Splitter::SplitBy( float fValue )
 			m->m_pView1->ResizeBy( Point( fValue, 0 ) );
 		}
 
-		float	vLimit1 = max( m->m_vLimit1, m->m_pView1->GetPreferredSize( false ).x );
-		float	vLimit2 = max( m->m_vLimit2, m->m_pView2->GetPreferredSize( false ).x );
+		float	vLimit1 = std::max( m->m_vLimit1, m->m_pView1->GetPreferredSize( false ).x );
+		float	vLimit2 = std::max( m->m_vLimit2, m->m_pView2->GetPreferredSize( false ).x );
 		m->m_vSplitPos = (f1.Width() - vLimit1) / (GetBounds().Width() - vLimit1 - vLimit2 - m->m_SeparatorWidth);
 	}
 	Flush();

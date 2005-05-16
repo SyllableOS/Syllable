@@ -546,9 +546,9 @@ void ScrollBar::KeyDown( const char *pzString, const char *pzRawString, uint32 n
 	{
 		MakeFocus();
 	} else if( pzString[1] == 0 && ( pzString[0] == 0x1E || pzString[0] == 0x1D ) ) {
-		SetValue( min( GetValue().AsFloat() + m->m_vSmallStep, m->m_vMax ) );
+		SetValue( std::min( GetValue().AsFloat() + m->m_vSmallStep, m->m_vMax ) );
 	} else if( pzString[1] == 0 && ( pzString[0] == 0x1F || pzString[0] == 0x1C ) ) {
-		SetValue( max( GetValue().AsFloat() - m->m_vSmallStep, m->m_vMin ) );
+		SetValue( std::max( GetValue().AsFloat() - m->m_vSmallStep, m->m_vMin ) );
 	} else {
 		Control::KeyDown( pzString, pzRawString, nQualifiers );
 	}
@@ -780,7 +780,7 @@ float ScrollBar::_PosToVal( Point cPos ) const
 			vValue = m->m_vMin + ( m->m_vMax - m->m_vMin ) * vPos;
 		}
 	}
-	return ( min( max( vValue, m->m_vMin ), m->m_vMax ) );
+	return ( std::min( std::max( vValue, m->m_vMin ), m->m_vMax ) );
 }
 
 void ScrollBar::FrameSized( const Point & cDelta )
@@ -882,7 +882,7 @@ Rect ScrollBar::GetKnobFrame( void ) const
 	if( m->m_nOrientation == HORIZONTAL )
 	{
 		float vViewLength = m->m_cKnobArea.Width() + 1.0f;
-		float vSize = max( float ( SB_MINSIZE ), vViewLength * m->m_vProportion );
+		float vSize = std::max( float ( SB_MINSIZE ), vViewLength * m->m_vProportion );
 		float vLen = vViewLength - vSize;
 		float vDelta = m->m_vMax - m->m_vMin;
 
@@ -895,7 +895,7 @@ Rect ScrollBar::GetKnobFrame( void ) const
 	else
 	{
 		float vViewLength = m->m_cKnobArea.Height() + 1.0f;
-		float vSize = max( float ( SB_MINSIZE ), vViewLength * m->m_vProportion );
+		float vSize = std::max( float ( SB_MINSIZE ), vViewLength * m->m_vProportion );
 		float vLen = vViewLength - vSize;
 		float vDelta = m->m_vMax - m->m_vMin;
 

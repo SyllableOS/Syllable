@@ -40,7 +40,7 @@ enum Error_e
 { E_OK, E_SKIP, E_CANCEL, E_ALL };
 struct MoveFileParams_s
 {
-	MoveFileParams_s( const std::vector < os::String > cDstPaths, const std::vector < os::String > cSrcPaths, const Messenger & cViewTarget, Message* pcMsg
+	MoveFileParams_s( const std::vector < os::String > &cDstPaths, const std::vector < os::String > &cSrcPaths, const Messenger & cViewTarget, Message* pcMsg
 					, bool bReplace, bool bDontOverwrite )
 	:m_cDstPaths( cDstPaths ), m_cSrcPaths( cSrcPaths ), m_cViewTarget( cViewTarget ), m_pcMsg( pcMsg ), m_bReplace( bReplace ),
 	m_bDontOverwrite( bDontOverwrite )

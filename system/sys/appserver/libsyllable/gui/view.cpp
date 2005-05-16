@@ -471,7 +471,7 @@ void View::_UnlinkChild( View * pcChild )
 	}
 	else
 	{
-		dbprintf( "ERROR : Attempt to remove a view not belonging to this window\n" );
+		dbprintf( "ERROR : Attempt to remove a view (%s) not belonging to this window\n", pcChild->GetName().c_str() );
 	}
 }
 

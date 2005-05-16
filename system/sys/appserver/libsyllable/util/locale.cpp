@@ -177,7 +177,7 @@ Catalog* Locale::GetLocalizedCatalog( const String& cName )
 		bDef = true;
 	}
 
-	for( int i = 0; i < m->m_cLang.size(); i++ ) {
+	for( size_t i = 0; i < m->m_cLang.size(); i++ ) {
 		pcStream = GetResourceStream( m->m_cLang[i] + String("/") + cName );
 		if( pcStream ) {
 			pcCatalog->Load( pcStream );

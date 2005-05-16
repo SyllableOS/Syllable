@@ -24,11 +24,6 @@
 #include <gui/window.h>
 #include <util/message.h>
 
-inline float max( float a, float b )
-{
-	return ( ( a < b ) ? b : a );
-}
-
 using namespace os;
 
 static Color32_s Tint( const Color32_s & sColor, float vTint )
@@ -217,7 +212,7 @@ void TabView::FrameSized( const Point & cDelta )
 	{
 		Rect cDamage = cBounds;
 
-		cDamage.left = cDamage.right - max( 2.0f, cDelta.x + 8.0f );
+		cDamage.left = cDamage.right - std::max( 2.0f, cDelta.x + 8.0f );
 		Invalidate( cDamage );
 		bNeedFlush = true;
 	}
@@ -225,7 +220,7 @@ void TabView::FrameSized( const Point & cDelta )
 	{
 		Rect cDamage = cBounds;
 
-		cDamage.top = cDamage.bottom - max( 2.0f, cDelta.y + 1.0f );
+		cDamage.top = cDamage.bottom - std::max( 2.0f, cDelta.y + 1.0f );
 		Invalidate( cDamage );
 		bNeedFlush = true;
 	}

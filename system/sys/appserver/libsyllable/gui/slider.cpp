@@ -664,9 +664,9 @@ void Slider::KeyDown( const char *pzString, const char *pzRawString, uint32 nQua
 	{
 		MakeFocus();
 	} else if( pzString[1] == 0 && ( pzString[0] == 0x1E || pzString[0] == 0x1D ) ) {
-		SetValue( min( GetValue().AsFloat() + m->m_vSmallStep, m->m_vMax ) );
+		SetValue( std::min( GetValue().AsFloat() + m->m_vSmallStep, m->m_vMax ) );
 	} else if( pzString[1] == 0 && ( pzString[0] == 0x1F || pzString[0] == 0x1C ) ) {
-		SetValue( max( GetValue().AsFloat() - m->m_vSmallStep, m->m_vMin ) );
+		SetValue( std::max( GetValue().AsFloat() - m->m_vSmallStep, m->m_vMin ) );
 	} else {
 		Control::KeyDown( pzString, pzRawString, nQualifiers );
 	}

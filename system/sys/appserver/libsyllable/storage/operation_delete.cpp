@@ -40,7 +40,7 @@ using namespace os;
 
 struct DeleteFileParams_s
 {
-	DeleteFileParams_s( const std::vector < os::String > cPaths, const Messenger & cViewTarget, Message* pcMsg )
+	DeleteFileParams_s( const std::vector < os::String > &cPaths, const Messenger & cViewTarget, Message* pcMsg )
 	:m_cPaths( cPaths ), m_cViewTarget( cViewTarget ), m_pcMsg( pcMsg )
 	{
 	}
@@ -327,11 +327,3 @@ void os::delete_files( const std::vector < os::String > &cPaths, const Messenger
 		resume_thread( hTread );
 	}
 }
-
-
-
-
-
-
-
-

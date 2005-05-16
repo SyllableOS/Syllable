@@ -853,7 +853,7 @@ void Looper::AddHandler( Handler * pcHandler )
 	}
 	else
 	{
-		dbprintf( "Warning: Attempt to add handler %ld twice\n", pcHandler->m_nToken );
+		dbprintf( "Warning: Attempt to add handler %d twice\n", pcHandler->m_nToken );
 	}
 }
 
@@ -890,7 +890,7 @@ bool Looper::RemoveHandler( Handler * pcHandler )
 
 	if( i == m->m_cHandlerMap.end() )
 	{
-		dbprintf( "Error: Looper::RemoveHandler() could not find handler %ld in map!\n", pcHandler->m_nToken );
+		dbprintf( "Error: Looper::RemoveHandler() could not find handler %d in map!\n", pcHandler->m_nToken );
 		return ( false );
 	}
 	else
