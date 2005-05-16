@@ -863,7 +863,7 @@ void AppServer::Run( void )
 					}
 					catch( ... )
 					{
-						dbprintf( "Error: Catched exception while handling request %ld\n", (long)nCode );
+						dbprintf( "Error: Catched exception while handling request %d\n", nCode );
 					}
 					break;
 				}
@@ -920,7 +920,7 @@ void AppServer::Run( void )
 					break;
 				}
 			default:
-				dbprintf( "WARNING : AppServer::Run() Unknown command %ld\n", (long)nCode );
+				dbprintf( "WARNING : AppServer::Run() Unknown command %d\n", nCode );
 				break;
 			}
 		}

@@ -327,7 +327,7 @@ FontNode *SrvApplication::GetFont( uint32 nID )
 		}
 		else
 		{
-			dbprintf( "Error : SrvApplication::GetFont() called on invalid font ID %lx\n", (unsigned long)nID );
+			dbprintf( "Error : SrvApplication::GetFont() called on invalid font ID %x\n", nID );
 		}
 		m_cFontLock.Unlock();
 	}
@@ -939,7 +939,7 @@ void SrvApplication::DispatchMessage( Message * pcReq )
 			}
 			else
 			{
-				dbprintf( "AR_GET_SCREENMODE_INFO: Invalid index %ld\n", (unsigned long)nIndex );
+				dbprintf( "AR_GET_SCREENMODE_INFO: Invalid index %d\n", nIndex );
 				cReply.AddInt32( "error", EINVAL );
 			}
 			pcReq->SendReply( &cReply );
@@ -981,7 +981,7 @@ void SrvApplication::DispatchMessage( Message * pcReq )
 			}
 			else
 			{
-				dbprintf( "Error: SrvApplication::DispatchMessage() invalid desktop %ld in AR_SET_SCREEN_MODE request\n", (unsigned long)nDesktop );
+				dbprintf( "Error: SrvApplication::DispatchMessage() invalid desktop %d in AR_SET_SCREEN_MODE request\n", nDesktop );
 				cReply.AddInt32( "error", EINVAL );
 			}
 			pcReq->SendReply( &cReply );
@@ -1517,7 +1517,7 @@ bool SrvApplication::DispatchMessage( const void *pMsg, int nCode )
 			}
 			else
 			{
-				dbprintf( "Error: Attempt to delete invalid sprite %ld\n", (long)psReq->m_nSprite );
+				dbprintf( "Error: Attempt to delete invalid sprite %d\n", psReq->m_nSprite );
 			}
 			return ( true );
 		}

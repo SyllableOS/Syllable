@@ -23,6 +23,7 @@
 #include "config.h"
 
 #include <util/messenger.h>
+#include <float.h>
 
 using namespace os;
 
@@ -254,7 +255,7 @@ void FontNode::SnapPointSize( float *pvSize ) const
 	const Font::size_list_t &cSizeList = m_pcFont->GetBitmapSizes();
 	float vSize = *pvSize;
 	float vClosest = vSize;
-	float vMinDelta = __FLT_MAX__;
+	float vMinDelta = FLT_MAX;
 
 	for( uint i = 0; i < cSizeList.size(); ++i )
 	{

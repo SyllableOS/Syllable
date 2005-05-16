@@ -23,6 +23,7 @@
 #include <signal.h>
 #include <atheos/types.h>
 #include <atheos/time.h>
+#include <float.h>
 
 #include "ddriver.h"
 #include "server.h"
@@ -521,7 +522,7 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 		nBufPos += psHdr->nSize;
 		if( nBufPos > RENDER_BUFFER_SIZE )
 		{
-			dbprintf( "Error: SrvWindow::R_Render() invalid message size %ld\n", (long)psHdr->nSize );
+			dbprintf( "Error: SrvWindow::R_Render() invalid message size %d\n", psHdr->nSize );
 			break;
 		}
 
@@ -1286,7 +1287,7 @@ bool SrvWindow::DispatchMessage( Message * pcReq )
 			}
 			else
 			{
-				dbprintf( "Error: Attempt to create view with invalid parent %ld\n", (long)hParentView );
+				dbprintf( "Error: Attempt to create view with invalid parent %d\n", hParentView );
 				Message cReply;
 
 				cReply.AddInt32( "error", -EINVAL );
@@ -1395,7 +1396,7 @@ bool SrvWindow::DispatchMessage( Message * pcReq )
 			if( m_pcWndBorder != NULL )
 			{
 				Point cMinSize( 0.0f, 0.0f );
-				Point cMaxSize( COORD_MAX, COORD_MAX );
+				Point cMaxSize( FLT_MAX, FLT_MAX );
 
 				pcReq->FindPoint( "min_size", &cMinSize );
 				pcReq->FindPoint( "max_size", &cMaxSize );

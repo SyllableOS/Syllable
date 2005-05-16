@@ -488,7 +488,7 @@ int AppserverConfig::LoadConfig( FILE *hFile, bool bActivateConfig )
 			float vShare;
 			float vRotation;
 
-			if( sscanf( zLineBuf, "DefaultFont: \"%1023[^\"]\" \"%511[^\"]\" \"%511[^\"]\" %lx %f %f %f\n", zName, zFamily, zStyle, &nFlags, &vSize, &vShare, &vRotation ) == 7 )
+			if( sscanf( zLineBuf, "DefaultFont: \"%1023[^\"]\" \"%511[^\"]\" \"%511[^\"]\" %x %f %f %f\n", zName, zFamily, zStyle, &nFlags, &vSize, &vShare, &vRotation ) == 7 )
 			{
 				AddFontConfig( zName, os::font_properties( zFamily, zStyle, nFlags, vSize, vShare, vRotation ) );
 			}

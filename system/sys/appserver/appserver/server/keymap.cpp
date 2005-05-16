@@ -39,12 +39,12 @@ keymap *load_keymap( FILE *hFile )
 	}
 	if( sHeader.m_nMagic != KEYMAP_MAGIC )
 	{
-		dbprintf( "Error: Keymap have bad magic number (%08lx) should have been %08x\n", (unsigned long)sHeader.m_nMagic, KEYMAP_MAGIC );
+		dbprintf( "Error: Keymap have bad magic number (%08x) should have been %08x\n", sHeader.m_nMagic, KEYMAP_MAGIC );
 		return ( NULL );
 	}
 	if( sHeader.m_nVersion != CURRENT_KEYMAP_VERSION )
 	{
-		dbprintf( "Error: Unknown keymap version %ld\n", (long)sHeader.m_nVersion );
+		dbprintf( "Error: Unknown keymap version %d\n", sHeader.m_nVersion );
 		return ( NULL );
 	}
 
@@ -52,7 +52,7 @@ keymap *load_keymap( FILE *hFile )
 
 	if( !psKeymap )
 	{
-		dbprintf( "Error: Could not allocate memory for keymap (Size: %ld)\n", (long)sHeader.m_nSize );
+		dbprintf( "Error: Could not allocate memory for keymap (Size: %d)\n", sHeader.m_nSize );
 		return ( NULL );
 	}
 
