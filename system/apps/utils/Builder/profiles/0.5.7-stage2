@@ -16,4 +16,5 @@ modules
 ;   - Create ~/Settings/System/
 ; - Fix live CD media plug-in loading
 ;   - ISO9660 get directory path bug
+; - Include stty on install CD, for the installer
 
