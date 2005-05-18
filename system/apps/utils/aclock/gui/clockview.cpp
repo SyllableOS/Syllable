@@ -73,8 +73,8 @@ void ClockView::TimerTick( int nID )
 	}
         else
 	{
-            float x0 = Width()/2  ,  y0 = Height()/2 ;
-            float R = min( Width() , Height() ) / 2  - 10 ;
+            float x0 = Width()/2, y0 = Height()/2;
+            float R = std::min( Width(), Height() ) / 2 - 10;
             float r = R * 0.9;
             // --- Draw seconds at new position ---
             float alpha = 2*M_PI*((float)s/60);
@@ -144,8 +144,8 @@ void ClockView::draw( const Rect& cUpdateRect )
 
     if( ! m_bShowDigital )
     {
-    float x0 = Width()/2  ,  y0 = Height()/2 ;        // Center of circle.
-    float R = min( Width() , Height() ) / 2  - 10 ;   // Radius.
+    float x0 = Width()/2, y0 = Height() / 2;           // Center of circle.
+    float R = std::min( Width(), Height() ) / 2 - 10;  // Radius.
     float r;
     float alpha;
     
@@ -215,3 +215,4 @@ void ClockView::draw( const Rect& cUpdateRect )
    
     Flush();
 }
+
