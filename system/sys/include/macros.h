@@ -32,7 +32,7 @@
 #define	ABS(a)	(((a)>=0) ? (a) : (-(a)))
 #define	SUMADR(a,b)	((void*)(((uintptr_t)(a))+((uintptr_t)(b))))
 
-#ifdef __KERNEL__
+#ifndef __cplusplus
 #define	min(a,b)	(((a)<(b)) ? (a) : (b) )
 #define	max(a,b)	(((a)>(b)) ? (a) : (b) )
 #endif
@@ -57,3 +57,4 @@
 	  __FUNCTION__, __LINE__, __builtin_return_address(0), __builtin_return_address(1)	\
 	  ); } while(0)
 #endif
+

@@ -1,3 +1,9 @@
+* May 18 2005, Kaj de Vos *
+
+Enabled the min/max macros in macros.h for userland C code. They were restricted to
+kernel space due to clashing with the C++ standard library, but some C applications
+use them.
+
 * May 12 2005, Kaj de Vos *
 
 Generalized the makefiles more. Removed generic hardwired optimization and debug options.
