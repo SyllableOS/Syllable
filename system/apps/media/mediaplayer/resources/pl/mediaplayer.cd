@@ -1,0 +1,27 @@
+//
+// Media Player string catalog
+//
+
+MSG_MAINWND_TITLE=100						Media Player
+
+
+MSG_MAINWND_MENU_APPLICATION=200			Aplikacja
+MSG_MAINWND_MENU_APPLICATION_ABOUT			O porgramie...
+MSG_MAINWND_MENU_APPLICATION_QUIT			Koniec
+
+MSG_MAINWND_MENU_FILE=300					Plik
+MSG_MAINWND_MENU_FILE_OPEN					Otwórz...
+MSG_MAINWND_MENU_FILE_OPEN_INPUT			Otwórz wejście...
+MSG_MAINWND_MENU_FILE_FULLSCREEN			Pełny ekran
+
+MSG_MAINWND_MENU_TRACKS=400					Scieżki
+
+MSG_ABOUTWND_TITLE=1000						O programie Media Player
+MSG_ABOUTWND_TEXT							\nA Media Player\nCopyright 2003 Arno Klenke\n\nSyllable Media Player jest rozwijany na warunkach licencji LGPL.
+MSG_ABOUTWND_OK								O.K
+
+MSG_ERRWND_TITLE=1100						Błąd
+MSG_ERRWND_OK								Ok
+MSG_ERRWND_CANTPLAY							Nie można otworzyć pliku.\n Sprawdź ustawienia multimedialne.
+
+MSG_TRACK_MENU_ITEM=2000					Ścieżka
