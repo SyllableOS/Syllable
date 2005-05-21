@@ -18,10 +18,14 @@ MSG_MAINWND_MENU_APPLICATION_QUIT			Avsluta
 
 MSG_MAINWND_MENU_PLAYLIST=300				Spellista
 MSG_MAINWND_MENU_PLAYLIST_SELECT			Välj...
+MSG_MAINWND_MENU_PLAYLIST_INPUT				Open Input...
 
 MSG_MAINWND_MENU_FILE=400					Fil
 MSG_MAINWND_MENU_FILE_ADD					Lägg till...
 MSG_MAINWND_MENU_FILE_REMOVE				Ta bort
+
+MSG_MAINWND_MENU_VIEW=500					Visa
+MSG_MAINWND_MENU_VIEW_PLAYLIST				Spellista
 
 MSG_ABOUTWND_TITLE=1000						Om ColdFish
 MSG_ABOUTWND_TEXT							\nEn musikspelare.\n\nCopyright 2003 Arno Klenke\nCopyright 2003 Kristian Van Der Vliet\nSvensk Översättning: Henrik Isaksson\n\nColdFish har släppts under LGPL.
@@ -41,4 +45,3 @@ MSG_PLAYLISTWND_OPEN						Öppna
 MSG_PLAYLISTWND_NOTE						OBS: Om du försöker öppna en spellista som\ninte finns, så skapas den automatiskt.
 
 MSG_LCD_TRACK=3000							Spår
-
