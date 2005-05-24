@@ -237,8 +237,6 @@ __SIGSETFN (sigdelset, ((__set->__val[__word] &= ~__mask), 0), )
 #define SIG_ERR	((__sighandler_t)-1)	/* error return from signal */
 #define SIG_HOLD ((__sighandler_t)2)	/* add signal to blocked mask */
 
-#include <atheos/pthreadsignal.h>
-
 #ifdef __cplusplus
 }
 #endif
