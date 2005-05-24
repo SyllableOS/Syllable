@@ -1,3 +1,8 @@
+* May 24 2005, Kristian Van Der Vliet *
+
+Removed atheos/pthreadsignal.h.  pthread_sigmask() is now defined in
+bits/sigthread.h as part of Glibc 2.3.4
+
 * May 7 2005, Kristian Van Der Vliet *
 
 Build 0015.  Added a new syscall, get_tld_addr() which as the name suggests,
