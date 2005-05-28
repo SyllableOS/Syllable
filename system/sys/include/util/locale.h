@@ -59,6 +59,14 @@ public:
 
 	Catalog* GetLocalizedCatalog( const String& cName );
 
+	// For resources embedded in libsyllable or stored in /system/resources
+	StreamableIO* GetSystemResourceStream( const String& cName );
+	StreamableIO* GetLocalizedSystemResourceStream( const String& cName );
+
+	Catalog* GetLocalizedSystemCatalog( const String& cName );
+
+	const Locale& operator=( const Locale& cLocale );
+
 public:
 	static const Locale& GetSystemDefaultLocale();
 private:
@@ -68,4 +76,4 @@ private:
 
 }
 
-#endif
+#endif /* __F_UTIL_LOCALE_H__ */
