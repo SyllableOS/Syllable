@@ -158,11 +158,25 @@ Application *Application::GetInstance()
 	return ( s_pcInstance );
 }
 
+/** \brief Get the default string catalog
+ *
+ *	This function returns the string catalog that was set with SetCatalog().
+ *  \return
+ *	Pointer to the application's default string catalog
+ *  \sa SetCatalog()
+ *  \author	Henrik Isaksson (syllable@isaksson.tk)
+ */
 const Catalog* Application::GetCatalog() const
 {
 	return m->m_pcCatalog;
 }
 
+/** \brief Set the default string catalog
+ *
+ *	This function sets the string catalog that is returned by GetCatalog().
+ *  \sa GetCatalog()
+ *  \author	Henrik Isaksson (syllable@isaksson.tk)
+ */
 void Application::SetCatalog( Catalog* pcCatalog )
 {
 	Lock();
@@ -178,6 +192,12 @@ void Application::SetCatalog( Catalog* pcCatalog )
 	Unlock();
 }
 
+/** \brief Set the default string catalog
+ *
+ *	This function sets the string catalog that is returned by GetCatalog().
+ *  \sa GetCatalog()
+ *  \author	Henrik Isaksson (syllable@isaksson.tk)
+ */
 bool Application::SetCatalog( const String& cCatalogName )
 {
 	Catalog* pcCat = m->m_cLocale.GetLocalizedCatalog( cCatalogName );
@@ -188,6 +208,32 @@ bool Application::SetCatalog( const String& cCatalogName )
 		dbprintf( "Catalog '%s' not found\n", cCatalogName.c_str() );
 		return false;
 	}
+}
+
+/** \brief Get current locale
+ *
+ *	This function returns the default locale that is used by this application.
+ *	Unless you change it using SetApplicationLocale, the application locale will
+ *	be the same as the system's default locale (as set by Locale prefs).
+ *	\sa SetApplicationLocale()
+ *  \author	Henrik Isaksson (syllable@isaksson.tk)
+ */
+Locale* Application::GetApplicationLocale() const
+{
+	return &m->m_cLocale;
+}
+
+/** \brief Change current locale
+ *
+ *	This function changes the default locale that is used by this application.
+ *	Normally, you shouldn't use this function, as the locale will be set
+ *	automatically to the system's default locale (as set by Locale prefs).
+ *	\sa GetApplicationLocale()
+ *  \author	Henrik Isaksson (syllable@isaksson.tk)
+ */
+void Application::SetApplicationLocale( const Locale& cLocale )
+{
+	m->m_cLocale = cLocale;
 }
 
 /** \brief Return the appserver message port.
