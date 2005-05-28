@@ -111,6 +111,9 @@ public:
 	void SetCatalog( Catalog* pcCatalog );
 	bool SetCatalog( const String& cCatalogName );
 
+	Locale* GetApplicationLocale() const;
+	void SetApplicationLocale( const Locale& pcLocale );
+
 private:
     friend class Window;
     friend class Desktop;
