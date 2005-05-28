@@ -31,6 +31,7 @@
 #include <util/message.h>
 #include <util/messenger.h>
 #include <util/string.h>
+#include <util/application.h>
 #include <storage/registrar.h>
 #include <storage/path.h>
 #include <storage/filereference.h>
@@ -44,6 +45,10 @@
 #include <time.h>
 #include <string>
 
+#include "catalogs/libsyllable.h"
+
+#define GS( x, def )		( m_pcCatalog ? m_pcCatalog->GetString( x, def ) : def )
+
 using namespace os;
 
 class InfoWin : public os::Window
@@ -51,10 +56,12 @@ class InfoWin : public os::Window
 public:
 	InfoWin( os::Rect cFrame, os::String zFile, const os::Messenger & cViewTarget, os::Message* pcChangeMsg ) : os::Window( cFrame, "info_window", "Info", os::WND_NOT_RESIZABLE )
 	{
+		m_pcCatalog = os::Application::GetInstance()->GetApplicationLocale()->GetLocalizedSystemCatalog( "libsyllable.catalog" );
+
 		m_zFile = zFile;
 		SetTitle( zFile );
 		os::Image* pcImage = NULL;
-		os::String zType = "Unknown";
+		os::String zType = GS( ID_MSG_FILEINFO_FILETYPE_UNKNOWN, "Unknown" );
 		os::String zMimeType = "application/unknown";
 		struct stat sStat;
 		char zSize[255];
@@ -71,7 +78,7 @@ public:
 		/* Calculate size string */
 		if( S_ISDIR( sStat.st_mode ) || S_ISLNK( sStat.st_mode ) )
 		{
-			strcpy( zSize, "None" );
+			strcpy( zSize, GS( ID_MSG_FILEINFO_FILESIZE_ZERO, os::String( "None" ) ).c_str()  );
 			bBlockTypeSelection = true;
 		} else {
 			if( sStat.st_size >= 1000000 )
@@ -118,7 +125,7 @@ public:
 		/* Name */
 		os::HLayoutNode* pcHFileName = new os::HLayoutNode( "h_filename" );
 		
-		m_pcFileNameLabel = new os::StringView( os::Rect(), "filename_label", "Name:" );	
+		m_pcFileNameLabel = new os::StringView( os::Rect(), "filename_label", GS( ID_MSG_FILEINFO_WINDOW_NAME_LABEL, "Name:" ) );	
 		m_pcFileName = new os::StringView( os::Rect(), "filename", os::Path( zFile ).GetLeaf() );	
 	
 		pcHFileName->AddChild( m_pcFileNameLabel, 0.0f );
@@ -129,7 +136,7 @@ public:
 		/* Path */
 		os::HLayoutNode* pcHPath = new os::HLayoutNode( "h_path" );
 		
-		m_pcPathLabel = new os::StringView( os::Rect(), "path_label", "Path:" );	
+		m_pcPathLabel = new os::StringView( os::Rect(), "path_label", GS( ID_MSG_FILEINFO_WINDOW_PATH_LABEL, "Path:" ) );	
 		m_pcPath = new os::StringView( os::Rect(), "path", os::Path( zFile ).GetDir() );	
 	
 		pcHPath->AddChild( m_pcPathLabel, 0.0f );
@@ -139,7 +146,7 @@ public:
 		/* Size */
 		os::HLayoutNode* pcHSize = new os::HLayoutNode( "h_size" );
 		
-		m_pcSizeLabel = new os::StringView( os::Rect(), "size_label", "Size:" );	
+		m_pcSizeLabel = new os::StringView( os::Rect(), "size_label", GS( ID_MSG_FILEINFO_WINDOW_SIZE_LABEL, "Size:" ) );	
 		m_pcSize = new os::StringView( os::Rect(), "size", zSize );	
 	
 		pcHSize->AddChild( m_pcSizeLabel, 0.0f );
@@ -149,7 +156,7 @@ public:
 		/* Data */
 		os::HLayoutNode* pcHDate = new os::HLayoutNode( "h_date" );
 		
-		m_pcDateLabel = new os::StringView( os::Rect(), "date_label", "Modified:" );	
+		m_pcDateLabel = new os::StringView( os::Rect(), "date_label", GS( ID_MSG_FILEINFO_WINDOW_MODIFIEDDATE_LABEL, "Modified:" ) );	
 		m_pcDate = new os::StringView( os::Rect(), "date", zDate );	
 	
 		pcHDate->AddChild( m_pcDateLabel, 0.0f );
@@ -160,7 +167,7 @@ public:
 		
 		os::HLayoutNode* pcHType = new os::HLayoutNode( "h_type" );
 		
-		m_pcTypeLabel = new os::StringView( os::Rect(), "type_label", "Type:" );	
+		m_pcTypeLabel = new os::StringView( os::Rect(), "type_label", GS( ID_MSG_FILEINFO_WINDOW_FILETYPE_LABEL, "Type:" ) );
 		m_pcTypeSelector = new os::DropdownMenu( os::Rect(), "type" );	
 		m_pcTypeSelector->SetEnable( !bBlockTypeSelection );
 		
@@ -193,7 +200,7 @@ public:
 		os::HLayoutNode* pcHButtons = new os::HLayoutNode( "h_buttons", 0.0f );
 		
 		m_pcOk = new os::Button( os::Rect(), "ok", 
-						"Ok", new os::Message( 0 ), os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_BOTTOM );
+						GS( ID_MSG_FILEINFO_WINDOW_OK_BUTTON, "Ok" ), new os::Message( 0 ), os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_BOTTOM );
 		pcHButtons->AddChild( new os::HLayoutSpacer( "" ) );
 		pcHButtons->AddChild( m_pcOk, 0.0f );
 	
@@ -203,8 +210,8 @@ public:
 		
 		
 		/* Populate dropdown menu */
-		m_pcTypeSelector->AppendItem( os::String( "Current: " ) + zType );
-		m_pcTypeSelector->AppendItem( "Executable" );
+		m_pcTypeSelector->AppendItem( GS( ID_MSG_FILEINFO_WINDOW_FILETYPE_DROPDOWN_CURRENT_LABEL, os::String( "Current: " ) ) + zType );
+		m_pcTypeSelector->AppendItem( GS( ID_MSG_FILEINFO_WINDOW_FILETYPE_DROPDOWN_EXECUTABLE, "Executable" ) );
 		if( !bBlockTypeSelection && pcManager )
 		{
 			for( int32 i = 0; i < pcManager->GetTypeCount(); i++ )
@@ -241,6 +248,8 @@ public:
 		os::Image* pcImage = m_pcImageView->GetImage();
 		m_pcImageView->SetImage( NULL );
 		delete( pcImage );
+		if( m_pcCatalog )
+			m_pcCatalog->Release();
 	}
 	
 	
@@ -320,6 +329,7 @@ private:
 	os::StringView*		m_pcTypeLabel;
 	os::DropdownMenu*	m_pcTypeSelector;
 	os::Button*			m_pcOk;
+	os::Catalog*		m_pcCatalog;
 };
 
 

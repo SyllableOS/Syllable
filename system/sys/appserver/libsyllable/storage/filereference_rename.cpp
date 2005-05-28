@@ -27,6 +27,7 @@
 #include <util/message.h>
 #include <util/messenger.h>
 #include <util/string.h>
+#include <util/application.h>
 #include <storage/path.h>
 #include <storage/symlink.h>
 #include <storage/directory.h>
@@ -39,6 +40,11 @@
 #include <cassert>
 #include <sys/stat.h>
 #include <string>
+
+#include "catalogs/libsyllable.h"
+
+
+#define GS( x, def )		( m_pcCatalog ? m_pcCatalog->GetString( x, def ) : def )
 
 
 using namespace os;
@@ -63,9 +69,13 @@ public:
 	RenameFileWin( RenameFileParams_s* psParams, os::Rect cFrame ) : os::Window( cFrame, "rename_window", 
 																			"Rename file", os::WND_NOT_V_RESIZABLE )
 	{
+		m_pcCatalog = os::Application::GetInstance()->GetApplicationLocale()->GetLocalizedSystemCatalog( "libsyllable.catalog" );
+
 		m_psParams = psParams;
 		
-		SetTitle( os::String( "Rename " ) + os::Path( psParams->m_cPath ).GetLeaf() );
+		os::String cTitle;
+		cTitle.Format( GS( ID_MSG_RENAMEFILE_WINDOW_TITLE, "Rename %s" ).c_str(),
+			os::Path( psParams->m_cPath ).GetLeaf().c_str() );
 			
 		/* Create main view */
 		m_pcView = new os::LayoutView( GetBounds(), "main_view" );
@@ -89,7 +99,7 @@ public:
 	
 		/* create buttons */
 		m_pcOk = new os::Button( os::Rect(), "ok", 
-						"Ok", new os::Message( 0 ), os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_BOTTOM );
+						GS( ID_MSG_RENAMEFILE_WINDOW_OK_BUTTON, "Ok" ), new os::Message( 0 ), os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_BOTTOM );
 	
 		
 		pcHNode->AddChild( new os::HLayoutSpacer( "" ) );
@@ -114,6 +124,8 @@ public:
 	~RenameFileWin() { 
 		delete( m_psParams->m_pcMsg );
 		delete( m_psParams );
+		if( m_pcCatalog )
+			m_pcCatalog->Release();
 	 }
 	
 	
@@ -162,8 +174,9 @@ public:
 				}
 				
 				if( bError ) {
-					os::String zBuffer = os::Path( cPath ).GetLeaf() + os::String( " could not be renamed!" );
-					os::Alert* pcAlert = new os::Alert( "Rename", zBuffer, os::Alert::ALERT_WARNING, 0, "Ok", NULL );
+					os::String zBuffer;
+					zBuffer.Format( GS( ID_MSG_RENAMEFILE_ERROR_TEXT, "%s could not be renamed!" ).c_str(), os::Path( cPath ).GetLeaf().c_str() );
+					os::Alert* pcAlert = new os::Alert( GS( ID_MSG_RENAMEFILE_ERROR_TITLE, "Rename" ), zBuffer, os::Alert::ALERT_WARNING, 0, GS( ID_MSG_RENAMEFILE_ERROR_CLOSE, "Ok" ).c_str(), NULL );
 					pcAlert->Go( new os::Invoker( 0 ) );
 				}
 				
@@ -187,6 +200,7 @@ private:
 	os::LayoutView*		m_pcView;
 	os::Button*			m_pcOk;
 	os::TextView*		m_pcInput;
+	os::Catalog*		m_pcCatalog;
 };
 
 

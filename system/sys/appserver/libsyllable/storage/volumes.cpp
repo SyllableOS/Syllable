@@ -33,6 +33,7 @@
 #include <util/string.h>
 #include <util/resources.h>
 #include <util/thread.h>
+#include <util/application.h>
 #include <storage/path.h>
 #include <storage/symlink.h>
 #include <storage/directory.h>
@@ -49,6 +50,11 @@
 #include <sys/ioctl.h>
 #include <string>
 
+#include "catalogs/libsyllable.h"
+
+#define GS( x, def )		( m_pcCatalog ? m_pcCatalog->GetString( x, def ) : def )
+// For UnmountDialog
+#define UGS( x, def )		( pcCatalog ? pcCatalog->GetString( x, def ) : def )
 
 using namespace os;
 
@@ -88,6 +94,7 @@ public:
 	int32 Run();
 private:
 	MountDialogWin* m_pcWin;
+	os::Catalog*	m_pcCatalog;
 };
 
 class MountDialogWin : public os::Window
@@ -97,7 +104,11 @@ public:
 																			"Mount" )
 	{
 		m_psParams = psParams;
-		
+
+		m_pcCatalog = os::Application::GetInstance()->GetApplicationLocale()->GetLocalizedSystemCatalog( "libsyllable.catalog" );
+
+		SetTitle( GS( ID_MSG_MOUNT_WINDOW_TITLE, "Mount" ) );
+
 		/* Create main view */
 		m_pcView = new os::LayoutView( GetBounds(), "main_view" );
 	
@@ -110,8 +121,8 @@ public:
 		/* Create disks view */
 		m_pcDisks = new os::TreeView( os::Rect(), "disks", 
 							os::ListView::F_RENDER_BORDER, os::CF_FOLLOW_ALL, os::WID_FULL_UPDATE_ON_RESIZE );
-		m_pcDisks->InsertColumn( "Name", (int)GetBounds().Width() - 150 );
-		m_pcDisks->InsertColumn( "Path", 150 );
+		m_pcDisks->InsertColumn( GS( ID_MSG_MOUNT_WINDOW_NAME_COLUMN, "Name" ).c_str(), (int)GetBounds().Width() - 150 );
+		m_pcDisks->InsertColumn( GS( ID_MSG_MOUNT_WINDOW_PATH_COLUMN, "Path" ).c_str(), 150 );
 		m_pcDisks->SetAutoSort( false );
 		//m_pcDisks->SetInvokeMsg( new os::Message( M_LIST_INVOKED ) );
 		m_pcDisks->SetTarget( this );
@@ -135,7 +146,7 @@ public:
 	
 		/* create buttons */
 		m_pcMount = new os::Button( os::Rect(), "mount", 
-						"Mount", new os::Message( 0 ), os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_BOTTOM );
+						GS( ID_MSG_MOUNT_WINDOW_MOUNT_BUTTON, "Mount" ), new os::Message( 0 ), os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_BOTTOM );
 	
 		
 		pcHNode->AddChild( m_pcMount )->LimitMaxSize( m_pcMount->GetPreferredSize( false ) );
@@ -161,6 +172,8 @@ public:
 	~MountDialogWin() { 
 		delete( m_psParams->m_pcMsg );
 		delete( m_psParams );
+		if( m_pcCatalog )
+			m_pcCatalog->Release();
 	}
 	
 	void StartScanner()
@@ -212,8 +225,10 @@ public:
 			}
 			if( !bCreated )
 			{
-				os::Alert* pcAlert = new os::Alert( "Mount", os::String( "Could not mount create mountpoint for device " ) + zDevice 
-													, os::Alert::ALERT_WARNING, 0, "Ok", NULL );
+				os::String cErrMsg;
+				cErrMsg.Format( GS( ID_MSG_MOUNT_ERROR_CREATE_MOUNTPOINT, "Could not mount create mountpoint for device %s" ).c_str(), zDevice.c_str() );
+				os::Alert* pcAlert = new os::Alert( GS( ID_MSG_MOUNT_ERROR_TITLE, "Mount" ), cErrMsg,
+													os::Alert::ALERT_WARNING, 0, GS( ID_MSG_MOUNT_ERROR_CLOSE, "Ok" ).c_str(), NULL );
 				pcAlert->Go( new os::Invoker( 0 ) );
 				return;	
 			}
@@ -221,9 +236,10 @@ public:
 			/* Mount */
 			if( mount( zDevice.c_str(), zNewDir.c_str(), NULL, 0, NULL ) < 0 ) {
 				rmdir( zPath.c_str() );
-				os::Alert* pcAlert = new os::Alert( "Mount", os::String( "Could not mount " ) + zDevice 
-													+ os::String( ":\n" ) + os::String( strerror( errno ) ), 
-													os::Alert::ALERT_WARNING, 0, "Ok", NULL );	
+				os::String cErrMsg;
+				cErrMsg.Format( GS( ID_MSG_MOUNT_ERROR_OTHER_ERROR, "Could not mount %s:\n%s" ).c_str(), zDevice.c_str(), strerror( errno ) );
+				os::Alert* pcAlert = new os::Alert( GS( ID_MSG_MOUNT_ERROR_TITLE, "Mount" ), cErrMsg,
+													os::Alert::ALERT_WARNING, 0, GS( ID_MSG_MOUNT_ERROR_CLOSE, "Ok" ).c_str(), NULL );
 				pcAlert->Go( new os::Invoker( 0 ) );
 			}
 			else {
@@ -288,16 +304,23 @@ private:
 	os::Button*			m_pcMount;
 	os::TreeView*		m_pcDisks;
 	os::TextView*		m_pcInput;
+public:
+	os::Catalog*		m_pcCatalog;
 };
 
 MountDialogScanner::MountDialogScanner( MountDialogWin* pcWin )
 					: os::Thread( "mount_scanner" )
 {
 	m_pcWin = pcWin;
+	m_pcCatalog = pcWin->m_pcCatalog;
+	if( m_pcCatalog )
+		m_pcCatalog->AddRef();
 }
 
 MountDialogScanner::~MountDialogScanner()
 {
+	if( m_pcCatalog )
+		m_pcCatalog->Release();
 }
 	
 bool MountDialogScanner::CheckMounted( os::String zDevice )
@@ -338,9 +361,11 @@ void MountDialogScanner::ScanPath( os::Path cPath, int nDepth, MemFile* pcSource
 		os::Directory cDir( cPath.GetPath() );
 		os::String zEntry;
 		os::Path cEntryPath;
-		
-		m_pcWin->m_pcInput->Set( ( os::String( "Scanning " ) + cPath.GetPath() + os::String( "..." ) ).c_str() );
-			
+
+		os::String cScanMsg;
+		cScanMsg.Format( GS( ID_MSG_MOUNT_SCANNING_PATH, "Scanning %s..." ).c_str(), cPath.GetPath().c_str() );		
+		m_pcWin->m_pcInput->Set( cScanMsg.c_str() );
+
 		while( cDir.GetNextEntry( &zEntry ) == 1 )
 		{
 			if( zEntry == "." || zEntry == ".." )
@@ -369,15 +394,15 @@ void MountDialogScanner::ScanPath( os::Path cPath, int nDepth, MemFile* pcSource
 						
 						/* Create name and icon */
 						if( zEntry[0] == 'h' && zEntry[1] == 'd' ) {
-							zName = os::String( "Harddisk (" ) + zEntry + os::String( ")" );
+							zName = GS( ID_MSG_MOUNT_TYPE_HARDDISK, "Harddisk" ) + os::String( " (" ) + zEntry + os::String( ")" );
 							pcSource = new MemFile( g_aDiskImage, sizeof( g_aDiskImage ) );
 						}
 						else if( zEntry[0] == 'c' && zEntry[1] == 'd' ) {
-							zName = os::String( "CD/DVD (" ) + zEntry + os::String( ")" );
+							zName = GS( ID_MSG_MOUNT_TYPE_CD_DVD, "CD/DVD" ) + os::String( " (" ) + zEntry + os::String( ")" );
 							pcSource = new MemFile( g_aCDImage, sizeof( g_aCDImage ) );
 						}
 						else if( zEntry[0] == 'f' && zEntry[1] == 'd' ) {
-							zName = os::String( "Floppy (" ) + zEntry + os::String( ")" );
+							zName = GS( ID_MSG_MOUNT_TYPE_FLOPPY, "Floppy" ) + os::String( " (" ) + zEntry + os::String( ")" );
 							pcSource = new MemFile( g_aFloppyImage, sizeof( g_aFloppyImage ) );
 						}
 						else {
@@ -435,7 +460,7 @@ void MountDialogScanner::ScanPath( os::Path cPath, int nDepth, MemFile* pcSource
 
 			/* Add partition entry */
 			os::TreeViewStringNode* pcNewRow = new os::TreeViewStringNode();
-			pcNewRow->AppendString( os::String( "Partition " ) + zEntry );
+			pcNewRow->AppendString( GS( ID_MSG_MOUNT_DEVICE_PARTITION, "Partition" ) + os::String( " " ) + zEntry );
 			pcNewRow->AppendString( cEntryPath.GetPath() );
 			pcNewRow->SetIndent( 3 );
 			pcNewRow->SetIcon( pcIcon );
@@ -453,7 +478,7 @@ int32 MountDialogScanner::Run()
 	m_pcWin->Lock();
 	m_pcWin->m_pcDisks->Clear();
 	m_pcWin->m_pcDisks->Hide();
-	m_pcWin->m_pcInput->Set( "Scanning..." );
+	m_pcWin->m_pcInput->Set( GS( ID_MSG_MOUNT_SCANNING, "Scanning..." ).c_str() );
 	m_pcWin->m_pcInput->SetEnable( false );
 	m_pcWin->m_pcMount->SetEnable( false );
 	
@@ -462,7 +487,7 @@ int32 MountDialogScanner::Run()
 		
 	/* Add local disks */
 	pcNewRow = new os::TreeViewStringNode();
-	pcNewRow->AppendString( "Local disks" );
+	pcNewRow->AppendString( GS( ID_MSG_MOUNT_LOCAL_DISKS_LABEL, "Local disks" ) );
 	pcNewRow->AppendString( "" );
 	pcNewRow->SetIndent( 1 );
 	m_pcWin->m_pcDisks->InsertNode( pcNewRow );
@@ -518,9 +543,15 @@ int32 UnmountThread( void *pData )
 	
 	if( unmount( psArgs->m_zPath.c_str(), false ) < 0 )
 	{
-		os::Alert* pcAlert = new os::Alert( "Unmount", os::String( "Could not mount " ) + zDevice 
-												+ os::String( ":\n" ) + os::String( strerror( errno ) ), 
-												os::Alert::ALERT_WARNING, 0, "Ok", NULL );	
+		os::String cErrMsg;
+		os::Catalog* pcCatalog = os::Application::GetInstance()->GetApplicationLocale()->GetLocalizedSystemCatalog( "libsyllable.catalog" );
+
+		cErrMsg.Format( UGS( ID_MSG_MOUNT_ERROR_UNMOUNT, "Could not unmount %s:\n%s" ).c_str(), zDevice.c_str(), strerror( errno ) );
+		os::Alert* pcAlert = new os::Alert( UGS( ID_MSG_MOUNT_ERROR_TITLE, "Mount" ), cErrMsg, 
+												os::Alert::ALERT_WARNING, 0, UGS( ID_MSG_MOUNT_ERROR_CLOSE, "Ok" ).c_str(), NULL );	
+
+		pcCatalog->Release();
+
 		pcAlert->Go( new os::Invoker( 0 ) );
 		goto out;
 	}

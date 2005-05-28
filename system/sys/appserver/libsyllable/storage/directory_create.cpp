@@ -27,6 +27,7 @@
 #include <util/message.h>
 #include <util/messenger.h>
 #include <util/string.h>
+#include <util/application.h>
 #include <storage/path.h>
 #include <storage/symlink.h>
 #include <storage/directory.h>
@@ -39,6 +40,9 @@
 #include <sys/stat.h>
 #include <string>
 
+#include "catalogs/libsyllable.h"
+
+#define GS( x, def )		( m_pcCatalog ? m_pcCatalog->GetString( x, def ) : def )
 
 using namespace os;
 
@@ -63,7 +67,11 @@ public:
 																			"New directory", os::WND_NOT_V_RESIZABLE )
 	{
 		m_psParams = psParams;
-			
+
+		m_pcCatalog = os::Application::GetInstance()->GetApplicationLocale()->GetLocalizedSystemCatalog( "libsyllable.catalog" );
+
+		SetTitle( GS( ID_MSG_NEWDIR_WINDOW_TITLE, "New directory" ) );
+
 		/* Create main view */
 		m_pcView = new os::LayoutView( GetBounds(), "main_view" );
 	
@@ -85,7 +93,7 @@ public:
 	
 		/* create buttons */
 		m_pcOk = new os::Button( os::Rect(), "ok", 
-						"Ok", new os::Message( 0 ), os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_BOTTOM );
+						GS( ID_MSG_NEWDIR_WINDOW_OK_BUTTON, "Ok" ), new os::Message( 0 ), os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_BOTTOM );
 	
 		
 		pcHNode->AddChild( new os::HLayoutSpacer( "" ) );
@@ -109,6 +117,8 @@ public:
 	~NewDirWin() {
 		delete( m_psParams->m_pcMsg );
 		delete( m_psParams );
+		if( m_pcCatalog )
+			m_pcCatalog->Release();
 	}
 	
 	void HandleMessage( os::Message* pcMessage )
@@ -128,8 +138,9 @@ public:
 				}
 				
 				if( bError ) {
-					os::String zBuffer = os::String( "The directory " ) + os::String( m_pcInput->GetBuffer()[0] ) + os::String( " could not be created!" );
-					os::Alert* pcAlert = new os::Alert( "New directory", zBuffer, os::Alert::ALERT_WARNING, 0, "Ok", NULL );
+					os::String zBuffer;
+					zBuffer.Format( GS( ID_MSG_NEWDIR_ERROR_TEXT, "The directory %s could not be created!" ).c_str(),  m_pcInput->GetBuffer()[0].c_str() );
+					os::Alert* pcAlert = new os::Alert( GS( ID_MSG_NEWDIR_ERROR_TITLE, "New directory" ), zBuffer, os::Alert::ALERT_WARNING, 0, GS( ID_MSG_NEWDIR_ERROR_CLOSE, "Ok" ).c_str(), NULL );
 					pcAlert->Go( new os::Invoker( 0 ) );
 				}
 				
@@ -153,6 +164,7 @@ private:
 	os::LayoutView*		m_pcView;
 	os::Button*			m_pcOk;
 	os::TextView*		m_pcInput;
+	os::Catalog*		m_pcCatalog;
 };
 
 
