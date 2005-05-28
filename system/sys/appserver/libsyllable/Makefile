@@ -1,5 +1,5 @@
 CFLAGS   += -c -fexceptions
-CXXFLAGS += -c -fexceptions
+CXXFLAGS += -c -fexceptions -I.
 AOPTS    = -c
 
 LIBBIN = /system/libs
