@@ -1,3 +1,23 @@
+* May 28 2005, Henrik Isaksson *
+
+ - Locale
+	o Changed to use image ID = 0 to get at main executable resources
+	o Added GetSystemResourceStream() - looks for resources in /system/resources
+	  and/or libsyllable.so
+	o Added GetLocalizedSystemResourceStream()
+	o Added GetLocalizedSystemCatalog() - looks for catalogues in
+	  /system/resources/catalogs
+	o Added operator=()
+ - Catalog
+	o Added a variant of GetString() with a "default string" argument. I don't want
+	  to rely on embedded resources in libsyllable for default strings.
+ - Application
+	o Added SetApplicationLocale() and GetApplicationLocale().
+	o Added some documentation to Catalog and Locale methods.
+ - FileRequester, IconDirectoryView, Filereference_* dialogues, new directory dialogue,
+   mount dialogue
+	o Added catalog, translated to Swedish.
+
 * May 16 2005, Henrik Isaksson *
 
  - AppServer & Libsyllable
