@@ -35,7 +35,12 @@ class Locale::Private
 
 	Private() {
 		m_pcCol = NULL;
+		m_pcSystemResource = NULL;
 
+		Init();
+	}
+	
+	void Init() {
 		try {
 			char* pzHome;
 			pzHome = getenv( "HOME" );
@@ -59,14 +64,41 @@ class Locale::Private
 	}
 
 	~Private() {
-		if( m_pcCol ) {
-			delete m_pcCol;
-		}
+		Clear();
+	}
+	
+	void Clear() {
+		delete m_pcCol;
+		delete m_pcSystemResource;
 	}
 	
 	Resources* GetResources() {
 		if( !m_pcCol ) {
-			m_pcCol = new Resources( get_image_id() );
+			m_pcCol = new Resources( 0 );	// Get resources from the main executable, wich is always ID = 0
+		}
+		return m_pcCol;
+	}
+
+	Resources* GetSystemResources() {
+		if( !m_pcCol ) {
+//			m_pcCol = new Resources( get_image_id() );
+// get_image_id() does not work as intended. Workaround follows...
+			void* x;
+			int i;
+			int id = 0;
+			image_info psInfo;
+			x = __builtin_return_address( 0 );
+			for( i = 0; i < 300; i++ ) {
+				if( get_image_info( i, 0, &psInfo ) != -1 ) {
+					if( (uint32)(x) >= (uint32)(psInfo.ii_text_addr) && (uint32)(x) <= (uint32)(psInfo.ii_text_addr) + psInfo.ii_text_size ) {
+						id = psInfo.ii_image_id;
+						break;
+					}
+				} else {
+					break;
+				}
+			}
+			m_pcCol = new Resources( id );
 		}
 		return m_pcCol;
 	}
@@ -74,6 +106,7 @@ class Locale::Private
 	std::vector<String> m_cLang;
 	String		m_cName;
 	Resources*	m_pcCol;
+	Resources*	m_pcSystemResource;
 };
 
 Locale::Locale( )
@@ -106,6 +139,13 @@ Locale::Locale( int nCategory )
 Locale::Locale( const Locale& cLocale )
 {
 	m = new Private;
+	SetName( cLocale.GetName() );
+}
+
+const Locale& Locale::operator=( const Locale& cLocale )
+{
+	m->Clear();
+	m->Init();
 	SetName( cLocale.GetName() );
 }
 
@@ -151,7 +191,47 @@ StreamableIO* Locale::GetResourceStream( const String& cName )
 	return pcStream;
 }
 
+StreamableIO* Locale::GetSystemResourceStream( const String& cName )
+{
+	Resources* pcCol = NULL;
+	StreamableIO* pcStream = NULL;
+
+	try {
+		pcCol = m->GetSystemResources();
+	} catch( ... ) {
+		// eat "could not find resource section" exceptions
+	}
+
+	if( pcCol ) {
+		pcStream = pcCol->GetResourceStream( cName );
+	}
+
+	if( !pcStream ) {
+		try {
+			pcStream = new File( String("/system/resources/") + cName );
+		} catch( ... ) {
+			if( pcStream ) delete pcStream;
+			pcStream = NULL;
+		}
+	}
+
+	return pcStream;
+}
+
 StreamableIO* Locale::GetLocalizedResourceStream( const String& cName )
+{
+	StreamableIO* pcStream;
+
+	pcStream = GetResourceStream( m->m_cName + String("/") + cName );
+	
+	if( pcStream == NULL ) {
+		pcStream = GetResourceStream( cName );
+	}
+
+	return pcStream;
+}
+
+StreamableIO* Locale::GetLocalizedSystemResourceStream( const String& cName )
 {
 	StreamableIO* pcStream;
 
@@ -194,3 +274,35 @@ Catalog* Locale::GetLocalizedCatalog( const String& cName )
 		return NULL;
 	}
 }
+
+Catalog* Locale::GetLocalizedSystemCatalog( const String& cName )
+{
+	StreamableIO* pcStream;
+	Catalog* pcCatalog = new Catalog;
+	bool bDef = false, bLoc = false;
+
+	pcStream = GetSystemResourceStream( cName );
+	if( pcStream ) {
+		pcCatalog->Load( pcStream );
+		delete pcStream;
+		bDef = true;
+	}
+
+	for( size_t i = 0; i < m->m_cLang.size(); i++ ) {
+		pcStream = GetSystemResourceStream( String("catalogs/") + m->m_cLang[i] + String("/") + cName );
+		if( pcStream ) {
+			pcCatalog->Load( pcStream );
+			delete pcStream;
+			bLoc = true;
+			break;
+		}
+	}
+
+	if( bLoc || bDef ) {
+		return pcCatalog;
+	} else {
+		delete pcCatalog;
+		return NULL;
+	}
+}
+
