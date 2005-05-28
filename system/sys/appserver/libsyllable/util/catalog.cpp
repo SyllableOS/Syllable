@@ -89,6 +89,21 @@ const String& Catalog::GetString( uint32 nID ) const
 	return cStr;
 }
 
+const String& Catalog::GetString( uint32 nID, const String& cDefault ) const
+{
+	Lock();
+
+	const_iterator i = m->m_cStrings.find( nID );
+
+	if( i == m->m_cStrings.end() ) {
+		m->m_cStrings[ nID ] = cDefault;
+	}
+
+	const String& cStr = m->m_cStrings[ nID ];
+	Unlock();
+	return cStr;
+}
+
 void Catalog::SetString( uint32 nID, const String& cStr ) const
 {
 	Lock();

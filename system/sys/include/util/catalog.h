@@ -54,6 +54,7 @@ public:
     ~Catalog();
 
 	const String& GetString( uint32 nID ) const;
+	const String& GetString( uint32 nID, const String& cDefault ) const;
 	void SetString( uint32 nID, const String& cStr ) const;
 
 	status_t Load( StreamableIO* pcSource );
