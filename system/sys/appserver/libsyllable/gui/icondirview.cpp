@@ -51,6 +51,8 @@
 #include <storage/volumes.h>
 #include <storage/memfile.h>
 
+#include "catalogs/libsyllable.h"
+
 #include <list>
 #include <set>
 //#include <iostream>
@@ -677,6 +679,7 @@ public:
     os::Menu*			m_pcTrashMenu;
     os::RegistrarManager* m_pcManager;
     int					m_nJobsPending;
+    os::Catalog*		m_pcCatalog;
     
 };
 
@@ -751,6 +754,12 @@ os::BitmapImage* IconDirectoryView::Private::GetDriveIcon( os::String zPath, fs_
 IconDirectoryView::IconDirectoryView( const Rect & cFrame, const String& cPath, uint32 nResizeMask ):IconView( cFrame, "_icon_view", nResizeMask )
 {
 	m = new IconDirectoryView::Private();
+	
+	m->m_pcCatalog = Application::GetInstance()->GetApplicationLocale()->GetLocalizedSystemCatalog( "libsyllable.catalog" );
+	if( !m->m_pcCatalog ) {
+		m->m_pcCatalog = new Catalog();
+	}
+	
 	m->m_cPath = cPath;
 	m->m_pcDirChangeMsg = NULL;
 	m->m_bLocked = false;
@@ -797,6 +806,8 @@ IconDirectoryView::~IconDirectoryView()
 	delete( m->m_pcTrashMenu );
 	if( m->m_pcManager )
 		m->m_pcManager->Put();
+	if( m->m_pcCatalog )
+		m->m_pcCatalog->Release();
 	delete( m );
 }
 
@@ -1031,7 +1042,7 @@ void IconDirectoryView::Invoked( uint nIcon, os::IconData* pcIconData )
 		{
 			os::Path cPath( m->m_cPath );
 			cPath.Append( pcData->m_zPath );
-			m->m_pcManager->Launch( GetWindow(), cPath, true, "Open with..." );
+			m->m_pcManager->Launch( GetWindow(), cPath, true, m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_WINDOW_OPEN_WITH, "Open with..." ) );
 		} else if( m->m_bAutoLaunch ) {
 			if( pcData->m_sStat.st_mode & ( S_IXUSR|S_IXGRP|S_IXOTH ) ) {
 				if( fork() == 0 )
@@ -1188,7 +1199,7 @@ void IconDirectoryView::DragSelection( os::Point cStartPoint )
 	} else {
 		/* Some objects */
 		os::BitmapImage* pcBitmapIcon = new os::BitmapImage();
-		sprintf( zString, "%i Entries", nNumObjects );
+		sprintf( zString, m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_NUMBER_OF_OBJECTS_SELECTED, "%i Entries" ).c_str(), nNumObjects );
 		MemFile* pcSource = new MemFile( g_aFolderImage, sizeof( g_aFolderImage ) );
 		pcBitmapIcon->Load( pcSource );
 		pcIcon = pcBitmapIcon;
@@ -1224,7 +1235,7 @@ void IconDirectoryView::OpenContextMenu( os::Point cPosition, bool bMouseOverIco
 			//std::cout<<"Root menu!"<<std::endl;
 			if( !m->m_pcRootMenu ) {
 				m->m_pcRootMenu = new os::Menu( os::Rect(), "rootmenu", os::ITEMS_IN_COLUMN );
-				m->m_pcRootMenu->AddItem( "Mount...", new os::Message( M_MOUNT ) );
+				m->m_pcRootMenu->AddItem( m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_MENU_MOUNT, "Mount..." ), new os::Message( M_MOUNT ) );
 				m->m_pcRootMenu->SetTargetForItems( this );
 			}
 			m->m_pcRootMenu->Open( ConvertToScreen( cPosition ) );
@@ -1233,7 +1244,7 @@ void IconDirectoryView::OpenContextMenu( os::Point cPosition, bool bMouseOverIco
 			//std::cout<<"Directory menu!"<<std::endl;
 			if( !m->m_pcDirMenu ) {
 				m->m_pcDirMenu = new os::Menu( os::Rect(), "dirmenu", os::ITEMS_IN_COLUMN );
-				m->m_pcDirMenu->AddItem( "New directory...", new os::Message( M_NEW_DIR ) );
+				m->m_pcDirMenu->AddItem( m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_MENU_NEW_DIRECTORY, "New directory..." ), new os::Message( M_NEW_DIR ) );
 				m->m_pcDirMenu->SetTargetForItems( this );
 			}
 			m->m_pcDirMenu->Open( ConvertToScreen( cPosition ) );
@@ -1272,7 +1283,7 @@ void IconDirectoryView::OpenContextMenu( os::Point cPosition, bool bMouseOverIco
 			if( !m->m_pcTrashMenu )
 			{
 				m->m_pcTrashMenu = new os::Menu( os::Rect(), "trashmenu", os::ITEMS_IN_COLUMN );
-				m->m_pcTrashMenu->AddItem( "Empty", new os::Message( M_EMPTY_TRASH ) );		
+				m->m_pcTrashMenu->AddItem( m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_MENU_EMPTY_TRASH, "Empty" ), new os::Message( M_EMPTY_TRASH ) );		
 				m->m_pcTrashMenu->SetTargetForItems( this );
 			}
 			m->m_pcTrashMenu->Open( ConvertToScreen( cPosition ) );
@@ -1283,11 +1294,11 @@ void IconDirectoryView::OpenContextMenu( os::Point cPosition, bool bMouseOverIco
 		if( !m->m_pcFileMenu ) {
 			m->m_pcFileMenu = new os::Menu( os::Rect(), "filemenu", os::ITEMS_IN_COLUMN );
 			
-			m->m_pcFileMenu->AddItem( "Open with...", new os::Message( M_OPEN_WITH ) );
-			m->m_pcFileMenu->AddItem( "Info...", new os::Message( M_INFO ) );
-			m->m_pcFileMenu->AddItem( "Rename...", new os::Message( M_RENAME ) );
-			m->m_pcFileMenu->AddItem( "Move to Trash", new os::Message( M_MOVE_TO_TRASH ) );
-			m->m_pcFileMenu->AddItem( "Delete...", new os::Message( M_DELETE ) );
+			m->m_pcFileMenu->AddItem( m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_MENU_OPEN_WITH, "Open with..." ), new os::Message( M_OPEN_WITH ) );
+			m->m_pcFileMenu->AddItem( m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_MENU_INFO, "Info..." ), new os::Message( M_INFO ) );
+			m->m_pcFileMenu->AddItem( m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_MENU_RENAME, "Rename..." ), new os::Message( M_RENAME ) );
+			m->m_pcFileMenu->AddItem( m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_MENU_MOVE_TO_TRASH, "Move to Trash" ), new os::Message( M_MOVE_TO_TRASH ) );
+			m->m_pcFileMenu->AddItem( m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_MENU_DELETE, "Delete..." ), new os::Message( M_DELETE ) );
 			m->m_pcFileMenu->SetTargetForItems( this );
 		}
 		
@@ -1303,7 +1314,7 @@ void IconDirectoryView::OpenContextMenu( os::Point cPosition, bool bMouseOverIco
 		if( !m->m_pcDiskMenu ) {
 			m->m_pcDiskMenu = new os::Menu( os::Rect(), "diskmenu", os::ITEMS_IN_COLUMN );
 			
-			m->m_pcDiskMenu->AddItem( "Unmount", new os::Message( M_UNMOUNT ) );
+			m->m_pcDiskMenu->AddItem( m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_MENU_UNMOUNT, "Unmount" ), new os::Message( M_UNMOUNT ) );
 			m->m_pcDiskMenu->SetTargetForItems( this );
 		}
 		
@@ -1396,7 +1407,8 @@ void IconDirectoryView::HandleMessage( Message * pcMessage )
 					
 					char zSize[255];
 					if( m->m_cPath.GetPath() == "/" )
-						sprintf( zSize, "%i%% free", ( int )( sInfo.fi_free_blocks * 100 / sInfo.fi_total_blocks ) );
+						sprintf( zSize, m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_PERCENT_FREE, "%i%% free" ).c_str(),
+							( int )( sInfo.fi_free_blocks * 100 / sInfo.fi_total_blocks ) );
 					else if( psStat->st_size >= 1000000 )
 						sprintf( zSize, "%i Mb", ( int )( psStat->st_size / 1000000 + 1 ) );
 					else
@@ -1525,7 +1537,7 @@ void IconDirectoryView::HandleMessage( Message * pcMessage )
 								
 							char zSize[255];
 							if( m->m_cPath.GetPath() == "/" )
-								sprintf( zSize, "%i%% free", ( int )( sInfo.fi_free_blocks * 100 / sInfo.fi_total_blocks ) );
+								sprintf( zSize, m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_PERCENT_FREE, "%i%% free" ).c_str(), ( int )( sInfo.fi_free_blocks * 100 / sInfo.fi_total_blocks ) );
 							else if( nNodeSize >= 1000000 )
 								sprintf( zSize, "%i Mb", ( int )( nNodeSize / 1000000 + 1 ) );
 							else
@@ -1701,7 +1713,7 @@ void IconDirectoryView::HandleMessage( Message * pcMessage )
 				cPath.Append( pcData->m_zPath.c_str() );
 				if( !( m->m_cPath.GetPath() == "/" ) && m->m_pcManager )
 				{
-					m->m_pcManager->Launch( GetWindow(), cPath, true, "Open with...", false );
+					m->m_pcManager->Launch( GetWindow(), cPath, true, m->m_pcCatalog->GetString( ID_MSG_ICONDIRVIEW_WINDOW_OPEN_WITH, "Open with..." ), false );
 				}
 				break;
 			}

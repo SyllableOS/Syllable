@@ -29,9 +29,13 @@
 #include <gui/dropdownmenu.h>
 #include <gui/imagebutton.h>
 #include <gui/image.h>
+#include <util/locale.h>
+#include <util/application.h>
 #include <storage/memfile.h>
 #include <string>
 #include <stack>
+
+#include "catalogs/libsyllable.h"
 
 using namespace os;
 
@@ -56,6 +60,14 @@ public:
 		m_bFirstReread = true;
 		m_pcMessage = NULL;
 		m_pcTarget = NULL;
+		m_pcCatalog = NULL;
+	}
+	
+	~Private()
+	{
+		if( m_pcCatalog ) {
+			m_pcCatalog->Release();
+		}
 	}
 	
 	bool m_bFirstReread;
@@ -77,6 +89,7 @@ public:
 	ImageButton *m_pcHomeButton;
 	ImageButton *m_pcBackButton;
 	std::stack<String> m_cBackStack;
+	Catalog* m_pcCatalog;
 };
 
 
@@ -101,22 +114,27 @@ FileRequester::FileRequester( file_req_mode_t nMode, Messenger * pcTarget, Strin
 {
 	Lock();		// Why ??
 
-	m = new Private;
+	m = new Private;	
+
+	m->m_pcCatalog = Application::GetInstance()->GetApplicationLocale()->GetLocalizedSystemCatalog( "libsyllable.catalog" );
+	if( !m->m_pcCatalog ) {
+		m->m_pcCatalog = new Catalog;
+	}
 
 	if( cOkLabel.empty() )
 	{
 		if( nMode == LOAD_REQ )
 		{
-			cOkLabel = "_Load";
+			cOkLabel = m->m_pcCatalog->GetString( ID_MSG_FILEREQUESTER_LOAD_BUTTON, "_Load" );
 		}
 		else
 		{
-			cOkLabel = "_Save";
+			cOkLabel = m->m_pcCatalog->GetString( ID_MSG_FILEREQUESTER_SAVE_BUTTON, "_Save" );
 		}
 	}
 	if( cCancelLabel.empty() )
 	{
-		cCancelLabel = "_Cancel";
+		cCancelLabel = m->m_pcCatalog->GetString( ID_MSG_FILEREQUESTER_CANCEL_BUTTON, "_Cancel" );
 	}
 
 
@@ -239,7 +257,7 @@ FileRequester::FileRequester( file_req_mode_t nMode, Messenger * pcTarget, Strin
 	m->m_pcPathView = new TextView( Rect(), "path_edit", cFile.c_str() );
 	m->m_pcCancelButton = new Button( Rect(), "cancel", cCancelLabel, new Message( ID_CANCEL ) );
 	m->m_pcOkButton = new Button( Rect(), "ok", cOkLabel, new Message( ID_OK ) );
-	m->m_pcFileString = new StringView( Rect(), "string", "File Name:" );
+	m->m_pcFileString = new StringView( Rect(), "string", m->m_pcCatalog->GetString( ID_MSG_FILEREQUESTER_FILE_NAME_LABEL, "File Name:" ) );
 	
 	pcHBottom->AddChild( m->m_pcFileString, 0.0f );
 	pcHBottom->AddChild( new HLayoutSpacer( "", 5.0f, 5.0f ) );
@@ -277,7 +295,7 @@ FileRequester::FileRequester( file_req_mode_t nMode, Messenger * pcTarget, Strin
 	m->m_pcDirView->SetInvokeMsg( new Message( ID_INVOKED ) );
 	m->m_pcDirView->SetDirChangeMsg( new Message( ID_PATH_CHANGED ) );
 	
-	String cTitlePath = ( String ) "Searching in: " + m->m_pcDirView->GetPath();
+	String cTitlePath = m->m_pcCatalog->GetString( ID_MSG_FILEREQUESTER_BROWSE_LOCATION_LABEL, "Searching in: " ) + m->m_pcDirView->GetPath();
 	SetTitle( cTitlePath );
 	
 	m->m_cBackStack.push( cPath );
@@ -338,7 +356,7 @@ void FileRequester::HandleMessage( Message * pcMessage )
 
 	case ID_PATH_CHANGED:
 		{
-			String cTitlePath = ( String ) "Searching in: " + m->m_pcDirView->GetPath();
+			String cTitlePath = m->m_pcCatalog->GetString( ID_MSG_FILEREQUESTER_BROWSE_LOCATION_LABEL, "Searching in: " ) + m->m_pcDirView->GetPath();
 			SetTitle( cTitlePath );
 
 			if( m->m_pcTypeDrop->GetItemCount() >= 5 )
@@ -492,9 +510,13 @@ void FileRequester::HandleMessage( Message * pcMessage )
 
 				if( pcMessage->GetCode() != ID_ALERT && stat( cPath.GetPath(  ).c_str(), &sStat ) >= 0 )
 				{
-					String cMsg = "The file '" + ( std::string ) cPath.GetPath() + "' already exists\nDo you want to overwrite it?\n";
+					String cMsg;
+					
+					cMsg.Format( m->m_pcCatalog->GetString( ID_MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_TEXT, "The file '%s' already exists\nDo you want to overwrite it?\n" ).c_str(), cPath.GetPath().c_str() );
 
-					Alert *pcAlert = new Alert( "Warning:", cMsg.c_str(), Alert::ALERT_WARNING, 0, "No", "Yes", NULL );
+					Alert *pcAlert = new Alert( m->m_pcCatalog->GetString( ID_MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_TITLE, "Warning:" ), cMsg.c_str(), Alert::ALERT_WARNING, 0,
+							m->m_pcCatalog->GetString( ID_MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_NO_BUTTON, "No" ).c_str(),
+							m->m_pcCatalog->GetString( ID_MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_YES_BUTTON, "Yes" ).c_str(), NULL );
 
 					pcAlert->CenterInWindow( this );
 					pcAlert->Go( new Invoker( new Message( ID_ALERT ), this ) );
