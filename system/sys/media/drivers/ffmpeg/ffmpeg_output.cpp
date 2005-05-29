@@ -238,6 +238,7 @@ status_t FFMpegOutput::AddStream( os::String zName, os::MediaFormat_s sFormat )
 	m_sStream[m_nCurrentStream] = ( ( AVStream * ) sFormat.pPrivate );
 	m_sStream[m_nCurrentStream]->id = m_nCurrentStream;
 	m_sStream[m_nCurrentStream]->index = m_nCurrentStream;
+    
 	m_nCurrentStream++;
 	
 	return( 0 );
@@ -270,12 +271,12 @@ status_t FFMpegOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket )
 			sPacket.stream_index = nIndex;
 			sPacket.data = pBuffer;
 			sPacket.size = psFrames->nSize;
-			if( m_sStream[nIndex]->codec.coded_frame )
-				sPacket.pts = m_sStream[nIndex]->codec.coded_frame->pts;
 			sPacket.flags |= PKT_FLAG_KEY;
-			
+			if( m_sStream[nIndex]->codec.coded_frame )
+				sPacket.pts= av_rescale_q( m_sStream[nIndex]->codec.coded_frame->pts, m_sStream[nIndex]->codec.time_base, m_sStream[nIndex]->time_base );
+                        
 		//cout<<"Write :"<<psFrames->nSize<<endl;
-			av_write_frame( m_psContext, &sPacket );
+			av_interleaved_write_frame( m_psContext, &sPacket );
 			pBuffer += psFrames->nSize;
 			ffmpeg_frame* psOldFrame = psFrames;
 			psFrames = psFrames->pNext;
@@ -289,7 +290,12 @@ status_t FFMpegOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket )
 		sPacket.stream_index = nIndex;
 		sPacket.data = psPacket->pBuffer[0];
 		sPacket.size = psPacket->nSize[0];
-		av_write_frame( m_psContext, &sPacket );
+		if( m_sStream[nIndex]->codec.coded_frame && m_sStream[nIndex]->codec.coded_frame->key_frame )
+			sPacket.flags |= PKT_FLAG_KEY;
+		if( m_sStream[nIndex]->codec.coded_frame )
+				sPacket.pts= av_rescale_q( m_sStream[nIndex]->codec.coded_frame->pts, m_sStream[nIndex]->codec.time_base, m_sStream[nIndex]->time_base );
+      			
+		av_interleaved_write_frame( m_psContext, &sPacket );
 	}
 	
 	

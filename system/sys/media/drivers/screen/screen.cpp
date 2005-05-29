@@ -405,7 +405,7 @@ void ScreenOutput::Flush()
 		{
 			/* Use the timestamp */
 			uint64 nFrameLength = 1000 / (uint64)m_sFormat.vFrameRate;
-			uint64 nPacketPosition = psFrame->nTimeStamp + nFrameLength/*- m_nFirstTimeStamp*/;
+			uint64 nPacketPosition = psFrame->nTimeStamp + nFrameLength - ( m_pcTimeSource != NULL ? 0 : m_nFirstTimeStamp );
 			uint64 nRealPosition;
 			if( m_pcTimeSource )
 				nRealPosition = m_pcTimeSource->GetCurrentTime();
@@ -413,8 +413,10 @@ void ScreenOutput::Flush()
 				nRealPosition = ( get_system_time() - m_nStartTime ) / 1000;
 			
 			//std::cout<<psFrame->nTimeStamp<<std::endl;
-			//std::cout<<"VIDEO Time "<<nRealPosition<<" Stamp "<<
-				//			nPacketPosition<<" "<<nFrameLength<<std::endl;
+			#if 0
+			std::cout<<"VIDEO Time "<<nRealPosition<<" Stamp "<<
+							nPacketPosition<<" "<<nFrameLength<<" "<<m_nQueuedFrames<<std::endl;
+			#endif							
 			//std::cout<<(int64)nPacketPosition - (int64)nRealPosition<<std::endl;
 			
 			if( nPacketPosition > nRealPosition )

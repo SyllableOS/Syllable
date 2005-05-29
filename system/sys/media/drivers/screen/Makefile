@@ -1,5 +1,5 @@
-CFLAGS   += -c -fexceptions -ffast-math
-CXXFLAGS += -c -fexceptions -ffast-math
+CFLAGS   += -c -fexceptions -ffast-math -fno-PIC
+CXXFLAGS += -c -fexceptions -ffast-math -fno-PIC
 AOPTS    = -c
 
 DRIVERBIN = /system/drivers/media

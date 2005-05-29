@@ -38,7 +38,7 @@
 #include <stdio.h>
 #include "mixerview.h"
 
-#define OSS_PACKET_NUMBER 10
+#define OSS_PACKET_NUMBER 20
 
 class OSSOutput : public os::MediaOutput
 {
@@ -66,21 +66,18 @@ public:
 	status_t		WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket );
 	uint64			GetDelay();
 	uint32			GetUsedBufferPercentage();
-	
-	void			FlushThread();
-	
+
 private:
 
 	uint32 Resample( os::MediaFormat_s sSrcFormat, os::MediaFormat_s sDstFormat, 
 						uint16* pDst, uint16* pSrc, uint32 nLength );
 	os::String		m_zDSPPath;
-	bool			m_bRunThread;
-	thread_id		m_hThread;
 	uint64			m_nFactor;
 	int				m_hOSS;
 	int				m_nBufferSize;
 	int				m_nQueuedPackets;
 	os::MediaPacket_s* m_psPacket[OSS_PACKET_NUMBER];
+	uint8*			m_pPacketPointer;
 	sem_id			m_hLock;
 	os::MediaFormat_s m_sSrcFormat;
 	os::MediaFormat_s m_sDstFormat;
@@ -92,9 +89,6 @@ private:
 };
 
 
-/*
- * Note : Using threads here, because the non-threaded version caused bad noises 
- */
 
 OSSOutput::OSSOutput( os::String zDSPPath )
 {
@@ -102,7 +96,7 @@ OSSOutput::OSSOutput( os::String zDSPPath )
 	m_hOSS = -1;
 	m_hLock = create_semaphore( "oss_lock", 1, 0 );
 	m_nQueuedPackets = 0;
-	m_hThread = -1;
+	m_pPacketPointer = NULL;
 	m_zDSPPath = zDSPPath;
 	m_nStartTime = 0;
 	m_pcTimeSource = NULL;
@@ -147,115 +141,115 @@ os::View* OSSOutput::GetConfigurationView()
 	return( pcView );
 }
 
-void OSSOutput::FlushThread()
-{
-	os::MediaPacket_s *psNextPacket;
-	
-	std::cout<<"OSS flush thread running"<<std::endl;
-	
-	m_bRunThread = true;
-	
-	while( m_bRunThread )
-	{
-		lock_semaphore( m_hLock );
-
-		if( m_nQueuedPackets > 0 ) 
-		{
-			/* Get first packet */
-			psNextPacket = m_psPacket[0];
-			
-			/* Start timer */
-			if( m_nStartTime == 0 )
-			{
-				std::cout<<"Start! "<<get_system_time()<<std::endl;
-				m_nFirstTimeStamp = psNextPacket->nTimeStamp;
-				m_nStartTime = get_system_time();
-			}
-			
-			
-			uint64 nNoTimeStamp = ~0;
-			if( psNextPacket->nTimeStamp != nNoTimeStamp )
-			{
-				/* Use the timestamp of the stream  */
-				int nDelay = 0;
-				ioctl( m_hOSS, SNDCTL_DSP_GETODELAY, &nDelay );
-			
-				uint64 nCardDelay = (uint64)nDelay * 1000 / (uint64)m_nFactor;
-				uint64 nSampleLength = psNextPacket->nSize[0] * 1000 / (uint64)m_nFactor;	
-				uint64 nPacketPosition = psNextPacket->nTimeStamp/* - m_nFirstTimeStamp*/;
-				uint64 nRealPosition;
-				
-				if( m_pcTimeSource )
-					nRealPosition = m_pcTimeSource->GetCurrentTime();
-				else
-					nRealPosition = ( get_system_time() - m_nStartTime ) / 1000 + nCardDelay;
-			
-				#if 0
-				std::cout<<"Time "<<nRealPosition<<" Stamp "<<
-							nPacketPosition<<" "<<nSampleLength<<std::endl;
-				std::cout<<(int64)nPacketPosition - (int64)nRealPosition<<std::endl;
-				#endif
-			
-				if( nSampleLength > 50 )
-					nSampleLength = 50;
-			
-				if( nPacketPosition > nRealPosition + nSampleLength )
-				{
-					/* Wait with writing the sample */
-					//std::cout<<"Waiting with writing!"<<std::endl;
-					goto skip;
-				} else if( nRealPosition > nPacketPosition + nSampleLength )
-				{
-					/* Skip the sample */
-				
-				} else {
-					unlock_semaphore( m_hLock );
-					write( m_hOSS, psNextPacket->pBuffer[0], psNextPacket->nSize[0] );
-					lock_semaphore( m_hLock );
-				}
-			} else {
-				unlock_semaphore( m_hLock );
-				write( m_hOSS, psNextPacket->pBuffer[0], psNextPacket->nSize[0] );
-				lock_semaphore( m_hLock );
-			}
-		
-			
-			//cout<<"Packet of "<<psNextPacket->nSize<<" flushed"<<endl;
-			free( psNextPacket->pBuffer[0] );
-			free( psNextPacket );
-			m_nQueuedPackets--;
-			for( int i = 0; i < m_nQueuedPackets; i++ )
-			{
-				m_psPacket[i] = m_psPacket[i+1];
-			}
-			//cout<<"Audio :"<<m_nQueuedPackets<<" packets left"<<endl;
-		}
-		skip:
-		unlock_semaphore( m_hLock );
-		snooze( 1000 );
-	}
-}
-
-
-int flush_thread_entry( void* pData )
-{
-	OSSOutput *pcOutput = ( OSSOutput* )pData;
-	pcOutput->FlushThread();
-	return( 0 );
-}
-
 void OSSOutput::Flush()
 {
-	/* Start flush thread if necessary */
-	if( m_hThread < 0 )
+	os::MediaPacket_s *psNextPacket;
+	lock_semaphore( m_hLock );
+
+	if( m_nQueuedPackets > 0 ) 
 	{
-		/* Spawn thread */
-		m_bRunThread = false;
-		m_hThread = spawn_thread( "oss_flush", (void*)flush_thread_entry, 0, 0, this );
-		resume_thread( m_hThread );
-		while( !m_bRunThread )
-			snooze( 1000 );
+		/* Get first packet */
+		psNextPacket = m_psPacket[0];
+		
+		/* Set pointer to packet data */
+		if( m_pPacketPointer == NULL )
+		{
+			m_pPacketPointer = psNextPacket->pBuffer[0];
+		}
+		
+		/* Start timer */
+		if( m_nStartTime == 0 )
+		{
+			std::cout<<"Start! "<<get_system_time()<<std::endl;
+			m_nFirstTimeStamp = psNextPacket->nTimeStamp;
+			m_nStartTime = get_system_time();
+		}
+		
+		
+		uint64 nNoTimeStamp = ~0;
+		if( psNextPacket->nTimeStamp != nNoTimeStamp )
+		{
+			/* Use the timestamp of the stream  */
+			int nDelay = 0;
+			ioctl( m_hOSS, SNDCTL_DSP_GETODELAY, &nDelay );
+		
+			uint64 nCardDelay = (uint64)nDelay * 1000 / (uint64)m_nFactor;
+			uint64 nSampleLength = psNextPacket->nSize[0] * 1000 / (uint64)m_nFactor;	
+			uint64 nPacketPosition = psNextPacket->nTimeStamp + 
+									( ( (uint64)((uint32)m_pPacketPointer - (uint32)psNextPacket->pBuffer[0]) ) * 1000 / (uint64)m_nFactor ) 
+									- ( m_pcTimeSource != NULL ? 0 : m_nFirstTimeStamp );
+			uint64 nRealPosition;
+			
+			if( m_pcTimeSource )
+				nRealPosition = m_pcTimeSource->GetCurrentTime();
+			else
+				nRealPosition = ( get_system_time() - m_nStartTime ) / 1000 + nCardDelay;
+		
+			#if 0
+			std::cout<<"Time "<<nRealPosition<<" Stamp "<<
+						nPacketPosition<<" "<<" "<< ( (uint64)((uint32)m_pPacketPointer - (uint32)psNextPacket->pBuffer[0]) ) * 1000 / (uint64)m_nFactor<<" "<<(uint32)m_pPacketPointer<<" "<<(uint32)psNextPacket->pBuffer[0]<<std::endl;
+			std::cout<<(int64)nPacketPosition - (int64)nRealPosition<<std::endl;
+			#endif
+		
+			if( nSampleLength > 50 )
+				nSampleLength = 50;
+		
+			if( nPacketPosition > nRealPosition + nSampleLength )
+			{
+				/* Wait with writing the sample */
+				//std::cout<<"Waiting with writing!"<<std::endl;
+				goto skip;
+			} else if( nRealPosition > nPacketPosition + nSampleLength * 2 )
+			{
+				/* Skip the sample */
+			
+			} else {
+				unlock_semaphore( m_hLock );
+				uint32 nDelay = 0;
+				ioctl( m_hOSS, SNDCTL_DSP_GETODELAY, &nDelay );
+				int nFlush = std::min( m_nBufferSize - nDelay, psNextPacket->nSize[0] );
+				write( m_hOSS, m_pPacketPointer, nFlush );
+				psNextPacket->nSize[0] -= nFlush;
+				m_pPacketPointer += nFlush;
+				if( nFlush > 0 )
+				{
+					return;
+				}
+				lock_semaphore( m_hLock );
+			}
+		} else {
+			unlock_semaphore( m_hLock );
+			uint32 nDelay = 0;
+			ioctl( m_hOSS, SNDCTL_DSP_GETODELAY, &nDelay );
+			int nFlush = std::min( m_nBufferSize - nDelay, psNextPacket->nSize[0] );
+			write( m_hOSS, m_pPacketPointer, nFlush/*psNextPacket->nSize[0]*/ );
+			psNextPacket->nSize[0] -= nFlush;
+			m_pPacketPointer += nFlush;
+			if( nFlush > 0 )
+			{
+				return;
+		
+			}
+			lock_semaphore( m_hLock );
+		}
+	
+		
+		//std::cout<<"Packet of "<<psNextPacket->nSize[0]<<" flushed"<<std::endl;
+		m_pPacketPointer = NULL;
+		free( psNextPacket->pBuffer[0] );
+		free( psNextPacket );
+		m_nQueuedPackets--;
+		for( int i = 0; i < m_nQueuedPackets; i++ )
+		{
+			if( i == OSS_PACKET_NUMBER - 1 )
+				m_psPacket[i] = NULL;
+			else
+				m_psPacket[i] = m_psPacket[i+1];
+		}
+		//cout<<"Audio :"<<m_nQueuedPackets<<" packets left"<<endl;
 	}
+	skip:
+	unlock_semaphore( m_hLock );
 }
 
 bool OSSOutput::FileNameRequired()
@@ -292,10 +286,6 @@ void OSSOutput::Close()
 	if( m_hOSS > -1 )
 		close( m_hOSS );
 	m_hOSS = -1;
-	m_bRunThread = false;
-	if( m_hThread > -1 )
-		wait_for_thread( m_hThread );
-	m_hThread = -1;
 	//cout<<"OSS closed"<<endl;
 }
 
@@ -303,11 +293,6 @@ void OSSOutput::Close()
 void OSSOutput::Clear()
 {
 	/* Stop playback */
-	m_bRunThread = false;
-	if( m_hThread > -1 ) {
-		wait_for_thread( m_hThread );
-	} 
-	m_hThread = -1;
 	if( m_hOSS ) {
 		ioctl( m_hOSS, SNDCTL_DSP_RESET, NULL );
 		int nVal = m_sSrcFormat.nSampleRate;
@@ -330,6 +315,8 @@ void OSSOutput::Clear()
 	}
 	m_nQueuedPackets = 0;
 	m_nStartTime = 0;
+	m_pPacketPointer = NULL;
+	m_nFirstTimeStamp = 0;
 }
 
 uint32 OSSOutput::GetOutputFormatCount()
@@ -432,16 +419,10 @@ uint32 OSSOutput::Resample( os::MediaFormat_s sSrcFormat, os::MediaFormat_s sDst
 	float vDstFactor = 0;
 	uint32 nSamples = 0;
 	
-	if( vFactor < 1 ) {
-		vSrcFactor = 1;
-		vDstFactor = vFactor;
-		nSamples = nLength / sSrcFormat.nChannels / 2;
-	} else {
-		vSrcFactor = 1 / vFactor;
-		vDstFactor = 1;
-		float vSamples = (float)nLength * vFactor / (float)sSrcFormat.nChannels / 2;
-		nSamples = (uint32)vSamples;
-	}
+	vSrcFactor = 1 / vFactor;
+	vDstFactor = 1;
+	float vSamples = (float)nLength * vFactor / (float)sSrcFormat.nChannels / 2;
+	nSamples = (uint32)vSamples;
 	
 	uint32 nSrcPitch;
 	uint32 nDstPitch = 2;

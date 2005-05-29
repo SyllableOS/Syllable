@@ -54,6 +54,7 @@ public:
 private:
 	uint32			Resample( uint16* pDst, uint16* pSrc, uint32 nLength );
 	bool			m_bEncode;
+	AVStream		m_sDecodeStream;
 	AVCodecContext	m_sDecodeContext;
 	AVStream  		m_sEncodeStream;
 	os::MediaFormat_s m_sInternalFormat;
@@ -141,7 +142,8 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 	
 	if( !m_bEncode ) 
 	{
-		m_sDecodeContext = *( ( AVCodecContext* )sFormat.pPrivate );
+		m_sDecodeStream = *( ( AVStream* )(sFormat.pPrivate) );
+		m_sDecodeContext = m_sDecodeStream.codec;
 	
 		AVCodec *psCodec = avcodec_find_decoder( id );
 	
@@ -228,11 +230,14 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 			return( -1 );
 		}
 		#endif
-		sEnc->frame_rate = (int)sExternal.vFrameRate;
-		sEnc->frame_rate_base = 1;
+		m_sEncodeStream.r_frame_rate.num = (int)sExternal.vFrameRate;
+		m_sEncodeStream.r_frame_rate.den = 1;
+		sEnc->time_base.den = (int)sExternal.vFrameRate;
+		sEnc->time_base.num = 1;
 		sEnc->width = sExternal.nWidth;
 		sEnc->height = sExternal.nHeight;
 //		sEnc->aspect_ratio = sExternal.nWidth / sExternal.nHeight;
+		sEnc->pix_fmt = PIX_FMT_YUV420P;
 	
 		sEnc->gop_size = 12;
 		sEnc->qmin = 2;
@@ -305,7 +310,7 @@ os::MediaFormat_s FFMpegCodec::GetInternalFormat()
 		sFormat.eColorSpace = os::CS_YUV12;
 		sFormat.nSampleRate = sEnc->sample_rate;
 		sFormat.nChannels = sEnc->channels;
-		sFormat.vFrameRate = sEnc->frame_rate;
+		sFormat.vFrameRate = m_sEncodeStream.r_frame_rate.num;
 		sFormat.nWidth = sEnc->width;
 		sFormat.nHeight = sEnc->height;
 	}
@@ -331,7 +336,7 @@ os::MediaFormat_s FFMpegCodec::GetExternalFormat()
 			
 		sFormat.nSampleRate = m_sDecodeContext.sample_rate;
 		sFormat.nChannels = m_sDecodeContext.channels;
-		sFormat.vFrameRate = (float)m_sDecodeContext.frame_rate / (float)m_sDecodeContext.frame_rate_base;
+		sFormat.vFrameRate = (float)m_sDecodeStream.r_frame_rate.num / (float)m_sDecodeStream.r_frame_rate.den;
 		sFormat.nWidth = m_sDecodeContext.width;
 		sFormat.nHeight = m_sDecodeContext.height;
 	} else {
@@ -577,6 +582,7 @@ status_t FFMpegCodec::EncodePacket( os::MediaPacket_s* psPacket, os::MediaPacket
 		sFrame.quality = m_sEncodeStream.quality;
 		AVCodecContext *sEnc = &m_sEncodeStream.codec;
 		psOutput->nSize[0] = avcodec_encode_video( &m_sEncodeStream.codec, psOutput->pBuffer[0], psPacket->nSize[0] * sEnc->height, &sFrame );
+		
 		if( psOutput->nSize[0] < 0 )
 			return( -1 );
 		return( 0 );

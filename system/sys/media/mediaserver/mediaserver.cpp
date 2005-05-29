@@ -295,6 +295,12 @@ void MediaServer::FlushThread()
 				}
 			}
 		}
+
+		/* Avoid blocks */		
+		int nDelay;		
+		ioctl( m_hOSS, SNDCTL_DSP_GETODELAY, &nDelay );
+		nSize = std::min( (int)nSize, m_nBufferSize - nDelay );
+				
 		unlock_semaphore( m_hLock );
 		
 		/* We have data to flush */
@@ -648,16 +654,10 @@ uint32 MediaServer::Resample( os::MediaFormat_s sSrcFormat, os::MediaFormat_s sD
 	float vDstFactor = 0;
 	uint32 nSamples = 0;
 	
-	if( vFactor < 1 ) {
-		vSrcFactor = 1;
-		vDstFactor = vFactor;
-		nSamples = nLength / sSrcFormat.nChannels / 2;
-	} else {
-		vSrcFactor = 1 / vFactor;
-		vDstFactor = 1;
-		float vSamples = (float)nLength * vFactor / (float)sSrcFormat.nChannels / 2;
-		nSamples = (uint32)vSamples;
-	}
+	vSrcFactor = 1 / vFactor;
+	vDstFactor = 1;
+	float vSamples = (float)nLength * vFactor / (float)sSrcFormat.nChannels / 2;
+	nSamples = (uint32)vSamples;
 	
 	uint32 nSrcPitch;
 	uint32 nDstPitch = 2;
