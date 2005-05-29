@@ -1096,7 +1096,7 @@ static int ioc_set_if_param( int nCommand, struct ifreq *psConf )
 
 	case SIOCSIFDSTADDR:
 		/* Check this is a broadcast interface */
-		if ( ( psInterface->ni_nFlags & IFF_POINTOPOINT ) == 0 )
+		if ( ( psInterface->ni_nFlags & IFF_POINTOPOINT ) == IFF_POINTOPOINT )
 		{
 			nError = set_interface_params( psInterface, NULL, NULL, ( ipaddr_p ) & psAddr->sin_addr, NULL, NULL );
 		}
