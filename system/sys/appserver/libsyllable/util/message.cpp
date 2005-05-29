@@ -22,6 +22,8 @@
 #include <assert.h>
 #include <atheos/kernel.h>
 
+#include "message.h"
+
 #include <util/message.h>
 #include <gui/region.h>
 #include <util/looper.h>
@@ -695,6 +697,60 @@ status_t Message::RemoveName( const char *pzName )
 	return ( 0 );
 }
 
+/** Add an object as a member of this message.
+ * \par Description:
+ *	Add a flattenable object as a member of this message.
+ * \par
+ *	See AddData() for more details on how to add members to the message.
+ * \param pzName
+ *	A name uniquely identifying the added object within the message.
+ *	It is possible to add multiple objects of the same type under
+ *	the same name but it is an error to use the same name for two
+ *	objects of different type.
+ * \param pcVal
+ *	The object to add.
+ * \return On success 0 is returned. On failure -1 is returned and a error
+ *	code is written to the global variable \b errno.
+ * \par Error codes:
+ *	<dl>
+ *	<dd>ENOMEM	Not enough memory to expand the message.
+ *	</dl>
+ * \sa FindObject(), AddData(), FindData()
+ * \author Henrik Isaksson
+ *****************************************************************************/
+
+status_t Message::AddObject( const char *pzName, const Flattenable& cVal )
+{
+	DataArray_s *psArray;
+
+	assert( pzName != NULL );
+
+	size_t nSize = cVal.GetFlattenedSize();
+
+	psArray = _FindArray( pzName, cVal.GetType() );
+
+	uint8 *pBuffer;
+
+	if( psArray == NULL )
+	{
+		pBuffer = _CreateArray( pzName, cVal.GetType(), NULL, nSize, false, 1 );
+	}
+	else
+	{
+		pBuffer = _ExpandArray( psArray, NULL, nSize );
+	}
+	if( pBuffer != NULL )
+	{
+		cVal.Flatten( pBuffer, nSize );
+		return ( 0 );
+	}
+	else
+	{
+		errno = ENOMEM;
+		return ( -1 );
+	}
+}
+
 /** Add another message object as a member of this message.
  * \par Description:
  *	Add another message object as a member of this message.
@@ -1164,6 +1220,19 @@ status_t Message::FindData( const char *pzName, int nType, const void **ppData, 
 		}
 	}
 	return ( -1 );
+}
+
+status_t Message::FindObject( const char *pzName, Flattenable & cVal, int nIndex ) const
+{
+	const void *pBuffer;
+	size_t nSize;
+	status_t nError = FindData( pzName, cVal.GetType(), &pBuffer, &nSize, nIndex );
+
+	if( nError < 0 )
+	{
+		return ( nError );
+	}
+	return ( cVal.Unflatten( ( uint8 * )pBuffer ) );
 }
 
 //----------------------------------------------------------------------------

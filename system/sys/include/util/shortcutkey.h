@@ -20,13 +20,15 @@
 #ifndef	__F_UTIL_SHORTCUTKEY_H__
 #define	__F_UTIL_SHORTCUTKEY_H__
 
+#include "flattenable.h"
+
 #include <gui/guidefines.h>
 #include <util/string.h>
 #include <atheos/types.h>
 
 namespace os {
 
-class ShortcutKey {
+class ShortcutKey : public Flattenable {
 	public:
 	ShortcutKey( const String& cKey, uint32 nQualifiers = 0 );
 	ShortcutKey( const uint32 nKey, uint32 nQualifiers = 0 );
@@ -44,7 +46,12 @@ class ShortcutKey {
 
 	bool operator<( const ShortcutKey& c ) const;
 	bool operator==( const ShortcutKey& c ) const;
-	
+
+	virtual int			GetType( void )	const { return T_SHORTCUTKEY; }
+	virtual size_t		GetFlattenedSize( void ) const { return 4*sizeof( uint32 ); }
+	virtual status_t	Flatten( uint8* pBuffer, size_t nSize ) const;
+	virtual status_t	Unflatten( const uint8* pBuffer );
+
 	private:
 	uint32		m_nKey;
 	uint32		m_nQualifiers;

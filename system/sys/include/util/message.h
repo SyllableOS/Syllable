@@ -27,6 +27,8 @@
 
 #include <util/string.h>
 
+#include "flattenable.h"
+
 namespace os
 {
 #if 0
@@ -104,6 +106,8 @@ public:
     status_t	AddData( const char* pzName, int nType, const void* pData,
 			 uint32 nSize, bool bFixedSize = true, int nMaxCountHint = 1 );
 
+    status_t	AddObject( const char* pzName, const Flattenable& cVal );
+
     status_t	AddMessage( const char* pzName, const Message* pcVal );
     status_t	AddPointer( const char* pzName, const void* pVal );
     status_t	AddInt8( const char* pzName, int8 nVal );
@@ -124,6 +128,8 @@ public:
     status_t	AddVariant( const char* pzName, const Variant& cVal );
 
     status_t	FindData( const char* pzName, int nType, const void** ppData, size_t* pnSize, int nIndex = 0 ) const;
+
+    status_t	FindObject( const char* pzName, Flattenable& cVal, int nIndex = 0 ) const;
 
     status_t	FindMessage( const char* pzName, Message* ppcVal, int nIndex = 0 ) const;
     status_t	FindPointer( const char* pzName, void** ppVal, int nIndex = 0 ) const;

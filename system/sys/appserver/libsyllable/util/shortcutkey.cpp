@@ -113,3 +113,24 @@ uint32 ShortcutKey::GetQualifiers() const
 	return m_nQualifiers;
 }
 
+status_t ShortcutKey::Flatten( uint8* pBuffer, size_t nSize ) const
+{
+	if( nSize >= 16 ) {
+		uint32* p = (uint32*)pBuffer;
+		p[0] = m_nKey;
+		p[1] = m_nQualifiers;
+		p[2] = 0;
+		p[3] = 0;
+		return 0;
+	} else {
+		return -1;
+	}
+}
+
+status_t ShortcutKey::Unflatten( const uint8* pBuffer )
+{
+	uint32* p = (uint32*)pBuffer;
+	m_nKey = p[0];
+	m_nQualifiers = p[1];
+	return 0;
+}

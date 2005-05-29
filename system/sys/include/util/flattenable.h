@@ -1,5 +1,6 @@
-/*  libatheos.so - the highlevel API library for AtheOS
+/*  libsyllable.so - the highlevel API library for Syllable
  *  Copyright (C) 1999 - 2001 Kurt Skauen
+ *  Copyright (C) 2003 - 2005 Syllable Team
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -17,8 +18,12 @@
  *  MA 02111-1307, USA
  */
 
-#ifndef __F_UTIL_TYPECODES_H__
-#define __F_UTIL_TYPECODES_H__
+#ifndef	__F_UTIL_FLATTENABLE_H__
+#define	__F_UTIL_FLATTENABLE_H__
+
+#include "typecodes.h"
+#include <sys/types.h>
+#include <atheos/types.h>
 
 namespace os
 {
@@ -27,46 +32,29 @@ namespace os
 #endif // Fool Emacs auto-indent
 
 
-
-
-
-/**\anchor os_util_typecodes
+/** 
+ * \ingroup util
  * \par Description:
- *	Various type codes used to identify data-types by various classes in
- *	the toolkit. Most notably the os::Message class and os::Flattenable.
- *	For classes not part of the OS namespace, use codes equal to, or higher
- *	than, T_USER.
+ *	The os::Flattenable class defines an interface for "flattening"
+ *	objects. Flattening means that all the data in the object is stored
+ *	in a flat buffer.
+ * \par
+ * \par
+ * \sa os::Message
+ * \author	Henrik Isaksson (henrik@isaksson.tk)
  *****************************************************************************/
 
-enum type_code
+class Flattenable
 {
-    T_ANY_TYPE,
-    T_POINTER,
-    T_INT8,
-    T_INT16,
-    T_INT32,
-    T_INT64,
-    T_BOOL,
-    T_FLOAT,
-    T_DOUBLE,
-    T_STRING,
-    T_IRECT,
-    T_IPOINT,
-    T_MESSAGE,
-    T_COLOR32,
-    T_FILE,	// obsolete
-    T_MEM_OBJ,	// obsolete
-    T_RECT,
-    T_POINT,
-    T_VARIANT,
-    T_RAW,
-    
-    T_SHORTCUTKEY,
-    
-    T_USER = 0x80000000
+public:
+	virtual int			GetType( void )	const = 0;
+	virtual bool		TypeIsCompatible( int nType ) const { return ( nType == GetType() ); }
+	virtual size_t		GetFlattenedSize( void ) const = 0;
+	virtual status_t	Flatten( uint8* pBuffer, size_t nSize ) const = 0;
+	virtual status_t	Unflatten( const uint8* pBuffer ) = 0;
 };
 
-} // end of namespace
+}
 
+#endif	// __F_UTIL_FLATTENABLE_H__
 
-#endif // __F_UTIL_TYPECODES_H__
