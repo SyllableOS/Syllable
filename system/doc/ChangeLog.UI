@@ -1,6 +1,16 @@
+* May 29 2005, Henrik Isaksson *
+
+ - Flattenable
+	o New class, defines interface for objects that can be flattened and used by
+	  os::Message, written to disk etc.
+ - Message
+	o Added support for Flattenable objects through AddObject/FindObject.
+ - ShortcutKey
+	o Added flattening support.
+
 * May 29 2005, Arno Klenke *
 
-- Filereference info dialog:
+ - Filereference info dialog:
 	o Now shows the attributes of a file
 
 * May 28 2005, Henrik Isaksson *
