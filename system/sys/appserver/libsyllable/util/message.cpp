@@ -22,8 +22,6 @@
 #include <assert.h>
 #include <atheos/kernel.h>
 
-#include "message.h"
-
 #include <util/message.h>
 #include <gui/region.h>
 #include <util/looper.h>
