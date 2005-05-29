@@ -15,7 +15,7 @@
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "appwindow.h"
-#include "appwindow_pixmaps.h"
+//#include "appwindow_pixmaps.h"
 #include "editview.h"
 #include "messages.h"
 #include "version.h"
@@ -48,24 +48,28 @@ AEditWindow::AEditWindow(const Rect& cFrame) : Window(cFrame, "main_window", AED
 	SetupMenus();
 	Rect cBounds=GetBounds();
 	cBounds.top =pcMenuBar->GetBounds().bottom +1.0f;
-	cBounds.bottom = BUTTON_HEIGHT + 4 + cBounds.top;
+//	cBounds.bottom = BUTTON_HEIGHT + 4 + cBounds.top;
 
 	// Create & attach the button bar
-	pcButtonBar=new ButtonBar(Rect(0,cBounds.top,GetBounds().Width(),cBounds.bottom),"button_bar");
-	AddChild(pcButtonBar);
+	pcButtonBar=new ButtonBar(Rect(),"button_bar");
 
 	// Attach the buttons to the button bar
-	pcButtonBar->AddButton(ImageFileNew,"appwindow_filenew",new Message(M_BUT_FILE_NEW));
-	pcButtonBar->AddButton(ImageFileOpen,"appwindow_fileopen",new Message(M_BUT_FILE_OPEN));
-	pcButtonBar->AddButton(ImageFileSave,"appwindow_filesave",new Message(M_BUT_FILE_SAVE));
-	pcButtonBar->AddButton(ImageEditCut,"appwindow_editcut",new Message(M_BUT_EDIT_CUT));
-	pcButtonBar->AddButton(ImageEditCopy,"appwindow_editcopy",new Message(M_BUT_EDIT_COPY));
-	pcButtonBar->AddButton(ImageEditPaste,"appwindow_editpaste",new Message(M_BUT_EDIT_PASTE));
-	pcButtonBar->AddButton(ImageFindFind,"appwindow_find",new Message(M_BUT_FIND_FIND));
+	pcButtonBar->AddButton("icon-new","appwindow_filenew",new Message(M_BUT_FILE_NEW));
+	pcButtonBar->AddButton("icon-open","appwindow_fileopen",new Message(M_BUT_FILE_OPEN));
+	pcButtonBar->AddButton("icon-save","appwindow_filesave",new Message(M_BUT_FILE_SAVE));
+	pcButtonBar->AddButton("icon-cut","appwindow_editcut",new Message(M_BUT_EDIT_CUT));
+	pcButtonBar->AddButton("icon-copy","appwindow_editcopy",new Message(M_BUT_EDIT_COPY));
+	pcButtonBar->AddButton("icon-paste","appwindow_editpaste",new Message(M_BUT_EDIT_PASTE));
+	pcButtonBar->AddButton("icon-find","appwindow_find",new Message(M_BUT_FIND_FIND));
 #ifdef ENABLE_UNDO
-	pcButtonBar->AddButton(ImageUndo,"appwindow_undo",new Message(M_BUT_EDIT_UNDO));
-	pcButtonBar->AddButton(ImageRedo,"appwindow_redo",new Message(M_BUT_EDIT_REDO));
+	pcButtonBar->AddButton("icon-undo","appwindow_undo",new Message(M_BUT_EDIT_UNDO));
+	pcButtonBar->AddButton("icon-redo","appwindow_redo",new Message(M_BUT_EDIT_REDO));
 #endif
+
+	AddChild(pcButtonBar);
+
+	cBounds.bottom = pcButtonBar->GetPreferredSize( false ).y + cBounds.top;
+	pcButtonBar->SetFrame( Rect( 0, cBounds.top, GetBounds().Width(), cBounds.bottom ) );
 
 		// Create & attach EditView
 	pcEditView=new EditView(Rect(0,cBounds.bottom+1.0f,GetBounds().Width(),GetBounds().Height()));
@@ -773,4 +777,5 @@ void AEditWindow::Save(const char* pzFileName)
 	hFile.close();
 
 }
+
 

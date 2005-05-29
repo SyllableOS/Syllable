@@ -22,6 +22,15 @@ $(EXE): $(OBJS)
 	rescopy -a $(EXE) es/aedit.catalog=resources/es/aedit.catalog
 	rescopy -a $(EXE) fr/aedit.catalog=resources/fr/aedit.catalog
 	rescopy -a $(EXE) da/aedit.catalog=resources/da/aedit.catalog
+	rescopy -a $(EXE) icon-copy=resources/aedit-icons/icon-copy.png
+	rescopy -a $(EXE) icon-cut=resources/aedit-icons/icon-cut.png
+	rescopy -a $(EXE) icon-paste=resources/aedit-icons/icon-paste.png
+	rescopy -a $(EXE) icon-new=resources/aedit-icons/icon-new.png
+	rescopy -a $(EXE) icon-open=resources/aedit-icons/icon-open.png
+	rescopy -a $(EXE) icon-save=resources/aedit-icons/icon-save.png
+	rescopy -a $(EXE) icon-redo=resources/aedit-icons/icon-redo.png
+	rescopy -a $(EXE) icon-undo=resources/aedit-icons/icon-undo.png
+	rescopy -a $(EXE) icon-find=resources/aedit-icons/icon-find.png
 	rescopy -a $(EXE) fy/aedit.catalog=resources/fy/aedit.catalog
 
 deps:
@@ -63,4 +72,6 @@ $(OBJSDIR)replacedialog.o: replacedialog.cpp replacedialog.cpp
 
 $(OBJSDIR)settings.o: settings.cpp settings.h
 	$(CXX) $(COPTS) settings.cpp -o $@
+
+
 

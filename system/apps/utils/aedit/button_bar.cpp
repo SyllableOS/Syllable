@@ -50,43 +50,65 @@ void ButtonBar::AttachedToWindow(void)
 {
     bIsAttached=true;
 
+	LayoutButtons();
+
     cPrefSize.x=(GetWindow()->GetBounds().Width());
-    cPrefSize.y=BUTTON_HEIGHT+4;	// Max button height, plus two pixel frame
+//    cPrefSize.y=BUTTON_HEIGHT+4;	// Max button height, plus two pixel frame
 }
 
-void ButtonBar::AddButton(const void* pnData, const char* pzName, Message* pcMessage)
+void ButtonBar::LayoutButtons( void )
 {
-	BitmapImage* pcImage = new BitmapImage();
-	
-	//hacked way of doing it until ImageButton::SetImageFromMemory is in place
-	pcImage->SetBitmapData((uint8*)pnData,IPoint(30,30),CS_RGB32);
-	
+	uint i;
+
+	cPrefSize.x = 0;
+	cPrefSize.y = 0;
+
+	for( i = 0; i < vButtons.size(); i++ ) {
+		ImageButton* ib = vButtons[i];
+		
+		if( ib->GetPreferredSize( false ).y > cPrefSize.y )
+			cPrefSize.y = ib->GetPreferredSize( false ).y;
+	}
+
+
+	for( i = 0; i < vButtons.size(); i++ ) {
+		ImageButton* ib = vButtons[i];
+		
+		ib->SetFrame( Rect( cPrefSize.x, 0, cPrefSize.x + ib->GetPreferredSize( false ).x, cPrefSize.y ) );
+
+		cPrefSize.x += ib->GetPreferredSize( false ).x + 1;
+	}
+}
+
+void ButtonBar::AddButton(const char* pzIcon, const char* pzName, Message* pcMessage)
+{
+	BitmapImage* pcImage = NULL;
+    os::Resources cRes(get_image_id());
+	os::ResStream* pcStream = cRes.GetResourceStream(pzIcon);
+	if(pcStream != NULL) {
+		pcImage = new BitmapImage( pcStream );
+
+		Rect	frame = pcImage->GetBounds();
+	} else {
+		printf("Failed to load image resource: \"%s\" for %s\n", pzIcon, pzName );
+	}
+	delete pcStream;
+
     // Increment the count
     nNumButtons++;
 
-    // Now create & add the button
-    if(nNumButtons==0)
-    {
-		ImageButton* pcCurrentButton;
-        ImageButton* pcTempButton = new ImageButton(Rect(1,0,BUTTON_WIDTH,BUTTON_HEIGHT+4),pzName,"",pcMessage,NULL, ImageButton::IB_TEXT_BOTTOM,true,false,true);
-        pcTempButton->SetImage(pcImage);
-        vButtons.push_back(pcTempButton);
-        
-        pcCurrentButton=vButtons[nNumButtons];
+	ImageButton* pcTempButton = new ImageButton(Rect(),pzName,"",pcMessage,NULL, ImageButton::IB_TEXT_BOTTOM,true,false,true);
 
-        AddChild(pcCurrentButton);
-    }
-    else
-    {
-		ImageButton* pcCurrentButton;
-        ImageButton* pcTempButton = new ImageButton(Rect( ( (BUTTON_WIDTH*nNumButtons)+1),0,(BUTTON_WIDTH*(nNumButtons+1)),BUTTON_HEIGHT+4),pzName,"",pcMessage,NULL, ImageButton::IB_TEXT_BOTTOM,true,false,true);
-        pcTempButton->SetImage(pcImage);
-        vButtons.push_back(pcTempButton);
-        
-        pcCurrentButton=vButtons[nNumButtons];
+	if( pcImage ) {
+		pcTempButton->SetImage(pcImage);
+	}
 
-        AddChild(pcCurrentButton);
-    }
+	vButtons.push_back(pcTempButton);
+	
+	AddChild(pcTempButton);
+
+	LayoutButtons();
 
     return;
 }
+

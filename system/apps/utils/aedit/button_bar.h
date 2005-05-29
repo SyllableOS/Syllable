@@ -43,9 +43,12 @@ public:
     virtual Point GetPreferredSize(bool bLargest) const;
     virtual void FrameSized(const Point &cDelta);
     virtual void AttachedToWindow(void);
-    void AddButton(const void* pnData, const char* pzName, Message* pcMessage);
+    void AddButton(const char* pzIcon, const char* pzName, Message* pcMessage);
 
 private:
+
+	void ButtonBar::LayoutButtons( void );
+
     Point cPrefSize;
     bool bIsAttached;
 
@@ -54,3 +57,5 @@ private:
 };
 
 #endif
+
+
