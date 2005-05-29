@@ -28,6 +28,7 @@
 #include <gui/stringview.h>
 #include <gui/image.h>
 #include <gui/imageview.h>
+#include <gui/treeview.h>
 #include <util/message.h>
 #include <util/messenger.h>
 #include <util/string.h>
@@ -51,6 +52,37 @@
 
 using namespace os;
 
+
+/* Structure to hold an attribute for sorting */
+struct sAttributeInfo
+{
+	os::String zName;
+	os::String zValue;
+};
+
+/* Used to sort the attributes */
+struct AttributeSort
+{
+	bool operator() ( const sAttributeInfo psX, const sAttributeInfo psY ) const
+	{
+		/* All attributes with category names come first */
+		if( psX.zName.size() < 1 || psY.zName.size() < 1 )
+			return( false );
+			
+		bool bCategoryInX = ( (int)(psX.zName.find( "::" )) != os::String::npos );
+		bool bCategoryInY = ( (int)(psY.zName.find( "::" )) != os::String::npos );
+		
+		if( bCategoryInX && !bCategoryInY )
+			return( true );
+		
+		if( !bCategoryInX && bCategoryInY )
+			return( false );
+
+		
+		return ( psX.zName < psY.zName );
+	}
+};
+
 class InfoWin : public os::Window
 {
 public:
@@ -71,9 +103,15 @@ public:
 		m_cMessenger = cViewTarget;
 		m_pcChangeMsg = pcChangeMsg;
 		
+		/* Create file system node */
+		os::FSNode cNode;
+		if( cNode.SetTo( zFile ) != 0 )
+		{
+			throw errno_exception( "Failed to open node" );
+		}
 		
 		/* Get stat */
-		lstat( zFile.c_str(), &sStat );
+		cNode.GetStat( &sStat );
 		
 		/* Calculate size string */
 		if( S_ISDIR( sStat.st_mode ) || S_ISLNK( sStat.st_mode ) )
@@ -99,11 +137,69 @@ public:
 		{
 		}
 		
-		/* Calculate */
+		/* Calculate date and time */
 		struct tm *psTime = localtime( &sStat.st_mtime );
 		strftime( zDate, sizeof( zDate ), "%c", psTime );
 		
+		/* Get attributes and save them in a list */
+		std::vector<struct sAttributeInfo> asAttributes;
 		
+		os::String zAttribute;
+		while( cNode.GetNextAttrName( &zAttribute ) == 1 )
+		{
+			attr_info sInfo;
+			char zBuffer[4096];
+			if( cNode.StatAttr( zAttribute, &sInfo ) == 0 )
+			{
+				sAttributeInfo sAttrib;
+				sAttrib.zName = zAttribute;
+				sAttrib.zValue = GS( ID_MSG_FILEINFO_FILETYPE_UNKNOWN, "Unknown" );
+				switch( sInfo.ai_type )
+				{
+					case ATTR_TYPE_STRING:
+					{
+						int nLength = cNode.ReadAttr( zAttribute, sInfo.ai_type, zBuffer, 0, 4095 );
+						zBuffer[nLength] = 0;						
+						sAttrib.zValue = zBuffer;
+					}
+					break;
+					case ATTR_TYPE_INT32:
+					{
+						int32 nVal = 0;
+						if( cNode.ReadAttr( zAttribute, sInfo.ai_type, &nVal, 0, sizeof( int32 ) ) != sizeof( int32 ) )
+							break;
+						sAttrib.zValue = os::Variant( nVal ).AsString();
+					}
+					break;
+					case ATTR_TYPE_INT64:
+					{
+						int64 nVal = 0;
+						if( cNode.ReadAttr( zAttribute, sInfo.ai_type, &nVal, 0, sizeof( int64 ) ) != sizeof( int64 ) )
+							break;
+						/* Special handling for the Media::Length attribute */
+						if( zAttribute == "Media::Length" )
+						{
+							int nH = nVal / 3600;
+							int nM = ( nVal - nH * 3600 ) / 60;
+							int nS = ( nVal - nH * 3600 - nM * 60 );
+							if( nVal >= 3600 )
+								sprintf( zBuffer, "%i:%i:%i", nH, nM, nS );
+							else
+								sprintf( zBuffer, "%i:%i", nM, nS );
+							sAttrib.zValue = zBuffer;							
+						}
+						else
+							sAttrib.zValue = os::Variant( nVal ).AsString();
+					}
+					break;
+
+				}
+				asAttributes.push_back( sAttrib );
+			}
+		}
+
+		/* Sort attributes */
+		std::sort( asAttributes.begin(), asAttributes.end(  ), AttributeSort() );	
 		
 		/* Create main view */
 		m_pcView = new os::LayoutView( GetBounds(), "main_view" );
@@ -178,6 +274,56 @@ public:
 		pcHType->AddChild( new os::HLayoutSpacer( "" ) );
 		
 		
+		/* Attributes tree */
+		os::TreeView* pcAttributes = NULL;
+		float vAttributeTreeHeight = 0;
+		if( asAttributes.size() > 0 )
+		{
+			pcAttributes = new os::TreeView( os::Rect(), "attributes", ListView::F_RENDER_BORDER | ListView::F_NO_AUTO_SORT );
+			pcAttributes->SetDrawExpanderBox( true );
+			pcAttributes->SetDrawTrunk( false );
+			pcAttributes->InsertColumn( "Attributes", 150 );
+			pcAttributes->InsertColumn( "", 1000 );
+			os::String zLastCategory = "";
+			
+			for( uint i = 0; i < asAttributes.size(); i++ )
+			{
+				/* Add the attributes. They are already sorted */
+				int nCategory = 0;
+				if( ( nCategory = asAttributes[i].zName.find( "::" ) ) != os::String::npos )
+				{
+					if( !( asAttributes[i].zName.substr( 0, nCategory ) == zLastCategory ) )
+					{
+						os::TreeViewStringNode* pcCategory = new os::TreeViewStringNode();
+						zLastCategory = asAttributes[i].zName.substr( 0, nCategory );
+						if( zLastCategory == "os" )
+							pcCategory->AppendString( "System" );
+						else
+							pcCategory->AppendString( zLastCategory );
+						pcCategory->AppendString( "" );
+						pcCategory->SetIndent( 1 );
+						pcAttributes->InsertNode( pcCategory );
+						vAttributeTreeHeight += pcCategory->GetHeight( pcAttributes );					
+					}
+					os::TreeViewStringNode* pcNode = new os::TreeViewStringNode();
+					pcNode->AppendString( asAttributes[i].zName.substr( nCategory + 2, asAttributes[i].zName.Length() - nCategory - 2 ) );
+					pcNode->AppendString( asAttributes[i].zValue );
+					pcNode->SetIndent( 2 );
+					pcAttributes->InsertNode( pcNode );
+					vAttributeTreeHeight += pcNode->GetHeight( pcAttributes );
+				}
+				else
+				{
+					os::TreeViewStringNode* pcNode = new os::TreeViewStringNode();
+					pcNode->AppendString( asAttributes[i].zName );
+					pcNode->AppendString( asAttributes[i].zValue );				
+					pcNode->SetIndent( 1 );
+					pcAttributes->InsertNode( pcNode );
+	
+					vAttributeTreeHeight += pcNode->GetHeight( pcAttributes );
+				}
+			}
+		}
 		
 		pcVInfo->AddChild( pcHFileName );
 		pcVInfo->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
@@ -205,7 +351,12 @@ public:
 		pcHButtons->AddChild( m_pcOk, 0.0f );
 	
 		pcVRoot->AddChild( pcHNode );
-		pcVRoot->AddChild( new os::VLayoutSpacer( "" ) );
+		pcVRoot->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
+		if( asAttributes.size() > 0 ) {
+			pcVRoot->AddChild( pcAttributes );
+			pcVRoot->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
+		} else
+			pcVRoot->AddChild( new os::VLayoutSpacer( "" ) );
 		pcVRoot->AddChild( pcHButtons );
 		
 		
@@ -237,8 +388,16 @@ public:
 		
 		m_pcOk->MakeFocus();
 		
-		ResizeTo( m_pcView->GetPreferredSize( false ) );
-		
+		/* Resize window */
+		if( asAttributes.size() == 0 ) {
+			ResizeTo( m_pcView->GetPreferredSize( false ) );			
+			SetFlags( os::WND_NOT_RESIZABLE );
+		} else {
+			SetSizeLimits( m_pcView->GetPreferredSize( false ) + os::Point( 0, 40 ), os::Point( USHRT_MAX, USHRT_MAX ) );
+			ResizeTo( m_pcView->GetPreferredSize( false ) + os::Point( 0, 40 ) + 
+						os::Point( 0, ( vAttributeTreeHeight < 200 ) ? vAttributeTreeHeight : 200 ) );				
+		}
+
 		if( pcManager )
 			pcManager->Put(); 
 		
