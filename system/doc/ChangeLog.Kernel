@@ -1,3 +1,7 @@
+* May 29 2005, Arno Klenke *
+
+Fixed SIOCSIFDSTADDR ioctl to work with point to point interfaces
+
 * May 24 2005, Kristian Van Der Vliet *
 
 Removed atheos/pthreadsignal.h.  pthread_sigmask() is now defined in

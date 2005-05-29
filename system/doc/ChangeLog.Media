@@ -1,3 +1,8 @@
+* May 29th 2005 Arno Klenke *
+Updated the ffmpeg plugin to work with the latest ffmpeg version
+Fixed resampler
+Fixed handling of the Media::Length attribute in coldfish
+Some smaller timestamp related fixes
 
 ---- 0.5.6 Released -------------------------------------------------------------------
 
