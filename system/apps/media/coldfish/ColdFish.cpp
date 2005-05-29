@@ -786,15 +786,44 @@ bool CFApp::OpenList( os::String zFileName )
 		if ( !strcmp( zTemp, "<ENTRYEND>" ) )
 		{
 			uint32 nM, nS;
+			int64 nLength = 0;
 
 			bInEntry = false;
+			
+			/* Try to read the length attribute */
+			bool bReadLengthFromInput = true;
+			try
+			{
+				os::FSNode cNode( zFile );
+				if( cNode.ReadAttr( "Media::Length", ATTR_TYPE_INT64, &nLength, 0, sizeof( int64 ) ) == sizeof( int64 ) )
+				{
+					bReadLengthFromInput = false;
+					secs_to_ms( nLength, &nM, &nS );
+				} 
+				cNode.Unset();
+			} catch(...)
+			{
+				bReadLengthFromInput = true;
+			}
 
-			/* Check entry */
-			os::MediaInput * pcInput = m_pcManager->GetBestInput( zFile );
-			if ( pcInput == NULL )
-				continue;
-			pcInput->SelectTrack( nTrack );
-
+			/* Read length from input if required */
+			if( bReadLengthFromInput )
+			{
+				os::MediaInput * pcInput = m_pcManager->GetBestInput( zFile );
+				if ( pcInput == NULL )
+					continue;
+				pcInput->SelectTrack( nTrack );
+				nLength = pcInput->GetLength();
+				secs_to_ms( pcInput->GetLength(), &nM, &nS );
+				try {
+					os::FSNode cNode( zFile );
+					cNode.WriteAttr( "Media::Length", O_TRUNC, ATTR_TYPE_INT64, &nLength, 0, sizeof( int64 ) );
+					cNode.Unset();
+				} catch( ... ) {
+				}
+				delete( pcInput );
+			}
+			
 			/* Add new row */
 			CFListItem * pcRow = new CFListItem();
 			pcRow->AppendString( os::Path( zFile ).GetLeaf() );
@@ -803,28 +832,13 @@ bool CFApp::OpenList( os::String zFileName )
 			pcRow->AppendString( zTemp );
 			pcRow->nTrack = nTrack;
 			pcRow->nStream = nStream;
-			/* Try to read the length from the Media::Length attribute */
-			try
-			{
-				int64 nLength;
-				os::FSNode cNode( zFile );
-				if( cNode.ReadAttr( "Media::Length", ATTR_TYPE_INT64, &nLength, 0, sizeof( int64 ) ) != sizeof( int64 ) )
-				{
-					nLength = pcInput->GetLength();
-					cNode.WriteAttr( "Media::Length", O_TRUNC, ATTR_TYPE_INT64, &nLength, 0, sizeof( int64 ) );				
-				}
-				secs_to_ms( nLength, &nM, &nS );
-			} catch(...)
-			{
-				secs_to_ms( pcInput->GetLength(), &nM, &nS );
-			}
+
 			sprintf( zTemp, "%.2li:%.2li", nM, nS );
 			pcRow->AppendString( zTemp );
 			m_pcWin->GetPlaylist()->InsertRow( pcRow );
 
 			if ( m_pcWin->GetPlaylist()->GetRowCount(  ) == 1 )
 				m_pcWin->GetPlaylist()->Select( 0, 0 );
-			delete( pcInput );
 			continue;
 		}
 		/* We expect a second line with data */
@@ -1038,6 +1052,16 @@ void CFApp::AddFile( os::String zFileName )
 			}
 		}
 	}
+	
+	if( pcInput->GetTrackCount() == 1 )
+	try {
+		os::FSNode cNode( zFileName );
+		uint64 nLength = pcInput->GetLength();
+		cNode.WriteAttr( "Media::Length", O_TRUNC, ATTR_TYPE_INT64, &nLength, 0, sizeof( int64 ) );
+		cNode.Unset();
+	} catch( ... ) {
+	}
+	
 	pcInput->Close();
 	delete( pcInput );
 

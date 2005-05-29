@@ -424,7 +424,7 @@ void MPApp::PlayThread()
 					/* Decode audio data */
 					if ( m_bAudio && sPacket.nStream == m_nAudioStream )
 					{
-						//std::cout<<"Audio "<<sPacket.nTimeStamp<<std::endl;
+						//std::cout<<"Audio "<<sPacket.nTimeStamp<<" "<<m_pcAudioOutput->GetUsedBufferPercentage()<<std::endl;
 						if ( m_pcAudioCodec->DecodePacket( &sPacket, &sAudioPacket ) == 0 )
 						{
 							if ( sAudioPacket.nSize[0] > 0 )
@@ -440,7 +440,7 @@ void MPApp::PlayThread()
 					}
 					if ( m_bVideo && sPacket.nStream == m_nVideoStream )
 					{
-						//std::cout<<"Video "<<sPacket.nTimeStamp<<std::endl;
+						//std::cout<<"Video "<<sPacket.nTimeStamp<<" "<<m_pcVideoOutput->GetUsedBufferPercentage()<<std::endl;
 						if ( m_pcVideoCodec->DecodePacket( &sPacket, &sVideoFrame ) == 0 )
 							if ( sVideoFrame.nSize[0] > 0 )
 							{
