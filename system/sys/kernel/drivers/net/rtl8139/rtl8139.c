@@ -1299,11 +1299,11 @@ static int rtl8129_interrupt(int irq, void *dev_instance, SysCallRegs_s *regs)
 		printk(KERN_ERR"%s: SMP simultaneous entry of an interrupt handler.\n",
 			   dev->name);
 		dev->interrupt = 0;	/* Avoid halting machine. */
-		return;
+		return( 0 );
 	}
 #endif
 	flags = spinlock_disable( &tp->tx_spinlock );
-
+	
 	do {
 		int status = inw(ioaddr + IntrStatus);
 		/* Acknowledge all of the current interrupt sources ASAP, but
@@ -1311,7 +1311,7 @@ static int rtl8129_interrupt(int irq, void *dev_instance, SysCallRegs_s *regs)
 		if (status & RxUnderrun)
 			link_changed = inw(ioaddr+CSCR) & CSCR_LinkChangeBit;
 		outw(status, ioaddr + IntrStatus);
-
+		
 		if (debug > 4)
 			printk(KERN_DEBUG"%s: interrupt  status=%#4.4x new intstat=%#4.4x.\n",
 				   dev->name, status, inw(ioaddr + IntrStatus));
@@ -1319,7 +1319,8 @@ static int rtl8129_interrupt(int irq, void *dev_instance, SysCallRegs_s *regs)
 		if ((status & (PCIErr|PCSTimeout|RxUnderrun|RxOverflow|RxFIFOOver
 					   |TxErr|TxOK|RxErr|RxOK)) == 0)
 			break;
-
+			
+		
 		if (status & (RxOK|RxUnderrun|RxOverflow|RxFIFOOver))/* Rx interrupt */
 			rtl8129_rx(dev);
 
@@ -1414,7 +1415,7 @@ static int rtl8129_interrupt(int irq, void *dev_instance, SysCallRegs_s *regs)
 	clear_bit(0, (void*)&dev->interrupt);
 //#endif
 	spinunlock_enable( &tp->tx_spinlock, flags );
-	return;
+	return( 0 );
 }
 
 /* The data sheet doesn't describe the Rx ring at all, so I'm guessing at the
