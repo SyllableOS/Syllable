@@ -470,6 +470,7 @@ void MainWindow::Treeview()
 	m_nTreeSelect = nSelected;
 	
 	if( nSelected >= m_nInputStart && nSelected < m_nCodecStart ) {
+		pcLRoot->SetRoot( NULL );
 		os::MediaInput* pcInput = os::MediaManager::GetInstance()->GetInput( nSelected - m_nInputStart );
 		m_pcPrefs = new InputPrefs( pcInput );
 		
@@ -481,6 +482,7 @@ void MainWindow::Treeview()
 		pcLRoot->SetRoot( pcVLRoot );
 		pcLRoot->InvalidateLayout();
 	} else if( nSelected >= m_nCodecStart && nSelected < m_nOutputStart ) {
+		pcLRoot->SetRoot( NULL );		
 		os::MediaCodec* pcCodec = os::MediaManager::GetInstance()->GetCodec( nSelected - m_nCodecStart );
 		m_pcPrefs = new CodecPrefs( pcCodec );
 		pcVLRoot->RemoveChild( pcHLSettings );
@@ -491,6 +493,7 @@ void MainWindow::Treeview()
 		pcLRoot->SetRoot( pcVLRoot );
 		pcLRoot->InvalidateLayout();
 	} else if( nSelected >= m_nOutputStart && nSelected < ( (int)m_pcTree->GetRowCount() - 2 ) ) {
+		pcLRoot->SetRoot( NULL );		
 		os::MediaOutput* pcOutput = os::MediaManager::GetInstance()->GetOutput( nSelected - m_nOutputStart );
 		m_pcPrefs = new OutputPrefs( pcOutput, pcOutput->GetIdentifier() == cCurrentVideo, pcOutput->GetIdentifier() == cCurrentAudio );
 		pcVLRoot->RemoveChild( pcHLSettings );
@@ -501,6 +504,7 @@ void MainWindow::Treeview()
 		pcLRoot->SetRoot( pcVLRoot );
 		pcLRoot->InvalidateLayout();
 	} else if( nSelected == (int)( m_pcTree->GetRowCount() - 1 ) ) {
+		pcLRoot->SetRoot( NULL );		
 		m_pcPrefs = new SoundPrefs( this, cCurrentStartupSound );
 		pcVLRoot->RemoveChild( pcHLSettings );
 		pcVLRoot->RemoveChild( pcHLButtons );
