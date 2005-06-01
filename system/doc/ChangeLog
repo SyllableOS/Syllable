@@ -1,3 +1,8 @@
+* June 1 2005, Arno Klenke *
+
+Set AC97_NR in the i810 audio driver to 1. This is reported to fix problems with some
+chipsets.
+
 * May 30 2005, Arno Klenke *
 
 Fixed interrupt handling in the rtl8139 network driver.
