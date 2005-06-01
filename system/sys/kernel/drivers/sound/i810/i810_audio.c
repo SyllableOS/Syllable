@@ -257,7 +257,7 @@ enum {
 #define NR_HW_CH		2
 
 /* maxinum number of AC97 codecs connected, AC97 2.0 defined 4 */
-#define NR_AC97		2
+#define NR_AC97		1
 
 /* minor number of /dev/dspW */
 #define SND_DEV_DSP8	1
