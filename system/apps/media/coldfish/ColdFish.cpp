@@ -409,15 +409,16 @@ CFApp::CFApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::App
 CFApp::~CFApp()
 {	
 	/* Close and delete everything */
+	CloseCurrentFile();
+	m_pcWin->Terminate();
 	for( uint i = 0; i < m_cPlugins.size(); i++ )
 	{
 		delete( m_cPlugins[i].pi_pcPlugin );
 	}
 	if ( m_pcManager->IsValid() )
 	{
-		CloseCurrentFile();
+		m_pcManager->Put();
 	}
-	m_pcManager->Put();
 
 	if( m_pcRegManager )
 	{
