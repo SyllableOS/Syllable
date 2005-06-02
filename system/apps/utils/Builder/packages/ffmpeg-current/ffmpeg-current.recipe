@@ -39,18 +39,22 @@ configure-options
 ;	--disable-ffserver
 ;	--disable-ffplay
 
-install-tree	include lib
+install-tree
+	lib
+	include
+	include/ffmpeg
 install-files
-	../ffmpeg-current/libavcodec/avcodec.h		include
-	../ffmpeg-current/libavcodec/common.h		include
-	../ffmpeg-current/libavcodec/rational.h		include
-	../ffmpeg-current/libavformat/avformat.h	include
-	../ffmpeg-current/libavformat/avio.h		include
-	../ffmpeg-current/libavformat/rtp.h			include
-	../ffmpeg-current/libavformat/rtsp.h		include
-	../ffmpeg-current/libavformat/rtspcodes.h	include
 	libavcodec/libavcodec.a						lib
 	libavformat/libavformat.a					lib
+	config.h									include/ffmpeg
+	../ffmpeg-current/libavcodec/avcodec.h		include/ffmpeg
+	../ffmpeg-current/libavcodec/common.h		include/ffmpeg
+	../ffmpeg-current/libavcodec/rational.h		include/ffmpeg
+	../ffmpeg-current/libavformat/avformat.h	include/ffmpeg
+	../ffmpeg-current/libavformat/avio.h		include/ffmpeg
+	../ffmpeg-current/libavformat/rtp.h			include/ffmpeg
+	../ffmpeg-current/libavformat/rtsp.h		include/ffmpeg
+	../ffmpeg-current/libavformat/rtspcodes.h	include/ffmpeg
 documentation
 	README COPYING Changelog CREDITS doc/TODO
 ;	doc/*.txt
