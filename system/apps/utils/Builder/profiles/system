@@ -167,10 +167,10 @@ modules
 	sys/kernel/fs/fatfs
 	sys/kernel/fs/iso9660
 	sys/kernel/fs/ramfs
-	libs/libdl
-	libs/libpthread
 	libs/glibc-2.3.4
 	libs/zlib-1.2.2
+	libs/libdl
+	libs/libpthread
 	libs/ncurses-5.4
 	sys/appserver/libsyllable
 	sys/appserver/appserver/server
