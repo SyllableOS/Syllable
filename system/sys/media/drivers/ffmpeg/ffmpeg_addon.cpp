@@ -18,9 +18,9 @@
  */
 
 #include <media/addon.h>
-#include "ffmpeg/config.h"
-#include "ffmpeg/libavcodec/avcodec.h"
-#include "ffmpeg/libavformat/avformat.h"
+#include <ffmpeg/config.h>
+#include <ffmpeg/avcodec.h>
+#include <ffmpeg/avformat.h>
 
 
 extern os::MediaCodec* init_ffmpeg_codec();
@@ -699,3 +699,4 @@ extern "C"
 	}
 
 }
+

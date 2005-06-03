@@ -23,7 +23,7 @@
 #include <iostream>
 extern "C" 
 {
-	#include "avformat.h"
+	#include <ffmpeg/avformat.h>
 }
 
 #define FFMPEG_MAX_STREAMS 4
@@ -317,97 +317,4 @@ os::MediaOutput* init_ffmpeg_output()
 {
 	return( new FFMpegOutput() );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
