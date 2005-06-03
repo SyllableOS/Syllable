@@ -1,3 +1,8 @@
+* June 3 2005, Arno Klenke
+	* Fixed icon creation in the desktop
+
+---- 0.5.6 Released -------------------------------------------------------------------
+
 * March 19 2005,    Arno Klenke
 	*Moved code from the constructors/destructors of some plugins into the (A/De)ttachedToWindow() method
 	*Fixed font handling in the clock plugin
