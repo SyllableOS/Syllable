@@ -27,7 +27,7 @@
 #include "desktop.h"
 #include "messages.h"
 
-#define NEW_FILESYSTEM
+#undef NEW_FILESYSTEM
 
 static void create_desktop_icon( os::String cAim, os::String cName, os::String cIcon )
 {
