@@ -1,3 +1,12 @@
+* June 2 2005 Kaj de Vos *
+
+Fixed the new FFMPEG plug-in code to compile with an FFMPEG library installed outside
+the source tree again. Please remember that third-party libraries are not managed within
+the Syllable source tree anymore.
+
+Moved the internal FFMPEG headers that we need to a separate include/ffmpeg/ subdirectory
+to avoid clashing with other packages.
+
 * June 1 2005 Arno Klenke *
 Improved shutdown behaviour in coldfish
 
