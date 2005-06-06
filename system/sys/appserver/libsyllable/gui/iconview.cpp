@@ -388,6 +388,70 @@ public:
 		Unlock();
 	}
 	
+	/* Select next or previous icon */
+	void SelectNextPrev( bool bNext )
+	{
+		uint nSelected = 0;
+		bool bFoundSelected = false;
+		if( m_eType != VIEW_DETAILS )
+			return;
+			
+		Lock();
+		if( m_cIcons.size() == 0 ) {
+			Unlock();
+			return;
+		}
+		for( uint i = 0; i < m_cIcons.size(); i++ )
+		{
+			/* Find the first selected icon */
+			if( m_cIcons[i]->m_bSelected )
+			{
+				nSelected = i;
+				bFoundSelected = true;
+				break;
+			}
+		}
+		if( !bFoundSelected )
+		{
+			nSelected = 0;
+		} else {
+			if( bNext ) {
+				if( nSelected == m_cIcons.size() - 1 )
+					nSelected = 0;
+				else
+					nSelected++;
+			} else {
+				if( nSelected == 0 )
+					nSelected = m_cIcons.size() - 1;
+				else
+					nSelected--;
+			}
+		}
+		DeselectAll();
+		Select( nSelected, true );
+		
+		/* Scroll to make the icon visible */
+		os::Rect cFrame = m_pcView->GetBounds();
+		os::Rect cIconFrame( m_cIcons[nSelected]->m_cPosition - os::Point( 3, 3 ), m_cIcons[nSelected]->m_cPosition +
+																os::Point( m_vIconWidth, m_vIconHeight ) + os::Point( 3, 3 ) );
+		if( !( cFrame.DoIntersect( os::Point( 0, cIconFrame.top ) ) && cFrame.DoIntersect( os::Point( 0, cIconFrame.bottom ) ) ) && !( m_bScrollDown || m_bScrollUp ) )
+		{
+			float vScroll;
+			if( bNext )
+				vScroll = -( cIconFrame.top - m_pcView->GetBounds().Height() + cIconFrame.Height() );
+			else
+				vScroll = -( cIconFrame.top );
+			if( vScroll > 0 )
+				vScroll = 0;
+			if( vScroll < -( m_vLastYPos - cFrame.Height() ) )
+				vScroll = -( m_vLastYPos - cFrame.Height() );
+			m_pcView->ScrollTo( os::Point( 0, vScroll ) );
+		}
+
+		Unlock();
+	}
+
+	
 	/* Render selection */
 	void RenderSelection( uint nIcon, os::View* pcView, os::Point cPosition )
 	{
@@ -718,7 +782,7 @@ public:
 			m->Unlock();
 			
 			m->m_bMouseDown = false;
-			return;
+			return( os::View::MouseDown( cPosition, nButtons ) );
 		}
 		
 		/* Handle single click */
@@ -809,6 +873,41 @@ public:
 		m->m_bSelecting = false;
 		
 		os::View::MouseUp( cPosition, nButtons, pcData );
+	}
+	
+	void KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers )
+	{
+		/* Handle keyboard events */
+		switch( pzString[0] )
+		{
+			case os::VK_UP_ARROW:
+				m->SelectNextPrev( false );
+				Flush();
+			break;
+			case os::VK_DOWN_ARROW:
+				m->SelectNextPrev( true );
+				Flush();
+			break;
+			case os::VK_RETURN:
+			{
+				/* Invoke the selected icon */
+				m->Lock();
+				uint nSelectCount = 0;
+				uint nIcon = 0;
+				for( uint i = 0; i < m->m_cIcons.size(); i++ )
+				{
+					if( m->m_cIcons[i]->m_bSelected ) {
+						nIcon = i;
+						nSelectCount++;
+					}
+				}
+				if( nSelectCount == 1 )
+					m->m_pcControl->Invoked( nIcon, m->m_cIcons[nIcon]->m_pcData );	
+				m->Unlock();
+			}
+			break;
+		}
+		os::View::KeyDown( pzString, pzRawString, nQualifiers );
 	}
 	
 	void FrameSized( const os::Point& cDelta )
@@ -1463,6 +1562,33 @@ void IconView::StopScroll()
 		}
 	}
 }
+
+/** Scrolls to an icon.
+ * \par Description:
+ * Scrolls the view to make one icon visible.
+ * \param nIcon - Icon
+ * \author	Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+void IconView::ScrollToIcon( uint nIcon )
+{
+	m->Lock();
+	if( nIcon < m->m_cIcons.size() ) {
+		os::Rect cFrame = m->m_pcView->GetBounds();
+		os::Rect cIconFrame( m->m_cIcons[nIcon]->m_cPosition - os::Point( 3, 3 ), m->m_cIcons[nIcon]->m_cPosition +
+																os::Point( m->m_vIconWidth, m->m_vIconHeight ) + os::Point( 3, 3 ) );
+		if( !( cFrame.DoIntersect( os::Point( 0, cIconFrame.top ) ) && cFrame.DoIntersect( os::Point( 0, cIconFrame.bottom ) ) ) && !( m->m_bScrollDown || m->m_bScrollUp ) )
+		{
+			float vScroll = -( cIconFrame.top - m->m_pcView->GetBounds().Height() / 2 + cIconFrame.Height() / 2 );
+			if( vScroll > 0 )
+				vScroll = 0;
+			if( vScroll < -( m->m_vLastYPos - cFrame.Height() ) )
+				vScroll = -( m->m_vLastYPos - cFrame.Height() );
+			m->m_pcView->ScrollTo( os::Point( 0, vScroll ) );
+		}
+	}
+	m->Unlock();
+}
+
 
 void IconView::EnableStatusChanged( bool bIsEnabled )
 {

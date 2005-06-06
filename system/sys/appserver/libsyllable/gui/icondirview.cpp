@@ -668,7 +668,7 @@ public:
 	Message*	        m_pcDirChangeMsg;
 	Path	        	m_cPath;
 	os_priv::DirKeeper* m_pcDirKeeper;
-	std::string	        m_cSearchString;
+	os::String	        m_cSearchString;
 	bigtime_t	        m_nLastKeyDownTime;
 	bool				m_bLocked;
 	bool				m_bAutoLaunch;
@@ -857,17 +857,18 @@ void IconDirectoryView::KeyDown( const char *pzString, const char *pzRawString, 
 
 		if( nTime < m->m_nLastKeyDownTime + 1000000 )
 		{
-			m->m_cSearchString.append( &nChar, 1 );
+			m->m_cSearchString += nChar;
 		}
 		else
 		{
-			m->m_cSearchString = std::string( &nChar, 1 );
+			m->m_cSearchString = os::String( &nChar, 1 );
 		}
 		for( uint i = 0; i < GetIconCount(); ++i )
 		{
-			if( m->m_cSearchString.compare( 0, m->m_cSearchString.size(), GetIconString( i, 0 ) ) == 0 )
+			if( m->m_cSearchString.CompareNoCase( GetIconString( i, 0 ).substr( 0, m->m_cSearchString.size() ) ) == 0 )
 			{
 				SetIconSelected( i, true );
+				ScrollToIcon( i );
 				break;
 			}
 			

@@ -125,6 +125,7 @@ public:
 	
 	void StartScroll( scroll_direction eDirection );
 	void StopScroll();
+	void ScrollToIcon( uint nIcon );
 	
 	void SetSelChangeMsg( os::Message* pcMessage );
 	void SetInvokeMsg( os::Message* pcMessage );
