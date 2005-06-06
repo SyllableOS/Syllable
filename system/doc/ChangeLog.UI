@@ -2,6 +2,8 @@
 
  - IconView, IconDirectoryView
 	o Patch from Arno, adds keyboard navigation.
+ - FileRequester
+	o Cancel requester on ESC
 
 * May 29 2005, Henrik Isaksson *
 
