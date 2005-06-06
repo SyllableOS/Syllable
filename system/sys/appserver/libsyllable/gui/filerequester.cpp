@@ -125,16 +125,16 @@ FileRequester::FileRequester( file_req_mode_t nMode, Messenger * pcTarget, Strin
 	{
 		if( nMode == LOAD_REQ )
 		{
-			cOkLabel = m->m_pcCatalog->GetString( ID_MSG_FILEREQUESTER_LOAD_BUTTON, "_Load" );
+			cOkLabel = m->m_pcCatalog->GetString( ID_MSG_FILEREQUESTER_LOAD_BUTTON, "Load" );
 		}
 		else
 		{
-			cOkLabel = m->m_pcCatalog->GetString( ID_MSG_FILEREQUESTER_SAVE_BUTTON, "_Save" );
+			cOkLabel = m->m_pcCatalog->GetString( ID_MSG_FILEREQUESTER_SAVE_BUTTON, "Save" );
 		}
 	}
 	if( cCancelLabel.empty() )
 	{
-		cCancelLabel = m->m_pcCatalog->GetString( ID_MSG_FILEREQUESTER_CANCEL_BUTTON, "_Cancel" );
+		cCancelLabel = m->m_pcCatalog->GetString( ID_MSG_FILEREQUESTER_CANCEL_BUTTON, "Cancel" );
 	}
 
 
@@ -304,7 +304,8 @@ FileRequester::FileRequester( file_req_mode_t nMode, Messenger * pcTarget, Strin
 
 	SetFrame( cFrame );
 	SetDefaultButton( m->m_pcOkButton );
-	
+	AddShortcut( ShortcutKey( 27 ), new Message( ID_CANCEL ) );	// ESC
+
 	m->m_pcDirView->SetView( IconView::VIEW_DETAILS );
 	m->m_pcDirView->MakeFocus();
 	
