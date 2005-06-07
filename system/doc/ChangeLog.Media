@@ -1,3 +1,9 @@
+* June 7 2005 Kaj de Vos *
+
+Rearranged the plug-in loading code in LibMedia a little to work around a bug in the
+ISO9660 file system. The file system doesn't generate a proper result when asked for
+the path of a node.
+
 * June 2 2005 Kaj de Vos *
 
 Fixed the new FFMPEG plug-in code to compile with an FFMPEG library installed outside

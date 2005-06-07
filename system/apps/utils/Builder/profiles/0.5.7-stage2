@@ -4,6 +4,7 @@ modules
 	sys/include
 	libs/zlib-1.2.2
 	sys/appserver/libsyllable
+	sys/media/libmedia
 ;	Missed in Syllable 0.5.6:
 	sys/media/drivers/cdrom
 	apps/utils/Preferences/Locale
@@ -14,7 +15,5 @@ modules
 ; - Persistent disk mounting
 ; - Fix locale preference applet
 ;   - Create ~/Settings/System/
-; - Fix live CD media plug-in loading
-;   - ISO9660 get directory path bug
 ; - Include stty on install CD, for the installer
 
