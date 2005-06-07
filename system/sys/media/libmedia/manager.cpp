@@ -47,26 +47,25 @@ public:
 	{
 		if( m_bPluginsLoaded )
 			return;
-		
+
+		String zFileName;
+		String zPath = String( "/system/drivers/media" );
+
 		/* Open all media plugins in /system/media */
 		Directory *pcDirectory = new Directory();
-		if( pcDirectory->SetTo( "/system/drivers/media" ) != 0 )
+		if( pcDirectory->SetTo( zPath.c_str() ) != 0 )
 			return;
-	
-		String zFileName;
-		String zPath;
-		pcDirectory->GetPath( &zPath );
-	
+
 		std::cout<<"Start plugin scan.."<<std::endl;
 		m_nPlugins.clear();
-	
+
 		while( pcDirectory->GetNextEntry( &zFileName ) )
 		{
 			/* Load image */
 			if( zFileName == "." || zFileName == ".." )
 				continue;
 			zFileName = zPath + String( "/" ) + zFileName;
-		
+
 			image_id nID = load_library( zFileName.c_str(), 0 );
 			if( nID >= 0 ) {
 				init_media_addon *pInit;
@@ -609,20 +608,4 @@ void MediaManager::_reserved7() {}
 void MediaManager::_reserved8() {}
 void MediaManager::_reserved9() {}
 void MediaManager::_reserved10() {}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
