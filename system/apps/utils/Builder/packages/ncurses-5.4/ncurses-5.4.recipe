@@ -4,7 +4,9 @@ warnings			Installs terminal definitions in /usr/share/terminfo/.
 licenses			?
 home				www.gnu.org/software/ncurses/
 
-build-needs			gawk
+build-needs
+	gawk
+	diffutils
 
 configure-options
 ;	--with-shared
@@ -15,3 +17,4 @@ documentation
 	doc/html
 ; For INetUtils:
 links				include/ncurses /usr/include
+
