@@ -20,6 +20,7 @@
 
 #include <posix/errno.h>
 #include <posix/uio.h>
+#include <posix/ioctls.h>
 
 #include <atheos/kernel.h>
 #include <atheos/socket.h>
@@ -1007,6 +1008,33 @@ static int udp_set_fflags( Socket_s *psSocket, uint32 nFlags )
 	return ( 0 );
 }
 
+
+static int udp_ioctl( Socket_s *psSocket, int nCmd, void *pBuffer, bool bFromKernel )
+{
+	UDPEndPoint_s *psUDPCtrl = psSocket->sk_psUDPEndP;
+	int nError = 0;
+	
+	kassertw( psUDPCtrl != NULL );
+
+	switch ( nCmd )
+	{
+	case FIONREAD:
+		if ( bFromKernel )
+		{
+			*( ( int * )pBuffer ) = psUDPCtrl->ue_sPackets.nq_nCount;
+		}
+		else
+		{
+			nError = memcpy_to_user( pBuffer, &psUDPCtrl->ue_sPackets.nq_nCount, sizeof( int ) );
+		}
+		break;
+	default:
+		nError = -ENOSYS;
+		break;
+	}
+	return ( nError );
+}
+
 SocketOps_s g_sUDPOperations = {
 	udp_open,
 	udp_close,
@@ -1023,7 +1051,7 @@ SocketOps_s g_sUDPOperations = {
 	NULL,			// so_accept
 	udp_setsockopt,
 	udp_set_fflags,		// so_set_fflags
-	NULL			// so_ioctl
+	udp_ioctl			// so_ioctl
 };
 
 int init_udp( void )
