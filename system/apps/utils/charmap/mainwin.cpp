@@ -42,7 +42,11 @@ MainWin::MainWin( const Rect& cRect )
     LayoutNode* pcRootLayout = new VLayoutNode( "pcRootLayout" );
    
     Menu*       pcMenuBar = _CreateMenuBar();
-	m_pcStatusBar = new StringView( Rect(), "pcStringView", "Status: OK" );
+	m_pcStatusBar = new StatusBar( Rect(), "pcStringView" );
+	
+	m_pcStatusBar->AddPanel( "char", "", 3, StatusPanel::F_FIXED );
+	m_pcStatusBar->AddPanel( "unicode", "", 100 );
+	m_pcStatusBar->AddPanel( "utf-8", "", 100 );
 
     LayoutNode*	pcCharmapLayout = new HLayoutNode( "pcCharmapLayout" );
 
@@ -75,6 +79,8 @@ MainWin::MainWin( const Rect& cRect )
 	m_nFlags = sProps.m_nFlags;
 
     AddChild( pcLayout );
+    
+    SetDefaultWheelView( m_pcScrollBar );
     
 	os::Resources cCol( get_image_id() );
 	os::ResStream *pcStream = cCol.GetResourceStream( "icon24x24.png" );
@@ -227,14 +233,18 @@ void MainWin::HandleMessage( Message *pcMsg )
 							numeric = numeric.Format( "Unicode: %d (0x%04x) ", nUnicode, nUnicode );
 						}
 						
+						m_pcStatusBar->SetText( "unicode", numeric );
+						
 						for( int i = 0; cUTF8.c_str()[i] != 0; i++ ) {
 							utf8 += s.Format( "%02x ", int(cUTF8.c_str()[i]) & 0xFF);
 						}
 						
-						s = String( " '" ) + cUTF8 + String( "'  " ) + numeric + String( " UTF-8: " ) + utf8;
-						m_pcStatusBar->SetString( s );
+						m_pcStatusBar->SetText( "char", String("\33c") + cUTF8 );
+						m_pcStatusBar->SetText( "utf-8", String("UTF-8: ") + utf8 );
 				} else {
-					m_pcStatusBar->SetString( "" );
+					m_pcStatusBar->SetText( "char", "" );
+					m_pcStatusBar->SetText( "utf-8", "" );
+					m_pcStatusBar->SetText( "unicode", "" );
 				}
 			}
 			break;

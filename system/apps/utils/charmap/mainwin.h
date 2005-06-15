@@ -3,7 +3,7 @@
 
 #include <gui/window.h>
 #include <gui/menu.h>
-#include <gui/stringview.h>
+#include <gui/statusbar.h>
 #include <util/message.h>
 #include "charmap.h"
 
@@ -18,8 +18,8 @@ public:
 	bool OkToQuit();
 private:
 	os::Menu* _CreateMenuBar();
-	CharMapView*	m_pcCharMap;
-    os::StringView* 	m_pcStatusBar;
+	CharMapView*		m_pcCharMap;
+    os::StatusBar* 		m_pcStatusBar;
     os::ScrollBar*		m_pcScrollBar;
 	os::String			m_cFamily;
 	os::String			m_cStyle;
