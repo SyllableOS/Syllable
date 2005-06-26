@@ -6,7 +6,7 @@ LIBBIN = /system/libs
 
 LIBNAME = libsyllable.so.7
 
-VPATH = ./ gui storage util translation gui/colorselector
+VPATH = ./ gui storage util translation gui/colorselector gui/fontrequester
 
 OBJS	= rect.o region.o desktop.o bitmap.o view.o tabview.o			\
 	  window.o slider.o scrollbar.o spinner.o frameview.o			\
@@ -18,6 +18,7 @@ OBJS	= rect.o region.o desktop.o bitmap.o view.o tabview.o			\
       popupmenu.o iconview.o icondirview.o statusbar.o toolbar.o separator.o
 
 OBJS += colorselector.o colorview.o colorwheel.o gradientview.o
+OBJS += fontrequester.o fontrequesterview.o
 
 OBJS += appserverconfig.o looper.o handler.o application.o message.o messenger.o messagequeue.o	\
 	invoker.o clipboard.o string.o regexp.o variant.o circularbuffer.o	\

@@ -41,12 +41,12 @@ void Font::_CommonInit()
 	assert( Application::GetInstance() != NULL );
 
 	atomic_set( &m_nRefCount, 1 );
-	m_vSize = 0.0f;
-	m_vShear = 0.0f;
-	m_vRotation = 0.0f;
+	m_sProps.m_vSize = 0.0f;
+	m_sProps.m_vShear = 0.0f;
+	m_sProps.m_vRotation = 0.0f;
 	m_nSpacing = CHAR_SPACING;
 	m_nEncoding = 0;
-	m_nFlags = 0;
+	m_sProps.m_nFlags = 0;
 	m_hFontHandle = -1;
 	m_hReplyPort = create_port( "font_reply", DEFAULT_PORT_SIZE );
 
@@ -66,12 +66,13 @@ Font::Font( const Font & cOrig )
 	_CommonInit();
 
 	// Make sure SetProperties() really takes action
-	m_vSize = -1.0f;
-	m_vRotation = -2.0f;
-	m_vShear = -3.0f;
+	m_sProps.m_vSize = -1.0f;
+	m_sProps.m_vRotation = -2.0f;
+	m_sProps.m_vShear = -3.0f;
 
-	SetFamilyAndStyle( cOrig.m_cFamily.c_str(), cOrig.m_cStyle.c_str(  ) );
-	_SetProperties( cOrig.m_vSize, cOrig.m_vShear, cOrig.m_vRotation, cOrig.m_nFlags );
+
+	SetFamilyAndStyle( cOrig.m_sProps.m_cFamily.c_str(), cOrig.m_sProps.m_cStyle.c_str(  ) );
+	_SetProperties(cOrig.m_sProps);
 }
 
 Font::Font( const String & cConfigName )
@@ -83,6 +84,9 @@ Font::Font( const String & cConfigName )
 	{
 		throw( std::runtime_error( "Configuration not found" ) );
 	}
+
+	SetFamilyAndStyle(sProps.m_cFamily.c_str(),sProps.m_cStyle.c_str());
+
 	if( SetProperties( sProps ) != 0 )
 	{
 		throw( std::runtime_error( "Failed to set properties" ) );
@@ -116,18 +120,18 @@ Font::~Font()
 
 bool Font::operator==( const Font & cOther )
 {
-	return ( m_cFamily == cOther.m_cFamily && m_cStyle == cOther.m_cStyle && m_vSize == cOther.m_vSize && m_vShear == cOther.m_vShear && m_vRotation == cOther.m_vRotation && m_nSpacing == cOther.m_nSpacing && m_nEncoding == cOther.m_nEncoding && m_nFlags == cOther.m_nFlags );
+	return ( m_sProps.m_cFamily == cOther.m_sProps.m_cFamily && m_sProps.m_cStyle == cOther.m_sProps.m_cStyle && m_sProps.m_vSize == cOther.m_sProps.m_vSize && m_sProps.m_vShear == cOther.m_sProps.m_vShear && m_sProps.m_vRotation == cOther.m_sProps.m_vRotation && m_nSpacing == cOther.m_nSpacing && m_nEncoding == cOther.m_nEncoding && m_sProps.m_nFlags == cOther.m_sProps.m_nFlags );
 }
 
 bool Font::operator!=( const Font & cOther )
 {
-	return ( !(m_cFamily == cOther.m_cFamily) || !(m_cStyle == cOther.m_cStyle) || m_vSize != cOther.m_vSize || m_vShear != cOther.m_vShear || m_vRotation != cOther.m_vRotation || m_nSpacing != cOther.m_nSpacing || m_nEncoding != cOther.m_nEncoding || m_nFlags != cOther.m_nFlags );
+	return ( !(m_sProps.m_cFamily == cOther.m_sProps.m_cFamily) || !(m_sProps.m_cStyle == cOther.m_sProps.m_cStyle) || m_sProps.m_vSize != cOther.m_sProps.m_vSize || m_sProps.m_vShear != cOther.m_sProps.m_vShear || m_sProps.m_vRotation != cOther.m_sProps.m_vRotation || m_nSpacing != cOther.m_nSpacing || m_nEncoding != cOther.m_nEncoding || m_sProps.m_nFlags != cOther.m_sProps.m_nFlags );
 }
 
 Font & Font::operator=( const Font & cOther )
 {
-	SetFamilyAndStyle( cOther.m_cFamily.c_str(), cOther.m_cStyle.c_str(  ) );
-	SetProperties( cOther.m_vSize, cOther.m_vShear, cOther.m_vRotation );
+	SetFamilyAndStyle( cOther.m_sProps.m_cFamily.c_str(), cOther.m_sProps.m_cStyle.c_str(  ) );
+	SetProperties( cOther.m_sProps );
 	return ( *this );
 }
 
@@ -159,14 +163,12 @@ status_t Font::SetProperties( const String & cConfigName )
 
 status_t Font::SetProperties( const font_properties & sProps )
 {
-	status_t nError;
-
-	nError = SetFamilyAndStyle( sProps.m_cFamily.c_str(), sProps.m_cStyle.c_str(  ) );
+	status_t nError = SetFamilyAndStyle(sProps.m_cFamily.c_str(), sProps.m_cStyle.c_str(  ) );
 	if( nError < 0 )
 	{
 		return ( nError );
 	}
-	return ( _SetProperties( sProps.m_vSize, sProps.m_vShear, sProps.m_vRotation, sProps.m_nFlags ) );
+	return _SetProperties(sProps);
 }
 
 status_t Font::SetFamilyAndStyle( const char *pzFamily, const char *pzStyle )
@@ -200,8 +202,8 @@ status_t Font::SetFamilyAndStyle( const char *pzFamily, const char *pzStyle )
 		m_sHeight.descender = -nDescender;
 		m_sHeight.line_gap = nLineGap;
 
-		m_cFamily = pzFamily;
-		m_cStyle = pzStyle;
+		m_sProps.m_cFamily = pzFamily;
+		m_sProps.m_cStyle = pzStyle;
 
 		return ( 0 );
 	}
@@ -214,42 +216,51 @@ status_t Font::SetFamilyAndStyle( const char *pzFamily, const char *pzStyle )
 
 void Font::SetSize( float vSize )
 {
-	_SetProperties( vSize, m_vShear, m_vRotation, m_nFlags );
+	m_sProps.m_vSize = vSize;
+
+	_SetProperties(m_sProps);
 }
 
-void Font::SetShear( float vShear )
+void Font::SetShear(float vShear)
 {
-	_SetProperties( m_vSize, vShear, m_vRotation, m_nFlags );
+	m_sProps.m_vShear = vShear;
+
+	_SetProperties(m_sProps);
 }
 
 void Font::SetRotation( float vRotation )
 {
-	_SetProperties( m_vSize, m_vShear, vRotation, m_nFlags );
+	m_sProps.m_vRotation = vRotation;
+	_SetProperties(m_sProps);
 }
 
 void Font::SetFlags( uint32 nFlags )
 {
-	_SetProperties( m_vSize, m_vShear, m_vRotation, nFlags );
+	m_sProps.m_nFlags = nFlags;
+	_SetProperties(m_sProps);
 }
 
 
 status_t Font::SetProperties( float vSize, float vShear, float vRotation )
 {
-	return _SetProperties( vSize, vShear, vRotation, m_nFlags );
+	m_sProps.m_vSize = vSize;
+	m_sProps.m_vShear = vShear;
+	m_sProps.m_vRotation = vRotation;
+	return _SetProperties(m_sProps);
 }
 
-status_t Font::_SetProperties( float vSize, float vShear, float vRotation, uint32 nFlags )
+status_t Font::_SetProperties(const font_properties& sProps)
 {
-	if( vSize != m_vSize || vShear != m_vShear || vRotation != m_vRotation || nFlags != m_nFlags )
-	{
+	//if( vSize != m_vSize || vShear != m_vShear || vRotation != m_vRotation || nFlags != m_nFlags )
+	//{
 		Message cReq( AR_SET_FONT_PROPERTIES );
 		Message cReply;
 
 		cReq.AddInt32( "handle", m_hFontHandle );
-		cReq.AddFloat( "size", vSize );
-		cReq.AddFloat( "rotation", vRotation );
-		cReq.AddFloat( "shear", vShear );
-		cReq.AddInt32( "flags", nFlags );
+		cReq.AddFloat( "size", sProps.m_vSize );
+		cReq.AddFloat( "rotation", sProps.m_vRotation );
+		cReq.AddFloat( "shear", sProps.m_vShear );
+		cReq.AddInt32( "flags", sProps.m_nFlags );
 
 		port_id hPort = Application::GetInstance()->GetAppPort(  );
 
@@ -273,10 +284,11 @@ status_t Font::_SetProperties( float vSize, float vShear, float vRotation, uint3
 			m_sHeight.descender = -nDescender;
 			m_sHeight.line_gap = nLineGap;
 
-			m_vSize = vSize;
-			m_vRotation = vRotation;
-			m_vShear = vShear;
-			m_nFlags = nFlags;
+			/*this has to be changed*/
+			m_sProps.m_vSize = sProps.m_vSize;
+			m_sProps.m_vRotation = sProps.m_vRotation;
+			m_sProps.m_vShear = sProps.m_vShear;
+			m_sProps.m_nFlags = sProps.m_nFlags;
 
 			return ( 0 );
 		}
@@ -285,33 +297,33 @@ status_t Font::_SetProperties( float vSize, float vShear, float vRotation, uint3
 			errno = -nError;
 			return ( -1 );
 		}
-	}
+	//}
 	return ( 0 );
 }
 
 String Font::GetFamily() const
 {
-	return ( m_cFamily );
+	return ( m_sProps.m_cFamily );
 }
 
 String Font::GetStyle() const
 {
-	return ( m_cStyle );
+	return ( m_sProps.m_cStyle );
 }
 
 float Font::GetSize() const
 {
-	return ( m_vSize );
+	return ( m_sProps.m_vSize );
 }
 
 float Font::GetShear() const
 {
-	return ( m_vShear );
+	return ( m_sProps.m_vShear );
 }
 
 float Font::GetRotation() const
 {
-	return ( m_vRotation );
+	return ( m_sProps.m_vRotation );
 }
 
 int Font::GetSpacing() const
@@ -327,7 +339,7 @@ int Font::GetEncoding() const
 
 uint32 Font::GetFlags() const
 {
-	return ( m_nFlags );
+	return ( m_sProps.m_nFlags );
 }
 
 font_direction Font::GetDirection() const
@@ -632,9 +644,8 @@ std::vector<uint32> Font::GetSupportedCharacters() const
 
 /** Get a list of default font names.
  * \par Description:
- * \par Note:
- * \par Warning:
- * \param
+ *  This method will give you a list of all the default font names.
+ * \param pcTable - A vector pointer of os::String's to return all the config names in.
  * \return
  * \sa
  * \author	Kurt Skauen (kurt@atheos.cx)
@@ -647,9 +658,9 @@ status_t Font::GetConfigNames( std::vector < String > *pcTable )
 
 /** Get the properties of a default font.
  * \par Description:
- * \par Note:
- * \par Warning:
- * \param
+	Gets the properties of the default font.
+ * \param  cName   - Name of the default fFont.
+ * \param  psProps - font_propties pointer which will contain the properties of the default Font.
  * \return
  * \sa
  * \author	Kurt Skauen (kurt@atheos.cx)
@@ -690,10 +701,9 @@ status_t Font::AddDefaultFont( const String & cName, const font_properties & sPr
 	return ( Application::GetInstance()->AddDefaultFont( cName, sProps ) );
 }
 
-/** Get number of installed font families
+/** Get number of installed Font families
  * \par Description:
- * \par Note:
- * \par Warning:
+ *  Returns the number of Font families
  * \param
  * \return
  * \sa
@@ -722,11 +732,9 @@ status_t Font::GetFamilyInfo( int nIndex, char *pzFamily )
 
 /** Get number of styles in a given family
  * \par Description:
- * \par Note:
- * \par Warning:
- * \param
- * \return
- * \sa
+ *  Returns the number of styles in the family
+ * \param pzFamily - The family.
+ * \return The number of styles.
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
@@ -736,10 +744,12 @@ int Font::GetStyleCount( const char *pzFamily )
 }
 
 /** Get info about a given font style
- * \par Description:
- * \par Note:
- * \par Warning:
- * \param
+ * \par Description: 
+ *  Get all the information about the Font. 
+ * \param pzFamily - The family of the Font.
+ * \param nIndex   - The index of the family.
+ * \param pzStyle  - The style of the Font.
+ * \param pnFlags  - The flags of the Font.
  * \return
  * \sa
  * \author	Kurt Skauen (kurt@atheos.cx)
@@ -801,4 +811,43 @@ bool Font::Rescan()
 		return ( false );
 	}
 }
+
+size_t 		Font::GetFlattenedSize( void ) const
+{
+	return sizeof(m_sProps);
+}
+
+status_t Font::Flatten( uint8* pBuffer, size_t nSize ) const 
+{
+	//sProps = GetFontProperties();
+
+	if( nSize >= sizeof( m_sProps ) ) 
+	{
+		memcpy( pBuffer, &m_sProps, sizeof( m_sProps ) );
+		return 0;
+    } 
+	else 
+	{
+		return -1;
+	}
+}
+	
+status_t	Font::Unflatten( const uint8* pBuffer )
+{
+	memcpy(&m_sProps,pBuffer,GetFlattenedSize());
+	SetProperties(m_sProps);
+	return 0;
+}
+
+void Font::_InitFontProperties()
+{
+	m_sProps.m_cFamily = GetFamily();
+	m_sProps.m_cStyle = GetStyle();
+	m_sProps.m_nFlags = GetFlags();
+	m_sProps.m_vSize = GetSize();
+	m_sProps.m_vShear = GetShear();
+	m_sProps.m_vRotation = GetRotation();
+}
+
+
 
