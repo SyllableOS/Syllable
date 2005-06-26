@@ -4,6 +4,7 @@
 #include <gui/button.h>
 #include <gui/menu.h>
 #include <gui/requesters.h>
+#include <gui/fontrequester.h>
 #include <gui/layoutview.h>
 #include <gui/scrollbar.h>
 #include <gui/tableview.h>
@@ -32,6 +33,7 @@ enum MessageIDs {
 	ID_KEY,
 	ID_HELP,
 	ID_ABOUT,
+	ID_FONT,
 	ID_MENU_FONT_SIZE,
 	ID_MENU_FONT_FAMILY_AND_STYLE,
 };
@@ -95,72 +97,10 @@ Menu* MainWin::_CreateMenuBar()
 
 	// Create the menus within the bar
 	Menu* pcFileMenu = new Menu(Rect(),"File", ITEMS_IN_COLUMN);
+	pcFileMenu->AddItem("Choose Font...", new Message( ID_FONT ) );
 	pcFileMenu->AddItem("Exit", new Message( ID_EXIT ), "CTRL+Q");
 	
 	pcMenuBar->AddItem(pcFileMenu);
-
-	Menu* pcFontMenu = new Menu(Rect(),"Font", ITEMS_IN_COLUMN);
-
-	// Add Size Submenu
-	Menu* pcSizeMenu = new Menu(Rect(0,0,1,1), "Size", ITEMS_IN_COLUMN);
-
-	float sz,del=1.0;
-
-	Message *pcSizeMsg;
-	char zSizeLabel[8];
-
-	for (sz=5.0; sz < 30.0; sz += del)
-	{
-		pcSizeMsg = new Message(ID_MENU_FONT_SIZE);
-
-		pcSizeMsg->AddFloat("size",sz);
-		sprintf(zSizeLabel,"%.1f",sz);
-		pcSizeMenu->AddItem(zSizeLabel,pcSizeMsg);
-
-		if (sz == 10.0)
-			del = 2.0;
-		else if (sz == 16.0)
-			del = 4.0;
-   }
-
-	pcFontMenu->AddItem(pcSizeMenu);
-	pcFontMenu->AddItem(new MenuSeparator());
-
-	// Add Family and Style Menu
-	int fc = Font::GetFamilyCount();
-	int sc,i=0,j=0;
-	char zFFamily[FONT_FAMILY_LENGTH],zFStyle[FONT_STYLE_LENGTH];
-	uint32 flags;
-
-	Menu *pcFamilyMenu;
-	Message *pcFontMsg;
-
-	for (i=0; i<fc; i++)
-	{
-		if (Font::GetFamilyInfo(i,zFFamily) == 0)
-		{
-			sc = Font::GetStyleCount(zFFamily);
-			pcFamilyMenu = new Menu(Rect(0,0,1,1),zFFamily,ITEMS_IN_COLUMN);
-
-			for (j=0; j<sc; j++)
-			{
-				if (Font::GetStyleInfo(zFFamily,j,zFStyle,&flags) == 0)
-				{
-					pcFontMsg = new Message(ID_MENU_FONT_FAMILY_AND_STYLE);
-					pcFontMsg->AddString("family",zFFamily);
-					pcFontMsg->AddString("style",zFStyle);
-					pcFontMsg->AddInt32("flags", flags );
-
-					pcFamilyMenu->AddItem(zFStyle,pcFontMsg);
-				}
-			}
-
-		pcFontMenu->AddItem(pcFamilyMenu);
-
-		}
-	}
-	
-	pcMenuBar->AddItem(pcFontMenu);
 
 	Menu* pcHelpMenu = new Menu(Rect(),"Help", ITEMS_IN_COLUMN);
 	pcHelpMenu->AddItem("Help", new Message( ID_HELP ), "CTRL+?");
@@ -285,42 +225,18 @@ void MainWin::HandleMessage( Message *pcMsg )
 	    	    pcAlert->Go( new Invoker(NULL) );
         	}
 			break;
-		case ID_MENU_FONT_SIZE:
+		case ID_FONT:			
 			{
-				float size;
-	
-				if (pcMsg->FindFloat("size",&size) == 0)
-				{
-					Font *font = new Font();
-					font->SetFamilyAndStyle( m_cFamily.c_str(), m_cStyle.c_str() );
-					font->SetSize( size );
-					font->SetFlags( m_nFlags );
-					m_pcCharMap->SetFont( font );
-					font->Release();
-	
-					m_vSize = size;
-				}
+				FontRequester* pcFontRequester = new FontRequester( new Messenger( this ), false );
+				pcFontRequester->Show();
 			}
 			break;
-
-		case ID_MENU_FONT_FAMILY_AND_STYLE:
+		case M_FONT_REQUESTED:
 			{
-				const char *family,*style;
-				int32 flags;
-
-				if (pcMsg->FindString("family",&family) == 0 && pcMsg->FindString("style",&style) == 0 && pcMsg->FindInt32( "flags", &flags) == 0 )
-				{
-					Font *font = new Font();
-					font->SetFamilyAndStyle(family,style);
-					font->SetSize(m_vSize);
-					flags |= FPF_SMOOTHED;
-					font->SetFlags(flags);
-					m_pcCharMap->SetFont(font);
-					font->Release();
-					m_cFamily = family;
-					m_cStyle = style;
-					m_nFlags = flags;
-				}
+				os::Font* pcFont = new Font();
+				pcMsg->FindObject("font",*pcFont);
+				m_pcCharMap->SetFont(pcFont);
+				pcFont->Release();
 			}
 			break;
 
