@@ -207,7 +207,7 @@ void MainWin::HandleMessage( Message *pcMsg )
 		case ID_ABOUT:
 			{
 				Alert *pcAlert = new Alert( "CharMap",
-                                  "CharMap V1.0\nCharacter map viewer for Syllable.",
+                                  "CharMap V1.1\nCharacter map viewer for Syllable.",
                                   Alert::ALERT_INFO, 0,
                                   "Ok", 0 );
     	    	pcAlert->CenterInWindow( this );
