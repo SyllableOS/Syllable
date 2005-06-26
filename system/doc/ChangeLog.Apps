@@ -1,3 +1,14 @@
+* June 26 2005, Henrik Isaksson *
+
+ - CharMap
+	o Updated to use the new FontRequester class.
+
+* June 15 2005, Henrik Isaksson *
+
+ - CharMap
+	o Updated to use the new StatusBar class.
+	o Added support for scroll wheel.
+
 * May 29 2005, Henrik Isaksson *
 
  - AEdit

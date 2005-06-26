@@ -1,3 +1,10 @@
+* June 26 2005, Henrik Isaksson *
+
+ - Font
+	o Patch from Rick, makes Fonts Flattenable
+ - FontRequester
+	o New class
+
 * June 6 2005, Henrik Isaksson *
 
  - IconView, IconDirectoryView
