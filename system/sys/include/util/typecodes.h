@@ -62,6 +62,7 @@ enum type_code
     T_RAW,
     
     T_SHORTCUTKEY,
+	T_FONT,
     
     T_USER = 0x80000000
 };
