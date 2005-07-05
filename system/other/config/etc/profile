@@ -22,11 +22,6 @@ export PAGER=less
 export LESSCHARSET=latin1
 export EDITOR=vi
 
-export CC=gcc
-export CXX=g++
-export AS=as
-export LD=ld
-
 case $TERM in 
     xterm | xterm-color)
 	PROMPT_COMMAND="echo -en \"\33]0;$(whoami)@$(hostname):\$PWD - Syllable Terminal\7\"";;
