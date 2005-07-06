@@ -202,6 +202,7 @@ bool i855_init_pagetable( struct gfx_node* psNode )
 										psNode->sAGPInfo.nFunction, I855_GMCH_CTRL, 2 );
 
 	if( psNode->sAGPInfo.nDeviceID == 0x3575 || psNode->sAGPInfo.nDeviceID == 0x2560 )
+	{
 		switch( nGMCH & I830_GMCH_GMS_MASK) {
 			case I830_GMCH_GMS_STOLEN_512:
 				psNode->nGTTEntries = KB(512) - KB(132);
@@ -222,7 +223,13 @@ bool i855_init_pagetable( struct gfx_node* psNode )
 				psNode->nGTTEntries = 0;
 				break;
 		}
-	else
+		if( ( nGMCH & I830_GMCH_MEM_MASK ) == I830_GMCH_MEM_128M )
+			psNode->nPageEntries = 32768;
+		else
+			psNode->nPageEntries = 16384;
+		printk( "i855: %liMb aperture\n", psNode->nPageEntries * 4 / KB( 1 ) );
+	}
+	else {
 		switch( nGMCH & I855_GMCH_GMS_MASK) {
 			case I855_GMCH_GMS_STOLEN_1M:
 				psNode->nGTTEntries = MB(1) - KB(132);
@@ -243,10 +250,13 @@ bool i855_init_pagetable( struct gfx_node* psNode )
 				psNode->nGTTEntries = 0;
 				break;
 		}
+		psNode->nPageEntries = 32768;
+		printk( "i855: %liMb aperture\n", psNode->nPageEntries * 4 / KB( 1 ) );
+	}
 	
 	printk( "i855: Detected %liK preallocated memory\n", psNode->nGTTEntries / KB( 1 ) );
 	psNode->nGTTEntries /= PAGE_SIZE;
-	psNode->nPageEntries = 32768;
+
 	
 	
 	/* Enable controller */
