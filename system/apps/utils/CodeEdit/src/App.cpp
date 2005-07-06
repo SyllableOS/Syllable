@@ -43,7 +43,7 @@ App::App()
         options(NULL), loadRequester(NULL), loadRequesterVisible(false)
 {
 	zCWD = get_current_dir_name();
-	zCWD = (char*) realloc(zCWD, strlen(zCWD) + 1);
+	zCWD = (char*) realloc(zCWD, strlen(zCWD) + 2);
 	zCWD[strlen(zCWD)+1] = '\0';
 	zCWD[strlen(zCWD)] = '/';
 	
@@ -52,6 +52,8 @@ App::App()
 
 App::~App()
 {
+	 if(!storeSettings())
+           cerr << APP_NAME ": Failed to write settings to disk!\n";
 	if ( zCWD != NULL ) free(zCWD);
 }
 
@@ -59,19 +61,16 @@ bool App::OkToQuit()
 {
     if(windowList)
     {
-        if(!storeSettings())
-            cerr << APP_NAME ": Failed to write settings to disk!\n";
-        return true;
-    }
-
-    else
-    {
         if(windowList->SafeLock()==0)
         {
             windowList->PostMessage(os::M_QUIT, windowList);
             windowList->Unlock();
         }
         return false;
+    }
+    else
+    {
+        return true;
     }
 }
 

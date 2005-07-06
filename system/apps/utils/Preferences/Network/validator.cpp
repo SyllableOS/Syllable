@@ -31,7 +31,7 @@ int GetIPPart(const char *pzSrc)
   }
 
   // Make copy
-  char *pzTmp = new char[strlen(pzSrc+iPos)];
+  char *pzTmp = new char[strlen(pzSrc+iPos)+1];
   strcpy(pzTmp, pzSrc+iPos);
 
   unsigned int i = 0;

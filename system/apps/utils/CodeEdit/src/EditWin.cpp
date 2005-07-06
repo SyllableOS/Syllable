@@ -493,7 +493,7 @@ void EditWin::fileClose()
                 Debug<std::string> debug("/var/log/CodeEdit",zDebug);
             }
 
-            Application::GetInstance()->PostMessage(M_QUIT);
+            Application::GetInstance()->PostMessage(M_TERMINATE);
         }
     }
 }
