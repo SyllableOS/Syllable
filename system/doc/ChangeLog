@@ -1,3 +1,7 @@
+* July 6 2005, Arno Klenke *
+
+Fixed aperture detection for i830 and i845 chipsets
+
 * June 1 2005, Arno Klenke *
 
 Set AC97_NR in the i810 audio driver to 1. This is reported to fix problems with some

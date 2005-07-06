@@ -1,3 +1,9 @@
+* July 6 2005, Arno Klenke *
+ - CodeEdit
+	o Fixed memory corruption
+ - Network preferences
+	o Fixed memory corruption
+
 * June 26 2005, Henrik Isaksson *
 
  - CharMap
