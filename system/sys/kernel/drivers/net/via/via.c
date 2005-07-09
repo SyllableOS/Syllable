@@ -547,7 +547,7 @@ struct netdev_private {
 };
 
 
-extern DeviceOperations_s g_sDevOps;
+static DeviceOperations_s g_sDevOps;
 PCI_bus_s* g_psBus;
 static struct device *root_via_dev = NULL;
 

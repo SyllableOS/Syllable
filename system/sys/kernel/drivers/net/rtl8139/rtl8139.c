@@ -81,7 +81,7 @@ static const char versionB[] =
 #define netif_link_down(dev)	(dev)->flags &= ~ IFF_RUNNING
 #define netif_link_up(dev)	(dev)->flags |= IFF_RUNNING
 
-extern DeviceOperations_s g_sDevOps;
+static DeviceOperations_s g_sDevOps;
 
 PCI_bus_s* g_psBus;
 

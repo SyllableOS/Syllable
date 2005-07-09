@@ -74,7 +74,7 @@ static int sis900_debug = 0;
 /* Time in jiffies before concluding the transmitter is hung. */
 #define TX_TIMEOUT  (4*HZ)
 
-extern DeviceOperations_s g_sDevOps;
+static DeviceOperations_s g_sDevOps;
 
 PCI_bus_s* g_psBus;
 

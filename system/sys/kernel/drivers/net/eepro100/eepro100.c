@@ -365,7 +365,7 @@ struct device
     int node_handle;    /* handle of device node in /dev */
 };
 
-extern DeviceOperations_s g_sDevOps;
+static DeviceOperations_s g_sDevOps;
 
 /* This table drives the PCI probe routines. */
 //static struct net_device *speedo_found1(struct pci_dev *pdev, int pci_bus, 

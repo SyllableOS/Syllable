@@ -226,7 +226,7 @@ static int full_duplex[MAX_UNITS];
 
 #define PKT_BUF_SZ		1536 /* Size of each temporary Rx buffer. */
 
-extern DeviceOperations_s g_sDevOps;
+static DeviceOperations_s g_sDevOps;
 
 PCI_bus_s* g_psBus;
 

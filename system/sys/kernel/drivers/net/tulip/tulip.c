@@ -147,7 +147,7 @@ static int csr0 = 0x00A00000 | 0x4800;
 #define jiffies ((int)(get_system_time() / 1000LL))
 #define HZ 1000
 
-extern DeviceOperations_s g_sDevOps;
+static DeviceOperations_s g_sDevOps;
 
 #define RUN_AT(x) (jiffies + (x))
 

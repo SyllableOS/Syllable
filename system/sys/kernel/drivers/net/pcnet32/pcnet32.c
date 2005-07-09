@@ -163,7 +163,7 @@ struct device
    int irq_handle; /* IRQ handler handle */
 };
 
-extern DeviceOperations_s g_sDevOps;
+static DeviceOperations_s g_sDevOps;
 static unsigned int pcnet32_portlist[] =
 {
    0x300, 0x320, 0x340, 0x360, 0

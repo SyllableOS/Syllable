@@ -343,7 +343,7 @@ static char version[] =
 DRV_NAME ".c:" DRV_VERSION " " DRV_RELDATE "  Donald Becker and others. http://www.scyld.com/network/vortex.html\n";
 
 
-extern DeviceOperations_s g_sDevOps;
+static DeviceOperations_s g_sDevOps;
 
 /* Operational parameter that usually are not changed. */
 

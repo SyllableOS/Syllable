@@ -216,8 +216,12 @@ static bool find_pci_router( void )
 			case 0x24c0:
 			case 0x2450:
 			case 0x24d0:
-			case 0x25a0:
+			case 0x25a1:
 			case 0x24cc:
+			case 0x2640:
+			case 0x2641:
+			case 0x27b8:
+			case 0x27b1:
 				g_sRouter.pzName = "Intel PIIX/ICH IRQ router";
 				g_sRouter.get = intel_get;
 				g_sRouter.set = intel_set;
