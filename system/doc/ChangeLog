@@ -1,3 +1,8 @@
+* July 9 2005, Arno Klenke *
+
+Compilation fix for the network drivers
+Added new device ids to the pci irq routing table code
+
 * July 6 2005, Arno Klenke *
 
 Fixed aperture detection for i830 and i845 chipsets
