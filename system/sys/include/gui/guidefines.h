@@ -242,6 +242,10 @@ enum
  *****************************************************************************/
 
 enum {
+	/* Attention! */
+	/* Be careful not to change the sequence of message codes here, */
+	/* as doing so would break binary compatibility! */
+	
     M_LAST_USER_MSG   = 9999999,	
     M_ABOUT_REQUESTED = 10000000,
     M_WINDOW_ACTIVATED,
@@ -287,6 +291,7 @@ enum {
     M_RESIZE_WINDOW,
     M_WINDOW_FRAME_CHANGED,
 
+	/* Add new appserver message codes here. */
 
     M_SET_PROPERTY = 20000000,
     M_GET_PROPERTY,
@@ -299,8 +304,6 @@ enum {
     M_LOAD_REQUESTED,
     M_SAVE_REQUESTED,
     M_FILE_REQUESTER_CANCELED,
-   	M_FONT_REQUESTED,
-	M_FONT_REQUESTER_CANCELED,
 
     M_MESSAGE_NOT_UNDERSTOOD,
     M_NO_REPLY,
@@ -311,6 +314,11 @@ enum {
     M_UPDATE_STATUS_BAR,
     M_RESET_STATUS_BAR,
     M_NODE_MONITOR,
+
+   	M_FONT_REQUESTED,
+	M_FONT_REQUESTER_CANCELED,
+    
+    /* Add new libsyllable message codes here. */
     
     M_FIRST_EVENT = 1000000000,
 };
