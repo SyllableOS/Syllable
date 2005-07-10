@@ -1,0 +1,75 @@
+//
+// LibSyllable string catalog
+//
+
+// FileRequester strings
+MSG_FILEREQUESTER_LOAD_BUTTON=1000                                              _Åbn
+MSG_FILEREQUESTER_SAVE_BUTTON                                                   _Gem
+MSG_FILEREQUESTER_CANCEL_BUTTON                                                 _Annuler
+MSG_FILEREQUESTER_FILE_NAME_LABEL                                               Fil navn:
+MSG_FILEREQUESTER_BROWSE_LOCATION_LABEL                                 Søger i:
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_TEXT                              Filen '%s' eksisterer allerede\nØnsker du at overskrive den?\n
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_TITLE                             Advarsel:
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_YES_BUTTON                Ja
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_NO_BUTTON                 Nej
+
+// IconDirectoryView strings
+MSG_ICONDIRVIEW_WINDOW_OPEN_WITH=2000                                   Åbn med...
+MSG_ICONDIRVIEW_NUMBER_OF_OBJECTS_SELECTED                              %i objekt
+MSG_ICONDIRVIEW_MENU_MOUNT                                                              Aktivere drev...
+MSG_ICONDIRVIEW_MENU_UNMOUNT                                                    Deaktivere drev...
+MSG_ICONDIRVIEW_MENU_NEW_DIRECTORY                                              Ny mappe...
+MSG_ICONDIRVIEW_MENU_EMPTY_TRASH                                                Tøm papirkurv
+MSG_ICONDIRVIEW_MENU_OPEN_WITH                                                  Åbn med...
+MSG_ICONDIRVIEW_MENU_INFO                                                               Info...
+MSG_ICONDIRVIEW_MENU_RENAME                                                             Omdøb...
+MSG_ICONDIRVIEW_MENU_MOVE_TO_TRASH                                              Flyt til papirkurv
+MSG_ICONDIRVIEW_MENU_DELETE                                                             Slet...
+MSG_ICONDIRVIEW_PERCENT_FREE                                                    %i%% fri plads
+MSG_ICONDIRVIEW_VOLUMENAME_UNKNOWN                                              Ukendt
+
+// File information window
+MSG_FILEINFO_WINDOW_TITLE=3000                                                  Info
+MSG_FILEINFO_WINDOW_NAME_LABEL                                                  Navn:
+MSG_FILEINFO_WINDOW_PATH_LABEL                                                  Sti:
+MSG_FILEINFO_WINDOW_SIZE_LABEL                                                  Størrelse:
+MSG_FILEINFO_WINDOW_MODIFIEDDATE_LABEL                                  Ændret:
+MSG_FILEINFO_WINDOW_FILETYPE_LABEL                                              Type:
+MSG_FILEINFO_WINDOW_FILETYPE_DROPDOWN_CURRENT_LABEL             Aktuel:
+MSG_FILEINFO_WINDOW_FILETYPE_DROPDOWN_EXECUTABLE                Program
+MSG_FILEINFO_WINDOW_OK_BUTTON                                                   Ok
+MSG_FILEINFO_FILESIZE_ZERO                                                              Ingen
+MSG_FILEINFO_FILETYPE_UNKNOWN                                                   Ukendt
+
+// Rename file window
+MSG_RENAMEFILE_WINDOW_TITLE=4000                                                Omdøb %s
+MSG_RENAMEFILE_WINDOW_OK_BUTTON                                                 Ok
+MSG_RENAMEFILE_ERROR_TITLE                                                              Omdøb
+MSG_RENAMEFILE_ERROR_TEXT                                                               %s kunne ikke omdøbes!
+MSG_RENAMEFILE_ERROR_CLOSE                                                              Ok
+
+// New directory window
+MSG_NEWDIR_WINDOW_TITLE=5000                                                    Ny mappe
+MSG_NEWDIR_WINDOW_OK_BUTTON                                                             Ok
+MSG_NEWDIR_ERROR_TITLE                                                                  Ny mappe
+MSG_NEWDIR_ERROR_TEXT                                                                   Den nye mappe %s kunne ikke oprettes!
+MSG_NEWDIR_ERROR_CLOSE                                                                  Ok
+
+// Mount window
+MSG_MOUNT_WINDOW_TITLE=6000                                                             Aktiver drev
+MSG_MOUNT_WINDOW_NAME_COLUMN                                                    Navn
+MSG_MOUNT_WINDOW_PATH_COLUMN                                                    Sti
+MSG_MOUNT_WINDOW_MOUNT_BUTTON                                                   Aktiver
+MSG_MOUNT_SCANNING_PATH                                                                 Skanner %s...
+MSG_MOUNT_SCANNING                                                                              Skanner...
+MSG_MOUNT_LOCAL_DISKS_LABEL                                                             Lokale drev
+MSG_MOUNT_TYPE_HARDDISK                                                                 Harddisk
+MSG_MOUNT_TYPE_CD_DVD                                                                   CD/DVD
+MSG_MOUNT_TYPE_FLOPPY                                                                   Diskette
+MSG_MOUNT_DEVICE_PARTITION                                                              Partition
+MSG_MOUNT_ERROR_TITLE                                                                   Aktiver
+MSG_MOUNT_ERROR_CLOSE                                                                   Ok
+MSG_MOUNT_ERROR_CREATE_MOUNTPOINT                                               Kunne ikke oprette et aktiveringssted til enheden %s
+MSG_MOUNT_ERROR_OTHER_ERROR                                                             Kunne ikke aktivere %s:\n%s
+MSG_MOUNT_ERROR_UNMOUNT                                                                 Kunne ikke deaktivere %s:\n%s
+
