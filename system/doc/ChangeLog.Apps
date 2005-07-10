@@ -1,3 +1,8 @@
+* July 10 2005, Henrik Isaksson *
+
+ - catcomp
+	o Moved catcomp.cd to resources
+
 * July 6 2005, Arno Klenke *
  - CodeEdit
 	o Fixed memory corruption
