@@ -1,3 +1,9 @@
+* July 10 2005, Henrik Isaksson *
+
+ - guidefines.h
+	o Moved FontRequester codes to the right place.
+	o Added warnings about changing the sequence of message codes.
+
 * June 26 2005, Henrik Isaksson *
 
  - Font
