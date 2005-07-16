@@ -1,3 +1,8 @@
+* July 16 2005 Kristian Van Der Vliet *
+
+Added YUY2 output to the screen driver.  Video overlays can now be used on chipsets
+that do not support YV12 or YUV422 E.g. S3 Savage.
+
 * June 7 2005 Kaj de Vos *
 
 Rearranged the plug-in loading code in LibMedia a little to work around a bug in the
