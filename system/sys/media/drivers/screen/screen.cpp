@@ -490,7 +490,7 @@ void ScreenOutput::Flush()
 				free( psFrame->pBuffer[1] );
 				free( psFrame->pBuffer[2] );
 			} 
-			else if( m_eColorSpace == os::CS_YUV422 )
+			else if( m_eColorSpace == os::CS_YUV422 || m_eColorSpace == os::CS_YUY2 )
 			{
 				/* UYVY Overlay */
 				uint32 nDstPitch = ( ( m_sFormat.nWidth * 2 ) + 0xff ) & ~0xff;
@@ -578,17 +578,26 @@ status_t ScreenOutput::Open( os::String zFileName )
 	m_bUseOverlay = true;
 	m_eColorSpace = os::CS_YUV12;
 	if( !CheckVideoOverlay( m_eColorSpace ) ) {
+
 		m_eColorSpace = os::CS_YUV422;
 		if( !CheckVideoOverlay( m_eColorSpace ) ) {
-			m_eColorSpace = os::CS_RGB32;
+
+			m_eColorSpace = os::CS_YUY2;
 			if( !CheckVideoOverlay( m_eColorSpace ) ) {
-				std::cout<<"Using bitmap for video output"<<std::endl;
-				m_bUseOverlay = false;
-				m_eColorSpace = os::CS_RGB16;
-				yuv2rgb_init( 16, MODE_RGB );
+				m_eColorSpace = os::CS_RGB32;
+
+				if( !CheckVideoOverlay( m_eColorSpace ) ) {
+					std::cout<<"Using bitmap for video output"<<std::endl;
+					m_bUseOverlay = false;
+					m_eColorSpace = os::CS_RGB16;
+					yuv2rgb_init( 16, MODE_RGB );
+				} else {
+					std::cout<<"Using RGB32 Overlay"<<std::endl;
+					yuv2rgb_init( 32, MODE_RGB );
+				}
+
 			} else {
-				std::cout<<"Using RGB32 Overlay"<<std::endl;
-				yuv2rgb_init( 32, MODE_RGB );
+				std::cout<<"Using YUY2 overlay"<<std::endl;
 			}
 		} else {
 			std::cout<<"Using UYVY Overlay"<<std::endl;
@@ -713,7 +722,17 @@ status_t ScreenOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psFrame )
 		yv12touyvy( psFrame->pBuffer[0], psFrame->pBuffer[1], psFrame->pBuffer[2], psQueueFrame->pBuffer[0],
 					m_sFormat.nWidth, m_sFormat.nHeight, psFrame->nSize[0], psFrame->nSize[1],
 					psQueueFrame->nSize[0] );
-	} 
+	}
+	else if( m_eColorSpace == os::CS_YUY2 )
+	{
+		/* Convert to YUY2 */
+		psQueueFrame->nSize[0] = m_sFormat.nWidth * 2;
+		psQueueFrame->pBuffer[0] = ( uint8* )malloc( psQueueFrame->nSize[0] * m_sFormat.nHeight );
+		yv12toyuy2( psFrame->pBuffer[0], psFrame->pBuffer[1], psFrame->pBuffer[2], psQueueFrame->pBuffer[0],
+					m_sFormat.nWidth, m_sFormat.nHeight, psFrame->nSize[0], psFrame->nSize[1],
+					psQueueFrame->nSize[0] );
+	}
+
 	else 
 	{
 		/* Convert to RGB32 */
@@ -735,7 +754,7 @@ status_t ScreenOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psFrame )
 			free( psQueueFrame->pBuffer[1] );
 			free( psQueueFrame->pBuffer[2] );
 		} else {
-			/* UYVY / RGB32 / RGB16 */
+			/* UYVY / YUY2 / RGB32 / RGB16 */
 			free( psQueueFrame->pBuffer[0] );
 		}
 		free( psQueueFrame );
