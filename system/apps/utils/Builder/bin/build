@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.17
+# Version 0.6.18
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -9,30 +9,30 @@
 # Functions for single modules
 
 def prepare target
-	unless exists? @stage
-		@log.header 'Creating staging area'
+	@log.header 'Creating staging area'
 
+	if exists? @stage
+		@log.header 'Deleting old staging area'
+		action 'rm -r ' + File.join(@stage, '*')
+	else
 		Dir.mkdir @stage
-		Dir.mkdir File.join(@stage, 'etc')
-		Dir.mkdir File.join(@stage, 'bin')
-		Dir.mkdir File.join(@stage, 'sbin')
-		Dir.mkdir File.join(@stage, 'include')
-		Dir.mkdir File.join(@stage, 'lib')
-		Dir.mkdir File.join(@stage, 'libexec')
-		Dir.mkdir File.join(@stage, 'man')
-		Dir.mkdir File.join(@stage, 'info')
-		Dir.mkdir File.join(@stage, 'share')
-		Dir.mkdir File.join(@stage, 'init')
 	end
+
+	Dir.mkdir File.join(@stage, 'etc')
+	Dir.mkdir File.join(@stage, 'bin')
+	Dir.mkdir File.join(@stage, 'sbin')
+	Dir.mkdir File.join(@stage, 'include')
+	Dir.mkdir File.join(@stage, 'lib')
+	Dir.mkdir File.join(@stage, 'libexec')
+	Dir.mkdir File.join(@stage, 'man')
+	Dir.mkdir File.join(@stage, 'info')
+	Dir.mkdir File.join(@stage, 'share')
+	Dir.mkdir File.join(@stage, 'init')
 
 	if @systemBuild and target.profile and tree = target.profile['tree']
 		@log.header 'Building distribution tree'
 
-		if exists? @systemImage
-			action 'rm -r ' + File.join(@systemImage, '*')
-		else
-			action 'mkdir --parents ' + @systemImage
-		end
+		Dir.mkdir @systemImage
 		Dir.chdir @systemImage
 
 		for line in parseList tree
@@ -47,8 +47,9 @@ def prepare target
 		end
 
 		Dir.chdir @workDir
-		action 'sync'
 	end
+
+	action 'sync'
 end
 
 def downloadModule target
@@ -574,12 +575,13 @@ def installModule staging, target
 						@log.header 'Registering ' + target
 
 						if staging
-							not @systemBuild or (registerPort staging, target and
-								Dir.foreach dir = File.join(root, 'init') do |file|
+							registerPort staging, target and (  # @systemBuild or (
+								not exists? dir = File.join(root, 'init') or
+								Dir.foreach dir do |file|
 									f = File.join dir, file
 									break unless action 'source ' + f if File.stat(f).file?
 								end
-							)
+							)  # )
 						else
 							action 'pkgmanager --add ' + root
 						end
@@ -1424,7 +1426,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.17',
+	puts 'Syllable Build System 0.6.18',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
