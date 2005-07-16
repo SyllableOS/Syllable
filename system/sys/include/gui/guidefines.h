@@ -73,7 +73,8 @@ enum color_space
     CS_YUV420,
     CS_YUV444,
     CS_YUV9,
-    CS_YUV12
+    CS_YUV12,
+    CS_YUY2
 };
 
 enum mouse_ptr_mode
