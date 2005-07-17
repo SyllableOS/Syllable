@@ -72,7 +72,7 @@ PCI_Bus_s *g_apsPCIBus[MAX_PCI_BUSSES];
 PCI_Entry_s *g_apsPCIDevice[MAX_PCI_DEVICES];
 PCI_Entry_s *g_apsAGPDevice[MAX_PCI_DEVICES];
 SpinLock_s g_sPCILock = INIT_SPIN_LOCK( "pci_lock" );
-bool g_bDisableAGP = false;
+bool g_bDisableAGP = true;
 
 extern void init_pci_irq_routing( void );
 extern int lookup_irq( PCI_Entry_s* psDevice, bool bAssign );
