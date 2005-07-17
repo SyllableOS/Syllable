@@ -1,3 +1,7 @@
+* July 17 2005, Arno Klenke *
+
+AGP support is now disabled by default
+
 * July 9 2005, Arno Klenke *
 
 Compilation fix for the network drivers
