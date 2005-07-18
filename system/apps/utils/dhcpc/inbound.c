@@ -148,7 +148,7 @@ void process_dhcpoffer( DHCPPacket_s *in_packet, DHCPOption_s *options )
 				{
 					int current_server;
 
-					info->dns_servers = (uint32*)malloc(servers);
+					info->dns_servers = (uint32*)malloc(servers * sizeof(uint32*));
 					if( info->dns_servers == NULL )
 					{
 						debug(PANIC,__FUNCTION__,"could not allocate space for DNS server entries\n");
@@ -183,7 +183,7 @@ void process_dhcpoffer( DHCPPacket_s *in_packet, DHCPOption_s *options )
 				{
 					int current_router;
 
-					info->routers = (uint32*)malloc(routers);
+					info->routers = (uint32*)malloc(routers * sizeof(uint32*));
 					if( info->routers == NULL )
 					{
 						debug(PANIC,__FUNCTION__,"could not allocate space for router entries\n");
