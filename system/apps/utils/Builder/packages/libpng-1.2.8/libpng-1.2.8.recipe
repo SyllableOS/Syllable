@@ -4,6 +4,9 @@ notes			See contrib/gregbook/ to build examples
 
 licenses		OS
 home			www.libpng.org
+locations
+	http://prdownloads/sourceforge.net/libpng/
+	ftp://ftp.simplesystems.org/pub/libpng/png/src/
 
 no-build-dir
 configure		cp scripts/makefile.gcc makefile

@@ -3,6 +3,7 @@ status				testing
 
 licenses			other
 home				sourceforge.net/projects/libungif/
+locations			http://prdownloads/sourceforge.net/libungif/
 
 patch-config
 
