@@ -1,3 +1,8 @@
+* July 27 2005, Henrik Isaksson *
+
+ - splitter.h
+	o Removed WID_DRAW_ON_CHILDREN. This fixes some Splitter rendering bugs.
+
 * July 10 2005, Henrik Isaksson *
 
  - guidefines.h
