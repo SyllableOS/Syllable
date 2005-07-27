@@ -68,7 +68,7 @@ public:
 	Splitter(const Rect &cFrame, const String &cTitle, View* pView1, 
 		View* pView2, orientation eOrientation = HORIZONTAL,
 		uint32 nResizeMask = CF_FOLLOW_LEFT|CF_FOLLOW_TOP,
-		uint32 nFlags = WID_WILL_DRAW|WID_CLEAR_BACKGROUND|WID_DRAW_ON_CHILDREN);
+		uint32 nFlags = WID_WILL_DRAW|WID_CLEAR_BACKGROUND);
    
 	virtual ~Splitter();
 
