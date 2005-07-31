@@ -210,7 +210,7 @@ modules
 	sys/media/drivers/screen
 	sys/media/drivers/serveraudio
 	sys/media/drivers/vorbis
-	apps/utils/desktop/dlogin
+	apps/utils/dlogin
 	apps/desktop/desktop
 	apps/desktop/dock
 	apps/desktop/dock_plugins/mixer
