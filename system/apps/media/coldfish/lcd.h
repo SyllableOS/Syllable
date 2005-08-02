@@ -41,10 +41,10 @@ namespace os
 		void EnableStatusChanged( bool bIsEnabled );
 
 	      private:
-		  std::string m_zName;
+		std::string m_zName;
 		int m_nTrack;
 		uint64 m_nTime;
-
+		
 		Font *m_pcLcdFont;
 	};
 

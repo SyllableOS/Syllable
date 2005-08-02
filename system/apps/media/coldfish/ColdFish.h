@@ -45,6 +45,7 @@
 #include <storage/path.h>
 #include <storage/registrar.h>
 #include <storage/directory.h>
+
 #include "resources/coldfish.h"
 #include "messages.h"
 #include "lcd.h"
@@ -52,7 +53,7 @@
 #include "cimagebutton.h"
 #include "CFPlugin.h"
 
-
+#define DEBUG 0
 
 typedef struct CFPluginItem
 {
@@ -80,8 +81,10 @@ class CFWindow:public os::Window
       public:
 	CFWindow( const os::Rect & cFrame, const os::String & cName, const os::String & cTitle, uint32 nFlags );
 	 ~CFWindow();
+	
 	virtual void HandleMessage( os::Message * pcMessage );
 	virtual bool OkToQuit();
+	
 	CFPlaylist *GetPlaylist()
 	{
 		return ( m_pcPlaylist );
@@ -102,91 +105,84 @@ class CFWindow:public os::Window
 	{
 		m_nState = nState;
 	}
-      private:
-	uint8 m_nState;
 
-	os::LayoutView * m_pcRoot;
-	os::HLayoutNode * m_pcControls;
-	os::Menu* m_pcMenuBar;
-	os::Lcd * m_pcLCD;
-	os::CImageButton * m_pcPlay;
-	os::CImageButton * m_pcPause;
-	os::CImageButton * m_pcStop;
-	os::CImageButton * m_pcShowList;
+private:
+	uint8 				m_nState;
 
-	CFPlaylist *m_pcPlaylist;
-	os::View* m_pcVisView;
-	os::FileRequester* m_pcFileDialog;
+	os::LayoutView* 	m_pcRoot;
+	os::HLayoutNode* 	m_pcControls;
+	os::Menu* 			m_pcMenuBar;
+	os::Lcd*			m_pcLCD;
+	os::CImageButton*	m_pcPlay;
+	os::CImageButton* 	m_pcStop;
+	os::CImageButton*	m_pcShowList;
+
+	CFPlaylist			*m_pcPlaylist;
+	os::View*			m_pcVisView;
+	os::FileRequester*	m_pcFileDialog;
 };
 
 class CFApp:public os::Application
 {
-      public:
+public:
 	CFApp( const char *pzMimeType, os::String zFileName, bool bLoad );
 	 ~CFApp();
-	virtual void HandleMessage( os::Message * pcMessage );
-	virtual bool OkToQuit();
 	
-	void LoadPlugins();
-	void ActivateVisPlugin();
-	void DeactivateVisPlugin();
-	void UpdatePluginPlaylist();
+	virtual void	HandleMessage( os::Message * pcMessage );
+	virtual bool	OkToQuit();
 	
-	void SetState( uint8 nState );
-	void OpenInput( os::String zFileName, os::String zInput );
-	bool OpenList( os::String zFileName );
+	void			LoadPlugins();
+	void			ActivateVisPlugin();
+	void			DeactivateVisPlugin();
+	void			UpdatePluginPlaylist();
+	status_t 		SetColdFishPluginState(bool);
+	void 			SetState( uint8 nState );
+	void 			OpenInput( os::String zFileName, os::String zInput );
+	bool 			OpenList( os::String zFileName );
 	
-	void SaveList();
+	void 			SaveList();
 
-	void AddFile( os::String zFileName );
-	int OpenFile( os::String zFileName, uint32 nTrack, uint32 nStream );
-	void CloseCurrentFile();
+	void 			AddFile( os::String zFileName );
+	int 			OpenFile( os::String zFileName, uint32 nTrack, uint32 nStream );
+	void 			CloseCurrentFile();
 
-	void PlayThread();
-	void PlayNext();
+	void 			PlayThread();
+	void			PlayNext();
+	void			PlayPrevious();
 	
-	CFWindow* GetWindow();
+	CFWindow*		GetWindow();
 private:
+	os::RegistrarManager*		m_pcRegManager;
+	CFWindow* 					m_pcWin;
+	std::vector<CFPluginItem>	m_cPlugins;
+	ColdFishPlugin*				m_pcCurrentVisPlugin;
 	
-	os::RegistrarManager* m_pcRegManager;
-	CFWindow * m_pcWin;
-	std::vector<CFPluginItem> m_cPlugins;
-	ColdFishPlugin* m_pcCurrentVisPlugin;
-	uint8 m_nState;
-	bool m_bListShown;
-	os::Rect m_cSavedFrame;
+	uint8 						m_nState;
+	bool						m_bListShown;
+	os::Rect					m_cSavedFrame;
 
-	os::String m_zListName;
+	os::String					m_zListName;
+	os::String					m_zTrackName;
+	uint						m_nPlaylistPosition;
+	os::String					m_zAudioName;
+	os::String					m_zAudioFile;
+	uint32						m_nAudioTrack;
+	uint32						m_nAudioStream;
 
-	uint m_nPlaylistPosition;
-	os::String m_zAudioName;
-	os::String m_zAudioFile;
-	uint32 m_nAudioTrack;
-	uint32 m_nAudioStream;
-
-	os::MediaManager * m_pcManager;
-	os::MediaInputSelector* m_pcInputSelector;
-	os::MediaInput * m_pcInput;
-	bool m_bLockedInput;
+	os::MediaManager*			m_pcManager;
+	os::MediaInputSelector*		m_pcInputSelector;
+	os::MediaInput*				m_pcInput;
+	bool 						m_bLockedInput;
 	
-	bool m_bPacket;
-	bool m_bStream;
-	os::MediaFormat_s m_sAudioFormat;
-	os::MediaCodec * m_pcAudioCodec;
-	os::MediaOutput * m_pcAudioOutput;
+	bool						m_bPacket;
+	bool						m_bStream;
+	os::MediaFormat_s			m_sAudioFormat;
+	os::MediaCodec*				m_pcAudioCodec;
+	os::MediaOutput*			m_pcAudioOutput;
 
-	bool m_bPlayThread;
-	thread_id m_hPlayThread;
-	uint64 m_nLastPosition;
+	bool						m_bPlayThread;
+	thread_id					m_hPlayThread;
+	uint64						m_nLastPosition;
 };
 
 #endif
-
-
-
-
-
-
-
-
-

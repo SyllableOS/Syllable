@@ -26,7 +26,7 @@
 /* CFListItem class */
 class CFListItem : public os::ListViewStringRow
 {
-	public:
+public:
 		os::String zPath;
 		int nTrack;
 		int nStream;
@@ -38,6 +38,8 @@ void SetCButtonImageFromResource( os::CImageButton* pcButton, os::String zResour
 	os::Resources cCol( &cSelf );		
 	os::ResStream *pcStream = cCol.GetResourceStream( zResource );
 	pcButton->SetImage( pcStream );
+	pcButton->Flush();
+	pcButton->Sync();
 	delete( pcStream );
 }
 
@@ -48,8 +50,12 @@ void SetCButtonSelectedImageFromResource( os::CImageButton* pcButton, os::String
 	os::Resources cCol( &cSelf );		
 	os::ResStream *pcStream = cCol.GetResourceStream( zResource );
 	pcButton->SetSelectedImage( pcStream );
+	pcButton->Flush();
+	pcButton->Sync();
 	delete( pcStream );
 }
+
+
 
 static inline void secs_to_ms( uint64 nTime, uint32 *nM, uint32 *nS )
 {
@@ -91,6 +97,7 @@ void CFPlaylist::MouseUp( const os::Point & cPos, uint32 nButtons, os::Message *
 CFWindow::CFWindow( const os::Rect & cFrame, const os::String & cName, const os::String & cTitle, uint32 nFlags ):os::Window( cFrame, cName, cTitle, nFlags )
 {
 	m_nState = CF_STATE_STOPPED;
+	
 	os::Rect cNewFrame = GetBounds();
 	
 	/* Create menubar */
@@ -134,13 +141,13 @@ CFWindow::CFWindow( const os::Rect & cFrame, const os::String & cName, const os:
 	m_pcControls->SetBorders( os::Rect( 2, 5, 2, 5 ) );
 
 	/* Create buttons */
-	m_pcPlay = new os::CImageButton( os::Rect( 0, 0, 1, 1 ), "cf_play", MSG_MAINWND_PLAY, new os::Message( CF_GUI_PLAY ), NULL, os::ImageButton::IB_TEXT_BOTTOM, false, false, true );
+	m_pcPlay = new os::CImageButton( os::Rect( 0, 0, 1, 1 ), "cf_playorpause", MSG_MAINWND_PLAY, new os::Message( CF_GUI_PLAY ), NULL, os::ImageButton::IB_TEXT_BOTTOM, false, false, true );
 	SetCButtonImageFromResource( m_pcPlay, "play.png" );
 	SetCButtonSelectedImageFromResource( m_pcPlay, "play_sel.png" );
 
-	m_pcPause = new os::CImageButton( os::Rect( 0, 0, 1, 1 ), "cf_pause", MSG_MAINWND_PAUSE, new os::Message( CF_GUI_PAUSE ), NULL, os::ImageButton::IB_TEXT_BOTTOM, false, false, true );
-	SetCButtonImageFromResource( m_pcPause, "pause.png" );
-	SetCButtonSelectedImageFromResource( m_pcPause, "pause_sel.png" );
+	//m_pcPause = new os::CImageButton( os::Rect( 0, 0, 1, 1 ), "cf_pause", MSG_MAINWND_PAUSE, new os::Message( CF_GUI_PAUSE ), NULL, os::ImageButton::IB_TEXT_BOTTOM, false, false, true );
+	//SetCButtonImageFromResource( m_pcPause, "pause.png" );
+	//SetCButtonSelectedImageFromResource( m_pcPause, "pause_sel.png" );
 
 	m_pcStop = new os::CImageButton( os::Rect( 0, 0, 1, 1 ), "cf_stop", MSG_MAINWND_STOP, new os::Message( CF_GUI_STOP ), NULL, os::ImageButton::IB_TEXT_BOTTOM, false, false, true );
 	SetCButtonImageFromResource( m_pcStop, "stop.png" );
@@ -150,26 +157,27 @@ CFWindow::CFWindow( const os::Rect & cFrame, const os::String & cName, const os:
 	SetCButtonImageFromResource( m_pcShowList, "list.png" );
 	SetCButtonSelectedImageFromResource( m_pcShowList, "list_sel.png" );
 
-	m_pcPause->SetEnable( false );
+	//m_pcPause->SetEnable( false );
 	m_pcStop->SetEnable( false );
 
 	os::VLayoutNode * pcCenter = new os::VLayoutNode( "cf_v_center" );
 
 	/* Create LCD */
 	m_pcLCD = new os::Lcd( os::Rect( 0, 0, 1, 1 ), new os::Message( CF_GUI_SEEK ) );
+	
 	m_pcLCD->SetTarget( this );
 	m_pcLCD->SetEnable( false );
 	pcCenter->AddChild( m_pcLCD );
-
+	AddTimer(m_pcLCD,123,1000000,false);
 
 	m_pcControls->AddChild( m_pcPlay );
-	m_pcControls->AddChild( m_pcPause );
+	//m_pcControls->AddChild( m_pcPause );
 	m_pcControls->AddChild( m_pcStop );
 	m_pcControls->AddChild( pcCenter );
 	m_pcControls->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
 	m_pcControls->AddChild( m_pcShowList );
 
-	m_pcControls->SameWidth( "cf_play", "cf_pause", "cf_stop", "cf_show_list", NULL );
+	m_pcControls->SameWidth( "cf_playorpause","cf_stop", "cf_show_list", NULL );
 
 	m_pcRoot->SetRoot( m_pcControls );
 
@@ -221,8 +229,10 @@ void CFWindow::HandleMessage( os::Message * pcMessage )
 	switch ( pcMessage->GetCode() )
 	{
 	case CF_GUI_PLAY:
-		/* Forward message to the CFApp class */
-		os::Application::GetInstance()->PostMessage( CF_GUI_PLAY, os::Application::GetInstance(  ) );
+		if (m_nState == CF_STATE_STOPPED || m_nState == CF_STATE_PAUSED)
+			os::Application::GetInstance()->PostMessage( CF_GUI_PLAY, os::Application::GetInstance(  ) );
+		else if (m_nState == CF_STATE_PLAYING)
+			os::Application::GetInstance()->PostMessage( CF_GUI_PAUSE, os::Application::GetInstance(  ) );
 		break;
 	case CF_GUI_PAUSE:
 		/* Forward message to the CFApp class */
@@ -286,22 +296,30 @@ void CFWindow::HandleMessage( os::Message * pcMessage )
 			/* Message sent by the CFApp class */
 			if ( m_nState == CF_STATE_STOPPED )
 			{
-				m_pcPlay->SetEnable( true );
-				m_pcPause->SetEnable( false );
+				SetCButtonImageFromResource( m_pcPlay, "play.png" );
+				SetCButtonSelectedImageFromResource( m_pcPlay, "play_sel.png" );
+				
+				m_pcPlay->Paint( m_pcPlay->GetBounds() );
 				m_pcStop->SetEnable( false );
 				m_pcLCD->SetEnable( false );
 			}
 			else if ( m_nState == CF_STATE_PLAYING )
 			{
-				m_pcPlay->SetEnable( false );
-				m_pcPause->SetEnable( true );
+				SetCButtonImageFromResource( m_pcPlay, "pause.png" );
+				SetCButtonSelectedImageFromResource( m_pcPlay, "pause_sel.png" );				
+				m_pcPlay->Paint( m_pcPlay->GetBounds() );
+				//m_pcPlay->SetEnable( false );
+				//m_pcPause->SetEnable( true );
 				m_pcStop->SetEnable( true );
 				m_pcLCD->SetEnable( true );
 			}
 			else if ( m_nState == CF_STATE_PAUSED )
 			{
-				m_pcPlay->SetEnable( true );
-				m_pcPause->SetEnable( false );
+				SetCButtonImageFromResource( m_pcPlay, "play.png" );
+				SetCButtonSelectedImageFromResource( m_pcPlay, "play_sel.png" );				
+				m_pcPlay->Paint( m_pcPlay->GetBounds() );
+				//m_pcPlay->SetEnable( true );
+				//m_pcPause->SetEnable( false );
 				m_pcStop->SetEnable( true );
 				m_pcLCD->SetEnable( false );
 			}
@@ -325,11 +343,13 @@ bool CFWindow::OkToQuit()
 /* MPApp class */
 CFApp::CFApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::Application( pzMimeType )
 {
+	SetPublic(true);
 	/* Select string catalogue */
 	try {
 		SetCatalog( "coldfish.catalog" );
 	} catch( ... ) {
-		std::cout << "Failed to load catalog file!" << std::endl;
+		if (DEBUG)
+			std::cout << "Failed to load catalog file!" << std::endl;
 	}
 	
 	/* Set default values */
@@ -347,6 +367,9 @@ CFApp::CFApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::App
 	m_bPlayThread = false;
 	m_pcCurrentVisPlugin = NULL;
 	m_bListShown = true;
+	m_zTrackName = "Unknown";
+	m_pcInputSelector = NULL;
+	//m_bIsPlaying = false;
 
 	/* Load settings */
 	os::Settings * pcSettings = new os::Settings();
@@ -367,21 +390,23 @@ CFApp::CFApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::App
 		m_pcRegManager->RegisterTypeIconFromRes( "application/x-coldfish-playlist", "application_coldfish_playlist.png" );
 		m_pcRegManager->RegisterTypeExtension( "application/x-coldfish-playlist", "plst" );
 		m_pcRegManager->RegisterAsTypeHandler( "application/x-coldfish-playlist" );
-		
-	} catch( ... ) {}
+	}
+	catch(...)
+	{
+	}
 
 	/* Create media manager */
 	m_pcManager = os::MediaManager::Get();
 	if ( !m_pcManager->IsValid() )
 	{
-		std::cout << "Media server is not running" << std::endl;
+		if (DEBUG)
+			std::cout << "Media server is not running" << std::endl;
 		PostMessage( os::M_QUIT );
 		return;
 	}
 
 	/* Create window */
-	m_pcWin = new CFWindow( os::Rect( 0, 0, 500, 350 ), "cf_window", "Default Playlist.plst - ColdFish", 0 );
-	
+	m_pcWin = new CFWindow( os::Rect( 0, 0, 500, 350 ), "cf_window", "Default Playlist.plst - ColdFish",0);
 	m_pcWin->CenterInScreen();
 	m_pcWin->Show();
 	m_pcWin->MakeFocus( true );
@@ -401,15 +426,20 @@ CFApp::CFApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::App
 		{
 			OpenList( os::String ( getenv( "HOME" ) ) + "/Default Playlist.plst" );
 		}
-	}
-	
-	
+	}	
 }
 
 CFApp::~CFApp()
 {	
+	
 	/* Close and delete everything */
+	if (m_pcRegManager)
+	{
+		m_pcRegManager->Put();
+	}
+	
 	CloseCurrentFile();
+	
 	m_pcWin->Terminate();
 	for( uint i = 0; i < m_cPlugins.size(); i++ )
 	{
@@ -420,11 +450,10 @@ CFApp::~CFApp()
 		m_pcManager->Put();
 	}
 
-	if( m_pcRegManager )
-	{
-		m_pcRegManager->Put();
-	}
+
 }
+
+	
 
 CFWindow* CFApp::GetWindow()
 {
@@ -444,7 +473,9 @@ void CFApp::LoadPlugins()
 	os::String zPath;
 	pcDirectory->GetPath( &zPath );
 	m_cPlugins.clear();
-	std::cout<<"Start plugin scan.."<<std::endl;
+	
+	if (DEBUG)
+		std::cout<<"Start plugin scan.."<<std::endl;
 	
 	while( pcDirectory->GetNextEntry( &zFileName ) )
 	{
@@ -476,7 +507,8 @@ void CFApp::LoadPlugins()
 				}
 				delete( pcPluginEntry );
 			} else {
-				std::cout<<zFileName.c_str()<<" does not export init_coldfish_plugin()"<<std::endl;
+				if (DEBUG)
+					std::cout<<zFileName.c_str()<<" does not export init_coldfish_plugin()"<<std::endl;
 			}
 			
 		}
@@ -545,7 +577,9 @@ void CFApp::PlayThread()
 	int16 nAnimationBuffer[2][512];
 	uint64 nAnBufferPosition = 0;
 	
-	std::cout << "Play thread running" << std::endl;
+	if (DEBUG)
+		std::cout << "Play thread running" << std::endl;
+	
 	/* Seek to last position */
 	if ( !m_bStream )
 		m_pcInput->Seek( m_nLastPosition );
@@ -705,7 +739,9 @@ void CFApp::PlayThread()
 		}
 	}
 	/* Stop tread */
-	std::cout << "Stop thread" << std::endl;
+	if (DEBUG)
+		std::cout << "Stop thread" << std::endl;
+	
 	if ( !m_bPacket )
 	{
 		m_pcInput->StopTrack();
@@ -749,7 +785,8 @@ bool CFApp::OpenList( os::String zFileName )
 	hIn.open( zFileName.c_str() );
 	if ( !hIn.is_open() )
 	{
-		std::cout << "Could not open playlist!" << std::endl;
+		if (DEBUG)
+			std::cout << "Could not open playlist!" << std::endl;
 		return ( false );
 	}
 	/* Read header */
@@ -758,7 +795,8 @@ bool CFApp::OpenList( os::String zFileName )
 
 	if ( strcmp( zTemp, "<PLAYLIST-V1>" ) )
 	{
-		std::cout << "Invalid playlist!" << std::endl;
+		if (DEBUG)
+			std::cout << "Invalid playlist!" << std::endl;
 		return ( false );
 	}
 
@@ -862,7 +900,9 @@ bool CFApp::OpenList( os::String zFileName )
 	/* Set title */
 	os::Path cPath( zFileName.c_str() );
 	m_pcWin->SetTitle( os::String ( cPath.GetLeaf() ) + " - ColdFish" );
-	std::cout << "List openened" << std::endl;
+	
+	if (DEBUG)
+		std::cout << "List openened" << std::endl;
 	UpdatePluginPlaylist();
 	return ( true );
 
@@ -926,7 +966,9 @@ void CFApp::OpenInput( os::String zFileName, os::String zInput )
 	if( zFileName.empty() )
 		zFileName = zInput;
 	
-	std::cout << "Open input " << zInput.c_str() << std::endl;
+	if (DEBUG)
+		std::cout << "Open input " << zInput.c_str() << std::endl;
+	
 	while ( ( m_pcInput = m_pcManager->GetInput( i ) ) != NULL )
 	{
 		if ( m_pcInput->GetIdentifier() == zInput )
@@ -1006,7 +1048,8 @@ void CFApp::AddFile( os::String zFileName )
 	uint32 i;
 	char zTemp[255];
 
-	std::cout << "Add File " << zFileName.c_str() << std::endl;
+	if(DEBUG)
+		std::cout << "Add File " << zFileName.c_str() << std::endl;
 
 	os::MediaInput * pcInput = m_pcManager->GetBestInput( zFileName );
 	if ( pcInput == NULL )
@@ -1091,19 +1134,22 @@ int CFApp::OpenFile( os::String zFileName, uint32 nTrack, uint32 nStream )
 		m_pcInput = m_pcManager->GetBestInput( zFileName );
 		if ( m_pcInput == NULL )
 		{
-			std::cout << "Cannot get input!" << std::endl;
+			if (DEBUG)
+				std::cout << "Cannot get input!" << std::endl;
 			return ( -1 );
 		}
 		/* Open input */
 		if ( m_pcInput->Open( zFileName ) != 0 )
 		{
-			std::cout << "Cannot open input!" << std::endl;
+			if (DEBUG)
+				std::cout << "Cannot open input!" << std::endl;
 			return ( -1 );
 		}
 	} else {
 		if ( m_pcInput == NULL )
 		{
-			std::cout << "Cannot get input!" << std::endl;
+			if (DEBUG)
+				std::cout << "Cannot get input!" << std::endl;
 			return ( -1 );
 		}
 	}
@@ -1114,7 +1160,8 @@ int CFApp::OpenFile( os::String zFileName, uint32 nTrack, uint32 nStream )
 	/* Look if this is a packet based file / device */
 	if ( !m_bPacket )
 	{
-		std::cout << "Not packet based!" << std::endl;
+		if (DEBUG)
+			std::cout << "Not packet based!" << std::endl;
 		CloseCurrentFile();
 		return ( -1 );
 	}
@@ -1122,7 +1169,8 @@ int CFApp::OpenFile( os::String zFileName, uint32 nTrack, uint32 nStream )
 	/* Select track */
 	if ( m_pcInput->SelectTrack( nTrack ) != nTrack )
 	{
-		std::cout << "Track selection failed!" << std::endl;
+		if (DEBUG)
+			std::cout << "Track selection failed!" << std::endl;
 		CloseCurrentFile();
 		return ( -1 );
 	}
@@ -1130,7 +1178,8 @@ int CFApp::OpenFile( os::String zFileName, uint32 nTrack, uint32 nStream )
 	/* Look if the stream is valid */
 	if ( nStream >= m_pcInput->GetStreamCount() )
 	{
-		std::cout << "Invalid stream number!" << std::endl;
+		if (DEBUG)
+			std::cout << "Invalid stream number!" << std::endl;
 		CloseCurrentFile();
 		return ( -1 );
 	}
@@ -1138,7 +1187,8 @@ int CFApp::OpenFile( os::String zFileName, uint32 nTrack, uint32 nStream )
 	/* Check stream */
 	if ( m_pcInput->GetStreamFormat( nStream ).nType != os::MEDIA_TYPE_AUDIO )
 	{
-		std::cout << "Invalid stream format!" << std::endl;
+		if(DEBUG)
+			std::cout << "Invalid stream format!" << std::endl;
 		CloseCurrentFile();
 		return ( -1 );
 	}
@@ -1150,7 +1200,8 @@ int CFApp::OpenFile( os::String zFileName, uint32 nTrack, uint32 nStream )
 	m_pcAudioOutput = m_pcManager->GetDefaultAudioOutput();
 	if ( m_pcAudioOutput == NULL || ( m_pcAudioOutput && m_pcAudioOutput->FileNameRequired() ) || ( m_pcAudioOutput && m_pcAudioOutput->Open( "" ) != 0 ) )
 	{
-		std::cout << "Cannot open audio output!" << std::endl;
+		if (DEBUG)
+			std::cout << "Cannot open audio output!" << std::endl;
 		CloseCurrentFile();
 		return ( -1 );
 	}
@@ -1169,13 +1220,15 @@ int CFApp::OpenFile( os::String zFileName, uint32 nTrack, uint32 nStream )
 	}
 	if ( m_pcAudioCodec == NULL || m_pcAudioOutput->AddStream( os::String ( os::Path( zFileName.c_str() ).GetLeaf(  ) ), m_pcAudioCodec->GetExternalFormat(  ) ) != 0 )
 	{
-		std::cout << "Cannot open audio codec!" << std::endl;
+		if(DEBUG)
+			std::cout << "Cannot open audio codec!" << std::endl;
 		CloseCurrentFile();
 		return ( -1 );
 	}
 	else
 	{
-		std::cout << "Using Audio codec " << m_pcAudioCodec->GetIdentifier().c_str(  ) << std::endl;
+		if(DEBUG)
+			std::cout << "Using Audio codec " << m_pcAudioCodec->GetIdentifier().c_str(  ) << std::endl;
 	}
 
 	/* Construct name */
@@ -1203,6 +1256,7 @@ int CFApp::OpenFile( os::String zFileName, uint32 nTrack, uint32 nStream )
 	m_pcWin->GetLCD()->UpdateTime( 0 );
 	m_pcWin->GetLCD()->SetValue( os::Variant( 0 ) );
 
+	m_zTrackName = cPath.GetLeaf();
 	return ( 0 );
 }
 
@@ -1262,7 +1316,6 @@ void CFApp::PlayNext()
 	PostMessage( CF_GUI_PLAY );
 }
 
-
 int play_next_entry( void *pData )
 {
 	CFApp *pcApp = ( CFApp * ) pData;
@@ -1271,12 +1324,33 @@ int play_next_entry( void *pData )
 	return ( 0 );
 }
 
+void CFApp::PlayPrevious()
+{
+	int nSelected = m_pcWin->GetPlaylist()->GetFirstSelected(  );
+	
+	if ( nSelected <= 0 )
+		nSelected = 0;
+	else
+		nSelected--;
+	m_pcWin->GetPlaylist()->Select( nSelected );
+	PostMessage( CF_GUI_PLAY );
+}
+
+int play_prev_entry( void *pData)
+{
+	CFApp *pcApp = ( CFApp * ) pData;
+
+	pcApp->PlayPrevious();
+	return ( 0 );
+}
+
 void CFApp::HandleMessage( os::Message * pcMessage )
 {
 	switch ( pcMessage->GetCode() )
 	{
-
+		
 	case CF_GUI_PLAY:
+		
 		/* Play  ( sent by the CFWindow class ) */
 		if ( m_nState == CF_STATE_STOPPED )
 		{
@@ -1305,7 +1379,6 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 				std::cout << "Cannot play file!" << std::endl;
 				break;
 			}
-			
 			SetState( CF_STATE_PLAYING );
 			
 			m_hPlayThread = spawn_thread( "play_thread", (void*)play_thread_entry, 0, 0, this );
@@ -1327,6 +1400,7 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 		}
 		break;
 	case CF_GUI_PAUSE:
+		
 		/* Pause ( sent by the CFWindow class ) */
 		if ( m_nState == CF_STATE_PLAYING )
 		{
@@ -1340,7 +1414,9 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 		}
 		break;
 	case CF_PLAY_NEXT:
+	case CF_PLAY_PREVIOUS:
 	case CF_GUI_STOP:
+
 		/* Stop ( sent by the CFWindow class ) */
 		if ( m_nState != CF_STATE_STOPPED )
 		{
@@ -1351,6 +1427,7 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 				m_bPlayThread = false;
 				wait_for_thread( m_hPlayThread );
 			}
+			//m_bIsPlaying = false;
 			CloseCurrentFile();
 			m_nLastPosition = 0;
 			m_pcWin->GetLCD()->SetValue( os::Variant( 0 ) );
@@ -1359,8 +1436,11 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 		/* Play next track */
 		if ( pcMessage->GetCode() == CF_PLAY_NEXT )
 			resume_thread( spawn_thread( "play_next", (void*)play_next_entry, 0, 0, this ) );
+		else if (pcMessage->GetCode() == CF_PLAY_PREVIOUS)
+			resume_thread( spawn_thread( "play_prev", (void*)play_prev_entry, 0, 0, this ) );
 		break;
 	case CF_GUI_SEEK:
+
 		/* Seek ( sent by the CFWindow class ) */
 		if ( m_nState == CF_STATE_PLAYING && !m_bStream )
 		{
@@ -1379,6 +1459,7 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 		}
 		break;
 	case CF_GUI_REMOVE_FILE:
+	
 		/* Remove the selected file from the playlist */
 		{
 			if ( m_pcWin->GetPlaylist()->GetRowCount(  ) == 0 )
@@ -1409,6 +1490,7 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 		}
 		break;
 	case CF_GUI_SELECT_LIST:
+
 		/* Select playlist */
 		{
 			/* Open window */
@@ -1420,6 +1502,8 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 		}
 		break;
 	case CF_GUI_OPEN_INPUT:
+	{
+
 		/* Open ( sent by the CFWindow class ) */
 		if ( m_nState != CF_STATE_STOPPED )
 		{
@@ -1434,7 +1518,8 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 			m_pcWin->GetLCD()->SetValue( os::Variant( 0 ) );
 			m_pcWin->GetLCD()->UpdateTime( 0 );
 		}
-		if ( !m_pcInputSelector )
+
+		if ( m_pcInputSelector== NULL )
 		{
 			/* Open input selector */
 			m_pcInputSelector = new os::MediaInputSelector( os::Point( 150, 150 ), "Open", new os::Messenger( this ), new os::Message( CF_IS_OPEN ), new os::Message( CF_IS_CANCEL ) );
@@ -1446,11 +1531,15 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 			m_pcInputSelector->MakeFocus( true );
 		}
 		break;
+	}
 	case CF_IS_CANCEL:
+	{
 		m_pcInputSelector = NULL;
 		break;
+	}
 	case CF_IS_OPEN:
 		{
+
 			/* Message sent by the input selector */
 			os::String zFile;
 			os::String zInput;
@@ -1498,6 +1587,7 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 		}
 		break;
 	case CF_GUI_LIST_INVOKED:
+
 		/* Play one item in the playlist */
 		if ( m_nState != CF_STATE_STOPPED )
 		{
@@ -1532,6 +1622,7 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 	case CF_GUI_LIST_SELECTED:
 		/* Open one playlist */
 		{
+
 			os::String zFilename;
 
 			if ( pcMessage->FindString( "file/path", &zFilename.str() ) == 0 )
@@ -1581,6 +1672,7 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 	case os::M_LOAD_REQUESTED:
 	case CF_ADD_FILE:
 		{
+			
 			/* Add one file ( sent by the CFWindow class or the filerequester ) */
 			os::String zFile;
 
@@ -1592,6 +1684,7 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 		break;
 	case CF_SET_VIS_PLUGIN:
 		{
+
 			/* Set Visualization plugin */
 			os::String zName;
 
@@ -1623,6 +1716,7 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 	case CF_GUI_VIEW_LIST:
 		/* Show playlist */
 		{
+
 			if( !m_pcWin->GetPlaylist()->IsVisible() )
 			{
 				m_pcWin->Lock();
@@ -1635,6 +1729,41 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 			}
 		}
 		break;
+	
+	case CF_GET_SONG:
+	{
+		os::Message cReply(0);
+		if (pcMessage->IsSourceWaiting())
+		{
+			cReply.AddString("track_name",m_zTrackName.c_str());
+			pcMessage->SendReply(&cReply);
+		}	
+		break;
+	}
+	
+	case CF_GET_PLAYSTATE:
+	{
+		os::Message cReply(0);
+		if (pcMessage->IsSourceWaiting())
+		{
+			cReply.AddInt32("play_state",m_nState);
+			pcMessage->SendReply(&cReply);
+		}
+		break;
+	}
+
+	case CF_GUI_ADD_FILE:
+	{
+		m_pcWin->PostMessage(new os::Message(CF_GUI_ADD_FILE),m_pcWin);
+		break;
+	}
+
+	case CF_GUI_ABOUT:
+	{
+		m_pcWin->PostMessage(new os::Message(CF_GUI_ABOUT),m_pcWin);
+		break;	
+	}
+
 	default:
 		os::Application::HandleMessage( pcMessage );
 		break;
@@ -1643,8 +1772,6 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 
 bool CFApp::OkToQuit()
 {
-	std::cout << "Quit" << std::endl;
-
 	if ( m_pcManager->IsValid() )
 	{
 		SaveList();
@@ -1674,19 +1801,6 @@ int main( int argc, char *argv[] )
 	pcApp->Run();
 	return ( 0 );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

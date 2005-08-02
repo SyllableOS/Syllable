@@ -28,7 +28,7 @@ MSG_MAINWND_MENU_VIEW=500					View
 MSG_MAINWND_MENU_VIEW_PLAYLIST				Playlist
 
 MSG_ABOUTWND_TITLE=1000						About ColdFish
-MSG_ABOUTWND_TEXT							\nA Music Player\nCopyright 2003 Arno Klenke\nCopyright 2003 Kristian Van Der Vliet\n\nColdFish is released under the LGPL.
+MSG_ABOUTWND_TEXT							\nA Music Player\nCopyright 2003 Arno Klenke\nCopyright 2003 Kristian Van Der Vliet\nCopyright 2005 Rick Caudill\n\nColdFish is released under the LGPL.
 MSG_ABOUTWND_OK								O.K
 
 MSG_ERRWND_TITLE=1100						ColdFish Error
