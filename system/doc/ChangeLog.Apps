@@ -1,3 +1,19 @@
+* August 2, 2005, Rick Caudill  *
+ 
+ - ColdFish
+    o Play/Pause Combined into one button
+    o Added Rick Caudill to the About Box
+    o The remote plugin has changed.  It adds to the registrar now "AddFile", "GetPlayState", "About", "GetSong" and also
+      will allow you to load ColdFishRemote dock plugin
+ - ColdFishRemote dock plugin
+ 	o A new dock plugin that allows you to control ColdFish through the dock.
+ 	o Features included are:
+ 		o Play/Stop/Next/Previous
+ 		o Viewing of currrent song(via a scrollview)
+ 	o Features I would like to add:
+ 		o A better way of scrolling
+ 		o Changing of the positon of the song(via some sort of slider)
+  
 * July 18 2005, Kristian Van Der Vliet *
 
  - dhcpc
