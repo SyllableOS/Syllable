@@ -13,6 +13,7 @@ modules
 	apps/desktop/dock_plugins/clock
 	apps/desktop/dock_plugins/Address
 	apps/desktop/dock_plugins/Camera
+	apps/desktop/dock_plugins/ColdFishRemote
 	apps/desktop/dock_plugins/Meter
 	apps/desktop/dock_plugins/WallpaperChanger
 	apps/media/coldfish
