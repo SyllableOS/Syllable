@@ -1,5 +1,5 @@
 #Makefile for dlogin
-COPTS = -Wall -c -O2 -pipe -fexceptions -march=i586 -ffast-math -fomit-frame-pointer
+COPTS = -c -fexceptions -ffast-math
 
 APPBIN = /bin/dlogin
 OBJS = main.o application.o mainwindow.o loginview.o loginimageview.o commonfuncs.o shutdown.o
@@ -10,7 +10,7 @@ OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
 # Rules
 $(OBJDIR)/%.o : %.c
 	@echo Compiling : $<
-	@$(CXX) $(COPTS) $< -o $@
+	@$(CC) $(COPTS) $< -o $@
 
 $(OBJDIR)/%.o : %.cpp
 	@echo Compiling : $<
@@ -18,7 +18,7 @@ $(OBJDIR)/%.o : %.cpp
 
 $(OBJDIR)/%.o : %.s
 	@echo Assembling : $<
-	@$(CXX) $(COPTS) -x assembler-with-cpp $< -o $@
+	@$(CC) $(COPTS) -x assembler-with-cpp $< -o $@
 
 all : objs dlogin
 
@@ -27,9 +27,9 @@ objs:
 
 dlogin: $(OBJS)
 	@echo Linking...
-	@g++ $(OBJS) -o dlogin  -lsyllable -lstdc++ -lcrypt
+	@$(CXX) $(OBJS) -o dlogin -lsyllable -lcrypt
 	@echo Adding resources...
-	@rescopy dlogin -r ./images/* 
+	@rescopy dlogin -r images/*.png images/*.jpg
 
 clean:
 	@echo Cleaning...
@@ -40,7 +40,7 @@ deps:
 
 dist: all
 	@echo Distribution...
-	@cp dlogin $(DIST_DIR)/bin/dlogin
+	@cp dlogin $(DIST_DIR)/atheos/sys/bin/dlogin
 
 install: all
 	@echo Installing...
