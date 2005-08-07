@@ -15,6 +15,7 @@ modules
 	apps/desktop/dock_plugins/Camera
 	apps/desktop/dock_plugins/ColdFishRemote
 	apps/desktop/dock_plugins/Meter
+	apps/desktop/dock_plugins/Switcher
 	apps/desktop/dock_plugins/WallpaperChanger
 	apps/media/coldfish
 	apps/media/coldfish_plugins/blursk
