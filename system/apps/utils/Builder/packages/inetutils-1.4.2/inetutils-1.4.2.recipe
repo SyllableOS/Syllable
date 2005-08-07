@@ -1,4 +1,5 @@
 authors				Kaj de Vos
+status				incomplete
 warnings			The servers reportedly don't work.
 notes
 	configure misgenerates some path definition files, except with Bash 2.03. Possibly a problem with echo.
@@ -8,9 +9,13 @@ home				www.gnu.org/software/inetutils/
 
 build-needs			bash 2.03
 
+; Seems to be necessary for GLibC 2.3.x:
+no-build-dir
+
 patch-config
 configure-options
 ;	Ping acts irregular, and Syllable has its own:
 	--disable-ping
 ;	--disable-servers
 documentation		README COPYING NEWS ChangeLog TODO AUTHORS THANKS
+
