@@ -1,4 +1,4 @@
-COPTS	= -c
+COPTS	= -Wall -c -O2 -pipe -fexceptions -march=i586 -ffast-math -fomit-frame-pointer
 
 OBJS	= main.o tview.o settings.o swindow.o
 EXE	= aterm.new

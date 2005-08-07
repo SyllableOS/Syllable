@@ -48,6 +48,7 @@
 #include "messages.h"
 #include <iostream>
 
+using namespace os;
 
 void SetDesktop( uint32 );
 

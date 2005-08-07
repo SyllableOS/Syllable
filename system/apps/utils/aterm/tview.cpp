@@ -390,7 +390,10 @@ void TermView::ExpandCharMap( IPoint cNewSize )
 void TermView::FrameSized( const Point & cDelta )
 {
 	Rect cBounds = GetBounds();
-	IPoint cNewSize( ( int )max( 10, ( cBounds.Width() + 1.0f ) / m_cCharSize.x ), ( int )( ( cBounds.Height(  ) + 1.0f ) / m_cCharSize.y ) );
+
+	int nWidth  = std::max( 10,(int)((cBounds.Width() + 1.0f ) / m_cCharSize.x));
+	int nHeight = (int)((cBounds.Height() + 1.0f ) / m_cCharSize.y);
+	IPoint cNewSize(nWidth,nHeight);
 
 
 	if( 0 == m_nScrollTop && m_nScrollBottom == m_cCurCharMapSize.y - 1 || -1 == m_nScrollBottom )
