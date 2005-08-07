@@ -13,7 +13,7 @@ $(OBJDIR):
 
 $(OBJDIR)/Address.so: $(OBJS)
 	$(CXX) -shared -Xlinker "-soname=Address.so" $(OBJS) -lsyllable -o $(OBJDIR)/Address.so
-	rescopy -r $(OBJDIR)/Address.so resources/*
+	rescopy -r $(OBJDIR)/Address.so resources/*.png resources/*.html
 
 install:  $(OBJDIR)/Address.so
 	mkdir -p $(APPBIN)
