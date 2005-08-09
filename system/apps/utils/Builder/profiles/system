@@ -173,6 +173,16 @@ modules
 	libs/libdl
 	libs/libpthread
 	libs/ncurses-5.4
+
+;	Static libraries that don't need to be included separately in the distribution:
+	libraries/ffmpeg-current
+	libraries/freetype-2.1.9
+	libraries/libjpeg-6b
+	libraries/libpng-1.2.8
+	libraries/libungif-4.1.3
+	libraries/libogg-1.1
+	libraries/libvorbis-1.0
+
 	sys/appserver/libsyllable
 	sys/appserver/appserver/server
 	sys/appserver/appserver/drivers/decorators/amiga
