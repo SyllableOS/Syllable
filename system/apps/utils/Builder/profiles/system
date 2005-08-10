@@ -174,14 +174,23 @@ modules
 	libs/libpthread
 	libs/ncurses-5.4
 
-;	Static libraries that don't need to be included separately in the distribution:
-	libraries/ffmpeg-current
+;	Static libraries, that don't need to be included separately in the distribution:
+	libraries/gettext-0.14.3
+	libraries/flex-2.5.4a
+	libraries/bison-1.875
+	libraries/binutils-2.15
+
+	libraries/gcc-3.4.3
+
 	libraries/freetype-2.1.9
+
 	libraries/libjpeg-6b
+
 	libraries/libpng-1.2.8
 	libraries/libungif-4.1.3
 	libraries/libogg-1.1
 	libraries/libvorbis-1.0
+	libraries/ffmpeg-current
 
 	sys/appserver/libsyllable
 	sys/appserver/appserver/server

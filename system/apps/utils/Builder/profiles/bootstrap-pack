@@ -5,7 +5,7 @@ modules
 ;	programming/languages/ruby-1.8.2
 	programming/libraries/ffmpeg-current
 	programming/libraries/freetype-2.1.9
-	programming/libraries/libjpeg-6b
+;	programming/libraries/libjpeg-6b
 	programming/libraries/libpng-1.2.8
 	programming/libraries/libungif-4.1.3
 	programming/libraries/libogg-1.1
