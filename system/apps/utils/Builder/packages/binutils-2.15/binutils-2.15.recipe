@@ -14,7 +14,10 @@ build-needs
 	perl 5.0
 	automake < 1.5
 	autoconf >= 2.58
-conflicts			gcc
+conflicts
+;	Both BinUtils and AutoConf have info/standards.info:
+	autoconf
+	gcc
 
 patch
 	cd ld
