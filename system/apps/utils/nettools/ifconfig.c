@@ -6,7 +6,7 @@
 
 #include <sys/ioctl.h>
 #include <atheos/types.h>
-#include <atheos/socket.h>
+#include <sys/socket.h>
 #include <net/nettypes.h>
 #include <net/if.h>
 #include <netinet/in.h>
