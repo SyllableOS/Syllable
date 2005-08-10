@@ -5,6 +5,7 @@ modules
 ;	Currently needed for building some packages:
 ;	programming/languages/perl-5.005_03
 ;	programming/languages/ruby-1.8.2
+;	Needs Make 3.80:
 	programming/libraries/ffmpeg-current
 	programming/libraries/freetype-2.1.9
 ;	programming/libraries/libjpeg-6b
