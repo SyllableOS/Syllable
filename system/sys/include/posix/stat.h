@@ -120,6 +120,10 @@ extern "C" {
 #define __S_IWRITE	__S_IWUSR
 #define __S_IEXEC	__S_IXUSR
 
+#define __S_TYPEISMQ(buf)	0
+#define __S_TYPEISSEM(buf)	0
+#define __S_TYPEISSHM(buf)	0
+
 #endif	/* __KERNEL__ */
 
 #include <posix/types.h>
