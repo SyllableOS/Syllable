@@ -27,6 +27,7 @@ modules
 ;	apps/utils/Builder
 	apps/utils/CodeEdit
 	apps/utils/DiskManager
+	apps/utils/Launch
 	apps/utils/aclock
 	apps/utils/aedit
 	apps/utils/archiver
