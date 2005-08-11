@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.18
+# Version 0.6.19
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -577,9 +577,8 @@ def installModule staging, target
 						if staging
 							registerPort staging, target and (  # @systemBuild or (
 								not exists? dir = File.join(root, 'init') or
-								Dir.foreach dir do |file|
-									f = File.join dir, file
-									break unless action 'source ' + f if File.stat(f).file?
+								for file in listFiles dir
+									# FIXME: break unless action 'source ' + file
 								end
 							)  # )
 						else
@@ -990,9 +989,8 @@ def deleteCVSData
 		@log.detail dir
 
 		# Delete all files in the CVS dir first
-		Dir.foreach dir do |file|
-			f = File.join dir, file
-			File.delete f if File.stat(f).file?
+		for file in listFiles dir
+			File.delete file
 		end
 
 		Dir.delete dir
@@ -1010,12 +1008,20 @@ def exists? file
 	FileTest.exists? file
 end
 
+def file? file
+	FileTest.file? file
+end
+
 def dir? file
 	FileTest.directory? file
 end
 
 def symlink? file
 	FileTest.symlink? file
+end
+
+def listFiles dir
+	Dir.entries(dir).collect {|file| File.join dir, file}.delete_if {|file| not file? file}
 end
 
 def dereference file
@@ -1426,7 +1432,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.18',
+	puts 'Syllable Build System 0.6.19',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1517,10 +1523,11 @@ else
 #						':' + (File.join @systemImage, 'atheos/usr/glibc/sbin') +
 #						':' + (File.join @systemImage, 'atheos/usr/glibc2/bin') +
 #						':' + (File.join @systemImage, 'atheos/usr/glibc2/sbin') +
+#
 #						':' + (File.join @stage, 'indexes/bin') +
-						':' + (File.join @stage, 'bin') +
+#						':' + (File.join @stage, 'bin') +
 #						':' + (File.join @stage, 'indexes/sbin') +
-						':' + (File.join @stage, 'sbin') +
+#						':' + (File.join @stage, 'sbin') +
 #						Shouldn't really be used:
 #						':' + (File.join @systemImage, 'atheos/usr/local/bin') +
 #						':' + (File.join @systemImage, 'atheos/usr/bin') +
