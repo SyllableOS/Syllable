@@ -36,6 +36,11 @@ build-needs
 ;	For Ada:
 ;	gnat >= 3.13 | gcc >= 3.1
 	gawk
+;	bison
+build-recommends
+;	diffutils
+;	For documentation:
+	texinfo
 test-needs			dejagnu >= 1.4.1
 conflicts			binutils
 
