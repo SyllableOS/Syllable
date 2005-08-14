@@ -1,4 +1,4 @@
-CFLAGS   += -c -O2 -std=gnu99 -Wstrict-prototypes -I./ -D__KERNEL__ -D__BUILD_KERNEL__ -ffreestanding -no-fPIC -mpreferred-stack-boundary=2 -fno-strict-aliasing
+CFLAGS   += -c -O2 -std=gnu99 -fno-optimize-sibling-calls -Wstrict-prototypes -I./ -D__KERNEL__ -D__BUILD_KERNEL__ -ffreestanding -no-fPIC -mpreferred-stack-boundary=2 -fno-strict-aliasing
 AFLAGS   = -c
 
 OLD_INCLUDE_PATH:=$(C_INCLUDE_PATH)
@@ -106,4 +106,5 @@ clean:
 	rm -f $(OBJS) $(DEPS) $(IF_OBJS) $(OBJDIR)/version.o $(OBJDIR)/kernel.so $(OBJDIR)/libkernel.so $(OBJDIR)/eth_if $(OBJDIR)/kernel.exports.c
 
 -include $(OBJDIR)/*.d
+
 
