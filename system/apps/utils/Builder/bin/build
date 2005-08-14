@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.20
+# Version 0.6.21
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -1369,7 +1369,7 @@ end
 'packages', 'profiles',   'sources',    'resources',    'distributions', 'logs'
 ].collect {|dir| File.join @builderPath, dir}
 
-@sourcesPath = dir if dir = @settings['sources-path']
+if dir = @settings['sources-path'] then @sourcesPath = dir end
 
 @iconsPath = '/system/icons'
 
@@ -1440,7 +1440,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.20',
+	puts 'Syllable Build System 0.6.21',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
