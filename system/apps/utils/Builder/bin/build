@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.19
+# Version 0.6.20
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -1362,16 +1362,19 @@ end
 # Get the path to the application directory.
 @builderPath = File.dirname File.dirname(dereference(File.expand_path($0)))
 
+# Get global settings
+@settings = parseDictionary loadFile(File.join(@builderPath, 'settings'))
+
 @portsPath, Profile.path, @sourcesPath, @resourcesPath, @distrosPath,    Log.path = [
 'packages', 'profiles',   'sources',    'resources',    'distributions', 'logs'
 ].collect {|dir| File.join @builderPath, dir}
+
+@sourcesPath = dir if dir = @settings['sources-path']
 
 @iconsPath = '/system/icons'
 
 
 # Set environment variables
-
-@settings = parseDictionary loadFile(File.join(@builderPath, 'settings'))
 
 for line in parseList @settings['environment']
 	var, value = splitLine line
@@ -1425,6 +1428,11 @@ if @crossCompile
 	ENV['LDFLAGS']  = "-b #{@target} " + (var = ENV['LDFLAGS']  ? var : '')
 end
 
+# Isolate build in staging area from the build host?
+@isolateStage = @crossCompile or @settings['isolate-stage']
+# Or run newly built binaries and libraries on the build host to bootstrap?
+@bootstrap = !@crossCompile and @settings['bootstrap']
+
 
 # Main function
 
@@ -1432,7 +1440,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.19',
+	puts 'Syllable Build System 0.6.20',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1516,7 +1524,7 @@ else
 
 					# Pick up executables from the staging area
 
-					unless @crossCompile then ENV['PATH'] =
+					if @bootstrap then ENV['PATH'] =
 						(File.join @systemImage, 'atheos/sys/bin') +
 #						Executables may not be position-independent:
 #						':' + (File.join @systemImage, 'atheos/usr/glibc/bin') +
@@ -1525,14 +1533,14 @@ else
 #						':' + (File.join @systemImage, 'atheos/usr/glibc2/sbin') +
 #
 #						':' + (File.join @stage, 'indexes/bin') +
-#						':' + (File.join @stage, 'bin') +
+						':' + (File.join @stage, 'bin') +
 #						':' + (File.join @stage, 'indexes/sbin') +
-#						':' + (File.join @stage, 'sbin') +
+						':' + (File.join @stage, 'sbin') +
 #						Shouldn't really be used:
 #						':' + (File.join @systemImage, 'atheos/usr/local/bin') +
 #						':' + (File.join @systemImage, 'atheos/usr/bin') +
 #						':' + (File.join @systemImage, 'atheos/usr/sbin') +
-						':' + ENV['PATH']
+						(@isolateStage ? '' : ':' + ENV['PATH'])
 					end
 
 					# Pick up headers from the staging area and system repository
@@ -1543,10 +1551,10 @@ else
 						# C library headers
 						':' + (File.join @systemImage, 'atheos/usr/glibc2/include') +
 						# For GoboLinux
-						':' + '/Programs/Glibc/Current/include' +
+#						':' + '/Programs/Glibc/Current/include' +
 						# System headers
 						':' + (File.join @systemImage, 'atheos/sys/include') +
-						':' + (File.join @workDir, 'sys/include')
+						':' + (File.join @workDir, 'sys/include') +
 						# Linked headers
 #						':' + (File.join @stage, 'indexes/include') +
 						':' + (File.join @stage, 'include')
@@ -1556,19 +1564,20 @@ else
 
 					ENV['ATHEOS_INCLUDE_PATH'] = File.join @workDir, 'sys/include'
 					ENV['C_INCLUDE_PATH'] = headers +
-						((var = ENV['C_INCLUDE_PATH']) && !@crossCompile ? ':' + var : '')
+						((var = ENV['C_INCLUDE_PATH']) && !@isolateStage ? ':' + var : '')
 					ENV['CPLUS_INCLUDE_PATH'] = headers +
-						((var = ENV['CPLUS_INCLUDE_PATH']) && !@crossCompile ? ':' + var : '')
+						((var = ENV['CPLUS_INCLUDE_PATH']) && !@isolateStage ? ':' + var : '')
 
 					# Pick up libraries from the staging area
 
 					ENV['ATHEOS_LIB_PATH'] = File.join @systemImage, 'atheos/sys/libs'
-					ENV['DLL_PATH'] =
+					if @bootstrap then ENV['DLL_PATH'] =
 						(File.join @systemImage, 'atheos/sys/libs') +
 						':' + (File.join @systemImage, 'atheos/sys') +
 #						':' + (File.join @stage, 'indexes/lib') +
 						':' + (File.join @stage, 'lib') +
-						((var = ENV['DLL_PATH']) && !@crossCompile ? ':' + var : '')
+						((var = ENV['DLL_PATH']) && !@isolateStage ? ':' + var : '')
+					end
 					ENV[name = (@syllable ? '' : 'LD_') + 'LIBRARY_PATH'] =
 						(File.join @systemImage, 'atheos/sys/libs') +
 						(@syllable ? '' : ':' + File.join(@systemImage, 'atheos/sys')) +
@@ -1578,7 +1587,7 @@ else
 						':' + (File.join @stage, 'lib') +
 #						':' + (File.join @systemImage, 'atheos/usr/local/lib') +
 #						':' + (File.join @systemImage, 'atheos/usr/lib') +
-						(@crossCompile ? '' : ':' + ENV[name])
+						(@isolateStage ? '' : ':' + ENV[name])
 				end
 
 				case arg1
