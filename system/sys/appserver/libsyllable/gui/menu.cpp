@@ -2327,7 +2327,7 @@ void Menu::_Close( bool bCloseChilds, bool bCloseParent )
 			// NOTE: We activate the parents window even if was not
 			//       opened by the menu-system (GetWindow() vs m_pcWindow)
 			Window *pcWnd = pcParent->GetWindow();
-
+			
 			if( pcWnd != NULL )
 			{
 				pcParent->MakeFocus( true );
@@ -2352,6 +2352,7 @@ void Menu::_Close( bool bCloseChilds, bool bCloseParent )
 			pcParent->_Close( false, true );
 		}
 	}
+	Flush();
 	m->m_bIsTracking = false;
 }
 

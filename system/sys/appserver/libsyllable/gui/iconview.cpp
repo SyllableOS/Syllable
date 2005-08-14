@@ -121,8 +121,10 @@ public:
 				m_vStringWidth[j] = 0;
 				for( uint i = 0; i < m_cIcons.size(); i++ )
 				{
-					float vCurrentW = m_pcView->GetStringWidth( m_cIcons[i]->m_zStrings[j] );
-					m_vStringWidth[j] = std::max( m_vStringWidth[j], vCurrentW );
+					if( !m_cIcons[i]->m_zStrings[j].empty() ) {
+						float vCurrentW = m_pcView->GetStringWidth( m_cIcons[i]->m_zStrings[j] );
+						m_vStringWidth[j] = std::max( m_vStringWidth[j], vCurrentW );
+					}
 				}
 			}
 			Unlock();
@@ -698,6 +700,7 @@ public:
 				m->RenderSelection( i, this, m->m_cIcons[i]->m_cPosition );
 			}
 		}
+		SetDrawingMode( os::DM_COPY );
 		SetFgColor( m->m_sTextColor );
 		for( uint i = 0; i < m->m_cIcons.size(); i++ )
 		{

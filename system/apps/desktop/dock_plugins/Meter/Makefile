@@ -12,3 +12,6 @@ install: Meter
 dist: Meter
 	cp -f meter.so $(DIST_DIR)/atheos/sys/drivers/dock/
 
+clean:
+	rm -f meter.o meter.so
+

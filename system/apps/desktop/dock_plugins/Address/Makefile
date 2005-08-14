@@ -26,7 +26,8 @@ dist:  $(OBJDIR)/Address.so
 deps: $(OBJDIR)
 
 clean:
-	rm -f $(OBJS) $(OBJDIR)/*.d $(OBJDIR)/Address.so
+	rm -f $(OBJS) $(OBJDIR)/Address.so
 
 -include $(OBJDIR)/*.d
+
 

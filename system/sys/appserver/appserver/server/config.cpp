@@ -679,7 +679,7 @@ int AppserverConfig::SaveConfig()
 
 	for( cIterator = m_cFontSettings.begin(); cIterator != m_cFontSettings.end(  ); ++cIterator )
 	{
-		fprintf( hFile, "DefaultFont: \"%s\" \"%s\" \"%s\" %08lx %.2f %.2f %.2f\n", ( *cIterator ).first.c_str(), ( *cIterator ).second.m_cFamily.c_str(  ), ( *cIterator ).second.m_cStyle.c_str(  ), ( *cIterator ).second.m_nFlags, ( *cIterator ).second.m_vSize, ( *cIterator ).second.m_vShear, ( *cIterator ).second.m_vRotation );
+		fprintf( hFile, "DefaultFont: \"%s\" \"%s\" \"%s\" %08lx %.2f %.2f %.2f\n", ( *cIterator ).first.c_str(), ( *cIterator ).second.m_cFamily.c_str(  ), ( *cIterator ).second.m_cStyle.c_str(  ), (long unsigned int)( *cIterator ).second.m_nFlags, ( *cIterator ).second.m_vSize, ( *cIterator ).second.m_vShear, ( *cIterator ).second.m_vRotation );
 	}
 
 

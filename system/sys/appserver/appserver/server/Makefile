@@ -1,4 +1,4 @@
-SCREENSHOT = y
+SCREENSHOT = n
 
 CFLAGS   += -c -fexceptions -ffast-math $(shell freetype-config --cflags)
 CXXFLAGS += -c -fexceptions -ffast-math $(shell freetype-config --cflags)
@@ -17,7 +17,7 @@ ifeq ($(SCREENSHOT),y)
 endif
 
 ifeq ($(SCREENSHOT),n)
-	CFLAGS += -D__NO_SCREENSHOT_SUPPORT__=1
+	CXXFLAGS += -D__NO_SCREENSHOT_SUPPORT__=1
 endif
 
 OBJDIR	:= objs
@@ -31,6 +31,7 @@ $(OBJDIR):
 
 $(OBJDIR)/appserver: $(OBJS)
 	$(CXX) $(OBJS) -o $(OBJDIR)/appserver $(shell freetype-config --libs) $(LIBS) -lm
+	strip --strip-all $(OBJDIR)/appserver
 
 $(OBJDIR)/mini_appserver: $(OBJS)
 	$(CXX) $(OBJS) -o $(OBJDIR)/appserver $(shell freetype-config --libs) $(LIBS) -lm

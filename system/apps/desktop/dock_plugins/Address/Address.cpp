@@ -354,6 +354,7 @@ void Address::ExecuteBrowser(const String& cUrl)
 	
 	if (fork() == 0)
 	{
+		set_thread_priority( -1, 0 );
 		nError = execlp("/Applications/ABrowse/ABrowse","/Applications/ABrowse/ABrowse",cUrl.c_str(),NULL);	
 	}	
 	

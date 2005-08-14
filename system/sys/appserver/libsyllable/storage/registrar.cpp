@@ -882,7 +882,7 @@ status_t RegistrarManager::Launch( Window* pcParentWindow, String zFile, bool bV
 	//std::cout<<"Launch "<<zFile.c_str()<<std::endl;
 	
 	os::String zIdentifier;
-	os::Image* pcImage;
+	os::Image* pcImage = NULL;
 	os::Message cMessage;
 	
 	/* Get the filetype and icon first */
@@ -902,6 +902,7 @@ status_t RegistrarManager::Launch( Window* pcParentWindow, String zFile, bool bV
 				set_thread_priority( -1, 0 );
 				execlp( zFile.c_str(), zFile.c_str(), NULL, NULL );
 			}
+			delete( pcImage );
 			return( 0 );
 		}
 		
@@ -918,13 +919,17 @@ status_t RegistrarManager::Launch( Window* pcParentWindow, String zFile, bool bV
 				set_thread_priority( -1, 0 );
 				execlp( zDefaultHandler.c_str(), zDefaultHandler.c_str(), cPath.GetPath().c_str(), NULL );
 			}
+			delete( pcImage );
 			return( 0 );
 		}
 	}
 	
 	/* If we haven't launched anything yet, then we stop if in non-verbose mode */
 	if( !bVerbose )
+	{
+		delete( pcImage );
 		return( -EIO );	
+	}
 	
 	HandlerSelector* pcSelector = new HandlerSelector( os::Rect( 50, 50, 400, 250 ), cPath, pcImage, cMessage );
 	pcSelector->SetTitle( zTitle );

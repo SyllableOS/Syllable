@@ -1,3 +1,11 @@
+* August 14 2005, Arno Klenke *
+
+Appserver changes:
+	- Make it work with gcc 3.4 and the new glibc
+	- Line drawing with DM_BLEND
+	- Improved sprite code
+	- New shutdown procedure
+
 * July 17 2005, Arno Klenke *
 
 AGP support is now disabled by default
@@ -825,4 +833,5 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
 

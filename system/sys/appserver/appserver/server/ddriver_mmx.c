@@ -27,12 +27,13 @@
 #define SFENCE "/nop"
 #define EMMS "emms"
 
-static const uint64 red_32to16mask __attribute__ ( ( aligned( 8 ) ) ) = 0x0000f8000000f800ULL;
-static const uint64 green_32to16mask __attribute__ ( ( aligned( 8 ) ) ) = 0x000007e0000007e0ULL;
-static const uint64 blue_32to16mask __attribute__ ( ( aligned( 8 ) ) ) = 0x0000001f0000001fULL;
-static const uint64 red_16to32mask __attribute__ ( ( aligned( 8 ) ) ) = 0xF800F800F800F800ULL;
-static const uint64 green_16to32mask __attribute__ ( ( aligned( 8 ) ) ) = 0x07E007E007E007E0ULL;
-static const uint64 blue_16to32mask __attribute__ ( ( aligned( 8 ) ) ) = 0x001F001F001F001FULL;
+static uint64 red_32to16mask __attribute__ ( ( aligned( 8 ) ) ) = 0x0000f8000000f800ULL;
+static uint64 green_32to16mask __attribute__ ( ( aligned( 8 ) ) ) = 0x000007e0000007e0ULL;
+static uint64 blue_32to16mask __attribute__ ( ( aligned( 8 ) ) ) = 0x0000001f0000001fULL;
+static uint64 red_16to32mask __attribute__ ( ( aligned( 8 ) ) ) = 0xF800F800F800F800ULL;
+static uint64 green_16to32mask __attribute__ ( ( aligned( 8 ) ) ) = 0x07E007E007E007E0ULL;
+static uint64 blue_16to32mask __attribute__ ( ( aligned( 8 ) ) ) = 0x001F001F001F001FULL;
+
 
 static inline void mmx_memcpy( uint8 *pTo, uint8 *pFrom, int nLen )
 {
@@ -48,6 +49,22 @@ static inline void mmx_memcpy( uint8 *pTo, uint8 *pFrom, int nLen )
 
 	if ( nLen & 7 )
 		memcpy( pTo, pFrom, nLen & 7 );
+}
+
+static inline void mmx_revcpy( uint8 *pTo, uint8 *pFrom, int nLen )
+{
+	int i;
+
+	for ( i = 0; i < nLen / 8; i++ )
+	{
+		__asm__ __volatile__( "movq (%0), %%mm0\n" "movq %%mm0, (%1)\n"::"r"( pFrom ), "r"( pTo ):"memory" );
+
+		pFrom -= 8;
+		pTo -= 8;
+	}
+
+	if ( nLen & 7 )
+		dbprintf( "Error: mmx_revcpy() called with non-aligned length\n" );
 }
 
 

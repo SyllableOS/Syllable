@@ -44,6 +44,8 @@
 #include "keyboard.h"
 #include "config.h"
 
+using namespace os;
+
 static uint32 g_nQual = 0;
 static uint32 g_nLock = 0;
 static int g_nKbdDev = 0;
@@ -322,7 +324,7 @@ int convert_key_code( char *pzDst, int nRawKey, int nQual, int *pnDeadKeyState )
 
 void HandleKeyboard()
 {
-	uint nKeyDownTime = 0;
+	bigtime_t nKeyDownTime = 0;
 	uint8 nLastKey = 0;
 	uint8 nKeyCode;
 
@@ -389,7 +391,7 @@ void HandleKeyboard()
 				}
 				else
 				{
-					nKeyDownTime = clock() + ( AppserverConfig::GetInstance(  )->GetKeyDelay(  ) * CLOCKS_PER_SEC / 1000 );
+					nKeyDownTime = get_system_time() + ( AppserverConfig::GetInstance(  )->GetKeyDelay(  ) * 1000 );
 					nLastKey = nKeyCode;
 				}
 				AppServer::GetInstance()->SendKeyCode( nKeyCode, g_nQual );
@@ -399,11 +401,11 @@ void HandleKeyboard()
 
 		if( 0 != nKeyDownTime )
 		{
-			uint nTime = clock();
+			bigtime_t nTime = get_system_time();
 
 			if( nTime > nKeyDownTime )
 			{
-				nKeyDownTime = nTime + ( AppserverConfig::GetInstance()->GetKeyRepeat(  ) * CLOCKS_PER_SEC / 1000 );
+				nKeyDownTime = nTime + ( AppserverConfig::GetInstance(  )->GetKeyRepeat(  ) * 1000 );
 				AppServer::GetInstance()->SendKeyCode( nLastKey, g_nQual | QUAL_REPEAT );
 			}
 		}

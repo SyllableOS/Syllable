@@ -497,13 +497,27 @@ void DisplayDriver::FillBlit8( uint8 *pDst, int nMod, int W, int H, int nColor )
 void DisplayDriver::FillBlit16( uint16 *pDst, int nMod, int W, int H, uint32 nColor )
 {
 	int X, Y;
-
+	
+	bool bAddLast = false;
+	if( W & 1 )
+	{
+		bAddLast = true;
+		W -= 1;
+	}
+	
 	for( Y = 0; Y < H; Y++ )
 	{
-		for( X = 0; X < W; X++ )
+		uint32* pDstConvert = (uint32*)pDst;
+		for( X = 0; X < W / 2; X++ )
+		{
+			
+			*pDstConvert++ = nColor << 16 | nColor;
+			pDst += 2;
+		}
+		if( bAddLast )
 		{
 			*pDst++ = nColor;
-		}
+		}		
 		pDst += nMod;
 	}
 }
@@ -585,6 +599,7 @@ bool DisplayDriver::FillRect( SrvBitmap * pcBitmap, const IRect & cRect, const C
 //                pcBitmap->m_nBytesPerLine - BltW * 3, BltW, BltH, nColor );
 //      break;
 	case CS_RGB32:
+	case CS_RGBA32:
 		FillBlit32( ( uint32 * )&pcBitmap->m_pRaster[BltY * pcBitmap->m_nBytesPerLine + BltX * 4], pcBitmap->m_nBytesPerLine / 4 - BltW, BltW, BltH, COL_TO_RGB32( sColor ) );
 		break;
 	default:
@@ -613,25 +628,35 @@ static inline void Blit( uint8 *Src, uint8 *Dst, int SMod, int DMod, int W, int 
 	{
 		for( Y = 0; Y < H; Y++ )
 		{
-			for( X = 0; ( X < W ) && ( ( uint32 ( Src - 3 ) )&3 ); X++ )
+			for( X = 0; ( X < W ) && ( ( uint32 ( Src - 7 ) )&7 ); X++ )
 			{
 				*Dst-- = *Src--;
 			}
 
-			LSrc = ( uint32 * )( ( ( uint32 )Src ) - 3 );
-			LDst = ( uint32 * )( ( ( uint32 )Dst ) - 3 );
+			LSrc = ( uint32 * )( ( ( uint32 )Src ) - 7 );
+			LDst = ( uint32 * )( ( ( uint32 )Dst ) - 7 );
 
-			i = ( W - X ) / 4;
-
-			X += i * 4;
-
-			for( ; i; i-- )
+			
+			if( g_bUseMMX )
 			{
-				*LDst-- = *LSrc--;
+				i = ( W - X ) / 8;
+				X += i * 8;
+				mmx_revcpy( (uint8*)LDst, (uint8*)LSrc, i * 8 );
+				LSrc -= i * 2;
+				LDst -= i * 2;
+			}
+			else
+			{
+				i = ( W - X ) / 4;
+				X += i * 4;
+				for( ; i; i-- )
+				{
+					*LDst-- = *LSrc--;
+				}
 			}
 
-			Src = ( uint8 * )( ( ( uint32 )LSrc ) + 3 );
-			Dst = ( uint8 * )( ( ( uint32 )LDst ) + 3 );
+			Src = ( uint8 * )( ( ( uint32 )LSrc ) + 7 );
+			Dst = ( uint8 * )( ( ( uint32 )LDst ) + 7 );
 
 			for( ; X < W; X++ )
 			{
@@ -646,21 +671,31 @@ static inline void Blit( uint8 *Src, uint8 *Dst, int SMod, int DMod, int W, int 
 	{
 		for( Y = 0; Y < H; Y++ )
 		{
-			for( X = 0; ( X < W ) && ( ( ( uint32 )Src ) & 3 ); ++X )
+			for( X = 0; ( X < W ) && ( ( ( uint32 )Src ) & 7 ); ++X )
 			{
 				*Dst++ = *Src++;
 			}
 
 			LSrc = ( uint32 * )Src;
 			LDst = ( uint32 * )Dst;
-
-			i = ( W - X ) / 4;
-
-			X += i * 4;
-
-			for( ; i; i-- )
+			
+			if( g_bUseMMX )
 			{
-				*LDst++ = *LSrc++;
+				i = ( W - X ) / 8;
+				X += i * 8;
+				mmx_memcpy( (uint8*)LDst, (uint8*)LSrc, i * 8 );
+				LSrc += i * 2;
+				LDst += i * 2;
+			}
+			else
+			{
+				i = ( W - X ) / 4;
+				X += i * 4;
+
+				for( ; i; i-- )
+				{
+					*LDst++ = *LSrc++;
+				}
 			}
 
 			Src = ( uint8 * )LSrc;
@@ -747,6 +782,8 @@ static inline void BitBlit( SrvBitmap * sbm, SrvBitmap * dbm, int sx, int sy, in
 			Blit( sbm->m_pRaster + InPtr, dbm->m_pRaster + OutPtr, Smod, Dmod, w, h, true );
 		}
 	}
+	if( g_bUseMMX )
+		mmx_end();
 }
 
 //----------------------------------------------------------------------------
@@ -1500,7 +1537,7 @@ bool DisplayDriver::BltBitmap( SrvBitmap * dstbm, SrvBitmap * srcbm, IRect cSrcR
 		blit_convert_over( dstbm, srcbm, cSrcRect, cDstPos );
 		break;
 	case DM_BLEND:
-		if( srcbm->m_eColorSpc == CS_RGB32 )
+		if( srcbm->m_eColorSpc == CS_RGB32 || srcbm->m_eColorSpc == CS_RGBA32 )
 		{
 			blit_convert_alpha( dstbm, srcbm, cSrcRect, cDstPos );
 		}
@@ -1619,7 +1656,7 @@ void DisplayDriver::RenderGlyph( SrvBitmap * pcBitmap, Glyph * pcGlyph, const IP
 			pDst += nDstModulo;
 		}
 	}
-	else if( pcBitmap->m_eColorSpc == CS_RGB32 )
+	else if( pcBitmap->m_eColorSpc == CS_RGB32 || pcBitmap->m_eColorSpc == CS_RGBA32 )
 	{
 		int nDstModulo = pcBitmap->m_nBytesPerLine / 4 - nWidth;
 		uint32 *pDst = ( uint32 * )pcBitmap->m_pRaster + cRect.left + cRect.top * pcBitmap->m_nBytesPerLine / 4;
@@ -1761,7 +1798,7 @@ void DisplayDriver::RenderGlyph( SrvBitmap * pcBitmap, Glyph * pcGlyph, const IP
 			pDst += nDstModulo;
 		}
 	}
-	else if( pcBitmap->m_eColorSpc == CS_RGB32 )
+	else if( pcBitmap->m_eColorSpc == CS_RGB32 || pcBitmap->m_eColorSpc == CS_RGBA32 )
 	{
 		int nDstModulo = pcBitmap->m_nBytesPerLine / 4 - nWidth;
 		uint32 *pDst = ( uint32 * )pcBitmap->m_pRaster + cRect.left + cRect.top * pcBitmap->m_nBytesPerLine / 4;

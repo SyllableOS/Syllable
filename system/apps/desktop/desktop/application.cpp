@@ -33,6 +33,11 @@ App::App() : os::Application( "application/syllable-Desktop" )
 	SetPublic( true );
 }
 
+bool App::OkToQuit()
+{
+	return( false );
+}
+
 void App::HandleMessage( os::Message* pcMessage )
 {
 	//dbprintf( "Got message!\n" );

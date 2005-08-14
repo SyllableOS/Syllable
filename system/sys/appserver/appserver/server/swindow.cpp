@@ -74,7 +74,6 @@ SrvWindow::SrvWindow( const char *pzTitle, void *pTopView, uint32 nFlags, uint32
 
 	m_nFlags = nFlags;
 	m_bOffscreen = false;
-	m_bNeedRegionUpdate = false;
 	Rect cBorderFrame = cRect;
 
 	m_pcWndBorder = new WndBorder( this, NULL, "wnd_border", ( nFlags & WND_BACKMOST ) );
@@ -93,7 +92,6 @@ SrvWindow::SrvWindow( const char *pzTitle, void *pTopView, uint32 nFlags, uint32
 	m_bBorderHit = false;
 
 	m_pcIcon = NULL;
-	m_bClosing = false;
 	m_bMinimized = false;
 
 	if( nDesktopMask == 0 )
@@ -164,7 +162,6 @@ SrvWindow::SrvWindow( SrvApplication * pcApp, SrvBitmap * pcBitmap ):m_cMutex( "
 	m_nDesktopMask = ~0;
 
 	m_pcIcon = NULL;
-	m_bClosing = false;
 	m_bMinimized = false;
 
 	m_bBorderHit = false;
@@ -1231,11 +1228,6 @@ void SrvWindow::HandleMouseTransaction()
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-void SrvWindow::BeginRegionUpdate()
-{
-	m_bNeedRegionUpdate = true;
-}
-
 bool SrvWindow::DispatchMessage( Message * pcReq )
 {
 	switch ( pcReq->GetCode() )
@@ -1254,7 +1246,7 @@ bool SrvWindow::DispatchMessage( Message * pcReq )
 			{
 				const char *pzName;
 				Rect cFrame;
-				uint32 nFlags;
+				uint32 nFlags = 0;
 				void *pUserObject;
 				int nHideCount = 0;
 
@@ -1549,7 +1541,7 @@ bool SrvWindow::DispatchMessage( Message * pcReq )
 		}
 	case WR_SET_ICON:
 		{
-			int hHandle;
+			int hHandle = -1;
 
 			if( pcReq->FindInt( "handle", &hHandle ) == 0 )
 			{
@@ -1693,24 +1685,7 @@ void SrvWindow::Loop( void )
 
 		if( get_msg( m_hMsgPort, &nCode, psMsg, 8192 ) >= 0 )
 		{
-//      Lock();
-			if( m_bNeedRegionUpdate )
-			{
-				g_cLayerGate.Lock();
-				if( m_pcWndBorder != NULL )
-				{
-					m_pcWndBorder->UpdateRegions();
-				}
-				else
-				{
-					m_pcTopView->UpdateRegions();
-				}
-				m_bNeedRegionUpdate = false;
-				g_cLayerGate.Unlock();
-			}
-
 			bDoLoop = DispatchMessage( psMsg, nCode );
-//      Unlock();
 		}
 	}
 	delete[]( char * )psMsg;

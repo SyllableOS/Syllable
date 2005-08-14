@@ -1,5 +1,5 @@
-/*  Syllable Desktop
- *  Copyright (C) 2003 Arno Klenke
+/*  Syllable Dock
+ *  Copyright (C) 2005 Arno Klenke
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -17,32 +17,28 @@
  *  MA 02111-1307, USA
  */
  
+#ifndef _DOCKMENU_H_
+#define _DOCKMENU_H_
 
-#ifndef APPLICATION_H
-#define APPLICATION_H
+#include <gui/menu.h>
+#include <storage/path.h>
+#include <storage/nodemonitor.h>
 
-#include <util/application.h>
-#include <gui/window.h>
+namespace os
+{
+	class RegistrarManager;
+};
 
-class Desktop;
-
-class App : public os::Application
+class DockMenu : public os::Menu
 {
 public:
-	App();
-	bool OkToQuit();
-	virtual void HandleMessage( os::Message* pcMessage );
+	DockMenu( os::Handler* pcHandler, os::Rect cFrame, const char* pzName, os::MenuLayout_e eLayout );
+	~DockMenu();
+	os::MenuItem* FindMenuItem( os::String zName );
+	void AddEntry( os::RegistrarManager* pcManager, os::String zCategory, os::Path cPath,  bool bUseDirIcon, os::Path cDir );
+	void ScanPath( int nLevel, os::Path cPath );
 private:
-	Desktop* m_pcDesktop;
+	os::NodeMonitor* m_pcMonitor;
 };
 
 #endif
-
-
-
-
-
-
-
-
-

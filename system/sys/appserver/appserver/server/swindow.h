@@ -53,7 +53,6 @@ public:
     void	PostUsrMessage( os::Message* pcMsg );
     void	ReplaceDecorator();
     void	NotifyWindowFontChanged( bool bToolWindow );
-    void	BeginRegionUpdate();
     void	Quit();
     const char*	GetTitle() const { return( m_cTitle.c_str() ); }
     SrvApplication* GetApp() const { return( m_pcApp ); }
@@ -97,9 +96,7 @@ public:
     void	SetIcon( SrvBitmap* pcIcon ) { m_pcIcon = pcIcon; }
 	SrvBitmap* GetIcon() { return( m_pcIcon ); }
     
-    bool	IsClosing() { return( m_bClosing ); }
-    void	SetClosing( bool bClosing ) { m_bClosing = bClosing; }
-    
+  
     bool	IsMinimized() { return( m_bMinimized ); }
     void	SetMinimized( bool bMinimized ) { m_bMinimized = bMinimized; }
     
@@ -146,13 +143,11 @@ private:
     bigtime_t		m_nLastHitTime;	// Time of last mouse click
     bool		m_bBorderHit;
     bool		m_bOffscreen;	// True for bitmap windows
-    bool		m_bNeedRegionUpdate;
     thread_id		m_hThread;
     port_id		m_hMsgPort;	// Requests from application
     port_id		m_hEventPort;	// Events to application
     os::Locker		m_cMutex;
     os::Messenger*	m_pcAppTarget;
-    bool			m_bClosing;
     SrvBitmap*		m_pcIcon;
     bool			m_bMinimized;
 };

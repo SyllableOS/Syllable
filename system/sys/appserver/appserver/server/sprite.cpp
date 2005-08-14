@@ -28,6 +28,8 @@
 
 #include <algorithm>
 
+using namespace os;
+
 Locker SrvSprite::s_cLock( "sprite_lock" );
 
 std::vector < SrvSprite * >SrvSprite::s_cInstances;
@@ -79,7 +81,21 @@ SrvSprite::SrvSprite( const IRect & cBounds, const IPoint & cPos, const IPoint &
 	{
 		Draw();
 	}
-	s_cInstances.push_back( this );
+	if( pcImage == NULL )
+		s_cInstances.push_back( this );
+	else {
+		uint i;
+		for( i = 0; i < s_cInstances.size(); ++i )
+		{
+			if( s_cInstances[i]->m_pcImage == NULL )
+			{
+				s_cInstances.insert( s_cInstances.begin() + i, this );
+				break;
+			}
+		}
+		if( i == s_cInstances.size() )
+			s_cInstances.push_back( this );
+	}
 	s_cLock.Unlock();
 }
 
@@ -138,7 +154,7 @@ void SrvSprite::Hide( const IRect & cFrame )
 	s_cLock.Lock();
 	atomic_inc( &s_nHideCount );
 
-	for( uint i = 0; i < s_cInstances.size(); ++i )
+	for( int i = s_cInstances.size() - 1; i >= 0 ; --i )
 	{
 		SrvSprite *pcSprite = s_cInstances[i];
 
@@ -150,7 +166,7 @@ void SrvSprite::Hide( const IRect & cFrame )
 	}
 	if( bDoHide )
 	{
-		for( uint i = 0; i < s_cInstances.size(); ++i )
+		for( int i = s_cInstances.size() - 1; i >= 0; --i )
 		{
 			s_cInstances[i]->Erase();
 		}
@@ -174,7 +190,7 @@ void SrvSprite::Hide()
 		return;
 	}
 
-	for( uint i = 0; i < s_cInstances.size(); ++i )
+	for( int i = s_cInstances.size() - 1; i >= 0 ; --i )
 	{
 		SrvSprite *pcSprite = s_cInstances[i];
 
@@ -201,7 +217,7 @@ void SrvSprite::Unhide()
 		s_cLock.Unlock();
 		return;
 	}
-	for( int i = s_cInstances.size() - 1; i >= 0; --i )
+	for( uint i = 0; i < s_cInstances.size(); ++i )
 	{
 		SrvSprite *pcSprite = s_cInstances[i];
 
@@ -230,13 +246,13 @@ void SrvSprite::Draw()
 	DisplayDriver *pcDriver = m_pcTarget->m_pcDriver;
 
 	IRect cBitmapRect( 0, 0, m_pcTarget->m_nWidth - 1, m_pcTarget->m_nHeight - 1 );
-
+	
 	if( m_pcImage != NULL )
 	{
 		IRect cRect = m_cBounds + m_cPosition - m_cHotSpot;
 		IRect cClipRect = cRect & cBitmapRect;
 		IPoint cOffset = cClipRect.LeftTop() - cRect.LeftTop(  );
-
+		
 		if( cClipRect.IsValid() )
 		{
 			pcDriver->BltBitmap( m_pcBackground, m_pcTarget, cClipRect, cOffset, DM_COPY );
@@ -440,7 +456,7 @@ void SrvSprite::MoveBy( const IPoint & cDelta )
 
 	if( cOldRect.DoIntersect( cNewRect ) == false )
 	{
-		for( uint i = 0; i < s_cInstances.size(); ++i )
+		for( int i = s_cInstances.size() - 1; i >= 0; --i )
 		{
 			SrvSprite *pcSprite = s_cInstances[i];
 
@@ -468,7 +484,7 @@ void SrvSprite::MoveBy( const IPoint & cDelta )
 
 		SrvBitmap *pcTmp = new SrvBitmap( cTotRect.Width() + 1, cTotRect.Height(  ) + 1, m_pcTarget->m_eColorSpc );
 
-		for( uint i = 0; i < s_cInstances.size(); ++i )
+		for( int i = s_cInstances.size() - 1; i >= 0; --i )
 		{
 			SrvSprite *pcSprite = s_cInstances[i];
 
@@ -502,7 +518,7 @@ void SrvSprite::MoveBy( const IPoint & cDelta )
 
 			pcSprite->Capture( pcTmp, cClipOff + cDelta );
 		}
-		for( int i = s_cInstances.size() - 1; i >= 0; --i )
+		for( uint i = 0; i < s_cInstances.size(); ++i )
 		{
 			SrvSprite *pcSprite = s_cInstances[i];
 
@@ -520,7 +536,7 @@ void SrvSprite::MoveBy( const IPoint & cDelta )
 		{
 			pcDriver->BltBitmap( m_pcTarget, pcTmp, cTotRect.Bounds(), cLeftTop, DM_COPY );
 		}
-		for( int i = s_cInstances.size() - 1; i >= 0; --i )
+		for( uint i = 0; i < s_cInstances.size(); ++i )
 		{
 			SrvSprite *pcSprite = s_cInstances[i];
 

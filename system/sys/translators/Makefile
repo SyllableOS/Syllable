@@ -1,7 +1,7 @@
 CFLAGS   += -c
 CXXFLAGS += -c
 
-TRANSDIR = /system/drivers/translators
+TRANSDIR = /system/extensions/translators
 
 VPATH = ./
 
@@ -26,10 +26,10 @@ $(OBJDIR)/jpegtrans.so: $(JPGOBJS)
 	$(CXX) -shared $(JPGOBJS) -lsyllable -ljpeg -o $(OBJDIR)/jpegtrans.so
 
 $(OBJDIR)/pngtrans.so: $(PNGOBJS)
-	$(CXX) -shared $(PNGOBJS) -lsyllable -lpng -lz -o $(OBJDIR)/pngtrans.so
+	$(CXX) -shared $(PNGOBJS) -lsyllable -lpng -L/usr/zlib/lib -lz -o $(OBJDIR)/pngtrans.so
 
 $(OBJDIR)/giftrans.so: $(GIFOBJS)
-	$(CXX) -shared $(GIFOBJS) -lsyllable -lungif -lz -o $(OBJDIR)/giftrans.so
+	$(CXX) -shared $(GIFOBJS) -lsyllable -lungif -o $(OBJDIR)/giftrans.so
 
 $(OBJDIR)/icontrans.so: $(ICONOBJS)
 	$(CXX) -shared $(ICONOBJS) -lsyllable -o $(OBJDIR)/icontrans.so
@@ -41,7 +41,7 @@ install: $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so $(OB
 	install -s $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so $(OBJDIR)/icontrans.so $(OBJDIR)/winicontrans.so $(TRANSDIR)/
 
 dist: $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so $(OBJDIR)/icontrans.so $(OBJDIR)/winicontrans.so
-	install -s $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so $(OBJDIR)/icontrans.so $(OBJDIR)/winicontrans.so $(DIST_DIR)/atheos/sys/translators/
+	install -s $(OBJDIR)/jpegtrans.so $(OBJDIR)/pngtrans.so $(OBJDIR)/giftrans.so $(OBJDIR)/icontrans.so $(OBJDIR)/winicontrans.so $(DIST_DIR)/atheos/sys/extensions/translators/
 
 deps: $(OBJDIR) $(DEPS)
 

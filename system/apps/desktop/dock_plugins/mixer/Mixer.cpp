@@ -109,7 +109,7 @@ class MixerWindow : public Window
 				case SET_VALUE:
 				{
 					int32 nValue = m_pcSlider->GetValue().AsInt32();
-					nValue = 100 - nValue;
+					nValue = nValue;
 					Message cMsg( MEDIA_SERVER_SET_MASTER_VOLUME );
 					cMsg.AddInt32( "volume", nValue );
 					m_pcManager->GetInstance()->GetServerLink().SendMessage( &cMsg );
@@ -133,7 +133,7 @@ class MixerWindow : public Window
 			m_pcManager->GetInstance()->GetServerLink().SendMessage( &cMsg, &cReply );
 			if( cReply.FindInt32( "volume", &nVolume ) == 0 )
 			{
-				m_pcSlider->SetValue( 100 - nVolume, false );
+				m_pcSlider->SetValue( nVolume, false );
 			}
 		}
 	private:

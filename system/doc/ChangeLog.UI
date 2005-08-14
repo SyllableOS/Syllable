@@ -1,3 +1,23 @@
+* August 14 2005, Arno Klenke *
+
+ - IconDirView
+	o Icons are shown while dragging
+
+ - Menu
+	o Fixed a small rendering bug
+
+ - View
+	o Corrected default colors
+
+ - RegistrarManager
+	o Fixed memory leak
+
+ - Looper
+	o Make it possible to delete a timer from the TimerTick() method
+
+ - Translators
+	o Moved to /system/extensions/translators
+
 * July 27 2005, Henrik Isaksson *
 
  - splitter.h
@@ -1036,3 +1056,4 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+

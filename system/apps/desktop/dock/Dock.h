@@ -34,7 +34,7 @@
 #include <util/locker.h>
 #include <storage/nodemonitor.h>
 #include "dockplugin.h"
-#include "DirMenu.h"
+#include "DockMenu.h"
 #include <storage/registrar.h>
 
 class DockWin;
@@ -77,7 +77,7 @@ public:
 	virtual void Paint( const os::Rect& cUpdate );
 	virtual void MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData );
 	virtual void MouseUp( const os::Point & cPosition, uint32 nButton, os::Message * pcData );
-	DirMenu* GetSyllableMenu() { return( m_pcSyllableMenu ); }
+	DockMenu* GetSyllableMenu() { return( m_pcSyllableMenu ); }
 	void SetSyllableMenuClosed() { Invalidate( os::Rect( 0, 0, 30, 30 ) ); Flush(); m_bSyllableMenuOpened = false; }
 	void InvalidateSyllableMenu() { m_bSyllableMenuInvalid = true; }
 private:
@@ -87,7 +87,7 @@ private:
 	DockWin* m_pcWin;
 	bool m_bSyllableMenuInvalid;
 	bool m_bSyllableMenuOpened;
-	DirMenu* m_pcSyllableMenu;
+	DockMenu* m_pcSyllableMenu;
 };
 
 class DockWin : public os::Window
@@ -137,6 +137,7 @@ class DockApp : public os::Application
 public:
 	DockApp( const char* pzMimeType );
 	~DockApp();
+	virtual bool OkToQuit();
 	virtual void HandleMessage( os::Message* pcMessage );
 private:
 	DockWin* m_pcWindow;

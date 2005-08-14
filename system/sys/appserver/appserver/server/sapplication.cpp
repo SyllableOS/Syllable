@@ -39,6 +39,8 @@
 
 #include <macros.h>
 
+using namespace os;
+
 #define POINTER_WIDTH 11
 #define POINTER_HEIGHT 18
 
@@ -60,6 +62,7 @@ bool SrvApplication::s_bBorderCursor = false;
 SrvApplication::SrvApplication( const char *pzName, proc_id hOwner, port_id hEventPort ):m_cName( pzName ), m_cLocker( "app_lock" ), m_cFontLock( "app_font_lock" )
 {
 	m_hOwner = hOwner;
+	m_bClosing = false;
 
 	s_cAppListLock.Lock();
 	m_pcNext = s_pcFirstApp;
@@ -404,9 +407,9 @@ void SrvApplication::DispatchMessage( Message * pcReq )
 	case AR_OPEN_WINDOW:
 		{
 			const char *pzTitle;
-			port_id hEventPort;
-			uint32 nFlags;
-			uint32 nDesktopMask;
+			port_id hEventPort = -1;
+			uint32 nFlags = 0;
+			uint32 nDesktopMask = 0;
 			void *pUserObj;
 			Rect cFrame;
 
@@ -444,7 +447,7 @@ void SrvApplication::DispatchMessage( Message * pcReq )
 		}
 	case AR_OPEN_BITMAP_WINDOW:
 		{
-			int hBitmapHandle;
+			int hBitmapHandle = -1;
 			void *pUserObj;
 
 			pcReq->FindInt( "bitmap_handle", &hBitmapHandle );
@@ -922,7 +925,7 @@ void SrvApplication::DispatchMessage( Message * pcReq )
 		}
 	case AR_GET_SCREENMODE_INFO:
 		{
-			int32 nIndex;
+			int32 nIndex = 0;
 
 			Message cReply;
 
@@ -1554,7 +1557,7 @@ bool SrvApplication::DispatchMessage( const void *pMsg, int nCode )
 		{
 			Message cReq( pMsg );
 
-			int hTopView;
+			int hTopView = -1;
 
 			cReq.FindInt( "top_view", &hTopView );
 

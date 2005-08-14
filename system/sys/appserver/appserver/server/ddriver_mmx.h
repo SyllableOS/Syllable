@@ -23,8 +23,10 @@
 
 
 static inline void mmx_memcpy( uint8 *pTo, uint8 *pFrom, int nLen );
+static inline void mmx_revcpy( uint8 *pTo, uint8 *pFrom, int nLen );
 static inline void mmx_end();
 static inline void mmx_rgb32_to_rgb16( uint8* pSrc, uint8* pDst, unsigned nPixels );
+
 
 #endif	//	INTERFACE_DDRIVER_MMX_HPP
 

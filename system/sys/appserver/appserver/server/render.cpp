@@ -451,7 +451,10 @@ void Layer::DrawLine( const Point & cToPos )
 
 	if( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false )
 	{
-		SrvSprite::Hide( static_cast < IRect > ( GetBounds() + cTopLeft ) );
+		os::IRect cHideRect;
+		cHideRect |= cMin;
+		cHideRect |= cMax;
+		SrvSprite::Hide( cHideRect );
 	}
 
 	IPoint cITopLeft( cTopLeft );
@@ -525,6 +528,7 @@ void Layer::DrawString( const char *pzString, int nLength )
 			}
 			break;
 		case CS_RGB32:
+		case CS_RGBA32:
 			for( int i = 1; i < NUM_FONT_GRAYS; ++i )
 			{
 				m_anFontPalletteConverted[i] = COL_TO_RGB32( m_asFontPallette[i] );
@@ -585,7 +589,7 @@ void Layer::DrawString( const char *pzString, int nLength )
 			FontServer::Unlock();
 		}
 	}
-	else if( m_nDrawingMode == DM_BLEND && m_pcBitmap->m_eColorSpc == CS_RGB32 )
+	else if( m_nDrawingMode == DM_BLEND && ( m_pcBitmap->m_eColorSpc == CS_RGB32 || m_pcBitmap->m_eColorSpc == CS_RGBA32 ) )
 	{
 		if( FontServer::Lock() )
 		{
@@ -714,6 +718,7 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 			}
 			break;
 		case CS_RGB32:
+		case CS_RGBA32:
 			for( int i = 1; i < NUM_FONT_GRAYS; ++i )
 			{
 				m_anFontPalletteConverted[i] = COL_TO_RGB32( m_asFontPallette[i] );
@@ -882,7 +887,7 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 					m_pcBitmap->m_pcDriver->RenderGlyph( m_pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_anFontPalletteConverted );
 				}
 			}
-			else if( m_nDrawingMode == DM_BLEND && m_pcBitmap->m_eColorSpc == CS_RGB32 )
+			else if( m_nDrawingMode == DM_BLEND && ( m_pcBitmap->m_eColorSpc == CS_RGB32 || m_pcBitmap->m_eColorSpc == CS_RGBA32 ) )
 			{
 				ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
 				{
@@ -977,7 +982,7 @@ void Layer::FillRect( Rect cRect, Color32_s sColor )
 
 	if( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false )
 	{
-		SrvSprite::Hide( static_cast < IRect > ( GetBounds() + cTopLeft ) );
+		SrvSprite::Hide( cDstRect + cITopLeft );
 	}
 	ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
 	{
@@ -1058,7 +1063,7 @@ static int SortCmp( const void *pNode1, const void *pNode2 )
 
 void Layer::ScrollRect( SrvBitmap * pcBitmap, Rect cSrcRect, Point cDstPos )
 {
-	if( m_pcVisibleReg == NULL )
+	if( m_pcVisibleReg == NULL || m_pcBitmap == NULL )
 	{
 		return;
 	}
@@ -1199,6 +1204,9 @@ void Layer::ScrollRect( SrvBitmap * pcBitmap, Rect cSrcRect, Point cDstPos )
 void Layer::DrawBitMap( SrvBitmap * pcDstBitmap, SrvBitmap * pcBitMap, Rect cSrcRect, Point cDstPos )
 {
 	Region *pcReg = GetRegion();
+	
+	if( m_pcBitmap == NULL || pcBitMap == NULL )
+		return;
 
 	if( NULL == pcReg )
 	{
@@ -1214,7 +1222,7 @@ void Layer::DrawBitMap( SrvBitmap * pcDstBitmap, SrvBitmap * pcBitMap, Rect cSrc
 
 	if( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false )
 	{
-		SrvSprite::Hide( static_cast < IRect > ( GetBounds() ) + cTopLeft );
+		SrvSprite::Hide( cDstRect + cTopLeft );
 	}
 
 	ENUMCLIPLIST( &pcReg->m_cRects, pcClip )

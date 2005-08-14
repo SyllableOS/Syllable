@@ -1213,7 +1213,7 @@ void IconDirectoryView::DragSelection( os::Point cStartPoint )
 	if( nNumObjects != 1 )
 		delete( pcIcon );
 	
-	BeginDrag( &cData, cStartPoint - cIconPos, /*&cImage*/os::Rect( os::Point(), GetIconSize() ) );
+	BeginDrag( &cData, cStartPoint - cIconPos, &cImage/*os::Rect( os::Point(), GetIconSize() )*/ );
 }
 
 

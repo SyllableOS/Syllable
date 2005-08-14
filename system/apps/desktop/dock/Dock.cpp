@@ -25,6 +25,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <signal.h>
+#include <math.h>
 #include "Dock.h"
 
 
@@ -122,7 +123,7 @@ void DockView::Paint( const os::Rect& cUpdateRect )
 			sCurrentColor.green -= (int)cUpdateRect.top * sColorStep.green;
 			sCurrentColor.blue -= (int)cUpdateRect.top * sColorStep.blue;
 			for( int i = (int)cUpdateRect.top; i < ( (int)cUpdateRect.bottom < 30 ? (int)cUpdateRect.bottom + 1 : 30 ); i++ )
-			{
+			{				
 				SetFgColor( sCurrentColor );
 				DrawLine( os::Point( cUpdateRect.left, i ), os::Point( cUpdateRect.right, i ) );
 				sCurrentColor.red -= sColorStep.red;
@@ -163,7 +164,7 @@ void DockView::Paint( const os::Rect& cUpdateRect )
 		sCurrentColor.blue -= (int)cRect.top * sColorStep.blue;
 		for( int i = (int)cRect.top; i < ( (int)cRect.bottom < 30 ? (int)cRect.bottom + 1 : 30 ); i++ )
 		{
-			SetFgColor( sCurrentColor );
+			SetFgColor( sCurrentColor );	
 			DrawLine( os::Point( cRect.left, i ), os::Point( cRect.right, i ) );
 			sCurrentColor.red -= sColorStep.red;
 			sCurrentColor.green -= sColorStep.green;
@@ -326,10 +327,8 @@ void DockView::MouseUp( const os::Point & cPosition, uint32 nButton, os::Message
 						delete( m_pcSyllableMenu );
 						m_pcSyllableMenu = NULL;
 					}
-					/* We use the menus in ~/Dock */
-					os::String zPath = getenv( "HOME" );
-					zPath += os::String( "/Dock" );
-					m_pcSyllableMenu = new DirMenu( this, os::Path( zPath.c_str() ), os::Rect(), "dock_menu", os::ITEMS_IN_COLUMN );
+					
+					m_pcSyllableMenu = new DockMenu( this, os::Rect(), "dock_menu", os::ITEMS_IN_COLUMN );
 					m_pcSyllableMenu->SetCloseMessage( os::Message( DOCK_MENU_CLOSED ) );
 					m_pcSyllableMenu->SetCloseMsgTarget( m_pcWin );
 					m_pcSyllableMenu->AddItem( new os::MenuSeparator() );
@@ -456,25 +455,6 @@ DockWin::~DockWin()
 void DockWin::Quit( int nAction )
 {
 	
-	/* Close all windows */
-	os::Messenger cMsg( os::Application::GetInstance()->GetServerPort() );
-	cMsg.SendMessage( os::DR_CLOSE_WINDOWS );
-	
-	for( int i = 0; i < 32; i++ )
-	{
-		os::Desktop* pcDesktop = new os::Desktop( i );
-		os::Message cMsg;
-	
-		//dbprintf( "Waiting for desktop %i\n", i );
-		while( pcDesktop->GetWindows( &cMsg ) > 0 )
-		{
-			snooze( 100000 );
-		}
-		
-		delete( pcDesktop );
-	}
-	//dbprintf( "Closing desktop\n" );.
-	
 	/* Close filetype manager */
 	if( m_pcManager ) {
 		
@@ -483,53 +463,14 @@ void DockWin::Quit( int nAction )
 		m_pcManager->UnregisterCall( "os/Dock/GetPosition" );
 		m_pcManager->UnregisterCall( "os/Dock/SetPosition" );
 		m_pcManager->Put();
+		m_pcManager = NULL;
 	}
 	
-	
-	
-	//dbprintf( "Finished\n" );
-	
-	switch( nAction )
-	{
-		case 0:
-		{
-			/* Close desktop */
-			port_id nPort = find_port( "l:application/syllable-Desktop" );
-			if( nPort )
-			{
-				os::Messenger cMsg( nPort );
-				os::Message cMessage( os::M_QUIT );
-				cMsg.SendMessage( &cMessage );
-			}
-	
-			/* Kill ourself */
-			os::Application::GetInstance()->PostMessage( os::M_QUIT );
-			break;
-		}
-		case 1: 
-		{
-			os::Alert* pcAlert = new os::Alert( "Syllable", "Shutting down...", os::Alert::ALERT_INFO,
-												0, "Please wait...", NULL );
-			pcAlert->SetFlags( pcAlert->GetFlags() | os::WND_NO_BORDER );
-			pcAlert->Go( new os::Invoker( 0 ) );
-			
-			/* Shutdown */
-			apm_poweroff();
-			break;
-		}
-		case 2: 
-		{
-			
-			os::Alert* pcAlert = new os::Alert( "Syllable", "Rebooting...", os::Alert::ALERT_INFO,
-												0, "Please wait...", NULL );
-			pcAlert->SetFlags( pcAlert->GetFlags() | os::WND_NO_BORDER );
-			pcAlert->Go( new os::Invoker( 0 ) );
-			
-			/* Reboot */
-			reboot();
-			break;
-		}
-	}
+	/* Close all windows */
+	os::Messenger cMsg( os::Application::GetInstance()->GetServerPort() );
+	os::Message cMessage( os::DR_CLOSE_WINDOWS );
+	cMessage.AddInt32( "action", nAction );
+	cMsg.SendMessage( &cMessage );
 }
 
 int dock_logout_entry( void* pData )
@@ -652,7 +593,6 @@ void DockWin::HandleMessage( os::Message* pcMessage )
 		}
 		case DOCK_QUIT:
 		{
-			printf( "Quit!\n" );
 			os::Alert* pcAlert = new os::Alert( "Quit", "What do you want to do?", os::Alert::ALERT_QUESTION,
 												0, "Logout", "Shutdown", "Reboot", "Cancel", NULL );
 			os::Invoker* pcInvoker = new os::Invoker( new os::Message( DOCK_QUIT_ALERT ), this );
@@ -1042,6 +982,10 @@ DockApp::~DockApp()
 {
 }
 
+bool DockApp::OkToQuit()
+{
+	return( false );
+}
 
 void DockApp::HandleMessage( os::Message* pcMessage )
 {

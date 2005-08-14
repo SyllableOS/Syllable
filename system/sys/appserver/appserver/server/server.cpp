@@ -61,6 +61,8 @@
 void ScreenShot();
 
 
+using namespace os;
+
 static WinSelect *g_pcWinSelector = NULL;
 
 AppServer *AppServer::s_pcInstance = NULL;
@@ -68,6 +70,7 @@ AppServer *AppServer::s_pcInstance = NULL;
 Array < Layer > *g_pcLayers;
 Array < BitmapNode > *g_pcBitmaps;
 
+FontServer *g_pcFontServer;
 
 SrvApplication *g_pcFirstApp = NULL;
 Layer *g_pcTopView = NULL;
@@ -401,8 +404,8 @@ void AppServer::DispatchMessage( Message * pcReq )
 	case DR_CREATE_APP:
 		{
 			const char *pzName;
-			proc_id hOwner;
-			port_id hEventPort;
+			proc_id hOwner = -1;
+			port_id hEventPort = -1;
 
 			pcReq->FindInt( "process_id", &hOwner );
 			pcReq->FindInt( "event_port", &hEventPort );
@@ -475,8 +478,8 @@ void AppServer::DispatchMessage( Message * pcReq )
 		{
 			const char *pzKeyMap;
 			char zKeyMapPath[1024];
-			int32 nKeyDelay;
-			int32 nKeyRepeat;
+			int32 nKeyDelay = 0;
+			int32 nKeyRepeat = 0;
 
 			if( pcReq->FindInt( "delay", &nKeyDelay ) == 0 )
 			{
@@ -601,7 +604,7 @@ void AppServer::DispatchMessage( Message * pcReq )
 		}
 	case DR_SET_DESKTOP:
 		{
-			int nDesktop;
+			int nDesktop = 0;
 
 			pcReq->FindInt( "desktop", &nDesktop );
 			if( nDesktop < 32 && nDesktop >= 0 )
@@ -612,7 +615,7 @@ void AppServer::DispatchMessage( Message * pcReq )
 		{
 			int32 nCount = 0;
 			Message cReply;
-			int nDesktop;
+			int nDesktop = 0;
 
 			if( pcReq->FindInt( "desktop", &nDesktop ) != 0 )
 			{
@@ -775,7 +778,10 @@ void AppServer::DispatchMessage( Message * pcReq )
 	case DR_CLOSE_WINDOWS:
 		{
 			g_cLayerGate.Close();
-			thread_id hCloseThread = spawn_thread( "close_thread", (void*)AppServer::CloseWindows, 0, 0, NULL );
+			int* pnAction = new int;
+			*pnAction = 0;
+			pcReq->FindInt( "action", pnAction );
+			thread_id hCloseThread = spawn_thread( "close_thread", (void*)AppServer::CloseWindows, 0, 0, pnAction );
 
 			resume_thread( hCloseThread );
 			g_cLayerGate.Open();
@@ -933,38 +939,56 @@ void AppServer::Run( void )
  *		will close all windows. It will run in its own thread.
  * \author Arno Klenke
  *****************************************************************************/
-int32 AppServer::CloseWindows( void *pcData )
+int32 AppServer::CloseWindows( void *pData )
 {
-	SrvWindow *pcWindow;
-
-	for( int i = 0; i < 32; i++ )
+	int* pnAction = (int*)pData;
+	
+	restart:
+	SrvApplication::LockAppList();
+	SrvApplication* pcApp = SrvApplication::GetFirstApp();
+	
+	/* Close all applications */
+	while( pcApp )
 	{
-	      restart:
-		snooze( 100000 );
-		g_cLayerGate.Close();
-		pcWindow = get_first_window( i );
-		while( pcWindow != NULL )
+		if( !( pcApp->GetName() == "application/syllable-Desktop" ||
+			   pcApp->GetName() == "media_server" ||
+			   pcApp->GetName() == "registrar" ||
+			   pcApp->GetName() == "application/x-vnd.syllable-login_application" ) )
 		{
-			if( pcWindow->GetTopView()->IsVisible(  ) && !pcWindow->GetTopView(  )->IsBackdrop(  ) && !( pcWindow->GetFlags(  ) & WND_NO_CLOSE_BUT ) && !( pcWindow->GetFlags(  ) & WND_SYSTEM ) && !pcWindow->IsClosing(  ) )
+			if( !pcApp->IsClosing() )
 			{
-				pcWindow->SetClosing( true );
-				Message cMsg( M_QUIT );
-
-				pcWindow->PostUsrMessage( &cMsg );
+				pcApp->SetClosing( true );
+				os::Message cMsg( os::M_QUIT );
+				if( pcApp->GetName() == "application/syllable-Dock" )
+					cMsg.SetCode( os::M_TERMINATE );
+				pcApp->PostUsrMessage( &cMsg );
 			}
-			if( pcWindow->IsClosing() )
-			{
-				g_cLayerGate.Open();
-				goto restart;
-			}
-			pcWindow = pcWindow->m_asDTState[i].m_pcNextWindow;
+			SrvApplication::UnlockAppList();
+			snooze( 100000 );
+			goto restart;
 		}
-		g_cLayerGate.Open();
+		pcApp = pcApp->GetNextApp();
 	}
+	
+	/* Close the desktop */
+	pcApp = SrvApplication::GetFirstApp();
+	while( pcApp )
+	{
+		if( pcApp->GetName() == "application/syllable-Desktop" && !pcApp->IsClosing() )
+		{
+			os::Message cMsg( os::M_TERMINATE );
+			pcApp->SetClosing( true );
+			pcApp->PostUsrMessage( &cMsg );
+			break;
+		}
+		pcApp = pcApp->GetNextApp();
+	}
+	SrvApplication::UnlockAppList();
 
+	if( *pnAction == 1 ) { apm_poweroff(); for(;;) { snooze( 10000 ); } } 
+	else if( *pnAction == 2 ) { reboot(); for(;;) { snooze( 10000 );} }
+		
 
-	g_pcTopView->UpdateRegions();
-	SrvWindow::HandleMouseTransaction();
 	return ( 0 );
 }
 
@@ -1006,6 +1030,8 @@ int main( int argc, char **argv )
 	signal( SIGINT, SIG_IGN );
 	signal( SIGQUIT, SIG_IGN );
 	signal( SIGTERM, SIG_IGN );
+	
+	g_pcFontServer = new FontServer();
 
 	g_pcBitmaps = new Array < BitmapNode >;
 	g_pcLayers = new Array < Layer >;

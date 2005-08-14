@@ -49,6 +49,7 @@ class Looper::Private
 
 	String m_cName;
 	TimerNode *m_pcFirstTimer;
+	TimerNode *m_pcFirstRestartTimer;
 
 	std::map <int, Handler * >m_cHandlerMap;
 	Handler *m_pcDefaultHandler;
@@ -114,6 +115,7 @@ Looper::Looper( const String & cName, int nPriority, int nPortSize ):Handler( cN
 	m->m_hPort = create_port( ( String( "l:" ) + cName ).c_str(), nPortSize );
 	m->m_pcDefaultHandler = NULL;
 	m->m_pcFirstTimer = NULL;
+	m->m_pcFirstRestartTimer = NULL;
 	m->m_nNextEvent = INFINITE_TIMEOUT;
 
 	m->m_pcCurrentMessage = NULL;
@@ -155,6 +157,7 @@ Looper::~Looper()
 		m->m_pcFirstTimer = pcTimer->m_pcNext;
 		delete pcTimer;
 	}
+	assert( m->m_pcFirstRestartTimer == NULL );
 	delete m;
 }
 
@@ -322,6 +325,19 @@ bool Looper::RemoveTimer( Handler * pcTarget, int nID )
 			return ( true );
 		}
 	}
+	for( ppcTmp = &m->m_pcFirstRestartTimer; NULL != *ppcTmp; ppcTmp = &( *ppcTmp )->m_pcNext )
+	{
+		TimerNode *pcTimer = *ppcTmp;
+
+		if( pcTimer->m_pcHandler == pcTarget && pcTimer->m_nID == nID )
+		{
+			*ppcTmp = pcTimer->m_pcNext;
+			delete pcTimer;
+
+			return ( true );
+		}
+	}
+
 	return ( false );
 }
 
@@ -1699,7 +1715,7 @@ void Looper::_Loop()
 		Lock();
 		bigtime_t nCurTime = get_system_time();
 
-		TimerNode *pcFirstRestarted = NULL;
+		m->m_pcFirstRestartTimer = NULL;
 
 		while( m->m_pcFirstTimer != NULL && nCurTime >= m->m_pcFirstTimer->m_nTimeout )
 		{
@@ -1717,18 +1733,19 @@ void Looper::_Loop()
 			else
 			{
 				pcTimer->m_nTimeout = nCurTime + pcTimer->m_nPeriode;
-				pcTimer->m_pcNext = pcFirstRestarted;
-				pcFirstRestarted = pcTimer;
+				pcTimer->m_pcNext = m->m_pcFirstRestartTimer;
+				m->m_pcFirstRestartTimer = pcTimer;
 			}
 			pcTarget->TimerTick( nID );
 		}
-		while( pcFirstRestarted != NULL )
+		while( m->m_pcFirstRestartTimer != NULL )
 		{
-			TimerNode *pcTimer = pcFirstRestarted;
+			TimerNode *pcTimer = m->m_pcFirstRestartTimer;
 
-			pcFirstRestarted = pcTimer->m_pcNext;
+			m->m_pcFirstRestartTimer = pcTimer->m_pcNext;
 			_InsertTimer( pcTimer );
 		}
+		m->m_pcFirstRestartTimer = NULL;
 		Unlock();
 
 		while( get_msg_x( m->m_hPort, &nCode, pBuffer, 8192, 0 ) >= 0 )

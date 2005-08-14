@@ -1,5 +1,5 @@
-#ifndef __F_ATHEOS_GUI_H__
-#define __F_ATHEOS_GUI_H__
+#ifndef __F_APPLICATION_H__
+#define __F_APPLICATION_H__
 
 /*
  *  The AtheOS application server
@@ -26,8 +26,6 @@
 #include <string>
 #include <vector>
 
-using namespace os;
-
 class SrvWindow;
 class FontNode;
 class BitmapNode;
@@ -44,49 +42,57 @@ public:
     SrvApplication( const char* pzName, proc_id hOwner, port_id hEventPort );
     ~SrvApplication();
     static SrvApplication*	FindApp( proc_id hProc );
+	static SrvApplication*	GetFirstApp() { return( s_pcFirstApp ); }
+	SrvApplication*			GetNextApp() { return( m_pcNext ); }
+	static void 			LockAppList() { s_cAppListLock.Lock(); }
+	static void				UnlockAppList() { s_cAppListLock.Unlock(); }
+	std::string  GetName()  { return( m_cName ); }
     void		 Lock() 	{ m_cLocker.Lock(); }
     void		 Unlock()	{ m_cLocker.Unlock(); }
     bool		 IsLocked()	{ return( m_cLocker.IsLocked() ); }
+	bool		 IsClosing() { return( m_bClosing ); }
+	void		 SetClosing( bool bClosing ) { m_bClosing = bClosing; }
     port_id	 GetReqPort() const { return( m_hReqPort ); }
     FontNode*	 GetFont( uint32 nID );
-    void	PostUsrMessage( Message* pcMsg );
+    void	PostUsrMessage( os::Message* pcMsg );
     static void ReplaceDecorators();
     static void NotifyWindowFontChanged( bool bToolWindow );
     static void NotifyColorCfgChanged();
-    static void SetCursor( mouse_ptr_mode eMode, const IPoint& cHotSpot, const void* pImage, int nWidth, int nHeight );
+    static void SetCursor( os::mouse_ptr_mode eMode, const os::IPoint& cHotSpot, const void* pImage, int nWidth, int nHeight );
     static void RestoreCursor();
     
 private:
-    void CreateBitmap( port_id hReply, int nWidth, int nHeight, color_space eColorSpc, uint32 nFlags );
+    void CreateBitmap( port_id hReply, int nWidth, int nHeight, os::color_space eColorSpc, uint32 nFlags );
     void DeleteBitmap( int hHandle );
 
     static SrvApplication* s_pcFirstApp;
-    static Locker	   s_cAppListLock;
+    static os::Locker	   s_cAppListLock;
   
     static uint32	Entry( void* pData );
-    void	DispatchMessage( Message* pcReq );
+    void	DispatchMessage( os::Message* pcReq );
     bool	DispatchMessage( const void* pMsg, int nCode );
     void	Loop();
 
     void	AddWindow( SrvWindow* pcWnd );
     void	RemoveWindow( SrvWindow* pcWnd );
 
-    std::string		   m_cName;
-    SrvApplication*	   m_pcNext;
-    thread_id		   m_hThread;
-    proc_id		   m_hOwner;
-    Locker		   m_cLocker;
-    Locker		   m_cFontLock;
-    port_id		   m_hReqPort;
-    Messenger*		   m_pcAppTarget;
+    std::string			m_cName;
+    SrvApplication*		m_pcNext;
+    thread_id			m_hThread;
+    proc_id				m_hOwner;
+    os::Locker			m_cLocker;
+    os::Locker			m_cFontLock;
+    port_id				m_hReqPort;
+    os::Messenger*		m_pcAppTarget;
+	bool				m_bClosing;
 
     struct Cursor
     {
-	void*		m_pImage;
-	IPoint		m_cSize;
-	mouse_ptr_mode	m_eMode;
-	IPoint		m_cHotSpot;
-	SrvApplication* m_pcOwner;
+	void*				m_pImage;
+	os::IPoint			m_cSize;
+	os::mouse_ptr_mode	m_eMode;
+	os::IPoint			m_cHotSpot;
+	SrvApplication*		m_pcOwner;
     };
 
     static std::vector<Cursor*> s_cCursorStack;

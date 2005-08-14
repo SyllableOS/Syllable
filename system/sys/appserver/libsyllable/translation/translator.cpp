@@ -66,7 +66,7 @@ void TranslatorFactory::LoadAll()
 {
 	try
 	{
-		Directory cDir( "/system/drivers/translators" );
+		Directory cDir( "/system/extensions/translators" );
 
 		String cName;
 
@@ -76,7 +76,7 @@ void TranslatorFactory::LoadAll()
 			{
 				continue;
 			}
-			String cPath( "/system/drivers/translators/" );
+			String cPath( "/system/extensions/translators/" );
 
 			cPath += cName;
 

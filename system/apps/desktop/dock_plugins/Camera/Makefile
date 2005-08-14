@@ -26,7 +26,8 @@ dist:  $(OBJDIR)/Camera.so
 deps: $(OBJDIR)
 
 clean:
-	rm -f $(OBJS) $(OBJDIR)/*.d $(OBJDIR)/Camera.so
+	rm -f $(OBJS) $(OBJDIR)/Camera.so
 
 -include $(OBJDIR)/*.d
+
 

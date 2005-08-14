@@ -296,7 +296,7 @@ bool DisplayDriver::ClipLine( const IRect & cRect, int *x1, int *y1, int *x2, in
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-static void draw_line16( SrvBitmap * pcBitmap, const IRect & cClip, int x1, int y1, int x2, int y2, uint16 nColor )
+static void draw_line16( SrvBitmap * pcBitmap, const IRect & cClip, int x1, int y1, int x2, int y2, uint16 nColor, uint32 nColor32, int nMode )
 {
 	int nODeltaX = abs( x2 - x1 );
 	int nODeltaY = abs( y2 - y1 );
@@ -348,7 +348,37 @@ static void draw_line16( SrvBitmap * pcBitmap, const IRect & cClip, int x1, int 
 
 		for( int i = 0; i <= nDeltaX; ++i )
 		{
-			*pRaster = nColor;
+			if( nMode == DM_COPY )
+			{
+				*pRaster = nColor;
+			}
+			else if( nMode == DM_INVERT )
+			{
+				Color32_s sColor = RGB16_TO_COL( *pRaster );
+
+				sColor.red = 255 - sColor.red;
+				sColor.green = 255 - sColor.green;
+				sColor.blue = 255 - sColor.blue;
+				*pRaster = COL_TO_RGB16( sColor );
+			}
+			else if( nMode == DM_BLEND )
+			{
+				uint32 nSrcColor = nColor32;
+				unsigned nAlpha = nSrcColor >> 27;
+					
+				if( nAlpha == ( 0xff >> 3 ) ) {
+					*pRaster = ( nSrcColor >> 8 & 0xf800 ) + ( nSrcColor >> 5 & 0x7e0 ) 
+						+ ( nSrcColor >> 3  & 0x1f );
+				} else if( nAlpha != 0x00 ) {
+					uint32 nDstColor = *pRaster;
+					nSrcColor = ( ( nSrcColor & 0xfc00 ) << 11 ) + ( nSrcColor >> 8 & 0xf800 )
+						      + ( nSrcColor >> 3 & 0x1f );
+					nDstColor = ( nDstColor | nDstColor << 16 ) & 0x07e0f81f;
+					nDstColor += ( nSrcColor - nDstColor ) * nAlpha >> 5;
+					nDstColor &= 0x07e0f81f;
+					*pRaster = nDstColor | nDstColor >> 16;
+				}		
+			}
 			if( d < 0 )
 			{
 				d += dinc1;
@@ -397,7 +427,37 @@ static void draw_line16( SrvBitmap * pcBitmap, const IRect & cClip, int x1, int 
 
 		for( int i = 0; i <= nDeltaY; ++i )
 		{
-			*pRaster = nColor;
+			if( nMode == DM_COPY )
+			{
+				*pRaster = nColor;
+			}
+			else if( nMode == DM_INVERT )
+			{
+				Color32_s sColor = RGB16_TO_COL( *pRaster );
+
+				sColor.red = 255 - sColor.red;
+				sColor.green = 255 - sColor.green;
+				sColor.blue = 255 - sColor.blue;
+				*pRaster = COL_TO_RGB16( sColor );
+			}
+			else if( nMode == DM_BLEND )
+			{
+				uint32 nSrcColor = nColor32;
+				unsigned nAlpha = nSrcColor >> 27;
+					
+				if( nAlpha == ( 0xff >> 3 ) ) {
+					*pRaster = ( nSrcColor >> 8 & 0xf800 ) + ( nSrcColor >> 5 & 0x7e0 ) 
+						+ ( nSrcColor >> 3  & 0x1f );
+				} else if( nAlpha != 0x00 ) {
+					uint32 nDstColor = *pRaster;
+					nSrcColor = ( ( nSrcColor & 0xfc00 ) << 11 ) + ( nSrcColor >> 8 & 0xf800 )
+						      + ( nSrcColor >> 3 & 0x1f );
+					nDstColor = ( nDstColor | nDstColor << 16 ) & 0x07e0f81f;
+					nDstColor += ( nSrcColor - nDstColor ) * nAlpha >> 5;
+					nDstColor &= 0x07e0f81f;
+					*pRaster = nDstColor | nDstColor >> 16;
+				}		
+			}
 			if( d < 0 )
 			{
 				d += dinc1;
@@ -412,263 +472,7 @@ static void draw_line16( SrvBitmap * pcBitmap, const IRect & cClip, int x1, int 
 	}
 }
 
-static void invert_line16( SrvBitmap * pcBitmap, const IRect & cClip, int x1, int y1, int x2, int y2 )
-{
-	int nODeltaX = abs( x2 - x1 );
-	int nODeltaY = abs( y2 - y1 );
-	int ox1 = x1;
-	int oy1 = y1;
-	uint16 *pRaster;
-	int nModulo = pcBitmap->m_nBytesPerLine;
-
-	if( DisplayDriver::ClipLine( cClip, &x1, &y1, &x2, &y2 ) == false )
-	{
-		return;
-	}
-	int nDeltaX = abs( x2 - x1 );
-	int nDeltaY = abs( y2 - y1 );
-
-	if( nODeltaX > nODeltaY )
-	{
-		int dinc1 = nODeltaY << 1;
-		int dinc2 = ( nODeltaY - nODeltaX ) << 1;
-		int d = dinc1 - nODeltaX;
-
-		int nYStep;
-
-		if( ox1 != x1 || oy1 != y1 )
-		{
-			int nClipDeltaX = abs( x1 - ox1 );
-			int nClipDeltaY = abs( y1 - oy1 );
-
-			d += ( ( nClipDeltaY * dinc2 ) + ( ( nClipDeltaX - nClipDeltaY ) * dinc1 ) );
-		}
-
-		if( y1 > y2 )
-		{
-			nYStep = -nModulo;
-		}
-		else
-		{
-			nYStep = nModulo;
-		}
-		if( x1 > x2 )
-		{
-			nYStep = -nYStep;
-			pRaster = ( uint16 * )( pcBitmap->m_pRaster + x2 * 2 + nModulo * y2 );
-		}
-		else
-		{
-			pRaster = ( uint16 * )( pcBitmap->m_pRaster + x1 * 2 + nModulo * y1 );
-		}
-
-		for( int i = 0; i <= nDeltaX; ++i )
-		{
-			Color32_s sColor = RGB16_TO_COL( *pRaster );
-
-			sColor.red = 255 - sColor.red;
-			sColor.green = 255 - sColor.green;
-			sColor.blue = 255 - sColor.blue;
-			*pRaster = COL_TO_RGB16( sColor );
-
-			if( d < 0 )
-			{
-				d += dinc1;
-			}
-			else
-			{
-				d += dinc2;
-				pRaster = ( uint16 * )( ( ( uint8 * )pRaster ) + nYStep );
-			}
-			pRaster++;
-		}
-	}
-	else
-	{
-		int dinc1 = nODeltaX << 1;
-		int d = dinc1 - nODeltaY;
-		int dinc2 = ( nODeltaX - nODeltaY ) << 1;
-		int nXStep;
-
-		if( ox1 != x1 || oy1 != y1 )
-		{
-			int nClipDeltaX = abs( x1 - ox1 );
-			int nClipDeltaY = abs( y1 - oy1 );
-
-			d += ( ( nClipDeltaX * dinc2 ) + ( ( nClipDeltaY - nClipDeltaX ) * dinc1 ) );
-		}
-
-
-		if( x1 > x2 )
-		{
-			nXStep = -sizeof( uint16 );
-		}
-		else
-		{
-			nXStep = sizeof( uint16 );
-		}
-		if( y1 > y2 )
-		{
-			nXStep = -nXStep;
-			pRaster = ( uint16 * )( pcBitmap->m_pRaster + x2 * 2 + nModulo * y2 );
-		}
-		else
-		{
-			pRaster = ( uint16 * )( pcBitmap->m_pRaster + x1 * 2 + nModulo * y1 );
-		}
-
-		for( int i = 0; i <= nDeltaY; ++i )
-		{
-			Color32_s sColor = RGB16_TO_COL( *pRaster );
-
-			sColor.red = 255 - sColor.red;
-			sColor.green = 255 - sColor.green;
-			sColor.blue = 255 - sColor.blue;
-			*pRaster = COL_TO_RGB16( sColor );
-
-			if( d < 0 )
-			{
-				d += dinc1;
-			}
-			else
-			{
-				d += dinc2;
-				pRaster = ( uint16 * )( ( ( uint8 * )pRaster ) + nXStep );
-			}
-			pRaster = ( uint16 * )( ( ( uint8 * )pRaster ) + nModulo );
-		}
-	}
-}
-
-static void invert_line15( SrvBitmap * pcBitmap, const IRect & cClip, int x1, int y1, int x2, int y2 )
-{
-	int nODeltaX = abs( x2 - x1 );
-	int nODeltaY = abs( y2 - y1 );
-	int ox1 = x1;
-	int oy1 = y1;
-	uint16 *pRaster;
-	int nModulo = pcBitmap->m_nBytesPerLine;
-
-	if( DisplayDriver::ClipLine( cClip, &x1, &y1, &x2, &y2 ) == false )
-	{
-		return;
-	}
-	int nDeltaX = abs( x2 - x1 );
-	int nDeltaY = abs( y2 - y1 );
-
-	if( nODeltaX > nODeltaY )
-	{
-		int dinc1 = nODeltaY << 1;
-		int dinc2 = ( nODeltaY - nODeltaX ) << 1;
-		int d = dinc1 - nODeltaX;
-
-		int nYStep;
-
-		if( ox1 != x1 || oy1 != y1 )
-		{
-			int nClipDeltaX = abs( x1 - ox1 );
-			int nClipDeltaY = abs( y1 - oy1 );
-
-			d += ( ( nClipDeltaY * dinc2 ) + ( ( nClipDeltaX - nClipDeltaY ) * dinc1 ) );
-		}
-
-		if( y1 > y2 )
-		{
-			nYStep = -nModulo;
-		}
-		else
-		{
-			nYStep = nModulo;
-		}
-		if( x1 > x2 )
-		{
-			nYStep = -nYStep;
-			pRaster = ( uint16 * )( pcBitmap->m_pRaster + x2 * 2 + nModulo * y2 );
-		}
-		else
-		{
-			pRaster = ( uint16 * )( pcBitmap->m_pRaster + x1 * 2 + nModulo * y1 );
-		}
-
-		for( int i = 0; i <= nDeltaX; ++i )
-		{
-			Color32_s sColor = RGB15_TO_COL( *pRaster );
-
-			sColor.red = 255 - sColor.red;
-			sColor.green = 255 - sColor.green;
-			sColor.blue = 255 - sColor.blue;
-			*pRaster = COL_TO_RGB15( sColor );
-
-			if( d < 0 )
-			{
-				d += dinc1;
-			}
-			else
-			{
-				d += dinc2;
-				pRaster = ( uint16 * )( ( ( uint8 * )pRaster ) + nYStep );
-			}
-			pRaster++;
-		}
-	}
-	else
-	{
-		int dinc1 = nODeltaX << 1;
-		int d = dinc1 - nODeltaY;
-		int dinc2 = ( nODeltaX - nODeltaY ) << 1;
-		int nXStep;
-
-		if( ox1 != x1 || oy1 != y1 )
-		{
-			int nClipDeltaX = abs( x1 - ox1 );
-			int nClipDeltaY = abs( y1 - oy1 );
-
-			d += ( ( nClipDeltaX * dinc2 ) + ( ( nClipDeltaY - nClipDeltaX ) * dinc1 ) );
-		}
-
-
-		if( x1 > x2 )
-		{
-			nXStep = -sizeof( uint16 );
-		}
-		else
-		{
-			nXStep = sizeof( uint16 );
-		}
-		if( y1 > y2 )
-		{
-			nXStep = -nXStep;
-			pRaster = ( uint16 * )( pcBitmap->m_pRaster + x2 * 2 + nModulo * y2 );
-		}
-		else
-		{
-			pRaster = ( uint16 * )( pcBitmap->m_pRaster + x1 * 2 + nModulo * y1 );
-		}
-
-		for( int i = 0; i <= nDeltaY; ++i )
-		{
-			Color32_s sColor = RGB15_TO_COL( *pRaster );
-
-			sColor.red = 255 - sColor.red;
-			sColor.green = 255 - sColor.green;
-			sColor.blue = 255 - sColor.blue;
-			*pRaster = COL_TO_RGB15( sColor );
-
-			if( d < 0 )
-			{
-				d += dinc1;
-			}
-			else
-			{
-				d += dinc2;
-				pRaster = ( uint16 * )( ( ( uint8 * )pRaster ) + nXStep );
-			}
-			pRaster = ( uint16 * )( ( ( uint8 * )pRaster ) + nModulo );
-		}
-	}
-}
-
-static void draw_line32( SrvBitmap * pcBitmap, const IRect & cClip, int x1, int y1, int x2, int y2, uint32 nColor )
+static void draw_line32( SrvBitmap * pcBitmap, const IRect & cClip, int x1, int y1, int x2, int y2, uint32 nColor, int nMode )
 {
 	int nODeltaX = abs( x2 - x1 );
 	int nODeltaY = abs( y2 - y1 );
@@ -720,7 +524,44 @@ static void draw_line32( SrvBitmap * pcBitmap, const IRect & cClip, int x1, int 
 
 		for( int i = 0; i <= nDeltaX; ++i )
 		{
-			*pRaster = nColor;
+			if( nMode == DM_COPY )
+			{
+				*pRaster = nColor;
+			}
+			else if( nMode == DM_INVERT )
+			{
+				Color32_s sColor = RGB32_TO_COL( *pRaster );
+
+				sColor.red = 255 - sColor.red;
+				sColor.green = 255 - sColor.green;
+				sColor.blue = 255 - sColor.blue;
+				*pRaster = COL_TO_RGB32( sColor );
+			} 
+			else if( nMode == DM_BLEND )
+			{
+				uint32 nSrcColor = nColor;
+				uint32 nAlpha = nSrcColor >> 24;
+			
+				if( nAlpha == 0xff )
+				{
+					*pRaster = nSrcColor;
+				} 
+				else if( nAlpha != 0x00 )
+				{
+					uint32 nDstColor = *pRaster;
+					uint32 nSrc1;
+					uint32 nDst1;
+					uint32 nDstAlpha = nDstColor & 0xff000000;
+
+					nSrc1 = nSrcColor & 0xff00ff;
+					nDst1 = nDstColor & 0xff00ff;
+					nDst1 = ( nDst1 + ( ( nSrc1 - nDst1 ) * nAlpha >> 8 ) ) & 0xff00ff;
+					nSrcColor &= 0xff00;
+					nDstColor &= 0xff00;
+					nDstColor = ( nDstColor + ( ( nSrcColor - nDstColor ) * nAlpha >> 8)) & 0xff00;
+					*pRaster = nDst1 | nDstColor | nDstAlpha;
+				}
+			}
 			if( d < 0 )
 			{
 				d += dinc1;
@@ -769,134 +610,44 @@ static void draw_line32( SrvBitmap * pcBitmap, const IRect & cClip, int x1, int 
 
 		for( int i = 0; i <= nDeltaY; ++i )
 		{
-			*pRaster = nColor;
-			if( d < 0 )
+			if( nMode == DM_COPY )
 			{
-				d += dinc1;
+				*pRaster = nColor;
 			}
-			else
+			else if( nMode == DM_INVERT )
 			{
-				d += dinc2;
-				pRaster = ( uint32 * )( ( ( uint8 * )pRaster ) + nXStep );
-			}
-			pRaster = ( uint32 * )( ( ( uint8 * )pRaster ) + nModulo );
-		}
-	}
-}
+				Color32_s sColor = RGB32_TO_COL( *pRaster );
 
-static void invert_line32( SrvBitmap * pcBitmap, const IRect & cClip, int x1, int y1, int x2, int y2 )
-{
-	int nODeltaX = abs( x2 - x1 );
-	int nODeltaY = abs( y2 - y1 );
-	int ox1 = x1;
-	int oy1 = y1;
-	uint32 *pRaster;
-	int nModulo = pcBitmap->m_nBytesPerLine;
-
-	if( DisplayDriver::ClipLine( cClip, &x1, &y1, &x2, &y2 ) == false )
-	{
-		return;
-	}
-	int nDeltaX = abs( x2 - x1 );
-	int nDeltaY = abs( y2 - y1 );
-
-	if( nODeltaX > nODeltaY )
-	{
-		int dinc1 = nODeltaY << 1;
-		int dinc2 = ( nODeltaY - nODeltaX ) << 1;
-		int d = dinc1 - nODeltaX;
-
-		int nYStep;
-
-		if( ox1 != x1 || oy1 != y1 )
-		{
-			int nClipDeltaX = abs( x1 - ox1 );
-			int nClipDeltaY = abs( y1 - oy1 );
-
-			d += ( ( nClipDeltaY * dinc2 ) + ( ( nClipDeltaX - nClipDeltaY ) * dinc1 ) );
-		}
-
-		if( y1 > y2 )
-		{
-			nYStep = -nModulo;
-		}
-		else
-		{
-			nYStep = nModulo;
-		}
-		if( x1 > x2 )
-		{
-			nYStep = -nYStep;
-			pRaster = ( uint32 * )( pcBitmap->m_pRaster + x2 * 4 + nModulo * y2 );
-		}
-		else
-		{
-			pRaster = ( uint32 * )( pcBitmap->m_pRaster + x1 * 4 + nModulo * y1 );
-		}
-
-		for( int i = 0; i <= nDeltaX; ++i )
-		{
-			Color32_s sColor = RGB32_TO_COL( *pRaster );
-
-			sColor.red = 255 - sColor.red;
-			sColor.green = 255 - sColor.green;
-			sColor.blue = 255 - sColor.blue;
-			*pRaster = COL_TO_RGB32( sColor );
-			if( d < 0 )
+				sColor.red = 255 - sColor.red;
+				sColor.green = 255 - sColor.green;
+				sColor.blue = 255 - sColor.blue;
+				*pRaster = COL_TO_RGB32( sColor );
+			} 
+			else if( nMode == DM_BLEND )
 			{
-				d += dinc1;
+				uint32 nSrcColor = nColor;
+				uint32 nAlpha = nSrcColor >> 24;
+			
+				if( nAlpha == 0xff )
+				{
+					*pRaster = nSrcColor;
+				} 
+				else if( nAlpha != 0x00 )
+				{
+					uint32 nDstColor = *pRaster;
+					uint32 nSrc1;
+					uint32 nDst1;
+					uint32 nDstAlpha = nDstColor & 0xff000000;
+
+					nSrc1 = nSrcColor & 0xff00ff;
+					nDst1 = nDstColor & 0xff00ff;
+					nDst1 = ( nDst1 + ( ( nSrc1 - nDst1 ) * nAlpha >> 8 ) ) & 0xff00ff;
+					nSrcColor &= 0xff00;
+					nDstColor &= 0xff00;
+					nDstColor = ( nDstColor + ( ( nSrcColor - nDstColor ) * nAlpha >> 8)) & 0xff00;
+					*pRaster = nDst1 | nDstColor | nDstAlpha;
+				}
 			}
-			else
-			{
-				d += dinc2;
-				pRaster = ( uint32 * )( ( ( uint8 * )pRaster ) + nYStep );
-			}
-			pRaster++;
-		}
-	}
-	else
-	{
-		int dinc1 = nODeltaX << 1;
-		int d = dinc1 - nODeltaY;
-		int dinc2 = ( nODeltaX - nODeltaY ) << 1;
-		int nXStep;
-
-		if( ox1 != x1 || oy1 != y1 )
-		{
-			int nClipDeltaX = abs( x1 - ox1 );
-			int nClipDeltaY = abs( y1 - oy1 );
-
-			d += ( ( nClipDeltaX * dinc2 ) + ( ( nClipDeltaY - nClipDeltaX ) * dinc1 ) );
-		}
-
-
-		if( x1 > x2 )
-		{
-			nXStep = -sizeof( uint32 );
-		}
-		else
-		{
-			nXStep = sizeof( uint32 );
-		}
-		if( y1 > y2 )
-		{
-			nXStep = -nXStep;
-			pRaster = ( uint32 * )( pcBitmap->m_pRaster + x2 * 4 + nModulo * y2 );
-		}
-		else
-		{
-			pRaster = ( uint32 * )( pcBitmap->m_pRaster + x1 * 4 + nModulo * y1 );
-		}
-
-		for( int i = 0; i <= nDeltaY; ++i )
-		{
-			Color32_s sColor = RGB32_TO_COL( *pRaster );
-
-			sColor.red = 255 - sColor.red;
-			sColor.green = 255 - sColor.green;
-			sColor.blue = 255 - sColor.blue;
-			*pRaster = COL_TO_RGB32( sColor );
-
 			if( d < 0 )
 			{
 				d += dinc1;
@@ -927,14 +678,12 @@ bool DisplayDriver::DrawLine( SrvBitmap * psBitmap, const IRect & cClipRect, con
 	default:
 		switch ( psBitmap->m_eColorSpc )
 		{
-		case CS_RGB15:
-			draw_line16( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB15( sColor ) );
-			break;
 		case CS_RGB16:
-			draw_line16( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB16( sColor ) );
+			draw_line16( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB16( sColor ), sColor, DM_COPY );
 			break;
 		case CS_RGB32:
-			draw_line32( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB32( sColor ) );
+		case CS_RGBA32:
+			draw_line32( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB32( sColor ), DM_COPY );
 			break;
 		default:
 			dbprintf( "DisplayDriver::DrawLine() unknown color space %d\n", psBitmap->m_eColorSpc );
@@ -943,17 +692,29 @@ bool DisplayDriver::DrawLine( SrvBitmap * psBitmap, const IRect & cClipRect, con
 	case DM_INVERT:
 		switch ( psBitmap->m_eColorSpc )
 		{
-		case CS_RGB15:
-			invert_line15( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y );
-			break;
 		case CS_RGB16:
-			invert_line16( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y );
+			draw_line16( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB16( sColor ), sColor, DM_INVERT );
 			break;
 		case CS_RGB32:
-			invert_line32( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y );
+		case CS_RGBA32:
+			draw_line32( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB32( sColor ), DM_INVERT );
 			break;
 		default:
 			dbprintf( "DisplayDriver::DrawLine() unknown color space %d can't invert\n", psBitmap->m_eColorSpc );
+		}
+		break;
+	case DM_BLEND:
+		switch ( psBitmap->m_eColorSpc )
+		{
+		case CS_RGB16:
+			draw_line16( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB16( sColor ), sColor, DM_BLEND );
+			break;
+		case CS_RGB32:
+		case CS_RGBA32:
+			draw_line32( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB32( sColor ), DM_BLEND );
+			break;
+		default:
+			dbprintf( "DisplayDriver::DrawLine() unknown color space %d can't blend\n", psBitmap->m_eColorSpc );
 		}
 		break;
 	}

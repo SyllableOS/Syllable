@@ -2,7 +2,7 @@
 COPTS = -c -fexceptions -ffast-math
 
 APPBIN = /system/bin
-OBJS = Dock.o DirMenu.o
+OBJS = Dock.o DockMenu.o
 
 OBJDIR := objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
@@ -29,7 +29,7 @@ Dock: $(OBJS)
 	@echo Linking...
 	@$(CXX) $(OBJS) -o Dock -lsyllable
 	@echo Adding resources...
-	@rescopy Dock -r logout.png syllable.png window.png 
+	@rescopy Dock -r logout.png syllable.png window.png folder.png
 
 clean:
 	@echo Cleaning...
