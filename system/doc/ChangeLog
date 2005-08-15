@@ -1,3 +1,10 @@
+* August 15 2005, Kristian Van Der Vliet *
+
+New Savage driver that supports all S3 Savage chipsets (Although not the mis-named
+Via Unichrome "ProSavage" chips)  The driver has been tested on an IX-MV Mobile
+Savage and supports acclerated 2D ops.  Video Overlays are only currently supported
+on the Mobile Savage chips (IX & MX) pending demand for support on older chipsets.
+
 * August 14 2005, Arno Klenke *
 
 Appserver changes:
