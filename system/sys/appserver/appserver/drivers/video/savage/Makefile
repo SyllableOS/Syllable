@@ -1,0 +1,38 @@
+COPTS   = -I$(TOP)/src -I. $(shell freetype-config --cflags) -c -O2 -Wall
+
+DEVBIN = /system/drivers/appserver/video
+OBJS =	savage_driver.o savage_cursor.o savage_accel.o savage_video.o
+
+OBJDIR	:= objs
+OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
+
+
+#
+#	rules
+#
+
+$(OBJDIR)/%.o : %.c
+	$(CC) $(COPTS) $< -o $@
+
+$(OBJDIR)/%.o : %.cpp
+	$(CXX) $(COPTS) $< -o $@
+
+
+all :	objs $(OBJDIR)/savage
+
+objs:
+	mkdir objs
+
+$(OBJDIR)/savage: $(OBJS)
+	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/savage -lsyllable
+
+deps:
+
+install: $(OBJDIR)/savage
+	cp -f $(OBJDIR)/savage $(DEVBIN)/savage
+
+dist: $(OBJDIR)/savage
+	cp -f $(OBJDIR)/savage $(DIST_DIR)/atheos/sys/drivers/appserver/video/savage
+
+clean:
+	-rm $(OBJS) $(OBJDIR)/savage
