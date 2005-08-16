@@ -1,3 +1,6 @@
+* August 15 2005 Arno Klenke *
+Small fix to avoid a deadlock in coldfish
+
 * July 16 2005 Kristian Van Der Vliet *
 
 Added YUY2 output to the screen driver.  Video overlays can now be used on chipsets
@@ -97,4 +100,5 @@ Added multiple soundcard support to the media server
 * Nov 18 2003, Kristian Van Der Vliet *
 
 Created this ChangeLog for changes specific to the media framework.
+
 
