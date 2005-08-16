@@ -694,7 +694,7 @@ void CFApp::PlayThread()
 			}
 			
 			
-			if( nAnBufferPosition == 512 )
+			if( nAnBufferPosition == 512 && m_bPlayThread )
 			{
 				GetWindow()->Lock();
 				if( m_pcCurrentVisPlugin )
