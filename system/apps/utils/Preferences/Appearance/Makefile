@@ -1,4 +1,4 @@
-COPTS = -c
+COPTS = -Wall -c
 OBJS = main.o mainwindow.o
 EXE = Appearance
 
@@ -16,5 +16,5 @@ clean:
 	-rm $(EXE)
 
 .cpp.o:
-	$(CXX) $(COPTS) $< -o $@
+	$(CC) $(COPTS) $< -o $@
 

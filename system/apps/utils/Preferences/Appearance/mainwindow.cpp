@@ -24,6 +24,8 @@
 #include <gui/requesters.h>
 #include <gui/image.h>
 #include <storage/filereference.h>
+#include <storage/registrar.h>
+
 #include "main.h"
 #include "mainwindow.h"
 #include "messages.h"
@@ -98,6 +100,10 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcDDMItem->AppendItem("Scrollbar Knob"); // SCROLLBAR KNOB
   pcDDMItem->AppendItem("Listview Tab"); // LISTVIEW TAB
   pcDDMItem->AppendItem("Listview Tab Text"); // LISTVIEW TAB TEXT
+  pcDDMItem->AppendItem("Icon Text");
+  pcDDMItem->AppendItem("Icon Selection");
+  pcDDMItem->AppendItem("Icon Background");
+  pcDDMItem->AppendItem("Focused Item");
   pcDDMItem->SetSelection(1);
   pcDDMItem->SetSelection(0);
   
@@ -318,6 +324,16 @@ void MainWindow::Apply()
   }
 
   os::Application::GetInstance()->CommitColorConfig();
+
+  /*added a call to desktop so we can make the icon color change on default*/
+  os::RegistrarManager* pcManager = os::RegistrarManager::Get();
+  os::RegistrarCall_s sCall;
+  os::Message cReply;
+  
+	if( pcManager->QueryCall( "os/Desktop/Refresh", 0, &sCall ) == 0 )
+		pcManager->InvokeCall( &sCall, &cReply, NULL );
+
+	pcManager->Put();
 }
 
 void MainWindow::Default()
