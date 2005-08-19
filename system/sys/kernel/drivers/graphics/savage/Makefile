@@ -1,5 +1,4 @@
-
-CFLAGS   = -kernel -fno-PIC -c -O3 -Wall -I.
+CFLAGS   = -kernel -fno-PIC -c -I.
 AFLAGS   = -c
 
 
@@ -18,7 +17,7 @@ $(OBJDIR)/%.o : %.c
 	$(CC) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/%.o : %.cpp
-	$(CC) $(CFLAGS) $< -o $@
+	$(CXX) $(CXXFLAGS) $< -o $@
 
 $(OBJDIR)/%.o : %.s
 	$(CC) $(AFLAGS) -x assembler-with-cpp $< -o $@
@@ -35,7 +34,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/savage: $(OBJS) Makefile
-	gcc -kernel $(OBJS) -o $(OBJDIR)/savage
+	$(CC) -kernel $(OBJS) -o $(OBJDIR)/savage
 
 install: all
 	mkdir -p /system/drivers/dev/graphics
@@ -47,4 +46,3 @@ dist: all
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/savage
-
