@@ -127,6 +127,7 @@ modules
 	sys/kernel/drivers/graphics/radeon
 	sys/kernel/drivers/graphics/riva
 	sys/kernel/drivers/graphics/s3_virge
+	sys/kernel/drivers/graphics/savage
 	sys/kernel/drivers/graphics/sis3xx
 	sys/kernel/drivers/graphics/tdfx
 	sys/kernel/drivers/graphics/trident
@@ -213,6 +214,7 @@ modules
 	sys/appserver/appserver/drivers/video/radeon
 	sys/appserver/appserver/drivers/video/riva
 	sys/appserver/appserver/drivers/video/s3
+	sys/appserver/appserver/drivers/video/savage
 	sys/appserver/appserver/drivers/video/sis3xx
 	sys/appserver/appserver/drivers/video/tdfx
 	sys/appserver/appserver/drivers/video/trident
@@ -258,4 +260,3 @@ modules
 	apps/utils/pkgmanager
 	apps/utils/systools
 	apps/utils/users-1.0.1b
-
