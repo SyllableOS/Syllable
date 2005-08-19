@@ -106,6 +106,13 @@ void App::HandleMessage( os::Message* pcMessage )
 			}
 			break;
 		}
+
+		case M_REFRESH:
+		{
+			m_pcDesktop->PostMessage(new os::Message(M_REFRESH),m_pcDesktop);
+			break;
+		}
+
 		default:
 			os::Application::HandleMessage( pcMessage );
 	}

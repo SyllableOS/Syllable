@@ -26,8 +26,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Photon: $(OBJS)
-	$(CXX) $(OBJS) -o $(OBJDIR)/Photon ../../../server/objs/appserver -lsyllable -lz
-	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/Photon -lsyllable
+	$(CXX) -plugin -Xlinker -Bsymbolic $(OBJS) -nodefaultlibs -o $(OBJDIR)/Photon
 
 install: $(OBJDIR)/Photon
 	cp -f $(OBJDIR)/Photon $(DEVBIN)/Photon

@@ -114,6 +114,8 @@ Desktop::Desktop() : os::Window( os::Rect(), "desktop", "Desktop", os::WND_NO_BO
 							os::Application::GetInstance(), M_GET_BACKGROUND );
 			pcManager->RegisterCall( "os/Desktop/SetBackgroundImage", "Sets the current background image",
 							os::Application::GetInstance(), M_SET_BACKGROUND );
+			pcManager->RegisterCall( "os/Desktop/Refresh","Refreshes the desktop",
+				os::Application::GetInstance(),M_REFRESH );
 			pcManager->Put();
 		}
 	} catch( ... )
@@ -132,6 +134,7 @@ Desktop::~Desktop()
 	pcManager->UnregisterCall( "os/Desktop/SetSingleClickInterface" );
 	pcManager->UnregisterCall( "os/Desktop/GetBackgroundImage" );
 	pcManager->UnregisterCall( "os/Desktop/SetBackgroundImage" );
+	pcManager->UnregisterCall( "os/Desktop/Refresh" );
 	pcManager->Put();
 }
 
@@ -160,6 +163,14 @@ void Desktop::HandleMessage( os::Message* pcMessage )
 			break;
 		}
 		
+		case M_REFRESH:
+		{
+			m_pcView->SetSelectionColor(os::get_default_color(os::COL_ICON_SELECTED));
+			m_pcView->Invalidate();
+			m_pcView->Flush();
+			break;
+		}
+
 		break;
 	}
 }

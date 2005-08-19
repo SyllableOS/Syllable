@@ -26,8 +26,10 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Mulvane: $(OBJS)
-	$(CXX) $(OBJS) -o $(OBJDIR)/Mulvane ../../../server/objs/appserver -lsyllable -lz
-	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/Mulvane -lsyllable
+	$(CXX) -plugin -Xlinker -Bsymbolic $(OBJS) -nodefaultlibs -o $(OBJDIR)/Mulvane
+
+#	$(CXX) $(OBJS) -o $(OBJDIR)/Mulvane ../../../server/objs/appserver -lsyllable -lz
+#	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/Mulvane -lsyllable
 
 install: $(OBJDIR)/Mulvane
 	cp -f $(OBJDIR)/Mulvane $(DEVBIN)/Mulvane

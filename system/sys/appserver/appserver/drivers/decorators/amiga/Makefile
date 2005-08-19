@@ -24,8 +24,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Amiga: $(OBJS)
-	$(CXX) $(OBJS) -o $(OBJDIR)/Amiga ../../../server/objs/appserver -lsyllable -lz
-	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/Amiga -lsyllable
+	$(CXX) -plugin -Xlinker -Bsymbolic $(OBJS) -nodefaultlibs -o $(OBJDIR)/Amiga
 
 deps:
 

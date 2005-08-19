@@ -26,8 +26,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Beish: $(OBJS)
-	$(CXX) $(OBJS) -o $(OBJDIR)/Beish ../../../server/objs/appserver -lsyllable -lz
-	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/Beish -lsyllable
+	$(CXX) -plugin -Xlinker -Bsymbolic $(OBJS) -nodefaultlibs -o $(OBJDIR)/Beish
 
 install: $(OBJDIR)/Beish
 	cp -f $(OBJDIR)/Beish $(DEVBIN)/Beish

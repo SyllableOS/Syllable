@@ -1,3 +1,7 @@
+* August 19 2005, Arno Klenke *
+
+Changed linker flags in the decorator makefiles to fix freezes
+
 * August 15 2005, Kristian Van Der Vliet *
 
 New Savage driver that supports all S3 Savage chipsets (Although not the mis-named
@@ -840,5 +844,6 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
 
 

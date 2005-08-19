@@ -26,8 +26,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Drow: $(OBJS)
-	$(CXX) $(OBJS) -o $(OBJDIR)/Drow ../../../server/objs/appserver -lsyllable -lz
-	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/Drow -lsyllable
+	$(CXX) -plugin -Xlinker -Bsymbolic $(OBJS) -nodefaultlibs -o $(OBJDIR)/Drow
 
 install: $(OBJDIR)/Drow
 	cp -f $(OBJDIR)/Drow $(DEVBIN)/Drow

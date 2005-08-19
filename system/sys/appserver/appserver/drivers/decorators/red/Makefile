@@ -26,8 +26,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/Red: $(OBJS)
-	$(CXX) $(OBJS) -o $(OBJDIR)/Red ../../../server/objs/appserver -lsyllable -lz
-	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/Red -lsyllable
+	$(CXX) -plugin -Xlinker -Bsymbolic $(OBJS) -nodefaultlibs -o $(OBJDIR)/Red
 
 install: $(OBJDIR)/Red
 	cp -f $(OBJDIR)/Red $(DEVBIN)/Red
