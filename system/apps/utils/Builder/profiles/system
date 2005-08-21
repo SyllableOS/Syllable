@@ -70,6 +70,8 @@ tree
 	atheos/sys/drivers/appserver/input
 	atheos/sys/drivers/appserver/video
 
+	atheos/sys/extensions/translators
+;	Location for older translators:
 	atheos/sys/translators
 
 	atheos/sys/drivers/media
@@ -176,6 +178,7 @@ modules
 	libs/ncurses-5.4
 
 ;	Static libraries, that don't need to be included separately in the distribution:
+
 	libraries/gettext-0.14.3
 	libraries/flex-2.5.4a
 	libraries/bison-1.875
