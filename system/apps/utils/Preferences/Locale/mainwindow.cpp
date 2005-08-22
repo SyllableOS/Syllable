@@ -444,8 +444,11 @@ void MainWindow::_Apply()
 
 		char* pzHome;
 		pzHome = getenv( "HOME" );
-		File* pcFile = new File( String( pzHome ) + String( "/Settings/System/Locale" ), O_CREAT );
-		Settings cSettings( pcFile );
+		Path path( String( pzHome ) + String( "/Settings/System" ) );
+//		File* pcFile = new File( String( pzHome ) + String( "/Settings/System/Locale" ), O_CREAT );
+		Settings cSettings;
+		cSettings.SetPath( &path );
+		cSettings.SetFile( "Locale" );
 		
 		for( i = 0; i < m_pcPreferred->GetRowCount(); i++ ) {
 			TreeViewStringNode* pcNode = (TreeViewStringNode*)m_pcPreferred->GetRow( i );
