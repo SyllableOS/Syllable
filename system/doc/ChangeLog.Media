@@ -1,3 +1,5 @@
+---- 0.5.7 Released -------------------------------------------------------------------
+
 * August 15 2005 Arno Klenke *
 Small fix to avoid a deadlock in coldfish
 
