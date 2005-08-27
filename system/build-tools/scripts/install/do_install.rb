@@ -11,11 +11,11 @@ require "grub-gen.rb"
 
 # Remember to always update the version numbers below!
 
-Base = ["0.5.6", "base-syllable-%s.zip"]
+Base = ["0.5.7", "base-syllable-%s.zip"]
 Packages = {
-	"ABrowse"	=> ["0.3.4", "abrowse-%s.bin.tar.gz"],
-	"Whisper"	=> ["0.2.0", "whisper-%s.bin.tar.gz"],
-	"Chat"		=> ["0.2.0", "chat-%s.bin.tar.gz"]
+	"ABrowse"	=> ["0.4a", "abrowse-%s.bin.zip"],
+	"Whisper"	=> ["1.0a", "whisper-%s.bin.zip"],
+	"Chat"		=> ["0.2.0", "chat-%s.bin.zip"]
 }
 
 # Now on with the installation
@@ -133,7 +133,7 @@ loop {
 Packages.sort_by{|name, info| name}.each {|pkgname, info|
 	puts "Installing #{pkgname}"
 	pkg = sprintf(info[1], info[0])
-	system "tar", "-xzpf", "/boot/Packages/net/#{pkg}", "-C", "/inst/atheos/Applications/"
+	system "unzip", "/boot/Packages/net/#{pkg}", "-d", "/inst/atheos/Applications/"
 }
 
 # Sync disks

@@ -63,6 +63,9 @@ mkdir $CDROOT/atheos/sys/fonts
 mkdir $CDROOT/atheos/sys/keymaps
 mkdir $CDROOT/atheos/sys/libs
 
+mkdir $CDROOT/atheos/sys/extensions/
+mkdir $CDROOT/atheos/sys/extensions/translators/
+
 mkdir $CDROOT/atheos/sys/drivers
 
 mkdir $CDROOT/atheos/sys/drivers/appserver
@@ -125,6 +128,8 @@ cp -p $ROOT/atheos/sys/drivers/bus/pci $CDROOT/atheos/sys/drivers/bus/
 cp -p $ROOT/atheos/sys/drivers/bus/usb $CDROOT/atheos/sys/drivers/bus/
 
 cp -dpr $ROOT/atheos/sys/libs/* $CDROOT/atheos/sys/libs/
+
+cp -p $ROOT/atheos/sys/extensions/translators/pngtrans.so $CDROOT/atheos/sys/extensions/translators/
 
 cp -p $ROOT/atheos/sys/fonts/Vera.ttf $CDROOT/atheos/sys/fonts/
 cp -p $ROOT/atheos/sys/fonts/VeraMono.ttf $CDROOT/atheos/sys/fonts/
