@@ -125,9 +125,8 @@ cp -p $ROOT/atheos/sys/drivers/bus/pci $CDROOT/atheos/sys/drivers/bus/
 cp -p $ROOT/atheos/sys/drivers/bus/usb $CDROOT/atheos/sys/drivers/bus/
 
 cp -dpr $ROOT/atheos/sys/libs/* $CDROOT/atheos/sys/libs/
-cp -dpr $ROOT/atheos/usr/zlib/lib/* $CDROOT/atheos/sys/libs/
 
-cp -p $ROOT/atheos/sys/fonts/NimbusSanL-Regu.ttf $CDROOT/atheos/sys/fonts/
+cp -p $ROOT/atheos/sys/fonts/Vera.ttf $CDROOT/atheos/sys/fonts/
 cp -p $ROOT/atheos/sys/fonts/VeraMono.ttf $CDROOT/atheos/sys/fonts/
 
 cp -p $ROOT/atheos/sys/keymaps/American $CDROOT/atheos/sys/keymaps/
@@ -170,11 +169,11 @@ cp -p $ROOT/atheos/usr/findutils/bin/find $CDROOT/atheos/usr/bin/
 cp -p $ROOT/atheos/usr/gzip/bin/gzip $CDROOT/atheos/usr/bin/
 cp -p $ROOT/atheos/usr/sed/bin/sed $CDROOT/atheos/usr/bin/
 cp -p $ROOT/atheos/usr/tar/bin/tar $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/zip/bin/unzip $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/unzip/bin/unzip $CDROOT/atheos/usr/bin/
 cp -p $ROOT/atheos/usr/ncurses/bin/clear $CDROOT/atheos/usr/bin/
 cp -p $ROOT/atheos/usr/less/bin/less $CDROOT/atheos/usr/bin/
 
-cp -p $ROOT/atheos/usr/bin/bash $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/bash/bin/bash $CDROOT/atheos/usr/bin/
 cp -p $ROOT/atheos/usr/bin/grep $CDROOT/atheos/usr/bin/
 
 cp -p $ROOT/atheos/usr/share/terminfo/x/xterm $CDROOT/atheos/usr/share/terminfo/x/
