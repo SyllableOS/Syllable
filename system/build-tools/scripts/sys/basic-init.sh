@@ -18,5 +18,5 @@ export TERM=xterm
 export COLORTERM=$TERM
 export TERMINFO=/usr/share/terminfo
 
-aterm /boot/Install/install.rb &
+aterm /usr/ruby/bin/ruby /boot/Install/install.rb &
 

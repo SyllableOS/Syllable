@@ -134,7 +134,6 @@ cp -p $ROOT/atheos/sys/keymaps/American $CDROOT/atheos/sys/keymaps/
 cp -p $ROOT/atheos/sys/appserver $CDROOT/atheos/sys/
 
 cp -p $ROOT/atheos/sys/bin/DiskManager $CDROOT/atheos/sys/bin/
-cp -p $ROOT/atheos/sys/bin/aedit $CDROOT/atheos/sys/bin/
 cp -p $ROOT/atheos/sys/bin/aterm $CDROOT/atheos/sys/bin/
 cp -p $ROOT/atheos/sys/bin/dbterm $CDROOT/atheos/sys/bin/
 cp -p $ROOT/atheos/sys/bin/devstat $CDROOT/atheos/sys/bin/
@@ -144,6 +143,8 @@ cp -p $ROOT/atheos/sys/bin/init $CDROOT/atheos/sys/bin/
 cp -p $ROOT/atheos/sys/bin/mount $CDROOT/atheos/sys/bin/
 cp -p $ROOT/atheos/sys/bin/reboot $CDROOT/atheos/sys/bin/
 cp -p $ROOT/atheos/sys/bin/unmount $CDROOT/atheos/sys/bin/
+
+cp -p $ROOT/atheos/Applications/AEdit/AEdit $CDROOT/atheos/sys/bin/aedit
 
 cp -p $ROOT/atheos/usr/coreutils/bin/cat $CDROOT/atheos/usr/bin/
 cp -p $ROOT/atheos/usr/coreutils/bin/cp $CDROOT/atheos/usr/bin/
