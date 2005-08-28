@@ -47,6 +47,9 @@ tree
 	atheos/sys/icons
 	atheos/sys/keymaps
 
+	atheos/sys/resources
+	atheos/sys/resources/catalogs
+
 	atheos/sys/drivers
 
 	atheos/sys/drivers/bus
