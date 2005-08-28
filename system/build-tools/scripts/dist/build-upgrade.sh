@@ -1,82 +1,207 @@
-#!/bin/sh
+#!/bin/bash
 
 OLD_DIST=$1
 NEW_DIST=$2
 
-# Pre-clean
-if [ -e removed.txt ]; then
-	rm removed.txt
+# Ensure we have valid packages
+if [ -z "$OLD_DIST" ]
+then
+  echo -n "Enter the full path to the old distribution:"
+  read OLD_DIST
 fi
 
-if [ -e changed.txt ]; then
-	rm changed.txt
+if [ ! -e "$OLD_DIST" ]
+then
+  echo "$OLD_DIST does not exist."
+  exit 1
 fi
 
-# Start
-echo Getting list of changed files
+if [ -z "$NEW_DIST" ]
+then
+  echo -n "Enter the full path to the new distribution:"
+  read NEW_DIST
+fi
 
-# Untar the old dist
-tar -xzpf $OLD_DIST -C .
+if [ ! -e "$NEW_DIST" ]
+then
+  echo "$NEW_DIST does not exist."
+  exit 1
+fi
 
-# Get the list of changed files
-./diff.sh $NEW_DIST changed.txt
+# Create staging areas
+if [ -e old ]
+then
+  echo "Removing previous directory \"old\""
+  rm -rf old
+fi
+mkdir -p old
 
-# Finished with the old dist
-rm -r atheos
-rm -r boot
+if [ -e new ]
+then
+  echo "Removing previous directory \"new\""
+  rm -rf new
+fi
+mkdir -p new
 
-echo Getting list of removed files
+# Work out if these are (old) tarballs or (new) zip files and unpack them
+if [ ! -z "`echo $OLD_DIST | grep tar`" ]
+then
+  # Tarball
+  echo "Un-tarring $OLD_DIST to old/"
+  tar xzvpf $OLD_DIST -C old
+else
+  # Zip file
+  echo "Un-zipping $OLD_DIST to old/"
+  unzip -d old $OLD_DIST
+fi
+sync
 
-# Untar the new dist
-tar -xzpf $NEW_DIST -C .
+if [ ! -z "`echo $NEW_DIST | grep tar`" ]
+then
+  # Tarball
+  echo "Un-tarring $NEW_DIST to new/"
+  tar xzvpf $NEW_DIST -C new
+else
+  # Zip file
+  echo "Un-zipping $NEW_DIST to new/"
+  unzip -d new $NEW_DIST
+fi
+sync
 
-# Get the list of changed files
-./diff.sh $OLD_DIST removed.txt
+# Diff them.  We want two lists of files; obsolete diles to be removed
+# during the upgrade and modified and new files to be copied to the system
+# to perform the upgrade.
+if [ -e all_files.list ]
+then
+  rm all_files.list
+fi
 
-# Now we have two files; removed.txt & changed.txt
-echo
-echo Please check both removed.txt \& changed.txt.  Press Enter when ready
-read FOO
+cd old/
+find >> ../all_files.list
+cd ..
 
-echo
-echo Copying changed files
+cd new/
+find >> ../all_files.list
+cd ..
 
-# Get the changed files
-mkdir upgrade
+if [ -e new.list ]
+then
+  rm new.list
+fi
 
-for FILE in $( cat changed.txt )
+if [ -e old.list ]
+then
+  rm old.list
+fi
+
+if [ -e changed.list ]
+then
+  rm changed.list
+fi
+
+for FILE in `sort -u all_files.list`
 do
-	cp --parents -dpr $FILE upgrade/
+  echo "$FILE"
+
+  if [ ! -e "old/$FILE" ]
+  then
+    # Doesn't exist in old, must be a new file
+    echo "$FILE" >> new.list
+    continue
+  fi
+
+  if [ ! -e "new/$FILE" ]
+  then
+    # Doesn't exist in new, must be an old file
+    echo "$FILE" >> old.list
+    continue
+  fi
+
+  # Must exist in both old and new
+
+  # Ignore directories that exist in both old and new
+  if [ -d "old/$FILE" ]
+  then
+    continue
+  fi
+
+  # Check for symlinks
+  if [ -h "old/$FILE" ]
+  then
+    # Get the link target of both links
+    OLD_TARGET=`ls -l old/$FILE | cut -d \> -f 2`
+    NEW_TARGET=`ls -l new/$FILE | cut -d \> -f 2`
+
+    if [[ "$OLD_TARGET" != "$NEW_TARGET" ]]
+    then
+      # Symlink changed
+      echo "$FILE" >> changed.list
+    else
+      continue
+    fi
+  fi
+
+  # See if the file has changed
+  if [ ! -z "`cmp old/$FILE new/$FILE`" ]
+  then
+    # File has changed
+    echo "$FILE" >> changed.list
+  fi
 done
 
-# Check the upgrade files are in place
-echo
-echo Please check the upgrade/ directory to ensure all files have been copied.  Press Enter when ready
+echo "Check files"
 read FOO
 
-# Tar it all up
-cd upgrade
-tar -czvpf upgrade.tgz *
-mv upgrade.tgz ..
+# Create upgrade directory and copy files
+if [ -e upgrade-files ]
+then
+  echo "Removing previous directory \"upgrade-files\""
+  rm -rf upgrade-files
+fi
+mkdir -p upgrade-files
+
+# Copy upgrade files
+echo "Copying new files"
+cd new/
+for FILE in `cat ../new.list`
+do
+  cp --parents -dpr "$FILE" ../upgrade-files/
+done
+
+echo "Copying changed files"
+for FILE in `cat ../changed.list`
+do
+  cp --parents -dpr "$FILE" ../upgrade-files/
+done
 cd ..
-rm -r upgrade/*
-mv upgrade.tgz upgrade/
 
-# Copy in the removed files list
-cp removed.txt upgrade/
+cd upgrade-files
+# Zip up the upgrade files
+zip -yr9 upgrade.zip atheos boot
+mv upgrade.zip ..
+cd ..
 
-# Copy in the upgrade script
-cp upgrade.sh upgrade/
+rm -rf upgrade-files
 
-# Tar up the upgrade
-tar -czvpf upgrade.tgz upgrade/
+if [ -e upgrade ]
+then
+  echo "Removing previous directory \"upgrade\""
+  rm -rf upgrade
+fi
+mkdir -p upgrade
 
-# Clean up
-rm -r atheos
-rm -r boot
+# Copy in scripts and files
+mv upgrade.zip upgrade/
+cp -f old.list upgrade/removed.list
+cp -f pre-upgrade.sh upgrade.sh post-upgrade.sh upgrade/
+cp -f /usr/zip/bin/unzip upgrade/
 
-# Finished
-echo
-echo Done
+# Zip it all up
+zip -yr9 upgrade.zip upgrade
+
+# Cleanup
+rm -rf upgrade
+rm -rf old
+rm -rf new
+
 exit 0
-
