@@ -35,6 +35,8 @@ tree
 	atheos/sys/config
 	atheos/sys/config/drivers
 	atheos/sys/config/drivers/dev
+	atheos/sys/config/appearance
+	atheos/sys/config/appearance/colour-schemes
 	atheos/sys/config/default_user
 	atheos/sys/config/default_user/config
 
