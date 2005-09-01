@@ -1,0 +1,9 @@
+; Modules to (re)build for Syllable 0.6.0
+
+modules
+	apps/gnu/grep-2.5.1
+	apps/gnu/sed-4.1.1
+
+; To do:
+; - Persistent disk mounting
+; - Include stty on install CD, for the installer
