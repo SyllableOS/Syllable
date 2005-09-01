@@ -1,0 +1,19 @@
+; Modules to (re)build for Syllable 0.5.7
+
+modules
+	sys/include
+	libs/zlib-1.2.2
+	sys/appserver/libsyllable
+	sys/media/libmedia
+;	Missed in Syllable 0.5.6:
+	sys/media/drivers/cdrom
+	apps/utils/Preferences/Locale
+	apps/other/Man
+	apps/utils/aedit
+
+; To do:
+; - Persistent disk mounting
+; - Fix locale preference applet
+;   - Create ~/Settings/System/
+; - Include stty on install CD, for the installer
+
