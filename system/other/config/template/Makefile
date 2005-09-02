@@ -19,11 +19,12 @@ install-doc:
 dist:
 	mkdir -p $(DIST_TARGET_PATH)/.template
 	cp -a * $(DIST_TARGET_PATH)/.template/
+	unzip Bookmarks.zip -d $(DIST_TARGET_PATH)/.template/
 	chown -R root:root $(DIST_TARGET_PATH)/.template
 
-	cp -a * $(DIST_TARGET_PATH)/root/
+	cp -a $(DIST_TARGET_PATH)/.template $(DIST_TARGET_PATH)/root/
 	chown -R root:root $(DIST_TARGET_PATH)/root
-	cp -a * $(DIST_TARGET_PATH)/guest/
+	cp -a $(DIST_TARGET_PATH)/.template $(DIST_TARGET_PATH)/guest/
 	chown -R guest:users $(DIST_TARGET_PATH)/guest
 
 clean:
