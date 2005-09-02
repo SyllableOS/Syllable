@@ -1,4 +1,4 @@
-CXXFLAGS = -Wall -c -I.
+CXXFLAGS += -c -I.
 OBJS = main.o login_window.o
 EXE = Login
 TARGET_EXE = Login\ Details
@@ -23,4 +23,3 @@ clean:
 
 .cpp.o:
 	$(CXX) $(CXXFLAGS) $< -o $@
-

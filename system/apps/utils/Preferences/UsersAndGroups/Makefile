@@ -1,4 +1,4 @@
-CXXFLAGS = -Wall -c -I.
+CXXFLAGS += -c -I.
 OBJS = main.o users_window.o user_propertiesdlg.o changepwddlg.o group_propertiesdlg.o
 EXE = Users
 TARGET_EXE = Users\ \&\ Groups
@@ -22,4 +22,3 @@ clean:
 
 .cpp.o:
 	$(CXX) $(CXXFLAGS) $< -o $@
-
