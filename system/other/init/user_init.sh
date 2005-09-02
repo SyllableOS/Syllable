@@ -1,27 +1,28 @@
-# Log local kernel output into /var/log/kernel
-dbterm 8 >>/var/log/kernel &
+#!/bin/sh
+# Perform system specific initialisation
+#
+# inetd is a special case and is always started first if inetutils is
+# installed.
 
-# Create /root for the convience of the root user
-ln -s home/root /root
-
-# Check for network changes
-/Applications/Preferences/Network --detect
-
-# Configure the network
-/system/net_init.sh
-
-# Start various daemons if they are installed
-
-if [ -e /usr/bind/sbin/named ]; then
-	/usr/bind/sbin/named
+if [ -e /atheos/autolnk/sbin/inetd ]
+then
+  /atheos/autolnk/sbin/inetd &
 fi
-if [ -e /usr/inetutils/sbin/inetd ]; then
-	/usr/inetutils/sbin/inetd
+
+# Packages that require initalisation can include an init directory, which
+# should contain the init script(s) E.g. Apache would have init/apache which
+# would call apachectl, OpenSSH would have init/sshd which would start
+# sshd etc.
+# The package manager will collect all of these scripts together in
+# /atheos/autolnk/init/; all we need to do is run each script in turn.
+
+if [ -e /atheos/autolnk/init ]
+then
+  for pkg_init in 'ls /atheos/autolnk/init/'
+  do
+    sh $pkg_init
+  done
 fi
-if [ -e /usr/sbin/crond ]; then
-	/usr/sbin/crond
-fi
-if [ -e /usr/apache/bin/apachectl ]; then
-	/usr/apache/bin/apachectl start
-fi
+
+# Please add any additional configuration below this point
 

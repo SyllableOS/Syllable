@@ -1,9 +1,4 @@
 root:$1$$oCLuEVgI1iAqOA8pwkzAg1:0:root
-bin:*:2:
-mail:*:12:mail
-news:*:13:news
-www:*:14:www
-man:*:15:
-ftp:*:50:
-nobody:*:99:
+system:*:1:
+network:*:99:
 users:*:100:

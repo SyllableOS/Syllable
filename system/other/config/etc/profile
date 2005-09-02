@@ -1,44 +1,33 @@
 export PWD
 
-export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:~/bin:/atheos/autolnk/bin:/atheos/autolnk/sbin
-export MANPATH=/system/docs/man:/usr/man:/usr/local/man:/atheos/autolnk/man:/atheos/man
-export INFOPATH=/usr/local/info:/atheos/autolnk/info
-export LIBRARY_PATH=/system/libs:/usr/glibc2/lib/:/atheos/autolnk/lib
-export DLL_PATH=@bindir@/lib:./:/boot/atheos/sys/libs:/boot/atheos/sys:/atheos/autolnk/lib
+export PATH=/usr/bin:/bin:/atheos/autolnk/bin:/usr/sbin:/atheos/autolnk/sbin
+export LIBRARY_PATH=/system/libs:/usr/glibc2/lib:/usr/lib:/atheos/autolnk/lib
+export DLL_PATH=@bindir@/lib:./:/atheos/sys/libs:/atheos/autolnk/lib:/boot/atheos/sys
 
-export C_INCLUDE_PATH=/include:/ainc:/usr/local/include:/usr/include:/atheos/autolnk/include
-export CPLUS_INCLUDE_PATH=/include:/ainc:/usr/local/include:/usr/include:/atheos/autolnk/include
-export OBJC_INCLUDE_PATH=/include:/ainc:/usr/local/include:/usr/include:/atheos/autolnk/include
-
-LIBRARY_PATH=$LIBRARY_PATH:/usr/local/lib:/usr/lib
-INFOPATH=$INFOPATH:/usr/info
+export C_INCLUDE_PATH=/include:/ainc:/atheos/autolnk/include:/usr/include
+export CPLUS_INCLUDE_PATH=$C_INCLUDE_PATH
 
 export ATHEOS_SRC=/atheos/src
+export ATHEOS_INCLUDE_PATH=/ainc
 
-export TERMINFO=/usr/share/terminfo
+export TEMP=/tmp
+
+export SYSTEM=Syllable
 export COLORTERM=xterm
+export TERMINFO=/usr/share/terminfo
 export LS_COLORS="ex=35:ln=4;35:di=31;1:*.c=36:*.cpp=34:*.h=34:*.hpp=34:*.c=34"
 export PAGER=less
 export LESSCHARSET=latin1
-export EDITOR=vi
+export EDITOR=aedit
+export CC=gcc
 
-case $TERM in 
-    xterm | xterm-color)
-	PROMPT_COMMAND="echo -en \"\33]0;$(whoami)@$(hostname):\$PWD - Syllable Terminal\7\"";;
-    *)  
-	unset PROMPT_COMMAND;;
+case $TERM in
+  xterm | xterm-color)
+    PROMPT_COMMAND="echo -en \"\33]0;$(whoami)@$(hostname):\$PWD - Syllable Terminal\7\"";;
+  *)
+    unset PROMPT_COMMAND;;
 esac
 
-alias d="ls --color"
 alias dir="ls --color -l"
 alias more=less
-
-mc ()
-{
-    MC=/tmp/mc$$-"$RANDOM"
-    /usr/mc/bin/mc -c -P "$@" > "$MC"
-    cd "`cat $MC`"
-    rm "$MC"
-    unset MC;
-}
 
