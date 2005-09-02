@@ -14,9 +14,10 @@ tree
 
 	atheos/etc
 
-	atheos/home			home.png
-	atheos/home/root	home.png
-	atheos/home/guest	home.png
+	atheos/home				home.png
+	atheos/home/.template	home.png
+	atheos/home/root		home.png
+	atheos/home/guest		home.png
 
 	atheos/autolnk
 	atheos/autolnk/bin
@@ -37,8 +38,6 @@ tree
 	atheos/sys/config/drivers/dev
 	atheos/sys/config/appearance
 	atheos/sys/config/appearance/colour-schemes
-	atheos/sys/config/default_user
-	atheos/sys/config/default_user/config
 
 	atheos/sys/include
 
@@ -76,8 +75,6 @@ tree
 	atheos/sys/drivers/appserver/video
 
 	atheos/sys/extensions/translators
-;	Location for older translators:
-	atheos/sys/translators
 
 	atheos/sys/drivers/media
 
@@ -115,6 +112,7 @@ modules
 ;	sys/boot/grub-0.95
 	other/config/default
 	other/config/etc
+	other/config/template
 	other/fonts
 	other/icons
 	other/init
@@ -192,9 +190,7 @@ modules
 	libraries/gcc-3.4.3
 
 	libraries/freetype-2.1.9
-
 	libraries/libjpeg-6b
-
 	libraries/libpng-1.2.8
 	libraries/libungif-4.1.3
 	libraries/libogg-1.1
@@ -256,9 +252,11 @@ modules
 	apps/utils/Preferences/Font
 	apps/utils/Preferences/Keyboard
 	apps/utils/Preferences/Locale
+	apps/utils/Preferences/Login
 	apps/utils/Preferences/Media
 	apps/utils/Preferences/Network
 	apps/utils/Preferences/Screen
+	apps/utils/Preferences/UsersAndGroups
 	apps/utils/aterm
 	apps/utils/debug
 	apps/utils/dhcpc
@@ -267,4 +265,4 @@ modules
 	apps/utils/nettools
 	apps/utils/pkgmanager
 	apps/utils/systools
-	apps/utils/users-1.0.1b
+;	apps/utils/users-1.0.1b
