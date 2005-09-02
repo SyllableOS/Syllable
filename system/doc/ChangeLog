@@ -1,5 +1,11 @@
 * September 2 2005, Kristian Van Der Vliet *
 
+It was brought to my attention that the code_alt.ttf font which was being shipped
+with Syllable was a commercial shareware font that should not be redistributed.
+The font has been removed from Syllable.
+
+* September 2 2005, Kristian Van Der Vliet *
+
 Small patch to the ATA driver so it uses a counting semaphore instead of a counter
 and a loop that snooze()s while it wait.  This should reduce CPU usage and reduce
 latency for commands.
