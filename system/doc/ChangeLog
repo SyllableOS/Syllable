@@ -1,5 +1,10 @@
 * September 2 2005, Kristian Van Der Vliet *
 
+Checked in all the init script, environment & Users management changes.  There
+are two new preferences applications, "Login" & "Users & Groups".
+
+* September 2 2005, Kristian Van Der Vliet *
+
 It was brought to my attention that the code_alt.ttf font which was being shipped
 with Syllable was a commercial shareware font that should not be redistributed.
 The font has been removed from Syllable.
