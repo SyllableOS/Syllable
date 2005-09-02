@@ -1,3 +1,9 @@
+* September 2 2005, Kristian Van Der Vliet *
+
+Small patch to the ATA driver so it uses a counting semaphore instead of a counter
+and a loop that snooze()s while it wait.  This should reduce CPU usage and reduce
+latency for commands.
+
 ---- 0.5.7 Released -------------------------------------------------------------------
 
 * August 19 2005, Arno Klenke *
