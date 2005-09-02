@@ -37,7 +37,7 @@ void ata_cmd_init_buffer( ATA_controller_s* psCtrl, int nChannel )
 	ATA_cmd_buf_s* psBuf = kmalloc( sizeof( ATA_cmd_buf_s ), MEMF_KERNEL | MEMF_CLEAR );
 	
 	psBuf->nChannel = nChannel;
-	psBuf->nCount = 0;
+	psBuf->hCount = create_semaphore( "ata_cmd_buffer_count", 0, 0 );
 	psBuf->hLock = create_semaphore( "ata_cmd_buffer_lock", 1, 0 );
 	psBuf->psHead = psBuf->psTail = NULL;
 	psBuf->hThread = spawn_kernel_thread( "ata_cmd_thread", ata_cmd_thread, DISPLAY_PRIORITY, 4096, psBuf );
@@ -46,7 +46,7 @@ void ata_cmd_init_buffer( ATA_controller_s* psCtrl, int nChannel )
 	{
 		psCtrl->psPort[nChannel*psCtrl->nPortsPerChannel+i]->psCmdBuf = psBuf;
 	}
-	
+
 	wakeup_thread( psBuf->hThread, true );
 }
 
@@ -95,7 +95,7 @@ void ata_cmd_queue( ATA_port_s* psPort, ATA_cmd_s* psCmd )
 	psCmd->psPrev = psBuf->psTail;
 	psBuf->psTail = psCmd;
 	
-	psBuf->nCount++;
+	UNLOCK( psBuf->hCount );
 	UNLOCK( psBuf->hLock );
 }
 
@@ -127,8 +127,6 @@ ATA_cmd_s* ata_cmd_next( ATA_cmd_buf_s* psBuf )
 		}
 		psCmd->psNext = NULL;
 		psCmd->psPrev = NULL;
-		
-		psBuf->nCount--;
 	}
 	
 	UNLOCK( psBuf->hLock );
@@ -717,9 +715,8 @@ int32 ata_cmd_thread( void* pData )
 			else
 				ata_cmd_ata( psCmd );
 		}
-		
-		if( psBuf->nCount == 0 )
-			snooze( 1000 );
+
+		LOCK( psBuf->hCount );
 	}
 	
 	return( 0 );

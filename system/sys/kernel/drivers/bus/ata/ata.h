@@ -238,7 +238,7 @@ typedef struct
 {
 	int nChannel; /* Controller channel */
 	thread_id hThread; /* Command thread */
-	int nCount; /* Number of command in the buffer */
+	sem_id hCount; /* Number of command in the buffer */
 	sem_id hLock; /* buffer lock */
 	ATA_cmd_s* psHead;
 	ATA_cmd_s* psTail;
