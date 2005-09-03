@@ -529,10 +529,9 @@ int afs_replay_log( AfsVolume_s * psVolume )
 		}
 		for( i = 0; i < 128; i++ )
 		{
-			if( pIndex[i] == 0 )
-			{
-				break;
-			}
+			if( pIndex[i] == 0 || psSuperBlock->as_nValidLogBlocks == 0 )
+  				break;
+
 			printk( "afs_replay_log() write back block %d to %d\n",( int )nLogBlock, ( int )pIndex[i] );
 
 			if( pIndex[i] >= psSuperBlock->as_nNumBlocks )
