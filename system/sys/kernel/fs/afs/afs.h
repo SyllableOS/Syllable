@@ -44,14 +44,22 @@ typedef struct
 
 #define AFS_MAX_RUN_LENGTH 65535
 
+/** Data stream of an AFS file
+ * \par Description:
+ * This structure is used to find the actual data in a file.  It conists of a Direct blockrun (ie, a
+ * set of DIRECT_BLOCK_COUNT (12) runs of data blocks), an Indirect blockrun (ie, a set of
+ * BLOCKS_PER_DI_RUN (4) blocks of pointers, each pointing to a run of data blocks) , and a Double
+ * Indirect blockrun (ie, set of BLOCKS_PER_DI_RUN (4) blocks of pointer, each pointing to a run of
+ * BLOCKS_PER_DI_RUN (4) blocks of pointers, each pointing to a run of data blocks).
+ ****************************************************************************/
 typedef struct
 {
-	BlockRun_s ds_asDirect[DIRECT_BLOCK_COUNT];
-	off_t ds_nMaxDirectRange;
-	BlockRun_s ds_sIndirect;
-	off_t ds_nMaxIndirectRange;
-	BlockRun_s ds_sDoubleIndirect;
-	off_t ds_nMaxDoubleIndirectRange;
+	BlockRun_s	ds_asDirect[ DIRECT_BLOCK_COUNT ];	///< Direct range
+	off_t	ds_nMaxDirectRange;			///< Number of blocks in the direct range
+	BlockRun_s	ds_sIndirect;				///< Indirect range
+	off_t	ds_nMaxIndirectRange;			///< Number of block in direct and indirect ranges
+	BlockRun_s	ds_sDoubleIndirect;			///< Double indirect range
+	off_t	ds_nMaxDoubleIndirectRange;		///< Number of blocks in direct, indirect, and double indirect ranges
 	off_t ds_nSize;
 } DataStream_s;
 
@@ -127,8 +135,8 @@ struct _AfsTransaction
 {
 	AfsTransaction_s *at_psNext;
 	AfsTransaction_s *at_psPrev;
-	AfsHashEnt_s *at_psFirstEntry;
-	AfsHashEnt_s *at_psLastEntry;
+	AfsHashEnt_s *at_psFirstEntry;	// First entry in doubly linked list of journal hash entries
+	AfsHashEnt_s *at_psLastEntry;	// Last entry in doubly linked list of journal hash entries
 	off_t at_nLogStart;	// Absolute start block in the log(disk address)
 	int at_nBlockCount;	// Number of blocks in the transaction including index blocks
 	atomic_t at_nPendingLogBlocks;	// Blocks written to the cache but not yet flushed.
@@ -175,8 +183,8 @@ typedef struct
 	off_t av_nLoggStart;
 	off_t av_nLoggEnd;
 	off_t as_nTransAllocatedBlocks;
-	void **av_pFirstTmpBuffer;
-	int av_nTmpBufferCount;
+	void **av_pFirstTmpBuffer;		/**< Pointer to temporary buffer freelist */
+	int av_nTmpBufferCount;			/**< Number of temporary buffers in use */
 	sem_id av_hBlockListMutex;
 	sem_id av_hIndexDirMutex;
 

@@ -38,12 +38,23 @@
 #include "btree.h"
 
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Get a block sized temporary buffer
+ * \par Description:
+ * Get (or allocate if there aren't any) a buffer the size of an AFS block.  This is a
+ * temporary buffer internal to AFS, and not part of the file cache system.  When free,
+ * the buffers are stored in a singly linked list using the first pointer-sized chunk of
+ * the buffer.  Thus, av_pFirstTmpBuffer points to the first free buffer, and the first
+ * pointer-sized chunk of that buffer points to the next free buffer, and so on.  Since
+ * these are temporary buffers (never held across calls) there should be very few of
+ * them.  This is good, because they are never freed.
+ * \par Note:
+ * \par Warning:
+ * There is no explicit null termination on this list.  I suspect no more than one is
+ * ever in use.
+ * \param psVolume	AFS filesystem pointer
+ * \return buffer on success, NULL on failure
+ * \sa
+ *****************************************************************************/
 void *afs_alloc_block_buffer( AfsVolume_s * psVolume )
 {
 	void *pBuffer;
@@ -79,14 +90,23 @@ void *afs_alloc_block_buffer( AfsVolume_s * psVolume )
 	return ( pBuffer );
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Put a block sized temporary buffer
+ * \par Description:
+ * Put (but don't free) a buffer the size of an AFS block.  It is stored in a singly
+ * linked list using the first pointer-sized chunk of the buffer.  Thus,
+ * av_pFirstTmpBuffer points to the first free buffer, and the first pointer-sized chunk
+ * of that buffer points to the next free buffer, and so on.  Since these are temporary
+ * buffers (never held across calls) there should be very few of them.  This is good,
+ * because they are never freed.
+ * \par Note:
+ * \par Warning:
+ * There is no explicit null termination on this list.  I suspect no more than one is
+ * ever in use.
+ * \param psVolume	AFS filesystem pointer
+ * \param pBuffer	buffer to put
+ * \return none
+ * \sa
+ *****************************************************************************/
 void afs_free_block_buffer( AfsVolume_s * psVolume, void *pBuffer )
 {
 
@@ -114,14 +134,21 @@ void afs_free_block_buffer( AfsVolume_s * psVolume, void *pBuffer )
 	}
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Remove an Inode from the deleted file directory and delete it
+ * \par Description:
+ * Remove the given Inode from the deleted file list of the given volume.
+ * If the volume was out of space when the Inode was deleted, then it was
+ * not moved to the deleted list. In either case, the inode is then
+ * permantly deleted.
+ * \par Note:
+ * XXX The section of code tha sets INF_NOT_IN_DELME is commented
+ * out.  Check to see if this is a problem.
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	AFS inode to be deleted
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_remove_from_deleted_list( AfsVolume_s * psVolume, AfsInode_s * psInode )
 {
 	AfsSuperBlock_s * psSuperBlock;
@@ -180,6 +207,16 @@ static int afs_remove_from_deleted_list( AfsVolume_s * psVolume, AfsInode_s * ps
 	}
 	return ( nError );
 }
+
+/** Get the total size of a device
+ * \par Description:
+ * Given a device number, get the total size in bytes of the device
+ * \par Note:
+ * \par Warning:
+ * \param nDev	Device number
+ * \return Size of device in octets
+ * \sa
+ *****************************************************************************/
 static off_t afs_get_device_size( int nDev )
 {
 	device_geometry sGeo;
@@ -202,14 +239,19 @@ static off_t afs_get_device_size( int nDev )
 	}
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Initialize an AFS volume
+ * \par Description:
+ * Initialzie (format) a volume represented by the given device path with
+ * the AFS filesystem.
+ * \par Note:
+ * \par Warning:
+ * \param pzDevPath	Path to device to format
+ * \param pzVolName	Name of new filesystem
+ * \param pArgs		Initialization arguments (? unused)
+ * \param nArgLen	Size of pArgs
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_initialize( const char *pzDevPath, const char *pzVolName, void *pArgs, size_t nArgLen )
 {
 	AfsSuperBlock_s * psSuperBlock;
@@ -406,14 +448,16 @@ static int afs_initialize( const char *pzDevPath, const char *pzVolName, void *p
 	return ( 0 );
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Check the validity of a superblock
+ * \par Description:
+ * Given an AFS superblock, check it for internal consistancy.
+ * \par Note:
+ * \par Warning:
+ * \param psSuperBlock	AFS superblock to check
+ * \param bQuiet		Whether or not to log errors
+ * \return true if superblock is valid, false otherwise
+ * \sa
+ *****************************************************************************/
 static bool afs_validate_superblock( AfsSuperBlock_s * psSuperBlock, bool bQuiet )
 {
 	bool bResult = true;
@@ -498,14 +542,17 @@ static bool afs_validate_superblock( AfsSuperBlock_s * psSuperBlock, bool bQuiet
 	return ( bResult );
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Clean out deleted file directory
+ * \par Description:
+ * When files are deleted, they are moved to a hidden directory of deleted
+ * files, rather than being deleted entirely.  This will delete the entire
+ * contents of the deleted file directory for the given volume.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_empty_delme_dir( AfsVolume_s * psVolume )
 {
 	AfsSuperBlock_s * psSuperBlock;
@@ -624,6 +671,19 @@ static int afs_empty_delme_dir( AfsVolume_s * psVolume )
 	kfree( psDeleteMe );
 	return ( nError );
 }
+
+/** Determine if a filesystem is AFS
+ * \par Description:
+ * Given a device containing a filesystem, determine if that filesystem is
+ * AFS and controllable by this driver.  If this is an AFS filesystem,
+ * then psInfo is filled in with appropriate information.
+ * \par Note:
+ * \par Warning:
+ * \param pzDevPath	The path to the device to probe
+ * \param psInfo	fs_info structure to fill on success
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_probe( const char *pzDevPath, fs_info * psInfo )
 {
 	AfsSuperBlock_s * psSuperBlock;
@@ -680,14 +740,21 @@ static int afs_probe( const char *pzDevPath, fs_info * psInfo )
 	return ( nError );
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Mount an AFS filesystem
+ * \par Description:
+ * Attempt to mount an AFS filesystem.
+ * \par Note:
+ * \par Warning:
+ * \param nFsID		Filesystem handle for filesystem to mount
+ * \param pzDevPath	Path to device to mount
+ * \param nFlags	Mount flags (MNTF_*)
+ * \param pArgs		Mount argument (? unused)
+ * \param pArgLen	Mount argument length
+ * \param ppVolData	AFS volume pointer to fill
+ * \param pnRootIno	Root inode of new filesystem
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_mount( kdev_t nFsID, const char *pzDevPath, uint32 nFlags, const void *pArgs, int nArgLen, void **ppVolData, ino_t *pnRootIno )
 {
 	AfsVolume_s * psVolume;
@@ -697,7 +764,7 @@ static int afs_mount( kdev_t nFsID, const char *pzDevPath, uint32 nFlags, const 
 	int nDev;
 	int nError = 0;
 
-	printk( "Mount afs on '%s' flags %u\n", pzDevPath, ( unsigned int )nFlags );
+	printk( "Mount afs on '%s' flags %08lx\n", pzDevPath, ( unsigned int )nFlags );
 	nDev = open( pzDevPath, O_RDWR );
 	if( nDev < 0 )
 	{
@@ -857,12 +924,15 @@ static int afs_mount( kdev_t nFsID, const char *pzDevPath, uint32 nFlags, const 
 
 
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Unmount an AFS filesystem
+ * \par Description:
+ * Unmount an AFS filesystem.  Flush all outstanding IO, free all state.
+ * \par Note:
+ * \par Warning:
+ * \param pVolume	Pointer to private filesystem data of filesystem to unmount
+ * \return 0 (success)
+ * \sa
+ *****************************************************************************/
 static int afs_unmount( void *pVolume )
 {
 	AfsVolume_s * psVolume = pVolume;
@@ -903,6 +973,19 @@ static int afs_unmount( void *pVolume )
 	kfree( psVolume );
 	return ( 0 );
 }
+
+/** Read filesystem info of an AFS filesystem
+ * \par Description:
+ * Read the filesystem info (device, free blocks, etc.) from the given
+ * volume into the given filesystem info structure
+ * \par Note:
+ * \par Warning:
+ * XXX should check to see if arguments are valid
+ * \param pVolume	AFS filesystem pointer
+ * \param psInfo	Filesystem info structure to fill
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_rfsstat( void *pVolume, fs_info * psInfo )
 {
 	AfsVolume_s * psVolume = pVolume;
@@ -922,6 +1005,18 @@ int afs_rfsstat( void *pVolume, fs_info * psInfo )
 	psInfo->fi_volume_name[255] = '\0';
 	return ( 0 );
 }
+
+/** Sync an AFS volume
+ * \par Description:
+ * Write out all outstainding IO of the given AFS volume, and flush all
+ * outstanding journal transactions.
+ * \par Note:
+ * XXX Should the journal flush be after the cache flush?
+ * \par Warning:
+ * \param pVolume	AFS filesystem pointer
+ * \return 0 (success)
+ * \sa
+ *****************************************************************************/
 int afs_sync( void *pVolume )
 {
 	AfsVolume_s * psVolume = pVolume;
@@ -930,14 +1025,18 @@ int afs_sync( void *pVolume )
 	return ( 0 );
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Read stats of an AFS file
+ * \par Description:
+ * Read the stat information (owner, modification time, etc.) of the given
+ * file into the given stat structure
+ * \par Note:
+ * \par Warning:
+ * \param pVolume	AFS filesystem pointer
+ * \param pNode		Inode of file to stat
+ * \param psStat	stat structure to fill
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_rstat( void *pVolume, void *pNode, struct stat *psStat )
 {
 	AfsVolume_s * psVolume = pVolume;
@@ -983,14 +1082,20 @@ static int afs_rstat( void *pVolume, void *pNode, struct stat *psStat )
 		return ( 0 );
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Write the stats of an AFS file
+ * \par Description:
+ * Write the given stat info (owner, modification time, etc.) into the
+ * given file
+ * \par Note:
+ * Atime is not currently kept
+ * \par Warning:
+ * \param pVolume	AFS filesystem pointer
+ * \param pNode		Inode of file to write to
+ * \param psStat	Stat structure to write
+ * \param nMask		Mask of attributes to actually write (WSTAT_*)
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_wstat( void *pVolume, void *pNode, const struct stat *psStat, uint32 nMask )
 {
 	AfsVolume_s * psVolume = pVolume;
@@ -1036,14 +1141,19 @@ static int afs_wstat( void *pVolume, void *pNode, const struct stat *psStat, uin
 	return ( nError );
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Find an Inode on an AFS filesystem
+ * \par Description:
+ * Given a parent Inode and a filename, get the I-Node number of the file
+ * \par Note:
+ * \par Warning:
+ * \param pVolume		AFS volume pointer
+ * \param pParent		Inode for parent directory
+ * \param pzName		Filename
+ * \param nNameLen		Length of filename
+ * \param pnInodeNum	Inode number to return
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_lookup( void *pVolume, void *pParent, const char *pzName, int nNameLen, ino_t *pnInodeNum )
 {
 	AfsVolume_s * psVolume = pVolume;
@@ -1087,14 +1197,21 @@ static int afs_lookup( void *pVolume, void *pParent, const char *pzName, int nNa
 	return ( nError );
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Move a file/directory to the deleted file directory
+ * \par Description:
+ * When files or directories are deleted, they are not acutally deleted
+ * but are moved to a hidden directory of deleted files for later removal.
+ * This will move the given file/directory to the deleted files directory.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psParent	Inode of parent directory
+ * \param psInode	Inode to be moved
+ * \param pzName	Name of file/directory to be moved
+ * \param nNameLen	Length of pzName
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_move_to_delme( AfsVolume_s * psVolume, AfsInode_s * psParent, AfsInode_s * psInode,  const char *pzName, int nNameLen )
 {
 	AfsSuperBlock_s * psSuperBlock = psVolume->av_psSuperBlock;
@@ -1149,14 +1266,23 @@ static int afs_move_to_delme( AfsVolume_s * psVolume, AfsInode_s * psParent, Afs
       error:return ( nError );
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Create a new AFS file
+ * \par Description:
+ * Create a new file with the given name in the given directory, with the
+ * given perms, and return the new inode and filehandle
+ * \par Note:
+ * \par Warning:
+ * \param pVolume		AFS volume pointer
+ * \param pParent		Inode of parent directory of new file
+ * \param pzName		Name of new file
+ * \param nNameLen		Length of pzName
+ * \param nMode			Open mode flags
+ * \param nPerms		Permission of new file
+ * \param pnInodeNum	Returned inode number
+ * \param ppCookie		Returned filehandle
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_create( void *pVolume, void *pParent, const char *pzName, int nNameLen, int nMode, int nPerms, ino_t *pnInodeNum, void **ppCookie )
 {
 	AfsVolume_s * psVolume = pVolume;
@@ -1225,14 +1351,20 @@ static int afs_create( void *pVolume, void *pParent, const char *pzName, int nNa
       error1:return ( nError );
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Create an AFS symlink
+ * \par Description:
+ * Create a symlink on the given volume in the given parent directory with
+ * the given name pointing to the given path
+ * \par Note:
+ * \par Warning:
+ * \param pVolume	AFS volume pointer
+ * \param pParent	Inode of parent directory
+ * \param pzName	Name of new symlink
+ * \param nNameLen	Length of pzName
+ * \param pzNewPath	Path to destination of symlink
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_symlink( void *pVolume, void *pParent, const char *pzName, int nNameLen, const char *pzNewPath )
 {
 	AfsVolume_s * psVolume = pVolume;
@@ -1326,14 +1458,22 @@ static int afs_symlink( void *pVolume, void *pParent, const char *pzName, int nN
 	return ( nError );
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Make an AFS special node
+ * \par Description:
+ * Create a special node on an AFS filesystem.  This is typically a device
+ * node.  Creates node in given parent directory, with given name and
+ * mode, and for the given device.
+ * \par Note:
+ * \par Warning:
+ * \param pVolume	AFS volume pointer
+ * \param pParent	Inode of parent directory
+ * \param pzName	Name of node to create
+ * \param nNameLen	Length of pzName
+ * \param nMode		Mode of node to create
+ * \param nDev		Device to create node for
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_mknod( void *pVolume, void *pParent, const char *pzName, int nNameLen, int nMode, dev_t nDev )
 {
 	AfsVolume_s * psVolume = pVolume;
@@ -1397,14 +1537,18 @@ static int afs_mknod( void *pVolume, void *pParent, const char *pzName, int nNam
 	return ( nError );
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Read an AFS symlink
+ * \par Description:
+ * Read the given symlink into the given buffer
+ * \par Note:
+ * \par Warning:
+ * \param pVolume	AFS volume pointer
+ * \param pNode		Inode of symlink to read
+ * \param pzBuffer	Buffer to fill with symlink contents
+ * \param nBufSize	Size of pzBuffer
+ * \return amount read on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_read_link( void *pVolume, void *pNode, char *pzBuffer, size_t nBufSize )
 {
 	AfsInode_s * psInode = ( ( AfsVNode_s * )pNode )->vn_psInode;
@@ -1420,14 +1564,22 @@ static int afs_read_link( void *pVolume, void *pNode, char *pzBuffer, size_t nBu
 	return ( nError );
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Read an AFS file
+ * \par Description:
+ * Read from the given file at the given position into the given buffer
+ * the given amount.
+ * \par Note:
+ * File must be open
+ * \par Warning:
+ * \param pVolume	AFS filesystem pointer
+ * \param pNode		Inode of file to read
+ * \param pCookie	AFS filehandle of file to read
+ * \param nPos		Position to read from
+ * \param pBuffer	Buffer to read into
+ * \param nLen		number of octets to read
+ * \return number of octets read on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_read( void *pVolume, void *pNode, void *pCookie, off_t nPos, void *pBuffer, size_t nLen )
 {
 	AfsInode_s * psInode = ( ( AfsVNode_s * )pNode )->vn_psInode;
@@ -1443,6 +1595,21 @@ static int afs_read( void *pVolume, void *pNode, void *pCookie, off_t nPos, void
 	return ( nError );
 }
 
+/** Read from an AFS file into a vector
+ * \par Description:
+ * Read from the given file the given amount into the given IO vector
+ * \par Note:
+ * File must be open
+ * \par Warning:
+ * \param pVolume	AFS filesystem pointer
+ * \param pNode		Inode of file to read from
+ * \param pCookie	AFS filehandle of file to read from
+ * \param nPos		Position to read from
+ * \param psVector	Array of vectors to read into
+ * \param nCount	Number of vectors to fill
+ * \return number of octets read on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_readv( void *pVolume, void *pNode, void *pCookie, off_t nPos, const struct iovec *psVector, size_t nCount )
 {
 	AfsInode_s * psInode = ( ( AfsVNode_s * )pNode )->vn_psInode;
@@ -1474,12 +1641,20 @@ static int afs_readv( void *pVolume, void *pNode, void *pCookie, off_t nPos, con
 	return ( ( nError < 0 ) ? nError : nBytesRead );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Expand an AFS file
+ * \par Description:
+ * This will expand the given file to the length indicated by the given
+ * offset and length.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	Inode of file to expand
+ * \param psCookie	AFS file handle for file to expand
+ * \param pnPos		Position to add to (and returned position used)
+ * \param pnLen		Length to add (and returned length added)
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_expand_file( AfsVolume_s * psVolume, AfsInode_s * psInode, AfsFileCookie_s * psCookie, off_t *pnPos, size_t *pnLen )
 {
 	const int nBlockSize = psVolume->av_psSuperBlock->as_nBlockSize;
@@ -1559,16 +1734,20 @@ static int afs_expand_file( AfsVolume_s * psVolume, AfsInode_s * psInode, AfsFil
 	return ( nError );
 }
 
-
-
-/**
+/** Write to an AFS file
  * \par Description:
+ * Write to the given file at the given location from the given buffer
  * \par Note:
+ * File must be open
  * \par Warning:
- * \param
- * \return
+ * \param pVolume	AFS filesystem pointer
+ * \param pNode		Inode of the file to write to
+ * \param pCookie	AFS filehandle of file to write to
+ * \param nPos		Position to write at
+ * \param pBuffer	Buffer to write from
+ * \param nLen		Amount to write (length of data in pBuffer)
+ * \return number of octets written on success, negative error code on failure
  * \sa
- * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 static int afs_write( void *pVolume, void *pNode, void *pCookie, off_t nPos, const void *pBuffer, size_t nLen )
 {
@@ -1609,6 +1788,23 @@ static int afs_write( void *pVolume, void *pNode, void *pCookie, off_t nPos, con
 	AFS_UNLOCK( psInode->ai_psVNode );
 	return ( nError );
 }
+
+/** Write into an AFS file from a vector
+ * \par Description:
+ * Write into the given file at the given position the contents of the
+ * given vectors
+ * \par Note:
+ * File must be open
+ * \par Warning:
+ * \param pVolume	AFS filesystem pointer
+ * \param pNode		Inode of file to write to
+ * \param pCookie	AFS filehandle of file to write to
+ * \param nPos		Position to write at
+ * \param psVector	Array of IO vectors to write from
+ * \param nCount	Number of vectors
+ * \return number of octets written on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_writev( void *pVolume, void *pNode, void *pCookie, off_t nPos, const struct iovec *psVector, size_t nCount )
 {
 	AfsVolume_s * psVolume = pVolume;
@@ -1669,17 +1865,21 @@ static int afs_writev( void *pVolume, void *pNode, void *pCookie, off_t nPos, co
 	return ( nError );
 }
 
-
-
-/** Read one entry from a B+tree
+/** Read the next entry from a directory
  * \par Description:
+ * This will read the next entry from the given directory, as indicated by
+ * the position or iterator into the given entry buffer
  * \par Note:
- *	No locking is done.
+ * XXX No locking is done.
  * \par Warning:
- * \param
+ * \param psVolume		AFS filesystem pointer
+ * \param psInode		Inode of directory to read
+ * \param psIterator	Iterator indicating next entry to read
+ * \param nPos			Position of next entry to read
+ * \param psFileInfo	Directory entry buffer to fill
+ * \param nBufSize		Size of psFileInfo
  * \return
  * \sa
- * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 int afs_do_read_dir( AfsVolume_s * psVolume, AfsInode_s * psInode, BIterator_s * psIterator,  int nPos, struct kernel_dirent *psFileInfo, size_t nBufSize )
 {
@@ -1734,6 +1934,23 @@ int afs_do_read_dir( AfsVolume_s * psVolume, AfsInode_s * psInode, BIterator_s *
 	}
 	return ( nError );
 }
+
+/** Read next entry from AFS directory
+ * \par Description:
+ * Reading a directory is an iterative process, with successive readdir
+ * calls returning seccussive entries.  This will return that next entry.
+ * \par Note:
+ * \par Warning:
+ * \param pVolume		AFS volume pointer
+ * \param pNode			Inode of directory to read
+ * \param pCookie		Pre-allocated directory reading cookie
+ * \param nPos			Directory read position
+ * \param psFileInfo	directory entry stucture to fill with read
+ * \param nBufSize		Size of psFileInfo
+ * \return 0 if directory empty, Positive number of entries read on success,
+ * negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_read_dir( void *pVolume, void *pNode, void *pCookie, int nPos, struct kernel_dirent *psFileInfo, size_t nBufSize )
 {
 	AfsVolume_s * psVolume = pVolume;
@@ -1754,14 +1971,21 @@ static int afs_read_dir( void *pVolume, void *pNode, void *pCookie, int nPos, st
 	return ( nError );
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Reset read of AFS directory to beginning
+ * \par Description:
+ * Reading a directory is an iterative process, with successive readdir
+ * calls returning seccussive entries.  This will reset the read so the
+ * next read will return the first entry.
+ * \par Note:
+ * XXX This does not currently do anything.  Check to see why (see comment
+ * on vn_nBTreeVersion
+ * \par Warning:
+ * \param pVolume	AFS volume pointer
+ * \param pNode		Inode of direcory to read
+ * \param pCookie	Cookie for this directory read
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_rewinddir( void *pVolume, void *pNode, void *pCookie )
 {
 	AfsInode_s * psInode = ( ( AfsVNode_s * )pNode )->vn_psInode;
@@ -1775,14 +1999,18 @@ static int afs_rewinddir( void *pVolume, void *pNode, void *pCookie )
 	}
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Open an AFS file
+ * \par Description:
+ * Open the given file in the given directory and return a filehandle
+ * \par Note:
+ * \par Warning:
+ * \param pVolume	AFS volume pointer
+ * \param pNode		Inode of parent directory
+ * \param nMode		Open mode of file
+ * \param ppCookie	Return parameter for AFS filehandle
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_open( void *pVolume, void *pNode, int nMode, void **ppCookie )
 {
 	AfsVolume_s * psVolume = pVolume;
@@ -1846,14 +2074,17 @@ static int afs_open( void *pVolume, void *pNode, int nMode, void **ppCookie )
       error:return ( nError );
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Close an AFS file
+ * \par Description:
+ * Close a file that was previously opened.
+ * \par Note:
+ * \par Warning:
+ * \param pVolume	AFS filesystem pointer
+ * \param pNode		Inode of file to close
+ * \param pCookie	AFS filehandle of file to close
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_close( void *pVolume, void *pNode, void *pCookie )
 {
 	AfsVolume_s * psVolume = pVolume;
@@ -1890,14 +2121,17 @@ static int afs_close( void *pVolume, void *pNode, void *pCookie )
 	return ( nError );
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Read an inode from an AFS filesystem
+ * \par Description:
+ * Given an Inode number, read the given inode in and pass it back
+ * \par Note:
+ * \par Warning:
+ * \param pVolume	AFS volume pointer
+ * \param nInodeNum	The number of the Inode to read
+ * \param ppNode	Pointer to return read Inode
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_read_inode( void *pVolume, ino_t nInodeNum, void **ppNode )
 {
 	AfsVolume_s * psVolume = pVolume;
@@ -1935,14 +2169,16 @@ static int afs_read_inode( void *pVolume, ino_t nInodeNum, void **ppNode )
       error1:return ( nError );
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Write an inode to an AFS filesystem
+ * \par Description:
+ * Given an Inode, write it to disk
+ * \par Note:
+ * \par Warning:
+ * \param pVolume	AFS volume pointer
+ * \param pNode		Inode to write
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_write_inode( void *pVolume, void *pNode )
 {
 	AfsVolume_s * psVolume = pVolume;
@@ -2012,14 +2248,20 @@ static int afs_write_inode( void *pVolume, void *pNode )
 	return ( nError );
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Create a new AFS directory
+ * \par Description:
+ * Create a directory with the given name in the given parent directory on
+ * the given volume.
+ * \par Note:
+ * \par Warning:
+ * \param pVolume	AFS volume pointer
+ * \param pParent	Inode of parent directory
+ * \param pzName	Name of new directory
+ * \param nNameLen	Length of pzName
+ * \param nMode		Type of directory to create
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_make_dir( void *pVolume, void *pParent, const char *pzName, int nNameLen, int nMode )
 {
 	AfsVolume_s * psVolume = pVolume;
@@ -2065,6 +2307,20 @@ static int afs_make_dir( void *pVolume, void *pParent, const char *pzName, int n
 	}
 	return ( nError );
 }
+
+/** Lock four inodes for a file move
+ * \par Description:
+ * This will lock the source and destination directory, and the source
+ * and destinations file inodes preperatory to moving a file.
+ * \par Note:
+ * \par Warning:
+ * \param psOldDir	Inode of source directory
+ * \param psNewDir	Inode of destination directory
+ * \param psSrcInode	Inode of source file
+ * \param psDstInode	Inode of destination file
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static status_t afs_lock_multiple_inodes( AfsInode_s * psOldDir, AfsInode_s * psNewDir, AfsInode_s * psSrcInode, AfsInode_s * psDstInode )
 {
 	sem_id anSemaphores[4];
@@ -2125,14 +2381,19 @@ static status_t afs_lock_multiple_inodes( AfsInode_s * psOldDir, AfsInode_s * ps
 	}
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Remove an AFS directory
+ * \par Description:
+ * Remove the given directory from the given parent directory
+ * \par Note:
+ * Directory must be empty
+ * \par Warning:
+ * \param pVolume	AFS volume pointer
+ * \param pParent	Inode of parent directory
+ * \param pzName	Name of directory to remove
+ * \param nNameLen	Length of pzName
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_rmdir( void *pVolume, void *pParent, const char *pzName, int nNameLen )
 {
 	AfsVolume_s * psVolume = pVolume;
@@ -2228,14 +2489,18 @@ static int afs_rmdir( void *pVolume, void *pParent, const char *pzName, int nNam
 	return ( nError );
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Unlink an AFS file
+ * \par Description:
+ * Unlink the given file.  If this is the last link, the file is removed
+ * \par Note:
+ * \par Warning:
+ * \param pVolume	AFS volume pointer
+ * \param pParent	Inode of parent directory
+ * \param pzName	Name of file to unlink
+ * \param nNameLen	Length of pzName
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_unlink( void *pVolume, void *pParent, const char *pzName, int nNameLen )
 {
 	AfsVolume_s * psVolume = pVolume;
@@ -2321,14 +2586,19 @@ static int afs_unlink( void *pVolume, void *pParent, const char *pzName, int nNa
 	return ( nError );
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Check to see if one inode is a child of the other
+ * \par Description:
+ * When renaming a file/directory, it must be ensured that the destination
+ * is not a child of the source, as this would result in a disconnected
+ * cycle.  This will make that check.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psDest	Destination Inode
+ * \param psInode	Source Inode
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static status_t afs_rename_is_child( AfsVolume_s * psVolume, AfsInode_s * psParent, AfsInode_s * psInode )
 {
 	ino_t nInodeNum = afs_run_to_num( psVolume->av_psSuperBlock, &psInode->ai_sInodeNum );
@@ -2369,6 +2639,20 @@ static status_t afs_rename_is_child( AfsVolume_s * psVolume, AfsInode_s * psPare
 	}
 	return ( 0 );
 }
+
+/** Get the Inode assiociated with the name
+ * \par Description:
+ * Look up the given name in the given directory and get it's Inode
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psParent	Inode of parent directory
+ * \param pzName	Name of file to lookup
+ * \param nNameLen	Length of pzName
+ * \param ppsRes	Return argument of found inode
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static status_t afs_rename_load_inode( AfsVolume_s * psVolume, AfsInode_s * psParent, const char *pzName, int nNameLen, AfsInode_s ** ppsRes )
 {
 	AfsVNode_s *psVnode;
@@ -2397,6 +2681,17 @@ static status_t afs_rename_load_inode( AfsVolume_s * psVolume, AfsInode_s * psPa
 	*ppsRes = psVnode->vn_psInode;
 	return ( 0 );
 }
+
+/** Determine if a directory is empty
+ * \par Description:
+ * Check to see if the given directory is empty
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	Inode of directory to check
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static status_t afs_rename_is_dir_empty( AfsVolume_s * psVolume, AfsInode_s * psInode )
 {
 	BIterator_s sIterator;
@@ -2421,14 +2716,22 @@ static status_t afs_rename_is_dir_empty( AfsVolume_s * psVolume, AfsInode_s * ps
 	}
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Rename an AFS file
+ * \par Description:
+ * Rename the given file to the new name in the new directory
+ * \par Note:
+ * \par Warning:
+ * \param pVolume		AFS volume pointer
+ * \param pOldDir		Inode of directory containing file to be moved
+ * \param pzOldName		Name of file to be moved
+ * \param nOldNameLen	Length of pzOldName
+ * \param pNewDir		Inode of destination directory
+ * \param pzNewName		New name of file
+ * \param nNewNameLen	Length of pzNewName
+ * \param bMustBeDir	If true, file to be moved must be a directory
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_rename( void *pVolume, void *pOldDir, const char *pzOldName, int nOldNameLen, void *pNewDir, const char *pzNewName, int nNewNameLen, bool bMustBeDir )
 {
 	AfsVolume_s * psVolume = pVolume;
@@ -2623,14 +2926,22 @@ static int afs_rename( void *pVolume, void *pOldDir, const char *pzOldName, int 
 	return ( nError );
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** Get the number of contiguous blocks from an AFS file
+ * \par Description:
+ * For the given file, starting at the given file position, return the
+ * number of contiguous blocks (a run), and the actual disk offset of the set of
+ * contiguous blocks.
+ * \par Note:
+ * \par Warning:
+ * \param pVolume		AFS filesystem pointer
+ * \param pNode			Inode of file to search
+ * \param nPos			File position to start looking for run
+ * \param nBlockCount	Maximum number of blocks to find
+ * \param pnStart		Return parameter for disk offset of start of run
+ * \param pnActualCount	Actual number of blocks in the run
+ * \return device number on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afsi_get_stream_blocks( void *pVolume, void *pNode, off_t nPos, int nBlockCount, off_t *pnStart, int *pnActualCount )
 {
 	AfsVolume_s * psVolume = pVolume;
@@ -2651,14 +2962,14 @@ int afsi_get_stream_blocks( void *pVolume, void *pNode, off_t nPos, int nBlockCo
 	return ( nError );
 }
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+/** AFS instance of FSOperations_s
+ * \par Description:
+ * The instance of FSOperations_s allows the VFS to call into the
+ * filesystem for filesystem specific functions.
+ * \par Note:
+ * \par Warning:
+ * \sa FSOperations_s
+ *****************************************************************************/
 static FSOperations_s g_sOperations =
 {
 	afs_probe,		// op_probe
@@ -2721,6 +3032,17 @@ static FSOperations_s g_sOperations =
 	NULL			// op_truncate
 };
 
+/** Initialize the AFS filesystem driver
+ * \par Description:
+ * Tell the VFS about our FSOperations_s structure so the VFS can
+ * communicate with AFS.
+ * \par Note:
+ * \par Warning:
+ * \param	pzName	The name of the filesystem
+ * \param	ppsOps	The FSOperations_s pointer to fill
+ * \return	FSDRIVER_API_VERSION on success, -1 on failure
+ * \sa
+ *****************************************************************************/
 int fs_init( const char *pzName, FSOperations_s ** ppsOps )
 {
 	printk( "initialize_fs called in afs\n" );

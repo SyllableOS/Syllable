@@ -27,13 +27,19 @@
 #include "afs.h"
 #include "btree.h"
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Delete a key/value pair from a BTree node
+ * \par Description:
+ * Delete the key with the given index from the given node.  First, get a pointer to the
+ * indices for the key.  Then, move all keys above the given one down.  Then move the
+ * entries in the index down over the removed key. Next, move the value index down over
+ * the removed key, and finally move the value array down over the deleted value.
+ * \par Note:
+ * \par Warning:
+ * \param psNode	BTree node to delete from
+ * \param nIndex	Index of key/value pair to delete
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static status_t bt_delete_key_from_node( BNode_s *psNode, int nIndex )
 {
 	int16 *pnKeyIndexes;
@@ -79,13 +85,26 @@ static status_t bt_delete_key_from_node( BNode_s *psNode, int nIndex )
 	return( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Replace one key/value pair with another
+ * \par Description:
+ * Replace the key/value pair with the given index with the given key/value pair.  First,
+ * delete the indexed key/value pair.  Then, if the new pair will fit in the given node,
+ * add them to that node, otherwise add them to the BTree.
+ * \par Note:
+ * Replace is somewhat of a misnomer.  This is really an add/delete pair.
+ * \par Warning:
+ * \param psVolume		AFS filesystem pointer
+ * \param psInode		AFS Inode containing tree
+ * \param psTrans		BTree transaction
+ * \param psStack		Stack pointing to node
+ * \param psNode		Node containing key to replace
+ * \param nNode			Node number of psNode
+ * \param nIndex		Index of key/value pair to replace
+ * \param pNewKey		New key
+ * \param nNewKeyLen	Length of pNewKey in octets
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static status_t bt_replace_key( AfsVolume_s * psVolume, AfsInode_s * psInode, BTransaction_s * psTrans, BStack_s * psStack, BNode_s *psNode, bvalue_t nNode, int nIndex, const void *pNewKey, int nNewKeyLen )
 {
 	bvalue_t psValue;
@@ -161,13 +180,26 @@ static status_t bt_replace_key( AfsVolume_s * psVolume, AfsInode_s * psInode, BT
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Rename the parent key of a node
+ * \par Description:
+ * Replace the key pointing at the given node with the first key in it's ultimate left
+ * child's first key.  First, load the parent of the given node, which must be the
+ * current node in the given stack.  Then, load the given node, and assert it's validity.
+ * Next, walk down the tree, always following the left-most branch, to the the leftmost
+ * leaf node, and save it's first key.  If the given node is in the overflow node,
+ * replace the last key in the parent with the saved key.  Otherwise, walk the keys in
+ * the parent node looking for the one pointing to the given node, and replace it with
+ * the saved key.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	AFS Inode containing the tree
+ * \param psTrans	BTree transaction
+ * \param psStack	BTree stack pointing to parent node
+ * \param nNode		Node who's key pointer to replace
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static status_t bt_rename_parent_key( AfsVolume_s * psVolume, AfsInode_s * psInode, BTransaction_s * psTrans, BStack_s * psStack, bvalue_t nNode )
 {
 	BTree_s *psTree;
@@ -282,13 +314,33 @@ static status_t bt_rename_parent_key( AfsVolume_s * psVolume, AfsInode_s * psIno
 }
 
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Join two adjacent children of a node, right to left
+ * \par Description:
+ * Move all the key/value pairs in the given right node into the given left node that
+ * will fit.  First, if the overflow pointer in the left node is full, get the key for
+ * the left node.  If the left node is the overflow of the parent, get the last key,
+ * otherwise search the parent node for the key corresponding to the left node.  Then,
+ * put that key and the value of the left nodes overflow pointer into the left node
+ * itself.  This frees the left nodes overflow pointer.  Next, if the total keys of the
+ * left and right nodes will fit into a single node, then walk the right node appending
+ * all of it's key/value pairs onto the left node, ending with moving the right node's
+ * overflow pointer into the left node.  Otherwise, the two nodes cannot be fully joined.
+ * Copy as many key/value pairs from the right node into the left node as will fit.  If
+ * the nodes are not leaves, move the last value in the right node into it's overflow
+ * pointer (if it's empty).  Do the same with the left node.  If the left overflow
+ * pointer is still empty, move the first value in the right node into it.
+ * \par Note:
+ * \par Warning:
+ * \param psParent	Parent node of the two being joined.
+ * \param psLeft	Left node, the target node of the join
+ * \param nLeft		Node number of the left node
+ * \param psRight	Right node, the source of the join
+ * \param bIsLeaf	True if the nodes to be joined are leaves
+ * \return
+ * true if the entire right node was emptied into the left, false if any key/value pairs
+ * are remaining in the right node.
+ * \sa
  ****************************************************************************/
-
 static bool bt_join_right_to_left( const BNode_s *psParent, BNode_s *psLeft, bvalue_t nLeft, BNode_s *psRight, bool bIsLeaf )
 {
 #ifdef AFS_PARANOIA
@@ -411,13 +463,29 @@ static bool bt_join_right_to_left( const BNode_s *psParent, BNode_s *psLeft, bva
 	}
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Join two adjacent children of a node, left to right
+ * \par Description:
+ * Move all the key/value pairs in the given left node into the given right node that
+ * will fit.  First, if the overflow pointer of the left node is not empty, it must be
+ * emptied.  Get the key pointing to the left node from the parent node, an insert it
+ * into the right node, with the value of the left overflow node.  The left overflow
+ * pointer is now free.  If these are not leaves, there is more than one key in the right
+ * node, and the right overflow is empty, then if there are no keys in the right node
+ * (XXX I think this should be checking the left node), move the last key/value from the
+ * right node into the right overflow pointer, otherwise move the last key/value pair
+ * from the left node into the overflow of the right node.  Then, if all the keys will
+ * fit in a single node, move all the keys from the left node into the right node and
+ * return.  Otherwise, move as many of the keys as will fit from the left node into the
+ * right node.  Then, if these are not leaves, move the last key/value in the left node
+ * into it's overflow pointer if the pointer is empty.  If it's still empty, move the
+ * first key/value pair from the right node into the left overflow pointer.
+ * \par Note:
+ * If these are not leaves, then the overflow pointer of the left node must be empty.
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \return true if all keys were joined, false otherwise, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 static bool bt_join_left_to_right( AfsInode_s * psInode, const BNode_s *psParent, BNode_s *psRight, BNode_s *psLeft, bvalue_t nLeft, bool bIsLeaf )
 {
 	const void *pOfKey;
@@ -566,13 +634,48 @@ static bool bt_join_left_to_right( AfsInode_s * psInode, const BNode_s *psParent
 	}
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Remove a node
+ * \par Description:
+ * Remove the node with the given number, reached by the given stack, from the tree with
+ * the given inode on the given volume.  Reballance the tree as necessary.  Begin loop.
+ * Get the current top of the stack, and store it as the parent.  If the current node is
+ * in the overflow, and there's more than one key in the parent, get the value of the
+ * last key in the parent, move it to the overflow, and delete the key.  Otherwise, find
+ * the key in the parent that points to the current node, and delete it.  Mark the parent
+ * dirty, and free the current node.  Unwind the stack one, making the previous parent
+ * current.  If the stack is not empty (ie the former parent was not the root), get the
+ * new parent from the top of the stack.  If the current node is less than half full,
+ * some keys must be stolen from a sibling.  If the current node is not first in the
+ * parent node, get the left sibling of the the current node, mark both dirty.  Join
+ * left-to-right into the current node.  If the join succeeded, the left sibling is
+ * empty, and must be deleted. Make the left sibling current, restart the loop.
+ * Otherwise, there are still keys in the left sibling, but the first key in the current
+ * node changed, so rename the key pointing to the current node, and terminate the loop.
+ * Otherwise, this is the first key in the parent node, get the right sibling.  If there
+ * is more than one key in the parent, get the second key from the parent, otherwise the
+ * overflow.  Mark the current and sibling nodes dirty.  Join right-to-left from the
+ * sibling to the current node.  If this succeeds, the sibling is empty.  Memcopy the
+ * current node over the sibling, and restart the loop to delete the current node.
+ * Otherwise, there are still keys in the sibling, but it's first key has changed.
+ * Rename the key pointing to the sibling, and terminate the loop.  Otherwise, the
+ * current node is still more than half full.  If the first key in the current node was
+ * deleted, rename the key in the parent pointing to the current node, and terminate the
+ * loop.  Otherwise, the former parent was the root.  If it's now empty, set the new root
+ * to be the overflow of the current node.  Otherwise, if it has one key in it, set the
+ * new root to be that key. (XXX what happens to the overflow in this case?) If we have
+ * changed the root, load the tree header, set the new root, decrease the tree depth, and
+ * free the former root.  Mark the new root dirty.  Regardless if we changed the root,
+ * terminate the loop.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	AFS inode containing the tree
+ * \param psTrans	Transaction
+ * \param psStack	Stack leading to the parent of nNode
+ * \param nNode		The number of the node to remove
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 static status_t bt_remove_subnode( AfsVolume_s * psVolume, AfsInode_s * psInode, BTransaction_s * psTrans, BStack_s * psStack, bvalue_t nNode )
 {
 	status_t nError = 0;
@@ -804,14 +907,39 @@ static status_t bt_remove_subnode( AfsVolume_s * psVolume, AfsInode_s * psInode,
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- *	Lookup and delete one key from the tree.
- * NOTE:
- * SEE ALSO:
+/** Delete a key from a BTree
+ * \par Description:
+ * Delete the given key of the given length from the tree with the given inode on the
+ * given volume.  Reballance the tree as necessary.  Begin a transaction.  Find the given
+ * key.  If it's not found, return error.  Delete the key from the node, and mark the
+ * node dirty.  If the containing node is not the root, and it is less than half full,
+ * join with one of it's siblings.  Get the parent of the containing node, and unwind the
+ * stack one.  The top of the stack now points to the parent.  If the current node is not
+ * the first key in the parent, load the left sibling and  mark it dirty.  Join left to
+ * right.  If the join succeeded, point the left pointer of the current node to the
+ * sibling's left pointer.  If this was not NULL, load the node pointed to by it, point
+ * it's right pointer to the current node, and mark it dirty.  Remove the sibling node.
+ * Otherwise, there are still keys in the sibling, but the first key in the current node
+ * changed.  Rename the key in the parent pointing to it.  Otherwise, the current node is
+ * the first key in the parent.  Load the right sibling (the second key in the parent if
+ * there is one, or the overflow otherwise), and mark it dirty.  Join right-to-left.  If
+ * this succeeds, load the left pointer (if it exists), and point it at the right
+ * sibling.  Save off the right pointer of the right sibling, and memcopy the current
+ * node over the right sibling.  Set the right sibling's right pointer back to it's
+ * previous value, and remove the current node.  Otherwise, the sibling still has keys in
+ * it, but it's first key changed.  Rename the key in the parent pointing to it.
+ * Otherwise, this is the root, or the node it at least half full.  If this is not the
+ * root, and it is the first key in the parent, rename the key in the parent pointing to
+ * the current node.  End the transaction.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	AFS inode containing the tree
+ * \param pKey		The key to delete
+ * \param nKeyLen	The length of pKey
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 status_t bt_delete_key( AfsVolume_s * psVolume, AfsInode_s * psInode, const void *pKey, int nKeyLen )
 {
 	BNode_s *psNode;
@@ -846,6 +974,7 @@ status_t bt_delete_key( AfsVolume_s * psVolume, AfsInode_s * psInode, const void
 		return( -EINVAL );
 	}
 #endif
+	// XXX this is not necessary, it is done in bt_begin_transaction
 	memset( &sStack, 0, sizeof( sStack ) );
 
 	if( psInode->ai_sData.ds_nSize == 0 )

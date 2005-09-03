@@ -36,13 +36,15 @@
 #define HT_DEFAULT_SIZE   128
 #define HASH(b)  (b)
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Initialize a new hash table
+ * \par Description:
+ * Initialize the given hash table to the default size, and mark it empty.
+ * \par Note:
+ * \par Warning:
+ * \param psTable	The hash table to initialize
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 int afs_init_hash_table( AfsHashTable_s * psTable )
 {
 	psTable->ht_nSize = HT_DEFAULT_SIZE;
@@ -61,25 +63,32 @@ int afs_init_hash_table( AfsHashTable_s * psTable )
 	}
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Delete a hash table
+ * \par Description:
+ * Free the table in the given hash table.
+ * \par Note:
+ * XXX Should set the size to zero
+ * \par Warning:
+ * \param psTable	The hash table to delete
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 void afs_delete_hash_table( AfsHashTable_s * psTable )
 {
 	kfree( psTable->ht_apsTable );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Resize a hash table
+ * \par Description:
+ * Resize the given hash table to twice it's previous size.  Allocate a new table twice
+ * teh size of the old table.  Then, for each entry in the old table, rehash it into the
+ * new table.  Finally, free the old hash table and store the new hashtable information.
+ * \par Note:
+ * \par Warning:
+ * \param psTable	The hash table to resize
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 static int afs_resize_hash_table( AfsHashTable_s * psTable )
 {
 	int nPrevSize;
@@ -130,13 +139,21 @@ static int afs_resize_hash_table( AfsHashTable_s * psTable )
 	return( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Insert a new entry into a hash
+ * \par Description:
+ * Insert the given block number into the given hash using the given hash entry.   First,
+ * check to see if the block number is alreay in the hash.  If so, return error.
+ * Otherwise, store the block number in the given entry, and hash it into the table.  If
+ * the hash table is now greater than 3/4 full, resize the hash table.
+ * \par Note:
+ * \par Warning:
+ * Hash tables do not shrink
+ * \param psTable	Hash table to insert into
+ * \param nBlockNum	Block number to insert
+ * \param psNew		New entry to insert in hash table
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 static int afs_hash_insert( AfsHashTable_s * psTable, off_t nBlockNum, AfsHashEnt_s *psNew )
 {
 	AfsHashEnt_s *psTmp;
@@ -173,13 +190,17 @@ static int afs_hash_insert( AfsHashTable_s * psTable, off_t nBlockNum, AfsHashEn
 	return( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Look up an entry in a hash
+ * \par Description:
+ * Lookup the given block number in the given hash table.  Hash the block number, and
+ * walk the chain at that bucket looking for the give block number.
+ * \par Note:
+ * \par Warning:
+ * \param psTable	The hash table to search
+ * \param nBlockNum	The block number to look up
+ * \return The hash entry if it's found, NULL otherwise
+ * \sa
  ****************************************************************************/
-
 static AfsHashEnt_s *afs_hash_lookup( AfsHashTable_s * psTable, off_t nBlockNum )
 {
 	int nHash = HASH( nBlockNum ) & psTable->ht_nMask;
@@ -195,13 +216,20 @@ static AfsHashEnt_s *afs_hash_lookup( AfsHashTable_s * psTable, off_t nBlockNum 
 	return( psEnt );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Delete an entry from a hash
+ * \par Description:
+ * Delete and return the hash entry for the given block number from the given hash.
+ * First, look up the given block number in the hash.  If it's not found, return NULL.
+ * Then, if the entry is the first in it's bucket, set the second in it's bucket to be
+ * first.  Otherwise, set the next pointer in the previous entry to point to the next
+ * entry.  Reduce the table count by one, and return the found entry.
+ * \par Note:
+ * \par Warning:
+ * \param psTable	The hash table
+ * \param nBlockNum	The block number to delete
+ * \return The deleted hash entry if found, NULL otherwise
+ * \sa
  ****************************************************************************/
-
 static AfsHashEnt_s *afs_hash_delete( AfsHashTable_s * psTable, off_t nBlockNum )
 {
 	int nHash = HASH( nBlockNum ) & psTable->ht_nMask;
@@ -268,6 +296,18 @@ static void afs_add_jb_entry( AfsTransaction_s *psTrans, AfsHashEnt_s *psEntry )
 	psEntry->he_psTransaction = psTrans;
 }
 
+/** Remove a hash entry from a transaction
+ * \par Description:
+ * Remove the given entry from the given transaction.  This is a bog-standard
+ * remove-from-doubly-linked-list function.
+ * \par Note:
+ * XXX The entry points to it's transaction. This should at least be checked, and
+ * probably asserted.
+ * \par Warning:
+ * \param
+ * \return
+ * \sa
+ ****************************************************************************/
 static void afs_remove_jb_entry( AfsTransaction_s *psTrans, AfsHashEnt_s *psEntry )
 {
 	if( psEntry->he_psNextInTrans != NULL )
@@ -292,7 +332,16 @@ static void afs_remove_jb_entry( AfsTransaction_s *psTrans, AfsHashEnt_s *psEntr
 }
 
 
-
+/** Write out an AFS superblock
+ * \par Description:
+ * Write out the superblock of the given AFS volume.  If the write fails, or if the
+ * amount written is not the same as the superblock size, return an error.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS volume containing superblock to write
+ * \return 0 on success, negative error code on failure
+ * \sa
+ ****************************************************************************/
 static int afs_write_superblock( AfsVolume_s * psVolume )
 {
 	int nError = write_pos( psVolume->av_nDevice, psVolume->av_nSuperBlockPos, psVolume->av_psSuperBlock, AFS_SUPERBLOCK_SIZE );
@@ -313,15 +362,25 @@ static int afs_write_superblock( AfsVolume_s * psVolume )
 	}
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- *	Called by the cache system for each logged block that is flushed to
- *	disk.
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
 
+/** Callback for logged write of cached blocks
+ * \par Description:
+ * When a transaction is written out, it uses a cached logged write, that is the write is
+ * not immediate (cached), and journaled (logged).  This callback is passed into
+ * write_logged_blocks, and is called each time a block in a transaction is written out.
+ * All this does is decrement the number of blocks yet to be written, and panic if that
+ * number goes negative.  It's more of a sanity check than anything else.
+ * \par Note:
+ * \par Warning:
+ * XXX This assumes that one block is being written, and ignores nNumBlocks.  This is
+ * currently true, but not necessarily true.  This will fail if the VFS ever writes out
+ * multiple blocks at once.  This should be fixed.
+ * \param nBlockNum		The block being written
+ * \param nNumBlocks	The number of blocks being written
+ * \param pArg			The passed in cookie, in this case the transaction being written
+ * \return void
+ * \sa
+ ****************************************************************************/
 static void afs_block_flushed_callback( off_t nBlockNum, int nNumBlocks, void *pArg )
 {
 	AfsTransaction_s *psTrans = pArg;
@@ -333,6 +392,24 @@ static void afs_block_flushed_callback( off_t nBlockNum, int nNumBlocks, void *p
 	}
 }
 
+/** Allocate a block buffer for a transaction
+ * \par Description:
+ * A transaction contains a singly linked list of block buffers.  Each buffer can hold
+ * 128 blocks.  First, determine the size of new new buffer, leaving space for the
+ * memory-manager overhead, and extend that to the nearest page boundary.  Next allocate
+ * an area to contain the buffer.  Note, this allocates the buffer itself, as well.
+ * Advance the returned pointer over the memory manager data structures.  Zero out the
+ * first block (the index block) of the buffer.  Store the area containing the buffer,
+ * the number of free blocks, and the number of used blocks.  Insert the buffer at the
+ * head of the buffer list in the transaction.
+ * \par Note:
+ * XXX The 128 should be changed to a #define and/or a runtime tunable, for tuning
+ * \par Warning:
+ * \param psVolume	AFS volume containing the data to be put in the transaction
+ * \param psTrans	Transaction to which buffer will be added
+ * \return The new buffer on success, NULL on failure
+ * \sa afs_free_transaction_buffer
+ ****************************************************************************/
 static AfsTransBuffer_s *afs_alloc_transaction_buffer( AfsVolume_s * psVolume, AfsTransaction_s *psTrans )
 {
 	AfsTransBuffer_s *psBuffer;
@@ -360,18 +437,41 @@ static AfsTransBuffer_s *afs_alloc_transaction_buffer( AfsVolume_s * psVolume, A
 	return( psBuffer );
 }
 
+/** Free a block buffer from a transaction
+ * \par Description:
+ * Merely delete the area containing the buffer.
+ * \par Note:
+ * XXX Alloc adds the buffer to the transaction, but free does not remove it.  This is
+ * asymmetrical, and possibly a bug.
+ * \par Warning:
+ * \param psVolume	Volume containing the transaction containing the buffer
+ * \param psBuffer	Buffer to free
+ * \return void
+ * \sa afs_alloc_transaction_buffer
+ ****************************************************************************/
 static void afs_free_transaction_buffer( AfsVolume_s * psVolume, AfsTransBuffer_s *psBuffer )
 {
 	delete_area( psBuffer->atb_hAreaID );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Replay the journal on an AFS volume
+ * \par Description:
+ * This will replay the journal on an AFS filesystem.  This is done prior t mounting.
+ * First, if the filesystem is clean, set the current journal location to the start of
+ * the journal and return.  Next, get an index block buffer and a block buffer.  While we
+ * have outstanding journal blocks, loop.  First, read the index block. (An index block
+ * indexes the destination disk address of the 128 consecutive journal blocks following
+ * it.) Then, loop through the index block and the blocks it indexes in parallel, reading
+ * each journal block into the block buffer and writing it to the destination address in
+ * the corresponding index block entry.  If we reach the end of the journal, wrap around
+ * to the beginning.  End loop.  Finally, set the current journal location to the start
+ * of the journal, write out the superblock, and return.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	The AFS volume containing the journal to replay
+ * \return 0 on success, negative error code on failure.
+ * \sa
  ****************************************************************************/
-
 int afs_replay_log( AfsVolume_s * psVolume )
 {
 	AfsSuperBlock_s *psSuperBlock = psVolume->av_psSuperBlock;
@@ -474,19 +574,22 @@ int afs_replay_log( AfsVolume_s * psVolume )
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- *	Allocate and initialize a new transaction header.
- *	The at_nLogStart is set to the first block after the previous
- *	transaction, or the first block in the log if the transaction
- *	list are empty.
- *	The new header is linked into the doubly linked list of transactions
- *	in the volume structure.
- * NOTE:
- * SEE ALSO:
+/** Allocate and initialize a new transaction.
+ * \par Description:
+ * Allocate a new transaction, determine it's start location in the journal, and link it
+ * into the list of transactions for this volume.  A volume contains a doubly linked list
+ * of transactions, in reverse-cronological order, so the most recent is first on the
+ * list.  Therefore, the head of the list is the most recently committed transaction.
+ * Set the begining of this transaction to one past the end of the previous transaction,
+ * wrapping at the end of the journal.  If there are no previous transactions, set it
+ * to the beginning of the journal.  The new transaction is linked into the head of the
+ * list, and, if the tail pointer is NULL, into the tail of the list.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS Volume to add transaction to
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 static int afs_create_transaction( AfsVolume_s * psVolume )
 {
 	AfsTransaction_s *psPrevTrans = psVolume->av_psFirstTrans;
@@ -537,13 +640,20 @@ static int afs_create_transaction( AfsVolume_s * psVolume )
 	return( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Begin an AFS transaction
+ * \par Description:
+ * Begin a new AFS transaction on the given volume.  Lock the journal.  If a transaction
+ * is in progress, error.  If there are allocated transaction blocks, but no active
+ * transaction, error.  Otherwise, mark this transaction started.  If a transaction
+ * exists that has not been committed to the journal yet, use it.  Otherwise, allocate a
+ * new one.  Note the transaction list is locked.
+ * \par Note:
+ * XXX The journal is locked, but not unlocked if there is an error.
+ * \par Warning:
+ * \param psVolume	The AFS volume to start a new transaction on
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 int afs_begin_transaction( AfsVolume_s * psVolume )
 {
 	int nError = 0;
@@ -576,35 +686,43 @@ int afs_begin_transaction( AfsVolume_s * psVolume )
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- *	Write all blocks to their final destination on the disk.
- *	For each block we writes we increase the at_nPendingLogBlocks
- *	counter, and register a callback with the cache block, that
- *	will be called when the buffer is safely written to disk.
- *	The callback will decrease the counter each time a block
- *	is flushed, and when it gets to zero we knows that the entire
- *	transaction is really written to disk, and the journal space
- *	occupied by this transaction can be reclaimed.
+/** Write out a transaction
+ * \par Description:
+ * Schedule the writeout of all the outstanding blocks in a transaction.  Since all I/O
+ * is cached, the write will not necessarily happen now, but at some future time.  Loop
+ * through all the hash entries in the transaction.  Then, for each block in the entry, if
+ * it has not yet been written out, write the block to it's destination address, and mark
+ * it written.  Note that all blocks in a transaction are written in sequential order, so
+ * a count of the written blocks is all that is necessary for determining if a block is
+ * written.  Increment the number of outstanding block writes.  A callback is registered
+ * with each write, that decrements this counter.  When the counter is zero, the
+ * transaction is actually written to disk. Next, walk all the hash entries in the
+ * transaction.  If there is no buffer for this entry, free the entry.  Otherwise,
+ * un-associate the entry with the transaction.  Finally, mark the transaction as
+ * written.
+ * \par Note:
+ * This currently writes each block one at a time.  This is quite likely suboptimal, and
+ * a trivial check could be added to coalesce multiple adjacent blocks into a single
+ * write.  This would require the fix in the note for afs_block_flushed_callback.
+ * \par Warning:
+ * No checks are done to verify that the previous transaction is finished or that the
+ * current really was written to disk.  If you don't check this before calling it you
+ * will jepordize the poor users hard earned data.
  *
- * NOTE:
- *	No checks are done to verify that the previous transaction is
- *	finished or that the current really was written to disk.
- *	If you don't check this before calling it you will jepordize 
- *	the poor users hard earned data.
- *
- *	Also note that this function fetch a block with get_empty_block()
- *	and that if somebody read that block before we write to it, they
+ * SEE ALSO:
+ *	Also note that this function fetches a block with get_empty_block()
+ *	and that if somebody reads that block before we write to it, they
  *	will get a cache hit on the empty block, and read invalid data.
  *	Therefore it is very important to avoid other threads accessing
  *	the cache block until it is gracefully updated. This is achived
  *	by locking the psVolume->av_hJournalListsLock mutex both while
  *	calling this function, and when reading meta data from the
  *	cache.
- * SEE ALSO:
+ * \param psVolume	AFS volume contiaining the transaction
+ * \param psTrans	Transaction to write
+ * \return 0 on success, negative error code on failure
+ * \sa afs_block_flushed_callback
  ****************************************************************************/
-
 static int afs_write_transaction_to_disk( AfsVolume_s * psVolume, AfsTransaction_s *psTrans )
 {
 	const int nBlockSize = psVolume->av_psSuperBlock->as_nBlockSize;
@@ -677,6 +795,17 @@ static int afs_write_transaction_to_disk( AfsVolume_s * psVolume, AfsTransaction
 	return( 0 );
 }
 
+/** Flush a transaction from the block cache
+ * \par Description:
+ * Force the writeout of a transaction from the block cache.  Walk the list of buffers,
+ * and, for each block in the buffer, flush it from the cache.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS volume containing the transaction
+ * \param psTrans	Transaction to flush
+ * \return
+ * \sa
+ ****************************************************************************/
 static void afs_force_flush_transaction( AfsVolume_s * psVolume, AfsTransaction_s *psTrans )
 {
 	AfsTransBuffer_s *psBuf;
@@ -692,19 +821,19 @@ static void afs_force_flush_transaction( AfsVolume_s * psVolume, AfsTransaction_
 	}
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- *	Checks if the oldest transaction has been safely flushed to disk, and
- *	if so deletes it. The av_nPendingLogBlocks in the volume structure
- *	and the super block is updated to reflect the new range of valid
- *	journal blocks.
- *	If there is more transaction written to the log, but not yet to their
- *	final destination, the oldest one are written to the cahche now.
- * NOTE:
- * SEE ALSO:
+/** Clean up a finished and committed transaction
+ * \par Description:
+ * If the oldest transaction on the given volume is written to the log and disk,
+ * completely, free up the journal space it consumes, note in the volume and superblock
+ * the reduced number of pending blocks, and unlink and free up the transaction and it's
+ * buffers.  Then, if the (new) last transaction is written to the journal, initiait the
+ * write-to-disk for that transaction.
+ * \par Note:
+ * \par Warning:
+ * \param
+ * \return
+ * \sa
  ****************************************************************************/
-
 static int afs_discard_flushed_journal_entries( AfsVolume_s * psVolume )
 {
 	AfsTransaction_s *psTrans;
@@ -777,18 +906,21 @@ static int afs_discard_flushed_journal_entries( AfsVolume_s * psVolume )
 	return( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- *	Makes room for nBlockCount number of blocks in the log by forcing
- *	cache flushes, and terminate the transactions that are finished
- *	because they are written to the disk.
- * NOTE:
- *	If nBlockCount are larger than the entire log this function will
- *	never finish.
- * SEE ALSO:
+/** Free up space in the journal
+ * \par Description:
+ * Free up at least the given number of blocks in the kernel by looping on transactions,
+ * flushing them to the journal, writing them to disk, and discarding them.
+ * \par Note:
+ * \par Warning:
+ * If nBlockCount is larger than the journal, this will never terminate.
+ * XXX add check and panic
+ * \param psVolume		AFS volume containing journal with needed space
+ * \param nBlockCount	Number of journal blocks to free
+ * \return 0 on success
+ * \sa
+ * afs_force_fluch_transaction, afs_write_transaction_to_disk,
+ * afs_discard_flushed_journal_entries
  ****************************************************************************/
-
 static int afs_wait_for_log_space( AfsVolume_s * psVolume, int nBlockCount )
 {
 	int nLoops = 0;
@@ -813,16 +945,26 @@ static int afs_wait_for_log_space( AfsVolume_s * psVolume, int nBlockCount )
 	return( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- *	First the transaction is written to the journal. Then the super-block
- *	is updated to contain the new valid journal area. 
- * NOTE:
- *	The logg are written directly to the disk, not through the cache.
- * SEE ALSO:
+/** Write a transaction to the journal
+ * \par Description:
+ * Write the most recent transaction to the journal.  Note that, since only one
+ * transaction can be outstanding at a time, this is the only transaction that has not
+ * yet been writen to the journal.  Loop through the buffers in the transaction.  If this
+ * buffer does not cross the end-of-journal boundry, write it directly to the disk (not
+ * thorugh the block cache).  Otherwise, split it into two writes, one upto the end of
+ * the journal, and one starting at the beginning, and write each one directly to disk.
+ * Mark the transaction as written to the journal, and subtract the number of blocks
+ * written from the total outstanding for this volume.  If the result is not zero, panic.
+ * Add the number of blocks just journaled to the number of outstanding journaled blocks
+ * in the volume, and write the superblock to the disk.  If the last (oldest) transaction
+ * on the list for this volume exists, is journaled, and is not written to disk, then
+ * initiate a write-to-disk for that transaction.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS volume containing transaction to write
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 static int afs_write_transaction_to_log( AfsVolume_s * psVolume )
 {
 	const int nBlockSize = psVolume->av_psSuperBlock->as_nBlockSize;
@@ -918,6 +1060,20 @@ static int afs_write_transaction_to_log( AfsVolume_s * psVolume )
 	return( nError );
 }
 
+/** Validate the internal consistancy of a transaction
+ * \par Description:
+ * Validate the given transaction.  Walk the list of buffers in the transaction.  For
+ * each buffer, check that all the blocks less than the blockcount for the buffer refer
+ * to a non-zero disk address, and that all other blocks refer to a zero disk address.
+ * Finally, assure that the number of blocks actually referenced in the transaction is
+ * the same as the blockcount in the transaction.  If any of these checks fails, panic.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS volume containing the transaction
+ * \param psTrans	Transaction to validate
+ * \return
+ * \sa
+ ****************************************************************************/
 static void afs_validate_transaction( AfsVolume_s * psVolume, AfsTransaction_s *psTrans )
 {
 	AfsTransBuffer_s *psBuf;
@@ -949,15 +1105,32 @@ static void afs_validate_transaction( AfsVolume_s * psVolume, AfsTransaction_s *
 	}
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- *	Merge the blocks touched during the previous transaction
- *	(recorded in the volume struct) with the current "super" transaction.
- * NOTE:
- * SEE ALSO:
+/** Merge all outstanding blocks into the current transaction
+ * \par Description:
+ * Walk all the journal blocks in the journal for the given volume, merging them all in
+ * the currently open transaction.  First, ensure the journal has enough space to hold
+ * all the outstanding blocks on the volume, plus 1/128th of the size of the journal. For
+ * each journal block, get it's hash entry.  If that journal block is not in the current
+ * transaction, and does not yet have a buffer, allocate a new buffer, and increase the
+ * number of outstanding blocks, pending blocks, and merged blocks.  If the buffer
+ * allocation failed, jump to the error handling code.  Otherwise, grab a buffer from the
+ * current transaction.  Set the block pointer of the current position in the buffer to
+ * the block, increase the block count of the buffer,  and point the block buffer pointer
+ * to the correct slot in the buffer.  Next, walk the list of journal blocks.  For each
+ * one, get it's hash entry.  If the entry is not part of this transaction, or it doesn't
+ * have a buffer, copy the data from the block into new buffer allocated in the previous
+ * loop, and, if it's not in this transaction, remove it from it's current transaction
+ * and add it to this one.  Otherwise, just copy the data from the block into it's
+ * buffer.  Finally, update the block counts in the transaction and volume, and validate
+ * the transaction.  In the case of a buffer allocation failure, free buffers from the
+ * transaction until there is enough to hold all the outstanding blocks.  Validate the
+ * transaction and return the error.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume		AFS volume containing transactions to merge
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 static int afs_merge_transactions( AfsVolume_s * psVolume )
 {
 	const int nBlockSize = psVolume->av_psSuperBlock->as_nBlockSize;
@@ -1117,16 +1290,21 @@ static int afs_merge_transactions( AfsVolume_s * psVolume )
 }
 
 
-/*****************************************************************************
- * NAME:
- * DESC:
- *	Discard the blocks touched during the previous transaction
- *	(recorded in the volume struct). This is used to "baild out"
- *	when something fail half-way through a transaction.
- * NOTE:
- * SEE ALSO:
+/** Discard journal blocks not yet written
+ * \par Description:
+ * Discard any blocks belonging to the previous transaction, leaving them unwritten.
+ * This will cancel a transaction as if it never happend, in case it fails part way
+ * through.  Walk the list of open journal block in the volume.  For each block, get it's
+ * hash entry.  If the has entry is not waiting for writing, free it's hash entry and
+ * remove it from it's transaction (if any).  Advance the first block pointer in the
+ * volume, and free the block.  Fix up the used blocks and allocated blocks numbers in
+ * the volume.  Next, for each remaining hash entry, verify that it's being written back.
+ * \par Note:
+ * \par Warning:
+ * \param
+ * \return
+ * \sa
  ****************************************************************************/
-
 static int afs_discard_transactions( AfsVolume_s * psVolume )
 {
 	int nNumReverted = 0;
@@ -1203,17 +1381,29 @@ static int afs_discard_transactions( AfsVolume_s * psVolume )
 	return( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- *	Called when new blocks are allocated for files. This function will
- *	flush out compleate journal entries until the given block is no
- *	longer in the journal.
- *
- * NOTE:
- * SEE ALSO:
+/** Flush journal until block is free
+ * \par Description:
+ * Flush completed journal entries until the given block is free.  Loop until the given
+ * block is no-longer in the journal hash.  In this loop, if this is the third time
+ * through, write the current transaction to the journal and, if that succeeded, create a
+ * new transaction. If the last transaction is not flushed to disk, flush it.  If the
+ * last transaction has ben written to the journal but not to the disk, write it to the
+ * disk.  Discard any flushed journal entries, increment the run number, and loop.
+ * \par Note:
+ * - The write-to-disk and the flush-transaction should probably be done in the opposite
+ *   order, so that you write-then-flush, rather than flush-then-write (which doesn't do
+ *   any good).  Kurt may have had a reason for this.
+ * - I'm not sure about the magic third-time-through-creates-a-new-transaction thing.
+ *   I'm not sure a new transaction should be created at all, let alone only sometimes.
+ *   This is only called from the stream code, which doesn't seem to have a concept of a
+ *   transaction, so maybe it's okay.
+ * \par Warning:
+ * No error handling for failure of called functions.  Should probably error out.
+ * \param psVolume		AFS volume containing journal
+ * \param nBlock		Block number of block to wait for
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 int afs_wait_for_block_to_leave_log( AfsVolume_s * psVolume, off_t nBlock )
 {
 	int nRun = 0;
@@ -1249,27 +1439,33 @@ int afs_wait_for_block_to_leave_log( AfsVolume_s * psVolume, off_t nBlock )
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- *	This function is called by the file-system to tell that it is now safe
- *	to split the transaction to avoid journal overflow.
- *	This can be necessary during operations that might touch more blocks
- *	than can possibly fit in the journal. It breaks the atomicity of the
- *	operation, but is only performed at times where a half finished
- *	operation won't threathen the integrity of the file-system.
- *	One example where this can happen is when deleting a file with lot's
- *	of attributes. If the entire deletion would be performed in one
- *	transaction, the blocks touched by both the file, and all its
- *	attributes might exceed the size of the log. By allowing the journaling
- *	system to start a new transaction between every attribute, we avoid
- *	overflowing the log, but risk that a crash will leave the file with
- *	half it's attributes deleted. This is not good, but far better than
- *	jepordizing the entire file-system by overflowing the log.
- * NOTE:
- * SEE ALSO:
+/** Mark journal transaction split point
+ * \par Description:
+ * From Kurt:
+ *	This function is called by the file-system to tell that it is now safe to split the
+ *	transaction to avoid journal overflow.  This can be necessary during operations that
+ *	might touch more blocks than can possibly fit in the journal. It breaks the atomicity
+ *	of the operation, but is only performed at times where a half finnished operation
+ *	won't threathen the integrity of the file-system.  One example where this can happen
+ *	is when deleting a file with lot's of attributes. If the entire deletion whould be
+ *	performed in one transaction, the blocks touched by both the file, and all it's
+ *	attributes might exceed the size of the log. By allowing the journaling system to
+ *	start a new transaction between every attribute, we avoid overflowing the log, but
+ *	risk that a crash will leave the file with half it's attributes deleted. This is not
+ *	good, but far better than jepordizing the entire file-system by overflowing the log.
+ * From DFG:
+ * Lock the transaction list, and check to see if we're about to overflow the journal.
+ * If the outstanding journal entries + the current transaction + 1/128th of the journal
+ * size will overflow, then write the current transaction and start a new one. Then, if
+ * that succeded, merge the new transaction into the journal, and, if that succeeded,
+ * flush the journal.  Finally, if the flush succeeded, mark the journal empty.  Unlock
+ * the journal and return error code.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume		AFS volume containing journal
+ * \return 0 on success, negative error code on failure.
+ * \sa
  ****************************************************************************/
-
 int afs_checkpoint_journal( AfsVolume_s * psVolume )
 {
 	status_t nError = 0;
@@ -1302,13 +1498,24 @@ int afs_checkpoint_journal( AfsVolume_s * psVolume )
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** End a journal transaction
+ * \par Description:
+ * End a journal transaction.  This is called when a transaction is complete, and it
+ * writes the transaction to the disk journal.  First, lock the transaction list.  Next,
+ * if the total outstanding journal size in blocks is greater than 128, write the
+ * transaction and create a new one. (DFG What???) Next, if bSubmitChanges is TRUE, merge
+ * in the outstanding transaction, and, if that fails, discard the outstanding
+ * transaction.  If it succeeded, mark the journal empty.  Otherwise, if bSubmitChanges
+ * is false, discard the outstanding transaction.  Either way, flush the journal, and
+ * unlock the journal.  Reduce the number of started transactions, timestamp the journal,
+ * and unlock the main journal lock taken in  afs_begin_transaction.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume		AFS volume containing journal
+ * \param
+ * \return
+ * \sa
  ****************************************************************************/
-
 int afs_end_transaction( AfsVolume_s * psVolume, bool bSubmitChanges )
 {
 	status_t nError = 0;
@@ -1366,15 +1573,23 @@ int afs_end_transaction( AfsVolume_s * psVolume, bool bSubmitChanges )
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- *	Periodically finish off half filled journal entries so they won't
- *	stay unwritten forever if all other disk access stops.
- * NOTE:
- * SEE ALSO:
+/** Periodically flush journal entries
+ * \par Description:
+ * It's highly undesirable that journal entries hang around forever.  They should be
+ * flushed periodically, to avoid re-appearing deleted files, and other problems if there
+ * is a crash.  This function does that flushing.  In an infinite loop, sleep for 1
+ * second, then lock the journal and transaction list.  If there's an in-progress
+ * transaction, panic and continue.  Otherwise, write the outstanding transactions to
+ * log, clean up any written-to-disk journal entries.  Unlock the transaction list and
+ * journal, and loop again.
+ * \par Note:
+ * DFG says "This function never exits, despite the comment at the bottom", but if that
+ * was true, afs_unmount would never return either... and it does, doesn't it!?
+ * \par Warning:
+ * \param pData		Volume to flush, in the form of a void data pointer
+ * \return 0
+ * \sa
  ****************************************************************************/
-
 static uint32 afs_journal_flusher( void *pData )
 {
 	AfsVolume_s *volatile psVolume = pData;
@@ -1392,6 +1607,7 @@ static uint32 afs_journal_flusher( void *pData )
 		if( psVolume->av_nNewBlockCount != 0 )
 		{
 			panic( "afs_journal_flusher() found a half-finished transaction in the journal!\n" );
+			//XXX DFG unlock!
 			continue;
 //          afs_merge_transactions( psVolume );
 		}
@@ -1406,13 +1622,16 @@ static uint32 afs_journal_flusher( void *pData )
 	return( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Start the periodic journal flushing thread
+ * \par Description:
+ * Create a kernel thread to periodically flush the journal for a volume, and start it
+ * running.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS volume to flush
+ * \return thread ID of flushing thread
+ * \sa
  ****************************************************************************/
-
 int afs_start_journal_flusher( AfsVolume_s * psVolume )
 {
 	thread_id hThread;
@@ -1425,13 +1644,23 @@ int afs_start_journal_flusher( AfsVolume_s * psVolume )
 	return( hThread );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Flush the journal for an AFS volume
+ * \par Description:
+ * This is the external entry point to flush the journal for a volume.  Flush the journal
+ * for the given volume to disk.  First, lock the journal.  Next, if the outstanding
+ * journal entries + 1/128th of the journal size is greater than the journal size, write
+ * the current transaction to the journal.  Then, if there is an outstanding transaction,
+ * panic (should come first.  Should not be possible, because of the journal lock).
+ * Next, unconditionally write the outstanding transactions to the journal.  Wait for the
+ * writes to complete, then unlock the journal.
+ * \par Note:
+ * This should be cleaned up.  Just test for open transaction and panic, then write to
+ * log, wait for space, and unlock.
+ * \par Warning:
+ * \param
+ * \return
+ * \sa
  ****************************************************************************/
-
 void afs_flush_journal( AfsVolume_s * psVolume )
 {
 	printk( "Flushing journal:\n" );
@@ -1460,13 +1689,26 @@ void afs_flush_journal( AfsVolume_s * psVolume )
 
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Read a block from the journal
+ * \par Description:
+ * This will read a block from the disk, getting it from the journal, if it's there.
+ * This is atomic with respect to logged writes, transactions, and other logged reads,
+ * and will pick up changes to the block that have been journalled but not yet written to
+ * disk.  First, timestamp the journal.  Then, lock the transaction list.  This means
+ * that no other journalled reads can occur, no logged_writes can occur, and no
+ * transactions can begin or end while this read is occuring.  Look for the block in the
+ * journal.  If it's there, copy from the transaction buffer (for unfinished
+ * transactions) or the journal buffer (for completed but not committed transactions)
+ * into the destination buffer.  Otherwise, read from disk.  Unlock the transaction list,
+ * allowing other reads/writes to proceed.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume		AFS volume from which to read
+ * \param pBuffer		Buffer to read into
+ * \param nBlock		AFS disk block to read
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 int afs_logged_read( AfsVolume_s * psVolume, void *pBuffer, off_t nBlock )
 {
 	const int nBlockSize = psVolume->av_psSuperBlock->as_nBlockSize;
@@ -1507,13 +1749,25 @@ int afs_logged_read( AfsVolume_s * psVolume, void *pBuffer, off_t nBlock )
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Write a block through the journal
+ * \par Description:
+ * This will write a block to the disk through the journal, using the currently open
+ * transaction.  This is atomic with respect to logged reads, transaction begin/end, and
+ * other logged writes.  First, lock the transaction list.  This ensures logged_read,
+ * other logged_writes, and transaction begin/end cannot occur until this is done.  Next,
+ * see if the block is already in a journal entry.  If it is, and it has a transaction
+ * buffer (ie it's not yet flushed), copy the data into the buffer.  Otherwise, create a
+ * new transaction buffer.  If the block did not have a journal entry, create one and add
+ * it to the journal hash.  Add the block to the current transaction, and copy the data
+ * into it.  Timestamp the journal, and unlock the transaction list.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume		AFS volume to write to
+ * \param pBuffer		Data to write
+ * \param nBlock		AFS block number to write to
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 int afs_logged_write( AfsVolume_s * psVolume, const void *pBuffer, off_t nBlock )
 {
 	const int nBlockSize = psVolume->av_psSuperBlock->as_nBlockSize;

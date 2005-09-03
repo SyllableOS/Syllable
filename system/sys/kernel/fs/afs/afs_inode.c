@@ -32,13 +32,16 @@
 #include "btree.h"
 #include "atheos/bcache.h"
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Get the number of blocks referenced by an AFS Inode
+ * \par Description:
+ * For the given Inode, return the number of blocks in the file referenced by that
+ * Inode.
+ * \par Note:
+ * \par Warning:
+ * \param psInode	AFS Inode of file to check
+ * \return Number of blocks
+ * \sa
+ *****************************************************************************/
 off_t afs_get_inode_block_count( const AfsInode_s * psInode )
 {
 	if( 0 == psInode->ai_sData.ds_nMaxDoubleIndirectRange )
@@ -58,13 +61,16 @@ off_t afs_get_inode_block_count( const AfsInode_s * psInode )
 	}
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Validate consistancy of an Inode
+ * \par Description:
+ * Check whether the given Inode is internally consistant
+ * \par Note:
+ * \par Warning: XXX Some checks not done
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	AFS Inode to check.
+ * \return 0 on success, -EINVAL on error
+ * \sa
+ *****************************************************************************/
 int afs_validate_inode( const AfsVolume_s * psVolume, const AfsInode_s * psInode )
 {
 	off_t nInoNum = afs_run_to_num( psVolume->av_psSuperBlock, &psInode->ai_sInodeNum );
@@ -83,6 +89,7 @@ int afs_validate_inode( const AfsVolume_s * psVolume, const AfsInode_s * psInode
 //  int32               ai_nMode;
 //  int32               ai_nFlags;
 
+	// XXX This is not atomic, copy to temp before compare
 	if( atomic_read( &psInode->ai_nLinkCount ) < 0 || atomic_read( &psInode->ai_nLinkCount ) > 1 )
 	{
 		printk( "Inode %Ld has invalid link count %d\n", nInoNum, atomic_read( &psInode->ai_nLinkCount ) );
@@ -108,6 +115,7 @@ int afs_validate_inode( const AfsVolume_s * psVolume, const AfsInode_s * psInode
 	}
 	if( 0 )
 	{
+	// XXX Checks not done
 		switch( psInode->ai_nIndexType )
 		{
 		case e_KeyTypeInt32:
@@ -136,13 +144,16 @@ int afs_validate_inode( const AfsVolume_s * psVolume, const AfsInode_s * psInode
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Validate an AFS file
+ * \par Description:
+ * Verify that the file pointed to by the given Inode is internally consistant
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	AFS Inode of file to check
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 /*
 int afs_validate_file( AfsVolume_s* psVolume, AfsInode_s* psInode )
 {
@@ -155,13 +166,23 @@ int afs_validate_file( AfsVolume_s* psVolume, AfsInode_s* psInode )
 }
 */
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Create and insert a new Inode
+ * \par Description:
+ * Create in Inode with the given mode, flags, index type, and name, add it to the
+ * given parent directory, and write it to the given volume.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume		AFS filesystem pointer
+ * \param psParent		AFS Inode of directory to contain new Inode
+ * \param nMode			Type of inode (normal file, directory, etc. S_IF*)
+ * \param nFlags		Inode flags (INF_*)
+ * \param nIndexType	Key type of index for inode (e_KeyType*)
+ * \param pzName		Name of file associated with Inode
+ * \param nNameLen		Length of pzName
+ * \param ppsRes		Return argument for new Inode
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_create_inode( AfsVolume_s * psVolume, AfsInode_s * psParent, int nMode, int nFlags, int nIndexType, const char *pzName, int nNameLen, AfsInode_s ** ppsRes )
 {
 	AfsSuperBlock_s *const psSuperBlock = psVolume->av_psSuperBlock;
@@ -267,13 +288,16 @@ int afs_create_inode( AfsVolume_s * psVolume, AfsInode_s * psParent, int nMode, 
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Remove and delete an AFS Inode
+ * \par Description:
+ * Remove the given Inode from the given volume and free it's disk space and memory
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	AFS Inode to remove
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_delete_inode( AfsVolume_s * psVolume, AfsInode_s * psInode )
 {
 	off_t nOldSize;
@@ -320,13 +344,20 @@ int afs_mkdir( AfsVolume_s* psVolume, AfsInode_s* psParent, const char* pzName, 
 }
 */
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Find an Inode number by name
+ * \par Description:
+ * Find the Inode for the given name in the given parent directory on the given
+ * volume and return it's number
+ * \par Note: XXX why not return it?
+ * \par Warning:
+ * \param psVolume		AFS filesystem pointer
+ * \param psParent		AFS Inode of parent directory
+ * \param pzName		Name of Inode to look up
+ * \param nNameLen		Length of pzName
+ * \param pnInodeNum	Return argument for found Inode number
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_lookup_inode( AfsVolume_s * psVolume, AfsInode_s * psParent, const char *pzName, int nNameLen, off_t *pnInodeNum )
 {
 	BIterator_s sIterator;
@@ -349,13 +380,18 @@ int afs_lookup_inode( AfsVolume_s * psVolume, AfsInode_s * psParent, const char 
 	return( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Read an AFS Inode from the disk
+ * \par Description:
+ * Read the Inode with the given pointer from the given volume and return it.
+ * Allocates memory for the returned Inode.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume		AFS filesystem pointer
+ * \param psInodePtr	Pointer to disk location of Inode
+ * \param ppsRes		Return argument for read Inode
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 status_t afs_do_read_inode( AfsVolume_s * psVolume, BlockRun_s * psInodePtr, AfsInode_s ** ppsRes )
 {
 	AfsSuperBlock_s *const psSuperBlock = psVolume->av_psSuperBlock;
@@ -410,7 +446,18 @@ status_t afs_do_read_inode( AfsVolume_s * psVolume, BlockRun_s * psInodePtr, Afs
 	return( nError );
 }
 
-
+/** Revert AFS Inode to on-disk version
+ * \par Description:
+ * Revert the given Inode to the version on the disk.  In particular,
+ * revert Link Count, Parent, Attribute directory, Index type, Inode size,
+ * and the Small data.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	AFS Inode to revert
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 status_t afs_revert_inode( AfsVolume_s * psVolume, AfsInode_s * psInode )
 {
 	AfsVNode_s *psVNode = psInode->ai_psVNode;
@@ -438,13 +485,16 @@ status_t afs_revert_inode( AfsVolume_s * psVolume, AfsInode_s * psInode )
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Write an AFS Inode to disk
+ * \par Description:
+ * Validate the given Inode, and, if valid, write it to disk.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	AFS Inode to write
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 status_t afs_do_write_inode( AfsVolume_s * psVolume, AfsInode_s * psInode )
 {
 	const off_t nInodeBlock = afs_run_to_num( psVolume->av_psSuperBlock, &psInode->ai_sInodeNum );
@@ -458,13 +508,24 @@ status_t afs_do_write_inode( AfsVolume_s * psVolume, AfsInode_s * psInode )
 	return( afs_logged_write( psVolume, psInode, nInodeBlock ) );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Read from an AFS file
+ * \par Description:
+ * Read from the given file into the given buffer starting at the given offset for
+ * the given length.  First, if the start position is not block aligned, read the
+ * first block/extant and copy from it into the destination buffer.  Next, loop
+ * through the blocks/extants, reading until there are no more full blocks, copying
+ * into the destination buffer.  Finally, if there's any data left to read, read the
+ * last block/extant and copy the correct data into the destination buffer.
+ * \par Note: Directory data does not appear to be cached. This could be a huge slowdown.
+ * \par Warning: Does not check for a read past the end of the file.  Use afs_read_pos
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	AFS Inode to read from
+ * \param pBuffer	Destination buffer for the data
+ * \param nPos		Start position in file
+ * \param nSize		Number of octets to read
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_do_read( AfsVolume_s * psVolume, AfsInode_s * psInode, char *pBuffer, off_t nPos, size_t nSize )
 {
 	const int nBlockSize = psVolume->av_psSuperBlock->as_nBlockSize;
@@ -635,13 +696,24 @@ static int afs_do_read( AfsVolume_s * psVolume, AfsInode_s * psInode, char *pBuf
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Write to an AFS file
+ * \par Description:
+ * Write from the given buffer into the given file starting at the given offset for
+ * the given length.  First, if the offset is not block aligned, read the first
+ * block/extent, write from the buffer into it starting at offset, and write it back
+ * out.  Next, for all the complete blocks/extents, in the range, write to them from
+ * the buffer.  Finally, if there is more to write, read the last extent/buffer,
+ * write from the buffer into the beginning of the block/extent, and write it out.
+ * \par Note: Directory data does not appear to be cached. This could be a huge slowdown.
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	AFS Inode to write to
+ * \param pBuffer	Buffer to write from
+ * \param nPos		Start position in file to write at
+ * \param a_nSize	Number of octets to write
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_do_write( AfsVolume_s * psVolume, AfsInode_s * psInode, const char *pBuffer, off_t nPos, size_t a_nSize )
 {
 	const int nBlockSize = psVolume->av_psSuperBlock->as_nBlockSize;
@@ -857,13 +929,21 @@ int afs_do_write( AfsVolume_s * psVolume, AfsInode_s * psInode, const char *pBuf
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Read from an AFS file
+ * \par Description:
+ * Read from the given file into the given buffer starting at the given position for
+ * the given length.  This is a wrapper for afs_do_read that will adjust the length
+ * to not read past the end of the file.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	AFS Inode to read from
+ * \param pBuffer	Buffer to read into
+ * \param nPos		Read start position
+ * \param nSize		Amount to read.
+ * \return amount read on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_read_pos( AfsVolume_s * psVolume, AfsInode_s * psInode, void *pBuffer, off_t nPos, size_t nSize )
 {
 	int nError = 0;

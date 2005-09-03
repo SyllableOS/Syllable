@@ -31,6 +31,15 @@ static bvalue_t bt_alloc_node( AfsVolume_s * psVolume, AfsInode_s * psInode, BTr
 
 static int g_nTotNodeCount = 0;
 
+/** Validate the consistancey of a BTree head
+ * \par Description:
+ * Check whether the given Btree head is internally consistant
+ * \par Note:
+ * \par Warning:
+ * \param psTree	BTree head
+ * \return true if the tree head is consistant, false otherwise
+ * \sa
+ *****************************************************************************/
 bool bt_validate_tree_header( BTree_s * psTree )
 {
 	bool bResult = true;
@@ -49,13 +58,16 @@ bool bt_validate_tree_header( BTree_s * psTree )
 	return( bResult );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Initialize a BTree transaction
+ * \par Description:
+ * Initialize the the given stack and transaction structures for a new transaction
+ * \par Note:
+ * \par Warning:
+ * \param psStack	BTree stack to initialize
+ * \param psTrans	BTree transaction to initialize
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int bt_begin_transaction( BStack_s * psStack, BTransaction_s * psTrans )
 {
 	memset( psStack, 0, sizeof( BStack_s ) );
@@ -63,13 +75,20 @@ int bt_begin_transaction( BStack_s * psStack, BTransaction_s * psTrans )
 	return( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Finalize a BTree transaction
+ * \par Description:
+ * Write out the results of the given transaction to the given inode.  First is the
+ * transaction runs off the end of the btree, then expand the btree.  Next write out the
+ * changed inode. Finally, for each block in the transaction, write out the block.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume		AFS filesystem pointer
+ * \param psInode		AFS Inode of BTree
+ * \param psTrans		Transaction to finalize
+ * \param bOkToWrite	Whether or not psInode should be written
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int bt_end_transaction( AfsVolume_s * psVolume, AfsInode_s * psInode, BTransaction_s * psTrans, bool bOkToWrite )
 {
 	int nBlockSize;
@@ -209,20 +228,17 @@ int bt_end_transaction( AfsVolume_s * psVolume, AfsInode_s * psInode, BTransacti
 	return( nError );
 }
 
-/** Allocate a temporary node buffer.
+/** Allocate a temporary BTree node buffer
  * \par Description:
- *	Allocate temporary storage for a tree node.
- *	The node must be released by bt_free_tmp_node()
- *	when not needed anymore.
+ * Allocate and initialize a temporary BTree node buffer.  The node must be released
+ * by bt_free_temp_node.
  * \par Note:
  *	No disk-space is reserved for the node.
- *
- * \return
- *	Pointer to the new node or NULL if no memory was available.
- *
- * \author	Kurt Skauen(kurt@atheos.cx)
+ * Nodes allocated by this cannot be released by bt_free_node or written to disk.
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \return temporary node, or NULL on error
  *****************************************************************************/
-
 static BNode_s *bt_alloc_tmp_node()
 {
 	BNode_s *psNode = kmalloc( B_NODE_SIZE + 4, MEMF_KERNEL | MEMF_OKTOFAILHACK );
@@ -247,13 +263,16 @@ static BNode_s *bt_alloc_tmp_node()
 	return( psNode );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Free a temprorary BTree node buffer
+ * \par Description:
+ * Free a temporary BTree node buffer allocated by bt_alloc_tmp_node.
+ * \par Note:
+ * The assert appears to ensure the node was allocated by bt_alloc_tmp_node
+ * \par Warning:
+ * \param psNode	BTree node buffer to free
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 static void bt_free_tmp_node( BNode_s *psNode )
 {
 	if( psNode == NULL )
@@ -267,13 +286,16 @@ static void bt_free_tmp_node( BNode_s *psNode )
 	g_nTotNodeCount--;
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Allocate a BTree node buffer
+ * \par Description:
+ * Allocate a BTree node buffer.  This is intended to be committed to disk.  The node can
+ * be released by bt_free_node
+ * \par Note:
+ * Nodes allocated by this canot be released by bt_free_tmp_node
+ * \par Warning:
+ * \return BTree node on success, NULL on failure
+ * \sa
  ****************************************************************************/
-
 static BNode_s *bt_malloc_node()
 {
 	BNode_s *psNode = kmalloc( B_NODE_SIZE + 4, MEMF_KERNEL | MEMF_OKTOFAILHACK );
@@ -297,6 +319,18 @@ static BNode_s *bt_malloc_node()
 	return( psNode );
 }
 
+/** Allocate and initialize a BTree
+ * \par Description:
+ * Allocate a BTree structure, initialize it, add it to the given transaction, and
+ * allocate space for it on the given volume.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	Inode to store BTree in
+ * \param psTrans	Transaction to add BTree too
+ * \return 0 on success, negative error code on failure
+ * \sa
+ ****************************************************************************/
 static int bt_init_tree( AfsVolume_s * psVolume, AfsInode_s * psInode, BTransaction_s * psTrans )
 {
 	BTree_s *psTree;
@@ -353,25 +387,25 @@ static int bt_init_tree( AfsVolume_s * psVolume, AfsInode_s * psInode, BTransact
 	return( 0 );
 }
 
-/** Load a tree node.
+/** Load a BTree node from a volume
  * \par Description:
- *	bt_load_node() will first check if the node is loaded already
- *	and return the old copy if so. If the node is not found a
- *	new node-buffer will be allocated and the node will be loaded.
- *
- *	If the tree has not yet been initialized the tree-header will
- *	be allocated and initialized.
+ * Load the node with the given number from the given inode on the given volume into the
+ * given transaction.  First, the transaction is searched to see if the requested node is
+ * already loaded.  If so, it is returned.  If, in the process, it is determined that the
+ * tree itself is not loaded, it will be loaded.  If the node is not found in the
+ * transaction, space is allocated for it, and it is read in from the given inode/volume.
+ * If it is a BTree header, it is then validated.
  * \par Note:
- *	The returned node will be automatically released in
- *	bt_end_transaction() and should not be released
- *	manually.
- *
- * \param
- * \return
+ * Nodes allocated by bt_load_node are released automatically in bt_end_transaction()
+ * \par Warning:
+ * If the tree is loaded, it involves a recursive call back into bt_load_node()
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	Inode containing the node
+ * \param psTrans	Transaction containing the BTree containing the node
+ * \param nNode		The number of the node
+ * \return A pointer to the loaded node on success, NULL on failure
  * \sa
- * \author	Kurt Skauen(kurt@atheos.cx)
  *****************************************************************************/
-
 BNode_s *bt_load_node( AfsVolume_s * psVolume, AfsInode_s * psInode, BTransaction_s * psTrans, bvalue_t nNode )
 {
 	BNode_s *psNode;
@@ -473,13 +507,19 @@ BNode_s *bt_load_node( AfsVolume_s * psVolume, AfsInode_s * psInode, BTransactio
 	return( NULL );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Mark a BTree node dirty
+ * \par Description:
+ * Mark the given node dirty in the given transaction.  When a transaction is finalized,
+ * all the dirty nodes are written out.  It's a panic if the node is not in the
+ * transaction.
+ * \par Note:
+ * Should probably be changed to return an error code, rather than panic.
+ * \par Warning:
+ * \param psTrans	BTree transaction containing node
+ * \param nNode		The number of the node to mark dirty
+ * \return nothing.
+ * \sa
  ****************************************************************************/
-
 void bt_mark_node_dirty( BTransaction_s * psTrans, bvalue_t nNode )
 {
 	int i;
@@ -508,15 +548,18 @@ void bt_mark_node_dirty( BTransaction_s * psTrans, bvalue_t nNode )
 	panic( "bt_mark_node_dirty() could not find the node\n" );
 }
 
-/** Allocate a new tree-node.
+/** Allocate a BTree node
  * \par Description:
+ * Allocate a node from the given inode on the given volume and add it to the given
+ * transaction.  If there is a free node in the tree, it is used.  Otherwise a new node
+ * is allocated.  Either way, it is marked dirty.
  * \par Note:
  * \par Warning:
- * \param
- * \return
- * \par Error codes:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	AFS inode containing BTree
+ * \param psTrans	Transaction to add node to
+ * \return node number on success, NULL_VAL on failure
  * \sa
- * \author	Kurt Skauen(kurt@atheos.cx)
  *****************************************************************************/
 
 static bvalue_t bt_alloc_node( AfsVolume_s * psVolume, AfsInode_s * psInode, BTransaction_s * psTrans )
@@ -613,13 +656,21 @@ static bvalue_t bt_alloc_node( AfsVolume_s * psVolume, AfsInode_s * psInode, BTr
 	return( nResult );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Free a BTree node
+ * \par Description:
+ * Free the node with the given location from the tree in the given inode on the given
+ * volume, using the given transaction.  The tree header is loaded and validated.  Next,
+ * the node to be freed is loaded and validated.  Finally, the node is marked free
+ * (bn_nKeyCount = 0x12345678), and put into the free node list.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	AFS inode containing the BTree
+ * \param psTrans	Transaction containing the BTree
+ * \param nNode		Number of the node to free.
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 status_t bt_free_node( AfsVolume_s * psVolume, AfsInode_s * psInode, BTransaction_s * psTrans, bvalue_t nNode )
 {
 	BTree_s *psTree;
@@ -691,14 +742,23 @@ status_t bt_free_node( AfsVolume_s * psVolume, AfsInode_s * psInode, BTransactio
 	return( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
+#if 0				//  Make if _BT_DEBUG
 
-/*
+/** Get the minimum and maximum keys in a tree
+ * \par Description:
+ * Walk all the keys in the given tree, finding the minimum and maximum keys when
+ * treated as integers.  For each node in the tree, check it's keys for minimum or
+ * maximum, and then recursively call on the subtree rooted in each of them, then
+ * recursively call on the subtree rooted in the overflow node, if it exists.  The
+ * result is the minimum and maximum keys in the entire tree.
+ * \par Note:
+ * \par Warning:
+ * \param psRoot	The root of the subtree to check
+ * \param pnMin		The current minimum (and returned minimum)
+ * \param pnMax		The current maximum (and returned maximum)
+ * \return No return value, min and max are out arguments.
+ * \sa
+ ****************************************************************************/
 static void bt_get_min_max( BNode_s* psRoot, int* pnMin, int* pnMax )
 {
   int16*		pnKeyIndexes = B_KEY_INDEX_OFFSET( psRoot );
@@ -727,16 +787,24 @@ static void bt_get_min_max( BNode_s* psRoot, int* pnMin, int* pnMax )
     bt_get_min_max( psRoot->bn_psOverflow, pnMin, pnMax );
   }
 }
-*/
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+#endif
+
+#if 0				//  Make if _BT_DEBUG
+
+/** Check the internal consistancy of a BTree subtree
+ * \par Description:
+ * Check the key validity of the given tree.  For each key in the node, get the min
+ * and max of the subtree rooted in that key.  If the max is treater than the key,
+ * or the min is less than the previous key, the tree is invalid.  Then, check the
+ * overflow, if it exists, to ensure it's greater than the highest key in the node.
+ * \par Note:
+ * This should do a recursive call on all subnodes to be useful.
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
-/*
 void	bt_validate_tree( BNode_s* psRoot )
 {
   int16*    pnKeyIndexes = B_KEY_INDEX_OFFSET( psRoot );
@@ -785,16 +853,20 @@ void	bt_validate_tree( BNode_s* psRoot )
     }
   }
 }
-*/
+#endif
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
-
+/** Print the contents of a BTree node
+ * \par Description:
+ * Print out the contents of the given node.  Print an indicator of left sibling, then
+ * each of the keys in the node, then an indicator of overflow, and finally an indicator
+ * of a right sibling.
+ * \par Note:
+ * \par Warning:
+ * \param nKeyType	The type of the key in the Node
+ * \param psNode	The Node to print
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 #ifdef _BT_DEBUG
 static void bt_print_node( int nKeyType, const BNode_s *psNode )
 {
@@ -860,13 +932,19 @@ static void bt_print_node( int nKeyType, const BNode_s *psNode )
 }
 #endif // _BT_DEBUG
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Determine if a key will fit in a BTree node
+ * \par Description:
+ * Determine if a key of the given size will fit in the given node.  The current total
+ * key size is added to the requested size, the total value size (including the new key),
+ * the total index size (including the new index), and the header size.  If the resulting
+ * value is less than the total node size, return true.
+ * \par Note:
+ * \par Warning:
+ * \param psNode	BTree node to check for fit
+ * \param nKeySize	Desired size of key
+ * \return true if the key will fit, false otherwise
+ * \sa
  ****************************************************************************/
-
 bool bt_will_key_fit( const BNode_s *psNode, int nKeySize )
 {
 	int nNewSize;
@@ -890,13 +968,26 @@ bool bt_will_key_fit( const BNode_s *psNode, int nKeySize )
 	return( nNewSize <= B_NODE_SIZE );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Compare two BTree keys for ordering
+ * \par Description:
+ * Compare the two given keys of the given type for ordering.  If they are equal,
+ * return 0. If they pKey1 is less than pKey2, return a negative number.  Otherwise,
+ * return a positive number.  For integer types, just subtract pKey2 from pKey1.
+ * For floats, subtract the keys, and return 0 on equality, -1 on less, or 1 on
+ * greater.  For strings, subtract each octet of pKey2 from pKey1, and, if they are
+ * the same up to them minimum length of the two keys, return the difference in the
+ * sizes.  Else, return the difference.
+ * \par Note:
+ * The string version could probably be optimized ala memcmp.
+ * \par Warning:
+ * \param nType		The type of the keys (e_KeyType*)
+ * \param pKey1		The first key to compare
+ * \param nKey1Size	The size of the first key in octets
+ * \param pKey2		The second key to compare
+ * \param nKey2Size	The size of the second key in octets
+ * \return 0 on equality, negative if pKey1 is less than pKey2, positive otherwise
+ * \sa
  ****************************************************************************/
-
 static int bt_cmp_keys( int nType, const void *pKey1, int nKey1Size, const void *pKey2, int nKey2Size )
 {
 	switch( nType )
@@ -956,13 +1047,26 @@ static int bt_cmp_keys( int nType, const void *pKey1, int nKey1Size, const void 
 	}
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Append a key/value pair onto a BTree node
+ * \par Description:
+ * Append the given key/value pair into the given node.  First, compute the size the new
+ * key will take, and ensure it will fit in the node.  Next, make space for the key by
+ * moving the value array and index array down by the required amount.  Then, copy the
+ * key and value data into the appropriate locations.  Finally, ensure the validity of
+ * the key index by walking the entire thing and checking for ordering.
+ * \par Note:
+ * This does not change the overflow pointer.  Since this key is last, the overflow might
+ * not be valid anymore.
+ * \par Warning:
+ * The key *must* fit into the node, and it must be last.  This is not checked, but is
+ * asserted.
+ * \param psNode	BTree node to append to
+ * \param pKey		Key to append
+ * \param nKeySize	Size of pKey in octets
+ * \param nValue	Value to append
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 status_t bt_append_key( BNode_s *psNode, const void *pKey, int nKeySize, bvalue_t nValue )
 {
 	int nExtraSize;
@@ -1020,14 +1124,32 @@ status_t bt_append_key( BNode_s *psNode, const void *pKey, int nKeySize, bvalue_
 	return( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- *	Same as bt_append_key() but will insert the key in a sorted order.
- * NOTE:
- * SEE ALSO:
+/** Insert a key/value pair into a BTree node in order
+ * \par Description:
+ * Insert the given key/value pair into the given node in sorted order.  First, caluclate
+ * the amount of space necessary, and ensure the new key will fit.  Next, if the node is
+ * empty, or the new key is greater than any extant key, append it.  Otherwise, validate
+ * the node and move the key index array and the values array to make space for the new
+ * key.  Then, walk all the existing keys, finding the correct spot, and inserting the
+ * new key.  All other key indices after that spot are updated.  Finally, verify the
+ * ordering of the key indices.
+ * \par Note:
+ * If the key is greater than any in the node, this will call bt_append_key, so the
+ * overflow pointer is not handled at all.  The caller must handle this.
+ * \par Note:
+ * This should be combined with bt_add_key_to_node, with one function deciding if the key
+ * can fit and whether or not the tree needs rebalancing.  Having them separate results
+ * in code duplication.
+ * \par Warning:
+ * The key *must* fit into the node.
+ * \param psInode		AFS Inode of BTree
+ * \param psNode		Node to insert key into
+ * \param a_pKey		Key to insert
+ * \param a_nKeySize	Size of Key in octets
+ * \param nValue		Value to insert
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 status_t bt_insert_key_to_node( AfsInode_s * psInode, BNode_s *psNode, const void *a_pKey, int a_nKeySize, bvalue_t nValue )
 {
 	int nExtraSize;
@@ -1208,13 +1330,30 @@ printk( "\n" );
 }
 #endif
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Find a key location or insertion position
+ * \par Description:
+ * Find the BTree leaf node that contains (or should contain) the given key in tree on
+ * the given volume with the given inode, using the given transaction.  Return it in the
+ * given node pointer, with the path to it in the given stack.  First, load and validate
+ * the root of the tree.  Next, if the tree is empty, return the root node and false.
+ * Otherwise, walk the tree, looking for the key.  For each non-leaf node, walk the keys
+ * in the node, looking for one that is greater than the given key.  If we find it, we
+ * follow it, otherwise, we follow the overflow node.  Either way, the current node is
+ * added to the stack.  When a leaf node is reached, it is the correct node.  Add it to
+ * the stack, and search it for the exact match of the key.  If it's found, return true,
+ * otherwise return false.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	AFS inode containing the tree to search
+ * \param psTrans	Transaction for the tree
+ * \param psStack	Stack to fill with the path to the returned node
+ * \param pKey		The key to find
+ * \param nKeySize	The size of pKey in octets
+ * \param ppsNode	Return argument for the found node
+ * \return 0 and the insertion node if the key was not found, 1 and the node if it was
+ * \sa
  ****************************************************************************/
-
 int bt_find_key( AfsVolume_s * psVolume, AfsInode_s * psInode, BTransaction_s * psTrans, BStack_s * psStack, const void *pKey, int nKeySize, BNode_s **ppsNode )
 {
 	int bFound = 0;
@@ -1358,13 +1497,33 @@ int bt_find_key( AfsVolume_s * psVolume, AfsInode_s * psInode, BTransaction_s * 
 	return( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Merge keys from one BTree node to another, possibly inserting another key.
+ * \par Description:
+ * Merge keys from the given source node starting at the given key index and offset, into
+ * the given destination node, possibly inserting the given key into the correct position
+ * in the process.  The destination node will be filled up until either the source node
+ * is empty, of the destination node reaches the given maximum size.  First, ensure that
+ * the source node has at least 2 keys in it.  Then, walk the keys in the source node
+ * starting with the correct one, and move them one at a time into the destination node.
+ * If the key about to be moved is larger than the given key, and bInserted is false,
+ * insert the given key first into the destination node, then, the key under
+ * consideration.  Fill pnStartIndex with the first empty index in the destination node,
+ * and fill pnStartOffset with the first empty key offset in the destination node.
+ * \par Note:
+ * \par Warning:
+ * \param psInode		AFS Inode containing the tree
+ * \param psDstNode		Destination node for the merge
+ * \param psSrcNode		Source node for the merge
+ * \param pnStartIndex	Key index in the source node to start merging from
+ * \param pnStartOffset	Key offset in the source node to start merging from
+ * \param nMaxSize		Maximum size of destination node in octets
+ * \param pKey			Key to possibly insert during the merge
+ * \param nkeyLen		Length of pKey in octets
+ * \param psValue		Value for pKey
+ * \param bInserted		If false, attempt to insert pKey into psDstNode
+ * \return True if pKey was inserted (or bInserted was true), false otherwise
+ * \sa
  ****************************************************************************/
-
 static bool bt_merge_node( AfsInode_s * psInode, BNode_s *psDstNode, const BNode_s *psSrcNode, int *pnStartIndex, int *pnStartOffset, int nMaxSize, const void *pKey, int nKeyLen, bvalue_t psValue, bool bInserted )
 {
 	int nKeyOffset;
@@ -1465,13 +1624,46 @@ static bool bt_merge_node( AfsInode_s * psInode, BNode_s *psDstNode, const BNode
 	return( bInserted );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Add a key to a BTree node and rebalance the tree
+ * \par Description:
+ * Insert the given key/value pair into the given node with the given stack of the tree
+ * on the given volume with the given inode and transaction, rebalancing as necessary.
+ * This is a giant loop, that starts with the given node and walks up the stack repeating
+ * as necessary.  Here's the loop.  First, if the current key will fit in the current
+ * node, no further rebalancing is necessary.  Insert it, validate the resulting node,
+ * mark it dirty, and return.  Otherwise, this node needs to be split, and the parent
+ * subtree rebalanced.  Start by allocating a temporary node, and copying the first half
+ * of the current node into it, merging the current key if necessary.  The key to be
+ * inserted into the parent node of the newly split node is now either the first key left
+ * in the current node, or the current key.  If it's in the current node, skip it, and in
+ * either case record it for later use.  Then, allocate a new node and copy the second
+ * half of the current node into it, again possibly merging the current key into it.  If
+ * the current key has not been merged and is not the parent key, append it onto the new
+ * node.  Make a copy of the parent key, then copy the temporary node into the current
+ * node Mark the current node dirty, and unwind the next level of the stack to insert the
+ * parent key.  If the stack is not empty, then reset all the state to point to the
+ * parent node and the parent key to be inserted in that node, and repeat the loop.
+ * Otherwise, we're at the root of the tree.  Load and validate the tree head.  Allocate
+ * a new node to split the root node into, insert it into the root pointer of the head,
+ * and add the parent key to it, pointing at the former root node.  Validate the new
+ * root, and mark the former root dirty.  The loop terminates either here, when the
+ * entire tree has been rebalanced, or in the first part where a subtree no longer needs
+ * rebalancing.
+ * \par Note:
+ * Possibly move the body of the loop into a separate function?  Or even two functions,
+ * one to rebalance a subtree, one to split the root?
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	AFS inode containing the tree
+ * \param psTrans	Transaction for the tree
+ * \param psNode	Node to add key to
+ * \param nNode		Node number of psNode
+ * \param pKey		Key to add
+ * \param nKeyLen	Length of pKey in octets
+ * \param psValue	Value of pKey
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 status_t bt_add_key_to_node( AfsVolume_s * psVolume, AfsInode_s * psInode, BTransaction_s * psTrans, BStack_s * psStack, BNode_s *psNode, bvalue_t nNode, const void *pKey, int nKeyLen, bvalue_t psValue )
 {
 	int nStackLevel;
@@ -1753,13 +1945,25 @@ status_t bt_add_key_to_node( AfsVolume_s * psVolume, AfsInode_s * psInode, BTran
 
 #ifdef _BT_DEBUG
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Debug: Print out a BTree level
+ * \par Description:
+ * Print out a single level of the given tree with the given inode, stack, and root node,
+ * on the given volume  If nLevel is zero, just print the root node.  Otherwise, walk all
+ * the children of the root node, recursively calling this function with the subtrees
+ * rooted in them, decrementing level.  Finally, if the overflow node is not empty, walk
+ * that as well.  The result is the printing of an entire level of the tree represented
+ * by nLevel for the first calling of this function.
+ * \par Note:
+ * Rename to bt_print_level?
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	AFS indode containing tree
+ * \param psStack	Stack for this tree
+ * \param psRoot	Root of this tree
+ * \param nLevel	Depth in tree to stop printing.
+ * \return false if the last level of the tree was printed, true otherwise.
+ * \sa
  ****************************************************************************/
-
 static int _bt_print_tree( AfsVolume_s * psVolume, AfsInode_s * psInode, BStack_s * psStack, const BNode_s *psRoot, int nLevel )
 {
 	int i;
@@ -1803,13 +2007,19 @@ static int _bt_print_tree( AfsVolume_s * psVolume, AfsInode_s * psInode, BStack_
 	}
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Debug: Print out a BTree
+ * \par Description:
+ * Print out the tree represented by the given inode on the given volume.  This is
+ * largely a wrapper for _bt_print_tree.  Start a transaction, and load the root of the
+ * tree.  Then, while the entire tree was not printed, print one level deeper of the
+ * tree.  Finally, end the transaction.  This will result in a level order printing of
+ * the tree.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 static void bt_print_tree( AfsVolume_s * psVolume, AfsInode_s * psInode )
 {
 	BStack_s sStack;
@@ -1826,14 +2036,23 @@ static void bt_print_tree( AfsVolume_s * psVolume, AfsInode_s * psInode )
 	printk( "\n" );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- *	Just for debugging(validate the regular lookup routine)
- * NOTE:
- * SEE ALSO:
+/** Debug: Find a BTree key via linear search
+ * \par Description:
+ * This is an alternative search for a key.  Find the given key in the given tree
+ * via linear search of all keys.  This is used to check other find functions.  Get
+ * the first key in the tree.  Then, while we have more keys left and have not found
+ * the key we're looking for, get the next key out of the tree.
+ * \par Note:
+ * \par Warning:
+ * The return value is wrong.  It should be zero if not found and there's no error.
+ * \param psVolume		AFS filesystem pointer
+ * \param psInode		AFS inode of tree
+ * \param pKey			Key to find
+ * \param nKeySize		Size of pKey
+ * \param psIterator	Iterator used for getting next key
+ * \return 1 if found, 0 if not found, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 static int bt_find_linear( AfsVolume_s * psVolume, AfsInode_s * psInode, const void *pKey, int nKeySize, BIterator_s * psIterator )
 {
 	int nError;
@@ -1862,13 +2081,17 @@ static int bt_find_linear( AfsVolume_s * psVolume, AfsInode_s * psInode, const v
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Debug: Print out all the keys in a BTree
+ * \par Description:
+ * Print out all the keys in the tree in the given inode.  Get the first key.  While
+ * we have more keys, print out the key.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	AFS inode for the tree
+ * \return >=0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 static int bt_list_tree( AfsVolume_s * psVolume, AfsInode_s * psInode )
 {
 	BIterator_s sIterator;
@@ -1906,15 +2129,34 @@ static int bt_list_tree( AfsVolume_s * psVolume, AfsInode_s * psInode )
 
 /******************************************************************************/
 
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Entry: Insert a key/value pair into a BTree
+ * \par Description:
+ * Insert the given key/value pair into the BTree with the given inode on the given
+ * volume.  First, begin a new transaction.  Next, if the key already exists in the tree,
+ * fail with -EEXIST.  The find will also return the insertion node.  If the key will fit
+ * in the correct node, just add it, mark the node dirty, and return success.  Otherwise,
+ * allocate a temporary node and a new node, linking the new node with the current node.
+ * Copy the first half of the current node into the temporary node, possibly merging the
+ * key.  Copy the second half of the current node into the new node, again possibly
+ * merging the key.  If the key was not merged, append it to the new node.  Copy the
+ * temporary node back over the current node, and free the temporary node.  Mark the
+ * current and new nodes dirty.  If we're not at the root, replace the parent pointer to
+ * the current node with a pointer to the new node, and add the current node into the
+ * tree with the first key in the new node pointing to it.  Otherwise, this is the root
+ * of the tree.  Load the tree header.  Allocate a new parent pointer, and add the first
+ * key in the new node to the parent, pointing to the new node.  Finally, end the
+ * transaction and return the error code.
+ * \par Note:
+ * I don't yet understand why this doesn't just wrap bt_add_key_to_node
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	AFS inode containing the tree
+ * \param pKey		Key to add
+ * \param nKeySize	Size of pKey in octets
+ * \param nValue	Value to add
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 int bt_insert_key( AfsVolume_s * psVolume, AfsInode_s * psInode, const void *pKey, int nKeySize, bvalue_t nValue )
 {
 	BNode_s *psNode;
@@ -2176,13 +2418,24 @@ int bt_insert_key( AfsVolume_s * psVolume, AfsInode_s * psInode, const void *pKe
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Entry: Lookup the value associated with a key in a BTree
+ * \par Description:
+ * Lookup the given key in the tree with the given inode on the given volume, and return
+ * the key/value pair in the given iterator.  First, start a transaction.  Then, find the
+ * node containing the key.  Then, if it's found, store the node, key number, and a copy
+ * of the key and value into the given iterator.  Finally, finish the transaction.
+ * \par Note:
+ * Included inline in bt_get_next_key.  Should be factored  out into helper
+ * function.
+ * \par Warning:
+ * \param psVolume		AFS filesystem pointer
+ * \param psInode		AFS inode containing the tree
+ * \param pKey			Key to search for
+ * \param nKeySize		Size of pKey in octets
+ * \param psIterator	Iterator to return key/value pair and containing node.
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 int bt_lookup_key( AfsVolume_s * psVolume, AfsInode_s * psInode, const void *pKey, int nKeySize, BIterator_s * psIterator )
 {
 	BStack_s sStack;
@@ -2259,13 +2512,23 @@ int bt_lookup_key( AfsVolume_s * psVolume, AfsInode_s * psInode, const void *pKe
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Entry: Find the first key in a BTree
+ * \par Description:
+ * Find the first key/value pair in the tree with the given inode on the given volume,
+ * and return them in the given iterator.  First, start a transaction.  Next, get and
+ * validate the tree header, and the root node.  Then, follow the tree to the leftmost
+ * leaf node by: loading the node pointed to by the first key in the current node, and
+ * making it the current node.  Store that leftmost leaf node, the first key in it, and
+ * the value associated with that first key, in the given iterator.  Finally, finish the
+ * transaction.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume		AFS filesystem pointer
+ * \param psInode		AFS inode containing the tree
+ * \param psIterator	Iterator to return the key/value pair and node
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 int bt_find_first_key( AfsVolume_s * psVolume, AfsInode_s * psInode, BIterator_s * psIterator )
 {
 	BStack_s sStack;
@@ -2367,13 +2630,26 @@ int bt_find_first_key( AfsVolume_s * psVolume, AfsInode_s * psInode, BIterator_s
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Entry: Get the next key from a BTree
+ * \par Description:
+ * Find the next key after the one in the given iterator in the tree with the given inode
+ * on the given volume.  First, start a new transaction.  Then, check to see if the tree
+ * has changed since the key in the iterator was loaded.  If it has, reload the key/value
+ * pair and node into the iterator.  Next, load the node containing the current key.
+ * Increment the key number of the current key, and check to see if the new key is in the
+ * current node.  If it is, get the copy the key and value into the iterator.  If it is
+ * not, load the next leafnode, and copy the first key/value pair and the new node into
+ * the iterator.  Finish the transaction.
+ * \par Note:
+ * Why include pretty much all of bt_lookup_key inline?  Should be factored  out
+ * into helper function.
+ * \par Warning:
+ * \param psVolume		AFS filesystem pointer
+ * \param psInode		AFS inode containing the tree
+ * \param psIterator	Iterator containing current key/to return next key/value pair
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 int bt_get_next_key( AfsVolume_s * psVolume, AfsInode_s * psInode, BIterator_s * psIterator )
 {
 	BStack_s sStack;

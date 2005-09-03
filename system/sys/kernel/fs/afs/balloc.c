@@ -30,13 +30,16 @@
 #include "btree.h"
 static int g_nReads;
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Count the number of used blocks in a volume
+ * \par Description:
+ * Count the number of used blocks in the given volume.  Get the bitmap block from
+ * the volume, and run through the bitmap block, counting all the set bits.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \return number of used blocks on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 off_t afs_count_used_blocks( AfsVolume_s * psVolume )
 {
 	AfsSuperBlock_s *psSuperBlock = psVolume->av_psSuperBlock;
@@ -106,13 +109,18 @@ off_t afs_count_used_blocks( AfsVolume_s * psVolume )
 	return( nCount );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Mark blocks used in a volume
+ * \par Description:
+ * Mark the blocks in the given run used in the given volume.  First, get the block
+ * bitmap from the volume.  Then, for all the bits representing blocks in the run,
+ * mark set them.  Write the block bitmap back out.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psRun		Block run to mark as used
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_mark_blocks_used( AfsVolume_s * psVolume, const BlockRun_s * psRun )
 {
 	AfsSuperBlock_s *psSuperBlock = psVolume->av_psSuperBlock;
@@ -193,13 +201,18 @@ static int afs_mark_blocks_used( AfsVolume_s * psVolume, const BlockRun_s * psRu
 	return( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Mark blocks free in a volume
+ * \par Description:
+ * Mark the blocks in the given block run as free in the given volume. First, get
+ * the block bitmap from the volume.  Then, for each block in the run, mark it's bit
+ * in the bitmap free.  Finally, write back the bitmap.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psRun		Block run containing block to mark free
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_free_blocks( AfsVolume_s * psVolume, const BlockRun_s * psRun )
 {
 	AfsSuperBlock_s *psSuperBlock = psVolume->av_psSuperBlock;
@@ -278,13 +291,27 @@ int afs_free_blocks( AfsVolume_s * psVolume, const BlockRun_s * psRun )
 	return( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Scan a block group for free blocks
+ * \par Description:
+ * Scan the given group of the given volume for the given number of free blocks,
+ * storing the bitmap blocks into the given buffer, starting at the given location.
+ * For each block in the bitmap starting at the given start location, get the bitmap
+ * block.  Next, loop through all the bits.  If we haven't found a hole yet, and
+ * there is a free block, start the hole.  If we have found a hole, and there is a
+ * used block, stop the hole.  Return the hole.
+ * \par Note:
+ * This will find the first hole after pnStart.  If the hole is not big enough, the
+ * caller will need to call again with pnStart set to the returned pnEnd + 1.
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param apBlocks	Buffer to store block bitmap
+ * \param nGroup	Number of group to scan
+ * \param pnStart	Return argument for the start of the free blocks
+ * \param pnEnd		Return argument for the end of the free blocks
+ * \param nCount	Requested number of blocks
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_scan_group( AfsVolume_s * psVolume, uint32 *apBlocks[], int nGroup, off_t *pnStart, off_t *pnEnd, int nCount )
 {
 	AfsSuperBlock_s *psSuperBlock = psVolume->av_psSuperBlock;
@@ -381,13 +408,29 @@ static int afs_scan_group( AfsVolume_s * psVolume, uint32 *apBlocks[], int nGrou
 	return( ( *pnEnd - nStart ) + 1 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Allocate a block run
+ * \par Description:
+ * Allocate a block run of the given size mod the given modulo.  If psPrevRun is
+ * given, try to allocate the new run immediately after it.  Otherwise, try and
+ * allocate in the given block group.  First, if psPrevRun is given, search
+ * immediately after it for space of the correct size.  If we get anything back (?),
+ * return it.  Otherwise, start at the given group, wrapping if necessary, and
+ * search for a block run of at least the desired size.  When one is found, mark
+ * it's blocks used, and return it.
+ * \par Note:
+ * Hoops are jumped through for apBlockBuffers.  Is this necessary?
+ * \par Warning:
+ * The modulo only works for powers of 2.  Since this is only called with 1 and 4,
+ * this is okay. I'm not sure the modulo test is sufficiant.
+ * \param psVolume	AFS filesystem pointer
+ * \param psRun		Block run to fill in with allocated space
+ * \param psPrevRun	If given, allocate new run immediately after this one.
+ * \param nGroup	Block group to start searching in
+ * \param nCount	Desired number of blocks
+ * \param nModulo	Desired granularity modulo (must be power of 2)
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_alloc_blocks( AfsVolume_s * psVolume, BlockRun_s * psRun, BlockRun_s * psPrevRun, int nGroup, int nCount, int nModulo )
 {
 	AfsSuperBlock_s *psSuperBlock = psVolume->av_psSuperBlock;
@@ -529,13 +572,17 @@ int afs_alloc_blocks( AfsVolume_s * psVolume, BlockRun_s * psRun, BlockRun_s * p
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Determine if a block is free
+ * \par Description:
+ * Determine if the given block is free on the given volume.  First, read the
+ * correct bitmap block. Then, check to see if the given block is marked free.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param nBlock	Block number to check
+ * \return true if block is free, false if block is used or on error.
+ * \sa
+ *****************************************************************************/
 bool afs_is_block_free( AfsVolume_s * psVolume, off_t nBlock )
 {
 	uint32 *panBlock;

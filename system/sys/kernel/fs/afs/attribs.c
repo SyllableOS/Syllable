@@ -30,17 +30,18 @@
 
 #include "afs.h"
 
-
-
-
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Release an AFS inode
+ * \par Description:
+ * If bWriteBack is true and the given Inode is dirty, write it to disk
+ * and mark it clean.  Then, free the Inode.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume		AFS filesystem pointer
+ * \param psInode		AFS Inode to release
+ * \param bWriteBack	Whether or not to attempt to write out the inode.
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_put_inode( AfsVolume_s * psVolume, AfsInode_s * psInode, bool bWriteBack )
 {
 	int nError = 0;
@@ -75,6 +76,20 @@ static int afs_put_inode( AfsVolume_s * psVolume, AfsInode_s * psInode, bool bWr
 	return( nError );
 }
 
+/** Read in an AFS Inode for an attribute
+ * \par Description
+ * Read the Inode from the disk for the attribute of the given name from
+ * the given attribute directory.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume			AFS filesystem pointer
+ * \param psAttrDirInode	AFS Inode of attribute directory
+ * \param pzName			Name of attribute to read
+ * \param nNameLen			Length of pzName
+ * \param ppsAttrInode		Return parameter for read Inode
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_load_attr_inode( AfsVolume_s * psVolume, AfsInode_s * psAttrDirInode, const char *pzName, int nNameLen, AfsInode_s ** ppsAttrInode )
 {
 	int nError;
@@ -92,13 +107,31 @@ static int afs_load_attr_inode( AfsVolume_s * psVolume, AfsInode_s * psAttrDirIn
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Create or write a SmallData AFS attribute
+ * \par Description:
+ * Create/write a SmallData attribute (a small attribute in the Inode of the
+ * attribute directory) in the given Inode (of the given block size) of the given
+ * type, with the given name using the given data of the given size at the given
+ * offset.  First, see if the attribute already exists.  If it does, see if the new
+ * data fits.  If it does, write it at the given offset.  Of it doesn't fit, see if
+ * the total data of the attribute will fit in an empty spot in the Inode.  If it
+ * does, move the existing attribute to the new position, and write the new data.
+ * If the total attribute does not fit in the Inode, error out.  If the attribute is
+ * not present in the Inode, see if the attribute will fit in the empty space in the
+ * Inode.  If it does, write it in the first empty spot.  If it does not, error.
+ * \par Note:
+ * \par Warning:
+ * \param pInode		AFS Inode containing the SD attributes
+ * \param nBlockSize	Total size of the Inode
+ * \param nType			Type of the attribute (ATTR_TYPE_*)
+ * \param pzName		Name of attribute
+ * \param nNameLen		Length of pzName
+ * \param pData			Data to write
+ * \param nPos			Offset into attribute to write data
+ * \param nSize			Ammount to write
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_sd_create_attribute( char *pInode, int nBlockSize, int nType, const char *pzName, int nNameLen, const void *pData, int nPos, int nSize )
 {
 	AfsSmallData_s *psEntry;
@@ -180,13 +213,20 @@ static int afs_sd_create_attribute( char *pInode, int nBlockSize, int nType, con
 	return( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Find a SmallData attribute
+ * \par Description:
+ * Find the SmallData attribute with the given name in the given Inode with the
+ * given blocksize.  Just loop through all the used entries, comparing the name of
+ * the entry with the given name.
+ * \par Note:
+ * \par Warning:
+ * \param pInode		AFS Inode to search
+ * \param nBlockSize	Size of Inode
+ * \param pzName		Name of attribute to find
+ * \param nNameLen		Size of pzName
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static AfsSmallData_s *afs_sd_find_entry( char *pInode, int nBlockSize, const char *pzName, int nNameLen )
 {
 	AfsSmallData_s *psEntry;
@@ -203,13 +243,20 @@ static AfsSmallData_s *afs_sd_find_entry( char *pInode, int nBlockSize, const ch
 	return( NULL );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Delete a SmallData attribute
+ * \par Description:
+ * Delete the SmallData attribute with the given name from the given Inode. Find the
+ * named attribute, and move all attributes after the named on down a slot.
+ * Finally, zero out the freed up at the end.
+ * \par Note:
+ * \par Warning:
+ * \param pInode		AFS Inode to delete from
+ * \param nBlockSIze	Size of pInode
+ * \param pzName		Name of attribute to delete
+ * \param nNameLen		Length of pzName
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_sd_delete_entry( char *pInode, int nBlockSize, const char *pzName, int nNameLen )
 {
 	AfsSmallData_s *psEntry;
@@ -252,13 +299,17 @@ static int afs_sd_delete_entry( char *pInode, int nBlockSize, const char *pzName
 	return( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Open AFS attribute directory of a file
+ * \par Description:
+ * Allocate an attribute directory handle for the given file
+ * \par Note:
+ * \par Warning:
+ * \param pVolume	AFS filesystem handle
+ * \param pNode		Inode of file whose attribute directory is to be opened
+ * \param ppCookie	Return argument for attribute directory handle
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_open_attrdir( void *pVolume, void *pNode, void **pCookie )
 {
 	AfsAttrIterator_s *psIterator;
@@ -276,26 +327,36 @@ int afs_open_attrdir( void *pVolume, void *pNode, void **pCookie )
 	return( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Close AFS attribute directory of a file
+ * \par Description:
+ * Free the given attribute directory handle
+ * \par Note:
+ * \par Warning:
+ * \param pVolume	AFS filesystem handle
+ * \param pNode		Inode of file owning attribute directory
+ * \param pCookie	Attribute directory handle to free
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_close_attrdir( void *pVolume, void *pNode, void *pCookie )
 {
 	kfree( pCookie );
 	return( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Reset read of AFS attribute directory to the beginning
+ * \par Description:
+ * Reading an attribute directory is an iterative process, with successive reads
+ * returning sucessive attribute names.  This will reset the read so the next read
+ * will return the first attribute
+ * \par Note:
+ * \par Warning:
+ * \param pVolume	AFS filesystem pointer
+ * \param pNode		Inode of file owning attribute directory
+ * \param pCookie	Attribute directory handle to reset
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_rewind_attrdir( void *pVolume, void *pNode, void *pCookie )
 {
 	AfsAttrIterator_s *psIterator = pCookie;
@@ -311,13 +372,19 @@ int afs_rewind_attrdir( void *pVolume, void *pNode, void *pCookie )
 	return( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Read an attribute entry out of an attribute directory
+ * \par Description:
+ * Read the next attribute entry out of the attribute directory for the given file
+ * \par Note:
+ * \par Warning:
+ * \param pVolume	AFS filesystem pointer
+ * \param pNode		Inode of file owning attribute directory
+ * \param pCookie	Attribute directory handle
+ * \param psBuffer	Directory entry to fill
+ * \param bufsize	Size of buffer in psBuffer
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_read_attrdir( void *pVolume, void *pNode, void *pCookie, struct kernel_dirent *psBuffer, size_t bufsize )
 {
 	AfsVolume_s *psVolume = pVolume;
@@ -410,13 +477,23 @@ int afs_read_attrdir( void *pVolume, void *pNode, void *pCookie, struct kernel_d
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Remove an AFS attribute
+ * \par Description:
+ * Delete and free the attribute of the given file with the given name.  First,
+ * assume it's a SmallData attribute, and try to delete it.  If the return value
+ * indicates it was not found, assume it was in the attribute directory of the given
+ * file.  Remove the name from the btree of the attribute directory, truncate the
+ * attribute to zero, and free all it's owned blocks.  Write out the inode of both
+ * the attribute (freeing the Inode), and the attribute directory.
+ * \par Note: Locking must be done before calling.
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	AFS Inode of file owning attribute to be deleted
+ * \param pzName	Name of attribute to delete
+ * \param nNameLen	Length of pzName
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_do_remove_attr( AfsVolume_s * psVolume, AfsInode_s * psInode, const char *pzName, int nNameLen )
 {
 	const int nBlockSize = psVolume->av_psSuperBlock->as_nBlockSize;
@@ -490,6 +567,19 @@ static int afs_do_remove_attr( AfsVolume_s * psVolume, AfsInode_s * psInode, con
 	return( nError );
 }
 
+/** Remove an AFS attribute
+ * \par Description:
+ * Remove the named attribute from the attribute directory of the given
+ * file
+ * \par Note:
+ * \par Warning:
+ * \param pVolume	AFS filesystem pointer
+ * \param pNode		Inode of file owning attribute
+ * \param pzName	Name of attribute to delete
+ * \param nNameLen	Length of pzName
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_remove_attr( void *pVolume, void *pNode, const char *pzName, int nNameLen )
 {
 	AfsVolume_s *psVolume = pVolume;
@@ -522,13 +612,17 @@ int afs_remove_attr( void *pVolume, void *pNode, const char *pzName, int nNameLe
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Delete all attributes from a file
+ * \par Description:
+ * Delete all the attributes of the given file.  For each entry in the attribute
+ * directory of this file, delete that attribute.  Then, free the inode for the
+ * attribute directory itself.
+ * \par Note: XXX Does not delete SD attributes
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_delete_file_attribs( AfsVolume_s * psVolume, AfsInode_s * psInode )
 {
 	AfsVNode_s *psVnode = psInode->ai_psVNode;
@@ -590,6 +684,7 @@ int afs_delete_file_attribs( AfsVolume_s * psVolume, AfsInode_s * psInode )
 	}
 	afs_free_blocks( psVolume, &psAttrDirInode->ai_sInodeNum );
 	psAttrDirInode->ai_nFlags &= ~INF_WAS_WRITTEN;	// Make sure afs_put_inode don't write to the released block
+	// XXX DFG is this necessary?  We pass in false to afs_put_inode...
       error2:
 	afs_put_inode( psVolume, psAttrDirInode, false );
       error1:
@@ -598,13 +693,20 @@ int afs_delete_file_attribs( AfsVolume_s * psVolume, AfsInode_s * psInode )
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Read the stats of an AFS attribute
+ * \par Description:
+ * Read the stat information (size, index type, etc.) of the attribute of the given
+ * file with the given name
+ * \par Note:
+ * \par Warning:
+ * \param pVolume	AFS filesystem pointer
+ * \param pNode		Inode of file owning the attribute
+ * \param pzName	Name of attribute to stat
+ * \param nNameLen	Length of pzName
+ * \param psBuffer	Attribute info structure to fill
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_stat_attr( void *pVolume, void *pNode, const char *pzName, int nNameLen, struct attr_info *psBuffer )
 {
 	AfsVolume_s *psVolume = pVolume;
@@ -661,13 +763,18 @@ int afs_stat_attr( void *pVolume, void *pNode, const char *pzName, int nNameLen,
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Write into a big attribute
+ * \par Description:
+ * Write from the given buffer into the given attribute at the given offset for the
+ * given length.  First, check to see if the new data will fit into the existing
+ * attribute.  If not, expand the attribute to fit the data.  Then, write the data
+ * into the attribute.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \return number of octets written on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_write_big_attr( AfsVolume_s * psVolume, AfsInode_s * psAttrInode, int nFlags, const void *pBuffer, off_t nPos, size_t nLen )
 {
 	const int nBlockSize = psVolume->av_psSuperBlock->as_nBlockSize;
@@ -690,7 +797,11 @@ static int afs_write_big_attr( AfsVolume_s * psVolume, AfsInode_s * psAttrInode,
 
 		kassertw( nNewBlockCount > nOldBlockCount );
 
-		afs_expand_stream( psVolume, psAttrInode, nNewBlockCount - nOldBlockCount );
+		nError = afs_expand_stream( psVolume, psAttrInode, nNewBlockCount - nOldBlockCount );
+		if ( nError < 0 )
+		{
+			return ( nError );
+		}
 
 		nNewBlockCount = afs_get_inode_block_count( psAttrInode );
 
@@ -723,13 +834,24 @@ static int afs_write_big_attr( AfsVolume_s * psVolume, AfsInode_s * psAttrInode,
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Write into a small attribute
+ * \par Description:
+ * Write from the given buffer into the small attribute with the given name of the
+ * given file, from the given buffer at the given starting position for the given
+ * length.  Basically just a wrapper around afs_sd_create_attribute.
+ * \par Note: This returns a different value than afs_write_big_attr
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	AFS Inode to write small attribute to
+ * \param pzName	Name of attribute to write to
+ * \param nNameLen	Length of pzName
+ * \param nType		Type of attribute
+ * \param a_pBuffer	Buffer to write from
+ * \param nPos		Position in attribute to write to
+ * \param nLen		Number of octets to write
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 static int afs_write_small_attr( AfsVolume_s * psVolume, AfsInode_s * psInode, const char *pzName, int nNameLen, int nType, const char *a_pBuffer, int nPos, size_t nLen )
 {
 	const int nSDSize = psVolume->av_psSuperBlock->as_nBlockSize - sizeof( AfsInode_s );
@@ -738,13 +860,31 @@ static int afs_write_small_attr( AfsVolume_s * psVolume, AfsInode_s * psInode, c
 	return( afs_sd_create_attribute( ( char * )( psInode + 1 ), nSDSize, nType, pzName, nNameLen, pBuffer, nPos, nLen ) );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Write to an AFS attribute
+ * \par Description:
+ * Write the contents of the given buffer to the named attribute of the
+ * given file at the given offset for the given length.  First, see if the attibute
+ * is already in the attribute directory.  If it is, write it.  If it is not, see if
+ * the new attribute data fits into the SmallData area.  If it does, write it there
+ * (overwriting the existing attribute, if there is one).  If it does not fit, see
+ * if the attribute exists in the SD area, and if it does move it to the attribute
+ * directory, possibly creating the attribute directory.  Then, write the new
+ * data to the attribute in the attribute directory. Finally, notify any monitors
+ * listening for events on this file.
+ * \par Note: Check for notification on queries/live queries
+ * \par Warning:
+ * \param pVolume	AFS filesystem pointer
+ * \param pNode		Inode of file owning the attribute
+ * \param pzName	Name of attribute to write to
+ * \param nNameLen	Length of pzName
+ * \param nFlags	Write flags (O_TRUNC, etc.)
+ * \param nType		Type of attribute to write
+ * \param pBuffer	Buffer to write from
+ * \param nPos		Position in attribute to write at
+ * \param nLen		Length of pBuffer
+ * \return number of octets written on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_write_attr( void *pVolume, void *pNode, const char *pzName, int nNameLen, int nFlags, int nType, const void *pBuffer, off_t nPos, size_t nLen )
 {
 	AfsVolume_s *psVolume = pVolume;
@@ -890,13 +1030,26 @@ int afs_write_attr( void *pVolume, void *pNode, const char *pzName, int nNameLen
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Read an AFS attribute
+ * \par Description:
+ * Read from the named attribute of the given file, into the given buffer starting
+ * at the given position up to the given length.  First, see if the attribute is in
+ * the SmallData area.  If so, read into the buffer, at most up the the end of the
+ * attribute.  If not, check to see if it's in the attribute directory.  If so, read
+ * into the buffer at most up to the end of the attribute.
+ * \par Note: XXX Attributes reads appear to not be cached
+ * \par Warning:
+ * \param pVolume	AFS filesystem pointer
+ * \param pNode		Inode of file owning the attribute
+ * \param pzName	Name of the attribute to read
+ * \param nNameLen	Length of pzName
+ * \param nType		Type of attribute
+ * \param pBuffer	Buffer to read into
+ * \param nPos		Position to read from
+ * \param nLen		Length to read (pBuffer is at least this long)
+ * \return number of octets read on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_read_attr( void *pVolume, void *pNode, const char *pzName, int nNameLen, int nType, void *pBuffer, off_t nPos, size_t nLen )
 {
 	AfsVolume_s *psVolume = pVolume;

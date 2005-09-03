@@ -191,13 +191,23 @@ int afs_validate_stream( AfsVolume_s * psVolume, AfsInode_s * psInode, uint32 *p
 }
 #endif
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Allocate metadata disk blocks
+ * \par Description:
+ * Allocate and zero out the disk blocks into the given block run.  First, get a temporary
+ * block-sized buffer, and zero it.  Next, allocate the disk blocks for the given run.
+ * Loop through the disk blocks, and write the zeroed temporary buffer to each block in
+ * the run.  Free the temporary buffer.  If an error occures, free the disk blocks for
+ * the run, and set it's length to zero.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psRun		Block run to allocate and zero
+ * \param psPrevRun	Block run after which to allocate the new one
+ * \param nGroup	Group in which to allocate the block run
+ * \param nSize		Size of block run to allocate
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 static int afs_alloc_meta_blocks( AfsVolume_s * psVolume, BlockRun_s * psRun, BlockRun_s * psPrevRun, int nGroup, int nSize )
 {
 	off_t nBlkNum;
@@ -249,6 +259,23 @@ static int afs_alloc_meta_blocks( AfsVolume_s * psVolume, BlockRun_s * psRun, Bl
 	psRun->len = 0;
 	return( nError );
 }
+
+/** Allocate data blocks
+ * \par Description:
+ * Allocate a run of disk blocks for data for the given inode.  Allocate a run of blocks,
+ * storing it in the given run.  Then, if the inode points to a directory, wait for each
+ * block in the run to clear the log.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	Inode owning data space
+ * \param psRun		Block run to allocate and zero
+ * \param psPrevRun	Block run after which to allocate the new one
+ * \param nGroup	Group in which to allocate the block run
+ * \param nSize		Size of block run to allocate
+ * \return 0 on success, negative error code on failure
+ * \sa
+ ****************************************************************************/
 static status_t afs_alloc_data_blocks( AfsVolume_s * psVolume, AfsInode_s * psInode, BlockRun_s * psNewRun, BlockRun_s * psPrevRun, int nDataGroup, int nSize )
 {
 	status_t nError;
@@ -277,13 +304,22 @@ static status_t afs_alloc_data_blocks( AfsVolume_s * psVolume, AfsInode_s * psIn
 	return( 0 );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Expand an inode's indirect range
+ * \par Description:
+ * Expand the indirect range of the given inode by the given amount.  The indirect range of an inode
+ * is a set of blocks containing pointers to data blockruns.  If the given inode does not already
+ * have an indirect range, create a new (empty) one.  Then, call afs_expand_indirect_blockrun() to
+ * expand it.
+ * \par Note:
+ * \par Warning:
+ * nDeltaSize, although signed, cannot be negative (unhandled)
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	Inode owning indirect range
+ * \param nDeltaSize	Amount by which to increase indirect range
+ * \param pbDiskFull	(out) set to true if disk becomes full
+ * \return number of blocks added on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 static off_t afs_expand_indirect_range( AfsVolume_s * psVolume, AfsInode_s * psInode, int nDeltaSize, bool *pbDiskFull )
 {
 	AfsSuperBlock_s *psSuperBlock = psVolume->av_psSuperBlock;
@@ -464,14 +500,23 @@ static off_t afs_expand_indirect_range( AfsVolume_s * psVolume, AfsInode_s * psI
 	return( nError );
 }
 
-
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Expand an inode's double-indirect range
+ * \par Description:
+ * Expand the double-indirect range of the given inode by the given amount.  If the double-indirect
+ * blockrun doesn't exist, create it.  Loop through it.  For each pointer, if it is empty, create a
+ * new indirect blockrun for it.  Regardless, call afs_expand_indirect_blockrun() to expand it.
+ * Continue until the expansion is complete, the filesystem is full, or the double-indirect range is
+ * full.
+ * \par Note:
+ * \par Locks:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	Inode owning double-indirect range
+ * \param nDeltaSize	Amount by which to increase double-indirect range
+ * \param pbDiskFull	(out) set to true if disk becomes full
+ * \return number of blocks added on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 static off_t afs_expand_doubleindirect_range( AfsVolume_s * psVolume, AfsInode_s * psInode, off_t nDeltaSize )
 {
 	AfsSuperBlock_s *psSuperBlock = psVolume->av_psSuperBlock;
@@ -694,13 +739,20 @@ static off_t afs_expand_doubleindirect_range( AfsVolume_s * psVolume, AfsInode_s
 	}
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
+/** Expand the data stream of the given inode
+ * \par Description:
+ * Expand the data stream of the given inode by the given amount.  First, try and expand the direct
+ * range.  If that isn't enough, expand the indirect range.  If that isn't enough, expand the
+ * double-indirect range.  If that isn't enough, the file is too big.
+ * \par Note:
+ * \par Locks:
+ * \par Warning:
+ * \param psVolume	AFS filesystem pointer
+ * \param psInode	Inode to expand
+ * \param nDeltaSize	Amount by which to increase expand file
+ * \return 0 on success, negative error code on failure
+ * \sa
+  ****************************************************************************/
 int afs_expand_stream( AfsVolume_s * psVolume, AfsInode_s * psInode, off_t nDeltaSize )
 {
 	AfsSuperBlock_s *psSuperBlock = psVolume->av_psSuperBlock;
@@ -1271,13 +1323,34 @@ int afs_truncate_stream( AfsVolume_s * psVolume, AfsInode_s * psInode )
 	return( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
+/** Get a set of blocks from a file stream
+ * \par Description:
+ * Get a set of blocks of nRequestLen length starting at nPos from the given stream.  The
+ * resulting blocks will start at pnStart and be of length pnActualLength.  First, see if
+ * the request position is in the direct block range of the given stream. (XXX DFG Should
+ * this check for total length as well?).  If so, walk the direct block list, looking for
+ * the direct block containing the requested offset.  Then, starting from that point,
+ * walk the direct block list looking for the block containing the end of the requested
+ * range.  Return the block number and actual length.
+ * Otherwise, if the offset is in the indirect range, walk the indirect block list, on
+ * blockrun at a time, looking for the range containing the requested offset.  Then, walk
+ * from that point, looking for the range containing the end of the requested range.
+ * Return the block number and actual length.
+ * Otherwise, it must be in the double-indirect range, error out if it's not.  Walk the
+ * double-indirect block run, the indirect block runs within it, and the direct block
+ * lists within those, looking for the block list that contains the offset.  Then, walk
+ * from that point looking for the end.  Return the block number and actual length.
+ * \par Note:
+ * \par Warning:
+ * \param psVolume		AFS volume containing stream
+ * \param psStream		Data stream to search
+ * \param nPos			Start offset into stream (in octets)
+ * \param nRequestLen	Requested length of blocks (in octets)
+ * \param pnStart		(out) Block number of found range
+ * \param pnActualLength	(out) Actual found length (in octets)
+ * \return 0 on success, negative error code on failure
+ * \sa
  ****************************************************************************/
-
 int afs_get_stream_blocks( AfsVolume_s * psVolume, DataStream_s * psStream, off_t nPos, int nRequestLen, off_t *pnStart, int *pnActualLength )
 {
 	AfsSuperBlock_s *psSuperBlock = psVolume->av_psSuperBlock;
@@ -1307,6 +1380,7 @@ int afs_get_stream_blocks( AfsVolume_s * psVolume, DataStream_s * psStream, off_
 				{
 					int nBlkNum = afs_run_to_num( psSuperBlock, &psStream->ds_asDirect[j] );
 
+					// XXX DFG should this be <=?
 					if( nStart + nLen == nBlkNum )
 					{
 						nLen += psStream->ds_asDirect[j].len;

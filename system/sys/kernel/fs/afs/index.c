@@ -36,7 +36,19 @@
 #include "afs.h"
 #include "btree.h"
 
-
+/** Open an AFS attribute index directory
+ * \par Description:
+ * Reading an attribute directory is an iterative process.  Successive
+ * reads of the directory return sucessive entries.  This will set up the
+ * state necessary to do such a read, chiefly allocating an attribute
+ * directory handle
+ * \par Note:
+ * \par Warning:
+ * \param pVolume	AFS filesystem pointer
+ * \param ppCookie	Return parameter for the AFS attribute directory handle
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_open_indexdir( void *pVolume, void **ppCookie )
 {
 	AfsFileCookie_s *psCookie;
@@ -55,17 +67,63 @@ int afs_open_indexdir( void *pVolume, void **ppCookie )
 	return( 0 );
 }
 
+/** Close an AFS attribute index directory
+ * \par Description:
+ * Reading an attribute directory is an iterative process.  Successive
+ * reads of the directory return sucessive entries.  This will free up the
+ * state necessary to do such a read, chiefly freeing an attribute
+ * directory handle.  After this call, a call to afs_open_indexdir must be
+ * made before the handle can be used again.
+ * \par Note:
+ * Must be called on an open handle
+ * \par Warning:
+ * \param pVolume	AFS filesystem pointer
+ * \param pCookie	AFS attribute directory handle
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_close_indexdir( void *pVolume, void *pCookie )
 {
 	kfree( pCookie );
 	return( 0 );
 }
 
+/** Rewind an AFS attribute directory
+ * \par Description:
+ * Reading an attribute directory is an iterative process.  Successive
+ * reads of the directory return sucessive entries.  This will reset the
+ * handle so that the next read on the directory will return the first
+ * entry in the directory, rather than the next.
+ * \par Note:
+ * Must be called on an open handle
+ * \par Warning:
+ * XXX This does not do anything.  It won't work.  Need to set
+ * bi_nCurNode to -1
+ * \param pVolume	AFS filesystem pointer
+ * \param pCookie	AFS attribute directory handle
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_rewind_indexdir( void *pVolume, void *pCookie )
 {
 	return( 0 );
 }
 
+/** Read from an AFS attribute directory
+ * \par Description:
+ * Reading an attribute directory is an iterative process.  Successive
+ * reads of the directory return sucessive entries.  This will read the
+ * next entry in the attribute directory into the given buffer.
+ * \par Note:
+ * Must be called on an open handle
+ * \par Warning:
+ * \param pVolume	AFS filesystem pointer
+ * \param pCookie	AFS attribute directory handle
+ * \param psBuffer	Entry buffer to fill
+ * \param nBufferSize	Size of psBuffer
+ * \return number of entries read on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_read_indexdir( void *pVolume, void *pCookie, struct kernel_dirent *psBuffer, size_t nBufferSize )
 {
 	AfsVolume_s *psVolume = pVolume;
@@ -90,6 +148,20 @@ int afs_read_indexdir( void *pVolume, void *pCookie, struct kernel_dirent *psBuf
 	return( nError );
 }
 
+/** Create an AFS attribute index
+ * \par Description:
+ * Attributes can be indexed for fast lookup.  This will create an index
+ * with the given name and type on the given volume.
+ * \par Note:
+ * \par Warning:
+ * \param pVolume	AFS filesystem pointer
+ * \param pzName	Name of index
+ * \param nNameLen	Length of pzName
+ * \param nType		Type of the attriute being indexed
+ * \param nFlags	Creation flags for index
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_create_index( void *pVolume, const char *pzName, int nNameLen, int nType, int nFlags )
 {
 	AfsVolume_s *psVolume = pVolume;
@@ -126,11 +198,36 @@ int afs_create_index( void *pVolume, const char *pzName, int nNameLen, int nType
 	return( nError );
 }
 
+/** Delete an AFS attribute index
+ * \par Description:
+ * Delete the named index from the given volume
+ * \par Note:
+ * \par Warning:
+ * XXX Not implemented yet
+ * \param pVolume	AFS filesystem pointer
+ * \param pzName	Name of index to delete
+ * \param nNameLen	Length of pzName
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_remove_index( void *pVolume, const char *pzName, int nNameLen )
 {
 	return( 0 );
 }
 
+/** Get the stats for an index
+ * \par Description:
+ * Get the stat information (type, size, owner, etc.) for an attribute index.
+ * \par Note:
+ * \par Warning:
+ * XXX Not implemented yet
+ * \param pVolume	AFS filesystem pointer
+ * \param pzName	Name of index to stat
+ * \param nNameLen	Length of pzName
+ * \param psBuffer	Index information to fill
+ * \return 0 on success, negative error code on failure
+ * \sa
+ *****************************************************************************/
 int afs_stat_index( void *pVolume, const char *pzName, int nNameLen, struct index_info *psBuffer )
 {
 	return( 0 );
