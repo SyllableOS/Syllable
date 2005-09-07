@@ -1,3 +1,7 @@
+* September 7 2005, Kaj de Vos *
+
+Corrected some spelling mistakes in afs.c.
+
 * September 3 2005, Henrik Isaksson *
 
 Applied patches for documentation and journal sanity check.
@@ -848,4 +852,3 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
-

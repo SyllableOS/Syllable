@@ -37,7 +37,7 @@ void LoginView::Layout()
 	
 	HLayoutNode* pcPassNode = new HLayoutNode("pass_node");
 	pcPassNode->AddChild(new HLayoutSpacer("",2,2));
-	pcPassNode->AddChild(pcPassString = new StringView(Rect(),"pass_string","Pass:"));
+	pcPassNode->AddChild(pcPassString = new StringView(Rect(),"pass_string","Password:"));
 	pcPassNode->AddChild(new HLayoutSpacer("",2,2));
 	pcPassNode->AddChild(pcPassText = new TextView(Rect(),"pass_text",""));
 	pcPassText->SetPasswordMode(true);
@@ -91,7 +91,7 @@ void LoginView::PopulateIcons()
   	
   	catch (...)
   	{
-  		Alert* pcError = new Alert("Unable to load users","I am unable to load users, please contact the syllable development group ASAP",0x00,"Oh No!!!",NULL);
+  		Alert* pcError = new Alert("Unable to load users","I am unable to load users, please contact the Syllable development group.",0x00,"Oh no!!!",NULL);
   		pcError->Go(new Invoker());
   	}	
 }
@@ -149,5 +149,3 @@ void LoginView::FindUser(const String& cName)
 		}
 	}
 }
-
-

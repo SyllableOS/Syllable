@@ -80,7 +80,7 @@ void MainWindow::HandleMessage( os::Message * pcMessage )
 			
 			else /*a user is not selected*/
 			{
-				Alert* pcError = new Alert("Select an icon please!!!","You must select an user icon before loginning in!",Alert::ALERT_INFO,0,"Okay",NULL);
+				Alert* pcError = new Alert("Select an icon, please.","You must select a user icon before logging in.",Alert::ALERT_INFO,0,"Okay",NULL);
 				pcError->Go(new Invoker());
 			}
 			
@@ -163,7 +163,7 @@ void MainWindow::Authorize(const char* pzLoginName, const char* pzPassword )
                 else
                 {
 					/*passwords don't match... flag error*/
-                    Alert* pcAlert = new Alert( "Login failed",  "Incorrect password!!!\n",Alert::ALERT_WARNING,0, "Sorry", NULL );
+                    Alert* pcAlert = new Alert( "Login failed",  "Incorrect password.\n",Alert::ALERT_WARNING,0, "Sorry", NULL );
                     pcAlert->Go(new Invoker(new Message (M_BAD_PASS), this));
                 }
                 break;
@@ -171,7 +171,7 @@ void MainWindow::Authorize(const char* pzLoginName, const char* pzPassword )
             else
             {
 				/*no such user available*/
-                Alert* pcAlert = new Alert( "Login failed",  "Please be advised!!!\n\nNo such user is\nregistered to use\nthis computer!!!\n",Alert::ALERT_WARNING, 0, "OK", NULL );
+                Alert* pcAlert = new Alert( "Login failed",  "Please be advised,\n\nno such user is\nregistered to use\nthis computer.\n",Alert::ALERT_WARNING, 0, "OK", NULL );
                 pcAlert->Go(new Invoker());
             }
             break;
@@ -179,4 +179,3 @@ void MainWindow::Authorize(const char* pzLoginName, const char* pzPassword )
         pzLoginName = NULL;
     }
 }
-

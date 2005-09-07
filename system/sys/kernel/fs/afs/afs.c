@@ -1,4 +1,3 @@
-
 /*
  *  AFS - The native AtheOS file-system
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -85,7 +84,7 @@ void *afs_alloc_block_buffer( AfsVolume_s * psVolume )
 	} UNLOCK( psVolume->av_hBlockListMutex );
 	if( psVolume->av_nTmpBufferCount > 30 )
 	{
-		printk( "Warning: afs_alloc_block_buffer() We got %d block buffers allocated simultanously! "  "Could be a leak\n", psVolume->av_nTmpBufferCount );
+		printk( "Warning: afs_alloc_block_buffer() We got %d block buffers allocated simultanuously! "  "Could be a leak\n", psVolume->av_nTmpBufferCount );
 	}
 	return ( pBuffer );
 }
@@ -443,7 +442,7 @@ static int afs_initialize( const char *pzDevPath, const char *pzVolName, void *p
 	kfree( psSuperBlock );
 	kfree( panBitmap );
 	kfree( psInode );
-	printk( "AFS volume %s formated\n", pzVolName );
+	printk( "AFS volume %s formatted\n", pzVolName );
 	close( nDev );
 	return ( 0 );
 }
@@ -522,14 +521,14 @@ static bool afs_validate_superblock( AfsSuperBlock_s * psSuperBlock, bool bQuiet
 	{
 		if( bQuiet )
 			return ( false );
-		printk( "Alloc group count (%d) does not cower entire disk (%Ld)\n", psSuperBlock->as_nAllocGroupCount, psSuperBlock->as_nNumBlocks );
+		printk( "Alloc group count (%d) does not cover entire disk (%Ld)\n", psSuperBlock->as_nAllocGroupCount, psSuperBlock->as_nNumBlocks );
 		bResult = false;
 	}
 	if( psSuperBlock->as_sLogBlock.len != psSuperBlock->as_nLogSize )
 	{
 		if( bQuiet )
 			return ( false );
-		printk( "Mismatch between length in journal run %d an the length recorded in the superblock %d\n", psSuperBlock->as_sLogBlock.len, psSuperBlock->as_nLogSize );
+		printk( "Mismatch between length in journal run %d and the length recorded in the superblock %d\n", psSuperBlock->as_sLogBlock.len, psSuperBlock->as_nLogSize );
 		bResult = false;
 	}
 	if( psSuperBlock->as_nValidLogBlocks > psSuperBlock->as_nLogSize )
@@ -814,7 +813,7 @@ static int afs_mount( kdev_t nFsID, const char *pzDevPath, uint32 nFlags, const 
 	if( afs_validate_superblock( psSuperBlock, false ) == false )
 
 	{
-		printk( "Invalide super block\n" );
+		printk( "Invalid super block\n" );
 		nError = -EINVAL;
 		goto error4;
 	}
@@ -1708,7 +1707,7 @@ static int afs_expand_file( AfsVolume_s * psVolume, AfsInode_s * psInode, AfsFil
 					{
 						nLen = 0;
 					}
-					printk( "Failed to expand file with %d bytes. Schrinked to %d\n", nTmp, nLen );
+					printk( "Failed to expand file with %d bytes. Shrunk to %d\n", nTmp, nLen );
 				}
 			}
 			else
@@ -2206,7 +2205,7 @@ static int afs_write_inode( void *pVolume, void *pNode )
 		nError = afs_remove_from_deleted_list( psVolume, psInode );
 		if( nError < 0 )
 		{
-			printk( "Error: afs_write_inode() failed to remove file from deted-list: %d\n", nError );
+			printk( "Error: afs_write_inode() failed to remove file from deleted-list: %d\n", nError );
 			goto error;
 		}
 	}
@@ -2625,7 +2624,7 @@ static status_t afs_rename_is_child( AfsVolume_s * psVolume, AfsInode_s * psPare
 		AfsInode_s * psTmpInode;
 		if( nParentIno == nInodeNum )
 		{
-			printk( "Error : Some dude tried to move a directory into one of it's childrens\n" );
+			printk( "Error : Some dude tried to move a directory into one of its children\n" );
 			return ( -EINVAL );
 		}
 		nError = afs_do_read_inode( psVolume, &sParentIno, &psTmpInode );
