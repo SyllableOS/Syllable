@@ -1,3 +1,7 @@
+* September 7 2005, Arno Klenke *
+
+Updated geforce driver
+
 * September 2 2005, Kristian Van Der Vliet *
 
 Checked in all the init script, environment & Users management changes.  There
@@ -863,6 +867,7 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
 
 
 

@@ -68,13 +68,10 @@ int NVShowHideCursor( NVPtr pNv, int ShowHide )
 	pNv->CurrentState->cursor1 = ( pNv->CurrentState->cursor1 & 0xFE ) | ( ShowHide & 0x01 );
 	VGA_WR08( pNv->PCIO, 0x3D4, 0x31 );
 	VGA_WR08( pNv->PCIO, 0x3D5, pNv->CurrentState->cursor1 );
-
-	if ( ( pNv->Chipset & 0x0000fff0 ) == 0x00000040 )
-	{			/* HW bug */
-		volatile CARD32 curpos = pNv->PRAMDAC[0x0300 / 4];
-
-		pNv->PRAMDAC[0x0300 / 4] = curpos;
-	}
+	if(pNv->Architecture == NV_ARCH_40) {  /* HW bug */
+       volatile CARD32 curpos = pNv->PRAMDAC[0x0300/4];
+       pNv->PRAMDAC[0x0300/4] = curpos;
+    }
 
 	return ( current & 0x01 );
 }
@@ -357,21 +354,6 @@ static void nv10CalcArbitration( nv10_fifo_info * fifo, nv10_sim_state * arb )
 			clwm = us_crt * crtc_drain_rate / ( 1000 * 1000 );
 			clwm++;	/* fixed point <= float_point - 1.  Fixes that */
 
-			/*
-			   //
-			   // Another concern, only for high pclks so don't do this
-			   // with video:
-			   // What happens if the latency to fetch the cbs is so large that
-			   // fifo empties.  In that case we need to have an alternate clwm value
-			   // based off the total burst fetch
-			   //
-			   us_crt = (cbs * 1000 * 1000)/ (8*width)/mclk_freq ;
-			   us_crt = us_crt + us_m + us_n + us_p + (4 * 1000 * 1000)/mclk_freq;
-			   clwm_mt = us_crt * crtc_drain_rate/(1000*1000);
-			   clwm_mt ++;
-			   if(clwm_mt > clwm)
-			   clwm = clwm_mt;
-			 */
 			/* Finally, a heuristic check when width == 64 bits */
 			if ( width == 1 )
 			{
@@ -480,6 +462,28 @@ static void nv10UpdateArbitrationSettings( unsigned VClk, unsigned pixelDepth, u
 			( *burst )++;
 		*lwm = fifo_data.graphics_lwm >> 3;
 	}
+}
+
+
+static void nv30UpdateArbitrationSettings (
+    NVPtr        pNv,
+    unsigned     *burst,
+    unsigned     *lwm
+)   
+{
+    unsigned int MClk, NVClk;
+    unsigned int fifo_size, burst_size, graphics_lwm;
+
+    fifo_size = 2048;
+    burst_size = 512;
+    graphics_lwm = fifo_size - burst_size;
+
+    nvGetClocks(pNv, &MClk, &NVClk);
+    
+    *burst = 0;
+    burst_size >>= 5;
+    while(burst_size >>= 1) (*burst)++;
+    *lwm = graphics_lwm >> 3;
 }
 
 
@@ -682,10 +686,17 @@ void NVCalcStateExt( NVPtr pNv, FX_HW_STATE * state, int bpp, int width, int hDi
 		{
 			nForceUpdateArbitrationSettings( VClk, pixelDepth * 8, &( state->arbitration0 ), &( state->arbitration1 ), pNv );
 		}
-		else
-		{
-			nv10UpdateArbitrationSettings( VClk, pixelDepth * 8, &( state->arbitration0 ), &( state->arbitration1 ), pNv );
-		}
+		else if(pNv->Architecture < NV_ARCH_30) {
+             nv10UpdateArbitrationSettings(VClk, 
+                                          pixelDepth * 8, 
+                                         &(state->arbitration0),
+                                         &(state->arbitration1),
+                                          pNv);
+       	} else {
+             nv30UpdateArbitrationSettings(pNv,
+                                         &(state->arbitration0),
+                                         &(state->arbitration1));
+        }
 		state->cursor0 = 0x80 | ( pNv->CursorStart >> 17 );
 		state->cursor1 = ( pNv->CursorStart >> 11 ) << 2;
 		state->cursor2 = pNv->CursorStart >> 24;
@@ -719,164 +730,153 @@ void NVLoadStateExt( NVPtr pNv, FX_HW_STATE * state )
 	pNv->PTIMER[0x0210] = 0x00000003;
 	pNv->PTIMER[0x0140] = 0x00000000;
 	pNv->PTIMER[0x0100] = 0xFFFFFFFF;
-
-
-	pNv->PFB[0x0240 / 4] = 0;
-	pNv->PFB[0x0244 / 4] = pNv->FbMapSize - 1;
-	pNv->PFB[0x0250 / 4] = 0;
-	pNv->PFB[0x0254 / 4] = pNv->FbMapSize - 1;
-	pNv->PFB[0x0260 / 4] = 0;
-	pNv->PFB[0x0264 / 4] = pNv->FbMapSize - 1;
-	pNv->PFB[0x0270 / 4] = 0;
-	pNv->PFB[0x0274 / 4] = pNv->FbMapSize - 1;
-	pNv->PFB[0x0280 / 4] = 0;
-	pNv->PFB[0x0284 / 4] = pNv->FbMapSize - 1;
-	pNv->PFB[0x0290 / 4] = 0;
-	pNv->PFB[0x0294 / 4] = pNv->FbMapSize - 1;
-	pNv->PFB[0x02A0 / 4] = 0;
-	pNv->PFB[0x02A4 / 4] = pNv->FbMapSize - 1;
-	pNv->PFB[0x02B0 / 4] = 0;
-	pNv->PFB[0x02B4 / 4] = pNv->FbMapSize - 1;
+	
+	if ((pNv->Chipset & 0xfff0) == 0x0090) {
+        for(i = 0; i < 15; i++) {
+           pNv->PFB[(0x0600 + (i * 0x10))/4] = 0;
+           pNv->PFB[(0x0604 + (i * 0x10))/4] = pNv->FbMapSize - 1;
+        }
+    } else {
+        for(i = 0; i < 8; i++) {
+           pNv->PFB[(0x0240 + (i * 0x10))/4] = 0;
+           pNv->PFB[(0x0244 + (i * 0x10))/4] = pNv->FbMapSize - 1;
+        }
+    }
 
 	if ( pNv->Architecture >= NV_ARCH_40 )
 	{
 		pNv->PRAMIN[0x0000] = 0x80000010;
-		pNv->PRAMIN[0x0001] = 0x00101202;
-		pNv->PRAMIN[0x0002] = 0x80000011;
-		pNv->PRAMIN[0x0003] = 0x00101204;
-		pNv->PRAMIN[0x0004] = 0x80000012;
-		pNv->PRAMIN[0x0005] = 0x00101206;
-		pNv->PRAMIN[0x0006] = 0x80000013;
-		pNv->PRAMIN[0x0007] = 0x00101208;
-		pNv->PRAMIN[0x0008] = 0x80000014;
-		pNv->PRAMIN[0x0009] = 0x0010120A;
-		pNv->PRAMIN[0x000A] = 0x80000015;
-		pNv->PRAMIN[0x000B] = 0x0010120C;
-		pNv->PRAMIN[0x000C] = 0x80000016;
-		pNv->PRAMIN[0x000D] = 0x0010120E;
-		pNv->PRAMIN[0x000E] = 0x80000017;
-		pNv->PRAMIN[0x000F] = 0x00101210;
-		pNv->PRAMIN[0x0800] = 0x00003000;
-		pNv->PRAMIN[0x0801] = pNv->FbMapSize - 1;
-		pNv->PRAMIN[0x0802] = 0x00000002;
-		pNv->PRAMIN[0x0808] = 0x02080062;
-		pNv->PRAMIN[0x0809] = 0x00000000;
-		pNv->PRAMIN[0x080A] = 0x00001200;
-		pNv->PRAMIN[0x080B] = 0x00001200;
-		pNv->PRAMIN[0x080C] = 0x00000000;
-		pNv->PRAMIN[0x080D] = 0x00000000;
-		pNv->PRAMIN[0x0810] = 0x02080043;
-		pNv->PRAMIN[0x0811] = 0x00000000;
-		pNv->PRAMIN[0x0812] = 0x00000000;
-		pNv->PRAMIN[0x0813] = 0x00000000;
-		pNv->PRAMIN[0x0814] = 0x00000000;
-		pNv->PRAMIN[0x0815] = 0x00000000;
-		pNv->PRAMIN[0x0818] = 0x02080044;
-		pNv->PRAMIN[0x0819] = 0x02000000;
-		pNv->PRAMIN[0x081A] = 0x00000000;
-		pNv->PRAMIN[0x081B] = 0x00000000;
-		pNv->PRAMIN[0x081C] = 0x00000000;
-		pNv->PRAMIN[0x081D] = 0x00000000;
-		pNv->PRAMIN[0x0820] = 0x02080019;
-		pNv->PRAMIN[0x0821] = 0x00000000;
-		pNv->PRAMIN[0x0822] = 0x00000000;
-		pNv->PRAMIN[0x0823] = 0x00000000;
-		pNv->PRAMIN[0x0824] = 0x00000000;
-		pNv->PRAMIN[0x0825] = 0x00000000;
-		pNv->PRAMIN[0x0828] = 0x020A005C;
-		pNv->PRAMIN[0x0829] = 0x00000000;
-		pNv->PRAMIN[0x082A] = 0x00000000;
-		pNv->PRAMIN[0x082B] = 0x00000000;
-		pNv->PRAMIN[0x082C] = 0x00000000;
-		pNv->PRAMIN[0x082D] = 0x00000000;
-		pNv->PRAMIN[0x0830] = 0x0208009F;
-		pNv->PRAMIN[0x0831] = 0x00000000;
-		pNv->PRAMIN[0x0832] = 0x00001200;
-		pNv->PRAMIN[0x0833] = 0x00001200;
-		pNv->PRAMIN[0x0834] = 0x00000000;
-		pNv->PRAMIN[0x0835] = 0x00000000;
-		pNv->PRAMIN[0x0838] = 0x0208004A;
-		pNv->PRAMIN[0x0839] = 0x02000000;
-		pNv->PRAMIN[0x083A] = 0x00000000;
-		pNv->PRAMIN[0x083B] = 0x00000000;
-		pNv->PRAMIN[0x083C] = 0x00000000;
-		pNv->PRAMIN[0x083D] = 0x00000000;
-		pNv->PRAMIN[0x0840] = 0x02080077;
-		pNv->PRAMIN[0x0841] = 0x00000000;
-		pNv->PRAMIN[0x0842] = 0x00001200;
-		pNv->PRAMIN[0x0843] = 0x00001200;
-		pNv->PRAMIN[0x0844] = 0x00000000;
-		pNv->PRAMIN[0x0845] = 0x00000000;
-		pNv->PRAMIN[0x084C] = 0x00003002;
-		pNv->PRAMIN[0x084D] = 0x00007FFF;
-		pNv->PRAMIN[0x084E] = pNv->FbUsableSize | 0x00000002;
+       pNv->PRAMIN[0x0001] = 0x00101202;
+       pNv->PRAMIN[0x0002] = 0x80000011;
+       pNv->PRAMIN[0x0003] = 0x00101204;
+       pNv->PRAMIN[0x0004] = 0x80000012;
+       pNv->PRAMIN[0x0005] = 0x00101206;
+       pNv->PRAMIN[0x0006] = 0x80000013;
+       pNv->PRAMIN[0x0007] = 0x00101208;
+       pNv->PRAMIN[0x0008] = 0x80000014;
+       pNv->PRAMIN[0x0009] = 0x0010120A;
+       pNv->PRAMIN[0x000A] = 0x80000015;
+       pNv->PRAMIN[0x000B] = 0x0010120C;
+       pNv->PRAMIN[0x000C] = 0x80000016;
+       pNv->PRAMIN[0x000D] = 0x0010120E;
+       pNv->PRAMIN[0x000E] = 0x80000017;
+       pNv->PRAMIN[0x000F] = 0x00101210;
+       pNv->PRAMIN[0x0800] = 0x00003000;
+       pNv->PRAMIN[0x0801] = pNv->FbMapSize - 1;
+       pNv->PRAMIN[0x0802] = 0x00000002;
+       pNv->PRAMIN[0x0808] = 0x02080062;
+       pNv->PRAMIN[0x0809] = 0x00000000;
+       pNv->PRAMIN[0x080A] = 0x00001200;
+       pNv->PRAMIN[0x080B] = 0x00001200;
+       pNv->PRAMIN[0x080C] = 0x00000000;
+       pNv->PRAMIN[0x080D] = 0x00000000;
+       pNv->PRAMIN[0x0810] = 0x02080043;
+       pNv->PRAMIN[0x0811] = 0x00000000;
+       pNv->PRAMIN[0x0812] = 0x00000000;
+       pNv->PRAMIN[0x0813] = 0x00000000;
+       pNv->PRAMIN[0x0814] = 0x00000000;
+       pNv->PRAMIN[0x0815] = 0x00000000;
+       pNv->PRAMIN[0x0818] = 0x02080044;
+       pNv->PRAMIN[0x0819] = 0x02000000;
+       pNv->PRAMIN[0x081A] = 0x00000000;
+       pNv->PRAMIN[0x081B] = 0x00000000;
+       pNv->PRAMIN[0x081C] = 0x00000000;
+       pNv->PRAMIN[0x081D] = 0x00000000;
+       pNv->PRAMIN[0x0820] = 0x02080019;
+       pNv->PRAMIN[0x0821] = 0x00000000;
+       pNv->PRAMIN[0x0822] = 0x00000000;
+       pNv->PRAMIN[0x0823] = 0x00000000;
+       pNv->PRAMIN[0x0824] = 0x00000000;
+       pNv->PRAMIN[0x0825] = 0x00000000;
+       pNv->PRAMIN[0x0828] = 0x020A005C;
+       pNv->PRAMIN[0x0829] = 0x00000000;
+       pNv->PRAMIN[0x082A] = 0x00000000;
+       pNv->PRAMIN[0x082B] = 0x00000000;
+       pNv->PRAMIN[0x082C] = 0x00000000;
+       pNv->PRAMIN[0x082D] = 0x00000000;
+       pNv->PRAMIN[0x0830] = 0x0208009F;
+       pNv->PRAMIN[0x0831] = 0x00000000;
+       pNv->PRAMIN[0x0832] = 0x00001200;
+       pNv->PRAMIN[0x0833] = 0x00001200;
+       pNv->PRAMIN[0x0834] = 0x00000000;
+       pNv->PRAMIN[0x0835] = 0x00000000;
+       pNv->PRAMIN[0x0838] = 0x0208004A;
+       pNv->PRAMIN[0x0839] = 0x02000000;
+       pNv->PRAMIN[0x083A] = 0x00000000;
+       pNv->PRAMIN[0x083B] = 0x00000000;
+       pNv->PRAMIN[0x083C] = 0x00000000;
+       pNv->PRAMIN[0x083D] = 0x00000000;
+       pNv->PRAMIN[0x0840] = 0x02080077;
+       pNv->PRAMIN[0x0841] = 0x00000000;
+       pNv->PRAMIN[0x0842] = 0x00001200;
+       pNv->PRAMIN[0x0843] = 0x00001200;
+       pNv->PRAMIN[0x0844] = 0x00000000;
+       pNv->PRAMIN[0x0845] = 0x00000000;
+       pNv->PRAMIN[0x084C] = 0x00003002;
+       pNv->PRAMIN[0x084D] = 0x00007FFF;
+       pNv->PRAMIN[0x084E] = pNv->FbUsableSize | 0x00000002;
 	}
 	else
 	{
-
-
-		pNv->PRAMIN[0x0000] = 0x80000010;
-		pNv->PRAMIN[0x0001] = 0x80011201;
-		pNv->PRAMIN[0x0002] = 0x80000011;
-		pNv->PRAMIN[0x0003] = 0x80011202;
-		pNv->PRAMIN[0x0004] = 0x80000012;
-		pNv->PRAMIN[0x0005] = 0x80011203;
-		pNv->PRAMIN[0x0006] = 0x80000013;
-		pNv->PRAMIN[0x0007] = 0x80011204;
-		pNv->PRAMIN[0x0008] = 0x80000014;
-		pNv->PRAMIN[0x0009] = 0x80011205;
-		pNv->PRAMIN[0x000A] = 0x80000015;
-		pNv->PRAMIN[0x000B] = 0x80011206;
-		pNv->PRAMIN[0x000C] = 0x80000016;
-		pNv->PRAMIN[0x000D] = 0x80011207;
-		pNv->PRAMIN[0x000E] = 0x80000017;
-		pNv->PRAMIN[0x000F] = 0x80011208;
-
-		pNv->PRAMIN[0x0800] = 0x00003000;
-		pNv->PRAMIN[0x0801] = pNv->FbMapSize - 1;
-		pNv->PRAMIN[0x0802] = 0x00000002;
-		pNv->PRAMIN[0x0803] = 0x00000002;
-
-		if ( pNv->Architecture >= NV_ARCH_10 )
-			pNv->PRAMIN[0x0804] = 0x01008062;
-		else
-			pNv->PRAMIN[0x0804] = 0x01008042;
-
-		pNv->PRAMIN[0x0805] = 0x00000000;
-		pNv->PRAMIN[0x0806] = 0x12001200;
-		pNv->PRAMIN[0x0807] = 0x00000000;
-		pNv->PRAMIN[0x0808] = 0x01008043;
-		pNv->PRAMIN[0x0809] = 0x00000000;
-		pNv->PRAMIN[0x080A] = 0x00000000;
-		pNv->PRAMIN[0x080B] = 0x00000000;
-		pNv->PRAMIN[0x080C] = 0x01008044;
-		pNv->PRAMIN[0x080D] = 0x00000002;
-		pNv->PRAMIN[0x080E] = 0x00000000;
-		pNv->PRAMIN[0x080F] = 0x00000000;
-		pNv->PRAMIN[0x0810] = 0x01008019;
-		pNv->PRAMIN[0x0811] = 0x00000000;
-		pNv->PRAMIN[0x0812] = 0x00000000;
-		pNv->PRAMIN[0x0813] = 0x00000000;
-		pNv->PRAMIN[0x0814] = 0x0100A05C;
-		pNv->PRAMIN[0x0815] = 0x00000000;
-		pNv->PRAMIN[0x0816] = 0x00000000;
-		pNv->PRAMIN[0x0817] = 0x00000000;
-		pNv->PRAMIN[0x0818] = 0x0100805F;
-		pNv->PRAMIN[0x0819] = 0x00000000;
-		pNv->PRAMIN[0x081A] = 0x12001200;
-		pNv->PRAMIN[0x081B] = 0x00000000;
-		pNv->PRAMIN[0x081C] = 0x0100804A;
-		pNv->PRAMIN[0x081D] = 0x00000002;
-		pNv->PRAMIN[0x081E] = 0x00000000;
-		pNv->PRAMIN[0x081F] = 0x00000000;
-		pNv->PRAMIN[0x0820] = 0x01018077;
-		pNv->PRAMIN[0x0821] = 0x00000000;
-		pNv->PRAMIN[0x0822] = 0x01201200;
-		pNv->PRAMIN[0x0823] = 0x00000000;
-		pNv->PRAMIN[0x0824] = 0x00003002;
-		pNv->PRAMIN[0x0825] = 0x00007FFF;
-		pNv->PRAMIN[0x0826] = pNv->FbUsableSize | 0x00000002;
-		pNv->PRAMIN[0x0827] = 0x00000002;
+       pNv->PRAMIN[0x0000] = 0x80000010;
+       pNv->PRAMIN[0x0001] = 0x80011201;  
+       pNv->PRAMIN[0x0002] = 0x80000011;
+       pNv->PRAMIN[0x0003] = 0x80011202; 
+       pNv->PRAMIN[0x0004] = 0x80000012;
+       pNv->PRAMIN[0x0005] = 0x80011203;
+       pNv->PRAMIN[0x0006] = 0x80000013;
+       pNv->PRAMIN[0x0007] = 0x80011204;
+       pNv->PRAMIN[0x0008] = 0x80000014;
+       pNv->PRAMIN[0x0009] = 0x80011205;
+       pNv->PRAMIN[0x000A] = 0x80000015;
+       pNv->PRAMIN[0x000B] = 0x80011206;
+       pNv->PRAMIN[0x000C] = 0x80000016;
+       pNv->PRAMIN[0x000D] = 0x80011207;
+       pNv->PRAMIN[0x000E] = 0x80000017;
+       pNv->PRAMIN[0x000F] = 0x80011208;
+       pNv->PRAMIN[0x0800] = 0x00003000;
+       pNv->PRAMIN[0x0801] = pNv->FbMapSize - 1;
+       pNv->PRAMIN[0x0802] = 0x00000002;
+       pNv->PRAMIN[0x0803] = 0x00000002;
+       if(pNv->Architecture >= NV_ARCH_10)
+          pNv->PRAMIN[0x0804] = 0x01008062;
+       else
+          pNv->PRAMIN[0x0804] = 0x01008042;
+       pNv->PRAMIN[0x0805] = 0x00000000;
+       pNv->PRAMIN[0x0806] = 0x12001200;
+       pNv->PRAMIN[0x0807] = 0x00000000;
+       pNv->PRAMIN[0x0808] = 0x01008043;
+       pNv->PRAMIN[0x0809] = 0x00000000;
+       pNv->PRAMIN[0x080A] = 0x00000000;
+       pNv->PRAMIN[0x080B] = 0x00000000;
+       pNv->PRAMIN[0x080C] = 0x01008044;
+       pNv->PRAMIN[0x080D] = 0x00000002;
+       pNv->PRAMIN[0x080E] = 0x00000000;
+       pNv->PRAMIN[0x080F] = 0x00000000;
+       pNv->PRAMIN[0x0810] = 0x01008019;
+       pNv->PRAMIN[0x0811] = 0x00000000;
+       pNv->PRAMIN[0x0812] = 0x00000000;
+       pNv->PRAMIN[0x0813] = 0x00000000;
+       pNv->PRAMIN[0x0814] = 0x0100A05C;
+       pNv->PRAMIN[0x0815] = 0x00000000;
+       pNv->PRAMIN[0x0816] = 0x00000000;
+       pNv->PRAMIN[0x0817] = 0x00000000;
+       pNv->PRAMIN[0x0818] = 0x0100805F;
+       pNv->PRAMIN[0x0819] = 0x00000000;
+       pNv->PRAMIN[0x081A] = 0x12001200;
+       pNv->PRAMIN[0x081B] = 0x00000000;
+       pNv->PRAMIN[0x081C] = 0x0100804A;
+       pNv->PRAMIN[0x081D] = 0x00000002;
+       pNv->PRAMIN[0x081E] = 0x00000000;
+       pNv->PRAMIN[0x081F] = 0x00000000;
+       pNv->PRAMIN[0x0820] = 0x01018077;
+       pNv->PRAMIN[0x0821] = 0x00000000;
+       pNv->PRAMIN[0x0822] = 0x12001200;
+       pNv->PRAMIN[0x0823] = 0x00000000;
+       pNv->PRAMIN[0x0824] = 0x00003002;
+       pNv->PRAMIN[0x0825] = 0x00007FFF;
+       pNv->PRAMIN[0x0826] = pNv->FbUsableSize | 0x00000002;
+       pNv->PRAMIN[0x0827] = 0x00000002;
 	}
 	pNv->PGRAPH[0x0080 / 4] = 0xFFFFFFFF;
 	pNv->PGRAPH[0x0080 / 4] = 0x00000000;
@@ -910,18 +910,63 @@ void NVLoadStateExt( NVPtr pNv, FX_HW_STATE * state )
 	{
 		if ( pNv->Architecture >= NV_ARCH_40 )
 		{
-			pNv->PGRAPH[0x0084 / 4] = 0x401287c0;
-			pNv->PGRAPH[0x008C / 4] = 0x60de8051;
-			pNv->PGRAPH[0x0090 / 4] = 0x00008000;
-			pNv->PGRAPH[0x0610 / 4] = 0x00be3c5f;
-			pNv->PGRAPH[0x09b0 / 4] = 0x83280fff;
-			pNv->PGRAPH[0x09b4 / 4] = 0x000000a0;
-			pNv->PGRAPH[0x09b8 / 4] = 0x0078e366;
-			pNv->PGRAPH[0x09bc / 4] = 0x0000014c;
-			pNv->PGRAPH[0x0b38 / 4] = 0x2ffff800;
-			pNv->PGRAPH[0x0b3c / 4] = 0x00006000;
-			pNv->PGRAPH[0x032C / 4] = 0x01000000;
-			pNv->PGRAPH[0x0220 / 4] = 0x00001200;
+			  pNv->PGRAPH[0x0084/4] = 0x401287c0;
+              pNv->PGRAPH[0x008C/4] = 0x60de8051;
+              pNv->PGRAPH[0x0090/4] = 0x00008000;
+              pNv->PGRAPH[0x0610/4] = 0x00be3c5f;
+
+              if((pNv->Chipset & 0xfff0) == 0x0040) {
+                 pNv->PGRAPH[0x09b0/4] = 0x83280fff;
+                 pNv->PGRAPH[0x09b4/4] = 0x000000a0;
+              } else {
+                 pNv->PGRAPH[0x0820/4] = 0x83280eff;
+                 pNv->PGRAPH[0x0824/4] = 0x000000a0;
+              }
+
+              switch(pNv->Chipset & 0xfff0) {
+              case 0x0040:
+              case 0x0210:
+                 pNv->PGRAPH[0x09b8/4] = 0x0078e366;
+                 pNv->PGRAPH[0x09bc/4] = 0x0000014c;
+                 pNv->PFB[0x033C/4] &= 0xffff7fff;
+                 break;
+              case 0x00C0:
+                 pNv->PGRAPH[0x0828/4] = 0x007596ff;
+                 pNv->PGRAPH[0x082C/4] = 0x00000108;
+                 break;
+              case 0x0160:
+              case 0x01D0:
+                 pNv->PMC[0x1700/4] = pNv->PFB[0x020C/4];
+                 pNv->PMC[0x1704/4] = 0;
+                 pNv->PMC[0x1708/4] = 0;
+                 pNv->PMC[0x170C/4] = pNv->PFB[0x020C/4];
+                 pNv->PGRAPH[0x0860/4] = 0;
+                 pNv->PGRAPH[0x0864/4] = 0;
+                 pNv->PRAMDAC[0x0608/4] |= 0x00100000;
+                 break;
+              case 0x0140:
+                 pNv->PGRAPH[0x0828/4] = 0x0072cb77;
+                 pNv->PGRAPH[0x082C/4] = 0x00000108;
+                 break;
+              case 0x0220:
+              case 0x0230:
+                 pNv->PGRAPH[0x0860/4] = 0;
+                 pNv->PGRAPH[0x0864/4] = 0;
+                 pNv->PRAMDAC[0x0608/4] |= 0x00100000;
+                 break;
+              case 0x0090:
+                 pNv->PRAMDAC[0x0608/4] |= 0x00100000;
+                 pNv->PGRAPH[0x0828/4] = 0x07830610;
+                 pNv->PGRAPH[0x082C/4] = 0x0000016A;
+                 break;
+              default:
+                 break;
+              };
+
+              pNv->PGRAPH[0x0b38/4] = 0x2ffff800;
+              pNv->PGRAPH[0x0b3c/4] = 0x00006000;
+              pNv->PGRAPH[0x032C/4] = 0x01000000; 
+              pNv->PGRAPH[0x0220/4] = 0x00001200;
 		}
 		else if ( pNv->Architecture == NV_ARCH_30 )
 		{
@@ -963,32 +1008,56 @@ void NVLoadStateExt( NVPtr pNv, FX_HW_STATE * state )
 			}
 		}
 
-		for ( i = 0; i < 32; i++ )
-			pNv->PGRAPH[( 0x0900 / 4 ) + i] = pNv->PFB[( 0x0240 / 4 ) + i];
+		if((pNv->Chipset & 0xfff0) == 0x0090) {
+              for(i = 0; i < 60; i++)
+                pNv->PGRAPH[(0x0D00/4) + i] = pNv->PFB[(0x0600/4) + i];
+        } else {
+              for(i = 0; i < 32; i++)
+                pNv->PGRAPH[(0x0900/4) + i] = pNv->PFB[(0x0240/4) + i];
+        }
+		if(pNv->Architecture >= NV_ARCH_40) {
+              if((pNv->Chipset & 0xfff0) == 0x0040) {
+                 pNv->PGRAPH[0x09A4/4] = pNv->PFB[0x0200/4];
+                 pNv->PGRAPH[0x09A8/4] = pNv->PFB[0x0204/4];
+                 pNv->PGRAPH[0x69A4/4] = pNv->PFB[0x0200/4];
+                 pNv->PGRAPH[0x69A8/4] = pNv->PFB[0x0204/4];
 
-		pNv->PGRAPH[0x09A4 / 4] = pNv->PFB[0x0200 / 4];
-		pNv->PGRAPH[0x09A8 / 4] = pNv->PFB[0x0204 / 4];
+                 pNv->PGRAPH[0x0820/4] = 0;
+                 pNv->PGRAPH[0x0824/4] = 0;
+                 pNv->PGRAPH[0x0864/4] = pNv->FbMapSize - 1;
+                 pNv->PGRAPH[0x0868/4] = pNv->FbMapSize - 1;
+              } else {
+                 if((pNv->Chipset & 0xfff0) == 0x0090) {
+                    pNv->PGRAPH[0x0DF0/4] = pNv->PFB[0x0200/4];
+                    pNv->PGRAPH[0x0DF4/4] = pNv->PFB[0x0204/4];
+                 } else {
+                    pNv->PGRAPH[0x09F0/4] = pNv->PFB[0x0200/4];
+                    pNv->PGRAPH[0x09F4/4] = pNv->PFB[0x0204/4];
+                 }
+                 pNv->PGRAPH[0x69F0/4] = pNv->PFB[0x0200/4];
+                 pNv->PGRAPH[0x69F4/4] = pNv->PFB[0x0204/4];
 
-		if ( pNv->Architecture >= NV_ARCH_40 )
-		{
-			pNv->PGRAPH[0x69A4 / 4] = pNv->PFB[0x0200 / 4];
-			pNv->PGRAPH[0x69A8 / 4] = pNv->PFB[0x0204 / 4];
-		}
-		else
-		{
-			pNv->PGRAPH[0x0750 / 4] = 0x00EA0000;
-			pNv->PGRAPH[0x0754 / 4] = pNv->PFB[0x0200 / 4];
+                 pNv->PGRAPH[0x0840/4] = 0;
+                 pNv->PGRAPH[0x0844/4] = 0;
+                 pNv->PGRAPH[0x08a0/4] = pNv->FbMapSize - 1;
+                 pNv->PGRAPH[0x08a4/4] = pNv->FbMapSize - 1;
+              }
+           } else {
+              pNv->PGRAPH[0x09A4/4] = pNv->PFB[0x0200/4];
+              pNv->PGRAPH[0x09A8/4] = pNv->PFB[0x0204/4];
+              pNv->PGRAPH[0x0750/4] = 0x00EA0000;
+              pNv->PGRAPH[0x0754/4] = pNv->PFB[0x0200/4];
+              pNv->PGRAPH[0x0750/4] = 0x00EA0004;
+              pNv->PGRAPH[0x0754/4] = pNv->PFB[0x0204/4];
 
-			pNv->PGRAPH[0x0750 / 4] = 0x00EA0004;
-			pNv->PGRAPH[0x0754 / 4] = pNv->PFB[0x0204 / 4];
-		}
-		pNv->PGRAPH[0x0820 / 4] = 0;
-		pNv->PGRAPH[0x0824 / 4] = 0;
-		pNv->PGRAPH[0x0864 / 4] = pNv->FbMapSize - 1;
-		pNv->PGRAPH[0x0868 / 4] = pNv->FbMapSize - 1;
+              pNv->PGRAPH[0x0820/4] = 0;
+              pNv->PGRAPH[0x0824/4] = 0;
+              pNv->PGRAPH[0x0864/4] = pNv->FbMapSize - 1;
+              pNv->PGRAPH[0x0868/4] = pNv->FbMapSize - 1;
+           }
 
-		pNv->PGRAPH[0x0B20 / 4] = 0x00000000;
-		pNv->PGRAPH[0x0B04 / 4] = 0xFFFFFFFF;
+           pNv->PGRAPH[0x0B20/4] = 0x00000000;
+           pNv->PGRAPH[0x0B04/4] = 0xFFFFFFFF;
 	}
 
 	pNv->PGRAPH[0x053C / 4] = 0;
@@ -1051,14 +1120,12 @@ void NVLoadStateExt( NVPtr pNv, FX_HW_STATE * state )
 
 	if ( pNv->FlatPanel )
 	{
-		if ( ( pNv->Chipset & 0x0ff0 ) == 0x0110 )
-		{
-			pNv->PRAMDAC[0x0528 / 4] = state->dither;
-		}
-		else if ( ( pNv->Chipset & 0x0ff0 ) >= 0x0170 )
-		{
-			pNv->PRAMDAC[0x083C / 4] = state->dither;
-		}
+		if((pNv->Chipset & 0x0ff0) == 0x0110) {
+               pNv->PRAMDAC[0x0528/4] = state->dither;
+        } else 
+           if(pNv->twoHeads) {
+               pNv->PRAMDAC[0x083C/4] = state->dither;
+        }
 
 		VGA_WR08( pNv->PCIO, 0x03D4, 0x53 );
 		VGA_WR08( pNv->PCIO, 0x03D5, 0 );
@@ -1082,9 +1149,15 @@ void NVLoadStateExt( NVPtr pNv, FX_HW_STATE * state )
 	VGA_WR08( pNv->PCIO, 0x03D4, 0x2D );
 	VGA_WR08( pNv->PCIO, 0x03D5, state->horiz );
 	VGA_WR08( pNv->PCIO, 0x03D4, 0x1B );
+	VGA_WR08( pNv->PCIO, 0x03D4, 0x1C);
+    VGA_WR08( pNv->PCIO, 0x03D5, state->fifo);
 	VGA_WR08( pNv->PCIO, 0x03D5, state->arbitration0 );
 	VGA_WR08( pNv->PCIO, 0x03D4, 0x20 );
 	VGA_WR08( pNv->PCIO, 0x03D5, state->arbitration1 );
+	if(pNv->Architecture >= NV_ARCH_30) {
+      VGA_WR08(pNv->PCIO, 0x03D4, 0x47);
+      VGA_WR08(pNv->PCIO, 0x03D5, state->arbitration1 >> 8);
+    }
 	VGA_WR08( pNv->PCIO, 0x03D4, 0x30 );
 	VGA_WR08( pNv->PCIO, 0x03D5, state->cursor0 );
 	VGA_WR08( pNv->PCIO, 0x03D4, 0x31 );
@@ -1109,15 +1182,9 @@ void NVLoadStateExt( NVPtr pNv, FX_HW_STATE * state )
 	else
 	{
 		pNv->PRAMDAC[0x0848 / 4] = state->scale;
+		pNv->PRAMDAC[0x0828/4] = state->crtcSync;
 	}
 	pNv->PRAMDAC[0x0600 / 4] = state->general;
-
-	if ( ( ( pNv->Chipset & 0xffff ) == 0x0328 ) && ( state->bpp == 32 ) )
-	{
-		/* At least one NV34 laptop needs this workaround. */
-		pNv->PRAMDAC[0x0828 / 4] &= 0xfffffffe;
-	}
-
 	pNv->PCRTC[0x0140 / 4] = 0;
 	pNv->PCRTC[0x0100 / 4] = 1;
 
@@ -1140,6 +1207,10 @@ void NVUnloadStateExt( NVPtr pNv, FX_HW_STATE * state )
 	state->arbitration0 = VGA_RD08( pNv->PCIO, 0x03D5 );
 	VGA_WR08( pNv->PCIO, 0x03D4, 0x20 );
 	state->arbitration1 = VGA_RD08( pNv->PCIO, 0x03D5 );
+	if(pNv->Architecture >= NV_ARCH_30) {
+       VGA_WR08(pNv->PCIO, 0x03D4, 0x47);
+       state->arbitration1 |= (VGA_RD08(pNv->PCIO, 0x03D5) & 1) << 8;
+    }
 	VGA_WR08( pNv->PCIO, 0x03D4, 0x30 );
 	state->cursor0 = VGA_RD08( pNv->PCIO, 0x03D5 );
 	VGA_WR08( pNv->PCIO, 0x03D4, 0x31 );
@@ -1190,6 +1261,10 @@ void NVUnloadStateExt( NVPtr pNv, FX_HW_STATE * state )
 		VGA_WR08( pNv->PCIO, 0x03D4, 0x54 );
 		state->timingV = VGA_RD08( pNv->PCIO, 0x03D5 );
 	}
+	
+	if(pNv->FlatPanel) {
+       state->crtcSync = pNv->PRAMDAC[0x0828/4];
+    }
 }
 
 void NVSetStartAddress( NVPtr pNv, CARD32 start )

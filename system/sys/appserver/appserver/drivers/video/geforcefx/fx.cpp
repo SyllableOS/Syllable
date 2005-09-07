@@ -70,6 +70,7 @@ static const struct chip_info asChipInfos[] = {
 	{0x10DE0181, NV_ARCH_10, "GeForce4 MX 440 with AGP8X"},
 	{0x10DE0182, NV_ARCH_10, "GeForce4 MX 440SE with AGP8X"},
 	{0x10DE0183, NV_ARCH_10, "GeForce4 MX 420 with AGP8X"},
+	{0x10DE0185, NV_ARCH_10, "GeForce4 MX 4000"},
 	{0x10DE0186, NV_ARCH_10, "GeForce4 448 Go"},
 	{0x10DE0187, NV_ARCH_10, "GeForce4 488 Go"},
 	{0x10DE0188, NV_ARCH_10, "Quadro4 580 XGL"},
@@ -143,14 +144,41 @@ static const struct chip_info asChipInfos[] = {
 	{0x10DE0042, NV_ARCH_40, "GeForce FX 6800 LE"},
 	{0x10DE0045, NV_ARCH_40, "GeForce FX 6800 GT"},
 	{0x10DE004E, NV_ARCH_40, "Quadro FX 4000"},
-	{0x10DE0140, NV_ARCH_40, "GeForce FX 6600 GT"},
-	{0x10DE0141, NV_ARCH_40, "GeForce FX 6600"},
-	{0x10DE0145, NV_ARCH_40, "GeForce FX 6610 XL"},
-	{0x10DE014E, NV_ARCH_40, "Quadro FX 540"}
+	{0x10DE00C1, NV_ARCH_40, "GeForce 6800" },
+	{0x10DE00C2, NV_ARCH_40, "GeForce 6800 LE" },
+	{0x10DE00C8, NV_ARCH_40, "GeForce Go 6800" },
+	{0x10DE00C9, NV_ARCH_40, "GeForce Go 6800 Ultra" },
+	{0x10DE00CC, NV_ARCH_40, "Quadro FX Go1400" },
+	{0x10DE00CD, NV_ARCH_40, "Quadro FX 3450/4000 SDI" },
+	{0x10DE00CE, NV_ARCH_40, "Quadro FX 1400" },
+	{0x10DE0140, NV_ARCH_40, "GeForce FX 6600 GT" },
+	{0x10DE0141, NV_ARCH_40, "GeForce FX 6600" },
+	{0x10DE0142, NV_ARCH_40, "GeForce FX 6600 LE" },
+	{0x10DE0144, NV_ARCH_40, "GeForce FX Go 6600" },
+	{0x10DE0145, NV_ARCH_40, "GeForce FX 6610 XL" },
+	{0x10DE0146, NV_ARCH_40, "GeForce FX Go 6600 TE/6200 TE" },
+	{0x10DE0147, NV_ARCH_40, "GeForce FX 6700 XL" },
+	{0x10DE0148, NV_ARCH_40, "GeForce FX Go 6600" },
+	{0x10DE0149, NV_ARCH_40, "GeForce FX Go 6600 GT" },
+	{0x10DE014E, NV_ARCH_40, "Quadro FX 540" },
+	{0x10DE014F, NV_ARCH_40, "GeForce FX 6200" },
+	{0x10DE0161, NV_ARCH_40, "GeForce FX 6200 TurboCache(TM)" },
+	{0x10DE0162, NV_ARCH_40, "GeForce FX 6200SE TurboCache(TM)" },  
+	{0x10DE0164, NV_ARCH_40, "GeForce FX Go 6200" },
+	{0x10DE0165, NV_ARCH_40, "Quadro NVS 285" },
+	{0x10DE0166, NV_ARCH_40, "GeForce FX Go 6400" },
+	{0x10DE0167, NV_ARCH_40, "GeForce FX Go 6200" },
+	{0x10DE0168, NV_ARCH_40, "GeForce FX Go 6400" },
+	{0x10DE0211, NV_ARCH_40, "GeForce FX 6800" },
+	{0x10DE0212, NV_ARCH_40, "GeForce FX 6800 LE" },
+	{0x10DE0215, NV_ARCH_40, "GeForce FX 6800 GT" },
+	{0x10DE0221, NV_ARCH_40, "GeForce FX 6200" },
+	{0x10DE0091, NV_ARCH_40, "GeForce FX 7800 GTX" },
+	{0x10DE0099, NV_ARCH_40, "GeForce FX Go 7800 GTX" },
+	{0x10DE009D, NV_ARCH_40, "Quadro FX 4500" }
 };
 
 
-#undef ENABLE_DOUBLEBUFFER	// Enable doublebuffering
 
 inline uint32 pci_size( uint32 base, uint32 mask )
 {
@@ -277,8 +305,6 @@ FX::FX( int nFd ):m_cGELock( "fx_ge_lock" ), m_hRegisterArea( -1 ), m_hFrameBuff
 	CRTCout( 0x11, CRTCin( 0x11 ) | 0x80 );
 	NVLockUnlock( &m_sHW, 0 );
 
-	m_hSwapThread = -1;
-	m_bSwap = false;
 	m_bVideoOverlayUsed = false;
 	m_bIsInitiated = true;
 
@@ -342,13 +368,6 @@ bool FX::GetScreenModeDesc( int nIndex, os::screen_mode * psMode )
 	return true;
 }
 
-int fx_swap_entry( void *data )
-{
-	FX *pcFX = ( FX * ) data;
-
-	pcFX->SwapThread();
-	return ( 0 );
-}
 
 //-----------------------------------------------------------------------------
 // NAME:
@@ -362,16 +381,6 @@ int FX::SetScreenMode( os::screen_mode sMode )
 	vga_regs newmode;
 	FXRegPtr nvReg = &m_sHW.ModeReg;
 	memset( &newmode, 0, sizeof( struct vga_regs ) );
-
-#ifdef ENABLE_DOUBLEBUFFER
-	/* Stop swap thread */
-	if ( m_hSwapThread > -1 )
-	{
-		m_bSwap = false;
-		wait_for_thread( m_hSwapThread );
-		m_hSwapThread = -1;
-	}
-#endif
 
 	float vHPeriodEst = ( ( ( 1.0 / sMode.m_vRefreshRate ) - ( 550.0 / 1000000.0 ) ) / ( ( float )sMode.m_nHeight + 1 ) * 1000000.0 );
 	float vVSyncPlusBp = rint( 550.0 / vHPeriodEst );
@@ -490,12 +499,16 @@ int FX::SetScreenMode( os::screen_mode sMode )
 		{
 			nvReg->scale |= ( 1 << 8 );
 		}
+		nvReg->crtcSync = m_sHW.PRAMDAC[0x0828/4];
 	}
 
 	nvReg->vpll = nvReg->pll;
 	nvReg->vpll2 = nvReg->pll;
 	nvReg->vpllB = nvReg->pllB;
 	nvReg->vpll2B = nvReg->pllB;
+	
+	VGA_WR08( &m_sHW.PCIO, 0x03D4, 0x1C );
+	nvReg->fifo = VGA_RD08( &m_sHW.PCIO, 0x03D5 ) & ~( 1<<5 );
 
 	if ( m_sHW.CRTCnumber )
 	{
@@ -589,12 +602,6 @@ int FX::SetScreenMode( os::screen_mode sMode )
 
 	/* Init acceleration */
 	SetupAccel();
-
-#ifdef ENABLE_DOUBLEBUFFER
-	m_bSwap = true;
-	m_hSwapThread = spawn_thread( "geforcefx_swap_thread", ( void * )fx_swap_entry, 100, 0, this );
-	resume_thread( m_hSwapThread );
-#endif
 
 	return 0;
 }
@@ -830,57 +837,6 @@ void FX::WaitForIdle()
 	   } */
 }
 
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-void FX::SwapThread()
-{
-	/* Enable interrupts on V-Blank */
-	m_sHW.PCRTC[0x140 / 4] = 0x1;
-
-
-	while ( m_bSwap )
-	{
-		m_cGELock.Lock();
-
-		DmaStart( &m_sHW, SURFACE_OFFSET_SRC, 2 );
-
-		DmaNext( &m_sHW, 0 );
-		DmaNext( &m_sHW, m_sCurrentMode.m_nBytesPerLine * m_sCurrentMode.m_nHeight );
-		DmaKickoff( &m_sHW );
-
-		WaitForIdle();
-
-		DmaStart( &m_sHW, BLIT_POINT_SRC, 3 );
-		DmaNext( &m_sHW, ( ( 0 << 16 ) | 0 ) );
-		DmaNext( &m_sHW, ( ( 0 << 16 ) | 0 ) );
-		DmaNext( &m_sHW, ( ( m_sCurrentMode.m_nHeight << 16 ) | m_sCurrentMode.m_nWidth ) );
-		DmaKickoff( &m_sHW );
-
-		WaitForIdle();
-
-		DmaStart( &m_sHW, SURFACE_OFFSET_SRC, 2 );
-		DmaNext( &m_sHW, 0 );
-		DmaNext( &m_sHW, 0 );
-		DmaKickoff( &m_sHW );
-
-		WaitForIdle();
-
-		m_cGELock.Unlock();
-
-		/* Wait for the next V-Blank event */
-		while ( !( m_sHW.PCRTC[0x100 / 4] & 0x1 ) )
-		{
-			snooze( 1000 );
-		}
-		/* Clear interrupt */
-		m_sHW.PCRTC[0x100 / 4] = 0x1;
-	}
-}
 
 //-----------------------------------------------------------------------------
 // NAME:
@@ -1394,13 +1350,16 @@ void FX::CommonSetup()
 	case 0x034C:
 	case 0x0160:
 	case 0x0166:
+	case 0x0169:
+	case 0x016B:
+	case 0x016C:
+	case 0x016D:
 	case 0x00C8:
-	case 0x00C9:
 	case 0x00CC:
-	case 0x0147:
+	case 0x0144:
+	case 0x0146:
 	case 0x0148:
-	case 0x0149:
-	case 0x014C:
+	case 0x0099:
 		bMobile = true;
 		break;
 	default:
@@ -1425,6 +1384,10 @@ void FX::CommonSetup()
 	{
 		m_sHW.RamAmountKBytes = ( m_sHW.PFB[0x020C / 4] & 0xFFF00000 )>>10;
 	}
+	
+	if(m_sHW.RamAmountKBytes > 256*1024)
+        m_sHW.RamAmountKBytes = 256*1024;
+	
 	m_sHW.CrystalFreqKHz = ( m_sHW.PEXTDEV[0x0000 / 4] & ( 1 << 6 ) ) ? 14318 : 13500;
 	if ( m_sHW.twoHeads && ( nImplementation != 0x0110 ) )
 	{

@@ -66,8 +66,7 @@ public:
 	virtual void	DeleteVideoOverlay( area_id *pBuffer );
 	virtual void	UpdateVideoOverlay( area_id *pBuffer );
 	
-	void		SwapThread();
-
+	
 	bool		IsInitiated() const { return( m_bIsInitiated ); }
 private:
 	void		WaitForIdle();
@@ -91,9 +90,6 @@ private:
 	os::screen_mode m_sCurrentMode;
 	
 	bool		m_bPaletteEnabled;
-	
-	bool		m_bSwap;
-	thread_id	m_hSwapThread;
 	
 	bool		m_bUsingHWCursor;
 	bool		m_bCursorIsOn;

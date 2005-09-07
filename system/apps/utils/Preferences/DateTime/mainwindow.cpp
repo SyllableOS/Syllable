@@ -246,7 +246,7 @@ void CMainWindow::UpdateTimeZoneMap()
   for (int y = 1; y < 149; y++) {
     
     // Translate
-    memcpy(cTemp, &(cData[(y*1024)]), 1032);
+    memcpy(cTemp, &(cData[(y*1024)]), 1024);
     memcpy(&(cData[(y*1024)+(start*4)]), cTemp, width1 * 4);
     memcpy(&(cData[(y*1024)]), cTemp + (width1*4), start * 4);
 

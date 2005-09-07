@@ -91,6 +91,7 @@ typedef struct _riva_hw_state
     U032 scale;
     U032 dither;
     U032 extra;
+    U032 fifo;
     U032 pixel;
     U032 horiz;
     U032 arbitration0;
@@ -114,6 +115,7 @@ typedef struct _riva_hw_state
     U032 timingH;
     U032 timingV;
     U032 displayV;
+    U032 crtcSync;
 } FX_HW_STATE, *FXRegPtr;
 
 
