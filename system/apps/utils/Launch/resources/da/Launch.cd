@@ -1,0 +1,16 @@
+//
+// Launch String Catalog
+//
+
+MSG_ERROR_LAUNCHING_ONE Kan ikke genkende filtypen for filen  ' 
+MSG_ERROR_LAUNCHING_TWO  ',\nKontakt venligst Syllable Norden for hjælp...
+
+MSG_BUTTON_LAUNCH _Kør
+MSG_BUTTON_BROWSE _Gennemse
+MSG_BUTTON_CANCEL _Annuller
+MSG_ALERT_BUTTON _Ok
+
+MSG_STRING_LAUNCH Åbn:
+MSG_STRING_DESC Skriv en Hjemmeside-adresse, Fil-, Mappe-, eller Program-navn her.
+
+MSG_WINDOW_TITLE Åbner...
