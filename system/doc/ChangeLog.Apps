@@ -1,3 +1,14 @@
+* September 17 2005, Henrik Isaksson *
+
+- Launch
+	o Added Swedish, Danish and Polish translations.
+- AEdit
+	o Added Polish and an updated Danish translation.
+- Locale
+	o Added Swedish, Danish and Polish translations.
+- ColdFishRemote
+	o Swedish, Danish and Polish translations. (but CFR doesn't use them!)
+
 * September 7, 2005, Arno Klenke *
 - DateTime
 	o Fixed memory corruption
