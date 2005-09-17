@@ -32,6 +32,9 @@ $(EXE): $(OBJS)
 	@$(CXX) $(OBJS) -o $(EXE) -lsyllable
 	@echo Adding resources...
 	@rescopy $(EXE) -r images/*.png resources/*.catalog
+	@rescopy $(EXE) -a sv/Launch.catalog=resources/sv/Launch.catalog
+	@rescopy $(EXE) -a pl/Launch.catalog=resources/pl/Launch.catalog
+	@rescopy $(EXE) -a da/Launch.catalog=resources/da/Launch.catalog
 
 clean:
 	@echo Cleaning...
