@@ -1,0 +1,74 @@
+//
+// LibSyllable string catalog
+// Polish translation by And3mD (updates - mail to and3md@interia.pl)
+
+// FileRequester strings
+MSG_FILEREQUESTER_LOAD_BUTTON=1000						Otwórz
+MSG_FILEREQUESTER_SAVE_BUTTON							Zapi_sz
+MSG_FILEREQUESTER_CANCEL_BUTTON							Anuluj
+MSG_FILEREQUESTER_FILE_NAME_LABEL						Nazwa pliku:
+MSG_FILEREQUESTER_BROWSE_LOCATION_LABEL					Szukaj w:
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_TEXT				Plik o nazwie '%s' już istnieje\nCzy nadpisać?\n
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_TITLE				Ostrzeżenie:
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_YES_BUTTON		Tak
+MSG_FILEREQUESTER_FILE_ALREADY_EXISTS_NO_BUTTON			Nie
+
+// IconDirectoryView strings
+MSG_ICONDIRVIEW_WINDOW_OPEN_WITH=2000					Otwórz za pomocą...
+MSG_ICONDIRVIEW_NUMBER_OF_OBJECTS_SELECTED				%i elementów
+MSG_ICONDIRVIEW_MENU_MOUNT								Montuj...
+MSG_ICONDIRVIEW_MENU_UNMOUNT							Odmontuj...
+MSG_ICONDIRVIEW_MENU_NEW_DIRECTORY						Nowy folder...
+MSG_ICONDIRVIEW_MENU_EMPTY_TRASH						Opróżnij kosz
+MSG_ICONDIRVIEW_MENU_OPEN_WITH							Otwórz za pomocą...
+MSG_ICONDIRVIEW_MENU_INFO								Info...
+MSG_ICONDIRVIEW_MENU_RENAME								Zmień nazwę...
+MSG_ICONDIRVIEW_MENU_MOVE_TO_TRASH						Przenieś do kosza
+MSG_ICONDIRVIEW_MENU_DELETE								Usuń...
+MSG_ICONDIRVIEW_PERCENT_FREE							Wolne miejsce: %i%% 
+MSG_ICONDIRVIEW_VOLUMENAME_UNKNOWN						Bez nazwy
+
+// File information window
+MSG_FILEINFO_WINDOW_TITLE=3000							Info
+MSG_FILEINFO_WINDOW_NAME_LABEL							Nazwa:
+MSG_FILEINFO_WINDOW_PATH_LABEL							Ścieżka:
+MSG_FILEINFO_WINDOW_SIZE_LABEL							Rozmiar:
+MSG_FILEINFO_WINDOW_MODIFIEDDATE_LABEL					Modyfikacja:
+MSG_FILEINFO_WINDOW_FILETYPE_LABEL						Typ:
+MSG_FILEINFO_WINDOW_FILETYPE_DROPDOWN_CURRENT_LABEL		Aktualny:
+MSG_FILEINFO_WINDOW_FILETYPE_DROPDOWN_EXECUTABLE		Plik wykonywalny
+MSG_FILEINFO_WINDOW_OK_BUTTON							Ok
+MSG_FILEINFO_FILESIZE_ZERO								0
+MSG_FILEINFO_FILETYPE_UNKNOWN							Nieznany
+
+// Rename file window
+MSG_RENAMEFILE_WINDOW_TITLE=4000						Zmień nazwę %s
+MSG_RENAMEFILE_WINDOW_OK_BUTTON							Ok
+MSG_RENAMEFILE_ERROR_TITLE								Zmień nazwę
+MSG_RENAMEFILE_ERROR_TEXT								Nie można zmienić nazwy %s. Plik o podanej nazwie już istnieje. 
+MSG_RENAMEFILE_ERROR_CLOSE								Ok
+
+// New directory window
+MSG_NEWDIR_WINDOW_TITLE=5000							Nowy folder
+MSG_NEWDIR_WINDOW_OK_BUTTON								Ok
+MSG_NEWDIR_ERROR_TITLE									Nowy folder
+MSG_NEWDIR_ERROR_TEXT									Folder o nazwie %s nie może być utworzony!
+MSG_NEWDIR_ERROR_CLOSE									Ok
+
+// Mount window
+MSG_MOUNT_WINDOW_TITLE=6000								Montuj
+MSG_MOUNT_WINDOW_NAME_COLUMN							Nazwa
+MSG_MOUNT_WINDOW_PATH_COLUMN							Ścieżka
+MSG_MOUNT_WINDOW_MOUNT_BUTTON							Montuj
+MSG_MOUNT_SCANNING_PATH									Skanowanie %s...
+MSG_MOUNT_SCANNING										Skanowanie...
+MSG_MOUNT_LOCAL_DISKS_LABEL								Dyski lokalne
+MSG_MOUNT_TYPE_HARDDISK									Twardy dysk
+MSG_MOUNT_TYPE_CD_DVD									CD/DVD
+MSG_MOUNT_TYPE_FLOPPY									Dyskietka
+MSG_MOUNT_DEVICE_PARTITION								Partycja
+MSG_MOUNT_ERROR_TITLE									Montuj
+MSG_MOUNT_ERROR_CLOSE									Ok
+MSG_MOUNT_ERROR_CREATE_MOUNTPOINT						Nie można zamontować (utowrzyć punktu montowania dla urządzenia %s )
+MSG_MOUNT_ERROR_OTHER_ERROR								Nie można zamontować %s:\n%s
+MSG_MOUNT_ERROR_UNMOUNT									Nie można odmontować %s:\n%s
