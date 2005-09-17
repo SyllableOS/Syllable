@@ -1,0 +1,19 @@
+//
+// Locale string catalog
+// Polish translation by And3mD (updates - mail to and3md@interia.pl)
+
+STR_MAIN_TITLE=1000						Locale
+STR_MAIN_APPLY							Z_astosuj
+STR_MAIN_REVERT							Cofnij
+STR_MAIN_DEFAULT							_Domyślny
+
+STR_MAIN_LANGUAGE_TAB=1100					Język
+STR_MAIN_LANGUAGE_ACTIVATE					Aktywuj język >
+STR_MAIN_LANGUAGE_DEACTIVATE				< Deaktywuj język 
+STR_MAIN_LANGUAGE_AVAILABLE					Obsługiwane języki
+STR_MAIN_LANGUAGE_USED						Aktywne języki
+
+STR_MAIN_COUNTRY_TAB=1200					Kraj
+
+STR_ERROR_SAVE=2000						Podczas próby zapisu ustawień lokalnych wystąpił błąd.
+

@@ -1,0 +1,19 @@
+//
+// Locale string catalog
+//
+
+STR_MAIN_TITLE=1000						Sprogvalg
+STR_MAIN_APPLY							_Aktiver
+STR_MAIN_REVERT							_Gendan
+STR_MAIN_DEFAULT							_Standart
+
+STR_MAIN_LANGUAGE_TAB=1100					Sprog
+STR_MAIN_LANGUAGE_ACTIVATE					Tilføj sprog >
+STR_MAIN_LANGUAGE_DEACTIVATE				< Fjern sprog
+STR_MAIN_LANGUAGE_AVAILABLE					Understøttede sprog
+STR_MAIN_LANGUAGE_USED						Valgte sprog
+
+STR_MAIN_COUNTRY_TAB=1200					Land
+
+STR_ERROR_SAVE=2000						Kunne ikke gemme indstillingerne
+

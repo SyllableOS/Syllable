@@ -1,0 +1,19 @@
+//
+// Locale string catalog
+//
+
+STR_MAIN_TITLE=1000						Språkval
+STR_MAIN_APPLY							_Aktivera
+STR_MAIN_REVERT							_Återgp
+STR_MAIN_DEFAULT							_Standard
+
+STR_MAIN_LANGUAGE_TAB=1100					Språk
+STR_MAIN_LANGUAGE_ACTIVATE					Lägg till >
+STR_MAIN_LANGUAGE_DEACTIVATE				< Ta bort språk
+STR_MAIN_LANGUAGE_AVAILABLE					Understödda språk
+STR_MAIN_LANGUAGE_USED						Valda språk
+
+STR_MAIN_COUNTRY_TAB=1200					Land
+
+STR_ERROR_SAVE=2000						Kunde inte spara inställningarna
+
