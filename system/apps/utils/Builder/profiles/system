@@ -74,6 +74,7 @@ tree
 	atheos/sys/drivers/appserver/input
 	atheos/sys/drivers/appserver/video
 
+	atheos/sys/extensions
 	atheos/sys/extensions/translators
 
 	atheos/sys/drivers/media
