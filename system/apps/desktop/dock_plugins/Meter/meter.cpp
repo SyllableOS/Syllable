@@ -17,47 +17,53 @@
 
 #include "meter.h"
 
-Meter::Meter(Path cPluginFile, os::Looper* pcDock)
+Meter::Meter(DockPlugin* pcPlugin, os::Looper* pcDock) : os::View( os::Rect(), "meter" )
 {
 	//store dock data
-	m_cPath = cPluginFile;
+	m_pcPlugin = pcPlugin;
 	m_pcDock = pcDock;
 
 	//load in bitmaps
-	File cFile(m_cPath);
+
+	File cFile(m_pcPlugin->GetPath());
 	Resources cResources(&cFile);
 	ResStream* pcResStream;
 
 	pcResStream = cResources.GetResourceStream("cpu.png");
-	m_cCPUImage.Load(pcResStream, "image/png");
+	m_pcCPUImage = new os::BitmapImage(pcResStream );
 	delete pcResStream;
 
 	pcResStream = cResources.GetResourceStream("disk.png");
-	m_cDiskImage.Load(pcResStream, "image/png");
+	m_pcDiskImage = new os::BitmapImage(pcResStream );
 	delete pcResStream;
 
 	pcResStream = cResources.GetResourceStream("memory.png");
-	m_cMemoryImage.Load(pcResStream, "image/png");
+	m_pcMemoryImage = new os::BitmapImage(pcResStream );
 	delete pcResStream;
-
+	
 	//create background bitmaps
-	m_cHorizontalBackground.ResizeCanvas(Point(72, 24));
-	View* pcView = m_cHorizontalBackground.GetView();
+	m_pcHorizontalBackground = new os::BitmapImage( Bitmap::SHARE_FRAMEBUFFER | Bitmap::ACCEPT_VIEWS );
+	m_pcHorizontalBackground->ResizeCanvas(Point(72, 24));
+
+	View* pcView = m_pcHorizontalBackground->GetView();
 	pcView->FillRect(pcView->GetBounds(), get_default_color(COL_NORMAL));
 	pcView->SetDrawingMode(DM_BLEND);
-	m_cCPUImage.Draw(Point(0, 24 - 16), pcView);
-	m_cDiskImage.Draw(Point(24, 24 - 16), pcView);
-	m_cMemoryImage.Draw(Point(48, 24 - 16), pcView);
+	m_pcCPUImage->Draw(Point(0, 24 - 16), pcView);
+	m_pcDiskImage->Draw(Point(24, 24 - 16), pcView);
+	m_pcMemoryImage->Draw(Point(48, 24 - 16), pcView);
 	pcView->Sync();
 
-	m_cVerticalBackground.ResizeCanvas(Point(24, 72));
-	pcView = m_cVerticalBackground.GetView();
+	m_pcVerticalBackground = new os::BitmapImage( Bitmap::SHARE_FRAMEBUFFER | Bitmap::ACCEPT_VIEWS );
+	m_pcVerticalBackground->ResizeCanvas(Point(24, 72));
+	pcView = m_pcVerticalBackground->GetView();
 	pcView->FillRect(pcView->GetBounds(), get_default_color(COL_NORMAL));
 	pcView->SetDrawingMode(DM_BLEND);
-	m_cCPUImage.Draw(Point(0, 8), pcView);
-	m_cDiskImage.Draw(Point(0, 32), pcView);
-	m_cMemoryImage.Draw(Point(0, 56), pcView);
+	m_pcCPUImage->Draw(Point(0, 8), pcView);
+	m_pcDiskImage->Draw(Point(0, 32), pcView);
+	m_pcMemoryImage->Draw(Point(0, 56), pcView);
 	pcView->Sync();
+	
+	m_pcBuffer = new os::BitmapImage( Bitmap::SHARE_FRAMEBUFFER | Bitmap::ACCEPT_VIEWS );
 
 	//initialise meter data
 	vMemory = 0;
@@ -66,22 +72,22 @@ Meter::Meter(Path cPluginFile, os::Looper* pcDock)
 
 	m_nOldRealtime = get_real_time();
 	m_nOldIdletime = get_idle_time(0);
+	
+	delete( m_pcCPUImage );
+	delete( m_pcDiskImage );
+	delete( m_pcMemoryImage );
+
 }
 
-String Meter::GetIdentifier()
+Meter::~Meter()
 {
-	return "Meter";
 }
 
-Point Meter::GetPreferredSize(bool bLargest)
+Point Meter::GetPreferredSize(bool bLargest) const
 {
 	return Point(71, 71);
 }
 
-Path Meter::GetPath()
-{
-	return m_cPath;
-}
 
 void Meter::AttachedToWindow()
 {
@@ -90,6 +96,7 @@ void Meter::AttachedToWindow()
 
 void Meter::DetachedFromWindow()
 {
+	
 	m_pcDock->RemoveTimer(this, TIMER_UPDATE);
 }
 
@@ -99,13 +106,13 @@ void Meter::FrameSized(const Point& cDelta)
 	m_bHorizontal = (GetBounds().Height() == 23);
 
 	//resize and redraw buffer
-	m_cBuffer.ResizeCanvas(Point(GetBounds().Width() + 1, GetBounds().Height() + 1));
-	View* pcView = m_cBuffer.GetView();
+	m_pcBuffer->ResizeCanvas(Point(GetBounds().Width() + 1, GetBounds().Height() + 1));
+	View* pcView = m_pcBuffer->GetView();
 	
 	if(m_bHorizontal)
-		m_cHorizontalBackground.Draw(Point(0, 0), pcView);
+		m_pcHorizontalBackground->Draw(Point(0, 0), pcView);
 	else
-		m_cVerticalBackground.Draw(Point(0, 0), pcView);
+		m_pcVerticalBackground->Draw(Point(0, 0), pcView);
 
 	//make sure disk meter is updated
 	m_nCounter = 0;
@@ -130,7 +137,7 @@ void Meter::MouseDown(const Point& cPosition, uint32 nButtons)
 void Meter::Paint(const Rect& cUpdateRect)
 {
 	//copy buffer
-	m_cBuffer.Draw(cUpdateRect, cUpdateRect, this);
+	m_pcBuffer->Draw(cUpdateRect, cUpdateRect, this);
 }
 
 void Meter::TimerTick(int nID)
@@ -149,7 +156,7 @@ void Meter::TimerTick(int nID)
 	if(m_nCounter == 0) //only check drive space occasionally
 	{
 		fs_info sFSInfo;
-		int nFD = open(String(m_cPath).c_str(), O_RDONLY);
+		int nFD = open(String(m_pcPlugin->GetPath()).c_str(), O_RDONLY);
 		get_fs_info(nFD, &sFSInfo);
 		vDisk = float(sFSInfo.fi_total_blocks - sFSInfo.fi_free_blocks)  / sFSInfo.fi_total_blocks;
 		close(nFD);
@@ -168,12 +175,12 @@ void Meter::TimerTick(int nID)
 	//update buffer
 
 	//copy background bitmap
-	View* pcView = m_cBuffer.GetView();
+	View* pcView = m_pcBuffer->GetView();
 	
 	if(m_bHorizontal)
-		m_cHorizontalBackground.Draw(Point(0, 0), pcView);
+		m_pcHorizontalBackground->Draw(Point(0, 0), pcView);
 	else
-		m_cVerticalBackground.Draw(Point(0, 0), pcView);
+		m_pcVerticalBackground->Draw(Point(0, 0), pcView);
 
 	//draw meters
 	float vFraction;
@@ -212,10 +219,71 @@ void Meter::TimerTick(int nID)
 	Flush();
 }
 
+//*************************************************************************************
+
+class MeterPlugin : public os::DockPlugin
+{
+public:
+	MeterPlugin()
+	{
+		m_pcView = NULL;
+	}
+	~MeterPlugin()
+	{
+	}
+	status_t Initialize()
+	{
+		m_pcView = new Meter( this, GetApp() );
+		AddView( m_pcView );
+		return( 0 );
+	}
+	void Delete()
+	{
+		delete( m_pcView->m_pcHorizontalBackground );
+		delete( m_pcView->m_pcVerticalBackground );
+		RemoveView( m_pcView );
+	}
+	os::String GetIdentifier()
+	{
+		return( "Meter" );
+	}
+private:
+	Meter* m_pcView;
+};
+
 extern "C"
 {
-	DockPlugin* init_dock_plugin(os::Path cPluginFile, os::Looper* pcDock)
-	{
-		return new Meter(cPluginFile, pcDock);
-	}
+DockPlugin* init_dock_plugin()
+{
+	return( new MeterPlugin() );
 }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

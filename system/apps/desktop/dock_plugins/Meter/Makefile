@@ -1,16 +1,54 @@
-Meter: meter.o
-	$(CXX) -o meter.so -shared meter.o -lsyllable
-	rescopy meter.so -r images/*.png
+#Makefile for Meter.so
+COPTS = -c -fexceptions -ffast-math
 
-meter.o: meter.cpp meter.h
-	$(CXX) -c meter.cpp
+APPBIN = /system/extensions/dock
+OBJS = meter.o
 
-install: Meter
-	if [ -e /system/drivers/dock/Meter.so ]; then rm /system/drivers/dock/Meter.so; fi
-	cp meter.so /system/drivers/dock/Meter.so
+OBJDIR := objs
+OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))
 
-dist: Meter
-	cp -f meter.so $(DIST_DIR)/atheos/sys/drivers/dock/Meter.so
+# Rules
+$(OBJDIR)/%.o : %.c
+	@echo Compiling : $<
+	@$(CC) $(COPTS) $< -o $@
+
+$(OBJDIR)/%.o : %.cpp
+	@echo Compiling : $<
+	@$(CXX) $(COPTS) $< -o $@
+
+$(OBJDIR)/%.o : %.s
+	@echo Assembling : $<
+	@$(CC) $(COPTS) -x assembler-with-cpp $< -o $@
+
+all : objs Meter.so
+
+objs:
+	@mkdir -p objs
+
+Meter.so: $(OBJS)
+	@echo Linking...
+	@$(CXX) -shared -Xlinker -soname=Meter.so $(OBJS) -o Meter.so -lsyllable
+	@echo Adding resources...
+	@rescopy Meter.so -r images/*.png 
 
 clean:
-	rm -f meter.o meter.so
+	@echo Cleaning...
+	@rm -f $(OBJDIR)/*
+	@rm -f Meter.so
+
+deps:
+
+dist: all
+	@echo Distribution...
+	@mkdir -p $(DIST_DIR)/atheos/sys/extensions/dock
+	@cp Meter.so $(DIST_DIR)/atheos/sys/extensions/dock/Meter.so
+
+install: all
+	@echo Installing...
+	@mkdir -p /system/extensions/dock
+	@cp Meter.so /system/extensions/dock/Meter.so
+
+
+
+
+

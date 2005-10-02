@@ -34,15 +34,14 @@ enum
 	TIMER_UPDATE
 };
 
-class Meter : public DockPlugin
+class Meter : public os::View
 {
 	public:
-		Meter(Path cPluginFile, os::Looper* pcDock);
+		Meter(os::DockPlugin* pcPlugin, os::Looper* pcDock);
+		~Meter();
 	
 		//dock plugin methods
-		String GetIdentifier();
-		Point GetPreferredSize(bool bLargest);
-		Path GetPath();
+		Point GetPreferredSize(bool bLargest) const;
 
 		//view methods
 		void AttachedToWindow();
@@ -52,22 +51,21 @@ class Meter : public DockPlugin
 		void Paint(const Rect& cUpdateRect);
 		void TimerTick(int nID);
 
-	protected:
 		//dock data
-		Path m_cPath;
+		os::DockPlugin* m_pcPlugin;
 		Looper* m_pcDock;
 
 		//dock alignment
 		bool m_bHorizontal;
 
 		//bitmaps
-		BitmapImage m_cCPUImage;
-		BitmapImage m_cDiskImage;
-		BitmapImage m_cMemoryImage;
+		BitmapImage* m_pcCPUImage;
+		BitmapImage* m_pcDiskImage;
+		BitmapImage* m_pcMemoryImage;
 
-		BitmapImage m_cHorizontalBackground;
-		BitmapImage m_cVerticalBackground;
-		BitmapImage m_cBuffer;
+		BitmapImage* m_pcHorizontalBackground;
+		BitmapImage* m_pcVerticalBackground;
+		BitmapImage* m_pcBuffer;
 
 		//meter data
 		float vCPU;

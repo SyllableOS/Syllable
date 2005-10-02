@@ -3,7 +3,7 @@ authors
 	Kaj de Vos
 	Kristian Van Der Vliet
 status			developing
-notes			Tested with FFMPEG CVS snapshot June 2 2005
+notes			Tested with FFMPEG CVS snapshot August 21 2005
 
 licenses		LGPL GPL
 
@@ -14,7 +14,7 @@ packages		FFMpeg-current
 locations		http://mplayerhq.hu/MPlayer/cvs/
 
 configure-options
-	--extra-cflags='-DPIC'
+	--extra-cflags='-DPIC -fomit-frame-pointer'
 	--extra-libs='-ldl -lm'
 ;	--enable-shared
 ;	--enable-pthreads
@@ -39,22 +39,24 @@ configure-options
 ;	--disable-ffserver
 ;	--disable-ffplay
 
-install-tree
-	lib
-	include
-	include/ffmpeg
+install-tree	include lib
 install-files
+	../ffmpeg-current/libavcodec/avcodec.h		include
+	../ffmpeg-current/libavformat/avformat.h	include
+	../ffmpeg-current/libavformat/avio.h		include
+	../ffmpeg-current/libavformat/rtp.h			include
+	../ffmpeg-current/libavformat/rtsp.h		include
+	../ffmpeg-current/libavformat/rtspcodes.h	include
+	../ffmpeg-current/libavutil/avutil.h		include
+	../ffmpeg-current/libavutil/common.h		include
+	../ffmpeg-current/libavutil/mathematics.h	include
+	../ffmpeg-current/libavutil/rational.h		include
+	../ffmpeg-current/libavutil/integer.h		include
+	../ffmpeg-current/libavutil/intfloat_readwrite.h include
+	../ffmpeg-current/config.h					include
 	libavcodec/libavcodec.a						lib
 	libavformat/libavformat.a					lib
-	config.h									include/ffmpeg
-	../ffmpeg-current/libavcodec/avcodec.h		include/ffmpeg
-	../ffmpeg-current/libavcodec/common.h		include/ffmpeg
-	../ffmpeg-current/libavcodec/rational.h		include/ffmpeg
-	../ffmpeg-current/libavformat/avformat.h	include/ffmpeg
-	../ffmpeg-current/libavformat/avio.h		include/ffmpeg
-	../ffmpeg-current/libavformat/rtp.h			include/ffmpeg
-	../ffmpeg-current/libavformat/rtsp.h		include/ffmpeg
-	../ffmpeg-current/libavformat/rtspcodes.h	include/ffmpeg
+	libavutil/libavutil.a						lib
 documentation
 	README COPYING Changelog CREDITS doc/TODO
 ;	doc/*.txt
