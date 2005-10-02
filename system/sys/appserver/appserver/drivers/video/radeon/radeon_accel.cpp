@@ -187,22 +187,18 @@ void ATIRadeon::EngineInit ()
 }
 
 bool ATIRadeon::FillRect(SrvBitmap *pcBitmap, const IRect &cRect, 
-		      const Color32_s &sColor)
+		      const Color32_s &sColor, int nMode)
 {
 	if( m_hFramebufferArea < 0 )
 		return false;
 
-	if( pcBitmap->m_bVideoMem == false ) {
+	if( pcBitmap->m_bVideoMem == false || nMode != DM_COPY ) {
 		EngineIdle();
-		return( DisplayDriver::FillRect(pcBitmap, cRect, sColor) );
+		return( DisplayDriver::FillRect(pcBitmap, cRect, sColor, nMode) );
 	}
 
 	uint32 nColor;
 	switch( pcBitmap->m_eColorSpc ) {
-	 	case CS_RGB15:
-		case CS_RGBA15:
-			nColor = COL_TO_RGB15 (sColor);
-			break;
 		case CS_RGB16:
 			nColor = COL_TO_RGB16 (sColor);
 			break;
@@ -212,13 +208,13 @@ bool ATIRadeon::FillRect(SrvBitmap *pcBitmap, const IRect &cRect,
 			break;
 		default:
 			EngineIdle();
-			return( DisplayDriver::FillRect(pcBitmap, cRect, sColor) );
+			return( DisplayDriver::FillRect(pcBitmap, cRect, sColor, nMode) );
 	}
 
 	if (rinfo.asleep)
 	{
 		EngineIdle();
-		return( DisplayDriver::FillRect(pcBitmap, cRect, sColor) );
+		return( DisplayDriver::FillRect(pcBitmap, cRect, sColor, nMode) );
 	}
 
 	m_cLock.Lock();
@@ -244,24 +240,25 @@ bool ATIRadeon::FillRect(SrvBitmap *pcBitmap, const IRect &cRect,
 }
 
 bool ATIRadeon::BltBitmap(SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap, 
-                           IRect cSrcRect, IPoint cDstPos, int nMode)
+                           IRect cSrcRect, IRect cDstRect, int nMode, int nAlpha)
 {
 	if( m_hFramebufferArea < 0 )
 		return false;
 
 	if( pcDstBitMap->m_bVideoMem == false ||
-		pcSrcBitMap->m_bVideoMem == false || rinfo.asleep) {
+		pcSrcBitMap->m_bVideoMem == false || rinfo.asleep || cSrcRect.Size() != cDstRect.Size() ) {
 		EngineIdle();
 		return( DisplayDriver::BltBitmap( pcDstBitMap, pcSrcBitMap,
-                                         cSrcRect, cDstPos, nMode  ) );
+                                         cSrcRect, cDstRect, nMode, nAlpha ) );
 	}
   
-	if (nMode == DM_INVERT) {
+	if (nMode != DM_COPY) {
 		EngineIdle();
 		return( DisplayDriver::BltBitmap( pcDstBitMap, pcSrcBitMap,
-                                         cSrcRect, cDstPos, nMode  ) );
+                                         cSrcRect, cDstRect, nMode, nAlpha ) );
 	}
 
+	IPoint cDstPos = cDstRect.LeftTop();
 	int srcx = cSrcRect.left;
 	int srcy = cSrcRect.top;
 	int dstx = cDstPos.x;
@@ -312,7 +309,7 @@ bool ATIRadeon::DrawLine(SrvBitmap *psBitMap, const IRect &cClipRect,
 	if( m_hFramebufferArea < 0 )
 		return false;
 
-	if( psBitMap->m_bVideoMem == false ) {
+	if( psBitMap->m_bVideoMem == false || nMode != DM_COPY ) {
 		EngineIdle();
 		return( DisplayDriver::DrawLine(psBitMap, cClipRect, cPnt1, cPnt2, sColor, nMode) );
 	}
@@ -332,10 +329,6 @@ bool ATIRadeon::DrawLine(SrvBitmap *psBitMap, const IRect &cClipRect,
 	}
 
 	switch( psBitMap->m_eColorSpc ) {
-		case CS_RGB15:
-		case CS_RGBA15:
-			nColor = COL_TO_RGB15 (sColor);
-			break;
 		case CS_RGB16:
 			nColor = COL_TO_RGB16 (sColor);
 			break;

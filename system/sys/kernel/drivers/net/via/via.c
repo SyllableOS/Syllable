@@ -77,7 +77,7 @@ static const int multicast_filter_limit = 32;
 /* Operational parameters that usually are not changed. */
 
 /* Time in jiffies before concluding the transmitter is hung. */
-#define TX_TIMEOUT  (6*100)
+#define TX_TIMEOUT  (6*1000)
 
 #define PKT_BUF_SZ		1536			/* Size of each temporary Rx buffer.*/
 
@@ -118,7 +118,7 @@ static const int multicast_filter_limit = 32;
 
 /* These identify the driver base version and may not be removed. */
 static char version[] =
-KERN_INFO DRV_NAME ": v1.10-LK" DRV_VERSION "  " DRV_RELDATE "  Written by Donald Becker\n"
+KERN_INFO DRV_NAME ": v1.16-LK" DRV_VERSION "  " DRV_RELDATE "  Written by Donald Becker\n"
 KERN_INFO "  http://www.scyld.com/network/via-rhine.html\n";
 
 static char shortname[] = DRV_NAME;
@@ -236,20 +236,26 @@ IV. Notes
 
 IVb. References
 
-Preliminary VT86C100A manual from http://www.via.com.tw/
-http://www.scyld.com/expert/100mbps.html
-http://www.scyld.com/expert/NWay.html
-ftp://ftp.via.com.tw/public/lan/Products/NIC/VT86C100A/Datasheet/VT86C100A03.pdf
-ftp://ftp.via.com.tw/public/lan/Products/NIC/VT6102/Datasheet/VT6102_021.PDF
+This driver was originally written using a preliminary VT86C100A manual
+from
+  http://www.via.com.tw/ 
+The usual background material was used:
+  http://www.scyld.com/expert/100mbps.html
+  http://scyld.com/expert/NWay.html
 
+Additional information is now available, especially for the newer chips.
+   http://www.via.com.tw/en/Networking/DS6105LOM100.pdf
 
 IVc. Errata
 
 The VT86C100A manual is not reliable information.
-The 3043 chip does not handle unaligned transmit or receive buffers, resulting
-in significant performance degradation for bounce buffer copies on transmit
-and unaligned IP headers on receive.
+The 3043 chip does not handle unaligned transmit or receive buffers,
+resulting in significant performance degradation for bounce buffer
+copies on transmit and unaligned IP headers on receive.
 The chip does not pad to minimum transmit length.
+
+There is a bug with the transmit descriptor pointer handling when the
+chip encounters a transmit error.
 
 */
 
@@ -285,26 +291,26 @@ enum chip_capability_flags {
 
 
 enum via_rhine_chips {
-	VT86C100A = 0,
+	VT3043 = 0,
+	VT86C100A,
 	VT6102,
-	VT3043,
-	VT6106LOM,
-	VT6106M
+	VT6105LOM,
+	VT6105M
 };
 
 /* directly indexed by enum via_rhine_chips, above */
 static struct via_rhine_chip_info via_rhine_chip_info[] =
 {
-	{ "VIA VT86C100A Rhine", RHINE_IOTYPE, 128,
-	  CanHaveMII | ReqTxAlign },
-	{ "VIA VT6102 Rhine-II", RHINE_IOTYPE, 256,
-	  CanHaveMII | HasWOL },
 	{ "VIA VT3043 Rhine",    RHINE_IOTYPE, 128,
 	  CanHaveMII | ReqTxAlign | HasV1TxStat },
-	{ "VIA VT6106LOM Rhine-III", RHINE_IOTYPE, 256,
+	{ "VIA VT86C100A Rhine", RHINE_IOTYPE, 128,
+	  CanHaveMII | ReqTxAlign | HasV1TxStat },
+	{ "VIA VT6102 Rhine-II", RHINE_IOTYPE, 256,
 	  CanHaveMII | HasWOL },
-	{ "VIA VT6106M Rhine-III", RHINE_IOTYPE, 256,
-	 CanHaveMII | HasWOL  }
+	{ "VIA VT6105LOM Rhine-III", RHINE_IOTYPE, 256,
+	  CanHaveMII | HasWOL },
+	{ "VIA VT6105M Rhine-III", RHINE_IOTYPE, 256,
+	 CanHaveMII | HasWOL }
 };
 
 /* Offsets to the device registers. */
@@ -600,7 +606,7 @@ static int via_rhine_init_one ( int device_handle, PCI_Info_s pdev, int chip_id 
 	pci_flags = via_rhine_chip_info[chip_id].pci_flags;
 
 	psBus->write_pci_config( pdev.nBus, pdev.nDevice, pdev.nFunction, PCI_COMMAND, 2, 
-		psBus->read_pci_config( pdev.nBus, pdev.nDevice, pdev.nFunction, PCI_COMMAND , 2 ) | PCI_COMMAND_MASTER );
+		psBus->read_pci_config( pdev.nBus, pdev.nDevice, pdev.nFunction, PCI_COMMAND , 2 ) | PCI_COMMAND_MASTER | PCI_COMMAND_IO | PCI_COMMAND_MEMORY );
 
 
 	
@@ -1720,9 +1726,9 @@ status_t device_init( int nDeviceID )
         	else if( pci.nDeviceID == 0x3043 ) 
         		chip_id = VT3043;
         	else if( pci.nDeviceID == 0x3106 ) 
-        		chip_id = VT6106LOM;
+        		chip_id = VT6105LOM;
         	else if( pci.nDeviceID == 0x3053 ) 
-        		chip_id = VT6106M;
+        		chip_id = VT6105M;
         		
         	if( chip_id > -1 )
         		if( via_rhine_init_one( nDeviceID, pci, chip_id ) == 0 )

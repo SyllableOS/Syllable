@@ -33,7 +33,8 @@
 static struct i3Task g_sInitialTSS;
 
 extern uint32 g_anKernelStackEnd[];
-
+extern uint32 g_nCpuMask;
+extern vuint32 g_nMTRRInvalidateMask;
 
 /*****************************************************************************
  * NAME:
@@ -42,7 +43,7 @@ extern uint32 g_anKernelStackEnd[];
  * SEE ALSO:
  ****************************************************************************/
 
-bool Desc_SetBase( uint16 desc, uint32 base )
+bool set_gdt_desc_base( uint16 desc, uint32 base )
 {
 	desc >>= 3;
 	g_sSysBase.ex_GDT[desc].desc_bsl = base & 0xffff;
@@ -58,7 +59,7 @@ bool Desc_SetBase( uint16 desc, uint32 base )
  * SEE ALSO:
  ****************************************************************************/
 
-uint32 Desc_GetBase( uint16 desc )
+uint32 get_gdt_desc_base( uint16 desc )
 {
 	uint32 base;
 
@@ -77,7 +78,7 @@ uint32 Desc_GetBase( uint16 desc )
  * SEE ALSO:
  ****************************************************************************/
 
-bool Desc_SetLimit( uint16 desc, uint32 limit )
+bool set_gdt_desc_limit( uint16 desc, uint32 limit )
 {
 	desc >>= 3;
 //  g_sSysBase.ex_GDT[desc].desc_lmh &= 0x70;   /* mask out hi nibble, and granularity bit      */
@@ -102,7 +103,7 @@ bool Desc_SetLimit( uint16 desc, uint32 limit )
  * SEE ALSO:
  ****************************************************************************/
 
-uint32 Desc_GetLimit( uint16 desc )
+uint32 get_gdt_desc_limit( uint16 desc )
 {
 	uint32 limit;
 
@@ -125,7 +126,7 @@ uint32 Desc_GetLimit( uint16 desc )
  * SEE ALSO:
  ****************************************************************************/
 
-bool Desc_SetAccess( uint16 desc, uint8 acc )
+bool set_gdt_desc_access( uint16 desc, uint8 acc )
 {
 	desc >>= 3;
 	g_sSysBase.ex_GDT[desc].desc_acc = acc;
@@ -139,7 +140,7 @@ bool Desc_SetAccess( uint16 desc, uint8 acc )
  * SEE ALSO:
  ****************************************************************************/
 
-uint8 Desc_GetAccess( uint16 desc )
+uint8 get_gdt_desc_access( uint16 desc )
 {
 	return ( g_sSysBase.ex_GDT[desc >> 3].desc_acc );
 }
@@ -151,7 +152,7 @@ uint8 Desc_GetAccess( uint16 desc )
  * SEE ALSO:
  ****************************************************************************/
 
-uint16 Desc_Alloc( int32 table )
+uint16 alloc_gdt_desc( int32 table )
 {
 	int i;
 	uint32 nFlg = cli();
@@ -180,7 +181,7 @@ uint16 Desc_Alloc( int32 table )
  * SEE ALSO:
  ****************************************************************************/
 
-void Desc_Free( uint16 desc )
+void free_gdt_desc( uint16 desc )
 {
 	uint32 nFlg = cli();
 
@@ -190,24 +191,207 @@ void Desc_Free( uint16 desc )
 	put_cpu_flags( nFlg );
 }
 
-
-void enable_mmu( void )
-{
-	/* Enable the mmu */
-	unsigned int nDummy;
-	g_sInitialTSS.cr3 = ( void * )&g_psKernelSeg->mc_pPageDir;
-	__asm__ __volatile__( "movl %%cr0,%0; orl $0x80010000,%0; movl %0,%%cr0" : "=r" (nDummy) );	// set PG & WP bit in cr0
-}
-
-//****************************************************************************/
-/** Initializes the intel descriptors for code and data segments. Also enables
- * the mmu.
- * Called by init_kernel() (init.c).
+/**
+ * Writes the mtrr descriptors into the msr registers.
  * \internal
  * \ingroup CPU
  * \author Arno Klenke (arno_klenke@yahoo.de)
- *****************************************************************************/
- 
+ */
+void write_mtrr_descs( void )
+{
+	uint32 nTemp, nCr4;
+	uint32 nDefLow, nDefHigh;
+	int i;
+	
+	if( !g_asProcessorDescs[g_nBootCPU].pi_bHaveMTRR )
+		return;
+	
+	/* Disable global pages */
+	asm volatile ( "movl  %%cr4, %0\n\t"
+		"movl  %0, %1\n\t"
+		"andb  $0x7f, %b1\n\t"
+		"movl  %1, %%cr4\n\t"
+			: "=r" ( nCr4 ), "=q" ( nTemp ) : : "memory" );
+		
+	/* Disable caching */
+	 asm volatile ( "movl  %%cr0, %0\n\t"
+		"orl   $0x40000000, %0\n\t"
+		"wbinvd\n\t"
+		"movl  %0, %%cr0\n\t"
+		"wbinvd\n\t"
+			: "=r" ( nTemp ) : : "memory" );
+		
+	rdmsr( MSR_REG_MTRR_DEFTYPE, nDefLow, nDefHigh );
+	wrmsr( MSR_REG_MTRR_DEFTYPE, nDefLow & 0xf300UL, nDefHigh );        
+
+	/* Write the mtrr descriptors */
+	for ( i = 0; i < g_sSysBase.ex_sMTRR.nNumDesc; i++ )
+	{
+		wrmsr( MSR_REG_MTRR_BASE( i ), g_sSysBase.ex_sMTRR.sDesc[i].nBaseLow, g_sSysBase.ex_sMTRR.sDesc[i].nBaseHigh );
+		wrmsr( MSR_REG_MTRR_MASK( i ), g_sSysBase.ex_sMTRR.sDesc[i].nMaskLow, g_sSysBase.ex_sMTRR.sDesc[i].nMaskHigh );
+	}
+
+	/* Restore previous state */
+	asm volatile ( "wbinvd" : : : "memory" );
+	wrmsr( MSR_REG_MTRR_DEFTYPE, nDefLow, nDefHigh );     
+	asm volatile ( "movl  %%cr0, %0\n\t"
+		"andl  $0xbfffffff, %0\n\t"
+		"movl  %0, %%cr0\n\t"
+			: "=r" ( nTemp ) : : "memory" );
+	asm volatile ( "movl  %0, %%cr4"
+		: : "r" ( nCr4 ) : "memory" );
+		
+	printk( "MTRR descriptors written\n" );
+}
+
+
+/**
+ * Allocates a mtrr descriptor
+ * \ingroup CPU
+ * \param nBase - Base address of the region.
+ * \param nSize - Size of the region.
+ * \param nType - Type.
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ */
+status_t alloc_mtrr_desc( uint64 nBase, uint64 nSize, int nType )
+{
+	int i;
+	
+	if( !g_asProcessorDescs[g_nBootCPU].pi_bHaveMTRR )
+		return( -EINVAL );
+	
+	if( nBase & 0xfff || nSize & 0xfff )
+	{
+		printk( "Tried to set unaligned mtrr descriptor\n" );
+		return( -EINVAL );
+	}
+	
+	uint32 nFlg = cli();
+	sched_lock();
+
+	for ( i = 0; i < g_sSysBase.ex_sMTRR.nNumDesc; i++ )
+	{
+		if ( ~( ( g_sSysBase.ex_sMTRR.sDesc[i].nMaskLow & 0xfffff000UL ) - 1 ) == 0 )
+		{
+			g_sSysBase.ex_sMTRR.sDesc[i].nBaseLow = ( nBase & 0xfffff000 ) | nType;
+			g_sSysBase.ex_sMTRR.sDesc[i].nBaseHigh = nBase >> 32;
+			g_sSysBase.ex_sMTRR.sDesc[i].nMaskLow = ~( ( nSize & 0xfffff000 ) - 1 ) | 0x800;
+			g_sSysBase.ex_sMTRR.sDesc[i].nMaskHigh = 0;
+			sched_unlock();
+			put_cpu_flags( nFlg );
+			g_nMTRRInvalidateMask = g_nCpuMask;
+			flush_tlb_global();
+			return( 0 );
+		}
+	}
+	sched_unlock();
+	put_cpu_flags( nFlg );
+	return( -ENOMEM );
+}
+
+
+/**
+ * Frees a mtrr descriptor
+ * \ingroup CPU
+ * \param nBase - Base address of the mtrr descriptor.
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ */
+status_t free_mtrr_desc( uint64 nBase )
+{
+	int i;
+	
+	if( !g_asProcessorDescs[g_nBootCPU].pi_bHaveMTRR )
+		return( -EINVAL );
+	
+	if( nBase & 0xff )
+	{
+		printk( "Tried to free unaligned mtrr descriptor\n" );
+		return( -EINVAL );
+	}
+	
+	uint32 nFlg = cli();
+	sched_lock();
+
+	for ( i = 0; i < g_sSysBase.ex_sMTRR.nNumDesc; i++ )
+	{
+		if ( ~( ( g_sSysBase.ex_sMTRR.sDesc[i].nMaskLow & 0xfffff000UL ) - 1 ) > 0 &&
+			( g_sSysBase.ex_sMTRR.sDesc[i].nBaseLow & 0xfffff000 ) == ( nBase & 0xffffffff ) )
+		{
+			g_sSysBase.ex_sMTRR.sDesc[i].nBaseLow = 0;
+			g_sSysBase.ex_sMTRR.sDesc[i].nBaseHigh = 0;
+			g_sSysBase.ex_sMTRR.sDesc[i].nMaskLow = 0;
+			g_sSysBase.ex_sMTRR.sDesc[i].nMaskHigh = 0;
+			sched_unlock();
+			put_cpu_flags( nFlg );
+			g_nMTRRInvalidateMask = g_nCpuMask;
+			flush_tlb_global();
+			return( 0 );
+		}
+	}
+	sched_unlock();
+	put_cpu_flags( nFlg );
+	return( -EINVAL );
+}
+
+
+/**
+ * Lists the mtrr descriptors
+ * \internal
+ * \ingroup CPU
+ * \param argc the number of arguments in the debug command.
+ * \param argv an array of pointers to the arguments in the debug command.
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ */
+static void db_list_mtrrs( int argc, char **argv )
+{
+	for( int i = 0; i < g_sSysBase.ex_sMTRR.nNumDesc; i++ )
+	{
+		const char* zType[] = { "Unchached", "Write combining", "", "", "Write through",
+									"Write protected", "Write back" };
+		dbprintf( DBP_DEBUGGER, "%x -> %x (%s)\n", ( g_sSysBase.ex_sMTRR.sDesc[i].nBaseLow & 0xfffff000 ),
+				( g_sSysBase.ex_sMTRR.sDesc[i].nBaseLow & 0xfffff000 ) + (uint)~( ( g_sSysBase.ex_sMTRR.sDesc[i].nMaskLow & 0xfffff000UL ) - 1 ), 
+				zType[( g_sSysBase.ex_sMTRR.sDesc[i].nBaseLow & 0xff ) % 7] );
+	}
+}
+
+
+/**
+ *  Enables the MMU and reads the MTRR descriptors
+ * \internal
+ * \ingroup CPU
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ */
+void enable_mmu( void )
+{
+	unsigned int nDummy;
+	int i;
+	
+	/* Enable the mmu */
+	g_sInitialTSS.cr3 = ( void * )&g_psKernelSeg->mc_pPageDir;
+	__asm__ __volatile__( "movl %%cr0,%0; orl $0x80010000,%0; movl %0,%%cr0" : "=r" (nDummy) );	// set PG & WP bit in cr0
+	
+	/* Read the MTRR descriptor table from the boot cpu */
+	if( !g_asProcessorDescs[g_nBootCPU].pi_bHaveMTRR )
+		return;
+		
+	rdmsr( MSR_REG_MTRR_CAP, g_sSysBase.ex_sMTRR.nNumDesc, nDummy );
+	g_sSysBase.ex_sMTRR.nNumDesc &= MSR_REG_MTRR_CAP_NUM;
+	for( i = 0; i < g_sSysBase.ex_sMTRR.nNumDesc; i++ )
+	{
+			rdmsr( MSR_REG_MTRR_BASE( i ), g_sSysBase.ex_sMTRR.sDesc[i].nBaseLow, g_sSysBase.ex_sMTRR.sDesc[i].nBaseHigh );
+			rdmsr( MSR_REG_MTRR_MASK( i ), g_sSysBase.ex_sMTRR.sDesc[i].nMaskLow, g_sSysBase.ex_sMTRR.sDesc[i].nMaskHigh );
+	}
+	
+	register_debug_cmd( "ls_mtrr", "list all mtrr entries.", db_list_mtrrs );
+}
+
+
+/**
+ *  Initializes the intel descriptors for code and data segments.
+ * \internal
+ * \ingroup CPU
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ */
 void init_descriptors()
 {
 	struct i3DescrTable IDT;
@@ -219,21 +403,21 @@ void init_descriptors()
 	SetIDT( &IDT );
 
 
-	Desc_SetBase( CS_KERNEL, 0x00000000 );
-	Desc_SetLimit( CS_KERNEL, 0xffffffff );
-	Desc_SetAccess( CS_KERNEL, 0x9a );
+	set_gdt_desc_base( CS_KERNEL, 0x00000000 );
+	set_gdt_desc_limit( CS_KERNEL, 0xffffffff );
+	set_gdt_desc_access( CS_KERNEL, 0x9a );
 
-	Desc_SetBase( DS_KERNEL, 0x00000000 );
-	Desc_SetLimit( DS_KERNEL, 0xffffffff );
-	Desc_SetAccess( DS_KERNEL, 0x92 );
+	set_gdt_desc_base( DS_KERNEL, 0x00000000 );
+	set_gdt_desc_limit( DS_KERNEL, 0xffffffff );
+	set_gdt_desc_access( DS_KERNEL, 0x92 );
 
-	Desc_SetBase( CS_USER, 0x00000000 );
-	Desc_SetLimit( CS_USER, 0xffffffff );
-	Desc_SetAccess( CS_USER, 0xfa );
+	set_gdt_desc_base( CS_USER, 0x00000000 );
+	set_gdt_desc_limit( CS_USER, 0xffffffff );
+	set_gdt_desc_access( CS_USER, 0xfa );
 
-	Desc_SetBase( DS_USER, 0x00000000 );
-	Desc_SetLimit( DS_USER, 0xffffffff );
-	Desc_SetAccess( DS_USER, 0xf2 );
+	set_gdt_desc_base( DS_USER, 0x00000000 );
+	set_gdt_desc_limit( DS_USER, 0xffffffff );
+	set_gdt_desc_access( DS_USER, 0xf2 );
 
 	memset( &g_sInitialTSS, 0, sizeof( g_sInitialTSS ) );
 
@@ -250,9 +434,9 @@ void init_descriptors()
 	g_sInitialTSS.esp0 = g_anKernelStackEnd;
 	g_sInitialTSS.IOMapBase = 104;
 
-	Desc_SetLimit( 0x40, 0xffff );
-	Desc_SetBase( 0x40, ( uint32 )&g_sInitialTSS );
-	Desc_SetAccess( 0x40, 0x89 );
+	set_gdt_desc_limit( 0x40, 0xffff );
+	set_gdt_desc_base( 0x40, ( uint32 )&g_sInitialTSS );
+	set_gdt_desc_access( 0x40, 0x89 );
 	g_sSysBase.ex_GDT[0x40 >> 3].desc_lmh &= 0x8f;	// TSS descriptor has bit 22 clear (as opposed to 32 bit data and code descriptors)
 
 
@@ -267,7 +451,6 @@ void init_descriptors()
 	{
 		g_sSysBase.ex_DTAllocList[i] |= DTAL_GDT;
 	}
-	
 }
  
  

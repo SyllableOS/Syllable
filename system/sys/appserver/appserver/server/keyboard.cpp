@@ -48,7 +48,7 @@ using namespace os;
 
 static uint32 g_nQual = 0;
 static uint32 g_nLock = 0;
-static int g_nKbdDev = 0;
+//static int g_nKbdDev = 0;
 
 /*
  *     Raw key numbering for 101 keyboard:
@@ -135,21 +135,18 @@ void SetQualifiers( int nKeyCode )
 	case 0x3b:
 		{
 			g_nLock ^= KLOCK_CAPSLOCK;
-			ioctl( g_nKbdDev, IOCTL_KBD_CAPLOC );
 			break;
 		}
 
 	case 0x22:
 		{
 			g_nLock ^= KLOCK_NUMLOCK;
-			ioctl( g_nKbdDev, IOCTL_KBD_NUMLOC );
 			break;
 		}
 
 	case 0x0f:
 		{
 			g_nLock ^= KLOCK_SCROLLLOCK;	// ScrollLock doesn't do anything
-			ioctl( g_nKbdDev, IOCTL_KBD_SCRLOC );
 			break;
 		}
 	}
@@ -322,92 +319,40 @@ int convert_key_code( char *pzDst, int nRawKey, int nQual, int *pnDeadKeyState )
 	return ( nLen );
 }
 
-void HandleKeyboard()
+void HandleKeyboard( bool bKeyEvent, int nKeyCode )
 {
-	bigtime_t nKeyDownTime = 0;
-	uint8 nLastKey = 0;
-	uint8 nKeyCode;
+	static bigtime_t nKeyDownTime = 0;
+	static uint8 nLastKey = 0;
 
-	signal( SIGINT, SIG_IGN );
-	signal( SIGQUIT, SIG_IGN );
-	signal( SIGTERM, SIG_IGN );
-
-	g_nKbdDev = open( "/dev/keybd", O_RDONLY );
-
-	if( g_nKbdDev < 0 )
+	if( bKeyEvent )
 	{
-		dbprintf( "Panic : Could not open keyboard device!\n" );
+		SetQualifiers( nKeyCode );
+
+		if( 0 != nKeyCode )
+		{
+			if( nKeyCode & 0x80 )
+			{
+				nKeyDownTime = 0;
+				nLastKey = 0;
+			}
+			else
+			{
+				nKeyDownTime = get_system_time() + ( AppserverConfig::GetInstance(  )->GetKeyDelay(  ) * 1000 );
+				nLastKey = nKeyCode;
+			}
+			AppServer::GetInstance()->SendKeyCode( nKeyCode, g_nQual );
+		}
+
 	}
 
-	g_cKeymapGate.Lock();
-
-	ioctl( g_nKbdDev, IOCTL_KBD_LEDRST );
-	switch ( g_psKeymap->m_nLockSetting )
+	if( 0 != nKeyDownTime )
 	{
-	case 0x00:		// None
-		break;
+		bigtime_t nTime = get_system_time();
 
-	case 0x01:		// Caps
+		if( nTime > nKeyDownTime )
 		{
-			g_nLock ^= KLOCK_CAPSLOCK;
-			ioctl( g_nKbdDev, IOCTL_KBD_CAPLOC );
-			break;
-		}
-
-	case 0x02:		// Scroll
-		{
-			g_nLock ^= KLOCK_SCROLLLOCK;
-			ioctl( g_nKbdDev, IOCTL_KBD_SCRLOC );
-			break;
-		}
-
-	case 0x04:		// Num
-		{
-			g_nLock ^= KLOCK_NUMLOCK;
-			ioctl( g_nKbdDev, IOCTL_KBD_NUMLOC );
-			break;
-		}
-
-	default:
-		dbprintf( "Unknown lock key 0x%2X\n", ( int )g_psKeymap->m_nLockSetting );
-		break;
-	}
-
-	g_cKeymapGate.Unlock();
-
-	for( ;; )
-	{
-		snooze( 10000 );
-		if( read( g_nKbdDev, &nKeyCode, 1 ) == 1 )
-		{
-			SetQualifiers( nKeyCode );
-
-			if( 0 != nKeyCode )
-			{
-				if( nKeyCode & 0x80 )
-				{
-					nKeyDownTime = 0;
-					nLastKey = 0;
-				}
-				else
-				{
-					nKeyDownTime = get_system_time() + ( AppserverConfig::GetInstance(  )->GetKeyDelay(  ) * 1000 );
-					nLastKey = nKeyCode;
-				}
-				AppServer::GetInstance()->SendKeyCode( nKeyCode, g_nQual );
-			}
-			continue;
-		}
-
-		if( 0 != nKeyDownTime )
-		{
-			bigtime_t nTime = get_system_time();
-
-			if( nTime > nKeyDownTime )
-			{
-				nKeyDownTime = nTime + ( AppserverConfig::GetInstance(  )->GetKeyRepeat(  ) * 1000 );
-				AppServer::GetInstance()->SendKeyCode( nLastKey, g_nQual | QUAL_REPEAT );
-			}
+			nKeyDownTime = nTime + ( AppserverConfig::GetInstance(  )->GetKeyRepeat(  ) * 1000 );
+			AppServer::GetInstance()->SendKeyCode( nLastKey, g_nQual | QUAL_REPEAT );
 		}
 	}
 }

@@ -69,7 +69,7 @@ void DockClockSettings::LoadSettings()
 
 bool DockClockSettings::OkToQuit()
 {
-	pcParentPlugin->GetLooper()->PostMessage(new Message(M_CANCEL),pcParentPlugin);
+	pcParentPlugin->GetLooper()->PostMessage(M_CANCEL,pcParentPlugin);
 	return false;
 }
 
@@ -277,6 +277,7 @@ void DockClockSettings::SaveSettings()
 	pcMsg->AddString("date_format",GetDateFormat());
 	pcMsg->AddBool("frame",pcFrameCheck->GetValue().AsBool());
 	pcParentPlugin->GetLooper()->PostMessage(pcMsg,pcParentPlugin);
+	delete( pcMsg );
 }
 
 String DockClockSettings::GetTimeFormat()

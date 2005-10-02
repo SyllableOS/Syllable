@@ -42,7 +42,7 @@ atomic_t SrvSprite::s_nHideCount = ATOMIC_INIT(0);
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-SrvSprite::SrvSprite( const IRect & cBounds, const IPoint & cPos, const IPoint & cHotSpot, SrvBitmap * pcTarget, SrvBitmap * pcImage )
+SrvSprite::SrvSprite( const IRect & cBounds, const IPoint & cPos, const IPoint & cHotSpot, SrvBitmap * pcTarget, SrvBitmap * pcImage, bool bLastPos )
 {
 	s_cLock.Lock();
 	m_pcImage = pcImage;
@@ -73,29 +73,24 @@ SrvSprite::SrvSprite( const IRect & cBounds, const IPoint & cPos, const IPoint &
 	{
 		pcImage->AddRef();
 	}
-	if( m_pcBackground && m_pcImage )
-	{
-		Capture( pcTarget, cPos + cHotSpot );
-	}
-	if( pcTarget->m_pRaster != NULL )
-	{
-		Draw();
-	}
+	
+	SrvSprite::Hide();
 	if( pcImage == NULL )
 		s_cInstances.push_back( this );
 	else {
-		uint i;
-		for( i = 0; i < s_cInstances.size(); ++i )
+		uint nPos = 0;
+		
+		if( bLastPos )
 		{
-			if( s_cInstances[i]->m_pcImage == NULL )
+			for( ; nPos < s_cInstances.size(); ++nPos )
 			{
-				s_cInstances.insert( s_cInstances.begin() + i, this );
-				break;
+				if( pcImage == NULL )
+					break;
 			}
 		}
-		if( i == s_cInstances.size() )
-			s_cInstances.push_back( this );
+		s_cInstances.insert( s_cInstances.begin() + nPos, this );
 	}
+	SrvSprite::Unhide();
 	s_cLock.Unlock();
 }
 
@@ -109,7 +104,7 @@ SrvSprite::SrvSprite( const IRect & cBounds, const IPoint & cPos, const IPoint &
 SrvSprite::~SrvSprite()
 {
 	s_cLock.Lock();
-	Erase();
+	SrvSprite::Hide();
 	m_pcTarget->Release();
 	if( NULL != m_pcBackground )
 	{
@@ -122,6 +117,7 @@ SrvSprite::~SrvSprite()
 	std::vector < SrvSprite * >::iterator i = find( s_cInstances.begin(), s_cInstances.end(  ), this );
 
 	s_cInstances.erase( i );
+	SrvSprite::Unhide();
 	s_cLock.Unlock();
 }
 
@@ -229,6 +225,23 @@ void SrvSprite::Unhide()
 	s_cLock.Unlock();
 }
 
+bool SrvSprite::DoIntersect( const os::IRect& cRect )
+{
+	s_cLock.Lock();
+	for( uint i = 0; i < s_cInstances.size(); ++i )
+	{
+		SrvSprite *pcSprite = s_cInstances[i];
+
+		if( cRect.DoIntersect( pcSprite->m_cBounds + pcSprite->m_cPosition - pcSprite->m_cHotSpot ) )
+		{
+			s_cLock.Unlock();
+			return( true );
+		}
+	}
+	s_cLock.Unlock();
+	return( false );
+}
+
 //----------------------------------------------------------------------------
 // NAME:
 // DESC:
@@ -255,8 +268,8 @@ void SrvSprite::Draw()
 		
 		if( cClipRect.IsValid() )
 		{
-			pcDriver->BltBitmap( m_pcBackground, m_pcTarget, cClipRect, cOffset, DM_COPY );
-			pcDriver->BltBitmap( m_pcTarget, m_pcImage, cClipRect.Bounds() + cOffset, m_cPosition - m_cHotSpot + cOffset, DM_BLEND );
+			pcDriver->BltBitmap( m_pcBackground, m_pcTarget, cClipRect, cClipRect.Bounds() + cOffset, DM_COPY, 0xff );
+			pcDriver->BltBitmap( m_pcTarget, m_pcImage, cClipRect.Bounds() + cOffset, cClipRect.Bounds() + m_cPosition - m_cHotSpot + cOffset, DM_BLEND, 0xff );
 		}
 	}
 	else
@@ -295,7 +308,7 @@ void SrvSprite::Erase()
 
 		if( cClipRect.IsValid() )
 		{
-			pcDriver->BltBitmap( m_pcTarget, m_pcBackground, cClipRect.Bounds() + cOffset, m_cPosition - m_cHotSpot + cOffset, DM_COPY );
+			pcDriver->BltBitmap( m_pcTarget, m_pcBackground, cClipRect.Bounds() + cOffset, cClipRect.Bounds() + m_cPosition - m_cHotSpot + cOffset, DM_COPY, 0xff );
 		}
 	}
 	else
@@ -333,7 +346,7 @@ void SrvSprite::Draw( SrvBitmap * pcTarget, const IPoint & cPos )
 		{
 			IPoint cOffset = cClipRect.LeftTop() - cRect.LeftTop(  );
 
-			pcDriver->BltBitmap( pcTarget, m_pcImage, cClipRect.Bounds() + cOffset, cPos + cOffset, DM_BLEND );
+			pcDriver->BltBitmap( pcTarget, m_pcImage, cClipRect.Bounds() + cOffset, cClipRect.Bounds() + cPos + cOffset, DM_BLEND, 0xff );
 		}
 	}
 	else
@@ -367,7 +380,7 @@ void SrvSprite::Capture( SrvBitmap * pcTarget, const IPoint & cPos )
 
 		if( cClipRect.IsValid() )
 		{
-			pcDriver->BltBitmap( m_pcBackground, pcTarget, cClipRect, cOffset, DM_COPY );
+			pcDriver->BltBitmap( m_pcBackground, pcTarget, cClipRect, cClipRect.Bounds() + cOffset, DM_COPY, 0xff );
 		}
 	}
 }
@@ -394,7 +407,7 @@ void SrvSprite::Erase( SrvBitmap * pcTarget, const IPoint & cPos )
 		{
 			IPoint cOffset = cClipRect.LeftTop() - cRect.LeftTop(  );
 
-			pcDriver->BltBitmap( pcTarget, m_pcBackground, cClipRect.Bounds() + cOffset, cPos + cOffset, DM_COPY );
+			pcDriver->BltBitmap( pcTarget, m_pcBackground, cClipRect.Bounds() + cOffset, cClipRect.Bounds() + cPos + cOffset, DM_COPY, 0xff );
 		}
 	}
 	else
@@ -417,14 +430,16 @@ void SrvSprite::Erase( SrvBitmap * pcTarget, const IPoint & cPos )
 
 void SrvSprite::MoveBy( const IPoint & cDelta )
 {
+	#if 0
 	if( this != s_cInstances[0] )
 	{
 		return;
 	}
+	#endif
 	s_cLock.Lock();
 	if( atomic_read( &s_nHideCount ) > 0 )
 	{
-		for( int i = s_cInstances.size() - 1; i >= 0; --i )
+		for( uint i = s_cInstances.size() - 1; i >= 0; --i )
 		{
 			SrvSprite *pcSprite = s_cInstances[i];
 
@@ -502,7 +517,7 @@ void SrvSprite::MoveBy( const IPoint & cDelta )
 
 		ENUMCLIPLIST( &cReg.m_cRects, pcClip )
 		{
-			pcDriver->BltBitmap( pcTmp, m_pcTarget, pcClip->m_cBounds, pcClip->m_cBounds.LeftTop() - cLeftTop, DM_COPY );
+			pcDriver->BltBitmap( pcTmp, m_pcTarget, pcClip->m_cBounds, pcClip->m_cBounds - cLeftTop, DM_COPY, 0xff );
 		}
 
 		for( uint i = 0; i < s_cInstances.size(); ++i )
@@ -534,7 +549,7 @@ void SrvSprite::MoveBy( const IPoint & cDelta )
 		}
 		if( cTotRect.IsValid() )
 		{
-			pcDriver->BltBitmap( m_pcTarget, pcTmp, cTotRect.Bounds(), cLeftTop, DM_COPY );
+			pcDriver->BltBitmap( m_pcTarget, pcTmp, cTotRect.Bounds(), cTotRect.Bounds() + cLeftTop, DM_COPY, 0xff );
 		}
 		for( uint i = 0; i < s_cInstances.size(); ++i )
 		{

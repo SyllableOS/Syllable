@@ -31,9 +31,9 @@
 #include "fontnode.h"
 
 namespace os {
-    class Gate;
-    struct GRndCopyRect_s;
-}
+	class Gate;
+	struct GRndCopyRect_s;
+};
 
 class FontNode;
 class SrvBitmap;
@@ -66,8 +66,8 @@ public:
 
     void		Show( bool bFlag );
     bool		IsVisible() const { return( m_nHideCount == 0 ); }
-    void		AddChild( Layer* pcChild, bool bTopmost );
-    void		RemoveChild( Layer* pcChild );
+    virtual void AddChild( Layer* pcChild, bool bTopmost );
+    virtual void RemoveChild( Layer* pcChild );
     void		RemoveThis( void );
     void		Added( int nHideCount );
     int			GetLevel() const 		{ return( m_nLevel ); }
@@ -79,10 +79,10 @@ public:
 
     Layer*		GetParent( void ) const		{ return( m_pcParent );	}
 
-    void		UpdateIfNeeded( bool bForce );
-
+    virtual void UpdateIfNeeded();
+	SrvBitmap*	GetBitmap() const { return( m_pcBitmap ); }
     void		SetBitmap( SrvBitmap* pcBitmap );
-    SrvBitmap*		GetBitmap( void ) const		{ return( m_pcBitmap );		}
+    
 
     os::Region*		GetRegion();
     void		PutRegion( os::Region* pcReg );
@@ -105,14 +105,14 @@ public:
     void		Invalidate( const os::IRect& cRect );
     void		Invalidate( bool bReqursive = false );
     void		SetDirtyRegFlags();
-
+	void		SetDirtyRegFlags( const os::IRect& cRect );
+	
     void		SetDrawRegion( os::Region* pcReg );
     void		SetShapeRegion( os::Region* pcReg );
     
     void		DeleteRegions();
-    void		UpdateRegions( bool bForce = true, bool bRoot = true );
+    virtual void UpdateRegions( bool bForce = true );
 
-    void		MarkModified( const os::IRect& cRect ); // Invalidate the region of views below us, inside the rectangle
     void		BeginUpdate( void );
     void		EndUpdate( void );
     
@@ -131,7 +131,7 @@ public:
     void		SetEraseColor( int nRed, int nGreen, int nBlue, int nAlpha );
     void					SetEraseColor( os::Color32_s sColor );
     void		SetDrawindMode( int nMode ) { m_nDrawingMode = nMode; }
-    void		DrawFrame( const os::Rect& cRect, uint32 nStyle );
+    void		DrawFrame( const os::Rect& a_cRect, uint32 nStyle );
     void		MovePenTo( float x, float y )		{ m_cPenPos.x = x; m_cPenPos.y = y;  }
     void		MovePenTo( const os::Point& cPos )	{ m_cPenPos = cPos;  }
     void		MovePenBy( const os::Point& cPos )	{ m_cPenPos += cPos; }
@@ -142,19 +142,13 @@ public:
     void		DrawString( const char* pzString, int nLength );
 	void		DrawText( const os::Rect& cPos, const char *pzString, int nLength, uint32 nFlags );
 
-    void		CopyRect( SrvBitmap* pcBitmap, os::GRndCopyRect_s* psCmd );
+    void		CopyRect( os::GRndCopyRect_s* psCmd );
 
     void		FillRect( os::Rect cRect );
     void		FillRect( os::Rect cRect, os::Color32_s sColor );
     void		EraseRect( os::Rect cRect );
-    void		DrawBitMap( SrvBitmap* pcDstBitmap, SrvBitmap* pcSrcBitmap, os::Rect cSrcRect, os::Point cDstPos );
-    void		BitBlit( SrvBitmap* pcBitmap, os::Rect cSrcRect, os::Point cDstPos );
+    void		DrawBitMap( SrvBitmap* pcSrcBitmap, os::Rect cSrcRect, os::Rect cDstRect );
     void		ScrollRect( SrvBitmap* pcBitmap, os::Rect cSrcRect, os::Point cDstPos );
-
-      // Mouse functions:
-    bool		MouseOverlap( os::Point cOffset );
-    void		MouseOn();
-    void		MouseOff();
 
       // Coordinate conversions:
     os::Point		ConvertToParent( const os::Point& cPoint ) const;
@@ -173,17 +167,18 @@ public:
     void		ConvertFromRoot( os::Point* pcPoint ) const;
     os::Rect		ConvertFromRoot( const os::Rect& cRect ) const;
     void		ConvertFromRoot( os::Rect* pcRect ) const;
+    os::Point		ConvertToBitmap( const os::Point& cPoint )	const;
     os::Point		GetScrollOffset() const { return( m_cScrollOffset ); }
     os::IPoint		GetIScrollOffset() const { return( m_cIScrollOffset ); }
 private:
     friend class SrvWindow;
+    friend class TopLayer;
   
-    void		InvalidateNewAreas( void );
-    void		ClearDirtyRegFlags();
-    void		SwapRegions( bool bForce );
-    void		RebuildRegion( bool bForce );
-    void		MoveChilds();
-  
+
+    void ClearDirtyRegFlags();
+    virtual void RebuildRegion( bool bForce );
+    virtual void MoveChilds();
+    virtual void InvalidateNewAreas( void );  
 protected:
 public:
     std::string	m_cName;
@@ -213,32 +208,40 @@ public:
     os::Region* m_pcDrawConstrainReg;	// User specified "local" clipping list.
     os::Region* m_pcShapeConstrainReg;	// User specified clipping list specifying the shape of the layer.
 
-    os::Region*	m_pcVisibleReg;		// Visible areas, not including non-transparent childrens
-    os::Region*	m_pcFullReg;		// All visible areas, including childrens
-    os::Region*	m_pcPrevVisibleReg;	// Temporary storage for m_pcVisibleReg during region rebuild
-    os::Region*	m_pcPrevFullReg;	// Temporary storage for m_pcFullReg during region rebuild
+    os::Region* m_pcBitmapReg;		// Region this layer can draw to
+    os::Region*	m_pcBitmapFullReg;		// Like the bitmap region, including childrens
+    
+    os::Region*	m_pcPrevBitmapReg;	// Temporary storage for m_pcBitmapReg during region rebuild
+    os::Region*	m_pcPrevBitmapFullReg;	// Temporary storage for m_pcBitmapFullReg during region rebuild
     os::Region*	m_pcDrawReg;		// Only valid between BeginPaint()/EndPaint()
     os::Region*	m_pcDamageReg;		// Containes areas made visible since the last M_PAINT message sendt
     os::Region*	m_pcActiveDamageReg;
-
+    
     uint32	m_nFlags;
-    bool	m_bHasInvalidRegs;	// True if someting made our clipping region invalide
+    bool	m_bHasInvalidRegs; // True if something made our bitmap region
     bool	m_bIsUpdating;		// True while we paint areas from the damage list
     bool	m_bBackdrop;
-      // Render state:
+    
+    bool	m_bOnUpdateList;
+    
+    // Members for layers connected to the top screen layer:
+    SrvBitmap* m_pcBackbuffer; // If != NULL then this layer has its own backbuffer.
+    							// This is only possible for window borders.
+    							// The backbuffer is managed by the TopLayer class
+    os::Region* m_pcVisibleFullReg; // Visible areas, including child areas
+    os::Region* m_pcPrevVisibleFullReg;
+    
+	// Render state:
     os::Point		m_cPenPos;
     os::Color32_s	m_sFgColor;
     os::Color32_s	m_sBgColor;
     os::Color32_s	m_sEraseColor;
     os::Color32_s	m_asFontPallette[NUM_FONT_GRAYS];
 	uint32 			m_anFontPalletteConverted[NUM_FONT_GRAYS];
-    int		m_nDrawingMode;
-    int		m_nRegionUpdateCount;
-    int		m_nMouseOffCnt;
-    FontNode*	m_pcFont;
-    bool	m_bIsMouseOn;
-    bool	m_bFontPalletteValid;
-    bool	m_bIsAddedToFont;
+    int				m_nDrawingMode;
+    FontNode*		m_pcFont;
+    bool			m_bFontPalletteValid;
+    bool			m_bIsAddedToFont;
     FontNode::DependencyList_t::iterator	m_cFontViewListIterator;
 };
 

@@ -375,7 +375,7 @@ static inline void return_to_32bit( Virtual86Regs_s * regs16, int retval )
 	nGS = g_asProcessorDescs[get_processor_id()].pi_nGS;
 	__asm__ __volatile__( "mov %0,%%gs"::"r"( nGS ) );
 
-	Desc_SetBase( nGS, ( uint32 )psThread->tr_pThreadData );
+	set_gdt_desc_base( nGS, ( uint32 )psThread->tr_pThreadData );
 	psThread->tc_sTSS.gs = nGS;
 
 	if ( NULL == g_psFirstV86State )

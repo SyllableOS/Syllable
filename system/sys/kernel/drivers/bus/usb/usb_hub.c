@@ -31,8 +31,6 @@
  */
  
 
-//#define DEBUG_LIMIT KERN_DEBUG
- 
 #include <atheos/usb.h>
 #include <atheos/kernel.h>
 #include <atheos/kdebug.h>
@@ -40,6 +38,9 @@
 #include <atheos/device.h>
 #include <posix/errno.h>
 #include <macros.h>
+
+//#undef DEBUG_LIMIT
+//#define DEBUG_LIMIT KERN_DEBUG
 
 /* Functions in usb.c */
 int usb_control_msg( USB_device_s* psDevice, unsigned int nPipe, uint8 nRequest, 

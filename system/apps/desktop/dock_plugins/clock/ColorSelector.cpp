@@ -50,7 +50,7 @@ void ColorSelectorWindow::Layout()
 *************************************************************/
 bool ColorSelectorWindow::OkToQuit()
 {
-	pcParentWindow->PostMessage(new Message(M_COLOR_SELECTOR_WINDOW_CANCEL),pcParentWindow);
+	pcParentWindow->PostMessage(M_COLOR_SELECTOR_WINDOW_CANCEL,pcParentWindow);
 	return true;
 }
 
@@ -66,10 +66,10 @@ void ColorSelectorWindow::HandleMessage(Message* pcMessage)
 	{
 		case M_COLOR_SELECTOR_WINDOW_OK:
 		{
-			Message* pcMsg = new Message(M_COLOR_SELECTOR_WINDOW_REQUESTED);
-			pcMsg->AddInt32("control",nControl);
-			pcMsg->AddColor32("color",pcSelector->GetValue().AsColor32());
-			pcParentWindow->PostMessage(pcMsg,pcParentWindow);			
+			Message cMsg(M_COLOR_SELECTOR_WINDOW_REQUESTED);
+			cMsg.AddInt32("control",nControl);
+			cMsg.AddColor32("color",pcSelector->GetValue().AsColor32());
+			pcParentWindow->PostMessage(&cMsg,pcParentWindow);			
 			break;
 		}
 		

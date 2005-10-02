@@ -229,6 +229,7 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 				os::Message* pcMsg = new os::Message( M_CHANGE_DIR );
 				pcMsg->AddString( "file/path", cNewPath );
 				PostMessage( pcMsg, this );
+				delete( pcMsg );
 			}
 			break;
 		}
@@ -238,6 +239,7 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 			os::Path cPath( m_pcView->GetPath().c_str() );
 			pcMsg->AddString( "file/path", cPath.GetDir().GetPath() );
 			PostMessage( pcMsg, this );
+			delete( pcMsg );
 			break;
 		}
 		case M_HOME:
@@ -246,6 +248,7 @@ void MainWindow::HandleMessage( os::Message* pcMessage )
 			os::Message* pcMsg = new os::Message( M_CHANGE_DIR );
 			pcMsg->AddString( "file/path", pzHome );
 			PostMessage( pcMsg, this );
+			delete( pcMsg );
 			break;
 		}
 		case M_RELOAD:

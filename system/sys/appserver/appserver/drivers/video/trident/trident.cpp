@@ -413,7 +413,7 @@ TridentDriver::TridentDriver( int nFd )
   if ( m_pFrameBufferBase != 0 ) {
     m_hFrameBufferArea = create_area( "trident_fb", NULL,
                                       1024 * m_nVideoMemory,
-                                      AREA_FULL_ACCESS, AREA_NO_LOCK );
+                                      AREA_FULL_ACCESS | AREA_WRCOMB, AREA_NO_LOCK );
     if ( m_hFrameBufferArea <= 0 ) {
       dbprintf("Unable to create Frame Buffer area\n");
       throw std::exception();
@@ -463,9 +463,6 @@ int TridentDriver::SetScreenMode( os::screen_mode sMode )
   switch( sMode.m_eColorSpace ) {
     case CS_CMAP8:
       clr = "CMAP8";
-      break;
-    case CS_RGB15:
-      clr = "RGB15";
       break;
     case CS_RGB16:
       clr = "RGB16";
@@ -527,30 +524,6 @@ bool TridentDriver::GetScreenModeDesc( int nIndex, os::screen_mode* psMode )
 os::screen_mode TridentDriver::GetCurrentScreenMode()
 {
   return( m_sCurrentMode );
-}
-
-
-
-bool TridentDriver::IntersectWithMouse( const IRect& cRect )
-{
-  return( false );
-}
-
-
-bool TridentDriver::DrawLine( SrvBitmap* psBitMap, const IRect& cClipRect,
-			    const IPoint& cPnt1, const IPoint& cPnt2, const Color32_s& sColor, int nMode )
-{
-  return( DisplayDriver::DrawLine(psBitMap, cClipRect, cPnt1, cPnt2, sColor, nMode) );
-}
-
-bool TridentDriver::FillRect( SrvBitmap* psBitMap, const IRect& cRect, const Color32_s& sColor )
-{
-  return( DisplayDriver::FillRect(psBitMap, cRect, sColor) );
-}
-
-bool TridentDriver::BltBitmap( SrvBitmap* dstbm, SrvBitmap* srcbm, IRect cSrcRect, IPoint cDstPos, int nMode )
-{
-  return( DisplayDriver::BltBitmap(dstbm, srcbm, cSrcRect, cDstPos, nMode) );
 }
 
 

@@ -2,7 +2,7 @@ COPTS   = -I$(TOP)/src $(shell freetype-config --cflags) -c
 
 DEVBIN = /system/drivers/appserver/video
 CFGDIR = /system/config/drivers/appserver/video
-OBJS = radeon.o radeon_accel.o radeon_cursor.o radeon_misc.o radeon_monitor.o radeon_pll.o radeon_rom.o radeon_video.o
+OBJS = radeon.o radeon_accel.o radeon_misc.o radeon_monitor.o radeon_pll.o radeon_rom.o radeon_video.o
 
 OBJDIR	:= objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))

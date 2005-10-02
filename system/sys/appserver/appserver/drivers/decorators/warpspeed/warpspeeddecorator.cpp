@@ -526,7 +526,7 @@ WarpSpeedDecorator::DrawTitle ()
   	os::Region *cClipRegion = new os::Region(cFrame);
  	 os::Region *cOldRegion = new os::Region(m_cBounds);
   	pcView->SetDrawRegion(cClipRegion);
-  	pcView->DrawText (cFrame, m_cTitle.c_str (), -1, NULL);
+  	pcView->DrawText (cFrame, m_cTitle.c_str (), -1, 0);
   	pcView->SetDrawRegion(cOldRegion);
   }
 }

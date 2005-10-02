@@ -1,7 +1,7 @@
 COPTS   = -I$(TOP)/src -I. $(shell freetype-config --cflags) -c
 
 DEVBIN = /system/drivers/appserver/video
-OBJS =	savage_driver.o savage_cursor.o savage_accel.o savage_video.o
+OBJS =	savage_driver.o savage_accel.o savage_video.o
 
 OBJDIR	:= objs
 OBJS	:= $(addprefix $(OBJDIR)/,$(OBJS))

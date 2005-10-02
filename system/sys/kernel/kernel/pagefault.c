@@ -191,11 +191,6 @@ uint32 memmap_no_page( MemArea_s *psArea, uintptr_t nAddress, bool bWriteAccess 
 		psPage->p_nFlags &= ~PF_BUSY;
 		PTE_VALUE( *pPte ) |= PTE_PRESENT;
 
-		if ( psArea->a_nProtection & AREA_UNMAP_PHYS )
-		{
-			protect_phys_pages( nNewPage, 1 );
-		}
-
 		flush_tlb_global();
 		
 		// Wake up threads bumping into the page while we were loading it.
@@ -218,11 +213,6 @@ uint32 memmap_no_page( MemArea_s *psArea, uintptr_t nAddress, bool bWriteAccess 
 	nBytesRead = read_pos_p( psArea->a_psFile, nFileOffset, ( void * )nNewPage, nSize );
 	unlock_area( psArea, LOCK_AREA_WRITE );
 	LOCK( g_hAreaTableSema );
-
-	if ( psArea->a_nProtection & AREA_UNMAP_PHYS )
-	{
-		protect_phys_pages( nNewPage, 1 );
-	}
 
 	psPage->p_nFlags &= ~PF_BUSY;
 	PTE_VALUE( *pPte ) |= PTE_PRESENT;
@@ -296,11 +286,6 @@ int handle_copy_on_write( MemArea_s *psArea, pte_t * pPte, uintptr_t nVirtualAdd
 			}
 		}
 
-		if ( psArea->a_nProtection & AREA_UNMAP_PHYS )
-		{
-			protect_phys_pages( nNewPage, 1 );
-		}
-
 		flush_tlb_global();
 		register_swap_page( nNewPage );
 		return ( 0 );
@@ -335,11 +320,6 @@ int handle_copy_on_write( MemArea_s *psArea, pte_t * pPte, uintptr_t nVirtualAdd
 
 	register_swap_page( nNewPage );
 	memcpy( ( void * )nNewPage, ( void * )nPageAddr, PAGE_SIZE );
-
-	if ( psArea->a_nProtection & AREA_UNMAP_PHYS )
-	{
-		protect_phys_pages( nNewPage, 1 );
-	}
 
 	set_pte_address( pPte, nNewPage );
 	PTE_VALUE( *pPte ) |= PTE_WRITE;

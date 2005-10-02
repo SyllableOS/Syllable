@@ -157,7 +157,7 @@ bool VesaDriver::InitModes( void )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-area_id VesaDriver::Open( void )
+area_id VesaDriver::Open()
 {
 	if( InitModes() )
 	{

@@ -759,10 +759,6 @@ bool ATIRadeon::RecreateVideoOverlay( const os::IPoint& cSize, const os::IRect& 
 	return( false );
 }
 
-void ATIRadeon::UpdateVideoOverlay( area_id *pBuffer )
-{
-}
-
 void ATIRadeon::DeleteVideoOverlay( area_id *pBuffer )
 {
 	if( m_bVideoOverlayUsed ) {

@@ -34,6 +34,8 @@
 #include "mach64_info.h"
 #include "mach64_vesa.h"
 
+using namespace os;
+
 #define dprintf dbprintf
 #define mach64_delay(arg) snooze( arg * 1000 )
 
@@ -95,23 +97,15 @@ public:
 	int BytesPerPixel(color_space cs);
 	int BitsPerPixel(color_space cs);
 
-	virtual void SetCursorBitmap( mouse_ptr_mode eMode, const IPoint& cHotSpot, const void* pRaster,
-		int nWidth, int nHeight );
-	virtual bool IntersectWithMouse(const IRect &cRect);
-
-	virtual void MouseOn();
-	virtual void MouseOff();
-	virtual void SetMousePos(IPoint cNewPos);
 	virtual void SetColor(int nIndex, const Color32_s &sColor);
-	virtual bool FillRect(SrvBitmap *psBitMap, const IRect &cRect, const Color32_s &sColor);
+	virtual bool FillRect(SrvBitmap *psBitMap, const IRect &cRect, const Color32_s &sColor, int nMode);
 	virtual bool DrawLine(SrvBitmap *psBitMap, const IRect &cClipRect,
 		const IPoint &cPnt1, const IPoint &cPnt2, const Color32_s &sColor, int nMode);
 	virtual bool BltBitmap(SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap,
-		IRect cSrcRect, IPoint cDstPos, int nMode);
+		IRect cSrcRect, IRect cDstRect, int nMode, int nAlpha);
 	virtual bool	CreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, os::color_space eFormat, os::Color32_s sColorKey, area_id *pBuffer );
 	virtual bool	RecreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, os::color_space eFormat, area_id *pBuffer );
 	virtual void	DeleteVideoOverlay( area_id *pBuffer );
-	virtual void	UpdateVideoOverlay( area_id *pBuffer );
 	bool IsInitialized();
 
 	//--------------------------------------------------------------------
@@ -131,8 +125,6 @@ private:
 	area_id m_hRegisterArea; // area_id of the registers
 	ati_info info;
 
-	// hardware cursor enabled
-	bool HWcursor;
 
 	// *** screen modes ***
 	std::vector<os::screen_mode> m_cScreenModeList; // list of the screen modes
@@ -180,11 +172,6 @@ private:
 	void aty_calc_pll_ct(struct pll_ct *pll);
 	int aty_var_to_pll_ct(uint32 vclk_per, uint8 bpp, union ati_pll *pll);
 	void aty_set_pll_ct(const union ati_pll *pll);
-
-	// Hardware cursor
-
-	void aty_hw_cursor_init();
-	void aty_set_cursor_color(uint8 *pixel,uint8 *red, uint8 *green, uint8 *blue);
 
 };
 

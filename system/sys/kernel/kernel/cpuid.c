@@ -29,13 +29,11 @@
 #include "inc/sysbase.h"
 #include "inc/areas.h"
 
-#include "inc/cputable.h"
-
 bool g_bHasFXSR = false;
 bool g_bHasXMM = false;
 
 extern uint32 g_anKernelStackEnd[];
-
+extern bool g_bDisableSMP;
 
 /*****************************************************************************
  * NAME:
@@ -62,12 +60,17 @@ void init_cpuid( void )
 	/* Save cpu name and features ( from mplayer ) */
 	unsigned int nRegs[4];
 	unsigned int nRegs2[4];
+	unsigned int nRegs3[4];
 	char zVendor[17];
 	int i;
 	uint nCPUid = 0;
+	#define CPUID_FAMILY	( ( nRegs2[0] >> 8 ) & 0x0F )
+	#define CPUID_MODEL		( ( nRegs2[0] >> 4 ) & 0x0F )
+	
 	
 	for ( i = 0; i < MAX_CPU_COUNT; i++ )
 	{
+		memset( &g_asProcessorDescs[i], 0, sizeof( g_asProcessorDescs[i] ) );
 		strcpy( g_asProcessorDescs[i].pi_zName, "Unknown" );
 		g_asProcessorDescs[i].pi_nFeatures = CPU_FEATURE_NONE;
 	}
@@ -76,9 +79,11 @@ void init_cpuid( void )
 	/* Warning : We do not check if the CPU supports CPUID
 	   ( Not a problem because all CPUs > 486 support it ) */
 	read_cpu_id( 0x00000000, nRegs );
+	sprintf( zVendor, "%.4s%.4s%.4s", ( char * )( nRegs + 1 ), ( char * )( nRegs + 3 ), ( char * )( nRegs + 2 ) );
 	if ( nRegs[0] >= 0x00000001 )
 	{
 		read_cpu_id( 0x00000001, nRegs2 );
+		nCPUid = ( CPUID_FAMILY << 4 ) | CPUID_MODEL;
 		if ( nRegs2[3] & ( 1 << 23 ) )
 			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_MMX;
 		if ( nRegs2[3] & ( 1 << 24 ) )
@@ -92,47 +97,35 @@ void init_cpuid( void )
 		
 		if ( nRegs2[3] & ( 1 << 9 ) )
 			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_APIC;
-		
-#define CPUID_FAMILY	( ( nRegs2[0] >> 8 ) & 0x0F )
-#define CPUID_MODEL		( ( nRegs2[0] >> 4 ) & 0x0F )
-
-		/* Find out CPU name */
-		strcpy( g_asProcessorDescs[g_nBootCPU].pi_zName, "Unknown" );
-		sprintf( zVendor, "%.4s%.4s%.4s", ( char * )( nRegs + 1 ), ( char * )( nRegs + 3 ), ( char * )( nRegs + 2 ) );
-		for ( i = 0; i < MAX_VENDORS; i++ )
-		{
-			if ( !strcmp( cpuvendors[i].string, zVendor ) )
-			{
-				if ( cpuname[i][CPUID_FAMILY][CPUID_MODEL] )
-				{
-					nCPUid = ( CPUID_FAMILY << 4 ) | CPUID_MODEL;
-					sprintf( g_asProcessorDescs[g_nBootCPU].pi_zName, "%s %s", cpuvendors[i].name, cpuname[i][CPUID_FAMILY][CPUID_MODEL] );
-				}
-			}
-		}
+		if ( nRegs2[3] & ( 1 << 12 ) )
+			g_asProcessorDescs[g_nBootCPU].pi_bHaveMTRR = true;
 	}
-	read_cpu_id( 0x80000000, nRegs );
-	if ( nRegs[0] >= 0x80000001 )
+	read_cpu_id( 0x80000000, nRegs3 );
+	if ( nRegs3[0] >= 0x80000001 )
 	{
-		read_cpu_id( 0x80000001, nRegs2 );
-		if ( nRegs2[3] & ( 1 << 23 ) )
+		read_cpu_id( 0x80000001, nRegs3 );
+		if ( nRegs3[3] & ( 1 << 23 ) )
 			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_MMX;
-		if ( nRegs2[3] & ( 1 << 22 ) )
+		if ( nRegs3[3] & ( 1 << 22 ) )
 			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_MMX2;
-		if ( nRegs2[3] & ( 1 << 31 ) )
+		if ( nRegs3[3] & ( 1 << 31 ) )
 			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_3DNOW;
-		if ( nRegs2[3] & ( 1 << 30 ) )
+		if ( nRegs3[3] & ( 1 << 30 ) )
 			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_3DNOWEX;
 	}
-	/* Copy this information to all other CPUs */
-	for ( i = 0; i < MAX_CPU_COUNT; i++ )
+	/* Find out CPU name */
+	read_cpu_id( 0x80000000, nRegs3 );
+	if ( nRegs3[0] >= 0x80000004 )
 	{
-		if ( i == g_nBootCPU )
-			continue;
-		strcpy( g_asProcessorDescs[i].pi_zName, g_asProcessorDescs[g_nBootCPU].pi_zName );
-		g_asProcessorDescs[i].pi_nFeatures = g_asProcessorDescs[g_nBootCPU].pi_nFeatures;
+		memset( g_asProcessorDescs[g_nBootCPU].pi_zName, 0, 255 );
+		read_cpu_id( 0x80000002, (unsigned int* )&g_asProcessorDescs[g_nBootCPU].pi_zName[0] );
+		read_cpu_id( 0x80000003, (unsigned int* )&g_asProcessorDescs[g_nBootCPU].pi_zName[16] );
+		read_cpu_id( 0x80000004, (unsigned int* )&g_asProcessorDescs[g_nBootCPU].pi_zName[32] );
 	}
-	kerndbg( KERN_INFO, "CPU: %s (0x%x)\n", g_asProcessorDescs[g_nBootCPU].pi_zName, nCPUid );
+	
+	
+	printk( "CPU: %s (0x%x)\n", g_asProcessorDescs[g_nBootCPU].pi_zName, nCPUid );
+	
 	if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_MMX )
 		kerndbg( KERN_DEBUG, "MMX supported\n" );
 	if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_MMX2 )
@@ -158,6 +151,46 @@ void init_cpuid( void )
 		if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_SSE2 )
 			kerndbg( KERN_DEBUG, "SSE2 supported\n" );
 	}
+	if( !( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_APIC ) 
+		&& !strcmp( "GenuineIntel", zVendor ) && ( nCPUid >= 0x60 ) && !g_bDisableSMP )
+	{
+		// enable local apic by using the msr registers
+		uint32 nLow, nHigh;
+		rdmsr( MSR_REG_APICBASE, nLow, nHigh );
+		if (!( nLow & MSR_REG_APICBASE_ENABLE ) ) {
+			nLow &= ~MSR_REG_APICBASE_BASE;
+			nLow |= MSR_REG_APICBASE_ENABLE | 0xFEE00000;		
+			wrmsr( MSR_REG_APICBASE, nLow, nHigh );
+			g_asProcessorDescs[g_nBootCPU].pi_nFeatures |= CPU_FEATURE_APIC;
+		}
+	}
 	if ( g_asProcessorDescs[g_nBootCPU].pi_nFeatures & CPU_FEATURE_APIC )
+	{
 		kerndbg( KERN_DEBUG, "APIC present\n" );
+	}
+	if ( g_asProcessorDescs[g_nBootCPU].pi_bHaveMTRR )
+	{
+		/* Check if we support write combining */
+		rdmsr( MSR_REG_MTRR_CAP, nRegs[0], nRegs[4] );
+		if( !( nRegs[0] & MSR_REG_MTRR_CAP_WRCOMP ) )
+		{
+			g_asProcessorDescs[g_nBootCPU].pi_bHaveMTRR = false;
+		}
+	}
+	
+	/* Copy this information to all other CPUs */
+	for ( i = 0; i < MAX_CPU_COUNT; i++ )
+	{
+		if ( i == g_nBootCPU )
+			continue;
+		strcpy( g_asProcessorDescs[i].pi_zName, g_asProcessorDescs[g_nBootCPU].pi_zName );
+		g_asProcessorDescs[i].pi_nFeatures = g_asProcessorDescs[g_nBootCPU].pi_nFeatures;
+		g_asProcessorDescs[i].pi_bHaveFXSR = g_asProcessorDescs[g_nBootCPU].pi_bHaveFXSR;
+		g_asProcessorDescs[i].pi_bHaveXMM = g_asProcessorDescs[g_nBootCPU].pi_bHaveXMM;
+		g_asProcessorDescs[i].pi_bHaveMTRR = g_asProcessorDescs[g_nBootCPU].pi_bHaveMTRR;
+	}
 }
+
+
+
+

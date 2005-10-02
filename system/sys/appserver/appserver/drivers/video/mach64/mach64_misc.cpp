@@ -38,8 +38,6 @@ int ATImach64::BytesPerPixel (color_space cs) {
 		case    CS_RGB24:
 			return( 3 );
 		case    CS_RGB16:
-		case    CS_RGB15:
-		case    CS_RGBA15:
 			return( 2 );
 		case CS_CMAP8:
 		case CS_GRAY8:
@@ -58,9 +56,6 @@ int ATImach64::BitsPerPixel (color_space cs) {
 			return( 24 );
 		case    CS_RGB16:
 			return( 16 );
-		case    CS_RGB15:
-		case    CS_RGBA15:
-			return( 15 );
 		case CS_CMAP8:
 		case CS_GRAY8:
 			return( 8 );

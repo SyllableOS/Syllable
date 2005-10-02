@@ -32,11 +32,11 @@
 
 #include "ddriver.h"
 #include "windowdecorator.h"
+#include "toplayer.h"
 
 typedef	struct TextFont	TextFont_s;
 
-using namespace os;
-
+	
 class SrvWindow;
 class Layer;
 class AppServer;
@@ -44,17 +44,18 @@ class SFontInstance;
 class DisplayDriver;
 class SrvBitmap;
 
-namespace os {
-    class Locker;
-    class Message;
-}
+namespace os
+{
+	class Locker;
+	class Message;
+};
 
-extern ::Layer* g_pcTopView;
+extern ::TopLayer* g_pcTopView;
 
 extern DisplayDriver*	g_pcDispDrv;
 
 extern Array<Layer>*	g_pcLayers;
-extern Locker*		g_pcWinListLock;
+extern os::Locker*		g_pcWinListLock;
 
 void config_changed();
 
@@ -68,7 +69,7 @@ public:
     os::WindowDecorator*  CreateWindowDecorator( Layer* pcView, uint32 nFlags );
   
     void		Run( void );
-    static int32 CloseWindows( void* pcData );
+    static int32 CloseWindows( void* pData );
     DisplayDriver*	GetDisplayDriver( int nIndex )	{ return( m_pcDispDriver ); }
 
     void 		SendKeyCode( int nKeyCode, int nQualifiers );
@@ -86,16 +87,16 @@ public:
 private:
 	void RescanFonts(void);
 	void SwitchDesktop(int nDesktop);
-    int	LoadDecorator( const std::string& cPath, op_create_decorator** ppfCreate );
+    int	LoadDecorator( const std::string& cPath, os::op_create_decorator** ppfCreate );
 
-    void	DispatchMessage( Message* pcReq );
+    void	DispatchMessage( os::Message* pcReq );
     
     static AppServer*	 s_pcInstance;
     port_id		 m_hRequestPort;
     DisplayDriver*	 m_pcDispDriver;
     bigtime_t		 m_nLastEvenTime;
     int			 m_hCurrentDecorator;
-    op_create_decorator* m_pfDecoratorCreator;
+    os::op_create_decorator* m_pfDecoratorCreator;
 
     FontNode*		m_pcWindowTitleFont;
     FontNode*		m_pcToolWindowTitleFont;

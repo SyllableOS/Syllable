@@ -34,56 +34,86 @@ class	Glyph;
 class	MousePtr;
 class	SrvSprite;
 
-
 extern SrvBitmap* g_pcScreenBitmap;
 
-class	DisplayDriver
+struct DisplayMemObj
+{
+	struct DisplayMemObj* pcPrev;
+	struct DisplayMemObj* pcNext;
+	bool bFree;
+	uint32 nOffset;
+	uint32 nObjStart;
+	uint32 nSize;
+};
+
+class DisplayDriver
 {
 public:
+	/* Video driver API */
+	
+	/* Construction/Destruction */
     DisplayDriver();
     virtual	    ~DisplayDriver();
 
-    virtual area_id   	Open() = 0;
-    virtual void	Close() = 0;
-    
-    virtual int	    	GetScreenModeCount() = 0;
-    virtual bool    	GetScreenModeDesc( int nIndex, os::screen_mode* psMode ) = 0;
-    virtual int	    	SetScreenMode( os::screen_mode sMode ) = 0;
-    virtual os::screen_mode GetCurrentScreenMode() = 0; 
-
-    virtual int		GetFramebufferOffset();
-    
-    virtual void	SetCursorBitmap( os::mouse_ptr_mode eMode, const os::IPoint& cHotSpot, const void* pRaster, int nWidth, int nHeight );
-    
-    virtual void	MouseOn();
-    virtual void	MouseOff();
-    virtual void	SetMousePos( os::IPoint cNewPos );
-    virtual bool	IntersectWithMouse( const os::IRect& cRect ) = 0;
+    virtual area_id  Open() = 0;
+    virtual void	 Close() = 0;
+ 
+	/* Screenmodes */
+    virtual int	    GetScreenModeCount() = 0;   
+    virtual bool    GetScreenModeDesc( int nIndex, os::screen_mode* psMode ) = 0;
+    virtual int		SetScreenMode( os::screen_mode sMode ) = 0;
+    virtual os::screen_mode GetCurrentScreenMode() = 0;
+	virtual int		GetFramebufferOffset();
+   
+	/* Acceleration */
+    virtual void	LockBitmap( SrvBitmap* pcDstBitmap, SrvBitmap* pcSrcBitmap, os::IRect cSrcRect, os::IRect cDstRect );
+    virtual void	UnlockBitmap( SrvBitmap* pcDstBitmap, SrvBitmap* pcSrcBitmap, os::IRect cSrcRect, os::IRect cDstRect );
     
     virtual bool	DrawLine( SrvBitmap* psBitMap, const os::IRect& cClipRect,
 				  const os::IPoint& cPnt1, const os::IPoint& cPnt2, const os::Color32_s& sColor, int nMode );
-    virtual bool	FillRect( SrvBitmap* psBitMap, const os::IRect& cRect, const os::Color32_s& sColor );
-    virtual bool	BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap, os::IRect cSrcRect, os::IPoint cDstPos, int nMode );
-
-    static bool	ClipLine( const os::IRect& cRect, int* x1, int* y1, int* x2, int* y2 );
-
-	virtual void 	RenderGlyph( SrvBitmap *pcBitmap, Glyph* pcGlyph,
-			 const os::IPoint& cPos, const os::IRect& cClipRect, const os::Color32_s& sFgColor ); 
-	virtual void	RenderGlyphBlend( SrvBitmap *pcBitmap, Glyph* pcGlyph,
-			      const os::IPoint& cPos, const os::IRect& cClipRect, const os::Color32_s& sFgColor );      
-	virtual void	RenderGlyph( SrvBitmap *pcBitmap, Glyph* pcGlyph,
-			 const os::IPoint& cPos, const os::IRect& cClipRect, const uint32* anPallette );
-
+    virtual bool	FillRect( SrvBitmap* psBitMap, const os::IRect& cRect, const os::Color32_s& sColor, int nMode );
+    virtual bool	BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap, os::IRect cSrcRect, os::IRect cDstRect, int nMode, int nAlpha );
+    
+    /* Video overlays */
     virtual bool	CreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, os::color_space eFormat, os::Color32_s sColorKey, area_id *phArea );
     virtual bool	RecreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, os::color_space eFormat, area_id *phArea );
-    virtual void	UpdateVideoOverlay( area_id *phArea );
     virtual void	DeleteVideoOverlay( area_id *phArea );
 
+	virtual status_t Control( int nCommand, void* pData, uint32 nDataSize );
+	
+	// --------------------------------------------------------------------------------
+
+	/* Internal methods */
+	
+	/* Lines */
+	static bool	ClipLine( const os::IRect& cRect, int* x1, int* y1, int* x2, int* y2 );
+	
+	/* Memory management */
+	void		InitMemory( uint32 nOffset, uint32 nSize, uint32 nMemObjAlign, uint32 nRowAlign );
+	status_t	AllocateMemory( uint32 nSize, uint32* pnOffset );
+	SrvBitmap*	AllocateBitmap( int nWidth, int nHeight, os::color_space eColorSpc );
+	void		FreeMemory( uint32 nOffset );
+	
+	/* Cursor management */
+	void		SetCursorBitmap( os::mouse_ptr_mode eMode, const os::IPoint& cHotSpot, const void* pRaster, int nWidth, int nHeight );
+    void		MouseOn();
+    void		MouseOff();
+    void		SetMousePos( os::IPoint cNewPos );
+    
+    /* Text rendering */
+	void 		RenderGlyph( SrvBitmap *pcBitmap, Glyph* pcGlyph,
+				 const os::IPoint& cPos, const os::IRect& cClipRect, const os::Color32_s& sFgColor ); 
+	void		RenderGlyphBlend( SrvBitmap *pcBitmap, Glyph* pcGlyph,
+				 const os::IPoint& cPos, const os::IRect& cClipRect, const os::Color32_s& sFgColor );      
+	void		RenderGlyph( SrvBitmap *pcBitmap, Glyph* pcGlyph,
+				 const os::IPoint& cPos, const os::IRect& cClipRect, const uint32* anPallette );
 private:
-    void	FillBlit8( uint8* pDst, int nMod, int W,int H, int nColor );
-    void	FillBlit16( uint16 *pDst, int nMod, int W, int H, uint32 nColor );
-    void	FillBlit24( uint8* pDst, int nMod, int W, int H, uint32 nColor );
-    void	FillBlit32( uint32 *pDst, int nMod, int W, int H, uint32 nColor );
+	void		FillBlit16( uint16 *pDst, int nMod, int W, int H, uint16 nColor );
+	void		FillBlit32( uint32 *pDst, int nMod, int W, int H, uint32 nColor );
+	void		FillAlpha16( uint16 *pDst, int nMod, int W, int H, uint32 nColor );
+	void		FillAlpha32( uint32 *pDst, int nMod, int W, int H, uint32 nColor );
+	void		DrawLine16( SrvBitmap * pcBitmap, const os::IRect & cClip, int x1, int y1, int x2, int y2, uint16 nColor, uint32 nColor32, int nMode );
+	void 		DrawLine32( SrvBitmap * pcBitmap, const os::IRect & cClip, int x1, int y1, int x2, int y2, uint32 nColor, int nMode );
 private:
 	virtual void	__VW_reserved1__();
     virtual void	__VW_reserved2__();
@@ -94,15 +124,16 @@ private:
     virtual void	__VW_reserved7__();
     virtual void	__VW_reserved8__();
     virtual void	__VW_reserved9__();
-
-    SrvBitmap*   	  m_pcMouseImage;
-    SrvSprite*		  m_pcMouseSprite;
-    os::IPoint		  m_cMousePos;
-    os::IPoint		  m_cCursorHotSpot;
-
-    SrvBitmap*		  m_pcOverlayImage;
-    SrvBitmap*		  m_pcOverlayConvertedImage;
-    os::IRect		  m_pcOverlayRect;
+    
+    SrvBitmap*   	m_pcMouseImage;
+    SrvSprite*		m_pcMouseSprite;
+    os::IPoint		m_cMousePos;
+    os::IPoint		m_cCursorHotSpot;
+    
+    uint8*			m_pVideoMem;
+    DisplayMemObj*	m_psFirstMemObj;
+    uint32			m_nMemObjAlign;
+    uint32			m_nRowAlign;
 };
 
 typedef DisplayDriver* gfxdrv_init_func( int nFd );

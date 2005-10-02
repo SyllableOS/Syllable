@@ -1,5 +1,5 @@
-CFLAGS   += -c -fexceptions -ffast-math -Iffmpeg/libavcodec -Iffmpeg/libavformat
-CXXFLAGS += -c -fexceptions -ffast-math -Iffmpeg/libavcodec -Iffmpeg/libavformat
+CFLAGS   += -c -fexceptions -ffast-math -Iffmpeg/libavcodec -Iffmpeg/libavformat -Iffmpeg/libavutil
+CXXFLAGS += -c -fexceptions -ffast-math -Iffmpeg/libavcodec -Iffmpeg/libavformat -Iffmpeg/libavutil
 AOPTS    = -c
 
 DRIVERBIN = /system/drivers/media
@@ -17,7 +17,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/ffmpeg.so: $(OBJS)
-	$(CXX) -shared -Xlinker "-soname=ffmpeg.so" $(OBJS) -lm -lz -lsyllable -lmedia -lavformat -Lffmpeg/libavcodec -Lffmpeg/libavformat -lavcodec -o $(OBJDIR)/ffmpeg.so
+	$(CXX) -shared -Xlinker "-soname=ffmpeg.so" $(OBJS) -lm -lsyllable -lmedia -lavformat -Lffmpeg/libavcodec -Lffmpeg/libavformat -Lffmpeg/libavutil -lavcodec -lavutil -lz -o $(OBJDIR)/ffmpeg.so
 
 
 deps: $(LIBS)

@@ -45,7 +45,20 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #define BEGIN_RING( n )	\
 	if( n & 1 )	\
-		dbprintf( "i855:: Invalid command!\n" ); 
+		dbprintf( "i855:: Invalid command!\n" ); \
+	uint32 nHead = INREG( LP_RING + RING_HEAD ); \
+	uint32 nTail = INREG( LP_RING + RING_TAIL ); \
+	if( n > 2 ) \
+	{ \
+		if( nTail > nHead ) { \
+			if( ( m_nRingSize - ( nTail - nHead ) - 16 < n ) || ( nTail - nHead ) > 100 ) \
+				WaitForIdle(); \
+		} else if( nHead > nTail ) { \
+			if( ( ( nHead - nTail ) - 16 < n ) || ( nHead - nTail ) > 100 ) \
+				WaitForIdle(); \
+		} \
+	}
+		
 
 #define OUTRING( n ) \
 	*(volatile unsigned int *)( m_pRingBase + m_nRingPos ) = n; \
@@ -68,7 +81,7 @@ public:
 
     i855( int nFd );
     ~i855();
-
+    
     area_id	Open();
     void	Close();
 
@@ -80,25 +93,20 @@ public:
    
     virtual int		    GetFramebufferOffset() { return( 0 ); }
 
-	virtual void	SetCursorBitmap( os::mouse_ptr_mode eMode, const os::IPoint& cHotSpot, const void* pRaster, int nWidth, int nHeight );
-	virtual void	MouseOn( void );
-	virtual void    MouseOff( void );
-	virtual void    SetMousePos( os::IPoint cNewPos );	
-
-    bool		IntersectWithMouse( const os::IRect& cRect );
+    virtual void	LockBitmap( SrvBitmap* pcDstBitmap, SrvBitmap* pcSrcBitmap, os::IRect cSrc, os::IRect cDst );
 	
 	virtual bool	DrawLine( SrvBitmap* psBitMap, const os::IRect& cClipRect,
 				  const os::IPoint& cPnt1, const os::IPoint& cPnt2, const os::Color32_s& sColor, int nMode );
-	virtual bool	FillRect( SrvBitmap* psBitMap, const os::IRect& cRect, const os::Color32_s& sColor );
-	virtual bool	BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap, os::IRect cSrcRect, os::IPoint cDstPos, int nMode );
+	virtual bool	FillRect( SrvBitmap* psBitMap, const os::IRect& cRect, const os::Color32_s& sColor, int nMode );
+	virtual bool	BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap, os::IRect cSrcRect, os::IRect cDstRect, int nMode, int nAlpha );
 
 	virtual bool	CreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, os::color_space eFormat, os::Color32_s sColorKey, area_id *pBuffer );
 	virtual bool	RecreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, os::color_space eFormat, area_id *pBuffer );
 	virtual void	DeleteVideoOverlay( area_id *pBuffer );
-	virtual void	UpdateVideoOverlay( area_id *pBuffer );
 	
 	bool		IsInitiated() const { return( m_bIsInitiated ); }
 private:
+    void		TweakMemorySize( int nFd );
     bool		InitModes();
     bool		SetVesaMode( uint32 nMode );
     void		WaitForIdle();
@@ -114,11 +122,15 @@ private:
     bool		m_bIsInitiated;
     PCI_Info_s	m_cPCIInfo;
     os::Locker	m_cGELock;
+    bool		m_bEngineDirty;
     
 	uint32		m_nBIOSVersion;
 	bool		m_bTwoPipes;
     int			m_nDisplayPipe;
     int			m_nDisplayInfo;
+    
+    vuint8*		m_pRomBase;
+	area_id		m_hRomArea;
     
     vuint8*		m_pRegisterBase;
 	area_id		m_hRegisterArea;
@@ -135,14 +147,8 @@ private:
 	int			m_nFrameBufferOffset;
 
 	vuint8*		m_pCursorBase;
-	bool		m_bMobileCursor;
-	bool		m_bUsingHWCursor;
-	bool		m_bCursorIsOn;
 	uint32		m_nCursorAddress;
 	int			m_nCursorOffset;
-	os::IPoint	m_cCursorPos;
-	os::IPoint	m_cCursorHotSpot;
-	uint32		m_anCursorShape[64*64];
 	
 	bool		m_bVideoOverlayUsed;
 	uint32		m_nVideoAddress;

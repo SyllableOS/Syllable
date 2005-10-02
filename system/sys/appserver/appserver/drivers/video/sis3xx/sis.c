@@ -35,18 +35,14 @@
 #include <stdlib.h>
 
 shared_info si;
-SiS_Private SiS_Pr;
-HW_DEVICE_EXTENSION sishw_ext = {
-	NULL, FALSE, NULL,
-	0, 0, 0, 0, FALSE
-};
+struct SiS_Private SiS_Pr;
 
 static BOOLEAN
-sis_bridgeisslave(s)
+sis_bridgeisslave()
 {
    unsigned char P1_00;
 
-   if(!(si.vbflags & VB_VIDEOBRIDGE)) return FALSE;
+   if(!(si.vbflags2 & VB_VIDEOBRIDGE)) return FALSE;
 
    inSISIDXREG(SISPART1,0x00,P1_00);
    if( ((si.sisvga_engine == SIS_300_VGA) && (P1_00 & 0xa0) == 0x20) ||
@@ -58,7 +54,7 @@ sis_bridgeisslave(s)
 }
 
 static BOOLEAN
-sisallowretracecrt1(s)
+sisallowretracecrt1()
 {
    u8 temp;
 
@@ -85,6 +81,66 @@ siswaitretracecrt1()
    while((inSISREG(SISINPSTAT) & 0x08) && --watchdog);
 }
 
+/* ------------- Callbacks from init.c/init301.c  -------------- */
+
+
+unsigned int
+sisfb_read_nbridge_pci_dword(struct SiS_Private *SiS_Pr, int reg)
+{
+   uint32 val = pci_gfx_read_config( si.fd, si.bridge.nBus, si.bridge.nDevice, si.bridge.nFunction, reg, 4 );
+   return (unsigned int)val;
+}
+
+void
+sisfb_write_nbridge_pci_dword(struct SiS_Private *SiS_Pr, int reg, unsigned int val)
+{
+	pci_gfx_write_config( si.fd, si.bridge.nBus, si.bridge.nDevice, si.bridge.nFunction, reg, 4, (uint32)val  );
+}
+
+unsigned int
+sisfb_read_lpc_pci_dword(struct SiS_Private *SiS_Pr, int reg)
+{
+  dbprintf( "sisfb_read_lpc_pci_dword not implemented!\n" );
+  return( 0 );
+}
+
+void sisfb_write_nbridge_pci_byte(struct SiS_Private *SiS_Pr, int reg, unsigned char val)
+{
+   struct sis_video_info *ivideo = (struct sis_video_info *)SiS_Pr->ivideo;
+
+   pci_gfx_write_config( si.fd, si.bridge.nBus, si.bridge.nDevice, si.bridge.nFunction, reg, 1, (uint8)val );
+}
+
+unsigned int
+sisfb_read_mio_pci_word(struct SiS_Private *SiS_Pr, int reg)
+{
+  dbprintf( "sisfb_read_mio_pci_word not implemented!\n" );
+  return( 0 );
+}
+
+void
+sis_set_pitch(int pitch)
+{
+	BOOLEAN isslavemode = FALSE;
+	unsigned short HDisplay1 = pitch >> 3;
+	unsigned short HDisplay2 = pitch >> 3;
+
+	if(sis_bridgeisslave()) isslavemode = TRUE;
+
+	/* We need to set pitch for CRT1 if bridge is in slave mode, too */
+	if((si.currentvbflags & VB_DISPTYPE_DISP1) || (isslavemode)) {
+		outSISIDXREG(SISCR,0x13,(HDisplay1 & 0xFF));
+		setSISIDXREG(SISSR,0x0E,0xF0,(HDisplay1 >> 8));
+	}
+
+	/* We must not set the pitch for CRT2 if bridge is in slave mode */
+	if((si.currentvbflags & VB_DISPTYPE_DISP2) && (!isslavemode)) {
+		orSISIDXREG(SISPART1,si.CRT2_write_enable,0x01);
+		outSISIDXREG(SISPART1,0x07,(HDisplay2 & 0xFF));
+		setSISIDXREG(SISPART1,0x09,0xF0,(HDisplay2 >> 8));
+	}
+}
+
 static PCI_Info_s sis_get_northbridge(int basechipid)
 {
 	PCI_Info_s dev;
@@ -101,7 +157,8 @@ static PCI_Info_s sis_get_northbridge(int basechipid)
 		0x0661,	/* for SiS 661/741/660/760 VGA */
 		0x0741,
 		0x0660,
-		0x0760
+		0x0760,
+		0x0761
 	};
 
     switch(basechipid) {
@@ -109,7 +166,7 @@ static PCI_Info_s sis_get_northbridge(int basechipid)
 	case SIS_630:	nbridgeidx = 1; nbridgenum = 2; break;
 	case SIS_550:   nbridgeidx = 3; nbridgenum = 1; break;
 	case SIS_650:	nbridgeidx = 4; nbridgenum = 3; break;
-	case SIS_660:	nbridgeidx = 7; nbridgenum = 4; break;
+	case SIS_660:	nbridgeidx = 7; nbridgenum = 5; break;
 	default:	return dev;
 	}
 	for( j = 0; get_pci_info( &dev, j ) == 0; j++ )
@@ -128,6 +185,7 @@ static int sis_get_dram_size()
 	uint8 reg;
 
 	si.video_size = 0;
+	si.UMAsize = si.LFBsize = 0;
 
 	switch( si.chip) {
 	case SIS_300:
@@ -174,14 +232,37 @@ static int sis_get_dram_size()
 		break;
 	case SIS_660:
 	case SIS_760:
+	case SIS_761:
 		inSISIDXREG(SISCR, 0x79, reg);
 		reg = (reg & 0xf0) >> 4;
-		if(reg)	si.video_size = (1 << reg) << 20;
+		if(reg)	{
+			si.video_size = (1 << reg) << 20;
+			si.UMAsize = si.video_size;
+		}
 		inSISIDXREG(SISCR, 0x78, reg);
 		reg &= 0x30;
 		if(reg) {
-		   if(reg == 0x10) si.video_size += (32 << 20);
-		   else		   si.video_size += (64 << 20);
+			if(reg == 0x10) {
+				si.LFBsize = (32 << 20);
+			} else {
+				si.LFBsize = (64 << 20);
+			}
+			si.video_size += si.LFBsize;
+		}
+		break;
+	case SIS_340:
+	case XGI_20:
+	case XGI_40:
+		inSISIDXREG(SISSR, 0x14, reg);
+		si.video_size = (1 << ((reg & 0xf0) >> 4)) << 20;
+		if(si.chip != XGI_20) {
+			reg = (reg & 0x0c) >> 2;
+			if(si.revision_id == 2) {
+				if(reg & 0x01) reg = 0x02;
+				else	       reg = 0x00;
+			}
+			if(reg == 0x02)		si.video_size <<= 1;
+			else if(reg == 0x03)	si.video_size <<= 2;
 		}
 		break;
 	default:
@@ -195,6 +276,12 @@ static int sis_get_dram_size()
 static void sis_detect_VB_connect(s)
 {
 	uint8 cr32, temp;
+	
+	/* No CRT2 on XGI Z7 */
+	if(si.chip == XGI_20) {
+		si.crt1off = 0;
+		return;
+	}
 
 	if(si.sisvga_engine == SIS_300_VGA) {
 		inSISIDXREG(SISSR, 0x17, temp);
@@ -211,6 +298,12 @@ static void sis_detect_VB_connect(s)
 	}
 
 	inSISIDXREG(SISCR, 0x32, cr32);
+	
+	if(cr32 & SIS_CRT1) {
+		si.crt1off = 0;
+	} else {
+		si.crt1off = (cr32 & 0xDF) ? 1 : 0;
+	}
 
 	si.vbflags &= ~(CRT2_TV | CRT2_LCD | CRT2_VGA);
 
@@ -317,7 +410,7 @@ static void sis_sense_crt1()
     if(temp == 0xffff) {
        i = 3;
        do {
-          temp = SiS_HandleDDC(&SiS_Pr, si.vbflags, si.sisvga_engine, 0, 0, NULL);
+          temp = SiS_HandleDDC(&SiS_Pr, si.vbflags, si.sisvga_engine, 0, 0, NULL, si.vbflags2);
        } while(((temp == 0) || (temp == 0xffff)) && i--);
 
        if((temp == 0) || (temp == 0xffff)) {
@@ -336,6 +429,95 @@ static void sis_sense_crt1()
     setSISIDXREG(SISCR,0x17,0x7F,cr17);
 
     outSISIDXREG(SISSR,0x1F,sr1F);
+}
+
+/* Determine and detect attached devices on SiS30x */
+static void 
+SiS_SenseLCD()
+{
+	unsigned char buffer[256];
+	unsigned short temp, realcrtno, i;
+	uint8 reg, cr37 = 0, paneltype = 0;
+	uint16 xres, yres;
+
+	SiS_Pr.PanelSelfDetected = FALSE;
+
+	/* LCD detection only for TMDS bridges */
+	if(!(si.vbflags2 & VB2_SISTMDSBRIDGE))
+		return;
+	if(si.vbflags2 & VB2_30xBDH)
+		return;
+
+	/* If LCD already set up by BIOS, skip it */
+	inSISIDXREG(SISCR, 0x32, reg);
+	if(reg & 0x08)
+		return;
+
+	realcrtno = 1;
+	if(SiS_Pr.DDCPortMixup)
+		realcrtno = 0;
+
+	/* Check DDC capabilities */
+	temp = SiS_HandleDDC(&SiS_Pr, si.vbflags, si.sisvga_engine,
+				realcrtno, 0, &buffer[0], si.vbflags2);
+
+	if((!temp) || (temp == 0xffff) || (!(temp & 0x02)))
+		return;
+
+	/* Read DDC data */
+	i = 3;  /* Number of retrys */
+	do {
+		temp = SiS_HandleDDC(&SiS_Pr, si.vbflags,
+				si.sisvga_engine, realcrtno, 1,
+				&buffer[0], si.vbflags2);
+	} while((temp) && i--);
+
+	if(temp)
+		return;
+
+	/* No digital device */
+	if(!(buffer[0x14] & 0x80))
+		return;
+
+	/* First detailed timing preferred timing? */
+	if(!(buffer[0x18] & 0x02))
+		return;
+
+	xres = buffer[0x38] | ((buffer[0x3a] & 0xf0) << 4);
+	yres = buffer[0x3b] | ((buffer[0x3d] & 0xf0) << 4);
+
+	switch(xres) {
+		case 1024:
+			if(yres == 768)
+				paneltype = 0x02;
+			break;
+		case 1280:
+			if(yres == 1024)
+				paneltype = 0x03;
+			break;
+		case 1600:
+			if((yres == 1200) && (si.vbflags2 & VB2_30xC))
+				paneltype = 0x0b;
+			break;
+	}
+
+	if(!paneltype)
+		return;
+
+	if(buffer[0x23])
+		cr37 |= 0x10;
+
+	if((buffer[0x47] & 0x18) == 0x18)
+		cr37 |= ((((buffer[0x47] & 0x06) ^ 0x06) << 5) | 0x20);
+	else
+		cr37 |= 0xc0;
+
+	outSISIDXREG(SISCR, 0x36, paneltype);
+	cr37 &= 0xf1;
+	setSISIDXREG(SISCR, 0x37, 0x0c, cr37);
+	orSISIDXREG(SISCR, 0x32, 0x08);
+
+	SiS_Pr.PanelSelfDetected = TRUE;
 }
 
 /* Determine and detect attached devices on SiS30x */
@@ -378,36 +560,49 @@ static void SiS_Sense30x()
     char stdstr[] = "Detected";
     char tvstr[]  = "TV connected to";
 
-    if(si.vbflags & VB_301) {
+    if(si.vbflags2 & VB2_301) {
        svhs = 0x00b9; cvbs = 0x00b3; vga2 = 0x00d1;
        inSISIDXREG(SISPART4,0x01,myflag);
        if(myflag & 0x04) {
 	  svhs = 0x00dd; cvbs = 0x00ee; vga2 = 0x00fd;
        }
-    } else if(si.vbflags & (VB_301B | VB_302B)) {
+    } else if(si.vbflags2 & (VB2_301B | VB2_302B)) {
        svhs = 0x016b; cvbs = 0x0174; vga2 = 0x0190;
-    } else if(si.vbflags & (VB_301LV | VB_302LV)) {
+    } else if(si.vbflags2 & (VB2_301LV | VB2_302LV)) {
        svhs = 0x0200; cvbs = 0x0100;
-    } else if(si.vbflags & (VB_301C | VB_302ELV)) {
+    } else if(si.vbflags2 & (VB2_301C | VB2_302ELV)) {
        svhs = 0x016b; cvbs = 0x0110; vga2 = 0x0190;
     } else return;
 
     vga2_c = 0x0e08; svhs_c = 0x0404; cvbs_c = 0x0804;
-    if(si.vbflags & (VB_301LV|VB_302LV|VB_302ELV)) {
+    if(si.vbflags & (VB2_301LV|VB2_302LV|VB2_302ELV)) {
        svhs_c = 0x0408; cvbs_c = 0x0808;
     }
     biosflag = 2;
+    if(SiS_Pr.SiS_XGIROM) {
+       biosflag = SiS_Pr.VirtualRomBase[0x58] & 0x03;
+    } else if(si.newrom) {
+       if(SiS_Pr.VirtualRomBase[0x5d] & 0x04) biosflag |= 0x01;
+    } else if(si.sisvga_engine == SIS_300_VGA) {
+       if(SiS_Pr.VirtualRomBase) {
+          biosflag = SiS_Pr.VirtualRomBase[0xfe] & 0x03;
+       }
+    }
 
     if(si.chip == SIS_300) {
        inSISIDXREG(SISSR,0x3b,myflag);
        if(!(myflag & 0x01)) vga2 = vga2_c = 0;
+    }
+    
+    if(!(si.vbflags2 & VB2_SISVGA2BRIDGE)) {
+       vga2 = vga2_c = 0;
     }
 
     inSISIDXREG(SISSR,0x1e,backupSR_1e);
     orSISIDXREG(SISSR,0x1e,0x20);
 
     inSISIDXREG(SISPART4,0x0d,backupP4_0d);
-    if(si.vbflags & VB_301C) {
+    if(si.vbflags2 & VB_301C) {
        setSISIDXREG(SISPART4,0x0d,~0x07,0x01);
     } else {
        orSISIDXREG(SISPART4,0x0d,0x04);
@@ -418,11 +613,11 @@ static void SiS_Sense30x()
     outSISIDXREG(SISPART2,0x00,((backupP2_00 | 0x1c) & 0xfc));
 
     inSISIDXREG(SISPART2,0x4d,backupP2_4d);
-    if(si.vbflags & (VB_301C|VB_301LV|VB_302LV|VB_302ELV)) {
+    if(si.vbflags2 & VB2_SISYPBPRBRIDGE) {
        outSISIDXREG(SISPART2,0x4d,(backupP2_4d & ~0x10));
     }
 
-    if(!(si.vbflags & VB_301C)) {
+    if(!(si.vbflags2 & VB2_30xCLV)) {
        SISDoSense(0, 0);
     }
 
@@ -442,12 +637,12 @@ static void SiS_Sense30x()
 
     andSISIDXREG(SISCR, 0x32, 0x3f);
 
-    if(si.vbflags & VB_301C) {
+    if(si.vbflags2 & VB2_30xCLV) {
        orSISIDXREG(SISPART4,0x0d,0x04);
     }
 
     if((si.sisvga_engine == SIS_315_VGA) &&
-       (si.vbflags & (VB_301C|VB_301LV|VB_302LV|VB_302ELV))) {
+       (si.vbflags2 & VB2_SISYPBPRBRIDGE)) {
        outSISIDXREG(SISPART2,0x4d,(backupP2_4d | 0x10));
        SiS_DDC2Delay(&SiS_Pr, 0x2000);
        if((result = SISDoSense(svhs, 0x0604))) {
@@ -510,7 +705,7 @@ static void SiS_SenseCh()
        /* See Chrontel TB31 for explanation */
        temp2 = SiS_GetCH700x(&SiS_Pr, 0x0e);
        if(((temp2 & 0x07) == 0x01) || (temp2 & 0x04)) {
-	  SiS_SetCH700x(&SiS_Pr, 0x0b0e);
+	  SiS_SetCH700x(&SiS_Pr, 0x0e, 0x0b);
 	  SiS_DDC2Delay(&SiS_Pr, 300);
        }
        temp2 = SiS_GetCH700x(&SiS_Pr, 0x25);
@@ -521,14 +716,14 @@ static void SiS_SenseCh()
 	   temp1 = SiS_GetCH700x(&SiS_Pr, 0x0e);
 	   if((temp1 & 0x03) != 0x03) {
      	        /* Power all outputs */
-		SiS_SetCH700x(&SiS_Pr, 0x0B0E);
+		SiS_SetCH700x(&SiS_Pr, 0x0E, 0x0B);
 		SiS_DDC2Delay(&SiS_Pr, 300);
 	   }
 	   /* Sense connected TV devices */
 	   for(i = 0; i < 3; i++) {
-	       SiS_SetCH700x(&SiS_Pr, 0x0110);
+	       SiS_SetCH700x(&SiS_Pr, 0x10, 0x01);
 	       SiS_DDC2Delay(&SiS_Pr, 0x96);
-	       SiS_SetCH700x(&SiS_Pr, 0x0010);
+	       SiS_SetCH700x(&SiS_Pr, 0x10, 0x00);
 	       SiS_DDC2Delay(&SiS_Pr, 0x96);
 	       temp1 = SiS_GetCH700x(&SiS_Pr, 0x10);
 	       if(!(temp1 & 0x08))       test[i] = 0x02;
@@ -555,11 +750,11 @@ static void SiS_SenseCh()
 		orSISIDXREG(SISCR, 0x32, 0x01);
 		andSISIDXREG(SISCR, 0x32, ~0x06);
 	   } else {
- 		SiS_SetCH70xxANDOR(&SiS_Pr, 0x010E,0xF8);
+ 		SiS_SetCH70xxANDOR(&SiS_Pr, 0x0e, 0x01,0xF8);
 		andSISIDXREG(SISCR, 0x32, ~0x07);
 	   }
        } else if(temp1 == 0) {
-	  SiS_SetCH70xxANDOR(&SiS_Pr, 0x010E,0xF8);
+	  SiS_SetCH70xxANDOR(&SiS_Pr, 0x0e, 0x01,0xF8);
 	  andSISIDXREG(SISCR, 0x32, ~0x07);
        }
        /* Set general purpose IO for Chrontel communication */
@@ -569,17 +764,17 @@ static void SiS_SenseCh()
 
 	SiS_Pr.SiS_IF_DEF_CH70xx = 2;		/* Chrontel 7019 */
         temp1 = SiS_GetCH701x(&SiS_Pr, 0x49);
-	SiS_SetCH701x(&SiS_Pr, 0x2049);
+	SiS_SetCH701x(&SiS_Pr, 0x49, 0x20);
 	SiS_DDC2Delay(&SiS_Pr, 0x96);
 	temp2 = SiS_GetCH701x(&SiS_Pr, 0x20);
 	temp2 |= 0x01;
-	SiS_SetCH701x(&SiS_Pr, (temp2 << 8) | 0x20);
+	SiS_SetCH701x(&SiS_Pr, 0x20, temp2);
 	SiS_DDC2Delay(&SiS_Pr, 0x96);
 	temp2 ^= 0x01;
-	SiS_SetCH701x(&SiS_Pr, (temp2 << 8) | 0x20);
+	SiS_SetCH701x(&SiS_Pr, 0x20, temp2);
 	SiS_DDC2Delay(&SiS_Pr, 0x96);
 	temp2 = SiS_GetCH701x(&SiS_Pr, 0x20);
-	SiS_SetCH701x(&SiS_Pr, (temp1 << 8) | 0x49);
+	SiS_SetCH701x(&SiS_Pr, 0x49, temp1);
         temp1 = 0;
 	if(temp2 & 0x02) temp1 |= 0x01;
 	if(temp2 & 0x10) temp1 |= 0x01;
@@ -615,6 +810,10 @@ static void sis_get_VB_type()
 	char bridgestr[] = "video bridge";
 	uint8 vb_chipid;
 	uint8 reg;
+	
+	/* No CRT2 on XGI Z7 */
+	if(si.chip == XGI_20)
+		return;
 
 	inSISIDXREG(SISPART4, 0x00, vb_chipid);
 	switch(vb_chipid) {
@@ -622,29 +821,36 @@ static void sis_get_VB_type()
 		inSISIDXREG(SISPART4, 0x01, reg);
 		if(reg < 0xb0) {
 			si.vbflags |= VB_301;
+			si.vbflags2 |= VB2_301;
 			dbprintf( "%s SiS301 %s\n", stdstr, bridgestr);
 		} else if(reg < 0xc0) {
 			si.vbflags |= VB_301B;
+			si.vbflags2 |= VB2_301B;
 			inSISIDXREG(SISPART4,0x23,reg);
 			if(!(reg & 0x02)) {
 			   si.vbflags |= VB_30xBDH;
+			   si.vbflags2 |= VB2_30xBDH;
 			  dbprintf( "%s SiS301B-DH %s\n", stdstr, bridgestr);
 			} else {
 			  dbprintf( "%s SiS301B %s\n", stdstr, bridgestr);
 			}
 		} else if(reg < 0xd0) {
 		 	si.vbflags |= VB_301C;
+		 	si.vbflags2 |= VB2_301C;
 			dbprintf( "%s SiS301C %s\n", stdstr, bridgestr);
 		} else if(reg < 0xe0) {
 			si.vbflags |= VB_301LV;
+			si.vbflags2 |= VB2_301LV;
 			dbprintf( "%s SiS301LV %s\n", stdstr, bridgestr);
 		} else if(reg <= 0xe1) {
 			inSISIDXREG(SISPART4,0x39,reg);
 			if(reg == 0xff) {
 			   si.vbflags |= VB_302LV;
+			   si.vbflags2 |= VB2_302LV;
 			   dbprintf( "%s SiS302LV %s\n", stdstr, bridgestr);
 			} else {
 			   si.vbflags |= VB_301C;
+			   si.vbflags2 |= VB2_301C;
 			   dbprintf( "%s SiS301C(P4) %s\n", stdstr, bridgestr);
 #if 0
 			   si.vbflags |= VB_302ELV;
@@ -655,11 +861,12 @@ static void sis_get_VB_type()
 		break;
 	case 0x02:
 		si.vbflags |= VB_302B;
+		si.vbflags2 |= VB2_302B;
 		dbprintf( "%s SiS302B %s\n", stdstr, bridgestr);
 		break;
 	}
 
-	if((!(si.vbflags & VB_VIDEOBRIDGE)) && (si.chip != SIS_300)) {
+	if((!(si.vbflags2 & VB2_VIDEOBRIDGE)) && (si.chip != SIS_300)) {
 		inSISIDXREG(SISCR, 0x37, reg);
 		reg &= SIS_EXTERNAL_CHIP_MASK;
 		reg >>= 1;
@@ -668,26 +875,32 @@ static void sis_get_VB_type()
 			switch(reg) {
 			   case SIS_EXTERNAL_CHIP_LVDS:
 				si.vbflags |= VB_LVDS;
+				si.vbflags2 |= VB2_LVDS;
 				break;
 			   case SIS_EXTERNAL_CHIP_TRUMPION:
-				si.vbflags |= VB_TRUMPION;
+				si.vbflags |= (VB_LVDS | VB_TRUMPION);	/* Deprecated */
+				si.vbflags2 |= (VB2_LVDS | VB2_TRUMPION);
 				break;
 			   case SIS_EXTERNAL_CHIP_CHRONTEL:
 				si.vbflags |= VB_CHRONTEL;
+				si.vbflags2 |= VB2_CHRONTEL;
 				break;
 			   case SIS_EXTERNAL_CHIP_LVDS_CHRONTEL:
-				si.vbflags |= (VB_LVDS | VB_CHRONTEL);
+				si.vbflags |= (VB_LVDS | VB_CHRONTEL);	/* Deprecated */
+				si.vbflags2 |= (VB2_LVDS | VB2_CHRONTEL);
 				break;
 			}
-			if(si.vbflags & VB_CHRONTEL) si.chronteltype = 1;
+			if(si.vbflags2 & VB2_CHRONTEL) si.chronteltype = 1;
 
 		} else if(si.chip < SIS_661) {
 			switch (reg) {
 			   case SIS310_EXTERNAL_CHIP_LVDS:
 				si.vbflags |= VB_LVDS;
+				si.vbflags2 |= VB2_LVDS;
 				break;
 			   case SIS310_EXTERNAL_CHIP_LVDS_CHRONTEL:
 				si.vbflags |= (VB_LVDS | VB_CHRONTEL);
+				si.vbflags2 |= (VB2_LVDS | VB2_CHRONTEL);
 				break;
 			}
 			if(si.vbflags & VB_CHRONTEL) si.chronteltype = 2;
@@ -697,33 +910,37 @@ static void sis_get_VB_type()
 			switch(reg) {
 			   case 0x02:
 				si.vbflags |= VB_LVDS;
+				si.vbflags2 |= VB2_LVDS;
 				break;
 			   case 0x03:
 				si.vbflags |= (VB_LVDS | VB_CHRONTEL);
+				si.vbflags2 |= (VB2_LVDS | VB2_CHRONTEL);
 				break;
 			   case 0x04:
 				si.vbflags |= (VB_LVDS | VB_CONEXANT);
+				si.vbflags2 |= (VB2_LVDS | VB2_CONEXANT);
 				break;
 			}
-			if(si.vbflags & VB_CHRONTEL) si.chronteltype = 2;
+			if(si.vbflags2 & VB2_CHRONTEL) si.chronteltype = 2;
 		}
-		if(si.vbflags & VB_LVDS) {
+		if(si.vbflags2 & VB2_LVDS) {
 		   dbprintf( "%s LVDS transmitter\n", stdstr);
 		}
-		if(si.vbflags & VB_TRUMPION) {
+		if((si.sisvga_engine == SIS_300_VGA) && si.vbflags2 & VB2_TRUMPION) {
 		   dbprintf( "%s Trumpion Zurac LCD scaler\n", stdstr);
 		}
-		if(si.vbflags & VB_CHRONTEL) {
+		if(si.vbflags2 & VB2_CHRONTEL) {
 		  dbprintf( "%s Chrontel TV encoder\n", stdstr);
 		}
-		if(si.vbflags & VB_CONEXANT) {
+		if(si.vbflags2 & VB2_CONEXANT) {
 		   dbprintf( "%s Conexant external device\n", stdstr);
 		}
 	}
 
-	if(si.vbflags & VB_SISBRIDGE) {
+	if(si.vbflags2 & VB_SISBRIDGE) {
+		SiS_SenseLCD();
 		SiS_Sense30x();
-	} else if(si.vbflags & VB_CHRONTEL) {
+	} else if(si.vbflags2 & VB2_CHRONTEL) {
 		SiS_SenseCh();
 	}
 }
@@ -748,24 +965,51 @@ void sis_enable_queue_300()
 
 void sis_enable_queue_315()
 {
-	unsigned long *cmdq_baseport = 0;
-	unsigned long *read_port = 0;
-	unsigned long *write_port = 0;
+	uint8 tempCR55;
+	uint16 SR26;
+	uint32 temp;
 	
-	cmdq_baseport = (unsigned long *)(si.regs + MMIO_QUEUE_PHYBASE);
-	write_port    = (unsigned long *)(si.regs + MMIO_QUEUE_WRITEPORT);
-	read_port     = (unsigned long *)(si.regs + MMIO_QUEUE_READPORT);
+	if( si.chip == XGI_20 )
+		si.cmdQueueSize = 128 * 1024;
+	else
+		si.cmdQueueSize = 512 * 1024;
 	
-	outSISIDXREG( SISSR, IND_SIS_CMDQUEUE_THRESHOLD, COMMAND_QUEUE_THRESHOLD );
-	outSISIDXREG( SISSR, IND_SIS_CMDQUEUE_SET, SIS_CMD_QUEUE_RESET );
+	si.cmdQueueSizeMask = si.cmdQueueSize - 1;
+	si.cmdQueueOffset = ( si.video_size ) - si.cmdQueueSize;
+	si.cmdQueueSize_div2 = si.cmdQueueSize / 2;
+	si.cmdQueueSize_div4 = si.cmdQueueSize / 4;
+	si.cmdQueueSize_4_3 = (si.cmdQueueSize / 4) * 3;
+	si.video_size -= si.cmdQueueSize;
 	
-	*write_port = *read_port;
+	/* Set Command Queue Threshold to max value 11111b (?) */
+	outSISIDXREG(SISSR, 0x27, 0x1F);
+
+	/* Disable queue flipping */
+	inSISIDXREG(SISCR, 0x55, tempCR55);
+	andSISIDXREG(SISCR, 0x55, 0x33);
+	/* Synchronous reset for Command Queue */
+	outSISIDXREG(SISSR, 0x26, 0x01);
+	MMIO_OUT32(si.regs, 0x85c4, 0);
+	      
+	/* Enable VRAM Command Queue mode */
+	if( si.chip == XGI_20 ) {
+		/* On XGI_20, always 128K */
+		SR26 = 0x40 | 0x04 | 0x01;
+	 } else {
+	 	SR26 = (0x40 | 0x00 | 0x01);
+	}
 	
-	/* TW: Set Auto_Correction bit */
-	outSISIDXREG(SISSR, IND_SIS_CMDQUEUE_SET, SIS_CMD_QUEUE_SIZE_512k | SIS_MMIO_CMD_ENABLE | SIS_CMD_AUTO_CORR );
-	*cmdq_baseport = si.video_size - COMMAND_QUEUE_AREA_SIZE;
+	outSISIDXREG(SISSR, 0x26, SR26);
+	SR26 &= 0xfe;
+	outSISIDXREG(SISSR, 0x26, SR26);
 	
-	si.video_size -= COMMAND_QUEUE_AREA_SIZE;
+	(si.cmdQ_SharedWritePort) = (unsigned int)(MMIO_IN32(si.regs, 0x85c8));
+	MMIO_OUT32(si.regs, 0x85c4, (uint32)((si.cmdQ_SharedWritePort)));
+	MMIO_OUT32(si.regs, 0x85C0, si.cmdQueueOffset);
+	temp = (uint32)si.framebuffer;
+	temp += si.cmdQueueOffset;
+	si.cmdQueueBase = (unsigned int*)temp;
+	outSISIDXREG(SISCR, 0x55, tempCR55);
 }
 
 void sis_pre_setmode( uint8 rate_idx )
@@ -774,6 +1018,8 @@ void sis_pre_setmode( uint8 rate_idx )
 	int tvregnum = 0;
 
 	si.currentvbflags &= (VB_VIDEOBRIDGE | VB_DISPTYPE_DISP2);
+	
+	outSISIDXREG(SISSR, 0x05, 0x86);
 
 	inSISIDXREG(SISCR, 0x31, cr31);
 	cr31 &= ~0x60;
@@ -803,7 +1049,7 @@ void sis_pre_setmode( uint8 rate_idx )
 
 	   case CRT2_TV:
 	      cr38 &= ~0xc0;   /* Clear PAL-M / PAL-N bits */
-	      if((si.vbflags & TV_YPBPR) && (si.vbflags & (VB_301C|VB_301LV|VB_302LV))) {
+	      if((si.vbflags & TV_YPBPR) && (si.vbflags2 & VB2_SISYPBPRBRIDGE)) {
 	         if(si.chip >= SIS_661) {
 		    cr38 |= 0x04;
 		    if(si.vbflags & TV_YPBPR525P)       cr35 |= 0x20;
@@ -821,7 +1067,7 @@ void sis_pre_setmode( uint8 rate_idx )
 		    cr31 &= ~0x01;
 		    si.currentvbflags |= (TV_YPBPR | (si.vbflags & TV_YPBPRALL));
 	         }
-	      } else if((si.vbflags & TV_HIVISION) && (si.vbflags & (VB_301|VB_301B|VB_302B))) {
+	      } else if((si.vbflags & TV_HIVISION) && (si.vbflags2 & VB2_SISHIVISIONBRIDGE)) {
 	         if(si.chip >= SIS_661) {
 	            cr38 |= 0x04;
 	            cr35 |= 0x60;
@@ -904,7 +1150,7 @@ void sis_pre_setmode( uint8 rate_idx )
 	outSISIDXREG(SISCR, 0x31, cr31);
 
 	if( si.sisvga_engine == SIS_315_VGA )
-		SiS310Idle
+		SiSIdle
 	else
 		SiS300Idle
 	
@@ -942,7 +1188,7 @@ void sis_post_setmode()
 	sis_fixup_SR11();
 
 	/* We can't switch off CRT1 if bridge is in slave mode */
-	if(si.vbflags & VB_VIDEOBRIDGE) {
+	if(si.vbflags2 & VB2_VIDEOBRIDGE) {
 		if(sis_bridgeisslave()) doit = FALSE;
 	} else si.crt1off = 0;
 
@@ -986,7 +1232,7 @@ void sis_post_setmode()
         andSISIDXREG(SISSR, IND_SIS_RAMDAC_CONTROL, ~0x04);
 
 	if(si.currentvbflags & CRT2_TV) {
-	   if(si.vbflags & VB_SISBRIDGE) {
+	   if(si.vbflags2 & VB2_SISBRIDGE) {
 	      inSISIDXREG(SISPART2,0x1f,si.p2_1f);
 	      inSISIDXREG(SISPART2,0x20,si.p2_20);
 	      inSISIDXREG(SISPART2,0x2b,si.p2_2b);
@@ -994,7 +1240,7 @@ void sis_post_setmode()
 	      inSISIDXREG(SISPART2,0x43,si.p2_43);
 	      inSISIDXREG(SISPART2,0x01,si.p2_01);
 	      inSISIDXREG(SISPART2,0x02,si.p2_02);
-	   } else if(si.vbflags & VB_CHRONTEL) {
+	   } else if(si.vbflags2 & VB2_CHRONTEL) {
 	      if(si.chronteltype == 1) {
 	         si.tvx = SiS_GetCH700x(&SiS_Pr, 0x0a);
 	         si.tvx |= (((SiS_GetCH700x(&SiS_Pr, 0x08) & 0x02) >> 1) << 8);
@@ -1003,114 +1249,17 @@ void sis_post_setmode()
  	      }
 	   }
 	}
-
-	if((si.currentvbflags & CRT2_TV) && (si.vbflags & VB_301)) {  /* Set filter for SiS301 */
-
-		unsigned char filter_tb = 0;
-
-		switch (si.video_width) {
-		   case 320:
-			filter_tb = (si.vbflags & TV_NTSC) ? 4 : 12;
-			break;
-		   case 640:
-			filter_tb = (si.vbflags & TV_NTSC) ? 5 : 13;
-			break;
-		   case 720:
-			filter_tb = (si.vbflags & TV_NTSC) ? 6 : 14;
-			break;
-		   case 400:
-		   case 800:
-			filter_tb = (si.vbflags & TV_NTSC) ? 7 : 15;
-			break;
-		   default:
-			break;
-		}
-
-		orSISIDXREG(SISPART1, si.CRT2_write_enable, 0x01);
-
-		if(si.vbflags & TV_NTSC) {
-
-		        andSISIDXREG(SISPART2, 0x3a, 0x1f);
-
-			if (si.vbflags & TV_SVIDEO) {
-
-			        andSISIDXREG(SISPART2, 0x30, 0xdf);
-
-			} else if (si.vbflags & TV_AVIDEO) {
-
-			        orSISIDXREG(SISPART2, 0x30, 0x20);
-
-				switch (si.video_width) {
-				case 640:
-				        outSISIDXREG(SISPART2, 0x35, 0xEB);
-					outSISIDXREG(SISPART2, 0x36, 0x04);
-					outSISIDXREG(SISPART2, 0x37, 0x25);
-					outSISIDXREG(SISPART2, 0x38, 0x18);
-					break;
-				case 720:
-					outSISIDXREG(SISPART2, 0x35, 0xEE);
-					outSISIDXREG(SISPART2, 0x36, 0x0C);
-					outSISIDXREG(SISPART2, 0x37, 0x22);
-					outSISIDXREG(SISPART2, 0x38, 0x08);
-					break;
-				case 400:
-				case 800:
-					outSISIDXREG(SISPART2, 0x35, 0xEB);
-					outSISIDXREG(SISPART2, 0x36, 0x15);
-					outSISIDXREG(SISPART2, 0x37, 0x25);
-					outSISIDXREG(SISPART2, 0x38, 0xF6);
-					break;
-				}
-			}
-
-		} else if(si.vbflags & TV_PAL) {
-
-			andSISIDXREG(SISPART2, 0x3A, 0x1F);
-
-			if (si.vbflags & TV_SVIDEO) {
-
-				andSISIDXREG(SISPART2, 0x30, 0xDF);
-
-			} else if (si.vbflags & TV_AVIDEO) {
-
-				orSISIDXREG(SISPART2, 0x30, 0x20);
-
-				switch (si.video_width) {
-				case 640:
-					outSISIDXREG(SISPART2, 0x35, 0xF1);
-					outSISIDXREG(SISPART2, 0x36, 0xF7);
-					outSISIDXREG(SISPART2, 0x37, 0x1F);
-					outSISIDXREG(SISPART2, 0x38, 0x32);
-					break;
-				case 720:
-					outSISIDXREG(SISPART2, 0x35, 0xF3);
-					outSISIDXREG(SISPART2, 0x36, 0x00);
-					outSISIDXREG(SISPART2, 0x37, 0x1D);
-					outSISIDXREG(SISPART2, 0x38, 0x20);
-					break;
-				case 400:
-				case 800:
-					outSISIDXREG(SISPART2, 0x35, 0xFC);
-					outSISIDXREG(SISPART2, 0x36, 0xFB);
-					outSISIDXREG(SISPART2, 0x37, 0x14);
-					outSISIDXREG(SISPART2, 0x38, 0x2A);
-					break;
-				}
-			}
-		}
-	}
-
 }
 
 #define readb(addr) (*(volatile unsigned char *) (addr))
 
 char *sis_find_rom()
 {
-	USHORT pciid;
+	uint16 pciid;
 	u32    temp;
 	SIS_IOTYPE1 *rom_base, *rom;
 	int    romptr;
-	UCHAR  *myrombase;
+	uint8  *myrombase;
 	
 	if(!(myrombase = malloc(65536)))
 		return NULL;
@@ -1136,7 +1285,7 @@ char *sis_find_rom()
 		}
 
 		pciid = readb(rom + 4) | (readb(rom + 5) << 8);
-		if(pciid != 0x1039) {
+		if(pciid != 0x1039 && pciid != 0x18ca ) {
 			continue;
 		}
 
@@ -1165,11 +1314,11 @@ int sis_init()
 			si.chip = SIS_300;
 			si.sisvga_engine = SIS_300_VGA;
 			si.CRT2_write_enable = IND_SIS_CRT2_WRITE_ENABLE_300;
-			strcpy( si.name, "330" );
+			strcpy( si.name, "SiS 330" );
 		break; 
 		case 0x6300: /* SIS 630/730 */
 			si.chip = SIS_630;
-			strcpy( si.name, "630" );
+			strcpy( si.name, "SiS 630" );
 			si.sisvga_engine = SIS_300_VGA;
 			si.CRT2_write_enable = IND_SIS_CRT2_WRITE_ENABLE_300;
 		break;
@@ -1177,35 +1326,35 @@ int sis_init()
 			si.chip = SIS_540;
 			si.sisvga_engine = SIS_300_VGA;
 			si.CRT2_write_enable = IND_SIS_CRT2_WRITE_ENABLE_300;
-			strcpy( si.name, "540" );
+			strcpy( si.name, "SiS 540" );
 		break;
 		case 0x310: /* SIS 315H */
 			si.chip = SIS_315H;
 			si.sisvga_engine = SIS_315_VGA;
 			si.CRT2_write_enable = IND_SIS_CRT2_WRITE_ENABLE_315;
-			strcpy( si.name, "315H" );
+			strcpy( si.name, "SiS 315H" );
 		break; 
 		case 0x315: /* SIS 315 */
 			si.chip = SIS_315H;
 			si.sisvga_engine = SIS_315_VGA;
 			si.CRT2_write_enable = IND_SIS_CRT2_WRITE_ENABLE_315;
-			strcpy( si.name, "315" );
+			strcpy( si.name, "SiS 315" );
 		break; 
 		case 0x325: /* SIS 315 PRO */
 			si.chip = SIS_315H;
 			si.sisvga_engine = SIS_315_VGA;
 			si.CRT2_write_enable = IND_SIS_CRT2_WRITE_ENABLE_315;
-			strcpy( si.name, "315 PRO" );
+			strcpy( si.name, "SiS 315 PRO" );
 		break;
 		case 0x5315: /* SIS 550 VGA */
 			si.chip = SIS_550;
 			si.sisvga_engine = SIS_315_VGA;
 			si.CRT2_write_enable = IND_SIS_CRT2_WRITE_ENABLE_315;
-			strcpy( si.name, "550" );
+			strcpy( si.name, "SiS 550" );
 		break;
 		case 0x6325: /* SIS 650/740 */
 			si.chip = SIS_650;
-			strcpy( si.name, "650" );
+			strcpy( si.name, "SiS 650" );
 			si.sisvga_engine = SIS_315_VGA;
 			si.CRT2_write_enable = IND_SIS_CRT2_WRITE_ENABLE_315;
 		break;
@@ -1213,11 +1362,23 @@ int sis_init()
 			si.chip = SIS_330;
 			si.sisvga_engine = SIS_315_VGA;
 			si.CRT2_write_enable = IND_SIS_CRT2_WRITE_ENABLE_315;
-			strcpy( si.name, "Xabre" );
+			strcpy( si.name, "SiS Xabre" );
 		break;
 		case 0x6330: /* SIS 660/760 */	
 			si.chip = SIS_660;		
-			strcpy( si.name, "660" );
+			strcpy( si.name, "SiS 660" );
+			si.sisvga_engine = SIS_315_VGA;
+			si.CRT2_write_enable = IND_SIS_CRT2_WRITE_ENABLE_315;
+		break;
+		case 0x0020: /* XGI20 */	
+			si.chip = XGI_20;		
+			strcpy( si.name, "XGI Z7" );
+			si.sisvga_engine = SIS_315_VGA;
+			si.CRT2_write_enable = IND_SIS_CRT2_WRITE_ENABLE_315;
+		break;
+		case 0x0040: /* XGI40 */	
+			si.chip = XGI_40;		
+			strcpy( si.name, "XGI V3XT/V5/V8" );
 			si.sisvga_engine = SIS_315_VGA;
 			si.CRT2_write_enable = IND_SIS_CRT2_WRITE_ENABLE_315;
 		break;
@@ -1225,13 +1386,15 @@ int sis_init()
 			return -1;
 	}
 	
+	si.revision_id = pci_gfx_read_config( si.fd, si.pci_dev.nBus, si.pci_dev.nDevice, si.pci_dev.nFunction, PCI_REVISION, 1 );
+	
 	
 	/* Set default values */
-	si.crt2type = -1;
 	si.detectedpdc  = 0xff;
 	si.detectedpdca = 0xff;
 	si.detectedlcda = 0xff;
 	si.vbflags = 0;
+	si.vbflags2 = 0;
 	si.crt1off = 0;
 	
 	SiS_Pr.UsePanelScaler = -1;
@@ -1250,6 +1413,7 @@ int sis_init()
 	SiS_Pr.SiS_MyCR63 = 0x63;
 	SiS_Pr.PDC  = -1;
 	SiS_Pr.PDCA = -1;
+	SiS_Pr.DDCPortMixup = FALSE;
 	if(si.chip >= SIS_330) {
 		SiS_Pr.SiS_MyCR63 = 0x53;
 		if(si.chip >= SIS_661) {
@@ -1286,23 +1450,27 @@ int sis_init()
 				si.chip = SIS_760;
 				strcpy( si.name, "760" );
 			break;
+			case 0x0761:
+				si.chip = SIS_761;
+				strcpy( si.name, "761" );
+			break;
 		}
 	}
 	
-	dbprintf( "SiS %s found\n", si.name );
+	dbprintf( "%s found\n", si.name );
 	
 	/* Initialize BIOS emulation */
-	sishw_ext.jChipType = si.chip;
-	sishw_ext.ulIOAddress = SiS_Pr.RelIO = si.io_base;
-	sishw_ext.ulIOAddress += 0x30;
+	SiS_Pr.ChipType = si.chip;
+	SiS_Pr.ivideo = (void*)&si;
+	SiS_Pr.RelIO = si.io_base + 0x30;
+	SiS_Pr.IOAddress = si.io_base + 0x30;
 	
-	
-	SiSRegInit(&SiS_Pr, (USHORT)sishw_ext.ulIOAddress);
+	SiSRegInit(&SiS_Pr, (uint16)SiS_Pr.IOAddress);
 	
 	/* Read subsystem ids */
 	si.subsys_vendor_id = pci_gfx_read_config( si.fd, si.pci_dev.nBus, si.pci_dev.nDevice, si.pci_dev.nFunction, PCI_SUBSYSTEM_VENDOR_ID, 2 );
-    si.subsys_device_id = pci_gfx_read_config( si.fd, si.pci_dev.nBus, si.pci_dev.nDevice, si.pci_dev.nFunction, PCI_SUBSYSTEM_ID, 2 );
-	
+	si.subsys_vendor_id = pci_gfx_read_config( si.fd, si.pci_dev.nBus, si.pci_dev.nDevice, si.pci_dev.nFunction, PCI_SUBSYSTEM_VENDOR_ID, 2 );
+   
 	dbprintf( "Subsystem id 0x%x 0x%x\n", (uint)si.subsys_vendor_id, (uint)si.subsys_device_id );
 	
 	/* Find PCI systems for Chrontel/GPIO communication setup */
@@ -1325,21 +1493,22 @@ int sis_init()
 	/* Unlock hardware */
 	outSISIDXREG( SISSR, IND_SIS_PASSWORD, SIS_PASSWORD );
 	
-	sishw_ext.bIntegratedMMEnabled = TRUE;
-	if( si.sisvga_engine == SIS_300_VGA ) {
-		if( si.chip != SIS_300 ) {
-			inSISIDXREG( SISSR,0x1a, reg );
-			if (!( reg & 0x10 ))
-				sishw_ext.bIntegratedMMEnabled = FALSE;
-		}
-	}
 
 	/* Search for ROM */
-	sishw_ext.pjVirtualRomBase = sis_find_rom();
-	if( sishw_ext.pjVirtualRomBase ) {
+	SiS_Pr.VirtualRomBase = sis_find_rom();
+	if( SiS_Pr.VirtualRomBase ) {
 		dbprintf( "Video ROM found and mapped to %p\n",
-			sishw_ext.pjVirtualRomBase );
-		sishw_ext.UseROM = TRUE;
+			SiS_Pr.VirtualRomBase );
+		SiS_Pr.UseROM = TRUE;
+		if( si.chip >= XGI_20 )
+		{
+			SiS_Pr.UseROM = false;
+			SiS_Pr.SiS_XGIROM = TRUE;
+			if( (si.revision_id == 2) &&
+		       (!(SiS_Pr.VirtualRomBase[0x1d1] & 0x01)) ) {
+				SiS_Pr.DDCPortMixup = TRUE;
+		   }
+		}
 	} else {
 		dbprintf( "Video ROM not found\n" );
 		return -1;
@@ -1354,31 +1523,31 @@ int sis_init()
 	   BOOLEAN footprint;
 	   u32 chksum = 0;
 
-	   if(sishw_ext.UseROM) {
-	      biosver = sishw_ext.pjVirtualRomBase + 0x06;
-	      biosdate = sishw_ext.pjVirtualRomBase + 0x2c;
-              for(i=0; i<32768; i++) chksum += sishw_ext.pjVirtualRomBase[i];
+	   if(SiS_Pr.UseROM) {
+	      biosver = SiS_Pr.VirtualRomBase + 0x06;
+	      biosdate = SiS_Pr.VirtualRomBase + 0x2c;
+              for(i=0; i<32768; i++) chksum += SiS_Pr.VirtualRomBase[i];
 	   }
 
 	   i=0;
            do {
 	      if( (mycustomttable[i].chipID == si.chip) &&
 		  ((!strlen(mycustomttable[i].biosversion)) ||
-		   (sishw_ext.UseROM &&
+		   (SiS_Pr.UseROM &&
 		   (!strncmp(mycustomttable[i].biosversion, biosver, strlen(mycustomttable[i].biosversion))))) &&
 		  ((!strlen(mycustomttable[i].biosdate)) ||
-		   (sishw_ext.UseROM &&
+		   (SiS_Pr.UseROM &&
 		   (!strncmp(mycustomttable[i].biosdate, biosdate, strlen(mycustomttable[i].biosdate))))) &&
 		  ((!mycustomttable[i].bioschksum) ||
-		   (sishw_ext.UseROM &&
+		   (SiS_Pr.UseROM &&
 		   (mycustomttable[i].bioschksum == chksum)))	&&
 		  (mycustomttable[i].pcisubsysvendor == si.subsys_vendor_id) &&
 		  (mycustomttable[i].pcisubsyscard == si.subsys_device_id) ) {
 		 footprint = TRUE;
 		 for(j = 0; j < 5; j++) {
 		    if(mycustomttable[i].biosFootprintAddr[j]) {
-		       if(sishw_ext.UseROM) {
-	                  if(sishw_ext.pjVirtualRomBase[mycustomttable[i].biosFootprintAddr[j]] !=
+		       if(SiS_Pr.UseROM) {
+	                  if(SiS_Pr.VirtualRomBase[mycustomttable[i].biosFootprintAddr[j]] !=
 				mycustomttable[i].biosFootprintData[j]) {
 				footprint = FALSE;
 			  }
@@ -1413,26 +1582,27 @@ int sis_init()
 	/* Enable 2D accelerator engine */
 	orSISIDXREG( SISSR, IND_SIS_MODULE_ENABLE, SIS_ENABLE_2D );
 	
-	sishw_ext.ulVideoMemorySize = si.video_size;
-	sishw_ext.pjVideoMemoryAddress = si.framebuffer;
+	SiS_Pr.VideoMemorySize = si.video_size;
+	SiS_Pr.VideoMemoryAddress = si.framebuffer;
 	
-	
-	si.newrom = SiSDetermineROMLayout661(&SiS_Pr, &sishw_ext);
+	si.newrom = 0;
+	if( si.chip < XGI_20 )
+		si.newrom = SiSDetermineROMLayout661(&SiS_Pr);
 	
 	/* Initialize video bridge */
 	sis_sense_crt1();
 	sis_get_VB_type();
-	if(si.vbflags & VB_VIDEOBRIDGE) {
+	if(si.vbflags2 & VB2_VIDEOBRIDGE) {
 		sis_detect_VB_connect();
 	}
 	
 	si.currentvbflags = si.vbflags & (VB_VIDEOBRIDGE | TV_STANDARD);
 	
-	if(si.vbflags & VB_VIDEOBRIDGE) {
+	if(si.vbflags2 & VB2_VIDEOBRIDGE) {
 		      /* Chrontel 700x TV detection often unreliable, therefore use a
 		       * different default order on such machines
 		       */
-		      if((si.sisvga_engine == SIS_300_VGA) && (si.vbflags & VB_CHRONTEL)) {
+		      if((si.sisvga_engine == SIS_300_VGA) && (si.vbflags2 & VB2_CHRONTEL)) {
 		         if(si.vbflags & CRT2_LCD)      si.currentvbflags |= CRT2_LCD;
 		         else if(si.vbflags & CRT2_TV)  si.currentvbflags |= CRT2_TV;
 		         else if(si.vbflags & CRT2_VGA) si.currentvbflags |= CRT2_VGA;
@@ -1474,12 +1644,15 @@ int sis_init()
 		   } else if(SiS_Pr.SiS_CustomT == CUT_PANEL848) {
 			si.lcdxres =  848; si.lcdyres =  480;
 		   }
+		   else if(SiS_Pr.SiS_CustomT == CUT_PANEL856) {
+			si.lcdxres =  856; si.lcdyres =  480;
+		   }
 		   dbprintf( "Detected %dx%d flat panel\n",	si.lcdxres, si.lcdyres);
 		}
         
         /* Save the current PanelDelayCompensation if the LCD is currently used */
 		if(si.sisvga_engine == SIS_300_VGA) {
-	           if(si.vbflags & (VB_LVDS | VB_30xBDH)) {
+	           if(si.vbflags2 & (VB2_LVDS | VB2_30xBDH)) {
 		       int tmp;
 		       inSISIDXREG(SISCR,0x30,tmp);
 		       if(tmp & 0x20) {
@@ -1502,7 +1675,7 @@ int sis_init()
 		if(si.sisvga_engine == SIS_315_VGA) {
 
 		   /* Try to find about LCDA */
-		   if(si.vbflags & (VB_301C | VB_302B | VB_301LV | VB_302LV | VB_302ELV)) {
+		   if(si.vbflags2 & VB2_SISLCDABRIDGE) {
 		      int tmp;
 		      inSISIDXREG(SISPART1,0x13,tmp);
 		      if(tmp & 0x04) {
@@ -1512,7 +1685,7 @@ int sis_init()
 	           }
 
 		   /* Save PDC */
-		   if(si.vbflags & (VB_301LV | VB_302LV | VB_302ELV)) {
+		   if(si.vbflags2 & VB2_SISLVDSBRIDGE) {
 		      int tmp;
 		      inSISIDXREG(SISCR,0x30,tmp);
 		      if((tmp & 0x20) || (si.detectedlcda != 0xff)) {
@@ -1554,7 +1727,7 @@ int sis_init()
 		      }
 
 		      /* Save EMI */
-		      if(si.vbflags & (VB_302LV | VB_302ELV)) {
+		      if(si.vbflags2 & VB2_SISEMIBRIDGE) {
 		         inSISIDXREG(SISPART4,0x30,SiS_Pr.EMI_30);
 			 inSISIDXREG(SISPART4,0x31,SiS_Pr.EMI_31);
 			 inSISIDXREG(SISPART4,0x32,SiS_Pr.EMI_32);
@@ -1567,7 +1740,7 @@ int sis_init()
 		   }
 
 		   /* Let user override detected PDCs (all bridges) */
-		   if(si.vbflags & (VB_301B | VB_301C | VB_301LV | VB_302LV | VB_302ELV)) {
+		   if(si.vbflags2 & VB2_30xBLV) {
 		      if((SiS_Pr.PDC != -1) && (SiS_Pr.PDC != si.detectedpdc)) {
 		         dbprintf("Using LCD PDC 0x%02x (for LCD=CRT2)\n",
 				 SiS_Pr.PDC);

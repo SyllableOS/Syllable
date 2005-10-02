@@ -485,7 +485,7 @@ bool ATIRadeon::InitHardware( int nFd ) {
 
 	// allocate framebuffer area
 	m_hFramebufferArea = create_area ("radeon_fb", (void **)&m_pFramebufferBase,
-		rinfo.video_ram, AREA_FULL_ACCESS, AREA_NO_LOCK);
+		rinfo.video_ram, AREA_FULL_ACCESS | AREA_WRCOMB, AREA_NO_LOCK);
 	if( m_hFramebufferArea < 0 ) {
 		dbprintf ("Radeon :: failed to create framebuffer area (%d)\n", m_hFramebufferArea);
 		return false;
@@ -538,10 +538,6 @@ bool ATIRadeon::InitHardware( int nFd ) {
 	 */
 	SaveState (&rinfo.init_state);
 
-	/* Try to enable hardware cursor */
-	HWcursor = false;
-	if( m_bCfgUseHWCursor )
-		HWCursorInit();
 
 	/* Enable PM on mobility chips */
 	if (rinfo.is_mobility) {
@@ -999,20 +995,6 @@ int ATIRadeon::SetScreenMode( screen_mode sMode )
 			m_cLock.Unlock();
 			
 			m_bFirstRepaint = true;
-		}
-
-		/* Re-enable the ARGB hardware cursor */
-		if(HWcursor) {
-			uint32 save1;
-			m_cLock.Lock();
-			FifoWait(1);
-			save1 = INREG(CRTC_GEN_CNTL) & ~(uint32) (3 << 20);
-			save1 |= (uint32) (2 << 20);
-			OUTREG(CRTC_GEN_CNTL, save1 & ~CRTC_CUR_EN);
-			snooze(100);
-			FifoWait(1);
-			OUTREG(CRTC_GEN_CNTL, save1);
-			m_cLock.Unlock();
 		}
 	}
 	

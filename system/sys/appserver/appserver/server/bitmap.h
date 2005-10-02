@@ -45,6 +45,7 @@ public:
     uint8*	    m_pRaster;		// adress of frame buffer
     DisplayDriver*  m_pcDriver;
     bool	    m_bVideoMem;
+    uint32		m_nVideoMemOffset;
 protected:
     ~SrvBitmap();
 };

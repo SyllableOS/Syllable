@@ -38,7 +38,6 @@ void ATIRadeon::GetSettings()
 	m_bCfgEnableR300 = false;
 	m_bCfgEnableMobility = false;
 	m_bCfgEnableMirroring = true;
-	m_bCfgUseHWCursor = true;
 	m_bCfgEnableDebug = false;
 	m_bCfgDisableBIOSUsage = false;
 
@@ -62,8 +61,6 @@ void ATIRadeon::GetSettings()
 			m_bCfgEnableMobility = true;
 		if( strcasestr( buffer, "\nEnableMirroring=0") )
 			m_bCfgEnableMirroring = false;
-		if( strcasestr( buffer, "\nEnableHWCursor=0") )
-			m_bCfgEnableMobility = true;
 		if( strcasestr( buffer, "\nEnableDebug=1") )
 			m_bCfgEnableDebug = true;
 		if( strcasestr( buffer, "\nDisableBIOSUsage=1") )
@@ -77,8 +74,6 @@ void ATIRadeon::GetSettings()
 		m_bCfgEnableMobility ? "enabled" : "disabled");
 	dbprintf("Radeon :: Notebook CRT mirroring support: %s\n",
 		m_bCfgEnableMirroring ? "enabled" : "disabled");
-	dbprintf("Radeon :: Hardware cursor support: %s\n",
-		m_bCfgUseHWCursor ? "enabled" : "disabled");
 	dbprintf("Radeon :: Debugging output: %s\n",
 		m_bCfgEnableDebug ? "enabled" : "disabled");
 	dbprintf("Radeon :: Card BIOS usage (disabling dangerous): %s\n",
@@ -94,8 +89,6 @@ int ATIRadeon::BytesPerPixel (color_space cs) {
 		case    CS_RGB24:
 			return( 3 );
 		case    CS_RGB16:
-		case    CS_RGB15:
-		case    CS_RGBA15:
 			return( 2 );
 		case CS_CMAP8:
 		case CS_GRAY8:
@@ -114,9 +107,6 @@ int ATIRadeon::BitsPerPixel (color_space cs) {
 			return( 24 );
 		case    CS_RGB16:
 			return( 16 );
-		case    CS_RGB15:
-		case    CS_RGBA15:
-			return( 15 );
 		case CS_CMAP8:
 		case CS_GRAY8:
 			return( 8 );

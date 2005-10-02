@@ -119,10 +119,6 @@ bool M64VesaDriver::InitModes( void )
 	     sModeInfo.RedFieldPosition == 0 && sModeInfo.GreenFieldPosition == 0 && sModeInfo.BlueFieldPosition == 0 ) {
 	    m_cModeList.push_back( VesaMode( sModeInfo.XResolution, sModeInfo.YResolution, sModeInfo.BytesPerScanLine,
 					     CS_CMAP8, 60.0f, anModes[i] | 0x4000, sModeInfo.PhysBasePtr ) );
-	} else if ( sModeInfo.RedMaskSize == 5 && sModeInfo.GreenMaskSize == 5 && sModeInfo.BlueMaskSize == 5 &&
-		    sModeInfo.RedFieldPosition == 10 && sModeInfo.GreenFieldPosition == 5 && sModeInfo.BlueFieldPosition == 0 ) {
-	    m_cModeList.push_back( VesaMode( sModeInfo.XResolution, sModeInfo.YResolution, sModeInfo.BytesPerScanLine,
-					     CS_RGB15, 60.0f, anModes[i] | 0x4000, sModeInfo.PhysBasePtr ) );
 	} else if ( sModeInfo.RedMaskSize == 5 && sModeInfo.GreenMaskSize == 6 && sModeInfo.BlueMaskSize == 5 &&
 		    sModeInfo.RedFieldPosition == 11 && sModeInfo.GreenFieldPosition == 5 && sModeInfo.BlueFieldPosition == 0 ) {
 	    m_cModeList.push_back( VesaMode( sModeInfo.XResolution, sModeInfo.YResolution, sModeInfo.BytesPerScanLine,

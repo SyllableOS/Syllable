@@ -43,13 +43,21 @@ static const uint8_t APIC_EOI		= 0xB0;
 static const uint8_t APIC_EIO_ACK	= 0x0;	/* Write this to the EOI register */
 static const uint8_t APIC_RRR		= 0xC0;
 static const uint8_t APIC_LDR		= 0xD0;
+static const uint32_t APIC_LDR_MASK	= ( 0xFF << 24 );
 #define	GET_APIC_LOGICAL_ID(x)	(((x)>>24)&0xFF)
+#define	SET_APIC_LOGICAL_ID(x)	(((x)<<24))
+static const uint32_t APIC_ALL_CPUS	= 0xFF;
+
 static const uint8_t APIC_DFR		= 0xE0;
+static const uint32_t APIC_DFR_CLUSTER	= 0x0FFFFFFFul;
+static const uint32_t APIC_DFR_FLAT		= 0xFFFFFFFFul;
 
 #define	GET_APIC_DFR(x)		(((x)>>28)&0x0F)
 #define	SET_APIC_DFR(x)		((x)<<28)
 
 static const uint8_t APIC_SPIV			= 0xF0;	///< Spurious interupt vector
+static const uint32_t APIC_SPIV_APIC_ENABLED	= 0x100;
+static const uint32_t APIC_SPIV_FOCUS_DISABLED	= 0x200;
 static const uint32_t APIC_ISR			= 0x100;
 static const uint32_t APIC_TMR			= 0x180;
 static const uint32_t APIC_IRR			= 0x200;
@@ -81,6 +89,7 @@ static const uint32_t APIC_DEST_DM_REMRD	= 0x00300;
 static const uint32_t APIC_DEST_DM_NMI		= 0x00400;
 static const uint32_t APIC_DEST_DM_INIT		= 0x00500;
 static const uint32_t APIC_DEST_DM_STARTUP	= 0x00600;
+static const uint32_t APIC_DEST_DM_EXTINT	= 0x00700;
 static const uint32_t APIC_DEST_VECTOR_MASK	= 0x000FF;
 static const uint32_t APIC_ICR2			= 0x310;
 

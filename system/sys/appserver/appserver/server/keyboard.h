@@ -28,9 +28,13 @@ extern os::Gate g_cKeymapGate;
 keymap* load_keymap( FILE* hFile );
 
 uint32	GetQualifiers();
-int convert_key_code( char* pzDst, int nRawKey, int nQual, int *nDeadKeyState );
+int		convert_key_code( char* pzDst, int nRawKey, int nQual, int *nDeadKeyState );
+void	HandleKeyboard( bool bKeyEvent, int nKeyCode );
 void	InitKeyboard( void );
-bool SetKeymap( const std::string& cKeymapPath );
+bool	SetKeymap( const std::string& cKeymapPath );
+
+
+
 
 
 

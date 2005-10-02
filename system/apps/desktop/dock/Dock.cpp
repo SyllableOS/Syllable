@@ -622,13 +622,60 @@ void DockWin::HandleMessage( os::Message* pcMessage )
 			}
 			break;
 		}
+		case os::DOCK_ADD_VIEW:
+		{
+			/* Add a view */
+			os::DockPlugin* pcPlugin = NULL;			
+			os::View* pcView = NULL;
+			if( pcMessage->FindPointer( "view", (void**)&pcView ) == 0 && pcMessage->FindPointer( "plugin", (void**)&pcPlugin ) == 0 )
+			{
+				pcPlugin->SetViewCount( pcPlugin->GetViewCount() + 1 );
+				m_pcView->AddChild( pcView );
+				m_pcPluginViews.push_back( pcView );
+				UpdatePlugins();
+			}
+			break;
+		}
+		case os::DOCK_REMOVE_VIEW:
+		{
+			/* Add a view */
+			os::DockPlugin* pcPlugin = NULL;
+			os::View* pcView = NULL;
+			if( pcMessage->FindPointer( "view", (void**)&pcView ) == 0 && pcMessage->FindPointer( "plugin", (void**)&pcPlugin ) == 0 )
+			{
+				bool bRemoved = false;
+				for( int i = 0; i < m_pcPluginViews.size(); i++ )
+				{
+					if( m_pcPluginViews[i] == pcView )
+					{
+						pcPlugin->SetViewCount( pcPlugin->GetViewCount() - 1 );
+						m_pcView->RemoveChild( pcView );
+						delete( pcView );
+						m_pcPluginViews.erase( m_pcPluginViews.begin() + i );
+						bRemoved = true;
+						if( pcPlugin->GetDeleted() && pcPlugin->GetViewCount() == 0 )
+						{
+							thread_id nThread = -1;
+							if( pcMessage->FindInt32( "thread", &nThread ) == 0 && nThread != -1 )
+								wait_for_thread( nThread );
+							DeletePlugin( pcPlugin );
+						}
+						break;
+					}
+				}
+				if( !bRemoved )
+					dbprintf( "Error: Tried to remove a non-added view\n" );			
+				UpdatePlugins();
+			}
+			break;
+		}
 		case os::DOCK_UPDATE_FRAME:
 		{
 			/* Called by a plugin to update its frame */
 			UpdatePlugins();
 			break;
 		}
-		case os::DOCK_REMOVE:
+		case os::DOCK_REMOVE_PLUGIN:
 		{
 			/* Called by a plugin to remove itself from the dock */
 			os::DockPlugin* pcPlugin;
@@ -657,13 +704,13 @@ void DockWin::AddPlugin( os::String zPath )
 			return;		
 	}
 	
-	/* Check if the plugin path is in "/system/drivers/dock" */
+	/* Check if the plugin path is in "/system/extensions/dock" */
 	os::Path cPath( zPath.c_str() );
-	if( !( os::String( cPath.GetDir().GetPath() ) == "/system/drivers/dock" ||
-		   os::String( cPath.GetDir().GetPath() ) == "/boot/atheos/sys/drivers/dock" ||
-		   os::String( cPath.GetDir().GetPath() ) == "/boot/system/drivers/dock" ) )
+	if( !( os::String( cPath.GetDir().GetPath() ) == "/system/extensions/dock" ||
+		   os::String( cPath.GetDir().GetPath() ) == "/boot/atheos/sys/extensions/dock" ||
+		   os::String( cPath.GetDir().GetPath() ) == "/boot/system/extensions/dock" ) )
 	{
-		os::Alert* pcAlert = new os::Alert( "Dock", "Please copy dock plugins to /system/drivers/dock\n"
+		os::Alert* pcAlert = new os::Alert( "Dock", "Please copy dock plugins to /system/extensions/dock\n"
 													"before you try to add them to the dock", os::Alert::ALERT_INFO,
 													0, "Ok", NULL );
 		pcAlert->Go( new os::Invoker( 0 ) );
@@ -683,11 +730,16 @@ void DockWin::AddPlugin( os::String zPath )
 			if( get_symbol_address( nID, "init_dock_plugin", -1, (void**)&pInit ) == 0 )
 			{
 				os::Path cPath = os::Path( zPath.c_str() );
-				os::DockPlugin* pcPlugin = pInit( cPath, this );
-				m_pcView->AddChild( pcPlugin );
-				m_pcPlugins.push_back( pcPlugin );
-				SaveSettings();
-				return( UpdatePlugins() );
+				os::DockPlugin* pcPlugin = pInit();
+				pcPlugin->SetApp( this, nID );
+				if( pcPlugin->Initialize() != 0 )
+				{
+					dbprintf( "Error: Plugin %s failed to initialize\n", zPath.c_str() );
+				} else {
+					//dbprintf( "Plugin %s loaded %i\n", pcPlugin->GetIdentifier().c_str(), nID );
+					m_pcPlugins.push_back( pcPlugin );
+					SaveSettings();
+				}
 			}
 		}
 	}
@@ -706,19 +758,18 @@ void DockWin::UpdatePlugins()
 		nCurrentPos = (int)GetBounds().bottom - 4;
 	
 	/* Update the positions of the plugins */
-	for( uint32 i = 0; i < m_pcPlugins.size(); i++ )
+	for( uint32 i = 0; i < m_pcPluginViews.size(); i++ )
 	{
-		
 		if( bHorizontal )
-			m_pcPlugins[i]->SetFrame( os::Rect( nCurrentPos - (int)m_pcPlugins[i]->GetPreferredSize( false ).x, 3, nCurrentPos, 
+			m_pcPluginViews[i]->SetFrame( os::Rect( nCurrentPos - (int)m_pcPluginViews[i]->GetPreferredSize( false ).x, 3, nCurrentPos, 
 											3 + 23 ) );
 		else
-			m_pcPlugins[i]->SetFrame( os::Rect( 3, nCurrentPos - (int)m_pcPlugins[i]->GetPreferredSize( false ).y, 3 + 23, 
+			m_pcPluginViews[i]->SetFrame( os::Rect( 3, nCurrentPos - (int)m_pcPluginViews[i]->GetPreferredSize( false ).y, 3 + 23, 
 										nCurrentPos ) );
 		if( bHorizontal )
-			nCurrentPos -= (int)m_pcPlugins[i]->GetPreferredSize( false ).x + 8;
+			nCurrentPos -= (int)m_pcPluginViews[i]->GetPreferredSize( false ).x + 8;
 		else
-			nCurrentPos -= (int)m_pcPlugins[i]->GetPreferredSize( false ).y + 8;
+			nCurrentPos -= (int)m_pcPluginViews[i]->GetPreferredSize( false ).y + 8;
 	} 
 }
 
@@ -729,10 +780,19 @@ void DockWin::DeletePlugin( os::DockPlugin* pcPlugin )
 	{
 		if( pcPlugin == m_pcPlugins[i] )
 		{
-			m_pcView->RemoveChild( m_pcPlugins[i] );
-			delete(  m_pcPlugins[i] );
+			if( !pcPlugin->GetDeleted() )
+				pcPlugin->Delete();
+			if( pcPlugin->GetViewCount() > 0 )
+			{
+				/* Delete plugin later */
+				pcPlugin->SetDeleted();
+				return;
+			}
+			image_id nPlugin = pcPlugin->GetPluginId();
+			delete( m_pcPlugins[i] );
 			m_pcPlugins.erase( m_pcPlugins.begin() + i );
-			UpdatePlugins();
+			//dbprintf("Unload %i\n", nPlugin );
+			unload_library( nPlugin );
 			SaveSettings();
 			return;
 		}

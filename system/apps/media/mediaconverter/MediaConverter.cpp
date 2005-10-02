@@ -241,7 +241,7 @@ void MCWindow::HandleMessage( os::Message * pcMessage )
 			if ( m_bEncode )
 			{
 				/* ... but we are already encoding */
-				os::Application::GetInstance()->PostMessage( new os::Message( MC_GUI_START ), os::Application::GetInstance(  ) );
+				os::Application::GetInstance()->PostMessage( MC_GUI_START, os::Application::GetInstance(  ) );
 				break;
 			}
 			os::Message * pcNewMessage = new os::Message( MC_GUI_START );
@@ -287,6 +287,7 @@ void MCWindow::HandleMessage( os::Message * pcMessage )
 
 				pcNewMessage->AddString( "file", zFile.str() );
 				os::Application::GetInstance()->PostMessage( pcNewMessage, os::Application::GetInstance(  ) );
+				delete( pcNewMessage );
 			}
 		}
 		break;

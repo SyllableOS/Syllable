@@ -31,6 +31,9 @@
 
 #include "../../../server/ddriver.h"
 
+using namespace os;
+
+
 #define	B_NO_ERROR  0
 #define	B_ERROR    -1
 
@@ -135,17 +138,17 @@ typedef struct {
 static ModeDesc TridentModes[] = {
 // Colorspaces CMAP8 and RGB24 are not handled correctly by AppServer.
 //  { 0x5d, 640, 480, CS_CMAP8, 640 },
-  { 0x74, 640, 480, CS_RGB15, 1280 },
+//  { 0x74, 640, 480, CS_RGB15, 1280 },
   { 0x75, 640, 480, CS_RGB16, 1280 },
 //  { 0x6c, 640, 480, CS_RGB24, 1920 },
 
 //  { 0x5e, 800, 600, CS_CMAP8, 800 },
-  { 0x76, 800, 600, CS_RGB15, 1600 },
+//  { 0x76, 800, 600, CS_RGB15, 1600 },
   { 0x77, 800, 600, CS_RGB16, 1600 },
 //  { 0x6d, 800, 600, CS_RGB24, 2400 },
 
 //  { 0x62, 1024, 768, CS_CMAP8, 1024 },
-  { 0x78, 1024, 768, CS_RGB15, 2048 },
+//  { 0x78, 1024, 768, CS_RGB15, 2048 },
   { 0x79, 1024, 768, CS_RGB16, 2048 },
 
   { 0, 0, 0, CS_CMAP8, 0 }
@@ -169,20 +172,6 @@ public:
     virtual bool    GetScreenModeDesc( int nIndex, os::screen_mode* psMode );
     virtual int     SetScreenMode( os::screen_mode sMode );
     virtual os::screen_mode     GetCurrentScreenMode();
-
-    virtual bool    DrawLine( SrvBitmap* psBitMap, const IRect& cClipRect,
-                              const IPoint& cPnt1, const IPoint& cPnt2,
-                              const Color32_s& sColor, int nMode );
-    virtual bool    FillRect( SrvBitmap* psBitMap, const IRect& cRect,
-                              const Color32_s& sColor );
-    virtual bool    BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap,
-                               IRect cSrcRect, IPoint cDstPos, int nMode );
-
-//    virtual void    MouseOn( void );
-//    virtual void    MouseOff( void );
-//    virtual void    SetMousePos( IPoint cNewPos );
-//    virtual void    SetCursorBitmap( os::mouse_ptr_mode eMode, const os::IPoint& cHotSpot, const void* pRaster, int nWidth, int nHeight );
-    virtual bool    IntersectWithMouse( const IRect& cRect );
 
 private:
 

@@ -48,6 +48,7 @@ class Bitmap;
 class ScrollBar;
 struct font_height;
 
+#if 0
 enum
 {
     PEN_DETAIL,	      /* primary pen (Draw, PutBixel, ... )			*/
@@ -72,6 +73,7 @@ enum
 
     PEN_SELGADGETTEXT
 };
+#endif
 
 enum default_color_t
 {

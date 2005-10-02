@@ -258,3 +258,22 @@ void Layer::ConvertFromRoot( Rect * pcRect ) const
 		m_pcParent->ConvertFromRoot( pcRect );
 	}
 }
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
+Point Layer::ConvertToBitmap( const Point & cPoint ) const
+{
+	if( m_pcParent != NULL && m_pcBackbuffer == NULL )
+	{
+		return ( m_pcParent->ConvertToBitmap( cPoint + GetLeftTop() ) );
+	}
+	else
+	{
+		return ( cPoint );
+	}
+}

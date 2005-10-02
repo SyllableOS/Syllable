@@ -289,9 +289,9 @@ INPUT                  = ./ \
                          vfs \
                          net \
                          inc \
-                         ../../include/atheos \
-                         ../../include/net \
-                         ../../include/posix
+                         /ainc/atheos \
+                         /ainc/net \
+                         /ainc/posix
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 

@@ -178,7 +178,7 @@ static const struct chip_info asChipInfos[] = {
 	{0x10DE009D, NV_ARCH_40, "Quadro FX 4500" }
 };
 
-
+using namespace os;
 
 inline uint32 pci_size( uint32 base, uint32 mask )
 {
@@ -214,12 +214,11 @@ static uint32 get_pci_memory_size( int nFd, const PCI_Info_s * pcPCIInfo, int nR
 }
 
 
-FX::FX( int nFd ):m_cGELock( "fx_ge_lock" ), m_hRegisterArea( -1 ), m_hFrameBufferArea( -1 ), m_cCursorPos( 0, 0 ), m_cCursorHotSpot( 0, 0 )
+FX::FX( int nFd ):m_cGELock( "fx_ge_lock" ), m_hRegisterArea( -1 ), m_hFrameBufferArea( -1 )
 {
 	m_bIsInitiated = false;
 	m_bPaletteEnabled = false;
-	m_bUsingHWCursor = false;
-	m_bCursorIsOn = false;
+	m_bEngineDirty = false;
 	int j;
 
 	bool bFound = false;
@@ -262,7 +261,7 @@ FX::FX( int nFd ):m_cGELock( "fx_ge_lock" ), m_hRegisterArea( -1 ), m_hFrameBuff
 
 	int nMemSize = get_pci_memory_size( nFd, &m_cPCIInfo, 1 );
 
-	m_hFrameBufferArea = create_area( "geforcefx_framebuffer", ( void ** )&m_pFrameBufferBase, nMemSize, AREA_FULL_ACCESS, AREA_NO_LOCK );
+	m_hFrameBufferArea = create_area( "geforcefx_framebuffer", ( void ** )&m_pFrameBufferBase, nMemSize, AREA_FULL_ACCESS | AREA_WRCOMB, AREA_NO_LOCK );
 	remap_area( m_hFrameBufferArea, ( void * )( m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK ) );
 
 	memset( &m_sHW, 0, sizeof( m_sHW ) );
@@ -300,15 +299,15 @@ FX::FX( int nFd ):m_cGELock( "fx_ge_lock" ), m_hRegisterArea( -1 ), m_hFrameBuff
 		}
 	}
 
-	memset( m_anCursorShape, 0, sizeof( m_anCursorShape ) );
-
 	CRTCout( 0x11, CRTCin( 0x11 ) | 0x80 );
 	NVLockUnlock( &m_sHW, 0 );
 
 	m_bVideoOverlayUsed = false;
 	m_bIsInitiated = true;
-
-
+	
+	if( m_sHW.ScratchBufferStart > 1024 * 1024 * 8 )
+		InitMemory( 1024 * 1024 * 8, m_sHW.ScratchBufferStart - 1024 * 1024 * 8, PAGE_SIZE - 1, 63 );
+	
 }
 
 FX::~FX()
@@ -575,25 +574,6 @@ int FX::SetScreenMode( os::screen_mode sMode )
 		VGA_WR08( m_sHW.PDIO, 0x3c9, i );
 	}
 
-#ifndef DISABLE_HW_CURSOR
-	// restore the hardware cursor
-	if ( m_bUsingHWCursor )
-	{
-		uint32 *pnSrc = ( uint32 * )m_anCursorShape;
-		volatile uint32 *pnDst = ( uint32 * )m_sHW.CURSOR;
-
-		for ( int i = 0; i < MAX_CURS * MAX_CURS; i++ )
-		{
-			*pnDst++ = *pnSrc++;
-		}
-
-		SetMousePos( m_cCursorPos );
-		if ( m_bCursorIsOn )
-		{
-			MouseOn();
-		}
-	}
-#endif
 
 	m_sCurrentMode = sMode;
 	m_sCurrentMode.m_nBytesPerLine = sMode.m_nWidth * nBpp;
@@ -602,7 +582,7 @@ int FX::SetScreenMode( os::screen_mode sMode )
 
 	/* Init acceleration */
 	SetupAccel();
-
+	
 	return 0;
 }
 
@@ -626,141 +606,14 @@ os::screen_mode FX::GetCurrentScreenMode()
 // SEE ALSO:
 //-----------------------------------------------------------------------------
 
-bool FX::IntersectWithMouse( const IRect & cRect )
+void FX::LockBitmap( SrvBitmap* pcDstBitmap, SrvBitmap* pcSrcBitmap, os::IRect cSrc, os::IRect cDst )
 {
-	return false;
-}
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-void FX::SetCursorBitmap( os::mouse_ptr_mode eMode, const os::IPoint & cHotSpot, const void *pRaster, int nWidth, int nHeight )
-{
-#ifndef DISABLE_HW_CURSOR
-	m_cCursorHotSpot = cHotSpot;
-	if ( ( eMode != MPTR_MONO && eMode != MPTR_RGB32 ) || nWidth > MAX_CURS || nHeight > MAX_CURS || !m_sHW.alphaCursor )
-	{
-#endif
-		if ( m_bUsingHWCursor )
-			NVShowHideCursor( &m_sHW, 0 );
-		m_bUsingHWCursor = false;
-		return DisplayDriver::SetCursorBitmap( eMode, cHotSpot, pRaster, nWidth, nHeight );
-#ifndef DISABLE_HW_CURSOR
-	}
-
-	if ( !m_bUsingHWCursor )
-	{
-		DisplayDriver::MouseOff();
-		NVShowHideCursor( &m_sHW, 1 );
-	}
-
-	m_bUsingHWCursor = true;
-
-	const uint8 *pnSrcMono = ( const uint8 * )pRaster;
-	const uint32 *pnSrcRgb = ( const uint32 * )pRaster;
-	volatile uint32 *pnDst = ( uint32 * )m_sHW.CURSOR;
-	uint32 *pnSaved = m_anCursorShape;
-	uint32 *pnSaved32 = ( uint32 * )m_anCursorShape;
-	static uint32 anPalette[] = { CURS_TRANSPARENT, CURS_BLACK, CURS_BLACK, CURS_WHITE };
-
-	for ( int y = 0; y < MAX_CURS; y++ )
-	{
-		for ( int x = 0; x < MAX_CURS; x++, pnSaved++ )
-		{
-			if ( y >= nHeight || x >= nWidth )
-			{
-				*pnSaved = CURS_TRANSPARENT;
-			}
-			else
-			{
-				if ( eMode == MPTR_RGB32 )
-					*pnSaved = *pnSrcRgb++;
-				else
-					*pnSaved = anPalette[*pnSrcMono++];
-			}
-		}
-	}
-
-	for ( int i = 0; i < MAX_CURS * MAX_CURS; i++ )
-	{
-		*pnDst++ = *pnSaved32++;
-	}
-
-#endif
-}
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-
-void FX::SetMousePos( os::IPoint cNewPos )
-{
-#ifndef DISABLE_HW_CURSOR
-	m_cCursorPos = cNewPos;
-	if ( !m_bUsingHWCursor )
-	{
-#endif
-		return DisplayDriver::SetMousePos( cNewPos );
-#ifndef DISABLE_HW_CURSOR
-	}
-	int x = cNewPos.x - m_cCursorHotSpot.x;
-	int y = cNewPos.y - m_cCursorHotSpot.y;
-
-	m_sHW.PRAMDAC[0x0000300 / 4] = ( y << 16 ) | ( x & 0xffff );
-#endif
-}
-
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-
-void FX::MouseOn()
-{
-#ifndef DISABLE_HW_CURSOR
-	m_bCursorIsOn = true;
-	if ( !m_bUsingHWCursor )
-	{
-#endif
-		return DisplayDriver::MouseOn();
-#ifndef DISABLE_HW_CURSOR
-	}
-	NVShowHideCursor( &m_sHW, 1 );
-#endif
-}
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-
-void FX::MouseOff()
-{
-#ifndef DISABLE_HW_CURSOR
-	m_bCursorIsOn = false;
-	if ( !m_bUsingHWCursor )
-	{
-#endif
-		return DisplayDriver::MouseOff();
-#ifndef DISABLE_HW_CURSOR
-	}
-	NVShowHideCursor( &m_sHW, 0 );
-#endif
+	if( ( pcDstBitmap->m_bVideoMem == false && ( pcSrcBitmap == NULL || pcSrcBitmap->m_bVideoMem == false ) ) || m_bEngineDirty == false )
+		return;
+	m_cGELock.Lock();
+	WaitForIdle();	
+	m_cGELock.Unlock();
+	m_bEngineDirty = false;
 }
 
 
@@ -848,7 +701,6 @@ bool FX::DrawLine( SrvBitmap * pcBitMap, const IRect & cClipRect, const IPoint &
 {
 	if ( pcBitMap->m_bVideoMem == false || nMode != DM_COPY )
 	{
-		WaitForIdle();
 		return DisplayDriver::DrawLine( pcBitMap, cClipRect, cPnt1, cPnt2, sColor, nMode );
 	}
 
@@ -876,6 +728,11 @@ bool FX::DrawLine( SrvBitmap * pcBitMap, const IRect & cClipRect, const IPoint &
 
 	m_cGELock.Lock();
 
+	DmaStart( &m_sHW, SURFACE_PITCH, 3 );
+	DmaNext( &m_sHW, pcBitMap->m_nBytesPerLine | ( pcBitMap->m_nBytesPerLine << 16 ) );
+	DmaNext( &m_sHW, pcBitMap->m_nVideoMemOffset );
+	DmaNext( &m_sHW, pcBitMap->m_nVideoMemOffset );
+	
 	DmaStart( &m_sHW, LINE_COLOR, 1 );
 	DmaNext( &m_sHW, nColor );
 	DmaStart( &m_sHW, LINE_LINES( 0 ), 4 );
@@ -885,7 +742,7 @@ bool FX::DrawLine( SrvBitmap * pcBitMap, const IRect & cClipRect, const IPoint &
 	DmaNext( &m_sHW, ( ( ( y2 + 1 ) << 16 ) | ( x2 & 0xffff ) ) );
 	DmaKickoff( &m_sHW );
 
-	WaitForIdle();
+	m_bEngineDirty = true;
 	m_cGELock.Unlock();
 	return true;
 }
@@ -897,12 +754,11 @@ bool FX::DrawLine( SrvBitmap * pcBitMap, const IRect & cClipRect, const IPoint &
 // SEE ALSO:
 //-----------------------------------------------------------------------------
 
-bool FX::FillRect( SrvBitmap * pcBitMap, const IRect & cRect, const Color32_s & sColor )
+bool FX::FillRect( SrvBitmap * pcBitMap, const IRect & cRect, const Color32_s & sColor, int nMode )
 {
-	if ( pcBitMap->m_bVideoMem == false )
+	if ( pcBitMap->m_bVideoMem == false || nMode != DM_COPY )
 	{
-		WaitForIdle();
-		return DisplayDriver::FillRect( pcBitMap, cRect, sColor );
+		return DisplayDriver::FillRect( pcBitMap, cRect, sColor, nMode );
 	}
 
 	int nWidth = cRect.Width() + 1;
@@ -920,6 +776,11 @@ bool FX::FillRect( SrvBitmap * pcBitMap, const IRect & cRect, const Color32_s & 
 	}
 
 	m_cGELock.Lock();
+	
+	DmaStart( &m_sHW, SURFACE_PITCH, 3 );
+	DmaNext( &m_sHW, pcBitMap->m_nBytesPerLine | ( pcBitMap->m_nBytesPerLine << 16 ) );
+	DmaNext( &m_sHW, pcBitMap->m_nVideoMemOffset );
+	DmaNext( &m_sHW, pcBitMap->m_nVideoMemOffset );
 
 	DmaStart( &m_sHW, RECT_SOLID_COLOR, 1 );
 	DmaNext( &m_sHW, nColor );
@@ -928,7 +789,7 @@ bool FX::FillRect( SrvBitmap * pcBitMap, const IRect & cRect, const Color32_s & 
 	DmaNext( &m_sHW, ( ( nWidth << 16 ) | nHeight ) );
 	DmaKickoff( &m_sHW );
 
-	WaitForIdle();
+	m_bEngineDirty = true;
 	m_cGELock.Unlock();
 	return true;
 }
@@ -940,18 +801,23 @@ bool FX::FillRect( SrvBitmap * pcBitMap, const IRect & cRect, const Color32_s & 
 // SEE ALSO:
 //-----------------------------------------------------------------------------
 
-bool FX::BltBitmap( SrvBitmap * pcDstBitMap, SrvBitmap * pcSrcBitMap, IRect cSrcRect, IPoint cDstPos, int nMode )
+bool FX::BltBitmap( SrvBitmap * pcDstBitMap, SrvBitmap * pcSrcBitMap, IRect cSrcRect, IRect cDstRect, int nMode, int nAlpha )
 {
-	if ( pcDstBitMap->m_bVideoMem == false || pcSrcBitMap->m_bVideoMem == false || nMode != DM_COPY )
+	if ( pcDstBitMap->m_bVideoMem == false || pcSrcBitMap->m_bVideoMem == false || nMode != DM_COPY || cSrcRect.Size() != cDstRect.Size() )
 	{
-		WaitForIdle();
-		return DisplayDriver::BltBitmap( pcDstBitMap, pcSrcBitMap, cSrcRect, cDstPos, nMode );
+		return DisplayDriver::BltBitmap( pcDstBitMap, pcSrcBitMap, cSrcRect, cDstRect, nMode, nAlpha );
 	}
 
 	int nWidth = cSrcRect.Width() + 1;
 	int nHeight = cSrcRect.Height() + 1;
+	IPoint cDstPos = cDstRect.LeftTop();
 
 	m_cGELock.Lock();
+	
+	DmaStart( &m_sHW, SURFACE_PITCH, 3 );
+	DmaNext( &m_sHW, pcSrcBitMap->m_nBytesPerLine | ( pcDstBitMap->m_nBytesPerLine << 16 ) );
+	DmaNext( &m_sHW, pcSrcBitMap->m_nVideoMemOffset );
+	DmaNext( &m_sHW, pcDstBitMap->m_nVideoMemOffset );
 
 	DmaStart( &m_sHW, BLIT_POINT_SRC, 3 );
 	DmaNext( &m_sHW, ( ( cSrcRect.top << 16 ) | cSrcRect.left ) );
@@ -959,7 +825,7 @@ bool FX::BltBitmap( SrvBitmap * pcDstBitMap, SrvBitmap * pcSrcBitMap, IRect cSrc
 	DmaNext( &m_sHW, ( ( nHeight << 16 ) | nWidth ) );
 	DmaKickoff( &m_sHW );
 
-	WaitForIdle();
+	m_bEngineDirty = true;
 	m_cGELock.Unlock();
 	return true;
 }
@@ -987,9 +853,12 @@ bool FX::CreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst, o
 		
 		pitch = ( ( cSize.x << 1 ) + 0xff ) & ~0xff;
 		totalSize = pitch * cSize.y; 
+		uint32 offset;
 		
+		if( AllocateMemory( totalSize, &offset ) != 0 )
+			return( false );
 
-		uint32 offset = PAGE_ALIGN( m_sHW.ScratchBufferStart - totalSize - PAGE_SIZE );
+		//uint32 offset = PAGE_ALIGN( m_sHW.ScratchBufferStart - totalSize - PAGE_SIZE );
 
 		*pBuffer = create_area( "geforcefx_overlay", NULL, PAGE_ALIGN( totalSize ), AREA_FULL_ACCESS, AREA_NO_LOCK );
 		remap_area( *pBuffer, ( void * )( ( m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK ) + offset ) );
@@ -1021,10 +890,10 @@ bool FX::CreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst, o
 		m_sHW.PMC[0x8900 / 4] = offset;
 		m_sHW.PMC[0x8928 / 4] = ( cSize.y << 16 ) | cSize.x;
 		m_sHW.PMC[0x8930 / 4] = 0;
-		m_sHW.PMC[0x8938 / 4] = ( cSize.x << 20 ) / cDst.Width();
-		m_sHW.PMC[0x8940 / 4] = ( cSize.y << 20 ) / cDst.Height();
+		m_sHW.PMC[0x8938 / 4] = ( cSize.x << 20 ) / ( cDst.Width() + 1 );
+		m_sHW.PMC[0x8940 / 4] = ( cSize.y << 20 ) / ( cDst.Height() + 1 );
 		m_sHW.PMC[0x8948 / 4] = ( cDst.top << 16 ) | cDst.left;
-		m_sHW.PMC[0x8950 / 4] = ( cDst.Height() << 16 ) | cDst.Width(  );
+		m_sHW.PMC[0x8950 / 4] = ( ( cDst.Height() + 1 ) << 16 ) | ( cDst.Width() + 1 );
 
 		uint32 dstPitch = ( pitch ) | 1 << 20;
 		if( eFormat == CS_YUV12 )
@@ -1057,14 +926,19 @@ bool FX::RecreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst,
 	if ( eFormat == CS_YUV422  )
 	{
 		delete_area( *pBuffer );
+		FreeMemory( m_nVideoOffset );
 		/* Calculate offset */
 		uint32 pitch = 0;
 		uint32 totalSize = 0;
 
 		pitch = ( ( cSize.x << 1 ) + 0xff ) & ~0xff;
 		totalSize = pitch * cSize.y;
+		uint32 offset;
+		
+		if( AllocateMemory( totalSize, &offset ) != 0 )
+			return( false );
 
-		uint32 offset = PAGE_ALIGN( m_sHW.ScratchBufferStart - totalSize - PAGE_SIZE );
+		//uint32 offset = PAGE_ALIGN( m_sHW.ScratchBufferStart - totalSize - PAGE_SIZE );
 
 		*pBuffer = create_area( "geforcefx_overlay", NULL, PAGE_ALIGN( totalSize ), AREA_FULL_ACCESS, AREA_NO_LOCK );
 		remap_area( *pBuffer, ( void * )( ( m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK ) + offset ) );
@@ -1078,10 +952,10 @@ bool FX::RecreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst,
 		m_sHW.PMC[0x8900 / 4] = offset;
 		m_sHW.PMC[0x8928 / 4] = ( cSize.y << 16 ) | cSize.x;
 		m_sHW.PMC[0x8930 / 4] = 0;
-		m_sHW.PMC[0x8938 / 4] = ( cSize.x << 20 ) / cDst.Width();
-		m_sHW.PMC[0x8940 / 4] = ( cSize.y << 20 ) / cDst.Height();
+		m_sHW.PMC[0x8938 / 4] = ( cSize.x << 20 ) / ( cDst.Width() + 1 );
+		m_sHW.PMC[0x8940 / 4] = ( cSize.y << 20 ) / ( cDst.Height() + 1 );
 		m_sHW.PMC[0x8948 / 4] = ( cDst.top << 16 ) | cDst.left;
-		m_sHW.PMC[0x8950 / 4] = ( cDst.Height() << 16 ) | cDst.Width(  );
+		m_sHW.PMC[0x8950 / 4] = ( ( cDst.Height() + 1 ) << 16 ) | ( cDst.Width() + 1 );
 
 		uint32 dstPitch = ( pitch ) | 1 << 20;
 		if( eFormat == CS_YUV12 )
@@ -1108,23 +982,12 @@ bool FX::RecreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDst,
 // SEE ALSO:
 //-----------------------------------------------------------------------------
 
-void FX::UpdateVideoOverlay( area_id *pBuffer )
-{
-}
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
 void FX::DeleteVideoOverlay( area_id *pBuffer )
 {
 	if ( m_bVideoOverlayUsed )
 	{
 		delete_area( *pBuffer );
-
+		FreeMemory( m_nVideoOffset );
 
 		m_sHW.PMC[0x00008704 / 4] = 1;
 

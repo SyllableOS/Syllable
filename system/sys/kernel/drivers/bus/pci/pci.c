@@ -49,6 +49,7 @@ enum
 {
 	PCI_METHOD_1 = 0x01,
 	PCI_METHOD_2 = 0x02,
+	PCI_METHOD_BIOS = 0x04
 };
 
 struct AGP_Speed_s
@@ -61,7 +62,7 @@ struct AGP_Speed_s
 	{ "AGP 3.0 4x", PCI_AGP_STATUS_3_0 | PCI_AGP_STATUS_RATE1 | PCI_AGP_STATUS_SBA },
 	{ "AGP 4x", PCI_AGP_STATUS_RATE4 },
 	{ "AGP 2x", PCI_AGP_STATUS_RATE2 },
-	{ "AGP 2x", PCI_AGP_STATUS_RATE1 }
+	{ "AGP 1x", PCI_AGP_STATUS_RATE1 }
 };
 
 uint32 g_nPCIMethod;
@@ -90,6 +91,7 @@ extern int lookup_irq( PCI_Entry_s* psDevice, bool bAssign );
 static void pci_inst_check( void )
 {
 	g_nPCIMethod = 0;
+	struct RMREGS rm;
 
 	/* Do simple register checks to find the way how to access the pci bus */
 
@@ -127,6 +129,17 @@ static void pci_inst_check( void )
 			kerndbg( KERN_DEBUG, "PCI: Detected Virtual PC, using access method 1\n" );
 			return;
 		}
+	}
+	/* Check for PCI BIOS */
+	memset( &rm, 0, sizeof( rm ) );
+	rm.EAX = 0xb101;
+	realint( 0x1a, &rm );
+	
+	if ( ( rm.flags & 0x01 ) == 0 && ( rm.EAX & 0xff00 ) == 0 )
+	{
+		g_nPCIMethod = PCI_METHOD_BIOS;
+		kerndbg( KERN_INFO, "PCI: PCIBIOS Version %ld.%ld detected\n", rm.EBX >> 8, rm.EBX & 0xff );
+		return;
 	}
 }
 
@@ -199,6 +212,25 @@ uint32 read_pci_config( int nBusNum, int nDevNum, int nFncNum, int nOffset, int 
 			spinunlock_restore( &g_sPCILock, nFlags );
 
 			return ( nValue );
+		}
+		else if ( g_nPCIMethod & PCI_METHOD_BIOS )
+		{
+			struct RMREGS rm;
+			int	anCmd[] = { 0xb108, 0xb109, 0x000, 0xb10a };
+			uint32 anMasks[] = { 0x000000ff, 0x0000ffff, 0x00000000, 0xffffffff };
+			memset( &rm, 0, sizeof( rm ) );
+
+			rm.EAX = anCmd[nSize - 1];
+			rm.EBX = (nBusNum << 8) | (((nDevNum << 3) | nFncNum));
+			rm.EDI = nOffset;
+		
+			realint( 0x1a, &rm );
+
+			if ( 0 == ( ( rm.EAX >> 8 ) & 0xff ) ) {
+				return( rm.ECX & anMasks[ nSize- 1 ] );
+			} else {
+				return( anMasks[ nSize- 1 ] );
+			}
 		}
 		else
 		{
@@ -283,6 +315,22 @@ status_t write_pci_config( int nBusNum, int nDevNum, int nFncNum, int nOffset, i
 			outb( 0x0, 0x0cf8 );
 			spinunlock_restore( &g_sPCILock, nFlags );
 			return ( 0 );
+		}
+		else if ( g_nPCIMethod & PCI_METHOD_BIOS )
+		{
+			struct RMREGS rm;
+			int	anCmd[] = { 0xb10b, 0xb10c, 0x000, 0xb10d };
+			uint32 anMasks[] = { 0x000000ff, 0x0000ffff, 0x00000000, 0xffffffff };
+			memset( &rm, 0, sizeof( rm ) );
+
+			rm.EAX = anCmd[nSize - 1];
+			rm.EBX = (nBusNum << 8) | (((nDevNum << 3) | nFncNum));
+			rm.EDI = nOffset;
+			rm.ECX = nValue & anMasks[ nSize - 1 ];
+
+			realint( 0x1a, &rm );
+
+			return( ( rm.flags & 0x01 ) ? -1 : 0 );
 		}
 		else
 		{
@@ -573,7 +621,7 @@ void pci_scan_bus( int nBusNum, int nBridgeFrom, int nBusDev )
 {
 	PCI_Bus_s *psBus;
 	PCI_Entry_s *psInfo;
-	int nDeviceNumberPerBus = ( g_nPCIMethod & PCI_METHOD_1 ) ? 32 : 16;
+	int nDeviceNumberPerBus = ( g_nPCIMethod & PCI_METHOD_2 ) ? 16 : 32;
 	int nDev, nFnc;
 	uint32 nVendorID;
 	uint8 nHeaderType = 0;

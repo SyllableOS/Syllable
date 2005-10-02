@@ -533,7 +533,7 @@ void init_devices_boot( void )
 
 		if ( g_asProcessorDescs[i].pi_bIsRunning == true )
 		{
-			sprintf( zTemp, "%s %iMHz", g_asProcessorDescs[i].pi_zName, ( int )( ( g_asProcessorDescs[i].pi_nCoreSpeed + 500000 ) / 1000000 ) );
+			sprintf( zTemp, "%s", g_asProcessorDescs[i].pi_zName );
 			claim_device( -1, register_device( "", "system" ), zTemp, DEVICE_PROCESSOR );
 		}
 	}

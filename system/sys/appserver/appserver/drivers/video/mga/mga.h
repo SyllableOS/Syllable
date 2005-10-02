@@ -44,14 +44,9 @@ class Matrox : public VesaDriver
 		virtual int SetScreenMode( os::screen_mode );
 		virtual os::screen_mode	GetCurrentScreenMode();
 
-		virtual void SetCursorBitmap( os::mouse_ptr_mode eMode, const os::IPoint& cHotSpot, const void* pRaster, int nWidth, int nHeight );
-		virtual void MouseOn( void );
-		virtual void MouseOff( void );
-		virtual void SetMousePos( os::IPoint cNewPos );
-
 		virtual bool DrawLine( SrvBitmap* psBitMap, const os::IRect& cClipRect, const os::IPoint& cPnt1, const os::IPoint& cPnt2, const os::Color32_s& sColor, int nMode );
-		virtual bool FillRect( SrvBitmap* psBitMap, const os::IRect& cRect, const os::Color32_s& sColor );
-		virtual bool BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap, os::IRect cSrcRect, os::IPoint cDstPos, int nMode );
+		virtual bool FillRect( SrvBitmap* psBitMap, const os::IRect& cRect, const os::Color32_s& sColor, int nMode );
+		virtual bool BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap, os::IRect cSrcRect, os::IRect cDstRect, int nMode, int nAlpha );
 
 		bool IsInitiated() const { return( m_bIsInitiated ); }
 		virtual int GetFramebufferOffset() { return(0); }

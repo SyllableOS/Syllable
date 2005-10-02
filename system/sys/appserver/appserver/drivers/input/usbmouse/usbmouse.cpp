@@ -34,6 +34,8 @@
 #include <util/message.h>
 #include <atheos/kernel.h>
 
+using namespace os;
+
 static int g_nSerialDevice = -1;
 
 class USBMouseDriver : public InputNode

@@ -51,6 +51,8 @@
 #include <set>
 #include <algorithm>
 
+using namespace os;
+
 #define POINTER_WIDTH 11
 #define POINTER_HEIGHT 18
 
@@ -89,12 +91,10 @@ uint8 g_anMouseImg[] = {
 };
 
 SrvBitmap *g_pcScreenBitmap = NULL;
-static int g_nFrameBufferArea = -1;
+int g_nFrameBufferArea = -1;
 
 static int g_nActiveDesktop = -1;
 static int g_nPrevDesktop = 1;
-
-static AreaInfo_s g_sFBAreaInfo;
 
 #define FOCUS_STACK_SIZE  32
 
@@ -153,15 +153,16 @@ SrvWindow *get_active_window( bool bIgnoreSystemWindows )
 
 void set_active_window( SrvWindow * pcWindow, bool bNotifyPrevious )
 {
-	if( pcWindow != NULL && ( pcWindow->GetFlags() & WND_SYSTEM ) )
+	if( pcWindow != NULL && ( ( pcWindow->GetFlags() & WND_SYSTEM ) || !( pcWindow->GetDesktopMask() & ( 1 << g_nActiveDesktop ) ) ) )
 	{
 		return;
 	}
 	if( pcWindow == NULL && g_asDesktops[g_nActiveDesktop].m_pcFirstSystemWindow != NULL )
 	{
+		g_asDesktops[g_nActiveDesktop].m_pcActiveWindow = NULL;
 		return;
 	}
-	if( pcWindow == g_asDesktops[g_nActiveDesktop].m_pcActiveWindow )
+	if( ( pcWindow == g_asDesktops[g_nActiveDesktop].m_pcActiveWindow ) && ( pcWindow != NULL )  )
 	{
 		return;
 	}
@@ -190,6 +191,8 @@ void set_active_window( SrvWindow * pcWindow, bool bNotifyPrevious )
 			g_asDesktops[g_nActiveDesktop].m_pcActiveWindow->WindowActivated( true );
 		}
 	}
+	if( pcPrevious != NULL && pcWindow == NULL )
+		__assertw( g_asDesktops[g_nActiveDesktop].m_pcActiveWindow != pcPrevious );
 }
 
 class ModeCmp
@@ -219,6 +222,9 @@ static bool setup_screenmode( int nDesktop, bool bForce )
 		return ( false );
 	}
 	bool bModeSet = true;
+	
+	if( g_nActiveDesktop != -1 )
+		g_pcTopView->FreeBackbuffers();
 
 	if( g_pcDispDrv->SetScreenMode( g_asDesktops[nDesktop].m_sScreenMode ) != 0 )
 	{
@@ -292,25 +298,26 @@ static bool setup_screenmode( int nDesktop, bool bForce )
 		dbprintf( "Terminate application server...\n" );
 		exit( 1 );
 	}
+	
+	AreaInfo_s sFBAreaInfo;
+	get_area_info( g_nFrameBufferArea, &sFBAreaInfo );
 	g_pcScreenBitmap->m_nWidth = g_pcDispDrv->GetCurrentScreenMode().m_nWidth;
 	g_pcScreenBitmap->m_nHeight = g_pcDispDrv->GetCurrentScreenMode().m_nHeight;
 	g_pcScreenBitmap->m_nBytesPerLine = g_pcDispDrv->GetCurrentScreenMode().m_nBytesPerLine;
 	g_pcScreenBitmap->m_eColorSpc = g_pcDispDrv->GetCurrentScreenMode().m_eColorSpace;
-	g_pcScreenBitmap->m_pRaster = ( ( uint8 * )g_sFBAreaInfo.pAddress ) + g_pcDispDrv->GetFramebufferOffset();
+	g_pcScreenBitmap->m_pRaster = ( ( uint8 * )sFBAreaInfo.pAddress ) + g_pcDispDrv->GetFramebufferOffset();
+	g_pcScreenBitmap->m_nVideoMemOffset = g_pcDispDrv->GetFramebufferOffset();
 	// update screenmode with correct nBytesPerLine
 	g_asDesktops[nDesktop].m_sScreenMode.m_nBytesPerLine = g_pcScreenBitmap->m_nBytesPerLine;
 
 	if( g_nActiveDesktop != -1 )
 	{
 		g_pcTopView->SetFrame( Rect( 0, 0, g_pcScreenBitmap->m_nWidth - 1, g_pcScreenBitmap->m_nHeight - 1 ) );
-	}
-
-	if( g_asDesktops[nDesktop].m_sScreenMode.m_eColorSpace == g_asDesktops[g_nActiveDesktop].m_sScreenMode.m_eColorSpace )
-	{
-		SrvSprite::ColorSpaceChanged();
-	}
-	if( g_nActiveDesktop != -1 )
-	{
+		if( g_asDesktops[nDesktop].m_sScreenMode.m_eColorSpace != g_asDesktops[g_nActiveDesktop].m_sScreenMode.m_eColorSpace )
+		{
+			SrvSprite::ColorSpaceChanged();
+		}
+	
 		Point cMousePos = InputNode::GetMousePos();
 
 		cMousePos.x = floor( cMousePos.x * g_asDesktops[nDesktop].m_sScreenMode.m_nWidth / g_asDesktops[g_nActiveDesktop].m_sScreenMode.m_nWidth );
@@ -450,6 +457,7 @@ void remove_window_from_desktop( SrvWindow * pcWindow )
 						g_asDesktops[i].m_apcFocusStack[k] = g_asDesktops[i].m_apcFocusStack[k + 1];
 					}
 					g_asDesktops[i].m_apcFocusStack[FOCUS_STACK_SIZE - 1] = NULL;
+					j = j - 1;
 				}
 			}
 			__assertw( bFound );
@@ -469,6 +477,15 @@ void remove_window_from_desktop( SrvWindow * pcWindow )
 	if( pcWindow == get_active_window( true ) )
 	{
 		set_active_window( NULL, false );
+	}
+	
+	if( pcWindow == get_active_window( true ) )
+	{
+		dbprintf( "Deleted window still active %i %i\n", g_nActiveDesktop, (int)nMask );
+		for( int j = 0; j < FOCUS_STACK_SIZE; ++j )
+		{
+			dbprintf( "%x\n", (uint)g_asDesktops[g_nActiveDesktop].m_apcFocusStack[j] );
+		}
 	}
 
 	desktop_windows_changed();
@@ -499,6 +516,7 @@ void remove_from_focusstack( SrvWindow * pcWindow )
 						g_asDesktops[i].m_apcFocusStack[k] = g_asDesktops[i].m_apcFocusStack[k + 1];
 					}
 					g_asDesktops[i].m_apcFocusStack[FOCUS_STACK_SIZE - 1] = NULL;
+					j = j - 1;
 				}
 			}
 		}
@@ -737,17 +755,17 @@ bool init_desktops()
 		}
 	}
 
-	get_area_info( g_nFrameBufferArea, &g_sFBAreaInfo );
-
+	AreaInfo_s sFBAreaInfo;
+	get_area_info( g_nFrameBufferArea, &sFBAreaInfo );
 
 	g_pcScreenBitmap->m_pcDriver = g_pcDispDrv;
 	g_pcScreenBitmap->m_hArea = g_nFrameBufferArea;
-	g_pcScreenBitmap->m_pRaster = ( uint8 * )g_sFBAreaInfo.pAddress;
+	g_pcScreenBitmap->m_pRaster = ( uint8 * )sFBAreaInfo.pAddress;
 
 	setup_screenmode( 0, false );
 
 	g_nActiveDesktop = 0;
-	g_pcTopView = new Layer( g_pcScreenBitmap );
+	g_pcTopView = new TopLayer( g_pcScreenBitmap );
 
 	g_pcDispDrv->SetCursorBitmap( MPTR_RGB32, IPoint( 0, 0 ), g_anMouseImg, POINTER_WIDTH, POINTER_HEIGHT );
 	g_pcDispDrv->MouseOn();

@@ -51,9 +51,15 @@
 #define OPAQUE                  0x00000000
 #define TRANSPARENT             0x00100000
 
-/* ? */
+/* Subfunctions for Alpha Blended BitBlt */
+#define A_CONSTANTALPHA         0x00000000
+#define A_PERPIXELALPHA			0x00080000
+#define A_NODESTALPHA			0x00100000
+#define A_3DFULLSCENE			0x00180000
+
+/* Destination */
 #define DSTAGP                  0x02000000
-#define DSTVIDEO                0x02000000
+#define DSTVIDEO                0x00000000
 
 /* Line */
 #define LINE_STYLE              0x00800000
@@ -147,7 +153,7 @@
 
 /* TW: BR(16)+2 = 0x8242 */
 
-int     CmdQueLen;
+static int     CmdQueLen;
 
 #define SiS300Idle \
   { \
@@ -298,6 +304,18 @@ int     CmdQueLen;
 
 /* ----------- SiS 310/325 series --------------- */
 
+/* VRAM queue operation command header definitions */
+#define SIS_SPKC_HEADER 	0x16800000L
+#define SIS_BURST_HEADER0	0x568A0000L
+#define SIS_BURST_HEADER1	0x62100000L
+#define SIS_PACKET_HEARER0 	0x968A0000L
+#define SIS_PACKET_HEADER1	0x62100000L
+#define SIS_NIL_CMD		0x168F0000L
+
+#define SIS_PACKET12_HEADER0	0x968A000CL
+#define SIS_PACKET12_HEADER1	0x62100010L
+#define SIS_PACKET12_LENGTH	80
+
 /* Q_STATUS:
    bit 31 = 1: All engines idle and all queues empty
    bit 30 = 1: Hardware Queue (=HW CQ, 2D queue, 3D queue) empty
@@ -316,142 +334,511 @@ int     CmdQueLen;
    from 300 series and certainly wrong...)
 */
 
-/* TW: FIXME: CmdQueLen is... where....? */
-#define SiS310Idle \
+#define SiSQEmpty \
   { \
-  while( (MMIO_IN16(si.regs, Q_STATUS+2) & 0x8000) != 0x8000){}; \
-  while( (MMIO_IN16(si.regs, Q_STATUS+2) & 0x8000) != 0x8000){}; \
-  CmdQueLen=MMIO_IN16(si.regs, Q_STATUS); \
+     while( (MMIO_IN16(si.regs, Q_STATUS+2) & 0x0400) != 0x0400) {}; \
+     while( (MMIO_IN16(si.regs, Q_STATUS+2) & 0x0400) != 0x0400) {}; \
+  }
+  
+#define SiSResetCmd		si.CmdReg = 0;
+
+#define SiSSetupCMDFlag(flags)  si.CmdReg |= (flags);
+
+/* --- VRAM mode --- */
+
+typedef char* pointer;
+
+#define SiSWriteQueue(tt)
+#define SIS_WQINDEX(i)  ((uint32 *)(tt))[(i)]
+#define SIS_RQINDEX(i)  ((volatile uint32 *)(tt))[(i)]
+
+#define SiSGetSwWP() (uint32)((si.cmdQ_SharedWritePort))
+#define SiSGetHwRP() (uint32)(MMIO_IN32(si.regs, Q_READ_PTR))
+
+#define SiSFlushCmdBuf  \
+  if(si.chip >= SIS_660 && si.chip <= SIS_770) { \
+     uint32 ttt = ((SiSGetSwWP()) - 4) & si.cmdQueueSizeMask;	\
+     pointer tt = (char *)si.cmdQueueBase + ttt; 			\
+     dummybuf = SIS_RQINDEX(0);						\
   }
 
-#define SiS310SetupSRCBase(base) \
-      if (CmdQueLen <= 0)  SiS310Idle;\
-      MMIO_OUT32(si.regs, SRC_ADDR, base);\
-      CmdQueLen--;
+#define SiSSyncWP    \
+  SiSFlushCmdBuf;    \
+  MMIO_OUT32(si.regs, Q_WRITE_PTR, (uint32)((si.cmdQ_SharedWritePort)));
 
-#define SiS310SetupSRCPitch(pitch) \
-      if (CmdQueLen <= 0)  SiS310Idle;\
-      MMIO_OUT16(si.regs, SRC_PITCH, pitch);\
-      CmdQueLen--;
+#define SiSSetHwWP(p) \
+  (si.cmdQ_SharedWritePort) = (p);   	\
+  MMIO_OUT32(si.regs, Q_WRITE_PTR, (p));
 
-#define SiS310SetupSRCXY(x,y) \
-      if (CmdQueLen <= 0)  SiS310Idle;\
-      MMIO_OUT32(si.regs, SRC_Y, (x)<<16 | (y) );\
-      CmdQueLen--;
+#define SiSSetSwWP(p) (si.cmdQ_SharedWritePort) = (p);
 
-#define SiS310SetupDSTBase(base) \
-      if (CmdQueLen <= 0)  SiS310Idle;\
-      MMIO_OUT32(si.regs, DST_ADDR, base);\
-      CmdQueLen--;
+#define SiSCheckQueue(amount)
 
-#define SiS310SetupDSTXY(x,y) \
-      if (CmdQueLen <= 0)  SiS310Idle;\
-      MMIO_OUT32(si.regs, DST_Y, (x)<<16 | (y) );\
-      CmdQueLen--;
 
-#define SiS310SetupDSTRect(x,y) \
-      if (CmdQueLen <= 0)  SiS310Idle;\
-      MMIO_OUT32(si.regs, DST_PITCH, (y)<<16 | (x) );\
-      CmdQueLen--;
+#define SiSUpdateQueue \
+      SiSWriteQueue(tt); \
+      ttt += 16; \
+      ttt &= si.cmdQueueSizeMask; \
+      if(!ttt) { \
+	 while(MMIO_IN32(si.regs, Q_READ_PTR) < si.cmdQueueSize_div4) {} \
+      } else if(ttt == si.cmdQueueSize_div4) { \
+	 uint32 temppp; \
+	 do { \
+	    temppp = MMIO_IN32(si.regs, Q_READ_PTR); \
+	 } while(temppp >= ttt && temppp <= si.cmdQueueSize_div2); \
+      } else if(ttt == si.cmdQueueSize_div2) { \
+	 uint32 temppp; \
+	 do { \
+	    temppp = MMIO_IN32(si.regs, Q_READ_PTR); \
+	 } while(temppp >= ttt && temppp <= si.cmdQueueSize_4_3); \
+      } else if(ttt == si.cmdQueueSize_4_3) { \
+	 while(MMIO_IN32(si.regs, Q_READ_PTR) > ttt) {} \
+      }
 
-#define SiS310SetupDSTColorDepth(bpp) \
-      if (CmdQueLen <= 0)  SiS310Idle;\
-      MMIO_OUT16(si.regs, AGP_BASE, bpp);\
-      CmdQueLen--;
+/* Write-updates MUST be 128bit aligned. */
+#define SiSNILandUpdateSWQueue \
+      SIS_WQINDEX(2) = (uint32)(SIS_NIL_CMD); \
+      SIS_WQINDEX(3) = (uint32)(SIS_NIL_CMD); \
+      SiSUpdateQueue; \
+      SiSSetSwWP(ttt);
 
-#define SiS310SetupRect(w,h) \
-      if (CmdQueLen <= 0)  SiS310Idle;\
-      MMIO_OUT32(si.regs, RECT_WIDTH, (h)<<16 | (w) );\
-      CmdQueLen--;
+#define SiSIdle \
+  { \
+     while( (MMIO_IN16(si.regs, Q_STATUS+2) & 0x8000) != 0x8000) {}; \
+     while( (MMIO_IN16(si.regs, Q_STATUS+2) & 0x8000) != 0x8000) {}; \
+     while( (MMIO_IN16(si.regs, Q_STATUS+2) & 0x8000) != 0x8000) {}; \
+     while( (MMIO_IN16(si.regs, Q_STATUS+2) & 0x8000) != 0x8000) {}; \
+  }
 
-#define SiS310SetupPATFG(color) \
-      if (CmdQueLen <= 0)  SiS310Idle;\
-      MMIO_OUT32(si.regs, PAT_FGCOLOR, color);\
-      CmdQueLen--;
+#define SiSSetupSRCDSTBase(srcbase,dstbase) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + SRC_ADDR); \
+	 SIS_WQINDEX(1) = (uint32)(srcbase); 			\
+	 SIS_WQINDEX(2) = (uint32)(SIS_SPKC_HEADER + DST_ADDR); \
+	 SIS_WQINDEX(3) = (uint32)(dstbase); 			\
+	 SiSUpdateQueue \
+	 SiSSetSwWP(ttt); \
+      }
 
-#define SiS310SetupPATBG(color) \
-      if (CmdQueLen <= 0)  SiS310Idle;\
-      MMIO_OUT32(si.regs, PAT_BGCOLOR, color);\
-      CmdQueLen--;
+#define SiSSetupSRCDSTXY(sx,sy,dx,dy) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + SRC_Y); 	\
+	 SIS_WQINDEX(1) = (uint32)(((sx)<<16) | (sy));		\
+	 SIS_WQINDEX(2) = (uint32)(SIS_SPKC_HEADER + DST_Y); 	\
+	 SIS_WQINDEX(3) = (uint32)(((dx)<<16) | (dy)); 		\
+	 SiSUpdateQueue \
+	 SiSSetSwWP(ttt); \
+      }
 
-#define SiS310SetupSRCFG(color) \
-      if (CmdQueLen <= 0)  SiS310Idle;\
-      MMIO_OUT32(si.regs, SRC_FGCOLOR, color);\
-      CmdQueLen--;
+#define SiSSetupDSTXYRect(x,y,w,h) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + DST_Y); 		\
+	 SIS_WQINDEX(1) = (uint32)(((x)<<16) | (y));	 		\
+	 SIS_WQINDEX(2) = (uint32)(SIS_SPKC_HEADER + RECT_WIDTH); 	\
+	 SIS_WQINDEX(3) = (uint32)(((h)<<16) | (w));			\
+	 SiSUpdateQueue \
+	 SiSSetSwWP(ttt); \
+      }
 
-#define SiS310SetupSRCBG(color) \
-      if (CmdQueLen <= 0)  SiS310Idle;\
-      MMIO_OUT32(si.regs, SRC_BGCOLOR, color);\
-      CmdQueLen--;
+#define SiSSetupSRCPitchDSTRect(pitch,x,y) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + SRC_PITCH); 	\
+	 SIS_WQINDEX(1) = (uint32)(pitch);				\
+	 SIS_WQINDEX(2) = (uint32)(SIS_SPKC_HEADER + DST_PITCH); 	\
+	 SIS_WQINDEX(3) = (uint32)(((y)<<16) | (x));			\
+	 SiSUpdateQueue \
+	 SiSSetSwWP(ttt); \
+      }
 
-#define SiS310SetupSRCTrans(color) \
-      if (CmdQueLen <= 1)  SiS310Idle;\
-      MMIO_OUT32(si.regs, TRANS_SRC_KEY_HIGH, color);\
-      MMIO_OUT32(si.regs, TRANS_SRC_KEY_LOW, color);\
-      CmdQueLen -= 2;
+#define SiSSetupSRCBase(base) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + SRC_ADDR); 	\
+	 SIS_WQINDEX(1) = (uint32)(base); 				\
+	 SiSNILandUpdateSWQueue \
+      }
 
-#define SiS310SetupDSTTrans(color) \
-      if (CmdQueLen <= 1)  SiS310Idle;\
-      MMIO_OUT32(si.regs, TRANS_DST_KEY_HIGH, color); \
-      MMIO_OUT32(si.regs, TRANS_DST_KEY_LOW, color); \
-      CmdQueLen -= 2;
+#define SiSSetupSRCPitch(pitch) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + SRC_PITCH); 	\
+	 SIS_WQINDEX(1) = (uint32)(pitch);				\
+	 SiSNILandUpdateSWQueue \
+      }
 
-#define SiS310SetupMONOPAT(p0,p1) \
-      if (CmdQueLen <= 1)  SiS310Idle;\
-      MMIO_OUT32(si.regs, MONO_MASK, p0);\
-      MMIO_OUT32(si.regs, MONO_MASK+4, p1);\
-      CmdQueLen -= 2;
+#define SiSSetupSRCXY(x,y) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + SRC_Y); 	\
+	 SIS_WQINDEX(1) = (uint32)(((x)<<16) | (y));		\
+	 SiSNILandUpdateSWQueue \
+      }
 
-#define SiS310SetupClipLT(left,top) \
-      if (CmdQueLen <= 0)  SiS310Idle;\
-      MMIO_OUT32(si.regs, LEFT_CLIP, ((left) & 0xFFFF) | (top)<<16 );\
-      CmdQueLen--;
+#define SiSSetupDSTBase(base) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + DST_ADDR); 	\
+	 SIS_WQINDEX(1) = (uint32)(base);				\
+	 SiSNILandUpdateSWQueue \
+      }
 
-#define SiS310SetupClipRB(right,bottom) \
-      if (CmdQueLen <= 0)  SiS310Idle;\
-      MMIO_OUT32(si.regs, RIGHT_CLIP, ((right) & 0xFFFF) | (bottom)<<16 );\
-      CmdQueLen--;
+#define SiSSetupDSTXY(x,y) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + DST_Y); 	\
+	 SIS_WQINDEX(1) = (uint32)(((x)<<16) | (y));	 	\
+	 SiSNILandUpdateSWQueue \
+      }
 
-#define SiS310SetupROP(rop) \
-      m_pHw->CmdReg = (rop) << 8;
+#define SiSSetupDSTRect(x,y) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + DST_PITCH); 	\
+	 SIS_WQINDEX(1) = (uint32)(((y)<<16) | (x));		\
+	 SiSNILandUpdateSWQueue \
+      }
 
-#define SiS310SetupCMDFlag(flags) \
-      m_pHw->CmdReg |= (flags);
+#define SiSSetupDSTRectBurstHeader(x,y,reg,num) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + DST_PITCH);	\
+	 SIS_WQINDEX(1) = (uint32)(((y)<<16) | (x));			\
+	 SIS_WQINDEX(2) = (uint32)(SIS_BURST_HEADER0 + reg); 		\
+	 SIS_WQINDEX(3) = (uint32)(SIS_BURST_HEADER1 + num); 		\
+	 SiSUpdateQueue \
+	 SiSSetSwWP(ttt); \
+      }
 
-#define SiS310DoCMD \
-      if (CmdQueLen <= 1)  SiS310Idle;\
-      MMIO_OUT32(si.regs, COMMAND_READY, m_pHw->CmdReg); \
-      MMIO_OUT32(si.regs, FIRE_TRIGGER, 0); \
-      CmdQueLen -= 2;
+#define SiSSetupDSTColorDepth(bpp) \
+      si.CmdReg = (((uint32)(bpp)) & (GENMASK(17:16)));
 
-#define SiS310SetupX0Y0(x,y) \
-      if (CmdQueLen <= 0)  SiS310Idle;\
-      MMIO_OUT32(si.regs, LINE_X0, (y)<<16 | (x) );\
-      CmdQueLen--;
+#define SiSSetupPATFGDSTRect(color,x,y) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + PAT_FGCOLOR); 	\
+	 SIS_WQINDEX(1) = (uint32)(color);	 			\
+	 SIS_WQINDEX(2) = (uint32)(SIS_SPKC_HEADER + DST_PITCH); 	\
+	 SIS_WQINDEX(3) = (uint32)(((y)<<16) | (x));			\
+	 SiSUpdateQueue \
+	 SiSSetSwWP(ttt); \
+      }
 
-#define SiS310SetupX1Y1(x,y) \
-      if (CmdQueLen <= 0)  SiS310Idle;\
-      MMIO_OUT32(si.regs, LINE_X1, (y)<<16 | (x) );\
-      CmdQueLen--;
+#define SiSSetupSRCFGDSTRect(color,x,y) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + SRC_FGCOLOR); 	\
+	 SIS_WQINDEX(1) = (uint32)(color);	 			\
+	 SIS_WQINDEX(2) = (uint32)(SIS_SPKC_HEADER + DST_PITCH); 	\
+	 SIS_WQINDEX(3) = (uint32)(((y)<<16) | (x));			\
+	 SiSUpdateQueue \
+	 SiSSetSwWP(ttt); \
+      }
 
-#define SiS310SetupLineCount(c) \
-      if (CmdQueLen <= 0)  SiS310Idle;\
-      MMIO_OUT16(si.regs, LINE_COUNT, c);\
-      CmdQueLen--;
+#define SiSSetupRectSRCPitch(w,h,pitch) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + RECT_WIDTH); 	\
+	 SIS_WQINDEX(1) = (uint32)(((h)<<16) | (w));			\
+	 SIS_WQINDEX(2) = (uint32)(SIS_SPKC_HEADER + SRC_PITCH); 	\
+	 SIS_WQINDEX(3) = (uint32)(pitch);				\
+	 SiSUpdateQueue \
+	 SiSSetSwWP(ttt); \
+      }
 
-#define SiS310SetupStylePeriod(p) \
-      if (CmdQueLen <= 0)  SiS310Idle;\
-      MMIO_OUT16(si.regs, LINE_STYLE_PERIOD, p);\
-      CmdQueLen--;
+#define SiSSetupRect(w,h) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + RECT_WIDTH); 	\
+	 SIS_WQINDEX(1) = (uint32)(((h)<<16) | (w));			\
+	 SiSNILandUpdateSWQueue \
+      }
 
-#define SiS310SetupStyleLow(ls) \
-      if (CmdQueLen <= 0)  SiS310Idle;\
-      MMIO_OUT32(si.regs, LINE_STYLE_0, ls);\
-      CmdQueLen--;
+#define SiSSetupPATFG(color) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + PAT_FGCOLOR); 	\
+	 SIS_WQINDEX(1) = (uint32)(color);	 			\
+	 SiSNILandUpdateSWQueue \
+      }
 
-#define SiS310SetupStyleHigh(ls) \
-      if (CmdQueLen <= 0)  SiS310Idle;\
-      MMIO_OUT32(si.regs, LINE_STYLE_1, ls);\
-      CmdQueLen--;
+#define SiSSetupPATBG(color) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + PAT_BGCOLOR);	\
+	 SIS_WQINDEX(1) = (uint32)(color);	 			\
+	 SiSNILandUpdateSWQueue \
+      }
+
+#define SiSSetupSRCFG(color) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + SRC_FGCOLOR);	\
+	 SIS_WQINDEX(1) = (uint32)(color);	 			\
+	 SiSNILandUpdateSWQueue \
+      }
+
+#define SiSSetupSRCBG(color) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + SRC_BGCOLOR);	\
+	 SIS_WQINDEX(1) = (uint32)(color);	 			\
+	 SiSNILandUpdateSWQueue \
+      }
+
+#define SiSSetupSRCTrans(color) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + TRANS_SRC_KEY_HIGH);	\
+	 SIS_WQINDEX(1) = (uint32)(color);	 				\
+	 SIS_WQINDEX(2) = (uint32)(SIS_SPKC_HEADER + TRANS_SRC_KEY_LOW);	\
+	 SIS_WQINDEX(3) = (uint32)(color);					\
+	 SiSUpdateQueue \
+	 SiSSetSwWP(ttt); \
+      }
+
+#define SiSSetupDSTTrans(color) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + TRANS_DST_KEY_HIGH);	\
+	 SIS_WQINDEX(1) = (uint32)(color);	 				\
+	 SIS_WQINDEX(2) = (uint32)(SIS_SPKC_HEADER + TRANS_DST_KEY_LOW);	\
+	 SIS_WQINDEX(3) = (uint32)(color);					\
+	 SiSUpdateQueue \
+	 SiSSetSwWP(ttt); \
+      }
+
+#define SiSSetupMONOPAT(p0,p1) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + MONO_MASK);		\
+	 SIS_WQINDEX(1) = (uint32)(p0);	 				\
+	 SIS_WQINDEX(2) = (uint32)(SIS_SPKC_HEADER + MONO_MASK + 4);	\
+	 SIS_WQINDEX(3) = (uint32)(p1);					\
+	 SiSUpdateQueue \
+	 SiSSetSwWP(ttt); \
+      }
+
+#define SiSSetupClip(left,top,right,bottom) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + LEFT_CLIP);	\
+	 SIS_WQINDEX(1) = (uint32)(((left) & 0xFFFF) | ((top)<<16));   	\
+	 SIS_WQINDEX(2) = (uint32)(SIS_SPKC_HEADER + RIGHT_CLIP);	\
+	 SIS_WQINDEX(3) = (uint32)(((right) & 0xFFFF)|((bottom)<<16)); 	\
+	 SiSUpdateQueue \
+	 SiSSetSwWP(ttt); \
+      }
+
+#define SiSSetupDSTBaseDoCMD(base) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + DST_ADDR); 	\
+	 SIS_WQINDEX(1) = (uint32)(base);				\
+	 SIS_WQINDEX(2) = (uint32)(SIS_SPKC_HEADER + COMMAND_READY);	\
+	 SIS_WQINDEX(3) = (uint32)(si.CmdReg); 			\
+	 if(si.chip >= SIS_660 && si.chip <= SIS_770) dummybuf = SIS_RQINDEX(3);   		\
+	 SiSUpdateQueue \
+	 SiSSetHwWP(ttt); \
+      }
+
+#define SiSSetRectDoCMD(w,h) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + RECT_WIDTH); 	\
+	 SIS_WQINDEX(1) = (uint32)(((h)<<16) | (w));	 		\
+	 SIS_WQINDEX(2) = (uint32)(SIS_SPKC_HEADER + COMMAND_READY);	\
+	 SIS_WQINDEX(3) = (uint32)(si.CmdReg); 			\
+	 if(si.chip >= SIS_660 && si.chip <= SIS_770) dummybuf = SIS_RQINDEX(3);  		\
+	 SiSUpdateQueue 	\
+	 SiSSetHwWP(ttt); 	\
+      }
+
+#define SiSSetupROP(rop) \
+      si.CmdReg |= (rop) << 8;
+
+#define SiSDoCMD \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + COMMAND_READY);	\
+	 SIS_WQINDEX(1) = (uint32)(si.CmdReg); 			\
+	 SIS_WQINDEX(2) = (uint32)(SIS_NIL_CMD); 			\
+	 SIS_WQINDEX(3) = (uint32)(SIS_NIL_CMD); 			\
+	 if(si.chip >= SIS_660 && si.chip <= SIS_770) dummybuf = SIS_RQINDEX(3);  		\
+	 SiSUpdateQueue \
+	 SiSSetHwWP(ttt); \
+      }
+
+#define SiSDualPipe(disable) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 uint32 _tmp = MMIO_IN32(si.regs, FIRE_TRIGGER) & ~(1 << 10);	\
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + FIRE_TRIGGER);	\
+	 SIS_WQINDEX(1) = (uint32)(_tmp | ((disable & 1) << 10)); 	\
+	 SIS_WQINDEX(2) = (uint32)(SIS_NIL_CMD); 			\
+	 SIS_WQINDEX(3) = (uint32)(SIS_NIL_CMD); 			\
+	 if(si.chip >= SIS_660 && si.chip <= SIS_770) dummybuf = SIS_RQINDEX(3); \
+	 SiSUpdateQueue \
+	 SiSSetHwWP(ttt); \
+      }
+
+/* Line */
+
+#define SiSSetupX0Y0X1Y1(x1,y1,x2,y2) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + LINE_X0);	\
+	 SIS_WQINDEX(1) = (uint32)(((y1)<<16) | (x1)); 		\
+	 SIS_WQINDEX(2) = (uint32)(SIS_SPKC_HEADER + LINE_X1);	\
+	 SIS_WQINDEX(3) = (uint32)(((y2)<<16) | (x2)); 		\
+	 SiSUpdateQueue \
+	 SiSSetSwWP(ttt); \
+      }
+
+#define SiSSetupX0Y0(x,y) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + LINE_X0);	\
+	 SIS_WQINDEX(1) = (uint32)(((y)<<16) | (x)); 		\
+	 SiSNILandUpdateSWQueue \
+      }
+
+#define SiSSetupX1Y1(x,y) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + LINE_X1);	\
+	 SIS_WQINDEX(1) = (uint32)(((y)<<16) | (x)); 		\
+	 SiSNILandUpdateSWQueue \
+      }
+
+#define SiSSetupLineCountPeriod(c, p) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + LINE_COUNT);	\
+	 SIS_WQINDEX(1) = (uint32)(((p) << 16) | (c)); 			\
+	 SiSNILandUpdateSWQueue \
+      }
+
+#define SiSSetupStyle(ls,hs) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + LINE_STYLE_0);	\
+	 SIS_WQINDEX(1) = (uint32)(ls);					\
+	 SIS_WQINDEX(2) = (uint32)(SIS_SPKC_HEADER + LINE_STYLE_1);	\
+	 SIS_WQINDEX(3) = (uint32)(hs); 				\
+	 SiSUpdateQueue \
+	 SiSSetSwWP(ttt); \
+      }
+
+/* Trapezoid */
+
+#define SiSSetupYHLR(y,h,left,right) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + TRAP_YH);	\
+	 SIS_WQINDEX(1) = (uint32)(((y)<<16) | (h)); 		\
+	 SIS_WQINDEX(2) = (uint32)(SIS_SPKC_HEADER + TRAP_LR);	\
+	 SIS_WQINDEX(3) = (uint32)(((right)<<16) | (left));	\
+	 SiSUpdateQueue \
+	 SiSSetSwWP(ttt); \
+      }
+
+
+#define SiSSetupdLdR(dxL,dyL,fxR,dyR) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + TRAP_DL);	\
+	 SIS_WQINDEX(1) = (uint32)(((dyL)<<16) | (dxL)); 	\
+	 SIS_WQINDEX(2) = (uint32)(SIS_SPKC_HEADER + TRAP_DR);	\
+	 SIS_WQINDEX(3) = (uint32)(((dyR)<<16) | (dxR)); 	\
+	 SiSUpdateQueue \
+	 SiSSetSwWP(ttt); \
+      }
+
+#define SiSSetupELER(eL,eR) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + TRAP_EL);	\
+	 SIS_WQINDEX(1) = (uint32)(eL);	 			\
+	 SIS_WQINDEX(2) = (uint32)(SIS_SPKC_HEADER + TRAP_ER);	\
+	 SIS_WQINDEX(3) = (uint32)(eR); 			\
+	 SiSUpdateQueue \
+	 SiSSetSwWP(ttt); \
+      }
+
+/* (Constant) Alpha blended BitBlt (alpha = 8 bit) */
+
+#define SiSSetupAlpha(alpha) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + ALPHA_ALPHA);	\
+	 SIS_WQINDEX(1) = (uint32)(alpha);	 			\
+	 SiSNILandUpdateSWQueue \
+      }
+
+#define SiSSetPattern(num, value) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(SIS_SPKC_HEADER + (PATTERN_REG + (num * 4)));	\
+	 SIS_WQINDEX(1) = (uint32)(value); 						\
+	 SiSNILandUpdateSWQueue \
+      }
+
+#define SiSSetupPatternRegBurst(pat1, pat2, pat3, pat4) \
+      { \
+	 uint32 ttt = SiSGetSwWP(); \
+	 pointer tt = (char *)si.cmdQueueBase + ttt; \
+	 SIS_WQINDEX(0) = (uint32)(pat1);		\
+	 SIS_WQINDEX(1) = (uint32)(pat2);		\
+	 SIS_WQINDEX(2) = (uint32)(pat3);		\
+	 SIS_WQINDEX(3) = (uint32)(pat4);		\
+	 SiSUpdateQueue \
+	 SiSSetSwWP(ttt); \
+      }
+
 
 #endif
+
+
+
+

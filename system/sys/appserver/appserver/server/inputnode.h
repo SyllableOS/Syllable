@@ -28,8 +28,6 @@ namespace os {
   class Message;
 };
 
-using namespace os;
-
 class InputNode
 {
 public:
@@ -43,23 +41,23 @@ public:
     InputNode();
     virtual ~InputNode();
 
-    static void   SetMousePos( const Point& cPos );
-    static Point GetMousePos();
+    static void   SetMousePos( const os::Point& cPos );
+    static os::Point GetMousePos();
     static uint32 GetMouseButtons();
   
     virtual bool Start() = 0;
     virtual int  GetType() = 0;
 protected:
-    static void EnqueueEvent( Message* pcEvent );
+    static void EnqueueEvent( os::Message* pcEvent );
 private:
     friend void InitInputSystem();
     static int32 EventLoopEntry( void* pData );
     static void EventLoop();
     static int32 Loop( void* pData );
   
-    static MessageQueue s_cEventQueue;
+    static os::MessageQueue s_cEventQueue;
     static atomic_t	      s_nMouseMoveEventCount;
-    static Point	      s_cMousePos;
+    static os::Point	  s_cMousePos;
     static uint32	      s_nMouseButtons;
 };
 

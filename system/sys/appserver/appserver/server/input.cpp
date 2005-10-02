@@ -36,6 +36,8 @@
 
 #include <util/message.h>
 
+using namespace os;
+
 MessageQueue InputNode::s_cEventQueue;
 Point InputNode::s_cMousePos( 0, 0 );
 uint32 InputNode::s_nMouseButtons = 0;
@@ -139,7 +141,7 @@ void InputNode::EnqueueEvent( Message * pcEvent )
 			atomic_inc( &s_nMouseMoveEventCount );
 			break;
 		}
-	}
+    }
 	if( s_cMousePos.x < 0 )
 		s_cMousePos.x = 0;
 	if( s_cMousePos.x >= g_pcScreenBitmap->m_nWidth )
@@ -171,6 +173,7 @@ void InputNode::EventLoop()
 	for( ;; )
 	{
 		Message *pcEvent;
+		int nKeyCode = 0;
 
 		for( ;; )
 		{
@@ -188,17 +191,25 @@ void InputNode::EventLoop()
 				g_cLayerGate.Close();
 				g_pcDispDrv->SetMousePos( static_cast < IPoint > ( s_cMousePos ) );
 				g_cLayerGate.Open();
-			}
+			} 
 			break;
 		}
+		
 		if( pcEvent != NULL )
 		{
-			AppServer::GetInstance()->ResetEventTime(  );
-			SrvWindow::HandleInputEvent( pcEvent );
+			if( pcEvent->GetCode() == M_KEY_DOWN || pcEvent->GetCode() == M_KEY_UP )
+			{
+				pcEvent->FindInt32( "_key", &nKeyCode );
+				HandleKeyboard( true, nKeyCode );
+			} else {
+				AppServer::GetInstance()->ResetEventTime(  );
+				SrvWindow::HandleInputEvent( pcEvent );
+			}
 			delete pcEvent;
 		}
 		else
 		{
+			HandleKeyboard( false, nKeyCode );
 			snooze( 10000 );
 		}
 	}

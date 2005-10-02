@@ -2142,44 +2142,12 @@ static void dump_tables( int argc, char **argv )
 
 void shutdown_vfs( void )
 {
-	Inode_s *psInode;
-
-	printk( "Flushing inodes...\n" );
-
-	LOCK( g_hInodeHashSem );
-
-	for ( psInode = g_sUsedList.il_psLRU; NULL != psInode; psInode = psInode->i_psNext )
-	{
-		psInode->i_bBusy = true;
-	}
-
-	UNLOCK( g_hInodeHashSem );
-
-	for ( psInode = g_sUsedList.il_psLRU; NULL != psInode; psInode = psInode->i_psNext )
-	{
-		write_inode( psInode );
-	}
-
-	LOCK( g_hInodeHashSem );
-	while ( g_sUsedList.il_psLRU != NULL )
-	{
-		psInode = g_sUsedList.il_psLRU;
-		remove_from_list( &g_sUsedList, psInode );
-
-		hash_delete_inode( &g_sHashTable, psInode );
-		clear_inode( psInode );
-		psInode->i_bBusy = false;
-
-		add_to_head( &g_sFreeList, psInode );
-	}
-	UNLOCK( g_hInodeHashSem );
-
 	printk( "Unmounting file systems...\n" );
 
 	while ( NULL != g_psFirstVolume )
 	{
 		Volume_s *psVol = g_psFirstVolume;
-
+		
 		g_psFirstVolume = psVol->v_psNext;
 
 		if ( NULL != psVol->v_psOperations )
@@ -2196,10 +2164,15 @@ void shutdown_vfs( void )
 					printk( "PANIC : volume points to a mount point where i_psMount == NULL!!\n" );
 					continue;
 				}
-
-				put_inode( psVol->v_psMountPoint->i_psMount );	// Release the root
+				
+				psVol->v_bUnmounted = true;
+				flush_volume_inodes( psVol );
+		
+				atomic_set( &psVol->v_psMountPoint->i_psMount->i_nCount, 0 );
+				umount_flush_inode( psVol->v_psMountPoint->i_psMount );
+				
 				put_inode( psVol->v_psMountPoint );	// release the mount point
-				psVol->v_psMountPoint->i_psMount = NULL;
+				psVol->v_psMountPoint->i_psMount = NULL;		
 				psVol->v_psOperations->unmount( psVol->v_pFSData );
 			}
 		}

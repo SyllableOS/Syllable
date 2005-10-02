@@ -38,6 +38,8 @@
 #include <util/messenger.h>
 #include <util/message.h>
 
+using namespace os;
+
 Gate g_cLayerGate( "layer_gate", false );
 
 
@@ -52,13 +54,13 @@ void Layer::Init()
 {
 	m_pcDrawConstrainReg = NULL;
 	m_pcShapeConstrainReg = NULL;
-	m_pcVisibleReg = NULL;
-	m_pcPrevVisibleReg = NULL;
 	m_pcDrawReg = NULL;
 	m_pcDamageReg = NULL;
 	m_pcActiveDamageReg = NULL;
-	m_pcFullReg = NULL;
-	m_pcPrevFullReg = NULL;
+	m_pcBitmapReg = NULL;
+	m_pcBitmapFullReg = NULL;
+	m_pcPrevBitmapReg = NULL;
+	m_pcPrevBitmapFullReg = NULL;
 	m_bIsUpdating = false;
 	m_bHasInvalidRegs = true;
 	m_nLevel = 0;
@@ -82,12 +84,16 @@ void Layer::Init()
 	m_sBgColor.green = 170;
 	m_sBgColor.blue = 170;
 
-	m_nRegionUpdateCount = 0;
-	m_nMouseOffCnt = 0;
-	m_bIsMouseOn = true;
 	m_bFontPalletteValid = false;
 	m_hHandle = g_pcLayers->Insert( this );
 	m_bBackdrop = false;
+
+	m_bOnUpdateList = false;	
+	m_pcBackbuffer = NULL;
+	m_pcVisibleFullReg = NULL;
+	m_pcPrevVisibleFullReg = NULL;
+	
+
 
 	memset( m_asFontPallette, 255, sizeof( m_asFontPallette ) );
 	memset( m_anFontPalletteConverted, NUM_FONT_GRAYS, sizeof( uint32 ) );
@@ -164,6 +170,11 @@ Layer::~Layer()
 		}
 		m_pcFont->Release();
 	}
+	if( m_pcBackbuffer != NULL )
+	{
+		m_pcBackbuffer->Release();
+		m_pcBackbuffer = NULL;
+	}
 }
 
 //----------------------------------------------------------------------------
@@ -198,7 +209,7 @@ void Layer::Show( bool bFlag )
 	{
 		if( pcSibling->m_cIFrame.DoIntersect( m_cIFrame ) )
 		{
-			pcSibling->MarkModified( m_cIFrame - pcSibling->m_cIFrame.LeftTop() );
+			pcSibling->SetDirtyRegFlags( m_cIFrame - pcSibling->m_cIFrame.LeftTop() );
 		}
 	}
 
@@ -405,17 +416,17 @@ void Layer::Added( int nHideCount )
 
 void Layer::DeleteRegions()
 {
-	__assertw( m_pcPrevVisibleReg == NULL );
-	__assertw( m_pcPrevFullReg == NULL );
+	__assertw( m_pcPrevBitmapReg == NULL );
+	__assertw( m_pcPrevBitmapFullReg == NULL );
 
-	delete m_pcVisibleReg;
-	delete m_pcFullReg;
+	delete m_pcBitmapReg;
+	delete m_pcBitmapFullReg;
 	delete m_pcDamageReg;
 	delete m_pcActiveDamageReg;
 	delete m_pcDrawReg;
 
-	m_pcVisibleReg = NULL;
-	m_pcFullReg = NULL;
+	m_pcBitmapReg = NULL;
+	m_pcBitmapFullReg = NULL;
 	m_pcDrawReg = NULL;
 	m_pcDamageReg = NULL;
 	m_pcActiveDamageReg = NULL;
@@ -478,7 +489,7 @@ Layer *Layer::GetChildAt( Point cPos )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-void Layer::UpdateIfNeeded( bool bForce )
+void Layer::UpdateIfNeeded()
 {
 	Layer *pcChild;
 
@@ -503,9 +514,7 @@ void Layer::UpdateIfNeeded( bool bForce )
 	}
 	for( pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
 	{
-//    if ( m_nLevel != 0 || pcChild->m_pcWindow == NULL ) {
-		pcChild->UpdateIfNeeded( bForce );
-//    }
+		pcChild->UpdateIfNeeded();
 	}
 }
 
@@ -519,8 +528,9 @@ void Layer::UpdateIfNeeded( bool bForce )
 void Layer::SetBitmap( SrvBitmap * pcBitmap )
 {
 	Layer *pcChild;
-
+	
 	m_bFontPalletteValid = false;
+	
 	m_pcBitmap = pcBitmap;
 
 	for( pcChild = m_pcTopChild; NULL != pcChild; pcChild = pcChild->m_pcLowerSibling )
@@ -562,8 +572,10 @@ int Layer::ToggleDepth()
 		{
 			if( pcSibling->m_cIFrame.DoIntersect( m_cIFrame ) )
 			{
-				pcSibling->MarkModified( m_cIFrame - pcSibling->m_cIFrame.LeftTop() );
+				pcSibling->SetDirtyRegFlags( m_cIFrame - pcSibling->m_cIFrame.LeftTop() );
 			}
+			if( GetParent() == g_pcTopView )
+				pcSibling->Invalidate();
 		}
 	}
 	return ( false );
@@ -594,8 +606,10 @@ void Layer::MoveToFront()
 	{
 		if( pcSibling->m_cIFrame.DoIntersect( m_cIFrame ) )
 		{
-			pcSibling->MarkModified( m_cIFrame - pcSibling->m_cIFrame.LeftTop() );
+			pcSibling->SetDirtyRegFlags( m_cIFrame - pcSibling->m_cIFrame.LeftTop() );
 		}
+		if( GetParent() == g_pcTopView )
+			pcSibling->Invalidate();
 	}
 }
 
@@ -624,8 +638,10 @@ void Layer::MoveToBack()
 	{
 		if( pcSibling->m_cIFrame.DoIntersect( m_cIFrame ) )
 		{
-			pcSibling->MarkModified( m_cIFrame - pcSibling->m_cIFrame.LeftTop() );
+			pcSibling->SetDirtyRegFlags( m_cIFrame - pcSibling->m_cIFrame.LeftTop() );
 		}
+		if( GetParent() == g_pcTopView )
+			pcSibling->Invalidate();
 	}
 }
 
@@ -636,7 +652,7 @@ void Layer::MoveToBack()
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-void Layer::MarkModified( const IRect & cRect )
+void Layer::SetDirtyRegFlags( const os::IRect& cRect )
 {
 	if( GetBounds().DoIntersect( cRect ) )
 	{
@@ -646,7 +662,7 @@ void Layer::MarkModified( const IRect & cRect )
 
 		for( pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
 		{
-			pcChild->MarkModified( cRect - pcChild->m_cIFrame.LeftTop() );
+			pcChild->SetDirtyRegFlags( cRect - pcChild->m_cIFrame.LeftTop() );
 		}
 	}
 }
@@ -748,7 +764,7 @@ void Layer::ScrollBy( const Point & cOffset )
 	UpdateRegions();
 	SrvWindow::HandleMouseTransaction();
 
-	if( NULL == m_pcFullReg || m_pcBitmap == NULL )
+	if( NULL == m_pcBitmapFullReg || m_pcBitmap == NULL )
 	{
 		return;
 	}
@@ -758,9 +774,9 @@ void Layer::ScrollBy( const Point & cOffset )
 	ClipRect *pcSrcClip;
 	ClipRect *pcDstClip;
 	ClipRectList cBltList;
-	Region cDamage( *m_pcVisibleReg );
+	Region cDamage( *m_pcBitmapReg );
 
-	ENUMCLIPLIST( &m_pcFullReg->m_cRects, pcSrcClip )
+	ENUMCLIPLIST( &m_pcBitmapFullReg->m_cRects, pcSrcClip )
 	{
 
 	  /***	Clip to source rectangle	***/
@@ -774,7 +790,7 @@ void Layer::ScrollBy( const Point & cOffset )
 		}
 		cSRect += cIOffset;
 
-		ENUMCLIPLIST( &m_pcFullReg->m_cRects, pcDstClip )
+		ENUMCLIPLIST( &m_pcBitmapFullReg->m_cRects, pcDstClip )
 		{
 			IRect cDRect = cSRect & pcDstClip->m_cBounds;
 
@@ -798,10 +814,10 @@ void Layer::ScrollBy( const Point & cOffset )
 	if( nCount == 0 )
 	{
 		Invalidate( cIBounds );
-		UpdateIfNeeded( true );
+		UpdateIfNeeded();
 		return;
 	}
-	IPoint cTopLeft( ConvertToRoot( Point( 0, 0 ) ) );
+	IPoint cTopLeft( ConvertToBitmap( Point( 0, 0 ) ) );
 
 	ClipRect **apsClips = new ClipRect *[nCount];
 
@@ -815,10 +831,10 @@ void Layer::ScrollBy( const Point & cOffset )
 	for( int i = 0; i < nCount; ++i )
 	{
 		ClipRect *pcClip = apsClips[i];
-
+		
 		pcClip->m_cBounds += cTopLeft;	// Convert into screen space
 
-		m_pcBitmap->m_pcDriver->BltBitmap( m_pcBitmap, m_pcBitmap, pcClip->m_cBounds - pcClip->m_cMove, IPoint( pcClip->m_cBounds.left, pcClip->m_cBounds.top ), DM_COPY );
+		m_pcBitmap->m_pcDriver->BltBitmap( m_pcBitmap, m_pcBitmap, pcClip->m_cBounds - pcClip->m_cMove, pcClip->m_cBounds, DM_COPY, 0xff );
 		Region::FreeClipRect( pcClip );
 	}
 	delete[]apsClips;
@@ -842,7 +858,7 @@ void Layer::ScrollBy( const Point & cOffset )
 	{
 		Invalidate( pcDstClip->m_cBounds );
 	}
-	UpdateIfNeeded( true );
+	UpdateIfNeeded();
 }
 
 //----------------------------------------------------------------------------
@@ -879,8 +895,8 @@ void Layer::SetFrame( const Rect & cRect )
 		{
 			if( pcSibling->m_cIFrame.DoIntersect( m_cIFrame ) || pcSibling->m_cIFrame.DoIntersect( cIRect ) )
 			{
-				pcSibling->MarkModified( m_cIFrame - pcSibling->m_cIFrame.LeftTop() );
-				pcSibling->MarkModified( cIRect - pcSibling->m_cIFrame.LeftTop() );
+				pcSibling->SetDirtyRegFlags( m_cIFrame - pcSibling->m_cIFrame.LeftTop() );
+				pcSibling->SetDirtyRegFlags( cIRect - pcSibling->m_cIFrame.LeftTop() );
 			}
 		}
 	}
@@ -925,7 +941,7 @@ void Layer::SetShapeRegion( Region * pcReg )
 		{
 			if( pcSibling->m_cIFrame.DoIntersect( m_cIFrame ) )
 			{
-				pcSibling->MarkModified( m_cIFrame - pcSibling->m_cIFrame.LeftTop() );
+				pcSibling->SetDirtyRegFlags( m_cIFrame - pcSibling->m_cIFrame.LeftTop() );
 			}
 		}
 	}
@@ -971,8 +987,6 @@ void Layer::Invalidate( bool bReqursive )
 }
 
 /** Called when the screenmode has changed.
- * \par Description:
- * Invalidates the font palette.
  * \par
  * \sa
  * \author	Arno Klenke (arno_klenke@yahoo.de)
@@ -1016,15 +1030,16 @@ void Layer::InvalidateNewAreas( void )
 		}
 		else
 		{
-			if( m_pcVisibleReg != NULL )
+			
+			if( m_pcBitmapReg != NULL )
 			{
-				pcRegion = new Region( *m_pcVisibleReg );
+				pcRegion = new Region( *m_pcBitmapReg );
 
 				if( pcRegion != NULL )
 				{
-					if( m_pcPrevVisibleReg != NULL )
+					if( m_pcPrevBitmapReg != NULL )
 					{
-						pcRegion->Exclude( *m_pcPrevVisibleReg );
+						pcRegion->Exclude( *m_pcPrevBitmapReg );
 					}
 					if( m_pcDamageReg == NULL )
 					{
@@ -1050,9 +1065,9 @@ void Layer::InvalidateNewAreas( void )
 				}
 			}
 		}
-		delete m_pcPrevVisibleReg;
+		delete m_pcPrevBitmapReg;
 
-		m_pcPrevVisibleReg = NULL;
+		m_pcPrevBitmapReg = NULL;
 
 		m_cDeltaSize = IPoint( 0, 0 );
 		m_cDeltaMove = IPoint( 0, 0 );
@@ -1060,9 +1075,7 @@ void Layer::InvalidateNewAreas( void )
 
 	for( Layer * pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
 	{
-//    if ( m_nLevel != 0 || pcChild->m_pcWindow == NULL ) {
 		pcChild->InvalidateNewAreas();
-//    }
 	}
 }
 
@@ -1097,19 +1110,19 @@ void Layer::MoveChilds()
 			{
 				continue;
 			}
-			if( pcChild->m_pcFullReg == NULL || pcChild->m_pcPrevFullReg == NULL )
+			if( pcChild->m_pcBitmapFullReg == NULL || pcChild->m_pcPrevBitmapFullReg == NULL )
 			{
 				continue;
 			}
+			
+			Region *pcRegion = new Region( *pcChild->m_pcPrevBitmapFullReg );
 
-			Region *pcRegion = new Region( *pcChild->m_pcPrevFullReg );
-
-			pcRegion->Intersect( *pcChild->m_pcFullReg );
+			pcRegion->Intersect( *pcChild->m_pcBitmapFullReg );
 
 			ClipRect *pcClip;
 			int nCount = 0;
 
-			IPoint cTopLeft( ConvertToRoot( Point( 0, 0 ) ) );
+			IPoint cTopLeft( ConvertToBitmap( Point( 0, 0 ) ) );
 
 			IPoint cChildOffset( IPoint( pcChild->m_cIFrame.left, pcChild->m_cIFrame.top ) + cTopLeft );
 			IPoint cChildMove( pcChild->m_cDeltaMove );
@@ -1142,8 +1155,8 @@ void Layer::MoveChilds()
 			{
 				ClipRect *pcClip = apsClips[i];
 
-				m_pcBitmap->m_pcDriver->BltBitmap( m_pcBitmap, m_pcBitmap, pcClip->m_cBounds - pcClip->m_cMove, IPoint( pcClip->m_cBounds.left, pcClip->m_cBounds.top ), DM_COPY );
-				m_pcVisibleReg->FreeClipRect( pcClip );
+				m_pcBitmap->m_pcDriver->BltBitmap( m_pcBitmap, m_pcBitmap, pcClip->m_cBounds - pcClip->m_cMove, pcClip->m_cBounds, DM_COPY, 0xff );
+				Region::FreeClipRect( pcClip );
 			}
 			delete[]apsClips;
 			delete pcRegion;
@@ -1176,41 +1189,13 @@ void Layer::MoveChilds()
 				}
 			}
 		}
-		delete m_pcPrevFullReg;
+		delete m_pcPrevBitmapFullReg;
 
-		m_pcPrevFullReg = NULL;
+		m_pcPrevBitmapFullReg = NULL;
 	}
 	for( pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
 	{
-//    if ( m_nLevel != 0 || pcChild->m_pcWindow == NULL ) {
 		pcChild->MoveChilds();
-//    }
-	}
-}
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-//      Stores the previous visible region in m_pcPrevVisibleReg and then
-//      rebuilds m_pcVisibleReg, starting with whatever is left of our parent
-//      and then removing areas covered by siblings.
-// NOTE:
-//      Areas covered by childrens are not removed.
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-void Layer::SwapRegions( bool bForce )
-{
-	if( bForce )
-	{
-		m_bHasInvalidRegs = true;
-	}
-
-	Layer *pcChild;
-
-	for( pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
-	{
-		pcChild->SwapRegions( bForce );
 	}
 }
 
@@ -1227,7 +1212,7 @@ void Layer::RebuildRegion( bool bForce )
 
 	if( m_nHideCount > 0 )
 	{
-		if( m_pcVisibleReg != NULL )
+		if( m_pcBitmapReg != NULL )
 		{
 			DeleteRegions();
 		}
@@ -1245,88 +1230,93 @@ void Layer::RebuildRegion( bool bForce )
 
 		m_pcDrawReg = NULL;
 
-		__assertw( m_pcPrevVisibleReg == NULL );
-		__assertw( m_pcPrevFullReg == NULL );
+		__assertw( m_pcPrevBitmapReg == NULL );
+		__assertw( m_pcPrevBitmapFullReg == NULL );
+		
+		if( m_pcPrevBitmapFullReg != NULL )
+			dbprintf( "%x %x\n", this, g_pcTopView );
 
-		m_pcPrevVisibleReg = m_pcVisibleReg;
-		m_pcPrevFullReg = m_pcFullReg;
+		m_pcPrevBitmapReg = m_pcBitmapReg;
+		m_pcPrevBitmapFullReg = m_pcBitmapFullReg;
 
 		if( m_pcParent == NULL )
 		{
-			m_pcFullReg = new Region( m_cIFrame );
+			m_pcBitmapFullReg = new Region( GetIBounds() );
 		}
 		else
 		{
-			__assertw( m_pcParent->m_pcFullReg != NULL );
-			if( m_pcParent->m_pcFullReg == NULL )
+			__assertw( m_pcParent->m_pcBitmapFullReg != NULL );
+			if( m_pcParent->m_pcBitmapFullReg == NULL  )
 			{
-				m_pcFullReg = new Region( m_cIFrame );
+				m_pcBitmapFullReg = new Region( GetIBounds() );
 			}
 			else
 			{
-				m_pcFullReg = new Region( *m_pcParent->m_pcFullReg, m_cIFrame, true );
-			}
+				if( m_pcBackbuffer != NULL ) {
+					m_pcBitmapFullReg = new Region( GetIBounds() );
+				} else {
+					m_pcBitmapFullReg = new Region( *m_pcParent->m_pcBitmapFullReg, m_cIFrame, true );
+				}
+				}
 			if( m_pcShapeConstrainReg != NULL )
 			{
-				m_pcFullReg->Intersect( *m_pcShapeConstrainReg );
+				m_pcBitmapFullReg->Intersect( *m_pcShapeConstrainReg );
 			}
 		}
-//    if ( m_nLevel == 1 ) {
+
 		IPoint cLeftTop( m_cIFrame.LeftTop() );
 
-		for( pcSibling = m_pcHigherSibling; NULL != pcSibling; pcSibling = pcSibling->m_pcHigherSibling )
+		if( m_pcBackbuffer == NULL )
 		{
-			if( pcSibling->m_nHideCount == 0 )
+			for( pcSibling = m_pcHigherSibling; NULL != pcSibling; pcSibling = pcSibling->m_pcHigherSibling )
 			{
-				if( pcSibling->m_cIFrame.DoIntersect( m_cIFrame ) )
+				/***	Remove siblings from region	***/
+				if( pcSibling->m_nHideCount == 0 )
 				{
-					if( pcSibling->m_pcShapeConstrainReg == NULL )
+					if( pcSibling->m_cIFrame.DoIntersect( m_cIFrame ) )
 					{
-						m_pcFullReg->Exclude( pcSibling->m_cIFrame - cLeftTop );
-					}
-					else
-					{
-						m_pcFullReg->Exclude( *pcSibling->m_pcShapeConstrainReg, pcSibling->m_cIFrame.LeftTop() - cLeftTop );
+						if( pcSibling->m_pcShapeConstrainReg == NULL )
+						{
+							m_pcBitmapFullReg->Exclude( pcSibling->m_cIFrame - cLeftTop );
+						}
+						else
+						{
+							m_pcBitmapFullReg->Exclude( *pcSibling->m_pcShapeConstrainReg, pcSibling->m_cIFrame.LeftTop() - cLeftTop );
+						}
 					}
 				}
 			}
 		}
-//    }
-		m_pcFullReg->Optimize();
-		m_pcVisibleReg = new Region( *m_pcFullReg );
 
+		m_pcBitmapFullReg->Optimize();
+		
+		m_pcBitmapReg = new Region( *m_pcBitmapFullReg );		
+		
 		if( ( m_nFlags & WID_DRAW_ON_CHILDREN ) == 0 )
 		{
-			bool bRegModified = false;
-
+		
 			for( pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
 			{
-
-		  /***	Remove children from child region	***/
+				/***	Remove children from region	***/
 				if( pcChild->m_nHideCount == 0 && ( pcChild->m_nFlags & WID_TRANSPARENT ) == 0 )
 				{
 					if( pcChild->m_pcShapeConstrainReg == NULL )
 					{
-						m_pcVisibleReg->Exclude( pcChild->m_cIFrame );
+						m_pcBitmapReg->Exclude( pcChild->m_cIFrame );
 					}
 					else
 					{
-						m_pcVisibleReg->Exclude( *pcChild->m_pcShapeConstrainReg, pcChild->m_cIFrame.LeftTop() );
+						m_pcBitmapReg->Exclude( *pcChild->m_pcShapeConstrainReg, pcChild->m_cIFrame.LeftTop() );
 					}
-					bRegModified = true;
+					
 				}
 			}
-			if( bRegModified )
-			{
-				m_pcVisibleReg->Optimize();
-			}
+			m_pcBitmapReg->Optimize();
 		}
 	}
 	for( pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
 	{
-//    if ( m_nLevel != 0 || pcChild->m_pcWindow == NULL ) {
 		pcChild->RebuildRegion( bForce );
-//    }
 	}
 }
 
@@ -1342,9 +1332,7 @@ void Layer::ClearDirtyRegFlags()
 	m_bHasInvalidRegs = false;
 	for( Layer * pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
 	{
-//    if ( m_nLevel != 0 || pcChild->m_pcWindow == NULL ) {
 		pcChild->ClearDirtyRegFlags();
-//    }
 	}
 }
 
@@ -1355,38 +1343,13 @@ void Layer::ClearDirtyRegFlags()
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-void Layer::UpdateRegions( bool bForce, bool bRoot )
+void Layer::UpdateRegions( bool bForce )
 {
 	RebuildRegion( bForce );
 	MoveChilds();
 	InvalidateNewAreas();
 
-	if( m_bHasInvalidRegs && m_pcParent == NULL && m_pcBitmap != NULL && m_pcDamageReg != NULL )
-	{
-		if( m_pcBitmap == g_pcScreenBitmap )
-		{
-			ClipRect *pcClip;
-			Color32_s sColor( 0x00, 0x60, 0x6b, 0 );
-			IPoint cTopLeft( ConvertToRoot( Point( 0, 0 ) ) );
-
-//          Region cTmpReg( static_cast<IRect>(GetBounds()) );
-
-			Region cDrawReg( *m_pcVisibleReg );
-
-			cDrawReg.Intersect( *m_pcDamageReg );
-//          cTmpReg.Exclude( *m_pcDamageReg );
-//          cDrawReg.Exclude( cTmpReg );
-
-			ENUMCLIPLIST( &cDrawReg.m_cRects, pcClip )
-			{
-				m_pcBitmap->m_pcDriver->FillRect( m_pcBitmap, pcClip->m_cBounds + cTopLeft, sColor );
-			}
-		}
-		delete m_pcDamageReg;
-
-		m_pcDamageReg = NULL;
-	}
-	UpdateIfNeeded( false );
+	UpdateIfNeeded();
 	ClearDirtyRegFlags();
 }
 
@@ -1412,28 +1375,24 @@ Region *Layer::GetRegion()
 	{
 		if( m_pcDrawConstrainReg == NULL )
 		{
-			return ( m_pcVisibleReg );
+			return ( m_pcBitmapReg );
 		}
 		else
 		{
 			if( m_pcDrawReg == NULL )
 			{
-				m_pcDrawReg = new Region( *m_pcVisibleReg );
+				m_pcDrawReg = new Region( *m_pcBitmapReg );
 				m_pcDrawReg->Intersect( *m_pcDrawConstrainReg );
 			}
 		}
 	}
-	else if( m_pcDrawReg == NULL && m_pcVisibleReg != NULL )
+	else if( m_pcDrawReg == NULL && m_pcBitmapReg != NULL )
 	{
-//      Region cTmpReg( static_cast<IRect>(GetBounds()) );
 
-		m_pcDrawReg = new Region( *m_pcVisibleReg );
+		m_pcDrawReg = new Region( *m_pcBitmapReg );
 
 		__assertw( m_pcActiveDamageReg != NULL );
 
-//      cTmpReg.Exclude( *m_pcActiveDamageReg );
-
-//      m_pcDrawReg->Exclude( cTmpReg );
 		m_pcDrawReg->Intersect( *m_pcActiveDamageReg );
 		if( m_pcDrawConstrainReg != NULL )
 		{
@@ -1465,7 +1424,7 @@ void Layer::PutRegion( Region * pcReg )
 
 void Layer::BeginUpdate()
 {
-	if( m_pcVisibleReg != NULL )
+	if( m_pcBitmapReg != NULL )
 	{
 		m_bIsUpdating = true;
 	}
@@ -1532,87 +1491,6 @@ void Layer::SetFont( FontNode * pcFont )
 	{
 		dbprintf( "ERROR : Layer::SetFont() called with NULL pointer\n" );
 	}
-}
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-bool Layer::MouseOverlap( Point cOffset )
-{
-	SrvBitmap *pcBitmap = GetBitmap();
-
-	if( NULL != pcBitmap )
-	{
-		if( NULL != pcBitmap->m_pcDriver )
-		{
-			return ( pcBitmap->m_pcDriver->IntersectWithMouse( static_cast < IRect > ( ConvertToRoot( GetBounds() ) - cOffset ) ) );
-		}
-	}
-	return ( false );
-}
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-void Layer::MouseOff()
-{
-
-/*  
-  if ( m_bIsMouseOn )
-  {
-    if ( MouseOverlap( Point( 0, 0 ) ) )
-    {
-      SrvBitmap* pcBitmap = GetBitmap();
-
-      if ( NULL != pcBitmap )
-      {
-	if ( NULL != pcBitmap->m_pcDriver ) {
-	  pcBitmap->m_pcDriver->MouseOff();
-	  m_bIsMouseOn = false;
-	}
-      }
-    }
-  }
-  m_nMouseOffCnt++;
-  */
-}
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-void Layer::MouseOn()
-{
-
-/*  
-  m_nMouseOffCnt--;
-
-  if ( m_nMouseOffCnt == 0 && m_bIsMouseOn == false )
-  {
-    m_bIsMouseOn = true;
-
-    SrvBitmap* pcBitmap = GetBitmap();
-
-    if ( NULL != pcBitmap )
-    {
-      if ( NULL != pcBitmap->m_pcDriver )
-      {
-	pcBitmap->m_pcDriver->MouseOn();
-      }
-    }
-  }
-  */
 }
 
 font_height Layer::GetFontHeight() const

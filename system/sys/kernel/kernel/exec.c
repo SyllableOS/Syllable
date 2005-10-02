@@ -455,7 +455,7 @@ int sys_execve( const char *a_pzPath, char *const *argv, char *const *envv )
 		}
 		nFlg = cli();
 		psRegs->gs = g_asProcessorDescs[get_processor_id()].pi_nGS;
-		Desc_SetBase( psRegs->gs, ( uint32 )psThread->tr_pThreadData );
+		set_gdt_desc_base( psRegs->gs, ( uint32 )psThread->tr_pThreadData );
 		psThread->tc_sTSS.gs = psRegs->gs;
 
 		g_bKernelInitialized = true;

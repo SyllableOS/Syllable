@@ -29,6 +29,8 @@
 #include "desktop.h"
 #include "keyboard.h"
 
+using namespace os;
+
 AppserverConfig *AppserverConfig::s_pcInstance = NULL;
 
 AppserverConfig::AppserverConfig()

@@ -259,7 +259,7 @@ static void init_timer2( void )
 void TimerInterrupt( int dummy )
 {
 	bigtime_t nCurTime;
-
+	
 	if ( get_processor_id() != g_nBootCPU )
 	{
 		printk( "Got timer IRQ to CPU %d (Booted on %d)\n", get_processor_id(), g_nBootCPU );
@@ -272,14 +272,10 @@ void TimerInterrupt( int dummy )
 	g_sSysBase.ex_nRealTime += ( uint64 )( 1000000 / INT_FREQ );
 	nCurTime = g_sSysBase.ex_nRealTime - g_sSysBase.ex_nBootTime;
 	write_sequnlock( &g_sTimerSeqLock );
-
-	// TODO: move this to a separate thread
+		
 	send_alarm_signals( nCurTime );
 	wake_up_sleepers( nCurTime );
-	if ( g_bAPICPresent == false )
-	{
-		Schedule();
-	}
+	Schedule();
 }
 
 //****************************************************************************/

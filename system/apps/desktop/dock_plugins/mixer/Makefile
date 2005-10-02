@@ -1,7 +1,7 @@
 #Makefile for Mixer.so
 COPTS = -c -fexceptions -ffast-math
 
-APPBIN = /system/drivers/dock
+APPBIN = /system/extensions/dock
 OBJS = Mixer.o
 
 OBJDIR := objs
@@ -40,11 +40,12 @@ deps:
 
 dist: all
 	@echo Distribution...
-	@mkdir -p $(DIST_DIR)/atheos/sys/drivers/dock
-	@cp Mixer.so $(DIST_DIR)/atheos/sys/drivers/dock/Mixer.so
+	@mkdir -p $(DIST_DIR)/atheos/sys/extensions/dock
+	@cp Mixer.so $(DIST_DIR)/atheos/sys/extensions/dock/Mixer.so
 
 install: all
 	@echo Installing...
-	@mkdir -p /system/drivers/dock
-	@cp Mixer.so /system/drivers/dock/Mixer.so
+	@mkdir -p /system/extensions/dock
+	@cp Mixer.so /system/extensions/dock/Mixer.so
+
 

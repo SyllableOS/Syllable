@@ -85,9 +85,9 @@ void SelectWin::HandleMessage( os::Message* pcMessage )
 	{
 		case CF_GUI_PLAYLIST_OPEN:
 		{
-			os::Message* pcMsg = new os::Message( CF_GUI_LIST_SELECTED );
-			pcMsg->AddString( "file/path", m_pcFileInput->GetBuffer()[0] );
-			os::Application::GetInstance()->PostMessage( pcMsg, os::Application::GetInstance() );
+			os::Message cMsg( CF_GUI_LIST_SELECTED );
+			cMsg.AddString( "file/path", m_pcFileInput->GetBuffer()[0] );
+			os::Application::GetInstance()->PostMessage( &cMsg, os::Application::GetInstance() );
 			PostMessage( os::M_QUIT );
 		}
 		break;

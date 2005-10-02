@@ -640,7 +640,7 @@ Thread_s *Thread_New( Process_s *psProc )
 	{
 		goto error3;
 	}
-	psThread->tc_TSSDesc = Desc_Alloc( 0 );	/* allocate a GDT descriptor for this task      */
+	psThread->tc_TSSDesc = alloc_gdt_desc( 0 );	/* allocate a GDT descriptor for this task      */
 
 	if ( psThread->tc_TSSDesc == 0 )
 	{
@@ -684,9 +684,9 @@ Thread_s *Thread_New( Process_s *psProc )
 
 	tss->eflags = 0x203246;	/*      ReadFlags() & ~0x200;   */
 
-	Desc_SetLimit( psThread->tc_TSSDesc, 0xffff );
-	Desc_SetBase( psThread->tc_TSSDesc, ( uint32 )tss );
-	Desc_SetAccess( psThread->tc_TSSDesc, 0xe9 );                                                                                                                                                                                      
+	set_gdt_desc_limit( psThread->tc_TSSDesc, 0xffff );
+	set_gdt_desc_base( psThread->tc_TSSDesc, ( uint32 )tss );
+	set_gdt_desc_access( psThread->tc_TSSDesc, 0xe9 );                                                                                                                                                                                      
 	g_sSysBase.ex_GDT[psThread->tc_TSSDesc >> 3].desc_lmh &= 0x8f;	// TSS descriptor has bit 22 clear (as opposed to 32 bit data and code descriptors)
 
 	tss->IOMapBase = 104;
@@ -732,7 +732,7 @@ void Thread_Delete( Thread_s *psThread )
 	sched_lock();
 
 	MArray_Remove( &g_sThreadTable, psThread->tr_hThreadID );
-	Desc_Free( psThread->tc_TSSDesc );
+	free_gdt_desc( psThread->tc_TSSDesc );
 
 	release_thread_semaphores( psThread->tr_hThreadID );
 

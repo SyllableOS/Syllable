@@ -88,15 +88,13 @@ class DockClockUpdater;
 
 
 
-class DockClock : public DockPlugin
+class DockClock : public View
 {
 	public:
-		DockClock( os::Path cPath, os::Looper* pcDock );
+		DockClock( os::DockPlugin* pcPlugin, os::Looper* pcDock );
 		~DockClock();
 		
-		os::String GetIdentifier() ;
-		Point GetPreferredSize( bool bLargest );
-		os::Path GetPath() { return( m_cPath ); }
+		Point GetPreferredSize( bool bLargest ) const;
 		
 		virtual void AttachedToWindow();
 		virtual void DetachedFromWindow();
@@ -113,8 +111,8 @@ class DockClock : public DockPlugin
 		void SaveSettings();
 		void UpdateFont();
 		
-		os::Path m_cPath;
 		os::BitmapImage* m_pcIcon;
+		os::DockPlugin* m_pcPlugin;
 		os::Looper* m_pcDock;
 		bool m_bCanDrag;
 		bool m_bDragging;
@@ -165,8 +163,9 @@ private:
 
 //*************************************************************************************
 
-DockClock::DockClock( os::Path cPath, os::Looper* pcDock ) : DockPlugin()
+DockClock::DockClock( DockPlugin* pcPlugin, os::Looper* pcDock ) : View( os::Rect(), "dock_clock" )
 {
+	m_pcPlugin = pcPlugin;
 	m_pcDock = pcDock;
 	m_bCanDrag = m_bDragging = false;
 	m_zString = "99:99:99";
@@ -175,15 +174,14 @@ DockClock::DockClock( os::Path cPath, os::Looper* pcDock ) : DockPlugin()
 	m_bDisplayTime = true;
 	pcClockSettingsWindow = NULL;
 	
-	m_cPath = cPath;
-	
 	
 	/* Load default icons */
-	os::File* pcFile = new os::File( cPath );
+	os::File* pcFile = new os::File( pcPlugin->GetPath() );
 	os::Resources cCol( pcFile );
 	os::ResStream *pcStream = cCol.GetResourceStream( "icon48x48.png" );
 	
 	m_pcIcon = new os::BitmapImage( pcStream );
+	delete( pcStream );
 	delete( pcFile );
 	
 	/* Load settings */
@@ -257,12 +255,8 @@ void DockClock::HandleMessage(Message* pcMessage)
 DockClock::~DockClock( )
 {
 	SaveSettings();
+	delete( pcContextMenu );
 	delete( m_pcIcon );
-}
-
-String DockClock::GetIdentifier()
-{
-	return( "Clock" );
 }
 
 void DockClock::AttachedToWindow()
@@ -469,7 +463,7 @@ void DockClock::Paint( const Rect &cUpdateRect )
   	DrawString( m_zString );
 }
 
-Point DockClock::GetPreferredSize( bool bLargest )
+Point DockClock::GetPreferredSize( bool bLargest ) const
 {
 	String cString = "Sat Mar 12, 2005";
 	float fWidth = GetStringWidth(cString);
@@ -487,13 +481,13 @@ void DockClock::MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons,
 		if( m_bCanDrag )
 		{
 			m_bDragging = true;
-			os::Message* pcMsg = new os::Message();
-			BeginDrag( pcMsg, os::Point( m_pcIcon->GetBounds().Width() / 2,
+			os::Message cMsg;
+			BeginDrag( &cMsg, os::Point( m_pcIcon->GetBounds().Width() / 2,
 											m_pcIcon->GetBounds().Height() / 2 ), m_pcIcon->LockBitmap() );
 			m_bCanDrag = false;
 		}
 	}
-	os::DockPlugin::MouseMove( cNewPos, nCode, nButtons, pcData );
+	os::View::MouseMove( cNewPos, nCode, nButtons, pcData );
 }
 
 
@@ -502,14 +496,14 @@ void DockClock::MouseUp( const os::Point & cPosition, uint32 nButtons, os::Messa
 	if( m_bDragging && ( cPosition.y > 30 ) )
 	{
 		/* Remove ourself from the dock */
-		os::Message cMsg( os::DOCK_REMOVE );
-		cMsg.AddPointer( "plugin", this );
+		os::Message cMsg( os::DOCK_REMOVE_PLUGIN );
+		cMsg.AddPointer( "plugin", m_pcPlugin );
 		m_pcDock->PostMessage( &cMsg, m_pcDock );
 		return;
 	}
 	m_bDragging = false;
 	m_bCanDrag = false;
-	os::DockPlugin::MouseUp( cPosition, nButtons, pcData );
+	os::View::MouseUp( cPosition, nButtons, pcData );
 }
 
 void DockClock::MouseDown( const os::Point& cPosition, uint32 nButtons )
@@ -535,49 +529,45 @@ void DockClock::MouseDown( const os::Point& cPosition, uint32 nButtons )
 		/* Change time format */
 		pcContextMenu->Open(ConvertToScreen(cPosition));
 	}
-	os::DockPlugin::MouseDown( cPosition, nButtons );
+	os::View::MouseDown( cPosition, nButtons );
 }
 //*************************************************************************************
+
+class DockClockPlugin : public os::DockPlugin
+{
+public:
+	DockClockPlugin()
+	{
+		m_pcView = NULL;
+	}
+	~DockClockPlugin()
+	{
+	}
+	status_t Initialize()
+	{
+		m_pcView = new DockClock( this, GetApp() );
+		AddView( m_pcView );
+		return( 0 );
+	}
+	void Delete()
+	{
+		RemoveView( m_pcView );
+	}
+	os::String GetIdentifier()
+	{
+		return( "Clock" );
+	}
+private:
+	DockClock* m_pcView;
+};
 
 extern "C"
 {
 DockPlugin* init_dock_plugin( os::Path cPluginFile, os::Looper* pcDock )
 {
-	return( new DockClock( cPluginFile, pcDock ) );
+	return( new DockClockPlugin() );
 }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

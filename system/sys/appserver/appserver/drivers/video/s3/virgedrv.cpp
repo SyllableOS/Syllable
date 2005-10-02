@@ -888,7 +888,7 @@ area_id VirgeDriver::Open( void )
 {
     m_pFrameBuffer = NULL;
     g_nFrameBufArea = create_area( "virge_io",(void**) &m_pFrameBuffer, 1024 * 1024 * 64,
-				   AREA_FULL_ACCESS, AREA_NO_LOCK );
+				   AREA_FULL_ACCESS | AREA_WRCOMB, AREA_NO_LOCK );
     remap_area( g_nFrameBufArea, (void*) (sCardInfo.pcii.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK) );
 
 	
@@ -1188,23 +1188,6 @@ os::screen_mode VirgeDriver::GetCurrentScreenMode()
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-bool VirgeDriver::IntersectWithMouse( const IRect& cRect )
-{
-    return( false );
-//  if ( NULL != m_pcMouse ) {
-//    return( cRect.DoIntersect( m_pcMouse->GetFrame() ) );
-//  } else {
-//    return( false );
-//  }
-}
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
 bool VirgeDriver::DrawLine( SrvBitmap* psBitMap, const IRect& cClipRect,
 			    const IPoint& cPnt1, const IPoint& cPnt2, const Color32_s& sColor, int nMode )
 {
@@ -1216,9 +1199,6 @@ bool VirgeDriver::DrawLine( SrvBitmap* psBitMap, const IRect& cClipRect,
 	    break;
 	case CS_RGB16:
 	    nColor = COL_TO_RGB16( sColor );
-	    break;
-	case CS_RGB15:
-	    nColor = COL_TO_RGB15( sColor );
 	    break;
 	default:
 	    return( false );
@@ -1324,9 +1304,14 @@ bool VirgeDriver::DrawLine( SrvBitmap* psBitMap, const IRect& cClipRect,
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-bool VirgeDriver::FillRect( SrvBitmap* psBitMap, const IRect& cRect, const Color32_s& sColor )
+bool VirgeDriver::FillRect( SrvBitmap* psBitMap, const IRect& cRect, const Color32_s& sColor, int nMode )
 {
     uint32 nColor;
+    
+    if( nMode != DM_COPY ) {
+		return( DisplayDriver::FillRect( psBitMap, cRect, sColor, nMode ) );
+    }
+    
     switch( psBitMap->m_eColorSpc )
     {
 	case CS_RGB32:
@@ -1334,9 +1319,6 @@ bool VirgeDriver::FillRect( SrvBitmap* psBitMap, const IRect& cRect, const Color
 	    break;
 	case CS_RGB16:
 	    nColor = COL_TO_RGB16( sColor );
-	    break;
-	case CS_RGB15:
-	    nColor = COL_TO_RGB15( sColor );
 	    break;
 	default:
 	    return( false );
@@ -1366,7 +1348,7 @@ bool VirgeDriver::FillRect( SrvBitmap* psBitMap, const IRect& cRect, const Color
 	unlock_ge();
 	return( true );
     } else {
-	return( DisplayDriver::FillRect( psBitMap, cRect, sColor ) );
+	return( DisplayDriver::FillRect( psBitMap, cRect, sColor, nMode ) );
     }
 }
 
@@ -1377,9 +1359,10 @@ bool VirgeDriver::FillRect( SrvBitmap* psBitMap, const IRect& cRect, const Color
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-bool VirgeDriver::BltBitmap( SrvBitmap* dstbm, SrvBitmap* srcbm, IRect cSrcRect, IPoint cDstPos, int nMode )
+bool VirgeDriver::BltBitmap( SrvBitmap* dstbm, SrvBitmap* srcbm, IRect cSrcRect, IRect cDstRect, int nMode, int nAlpha )
 {
-    if ( dstbm->m_bVideoMem && srcbm->m_bVideoMem && nMode == DM_COPY ) {
+    if ( dstbm->m_bVideoMem && srcbm->m_bVideoMem && nMode == DM_COPY && cSrcRect.Size() == cDstRect.Size() ) {
+    IPoint cDstPos = cDstRect.LeftTop();
 	uint32 command;
 	int x1 = cSrcRect.left;
 	int y1 = cSrcRect.top;
@@ -1425,8 +1408,9 @@ bool VirgeDriver::BltBitmap( SrvBitmap* dstbm, SrvBitmap* srcbm, IRect cSrcRect,
 
 	wait_for_blitter();
 	unlock_ge();
+	return( true );
     } else {
-	return( DisplayDriver::BltBitmap( dstbm, srcbm, cSrcRect, cDstPos, nMode ) );
+	return( DisplayDriver::BltBitmap( dstbm, srcbm, cSrcRect, cDstRect, nMode, nAlpha ) );
     }
 }
 

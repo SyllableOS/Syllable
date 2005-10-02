@@ -127,10 +127,6 @@ void i855::ResetVideo()
 		m_psVidRegs->DCLRKV = 0;
 		m_psVidRegs->DCLRKM = 0xffffff | DEST_KEY_ENABLE;
 		break;
-	case os::CS_RGB15:
-		m_psVidRegs->DCLRKV = RGB15ToColorKey( m_nVideoColorKey );
-		m_psVidRegs->DCLRKM = 0x070707 | DEST_KEY_ENABLE;
-		break;
 	case os::CS_RGB16:
 		m_psVidRegs->DCLRKV = RGB16ToColorKey( m_nVideoColorKey );
 		m_psVidRegs->DCLRKM = 0x070307 | DEST_KEY_ENABLE;
@@ -319,6 +315,7 @@ bool i855::SetupVideo( const os::IPoint & cSize, const os::IRect & cDst, os::col
 	/* Calculate offset */
 	uint32 pitch = 0;
 	uint32 totalSize = 0;
+	uint32 offset = 0;
 
 	os::IRect cDest = cDst;
 	int nDestHeight = cDest.Height() + 1;
@@ -332,7 +329,9 @@ bool i855::SetupVideo( const os::IPoint & cSize, const os::IRect & cDst, os::col
 		totalSize = pitch * cSize.y;
 	}
 
-	uint32 offset = PAGE_ALIGN( m_nVideoEnd - totalSize - PAGE_SIZE );
+	if( AllocateMemory( totalSize, &offset ) != 0 )
+		return( false );
+	offset += m_nFrameBufferOffset;
 
 	*pBuffer = create_area( "i855_overlay", NULL, PAGE_ALIGN( totalSize ), AREA_FULL_ACCESS, AREA_NO_LOCK );
 	if ( *pBuffer < 0 )
@@ -340,9 +339,11 @@ bool i855::SetupVideo( const os::IPoint & cSize, const os::IRect & cDst, os::col
 	if ( remap_area( *pBuffer, ( void * )( ( m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK ) + offset ) ) < 0 )
 		return ( false );
 		
-	//dbprintf( "Video @ 0x%x %i %i %i\n", (uint)offset, cSize.x, cSize.y, pitch );
+	//dbprintf( "Video @ 0x%x %i %i %i %i %i %i %i %i\n", (uint)offset, cSize.x, cSize.y, pitch, 
+		//	(int)cDst.left, (int)cDst.top, (int)cDst.right, (int)cDst.bottom );
 	
 	m_cGELock.Lock();
+	
 	
 	if( cDst.left < 0 || cDst.top < 0 || cDst.right >= GetCurrentScreenMode().m_nWidth ||
 		cDst.bottom >= GetCurrentScreenMode().m_nHeight )
@@ -375,13 +376,13 @@ bool i855::SetupVideo( const os::IPoint & cSize, const os::IRect & cDst, os::col
 		cDest.top = ( ( ( cDest.top - 1 ) * m_nVideoScale ) >> 16 ) + 1;
 		cDest.bottom = ( ( cDest.bottom * m_nVideoScale ) >> 16 ) + 1;
 
-		nDestHeight = cDest.bottom - cDest.top;
+		nDestHeight = cDest.bottom - cDest.top + 1;
 		if ( nDestHeight < cSize.y )
 			nDestHeight = cSize.y;
 	}
 
 	m_psVidRegs->DWINPOS = ( cDest.top << 16 ) | cDest.left;
-	m_psVidRegs->DWINSZ = ( cDest.Height() << 16 ) | cDest.Width(  );
+	m_psVidRegs->DWINSZ = ( ( cDest.Height() + 1 ) << 16 ) | ( cDest.Width(  ) + 1 );
 
 	
 	m_psVidRegs->OCMD = OVERLAY_ENABLE;
@@ -407,8 +408,8 @@ bool i855::SetupVideo( const os::IPoint & cSize, const os::IRect & cDst, os::col
 		/*
 		 * Y down-scale factor as a multiple of 4096.
 		 */
-		xscaleFract = ( ( cSize.x + 1 ) << 12 ) / ( cDest.Width() + 1 );
-		yscaleFract = ( ( cSize.y + 1 ) << 12 ) / nDestHeight;
+		xscaleFract = ( ( cSize.x/* + 1*/ ) << 12 ) / ( cDest.Width() + 1 );
+		yscaleFract = ( ( cSize.y/* + 1*/ ) << 12 ) / nDestHeight;
 
 		/* Calculate the UV scaling factor. */
 		xscaleFractUV = xscaleFract / uvratio;
@@ -606,22 +607,12 @@ bool i855::RecreateVideoOverlay( const os::IPoint & cSize, const os::IRect & cDs
 	if ( eFormat == os::CS_YUV422 || eFormat == os::CS_YUV12 )
 	{
 		delete_area( *pBuffer );
+		FreeMemory( m_nVideoOffset - m_nFrameBufferOffset );
 		return ( SetupVideo( cSize, cDst, eFormat, pBuffer ) );
 	}
 	return ( false );
 }
 
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-void i855::UpdateVideoOverlay( area_id *pBuffer )
-{
-}
 
 //-----------------------------------------------------------------------------
 // NAME:
@@ -642,6 +633,7 @@ void i855::DeleteVideoOverlay( area_id *pBuffer )
 		m_cGELock.Unlock();
 
 		delete_area( *pBuffer );
+		FreeMemory( m_nVideoOffset - m_nFrameBufferOffset );
 	}
 	m_bVideoOverlayUsed = false;
 }

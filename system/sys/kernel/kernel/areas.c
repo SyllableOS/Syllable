@@ -340,8 +340,28 @@ static int do_delete_area( MemContext_s *psCtx, MemArea_s *psArea )
 		put_fd( psArea->a_psFile );
 		LOCK( g_hAreaTableSema );
 	}
+	
+	/* Free mttr descriptor */
+	if( psArea->a_nProtection & AREA_WRCOMB )
+	{
+		uintptr_t nPhysAddress;
+		pgd_t *pPgd;
+		pte_t *pPte;
+		pPgd = pgd_offset( psArea->a_psContext, psArea->a_nStart );
+		if( PGD_PAGE( *pPgd ) > 0 ) 
+		{
+			pPte = pte_offset( pPgd, psArea->a_nStart );
+			if ( PTE_ISPRESENT( *pPte ) )
+			{
+				nPhysAddress = PTE_PAGE( *pPte );
+				if( free_mtrr_desc( nPhysAddress ) != 0 )
+					printk( "Could not free mtrr descriptor for base address 0x%u\n", (uint)nPhysAddress );
+			}
+		}
+	}
 
-	free_area_pages( psArea, psArea->a_nStart, psArea->a_nEnd );
+	if( ( psArea->a_nProtection & AREA_REMAPPED ) == 0 )
+		free_area_pages( psArea, psArea->a_nStart, psArea->a_nEnd );
 	free_area_page_tables( psArea, psArea->a_nStart, psArea->a_nEnd, false );
 	flush_tlb_global();
 
@@ -502,7 +522,7 @@ static status_t alloc_area_pages( MemArea_s *psArea, uintptr_t nStart,
  *     should be allocated.
  * \param nProtection a protection bitmask containing any combination of:
  *     <code>AREA_READ</code>, <code>AREA_WRITE</code>, <code>AREA_EXEC</code>,
- *     <code>AREA_KERNEL</code>, and <code>AREA_UNMAP_PHYS</code>.
+ *     <code>AREA_KERNEL</code>, and <code>AREA_WRCOMB</code>.
  * \param nLockMode the locking mode to use: <code>AREA_NO_LOCK</code>,
  *     <code>AREA_LAZY_LOCK</code>, <code>AREA_FULL_LOCK</code>, or
  *     <code>AREA_CONTIGUOUS</code>.
@@ -587,7 +607,7 @@ static MemArea_s *do_create_area( MemContext_s *psCtx, uintptr_t nAddress,
  * \param psCtx a pointer to the <code>MemContext_s</code> structure to use.
  * \param nProtection a protection bitmask containing any combination of:
  *     <code>AREA_READ</code>, <code>AREA_WRITE</code>, <code>AREA_EXEC</code>,
- *     <code>AREA_KERNEL</code>, and <code>AREA_UNMAP_PHYS</code>.
+ *     <code>AREA_KERNEL</code>, and <code>AREA_WRCOMB</code>.
  * \param nLockMode   the locking mode to use: <code>AREA_NO_LOCK</code>,
  *     <code>AREA_LAZY_LOCK</code>, <code>AREA_FULL_LOCK</code>, or
  *     <code>AREA_CONTIGUOUS</code>.
@@ -662,7 +682,7 @@ static status_t alloc_area( const char *pzName, MemContext_s *psCtx,
  * \ingroup DriverAPI
  * \param nProtection a protection bitmask containing any combination of:
  *     <code>AREA_READ</code>, <code>AREA_WRITE</code>, <code>AREA_EXEC</code>,
- *     <code>AREA_KERNEL</code>, and <code>AREA_UNMAP_PHYS</code>.
+ *     <code>AREA_KERNEL</code>, and <code>AREA_WRCOMB</code>.
  * \param nLockMode the locking mode to use: <code>AREA_NO_LOCK</code>,
  *     <code>AREA_LAZY_LOCK</code>, <code>AREA_FULL_LOCK</code>, or
  *     <code>AREA_CONTIGUOUS</code>.
@@ -1324,7 +1344,7 @@ static status_t unmap_pagedir( pgd_t * pPgd, uintptr_t nAddress, count_t nSize,
  * \param psFile a pointer to the <code>File_s</code> to map the area onto.
  * \param nProtection a protection bitmask containing any combination of:
  *     <code>AREA_READ</code>, <code>AREA_WRITE</code>, <code>AREA_EXEC</code>,
- *     <code>AREA_KERNEL</code>, and <code>AREA_UNMAP_PHYS</code>.
+ *     <code>AREA_KERNEL</code>, and <code>AREA_WRCOMB</code>.
  * \param nOffset the offset from the start of <i>psFile</i> to use for the
  *     first byte of the mapped region of the file.
  * \param nSize the size of the new area in bytes.
@@ -1433,7 +1453,7 @@ status_t map_area_to_file( area_id hArea, File_s *psFile,
  *     to will be used as the preferred start address of the new area.
  * \param nProtection a protection bitmask containing any combination of:
  *     <code>AREA_READ</code>, <code>AREA_WRITE</code>, <code>AREA_EXEC</code>,
- *     <code>AREA_KERNEL</code>, and <code>AREA_UNMAP_PHYS</code>.
+ *     <code>AREA_KERNEL</code>, and <code>AREA_WRCOMB</code>.
  * \param nLockMode the locking mode to use: <code>AREA_NO_LOCK</code>,
  *     <code>AREA_LAZY_LOCK</code>, <code>AREA_FULL_LOCK</code>, or
  *     <code>AREA_CONTIGUOUS</code>.
@@ -1592,7 +1612,7 @@ area_id sys_clone_area( const char *pzName, void **ppAddress,
  * \param nMaxSize the maximum size in bytes of the requested area.
  * \param nProtection a protection bitmask containing any combination of:
  *     <code>AREA_READ</code>, <code>AREA_WRITE</code>, <code>AREA_EXEC</code>,
- *     <code>AREA_KERNEL</code>, and <code>AREA_UNMAP_PHYS</code>.
+ *     <code>AREA_KERNEL</code>, and <code>AREA_WRCOMB</code>.
  * \param nLockMode the locking mode to use: <code>AREA_NO_LOCK</code>,
  *     <code>AREA_LAZY_LOCK</code>, <code>AREA_FULL_LOCK</code>, or
  *     <code>AREA_CONTIGUOUS</code>.
@@ -1677,7 +1697,7 @@ area_id create_area( const char *pzName, void **ppAddress, size_t nSize,
  * \param nSize the size in bytes of the requested area.
  * \param nProtection a protection bitmask containing any combination of
  *     <code>AREA_READ</code>, <code>AREA_WRITE</code>, <code>AREA_EXEC</code>,
- *     <code>AREA_KERNEL</code>, and <code>AREA_UNMAP_PHYS</code>.
+ *     <code>AREA_KERNEL</code>, and <code>AREA_WRCOMB</code>.
  * \param nLockMode the locking mode to use: <code>AREA_NO_LOCK</code>,
  *     <code>AREA_LAZY_LOCK</code>, <code>AREA_FULL_LOCK</code>, or
  *     <code>AREA_CONTIGUOUS</code>.
@@ -2050,6 +2070,7 @@ static status_t do_remap_area( MemArea_s *psArea, uintptr_t nPhysAddress )
 {
 	uintptr_t nAddress = psArea->a_nStart;
 	uintptr_t nEnd = psArea->a_nEnd;
+	uintptr_t nPhys = nPhysAddress;
 	pgd_t *pPgd;
 	status_t nError = 0;
 	bool bFreeOldPages = ( psArea->a_nProtection & AREA_REMAPPED ) == 0;
@@ -2076,6 +2097,12 @@ static status_t do_remap_area( MemArea_s *psArea, uintptr_t nPhysAddress )
 		nAddress += nOffset;
 	}
 	psArea->a_nProtection |= AREA_REMAPPED;
+	/* Allocate a mtrr descriptor and set it to write-combining */
+	if( psArea->a_nProtection & AREA_WRCOMB )
+	{
+		if( alloc_mtrr_desc( nPhys, psArea->a_nEnd - psArea->a_nStart + 1, 1 ) != 0 )
+			psArea->a_nProtection &= ~AREA_WRCOMB;
+	}
 	flush_tlb_global();
 	return ( nError );
 }

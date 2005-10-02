@@ -23,8 +23,6 @@
 #include "layer.h"
 #include "windowdecorator.h"
 
-using namespace os;
-
 namespace os {
   class WindowDecorator;
 }
@@ -33,50 +31,47 @@ class WndBorder : public Layer
 {
 public:
     WndBorder( SrvWindow* pcWindow, Layer* pcParent, const char* pzName, bool bBackdrop );
+	~WndBorder();
 
     void		 SetDecorator( os::WindowDecorator* pcDecorator );
     os::WindowDecorator* GetDecorator() const;
     void		 SetFlags( uint32 nFlags );
     Layer*	       	 GetClient() const { return( m_pcClient ); }
-    void	     	 SetSizeLimits( const Point& cMinSize, const Point& cMaxSize );
-    void	     	 GetSizeLimits( Point* pcMinSize, Point* pcMaxSize );
-    void		 SetAlignment( const IPoint& cSize, const IPoint& cSizeOffset, const IPoint& cPos, const IPoint& cPosOffset );
+    void	     	 SetSizeLimits( const os::Point& cMinSize, const os::Point& cMaxSize );
+    void	     	 GetSizeLimits( os::Point* pcMinSize, os::Point* pcMaxSize );
+    void		 SetAlignment( const os::IPoint& cSize, const os::IPoint& cSizeOffset, const os::IPoint& cPos, const os::IPoint& cPosOffset );
     
-    virtual void	 SetFrame( const Rect& cRect );
-    virtual void	 Paint( const IRect& cUpdateRect, bool bUpdate = false );
+    virtual void	 SetFrame( const os::Rect& cRect );
+    virtual void	 Paint( const os::IRect& cUpdateRect, bool bUpdate = false );
 
-    bool		MouseMoved( Messenger* pcAppTarget, const Point& cNewPos, int nTransit );
-    bool		MouseDown( Messenger* pcAppTarget, const Point& cPos, int nButton );
-    void		MouseUp( Messenger* pcAppTarget, const Point& cPos, int nButton );
-    void		WndMoveReply( Messenger* pcAppTarget );
+    bool		MouseMoved( os::Messenger* pcAppTarget, const os::Point& cNewPos, int nTransit );
+    bool		MouseDown( os::Messenger* pcAppTarget, const os::Point& cPos, int nButton );
+    void		MouseUp( os::Messenger* pcAppTarget, const os::Point& cPos, int nButton );
+    void		WndMoveReply( os::Messenger* pcAppTarget );
     bool 		HasPendingSizeEvents() const;
 private:
-    IPoint	GetHitPointBase() const;
-    IRect	AlignRect( const IRect& cRect, const IRect& cBorders );
-    void	DoSetFrame( const Rect& cRect );
+    os::IPoint	GetHitPointBase() const;
+    os::IRect	AlignRect( const os::IRect& cRect, const os::IRect& cBorders );
+    void	DoSetFrame( const os::Rect& cRect );
     Layer* 		    m_pcClient;
     os::WindowDecorator*    m_pcDecorator;
-    IPoint     		    m_cHitOffset;
-    WindowDecorator::hit_item m_eHitItem; // Item hit by the intital mouse-down event.
-    WindowDecorator::hit_item m_eCursorHitItem;
-/*    int	     		    m_nCloseDown;
-    int	     		    m_nZoomDown;
-    int	     		    m_nMinimizeDown;
-    int	     		    m_nToggleDown;*/
-	int				m_nButtonDown[ WindowDecorator::HIT_MAX_ITEMS ];
+    os::IPoint     		    m_cHitOffset;
+    os::WindowDecorator::hit_item m_eHitItem; // Item hit by the intital mouse-down event.
+    os::WindowDecorator::hit_item m_eCursorHitItem;
+	int				m_nButtonDown[ os::WindowDecorator::HIT_MAX_ITEMS ];
     bool	    	    m_bWndMovePending;
     bool		    m_bFrameUpdated;
-    IPoint  		    m_cMinSize;
-    IPoint		    m_cMaxSize;
+    os::IPoint  		    m_cMinSize;
+    os::IPoint		    m_cMaxSize;
 
-    IRect		    m_cRawFrame;
-    IPoint		    m_cAlignSize;
-    IPoint		    m_cAlignSizeOff;
-    IPoint		    m_cAlignPos;
-    IPoint		    m_cAlignPosOff;
+    os::IRect		    m_cRawFrame;
+    os::IPoint		    m_cAlignSize;
+    os::IPoint		    m_cAlignSizeOff;
+    os::IPoint		    m_cAlignPos;
+    os::IPoint		    m_cAlignPosOff;
     
-    IPoint     		    m_cDeltaMove;
-    IPoint     		    m_cDeltaSize;
+    os::IPoint     		    m_cDeltaMove;
+    os::IPoint     		    m_cDeltaSize;
 };
 
 #endif // __F_WNDBORDER_H__

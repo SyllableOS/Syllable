@@ -791,10 +791,10 @@ void MPApp::Open( os::String zFileName, os::String zInput )
 	if ( m_bVideo && m_pcVideoOutput->GetVideoView( 0 ) != NULL )
 	{
 		m_pcWin->SetVideo( m_pcVideoOutput->GetVideoView( 0 ) );
-		os::Message * pcVideoMsg = new os::Message( MP_CREATE_VIDEO );
-		pcVideoMsg->AddInt32( "width", m_sVideoFormat.nWidth );
-		pcVideoMsg->AddInt32( "height", m_sVideoFormat.nHeight );
-		m_pcWin->PostMessage( pcVideoMsg, m_pcWin );
+		os::Message cVideoMsg( MP_CREATE_VIDEO );
+		cVideoMsg.AddInt32( "width", m_sVideoFormat.nWidth );
+		cVideoMsg.AddInt32( "height", m_sVideoFormat.nHeight );
+		m_pcWin->PostMessage( &cVideoMsg, m_pcWin );
 	}
 
 	/* Set slider */
@@ -866,7 +866,7 @@ void MPApp::ChangeFullScreen()
 		os::Desktop * pcDesktop = new os::Desktop();
 		os::IPoint sRes = pcDesktop->GetResolution();
 		m_sSavedFrame = m_pcWin->GetFrame();
-		m_pcWin->SetFrame( os::Rect( 0, 0, sRes.x, sRes.y ) );
+		m_pcWin->SetFrame( os::Rect( 0, 0, sRes.x - 1, sRes.y - 1 ) );
 		m_bFullScreen = true;
 	}
 }

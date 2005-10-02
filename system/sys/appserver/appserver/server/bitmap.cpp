@@ -26,6 +26,7 @@
 
 #include "bitmap.h"
 #include "ddriver.h"
+#include "server.h"
 
 using namespace os;
 
@@ -44,6 +45,7 @@ SrvBitmap::SrvBitmap( int nWidth, int nHeight, color_space eColorSpc, uint8 *pRa
 	m_eColorSpc = eColorSpc;
 	m_pcDriver = NULL;
 	m_bVideoMem = false;
+	m_nVideoMemOffset = false;
 	m_hArea = -1;
 
 	if( nBytesPerLine != 0 )
@@ -83,7 +85,10 @@ SrvBitmap::~SrvBitmap()
 {
 	if( m_bFreeRaster )
 	{
-		delete[]m_pRaster;
+		if( m_bVideoMem )
+			g_pcDispDrv->FreeMemory( m_nVideoMemOffset );
+		else
+			delete[]m_pRaster;
 	}
 	if( m_hArea >= 0 )
 	{

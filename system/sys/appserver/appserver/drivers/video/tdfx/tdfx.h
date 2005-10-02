@@ -268,21 +268,14 @@ public:
 	virtual int SetScreenMode( os::screen_mode );
 	virtual os::screen_mode GetCurrentScreenMode();
 
-	virtual void SetCursorBitmap( os::mouse_ptr_mode eMode,
-        const os::IPoint & cHotSpot, const void *pRaster, int nWidth,
-        int nHeight );
-	virtual void MouseOn();
-	virtual void MouseOff();
-	virtual void SetMousePos( os::IPoint cNewPos );
-	virtual bool IntersectWithMouse( const IRect & cRect );
-
+	
 	virtual bool DrawLine( SrvBitmap * psBitMap, const os::IRect & cClipRect,
         const os::IPoint & cPnt1, const os::IPoint & cPnt2,
         const os::Color32_s & sColor, int nMode );
 	virtual bool FillRect( SrvBitmap * psBitMap, const os::IRect & cRect,
-        const os::Color32_s & sColor );
+        const os::Color32_s & sColor, int nMode );
 	virtual bool BltBitmap( SrvBitmap * pcDstBitMap, SrvBitmap * pcSrcBitMap,
-        os::IRect cSrcRect, os::IPoint cDstPos, int nMode );
+        os::IRect cSrcRect, os::IRect cDstRect, int nMode, int nAlpha );
 
 	virtual bool CreateVideoOverlay( const os::IPoint & cSize,
         const os::IRect & cDst, os::color_space eFormat,
@@ -290,9 +283,6 @@ public:
 	virtual bool RecreateVideoOverlay( const os::IPoint & cSize,
         const os::IRect & cDst, os::color_space eFormat, area_id *pBuffer );
 	virtual void DeleteVideoOverlay( area_id *pBuffer );
-	virtual void UpdateVideoOverlay( area_id *pBuffer );
-	virtual bool UploadVideoData( area_id *phArea, area_id hSrcArea,
-        uint32 nBytesPerRow );
 	bool CreateOverlayCommon( const os::IPoint & cSize, const os::IRect & cDst,
         area_id *pBuffer );
 
@@ -314,9 +304,6 @@ private:
 
 	std::vector < os::screen_mode > m_cScreenModeList;
 	os::screen_mode m_sCurrentMode;
-
-	bool m_bUsingHWCursor;
-	os::IPoint m_cMousePos, m_cCursorHotSpot;
 
 	bool m_bVideoOverlayUsed;
 	uint32 m_nColorKey;

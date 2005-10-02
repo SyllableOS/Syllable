@@ -46,6 +46,7 @@
 #include "server.h"
 #include "swindow.h"
 #include "layer.h"
+#include "toplayer.h"
 #include "sfont.h"
 #include "keyboard.h"
 #include "sapplication.h"
@@ -73,7 +74,7 @@ Array < BitmapNode > *g_pcBitmaps;
 FontServer *g_pcFontServer;
 
 SrvApplication *g_pcFirstApp = NULL;
-Layer *g_pcTopView = NULL;
+TopLayer *g_pcTopView = NULL;
 DisplayDriver *g_pcDispDrv = NULL;
 
 
@@ -81,7 +82,7 @@ int AppServer::LoadDecorator( const std::string & cPath, op_create_decorator **p
 {
 	int nPlugin;
 	op_create_decorator *pfCreate = NULL;
-
+	
 	nPlugin = load_library( cPath.c_str(), 0 );
 	if( nPlugin < 0 )
 	{
@@ -957,6 +958,7 @@ int32 AppServer::CloseWindows( void *pData )
 		{
 			if( !pcApp->IsClosing() )
 			{
+				//dbprintf( "Closing %s ...\n", pcApp->GetName().c_str() );
 				pcApp->SetClosing( true );
 				os::Message cMsg( os::M_QUIT );
 				if( pcApp->GetName() == "application/syllable-Dock" )
@@ -976,6 +978,7 @@ int32 AppServer::CloseWindows( void *pData )
 	{
 		if( pcApp->GetName() == "application/syllable-Desktop" && !pcApp->IsClosing() )
 		{
+			//dbprintf( "Closing desktop...\n" );
 			os::Message cMsg( os::M_TERMINATE );
 			pcApp->SetClosing( true );
 			pcApp->PostUsrMessage( &cMsg );
@@ -985,9 +988,10 @@ int32 AppServer::CloseWindows( void *pData )
 	}
 	SrvApplication::UnlockAppList();
 
+	g_pcDispDrv->LockBitmap( g_pcScreenBitmap, NULL, IRect(), IRect() );
 	if( *pnAction == 1 ) { apm_poweroff(); for(;;) { snooze( 10000 ); } } 
 	else if( *pnAction == 2 ) { reboot(); for(;;) { snooze( 10000 );} }
-		
+	g_pcDispDrv->UnlockBitmap( g_pcScreenBitmap, NULL, IRect(), IRect() );
 
 	return ( 0 );
 }

@@ -183,11 +183,11 @@ Matrox::Matrox( int nFd ) : m_cGELock( "matrox_ge_lock" ), m_cCursorHotSpot(0,0)
 	// FIXME: Find out if the actualy is ram for the resolution...
 	if( m_sChip.eDAC == MGAGx00 || m_sChip.eDAC == MGAGx50 )
 	{
-		color_space colspace[3] = { CS_RGB15, CS_RGB16, CS_RGB32 };
-		int bpp[3] = { 2, 2, 4 };
+		color_space colspace[2] = { CS_RGB16, CS_RGB32 };
+		int bpp[2] = { 2, 4 };
 		float rf[] = { 60.0f, 75.0f, 85.0f, 100.0f };
 
-		for( int i=0; i<3; i++ )
+		for( int i=0; i<2; i++ )
 		{
 			for( int j = 0; j < 4; j++ ) 
 			{
@@ -227,7 +227,7 @@ Matrox::Matrox( int nFd ) : m_cGELock( "matrox_ge_lock" ), m_cCursorHotSpot(0,0)
 		}
 	}
 
-	m_hFrameBufferArea = create_area( "matrox_framebuffer",(void**) &m_pFrameBufferBase, 32*1024*1024, AREA_FULL_ACCESS, AREA_NO_LOCK );
+	m_hFrameBufferArea = create_area( "matrox_framebuffer",(void**) &m_pFrameBufferBase, 32*1024*1024, AREA_FULL_ACCESS | AREA_WRCOMB, AREA_NO_LOCK );
 
 	if( m_sChip.nDeviceID == PCI_DEVICE_ID_MATROX_MIL )
 	{
@@ -335,10 +335,6 @@ int Matrox::SetScreenMode( os::screen_mode sMode )
 
 			switch( sMode.m_eColorSpace )
 			{
-				case CS_RGB15:
-					nBPP = 15;
-					break;
-
 				case CS_RGB16:
 					nBPP = 16;
 					break;
@@ -385,105 +381,6 @@ os::screen_mode Matrox::GetCurrentScreenMode()
 
 //-----------------------------------------------------------------------------
 
-void Matrox::MouseOn( void )
-{
-	if( m_nPointerScheme == POINTER_SPRITE )
-		VesaDriver::MouseOn();
-}
-
-void Matrox::MouseOff( void )
-{
-	if( m_nPointerScheme == POINTER_SPRITE )
-		VesaDriver::MouseOff();
-}
-
-void Matrox::SetMousePos( IPoint cNewPos )
-{
-	if( m_nPointerScheme == POINTER_MILLENIUM )
-	{
-		int x = cNewPos.x - m_cCursorHotSpot.x + 64;
-		int y = (cNewPos.y*2) - (m_cCursorHotSpot.y*2) + 64;
-		
-		m_cGELock.Lock();	 // The pointer stuff is likely to be independent from the blitter stuff,
-							 //  but just to be sure...
-		outb( TVP3026_CUR_XLOW, x&0xff );
-		outb( TVP3026_CUR_XHI, (x>>8)&0x0f );
-		outb( TVP3026_CUR_YLOW, y&0xff );
-		outb( TVP3026_CUR_YHI, (y>>8)&0x0f );
-
-		m_cGELock.Unlock();
-		m_cLastMousePosition = cNewPos;
-	}
-	else
-		VesaDriver::SetMousePos( cNewPos );
-}
-
-void Matrox::SetCursorBitmap( mouse_ptr_mode eMode, const IPoint& cHotSpot, const void* pRaster, int nWidth, int nHeight )
-{
-	m_cCursorHotSpot = cHotSpot;
-
-	if( eMode == MPTR_MONO && m_nPointerScheme == POINTER_MILLENIUM )
-	{
-		const uint8* bits = static_cast<const uint8*>(pRaster);
-		m_cGELock.Lock();
-
-		// Disable cursor
-		int tmp = inb(TVP3026_CURSOR_CTL)&0xfc;
-		outb( TVP3026_INDEX, TVP3026_CURSOR_CTL );
-		outb( TVP3026_DATA, tmp );
-
-		tmp = inb(TVP3026_CURSOR_CTL)&0xf3;
-		outb( TVP3026_INDEX, TVP3026_CURSOR_CTL );
-		outb( TVP3026_DATA, tmp );
-		outb( TVP3026_WADR_PAL, 0x00 );
-
-		for( int imask=0x01; imask<=0x02; imask<<=1 )
-		{
-			for( int iy=0; iy<64; iy++ )
-			{
-				for( int ix=0; ix<64; ix+=8 )
-				{
-					uint8 bit = 0;
-					for( int ix2=0; ix2<8; ix2++ )
-					{
-						int srcy = iy/2;	// for some unknown reason, only every second scanline shows up,
-											// maybe it's an interlace thing?
-						uint8 col = ((ix+ix2)<nWidth && srcy < nHeight) ? bits[(ix+ix2)+srcy*nWidth] : 0x00;
-						bit |= ((col&imask)?1:0)<<(7-ix2);
-					}
-
-					while (inb(0x1fda) & 0x01);
-					while (!(inb(0x1fda) & 0x01));
-					outb( TVP3026_CUR_RAM, bit );
-
-				}
-			}
-		}
-
-		// set pointer colors:
-		outb(TVP3026_CUR_COL_ADDR, 1);
-		outb(TVP3026_CUR_COL_DATA, 0x00 );
-		outb(TVP3026_CUR_COL_DATA, 0x00 );
-		outb(TVP3026_CUR_COL_DATA, 0x00 );
-		outb(TVP3026_CUR_COL_ADDR, 2);
-		outb(TVP3026_CUR_COL_DATA, 0xff );
-		outb(TVP3026_CUR_COL_DATA, 0xff );
-		outb(TVP3026_CUR_COL_DATA, 0xff );
-
-		// Enable cursor
-		tmp = inb(TVP3026_CURSOR_CTL)&0x6c;
-		outb( TVP3026_INDEX, TVP3026_CURSOR_CTL );
-		outb( TVP3026_DATA, tmp|0x13 );
-
-		m_cGELock.Unlock();
-		SetMousePos( m_cLastMousePosition );
-	}
-	else
-		VesaDriver::SetCursorBitmap( eMode, cHotSpot, pRaster, nWidth, nHeight );
-}
-
-//-----------------------------------------------------------------------------
-
 bool Matrox::DrawLine( SrvBitmap* pcBitMap, const IRect& cClipRect,
 			   const IPoint& cPnt1, const IPoint& cPnt2, const Color32_s& sColor, int nMode )
 {
@@ -516,11 +413,6 @@ bool Matrox::DrawLine( SrvBitmap* pcBitMap, const IRect& cClipRect,
     {
 //    case CS_CMAP8:
 //      break;
-	case CS_RGB15:
-	    nColor = COL_TO_RGB15( sColor );
-	    nColor |= nColor << 16;
-	    nPitch /= 2;
-	    break;
 	case CS_RGB16:
 	    nColor = COL_TO_RGB16( sColor );
 	    nColor |= nColor << 16;
@@ -562,12 +454,12 @@ bool Matrox::DrawLine( SrvBitmap* pcBitMap, const IRect& cClipRect,
     return( true );
 }
 
-bool Matrox::FillRect( SrvBitmap* pcBitMap, const IRect& cRect, const Color32_s& sColor )
+bool Matrox::FillRect( SrvBitmap* pcBitMap, const IRect& cRect, const Color32_s& sColor, int nMode )
 {
 	if(	 pcBitMap->m_bVideoMem == false || 
-		 ( m_sChip.nDeviceID < PCI_DEVICE_ID_MATROX_MIL_2 ) )
+		 ( m_sChip.nDeviceID < PCI_DEVICE_ID_MATROX_MIL_2 ) || nMode != DM_COPY )
 	{
-		return( VesaDriver::FillRect( pcBitMap, cRect, sColor ) );
+		return( VesaDriver::FillRect( pcBitMap, cRect, sColor, nMode ) );
 	}
 
       // Page 242
@@ -596,12 +488,6 @@ bool Matrox::FillRect( SrvBitmap* pcBitMap, const IRect& cRect, const Color32_s&
 //    case CS_CMAP8:
 //      outl( M2_MACCESS, 0x00 );
 //      break;
-	case CS_RGB15:
-	    nPitch /= 2;
-	    outl( M2_MACCESS, 0x01 );
-	    nColor = COL_TO_RGB15( sColor );
-	    nColor |= nColor << 16;
-	    break;
 	case CS_RGB16:
 	    nPitch /= 2;
 	    outl( M2_MACCESS, 0x01 );
@@ -642,14 +528,14 @@ bool Matrox::FillRect( SrvBitmap* pcBitMap, const IRect& cRect, const Color32_s&
 }
 
 bool Matrox::BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap,
-			    IRect cSrcRect, IPoint cDstPos, int nMode )
+			    IRect cSrcRect, IRect cDstRect, int nMode, int nAlpha )
 {
 	if(	 pcDstBitMap->m_bVideoMem == false ||
 		 pcSrcBitMap->m_bVideoMem == false ||
-		 nMode != DM_COPY ||
+		 nMode != DM_COPY || cSrcRect.Size() != cDstRect.Size() || 
 		 ( m_sChip.nDeviceID < PCI_DEVICE_ID_MATROX_MIL_2 ) )
 	{
-		return( VesaDriver::BltBitmap( pcDstBitMap, pcSrcBitMap, cSrcRect, cDstPos, nMode ) );
+		return( VesaDriver::BltBitmap( pcDstBitMap, pcSrcBitMap, cSrcRect, cDstRect, nMode, nAlpha ) );
 	}
       // Page 242
     int nWidth = cSrcRect.Width() + 1;
@@ -657,13 +543,13 @@ bool Matrox::BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap,
     int nPitch = pcSrcBitMap->m_nBytesPerLine;
     int nYDstOrg = 0; // Number of pixels (not bytes) from top of memory to frame buffer
     uint32 nSign = 0;
+    IPoint cDstPos = cDstRect.LeftTop();
   
       // Page 87/243
     uint32 nCtrl = M2_OPCODE_BITBLT | M2_ATYPE_RPL | M2_SHFTZERO | M2_BLTMOD_BFCOL | 0xc0000;
 
     switch( pcSrcBitMap->m_eColorSpc )
     {
-	case CS_RGB15:
 	case CS_RGB16:
 	    nPitch /= 2;
 	    break;
@@ -702,7 +588,6 @@ bool Matrox::BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap,
 	case CS_CMAP8:
 	    outl( M2_MACCESS, 0x00 );
 	    break;
-	case CS_RGB15:
 	case CS_RGB16:
 	    outl( M2_MACCESS, 0x01 );
 	    break;

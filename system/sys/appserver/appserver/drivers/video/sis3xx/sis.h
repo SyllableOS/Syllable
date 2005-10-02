@@ -22,6 +22,7 @@
 #define COMMAND_QUEUE_AREA_SIZE   0x80000 /* 512K */
 #define COMMAND_QUEUE_THRESHOLD   0x1F
 #define HW_CURSOR_AREA_SIZE_315   0x4000  /* 16K */
+#define COMMAND_QUEUE_THRESHOLD	0x1F
 
 #define SEQ_ADR                   0x14
 #define SEQ_DATA                  0x15
@@ -51,11 +52,13 @@
 #define SISPART5                  SiS_Pr.SiS_Part5Port
 #define SISDAC2A                  SISPART5
 #define SISDAC2D                  (SISPART5 + 1)
-#define SISMISCR                  (SiS_Pr.RelIO + 0x4c)
+#define SISMISCR                  (SiS_Pr.RelIO + 0x1c)
 #define SISMISCW                  SiS_Pr.SiS_P3c2
-#define SISINPSTAT				  (SiS_Pr.RelIO + 0x5a)
-#define SISVID					  (SiS_Pr.RelIO + 0x02)
-#define SISPEL			  			SiS_Pr.SiS_P3c6
+#define SISINPSTAT				  (SiS_Pr.RelIO + 0x2a)
+#define SISPEL			          SiS_Pr.SiS_P3c6
+#define SISVGAENABLE              (SiS_Pr.SiS_Pr.RelIO + 0x13)
+#define SISVID					  (SiS_Pr.RelIO + 0x02 - 0x30)
+#define SISCAP                    (SiS_Pr.SiS_Pr.RelIO + 0x00 - 0x30 )
 
 #define IND_SIS_PASSWORD          0x05  /* SRs */
 #define IND_SIS_COLOR_MODE        0x06
@@ -98,6 +101,9 @@
 #define SIS_CMD_QUEUE_RESET       0x01
 #define SIS_CMD_AUTO_CORR	  0x02
 
+#define SIS_CMD_QUEUE_SIZE_Z7_64k	0x00 /* XGI Z7 */
+#define SIS_CMD_QUEUE_SIZE_Z7_128k	0x04
+
 #define SIS_SIMULTANEOUS_VIEW_ENABLE  0x01  /* CR30 */
 #define SIS_MODE_SELECT_CRT2      0x02
 #define SIS_VB_OUTPUT_COMPOSITE   0x04
@@ -132,8 +138,6 @@
 
 #define SIS_AGP_2X		0x20  /* CR48 */
 
-#define HW_DEVICE_EXTENSION	SIS_HW_INFO
-#define PHW_DEVICE_EXTENSION	PSIS_HW_INFO
 
 /*
  *  CRT_2 function control register ---------------------------------
@@ -159,43 +163,92 @@
 #define IND_SIS_CRT2_WRITE_ENABLE_315 0x2F
 
 
-/* TW: vbflags */
-#define CRT2_DEFAULT            0x00000001
-#define CRT2_LCD                0x00000002  /* TW: Never change the order of the CRT2_XXX entries */
-#define CRT2_TV                 0x00000004  /*     (see SISCycleCRT2Type())                       */
-#define CRT2_VGA                0x00000008
-#define TV_NTSC                 0x00000010
-#define TV_PAL                  0x00000020
-#define TV_HIVISION             0x00000040
-#define TV_YPBPR                0x00000080
-#define TV_AVIDEO               0x00000100
-#define TV_SVIDEO               0x00000200
-#define TV_SCART                0x00000400
+/* vbflags, private entries */
 #define VB_CONEXANT		0x00000800	/* 661 series only */
 #define VB_TRUMPION		VB_CONEXANT	/* 300 series only */
-#define TV_PALM                 0x00001000
-#define TV_PALN                 0x00002000
-#define TV_NTSCJ		0x00001000
 #define VB_302ELV		0x00004000
-#define TV_CHSCART              0x00008000
-#define TV_CHYPBPR525I          0x00010000
+#define VB_301			0x00100000	/* Video bridge type */
+#define VB_301B			0x00200000
+#define VB_302B			0x00400000
+#define VB_30xBDH		0x00800000	/* 30xB DH version (w/o LCD support) */
+#define VB_LVDS			0x01000000
+#define VB_CHRONTEL		0x02000000
+#define VB_301LV		0x04000000
+#define VB_302LV		0x08000000
+#define VB_301C			0x10000000
+
+
+#define VB_SISBRIDGE		(VB_301|VB_301B|VB_301C|VB_302B|VB_301LV|VB_302LV|VB_302ELV)
+#define VB_VIDEOBRIDGE		(VB_SISBRIDGE | VB_LVDS | VB_CHRONTEL | VB_CONEXANT)
+
+/* vbflags, public */
+#define CRT2_DEFAULT		0x00000001
+#define CRT2_LCD		0x00000002
+#define CRT2_TV			0x00000004
+#define CRT2_VGA		0x00000008
+#define TV_NTSC			0x00000010
+#define TV_PAL			0x00000020
+#define TV_HIVISION		0x00000040
+#define TV_YPBPR		0x00000080
+#define TV_AVIDEO		0x00000100
+#define TV_SVIDEO		0x00000200
+#define TV_SCART		0x00000400
+#define TV_PALM			0x00001000
+#define TV_PALN			0x00002000
+#define TV_NTSCJ		0x00001000
+#define TV_CHSCART		0x00008000
+#define TV_CHYPBPR525I		0x00010000
 #define CRT1_VGA		0x00000000
 #define CRT1_LCDA		0x00020000
 #define VGA2_CONNECTED          0x00040000
-#define VB_DISPTYPE_CRT1	0x00080000  	/* CRT1 connected and used */
-#define VB_301                  0x00100000	/* Video bridge type */
-#define VB_301B                 0x00200000
-#define VB_302B                 0x00400000
-#define VB_30xBDH		0x00800000      /* 30xB DH version (w/o LCD support) */
-#define VB_LVDS                 0x01000000
-#define VB_CHRONTEL             0x02000000
-#define VB_301LV                0x04000000
-#define VB_302LV                0x08000000
-#define VB_301C			0x10000000
-#define VB_SINGLE_MODE          0x20000000   	/* CRT1 or CRT2; determined by DISPTYPE_CRTx */
-#define VB_MIRROR_MODE		0x40000000   	/* CRT1 + CRT2 identical (mirror mode) */
-#define VB_DUALVIEW_MODE	0x80000000   	/* CRT1 + CRT2 independent (dual head mode) */
+#define VB_DISPTYPE_CRT1	0x00080000	/* CRT1 connected and used */
+#define VB_SINGLE_MODE		0x20000000	/* CRT1 or CRT2; determined by DISPTYPE_CRTx */
+#define VB_MIRROR_MODE		0x40000000	/* CRT1 + CRT2 identical (mirror mode) */
+#define VB_DUALVIEW_MODE	0x80000000	/* CRT1 + CRT2 independent (dual head mode) */
 
+/* vbflags2 (static stuff only!) */
+#define VB2_SISUMC		0x00000001
+#define VB2_301			0x00000002	/* Video bridge type */
+#define VB2_301B		0x00000004
+#define VB2_301C		0x00000008
+#define VB2_307T		0x00000010
+#define VB2_302B		0x00000800
+#define VB2_301LV		0x00001000
+#define VB2_302LV		0x00002000
+#define VB2_302ELV		0x00004000
+#define VB2_307LV		0x00008000
+#define VB2_30xBDH		0x08000000      /* 30xB DH version (w/o LCD support) */
+#define VB2_CONEXANT		0x10000000
+#define VB2_TRUMPION		0x20000000
+#define VB2_LVDS		0x40000000
+#define VB2_CHRONTEL		0x80000000
+
+#define VB2_SISLVDSBRIDGE	(VB2_301LV | VB2_302LV | VB2_302ELV | VB2_307LV)
+#define VB2_SISTMDSBRIDGE	(VB2_301   | VB2_301B  | VB2_301C   | VB2_302B | VB2_307T)
+#define VB2_SISBRIDGE		(VB2_SISLVDSBRIDGE | VB2_SISTMDSBRIDGE)
+
+#define VB2_SISTMDSLCDABRIDGE	(VB2_301C | VB2_307T)
+#define VB2_SISLCDABRIDGE	(VB2_SISTMDSLCDABRIDGE | VB2_301LV | VB2_302LV | VB2_302ELV | VB2_307LV)
+
+#define VB2_SISHIVISIONBRIDGE	(VB2_301  | VB2_301B | VB2_302B)
+#define VB2_SISYPBPRBRIDGE	(VB2_301C | VB2_307T | VB2_SISLVDSBRIDGE)
+#define VB2_SISYPBPRARBRIDGE	(VB2_301C | VB2_307T | VB2_307LV)
+#define VB2_SISTAP4SCALER	(VB2_301C | VB2_307T | VB2_302ELV | VB2_307LV)
+#define VB2_SISTVBRIDGE		(VB2_SISHIVISIONBRIDGE | VB2_SISYPBPRBRIDGE)
+
+#define VB2_SISVGA2BRIDGE	(VB2_301 | VB2_301B | VB2_301C | VB2_302B | VB2_307T)
+
+#define VB2_VIDEOBRIDGE		(VB2_SISBRIDGE | VB2_LVDS | VB2_CHRONTEL | VB2_CONEXANT)
+
+#define VB2_30xB		(VB2_301B  | VB2_301C   | VB2_302B  | VB2_307T)
+#define VB2_30xBLV		(VB2_30xB  | VB2_SISLVDSBRIDGE)
+#define VB2_30xC		(VB2_301C  | VB2_307T)
+#define VB2_30xCLV		(VB2_301C  | VB2_307T   | VB2_302ELV| VB2_307LV)
+#define VB2_SISEMIBRIDGE	(VB2_302LV | VB2_302ELV | VB2_307LV)
+#define VB2_LCD162MHZBRIDGE	(VB2_301C  | VB2_307T)
+#define VB2_LCDOVER1280BRIDGE	(VB2_301C  | VB2_307T   | VB2_302LV | VB2_302ELV | VB2_307LV)
+#define VB2_LCDOVER1600BRIDGE	(VB2_307T  | VB2_307LV)
+#define VB2_RAMDAC202MHZBRIDGE	(VB2_301C  | VB2_307T)
 
 /* Aliases: */
 #define CRT2_ENABLE		(CRT2_LCD | CRT2_TV | CRT2_VGA)
@@ -232,18 +285,19 @@ enum _SIS_LCD_TYPE {
     LCD_1600x1200,
     LCD_1920x1440,
     LCD_2048x1536,
-    LCD_320x480,       /* FSTN */
+    LCD_320x240,	/* FSTN */
     LCD_1400x1050,
     LCD_1152x864,
     LCD_1152x768,
     LCD_1280x768,
     LCD_1024x600,
-    LCD_640x480_2,     /* DSTN */
-    LCD_640x480_3,     /* DSTN */
+    LCD_320x240_2,	/* DSTN */
+    LCD_320x240_3,	/* DSTN */
     LCD_848x480,
     LCD_1280x800,
     LCD_1680x1050,
     LCD_1280x720,
+    LCD_1280x854,
     LCD_CUSTOM,
     LCD_UNKNOWN
 };
@@ -415,11 +469,11 @@ static const struct _sisbios_mode {
 };
 
 
-#define SIS_LCD_NUMBER 17
-static const struct _sis_lcd_data {
+#define SIS_LCD_NUMBER 18
+static struct _sis_lcd_data {
 	u32 lcdtype;
-	u16 xres; 
-	u16 yres; 
+	u16 xres;
+	u16 yres;
 	u8  default_mode_idx;
 } sis_lcd_data[] = {
 	{ LCD_640x480,    640,  480,  23 },
@@ -431,79 +485,37 @@ static const struct _sis_lcd_data {
 	{ LCD_1280x720,  1280,  720,  83 },
 	{ LCD_1280x768,  1280,  768,  87 },
 	{ LCD_1280x800,  1280,  800,  91 },
-	{ LCD_1280x960,  1280,  960,  95 },
-	{ LCD_1280x1024, 1280, 1024,  99 },
-	{ LCD_1400x1050, 1400, 1050, 111 },
-	{ LCD_1680x1050, 1680, 1050, 119 },
-	{ LCD_1600x1200, 1600, 1200, 115 },
-	{ LCD_640x480_2,  640,  480,  23 },
-	{ LCD_640x480_3,  640,  480,  23 },
-	{ LCD_320x480,    320,  480,   9 },
+	{ LCD_1280x854,  1280,  854,  95 },
+	{ LCD_1280x960,  1280,  960,  99 },
+	{ LCD_1280x1024, 1280, 1024, 103 },
+	{ LCD_1400x1050, 1400, 1050, 115 },
+	{ LCD_1680x1050, 1680, 1050, 123 },
+	{ LCD_1600x1200, 1600, 1200, 119 },
+	{ LCD_320x240_2,  320,  240,   9 },
+	{ LCD_320x240_3,  320,  240,   9 },
+	{ LCD_320x240,    320,  240,   9 },
 };
 
 /* CR36 evaluation */
-static const USHORT sis300paneltype[] =
-    { LCD_UNKNOWN,   LCD_800x600,   LCD_1024x768,  LCD_1280x1024,
-      LCD_1280x960,  LCD_640x480,   LCD_1024x600,  LCD_1152x768,
-      LCD_UNKNOWN,   LCD_UNKNOWN,   LCD_UNKNOWN,   LCD_UNKNOWN,
-      LCD_UNKNOWN,   LCD_UNKNOWN,   LCD_UNKNOWN,   LCD_UNKNOWN };
-
-static const USHORT sis310paneltype[] =
-    { LCD_UNKNOWN,   LCD_800x600,   LCD_1024x768,  LCD_1280x1024,
-      LCD_640x480,   LCD_1024x600,  LCD_1152x864,  LCD_1280x960,
-      LCD_1152x768,  LCD_1400x1050, LCD_1280x768,  LCD_1600x1200,
-      LCD_640x480_2, LCD_640x480_3, LCD_UNKNOWN,   LCD_UNKNOWN };
-
-static const USHORT sis661paneltype[] =
-    { LCD_UNKNOWN,   LCD_800x600,   LCD_1024x768,  LCD_1280x1024,
-      LCD_640x480,   LCD_1024x600,  LCD_1152x864,  LCD_1280x960,
-      LCD_1152x768,  LCD_1400x1050, LCD_1280x768,  LCD_1600x1200,
-      LCD_1280x800,  LCD_1680x1050, LCD_1280x720,  LCD_UNKNOWN };
-
-#define FL_550_DSTN 0x01
-#define FL_550_FSTN 0x02
-#define FL_300      0x04
-#define FL_315      0x08
-
-static struct _sis_crt2type {
-	char name[32];
-	u32 type_no;
-	u32 tvplug_no;
-	u16 flags;
-} sis_crt2type[] = {
-	{"NONE", 	     0, 	-1,                     FL_300|FL_315},
-	{"LCD",  	     CRT2_LCD, 	-1,                     FL_300|FL_315},
-	{"TV",   	     CRT2_TV, 	-1,                     FL_300|FL_315},
-	{"VGA",  	     CRT2_VGA, 	-1,                     FL_300|FL_315},
-	{"SVIDEO", 	     CRT2_TV, 	TV_SVIDEO,              FL_300|FL_315},
-	{"COMPOSITE", 	     CRT2_TV, 	TV_AVIDEO,              FL_300|FL_315},
-	{"CVBS", 	     CRT2_TV, 	TV_AVIDEO,              FL_300|FL_315},
-	{"SVIDEO+COMPOSITE", CRT2_TV,   TV_AVIDEO|TV_SVIDEO,    FL_300|FL_315},
-	{"COMPOSITE+SVIDEO", CRT2_TV,   TV_AVIDEO|TV_SVIDEO,    FL_300|FL_315},
-	{"SVIDEO+CVBS",      CRT2_TV,   TV_AVIDEO|TV_SVIDEO,    FL_300|FL_315},
-	{"CVBS+SVIDEO",      CRT2_TV,   TV_AVIDEO|TV_SVIDEO,    FL_300|FL_315},
-	{"SCART", 	     CRT2_TV, 	TV_SCART,               FL_300|FL_315},
-	{"HIVISION",	     CRT2_TV,   TV_HIVISION,            FL_315},
-	{"YPBPR480I",	     CRT2_TV,   TV_YPBPR|TV_YPBPR525I,  FL_315},
-	{"YPBPR480P",	     CRT2_TV,   TV_YPBPR|TV_YPBPR525P,  FL_315},
-	{"YPBPR720P",	     CRT2_TV,   TV_YPBPR|TV_YPBPR750P,  FL_315},
-	{"YPBPR1080I",	     CRT2_TV,   TV_YPBPR|TV_YPBPR1080I, FL_315},
-	{"DSTN",             CRT2_LCD,  -1,                     FL_315|FL_550_DSTN},
-	{"FSTN",             CRT2_LCD,  -1,                     FL_315|FL_550_FSTN},
-	{"\0",  	     -1, 	-1,                     0}
+static unsigned short sis300paneltype[] = {
+	LCD_UNKNOWN,   LCD_800x600,   LCD_1024x768,  LCD_1280x1024,
+	LCD_1280x960,  LCD_640x480,   LCD_1024x600,  LCD_1152x768,
+	LCD_UNKNOWN,   LCD_UNKNOWN,   LCD_UNKNOWN,   LCD_UNKNOWN,
+	LCD_UNKNOWN,   LCD_UNKNOWN,   LCD_UNKNOWN,   LCD_UNKNOWN
 };
 
-/* TV standard */
-static struct _sis_tvtype {
-	char name[6];
-	u32 type_no;
-} sis_tvtype[] = {
-	{"PAL",  	TV_PAL},
-	{"NTSC", 	TV_NTSC},
-	{"PALM",  	TV_PAL|TV_PALM},
-	{"PALN",  	TV_PAL|TV_PALN},
-	{"NTSCJ",  	TV_NTSC|TV_NTSCJ},
-	{"\0",   	-1}
+static unsigned short sis310paneltype[] = {
+	LCD_UNKNOWN,   LCD_800x600,   LCD_1024x768,  LCD_1280x1024,
+	LCD_640x480,   LCD_1024x600,  LCD_1152x864,  LCD_1280x960,
+	LCD_1152x768,  LCD_1400x1050, LCD_1280x768,  LCD_1600x1200,
+	LCD_320x240_2, LCD_320x240_3, LCD_UNKNOWN,   LCD_UNKNOWN
+};
+
+static unsigned short sis661paneltype[] = {
+	LCD_UNKNOWN,   LCD_800x600,   LCD_1024x768,  LCD_1280x1024,
+	LCD_640x480,   LCD_1024x600,  LCD_1152x864,  LCD_1280x960,
+	LCD_1280x854,  LCD_1400x1050, LCD_1280x768,  LCD_1600x1200,
+	LCD_1280x800,  LCD_1680x1050, LCD_1280x720,  LCD_UNKNOWN
 };
 
 static const struct _sis_vrate {
@@ -743,6 +755,13 @@ static struct _customttable {
 	  0, 0,
 	  "Generic", "LVDS/Parallel 848x480", CUT_PANEL848, "PANEL848x480"
 	},
+	{ 4322, "", "",			/* never autodetected */
+	  0,
+	  { 0, 0, 0, 0, 0 },
+	  { 0, 0, 0, 0, 0 },
+	  0, 0,
+	  "Generic", "LVDS/Parallel 856x480", CUT_PANEL856, "PANEL856x480"
+	},
 	{ 0, "", "",
 	  0,
 	  { 0, 0, 0, 0 },
@@ -750,155 +769,6 @@ static struct _customttable {
 	  0, 0,
 	  "", "", CUT_NONE, ""
 	}
-};
-
-static const struct _sis_TV_filter {
-	u8 filter[9][4];
-} sis_TV_filter[] = {
-	{ {{0x00,0x00,0x00,0x40},  /* NTSCFilter_0 */
-	   {0x00,0xE0,0x10,0x60},
-	   {0x00,0xEE,0x10,0x44},
-	   {0x00,0xF4,0x10,0x38},
-	   {0xF8,0xF4,0x18,0x38},
-	   {0xFC,0xFB,0x14,0x2A},
-	   {0x00,0x00,0x10,0x20},
-	   {0x00,0x04,0x10,0x18}, 
-	   {0xFF,0xFF,0xFF,0xFF} }},
-	{ {{0x00,0x00,0x00,0x40},  /* NTSCFilter_1 */
-	   {0x00,0xE0,0x10,0x60},
-	   {0x00,0xEE,0x10,0x44},
-	   {0x00,0xF4,0x10,0x38},
-	   {0xF8,0xF4,0x18,0x38},
-	   {0xFC,0xFB,0x14,0x2A},
-	   {0x00,0x00,0x10,0x20},
-	   {0x00,0x04,0x10,0x18},
-	   {0xFF,0xFF,0xFF,0xFF} }},
-	{ {{0x00,0x00,0x00,0x40},  /* NTSCFilter_2 */
-	   {0xF5,0xEE,0x1B,0x44},
-	   {0xF8,0xF4,0x18,0x38},
-	   {0xEB,0x04,0x25,0x18},
-	   {0xF1,0x05,0x1F,0x16},
-	   {0xF6,0x06,0x1A,0x14},
-	   {0xFA,0x06,0x16,0x14},
-	   {0x00,0x04,0x10,0x18}, 
-	   {0xFF,0xFF,0xFF,0xFF} }},
-	{ {{0x00,0x00,0x00,0x40},  /* NTSCFilter_3 */
-	   {0xF1,0x04,0x1F,0x18},
-	   {0xEE,0x0D,0x22,0x06},
-	   {0xF7,0x06,0x19,0x14},
-	   {0xF4,0x0B,0x1C,0x0A},
-	   {0xFA,0x07,0x16,0x12},
-	   {0xF9,0x0A,0x17,0x0C},
-	   {0x00,0x07,0x10,0x12}, 
-	   {0xFF,0xFF,0xFF,0xFF} }},
-	{ {{0x00,0x00,0x00,0x40},  /* NTSCFilter_4 - 320 */
-	   {0x00,0xE0,0x10,0x60},
-	   {0x00,0xEE,0x10,0x44},
-	   {0x00,0xF4,0x10,0x38},
-	   {0xF8,0xF4,0x18,0x38},
-	   {0xFC,0xFB,0x14,0x2A},
-	   {0x00,0x00,0x10,0x20},
-	   {0x00,0x04,0x10,0x18}, 
-	   {0xFF,0xFF,0xFF,0xFF} }},
-	{ {{0x00,0x00,0x00,0x40},  /* NTSCFilter_5 - 640 */
-	   {0xF5,0xEE,0x1B,0x44},
-	   {0xF8,0xF4,0x18,0x38},
-	   {0xEB,0x04,0x25,0x18},
-	   {0xF1,0x05,0x1F,0x16},
-	   {0xF6,0x06,0x1A,0x14},
-	   {0xFA,0x06,0x16,0x14},
-	   {0x00,0x04,0x10,0x18}, 
-	   {0xFF,0xFF,0xFF,0xFF} }},
-	{ {{0x00,0x00,0x00,0x40},  /* NTSCFilter_6 - 720 */
-	   {0xEB,0x04,0x25,0x18},
-	   {0xE7,0x0E,0x29,0x04},
-	   {0xEE,0x0C,0x22,0x08},
-	   {0xF6,0x0B,0x1A,0x0A},
-	   {0xF9,0x0A,0x17,0x0C},
-	   {0xFC,0x0A,0x14,0x0C},
-	   {0x00,0x08,0x10,0x10}, 
-	   {0xFF,0xFF,0xFF,0xFF} }},
-	{ {{0x00,0x00,0x00,0x40},  /* NTSCFilter_7 - 800 */
-	   {0xEC,0x02,0x24,0x1C},
-	   {0xF2,0x04,0x1E,0x18},
-	   {0xEB,0x15,0x25,0xF6},
-	   {0xF4,0x10,0x1C,0x00},
-	   {0xF8,0x0F,0x18,0x02},
-	   {0x00,0x04,0x10,0x18},
-	   {0x01,0x06,0x0F,0x14}, 
-	   {0xFF,0xFF,0xFF,0xFF} }},
-	{ {{0x00,0x00,0x00,0x40},  /* PALFilter_0 */
-	   {0x00,0xE0,0x10,0x60},
-	   {0x00,0xEE,0x10,0x44},
-	   {0x00,0xF4,0x10,0x38},
-	   {0xF8,0xF4,0x18,0x38},
-	   {0xFC,0xFB,0x14,0x2A},
-	   {0x00,0x00,0x10,0x20},
-	   {0x00,0x04,0x10,0x18}, 
-	   {0xFF,0xFF,0xFF,0xFF} }},
-	{ {{0x00,0x00,0x00,0x40},  /* PALFilter_1 */
-	   {0x00,0xE0,0x10,0x60},
-	   {0x00,0xEE,0x10,0x44},
-	   {0x00,0xF4,0x10,0x38},
-	   {0xF8,0xF4,0x18,0x38},
-	   {0xFC,0xFB,0x14,0x2A},
-	   {0x00,0x00,0x10,0x20},
-	   {0x00,0x04,0x10,0x18}, 
-	   {0xFF,0xFF,0xFF,0xFF} }},
-	{ {{0x00,0x00,0x00,0x40},  /* PALFilter_2 */
-	   {0xF5,0xEE,0x1B,0x44},
-	   {0xF8,0xF4,0x18,0x38},
-	   {0xF1,0xF7,0x01,0x32},
-	   {0xF5,0xFB,0x1B,0x2A},
-	   {0xF9,0xFF,0x17,0x22},
-	   {0xFB,0x01,0x15,0x1E},
-	   {0x00,0x04,0x10,0x18}, 
-	   {0xFF,0xFF,0xFF,0xFF} }},
-	{ {{0x00,0x00,0x00,0x40},  /* PALFilter_3 */
-	   {0xF5,0xFB,0x1B,0x2A},
-	   {0xEE,0xFE,0x22,0x24},
-	   {0xF3,0x00,0x1D,0x20},
-	   {0xF9,0x03,0x17,0x1A},
-	   {0xFB,0x02,0x14,0x1E},
-	   {0xFB,0x04,0x15,0x18},
-	   {0x00,0x06,0x10,0x14}, 
-	   {0xFF,0xFF,0xFF,0xFF} }},
-	{ {{0x00,0x00,0x00,0x40},  /* PALFilter_4 - 320 */
-	   {0x00,0xE0,0x10,0x60},
-	   {0x00,0xEE,0x10,0x44},
-	   {0x00,0xF4,0x10,0x38},
-	   {0xF8,0xF4,0x18,0x38},
-	   {0xFC,0xFB,0x14,0x2A},
-	   {0x00,0x00,0x10,0x20},
-	   {0x00,0x04,0x10,0x18}, 
-	   {0xFF,0xFF,0xFF,0xFF} }},
-	{ {{0x00,0x00,0x00,0x40},  /* PALFilter_5 - 640 */
-	   {0xF5,0xEE,0x1B,0x44},
-	   {0xF8,0xF4,0x18,0x38},
-	   {0xF1,0xF7,0x1F,0x32},
-	   {0xF5,0xFB,0x1B,0x2A},
-	   {0xF9,0xFF,0x17,0x22},
-	   {0xFB,0x01,0x15,0x1E},
-	   {0x00,0x04,0x10,0x18}, 
-	   {0xFF,0xFF,0xFF,0xFF} }},
-	{ {{0x00,0x00,0x00,0x40},  /* PALFilter_6 - 720 */
-	   {0xF5,0xEE,0x1B,0x2A},
-	   {0xEE,0xFE,0x22,0x24},
-	   {0xF3,0x00,0x1D,0x20},
-	   {0xF9,0x03,0x17,0x1A},
-	   {0xFB,0x02,0x14,0x1E},
-	   {0xFB,0x04,0x15,0x18},
-	   {0x00,0x06,0x10,0x14}, 
-	   {0xFF,0xFF,0xFF,0xFF} }},
-	{ {{0x00,0x00,0x00,0x40},  /* PALFilter_7 - 800 */
-	   {0xF5,0xEE,0x1B,0x44},
-	   {0xF8,0xF4,0x18,0x38},
-	   {0xFC,0xFB,0x14,0x2A},
-	   {0xEB,0x05,0x25,0x16},
-	   {0xF1,0x05,0x1F,0x16},
-	   {0xFA,0x07,0x16,0x12},
-	   {0x00,0x07,0x10,0x12}, 
-	   {0xFF,0xFF,0xFF,0xFF} }}
 };
 
 /* Information shared between the c++ syllable
@@ -920,13 +790,15 @@ typedef struct
 	void 	*rom;
 	
 	enum _SIS_CHIP_TYPE chip;
+	uint8		revision_id;
 	int		sisvga_engine;
 	uint32		video_size;
 	int newrom;
+	unsigned long UMAsize, LFBsize;
 	
 	uint32 vbflags;
 	uint32 currentvbflags;
-	int crt2type;
+	uint32 vbflags2;
 	uint32 CRT2LCDType;
 	int	CRT2_write_enable;
 	int crt1off;
@@ -948,6 +820,15 @@ typedef struct
 	uint16 DstColor;
 	uint32 CmdReg;
 	SISPortPrivRec video_port;
+	
+    unsigned int	*cmdQueueBase;
+    unsigned int	cmdQueueOffset;
+    unsigned int	cmdQueueSize;
+    unsigned int	cmdQueueSizeMask;
+    unsigned int	cmdQ_SharedWritePort;
+    unsigned int	cmdQueueSize_div2;
+    unsigned int	cmdQueueSize_div4;
+    unsigned int	cmdQueueSize_4_3;
 } shared_info;
 
 
@@ -989,8 +870,7 @@ typedef struct
       
 /* Some global stuff */                                  
                                         
-extern SiS_Private SiS_Pr;
-extern SIS_HW_INFO sishw_ext;
+extern struct SiS_Private SiS_Pr;
 extern shared_info si;
 
 /* sis.c */
@@ -998,9 +878,36 @@ extern shared_info si;
 void sis_pre_setmode( uint8 rate_idx );
 void sis_post_setmode();
 int sis_init();
-extern BOOLEAN  SiSSetMode(SiS_Private *SiS_Pr, PSIS_HW_INFO HwDeviceInfo, USHORT ModeNo);
+extern BOOLEAN  SiSSetMode(struct SiS_Private *SiS_Pr, unsigned short ModeNo);
+void sis_set_pitch( int pitch );
 
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

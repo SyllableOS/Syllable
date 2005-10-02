@@ -214,7 +214,7 @@ bool ATImach64::InitHardware( int nFd ) {
 
 	 // allocate framebuffer area
 	m_hFramebufferArea = create_area ("mach64_fb", (void **)&m_pFramebufferBase,
-		get_pci_memory_size(nFd, &m_cPCIInfo, 0), AREA_FULL_ACCESS, AREA_NO_LOCK);
+		get_pci_memory_size(nFd, &m_cPCIInfo, 0), AREA_FULL_ACCESS | AREA_WRCOMB, AREA_NO_LOCK);
 	if( m_hFramebufferArea < 0 ) {
 		dbprintf ("Mach64:: failed to create framebuffer area (%d)\n", m_hFramebufferArea);
 		return false;
@@ -279,19 +279,14 @@ bool ATImach64::InitHardware( int nFd ) {
 	// populate screen mode list
 	float rf[] = { 60.0f, 75.0f, 100.0f };
 	for( int i = 0; i < 3; i++ ) {
-	m_cScreenModeList.push_back (os::screen_mode ( 640, 480, 1280, CS_RGB15, rf[i]));  // 640x480 HiColor
 	m_cScreenModeList.push_back (os::screen_mode ( 640, 480, 1280, CS_RGB16, rf[i]));  // 640x480 HiColor
 	m_cScreenModeList.push_back (os::screen_mode ( 640, 480, 2560, CS_RGB32, rf[i])); // 640x480 TrueColor
-	m_cScreenModeList.push_back (os::screen_mode ( 800, 600, 1600, CS_RGB15, rf[i]));  // 800x600 HiColor
 	m_cScreenModeList.push_back (os::screen_mode ( 800, 600, 1600, CS_RGB16, rf[i]));  // 800x600 HiColor
 	m_cScreenModeList.push_back (os::screen_mode ( 800, 600, 3200, CS_RGB32, rf[i])); // 800x600 TrueColor
-	m_cScreenModeList.push_back (os::screen_mode (1024, 768, 2048, CS_RGB15, rf[i]));  // 1024x768 HiColor
 	m_cScreenModeList.push_back (os::screen_mode (1024, 768, 2048, CS_RGB16, rf[i]));  // 1024x768 HiColor
 	m_cScreenModeList.push_back (os::screen_mode (1024, 768, 4096, CS_RGB32, rf[i])); // 1024x768 TrueColor
-	m_cScreenModeList.push_back (os::screen_mode (1152, 864, 2304, CS_RGB15, rf[i]));  // 1152x864 HiColor
 	m_cScreenModeList.push_back (os::screen_mode (1152, 864, 2304, CS_RGB16, rf[i]));  // 1152x864 HiColor
 	m_cScreenModeList.push_back (os::screen_mode (1152, 864, 4608, CS_RGB32, rf[i])); // 1152x864 TrueColor
-	m_cScreenModeList.push_back (os::screen_mode (1280, 1024, 2560, CS_RGB15, rf[i]));  // 1280x1024 HiColor
 	m_cScreenModeList.push_back (os::screen_mode (1280, 1024, 2560, CS_RGB16, rf[i]));  // 1280x1024 HiColor
 	m_cScreenModeList.push_back (os::screen_mode (1280, 1024, 5120, CS_RGB32, rf[i])); // 1280x1024 TrueColor
 	}
@@ -484,11 +479,6 @@ vesa:
 	wait_for_idle();
 
 
-	/* Try to enable hardware cursor */
-	HWcursor = false;
-	if( M64_HAS(INTEGRATED) )
-		aty_hw_cursor_init();
-		
 	/* Initialize video overlay */
 	m_bSupportsYUV = false;
 	m_bVideoOverlayUsed = false;
@@ -562,11 +552,7 @@ int ATImach64::SetScreenMode( os::screen_mode sMode ) {
 		info.par.crtc.vyres = sMode.m_nHeight;
 		info.par.crtc.bpp = BitsPerPixel( sMode.m_eColorSpace );
 		m_sCurrentMode = sMode;
-		if( sMode.m_eColorSpace == CS_RGB15 ) {
-			info.par.crtc.dp_pix_width = HOST_15BPP | SRC_15BPP | DST_15BPP |
-				BYTE_ORDER_LSB_TO_MSB;
-			info.par.crtc.dp_chain_mask = 0x4210;
-		} else if( sMode.m_eColorSpace == CS_RGB16 ) {
+		if( sMode.m_eColorSpace == CS_RGB16 ) {
 			info.par.crtc.dp_pix_width = HOST_16BPP | SRC_16BPP | DST_16BPP |
 				BYTE_ORDER_LSB_TO_MSB;
 			info.par.crtc.dp_chain_mask = 0x8410;

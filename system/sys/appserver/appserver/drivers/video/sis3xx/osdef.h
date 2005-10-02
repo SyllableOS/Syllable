@@ -3,7 +3,7 @@
 /*
  * OS depending defines
  *
- * Copyright (C) 2001-2004 by Thomas Winischhofer, Vienna, Austria
+ * Copyright (C) 2001-2005 by Thomas Winischhofer, Vienna, Austria
  *
  * If distributed as part of the Linux kernel, the following license terms
  * apply:
@@ -52,12 +52,15 @@
  */
 
 #ifndef _SIS_OSDEF_H_
-#define _SIS_OSDEF_H_ 
- 
+#define _SIS_OSDEF_H_
+
 /* The choices are: */
-//#define LINUX_KERNEL	   /* Linux kernel framebuffer */
-/* #define LINUX_XF86 */   /* XFree86/X.org */
+//#undef  SIS_LINUX_KERNEL		/* Linux kernel framebuffer */
+//#define SIS_XORG_XF86			/* XFree86/X.org */
 #define SYLLABLE
+
+#undef SIS_LINUX_KERNEL_24
+#undef SIS_LINUX_KERNEL_26
 
 #ifdef OutPortByte
 #undef OutPortByte
@@ -87,8 +90,9 @@
 /*  LINUX KERNEL                                                      */
 /**********************************************************************/
 
-#ifdef LINUX_KERNEL
+#ifdef SIS_LINUX_KERNEL
 #include <linux/config.h>
+#include <linux/version.h>
 
 #ifdef CONFIG_FB_SIS_300
 #define SIS300
@@ -98,19 +102,26 @@
 #define SIS315H
 #endif
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
+#define SIS_LINUX_KERNEL_26
+#else
+#define SIS_LINUX_KERNEL_24
+#endif
+
 #if !defined(SIS300) && !defined(SIS315H)
 #warning Neither CONFIG_FB_SIS_300 nor CONFIG_FB_SIS_315 is set
 #warning sisfb will not work!
 #endif
 
-#define OutPortByte(p,v) outb((u8)(v),(SISIOADDRESS)(p))
-#define OutPortWord(p,v) outw((u16)(v),(SISIOADDRESS)(p))
-#define OutPortLong(p,v) outl((u32)(v),(SISIOADDRESS)(p))
-#define InPortByte(p)    inb((SISIOADDRESS)(p))
-#define InPortWord(p)    inw((SISIOADDRESS)(p))
-#define InPortLong(p)    inl((SISIOADDRESS)(p))
+#define OutPortByte(p,v) outb((u8)(v),(IOADDRESS)(p))
+#define OutPortWord(p,v) outw((u16)(v),(IOADDRESS)(p))
+#define OutPortLong(p,v) outl((u32)(v),(IOADDRESS)(p))
+#define InPortByte(p)    inb((IOADDRESS)(p))
+#define InPortWord(p)    inw((IOADDRESS)(p))
+#define InPortLong(p)    inl((IOADDRESS)(p))
 #define SiS_SetMemory(MemoryAddress,MemorySize,value) memset_io(MemoryAddress, value, MemorySize)
-#endif
+
+#endif /* LINUX_KERNEL */
 
 
 /**********************************************************************/
@@ -131,13 +142,15 @@
 typedef uint8 u8;
 typedef uint16 u16;
 typedef uint32 u32;
+#define writew(dest, data)        	*(dest)     = (data)
 #endif
 
 /**********************************************************************/
-/*  XFree86/X.org                                                    */
+/*  XFree86/X.org                                                     */
 /**********************************************************************/
 
-#ifdef LINUX_XF86
+#ifdef SIS_XORG_XF86
+
 #define SIS300
 #define SIS315H
 
@@ -148,6 +161,9 @@ typedef uint32 u32;
 #define InPortWord(p)    inSISREGW((IOADDRESS)(p))
 #define InPortLong(p)    inSISREGL((IOADDRESS)(p))
 #define SiS_SetMemory(MemoryAddress,MemorySize,value) memset(MemoryAddress, value, MemorySize)
-#endif
+
+#endif /* XF86 */
 
 #endif  /* _OSDEF_H_ */
+
+

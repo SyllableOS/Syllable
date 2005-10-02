@@ -89,7 +89,7 @@ typedef struct
 #define	AREA_EXEC		0x00000004
 #define	AREA_FULL_ACCESS	(AREA_READ | AREA_WRITE | AREA_EXEC)
 #define AREA_KERNEL		0x00000008
-#define AREA_UNMAP_PHYS		0x00000010
+#define AREA_WRCOMB		0x00000010
 
   // Creation/cloning allocation policy
 #define AREA_ANY_ADDRESS	0x00000000

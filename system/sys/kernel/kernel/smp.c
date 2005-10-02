@@ -54,6 +54,9 @@ static int g_anLogicToRealID[MAX_CPU_COUNT] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 extern bool g_bHasFXSR;
 extern bool g_bHasXMM;
 
+vuint32 g_nTLBInvalidateMask = 0; // Mask of the CPUs that need to invalidate their tlb
+vuint32 g_nMTRRInvalidateMask = 0; // Mask of the CPUs that need to invalidate their mtrr descriptors
+uint32 g_nCpuMask = 0; // CPU mask (copied to g_nTLBInvalidateMask or g_nMTRRInvalidateMask during tlb flush)
 
 /*
  * This is the number of bits of precision for pi_nDelayCount.  Each
@@ -67,6 +70,19 @@ static const count_t LPS_PREC = 8;
 uint8 g_anTrampoline[] = {
 #include "objs/smp_entry.hex"
 };
+
+static __inline__ void set_bit( volatile void * pAddr, int nNr )
+{
+	__asm__ __volatile__( "lock\n\tbtsl %1,%0" :"=m" ( *(volatile long *)pAddr ) :"Ir" ( nNr ) );
+}
+
+static inline int test_and_clear_bit( volatile void* pAddr, int nNr )
+{
+	int nBit;
+	__asm__ __volatile__( "lock\n\tbtrl %2,%1\n\tsbbl %0,%0" :"=r" ( nBit ),
+			"=m" ( *(volatile long *)pAddr ) :"Ir" ( nNr ) : "memory" );
+	return( nBit );
+}
 
 /*****************************************************************************
  * NAME:
@@ -159,12 +175,14 @@ static void wait_pit_wrap( void )
  * SEE ALSO:
  ****************************************************************************/
 
-void calibrate_delay( void )
+void calibrate_delay( int nProcessor )
 {
 	unsigned long loops_per_jiffy = ( 1 << 12 );	// start at 2 BogoMips
 	unsigned long loopbit;
 	unsigned long jiffy_countdown = 0xffff - ( PIT_TICKS_PER_SEC / INT_FREQ );
 	count_t lps_precision = LPS_PREC;
+	uint64 nStartPerf;
+	uint64 nEndPerf;
 
 	printk( "Calibrating delay loop for CPU %d\n", get_processor_id() );
 
@@ -199,6 +217,18 @@ void calibrate_delay( void )
 			loops_per_jiffy &= ~loopbit;
 	}
 
+	/* Calculate CPU core speed */
+	isa_writeb( PIT_MODE, 0x34 );	// loop mode
+	isa_writeb( PIT_CH0, 0xff );
+	isa_writeb( PIT_CH0, 0xff );
+
+	wait_pit_wrap();
+	nStartPerf = read_pentium_clock();
+	wait_pit_wrap();
+	nEndPerf = read_pentium_clock();
+
+	g_asProcessorDescs[nProcessor].pi_nCoreSpeed = ( uint32 )( ( uint64 )PIT_TICKS_PER_SEC * ( nEndPerf - nStartPerf ) / 0xffff );
+
 	isa_writeb( PIT_MODE, 0x34 );	// loop mode
 	isa_writeb( PIT_CH0, 0x0 );
 	isa_writeb( PIT_CH0, 0x0 );
@@ -207,6 +237,7 @@ void calibrate_delay( void )
 
 	// Round the value and print it.
 	printk( "ok - %lu.%02lu BogoMIPS (lpj=%lu)\n", loops_per_jiffy / ( 500000 / INT_FREQ ), ( loops_per_jiffy / ( 5000 / INT_FREQ ) ) % 100, loops_per_jiffy );
+	printk( "CPU %d runs at %d.%04d MHz\n", nProcessor,  g_asProcessorDescs[nProcessor].pi_nCoreSpeed / 1000000, ( g_asProcessorDescs[nProcessor].pi_nCoreSpeed / 100 ) % 10000 );
 }
 
 /*****************************************************************************
@@ -219,9 +250,6 @@ void calibrate_delay( void )
 static void calibrate_apic_timer( int nProcessor )
 {
 	uint32 nAPICCount;
-	uint64 nStartPerf;
-	uint64 nEndPerf;
-
 	uint32 nReg;
 
 #ifdef SMP_DEBUG
@@ -238,15 +266,12 @@ static void calibrate_apic_timer( int nProcessor )
 
 	wait_pit_wrap();
 	apic_write( APIC_TMICT, ~0 );	// Start APIC timer
-	nStartPerf = read_pentium_clock();
 	wait_pit_wrap();
 	nAPICCount = apic_read( APIC_TMCCT );
-	nEndPerf = read_pentium_clock();
 
 
 	g_asProcessorDescs[nProcessor].pi_nBusSpeed = ( uint32 )( ( uint64 )PIT_TICKS_PER_SEC * ( 0xffffffffLL - nAPICCount ) / 0xffff );
-	g_asProcessorDescs[nProcessor].pi_nCoreSpeed = ( uint32 )( ( uint64 )PIT_TICKS_PER_SEC * ( nEndPerf - nStartPerf ) / 0xffff );
-	printk( "CPU %d runs at %d.%04d / %d.%04d MHz\n", nProcessor, g_asProcessorDescs[nProcessor].pi_nBusSpeed / 1000000, ( g_asProcessorDescs[nProcessor].pi_nBusSpeed / 100 ) % 10000, g_asProcessorDescs[nProcessor].pi_nCoreSpeed / 1000000, ( g_asProcessorDescs[nProcessor].pi_nCoreSpeed / 100 ) % 10000 );
+	printk( "CPU %d busspeed at %d.%04d MHz\n", nProcessor, g_asProcessorDescs[nProcessor].pi_nBusSpeed / 1000000, ( g_asProcessorDescs[nProcessor].pi_nBusSpeed / 100 ) % 10000 );
 }
 
 /*****************************************************************************
@@ -277,11 +302,11 @@ static void ap_entry_proc( void )
 	__asm__ __volatile__( "movl %0,%%cr0"::"r"( ( nCR0 & 0x9ffffffb ) | 0x22 ) );
 
 	// Enable SSE support
-	if ( g_bHasFXSR )
+	if ( g_asProcessorDescs[nProcessor].pi_bHaveFXSR )
 	{
 		set_in_cr4( X86_CR4_OSFXSR );
 	}
-	if ( g_bHasXMM )
+	if ( g_asProcessorDescs[nProcessor].pi_bHaveXMM )
 	{
 		set_in_cr4( X86_CR4_OSXMMEXCPT );
 	}
@@ -294,19 +319,42 @@ static void ap_entry_proc( void )
 	sIDT.Limit = 0x7ff;
 
 	SetIDT( &sIDT );
+	
+	calibrate_delay( nProcessor );
 
+	// Clear the local apic
+
+	apic_write( APIC_ESR, 0 );
+	apic_write( APIC_ESR, 0 );
+	apic_write( APIC_ESR, 0 );
+	apic_write( APIC_ESR, 0 );
+
+	apic_write( APIC_DFR, APIC_DFR_FLAT );
+
+	nReg = apic_read( APIC_LDR ) & ~APIC_LDR_MASK;
+	nReg |= SET_APIC_LOGICAL_ID( 1UL << nProcessor );
+	apic_write( APIC_LDR, nReg );
+
+	// Enable the local APIC
 	nReg = apic_read( APIC_SPIV );
-	nReg |= ( 1 << 8 );	// Enable spurious interupt vector
+	nReg &=~ APIC_DEST_VECTOR_MASK;
+	nReg |= APIC_SPIV_APIC_ENABLED;	/* Enable APIC */
+	nReg &=~ APIC_SPIV_FOCUS_DISABLED; /* Disable focus */
+	nReg |= INT_SPURIOUS;
 	apic_write( APIC_SPIV, nReg );
+	
+	udelay( 10 );
 
-	calibrate_delay();
+	apic_write( APIC_LVT0, APIC_DEST_DM_EXTINT | APIC_LVT_MASKED );
+	apic_write( APIC_LVT1, APIC_DEST_DM_NMI | APIC_LVT_MASKED );
+
 	calibrate_apic_timer( nProcessor );
 
 	flush_tlb();
+	set_bit( &g_nCpuMask, nProcessor );
+	write_mtrr_descs();
 
 	g_asProcessorDescs[nProcessor].pi_bIsRunning = true;
-	g_asProcessorDescs[nProcessor].pi_bHaveFXSR = g_bHasFXSR;
-	g_asProcessorDescs[nProcessor].pi_bHaveXMM = g_bHasXMM;
 
 	create_idle_thread( "idle" );
 
@@ -377,6 +425,8 @@ static char *mpc_family( int family, int model )
 		return ( "Pentium(tm)" );
 	if ( family == 0x0F && model == 0x0F )
 		return ( "Special controller" );
+	if ( family == 0x0F && model == 0x00 )
+		return ( "Pentium 4(tm)" );
 	if ( family == 0x04 && model < 9 )
 		return model_defs[model];
 	sprintf( n, "Unknown CPU [%d:%d]", family, model );
@@ -997,14 +1047,33 @@ void smp_boot_cpus( void )
 	test_apic();
 #endif
 
-	//        Enable the local APIC
+	// Clear the local apic
+	apic_write( APIC_ESR, 0 );
+	apic_write( APIC_ESR, 0 );
+	apic_write( APIC_ESR, 0 );
+	apic_write( APIC_ESR, 0 );
+	
+	apic_write( APIC_DFR, APIC_DFR_FLAT );
 
+	nReg = apic_read( APIC_LDR ) & ~APIC_LDR_MASK;
+	nReg |= SET_APIC_LOGICAL_ID( 1UL << get_processor_id() );
+	apic_write( APIC_LDR, nReg );
+	
+	// Enable the local APIC
 	nReg = apic_read( APIC_SPIV );
-	nReg |= ( 1 << 8 );	/* Enable APIC */
+	nReg &=~ APIC_DEST_VECTOR_MASK;
+	nReg |= APIC_SPIV_APIC_ENABLED;	/* Enable APIC */
+	nReg &=~ APIC_SPIV_FOCUS_DISABLED; /* Disable focus */
+	nReg |= INT_SPURIOUS;
 	apic_write( APIC_SPIV, nReg );
 
 	udelay( 10 );
-
+	
+	apic_write( APIC_LVT0, APIC_DEST_DM_EXTINT );
+	apic_write( APIC_LVT1, APIC_DEST_DM_NMI );
+	
+	set_bit( &g_nCpuMask, g_nBootCPU );
+	
 	//        Now scan the cpu present map and fire up the other CPUs.
 
 	for ( i = 0; i < MAX_CPU_COUNT; ++i )
@@ -1169,7 +1238,14 @@ void apic_eoi( void )
 void do_smp_invalidate_pgt( SysCallRegs_s * psRegs, int nIrqNum )
 {
 	apic_eoi();
-	flush_tlb();
+	if( test_and_clear_bit( &g_nTLBInvalidateMask, get_processor_id() ) )
+	{
+		flush_tlb();
+	}
+	if( test_and_clear_bit( &g_nMTRRInvalidateMask, get_processor_id() ) )
+	{
+		write_mtrr_descs();
+	}
 }
 
 /*****************************************************************************
@@ -1308,7 +1384,7 @@ void boot_ap_processors( void )
 	
 	printk( "Untie AP processors...\n" );
 	
-	calibrate_delay();
+	calibrate_delay( get_processor_id() );
 	if ( g_bFoundSmpConfig )
 	{
 		nFlg = cli();
@@ -1321,10 +1397,10 @@ void boot_ap_processors( void )
 	{
 		if ( g_asProcessorDescs[i].pi_bIsPresent && g_asProcessorDescs[i].pi_bIsRunning )
 		{
-			g_asProcessorDescs[i].pi_nGS = Desc_Alloc( 0 );
-			Desc_SetLimit( g_asProcessorDescs[i].pi_nGS, TLD_SIZE );
-			Desc_SetBase( g_asProcessorDescs[i].pi_nGS, 0 );
-			Desc_SetAccess( g_asProcessorDescs[i].pi_nGS, 0xf2 );
+			g_asProcessorDescs[i].pi_nGS = alloc_gdt_desc( 0 );
+			set_gdt_desc_limit( g_asProcessorDescs[i].pi_nGS, TLD_SIZE );
+			set_gdt_desc_base( g_asProcessorDescs[i].pi_nGS, 0 );
+			set_gdt_desc_access( g_asProcessorDescs[i].pi_nGS, 0xf2 );
 			printk( "CPU #%d got GS=%d\n", i, g_asProcessorDescs[i].pi_nGS );
 		}
 	}
@@ -1340,11 +1416,33 @@ void boot_ap_processors( void )
 
 void flush_tlb_global( void )
 {
-	flush_tlb();
+	int nProcessor = get_processor_id();
+	/* Update MTRR descriptors */
+	if( test_and_clear_bit( &g_nMTRRInvalidateMask, nProcessor ) )
+	{
+		write_mtrr_descs();
+	}
+	
 	if ( g_nActiveCPUCount > 1 )
 	{
-		send_ipi( MSG_ALL_BUT_SELF, APIC_DEST_DM_FIXED, INT_INVAL_PGT );
-	}
+		uint32 nFlags = cli();
+		g_nTLBInvalidateMask = g_nCpuMask;
+ 		send_ipi( MSG_ALL_BUT_SELF, APIC_DEST_DM_FIXED, INT_INVAL_PGT );
+ 		flush_tlb();
+//		int nTimeout = 50000000;
+//		while( g_nTLBInvalidateMask && nTimeout-- > 1 )
+//		{
+			if( test_and_clear_bit( &g_nTLBInvalidateMask, nProcessor ) )
+			{
+				flush_tlb();
+			}
+//		}
+//		if( nTimeout == 0 )
+//			printk("TLB flush timeout!\n");
+//		g_nTLBInvalidateMask = 0;
+		put_cpu_flags( nFlags );
+	} else
+		flush_tlb();
 }
 
 int logical_to_physical_cpu_id( int nLogicalID )

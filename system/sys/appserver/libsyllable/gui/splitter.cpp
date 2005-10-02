@@ -314,9 +314,9 @@ void Splitter::AdjustLayout()
 		rs = Rect( r.left, f1.bottom + 1, r.right, f1.bottom + m->m_SeparatorWidth );
 		f2 = Rect( r.left, rs.bottom + 1, r.right, r.bottom );
 
-		m->m_pView1->SetFrame( f1 );
-		m->m_pSeparator->SetFrame( rs );
-		m->m_pView2->SetFrame( f2 );
+		m->m_pView1->SetFrame( f1.Floor() );
+		m->m_pSeparator->SetFrame( rs.Floor() );
+		m->m_pView2->SetFrame( f2.Floor() );
 	}
 	else
 	{
@@ -330,9 +330,9 @@ void Splitter::AdjustLayout()
 		rs = Rect( f1.right + 1, r.top, f1.right + m->m_SeparatorWidth, r.bottom );
 		f2 = Rect( rs.right + 1, r.top, r.right, r.bottom );
 
-		m->m_pView1->SetFrame( f1 );
-		m->m_pSeparator->SetFrame( rs );
-		m->m_pView2->SetFrame( f2 );
+		m->m_pView1->SetFrame( f1.Floor() );
+		m->m_pSeparator->SetFrame( rs.Floor() );
+		m->m_pView2->SetFrame( f2.Floor() );
 	}
 }
 
@@ -372,9 +372,9 @@ void Splitter::SplitBy( float fValue )
 				fValue = vLimit - f1.bottom + f1.top;
 				//m->m_Tracking = false;
 			}
-			m->m_pView1->ResizeBy( Point( 0, fValue ) );
-			m->m_pSeparator->MoveBy( Point( 0, fValue ) );
-			f2.top += fValue;
+			m->m_pView1->ResizeBy( Point( 0, (int)fValue ) );
+			m->m_pSeparator->MoveBy( Point( 0, (int)fValue ) );
+			f2.top += (int)fValue;
 			m->m_pView2->SetFrame( f2 );
 		}
 		else if( fValue > 0 )
@@ -387,10 +387,10 @@ void Splitter::SplitBy( float fValue )
 				fValue = -vLimit + f2.bottom - f2.top;
 				//m->m_Tracking = false;
 			}
-			f2.top += fValue;
+			f2.top += (int)fValue;
 			m->m_pView2->SetFrame( f2 );
-			m->m_pSeparator->MoveBy( Point( 0, fValue ) );
-			m->m_pView1->ResizeBy( Point( 0, fValue ) );
+			m->m_pSeparator->MoveBy( Point( 0, (int)fValue ) );
+			m->m_pView1->ResizeBy( Point( 0, (int)fValue ) );
 		}
 
 		float	vLimit1 = std::max( m->m_vLimit1, m->m_pView1->GetPreferredSize( false ).y );
@@ -409,9 +409,9 @@ void Splitter::SplitBy( float fValue )
 				fValue = vLimit - f1.right + f1.left;
 				//m->m_Tracking = false;
 			}
-			m->m_pView1->ResizeBy( Point( fValue, 0 ) );
-			m->m_pSeparator->MoveBy( Point( fValue, 0 ) );
-			f2.left += fValue;
+			m->m_pView1->ResizeBy( Point( (int)fValue, 0 ) );
+			m->m_pSeparator->MoveBy( Point( (int)fValue, 0 ) );
+			f2.left += (int)fValue;
 			m->m_pView2->SetFrame( f2 );
 		}
 		else if( fValue > 0 )
@@ -424,10 +424,10 @@ void Splitter::SplitBy( float fValue )
 				fValue = -vLimit + f2.right - f2.left;
 				//m->m_Tracking = false;
 			}
-			f2.left += fValue;
+			f2.left += (int)fValue;
 			m->m_pView2->SetFrame( f2 );
-			m->m_pSeparator->MoveBy( Point( fValue, 0 ) );
-			m->m_pView1->ResizeBy( Point( fValue, 0 ) );
+			m->m_pSeparator->MoveBy( Point( (int)fValue, 0 ) );
+			m->m_pView1->ResizeBy( Point( (int)fValue, 0 ) );
 		}
 
 		float	vLimit1 = std::max( m->m_vLimit1, m->m_pView1->GetPreferredSize( false ).x );

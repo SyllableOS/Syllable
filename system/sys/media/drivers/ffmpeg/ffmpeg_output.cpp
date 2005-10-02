@@ -23,7 +23,7 @@
 #include <iostream>
 extern "C" 
 {
-	#include <ffmpeg/avformat.h>
+	#include <avformat.h>
 }
 
 #define FFMPEG_MAX_STREAMS 4
@@ -255,7 +255,7 @@ status_t FFMpegOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket )
 {
 	StartEncoding();
 	
-	if( m_sStream[nIndex]->codec.codec_type == CODEC_TYPE_AUDIO )
+	if( m_sStream[nIndex]->codec->codec_type == CODEC_TYPE_AUDIO )
 	{
 		if( psPacket->pPrivate == NULL )
 			return( -1 );
@@ -272,8 +272,8 @@ status_t FFMpegOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket )
 			sPacket.data = pBuffer;
 			sPacket.size = psFrames->nSize;
 			sPacket.flags |= PKT_FLAG_KEY;
-			if( m_sStream[nIndex]->codec.coded_frame )
-				sPacket.pts= av_rescale_q( m_sStream[nIndex]->codec.coded_frame->pts, m_sStream[nIndex]->codec.time_base, m_sStream[nIndex]->time_base );
+			if( m_sStream[nIndex]->codec->coded_frame )
+				sPacket.pts= av_rescale_q( m_sStream[nIndex]->codec->coded_frame->pts, m_sStream[nIndex]->codec->time_base, m_sStream[nIndex]->time_base );
                         
 		//cout<<"Write :"<<psFrames->nSize<<endl;
 			av_interleaved_write_frame( m_psContext, &sPacket );
@@ -290,10 +290,10 @@ status_t FFMpegOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psPacket )
 		sPacket.stream_index = nIndex;
 		sPacket.data = psPacket->pBuffer[0];
 		sPacket.size = psPacket->nSize[0];
-		if( m_sStream[nIndex]->codec.coded_frame && m_sStream[nIndex]->codec.coded_frame->key_frame )
+		if( m_sStream[nIndex]->codec->coded_frame && m_sStream[nIndex]->codec->coded_frame->key_frame )
 			sPacket.flags |= PKT_FLAG_KEY;
-		if( m_sStream[nIndex]->codec.coded_frame )
-				sPacket.pts= av_rescale_q( m_sStream[nIndex]->codec.coded_frame->pts, m_sStream[nIndex]->codec.time_base, m_sStream[nIndex]->time_base );
+		if( m_sStream[nIndex]->codec->coded_frame )
+				sPacket.pts= av_rescale_q( m_sStream[nIndex]->codec->coded_frame->pts, m_sStream[nIndex]->codec->time_base, m_sStream[nIndex]->time_base );
       			
 		av_interleaved_write_frame( m_psContext, &sPacket );
 	}

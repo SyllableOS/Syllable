@@ -296,7 +296,7 @@ bool DisplayDriver::ClipLine( const IRect & cRect, int *x1, int *y1, int *x2, in
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-static void draw_line16( SrvBitmap * pcBitmap, const IRect & cClip, int x1, int y1, int x2, int y2, uint16 nColor, uint32 nColor32, int nMode )
+void DisplayDriver::DrawLine16( SrvBitmap * pcBitmap, const IRect & cClip, int x1, int y1, int x2, int y2, uint16 nColor, uint32 nColor32, int nMode )
 {
 	int nODeltaX = abs( x2 - x1 );
 	int nODeltaY = abs( y2 - y1 );
@@ -309,6 +309,15 @@ static void draw_line16( SrvBitmap * pcBitmap, const IRect & cClip, int x1, int 
 	{
 		return;
 	}
+
+/*	if( ( ( x1 == x2 ) || ( y1 == y2 ) ) && nMode != DM_INVERT )
+	{
+		FillRect( pcBitmap, IRect( x1, y1, x2, y2 ), os::Color32_s( nColor32 ), nMode );
+		return;
+	}*/
+		
+	LockBitmap( pcBitmap, NULL, IRect(), cClip );
+	
 	int nDeltaX = abs( x2 - x1 );
 	int nDeltaY = abs( y2 - y1 );
 
@@ -470,9 +479,10 @@ static void draw_line16( SrvBitmap * pcBitmap, const IRect & cClip, int x1, int 
 			pRaster = ( uint16 * )( ( ( uint8 * )pRaster ) + nModulo );
 		}
 	}
+	UnlockBitmap( pcBitmap, NULL, IRect(), cClip );
 }
 
-static void draw_line32( SrvBitmap * pcBitmap, const IRect & cClip, int x1, int y1, int x2, int y2, uint32 nColor, int nMode )
+void DisplayDriver::DrawLine32( SrvBitmap * pcBitmap, const IRect & cClip, int x1, int y1, int x2, int y2, uint32 nColor, int nMode )
 {
 	int nODeltaX = abs( x2 - x1 );
 	int nODeltaY = abs( y2 - y1 );
@@ -485,8 +495,18 @@ static void draw_line32( SrvBitmap * pcBitmap, const IRect & cClip, int x1, int 
 	{
 		return;
 	}
+	#if 0
+	if( ( ( x1 == x2 ) || ( y1 == y2 ) ) && nMode != DM_INVERT )
+	{
+		FillRect( pcBitmap, IRect( x1, y1, x2, y2 ), os::Color32_s( nColor ), nMode );
+		return;
+	}
+	#endif
+	
 	int nDeltaX = abs( x2 - x1 );
 	int nDeltaY = abs( y2 - y1 );
+	
+	LockBitmap( pcBitmap, NULL, IRect(), cClip );
 
 	if( nODeltaX > nODeltaY )
 	{
@@ -660,6 +680,7 @@ static void draw_line32( SrvBitmap * pcBitmap, const IRect & cClip, int x1, int 
 			pRaster = ( uint32 * )( ( ( uint8 * )pRaster ) + nModulo );
 		}
 	}
+	UnlockBitmap( pcBitmap, NULL, IRect(), cClip );
 }
 
 //----------------------------------------------------------------------------
@@ -676,14 +697,15 @@ bool DisplayDriver::DrawLine( SrvBitmap * psBitmap, const IRect & cClipRect, con
 	case DM_COPY:
 	case DM_OVER:
 	default:
+		
 		switch ( psBitmap->m_eColorSpc )
 		{
 		case CS_RGB16:
-			draw_line16( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB16( sColor ), sColor, DM_COPY );
+			DrawLine16( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB16( sColor ), sColor, DM_COPY );
 			break;
 		case CS_RGB32:
 		case CS_RGBA32:
-			draw_line32( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB32( sColor ), DM_COPY );
+			DrawLine32( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB32( sColor ), DM_COPY );
 			break;
 		default:
 			dbprintf( "DisplayDriver::DrawLine() unknown color space %d\n", psBitmap->m_eColorSpc );
@@ -693,11 +715,11 @@ bool DisplayDriver::DrawLine( SrvBitmap * psBitmap, const IRect & cClipRect, con
 		switch ( psBitmap->m_eColorSpc )
 		{
 		case CS_RGB16:
-			draw_line16( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB16( sColor ), sColor, DM_INVERT );
+			DrawLine16( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB16( sColor ), sColor, DM_INVERT );
 			break;
 		case CS_RGB32:
 		case CS_RGBA32:
-			draw_line32( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB32( sColor ), DM_INVERT );
+			DrawLine32( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB32( sColor ), DM_INVERT );
 			break;
 		default:
 			dbprintf( "DisplayDriver::DrawLine() unknown color space %d can't invert\n", psBitmap->m_eColorSpc );
@@ -707,16 +729,23 @@ bool DisplayDriver::DrawLine( SrvBitmap * psBitmap, const IRect & cClipRect, con
 		switch ( psBitmap->m_eColorSpc )
 		{
 		case CS_RGB16:
-			draw_line16( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB16( sColor ), sColor, DM_BLEND );
+			DrawLine16( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB16( sColor ), sColor, DM_BLEND );
 			break;
 		case CS_RGB32:
 		case CS_RGBA32:
-			draw_line32( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB32( sColor ), DM_BLEND );
+			DrawLine32( psBitmap, cClipRect, cPnt1.x, cPnt1.y, cPnt2.x, cPnt2.y, COL_TO_RGB32( sColor ), DM_BLEND );
 			break;
 		default:
 			dbprintf( "DisplayDriver::DrawLine() unknown color space %d can't blend\n", psBitmap->m_eColorSpc );
 		}
 		break;
 	}
+	
 	return ( true );
 }
+
+
+
+
+
+

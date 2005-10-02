@@ -68,30 +68,17 @@ private:
 	int nCount;
 };
 
-
-class ColdFishRemoteLooper : public os::Looper
+class ColdFishRemote : public os::View
 {
 public:
-	ColdFishRemoteLooper(View* pcParent);
-	~ColdFishRemoteLooper(){};
-	
-	void TimerTick(int);
-private:
-	View* pcParentView;
-};
-
-class ColdFishRemote : public DockPlugin
-{
-public:
-	ColdFishRemote(os::Path cPath, os::Looper* pcDock);
+	ColdFishRemote( os::DockPlugin* pcPlugin, os::Looper* pcDock);
 	~ColdFishRemote();
 	
-	os::String GetIdentifier() {return "ColdFishRemote";}
-	Point GetPreferredSize(bool bLargest);
-	os::Path GetPath() {return (m_cPath);}
+	Point GetPreferredSize(bool bLargest) const;
 	
 	virtual void Paint( const Rect &cUpdateRect );
 	virtual void AttachedToWindow();
+	virtual void DetachedFromWindow();
 	virtual void MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData );
 	virtual void MouseUp( const os::Point & cPosition, uint32 nButton, os::Message * pcData );
 	virtual void MouseDown( const os::Point& cPosition, uint32 nButtons );
@@ -104,10 +91,9 @@ private:
 	void PrevSong();
 	void StopPlaying();
 	
+	os::DockPlugin* m_pcPlugin;	
 	os::BitmapImage* m_pcPrevImage, *m_pcStopImage, *m_pcPlayImage, *m_pcNextImage, *m_pcPauseImage;
-	os::Path m_cPath;
 	os::Looper* m_pcDock;
-	ColdFishRemoteLooper* pcLooper;
 	os::String cTrackName;
 	os::File* pcFile;
 	os::ResStream *pcStream;
@@ -162,33 +148,18 @@ void ColdFishRemoteScrollView::SetTrackName(const String& cString)
 		nCount = 0;
 		cName = cString;
 	}
-	Paint(GetBounds());
-}
-
-ColdFishRemoteLooper::ColdFishRemoteLooper(View* pcParent) : os::Looper("cold_fish_remote_looper")
-{
-	pcParentView = pcParent;
-}
-
-void ColdFishRemoteLooper::TimerTick(int nCode)
-{
-	if (nCode ==  GET_INFO_TIMER_CODE)
-	{
-		pcParentView->GetLooper()->PostMessage(new Message(M_GET_INFO),pcParentView);
-	}
+	Invalidate();
+	Flush();
 }
 
 
-
-ColdFishRemote::ColdFishRemote(os::Path cPath, os::Looper* pcDock) : DockPlugin()
+ColdFishRemote::ColdFishRemote( os::DockPlugin* pcPlugin, os::Looper* pcDock) : View( os::Rect(), "coldfish" )
 {	
 	m_pcDock = pcDock;
-	m_cPath = cPath;
+	m_pcPlugin = pcPlugin;
 	
-	pcLooper = new ColdFishRemoteLooper(this);
-	/*fist timer is to get the new info every second*/
-	pcLooper->AddTimer(pcLooper,GET_INFO_TIMER_CODE,1000000,false);
-	pcLooper->Run();
+	pcScrollView = new ColdFishRemoteScrollView(Rect(0,15,70,25),"Unknown");
+	AddChild( pcScrollView );
 	
 	m_bHover = false;	
 	m_bMouseDown = false;
@@ -202,11 +173,12 @@ ColdFishRemote::ColdFishRemote(os::Path cPath, os::Looper* pcDock) : DockPlugin(
 
 ColdFishRemote::~ColdFishRemote()
 {
-	if (pcLooper != NULL)
-	{
-		pcLooper->RemoveTimer(pcLooper,GET_INFO_TIMER_CODE);
-		pcLooper->Terminate();
-	}
+	delete( m_pcPrevImage );
+	delete( m_pcStopImage );
+	delete( m_pcPlayImage );
+	delete( m_pcNextImage );
+	delete( m_pcPauseImage );
+	pcManager->Put();
 }
 
 void ColdFishRemote::HandleMessage(Message* pcMessage)
@@ -220,7 +192,8 @@ void ColdFishRemote::HandleMessage(Message* pcMessage)
 			
 			if (pcManager->QueryCall("media/Coldfish/GetSong",0,&callInfo) ==0)
 			{
-				if (pcManager->InvokeCall(&callInfo,new Message(),&cReply)== 0)
+				os::Message cMsg;
+				if (pcManager->InvokeCall(&callInfo, &cMsg,&cReply)== 0)
 				{
 					if (cReply.FindString("track_name",&cTrackName)!=0)
 					{
@@ -234,7 +207,8 @@ void ColdFishRemote::HandleMessage(Message* pcMessage)
 			Message cReplyTwo(0);
 			if (pcManager->QueryCall("media/Coldfish/GetPlayState",0,&callInfo) ==0)
 			{
-				if (pcManager->InvokeCall(&callInfo,new Message(),&cReplyTwo)== 0)
+				os::Message cMsg;
+				if (pcManager->InvokeCall(&callInfo, &cMsg,&cReplyTwo)== 0)
 				{
 					if (cReplyTwo.FindInt32("play_state",&m_nState) == 0)
 					{
@@ -258,8 +232,8 @@ void ColdFishRemote::HandleMessage(Message* pcMessage)
 					}
 				}
 			}
-
-			Paint(GetBounds());
+			Invalidate();
+			Flush();
 			pcScrollView->SetTrackName(cTrackName);
 			break;
 		}
@@ -269,16 +243,17 @@ void ColdFishRemote::HandleMessage(Message* pcMessage)
 			RegistrarCall_s callInfo;
 
 			pcManager->QueryCall("media/Coldfish/AddFile", 0, &callInfo);
-			pcManager->InvokeCall(&callInfo, new Message(CF_GUI_ADD_FILE),NULL);
+			Message cMsg(CF_GUI_ADD_FILE);
+			pcManager->InvokeCall(&callInfo, &cMsg,NULL);
 			break;
 		}
 
 		case M_ABOUT:
 		{
 			RegistrarCall_s callInfo;
-
+			Message cMsg(CF_GUI_ABOUT);
 			pcManager->QueryCall("media/Coldfish/About", 0, &callInfo);
-			pcManager->InvokeCall(&callInfo, new Message(CF_GUI_ABOUT),NULL);
+			pcManager->InvokeCall(&callInfo, &cMsg,NULL);
 			break;
 		}		
 	}
@@ -337,17 +312,20 @@ void ColdFishRemote::Paint(const Rect& cUpdateRect)
 
 void ColdFishRemote::AttachedToWindow()
 {
-	pcScrollView = new ColdFishRemoteScrollView(Rect(0,12,70,GetParent()->GetBounds().Height()),"Unknown");
-	AddChild(pcScrollView);	
-	
 	m_pcContextMenu = new os::Menu(Rect(0,0,1,1),"remote_plugin_context_menu",ITEMS_IN_COLUMN);
 	m_pcContextMenu->AddItem("About",new Message(M_ABOUT));
 	m_pcContextMenu->AddItem("Add File",new Message(M_ADD_FILE));
 	m_pcContextMenu->SetTargetForItems(this);
 }
 
+void ColdFishRemote::DetachedFromWindow()
+{
+	delete( m_pcContextMenu );
+}
+
 void ColdFishRemote::MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons, os::Message* pcData )
 {
+	os::View::MouseMove( cNewPos, nCode, nButtons, pcData );
 }
 
 void ColdFishRemote::MouseUp( const os::Point & cPosition, uint32 nButton, os::Message * pcData )
@@ -394,6 +372,7 @@ void ColdFishRemote::MouseUp( const os::Point & cPosition, uint32 nButton, os::M
 	{
 		m_pcContextMenu->Open(ConvertToScreen(cPosition));
 	}
+	os::View::MouseUp( cPosition, nButton, pcData );
 }
 
 
@@ -404,11 +383,12 @@ void ColdFishRemote::MouseDown( const os::Point& cPosition, uint32 nButtons )
 	{
 		m_bMouseDown = true;
 	}
+	os::View::MouseDown( cPosition, nButtons );
 }
 
-os::Point ColdFishRemote::GetPreferredSize(bool bSize)
+os::Point ColdFishRemote::GetPreferredSize(bool bSize) const
 {
-	return os::Point(70,GetParent()->GetBounds().Height()); 
+	return os::Point(70,0); 
 }
 
 void ColdFishRemote::PauseOrPlay()
@@ -420,7 +400,8 @@ void ColdFishRemote::PauseOrPlay()
 			RegistrarCall_s callInfo;
 
 			pcManager->QueryCall("media/Coldfish/Play", 0, &callInfo);
-			pcManager->InvokeCall(&callInfo, new Message(CF_GUI_PLAY),NULL);		
+			Message cMsg(CF_GUI_PLAY);
+			pcManager->InvokeCall(&callInfo, &cMsg,NULL);		
 			m_bIsPlaying = true;
 			m_bIsPaused = false;
 			m_nState = CF_STATE_PLAYING;
@@ -430,7 +411,8 @@ void ColdFishRemote::PauseOrPlay()
 			RegistrarCall_s callInfo;
 
 			pcManager->QueryCall("media/Coldfish/Pause", 0, &callInfo);
-			pcManager->InvokeCall(&callInfo, new Message(CF_GUI_PAUSE),NULL);
+			Message cMsg(CF_GUI_PAUSE);
+			pcManager->InvokeCall(&callInfo, &cMsg ,NULL);
 				
 			m_bIsPlaying = false;
 			m_bIsPaused = true;
@@ -443,16 +425,14 @@ void ColdFishRemote::PauseOrPlay()
 		RegistrarCall_s callInfo;
 
 		pcManager->QueryCall("media/Coldfish/Play", 0, &callInfo);
-		pcManager->InvokeCall(&callInfo, new Message(CF_GUI_PLAY),NULL);		
+		Message cMsg(CF_GUI_PLAY);
+		pcManager->InvokeCall(&callInfo, &cMsg,NULL);		
 		m_bIsPlaying = true;
 		m_bIsPaused = false;
 		m_nState = CF_STATE_PLAYING;		
 	}
-	Paint(GetBounds());
-	GetParent()->Flush();
-	GetParent()->Sync();
-	GetParent()->Invalidate();
-	
+	Invalidate();
+	Flush();
 }
 
 void ColdFishRemote::NextSong()
@@ -460,7 +440,8 @@ void ColdFishRemote::NextSong()
 	RegistrarCall_s callInfo;
 
 	pcManager->QueryCall("media/Coldfish/Next", 0, &callInfo);
-	pcManager->InvokeCall(&callInfo, new Message(CF_PLAY_NEXT),NULL);
+	Message cMsg(CF_PLAY_NEXT);
+	pcManager->InvokeCall(&callInfo, &cMsg,NULL);
 }
 
 void ColdFishRemote::PrevSong()
@@ -468,7 +449,8 @@ void ColdFishRemote::PrevSong()
 	RegistrarCall_s callInfo;
 	
 	pcManager->QueryCall("media/Coldfish/Previous", 0, &callInfo);
-	pcManager->InvokeCall(&callInfo, new Message(CF_PLAY_PREVIOUS),NULL);	
+	Message cMsg(CF_PLAY_PREVIOUS);
+	pcManager->InvokeCall(&callInfo, &cMsg,NULL);	
 }
 	
 void ColdFishRemote::StopPlaying()
@@ -476,49 +458,172 @@ void ColdFishRemote::StopPlaying()
 	RegistrarCall_s cCallInfo;
 	
 	pcManager->QueryCall("media/Coldfish/Stop", 0, &cCallInfo);
-	pcManager->InvokeCall(&cCallInfo, new Message(CF_GUI_STOP),NULL);	
+	Message cMsg(CF_GUI_STOP);
+	pcManager->InvokeCall(&cCallInfo, &cMsg,NULL);	
 	
 	m_bIsPlaying = false;
 	m_bIsPaused = false;
 	m_nState = CF_STATE_STOPPED;
 	
-	Paint(GetBounds());
-	GetParent()->Flush();
-	GetParent()->Sync();
-	GetParent()->Invalidate();
+	Invalidate();
+	Flush();
 }
 
 
 void ColdFishRemote::LoadImages()
 {
 	/* Load default icons */
-	pcFile = new os::File( m_cPath );
+	pcFile = new os::File( m_pcPlugin->GetPath() );
 	os::Resources cCol( pcFile );
 	
 	os::ResStream* pcPlayStream = cCol.GetResourceStream( "play.png" );
 	m_pcPlayImage = new os::BitmapImage( pcPlayStream );
+	delete( pcPlayStream );
 	
 	os::ResStream* pcStopStream = cCol.GetResourceStream( "stop.png" );
 	m_pcStopImage = new os::BitmapImage( pcStopStream );
+	delete( pcStopStream );
 	
 	os::ResStream* pcNextStream = cCol.GetResourceStream( "next.png" );
 	m_pcNextImage = new os::BitmapImage( pcNextStream );
+	delete( pcNextStream );
 	
 	os::ResStream* pcPrevStream = cCol.GetResourceStream( "prev.png" );
 	m_pcPrevImage = new os::BitmapImage( pcPrevStream );
+	delete( pcPrevStream );
 	
 	os::ResStream* pcPauseStream = cCol.GetResourceStream( "pause.png" );
 	m_pcPauseImage = new os::BitmapImage( pcPauseStream );
+	delete( pcPauseStream );
 	
 	delete pcFile;
 }
 
+class ColdFishRemoteLooper : public os::Looper
+{
+public:
+	ColdFishRemoteLooper(os::DockPlugin* pcPlugin);
+	~ColdFishRemoteLooper();
+	
+	void TimerTick(int);
+private:
+	os::DockPlugin* m_pcPlugin;
+	ColdFishRemote* m_pcView;
+	os::RegistrarManager* m_pcManager;
+};
 
+ColdFishRemoteLooper::ColdFishRemoteLooper(os::DockPlugin* pcPlugin) : os::Looper("cold_fish_remote_looper")
+{
+	m_pcPlugin = pcPlugin;
+	m_pcView = NULL;
+	m_pcManager = os::RegistrarManager::Get();
+}
+
+ColdFishRemoteLooper::~ColdFishRemoteLooper()
+{
+	m_pcManager->Put();
+}
+
+void ColdFishRemoteLooper::TimerTick(int nCode)
+{
+	if ( nCode == GET_INFO_TIMER_CODE )
+	{
+		RegistrarCall_s callInfo;
+		
+		if( m_pcManager->QueryCall("media/Coldfish/GetSong",0,&callInfo) == 0 )
+		{
+			if( m_pcView != NULL ) {
+				m_pcView->GetLooper()->PostMessage( M_GET_INFO , m_pcView );
+			} else {
+				m_pcView = new ColdFishRemote( m_pcPlugin, m_pcPlugin->GetApp() );
+				m_pcPlugin->AddView( m_pcView );
+			}
+		} else {
+			if( m_pcView != NULL )
+				m_pcPlugin->RemoveView( m_pcView );
+			m_pcView = NULL;
+		}
+	}
+}
+
+
+
+//*************************************************************************************
+
+class ColdFishPlugin : public os::DockPlugin
+{
+public:
+	ColdFishPlugin()
+	{
+		m_pcLooper = NULL;
+	}
+	~ColdFishPlugin()
+	{
+		if (m_pcLooper != NULL)
+		{
+			m_pcLooper->RemoveTimer(m_pcLooper,GET_INFO_TIMER_CODE);
+			m_pcLooper->Terminate();
+			m_pcLooper = NULL;
+		}
+	}
+	status_t Initialize()
+	{
+		m_pcLooper = new ColdFishRemoteLooper(this);
+		m_pcLooper->AddTimer(m_pcLooper,GET_INFO_TIMER_CODE,1000000,false);
+		m_pcLooper->Run();
+		return( 0 );
+	}
+	void Delete()
+	{
+		if ( GetViewCount() == 0 && m_pcLooper != NULL)
+		{
+			m_pcLooper->RemoveTimer(m_pcLooper,GET_INFO_TIMER_CODE);
+			m_pcLooper->Terminate();
+			m_pcLooper = NULL;
+		}
+	}
+	os::String GetIdentifier()
+	{
+		return( "ColdFish" );
+	}
+private:
+	ColdFishRemoteLooper* m_pcLooper;
+};
 
 extern "C"
 {
-DockPlugin* init_dock_plugin( os::Path cPluginFile, os::Looper* pcDock )
+DockPlugin* init_dock_plugin()
 {
-	return( new ColdFishRemote( cPluginFile, pcDock ) );
+	return( new ColdFishPlugin() );
 }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

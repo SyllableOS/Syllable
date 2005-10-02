@@ -264,7 +264,7 @@ void NextDecorator::SetCloseButtonState( bool bPushed )
 {
     m_bCloseState = bPushed;
     if ( (m_nFlags & WND_NO_CLOSE_BUT) == 0 ) {
-	Color32_s sFillColor =  m_bHasFocus ? GetDefaultColor( PEN_SELWINTITLE ) : GetDefaultColor( PEN_WINTITLE );
+	Color32_s sFillColor =  m_bHasFocus ? get_default_color( COL_SEL_WND_BORDER ) : get_default_color( COL_NORMAL_WND_BORDER );
 	DrawClose( m_cCloseRect, sFillColor, m_bCloseState == 1 );
     }
 }
@@ -273,7 +273,7 @@ void NextDecorator::SetZoomButtonState( bool bPushed )
 {
     m_bZoomState = bPushed;
     if ( (m_nFlags & WND_NO_ZOOM_BUT) == 0 ) {
-	Color32_s sFillColor =  m_bHasFocus ? GetDefaultColor( PEN_SELWINTITLE ) : GetDefaultColor( PEN_WINTITLE );
+	Color32_s sFillColor =  m_bHasFocus ? get_default_color( COL_SEL_WND_BORDER ) : get_default_color( COL_NORMAL_WND_BORDER );
 	DrawZoom( m_cZoomRect, sFillColor, m_bZoomState == 1 );
     }
 }
@@ -282,7 +282,7 @@ void NextDecorator::SetDepthButtonState( bool bPushed )
 {
     m_bDepthState = bPushed;
     if ( (m_nFlags & WND_NO_DEPTH_BUT) == 0 ) {
-	Color32_s sFillColor =  m_bHasFocus ? GetDefaultColor( PEN_SELWINTITLE ) : GetDefaultColor( PEN_WINTITLE );
+	Color32_s sFillColor =  m_bHasFocus ? get_default_color( COL_SEL_WND_BORDER ) : get_default_color( COL_NORMAL_WND_BORDER );
 	DrawDepth( m_cToggleRect, sFillColor, m_bDepthState == 1 );
     }
 }
@@ -403,7 +403,7 @@ void NextDecorator::Render( const Rect& cUpdateRect )
 	return;
     }
   
-    Color32_s sFillColor =  m_bHasFocus ? GetDefaultColor( PEN_SELWINTITLE ) : GetDefaultColor( PEN_WINTITLE );
+    Color32_s sFillColor =  m_bHasFocus ? get_default_color( COL_SEL_WND_BORDER ) : get_default_color( COL_NORMAL_WND_BORDER );
 
     Layer* pcView = GetLayer();
   

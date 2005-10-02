@@ -451,7 +451,7 @@ static int cmp_blocks( const void *pBlk1, const void *pBlk2 )
  * SEE ALSO:
  ****************************************************************************/
 
-static status_t flush_block_list( CacheBlock_s **pasBlocks, count_t nCount )
+static status_t flush_block_list( CacheBlock_s **pasBlocks, count_t nCount, bool bFlushLocked )
 {
 	struct iovec pasIoVecs[BC_FLUSH_SIZE];
 	int nIoVecCnt = 0;
@@ -472,7 +472,7 @@ static status_t flush_block_list( CacheBlock_s **pasBlocks, count_t nCount )
 	{
 		CacheBlock_s *psBuffer = pasBlocks[i];
 
-		if ( psBuffer->cb_nRefCount > 0 )
+		if ( psBuffer->cb_nRefCount > 0 && !bFlushLocked )
 		{
 			printk( "flush_block_list() Got locked block, not flushing\n" );
 			continue;
@@ -487,7 +487,7 @@ static status_t flush_block_list( CacheBlock_s **pasBlocks, count_t nCount )
 		{
 			panic( "flush_block_list() Block %d is greater than block %d (%d) (bad sorting)\n", ( int )pasBlocks[i - 1]->cb_nBlockNum, ( int )pasBlocks[i]->cb_nBlockNum, i );
 		}
-		kassertw( 0 == psBuffer->cb_nRefCount );
+		kassertw( 0 == psBuffer->cb_nRefCount || bFlushLocked );
 
 		if ( NULL != psPrevBuffer && ( psPrevBuffer->cb_nDevice != psBuffer->cb_nDevice || psPrevBuffer->cb_nBlockNum != ( psBuffer->cb_nBlockNum - 1 ) ) )
 		{
@@ -541,7 +541,7 @@ static status_t flush_block_list( CacheBlock_s **pasBlocks, count_t nCount )
 		{
 			continue;
 		}
-		if ( psBuffer->cb_nRefCount > 0 )
+		if ( psBuffer->cb_nRefCount > 0 && !bFlushLocked )
 		{
 			continue;
 		}
@@ -608,7 +608,7 @@ void release_cache_blocks( void )
 	{
 		qsort( apsBlockList, nCount, sizeof( CacheBlock_s * ), cmp_blocks );
 		UNLOCK( g_sBlockCache.bc_hLock );
-		flush_block_list( apsBlockList, nCount );
+		flush_block_list( apsBlockList, nCount, false );
 		LOCK( g_sBlockCache.bc_hLock );
 	}
 	for ( count_t i = 0; i < nCount; ++i )
@@ -847,7 +847,7 @@ void *get_cache_block( dev_t nDev, off_t nBlockNum, size_t nBlockSize )
 		nReqBlock = nBlockNum;
 
 		// Scan forward to see how many blocks we can "readahed"
-		for ( nNumNeeded = 1; nNumNeeded < nMaxReadahead; ++nNumNeeded )
+		for ( nNumNeeded = 1; nNumNeeded < nMaxReadahead && ( nBlockNum + nNumNeeded < g_asDevices[nDev].de_nBlockCount ); ++nNumNeeded )
 		{
 			if ( hash_lookup( &g_sBlockCache.bc_sHashTab, nDev, nBlockNum + nNumNeeded ) != NULL )
 			{
@@ -881,12 +881,14 @@ void *get_cache_block( dev_t nDev, off_t nBlockNum, size_t nBlockSize )
 		{
 			panic( "Failed to remove guard block from hash-table\n" );
 		}
+		
+		kassertw( bBlocked || nListSize == nNumNeeded );
 
 		if ( bBlocked )
 		{
 			nBlockNum = nReqBlock;
 			// Scan forward to see how many blocks we can "readahed"
-			for ( nNumNeeded = 1; nNumNeeded < nListSize; ++nNumNeeded )
+			for ( nNumNeeded = 1; nNumNeeded < nListSize && ( nBlockNum + nNumNeeded < g_asDevices[nDev].de_nBlockCount ); ++nNumNeeded )
 			{
 				if ( hash_lookup( &g_sBlockCache.bc_sHashTab, nDev, nBlockNum + nNumNeeded ) != NULL )
 				{
@@ -1424,14 +1426,7 @@ status_t cached_write( dev_t nDev, off_t nBlockNum, const void *pBuffer,
 	return ( nError );
 }
 
-/*****************************************************************************
- * NAME:
- * DESC:
- * NOTE:
- * SEE ALSO:
- ****************************************************************************/
-
-status_t flush_device_cache( dev_t nDevice, bool bOnlyLoggedBlocks )
+static status_t do_flush_device_cache( dev_t nDevice, bool bOnlyLoggedBlocks, bool bFlushLocked )
 {
 	CacheBlock_s *pasIoList[BC_FLUSH_SIZE];
 	CacheBlock_s *psBuffer;
@@ -1445,9 +1440,10 @@ status_t flush_device_cache( dev_t nDevice, bool bOnlyLoggedBlocks )
 
 	LOCK( g_sBlockCache.bc_hLock );
 
-	for ( psBuffer = g_sBlockCache.bc_sNormal.cl_psLRU; NULL != psBuffer; psBuffer = psBuffer->cb_psNext )
+	for ( psBuffer = ( bFlushLocked ? g_sBlockCache.bc_sLocked .cl_psLRU : g_sBlockCache.bc_sNormal.cl_psLRU ); NULL != psBuffer; psBuffer = psBuffer->cb_psNext )
 	{
-		kassertw( 0 == psBuffer->cb_nRefCount );
+		if( !bFlushLocked )
+			kassertw( 0 == psBuffer->cb_nRefCount );
 
 		if ( psBuffer->cb_nDevice != nDevice )
 		{
@@ -1472,7 +1468,7 @@ status_t flush_device_cache( dev_t nDevice, bool bOnlyLoggedBlocks )
 		{
 			qsort( pasIoList, BC_FLUSH_SIZE, sizeof( CacheBlock_s * ), cmp_blocks );
 			UNLOCK( g_sBlockCache.bc_hLock );
-			flush_block_list( pasIoList, BC_FLUSH_SIZE );
+			flush_block_list( pasIoList, BC_FLUSH_SIZE, bFlushLocked );
 			LOCK( g_sBlockCache.bc_hLock );	// No need to restart the iteration. The BUSY flag ensure the current node is not deleted.
 			for ( count_t j = 0; j < BC_FLUSH_SIZE; ++j )
 			{
@@ -1486,7 +1482,7 @@ status_t flush_device_cache( dev_t nDevice, bool bOnlyLoggedBlocks )
 	{
 		qsort( pasIoList, i, sizeof( CacheBlock_s * ), cmp_blocks );
 		UNLOCK( g_sBlockCache.bc_hLock );
-		flush_block_list( pasIoList, i );
+		flush_block_list( pasIoList, i, bFlushLocked );
 		LOCK( g_sBlockCache.bc_hLock );
 		for ( count_t j = 0; j < i; ++j )
 		{
@@ -1498,6 +1494,30 @@ status_t flush_device_cache( dev_t nDevice, bool bOnlyLoggedBlocks )
 	return ( 0 );
 }
 
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+
+status_t flush_device_cache( dev_t nDevice, bool bOnlyLoggedBlocks )
+{
+	return( do_flush_device_cache( nDevice, bOnlyLoggedBlocks, false ) );
+}
+
+
+/*****************************************************************************
+ * NAME:
+ * DESC:
+ * NOTE:
+ * SEE ALSO:
+ ****************************************************************************/
+
+status_t flush_locked_device_cache( dev_t nDevice, bool bOnlyLoggedBlocks )
+{
+	return( do_flush_device_cache( nDevice, bOnlyLoggedBlocks, true ) );
+}
 
 status_t flush_cache_block( dev_t nDev, off_t nBlockNum )
 {
@@ -1561,7 +1581,7 @@ status_t flush_cache_block( dev_t nDev, off_t nBlockNum )
 		}
 	}
 	UNLOCK( g_sBlockCache.bc_hLock );
-	flush_block_list( pasIoList, nCount );
+	flush_block_list( pasIoList, nCount, false );
 	LOCK( g_sBlockCache.bc_hLock );
 	for ( count_t i = 0; i < nCount; ++i )
 	{
@@ -1725,7 +1745,7 @@ void flush_block_cache( void )
 		{
 			qsort( pasIoList, BC_FLUSH_SIZE, sizeof( CacheBlock_s * ), cmp_blocks );
 			UNLOCK( g_sBlockCache.bc_hLock );
-			flush_block_list( pasIoList, BC_FLUSH_SIZE );
+			flush_block_list( pasIoList, BC_FLUSH_SIZE, false );
 			LOCK( g_sBlockCache.bc_hLock );	// No need to restart the iteration. The BUSY flag ensure the current node is not deleted.
 			for ( count_t j = 0; j < BC_FLUSH_SIZE; ++j )
 			{
@@ -1740,7 +1760,7 @@ void flush_block_cache( void )
 	{
 		qsort( pasIoList, i, sizeof( CacheBlock_s * ), cmp_blocks );
 		UNLOCK( g_sBlockCache.bc_hLock );
-		flush_block_list( pasIoList, i );
+		flush_block_list( pasIoList, i, false );
 		LOCK( g_sBlockCache.bc_hLock );
 
 		for ( count_t j = 0; j < i; ++j )
@@ -1824,7 +1844,7 @@ static status_t cache_flusher( void *pData  __attribute__ ((unused)) )
 			qsort( pasIoList, i, sizeof( CacheBlock_s * ), cmp_blocks );
 
 			UNLOCK( g_sBlockCache.bc_hLock );
-			flush_block_list( pasIoList, i );
+			flush_block_list( pasIoList, i, false );
 			LOCK( g_sBlockCache.bc_hLock );
 			for ( count_t j = 0; j < i; ++j )
 			{

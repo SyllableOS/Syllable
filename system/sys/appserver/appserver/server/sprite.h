@@ -24,46 +24,43 @@
 #include <gui/region.h>
 #include <util/locker.h>
 
-
-using namespace os;
-
-
 class SrvBitmap;
 
 class SrvSprite
 {
 public:
-    SrvSprite( const IRect& cFrame, const IPoint& cPos, const IPoint& cHotSpot,
-	       SrvBitmap* pcTarget, SrvBitmap* pcImage );
+    SrvSprite( const os::IRect& cFrame, const os::IPoint& cPos, const os::IPoint& cHotSpot,
+	       SrvBitmap* pcTarget, SrvBitmap* pcImage, bool bLastPos = false );
     ~SrvSprite();
 
-    IRect GetBounds() const { return( m_cBounds ); }
+    os::IRect GetBounds() const { return( m_cBounds ); }
     void Draw();
     void Erase();
 
-    void Draw( SrvBitmap* pcTarget, const IPoint& cPos );
-    void Capture( SrvBitmap* pcTarget, const IPoint& cPos );
-    void Erase( SrvBitmap* pcTarget, const IPoint& cPos );
+    void Draw( SrvBitmap* pcTarget, const os::IPoint& cPos );
+    void Capture( SrvBitmap* pcTarget, const os::IPoint& cPos );
+    void Erase( SrvBitmap* pcTarget, const os::IPoint& cPos );
   
-    void MoveBy( const IPoint& cDelta );
-    void MoveTo( const IPoint& cNewPos ) { MoveBy( cNewPos - m_cPosition ); }
+    void MoveBy( const os::IPoint& cDelta );
+    void MoveTo( const os::IPoint& cNewPos ) { MoveBy( cNewPos - m_cPosition ); }
 
     static void ColorSpaceChanged();
-    static void Hide( const IRect& cFrame );
+    static void Hide( const os::IRect& cFrame );
     static void Hide();
     static void Unhide();
+  	static bool DoIntersect( const os::IRect& cRect );
   
 private:
     static std::vector<SrvSprite*> s_cInstances;
     static atomic_t	   	   s_nHideCount;
-    static Locker		   s_cLock;
+    static os::Locker	   s_cLock;
 
-    IPoint     m_cPosition;
-    IPoint     m_cHotSpot;
+    os::IPoint m_cPosition;
+    os::IPoint m_cHotSpot;
     SrvBitmap* m_pcImage;
     SrvBitmap* m_pcTarget;
     SrvBitmap* m_pcBackground;
-    IRect      m_cBounds;
+    os::IRect  m_cBounds;
     bool       m_bVisible;
 };
 

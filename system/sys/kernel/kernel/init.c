@@ -70,7 +70,7 @@ static uint32 g_nDebugSerialPort = 2;
 static bool g_bPlainTextDebug = false;
 static uint32 g_nMemSize = 64 * 1024 * 1024;
 static bool g_bSwapEnabled = false;
-static bool g_bDisableSMP = false;
+bool g_bDisableSMP = false;
 static bool g_bDisableACPI = false;
 
 bool g_bDisableKernelConfig = false;
@@ -468,7 +468,7 @@ static int kernel_init( void )
 	
 	if( g_bSwapEnabled )
 		init_swapper(); /* Initialize swapper */
-
+		
 	return ( 0 );
 }
 
@@ -778,9 +778,9 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 
 	pRealMemBase += 65536;
 	
+	init_cpuid();
 	init_descriptors();
 	init_interrupt_table();
-	init_cpuid();
 	init_pages( KERNEL_LOAD_ADDR + nKernelSize );
 
 	kassertw( sizeof( MemContext_s ) <= PAGE_SIZE );	/* Late compile-time check :) */

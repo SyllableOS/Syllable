@@ -44,6 +44,8 @@ extern "C"
 	extern int RivaGetConfig( RIVA_HW_INST* chip );
 };
 
+using namespace os;
+
 static const struct chip_info asChipInfos[] = {
   { 0x12D20018, NV_ARCH_03, "RIVA 128" },
   { 0x10DE0020, NV_ARCH_04, "RIVA TNT" },
@@ -89,6 +91,7 @@ Riva::Riva( int nFd )
 {	
 	m_bIsInitiated = false;
 	m_bPaletteEnabled = false;
+	m_bEngineDirty = false;
 	int j;
 	
 	bool bFound = false;
@@ -126,7 +129,7 @@ Riva::Riva( int nFd )
 	
 	int nMemSize = get_pci_memory_size(nFd, &m_cPCIInfo, 1);
 	m_hFrameBufferArea = create_area("riva_framebuffer", (void**)&m_pFrameBufferBase,
-	                                 nMemSize, AREA_FULL_ACCESS, AREA_NO_LOCK);
+	                                 nMemSize, AREA_FULL_ACCESS | AREA_WRCOMB, AREA_NO_LOCK);
 	remap_area(m_hFrameBufferArea, (void*)(m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK));
 
 	memset( &m_sHW, 0, sizeof( m_sHW ) );
@@ -372,18 +375,15 @@ os::screen_mode Riva::GetCurrentScreenMode()
 	return m_sCurrentMode;
 }
 
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-bool Riva::IntersectWithMouse(const IRect& cRect)
+void Riva::LockBitmap( SrvBitmap* pcDstBitmap, SrvBitmap* pcSrcBitmap, os::IRect cSrc, os::IRect cDst )
 {
-	return false;
+	if( ( pcDstBitmap->m_bVideoMem == false && ( pcSrcBitmap == NULL || pcSrcBitmap->m_bVideoMem == false ) ) || m_bEngineDirty == false )
+		return;
+	m_cGELock.Lock();
+	WaitForIdle();	
+	m_cGELock.Unlock();
+	m_bEngineDirty = false;
 }
-
 
 //-----------------------------------------------------------------------------
 // NAME:
@@ -397,7 +397,6 @@ bool Riva::DrawLine(SrvBitmap* pcBitMap, const IRect& cClipRect,
                       const IPoint& cPnt1, const IPoint& cPnt2, const Color32_s& sColor, int nMode)
 {
 	if (pcBitMap->m_bVideoMem == false || nMode != DM_COPY) {
-		WaitForIdle();
 		return DisplayDriver::DrawLine(pcBitMap, cClipRect, cPnt1, cPnt2, sColor, nMode);
 	}
 	
@@ -430,7 +429,7 @@ bool Riva::DrawLine(SrvBitmap* pcBitMap, const IRect& cClipRect,
 	m_sHW.Line->Lin[1].point0 = (y2 << 16) | (x2 & 0xffff);
 	m_sHW.Line->Lin[1].point1 = ((y2+1)<<16) | (x2 & 0xffff);
 	
-	WaitForIdle();
+	m_bEngineDirty = true;
 	m_cGELock.Unlock();
 	return true;
 }
@@ -442,11 +441,10 @@ bool Riva::DrawLine(SrvBitmap* pcBitMap, const IRect& cClipRect,
 // SEE ALSO:
 //-----------------------------------------------------------------------------
 
-bool Riva::FillRect(SrvBitmap *pcBitMap, const IRect& cRect, const Color32_s& sColor)
+bool Riva::FillRect(SrvBitmap *pcBitMap, const IRect& cRect, const Color32_s& sColor, int nMode)
 {
-	if (pcBitMap->m_bVideoMem == false ) {
-		WaitForIdle();
-		return DisplayDriver::FillRect(pcBitMap, cRect, sColor);
+	if (pcBitMap->m_bVideoMem == false || nMode != DM_COPY ) {
+		return DisplayDriver::FillRect(pcBitMap, cRect, sColor, nMode);
 	}
 	
 	int nWidth = cRect.Width()+1;
@@ -467,7 +465,7 @@ bool Riva::FillRect(SrvBitmap *pcBitMap, const IRect& cRect, const Color32_s& sC
 	m_sHW.Bitmap->UnclippedRectangle[0].TopLeft = (cRect.left << 16) | cRect.top;
 	m_sHW.Bitmap->UnclippedRectangle[0].WidthHeight = (nWidth << 16) | nHeight;
 	
-	WaitForIdle();
+	m_bEngineDirty = true;
 	m_cGELock.Unlock();
 	return true;
 }
@@ -480,13 +478,13 @@ bool Riva::FillRect(SrvBitmap *pcBitMap, const IRect& cRect, const Color32_s& sC
 //-----------------------------------------------------------------------------
 
 bool Riva::BltBitmap(SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap,
-                       IRect cSrcRect, IPoint cDstPos, int nMode)
+                       IRect cSrcRect, IRect cDstRect, int nMode, int nAlpha)
 {
 	if (pcDstBitMap->m_bVideoMem == false || pcSrcBitMap->m_bVideoMem == false || nMode != DM_COPY ) {
-		WaitForIdle();
-		return DisplayDriver::BltBitmap(pcDstBitMap, pcSrcBitMap, cSrcRect, cDstPos, nMode);
+		return DisplayDriver::BltBitmap(pcDstBitMap, pcSrcBitMap, cSrcRect, cDstRect, nMode, nAlpha);
 	}
 		
+	IPoint cDstPos = cDstRect.LeftTop();
 	int nWidth = cSrcRect.Width()+1;
 	int nHeight = cSrcRect.Height()+1;
 	m_cGELock.Lock();
@@ -496,7 +494,7 @@ bool Riva::BltBitmap(SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap,
 	m_sHW.Blt->TopLeftDst = (cDstPos.y << 16) | cDstPos.x;
 	m_sHW.Blt->WidthHeight = (nHeight << 16) | nWidth;
 	
-	WaitForIdle();
+	m_bEngineDirty = true;
 	m_cGELock.Unlock();
 	return true;
 }
@@ -630,17 +628,6 @@ bool Riva::RecreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst,
 	return( false );
 }
 
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-void Riva::UpdateVideoOverlay( area_id *pBuffer )
-{
-}
 
 //-----------------------------------------------------------------------------
 // NAME:

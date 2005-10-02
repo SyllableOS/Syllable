@@ -40,17 +40,18 @@
 #include <atheos/kernel.h>
 #include <appserver/pci_graphics.h>
 
-#undef HAVE_MTRR
-#ifdef HAVE_MTRR
-#include <atheos/mtrr.h>
-#endif
 #include "../../../server/bitmap.h"
 #include "../../../server/sprite.h"
 
 #include <gui/bitmap.h>
 
 #include "sis3xx.h"
-#include "sis_cursor.h"
+
+static uint32 dummybuf;
+#define BITMASK(h,l)		(((unsigned)(1U << ((h) - (l) + 1)) - 1) << (l))
+#define GENMASK(mask)		BITMASK(1 ? mask, 0 ? mask)
+
+using namespace os;
 
 inline uint32 pci_size(uint32 base, uint32 mask)
 {
@@ -79,10 +80,10 @@ static uint32 get_pci_memory_size(int nFd, const PCI_Info_s *pcPCIInfo, int nRes
 	}
 }
 
-SiS3xx::SiS3xx( int nFd ) : m_cGELock("sis3xx_ge_lock"), m_cCursorHotSpot(0,0)
+SiS3xx::SiS3xx( int nFd ) : m_cGELock("sis3xx_ge_lock")
 {	
 	m_bIsInitiated = false;
-	m_bCursorIsOn = false;
+	m_bEngineDirty = false;
 	
 	/* Get Info */
 	if( ioctl( nFd, PCI_GFX_GET_PCI_INFO, &m_cPCIInfo ) != 0 )
@@ -111,7 +112,7 @@ SiS3xx::SiS3xx( int nFd ) : m_cGELock("sis3xx_ge_lock"), m_cCursorHotSpot(0,0)
 	m_pFrameBufferBase = NULL;
 	int nMemSize = get_pci_memory_size(nFd, &m_cPCIInfo, 0); 
 	m_hFrameBufferArea = create_area("sis3xx_framebuffer", (void**)&m_pFrameBufferBase,
-	                                 nMemSize, AREA_FULL_ACCESS, AREA_NO_LOCK);
+	                                 nMemSize, AREA_FULL_ACCESS | AREA_WRCOMB, AREA_NO_LOCK);
 	remap_area(m_hFrameBufferArea, (void*)(m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK));
 	
 	/* Initialize shared info */
@@ -145,25 +146,10 @@ SiS3xx::SiS3xx( int nFd ) : m_cGELock("sis3xx_ge_lock"), m_cCursorHotSpot(0,0)
 		m_cScreenModeList.push_back(os::screen_mode(1600, 1200, 1600*bpp[i], colspace[i], rf[j]));
 		}
 	}
-	/* Initialize HW cursor */
-	m_bUsingHWCursor = true;
-	m_pHw->video_size -= 64 * 64 * 4;
-	SetMousePos( os::IPoint( 0, 0 ) );
 	
-	memset(m_anCursorShape, 0, sizeof(m_anCursorShape));
+	if( m_pHw->video_size > 1024 * 1024 * 8 )
+		InitMemory( 1024 * 1024 * 8, m_pHw->video_size - 1024 * 1024 * 8, PAGE_SIZE - 1, 63 );
 	
-	#ifdef HAVE_MTRR
-	/* Initialize MTRRs if possible */
-	MTRR_ioctl_s mtrr = { 1, m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK, nMemSize,
-							MTRR_WRITE_COMBINE };
-	int mtrr_fd = open( "/dev/misc/mtrr", O_RDWR );
-	if( mtrr_fd >= 0 ) {
-		ioctl( mtrr_fd, MTRR_SET_NEXT, &mtrr );
-		close( mtrr_fd );
-	}
-	#endif
-	
-
 	m_bIsInitiated = true;
 }
 
@@ -290,7 +276,7 @@ int SiS3xx::SetScreenMode( os::screen_mode sMode )
 	si.video_height = yres;
 	
 	sis_pre_setmode( rate_idx );
-	if( SiSSetMode( &SiS_Pr, &sishw_ext, mode_no ) == 0 ) {
+	if( SiSSetMode( &SiS_Pr, mode_no ) == 0 ) {
 		dbprintf( "Setting mode[0x%x] failed\n", mode_no );
 		return -1;
 	}
@@ -314,11 +300,21 @@ int SiS3xx::SetScreenMode( os::screen_mode sMode )
 	m_sCurrentMode = sMode;
 	m_sCurrentMode.m_nBytesPerLine = m_sCurrentMode.m_nWidth * bpp;
 	
+	sis_set_pitch( m_sCurrentMode.m_nBytesPerLine );
+	
 	si.bpp = bpp;
 	
 	/* Initialize Video overlay */
 	SISSetupImageVideo();
 	m_bVideoOverlayUsed = false;
+	m_bEngineDirty = true;
+	
+	/* Disable dual pipe */
+	if( si.chip == XGI_40 ) {
+		SiSIdle;
+		SiSDualPipe(1);
+		SiSIdle;
+	}
 	
 	return 0;
 }
@@ -334,204 +330,19 @@ os::screen_mode SiS3xx::GetCurrentScreenMode()
 {
 	return m_sCurrentMode;
 }
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
 
-bool SiS3xx::IntersectWithMouse(const IRect& cRect)
+void SiS3xx::LockBitmap( SrvBitmap* pcDstBitmap, SrvBitmap* pcSrcBitmap, os::IRect cSrc, os::IRect cDst )
 {
-	return false;
-}
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-void SiS3xx::SetCursorBitmap(os::mouse_ptr_mode eMode, const os::IPoint& cHotSpot,
-                             const void *pRaster, int nWidth, int nHeight)
-{
-	m_cCursorHotSpot = cHotSpot;
-	int maxcurs = ( m_pHw->sisvga_engine == SIS_315_VGA ) ? 64 : 32;
-	if (eMode != MPTR_MONO || nWidth > maxcurs || nHeight > maxcurs || m_pHw->chip >= SIS_660 ) {
-		if( m_bUsingHWCursor ) {
-			MouseOff();
-			m_bCursorIsOn = true;
-		}
-		m_bUsingHWCursor = false;
-		return DisplayDriver::SetCursorBitmap(eMode, cHotSpot, pRaster, nWidth, nHeight);
-	}
-	
-	if( !m_bUsingHWCursor ) {
-		DisplayDriver::MouseOff();
-		m_bUsingHWCursor = true;
-		MouseOn();
-	}
-	
-	int nCurAddr = m_pHw->video_size / 1024;
-	const uint8 *pnSrc = (const uint8*)pRaster;
-	uint8 *nTemp = m_pHw->framebuffer + m_pHw->video_size;
-	uint32 *pnDst = (uint32*)nTemp;
-	uint32 *pnSaved = (uint32*)&m_anCursorShape[0];
-	static uint32 anPalette310[] =
-	{ 0x00000000, 0xFF000000, 0xFF000000, 0xFFFFFFFF };
-	static uint32 anPalette300[] =
-	{ 0xff000000, 0x00000000, 0x00000000, 0x00FFFFFF };
-	
-	
-	for (int y = 0; y < maxcurs; y++) {
-		for (int x = 0; x < maxcurs; x++, pnSaved++) {
-			if (y >= nHeight || x >= nWidth) {
-				*pnSaved = ( m_pHw->sisvga_engine == SIS_315_VGA ) ? 
-							anPalette310[0] : anPalette300[0];
-			} else {
-				*pnSaved = ( m_pHw->sisvga_engine == SIS_315_VGA ) ? 
-							anPalette310[*pnSrc++] : anPalette300[*pnSrc++];
-			}
-		}
-	}
-	
-	pnSaved = (uint32*)&m_anCursorShape[0];
-	for (int i = 0; i < maxcurs * maxcurs; i++) {
-		*pnDst++ = *pnSaved++;
-	}
-	
+	if( ( pcDstBitmap->m_bVideoMem == false && ( pcSrcBitmap == NULL || pcSrcBitmap->m_bVideoMem == false ) ) || m_bEngineDirty == false )
+		return;
+	m_cGELock.Lock();
 	if( m_pHw->sisvga_engine == SIS_315_VGA ) {
-		sis310SwitchToRGBCursor()
-		sis310SetCursorBGColor( 0x00000000 )
-		sis310SetCursorFGColor( 0xFFFFFFFF )
-		sis310SetCursorAddress( nCurAddr )
-		sis310SetCursorPatternSelect( 0 )
-		sis310EnableHWARGBCursor()
-		if( m_pHw->vbflags & CRT2_ENABLE ) {
-    		sis301SwitchToRGBCursor310()
-			sis301SetCursorBGColor310( 0x00000000 )
-			sis301SetCursorFGColor310( 0xFFFFFFFF )
-			sis301SetCursorAddress310( nCurAddr )
-			sis301SetCursorPatternSelect310( 0 )
-			sis301EnableHWARGBCursor310()
-    	}
+		SiSIdle
 	} else {
-		sis300SwitchToRGBCursor()
-		sis300SetCursorBGColor( 0x00000000 )
-		sis300SetCursorFGColor( 0xFFFFFFFF )
-		sis300SetCursorAddress( nCurAddr )
-		sis300SetCursorPatternSelect( 0 )
-		sis300EnableHWARGBCursor()
-		if( m_pHw->vbflags & CRT2_ENABLE ) {
-    		sis301SwitchToRGBCursor();
-			sis301SetCursorBGColor( 0x00000000 )
-			sis301SetCursorFGColor( 0xFFFFFFFF )
-			sis301SetCursorAddress( nCurAddr )
-			sis301SetCursorPatternSelect( 0 )
-			sis301EnableHWARGBCursor()
-    	}
+		SiS300Idle
 	}
-}
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-
-void SiS3xx::SetMousePos(os::IPoint cNewPos)
-{
-	if( !m_bUsingHWCursor )
-		return DisplayDriver::SetMousePos( cNewPos );
-	m_cCursorPos = cNewPos;
-	unsigned char xpre = 0;
-	unsigned char ypre = 0;
-	
-	int xp = cNewPos.x - m_cCursorHotSpot.x;
-	int yp = cNewPos.y - m_cCursorHotSpot.y;
-	/* clamp cursor to virtual display */
-	if( xp >= m_sCurrentMode.m_nWidth ) xp =m_sCurrentMode.m_nWidth - 1;
-	if( yp >= m_sCurrentMode.m_nHeight ) yp = m_sCurrentMode.m_nHeight - 1;
-	if( xp < 0 ) {
-		xpre = (-xp);
-		xp = 0;
-	}
-	if( yp < 0 ) {
-		ypre = (-yp);
-		yp = 0;
-	}
-
-	if( m_pHw->sisvga_engine == SIS_315_VGA ) {
-		sis310SetCursorPositionX( xp, xpre )
-    	sis310SetCursorPositionY( yp, ypre )
-    	if( m_pHw->vbflags & CRT2_ENABLE ) {
-    		sis301SetCursorPositionX310( xp + 17, xpre )
-    		sis301SetCursorPositionY310( yp, ypre )
-    	}
-    } else {
-    	sis300SetCursorPositionX( xp, xpre )
-    	sis300SetCursorPositionY( yp, ypre )
-    	if( m_pHw->vbflags & CRT2_ENABLE ) {
-    		sis301SetCursorPositionX( xp + 13, xpre )
-    		sis301SetCursorPositionY( yp, ypre )
-    	}
-    }
-}
-
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-
-void SiS3xx::MouseOn()
-{
-	if( !m_bUsingHWCursor )
-		return DisplayDriver::MouseOn();
-	if( m_pHw->sisvga_engine == SIS_315_VGA ) {
-		sis310EnableHWARGBCursor()
-		if( m_pHw->vbflags & CRT2_ENABLE ) {
-			sis301EnableHWARGBCursor310()
-		}
-	} else {
-		sis300EnableHWARGBCursor()
-		if( m_pHw->vbflags & CRT2_ENABLE ) {
-			sis301EnableHWARGBCursor()
-		}
-	}
-	m_bCursorIsOn = true;
-}
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-
-void SiS3xx::MouseOff()
-{
-	if( !m_bUsingHWCursor )
-		return DisplayDriver::MouseOff();
-	if( m_pHw->sisvga_engine == SIS_315_VGA ) {
-		sis310DisableHWCursor()
-		if( m_pHw->vbflags & CRT2_ENABLE ) {
-			sis301DisableHWCursor310()
-		}
-	} else {
-		sis300DisableHWCursor()
-		if( m_pHw->vbflags & CRT2_ENABLE ) {
-			sis301DisableHWCursor()
-		}
-	}
-	m_bCursorIsOn = false;
+	m_cGELock.Unlock();
+	m_bEngineDirty = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -545,7 +356,7 @@ void SiS3xx::MouseOff()
 bool SiS3xx::DrawLine(SrvBitmap* pcBitMap, const IRect& cClipRect,
                       const IPoint& cPnt1, const IPoint& cPnt2, const Color32_s& sColor, int nMode)
 {
-	if (pcBitMap->m_bVideoMem == false || nMode != DM_COPY  ) {
+	if (pcBitMap->m_bVideoMem == false || nMode != DM_COPY ) {
 		return DisplayDriver::DrawLine(pcBitMap, cClipRect, cPnt1, cPnt2, sColor, nMode);
 	}
 	
@@ -569,46 +380,44 @@ bool SiS3xx::DrawLine(SrvBitmap* pcBitMap, const IRect& cClipRect,
 	m_cGELock.Lock();
 	
 	if( m_pHw->sisvga_engine == SIS_315_VGA ) {
-		SiS310SetupLineCount( 1 )
-		SiS310SetupPATFG( nColor )
-		SiS310SetupDSTRect( m_sCurrentMode.m_nBytesPerLine, -1 );
-		SiS310SetupDSTColorDepth( m_pHw->DstColor );
-		SiS310SetupROP( 0xF0 )
-		SiS310SetupCMDFlag( PATFG | LINE | m_pHw->AccelDepth )
+		SiSSetupDSTColorDepth(m_pHw->AccelDepth);
+		SiSCheckQueue(16 * 3);
+		SiSSetupLineCountPeriod(1, 1)
+		SiSSetupPATFGDSTRect( nColor, pcBitMap->m_nBytesPerLine, -1 )
+		SiSSetupROP( 0xF0 )
+		SiSSetupCMDFlag(PATFG | LINE)
+		SiSSyncWP
 	} else {
 		SiS300SetupLineCount( 1 )
 		SiS300SetupPATFG( nColor )
-		SiS300SetupDSTRect( m_sCurrentMode.m_nBytesPerLine, -1 );
+		SiS300SetupDSTRect( pcBitMap->m_nBytesPerLine, -1 );
 		SiS300SetupDSTColorDepth( m_pHw->DstColor );
 		SiS300SetupROP( 0xF0 )
 		SiS300SetupCMDFlag( PATFG | LINE )
 	}
 	
-	long nDstBase = 0;
+	long nDstBase = pcBitMap->m_nVideoMemOffset;
 	int nMinY = ( y1 > y2 ) ? y2 : y1;
 	int nMaxY = ( y1 > y2 ) ? y1 : y2;
 	if( nMaxY >= 2048 ) {
-		nDstBase = m_sCurrentMode.m_nBytesPerLine * nMaxY;
+		nDstBase += pcBitMap->m_nBytesPerLine * nMaxY;
 		y1 -= nMinY;
 		y2 -= nMinY;
 	}
 	
 	if( m_pHw->sisvga_engine == SIS_315_VGA ) {
-		SiS310SetupDSTBase( nDstBase )
-		SiS310SetupX0Y0( x1, y1 )
-		SiS310SetupX1Y1( x2, y2 )
-		m_pHw->CmdReg &= ~( NO_LAST_PIXEL );
-		SiS310DoCMD
-		SiS310Idle
+		SiSCheckQueue(16 * 2);
+		SiSSetupX0Y0X1Y1(x1, y1, x2, y2)
+		SiSSetupDSTBaseDoCMD( nDstBase )
 	} else {
 		SiS300SetupDSTBase( nDstBase )
 		SiS300SetupX0Y0( x1, y1 )
 		SiS300SetupX1Y1( x2, y2 )
 		m_pHw->CmdReg &= ~( NO_LAST_PIXEL );
 		SiS300DoCMD
-		SiS300Idle
 	}
 	
+	m_bEngineDirty = true;
 	m_cGELock.Unlock();
 	return true;
 }
@@ -620,17 +429,16 @@ bool SiS3xx::DrawLine(SrvBitmap* pcBitMap, const IRect& cClipRect,
 // SEE ALSO:
 //-----------------------------------------------------------------------------
 
-bool SiS3xx::FillRect(SrvBitmap *pcBitMap, const IRect& cRect, const Color32_s& sColor)
+bool SiS3xx::FillRect(SrvBitmap *pcBitMap, const IRect& cRect, const Color32_s& sColor, int nMode)
 {
-	if (pcBitMap->m_bVideoMem == false) {
-		return DisplayDriver::FillRect(pcBitMap, cRect, sColor);
+	if ( pcBitMap->m_bVideoMem == false || nMode != DM_COPY ) {
+		return DisplayDriver::FillRect(pcBitMap, cRect, sColor, nMode);
 	}
 	
 	int nWidth = cRect.Width()+1;
 	int nHeight = cRect.Height()+1;
 	uint32 nColor;
-	if (pcBitMap->m_eColorSpc == CS_RGB32 || 
-		( ( COL_TO_RGB32(sColor) & 0xffffff ) ==  ( m_nColorKey & 0xffffff ) ) ) {
+	if (pcBitMap->m_eColorSpc == CS_RGB32 ) {
 		nColor = COL_TO_RGB32(sColor);
 	} else {
 		// we only support CS_RGB32 and CS_RGB16
@@ -640,39 +448,37 @@ bool SiS3xx::FillRect(SrvBitmap *pcBitMap, const IRect& cRect, const Color32_s& 
 	m_cGELock.Lock();
 	
 	if( m_pHw->sisvga_engine == SIS_315_VGA ) {
-		SiS310SetupPATFG( nColor )
-		SiS310SetupDSTRect( m_sCurrentMode.m_nBytesPerLine, -1 );
-		SiS310SetupDSTColorDepth( m_pHw->DstColor );
-		SiS310SetupROP( 0xF0 )
-		SiS310SetupCMDFlag( PATFG | m_pHw->AccelDepth )
+		SiSSetupDSTColorDepth(m_pHw->AccelDepth);
+		SiSCheckQueue(16 * 1);
+		SiSSetupPATFGDSTRect( nColor, pcBitMap->m_nBytesPerLine, -1 )
+		SiSSetupROP( 0xF0 )
+		SiSSetupCMDFlag(PATFG)
+		SiSSyncWP
 	} else {
 		SiS300SetupPATFG( nColor )
-		SiS300SetupDSTRect( m_sCurrentMode.m_nBytesPerLine, -1 );
+		SiS300SetupDSTRect( pcBitMap->m_nBytesPerLine, -1 );
 		SiS300SetupDSTColorDepth( m_pHw->DstColor );
 		SiS300SetupROP( 0xF0 )
 		SiS300SetupCMDFlag( PATFG )
 	}
 	
-	long nDstBase = 0;
+	long nDstBase = pcBitMap->m_nVideoMemOffset;
 	if( cRect.top >= 2048 ) {
-		nDstBase = m_sCurrentMode.m_nBytesPerLine * cRect.top;
+		nDstBase = pcBitMap->m_nBytesPerLine * cRect.top;
 	}
 	if( m_pHw->sisvga_engine == SIS_315_VGA ) {
-		SiS310SetupDSTBase( nDstBase )
-		SiS310SetupDSTXY( cRect.left, ( cRect.top < 2048 ) ? cRect.top : 0 )
-		SiS310SetupRect( nWidth, nHeight )
-		SiS310SetupCMDFlag( BITBLT )
-		SiS310DoCMD
-		SiS310Idle
+		SiSCheckQueue(16 * 2)
+		SiSSetupDSTXYRect( cRect.left, ( cRect.top < 2048 ) ? cRect.top : 0, nWidth, nHeight )
+		SiSSetupDSTBaseDoCMD( nDstBase )
 	} else {
 		SiS300SetupDSTBase( nDstBase )
 		SiS300SetupDSTXY( cRect.left, ( cRect.top < 2048 ) ? cRect.top : 0 )
 		SiS300SetupRect( nWidth, nHeight )
 		SiS300SetupCMDFlag( BITBLT | X_INC | Y_INC )
 		SiS300DoCMD
-		SiS300Idle
 	}
 	
+	m_bEngineDirty = true;
 	m_cGELock.Unlock();
 	return true;
 }
@@ -685,52 +491,50 @@ bool SiS3xx::FillRect(SrvBitmap *pcBitMap, const IRect& cRect, const Color32_s& 
 //-----------------------------------------------------------------------------
 
 bool SiS3xx::BltBitmap(SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap,
-                       IRect cSrcRect, IPoint cDstPos, int nMode)
+                       IRect cSrcRect, IRect cDstRect, int nMode, int nAlpha)
 {
-	if (pcDstBitMap->m_bVideoMem == false || pcSrcBitMap->m_bVideoMem == false || nMode != DM_COPY) {
-		return DisplayDriver::BltBitmap(pcDstBitMap, pcSrcBitMap, cSrcRect, cDstPos, nMode);
+	if (pcDstBitMap->m_bVideoMem == false || pcSrcBitMap->m_bVideoMem == false || nMode != DM_COPY 
+		|| cDstRect.Size() != cSrcRect.Size()) {
+		return DisplayDriver::BltBitmap(pcDstBitMap, pcSrcBitMap, cSrcRect, cDstRect, nMode, nAlpha);
 	}
 		
 	int nWidth = cSrcRect.Width()+1;
 	int nHeight = cSrcRect.Height()+1;
+	IPoint cDstPos = cDstRect.LeftTop();
 	m_cGELock.Lock();
 	
 	if( m_pHw->sisvga_engine == SIS_315_VGA ) {
-		SiS310SetupDSTColorDepth( m_pHw->DstColor );
-		SiS310SetupSRCPitch( m_sCurrentMode.m_nBytesPerLine );
-		SiS310SetupDSTRect( m_sCurrentMode.m_nBytesPerLine, -1 );
-		SiS310SetupROP( 0xCC );
-		SiS310SetupClipLT( 0, 0 );
-		SiS310SetupClipRB( (m_sCurrentMode.m_nWidth - 1), (m_sCurrentMode.m_nHeight - 1) );
-		SiS310SetupCMDFlag( m_pHw->AccelDepth )
-		
+		SiSSetupDSTColorDepth(m_pHw->AccelDepth);
+		SiSCheckQueue(16 * 2);
+		SiSSetupSRCPitchDSTRect(pcSrcBitMap->m_nBytesPerLine, pcDstBitMap->m_nBytesPerLine, -1)
+		SiSSetupROP( 0xCC );
+		SiSSyncWP
 	} else {
 		SiS300SetupDSTColorDepth( m_pHw->DstColor );
-		SiS300SetupSRCPitch( m_sCurrentMode.m_nBytesPerLine );
-		SiS300SetupDSTRect( m_sCurrentMode.m_nBytesPerLine, -1 );
+		SiS300SetupSRCPitch( pcSrcBitMap->m_nBytesPerLine );
+		SiS300SetupDSTRect( pcDstBitMap->m_nBytesPerLine, -1 );
 		SiS300SetupROP( 0xCC );
 		SiS300SetupClipLT( 0, 0 );
-		SiS300SetupClipRB( (m_sCurrentMode.m_nWidth - 1), (m_sCurrentMode.m_nHeight - 1) );
+		SiS300SetupClipRB( (pcDstBitMap->m_nWidth - 1), (pcDstBitMap->m_nHeight - 1) );
 	}
 	
-	long nSrcBase = 0;
+	long nSrcBase = pcSrcBitMap->m_nVideoMemOffset;
 	if( cSrcRect.top >= 2048 ) {
-		nSrcBase = m_sCurrentMode.m_nBytesPerLine * cSrcRect.top;
+		nSrcBase += pcSrcBitMap->m_nBytesPerLine * cSrcRect.top;
+		cSrcRect.top = 0;
 	}
 	
-	long nDstBase = 0;
+	long nDstBase = pcDstBitMap->m_nVideoMemOffset;
 	if( cDstPos.y >= 2048 ) {
-		nDstBase = m_sCurrentMode.m_nBytesPerLine * cDstPos.y;
+		nDstBase = pcDstBitMap->m_nBytesPerLine * cDstPos.y;
+		cDstPos.y = 0;
 	}
 	if( m_pHw->sisvga_engine == SIS_315_VGA ) {
-		SiS310SetupSRCBase( nSrcBase )
-		SiS310SetupDSTBase( nDstBase )
-		SiS310SetupRect( nWidth, nHeight )
-		SiS310SetupSRCXY( cSrcRect.left, ( cSrcRect.top < 2048 ) ? cSrcRect.top : 0 )
-		SiS310SetupDSTXY( cDstPos.x, ( cDstPos.y < 2048 ) ? cDstPos.y : 0 )
-		SiS310SetupRect( nWidth, nHeight )
-		SiS310DoCMD
-		SiS310Idle
+		SiSCheckQueue(16 * 3);
+		SiSSetupSRCDSTBase( nSrcBase, nDstBase )
+		SiSSetupSRCDSTXY( cSrcRect.left, ( cSrcRect.top < 2048 ) ? cSrcRect.top : 0, cDstPos.x, 
+							( cDstPos.y < 2048 ) ? cDstPos.y : 0 )
+		SiSSetRectDoCMD( nWidth, nHeight )
 	} else {
 		int src_left = cSrcRect.left;
 		int src_top = ( cSrcRect.top < 2048 ) ? cSrcRect.top : 0;
@@ -756,9 +560,8 @@ bool SiS3xx::BltBitmap(SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap,
 		SiS300SetupSRCXY( src_left, src_top )
 		SiS300SetupDSTXY( dest_left, dest_top )
 		SiS300DoCMD
-		SiS300Idle
 	}
-	
+	m_bEngineDirty = true;
 	m_cGELock.Unlock();
 	return true;
 }
@@ -773,16 +576,15 @@ bool SiS3xx::BltBitmap(SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap,
 bool SiS3xx::CreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, 
 								os::color_space eFormat, os::Color32_s sColorKey, area_id *pBuffer )
 {
-	if( eFormat == CS_YUV12 && !m_bVideoOverlayUsed ) {
-		m_nColorKey = COL_TO_RGB32( sColorKey );
-		*pBuffer = SISStartVideo( 0, 0, cDst.left, cDst.top, cSize.x, cSize.y, cDst.Width(), 
-							cDst.Height(), 0x01, cSize.x, cSize.y, m_nColorKey );
-		m_bVideoOverlayUsed = true;
-		return( true );
-	} else if ( eFormat == CS_YUV422 && !m_bVideoOverlayUsed ) {
-		m_nColorKey = COL_TO_RGB32( sColorKey );
-		*pBuffer = SISStartVideo( 0, 0, cDst.left, cDst.top, cSize.x, cSize.y, cDst.Width(), 
-							cDst.Height(), 0x02, cSize.x, cSize.y, m_nColorKey );
+	if( ( eFormat == CS_YUV12 || eFormat == CS_YUV422 ) && !m_bVideoOverlayUsed ) {
+		if( m_sCurrentMode.m_eColorSpace == os::CS_RGB16 )
+			m_nColorKey = COL_TO_RGB16( sColorKey );
+		else
+			m_nColorKey = COL_TO_RGB32( sColorKey );
+		*pBuffer = SISStartVideo( 0, 0, cDst.left, cDst.top, cSize.x, cSize.y, cDst.Width() + 1, 
+							cDst.Height() + 1, eFormat == CS_YUV12 ? 0x01 : 0x02, cSize.x, cSize.y, m_nColorKey );
+		if( *pBuffer < 0 )
+			return( false );
 		m_bVideoOverlayUsed = true;
 		return( true );
 	}
@@ -801,33 +603,19 @@ bool SiS3xx::RecreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDs
 								os::color_space eFormat, area_id *pBuffer )
 {
 	
-	if( eFormat == CS_YUV12 ) {
+	if( eFormat == CS_YUV12 || eFormat == CS_YUV422 ) {
 		delete_area( *pBuffer );
-		*pBuffer = SISStartVideo( 0, 0, cDst.left, cDst.top, cSize.x, cSize.y, cDst.Width(), 
-							cDst.Height(), 0x01, cSize.x, cSize.y, m_nColorKey );
-		m_bVideoOverlayUsed = true;
-		return( true );
-	} else if( eFormat == CS_YUV422 ) {
-		delete_area( *pBuffer );
-		*pBuffer = SISStartVideo( 0, 0, cDst.left, cDst.top, cSize.x, cSize.y, cDst.Width(), 
-							cDst.Height(), 0x02, cSize.x, cSize.y, m_nColorKey );
+		FreeMemory( m_pHw->video_port.bufAddr );
+		*pBuffer = SISStartVideo( 0, 0, cDst.left, cDst.top, cSize.x, cSize.y, cDst.Width() + 1, 
+							cDst.Height() + 1, eFormat == CS_YUV12 ? 0x01 : 0x02, cSize.x, cSize.y, m_nColorKey );
+		if( *pBuffer < 0 )
+			return( false );
 		m_bVideoOverlayUsed = true;
 		return( true );
 	}
 	return( false );
 }
 
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-void SiS3xx::UpdateVideoOverlay( area_id *pBuffer )
-{
-}
 
 //-----------------------------------------------------------------------------
 // NAME:

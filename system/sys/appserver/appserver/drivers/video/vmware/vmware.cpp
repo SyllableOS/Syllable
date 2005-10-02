@@ -335,141 +335,6 @@ static int makeXor1(uint8* cursRaster, CursorInfo *cursInfo)
 }
 
 
-void VMware::SetCursorBitmap(os::mouse_ptr_mode eMode, const os::IPoint& cHotSpot,
-	const void* pRaster, int nWidth, int nHeight)
-{
-	CursorInfo cursorInfo;
-	bool cursorIsVisible = m_bCursorIsOn;
-	bool supportHw_MptrMono = SVGA_CAP_CURSOR & m_regCapabilities;
-	bool supportHw_MptrRGB32 = SVGA_CAP_ALPHA_CURSOR & m_regCapabilities;
-	bool accelCursor = ((eMode == MPTR_MONO) && supportHw_MptrMono)
-						|| ((eMode == MPTR_RGB32) && supportHw_MptrRGB32);
-
-
-	if((m_bUsingHwCursor && !accelCursor) || (!m_bUsingHwCursor && accelCursor))
-	{
-		/* If switching from accel to non-accel *
-		 * OR switching from accel to non-accel *
-		 * then the cursor must be turned off   */
-		MouseOff();
-	}
-
-	if(accelCursor == true)
-	{
-		m_bUsingHwCursor = true;
-		cursorInfo.hotSpotX = cHotSpot.x;
-		cursorInfo.hotSpotY = cHotSpot.y;
-		cursorInfo.cursWidth = nWidth;
-		cursorInfo.cursHeight = nHeight;
-
-		cursorInfo.andMask = NULL;
-		cursorInfo.xorMask = NULL;
-	}
-
-
-	if((eMode == MPTR_RGB32) && supportHw_MptrRGB32)
-	{
-		/** Hardware accelerated MPTR_RGB32 **/
-		cursorInfo.andMask = (uint32 *)pRaster;
-
-		// ACQUIRE lock
-		m_cGELock.Lock();
-
-		Fifo_DefineAlphaCursor(0, &cursorInfo);
-		vmwareWriteReg(SVGA_REG_CURSOR_ID, 0);
-		SetMousePos(m_CursorPos);
-
-		// RELEASE lock
-		m_cGELock.Unlock();
-	}
-	else if((eMode == MPTR_MONO) && supportHw_MptrMono)
-	{
-		/** Hardware accelerated MPTR_MONO **/
-		uint32 andMask[SVGA_BITMAP_SIZE(nWidth, nHeight)];
-		uint32 xorMask[SVGA_BITMAP_SIZE(nWidth, nHeight)];
-
-		cursorInfo.andDepth = cursorInfo.xorDepth = 1;
-		cursorInfo.andSize = cursorInfo.xorSize = SVGA_BITMAP_SIZE(nWidth, nHeight);
-		cursorInfo.andMask = andMask;
-		cursorInfo.xorMask = xorMask;
-
-		makeAnd1((uint8 *)pRaster, &cursorInfo);
-		makeXor1((uint8 *)pRaster, &cursorInfo);
-
-		// ACQUIRE lock
-		m_cGELock.Lock();
-
-		Fifo_DefineCursor(0, &cursorInfo);
-		vmwareWriteReg(SVGA_REG_CURSOR_ID, 0);
-		SetMousePos(m_CursorPos);
-
-		// RELEASE lock
-		m_cGELock.Unlock();
-	}
-	else
-	{
-		/** Software fallback for unsupported cursor eMode **/
-		m_bUsingHwCursor = false;
-		dbprintf("VMware::SetCursorBitmap() - Switching to unaccelerated cursor.\n"
-					"\teMode = %d is unknown or unsupported\n", eMode);
-		SetMousePos(m_CursorPos);
-		DisplayDriver::SetCursorBitmap(eMode, cHotSpot, pRaster, nWidth, nHeight);
-	}
-
-	//m_bCursorIsOn = cursorIsVisible;
-	if(cursorIsVisible)
-	{
-		/* Restore the cursor if we switched it off */
-		MouseOn();
-	}
-
-}
-
-
-void VMware::MouseOn()
-{
-	if(m_bUsingHwCursor)
-		vmwareWriteReg(SVGA_REG_CURSOR_ON, SVGA_CURSOR_ON_SHOW);
-	else
-		DisplayDriver::MouseOn();
-	m_bCursorIsOn = true;
-}
-
-
-void VMware::MouseOff()
-{
-	if(m_bUsingHwCursor)
-		vmwareWriteReg(SVGA_REG_CURSOR_ON, SVGA_CURSOR_ON_HIDE);
-	else
-		DisplayDriver::MouseOff();
-	m_bCursorIsOn = false;
-}
-
-
-void VMware::SetMousePos(os::IPoint cNewPos)
-{
-	m_CursorPos = cNewPos;
-	if(m_bUsingHwCursor)
-	{
-		vmwareWriteReg(SVGA_REG_CURSOR_X, cNewPos.x);
-		vmwareWriteReg(SVGA_REG_CURSOR_Y, cNewPos.y);
-
-		if(m_bCursorIsOn)
-			vmwareWriteReg(SVGA_REG_CURSOR_ON, SVGA_CURSOR_ON_SHOW);
-	}
-	else
-	{
-		DisplayDriver::SetMousePos(cNewPos);
-	}
-}
-
-
-bool VMware::IntersectWithMouse(const IRect& cRect)
-{
-	return false;
-}
-
-
 bool VMware::DrawLine(SrvBitmap* pcBitmap, const os::IRect& cClipRect,
 	const os::IPoint& cPnt1, const os::IPoint& cPnt2,
 	const os::Color32_s& sColor, int nMode)
@@ -532,12 +397,12 @@ bool VMware::DrawLine(SrvBitmap* pcBitmap, const os::IRect& cClipRect,
 
 
 bool VMware::FillRect(SrvBitmap *pcBitmap, const IRect& cRect,
-	const Color32_s& sColor)
+	const Color32_s& sColor, int nMode)
 {
-	if(!pcBitmap->m_bVideoMem)
+	if(!pcBitmap->m_bVideoMem || nMode != DM_COPY)
 	{
 		/* Off-screen */
-		return DisplayDriver::FillRect(pcBitmap, cRect, sColor);
+		return DisplayDriver::FillRect(pcBitmap, cRect, sColor, nMode);
 	}
 
 	int dstX = cRect.left;
@@ -568,7 +433,7 @@ bool VMware::FillRect(SrvBitmap *pcBitmap, const IRect& cRect,
 		if(m_bFifoCmds)
 			FifoSync();
 
-		DisplayDriver::FillRect(pcBitmap, cRect, sColor);
+		DisplayDriver::FillRect(pcBitmap, cRect, sColor, nMode);
 		Fifo_UpdateRect(dstX, dstY, width, height);
 	}
 
@@ -579,15 +444,16 @@ bool VMware::FillRect(SrvBitmap *pcBitmap, const IRect& cRect,
 
 
 bool VMware::BltBitmap(SrvBitmap *pcDstBitmap, SrvBitmap *pcSrcBitmap,
-	IRect cSrcRect, IPoint cDstPos, int nMode)
+	IRect cSrcRect, IRect cDstRect, int nMode, int nAlpha)
 {
-	if((!pcDstBitmap->m_bVideoMem) && (!pcSrcBitmap->m_bVideoMem))
+	if(((!pcDstBitmap->m_bVideoMem) && (!pcSrcBitmap->m_bVideoMem)) || nMode != DM_COPY || cSrcRect.Size() != cDstRect.Size())
 	{
 		// Off-screen to off-screen
 		return DisplayDriver::BltBitmap(pcDstBitmap, pcSrcBitmap, cSrcRect,
-										cDstPos, nMode);
+										cDstRect, nMode, nAlpha);
 	}
 
+	IPoint cDstPos = cDstRect.LeftTop();
 	int srcX = cSrcRect.left;
 	int srcY = cSrcRect.top;
 	int dstX = cDstPos.x;
@@ -623,7 +489,7 @@ bool VMware::BltBitmap(SrvBitmap *pcDstBitmap, SrvBitmap *pcSrcBitmap,
 			FifoSync();
 
 		DisplayDriver::BltBitmap(pcDstBitmap, pcSrcBitmap, cSrcRect,
-									cDstPos, nMode);
+									cDstRect, nMode, nAlpha);
 
 		if(pcDstBitmap->m_bVideoMem)
 			Fifo_UpdateRect(dstX, dstY, width, height);
@@ -634,80 +500,24 @@ bool VMware::BltBitmap(SrvBitmap *pcDstBitmap, SrvBitmap *pcSrcBitmap,
 	return true;
 }
 
-
-void VMware::RenderGlyph(SrvBitmap *pcBitmap, Glyph* pcGlyph,
-	const os::IPoint& cPos, const os::IRect& cClipRect,
-	const os::Color32_s& sFgColor)
+void VMware::UnlockBitmap( SrvBitmap* pcDstBitmap, SrvBitmap* pcSrcBitmap, os::IRect cSrc, os::IRect cDst )
 {
-	if(!pcBitmap->m_bVideoMem)
-	{
-		DisplayDriver::RenderGlyph(pcBitmap, pcGlyph, cPos, cClipRect, sFgColor);
+	if( ( pcDstBitmap->m_bVideoMem == false && ( pcSrcBitmap == NULL || pcSrcBitmap->m_bVideoMem == false ) ) )
 		return;
-	}
-
+		
 	// ACQUIRE lock
 	m_cGELock.Lock();
 
 	if(m_bFifoCmds)
 		FifoSync();
-
-	DisplayDriver::RenderGlyph(pcBitmap, pcGlyph, cPos, cClipRect, sFgColor);
-	Fifo_UpdateRect(cClipRect.left, cClipRect.top, cClipRect.Width() + 1,
-					cClipRect.Height() + 1);
-
+	
+	Fifo_UpdateRect(0, 0, cDst.Width() + 1,
+					cDst.Height() + 1);
+		
 	// RELEASE lock
 	m_cGELock.Unlock();
 }
 
-void VMware::RenderGlyphBlend(SrvBitmap *pcBitmap, Glyph* pcGlyph,
-	const os::IPoint& cPos, const os::IRect& cClipRect,
-	const os::Color32_s& sFgColor)
-{
-	if(!pcBitmap->m_bVideoMem)
-	{
-		DisplayDriver::RenderGlyphBlend(pcBitmap, pcGlyph, cPos, cClipRect,
-										sFgColor);
-		return;
-	}
-
-	// ACQUIRE lock
-	m_cGELock.Lock();
-
-	if(m_bFifoCmds)
-		FifoSync();
-
-	DisplayDriver::RenderGlyphBlend(pcBitmap, pcGlyph, cPos, cClipRect, sFgColor);
-	Fifo_UpdateRect(cClipRect.left, cClipRect.top, cClipRect.Width() + 1,
-					cClipRect.Height() + 1);
-
-	// RELEASE lock
-	m_cGELock.Unlock();
-}
-
-
-void VMware::RenderGlyph(SrvBitmap *pcBitmap, Glyph* pcGlyph,
-	const os::IPoint& cPos, const os::IRect& cClipRect, const uint32* anPallette)
-{
-	if(!pcBitmap->m_bVideoMem)
-	{
-		DisplayDriver::RenderGlyph(pcBitmap, pcGlyph, cPos, cClipRect,
-									anPallette);
-		return;
-	}
-
-	// ACQUIRE lock
-	m_cGELock.Lock();
-
-	if(m_bFifoCmds)
-		FifoSync();
-
-	DisplayDriver::RenderGlyph(pcBitmap, pcGlyph, cPos, cClipRect, anPallette);
-	Fifo_UpdateRect(cClipRect.left, cClipRect.top, cClipRect.Width() + 1,
-					cClipRect.Height() + 1);
-
-	// RELEASE lock
-	m_cGELock.Unlock();
-}
 /********************************************************************/
 /********************************************************************/
 

@@ -423,26 +423,17 @@ public:
    
     virtual int		    GetFramebufferOffset() { return( 0 ); }
 
-    virtual bool		IntersectWithMouse( const os::IRect& cRect );
     virtual bool		IsInitialized();
 
-    virtual void SetCursorBitmap( mouse_ptr_mode eMode, const IPoint& cHotSpot, const void* pRaster,
-        int nWidth, int nHeight );
-
-    virtual void MouseOn();
-    virtual void MouseOff();
-    virtual void SetMousePos(IPoint cNewPos);
-
-    virtual bool DrawLine(SrvBitmap *psBitMap, const IRect &cClipRect,
+       virtual bool DrawLine(SrvBitmap *psBitMap, const IRect &cClipRect,
         const IPoint &cPnt1, const IPoint &cPnt2, const Color32_s &sColor, int nMode);
-    virtual bool		FillRect(SrvBitmap *pcBitmap, const IRect &cRect, const Color32_s &sColor);
+    virtual bool		FillRect(SrvBitmap *pcBitmap, const IRect &cRect, const Color32_s &sColor, int nMode);
     virtual bool		BltBitmap(SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap, IRect cSrcRect,
-								IPoint cDstPos, int nMode);
+								IRect cDstRect, int nMode, int nAlpha);
 
     virtual bool	CreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, os::color_space eFormat, os::Color32_s sColorKey, area_id *pBuffer );
     virtual bool	RecreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, os::color_space eFormat, area_id *pBuffer );
     virtual void	DeleteVideoOverlay( area_id *pBuffer );
-    virtual void	UpdateVideoOverlay( area_id *pBuffer );
 private:
     bool		m_bIsInitialized;
     bool		m_bRetrievedInfos;
@@ -463,7 +454,6 @@ private:
     bool	m_bCfgEnableR300;
     bool	m_bCfgEnableMobility;
     bool	m_bCfgEnableMirroring;
-    bool	m_bCfgUseHWCursor;
     bool	m_bCfgEnableDebug;
     bool	m_bCfgDisableBIOSUsage;
 
@@ -474,10 +464,7 @@ private:
     int		mirror;
     bool		m_bFirstRepaint;
 
-    // hardware cursor enabled
-    bool		HWcursor;
-    void		HWCursorInit();
-
+   
     // Video Overlay
     Color32_s m_cColorKey;
     bool		m_bVideoOverlayUsed;

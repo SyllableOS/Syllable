@@ -170,19 +170,12 @@ class SavageDriver : public VesaDriver
 		virtual int GetScreenModeCount();
 		virtual bool GetScreenModeDesc( int nIndex, os::screen_mode *psMode );
 		virtual int SetScreenMode( os::screen_mode sMode );
-
-		virtual void SetCursorBitmap( os::mouse_ptr_mode eMode, const os::IPoint& cHotSpot, const void *pRaster, int nWidth, int nHeight );
-		virtual void MouseOn();
-		virtual void MouseOff();
-		virtual void SetMousePos( os::IPoint cNewPos );
-
 		virtual bool DrawLine( SrvBitmap *psBitmap, const os::IRect &cClipRect, const os::IPoint &cPnt1, const os::IPoint &cPnt2, const os::Color32_s &sColor, int nMode );
-		virtual bool FillRect( SrvBitmap *psBitmap, const os::IRect &cRect, const os::Color32_s &sColor );
-		virtual bool BltBitmap( SrvBitmap *pcDstBitmap, SrvBitmap *pcSrcBitmap, os::IRect cSrcRect, os::IPoint cDstPos, int nMode );
+		virtual bool FillRect( SrvBitmap *psBitmap, const os::IRect &cRect, const os::Color32_s &sColor, int nMode );
+		virtual bool BltBitmap( SrvBitmap *pcDstBitmap, SrvBitmap *pcSrcBitmap, os::IRect cSrcRect, os::IRect cDstRect, int nMode, int nAlpha );
 
 		virtual bool CreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, os::color_space eFormat, os::Color32_s sColorKey, area_id *phArea );
 		virtual bool RecreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, os::color_space eFormat, area_id *phArea );
-		virtual void UpdateVideoOverlay( area_id *phArea );
 		virtual void DeleteVideoOverlay( area_id *phArea );
 
 	private:
@@ -237,9 +230,7 @@ class SavageDriver : public VesaDriver
 		area_id m_hFramebufferArea;
 
 		bool m_bIsInited;
-		bool m_bHWCursor;
-		uint32 m_anCursorShape[CURS_HEIGHT*CURS_WIDTH];
-
+		
 		os::Color32_s m_sColorKey;
 		bool m_bVideoOverlayUsed;
 
@@ -248,7 +239,6 @@ class SavageDriver : public VesaDriver
 
 		/* Control variables */
 		bool m_bDisableCOB;		/* Enable or disable COB for Savage4 & ProSavage */
-		bool m_bEnableHWC;		/* Enable or disable HW cursor (default is off) */
 };
 
 /* Replacement inline functions for the X-provided vgaHW functions, adapted from the  GeForceFX driver */

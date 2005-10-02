@@ -206,11 +206,9 @@ typedef struct
 	bigtime_t pi_nIdleTime;
 	bool pi_bIsPresent;
 	bool pi_bIsRunning;
-	bool pi_bHaveCPUID;
-	bool pi_bHavePERFCnt;
-	bool pi_bHaveAPIC;
 	bool pi_bHaveFXSR; // CPU has fast FPU save and restore
 	bool pi_bHaveXMM; // CPU has SSE extensions
+	bool pi_bHaveMTRR; // CPU has MTRRs
 	uint32 pi_nFeatures;
 } ProcessorInfo_s;
 

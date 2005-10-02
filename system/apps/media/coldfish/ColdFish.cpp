@@ -85,9 +85,9 @@ void CFPlaylist::MouseUp( const os::Point & cPos, uint32 nButtons, os::Message *
 		return ( os::ListView::MouseUp( cPos, nButtons, pcData ) );
 	}
 	/* Tell CFApp class */
-	os::Message * pcMsg = new os::Message( CF_ADD_FILE );
-	pcMsg->AddString( "file/path", zFile );
-	os::Application::GetInstance()->PostMessage( pcMsg, os::Application::GetInstance(  ) );
+	os::Message cMsg( CF_ADD_FILE );
+	cMsg.AddString( "file/path", zFile );
+	os::Application::GetInstance()->PostMessage( &cMsg, os::Application::GetInstance(  ) );
 }
 
 
@@ -1754,13 +1754,14 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 
 	case CF_GUI_ADD_FILE:
 	{
-		m_pcWin->PostMessage(new os::Message(CF_GUI_ADD_FILE),m_pcWin);
+		m_pcWin->PostMessage(CF_GUI_ADD_FILE,m_pcWin);
 		break;
 	}
 
 	case CF_GUI_ABOUT:
 	{
-		m_pcWin->PostMessage(new os::Message(CF_GUI_ABOUT),m_pcWin);
+		
+		m_pcWin->PostMessage(CF_GUI_ABOUT,m_pcWin);
 		break;	
 	}
 

@@ -127,7 +127,7 @@ private:
 	DockIcon* m_pcSyllableIcon;
 	std::vector<DockIcon*> m_pcIcons;
 	std::vector<os::DockPlugin*> m_pcPlugins;
-	os::NodeMonitor* m_pcMonitor;
+	std::vector<os::View*> m_pcPluginViews;
 	os::RegistrarManager* m_pcManager;
 };
 

@@ -72,10 +72,6 @@ bool SavageDriver::RecreateVideoOverlay( const IPoint& cSize, const IRect& cDst,
 	return false;
 }
 
-void SavageDriver::UpdateVideoOverlay( area_id *phArea )
-{
-}
-
 void SavageDriver::DeleteVideoOverlay( area_id *phArea )
 {
 	/* Stop video */

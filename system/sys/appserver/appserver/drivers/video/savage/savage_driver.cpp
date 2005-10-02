@@ -104,7 +104,6 @@ SavageDriver::SavageDriver( int nFd ) : m_cGELock( "savage_ge_lock" )
 
 	/* You can change these & recompile if you want to experiment */
 	m_bDisableCOB = false;	/* Set true of you're having problems with Savage4 or ProSavage */
-	m_bEnableHWC = false;	/* Set true if you'd like to try the HW cursor (but you'll have to fix SetCursorBitmap()!) */
 
 	/* Keep all the card info together */
 	savage_s *psCard = (savage_s*)calloc( 1, sizeof( *m_psCard ) );
@@ -285,7 +284,7 @@ SavageDriver::SavageDriver( int nFd ) : m_cGELock( "savage_ge_lock" )
 
 	/* Map the framebuffer */
 	psCard->FramebufferSize = nRamSize * 1024;
-	m_hFramebufferArea = create_area( "savage_framebuffer", (void**)&psCard->FBBase, psCard->FramebufferSize, AREA_FULL_ACCESS, AREA_NO_LOCK );
+	m_hFramebufferArea = create_area( "savage_framebuffer", (void**)&psCard->FBBase, psCard->FramebufferSize, AREA_FULL_ACCESS | AREA_WRCOMB, AREA_NO_LOCK );
 	if( remap_area( m_hFramebufferArea, (void*)m_nFramebufferAddr ) != EOK )
 	{
 		dbprintf( "Error: Failed to map framebuffer.\n" );

@@ -49,22 +49,15 @@ public:
 	virtual int	SetScreenMode( os::screen_mode );
 	virtual os::screen_mode GetCurrentScreenMode(); 
 	
-	//int GetFramebufferOffset() { return( m_sCurrentMode.m_nBytesPerLine * m_sCurrentMode.m_nHeight ); }
+	virtual void	LockBitmap( SrvBitmap* pcDstBitmap, SrvBitmap* pcSrcBitmap, os::IRect cSrc, os::IRect cDst );
 	
-	virtual void	SetCursorBitmap( os::mouse_ptr_mode eMode, const os::IPoint& cHotSpot, const void* pRaster, int nWidth, int nHeight );
-	virtual void	MouseOn( void );
-	virtual void    MouseOff( void );
-	virtual void    SetMousePos( os::IPoint cNewPos );	
-	
-	virtual bool	IntersectWithMouse(const IRect& cRect);
 	virtual bool	DrawLine( SrvBitmap* psBitMap, const os::IRect& cClipRect,
 				  const os::IPoint& cPnt1, const os::IPoint& cPnt2, const os::Color32_s& sColor, int nMode );
-	virtual bool	FillRect( SrvBitmap* psBitMap, const os::IRect& cRect, const os::Color32_s& sColor );
-	virtual bool	BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap, os::IRect cSrcRect, os::IPoint cDstPos, int nMode );
+	virtual bool	FillRect( SrvBitmap* psBitMap, const os::IRect& cRect, const os::Color32_s& sColor, int nMode );
+	virtual bool	BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap, os::IRect cSrcRect, os::IRect cDstRect, int nMode, int nAlpha );
 	virtual bool	CreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, os::color_space eFormat, os::Color32_s sColorKey, area_id *pBuffer );
 	virtual bool	RecreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, os::color_space eFormat, area_id *pBuffer );
 	virtual void	DeleteVideoOverlay( area_id *pBuffer );
-	virtual void	UpdateVideoOverlay( area_id *pBuffer );
 	
 	
 	bool		IsInitiated() const { return( m_bIsInitiated ); }
@@ -90,13 +83,8 @@ private:
 	os::screen_mode m_sCurrentMode;
 	
 	bool		m_bPaletteEnabled;
+	bool		m_bEngineDirty;
 	
-	bool		m_bUsingHWCursor;
-	bool		m_bCursorIsOn;
-	os::IPoint	m_cCursorPos;
-	os::IPoint	m_cCursorHotSpot;
-	uint32		m_anCursorShape[MAX_CURS*MAX_CURS];
-
 	uint32		m_nColorKey;
 	bool		m_bVideoOverlayUsed;
 	os::IPoint	m_cVideoSize;		

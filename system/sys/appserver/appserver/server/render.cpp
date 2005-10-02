@@ -34,344 +34,87 @@
 
 #include <appserver/protocol.h>
 
+using namespace os;
 
-static Color32_s g_asPens[128];
 
-static Color32_s GetStdCol( int i )
+static Color32_s Tint( const Color32_s & sColor, float vTint )
 {
-	static uint8 DefaultPalette[] = {
-		0x00, 0x60, 0x6b,
-		0x00, 0x00, 0x00,
-		0xff, 0xff, 0xff,
-		0x66, 0x88, 0xbb,
+	int r = int ( ( float ( sColor.red ) * vTint + 127.0f * ( 1.0f - vTint ) ) );
+	int g = int ( ( float ( sColor.green ) * vTint + 127.0f * ( 1.0f - vTint ) ) );
+	int b = int ( ( float ( sColor.blue ) * vTint + 127.0f * ( 1.0f - vTint ) ) );
 
-		0x8f, 0x8f, 0x8f,
-		0xc6, 0xc6, 0xc6,
-		0xbb, 0xaa, 0x99,
-		0xff, 0xbb, 0xaa,
-
-		0xff, 0x00, 0x00,
-		0x78, 0x78, 0x78,
-		0xb4, 0xb4, 0xb4,
-		0xdc, 0xdc, 0xdc,
-
-		0x55, 0x55, 0xff,
-		0x99, 0x22, 0xff,
-		0x00, 0xff, 0x88,
-		0xcc, 0xcc, 0xcc,
-
-		0x00, 0x00, 0x00,
-		0xe0, 0x40, 0x40,
-		0x00, 0x00, 0x00,
-		0xe0, 0xe0, 0xc0,
-		0x44, 0x44, 0x44,
-		0x55, 0x55, 0x55,
-		0x66, 0x66, 0x66,
-		0x77, 0x77, 0x77,
-		0x88, 0x88, 0x88,
-		0x99, 0x99, 0x99,
-		0xaa, 0xaa, 0xaa,
-		0xbb, 0xbb, 0xbb,
-		0xcc, 0xcc, 0xcc,
-		0xdd, 0xdd, 0xdd,
-		0xee, 0xee, 0xee,
-		0xff, 0xff, 0xff,
-		0xff, 0xff, 0xff,
-		0x88, 0x88, 0x88,
-		0xff, 0xff, 0xff,
-		0xcc, 0xcc, 0xcc,
-		0x44, 0x44, 0x44,
-		0xff, 0xff, 0xff,
-		0xff, 0xff, 0xff,
-		0x88, 0xff, 0xff,
-		0x44, 0x88, 0x88,
-		0xcc, 0xff, 0xff,
-		0x66, 0xcc, 0xcc,
-		0x22, 0x44, 0x44,
-		0xaa, 0xff, 0xff,
-		0xee, 0xff, 0xff,
-		0xcc, 0xff, 0xff,
-		0x66, 0x88, 0x88,
-		0xff, 0xff, 0xff,
-		0x99, 0xcc, 0xcc,
-		0x33, 0x44, 0x44,
-		0xff, 0xff, 0xff,
-		0xff, 0xff, 0xff,
-		0x44, 0xff, 0xff,
-		0x22, 0x88, 0x88,
-		0x66, 0xff, 0xff,
-		0x33, 0xcc, 0xcc,
-		0x11, 0x44, 0x44,
-		0x55, 0xff, 0xff,
-		0x77, 0xff, 0xff,
-		0xff, 0x88, 0xff,
-		0x88, 0x44, 0x88,
-		0xff, 0xcc, 0xff,
-		0xcc, 0x66, 0xcc,
-		0x44, 0x22, 0x44,
-		0xff, 0xaa, 0xff,
-		0xff, 0xee, 0xff,
-		0x88, 0x88, 0xff,
-		0x44, 0x44, 0x88,
-		0xcc, 0xcc, 0xff,
-		0x66, 0x66, 0xcc,
-		0x22, 0x22, 0x44,
-		0xaa, 0xaa, 0xff,
-		0xee, 0xee, 0xff,
-		0xcc, 0x88, 0xff,
-		0x66, 0x44, 0x88,
-		0xff, 0xcc, 0xff,
-		0x99, 0x66, 0xcc,
-		0x33, 0x22, 0x44,
-		0xff, 0xaa, 0xff,
-		0xff, 0xee, 0xff,
-		0x44, 0x88, 0xff,
-		0x22, 0x44, 0x88,
-		0x66, 0xcc, 0xff,
-		0x33, 0x66, 0xcc,
-		0x11, 0x22, 0x44,
-		0x55, 0xaa, 0xff,
-		0x77, 0xee, 0xff,
-		0xff, 0xcc, 0xff,
-		0x88, 0x66, 0x88,
-		0xff, 0xff, 0xff,
-		0xcc, 0x99, 0xcc,
-		0x44, 0x33, 0x44,
-		0xff, 0xff, 0xff,
-		0xff, 0xff, 0xff,
-		0x88, 0xcc, 0xff,
-		0x44, 0x66, 0x88,
-		0xcc, 0xff, 0xff,
-		0x66, 0x99, 0xcc,
-		0x22, 0x33, 0x44,
-		0xaa, 0xff, 0xff,
-		0xee, 0xff, 0xff,
-		0xcc, 0xcc, 0xff,
-		0x66, 0x66, 0x88,
-		0xff, 0xff, 0xff,
-		0x99, 0x99, 0xcc,
-		0x33, 0x33, 0x44,
-		0xff, 0xff, 0xff,
-		0xff, 0xff, 0xff,
-		0x44, 0xcc, 0xff,
-		0x22, 0x66, 0x88,
-		0x66, 0xff, 0xff,
-		0x33, 0x99, 0xcc,
-		0x11, 0x33, 0x44,
-		0x55, 0xff, 0xff,
-		0x77, 0xff, 0xff,
-		0xff, 0x44, 0xff,
-		0x88, 0x22, 0x88,
-		0xff, 0x66, 0xff,
-		0xcc, 0x33, 0xcc,
-		0x44, 0x11, 0x44,
-		0xff, 0x55, 0xff,
-		0xff, 0x77, 0xff,
-		0x88, 0x44, 0xff,
-		0x44, 0x22, 0x88,
-		0xcc, 0x66, 0xff,
-		0x66, 0x33, 0xcc,
-		0x22, 0x11, 0x44,
-		0xaa, 0x55, 0xff,
-		0xee, 0x77, 0xff,
-		0xcc, 0x44, 0xff,
-		0x66, 0x22, 0x88,
-		0xff, 0x66, 0xff,
-		0x99, 0x33, 0xcc,
-		0x33, 0x11, 0x44,
-		0xff, 0x55, 0xff,
-		0xff, 0x77, 0xff,
-		0x44, 0x44, 0xff,
-		0x22, 0x22, 0x88,
-		0x66, 0x66, 0xff,
-		0x33, 0x33, 0xcc,
-		0x11, 0x11, 0x44,
-		0x55, 0x55, 0xff,
-		0x77, 0x77, 0xff,
-		0xff, 0xff, 0x88,
-		0x88, 0x88, 0x44,
-		0xff, 0xff, 0xcc,
-		0xcc, 0xcc, 0x66,
-		0x44, 0x44, 0x22,
-		0xff, 0xff, 0xaa,
-		0xff, 0xff, 0xee,
-		0x88, 0xff, 0x88,
-		0x44, 0x88, 0x44,
-		0xcc, 0xff, 0xcc,
-		0x66, 0xcc, 0x66,
-		0x22, 0x44, 0x22,
-		0xaa, 0xff, 0xaa,
-		0xee, 0xff, 0xee,
-		0xcc, 0xff, 0x88,
-		0x66, 0x88, 0x44,
-		0xff, 0xff, 0xcc,
-		0x99, 0xcc, 0x66,
-		0x33, 0x44, 0x22,
-		0xff, 0xff, 0xaa,
-		0xff, 0xff, 0xee,
-		0x44, 0xff, 0x88,
-		0x22, 0x88, 0x44,
-		0x66, 0xff, 0xcc,
-		0x33, 0xcc, 0x66,
-		0x11, 0x44, 0x22,
-		0x55, 0xff, 0xaa,
-		0x77, 0xff, 0xee,
-		0xff, 0x88, 0x88,
-		0x88, 0x44, 0x44,
-		0xff, 0xcc, 0xcc,
-		0xcc, 0x66, 0x66,
-		0x44, 0x22, 0x22,
-		0xff, 0xaa, 0xaa,
-		0xff, 0xee, 0xee,
-		0x88, 0x88, 0x88,
-		0x44, 0x44, 0x44,
-		0xcc, 0xcc, 0xcc,
-		0x66, 0x66, 0x66,
-		0x22, 0x22, 0x22,
-		0xaa, 0xaa, 0xaa,
-		0xee, 0xee, 0xee,
-		0xcc, 0x88, 0x88,
-		0x66, 0x44, 0x44,
-		0xff, 0xcc, 0xcc,
-		0x99, 0x66, 0x66,
-		0x33, 0x22, 0x22,
-		0xff, 0xaa, 0xaa,
-		0xff, 0xee, 0xee,
-		0x44, 0x88, 0x88,
-		0x22, 0x44, 0x44,
-		0x66, 0xcc, 0xcc,
-		0x33, 0x66, 0x66,
-		0x11, 0x22, 0x22,
-		0x55, 0xaa, 0xaa,
-		0x77, 0xee, 0xee,
-		0xff, 0xcc, 0x88,
-		0x88, 0x66, 0x44,
-		0xff, 0xff, 0xcc,
-		0xcc, 0x99, 0x66,
-		0x44, 0x33, 0x22,
-		0xff, 0xff, 0xaa,
-		0xff, 0xff, 0xee,
-		0x88, 0xcc, 0x88,
-		0x44, 0x66, 0x44,
-		0xcc, 0xff, 0xcc,
-		0x66, 0x99, 0x66,
-		0x22, 0x33, 0x22,
-		0xaa, 0xff, 0xaa,
-		0xee, 0xff, 0xee,
-		0xcc, 0xcc, 0x88,
-		0x66, 0x66, 0x44,
-		0xff, 0xff, 0xcc,
-		0x99, 0x99, 0x66,
-		0x33, 0x33, 0x22,
-		0xff, 0xff, 0xaa,
-		0xff, 0xff, 0xee,
-		0x44, 0xcc, 0x88,
-		0x22, 0x66, 0x44,
-		0x66, 0xff, 0xcc,
-		0x33, 0x99, 0x66,
-		0x11, 0x33, 0x22,
-		0x55, 0xff, 0xaa,
-		0x77, 0xff, 0xee,
-		0xff, 0x44, 0x88,
-		0x88, 0x22, 0x44,
-		0xff, 0x66, 0xcc,
-		0xcc, 0x33, 0x66,
-		0x44, 0x11, 0x22,
-		0xff, 0x55, 0xaa,
-		0xff, 0x77, 0xee,
-		0x88, 0x44, 0x88,
-		0x44, 0x22, 0x44,
-		0xcc, 0x66, 0xcc,
-		0x66, 0x33, 0x66,
-		0x22, 0x11, 0x22,
-		0xaa, 0x55, 0xaa,
-		0xee, 0x77, 0xee,
-		0xcc, 0x44, 0x88,
-		0x66, 0x22, 0x44,
-		0xff, 0x66, 0xcc,
-		0x99, 0x33, 0x66,
-		0x33, 0x11, 0x22,
-		0xff, 0x55, 0xaa,
-		0xff, 0x77, 0xee,
-		0x44, 0x44, 0x88,
-		0xbb, 0xbb, 0xbb,
-		0x99, 0x99, 0x99,
-		0x8f, 0x8f, 0x8f,
-		0xc6, 0xc6, 0xc6,
-		0xbb, 0xaa, 0x99,
-		0x4d, 0x75, 0x44
-	};
-
-	Color32_s sColor;
-
-	sColor.red = DefaultPalette[i * 3 + 0];
-	sColor.green = DefaultPalette[i * 3 + 1];
-	sColor.blue = DefaultPalette[i * 3 + 2];
-	sColor.alpha = 0;
-
-	return ( sColor );
+	if( r < 0 )
+		r = 0;
+	else if( r > 255 )
+		r = 255;
+	if( g < 0 )
+		g = 0;
+	else if( g > 255 )
+		g = 255;
+	if( b < 0 )
+		b = 0;
+	else if( b > 255 )
+		b = 255;
+	return ( Color32_s( r, g, b, sColor.alpha ) );
 }
 
-
-
-Color32_s GetDefaultColor( int nIndex )
+void Layer::DrawFrame( const Rect &a_cRect, uint32 nStyle )
 {
-	static bool bFirst = true;
-
-	if( bFirst )
-	{
-		g_asPens[PEN_BACKGROUND] = GetStdCol( 4 );
-		g_asPens[PEN_DETAIL] = GetStdCol( 1 );
-		g_asPens[PEN_SHINE] = GetStdCol( 2 );
-		g_asPens[PEN_SHADOW] = GetStdCol( 1 );
-		g_asPens[PEN_BRIGHT] = GetStdCol( 11 );
-		g_asPens[PEN_DARK] = GetStdCol( 9 );
-		g_asPens[PEN_WINTITLE] = GetStdCol( 9 );
-		g_asPens[PEN_WINBORDER] = GetStdCol( 10 );
-		g_asPens[PEN_SELWINTITLE] = GetStdCol( 3 );
-		g_asPens[PEN_SELWINBORDER] = GetStdCol( 10 );
-		g_asPens[PEN_WINDOWTEXT] = GetStdCol( 1 );
-		g_asPens[PEN_SELWNDTEXT] = GetStdCol( 2 );
-		g_asPens[PEN_WINCLIENT] = GetStdCol( 5 );
-		g_asPens[PEN_GADGETFILL] = GetStdCol( 4 );
-		g_asPens[PEN_SELGADGETFILL] = GetStdCol( 9 );
-		g_asPens[PEN_GADGETTEXT] = GetStdCol( 2 );
-		g_asPens[PEN_SELGADGETTEXT] = GetStdCol( 1 );
-		bFirst = false;
-	}
-	return ( g_asPens[nIndex] );
-}
-
-void Layer::DrawFrame( const Rect & cRect, uint32 nStyle )
-{
-	bool Sunken = false;
+	Rect cRect = a_cRect;
+	Color32_s fg_save = m_sFgColor;
+	Color32_s bg_save = m_sBgColor;
+	
+	cRect.Floor();
+	bool bSunken = false;
 
 	if( ( ( nStyle & FRAME_RAISED ) == 0 ) && ( nStyle & ( FRAME_RECESSED ) ) )
 	{
-		Sunken = true;
+		bSunken = true;
 	}
+
+	Color32_s sFgCol = get_default_color( COL_SHINE );
+	Color32_s sBgCol = get_default_color( COL_SHADOW );
+
+	if( nStyle & FRAME_DISABLED )
+	{
+		sFgCol = Tint( sFgCol, 0.6f );
+		sBgCol = Tint( sBgCol, 0.4f );
+	}
+	Color32_s sFgShadowCol = Tint( sFgCol, 0.6f );
+	Color32_s sBgShadowCol = Tint( sBgCol, 0.5f );
 
 	if( nStyle & FRAME_FLAT )
 	{
+		SetFgColor( ( bSunken ) ? sBgCol : sFgCol );
+		MovePenTo( cRect.left, cRect.bottom );
+		DrawLine( Point( cRect.left, cRect.top ) );
+		DrawLine( Point( cRect.right, cRect.top ) );
+		DrawLine( Point( cRect.right, cRect.bottom ) );
+		DrawLine( Point( cRect.left, cRect.bottom ) );
 	}
 	else
 	{
-		Color32_s sShinePen = GetDefaultColor( PEN_SHINE );
-		Color32_s sShadowPen = GetDefaultColor( PEN_SHADOW );
-
-		if( ( nStyle & FRAME_TRANSPARENT ) == 0 )
+		if( nStyle & FRAME_THIN )
 		{
-			FillRect( Rect( cRect.left + 2, cRect.top + 2, cRect.right - 2, cRect.bottom - 2 ), m_sEraseColor );
+			SetFgColor( ( bSunken ) ? sBgCol : sFgCol );
 		}
-
-		SetFgColor( ( Sunken ) ? sShadowPen : sShinePen );
+		else
+		{
+			SetFgColor( ( bSunken ) ? sBgCol : sFgShadowCol );
+		}
 
 		MovePenTo( cRect.left, cRect.bottom );
 		DrawLine( Point( cRect.left, cRect.top ) );
 		DrawLine( Point( cRect.right, cRect.top ) );
 
-		SetFgColor( ( Sunken ) ? sShinePen : sShadowPen );
-
+		if( nStyle & FRAME_THIN )
+		{
+			SetFgColor( ( bSunken ) ? sFgCol : sBgCol );
+		}
+		else
+		{
+			SetFgColor( ( bSunken ) ? sFgCol : sBgShadowCol );
+		}
 		DrawLine( Point( cRect.right, cRect.bottom ) );
 		DrawLine( Point( cRect.left, cRect.bottom ) );
 
@@ -380,44 +123,49 @@ void Layer::DrawFrame( const Rect & cRect, uint32 nStyle )
 		{
 			if( nStyle & FRAME_ETCHED )
 			{
-				SetFgColor( ( Sunken ) ? sShadowPen : sShinePen );
+				SetFgColor( ( bSunken ) ? sBgCol : sFgCol );
 
-				MovePenTo( cRect.left + 1, cRect.bottom - 1 );
+				MovePenTo( cRect.left + 1.0f, cRect.bottom - 1.0f );
 
-				DrawLine( Point( cRect.left + 1, cRect.top + 1 ) );
-				DrawLine( Point( cRect.right - 1, cRect.top + 1 ) );
+				DrawLine( Point( cRect.left + 1.0f, cRect.top + 1.0f ) );
+				DrawLine( Point( cRect.right - 1.0f, cRect.top + 1.0f ) );
 
-				SetFgColor( ( Sunken ) ? sShinePen : sShadowPen );
+				SetFgColor( ( bSunken ) ? sFgCol : sBgCol );
 
-				DrawLine( Point( cRect.right - 1, cRect.bottom - 1 ) );
-				DrawLine( Point( cRect.left + 1, cRect.bottom - 1 ) );
+				DrawLine( Point( cRect.right - 1.0f, cRect.bottom - 1.0f ) );
+				DrawLine( Point( cRect.left + 1.0f, cRect.bottom - 1.0f ) );
 			}
 			else
 			{
-				Color32_s sBrightPen = GetDefaultColor( PEN_BRIGHT );
-				Color32_s sDarkPen = GetDefaultColor( PEN_DARK );
+				SetFgColor( ( bSunken ) ? sBgShadowCol : sFgCol );
 
-				SetFgColor( ( Sunken ) ? sDarkPen : sBrightPen );
+				MovePenTo( cRect.left + 1.0f, cRect.bottom - 1.0f );
 
-				MovePenTo( cRect.left + 1, cRect.bottom - 1 );
+				DrawLine( Point( cRect.left + 1.0f, cRect.top + 1.0f ) );
+				DrawLine( Point( cRect.right - 1.0f, cRect.top + 1.0f ) );
 
-				DrawLine( Point( cRect.left + 1, cRect.top + 1 ) );
-				DrawLine( Point( cRect.right - 1, cRect.top + 1 ) );
+				SetFgColor( ( bSunken ) ? sFgShadowCol : sBgCol );
 
-				SetFgColor( ( Sunken ) ? sBrightPen : sDarkPen );
+				DrawLine( Point( cRect.right - 1.0f, cRect.bottom - 1.0f ) );
+				DrawLine( Point( cRect.left + 1.0f, cRect.bottom - 1.0f ) );
+			}
+			if( ( nStyle & FRAME_TRANSPARENT ) == 0 )
+			{
 
-				DrawLine( Point( cRect.right - 1, cRect.bottom - 1 ) );
-				DrawLine( Point( cRect.left + 1, cRect.bottom - 1 ) );
+				FillRect( Rect( cRect.left + 2.0f, cRect.top + 2.0f, cRect.right - 2.0f, cRect.bottom - 2.0f ), m_sEraseColor );
 			}
 		}
 		else
 		{
 			if( ( nStyle & FRAME_TRANSPARENT ) == 0 )
 			{
-				FillRect( Rect( cRect.left + 1, cRect.top + 1, cRect.right - 1, cRect.bottom - 1 ), m_sEraseColor );
+				FillRect( Rect( cRect.left + 1.0f, cRect.top + 1.0f, cRect.right - 1.0f, cRect.bottom - 1.0f ), m_sEraseColor );
 			}
 		}
 	}
+
+	SetFgColor( fg_save );
+	SetBgColor( bg_save );
 }
 
 //----------------------------------------------------------------------------
@@ -440,7 +188,7 @@ void Layer::DrawLine( const Point & cToPos )
 		return;
 	}
 
-	Point cTopLeft = ConvertToRoot( Point( 0, 0 ) );
+	Point cTopLeft = ConvertToBitmap( Point( 0, 0 ) );
 
 	IPoint cMin( m_cPenPos + cTopLeft + m_cScrollOffset );
 	IPoint cMax( cToPos + cTopLeft + m_cScrollOffset );
@@ -448,22 +196,23 @@ void Layer::DrawLine( const Point & cToPos )
 	m_cPenPos = cToPos;
 
 	ClipRect *pcClip;
+	
+	os::IRect cHideRect;
+	cHideRect |= cMin;
+	cHideRect |= cMax;	
 
-	if( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false )
+	if( ( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false ) && m_pcBitmap == g_pcScreenBitmap )
 	{
-		os::IRect cHideRect;
-		cHideRect |= cMin;
-		cHideRect |= cMax;
 		SrvSprite::Hide( cHideRect );
 	}
-
+	
 	IPoint cITopLeft( cTopLeft );
 
 	ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
 	{
 		m_pcBitmap->m_pcDriver->DrawLine( m_pcBitmap, pcClip->m_cBounds + cITopLeft, cMin, cMax, m_sFgColor, m_nDrawingMode );
 	}
-	if( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false )
+	if( ( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false ) && m_pcBitmap == g_pcScreenBitmap )
 	{
 		SrvSprite::Unhide();
 	}
@@ -498,8 +247,10 @@ void Layer::DrawString( const char *pzString, int nLength )
 	{
 		return;
 	}
+	
+	SrvBitmap* pcBitmap = m_pcBitmap;
 
-	if( m_nDrawingMode == DM_COPY && m_bFontPalletteValid == false )
+	if(m_nDrawingMode == DM_COPY && m_bFontPalletteValid == false )
 	{
 		m_asFontPallette[0] = m_sBgColor;
 		m_asFontPallette[NUM_FONT_GRAYS - 1] = m_sFgColor;
@@ -513,14 +264,8 @@ void Layer::DrawString( const char *pzString, int nLength )
 		}
 
 		/* Convert font pallette to colorspace */
-		switch ( m_pcBitmap->m_eColorSpc )
+		switch ( pcBitmap->m_eColorSpc )
 		{
-		case CS_RGB15:
-			for( int i = 1; i < NUM_FONT_GRAYS; ++i )
-			{
-				m_anFontPalletteConverted[i] = COL_TO_RGB15( m_asFontPallette[i] );
-			}
-			break;
 		case CS_RGB16:
 			for( int i = 1; i < NUM_FONT_GRAYS; ++i )
 			{
@@ -535,7 +280,7 @@ void Layer::DrawString( const char *pzString, int nLength )
 			}
 			break;
 		default:
-			dbprintf( "Layer::DrawString() unknown colorspace %d\n", m_pcBitmap->m_eColorSpc );
+			dbprintf( "Layer::DrawString() unknown colorspace %d\n", pcBitmap->m_eColorSpc );
 			break;
 		}
 		m_bFontPalletteValid = true;
@@ -546,11 +291,11 @@ void Layer::DrawString( const char *pzString, int nLength )
 		nLength = strlen( pzString );
 	}
 
-	Point cTopLeft = ConvertToRoot( Point( 0, 0 ) );
+	Point cTopLeft = ConvertToBitmap( Point( 0, 0 ) );
 	IPoint cITopLeft( cTopLeft );
 	IPoint cPos( m_cPenPos + cTopLeft + m_cScrollOffset );
 
-	if( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false )
+	if( ( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false ) && m_pcBitmap == g_pcScreenBitmap )
 	{
 		SrvSprite::Hide( static_cast < IRect > ( GetBounds() + cTopLeft ) );
 	}
@@ -581,7 +326,7 @@ void Layer::DrawString( const char *pzString, int nLength )
 
 				ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
 				{
-					m_pcBitmap->m_pcDriver->RenderGlyph( m_pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_anFontPalletteConverted );
+					pcBitmap->m_pcDriver->RenderGlyph( pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_anFontPalletteConverted );
 				}
 				cPos.x += pcGlyph->m_nAdvance.x;
 				m_cPenPos.x += pcGlyph->m_nAdvance.x;
@@ -589,7 +334,7 @@ void Layer::DrawString( const char *pzString, int nLength )
 			FontServer::Unlock();
 		}
 	}
-	else if( m_nDrawingMode == DM_BLEND && ( m_pcBitmap->m_eColorSpc == CS_RGB32 || m_pcBitmap->m_eColorSpc == CS_RGBA32 ) )
+	else if( m_nDrawingMode == DM_BLEND && ( pcBitmap->m_eColorSpc == CS_RGB32 || pcBitmap->m_eColorSpc == CS_RGBA32 ) )
 	{
 		if( FontServer::Lock() )
 		{
@@ -615,7 +360,7 @@ void Layer::DrawString( const char *pzString, int nLength )
 
 				ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
 				{
-					m_pcBitmap->m_pcDriver->RenderGlyphBlend( m_pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_sFgColor );
+					pcBitmap->m_pcDriver->RenderGlyphBlend( pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_sFgColor );
 				}
 				cPos.x += pcGlyph->m_nAdvance.x;
 				m_cPenPos.x += pcGlyph->m_nAdvance.x;
@@ -649,7 +394,7 @@ void Layer::DrawString( const char *pzString, int nLength )
 
 				ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
 				{
-					m_pcBitmap->m_pcDriver->RenderGlyph( m_pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_sFgColor );
+					pcBitmap->m_pcDriver->RenderGlyph( pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_sFgColor );
 				}
 				cPos.x += pcGlyph->m_nAdvance.x;
 				m_cPenPos.x += pcGlyph->m_nAdvance.x;
@@ -657,7 +402,7 @@ void Layer::DrawString( const char *pzString, int nLength )
 			FontServer::Unlock();
 		}
 	}
-	if( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false )
+	if( ( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false ) && m_pcBitmap == g_pcScreenBitmap )
 	{
 		SrvSprite::Unhide();
 	}
@@ -685,6 +430,7 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 		return;
 
 	Region *pcReg = GetRegion();
+	SrvBitmap* pcBitmap = m_pcBitmap;
 
 	if( NULL == pcReg )
 		return;
@@ -703,14 +449,8 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 		}
 
 		/* Convert font pallette to colorspace */
-		switch ( m_pcBitmap->m_eColorSpc )
+		switch ( pcBitmap->m_eColorSpc )
 		{
-		case CS_RGB15:
-			for( int i = 1; i < NUM_FONT_GRAYS; ++i )
-			{
-				m_anFontPalletteConverted[i] = COL_TO_RGB15( m_asFontPallette[i] );
-			}
-			break;
 		case CS_RGB16:
 			for( int i = 1; i < NUM_FONT_GRAYS; ++i )
 			{
@@ -725,7 +465,7 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 			}
 			break;
 		default:
-			dbprintf( "Layer::DrawString() unknown colorspace %d\n", m_pcBitmap->m_eColorSpc );
+			dbprintf( "Layer::DrawString() unknown colorspace %d\n", pcBitmap->m_eColorSpc );
 			break;
 		}
 		m_bFontPalletteValid = true;
@@ -752,7 +492,7 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 		p +=len;
 	}
 
-	Point cTopLeft = ConvertToRoot( Point( 0, 0 ) );
+	Point cTopLeft = ConvertToBitmap( Point( 0, 0 ) );
 	IPoint cITopLeft( cTopLeft );
 	IPoint cPos( cTopLeft + m_cScrollOffset );
 
@@ -760,7 +500,7 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 	cPos.y += ( int )cRect.top;
 	IPoint cStartPos = cPos;
 
-	if( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false )
+	if( ( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false )  && m_pcBitmap == g_pcScreenBitmap )
 	{
 		SrvSprite::Hide( static_cast < IRect > ( GetBounds() + cTopLeft ) );
 	}
@@ -884,21 +624,21 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 			{
 				ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
 				{
-					m_pcBitmap->m_pcDriver->RenderGlyph( m_pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_anFontPalletteConverted );
+					pcBitmap->m_pcDriver->RenderGlyph( pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_anFontPalletteConverted );
 				}
 			}
-			else if( m_nDrawingMode == DM_BLEND && ( m_pcBitmap->m_eColorSpc == CS_RGB32 || m_pcBitmap->m_eColorSpc == CS_RGBA32 ) )
+			else if( m_nDrawingMode == DM_BLEND && ( pcBitmap->m_eColorSpc == CS_RGB32 || pcBitmap->m_eColorSpc == CS_RGBA32 ) )
 			{
 				ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
 				{
-					m_pcBitmap->m_pcDriver->RenderGlyphBlend( m_pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_sFgColor );
+					pcBitmap->m_pcDriver->RenderGlyphBlend( pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_sFgColor );
 				}
 			}
 			else
 			{
 				ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
 				{
-					m_pcBitmap->m_pcDriver->RenderGlyph( m_pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_sFgColor );
+					pcBitmap->m_pcDriver->RenderGlyph( pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_sFgColor );
 				}
 			}
 
@@ -909,7 +649,7 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 					IPoint cMax( cPos );
 
 					cMax.x += pcGlyph->m_nAdvance.x;
-					m_pcBitmap->m_pcDriver->DrawLine( m_pcBitmap, pcClip->m_cBounds + cITopLeft, cPos, cMax, m_sFgColor, m_nDrawingMode );
+					pcBitmap->m_pcDriver->DrawLine( pcBitmap, pcClip->m_cBounds + cITopLeft, cPos, cMax, m_sFgColor, m_nDrawingMode );
 				}
 			}
 
@@ -918,7 +658,7 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 		FontServer::Unlock();
 	}
 
-	if( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false )
+	if( ( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false ) && m_pcBitmap == g_pcScreenBitmap )
 	{
 		SrvSprite::Unhide();
 	}
@@ -933,8 +673,11 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-void Layer::CopyRect( SrvBitmap * pcBitmap, GRndCopyRect_s * psCmd )
+void Layer::CopyRect( GRndCopyRect_s * psCmd )
 {
+	SrvBitmap* pcBitmap = m_pcBitmap;
+	if( pcBitmap == NULL )
+		return;
 	ScrollRect( pcBitmap, psCmd->cSrcRect, psCmd->cDstRect.LeftTop() );
 }
 
@@ -968,6 +711,7 @@ void Layer::FillRect( Rect cRect, Color32_s sColor )
 		return;
 	}
 
+	SrvBitmap* pcBitmap = m_pcBitmap;
 	Region *pcReg = GetRegion();
 
 	if( NULL == pcReg )
@@ -975,12 +719,12 @@ void Layer::FillRect( Rect cRect, Color32_s sColor )
 		return;
 	}
 
-	Point cTopLeft = ConvertToRoot( Point( 0, 0 ) );
+	Point cTopLeft = ConvertToBitmap( Point( 0, 0 ) );
 	IPoint cITopLeft( cTopLeft );
 	ClipRect *pcClip;
 	IRect cDstRect( cRect + m_cScrollOffset );
 
-	if( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false )
+	if( ( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false ) && m_pcBitmap == g_pcScreenBitmap )
 	{
 		SrvSprite::Hide( cDstRect + cITopLeft );
 	}
@@ -990,38 +734,14 @@ void Layer::FillRect( Rect cRect, Color32_s sColor )
 
 		if( cRect.IsValid() )
 		{
-			m_pcBitmap->m_pcDriver->FillRect( m_pcBitmap, cRect + cITopLeft, sColor );
+			pcBitmap->m_pcDriver->FillRect( pcBitmap, cRect + cITopLeft, sColor, m_nDrawingMode );
 		}
 	}
-	if( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false )
+	if( ( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false ) && m_pcBitmap == g_pcScreenBitmap )
 	{
 		SrvSprite::Unhide();
 	}
 	PutRegion( pcReg );
-}
-
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-//      To be removed when ScrollRect() are repaired.
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-void Layer::BitBlit( SrvBitmap * pcBitmap, Rect cSrcRect, Point cDstPos )
-{
-	ConvertToRoot( &cSrcRect );
-	ConvertToRoot( &cDstPos );
-
-	if( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false )
-	{
-		SrvSprite::Hide( static_cast < IRect > ( GetBounds() + ConvertToRoot( Point( 0, 0 ) ) ) );
-	}
-	pcBitmap->m_pcDriver->BltBitmap( pcBitmap, pcBitmap, static_cast < IRect > ( cSrcRect + m_cScrollOffset ), static_cast < IPoint > ( cDstPos + m_cScrollOffset ), m_nDrawingMode );
-	if( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false )
-	{
-		SrvSprite::Unhide();
-	}
 }
 
 //----------------------------------------------------------------------------
@@ -1063,10 +783,11 @@ static int SortCmp( const void *pNode1, const void *pNode2 )
 
 void Layer::ScrollRect( SrvBitmap * pcBitmap, Rect cSrcRect, Point cDstPos )
 {
-	if( m_pcVisibleReg == NULL || m_pcBitmap == NULL )
+	if( m_pcBitmapReg == NULL || m_pcBitmap == NULL )
 	{
 		return;
 	}
+	SrvBitmap* pcDstBitmap = m_pcBitmap;
 
 	IRect cISrcRect( cSrcRect );
 	IPoint cDelta = IPoint( cDstPos ) - cISrcRect.LeftTop();
@@ -1075,9 +796,9 @@ void Layer::ScrollRect( SrvBitmap * pcBitmap, Rect cSrcRect, Point cDstPos )
 	ClipRect *pcSrcClip;
 	ClipRect *pcDstClip;
 	ClipRectList cBltList;
-	Region cDamage( *m_pcVisibleReg, cIDstRect, false );
+	Region cDamage( *m_pcBitmapReg, cIDstRect, false );
 
-	ENUMCLIPLIST( &m_pcVisibleReg->m_cRects, pcSrcClip )
+	ENUMCLIPLIST( &m_pcBitmapReg->m_cRects, pcSrcClip )
 	{
 
 	  /***	Clip to source rectangle	***/
@@ -1091,7 +812,7 @@ void Layer::ScrollRect( SrvBitmap * pcBitmap, Rect cSrcRect, Point cDstPos )
 	  /***	Transform into destination space	***/
 		cSRect += cDelta;
 
-		ENUMCLIPLIST( &m_pcVisibleReg->m_cRects, pcDstClip )
+		ENUMCLIPLIST( &m_pcBitmapReg->m_cRects, pcDstClip )
 		{
 			IRect cDRect = cSRect & pcDstClip->m_cBounds;
 
@@ -1114,11 +835,11 @@ void Layer::ScrollRect( SrvBitmap * pcBitmap, Rect cSrcRect, Point cDstPos )
 	if( nCount == 0 )
 	{
 		Invalidate( cIDstRect );
-		UpdateIfNeeded( true );
+		UpdateIfNeeded();
 		return;
 	}
 
-	IPoint cTopLeft( ConvertToRoot( Point( 0, 0 ) ) );
+	IPoint cTopLeft( ConvertToBitmap( Point( 0, 0 ) ) );
 
 	ClipRect **apsClips = new ClipRect *[nCount];
 
@@ -1129,9 +850,9 @@ void Layer::ScrollRect( SrvBitmap * pcBitmap, Rect cSrcRect, Point cDstPos )
 	}
 	qsort( apsClips, nCount, sizeof( ClipRect * ), SortCmp );
 
-	if( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false )
+	if( ( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false ) && m_pcBitmap == g_pcScreenBitmap )
 	{
-		SrvSprite::Hide( static_cast < IRect > ( GetBounds() + ConvertToRoot( Point( 0, 0 ) ) ) );
+		SrvSprite::Hide( static_cast < IRect > ( GetBounds() + ConvertToBitmap( Point( 0, 0 ) ) ) );
 	}
 
 	for( int i = 0; i < nCount; ++i )
@@ -1139,7 +860,7 @@ void Layer::ScrollRect( SrvBitmap * pcBitmap, Rect cSrcRect, Point cDstPos )
 		ClipRect *pcClip = apsClips[i];
 
 		pcClip->m_cBounds += cTopLeft;	// Convert into screen space
-		m_pcBitmap->m_pcDriver->BltBitmap( m_pcBitmap, m_pcBitmap, pcClip->m_cBounds - pcClip->m_cMove, IPoint( pcClip->m_cBounds.left, pcClip->m_cBounds.top ), DM_COPY );
+		pcDstBitmap->m_pcDriver->BltBitmap( pcDstBitmap, pcBitmap, pcClip->m_cBounds - pcClip->m_cMove, pcClip->m_cBounds, DM_COPY, 0xff );
 		Region::FreeClipRect( pcClip );
 	}
 	delete[]apsClips;
@@ -1187,8 +908,8 @@ void Layer::ScrollRect( SrvBitmap * pcBitmap, Rect cSrcRect, Point cDstPos )
 	{
 		m_pcActiveDamageReg->Optimize();
 	}
-	UpdateIfNeeded( true );
-	if( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false )
+	UpdateIfNeeded();
+	if( ( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false ) && m_pcBitmap == g_pcScreenBitmap )
 	{
 		SrvSprite::Unhide();
 	}
@@ -1201,43 +922,54 @@ void Layer::ScrollRect( SrvBitmap * pcBitmap, Rect cSrcRect, Point cDstPos )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-void Layer::DrawBitMap( SrvBitmap * pcDstBitmap, SrvBitmap * pcBitMap, Rect cSrcRect, Point cDstPos )
+void Layer::DrawBitMap( SrvBitmap * pcBitMap, Rect cSrcRect, Rect cDstRect )
 {
-	Region *pcReg = GetRegion();
-	
 	if( m_pcBitmap == NULL || pcBitMap == NULL )
 		return;
 
+	SrvBitmap* pcDstBitmap = m_pcBitmap;
+	Region *pcReg = GetRegion();
+	
+	
 	if( NULL == pcReg )
 	{
 		return;
 	}
-	IPoint cTopLeft( ConvertToRoot( Point( 0, 0 ) ) );
+	IPoint cTopLeft( ConvertToBitmap( Point( 0, 0 ) ) );
 	ClipRect *pcClip;
+	
 
 	IRect cISrcRect( cSrcRect );
-	IPoint cIDstPos( cDstPos + m_cScrollOffset );
-	IRect cDstRect = cISrcRect.Bounds() + cIDstPos;
-	IPoint cSrcPos( cISrcRect.LeftTop() );
+	IRect cIDstRect( cDstRect + m_cScrollOffset );
 
-	if( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false )
+	if( ( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false ) && m_pcBitmap == g_pcScreenBitmap )
 	{
-		SrvSprite::Hide( cDstRect + cTopLeft );
+		SrvSprite::Hide( cIDstRect + cTopLeft );
 	}
+	
 
 	ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
 	{
-		IRect cRect = cDstRect & pcClip->m_cBounds;
+		IRect cRect = cIDstRect & pcClip->m_cBounds;
 
 		if( cRect.IsValid() )
 		{
-			IPoint cDst = cRect.LeftTop() + cTopLeft;
-			IRect cSrc = cRect - cIDstPos + cSrcPos;
-
-			pcDstBitmap->m_pcDriver->BltBitmap( pcDstBitmap, pcBitMap, cSrc, cDst, m_nDrawingMode );
+			IRect cDst = cRect + cTopLeft;
+			IRect cSrc;
+			if( cISrcRect.Size() != cIDstRect.Size() )
+			{
+				cSrc = cISrcRect;
+				cSrc.left += ( cRect.left - cIDstRect.left ) * ( cISrcRect.Width() + 1 ) / ( cIDstRect.Width() + 1 );
+				cSrc.right -= ( cIDstRect.right - cRect.right ) * ( cISrcRect.Width() + 1 ) / ( cIDstRect.Width() + 1 );
+				cSrc.top += ( cRect.top - cIDstRect.top ) * ( cISrcRect.Height() + 1 ) / ( cIDstRect.Height() + 1 );
+				cSrc.bottom -= ( cIDstRect.bottom - cRect.bottom ) * ( cISrcRect.Height() + 1 ) / ( cIDstRect.Height() + 1 );
+			}
+			else
+				cSrc = cRect - cIDstRect.LeftTop() + cISrcRect.LeftTop();
+			pcDstBitmap->m_pcDriver->BltBitmap( pcDstBitmap, pcBitMap, cSrc, cDst, m_nDrawingMode, 0xff );
 		}
 	}
-	if( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false )
+	if( ( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false ) && m_pcBitmap == g_pcScreenBitmap )
 	{
 		SrvSprite::Unhide();
 	}

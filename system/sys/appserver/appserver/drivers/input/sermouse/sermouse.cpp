@@ -32,6 +32,8 @@
 #include <appserver/protocol.h>
 #include <util/message.h>
 
+using namespace os;
+
 static int g_nSerialDevice = -1;
 
 class SerMouseDriver : public InputNode

@@ -24,7 +24,7 @@
 #include <iostream>
 extern "C" 
 {
-	#include <ffmpeg/avformat.h>
+	#include <avformat.h>
 }
 
 class FFMpegDemuxer : public os::MediaInput
@@ -102,7 +102,7 @@ status_t FFMpegDemuxer::Open( os::String zFileName )
 		m_nBitRate = 0;
 		for( int i = 0; i < m_psContext->nb_streams; i++ ) 
 		{
-			m_nBitRate += m_psContext->streams[i]->codec.bit_rate;
+			m_nBitRate += m_psContext->streams[i]->codec->bit_rate;
 		}
 		
 		/* Do not use url_fseek for getting the file length, it does not work ( but why ? ) */
@@ -238,26 +238,26 @@ os::MediaFormat_s FFMpegDemuxer::GetStreamFormat( uint32 nIndex )
 	os::MediaFormat_s sFormat;
 	
 	/* Save Media Type */
-	if( m_psContext->streams[nIndex]->codec.codec_type == CODEC_TYPE_VIDEO )
+	if( m_psContext->streams[nIndex]->codec->codec_type == CODEC_TYPE_VIDEO )
 		sFormat.nType = os::MEDIA_TYPE_VIDEO;
-	else if( m_psContext->streams[nIndex]->codec.codec_type == CODEC_TYPE_AUDIO )
+	else if( m_psContext->streams[nIndex]->codec->codec_type == CODEC_TYPE_AUDIO )
 		sFormat.nType = os::MEDIA_TYPE_AUDIO;
 	else
 		sFormat.nType = os::MEDIA_TYPE_OTHER;
 		
-	if( avcodec_find_decoder( m_psContext->streams[nIndex]->codec.codec_id ) == NULL )
+	if( avcodec_find_decoder( m_psContext->streams[nIndex]->codec->codec_id ) == NULL )
 	{
-		std::cout<<"Warning Unknown Codec :"<<m_psContext->streams[nIndex]->codec.codec_id<<std::endl;
+		std::cout<<"Warning Unknown Codec :"<<m_psContext->streams[nIndex]->codec->codec_id<<std::endl;
 		sFormat.zName = "Unknown";
 	} else {
-		sFormat.zName = avcodec_find_decoder( m_psContext->streams[nIndex]->codec.codec_id )->name;
+		sFormat.zName = avcodec_find_decoder( m_psContext->streams[nIndex]->codec->codec_id )->name;
 	}
 
-	sFormat.nBitRate = m_psContext->streams[nIndex]->codec.bit_rate;
+	sFormat.nBitRate = m_psContext->streams[nIndex]->codec->bit_rate;
 	
 	if( sFormat.nType == os::MEDIA_TYPE_AUDIO ) {
-		sFormat.nSampleRate = m_psContext->streams[nIndex]->codec.sample_rate;
-		sFormat.nChannels = m_psContext->streams[nIndex]->codec.channels;
+		sFormat.nSampleRate = m_psContext->streams[nIndex]->codec->sample_rate;
+		sFormat.nChannels = m_psContext->streams[nIndex]->codec->channels;
 	}
 	
 	if( sFormat.nType == os::MEDIA_TYPE_VIDEO ) {
@@ -266,18 +266,18 @@ os::MediaFormat_s FFMpegDemuxer::GetStreamFormat( uint32 nIndex )
 		else
 			sFormat.bVFR = false;
 		sFormat.vFrameRate = (float)m_psContext->streams[nIndex]->r_frame_rate.num / (float)m_psContext->streams[nIndex]->r_frame_rate.den;
-		sFormat.nWidth = m_psContext->streams[nIndex]->codec.width;
-		sFormat.nHeight = m_psContext->streams[nIndex]->codec.height;
+		sFormat.nWidth = m_psContext->streams[nIndex]->codec->width;
+		sFormat.nHeight = m_psContext->streams[nIndex]->codec->height;
 		
-		if( m_psContext->streams[nIndex]->codec.pix_fmt == PIX_FMT_YUV422 )
+		if( m_psContext->streams[nIndex]->codec->pix_fmt == PIX_FMT_YUV422 )
 			sFormat.eColorSpace = os::CS_YUV422;
-		else if( m_psContext->streams[nIndex]->codec.pix_fmt == PIX_FMT_YUV411P )
+		else if( m_psContext->streams[nIndex]->codec->pix_fmt == PIX_FMT_YUV411P )
 			sFormat.eColorSpace = os::CS_YUV411;
-		else if( m_psContext->streams[nIndex]->codec.pix_fmt == PIX_FMT_YUV420P )
+		else if( m_psContext->streams[nIndex]->codec->pix_fmt == PIX_FMT_YUV420P )
 			sFormat.eColorSpace = os::CS_YUV420;
-		else if( m_psContext->streams[nIndex]->codec.pix_fmt == PIX_FMT_YUV422P )
+		else if( m_psContext->streams[nIndex]->codec->pix_fmt == PIX_FMT_YUV422P )
 			sFormat.eColorSpace = os::CS_YUV422;
-		else if( m_psContext->streams[nIndex]->codec.pix_fmt == PIX_FMT_RGB24 )
+		else if( m_psContext->streams[nIndex]->codec->pix_fmt == PIX_FMT_RGB24 )
 			sFormat.eColorSpace = os::CS_RGB24;
 		//cout<<"Format "<<m_psContext->streams[nIndex]->codec.pix_fmt<<endl;
 			

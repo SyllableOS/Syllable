@@ -104,8 +104,10 @@ i855::i855(  int nFd ) :
 	m_nRingSize = RING_BUFFER_SIZE;
 	m_nRingMask = m_nRingSize - 1;
 	m_nFrameBufferOffset = m_nRingSize;
-	m_bMobileCursor = false;
 	m_bTwoPipes = false;
+	m_bEngineDirty = false;
+	bool bSwapBases = false;
+	bool bTweakBios = false;
 	
 	/* Get Info */
 	if( ioctl( nFd, PCI_GFX_GET_PCI_INFO, &m_cPCIInfo ) != 0 )
@@ -119,7 +121,6 @@ i855::i855(  int nFd ) :
 	switch( m_cPCIInfo.nDeviceID )
 	{
 		case 0x3577:
-			m_bMobileCursor = true;
 			m_bTwoPipes = true;
 			strcpy( zGPUName, "i830M" );
 		break;
@@ -128,8 +129,8 @@ i855::i855(  int nFd ) :
 		break;
 		case 0x3582:
 		{
-			m_bMobileCursor = true;
 			m_bTwoPipes = true;
+			bTweakBios = true;
 			uint32 nVariant = pci_gfx_read_config(nFd, m_cPCIInfo.nBus, m_cPCIInfo.nDevice,
 												m_cPCIInfo.nFunction, I85X_CAPID, 4);
 			nVariant = ( nVariant >> I85X_VARIANT_SHIFT) & I85X_VARIANT_MASK;
@@ -157,45 +158,71 @@ i855::i855(  int nFd ) :
 			strcpy( zGPUName, "i865G" );
 		break;
 		case 0x2582:
-			m_bMobileCursor = true;
 			m_bTwoPipes = true;
+			bSwapBases = true;
 			strcpy( zGPUName, "i915G" );
 		break;
+		case 0x258A:
+			bSwapBases = true;
+			strcpy( zGPUName, "E7221G" );
+		break;
+		case 0x2592:
+			m_bTwoPipes = true;
+			bSwapBases = true;
+			strcpy( zGPUName, "i915GM" );
+		break;
+		case 0x2772:
+			m_bTwoPipes = true;
+			bSwapBases = true;
+			strcpy( zGPUName, "i945G" );
+		break;
+
 		default:
 			strcpy( zGPUName, "Unknown" );
 	}
 	
 	dbprintf( "i855:: Intel %s detected\n", zGPUName );
 	
+	/* Map ROM */
+	m_pRomBase = NULL;
+	m_hRomArea = create_area("i855_rom", (void**)&m_pRomBase, 0x30000,
+	                              AREA_FULL_ACCESS, AREA_NO_LOCK);
+	remap_area(m_hRomArea, (void*)(0x000c0000));
+	
 	/* Create mmio and framebuffer area */
 	int nIoSize = get_pci_memory_size(nFd, &m_cPCIInfo, 1); 
 	m_hRegisterArea = create_area("i855_regs", (void**)&m_pRegisterBase, nIoSize,
 	                              AREA_FULL_ACCESS, AREA_NO_LOCK);
-	remap_area(m_hRegisterArea, (void*)(m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK));
+	if( bSwapBases )
+		remap_area(m_hRegisterArea, (void*)(m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK));
+	else
+		remap_area(m_hRegisterArea, (void*)(m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK));
 	
 	dbprintf( "i855:: MMIO @ 0x%x mapped to 0x%x size 0x%x\n", (uint)(m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK),
 													(uint)m_pRegisterBase, (uint)nIoSize );
 	
 	int nMemSize = get_pci_memory_size(nFd, &m_cPCIInfo, 0) - m_nRingSize;
 	m_hFrameBufferArea = create_area("i855_framebuffer", (void**)&m_pFrameBufferBase,
-	                                 nMemSize, AREA_FULL_ACCESS, AREA_NO_LOCK);
-	remap_area(m_hFrameBufferArea, (void*)( ( m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK ) + m_nFrameBufferOffset ));
+	                                 nMemSize, AREA_FULL_ACCESS | AREA_WRCOMB, AREA_NO_LOCK);
+	if( bSwapBases )
+		remap_area(m_hFrameBufferArea, (void*)( ( m_cPCIInfo.u.h0.nBase2 & PCI_ADDRESS_MEMORY_32_MASK ) + m_nFrameBufferOffset ));
+	else
+		remap_area(m_hFrameBufferArea, (void*)( ( m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK ) + m_nFrameBufferOffset ));
 	dbprintf( "i855:: Framebuffer @ 0x%x mapped to 0x%x size 0x%x\n", (uint)(( m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK ) + m_nFrameBufferOffset),
 													(uint)m_pFrameBufferBase, (uint)nMemSize );
 	
 	/* Create command ring area */
 	m_hRingArea = create_area("i855_cmd_ring", (void**)&m_pRingBase,
 	                                 m_nRingSize, AREA_FULL_ACCESS, AREA_NO_LOCK);
-	remap_area(m_hRingArea, (void*)(m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK));
+	if( bSwapBases )
+		remap_area(m_hRingArea, (void*)(m_cPCIInfo.u.h0.nBase2 & PCI_ADDRESS_MEMORY_32_MASK));
+	else
+		remap_area(m_hRingArea, (void*)(m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK));
 	
 	dbprintf( "i855:: Ringbuffer @ 0x%x mapped to 0x%x size 0x%x\n", (uint)(m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK),
 													(uint)m_pRingBase, (uint)m_nRingSize );
 	/* Initialize the cursor */
 	/* The last 10 pages of the video memory are allocated as linear memory */
-	m_bUsingHWCursor = false;
-	m_bCursorIsOn = false;
-	m_cCursorPos = os::IPoint( 0, 0 );
-	memset( m_anCursorShape, 0x00, sizeof( m_anCursorShape ) );
 	m_nCursorOffset = ( 8192 - 10 ) * PAGE_SIZE;
 	m_pCursorBase = m_pFrameBufferBase + m_nCursorOffset - m_nFrameBufferOffset;
 	if( ioctl( nFd, I855_GET_CURSOR_ADDRESS, &m_nCursorAddress ) != 0 )
@@ -266,6 +293,10 @@ i855::i855(  int nFd ) :
 		m_nDisplayInfo = rm.ECX & 0xffff;
 	}
 	
+	/* Patch BIOS */
+	if( bTweakBios )
+		TweakMemorySize( nFd );
+	
 	
 	/* Initialize the screenmodes */
 	
@@ -282,6 +313,9 @@ i855::i855(  int nFd ) :
 	OUTREG( LP_RING + RING_START, 0 );
 	m_nRingPos = 0;
 	m_nRingSpace = m_nRingSize - 8;
+	
+	/* Initialize memory manager */
+	InitMemory( 8 * 1024 * 1024, m_nVideoEnd - 8 * 1024 * 1024 - m_nFrameBufferOffset, PAGE_SIZE - 1, 63 );
 	
 	m_bIsInitiated = true;
 }
@@ -306,6 +340,52 @@ i855::~i855()
 	}
 }
 
+
+//----------------------------------------------------------------------------
+// NAME:
+// DESC:
+// NOTE:
+// SEE ALSO:
+//----------------------------------------------------------------------------
+
+/* I am not sure about this. The X-driver writes "new size - 0x21000" but on my
+ machine its new size / 1024 * 4 ... */
+void i855::TweakMemorySize( int nFd )
+{
+	const char *pzString = "Total time for VGA POST:";
+	const int nLen = strlen( pzString );
+	int nReg = ( m_cPCIInfo.nDeviceID == 0x2562 ? _845_DRAM_RW_CONTROL : _855_DRAM_RW_CONTROL );
+	int nOffset = ( m_cPCIInfo.nDeviceID == 0x2562 ? -19 : -23 );
+	char* pBiosAddr = (char*)m_pRomBase;
+	int i, j = 0;
+	
+	/* Search for MAGIC string */
+	for( i = 0; i < 0x10000; i++ ) {
+		if( pBiosAddr[i] == pzString[j] ) {
+			if( ++j == nLen )
+				break;
+		} else {
+			i -= j;
+			j = 0;
+		}
+	}
+	
+	if( j < nLen )
+	{
+		dbprintf( "Could not find ROM\n" );
+		return;
+	}
+	
+	uint32 nMemSizeBase = ( i - j + 1 + nOffset );
+	char* pPosition = pBiosAddr + nMemSizeBase;
+	
+	uint32 nOldPerm = pci_gfx_read_config( nFd, 0, 0, 0, nReg, 4 );
+	pci_gfx_write_config( nFd, 0, 0, 0, nReg, 4, 0x33330000 );
+	
+	*( uint32* )pPosition = ( 12288 * 4 ); // ????
+	
+	pci_gfx_write_config( nFd, 0, 0, 0, nReg, 4, nOldPerm );
+}
 
 //----------------------------------------------------------------------------
 // NAME:
@@ -368,10 +448,6 @@ bool i855::InitModes( void )
 		if( sModeInfo.RedMaskSize == 0 && sModeInfo.GreenMaskSize == 0 && sModeInfo.BlueMaskSize == 0 && sModeInfo.RedFieldPosition == 0 && sModeInfo.GreenFieldPosition == 0 && sModeInfo.BlueFieldPosition == 0 )
 		{
 			m_cModeList.push_back( i855Mode( sModeInfo.XResolution, sModeInfo.YResolution, sModeInfo.BytesPerScanLine, CS_CMAP8, 60.0f, anModes[i] | 0x4000, sModeInfo.PhysBasePtr ) );
-		}
-		else if( sModeInfo.RedMaskSize == 5 && sModeInfo.GreenMaskSize == 5 && sModeInfo.BlueMaskSize == 5 && sModeInfo.RedFieldPosition == 10 && sModeInfo.GreenFieldPosition == 5 && sModeInfo.BlueFieldPosition == 0 )
-		{
-			m_cModeList.push_back( i855Mode( sModeInfo.XResolution, sModeInfo.YResolution, sModeInfo.BytesPerScanLine, CS_RGB15, 60.0f, anModes[i] | 0x4000, sModeInfo.PhysBasePtr ) );
 		}
 		else if( sModeInfo.RedMaskSize == 5 && sModeInfo.GreenMaskSize == 6 && sModeInfo.BlueMaskSize == 5 && sModeInfo.RedFieldPosition == 11 && sModeInfo.GreenFieldPosition == 5 && sModeInfo.BlueFieldPosition == 0 )
 		{
@@ -501,45 +577,16 @@ int i855::SetScreenMode( screen_mode sMode )
 				OUTREG( DSPBBASE, m_nFrameBufferOffset );
 			}
 			
-			/* Initialize the hardware cursor */
-			if( m_bMobileCursor )
-			{
-				uint32 nTemp = INREG( CURSOR_A_CONTROL );
-				nTemp &= ~(CURSOR_MODE | MCURSOR_GAMMA_ENABLE | MCURSOR_MEM_TYPE_LOCAL |
-				MCURSOR_PIPE_SELECT);
-				nTemp |= CURSOR_MODE_DISABLE;
-				nTemp |= (m_nDisplayPipe << 28);
-      
-				OUTREG(CURSOR_A_CONTROL, nTemp);
-				OUTREG(CURSOR_A_BASE, m_nCursorAddress);
-				
-				if( m_bTwoPipes )
-				{
-					nTemp &= ~MCURSOR_PIPE_SELECT;
-					nTemp |= (!m_nDisplayPipe << 28);
-					OUTREG(CURSOR_B_CONTROL, nTemp);
-					OUTREG(CURSOR_B_BASE, m_nCursorAddress);
-				}
-			}		
-			/* Load the hardware cursor */
-			if ( m_bUsingHWCursor )
-			{
-				uint32 *pnSrc = ( uint32 * )m_anCursorShape;
-				volatile uint32 *pnDst = ( uint32 * )m_pCursorBase;
-
-				for ( int i = 0; i < 64 * 64; i++ )
-				{
-					*pnDst++ = *pnSrc++;
-				}
-
-				SetMousePos( m_cCursorPos );
-				if ( m_bCursorIsOn )
-				{
-					MouseOn();
-				}
-			}
-			
 			WaitForIdle();
+			
+			/* Reenable video overlay */
+			if ( m_bVideoOverlayUsed )
+			{
+				SetupVideoOneLine();
+				UpdateVideo();
+			}
+			m_bEngineDirty = true;
+			
 			#if 0
 			dbprintf( "%x %x\n", (uint)INREG( DSPACNTR ), (uint)INREG( DSPBCNTR ) );
 			dbprintf( "%x %x\n", (uint)INREG( PIPEACONF ), (uint)INREG( PIPEBCONF ) );
@@ -550,12 +597,7 @@ int i855::SetScreenMode( screen_mode sMode )
 			return ( 0 );
 		}
 		
-		/* Reenable video overlay */
-		if ( m_bVideoOverlayUsed )
-		{
-			SetupVideoOneLine();
-			UpdateVideo();
-		}
+		
 	}
 	return ( -1 );
 }
@@ -565,18 +607,6 @@ screen_mode i855::GetCurrentScreenMode()
 	return ( m_cModeList[m_nCurrentMode] );
 }
 
-//----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//----------------------------------------------------------------------------
-
-bool i855::IntersectWithMouse( const IRect & cRect )
-{
-	return ( false );
-}
-
 
 //-----------------------------------------------------------------------------
 // NAME:
@@ -585,171 +615,14 @@ bool i855::IntersectWithMouse( const IRect & cRect )
 // SEE ALSO:
 //-----------------------------------------------------------------------------
 
-void i855::SetCursorBitmap( os::mouse_ptr_mode eMode, const os::IPoint & cHotSpot, const void *pRaster, int nWidth, int nHeight )
+void i855::LockBitmap( SrvBitmap* pcDstBitmap, SrvBitmap* pcSrcBitmap, os::IRect cSrc, os::IRect cDst )
 {
-	m_cCursorHotSpot = cHotSpot;
-	if ( !m_bMobileCursor || ( eMode != MPTR_MONO && eMode != MPTR_RGB32 ) || nWidth > 64 || nHeight > 64 )
-	{
-		if( m_bUsingHWCursor && m_bCursorIsOn )
-		{
-			MouseOff();
-			m_bUsingHWCursor = false;
-			MouseOn();
-		}
-		m_bUsingHWCursor = false;
-		return DisplayDriver::SetCursorBitmap( eMode, cHotSpot, pRaster, nWidth, nHeight );
-	}
-	
-	const uint8 *pnSrcMono = ( const uint8 * )pRaster;
-	const uint32 *pnSrcRgb = ( const uint32 * )pRaster;
-	volatile uint32 *pnDst = ( uint32 * )m_pCursorBase;
-	uint32 *pnSaved = m_anCursorShape;
-	uint32 *pnSaved32 = ( uint32 * )m_anCursorShape;
-	static uint32 anPalette[] = { 0x00000000, 0xff000000, 0xff000000, 0xffffffff };
-
-	for ( int y = 0; y < 64; y++ )
-	{
-		for ( int x = 0; x < 64; x++, pnSaved++ )
-		{
-			if ( y >= nHeight || x >= nWidth )
-			{
-				*pnSaved = 0x00000000;
-			}
-			else
-			{
-				if( eMode == MPTR_RGB32 )
-					*pnSaved = *pnSrcRgb++;
-				else
-					*pnSaved = anPalette[*pnSrcMono++];
-			}
-		}
-	}
-
-	for ( int i = 0; i < 64 * 64; i++ )
-	{
-		*pnDst++ = *pnSaved32++;
-	}
-	
-	if( !m_bUsingHWCursor && m_bCursorIsOn ) {
-		MouseOff();
-		m_bUsingHWCursor = true;
-		MouseOn();
-	}
-	m_bUsingHWCursor = true;
-	SetMousePos( m_cCursorPos );
-}
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-
-void i855::SetMousePos( os::IPoint cNewPos )
-{
-	m_cCursorPos = cNewPos;
-	if ( !m_bUsingHWCursor )
-	{
-		return DisplayDriver::SetMousePos( cNewPos );
-	}
-	int x = (int)cNewPos.x - (int)m_cCursorHotSpot.x;
-	int y = (int)cNewPos.y - (int)m_cCursorHotSpot.y;
-	bool bHide = false;
-	uint32 nTemp = 0;
-	
-	if( x >= GetCurrentScreenMode().m_nWidth ||
-       y >= GetCurrentScreenMode().m_nHeight ||
-       x <= -64 || y <= -64 )
-		bHide = true;
-		
-	nTemp |= ((x & CURSOR_POS_MASK) << CURSOR_X_SHIFT);
-	nTemp |= ((y & CURSOR_POS_MASK) << CURSOR_Y_SHIFT);
-	
-	if( y < 0 ) {
-		nTemp |= (CURSOR_POS_SIGN << CURSOR_Y_SHIFT);
-		y = -y;
-	}
-	
-	if( x < 0 ) {
-		nTemp |= (CURSOR_POS_SIGN << CURSOR_X_SHIFT);
-		x = -x;
-	}
-
-	OUTREG(CURSOR_A_POSITION, nTemp);
-	if( m_bTwoPipes )
-		OUTREG(CURSOR_B_POSITION, nTemp);
-	if( m_bCursorIsOn )
-	{
-		nTemp = INREG(CURSOR_A_CONTROL);
-		nTemp &= ~(CURSOR_MODE | MCURSOR_PIPE_SELECT);
-		if( bHide )
-			nTemp |= CURSOR_MODE_DISABLE;
-		else
-			nTemp |= CURSOR_MODE_64_ARGB_AX;
-		nTemp |= (m_nDisplayPipe << 28); /* Connect to correct pipe */
-		
-		OUTREG(CURSOR_A_CONTROL, nTemp);
-		if( m_bTwoPipes )
-		{
-			nTemp &= ~MCURSOR_PIPE_SELECT;
-			nTemp |= (!m_nDisplayPipe << 28);	
-			OUTREG(CURSOR_B_CONTROL, nTemp);
-		}
-	}
-	OUTREG(CURSOR_A_BASE, m_nCursorAddress);
-	if( m_bTwoPipes )
-		OUTREG(CURSOR_B_BASE, m_nCursorAddress);
-}
-
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-
-void i855::MouseOn()
-{
-	m_bCursorIsOn = true;
-	if ( !m_bUsingHWCursor )
-	{
-		return DisplayDriver::MouseOn();
-	}
-	SetMousePos( m_cCursorPos );
-}
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-
-void i855::MouseOff()
-{
-	m_bCursorIsOn = false;
-	if ( !m_bUsingHWCursor )
-	{
-		return DisplayDriver::MouseOff();
-	}
-	uint32 nTemp = INREG(CURSOR_A_CONTROL);
-	nTemp &= ~(CURSOR_MODE | MCURSOR_PIPE_SELECT);
-	nTemp |= CURSOR_MODE_DISABLE;
-	nTemp |= (m_nDisplayPipe << 28); /* Connect to correct pipe */
-	OUTREG(CURSOR_A_CONTROL, nTemp);
-	OUTREG(CURSOR_A_BASE, m_nCursorAddress);
-	if( m_bTwoPipes )
-	{
-		nTemp &= ~MCURSOR_PIPE_SELECT;
-		nTemp |= (!m_nDisplayPipe << 28);	
-		OUTREG(CURSOR_B_CONTROL, nTemp);
-		OUTREG(CURSOR_B_BASE, m_nCursorAddress);
-	}
+	if( ( pcDstBitmap->m_bVideoMem == false && ( pcSrcBitmap == NULL || pcSrcBitmap->m_bVideoMem == false ) ) || m_bEngineDirty == false )
+		return;
+	m_cGELock.Lock();
+	WaitForIdle();	
+	m_cGELock.Unlock();
+	m_bEngineDirty = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -774,17 +647,17 @@ bool i855::DrawLine(SrvBitmap* pcBitMap, const IRect& cClipRect,
 // SEE ALSO:
 //-----------------------------------------------------------------------------
 
-bool i855::FillRect(SrvBitmap *pcBitMap, const IRect& cRect, const Color32_s& sColor)
+bool i855::FillRect(SrvBitmap *pcBitMap, const IRect& cRect, const Color32_s& sColor, int nMode)
 {
-	if ( pcBitMap->m_bVideoMem == false ) {
-		return DisplayDriver::FillRect(pcBitMap, cRect, sColor);
+	if ( pcBitMap->m_bVideoMem == false || nMode != DM_COPY ) {
+		return DisplayDriver::FillRect(pcBitMap, cRect, sColor, nMode);
 	}
 	
 	m_cGELock.Lock();
 	
 	os::screen_mode sMode = GetCurrentScreenMode();
 	
-	uint32 nBR13 = sMode.m_nBytesPerLine | ( 0xF0 << 16 );
+	uint32 nBR13 = pcBitMap->m_nBytesPerLine | ( 0xF0 << 16 );
 	int nSize = cRect.Width() + 1;
 	int nBpp;
 	uint32 nColor;
@@ -806,12 +679,12 @@ bool i855::FillRect(SrvBitmap *pcBitMap, const IRect& cRect, const Color32_s& sC
 	}
 	OUTRING( nBR13 );
 	OUTRING(((cRect.Height()+1) << 16) | (nSize & 0xffff));
-	OUTRING(m_nFrameBufferOffset + cRect.top * sMode.m_nBytesPerLine + cRect.left * nBpp );
+	OUTRING(m_nFrameBufferOffset + pcBitMap->m_nVideoMemOffset + cRect.top * pcBitMap->m_nBytesPerLine + cRect.left * nBpp );
 	OUTRING(nColor);
 	OUTRING(0);
 	FLUSH_RING();
 	
-	WaitForIdle();
+	m_bEngineDirty = true;
 	m_cGELock.Unlock();
 
 	return( true );
@@ -825,17 +698,20 @@ bool i855::FillRect(SrvBitmap *pcBitMap, const IRect& cRect, const Color32_s& sC
 //-----------------------------------------------------------------------------
 
 bool i855::BltBitmap(SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap,
-                       IRect cSrcRect, IPoint cDstPos, int nMode)
+                       IRect cSrcRect, IRect cDstRect, int nMode, int nAlpha)
 {
-	if (pcDstBitMap->m_bVideoMem == false || pcSrcBitMap->m_bVideoMem == false || nMode != DM_COPY ) {
-		return DisplayDriver::BltBitmap(pcDstBitMap, pcSrcBitMap, cSrcRect, cDstPos, nMode);
+	if (pcDstBitMap->m_bVideoMem == false || pcSrcBitMap->m_bVideoMem == false || 
+			nMode != DM_COPY || cSrcRect.Size() != cDstRect.Size() ) {
+		return DisplayDriver::BltBitmap(pcDstBitMap, pcSrcBitMap, cSrcRect, cDstRect, nMode, nAlpha);
 	}
+	
+	IPoint cDstPos = cDstRect.LeftTop();
 	
 	m_cGELock.Lock();
 	
 	os::screen_mode sMode = GetCurrentScreenMode();
 	
-	uint32 nBR13 = sMode.m_nBytesPerLine | ( 0xCC << 16 );
+	uint32 nBR13 = pcDstBitMap->m_nBytesPerLine | ( 0xCC << 16 );
 	int nDstX2 = cDstPos.x + cSrcRect.Width() + 1;
 	int nDstY2 = cDstPos.y + cSrcRect.Height() + 1;
 	
@@ -851,13 +727,13 @@ bool i855::BltBitmap(SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap,
 	OUTRING( nBR13 );
 	OUTRING((cDstPos.y << 16) | (cDstPos.x & 0xffff));
 	OUTRING((nDstY2 << 16) | (nDstX2 & 0xffff));
-	OUTRING(m_nFrameBufferOffset);
+	OUTRING(m_nFrameBufferOffset + pcDstBitMap->m_nVideoMemOffset);
 	OUTRING((cSrcRect.top << 16) | (cSrcRect.left & 0xffff));
-	OUTRING( nBR13 & 0xFFFF );
-	OUTRING(m_nFrameBufferOffset);
+	OUTRING( pcSrcBitMap->m_nBytesPerLine & 0xFFFF );
+	OUTRING(m_nFrameBufferOffset + pcSrcBitMap->m_nVideoMemOffset);
 	FLUSH_RING();
 	
-	WaitForIdle();
+	m_bEngineDirty = true;
 	m_cGELock.Unlock();
 	
 	return( true );
@@ -909,8 +785,6 @@ void i855::WaitForIdle()
     FLUSH_RING();
 	
 	/* Wait for the commands to be processed */
-	int nHead = 0;
-	int nTail = 0;
 	bool bTimeout = false;
 	bigtime_t nLastTime = get_system_time();
 	do {

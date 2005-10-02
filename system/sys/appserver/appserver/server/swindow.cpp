@@ -50,6 +50,8 @@
 
 #include <macros.h>
 
+using namespace os;
+
 SrvWindow *SrvWindow::s_pcLastMouseWindow = NULL;
 SrvWindow *SrvWindow::s_pcDragWindow = NULL;
 SrvSprite *SrvWindow::s_pcDragSprite = NULL;
@@ -203,17 +205,23 @@ SrvWindow::~SrvWindow()
 			pcParent->UpdateRegions();
 		}
 		delete m_pcWndBorder;
+		
+		__assertw( get_active_window( true ) != this );
 	}
 	else
 	{
 		delete m_pcTopView;
 	}
 	delete m_pcAppTarget;
+	
+	m_pcTopView = NULL;
 
 	if( m_hMsgPort != -1 )
 	{
 		delete_port( m_hMsgPort );
 	}
+	
+	delete m_pcDecorator;
 }
 
 bool SrvWindow::HasFocus() const
@@ -491,6 +499,7 @@ void SrvWindow::WindowActivated( bool bFocus )
 		if( m_pcWndBorder != NULL )
 		{
 			m_pcDecorator->SetFocusState( bFocus );
+			g_pcTopView->UpdateLayer( m_pcWndBorder, false );
 		}
 	}
 }
@@ -503,6 +512,18 @@ void SrvWindow::WindowActivated( bool bFocus )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
+/* Entry of the the blit list */
+struct sBlitEntry
+{
+	sBlitEntry( Layer* pcLayer, bool bUpdateChildren )
+	{
+		m_nLayerHandle = pcLayer->GetHandle();
+		m_bUpdateChildren = bUpdateChildren;
+	}
+	int m_nLayerHandle;
+	bool m_bUpdateChildren;
+};
+
 void SrvWindow::R_Render( WR_Render_s * psPkt )
 {
 	bool bViewsMoved = false;
@@ -511,6 +532,8 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 	int nLowest = INT_MAX;
 	Layer *pcLowestLayer = NULL;
 	uint nBufPos = 0;
+	
+	std::vector<sBlitEntry> asBlitList;
 
 	for( int i = 0; i < psPkt->nCount; ++i )
 	{
@@ -522,7 +545,7 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 			dbprintf( "Error: SrvWindow::R_Render() invalid message size %d\n", psHdr->nSize );
 			break;
 		}
-
+		
 		if( bViewsMoved && ( psHdr->nCmd != DRC_SET_FRAME || psHdr->nCmd != DRC_SHOW_VIEW || psHdr->nCmd != DRC_SET_DRAW_REGION || psHdr->nCmd != DRC_SET_SHAPE_REGION ) )
 		{
 			bViewsMoved = false;
@@ -531,10 +554,12 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 			{
 				g_cLayerGate.Unlock();
 				g_cLayerGate.Close();
-				SrvSprite::Hide(  /*pcLowestLayer->ConvertToRoot( pcLowestLayer->GetBounds() ) */  );
+				if( pcLowestLayer->m_pcBitmap == g_pcScreenBitmap )
+					SrvSprite::Hide();
 				pcLowestLayer->UpdateRegions( false );
 				SrvWindow::HandleMouseTransaction();
-				SrvSprite::Unhide();
+				if( pcLowestLayer->m_pcBitmap == g_pcScreenBitmap )
+					SrvSprite::Unhide();
 				nLowest = INT_MAX;
 				g_cLayerGate.Open();
 				g_cLayerGate.Lock();
@@ -548,7 +573,14 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 		{
 			continue;
 		}
-
+		
+		/* Copy the last layer to the blitlist */			
+		if( !pcView->m_bOnUpdateList ) {
+			asBlitList.push_back( sBlitEntry( pcView, false ) );
+			pcView->m_bOnUpdateList = true;
+		}
+		
+		
 		switch ( psHdr->nCmd )
 		{
 		case DRC_BEGIN_UPDATE:
@@ -572,17 +604,15 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 				break;
 			}
 		case DRC_COPY_RECT:
-			if( NULL != GetBitmap() )
 			{
 				g_cLayerGate.Unlock();
 				g_cLayerGate.Close();
-				pcView->CopyRect( GetBitmap(), ( GRndCopyRect_s * ) psHdr );
+				pcView->CopyRect( ( GRndCopyRect_s * ) psHdr );
 				g_cLayerGate.Open();
 				g_cLayerGate.Lock();
 			}
 			break;
 		case DRC_DRAW_BITMAP:
-			if( NULL != GetBitmap() )
 			{
 				GRndDrawBitmap_s *psReq = ( GRndDrawBitmap_s * ) psHdr;
 
@@ -590,7 +620,7 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 
 				if( NULL != pcNode )
 				{
-					pcView->DrawBitMap( GetBitmap(), pcNode->m_pcBitmap, psReq->cSrcRect, psReq->cDstRect.LeftTop(  ) );
+					pcView->DrawBitMap( pcNode->m_pcBitmap, psReq->cSrcRect, psReq->cDstRect );
 				}
 			}
 			break;
@@ -678,6 +708,7 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 							nLowest = pcParent->GetLevel();
 							pcLowestLayer = pcParent;
 						}
+						asBlitList[asBlitList.size()-1].m_bUpdateChildren = true;
 					}
 				}
 				bViewsMoved = true;
@@ -732,9 +763,12 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 
 				g_cLayerGate.Unlock();
 				g_cLayerGate.Close();
-				SrvSprite::Hide( static_cast < IRect > ( pcView->ConvertToRoot( pcView->GetBounds() ) ) );
+				if( pcView->m_pcBitmap == g_pcScreenBitmap )
+					SrvSprite::Hide( static_cast < IRect > ( pcView->ConvertToRoot( pcView->GetBounds() ) ) );
 				pcView->ScrollBy( psMsg->cDelta );
-				SrvSprite::Unhide();
+				if( pcView->m_pcBitmap == g_pcScreenBitmap )
+					SrvSprite::Unhide();
+				asBlitList[asBlitList.size()-1].m_bUpdateChildren = true;					
 				g_cLayerGate.Open();
 				g_cLayerGate.Lock();
 				break;
@@ -812,24 +846,48 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 				break;
 			}
 		}
-//    g_cLayerGate.Unlock();
 	}
-	g_cLayerGate.Unlock();
-
+	
 	if( bViewsMoved )
 	{
 		bViewsMoved = false;
 		if( pcLowestLayer != NULL )
 		{
+			g_cLayerGate.Unlock();
 			g_cLayerGate.Close();
-			SrvSprite::Hide();
+			if( pcLowestLayer->m_pcBitmap == g_pcScreenBitmap )
+				SrvSprite::Hide();
 			pcLowestLayer->UpdateRegions( false );
 			SrvWindow::HandleMouseTransaction();
-			SrvSprite::Unhide();
+			if( pcLowestLayer->m_pcBitmap == g_pcScreenBitmap )
+				SrvSprite::Unhide();
 			nLowest = INT_MAX;
 			g_cLayerGate.Open();
+			g_cLayerGate.Lock();
 		}
 	}
+
+	g_cLayerGate.Unlock();
+	
+	/* Update the content of the modified layers */
+	if( m_pcWndBorder != NULL )
+	{
+		g_cLayerGate.Close();
+		for( uint i = 0; i < asBlitList.size(); i++ )
+		{
+			Layer *pcView = FindLayer( asBlitList[i].m_nLayerHandle );
+
+			if( pcView == NULL )
+				continue;
+				
+			pcView->m_bOnUpdateList = false;
+			if( asBlitList[i].m_bUpdateChildren == true || ( pcView->m_pcDamageReg == NULL && pcView->m_pcActiveDamageReg == NULL && pcView->m_bIsUpdating == false ) )
+				g_pcTopView->UpdateLayer( pcView, asBlitList[i].m_bUpdateChildren );
+		}	
+		
+		g_cLayerGate.Open();
+	}
+	
 	if( psPkt->hReply != -1 )
 	{
 		send_msg( psPkt->hReply, 0, NULL, 0 );
@@ -877,6 +935,12 @@ void SrvWindow::MouseMoved( Message * pcEvent, int nTransit )
 {
 	__assertw( NULL != m_pcWndBorder );
 	__assertw( NULL != m_pcTopView );
+	/*if( m_pcTopView == NULL )
+	{
+		Point cMousePos;
+		pcEvent->FindPoint( "_scr_pos", &cMousePos );
+		dbprintf( "%x %x %x %x %x %x\n", (uint)this, (uint)s_pcLastMouseWindow, (uint)s_pcDragWindow, (uint)get_active_window( false ), (uint)get_active_window( true ), g_pcTopView->GetChildAt( cMousePos ) );
+	}*/
 
 	if(  /*m_bBorderHit && */ ( m_nFlags & WND_SYSTEM ) == 0 )
 	{
@@ -1037,14 +1101,6 @@ void SrvWindow::HandleMouseMoved( const Point & cMousePos, Message * pcEvent )
 	if( pcActiveWindow != NULL )
 	{
 		pcActiveWindow->MouseMoved( pcEvent, MOUSE_OUTSIDE );
-	}
-	if( pcMouseWnd != NULL && pcMouseWnd != pcActiveWindow )
-	{
-		pcMouseWnd->m_pcWndBorder->MouseMoved( pcMouseWnd->m_pcAppTarget, cMousePos - pcMouseWnd->m_pcWndBorder->GetLeftTop(), MOUSE_INSIDE );
-	}
-	if( s_bIsDragging && s_pcDragSprite != NULL )
-	{
-		s_pcDragSprite->MoveTo( static_cast < IPoint > ( cMousePos ) );
 	}
 }
 
@@ -1346,6 +1402,7 @@ bool SrvWindow::DispatchMessage( Message * pcReq )
 			if( m_pcDecorator != NULL )
 			{
 				m_pcDecorator->SetTitle( m_cTitle.c_str() );
+				g_pcTopView->UpdateLayer( m_pcWndBorder, false );
 			}
 			rename_thread( -1, String ().Format( "W:%.62s", pzTitle ).c_str(  ) );
 
@@ -1377,7 +1434,7 @@ bool SrvWindow::DispatchMessage( Message * pcReq )
 				}
 				else
 				{
-					m_pcWndBorder->UpdateIfNeeded( false );
+					m_pcWndBorder->UpdateIfNeeded();
 				}
 				g_cLayerGate.Open();
 			}

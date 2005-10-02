@@ -25,8 +25,6 @@
 
 #include <string>
 
-//using namespace os;
-
 class DefaultDecorator : public os::WindowDecorator
 {
 public:

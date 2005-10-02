@@ -47,8 +47,11 @@ struct gfx_node
 {
 	PCI_Info_s sGFXInfo;
 	PCI_Info_s sAGPInfo;
+	bool bIs9xx;
 	area_id hGFXRegisters;
 	uint8* pGFXRegisters;
+	area_id hGTTRegisters; // i9xx
+	uint32* pGTTRegisters; // i9xx
 	uint32 nGATTAddress;
 	uint32 nScratchPage;
 	uint32 nPageEntries;
@@ -65,7 +68,11 @@ struct gfx_device g_sDevices[] = {
 	{0x8086, 0x3582, "Intel", "i855/852"},
 	{0x8086, 0x3577, "Intel", "i830M"},
 	{0x8086, 0x2562, "Intel", "i845G"},
-	{0x8086, 0x2572, "Intel", "i865G"}
+	{0x8086, 0x2572, "Intel", "i865G"},
+	{0x8086, 0x2582, "Intel", "i915G"},
+	{0x8086, 0x258A, "Intel", "E7221G"},
+	{0x8086, 0x2592, "Intel", "i915GM"},
+	{0x8086, 0x2772, "Intel", "i945G"}
 };
 
 
@@ -246,11 +253,26 @@ bool i855_init_pagetable( struct gfx_node* psNode )
 			case I855_GMCH_GMS_STOLEN_32M:
 				psNode->nGTTEntries = MB(32) - KB(132);
 				break;
+			case I915_GMCH_GMS_STOLEN_48M:
+				if( psNode->bIs9xx )
+				{
+					psNode->nGTTEntries = MB(48) - KB(132);
+					break;
+				}
+			case I915_GMCH_GMS_STOLEN_64M:
+				if( psNode->bIs9xx )
+				{
+					psNode->nGTTEntries = MB(64) - KB(132);
+					break;
+				}
 			default:
 				psNode->nGTTEntries = 0;
 				break;
 		}
-		psNode->nPageEntries = 32768;
+		if( psNode->bIs9xx && ( psNode->sGFXInfo.u.h0.nBase2 & 0x08000000 ) )
+			psNode->nPageEntries = 65536;
+		else
+			psNode->nPageEntries = 32768;
 		printk( "i855: %liMb aperture\n", psNode->nPageEntries * 4 / KB( 1 ) );
 	}
 	
@@ -275,7 +297,16 @@ bool i855_init_pagetable( struct gfx_node* psNode )
 	printk( "i855: Allocated scratch page @ 0x%x\n", (uint)psNode->nScratchPage );
 	
 	for( i = psNode->nGTTEntries; i < psNode->nPageEntries; i++)
-		OUTREG32( psNode->pGFXRegisters, I855_PTE_BASE + (i * 4), psNode->nScratchPage | I855_PTE_VALID );
+	{
+		if( psNode->bIs9xx ) {
+			OUTREG32( psNode->pGTTRegisters, i, psNode->nScratchPage | I855_PTE_VALID );
+			INREG32( psNode->pGTTRegisters, i );
+		}
+		else {
+			OUTREG32( psNode->pGFXRegisters, I855_PTE_BASE + (i * 4), psNode->nScratchPage | I855_PTE_VALID );
+			INREG32( psNode->pGFXRegisters, I855_PTE_BASE + (i * 4) );
+		}
+	}
 
 	flush_agp_cache();
 	/* Calculate the number of additional pages to get 32mb video memory */
@@ -289,7 +320,16 @@ bool i855_init_pagetable( struct gfx_node* psNode )
 	printk( "i855: Allocating %liK additional memory\n", psNode->nAGPEntries * 4 );
 
 	for( i = psNode->nGTTEntries; i < ( psNode->nGTTEntries + psNode->nAGPEntries - 10 ); i++)
-		OUTREG32( psNode->pGFXRegisters, I855_PTE_BASE + (i * 4), (uint32)get_free_page( 0 ) | I855_PTE_VALID );
+	{
+		if( psNode->bIs9xx ) {
+			OUTREG32( psNode->pGTTRegisters, i, (uint32)get_free_page( 0 ) | I855_PTE_VALID );
+			INREG32( psNode->pGTTRegisters, i );
+		} else {
+			OUTREG32( psNode->pGFXRegisters, I855_PTE_BASE + (i * 4), (uint32)get_free_page( 0 ) | I855_PTE_VALID );
+			INREG32( psNode->pGFXRegisters, I855_PTE_BASE + (i * 4) );
+		}
+		
+	}
 
 	/* Allocate the last 10 pages of agp memory as linear memory */
 	if( ( nContMem = get_free_pages( 10, 0 ) ) == 0 )
@@ -300,7 +340,13 @@ bool i855_init_pagetable( struct gfx_node* psNode )
 	
 	for( j = 0; i < ( psNode->nGTTEntries + psNode->nAGPEntries ); i++, j++)
 	{
-		OUTREG32( psNode->pGFXRegisters, I855_PTE_BASE + (i * 4), (((uint32)nContMem) + ( j * PAGE_SIZE )) | I855_PTE_VALID );
+		if( psNode->bIs9xx ) {
+			OUTREG32( psNode->pGTTRegisters, i, (((uint32)nContMem) + ( j * PAGE_SIZE )) | I855_PTE_VALID );
+			INREG32( psNode->pGTTRegisters, i );
+		} else {
+			OUTREG32( psNode->pGFXRegisters, I855_PTE_BASE + (i * 4), (((uint32)nContMem) + ( j * PAGE_SIZE )) | I855_PTE_VALID );
+			INREG32( psNode->pGFXRegisters, I855_PTE_BASE + (i * 4) );
+		}
 	}
 	
 	psNode->nCursorAddress = nContMem;
@@ -317,6 +363,7 @@ bool i855_init( struct gfx_node* psNode )
 	int i;
 	bool bAGPFound = false;
 	uint32 nGFXRegsPhys;
+	uint32 nGTTRegsPhys;
 	
 	/* Use the first device */
 	if( psNode->sGFXInfo.nFunction != 0 )
@@ -324,14 +371,16 @@ bool i855_init( struct gfx_node* psNode )
 		printk( "i855: Ignoring secondary device\n" );
 		return( false );
 	}
+	
+	psNode->bIs9xx = psNode->sGFXInfo.nDeviceID >= 0x2582 && psNode->sGFXInfo.nDeviceID < 0x3500;
 		
 	/* Search for the AGP bridge */
 	psBus = get_busmanager( PCI_BUS_NAME, PCI_BUS_VERSION );
 	for ( i = 0; psBus->get_pci_info( &sAGPBridge, i ) == 0; ++i )
 	{
 		if( ( sAGPBridge.nVendorID == 0x8086 && ( sAGPBridge.nDeviceID == 0x3580 ||
-			sAGPBridge.nDeviceID == 0x3575 || sAGPBridge.nDeviceID == 0x2560 ||
-			sAGPBridge.nDeviceID == 0x2570 ) ) )
+			sAGPBridge.nDeviceID == 0x3575 || sAGPBridge.nDeviceID == 0x2560 ||	sAGPBridge.nDeviceID == 0x2570 
+			|| sAGPBridge.nDeviceID == 0x2580 || sAGPBridge.nDeviceID == 0x2590 || sAGPBridge.nDeviceID == 0x2770 ) ) )
 		{
 			bAGPFound = true;
 			break;
@@ -351,7 +400,7 @@ bool i855_init( struct gfx_node* psNode )
 													sAGPBridge.nFunction );
 	
 	nGFXRegsPhys = psBus->read_pci_config( psNode->sGFXInfo.nBus, psNode->sGFXInfo.nDevice,
-										psNode->sGFXInfo.nFunction, I855_MMADDR, 4 );
+										psNode->sGFXInfo.nFunction, psNode->bIs9xx ? I915_MMADDR : I855_MMADDR, 4 );
 	nGFXRegsPhys &= 0xfff80000;
 	
 	psNode->hGFXRegisters = create_area( "i855_gfx_regs", ( void ** )&psNode->pGFXRegisters, 
@@ -360,7 +409,15 @@ bool i855_init( struct gfx_node* psNode )
 	
 	printk( "i855: GFX memory address @ 0x%x mapped to 0x%x\n", (uint)nGFXRegsPhys, (uint)psNode->pGFXRegisters );
 	
-	
+	if( psNode->bIs9xx ) {
+		nGTTRegsPhys = psBus->read_pci_config( psNode->sGFXInfo.nBus, psNode->sGFXInfo.nDevice,
+										psNode->sGFXInfo.nFunction, I915_PTEADDR, 4 );
+		psNode->hGTTRegisters = create_area( "i855_gtt_regs", ( void ** )&psNode->pGTTRegisters, 
+							256 * PAGE_SIZE, 256 * PAGE_SIZE, AREA_ANY_ADDRESS | AREA_KERNEL, AREA_FULL_LOCK );
+		remap_area( psNode->hGTTRegisters, (void*)nGTTRegsPhys );
+		printk( "i855: GTT memory address @ 0x%x mapped to 0x%x\n", (uint)nGTTRegsPhys, (uint)psNode->pGTTRegisters );
+	}
+
 	
 	/* Get GATT table address */
 	psNode->nGATTAddress = INREG32( psNode->pGFXRegisters, I855_PGETBL_CTL ) & 0xfffff000;

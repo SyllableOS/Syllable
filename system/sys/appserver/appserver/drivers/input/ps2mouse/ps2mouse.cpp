@@ -39,6 +39,7 @@
 #include <util/message.h>
 #include <atheos/kernel.h>
 
+using namespace os;
 
 #define GPM_AUX_SEND_ID    0xF2
 #define GPM_AUX_ID_ERROR   -1

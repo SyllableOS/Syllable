@@ -1027,4 +1027,10 @@ typedef enum {
 #define PIPE_DFP2	1<<6
 #define PIPE_LFP2	1<<7
 
+
+/* Chipset registers for VIDEO BIOS memory RW access */
+#define _855_DRAM_RW_CONTROL 0x58
+#define _845_DRAM_RW_CONTROL 0x90
+
 #endif /* _I810_REG_H */
+

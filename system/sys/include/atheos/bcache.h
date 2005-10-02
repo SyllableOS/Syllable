@@ -34,6 +34,7 @@ typedef void cache_callback( off_t nBlockNum, int nNumBlocks, void* arg );
 status_t  setup_device_cache( dev_t nDevice, fs_id nFS, off_t nBlockCount );
 status_t  flush_cache_block( dev_t nDev, off_t nBlockNum );
 status_t  flush_device_cache( dev_t nDevice, bool bOnlyLogBlocks );
+status_t  flush_locked_device_cache( dev_t nDevice, bool bOnlyLogBlocks );
 status_t  shutdown_device_cache( dev_t nDevice );
 
 void* get_empty_block( dev_t nDev, off_t nBlockNum, size_t nBlockSize );

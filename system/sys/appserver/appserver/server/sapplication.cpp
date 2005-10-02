@@ -1176,15 +1176,7 @@ void SrvApplication::DispatchMessage( Message * pcReq )
 		}
 	case WR_UPDATE_VIDEO_OVERLAY:
 		{
-			area_id hArea;
-
-			if( pcReq->FindInt32( "area", ( int32 * )&hArea ) != 0 )
-			{
-				break;
-			}
-			g_cLayerGate.Close();
-			g_pcDispDrv->UpdateVideoOverlay( &hArea );
-			g_cLayerGate.Open();
+			/* Deprecated */
 			break;
 		}
 	case WR_DELETE_VIDEO_OVERLAY:
@@ -1542,13 +1534,14 @@ bool SrvApplication::DispatchMessage( const void *pMsg, int nCode )
 	case M_QUIT:
 		{
 			std::set < SrvWindow * >::iterator i;
-
+			g_cLayerGate.Close();
 			for( i = m_cWindows.begin(); i != m_cWindows.end(  ); ++i )
 			{
 				SrvWindow *pcWnd = *i;
 
 				pcWnd->Quit();
 			}
+			g_cLayerGate.Open();
 			return ( false );
 		}
 	case WR_CREATE_VIEW:

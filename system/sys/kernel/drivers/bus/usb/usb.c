@@ -30,7 +30,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
  
-//#define DEBUG_LIMIT KERN_DEBUG
+
  
 #include <atheos/usb.h>
 #include <atheos/kernel.h>
@@ -40,6 +40,9 @@
 #include <atheos/device.h>
 #include <posix/errno.h>
 #include <macros.h>
+
+//#undef DEBUG_LIMIT
+//#define DEBUG_LIMIT KERN_DEBUG
 
 #define MAX_USB_DRIVERS 128
 

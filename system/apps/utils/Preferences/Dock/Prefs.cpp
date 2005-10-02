@@ -67,7 +67,7 @@ PrefsDockWin::PrefsDockWin( os::Rect cFrame )
 	m_pcPluginsList->InsertColumn( "Enabled", 100 );
 	m_pcEnable = new os::Button( os::Rect(), "dock_prefs_enable", "Enable", new os::Message( DP_ENABLE ) );
 	m_pcEnable->SetEnable( false );
-	m_pcPluginNote = new os::StringView( os::Rect(), "dock_prefs_note", "Note: Please copy plugins to /system/drivers/dock/" );
+	m_pcPluginNote = new os::StringView( os::Rect(), "dock_prefs_note", "Note: Please copy plugins to /system/extensions/dock/" );
 	m_pcVPlugins->AddChild( m_pcPluginsList );
 	m_pcVPlugins->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
 	m_pcVPlugins->AddChild( m_pcEnable );
@@ -191,7 +191,7 @@ bool PrefsDockWin::CheckPlugin( os::String zPath, os::String* pzName )
 			if( get_symbol_address( nID, "init_dock_plugin", -1, (void**)&pInit ) == 0 )
 			{
 				os::Path cPath = os::Path( zPath.c_str() );
-				os::DockPlugin* pcPlugin = pInit( cPath, this );
+				os::DockPlugin* pcPlugin = pInit();
 				if( pcPlugin )
 				{
 					*pzName = pcPlugin->GetIdentifier();
@@ -215,12 +215,12 @@ void PrefsDockWin::UpdatePluginsList()
 	m_pcEnable->SetLabel( "Enable" );
 	m_pcEnable->SetEnable( false );
 	
-	/* Fill list with entries from /system/drivers/dock/ */
+	/* Fill list with entries from /system/extensions/dock/ */
 	os::Directory* pcDir = NULL;
 	
 	try
 	{
-		pcDir = new os::Directory( "/system/drivers/dock" );
+		pcDir = new os::Directory( "/boot/atheos/sys/extensions/dock" );
 	} catch( ... )
 	{
 		return;
@@ -236,7 +236,7 @@ void PrefsDockWin::UpdatePluginsList()
 			continue;
 			
 		/* Construct path */
-		os::Path cFilePath( "/system/drivers/dock" );
+		os::Path cFilePath( "/boot/atheos/sys/extensions/dock" );
 		cFilePath.Append( zFile.c_str() );
 		
 		/* Validate entry */

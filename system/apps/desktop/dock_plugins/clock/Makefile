@@ -1,7 +1,7 @@
 #Makefile for Clock.so
 COPTS = -c -fexceptions -ffast-math
 
-APPBIN = /system/drivers/dock
+APPBIN = /system/extensions/dock
 OBJS = ColorSelector.o Settings.o Clock.o colorbutton.o
 
 OBJDIR := objs
@@ -40,11 +40,13 @@ deps:
 
 dist: all
 	@echo Distribution...
-	@mkdir -p $(DIST_DIR)/atheos/sys/drivers/dock
-	@cp Clock.so $(DIST_DIR)/atheos/sys/drivers/dock/Clock.so
+	@mkdir -p $(DIST_DIR)/atheos/sys/extensions/dock
+	@cp Clock.so $(DIST_DIR)/atheos/sys/extensions/dock/Clock.so
 
 install: all
 	@echo Installing...
-	@mkdir -p /system/drivers/dock
-	@cp Clock.so /system/drivers/dock/Clock.so
+	@mkdir -p /system/extensions/dock
+	@cp Clock.so /system/extensions/dock/Clock.so
+
+
 

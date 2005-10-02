@@ -147,6 +147,11 @@
 
 #define  Index_VI_Control_Misc3			0x74
 
+/* 340 and later: */
+/* DDA registers 0x75 - 0xb4 */
+/* threshold high 0xb5, 0xb6 */
+#define  Index_VI_Line_Buffer_Size_High		0xb7
+
 
 /* TW: Bits (and helpers) for Index_VI_Control_Misc0 */
 #define  VI_Misc0_Enable_Overlay		0x02
@@ -259,16 +264,13 @@ typedef struct {
     
 } SISOverlayRec, *SISOverlayPtr;
 
-area_id SISStartVideo( short src_x, short src_y,
-  short drw_x, short drw_y,
-  short src_w, short src_h,
-  short drw_w, short drw_h,
-  int id, short width, short height, uint32 color_key );
-
-void SISStopVideo();
-
-void SISSetupImageVideo();
 
 #endif
+
+
+
+
+
+
 
 

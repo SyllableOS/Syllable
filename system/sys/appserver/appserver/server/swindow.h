@@ -31,10 +31,8 @@ namespace os {
     class Messenger;
     class Locker;
     class WindowDecorator;
-  
-//    struct WR_ToggleViewDepth_s;
     struct WR_Render_s;
-}
+};
 
 class SrvApplication;
 class WndBorder;
@@ -60,6 +58,7 @@ public:
     void	Show( bool bShow );
     void	MakeFocus( bool bFocus );
     bool	HasFocus() const;
+//    bool	HasBackbuffer() const;
     void	SetBitmap( SrvBitmap* pcBitmap ) { m_pcTopView->SetBitmap( pcBitmap ); }
 
     void	DesktopActivated( int nNewDesktop, bool bActivated, const os::IPoint cNewRes, os::color_space eColorSpace );
@@ -96,7 +95,6 @@ public:
     void	SetIcon( SrvBitmap* pcIcon ) { m_pcIcon = pcIcon; }
 	SrvBitmap* GetIcon() { return( m_pcIcon ); }
     
-  
     bool	IsMinimized() { return( m_bMinimized ); }
     void	SetMinimized( bool bMinimized ) { m_bMinimized = bMinimized; }
     
@@ -118,8 +116,7 @@ private:
     static void		HandleMouseMoved( const os::Point& cMousePos, os::Message* pcEvent );
     static void		HandleMouseUp( const os::Point& cMousePos, int nButton, os::Message* pcEvent );
     
-    SrvBitmap*	GetBitmap() const { return( m_pcTopView->GetBitmap() ); }
-
+ 
     void		Loop( void );
     static uint32	Entry( void* pData );
 

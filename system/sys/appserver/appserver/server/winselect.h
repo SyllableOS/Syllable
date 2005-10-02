@@ -24,8 +24,6 @@
 
 #include <vector>
 
-using namespace os;
-
 class SrvWindow;
 
 class WinSelect : public Layer
@@ -35,7 +33,7 @@ public:
     ~WinSelect();
 
     void UpdateWinList( bool bMoveToFront, bool bSetFocus );
-    void Paint( const IRect& cUpdateRect, bool bUpdate );
+    void Paint( const os::IRect& cUpdateRect, bool bUpdate );
     void Step( bool bForward );
     
     std::vector<SrvWindow*> GetWindows();

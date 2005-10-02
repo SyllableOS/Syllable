@@ -380,14 +380,41 @@ the video framebuffer to perform drawing functions.
 
 \section sec_gfx_4 Accelerated Drawing
 
+In previous versions of Syllable the video driver had to make sure that the framebuffer content was up to date
+after every call to an accelerated method. This causes a big performance hit especially if there is a lot of
+hardware accelerated drawing and the card/driver uses a command buffer. There are two new methods to solve this
+problem: 
+
+\code
+void Fire::LockBitmap( SrvBitmap* pcDstBitmap, SrvBitmap* pcSrcBitmap = NULL );
+void Fire::UnlockBitmap( SrvBitmap* pcDstBitmap, SrvBitmap* pcSrcBitmap = NULL );
+\endcode
+
+Both are called by the software rendering methods before/after they access any bitmap. A normal video driver 
+will only have to implement the LockBitmap() method. An example:
+
+\code
+Fire::LockBitmap( SrvBitmap* pcDstBitmap, SrvBitmap* pcSrcBitmap = NULL )
+{
+	if( ( pcDstBitmap->m_bVideoMem == false && ( pcSrcBitmap == NULL || pcSrcBitmap->m_bVideoMem == false ) ) || m_bEngineDirty == false )
+		return;
+	// ... Lock hardware and call the WaitForIdle() method ...
+	m_bEngineDirty = false;
+}
+\endcode
+
+The m_bEngineDirty flag should be set in every hardware accelerated drawing method.
+The UnlockBitmap() method is only necessary if the hardware does not allow accesses to the framebuffer and accelerated 
+drawing at the same time.
+
 An accelerated video driver will also provide methods which override the DisplayDriver software rendering methods. 
 There implementation is highly hardware dependent, but most drivers implement methods to accelerate Line drawing, 
 rectangular Fills and Bitmap Blits. The methods are: 
 
 \code
 bool Fire::DrawLine( SrvBitmap* pcBitMap, const IRect& cClipRect, const IPoint& cPnt1, const IPoint& cPnt2, const Color32_s& sColor, int nMode );
-bool Fire::FillRect( SrvBitmap* pcBitMap, const IRect& cRect, const Color32_s& sColor );
-bool Fire::BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap, IRect cSrcRect, IPoint cDstPos, int nMode );
+bool Fire::FillRect( SrvBitmap* pcBitMap, const IRect& cRect, const Color32_s& sColor, int nMode );
+bool Fire::BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap, IRect cSrcRect, IRect cDstRect, int nMode, int nAlpha );
 \endcode
 
 All of these methods receive a pointer to a SrvBitmap class. This class is the internal bitmap which is being 
@@ -401,14 +428,26 @@ DrawLine(); and FillRect(); recieve Color information which indicates the color 
 drawn in. You may need to convert the RGBA information contained in the Color32_s class to information which can be 
 used by your video hardware, but this is hardware dependent. 
 
-Drawline(); and BltBitmap(); recieve the nMode argument, which indicates the drawing mode which should be used to 
+All methods recieve the nMode argument, which indicates the drawing mode which should be used to 
 perform the operation. This argument will specify DM_COPY (A stright drawing operation), DM_OVER 
 (An alpha transparent "stamp" operation where the transparency is either "On" or "Off") or DM_BLEND 
-(An alpha blending operation). DM_COPY and DM_OVER operations are the most common, and you may choose not to support 
+(An alpha blending operation). DM_COPY and DM_BLEND operations are the most common, and you may choose not to support 
 hardware accelerated DM_OVER and DM_BLEND operations. Generally, passing this drawing operations down to the 
 DisplayDriver methods does not noticably slow down rendering[3]. 
 
-\section sec_gfx_5 Video Overlays
+BltBitmap(); has an alpha parameter but the hardware only has to care about it if it supports the DM_BLEND mode.
+
+\section sec_gfx_5 Offscreen videomemory bitmaps
+
+If your card supports offscreen bitmaps in videomemory then you should implement this. The appserver can use 
+these bitmaps to store the content of a window. In the constructor of the driver you call InitializeMemory() with
+the offset of the offscreen area and the size. You also have to provide alignment information for the start of every 
+bitmap and the alignment of the bitmap rows. If you have initialized the memory manager then you use the m_nVideoMemOffset 
+member of a SrvBitmap to set the source/destination offset and the m_nBytesPerLine member to set the source/destination pitch.
+If you support video overlays you should use the AllocateMemory() method of the DisplayDriver class to allocate memory 
+for it using the memory manager.
+
+\section sec_gfx_6 Video Overlays
 
 If your hardware supports Video Overlays you may wish to support this functionality in your display driver. 
 There are four methods which you must provide in order to support Video Overalys correctly. They are: 
@@ -416,46 +455,17 @@ There are four methods which you must provide in order to support Video Overalys
 \code
 bool Fire::CreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, os::color_space eFormat, os::Color32_s sColorKey, area_id *pBuffer );
 bool Fire::RecreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, os::color_space eFormat, area_id *pBuffer );
-void Fire::UpdateVideoOverlay( area_id *pBuffer );
 void Fire::DeleteVideoOverlay( area_id *pBuffer );
 \endcode
 
 Unlike the rendering functions, these functions do not have a software implementation in the DisplayDriver class. 
 Your video driver must either support Video Overlays or the user will not be able to use them at all.[4] 
 
-CreateVideoOverlay(); and DeleteVideoOverlay(); are self explanitory. UpdateVideoOverlay(); is actually not used by 
-any DisplayDriver at this point, so the implementation of this method will be empty. RecreateVideoOverlay(); is 
+CreateVideoOverlay(); and DeleteVideoOverlay(); are self explanitory. RecreateVideoOverlay(); is 
 used to resize a current Video Overlay or to change the current color space of a Video Overlay. 
 
 All of these functions will be highly hardware specific and the functionality is complex. You should refer to 
 actual driver implementations of these methods if you wish to understand how they work.[5]
-
-\section sec_gfx_6 Hardware Cursor
-
-Supporting the hardware cursor can be a bit tricky, because you have to convert the syllable cursor format into
-the native hardware format. In general these methods need to be implemented:
-
-\code
-void Fire::SetCursorBitmap( os::mouse_ptr_mode eMode, const os::IPoint& cHotSpot, const void* pRaster, int nWidth, int nHeight );
-void Fire::MouseOn();
-void Fire::MouseOff();
-void Fire::SetMousePos( os::IPoint cNewPos );
-bool Fire::IntersectWithMouse( const os::IRect& cRect );
-\endcode
-
-IntersectWithMouse() returns false in all drivers and what MouseOn(), MouseOff(), SetMousePos() do should be obvious.
-SetCursorBitmap() is the most difficult method. At the moment Syllable only supports mono cursors, so eMode will 
-be MPTR_MONO ( but you should fall back to software cursor if eMode is != MPTR_MONO ). pRaster is a pointer to a buffer
-with 8bit values. The values mean:
-
-\code
-0 - Transparent
-1 - Black
-2 - Black
-3 - White
-\endcode
-
-You should probably look into the drivers that implement hardware cursors to understand everything.[6]
 
 \section sec_gfx_7 Footnotes
 
@@ -466,15 +476,17 @@ if( pcBitMap->m_bVideoMem == false )
 {   return( DisplayDriver::FillRect( pcBitMap, cRect, sColor ) );
 }
 
+If you support offscreen videomemory bitmaps then you also have to use the m_nVideoMemOffset and m_nBytesPerRow members!
+
 [3]: The DisplayDriver class now also supports MMX accelerated functions on hardware which supports MMX. This generally provides quite fast software rendering on most systems. 
 
 [4]: Users can instead use the slower Bitmap rendering output provided by the Media Framework.
 
-[5]: At the time of writing the nVidia, Mach64 and SiS drivers implement Video Overlays.
-
-[6]: At the time of writing the Mach64 and SiS drivers implement Hardware Cursors.
+[5]: At the time of writing the Riva, GeForce, Radeon, Mach64, Intel and SiS drivers implement Video Overlays.
 
 */
+
+
 
 
 

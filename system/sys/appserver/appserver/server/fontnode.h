@@ -35,10 +35,12 @@ class  SFontInstance;
 class  FontProperty;
 struct Glyph;
 
-namespace os {
-    class Messenger;
-    struct font_properties;
+namespace os
+{
+	class Messenger;
+	struct font_properties;
 };
+
 
 class FontNode : public Resource
 {

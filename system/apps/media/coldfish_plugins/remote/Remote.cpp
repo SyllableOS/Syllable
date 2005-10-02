@@ -49,7 +49,6 @@ public:
 		} catch( ... ) 
 		{
 		}
-		SetColdFishPluginState(false);
 	}
 	os::String GetIdentifier()
 	{
@@ -76,82 +75,9 @@ public:
 		{
 			return( -1 );
 		}
-		SetColdFishPluginState(true);
 		return( 0 );
 	}
 private:
-	status_t SetColdFishPluginState(bool bState)
-	{
-		/* Connect to the dock and get a list of the currently enabled plugins */
-		std::vector<os::String> m_cEnabledPlugins;
-	
-		try
-		{
-			os::RegistrarCall_s sCall;
-			os::Message cReply;
-			os::Message cDummy;
-			os::Message cPlugins;
-			os::RegistrarManager* m_pcRegManager = os::RegistrarManager::Get();	
-			
-			/* Get enabled plugins */
-			if( m_pcRegManager->QueryCall( "os/Dock/GetPlugins", 0, &sCall ) == 0 )
-			{
-		
-				if( m_pcRegManager->InvokeCall( &sCall, &cDummy, &cReply ) == 0 )
-				{
-					int i = 0;
-					os::String zEnabledPlugin;
-					while( cReply.FindString( "plugin", &zEnabledPlugin, i ) == 0 )
-					{
-						if (zEnabledPlugin == "/system/drivers/dock/ColdFishRemote.so" && bState)
-						{
-							return 1;
-						}
-						else
-						{
-							m_cEnabledPlugins.push_back( zEnabledPlugin );
-							i++;
-						}
-					}
-				}
-			}
-		else
-		{
-			return -1;
-		}
-	
-		if (bState)
-		{
-			m_cEnabledPlugins.push_back("/system/drivers/dock/ColdFishRemote.so");
-		}
-		else
-		{
-			for (uint i=0; i<m_cEnabledPlugins.size(); i++)
-			{
-				if (m_cEnabledPlugins[i] == "/system/drivers/dock/ColdFishRemote.so")
-				{
-					m_cEnabledPlugins.erase(m_cEnabledPlugins.begin() + i);
-				}
-			}
-		}
-	
-		if( m_pcRegManager->QueryCall( "os/Dock/SetPlugins", 0, &sCall ) == 0 )
-		{
-			for( uint i = 0; i < m_cEnabledPlugins.size(); i++ )
-				cPlugins.AddString( "plugin", m_cEnabledPlugins[i] );
-			
-			if (m_pcRegManager->InvokeCall( &sCall, &cPlugins, NULL ) == 0)
-			{
-			}		
-		}
-		m_pcRegManager->Put();
-	}
-	
-	catch(...)
-	{
-	}
-	return 0;	
-}		
 };
 
 class CFRemoteEntry : public ColdFishPluginEntry

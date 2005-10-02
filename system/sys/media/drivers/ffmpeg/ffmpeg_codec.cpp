@@ -24,8 +24,8 @@
 
 extern "C"
 {
-	#include <ffmpeg/avformat.h>
-	#include <ffmpeg/avcodec.h>
+	#include <avformat.h>
+	#include <avcodec.h>
 }
 
 class FFMpegCodec : public os::MediaCodec
@@ -55,7 +55,7 @@ private:
 	uint32			Resample( uint16* pDst, uint16* pSrc, uint32 nLength );
 	bool			m_bEncode;
 	AVStream		m_sDecodeStream;
-	AVCodecContext	m_sDecodeContext;
+	AVCodecContext*	m_sDecodeContext;
 	AVStream  		m_sEncodeStream;
 	os::MediaFormat_s m_sInternalFormat;
 	os::MediaFormat_s m_sExternalFormat;
@@ -105,6 +105,7 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 	if( sExternal.zName.str() != "Raw Audio" && sExternal.zName.str() != "Raw Video" )
 		return( -1 );
 		
+	
 	if( !bEncode )
 	{
 		if( sFormat.pPrivate == NULL ) {
@@ -148,27 +149,26 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 		AVCodec *psCodec = avcodec_find_decoder( id );
 	
 		if( id == CODEC_ID_MPEG1VIDEO )
-			m_sDecodeContext.flags |= CODEC_FLAG_TRUNCATED;
-		if( psCodec == NULL || avcodec_open( &m_sDecodeContext, psCodec ) < 0 )
+			m_sDecodeContext->flags |= CODEC_FLAG_TRUNCATED;
+		if( psCodec == NULL || avcodec_open( m_sDecodeContext, psCodec ) < 0 )
 		{
 			std::cout<<"Error while opening codec "<<sFormat.zName.c_str()<<std::endl;
 			return( -1 );
 		}
 	}
 		
+		
 	/* Set encoding parameters */
 	if( m_bEncode && sFormat.nType == os::MEDIA_TYPE_AUDIO ) 
 	{
 		/* Prepare stream for the ffmpeg output */
+		m_sEncodeStream.codec = avcodec_alloc_context();
 		m_sEncodeStream.start_time = AV_NOPTS_VALUE;
 		m_sEncodeStream.duration = AV_NOPTS_VALUE;
 		m_sEncodeStream.cur_dts = AV_NOPTS_VALUE;
 		av_set_pts_info( &m_sEncodeStream, 33, 1, 90000 );
 	    m_sEncodeStream.last_IP_pts = AV_NOPTS_VALUE;
-		
-		AVCodecContext *sEnc = &m_sEncodeStream.codec;
-		memset( sEnc, 0, sizeof( AVCodecContext ) );
-		avcodec_get_context_defaults( &m_sEncodeStream.codec );
+		AVCodecContext *sEnc = m_sEncodeStream.codec;
 		sEnc->codec_type = CODEC_TYPE_AUDIO;
 		sEnc->codec_id = id;
 		
@@ -205,15 +205,14 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 	if( m_bEncode && sFormat.nType == os::MEDIA_TYPE_VIDEO )
 	{
 		/* Prepare stream for the ffmpeg output */
+		m_sEncodeStream.codec = avcodec_alloc_context();
 		m_sEncodeStream.start_time = AV_NOPTS_VALUE;
 		m_sEncodeStream.duration = AV_NOPTS_VALUE;
 		m_sEncodeStream.cur_dts = AV_NOPTS_VALUE;
 		av_set_pts_info( &m_sEncodeStream, 33, 1, 90000 );
 	    m_sEncodeStream.last_IP_pts = AV_NOPTS_VALUE;
 		
-		AVCodecContext *sEnc = &m_sEncodeStream.codec;
-		memset( sEnc, 0, sizeof( AVCodecContext ) );
-		avcodec_get_context_defaults( &m_sEncodeStream.codec );
+		AVCodecContext *sEnc = m_sEncodeStream.codec;
 		sEnc->codec_type = CODEC_TYPE_VIDEO;
 		sEnc->codec_id = id;
 		if( sFormat.nBitRate == 0 )
@@ -284,9 +283,9 @@ status_t FFMpegCodec::Open( os::MediaFormat_s sFormat, os::MediaFormat_s sExtern
 void FFMpegCodec::Close()
 {
 	if( !m_bEncode )
-		avcodec_close( &m_sDecodeContext );
+		avcodec_close( m_sDecodeContext );
 	else
-		avcodec_close( &m_sEncodeStream.codec );
+		avcodec_close( m_sEncodeStream.codec );
 }
 
 os::MediaFormat_s FFMpegCodec::GetInternalFormat()
@@ -294,19 +293,19 @@ os::MediaFormat_s FFMpegCodec::GetInternalFormat()
 	os::MediaFormat_s sFormat = m_sInternalFormat;
 	if( !m_bEncode )
 	{
-		if( m_sDecodeContext.pix_fmt == PIX_FMT_YUV422 )
+		if( m_sDecodeContext->pix_fmt == PIX_FMT_YUV422 )
 			sFormat.eColorSpace = os::CS_YUV422;
-		else if( m_sDecodeContext.pix_fmt == PIX_FMT_YUV411P )
+		else if( m_sDecodeContext->pix_fmt == PIX_FMT_YUV411P )
 			sFormat.eColorSpace = os::CS_YUV411;
-		else if( m_sDecodeContext.pix_fmt == PIX_FMT_YUV420P )
+		else if( m_sDecodeContext->pix_fmt == PIX_FMT_YUV420P )
 			sFormat.eColorSpace = os::CS_YUV12;
-		else if( m_sDecodeContext.pix_fmt == PIX_FMT_YUV422P )
+		else if( m_sDecodeContext->pix_fmt == PIX_FMT_YUV422P )
 			sFormat.eColorSpace = os::CS_YUV422;
-		else if( m_sDecodeContext.pix_fmt == PIX_FMT_RGB24 )
+		else if( m_sDecodeContext->pix_fmt == PIX_FMT_RGB24 )
 			sFormat.eColorSpace = os::CS_RGB24;
 			
 	} else {
-		AVCodecContext *sEnc = &m_sEncodeStream.codec;
+		AVCodecContext *sEnc = m_sEncodeStream.codec;
 		sFormat.eColorSpace = os::CS_YUV12;
 		sFormat.nSampleRate = sEnc->sample_rate;
 		sFormat.nChannels = sEnc->channels;
@@ -323,22 +322,22 @@ os::MediaFormat_s FFMpegCodec::GetExternalFormat()
 	os::MediaFormat_s sFormat = m_sExternalFormat;
 	if( !m_bEncode )
 	{
-		if( m_sDecodeContext.pix_fmt == PIX_FMT_YUV422 )
+		if( m_sDecodeContext->pix_fmt == PIX_FMT_YUV422 )
 			sFormat.eColorSpace = os::CS_YUV422;
-		else if( m_sDecodeContext.pix_fmt == PIX_FMT_YUV411P )
+		else if( m_sDecodeContext->pix_fmt == PIX_FMT_YUV411P )
 			sFormat.eColorSpace = os::CS_YUV411;
-		else if( m_sDecodeContext.pix_fmt == PIX_FMT_YUV420P )
+		else if( m_sDecodeContext->pix_fmt == PIX_FMT_YUV420P )
 			sFormat.eColorSpace = os::CS_YUV12;
-		else if( m_sDecodeContext.pix_fmt == PIX_FMT_YUV422P )
+		else if( m_sDecodeContext->pix_fmt == PIX_FMT_YUV422P )
 			sFormat.eColorSpace = os::CS_YUV422;
-		else if( m_sDecodeContext.pix_fmt == PIX_FMT_RGB24 )
+		else if( m_sDecodeContext->pix_fmt == PIX_FMT_RGB24 )
 			sFormat.eColorSpace = os::CS_RGB24;
 			
-		sFormat.nSampleRate = m_sDecodeContext.sample_rate;
-		sFormat.nChannels = m_sDecodeContext.channels;
+		sFormat.nSampleRate = m_sDecodeContext->sample_rate;
+		sFormat.nChannels = m_sDecodeContext->channels;
 		sFormat.vFrameRate = (float)m_sDecodeStream.r_frame_rate.num / (float)m_sDecodeStream.r_frame_rate.den;
-		sFormat.nWidth = m_sDecodeContext.width;
-		sFormat.nHeight = m_sDecodeContext.height;
+		sFormat.nWidth = m_sDecodeContext->width;
+		sFormat.nHeight = m_sDecodeContext->height;
 	} else {
 		sFormat.eColorSpace = os::CS_YUV12;
 	}
@@ -367,7 +366,7 @@ status_t FFMpegCodec::CreateVideoOutputPacket( os::MediaPacket_s* psOutput )
 {
 	if( !m_bEncode )
 		return( 0 );
-	AVCodecContext *sEnc = &m_sEncodeStream.codec;
+	AVCodecContext *sEnc = m_sEncodeStream.codec;
 	psOutput->pBuffer[0] = ( uint8* )malloc( sEnc->width * sEnc->height * 4 );
 	if(	psOutput->pBuffer[0] == NULL )
 			return( -1 );
@@ -396,7 +395,7 @@ status_t FFMpegCodec::DecodePacket( os::MediaPacket_s* psPacket, os::MediaPacket
 	
 		while( nSize > 0 ) {
 			
-			int nLen = avcodec_decode_audio( &m_sDecodeContext, (short *)pOut, &nOutSize, 
+			int nLen = avcodec_decode_audio( m_sDecodeContext, (short *)pOut, &nOutSize, 
         	                              pInput, nSize);
 			if( nLen < 0 ) {
 				return( -1 );
@@ -422,7 +421,7 @@ status_t FFMpegCodec::DecodePacket( os::MediaPacket_s* psPacket, os::MediaPacket
 		psOutput->nSize[0] = 0;
 	
 		while( nSize > 0 ) {
-			int nLen = avcodec_decode_video( &m_sDecodeContext, &sFrame, &bDecoded, 
+			int nLen = avcodec_decode_video( m_sDecodeContext, &sFrame, &bDecoded, 
    	                                   pInput, nSize );                      
 			if( bDecoded > 0 ) {
 				//std::cout<<"DECODED "<<psPacket->nTimeStamp<<std::endl;
@@ -500,12 +499,12 @@ status_t FFMpegCodec::EncodePacket( os::MediaPacket_s* psPacket, os::MediaPacket
 		int nSize = psPacket->nSize[0];
 		uint8* pOut = psOutput->pBuffer[0];
 		psOutput->nSize[0] = 0;
-		AVCodecContext *sEnc = &m_sEncodeStream.codec;
+		AVCodecContext *sEnc = m_sEncodeStream.codec;
 	
 		//std::cout<<m_sEncodeStream.pts.num<<" "<<m_sEncodeStream.pts.den<<std::endl;
 	
 		if( sEnc->frame_size == 1 ) {
-			switch( m_sEncodeStream.codec.codec_id ) {
+			switch( m_sEncodeStream.codec->codec_id ) {
 				case CODEC_ID_PCM_S16LE:
 				case CODEC_ID_PCM_S16BE:
 				case CODEC_ID_PCM_U16LE:
@@ -527,7 +526,7 @@ status_t FFMpegCodec::EncodePacket( os::MediaPacket_s* psPacket, os::MediaPacket
 			}
 			
 			
-	    	psOutput->nSize[0] = avcodec_encode_audio( &m_sEncodeStream.codec, pOut, m_nCachePointer, ( const short* )m_pCache );
+	    	psOutput->nSize[0] = avcodec_encode_audio( m_sEncodeStream.codec, pOut, m_nCachePointer, ( const short* )m_pCache );
     		ffmpeg_frame* psFrame = ( ffmpeg_frame* )malloc( sizeof( ffmpeg_frame ) );
 			psFrame->nSize = psOutput->nSize[0];
 			psFrame->pNext = NULL;
@@ -558,7 +557,7 @@ status_t FFMpegCodec::EncodePacket( os::MediaPacket_s* psPacket, os::MediaPacket
 		{
 			/* Note: We have to tell the ffmpeg output how we have split the packets */
 			//cout<<"Encode :"<<nFrameBytes<<endl;
-			int nLen = avcodec_encode_audio( &m_sEncodeStream.codec, pOut, 4 * AVCODEC_MAX_AUDIO_FRAME_SIZE, ( const short* )m_pCache );
+			int nLen = avcodec_encode_audio( m_sEncodeStream.codec, pOut, 4 * AVCODEC_MAX_AUDIO_FRAME_SIZE, ( const short* )m_pCache );
 			psOutput->nSize[0] += nLen;
 			memcpy( m_pCache, m_pCache + nFrameBytes, m_nCachePointer - nFrameBytes );
 			m_nCachePointer -= nFrameBytes;
@@ -580,8 +579,8 @@ status_t FFMpegCodec::EncodePacket( os::MediaPacket_s* psPacket, os::MediaPacket
 			sFrame.linesize[i] = psPacket->nSize[i]; 
 		}
 		sFrame.quality = m_sEncodeStream.quality;
-		AVCodecContext *sEnc = &m_sEncodeStream.codec;
-		psOutput->nSize[0] = avcodec_encode_video( &m_sEncodeStream.codec, psOutput->pBuffer[0], psPacket->nSize[0] * sEnc->height, &sFrame );
+		AVCodecContext *sEnc = m_sEncodeStream.codec;
+		psOutput->nSize[0] = avcodec_encode_video( m_sEncodeStream.codec, psOutput->pBuffer[0], psPacket->nSize[0] * sEnc->height, &sFrame );
 		
 		if( psOutput->nSize[0] < 0 )
 			return( -1 );

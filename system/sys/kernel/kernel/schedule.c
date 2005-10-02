@@ -1743,7 +1743,7 @@ void Schedule( void )
 
 	psNext->tr_nCurrentCPU = nThisProc;
 	psNext->tc_sTSS.gs = g_asProcessorDescs[psNext->tr_nCurrentCPU].pi_nGS;
-	Desc_SetBase( psNext->tc_sTSS.gs, ( uint32 )psNext->tr_pThreadData );
+	set_gdt_desc_base( psNext->tc_sTSS.gs, ( uint32 )psNext->tr_pThreadData );
 
 	if ( atomic_read( &g_sSchedSpinLock.sl_nNest ) != 1 )
 	{

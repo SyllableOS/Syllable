@@ -24,6 +24,7 @@
 #include <gui/slider.h>
 #include <util/looper.h>
 #include <util/resources.h>
+#include <util/thread.h>
 #include <storage/file.h>
 #include <media/manager.h>
 #include <media/server.h>
@@ -34,16 +35,14 @@ using namespace os;
 
 class MixerWindow;
 
-class DockMixer : public DockPlugin
+class DockMixer : public View
 {
 	public:
-		DockMixer( os::Path cPath, os::Looper* pcDock );
+		DockMixer( os::DockPlugin* pcPlugin, os::Looper* pcDock );
 		~DockMixer();
 
-		os::String GetIdentifier() ;
-		Point GetPreferredSize( bool bLargest );
-		os::Path GetPath() { return( m_cPath ); }
-		
+		Point GetPreferredSize( bool bLargest ) const;
+				
 		virtual void AttachedToWindow();
 		virtual void DetachedFromWindow();
 
@@ -53,8 +52,10 @@ class DockMixer : public DockPlugin
 		virtual void MouseUp( const os::Point & cPosition, uint32 nButton, os::Message * pcData );
 		virtual void MouseDown( const os::Point& cPosition, uint32 nButtons );
         void MixerWindowHidden() { m_bWindowShown = false; }
+        MixerWindow* GetMixerWindow() { return( m_pcWindow ); }
+        void Remove( thread_id nThread );
 	private:
-		os::Path m_cPath;
+		os::DockPlugin* m_pcPlugin;
 		os::BitmapImage* m_pcDockIcon;
 		os::BitmapImage* m_pcDragIcon;
 		os::Looper* m_pcDock;
@@ -145,46 +146,38 @@ class MixerWindow : public Window
 
 //*************************************************************************************
 
-DockMixer::DockMixer( os::Path cPath, os::Looper* pcDock ) : DockPlugin()
+DockMixer::DockMixer( DockPlugin* pcPlugin, os::Looper* pcDock ) : View( os::Rect(), "dock_mixer" )
 {
 	os::File* pcFile;
 	os::ResStream *pcStream;
 
+	m_pcPlugin = pcPlugin;
 	m_pcDock = pcDock;
 	m_bCanDrag = m_bDragging = false;
-	m_cPath = cPath;
+	
 
 	/* Load default icons */
-	pcFile = new os::File( cPath );
+	pcFile = new os::File( m_pcPlugin->GetPath() );
 	os::Resources cDockCol( pcFile );
 	pcStream = cDockCol.GetResourceStream( "icon24x24.png" );
 	
 	m_pcDockIcon = new os::BitmapImage( pcStream );
+	delete( pcStream );
 	delete( pcFile );
 
-	pcFile = new os::File( cPath );
+	pcFile = new os::File( m_pcPlugin->GetPath() );
 	os::Resources cDragCol( pcFile );
 	pcStream = cDragCol.GetResourceStream( "icon48x48.png" );
 	
 	m_pcDragIcon = new os::BitmapImage( pcStream );
+	delete( pcStream );
 	delete( pcFile );
-
-	
-	
-	
 }
 
 DockMixer::~DockMixer( )
 {
-	
 	delete( m_pcDockIcon );
 	delete( m_pcDragIcon );
-	
-}
-
-String DockMixer::GetIdentifier()
-{
-	return( "Mixer" );
 }
 
 void DockMixer::Paint( const Rect &cUpdateRect )
@@ -208,14 +201,40 @@ void DockMixer::AttachedToWindow()
 }
 
 
+class DockMixerCloser : public os::Thread
+{
+public:
+	DockMixerCloser( DockMixer* pcMixer, MixerWindow* pcWin ) : Thread( "dock_mixer_closer" ) 
+	{
+		m_pcWin = pcWin;
+		m_pcMixer = pcMixer;
+	}
+	
+	int32 Run()
+	{
+		thread_id hThread = m_pcWin->GetThread();
+		m_pcWin->PostMessage( os::M_TERMINATE, m_pcWin );
+		wait_for_thread( hThread );
+		m_pcMixer->Remove( get_thread_id( NULL ) );
+		return( 0 );
+	}
+private:
+	DockMixer* m_pcMixer;
+	MixerWindow* m_pcWin;
+};
+
+
 void DockMixer::DetachedFromWindow()
 {
-	if( m_bWindowShown )
-		m_pcWindow->Terminate();
 	m_pcManager->Put();
 }
 
-Point DockMixer::GetPreferredSize( bool bLargest )
+void DockMixer::Remove( thread_id nThread )
+{
+	m_pcPlugin->RemoveView( this, nThread );
+}
+
+Point DockMixer::GetPreferredSize( bool bLargest ) const
 {
 	return m_pcDockIcon->GetSize();
 }
@@ -228,13 +247,13 @@ void DockMixer::MouseMove( const os::Point& cNewPos, int nCode, uint32 nButtons,
 		if( m_bCanDrag )
 		{
 			m_bDragging = true;
-			os::Message* pcMsg = new os::Message();
-			BeginDrag( pcMsg, os::Point( m_pcDragIcon->GetBounds().Width() / 2,
+			os::Message cMsg;
+			BeginDrag( &cMsg, os::Point( m_pcDragIcon->GetBounds().Width() / 2,
 											m_pcDragIcon->GetBounds().Height() / 2 ), m_pcDragIcon->LockBitmap() );
 			m_bCanDrag = false;
 		}
 	}
-	os::DockPlugin::MouseMove( cNewPos, nCode, nButtons, pcData );
+	os::View::MouseMove( cNewPos, nCode, nButtons, pcData );
 }
 
 
@@ -243,14 +262,14 @@ void DockMixer::MouseUp( const os::Point & cPosition, uint32 nButtons, os::Messa
 	if( m_bDragging && ( cPosition.y > 30 ) )
 	{
 		/* Remove ourself from the dock */
-		os::Message cMsg( os::DOCK_REMOVE );
-		cMsg.AddPointer( "plugin", this );
+		os::Message cMsg( os::DOCK_REMOVE_PLUGIN );
+		cMsg.AddPointer( "plugin", m_pcPlugin );
 		m_pcDock->PostMessage( &cMsg, m_pcDock );
 		return;
 	}
 	m_bDragging = false;
 	m_bCanDrag = false;
-	os::DockPlugin::MouseUp( cPosition, nButtons, pcData );
+	os::View::MouseUp( cPosition, nButtons, pcData );
 }
 
 void DockMixer::MouseDown( const os::Point& cPosition, uint32 nButtons )
@@ -271,17 +290,60 @@ void DockMixer::MouseDown( const os::Point& cPosition, uint32 nButtons )
 		m_bWindowShown = true;
 	} else
 		m_pcWindow->MakeFocus();
-	os::DockPlugin::MouseDown( cPosition, nButtons );
+	os::View::MouseDown( cPosition, nButtons );
 }
-
 
 //*************************************************************************************
 
+class DockMixerPlugin : public os::DockPlugin
+{
+public:
+	DockMixerPlugin()
+	{
+		m_pcView = NULL;
+	}
+	~DockMixerPlugin()
+	{
+	}
+	status_t Initialize()
+	{
+		m_pcView = new DockMixer( this, GetApp() );
+		AddView( m_pcView );
+		return( 0 );
+	}
+	void Delete()
+	{
+		os::Thread* pcThread = new DockMixerCloser( m_pcView, m_pcView->GetMixerWindow() );
+		pcThread->Start();
+	}
+	os::String GetIdentifier()
+	{
+		return( "Mixer" );
+	}
+private:
+	DockMixer* m_pcView;
+};
+
 extern "C"
 {
-DockPlugin* init_dock_plugin( os::Path cPluginFile, os::Looper* pcDock )
+DockPlugin* init_dock_plugin()
 {
-	return( new DockMixer( cPluginFile, pcDock ) );
+	return( new DockMixerPlugin() );
 }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

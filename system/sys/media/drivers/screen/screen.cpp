@@ -20,6 +20,7 @@
 #include <media/output.h>
 #include <media/addon.h>
 #include <gui/point.h>
+#include <gui/desktop.h>
 #include <atheos/threads.h>
 #include <atheos/semaphore.h>
 #include <atheos/kernel.h>
@@ -72,7 +73,7 @@ public:
 			m_sOverlay.m_sColorKey = sColorKey;
 		} else
 		{
-			m_pcBitmap = new os::Bitmap( cSrcSize.x, cSrcSize.y, os::CS_RGB16 );
+			m_pcBitmap = new os::Bitmap( cSrcSize.x, cSrcSize.y, eFormat );
 		}
 	}
 	~VideoView()
@@ -98,7 +99,7 @@ public:
 		if( ConvertToScreen( GetBounds() ) != m_cCurrentFrame )
 		{
 			m_cCurrentFrame = ConvertToScreen( GetBounds() );
-			Recreate( os::IPoint( m_sOverlay.m_nSrcWidth, m_sOverlay.m_nSrcHeight ), os::Rect( m_cCurrentFrame.left, m_cCurrentFrame.top, m_cCurrentFrame.right + 1, m_cCurrentFrame.bottom + 1 ) );
+			Recreate( os::IPoint( m_sOverlay.m_nSrcWidth, m_sOverlay.m_nSrcHeight ), m_cCurrentFrame );
 		}
 
 		/* Send update message */
@@ -119,8 +120,8 @@ public:
 		m_cCurrentFrame = ConvertToScreen( GetBounds() );
 		m_sOverlay.m_nDstX = ( int )m_cCurrentFrame.left;
 		m_sOverlay.m_nDstY = ( int )m_cCurrentFrame.top;
-		m_sOverlay.m_nDstWidth = ( int )m_cCurrentFrame.Width();
-		m_sOverlay.m_nDstHeight = ( int )m_cCurrentFrame.Height();
+		m_sOverlay.m_nDstWidth = ( int )m_cCurrentFrame.Width() + 1;
+		m_sOverlay.m_nDstHeight = ( int )m_cCurrentFrame.Height() + 1;
 		m_sOverlay.m_pAddress = NULL;
 		m_sOverlay.m_hArea = -1;
 
@@ -137,7 +138,7 @@ public:
 		int32 nFormat = static_cast < int32 >( m_sOverlay.m_eFormat );
 
 		cReq.AddIPoint( "size", os::IPoint( m_sOverlay.m_nSrcWidth, m_sOverlay.m_nSrcHeight ) );
-		cReq.AddRect( "dst", os::IRect( m_sOverlay.m_nDstX, m_sOverlay.m_nDstY, m_sOverlay.m_nDstX + m_sOverlay.m_nDstWidth + 1, m_sOverlay.m_nDstY + m_sOverlay.m_nDstHeight + 1 ) );
+		cReq.AddRect( "dst", os::IRect( m_sOverlay.m_nDstX, m_sOverlay.m_nDstY, m_sOverlay.m_nDstX + m_sOverlay.m_nDstWidth - 1, m_sOverlay.m_nDstY + m_sOverlay.m_nDstHeight - 1 ) );
 		cReq.AddInt32( "format", nFormat );
 		cReq.AddColor32( "color_key", m_sOverlay.m_sColorKey );
 	
@@ -203,8 +204,8 @@ public:
 		m_sOverlay.m_nSrcHeight = cSrcSize.y;
 		m_sOverlay.m_nDstX = cDstRect.left;
 		m_sOverlay.m_nDstY = cDstRect.top;
-		m_sOverlay.m_nDstWidth = cDstRect.Width();
-		m_sOverlay.m_nDstHeight = cDstRect.Height();
+		m_sOverlay.m_nDstWidth = cDstRect.Width() + 1;
+		m_sOverlay.m_nDstHeight = cDstRect.Height() + 1;
 		m_sOverlay.m_pAddress = NULL;
 
 		/* Send message */
@@ -218,7 +219,7 @@ public:
 		int32 nFormat = static_cast < int32 >( m_sOverlay.m_eFormat );
 
 		cReq.AddIPoint( "size", os::IPoint( m_sOverlay.m_nSrcWidth, m_sOverlay.m_nSrcHeight ) );
-		cReq.AddRect( "dst", os::IRect( m_sOverlay.m_nDstX, m_sOverlay.m_nDstY, m_sOverlay.m_nDstX + m_sOverlay.m_nDstWidth, m_sOverlay.m_nDstY + m_sOverlay.m_nDstHeight ) );
+		cReq.AddRect( "dst", os::IRect( m_sOverlay.m_nDstX, m_sOverlay.m_nDstY, m_sOverlay.m_nDstX + m_sOverlay.m_nDstWidth - 1, m_sOverlay.m_nDstY + m_sOverlay.m_nDstHeight - 1 ) );
 		cReq.AddInt32( "format", nFormat );
 		cReq.AddInt32( "area", m_sOverlay.m_hPhysArea );
 
@@ -256,20 +257,7 @@ public:
 			FillRect( cUpdateRect );
 		} else
 		{
-			/* Fill view with black and draw the bitmap in the center */
-			SetFgColor( 0, 0, 0 );
-		
-			float nPosX = ( GetBounds().Width() - m_pcBitmap->GetBounds().Width() ) / 2 - 1;
-			float nPosY = ( GetBounds().Height() - m_pcBitmap->GetBounds().Height() ) / 2 - 1;
-			float nPosX2 = nPosX + m_pcBitmap->GetBounds().Width() + 2;
-			float nPosY2 = nPosY + m_pcBitmap->GetBounds().Height() + 2;
-			FillRect( os::Rect( 0, 0, nPosX, GetBounds().bottom ) );
-			FillRect( os::Rect( nPosX2, 0, GetBounds().right, GetBounds().bottom ) );
-			FillRect( os::Rect( nPosX, 0, nPosX2, nPosY ) );
-			FillRect( os::Rect( nPosX, nPosY2, nPosX2, GetBounds().bottom ) );
-		
-			DrawBitmap( m_pcBitmap, m_pcBitmap->GetBounds(), os::Rect( nPosX + 1, nPosY + 1, 
-					nPosX2 - 1, nPosY2 - 1 ) );
+			DrawBitmap( m_pcBitmap, m_pcBitmap->GetBounds(), GetBounds() );
 		}
 	}
 	uint8* GetRaster()
@@ -465,7 +453,7 @@ void ScreenOutput::Flush()
 			if( !m_bUseOverlay )
 			{
 				/* No video overlay */
-				memcpy( m_pcView->GetRaster(), psFrame->pBuffer[0], m_sFormat.nWidth * m_sFormat.nHeight * 2 );
+				memcpy( m_pcView->GetRaster(), psFrame->pBuffer[0], m_sFormat.nWidth * m_sFormat.nHeight * BitsPerPixel( m_eColorSpace ) / 8 );
 				m_pcView->Paint( m_pcView->GetBounds() );
 				m_pcView->Sync();
 			}
@@ -589,8 +577,12 @@ status_t ScreenOutput::Open( os::String zFileName )
 				if( !CheckVideoOverlay( m_eColorSpace ) ) {
 					std::cout<<"Using bitmap for video output"<<std::endl;
 					m_bUseOverlay = false;
-					m_eColorSpace = os::CS_RGB16;
-					yuv2rgb_init( 16, MODE_RGB );
+					os::Desktop cDesktop;
+					m_eColorSpace = cDesktop.GetColorSpace();
+					if( m_eColorSpace == os::CS_RGB16 )
+						yuv2rgb_init( 16, MODE_RGB );
+					else
+						yuv2rgb_init( 32, MODE_RGB );
 				} else {
 					std::cout<<"Using RGB32 Overlay"<<std::endl;
 					yuv2rgb_init( 32, MODE_RGB );
@@ -665,7 +657,7 @@ status_t ScreenOutput::AddStream( os::String zName, os::MediaFormat_s sFormat )
 	m_sFormat = sFormat;
 	
 	/* Open Overlay */
-	os::Rect cFrame( 0, 0, sFormat.nWidth, sFormat.nHeight );
+	os::Rect cFrame( 0, 0, sFormat.nWidth - 1, sFormat.nHeight - 1 );
 	m_pcView = new VideoView( m_bUseOverlay, os::IPoint( sFormat.nWidth, sFormat.nHeight ), m_eColorSpace, os::Color32_s( 0, 0, 255 ), 
 				cFrame, "media_video" );
 	if( m_pcView == NULL )
@@ -692,12 +684,12 @@ status_t ScreenOutput::WritePacket( uint32 nIndex, os::MediaPacket_s* psFrame )
 	if( !m_bUseOverlay )
 	{
 		/* No overlay */
-		psQueueFrame->nSize[0] = m_sFormat.nWidth * 2;
-		psQueueFrame->pBuffer[0] = ( uint8* )malloc( m_sFormat.nWidth * m_sFormat.nHeight * 2 );
+		psQueueFrame->nSize[0] = m_sFormat.nWidth * BitsPerPixel( m_eColorSpace ) / 8;
+		psQueueFrame->pBuffer[0] = ( uint8* )malloc( m_sFormat.nWidth * m_sFormat.nHeight * BitsPerPixel( m_eColorSpace ) / 8 );
 		psQueueFrame->nTimeStamp = psFrame->nTimeStamp;
 	
 		yuv2rgb( psQueueFrame->pBuffer[0], psFrame->pBuffer[0], psFrame->pBuffer[1], psFrame->pBuffer[2],
-			m_sFormat.nWidth, m_sFormat.nHeight, m_sFormat.nWidth * 2, psFrame->nSize[0],
+			m_sFormat.nWidth, m_sFormat.nHeight, psQueueFrame->nSize[0], psFrame->nSize[0],
 			psFrame->nSize[1] );
 	}
 	else if( m_eColorSpace == os::CS_YUV12 )

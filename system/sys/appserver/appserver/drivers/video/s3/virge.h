@@ -26,6 +26,8 @@
 
 #include "../../../server/ddriver.h"
 
+using namespace os;
+
 #define	B_NO_ERROR 0
 #define	B_ERROR 	-1
 
@@ -183,12 +185,11 @@ public:
 //    void		MouseOn( void );
 //    void		MouseOff( void );
 //    void		SetMousePos( IPoint cNewPos );
-    bool		IntersectWithMouse( const IRect& cRect );
-
+  
     bool		DrawLine( SrvBitmap* psBitMap, const IRect& cClipRect,
 				  const IPoint& cPnt1, const IPoint& cPnt2, const Color32_s& sColor, int nMode );
-    bool		FillRect( SrvBitmap* psBitMap, const IRect& cRect, const Color32_s& sColor );
-    bool		BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap, IRect cSrcRect, IPoint cDstPos, int nMode );
+    bool		FillRect( SrvBitmap* psBitMap, const IRect& cRect, const Color32_s& sColor, int nMode );
+    bool		BltBitmap( SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap, IRect cSrcRect, IRect cDstRect, int nMode, int nAlpha );
 
 private:
     std::vector<os::screen_mode>	m_cModes;

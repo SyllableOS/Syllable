@@ -20,10 +20,10 @@ int MixFromMode( int nMode )
 
 //-----------------------------------------------------------------------------
 bool ATImach64::FillRect(SrvBitmap *pcBitmap, const IRect &cRect, 
-		      const Color32_s &sColor) {
+		      const Color32_s &sColor, int nMode) {
   
-	if( pcBitmap->m_bVideoMem == false ) {
-		return( DisplayDriver::FillRect(pcBitmap, cRect, sColor) );
+	if( pcBitmap->m_bVideoMem == false || nMode != DM_COPY ) {
+		return( DisplayDriver::FillRect(pcBitmap, cRect, sColor, nMode) );
 	}
 
 	int dstx = cRect.left;
@@ -31,10 +31,6 @@ bool ATImach64::FillRect(SrvBitmap *pcBitmap, const IRect &cRect,
 
 	uint32 nColor;
 	switch( pcBitmap->m_eColorSpc ) {
-	 	case CS_RGB15:
-		case CS_RGBA15:
-			nColor = COL_TO_RGB15 (sColor);
-			break;
 		case CS_RGB16:
 			nColor = COL_TO_RGB16 (sColor);
 			break;
@@ -43,8 +39,8 @@ bool ATImach64::FillRect(SrvBitmap *pcBitmap, const IRect &cRect,
 			nColor = COL_TO_RGB32 (sColor);
 			break;
 		default:
-			return( DisplayDriver::FillRect(pcBitmap, cRect, sColor) );
-}
+			return( DisplayDriver::FillRect(pcBitmap, cRect, sColor, nMode) );
+	}
 
 	m_cLock.Lock();
 
@@ -67,16 +63,12 @@ bool ATImach64::DrawLine(SrvBitmap *psBitMap, const IRect &cClipRect,
                           const Color32_s &sColor, int nMode) { 
       
 	/* based upon mach64seg.c */
-	if( psBitMap->m_bVideoMem == false ) {
+	if( psBitMap->m_bVideoMem == false || ( nMode != DM_COPY && nMode != DM_INVERT ) ) {
 		return( DisplayDriver::DrawLine(psBitMap, cClipRect, cPnt1, cPnt2, sColor, nMode) );
 	}
 
 	uint32 nColor;
 	switch( psBitMap->m_eColorSpc ) {
-		case CS_RGB15:
-		case CS_RGBA15:
-			nColor = COL_TO_RGB15 (sColor);
-			break;
 		case CS_RGB16:
 			nColor = COL_TO_RGB16 (sColor);
 			break;
@@ -154,15 +146,16 @@ bool ATImach64::DrawLine(SrvBitmap *psBitMap, const IRect &cClipRect,
 }
 //-----------------------------------------------------------------------------         
 bool ATImach64::BltBitmap(SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap, 
-                           IRect cSrcRect, IPoint cDstPos, 
-                           int nMode) { 
+                           IRect cSrcRect, IRect cDstRect, 
+                           int nMode, int nAlpha) { 
  
 	if( pcDstBitMap->m_bVideoMem == false ||
-		pcSrcBitMap->m_bVideoMem == false ) {
+		pcSrcBitMap->m_bVideoMem == false || ( nMode != DM_COPY && nMode != DM_INVERT ) || ( cSrcRect.Size() != cDstRect.Size() ) ) {
 		return( DisplayDriver::BltBitmap( pcDstBitMap, pcSrcBitMap,
-                                         cSrcRect, cDstPos, nMode  ) );
+                                         cSrcRect, cDstRect, nMode, nAlpha ) );
 	}
     
+    IPoint cDstPos = cDstRect.LeftTop();
 	int srcx = cSrcRect.left;
 	int srcy = cSrcRect.top;
 	int dstx = cDstPos.x;

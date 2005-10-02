@@ -58,6 +58,7 @@ struct SystemBase
 	struct i3IntrGate ex_IDT[256];	/* Interrupt Descriptor Table   */
 	struct i3Desc ex_GDT[8192];	/* Global Descriptor Table      */
 	uint8 ex_DTAllocList[8192];	/* array describing whitch descriptors allocated in the different tables */
+	struct i3MTRRDescrTable ex_sMTRR; /* The MTRR descriptor table */
 
 	char *ex_pNullPage;
 

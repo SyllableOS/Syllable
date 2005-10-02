@@ -62,10 +62,6 @@ bool ATImach64::CreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cD
 		
 		switch( BitsPerPixel( m_sCurrentMode.m_eColorSpace ) )
 		{
-			case 15:
-				key_msk = 0x7FFF;
-				m_nColorKey = COL_TO_RGB15( sColorKey );
-			break;
 			case 16:
 				key_msk = 0xFFFF;
 				m_nColorKey = COL_TO_RGB16( sColorKey );
@@ -191,18 +187,6 @@ bool ATImach64::RecreateVideoOverlay( const os::IPoint& cSize, const os::IRect& 
 		return( true );
 	}
 	return( false );
-}
-
-
-//-----------------------------------------------------------------------------
-// NAME:
-// DESC:
-// NOTE:
-// SEE ALSO:
-//-----------------------------------------------------------------------------
-
-void ATImach64::UpdateVideoOverlay( area_id *pBuffer )
-{
 }
 
 //-----------------------------------------------------------------------------

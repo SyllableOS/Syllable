@@ -39,6 +39,9 @@
 #include "ChipInfo.h"
 #include "CursorInfo.h"
 
+
+using namespace os;
+
 #ifndef __VMWARE_H__
 #define __VMWARE_H__
 
@@ -57,21 +60,12 @@ public:
 	virtual os::screen_mode GetCurrentScreenMode();
 
 	virtual int GetFramebufferOffset();
-
-	virtual void SetCursorBitmap(os::mouse_ptr_mode eMode, const os::IPoint& cHotSpot, const void* pRaster, int nWidth, int nHeight);
-
-	virtual void MouseOn();
-	virtual void MouseOff();
-	virtual void SetMousePos(os::IPoint cNewPos);
-	virtual bool IntersectWithMouse(const IRect& cRect);
+	
+	virtual void UnlockBitmap( SrvBitmap* pcDstBitmap, SrvBitmap* pcSrcBitmap, os::IRect cSrc, os::IRect cDst );
 
 	virtual bool DrawLine(SrvBitmap* psBitMap, const os::IRect& cClipRect, const os::IPoint& cPnt1, const os::IPoint& cPnt2, const os::Color32_s& sColor, int nMode);
-	virtual bool FillRect(SrvBitmap* psBitMap, const os::IRect& cRect, const os::Color32_s& sColor);
-	virtual bool BltBitmap(SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap, os::IRect cSrcRect, os::IPoint cDstPos, int nMode);
-
-	virtual void RenderGlyph(SrvBitmap *pcBitmap, Glyph* pcGlyph, const os::IPoint& cPos, const os::IRect& cClipRect, const os::Color32_s& sFgColor);
-	virtual void RenderGlyphBlend(SrvBitmap *pcBitmap, Glyph* pcGlyph, const os::IPoint& cPos, const os::IRect& cClipRect, const os::Color32_s& sFgColor);
-	virtual void RenderGlyph(SrvBitmap *pcBitmap, Glyph* pcGlyph, const os::IPoint& cPos, const os::IRect& cClipRect, const uint32* anPallette);
+	virtual bool FillRect(SrvBitmap* psBitMap, const os::IRect& cRect, const os::Color32_s& sColor, int nMode);
+	virtual bool BltBitmap(SrvBitmap* pcDstBitMap, SrvBitmap* pcSrcBitMap, os::IRect cSrcRect, os::IRect cDstRect, int nMode, int nAlpha);
 
 	bool IsInitiated() const
 	{

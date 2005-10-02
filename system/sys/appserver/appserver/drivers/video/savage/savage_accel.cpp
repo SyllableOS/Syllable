@@ -897,14 +897,14 @@ bool SavageDriver::DrawLine( SrvBitmap *psBitmap, const IRect &cClipRect, const 
 	return bRet;
 }
 
-bool SavageDriver::FillRect( SrvBitmap *psBitmap, const IRect &cRect, const Color32_s &sColor )
+bool SavageDriver::FillRect( SrvBitmap *psBitmap, const IRect &cRect, const Color32_s &sColor, int nMode )
 {
 	savage_s *psCard = m_psCard;
 	uint32 nColor;
 	bool bRet;
 
 	if ( psBitmap->m_bVideoMem && cRect.Width() > 1 && cRect.Height() > 1 && 
-		 ( psBitmap->m_eColorSpc == CS_RGB32 || psBitmap->m_eColorSpc == CS_RGB16 ) )
+		 ( psBitmap->m_eColorSpc == CS_RGB32 || psBitmap->m_eColorSpc == CS_RGB16 ) && nMode == DM_COPY )
 	{
 		BCI_GET_PTR;
 		int nCmd;
@@ -935,20 +935,21 @@ bool SavageDriver::FillRect( SrvBitmap *psBitmap, const IRect &cRect, const Colo
 	else
 	{
 		WaitIdle( psCard );
-		bRet = DisplayDriver::FillRect( psBitmap, cRect, sColor );
+		bRet = DisplayDriver::FillRect( psBitmap, cRect, sColor, nMode );
 	}
 
 	return bRet;
 }
 
-bool SavageDriver::BltBitmap( SrvBitmap *pcDstBitmap, SrvBitmap *pcSrcBitmap, IRect cSrcRect, IPoint cDstPos, int nMode )
+bool SavageDriver::BltBitmap( SrvBitmap *pcDstBitmap, SrvBitmap *pcSrcBitmap, IRect cSrcRect, IRect cDstRect, int nMode, int nAlpha )
 {
 	savage_s *psCard = m_psCard;
 	bool bRet;
 
-	if( pcSrcBitmap->m_bVideoMem == true && pcDstBitmap->m_bVideoMem == true && nMode == DM_COPY )
+	if( pcSrcBitmap->m_bVideoMem == true && pcDstBitmap->m_bVideoMem == true && nMode == DM_COPY && cSrcRect.Size() == cDstRect.Size() )
 	{
 		/* Screen to screen copy */
+		IPoint cDstPos = cDstRect.LeftTop();
 		int nWidth  = cSrcRect.Width();
 		int nHeight = cSrcRect.Height();
 		int sx = cSrcRect.left;
@@ -995,7 +996,7 @@ bool SavageDriver::BltBitmap( SrvBitmap *pcDstBitmap, SrvBitmap *pcSrcBitmap, IR
 	{
 		/* RAM to RAM/video copy */
 		WaitIdle( psCard );
-		bRet = DisplayDriver::BltBitmap( pcDstBitmap, pcSrcBitmap, cSrcRect, cDstPos, nMode );
+		bRet = DisplayDriver::BltBitmap( pcDstBitmap, pcSrcBitmap, cSrcRect, cDstRect, nMode, nAlpha );
 	}
 
 	return bRet;

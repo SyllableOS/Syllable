@@ -27,6 +27,9 @@
 
 #include <gui/desktop.h>
 #include <util/messenger.h>
+
+using namespace os;
+
 static Color32_s Tint( const Color32_s & sColor, float vTint )
 {
 	int r = int ( ( float ( sColor.red ) * vTint + 127.0f * ( 1.0f - vTint ) ) );
@@ -117,6 +120,7 @@ WinSelect::WinSelect():Layer( NULL, g_pcTopView, "", Rect( 0, 0, 1, 1 ), 0, NULL
 
 	get_desktop_config( &nDesktop, &sMode, NULL );
 	SetFrame( Rect( 0, 0, nWidth + 10, nHeight ) + Point( sMode.m_nWidth / 2 - nWidth / 2, sMode.m_nHeight / 2 - nHeight / 2 ) );
+	g_pcTopView->LayerFrameChanged( this, GetIFrame() );
 }
 
 WinSelect::~WinSelect()
@@ -235,6 +239,7 @@ void WinSelect::Paint( const IRect & cUpdateRect, bool bUpdate )
 	{
 		EndUpdate();
 	}
+	g_pcTopView->UpdateLayer( this, true );
 }
 void WinSelect::Step( bool bForward )
 {

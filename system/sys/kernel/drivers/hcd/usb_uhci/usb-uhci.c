@@ -19,7 +19,7 @@
  * $Id$
  */
  
-//#define DEBUG_LIMIT KERN_DEBUG
+
 
 #include <atheos/udelay.h>
 #include <atheos/isa_io.h>
@@ -30,6 +30,9 @@
 #include <posix/signal.h>
 #include <macros.h>
 #include "bitops.h"
+
+//#undef DEBUG_LIMIT
+//#define DEBUG_LIMIT KERN_DEBUG
 
 /* This enables more detailed sanity checks in submit_iso */
 //#define ISO_SANITY_CHECK

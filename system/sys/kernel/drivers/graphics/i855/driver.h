@@ -43,7 +43,7 @@
 #define I830_RDRAM_ND(x)		(((x) & 0x20) >> 5)
 #define I830_RDRAM_DDT(x)		(((x) & 0x18) >> 3)
 
-/* Intel i855/i852 registers */
+/* Intel i845 - i945 registers */
 #define I855_GMCH_CTRL			0x52
 #define I855_GMCH_ENABLED		0x4
 #define I855_GMCH_GMS_MASK		0x70
@@ -53,6 +53,8 @@
 #define I855_GMCH_GMS_STOLEN_8M		(0x3 << 4)
 #define I855_GMCH_GMS_STOLEN_16M	(0x4 << 4)
 #define I855_GMCH_GMS_STOLEN_32M	(0x5 << 4)
+#define I915_GMCH_GMS_STOLEN_48M	(0x6 << 4)
+#define I915_GMCH_GMS_STOLEN_64M	(0x7 << 4)
 #define I85X_CAPID			0x44
 #define I85X_VARIANT_MASK		0x7
 #define I85X_VARIANT_SHIFT		5
@@ -64,6 +66,9 @@
 
 #define I855_GMADDR		0x10
 #define I855_MMADDR		0x14
+#define I915_GMADDR		0x18
+#define I915_MMADDR		0x10
+#define I915_PTEADDR	0x1C
 #define I855_PGETBL_CTL		0x2020
 #define I855_PGETBL_ENABLED	0x00000001
 #define I855_PTE_BASE		0x10000

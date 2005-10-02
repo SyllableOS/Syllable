@@ -43,10 +43,10 @@
 #include "tdfx.h"
 #include "gtf.h"
 
+using namespace os;
 
 
-TDFX::TDFX( int nFd ):m_cGELock( "tdfx_ge_lock" ), m_cMousePos( 0, 0 ),
-                      m_cCursorHotSpot( 0, 0 )
+TDFX::TDFX( int nFd ):m_cGELock( "tdfx_ge_lock" )
 {
 	PCI_Info_s cPCIInfo;
 
@@ -86,7 +86,7 @@ TDFX::TDFX( int nFd ):m_cGELock( "tdfx_ge_lock" ), m_cMousePos( 0, 0 ),
               ( unsigned int )m_nFbSize >> 10 );
 
 	m_hFrameBufferArea = create_area( "tdfx_framebuffer",
-        ( void ** )&m_pFrameBufferBase, m_nFbSize, AREA_FULL_ACCESS,
+        ( void ** )&m_pFrameBufferBase, m_nFbSize, AREA_FULL_ACCESS | AREA_WRCOMB,
         AREA_NO_LOCK );
 	m_nFbBasePhys = cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK;
 	remap_area( m_hFrameBufferArea, ( void * )m_nFbBasePhys );
@@ -115,7 +115,6 @@ TDFX::TDFX( int nFd ):m_cGELock( "tdfx_ge_lock" ), m_cMousePos( 0, 0 ),
                         colspace[i], rf[j] ) );
 		}
 
-	m_bUsingHWCursor = false;
 	m_bVideoOverlayUsed = false;
 	m_bIsInitiated = true;
 }
@@ -538,112 +537,6 @@ uint32 TDFX::get_lfb_size()
 }
 
 
-
-//-----------------------------------------------------------------------------
-//                          Hardware Mouse Cursor
-//-----------------------------------------------------------------------------
-
-
-bool TDFX::IntersectWithMouse( const IRect & cRect )
-{
-	return false;
-}
-
-
-void TDFX::SetCursorBitmap( os::mouse_ptr_mode eMode,
-                            const os::IPoint & cHotSpot, const void *pRaster,
-                            int nWidth, int nHeight )
-{
-	m_cCursorHotSpot = cHotSpot;
-	MouseOff();
-
-	// the 3dfx cards don't support cursors with more than 1 bpp
-	if( ( eMode != MPTR_MONO ) || ( nWidth > MAX_CURS ) ||
-        ( nHeight > MAX_CURS ) )
-	{
-		m_bUsingHWCursor = false;
-		SetMousePos( m_cMousePos );
-		return DisplayDriver::SetCursorBitmap( eMode, cHotSpot, pRaster, nWidth,
-                                               nHeight );
-	}
-
-	m_cGELock.Lock();
-
-
-	// convert the appserver's cursor bitmap to a format the Voodoo chip can
-	// digest - yes, I know, the code is ugly :-/
-
-	uint8 *cursorbase = ( uint8 * )( m_pFrameBufferBase + ( m_nFbSize - 1024 ));
-	uint8 *pnBitmap = ( uint8 * )pRaster;
-	uint8 anPattern[1024];
-
-	memset( anPattern, 0, 1024 );
-
-	for( int i = 0; i < nWidth; i++ )
-		for( int j = 0; j < nHeight; j++ )
-		{
-			switch ( pnBitmap[( j * nWidth ) + i] )
-			{
-			case 0x02:
-				anPattern[( j * 16 ) + ( i / 8 )] |= BIT( ( 7 - ( i % 8 ) ) );
-				break;
-			case 0x03:
-				anPattern[( j * 16 ) + ( i / 8 )] |= BIT( ( 7 - ( i % 8 ) ) );
-				anPattern[( ( j * 16 ) + ( i / 8 ) ) + 8] |= BIT((7 - (i % 8)));
-			}
-		}
-
-	memcpy( cursorbase, anPattern, 1024 );
-
-	m_cGELock.Unlock();
-	m_bUsingHWCursor = true;
-	SetMousePos( m_cMousePos );
-	MouseOn();
-}
-
-
-void TDFX::SetMousePos( os::IPoint cNewPos )
-{
-	m_cMousePos = cNewPos;
-
-	if( !m_bUsingHWCursor )
-		return DisplayDriver::SetMousePos( cNewPos );
-
-	int x = ( cNewPos.x - m_cCursorHotSpot.x ) + 63;
-	int y = ( cNewPos.y - m_cCursorHotSpot.y ) + 63;
-
-	m_cGELock.Lock();
-	fifo_make_room( 1 );
-	tdfx_outl( HWCURLOC, ( y << 16 ) + x );
-	m_cGELock.Unlock();
-}
-
-
-void TDFX::MouseOn()
-{
-	if( !m_bUsingHWCursor )
-		return DisplayDriver::MouseOn();
-
-	m_cGELock.Lock();
-	fifo_make_room( 1 );
-	tdfx_outl( VIDPROCCFG, tdfx_inl( VIDPROCCFG ) | VIDCFG_HWCURSOR_ENABLE );
-	m_cGELock.Unlock();
-}
-
-
-void TDFX::MouseOff()
-{
-	if( !m_bUsingHWCursor )
-		return DisplayDriver::MouseOff();
-
-	m_cGELock.Lock();
-	fifo_make_room( 1 );
-	tdfx_outl( VIDPROCCFG, tdfx_inl( VIDPROCCFG ) & ~VIDCFG_HWCURSOR_ENABLE );
-	m_cGELock.Unlock();
-}
-
-
-
 //-----------------------------------------------------------------------------
 //                          Accelerated Functions
 //-----------------------------------------------------------------------------
@@ -674,9 +567,6 @@ bool TDFX::DrawLine( SrvBitmap * pcBitMap, const IRect & cClipRect,
 	case CS_RGB16:
 		nColor = COL_TO_RGB16( sColor );
 		break;
-	case CS_RGB15:
-		nColor = COL_TO_RGB15( sColor );
-		break;
 	default:
 		return DisplayDriver::DrawLine( pcBitMap, cClipRect, cPnt1, cPnt2,
                                         sColor, nMode );
@@ -698,10 +588,10 @@ bool TDFX::DrawLine( SrvBitmap * pcBitMap, const IRect & cClipRect,
 
 
 bool TDFX::FillRect( SrvBitmap * pcBitMap, const IRect & cRect,
-                     const Color32_s & sColor )
+                     const Color32_s & sColor, int nMode )
 {
-	if( pcBitMap->m_bVideoMem == false )
-		return DisplayDriver::FillRect( pcBitMap, cRect, sColor );
+	if( pcBitMap->m_bVideoMem == false || nMode != DM_COPY )
+		return DisplayDriver::FillRect( pcBitMap, cRect, sColor, nMode );
 
 	int nWidth = cRect.Width() + 1;
 	int nHeight = cRect.Height() + 1;
@@ -715,11 +605,8 @@ bool TDFX::FillRect( SrvBitmap * pcBitMap, const IRect & cRect,
 	case CS_RGB16:
 		nColor = COL_TO_RGB16( sColor );
 		break;
-	case CS_RGB15:
-		nColor = COL_TO_RGB15( sColor );
-		break;
 	default:
-		return DisplayDriver::FillRect( pcBitMap, cRect, sColor );
+		return DisplayDriver::FillRect( pcBitMap, cRect, sColor, nMode );
 	}
 
 	uint32 stride = m_sCurrentMode.m_nBytesPerLine;
@@ -742,13 +629,14 @@ bool TDFX::FillRect( SrvBitmap * pcBitMap, const IRect & cRect,
 
 
 bool TDFX::BltBitmap( SrvBitmap * pcDstBitMap, SrvBitmap * pcSrcBitMap,
-                      IRect cSrcRect, IPoint cDstPos, int nMode )
+                      IRect cSrcRect, IRect cDstRect, int nMode, int nAlpha )
 {
 	if( ( pcSrcBitMap->m_bVideoMem == false ) ||
-        ( pcDstBitMap->m_bVideoMem == false ) || ( nMode != DM_COPY ) )
+        ( pcDstBitMap->m_bVideoMem == false ) || ( nMode != DM_COPY ) || cSrcRect.Size() != cDstRect.Size() )
 		return DisplayDriver::BltBitmap( pcDstBitMap, pcSrcBitMap, cSrcRect,
-                                         cDstPos, nMode );
+                                         cDstRect, nMode, nAlpha );
 
+	IPoint cDstPos = cDstRect.LeftTop();
 	int nWidth = cSrcRect.Width() + 1;
 	int nHeight = cSrcRect.Height() + 1;
 
@@ -883,19 +771,6 @@ bool TDFX::RecreateVideoOverlay( const os::IPoint & cSize,
 
 	return false;
 }
-
-
-bool TDFX::UploadVideoData( area_id *phArea, area_id hSrcArea,
-                            uint32 nBytesPerRow )
-{
-	return false;
-}
-
-
-void TDFX::UpdateVideoOverlay( area_id *pBuffer )
-{
-}
-
 
 void TDFX::DeleteVideoOverlay( area_id *pBuffer )
 {

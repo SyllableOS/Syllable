@@ -64,15 +64,6 @@ static const uint16_t CS_USER		= 0x13;	/* User (Ring 3) code segment */
 static const uint16_t DS_KERNEL	= 0x18;	/* Kernel (Ring 0) data segment */
 static const uint16_t DS_USER		= 0x23;	/* User (Ring 3) data segment */
 
-#if 0
-#define VM86_TYPE(retval)	((retval) & 0xff)
-#define VM86_ARG(retval)	((retval) >> 8)
-
-#define VM86_SIGNAL	0	/* return due to signal */
-#define VM86_UNKNOWN	1	/* unhandled GP fault - IO-instruction or similar */
-#define VM86_INTx	2	/* int3/int x instruction (ARG = x) */
-#define VM86_STI	3	/* sti/popf/iret instruction enabled virtual interrupts */
-#endif
 
 /**** END OF VM86 STUFF ***************************************/
 
@@ -181,6 +172,20 @@ union i3FPURegs_u
 	struct i3FXSave_t	fpu_sFXSave;
 };
 
+struct i3MTRRDesc
+{
+	uint32 nBaseLow;
+	uint32 nBaseHigh;
+	uint32 nMaskLow;
+	uint32 nMaskHigh;
+};
+
+struct i3MTRRDescrTable
+{
+	int nNumDesc;
+	struct i3MTRRDesc sDesc[16];
+};
+
 static const uint32_t PTE_PRESENT	= 0x001;  ///< dir/page is present/valid
 static const uint32_t PTE_WRITE		= 0x002;  ///< dir/page is writeable
 static const uint32_t PTE_USER		= 0x004;  ///< only accessible by supervisor
@@ -198,17 +203,6 @@ static const uint32_t PFE_PROTVIOL	= 0x0001;
 			 */
 static const uint32_t PFE_WRITE		= 0x0002;  /* if set fault caused by a write, otherwise by a read  */
 static const uint32_t PFE_USER		= 0x0004;  /* if set fault caused in user-mode otherwise in supervisor-mode */
-
-/*
- *	PTE_ALLOCATED flag have different meanings in directory and page tables.
- *	When set in a directory table it means that there is allocated memory for
- *	this page table. For a page table entry it is indicates that the entry is
- *	in use.
- */
-
-/* #define	PTE_ALLOCATED		0x400	*/
-
-/*void	sys_FlushCaches( void );*/
 
 static inline void set_page_directory_base_reg( void *pPageTable )
 {
@@ -275,6 +269,8 @@ static inline void SetTR( int nTaskReg )
 	__asm__ __volatile__( "ltr %%ax" : : "a" (nTaskReg) );
 }
 
+/* CR4 register */
+
 static const uint32_t X86_CR4_VME	  = 0x0001; // enable vm86 extensions
 static const uint32_t X86_CR4_PVI	  = 0x0002; // enable virtual interrupts flag
 static const uint32_t X86_CR4_TSD	  = 0x0004; // disable time stamp at ipl 3
@@ -294,18 +290,46 @@ static inline void set_in_cr4( unsigned int nFlags )
 	__asm__ __volatile__( "movl %0,%%cr4" : : "r" ( nCR4 | nFlags ) );
 }
 
+/* MSR registers */
+
+#define MSR_REG_APICBASE			0x1b
+#define MSR_REG_APICBASE_BSP		(1<<8)
+#define MSR_REG_APICBASE_ENABLE		(1<<11)
+#define MSR_REG_APICBASE_BASE		(0xfffff<<12)
+#define MSR_REG_MTRR_CAP			0x0fe
+#define MSR_REG_MTRR_CAP_NUM		0xff
+#define MSR_REG_MTRR_CAP_WRCOMP		(1<<10)
+#define MSR_REG_MTRR_DEFTYPE		0x2ff
+#define MSR_REG_MTRR_BASE( nReg ) ( 0x200 + 2 * ( nReg ) )
+#define MSR_REG_MTRR_MASK( nReg ) ( 0x200 + 2 * ( nReg ) + 1 )
+
+#define rdmsr( nReg, nLow, nHigh ) \
+	__asm__ __volatile__( "rdmsr" \
+			  : "=a" ( nLow ), "=d" ( nHigh ) \
+			  : "c" ( nReg ) )
+
+#define wrmsr( nReg, nLow, nHigh ) \
+	__asm__ __volatile__("wrmsr" \
+			  : /* no outputs */ \
+			  : "c" ( nReg ), "a" ( nLow ), "d" ( nHigh ) )
+
+
 void init_cpuid( void );
 
 void init_descriptors( void );
 void enable_mmu( void );
-bool Desc_SetBase( uint16 desc, uint32 base );
-uint32 Desc_GetBase( uint16 desc );
-bool Desc_SetLimit( uint16 desc, uint32 limit );
-uint32 Desc_GetLimit( uint16 desc );
-bool Desc_SetAccess( uint16 desc, uint8 acc );
-uint8 Desc_GetAccess( uint16 desc );
-uint16 Desc_Alloc( int32 table );
-void Desc_Free( uint16 desc );
+bool set_gdt_desc_base( uint16 desc, uint32 base );
+uint32 get_gdt_desc_base( uint16 desc );
+bool set_gdt_desc_limit( uint16 desc, uint32 limit );
+uint32 get_gdt_desc_limit( uint16 desc );
+bool set_gdt_desc_access( uint16 desc, uint8 acc );
+uint8 get_gdt_desc_access( uint16 desc );
+uint16 alloc_gdt_desc( int32 table );
+void free_gdt_desc( uint16 desc );
+void write_mtrr_descs( void );
+status_t alloc_mtrr_desc( uint64 nBase, uint64 nSize, int nType );
+status_t free_mtrr_desc( uint64 nBase );
+
 #endif /* __KERNEL__ */
 
 // Read the TSC clock

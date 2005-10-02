@@ -157,14 +157,16 @@ m_cAlignPos( 1, 1 ), m_cAlignPosOff( 0, 0 )
 
 	m_bBackdrop = bBackdrop;
 
-//    FontNode* pcNode = new FontNode( AppServer::GetInstance()->GetPlainFont() );
-//    SetFont( pcNode );
 	SetFont( AppServer::GetInstance()->GetWindowTitleFont(  ) );
 
 	m_pcDecorator = NULL;
 
 	m_pcClient = new Layer( pcWindow, this, "wnd_client", Rect( 0, 0, 0, 0 ), 0, NULL );
 
+}
+
+WndBorder::~WndBorder()
+{
 }
 
 void WndBorder::SetDecorator( os::WindowDecorator * pcDecorator )
@@ -196,6 +198,7 @@ void WndBorder::SetFlags( uint32 nFlags )
 
 void WndBorder::DoSetFrame( const Rect & cRect )
 {
+	g_pcTopView->LayerFrameChanged( this, cRect );
 	Layer::SetFrame( cRect );
 	m_pcClient->SetFrame( RectToClient( GetBounds(), m_pcDecorator ) );
 	m_pcDecorator->FrameSized( GetBounds() );
@@ -255,6 +258,7 @@ void WndBorder::Paint( const IRect & cUpdateRect, bool bUpdate )
 	{
 		EndUpdate();
 	}
+	g_pcTopView->UpdateLayer( this, false );
 }
 
 IRect WndBorder::AlignRect( const IRect & cRect, const IRect & cBorders )
@@ -408,6 +412,7 @@ bool WndBorder::MouseMoved( Messenger * pcAppTarget, const Point & cNewPos, int 
 	}
 
 	// Set the state of the various border buttons.
+	bool bNeedRedraw = false;
 	for( int i = 0; i < WindowDecorator::HIT_MAX_ITEMS; i++ )
 	{
 		if( m_nButtonDown[i] > 0 )
@@ -416,11 +421,15 @@ bool WndBorder::MouseMoved( Messenger * pcAppTarget, const Point & cNewPos, int 
 
 			if( nNewMode != m_nButtonDown[i] )
 			{
+				bNeedRedraw = true;
 				m_nButtonDown[i] = nNewMode;
 				m_pcDecorator->SetButtonState( i, m_nButtonDown[i] == 1 );
 			}
 		}
 	}
+	if( bNeedRedraw )
+		g_pcTopView->UpdateLayer( this, false );
+	
 
 	if( m_eHitItem == WindowDecorator::HIT_DRAG )
 	{
@@ -588,6 +597,7 @@ bool WndBorder::MouseDown( Messenger * pcAppTarget, const Point & cPos, int nBut
 		{
 			m_nButtonDown[m_eHitItem] = 1;
 			m_pcDecorator->SetButtonState( m_eHitItem, true );
+			g_pcTopView->UpdateLayer( this, false );
 		}
 	}
 
@@ -690,14 +700,18 @@ void WndBorder::MouseUp( Messenger * pcAppTarget, const Point & cPos, int nButto
 
 	m_eHitItem = WindowDecorator::HIT_NONE;
 
+	bool bNeedRedraw = false;
 	for( int i = 0; i < WindowDecorator::HIT_MAX_ITEMS; i++ )
 	{
 		if( m_nButtonDown[i] != 0 )
 		{		// == 1
 			m_pcDecorator->SetButtonState( i, false );
+			bNeedRedraw = true;
 		}
 		m_nButtonDown[i] = 0;
 	}
+	if( bNeedRedraw )
+		g_pcTopView->UpdateLayer( this, false );
 
 	m_cRawFrame = m_cIFrame;
 
@@ -759,7 +773,8 @@ void WndBorder::WndMoveReply( Messenger * pcAppTarget )
 	}
 	if( m_bWndMovePending == false )
 	{
-		m_pcClient->UpdateIfNeeded( false );
+		m_pcClient->UpdateIfNeeded();
+		g_pcTopView->UpdateLayer( this, true );
 	}
 	g_cLayerGate.Open();
 }
