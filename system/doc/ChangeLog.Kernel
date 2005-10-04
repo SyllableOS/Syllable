@@ -1,3 +1,13 @@
+* October 4 2005, Arno Klenke *
+
+Added the flush_locked_device_cache() function
+Reworked shrink_cache_heaps() and shutdown_vfs()
+Sorted kernel function list in ksyms.c
+MTRR support
+The floppy drive should work again
+Kernel graphic driver updates
+Support for the pci bios in the pci busmanager
+
 * September 7 2005, Kaj de Vos *
 
 Corrected some spelling mistakes in afs.c.

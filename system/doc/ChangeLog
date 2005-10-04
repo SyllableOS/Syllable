@@ -1,3 +1,12 @@
+* October 4 2005, Arno Klenke
+
+Updated appserver:
+	o Code cleanups and display driver api updates
+	o Removed 15bit code
+	o Parts of the keyboard code moved into an input plugin
+	o Backbuffered rendering supported in the intel, sis and geforce driver
+	o New hardware support: SiS 761, XGI Volari and nVidia GeForce 7800
+
 * September 17 2005, Henrik Isaksson *
 
 Checked in Paul Dufresne's French Canadian keymap.

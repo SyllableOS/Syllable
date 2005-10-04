@@ -1,3 +1,9 @@
+* October 4 2005 Arno Klenke *
+
+Fixed memory leaks in the media applications
+Updated screen driver that can scale the output
+Updated ffmpeg driver
+
 ---- 0.5.7 Released -------------------------------------------------------------------
 
 * August 15 2005 Arno Klenke *
