@@ -36,7 +36,6 @@ extern "C" {
 #ifdef __KERNEL__
 
 int alloc_tld( void );
-void * get_tld_addr( int nHandle );
 
 #else /* __KERNEL__ */
 
@@ -44,6 +43,7 @@ int   alloc_tld( void* pDestructor );
 
 #endif /* __KERNEL__ */
 
+void * get_tld_addr( int nHandle );
 void  set_tld( int nHandle, const void* pValue );
 void* get_tld( int nHandle );
 int free_tld( int nHandle );

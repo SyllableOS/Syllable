@@ -50,6 +50,8 @@ status_t sys_make_port_private( port_id hPort );
 
 port_id sys_find_port( const char* pzPortname );
 
+size_t sys_get_msg_size( port_id hPort );
+
 #endif /* __KERNEL__ */
 
 
@@ -87,6 +89,8 @@ status_t make_port_public( port_id hPort );
 status_t make_port_private( port_id hPort );
 
 port_id find_port( const char* pzPortname );
+
+size_t get_msg_size( port_id hPort );
 
 #ifdef __cplusplus
 }
