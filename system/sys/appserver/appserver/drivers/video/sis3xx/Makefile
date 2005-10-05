@@ -24,7 +24,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/sis3xx: $(OBJS)
-	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/sis3xx -lsyllable
+	$(CXX) -plugin -Xlinker -Bsymbolic -nodefaultlibs $(OBJS) -o $(OBJDIR)/sis3xx
 
 install: $(OBJDIR)/sis3xx
 	cp -f $(OBJDIR)/sis3xx $(DEVBIN)/sis3xx

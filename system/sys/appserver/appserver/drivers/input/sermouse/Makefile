@@ -24,7 +24,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/sermouse: $(OBJS)
-	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/sermouse -lsyllable
+	$(CXX) -plugin -Xlinker -Bsymbolic -nodefaultlibs $(OBJS) -o $(OBJDIR)/sermouse -lsyllable
 
 deps:
 

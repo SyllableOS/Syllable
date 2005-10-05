@@ -24,7 +24,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/geforcefx: $(OBJS)
-	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/geforcefx -lsyllable
+	$(CXX) -plugin -Xlinker -Bsymbolic -nodefaultlibs $(OBJS) -o $(OBJDIR)/geforcefx 
 
 deps:
 

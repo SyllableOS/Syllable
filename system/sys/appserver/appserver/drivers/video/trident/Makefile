@@ -26,7 +26,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/trident: $(OBJS)
-	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/trident -lsyllable
+	$(CXX) -plugin -Xlinker -Bsymbolic -nodefaultlibs $(OBJS) -o $(OBJDIR)/trident
 
 install: $(OBJDIR)/trident
 	cp -f $(OBJDIR)/trident $(DEVBIN)/trident

@@ -26,7 +26,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/mach64: $(OBJS)
-	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/mach64 -lsyllable
+	$(CXX) -plugin -Xlinker -Bsymbolic -nodefaultlibs $(OBJS) -o $(OBJDIR)/mach64
 
 install: $(OBJDIR)/mach64
 	cp -f $(OBJDIR)/mach64 $(DEVBIN)/mach64

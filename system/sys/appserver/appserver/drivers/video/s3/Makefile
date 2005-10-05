@@ -24,7 +24,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/s3_virge: $(OBJS)
-	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/s3_virge -lsyllable
+	$(CXX) -plugin -Xlinker -Bsymbolic -nodefaultlibs $(OBJS) -o $(OBJDIR)/s3_virge
 
 deps:
 

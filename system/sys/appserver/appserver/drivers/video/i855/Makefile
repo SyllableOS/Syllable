@@ -24,7 +24,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/i855: $(OBJS)
-	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/i855 -lsyllable
+	$(CXX) -plugin -Xlinker -Bsymbolic -nodefaultlibs $(OBJS) -o $(OBJDIR)/i855
 
 deps:
 

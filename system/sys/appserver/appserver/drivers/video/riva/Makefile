@@ -24,7 +24,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/riva: $(OBJS)
-	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/riva -lsyllable
+	$(CXX) -plugin -Xlinker -Bsymbolic -nodefaultlibs $(OBJS) -o $(OBJDIR)/riva
 
 deps:
 

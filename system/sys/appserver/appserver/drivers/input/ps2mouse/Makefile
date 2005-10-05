@@ -24,7 +24,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/ps2mouse: $(OBJS)
-	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/ps2mouse -lsyllable
+	$(CXX) -plugin -Xlinker -Bsymbolic -nodefaultlibs $(OBJS) -o $(OBJDIR)/ps2mouse -lsyllable
 
 deps:
 

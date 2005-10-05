@@ -24,7 +24,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/savage: $(OBJS)
-	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/savage -lsyllable
+	$(CXX) -plugin -Xlinker -Bsymbolic -nodefaultlibs $(OBJS) -o $(OBJDIR)/savage
 
 deps:
 

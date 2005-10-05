@@ -27,7 +27,7 @@ objs:
 	mkdir objs
 
 $(OBJDIR)/radeon: $(OBJS)
-	$(CXX) -plugin $(OBJS) -o $(OBJDIR)/radeon -lsyllable
+	$(CXX) -plugin -Xlinker -Bsymbolic -nodefaultlibs $(OBJS) -o $(OBJDIR)/radeon
 
 install: $(OBJDIR)/radeon radeon.cfg
 	cp -f $(OBJDIR)/radeon $(DEVBIN)/radeon

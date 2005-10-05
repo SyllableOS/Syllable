@@ -25,7 +25,7 @@ objs:
 	mkdir objs
 
 $(DRIVER): $(OBJS)
-	$(CXX) -plugin -lsyllable $(OBJS) -o $(DRIVER)
+	$(CXX) -plugin -Xlinker -Bsymbolic -nodefaultlibs $(OBJS) -o $(DRIVER)
 
 deps:
 
