@@ -209,6 +209,7 @@ modules
 	sys/appserver/appserver/drivers/decorators/red
 	sys/appserver/appserver/drivers/decorators/warpspeed
 	sys/appserver/appserver/drivers/decorators/win98
+	sys/appserver/appserver/drivers/input/keyboard
 	sys/appserver/appserver/drivers/input/ps2mouse
 	sys/appserver/appserver/drivers/input/sermouse
 	sys/appserver/appserver/drivers/input/usbmouse
