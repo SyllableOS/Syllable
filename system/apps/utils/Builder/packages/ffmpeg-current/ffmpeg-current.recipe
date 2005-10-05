@@ -26,8 +26,6 @@ configure-options
 ;	--disable-audio-beos
 	--disable-vhook
 	--disable-dv1394
-;	Non-free stuff:
-	--disable-risky
 	--enable-gpl
 	--enable-a52
 	--enable-pp
@@ -41,23 +39,22 @@ configure-options
 
 install-tree	include lib
 install-files
-	../ffmpeg-current/libavcodec/avcodec.h		include
-	../ffmpeg-current/libavformat/avformat.h	include
-	../ffmpeg-current/libavformat/avio.h		include
-	../ffmpeg-current/libavformat/rtp.h			include
-	../ffmpeg-current/libavformat/rtsp.h		include
-	../ffmpeg-current/libavformat/rtspcodes.h	include
-	../ffmpeg-current/libavutil/avutil.h		include
-	../ffmpeg-current/libavutil/common.h		include
-	../ffmpeg-current/libavutil/mathematics.h	include
-	../ffmpeg-current/libavutil/rational.h		include
-	../ffmpeg-current/libavutil/integer.h		include
-	../ffmpeg-current/libavutil/intfloat_readwrite.h include
-	../ffmpeg-current/config.h					include
-	libavcodec/libavcodec.a						lib
-	libavformat/libavformat.a					lib
-	libavutil/libavutil.a						lib
+	../ffmpeg-current/libavcodec/avcodec.h				include
+	../ffmpeg-current/libavformat/avformat.h			include
+	../ffmpeg-current/libavformat/avio.h				include
+	../ffmpeg-current/libavformat/rtp.h					include
+	../ffmpeg-current/libavformat/rtsp.h				include
+	../ffmpeg-current/libavformat/rtspcodes.h			include
+	../ffmpeg-current/libavutil/avutil.h				include
+	../ffmpeg-current/libavutil/common.h				include
+	../ffmpeg-current/libavutil/mathematics.h			include
+	../ffmpeg-current/libavutil/rational.h				include
+	../ffmpeg-current/libavutil/integer.h				include
+	../ffmpeg-current/libavutil/intfloat_readwrite.h	include
+	../ffmpeg-current/config.h							include
+	libavcodec/libavcodec.a								lib
+	libavformat/libavformat.a							lib
+	libavutil/libavutil.a								lib
 documentation
 	README COPYING Changelog CREDITS doc/TODO
 ;	doc/*.txt
-
