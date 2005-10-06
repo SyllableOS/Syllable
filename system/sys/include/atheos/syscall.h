@@ -252,7 +252,9 @@
 
 #define __NR_get_tld_addr		216
 
-#define	__NR_SysCallCount		217
+#define __NR_get_msg_size		217
+
+#define	__NR_SysCallCount		218
 #define	__NR_DeprecatedSysCallCount	11	/* Obsolete syscalls */
 
 /* The TRUE number of ACTIVE syscalls E.g. __NR_SysCallCount minus the number of

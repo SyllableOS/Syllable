@@ -148,6 +148,7 @@ static struct SysCall_info g_sSysCallTable[] = {
  {__NR_make_port_public,"make_port_public", SYSC_GROUP_IPC, 1, SYSC_ARG_T_STATUS_T, SYSC_ARG_T_INT, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE},
  {__NR_make_port_private,"make_port_private", SYSC_GROUP_IPC, 1, SYSC_ARG_T_STATUS_T, SYSC_ARG_T_INT, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE},
  {__NR_find_port,"find_port", SYSC_GROUP_IPC, 1, SYSC_ARG_T_INT, SYSC_ARG_T_STRING, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE},
+ {__NR_get_msg_size,"get_msg_size", SYSC_GROUP_IPC, 1, SYSC_ARG_T_INT, SYSC_ARG_T_INT, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE, SYSC_ARG_T_NONE},
 
  /* I/O */
 
