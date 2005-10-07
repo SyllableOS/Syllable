@@ -85,8 +85,8 @@ void CFPlaylist::MouseUp( const os::Point & cPos, uint32 nButtons, os::Message *
 		return ( os::ListView::MouseUp( cPos, nButtons, pcData ) );
 	}
 	/* Tell CFApp class */
-	os::Message cMsg( CF_ADD_FILE );
-	cMsg.AddString( "file/path", zFile );
+	os::Message cMsg( *pcData );
+	cMsg.SetCode( CF_ADD_FILE );
 	os::Application::GetInstance()->PostMessage( &cMsg, os::Application::GetInstance(  ) );
 }
 
@@ -205,7 +205,7 @@ CFWindow::CFWindow( const os::Rect & cFrame, const os::String & cName, const os:
 	
 	
 	/* Create file selector */
-	m_pcFileDialog = new os::FileRequester( os::FileRequester::LOAD_REQ, new os::Messenger( os::Application::GetInstance() ), "", os::FileRequester::NODE_FILE, false );
+	m_pcFileDialog = new os::FileRequester( os::FileRequester::LOAD_REQ, new os::Messenger( os::Application::GetInstance() ), "", os::FileRequester::NODE_FILE, true );
 	m_pcFileDialog->Lock();
 	m_pcFileDialog->Start();
 	m_pcFileDialog->Unlock();
@@ -1675,10 +1675,12 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 			
 			/* Add one file ( sent by the CFWindow class or the filerequester ) */
 			os::String zFile;
+			int i = 0;
 
-			if ( pcMessage->FindString( "file/path", &zFile.str() ) == 0 && !m_bLockedInput )
+			while( pcMessage->FindString( "file/path", &zFile.str(), i ) == 0 && !m_bLockedInput )
 			{
 				AddFile( zFile );
+				i++;
 			}
 		}
 		break;

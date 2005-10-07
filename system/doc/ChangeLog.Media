@@ -1,3 +1,7 @@
+* October 7 2005 Arno Klenke *
+
+ColdFish can now add multiple files at once
+
 * October 4 2005 Arno Klenke *
 
 Fixed memory leaks in the media applications
