@@ -1,3 +1,8 @@
+* October 8 2005, Kristian Van Der Vliet *
+
+The appserver Window & Application loops use get_msg_size() to handle
+over-sized packets.
+
 * October 5 2005, Arno Klenke
 
 Updated makefiles of the input and display drivers

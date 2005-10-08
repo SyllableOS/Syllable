@@ -1,3 +1,7 @@
+* October 8 2005, Kristian Van Der Vliet *
+
+Implement get_msg_size()
+
 * October 4 2005, Arno Klenke *
 
 Added the flush_locked_device_cache() function
