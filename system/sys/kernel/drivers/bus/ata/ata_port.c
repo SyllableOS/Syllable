@@ -153,15 +153,8 @@ status_t ata_port_start_dma( ATA_port_s* psPort )
 	
 	sleep_on_sem( psPort->hIRQWait, INFINITE_TIMEOUT );
 	
-/*	while( !( nStatus & ATA_DMA_STATUS_IRQ ) )
-	{
-		
-		udelay( 5000 );
-		ATA_READ_DMA_REG( psPort, ATA_REG_DMA_STATUS, nStatus )
-	}*/
-	
 	/* Stop transfer */
-	ATA_READ_DMA_REG( psPort, ATA_REG_CONTROL, nControl )
+	ATA_READ_DMA_REG( psPort, ATA_REG_DMA_CONTROL, nControl )
 	ATA_WRITE_DMA_REG( psPort, ATA_REG_DMA_CONTROL, nControl & ~ATA_DMA_CONTROL_START )
 	ATA_READ_DMA_REG( psPort, ATA_REG_DMA_STATUS, nStatus )
 	

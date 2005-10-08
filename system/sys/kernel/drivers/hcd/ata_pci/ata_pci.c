@@ -135,7 +135,7 @@ int ata_pci_interrupt( int nIrq, void *pPort, SysCallRegs_s* psRegs )
 
 status_t ata_pci_reset( ATA_port_s* psPort )
 {
-	int nCount, nLbaLow;
+	int nCount, nLbaLow, nControl;
 	
 	
 	/* Select drive */
@@ -144,6 +144,7 @@ status_t ata_pci_reset( ATA_port_s* psPort )
 		ATA_WRITE_REG( psPort, ATA_REG_DEVICE, ATA_DEVICE_DEFAULT )
 	else
 		ATA_WRITE_REG( psPort, ATA_REG_DEVICE, ATA_DEVICE_DEFAULT | ATA_DEVICE_SLAVE )
+	ATA_READ_REG( psPort, ATA_REG_CONTROL, nControl )
 	udelay( ATA_CMD_DELAY );
 	
 	/* Reset */
@@ -161,15 +162,8 @@ status_t ata_pci_reset( ATA_port_s* psPort )
 
 	if( !( nCount == 0x55 && nLbaLow == 0xaa ) )
 		return( -1 );
-	
-	
-	if( psPort->nPort == 0 )
-		ATA_WRITE_REG( psPort, ATA_REG_DEVICE, ATA_DEVICE_DEFAULT )
-	else
-		ATA_WRITE_REG( psPort, ATA_REG_DEVICE, ATA_DEVICE_DEFAULT | ATA_DEVICE_SLAVE )
-	udelay( ATA_CMD_DELAY );
-	
-	/* Drive reset */
+
+	/* Bus reset */
 	ATA_WRITE_REG( psPort, ATA_REG_CONTROL, ATA_CONTROL_DEFAULT | ATA_CONTROL_RESET )
 	udelay( 10 );
 	ATA_WRITE_REG( psPort, ATA_REG_CONTROL, ATA_CONTROL_DEFAULT )
@@ -188,15 +182,24 @@ status_t ata_pci_reset( ATA_port_s* psPort )
 		ATA_WRITE_REG( psPort, ATA_REG_DEVICE, ATA_DEVICE_DEFAULT )
 	else
 		ATA_WRITE_REG( psPort, ATA_REG_DEVICE, ATA_DEVICE_DEFAULT | ATA_DEVICE_SLAVE )
+	ATA_READ_REG( psPort, ATA_REG_CONTROL, nControl )
 	udelay( ATA_CMD_DELAY );
 		
 	ATA_READ_REG( psPort, ATA_REG_COUNT, nCount )
 	ATA_READ_REG( psPort, ATA_REG_LBA_LOW, nLbaLow )
 	
-	if( !( nCount == 0x01 && nLbaLow == 0x01 ) )
+	if( psPort->nPort == 1 && !( nCount & 0x01 && nLbaLow & 0x01 ) )
 		return( -1 );
-		
+	
 	udelay( 50 );
+	
+	/* Select again */
+	if( psPort->nPort == 0 )
+		ATA_WRITE_REG( psPort, ATA_REG_DEVICE, ATA_DEVICE_DEFAULT )
+	else
+		ATA_WRITE_REG( psPort, ATA_REG_DEVICE, ATA_DEVICE_DEFAULT | ATA_DEVICE_SLAVE )
+	ATA_READ_REG( psPort, ATA_REG_CONTROL, nControl )
+	udelay( ATA_CMD_DELAY );
 		
 	return( 0 );
 }

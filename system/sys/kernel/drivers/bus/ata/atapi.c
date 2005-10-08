@@ -555,8 +555,8 @@ retry:
 	memcpy( &sCap, psDev->psPort->pDataBuf, sizeof( sCap ) );
 	
 	psDev->nSize = 1 + be32_to_cpu(sCap.lba);
-	psDev->nSectorSize = be32_to_cpu(sCap.blocklen);
-	psDev->nSize *= be32_to_cpu(sCap.blocklen);
+	psDev->nSectorSize = 2048;
+	psDev->nSize *= psDev->nSectorSize;
 	
 	if( pnCapacity != NULL )
 		*pnCapacity = psDev->nSize;

@@ -186,7 +186,7 @@ status_t ata_probe_configure_drive( ATA_port_s* psPort )
 /* Probe for drive */
 void ata_probe_port( ATA_port_s* psPort )
 {
-	uint8 nLbaHigh, nLbaMid, nStatus;
+	uint8 nLbaHigh, nLbaMid, nStatus, nError;
 	uint8 nID[512];
 	char zNode[10];
 	ATA_identify_info_s* psID;
@@ -211,25 +211,35 @@ void ata_probe_port( ATA_port_s* psPort )
 	ATA_READ_REG( psPort, ATA_REG_LBA_HIGH, nLbaHigh )
 	ATA_READ_REG( psPort, ATA_REG_LBA_MID, nLbaMid )
 	ATA_READ_REG( psPort, ATA_REG_STATUS, nStatus )
+	ATA_READ_REG( psPort, ATA_REG_ERROR, nError )
 	
-	if( ( ( nLbaMid == 0x00 && nLbaHigh == 0x00 ) ||
+	if( nError == 1 || ( psPort->nPort == 0 && nError == 0x81 ) )
+	{
+		if( ( ( nLbaMid == 0x00 && nLbaHigh == 0x00 ) ||
 		( nLbaMid == 0xc3 && nLbaHigh == 0xc3 ) ) && nStatus != 0 )
-	{
-		psPort->nDevice = ATA_DEV_ATA;
-		kerndbg( KERN_INFO, "ATA device connected on %s cable\n", g_zCable[psPort->nCable] );
-	} else 
-	{
-		if( ( nLbaMid == 0x14 && nLbaHigh == 0xeb ) ||
-		( nLbaMid == 0x69 && nLbaHigh == 0x96 ) )
 		{
-			psPort->nDevice = ATA_DEV_ATAPI;
-		} else {
-			psPort->nDevice = ATA_DEV_NONE;
-			psPort->nCable = ATA_CABLE_NONE;
-			kerndbg( KERN_DEBUG_LOW, "No device connected on %i:%i\n", psPort->nChannel, psPort->nPort );
-			goto end;
+			psPort->nDevice = ATA_DEV_ATA;
+			kerndbg( KERN_INFO, "ATA device connected on %s cable\n", g_zCable[psPort->nCable] );
+		} else 
+		{
+			if( ( nLbaMid == 0x14 && nLbaHigh == 0xeb ) ||
+			( nLbaMid == 0x69 && nLbaHigh == 0x96 ) )
+			{
+				psPort->nDevice = ATA_DEV_ATAPI;
+			} else {
+				psPort->nDevice = ATA_DEV_NONE;
+				psPort->nCable = ATA_CABLE_NONE;
+				kerndbg( KERN_DEBUG_LOW, "No device connected on %i:%i\n", psPort->nChannel, psPort->nPort );
+				goto end;
+			}
 		}
-	} 
+	} else
+	{
+		psPort->nDevice = ATA_DEV_NONE;
+		psPort->nCable = ATA_CABLE_NONE;
+		kerndbg( KERN_DEBUG_LOW, "No device connected on %i:%i\n", psPort->nChannel, psPort->nPort );
+		goto end;
+	}
 	
 	psPort->bConfigured = true;
 	
@@ -238,7 +248,7 @@ void ata_probe_port( ATA_port_s* psPort )
 
 	/* Select drive */
 	psPort->sOps.select( psPort, 0 );
-
+	
 	if( ata_io_wait( psPort, ATA_STATUS_BUSY, 0 ) != 0 )
 		goto err_dev_data;
 		
