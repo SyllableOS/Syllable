@@ -1,5 +1,10 @@
 * October 8 2005, Kristian Van Der Vliet *
 
+Improve drive probing in the ATA driver and always use ATAPI block
+size of 2048
+
+* October 8 2005, Kristian Van Der Vliet *
+
 The appserver Window & Application loops use get_msg_size() to handle
 over-sized packets.
 
