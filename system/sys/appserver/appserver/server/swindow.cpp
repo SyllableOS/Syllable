@@ -49,6 +49,7 @@
 #include <appserver/protocol.h>
 
 #include <macros.h>
+#include <algorithm>
 
 using namespace os;
 
@@ -1733,19 +1734,26 @@ bool SrvWindow::DispatchMessage( const void *psMsg, int nCode )
 
 void SrvWindow::Loop( void )
 {
-	void *psMsg = new char[8192];
+	char* pMsg = new char[8192];
+	size_t nSize, nOldSize = 8192;
 	bool bDoLoop = true;
 
 	while( bDoLoop )
 	{
 		uint32 nCode;
 
-		if( get_msg( m_hMsgPort, &nCode, psMsg, 8192 ) >= 0 )
+		nSize = std::max( (int)get_msg_size( m_hMsgPort ), 8192 );
+		if( nSize != nOldSize )
 		{
-			bDoLoop = DispatchMessage( psMsg, nCode );
+			delete[]pMsg;
+			pMsg = new char[nSize];
 		}
+		nOldSize = nSize;
+
+		if( get_msg( m_hMsgPort, &nCode, pMsg, nSize ) >= 0 )
+			bDoLoop = DispatchMessage( pMsg, nCode );
 	}
-	delete[]( char * )psMsg;
+	delete[]pMsg;
 }
 
 //----------------------------------------------------------------------------

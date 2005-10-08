@@ -322,7 +322,7 @@ status_t get_msg_x( port_id hPort, uint32 *pnCode, void *pBuffer, int nSize, big
 
 	if ( NULL == psPort )
 	{
-		printk( "Error: get_msg_x() attempt to receive message from invalid port %d\n", hPort );
+		printk( "get_msg_x() attempt to receive message from invalid port %d\n", hPort );
 		nError = -EINVAL;
 		goto error1;
 	}
@@ -356,7 +356,7 @@ status_t get_msg_x( port_id hPort, uint32 *pnCode, void *pBuffer, int nSize, big
 		if ( NULL == psPort )
 		{
 			nError = -EINVAL;
-			printk( "Message port %d deleted while we was wating for messages\n", hPort );
+			printk( "Message port %d deleted while we were wating for a message\n", hPort );
 			goto error1;
 		}
 	}
@@ -364,14 +364,14 @@ status_t get_msg_x( port_id hPort, uint32 *pnCode, void *pBuffer, int nSize, big
 	{
 		if ( lock_semaphore( psPort->mp_hSyncSema, SEM_NOSIG, 0LL ) < 0 )
 		{
-			printk( "panic: get_msg_x() failed to lock mp_hSyncSema even though there was pending messages\n" );
+			printk( "get_msg_x() failed to lock mp_hSyncSema even though there were pending messages\n" );
 		}
 	}
 	psNode = psPort->mp_psFirstMsg;
 
 	if ( psNode == NULL )
 	{
-		printk( "Error: We got lock on mp_hSyncSema even though the message list was empty on port %d\n", hPort );
+		printk( "get_msg_x() locked mp_hSyncSema even though the message list was empty on port %d\n", hPort );
 		goto again;
 	}
 
@@ -728,6 +728,70 @@ port_id find_port( const char *pzPortname )
 
       error:
 	return ( hPort );
+}
+
+size_t sys_get_msg_size( port_id hPort )
+{
+	MsgPort_s *psPort = NULL;
+	int nError = 0;
+
+	lock_mutex( g_hPortListSema, true );
+
+	psPort = get_port_from_handle( hPort );
+
+	if ( NULL == psPort )
+	{
+		printk( "sys_get_msg_size() attempt to receive message from invalid port %d\n", hPort );
+		nError = -EINVAL;
+		goto error;
+	}
+
+again:
+	if ( psPort->mp_psFirstMsg == NULL )
+	{
+		sem_id hSyncSema;
+
+		// We take a backup here since the port might get deleted
+		// when we release the g_hPortListSema semaphore.
+		// If the port is deleted so is the semaphore and lock_semaphore()
+		// will return an error. It's then very important not to
+		// touch the port again until we has revalidated the port-handle.
+
+		hSyncSema = psPort->mp_hSyncSema;
+
+		unlock_mutex( g_hPortListSema );
+		nError = lock_semaphore( hSyncSema, 0, INFINITE_TIMEOUT );
+		lock_mutex( g_hPortListSema, true );
+
+		if ( nError < 0 )
+			goto error;
+
+		// We must revalidate the handle after unlocking g_hPortListSema
+		psPort = get_port_from_handle( hPort );
+
+		if ( NULL == psPort )
+		{
+			nError = -EINVAL;
+			printk( "Message port %d deleted while we were wating for a message\n", hPort );
+			goto error;
+		}
+	}
+	else
+		if( lock_semaphore( psPort->mp_hSyncSema, SEM_NOSIG, 0LL ) < 0 )
+			printk( "sys_get_msg_size() failed to lock mp_hSyncSema even though there were pending messages\n" );
+
+	if ( psPort->mp_psFirstMsg == NULL )
+	{
+		printk( "sys_get_msg_size() locked mp_hSyncSema even though the message list was empty on port %d\n", hPort );
+		goto again;
+	}
+
+	nError = psPort->mp_psFirstMsg->mn_nSize;
+
+	unlock_semaphore( psPort->mp_hSyncSema );
+error:
+	unlock_mutex( g_hPortListSema );
+	return nError;
 }
 
 /*****************************************************************************

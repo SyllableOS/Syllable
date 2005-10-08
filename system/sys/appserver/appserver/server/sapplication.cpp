@@ -38,6 +38,7 @@
 #include "config.h"
 
 #include <macros.h>
+#include <algorithm>
 
 using namespace os;
 
@@ -1620,20 +1621,26 @@ bool SrvApplication::DispatchMessage( const void *pMsg, int nCode )
 
 void SrvApplication::Loop()
 {
-	char *pMsg = new char[8192];
+	char* pMsg = new char[8192];
+	size_t nSize, nOldSize = 8192;
 	bool bDoLoop = true;
 
 	while( bDoLoop || m_cWindows.empty() == false )
 	{
 		uint32 nCode;
 
-		if( get_msg( m_hReqPort, &nCode, pMsg, 8192 ) >= 0 )
+		nSize = std::max( (int)get_msg_size( m_hReqPort ), 8192 );
+		if( nSize != nOldSize )
+		{
+			delete[]pMsg;
+			pMsg = new char[nSize];
+		}
+		nOldSize = nSize;
+
+		if( get_msg( m_hReqPort, &nCode, pMsg, nSize ) >= 0 )
 		{
 			Lock();
-			if( DispatchMessage( pMsg, nCode ) == false )
-			{
-				bDoLoop = false;
-			}
+			bDoLoop = DispatchMessage( pMsg, nCode );
 			Unlock();
 		}
 	}

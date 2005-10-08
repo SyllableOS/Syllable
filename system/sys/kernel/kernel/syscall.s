@@ -777,4 +777,6 @@ SysCallTable:
 .long	_C_SYM( sys_truncate )
 .long	_C_SYM( sys_sigaltstack )
 
-.long	_C_SYM( sys_get_tld_addr )	/* 216 */
+.long	_C_SYM( sys_get_tld_addr )
+
+.long	_C_SYM( sys_get_msg_size ) /* 217 */
