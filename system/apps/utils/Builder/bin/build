@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.21
+# Version 0.6.22
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -192,7 +192,7 @@ def patchModule target
 	unless
 		if dirs = recipe['patch-config']
 			@log.header 'Patching configuration'
-			files = File.join @sourcesPath, 'config/config.*'
+			files = File.join @configPath, 'config/config.*'
 	
 			if dirs == ''
 				action "cp -a --force #{files} ."
@@ -204,7 +204,7 @@ def patchModule target
 		elsif dir = recipe['patch-legacy-config']
 			@log.header 'Patching configuration'
 
-			action "cp -a #{File.join @sourcesPath, 'config/legacy/*'} " +
+			action "cp -a #{File.join @configPath, 'config/legacy/*'} " +
 				(dir == '' ? '.' : dir)
 		else
 			true
@@ -1365,11 +1365,11 @@ end
 # Get global settings
 @settings = parseDictionary loadFile(File.join(@builderPath, 'settings'))
 
-@portsPath, Profile.path, @sourcesPath, @resourcesPath, @distrosPath,    Log.path = [
+@portsPath, Profile.path, @configPath, @resourcesPath, @distrosPath,    Log.path = [
 'packages', 'profiles',   'sources',    'resources',    'distributions', 'logs'
 ].collect {|dir| File.join @builderPath, dir}
 
-if dir = @settings['sources-path'] then @sourcesPath = dir end
+@sourcesPath = (dir = @settings['sources-path'] ? dir : @configPath)
 
 @iconsPath = '/system/icons'
 
@@ -1440,7 +1440,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.21',
+	puts 'Syllable Build System 0.6.22',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
