@@ -13,7 +13,8 @@ modules
 ;	programming/autoconf-2.13
 	file/versioning/patch-2.5.4
 	file/versioning/cvs-1.12.9
-	programming/languages/ruby-1.8.1
-	Builder
+	programming/languages/ruby-1.8.2
+	programming/Builder-0.6.21
 	programming/indent-2.2.9
 	programming/splint-3.1.1
+
