@@ -49,7 +49,9 @@ conflicts			binutils
 ;	autoconf
 
 configure-options
-	--enable-languages=c,c++,f77
+	--enable-languages=c,c++
+;		Fortran doesn't build with the new GLibC 2.3.x:
+;		,f77
 ;		,treelang
 ;		Won't do --enable-shared:
 ;		,objc
