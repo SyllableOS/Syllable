@@ -13,6 +13,7 @@ configure		cp scripts/makefile.gcc makefile
 test-targets	test
 
 install-tree	include lib
+install			true
 install-files
 	libpng.a	lib
 	png.h		include
