@@ -815,7 +815,6 @@ int tulip_probe(int device_handle)
 	
     dev = 0;
     cards_found++;
-    break;
   }
   if( !cards_found )
   	disable_device( device_handle );
