@@ -1,0 +1,11 @@
+authors				Kaj de Vos
+status				broken
+notes				Runtime error on new GLibC 2.3.x
+
+licenses			GPL
+home				www.gnu.org/software/m4/
+
+documentation
+	README COPYING NEWS ChangeLog THANKS TODO
+	examples
+
