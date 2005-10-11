@@ -5,7 +5,7 @@ modules
 	programming/bison-1.875
 	programming/languages/binutils-2.15
 	programming/languages/gcc-3.4.3
-	programming/m4-1.4.1
+	programming/m4-1.4.3
 	programming/make-3.79.1
 ;	programming/automake-1.7.9
 	programming/automake-1.4-p6
