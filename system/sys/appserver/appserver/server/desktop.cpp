@@ -159,7 +159,8 @@ void set_active_window( SrvWindow * pcWindow, bool bNotifyPrevious )
 	}
 	if( pcWindow == NULL && g_asDesktops[g_nActiveDesktop].m_pcFirstSystemWindow != NULL )
 	{
-		g_asDesktops[g_nActiveDesktop].m_pcActiveWindow = NULL;
+		if( !bNotifyPrevious )
+			g_asDesktops[g_nActiveDesktop].m_pcActiveWindow = NULL;
 		return;
 	}
 	if( ( pcWindow == g_asDesktops[g_nActiveDesktop].m_pcActiveWindow ) && ( pcWindow != NULL )  )
