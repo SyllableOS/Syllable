@@ -1,6 +1,7 @@
-authors				Kaj de Vos
-status				broken
-notes				Runtime error on new GLibC 2.3.x
+authors
+	Kaj de Vos
+	Jan Hauffa
+status				testing
 
 licenses			GPL
 home				www.gnu.org/software/m4/
