@@ -1,3 +1,7 @@
+* October 13 2005, Arno Klenke *
+
+Provide default permission flags to the open() call in the fsnode class
+
 * October 4 2005, Arno Klenke *
 
 Pixel align the views in the splitter class
@@ -1066,4 +1070,5 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 

@@ -79,7 +79,7 @@ FSNode::FSNode( const String & cPath, int nOpenMode )
 		}
 		String cRealPath = pzHome;
 		cRealPath.str().insert( cRealPath.end(), cPath.begin(  ) + 1, cPath.end(  ) );
-		m->m_nFD = open( cRealPath.c_str(), nOpenMode );
+		m->m_nFD = open( cRealPath.c_str(), nOpenMode, S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR );
 	}
 	else if( cPath.size() > 1 && cPath[0] == '^' && cPath[1] == '/' )
 	{
@@ -100,7 +100,7 @@ FSNode::FSNode( const String & cPath, int nOpenMode )
 	}
 	else
 	{
-		m->m_nFD = open( cPath.c_str(), nOpenMode );
+		m->m_nFD = open( cPath.c_str(), nOpenMode, S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR );
 	}
 	m->m_hAttrDir = NULL;
 	if( m->m_nFD < 0 )
@@ -133,7 +133,7 @@ FSNode::FSNode( const Directory & cDir, const String & cPath, int nOpenMode )
 	{
 		throw errno_exception( "Invalid directory", EINVAL );
 	}
-	m->m_nFD = based_open( cDir.GetFileDescriptor(), cPath.c_str(  ), nOpenMode );
+	m->m_nFD = based_open( cDir.GetFileDescriptor(), cPath.c_str(  ), nOpenMode, S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR );
 	m->m_hAttrDir = NULL;
 	if( m->m_nFD < 0 )
 	{
@@ -337,7 +337,7 @@ status_t FSNode::SetTo( const String & cPath, int nOpenMode )
 		}
 		String cRealPath = pzHome;
 		cRealPath.str().insert( cRealPath.end(), cPath.begin(  ) + 1, cPath.end(  ) );
-		nNewFD = open( cRealPath.c_str(), nOpenMode );
+		nNewFD = open( cRealPath.c_str(), nOpenMode, S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR );
 	}
 	else if( cPath.size() > 1 && cPath[0] == '^' && cPath[1] == '/' )
 	{
@@ -358,7 +358,7 @@ status_t FSNode::SetTo( const String & cPath, int nOpenMode )
 	}
 	else
 	{
-		nNewFD = open( cPath.c_str(), nOpenMode );
+		nNewFD = open( cPath.c_str(), nOpenMode, S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR );
 	}
 
 	if( nNewFD < 0 )
@@ -442,7 +442,7 @@ status_t FSNode::SetTo( const Directory & cDir, const String & cPath, int nOpenM
 		errno = EINVAL;
 		return ( -1 );
 	}
-	int nNewFD = based_open( cDir.GetFileDescriptor(), cPath.c_str(  ), nOpenMode );
+	int nNewFD = based_open( cDir.GetFileDescriptor(), cPath.c_str(  ), nOpenMode, S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR );
 
 	if( nNewFD < 0 )
 	{
@@ -502,7 +502,7 @@ status_t FSNode::SetTo( const FileReference & cRef, int nOpenMode )
 		errno = EINVAL;
 		return ( -1 );
 	}
-	int nNewFD = based_open( cRef.GetDirectory().GetFileDescriptor(  ), cRef.GetName(  ).c_str(  ), nOpenMode );
+	int nNewFD = based_open( cRef.GetDirectory().GetFileDescriptor(  ), cRef.GetName(  ).c_str(  ), nOpenMode, S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR );
 
 	if( nNewFD < 0 )
 	{
