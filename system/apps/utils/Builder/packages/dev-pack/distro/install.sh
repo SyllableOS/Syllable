@@ -1,6 +1,6 @@
 #! /bin/sh
 
-packages='autoconf automake make binutils gcc patch m4 flex bison cvs indent'
+packages='autoconf automake make binutils gcc patch m4 flex bison cvs ruby Builder indent splint'
 
 if [ "$USER" != "root" ]
 then
@@ -36,10 +36,10 @@ done
 
 echo ""
 
-for package in `ls *.tgz`
+for package in `ls *.zip`
 do
 	echo "Installing $package"
-	tar -C /usr -xpPzf $package
+	unzip $package -d /usr
 	sync
 done
 
@@ -53,3 +53,4 @@ done
 
 echo ""
 echo "Done"
+

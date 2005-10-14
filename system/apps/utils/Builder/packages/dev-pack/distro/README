@@ -1,17 +1,17 @@
 Developer Pack for Syllable
 ===========================
 
-30-Jun-2004
+14-Oct-2005
 
 1 Introduction
 ==============
 
 This distribution is a collection of the most important binary
 packages a software developer would want for the Syllable operating
-system. Most of the packages were built on Syllable 0.5.3 and
-optimized for a Pentium CPU. Several of the packages do not work on
-older versions of Syllable, but they should run on higher versions,
-although this has not been tested.
+system. All packages except Ruby were built on Syllable 0.5.7 and
+optimized for a Pentium CPU. They may also run on Syllable 0.5.6(a),
+but this has not been tested, and they will not run on earlier
+versions of Syllable.
 
 If you encounter problems or have any other interesting observations,
 I would be interested to hear about them (see contact information).
@@ -20,21 +20,17 @@ I would be interested to hear about them (see contact information).
 ===============================================
 
 2.1 
-----
+---
 
 Please note that if you want to use AutoConf or AutoMake, you should
-install Perl separately.
+install PERL separately.
 
 Now for the developer pack installation. You may have to become the
 root user to perform the following operations:
 
     su -l
 
-You should have unpacked this file with
-
-    tar -xz
-
-or something equivalent. Unpacking produces a directory with the
+Unpacking this distribution should have produced a directory with the
 contained packages, this README document, and an install script.
 Being the root user, go into the directory and run the install script:
 
@@ -49,22 +45,24 @@ first. Please note, though, that no version of any of the packages
 should be previously registered with a different directory name under
 /usr, because that would lead to conflicting package registrations.
 
-You should now be able to use the programs in the developer pack.
+You should now be able to use the programs in the developer pack. You
+are advised to update Builder, the Syllable build system, via the
+Internet, to get the latest version. Further on you can read how to
+do that.
 
-2.2 Uninstalling & upgrading the Developer Pack
------------------------------------------------
+2.2 Uninstalling and upgrading the Developer Pack
+-------------------------------------------------
 
 2.2.1 
-------
+-----
 
 After installation, the developer pack is effectively no longer one
 package, but the individual packages it contained. If you ever want
-to remove one or more of those packages, you should follow the steps
-outlined in the respective README.Syllable documents that are
-included in most packages. Usually, you will have to follow the
-standard procedure. Again, you may have to become root first:
+to remove one or more of those packages, you should execute the
+following procedure for each package. Again, you may have to become
+root first:
 
-    su
+    su -l
 
 Then you should remove the links to the package from Syllable.
 
@@ -77,14 +75,15 @@ To delete the files belonging to the package, run:
 2.2.2 Uninstalling individual packages with the Syllable build system
 ---------------------------------------------------------------------
 
-If you have the Syllable build system installed, it can do the
-previous steps for you. Also, if you install an individual package
-with the Syllable build system, it will check if the package was
-already installed and remove the previous version automatically.
+Since you have the Syllable build system installed from this
+developer pack, you can use it to do the previous steps for you.
+Also, if you install an individual package with the Syllable build
+system, it will check if the package was already installed and will
+remove the previous version automatically.
 
 If you just want to uninstall an individual package, do:
 
-    su
+    su -l
     build uninstall <package>
 
 2.2.3 Upgrading the entire Developer Pack
@@ -94,11 +93,29 @@ Upgrading to a new version of the developer pack is easy, since the
 install script will remove the existing packages and replace them
 with the new ones.
 
+2.2.4 Updating the Syllable build system, Builder
+-------------------------------------------------
+
+The Builder package in this developer pack has the form of an
+anonymous CVS checkout. This means that you can update it to the
+latest version from the Syllable CVS repository on the Internet. You
+are strongly encouraged to do this with some regularity if you use
+Builder, because it and its package definitions change regularly and
+match the current Syllable development. This is how to do it:
+
+    build update
+    build log
+
+If you have made your own changes to some of Builder's files - in the
+settings or the ports tree, perhaps - you should look in the log for
+conflicts. If there was an updated version for a file you changed,
+you should solve the conflict.
+
 3 Known problems and limitations
 ================================
 
-Please refer to the respective README and README.Syllable documents
-that are included in each separate package.
+Please refer to the respective README and possibly README.Syllable
+documents that are included in each separate package.
 
 4 Contact information
 =====================
