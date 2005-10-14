@@ -18,7 +18,7 @@ environment
 cvs-path		syllable/system
 
 ; Location of source packages, if not Builder/sources/:
-;sources-path	~/sources
+sources-path	/data/sources
 
 ; For cross-compilation:
 ;target			i586-pc-syllable
@@ -30,3 +30,4 @@ cvs-path		syllable/system
 
 ; Include version number in the installation path prefix of ports:
 ;include-version
+
