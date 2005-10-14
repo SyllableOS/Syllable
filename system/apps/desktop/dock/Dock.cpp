@@ -979,6 +979,30 @@ void DockWin::WindowsChanged()
 	}
 }
 
+void DockWin::UpdateWindowArea()
+{
+	if( m_pcDesktop == NULL )
+		return;
+		
+	os::Rect cFrame;
+	
+	if( m_eAlign == os::ALIGN_TOP )
+		cFrame = os::Rect( 0, 31, m_pcDesktop->GetResolution().x - 1, m_pcDesktop->GetResolution().y - 1 );
+	else if( m_eAlign == os::ALIGN_BOTTOM )
+		cFrame = os::Rect( 0, 0, m_pcDesktop->GetResolution().x - 1, m_pcDesktop->GetResolution().y - 31 );
+	else if( m_eAlign == os::ALIGN_LEFT )
+		cFrame = os::Rect( 31, 0, m_pcDesktop->GetResolution().x - 1, m_pcDesktop->GetResolution().y - 1 );
+	else
+		cFrame = os::Rect( 0, 0, m_pcDesktop->GetResolution().x - 31, m_pcDesktop->GetResolution().y - 1 );
+	
+	os::Message cReq( os::DR_SET_DESKTOP_MAX_WINFRAME );
+	cReq.AddInt32( "desktop", os::Desktop::ACTIVE_DESKTOP );
+	cReq.AddRect( "frame", cFrame );
+				
+	os::Application* pcApp = os::Application::GetInstance();
+	os::Messenger( pcApp->GetServerPort() ).SendMessage( &cReq );
+}
+
 void DockWin::ScreenModeChanged( const os::IPoint& cNewRes, os::color_space eSpace )
 {
 	/* Update desktop parameters */
@@ -996,6 +1020,8 @@ void DockWin::ScreenModeChanged( const os::IPoint& cNewRes, os::color_space eSpa
 	/* Update list */
 	UpdateWindows( &cWindows, nCount );
 	UpdatePlugins();
+	
+	UpdateWindowArea();
 }
 
 void DockWin::DesktopActivated( int nDesktop, bool bActive )
@@ -1014,6 +1040,8 @@ void DockWin::DesktopActivated( int nDesktop, bool bActive )
 	/* Update list */
 	UpdateWindows( &cWindows, nCount );
 	UpdatePlugins();
+	
+	UpdateWindowArea();
 }
 
 void DockWin::SetPosition( os::alignment eAlign )
@@ -1026,6 +1054,8 @@ void DockWin::SetPosition( os::alignment eAlign )
 	UpdatePlugins();
 	m_pcView->Invalidate();
 	Sync();
+	
+	UpdateWindowArea();
 }
 
 DockApp::DockApp( const char *pzMimeType ):os::Application( pzMimeType )
@@ -1083,7 +1113,10 @@ void DockApp::HandleMessage( os::Message* pcMessage )
 				}
 				if( !bFound ) {
 					/* Remove plugin */
-					m_pcWindow->DeletePlugin( m_pcWindow->GetPlugins()[i] );
+					os::Message cMsg( os::DOCK_REMOVE_PLUGIN );
+					cMsg.AddPointer( "plugin", m_pcWindow->GetPlugins()[i] );
+					m_pcWindow->PostMessage( &cMsg, m_pcWindow );;
+					//m_pcWindow->DeletePlugin( m_pcWindow->GetPlugins()[i] );
 				}
 			}
 			/* Look what plugins have been added */

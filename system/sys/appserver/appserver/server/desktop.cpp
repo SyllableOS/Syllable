@@ -105,7 +105,8 @@ static struct Desktop
 	SrvWindow *m_pcActiveWindow;
 	SrvWindow *m_apcFocusStack[FOCUS_STACK_SIZE];
 	screen_mode m_sScreenMode;
-	  std::string m_cBackdropPath;
+	std::string m_cBackdropPath;
+	os::Rect m_cMaxWindowFrame;
 } g_asDesktops[32];
 
 
@@ -114,6 +115,7 @@ void set_desktop_config( int nDesktop, const screen_mode & sMode, const std::str
 	assert( nDesktop >= 0 && nDesktop < 32 );
 
 	g_asDesktops[nDesktop].m_sScreenMode = sMode;
+	g_asDesktops[nDesktop].m_cMaxWindowFrame = os::Rect( 0, 0, sMode.m_nWidth - 1, sMode.m_nHeight - 1 );
 }
 
 
@@ -310,6 +312,9 @@ static bool setup_screenmode( int nDesktop, bool bForce )
 	g_pcScreenBitmap->m_nVideoMemOffset = g_pcDispDrv->GetFramebufferOffset();
 	// update screenmode with correct nBytesPerLine
 	g_asDesktops[nDesktop].m_sScreenMode.m_nBytesPerLine = g_pcScreenBitmap->m_nBytesPerLine;
+	
+	g_asDesktops[nDesktop].m_cMaxWindowFrame = os::Rect( 0, 0, g_asDesktops[nDesktop].m_sScreenMode.m_nWidth - 1,
+												g_asDesktops[nDesktop].m_sScreenMode.m_nHeight - 1 );
 
 	if( g_nActiveDesktop != -1 )
 	{
@@ -645,6 +650,22 @@ bool toggle_desktops()
 int get_active_desktop()
 {
 	return ( g_nActiveDesktop );
+}
+
+os::Rect get_desktop_max_window_frame( int nDesktop )
+{
+	if( nDesktop == os::Desktop::ACTIVE_DESKTOP )
+		nDesktop = g_nActiveDesktop;
+	__assertw( nDesktop >= 0 && nDesktop < 32 );
+	return ( g_asDesktops[nDesktop].m_cMaxWindowFrame );
+}
+
+void set_desktop_max_window_frame( int nDesktop, os::Rect cFrame )
+{
+	if( nDesktop == os::Desktop::ACTIVE_DESKTOP )
+		nDesktop = g_nActiveDesktop;
+	__assertw( nDesktop >= 0 && nDesktop < 32 );
+	g_asDesktops[nDesktop].m_cMaxWindowFrame = cFrame;
 }
 
 bool init_desktops()

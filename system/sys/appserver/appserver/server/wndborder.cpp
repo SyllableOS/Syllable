@@ -655,21 +655,21 @@ void WndBorder::MouseUp( Messenger * pcAppTarget, const Point & cPos, int nButto
 			{
 				cBorders = static_cast < IRect > ( m_pcDecorator->GetBorderSize() );
 			}
-			os::Rect cMaxFrame = os::Rect( 0, 0, m_pcBitmap->m_nWidth - 1, m_pcBitmap->m_nHeight - 1 );
+			os::Rect cMaxFrame = get_desktop_max_window_frame( get_active_desktop() );
 
 			if( nFlags & WND_NOT_H_RESIZABLE )
 			{
-				cMaxFrame.right = GetFrame().Width(  );
+				cMaxFrame.right = GetFrame().Width(  ) + cMaxFrame.left;
 			}
 			if( nFlags & WND_NOT_V_RESIZABLE )
 			{
-				cMaxFrame.bottom = GetFrame().Height(  );
+				cMaxFrame.bottom = GetFrame().Height(  )+ cMaxFrame.top;
 			}
 
-			if( cMaxFrame.right > m_cMaxSize.x )
-				cMaxFrame.right = m_cMaxSize.x - 1;
-			if( cMaxFrame.bottom > m_cMaxSize.y )
-				cMaxFrame.bottom = m_cMaxSize.y - 1;
+			if( cMaxFrame.right - cMaxFrame.left > m_cMaxSize.x - 1 )
+				cMaxFrame.right = cMaxFrame.left + m_cMaxSize.x - 1;
+			if( cMaxFrame.bottom - cMaxFrame.top > m_cMaxSize.y - 1 )
+				cMaxFrame.bottom = cMaxFrame.top + m_cMaxSize.y - 1;
 
 			IRect cAlignedFrame = AlignRect( cMaxFrame, cBorders );
 

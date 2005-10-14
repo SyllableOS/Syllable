@@ -50,7 +50,7 @@ class Meter : public os::View
 		void MouseDown(const Point& cPosition, uint32 nButtons);
 		void Paint(const Rect& cUpdateRect);
 		void TimerTick(int nID);
-
+	private:
 		//dock data
 		os::DockPlugin* m_pcPlugin;
 		Looper* m_pcDock;

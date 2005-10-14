@@ -81,6 +81,8 @@ Meter::Meter(DockPlugin* pcPlugin, os::Looper* pcDock) : os::View( os::Rect(), "
 
 Meter::~Meter()
 {
+	delete( m_pcHorizontalBackground );
+	delete( m_pcVerticalBackground );
 }
 
 Point Meter::GetPreferredSize(bool bLargest) const
@@ -239,8 +241,6 @@ public:
 	}
 	void Delete()
 	{
-		delete( m_pcView->m_pcHorizontalBackground );
-		delete( m_pcView->m_pcVerticalBackground );
 		RemoveView( m_pcView );
 	}
 	os::String GetIdentifier()

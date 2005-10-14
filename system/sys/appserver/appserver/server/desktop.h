@@ -30,6 +30,8 @@ int  get_desktop_config( int* pnActiveDesktop, os::screen_mode* psMode, std::str
 void set_desktop_screenmode( int nDesktop, const os::screen_mode& sMode );
 
 int get_active_desktop();
+os::Rect get_desktop_max_window_frame( int nDesktop );
+void set_desktop_max_window_frame( int nDesktop, os::Rect cWinSize );
 
 SrvWindow* get_first_window( int nDesktop );
 SrvWindow* get_active_window( bool bIgnoreSystemWindows );

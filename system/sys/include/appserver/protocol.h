@@ -62,6 +62,8 @@ enum
     DR_ACTIVATE_WINDOW,
     DR_CLOSE_WINDOWS,
     DR_GET_WINDOW_ICON,
+    DR_SET_DESKTOP_MAX_WINFRAME,
+    DR_GET_DESKTOP_MAX_WINFRAME,
     
     AR_OPEN_WINDOW = 10000,
     AR_CLOSE_WINDOW,
@@ -128,7 +130,7 @@ enum
 enum
 {
     DRC_PING,
-    DRC_WRITE_PIXEL32,
+    _DRC_unused1,
     _DRC_unused3,
     DRC_LINE32,
     _DRC_unused4,

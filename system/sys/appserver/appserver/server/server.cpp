@@ -37,6 +37,7 @@
 
 #include <gui/guidefines.h>
 #include <gui/window.h>
+#include <gui/desktop.h>
 #include <util/locker.h>
 #include <util/messenger.h>
 #include <appserver/protocol.h>
@@ -788,6 +789,38 @@ void AppServer::DispatchMessage( Message * pcReq )
 			g_cLayerGate.Open();
 			break;
 		}
+	case DR_SET_DESKTOP_MAX_WINFRAME:
+		{
+			g_cLayerGate.Close();
+			int nDesktop = 0;
+			os::Rect cFrame;
+
+			if( pcReq->FindInt( "desktop", &nDesktop ) != 0 )
+				break;
+			if( pcReq->FindRect( "frame", &cFrame ) != 0 )
+				break;
+			if( ( nDesktop < 32 && nDesktop >= 0 ) || ( nDesktop == os::Desktop::ACTIVE_DESKTOP ) )
+				set_desktop_max_window_frame( nDesktop, cFrame );
+			g_cLayerGate.Open();
+			break;
+		}
+	case DR_GET_DESKTOP_MAX_WINFRAME:
+		{
+			int nDesktop = 0;
+			os::Rect cFrame;
+			os::Message cReply;
+
+			if( pcReq->FindInt( "desktop", &nDesktop ) != 0 )
+				break;
+			if( ( nDesktop < 32 && nDesktop >= 0 ) || ( nDesktop == os::Desktop::ACTIVE_DESKTOP ) )
+				cFrame = get_desktop_max_window_frame( nDesktop );
+			g_cLayerGate.Open();
+			
+			cReply.AddRect( "frame", cFrame );
+			
+			pcReq->SendReply( &cReply );
+			break;
+		}
 	}
 }
 
@@ -861,6 +894,8 @@ void AppServer::Run( void )
 			case DR_ACTIVATE_WINDOW:
 			case DR_GET_WINDOW_ICON:
 			case DR_CLOSE_WINDOWS:
+			case DR_SET_DESKTOP_MAX_WINFRAME:
+			case DR_GET_DESKTOP_MAX_WINFRAME:
 				{
 					try
 					{

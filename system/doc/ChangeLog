@@ -1,3 +1,8 @@
+* October 14 2005, Arno Klenke *
+
+Stretched blits are now supported in DM_BLEND mode
+Added the possibility to set the size for maximized windows
+
 * October 11 2005, Arno Klenke *
 
 Fixed a special case in the focus handling code of the appserver
@@ -898,6 +903,9 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
+
+
 
 
 

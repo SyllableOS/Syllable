@@ -1,7 +1,7 @@
 CFLAGS   += -c -fexceptions -ffast-math
 CXXFLAGS += -c -fexceptions -ffast-math
 AOPTS   = -c
-APPBIN = /system/drivers/dock
+APPBIN = /system/extensions/dock
 VPATH = ./
 OBJDIR	:= objs
 OBJS = ColdFishRemote.o
@@ -16,15 +16,15 @@ $(OBJDIR)/ColdFishRemote.so: $(OBJS)
 	rescopy -r $(OBJDIR)/ColdFishRemote.so images/*.png
 	rescopy -a $(OBJDIR)/ColdFishRemote.so sv/ColdFishRemote.catalog=resources/sv/ColdFishRemote.catalog
 	rescopy -a $(OBJDIR)/ColdFishRemote.so da/ColdFishRemote.catalog=resources/da/ColdFishRemote.catalog
-	rescopy -a $(OBJDIR)/ColdFishRemote.so pl/ColdFishRemote.catalog=resources/pl/ColdFishRemote.catalog
+#	rescopy -a $(OBJDIR)/ColdFishRemote.so pl/ColdFishRemote.catalog=resources/pl/ColdFishRemote.catalog
 
 install:  $(OBJDIR)/ColdFishRemote.so
 	mkdir -p $(APPBIN)
 	install -s $(OBJDIR)/ColdFishRemote.so $(APPBIN)/ColdFishRemote.so
 
 dist:  $(OBJDIR)/ColdFishRemote.so
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dock
-	install -s $(OBJDIR)/ColdFishRemote.so $(DIST_DIR)/atheos/sys/drivers/dock/ColdFishRemote.so
+	mkdir -p $(DIST_DIR)/atheos/sys/extensions/dock
+	install -s $(OBJDIR)/ColdFishRemote.so $(DIST_DIR)/atheos/sys/extensions/dock/ColdFishRemote.so
 
 deps: $(OBJDIR)
 

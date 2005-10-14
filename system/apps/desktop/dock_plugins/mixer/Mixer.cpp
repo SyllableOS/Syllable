@@ -201,31 +201,9 @@ void DockMixer::AttachedToWindow()
 }
 
 
-class DockMixerCloser : public os::Thread
-{
-public:
-	DockMixerCloser( DockMixer* pcMixer, MixerWindow* pcWin ) : Thread( "dock_mixer_closer" ) 
-	{
-		m_pcWin = pcWin;
-		m_pcMixer = pcMixer;
-	}
-	
-	int32 Run()
-	{
-		thread_id hThread = m_pcWin->GetThread();
-		m_pcWin->PostMessage( os::M_TERMINATE, m_pcWin );
-		wait_for_thread( hThread );
-		m_pcMixer->Remove( get_thread_id( NULL ) );
-		return( 0 );
-	}
-private:
-	DockMixer* m_pcMixer;
-	MixerWindow* m_pcWin;
-};
-
-
 void DockMixer::DetachedFromWindow()
 {
+	m_pcWindow->Close();
 	m_pcManager->Put();
 }
 
@@ -313,8 +291,7 @@ public:
 	}
 	void Delete()
 	{
-		os::Thread* pcThread = new DockMixerCloser( m_pcView, m_pcView->GetMixerWindow() );
-		pcThread->Start();
+		RemoveView( m_pcView );
 	}
 	os::String GetIdentifier()
 	{

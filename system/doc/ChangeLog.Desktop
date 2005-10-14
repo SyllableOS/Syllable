@@ -1,3 +1,8 @@
+* October 14 2005, Arno Klenke
+
+The dock now sets the size for maximized windows
+Removed some workarounds from the dock code
+
 * October 4 2005, Arno Klenke
 
 New plugin system
@@ -123,3 +128,5 @@ Cleaned up message texts in DLogin.
 		* Moved code around.  It makes the code easier to read.
 		* Added error testing for scaling images.  If the image is not bigger than the 				screen resolution, the desktop will not scale the image.
 		* Fixed icon text color problems.
+
+
