@@ -1,0 +1,144 @@
+#!/bin/bash
+#
+# mkhome : Copyright (C) 2005 Kristian Van Der Vliet
+#
+# mkhome creates a new users home directory within /home and
+# populates it with default files and configuration from the
+# skeleton directory.
+#
+# This script is generally called by user management tools
+# such as the Users preferences.  You should not normally
+# need to call this script manually.
+
+# Global variables.  These can be changed if you know what you're
+# doing.
+
+SKELETON_DIR=/home/.template
+
+# function print_usage
+#
+# Prints usage information.  This function will cause the script
+# to exit with a return code of 1
+#
+# No arguments
+
+function print_usage
+{
+	echo "$0 [username]"
+	exit 1
+}
+
+# function exit_with_error
+#
+# Called by other functions when an abnormal exit is required.  Prints
+# an error and exits with a return code it was passed (1..n)
+#
+# $1 error code
+# $2..$n extra information.  Error code specific
+
+function exit_with_error
+{
+	echo -n "Error: "
+
+	case $1 in
+	"1" )
+		# The home directory already exists
+		echo "The directory \"$2\" already exists."
+		;;
+	"2" )
+		# Failed to copy skeleton from /etc/skel
+		echo "Failed to copy default configuration files to users home directory."
+		;;
+	"3" )
+		# Could not create directory
+		echo "Could not create directory \"$2\"."
+		;;
+	esac
+
+	exit $1
+}
+
+# function create_home_dir
+#
+# Creates the default symlinks in the users Desktop directory
+#
+# $1 path to the directory to create
+
+function create_desktop
+{
+	userhome=$1
+	userdesktop=$userhome/Desktop
+
+	mkdir $userdesktop
+	if [ $? != 0 ]
+	then
+		exit_with_error 3 $userdesktop
+	fi
+
+	pushd $userdesktop 1>/dev/null
+
+	# Add new symlinks below these
+	ln -sf /Applications Applications
+	ln -sf / Disks
+	ln -sf $userhome Home
+	ln -sf /Applications/Preferences Preferences
+	ln -sf /system/bin/aterm Terminal
+	if [ -e $userhome/Trash ]
+	then
+		ln -sf $userhome/Trash Trash
+	fi
+
+	popd 1>/dev/null
+}
+
+# function create_home_dir
+#
+# Creates the home directory, copies the default configuration from /etc/skel/
+# and configures the users default desktop settings
+#
+# $1 username
+
+function create_home_dir
+{
+	username=$1
+	userhome=/home/$username
+
+	# Don't overwrite an existing home directory
+	if [ -e $userhome ]
+	then
+		exit_with_error 1 $userhome
+	fi
+
+	# Create the new directory and copy the skeleton files
+	if [ -e $SKELETON_DIR ]
+	then
+		cp -a $SKELETON_DIR $userhome 1>/dev/null
+		if [ $? != 0 ]
+		then
+			exit_with_error 2
+		fi
+	fi
+
+	# Create default desktop symlinks
+	create_desktop $userhome
+
+	# Own everything to the user (If they exist)
+	if [ $(cat /etc/passwd | cut -d : -f 1 | grep $username) ]
+	then
+		chown -R $username:users $userhome
+	fi
+}
+
+# mkuser script entry point
+#
+# $1 - username to create
+
+if [ -z $1 ]
+then
+	print_usage
+fi
+
+create_home_dir $1
+
+exit 0
+
