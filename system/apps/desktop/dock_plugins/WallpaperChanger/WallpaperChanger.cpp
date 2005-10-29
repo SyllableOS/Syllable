@@ -40,7 +40,7 @@ static os::Color32_s Tint( const os::Color32_s & sColor, float vTint )
 * Author: Rick Caudill
 * Date: Wed Mar  9 17:59:59 2005
 **************************************************/
-DockWallpaperChanger::DockWallpaperChanger( os::Path cPath, os::Looper* pcDock ) : DockPlugin()
+DockWallpaperChanger::DockWallpaperChanger( os::Path cPath, os::Looper* pcDock ) : View(Rect(0,0,1,1),"wallpaper_view")
 {
 	m_pcDock = pcDock;
 	m_cPath = cPath;	
@@ -100,15 +100,7 @@ void DockWallpaperChanger::DetachedFromWindow()
 	if (pcPaint)delete pcPaint;
 }
 
-/*************************************************
-* Description: Returns the name of the plugin
-* Author: Rick Caudill
-* Date: Thu Mar 18 20:17:32 2004
-**************************************************/
-String DockWallpaperChanger::GetIdentifier()
-{
-	return( "WallpaperChanger" );
-}
+
 
 /*************************************************
 * Description: Paints the view
@@ -158,7 +150,7 @@ void DockWallpaperChanger::Paint( const Rect &cUpdateRect )
 * Author: Rick Caudill
 * Date: Thu Mar 18 20:17:32 2004
 **************************************************/
-Point DockWallpaperChanger::GetPreferredSize( bool bLargest )
+Point DockWallpaperChanger::GetPreferredSize( bool bLargest ) const
 {
 	return m_pcIcon->GetSize();
 }
@@ -260,7 +252,7 @@ void DockWallpaperChanger::MouseMove( const os::Point& cNewPos, int nCode, uint3
 		}
 	}
 
-	os::DockPlugin::MouseMove( cNewPos, nCode, nButtons, pcData );
+	os::View::MouseMove( cNewPos, nCode, nButtons, pcData );
 }
 
 /*************************************************
@@ -273,7 +265,7 @@ void DockWallpaperChanger::MouseUp( const os::Point & cPosition, uint32 nButtons
 	if( m_bDragging && ( cPosition.y > 30 ) )
 	{
 		/* Remove ourself from the dock */
-		os::Message cMsg( os::DOCK_REMOVE );
+		os::Message cMsg( os::DOCK_REMOVE_PLUGIN );
 		cMsg.AddPointer( "plugin", this );
 		m_pcDock->PostMessage( &cMsg, m_pcDock );
 		Paint(GetBounds());
@@ -281,7 +273,7 @@ void DockWallpaperChanger::MouseUp( const os::Point & cPosition, uint32 nButtons
 	}
 	m_bDragging = false;
 	m_bCanDrag = false;
-	os::DockPlugin::MouseUp( cPosition, nButtons, pcData );
+	os::View::MouseUp( cPosition, nButtons, pcData );
 }
 
 /*************************************************
@@ -299,7 +291,7 @@ void DockWallpaperChanger::MouseDown( const os::Point& cPosition, uint32 nButton
 	else
 		m_bCanDrag = true;
 		
-	os::DockPlugin::MouseDown( cPosition, nButtons );
+	os::View::MouseDown( cPosition, nButtons );
 }
 
 /*************************************************
@@ -519,6 +511,33 @@ void DockWallpaperChanger::UpdateImage()
 	
 }
 
+class WallpaperChangerPlugin : public DockPlugin
+{
+public:
+	WallpaperChangerPlugin(){}
+
+	status_t Initialize()
+	{
+		m_pcView = new DockWallpaperChanger(GetPath(),GetApp());
+		AddView(m_pcView);
+		return 0;
+	}
+
+	void Delete()
+	{
+		RemoveView(m_pcView);
+	}
+
+
+	String GetIdentifier()
+	{
+		return( "WallpaperChanger" );
+	}
+	
+private:
+	DockWallpaperChanger* m_pcView;
+};
+
 /*************************************************
 * Description: Initialize the plugin
 * Author: Rick Caudill
@@ -526,9 +545,9 @@ void DockWallpaperChanger::UpdateImage()
 **************************************************/
 extern "C"
 {
-DockPlugin* init_dock_plugin( os::Path cPluginFile, os::Looper* pcDock )
+DockPlugin* init_dock_plugin()
 {
-	return( new DockWallpaperChanger( cPluginFile, pcDock ) );
+	return( new WallpaperChangerPlugin() );
 }
 }
 

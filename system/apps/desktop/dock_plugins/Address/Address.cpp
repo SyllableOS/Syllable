@@ -29,17 +29,19 @@ void AddressDrop::KeyDown(const char* pzString,const char* pzRawString,uint32 nK
 	printf("this will never work!!!!!!\n");
 }
 
-Address::Address(os::Path cPath, os::Looper* pcDock) : DockPlugin()
+Address::Address(os::Path cPath, os::Looper* pcDock) : View(Rect(0,3,150,20),"address_view")
 {
 	m_pcDock = pcDock;
 	m_cPath = cPath;
 
 	pcAddressDrop = new AddressDrop(this);
+	pcAddressDrop->SetMaxPreferredSize(235);
 	AddChild(pcAddressDrop);
 }
 
 Address::~Address()
 {
+	RemoveChild(pcAddressDrop);
 }
 
 void Address::DetachedFromWindow()
@@ -215,14 +217,9 @@ void Address::AttachedToWindow()
 	pcAddressDrop->SetTarget(this);
 }
 
-String Address::GetIdentifier()
+Point Address::GetPreferredSize( bool bLargest ) const
 {
-	return( PLUGIN_NAME );
-}
-
-Point Address::GetPreferredSize( bool bLargest )
-{
-	return Point(pcAddressDrop->GetBounds().Width(),pcAddressDrop->GetBounds().Height());
+	return Point(150,20);
 }
 
 void Address::HandleMessage(Message* pcMessage)
@@ -412,11 +409,35 @@ void Address::ExportHelpFile()
 	}
 }
 
+AddressDockPlugin::AddressDockPlugin() : DockPlugin()
+{
+}
+
+status_t AddressDockPlugin::Initialize()
+{
+	m_pcView = new Address(GetPath(),GetApp());
+	AddView(m_pcView);
+	return 0;
+}
+
+void AddressDockPlugin::Delete()
+{
+	RemoveView(m_pcView);
+}
+
+
+String AddressDockPlugin::GetIdentifier()
+{
+	return( PLUGIN_NAME );
+}
+
+
+
 extern "C"
 {
-DockPlugin* init_dock_plugin( os::Path cPluginFile, os::Looper* pcDock )
+DockPlugin* init_dock_plugin()
 {
-	return( new Address( cPluginFile, pcDock ) );
+	return( new AddressDockPlugin());
 }
 }
 

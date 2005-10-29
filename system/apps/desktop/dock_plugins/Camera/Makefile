@@ -1,7 +1,7 @@
 CFLAGS   += -c -fexceptions -ffast-math
 CXXFLAGS += -c -fexceptions -ffast-math
 AOPTS   = -c
-APPBIN = /system/drivers/dock
+APPBIN = /system/extensions/dock
 VPATH = ./
 OBJDIR	:= objs
 OBJS = Camera.o
@@ -20,8 +20,8 @@ install:  $(OBJDIR)/Camera.so
 	install -s $(OBJDIR)/Camera.so $(APPBIN)/Camera.so
 
 dist:  $(OBJDIR)/Camera.so
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dock
-	install -s $(OBJDIR)/Camera.so $(DIST_DIR)/atheos/sys/drivers/dock/Camera.so
+	mkdir -p $(DIST_DIR)/atheos/sys/extensions/dock
+	install -s $(OBJDIR)/Camera.so $(DIST_DIR)/atheos/sys/extensions/dock/Camera.so
 
 deps: $(OBJDIR)
 

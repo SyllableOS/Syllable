@@ -43,14 +43,13 @@
 using namespace os;
 using namespace std;                                                                                                                                                                                                     
                                                                                                                                                                                                         
-class DockWallpaperChanger : public DockPlugin
+class DockWallpaperChanger : public View
 {
 	public:
 		DockWallpaperChanger( os::Path cPath, os::Looper* pcDock );
 		~DockWallpaperChanger();
 		
-		os::String GetIdentifier() ;
-		Point GetPreferredSize( bool bLargest );
+		Point GetPreferredSize( bool bLargest ) const;
 		os::Path GetPath() { return( m_cPath ); }
 		
         virtual void Paint( const Rect &cUpdateRect );

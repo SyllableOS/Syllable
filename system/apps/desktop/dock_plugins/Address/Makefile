@@ -1,7 +1,7 @@
 CFLAGS   += -c -fexceptions -ffast-math
 CXXFLAGS += -c -fexceptions -ffast-math
 AOPTS   = -c
-APPBIN = /system/drivers/dock
+APPBIN = /system/extensions/dock
 VPATH = ./
 OBJDIR	:= objs
 OBJS = Address.o Settings.o

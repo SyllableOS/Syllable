@@ -8,6 +8,8 @@
 #include <storage/file.h>
 #include <util/resources.h>
 #include <gui/desktop.h>
+#include <gui/menu.h>
+
 #include <cstdlib>
 #include <cstdio>
 
@@ -24,7 +26,7 @@ String itoa(int nInt)
 	return cString;
 }
 
-class Switcher : public DockPlugin
+class Switcher : public View
 {
 public:
 	Switcher(os::Path cPath, os::Looper* pcDock);
@@ -36,7 +38,7 @@ public:
     void		MouseDown( const Point& cPosition, uint32 nButtons );
 	void		MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData );
     void		LoadImages();
-    os::Point 	GetPreferredSize(bool);
+    os::Point 	GetPreferredSize(bool) const; 
     void 		SwitchDesktop(int);
     void 		Forward();
     void		Backward();
@@ -45,19 +47,23 @@ private:
 	int m_nDesktop;
 	os::BitmapImage* pcBackImage, *pcBackGreyImage;
 	os::BitmapImage* pcForwardImage, *pcForwardGreyImage;
+	os::Menu* m_pcContextMenu;
 	os::Path m_cPath;
 };
 
-Switcher::Switcher(os::Path cPath, os::Looper* pcDock) : DockPlugin()
+Switcher::Switcher(os::Path cPath, os::Looper* pcDock) : View(Rect(0,0,1,1),"switcher")
 {
 	m_nDesktopCount = 1;
 	m_nDesktop = 1;
 	m_cPath = cPath;
 	
+	m_pcContextMenu = new Menu(Rect(0,0,1,1),"context_menu",ITEMS_IN_COLUMN);
+	m_pcContextMenu->AddItem("Minimize All",NULL);
+	
 	LoadImages();
 }
 
-os::Point Switcher::GetPreferredSize(bool bSize)
+os::Point Switcher::GetPreferredSize(bool bSize) const
 {
 	os::Point cPoint(64,GetParent()->GetBounds().Height());
 	return cPoint;
@@ -132,14 +138,10 @@ void Switcher::LoadImages()
 	delete pcFile;
 }
 
-os::String Switcher::GetIdentifier()
-{
-	return (PLUGIN_NAME);
-}
+
 
 void Switcher::MouseMove( const Point& cNewPos, int nCode, uint32 nButtons, Message* pcData )
 {
-
 }
 
 void Switcher::MouseDown( const Point& cPosition, uint32 nButtons )
@@ -149,19 +151,36 @@ void Switcher::MouseDown( const Point& cPosition, uint32 nButtons )
 
 void Switcher::MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData )
 {
+	
 	if (cPosition.x <= pcBackImage->GetSize().x)
 		Backward();
+	
 	else if (cPosition.x >= 14 && cPosition.x <=32 && cPosition.y  < 13)
-		SwitchDesktop(m_nDesktopCount);
+		if(nButtons == 2)
+			m_pcContextMenu->Open(ConvertToScreen(cPosition));
+		else
+			SwitchDesktop(m_nDesktopCount);
+	
 	else if (cPosition.x >=32 && cPosition.x <= 51 && cPosition.y < 13)
-		SwitchDesktop(m_nDesktopCount+1);
+		if (nButtons == 2)
+			m_pcContextMenu->Open(ConvertToScreen(cPosition));
+		else
+			SwitchDesktop(m_nDesktopCount+1);
+	
 	else if (cPosition.x >= 14 && cPosition.x <=32  && cPosition.y >= 14)
-		SwitchDesktop(m_nDesktopCount+2);
+		if (nButtons == 2)
+			m_pcContextMenu->Open(ConvertToScreen(cPosition));
+		else
+			SwitchDesktop(m_nDesktopCount+2);
+	
 	else if(cPosition.x >=32 && cPosition.x <= 51 && cPosition.y >=14)
-		SwitchDesktop(m_nDesktopCount+3);
+		if (nButtons == 2)
+			m_pcContextMenu->Open(ConvertToScreen(cPosition));
+		else
+			SwitchDesktop(m_nDesktopCount+3);
+	
 	else if (cPosition.x >= 53 && cPosition.x < 61)
 		Forward();
-
 }
 
 
@@ -197,12 +216,41 @@ void Switcher::Backward()
 	}
 }
 
+
+class SwitcherPlugin : public DockPlugin
+{
+public:
+		SwitcherPlugin(){}
+		
+		os::String GetIdentifier()
+		{
+			return (PLUGIN_NAME);
+		}
+		
+		status_t Initialize()
+		{
+			m_pcView = new Switcher(GetPath(),GetApp());
+			AddView(m_pcView);
+			return 0;
+		}
+		
+		void Delete()
+		{
+			RemoveView(m_pcView);
+		}
+private:
+	Switcher* m_pcView;
+};
+
+
 extern "C"
 {
-DockPlugin* init_dock_plugin( os::Path cPluginFile, os::Looper* pcDock )
+DockPlugin* init_dock_plugin()
 {
-	return( new Switcher( cPluginFile, pcDock ) );
+	return( new SwitcherPlugin());
 }
 }
+
+
 
 

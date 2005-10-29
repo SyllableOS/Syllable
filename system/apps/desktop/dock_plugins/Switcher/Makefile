@@ -1,7 +1,7 @@
 CFLAGS   += -c -fexceptions -ffast-math
 CXXFLAGS += -c -fexceptions -ffast-math
 AOPTS   = -c
-APPBIN = /system/drivers/dock
+APPBIN = /system/extensions/dock
 VPATH = ./
 OBJDIR	:= objs
 OBJS = Switcher.o
@@ -20,8 +20,8 @@ install:  $(OBJDIR)/Switcher.so
 	install -s $(OBJDIR)/Switcher.so $(APPBIN)/Switcher.so
 
 dist:  $(OBJDIR)/Switcher.so
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dock
-	install -s $(OBJDIR)/Switcher.so $(DIST_DIR)/atheos/sys/drivers/dock/Switcher.so
+	mkdir -p $(DIST_DIR)/atheos/sys/extensions/dock
+	install -s $(OBJDIR)/Switcher.so $(DIST_DIR)/atheos/sys/extensions/dock/Switcher.so
 
 deps: $(OBJDIR)
 

@@ -19,14 +19,14 @@ private:
 	View* pcParentView;
 };
 	
-class Address : public DockPlugin
+class Address : public View
 {
 public:
 	Address(os::Path cPath, os::Looper* pcDock);
 	~Address();
 	
 	os::String GetIdentifier() ;
-	Point GetPreferredSize( bool bLargest );
+	Point GetPreferredSize( bool bLargest ) const;
 	os::Path GetPath() { return( m_cPath ); }
 	
 	virtual void AttachedToWindow();
@@ -58,7 +58,6 @@ private:
 	Path m_cPath;
 	BitmapImage* m_pcIcon;
 	os::Looper* m_pcDock;  
-	//os::File* pcFile;
 	os::ResStream* pcStream;
 	bool bExportHelpFile;
 	int32 nDefault;
@@ -70,6 +69,17 @@ private:
 };
 
 
+class AddressDockPlugin : public DockPlugin
+{
+public:
+	AddressDockPlugin();
+
+	status_t	Initialize();
+	void 		Delete();
+	String		GetIdentifier();
+private:
+	Address* m_pcView;
+};
 
 
 

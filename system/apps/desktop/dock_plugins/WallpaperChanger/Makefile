@@ -1,7 +1,7 @@
 CFLAGS   += -c -fexceptions -ffast-math
 CXXFLAGS += -c -fexceptions -ffast-math
 AOPTS   = -c
-APPBIN = /system/drivers/dock
+APPBIN = /system/extensions/dock
 VPATH = ./
 OBJDIR	:= objs
 OBJS = WallpaperChanger.o WallpaperChangerLooper.o WallpaperChangerSettings.o bitmapscale.o
@@ -20,8 +20,8 @@ install:  $(OBJDIR)/WallpaperChanger.so
 	install -s $(OBJDIR)/WallpaperChanger.so $(APPBIN)/WallpaperChanger.so
 
 dist:  $(OBJDIR)/WallpaperChanger.so
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dock
-	install -s $(OBJDIR)/WallpaperChanger.so $(DIST_DIR)/atheos/sys/drivers/dock/WallpaperChanger.so
+	mkdir -p $(DIST_DIR)/atheos/sys/extensions/dock
+	install -s $(OBJDIR)/WallpaperChanger.so $(DIST_DIR)/atheos/sys/extensions/dock/WallpaperChanger.so
 
 deps: $(OBJDIR)
 
