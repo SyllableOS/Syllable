@@ -71,11 +71,12 @@ void NewEditWindow::HandleMessage(Message* pcMessage)
 				pcMsg->AddString("website",pcWebTextView->GetBuffer()[0]);
 				pcMsg->AddBool("new",bNewWindow);
 				pcParentWindow->PostMessage(pcMsg,pcParentWindow);
+				delete(pcMsg);
 				break;
 			}
 			
 		case M_NEW_CANCEL:
-			pcParentWindow->PostMessage(new Message(M_NEW_CANCEL),pcParentWindow);
+			pcParentWindow->PostMessage(M_NEW_CANCEL,pcParentWindow);
 			break;
 	}
 }
@@ -107,7 +108,7 @@ void SettingsWindow::Layout()
 	HLayoutNode* pcListNode = new HLayoutNode("list_node");
 	pcListNode->AddChild(pcListView = new ListView(Rect(0,0,0,0),"edit_list",CF_FOLLOW_ALL));
 	pcListView->InsertColumn("Tag",40);
-	pcListView->InsertColumn("Website",GetBounds().Width()/2-10);
+	pcListView->InsertColumn("Website",(int)GetBounds().Width()/2-10);
 	pcListNode->SetWeight(120);
 	
 	HLayoutNode* pcListButtonNode = new HLayoutNode("list_buttons");
@@ -236,21 +237,21 @@ void SettingsWindow::HandleMessage(Message* pcMessage)
 				pcRow->SetString(0,cTag);
 				pcRow->SetString(1,cWeb);
 			}
-			pcNewEditWindow->PostMessage(new Message(M_TERMINATE),pcNewEditWindow);
+			pcNewEditWindow->PostMessage(M_TERMINATE,pcNewEditWindow);
 			pcNewEditWindow = NULL;
 			break;
 		}
 		
 		case M_NEW_CANCEL:
 		{
-			pcNewEditWindow->PostMessage(new Message(M_TERMINATE),pcNewEditWindow);
+			pcNewEditWindow->PostMessage(M_TERMINATE,pcNewEditWindow);
 			pcNewEditWindow = NULL;
 			break;
 		}
 		
 		case M_SETTINGS_CANCEL:
 		{
-			pcParentView->GetLooper()->PostMessage(new Message(M_SETTINGS_CANCEL),pcParentView);
+			pcParentView->GetLooper()->PostMessage(M_SETTINGS_CANCEL,pcParentView);
 			break;
 		}
 		
@@ -260,6 +261,7 @@ void SettingsWindow::HandleMessage(Message* pcMessage)
 			Message* pcMsg = new Message(M_SETTINGS_PASSED);
 			pcMsg->AddInt32("default",pcDefaultDrop->GetSelection());
 			pcParentView->GetLooper()->PostMessage(pcMsg,pcParentView);
+			delete(pcMsg);
 			break;
 		}	
 	}

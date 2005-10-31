@@ -1,10 +1,11 @@
-#include "dockplugin.h"
-
+#include <atheos/filesystem.h>
 #include <gui/dropdownmenu.h>
 #include <gui/image.h>
 #include <util/resources.h>
+#include <util/looper.h>
 #include <storage/file.h>
 
+#include "dockplugin.h"
 #include "Settings.h"
 
 using namespace os;
@@ -13,8 +14,10 @@ class AddressDrop : public DropdownMenu
 {
 public:	
 	AddressDrop(View*);
+	
 	void KeyUp(const char* pzString, const char* pzRawString, uint32 nRaw);
 	void KeyDown( const char* pzString, const char* pzRawString, uint32 nQualifiers );
+
 private:
 	View* pcParentView;
 };
@@ -22,13 +25,11 @@ private:
 class Address : public View
 {
 public:
-	Address(os::Path cPath, os::Looper* pcDock);
+	Address(os::DockPlugin* pcPlugin, os::Looper* pcDock);
 	~Address();
 	
-	os::String GetIdentifier() ;
 	Point GetPreferredSize( bool bLargest ) const;
-	os::Path GetPath() { return( m_cPath ); }
-	
+		
 	virtual void AttachedToWindow();
 	virtual void DetachedFromWindow();
 	virtual void HandleMessage(Message* pcMessage);
@@ -55,10 +56,9 @@ private:
 	
 	DropdownMenu* pcAddressDrop;
 	
-	Path m_cPath;
+	os::DockPlugin* m_pcPlugin;
 	BitmapImage* m_pcIcon;
 	os::Looper* m_pcDock;  
-	os::ResStream* pcStream;
 	bool bExportHelpFile;
 	int32 nDefault;
 	
@@ -69,17 +69,13 @@ private:
 };
 
 
-class AddressDockPlugin : public DockPlugin
-{
-public:
-	AddressDockPlugin();
 
-	status_t	Initialize();
-	void 		Delete();
-	String		GetIdentifier();
-private:
-	Address* m_pcView;
-};
+
+
+
+
+
+
 
 
 

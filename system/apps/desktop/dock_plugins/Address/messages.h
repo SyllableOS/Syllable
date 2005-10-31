@@ -21,7 +21,7 @@ enum
 
 #define PLUGIN_NAME       "Address"
 #define PLUGIN_VERSION    "1.0"
-#define PLUGIN_DESC       "Address will open up a Web Browser with the specified address.\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tThere are special commands you can use, please type 'help' to find them out."
+#define PLUGIN_DESC       "Address will open up a Web Browser with the specified address.\nThere are special commands you can use, please type 'help' to find them out."
 #define PLUGIN_AUTHOR     "Rick Caudill"
 
 #endif

@@ -20,8 +20,8 @@ install:  $(OBJDIR)/Address.so
 	install -s $(OBJDIR)/Address.so $(APPBIN)/Address.so
 
 dist:  $(OBJDIR)/Address.so
-	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dock
-	install -s $(OBJDIR)/Address.so $(DIST_DIR)/atheos/sys/drivers/dock/Address.so
+	mkdir -p $(DIST_DIR)/atheos/sys/extensions/dock
+	install -s $(OBJDIR)/Address.so $(DIST_DIR)/atheos/sys/extensions/dock/Address.so
 
 deps: $(OBJDIR)
 

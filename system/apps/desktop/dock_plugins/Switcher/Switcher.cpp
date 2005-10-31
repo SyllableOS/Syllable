@@ -30,6 +30,7 @@ class Switcher : public View
 {
 public:
 	Switcher(os::Path cPath, os::Looper* pcDock);
+	~Switcher();
 	
 	os::String	GetIdentifier();
 	os::Path	GetPath() {return m_cPath;}
@@ -61,6 +62,15 @@ Switcher::Switcher(os::Path cPath, os::Looper* pcDock) : View(Rect(0,0,1,1),"swi
 	m_pcContextMenu->AddItem("Minimize All",NULL);
 	
 	LoadImages();
+}
+
+Switcher::~Switcher()
+{
+	delete( pcBackImage );
+	delete( pcBackGreyImage );
+	delete( pcForwardImage );
+	delete( pcForwardGreyImage );
+	delete( m_pcContextMenu );
 }
 
 os::Point Switcher::GetPreferredSize(bool bSize) const
@@ -123,17 +133,21 @@ void Switcher::LoadImages()
 	
 	os::ResStream* pcBackStream = cCol.GetResourceStream( "back.png" );
 	pcBackImage = new os::BitmapImage( pcBackStream );
+	delete( pcBackStream );
 	
 	os::ResStream* pcBackGreyStream = cCol.GetResourceStream( "back.png" );
 	pcBackGreyImage = new BitmapImage(pcBackGreyStream);
 	pcBackGreyImage->GrayFilter();
+	delete( pcBackGreyStream );
 	
 	os::ResStream* pcForwardStream = cCol.GetResourceStream( "forward.png" );
 	pcForwardImage = new os::BitmapImage( pcForwardStream );
+	delete( pcForwardStream );
 	
 	os::ResStream* pcForwardGreyStream = cCol.GetResourceStream( "forward.png" );
 	pcForwardGreyImage = new BitmapImage(pcForwardGreyStream);
 	pcForwardGreyImage->GrayFilter();
+	delete( pcForwardGreyStream );
 	
 	delete pcFile;
 }

@@ -20,7 +20,7 @@ void AddressDrop::KeyUp(const char* pzString, const char* pzRawString,uint32 nKe
 	if (pzString[0] == VK_ENTER)
 	{
 		Looper* pcParentLooper = pcParentView->GetLooper();
-		pcParentLooper->PostMessage(new Message(M_SELECTION),pcParentView);
+		pcParentLooper->PostMessage(M_SELECTION,pcParentView);
 	}
 }
 
@@ -29,19 +29,17 @@ void AddressDrop::KeyDown(const char* pzString,const char* pzRawString,uint32 nK
 	printf("this will never work!!!!!!\n");
 }
 
-Address::Address(os::Path cPath, os::Looper* pcDock) : View(Rect(0,3,150,20),"address_view")
+Address::Address(os::DockPlugin* pcPlugin, os::Looper* pcDock) : os::View( os::Rect(), "address" )
 {
 	m_pcDock = pcDock;
-	m_cPath = cPath;
-
+	m_pcPlugin = pcPlugin;
+	
 	pcAddressDrop = new AddressDrop(this);
-	pcAddressDrop->SetMaxPreferredSize(235);
-	AddChild(pcAddressDrop);
+	AddChild( pcAddressDrop );
 }
 
 Address::~Address()
 {
-	RemoveChild(pcAddressDrop);
 }
 
 void Address::DetachedFromWindow()
@@ -49,6 +47,7 @@ void Address::DetachedFromWindow()
 	SaveSettings();
 	SaveBuffer();
 	SaveAddresses();
+	delete( m_pcIcon );	
 }
 
 void Address::InitDefaultAddresses()
@@ -172,6 +171,7 @@ void Address::LoadSettings()
 	
 		nDefault = pcSettings->GetInt32("default",nDefault);
 		bExportHelpFile = pcSettings->GetBool("help",&bExportHelpFile);
+		delete(pcSettings);
 	}
 	
 	catch (...)
@@ -200,14 +200,14 @@ void Address::SaveSettings()
 	
 void Address::AttachedToWindow()
 {
-	os::File* pcFile = new os::File( m_cPath );
+	os::File* pcFile = new os::File( m_pcPlugin->GetPath() );
 	os::Resources cCol( pcFile );
-	pcStream = cCol.GetResourceStream( "icon48x48.png" );
+	os::ResStream* pcStream = cCol.GetResourceStream( "icon48x48.png" );
 	m_pcIcon = new os::BitmapImage( pcStream );
+	delete pcStream;
 	delete pcFile;
 		
 	pcSettingsWindow = NULL;
-	
 	InitDefaultAddresses();
 	LoadAddresses();
 	LoadBuffer();
@@ -219,7 +219,7 @@ void Address::AttachedToWindow()
 
 Point Address::GetPreferredSize( bool bLargest ) const
 {
-	return Point(150,20);
+	return Point(pcAddressDrop->GetBounds().Width(),pcAddressDrop->GetBounds().Height());
 }
 
 void Address::HandleMessage(Message* pcMessage)
@@ -304,7 +304,7 @@ void Address::HandleMessage(Message* pcMessage)
 			case M_SETTINGS_PASSED:
 				pcMessage->FindInt32("default",&nDefault);
 				ReloadAddresses();
-				pcSettingsWindow->PostMessage(new Message(M_TERMINATE),pcSettingsWindow);
+				pcSettingsWindow->PostMessage(M_TERMINATE,pcSettingsWindow);
 				pcSettingsWindow = NULL;
 				break;
 				
@@ -394,13 +394,14 @@ void Address::ExportHelpFile()
 	{
 		char buffer[8192];
 	
-		os::File* pcResourceFile = new os::File( m_cPath );	
+		os::File* pcResourceFile = new os::File( m_pcPlugin->GetPath() );	
 		os::Resources cCol( pcResourceFile );
 		ResStream* pcHelpStream = cCol.GetResourceStream( "address.html" );
 	
 		ssize_t nSize = pcHelpStream->GetSize();
 		pcHelpStream->Read(buffer,nSize);
 		delete pcHelpStream;
+		delete pcResourceFile;
 	
 		File* pcFileTwo = new File("/atheos/Documentation/address.html",O_CREAT | O_RDWR);
 		pcFileTwo->Write(buffer,nSize);
@@ -409,37 +410,66 @@ void Address::ExportHelpFile()
 	}
 }
 
-AddressDockPlugin::AddressDockPlugin() : DockPlugin()
+//*************************************************************************************
+
+class AdressPlugin : public os::DockPlugin
 {
-}
-
-status_t AddressDockPlugin::Initialize()
-{
-	m_pcView = new Address(GetPath(),GetApp());
-	AddView(m_pcView);
-	return 0;
-}
-
-void AddressDockPlugin::Delete()
-{
-	RemoveView(m_pcView);
-}
-
-
-String AddressDockPlugin::GetIdentifier()
-{
-	return( PLUGIN_NAME );
-}
-
-
+public:
+	AdressPlugin()
+	{
+		m_pcView = NULL;
+	}
+	~AdressPlugin()
+	{
+	}
+	status_t Initialize()
+	{
+		m_pcView = new Address( this, GetApp() );
+		AddView( m_pcView );
+		return( 0 );
+	}
+	void Delete()
+	{
+		RemoveView( m_pcView );
+	}
+	os::String GetIdentifier()
+	{
+		return( PLUGIN_NAME );
+	}
+private:
+	Address* m_pcView;
+};
 
 extern "C"
 {
-DockPlugin* init_dock_plugin()
+DockPlugin* init_dock_plugin( os::Path cPluginFile, os::Looper* pcDock )
 {
-	return( new AddressDockPlugin());
+	return( new AdressPlugin() );
 }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

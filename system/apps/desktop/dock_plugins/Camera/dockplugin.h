@@ -28,8 +28,6 @@
 #include <util/message.h>
 #include <util/string.h>
 #include <storage/path.h>
-#include <atheos/filesystem.h>
-#include <util/looper.h>
 #include <unistd.h>
 
 namespace os {

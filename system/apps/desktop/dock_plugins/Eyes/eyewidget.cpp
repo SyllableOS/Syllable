@@ -45,6 +45,7 @@ EyeWidget::EyeWidget(const String& cName, uint32 nResizeMask, uint32 nFlags ) : 
 
 EyeWidget::~EyeWidget()
 {
+	delete( pcContextMenu );
 }
 
 void EyeWidget::AttachedToWindow(void)
