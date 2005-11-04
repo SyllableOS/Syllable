@@ -1,0 +1,21 @@
+authors				Kaj de Vos
+status				testing
+notes				Tested with Orca 0.0.21 and M2 0.3.1
+
+licenses			LGPL
+
+home				wsrebol.sf.net
+packages
+	orca
+	m2 orca/support
+locations			wsrebol.sf.net/arc/
+
+needs				bzip2
+
+patch
+	cp ../orca-current/support/m2/m2 .
+	cp ../orca-current/support/m2/m2_linux.r m2_template.r
+
+no-build-dir
+
+configure			./m2
