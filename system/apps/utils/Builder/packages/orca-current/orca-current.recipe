@@ -20,7 +20,9 @@ no-build-dir
 ;configure			./m2
 
 install-tree		bin lib
+install				true
 install-files
 	ocore			bin
 	liborca.a		lib
 documentation		README LICENSE ChangeLog TODO
+
