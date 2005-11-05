@@ -3,7 +3,6 @@ status				testing
 notes				Tested with Orca 0.0.21 and M2 0.3.1
 
 licenses			LGPL
-
 home				wsrebol.sf.net
 packages
 	orca
@@ -18,4 +17,10 @@ patch
 
 no-build-dir
 
-configure			./m2
+;configure			./m2
+
+install-tree		bin lib
+install-files
+	ocore			bin
+	liborca.a		lib
+documentation		README LICENSE ChangeLog TODO
