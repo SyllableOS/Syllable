@@ -25,4 +25,5 @@ install-files
 	ocore			bin
 	liborca.a		lib
 documentation		README LICENSE ChangeLog TODO
+links				ocore bin/rebol
 
