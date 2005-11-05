@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.24
+# Version 0.6.25
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -1441,7 +1441,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.24',
+	puts 'Syllable Build System 0.6.25',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1517,79 +1517,121 @@ else
 			when 'package'		then buildPackages	target
 			when 'pack'			then buildPack		target
 			else
-				if @systemBuild
-					if exists? '/ainc'
-						@log.header 'Temporarily replacing system headers'
-						action "ln -snf #{File.join @workDir, 'sys/include'} /ainc"
-					end
+				if @systemBuild and exists? '/ainc'
+					@log.header 'Temporarily replacing system headers'
+					action "ln -snf #{File.join @workDir, 'sys/include'} /ainc"
+				end
 
-					# Pick up executables from the staging area
+				# Pick up executables from the staging area
 
-					if @bootstrap then ENV['PATH'] =
-						(File.join @systemImage, 'atheos/sys/bin') +
+				if @bootstrap then ENV['PATH'] =
+					if @systemBuild
+						(File.join @systemImage, 'atheos/sys/bin') + ':'
 #						Executables may not be position-independent:
-#						':' + (File.join @systemImage, 'atheos/usr/glibc/bin') +
-#						':' + (File.join @systemImage, 'atheos/usr/glibc/sbin') +
-#						':' + (File.join @systemImage, 'atheos/usr/glibc2/bin') +
-#						':' + (File.join @systemImage, 'atheos/usr/glibc2/sbin') +
-#
-#						':' + (File.join @stage, 'indexes/bin') +
-						':' + (File.join @stage, 'bin') +
-#						':' + (File.join @stage, 'indexes/sbin') +
-						':' + (File.join @stage, 'sbin') +
+#						(File.join @systemImage, 'atheos/usr/glibc/bin') + ':' +
+#						(File.join @systemImage, 'atheos/usr/glibc/sbin') + ':' +
+#						(File.join @systemImage, 'atheos/usr/glibc2/bin') + ':' +
+#						(File.join @systemImage, 'atheos/usr/glibc2/sbin') + ':'
+					else
+						''
+					end +
+
+#					(File.join @stage, 'indexes/bin') +
+					(File.join @stage, 'bin') +
+#					':' + (File.join @stage, 'indexes/sbin') +
+					':' + (File.join @stage, 'sbin') +
+
+					if @systemBuild
 #						Shouldn't really be used:
 #						':' + (File.join @systemImage, 'atheos/usr/local/bin') +
 #						':' + (File.join @systemImage, 'atheos/usr/bin') +
-#						':' + (File.join @systemImage, 'atheos/usr/sbin') +
-						(@isolateStage ? '' : ':' + ENV['PATH'])
-					end
+#						':' + (File.join @systemImage, 'atheos/usr/sbin')
+						''
+					else
+						''
+					end +
 
-					# Pick up headers from the staging area and system repository
+					(@isolateStage ? '' : ':' + ENV['PATH'])
+				end
 
-					headers =
+				# Pick up headers from the staging area and system repository
+
+				headers =
+					if @systemBuild
 						# New C library if it's there
-						(File.join @systemImage, 'atheos/usr/glibc/include') +
+						(File.join @systemImage, 'atheos/usr/glibc/include') + ':' +
 						# C library headers
-						':' + (File.join @systemImage, 'atheos/usr/glibc2/include') +
+						(File.join @systemImage, 'atheos/usr/glibc2/include') + ':' +
 						# For GoboLinux
-#						':' + '/Programs/Glibc/Current/include' +
+#						'/Programs/Glibc/Current/include' + ':' +
 						# System headers
-						':' + (File.join @systemImage, 'atheos/sys/include') +
-						':' + (File.join @workDir, 'sys/include') +
-						# Linked headers
-#						':' + (File.join @stage, 'indexes/include') +
-						':' + (File.join @stage, 'include')
+						(File.join @systemImage, 'atheos/sys/include') + ':' +
+						(File.join @workDir, 'sys/include') + ':'
+					else
+						''
+					end +
+
+					# Linked headers
+#					(File.join @stage, 'indexes/include') +
+					(File.join @stage, 'include') +
+
+					if @systemBuild
 						# Extra headers
 #						':' + (File.join @systemImage, 'atheos/usr/local/include') +
 #						':' + (File.join @systemImage, 'atheos/usr/include')
-
-					ENV['ATHEOS_INCLUDE_PATH'] = File.join @workDir, 'sys/include'
-					ENV['C_INCLUDE_PATH'] = headers +
-						((var = ENV['C_INCLUDE_PATH']) && !@isolateStage ? ':' + var : '')
-					ENV['CPLUS_INCLUDE_PATH'] = headers +
-						((var = ENV['CPLUS_INCLUDE_PATH']) && !@isolateStage ? ':' + var : '')
-
-					# Pick up libraries from the staging area
-
-					ENV['ATHEOS_LIB_PATH'] = File.join @systemImage, 'atheos/sys/libs'
-					if @bootstrap then ENV['DLL_PATH'] =
-						(File.join @systemImage, 'atheos/sys/libs') +
-						':' + (File.join @systemImage, 'atheos/sys') +
-#						':' + (File.join @stage, 'indexes/lib') +
-						':' + (File.join @stage, 'lib') +
-						((var = ENV['DLL_PATH']) && !@isolateStage ? ':' + var : '')
+						''
+					else
+						''
 					end
-					ENV[name = (@syllable ? '' : 'LD_') + 'LIBRARY_PATH'] =
-						(File.join @systemImage, 'atheos/sys/libs') +
-						(@syllable ? '' : ':' + File.join(@systemImage, 'atheos/sys')) +
-						':' + (File.join @systemImage, 'atheos/usr/glibc/lib') +
-						':' + (File.join @systemImage, 'atheos/usr/glibc2/lib') +
-#						':' + (File.join @stage, 'indexes/lib') +
-						':' + (File.join @stage, 'lib') +
-#						':' + (File.join @systemImage, 'atheos/usr/local/lib') +
-#						':' + (File.join @systemImage, 'atheos/usr/lib') +
-						(@isolateStage ? '' : ':' + ENV[name])
+
+				ENV['ATHEOS_INCLUDE_PATH'] = File.join @workDir, 'sys/include' if @systemBuild
+				ENV['C_INCLUDE_PATH'] = headers +
+					((var = ENV['C_INCLUDE_PATH']) && !@isolateStage ? ':' + var : '')
+				ENV['CPLUS_INCLUDE_PATH'] = headers +
+					((var = ENV['CPLUS_INCLUDE_PATH']) && !@isolateStage ? ':' + var : '')
+
+				# Pick up libraries from the staging area
+
+				ENV['ATHEOS_LIB_PATH'] = File.join @systemImage, 'atheos/sys/libs' if @systemBuild
+
+				if @bootstrap then ENV['DLL_PATH'] =
+					if @systemBuild
+						(File.join @systemImage, 'atheos/sys/libs') + ':' +
+						(File.join @systemImage, 'atheos/sys') + ':'
+					else
+						''
+					end +
+
+#					(File.join @stage, 'indexes/lib') +
+					(File.join @stage, 'lib') +
+					((var = ENV['DLL_PATH']) && !@isolateStage ? ':' + var : '')
 				end
+
+				ENV[name = (@syllable ? '' : 'LD_') + 'LIBRARY_PATH'] =
+					if @systemBuild
+						(File.join @systemImage, 'atheos/sys/libs') +
+						(@syllable ? '' : ':' + File.join(@systemImage, 'atheos/sys')) + ':' +
+						(File.join @systemImage, 'atheos/usr/glibc/lib') + ':' +
+						(File.join @systemImage, 'atheos/usr/glibc2/lib') + ':'
+#						(File.join @stage, 'indexes/lib') + ':'
+					else
+						''
+					end +
+
+					(libs = File.join @stage, 'lib') +
+
+					if @systemBuild
+#						':' + (File.join @systemImage, 'atheos/usr/local/lib') +
+#						':' + (File.join @systemImage, 'atheos/usr/lib')
+						''
+					else
+						''
+					end +
+
+					((var = ENV[name]) && !@isolateStage ? ':' + var : '')
+
+				# At least Ubuntu doesn't respond to $LD_LIBRARY_PATH. Sigh...
+				ENV['LDFLAGS'] = ((var = ENV['LDFLAGS']) ? var + ' ' : '') + '-L' + libs unless @syllable
 
 				case arg1
 				when 'distclean'	then distclean	target
@@ -1623,4 +1665,3 @@ else
 	@log.close
 	exit @log.failures.length  # FIXME: only works when processing a profile
 end
-
