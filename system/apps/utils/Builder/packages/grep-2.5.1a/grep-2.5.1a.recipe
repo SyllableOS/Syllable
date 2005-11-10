@@ -1,3 +1,16 @@
-authors Kaj de Vos
+authors				Kaj de Vos
+status				broken
+notes				Waiting for GetText to be fixed
+
+licenses			GPL
+home				www.gnu.org/software/grep/
+
 patch-config
-documentation README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
+
+; Seems to be necessary for internationalization:
+;no-build-dir
+
+;configure-options	--without-included-gettext
+
+documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
+
