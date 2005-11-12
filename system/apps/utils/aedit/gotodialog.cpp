@@ -1,4 +1,5 @@
-//  AEdit -:-  (C)opyright 2000-2002 Kristian Van Der Vliet
+//  hhAEdit -:-  (C)opyright 2000-2002 Kristian Van Der Vliet
+//             (C)opyright 2004 Jonas Jarvoll
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -15,14 +16,16 @@
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "gotodialog.h"
+#include "appwindow.h"
+#include "buffer.h"
 #include "messages.h"
 #include "resources/aedit.h"
 
 #include <util/message.h>
 
-GotoDialog::GotoDialog(const Rect& cFrame, Window* pcParent) : Window(cFrame, "goto_dialog", MSG_GOTO_TITLE, WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_RESIZABLE)
+GotoDialog::GotoDialog(const Rect& cFrame, AEditWindow* pcParent) : Window(cFrame, "goto_dialog", MSG_GOTO_TITLE, WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_RESIZABLE)
 {
-	pcParentWindow=pcParent;		// We need to know the parent window so we can send messages back to it
+	pcTarget=pcParent;		// We need to know the parent window so we can send messages back to it
 
 	// Create the Layoutviews
 	pcMainLayoutView=new LayoutView(GetBounds(),"", NULL, CF_FOLLOW_ALL);
@@ -88,17 +91,59 @@ void GotoDialog::HandleMessage(Message* pcMessage)
 	switch(pcMessage->GetCode())
 	{
 		case M_BUT_GOTO_GOTO:
-		{	
-			pcMessage->AddInt32("goto_lineno",atoi(pcLineNoTextView->GetBuffer()[0].c_str()));
-			pcParentWindow->PostMessage(pcMessage,pcParentWindow);	// Send the messages from the dialog back to the parent window
+		{
+			if(pcTarget->pcCurrentBuffer!=NULL)
+				pcTarget->pcCurrentBuffer->GotoLine(atoi(pcLineNoTextView->GetBuffer()[0].c_str()));
+
+			// Fall through to close the GotoDialog
+		}
+
+		case M_BUT_GOTO_CLOSE:
+		{
+			// Close the Goto window
+			Hide();
+
+			if(pcTarget->pcCurrentBuffer!=NULL)
+				pcTarget->pcCurrentBuffer->MakeFocus();
 
 			break;
 		}
 
 		default:
 		{
-			pcParentWindow->PostMessage(pcMessage,pcParentWindow);	// Send the messages from the dialog back to the parent window
+			pcTarget->PostMessage(pcMessage,pcTarget);	// Send the messages from the dialog back to the parent window
 			break;
 		}
 	}
+}
+
+// Disable/enable buttons in dialog depending on the parameter
+void GotoDialog::SetEnable(bool bEnable)
+{
+	pcGotoButton->SetEnable(bEnable);
+}
+
+bool GotoDialog::OkToQuit(void)
+{
+	Message *msg=new Message(M_BUT_GOTO_CLOSE);
+	HandleMessage(msg);
+	delete msg;
+	return (false);
+}
+
+void GotoDialog::MakeFocus()
+{
+	Window::MakeFocus();
+	// Set cursor on the text entry
+	pcLineNoTextView->MakeFocus();
+}
+
+void GotoDialog::Raise()
+{
+	if(IsVisible())
+		Show(false);
+
+	Show(true);
+
+	MakeFocus();
 }

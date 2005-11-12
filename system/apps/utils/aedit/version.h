@@ -1,4 +1,5 @@
 // AEdit -:-  (C)opyright 2000-2002 Kristian Van Der Vliet
+//            (C)opyright 2005 Jonas Jarvoll
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -14,4 +15,8 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-#define AEDIT_RELEASE_STRING "AEdit 1.5"
+#define AEDIT_VERSION "2.1"
+#define AEDIT_RELEASE_STRING "AEdit 2.1"
+
+
+

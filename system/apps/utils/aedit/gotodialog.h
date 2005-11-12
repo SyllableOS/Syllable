@@ -1,4 +1,5 @@
 //  AEdit -:-  (C)opyright 2000-2002 Kristian Van Der Vliet
+//             (C)opyright 2004 Jonas Jarvoll
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -13,7 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#ifndef __GOTO_DIALOG_H__
+#define __GOTO_DIALOG_H__
 
+#include "appwindow.h"
 #include <gui/window.h>
 #include <gui/layoutview.h>
 #include <gui/button.h>
@@ -21,14 +25,20 @@
 
 using namespace os;
 
+class AEditWindow;
+
 class GotoDialog : public Window
 {
 	public:
-		GotoDialog(const Rect& cFrame, Window* pcParent);
+		GotoDialog(const Rect& cFrame, AEditWindow* pcParent);
 		void HandleMessage(Message* pcMessage);
+		bool OkToQuit(void);
+		void SetEnable(bool bEnable);
+		void MakeFocus();
+		void Raise();
 
 	private:
-		Window* pcParentWindow;
+		AEditWindow* pcTarget;
 
 		LayoutView* pcMainLayoutView;
 		HLayoutNode* pcHLayoutNode;
@@ -41,3 +51,4 @@ class GotoDialog : public Window
 		TextView* pcLineNoTextView;
 };
 
+#endif

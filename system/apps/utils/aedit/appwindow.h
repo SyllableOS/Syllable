@@ -1,4 +1,5 @@
 // AEdit -:-  (C)opyright 2000-2002 Kristian Van Der Vliet
+//		      (C)opyright 2004 Jonas Jarvoll
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -17,75 +18,127 @@
 #ifndef __APPWINDOW_H_
 #define __APPWINDOW_H_
 
-#include "editview.h"
 #include "button_bar.h"
+#include "status_bar.h"
+#include "aboutdialog.h"
 #include "gotodialog.h"
 #include "finddialog.h"
 #include "replacedialog.h"
-#include "settings.h"
+#include "mytabview.h"
 
 #include <util/message.h>
+#include <util/string.h>
+#include <util/resources.h>
+#include <util/settings.h>
 
 #include <gui/window.h>
 #include <gui/layoutview.h>
+#include <gui/image.h>
 #include <gui/menu.h>
 #include <gui/filerequester.h>
+#include <gui/requesters.h>
 
 using namespace os;
 
+class AboutDialog;
+class FindDialog;
+class ReplaceDialog;
+class GotoDialog;
+class MyTabView;
+
 class AEditWindow : public Window
 {
+	friend class Buffer;
+
 	public:
 		AEditWindow(const Rect& cFrame);
 		virtual void HandleMessage(Message* pcMessage);
 		virtual bool OkToQuit(void);
 		void LoadOnStart(char* pzFilename);
+		void SetTitle(std::string zTtitle);
+		void SetStatus(std::string zTitle);
+		void UpdateMenuItemStatus(void);
+		void Load(char* pzFileName);		
+		void CreateNewBuffer(void);
+		void DragAndDrop(Message* pcData);
+
+		// Pointer to current viewed buffer. NULL if no buffer has been opened
+		Buffer* pcCurrentBuffer;
 
 	private:
-		void SetupMenus();
-		void Load(char* pzFileName);
-		void Save(const char* pzFileName);
+		void SetupMenus();	
 
 		LayoutView* pcAppWindowLayout;
 		VLayoutNode* pcVLayoutRoot;
 
 		ButtonBar* pcButtonBar;
-		EditView* pcEditView;
+		MyTabView* pcMyTabView;
+		StatusBar *pcStatusBar;
 
+		// Button bar buttons
+		ImageButton* pcImageFileNew;
+		ImageButton* pcImageFileOpen;
+		ImageButton* pcImageFileSave;
+		ImageButton* pcImageEditCut;
+		ImageButton* pcImageEditCopy;
+		ImageButton* pcImageEditPaste;
+		ImageButton* pcImageFindFind;
+		ImageButton* pcImageEditUndo;
+		ImageButton* pcImageEditRedo;
+
+		// Menu stuff
 		Menu* pcMenuBar;
 		Menu* pcAppMenu;
+
+		// The file menu and its menuitems
 		Menu* pcFileMenu;
+		MenuItem *pcFileNew;
+		MenuItem *pcFileOpen;
+		MenuItem *pcFileClose;
+		MenuItem *pcFileSave;
+		MenuItem *pcFileSaveAs;
+		MenuItem *pcFileSaveAll;
+		MenuItem *pcFileNextTab;
+		MenuItem *pcFilePrevTab;
+
+		// The edit menu and its menuitem
 		Menu* pcEditMenu;
+		MenuItem* pcEditUndo;
+		MenuItem* pcEditRedo;
+		MenuItem* pcEditCut;
+		MenuItem* pcEditCopy;
+		MenuItem* pcEditPaste;
+		MenuItem* pcEditSelectAll;
+
+		// The find menu and its menuitem
 		Menu* pcFindMenu;
+		MenuItem* pcFindFind;
+		MenuItem* pcFindReplace;
+		MenuItem* pcFindGoto;
+	
+		// The font menu
 		Menu* pcFontMenu;
+		
+		// The setting menu
 		Menu* pcSettingsMenu;
-		Menu* pcHelpMenu;
+		MenuItem* pcSettingsSaveOnClose;
 
 		FileRequester* pcLoadRequester;
 		FileRequester* pcSaveRequester;
+		FileRequester* pcSaveAsRequester;
 
-		std::string zWindowTitle;
-		std::string zCurrentFile;
-
-		bool bContentChanged;
-
+		AboutDialog* pcAboutDialog;			// About dialog
 		GotoDialog* pcGotoDialog;			// "Goto Line" dialog
 		FindDialog* pcFindDialog;			// Find dialog
 		ReplaceDialog* pcReplaceDialog;		// Replace dialog
+		Alert* pcCloseAlert;
+		Alert* pcSaveErrorAlert;
+		Alert* pcQuitAlert;
 
-		std::string zFindText;				// All used for find & replace
-		std::string zReplaceText;
-		int32 nTextPosition,nCurrentLine, nTotalLines;
-		bool bHasFind;
-		bool bCaseSensitive;
-		bool bSaveOnExit;
-		
-		AEditSettings* pcSettings;
+		String LatestOpenPath;
+		String LatestSavePath;
 
-		std::string zFamily;				// Font family currently selected
-		std::string zStyle;					// Font style currently selected
-		float vSize;						// Font size currently selectes
-		uint32 nFlags;					// Font flags (E.g. FPF_SMOOTHED)
+		Settings cSettings;
 };
 
 #endif /* __APPWINDOW_H_ */

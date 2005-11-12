@@ -1,4 +1,5 @@
 //  AEdit -:-  (C)opyright 2000-2002 Kristian Van Der Vliet
+//             (C)opyright 2004 Jonas Jarvoll
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -14,6 +15,10 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+#ifndef __FIND_DIALOG_H__
+#define __FIND_DIALOG_H__
+
+#include "appwindow.h"
 #include <gui/window.h>
 #include <gui/layoutview.h>
 #include <gui/checkbox.h>
@@ -25,14 +30,20 @@
 
 using namespace os;
 
+class AEditWindow;
+
 class FindDialog : public Window
 {
 	public:
-		FindDialog(const Rect& cFrame, Window* pcParent);
+		FindDialog(const Rect& cFrame, AEditWindow* pcParent);
 		void HandleMessage(Message* pcMessage);
+		bool OkToQuit(void);
+		void SetEnable(bool bEnable);
+		void MakeFocus();
+		void Raise();
 
 	private:
-		Window* pcParentWindow;
+		AEditWindow* pcTarget;
 
 		LayoutView* pcMainLayoutView;
 		HLayoutNode* pcHLayoutNode;
@@ -50,3 +61,4 @@ class FindDialog : public Window
 		StringView* pcFindLabel;
 };
 
+#endif

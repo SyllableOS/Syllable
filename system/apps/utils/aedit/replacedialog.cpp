@@ -1,4 +1,5 @@
 //  AEdit -:-  (C)opyright 2000-2002 Kristian Van Der Vliet
+//             (C)opyright 2004 Jonas Jarvoll
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -16,15 +17,17 @@
 
 #include "replacedialog.h"
 #include "messages.h"
+#include "appwindow.h"
+#include "buffer.h"
 
 #include <gui/window.h>
 #include <util/message.h>
 
 #include "resources/aedit.h"
 
-ReplaceDialog::ReplaceDialog(const Rect& cFrame, Window* pcParent) : Window(cFrame, "replace_dialog", MSG_REPLACE_TITLE, WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_RESIZABLE)
+ReplaceDialog::ReplaceDialog(const Rect& cFrame, AEditWindow* pcParent) : Window(cFrame, "replace_dialog", MSG_REPLACE_TITLE, WND_NO_ZOOM_BUT | WND_NO_DEPTH_BUT | WND_NOT_RESIZABLE)
 {
-	pcParentWindow=pcParent;		// We need to know the parent window so we can send messages back to it
+	pcTarget=pcParent;		// We need to know the parent window so we can send messages back to it
 
 	// Create the Layoutviews
 	pcMainLayoutView=new LayoutView(GetBounds(),"", NULL,CF_FOLLOW_ALL);
@@ -115,30 +118,117 @@ void ReplaceDialog::HandleMessage(Message* pcMessage)
 {
 	switch(pcMessage->GetCode())
 	{
-
 		case M_BUT_FIND_GO:
 		{
-			pcMessage->AddString("find_text",(pcFindTextView->GetBuffer()[0]));
-			pcMessage->AddBool("case_check_state",pcCaseCheckBox->GetValue());
-			pcParentWindow->PostMessage(pcMessage,pcParentWindow);	// Send the messages from the dialog back to the parent window
+			if(pcTarget->pcCurrentBuffer!=NULL)
+			{
+				std::string text=pcFindTextView->GetBuffer()[0];
+
+				if(pcTarget->pcCurrentBuffer->FindFirst(text, (pcCaseCheckBox->GetValue()? true : false)))
+				{
+					char buffer[1024];
+					sprintf(buffer,MSG_STATUSBAR_SEARCH_FOUND.c_str(), text.c_str());
+
+					pcTarget->SetStatus(string(buffer));
+				}					
+				else
+				{
+					char buffer[1024];
+					sprintf(buffer,MSG_STATUSBAR_SEARCH_NOT_FOUND_1.c_str(), text.c_str());
+
+					pcTarget->SetStatus(string(buffer));
+				}
+				
+			}
+			break;
+		}
+
+		case M_BUT_FIND_NEXT:
+		{
+			if(pcTarget->pcCurrentBuffer!=NULL)
+			{
+				std::string text;
+
+				text=pcTarget->pcCurrentBuffer->FindNext();
+
+				if(text!="")
+				{
+					char buffer[1024];
+					sprintf(buffer,MSG_STATUSBAR_SEARCH_FOUND.c_str(), text.c_str());
+
+					pcTarget->SetStatus(string(buffer));
+				}
+				else
+				{
+					pcTarget->SetStatus(MSG_STATUSBAR_SEARCH_NOT_FOUND_2);
+				}
+			}
 			break;
 		}
 
 		case M_BUT_REPLACE_DO:
 		{
-			pcMessage->AddString("find_text",(pcFindTextView->GetBuffer()[0]));
-			pcMessage->AddString("replace_text",(pcReplaceTextView->GetBuffer()[0]));
+			if(pcTarget->pcCurrentBuffer!=NULL)
+			{	
+				std::string ftext=(pcFindTextView->GetBuffer()[0]);
+				std::string rtext=(pcReplaceTextView->GetBuffer()[0]);
 
-			pcParentWindow->PostMessage(pcMessage,pcParentWindow);	// Send the messages from the dialog back to the parent window
+				if(pcTarget->pcCurrentBuffer->Replace(ftext, rtext))
+				{
+					char buffer[1024];
+					sprintf(buffer,MSG_STATUSBAR_REPLACE_OK.c_str(), ftext.c_str(), rtext.c_str());
+
+					pcTarget->SetStatus(string(buffer));
+				}
+				else
+					pcTarget->SetStatus(MSG_STATUSBAR_REPLACE_NOT_OK);
+
+				HandleMessage(new Message(M_BUT_FIND_NEXT));
+			}				
+
+			break;
+		}
+
+		case M_BUT_REPLACE_CLOSE:
+		{
+			// Hide the Window
+			Hide();
+
 			break;
 		}
 
 		default:
 		{
-			pcParentWindow->PostMessage(pcMessage,pcParentWindow);	// Send the messages from the dialog back to the parent window
+			pcTarget->PostMessage(pcMessage,pcTarget);	// Send the messages from the dialog back to the parent window
 			break;
 		}
 	}
 
+}
+
+// Disable/enable buttons in dialog depending on the parameter
+void ReplaceDialog::SetEnable(bool bEnable)
+{
+	pcFindButton->SetEnable(bEnable);
+	pcNextButton->SetEnable(bEnable);
+	pcReplaceButton->SetEnable(bEnable);
+}
+
+bool ReplaceDialog::OkToQuit(void)
+{
+	Message *msg=new Message(M_BUT_REPLACE_CLOSE);
+	HandleMessage(msg);
+	delete msg;
+	return (false);
+}
+
+void ReplaceDialog::Raise()
+{
+	if(IsVisible())
+		Show(false);
+
+	Show(true);
+
+	MakeFocus();
 }
 

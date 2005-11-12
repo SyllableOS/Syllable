@@ -25,34 +25,30 @@ int main(int argc, char* argv[]);
 
 int main(int argc, char* argv[])
 {
-	if(argc>1)
-	{
-		AEditApp* pcAEditApp=new AEditApp(argv[1],true);
-		pcAEditApp->Run();
-	}
-	else
-	{
-		AEditApp* pcAEditApp=new AEditApp("",false);
-		pcAEditApp->Run();
-	}
+	AEditApp* pcAEditApp=new AEditApp(argc, argv);
+	pcAEditApp->Run();
 
 	return(0);
 }
 
-AEditApp::AEditApp(char* pzFilename, bool bLoad) : Application("application/x-VND.Vanders-AEdit")
+AEditApp::AEditApp(int argc, char* argv[]) : Application("application/x-VND.Vanders-AEdit")
 {
+	int i;
+
 	try {
-	SetCatalog( "aedit.catalog" );
+		SetCatalog( "aedit.catalog" );
 	} catch( errno_exception &e ) {
 		cout << e.what() << endl;
 	}
 
 	pcMainWindow = new AEditWindow(Rect(100,125,700,500));
 
-	if(bLoad)
-	{
-		pcMainWindow->LoadOnStart(pzFilename);
-	}
+	// If we do not have any arguments open empty buffer
+	if(argc<2)
+		pcMainWindow->CreateNewBuffer();
+	else	
+		for(i=1;i<argc;i++)
+			pcMainWindow->Load(argv[i]);
 
 	pcMainWindow->Show();
 	pcMainWindow->MakeFocus();

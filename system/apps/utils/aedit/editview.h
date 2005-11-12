@@ -22,13 +22,14 @@
 #include <gui/menu.h>
 #include <gui/view.h>
 #include <gui/textview.h>
+#include "appwindow.h"
 
 using namespace os;
 
 class EditView : public TextView
 {
 	public:
-		EditView(const Rect& cFrame);
+		EditView(const Rect& cFrame, AEditWindow* pcMain);
 		void AttachedToWindow(void);
 		void MouseDown(const Point& cPosition, uint32 nButtons);
 		void KeyDown(const char* pzString, const char* pzRawString, uint32 nQualifiers);
@@ -37,8 +38,10 @@ class EditView : public TextView
 		void Redo(void);
 		int GetLineCount(void);
 		std::string GetLine(int32 nLineNo);
+		void MouseUp(const Point& cPosition, uint32 nButtons, Message* pcData);
 
 	private:
+		AEditWindow *pcMainWindow;
 		Menu* pcContextMenu;
 };
 

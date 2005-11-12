@@ -20,20 +20,24 @@
 #include <util/message.h>
 
 #include <gui/textview.h>
+#include "appwindow.h"
+#include "resources/aedit.h"
 
-EditView::EditView(const Rect& cFrame) : TextView(cFrame,"edit_view","",CF_FOLLOW_BOTTOM | CF_FOLLOW_TOP |  CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT)//,WID_WILL_DRAW)
+EditView::EditView(const Rect& cFrame, AEditWindow *pcMain) : TextView(cFrame,"edit_view","",CF_FOLLOW_BOTTOM | CF_FOLLOW_TOP |  CF_FOLLOW_LEFT | CF_FOLLOW_RIGHT)//,WID_WILL_DRAW)
 {
+	pcMainWindow=pcMain;
+
 	// Create a context menu
 	pcContextMenu=new Menu(Rect(0,0,10,10),"",ITEMS_IN_COLUMN);
-	pcContextMenu->AddItem("Cut", new Message(M_MENU_EDIT_CUT));
-	pcContextMenu->AddItem("Copy", new Message(M_MENU_EDIT_COPY));
-	pcContextMenu->AddItem("Paste", new Message(M_MENU_EDIT_PASTE));
+	pcContextMenu->AddItem(MSG_MENU_EDIT_CUT, new Message(M_MENU_EDIT_CUT));
+	pcContextMenu->AddItem(MSG_MENU_EDIT_COPY, new Message(M_MENU_EDIT_COPY));
+	pcContextMenu->AddItem(MSG_MENU_EDIT_PASTE, new Message(M_MENU_EDIT_PASTE));
 	pcContextMenu->AddItem(new MenuSeparator());
-	pcContextMenu->AddItem("Select all", new Message(M_MENU_EDIT_SELECT_ALL));
+	pcContextMenu->AddItem(MSG_MENU_EDIT_SELECT_ALL, new Message(M_MENU_EDIT_SELECT_ALL));
 #ifdef ENABLE_UNDO
 	pcContextMenu->AddItem(new MenuSeparator());
-	pcContextMenu->AddItem("Undo", new Message(M_MENU_EDIT_UNDO));
-	pcContextMenu->AddItem("Redo", new Message(M_MENU_EDIT_REDO));
+	pcContextMenu->AddItem(MSG_MENU_EDIT_UNDO, new Message(M_MENU_EDIT_UNDO));
+	pcContextMenu->AddItem(MSG_MENU_EDIT_REDO, new Message(M_MENU_EDIT_REDO));
 #endif
 }
 
@@ -50,15 +54,54 @@ void EditView::MouseDown(const Point &cPosition, uint32 nButtons)
 		TextView::MouseDown(cPosition, nButtons);
 }
 
+// We implement this function to be able to do drag and drop of files
+void EditView::MouseUp(const Point& cPosition, uint32 nButtons, Message* pcData)
+{
+	if(pcData!=NULL)
+		pcMainWindow->DragAndDrop(pcData);
+	else
+		TextView::MouseUp(cPosition, nButtons, pcData);
+}
+
 void EditView::KeyDown(const char* pzString, const char* pzRawString, uint32 nQualifiers)
 {
-	if(nQualifiers & QUAL_CTRL)
+// This is not a nice way of doing shortcuts. Best would be to first check if the shortcut belongs to a menuitem
+// and if not pass the shortcut to TextView. Unfortunetly there is no(?) way of knowing (except going through
+// all menuitems) if the shortcut did have a menuitem attached to it or not.
+// The main probem with the below solution is that the shortcut is defined in two places, this place but
+// also where you create the menuitem.
+
+	if((nQualifiers & QUAL_CTRL) && (nQualifiers & QUAL_SHIFT))
 	{
 		if(!(nQualifiers & QUAL_REPEAT))
 		{
-
 			switch(*pzString)
 			{
+				case 9:	    // Prev tab (Shift+Ctrl+Tab)
+				{
+					GetWindow()->HandleMessage(new Message(M_MENU_FILE_PREV_TAB));
+					break;
+				}
+
+				default:
+					TextView::KeyDown(pzString,pzRawString,nQualifiers);
+
+			}	// End of switch() block
+
+		}	// End of if() testing the repeat
+	}
+	else if(nQualifiers & QUAL_CTRL)
+	{
+		if(!(nQualifiers & QUAL_REPEAT))
+		{
+			switch(*pzString)
+			{
+				case 14:	// New (Ctrl+N)
+				{
+					GetWindow()->HandleMessage(new Message(M_MENU_FILE_NEW));
+					break;
+				}
+
 				case 15:	// Open (Ctrl+O)
 				{
 					GetWindow()->HandleMessage(new Message(M_MENU_FILE_OPEN));
@@ -71,9 +114,28 @@ void EditView::KeyDown(const char* pzString, const char* pzRawString, uint32 nQu
 					break;
 				}
 
-				case 1:	// Save As (Ctrl+A)
+				case 12:	// Save All (Ctrl+L)
 				{
-					GetWindow()->HandleMessage(new Message(M_MENU_FILE_SAVE_AS));
+					GetWindow()->HandleMessage(new Message(M_MENU_FILE_SAVE_ALL));
+					break;
+				}
+
+				case 23:	// Close (Ctrl+W)
+				{
+					GetWindow()->HandleMessage(new Message(M_MENU_FILE_CLOSE));
+					break;
+				}
+
+				case 44:	// Prev tab (Ctrl+,)
+				{
+					GetWindow()->HandleMessage(new Message(M_MENU_FILE_PREV_TAB));
+					break;
+				}
+
+				case 9:	    // (Ctrl+Tab)
+				case 46:	// Next tab (Ctrl+.)
+				{
+					GetWindow()->HandleMessage(new Message(M_MENU_FILE_NEXT_TAB));
 					break;
 				}
 
@@ -101,6 +163,11 @@ void EditView::KeyDown(const char* pzString, const char* pzRawString, uint32 nQu
 					break;
 				}
 
+				case 1:	// Select all (Ctrl+A)
+				{
+					GetWindow()->HandleMessage(new Message(M_MENU_EDIT_SELECT_ALL));
+					break;
+				}		
 				default:
 					TextView::KeyDown(pzString,pzRawString,nQualifiers);
 

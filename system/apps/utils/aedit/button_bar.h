@@ -1,4 +1,5 @@
 // Whisper -:-  (C)opyright 2001-2002 Kristian Van Der Vliet
+// AEdit -:-    (C)opyright 2004 Jonas Jarvoll
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -43,19 +44,13 @@ public:
     virtual Point GetPreferredSize(bool bLargest) const;
     virtual void FrameSized(const Point &cDelta);
     virtual void AttachedToWindow(void);
-    void AddButton(const char* pzIcon, const char* pzName, Message* pcMessage);
+    ImageButton* AddButton(Image* pcImage, const char* pzName, Message* pcMessage);
 
 private:
-
-	void ButtonBar::LayoutButtons( void );
-
     Point cPrefSize;
     bool bIsAttached;
 
-    int nNumButtons;
     t_Buttons vButtons;
 };
 
 #endif
-
-

@@ -1,4 +1,5 @@
 // AEdit 0.6 -:-  (C)opyright 2000-2002 Kristian Van Der Vliet
+//                (C)opyright 2004 Jonas Jarvoll
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -23,8 +24,12 @@ enum Messages
 	M_MENU_APP_ABOUT,
 	M_MENU_FILE_NEW,
 	M_MENU_FILE_OPEN,
+	M_MENU_FILE_CLOSE,
 	M_MENU_FILE_SAVE,
 	M_MENU_FILE_SAVE_AS,
+	M_MENU_FILE_SAVE_ALL,
+	M_MENU_FILE_NEXT_TAB,
+	M_MENU_FILE_PREV_TAB,
 	M_MENU_EDIT_CUT,
 	M_MENU_EDIT_COPY,
 	M_MENU_EDIT_PASTE,
@@ -37,14 +42,9 @@ enum Messages
 	M_MENU_FIND_FIND,
 	M_MENU_FIND_REPLACE,
 	M_MENU_FIND_GOTO,
-	M_MENU_FORMAT_NONE,
-	M_MENU_FORMAT_C,
-	M_MENU_FORMAT_JAVA,
 	M_MENU_SETTINGS_SAVE_ON_CLOSE,
 	M_MENU_SETTINGS_SAVE_NOW,
 	M_MENU_SETTINGS_RESET,
-	M_MENU_HELP_TOC,
-	M_MENU_HELP_HOMEPAGE,
 	M_MENU_FONT_SIZE,
 	M_MENU_FONT_FAMILY_AND_STYLE,
 	M_BUT_FILE_NEW,
@@ -64,6 +64,11 @@ enum Messages
 	M_BUT_FIND_CLOSE,
 	M_BUT_REPLACE_DO,
 	M_BUT_REPLACE_CLOSE,
+	M_INVOKED_TAB_CHANGED,
+	M_INVOKED_CLOSE_ALERT,
+	M_INVOKED_SAVEAS_ALERT,
+	M_INVOKED_QUIT_ALERT,
+	M_BUT_ABOUT_CLOSE,
 	M_VOID					// Used where no message is required
 };
 

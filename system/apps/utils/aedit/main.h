@@ -1,4 +1,5 @@
 // AEdit -:-  (C)opyright 2000-2001 Kristian Van Der Vliet
+//            (C)opyright 2004 Jonas Jarvoll
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@ using namespace os;
 class AEditApp : public Application
 {
 	public:
-		AEditApp(char* pzFilename, bool bLoad);
+		AEditApp(int argc, char* argv[]);
    
 	private:
 		AEditWindow* pcMainWindow;
