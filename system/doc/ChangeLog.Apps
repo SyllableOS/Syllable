@@ -1,3 +1,9 @@
+* November 13 2005, Kristian Van Der Vliet *
+
+- AEdit
+	o Finally checked in AEdit 2.1  Jonas Jarvoll has made a lot of changes since AEdit 1.5,
+	  including support for multiple (tabbed) documents.
+
 * November 12 2005, Henrik Isaksson *
 
 - ColdFishRemote
