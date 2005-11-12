@@ -1,0 +1,7 @@
+* Be able to change name of file by clicking on the "tabheader". 
+  Probably the TabView class must be rewritten to support this.
+* Add recently opened files in the menu
+* Direct access to a file using function keys 
+  (ie. pressing F3 means select tab number 3, F6 tab number 6 etc.)
+* Change Save All so it is actually saving all files (including those untitled)
+

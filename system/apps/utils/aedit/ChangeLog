@@ -1,0 +1,119 @@
+This file describes all changes made between versions of AEdit
+
+2004-09-18 AEdit 1.6 Beta Jonas Jarvoll
+===================================================================
+First inoffical release of the Beta version
+
+* Multiple files
+* Save changes dialog
+* Some code clean
+
+2004-09-20 AEdit 1.6 Beta-2 Jonas Jarvoll
+===================================================================
+* Change name "Buffer" to "File" in statusbar
+* When switching between files the cursor position is updated
+* When starting the program without a filename a new file is 
+  automatically created
+* Stupid bug removed (pcTabView should be pcMyTabView)
+
+2004-09-21 AEdit 1.6 Beta-2 Jonas Jarvoll
+===================================================================
+* Added shortcut for creating new file (Ctrl+N)
+* Added menuitem and shortcut for moving through opened files (Ctrl+, and Ctr+.)
+* Bug: The mouse pointer doesnt change to the correct image when pressing shortcut Ctrl+N
+
+2004-09-24 AEdit 1.6 Beta-3 Jonas Jarvoll
+===================================================================
+* You can also use Ctrl+Tab or Shift+Ctrl+Tab to move through opened files.
+
+2004-09-28 AEdit 1.6 Beta-3 Jonas Jarvoll
+===================================================================
+* First compile on Syllable 0.5.4
+* Shortcut for closing buffer Ctrl+W
+* New menuitem called "Save All". This item allows the user to save
+  all modified files at once. Very nice to have when you have a lot
+  of files opened and what to be sure that all are saved (like when you 
+  program). Short cut has been set to Ctrl+B but can be discussed.
+* With 0.5.4 I no longer can create FileRequesters. It will make a Abort
+  core dumped. Thus seems to be something broken in 0.5.4? These have been 
+  temporary commented out.
+* When a menuitem is disabled also the shortcut plus belonging toolbar button
+  is disabled.
+
+2004-09-29 AEdit 1.6 Beta-3 Jonas Jarvoll
+===================================================================
+* FileRequester bug fixed. Turned out that you should pass "" instead
+  of the getenv("$HOME") stuff.
+
+2004-10-02 AEdit 1.6 Beta-3 Jonas Jarvoll
+===================================================================
+* Added visible shortcuts to the menuitems
+* Cleaned up button_bar class (no need to keep track of number of buttons
+  when you can have that information from the vector class itself
+* Added small icons to the menuitems
+* Replace previous icons with GTK stock items (in png format for easy change)
+* Beta 3 released
+
+2004-10-06 AEdit 1.6 Beta-4 Jonas Jarvoll
+===================================================================
+* Mixed Redo and Undo icon on the toolbar
+* Changed so that only the filename is showed in the Tab label
+  (this to avoid silly long tab name)
+
+2004-10-09 AEdit 1.6 Beta-4 Jonas Jarvoll
+===================================================================
+* Due to the above changed to the tab label I forgot to add an asterix
+  if the buffer has been modifed. This is now fixed.
+
+2004-10-11 AEdit 1.6 Beta-4 Jonas Jarvoll
+===================================================================
+* You can now pass multiple filenames when starting AEdit and AEdit
+  will open each in a new tab (eg. "aedit test1 test2 teste3")
+  You can actually write "aedit *.cpp" and AEdit will open all your
+  c-source files in the current directory.
+
+2004-10-28 AEdit 1.6 Beta-4 Jonas Jarvoll
+===================================================================
+* For some strange reason Ctrl+B didnt work. I have changed it to
+  Ctrl+L instead.
+* Added support for DragAndDrop of files from the desktop
+
+2004-11-09 AEdit 1.6 Jonas Jarvoll
+===================================================================
+* After some more testing I have decided to release the offical 
+  1.6 version
+
+2005-02-09 AEdit 1.7 Jonas Jarvoll
+===================================================================
+* When activating either the GotoDialog or the FindDialog the cursor
+  is always focused in the text entry
+* Changed so that AEdit now uses the Syllable class of Settings
+  instead of inventing one by itself
+
+2005-03-27 AEdit 1.7 Jonas Jarvoll
+===================================================================
+* Fixed a new and nicer about dialog
+* Added a "/" when saving paths in the Settings class
+
+2005-04-25 AEdit 1.7 Jonas Jarvoll
+===================================================================
+* Hopefully once and for all removed the annoying disappearing
+  file requester bug.
+
+2005-07-10 AEdit 2.0 Jonas Jarvoll
+===================================================================
+* Hm, the above change did not fix the filerequester bug but after 
+  implementing after how Whipser solved it I feel quite sure that 
+  it is actually once and for all gone.
+* Increased version from 1.7 to 2.0.
+
+2005-07-11 AEdit 2.0 Jonas Jarvoll
+===================================================================
+* Changed so that you can only have one buffer of the same file.
+
+2005-08-05 AEdit 2.1 Jonas Jarvoll
+===================================================================
+* Added translation strings for all text
+* Removed the help menu
+* You can select multiple files in the open file dialog
+
