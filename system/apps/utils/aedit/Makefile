@@ -1,7 +1,7 @@
 CC = g++
 LL = g++
 
-COPTS = -Wall -Wno-deprecated -c -O3 -DENABLE_UNDO
+COPTS += -Wall -Wno-deprecated -c -DENABLE_UNDO
 
 OBJSDIR = objs/
 
@@ -61,10 +61,13 @@ deps:
 
 install: all
 	strip --strip-all $(EXE)
-	cp $(EXE) /system/bin/
+	mkdir -p /Applications/AEdit
+	cp $(EXE) /Applications/AEdit/AEdit
+	ln -sf /Applications/AEdit/AEdit /system/bin/$(EXE)
 
 dist: all
-	install -s $(EXE) $(DIST_DIR)/atheos/sys/bin/$(EXE)
+	strip --strip-all $(EXE)
+	install -s $(EXE) $(DIST_DIR)/atheos/Applications/AEdit/AEdit
 
 clean:
 	-rm $(OBJS)
