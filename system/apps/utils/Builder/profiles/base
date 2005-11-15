@@ -17,6 +17,7 @@ modules
 	apps/desktop/dock_plugins/Meter
 	apps/desktop/dock_plugins/Switcher
 	apps/desktop/dock_plugins/WallpaperChanger
+	apps/desktop/dock_plugins/Eyes
 	apps/media/coldfish
 	apps/media/coldfish_plugins/blursk
 	apps/media/coldfish_plugins/remote
