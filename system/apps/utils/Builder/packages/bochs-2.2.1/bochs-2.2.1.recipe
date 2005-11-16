@@ -1,0 +1,26 @@
+authors
+	Flemming Sørensen
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				testing
+
+licenses			LGPL
+home				bochs.sf.net
+locations			http://prdownloads.sourceforge.net/bochs/
+
+needs
+	sdl
+;	wxWidgets >= 2.3.3
+
+patch-config
+
+configure-options
+	--with-sdl
+;	--enable-cpu-level=5
+;	--enable-fast-function-calls
+;	--enable-all-optimizations
+
+documentation
+	README README.rfb COPYING CHANGES TODO TESTFORM.txt
+;	PARAM_TREE.txt
+;	doc docs-html
