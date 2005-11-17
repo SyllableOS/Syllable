@@ -1,0 +1,17 @@
+authors
+	Flemming Sørensen
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				testing
+
+licenses			LGPL
+home				www.libsdl.org/projects/SDL_ttf/
+packages			SDL_ttf-2.0.7
+locations			http://www.libsdl.org/projects/SDL_ttf/release/
+
+needs				sdl
+build-needs			freetype
+
+patch-config
+
+documentation		README COPYING CHANGES

@@ -1,0 +1,17 @@
+authors
+	Flemming Sørensen
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				testing
+
+licenses			LGPL
+home				www.libsdl.org/projects/SDL_rtf/
+packages			SDL_rtf-0.1.0
+locations			http://www.libsdl.org/projects/SDL_rtf/release/
+
+needs				sdl
+build-recommends	sdl-ttf
+
+patch-config
+
+documentation		README COPYING CHANGES

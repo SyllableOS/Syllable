@@ -1,0 +1,24 @@
+authors
+	Flemming Sørensen
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				testing
+
+licenses			LGPL
+home				www.libsdl.org/projects/SDL_mixer/
+packages
+	SDL_mixer-1.2.6
+;	http://www.libsdl.org/projects/mixer/timidity/timidity.tar.gz /usr/local/lib/
+
+locations			http://www.libsdl.org/projects/SDL_mixer/release/
+
+needs				sdl
+build-recommends
+;	smpeg
+;	timidity
+;	mikmod
+	libvorbis
+
+;configure-options	--enable-music-native-midi-gpl
+
+documentation		README COPYING CHANGES

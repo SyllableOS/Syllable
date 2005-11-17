@@ -1,0 +1,20 @@
+authors
+	Flemming Sørensen
+	Kaj de Vos
+maintainers			Kaj de Vos
+status				testing
+
+licenses			LGPL
+home				www.libsdl.org/projects/SDL_image/
+packages			SDL_image-1.2.4
+locations			http://www.libsdl.org/projects/SDL_image/release/
+
+needs				sdl
+build-recommends
+	libpng
+	libjpeg
+	libtiff
+
+;configure-options	--enable-tif
+
+documentation		README COPYING CHANGES

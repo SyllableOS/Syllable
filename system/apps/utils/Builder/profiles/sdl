@@ -1,0 +1,7 @@
+modules
+;	sdl
+	sdl-mixer-1.2.6
+	sdl-net-1.2.5
+	sdl-image-1.2.4
+	sdl-ttf-2.0.7
+	sdl-rtf-0.1.0
