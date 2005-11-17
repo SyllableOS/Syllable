@@ -1,0 +1,73 @@
+//
+// AEdit tekstlist
+//
+// Oerset troch Kaj de Vos, 2005
+// Tige tank oan it Fryske KDE-team.
+//
+
+MSG_APPWND_TITLE					AEdit
+MSG_APPWND_TITLE_NEW_FILE			Nije triem
+
+MSG_MENU_APPLICATION=100			Ta_passing
+MSG_MENU_APPLICATION_QUIT			O_fslúte
+MSG_MENU_APPLICATION_ABOUT			Ynfo _oer AEdit...
+
+MSG_MENU_FILE=200					_Triem
+MSG_MENU_FILE_NEW					_Nij
+MSG_MENU_FILE_OPEN					_Iepenje...
+MSG_MENU_FILE_SAVE					Op_slaan
+MSG_MENU_FILE_SAVE_AS				Opslaan _as...
+
+MSG_MENU_EDIT=300					Be_wurkje
+MSG_MENU_EDIT_CUT					Kni_ppe
+MSG_MENU_EDIT_COPY					_Kopieare
+MSG_MENU_EDIT_PASTE					P_lakken
+MSG_MENU_EDIT_SELECT_ALL			_Alles selektearje
+MSG_MENU_EDIT_UNDO					_Ungedien meitsje
+MSG_MENU_EDIT_REDO					Op '_e nij
+
+MSG_MENU_FIND=400					_Sykje
+MSG_MENU_FIND_FIND					_Sykje...
+MSG_MENU_FIND_REPLACE				_Ferfange...
+MSG_MENU_FIND_GOTO_LINE				_Gean nei rigel...
+
+MSG_MENU_FONT=500					_Lettertype
+MSG_MENU_FONT_SIZE					_Grutte
+
+MSG_MENU_SETTINGS=600				_Ynstellings
+MSG_MENU_SETTINGS_SAVE_ON_CLOSE		Ynstellings opslaan by ô_fslúte
+MSG_MENU_SETTINGS_SAVE_NOW			Ynstellings no op_slaan
+MSG_MENU_SETTINGS_RESET				Ynstellings _werom sette
+
+MSG_MENU_HELP=700					_Help
+MSG_MENU_HELP_TABLE_OF_CONTENTS		_Hânboek...
+MSG_MENU_HELP_HOMEPAGE				AEdit _webskerm...
+
+MSG_ABOUT_TITLE=800					Ynfo oer
+MSG_ABOUT_TEXT						\n\nTekstferwurker foar Syllable\nMakke troch Kristian Van Der Vliet, 2000-2003\n\nAEdit is ferspraat ûnder de betingsten fan\nde GNU General Public License. Sjoch it\ntriem COPYING by dit programma, of op\nhttp://www.gnu.org\nfoar mear ynformaasje.
+MSG_ABOUT_CLOSE						S_lúte
+
+MSG_ERROR_TITLE=900					Opslaan
+MSG_ERROR_CANT_SAVE					Koe triem net bewarre.
+MSG_ERROR_CLOSE						S_lúte
+
+MSG_FIND_TITLE=1000					Tekst sykje
+MSG_FIND_FIND_LABEL					Te finen tekst:
+MSG_FIND_CASE_SENSITIVE				H_aadletter gefoelich
+MSG_FIND_FIND						_Sykje fanôf boppe-oan
+MSG_FIND_FIND_NEXT					_Neikommende sykje
+MSG_FIND_CLOSE						S_lúte
+
+MSG_GOTO_TITLE=1100					Gean nei rigel
+MSG_GOTO_GOTO						_Gean nei rigel
+MSG_GOTO_CLOSE						Ofbre_kke
+
+MSG_REPLACE_TITLE=1200				Tekst ferfange
+MSG_REPLACE_LBLFIND					Te finen tekst:
+MSG_REPLACE_WITH					Ferfange troch:
+MSG_REPLACE_CASE_SENSITIVE			H_aadletter gefoelich
+MSG_REPLACE_FIND					_Sykje fanôf boppe-oan
+MSG_REPLACE_FIND_NEXT				_Neikommende sykje
+MSG_REPLACE_REPLACE					_Ferfange
+MSG_REPLACE_CLOSE					S_lúte
+

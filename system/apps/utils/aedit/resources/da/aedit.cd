@@ -1,0 +1,109 @@
+//
+// AEdit string catalog
+//
+
+MSG_APPWND_TITLE							AEdit
+MSG_APPWND_TITLE_NEW_FILE					Ny fil
+
+MSG_MENU_APPLICATION=100					Program
+MSG_MENU_APPLICATION_QUIT					Afslut
+MSG_MENU_APPLICATION_ABOUT					Om...
+
+MSG_MENU_FILE=200							Filer
+MSG_MENU_FILE_NEW							Ny
+MSG_MENU_FILE_OPEN							Åbn
+MSG_MENU_FILE_CLOSE						Luk
+MSG_MENU_FILE_SAVE							Gem
+MSG_MENU_FILE_SAVE_AS						Gem som...
+MSG_MENU_FILE_SAVE_ALL						Gem alle
+MSG_MENU_FILE_NEXT_FILE					Næste fil
+MSG_MENU_FILE_PREVIOUS_FILE					Foregående fil
+
+MSG_MENU_EDIT=300							Rediger
+MSG_MENU_EDIT_CUT							Klip
+MSG_MENU_EDIT_COPY 						Kopier
+MSG_MENU_EDIT_PASTE						Sæt ind
+MSG_MENU_EDIT_SELECT_ALL					Marker alt
+MSG_MENU_EDIT_UNDO							Fortryd
+MSG_MENU_EDIT_REDO							Gentag
+
+MSG_MENU_FIND=400							Søg
+MSG_MENU_FIND_FIND							Find
+MSG_MENU_FIND_REPLACE						Erstat
+MSG_MENU_FIND_GOTO_LINE					Gå til linje...
+
+MSG_MENU_FONT=500							Skrift
+MSG_MENU_FONT_SIZE							Størrelse
+
+MSG_MENU_SETTINGS=600						Indstillinger
+MSG_MENU_SETTINGS_SAVE_ON_CLOSE				Gem indstillinger ved afslut
+MSG_MENU_SETTINGS_SAVE_NOW					Gem indstillinger nu
+MSG_MENU_SETTINGS_RESET					Fortryd ændringer
+
+MSG_MENU_HELP=700							Hjælp
+MSG_MENU_HELP_TABLE_OF_CONTENTS				Indhold
+MSG_MENU_HELP_HOMEPAGE						AEdit hjemmeside
+
+MSG_ABOUT_TITLE=800						Om...
+MSG_ABOUT_TEXT							\n\nTekst Editor for Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit er udgivet under GNU General\nPublic License.  Se venligst filen COPYING,\ndistribueret med AEdit, eller http://www.gnu.org\nfor mere information.
+MSG_ABOUT_CLOSE							Luk
+MSG_ABOUT_VERSION							version: 
+MSG_ABOUT_LINE_1							En Teksteditor For Syllable
+MSG_ABOUT_LINE_2							(C)2005 The Syllable team
+MSG_ABOUT_LINE_3							w w w . s y l l a b l e . o r g
+
+MSG_ERROR_TITLE=900						AEdit
+MSG_ERROR_CANT_SAVE						Kunne ikke gemme filen
+MSG_ERROR_CLOSE							OK
+
+MSG_FIND_TITLE=1000						Find
+MSG_FIND_FIND_LABEL						Find
+MSG_FIND_CASE_SENSITIVE					Forskel på store og små bogstaver
+MSG_FIND_FIND								_Find
+MSG_FIND_FIND_NEXT							Find _næste
+MSG_FIND_CLOSE							_Afslut
+
+MSG_GOTO_TITLE=1100						Gå til linje
+MSG_GOTO_GOTO								Gå til linje
+MSG_GOTO_CLOSE							Afslut
+
+MSG_REPLACE_TITLE=1200						Erstat
+MSG_REPLACE_LBLFIND						Find
+MSG_REPLACE_WITH							Erstat med
+MSG_REPLACE_CASE_SENSITIVE					Forskel på store og små bogstaver
+MSG_REPLACE_FIND							Find
+MSG_REPLACE_FIND_NEXT						Find _næste
+MSG_REPLACE_REPLACE						_Erstat
+MSG_REPLACE_CLOSE							_Afslut
+
+MSG_ALERT_CLOSE_FILE_TITLE=1500				Gem fil?
+MSG_ALERT_CLOSE_FILE_BODY					Vil du gemme filen før du lukker den?
+MSG_ALERT_CLOSE_FILE_YES					Ja
+MSG_ALERT_CLOSE_FILE_NO					Nej
+MSG_ALERT_CLOSE_FILE_CANCEL					Annuller
+MSG_ALERT_SAVE_FILE_TITLE					Fejl
+MSG_ALERT_SAVE_FILE_BODY					Kunne ikke gemme filen "%s".
+MSG_ALERT_SAVE_FILE_OK						OK
+MSG_ALERT_QUIT_TITLE						Afslut?
+MSG_ALERT_QUIT_BODY						Du har filer der ikke er gemte. Du vil miste indholdet hvis du afslutter.\nEr du sikker på at du vil afslutte?
+MSG_ALERT_QUIT_YES							Ja
+MSG_ALERT_QUIT_NO							Nej
+MSG_ALERT_FILE_OPEN_TITLE					Fejl
+MSG_ALERT_FILE_OPEN_OK						OK
+
+MSG_STATUSBAR_WELCOME=2000					Velkommen til AEdit!
+MSG_STATUSBAR_CLOSED_FILE					Filen "%s" er blevet lukket.
+MSG_STATUSBAR_SAVED_FILE					Filen "%s" er blevet gemt.
+MSG_STATUSBAR_FILE_CLOSED_AND_SAVED			Filen "%s" er blevet gemt og lukket.
+MSG_STATUSBAR_FILE_CLOSED_AND_NOT_SAVED		Filen "%s" er blevet lukket, men ikke gemt.
+MSG_STATUSBAR_NEW_FILE_CREATED				Filen "%s" er blevet oprettet.
+MSG_STATUSBAR_FILE_LOADED_OK				Filen "%s" er blevet åbnet.
+MSG_STATUSBAR_FILE_UNABLE_TO_OPEN			Kunne ikke åbne filen "%s".
+MSG_STATUSBAR_SEARCH_FOUND					Sætningen "%s" blev ikke fundet.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_1				Sætningen \"%s\" blev ikke fundet.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_2				Sætningen blev ikke fundet.
+MSG_STATUSBAR_REPLACE_OK					Sætningen "%s" er blevet erstattet med "%s".
+MSG_STATUSBAR_REPLACE_NOT_OK				Sætningen blev ikke erstattet.
+
+MSG_BUFFER_UNTITLED=2100					Unavngivet-%d
+MSG_BUFFER_CURSOR							Række: %d Linje: %d

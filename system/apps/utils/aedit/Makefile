@@ -1,7 +1,4 @@
-CC = g++
-LL = g++
-
-COPTS += -Wall -Wno-deprecated -c -DENABLE_UNDO
+COPTS = -Wno-deprecated -c -DENABLE_UNDO
 
 OBJSDIR = objs/
 
@@ -14,7 +11,7 @@ $(OBJSDIR):
 	mkdir $(OBJSDIR)
 
 $(EXE): $(OBJS)
-	$(LL) $(OBJS) -lsyllable -o $(EXE)
+	$(CXX) $(OBJS) -lsyllable -o $(EXE)
 	rescopy -r $(EXE) resources/aedit.catalog
 	rescopy -a $(EXE) sv/aedit.catalog=resources/sv/aedit.catalog
 	rescopy -a $(EXE) de/aedit.catalog=resources/de/aedit.catalog
@@ -23,6 +20,8 @@ $(EXE): $(OBJS)
 	rescopy -a $(EXE) es/aedit.catalog=resources/es/aedit.catalog
 	rescopy -a $(EXE) fr/aedit.catalog=resources/fr/aedit.catalog
 	rescopy -a $(EXE) da/aedit.catalog=resources/da/aedit.catalog
+	rescopy -a $(EXE) fy/aedit.catalog=resources/fy/aedit.catalog
+	rescopy -a $(EXE) pl/aedit.catalog=resources/pl/aedit.catalog
 	rescopy -a $(EXE) stock_copy_16=pixmaps/stock_copy_16.png
 	rescopy -a $(EXE) stock_copy_24=pixmaps/stock_copy_24.png
 	rescopy -a $(EXE) stock_cut_16=pixmaps/stock_cut_16.png
@@ -68,44 +67,44 @@ install: all
 dist: all
 	strip --strip-all $(EXE)
 	install -s $(EXE) $(DIST_DIR)/atheos/Applications/AEdit/AEdit
+	ln -sf /Applications/AEdit/AEdit $(DIST_DIR)/atheos/sys/bin/$(EXE)
 
 clean:
 	-rm $(OBJS)
 	-rm $(EXE)
 
 $(OBJSDIR)main.o: main.cpp main.h
-	$(CC) $(COPTS) main.cpp -o $@
+	$(CXX) $(COPTS) main.cpp -o $@
 
 $(OBJSDIR)appwindow.o: appwindow.cpp appwindow.h
-	$(CC) $(COPTS) appwindow.cpp -o $@
+	$(CXX) $(COPTS) appwindow.cpp -o $@
 
 $(OBJSDIR)button_bar.o: button_bar.cpp button_bar.h
-	$(CC) $(COPTS) button_bar.cpp -o $@
+	$(CXX) $(COPTS) button_bar.cpp -o $@
 
 $(OBJSDIR)editview.o: editview.cpp editview.h
-	$(CC) $(COPTS) editview.cpp -o $@
+	$(CXX) $(COPTS) editview.cpp -o $@
 
 $(OBJSDIR)aboutdialog.o: aboutdialog.cpp aboutdialog.h
-	$(CC) $(COPTS) aboutdialog.cpp -o $@
+	$(CXX) $(COPTS) aboutdialog.cpp -o $@
 
 $(OBJSDIR)gotodialog.o: gotodialog.cpp gotodialog.h
-	$(CC) $(COPTS) gotodialog.cpp -o $@
+	$(CXX) $(COPTS) gotodialog.cpp -o $@
 
 $(OBJSDIR)finddialog.o: finddialog.cpp finddialog.h
-	$(CC) $(COPTS) finddialog.cpp -o $@
+	$(CXX) $(COPTS) finddialog.cpp -o $@
 
 $(OBJSDIR)replacedialog.o: replacedialog.cpp replacedialog.cpp
-	$(CC) $(COPTS) replacedialog.cpp -o $@
+	$(CXX) $(COPTS) replacedialog.cpp -o $@
 
 $(OBJSDIR)buffer.o: buffer.cpp buffer.h
-	$(CC) $(COPTS) buffer.cpp -o $@
+	$(CXX) $(COPTS) buffer.cpp -o $@
 
 $(OBJSDIR)status_bar.o: status_bar.cpp status_bar.h
-	$(CC) $(COPTS) status_bar.cpp -o $@
+	$(CXX) $(COPTS) status_bar.cpp -o $@
 
 $(OBJSDIR)mytabview.o: mytabview.cpp mytabview.h
-	$(CC) $(COPTS) mytabview.cpp -o $@
+	$(CXX) $(COPTS) mytabview.cpp -o $@
 
 $(OBJSDIR)icons.o: icons.cpp icons.h
-	$(CC) $(COPTS) icons.cpp -o $@
-
+	$(CXX) $(COPTS) icons.cpp -o $@
