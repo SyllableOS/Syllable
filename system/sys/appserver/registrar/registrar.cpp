@@ -1033,6 +1033,12 @@ no_database:
 	
 	if( !( ( zAttributeIcon = GetAttribute( &cNode, "os::Icon" ) ) == "" ) )
 	{
+		/* If we have a directory then check if we have a relative icon path */
+		if( bDirectory && zAttributeIcon[0] != '/' )
+		{
+			zAttributeIcon = zPath + "/" + zAttributeIcon;
+		}
+		
 		struct stat sStat;
 		if( lstat( zAttributeIcon.c_str(), &sStat ) >= 0 )
 			zIcon = zAttributeIcon;
