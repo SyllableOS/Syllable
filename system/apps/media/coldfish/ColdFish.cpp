@@ -272,7 +272,7 @@ void CFWindow::HandleMessage( os::Message * pcMessage )
 			/* Show about alert */
 			os::String cBodyText;
 			
-			cBodyText = os::String( "ColdFish V1.2\n" ) + MSG_ABOUTWND_TEXT;
+			cBodyText = os::String( "ColdFish V1.2.1\n" ) + MSG_ABOUTWND_TEXT;
 			
 			os::Alert* pcAbout = new os::Alert( MSG_ABOUTWND_TITLE, cBodyText, os::Alert::ALERT_INFO, 
 											os::WND_NOT_RESIZABLE, MSG_ABOUTWND_OK.c_str(), NULL );
@@ -340,17 +340,15 @@ bool CFWindow::OkToQuit()
 }
 
 
-/* MPApp class */
-CFApp::CFApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::Application( pzMimeType )
+/* CFApp class */
+CFApp::CFApp( ):os::Looper( "cf_app" )
+{
+}
+
+void CFApp::Start( os::String zFileName, bool bLoad )
 {
 	SetPublic(true);
-	/* Select string catalogue */
-	try {
-		SetCatalog( "coldfish.catalog" );
-	} catch( ... ) {
-		if (DEBUG)
-			std::cout << "Failed to load catalog file!" << std::endl;
-	}
+	
 	
 	/* Set default values */
 	m_nState = CF_STATE_STOPPED;
@@ -376,7 +374,7 @@ CFApp::CFApp( const char *pzMimeType, os::String zFileName, bool bLoad ):os::App
 	if ( pcSettings->Load() == 0 )
 	{
 		m_zListName = pcSettings->GetString( "playlist", m_zListName.c_str() );
-	}
+	}	
 	delete( pcSettings );
 
 	/* Create registrar manager */
@@ -771,8 +769,8 @@ int play_thread_entry( void *pData )
 /* Open one playlist */
 bool CFApp::OpenList( os::String zFileName )
 {
-	char zTemp[255];
-	char zTemp2[255];
+	char zTemp[PATH_MAX];
+	char zTemp2[PATH_MAX];
 	
 	m_bLockedInput = false;
 	m_pcWin->GetPlaylist()->Clear(  );
@@ -805,6 +803,10 @@ bool CFApp::OpenList( os::String zFileName )
 	os::String zFile;
 	int nTrack = 0;
 	int nStream = 0;
+	
+	m_pcWin->Lock();
+	m_pcWin->SetTitle( "Loading... - ColdFish" );
+	m_pcWin->Unlock();
 
 	while ( !hIn.eof() )
 	{
@@ -844,7 +846,7 @@ bool CFApp::OpenList( os::String zFileName )
 			{
 				bReadLengthFromInput = true;
 			}
-
+			
 			/* Read length from input if required */
 			if( bReadLengthFromInput )
 			{
@@ -871,13 +873,17 @@ bool CFApp::OpenList( os::String zFileName )
 			pcRow->AppendString( zTemp );
 			pcRow->nTrack = nTrack;
 			pcRow->nStream = nStream;
-
+			
+			
 			sprintf( zTemp, "%.2li:%.2li", nM, nS );
 			pcRow->AppendString( zTemp );
+			m_pcWin->Lock();
 			m_pcWin->GetPlaylist()->InsertRow( pcRow );
-
+			
 			if ( m_pcWin->GetPlaylist()->GetRowCount(  ) == 1 )
 				m_pcWin->GetPlaylist()->Select( 0, 0 );
+			m_pcWin->Unlock();	
+			
 			continue;
 		}
 		/* We expect a second line with data */
@@ -892,14 +898,19 @@ bool CFApp::OpenList( os::String zFileName )
 		else if ( !strcmp( zTemp, "<STREAM>" ) )
 			nStream = atoi( zTemp2 ) - 1;
 	}
+	m_pcWin->Lock();
+	m_pcWin->SetTitle( "ColdFish" );
+	m_pcWin->Unlock();
 	return ( false );
-      finished:
+	finished:
 	hIn.close();
 	m_zListName = zFileName;
-
+	
 	/* Set title */
 	os::Path cPath( zFileName.c_str() );
+	m_pcWin->Lock();
 	m_pcWin->SetTitle( os::String ( cPath.GetLeaf() ) + " - ColdFish" );
+	m_pcWin->Unlock();
 	
 	if (DEBUG)
 		std::cout << "List openened" << std::endl;
@@ -913,9 +924,9 @@ void CFApp::SaveList()
 {
 	uint32 i;
 	
-	if( m_bLockedInput )
+	if( m_bLockedInput || m_zListName == "" )
 		return;
-
+		
 	/* Open output file */
 	std::ofstream hOut;
 
@@ -995,7 +1006,7 @@ void CFApp::OpenInput( os::String zFileName, os::String zInput )
 		
 	/* Search tracks with audio streams and add them to the list */
 
-	m_pcWin->Lock();
+	
 	for ( i = 0; i < m_pcInput->GetTrackCount(); i++ )
 	{
 		m_pcInput->SelectTrack( i );
@@ -1017,17 +1028,20 @@ void CFApp::OpenInput( os::String zFileName, os::String zInput )
 				secs_to_ms( m_pcInput->GetLength(), &nM, &nS );
 				sprintf( zTemp, "%.2li:%.2li", nM, nS );
 				pcRow->AppendString( zTemp );
+				m_pcWin->Lock();
 				m_pcWin->GetPlaylist()->InsertRow( pcRow );
 
 				if ( m_pcWin->GetPlaylist()->GetRowCount(  ) == 1 )
 					m_pcWin->GetPlaylist()->Select( 0, 0 );
+				m_pcWin->Unlock();
 			}
 		}
 	}
-	m_pcWin->GetPlaylist()->Invalidate();
-	m_pcWin->Flush();
-	m_pcWin->Unlock();
 	UpdatePluginPlaylist();
+	
+	m_pcWin->Lock();
+	m_pcWin->SetTitle( m_zListName + " - ColdFish" );
+	m_pcWin->Unlock();
 	
 	return;
       invalid:
@@ -1089,10 +1103,12 @@ void CFApp::AddFile( os::String zFileName )
 				secs_to_ms( pcInput->GetLength(), &nM, &nS );
 				sprintf( zTemp, "%.2li:%.2li", nM, nS );
 				pcRow->AppendString( zTemp );
+				m_pcWin->Lock();
 				m_pcWin->GetPlaylist()->InsertRow( pcRow );
 
 				if ( m_pcWin->GetPlaylist()->GetRowCount(  ) == 1 )
 					m_pcWin->GetPlaylist()->Select( 0, 0 );
+				m_pcWin->Unlock();
 			}
 		}
 	}
@@ -1348,7 +1364,18 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 {
 	switch ( pcMessage->GetCode() )
 	{
-		
+	case CF_APP_STARTED:
+		/* Sent by the Application class when started */
+		{
+			os::String zFileName;
+			bool bLoad = false;
+			if( pcMessage->FindString( "file/path", &zFileName ) == 0 )
+			{
+				bLoad = true;
+			}
+			Start( zFileName, bLoad );
+			break;
+		}
 	case CF_GUI_PLAY:
 		
 		/* Play  ( sent by the CFWindow class ) */
@@ -1628,7 +1655,6 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 			if ( pcMessage->FindString( "file/path", &zFilename.str() ) == 0 )
 			{
 				/* Stop playback */
-				m_bLockedInput = false;
 				if ( m_nState != CF_STATE_STOPPED )
 				{
 					SetState( CF_STATE_STOPPED );
@@ -1768,7 +1794,7 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 	}
 
 	default:
-		os::Application::HandleMessage( pcMessage );
+		os::Looper::HandleMessage( pcMessage );
 		break;
 	}
 }
@@ -1788,17 +1814,50 @@ bool CFApp::OkToQuit()
 	return ( true );
 }
 
+CFApplication::CFApplication( const char *pzMimeType, os::String zFileName, bool bLoad ):os::Application( pzMimeType )
+{
+	/* Select string catalogue */
+	try {
+		SetCatalog( "coldfish.catalog" );
+	} catch( ... ) {
+		if (DEBUG)
+			std::cout << "Failed to load catalog file!" << std::endl;
+	}
+	
+	m_pcApp = new CFApp();
+	m_pcApp->Run();
+	os::Message cMsg( CF_APP_STARTED );
+	if( bLoad )
+		cMsg.AddString( "file/path", zFileName );
+	m_pcApp->PostMessage( &cMsg, m_pcApp );
+}
+
+CFApplication::~CFApplication()
+{
+	m_pcApp->Terminate();
+}
+
+void CFApplication::HandleMessage( os::Message * pcMessage )
+{
+	m_pcApp->PostMessage( pcMessage, m_pcApp );
+}
+
+bool CFApplication::OkToQuit()
+{
+	return( m_pcApp->OkToQuit() );
+}
+
 int main( int argc, char *argv[] )
 {
-	CFApp *pcApp = NULL;
+	CFApplication *pcApp = NULL;
 
 	if ( argc > 1 )
 	{
-		pcApp = new CFApp( "application/x-vnd.syllable-ColdFish", argv[1], true );
+		pcApp = new CFApplication( "application/x-vnd.syllable-ColdFish", argv[1], true );
 	}
 	else
 	{
-		pcApp = new CFApp( "application/x-vnd.syllable-ColdFish", "", false );
+		pcApp = new CFApplication( "application/x-vnd.syllable-ColdFish", "", false );
 	}
 
 	pcApp->Run();

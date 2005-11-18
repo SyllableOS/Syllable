@@ -122,14 +122,16 @@ private:
 	os::FileRequester*	m_pcFileDialog;
 };
 
-class CFApp:public os::Application
+class CFApp:public os::Looper
 {
 public:
-	CFApp( const char *pzMimeType, os::String zFileName, bool bLoad );
+	CFApp();
 	 ~CFApp();
 	
 	virtual void	HandleMessage( os::Message * pcMessage );
 	virtual bool	OkToQuit();
+	
+	void			Start( os::String zFileName, bool bLoad );
 	
 	void			LoadPlugins();
 	void			ActivateVisPlugin();
@@ -185,4 +187,23 @@ private:
 	uint64						m_nLastPosition;
 };
 
+
+class CFApplication : public os::Application
+{
+public:
+	CFApplication( const char *pzMimeType, os::String zFileName, bool bLoad );
+	 ~CFApplication();
+	 
+	virtual void	HandleMessage( os::Message * pcMessage );
+	virtual bool	OkToQuit();
+private:
+	CFApp*			m_pcApp;
+};
+
 #endif
+
+
+
+
+
+

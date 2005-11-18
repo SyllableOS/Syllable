@@ -54,6 +54,8 @@ enum
 	CF_IS_CANCEL,
 	CF_IS_OPEN,
 	
+	CF_APP_STARTED,
+	
 	/* App messages */
 	CF_STATE_CHANGED = 100,
 	CF_ADD_FILE = 101,
