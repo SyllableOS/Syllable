@@ -62,7 +62,7 @@ static gint xscale[] = {
 /* Windows and such */
 static bool activated = false;
 os::View* blursk_view = NULL;
-os::Bitmap* blursk_bitmap;
+os::Bitmap* blursk_bitmap = NULL;
 static int cf_position = 0;
 os::String cf_title = "";
 
@@ -263,7 +263,8 @@ static void blursk_init(void)
 	/* Determine whether fullscreen operation is supported. */
 	can_fullscreen = xmms_fullscreen_init(blursk_window);
 #endif
-	blursk_bitmap = new os::Bitmap( config.width, config.height, os::CS_RGB32 );
+	if( blursk_bitmap == NULL )
+		blursk_bitmap = new os::Bitmap( config.width, config.height, os::CS_RGB32 );
 	color_genmap(TRUE);
 }
 
@@ -961,7 +962,7 @@ public:
 	{
 		blursk_init();
 		RegisterAsVisualization();
-		printf( "Remote Plugin initialized\n" );
+		printf( "Blursk Plugin initialized\n" );
 		return( 0 );
 		
 	}
