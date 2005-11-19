@@ -72,8 +72,6 @@ InputPrefs::InputPrefs( os::MediaInput* pcInput ) : os::VLayoutNode( "Prefs" )
 }
 InputPrefs::~InputPrefs()
 {
-	RemoveChild( m_pcConfigView );
-	delete( m_pcConfigView );
 	delete( m_pcInput );
 }
 
@@ -97,8 +95,6 @@ CodecPrefs::CodecPrefs( os::MediaCodec* pcCodec ) : os::VLayoutNode( "Prefs" )
 }
 CodecPrefs::~CodecPrefs()
 {
-	RemoveChild( m_pcConfigView );
-	delete( m_pcConfigView );
 	delete( m_pcCodec );
 }
 
@@ -157,12 +153,6 @@ OutputPrefs::OutputPrefs( os::MediaOutput* pcOutput, bool bDefaultVideo, bool bD
 }
 OutputPrefs::~OutputPrefs()
 {
-	RemoveChild( m_pcConfigView );
-	RemoveChild( m_pcDefaultVideo );
-	RemoveChild( m_pcDefaultAudio );
-	delete( m_pcConfigView );
-	delete( m_pcDefaultVideo );
-	delete( m_pcDefaultAudio );
 	delete( m_pcOutput );
 }
 
