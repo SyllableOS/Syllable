@@ -429,9 +429,13 @@ int sys_setgroups( int gidsetsize, gid_t *grouplist )
 		return -EPERM;
 	if ( ( unsigned )gidsetsize > NGROUPS )
 		return -EINVAL;
-	if ( memcpy_from_user( psProc->pr_anGroups, grouplist, gidsetsize * sizeof( gid_t ) ) )
-		return -EFAULT;
-	psProc->pr_nNumGroups = gidsetsize;
+	if( gidsetsize > 0 )
+	{
+		if ( memcpy_from_user( psProc->pr_anGroups, grouplist, gidsetsize * sizeof( gid_t ) ) )
+			return -EFAULT;
+
+		psProc->pr_nNumGroups = gidsetsize;
+	}
 	return 0;
 }
 

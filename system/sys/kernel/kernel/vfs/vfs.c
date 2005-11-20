@@ -766,6 +766,8 @@ static int remove_fd( bool bKernel, int nFile )
 
 	if ( NULL != psFile && psFile->f_psInode != NULL )
 	{
+		if( psFile->f_psInode->i_psFirstLock != NULL )
+			unlock_inode_record( psFile->f_psInode, 0, MAX_FILE_OFFSET );
 		return ( put_fd( psFile ) );
 	}
 	else
@@ -906,13 +908,15 @@ int sys_fsync( int nFile )
  * SEE ALSO:
  ****************************************************************************/
 
-int sys_truncate( const char *a_pzPath, off_t nLength )
+int sys_truncate( const char *a_pzPath, uint32 nLenLow, uint32 nLenHigh )
 {
 	Inode_s *psInode;
 	char *pzPath;
 	int nError;
 
-	printk( "sys_truncate( %s, %Ld ) stub called!\n", a_pzPath, nLength );
+	off_t nLength = ((off_t)nLenHigh << 32 ) | nLenLow;
+
+	//printk( "sys_truncate( %s, %Ld ) stub called!\n", a_pzPath, nLength );
 
 	nError = strndup_from_user( a_pzPath, PATH_MAX, &pzPath );
 	if ( nError < 0 )
@@ -943,12 +947,14 @@ int sys_truncate( const char *a_pzPath, off_t nLength )
  * SEE ALSO:
  ****************************************************************************/
 
-int sys_ftruncate( int nFile, off_t nLength )
+int sys_ftruncate( int nFile, uint32 nLenLow, uint32 nLenHigh )
 {
 	File_s *psFile;
 	int nError;
 
-	printk( "sys_ftruncate( %d, %Ld ) stub called!\n", nFile, nLength );
+	off_t nLength = ((off_t)nLenHigh << 32 ) | nLenLow;
+
+	//printk( "sys_ftruncate( %d, %Ld ) stub called!\n", nFile, nLength );
 
 	psFile = get_fd( false, nFile );
 
@@ -3851,8 +3857,9 @@ off_t lseek( int nFile, off_t nOffset, int nMode )
  * SEE ALSO:
  ****************************************************************************/
 
-int sys_lseek( int nFile, off_t nOffset, int nMode, off_t *pnNewPos )
+int sys_lseek( int nFile, uint32 nOffLow, uint32 nOffHigh, int nMode, off_t *pnNewPos )
 {
+	off_t nOffset = ((off_t)nOffHigh << 32 ) | nOffLow;
 	off_t nNewPos = do_lseek( false, nFile, nOffset, nMode );
 
 	if ( nNewPos < 0 )
