@@ -1,0 +1,4 @@
+# Start Samba nmbd & smbd daemons
+nmbd -D >>/dev/null
+smbd -D >>/dev/null
+

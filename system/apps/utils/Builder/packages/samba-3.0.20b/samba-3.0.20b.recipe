@@ -1,0 +1,28 @@
+authors
+	Kaj de Vos
+	Kristian Van Der Vliet
+status				testing
+notes				"Using Samba" is in the documentation twice
+
+licenses			GPL
+home				samba.org
+locations			http://us2.samba.org/samba/ftp/stable/
+
+needs				Syllable >= 0.6.0
+recommends			libiconv
+
+; Samba will not work if we try to override the CFLAGS its configure script picks
+configure-env		CFLAGS ''
+
+configure-cmd		source/configure
+;configure-options
+;	--with-static-modules=charset,vfs
+;	--with-manpages-langs=
+
+make-env			CFLAGS ''
+
+documentation
+	README COPYING Manifest WHATSNEW.txt MAINTAINERS Roadmap
+	docs/THANKS docs/history docs/Samba3-HOWTO.pdf docs/Samba3-ByExample.pdf
+	docs/htmldocs examples
+
