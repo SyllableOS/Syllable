@@ -19,6 +19,9 @@ build-recommends
 ;	mikmod
 	libvorbis
 
+patch-config
+
 ;configure-options	--enable-music-native-midi-gpl
 
 documentation		README COPYING CHANGES
+

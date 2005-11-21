@@ -15,6 +15,9 @@ build-recommends
 	libjpeg
 	libtiff
 
+patch-config
+
 ;configure-options	--enable-tif
 
 documentation		README COPYING CHANGES
+
