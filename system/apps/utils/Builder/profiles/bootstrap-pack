@@ -1,16 +1,16 @@
 ; The Bootstrap Bundle
 
 modules
-	programming/languages/nasm-0.98.38
 ;	Currently needed for building some packages:
 ;	programming/languages/perl-5.005_03
+
 ;	Needs Make 3.80:
 	programming/libraries/ffmpeg-current
+
 	programming/libraries/freetype-2.1.9
-;	programming/libraries/libjpeg-6b
+	programming/libraries/libjpeg-6b
 	programming/libraries/libpng-1.2.8
 	programming/libraries/libungif-4.1.3
 	programming/libraries/libogg-1.1
 	programming/libraries/libvorbis-1.0
 	productivity/publishing/texinfo-4.7
-

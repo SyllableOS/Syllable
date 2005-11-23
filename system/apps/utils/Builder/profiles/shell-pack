@@ -1,4 +1,4 @@
-; Shell Essentials
+; Command-Line Cornucopia
 
 modules
 	system/gettext-0.14.3
@@ -9,4 +9,3 @@ modules
 	file/mc-4.1
 	file/versioning/diffutils-2.8.1
 	programming/languages/gawk-3.1.3
-

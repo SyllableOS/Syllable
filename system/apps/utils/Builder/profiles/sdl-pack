@@ -1,5 +1,7 @@
+; SDL Essentials
+
 modules
-;	sdl
+;	sdl-1.2.8
 	sdl-mixer-1.2.6
 	sdl-sound-1.0.1
 	sdl-net-1.2.5
