@@ -2462,7 +2462,6 @@ static void i810_configure_clocking (void)
 	struct i810_state *state;
 	struct dmabuf *dmabuf;
 	unsigned int i, offset, new_offset;
-	int flags;
 
 	card = devs;
 	/* We could try to set the clocking for multiple cards, but can you even have
@@ -2496,14 +2495,11 @@ static void i810_configure_clocking (void)
 		}
 		dmabuf->count = dmabuf->dmasize;
 		CIV_TO_LVI(card->iobase+dmabuf->write_channel->port, -1);
-		flags = get_cpu_flags();
-		cli();
 		start_dac(state);
 		offset = i810_get_dma_addr(state, 0);
-		udelay(50000);
+		snooze(50000);
 		new_offset = i810_get_dma_addr(state, 0);
 		stop_dac(state);
-		put_cpu_flags(flags);
 		i = new_offset - offset;
 #ifdef DEBUG_INTERRUPTS
 		printk("i810_audio: %d bytes in 50 milliseconds\n", i);
@@ -2511,7 +2507,7 @@ static void i810_configure_clocking (void)
 		if(i == 0)
 			goto config_out;
 		i = i / 4 * 20;
-		if (i > 48500 || i < 47500) {
+		if (i > 49000 || i < 47000) {
 			clocking = clocking * clocking / i;
 			printk("i810_audio: setting clocking to %d\n", clocking);
 		}
