@@ -935,6 +935,7 @@ class CFBlursk : public ColdFishPlugin
 public:
 	CFBlursk( int nType )
 	{
+		blursk_init();
 		switch( nType )
 		{
 			case 0:
@@ -960,7 +961,6 @@ public:
 	}
 	status_t Initialize()
 	{
-		blursk_init();
 		RegisterAsVisualization();
 		printf( "Blursk Plugin initialized\n" );
 		return( 0 );
