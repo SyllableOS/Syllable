@@ -1640,7 +1640,10 @@ void SrvApplication::Loop()
 		if( get_msg( m_hReqPort, &nCode, pMsg, nSize ) >= 0 )
 		{
 			Lock();
-			bDoLoop = DispatchMessage( pMsg, nCode );
+			if( DispatchMessage( pMsg, nCode ) == false )
+			{
+				bDoLoop = false;
+			}
 			Unlock();
 		}
 	}

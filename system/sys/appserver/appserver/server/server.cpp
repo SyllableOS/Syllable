@@ -993,7 +993,7 @@ int32 AppServer::CloseWindows( void *pData )
 		{
 			if( !pcApp->IsClosing() )
 			{
-				//dbprintf( "Closing %s ...\n", pcApp->GetName().c_str() );
+				dbprintf( "Closing %s ...\n", pcApp->GetName().c_str() );
 				pcApp->SetClosing( true );
 				os::Message cMsg( os::M_QUIT );
 				if( pcApp->GetName() == "application/syllable-Dock" )
@@ -1013,7 +1013,7 @@ int32 AppServer::CloseWindows( void *pData )
 	{
 		if( pcApp->GetName() == "application/syllable-Desktop" && !pcApp->IsClosing() )
 		{
-			//dbprintf( "Closing desktop...\n" );
+			dbprintf( "Closing desktop...\n" );
 			os::Message cMsg( os::M_TERMINATE );
 			pcApp->SetClosing( true );
 			pcApp->PostUsrMessage( &cMsg );
