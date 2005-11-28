@@ -1,3 +1,7 @@
+* November 28 2005, Arno Klenke *
+
+The appserver should now close the applications more reliable
+
 * November 18 2005, Arno Klenke *
 
 The registrar now supports relative icon paths
@@ -907,6 +911,7 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
 
 
 
