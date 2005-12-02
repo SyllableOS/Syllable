@@ -1,3 +1,8 @@
+* December 2 2005, Kristian Van Der Vliet *
+
+Added kernel-level NLS support for use by kernel level drivers E.g. ISO9660
+& FAT filesystem drivers.  From Jaroslaw Pelczar <spideros1@wp.pl>
+
 * October 8 2005, Kristian Van Der Vliet *
 
 Implement get_msg_size()
