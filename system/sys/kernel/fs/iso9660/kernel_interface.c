@@ -22,7 +22,6 @@
 #include <atheos/bcache.h>
 #include <macros.h>
 
-
 // Probe is called _only_ if you don't provide the fs type when you mount a volume,
 static int iso_probe( const char* devicePath, fs_info* filesystemInfo );
 
@@ -57,25 +56,6 @@ static int		iso_free_dircookie(void *_ns, void *_node, void *cookie);
 static int		iso_read_fs_stat(void *_ns, fs_info *);
 static int 		iso_read_link(void *_ns, void *_node, char *buf, size_t bufsize);
 // End of fundamental (read-only) required functions.
-
-// write operations ( not implemented )
-#if 0
-static int		iso_remove_vnode(void *ns, void *node, char r);
-static int		iso_secure_vnode(void *ns, void *node);
-static int		iso_create(void *ns, void *dir, const char *name,
-					int perms, int omode, vnode_id *vnid, void **cookie);
-static int		iso_mkdir(void *ns, void *dir, const char *name, int perms);
-static int		iso_unlink(void *ns, void *dir, const char *name);
-static int		iso_rmdir(void *ns, void *dir, const char *name);
-static int		iso_wstat(void *ns, void *node, struct stat *st, long mask);
-static int		iso_write(void *ns, void *node, void *cookie, off_t pos,
-						const void *buf, size_t *len);
-static int		iso_ioctl(void *ns, void *node, void *cookie, int cmd,
-						void *buf, size_t len);
-static int		iso_wfsstat(void *ns, struct fs_info *);
-static int		iso_sync(void *ns);
-static int     	iso_initialize(const char *devname, void *parms, size_t len);
-#endif 
 
 // NOTE!!! The commented out functions do not exist in dosfs or afs
 // Are they even implemented in the vfs? 
@@ -160,7 +140,7 @@ iso_probe( const char* devicePath, fs_info* info )
 		return ( device ); 
 	}
 
-	error = ISOMount( devicePath, 0, &vol );
+	error = ISOMount( devicePath, 0, &vol, false );
 	if ( error < 0 )
 	{
 		kerndbg( KERN_DEBUG_LOW, "iso_probe - failed to mount device %s\n -> not an iso volume", devicePath );
@@ -231,25 +211,52 @@ iso_mount( kdev_t volumeID, const char *devicePath, uint32 flags, const void *pa
 {	
 	int 		result = -EINVAL;
 	nspace*		volume;
-	
+	bool		allow_joliet;
+
 	kerndbg( KERN_DEBUG, "iso_mount - ENTER\n");	
 	kerndbg( KERN_DEBUG, "%s: volumeID: %d device paht: %s\n",gFSName, volumeID, devicePath);
 	
 	//printk("iso_mount - Parameters(%d): %s\n", len, (char*)parameters );
 
+	// here we should parse the options and act accordingly
+	volume->rockRidge = true;
+	allow_joliet = true;
+
+	if(parameters)
+	{
+	    char * pzParameters = (char *)kmalloc(len + 1, MEMF_KERNEL|MEMF_CLEAR);
+	    if(pzParameters)
+	    {
+		memcpy(pzParameters, parameters, len);
+		pzParameters[len] = '\0';
+
+		if(strstr(pzParameters, "nojoliet"))
+		{
+		    kerndbg( KERN_INFO, "iso_mount - disabling Joliet\n");
+		    allow_joliet = false;
+		}
+		if(strstr(pzParameters, "disablerockridge"))
+		{
+		    kerndbg( KERN_INFO, "iso_mount - disabling RockRidge\n");
+		    volume->rockRidge = false;
+		}
+
+		kfree(pzParameters);
+	    } else {
+		kerndbg( KERN_WARNING, "iso_mount - unable to allocate space for pzParameters\n");
+	    }
+	}
+
 	// flags is currently unused
-	result = ISOMount( devicePath, flags, &volume );
-	
+	result = ISOMount( devicePath, flags, &volume, allow_joliet );
+
 	// If the mount succeeded, setup the block cache
 	if ( result == -EOK )
 	{
 		int error = 0;
 		// volumeSize is in blocks
 		off_t volumeSize = volume->volSpaceSize[FS_DATA_FORMAT];
-
-		// here we should parse the options and act accordingly
-		volume->rockRidge = true;
-		
+	
 		// root node is a special case and has always value 1
 		*rootNodeID = volume->rootDirRec.id;
 		*data = (void*)volume;
@@ -435,7 +442,7 @@ static int	iso_walk( void * _volume, void * _baseNode, const char * _fileName
 					node.fileIDString = nodeFileName;
 					node.attr.slName = nodeSymbolicLinkName;
 				
-					result = InitNode( volume, &node, blockData, &nodeBytesRead );
+					result = InitNode( volume, &node, blockData, &nodeBytesRead, volume->joliet_level );
 
 					if ( result != EOK )
 					{
@@ -539,9 +546,9 @@ iso_read_vnode(void *_ns, ino_t vnid, void **node)
 		 		newNode->fileIDString = (char*)calloc( ISO_MAX_FILENAME_LENGTH, 1 );
 		 		newNode->attr.slName = (char*)calloc( ISO_MAX_FILENAME_LENGTH, 1 );
 				blockData = (char*)get_cache_block(ns->fd, block, ns->logicalBlkSize[FS_DATA_FORMAT]);
-		 		if (blockData != NULL)  
+		 		if (blockData != NULL)
 		 		{
-					result = InitNode(ns, newNode, (blockData + pos), NULL);
+					result = InitNode(ns, newNode, (blockData + pos), NULL, ns->joliet_level);
 					newNode->id = vnid;
 					kerndbg( KERN_DEBUG_LOW, "iso_read_vnode - init result is %d\n", result );
 					*node = (void*)newNode;
@@ -1000,18 +1007,3 @@ int fs_init( const char* name, FSOperations_s** ppsOps )
 	*ppsOps = &iso_operations;
 	return( api_version );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

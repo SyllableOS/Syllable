@@ -15,7 +15,7 @@
 #define _ISO_H
 
 #define __ENABLE_DEBUG__
-#define DEBUG_LIMIT KERN_WARNING
+//#define DEBUG_LIMIT KERN_WARNING
 
 #include <atheos/types.h> // uints
 #include <posix/stat.h> // stat
@@ -253,27 +253,11 @@ typedef struct nspace
 	uint8			fileStructVers;		// File structure version								byte882
 }nspace;
 
-int ISOMount(const char *path, const int flags, nspace** newVol);
+int 	ISOMount(const char *path, const int flags, nspace** newVol,bool allowJoliet);
 int	ISOReadDirEnt(nspace* ns, dircookie* cookie, struct kernel_dirent* buf, size_t bufsize);
-int	InitNode( nspace * volume, vnode* rec, char* buf, int* bytesRead);
+int	InitNode( nspace * volume, vnode* rec, char* buf, int * bytesRead, uint8 jolietLevel );
 int	ConvertRecDate(ISORecDate* inDate, time_t* outDate);
 
+#define ISO_HIDDEN		__attribute__((visibility("hidden")))
+
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

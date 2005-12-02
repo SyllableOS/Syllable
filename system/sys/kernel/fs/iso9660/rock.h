@@ -12,13 +12,13 @@ enum
 	NM_CURRENT = 2,
 	NM_PARENT = 4,
 	NM_HOST = 32
-}NMFLAGS;
+} NMFLAGS;
 
 // Symbolic link field flags
 enum
 {
 	SL_CONTINUE = 1
-}SLFLAGS;
+} SLFLAGS;
 
 // Symbolic link field component flags
 enum
@@ -29,4 +29,4 @@ enum
 	SLCP_ROOT = 8,
 	SLCP_VOLROOT = 16, 
 	SLCP_HOST = 32
-}SLCPFLAGS;
+} SLCPFLAGS;
