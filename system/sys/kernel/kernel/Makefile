@@ -4,13 +4,17 @@ AFLAGS   = -c
 OLD_INCLUDE_PATH:=$(C_INCLUDE_PATH)
 C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
 
-VPATH =	./ lib vfs net ../devices ../drivers/disk/bios ../fs/lfndos ../fs/afs
+VPATH =	./ lib vfs net nls
 
 CP	= cp -f
 
+LIBOBJS := ct_flags.o ct_upper.o ct_lower.o vsprintf.o string.o strstr.o qsort.o gcc34_memcpy.o strlcpy.o strlcat.o
 VFSOBJS := vfs.o inode.o nodemonitor.o attributes.o flock.o root.o dev.o fifo.o pty.o
 NETOBJS := core.o interface.o route.o ip.o udp.o tcp.o tcp_input.o tcp_output.o socket.o packets.o raw.o
-LIBOBJS := ct_flags.o ct_upper.o ct_lower.o vsprintf.o string.o strstr.o qsort.o gcc34_memcpy.o strlcpy.o strlcat.o
+
+NLSOBJS := nls_conv.o nls_iso8859-1.o nls_iso8859-2.o nls_iso8859-3.o nls_ascii.o nls_utf16.o \
+	nls_cp1250.o nls_cp1251.o nls_cp1255.o nls_koi8-u.o nls_koi8-r.o nls_cp437.o nls_cp850.o \
+	nls_cp852.o
 
 OBJS := intel.o cpuid.o descriptors.o kernel.o dbconsole.o ksyms.o init.o fork.o syscall.o 	  		\
 	debug.o timer.o process.o threads.o sema.o msgport.o memory.o strace.o	\
@@ -18,7 +22,7 @@ OBJS := intel.o cpuid.o descriptors.o kernel.o dbconsole.o ksyms.o init.o fork.o
 	elf.o timecalc.o virt86.o irq.o array.o schedule.o psignals.o mman.o	\
 	areas.o vmalloc.o pagefault.o bcache.o bcalloc.o vesa_gfx.o random.o	\
 	devices.o config.o ptrace.o save_i387.o \
-	$(VFSOBJS) $(NETOBJS) $(LIBOBJS)
+	$(LIBOBJS) $(VFSOBJS) $(NETOBJS) $(NLSOBJS)
 
 IF_OBJS := eth_interface.o arp.o
 
