@@ -42,6 +42,7 @@
 #include <atheos/tld.h>
 #include <atheos/random.h>
 #include <atheos/config.h>
+#include <atheos/nls.h>
 
 #include <posix/fcntl.h>
 #include <posix/unistd.h>
@@ -508,6 +509,9 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	KSYMBOL( disable_device ),
 	KSYMBOL( enable_all_devices ),
 
+	// NLS
+	KSYMBOL( nls_conv_cp_to_utf8 ),
+	KSYMBOL( nls_conv_utf8_to_cp ),
 
 	{NULL, NULL}
 };
