@@ -1,5 +1,10 @@
 * December 2 2005, Kristian Van Der Vliet *
 
+Update the ISO9660 filesystem driver with Microsoft Joilet support.
+The driver also uses the kernel NLS.  From Jaroslaw Pelczar <spideros1@wp.pl>
+
+* December 2 2005, Kristian Van Der Vliet *
+
 Added kernel-level NLS support for use by kernel level drivers E.g. ISO9660
 & FAT filesystem drivers.  From Jaroslaw Pelczar <spideros1@wp.pl>
 
