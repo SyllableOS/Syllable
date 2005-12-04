@@ -1,6 +1,7 @@
 authors
 	Flemming Sørensen
 	Kaj de Vos
+	Michael Saunders
 maintainers			Kaj de Vos
 status				testing
 
@@ -21,7 +22,9 @@ build-recommends
 
 patch-config
 
-;configure-options	--enable-music-native-midi-gpl
+configure-options
+;	Bare LibMikMod:
+	--enable-music-mod
+;	--enable-music-native-midi-gpl
 
 documentation		README COPYING CHANGES
-
