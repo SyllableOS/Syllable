@@ -40,6 +40,9 @@ void *dlsym(void *handle, const char *name);
 int   dlclose(void *handle);
 char *dlerror(void);
 
+/* Type for namespace indeces. Required by Glibc link.h */
+typedef long int Lmid_t;
+
 #ifdef __cplusplus
 }
 #endif
