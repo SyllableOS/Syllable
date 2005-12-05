@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.25
+# Version 0.6.26
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -1441,7 +1441,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.25',
+	puts 'Syllable Build System 0.6.26',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1499,7 +1499,7 @@ else
 		Dir.chdir @builderPath
 		action 'cvs -q update -dP'
 	else
-		target  = getTarget arg2 ? arg2 : arg1 ? arg1 : 'default'
+		target  = getTarget arg2 ? arg2 : arg1 ? arg1 : './'
 		profile = target.profile
 
 		Profile.new('last')['modules'] = profile['modules'] if profile  # Processing a profile
