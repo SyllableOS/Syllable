@@ -35,6 +35,7 @@ install: $(OBJDIR)/radeon radeon.cfg
 
 dist: $(OBJDIR)/radeon
 	cp -f $(OBJDIR)/radeon $(DIST_DIR)/atheos/sys/drivers/appserver/video/radeon
+	cp -f radeon.cfg $(DIST_DIR)/atheos/sys/config/drivers/appserver/video/radeon.cfg
 
 clean:
 	-rm $(OBJDIR)/*
