@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.26
+# Version 0.6.27
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -411,27 +411,34 @@ def testModule target
 end
 
 def installModule staging, target
+	root = installPath staging, target
+
 	unless
 		if target =~ /\.(zip|tgz)$/ and exists? target  # A distribution package
 			# Packages are currently supposed to contain an unversioned directory
-			root = File.join(File.dirname(installPath(false, target)), shortName(target))
+			dir = File.join(File.dirname(root), name = shortName(target))
 
-			if exists? root and not
+			if exists? dir and not
 				begin
-					@log.header 'Uninstalling ' + shortName(target)
-					uninstallModule false, target  # FIXME: double failure logging!
+					@log.header 'Uninstalling ' + name
+					uninstallModule staging, target  # FIXME: double failure logging!
 				end
 			then
 				false
 			else
 				@log.header 'Unpacking ' + target
 				action (target[-3..-1] == 'zip' ?
-					"unzip '#{target}' -d /usr" :
-					"tar --directory=/usr -xpPzf '#{target}'"
+					"unzip '#{target}' -d #{root}" :
+					"tar --directory=#{root} -xpPzf '#{target}'"
 				) and
 				begin
 					@log.header 'Registering ' + target
-					action 'pkgmanager --add ' + root
+
+					if staging
+						registerPort staging, name  # FIXME: handle init scripts
+					else
+						action 'pkgmanager --add ' + dir
+					end
 				end
 			end
 		else
@@ -454,8 +461,6 @@ def installModule staging, target
 					end
 				end
 			else
-				root = installPath staging, target
-
 				if exists? root and not
 					begin
 						@log.header 'Uninstalling ' + shortName(target)
@@ -541,7 +546,7 @@ def installModule staging, target
 								if linkPath[0, 1] == '/'  # A link into the system
 									original = File.join prefix(target), original if original['/']
 
-									if staging and @systemBuild
+									if staging == :imaging
 										linkPath = File.join @systemRoot,
 											linkPath[0, 4] == '/usr' ?
 												'' :
@@ -563,7 +568,7 @@ def installModule staging, target
 
 							for libs in toList files
 								break unless action "mv #{File.join(root, 'lib', libs)} " +
-									(staging && @systemBuild ?
+									(staging == :imaging ?
 										File.join(@systemRoot, 'sys/libs/') :
 										'/system/libs/'
 									)
@@ -575,7 +580,7 @@ def installModule staging, target
 						@log.header 'Registering ' + target
 
 						if staging
-							registerPort staging, target and (  # @systemBuild or (
+							registerPort staging, target and (  # @bootstrap or (
 								not exists? dir = File.join(root, 'init') or
 								for file in listFiles dir
 									# FIXME: break unless action 'source ' + file
@@ -607,7 +612,7 @@ def uninstallModule staging, target
 			dir = installPath staging, target
 			name = shortName target
 
-			unless staging or
+			unless staging or  # FIXME: no unregistering when staging
 				begin
 					@log.header 'Unregistering ' + name
 					action 'pkgmanager --remove ' + dir
@@ -691,10 +696,10 @@ def linkSubdir staging, target, subdir, nesting
 
 		Dir[nesting ? '**/*' : '*'].each do |node|
 			break unless
-				linkNode subdir, node,
+				linkNode subdir, node,  # Link node into the staging area
 					File.join(dir, node),
 					File.join(@stage, subdir, node) and
-				(staging and not @systemBuild or linkNode subdir, node,
+				(staging != :imaging or linkNode subdir, node,  # Link node into the system image
 					File.join(installPath(false, target), subdir, node),
 					File.join(@indexesRoot, subdir, node)
 				)
@@ -733,7 +738,7 @@ def buildModule staging, target
 				Dir.chdir @workDir
 
 				@log.header 'Installing in staging area'
-				installModule true, target
+				installModule staging, target
 			end
 		end
 	end
@@ -943,7 +948,7 @@ end
 def build staging, targets
 	@log.header 'Building ' + targets.to_s
 
-	if staging and @systemBuild and targets.profile and resources = targets.profile['resources']
+	if staging == :imaging and @systemBuild and targets.profile and resources = targets.profile['resources']
 		@log.header 'Installing resources'
 
 		Dir.chdir @systemImage
@@ -1153,11 +1158,11 @@ def prefix port
 end
 
 def installRoot staging
-	! staging ?
-		'/usr' :
-	@systemBuild ?
-		File.join(@systemRoot, 'usr') :
-		@stage
+	case staging
+	when :staging	then @stage
+	when :imaging	then File.join(@systemRoot, 'usr')
+	else '/usr'
+	end
 end
 
 def installPath staging, port
@@ -1407,8 +1412,8 @@ else
 
 #	@buildTools = File.join @workDir, 'build-tools'
 
-#	ENV['DIST_VER'] = '0.5.6+'
-#	ENV['DIST_NAME'] = 'base-syllable-0.5.6+.zip'
+#	ENV['DIST_VER'] = '0.5.7+'
+#	ENV['DIST_NAME'] = 'base-syllable-0.5.7+.zip'
 
 	ENV['ATHEOS_SRC'] = @workDir
 #	ENV['BUILD_TOOLS'] = File.join @workDir, 'build-tools'
@@ -1441,13 +1446,14 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.26',
+	puts 'Syllable Build System 0.6.27',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
 	puts 'Usage:',
 		'  build [<command>] [<module> | <profile> | <package> | <log>]',
 		'  stage [<module> | <profile> | <package>]',
+		'  image [<module> | <profile> | <package>]',
 		'<command>:',
 		'  -h, --help,   Show this help information',
 		'    -help, ?, -?',
@@ -1471,6 +1477,7 @@ when '?', '-?', '-h', '-help', '--help'
 #		'  activate/elect   (Run as super user)',
 #		'  unregister    (Run as super user)',
 		'  stage         Build and install in the staging area',
+		'  image         Build and install in the system image',
 		'  package       Build distribution package',
 		'  pack          Build a compound package',
 #		'  release       ',
@@ -1641,7 +1648,9 @@ else
 				when 'test'			then test		target
 				when 'install'		then install	target
 				when 'stage'
-					build true, target if exists? @stage or prepare target
+					build :staging, target if exists? @stage or prepare target
+				when 'image'
+					build :imaging, target if exists? @stage or prepare target
 				else
 					if arg2
 						@log.error 'Unrecognized command'
