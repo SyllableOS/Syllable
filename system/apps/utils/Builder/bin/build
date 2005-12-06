@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.30
+# Version 0.6.31
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -284,7 +284,7 @@ def getModule target
 	end
 end
 
-def configureModule target
+def configureModule staging, target
 	if native? target
 		@log.header 'Building dependencies'
 
@@ -335,7 +335,7 @@ def configureModule target
 										((p = recipe['configure-prefix']) ?
 											' ' + p :
 											' --prefix='
-										) + prefix(target) +
+										) + prefix(staging, target) +
 										(@crossCompile ? " --build=#{ENV['MACHTYPE']} --host=" + @target : '')
 									) +
 									((options = recipe['configure-options']) ? ' ' + toString(options) : '')
@@ -493,9 +493,9 @@ def installModule staging, target
 							else
 								((vars = recipe['install-env']) ? toVariables(vars) + ' ' : '') +
 								makeCommand(target) +
-								( (var = recipe['install-prefix-var']) ? " #{var}=" + root :
-									staging ? ' prefix=' + root :
-									''
+								(staging != :imaging ?
+									'' :
+									" #{(var = recipe['install-prefix-var']) ? var : 'prefix'}=" + root
 								) +
 								((vars = recipe['install-vars']) ? ' ' + toVariables(vars) : '') +
 								' ' + ((targets = recipe['install-targets']) ? toString(targets) : 'install')
@@ -732,7 +732,7 @@ def buildModule staging, target
 		cleanModule target
 		Dir.chdir @workDir
 
-		if configureModule target  # No failed configuration
+		if configureModule staging, target  # No failed configuration
 			@log.header 'Making'
 
 			if makeModule(target) and staging
@@ -820,10 +820,13 @@ end
 def configure targets
 	@log.header 'Configuring ' + targets.to_s
 
-	for target in targets.modules
+	for target in targets.specs
+		directive = false
+		directive, target = target.split if target[' ']
+
 		@log.entry target
 
-		configureModule target
+		configureModule directive == 'stage' ? :staging : false, target
 		Dir.chdir @workDir
 	end
 end
@@ -1157,15 +1160,18 @@ def installName port
 		shortName(port)
 end
 
-def prefix port
-	File.join '/usr', installName(port)
+def prefix staging, port
+	File.join staging == :staging ? @stage : '/usr', installName(port)
 end
 
 def installRoot staging
 	case staging
-	when :staging	then @stage
-	when :imaging	then File.join(@systemRoot, 'usr')
-	else '/usr'
+	when :staging
+		@stage
+	when :imaging
+		@systemBuild ? File.join(@systemRoot, 'usr') : @image
+	else
+		'/usr'
 	end
 end
 
@@ -1450,7 +1456,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.30',
+	puts 'Syllable Build System 0.6.31',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
