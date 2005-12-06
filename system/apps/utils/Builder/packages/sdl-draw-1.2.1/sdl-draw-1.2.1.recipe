@@ -9,7 +9,7 @@ locations			http://prdownloads.sf.net/sdl-draw/
 needs				sdl
 
 patch-config
-;configure-options	-disable-sdltest
+;configure-options	--disable-sdltest
 documentation
 	README COPYING ChangeLog AUTHORS TODO
 ;	doc

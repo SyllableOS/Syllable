@@ -1,0 +1,21 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			LGPL
+home				www.ferzkopp.net/Software/SDL_gfx-2.0/
+packages			SDL_gfx-2.0.13
+locations			http://www.ferzkopp.net/Software/SDL_gfx-2.0/
+
+needs				sdl >= 1.2
+
+patch-config
+;patch				./autogen.sh
+
+;configure-options
+;	--disable-mmx
+;	--disable-sdltest
+;pre-make			./nodebug.sh
+documentation
+	README COPYING LICENSE ChangeLog AUTHORS
+;	INSTALL
+;	Docs
