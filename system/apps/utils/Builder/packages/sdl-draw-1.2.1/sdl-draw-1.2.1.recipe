@@ -1,0 +1,15 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			LGPL
+home				sdl-draw.sf.net
+packages			SDL_draw-1.2.1
+locations			http://prdownloads.sf.net/sdl-draw/
+
+needs				sdl
+
+patch-config
+;configure-options	-disable-sdltest
+documentation
+	README COPYING ChangeLog AUTHORS TODO
+;	doc
