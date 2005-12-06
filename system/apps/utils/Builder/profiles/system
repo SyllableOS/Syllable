@@ -183,22 +183,21 @@ modules
 	libs/libpthread
 	libs/ncurses-5.4
 
-;	Static libraries, that don't need to be included separately in the distribution:
+	stage libraries/gettext-0.14.3
+	stage libraries/flex-2.5.4a
+	stage libraries/bison-1.875
+	stage libraries/binutils-2.15
 
-	libraries/gettext-0.14.3
-	libraries/flex-2.5.4a
-	libraries/bison-1.875
-	libraries/binutils-2.15
+;	libraries/gcc-3.4.3
 
-	libraries/gcc-3.4.3
-
-	libraries/freetype-2.1.9
-	libraries/libjpeg-6b
-	libraries/libpng-1.2.8
-	libraries/libungif-4.1.3
-	libraries/libogg-1.1
-	libraries/libvorbis-1.0
-	libraries/ffmpeg-current
+;	freetype-config needs to be in the path:
+	stage libraries/freetype-2.1.9
+	stage libraries/libjpeg-6b
+	stage libraries/libpng-1.2.8
+	stage libraries/libungif-4.1.3
+	stage libraries/libogg-1.1
+	stage libraries/libvorbis-1.0
+	stage libraries/ffmpeg-current
 
 	sys/appserver/libsyllable
 	sys/appserver/appserver/server
@@ -269,4 +268,3 @@ modules
 	apps/utils/nettools
 	apps/utils/pkgmanager
 	apps/utils/systools
-
