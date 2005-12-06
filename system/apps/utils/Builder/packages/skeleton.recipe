@@ -132,6 +132,5 @@ links
 ;stage-files
 ;	<Original> <Destination>
 ; Files to move to the system libraries area, after the main installation:
-system-libs			<Libraries and links from the lib subdirectory>
+;system-libs			<Libraries and links from the lib subdirectory>
 ;post-install		<Commands after installation, before registration>
-

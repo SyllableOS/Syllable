@@ -177,8 +177,8 @@ modules
 	sys/kernel/fs/fatfs
 	sys/kernel/fs/iso9660
 	sys/kernel/fs/ramfs
-	libs/glibc-2.3.4
-	libs/zlib-1.2.2
+	system libs/glibc-2.3.4
+	system libs/zlib-1.2.2
 	libs/libdl
 	libs/libpthread
 	libs/ncurses-5.4
@@ -188,9 +188,9 @@ modules
 	stage libraries/bison-1.875
 	stage libraries/binutils-2.15
 
-;	libraries/gcc-3.4.3
+;	libraries libraries/gcc-3.4.3
 
-;	freetype-config needs to be in the path:
+;	freetype-config needs to be in the path (use bootstrap):
 	stage libraries/freetype-2.1.9
 	stage libraries/libjpeg-6b
 	stage libraries/libpng-1.2.8
