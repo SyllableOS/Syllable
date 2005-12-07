@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.32
+# Version 0.6.33
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -485,18 +485,18 @@ def installModule originalStaging, staging, directive, target
 						true
 					else
 						Dir.chdir target
+						configured = exists?((cmd = recipe['configure-cmd']) ? toString(cmd) : 'configure')
 						if exists? dir = buildDir(target) then Dir.chdir dir end
-	
+
 						if not action(
 							if cmdLine = recipe['install']
 								toCommand cmdLine
 							else
 								((vars = recipe['install-env']) ? toVariables(vars) + ' ' : '') +
 								makeCommand(target) +
-								(staging != :imaging &&
-									exists?((cmd = recipe['configure-cmd']) ? toString(cmd) : 'configure') ?
-										'' :
-										" #{(var = recipe['install-prefix-var']) ? var : 'prefix'}=" + root
+								(staging != :imaging && configured ?
+									'' :
+									" #{(var = recipe['install-prefix-var']) ? var : 'prefix'}=" + root
 								) +
 								((vars = recipe['install-vars']) ? ' ' + toVariables(vars) : '') +
 								' ' + ((targets = recipe['install-targets']) ? toString(targets) : 'install')
@@ -702,7 +702,7 @@ def linkSubdir staging, target, subdir, nesting
 				linkNode subdir, node,  # Link node into the staging area
 					File.join(dir, node),
 					File.join(@stage, subdir, node) and
-				(staging != :imaging and @systemBuild or
+				(staging != :imaging or ! @systemBuild or
 					linkNode subdir, node,  # Link node into the system image
 						File.join(installPath(false, target), subdir, node),
 						File.join(@indexesRoot, subdir, node)
@@ -1463,7 +1463,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.32',
+	puts 'Syllable Build System 0.6.33',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1691,3 +1691,4 @@ else
 	@log.close
 	exit @log.failures.length  # FIXME: only works when processing a profile
 end
+
