@@ -113,6 +113,7 @@ resources
 modules
 ;	Hangs during configuring:
 ;	sys/boot/grub-0.95
+
 	other/config/default
 	other/config/etc
 	other/config/template
@@ -177,8 +178,10 @@ modules
 	sys/kernel/fs/fatfs
 	sys/kernel/fs/iso9660
 	sys/kernel/fs/ramfs
+
 	system libs/glibc-2.3.4
 	system libs/zlib-1.2.2
+
 	libs/libdl
 	libs/libpthread
 	libs/ncurses-5.4
@@ -192,7 +195,8 @@ modules
 
 ;	freetype-config needs to be in the path (use bootstrap):
 	stage libraries/freetype-2.1.9
-	stage libraries/libjpeg-6b
+
+	stage libraries/libjpeg-6b-static
 	stage libraries/libpng-1.2.8
 	stage libraries/libungif-4.1.3
 	stage libraries/libogg-1.1
@@ -268,3 +272,4 @@ modules
 	apps/utils/nettools
 	apps/utils/pkgmanager
 	apps/utils/systools
+
