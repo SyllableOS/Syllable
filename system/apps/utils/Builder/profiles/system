@@ -201,6 +201,8 @@ modules
 	stage libraries/libungif-4.1.3
 	stage libraries/libogg-1.1
 	stage libraries/libvorbis-1.0
+
+;	Needs Make 3.80:
 	stage libraries/ffmpeg-current
 
 	sys/appserver/libsyllable
