@@ -1,5 +1,5 @@
 authors				Kaj de Vos
-status				testing
+status				broken
 
 licenses			LGPL
 home				sdl-draw.sf.net
@@ -13,3 +13,4 @@ patch-config
 documentation
 	README COPYING ChangeLog AUTHORS TODO
 ;	doc
+
