@@ -8,5 +8,6 @@ modules
 	sdl-image-1.2.4
 	sdl-ttf-2.0.7
 	sdl-rtf-0.1.0
-	sdl-draw-1.2.1
+;	sdl-draw-1.2.1
 	sdl-gfx-2.0.13
+
