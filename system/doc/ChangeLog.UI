@@ -1,3 +1,7 @@
+* December 9 2005, Arno Klenke *
+
+The layout node class now deletes its views
+
 * October 13 2005, Arno Klenke *
 
 Provide default permission flags to the open() call in the fsnode class
@@ -1070,5 +1074,6 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
 
