@@ -35,6 +35,9 @@ class LayoutView::Private
     Private() {
     	m_pcRoot = NULL;
     }
+    ~Private() {
+    	delete( m_pcRoot );
+    }
 };
 
 struct ShareNode {
@@ -70,10 +73,7 @@ class LayoutNode::Private
     }
     
     ~Private() {
-		for( uint i = 0; i < m_cChildList.size(); ++i )
-		{
-			delete m_cChildList[i];
-		}
+    	delete( m_pcView );
     }
 };
 
@@ -224,7 +224,12 @@ LayoutNode::LayoutNode( const String & cName, float vWeight, LayoutNode * pcPare
 
 LayoutNode::~LayoutNode()
 {
-   	if( m->m_pcParent != NULL )
+   	for( uint i = 0; i < m->m_cChildList.size(); ++i )
+	{
+		delete m->m_cChildList[i];
+	}
+	m->m_cChildList.clear();
+	if( m->m_pcParent != NULL )
 	{
 		m->m_pcParent->RemoveChild( this );
 	}
@@ -976,3 +981,23 @@ void LayoutView::__LYV_reserved4__()
 void LayoutView::__LYV_reserved5__()
 {
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
