@@ -176,17 +176,44 @@ void ATIRadeon::GetPLLInfo()
 	 * and if yes, retreive them
 	 */
 	if (rinfo.bios_seg) {
-		uint16 pll_info_block = BIOS_IN16(rinfo.fp_bios_start + 0x30);
+		if (rinfo.bios_type == bios_atom) {
+		    uint16 pll_info_block = BIOS_IN16(rinfo.fp_atom_bios_start + 12);
 
-		rinfo.pll.sclk		= BIOS_IN16(pll_info_block + 0x08);
-		rinfo.pll.mclk		= BIOS_IN16(pll_info_block + 0x0a);
-		rinfo.pll.ref_clk	= BIOS_IN16(pll_info_block + 0x0e);
-		rinfo.pll.ref_div	= BIOS_IN16(pll_info_block + 0x10);
-		rinfo.pll.ppll_min	= BIOS_IN32(pll_info_block + 0x12);
-		rinfo.pll.ppll_max	= BIOS_IN32(pll_info_block + 0x16);
+		    rinfo.pll.ref_clk = BIOS_IN16(pll_info_block + 82);
+#if 0
+		    rinfo.pll.ref_div = 0; /* Need to derive from existing setting
+									  or use a new algorithm to calculate
+									  from min_input and max_input */
+#else
+			rinfo.pll.ref_div = INPLL(PPLL_REF_DIV) & 0x3f;
+#endif
+		    rinfo.pll.ppll_min = BIOS_IN16(pll_info_block + 78);
+		    rinfo.pll.ppll_max = BIOS_IN32(pll_info_block + 32);
 
-		dbprintf("Radeon :: Retrieved PLL infos from BIOS\n");
-		goto found;
+			/* XXXKV: The X driver divides both the sclk & mclk values by 100.0,
+			   but the legacy BIOS stuff below doesn't do that, so I'm not doing it here either */
+		    rinfo.pll.sclk = BIOS_IN32(pll_info_block + 0x08);
+		    rinfo.pll.mclk = BIOS_IN32(pll_info_block + 0x0c);
+		    if (rinfo.pll.sclk == 0)
+				rinfo.pll.sclk = 20000;
+		    if (rinfo.pll.mclk == 0)
+				rinfo.pll.mclk = 20000;
+		
+			dbprintf("Radeon :: Retrieved PLL infos from ATOM BIOS\n");
+			goto found;
+		} else {
+			uint16 pll_info_block = BIOS_IN16(rinfo.fp_bios_start + 0x30);
+
+			rinfo.pll.sclk		= BIOS_IN16(pll_info_block + 0x08);
+			rinfo.pll.mclk		= BIOS_IN16(pll_info_block + 0x0a);
+			rinfo.pll.ref_clk	= BIOS_IN16(pll_info_block + 0x0e);
+			rinfo.pll.ref_div	= BIOS_IN16(pll_info_block + 0x10);
+			rinfo.pll.ppll_min	= BIOS_IN32(pll_info_block + 0x12);
+			rinfo.pll.ppll_max	= BIOS_IN32(pll_info_block + 0x16);
+
+			dbprintf("Radeon :: Retrieved PLL infos from legacy BIOS\n");
+			goto found;
+		}
 	}
 
 	/*
@@ -263,7 +290,7 @@ void ATIRadeon::GetPLLInfo()
 	case PCI_CHIP_R350_AK:
 	case PCI_CHIP_RV350_AP:
 	case PCI_CHIP_RV350_AQ:
-	case PCI_CHIP_RV350_AR:
+	case PCI_CHIP_RV360_AR:
 	case PCI_CHIP_RV350_AS:
 	case PCI_CHIP_RV350_AT:
 	case PCI_CHIP_RV350_AV:
@@ -277,6 +304,38 @@ void ATIRadeon::GetPLLInfo()
 		rinfo.pll.sclk = 27000;
 		rinfo.pll.ref_clk = 2700;
 		break;
+
+	/* XXXKV: I don't know what the correct R420 & R423 values are; the max. values are probably higher.
+	   The R300/R350 values will work for now. */
+	case PCI_CHIP_R420_JH:
+	case PCI_CHIP_R420_JI:
+	case PCI_CHIP_R420_JJ:
+	case PCI_CHIP_R420_JK:
+	case PCI_CHIP_R420_JL:
+	case PCI_CHIP_R420_JM:
+	case PCI_CHIP_R420_JP:
+	case PCI_CHIP_R420_4A4F:
+		rinfo.pll.ppll_max = 40000;
+		rinfo.pll.ppll_min = 20000;
+		rinfo.pll.mclk = 27000;
+		rinfo.pll.sclk = 27000;
+		rinfo.pll.ref_clk = 2700;
+		break;
+
+	case PCI_CHIP_R423_UH:
+	case PCI_CHIP_R423_UI:
+	case PCI_CHIP_R423_UJ:
+	case PCI_CHIP_R423_UK:
+	case PCI_CHIP_R423_UQ:
+	case PCI_CHIP_R423_UR:
+	case PCI_CHIP_R423_UT:
+		rinfo.pll.ppll_max = 40000;
+		rinfo.pll.ppll_min = 20000;
+		rinfo.pll.mclk = 27000;
+		rinfo.pll.sclk = 27000;
+		rinfo.pll.ref_clk = 2700;
+		break;
+
 	case PCI_CHIP_RADEON_QD:
 	case PCI_CHIP_RADEON_QE:
 	case PCI_CHIP_RADEON_QF:

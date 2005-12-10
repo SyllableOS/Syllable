@@ -192,6 +192,26 @@ int ATIRadeon::MapROM( int nFd, PCI_Info_s *dev )
  anyway:
 	/* Locate the flat panel infos, do some sanity checking !!! */
 	rinfo.fp_bios_start = BIOS_IN16(0x48);
+
+	/* Check for ATOM BIOS */
+	dptr = rinfo.fp_bios_start + 4;
+	if ((BIOS_IN8(dptr)   == 'A' &&
+		 BIOS_IN8(dptr+1) == 'T' &&
+		 BIOS_IN8(dptr+2) == 'O' &&
+		 BIOS_IN8(dptr+3) == 'M') ||
+		(BIOS_IN8(dptr)   == 'M' &&
+		 BIOS_IN8(dptr+1) == 'O' &&
+		 BIOS_IN8(dptr+2) == 'T' &&
+		 BIOS_IN8(dptr+3) == 'A'))
+		rinfo.bios_type = bios_atom;
+	else
+		rinfo.bios_type = bios_legacy;
+
+    if (rinfo.bios_type == bios_atom) 
+		rinfo.fp_atom_bios_start = BIOS_IN16 (rinfo.fp_bios_start + 32);
+
+	dbprintf( "Radeon :: %s BIOS detected\n", (rinfo.bios_type == bios_atom) ? "ATOM" : "Legacy" );
+
 	return 0;
 
  failed:

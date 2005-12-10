@@ -52,10 +52,13 @@ using namespace os;
 /** User-configurable values (deprecated, use configuration file) **/
 
 /* Enable experimental support for R300/R350/RV350 (Radeon 9500-9800) */
-#define RADEON_ENABLE_R300
+#define RADEON_ENABLE_R400
 
 /* Enable experimental support for Mobility & IGP chips */
 #define RADEON_ENABLE_MOBILITY
+
+/* Enable experimental support for RV370/R380/R400/R420/R450 & XPRESS (Radeon X300-X850) */
+#define RADEON_ENABLE_R400
 
 /* Configuration file */
 #define RADEON_CONFIG_FILE "/system/config/drivers/appserver/video/radeon.cfg"
@@ -83,6 +86,8 @@ enum radeon_family {
 	CHIP_FAMILY_R300,
 	CHIP_FAMILY_R350,
 	CHIP_FAMILY_RV350,
+	CHIP_FAMILY_RV380,    /* RV370/RV380/M22/M24 */
+	CHIP_FAMILY_R420,     /* R420/R423/M18 */
 	CHIP_FAMILY_LAST,
 };
 
@@ -317,6 +322,11 @@ struct VideoMode {
 	uint32	Flags;
 };
 
+enum radeon_bios {
+	bios_legacy,
+	bios_atom
+};
+
 struct radeon_info {
 
     /* From radeonfb_info structure */
@@ -336,8 +346,10 @@ struct radeon_info {
 
     PCI_Info_s	pdev;
 
+    radeon_bios			bios_type;
     vuint8			*bios_seg;
     int			fp_bios_start;
+	int			fp_atom_bios_start;
 
     int			chipset;
     uint8			family;
