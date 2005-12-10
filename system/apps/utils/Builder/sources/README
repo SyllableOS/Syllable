@@ -1,2 +1,6 @@
 Drop tarballs of third-party software in this directory.
 The build system will find and unpack them.
+
+This directory is not meant as a working directory for
+compiling your sources. You can do that in any directory.
+
