@@ -48,10 +48,18 @@ install: $(OBJDIR)/$(LIBNAME)
 	strip --strip-all $(OBJDIR)/$(LIBNAME)
 	install -s $(OBJDIR)/$(LIBNAME) $(LIBBIN)/$(LIBNAME)
 	ln -sf $(LIBNAME) $(LIBBIN)/libsyllable.so
+	cp catalogs/da/libsyllable.catalog /system/resources/catalogs/da/
+	cp catalogs/nl/libsyllable.catalog /system/resources/catalogs/nl/
+	cp catalogs/pl/libsyllable.catalog /system/resources/catalogs/pl/
+	cp catalogs/sv/libsyllable.catalog /system/resources/catalogs/sv/
 
 dist: $(OBJDIR)/$(LIBNAME)
 	install -s $(OBJDIR)/$(LIBNAME) $(DIST_DIR)/atheos/sys/libs/$(LIBNAME)
 	ln -sf $(LIBNAME) $(DIST_DIR)/atheos/sys/libs/libsyllable.so
+	cp catalogs/da/libsyllable.catalog $(DIST_DIR)/atheos/sys/resources/catalogs/da/
+	cp catalogs/nl/libsyllable.catalog $(DIST_DIR)/atheos/sys/resources/catalogs/nl/
+	cp catalogs/pl/libsyllable.catalog $(DIST_DIR)/atheos/sys/resources/catalogs/pl/
+	cp catalogs/sv/libsyllable.catalog $(DIST_DIR)/atheos/sys/resources/catalogs/sv/
 
 doc:
 	-rm -R docs/*
