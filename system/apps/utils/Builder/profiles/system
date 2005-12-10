@@ -83,6 +83,7 @@ tree
 	atheos/sys/drivers/appserver/video
 
 	atheos/sys/extensions
+	atheos/sys/extensions/dock
 	atheos/sys/extensions/translators
 
 	atheos/sys/drivers/media
