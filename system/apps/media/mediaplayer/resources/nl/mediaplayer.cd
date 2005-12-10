@@ -1,0 +1,29 @@
+//
+// Media Player string catalog
+// Nederlandse vertaling door Rik van Achterberg <rikratva@xs4all.nl>
+//
+
+MSG_MAINWND_TITLE=100						Media Player
+
+
+MSG_MAINWND_MENU_APPLICATION=200			Applicatie
+MSG_MAINWND_MENU_APPLICATION_ABOUT			Over...
+MSG_MAINWND_MENU_APPLICATION_QUIT			Afsluiten
+
+MSG_MAINWND_MENU_FILE=300					Bestand
+MSG_MAINWND_MENU_FILE_OPEN					Openen...
+MSG_MAINWND_MENU_FILE_OPEN_INPUT			Audio/videobron openen...
+MSG_MAINWND_MENU_FILE_FULLSCREEN			Volledig scherm
+
+MSG_MAINWND_MENU_TRACKS=400					Nummers
+
+MSG_ABOUTWND_TITLE=1000						Over Media Player
+MSG_ABOUTWND_TEXT							\nEen mediaspeler\nCopyright 2003 Arno Klenke\n\nDe Syllable Media Player wordt uitgegeven onder de LGPL.\n\nNederlandse vertaling door Rik van Achterberg.
+MSG_ABOUTWND_OK								OK
+
+MSG_ERRWND_TITLE=1100						Fout
+MSG_ERRWND_OK								OK
+MSG_ERRWND_CANTPLAY							Bestand kon niet worden geopend.\nControleer a.u.b. uw media-instellingen.
+
+MSG_TRACK_MENU_ITEM=2000					Nummer
+

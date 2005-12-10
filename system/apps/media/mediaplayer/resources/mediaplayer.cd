@@ -18,10 +18,11 @@ MSG_MAINWND_MENU_TRACKS=400					Tracks
 
 MSG_ABOUTWND_TITLE=1000						About Media Player
 MSG_ABOUTWND_TEXT							\nA Media Player\nCopyright 2003 Arno Klenke\n\nThe Syllable Media Player is released under the LGPL.
-MSG_ABOUTWND_OK								O.K
+MSG_ABOUTWND_OK								OK
 
 MSG_ERRWND_TITLE=1100						Error
-MSG_ERRWND_OK								Ok
-MSG_ERRWND_CANTPLAY							File could not be openend.\n Check your media settings.
+MSG_ERRWND_OK								OK
+MSG_ERRWND_CANTPLAY							File could not be opened.\nPlease check your media settings.
 
 MSG_TRACK_MENU_ITEM=2000					Track
+
