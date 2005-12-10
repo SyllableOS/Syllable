@@ -1,0 +1,18 @@
+//
+// String catalog for Catalog Compiler
+// Nederlandse vertaling door Rik van Achterberg <rikratva@xs4all.nl>
+//
+
+MSG_SYNTAX_ERROR				Syntaxisfout op regelnummer %d.
+MSG_ID_NUMBER_MISSING			ID-nummer mist.
+MSG_NO_TEXT_STRING				Geen tekenreeks gevonden.
+MSG_CANT_OPEN_FILE				Kan het bestand %s niet openen!
+
+MSG_HELP_COMPILE=100			Compileer catalog en headerbestand.
+MSG_HELP_TRANSLATE				Compileer vertaalde catalog naar binair formaat.
+MSG_HELP_HELP					Toon deze helptekst.
+
+MSG_CREATING_CATALOG_FILE=200	Maken van catalogbestand:
+MSG_CREATING_HEADER_FILE		Maken van headerbestand:
+MSG_DESCR						Hulpmiddel voor het maken van tekstlijsten voor het vertalen van software.
+

@@ -20,8 +20,9 @@ $(OBJDIR):
 $(OBJDIR)/catcomp: $(catcomp_OBJS)
 	$(CXX) $(catcomp_OBJS) -lsyllable -o $@
 	rescopy -r $(OBJDIR)/catcomp catcomp.catalog=resources/catcomp.catalog
-	rescopy -a $(OBJDIR)/catcomp sv/catcomp.catalog=resources/sv/catcomp.catalog
 	rescopy -a $(OBJDIR)/catcomp da/catcomp.catalog=resources/da/catcomp.catalog
+	rescopy -a $(OBJDIR)/catcomp nl/catcomp.catalog=resources/nl/catcomp.catalog
+	rescopy -a $(OBJDIR)/catcomp sv/catcomp.catalog=resources/sv/catcomp.catalog
 
 $(OBJDIR)/catalogtool: $(catalogtool_OBJS)
 	$(CXX) $(catalogtool_OBJS) -lsyllable -o $@
