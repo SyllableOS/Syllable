@@ -14,9 +14,10 @@ $(OBJDIR):
 $(OBJDIR)/ColdFishRemote.so: $(OBJS)
 	$(CXX) -shared -Xlinker "-soname=ColdFishRemote.so" $(OBJS) -lsyllable -o $(OBJDIR)/ColdFishRemote.so
 	rescopy -r $(OBJDIR)/ColdFishRemote.so images/*.png
-	rescopy -a $(OBJDIR)/ColdFishRemote.so sv/ColdFishRemote.catalog=resources/sv/ColdFishRemote.catalog
 	rescopy -a $(OBJDIR)/ColdFishRemote.so da/ColdFishRemote.catalog=resources/da/ColdFishRemote.catalog
-#	rescopy -a $(OBJDIR)/ColdFishRemote.so pl/ColdFishRemote.catalog=resources/pl/ColdFishRemote.catalog
+	rescopy -a $(OBJDIR)/ColdFishRemote.so nl/ColdFishRemote.catalog=resources/nl/ColdFishRemote.catalog
+	rescopy -a $(OBJDIR)/ColdFishRemote.so pl/ColdFishRemote.catalog=resources/pl/ColdFishRemote.catalog
+	rescopy -a $(OBJDIR)/ColdFishRemote.so sv/ColdFishRemote.catalog=resources/sv/ColdFishRemote.catalog
 
 install:  $(OBJDIR)/ColdFishRemote.so
 	mkdir -p $(APPBIN)
