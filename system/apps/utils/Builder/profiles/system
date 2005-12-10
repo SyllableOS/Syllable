@@ -52,6 +52,12 @@ tree
 
 	atheos/sys/resources
 	atheos/sys/resources/catalogs
+	atheos/sys/resources/catalogs/da
+	atheos/sys/resources/catalogs/de
+	atheos/sys/resources/catalogs/fy
+	atheos/sys/resources/catalogs/nl
+	atheos/sys/resources/catalogs/pl
+	atheos/sys/resources/catalogs/sv
 
 	atheos/sys/drivers
 
