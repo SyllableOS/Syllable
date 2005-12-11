@@ -7,7 +7,7 @@ modules
 	apps/gnu/inetutils-1.4.2
 	apps/gnu/less-382
 	apps/gnu/tar-1.14
-	apps/other/Man
+;	apps/other/Man
 	apps/other/unzip-5.51
 	apps/other/zip-2.3
 	apps/desktop/dock_plugins/clock
@@ -26,7 +26,7 @@ modules
 	apps/utils/mixer
 	apps/utils/Albert
 ;	apps/utils/Builder
-	apps/utils/CodeEdit
+;	apps/utils/CodeEdit
 	apps/utils/DiskManager
 	apps/utils/Launch
 	apps/utils/aclock
@@ -40,8 +40,9 @@ modules
 	apps/utils/crypt
 	apps/utils/keymapconv
 	apps/utils/memmon
+
 ;	Needs objcopy from BinUtils:
 	apps/utils/rescopy
+
 	apps/utils/shelltools
 	apps/utils/slbmgr
-
