@@ -224,6 +224,11 @@ cp objs/boot.img $CDROOT/boot/boot.img
 echo "Copying $TARBALL base package"
 cp $TARBALL $CDROOT/Packages/base/
 
+YN=""
+echo "Have you remembered to set the version information in do_install.rb?"
+echo -n "Press any key to continue:"
+read YN
+
 echo "Copying installation scripts"
 cp -dpr ../scripts/install/* $CDROOT/Install/
 
@@ -247,8 +252,8 @@ cp -r $NET/* $CDROOT/Packages/net/
 echo "Building ISO image"
 ./mkiso.sh $CDROOT $VER
 
-echo "Moving ISO image"
-mv $VER.iso.gz objs/$VER-basic.iso.gz
+echo "Renaming ISO"
+mv $VER.iso objs/$VER-basic.iso
 
 echo "Done!"
 exit 0
