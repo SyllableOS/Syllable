@@ -170,6 +170,7 @@ cp -p $ROOT/atheos/usr/coreutils/bin/sleep $CDROOT/atheos/usr/bin/
 cp -p $ROOT/atheos/usr/coreutils/bin/sync $CDROOT/atheos/usr/bin/
 cp -p $ROOT/atheos/usr/coreutils/bin/whoami $CDROOT/atheos/usr/bin/
 cp -p $ROOT/atheos/usr/coreutils/bin/uname $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/coreutils/bin/stty $CDROOT/atheos/usr/bin/
 
 cp -p $ROOT/atheos/usr/findutils/bin/find $CDROOT/atheos/usr/bin/
 cp -p $ROOT/atheos/usr/gzip/bin/gzip $CDROOT/atheos/usr/bin/
@@ -180,7 +181,7 @@ cp -p $ROOT/atheos/usr/ncurses/bin/clear $CDROOT/atheos/usr/bin/
 cp -p $ROOT/atheos/usr/less/bin/less $CDROOT/atheos/usr/bin/
 
 cp -p $ROOT/atheos/usr/bash/bin/bash $CDROOT/atheos/usr/bin/
-cp -p $ROOT/atheos/usr/bin/grep $CDROOT/atheos/usr/bin/
+cp -p $ROOT/atheos/usr/grep/bin/grep $CDROOT/atheos/usr/bin/
 
 cp -p $ROOT/atheos/usr/share/terminfo/x/xterm $CDROOT/atheos/usr/share/terminfo/x/
 
@@ -212,7 +213,7 @@ if [ ! -e "$RUBY" ]; then
 	exit 1;
 fi;
 
-tar -xzpf $RUBY -C $CDROOT/atheos/usr/
+unzip $RUBY -d $CDROOT/atheos/usr/
 cd $CDROOT/atheos/usr/bin
 ln -s /usr/ruby/bin/ruby ruby
 cd ../../../..

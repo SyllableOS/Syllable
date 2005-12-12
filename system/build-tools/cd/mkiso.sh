@@ -21,10 +21,7 @@ NAME="Syllable $VER"
 echo "Building ISO image"
 # Do not mess with the following line unless you know exactly what you are doing.  Getting the
 # options wrong will mean the CD will be unbootable (And likely unreadable)
-mkisofs -iso-level 3 -L -R -V "$NAME" -b boot/boot.img -o $VER.iso $ROOT
-
-echo "Compressing ISO image"
-gzip $VER.iso
+mkisofs -iso-level 3 --allow-leading-dots -R -V "$NAME" -b boot/boot.img -o $VER.iso $ROOT
 
 echo "Done!"
 exit 0
