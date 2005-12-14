@@ -5,7 +5,8 @@ scripts			:= manmanager
 posix-apps-path	:= /usr
 executables-dir	:= bin
 register		:= pkgmanager -a
-install-path	:= $(posix-apps-path)/$(name)
+#install-path	:= $(posix-apps-path)/$(name)
+install-path	:= $(prefix)
 distro-path		:= $(DIST_DIR)/atheos$(install-path)
 
 .PHONY: all deps clean install dist
@@ -22,7 +23,6 @@ clean:
 
 install: all $(install-path)
 	cp $(main) $(scripts) $(install-path)/$(executables-dir)
-	$(register) $(install-path)
 
 $(install-path):
 	mkdir $(install-path)
