@@ -4,9 +4,9 @@
 # inetd is a special case and is always started first if inetutils is
 # installed.
 
-if [ -e /atheos/autolnk/sbin/inetd ]
+if [ -e /atheos/autolnk/libexec/inetd ]
 then
-  /atheos/autolnk/sbin/inetd &
+  /atheos/autolnk/libexec/inetd &
 fi
 
 # Packages that require initalisation can include an init directory, which
