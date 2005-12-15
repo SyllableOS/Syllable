@@ -1,6 +1,6 @@
 authors				Kaj de Vos
 status				testing
-notes				Tested with Orca 0.0.21 and M2 0.3.1
+notes				Tested with Orca 0.0.22 and M2 0.3.1
 
 licenses			LGPL
 home				wsrebol.sf.net
@@ -12,18 +12,18 @@ locations			wsrebol.sf.net/arc/
 needs				bzip2
 
 patch
-	cp ../orca-current/support/m2/m2 .
-	cp ../orca-current/support/m2/m2_linux.r m2_template.r
+	cp support/m2/m2			.
+	cp support/m2/m2_linux.r	m2_template.r
 
 no-build-dir
 
 ;configure			./m2
 
-install-tree		bin lib
+install-tree		bin lib include
 install				true
 install-files
 	ocore			bin
 	liborca.a		lib
+	ovalue.h		include
 documentation		README LICENSE ChangeLog TODO
 links				ocore bin/rebol
-

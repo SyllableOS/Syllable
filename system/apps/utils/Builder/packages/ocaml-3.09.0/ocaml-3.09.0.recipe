@@ -1,0 +1,41 @@
+authors
+	Kaj de Vos
+	Jamie Clarkson
+status			testing
+notes
+	The patch for the configuration for the native code compiler is a bit of a hack, but it seems to work
+
+licenses		QPL LGPL other
+home			www.ocaml.org
+locations
+	http://caml.inria.fr/pub/distrib/ocaml-3.09/
+	ftp://ftp.inria.fr/INRIA/caml-light/ocaml-3.09/
+
+no-build-dir
+
+patch-config	config/gnu
+configure-args
+	-prefix /usr/ocaml
+	-no-pthread
+
+make-targets
+	world.opt
+;		No native code compiler:
+;		world
+;	For testing the bytecode compiler:
+;;	bootstrap
+;		Native code compiler:
+;		opt
+;		For testing the native code compiler, and generating native versions of the compilers:
+;		opt.opt
+
+;install
+;;	umask 022
+;	make install
+;;	cd emacs
+;;	make EMACSDIR="" install
+; Mixed binaries!
+;strip-files		<Everything but ocamldebug and ocamlbrowser>
+documentation
+	README Upgrading LICENSE Changes
+;	INSTALL
