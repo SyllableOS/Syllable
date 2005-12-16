@@ -2,9 +2,10 @@ CFLAGS	+= -c
 CXXFLAGS += -c
 OBJDIR = objs
 
-EXES	= $(OBJDIR)/init $(OBJDIR)/ps $(OBJDIR)/ls_ports $(OBJDIR)/ls_sema	\
-	  $(OBJDIR)/top $(OBJDIR)/reboot $(OBJDIR)/nice $(OBJDIR)/semctl	\
-	  $(OBJDIR)/shutdown $(OBJDIR)/strace $(OBJDIR)/sysinfo mkhome
+EXES = $(OBJDIR)/init $(OBJDIR)/ps $(OBJDIR)/ls_ports $(OBJDIR)/ls_sema	\
+	$(OBJDIR)/top $(OBJDIR)/reboot $(OBJDIR)/nice $(OBJDIR)/semctl	\
+	$(OBJDIR)/shutdown $(OBJDIR)/strace $(OBJDIR)/sysinfo \
+	mkhome kill_all
 
 init_OBJS     = init.o
 ps_OBJS       = ps.o
