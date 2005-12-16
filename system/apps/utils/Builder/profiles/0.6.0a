@@ -1,5 +1,8 @@
 ; Modules to rebuild for the Syllable 0.6.0a update
 
+resources
+	atheos/sys/libs	GCC-libraries-3.3.4
+
 modules
 	other/config/template
 ;	Just user_init.sh:
