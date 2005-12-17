@@ -1,3 +1,14 @@
+* December 17 2005, Kaj de Vos *
+
+Added Dutch translations for
+- Locale preference applet
+- Xpdf (source of which hasn't been imported yet)
+
+Extended the Dutch translation for AEdit for version 2.1. Reconstructed my old
+improvements to the ancient translation, which were lost in the upgrade.
+
+Made minor corrections to the corresponding English texts.
+
 * December 10 2005, Kaj de Vos *
 
 Added Dutch translations by Rik van Achterberg for
