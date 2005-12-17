@@ -1,5 +1,5 @@
 #
-# Language database for Locale Prefs - V0.1
+# Language database for Locale Prefs - V0.2
 # Copyright (C)2005 Syllable Team
 #
 # Tabsize = 4
@@ -18,11 +18,11 @@ English/New Zealand	OCEANIA			New Zealand			INDO_EUROPEAN/GERMANIC		en-nz		en-nz
 Español				EUROPE			España				INDO_EUROPEAN/ROMANCE		es			es.png
 Føroysku			EUROPE			Färöarna			INDO_EUROPEAN/GERMANIC		fo			fo.png
 Français			EUROPE			France				INDO_EUROPEAN/ROMANCE		fr			fr.png
-Frysk				EUROPE			?					INDO_EUROPEAN				fy			fy.png
+Frysk				EUROPE			?					INDO_EUROPEAN/GERMANIC		fy			fy.png
 Íslenska			EUROPE			Island				INDO_EUROPEAN/GERMANIC		is			is.png
 Italiano			EUROPE			Italia				INDO_EUROPEAN/ROMANCE		it			it.png
 日本語 (Japanese)		ASIA			Japan				?							ja			ja.png
-Nederlands			EUROPE			Holland				INDO_EUROPEAN/GERMANIC		nl			nl.png
+Nederlands			EUROPE			The Netherlands		INDO_EUROPEAN/GERMANIC		nl			nl.png
 Norsk/Bokmål		EUROPE			Norge				INDO_EUROPEAN/GERMANIC		nb			no.png
 Norsk/Nynorsk		EUROPE			Norge				INDO_EUROPEAN/GERMANIC		nn			no.png
 Polski				EUROPE			Poland				INDO_EUROPEAN/SLAVONIC		pl			pl.png

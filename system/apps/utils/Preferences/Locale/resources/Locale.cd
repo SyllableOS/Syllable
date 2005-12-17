@@ -10,8 +10,8 @@ STR_MAIN_DEFAULT						_Default
 STR_MAIN_LANGUAGE_TAB=1100				Language
 STR_MAIN_LANGUAGE_ACTIVATE				Activate Language >
 STR_MAIN_LANGUAGE_DEACTIVATE			< Deactivate Language
-STR_MAIN_LANGUAGE_AVAILABLE				Supported languages
-STR_MAIN_LANGUAGE_USED					Active languages
+STR_MAIN_LANGUAGE_AVAILABLE				Supported Languages
+STR_MAIN_LANGUAGE_USED					Active Languages
 
 STR_MAIN_COUNTRY_TAB=1200				Country
 
