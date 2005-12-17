@@ -22,6 +22,7 @@ modules
 ;	sys/appserver/appserver/drivers/video/mga
 	sys/appserver/appserver/drivers/video/radeon
 	apps/utils/Preferences/Dock
+	apps/utils/Preferences/Locale
 ;	apps/utils/Preferences/Screen
 	apps/utils/Man
 ;	Just the symlinks in /atheos/autolnk/bin/:
@@ -33,4 +34,5 @@ modules
 	apps/utils/Launch
 	apps/utils/aedit
 	apps/utils/catalog
-
+;	Just take the Dutch translation from here:
+;	apps/utils/xpdf
