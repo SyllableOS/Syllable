@@ -3,5 +3,7 @@ authors
 	Kaj de Vos
 maintainers			Kaj de Vos
 
+headline			Simple man script in place of full Man package
+
 install-tree
 
