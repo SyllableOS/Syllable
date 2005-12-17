@@ -23,6 +23,7 @@ modules
 	sys/appserver/appserver/drivers/video/radeon
 	apps/utils/Preferences/Dock
 ;	apps/utils/Preferences/Screen
+	apps/utils/Man
 ;	Just the symlinks in /atheos/autolnk/bin/:
 	apps/utils/man2html
 	apps/utils/systools
@@ -32,3 +33,4 @@ modules
 	apps/utils/Launch
 	apps/utils/aedit
 	apps/utils/catalog
+
