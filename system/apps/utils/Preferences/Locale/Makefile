@@ -8,9 +8,10 @@ $(EXE): $(OBJS)
 	rescopy -r $(EXE) resources/*.png *.png
 	rescopy -a $(EXE) resources/languages.db
 	rescopy -a $(EXE) resources/Locale.catalog
-	rescopy -a $(EXE) sv/Locale.catalog=resources/sv/Locale.catalog
 	rescopy -a $(EXE) da/Locale.catalog=resources/da/Locale.catalog
+	rescopy -a $(EXE) nl/Locale.catalog=resources/nl/Locale.catalog
 	rescopy -a $(EXE) pl/Locale.catalog=resources/pl/Locale.catalog
+	rescopy -a $(EXE) sv/Locale.catalog=resources/sv/Locale.catalog
 
 dist: $(EXE)
 	mkdir -p $(DIST_DIR)/atheos/Applications/Preferences
@@ -22,4 +23,3 @@ clean:
 
 .cpp.o:
 	$(CXX) $(COPTS) $< -o $@
-
