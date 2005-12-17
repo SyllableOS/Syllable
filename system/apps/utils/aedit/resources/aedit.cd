@@ -2,95 +2,94 @@
 // AEdit string catalog
 //
 
-MSG_APPWND_TITLE					AEdit
-MSG_APPWND_TITLE_NEW_FILE			New File
+MSG_APPWND_TITLE							AEdit
+MSG_APPWND_TITLE_NEW_FILE					New Document
 
-MSG_MENU_APPLICATION=100			Application
-MSG_MENU_APPLICATION_QUIT			Quit
-MSG_MENU_APPLICATION_ABOUT			About
+MSG_MENU_APPLICATION=100					Application
+MSG_MENU_APPLICATION_QUIT					Quit
+MSG_MENU_APPLICATION_ABOUT					About AEdit...
 
-MSG_MENU_FILE=200					File
-MSG_MENU_FILE_NEW					New
-MSG_MENU_FILE_OPEN					Open...
-MSG_MENU_FILE_CLOSE					Close
-MSG_MENU_FILE_SAVE					Save
-MSG_MENU_FILE_SAVE_AS				Save as...
-MSG_MENU_FILE_SAVE_ALL				Save All
-MSG_MENU_FILE_NEXT_FILE				Next file
-MSG_MENU_FILE_PREVIOUS_FILE			Previous file
+MSG_MENU_FILE=200							File
+MSG_MENU_FILE_NEW							New
+MSG_MENU_FILE_OPEN							Open...
+MSG_MENU_FILE_CLOSE							Close
+MSG_MENU_FILE_SAVE							Save
+MSG_MENU_FILE_SAVE_AS						Save as...
+MSG_MENU_FILE_SAVE_ALL						Save All
+MSG_MENU_FILE_NEXT_FILE						Next File
+MSG_MENU_FILE_PREVIOUS_FILE					Previous File
 
-MSG_MENU_EDIT=300					Edit
-MSG_MENU_EDIT_CUT					Cut
-MSG_MENU_EDIT_COPY					Copy
-MSG_MENU_EDIT_PASTE					Paste
-MSG_MENU_EDIT_SELECT_ALL			Select all
-MSG_MENU_EDIT_UNDO					Undo
-MSG_MENU_EDIT_REDO					Redo
+MSG_MENU_EDIT=300							Edit
+MSG_MENU_EDIT_CUT							Cut
+MSG_MENU_EDIT_COPY							Copy
+MSG_MENU_EDIT_PASTE							Paste
+MSG_MENU_EDIT_SELECT_ALL					Select All
+MSG_MENU_EDIT_UNDO							Undo
+MSG_MENU_EDIT_REDO							Redo
 
-MSG_MENU_FIND=400					Find
-MSG_MENU_FIND_FIND					Find
-MSG_MENU_FIND_REPLACE				Replace
-MSG_MENU_FIND_GOTO_LINE				Goto line...
+MSG_MENU_FIND=400							Find
+MSG_MENU_FIND_FIND							Find...
+MSG_MENU_FIND_REPLACE						Replace...
+MSG_MENU_FIND_GOTO_LINE						Go to Line...
 
-MSG_MENU_FONT=500					Font
-MSG_MENU_FONT_SIZE					Size
+MSG_MENU_FONT=500							Font
+MSG_MENU_FONT_SIZE							Size
 
-MSG_MENU_SETTINGS=600				Settings
-MSG_MENU_SETTINGS_SAVE_ON_CLOSE		Save settings on Close
-MSG_MENU_SETTINGS_SAVE_NOW			Save settings now
-MSG_MENU_SETTINGS_RESET				Reset settings
+MSG_MENU_SETTINGS=600						Settings
+MSG_MENU_SETTINGS_SAVE_ON_CLOSE				Save Settings on Close
+MSG_MENU_SETTINGS_SAVE_NOW					Save Settings Now
+MSG_MENU_SETTINGS_RESET						Reset Settings
 
-MSG_MENU_HELP=700					Help
-MSG_MENU_HELP_TABLE_OF_CONTENTS		Table of Contents
-MSG_MENU_HELP_HOMEPAGE				AEdit Homepage
+MSG_MENU_HELP=700							Help
+MSG_MENU_HELP_TABLE_OF_CONTENTS				Manual...
+MSG_MENU_HELP_HOMEPAGE						AEdit Web Page
 
-MSG_ABOUT_TITLE=800					About
-MSG_ABOUT_TEXT						\n\nText Editor for Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit is released under the GNU General\nPublic License.  Please see the file COPYING,\ndistributed with AEdit, or http://www.gnu.org\nfor more information.
-MSG_ABOUT_CLOSE						Close
-MSG_ABOUT_VERSION					version: 
-MSG_ABOUT_LINE_1 					A Texteditor For Syllable
-MSG_ABOUT_LINE_2					(C)2005 The Syllable team
-MSG_ABOUT_LINE_3					w w w . s y l l a b l e . o r g
+MSG_ABOUT_TITLE=800							About AEdit
+MSG_ABOUT_TEXT								\n\nText Editor for Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit is released under the GNU General\nPublic License. Please see the file COPYING,\ndistributed with AEdit, or http://www.gnu.org\nfor more information.
+MSG_ABOUT_CLOSE								Close
+MSG_ABOUT_VERSION							version: 
+MSG_ABOUT_LINE_1 							A Text Editor for Syllable
+MSG_ABOUT_LINE_2							(c) 2005 The Syllable Team
+MSG_ABOUT_LINE_3							w w w . s y l l a b l e . o r g
 
-MSG_ERROR_TITLE=900					About AEdit
-MSG_ERROR_CANT_SAVE					Unable to save file
-MSG_ERROR_CLOSE						O.K
+MSG_ERROR_TITLE=900							Save
+MSG_ERROR_CANT_SAVE							Unable to save file.
+MSG_ERROR_CLOSE								OK
 
-MSG_FIND_TITLE=1000					Find
-MSG_FIND_FIND_LABEL					Find
-MSG_FIND_CASE_SENSITIVE				Case Sensitive Search
-MSG_FIND_FIND						_Find
-MSG_FIND_FIND_NEXT					Find _Next
-MSG_FIND_CLOSE					    _Close
+MSG_FIND_TITLE=1000							Find
+MSG_FIND_FIND_LABEL							Find
+MSG_FIND_CASE_SENSITIVE						Case Sensitive Search
+MSG_FIND_FIND								_Find First
+MSG_FIND_FIND_NEXT							Find _Next
+MSG_FIND_CLOSE					    		_Close
 
-MSG_GOTO_TITLE=1100					Goto Line
-MSG_GOTO_GOTO						Goto Line
-MSG_GOTO_CLOSE						Close
+MSG_GOTO_TITLE=1100							Go to Line
+MSG_GOTO_GOTO								_Go to Line
+MSG_GOTO_CLOSE								_Cancel
 
-MSG_REPLACE_TITLE=1200				Replace
-MSG_REPLACE_LBLFIND					Find
-MSG_REPLACE_WITH					Replace with
-MSG_REPLACE_CASE_SENSITIVE			Case _Sensitive Search
-MSG_REPLACE_FIND					_Find
-MSG_REPLACE_FIND_NEXT				Find _Next
-MSG_REPLACE_REPLACE					_Replace
-MSG_REPLACE_CLOSE				    _Close
+MSG_REPLACE_TITLE=1200						Replace
+MSG_REPLACE_LBLFIND							Find
+MSG_REPLACE_WITH							Replace with
+MSG_REPLACE_CASE_SENSITIVE					Case _Sensitive Search
+MSG_REPLACE_FIND							_Find First
+MSG_REPLACE_FIND_NEXT						Find _Next
+MSG_REPLACE_REPLACE							_Replace
+MSG_REPLACE_CLOSE				    		_Close
 
-MSG_ALERT_CLOSE_FILE_TITLE=1500		Save file?
-MSG_ALERT_CLOSE_FILE_BODY			Do you want to save file before closing it?
-MSG_ALERT_CLOSE_FILE_YES			Yes
-MSG_ALERT_CLOSE_FILE_NO				No
-MSG_ALERT_CLOSE_FILE_CANCEL			Cancel
-MSG_ALERT_SAVE_FILE_TITLE			Error
-MSG_ALERT_SAVE_FILE_BODY			Unable to save file "%s".
-MSG_ALERT_SAVE_FILE_OK				OK
-MSG_ALERT_QUIT_TITLE				Really quit?
-MSG_ALERT_QUIT_BODY					You have unsaved files. Data will be lost if you quit.\nAre you sure you want to quit?
-MSG_ALERT_QUIT_YES					Yes
-MSG_ALERT_QUIT_NO					No
-MSG_ALERT_FILE_OPEN_TITLE			Error
-MSG_ALERT_FILE_OPEN_OK				OK
-
+MSG_ALERT_CLOSE_FILE_TITLE=1500				Save file?
+MSG_ALERT_CLOSE_FILE_BODY					Do you want to save the file before closing it?
+MSG_ALERT_CLOSE_FILE_YES					Save
+MSG_ALERT_CLOSE_FILE_NO						Discard
+MSG_ALERT_CLOSE_FILE_CANCEL					Cancel
+MSG_ALERT_SAVE_FILE_TITLE					Error
+MSG_ALERT_SAVE_FILE_BODY					Unable to save file "%s".
+MSG_ALERT_SAVE_FILE_OK						OK
+MSG_ALERT_QUIT_TITLE						Really quit?
+MSG_ALERT_QUIT_BODY							You have unsaved files. Data will be lost if you quit.\nAre you sure you want to quit?
+MSG_ALERT_QUIT_YES							Quit
+MSG_ALERT_QUIT_NO							Cancel
+MSG_ALERT_FILE_OPEN_TITLE					Error
+MSG_ALERT_FILE_OPEN_OK						OK
 
 MSG_STATUSBAR_WELCOME=2000					Welcome to AEdit!
 MSG_STATUSBAR_CLOSED_FILE					File "%s" has been closed.
@@ -98,7 +97,7 @@ MSG_STATUSBAR_SAVED_FILE					File "%s" has been saved.
 MSG_STATUSBAR_FILE_CLOSED_AND_SAVED			File "%s" has been closed and changes has been saved.
 MSG_STATUSBAR_FILE_CLOSED_AND_NOT_SAVED		File "%s" has been closed without saving changes.
 MSG_STATUSBAR_NEW_FILE_CREATED				New file "%s" has been created.
-MSG_STATUSBAR_FILE_LOADED_OK				File "%s" has been successfully loaded.
+MSG_STATUSBAR_FILE_LOADED_OK				File "%s" has been successfully opened.
 MSG_STATUSBAR_FILE_UNABLE_TO_OPEN			Unable to open file "%s".
 MSG_STATUSBAR_SEARCH_FOUND					Phrase "%s" was found.
 MSG_STATUSBAR_SEARCH_NOT_FOUND_1			Phrase \"%s\" was not found.
@@ -106,5 +105,5 @@ MSG_STATUSBAR_SEARCH_NOT_FOUND_2			Phrase was not found.
 MSG_STATUSBAR_REPLACE_OK					Phrase "%s" has been replaced with "%s".
 MSG_STATUSBAR_REPLACE_NOT_OK				Phrase was not replaced.
 
-MSG_BUFFER_UNTITLED=2100					Untitled-%d
-MSG_BUFFER_CURSOR							Col: %d Row: %d
+MSG_BUFFER_UNTITLED=2100					Untitled - %d
+MSG_BUFFER_CURSOR							Column: %d Row: %d

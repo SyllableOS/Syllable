@@ -1,70 +1,110 @@
 //
 // AEdit string catalog
+// Dutch translation by Kaj de Vos and others
 //
 
-MSG_APPWND_TITLE					AEdit
-MSG_APPWND_TITLE_NEW_FILE			Nieuw Bestand
+MSG_APPWND_TITLE							AEdit
+MSG_APPWND_TITLE_NEW_FILE					Nieuw document
 
-MSG_MENU_APPLICATION=100			Applicatie
-MSG_MENU_APPLICATION_QUIT			Afsluiten
-MSG_MENU_APPLICATION_ABOUT			Info
+MSG_MENU_APPLICATION=100					Applicatie
+MSG_MENU_APPLICATION_QUIT					Afsluiten
+MSG_MENU_APPLICATION_ABOUT					Over AEdit...
 
-MSG_MENU_FILE=200					Bestand
-MSG_MENU_FILE_NEW					Nieuw
-MSG_MENU_FILE_OPEN					Open
-MSG_MENU_FILE_SAVE					Opslaan
-MSG_MENU_FILE_SAVE_AS				Opslaan als...
+MSG_MENU_FILE=200							Bestand
+MSG_MENU_FILE_NEW							Nieuw
+MSG_MENU_FILE_OPEN							Openen...
+MSG_MENU_FILE_CLOSE							Sluiten
+MSG_MENU_FILE_SAVE							Opslaan
+MSG_MENU_FILE_SAVE_AS						Opslaan als...
+MSG_MENU_FILE_SAVE_ALL						Alle opslaan
+MSG_MENU_FILE_NEXT_FILE						Volgend bestand
+MSG_MENU_FILE_PREVIOUS_FILE					Vorig bestand
 
-MSG_MENU_EDIT=300					Bewerken
-MSG_MENU_EDIT_CUT					Knippen
-MSG_MENU_EDIT_COPY					Kopiëren
-MSG_MENU_EDIT_PASTE					Plakken
-MSG_MENU_EDIT_SELECT_ALL			Alles Selecteren
-MSG_MENU_EDIT_UNDO					Ongedaan Maken
-MSG_MENU_EDIT_REDO					Opnieuw
+MSG_MENU_EDIT=300							Bewerken
+MSG_MENU_EDIT_CUT							Knippen
+MSG_MENU_EDIT_COPY							Kopiëren
+MSG_MENU_EDIT_PASTE							Plakken
+MSG_MENU_EDIT_SELECT_ALL					Alles selecteren
+MSG_MENU_EDIT_UNDO							Bewerking ongedaan maken
+MSG_MENU_EDIT_REDO							Bewerking opnieuw uitvoeren
 
-MSG_MENU_FIND=400					Zoeken
-MSG_MENU_FIND_FIND					Zoeken
-MSG_MENU_FIND_REPLACE				Vervangen
-MSG_MENU_FIND_GOTO_LINE				Ga naar lijn...
+MSG_MENU_FIND=400							Zoeken
+MSG_MENU_FIND_FIND							Zoeken...
+MSG_MENU_FIND_REPLACE						Vervangen...
+MSG_MENU_FIND_GOTO_LINE						Ga naar regel...
 
-MSG_MENU_FONT=500					Lettertype
-MSG_MENU_FONT_SIZE					Grootte
+MSG_MENU_FONT=500							Lettertype
+MSG_MENU_FONT_SIZE							Grootte
 
-MSG_MENU_SETTINGS=600				Instellingen
-MSG_MENU_SETTINGS_SAVE_ON_CLOSE		Instellingen opslaan bij afluiten
-MSG_MENU_SETTINGS_SAVE_NOW			Instellen opslaan
-MSG_MENU_SETTINGS_RESET				Instellingen herstellen
+MSG_MENU_SETTINGS=600						Instellingen
+MSG_MENU_SETTINGS_SAVE_ON_CLOSE				Instellingen opslaan bij afsluiten
+MSG_MENU_SETTINGS_SAVE_NOW					Instellingen nu opslaan
+MSG_MENU_SETTINGS_RESET						Instellingen herstellen
 
-MSG_MENU_HELP=700					Help
-MSG_MENU_HELP_TABLE_OF_CONTENTS		Inhoudstafel
-MSG_MENU_HELP_HOMEPAGE				AEdit Homepage
+MSG_MENU_HELP=700							Help
+MSG_MENU_HELP_TABLE_OF_CONTENTS				Handleiding...
+MSG_MENU_HELP_HOMEPAGE						AEdit-webpagina...
 
-MSG_ABOUT_TITLE=800					Info
-MSG_ABOUT_TEXT						\n\nText Editor voor Syllable\nCopyright 2000-2003 Kristian Van Der Vliet\n\nAEdit is gepubliceerd onder de GNU General\nPublic License.  Gelieve het bestand COPYING,\ngedistribueerd samen met AEdit, of http://www.gnu.org\n raad te plegen voor meer informatie.
-MSG_ABOUT_CLOSE						O.K
+MSG_ABOUT_TITLE=800							Over AEdit
+MSG_ABOUT_TEXT								\n\nEenvoudige tekstverwerker voor Syllable\nAuteursrecht 2000-2003 Kristian Van Der Vliet\n\nAEdit is gepubliceerd onder de GNU\nGeneral Public License. Gelieve het bestand\nCOPYING, gedistribueerd samen met AEdit, of\nhttp://www.gnu.org\nte raadplegen voor meer informatie.\n\nNederlandse vertaling door Kaj de Vos en anderen.
+MSG_ABOUT_CLOSE								OK
+MSG_ABOUT_VERSION							versie: 
+MSG_ABOUT_LINE_1 							Een tekstverwerker voor Syllable
+MSG_ABOUT_LINE_2							(c) 2005 het Syllable-team
+MSG_ABOUT_LINE_3							w w w . s y l l a b l e . o r g
 
-MSG_ERROR_TITLE=900					AEdit
-MSG_ERROR_CANT_SAVE					Kon bestand niet bewaren.
-MSG_ERROR_CLOSE						O.K
+MSG_ERROR_TITLE=900							Opslaan
+MSG_ERROR_CANT_SAVE							Kon bestand niet bewaren.
+MSG_ERROR_CLOSE								OK
 
-MSG_FIND_TITLE=1000					Zoeken
-MSG_FIND_FIND_LABEL					Zoek
-MSG_FIND_CASE_SENSITIVE				Hoofdlettergevoelige opzoeking
-MSG_FIND_FIND						_Zoek
-MSG_FIND_FIND_NEXT					Zoek Volge_nde
-MSG_FIND_CLOSE						_Sluiten
+MSG_FIND_TITLE=1000							Zoeken
+MSG_FIND_FIND_LABEL							Zoek
+MSG_FIND_CASE_SENSITIVE						_Hoofdlettergevoelig zoeken
+MSG_FIND_FIND								_Zoek eerste
+MSG_FIND_FIND_NEXT							Zoek _volgende
+MSG_FIND_CLOSE								_Sluiten
 
-MSG_GOTO_TITLE=1100					Ga naar lijn
-MSG_GOTO_GOTO						Ga naar lijn
-MSG_GOTO_CLOSE						Sluiten
+MSG_GOTO_TITLE=1100							Ga naar regel
+MSG_GOTO_GOTO								_Ga naar regel
+MSG_GOTO_CLOSE								_Annuleren
 
-MSG_REPLACE_TITLE=1200				Vervangen
-MSG_REPLACE_LBLFIND					Zoek
-MSG_REPLACE_WITH					Vervangen door
-MSG_REPLACE_CASE_SENSITIVE			_Hoofdlettergevoelige opzoeking
-MSG_REPLACE_FIND					_Zoek
-MSG_REPLACE_FIND_NEXT				Zoek Volge_nde
-MSG_REPLACE_REPLACE					_Vervangen
-MSG_REPLACE_CLOSE					_Sluiten
+MSG_REPLACE_TITLE=1200						Vervangen
+MSG_REPLACE_LBLFIND							Zoek
+MSG_REPLACE_WITH							Vervangen door
+MSG_REPLACE_CASE_SENSITIVE					_Hoofdlettergevoelig zoeken
+MSG_REPLACE_FIND							_Zoek eerste
+MSG_REPLACE_FIND_NEXT						Zoek _volgende
+MSG_REPLACE_REPLACE							_Vervangen
+MSG_REPLACE_CLOSE							_Sluiten
 
+MSG_ALERT_CLOSE_FILE_TITLE=1500				Document opslaan?
+MSG_ALERT_CLOSE_FILE_BODY					Wilt u het document opslaan?
+MSG_ALERT_CLOSE_FILE_YES					Opslaan
+MSG_ALERT_CLOSE_FILE_NO						Niet opslaan
+MSG_ALERT_CLOSE_FILE_CANCEL					Annuleren
+MSG_ALERT_SAVE_FILE_TITLE					Fout
+MSG_ALERT_SAVE_FILE_BODY					Kon bestand "%s" niet opslaan.
+MSG_ALERT_SAVE_FILE_OK						OK
+MSG_ALERT_QUIT_TITLE						Werkelijk afsluiten?
+MSG_ALERT_QUIT_BODY							U hebt niet-opgeslagen documenten. Gegevens zullen verloren gaan als u nu afsluit.\nWeet u zeker dat u AEdit wilt verlaten?
+MSG_ALERT_QUIT_YES							Afsluiten
+MSG_ALERT_QUIT_NO							Annuleren
+MSG_ALERT_FILE_OPEN_TITLE					Fout
+MSG_ALERT_FILE_OPEN_OK						OK
+
+MSG_STATUSBAR_WELCOME=2000					Welkom bij AEdit!
+MSG_STATUSBAR_CLOSED_FILE					Bestand "%s" is gesloten.
+MSG_STATUSBAR_SAVED_FILE					Bestand "%s" is opgeslagen.
+MSG_STATUSBAR_FILE_CLOSED_AND_SAVED			Bestand "%s" is gesloten en wijzigingen zijn opgeslagen.
+MSG_STATUSBAR_FILE_CLOSED_AND_NOT_SAVED		Bestand "%s" is gesloten zonder wijzigingen op te slaan.
+MSG_STATUSBAR_NEW_FILE_CREATED				Nieuw bestand "%s" is aangemaakt.
+MSG_STATUSBAR_FILE_LOADED_OK				Bestand "%s" is geopend.
+MSG_STATUSBAR_FILE_UNABLE_TO_OPEN			Kon bestand "%s" niet openen.
+MSG_STATUSBAR_SEARCH_FOUND					Tekst "%s" gevonden.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_1			Tekst \"%s\" niet gevonden.
+MSG_STATUSBAR_SEARCH_NOT_FOUND_2			Tekst niet gevonden.
+MSG_STATUSBAR_REPLACE_OK					Tekst "%s" is vervangen door "%s".
+MSG_STATUSBAR_REPLACE_NOT_OK				Tekst is niet vervangen.
+
+MSG_BUFFER_UNTITLED=2100					Titelloos - %d
+MSG_BUFFER_CURSOR							Kolom: %d Regel: %d
