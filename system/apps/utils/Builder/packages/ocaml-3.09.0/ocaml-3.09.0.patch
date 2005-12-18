@@ -1,0 +1,12 @@
+diff -ru ocaml-3.09.0.original/configure ocaml-3.09.0/configure
+--- ocaml-3.09.0.original/configure	2005-09-24 09:19:10.000000000 +0000
++++ ocaml-3.09.0/configure	2005-12-18 00:52:12.000000000 +0000
+@@ -572,6 +572,7 @@
+   i[3456]86-*-solaris*)         arch=i386; system=solaris;;
+   i[3456]86-*-beos*)            arch=i386; system=beos;;
+   i[3456]86-*-cygwin*)          arch=i386; system=cygwin;;
++  i[3456]86-*-syllable*)        arch=i386; system=linux_`sh ./runtest elf.c`;;
+   mips-*-irix6*)                arch=mips; system=irix;;
+   hppa1.1-*-hpux*)              arch=hppa; system=hpux;;
+   hppa2.0*-*-hpux*)             arch=hppa; system=hpux;;
+Only in ocaml-3.09.0: configure~
