@@ -2,11 +2,12 @@ authors				Kaj de Vos
 status				testing
 
 licenses			GPL
+home				www.seyza.com
 packages			revc.0.0x2
+locations			http://www.seyza.com
 
 patch-config		build-tools/gnu
 test-targets		test
 documentation
 	COPYING ChangeLog
 	web-pages/revc
-
