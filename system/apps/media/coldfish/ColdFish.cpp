@@ -463,13 +463,13 @@ typedef ColdFishPluginEntry* init_coldfish_plugin();
 
 void CFApp::LoadPlugins()
 {
+	os::String zFileName;
+	os::String zPath = String( "^/Plugins" );
+
 	os::Directory *pcDirectory = new os::Directory();
-	if( pcDirectory->SetTo( "^/Plugins" ) != 0 )
+	if( pcDirectory->SetTo( zPath.c_str() ) != 0 )
 		return;
 	
-	os::String zFileName;
-	os::String zPath;
-	pcDirectory->GetPath( &zPath );
 	m_cPlugins.clear();
 	
 	if (DEBUG)
@@ -1863,7 +1863,3 @@ int main( int argc, char *argv[] )
 	pcApp->Run();
 	return ( 0 );
 }
-
-
-
-
