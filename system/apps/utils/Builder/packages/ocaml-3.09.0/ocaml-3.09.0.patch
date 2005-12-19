@@ -9,4 +9,3 @@ diff -ru ocaml-3.09.0.original/configure ocaml-3.09.0/configure
    mips-*-irix6*)                arch=mips; system=irix;;
    hppa1.1-*-hpux*)              arch=hppa; system=hpux;;
    hppa2.0*-*-hpux*)             arch=hppa; system=hpux;;
-Only in ocaml-3.09.0: configure~
