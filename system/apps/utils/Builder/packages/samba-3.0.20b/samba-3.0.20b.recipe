@@ -2,27 +2,38 @@ authors
 	Kaj de Vos
 	Kristian Van Der Vliet
 status				testing
-notes				"Using Samba" is in the documentation twice
+notes
+	"Using Samba" is in the documentation twice.
+	ADS support is currently buggy.
+	OpenLDAP & Kerberos5 are not required if ADS support is disabled.
 
 licenses			GPL
 home				samba.org
 locations			http://us2.samba.org/samba/ftp/stable/
 
 needs				Syllable >= 0.6.0
+;build-needs
+;	openldap
+;	krb5
 recommends			libiconv
 
-; Samba will not work if we try to override the CFLAGS its configure script picks
-configure-env		CFLAGS ''
+configure-env
+;	Samba will not work if we try to override the CFLAGS its configure script picks
+	CFLAGS	''
+;	libldap requires libresolv:
+;	LDFLAGS	'-lresolv'
 
 configure-cmd		source/configure
 ;configure-options
 ;	--with-static-modules=charset,vfs
 ;	--with-manpages-langs=
+;	--with-ads
 
-make-env			CFLAGS ''
+make-env
+	CFLAGS	''
+;	LDFLAGS	'-lresolv'
 
 documentation
 	README COPYING Manifest WHATSNEW.txt MAINTAINERS Roadmap
 	docs/THANKS docs/history docs/Samba3-HOWTO.pdf docs/Samba3-ByExample.pdf
 	docs/htmldocs examples
-
