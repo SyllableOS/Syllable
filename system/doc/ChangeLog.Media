@@ -1,3 +1,10 @@
+* December 19 2005 Kaj de Vos *
+
+Temporarily made the same fix as in LibMedia to ColdFish, to make it load its
+plug-ins on the live CD. Necessitated by a bug in the path construction in the
+ISO9660 driver. Here, ColdFish wants to use a relocatable path, which doesn't
+work with the fix, so this should be reverted sometime later.
+
 * November 18 2005 Arno Klenke *
 
 Updated coldfish to avoid a lockup when loading a playlist with many files
@@ -116,6 +123,4 @@ Added multiple soundcard support to the media server
 * Nov 18 2003, Kristian Van Der Vliet *
 
 Created this ChangeLog for changes specific to the media framework.
-
-
 
