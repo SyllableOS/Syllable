@@ -13,8 +13,8 @@ locations			http://us2.samba.org/samba/ftp/stable/
 
 needs				Syllable >= 0.6.0
 ;build-needs
-;	openldap
 ;	krb5
+;	openldap
 recommends			libiconv
 
 configure-env
