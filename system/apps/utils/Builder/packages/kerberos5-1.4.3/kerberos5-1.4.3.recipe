@@ -1,0 +1,25 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+status				developing
+
+licenses			BSD
+home				web.mit.edu/kerberos/www/
+packages			krb5-1.4.3-signed.tar
+locations			http://web.mit.edu/kerberos/dist/krb5/1.4/
+
+recommends			openssl
+test-needs
+	tcl
+	dejagnu
+
+patch-config		src/config
+
+configure-cmd		src/configure
+configure-options
+	--disable-thread-support
+	--enable-static
+
+documentation
+	README
+;	doc

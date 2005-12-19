@@ -1,0 +1,12 @@
+diff -ur krb5-1.4.3-orig/src/krb5-config.in krb5-1.4.3/src/krb5-config.in
+--- krb5-1.4.3-orig/src/krb5-config.in	2005-09-07 21:30:52.000000000 +0000
++++ krb5-1.4.3/src/krb5-config.in	2005-11-25 15:46:33.000000000 +0000
+@@ -212,7 +212,7 @@
+     fi
+ 
+     if test $library = 'krb5'; then
+-	lib_flags="$lib_flags -lkrb5 -lk5crypto -lkrb5support -lcom_err $LIBS $GEN_LIB"
++	lib_flags="$lib_flags -lkrb5 -lk5crypto -lcom_err -lkrb5support $LIBS $GEN_LIB"
+     fi
+ 
+     echo $lib_flags
