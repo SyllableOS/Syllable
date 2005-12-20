@@ -1,0 +1,29 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+status				developing
+warnings			cupsd may deadlock during operation.
+
+licenses			GPL LPGPL
+home				www.cups.org
+packages			cups-1.1.23-source
+locations			http://cups.org/software.php?VERSION=1.1.23&FILE=cups/1.1.23/
+
+recommends
+	zlib	>= 1.1.3
+	libpng	>= 1.0.6
+	libjpeg	>= 6b
+	libtiff	>= 3.4
+	esp-ghostscript
+	openssl
+run-recommends		samba
+
+no-build-dir
+
+;configure-options	--enable-ssl
+
+links				smbspool lib/cups/backend/smb
+documentation
+	README*.txt LICENSE.* CHANGES.txt CREDITS.txt ENCRYPTION.txt CGI.txt
+	INSTALL*.txt
+;	doc

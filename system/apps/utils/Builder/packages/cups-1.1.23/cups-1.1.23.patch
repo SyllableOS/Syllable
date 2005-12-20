@@ -1,0 +1,25 @@
+diff -ur cups-1.1.23-orig/filter/Makefile cups-1.1.23/filter/Makefile
+--- cups-1.1.23-orig/filter/Makefile	2005-01-03 19:29:58.000000000 +0000
++++ cups-1.1.23/filter/Makefile	2005-11-22 15:02:25.000000000 +0000
+@@ -130,7 +130,7 @@
+ 
+ libcupsimage.so.2 libcupsimage.sl.2:	$(IMAGEOBJS) ../Makedefs
+ 	echo Linking $@...
+-	$(DSO) $(DSOFLAGS) -o $@ $(IMAGEOBJS) $(DSOLIBS) -lm
++	$(DSO) $(DSOFLAGS) -o $@ $(IMAGEOBJS) $(DSOLIBS) -L../cups -lcups -lm
+ 	$(RM) `basename $@ .2`
+ 	$(LN) $@ `basename $@ .2`
+ 
+diff -ur cups-1.1.23-orig/scheduler/main.c cups-1.1.23/scheduler/main.c
+--- cups-1.1.23-orig/scheduler/main.c	2005-01-03 19:30:00.000000000 +0000
++++ cups-1.1.23/scheduler/main.c	2005-11-22 15:03:21.000000000 +0000
+@@ -297,6 +297,9 @@
+   else
+     MaxFDs = limit.rlim_max;
+ 
++  if( MaxFDs == 0 )
++    MaxFDs = 32;
++
+   limit.rlim_cur = MaxFDs;
+ 
+   setrlimit(RLIMIT_NOFILE, &limit);
