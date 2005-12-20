@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.36
+# Version 0.6.37
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -417,9 +417,9 @@ def installModule originalStaging, staging, directive, target
 	unless
 		if target =~ /\.(zip|tgz)$/ and exists? target  # A distribution package
 			# Packages are currently supposed to contain an unversioned directory
-			dir = File.join(File.dirname(root), name = shortName(target))
+			root = File.join(dir = File.dirname(root), name = shortName(target))
 
-			if exists? dir and not
+			if exists? root and not
 				begin
 					@log.header 'Uninstalling ' + name
 					uninstallModule staging, target  # FIXME: double failure logging!
@@ -429,8 +429,8 @@ def installModule originalStaging, staging, directive, target
 			else
 				@log.header 'Unpacking ' + target
 				action (target[-3..-1] == 'zip' ?
-					"unzip '#{target}' -d #{root}" :
-					"tar --directory=#{root} -xpPzf '#{target}'"
+					"unzip '#{target}' -d #{dir}" :
+					"tar --directory=#{dir} -xpPzf '#{target}'"
 				) and
 				begin
 					@log.header 'Registering ' + target
@@ -438,7 +438,7 @@ def installModule originalStaging, staging, directive, target
 					if staging
 						registerPort staging, name  # FIXME: handle init scripts
 					else
-						action 'pkgmanager --add ' + dir
+						action 'pkgmanager --add ' + root
 					end
 				end
 			end
@@ -1461,7 +1461,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.36',
+	puts 'Syllable Build System 0.6.37',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
