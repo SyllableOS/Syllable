@@ -2,6 +2,11 @@ authors
 	Kristian Van Der Vliet
 	Kaj de Vos
 status				testing
+warnings
+	The source package contains hard links. This fails on Syllable of course, but the source is installed, so you have to patch the source separately and continue the build:
+	build get cdrtools-2.01
+	build patch cdrtools-2.01
+	build cdrtools-2.01
 
 licenses			GPL
 
