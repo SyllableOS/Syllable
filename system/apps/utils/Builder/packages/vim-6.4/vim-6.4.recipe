@@ -3,6 +3,7 @@ authors
 	Kaj de Vos
 maintainers			Kaj de Vos
 status				testing
+notes				Waiting for fsync() implementation in Syllable GLibC 2.3.x
 
 licenses			other
 home				www.vim.org
@@ -14,10 +15,11 @@ locations
 ;	Language pack:
 	ftp://ftp.vim.org/pub/vim/extra/
 
-build-needs			ruby
+;build-needs			ruby
 no-build-dir
 configure-options
 	--with-features=big
-	--enable-rubyinterp
+;	--enable-rubyinterp
 documentation		README.txt
 links				vim bin/vi
+
