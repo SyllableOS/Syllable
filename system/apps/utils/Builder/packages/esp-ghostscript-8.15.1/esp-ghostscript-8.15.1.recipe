@@ -1,0 +1,26 @@
+authors
+	Kristian Van Der Vliet
+	Kaj de Vos
+status				developing
+notes				When launched by cupsd, gs fails to find shared libraries in $DLL_PATH
+
+licenses			GPL
+home				www.cups.org/espgs/
+packages			espgs-8.15.1-source
+locations			http://www.cups.org/espgs/software.php?VERSION=8.15.1&FILE=ghostscript/8.15.1/
+
+needs
+	zlib >= 1.2.1
+	libpng
+	libjpeg
+recommends
+;	libtiff
+
+no-build-dir
+
+;install-targets		soinstall
+documentation
+	README LICENSE CHANGES
+	HACKING
+;	doc
+;	examples

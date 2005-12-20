@@ -4,7 +4,7 @@ authors
 status				developing
 warnings			cupsd may deadlock during operation.
 
-licenses			GPL LPGPL
+licenses			GPL+exception LGPL
 home				www.cups.org
 packages			cups-1.1.23-source
 locations			http://cups.org/software.php?VERSION=1.1.23&FILE=cups/1.1.23/
