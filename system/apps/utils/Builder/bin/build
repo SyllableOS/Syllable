@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.35
+# Version 0.6.36
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -148,8 +148,8 @@ def unpackModule target
 						false
 					else  # Get the directory name from the package listing
 						action "mv #{type == :zip ?
-							result.first.split.last :
-							result.split("/").first
+							parseList(result).first.split.last :
+							result.split.first.split("/").first
 						} " + dir
 					end
 				end
@@ -1102,11 +1102,7 @@ end
 
 def parseList value  # Normalize value into an array
 	if value.is_a? String
-		if value == ''
-			[]
-		else
-			[value]
-		end
+		value.split "\n"
 	else  # Assume it's already an array, or nil
 		value
 	end
@@ -1465,7 +1461,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.35',
+	puts 'Syllable Build System 0.6.36',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
