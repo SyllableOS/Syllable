@@ -186,7 +186,7 @@ modules
 	sys/kernel/fs/iso9660
 	sys/kernel/fs/ramfs
 
-	system libs/glibc-2.3.4
+	system libs/glibc-2.3.5
 	system libs/zlib-1.2.2
 
 	libs/libdl

@@ -7,7 +7,7 @@ modules
 	programming/languages/binutils-2.15
 	programming/languages/gcc-3.4.3
 	programming/m4-1.4.3
-	programming/make-3.79.1
+	programming/make-3.80
 ;	programming/automake-1.7.9
 	programming/automake-1.4-p6
 	programming/autoconf-2.59
@@ -18,3 +18,4 @@ modules
 	programming/Builder-0.6.21
 	programming/indent-2.2.9
 	programming/splint-3.1.1
+
