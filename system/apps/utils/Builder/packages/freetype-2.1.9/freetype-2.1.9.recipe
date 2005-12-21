@@ -3,7 +3,6 @@ authors				Kaj de Vos
 licenses			GPL other
 home				www.freetype.org
 
-build-needs			make <> 3.80
 ;build-recommends	python
 
 no-build-dir

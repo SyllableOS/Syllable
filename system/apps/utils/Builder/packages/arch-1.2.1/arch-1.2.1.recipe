@@ -7,7 +7,6 @@ home				www.gnuarch.org
 packages			tla-1.2.1
 
 build-needs
-	make <> 3.80
 ;	gawk
 ;	findutils
 run-needs
@@ -25,3 +24,4 @@ test-targets		test
 documentation
 	=ARCH-USERS-README COPYING src/tla/ChangeLog src/tla/=TODO src/tla/=THANKS
 	src/docs-tla/HOWTO.crypto src/docs-tla/html
+
