@@ -1689,4 +1689,3 @@ else
 	@log.close
 	exit @log.failures.length  # FIXME: only works when processing a profile
 end
-
