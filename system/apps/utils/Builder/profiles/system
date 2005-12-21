@@ -193,6 +193,9 @@ modules
 	libs/libpthread
 	libs/ncurses-5.4
 
+;	Currently conflicts with GetText on GLibC 2.3.x:
+	apps/gnu/grep-2.5.1a
+
 	stage libraries/gettext-0.14.3
 	stage libraries/flex-2.5.4a
 	stage libraries/bison-1.875
@@ -258,7 +261,6 @@ modules
 	apps/desktop/file_browser
 	apps/gnu/bash-2.03
 	apps/gnu/coreutils-5.2.1
-	apps/gnu/grep-2.5.1a
 	apps/gnu/sed-4.1.1
 	apps/utils/Preferences/Appearance
 	apps/utils/Preferences/DateTime

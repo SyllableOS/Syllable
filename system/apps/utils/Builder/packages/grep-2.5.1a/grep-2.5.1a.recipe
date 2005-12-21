@@ -1,9 +1,10 @@
 authors				Kaj de Vos
-status				broken
-notes				Waiting for GetText to be fixed
 
 licenses			GPL
 home				www.gnu.org/software/grep/
+
+; Currently conflicts with GetText on GLibC 2.3.x:
+build-conflicts		gettext
 
 patch-config
 
