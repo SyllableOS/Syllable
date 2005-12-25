@@ -566,12 +566,13 @@ def installModule originalStaging, staging, directive, target
 						end
 					then
 						false
-					elsif !(dirs = ['bin', 'libexec'].collect {|dir|
+					elsif !(dirs = ['bin', 'sbin', 'libexec'].collect {|dir|
 							exists?(dir = File.join(root, dir)) ? dir : nil
 						}.compact).empty? && !
 						begin
 							@log.header 'Stripping binaries'
-							action 'strip --strip-unneeded' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join
+#							action 'strip --strip-unneeded' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join
+							action 'strip --strip-all' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join
 						end or
 						exists?(dir = File.join(root, 'lib')) && !
 						begin
