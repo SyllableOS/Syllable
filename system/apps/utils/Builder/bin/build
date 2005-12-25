@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.40
+# Version 0.6.41
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -565,13 +565,14 @@ def installModule originalStaging, staging, directive, target
 							}.compact).empty? ||
 							begin
 								@log.header 'Stripping executables'
-#								action 'strip --strip-unneeded' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join
-								action 'strip --strip-all' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join
+								#--strip-unneeded
+								action 'strip --strip-all' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join or
+									$? >> 8 == 1  # File type not recognized
 							end and
 							! exists?(dir = File.join(root, 'lib')) ||
 							begin
 								@log.header 'Stripping libraries'
-								action 'strip --strip-debug ' + File.join(dir, '*')
+								action 'strip --strip-debug ' + File.join(dir, '*') or $? >> 8 == 1
 							end
 						)
 					then
@@ -1479,7 +1480,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.40',
+	puts 'Syllable Build System 0.6.41',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1707,4 +1708,3 @@ else
 	@log.close
 	exit @log.failures.length  # FIXME: only works when processing a profile
 end
-
