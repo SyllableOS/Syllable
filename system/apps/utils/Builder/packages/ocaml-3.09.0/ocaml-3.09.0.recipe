@@ -35,9 +35,10 @@ make-targets
 ;	make install
 ;;	cd emacs
 ;;	make EMACSDIR="" install
-; Mixed binaries!
-;strip-files			<Everything but ocamldebug and ocamlbrowser>
 documentation
 	README Upgrading LICENSE Changes
 ;	INSTALL
+; Mixed binaries!
+no-strip
+;strip-files			<Everything but ocamldebug and ocamlbrowser>
 

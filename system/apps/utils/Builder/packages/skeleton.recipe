@@ -117,7 +117,6 @@ install-targets		install
 ; Extra files to install:
 install-files
 	<Original> <Destination>
-;strip-files			<Binary files to strip, after the main installation>
 ; Documentation to install:
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
 ; Links to create
@@ -128,9 +127,9 @@ links
 	[<Original> <Link>]
 ;	<Links path>
 ;		<Originals>
-; Files to copy to the staging area, if used, after the main installation:
-;stage-files
-;	<Original> <Destination>
+; Don't strip binaries:
+;no-strip
 ; Files to move to the system libraries area, after the main installation:
 ;system-libs			<Libraries and links from the lib subdirectory>
 ;post-install		<Commands after installation, before registration>
+

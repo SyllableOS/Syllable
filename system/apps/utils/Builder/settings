@@ -31,3 +31,6 @@ cvs-path		syllable/system
 ; Include version number in the installation path prefix of ports:
 ;include-version
 
+; Don't strip binaries:
+;no-strip
+

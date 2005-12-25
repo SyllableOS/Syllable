@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.38
+# Version 0.6.39
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -566,19 +566,21 @@ def installModule originalStaging, staging, directive, target
 						end
 					then
 						false
-					elsif !(dirs = ['bin', 'sbin', 'libexec'].collect {|dir|
-							exists?(dir = File.join(root, dir)) ? dir : nil
-						}.compact).empty? && !
-						begin
-							@log.header 'Stripping binaries'
-#							action 'strip --strip-unneeded' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join
-							action 'strip --strip-all' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join
-						end or
-						exists?(dir = File.join(root, 'lib')) && !
-						begin
-							@log.header 'Stripping libraries'
-							action 'strip --strip-debug ' + File.join(dir, '*')
-						end
+					elsif not @settings['no-strip'] || recipe['no-strip'] || (
+							(dirs = ['bin', 'sbin', 'libexec'].collect {|dir|
+								exists?(dir = File.join(root, dir)) ? dir : nil
+							}.compact).empty? ||
+							begin
+								@log.header 'Stripping executables'
+#								action 'strip --strip-unneeded' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join
+								action 'strip --strip-all' + dirs.collect {|dir| ' ' + File.join(dir, '*')}.join
+							end and
+							! exists?(dir = File.join(root, 'lib')) ||
+							begin
+								@log.header 'Stripping libraries'
+								action 'strip --strip-debug ' + File.join(dir, '*')
+							end
+						)
 					then
 						false
 					elsif (originalStaging == :imaging and @systemBuild or not originalStaging) and
@@ -1476,7 +1478,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.38',
+	puts 'Syllable Build System 0.6.39',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
