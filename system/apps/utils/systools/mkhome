@@ -2,9 +2,8 @@
 #
 # mkhome : Copyright (C) 2005 Kristian Van Der Vliet
 #
-# mkhome creates a new users home directory within /home and
-# populates it with default files and configuration from the
-# skeleton directory.
+# mkhome creates a new users home directory and populates it
+# with default files and configuration from the skeleton directory.
 #
 # This script is generally called by user management tools
 # such as the Users preferences.  You should not normally
@@ -24,7 +23,7 @@ SKELETON_DIR=/home/.template
 
 function print_usage
 {
-	echo "$0 [username]"
+	echo "$0 [path] [username]"
 	exit 1
 }
 
@@ -46,7 +45,7 @@ function exit_with_error
 		echo "The directory \"$2\" already exists."
 		;;
 	"2" )
-		# Failed to copy skeleton from /etc/skel
+		# Failed to copy files from the template directory
 		echo "Failed to copy default configuration files to users home directory."
 		;;
 	"3" )
@@ -58,7 +57,7 @@ function exit_with_error
 	exit $1
 }
 
-# function create_home_dir
+# function create_desktop
 #
 # Creates the default symlinks in the users Desktop directory
 #
@@ -93,15 +92,17 @@ function create_desktop
 
 # function create_home_dir
 #
-# Creates the home directory, copies the default configuration from /etc/skel/
-# and configures the users default desktop settings
+# Creates the home directory, copies the default configuration from
+# the skeleton directory and configures the users default desktop
+# settings
 #
-# $1 username
+# $1 home directory
+# $2 username
 
 function create_home_dir
 {
-	username=$1
-	userhome=/home/$username
+	userhome=$1
+	username=$2
 
 	# Don't overwrite an existing home directory
 	if [ -e $userhome ]
@@ -112,7 +113,8 @@ function create_home_dir
 	# Create the new directory and copy the skeleton files
 	if [ -e $SKELETON_DIR ]
 	then
-		cp -a $SKELETON_DIR $userhome 1>/dev/null
+		mkdir -p $userhome
+		cp -a $SKELETON_DIR/* $userhome 1>/dev/null
 		if [ $? != 0 ]
 		then
 			exit_with_error 2
@@ -131,14 +133,15 @@ function create_home_dir
 
 # mkuser script entry point
 #
-# $1 - username to create
+# $1 - home directory to create
+# $2 - username of owner
 
-if [ -z $1 ]
+if [ -z $1 ] || [ -z $2 ]
 then
 	print_usage
 fi
 
-create_home_dir $1
+create_home_dir $1 $2
 
 exit 0
 
