@@ -52,7 +52,7 @@ using namespace os;
 /** User-configurable values (deprecated, use configuration file) **/
 
 /* Enable experimental support for R300/R350/RV350 (Radeon 9500-9800) */
-#define RADEON_ENABLE_R400
+#define RADEON_ENABLE_R300
 
 /* Enable experimental support for Mobility & IGP chips */
 #define RADEON_ENABLE_MOBILITY
