@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.42
+# Version 0.6.43
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -167,7 +167,7 @@ def patchModule target
 					break unless action 'patch --strip=1 < ' + file
 				end
 			
-				if exists? dir = patchesPath(kin)
+				if exists? dir = File.join(recipePath(kin), 'patches')
 					@log.header 'Overlaying extra source files' + (ancestor ? ' from ancestor ' + kin : '')
 					break unless action "cp -a #{File.join dir, '*'} ." and
 						# FIXME: crude way to remove possible CVS dirs from patches
@@ -1195,12 +1195,8 @@ def installPath staging, port
 	File.join installRoot(staging), installName(port)
 end
 
-def recipePath port
-	File.join @portsPath, fullName(port)
-end
-
-def patchesPath port
-	File.join recipePath(port), 'patches'
+def recipePath portPath
+	File.join @portsPath, portPath
 end
 
 def buildDir target
@@ -1256,8 +1252,8 @@ def getTarget target
 	)
 end
 
-def loadRecipe target  # Read a recipe file
-	if exists? file = File.join(recipePath(target = fullName(target)), target + '.recipe')
+def loadRecipe project, target  # Read a recipe file
+	if exists? file = File.join(recipePath(File.join(project, target = fullName(target))), target + '.recipe')
 		loadFile file
 	else  # No recipe
 		[]
@@ -1272,22 +1268,37 @@ def overlayRecipe recipe, overlay
 end
 
 def getRecipe target  # Load the key/value pairs of a recipe into a hash table
-	recipe = parseDictionary loadRecipe(target)
+	target = fullName target
+	recipe = {}
 	ancestry = []
 
-	if parents = recipe['inherits']
-		for parent in toList parents
-			recipe = overlayRecipe(parentRecipe = getRecipe(parent), recipe)
-			ancestry.push [parentRecipe['ancestry'], parent]
+	for project in @lineage
+		if (projectRecipe = parseDictionary loadRecipe(project, target)) != []
+			recipe = overlayRecipe(recipe, projectRecipe)
+			ancestry.push File.join(project, target)
 		end
 	end
 
-	recipe['ancestry'] = ancestry
+	if parents = recipe['inherits']
+		ancestorsRecipe = {}
+		parentAncestries = []
+
+		for parent in toList parents
+			ancestorsRecipe = overlayRecipe(ancestorsRecipe, parentRecipe = getRecipe(parent))
+			parentAncestries.push parentRecipe['ancestry']
+		end
+
+		recipe = overlayRecipe(ancestorsRecipe, recipe)
+		recipe['ancestry'] = [parentAncestries] << ancestry
+	else
+		recipe['ancestry'] = ancestry
+	end
+
 	recipe
 end
 
 def lineage target
-	getRecipe(target)['ancestry'].flatten << target
+	getRecipe(target)['ancestry'].flatten
 end
 
 def makeCommand port
@@ -1411,8 +1422,8 @@ end
 # Get global settings
 @settings = parseDictionary loadFile(File.join(@builderPath, 'settings'))
 
-@portsPath, Profile.path, @configPath, @resourcesPath, @distrosPath,    Log.path = [
-'packages', 'profiles',   'sources',    'resources',    'distributions', 'logs'
+@portsPath, Profile.path,	@configPath,	@resourcesPath,	@distrosPath,		Log.path = [
+'packages', 'profiles',		'sources',		'resources',	'distributions',	'logs'
 ].collect {|dir| File.join @builderPath, dir}
 
 @sourcesPath = (dir = @settings['sources-path']) ? dir : @configPath
@@ -1430,6 +1441,11 @@ end
 # Define settings
 
 @syllable = ENV['OSTYPE'] == 'syllable'
+
+# Project trees
+@lineage = (@lineage = @settings['lineage']) ?
+	parseList(@lineage) :
+	['']
 
 # Confine ourselves to a subsection of CVS?
 @cvsPath = '' unless @cvsPath = @settings['cvs-path']
@@ -1485,7 +1501,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.42',
+	puts 'Syllable Build System 0.6.43',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1495,7 +1511,7 @@ when '?', '-?', '-h', '-help', '--help'
 		'  image [<module> | <profile> | <package>]',
 		'<command>:',
 		'  -h, --help,   Show this help information',
-		'    -help, ?, -?',
+		'    -help, -?, (?)',
 		'  -v, --version Show version information',
 		'  scrub         Delete CVS control files recursively from the current directory',
 		'  prepare       Initialize project image tree in staging area',
@@ -1713,3 +1729,4 @@ else
 	@log.close
 	exit @log.failures.length  # FIXME: only works when processing a profile
 end
+

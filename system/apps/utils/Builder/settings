@@ -1,3 +1,7 @@
+; Project trees:
+;lineage
+;	.
+
 environment
 ;	For some strange reason, Linux defines $OSTYPE and $MACHTYPE, but doesn't
 ;	export them to child processes. If you have the misfortune of running it,
