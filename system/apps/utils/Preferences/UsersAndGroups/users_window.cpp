@@ -362,7 +362,7 @@ void UsersView::HandleMessage( Message *pcMessage )
 			m_pcUsersList->InsertRow( pcRow );
 
 			/* Remember to create a home directory for this user */
-			m_vNewHomes.push_back( cHome );
+			m_vNewHomes.push_back( psPasswd->pw_name );
 
 			m_bModified = true;
 
@@ -462,7 +462,7 @@ void UsersView::HandleMessage( Message *pcMessage )
 			{
 				vector<string>::iterator i;
 				for( i = m_vNewHomes.begin(); i != m_vNewHomes.end(); i++ )
-					if( strcmp( (*i).c_str(), m_psSelected->pw_dir ) == 0 )
+					if( strcmp( (*i).c_str(), m_psSelected->pw_name ) == 0 )
 					{
 						i = m_vNewHomes.erase( i );
 						break;
@@ -576,11 +576,18 @@ status_t UsersView::SaveChanges( void )
 		vector<string>::iterator i;
 		for( i = m_vNewHomes.begin(); i != m_vNewHomes.end(); i++ )
 		{
-			char anSys[PATH_MAX];
-			snprintf( anSys, PATH_MAX, "mkhome %s", (*i).c_str() );
-			/* XXXKV: Debug */
-			//printf("%s\n", anSys );
-			system( anSys );
+			for( int nRow = 0; nRow < m_pcUsersList->GetRowCount(); nRow++ )
+			{
+				psEntry = (struct passwd *)m_pcUsersList->GetRow( nRow )->GetCookie().AsPointer();
+				if( psEntry->pw_name == (*i) )
+				{
+					char anSys[PATH_MAX];
+					snprintf( anSys, PATH_MAX, "mkhome %s %s", psEntry->pw_dir, psEntry->pw_name );
+					/* XXXKV: Debug */
+					//printf("%s\n", anSys );
+					system( anSys );
+				}
+			}
 		}
 	}
 #endif
