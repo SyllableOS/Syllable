@@ -30,7 +30,12 @@ patch
 	automake
 	autoconf
 
+; Problems are known with optimization:
+configure-env		CFLAGS ''
+make-env			CFLAGS ''
+
 documentation
 	README netboot/README.netboot INSTALL BUGS COPYING NEWS ChangeLog TODO AUTHORS THANKS
 	MAINTENANCE
 stage-files			share/grub/i386-pc/* /boot/grub/
+
