@@ -1,3 +1,9 @@
+* December 26 2005, Kristian Van Der Vliet *
+
+Fixed both mkhome & Users & Groups preferences to work correctly together.  mkhome
+now accepts two arguments; the new home directory to create and the username of
+the owner.  Users & Groups has been changed to path these arguments.
+
 * December 19 2005, Kaj de Vos *
 
 Over the course of the last week, made a lot of fixes for Syllable 0.6.0a.
