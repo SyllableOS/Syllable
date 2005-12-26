@@ -1,0 +1,4 @@
+Source packages of third-party software will be downloaded
+in this directory. If the download is successful, the
+build system will then move them to the parent directory.
+
