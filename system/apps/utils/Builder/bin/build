@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.44
+# Version 0.6.45
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -52,7 +52,10 @@ def downloadModule target
 			@log.subheader 'Downloading source package(s)'
 			Dir.chdir File.join(@sourcesPath, 'downloading')
 
-			for package in (packages = recipe['packages']) ? toList(packages) : fullName(target)
+			for package in ((packages = recipe['packages']) ?
+				parseList(packages).collect {|line| line.split.first} :
+				fullName(target)
+			)
 				for location in toList locations
 					break unless for type in ['tar.bz2', 'tbz2', 'tar.gz', 'tgz', 'zip']
 						@log.subheader 'Trying ' + f = File.join(location, file = package + '.' + type)
@@ -76,6 +79,7 @@ def downloadModule target
 		@log.failure target
 		false
 	else
+		Dir.chdir @workDir
 		action 'sync'
 	end
 end
@@ -241,11 +245,12 @@ def getModule target
 				unpackModule target
 			else
 				downloadModule target and
-				begin
+				if exists? target  # It was a repository checkout
 					# FIXME: crude way to remove CVS files
-					Dir.chdir @workDir
 					Dir.chdir target
 					deleteCVSData
+				else  # It was a package download
+					unpackModule target
 				end
 			end and
 			begin
@@ -1518,7 +1523,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.44',
+	puts 'Syllable Build System 0.6.45',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
