@@ -290,7 +290,7 @@ void ATIRadeon::GetPLLInfo()
 	case PCI_CHIP_R350_AK:
 	case PCI_CHIP_RV350_AP:
 	case PCI_CHIP_RV350_AQ:
-	case PCI_CHIP_RV360_AR:
+	case PCI_CHIP_RV350_AR:
 	case PCI_CHIP_RV350_AS:
 	case PCI_CHIP_RV350_AT:
 	case PCI_CHIP_RV350_AV:

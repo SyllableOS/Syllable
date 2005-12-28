@@ -28,7 +28,7 @@
 #define PCI_CHIP_R350_AK                0x414B
 #define PCI_CHIP_RV350_AP               0x4150
 #define PCI_CHIP_RV350_AQ               0x4151
-#define PCI_CHIP_RV360_AR               0x4152
+#define PCI_CHIP_RV350_AR               0x4152
 #define PCI_CHIP_RV350_AS               0x4153
 #define PCI_CHIP_RV350_AT               0x4154
 #define PCI_CHIP_RV350_4155             0x4155
