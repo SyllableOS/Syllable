@@ -52,16 +52,6 @@ if [ ! -e "$PACKAGES" ]; then
 	exit 1;
 fi;
 
-BONUS=""
-
-echo -n "Enter the path to the Bonus directory"
-read BONUS
-
-if [ ! -e "$BONUS" ]; then
-	echo "$BONUS does not exist.  Stoping."
-	exit 1;
-fi;
-
 echo "Copying documentation tarball from $DOCS"
 cp -dpr $DOCS $CDROOT/Packages/base/
 
@@ -76,15 +66,11 @@ echo "Copying packages from $PACKAGES"
 mkdir $CDROOT/Packages/optional
 cp -dpr $PACKAGES/* $CDROOT/Packages/optional/
 
-echo "Copying bonus files from $BONUS"
-mkdir $CDROOT/Bonus
-cp -dpr $BONUS/* $CDROOT/Bonus/
-
 echo "Building ISO image"
 ./mkiso.sh $CDROOT $VER
 
 echo "Moving ISO image"
-mv $VER.iso.gz objs/$VER-large.iso.gz
+mv $VER.iso objs/$VER-large.iso
 
 echo "Done!"
 exit 0
