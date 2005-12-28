@@ -1,3 +1,5 @@
+---- 0.6.0a Released -------------------------------------------------------------------
+
 * December 26 2005, Kristian Van Der Vliet *
 
 Fixed both mkhome & Users & Groups preferences to work correctly together.  mkhome
@@ -34,6 +36,8 @@ Made some minor corrections to the corresponding English texts.
 
 Added binary versions of some translations and fixed LibSyllable to install
 its catalogs in the system.
+
+---- 0.6.0 Released -------------------------------------------------------------------
 
 * November 28 2005, Arno Klenke *
 

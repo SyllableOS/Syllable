@@ -1,9 +1,13 @@
+---- 0.6.0a Released -------------------------------------------------------------------
+
 * December 19 2005 Kaj de Vos *
 
 Temporarily made the same fix as in LibMedia to ColdFish, to make it load its
 plug-ins on the live CD. Necessitated by a bug in the path construction in the
 ISO9660 driver. Here, ColdFish wants to use a relocatable path, which doesn't
 work with the fix, so this should be reverted sometime later.
+
+---- 0.6.0 Released -------------------------------------------------------------------
 
 * November 18 2005 Arno Klenke *
 
