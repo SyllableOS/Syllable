@@ -17,5 +17,5 @@ modules
 	programming/languages/ruby-1.8.1
 	programming/Builder-0.6.21
 	programming/indent-2.2.9
+;	programming/sindent-1.1
 	programming/splint-3.1.1
-
