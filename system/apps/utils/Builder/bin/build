@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.45
+# Version 0.6.46
 # Copyright (c) 2002-2005 Kaj de Vos
 # License: GPL 2
 
@@ -50,7 +50,7 @@ def downloadModule target
 	unless
 		if locations = (recipe = getRecipe target)['locations']  # Get the source package(s)
 			@log.subheader 'Downloading source package(s)'
-			Dir.chdir File.join(@sourcesPath, 'downloading')
+			Dir.chdir File.join(@configPath, 'downloading')
 
 			for package in ((packages = recipe['packages']) ?
 				parseList(packages).collect {|line| line.split.first} :
@@ -64,7 +64,7 @@ def downloadModule target
 				end
 
 				@log.subheader "Moving package #{file} to sources directory"
-				break unless action "mv #{file} .."
+				break unless action "mv #{file} " + @sourcesPath
 			end
 		else  # Get it from a repository
 			(exists? dir = File.dirname(target) or action 'mkdir --parents ' + dir) and
@@ -1523,7 +1523,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.45',
+	puts 'Syllable Build System 0.6.46',
 		'Copyright (c) 2002-2005 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1751,4 +1751,3 @@ else
 	@log.close
 	exit @log.failures.length  # FIXME: only works when processing a profile
 end
-
