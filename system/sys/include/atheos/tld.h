@@ -21,6 +21,7 @@
 #define	__F_ATHEOS_TLD_H__
 
 #include <atheos/types.h>
+#include <atheos/areas.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,7 +32,9 @@ extern "C" {
 #define TLD_PRID	4
 #define TLD_ERRNO_ADDR	8
 #define TLD_ERRNO	12
-#define	TLD_USER	1024
+#define TLD_BASE	16
+#define TLD_LIBC	512
+#define TLD_USER	1024
 
 #ifdef __KERNEL__
 
