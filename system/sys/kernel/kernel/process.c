@@ -317,7 +317,7 @@ int sys_alloc_tld( void )
  * \ingroup DriverAPI
  * \ingroup Syscalls
  * \param nHandle
- *	The TLD to calculate the address for.
+ *	The TLD to calculate the address for.  Deprecated & marked for removal.
  * \return
  *	On success the address of the TLD is returned.
  *	On failure, NULL is returned.
@@ -327,6 +327,7 @@ int sys_alloc_tld( void )
  * \sa alloc_tld(), set_tld(), get_tld()
  * \author	Kristian Van Der Vliet (vanders@liqwyd.com)
  *****************************************************************************/ 
+/* XXXKV: Delete this function */
 void * get_tld_addr( int nHandle )
 {
 	Process_s *psProc = CURRENT_PROC;
@@ -343,6 +344,7 @@ void * get_tld_addr( int nHandle )
 	return pAddr;
 }
 
+/* XXXKV: Delete this function & mark the syscall sys_nosys */
 void * sys_get_tld_addr( int nHandle )
 {
 	return get_tld_addr( nHandle );

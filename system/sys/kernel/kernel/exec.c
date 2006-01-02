@@ -345,6 +345,7 @@ int sys_execve( const char *a_pzPath, char *const *argv, char *const *envv )
 	memcpy_to_user( psThread->tr_pThreadData + TLD_THID, &psThread->tr_hThreadID, sizeof( psThread->tr_hThreadID ) );
 	memcpy_to_user( psThread->tr_pThreadData + TLD_PRID, &psThread->tr_psProcess->tc_hProcID, sizeof( psThread->tr_psProcess->tc_hProcID ) );
 	memcpy_to_user( psThread->tr_pThreadData + TLD_ERRNO_ADDR, &pErrnoPtr, sizeof( pErrnoPtr ) );
+	memcpy_to_user( psThread->tr_pThreadData + TLD_BASE, &psThread->tr_pThreadData, sizeof( psThread->tr_pThreadData ) );
 	memset( psProc->pr_anTLDBitmap, 0, sizeof( psProc->pr_anTLDBitmap ) );
 
 	/* Reset signal handlers */

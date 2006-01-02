@@ -922,6 +922,7 @@ thread_id sys_spawn_thread( const char *const pzName, void *const pfEntry, const
 	memcpy_to_user( psNewThread->tr_pThreadData + TLD_THID, &psNewThread->tr_hThreadID, sizeof( psNewThread->tr_hThreadID ) );
 	memcpy_to_user( psNewThread->tr_pThreadData + TLD_PRID, &psParent->tc_hProcID, sizeof( psParent->tc_hProcID ) );
 	memcpy_to_user( psNewThread->tr_pThreadData + TLD_ERRNO_ADDR, &pErrnoPtr, sizeof( pErrnoPtr ) );
+	memcpy_to_user( psNewThread->tr_pThreadData + TLD_BASE, &psNewThread->tr_pThreadData, sizeof( psNewThread->tr_pThreadData ) );
 
 	return ( hNewThread );
       error2:
