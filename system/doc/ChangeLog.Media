@@ -1,3 +1,7 @@
+* January 2 2006 Arno Klenke *
+
+Moved media plugins to the extensions folder
+
 ---- 0.6.0a Released -------------------------------------------------------------------
 
 * December 19 2005 Kaj de Vos *
@@ -127,4 +131,5 @@ Added multiple soundcard support to the media server
 * Nov 18 2003, Kristian Van Der Vliet *
 
 Created this ChangeLog for changes specific to the media framework.
+
 

@@ -1,3 +1,9 @@
+* January 2 2006, Arno Klenke *
+
+The kernel now uses software task switching
+Moved the irq controller code from intel.s to irq.c
+Support for the acpi busmanager
+
 ---- 0.6.0a Released -------------------------------------------------------------------
 ---- 0.6.0 Released -------------------------------------------------------------------
 
@@ -879,3 +885,4 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
