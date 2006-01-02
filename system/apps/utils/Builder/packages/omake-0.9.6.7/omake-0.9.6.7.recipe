@@ -1,0 +1,22 @@
+authors				Kaj de Vos
+status				testing
+
+licenses			GPL MIT
+home				omake.metaprl.org
+packages			omake-0.9.6.7-1
+locations			http://omake.metaprl.org/downloads/
+
+build-needs			ocaml
+
+install-prefix-var
+;	INSTALL_ROOT
+	PREFIX
+make-targets
+; Bootstrap phase:
+;	boot
+	all
+no-strip
+documentation
+	LICENSE CHANGELOG.txt
+;	INSTALL
+	doc/html
