@@ -56,38 +56,6 @@ multiboot:
 	movl	%eax,%cr0
 	movl	$g_anKernelStackEnd,%esp
 
-
-        mov	$0x11,%al
-        outb	%al,$0x20
-        jmp	1f
-1:	
-        mov	$0x20,%al	# First PIC start at vector 0x20
-        outb	%al,$0x21
-        jmp	2f
-2:	
-        mov	$0x04,%al
-        outb	%al,$0x21
-        jmp	3f
-3:	
-        mov	$0x01,%al
-        outb	%al,$0x21
-        jmp	4f
-4:	
-        mov	$0x11, %al
-        outb	%al,$0xa0
-        jmp	5f
-5:	
-        mov	$0x28,%al	# Second PIC start at vector 0x28
-        outb	%al,$0xa1
-        jmp	6f
-6:	
-        mov	$0x02,%al
-        outb	%al,$0xa1
-        jmp	7f
-7:	
-        mov	$0x01,%al
-        outb	%al,$0xa1
-	
 	pushl	%ebx
 	call	_C_SYM( init_kernel_mb )
 
@@ -153,9 +121,6 @@ _C_SYM( sti ):
 .Lfe_sti:
 	.size	 sti,.Lfe_sti - sti
 
-_C_SYM( SwitchCont ):
-	ljmp	*(%esp)
-	ret
 
 
 _C_SYM( _GETDS ):

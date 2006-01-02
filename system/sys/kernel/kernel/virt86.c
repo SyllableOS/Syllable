@@ -331,10 +331,11 @@ static int do_call_v86( Virtual86Struct_s * psState, SysCallRegs_s * psCallRegs 
 
 	sState.regs32->eax = 0;
 
-	sState.pSavedStack = psThread->tc_sTSS.esp0;
-	psThread->tc_sTSS.esp0 = ( void * )&sState.VM86_TSS_ESP0;
+	sState.pSavedStack = psThread->tr_pESP0;
+	psThread->tr_pESP0 = ( void * )&sState.VM86_TSS_ESP0;
 
-
+	g_asProcessorDescs[get_processor_id()].pi_sTSS.esp0 = psThread->tr_pESP0;
+	
 	__asm__ __volatile__( "movl %0,%%esp\n\t" "jmp ret_from_sys_call":	/* no outputs */
 		:"r"( &sState.regs ) );
 
@@ -376,7 +377,9 @@ static inline void return_to_32bit( Virtual86Regs_s * regs16, int retval )
 	__asm__ __volatile__( "mov %0,%%gs"::"r"( nGS ) );
 
 	set_gdt_desc_base( nGS, ( uint32 )psThread->tr_pThreadData );
-	psThread->tc_sTSS.gs = nGS;
+	
+	__asm__ __volatile__( "movl %0,%%gs\n\t" :	/* no outputs */
+		:"r"( nGS ) );
 
 	if ( NULL == g_psFirstV86State )
 	{
@@ -389,7 +392,9 @@ static inline void return_to_32bit( Virtual86Regs_s * regs16, int retval )
 	g_psFirstV86State->regs32->eax = retval;
 	psCallerRegs = g_psFirstV86State->regs32;
 
-	psThread->tc_sTSS.esp0 = g_psFirstV86State->pSavedStack;
+	psThread->tr_pESP0 = g_psFirstV86State->pSavedStack;
+	g_asProcessorDescs[get_processor_id()].pi_sTSS.esp0 = psThread->tr_pESP0;
+
 
 	g_psFirstV86State = g_psFirstV86State->psNext;
 
@@ -474,7 +479,7 @@ int sys_realint( int num, struct RMREGS *rm )
 	uint32 *pIntVects = NULL;
 	uint32 *pnStack;
 	uint32 nFlags;
-
+	
 	sRegs.regs.eax = rm->EAX;
 	sRegs.regs.orig_eax = rm->EAX;
 	sRegs.regs.ebx = rm->EBX;

@@ -1,9 +1,9 @@
-CFLAGS   += -Wstrict-prototypes -kernel -fno-PIC -c -fno-strict-aliasing -Wno-trigraphs -fno-common -D__ENABLE_DEBUG__
+CFLAGS   += -Wstrict-prototypes -kernel -fno-PIC -c -fno-strict-aliasing -Wno-trigraphs -fno-common -D__ENABLE_DEBUG__ -I../acpi/include
 AFLAGS   = -c
 
 C_INCLUDE_PATH=$(ATHEOS_INCLUDE_PATH)
 
-OBJS := pci.o pci_irq_router.o
+OBJS := pci.o pci_acpi_link.o pci_acpi_router.o
 
 
 OBJDIR	:= objs

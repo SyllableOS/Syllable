@@ -256,7 +256,7 @@ static void init_timer2( void )
  * \sa idle_loop()
  * \author Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
-void TimerInterrupt( int dummy )
+void TimerInterrupt( SysCallRegs_s* psRegs )
 {
 	bigtime_t nCurTime;
 	
@@ -275,7 +275,10 @@ void TimerInterrupt( int dummy )
 		
 	send_alarm_signals( nCurTime );
 	wake_up_sleepers( nCurTime );
-	Schedule();
+	if( g_bAPICPresent == false )
+	{
+		DoSchedule( psRegs );
+	}
 }
 
 //****************************************************************************/

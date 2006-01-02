@@ -319,6 +319,7 @@ static void ap_entry_proc( void )
 	sIDT.Limit = 0x7ff;
 
 	SetIDT( &sIDT );
+	SetTR( ( 8 + nProcessor ) << 3 );
 	
 	calibrate_delay( nProcessor );
 
@@ -1255,7 +1256,7 @@ void do_smp_invalidate_pgt( SysCallRegs_s * psRegs, int nIrqNum )
  * SEE ALSO:
  ****************************************************************************/
 
-void do_smp_spurious_irq( SysCallRegs_s * psRegs, int nIrqNum )
+void do_smp_spurious_irq( void )
 {
 	printk( "Got APIC spurious interrupt\n" );
 }
@@ -1267,10 +1268,10 @@ void do_smp_spurious_irq( SysCallRegs_s * psRegs, int nIrqNum )
  * SEE ALSO:
  ****************************************************************************/
 
-void do_smp_preempt( SysCallRegs_s * psRegs, int nIrqNum )
+void do_smp_preempt( SysCallRegs_s * psRegs )
 {
 	apic_eoi();
-	Schedule();
+	DoSchedule( psRegs );
 }
 
 /*****************************************************************************

@@ -42,7 +42,7 @@ extern "C"
 #include "typedefs.h"
 #include "i82489.h"
 #include "acpi.h"
-
+#include "intel.h"
 
 static const uint32_t SMP_MAGIC_IDENT = (('_'<<24)|('P'<<16)|('M'<<8)|'_');
 
@@ -204,6 +204,7 @@ typedef struct
 	Thread_s *pi_psCurrentThread;
 	Thread_s *pi_psIdleThread;
 	bigtime_t pi_nIdleTime;
+	TaskStateSeg_s pi_sTSS;	/* Intel 386 specific task state buffer */
 	bool pi_bIsPresent;
 	bool pi_bIsRunning;
 	bool pi_bHaveFXSR; // CPU has fast FPU save and restore

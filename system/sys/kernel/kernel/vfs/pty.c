@@ -1638,13 +1638,15 @@ void clear_ctty( void )
 
 void clone_ctty( IoContext_s * psDst, IoContext_s * psSrc )
 {
-	LOCK( g_hCTTYMutex );
+	if( g_hCTTYMutex >= 0 )
+		LOCK( g_hCTTYMutex );
 	psDst->ic_psCtrlTTY = psSrc->ic_psCtrlTTY;
 	if ( psDst->ic_psCtrlTTY != NULL )
 	{
 		atomic_inc( &psDst->ic_psCtrlTTY->i_nCount );
 	}
-	UNLOCK( g_hCTTYMutex );
+	if( g_hCTTYMutex >= 0 )
+		UNLOCK( g_hCTTYMutex );
 }
 
 Inode_s *get_ctty( void )

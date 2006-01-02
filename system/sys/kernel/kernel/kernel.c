@@ -28,6 +28,7 @@
 #include <atheos/spinlock.h>
 #include <atheos/time.h>
 #include <atheos/config.h>
+#include <atheos/device.h>
 
 #include <atheos/syscall.h>
 
@@ -626,7 +627,7 @@ int reboot( void )
 
 /*****************************************************************************
  * NAME: sys_apm_poweroff
- * DESC: Powers down a system using the APM BIOS
+ * DESC: Powers down a system using the APM BIOS or the ACPI busmanager
  * NOTE: by Anthony Morphett < tonymorph@yahoo.com >
  * SEE ALSO: apm_poweroff(), sys_reboot()
  ****************************************************************************/
@@ -634,6 +635,12 @@ int reboot( void )
 int sys_apm_poweroff( void )
 {
 	struct RMREGS rm;
+	
+	typedef struct 
+	{
+		void		( *poweroff )( void );
+	} ACPI_bus_s;
+	
 
 	/* this part copied from sys_reboot */
 	thread_id hThread;
@@ -687,6 +694,15 @@ int sys_apm_poweroff( void )
 	snooze( 1000000 );
 
 	unprotect_dos_mem();	// hard_reset does this, probably doesn't hurt
+	
+	ACPI_bus_s* psBus = get_busmanager( "acpi", 1 );
+	if( psBus )
+	{
+		psBus->poweroff();
+		for( ;; )
+		{
+		}
+	}
 
 	memset( &rm, 0, sizeof( rm ) );
 

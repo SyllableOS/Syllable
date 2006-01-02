@@ -106,6 +106,7 @@ extern void exc11( void );
 extern void exc12( void );
 extern void exc13( void );
 
+extern void init_irq_controller( void );
 extern void irq0( void );
 extern void irq1( void );
 extern void irq2( void );
@@ -426,7 +427,8 @@ static int kernel_init( void )
 
 	printk( "Enable interrupts\n" );
 	sti();
-
+	
+	
 	get_cmos_time();
 
 	init_scheduler();
@@ -441,7 +443,7 @@ static int kernel_init( void )
 	init_elf_loader();
 
 	init_block_cache();
-
+	
 	printk( "Mount boot FS: %s %s %s\n", g_zBootDev, g_zBootFS, g_zBootFSArgs );
 	mkdir( "/boot", 0 );
 
@@ -492,7 +494,7 @@ void system_init( void )
 		printk( "Panic: idle_loop() returned!!!\n" );
 		return;
 	}
-
+	
 	kernel_init();
 
 	register_debug_cmd( "umode", "umode mode - Set single(0)/multi(1) user mode", dbg_set_user_mode );
@@ -781,6 +783,7 @@ int init_kernel( char *pRealMemBase, int nKernelSize )
 	init_cpuid();
 	init_descriptors();
 	init_interrupt_table();
+	init_irq_controller();
 	init_pages( KERNEL_LOAD_ADDR + nKernelSize );
 
 	kassertw( sizeof( MemContext_s ) <= PAGE_SIZE );	/* Late compile-time check :) */

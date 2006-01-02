@@ -34,7 +34,7 @@
 
 static IrqAction_s *g_psIrqHandlerLists[IRQ_COUNT] = { 0, };
 
-static unsigned int cached_irq_mask = 0x0;	// 0xffff;
+static unsigned int cached_irq_mask = 0xffff;
 
 #define __byte(x,y) 	(((uint8*)&(y))[x])
 #define cached_21	(__byte(0,cached_irq_mask))
@@ -152,10 +152,10 @@ int request_irq( int nIrqNum, irq_top_handler *pTopHandler, irq_bottom_handler *
 	psAction->psNext = NULL;
 	psAction->nHandle = atomic_inc_and_read( &nIrqHandle );
 
-	enable_8259A_irq( nIrqNum );
+
 	nEFlags = cli();
-
-
+	
+	
 	if ( g_psIrqHandlerLists[nIrqNum] != NULL )
 	{
 		if ( ( nFlags & SA_SHIRQ ) == 0 || ( g_psIrqHandlerLists[nIrqNum]->nFlags & SA_SHIRQ ) == 0 )
@@ -173,6 +173,8 @@ int request_irq( int nIrqNum, irq_top_handler *pTopHandler, irq_bottom_handler *
 	{
 		g_psIrqHandlerLists[nIrqNum] = psAction;
 		nError = psAction->nHandle;
+		enable_8259A_irq( nIrqNum );
+		printk( "IRQ %i enabled\n", nIrqNum );
 	}
 
 	put_cpu_flags( nEFlags );
@@ -245,14 +247,14 @@ static inline void mask_and_ack_8259A( int irq )
 	{
 		inb( PIC_SLAVE_IMR );	/* DUMMY */
 		outb( cached_A1, PIC_SLAVE_IMR );
-		outb( 0x62, PIC_MASTER_CMD );	/* Specific EOI to cascade */
-		outb( 0x20, PIC_SLAVE_CMD );
+		outb( 0x60 + ( irq & 7 ), PIC_SLAVE_CMD );	/* Specific EOI to cascade */
+		outb( 0x60 + PIC_CASCADE_IR, PIC_MASTER_CMD );
 	}
 	else
 	{
 		inb( PIC_MASTER_IMR );	/* DUMMY */
 		outb( cached_21, PIC_MASTER_IMR );
-		outb( 0x20, PIC_MASTER_CMD );
+		outb( 0x60 + irq, PIC_MASTER_CMD );
 	}
 }
 
@@ -271,7 +273,8 @@ void handle_irq( SysCallRegs_s * psRegs, int nIrqNum )
 	static atomic_t nBottomOut = ATOMIC_INIT(0);
 	int nIn;
 	bool bNeedSchedule = false;
-
+	
+	
 	if ( NULL != g_psIrqHandlerLists[nIrqNum] )
 	{
 		mask_and_ack_8259A( nIrqNum );
@@ -369,6 +372,43 @@ void handle_irq( SysCallRegs_s * psRegs, int nIrqNum )
 	}
 	if ( bNeedSchedule )
 	{
-		Schedule();
+		DoSchedule( psRegs );
 	}
 }
+
+
+void init_irq_controller( void )
+{
+	/* Mask all interrupts */
+	outb( 0xff, PIC_SLAVE_IMR );
+	outb( 0xff, PIC_MASTER_IMR );
+	
+	/* Initialize the PIC */
+	outb( 0x11, PIC_MASTER_CMD );
+	outb( 0x20, PIC_MASTER_IMR ); // First PIC start at vector 0x20
+	outb( 0x04, PIC_MASTER_IMR );
+	outb( MASTER_ICW4_DEFAULT, PIC_MASTER_IMR );
+	
+	outb( 0x11, PIC_SLAVE_CMD );
+	outb( 0x28, PIC_SLAVE_IMR ); // Second PIC start at vector 0x28
+	outb( 0x02, PIC_SLAVE_IMR );
+	outb( SLAVE_ICW4_DEFAULT, PIC_SLAVE_IMR );
+	
+	/* Mask all interrupts */
+	outb( cached_A1, PIC_SLAVE_IMR );
+	outb( cached_21, PIC_MASTER_IMR );
+	
+	/* Enable IRQ 0 (Timer) and 2 (Connection to slave) */
+	enable_8259A_irq( 0 );
+	enable_8259A_irq( 2 );
+}
+
+
+
+
+
+
+
+
+
+

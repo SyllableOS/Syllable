@@ -29,9 +29,6 @@
 #include "inc/sysbase.h"
 #include "inc/areas.h"
 
-
-static struct i3Task g_sInitialTSS;
-
 extern uint32 g_anKernelStackEnd[];
 extern uint32 g_nCpuMask;
 extern vuint32 g_nMTRRInvalidateMask;
@@ -367,7 +364,7 @@ void enable_mmu( void )
 	int i;
 	
 	/* Enable the mmu */
-	g_sInitialTSS.cr3 = ( void * )&g_psKernelSeg->mc_pPageDir;
+	g_asProcessorDescs[get_processor_id()].pi_sTSS.cr3 = ( void * )&g_psKernelSeg->mc_pPageDir;
 	__asm__ __volatile__( "movl %%cr0,%0; orl $0x80010000,%0; movl %0,%%cr0" : "=r" (nDummy) );	// set PG & WP bit in cr0
 	
 	/* Read the MTRR descriptor table from the boot cpu */
@@ -418,32 +415,38 @@ void init_descriptors()
 	set_gdt_desc_base( DS_USER, 0x00000000 );
 	set_gdt_desc_limit( DS_USER, 0xffffffff );
 	set_gdt_desc_access( DS_USER, 0xf2 );
+	
+	/* Initialize the TSS descriptors for every CPU */
+	for ( i = 0; i < MAX_CPU_COUNT; i++ )
+	{
+		TaskStateSeg_s* psTSS = &g_asProcessorDescs[i].pi_sTSS;
+		
+		memset( psTSS, 0, sizeof( TaskStateSeg_s ) );
 
-	memset( &g_sInitialTSS, 0, sizeof( g_sInitialTSS ) );
+		psTSS->cs = CS_KERNEL;
+		psTSS->ss = DS_KERNEL;
+		psTSS->ds = DS_KERNEL;
+		psTSS->es = DS_KERNEL;
+		psTSS->fs = DS_KERNEL;
+		psTSS->gs = DS_KERNEL;
+		psTSS->eflags = 0x203246;
 
-	g_sInitialTSS.cs = CS_KERNEL;
-	g_sInitialTSS.ss = DS_KERNEL;
-	g_sInitialTSS.ds = DS_KERNEL;
-	g_sInitialTSS.es = DS_KERNEL;
-	g_sInitialTSS.fs = DS_KERNEL;
-	g_sInitialTSS.gs = DS_KERNEL;
-	g_sInitialTSS.eflags = 0x203246;
+		psTSS->cr3 = 0;
+		psTSS->ss0 = DS_KERNEL;
+		psTSS->esp0 = g_anKernelStackEnd;
+		psTSS->IOMapBase = 104;
+		
+		set_gdt_desc_limit( ( 8 + i ) << 3, 0xffff );
+		set_gdt_desc_base( ( 8 + i ) << 3, ( uint32 )psTSS );
+		set_gdt_desc_access( ( 8 + i ) << 3, 0x89 );
+		g_sSysBase.ex_GDT[8+i].desc_lmh &= 0x8f;	// TSS descriptor has bit 22 clear (as opposed to 32 bit data and code descriptors)
+	}
 
-	g_sInitialTSS.cr3 = 0;
-	g_sInitialTSS.ss0 = DS_KERNEL;
-	g_sInitialTSS.esp0 = g_anKernelStackEnd;
-	g_sInitialTSS.IOMapBase = 104;
-
-	set_gdt_desc_limit( 0x40, 0xffff );
-	set_gdt_desc_base( 0x40, ( uint32 )&g_sInitialTSS );
-	set_gdt_desc_access( 0x40, 0x89 );
-	g_sSysBase.ex_GDT[0x40 >> 3].desc_lmh &= 0x8f;	// TSS descriptor has bit 22 clear (as opposed to 32 bit data and code descriptors)
-
-
+	
 	IDT.Base = ( uint32 )g_sSysBase.ex_GDT;
 	IDT.Limit = 0xffff;
 	SetGDT( &IDT );
-	SetTR( 0x40 );
+	SetTR( ( 8 + get_processor_id() ) << 3 );
 	__asm__ volatile ( "mov %0,%%ds;mov %0,%%es;mov %0,%%fs;mov %0,%%gs;mov %0,%%ss;"::"r" ( 0x18 ) );
 
 	/* mark the first descriptors in GDT as used      */

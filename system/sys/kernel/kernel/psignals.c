@@ -405,7 +405,7 @@ int handle_signals( int dummy )
 	{
 		return ( -EINVAL );
 	}
-	if ( 0 == psThread->tr_hThreadID )
+	if ( get_idle_thread()->tr_hThreadID == psThread->tr_hThreadID )
 	{
 		return ( -EINVAL );	/* Dont do anything silly with the idle thread */
 	}

@@ -35,22 +35,7 @@
 
 #include <macros.h>
 
-#define MAX_PCI_BUSSES	16
-#define	MAX_PCI_DEVICES	255
-
-typedef struct
-{
-	uint32 nPCIDeviceNumber;
-	uint32 nPrimaryBus;
-	uint32 nSecondaryBus;
-} PCI_Bus_s;
-
-enum
-{
-	PCI_METHOD_1 = 0x01,
-	PCI_METHOD_2 = 0x02,
-	PCI_METHOD_BIOS = 0x04
-};
+#include "pci_internal.h"
 
 struct AGP_Speed_s
 {
@@ -75,8 +60,6 @@ PCI_Entry_s *g_apsAGPDevice[MAX_PCI_DEVICES];
 SpinLock_s g_sPCILock = INIT_SPIN_LOCK( "pci_lock" );
 bool g_bDisableAGP = true;
 
-extern void init_pci_irq_routing( void );
-extern int lookup_irq( PCI_Entry_s* psDevice, bool bAssign );
 
 /** 
  * \par Description: Checks wether a PCI bus is present and selects the access ethod
@@ -439,7 +422,7 @@ static int read_pci_header( PCI_Entry_s * psInfo, int nBusNum, int nDevNum, int 
 
 		if ( ( nAddr & PCI_ADDRESS_SPACE ) || ( nAddr == 0x00000000 ) || ( nAddr == 0xffffffff ) )
 			continue;
-			
+				
 		nAddr = nAddr & PCI_ADDRESS_MEMORY_32_MASK;
 		
 		alloc_physical( &nAddr, true, get_pci_memory_size( nBusNum, nDevNum, nFncNum, i ) );
@@ -671,8 +654,6 @@ void pci_scan_bus( int nBusNum, int nBridgeFrom, int nBusDev )
 
 						kerndbg( KERN_INFO, "PCI: Device %i VendorID: %04x DeviceID: %04x at %i:%i:%i\n", g_nPCINumDevices - 1, psInfo->nVendorID, psInfo->nDeviceID, nBusNum, nDev, nFnc );
 					
-						/* Try to lookup the irq using the pci routing table instead of the BIOS */
-						lookup_irq( psInfo, true );
 					}
 					else
 					{
@@ -1014,9 +995,13 @@ status_t bus_init( void )
 	}
 	else
 	{
-		if( !bDisableIRQRouting )
-			init_pci_irq_routing();		
 		pci_scan_all();
+		
+		if( !bDisableIRQRouting )
+		{
+			init_acpi_pci_links();
+			init_acpi_pci_router();
+		}
 	}
 	return ( 0 );
 }

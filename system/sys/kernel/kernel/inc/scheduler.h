@@ -96,16 +96,12 @@ struct _Thread
 	char tr_zName[OS_NAME_LENGTH];	/* Thread name                          */
 	int tr_nExitCode;
 
-	TaskStateSeg_s tc_sTSS;	/* Intel 386 specific task state buffer */
-
 	// Hack alert!  kmalloc() alignment is off by 8 due to block_header,
 	// and we need 16 byte alignment in order to use fxsave.
 	long padding[2] __attribute__(( aligned(16) ));
 	union i3FPURegs_u tc_FPUState;	/* Intel 387 specific FPU state buffer  */
 	int32 tr_nState;	/* Current task state.                  */
 	uint32 tr_nFlags;
-
-	int tc_TSSDesc;		/* task descriptor                      */
 
       /*** Timing members	***/
 
@@ -114,7 +110,12 @@ struct _Thread
 	int64 tr_nQuantum;	/* Maximum allowed micros of execution before preemption        */
 	int64 tr_nLaunchTime;
 
+	/* Registers */
 	int tr_nCR2;
+	void* tr_pEIP;
+	void* tr_pESP;
+	void* tr_pESP0;
+	uint32 tr_nSS0;
 
 	int tr_nPriority;
 
@@ -164,9 +165,7 @@ struct _Thread
 	int tr_nSysTraceMask;
 	SyscallExc_s *psExc;
 
-	int tr_nLastCS;
-	void *tr_pLastEIP;
-	int tr_nAfsInodeLockCount;
+	/* Block cache */
 	int tr_nNumLockedCacheBlocks;
 };
 
@@ -284,6 +283,7 @@ thread_id get_prev_thread( const thread_id hPrev );
 
 int send_signal( Thread_s *psThread, int nSigNum, bool bBypassChecks );
 
+void DoSchedule( SysCallRegs_s* psRegs );
 
 #ifdef __cplusplus
 }

@@ -27,6 +27,7 @@
 #include <macros.h>
 
 #include "inc/scheduler.h"
+#include "inc/smp.h"
 
 /*****************************************************************************
  * NAME:
@@ -145,7 +146,7 @@ int save_i387( struct _fpstate *buf )
 	// This will cause a "finit" to be triggered by the next
 	// attempted FPU operation by the current thread.
 	psThread->tr_nFlags &= ~TF_FPU_USED;
-
+	
 	if ( psThread->tr_nFlags & TF_FPU_DIRTY )
 	{
 		save_fpu_state( &psThread->tc_FPUState );
@@ -243,3 +244,41 @@ void restore_i387( struct _fpstate *buf )
 
 	psThread->tr_nFlags |= TF_FPU_USED;
 }
+
+
+inline void load_fpu_state( union i3FPURegs_u *pState )
+{
+	if ( get_processor()->pi_bHaveFXSR )
+	{
+		if ( ( ( unsigned int )&pState->fpu_sFXSave & 0x0000000f ) != 0 )
+		{
+			printk( "Panic: fxsave struct is misaligned: %p\n", &pState->fpu_sFXSave );
+			return;
+		}
+		__asm__ __volatile__( "fxrstor %0" : : "m" ( pState->fpu_sFXSave ) );
+	}
+	else
+	{
+		__asm__ __volatile__( "frstor %0" : : "m" ( pState->fpu_sFSave ) );
+	}
+}
+
+inline void save_fpu_state( union i3FPURegs_u *pState )
+{
+	if ( get_processor()->pi_bHaveFXSR )
+	{
+		if ( ( ( unsigned int )&pState->fpu_sFXSave & 0x0000000f ) != 0 )
+		{
+			printk( "Panic: fxsave struct is misaligned: %p\n", &pState->fpu_sFXSave );
+			return;
+		}
+		__asm__ __volatile__( "fxsave %0; fnclex" : "=m" ( pState->fpu_sFXSave ) );
+	}
+	else
+	{
+		__asm__ __volatile__( "fnsave %0; fwait" : "=m" ( pState->fpu_sFSave ) );
+	}
+}
+
+
+

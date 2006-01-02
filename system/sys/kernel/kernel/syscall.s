@@ -212,8 +212,13 @@ _C_SYM( smp_preempt ):
 	cli
 	pushl	$-1 /* %eax */
 	ENTER_SYSCALL
+
+	movl	%esp,%edx
+	pushl	%edx		# push pointer to stack frame
 	
 	call	_C_SYM( do_smp_preempt )
+
+	addl	$4,%esp
 
 	jmp	ret_from_sys_call1
 			
@@ -222,7 +227,12 @@ _C_SYM( TSIHand ):
 	pushl	$-1 /* %eax */
 	ENTER_SYSCALL
 
+	movl	%esp,%edx
+	pushl	%edx		# push pointer to stack frame
+
 	call	_C_SYM( TimerInterrupt )
+
+	addl	$4,%esp
 
 	jmp	ret_from_sys_call1
 
@@ -779,4 +789,9 @@ SysCallTable:
 
 .long	_C_SYM( sys_get_tld_addr )
 
-.long	_C_SYM( sys_get_msg_size ) /* 217 */
+.long	_C_SYM( sys_get_msg_size ) 
+.long	_C_SYM( sys_do_schedule ) /* 218 */
+
+
+
+

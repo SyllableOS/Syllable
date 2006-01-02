@@ -251,7 +251,7 @@ int do_exit( int nErrorCode )
 /*			printk( "Send SIGCHLD to init\n" ); */
 	}
 
-	send_signal( psParentThread, SIGCHLD, true );
+	send_signal( psParentThread, SIGCHLD, true );	
 	psThread->tr_nState = TS_ZOMBIE;
 	wake_up_queue( psThread->tr_psTermWaitList, nErrorCode, true );
 
@@ -346,7 +346,6 @@ static Process_s *alloc_process( MemContext_s *psMemSeg )
 thread_id create_init_proc( const char *Name )
 {
 	Process_s *psProc = alloc_process( g_psKernelSeg );
-	TaskStateSeg_s *tss;
 	thread_id hThread = -1;
 
 	if ( psProc != NULL )
@@ -363,14 +362,20 @@ thread_id create_init_proc( const char *Name )
 		psThread->tr_nUMask = S_IWGRP | S_IWOTH;
 
 		psProc->pr_psFirstThread = psThread;
-
-		tss = &psThread->tc_sTSS;
-
-		tss->eflags = get_cpu_flags();
-		tss->ds = 0x18;
-		tss->es = 0x18;
-		tss->fs = 0x18;
-		tss->gs = 0x18;
+		
+		/* Prepare kernel stack */
+		SysCallRegs_s* psRegs = (SysCallRegs_s*)( psThread->tc_plKStack - sizeof( SysCallRegs_s ) / 4 - 1 );
+		memset( psRegs, 0, sizeof( SysCallRegs_s ) );
+		
+		psRegs->ds = 0x18;
+		psRegs->es = 0x18;
+		psRegs->fs = 0x18;
+		psRegs->gs = 0x18;
+		psRegs->eip = (uint32)system_init;
+		psRegs->cs = 0x08;
+		psRegs->eflags = get_cpu_flags();
+		psRegs->oldesp = (uint32)psThread->tc_plKStack;
+		psRegs->oldss = 0x18;	
 
 		hThread = MArray_Insert( &g_sThreadTable, psThread, false );
 		psThread->tr_hThreadID = hThread;
@@ -384,10 +389,11 @@ thread_id create_init_proc( const char *Name )
 
 		psProc->pr_psIoContext = fs_alloc_ioctx( FD_SETSIZE );
 
-		tss->eip = system_init;
+		psThread->tr_pESP = (void*)psRegs;
+		psThread->tr_pEIP = exit_from_sys_call;
 	}
 	printk( "Start init thread\n" );
-	Schedule();
+	DoSchedule( NULL );
 	return ( hThread );
 }
 
@@ -401,11 +407,8 @@ thread_id create_init_proc( const char *Name )
 thread_id create_idle_thread( const char *Name )
 {
 	Process_s *psProc = get_proc_by_handle( 0 );
-	TaskStateSeg_s *tss;
 	thread_id hThread = -1;
 	Thread_s *psThread;
-
-	sched_lock();
 
 	psThread = Thread_New( psProc );
 
@@ -413,24 +416,29 @@ thread_id create_idle_thread( const char *Name )
 
 	psThread->tr_nPriority = -999;
 
-	tss = &psThread->tc_sTSS;
-
-	tss->eflags = get_cpu_flags();
-	tss->ds = 0x18;
-	tss->es = 0x18;
-	tss->fs = 0x18;
-	tss->gs = 0x18;
-
+	/* Prepare kernel stack */
+	SysCallRegs_s* psRegs = (SysCallRegs_s*)( psThread->tc_plKStack - sizeof( SysCallRegs_s ) / 4 - 1 );
+	memset( psRegs, 0, sizeof( SysCallRegs_s ) );
+		
+	psRegs->ds = 0x18;
+	psRegs->es = 0x18;
+	psRegs->fs = 0x18;
+	psRegs->gs = 0x18;
+	psRegs->eip = (uint32)idle_loop;
+	psRegs->cs = 0x08;
+	psRegs->eflags = get_cpu_flags();
+	psRegs->oldesp = (uint32)psThread->tc_plKStack;
+	psRegs->oldss = 0x18;
+	
 	hThread = MArray_Insert( &g_sThreadTable, psThread, false );
 	psThread->tr_hThreadID = hThread;
 
 	strcpy( psThread->tr_zName, Name );
 
-	tss->eip = idle_loop;
+	psThread->tr_pESP = (void*)psRegs;
+	psThread->tr_pEIP = exit_from_sys_call;
 
-	sched_unlock();
-
-	Schedule();
+	DoSchedule( NULL );
 	return ( hThread );
 }
 
@@ -449,7 +457,6 @@ thread_id sys_Fork( const char *const pzName )
 	Process_s *psParent;
 	MemContext_s *psMemSeg;
 	SysCallRegs_s *psRegs = ( SysCallRegs_s * ) & pzName;
-	TaskStateSeg_s *tss;
 	proc_id hParentID;
 	thread_id hNewThread = -1;
 	int i;
@@ -459,6 +466,7 @@ thread_id sys_Fork( const char *const pzName )
 	psParentThread = CURRENT_THREAD;
 	psParent = psParentThread->tr_psProcess;
 	hParentID = psParent->tc_hProcID;
+	
 
 	psMemSeg = clone_mem_context( psParent->tc_psMemSeg );
 
@@ -467,7 +475,7 @@ thread_id sys_Fork( const char *const pzName )
 		nError = -ENOMEM;
 		goto error1;
 	}
-
+	
 	psProc = alloc_process( psMemSeg );
 
 	if ( psProc == NULL )
@@ -475,7 +483,7 @@ thread_id sys_Fork( const char *const pzName )
 		nError = -ENOMEM;
 		goto error2;
 	}
-
+	
 	psNewThread = Thread_New( psProc );
 
 	if ( psNewThread == NULL )
@@ -509,7 +517,7 @@ thread_id sys_Fork( const char *const pzName )
 			printk( "Error: fork() could not find stack area in child\n" );
 		}
 	}
-
+	
 	psProc->pr_nUID = psParent->pr_nUID;
 	psProc->pr_nEUID = psParent->pr_nEUID;
 	psProc->pr_nSUID = psParent->pr_nSUID;
@@ -529,9 +537,6 @@ thread_id sys_Fork( const char *const pzName )
 
 	psProc->pr_psFirstThread = psNewThread;
 
-	tss = &psNewThread->tc_sTSS;
-
-
 	if ( pzName != NULL )
 	{
 		if ( strncpy_from_user( psProc->tc_zName, pzName, OS_NAME_LENGTH ) < 0 )
@@ -549,9 +554,9 @@ thread_id sys_Fork( const char *const pzName )
 	psProc->tc_hParent = hParentID;
 	psNewThread->tr_nPriority = psParentThread->tr_nPriority;
 	psNewThread->tr_nQuantum = psParentThread->tr_nQuantum;
-
+	
       /*** Clone file descriptors and cwd ***/
-
+  
 	psProc->pr_psIoContext = fs_clone_io_context( psParent->pr_psIoContext );
 
 	if ( psProc->pr_psIoContext == NULL )
@@ -559,6 +564,7 @@ thread_id sys_Fork( const char *const pzName )
 		nError = -ENOMEM;
 		goto error4;
 	}
+	
 	psProc->pr_psSemContext = clone_semaphore_context( psParent->pr_psSemContext, hParentID );
 
 	if ( psProc->pr_psSemContext == NULL )
@@ -566,7 +572,7 @@ thread_id sys_Fork( const char *const pzName )
 		nError = -ENOMEM;
 		goto error5;
 	}
-
+		
 	psProc->pr_psImageContext = clone_image_context( psParent->pr_psImageContext, psMemSeg );
 
 	if ( psProc->pr_psImageContext == NULL )
@@ -574,7 +580,7 @@ thread_id sys_Fork( const char *const pzName )
 		nError = -ENOMEM;
 		goto error6;
 	}
-
+	
       /*** Clone signal handlers ***/
 
 	for ( i = 0; i < _NSIG; ++i )
@@ -600,7 +606,7 @@ thread_id sys_Fork( const char *const pzName )
 			put_area( psArea );
 		}
 	}
-
+	
 	/* Copy FPU state and flags */
 	if ( psParentThread->tr_nFlags & TF_FPU_USED )
 	{
@@ -610,26 +616,17 @@ thread_id sys_Fork( const char *const pzName )
 			psParentThread->tr_nFlags &= ~TF_FPU_DIRTY;
 			stts();
 		}
+		
 		memcpy( &psNewThread->tc_FPUState, &psParentThread->tc_FPUState, sizeof( union i3FPURegs_u ) );
 	}
 	psNewThread->tr_nFlags = psParentThread->tr_nFlags;
 
-	tss->esp -= sizeof( SysCallRegs_s );
-	memcpy( tss->esp, psRegs, sizeof( SysCallRegs_s ) );
-	( ( SysCallRegs_s * ) tss->esp )->eax = 0;
+	psNewThread->tr_pESP -= sizeof( SysCallRegs_s );
+	memcpy( psNewThread->tr_pESP, psRegs, sizeof( SysCallRegs_s ) );
+	( ( SysCallRegs_s * ) psNewThread->tr_pESP )->eax = 0;
 
 
-	if ( 0x08 == psRegs->cs )
-	{
-		tss->cs = psRegs->cs;
-		tss->ds = psRegs->ds;
-		tss->es = psRegs->es;
-		tss->fs = psRegs->fs;
-		tss->gs = psRegs->gs;
-		tss->eflags = psRegs->eflags;
-	}
-
-	tss->eip = exit_from_sys_call;
+	psNewThread->tr_pEIP = exit_from_sys_call;
 
 	if ( NULL != pzName )
 	{

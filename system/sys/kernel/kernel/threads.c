@@ -613,7 +613,6 @@ int sys_has_data( const thread_id hThread )
 Thread_s *Thread_New( Process_s *psProc )
 {
 	Thread_s *psThread;
-	TaskStateSeg_s *tss;
 
 	psThread = kmalloc( sizeof( Thread_s ), MEMF_CLEAR | MEMF_KERNEL | MEMF_LOCKED | MEMF_OKTOFAILHACK );
 
@@ -640,14 +639,6 @@ Thread_s *Thread_New( Process_s *psProc )
 	{
 		goto error3;
 	}
-	psThread->tc_TSSDesc = alloc_gdt_desc( 0 );	/* allocate a GDT descriptor for this task      */
-
-	if ( psThread->tc_TSSDesc == 0 )
-	{
-		goto error4;
-	}
-
-	tss = &psThread->tc_sTSS;
 
 #ifdef __DETECT_DEADLOCK
 	memset( psThread->tr_ahObtainedSemas, -1, 256 * sizeof( int ) );
@@ -668,36 +659,17 @@ Thread_s *Thread_New( Process_s *psProc )
 	psThread->tr_nSysTraceMask = STRACE_DISABLED;
 	psThread->psExc = NULL;
 
-	tss->esp = psThread->tc_plKStack;
-	tss->esp0 = psThread->tc_plKStack;
+	psThread->tr_pESP = psThread->tc_plKStack;
+	psThread->tr_pESP0 = psThread->tc_plKStack;
+	psThread->tr_nSS0 = 0x18;
 
 //	save_fpu_state( &psThread->tc_FPUState );
-
-	tss->ss0 = 0x18;
-
-	tss->cs = 0x08;
-	tss->ss = 0x18;
-	tss->ds = 0x23;
-	tss->es = 0x23;
-	tss->fs = 0x23;
-	tss->gs = 0x23;
-
-	tss->eflags = 0x203246;	/*      ReadFlags() & ~0x200;   */
-
-	set_gdt_desc_limit( psThread->tc_TSSDesc, 0xffff );
-	set_gdt_desc_base( psThread->tc_TSSDesc, ( uint32 )tss );
-	set_gdt_desc_access( psThread->tc_TSSDesc, 0xe9 );                                                                                                                                                                                      
-	g_sSysBase.ex_GDT[psThread->tc_TSSDesc >> 3].desc_lmh &= 0x8f;	// TSS descriptor has bit 22 clear (as opposed to 32 bit data and code descriptors)
-
-	tss->IOMapBase = 104;
-	tss->cr3 = ( uint32 * )psProc->tc_psMemSeg->mc_pPageDir;
 
 	atomic_inc( &psProc->pr_nThreadCount );
 	atomic_inc( &psProc->pr_nLivingThreadCount );
 	atomic_inc( &g_sSysBase.ex_nThreadCount );
 
 	return ( psThread );
-      error4:
 	delete_semaphore( psThread->tr_hRecvSem );
       error3:
 	kfree( psThread->tc_plKStack - ( psThread->tc_lKStackSize / 4 - 1 ) );
@@ -732,7 +704,6 @@ void Thread_Delete( Thread_s *psThread )
 	sched_lock();
 
 	MArray_Remove( &g_sThreadTable, psThread->tr_hThreadID );
-	free_gdt_desc( psThread->tc_TSSDesc );
 
 	release_thread_semaphores( psThread->tr_hThreadID );
 
@@ -913,12 +884,23 @@ thread_id sys_spawn_thread( const char *const pzName, void *const pfEntry, const
 	{
 		goto error2;
 	}
+	
+	/* Prepare kernel stack */
+	SysCallRegs_s* psRegs = (SysCallRegs_s*)( psNewThread->tc_plKStack - sizeof( SysCallRegs_s ) / 4 - 1 );
+	memset( psRegs, 0, sizeof( SysCallRegs_s ) );
+		
+	psRegs->ds = 0x23;
+	psRegs->es = 0x23;
+	psRegs->fs = 0x23;
+	psRegs->gs = 0x23;
+	psRegs->eip = (uint32)pfEntry;
+	psRegs->cs = 0x13;
+	psRegs->eflags = 0x203246;
+	psRegs->oldesp = (uint32)&pnUserStack[-6];
+	psRegs->oldss = 0x23;
 
-	psNewThread->tc_sTSS.cs = 0x13;	/* User mode code segment       */
-	psNewThread->tc_sTSS.ss = 0x23;	/* User mode stack segment      */
-
-	psNewThread->tc_sTSS.esp = &pnUserStack[-6];
-	psNewThread->tc_sTSS.eip = pfEntry;
+	psNewThread->tr_pESP = ( void* )psRegs;
+	psNewThread->tr_pEIP = exit_from_sys_call;
 
 	psNewThread->tr_nState = TS_WAIT;
 
@@ -997,11 +979,27 @@ thread_id spawn_kernel_thread( const char *const pzName, void *const pfEntry, co
 	psNewThread->tr_pData = NULL;
 	psNewThread->tr_hDataSender = -1;
 
+	/* Prepare kernel stack */
+	SysCallRegs_s* psRegs = (SysCallRegs_s*)( ( uint8* )( psNewThread->tc_plKStack - 5 ) - sizeof( SysCallRegs_s ) + 8 );
+	memset( psRegs, 0, sizeof( SysCallRegs_s ) );
+		
+	psRegs->ds = 0x23;
+	psRegs->es = 0x23;
+	psRegs->fs = 0x23;
+	psRegs->gs = 0x23;
+	psRegs->eip = (uint32)pfEntry;
+	psRegs->cs = 0x08;
+	psRegs->eflags = 0x203246;
+
+	/* Yes, this overwrites the last 8 bytes of the SysCallRegs_s structure. We are jumping back from kernel space
+	   to kernel space and so the stack pointer and stack segment are not used */
 	psNewThread->tc_plKStack[-5] = ( uint32 )kthread_exit;	// sys_TaskEnd;
 	psNewThread->tc_plKStack[-4] = ( uint32 )pData;
 
-	psNewThread->tc_sTSS.esp = &psNewThread->tc_plKStack[-5];
-	psNewThread->tc_sTSS.eip = pfEntry;
+	psNewThread->tr_pESP = (void*)psRegs;
+
+	psNewThread->tr_pEIP = exit_from_sys_call;
+
 
       again:
 	nFlg = cli();
@@ -1063,12 +1061,10 @@ static void db_dump_thread( int argc, char **argv )
 
 	dbprintf( DBP_DEBUGGER, "HasExeced=%d : ExitCode=%08x\n", psThread->tr_bHasExeced, psThread->tr_nExitCode );
 
-//  TaskStateSeg_s tc_sTSS;             /* Intel 386 specific task state buffer */
 
 	dbprintf( DBP_DEBUGGER, "State=%d\n", psThread->tr_nState );
 	dbprintf( DBP_DEBUGGER, "Flags = %08x\n", psThread->tr_nFlags );
 
-//  psThread->tc_TSSDesc;               /* task descriptor                      */
 
       /*** Timing members	***/
 
@@ -1241,7 +1237,7 @@ void db_list_threads( int argc, char **argv )
 				pzState = zState;
 			}
 		}
-		dbprintf( DBP_DEBUGGER, "%05d - %05d (%04x::%p) %-12s %04d %s::%s\n", hThread, psThread->tr_psProcess->tc_hProcID, psThread->tr_nLastCS, psThread->tr_pLastEIP, pzState, psThread->tr_nPriority, psThread->tr_zName, psThread->tr_psProcess->tc_zName );
+		dbprintf( DBP_DEBUGGER, "%05d - %05d %-12s %04d %s::%s\n", hThread, psThread->tr_psProcess->tc_hProcID, pzState, psThread->tr_nPriority, psThread->tr_zName, psThread->tr_psProcess->tc_zName );
 	}
 
 }

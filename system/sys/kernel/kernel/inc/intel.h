@@ -21,7 +21,6 @@
 #ifndef	EXEC_INTEL_H
 #define	EXEC_INTEL_H
 
-#include "inc/smp.h"
 #include "inc/virt86.h"
 
 #ifdef __cplusplus
@@ -209,39 +208,10 @@ static inline void set_page_directory_base_reg( void *pPageTable )
 	__asm__ __volatile__( "movl %0,%%cr3" : : "r" (pPageTable) );
 }
 
-static inline void load_fpu_state( union i3FPURegs_u *pState )
-{
-	if ( get_processor()->pi_bHaveFXSR )
-	{
-		if ( ( ( unsigned int )&pState->fpu_sFXSave & 0x0000000f ) != 0 )
-		{
-			printk( "Panic: fxsave struct is misaligned: %p\n", &pState->fpu_sFXSave );
-			return;
-		}
-		__asm__ __volatile__( "fxrstor %0" : : "m" ( pState->fpu_sFXSave ) );
-	}
-	else
-	{
-		__asm__ __volatile__( "frstor %0" : : "m" ( pState->fpu_sFSave ) );
-	}
-}
 
-static inline void save_fpu_state( union i3FPURegs_u *pState )
-{
-	if ( get_processor()->pi_bHaveFXSR )
-	{
-		if ( ( ( unsigned int )&pState->fpu_sFXSave & 0x0000000f ) != 0 )
-		{
-			printk( "Panic: fxsave struct is misaligned: %p\n", &pState->fpu_sFXSave );
-			return;
-		}
-		__asm__ __volatile__( "fxsave %0; fnclex" : "=m" ( pState->fpu_sFXSave ) );
-	}
-	else
-	{
-		__asm__ __volatile__( "fnsave %0; fwait" : "=m" ( pState->fpu_sFSave ) );
-	}
-}
+inline void load_fpu_state( union i3FPURegs_u *pState );
+
+inline void save_fpu_state( union i3FPURegs_u *pState );
 
 static inline void clts( void )
 {

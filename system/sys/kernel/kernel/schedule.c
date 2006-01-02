@@ -32,6 +32,7 @@
 #include "inc/sysbase.h"
 #include "inc/global.h"
 #include "inc/smp.h"
+#include "inc/areas.h"
 
 static WaitQueue_s *g_psFirstSleeping = NULL;
 
@@ -1617,14 +1618,14 @@ static Thread_s *select_thread( void )
  * \return Nothing, but returns into new thread.
  * \sa
  ****************************************************************************/
-void Schedule( void )
+void DoSchedule( SysCallRegs_s* psRegs )
 {
 	Thread_s *psPrev;
 	Thread_s *psNext;
 	int nFlg;
 	int nThisProc;
 	bigtime_t nCurTime = get_system_time();
-
+	
 	nFlg = cli();
 	sched_lock();
 
@@ -1732,26 +1733,52 @@ void Schedule( void )
 		{
 			save_fpu_state( &psPrev->tc_FPUState );
 			psPrev->tr_nFlags &= ~TF_FPU_DIRTY;
-			stts();
 		}
+		
 		__asm__ __volatile__( "movl %%cr2,%0":"=r"( psPrev->tr_nCR2 ) );
+		psPrev->tr_pESP = (void*)psRegs;
 	}
 	g_asProcessorDescs[nThisProc].pi_psCurrentThread = psNext;
 
-//	load_fpu_state( psNext->tc_FPUState );
+
+	//load_fpu_state( &psNext->tc_FPUState );
 	__asm__ __volatile__( "movl %0,%%cr2"::"r"( psNext->tr_nCR2 ) );
 
 	psNext->tr_nCurrentCPU = nThisProc;
-	psNext->tc_sTSS.gs = g_asProcessorDescs[psNext->tr_nCurrentCPU].pi_nGS;
-	set_gdt_desc_base( psNext->tc_sTSS.gs, ( uint32 )psNext->tr_pThreadData );
+	set_gdt_desc_base( g_asProcessorDescs[psNext->tr_nCurrentCPU].pi_nGS, ( uint32 )psNext->tr_pThreadData );
 
 	if ( atomic_read( &g_sSchedSpinLock.sl_nNest ) != 1 )
 	{
 		printk( "Error: Schedule() called with g_nSchedSpinLockNest = %d\n", atomic_read( &g_sSchedSpinLock.sl_nNest ) );
 	}
-
+	
+	g_asProcessorDescs[psNext->tr_nCurrentCPU].pi_sTSS.esp0 = psNext->tr_pESP0;
+	g_asProcessorDescs[psNext->tr_nCurrentCPU].pi_sTSS.IOMapBase = 104;
+	
 	sched_unlock();
-	SwitchCont( psNext->tc_TSSDesc );
-	put_cpu_flags( nFlg );
+	
+	stts();
+	set_page_directory_base_reg( psNext->tr_psProcess->tc_psMemSeg->mc_pPageDir );
 	g_bNeedSchedule = false;
+	__asm__ __volatile__( "movl %0,%%gs\n\t" "movl %1,%%esp\n\t" "jmp ret_from_sys_call":	/* no outputs */
+		:"r"( g_asProcessorDescs[psNext->tr_nCurrentCPU].pi_nGS ), "r"( psNext->tr_pESP ) );
+	
+	put_cpu_flags( nFlg );
+	
 }
+
+void sys_do_schedule( void* pPtr )
+{
+	SysCallRegs_s *psRegs = ( SysCallRegs_s * ) &pPtr;
+	DoSchedule( psRegs );
+}
+
+void Schedule( void )
+{
+	int nError;
+	__asm__ volatile ( "int $0x80":"=a" ( nError ):"0"( __NR_do_schedule ) );
+}
+
+
+
+

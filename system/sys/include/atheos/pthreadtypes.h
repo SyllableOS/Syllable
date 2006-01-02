@@ -62,6 +62,7 @@ typedef struct __pthread_cond_s
   pthread_t __owner;
   unsigned long __count;
   pthread_condattr_t* __attr;
+  pthread_condattr_t __def_attr;
   __pt_thread_list_t* __head;
   sem_id __lock;
 } pthread_cond_t;
@@ -83,6 +84,7 @@ typedef struct __pthread_mutex_s
   pthread_t __owner;
   unsigned long __count;
   pthread_mutexattr_t *__attr;
+  pthread_mutexattr_t __def_attr;
 } pthread_mutex_t;
 
 /* Dynamic package initialisation. */
