@@ -2,7 +2,7 @@ CFLAGS   += -c -fexceptions -ffast-math
 CXXFLAGS += -c -fexceptions -ffast-math
 AOPTS    = -c
 
-DRIVERBIN = /system/drivers/media
+DRIVERBIN = /system/extensions/media
 
 VPATH = ./
 
@@ -27,7 +27,7 @@ install:  $(OBJDIR)/raw.so
 	install -s $(OBJDIR)/raw.so $(DRIVERBIN)/raw.so
 
 dist:  $(OBJDIR)/raw.so
-	install -s $(OBJDIR)/raw.so $(DIST_DIR)/atheos/sys/drivers/media/raw.so
+	install -s $(OBJDIR)/raw.so $(DIST_DIR)/atheos/sys/extensions/media/raw.so
 
 deps: $(OBJDIR) $(DEPS)
 

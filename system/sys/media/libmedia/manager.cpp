@@ -49,7 +49,7 @@ public:
 			return;
 
 		String zFileName;
-		String zPath = String( "/system/drivers/media" );
+		String zPath = String( "/system/extensions/media" );
 
 		/* Open all media plugins in /system/media */
 		Directory *pcDirectory = new Directory();

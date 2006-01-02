@@ -2,7 +2,7 @@ CFLAGS   += -c -fexceptions -ffast-math
 CXXFLAGS += -c -fexceptions -ffast-math
 AOPTS    = -c
 
-DRIVERBIN = /system/drivers/media
+DRIVERBIN = /system/extensions/media
 
 VPATH = ./
 
@@ -27,7 +27,7 @@ install:  $(OBJDIR)/cdrom.so
 	install -s $(OBJDIR)/cdrom.so $(DRIVERBIN)/cdrom.so
 
 dist:  $(OBJDIR)/cdrom.so
-	install -s $(OBJDIR)/cdrom.so $(DIST_DIR)/atheos/sys/drivers/media/cdrom.so
+	install -s $(OBJDIR)/cdrom.so $(DIST_DIR)/atheos/sys/extensions/media/cdrom.so
 
 deps: $(OBJDIR) $(DEPS)
 

@@ -2,7 +2,7 @@ CFLAGS   += -c -fexceptions
 CXXFLAGS += -c -fexceptions
 AOPTS    = -c
 
-DRIVERBIN = /system/drivers/media
+DRIVERBIN = /system/extensions/media
 
 VPATH = ./
 
@@ -27,7 +27,7 @@ install:  $(OBJDIR)/serveraudio.so
 	install -s $(OBJDIR)/serveraudio.so $(DRIVERBIN)/serveraudio.so
 
 dist:  $(OBJDIR)/serveraudio.so
-	install -s $(OBJDIR)/serveraudio.so $(DIST_DIR)/atheos/sys/drivers/media/serveraudio.so
+	install -s $(OBJDIR)/serveraudio.so $(DIST_DIR)/atheos/sys/extensions/media/serveraudio.so
 
 deps: $(OBJDIR) $(DEPS)
 

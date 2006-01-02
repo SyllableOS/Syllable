@@ -34,8 +34,8 @@ MediaServer::MediaServer()
 {
 	/* Set default values */
 	m_zDefaultInput = "";
-	m_zDefaultAudioOutput = "Media Server Audio Output";
-	m_zDefaultVideoOutput = "Video Overlay Output";
+	m_zDefaultAudioOutput = "Media Server";
+	m_zDefaultVideoOutput = "Screen Video Output";
 	m_zStartupSound = "startup.wav";
 	
 	/* Load Settings */

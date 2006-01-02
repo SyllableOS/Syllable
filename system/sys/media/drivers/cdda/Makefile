@@ -2,7 +2,7 @@ CFLAGS   += -c -fexceptions -ffast-math
 CXXFLAGS += -c -fexceptions -ffast-math
 AOPTS    = -c
 
-DRIVERBIN = /system/drivers/media
+DRIVERBIN = /system/extensions/media
 
 VPATH = ./
 
@@ -27,7 +27,7 @@ install:  $(OBJDIR)/cdda.so
 	install -s $(OBJDIR)/cdda.so $(DRIVERBIN)/cdda.so
 
 dist:  $(OBJDIR)/cdda.so
-	install -s $(OBJDIR)/cdda.so $(DIST_DIR)/atheos/sys/drivers/media/cdda.so
+	install -s $(OBJDIR)/cdda.so $(DIST_DIR)/atheos/sys/extensions/media/cdda.so
 
 deps: $(OBJDIR) $(DEPS)
 

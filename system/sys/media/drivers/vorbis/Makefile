@@ -2,7 +2,7 @@ CFLAGS   += -c -fexceptions -ffast-math
 CXXFLAGS += -c -fexceptions -ffast-math
 AOPTS    = -c
 
-DRIVERBIN = /system/drivers/media
+DRIVERBIN = /system/extensions/media
 
 VPATH = ./
 
@@ -27,7 +27,7 @@ install:  $(OBJDIR)/vorbis.so
 	install -s $(OBJDIR)/vorbis.so $(DRIVERBIN)/vorbis.so
 
 dist:  $(OBJDIR)/vorbis.so
-	install -s $(OBJDIR)/vorbis.so $(DIST_DIR)/atheos/sys/drivers/media/vorbis.so
+	install -s $(OBJDIR)/vorbis.so $(DIST_DIR)/atheos/sys/extensions/media/vorbis.so
 
 deps: $(OBJDIR) $(DEPS)
 

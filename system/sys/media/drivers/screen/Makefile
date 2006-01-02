@@ -2,7 +2,7 @@ CFLAGS   += -c -fexceptions -ffast-math -fno-PIC
 CXXFLAGS += -c -fexceptions -ffast-math -fno-PIC
 AOPTS    = -c
 
-DRIVERBIN = /system/drivers/media
+DRIVERBIN = /system/extensions/media
 
 VPATH = ./
 
@@ -27,7 +27,7 @@ install:  $(OBJDIR)/screen.so
 	install -s $(OBJDIR)/screen.so $(DRIVERBIN)/screen.so
 
 dist:  $(OBJDIR)/screen.so
-	install -s $(OBJDIR)/screen.so $(DIST_DIR)/atheos/sys/drivers/media/screen.so
+	install -s $(OBJDIR)/screen.so $(DIST_DIR)/atheos/sys/extensions/media/screen.so
 
 deps: $(OBJDIR) $(DEPS)
 

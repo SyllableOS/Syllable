@@ -2,7 +2,7 @@ CFLAGS   += -c -fexceptions -ffast-math -Iffmpeg/libavcodec -Iffmpeg/libavformat
 CXXFLAGS += -c -fexceptions -ffast-math -Iffmpeg/libavcodec -Iffmpeg/libavformat -Iffmpeg/libavutil
 AOPTS    = -c
 
-DRIVERBIN = /system/drivers/media
+DRIVERBIN = /system/extensions/media
 
 VPATH = ./
 
@@ -26,7 +26,7 @@ install:  $(OBJDIR)/ffmpeg.so
 	install -s $(OBJDIR)/ffmpeg.so $(DRIVERBIN)/ffmpeg.so
 
 dist:  $(OBJDIR)/ffmpeg.so
-	install -s $(OBJDIR)/ffmpeg.so $(DIST_DIR)/atheos/sys/drivers/media/ffmpeg.so
+	install -s $(OBJDIR)/ffmpeg.so $(DIST_DIR)/atheos/sys/extensions/media/ffmpeg.so
 
 deps: $(OBJDIR) $(DEPS)
 

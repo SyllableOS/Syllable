@@ -2,7 +2,7 @@ CFLAGS   += -c -fexceptions -ffast-math
 CXXFLAGS += -c -fexceptions -ffast-math
 AOPTS    = -c
 
-DRIVERBIN = /system/drivers/media
+DRIVERBIN = /system/extensions/media
 
 VPATH = ./
 
@@ -27,7 +27,7 @@ install:  $(OBJDIR)/oss.so
 	install -s $(OBJDIR)/oss.so $(DRIVERBIN)/oss.so
 
 dist:  $(OBJDIR)/oss.so
-	install -s $(OBJDIR)/oss.so $(DIST_DIR)/atheos/sys/drivers/media/oss.so
+	install -s $(OBJDIR)/oss.so $(DIST_DIR)/atheos/sys/extensions/media/oss.so
 
 deps: $(OBJDIR) $(DEPS)
 
