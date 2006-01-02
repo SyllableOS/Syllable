@@ -198,8 +198,6 @@ SoundPrefs::SoundPrefs( os::Window* pcParent, os::String zCurrentStartup ) : os:
 }
 SoundPrefs::~SoundPrefs()
 {
-	RemoveChild( m_pcStartupSound );
-	delete( m_pcStartupSound );
 }
 
 

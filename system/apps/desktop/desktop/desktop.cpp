@@ -177,7 +177,7 @@ void Desktop::HandleMessage( os::Message* pcMessage )
 
 bool Desktop::OkToQuit()
 {
-	return( true );
+	return( false );
 }
 
 void Desktop::ScreenModeChanged( const os::IPoint& cRes, os::color_space eSpace )

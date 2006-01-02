@@ -692,7 +692,7 @@ void DockWin::HandleMessage( os::Message* pcMessage )
 
 bool DockWin::OkToQuit()
 {
-	return( true );
+	return( false );
 }
 
 void DockWin::AddPlugin( os::String zPath )
