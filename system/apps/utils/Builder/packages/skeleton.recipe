@@ -69,9 +69,12 @@ configure-args		--prefix=/usr/foo
 ; Extra configure options:
 configure-options	--with-option
 
+; Non-standard install prefix variable, for staging or when configure is not available:
+;install-prefix-var	prefix
+
 ; Building:
 ; [<pre-make>]
-; [<make-env>] <make> [<make-vars>] [<make-options>] <make-targets>
+; [<make-env>] <make> [<install-prefix-var>=<Final installation path>] [<make-vars>] [<make-options>] <make-targets>
 ; [<post-make>]
 
 pre-make			<Commands preceding make>
@@ -99,15 +102,13 @@ install-tree		<Extra subdirectories to create>
 
 ; Installing:
 ; <install>
-; [<install-env>] <make> [<install-prefix-var>=<Installation path>] [<install-vars>] <install-targets>
+; [<install-env>] <make> [<install-prefix-var>=<(Stage) installation path>] [<install-vars>] <install-targets>
 
 install				<Installation commands override>
 
 ; Extra environment variables for make install:
 install-env
 	VAR 'value'
-; Non-standard install prefix variable:
-;install-prefix-var	prefix
 ; Extra variables for make install:
 install-vars
 	VAR 'value'
@@ -132,4 +133,3 @@ links
 ; Files to move to the system libraries area, after the main installation:
 ;system-libs			<Libraries and links from the lib subdirectory>
 ;post-install		<Commands after installation, before registration>
-
