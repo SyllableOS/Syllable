@@ -21,14 +21,14 @@ packages
 locations			<Download locations>
 ;archives			<Arch archives>
 
-; Dependencies (unimplemented):
-;needs
-;	<Build- and run-time Dependencies>
-;	<Package> [[> | >= | < | <= | <>] <Version>]
-;	Assumed to be always available: SEd, GRep, ZLib
-;build-needs
-;	<Build-time dependencies>
-;	Assumed to be always available: GNU Make, BinUtils, GCC
+; Dependencies (partly implemented):
+needs
+	<Build- and run-time Dependencies>
+	<Package> [[> | >= | < | <= | <>] <Version>]
+	Assumed to be always available: SEd, GRep, ZLib
+build-needs
+	<Build-time dependencies>
+	Assumed to be always available: GNU Make, BinUtils, GCC
 ;test-needs
 ;	<Test-time dependencies>
 ;run-needs
@@ -133,3 +133,4 @@ links
 ; Files to move to the system libraries area, after the main installation:
 ;system-libs			<Libraries and links from the lib subdirectory>
 ;post-install		<Commands after installation, before registration>
+
