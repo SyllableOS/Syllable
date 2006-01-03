@@ -68,6 +68,15 @@ all :	objs $(OBJDIR)/acpi
 
 objs:
 	mkdir objs
+	-mkdir objs/dispatcher
+	-mkdir objs/events
+	-mkdir objs/executer
+	-mkdir objs/hardware
+	-mkdir objs/namespace
+	-mkdir objs/parser
+	-mkdir objs/resources
+	-mkdir objs/tables
+	-mkdir objs/utilities
 
 $(OBJDIR)/acpi: $(OBJS) Makefile
 	gcc -kernel $(OBJS) -o $(OBJDIR)/acpi
