@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.48
+# Version 0.6.49
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2
 
@@ -386,7 +386,8 @@ def cleanModule target
 end
 
 def makeModule staging, target
-	configured = exists?((cmd = (recipe = getRecipe(target))['configure-cmd']) ? toString(cmd) : 'configure')
+	recipe = getRecipe target
+	configured = native?(target) or exists?((cmd = recipe['configure-cmd']) ? toString(cmd) : 'configure')
 	if exists? dir = buildDir(target) then Dir.chdir dir end
 
 	unless
@@ -1234,7 +1235,7 @@ def buildDir target
 end
 
 def native? target
-	not exists? File.join(target, 'configure') and not
+	not exists? File.join(target[0, 1] == '/' ? target : File.join(@workDir, target), 'configure') and not
 		# Currently look for a recipe to distinguish from meta-packages:
 		exists? File.join(@portsPath, port = fullName(target), port + '.recipe')
 end
@@ -1531,7 +1532,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.48',
+	puts 'Syllable Build System 0.6.49',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1759,3 +1760,4 @@ else
 	@log.close
 	exit @log.failures.length  # FIXME: only works when processing a profile
 end
+
