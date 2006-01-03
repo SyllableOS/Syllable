@@ -1,3 +1,11 @@
+* January 3 2006, Kristian Van Der Vliet *
+
+ftruncate() support for AFS.  Patch from Daniel Gryniewicz.
+posix/ioctl.h: Define Linux-compatable names for the ioctl macros E.g. _IOW, _IOR etc.
+atheos/tld.h: The TLD range from 512 to 1024 is now reserved for use by Glibc
+exec.c, thread.c: Put the base address of the thread data area in the initial thread TLDs so it can
+be retrieved by get_tld_addr() without a syscall.
+
 * January 2 2006, Arno Klenke *
 
 The kernel now uses software task switching
