@@ -1654,11 +1654,11 @@ static int afs_readv( void *pVolume, void *pNode, void *pCookie, off_t nPos, con
  * \return 0 on success, negative error code on failure
  * \sa
  *****************************************************************************/
-static int afs_expand_file( AfsVolume_s * psVolume, AfsInode_s * psInode, AfsFileCookie_s * psCookie, off_t *pnPos, size_t *pnLen )
+static int afs_expand_file( AfsVolume_s * psVolume, AfsInode_s * psInode, AfsFileCookie_s * psCookie, off_t *pnPos, off_t *pnLen )
 {
 	const int nBlockSize = psVolume->av_psSuperBlock->as_nBlockSize;
 	off_t nPos = *pnPos;
-	status_t nLen = *pnLen;
+	off_t nLen = *pnLen;
 	int nError = 0;
 
 	if( ( nPos + nLen ) > ( afs_get_inode_block_count( psInode ) * nBlockSize ) )
@@ -1697,7 +1697,7 @@ static int afs_expand_file( AfsVolume_s * psVolume, AfsInode_s * psInode, AfsFil
 				nNewBlockCount = afs_get_inode_block_count( psInode );
 				if( ( nNewBlockCount * nBlockSize ) < ( nPos + nLen ) )
 				{
-					size_t nTmp = nLen;
+					off_t nTmp = nLen;
 
 					if( nPos < nNewBlockCount * nBlockSize )
 					{
@@ -1707,7 +1707,7 @@ static int afs_expand_file( AfsVolume_s * psVolume, AfsInode_s * psInode, AfsFil
 					{
 						nLen = 0;
 					}
-					printk( "Failed to expand file with %d bytes. Shrunk to %d\n", nTmp, nLen );
+					printk( "Failed to expand file with %Ld bytes. Shrunk to %Ld\n", nTmp, nLen );
 				}
 			}
 			else
@@ -1754,6 +1754,7 @@ static int afs_write( void *pVolume, void *pNode, void *pCookie, off_t nPos, con
 	AfsInode_s * psInode = ( ( AfsVNode_s * )pNode )->vn_psInode;
 	AfsFileCookie_s * psCookie = pCookie;
 	int nError = 0;
+	off_t nAFSLen = nLen;
 
 	if( S_ISDIR( psInode->ai_nMode ) )
 	{
@@ -1768,16 +1769,17 @@ static int afs_write( void *pVolume, void *pNode, void *pCookie, off_t nPos, con
 		return ( -EROFS );
 	AFS_LOCK( psInode->ai_psVNode );
 
-		// Set the position to the end of the file if opened in append mode
-		if( psCookie != NULL && psCookie->fc_nOMode & O_APPEND )
+	// Set the position to the end of the file if opened in append mode
+	if( psCookie != NULL && psCookie->fc_nOMode & O_APPEND )
 	{
 		nPos = psInode->ai_sData.ds_nSize;
 	}
 
-		// Check if we must expand the file.
-		nError = afs_expand_file( psVolume, psInode, psCookie, &nPos, &nLen );
-	if( nLen > 0 )
+	// Check if we must expand the file.
+	nError = afs_expand_file( psVolume, psInode, psCookie, &nPos, &nAFSLen );
+	if( nAFSLen > 0 )
 	{
+		nLen = nAFSLen;
 		nError = afs_do_write( pVolume, psInode, pBuffer, nPos, nLen );
 		if( nError >= 0 )
 		{
@@ -1811,7 +1813,7 @@ static int afs_writev( void *pVolume, void *pNode, void *pCookie, off_t nPos, co
 	AfsFileCookie_s * psCookie = pCookie;
 	int nError = 0;
 	int nBytesWritten = 0;
-	int nLen = 0;
+	off_t nLen = 0;
 	int i;
 
 	if( S_ISDIR( psInode->ai_nMode ) )
@@ -1845,7 +1847,7 @@ static int afs_writev( void *pVolume, void *pNode, void *pCookie, off_t nPos, co
 		nError = afs_expand_file( psVolume, psInode, psCookie, &nPos, &nLen );
 	for( i = 0; i < nCount && nLen > 0; ++i )
 	{
-		int nCurLen = min( nLen, psVector[i].iov_len );
+		size_t nCurLen = min( nLen, psVector[i].iov_len );
 
 		nError = afs_do_write( pVolume, psInode, psVector[i].iov_base, nPos, nCurLen );
 		if( nError < 0 )
@@ -2961,6 +2963,139 @@ int afsi_get_stream_blocks( void *pVolume, void *pNode, off_t nPos, int nBlockCo
 	return ( nError );
 }
 
+/** Truncate a file to a specific length
+ * \par Description:
+ * Truncate the given file on the give volume to the given length.  If nLen is shorter
+ * than the current length, the file is shortened.  Otherwise, it is lengthened and zero
+ * filled.
+ * \par Note:
+ * This could be improved by making the file sparse.  I suspect that needs VFS support
+ * \par Warning:
+ * \param pVolume	AFS filesystem pointer
+ * \param pNode		Inode of file to truncate
+ * \param nLen		Length to truncate to
+ * \return 0 on success negative error code on failure
+ * \sa
+ ****************************************************************************/
+int afs_truncate( void *pVolume, void *pNode, off_t nLen )
+{
+	AfsVolume_s * psVolume = pVolume;
+	AfsInode_s * psInode = ( ( AfsVNode_s * )pNode )->vn_psInode;
+	int nError;
+	off_t nOldSize, nPos, nBufSize;
+	void * pBuffer = NULL;
+
+	printk( "%s\n", __FUNCTION__ );
+	if( S_ISDIR( psInode->ai_nMode ) )
+	{
+		return ( -EISDIR );
+	}
+	if( psVolume->av_nFlags & FS_IS_READONLY )
+	{
+		return ( -EROFS );
+	}
+	if( nLen < 0 || nLen > SIZE_MAX )
+	{
+		return ( -EINVAL );
+	}
+	nOldSize = psInode->ai_sData.ds_nSize;
+	if (nLen == nOldSize)
+		return ( 0 );
+	printk( "%s oldsize %Ld newsize %Ld\n", __FUNCTION__, nOldSize, nLen );
+
+	if (nLen < nOldSize)
+	{
+		printk( "%s shrink \n", __FUNCTION__ );
+		// Shrink
+		nError = afs_begin_transaction( psVolume );
+		if( nError < 0 )
+		{
+			printk( "Error : %s failed to start transaction\n", __FUNCTION__ );
+			goto error;
+		}
+		AFS_LOCK( psInode->ai_psVNode );
+		psInode->ai_sData.ds_nSize = nLen;
+		nError = afs_truncate_stream( psVolume, psInode );
+		if( nError < 0 )
+		{
+			printk( "Error : %s truncate stream failed; reverting\n", __FUNCTION__ );
+			psInode->ai_sData.ds_nSize = nOldSize;
+			afs_end_transaction( psVolume, false );
+			afs_revert_inode( psVolume, psInode );
+		}
+		else
+		{
+			afs_end_transaction( psVolume, true );
+		}
+		AFS_UNLOCK( psInode->ai_psVNode );
+	}
+	else
+	{
+		printk( "%s expand \n", __FUNCTION__ );
+		// Expand
+		// Will need a buffer to write zeros.  Get it now so that we can handle failure
+		// gracefully
+		pBuffer = afs_alloc_block_buffer( psVolume );
+		if ( !pBuffer )
+		{
+			printk( "PANIC : %s failed to truncate file! No memory!\n", __FUNCTION__ );
+			nError = -ENOMEM;
+			goto error;
+		}
+		AFS_LOCK( psInode->ai_psVNode );
+		// Set the position to the end of the file if opened in append mode
+		nPos = psInode->ai_sData.ds_nSize;
+		// Expand file
+		nError = afs_expand_file( psVolume, psInode, NULL, &nPos, &nLen );
+		if( nLen > 0 )
+		{
+			printk( "%s afs_expand_file succeeded: %Ld \n", __FUNCTION__, nLen );
+			// Need to write zeros into expanded space.
+			nBufSize = psVolume->av_psSuperBlock->as_nBlockSize;
+			memset(pBuffer, 0, nBufSize);
+			while (nLen > 0)
+			{
+				if (nLen >= nBufSize)
+				{
+					nError = afs_do_write( pVolume, psInode, pBuffer, nPos, nBufSize );
+					nPos += nBufSize;
+					nLen -= nBufSize;
+				}
+				else
+				{
+					nError = afs_do_write( pVolume, psInode, pBuffer, nPos, nLen );
+					nPos += nLen;
+					nLen -= nLen;
+				}
+				if (nError < 0)
+				{
+					printk( "%s Uh oh.  nError < 0 \n", __FUNCTION__ );
+					break;
+				}
+			}
+		}
+		afs_free_block_buffer( psVolume, pBuffer );
+		if( nError < 0 )
+		{
+			printk( "%s Something failed... %d \n", __FUNCTION__, nError );
+			psInode->ai_sData.ds_nSize = nOldSize;
+			afs_revert_inode( psVolume, psInode );
+		}
+		AFS_UNLOCK( psInode->ai_psVNode );
+	}
+	if( nError < 0 )
+	{
+		printk( "PANIC : %s failed to truncate file!\n", __FUNCTION__ );
+	}
+	else
+	{
+		notify_node_monitors( NWEVENT_STAT_CHANGED, psVolume->av_nFsID, 0, 0, afs_run_to_num( psVolume->av_psSuperBlock, &psInode->ai_sInodeNum ), NULL, 0 );
+		psInode->ai_nFlags &= ~INF_STAT_CHANGED;
+	}
+error:
+	return ( nError );
+}
+
 /** AFS instance of FSOperations_s
  * \par Description:
  * The instance of FSOperations_s allows the VFS to call into the
@@ -3028,7 +3163,7 @@ static FSOperations_s g_sOperations =
 	NULL,			// op_rename_index
 	afs_stat_index,		// op_stat_index
 	afsi_get_stream_blocks,	// op_get_file_blocks
-	NULL			// op_truncate
+	afs_truncate		// op_truncate
 };
 
 /** Initialize the AFS filesystem driver
