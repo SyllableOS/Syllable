@@ -1,7 +1,7 @@
 /*
  *  The AtheOS kernel
  *  Copyright (C) 1999 - 2001 Kurt Skauen
- *  Copyright (C) 2002 Kristian Van Der Vliet
+ *  Copyright (C) 2002, 2006 Kristian Van Der Vliet
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
@@ -62,6 +62,32 @@ extern "C"{
 #define IOCTL_CMD( num )  (((num)&_IOCTL_CMD_MASK)>>_IOCTL_CMD_SHIFT)
 #define IOCTL_DIR( num )  (((num)&_IOCTL_DIR_MASK)>>_IOCTL_DIR_SHIFT)
 #define IOCTL_SIZE( num ) (((num)&_IOCTL_SIZE_MASK)>>_IOCTL_SIZE_SHIFT)
+
+/* Linux compatability */
+#define _IOC_NRMASK		_IOCTL_CMD_MASK
+#define _IOC_TYPEMASK	_IOCTL_MOD_MASK
+#define _IOC_SIZEMASK	_IOCTL_SIZE_MASK
+#define _IOC_DIRMASK	_IOCTL_DIR_MASK
+
+#define _IOC_NRSHIFT	_IOCTL_CMD_SHIFT
+#define _IOC_TYPESHIFT	_IOCTL_MOD_SHIFT
+#define _IOC_SIZESHIFT	_IOCTL_SIZE_SHIFT
+#define _IOC_DIRSHIFT	_IOCTL_DIR_SHIFT
+
+#define _IOC_NONE		IOCTL_DIR_NONE
+#define _IOC_READ		IOCTL_DIR_READ
+#define _IOC_WRITE		IOCTL_DIR_WRITE
+
+#define _IOC			MK_IOCTL
+#define _IO				MK_IOCTLN
+#define _IOR			MK_IOCTLR
+#define _IOW			MK_IOCTLW
+#define _IORW			MK_IOCTLRW
+
+#define _IOC_TYPE		IOCTL_MOD
+#define _IOC_NR			IOCTL_CMD
+#define _IOC_DIR		IOCTL_DIR
+#define _IOC_SIZE		IOCTL_SIZE
 
 /* Keyboard */
 #define IOCTL_KBD_LEDRST		0x00	/* Reset & clear all LED's */
