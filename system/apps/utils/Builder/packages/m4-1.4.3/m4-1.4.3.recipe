@@ -3,10 +3,12 @@ authors
 	Jan Hauffa
 status				testing
 
+inherits			gnu
+
 licenses			GPL
 home				www.gnu.org/software/m4/
+packages			m4/m4-1.4.3
 
 documentation
 	README COPYING NEWS ChangeLog THANKS TODO
 	examples
-

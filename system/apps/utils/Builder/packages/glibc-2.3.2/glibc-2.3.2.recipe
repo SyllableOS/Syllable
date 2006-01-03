@@ -7,10 +7,11 @@ warnings
 	Temporarily modifies the GCC specs file!
 	GLibC has a circular dependency on the LibGCC library in GCC.
 
+inherits			gnu
+
 licenses			LGPL BSD other
 home				www.gnu.org/software/libc/
-;packages
-;	glibc-2.3.2
+packages			glibc/glibc-2.3.2
 
 build-needs
 ;	autoconf 2.13
@@ -52,5 +53,3 @@ post-make
 documentation
 	README BUGS INSTALL COPYING.LIB COPYING LICENSES NEWS ChangeLog FAQ INTERFACE CONFORMANCE README.libm PROJECTS NOTES NAMESPACE
 	manual/examples
-system-libs			*.so *.so.*
-

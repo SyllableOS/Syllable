@@ -4,10 +4,12 @@ authors
 	Kristian Van Der Vliet
 warnings			LibIberty is both in BinUtils and in GCC.
 
+inherits			gnu
+
 licenses			GPL LGPL
 home				www.gnu.org/software/binutils/
 ; For other recipes to inherit:
-packages			binutils-2.15
+packages			binutils/binutils-2.15
 
 build-needs
 	binutils
@@ -41,4 +43,3 @@ links
 ;	For OpenSSL:
 	bin/ranlib					/usr/bin/ranlib
 ;	/atheos/autolnk/bin/ranlib	/usr/bin/ranlib
-

@@ -2,9 +2,12 @@ authors				Kaj de Vos
 status				broken
 warnings			Prevents compiling some packages, specifically INetUtils.
 
+inherits			gnu
+
 licenses			GPL
 home				www.gnu.org/software/bash/
-locations			ftp://ftp.cwru.edu/pub/bash/
+packages			bash/bash-3.1
+;locations			ftp://ftp.cwru.edu/pub/bash/
 
 build-needs			bash
 
@@ -18,4 +21,3 @@ documentation
 links
 	bin/bash		/bin/bash
 	bin/bash		/bin/sh
-

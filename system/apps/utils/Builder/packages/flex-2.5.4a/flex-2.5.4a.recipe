@@ -1,2 +1,7 @@
-authors Kaj de Vos
-documentation README COPYING NEWS
+authors				Kaj de Vos
+
+inherits			gnu
+
+packages			non-gnu/flex/flex-2.5.4a
+
+documentation		README COPYING NEWS

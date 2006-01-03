@@ -1,9 +1,16 @@
-authors			Kaj de Vos
-licenses		GPL
+authors				Kaj de Vos
+
+inherits			gnu
+
+licenses			GPL
+packages			indent/indent-2.2.9
+
 build-recommends
 	libiconv
 	texinfo
 	tex
-patch-config	config
-;make-targets	html pdf ps
-documentation	README COPYING ABOUT-NLS NEWS ChangeLog AUTHORS
+
+patch-config		config
+
+;make-targets		html pdf ps
+documentation		README COPYING ABOUT-NLS NEWS ChangeLog AUTHORS

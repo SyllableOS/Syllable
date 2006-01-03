@@ -1,10 +1,16 @@
-authors			Kaj de Vos
-status			testing
-licenses		GPL
-patch-config	support
+authors				Kaj de Vos
+status				testing
+
+inherits			gnu
+
+licenses			GPL
+packages			readline/readline-4.3
+
+patch-config		support
+
 configure-options
 	--disable-shared
 ;	--with-curses
-;make-targets	everything shared
-;install-targets	install install-static install-shared
-documentation	README INSTALL USAGE COPYING CHANGES CHANGELOG
+;make-targets		everything shared
+;install-targets		install install-static install-shared
+documentation		README INSTALL USAGE COPYING CHANGES CHANGELOG

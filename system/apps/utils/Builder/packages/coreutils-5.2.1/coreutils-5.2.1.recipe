@@ -2,43 +2,46 @@ authors
 	Kurt Skauen
 	Sebastien Keim
 	Kaj de Vos
-maintainers		Kaj de Vos
-status			testing
+maintainers			Kaj de Vos
+status				testing
 
-licenses		GPL
-home			www.gnu.org/software/coreutils/
+inherits			gnu
+
+licenses			GPL
+home				www.gnu.org/software/coreutils/
+packages			coreutils/coreutils-5.2.1
 
 build-needs
 	coreutils
 	perl
 
-documentation	README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS THANKS-to-translators
+documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS THANKS-to-translators
 links
 ;	For she-bang lines:
-	bin/env		/usr/bin
+	bin/env			/usr/bin
 ;	For GLibC:
-	bin/pwd		/bin
+	bin/pwd			/bin
 ;	For JEd, S-Lang:
-	bin/cp		/bin
-	bin/rm		/bin
-	bin/ln		/bin
+	bin/cp			/bin
+	bin/rm			/bin
+	bin/ln			/bin
 ;	For NcFTP:
-	bin/ls		/bin
+	bin/ls			/bin
 ;	For SaMBa:
-	bin/echo	/bin
+	bin/echo		/bin
 ;	For general compatibility:
-	bin/cat		/bin
-	bin/chgrp	/bin
-	bin/chmod	/bin
-	bin/chown	/bin
-	bin/date	/bin
-	bin/dd		/bin
-	bin/false	/bin
+	bin/cat			/bin
+	bin/chgrp		/bin
+	bin/chmod		/bin
+	bin/chown		/bin
+	bin/date		/bin
+	bin/dd			/bin
+	bin/false		/bin
 	bin/hostname	/bin
-	bin/mkdir	/bin
-	bin/mv		/bin
-	bin/rmdir	/bin
-	bin/su		/bin
-	bin/sync	/bin
-	bin/true	/bin
-	bin/uname	/bin
+	bin/mkdir		/bin
+	bin/mv			/bin
+	bin/rmdir		/bin
+	bin/su			/bin
+	bin/sync		/bin
+	bin/true		/bin
+	bin/uname		/bin

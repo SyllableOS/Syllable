@@ -1,8 +1,11 @@
 authors				Kaj de Vos
 status				testing
 
+inherits			gnu
+
 licenses			GPL
 home				www.gnu.org/software/make/
+packages			make/make-3.80
 
 build-needs			make
 test-needs			perl
@@ -12,4 +15,3 @@ patch-config		config
 ;	check-loadavg
 ;	check
 documentation		README README.customs COPYING ABOUT-NLS NEWS ChangeLog AUTHORS
-

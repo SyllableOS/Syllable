@@ -1,9 +1,11 @@
 authors				Jake Hamby
 status				testing
 
+inherits			gnu
+
 licenses			GPL
 home				www.gnu.org/software/dejagnu/
-locations			ftp://ftp.gnu.org/gnu/dejagnu/
+packages			dejagnu/dejagnu-1.4.4
 
 needs
 	tcl >= 8.4.6
@@ -11,6 +13,4 @@ needs
 
 patch-config
 no-build-dir
-
 documentation		README AUTHORS COPYING ChangeLog ChangeLog.0 MAINTAINERS NEWS TODO
-

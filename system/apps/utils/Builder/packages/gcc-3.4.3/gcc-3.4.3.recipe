@@ -10,17 +10,20 @@ warnings
 	GCC has a circular dependency on GLibC.
 	LibIberty is both in BinUtils and in GCC.
 
+inherits			gnu
+
 licenses			GPL LGPL GFDL
 home				gcc.gnu.org
-;packages
-;	gcc-core-3.4.3
-;	gcc-g++-3.4.3
-;	gcc-objc-3.4.3
-;	gcc-java-3.4.3
-;	gcc-g77-3.4.3
-;	gcc-ada-3.4.3
-;	gcc-testsuite-3.4.3
-locations			ftp://gcc.gnu.org/pub/gcc/releases/gcc-3.4.3/
+packages
+	gcc/gcc-3.4.3/gcc-3.4.3
+;	gcc/gcc-3.4.3/gcc-core-3.4.3
+;	gcc/gcc-3.4.3/gcc-g++-3.4.3
+;	gcc/gcc-3.4.3/gcc-objc-3.4.3
+;	gcc/gcc-3.4.3/gcc-java-3.4.3
+;	gcc/gcc-3.4.3/gcc-g77-3.4.3
+;	gcc/gcc-3.4.3/gcc-ada-3.4.3
+;	gcc/gcc-3.4.3/gcc-testsuite-3.4.3
+;locations			ftp://gcc.gnu.org/pub/gcc/releases/gcc-3.4.3/
 
 needs
 ;	Due to new atomics definitions:
@@ -90,7 +93,3 @@ documentation
 links
 	gcc				bin/cc
 	libgcc.a		lib/gcc/i586-pc-syllable/3.4.3/libgcc_static.a
-system-libs
-	libgcc_s.so*
-	libstdc++.so*
-

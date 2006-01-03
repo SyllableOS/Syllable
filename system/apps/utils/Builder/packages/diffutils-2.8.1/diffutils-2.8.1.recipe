@@ -1,5 +1,9 @@
-authors			Kaj de Vos
-licenses		GPL
-locations		ftp://ftp.gnu.org/gnu/diffutils/
-patch-config	config
-documentation	README COPYING ABOUT-NLS NEWS ChangeLog AUTHORS THANKS
+authors				Kaj de Vos
+
+inherits			gnu
+
+licenses			GPL
+packages			diffutils/diffutils-2.8.1
+
+patch-config		config
+documentation		README COPYING ABOUT-NLS NEWS ChangeLog AUTHORS THANKS

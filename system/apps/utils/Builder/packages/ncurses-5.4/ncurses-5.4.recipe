@@ -1,8 +1,11 @@
 authors				Kaj de Vos
 warnings			Installs terminal definitions in /usr/share/terminfo/.
 
+inherits			gnu
+
 licenses			?
 home				www.gnu.org/software/ncurses/
+packages			ncurses/ncurses-5.4
 
 build-needs
 	gawk
@@ -17,4 +20,3 @@ documentation
 	doc/html
 ; For INetUtils:
 links				include/ncurses /usr/include
-

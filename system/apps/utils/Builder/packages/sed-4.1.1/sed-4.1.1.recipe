@@ -1,10 +1,14 @@
 authors				Kaj de Vos
 
+inherits			gnu
+
 licenses			GPL GFDL
 home				www.gnu.org/software/sed/
+packages			sed/sed-4.1.1
 
 build-needs
 	sed
 	texinfo
+
 configure-options	--enable-html
 documentation		README COPYING COPYING.DOC ABOUT-NLS BUGS NEWS ChangeLog AUTHORS THANKS

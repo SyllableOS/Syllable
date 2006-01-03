@@ -1,9 +1,11 @@
 authors				Kaj de Vos
 status				testing
 
+inherits			gnu
+
 licenses			GPL
 home				www.gnu.org/software/texinfo/
-locations			ftp://ftp.gnu.org/gnu/texinfo/
+packages			texinfo/texinfo-4.7
 
 install-vars
 	TEXMF /usr/texinfo/share/texmf
@@ -12,4 +14,3 @@ install-targets		install install-tex
 documentation
 	README INSTALL INTRODUCTION COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS
 ;	doc/*.tex
-

@@ -1,7 +1,10 @@
 authors				Kaj de Vos
 
+inherits			gnu
+
 licenses			GPL BSD
 home				www.greenwoodsoftware.com/less/
+packages			less/less-382
 
 build-needs			binutils <> 2.14
 ;configure-options	--with-editor=

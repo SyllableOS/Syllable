@@ -2,16 +2,17 @@ authors				Kaj de Vos
 status				broken
 notes				Some header problem
 
+inherits			gnu
+
 licenses			GPL
 home				www.gnu.org/software/ghostscript/
 packages
-	gnughostscript-8.01
+	ghostscript/gnughostscript-8.01
 ;	ghostscript-fonts-std-8.01
 ;	ghostscript-fonts-other-8.01
 	jpegsrc.v6b		gnughostscript-8.01
 ;	libpng-1.2.5	gnughostscript-8.01
 ;	zlib-1.2.1		gnughostscript-8.01
-locations			ftp://ftp.gnu.org/gnu/ghostscript/
 
 ;build-needs
 ;	libjpeg
@@ -34,4 +35,3 @@ no-build-dir
 documentation
 	README LICENSE COPYING
 ;	doc examples
-

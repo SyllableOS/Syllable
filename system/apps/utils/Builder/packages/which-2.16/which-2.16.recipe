@@ -1,6 +1,9 @@
-authors			Kaj de Vos
+authors				Kaj de Vos
 
-licenses		GPL
-home			www.gnu.org/software/which/
+inherits			gnu
 
-documentation	README README.alias EXAMPLES COPYING LICENSE NEWS ChangeLog AUTHORS
+licenses			GPL
+home				www.gnu.org/software/which/
+packages			which/which-2.16
+
+documentation		README README.alias EXAMPLES COPYING LICENSE NEWS ChangeLog AUTHORS

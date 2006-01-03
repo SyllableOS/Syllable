@@ -1,13 +1,15 @@
-authors			Kaj de Vos
-notes			Build: autom4te needs ftruncate
+authors				Kaj de Vos
+notes				Build: autom4te needs ftruncate
 
-licenses		GPL
+inherits			gnu
+
+licenses			GPL
+packages			autoconf/autoconf-2.59
 
 needs
 	m4 >= 1.4
 	perl >= 5.005_03
 ; Both BinUtils and AutoConf have info/standards.info:
-conflicts		binutils
+conflicts			binutils
 
-documentation	README BUGS COPYING NEWS ChangeLog TODO AUTHORS THANKS
-
+documentation		README BUGS COPYING NEWS ChangeLog TODO AUTHORS THANKS

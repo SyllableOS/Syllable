@@ -2,9 +2,11 @@ authors				Kaj de Vos
 status				testing
 notes				Waiting for ftruncate() implementation in AFS
 
+inherits			gnu
+
 licenses			GPL GFDL
 home				www.gnuarch.org
-packages			tla-1.2.1
+packages			gnu-arch/tla-1.2.1
 
 build-needs
 ;	gawk
@@ -24,4 +26,3 @@ test-targets		test
 documentation
 	=ARCH-USERS-README COPYING src/tla/ChangeLog src/tla/=TODO src/tla/=THANKS
 	src/docs-tla/HOWTO.crypto src/docs-tla/html
-
