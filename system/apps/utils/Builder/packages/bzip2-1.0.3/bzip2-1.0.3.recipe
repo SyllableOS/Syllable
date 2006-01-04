@@ -2,7 +2,7 @@ authors				Kaj de Vos
 
 licenses			BSD
 home				www.bzip.org
-locations			http://www.bzip.org/1.0.2/
+locations			http://www.bzip.org/1.0.3/
 
 patch				sed -i 's/ln \$/ln -s \$/' Makefile
 
@@ -15,8 +15,8 @@ documentation
 	README LICENSE CHANGES Y2K_INFO
 ;	Text version of man:
 ;	bzip2.txt
-	manual*.html
-;	manual.pdf manual.ps manual.texi
+	manual.html
+;	manual.xml manual.pdf manual.ps
 
 ; Replace links that are incorrect when installing in an image area:
 links
