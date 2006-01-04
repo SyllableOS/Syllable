@@ -8,12 +8,9 @@ notes				Waiting for fsync() implementation in Syllable GLibC 2.3.x
 licenses			other
 home				www.vim.org
 packages
-	vim-6.4
-	vim-6.4-lang
-locations
-	ftp://ftp.vim.org/pub/vim/unix/
-;	Language pack:
-	ftp://ftp.vim.org/pub/vim/extra/
+	unix/vim-6.4
+	extra/vim-6.4-lang
+locations			ftp://ftp.vim.org/pub/vim/
 
 ;build-needs			ruby
 no-build-dir
