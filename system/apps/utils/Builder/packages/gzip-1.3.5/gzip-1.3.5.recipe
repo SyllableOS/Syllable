@@ -1,0 +1,21 @@
+authors				Kaj de Vos
+
+;inherits			gnu
+
+licenses			GPL
+home				www.gnu.org/software/gzip/
+
+documentation
+	README COPYING NEWS ChangeLog AUTHORS THANKS TODO
+;	Text version of man:
+;	gzip.doc
+	algorithm.doc
+
+; Replace links that are incorrect when installing in an image area:
+links
+	gzip	bin/gunzip
+	gzip	bin/zcat
+	zdiff	bin/zcmp
+	zgrep	bin/zegrep
+	zgrep	bin/zfgrep
+
