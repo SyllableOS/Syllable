@@ -38,8 +38,10 @@ build-needs
 ;conflicts
 ;	<Not needed, and conflicts (as opposed to "needs <>")>
 
-; Patching options:
+; Patching options
+; For replacing config.guess & config.sub with Syllable-aware versions:
 patch-config		[<Directories>]
+; For packages produced with ancient AutoConf versions:
 patch-legacy-config
 patch				<Extra patching commands>
 
