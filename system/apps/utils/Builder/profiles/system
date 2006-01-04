@@ -186,12 +186,12 @@ modules
 	sys/kernel/fs/iso9660
 	sys/kernel/fs/ramfs
 
-	system libs/glibc-2.3.5
+	system libs/glibc-2.3.6
 	system libs/zlib-1.2.2
 
 	libs/libdl
 	libs/libpthread
-	libs/ncurses-5.4
+	libs/ncurses-5.5
 
 ;	Currently conflicts with GetText on GLibC 2.3.x:
 	apps/gnu/grep-2.5.1a
