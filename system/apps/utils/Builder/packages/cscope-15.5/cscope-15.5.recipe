@@ -7,7 +7,10 @@ inherits			sourceforge
 licenses			BSD
 home				cscope.sourceforge.net
 
-needs				ncurses flex bison
+needs				ncurses
+build-needs
+	flex
+	bison
 
 patch-config
 documentation
