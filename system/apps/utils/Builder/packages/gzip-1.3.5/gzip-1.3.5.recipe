@@ -4,6 +4,7 @@ authors				Kaj de Vos
 
 licenses			GPL
 home				www.gnu.org/software/gzip/
+locations			ftp://alpha.gnu.org/gnu/gzip/
 
 documentation
 	README COPYING NEWS ChangeLog AUTHORS THANKS TODO
@@ -18,4 +19,3 @@ links
 	zdiff	bin/zcmp
 	zgrep	bin/zegrep
 	zgrep	bin/zfgrep
-
