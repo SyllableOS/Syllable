@@ -1,5 +1,27 @@
 authors				Kaj de Vos
 
+licenses			BSD
+home				www.bzip.org
+locations			http://www.bzip.org/1.0.2/
+
 patch				sed -i 's/ln \$/ln -s \$/' Makefile
+
 install-prefix-var	PREFIX
-documentation		README LICENSE CHANGES Y2K_INFO
+
+; For a shared library:
+;make-file			Makefile-libbz2_so
+
+documentation
+	README LICENSE CHANGES Y2K_INFO
+;	Text version of man:
+;	bzip2.txt
+	manual*.html
+;	manual.pdf manual.ps manual.texi
+
+; Replace links that are incorrect when installing in an image area:
+links
+	bzdiff	bin/bzcmp
+	bzgrep	bin/bzegrep
+	bzgrep	bin/bzfgrep
+	bzmore	bin/bzless
+
