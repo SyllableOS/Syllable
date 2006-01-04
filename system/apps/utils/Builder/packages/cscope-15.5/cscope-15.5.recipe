@@ -1,0 +1,16 @@
+authors
+	Daniel Gryniewicz
+	Kaj de Vos
+
+inherits			sourceforge
+
+licenses			BSD
+home				cscope.sourceforge.net
+
+needs				ncurses flex bison
+
+patch-config
+documentation
+	README COPYING NEWS ChangeLog AUTHORS TODO
+;	INSTALL 
+
