@@ -20,7 +20,10 @@ run-recommends
 	openssh
 	gnupg
 
-patch-config		src/build-tools/gnu
+patch-config
+	src/build-tools/gnu
+	src/expat/conftools
+	src/libneon
 
 configure-cmd		src/configure
 ;configure-options
@@ -31,3 +34,4 @@ documentation
 	README src/COPYING src/ChangeLog AUTHORS
 	src/docs-tla
 ;	web
+
