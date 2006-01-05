@@ -2,7 +2,7 @@
 authors				<Recipe and patches authors, in historical order>
 maintainers			<Recipe maintainers, if not first author>
 status				broken | deprecated | unmaintained | incomplete | developing | testing | contributed
-warnings			<Important notes>
+warnings			<Important notes that are relayed to the user>
 notes				<Internal notes>
 
 inherits			<Modules this recipe inherits from>
