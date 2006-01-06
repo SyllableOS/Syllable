@@ -7,7 +7,7 @@ locations		ftp://ftp.ruby-lang.org/pub/ruby/
 
 needs			Syllable >= 0.6.1
 ; For Builder:
-build-needs		ruby
+;build-needs		ruby
 
 ;configure-options
 ;	--disable-ipv6
