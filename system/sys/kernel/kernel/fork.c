@@ -367,15 +367,15 @@ thread_id create_init_proc( const char *Name )
 		SysCallRegs_s* psRegs = (SysCallRegs_s*)( psThread->tc_plKStack - sizeof( SysCallRegs_s ) / 4 - 1 );
 		memset( psRegs, 0, sizeof( SysCallRegs_s ) );
 		
-		psRegs->ds = 0x18;
-		psRegs->es = 0x18;
-		psRegs->fs = 0x18;
-		psRegs->gs = 0x18;
+		psRegs->ds = DS_KERNEL;
+		psRegs->es = DS_KERNEL;
+		psRegs->fs = DS_KERNEL;
+		psRegs->gs = DS_KERNEL;
 		psRegs->eip = (uint32)system_init;
-		psRegs->cs = 0x08;
+		psRegs->cs = CS_KERNEL;
 		psRegs->eflags = get_cpu_flags();
 		psRegs->oldesp = (uint32)psThread->tc_plKStack;
-		psRegs->oldss = 0x18;	
+		psRegs->oldss = DS_KERNEL;	
 
 		hThread = MArray_Insert( &g_sThreadTable, psThread, false );
 		psThread->tr_hThreadID = hThread;
@@ -420,15 +420,15 @@ thread_id create_idle_thread( const char *Name )
 	SysCallRegs_s* psRegs = (SysCallRegs_s*)( psThread->tc_plKStack - sizeof( SysCallRegs_s ) / 4 - 1 );
 	memset( psRegs, 0, sizeof( SysCallRegs_s ) );
 		
-	psRegs->ds = 0x18;
-	psRegs->es = 0x18;
-	psRegs->fs = 0x18;
-	psRegs->gs = 0x18;
+	psRegs->ds = DS_KERNEL;
+	psRegs->es = DS_KERNEL;
+	psRegs->fs = DS_KERNEL;
+	psRegs->gs = DS_KERNEL;
 	psRegs->eip = (uint32)idle_loop;
-	psRegs->cs = 0x08;
+	psRegs->cs = CS_KERNEL;
 	psRegs->eflags = get_cpu_flags();
 	psRegs->oldesp = (uint32)psThread->tc_plKStack;
-	psRegs->oldss = 0x18;
+	psRegs->oldss = DS_KERNEL;
 	
 	hThread = MArray_Insert( &g_sThreadTable, psThread, false );
 	psThread->tr_hThreadID = hThread;

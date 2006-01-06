@@ -1773,11 +1773,8 @@ void sys_do_schedule( void* pPtr )
 	DoSchedule( psRegs );
 }
 
-void Schedule( void )
-{
-	int nError;
-	__asm__ volatile ( "int $0x80":"=a" ( nError ):"0"( __NR_do_schedule ) );
-}
+
+
 
 
 

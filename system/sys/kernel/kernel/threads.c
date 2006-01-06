@@ -889,15 +889,15 @@ thread_id sys_spawn_thread( const char *const pzName, void *const pfEntry, const
 	SysCallRegs_s* psRegs = (SysCallRegs_s*)( psNewThread->tc_plKStack - sizeof( SysCallRegs_s ) / 4 - 1 );
 	memset( psRegs, 0, sizeof( SysCallRegs_s ) );
 		
-	psRegs->ds = 0x23;
-	psRegs->es = 0x23;
-	psRegs->fs = 0x23;
-	psRegs->gs = 0x23;
+	psRegs->ds = DS_USER;
+	psRegs->es = DS_USER;
+	psRegs->fs = DS_USER;
+	psRegs->gs = DS_USER;
 	psRegs->eip = (uint32)pfEntry;
-	psRegs->cs = 0x13;
+	psRegs->cs = CS_USER;
 	psRegs->eflags = 0x203246;
 	psRegs->oldesp = (uint32)&pnUserStack[-6];
-	psRegs->oldss = 0x23;
+	psRegs->oldss = DS_USER;
 
 	psNewThread->tr_pESP = ( void* )psRegs;
 	psNewThread->tr_pEIP = exit_from_sys_call;
@@ -984,12 +984,12 @@ thread_id spawn_kernel_thread( const char *const pzName, void *const pfEntry, co
 	SysCallRegs_s* psRegs = (SysCallRegs_s*)( ( uint8* )( psNewThread->tc_plKStack - 5 ) - sizeof( SysCallRegs_s ) + 8 );
 	memset( psRegs, 0, sizeof( SysCallRegs_s ) );
 		
-	psRegs->ds = 0x23;
-	psRegs->es = 0x23;
-	psRegs->fs = 0x23;
-	psRegs->gs = 0x23;
+	psRegs->ds = DS_USER;
+	psRegs->es = DS_USER;
+	psRegs->fs = DS_USER;
+	psRegs->gs = DS_USER;
 	psRegs->eip = (uint32)pfEntry;
-	psRegs->cs = 0x08;
+	psRegs->cs = CS_KERNEL;
 	psRegs->eflags = 0x203246;
 
 	/* Yes, this overwrites the last 8 bytes of the SysCallRegs_s structure. We are jumping back from kernel space

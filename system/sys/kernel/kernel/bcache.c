@@ -571,7 +571,7 @@ static status_t flush_block_list( CacheBlock_s **pasBlocks, count_t nCount, bool
 }
 
 
-void release_cache_blocks( void )
+void release_cache_blocks( int nBlockSize )
 {
 	CacheBlock_s *apsBlockList[BC_FLUSH_SIZE];	// FIXME : Too much stack usage!!!!!!!!!!!
 	CacheBlock_s *psBlock;
@@ -589,6 +589,10 @@ void release_cache_blocks( void )
 		if ( psBlock->cb_nDevice == -1 )
 		{
 			printk( "release_cache_blocks() Block with dev=-1!!\n" );
+			continue;
+		}
+		if( nBlockSize != -1 && CB_SIZE( psBlock ) != nBlockSize )
+		{
 			continue;
 		}
 		if ( psBlock->cb_nFlags & CBF_DIRTY )
@@ -634,7 +638,7 @@ size_t shrink_block_cache( size_t nBytesNeeded )
 		int nFreed;
 
 		LOCK( g_sBlockCache.bc_hLock );
-		release_cache_blocks();
+		release_cache_blocks( -1 );
 
 		while ( ( nFreed = shrink_cache_heaps( -1 ) ) == -EAGAIN )
 		{
@@ -1853,7 +1857,7 @@ static status_t cache_flusher( void *pData  __attribute__ ((unused)) )
 		}
 		if ( atomic_read( &g_sSysBase.ex_nFreePageCount ) < 4096 )
 		{
-			release_cache_blocks();
+			release_cache_blocks( -1 );
 			shrink_cache_heaps( -1 );
 		}
 		UNLOCK( g_sBlockCache.bc_hLock );

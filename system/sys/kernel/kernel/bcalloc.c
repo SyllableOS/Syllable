@@ -58,6 +58,14 @@ static CacheHeap_s g_asCacheHeaps[MAX_CACHE_BLK_SIZE_ORDERS];
 static int get_block_order( int nSize )
 {
 	int nOrder;
+	
+	/* Fast path */
+	if( nSize == 1024 )
+		return( 10 );
+	else if( nSize == 2048 )
+		return( 11 );
+	else if( nSize == 512 )
+		return( 9 );
 
 	for ( nOrder = 0; nOrder < MAX_CACHE_BLK_SIZE_ORDERS; nOrder++ )
 	{
@@ -215,7 +223,7 @@ int alloc_cache_blocks( CacheBlock_s **apsBlocks, int nCount, int nBlockSize, bo
 
 	if ( nFreeBlocks < nCount )
 	{
-		release_cache_blocks();
+		release_cache_blocks( nBlockSize );
 		
 		nMaxBlocks = psHeap->ch_nSize / nRealBlockSize;
 		nFreeBlocks = nMaxBlocks - psHeap->ch_nUsedBlocks;
@@ -230,8 +238,10 @@ int alloc_cache_blocks( CacheBlock_s **apsBlocks, int nCount, int nBlockSize, bo
 
 	if ( psHeap->ch_psFirstFreeBlock == NULL )
 	{
+		UNLOCK( g_sBlockCache.bc_hLock );
+		snooze( 1000 );
+		LOCK( g_sBlockCache.bc_hLock );
 		goto again;
-		return ( 0 );
 	}
 
 	for ( i = 0; i < nCount; ++i )

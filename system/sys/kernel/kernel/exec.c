@@ -436,15 +436,15 @@ int sys_execve( const char *a_pzPath, char *const *argv, char *const *envv )
 		rename_thread( -1, zCommand );
 		rename_process( -1, zCommand );
 
-		psRegs->oldss = 0x23;
+		psRegs->oldss = DS_USER;
 		psRegs->oldesp = ( uint32 )plEntryStack;
 		psRegs->eip = ( uint32 )psImageInst->ii_nTextAddress + psImageInst->ii_psImage->im_nEntry - psImageInst->ii_psImage->im_nVirtualAddress;
 
-		psRegs->cs = 0x13;
+		psRegs->cs = CS_USER;
 
-		psRegs->ds = 0x23;
-		psRegs->es = 0x23;
-		psRegs->fs = 0x23;
+		psRegs->ds = DS_USER;
+		psRegs->es = DS_USER;
+		psRegs->fs = DS_USER;
 
 		if ( sStat.st_mode & S_ISUID )
 		{

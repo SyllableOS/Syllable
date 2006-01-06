@@ -102,7 +102,7 @@ void release_cache_mem( void );
 
 size_t shrink_block_cache( size_t nBytesNeeded );
 ssize_t shrink_cache_heaps( int nIgnoredOrder );
-void release_cache_blocks( void );
+void release_cache_blocks( int nBlockSize );
 void flush_block_cache( void );
 void init_block_cache( void );
 int shutdown_block_cache( void );

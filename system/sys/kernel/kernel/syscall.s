@@ -28,6 +28,7 @@
 	.global	_C_SYM( probe )
 	.global	_C_SYM( ret_from_sys_call )
 	.global	_C_SYM( exit_from_sys_call )
+	.global _C_SYM( Schedule )
 
 	.global	_C_SYM( irq1 )
 	.global	_C_SYM( irq2 )
@@ -304,7 +305,17 @@ no_sig_check:
 _C_SYM( ret_from_sys_call ):
 	EXIT_SYSCALL
 
+_C_SYM( Schedule ):
+	movl 0(%esp), %eax;
+	pushfl
+	pushl $KERNEL_CS
+	pushl %eax
+	pushl %eax;
+	ENTER_SYSCALL
 
+	call _C_SYM( sys_do_schedule )
+	EXIT_SYSCALL
+	
 
 
 
