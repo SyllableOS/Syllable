@@ -1,0 +1,19 @@
+authors			Kaj de Vos
+status			testing
+
+licenses		GPL LGPL BSD Artistic other PD
+home			www.ruby-lang.org
+locations		ftp://ftp.ruby-lang.org/pub/ruby/
+
+needs			Syllable >= 0.6.1
+; For Builder:
+build-needs		ruby
+
+;configure-options
+;	--disable-ipv6
+;	--with-static-linked-ext
+;	--enable-shared
+;	--enable-pthread
+;	--enable-install-doc
+test-targets	test
+documentation	README README.EXT COPYING LEGAL GPL LGPL ChangeLog ToDo sample
