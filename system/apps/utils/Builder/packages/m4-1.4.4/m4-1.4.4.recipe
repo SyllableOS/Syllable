@@ -2,9 +2,10 @@ authors
 	Kaj de Vos
 	Jan Hauffa
 status				testing
-notes				Can't configure AutoConf 2.59!
 
 inherits			gnu
+
+needs				Syllable >= 0.6.1
 
 licenses			GPL
 home				www.gnu.org/software/m4/
