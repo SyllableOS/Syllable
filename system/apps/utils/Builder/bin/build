@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.52
+# Version 0.6.53
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2
 
@@ -804,6 +804,18 @@ def buildModule staging, directive, target
 	Dir.chdir @workDir
 end
 
+def prepareModule target
+	@log.entry target
+	if warnings = getRecipe(target)['warnings']
+		@log.warning warnings
+	end
+
+	for line in parseList @settings[native?(target) ? 'native-env' : 'ports-env']
+		var, value = toKeyValue line
+		ENV[var] = value
+	end
+end
+
 
 # Functions for multiple modules
 
@@ -811,7 +823,7 @@ def get targets
 	@log.header 'Fetching ' + targets.to_s
 
 	for target in targets.modules
-		notes target
+		prepareModule target
 		getModule target
 		Dir.chdir @workDir
 	end
@@ -821,7 +833,7 @@ def download targets
 	@log.header 'Downloading ' + targets.to_s
 
 	for target in targets.modules
-		notes target
+		prepareModule target
 		downloadModule target
 		Dir.chdir @workDir
 	end
@@ -831,7 +843,7 @@ def update targets
 	@log.header 'Updating ' + targets.to_s
 
 	for target in targets.modules
-		notes target
+		prepareModule target
 		updateModule target
 		Dir.chdir @workDir
 	end
@@ -841,7 +853,7 @@ def unpack targets
 	@log.header 'Unpacking ' + targets.to_s
 
 	for target in targets.modules
-		notes target
+		prepareModule target
 		unpackModule target
 		Dir.chdir @workDir
 	end
@@ -851,7 +863,7 @@ def patch targets
 	@log.header 'Patching ' + targets.to_s
 
 	for target in targets.modules
-		notes target
+		prepareModule target
 
 		Dir.chdir target
 		unless patchModule target
@@ -866,7 +878,7 @@ def distclean targets
 	@log.header 'Cleaning distribution ' + targets.to_s
 
 	for target in targets.modules
-		notes target
+		prepareModule target
 
 		Dir.chdir target
 		action makeCommand(target) + ' distclean', target
@@ -878,7 +890,7 @@ def configure targets
 	@log.header 'Configuring ' + targets.to_s
 
 	for target in targets.specs
-		notes target
+		prepareModule target
 
 		directive = false
 		directive, target = target.split if target[' ']
@@ -892,7 +904,7 @@ def clean targets
 	@log.header 'Cleaning ' + targets.to_s
 
 	for target in targets.modules
-		notes target
+		prepareModule target
 
 		Dir.chdir target
 		cleanModule target
@@ -904,7 +916,7 @@ def make targets
 	@log.header 'Making ' + targets.to_s
 
 	for target in targets.modules
-		notes target
+		prepareModule target
 
 		directive = false
 		directive, target = target.split if target[' ']
@@ -919,7 +931,7 @@ def test targets
 	@log.header 'Testing ' + targets.to_s
 
 	for target in targets.modules
-		notes target
+		prepareModule target
 
 		Dir.chdir target
 		testModule target
@@ -931,7 +943,7 @@ def install targets
 	@log.header 'Installing ' + targets.to_s
 
 	for target in targets.modules
-		notes target
+		prepareModule target
 
 		installModule false, false, false, target
 		Dir.chdir @workDir
@@ -942,7 +954,7 @@ def uninstall targets
 	@log.header 'Uninstalling ' + targets.to_s
 
 	for target in targets.modules
-		notes target
+		prepareModule target
 
 		uninstallModule false, target
 		Dir.chdir @workDir
@@ -953,7 +965,7 @@ def buildPackages targets
 	@log.header 'Making distribution packages ' + targets.to_s
 
 	for target in targets.modules
-		notes target
+		prepareModule target
 
 		buildPackage target
 		Dir.chdir @workDir
@@ -1040,7 +1052,7 @@ def build staging, targets
 	# Build all directories
 
 	for target in targets.specs
-		notes target
+		prepareModule target
 
 		directive = false
 		directive, target = target.split if target[' ']
@@ -1476,13 +1488,6 @@ attr_reader :failures
 	end
 end
 
-def notes target
-	@log.entry target
-	if warnings = getRecipe(target)['warnings']
-		@log.warning warnings
-	end
-end
-
 
 # Define paths
 
@@ -1573,7 +1578,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.52',
+	puts 'Syllable Build System 0.6.53',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'

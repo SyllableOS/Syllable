@@ -14,9 +14,17 @@ environment
 ;	If you have write access:
 ;	CVSROOT		:ext:<Your SF user name here>@cvs.sourceforge.net:/cvsroot/syllable
 
-;	Default compiler settings:
+; native-env and ports-env must define the same variables:
+
+native-env
+;	Default compiler settings for native modules:
 	CFLAGS		-Wall -pipe -march=i586 -O2 -fomit-frame-pointer
 	CXXFLAGS	-Wall -pipe -march=i586 -O2 -fomit-frame-pointer
+
+ports-env
+;	Default compiler settings for ports:
+	CFLAGS		-pipe -march=i586 -O2
+	CXXFLAGS	-pipe -march=i586 -O2
 
 ; Location in CVS we want, if not the CVS root:
 cvs-path		syllable/system
