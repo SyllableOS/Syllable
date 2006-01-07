@@ -1,0 +1,16 @@
+authors
+	Kaj de Vos
+	Jan Hauffa
+status				testing
+notes				Can't configure AutoConf 2.59!
+
+inherits			gnu
+
+licenses			GPL
+home				www.gnu.org/software/m4/
+packages			m4/m4-1.4.4
+
+documentation
+	README COPYING NEWS ChangeLog THANKS TODO
+	examples
+
