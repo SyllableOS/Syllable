@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.51
+# Version 0.6.52
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2
 
@@ -1573,7 +1573,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.51',
+	puts 'Syllable Build System 0.6.52',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1651,11 +1651,6 @@ else
 			when 'package'		then buildPackages	target
 			when 'pack'			then buildPack		target
 			else
-				if @systemBuild and exists? '/ainc'
-					@log.header 'Temporarily replacing system headers'
-					action "ln -snf #{File.join @workDir, 'sys/include'} /ainc"
-				end
-
 				# Pick up executables from the staging area
 
 				if @bootstrap then ENV['PATH'] =
@@ -1785,11 +1780,6 @@ else
 					else
 						build false, target
 					end
-				end
-
-				if @systemBuild and exists? '/ainc'
-					@log.header 'Restoring system headers'
-					action 'ln -snf /system/include /ainc'
 				end
 			end
 
