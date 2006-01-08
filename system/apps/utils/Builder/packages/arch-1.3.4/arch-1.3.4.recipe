@@ -31,7 +31,7 @@ configure-cmd		src/configure
 ;	--yes ssh-is-lsh
 test-targets		test
 documentation
-	README src/COPYING src/ChangeLog AUTHORS
+	src/tla/README src/COPYING src/ChangeLog src/tla/AUTHORS
 	src/docs-tla
 ;	web
 
