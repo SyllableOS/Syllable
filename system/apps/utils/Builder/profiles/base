@@ -9,6 +9,7 @@ modules
 	apps/gnu/tar-1.14
 	apps/other/unzip-5.51
 	apps/other/zip-2.3
+	apps/desktop/dock_plugins/battery
 	apps/desktop/dock_plugins/clock
 	apps/desktop/dock_plugins/Address
 	apps/desktop/dock_plugins/Camera

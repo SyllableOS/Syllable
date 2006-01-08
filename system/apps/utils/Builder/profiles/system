@@ -85,8 +85,7 @@ tree
 	atheos/sys/extensions
 	atheos/sys/extensions/dock
 	atheos/sys/extensions/translators
-
-	atheos/sys/drivers/media
+	atheos/sys/extensions/media
 
 	atheos/tmp
 
@@ -130,6 +129,7 @@ modules
 	other/keymaps
 	sys/include
 	sys/kernel/kernel
+	sys/kernel/drivers/bus/acpi
 	sys/kernel/drivers/bus/ata
 	sys/kernel/drivers/bus/pci
 	sys/kernel/drivers/bus/scsi
@@ -155,6 +155,7 @@ modules
 	sys/kernel/drivers/input/usb_mouse
 	sys/kernel/drivers/keyboard
 	sys/kernel/drivers/misc/apm
+	sys/kernel/drivers/misc/battery
 	sys/kernel/drivers/misc/devices
 	sys/kernel/drivers/misc/ps2aux
 	sys/kernel/drivers/misc/random
