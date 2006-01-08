@@ -1,12 +1,12 @@
 #!/bin/sh
 # Perform system specific initialisation
-#
+
 # inetd is a special case and is always started first if inetutils is
 # installed.
 
 if [ -e /atheos/autolnk/libexec/inetd ]
 then
-  /atheos/autolnk/libexec/inetd &
+	/atheos/autolnk/libexec/inetd &
 fi
 
 # Packages that require initalisation can include an init directory, which
@@ -16,13 +16,10 @@ fi
 # The package manager will collect all of these scripts together in
 # /atheos/autolnk/init/; all we need to do is run each script in turn.
 
-if [ -e /atheos/autolnk/init ]
-then
-  for pkg_init in 'ls /atheos/autolnk/init/'
-  do
-    sh $pkg_init
-  done
-fi
+for pkg_init in `ls /atheos/autolnk/init/`
+do
+	source /atheos/autolnk/init/$pkg_init
+done
 
 # Please add any additional configuration below this point
 
