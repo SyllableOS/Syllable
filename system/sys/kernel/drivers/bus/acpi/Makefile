@@ -1,5 +1,4 @@
-
-CFLAGS   = -kernel -ffreestanding -fno-PIC -fno-strict-aliasing -c -O3 -Wall -D__ENABLE_DEBUG__ -Iinclude
+CFLAGS   += -kernel -ffreestanding -fno-PIC -fno-strict-aliasing -c -D__ENABLE_DEBUG__ -Iinclude
 AFLAGS   = -c
 
 DISPATCHER := dispatcher/dsfield.o dispatcher/dsinit.o dispatcher/dsmethod.o dispatcher/dsmthdat.o \
@@ -88,46 +87,7 @@ install: all
 
 dist: all
 	mkdir -p $(DIST_DIR)/system/drivers/bus
-	cp -f $(OBJDIR)/acpi $(DIST_DIR)/system/drivers/bus/acpi
+	cp -f $(OBJDIR)/acpi $(DIST_DIR)/atheos/sys/drivers/bus/acpi
 
 clean:
 	-rm -f $(OBJS) $(OBJDIR)/acpi
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
