@@ -1,3 +1,13 @@
+* January 12 2006, Kristian Van Der Vliet *
+
+atheos/bitops.h: New file, from Linux.
+atheos/linux_compat.h: New file.  Single, standardised version of the various linuxcomp.h headers
+used by a lot of ported drivers.
+Updated the net & sound drivers.  Removed the individual bitops.h in favour of <atheos/bitops.h>
+and removed the majority of the individual linuxcomp.h wrappers in favour of <atheos/linux_compat.h>
+posix/ioctl.h: Corrected the argument order for the _IOC macro and fixed the implementations for
+the _IO, _IOR, _IOW & _IORW macros.
+
 * January 3 2006, Kristian Van Der Vliet *
 
 ftruncate() support for AFS.  Patch from Daniel Gryniewicz.
