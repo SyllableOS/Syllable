@@ -23,13 +23,13 @@
 
 #include <atheos/udelay.h>
 #include <atheos/isa_io.h>
+#include <atheos/bitops.h>
 #include <posix/errno.h>
 #include <posix/ioctls.h>
 #include <posix/fcntl.h>
 #include <posix/termios.h>
 #include <posix/signal.h>
 #include <macros.h>
-#include "bitops.h"
 
 //#undef DEBUG_LIMIT
 //#define DEBUG_LIMIT KERN_DEBUG
