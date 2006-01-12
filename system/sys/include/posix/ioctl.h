@@ -78,11 +78,11 @@ extern "C"{
 #define _IOC_READ		IOCTL_DIR_READ
 #define _IOC_WRITE		IOCTL_DIR_WRITE
 
-#define _IOC			MK_IOCTL
-#define _IO				MK_IOCTLN
-#define _IOR			MK_IOCTLR
-#define _IOW			MK_IOCTLW
-#define _IORW			MK_IOCTLRW
+#define _IOC(dir,mod,cmd,size)	MK_IOCTL(mod,cmd,dir,size)
+#define _IO(mod,cmd,size)		_IOC(_IOC_NONE,(mod),(cmd),sizeof(size))
+#define _IOR(mod,cmd,size)		_IOC(_IOC_READ,(mod),(cmd),sizeof(size))
+#define _IOW(mod,cmd,size)		_IOC(_IOC_WRITE,(mod),(cmd),sizeof(size))
+#define _IORW(mod,cmd,size)		_IOC(_IOC_READ|_IOC_WRITE,(mod),(cmd),sizeof(size))
 
 #define _IOC_TYPE		IOCTL_MOD
 #define _IOC_NR			IOCTL_CMD
