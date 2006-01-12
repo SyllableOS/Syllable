@@ -26,7 +26,7 @@
 #include <atheos/time.h>
 #include <atheos/bootmodules.h>
 #include <atheos/device.h>
-#include <atheps/bitops.h>
+#include <atheos/bitops.h>
 #include <posix/errno.h>
 #include <posix/ioctls.h>
 #include <posix/fcntl.h>
