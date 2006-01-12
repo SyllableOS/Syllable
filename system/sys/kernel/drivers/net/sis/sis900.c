@@ -48,6 +48,8 @@
 #include <atheos/spinlock.h>
 #include <atheos/ctype.h>
 #include <atheos/device.h>
+#include <atheos/bitops.h>
+#include <atheos/linux_compat.h>
 
 #include <posix/unistd.h>
 #include <posix/errno.h>
@@ -58,8 +60,6 @@
 #include <net/ip.h>
 #include <net/sockios.h>
 
-#include "bitops.h"
-#include "linuxcomp.h"
 #include "sis900.h"
 
 static const char *version =
@@ -77,6 +77,7 @@ static int sis900_debug = 0;
 static DeviceOperations_s g_sDevOps;
 
 PCI_bus_s* g_psBus;
+#define psBus g_psBus
 
 struct mac_chip_info {
 	const char *name;

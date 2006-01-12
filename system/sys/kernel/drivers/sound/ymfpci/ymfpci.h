@@ -39,8 +39,9 @@
 #include <atheos/areas.h>
 #include <atheos/soundcard.h>
 #include <atheos/list.h>
+#define NO_DEBUG_STUBS 1
+#include <atheos/linux_compat.h>
 
-#include "linuxcomp.h"
 #include "ac97_codec.h"
 
 #define PCI_VENDOR_ID_YAMAHA            0x1073

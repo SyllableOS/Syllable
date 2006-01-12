@@ -26,6 +26,8 @@ static const char *version = "pcnet32.c:v1.25kf 26.9.1999 tsbogend@alpha.franken
 #include <atheos/spinlock.h>
 #include <atheos/ctype.h>
 #include <atheos/device.h>
+#include <atheos/bitops.h>
+#include <atheos/linux_compat.h>
 
 #include <posix/unistd.h>
 #include <posix/errno.h>
@@ -33,43 +35,7 @@ static const char *version = "pcnet32.c:v1.25kf 26.9.1999 tsbogend@alpha.franken
 #include <net/net.h>
 #include <net/ip.h>
 #include <net/sockios.h>
-#include "bitops.h"
 
-/*
-#include <linux/config.h>
-#include <linux/module.h>
-#ifdef MODVERSIONS
-#include <linux/modversions.h>
-#endif
-
-#include <linux/kernel.h>
-#include <linux/sched.h>
-#include <linux/string.h>
-#include <linux/ptrace.h>
-#include <linux/errno.h>
-#include <linux/ioport.h>
-#include <linux/malloc.h>
-#include <linux/interrupt.h>
-#include <linux/pci.h>
-#include <linux/delay.h>
-#include <linux/init.h>
-#include <asm/bitops.h>
-#include <asm/io.h>
-#include <asm/dma.h>
-
-#include <linux/netdevice.h>
-#include <linux/etherdevice.h>
-#include <linux/skbuff.h>
-#include <asm/spinlock.h>
-*/
-
-#define virt_to_bus(a) ((uint32)(a))
-#define bus_to_virt(a) ((uint32)(a))
-
-#define jiffies ((int)(get_system_time() /1000LL))
-#define HZ 1000
-
-#define MAX_ADDR_LEN 6
 struct /*enet_statistics*/  net_device_stats
 {
    unsigned long	rx_packets;		/* total packets received	*/
@@ -564,14 +530,6 @@ static struct pcnet32_pci_id_info pcnet32_tbl[] =
      },
      {0,}
 };
-
-static void* skb_put( PacketBuf_s* psBuffer, int nSize)
-{
-   void* pOldEnd = psBuffer->pb_pData + psBuffer->pb_nSize;
-   psBuffer->pb_nSize += nSize;
-
-   return pOldEnd;
-}
 
 static uint16 pcnet32_wio_read_csr (unsigned long addr, int index)
 {

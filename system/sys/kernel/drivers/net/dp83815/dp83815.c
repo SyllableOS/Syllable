@@ -159,6 +159,7 @@
 #include <atheos/spinlock.h>
 #include <atheos/ctype.h>
 #include <atheos/device.h>
+#include <atheos/bitops.h>
 
 #include <posix/unistd.h>
 #include <posix/errno.h>
@@ -169,8 +170,81 @@
 #include <net/ip.h>
 #include <net/sockios.h>
 
-#include "bitops.h"
-#include "linuxcomp.h"
+#define NO_DEBUG_STUBS 1
+#include <atheos/linux_compat.h>
+
+struct net_device
+{
+
+    /*
+     * This is the first field of the "visible" part of this structure
+     * (i.e. as seen by users in the "Space.c" file).  It is the name
+     * the interface.
+     */
+    char            *name;
+
+     /*
+     *  I/O specific fields
+     *  FIXME: Merge these and struct ifmap into one
+     */
+    unsigned long   rmem_end; /* shmem "recv" end */
+    unsigned long   rmem_start; /* shmem "recv" start */
+    unsigned long   mem_end;  /* shared mem end */
+    unsigned long   mem_start;  /* shared mem start */
+    unsigned long   base_addr;  /* device I/O address   */
+    unsigned int    irq;        /* device IRQ number    */
+    
+    /* Low-level status flags. */
+    volatile unsigned char  start;      /* start an operation   */
+    /*
+     * These two are just single-bit flags, but due to atomicity
+     * reasons they have to be inside a "unsigned long". However,
+     * they should be inside the SAME unsigned long instead of
+     * this wasteful use of memory..
+     */
+    unsigned char   if_port;  /* Selectable AUI, TP,..*/
+    unsigned char   dma;    /* DMA channel    */
+                                                                                                                                                                                                        
+//  unsigned long   state;
+    
+    unsigned long       interrupt;  /* bitops.. */
+    unsigned long       tbusy;      /* transmitter busy */
+    
+    struct device       *next;
+    
+    /*
+     * This marks the end of the "visible" part of the structure. All
+     * fields hereafter are internal to the system, and may change at
+     * will (read: may be cleaned up at will).
+     */
+
+    /* These may be needed for future network-power-down code. */
+    unsigned long       trans_start;    /* Time (in jiffies) of last Tx */
+    unsigned long           last_rx;        /* Time of last Rx      */
+    unsigned    mtu;  /* interface MTU value    */
+    unsigned short    type; /* interface hardware type  */
+    unsigned short    hard_header_len;  /* hardware hdr length  */   
+    unsigned short      flags;  /* interface flags (a la BSD) */
+    void            *priv;  /* pointer to private data  */
+
+    /* Interface address info. */
+    unsigned char   broadcast[MAX_ADDR_LEN];  /* hw bcast add */
+    unsigned char   pad;    /* make dev_addr aligned to 8 bytes */
+    unsigned char   dev_addr[MAX_ADDR_LEN]; /* hw address */
+    unsigned char   addr_len; /* hardware address length  */    
+
+//	struct dev_mc_list	*mc_list;	/* Multicast mac addresses	*/
+	int			mc_count;	/* Number of installed mcasts	*/
+//	int			promiscuity;
+//	int			allmulti;
+
+    NetQueue_s		*packet_queue;
+    int irq_handle; /* IRQ handler handle */
+
+	int device_handle; /* device handle from probing */
+    
+    int node_handle;    /* handle of device node in /dev */
+};
 
 #define RX_OFFSET	2
 

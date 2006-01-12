@@ -409,8 +409,6 @@ enum miscint_bits {
 #define SPDIF_DRS	0x4000
 #define SPDIF_V		0x8000
 
-
-#define HZ 100
       
 #define VALIDATE_MAGIC(FOO,MAG)				\
 ({						  	\

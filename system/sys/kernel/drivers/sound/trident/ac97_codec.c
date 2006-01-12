@@ -54,10 +54,10 @@
 #include <atheos/areas.h>
 #include <atheos/soundcard.h>
 #include <atheos/spinlock.h>
+#include <atheos/bitops.h>
+#include <atheos/linux_compat.h>
 #include <macros.h>
 
-#include "bitops.h"
-#include "linuxcomp.h"
 #include "ac97_codec.h"
 
 #undef DEBUG

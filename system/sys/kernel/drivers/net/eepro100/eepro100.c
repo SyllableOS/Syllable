@@ -62,6 +62,8 @@
 #include <atheos/spinlock.h>
 #include <atheos/ctype.h>
 #include <atheos/device.h>
+#include <atheos/bitops.h>
+#include <atheos/linux_compat.h>
 
 #include <posix/unistd.h>
 #include <posix/errno.h>
@@ -71,9 +73,6 @@
 #include <net/net.h>
 #include <net/ip.h>
 #include <net/sockios.h>
-
-#include "bitops.h"
-#include "linuxcomp.h"
 
 #define USE_IO 1 /* most important: No MMIO! This is really complicated in AtheOS!*/
 
@@ -290,9 +289,6 @@ that stated that I could disclose the information.  But I still resent
 having to sign an Intel NDA when I'm helping Intel sell their own product!
 
 */
-
-#define MAX_ADDR_LEN    6
-
 
 struct device
 {

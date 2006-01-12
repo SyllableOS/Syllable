@@ -100,6 +100,7 @@ static const int multicast_filter_limit = 32;
 #include <atheos/ctype.h>
 #include <atheos/device.h>
 #include <atheos/udelay.h>
+#include <atheos/bitops.h>
 
 #include <posix/unistd.h>
 #include <posix/errno.h>
@@ -107,7 +108,6 @@ static const int multicast_filter_limit = 32;
 #include <net/net.h>
 #include <net/ip.h>
 #include <net/sockios.h>
-#include "bitops.h"
 
 
 #define KERN_ERR "Error: "

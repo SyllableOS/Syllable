@@ -284,8 +284,6 @@ enum sis630_revision_id {
 #define SIOCSMIIREG (SIOCDEVPRIVATE+2)		/* Write a PHY register */
 
 /* Linux net_device structure */
-#define MAX_ADDR_LEN    6
-
 struct device
 {
 

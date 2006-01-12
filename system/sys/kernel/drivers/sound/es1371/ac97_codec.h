@@ -1,7 +1,6 @@
 #ifndef _AC97_CODEC_H_
 #define _AC97_CODEC_H_
 
-
 /* AC97 1.0 */
 #define  AC97_RESET               0x0000      //
 #define  AC97_MASTER_VOL_STEREO   0x0002      // Line Out

@@ -97,6 +97,7 @@
 #include <atheos/spinlock.h>
 #include <atheos/ctype.h>
 #include <atheos/device.h>
+#include <atheos/bitops.h>
 
 #include <posix/unistd.h>
 #include <posix/errno.h>
@@ -106,8 +107,6 @@
 #include <net/net.h>
 #include <net/ip.h>
 #include <net/sockios.h>
-
-#include "bitops.h"
 
 static PCI_bus_s *g_psBus;
 static DeviceOperations_s g_sDevOps;
@@ -443,9 +442,6 @@ static struct mac_chip_info  mac_chip_table[] = {
 };
 
 
-
-/* Linux net_device structure */
-#define MAX_ADDR_LEN    6
 
 struct device
 {

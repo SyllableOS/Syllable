@@ -59,9 +59,9 @@
 #include <atheos/areas.h>
 #include <atheos/soundcard.h>
 #include <atheos/spinlock.h>
+#include <atheos/bitops.h>
 #include <macros.h>
 
-#include "bitops.h"
 #include "ac97_codec.h"
 #include "emu_wrapper.h"
 

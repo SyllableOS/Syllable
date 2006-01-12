@@ -43,9 +43,9 @@
 #include <atheos/areas.h>
 #include <atheos/soundcard.h>
 #include <atheos/spinlock.h>
+#include <atheos/linux_compat.h>
 #include <macros.h>
 
-#include "linuxcomp.h"
 #include "ac97_codec.h"
 #include "via686a.h"
 

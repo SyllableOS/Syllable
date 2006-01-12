@@ -42,6 +42,9 @@ static const char versionB[] =
 #include <atheos/spinlock.h>
 #include <atheos/ctype.h>
 #include <atheos/device.h>
+#include <atheos/bitops.h>
+#define NO_DEBUG_STUBS 1
+#include <atheos/linux_compat.h>
 
 #include <posix/unistd.h>
 #include <posix/errno.h>
@@ -49,37 +52,12 @@ static const char versionB[] =
 #include <net/net.h>
 #include <net/ip.h>
 #include <net/sockios.h>
-#include "bitops.h"
 
 #define KERN_ERR "Error: "
 #define KERN_DEBUG "Debug: "
 #define KERN_WARNING "Warning: "
 #define KERN_INFO "Info: "
 #define KERN_NOTICE "Note: "
-
-#define virt_to_bus(a) ((uint32)(a))
-#define cpu_to_le32(x) 			((uint32)(x))
-#define le32_to_cpu(x) 			((uint32)(x))
-
-#define jiffies ((int)(get_system_time() / 1000LL))
-#define HZ 100
-
-#define IFF_RUNNING 0x40
-#define netif_wake_queue(dev)   do { clear_bit(0, (void*)&dev->tbusy); } while(0)
-#define netif_start_queue(dev)  clear_bit(0, (void*)&dev->tbusy)
-#define netif_start_tx_queue(dev)  do { (dev)->tbusy = 0; dev->start = 1; } while(0)
-#define netif_stop_tx_queue(dev)  do { (dev)->tbusy = 1; dev->start = 0; } while(0)
-#define netif_stop_queue(dev)   set_bit(0, (void*)&dev->tbusy)
-#define netif_queue_paused(dev)	((dev)->tbusy != 0)
-#define netif_pause_tx_queue(dev)	(test_and_set_bit(0, (void*)&dev->tbusy))
-#define netif_unpause_tx_queue(dev)	do { clear_bit(0, (void*)&dev->tbusy); } while(0)
-#define netif_resume_tx_queue(dev)	do { clear_bit(0, (void*)&dev->tbusy); } while(0)
-#define netif_running(dev)	((dev)->start != 0)
-#define netif_mark_up(dev)	do { (dev)->start = 1; } while (0)
-#define netif_mark_down(dev)	do { (dev)->start = 0; } while (0)
-#define netif_queue_stopped(dev)	((dev)->tbusy)
-#define netif_link_down(dev)	(dev)->flags &= ~ IFF_RUNNING
-#define netif_link_up(dev)	(dev)->flags |= IFF_RUNNING
 
 static DeviceOperations_s g_sDevOps;
 
@@ -94,8 +72,6 @@ PCI_bus_s* g_psBus;
  *	FIXME: cleanup struct device such that network protocol info
  *	moves out.
  */
-
-#define MAX_ADDR_LEN	6		/* Largest hardware address length */
 
 struct /*enet_statistics*/  net_device_stats
 {
@@ -137,15 +113,6 @@ struct sk_buff
 	int	  protocol;
 };
 */
-
-void* skb_put( PacketBuf_s* psBuffer, int nSize )
-{
-	void* pOldEnd = psBuffer->pb_pData + psBuffer->pb_nSize;
-	psBuffer->pb_nSize += nSize;
-	return( pOldEnd );
-}
-
-#define net_device device
 
 struct device
 {

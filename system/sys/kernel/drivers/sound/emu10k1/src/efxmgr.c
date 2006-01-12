@@ -30,6 +30,7 @@
  */
 
 #include <atheos/atomic.h>
+#include <atheos/bitops.h>
 #include "hwaccess.h"
 #include "efxmgr.h"
 

@@ -17,9 +17,8 @@
 #include <atheos/areas.h>
 #include <atheos/soundcard.h>
 #include <atheos/spinlock.h>
+#include <atheos/linux_compat.h>
 #include <macros.h>
-
-#include "linuxcomp.h"
 
 #ifndef PCI_VENDOR_ID_ENSONIQ
 #define PCI_VENDOR_ID_ENSONIQ        0x1274

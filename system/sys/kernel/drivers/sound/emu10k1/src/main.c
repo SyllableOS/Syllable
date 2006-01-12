@@ -91,6 +91,7 @@
 #include <atheos/pci.h>
 #include <atheos/device.h>
 #include <atheos/irq.h>
+#include <atheos/bitops.h>
 #include <posix/errno.h>
 #include <posix/signal.h>
 

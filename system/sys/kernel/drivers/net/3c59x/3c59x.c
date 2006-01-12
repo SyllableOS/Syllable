@@ -223,6 +223,7 @@ static int vortex_debug = 0;
 #include <atheos/semaphore.h>
 #include <atheos/spinlock.h>
 #include <atheos/isa_io.h>
+#include <atheos/bitops.h>
 
 #include <net/net.h>
 
@@ -232,8 +233,6 @@ static int vortex_debug = 0;
 #include <posix/errno.h>
 #include <posix/signal.h>
 
-#include "bitops.h"
-
 #define KERN_ERR "Error: "
 #define KERN_DEBUG "Debug: "
 #define KERN_WARNING "Warning: "
@@ -241,13 +240,10 @@ static int vortex_debug = 0;
 #define KERN_NOTICE "Note: "
 #define PFX DRV_NAME ": "
 
-#include "lincomp.h"
-
+#include "linuxcomp.h"
 
 
 #define TX_TIMEOUT      4000000LL  // 4 sec
-
-#define MAX_ADDR_LEN    6
 
 
 struct device
@@ -1132,7 +1128,7 @@ static struct device *vortex_probe1(int device_handle, int nHandle, PCI_Info_s *
 
         /* enable bus-mastering if necessary */     
         if (vci->flags & PCI_USES_MASTER)
-            pci_set_master (psBus, &vp->pci_dev);
+            pci_set_master (&vp->pci_dev);
 
         if (vci->drv_flags & IS_VORTEX) {
             uint32 pci_latency;

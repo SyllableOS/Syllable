@@ -39,10 +39,11 @@
 #include <atheos/time.h>
 #include <atheos/udelay.h>
 #include <atheos/schedule.h>
+#define NO_DEBUG_STUBS 1
+#include <atheos/linux_compat.h>
 #include <posix/signal.h>
 #include <posix/errno.h>
 
-#include "linuxcomp.h"
 #include "ac97_codec.h"
 
 static int ymfpci_interrupt( int nIRQ, void *pData, SysCallRegs_s *psRegs );

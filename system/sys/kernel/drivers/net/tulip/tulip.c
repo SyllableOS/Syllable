@@ -117,6 +117,9 @@ static int csr0 = 0x00A00000 | 0x4800;
 #include <atheos/spinlock.h>
 #include <atheos/ctype.h>
 #include <atheos/device.h>
+#include <atheos/bitops.h>
+#define NO_DEBUG_STUBS 1
+#include <atheos/linux_compat.h>
 
 #include <posix/unistd.h>
 #include <posix/errno.h>
@@ -125,9 +128,6 @@ static int csr0 = 0x00A00000 | 0x4800;
 #include <net/ip.h>
 #include <net/sockios.h>
 #include <net/if_ether.h>
-#include "bitops.h"
-//#include "io.h"
-#include "unaligned.h"
 
 #define KERN_ERR "Error: "
 #define KERN_DEBUG "Debug: "
@@ -141,25 +141,9 @@ static int csr0 = 0x00A00000 | 0x4800;
 #define PCI_LATENCY_TIMER             0x0d
 #define PCI_REVISION_ID               0x08
 
-#define virt_to_bus(a) ((uint32)(a))
-#define bus_to_virt(a) ((uint32)(a))
-
-#define jiffies ((int)(get_system_time() / 1000LL))
-#define HZ 1000
-
 static DeviceOperations_s g_sDevOps;
 
 #define RUN_AT(x) (jiffies + (x))
-
-/* For Little Endian */
-#define le16_to_cpu(x)   ((u16)(x))
-#define cpu_to_le16(x)   ((u16)(x))
-#define le32_to_cpu(x)   ((u32)(x))
-#define cpu_to_le32(x)   ((u32)(x))
-
-/* Condensed operations for readability. */
-#define virt_to_le32desc(addr)  cpu_to_le32(virt_to_bus(addr))
-#define le32desc_to_virt(addr)  bus_to_virt(le32_to_cpu(addr))
 
 /*
  *	The DEVICE structure.
@@ -170,8 +154,6 @@ static DeviceOperations_s g_sDevOps;
  *	FIXME: cleanup struct device such that network protocol info
  *	moves out.
  */
-
-#define MAX_ADDR_LEN	6		/* Largest hardware address length */
 
 struct enet_statistics
 {
@@ -207,13 +189,6 @@ struct enet_statistics
 };
 
 #define   net_device_stats enet_statistics
-
-void* skb_put( PacketBuf_s* psBuffer, int nSize )
-{
-  void* pOldEnd = psBuffer->pb_pData + psBuffer->pb_nSize;
-  psBuffer->pb_nSize += nSize;
-  return( pOldEnd );
-}
 
 // ???
 struct dev_mc_list

@@ -7,13 +7,7 @@
 
 //#define DPRINTK(fmt...) printk( __FUNCTION__": " fmt )
 #define DPRINTK(fmt...)
-
-#define assert(expr) \
-        if(!(expr)) {					\
-        printk( "Assertion failed! %s,%s,%s,line=%d\n",	\
-        #expr,__FILE__,__FUNCTION__,__LINE__);		\
-        }
-       
+      
 #define arraysize(x)            (sizeof(x)/sizeof(*(x)))
 
 #define MAX_CARDS	1
