@@ -67,9 +67,9 @@
 #include <atheos/soundcard.h>
 #include <atheos/spinlock.h>
 #include <atheos/list.h>
+#include <atheos/bitops.h>
 #include <macros.h>
 
-#include "bitops.h"
 #include "linuxcomp.h"
 #include "ac97_codec.h"
 
