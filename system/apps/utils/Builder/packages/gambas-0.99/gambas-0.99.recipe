@@ -2,8 +2,11 @@ authors				Kaj de Vos
 status				broken
 notes				Still looks for X11, even when disabled
 
+inherits			sourceforge
+
 licenses			GPL
 home				gambas.sf.net
+packages			gambas/gambas-0.99
 
 build-needs
 	gcc 2.95 | gcc 3.2
@@ -24,4 +27,3 @@ configure-options
 ;	--disable-qt
 ;	--disable-kde
 documentation		README INSTALL COPYING NEWS ChangeLog TODO AUTHORS
-

@@ -1,12 +1,13 @@
 authors				Jake Hamby
 status				testing
 
+inherits			sourceforge
+
 licenses			other
 home				sourceforge.net/projects/libungif/
-locations			http://prdownloads/sourceforge.net/libungif/
+packages			libungif/libungif-4.1.3
 
 patch-config
 
 documentation
 	README AUTHORS BUGS COPYING ChangeLog DEVELOPERS NEWS ONEWS TODO UNCOMPRESSED_GIF
-

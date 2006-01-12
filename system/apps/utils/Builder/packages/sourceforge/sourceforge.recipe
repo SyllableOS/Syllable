@@ -4,6 +4,9 @@ notes
 	Put mirrors near you at the top of the list.
 
 locations
+;	Currently the only one that works with automatic downloading:
+	http://osdn.dl.sourceforge.net/sourceforge/
+
 	http://citkit.dl.sourceforge.net/sourceforge/
 	http://easynews.dl.sourceforge.net/sourceforge/
 	http://heanet.dl.sourceforge.net/sourceforge/

@@ -4,17 +4,22 @@ authors
 status				testing
 notes				Can't find OpenSSL
 
+inherits			sourceforge
+
 headline			Command-driven mail client
 licenses			BSD
 home				nail.sourceforge.net
+packages			nail/nail-11.1
 
 ;build-needs			openssl
+
+;install-prefix-var	DESTDIR
 
 make-vars
 	PREFIX			/usr/nail
 	SYSCONFDIR		/usr/nail/etc
 ;	INCLUDES		-I/usr/local/ssl/include/openssl
-;install-prefix-var	DESTDIR
+
 install-vars
 	PREFIX			/usr/nail
 	SYSCONFDIR		/usr/nail/etc

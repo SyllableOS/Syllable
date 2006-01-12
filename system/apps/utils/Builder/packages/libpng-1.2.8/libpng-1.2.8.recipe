@@ -1,23 +1,24 @@
-authors			Kaj de Vos
-status			testing
-notes			See contrib/gregbook/ to build examples
+authors				Kaj de Vos
+status				testing
+notes				See contrib/gregbook/ to build examples
 
-licenses		OS
-home			www.libpng.org
-locations
-	http://prdownloads/sourceforge.net/libpng/
-	ftp://ftp.simplesystems.org/pub/libpng/png/src/
+inherits			sourceforge
+
+licenses			OS
+home				www.libpng.org
+packages			libpng/libpng-1.2.8
+;locations			ftp://ftp.simplesystems.org/pub/libpng/png/src/
 
 no-build-dir
-configure		cp scripts/makefile.gcc makefile
-test-targets	test
 
-install-tree	include lib
-install			true
+configure			cp scripts/makefile.gcc makefile
+test-targets		test
+
+install-tree		include lib
+install				true
 install-files
-	libpng.a	lib
-	png.h		include
-	pngconf.h	include
+	libpng.a		lib
+	png.h			include
+	pngconf.h		include
 documentation
 	README ANNOUNCE INSTALL LICENSE libpng.txt KNOWNBUG CHANGES TODO Y2KINFO example.c
-

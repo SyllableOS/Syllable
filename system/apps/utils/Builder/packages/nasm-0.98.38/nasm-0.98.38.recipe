@@ -1,8 +1,11 @@
-authors			Kaj de Vos
-status			testing
+authors				Kaj de Vos
+status				testing
 
-licenses		LGPL
-home			nasm.sf.net
+inherits			sourceforge
+
+licenses			LGPL
+home				nasm.sf.net
+packages			nasm/nasm-0.98.38
 
 ; For documentation:
 ;build-needs
@@ -12,13 +15,12 @@ home			nasm.sf.net
 ; For documentation:
 ;no-build-dir
 
-make-targets
-	all
+;make-targets
+;	all
 ;	For documentation:
 ;	everything
-	strip
 
-install-tree	bin man man/man1
+install-tree		bin man man/man1
 ; For documentation:
-;install-targets	install_everything
-documentation	README COPYING CHANGES ChangeLog TODO AUTHORS
+;install-targets		install_everything
+documentation		README COPYING CHANGES ChangeLog TODO AUTHORS

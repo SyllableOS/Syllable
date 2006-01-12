@@ -6,6 +6,7 @@ inherits			sourceforge
 
 licenses			BSD
 home				cscope.sourceforge.net
+packages			cscope/cscope-15.5
 
 needs				ncurses
 build-needs
@@ -16,4 +17,3 @@ patch-config
 documentation
 	README COPYING NEWS ChangeLog AUTHORS TODO
 ;	INSTALL 
-

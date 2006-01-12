@@ -4,9 +4,10 @@ authors
 maintainers			Kaj de Vos
 status				testing
 
+inherits			sourceforge
+
 licenses			LGPL
-home				bochs.sf.net
-locations			http://prdownloads.sourceforge.net/bochs/
+home				bochs/bochs.sf.net
 
 needs
 	sdl
