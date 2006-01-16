@@ -1,14 +1,17 @@
-# Syllable hints file ( http://syllable.sf.net/ )
-# Kurt Skauen, kurt@atheos.cx for AtheOS
+# Syllable hints file ( http://syllable.org )
+# Kurt Skauen, for AtheOS
 # Kaj de Vos, for Syllable
 
-prefix="/usr/perl"
+#d_suidsafe='undef'
+ignore_versioned_solibs='y'
+#libc=/system/libs/libc.so.2
 
-libpth='/system/libs /usr/lib'
-usrinc='/include'
+libpth='/system/libs /usr/glibc2/lib /atheos/autolnk/lib'
+#usrinc='/include'
 
-libs=' '
-#libswanted=' '
+#libs=' '
+#libswanted='nsl ndbm db dl m c crypt util'
+libswanted='nsl ndbm db m c crypt util'
 
 d_htonl='define'
 d_htons='define'
@@ -34,4 +37,6 @@ dont_use_nlink='define'
 
 ld='gcc'
 cc='gcc'
+
+ldlibpthname=LIBRARY_PATH
 

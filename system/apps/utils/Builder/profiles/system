@@ -99,6 +99,8 @@ tree
 	atheos/usr/info
 	atheos/usr/lib
 	atheos/usr/local
+;	For PERL:
+	atheos/usr/local/bin
 	atheos/usr/man
 	atheos/usr/sbin
 	atheos/usr/share

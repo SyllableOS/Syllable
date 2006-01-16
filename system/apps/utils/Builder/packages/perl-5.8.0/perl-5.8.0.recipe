@@ -5,6 +5,12 @@ maintainers			Kaj de Vos
 
 licenses			Artistic GPL
 home				www.perl.org
+locations
+	http://www.cpan.org/src/5.0/
+	ftp://ftp.funet.fi/pub/CPAN/src/5.0/
+	http://ftp.funet.fi/pub/CPAN/src/5.0/
+
+recommends			db
 
 ;configure
 ;	rm -f config.sh Policy.sh;
@@ -29,12 +35,13 @@ test-targets
 	test
 ;	minitest
 
-strip-files			bin/perl5.8.0
-documentation		README README.Y2K INSTALL Artistic Copying AUTHORS
+documentation
+	README README.Y2K INSTALL Artistic Copying AUTHORS
 ;	Too huge:
 ;	Changes
 links
-	bin/perl bin/perl5.8.0
-	bin/perl /usr/bin/perl
+	perl5.8.0	bin/perl
+	bin/perl	/usr/bin/perl
 ;	For OpenSSL:
-	bin/perl /usr/local/bin/perl
+	bin/perl	/usr/local/bin/perl
+
