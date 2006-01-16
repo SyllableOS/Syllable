@@ -1,3 +1,7 @@
+* January 15 2006, Arno Klenke *
+
+New method SetTextShadowColor() in the IconView class
+
 ---- 0.6.0a Released -------------------------------------------------------------------
 ---- 0.6.0 Released -------------------------------------------------------------------
 
@@ -1077,6 +1081,8 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
+
 
 
 
