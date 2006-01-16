@@ -79,6 +79,7 @@ public:
 		m_bAdjusting = false;
 		m_pcBackground = NULL;
 		m_sTextColor = get_default_color(COL_ICON_TEXT);  //os::Color32_s( 0, 0, 0 );
+		m_sTextShadowColor = get_default_color(COL_ICON_TEXT);
 		m_sBackgroundColor = get_default_color(COL_ICON_BG); //os::Color32_s( 255, 255, 255 );
 		m_sSelectionColor = get_default_color(COL_ICON_SELECTED);  //os::Color32( 186, 199, 227 );
 		m_cIcons.clear();
@@ -86,6 +87,8 @@ public:
 		m_bSingleClick = false;
 		m_bAutoSort = true;
 		m_bMultiSelect = true;
+		m_bHScrollBarVisible = true;
+		m_bVScrollBarVisible = true;
 	}
 	
 	void Lock()
@@ -520,10 +523,21 @@ public:
 		pcView->GetFontHeight( &sHeight );
 		pcView->SetDrawingMode( os::DM_OVER );
 		if( m_eType == VIEW_ICONS || m_eType == VIEW_ICONS_DESKTOP ) {
-			if( m_cIcons[nIcon]->m_zStrings.size() > 0 )
+			if( m_cIcons[nIcon]->m_zStrings.size() > 0 ) {
+				if ( ( m_eType == VIEW_ICONS_DESKTOP ) && (m_sTextColor!=m_sTextShadowColor ) ) {
+						pcView->SetFgColor(m_sTextShadowColor);
+						pcView->DrawString( os::Point( cPosition.x + 1 + ( m_vIconWidth -
+									pcView->GetStringWidth( m_cIcons[nIcon]->m_zStrings[0] ) ) / 2, cPosition.y + m_vIconHeight + 1
+									- sHeight.ascender ), m_cIcons[nIcon]->m_zStrings[0] );
+						pcView->SetFgColor(m_sTextColor);
+				}
+
 				pcView->DrawString( os::Point( cPosition.x + ( m_vIconWidth - 
 								pcView->GetStringWidth( m_cIcons[nIcon]->m_zStrings[0] ) ) / 2, cPosition.y + m_vIconHeight
 								- sHeight.ascender ), m_cIcons[nIcon]->m_zStrings[0] );
+		
+			}
+					
 		} else if( m_eType == VIEW_DETAILS ) {
 			float vCurrentW = cPosition.x + m_cIcons[nIcon]->m_pcImage->GetSize().x + 5;
 			for( uint i = 0; i < m_cIcons[nIcon]->m_zStrings.size(); i++ )
@@ -584,32 +598,36 @@ public:
 			return;
 		m_bAdjusting = true;
 		
-		if( m_vLastYPos > m_pcView->GetBounds().Height() && !m_pcVScrollBar->IsVisible() 
+		if( m_vLastYPos > m_pcView->GetBounds().Height() && !m_bVScrollBarVisible 
 			&& ( m_eType == VIEW_ICONS || m_eType == VIEW_DETAILS ) )
 		{
 			os::Rect cFrame = m_pcView->GetFrame();
 			cFrame.right -= m_vScrollBarWidth;
 			m_pcView->SetFrame( cFrame );
 			m_pcVScrollBar->Show();
+			m_bVScrollBarVisible = true;
 		}
-		else if( m_vLastYPos <= m_pcView->GetBounds().Height() && m_pcVScrollBar->IsVisible() ) 
+		else if( m_vLastYPos <= m_pcView->GetBounds().Height() && m_bVScrollBarVisible ) 
 		{
 			m_pcVScrollBar->Hide();
+			m_bVScrollBarVisible = false;
 			os::Rect cFrame = m_pcView->GetFrame();
 			cFrame.right += m_vScrollBarWidth;
 			m_pcView->SetFrame( cFrame );
 		}
-		if( m_vLastXPos > m_pcView->GetBounds().Width() && !m_pcHScrollBar->IsVisible() 
+		if( m_vLastXPos > m_pcView->GetBounds().Width() && !m_bHScrollBarVisible 
 			&& ( m_eType == VIEW_LIST || m_eType == VIEW_ICONS_DESKTOP ) )
 		{
 			os::Rect cFrame = m_pcView->GetFrame();
 			cFrame.bottom -= m_vScrollBarHeight;
 			m_pcView->SetFrame( cFrame );
 			m_pcHScrollBar->Show();
+			m_bHScrollBarVisible = true;
 		}
-		else if( m_vLastXPos <= m_pcView->GetBounds().Width() && m_pcHScrollBar->IsVisible() ) 
+		else if( m_vLastXPos <= m_pcView->GetBounds().Width() && m_bHScrollBarVisible ) 
 		{
 			m_pcHScrollBar->Hide();
+			m_bHScrollBarVisible = false;
 			os::Rect cFrame = m_pcView->GetFrame();
 			cFrame.bottom += m_vScrollBarHeight;
 			m_pcView->SetFrame( cFrame );
@@ -628,6 +646,7 @@ public:
 	os::Image* m_pcBackground;
 	os::Color32_s m_sBackgroundColor;
 	os::Color32_s m_sTextColor;
+	os::Color32_s m_sTextShadowColor;	
 	os::Color32_s m_sSelectionColor;
 	
 	float m_vIconWidth;
@@ -653,6 +672,8 @@ public:
 	bool m_bSingleClick;
 	bool m_bAutoSort;
 	bool m_bMultiSelect;
+	bool m_bVScrollBarVisible;
+	bool m_bHScrollBarVisible;
 };
 
 class IconView::MainView : public os::View
@@ -1149,19 +1170,35 @@ void IconView::SetBackgroundColor( os::Color32_s sColor )
 /** Sets a new text color.
  * \par Description:
  * Sets a new text color and updates the view.
- * \par Note:
+ * \par Note: SetTextColor overwrites SetTextShadowColor to disable shadows
  * Please make sure that the background color/image doesn’t make the text
  * invisible.
  * \param sColor - The new color.
- * \author	Arno Klenke (arno_klenke@yahoo.de)
+ * \author	Arno Klenke (arno_klenke@yahoo.de) Andreas Benzler (andreas.benzler@t-online.de)
  *****************************************************************************/
 void IconView::SetTextColor( os::Color32_s sColor )
 {
 	m->m_sTextColor = sColor;
+	m->m_sTextShadowColor = sColor;
+		
 	m->m_pcView->Invalidate();
 	m->m_pcView->Flush();
 }
 
+
+/** Sets a new color for the shadows of the text.
+ * \par Description:
+ * Sets a new color for the shadows of the text.
+ * \par Note: SetTextColor overwrites SetTextShadowColor to disable shadows.
+ * \param sColor - The new color.
+ * \author	Arno Klenke (arno_klenke@yahoo.de) Andreas Benzler (andreas.benzler@t-online.de)
+ *****************************************************************************/
+void IconView::SetTextShadowColor( os::Color32_s sColor )
+{
+	m->m_sTextShadowColor = sColor;
+	m->m_pcView->Invalidate();
+	m->m_pcView->Flush();
+}
 
 /** Sets a new color for the selection.
  * \par Description:

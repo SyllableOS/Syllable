@@ -1,6 +1,8 @@
 /*  Syllable Desktop Preferences
  *  Copyright (C) 2003 Arno Klenke
  *
+ *	Andreas Benzler 2006 add some font function
+ *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
  *  General Public License as published by the Free Software
@@ -65,9 +67,13 @@ PrefsDesktopWin::PrefsDesktopWin( os::Rect cFrame )
 	m_pcVWindows->SetBorders( os::Rect( 5, 5, 5, 5 ) );
 	m_pcPopupWindows = new os::CheckBox( os::Rect(), "desktop_prefs_popup", "Popup selected window", NULL );
 	m_pcSingleClick = new os::CheckBox( os::Rect(), "desktop_prefs_sc", "Use single-click interface", NULL );
+	m_pcFontShadow = new os::CheckBox( os::Rect(), "desktop_prefs_font_shadow", "Show icontext with shadow", NULL );
+
 	m_pcVWindows->AddChild( m_pcPopupWindows );
 	m_pcVWindows->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
 	m_pcVWindows->AddChild( m_pcSingleClick );
+	m_pcVWindows->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
+	m_pcVWindows->AddChild( m_pcFontShadow );
 	
 	/* Create windows frame */
 	m_pcWindows = new os::FrameView( os::Rect(), "desktop_prefs_windows", "Windows" );
@@ -126,6 +132,8 @@ PrefsDesktopWin::PrefsDesktopWin( os::Rect cFrame )
 	os::Message cDummy;
 	m_zBackground = "None";
 	m_bSingleClickSave = false;
+	m_bFontShadowSave = true;
+	
 	if( pcManager->QueryCall( "os/Desktop/GetSingleClickInterface", 0, &sCall ) == 0 )
 	{
 		if( pcManager->InvokeCall( &sCall, &cDummy, &cReply ) == 0 )
@@ -140,6 +148,15 @@ PrefsDesktopWin::PrefsDesktopWin( os::Rect cFrame )
 			cReply.FindString( "background_image", &m_zBackground );
 		}
 	}
+	if( pcManager->QueryCall( "os/Desktop/GetDesktopFontShadow", 0, &sCall ) == 0 )
+	{
+		if( pcManager->InvokeCall( &sCall, &cDummy, &cReply ) == 0 )
+		{
+			cReply.FindBool( "desktop_font_shadow", &m_bFontShadowSave );
+		}
+	}
+	m_pcFontShadow->SetValue( m_bFontShadowSave );
+	
 	pcManager->Put();
 	} catch(...) {
 	}
@@ -253,11 +270,15 @@ void PrefsDesktopWin::HandleMessage( os::Message* pcMessage )
 			os::RegistrarManager* pcManager = os::RegistrarManager::Get();
 			os::RegistrarCall_s sCall;
 			os::Message cReply;
+			os::Message cFontShadow;
 			os::Message cSingleClick;
 			os::Message cBackgroundImage;
+			cFontShadow.AddBool( "desktop_font_shadow", m_pcFontShadow->GetValue().AsBool() );
 			cSingleClick.AddBool( "single_click", m_pcSingleClick->GetValue().AsBool() );
 			cBackgroundImage.AddString( "background_image", m_zBackground );
 			
+			if( pcManager->QueryCall( "os/Desktop/SetDesktopFontShadow", 0, &sCall ) == 0 )
+				pcManager->InvokeCall( &sCall, &cFontShadow, NULL );
 			if( pcManager->QueryCall( "os/Desktop/SetSingleClickInterface", 0, &sCall ) == 0 )
 				pcManager->InvokeCall( &sCall, &cSingleClick, NULL );
 			if( pcManager->QueryCall( "os/Desktop/SetBackgroundImage", 0, &sCall ) == 0 )

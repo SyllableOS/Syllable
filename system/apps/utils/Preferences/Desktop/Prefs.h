@@ -58,6 +58,7 @@ private:
 	os::FrameView* m_pcWindows;
 	os::CheckBox* m_pcPopupWindows;
 	os::CheckBox* m_pcSingleClick;
+	os::CheckBox* m_pcFontShadow;
 	os::HLayoutNode* m_pcHButtons;
 	os::Button* m_pcApply;
 	os::Button* m_pcUndo;
@@ -66,6 +67,7 @@ private:
 	os::String m_zSavedBackground;
 	bool m_bPopupWindowSave;
 	bool m_bSingleClickSave;
+	bool m_bFontShadowSave;
 };
 
 class PrefsDesktopApp : public os::Application

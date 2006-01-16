@@ -730,6 +730,7 @@ void View::_Attached( Window * pcWindow, View * pcParent, int hHandle, int nHide
 			{
 				psCmd->hFontID = m->m_pcFont->GetFontID();
 			}
+			pcWindow->_PutRenderCmd();
 		}
 		else
 		{
@@ -962,9 +963,8 @@ void View::_IncHideCount( bool bVisible )
 	{
 		m->m_nHideCount++;
 	}
-
+	
 	Window *pcWindow = GetWindow();
-
 	if( pcWindow != NULL )
 	{
 		GRndShowView_s *psCmd;
@@ -975,8 +975,8 @@ void View::_IncHideCount( bool bVisible )
 		{
 			psCmd->bVisible = bVisible;
 		}
+		pcWindow->_PutRenderCmd();
 	}
-
 	for( View * pcChild = m->m_pcBottomChild; pcChild != NULL; pcChild = pcChild->m->m_pcHigherSibling )
 	{
 		pcChild->_IncHideCount( bVisible );
@@ -1017,7 +1017,7 @@ void View::Show( bool bVisible )
 	{
 		m->m_nHideCount++;
 	}
-
+	
 	Window *pcWindow = GetWindow();
 
 	if( pcWindow != NULL )
@@ -1029,6 +1029,7 @@ void View::Show( bool bVisible )
 		{
 			psCmd->bVisible = bVisible;
 		}
+		pcWindow->_PutRenderCmd();
 	}
 	for( View * pcChild = m->m_pcBottomChild; pcChild != NULL; pcChild = pcChild->m->m_pcHigherSibling )
 	{
@@ -1452,6 +1453,7 @@ void View::SetFrame( const Rect & cRect, bool bNotifyServer )
 			{
 				psCmd->cFrame = cRect;
 			}
+			pcWindow->_PutRenderCmd();
 		}
 
 		if( cSize.x || cSize.y )
@@ -1626,6 +1628,7 @@ void View::SetDrawingRegion( const Region & cReg )
 
 	if( psCmd == NULL )
 	{
+		pcWindow->_PutRenderCmd();
 		return;
 	}
 	psCmd->m_nClipCount = nCount;
@@ -1637,6 +1640,7 @@ void View::SetDrawingRegion( const Region & cReg )
 		pasRects[i] = pcClip->m_cBounds;
 		pcClip = pcClip->m_pcNext;
 	}
+	pcWindow->_PutRenderCmd();
 }
 
 /** Remove any previously assigned drawing region.
@@ -1661,9 +1665,11 @@ void View::ClearDrawingRegion()
 
 	if( psCmd == NULL )
 	{
+		pcWindow->_PutRenderCmd();
 		return;
 	}
 	psCmd->m_nClipCount = -1;
+	pcWindow->_PutRenderCmd();
 }
 
 /** Define a non-square shape for the view.
@@ -1708,6 +1714,7 @@ void View::SetShapeRegion( const Region & cReg )
 
 	if( psCmd == NULL )
 	{
+		pcWindow->_PutRenderCmd();
 		return;
 	}
 	psCmd->m_nClipCount = nCount;
@@ -1719,6 +1726,7 @@ void View::SetShapeRegion( const Region & cReg )
 		pasRects[i] = pcClip->m_cBounds;
 		pcClip = pcClip->m_pcNext;
 	}
+	pcWindow->_PutRenderCmd();
 	Flush();
 }
 
@@ -1745,9 +1753,11 @@ void View::ClearShapeRegion()
 
 	if( psCmd == NULL )
 	{
+		pcWindow->_PutRenderCmd();
 		return;
 	}
 	psCmd->m_nClipCount = -1;
+	pcWindow->_PutRenderCmd();
 	Flush();
 }
 
@@ -1846,6 +1856,7 @@ void View::Invalidate( const Rect & cRect, bool bRecurse )
 		psCmd->m_cRect = cRect;
 		psCmd->m_bRecurse = bRecurse;
 	}
+	pcWnd->_PutRenderCmd();
 }
 
 /** Invalidate the whole view.
@@ -1872,6 +1883,7 @@ void View::Invalidate( bool bRecurse )
 	{
 		psCmd->m_bRecurse = bRecurse;
 	}
+	pcWnd->_PutRenderCmd();
 }
 
 /** \internal
@@ -1931,6 +1943,7 @@ void View::_BeginUpdate()
 			if( m->m_nBeginPaintCount++ == 0 )
 			{
 				pcWindow->_AllocRenderCmd( DRC_BEGIN_UPDATE, this, sizeof( GRndHeader_s ) );
+				pcWindow->_PutRenderCmd();
 			}
 		}
 	}
@@ -1948,6 +1961,7 @@ void View::_EndUpdate( void )
 		if( --m->m_nBeginPaintCount == 0 )
 		{
 			pcWindow->_AllocRenderCmd( DRC_END_UPDATE, this, sizeof( GRndHeader_s ) );
+			pcWindow->_PutRenderCmd();
 		}
 	}
 }
@@ -2064,6 +2078,7 @@ void View::MovePenTo( const Point & cPos )
 			psCmd->bRelative = false;
 			psCmd->sPosition = cPos;
 		}
+		pcWindow->_PutRenderCmd();
 	}
 }
 
@@ -2087,6 +2102,7 @@ void View::MovePenBy( const Point & cPos )
 			psCmd->bRelative = true;
 			psCmd->sPosition = cPos;
 		}
+		pcWindow->_PutRenderCmd();
 	}
 }
 
@@ -2140,6 +2156,7 @@ void View::DrawString( const String& cString )
 		psCmd->nLength = cString.size();
 		memcpy( psCmd->zString, cString.c_str(), psCmd->nLength );
 	}
+	pcWindow->_PutRenderCmd();
 }
 
 void View::DrawString( const char *pzString, int nLength )
@@ -2162,6 +2179,7 @@ void View::DrawString( const char *pzString, int nLength )
 		psCmd->nLength = nLength;
 		memcpy( psCmd->zString, pzString, psCmd->nLength );
 	}
+	pcWindow->_PutRenderCmd();
 }
 
 /** Render a text-string in a specified rectangle.
@@ -2234,6 +2252,7 @@ void View::DrawText( const Rect& cPos, const String& cString, uint32 nFlags )
 		psCmd->cPos = cPos;
 		memcpy( psCmd->zString, cString.c_str(), psCmd->nLength );
 	}
+	pcWindow->_PutRenderCmd();	
 }
 
 void View::DrawString( const Point & cPos, const String& cString )
@@ -2268,6 +2287,7 @@ void View::SetDrawingMode( drawing_mode eMode )
 		{
 			psMsg->nDrawingMode = eMode;
 		}
+		pcWnd->_PutRenderCmd();
 	}
 }
 
@@ -2317,6 +2337,7 @@ void View::SetFgColor( Color32_s sColor )
 			psCmd->nWhichPen = PEN_HIGH;
 			psCmd->sColor = sColor;
 		}
+		pcWindow->_PutRenderCmd();
 	}
 }
 
@@ -2354,6 +2375,7 @@ void View::SetBgColor( Color32_s sColor )
 			psCmd->nWhichPen = PEN_LOW;
 			psCmd->sColor = sColor;
 		}
+		pcWindow->_PutRenderCmd();
 	}
 }
 
@@ -2392,6 +2414,7 @@ void View::SetEraseColor( Color32_s sColor )
 			psCmd->nWhichPen = PEN_ERASE;
 			psCmd->sColor = sColor;
 		}
+		pcWindow->_PutRenderCmd();
 	}
 }
 
@@ -2495,6 +2518,7 @@ void View::SetFont( Font * pcFont )
 		{
 			psCmd->hFontID = m->m_pcFont->GetFontID();
 		}
+		pcWindow->_PutRenderCmd();
 	}
 	FontChanged( m->m_pcFont );
 }
@@ -2525,6 +2549,7 @@ void View::DrawLine( const Point & cFromPnt, const Point & cToPnt )
 		{
 			psCmd->sToPos = cToPnt;
 		}
+		pcWindow->_PutRenderCmd();
 	}
 }
 
@@ -2547,6 +2572,7 @@ void View::DrawLine( const Point & cToPnt )
 		{
 			psCmd->sToPos = cToPnt;
 		}
+		pcWindow->_PutRenderCmd();
 	}
 }
 
@@ -2570,6 +2596,7 @@ void View::FillRect( const Rect & cRect )
 			psCmd->sRect = cRect;
 			psCmd->sColor = m->m_sFgColor;
 		}
+		pcWindow->_PutRenderCmd();
 	}
 }
 
@@ -2593,6 +2620,7 @@ void View::FillRect( const Rect & cRect, Color32_s sColor )
 			psCmd->sRect = cRect;
 			psCmd->sColor = sColor;
 		}
+		pcWindow->_PutRenderCmd();
 	}
 }
 
@@ -2616,6 +2644,7 @@ void View::EraseRect( const Rect & cRect )
 			psCmd->sRect = cRect;
 			psCmd->sColor = m->m_sEraseColor;
 		}
+		pcWindow->_PutRenderCmd();
 	}
 }
 
@@ -2678,6 +2707,7 @@ void View::DrawBitmap( const Bitmap * pcBitmap, const Rect & cSrcRect, const Rec
 			psCmd->cSrcRect = cSrcRect;
 			psCmd->cDstRect = cDstRect;
 		}
+		pcWindow->_PutRenderCmd();
 	}
 }
 
@@ -2822,6 +2852,7 @@ void View::ScrollBy( const Point & cDelta )
 			{
 				psCmd->cDelta = cDelta;
 			}
+			pcWindow->_PutRenderCmd();
 		}
 		if( cDelta.x != 0 && m->m_pcHScrollBar != NULL )
 		{
@@ -2899,6 +2930,7 @@ void View::ScrollRect( const Rect & cSrcRect, const Rect & cDstRect )
 			psCmd->cSrcRect = cSrcRect;
 			psCmd->cDstRect = cDstRect;
 		}
+		pcWindow->_PutRenderCmd();
 	}
 }
 
@@ -3617,6 +3649,7 @@ void View::Ping( int nSize ) const
 	if( pcWindow != NULL )
 	{
 		pcWindow->_AllocRenderCmd( DRC_PING, this, sizeof( GRndHeader_s ) + nSize );
+		pcWindow->_PutRenderCmd();
 	}
 }
 

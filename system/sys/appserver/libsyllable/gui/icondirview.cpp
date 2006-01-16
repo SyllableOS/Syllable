@@ -993,10 +993,9 @@ os::Image* IconDirectoryView::GetDirIcon() const
 	os::String zTempType;
 	os::Image* pcIcon;
 	
-	if( m->m_pcManager )
-	{
-		m->m_pcManager->GetTypeAndIcon( m->m_cPath.GetPath(), os::Point( 24, 24 ),
-									&zTempType, &pcIcon );
+	if( m->m_pcManager && m->m_pcManager->GetTypeAndIcon( m->m_cPath.GetPath(), os::Point( 24, 24 ),
+									&zTempType, &pcIcon ) == 0)
+	{		
 	} else {
 		os::BitmapImage* pcBitmap = new os::BitmapImage();
 		
@@ -1386,10 +1385,9 @@ void IconDirectoryView::HandleMessage( Message * pcMessage )
 							cRequestedSize = os::Point( 24, 24 );
 						else
 							cRequestedSize = os::Point( 48, 48 );
-						if( m->m_pcManager )
+						if( m->m_pcManager && m->m_pcManager->GetTypeAndIcon( cPath.GetPath(), cRequestedSize,
+							&zType, &pcImage ) == 0)
 						{
-							m->m_pcManager->GetTypeAndIcon( cPath.GetPath(), cRequestedSize,
-							&zType, &pcImage );
 						} 
 						else
 						{
@@ -1511,10 +1509,10 @@ void IconDirectoryView::HandleMessage( Message * pcMessage )
 									cRequestedSize = os::Point( 24, 24 );
 								else
 									cRequestedSize = os::Point( 48, 48 );
-								if( m->m_pcManager )
+								if( m->m_pcManager && m->m_pcManager->GetTypeAndIcon( cPath.GetPath(), cRequestedSize,
+									&zType, &pcImage ) == 0 )
 								{
-									m->m_pcManager->GetTypeAndIcon( cPath.GetPath(), cRequestedSize,
-									&zType, &pcImage );
+									
 								} 
 								else
 								{

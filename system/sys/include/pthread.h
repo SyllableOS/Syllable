@@ -74,7 +74,7 @@ enum
 	PTHREAD_INHERIT_SCHED
 };
 
-#define	PTHREAD_ONCE_INIT	0
+#define	PTHREAD_ONCE_INIT	{ 0 }
 
 enum
 {

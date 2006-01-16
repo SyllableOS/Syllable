@@ -1,6 +1,8 @@
 /*  Syllable Desktop
  *  Copyright (C) 2003 Arno Klenke
  *
+ *  Andreas Benzler 2006 - some font functions and clean ups.
+ *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
  *  General Public License as published by the Free Software
@@ -61,12 +63,15 @@ Desktop::Desktop() : os::Window( os::Rect(), "desktop", "Desktop", os::WND_NO_BO
 	m_pcView->SetView( os::IconView::VIEW_ICONS_DESKTOP );
 	m_pcView->SetBackgroundColor( get_default_color( os::COL_MENU_BACKGROUND ) );
 	m_pcView->SetTextColor( os::Color32_s( 255, 255, 255 ) );
+	m_pcView->SetTextShadowColor( os::Color32_s( 255, 255, 255 ) );
+	
 	
 	
 	/* Set background */
 	m_pcBackground = NULL;
 	m_zBackground = "None";
 	m_bSingleClick = false;
+	m_bFontShadows = true;
 	
 	/* Load settings */
 	os::Settings* pcSettings = new os::Settings();
@@ -74,6 +79,7 @@ Desktop::Desktop() : os::Window( os::Rect(), "desktop", "Desktop", os::WND_NO_BO
 	{
 		m_zBackground = pcSettings->GetString( "background_image", "None" );
 		m_bSingleClick = pcSettings->GetBool( "single_click", false );
+		m_bFontShadows =  pcSettings->GetBool( "desktop_font_shadow",true);
 	} else {
 		/* Create default links */
 		os::String zTemp = os::String( pzHome ) + ( "/Desktop/" );
@@ -93,19 +99,41 @@ Desktop::Desktop() : os::Window( os::Rect(), "desktop", "Desktop", os::WND_NO_BO
 	}
 	delete( pcSettings );
 	
-	
 	LoadBackground();
 	
 	AddChild( m_pcView );
 	m_pcView->ReRead();
 	m_pcView->MakeFocus();
-	m_pcView->SetSingleClick( m_bSingleClick );	
+	m_pcView->SetSingleClick( m_bSingleClick );
+
+	if( m_bFontShadows )
+		m_pcView->SetTextShadowColor( os::Color32_s( 80, 80, 80 ) );
 	
 	/* Register calls  */
 	try
 	{
 		os::RegistrarManager* pcManager = os::RegistrarManager::Get();
 		if( pcManager ) {
+
+			pcManager->RegisterCall( "os/Desktop/SetDesktopFont", "Sets a new desktop font",
+							os::Application::GetInstance(), M_SET_DESKTOP_FONT );
+			pcManager->RegisterCall( "os/Desktop/GetDesktopFont", "Gets a new desktop font",
+							os::Application::GetInstance(), M_GET_DESKTOP_FONT );
+
+			pcManager->RegisterCall( "os/Desktop/SetDesktopFontColor", "Sets the desktop font color",
+							os::Application::GetInstance(), M_SET_DESKTOP_FONT_COLOR );
+			pcManager->RegisterCall( "os/Desktop/GetDesktopFontColor", "Gets the desktop font color",
+							os::Application::GetInstance(), M_GET_DESKTOP_FONT_COLOR );
+
+			pcManager->RegisterCall( "os/Desktop/SetDesktopFontShadowColor", "Sets color for desktop font",
+							os::Application::GetInstance(), M_SET_DESKTOP_FONT_SHADOW_COLOR );
+			pcManager->RegisterCall( "os/Desktop/GetDesktopFontShadowColor", "Gets color for desktop font",
+							os::Application::GetInstance(), M_GET_DESKTOP_FONT_SHADOW_COLOR );
+
+			pcManager->RegisterCall( "os/Desktop/SetDesktopFontShadow", "Enables/Disables font shadow",
+							os::Application::GetInstance(), M_SET_DESKTOP_FONT_SHADOW );
+			pcManager->RegisterCall( "os/Desktop/GetDesktopFontShadow", "Gets current state of font shadow",
+							os::Application::GetInstance(), M_GET_DESKTOP_FONT_SHADOW );
 			pcManager->RegisterCall( "os/Desktop/GetSingleClickInterface", "Returns whether the single-click interface is enabled",
 							os::Application::GetInstance(), M_GET_SINGLE_CLICK );
 			pcManager->RegisterCall( "os/Desktop/SetSingleClickInterface", "Enables/Disables the single-click interface",
@@ -129,13 +157,30 @@ Desktop::Desktop() : os::Window( os::Rect(), "desktop", "Desktop", os::WND_NO_BO
 
 Desktop::~Desktop()
 {
-	os::RegistrarManager* pcManager = os::RegistrarManager::Get();
-	pcManager->UnregisterCall( "os/Desktop/GetSingleClickInterface" );
-	pcManager->UnregisterCall( "os/Desktop/SetSingleClickInterface" );
-	pcManager->UnregisterCall( "os/Desktop/GetBackgroundImage" );
-	pcManager->UnregisterCall( "os/Desktop/SetBackgroundImage" );
-	pcManager->UnregisterCall( "os/Desktop/Refresh" );
-	pcManager->Put();
+	try
+	{
+		os::RegistrarManager* pcManager = os::RegistrarManager::Get();
+		if( pcManager ) {
+			pcManager->UnregisterCall( "os/Desktop/SetDesktopFont" );
+			pcManager->UnregisterCall( "os/Desktop/SetDesktopFontColor" );
+			pcManager->UnregisterCall( "os/Desktop/SetDesktopFontShadowColor" );
+			pcManager->UnregisterCall( "os/Desktop/SetDesktopFontShadow" );
+			pcManager->UnregisterCall( "os/Desktop/GetDesktopFont" );
+			pcManager->UnregisterCall( "os/Desktop/GetDesktopFontColor" );
+			pcManager->UnregisterCall( "os/Desktop/GetDesktopFontShadowColor" );
+			pcManager->UnregisterCall( "os/Desktop/GetDesktopFontShadow" );
+
+			pcManager->UnregisterCall( "os/Desktop/GetSingleClickInterface" );
+			pcManager->UnregisterCall( "os/Desktop/SetSingleClickInterface" );
+			pcManager->UnregisterCall( "os/Desktop/GetBackgroundImage" );
+			pcManager->UnregisterCall( "os/Desktop/SetBackgroundImage" );
+
+			pcManager->UnregisterCall( "os/Desktop/Refresh" );
+			pcManager->Put();
+		}
+	} catch ( ... )
+	{
+	}
 }
 
 void Desktop::HandleMessage( os::Message* pcMessage )
@@ -254,11 +299,24 @@ void Desktop::SetSingleClick( bool bSingleClick )
 	SaveSettings();
 }
 
+void Desktop::SetDesktopFontShadow( bool bDesktopFontShadow )
+{
+	m_bFontShadows = bDesktopFontShadow;
+
+	if ( m_bFontShadows ) 
+		m_pcView->SetTextShadowColor( os::Color32_s( 80, 80, 80 ) );
+	else 
+		m_pcView->SetTextShadowColor( os::Color32_s( 255, 255, 255 ) );
+	
+	SaveSettings();
+}
+		
 void Desktop::SaveSettings()
 {
 	os::Settings* pcSettings = new os::Settings();
 	pcSettings->SetString( "background_image", m_zBackground );
 	pcSettings->SetBool( "single_click", m_bSingleClick );
+	pcSettings->SetBool( "desktop_font_shadow", m_bFontShadows );
 	pcSettings->Save();
 	delete( pcSettings );
 }

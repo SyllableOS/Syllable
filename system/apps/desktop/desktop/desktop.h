@@ -1,6 +1,8 @@
 /*  Syllable Desktop
  *  Copyright (C) 2003 Arno Klenke
  *
+ *  Andreas Benzler 2006 - some font functions and clean ups.
+ *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of version 2 of the GNU Library
  *  General Public License as published by the Free Software
@@ -38,9 +40,15 @@ public:
 	void DesktopActivated( int nDesktop, bool bActive );
 	
 	os::String GetBackground() { return( m_zBackground ); }
+
+	bool GetDesktopFontShadow() { return( m_bFontShadows ); }
+	void SetDesktopFontShadow( bool bDesktopFontShadow ); 
+
 	void SetBackground( os::String zBackground );
+
 	bool GetSingleClick() { return( m_bSingleClick ); }
 	void SetSingleClick( bool bSingleClick );
+
 private:
 	void LaunchFiles();
 	void SaveSettings();
@@ -49,6 +57,7 @@ private:
 	os::String m_zBackground;
 	os::BitmapImage* m_pcBackground;
 	bool m_bSingleClick;
+	bool m_bFontShadows;
 };
 
 #endif

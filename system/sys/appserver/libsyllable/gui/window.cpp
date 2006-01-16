@@ -88,7 +88,7 @@ typedef std::map<ShortcutKey, ShortcutData> shortcut_map;
 class Window::Private
 {
       public:
-	Private( const String & cTitle ):m_cTitle( cTitle )
+	Private( const String & cTitle ):m_cTitle( cTitle ),m_cRenderLock( "render_lock" )
 	{
 		m_psRenderPkt = NULL;
 		m_nRndBufSize = RENDER_BUFFER_SIZE;
@@ -137,6 +137,8 @@ class Window::Private
 	bool m_bMenuOpen;
 	bool m_bIsRunning;
 	bool m_bDidScrollRect;
+	
+	os::Locker m_cRenderLock;
 
 	shortcut_map	m_cShortcuts;
 
@@ -1064,8 +1066,10 @@ void Window::_HandleActivate( bool bIsActive, const Point & cMousePos )
 
 void Window::Flush()
 {
+	m->m_cRenderLock.Lock();
 	if( m->m_psRenderPkt->nCount == 0 )
 	{
+		m->m_cRenderLock.Unlock();
 		return;
 	}
 	m->m_psRenderPkt->hReply = -1;
@@ -1075,6 +1079,7 @@ void Window::Flush()
 	}
 	m->m_psRenderPkt->nCount = 0;
 	m->m_nRndBufSize = 0;
+	m->m_cRenderLock.Unlock();
 }
 
 /** Flush the render queue, and wait til the rendering is done.
@@ -1097,6 +1102,7 @@ void Window::Flush()
 
 void Window::Sync()
 {
+	m->m_cRenderLock.Lock();
 	m->m_psRenderPkt->hReply = m->m_hReplyPort;
 	if( send_msg( m->m_hLayerPort, WR_RENDER, m->m_psRenderPkt, sizeof( WR_Render_s ) + m->m_nRndBufSize - RENDER_BUFFER_SIZE ) == 0 )
 	{
@@ -1107,6 +1113,7 @@ void Window::Sync()
 	}
 	m->m_psRenderPkt->nCount = 0;
 	m->m_nRndBufSize = 0;
+	m->m_cRenderLock.Unlock();
 }
 
 //----------------------------------------------------------------------------
@@ -1119,7 +1126,9 @@ void Window::Sync()
 void *Window::_AllocRenderCmd( uint32 nCmd, const View * pcView, uint32 nSize )
 {
 	void *pObj = NULL;
-
+	
+	m->m_cRenderLock.Lock();
+	
 	if( nSize <= RENDER_BUFFER_SIZE )
 	{
 		if( m->m_nRndBufSize + nSize > RENDER_BUFFER_SIZE )
@@ -1147,6 +1156,11 @@ void *Window::_AllocRenderCmd( uint32 nCmd, const View * pcView, uint32 nSize )
 		dbprintf( "Error: View::_AllocRenderCmd() packet to big!\n" );
 	}
 	return ( pObj );
+}
+
+void Window::_PutRenderCmd()
+{
+	m->m_cRenderLock.Unlock();
 }
 
 /** Find the view covering a given position on the window.

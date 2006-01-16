@@ -88,6 +88,24 @@ void App::HandleMessage( os::Message* pcMessage )
 			}
 			break;
 		}
+		case M_GET_DESKTOP_FONT_SHADOW:
+		{
+			os::Message cReply( 0 );
+			if( pcMessage->IsSourceWaiting() )
+			{
+				cReply.AddBool( "desktop_font_shadow", m_pcDesktop->GetDesktopFontShadow() );
+				pcMessage->SendReply( &cReply );
+			}
+			break;
+		}
+		case M_SET_DESKTOP_FONT_SHADOW:
+		{
+			bool bEnabled;
+			if( pcMessage->FindBool( "desktop_font_shadow", &bEnabled ) == 0 ) {
+				m_pcDesktop->SetDesktopFontShadow( bEnabled );
+			}
+			break;
+		}
 		case M_GET_BACKGROUND:
 		{
 			os::Message cReply( 0 );

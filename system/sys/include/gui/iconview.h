@@ -85,6 +85,7 @@ public:
 	view_type GetView() const;
 	void SetView( view_type eType );
 	void SetTextColor( os::Color32_s sColor );
+	void SetTextShadowColor( os::Color32_s sColor );
 	void SetSelectionColor( os::Color32_s sColor );
 	void SetBackgroundColor( os::Color32_s sColor );
 	void SetBackground( os::Image* pcImage );
