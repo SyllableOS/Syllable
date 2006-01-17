@@ -1,3 +1,7 @@
+* January 17 2006, Arno Klenke *
+
+Updated window selector in the appserver to show previews of the windows
+
 * January 8 2006, Kaj de Vos *
 
 Fixed package-specific initialization in /system/user_init.sh.
@@ -961,4 +965,5 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
 
