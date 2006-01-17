@@ -130,7 +130,7 @@ public:
     void		SetBgColor( os::Color32_s sColor );
     void		SetEraseColor( int nRed, int nGreen, int nBlue, int nAlpha );
     void					SetEraseColor( os::Color32_s sColor );
-    void		SetDrawindMode( int nMode ) { m_nDrawingMode = nMode; }
+    void		SetDrawingMode( int nMode ) { m_nDrawingMode = nMode; }
     void		DrawFrame( const os::Rect& a_cRect, uint32 nStyle );
     void		MovePenTo( float x, float y )		{ m_cPenPos.x = x; m_cPenPos.y = y;  }
     void		MovePenTo( const os::Point& cPos )	{ m_cPenPos = cPos;  }

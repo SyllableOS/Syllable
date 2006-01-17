@@ -71,7 +71,7 @@ WinSelect::WinSelect():Layer( NULL, g_pcTopView, "", Rect( 0, 0, 1, 1 ), 0, NULL
 		nDescender = pcFontInst->GetDescender();
 	}
 	int nHeight = 10;
-	int nWidth = 50;
+	int nWidth = 300;
 
 	m_pcOldFocusWindow = get_active_window( true );
 	Layer *pcLayer;
@@ -104,6 +104,7 @@ WinSelect::WinSelect():Layer( NULL, g_pcTopView, "", Rect( 0, 0, 1, 1 ), 0, NULL
 		{
 			nStrWidth = pcFontInst->GetStringWidth( pzStr, strlen( pzStr ) );
 		}
+		nStrWidth += 30;
 		if( nStrWidth > nWidth )
 		{
 			nWidth = nStrWidth;
@@ -118,6 +119,7 @@ WinSelect::WinSelect():Layer( NULL, g_pcTopView, "", Rect( 0, 0, 1, 1 ), 0, NULL
 
 	screen_mode sMode;
 
+	nHeight += 250;
 	get_desktop_config( &nDesktop, &sMode, NULL );
 	SetFrame( Rect( 0, 0, nWidth + 10, nHeight ) + Point( sMode.m_nWidth / 2 - nWidth / 2, sMode.m_nHeight / 2 - nHeight / 2 ) );
 	g_pcTopView->LayerFrameChanged( this, GetIFrame() );
@@ -202,7 +204,7 @@ void WinSelect::Paint( const IRect & cUpdateRect, bool bUpdate )
 	}
 	Rect cRect = GetBounds();
 
-	SetFgColor( get_default_color( COL_NORMAL ) );
+	SetFgColor( get_default_color( COL_ICON_BG ) );
 	FillRect( cRect );
 	Rect cOBounds = GetBounds();
 	Rect cIBounds = cOBounds;
@@ -215,7 +217,8 @@ void WinSelect::Paint( const IRect & cUpdateRect, bool bUpdate )
 	DrawFrame( cOBounds, FRAME_RAISED | FRAME_THIN | FRAME_TRANSPARENT );
 	SetFgColor( Tint( get_default_color( COL_NORMAL ), 4.5 ) );
 	DrawFrame( cIBounds, FRAME_RECESSED | FRAME_THIN | FRAME_TRANSPARENT );
-	cRect.left = 4;
+	cRect.top = 205;
+	cRect.left = 30;
 	cRect.right = cRect.left + nAscender + ( -nDescender ) + 2;
 	for( uint i = 0; i < m_cWindows.size(); ++i )
 
@@ -223,17 +226,74 @@ void WinSelect::Paint( const IRect & cUpdateRect, bool bUpdate )
 		int nItem = ( m_nCurSelect + i ) % m_cWindows.size();
 
 		SrvWindow *pcWindow = m_cWindows[nItem];
-
-		SetFgColor( 0, 0, 0, 0 );
-		MovePenTo( cRect.left + 5, cRect.top + 5 + nAscender );
+		
+		MovePenTo( cRect.left + 5, cRect.top + 6 + nAscender + 
+				std::max( ( 26 - ( nAscender - nDescender + 2 ) ) / 2, 0 ) );
 		const char *pzStr = pcWindow->GetTitle();
-
+		
+		if( nItem == m_nCurSelect ) {
+			/* Draw selection */
+			SetFgColor( get_default_color( COL_ICON_SELECTED ) );
+			SetBgColor( get_default_color( COL_ICON_SELECTED ) );
+			FillRect( os::Rect( 2, cRect.top + 6, cOBounds.Width() - 2, cRect.top + 5 +
+								std::max( nAscender -nDescender + 2, 26 ) ) );
+			SetFgColor( 0, 0, 0, 0 );	
+		} else {
+			SetBgColor( get_default_color( COL_ICON_BG ) );
+			SetFgColor( get_default_color( COL_SHADOW ) );
+		}
+		
+		
+		
 		if( pzStr[0] == '\0' )
 		{
 			pzStr = "*unnamed*";
 		}
 		DrawString( pzStr, -1 );
-		cRect += Point( 0, nAscender + ( -nDescender ) + 2 );
+		
+		/* Draw window icon */
+		if( pcWindow->GetIcon() != NULL )
+		{
+			SrvBitmap* pcBitmap = pcWindow->GetIcon();
+			Rect cBitmapBounds( 0, 0, pcBitmap->m_nWidth - 1, pcBitmap->m_nHeight - 1 );
+			SetDrawingMode( DM_BLEND );
+			DrawBitMap( pcBitmap, cBitmapBounds, cBitmapBounds + Point( 3, cRect.top + 6 ) );
+			SetDrawingMode( DM_COPY );			
+		}
+		
+		cRect += Point( 0, std::max( nAscender -nDescender + 2, 26 ) );
+		
+		if( nItem == m_nCurSelect )
+		{
+			/* Draw bitmap if the window has a backbuffer */
+			if( pcWindow->GetTopView()->m_pcBackbuffer != NULL )
+			{
+				SrvBitmap* pcBitmap = pcWindow->GetTopView()->m_pcBackbuffer;
+				
+				/* Preserve ratio */
+				Rect cWindowBounds = pcWindow->GetTopView()->GetBounds();
+				Rect cBitmapBounds( 0, 0, pcBitmap->m_nWidth - 1, pcBitmap->m_nHeight - 1 );
+				float vRatio = ( cWindowBounds.Width() + 1 ) / ( cWindowBounds.Height() + 1 );
+				
+				float vNewWidth = round( cOBounds.Width() - 10 );
+				float vNewHeight = round( vNewWidth / vRatio );
+				float vXPos = 5;
+				float vYPos = 5;
+				
+				if( vNewHeight > 200 )
+				{
+					/* Use the maximum height */
+					vNewHeight = 200;
+					vNewWidth = round( 200 * vRatio );
+					vXPos = round( ( cOBounds.Width() - 10 ) / 2 - vNewWidth / 2 ) + 5;
+				} else 
+				{
+					/* Use the maximum width */
+					vYPos = round( 100 - vNewHeight / 2 ) + 5;
+				}
+				DrawBitMap( pcBitmap, cBitmapBounds & cWindowBounds, Rect( vXPos, vYPos, vXPos + vNewWidth - 1, vYPos + vNewHeight ) );
+			}
+		}
 	}
 	if( bUpdate )
 	{
