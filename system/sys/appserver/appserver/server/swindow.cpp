@@ -1,4 +1,3 @@
-
 /*
  *  The AtheOS application server
  *  Copyright (C) 1999 - 2001 Kurt Skauen
@@ -775,7 +774,7 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 				break;
 			}
 		case DRC_SET_DRAWING_MODE:
-			pcView->SetDrawindMode( static_cast < GRndSetDrawingMode_s * >( psHdr )->nDrawingMode );
+			pcView->SetDrawingMode( static_cast < GRndSetDrawingMode_s * >( psHdr )->nDrawingMode );
 			break;
 		case DRC_INVALIDATE_RECT:
 			{
@@ -1803,3 +1802,4 @@ thread_id SrvWindow::Run()
 	}
 	return ( hThread );
 }
+
