@@ -1,3 +1,8 @@
+* January 21 2006, Arno Klenke *
+
+Updated generic acpi code
+Updated irq wait handling in the ata busmanager to fix problems on virtual hardware
+
 * January 17 2006, Arno Klenke *
 
 Updated window selector in the appserver to show previews of the windows
@@ -965,5 +970,6 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
 
 
