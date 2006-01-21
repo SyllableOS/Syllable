@@ -349,12 +349,47 @@ void CImageButton::Paint( const Rect & cUpdateRect )
 
 	if( m->bShowFrame == false )
 	{
-		if( m->bMouseOver == true )
+		
+		if( m->bMouseOver == true && m->bMouseTwo == true )
 		{
+			os::Rect cFillRect = GetBounds();			
+			SetFgColor( 230, 230, 230 );
+			cFillRect.bottom = 3;
+			
 			FillRect( cBounds, get_default_color( COL_NORMAL ) );
-			SetFgColor( 0, 255, 0 );
-			Rect cBounds2 = ConvertToScreen( GetBounds() );
-			Rect cWinBounds = GetWindow()->GetFrame(  );
+			cFillRect = GetBounds();
+			cFillRect.Resize( 1, 4, -1 , -4 );
+			FillRect( cFillRect );
+			
+			SetFgColor( 180, 180, 180 );
+			DrawLine( os::Point( 0, cFillRect.top ), os::Point( 0, cFillRect.bottom ) );
+			DrawLine( os::Point( cFillRect.right + 1, cFillRect.top ), os::Point( cFillRect.right + 1, cFillRect.bottom ) );
+			DrawLine( os::Point( 4, 0 ), os::Point( GetBounds().right - 4, 0 ) );
+			DrawLine( os::Point( 2, 1 ), os::Point(	3, 1 ) );
+			DrawLine( os::Point( 1, 2 ), os::Point(	1, 3 ) );
+			DrawLine( os::Point( GetBounds().right - 2, 1 ), os::Point(	GetBounds().right - 3, 1 ) );
+			DrawLine( os::Point( GetBounds().right - 1, 2 ), os::Point(	GetBounds().right - 1, 3 ) );
+			SetFgColor( 230, 230, 230 );
+			DrawLine( os::Point( 4, 1 ), os::Point( GetBounds().right - 4, 1 ) );
+			DrawLine( os::Point( 2, 2 ), os::Point( GetBounds().right - 2, 2 ) );
+			DrawLine( os::Point( 2, 3 ), os::Point( GetBounds().right - 2, 3 ) );
+	
+			cFillRect.top = GetBounds().bottom - 3;
+			cFillRect.bottom = GetBounds().bottom;
+	
+			FillRect( cFillRect, os::get_default_color( os::COL_NORMAL ) );
+			SetFgColor( 180, 180, 180 );
+			DrawLine( os::Point( 4, cFillRect.bottom - 0 ), os::Point( GetBounds().right - 4, cFillRect.bottom - 0 ) );
+			DrawLine( os::Point( 2, cFillRect.bottom - 1 ), os::Point( 3, cFillRect.bottom - 1 ) );
+			DrawLine( os::Point( 1, cFillRect.bottom - 2 ), os::Point( 1, cFillRect.bottom - 3 ) );
+			DrawLine( os::Point( GetBounds().right - 2, cFillRect.bottom - 1 ), os::Point(	GetBounds().right - 3, cFillRect.bottom - 1 ) );
+			DrawLine( os::Point( GetBounds().right - 1, cFillRect.bottom - 2 ), os::Point(	GetBounds().right - 1, cFillRect.bottom - 3 ) );
+			DrawLine( os::Point( 4, cFillRect.bottom ), os::Point( GetBounds().right - 4, cFillRect.bottom ) );
+			SetFgColor( 230, 230, 230 );
+			DrawLine( os::Point( 4, cFillRect.bottom - 1 ), os::Point( GetBounds().right - 4, cFillRect.bottom - 1 ) );
+			DrawLine( os::Point( 2, cFillRect.bottom - 2 ), os::Point( GetBounds().right - 2, cFillRect.bottom - 2 ) );
+			DrawLine( os::Point( 2, cFillRect.bottom - 3 ), os::Point( GetBounds().right - 2, cFillRect.bottom - 3 ) );
+
 		}
 		else
 		{

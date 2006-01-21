@@ -26,16 +26,16 @@ $(OBJDIR)/MediaPlayer: $(OBJS)
 	rescopy -a MediaPlayer nl/mediaplayer.catalog=resources/nl/mediaplayer.catalog
 	rescopy -a MediaPlayer pl/mediaplayer.catalog=resources/pl/mediaplayer.catalog
 	rescopy -a MediaPlayer sv/mediaplayer.catalog=resources/sv/mediaplayer.catalog
-
+	addattrib MediaPlayer os::Category Media
 deps:
 
 install:  $(OBJDIR)/MediaPlayer
 	mkdir -p $(APPBIN)
-	install -s MediaPlayer $(APPBIN)/MediaPlayer
+	cp MediaPlayer $(APPBIN)/MediaPlayer
 
 dist:  $(OBJDIR)/MediaPlayer
 	mkdir -p $(DIST_DIR)/atheos/Applications/Media
-	install -s MediaPlayer $(DIST_DIR)/atheos/Applications/Media/MediaPlayer
+	cp MediaPlayer $(DIST_DIR)/atheos/Applications/Media/MediaPlayer
 
 deps: $(OBJDIR) $(DEPS)
 

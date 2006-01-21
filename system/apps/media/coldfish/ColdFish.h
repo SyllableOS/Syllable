@@ -101,6 +101,7 @@ class CFWindow:public os::Window
 	{
 		return ( m_pcMenuBar );
 	}
+	void SetList( bool bEnabled );
 	void SetState( uint8 nState )
 	{
 		m_nState = nState;

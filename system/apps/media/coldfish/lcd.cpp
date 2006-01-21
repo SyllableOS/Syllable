@@ -51,13 +51,13 @@ Lcd::Lcd( const Rect & cFrame, Message* pcMessage, uint32 nResizeMask ):Control(
 	m_pcLcdFont->SetFlags( GetFont()->GetFlags(  ) );
 
 	SetFont( m_pcLcdFont );
+	m_pcLcdFont->Release();
 
 	SetDrawingMode( DM_COPY );
 }
 
 Lcd::~Lcd()
 {
-	m_pcLcdFont->Release();
 }
 
 void Lcd::Paint( const Rect & cUpdateRect )
@@ -67,43 +67,48 @@ void Lcd::Paint( const Rect & cUpdateRect )
 	char zTrackString[13];
 	float vX, vWidth;
 	
+	/* Draw background */
 	SetDrawingMode( DM_COPY );
-	SetFgColor( os::get_default_color( os::COL_NORMAL ) );
+	SetFgColor( 230, 230, 230 );
 
-	FillRect( cUpdateRect );
+	os::Rect cFillRect = GetBounds();
+	cFillRect.top += 4;
+	cFillRect.bottom -= 4;
+	FillRect( cFillRect & cUpdateRect );
 	
-	/* Draw background and its shadow */
-	SetBgColor( 255, 255, 255 );
-	SetFgColor( 255, 255, 255 );
+	cFillRect.top = 0;
+	cFillRect.bottom = 3;
 	
-	os::Rect cMiddle( GetBounds() );
-	cMiddle.left += 5;
-	cMiddle.top += 5;
-	cMiddle.right -= 7;
-	cMiddle.bottom -= 15;
-	
-	for( int i = 6; i >= 0; i-- )
+	if( cUpdateRect.DoIntersect( cFillRect ) )
 	{
-		SetFgColor( i * 35, i * 35, i * 35 );
-		
-		
-		DrawLine( os::Point( cMiddle.left + i, cMiddle.bottom + i ), os::Point( cMiddle.right + i, cMiddle.bottom + i ) );
-		DrawLine( os::Point( cMiddle.right + i, cMiddle.top + i ), os::Point( cMiddle.right + i, cMiddle.bottom + i ) );
+		SetFgColor( os::get_default_color( os::COL_NORMAL ) );
+		FillRect( cFillRect );
+		SetFgColor( 230, 230, 230 );
+		DrawLine( os::Point( 4, 0 ), os::Point( GetBounds().right - 4, 0 ) );
+		DrawLine( os::Point( 2, 1 ), os::Point( GetBounds().right - 2, 1 ) );
+		DrawLine( os::Point( 1, 2 ), os::Point( GetBounds().right - 1, 2 ) );
+		DrawLine( os::Point( 1, 3 ), os::Point( GetBounds().right - 1, 3 ) );
 	}
 	
-	SetFgColor( 255, 255, 255 );
-	FillRect( cMiddle );
+	cFillRect.top = GetBounds().bottom - 3;
+	cFillRect.bottom = GetBounds().bottom;
+	
+	if( cUpdateRect.DoIntersect( cFillRect ) )
+	{
+		SetFgColor( os::get_default_color( os::COL_NORMAL ) );
+		FillRect( cFillRect );
+		SetFgColor( 230, 230, 230 );
+		DrawLine( os::Point( 4, cFillRect.bottom ), os::Point( GetBounds().right - 4, cFillRect.bottom ) );
+		DrawLine( os::Point( 2, cFillRect.bottom - 1 ), os::Point( GetBounds().right - 2, cFillRect.bottom - 1 ) );
+		DrawLine( os::Point( 1, cFillRect.bottom - 2 ), os::Point( GetBounds().right - 1, cFillRect.bottom - 2 ) );
+		DrawLine( os::Point( 1, cFillRect.bottom - 3 ), os::Point( GetBounds().right - 1, cFillRect.bottom - 3 ) );
+	}
 	
 	
 	/* Draw text */
 	SetFgColor( 0, 0, 0 );
-	MovePenTo( 10.0, 20.0 );
+	SetBgColor( 230, 230, 230 );
 	
-	sprintf( zTrackString, " (%s %.2i)", MSG_LCD_TRACK.c_str(), m_nTrack );
-	
-	os::String zTitle = os::String( m_zName ) + os::String( zTrackString );
-	
-	DrawString( zTitle );
 
 	secs_to_ms( m_nTime, &nM, &nS );
 	sprintf( zTimeString, "%.2li:%.2li", nM, nS );
@@ -116,9 +121,27 @@ void Lcd::Paint( const Rect & cUpdateRect )
 	MovePenTo( vX, 20.0 );
 	DrawString( zTimeString );
 	
+	MovePenTo( 10.0, 20.0 );
+		
+	sprintf( zTrackString, " (%s %.2i)", MSG_LCD_TRACK.c_str(), m_nTrack );
+	os::String zTitle = os::String( m_zName ) + os::String( zTrackString );
+	
+	if( GetStringWidth( zTitle ) > GetBounds().Width() - vWidth - 15 )
+	{
+		float vAvailable = GetBounds().Width() - vWidth - 10;
+		vAvailable -= GetStringWidth( zTrackString );
+		int nChars = (int)( vAvailable / GetStringWidth( "x" ) );
+		nChars -= 3;
+		zTitle = os::String( m_zName ).substr( 0, nChars ) + "..." + os::String( zTrackString );
+	}
+	
+		
+	DrawString( zTitle );
+	
 	
 	/* Draw slider frame */
-	os::Rect cSliderRect( 10, GetBounds().Height() - 35, GetBounds().Width() - 10, GetBounds().Height() - 20 );
+	SetFgColor( 180, 180, 180 );
+	os::Rect cSliderRect( 10, GetBounds().Height() - 25, GetBounds().Width() - 10, GetBounds().Height() - 10 );
 	DrawLine( os::Point( cSliderRect.left, cSliderRect.top ), os::Point( cSliderRect.right, cSliderRect.top ) );
 	DrawLine( os::Point( cSliderRect.right, cSliderRect.top ), os::Point( cSliderRect.right, cSliderRect.bottom ) );
 	DrawLine( os::Point( cSliderRect.right, cSliderRect.bottom ), os::Point( cSliderRect.left, cSliderRect.bottom ) );
@@ -151,7 +174,7 @@ void Lcd::Paint( const Rect & cUpdateRect )
 
 void Lcd::MouseUp( const Point& cPosition, uint32 nButtons, Message* pcData )
 {
-	os::Rect cSliderRect( 11, GetBounds().Height() - 36, GetBounds().Width() - 11, GetBounds().Height() - 21 );
+	os::Rect cSliderRect( 11, GetBounds().Height() - 26, GetBounds().Width() - 11, GetBounds().Height() - 11 );
 	
 	if( cSliderRect.DoIntersect( cPosition ) && IsEnabled() )
 	{
@@ -178,13 +201,13 @@ void Lcd::SetTrackNumber( int nTrack )
 void Lcd::UpdateTime( uint64 nTime )
 {
 	m_nTime = nTime;
-	Paint( Rect( GetBounds().right - 100, 19, GetBounds().right, 31 ) );
+	Paint( Rect( GetBounds().right - 100, 0, GetBounds().right, GetBounds().bottom - 25 ) );
 	Flush();
 }
 
 void Lcd::PostValueChange( const Variant & cNewValue )
 {
-	os::Rect cSliderRect( 10, GetBounds().Height() - 35, GetBounds().Width() - 10, GetBounds().Height() - 20 );
+	os::Rect cSliderRect( 10, GetBounds().Height() - 25, GetBounds().Width() - 10, GetBounds().Height() - 10 );
 	Paint( cSliderRect );
 	Flush();
 }

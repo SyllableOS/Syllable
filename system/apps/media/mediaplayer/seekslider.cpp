@@ -46,6 +46,7 @@ void SeekSlider::Paint( const Rect & cUpdateRect )
 	FillRect( cUpdateRect );
 	
 	/* Draw background and its shadow */
+	#if 0
 	SetBgColor( 255, 255, 255 );
 	SetFgColor( 255, 255, 255 );
 	
@@ -53,6 +54,7 @@ void SeekSlider::Paint( const Rect & cUpdateRect )
 	/* Leave room for the shadow */
 	cMiddle.right -= 4;
 	cMiddle.bottom -= 4;
+	
 	
 	for( int i = 4; i >= 0; i-- )
 	{
@@ -66,9 +68,9 @@ void SeekSlider::Paint( const Rect & cUpdateRect )
 	SetFgColor( 255, 255, 255 );
 	FillRect( cMiddle );
 	
-	
+	#endif
 	/* Draw slider frame */
-	SetFgColor( 0, 0, 0 );
+	SetFgColor( 180, 180, 180 );
 	float vYPos = ( GetBounds().Height() - 15 ) / 2 - 1;
 	os::Rect cSliderRect( 3, vYPos, GetBounds().Width() - 10, vYPos + 15 );
 	DrawLine( os::Point( cSliderRect.left, cSliderRect.top ), os::Point( cSliderRect.right, cSliderRect.top ) );

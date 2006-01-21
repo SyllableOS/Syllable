@@ -19,16 +19,17 @@ $(OBJDIR):
 
 $(OBJDIR)/MediaConverter: $(OBJS)
 	$(CXX) $(OBJS) -lsyllable -lmedia -o MediaConverter
+	addattrib MediaConverter os::Category Media
 
 deps:
 
 install:  $(OBJDIR)/MediaConverter
 	mkdir -p $(APPBIN)
-	install -s MediaConverter $(APPBIN)/MediaConverter
+	cp MediaConverter $(APPBIN)/MediaConverter
 
 dist:  $(OBJDIR)/MediaConverter
 	mkdir -p $(DIST_DIR)/atheos/Applications/Media
-	install -s MediaConverter $(DIST_DIR)/atheos/Applications/Media/MediaConverter
+	cp MediaConverter $(DIST_DIR)/atheos/Applications/Media/MediaConverter
 
 deps: $(OBJDIR) $(DEPS)
 

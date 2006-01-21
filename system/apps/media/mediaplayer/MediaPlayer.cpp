@@ -36,15 +36,6 @@ void SetCButtonImageFromResource( os::CImageButton* pcButton, os::String zResour
 }
 
 
-void SetCButtonSelectedImageFromResource( os::CImageButton* pcButton, os::String zResource )
-{
-	os::File cSelf( open_image_file( get_image_id() ) );
-	os::Resources cCol( &cSelf );		
-	os::ResStream *pcStream = cCol.GetResourceStream( zResource );
-	pcButton->SetSelectedImage( pcStream );
-	delete( pcStream );
-}
-
 
 /* MPWindow class */
 
@@ -98,14 +89,12 @@ MPWindow::MPWindow( const os::Rect & cFrame, const std::string & cName, const st
 	cNewFrame.bottom = m_pcMenuBar->GetPreferredSize( false ).y + 40;
 	m_pcControls = new os::View( cNewFrame, "mp_controls", os::CF_FOLLOW_LEFT | os::CF_FOLLOW_RIGHT | os::CF_FOLLOW_BOTTOM );
 	/* Create buttons */
-	m_pcPlayPause = new os::CImageButton( os::Rect( 5, 2, 40, 40 ), "mp_play_pause", "", new os::Message( MP_GUI_PLAY_PAUSE ), NULL, os::ImageButton::IB_TEXT_BOTTOM, false, false, true );
+	m_pcPlayPause = new os::CImageButton( os::Rect( 5, 1, 40, 38 ), "mp_play_pause", "", new os::Message( MP_GUI_PLAY_PAUSE ), NULL, os::ImageButton::IB_TEXT_BOTTOM, false, false, true );
 	SetCButtonImageFromResource( m_pcPlayPause, "play.png" );
-	SetCButtonSelectedImageFromResource( m_pcPlayPause, "play_sel.png" );
 	m_pcPlayPause->SetEnable( false );
 
-	m_pcStop = new os::CImageButton( os::Rect( 41, 2, 76, 40 ), "mp_stop", "", new os::Message( MP_GUI_STOP ), NULL, os::ImageButton::IB_TEXT_BOTTOM, false, false, true );
+	m_pcStop = new os::CImageButton( os::Rect( 41, 1, 76, 38 ), "mp_stop", "", new os::Message( MP_GUI_STOP ), NULL, os::ImageButton::IB_TEXT_BOTTOM, false, false, true );
 	SetCButtonImageFromResource( m_pcStop, "stop.png" );
-	SetCButtonSelectedImageFromResource( m_pcStop, "stop_sel.png" );
 	m_pcStop->SetEnable( false );
 	
 
@@ -234,7 +223,6 @@ void MPWindow::HandleMessage( os::Message * pcMessage )
 				m_pcStop->SetEnable( false );
 				m_pcSlider->SetEnable( false );
 				SetCButtonImageFromResource( m_pcPlayPause, "play.png" );
-				SetCButtonSelectedImageFromResource( m_pcPlayPause, "play_sel.png" );
 			}
 			else if ( m_nState == MP_STATE_PLAYING )
 			{
@@ -242,7 +230,6 @@ void MPWindow::HandleMessage( os::Message * pcMessage )
 				m_pcStop->SetEnable( true );
 				m_pcSlider->SetEnable( true );
 				SetCButtonImageFromResource( m_pcPlayPause, "pause.png" );	
-				SetCButtonSelectedImageFromResource( m_pcPlayPause, "pause_sel.png" );	
 			}
 			else if ( m_nState == MP_STATE_PAUSED )
 			{
@@ -250,7 +237,6 @@ void MPWindow::HandleMessage( os::Message * pcMessage )
 				m_pcStop->SetEnable( true );
 				m_pcSlider->SetEnable( false );
 				SetCButtonImageFromResource( m_pcPlayPause, "play.png" );
-				SetCButtonSelectedImageFromResource( m_pcPlayPause, "play_sel.png" );
 			}
 			m_pcControls->Invalidate( true );
 			Sync();

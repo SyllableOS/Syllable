@@ -39,22 +39,8 @@ void SetCButtonImageFromResource( os::CImageButton* pcButton, os::String zResour
 	os::ResStream *pcStream = cCol.GetResourceStream( zResource );
 	pcButton->SetImage( pcStream );
 	pcButton->Flush();
-	pcButton->Sync();
 	delete( pcStream );
 }
-
-
-void SetCButtonSelectedImageFromResource( os::CImageButton* pcButton, os::String zResource )
-{
-	os::File cSelf( open_image_file( get_image_id() ) );
-	os::Resources cCol( &cSelf );		
-	os::ResStream *pcStream = cCol.GetResourceStream( zResource );
-	pcButton->SetSelectedImage( pcStream );
-	pcButton->Flush();
-	pcButton->Sync();
-	delete( pcStream );
-}
-
 
 
 static inline void secs_to_ms( uint64 nTime, uint32 *nM, uint32 *nS )
@@ -131,7 +117,7 @@ CFWindow::CFWindow( const os::Rect & cFrame, const os::String & cName, const os:
 
 	cNewFrame = GetBounds();
 	cNewFrame.top += m_pcMenuBar->GetPreferredSize( false ).y + 1;
-	cNewFrame.bottom = cNewFrame.top + 70;
+	cNewFrame.bottom = cNewFrame.top + 60;
 
 	/* Create root view */
 	m_pcRoot = new os::LayoutView( cNewFrame, "cf_root", NULL, os::CF_FOLLOW_LEFT | os::CF_FOLLOW_TOP | os::CF_FOLLOW_RIGHT );
@@ -143,21 +129,13 @@ CFWindow::CFWindow( const os::Rect & cFrame, const os::String & cName, const os:
 	/* Create buttons */
 	m_pcPlay = new os::CImageButton( os::Rect( 0, 0, 1, 1 ), "cf_playorpause", MSG_MAINWND_PLAY, new os::Message( CF_GUI_PLAY ), NULL, os::ImageButton::IB_TEXT_BOTTOM, false, false, true );
 	SetCButtonImageFromResource( m_pcPlay, "play.png" );
-	SetCButtonSelectedImageFromResource( m_pcPlay, "play_sel.png" );
-
-	//m_pcPause = new os::CImageButton( os::Rect( 0, 0, 1, 1 ), "cf_pause", MSG_MAINWND_PAUSE, new os::Message( CF_GUI_PAUSE ), NULL, os::ImageButton::IB_TEXT_BOTTOM, false, false, true );
-	//SetCButtonImageFromResource( m_pcPause, "pause.png" );
-	//SetCButtonSelectedImageFromResource( m_pcPause, "pause_sel.png" );
 
 	m_pcStop = new os::CImageButton( os::Rect( 0, 0, 1, 1 ), "cf_stop", MSG_MAINWND_STOP, new os::Message( CF_GUI_STOP ), NULL, os::ImageButton::IB_TEXT_BOTTOM, false, false, true );
 	SetCButtonImageFromResource( m_pcStop, "stop.png" );
-	SetCButtonSelectedImageFromResource( m_pcStop, "stop_sel.png" );
-	
+	#if 0
 	m_pcShowList = new os::CImageButton( os::Rect( 0, 0, 1, 1 ), "cf_show_list", MSG_MAINWND_PLAYLIST, new os::Message( CF_GUI_SHOW_LIST ), NULL, os::ImageButton::IB_TEXT_BOTTOM, false, false, true );
-	SetCButtonImageFromResource( m_pcShowList, "list.png" );
-	SetCButtonSelectedImageFromResource( m_pcShowList, "list_sel.png" );
-
-	//m_pcPause->SetEnable( false );
+	SetCButtonImageFromResource( m_pcShowList, "list_hide.png" );
+	#endif
 	m_pcStop->SetEnable( false );
 
 	os::VLayoutNode * pcCenter = new os::VLayoutNode( "cf_v_center" );
@@ -171,11 +149,12 @@ CFWindow::CFWindow( const os::Rect & cFrame, const os::String & cName, const os:
 	AddTimer(m_pcLCD,123,1000000,false);
 
 	m_pcControls->AddChild( m_pcPlay );
-	//m_pcControls->AddChild( m_pcPause );
 	m_pcControls->AddChild( m_pcStop );
 	m_pcControls->AddChild( pcCenter );
+	#if 0
 	m_pcControls->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
 	m_pcControls->AddChild( m_pcShowList );
+	#endif
 
 	m_pcControls->SameWidth( "cf_playorpause","cf_stop", "cf_show_list", NULL );
 
@@ -183,7 +162,7 @@ CFWindow::CFWindow( const os::Rect & cFrame, const os::String & cName, const os:
 
 	/* Create playlist */
 	cNewFrame = GetBounds();
-	cNewFrame.top = 71 + m_pcMenuBar->GetPreferredSize( false ).y + 1;
+	cNewFrame.top = 61 + m_pcMenuBar->GetPreferredSize( false ).y + 1;
 	m_pcPlaylist = new CFPlaylist( cNewFrame );
 	m_pcPlaylist->SetInvokeMsg( new os::Message( CF_GUI_LIST_INVOKED ) );
 	m_pcPlaylist->SetTarget( this );
@@ -272,7 +251,7 @@ void CFWindow::HandleMessage( os::Message * pcMessage )
 			/* Show about alert */
 			os::String cBodyText;
 			
-			cBodyText = os::String( "ColdFish V1.2.1\n" ) + MSG_ABOUTWND_TEXT;
+			cBodyText = os::String( "ColdFish V1.2.2\n" ) + MSG_ABOUTWND_TEXT;
 			
 			os::Alert* pcAbout = new os::Alert( MSG_ABOUTWND_TITLE, cBodyText, os::Alert::ALERT_INFO, 
 											os::WND_NOT_RESIZABLE, MSG_ABOUTWND_OK.c_str(), NULL );
@@ -297,7 +276,6 @@ void CFWindow::HandleMessage( os::Message * pcMessage )
 			if ( m_nState == CF_STATE_STOPPED )
 			{
 				SetCButtonImageFromResource( m_pcPlay, "play.png" );
-				SetCButtonSelectedImageFromResource( m_pcPlay, "play_sel.png" );
 				
 				m_pcPlay->Paint( m_pcPlay->GetBounds() );
 				m_pcStop->SetEnable( false );
@@ -306,20 +284,14 @@ void CFWindow::HandleMessage( os::Message * pcMessage )
 			else if ( m_nState == CF_STATE_PLAYING )
 			{
 				SetCButtonImageFromResource( m_pcPlay, "pause.png" );
-				SetCButtonSelectedImageFromResource( m_pcPlay, "pause_sel.png" );				
 				m_pcPlay->Paint( m_pcPlay->GetBounds() );
-				//m_pcPlay->SetEnable( false );
-				//m_pcPause->SetEnable( true );
 				m_pcStop->SetEnable( true );
 				m_pcLCD->SetEnable( true );
 			}
 			else if ( m_nState == CF_STATE_PAUSED )
 			{
 				SetCButtonImageFromResource( m_pcPlay, "play.png" );
-				SetCButtonSelectedImageFromResource( m_pcPlay, "play_sel.png" );				
 				m_pcPlay->Paint( m_pcPlay->GetBounds() );
-				//m_pcPlay->SetEnable( true );
-				//m_pcPause->SetEnable( false );
 				m_pcStop->SetEnable( true );
 				m_pcLCD->SetEnable( false );
 			}
@@ -339,6 +311,15 @@ bool CFWindow::OkToQuit()
 	return ( false );
 }
 
+void CFWindow::SetList( bool bEnabled )
+{
+	if( bEnabled )
+		SetCButtonImageFromResource( m_pcShowList, "list_hide.png" );
+	else
+		SetCButtonImageFromResource( m_pcShowList, "list_show.png" );
+	m_pcShowList->Invalidate();
+	m_pcShowList->Flush();
+}
 
 /* CFApp class */
 CFApp::CFApp( ):os::Looper( "cf_app" )
@@ -1596,6 +1577,7 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 				cFrame.bottom = cFrame.top + m_cSavedFrame.bottom - m_cSavedFrame.top;
 				
 				m_pcWin->Lock();
+				m_pcWin->SetList( true );
 				m_pcWin->SetFrame( cFrame );
 				m_pcWin->SetFlags( m_pcWin->GetFlags() & ~os::WND_NOT_V_RESIZABLE );				
 				m_pcWin->SetSizeLimits( os::Point( 400,150 ), os::Point( 4096, 4096 ) );
@@ -1607,9 +1589,9 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 				m_bListShown = false;
 				m_pcWin->Lock();
 				DeactivateVisPlugin();
-				
+				m_pcWin->SetList( false );
 				os::Rect cFrame = m_cSavedFrame = m_pcWin->GetFrame();
-				cFrame.bottom = cFrame.top + 70 + m_pcWin->GetMenuBar()->GetBounds().Height();
+				cFrame.bottom = cFrame.top + 60 + m_pcWin->GetMenuBar()->GetBounds().Height();
 				m_pcWin->SetFrame( cFrame );
 				m_pcWin->SetFlags( m_pcWin->GetFlags() | os::WND_NOT_V_RESIZABLE );
 				m_pcWin->SetSizeLimits( os::Point( 400,0 ), os::Point( 4096, 4096 ) );

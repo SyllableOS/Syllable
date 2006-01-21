@@ -26,16 +26,16 @@ $(OBJDIR)/ColdFish: $(OBJS)
 	rescopy -a ColdFish nl/coldfish.catalog=resources/nl/coldfish.catalog
 	rescopy -a ColdFish pl/coldfish.catalog=resources/pl/coldfish.catalog
 	rescopy -a ColdFish sv/coldfish.catalog=resources/sv/coldfish.catalog
-
+	addattrib ColdFish os::Category Media
 deps:
 
 install:  $(OBJDIR)/ColdFish
 	mkdir -p $(APPBIN)
-	install -s ColdFish $(APPBIN)/ColdFish
+	cp ColdFish $(APPBIN)/ColdFish
 
 dist:  $(OBJDIR)/ColdFish
 	mkdir -p $(DIST_DIR)/atheos/Applications/Media
-	install -s ColdFish $(DIST_DIR)/atheos/Applications/Media/ColdFish
+	cp ColdFish $(DIST_DIR)/atheos/Applications/Media/ColdFish
 
 deps: $(OBJDIR) $(DEPS)
 
