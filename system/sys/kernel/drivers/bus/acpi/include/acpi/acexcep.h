@@ -96,8 +96,9 @@
 #define AE_ABORT_METHOD                 (acpi_status) (0x001C | AE_CODE_ENVIRONMENTAL)
 #define AE_SAME_HANDLER                 (acpi_status) (0x001D | AE_CODE_ENVIRONMENTAL)
 #define AE_WAKE_ONLY_GPE                (acpi_status) (0x001E | AE_CODE_ENVIRONMENTAL)
+#define AE_OWNER_ID_LIMIT               (acpi_status) (0x001F | AE_CODE_ENVIRONMENTAL)
 
-#define AE_CODE_ENV_MAX                 0x001E
+#define AE_CODE_ENV_MAX                 0x001F
 
 /*
  * Programmer exceptions
@@ -192,8 +193,7 @@
  * String versions of the exception codes above
  * These strings must match the corresponding defines exactly
  */
-char const   *acpi_gbl_exception_names_env[] =
-{
+char const *acpi_gbl_exception_names_env[] = {
 	"AE_OK",
 	"AE_ERROR",
 	"AE_NO_ACPI_TABLES",
@@ -224,11 +224,11 @@ char const   *acpi_gbl_exception_names_env[] =
 	"AE_LOGICAL_ADDRESS",
 	"AE_ABORT_METHOD",
 	"AE_SAME_HANDLER",
-	"AE_WAKE_ONLY_GPE"
+	"AE_WAKE_ONLY_GPE",
+	"AE_OWNER_ID_LIMIT"
 };
 
-char const   *acpi_gbl_exception_names_pgm[] =
-{
+char const *acpi_gbl_exception_names_pgm[] = {
 	"AE_BAD_PARAMETER",
 	"AE_BAD_CHARACTER",
 	"AE_BAD_PATHNAME",
@@ -240,8 +240,7 @@ char const   *acpi_gbl_exception_names_pgm[] =
 	"AE_BAD_DECIMAL_CONSTANT"
 };
 
-char const   *acpi_gbl_exception_names_tbl[] =
-{
+char const *acpi_gbl_exception_names_tbl[] = {
 	"AE_BAD_SIGNATURE",
 	"AE_BAD_HEADER",
 	"AE_BAD_CHECKSUM",
@@ -250,8 +249,7 @@ char const   *acpi_gbl_exception_names_tbl[] =
 	"AE_INVALID_TABLE_LENGTH"
 };
 
-char const   *acpi_gbl_exception_names_aml[] =
-{
+char const *acpi_gbl_exception_names_aml[] = {
 	"AE_AML_ERROR",
 	"AE_AML_PARSE",
 	"AE_AML_BAD_OPCODE",
@@ -287,8 +285,7 @@ char const   *acpi_gbl_exception_names_aml[] =
 	"AE_AML_BAD_RESOURCE_LENGTH"
 };
 
-char const   *acpi_gbl_exception_names_ctrl[] =
-{
+char const *acpi_gbl_exception_names_ctrl[] = {
 	"AE_CTRL_RETURN_VALUE",
 	"AE_CTRL_PENDING",
 	"AE_CTRL_TERMINATE",
@@ -302,7 +299,6 @@ char const   *acpi_gbl_exception_names_ctrl[] =
 	"AE_CTRL_SKIP"
 };
 
-#endif /* ACPI GLOBALS */
+#endif				/* ACPI GLOBALS */
 
-
-#endif /* __ACEXCEP_H__ */
+#endif				/* __ACEXCEP_H__ */

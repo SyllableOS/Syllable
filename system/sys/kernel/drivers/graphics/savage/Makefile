@@ -38,7 +38,7 @@ $(OBJDIR)/savage: $(OBJS) Makefile
 
 install: all
 	mkdir -p /system/drivers/dev/graphics
-	cp -f $(OBJDIR)/s3_savage /system/drivers/dev/graphics
+	cp -f $(OBJDIR)/savage /system/drivers/dev/graphics
 
 dist: all
 	mkdir -p $(DIST_DIR)/atheos/sys/drivers/dev/graphics

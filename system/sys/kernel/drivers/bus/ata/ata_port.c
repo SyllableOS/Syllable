@@ -147,11 +147,14 @@ status_t ata_port_start_dma( ATA_port_s* psPort )
 	//printk( "Starting DMA!\n" );
 	
 	ATA_READ_DMA_REG( psPort, ATA_REG_DMA_CONTROL, nControl )
+	psPort->bWaitForIRQ = true;
 	ATA_WRITE_DMA_REG( psPort, ATA_REG_DMA_CONTROL, nControl | ATA_DMA_CONTROL_START )
 	
 	nStatus = 0;
 	
-	sleep_on_sem( psPort->hIRQWait, INFINITE_TIMEOUT );
+	lock_semaphore( psPort->hIRQWait, SEM_NOSIG, INFINITE_TIMEOUT );
+	
+	psPort->bWaitForIRQ = false;
 	
 	/* Stop transfer */
 	ATA_READ_DMA_REG( psPort, ATA_REG_DMA_CONTROL, nControl )

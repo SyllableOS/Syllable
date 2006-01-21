@@ -136,7 +136,7 @@
 /*
  * Debug level macros that are used in the DEBUG_PRINT macros
  */
-#define ACPI_DEBUG_LEVEL(dl)        (u32) dl,__LINE__,&_debug_info
+#define ACPI_DEBUG_LEVEL(dl)        (u32) dl,ACPI_DEBUG_PARAMETERS
 
 /* Exception level -- used in the global "debug_level" */
 
@@ -181,5 +181,4 @@
 #define ACPI_NORMAL_DEFAULT         (ACPI_LV_INIT | ACPI_LV_WARN | ACPI_LV_ERROR | ACPI_LV_DEBUG_OBJECT)
 #define ACPI_DEBUG_ALL              (ACPI_LV_AML_DISASSEMBLE | ACPI_LV_ALL_EXCEPTIONS | ACPI_LV_ALL)
 
-
-#endif /* __ACOUTPUT_H__ */
+#endif				/* __ACOUTPUT_H__ */

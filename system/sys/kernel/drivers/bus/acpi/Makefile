@@ -22,7 +22,7 @@ NAMESPACE := namespace/nsaccess.o namespace/nsalloc.o namespace/nsdump.o namespa
 			namespace/nsobject.o namespace/nsparse.o namespace/nssearch.o namespace/nsutils.o namespace/nswalk.o \
 			namespace/nsxfeval.o namespace/nsxfname.o namespace/nsxfobj.o
 
-PARSER := parser/psargs.o parser/psopcode.o parser/psparse.o parser/psscope.o parser/pstree.o \
+PARSER := parser/psargs.o parser/psloop.o parser/psopcode.o parser/psparse.o parser/psscope.o parser/pstree.o \
 			parser/psutils.o parser/pswalk.o parser/psxface.o
 
 RESOURCES := resources/rsaddr.o resources/rscalc.o resources/rscreate.o resources/rsdump.o \
@@ -34,7 +34,7 @@ TABLES := tables/tbconvrt.o tables/tbget.o tables/tbgetall.o tables/tbinstal.o t
 
 UTILITIES := utilities/utalloc.o utilities/utcopy.o utilities/utdebug.o utilities/utdelete.o \
 			utilities/uteval.o utilities/utglobal.o utilities/utinit.o utilities/utmath.o \
-			utilities/utmisc.o utilities/utobject.o utilities/utxface.o
+			utilities/utmisc.o utilities/utmutex.o utilities/utobject.o utilities/utstate.o utilities/utxface.o
 
 OBJS := acpi.o bus.o button.o ec.o memset.o osl.o power.o scan.o simple_pci.o thermal.o utils.o wakeup.o $(DISPATCHER) $(EVENTS) $(EXECUTER) $(HARDWARE) $(NAMESPACE) $(PARSER) $(RESOURCES) \
 				$(TABLES) $(UTILITIES)

@@ -88,6 +88,7 @@ ATA_port_s* ata_alloc_port( ATA_controller_s* psCtrl )
 	
 	psPort->hPortLock = -1;
 	psPort->hIRQWait = -1;
+	psPort->bWaitForIRQ = false;
 	
 	return( psPort );
 }

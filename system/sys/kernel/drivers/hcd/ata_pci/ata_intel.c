@@ -157,6 +157,16 @@ status_t intel_port_configure( ATA_port_s* psPort )
 	reg55 = g_psPCIBus->read_pci_config( sDevice.nBus, sDevice.nDevice, sDevice.nFunction,
 										0x55, 1 );
 	
+	/* Enable DMA mode */
+	#if 0
+	if( speed >= ATA_SPEED_DMA )
+	{
+		uint8 nStatus;
+		ATA_READ_DMA_REG( psPort, ATA_REG_DMA_STATUS, nStatus );
+		nStatus |= ( psPort->nPort == 1 ) ? ATA_DMA_STATUS_1_EN : ATA_DMA_STATUS_0_EN;
+		ATA_WRITE_DMA_REG( psPort, ATA_REG_DMA_STATUS, nStatus );
+	}
+	#endif
 	
 	switch(speed) {
 		case ATA_SPEED_UDMA_4:
@@ -217,6 +227,7 @@ status_t intel_port_configure( ATA_port_s* psPort )
 	}
 	
 	intel_port_configure_pio( psPort );
+	
 	
 	return( 0 );
 }

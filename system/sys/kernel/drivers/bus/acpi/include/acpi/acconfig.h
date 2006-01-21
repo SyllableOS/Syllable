@@ -64,7 +64,7 @@
 
 /* Version string */
 
-#define ACPI_CA_VERSION                 0x20050211
+#define ACPI_CA_VERSION                 0x20050902
 
 /*
  * OS name, used for the _OS object.  The _OS object is essentially obsolete,
@@ -78,11 +78,10 @@
 
 /* Maximum objects in the various object caches */
 
-#define ACPI_MAX_STATE_CACHE_DEPTH      64          /* State objects */
-#define ACPI_MAX_PARSE_CACHE_DEPTH      96          /* Parse tree objects */
-#define ACPI_MAX_EXTPARSE_CACHE_DEPTH   64          /* Parse tree objects */
-#define ACPI_MAX_OBJECT_CACHE_DEPTH     64          /* Interpreter operand objects */
-#define ACPI_MAX_WALK_CACHE_DEPTH       4           /* Objects for parse tree walks */
+#define ACPI_MAX_STATE_CACHE_DEPTH      96	/* State objects */
+#define ACPI_MAX_PARSE_CACHE_DEPTH      96	/* Parse tree objects */
+#define ACPI_MAX_EXTPARSE_CACHE_DEPTH   96	/* Parse tree objects */
+#define ACPI_MAX_OBJECT_CACHE_DEPTH     96	/* Interpreter operand objects */
 
 /*
  * Should the subystem abort the loading of an ACPI table if the
@@ -104,7 +103,7 @@
 /* String size constants */
 
 #define ACPI_MAX_STRING_LENGTH          512
-#define ACPI_PATHNAME_MAX               256         /* A full namespace pathname */
+#define ACPI_PATHNAME_MAX               256	/* A full namespace pathname */
 
 /* Maximum count for a semaphore object */
 
@@ -130,9 +129,8 @@
 #define ACPI_MAX_GPE_BLOCKS             2
 #define ACPI_GPE_REGISTER_WIDTH         8
 
-/*
- * Method info (in WALK_STATE), containing local variables and argumetns
- */
+/* Method info (in WALK_STATE), containing local variables and argumetns */
+
 #define ACPI_METHOD_NUM_LOCALS          8
 #define ACPI_METHOD_MAX_LOCAL           7
 
@@ -157,15 +155,15 @@
 /* Names within the namespace are 4 bytes long */
 
 #define ACPI_NAME_SIZE                  4
-#define ACPI_PATH_SEGMENT_LENGTH        5           /* 4 chars for name + 1 char for separator */
+#define ACPI_PATH_SEGMENT_LENGTH        5	/* 4 chars for name + 1 char for separator */
 #define ACPI_PATH_SEPARATOR             '.'
 
 /* Constants used in searching for the RSDP in low memory */
 
-#define ACPI_EBDA_PTR_LOCATION          0x0000040E     /* Physical Address */
+#define ACPI_EBDA_PTR_LOCATION          0x0000040E	/* Physical Address */
 #define ACPI_EBDA_PTR_LENGTH            2
 #define ACPI_EBDA_WINDOW_SIZE           1024
-#define ACPI_HI_RSDP_WINDOW_BASE        0x000E0000     /* Physical Address */
+#define ACPI_HI_RSDP_WINDOW_BASE        0x000E0000	/* Physical Address */
 #define ACPI_HI_RSDP_WINDOW_SIZE        0x00020000
 #define ACPI_RSDP_SCAN_STEP             16
 
@@ -198,8 +196,7 @@
 
 /* Number of strings associated with the _OSI reserved method */
 
-#define ACPI_NUM_OSI_STRINGS            9
-
+#define ACPI_NUM_OSI_STRINGS            10
 
 /******************************************************************************
  *
@@ -207,11 +204,9 @@
  *
  *****************************************************************************/
 
-#define ACPI_DEBUGGER_MAX_ARGS          8  /* Must be max method args + 1 */
+#define ACPI_DEBUGGER_MAX_ARGS          8	/* Must be max method args + 1 */
 
 #define ACPI_DEBUGGER_COMMAND_PROMPT    '-'
 #define ACPI_DEBUGGER_EXECUTE_PROMPT    '%'
 
-
-#endif /* _ACCONFIG_H */
-
+#endif				/* _ACCONFIG_H */
