@@ -1,3 +1,14 @@
+* January 21 2006, Rick Caudill*
+
+Added 'Clipper', a dock plugin that holds the text of the clipboard for 10 clips.
+Delete items to add new ones.  This plugin will become more elaborate as time goes on
+
+Features that I want to include are:
+	1. A history
+	2. Infinite amount of Clips/
+	3. Clips that can be bitmaps(that will require work in libsyllable)
+	4. Anything else that I want :)
+
 * January 15 2006, Arno Klenke *
 
 Support for a text shadow color in the desktop
