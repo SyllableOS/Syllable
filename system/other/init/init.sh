@@ -8,12 +8,12 @@
 #
 # init.sh is called directly by the init process; do not call this file
 # yourself.
-# This script in turn calls /etc/profile, net_init.sh and user_init.sh  If you
-# wish to modify your configuration or initialisation process you should edit
-# these files instead.
+# This script in turn calls /etc/profile, user-early-init.sh, network-init.sh
+# and user-init.sh  If you wish to modify your configuration or initialisation
+# process you should edit these files instead.
 
-# Configure basic environment
-source /etc/profile
+# Log local kernel output into /var/log/kernel
+dbterm 8 >>/var/log/kernel &
 
 # Add a few additional symlinks which simplify navigation around the
 # filesystem
@@ -25,31 +25,69 @@ ln -s /home/root /root
 # Silently empty the temporary directory
 rm -r $TEMP/* >>/dev/null 2>&1 &
 
-# Log local kernel output into /var/log/kernel
-dbterm 8 >>/var/log/kernel &
+# Configure basic environment
+source /etc/profile
+
+# Packages that require initalisation can include init and early-init directories,
+# which should contain the init script(s). E.g. Apache would have init/apache which
+# would call apachectl, OpenSSH would have init/sshd which would start
+# sshd etc.
+# The package manager will collect all of these scripts together in
+# /atheos/autolnk/early-init/ and /atheos/autolnk/init/; all we need to do is run
+# each script in turn.
+
+# Early init scripts run before user login and can include environment variables.
+
+for pkg_init in `ls /atheos/autolnk/early-init/`
+do
+	source /atheos/autolnk/early-init/$pkg_init
+done
+
+# Do early user initialisation
+source /system/user-early-init.sh
 
 # If the graphical login isn't available, failsafe to a standalone server and
 # abort further initialisation
 if [ ! -e /bin/dlogin ]
 then
-  aterm &
-  exit 1
+	aterm &
+	exit 1
 fi
 
 # Start the graphical login and servers
 /bin/dlogin </dev/null >>/var/log/desktop 2>&1 &
+
+# No more environment variables can be defined for the user's environment
+# after DLogin has started
+
 /system/mediaserver >>/dev/null &
 /system/registrar >>/dev/null &
 
 # Check for network changes & configure the network if required
 /Applications/Preferences/Network --detect
 
-if [ -e /system/net_init.sh ]
+if [ -e /system/network-init.sh ]
 then
-  source /system/net_init.sh
+	source /system/network-init.sh
 fi
 
+# inetd is a special case and is always started first if INetUtils is
+# installed.
+
+if [ -e /atheos/autolnk/libexec/inetd ]
+then
+	/atheos/autolnk/libexec/inetd &
+fi
+
+# Run the late init scripts
+
+for pkg_init in `ls /atheos/autolnk/init/`
+do
+	source /atheos/autolnk/init/$pkg_init
+done
+
 # Do user initialisation and exit
-source /system/user_init.sh
+source /system/user-init.sh
 
 exit 0
+
