@@ -1,7 +1,7 @@
 // Network Preferences :: (C)opyright 2000-2001 Daryl Dudey
 //
 // 2 September 2003, Kaj de Vos
-//   Don't execute net_init.sh when called with --detect.
+//   Don't execute network-init.sh when called with --detect.
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -74,8 +74,8 @@ int main(int argc, char* argv[])
   if (bActivate) {
     pcConfig->Activate();
 
-    // Now execute /system/net_init.sh
-    system("/system/net_init.sh");
+    // Now execute /system/network-init.sh
+    system("/system/network-init.sh");
   }
 
   // Delete configuration
@@ -118,13 +118,4 @@ PrefsNetApp::PrefsNetApp() : os::Application("application/x-vnd-NetworkPreferenc
 PrefsNetApp::~PrefsNetApp()
 {
 }
-
-
-
-
-
-
-
-
-
 

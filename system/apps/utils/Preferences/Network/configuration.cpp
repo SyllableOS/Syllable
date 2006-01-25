@@ -255,8 +255,8 @@ void Configuration::Activate()
   fsOut.close();
   chmod("/etc/resolv.conf", S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
   
-  // Next job, create the init_net.sh file containing initialise information
-  fsOut.open("/system/net_init.sh");
+  // Next job, create the network-init.sh file containing initialise information
+  fsOut.open("/system/network-init.sh");
   fsOut << "#!/bin/sh" << newl;
   for (i=0;i<C_CO_MAXADAPTORS;i++) {
     if (pcAdaptors[i].bEnabled) {
@@ -273,7 +273,7 @@ void Configuration::Activate()
     }
   }
   fsOut.close();
-  chmod("/system/net_init.sh", S_IRWXU | S_IRGRP | S_IROTH); 
+  chmod("/system/network-init.sh", S_IRWXU | S_IRGRP | S_IROTH);
 }
 
 int Configuration::Detect() {

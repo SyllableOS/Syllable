@@ -66,10 +66,7 @@ fi
 # Check for network changes & configure the network if required
 /Applications/Preferences/Network --detect
 
-if [ -e /system/network-init.sh ]
-then
-	source /system/network-init.sh
-fi
+source /system/network-init.sh
 
 # inetd is a special case and is always started first if INetUtils is
 # installed.
