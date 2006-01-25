@@ -8,15 +8,19 @@ modules
 	programming/languages/gcc-3.4.3
 	programming/m4-1.4.3
 	programming/make-3.80
+;	programming/languages/perl-5.8.0
 ;	programming/automake-1.7.9
 	programming/automake-1.4-p6
 	programming/autoconf-2.59
 ;	programming/autoconf-2.13
 	file/versioning/patch-2.5.4
+;	file/versioning/arch-1.3.4
 	file/versioning/cvs-1.12.9
 	programming/languages/ruby-1.8.4
 	programming/Builder-0.6.21
 	programming/indent-2.2.9
 ;	programming/sindent-1.1
+	programming/doxygen-1.4.6
 	programming/cscope-15.5
 	programming/splint-3.1.1
+
