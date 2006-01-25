@@ -1,3 +1,12 @@
+* January 25 2006, Kaj de Vos *
+
+Rearranged the system initialization scripts.
+Introduced an early-init directory for packages, to allow scripts to run before
+user login, specifically to allow setting variables in the user's environment.
+Introduced user-early-init.sh.
+Renamed net_init.sh and user_init.sh to network-init.sh and user-init.sh, for
+consistency and more natural writing.
+
 * January 21 2006, Arno Klenke *
 
 Updated generic acpi code
@@ -970,6 +979,4 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
-
-
 
