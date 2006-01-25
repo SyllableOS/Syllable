@@ -29,6 +29,7 @@ tree
 	atheos/autolnk/man
 	atheos/autolnk/sbin
 	atheos/autolnk/share
+	atheos/autolnk/early-init
 	atheos/autolnk/init
 
 	atheos/sys

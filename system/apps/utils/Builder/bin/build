@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.53
+# Version 0.6.54
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2
 
@@ -18,7 +18,7 @@ def prepare target
 		Dir.mkdir @stage
 	end
 
-	for dir in ['etc', 'bin', 'sbin', 'include', 'lib', 'libexec', 'man', 'info', 'share', 'init']
+	for dir in ['etc', 'bin', 'sbin', 'include', 'lib', 'libexec', 'man', 'info', 'share', 'early-init', 'init']
 		Dir.mkdir File.join(@stage, dir)
 	end
 
@@ -727,7 +727,7 @@ def registerPort staging, target  # Create symlinks for a ported package
 #	@log.header 'Registering ' + target
 
 	unless
-		for subdir in ['etc', 'bin', 'sbin', 'info', 'init']  # Flat directories
+		for subdir in ['etc', 'bin', 'sbin', 'info', 'early-init', 'init']  # Flat directories
 			break unless linkSubdir staging, target, subdir, false
 		end and
 		for subdir in ['lib', 'libexec', 'include', 'share'] << 'man'  # Nested directories
@@ -806,6 +806,7 @@ end
 
 def prepareModule target
 	@log.entry target
+
 	if warnings = getRecipe(target)['warnings']
 		@log.warning warnings
 	end
@@ -1578,7 +1579,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.53',
+	puts 'Syllable Build System 0.6.54',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
