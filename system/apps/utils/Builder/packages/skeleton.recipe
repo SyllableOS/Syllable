@@ -117,6 +117,11 @@ install-vars
 ; Non-standard install targets:
 install-targets		install
 
+post-install		<Commands after make install, before registration>
+; Files to move within the installation:
+move-files
+	<Source> <Destination>
+delete-files		<Files to delete from the installation>
 ; Extra files to install:
 install-files
 	<Original> <Destination>
@@ -132,7 +137,3 @@ links
 ;		<Originals>
 ; Don't strip binaries:
 ;no-strip
-; Files to move to the system libraries area, after the main installation:
-;system-libs			<Libraries and links from the lib subdirectory>
-;post-install		<Commands after installation, before registration>
-
