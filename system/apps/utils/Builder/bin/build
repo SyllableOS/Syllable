@@ -3,7 +3,7 @@
 # Syllable Build System
 # Version 0.6.55
 # Copyright (c) 2002-2006 Kaj de Vos
-# License: GPL 2
+# License: GPL version 2 or later
 
 
 # Functions for single modules
@@ -1613,7 +1613,7 @@ case arg1
 when '-v', '--version'
 	puts 'Syllable Build System 0.6.55',
 		'Copyright (c) 2002-2006 Kaj de Vos',
-		'License: GPL 2'
+		'License: GPL version 2 or later'
 when '?', '-?', '-h', '-help', '--help'
 	puts 'Usage:',
 		'  build [<command>] [<module> | <profile> | <package> | <log>]',
