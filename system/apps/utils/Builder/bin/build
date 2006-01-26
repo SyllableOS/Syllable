@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.54
+# Version 0.6.55
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2
 
@@ -533,6 +533,13 @@ def installModule originalStaging, staging, directive, target
 							end
 						)
 							false
+						elsif cmdLine = recipe['post-install'] and not
+							begin
+								@log.header 'Executing post-installation commands'
+								action toCommand(cmdLine)
+							end
+						then
+							false
 						elsif files = recipe['install-files'] and not
 							begin
 								@log.header 'Installing files'
@@ -541,6 +548,31 @@ def installModule originalStaging, staging, directive, target
 									source, destination = toList line
 									break unless action "cp -a #{source} " + File.join(root, destination)
 								end
+							end
+						then
+							false
+						elsif files = recipe['move-files'] and not
+							begin
+								@log.header 'Moving files'
+
+								Dir.chdir root
+
+								for line in parseList files
+									source, destination = toList line
+									break unless action "mv #{source} " + (
+										destination[0, 1] == '/' && staging == :imaging ?
+											File.join(@systemRoot, destination) :
+											destination
+									)
+								end
+							end
+						then
+							false
+						elsif files = recipe['delete-files'] and not
+							begin
+								@log.header 'Deleting files from installation'
+								Dir.chdir root
+								action 'rm --recursive --force ' + toString(files)
 							end
 						then
 							false
@@ -1579,7 +1611,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.54',
+	puts 'Syllable Build System 0.6.55',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2'
 when '?', '-?', '-h', '-help', '--help'
@@ -1797,4 +1829,3 @@ else
 	@log.close
 	exit @log.failures.length  # FIXME: only works when processing a profile
 end
-
