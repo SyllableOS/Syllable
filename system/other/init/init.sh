@@ -22,11 +22,14 @@ ln -s /system/include /ainc
 ln -s /atheos/Applications /Applications
 ln -s /home/root /root
 
-# Silently empty the temporary directory
-rm -r $TEMP/* >>/dev/null 2>&1 &
-
 # Configure basic environment
 source /etc/profile
+
+# Silently empty the temporary directory
+if [ "$TEMP" != '' ]
+then
+	rm -r $TEMP/* >>/dev/null 2>&1 &
+fi
 
 # Packages that require initalisation can include init and early-init directories,
 # which should contain the init script(s). E.g. Apache would have init/apache which
