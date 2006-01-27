@@ -1,3 +1,7 @@
+* January 27 2006, Arno Klenke *
+
+Synced the geforcefx driver with the X driver. This will hopefully fix the FX5200 problems.
+
 * January 26 2006, Kristian Van Der Vliet *
 
 Added a USB printer driver.  The driver is a re-write of the Linux usblp driver
@@ -985,4 +989,11 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
+<<<<<<< ChangeLog
+
+
+
+=======
+>>>>>>> 1.149
 

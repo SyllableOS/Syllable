@@ -1,3 +1,8 @@
+* January 27 2006, Arno Klenke *
+
+Moved PGDIR_XXX macros from atheos/areas.h to a private kernel header
+Removed protect_phys_pages() call
+
 * January 26 2006, Kristian Van Der Vliet *
 
 atheos/lp.h: New file, from Linux with some modifications.
@@ -907,4 +912,6 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
+
 
