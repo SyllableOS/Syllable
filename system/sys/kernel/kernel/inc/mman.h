@@ -106,9 +106,6 @@ uint32 get_free_pages( int nPageCount, int nFlags );
 void free_pages( uint32 nPages, int nCount );
 void do_free_pages( uint32 nPages, int nCount );	// doesn't call flush_tlb_global()
 
-void protect_phys_pages( uintptr_t nAddress, int nCount );
-void unprotect_phys_pages( uintptr_t nAddress, int nCount );
-
 Page_s *get_page_desc( int nPageNum );
 
 int shrink_caches( int nBytesNeeded );

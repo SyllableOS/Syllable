@@ -27,6 +27,7 @@
 #include "../vfs/vfs.h"
 #include "mman.h"
 #include "array.h"
+#include "intel.h"
 
 #ifdef __cplusplus
 extern "C"

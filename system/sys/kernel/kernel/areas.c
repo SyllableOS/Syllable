@@ -134,9 +134,9 @@ static int clear_pagedir( pgd_t * pPgd, uintptr_t nAddress, size_t nSize )
 	nAddress &= ~PGDIR_MASK;
 	nEnd = nAddress + nSize - 1;
 
-	if ( nEnd > PGDIR_SIZE )
+	if ( nEnd >= PGDIR_SIZE )
 	{
-		nEnd = PGDIR_SIZE;
+		nEnd = PGDIR_SIZE - 1;
 	}
 
 	if ( 0 == PGD_PAGE( *pPgd ) )
@@ -219,7 +219,7 @@ static int free_area_pages( MemArea_s *psArea, uint32_t nStart, uint32_t nEnd )
 
 	while ( nStart - 1 < nEnd )
 	{
-		clear_pagedir( pPgd++, nStart, nEnd - nStart );
+		clear_pagedir( pPgd++, nStart, nEnd - nStart + 1 );
 		nStart = ( nStart + PGDIR_SIZE ) & PGDIR_MASK;
 	}
 	return ( 0 );

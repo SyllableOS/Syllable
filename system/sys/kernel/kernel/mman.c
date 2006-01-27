@@ -94,34 +94,6 @@ void validate_page_list( void )
 	}
 }
 
-void protect_phys_pages( uintptr_t nAddress, int nCount )
-{
-	int i;
-
-	for ( i = 0; i < nCount; ++i )
-	{
-		pgd_t *pPgd = pgd_offset( g_psKernelSeg, nAddress );
-		pte_t *pPte = pte_offset( pPgd, nAddress );
-
-		PTE_VALUE( *pPte ) &= ~PTE_PRESENT;
-		nAddress += PAGE_SIZE;
-	}
-}
-
-void unprotect_phys_pages( uintptr_t nAddress, int nCount )
-{
-	int i;
-
-	for ( i = 0; i < nCount; ++i )
-	{
-		pgd_t *pPgd = pgd_offset( g_psKernelSeg, nAddress );
-		pte_t *pPte = pte_offset( pPgd, nAddress );
-
-		PTE_VALUE( *pPte ) |= PTE_PRESENT;
-		nAddress += PAGE_SIZE;
-	}
-}
-
 
 /*****************************************************************************
  * NAME:
@@ -252,10 +224,6 @@ uint32 get_free_pages( int nPageCount, int nFlags )
 			}
 		}
 	}
-	if ( 0 != nPage )
-	{
-		unprotect_phys_pages( nPage, nPageCount );
-	}
 	spinunlock_enable( &g_sPageListSpinLock, nEFlg );
 
 	if ( 0 != nPage )
@@ -293,7 +261,6 @@ void do_free_pages( uint32 nPage, int nCount )
 		{
 			g_nAllocatedPages--;
 			atomic_inc( &g_sSysBase.ex_nFreePageCount );
-			protect_phys_pages( nPage, 1 );
 
 			if ( ppsNext == NULL )
 			{
