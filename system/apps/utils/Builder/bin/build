@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.55
+# Version 0.6.56
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -561,7 +561,7 @@ def installModule originalStaging, staging, directive, target
 									source, destination = toList line
 									break unless action "mv #{source} " + (
 										destination[0, 1] == '/' && staging == :imaging ?
-											File.join(@systemRoot, destination) :
+											File.join(@systemImage, destination) :
 											destination
 									)
 								end
@@ -1568,12 +1568,13 @@ end
 unless @systemBuild = File.basename(@workDir) == 'system'
 	@crossCompile = false
 	@systemRoot = '/'
-#	@systemImage = '/boot'
+	@systemImage = '/boot'
 else
 	# System build; assume we're building Syllable for now
 	@crossCompile = ! @syllable
 
-	@systemRoot = File.join @image, 'atheos'
+	@systemImage = @image
+	@systemRoot = File.join @systemImage, 'atheos'
 
 #	@buildTools = File.join @workDir, 'build-tools'
 
@@ -1611,7 +1612,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.55',
+	puts 'Syllable Build System 0.6.56',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when '?', '-?', '-h', '-help', '--help'
