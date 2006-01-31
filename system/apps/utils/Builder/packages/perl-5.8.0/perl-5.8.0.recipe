@@ -18,7 +18,7 @@ recommends			db
 configure-cmd
 ;	configure.gnu
 	Configure
-configure-prefix	-Dprefix=
+configure-prefix	"-Dprefix="
 configure-options
 	-des
 	-Dmksymlinks
@@ -44,4 +44,3 @@ links
 	bin/perl	/usr/bin/perl
 ;	For OpenSSL:
 	bin/perl	/usr/local/bin/perl
-

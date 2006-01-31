@@ -65,7 +65,7 @@ configure-env
 ; Configure command, if non-standard or in a non-standard location:
 configure-cmd		configure
 ; Non-standard prefix option:
-configure-prefix	--prefix=
+configure-prefix	"--prefix="
 ; Arguments overriding prefix:
 configure-args		--prefix=/usr/foo
 ; Extra configure options:

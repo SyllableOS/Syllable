@@ -2,8 +2,6 @@ authors
 	Kaj de Vos
 	Jamie Clarkson
 status				testing
-warnings
-	Cannot be installed in a staging area due to non-standard prefix passing.
 notes
 	The patch for the configuration for the native code compiler is a bit of a hack, but it seems to work
 
@@ -15,9 +13,8 @@ locations
 
 no-build-dir
 
-configure-args
-	-prefix /usr/ocaml
-	-no-pthread
+configure-prefix	"-prefix "
+configure-options	-no-pthread
 
 make-targets
 ;	Syllable with GLibC 2.3.x doesn't support native compiler yet:
@@ -43,4 +40,3 @@ documentation
 ; Mixed binaries!
 no-strip
 ;strip-files			<Everything but ocamldebug and ocamlbrowser>
-
