@@ -208,7 +208,7 @@ modules
 ;	libraries libraries/gcc-3.4.3
 
 ;	freetype-config needs to be in the path (use bootstrap):
-	stage libraries/freetype-2.1.9
+	stage libraries/freetype-2.1.10
 
 	stage libraries/libjpeg-6b-static
 	stage libraries/libpng-1.2.8
@@ -287,4 +287,3 @@ modules
 	apps/utils/nettools
 	apps/utils/pkgmanager
 	apps/utils/systools
-
