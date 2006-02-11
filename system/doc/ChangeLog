@@ -1,3 +1,7 @@
+* February 11 2006, Kaj de Vos *
+
+Added objcopy from BinUtils to the base distribution, because it's needed by rescopy.
+
 * January 27 2006, Arno Klenke *
 
 Synced the geforcefx driver with the X driver. This will hopefully fix the FX5200 problems.
@@ -989,11 +993,3 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
-
-<<<<<<< ChangeLog
-
-
-
-=======
->>>>>>> 1.149
-
