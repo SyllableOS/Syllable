@@ -1,3 +1,10 @@
+* February 17 2006, Arno Klenke *
+
+New event class for interprocess communication
+Small fixes in the dynamic layout system
+Added the method GetToken() to the handler class
+Updated mulvane decorator
+
 * January 15 2006, Arno Klenke *
 
 New method SetTextShadowColor() in the IconView class
@@ -1081,6 +1088,8 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
+
 
 
 
