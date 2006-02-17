@@ -2761,7 +2761,7 @@ void View::DrawFrame( const Rect & a_cRect, uint32 nStyle )
 		}
 		else
 		{
-			SetFgColor( ( bSunken ) ? sBgCol : sFgShadowCol );
+			SetFgColor( ( bSunken ) ? sBgCol : sBgShadowCol );
 		}
 
 		MovePenTo( cRect.left, cRect.bottom );
@@ -2774,7 +2774,7 @@ void View::DrawFrame( const Rect & a_cRect, uint32 nStyle )
 		}
 		else
 		{
-			SetFgColor( ( bSunken ) ? sFgCol : sBgShadowCol );
+			SetFgColor( ( bSunken ) ? sBgCol : sBgShadowCol );
 		}
 		DrawLine( Point( cRect.right, cRect.bottom ) );
 		DrawLine( Point( cRect.left, cRect.bottom ) );
@@ -2807,8 +2807,9 @@ void View::DrawFrame( const Rect & a_cRect, uint32 nStyle )
 
 				SetFgColor( ( bSunken ) ? sFgShadowCol : sBgCol );
 
+				MovePenTo( Point( cRect.right - 1.0f, cRect.top + 2.0f ) );
 				DrawLine( Point( cRect.right - 1.0f, cRect.bottom - 1.0f ) );
-				DrawLine( Point( cRect.left + 1.0f, cRect.bottom - 1.0f ) );
+				DrawLine( Point( cRect.left + 2.0f, cRect.bottom - 1.0f ) );
 			}
 			if( ( nStyle & FRAME_TRANSPARENT ) == 0 )
 			{

@@ -596,7 +596,7 @@ void DropdownMenu::Paint( const Rect & cUpdateRect )
 
 	if( IsEnabled() && HasFocus() )
 	{
-		SetFgColor( 0, 0xAA, 0 );
+		SetFgColor( get_default_color( COL_FOCUS ) );
 		DrawLine( Point( cArrowRect.left, cArrowRect.top ), Point( cArrowRect.right, cArrowRect.top ) );
 		DrawLine( Point( cArrowRect.right, cArrowRect.bottom ) );
 		DrawLine( Point( cArrowRect.left, cArrowRect.bottom ) );

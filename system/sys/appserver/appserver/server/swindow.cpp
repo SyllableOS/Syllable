@@ -872,7 +872,7 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 	/* Update the content of the modified layers */
 	if( m_pcWndBorder != NULL )
 	{
-		g_cLayerGate.Close();
+		g_cLayerGate.Lock();
 		for( uint i = 0; i < asBlitList.size(); i++ )
 		{
 			Layer *pcView = FindLayer( asBlitList[i].m_nLayerHandle );
@@ -885,7 +885,7 @@ void SrvWindow::R_Render( WR_Render_s * psPkt )
 				g_pcTopView->UpdateLayer( pcView, asBlitList[i].m_bUpdateChildren );
 		}	
 		
-		g_cLayerGate.Open();
+		g_cLayerGate.Unlock();
 	}
 	
 	if( psPkt->hReply != -1 )
@@ -1627,6 +1627,15 @@ bool SrvWindow::DispatchMessage( Message * pcReq )
 			}
 			break;
 		}
+	case AR_CLOSE_WINDOW:
+		{
+			delete m_pcAppTarget;
+
+			m_pcAppTarget = NULL;
+			if( pcReq->IsSourceWaiting() )
+				pcReq->SendReply( M_REPLY );
+			return( false );
+		}
 	}
 	return ( true );
 }
@@ -1656,12 +1665,13 @@ bool SrvWindow::DispatchMessage( const void *psMsg, int nCode )
 	case WR_GET_MOUSE:
 	case WR_SET_MOUSE_POS:
 	case WR_SET_ICON:
+	case AR_CLOSE_WINDOW:
 		{
 			try
 			{
 				Message cReq( psMsg );
 
-				DispatchMessage( &cReq );
+				bDoLoop = DispatchMessage( &cReq );
 			}
 			catch( ... )
 			{
@@ -1709,7 +1719,6 @@ bool SrvWindow::DispatchMessage( const void *psMsg, int nCode )
 		g_cLayerGate.Open();
 		break;
 	case M_QUIT:
-	case AR_CLOSE_WINDOW:
 		{
 			bDoLoop = false;
 			delete m_pcAppTarget;

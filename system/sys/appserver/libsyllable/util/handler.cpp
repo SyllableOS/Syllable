@@ -113,7 +113,7 @@ void Handler::HandleMessage( Message * pcMessage )
 	}
 }
 
-/** Get the loopers name.
+/** Get the handlers name.
  * \par Description:
  *	Get the name assigned to the handler in the constructor or with
  *	the SetName() member.
@@ -125,6 +125,19 @@ void Handler::HandleMessage( Message * pcMessage )
 String Handler::GetName() const
 {
 	return ( m_cName );
+}
+
+
+/** Get the handlers token.
+ * \par Description:
+ *	Get the token assigned to the handler.
+ * \return The token of the handler.
+ * \author Arno Klenke (arno_klenke@yahoo.de)
+ *****************************************************************************/
+
+const uint32 Handler::GetToken()
+{
+	return ( m_nToken );
 }
 
 /** Get a pointer to the looper this handler belongs to.

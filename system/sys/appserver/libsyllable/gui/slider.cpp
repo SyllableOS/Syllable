@@ -760,7 +760,7 @@ void Slider::RenderKnob( View * pcRenderView )
 	{
 		if( IsEnabled() && HasFocus() )
 		{
-			pcRenderView->SetFgColor( 0, 0xAA, 0 );
+			pcRenderView->SetFgColor( get_default_color( COL_FOCUS ) );
 			pcRenderView->DrawLine( Point( cKnobFrame.left, cKnobFrame.top ), Point( cKnobFrame.right, cKnobFrame.top ) );
 			pcRenderView->DrawLine( Point( cKnobFrame.right, cKnobFrame.bottom ) );
 			pcRenderView->DrawLine( Point( cKnobFrame.left, cKnobFrame.bottom ) );

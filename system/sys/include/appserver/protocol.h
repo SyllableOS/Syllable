@@ -29,7 +29,7 @@
 #include <gui/region.h>
 #include <gui/guidefines.h>
 
-#include  <atheos/mouse.h>
+//#include  <atheos/mouse.h>
 
 class SrvWindow;
 
@@ -124,6 +124,14 @@ enum
     WR_UPDATE_VIDEO_OVERLAY,
     WR_DELETE_VIDEO_OVERLAY,
     WR_SET_ICON,
+    
+    EV_REGISTER = 30000,
+    EV_UNREGISTER,
+    EV_GET_INFO,
+    EV_GET_LAST_EVENT_MESSAGE,
+    EV_ADD_MONITOR,
+    EV_REMOVE_MONITOR,
+    EV_CALL
 };
 
 
@@ -270,12 +278,12 @@ struct GRndRegion_s : GRndHeader_s
 };
 
 /***	Messages sendt to main thread of the display server	***/
-
+#if 0
 typedef struct
 {
     MouseEvent_s	sEvent;
 } DR_MouseEvent_s;
-
+#endif
 #define CLIPBOARD_FRAGMENT_SIZE (1024 * 32)
 
 struct DR_GetClipboardData_s
@@ -493,14 +501,7 @@ struct AR_GetScreenModeInfoReply_s
     int	      m_nBytesPerLine;
     color_space m_eColorSpace;
 };
-#if 0
-typedef struct
-{
-    int	nKeyCode;
-    int	nQualifiers;
-    char	zString[64];
-} SR_KbdEvent_s;
-#endif
+
 /***	Messages sendt to window threads in the display server	***/
 
 struct WR_Request_s

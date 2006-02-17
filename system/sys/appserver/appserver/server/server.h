@@ -43,6 +43,7 @@ class AppServer;
 class SFontInstance;
 class DisplayDriver;
 class SrvBitmap;
+class SrvEvents;
 
 namespace os
 {
@@ -67,6 +68,7 @@ public:
 
     static AppServer*	GetInstance();
     os::WindowDecorator*  CreateWindowDecorator( Layer* pcView, uint32 nFlags );
+    SrvEvents* GetEvents() { return( m_pcEvents ); }
   
     void		Run( void );
     static int32 CloseWindows( void* pData );
@@ -100,6 +102,8 @@ private:
 
     FontNode*		m_pcWindowTitleFont;
     FontNode*		m_pcToolWindowTitleFont;
+    
+    SrvEvents*		m_pcEvents;
     
     int nWatchNode;
 };

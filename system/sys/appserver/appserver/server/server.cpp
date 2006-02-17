@@ -59,6 +59,7 @@
 #include "sprite.h"
 #include "defaultdecorator.h"
 #include "wndborder.h"
+#include "event.h"
 
 void ScreenShot();
 
@@ -173,6 +174,9 @@ AppServer::AppServer()
 {
 	s_pcInstance = this;
 	m_pfDecoratorCreator = NULL;
+	
+	m_pcEvents = new SrvEvents;
+	
 	printf( "Load default fonts\n" );
 
 	dbprintf( "Load default fonts\n" );
@@ -217,7 +221,6 @@ void AppServer::R_ClientDied( thread_id hClient )
 	{
 		send_msg( pcApp->GetReqPort(), M_QUIT, NULL, 0 );
 	}
-	
 	
 	/* Tell the registrar that the application has died */
 	int nPort;
@@ -955,12 +958,33 @@ void AppServer::Run( void )
 					AppserverConfig::GetInstance()->SetWindowDecoratorPath( psReq->m_zDecoratorPath );
 					break;
 				}
+			case EV_REGISTER:
+			case EV_UNREGISTER:
+			case EV_GET_INFO:
+			case EV_GET_LAST_EVENT_MESSAGE:
+			case EV_ADD_MONITOR:
+			case EV_REMOVE_MONITOR:
+			case EV_CALL:
+				{
+					try
+					{
+						Message cReq( pBuffer );
+
+						m_pcEvents->DispatchMessage( &cReq );
+					}
+					catch( ... )
+					{
+						dbprintf( "Error: Catched exception while handling request %d\n", nCode );
+					}
+					break;
+				}
 			case M_NODE_MONITOR:
 				{
 					dbprintf( "Font directory has changed, scanning font directory!\n" );
 					FontServer::GetInstance()->ScanDirectory( "/system/fonts/" );
 					break;
 				}
+			
 			default:
 				dbprintf( "WARNING : AppServer::Run() Unknown command %d\n", nCode );
 				break;

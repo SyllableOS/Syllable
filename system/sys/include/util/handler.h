@@ -70,7 +70,8 @@ public:
     void	RemoveFilter( MessageFilter* pcFilter );
     
     const MsgFilterList& GetFilterList() const;
-     
+    
+	const uint32 GetToken();
 private:
     friend class Looper;
     friend class Message;

@@ -26,6 +26,7 @@
 class	SrvWindow;
 class	SrvApplication;
 class	SrvWidget;
+class	SrvEvents;
 
 namespace os
 {
@@ -77,9 +78,11 @@ private:
     friend class SrvWidget;
     friend class SrvWindow;
     friend class SrvApplication;
+    friend class SrvEvents;
     friend class NodeMonitor;
-
-    Messenger( port_id hPort, int nHandlerID, proc_id hDestProc );
+    friend class Event;
+    
+	Messenger( port_id hPort, int nHandlerID, proc_id hDestProc );
 
     port_id	m_hPort;
     int		m_hHandlerID;

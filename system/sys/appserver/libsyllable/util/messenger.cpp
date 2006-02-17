@@ -326,7 +326,7 @@ status_t Messenger::SendMessage( Message * pcMsg, Message * pcReply, bigtime_t n
 			dbprintf( "Error: Messenger::SendMessage() failed to create temporary message port\n" );
 		}
 	}
-	status_t nError = pcMsg->_Post( m_hPort, -1, hReplyPort, -1, get_process_id( NULL ) );
+	status_t nError = pcMsg->_Post( m_hPort, m_hHandlerID, hReplyPort, -1, get_process_id( NULL ) );
 
 	if( nError < 0 )
 	{
@@ -338,7 +338,7 @@ status_t Messenger::SendMessage( Message * pcMsg, Message * pcReply, bigtime_t n
 	}
 	if( pcReply != NULL )
 	{
-		nError = pcReply->_ReadPort( hReplyPort );
+		nError = pcReply->_ReadPort( hReplyPort, nReplyTimeOut );
 		delete_port( hReplyPort );
 	}
 	if( nError < 0 )

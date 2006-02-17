@@ -1956,6 +1956,7 @@ status_t Message::_Post( port_id hPort, uint32 nTarget, port_id hReplyPort, int 
 	m_nReplyToken = nReplyTarget;
 	m_hReplyPort = hReplyPort;
 	m_hReplyProc = hReplyProc;
+	
 
 	// Should'nt this be delayed til the message is received???????????????????????
 
@@ -2035,12 +2036,12 @@ void Message::_SetReplyHandler( Handler * pcHandler )
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-status_t Message::_ReadPort( port_id hPort )
+status_t Message::_ReadPort( port_id hPort, bigtime_t nTimeOut )
 {
 	uint8 *pBuffer = new uint8[8192];	// FIXME: Check size first
 	int nError = -1;
 
-	if( get_msg( hPort, NULL, pBuffer, 8192 ) >= 0 )
+	if( get_msg_x( hPort, NULL, pBuffer, 8192, nTimeOut ) >= 0 )
 	{
 		nError = Unflatten( pBuffer );
 	}

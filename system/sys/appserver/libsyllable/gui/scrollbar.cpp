@@ -617,7 +617,7 @@ void ScrollBar::Paint( const Rect & cUpdateRect )
 
 	if( IsEnabled() && HasFocus() )
 	{
-		SetFgColor( 0, 0xAA, 0 );
+		SetFgColor( get_default_color( COL_FOCUS ) );
 		DrawLine( Point( cKnobFrame.left, cKnobFrame.top ), Point( cKnobFrame.right, cKnobFrame.top ) );
 		DrawLine( Point( cKnobFrame.right, cKnobFrame.bottom ) );
 		DrawLine( Point( cKnobFrame.left, cKnobFrame.bottom ) );

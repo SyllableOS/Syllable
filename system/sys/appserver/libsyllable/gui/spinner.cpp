@@ -644,7 +644,7 @@ void Spinner::Paint( const os::Rect & cUpdateRect )
 
 	if( IsEnabled() && HasFocus() )
 	{
-		SetFgColor( 0, 0xAA, 0 );
+		SetFgColor( get_default_color( COL_FOCUS ) );
 	} else {
 		SetFgColor( get_default_color( COL_NORMAL ) );
 	}

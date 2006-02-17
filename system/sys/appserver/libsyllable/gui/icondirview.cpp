@@ -50,6 +50,7 @@
 #include <storage/operations.h>
 #include <storage/volumes.h>
 #include <storage/memfile.h>
+#include <storage/file.h>
 
 #include "catalogs/libsyllable.h"
 
@@ -704,13 +705,28 @@ os::BitmapImage* IconDirectoryView::Private::GetDriveIcon( os::String zPath, fs_
 					os::String zDevice = os::Path( sInfo.fi_device_path ).GetDir().GetLeaf();
 					if( zDevice.Length() > 2 )
 					{
-						MemFile* pcSource = NULL;
-						if( zDevice[0] == 'c' && zDevice[1] == 'd' )
-							pcSource = new MemFile( g_aCDImage, sizeof( g_aCDImage ) );
-						else if( zDevice[0] == 'f' && zDevice[1] == 'd' )
-							pcSource = new MemFile( g_aFloppyImage, sizeof( g_aFloppyImage ) );
-						else
-							pcSource = new MemFile( g_aDiskImage, sizeof( g_aDiskImage ) );
+						os::StreamableIO* pcSource = NULL;
+						if( zDevice[0] == 'c' && zDevice[1] == 'd' ) {
+							try {
+								pcSource = new os::File( "/system/icons/cdrom.png" );
+							} catch( ... ) {
+								pcSource = new MemFile( g_aCDImage, sizeof( g_aCDImage ) );
+							}
+						}
+						else if( zDevice[0] == 'f' && zDevice[1] == 'd' ) {
+							try {
+								pcSource = new os::File( "/system/icons/floppy.png" );
+							} catch( ... ) {
+								pcSource = new MemFile( g_aFloppyImage, sizeof( g_aFloppyImage ) );
+							}
+						}
+						else {
+							try {
+								pcSource = new os::File( "/system/icons/harddisk.png" );
+							} catch( ... ) {
+								pcSource = new MemFile( g_aDiskImage, sizeof( g_aDiskImage ) );
+							}
+						}
 						
 						pcItemIcon = new os::BitmapImage();
 									

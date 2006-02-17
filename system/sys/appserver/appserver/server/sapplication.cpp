@@ -36,6 +36,7 @@
 #include "sprite.h"
 #include "keyboard.h"
 #include "config.h"
+#include "event.h"
 
 #include <macros.h>
 #include <algorithm>
@@ -92,6 +93,8 @@ SrvApplication::SrvApplication( const char *pzName, proc_id hOwner, port_id hEve
 SrvApplication::~SrvApplication()
 {
 	SrvApplication **ppcTmp;
+	
+	AppServer::GetInstance()->GetEvents()->ProcessKilled( m_hOwner );
 
 	if( m_cFonts.size() > 0 )
 	{
@@ -513,6 +516,9 @@ void SrvApplication::DispatchMessage( Message * pcReq )
 			}
 			m_cWindows.erase( pcWindow );
 			delete pcWindow;
+			
+			if( pcReq->IsSourceWaiting() )
+				pcReq->SendReply( M_REPLY );
 
 			g_cLayerGate.Open();
 			break;

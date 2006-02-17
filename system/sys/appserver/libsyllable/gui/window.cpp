@@ -176,13 +176,14 @@ void Window::_Cleanup()
 	if( m->m_pcTopView != NULL )
 	{
 		Message cReq( AR_CLOSE_WINDOW );
+		Message cReply;
 
 		cReq.AddInt32( "top_view", m->m_pcTopView->_GetHandle() );
 
 		m->m_pcTopView->_Detached( true, 0 );
 		delete m->m_pcTopView;
 
-		if( Messenger( m->m_hLayerPort ).SendMessage( &cReq ) < 0 )
+		if( Messenger( m->m_hLayerPort ).SendMessage( &cReq, &cReply ) < 0 )
 		{
 			dbprintf( "Error: Window::_Cleanup() failed to send AR_CLOSE_WINDOW request to server\n" );
 		}
@@ -1674,6 +1675,7 @@ void Window::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 				}
 				break;
 			}
+#if 0			
 		case M_MOVE_WINDOW:
 			{
 				Point cDeltaPos;
@@ -1703,6 +1705,7 @@ void Window::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 				}
 				break;
 			}
+#endif			
 		case M_WINDOW_ACTIVATED:
 			{
 				bool bIsActive;

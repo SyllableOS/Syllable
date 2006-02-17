@@ -356,6 +356,7 @@ void TopLayer::InvalidateNewAreas( void )
 	
 	bool bSpritesHidden = false;
 	
+	
 	/* Update the contents of layers which have not been moved */
 	for( pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
 	{
@@ -367,6 +368,7 @@ void TopLayer::InvalidateNewAreas( void )
 			
 			if( pcChild->m_pcPrevVisibleFullReg != NULL )
 				cDamage.Exclude( *pcChild->m_pcPrevVisibleFullReg );
+			
 				
 			cDamage.Optimize();
 				

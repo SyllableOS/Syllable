@@ -219,7 +219,7 @@ private:
     void	 _SetReplyHandler( Handler* pcHandler );
     status_t	 _Post( port_id hPort, uint32 nTargetToken, port_id hReplyPort = -1,
 			int nReplyTarget = -1, proc_id hReplyProc = -1 );
-    status_t	 _ReadPort( port_id hPort );
+    status_t	 _ReadPort( port_id hPort, bigtime_t nTimeOut = INFINITE_TIMEOUT );
     int		 _GetStaticSize( void ) const { return( sizeof(m_nCode) + sizeof(m_nFlags) + sizeof(m_nTargetToken) + sizeof(m_nReplyToken) + sizeof(m_hReplyProc) + sizeof(m_hReplyPort) + sizeof( int ) ); }
 
       // Definitions for m_nFlags

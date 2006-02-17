@@ -224,11 +224,11 @@ LayoutNode::LayoutNode( const String & cName, float vWeight, LayoutNode * pcPare
 
 LayoutNode::~LayoutNode()
 {
-   	for( uint i = 0; i < m->m_cChildList.size(); ++i )
+	std::vector<LayoutNode*> cChildList = m->m_cChildList;
+	for( uint i = 0; i < cChildList.size(); ++i )
 	{
-		delete m->m_cChildList[i];
+		delete cChildList[i];
 	}
-	m->m_cChildList.clear();
 	if( m->m_pcParent != NULL )
 	{
 		m->m_pcParent->RemoveChild( this );
@@ -238,6 +238,14 @@ LayoutNode::~LayoutNode()
 
 void LayoutNode::AddChild( LayoutNode * pcChild )
 {
+	for( uint i = 0; i < m->m_cChildList.size(); ++i )
+	{
+		if( m->m_cChildList[i] == pcChild )
+		{
+			dbprintf( "Error: LayoutNode::AddChild() node %s already added!\n", pcChild->GetName().c_str() );
+			return;
+		}
+	}
 	m->m_cChildList.push_back( pcChild );
 	pcChild->_AddedToParent( this );
 }
@@ -283,7 +291,7 @@ void LayoutNode::SetView( View * pcView )
 	{
 		if( m->m_pcLayoutView != NULL )
 		{
-			m->m_pcLayoutView->RemoveChild( pcView );
+			m->m_pcLayoutView->RemoveChild( m->m_pcView );
 		}
 	}
 	m->m_pcView = pcView;
@@ -650,13 +658,12 @@ void LayoutNode::SameHeight( const char *pzName1, ... )
 
 void LayoutNode::_AddedToParent( LayoutNode * pcParent )
 {
+	m->m_pcParent = pcParent;
+	m->m_pcLayoutView = pcParent->m->m_pcLayoutView;
 	if( m->m_pcView != NULL && m->m_pcLayoutView != NULL )
 	{
 		m->m_pcLayoutView->AddChild( m->m_pcView );
 	}
-
-	m->m_pcParent = pcParent;
-	m->m_pcLayoutView = pcParent->m->m_pcLayoutView;
 	for( uint i = 0; i < m->m_cChildList.size(); ++i )
 	{
 		m->m_cChildList[i]->_AddedToParent( this );

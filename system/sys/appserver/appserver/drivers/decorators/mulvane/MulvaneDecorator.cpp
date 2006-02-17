@@ -181,7 +181,7 @@ WindowDecorator::hit_item MulvaneDecorator::HitTest( const Point& cPosition )
 	}
 	else if ( m_cToggleRect.DoIntersect( cPosition ) )
 	{
-		return( HIT_DEPTH );
+		return( HIT_MINIMIZE );
 	}
 	else if ( m_cDragRect.DoIntersect( cPosition ) )
 	{
@@ -320,7 +320,7 @@ void MulvaneDecorator::SetButtonState( uint32 nButton, bool bPushed )
 		case HIT_ZOOM:
 			SetZoomButtonState( bPushed );
 			break;
-		case HIT_DEPTH:
+		case HIT_MINIMIZE:
 			SetDepthButtonState( bPushed );
 			break;
 	}
@@ -369,14 +369,14 @@ void MulvaneDecorator::DrawPanel( const Rect& cRect, bool bActive, bool bRecesse
 	}
 	else
 	{
-		col_Shine	= Color32_s(128,128,128);
-		col_Light	= Color32_s( 94, 94, 94);
-		col_Dark	= Color32_s( 64, 64, 64);
-		col_Shadow	= Color32_s( 32, 32, 32);
+		col_Light	= BlendColours(get_default_color(COL_SHINE), get_default_color(COL_NORMAL_WND_BORDER), 0.5f);
+		col_Dark	= BlendColours(get_default_color(COL_SHADOW), get_default_color(COL_NORMAL_WND_BORDER), 0.5f);
+		col_Shine	= BlendColours(get_default_color(COL_NORMAL_WND_BORDER), col_Dark, 0.5f);
+		col_Shadow	= BlendColours(get_default_color(COL_SHADOW),         col_Dark, 0.5f);
 	}
 
 	// Top and bottom line
-	pcView->SetFgColor( col_Black );
+	pcView->SetFgColor( col_Shadow );
 	pcView->DrawLine( Point(cRect.left,cRect.top), Point(cRect.right-1,cRect.top) );
 	pcView->DrawLine( Point(cRect.left,cRect.bottom-1), Point(cRect.right-1,cRect.bottom-1) );
 	// Shine
@@ -411,41 +411,33 @@ void MulvaneDecorator::DrawDepth( const Rect& cRect, bool bActive, bool bRecesse
 	if ( bRecessed )
 	{
 		pcView->SetFgColor( get_default_color(COL_SHINE) );
-		pcView->DrawLine( Point(cRect.left+ 3,cRect.top+ 3), Point(cRect.left+11,cRect.top+ 3) );
-		pcView->DrawLine( Point(cRect.left+ 3,cRect.top+ 4), Point(cRect.left+11,cRect.top+ 4) );
-		pcView->DrawLine( Point(cRect.left+ 3,cRect.top+ 4), Point(cRect.left+ 3,cRect.top+ 9) );
-		pcView->DrawLine( Point(cRect.left+ 3,cRect.top+ 9), Point(cRect.left+ 6,cRect.top+ 9) );
-		pcView->DrawLine( Point(cRect.left+11,cRect.top+ 4), Point(cRect.left+11,cRect.top+ 6) );
-		pcView->DrawLine( Point(cRect.left+ 6,cRect.top+ 6), Point(cRect.left+14,cRect.top+ 6) );
-		pcView->DrawLine( Point(cRect.left+ 6,cRect.top+ 7), Point(cRect.left+14,cRect.top+ 7) );
-		pcView->DrawLine( Point(cRect.left+ 6,cRect.top+ 7), Point(cRect.left+ 6,cRect.top+12) );
-		pcView->DrawLine( Point(cRect.left+ 6,cRect.top+12), Point(cRect.left+14,cRect.top+12) );
-		pcView->DrawLine( Point(cRect.left+14,cRect.top+ 7), Point(cRect.left+14,cRect.top+12) );
+		pcView->DrawLine( Point(cRect.left+ 3,cRect.top+ 3), Point(cRect.left+14,cRect.top+ 3) );
+		pcView->DrawLine( Point(cRect.left+ 3,cRect.top+ 4), Point(cRect.left+14,cRect.top+ 4) );
+		pcView->DrawLine( Point(cRect.left+ 3,cRect.top+ 4), Point(cRect.left+ 3,cRect.top+12) );
+		pcView->DrawLine( Point(cRect.left+ 3,cRect.top+12), Point(cRect.left+14,cRect.top+12) );
+		pcView->DrawLine( Point(cRect.left+14,cRect.top+ 4), Point(cRect.left+14,cRect.top+12) );
+		pcView->DrawLine( Point(cRect.left+ 3,cRect.top+ 10), Point(cRect.left+5,cRect.top+ 10) );
+		pcView->DrawLine( Point(cRect.left+5,cRect.top+ 10), Point(cRect.left+5,cRect.top+ 12) );
 	}
 	else
 	{
 		pcView->SetFgColor( get_default_color(COL_SHADOW) );
-		pcView->DrawLine( Point(cRect.left+ 3,cRect.top+ 3), Point(cRect.left+11,cRect.top+ 3) );
-		pcView->DrawLine( Point(cRect.left+ 3,cRect.top+ 4), Point(cRect.left+11,cRect.top+ 4) );
-		pcView->DrawLine( Point(cRect.left+ 3,cRect.top+ 4), Point(cRect.left+ 3,cRect.top+ 9) );
-		pcView->DrawLine( Point(cRect.left+ 3,cRect.top+ 9), Point(cRect.left+ 6,cRect.top+ 9) );
-		pcView->DrawLine( Point(cRect.left+11,cRect.top+ 4), Point(cRect.left+11,cRect.top+ 6) );
-		pcView->DrawLine( Point(cRect.left+ 6,cRect.top+ 6), Point(cRect.left+14,cRect.top+ 6) );
-		pcView->DrawLine( Point(cRect.left+ 6,cRect.top+ 7), Point(cRect.left+14,cRect.top+ 7) );
-		pcView->DrawLine( Point(cRect.left+ 6,cRect.top+ 7), Point(cRect.left+ 6,cRect.top+12) );
-		pcView->DrawLine( Point(cRect.left+ 6,cRect.top+12), Point(cRect.left+14,cRect.top+12) );
-		pcView->DrawLine( Point(cRect.left+14,cRect.top+ 7), Point(cRect.left+14,cRect.top+12) );
+		pcView->DrawLine( Point(cRect.left+ 3,cRect.top+ 3), Point(cRect.left+14,cRect.top+ 3) );
+		pcView->DrawLine( Point(cRect.left+ 3,cRect.top+ 4), Point(cRect.left+14,cRect.top+ 4) );
+		pcView->DrawLine( Point(cRect.left+ 3,cRect.top+ 4), Point(cRect.left+ 3,cRect.top+12) );
+		pcView->DrawLine( Point(cRect.left+ 3,cRect.top+12), Point(cRect.left+14,cRect.top+12) );
+		pcView->DrawLine( Point(cRect.left+14,cRect.top+ 4), Point(cRect.left+14,cRect.top+12) );
+		pcView->DrawLine( Point(cRect.left+ 3,cRect.top+ 10), Point(cRect.left+5,cRect.top+ 10) );
+		pcView->DrawLine( Point(cRect.left+5,cRect.top+ 10), Point(cRect.left+5,cRect.top+ 12) );
 		pcView->SetFgColor( get_default_color(COL_SHINE) );
-		pcView->DrawLine( Point(cRect.left+ 2,cRect.top+ 2), Point(cRect.left+10,cRect.top+ 2) );
-		pcView->DrawLine( Point(cRect.left+ 2,cRect.top+ 3), Point(cRect.left+10,cRect.top+ 3) );
-		pcView->DrawLine( Point(cRect.left+ 2,cRect.top+ 3), Point(cRect.left+ 2,cRect.top+ 8) );
-		pcView->DrawLine( Point(cRect.left+ 2,cRect.top+ 8), Point(cRect.left+ 5,cRect.top+ 8) );
-		pcView->DrawLine( Point(cRect.left+10,cRect.top+ 3), Point(cRect.left+10,cRect.top+ 5) );
-		pcView->DrawLine( Point(cRect.left+ 5,cRect.top+ 5), Point(cRect.left+13,cRect.top+ 5) );
-		pcView->DrawLine( Point(cRect.left+ 5,cRect.top+ 6), Point(cRect.left+13,cRect.top+ 6) );
-		pcView->DrawLine( Point(cRect.left+ 5,cRect.top+ 6), Point(cRect.left+ 5,cRect.top+11) );
-		pcView->DrawLine( Point(cRect.left+ 5,cRect.top+11), Point(cRect.left+13,cRect.top+11) );
-		pcView->DrawLine( Point(cRect.left+13,cRect.top+ 6), Point(cRect.left+13,cRect.top+11) );
+		pcView->DrawLine( Point(cRect.left+ 2,cRect.top+ 2), Point(cRect.left+13,cRect.top+ 2) );
+		pcView->DrawLine( Point(cRect.left+ 2,cRect.top+ 3), Point(cRect.left+13,cRect.top+ 3) );
+		pcView->DrawLine( Point(cRect.left+ 2,cRect.top+ 3), Point(cRect.left+ 2,cRect.top+11) );
+		pcView->DrawLine( Point(cRect.left+ 2,cRect.top+11), Point(cRect.left+13,cRect.top+11) );
+		pcView->DrawLine( Point(cRect.left+13,cRect.top+ 3), Point(cRect.left+13,cRect.top+11) );
+		pcView->DrawLine( Point(cRect.left+ 2,cRect.top+ 8), Point(cRect.left+ 6,cRect.top+ 8) );
+		pcView->DrawLine( Point(cRect.left+ 2,cRect.top+ 9), Point(cRect.left+ 6,cRect.top+ 9) );
+		pcView->DrawLine( Point(cRect.left+ 6,cRect.top+ 9), Point(cRect.left+ 6,cRect.top+ 11) );
 	}
 }
 
@@ -586,13 +578,15 @@ void MulvaneDecorator::Render( const Rect& cUpdateRect )
 		}
 		else
 		{
-			pcView->SetFgColor( 255, 255, 255, 255 );
+			pcView->SetFgColor( 50, 50, 50, 50 );
 		}
 		pcView->SetBgColor( sFillColor );
+		pcView->SetDrawingMode( DM_OVER );
 		pcView->MovePenTo( m_cDragRect.left + 5,
 			   m_cDragRect.top + m_cDragRect.Height() / 2 -
 			   (m_sFontHeight.ascender + m_sFontHeight.descender) / 2 + m_sFontHeight.ascender );
 		pcView->DrawString( m_cTitle.c_str(), -1 );
+		pcView->SetDrawingMode( DM_COPY );
 	}
 	else
 	{

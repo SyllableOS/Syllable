@@ -266,7 +266,7 @@ void Button::Paint( const Rect & cUpdateRect )
 	if( IsEnabled() && ( HasFocus() || ( GetWindow(  )->GetDefaultButton(  ) == this ) ) )
 	{
 		if( HasFocus() ) {
-			SetFgColor( 0, 0xAA, 0 );
+			SetFgColor( get_default_color( COL_FOCUS ) );
 		} else {
 			SetFgColor( 0, 0, 0 );
 		}

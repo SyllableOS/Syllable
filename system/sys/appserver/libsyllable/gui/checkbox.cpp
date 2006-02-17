@@ -219,7 +219,7 @@ void CheckBox::Paint( const Rect & cUpdateRect )
 
 	if( IsEnabled() && HasFocus() )
 	{
-		SetFgColor( 0, 0xAA, 0 );
+		SetFgColor( get_default_color( COL_FOCUS ) );
 		DrawLine( Point( cButFrame.left, cButFrame.top ), Point( cButFrame.right, cButFrame.top ) );
 		DrawLine( Point( cButFrame.right, cButFrame.bottom ) );
 		DrawLine( Point( cButFrame.left, cButFrame.bottom ) );

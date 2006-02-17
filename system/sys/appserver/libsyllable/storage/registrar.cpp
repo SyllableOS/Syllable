@@ -26,8 +26,10 @@
 #include <util/exceptions.h>
 #include <util/messenger.h>
 #include <util/resources.h>
+#include <util/application.h>
 #include <storage/file.h>
 #include <storage/registrar.h>
+#include <appserver/protocol.h>
 //#include <iostream>
 #include <unistd.h>
 
@@ -960,23 +962,19 @@ status_t RegistrarManager::Launch( Window* pcParentWindow, String zFile, bool bV
 status_t RegistrarManager::RegisterCall( String zID, String zDescription, os::Looper* pcTarget, int nMessageCode, bool bPersistent )
 {
 	os::Message cReply;
-	os::Message cMessage( REGISTRAR_REGISTER_CALL );
+	os::Message cMessage( EV_REGISTER );
 	
 	cMessage.AddString( "id", zID );
 	cMessage.AddInt64( "process", get_process_id( NULL ) );
 	cMessage.AddString( "description", zDescription );
 	cMessage.AddInt64( "target", pcTarget->GetMsgPort() );
+	cMessage.AddInt64( "token", pcTarget->GetToken() );
 	cMessage.AddInt64( "message_code", nMessageCode );
 	
-	if( m->m_bSync ) {
-		m->m_cServerLink.SendMessage( &cMessage, &cReply );
-		if( cReply.GetCode() != REGISTRAR_OK ) 
-		{
-			dbprintf( "Error: Could not register call %s\n", zID.c_str() );
-			return( -1 );
-		}
-	} else
-		m->m_cServerLink.SendMessage( &cMessage );
+	port_id hPort = os::Application::GetInstance()->GetServerPort();
+	Messenger cServerLink = Messenger( hPort );
+	
+	cServerLink.SendMessage( &cMessage );
 	
 	return( 0 );
 }
@@ -993,20 +991,15 @@ status_t RegistrarManager::RegisterCall( String zID, String zDescription, os::Lo
 status_t RegistrarManager::UnregisterCall( String zID )
 {
 	os::Message cReply;
-	os::Message cMessage( REGISTRAR_UNREGISTER_CALL );
+	os::Message cMessage( EV_UNREGISTER );
 	
 	cMessage.AddString( "id", zID );
 	cMessage.AddInt64( "process", get_process_id( NULL ) );
 	
-	if( m->m_bSync ) {
-		m->m_cServerLink.SendMessage( &cMessage, &cReply );
-		if( cReply.GetCode() != REGISTRAR_OK ) 
-		{
-			dbprintf( "Error: Could not unregister call %s\n", zID.c_str() );
-			return( -1 );
-		}
-	} else
-		m->m_cServerLink.SendMessage( &cMessage );
+	port_id hPort = os::Application::GetInstance()->GetServerPort();
+	Messenger cServerLink = Messenger( hPort );
+	
+	cServerLink.SendMessage( &cMessage );
 	
 	return( 0 );
 }
@@ -1025,13 +1018,18 @@ status_t RegistrarManager::UnregisterCall( String zID )
 status_t RegistrarManager::QueryCall( String zID, int nIndex, RegistrarCall_s *psCallInfo )
 {
 	os::Message cReply;
-	os::Message cMessage( REGISTRAR_QUERY_CALL );
+	os::Message cMessage( EV_GET_INFO );
+	
+	port_id hPort = os::Application::GetInstance()->GetServerPort();
+	Messenger cServerLink = Messenger( hPort );
+	
+	cServerLink.SendMessage( &cMessage );
 	
 	cMessage.AddString( "id", zID );
 	cMessage.AddInt64( "index", nIndex );
 	
-	m->m_cServerLink.SendMessage( &cMessage, &cReply );
-	if( cReply.GetCode() != REGISTRAR_OK ) 
+	cServerLink.SendMessage( &cMessage, &cReply );
+	if( cReply.GetCode() != 0 ) 
 	{
 		return( -ENOENT );
 	}
