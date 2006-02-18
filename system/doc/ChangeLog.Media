@@ -1,3 +1,7 @@
+* February 18 2006 Arno Klenke *
+
+Switched the coldfish dock plugin to the new event system
+
 * January 21 2006 Arno Klenke *
 
 Small updates for the media player and coldfish
@@ -135,6 +139,7 @@ Added multiple soundcard support to the media server
 * Nov 18 2003, Kristian Van Der Vliet *
 
 Created this ChangeLog for changes specific to the media framework.
+
 
 
 
