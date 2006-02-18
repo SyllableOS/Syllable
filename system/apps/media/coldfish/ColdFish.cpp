@@ -156,7 +156,7 @@ CFWindow::CFWindow( const os::Rect & cFrame, const os::String & cName, const os:
 	m_pcControls->AddChild( m_pcShowList );
 	#endif
 
-	m_pcControls->SameWidth( "cf_playorpause","cf_stop", "cf_show_list", NULL );
+	m_pcControls->SameWidth( "cf_playorpause","cf_stop", NULL );
 
 	m_pcRoot->SetRoot( m_pcControls );
 
@@ -1746,7 +1746,9 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 	
 	case CF_GET_SONG:
 	{
-		os::Message cReply(0);
+		int32 nCode;
+		pcMessage->FindInt32( "reply_code", &nCode );
+		os::Message cReply(nCode);
 		if (pcMessage->IsSourceWaiting())
 		{
 			cReply.AddString("track_name",m_zTrackName.c_str());
@@ -1757,7 +1759,9 @@ void CFApp::HandleMessage( os::Message * pcMessage )
 	
 	case CF_GET_PLAYSTATE:
 	{
-		os::Message cReply(0);
+		int32 nCode;
+		pcMessage->FindInt32( "reply_code", &nCode );
+		os::Message cReply(nCode);
 		if (pcMessage->IsSourceWaiting())
 		{
 			cReply.AddInt32("play_state",m_nState);

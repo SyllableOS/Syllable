@@ -21,7 +21,7 @@
 /* This plugins registers coldfish in the registrar server */
 
 #include "../../coldfish/CFPlugin.h"
-#include <storage/registrar.h>
+#include <util/event.h>
 
 class CFRemote : public ColdFishPlugin
 {
@@ -31,24 +31,16 @@ public:
 	}
 	~CFRemote()
 	{
-		try
-		{
-			os::RegistrarManager* pcRegManager = os::RegistrarManager::Get();
-		
-			pcRegManager->UnregisterCall("media/Coldfish/Play");
-			pcRegManager->UnregisterCall("media/Coldfish/Stop");
-			pcRegManager->UnregisterCall("media/Coldfish/Pause");
-			pcRegManager->UnregisterCall("media/Coldfish/Next");
-			pcRegManager->UnregisterCall("media/Coldfish/Previous");
-			pcRegManager->UnregisterCall("media/Coldfish/GetSong");
-			pcRegManager->UnregisterCall("media/Coldfish/GetPlayState");
-			pcRegManager->UnregisterCall("media/Coldfish/AddFile");
-			pcRegManager->UnregisterCall("media/Coldfish/About");
-			pcRegManager->Put();
-
-		} catch( ... ) 
-		{
-		}
+		printf("Delete!\n");
+		delete( pcPlayEvent );
+		delete( pcStopEvent );
+		delete( pcPauseEvent );
+		delete( pcNextEvent );
+		delete( pcPrevEvent );
+		delete( pcGetSongEvent );
+		delete( pcGetPlayStateEvent );
+		delete( pcAddFileEvent );
+		delete( pcAboutEvent );
 	}
 	os::String GetIdentifier()
 	{
@@ -58,19 +50,17 @@ public:
 	{
 		try
 		{
-			os::RegistrarManager* pcRegManager = os::RegistrarManager::Get();
-		
+			//os::RegistrarManager* pcRegManager = os::RegistrarManager::Get();
 			/* Register remote calls */
-			pcRegManager->RegisterCall("media/Coldfish/Play","Play",GetApp(),CF_GUI_PLAY);
-			pcRegManager->RegisterCall("media/Coldfish/Stop","Stop",GetApp(),CF_GUI_STOP);
-			pcRegManager->RegisterCall("media/Coldfish/Pause","Pause",GetApp(),CF_GUI_PAUSE);
-			pcRegManager->RegisterCall("media/Coldfish/Next","Next",GetApp(),CF_PLAY_NEXT);
-			pcRegManager->RegisterCall("media/Coldfish/Previous","Previous",GetApp(),CF_PLAY_PREVIOUS);
-			pcRegManager->RegisterCall( "media/Coldfish/GetSong", "Gets the current song",GetApp(), CF_GET_SONG);
-			pcRegManager->RegisterCall( "media/Coldfish/GetPlayState", "Gets the current playstate",GetApp(), CF_GET_PLAYSTATE);
-			pcRegManager->RegisterCall( "media/Coldfish/AddFile", "Calls the file requester to add a file to ColdFish",GetApp(), CF_GUI_ADD_FILE);			
-			pcRegManager->RegisterCall( "media/Coldfish/About", "Calls the about box",GetApp(), CF_GUI_ABOUT);	
-			pcRegManager->Put();
+			pcPlayEvent = os::Event::Register( "media/Coldfish/Play","Play",GetApp(),CF_GUI_PLAY);
+			pcStopEvent = os::Event::Register( "media/Coldfish/Stop","Stop",GetApp(),CF_GUI_STOP);
+			pcPauseEvent = os::Event::Register( "media/Coldfish/Pause","Pause",GetApp(),CF_GUI_PAUSE);
+			pcNextEvent = os::Event::Register( "media/Coldfish/Next","Next",GetApp(),CF_PLAY_NEXT);
+			pcPrevEvent = os::Event::Register( "media/Coldfish/Previous","Previous",GetApp(),CF_PLAY_PREVIOUS);
+			pcGetSongEvent = os::Event::Register( "media/Coldfish/GetSong", "Gets the current song",GetApp(), CF_GET_SONG);
+			pcGetPlayStateEvent = os::Event::Register( "media/Coldfish/GetPlayState", "Gets the current playstate",GetApp(), CF_GET_PLAYSTATE);
+			pcAddFileEvent = os::Event::Register( "media/Coldfish/AddFile", "Calls the file requester to add a file to ColdFish",GetApp(), CF_GUI_ADD_FILE);			
+			pcAboutEvent = os::Event::Register( "media/Coldfish/About", "Calls the about box",GetApp(), CF_GUI_ABOUT);	
 		} catch( ... )
 		{
 			return( -1 );
@@ -78,6 +68,15 @@ public:
 		return( 0 );
 	}
 private:
+	os::Event* pcPlayEvent;
+	os::Event* pcStopEvent;
+	os::Event* pcPauseEvent;
+	os::Event* pcNextEvent;
+	os::Event* pcPrevEvent;
+	os::Event* pcGetSongEvent;
+	os::Event* pcGetPlayStateEvent;
+	os::Event* pcAddFileEvent;
+	os::Event* pcAboutEvent;
 };
 
 class CFRemoteEntry : public ColdFishPluginEntry

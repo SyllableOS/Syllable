@@ -80,9 +80,17 @@ void DockMenu::AddEntry( os::RegistrarManager* pcManager, os::String zCategory, 
 		{
 			if( pcCategoryIcon == NULL )
 			{
-				os::File cSelf( open_image_file( get_image_id() ) );
-				os::Resources cCol( &cSelf );		
-				os::ResStream *pcStream = cCol.GetResourceStream( "folder.png" );
+				os::StreamableIO *pcStream;
+				try
+				{
+					pcStream = new os::File( "/system/icons/folder.png" );
+				} catch( ... )
+				{
+					os::File cSelf( open_image_file( get_image_id() ) );
+					os::Resources cCol( &cSelf );		
+					pcStream = cCol.GetResourceStream( "folder.png" );
+				}
+
 				os::BitmapImage* pcImg = new os::BitmapImage();
 				pcImg->Load( pcStream );
 				pcImg->SetSize( os::Point( 24, 24 ) );
@@ -211,3 +219,4 @@ void DockMenu::ScanPath( int nLevel, os::Path cPath )
 	if( pcManager )
 		pcManager->Put();
 }
+
