@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.57
+# Version 0.6.58
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -577,12 +577,13 @@ def installModule originalStaging, staging, directive, target
 						then
 							false
 						else
-							not files = recipe['documentation'] or
+							devDocs = nil
+							not (docs = recipe['documentation'] or devDocs = recipe['develop-docs']) or
 							begin
 								@log.header 'Installing documentation'
 								Dir.chdir @workDir
 								Dir.chdir target
-								action "cp -a #{toString files} " + root
+								action "cp -a #{toString docs} #{toString devDocs} " + root
 							end
 						end
 					end and
@@ -1612,7 +1613,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.57',
+	puts 'Syllable Build System 0.6.58',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when '?', '-?', '-h', '-help', '--help'
