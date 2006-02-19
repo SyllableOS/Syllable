@@ -125,8 +125,14 @@ delete-files		<Files to delete from the installation>
 ; Extra files to install:
 install-files
 	<Original> <Destination>
-; Documentation to install:
+; General documentation to install:
 documentation		README COPYING ABOUT-NLS NEWS ChangeLog TODO AUTHORS THANKS
+; Documentation for building from source:
+;build-docs			INSTALL
+; Documentation for developers using the package:
+develop-docs		docs
+; Internal documentation for developers of the package itself:
+;internal-docs		docs
 ; Links to create
 ; The path of the original is relative to the path of the link in the case of
 ; a link that's internal to the package, and relative to the package root
