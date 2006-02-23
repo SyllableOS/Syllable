@@ -1,3 +1,7 @@
+* Feburary 23 2006, Arno Klenke *
+
+Patch for the clock dock plugin by Andreas Benzler
+
 * January 21 2006, Rick Caudill*
 
 Added 'Clipper', a dock plugin that holds the text of the clipboard for 10 clips.
@@ -155,6 +159,7 @@ Cleaned up message texts in DLogin.
 		* Moved code around.  It makes the code easier to read.
 		* Added error testing for scaling images.  If the image is not bigger than the 				screen resolution, the desktop will not scale the image.
 		* Fixed icon text color problems.
+
 
 
 
