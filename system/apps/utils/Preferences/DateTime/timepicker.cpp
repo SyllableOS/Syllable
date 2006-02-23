@@ -249,6 +249,7 @@ void TimePicker::TimerTick(int nID)
 
     // Update clock
     Invalidate();
+    m_pcClock->Invalidate();
     Flush();
   }
 }
@@ -276,8 +277,8 @@ void Clock::SetTime(int iHour, int iMin, int iSec)
   m_iHour = iHour;
   m_iMin = iMin;
   m_iSec = iSec;
-  Invalidate();
-  Flush();
+//  Invalidate();
+//  Flush();
 }
 
 void Clock::Paint(const os::Rect &cUpdateRect)

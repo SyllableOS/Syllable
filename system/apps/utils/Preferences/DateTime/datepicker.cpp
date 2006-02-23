@@ -276,7 +276,7 @@ void DatePicker::HandleMessage(os::Message* pcMessage)
 void DatePicker::Paint(const os::Rect &cUpdateRect)
 {
   os::View::Paint(cUpdateRect);
-  ReDraw();
+  //ReDraw();
 }
 
 void DatePicker::FrameSized(const os::Point &cDelta)
