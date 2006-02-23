@@ -111,6 +111,8 @@ void DockClockSettings::Layout()
 		char cItem[6];
 		sprintf(cItem,"%d.0",i);
 		pcFontSizeDrop->AppendItem(cItem);
+		sprintf(cItem,"%d.5",i);
+		pcFontSizeDrop->AppendItem(cItem);
 	}
 	
 	pcFontNode->AddChild(pcFontSizeDrop);

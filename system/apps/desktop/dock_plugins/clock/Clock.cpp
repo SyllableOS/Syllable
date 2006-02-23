@@ -187,13 +187,9 @@ DockClock::DockClock( DockPlugin* pcPlugin, os::Looper* pcDock ) : View( os::Rec
 	/* Load settings */
 	LoadSettings();
 	
-	if (m_vFontSize >0)
-		GetFont()->SetSize(m_vFontSize);
-		
 	pcContextMenu = new Menu(Rect(0,0,10,10),"",ITEMS_IN_COLUMN);
 	pcContextMenu->AddItem("Preferences...",new Message(M_PREFS));
-	pcContextMenu->AddItem(new MenuSeparator());	
-	pcContextMenu->AddItem("Help...", new Message(M_HELP));
+	pcContextMenu->AddItem("Date Time", new Message(M_DATE_TIME));
 	pcContextMenu->AddItem(new MenuSeparator());	
 	pcContextMenu->AddItem("About Clock...",new Message(M_CLOCK_ABOUT));
 	pcContextMenu->SetTargetForItems(this);
@@ -223,9 +219,29 @@ void DockClock::HandleMessage(Message* pcMessage)
 			}
 			else
 				pcClockSettingsWindow->MakeFocus();
-			break;
 		}
-		
+		break;
+		case M_DATE_TIME:
+		{
+			if (fork() == 0)
+				execlp("/Applications/Preferences/DateTime","/Applications/Preferences/DateTime",NULL);
+		}
+		break;
+		case M_CLOCK_ABOUT:
+		{
+			//Display copyright notice
+			Alert *pcAlert = new Alert("Copyright Notice",
+				"Clock 1.0\n"
+				"Copyright (C) 2006 Arno Klenke\n"
+				"Copyright (C) 2006 Rick Caudill\n\n"
+				"Clock comes with ABSOLUTELY NO WARRANTY.\n"
+				"This is free software, and is distributed under the\n"
+				"GNU General Public License.\n\n"
+				"See http://www.gnu.org for details.",
+			Alert::ALERT_INFO, 0, "Ok", NULL );
+			pcAlert->Go(new Invoker());
+		}
+		break;
 		case M_APPLY:
 		{
 			pcMessage->FindString("date_format",&m_zDateFormat);
@@ -247,7 +263,7 @@ void DockClock::HandleMessage(Message* pcMessage)
 		{
 			pcClockSettingsWindow->PostMessage( os::M_TERMINATE );
 			pcClockSettingsWindow = NULL;
-			break;
+		break;
 		}		
 	}
 }
@@ -300,15 +316,16 @@ void DockClock::LoadSettings()
 			m_bFrame = true;
 			
 		if (pcSettings->FindString("font",&m_cFontType) != 0)
-			m_cFontType = "";
+			m_cFontType = GetFont()->GetFamily ();
 			
 		if (pcSettings->FindFloat("size",&m_vFontSize) != 0)
-			m_vFontSize = -1;
+			m_vFontSize = GetFont()->GetSize();
 			
 		delete( pcSettings );
 	} catch( ... ) {
-		m_vFontSize = -1;
-		m_cFontType = "";
+		
+		m_vFontSize = GetFont()->GetSize();
+		m_cFontType = GetFont()->GetFamily();
 		m_cTextColor = Color32_s(0,0,0,0);
 		m_zTimeFormat = "%H:%m:%s";
 		m_zDateFormat = "%a %b %e, %Y";
@@ -348,11 +365,14 @@ void DockClock::UpdateFont()
 {
 	Font *font = new Font();
 	if( font->SetFamilyAndStyle(m_cFontType.c_str(),"Regular") != 0 )
+	{
 		if( font->SetFamilyAndStyle(m_cFontType.c_str(),"Roman") != 0 )
 		{
 			printf( "Unknown font!\n" );
 			font->SetProperties( DEFAULT_FONT_REGULAR );
 		}
+	}
+
 	font->SetFlags( FPF_SMOOTHED );
 	font->SetSize(m_vFontSize);
 	SetFont(font);
@@ -512,20 +532,19 @@ void DockClock::MouseDown( const os::Point& cPosition, uint32 nButtons )
 	
 	if( nButtons == os::MOUSE_BUT_LEFT )
 	{
-		if (m_nClickTime + 500000 >= get_system_time())
+/*		if (m_nClickTime + 500000 >= get_system_time())
 		{
 			if (fork() == 0)
 				execlp("/Applications/Preferences/DateTime","/Applications/Preferences/DateTime",NULL);
 		}
 		else
 		{
-			m_bCanDrag = true;
+*/			m_bCanDrag = true;
 			m_bDisplayTime = !m_bDisplayTime;
 			Flush();
-		}
+/*		}
 		m_nClickTime = get_system_time();
-	}	
-	if( nButtons == 2 ) {
+*/	}	else if ( nButtons == 2 ) {
 		/* Change time format */
 		pcContextMenu->Open(ConvertToScreen(cPosition));
 	}
