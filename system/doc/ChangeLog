@@ -1,3 +1,8 @@
+* February 24 2006, Kristian Van Der Vliet *
+
+Added a Maestro 1/2[E] driver.  Ported from the Linux 2.6 OSS driver and tested
+on a Maestro 2E.  PCM output and mixer are functional.
+
 * February 11 2006, Kaj de Vos *
 
 Added objcopy from BinUtils to the base distribution, because it's needed by rescopy.
