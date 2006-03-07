@@ -1,0 +1,21 @@
+diff -ur espgs-8.15.1_orig/src/devs.mak espgs-8.15.1/src/devs.mak
+--- espgs-8.15.1_orig/src/devs.mak	2005-09-22 17:10:55.000000000 +0000
++++ espgs-8.15.1/src/devs.mak	2006-01-19 15:05:14.000000000 +0000
+@@ -1166,7 +1166,7 @@
+ 
+ ### --------------------------- The PSD device ------------------------- ###
+ 
+-psd_=$(GLOBJ)gdevpsd.$(OBJ)
++psd_=$(GLOBJ)gdevpsd.$(OBJ) $(GLOBJ)gdevdcrd.$(OBJ)
+ 
+ $(DD)psdrgb.dev : $(DEVS_MAK) $(psd_) $(GLD)page.dev
+ 	$(SETDEV) $(DD)psdrgb $(psd_)
+@@ -1174,7 +1174,7 @@
+ $(DD)psdcmyk.dev : $(DEVS_MAK) $(psd_) $(GLD)page.dev
+ 	$(SETDEV) $(DD)psdcmyk $(psd_)
+ 
+-$(GLOBJ)gdevpsd.$(OBJ) : $(GLSRC)gdevpsd.c $(PDEVH) $(math__h)\
++$(GLOBJ)gdevpsd.$(OBJ) : $(GLOBJ)gdevdcrd.$(OBJ) $(GLSRC)gdevpsd.c $(PDEVH) $(math__h)\
+  $(gdevdcrd_h) $(gscrd_h) $(gscrdp_h) $(gsparam_h) $(gxlum_h) $(icc_h)\
+  $(gstypes_h) $(gxdcconv_h) $(gdevdevn_h)
+ 	$(GLICCCC) $(GLO_)gdevpsd.$(OBJ) $(C_) $(GLSRC)gdevpsd.c
