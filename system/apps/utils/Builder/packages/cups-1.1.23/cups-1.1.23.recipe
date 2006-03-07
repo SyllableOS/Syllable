@@ -1,8 +1,7 @@
 authors
 	Kristian Van Der Vliet
 	Kaj de Vos
-status				developing
-warnings			cupsd may deadlock during operation.
+status				testing
 
 licenses			GPL+exception LGPL
 home				www.cups.org
@@ -22,8 +21,23 @@ no-build-dir
 
 ;configure-options	--enable-ssl
 
-links				smbspool lib/cups/backend/smb
+system-prefix-var	DSTROOT
+
+delete-files
+	share/doc
+;	share/cups/templates
+; Epson & HP printers are served by GutenPrint, but we'll leave the Dymo label printer driver
+	lib/cups/filter/rastertoepson
+	lib/cups/filter/rastertohp
+; Same with the PPDs for those printers; we'll leave the Dymo & Zebra label printers
+	share/cups/model/*jet*.ppd
+	share/cups/model/epson*.ppd
+	share/cups/model/okidat*.ppd
+	share/cups/model/st*.ppd
+
 documentation
 	README*.txt LICENSE.* CHANGES.txt CREDITS.txt ENCRYPTION.txt CGI.txt
-	INSTALL*.txt
 ;	doc
+build-docs			INSTALL*.txt
+
+links				/atheos/autolnk/bin/smbspool lib/cups/backend/smb

@@ -1,6 +1,134 @@
+diff -ur cups-1.1.23-orig/backend/usb-unix.c cups-1.1.23/backend/usb-unix.c
+--- cups-1.1.23-orig/backend/usb-unix.c	2005-01-03 19:29:45.000000000 +0000
++++ cups-1.1.23/backend/usb-unix.c	2006-01-18 12:31:13.000000000 +0000
+@@ -35,16 +35,20 @@
+  * Include necessary headers.
+  */
+ 
+-#ifdef __linux
++#if defined(__linux) || defined(__SYLLABLE__)
+ #  include <sys/ioctl.h>
+-#  include <linux/lp.h>
++#  ifdef __linux
++#    include <linux/lp.h>
++#  else
++#    include <atheos/lp.h>
++#  endif
+ #  define IOCNR_GET_DEVICE_ID		1
+ 
+ /*
+  * Get device_id string
+  */
+ #  define LPIOC_GET_DEVICE_ID(len)	_IOC(_IOC_READ, 'P', IOCNR_GET_DEVICE_ID, len)
+-#endif /* __linux */
++#endif /* __linux || __SYLLABLE__ */
+ 
+ #ifdef __sun
+ #  ifdef __sparc
+@@ -55,7 +59,6 @@
+ #  endif /* __sparc */
+ #endif /* __sun */
+ 
+-
+ /*
+  * Local functions...
+  */
+@@ -88,9 +91,9 @@
+ #if defined(HAVE_SIGACTION) && !defined(HAVE_SIGSET)
+   struct sigaction action;		/* Actions for POSIX signals */
+ #endif /* HAVE_SIGACTION && !HAVE_SIGSET */
+-#ifdef __linux
++#if defined(__linux) || defined(__SYLLABLE__)
+   unsigned int	status;			/* Port status (off-line, out-of-paper, etc.) */
+-#endif /* __linux */
++#endif /* __linux || __SYLLABLE__ */
+ 
+ 
+  /*
+@@ -155,7 +158,7 @@
+ #endif /* HAVE_SIGSET */
+   }
+ 
+-#if defined(__linux) && defined(LP_POUTPA)
++#if ( defined(__linux) || defined(__SYLLABLE__) ) && defined(LP_POUTPA)
+  /*
+   * Show the printer status before we send the file; normally, we'd
+   * do this while we write data to the printer, however at least some
+@@ -178,7 +181,7 @@
+     else if (!(status & LP_PSELECD))
+       fputs("WARNING: Printer off-line.\n", stderr);
+   }
+-#endif /* __linux && LP_POUTPA */
++#endif /* ( __linux || __SYLLABLE__ ) && LP_POUTPA */
+ 
+  /*
+   * Finally, send the print file...
+@@ -411,7 +414,7 @@
+ void
+ list_devices(void)
+ {
+-#ifdef __linux
++#if defined(__linux) || defined(__SYLLABLE__)
+   int	i;			/* Looping var */
+   int	length;			/* Length of device ID info */
+   int	fd;			/* File descriptor */
+@@ -430,8 +433,10 @@
+     strcpy(format, "/dev/usblp%d");
+   else if (access("/dev/usb/usblp0", 0) == 0)
+     strcpy(format, "/dev/usb/usblp%d");
+-  else
++  else if (access("/dev/usb/lp0", 0) == 0)
+     strcpy(format, "/dev/usb/lp%d");
++  else
++    strcpy(format, "/dev/printer/usb/%d");
+ 
+  /*
+   * Then open each USB device...
+@@ -578,7 +583,7 @@
+ 
+   if (strncmp(uri, "usb:/dev/", 9) == 0)
+     return (open(uri + 4, O_RDWR | O_EXCL));
+-#ifdef __linux
++#if defined(__linux) || defined(__SYLLABLE__)
+   else if (strncmp(uri, "usb://", 6) == 0)
+   {
+    /*
+@@ -604,8 +609,10 @@
+       strcpy(format, "/dev/usblp%d");
+     else if (access("/dev/usb/usblp0", 0) == 0)
+       strcpy(format, "/dev/usb/usblp%d");
+-    else
++    else if (access("/dev/usb/lp0", 0) == 0)
+       strcpy(format, "/dev/usb/lp%d");
++    else
++      strcpy(format, "/dev/printer/usb/%d");
+ 
+    /*
+     * Then find the correct USB device...
+@@ -793,7 +800,7 @@
+ 
+     return (-1);
+   }
+-#endif /* __linux */
++#endif /* __linux || __SYLLABLE__ */
+   else
+   {
+     errno = ENODEV;
+diff -ur cups-1.1.23-orig/backend/usb.c cups-1.1.23/backend/usb.c
+--- cups-1.1.23-orig/backend/usb.c	2005-01-03 19:29:45.000000000 +0000
++++ cups-1.1.23/backend/usb.c	2006-01-18 12:31:13.000000000 +0000
+@@ -71,7 +71,7 @@
+ 
+ #ifdef __APPLE__
+ #  include "usb-darwin.c"
+-#elif defined(__linux) || defined(__sun) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
++#elif defined(__linux) || defined(__sun) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__SYLLABLE__)
+ #  include "usb-unix.c"
+ #else
+ /*
 diff -ur cups-1.1.23-orig/filter/Makefile cups-1.1.23/filter/Makefile
 --- cups-1.1.23-orig/filter/Makefile	2005-01-03 19:29:58.000000000 +0000
-+++ cups-1.1.23/filter/Makefile	2005-11-22 15:02:25.000000000 +0000
++++ cups-1.1.23/filter/Makefile	2006-01-18 12:31:23.000000000 +0000
 @@ -130,7 +130,7 @@
  
  libcupsimage.so.2 libcupsimage.sl.2:	$(IMAGEOBJS) ../Makedefs
@@ -12,7 +140,7 @@ diff -ur cups-1.1.23-orig/filter/Makefile cups-1.1.23/filter/Makefile
  
 diff -ur cups-1.1.23-orig/scheduler/main.c cups-1.1.23/scheduler/main.c
 --- cups-1.1.23-orig/scheduler/main.c	2005-01-03 19:30:00.000000000 +0000
-+++ cups-1.1.23/scheduler/main.c	2005-11-22 15:03:21.000000000 +0000
++++ cups-1.1.23/scheduler/main.c	2006-01-18 12:31:23.000000000 +0000
 @@ -297,6 +297,9 @@
    else
      MaxFDs = limit.rlim_max;
