@@ -5,7 +5,7 @@ CXXFLAGS += -c -fexceptions -ffast-math $(shell freetype-config --cflags)
 AOPTS    = -c
 LIBS     = -lsyllable
 
-OBJS =  ddriver.o ddline.o ddmemory.o vesadrv.o server.o input.o			\
+OBJS =  ddriver.o ddline.o ddmemory.o event.o vesadrv.o server.o input.o			\
 	config.o keyboard.o keymap.o defaultkeymap.o			\
 	sapplication.o swindow.o layer.o toplayer.o render.o bitmap.o crdtrans.o	\
 	sfont.o fontnode.o wndborder.o desktop.o winselect.o sprite.o	\
@@ -48,4 +48,5 @@ clean:
 	rm -f $(OBJS) $(OBJDIR)/*.d $(OBJDIR)/appserver
 
 -include $(OBJDIR)/*.d
+
 
