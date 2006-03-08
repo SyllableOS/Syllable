@@ -1168,8 +1168,8 @@ void NVLoadStateExt( NVPtr pNv, FX_HW_STATE * state )
     VGA_WR08(pNv->PCIO, 0x03D5, state->pixel);
     VGA_WR08(pNv->PCIO, 0x03D4, 0x2D);
     VGA_WR08(pNv->PCIO, 0x03D5, state->horiz);
-    VGA_WR08(pNv->PCIO, 0x03D4, 0x1C);
-    VGA_WR08(pNv->PCIO, 0x03D5, state->fifo);
+//    VGA_WR08(pNv->PCIO, 0x03D4, 0x1C);
+//    VGA_WR08(pNv->PCIO, 0x03D5, state->fifo);
     VGA_WR08(pNv->PCIO, 0x03D4, 0x1B);
     VGA_WR08(pNv->PCIO, 0x03D5, state->arbitration0);
     VGA_WR08(pNv->PCIO, 0x03D4, 0x20);

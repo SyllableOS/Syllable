@@ -304,10 +304,8 @@ FX::FX( int nFd ):m_cGELock( "fx_ge_lock" ), m_hRegisterArea( -1 ), m_hFrameBuff
 
 	m_bVideoOverlayUsed = false;
 	m_bIsInitiated = true;
-	
 	if( m_sHW.ScratchBufferStart > 1024 * 1024 * 8 )
 		InitMemory( 1024 * 1024 * 8, m_sHW.ScratchBufferStart - 1024 * 1024 * 8, PAGE_SIZE - 1, 63 );
-	
 }
 
 FX::~FX()
@@ -446,7 +444,7 @@ int FX::SetScreenMode( os::screen_mode sMode )
 	newmode.crtc[0x13] = Set8Bits( ( sMode.m_nWidth / 8 ) * nBpp );
 	newmode.crtc[0x15] = Set8Bits( vertBlankStart );
 	newmode.crtc[0x16] = Set8Bits( vertBlankEnd );
-	newmode.crtc[0x17] = 0xc3;
+	newmode.crtc[0x17] = 0xe3;
 	newmode.crtc[0x18] = 0xff;
 
 	newmode.gra[0x05] = 0x40;
@@ -562,7 +560,6 @@ int FX::SetScreenMode( os::screen_mode sMode )
 
 	/* Write registers */
 	NVLoadStateExt( &m_sHW, nvReg );
-	NVLockUnlock( &m_sHW, 0 );
 	LoadVGAState( &newmode );
 
 	/* Load color registers */
@@ -578,7 +575,7 @@ int FX::SetScreenMode( os::screen_mode sMode )
 	m_sCurrentMode = sMode;
 	m_sCurrentMode.m_nBytesPerLine = sMode.m_nWidth * nBpp;
 
-	NVSetStartAddress( &m_sHW, 0 /*m_sCurrentMode.m_nBytesPerLine * m_sCurrentMode.m_nHeight */  );
+	//NVSetStartAddress( &m_sHW, 0 /*m_sCurrentMode.m_nBytesPerLine * m_sCurrentMode.m_nHeight */  );
 
 	/* Init acceleration */
 	SetupAccel();
@@ -608,12 +605,14 @@ os::screen_mode FX::GetCurrentScreenMode()
 
 void FX::LockBitmap( SrvBitmap* pcDstBitmap, SrvBitmap* pcSrcBitmap, os::IRect cSrc, os::IRect cDst )
 {
+	#if 0
 	if( ( pcDstBitmap->m_bVideoMem == false && ( pcSrcBitmap == NULL || pcSrcBitmap->m_bVideoMem == false ) ) || m_bEngineDirty == false )
 		return;
 	m_cGELock.Lock();
 	WaitForIdle();	
 	m_cGELock.Unlock();
 	m_bEngineDirty = false;
+	#endif
 }
 
 
@@ -741,6 +740,7 @@ bool FX::DrawLine( SrvBitmap * pcBitMap, const IRect & cClipRect, const IPoint &
 	DmaNext( &m_sHW, ( ( y2 << 16 ) | ( x2 & 0xffff ) ) );
 	DmaNext( &m_sHW, ( ( ( y2 + 1 ) << 16 ) | ( x2 & 0xffff ) ) );
 	DmaKickoff( &m_sHW );
+	WaitForIdle();
 
 	m_bEngineDirty = true;
 	m_cGELock.Unlock();
@@ -788,6 +788,7 @@ bool FX::FillRect( SrvBitmap * pcBitMap, const IRect & cRect, const Color32_s & 
 	DmaNext( &m_sHW, ( ( cRect.left << 16 ) | cRect.top ) );
 	DmaNext( &m_sHW, ( ( nWidth << 16 ) | nHeight ) );
 	DmaKickoff( &m_sHW );
+	WaitForIdle();
 
 	m_bEngineDirty = true;
 	m_cGELock.Unlock();
@@ -824,7 +825,8 @@ bool FX::BltBitmap( SrvBitmap * pcDstBitMap, SrvBitmap * pcSrcBitMap, IRect cSrc
 	DmaNext( &m_sHW, ( ( cDstPos.y << 16 ) | cDstPos.x ) );
 	DmaNext( &m_sHW, ( ( nHeight << 16 ) | nWidth ) );
 	DmaKickoff( &m_sHW );
-
+	WaitForIdle();
+	
 	m_bEngineDirty = true;
 	m_cGELock.Unlock();
 	return true;
@@ -1107,6 +1109,7 @@ void FX::SetupAccel()
 	DmaStart( &m_sHW, ROP_SET, 1 );
 	DmaNext( &m_sHW, 0xCA );
 	DmaKickoff( &m_sHW );
+	WaitForIdle();
 }
 
 
@@ -1267,6 +1270,7 @@ void FX::CommonSetup()
 	m_sHW.PCRTC = m_sHW.PCRTC0;
 	m_sHW.PRAMDAC = m_sHW.PRAMDAC0;
 	m_sHW.PDIO = m_sHW.PDIO0;
+	NVLockUnlock( &m_sHW, 0 );
 
 	m_sHW.Television = false;
 	m_sHW.FlatPanel = -1;

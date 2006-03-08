@@ -963,6 +963,16 @@ void LayoutSpacer::SetMaxSize( const Point & cSize )
 	m_cMaxSize = cSize;
 }
 
+Point LayoutSpacer::GetMinSize() const
+{
+	return( m_cMinSize );
+}
+
+Point LayoutSpacer::GetMaxSize() const
+{
+	return( m_cMaxSize );
+}
+
 Point LayoutSpacer::CalculatePreferredSize( bool bLargest )
 {
 	return ( ( bLargest ) ? m_cMaxSize : m_cMinSize );

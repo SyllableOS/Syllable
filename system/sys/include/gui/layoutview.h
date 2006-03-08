@@ -157,7 +157,9 @@ public:
 
     void SetMinSize( const Point& cSize );
     void SetMaxSize( const Point& cSize );
-
+	
+	Point GetMinSize() const;
+	Point GetMaxSize() const;
 private:
     LayoutSpacer& operator=( const LayoutSpacer& );
     LayoutSpacer( const LayoutSpacer& );

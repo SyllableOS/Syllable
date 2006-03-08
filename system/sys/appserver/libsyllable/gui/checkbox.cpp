@@ -93,7 +93,7 @@ Point CheckBox::GetPreferredSize( bool bLargest ) const
 	{
 		return Point( COORD_MAX, COORD_MAX );
 	} else {
-		Point cSize( 13, 13 );
+		Point cSize( 14, 14 );
 		Point cStringExt = GetTextExtent( GetLabel() );
 		if( cStringExt.y > 13 ) {
 			cSize.y = cStringExt.y;
@@ -213,7 +213,7 @@ void CheckBox::Paint( const Rect & cUpdateRect )
 	Rect cButFrame( 0, 0, 13, 13 );
 
 	float nDelta = ( cBounds.Height() - cButFrame.Height(  ) ) / 2;
-
+	
 	cButFrame.top += nDelta;
 	cButFrame.bottom += nDelta;
 
