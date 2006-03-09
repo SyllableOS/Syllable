@@ -2,6 +2,7 @@ authors
 	Mike Saunders
 	Kaj de Vos
 status				testing
+warnings			Doesn't support building in staging areas.
 notes				Can't find OpenSSL
 
 inherits			sourceforge
@@ -13,18 +14,19 @@ packages			nail/nail-11.1
 
 ;build-needs			openssl
 
-;install-prefix-var	DESTDIR
+install-prefix-var	PREFIX
 
 make-vars
-	PREFIX			/usr/nail
 	SYSCONFDIR		/usr/nail/etc
 ;	INCLUDES		-I/usr/local/ssl/include/openssl
 
+system-prefix-var	DESTDIR
+
 install-vars
-	PREFIX			/usr/nail
 	SYSCONFDIR		/usr/nail/etc
 	UCBINSTALL		/atheos/autolnk/bin/install
+
+move-files			share/man .
+delete-files		share
+
 documentation		README I18N INSTALL COPYING ChangeLog TODO AUTHORS nail.1.html
-post-install
-	mv /usr/nail/share/man /usr/nail
-	rm /usr/nail/share
