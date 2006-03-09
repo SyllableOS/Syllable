@@ -100,6 +100,9 @@ test-options		-k
 ; Non-standard test targets (default is check):
 test-targets		test
 
+; Don't delete any previous installation:
+merge-install
+
 install-tree		<Extra subdirectories to create>
 
 ; Installing:
