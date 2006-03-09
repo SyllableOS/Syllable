@@ -115,7 +115,7 @@ tree
 resources
 	boot/grub				GrUB-binaries-0.95
 	boot/grub				menu.lst
-	atheos/sys/libs			GCC-libraries-3.4.3
+;	atheos/sys/libs			GCC-libraries-3.4.3
 	atheos/Documentation	documentation/Welcome
 	atheos/Documentation	documentation/Copyrights
 
@@ -205,7 +205,7 @@ modules
 	stage libraries/bison-1.875
 	stage libraries/binutils-2.15
 
-;	libraries libraries/gcc-3.4.3
+	libraries libraries/gcc-3.4.3
 
 ;	freetype-config needs to be in the path (use bootstrap):
 	stage libraries/freetype-2.1.10
@@ -287,3 +287,4 @@ modules
 	apps/utils/nettools
 	apps/utils/pkgmanager
 	apps/utils/systools
+
