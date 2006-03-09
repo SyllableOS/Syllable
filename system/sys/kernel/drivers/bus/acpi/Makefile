@@ -86,7 +86,7 @@ install: all
 	cp -f $(OBJDIR)/acpi /system/drivers/bus/acpi
 
 dist: all
-	mkdir -p $(DIST_DIR)/system/drivers/bus
+	mkdir -p $(DIST_DIR)/atheos/sys/drivers/bus
 	cp -f $(OBJDIR)/acpi $(DIST_DIR)/atheos/sys/drivers/bus/acpi
 
 clean:
