@@ -3,7 +3,6 @@ authors
 	Kaj de Vos
 status				developing
 warnings
-	This recipe references files using absolute paths which will not work if building into a staging area.
 	CUPS needs to be installed in the running system.
 ;	The generated PPDs will be moved to /tmp
 notes				Prior to version 5.0 Gutenprint was known as Gimp-Print
@@ -50,3 +49,4 @@ documentation
 	README ABOUT-NLS COPYING NEWS ChangeLog AUTHORS
 ;	doc
 ;	samples
+
