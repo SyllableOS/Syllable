@@ -72,7 +72,7 @@ configure-args		--prefix=/usr/foo
 configure-options	--with-option
 
 ; Non-standard install prefix variable, for staging or when configure is not available:
-;install-prefix-var	prefix
+install-prefix-var	prefix
 
 ; Building:
 ; [<pre-make>]
@@ -107,6 +107,9 @@ install-tree		<Extra subdirectories to create>
 ; [<install-env>] <make> [<install-prefix-var>=<(Stage) installation path>] [<install-vars>] <install-targets>
 
 install				<Installation commands override>
+
+; Non-standard install prefix variable for staging, in addition to configure prefix:
+system-prefix-var	prefix
 
 ; Extra environment variables for make install:
 install-env

@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.58
+# Version 0.6.59
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -524,9 +524,11 @@ def installModule originalStaging, staging, directive, target
 							else
 								((vars = recipe['install-env']) ? toVariables(vars) + ' ' : '') +
 								makeCommand(target) +
-								(staging != :imaging && configured ?
-									'' :
-									" #{(var = recipe['install-prefix-var']) ? var : 'prefix'}=" + root
+								(	staging != :imaging && configured ?
+										'' :
+									(var = recipe['system-prefix-var']) ?
+										var + '=' + @systemRoot :
+										((var = recipe['install-prefix-var']) ? var : 'prefix') + '=' + root
 								) +
 								((vars = recipe['install-vars']) ? ' ' + toVariables(vars) : '') +
 								' ' + ((targets = recipe['install-targets']) ? toString(targets) : 'install')
@@ -1613,7 +1615,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.58',
+	puts 'Syllable Build System 0.6.59',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when '?', '-?', '-h', '-help', '--help'
