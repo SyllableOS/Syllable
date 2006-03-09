@@ -2,7 +2,7 @@ authors
 	Mike Saunders
 	Kaj de Vos
 status				testing
-warnings			Doesn't support building in staging areas.
+warnings			Doesn't adapt configuration directory when building in staging area.
 notes				Can't find OpenSSL
 
 inherits			sourceforge
@@ -30,3 +30,4 @@ move-files			share/man .
 delete-files		share
 
 documentation		README I18N INSTALL COPYING ChangeLog TODO AUTHORS nail.1.html
+

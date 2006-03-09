@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.62
+# Version 0.6.63
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -486,10 +486,11 @@ def installModule originalStaging, staging, directive, target
 			else
 				recipe = getRecipe target
 
-				if exists? root and not recipe['merge-install'] and not
+				if exists? root and not
 					begin
-						if staging or not firstColumn(parseList(recipe['build-needs'])).include? name
-						then
+						if recipe['merge-install']
+							# TODO: unregister previous installation
+						elsif staging or not firstColumn(parseList(recipe['build-needs'])).include? name
 							@log.header 'Uninstalling ' + shortName(target)
 							uninstallModule staging, target  # FIXME: double failure logging!
 						else
@@ -526,11 +527,12 @@ def installModule originalStaging, staging, directive, target
 								makeCommand(target) +
 								(	staging != :imaging && configured ?
 										'' :
-										((var = recipe['system-prefix-var']) ?
-											" #{var}=" + @systemRoot :
+										((p = recipe['system-prefix-var']) ?
+											" #{p}=" + @systemRoot :
 											''
 										) +
-										" #{(var = recipe['install-prefix-var']) ? var : 'prefix'}=" + root
+										" #{(var = recipe['install-prefix-var']) ? var : 'prefix'}=" +
+											(p ? prefix(staging, target) : root)
 								) +
 								((vars = recipe['install-vars']) ? ' ' + toVariables(vars) : '') +
 								' ' + ((targets = recipe['install-targets']) ? toString(targets) : 'install')
@@ -1617,7 +1619,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.62',
+	puts 'Syllable Build System 0.6.63',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when '?', '-?', '-h', '-help', '--help'
@@ -1835,3 +1837,4 @@ else
 	@log.close
 	exit @log.failures.length  # FIXME: only works when processing a profile
 end
+
