@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Syllable Build System
-# Version 0.6.64
+# Version 0.6.65
 # Copyright (c) 2002-2006 Kaj de Vos
 # License: GPL 2 or any later version
 
@@ -56,15 +56,17 @@ def downloadModule target
 				firstColumn(parseList(packages)) :
 				fullName(target)
 			)
-				for location in toList locations
-					break unless for type in ['tar.bz2', 'tbz2', 'tar.gz', 'tgz', 'zip']
-						@log.subheader 'Trying ' + f = File.join(location, file = package + '.' + type)
-						break if action 'wget --tries=5 ' + f
+				unless sourcePackageAvailable? package
+					for location in toList locations
+						break unless for type in ['tar.bz2', 'tbz2', 'tar.gz', 'tgz', 'zip']
+							@log.subheader 'Trying ' + f = File.join(location, file = package + '.' + type)
+							break if action 'wget --tries=5 ' + f
+						end
 					end
-				end
 
-				@log.subheader "Moving package #{file = File.basename file} to sources directory"
-				break unless action "mv #{file} " + @sourcesPath
+					@log.subheader "Moving package #{file = File.basename file} to sources directory"
+					break unless action "mv #{file} " + @sourcesPath
+				end
 			end
 		else  # Get it from a repository
 			(exists? dir = File.dirname(target) or action 'mkdir --parents ' + dir) and
@@ -1185,11 +1187,11 @@ def parseDictionary text  # Load key/value pairs into a hash table
 
 	for line in text
 		if line !~ /^\s+/  # A key line
-			unless line[/\s/]  # A single key
+			unless (line = line.strip)[/\s/]  # A single key
 				hash[lastKey = line] = ''
-			else  # A key with a single value
-				key, value = toKeyValue line
-				hash[key] = value
+			else  # A key with a value
+				lastKey, value = toKeyValue line
+				hash[lastKey] = value
 			end
 		else  # Starts with whitespace, so it's a list value
 			if hash[lastKey] == ''
@@ -1410,11 +1412,17 @@ def makeCommand port
 	'make' + ((file = getRecipe(port)['makefile']) ? ' -f ' + file : '')
 end
 
+def sourcePackageAvailable? package
+	Dir[File.join(@sourcesPath, File.basename(package) + '.*')] != []
+end
+
 def sourcePackagesAvailable? target
-	package = (packages = getRecipe(target)['packages']) ?
-		File.basename(parseList(packages).first) :
+	for package in ((packages = getRecipe(target)['packages']) ?
+		firstColumn(parseList(packages)) :
 		fullName(target)
-	Dir[File.join(@sourcesPath, package + '.*')] != []
+	)
+		break unless sourcePackageAvailable? package
+	end
 end
 
 def action command  # Return the output of the shell command, or false if unsuccessful
@@ -1619,7 +1627,7 @@ arg1, arg2, arg3 = ARGV
 
 case arg1
 when '-v', '--version'
-	puts 'Syllable Build System 0.6.64',
+	puts 'Syllable Build System 0.6.65',
 		'Copyright (c) 2002-2006 Kaj de Vos',
 		'License: GPL 2 or any later version'
 when '?', '-?', '-h', '-help', '--help'
