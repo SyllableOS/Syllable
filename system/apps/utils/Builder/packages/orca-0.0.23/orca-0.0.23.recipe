@@ -20,15 +20,14 @@ patch
 	cp support/m2/m2			.
 	cp support/m2/m2_linux.r	m2_template.r
 
-no-build-dir
-
 ;configure			./m2
 
 install-tree		bin lib include
 install				true
 install-files
-	ocore			bin
-	liborca.a		lib
+	orca			bin
+	liborca0.a		lib
 	ovalue.h		include
 documentation		README LICENSE ChangeLog TODO
-links				ocore bin/rebol
+links				orca bin/rebol
+
