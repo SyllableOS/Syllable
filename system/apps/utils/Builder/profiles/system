@@ -7,6 +7,7 @@ tree
 
 	boot
 	boot/grub
+	boot/grub/documentation
 
 ;	Main directory structure
 
@@ -113,7 +114,7 @@ tree
 	atheos/Documentation
 
 resources
-	boot/grub				GrUB-binaries-0.95
+	boot/grub				GrUB-binaries-0.97
 	boot/grub				menu.lst
 ;	atheos/sys/libs			GCC-libraries-3.4.3
 	atheos/Documentation	documentation/Welcome
@@ -121,7 +122,7 @@ resources
 
 modules
 ;	Hangs during configuring:
-;	sys/boot/grub-0.95
+;	sys/boot/grub-0.97
 
 	other/config/default
 	other/config/etc
