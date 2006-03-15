@@ -1,3 +1,8 @@
+* March 15 2006, Kristian Van Der Vliet *
+
+Added DTF_WRAP_SOFT & DTF_UNDERLINES flags to DrawText() & GetTextExtent()
+Patched libsyllable classes to use DTF_UNDERLINES as required.
+
 * February 17 2006, Arno Klenke *
 
 New event class for interprocess communication
