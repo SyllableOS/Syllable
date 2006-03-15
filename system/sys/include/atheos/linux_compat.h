@@ -117,7 +117,16 @@ typedef uint32		dma_addr_t;
 #define le32desc_to_virt(addr) \
 	bus_to_virt(le32_to_cpu(addr))
 
-#define ioremap(p,n)	((void*)(p))
+static inline void * ioremap( unsigned long phys_addr, unsigned long size )
+{
+	area_id hArea;
+	void *pAddr = NULL;
+
+	hArea = create_area( "mmio", &pAddr, size, size, AREA_KERNEL|AREA_ANY_ADDRESS|AREA_FULL_ACCESS, AREA_NO_LOCK );
+	remap_area( hArea, (void *) ( phys_addr & PCI_ADDRESS_IO_MASK ) );
+
+	return pAddr;
+}
 
 #define copy_to_user(x, y, z) \
 	memcpy_to_user(x, y, z)
