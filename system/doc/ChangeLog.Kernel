@@ -1,3 +1,8 @@
+* March 15 2006, Kristian Van Der Vliet *
+
+Added a working ioremap() implementation to linux_compat.h  This has fixed at least one known
+problem with the 3c59x driver and certain mini-PCI laptop cards.
+
 * January 27 2006, Arno Klenke *
 
 Moved PGDIR_XXX macros from atheos/areas.h to a private kernel header
