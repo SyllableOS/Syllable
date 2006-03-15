@@ -391,14 +391,14 @@ void RadioButton::Paint( const Rect & cUpdateRect )
 		}
 
 		SetBgColor( get_default_color( COL_NORMAL ) );
-		DrawText( cLabelRect, cLabel, DTF_ALIGN_MIDDLE | DTF_ALIGN_LEFT );
+		DrawText( cLabelRect, cLabel, DTF_ALIGN_MIDDLE | DTF_ALIGN_LEFT | DTF_UNDERLINES );
 
 		if( IsEnabled() == false )
 		{
 			SetFgColor( 100, 100, 100 );
 			SetDrawingMode( DM_OVER );
 			cLabelRect.MoveTo( -1, -1 );
-			DrawText( cLabelRect, cLabel, DTF_ALIGN_MIDDLE | DTF_ALIGN_LEFT );
+			DrawText( cLabelRect, cLabel, DTF_ALIGN_MIDDLE | DTF_ALIGN_LEFT | DTF_UNDERLINES );
 			SetDrawingMode( DM_COPY );
 		}
 	}

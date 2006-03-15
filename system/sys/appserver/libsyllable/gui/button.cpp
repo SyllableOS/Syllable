@@ -294,13 +294,13 @@ void Button::Paint( const Rect & cUpdateRect )
 		cBounds.MoveTo( 1, 1 );
 	}
 
-	DrawText( cBounds, GetLabel(), DTF_ALIGN_CENTER );
+	DrawText( cBounds, GetLabel(), DTF_ALIGN_CENTER | DTF_UNDERLINES );
 	if( IsEnabled() == false )
 	{
 		SetFgColor( 100, 100, 100 );
 		SetDrawingMode( DM_OVER );
 		cBounds.MoveTo( -1, -1 );
-		DrawText( cBounds, GetLabel(), DTF_ALIGN_CENTER );
+		DrawText( cBounds, GetLabel(), DTF_ALIGN_CENTER | DTF_UNDERLINES );
 		SetDrawingMode( DM_COPY );
 	}
 }

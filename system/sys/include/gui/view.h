@@ -413,7 +413,7 @@ public:
     void		GetStringWidths( const char** apzStringArray, const int* anLengthArray,
 					 int nStringCount, float* avWidthArray ) const;
 
-    Point		GetTextExtent( const String& cString, uint32 nFlags = 0 ) const;
+    Point		GetTextExtent( const String& cString, uint32 nFlags = 0, int nTargetWidth = -1 ) const;
 
     int			GetStringLength( const String& cString, float vWidth, bool bIncludeLast = false ) const;
     int			GetStringLength( const char* pzString, int nLen, float vWidth, bool bIncludeLast = false ) const;

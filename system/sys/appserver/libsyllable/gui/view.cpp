@@ -2979,14 +2979,14 @@ void View::GetStringWidths( const char *apzStringArray[], const int *anLengthArr
 	m->m_pcFont->GetStringWidths( apzStringArray, anLengthArray, nStringCount, avWidthArray );
 }
 
-Point View::GetTextExtent( const String & cString, uint32 nFlags ) const
+Point View::GetTextExtent( const String & cString, uint32 nFlags, int nTargetWidth ) const
 {
 	if( m->m_pcFont == NULL )
 	{
 		dbprintf( "Warning: %s() View %s has no font\n", __FUNCTION__, m->m_cTitle.c_str() );
 		return Point();
 	}
-	return ( m->m_pcFont->GetTextExtent( cString, nFlags ) );
+	return ( m->m_pcFont->GetTextExtent( cString, nFlags, nTargetWidth ) );
 }
 
 //----------------------------------------------------------------------------

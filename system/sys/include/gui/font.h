@@ -517,7 +517,7 @@ public:
      * \sa 
      * \author
 	 **************************************************************************/
-    Point				GetTextExtent( const char* pzString, int nLength = -1, uint32 nFlags = 0 ) const;
+    Point				GetTextExtent( const char* pzString, int nLength = -1, uint32 nFlags = 0, int nTargetWidth = -1 ) const;
 
 	/** 
      * \par Description:
@@ -526,7 +526,7 @@ public:
      * \sa 
      * \author
 	 **************************************************************************/
-    Point				GetTextExtent( const String& cString, uint32 nFlags = 0 ) const;
+    Point				GetTextExtent( const String& cString, uint32 nFlags = 0, int nTargetWidth = -1 ) const;
     
 	/** 
      * \par Description:
@@ -535,7 +535,7 @@ public:
      * \sa 
      * \author
 	 **************************************************************************/    
-    void				GetTextExtents( const char** apzStringArray, const int* anLengthArray,int nStringCount, Point* acExtentArray, uint32 nFlags ) const;
+    void				GetTextExtents( const char** apzStringArray, const int* anLengthArray,int nStringCount, Point* acExtentArray, uint32 nFlags, int nTargetWidth = -1 ) const;
 
 	/** Gets the length of a string.
      * \par Description:

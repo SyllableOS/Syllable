@@ -632,26 +632,26 @@ void MenuItem::Draw()
 	if( !(m->m_cShortcut == "") ) {
 		Rect cShortcutRect( cTextRect.right, cFrame.top, cFrame.right, cFrame.bottom );
 		pcMenu->SetDrawingMode(DM_COPY);
-		pcMenu->DrawText( cShortcutRect, m->m_cShortcut, DTF_ALIGN_LEFT | DTF_ALIGN_MIDDLE );
+		pcMenu->DrawText( cShortcutRect, m->m_cShortcut, DTF_ALIGN_LEFT | DTF_ALIGN_MIDDLE | DTF_UNDERLINES );
 		if( IsEnabled() == false )
 		{
 			pcMenu->SetFgColor( 100, 100, 100 );
 			pcMenu->SetDrawingMode( DM_OVER );
 			cShortcutRect.MoveTo( -1, -1 );
-			pcMenu->DrawText( cShortcutRect, m->m_cShortcut, DTF_ALIGN_LEFT | DTF_ALIGN_MIDDLE );
+			pcMenu->DrawText( cShortcutRect, m->m_cShortcut, DTF_ALIGN_LEFT | DTF_ALIGN_MIDDLE | DTF_UNDERLINES );
 			pcMenu->SetDrawingMode( DM_COPY );
 		}
 	}
 
 	pcMenu->SetDrawingMode(DM_COPY);
-	pcMenu->DrawText( cTextRect, cLabel, DTF_ALIGN_LEFT | DTF_ALIGN_MIDDLE );
+	pcMenu->DrawText( cTextRect, cLabel, DTF_ALIGN_LEFT | DTF_ALIGN_MIDDLE | DTF_UNDERLINES );
 
 	if( IsEnabled() == false )
 	{
 		pcMenu->SetFgColor( 100, 100, 100 );
 		pcMenu->SetDrawingMode( DM_OVER );
 		cTextRect.MoveTo( -1, -1 );
-		pcMenu->DrawText( cTextRect, cLabel, DTF_ALIGN_LEFT | DTF_ALIGN_MIDDLE );
+		pcMenu->DrawText( cTextRect, cLabel, DTF_ALIGN_LEFT | DTF_ALIGN_MIDDLE | DTF_UNDERLINES );
 		pcMenu->SetDrawingMode( DM_COPY );
 	}
 

@@ -345,14 +345,14 @@ void ImageButton::Paint( const Rect & cUpdateRect )
 			}
 
 			SetFgColor( 0, 0, 0 );
-			DrawText( cTextBounds, GetLabel() );
+			DrawText( cTextBounds, GetLabel(), DTF_UNDERLINES );
 		}
 		else
 		{
-			DrawText( cTextBounds, GetLabel() );
+			DrawText( cTextBounds, GetLabel(), DTF_UNDERLINES );
 			SetFgColor( 100, 100, 100 );
 			SetDrawingMode( DM_OVER );
-			DrawText( cTextBounds - Point( 1, 1 ), GetLabel() );
+			DrawText( cTextBounds - Point( 1, 1 ), GetLabel(), DTF_UNDERLINES );
 			SetDrawingMode( DM_COPY );
 		}
 	}

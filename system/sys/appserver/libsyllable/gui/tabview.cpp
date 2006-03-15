@@ -134,7 +134,7 @@ void TabViewTab::Paint( View* pcView, const Rect& cTabFrame, int nIndex )
 	}
 	pcView->SetFgColor( 0, 0, 0 );
 
-	pcView->DrawText( cTabFrame, GetLabel(), DTF_CENTER );
+	pcView->DrawText( cTabFrame, GetLabel(), DTF_CENTER | DTF_UNDERLINES );
 
 //	MovePenTo( x + ( vWidth - 4 ) * 5 / 100 + 4, cTabFrame.top + vTabHeight / 2 + sFontHeight.ascender - sFontHeight.line_gap / 2 - vGlyphHeight / 2 + 2 );
 

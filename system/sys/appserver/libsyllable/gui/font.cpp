@@ -424,24 +424,24 @@ void Font::GetStringWidths( const char **apzStringArray, const int *anLengthArra
 	delete[]pBuffer;
 }
 
-Point Font::GetTextExtent( const char *pzString, int nLength, uint32 nFlags ) const
+Point Font::GetTextExtent( const char *pzString, int nLength, uint32 nFlags, int nTargetWidth ) const
 {
 	const char *apzStrPtr[] = { pzString };
 	Point cExt;
 
 	if( nLength == -1 ) nLength = strlen( pzString );
 
-	GetTextExtents( apzStrPtr, &nLength, 1, &cExt, nFlags );
+	GetTextExtents( apzStrPtr, &nLength, 1, &cExt, nFlags, nTargetWidth );
 
 	return ( cExt );
 }
 
-Point Font::GetTextExtent( const String & cString, uint32 nFlags ) const
+Point Font::GetTextExtent( const String & cString, uint32 nFlags, int nTargetWidth ) const
 {
-	return ( GetTextExtent( cString.c_str(), cString.size(), nFlags ) );
+	return ( GetTextExtent( cString.c_str(), cString.size(), nFlags, nTargetWidth ) );
 }
 
-void Font::GetTextExtents( const char **apzStringArray, const int *anLengthArray, int nStringCount, Point *acExtentArray, uint32 nFlags ) const
+void Font::GetTextExtents( const char **apzStringArray, const int *anLengthArray, int nStringCount, Point *acExtentArray, uint32 nFlags, int nTargetWidth ) const
 {
 	int i;
 
@@ -463,6 +463,7 @@ void Font::GetTextExtents( const char **apzStringArray, const int *anLengthArray
 	psReq->hFontToken = m_hFontHandle;
 	psReq->nStringCount = nStringCount;
 	psReq->nFlags = nFlags;
+	psReq->nTargetWidth = nTargetWidth;
 
 	int *pnLen = &psReq->sFirstHeader.nLength;
 

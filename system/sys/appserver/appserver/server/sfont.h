@@ -153,7 +153,7 @@ public:
     int		GetAdvance() const		{ return( m_nAdvance ); 	}
     int		GetStringWidth( const char* pzString, int nLength );
     int		GetStringLength( const char* pzString, int nLength, int nWidth, bool bIncludeLast );
-    os::IPoint	GetTextExtent( const char* pzString, int nLength, uint32 nFlags );
+    os::IPoint	GetTextExtent( const char* pzString, int nLength, uint32 nFlags, int nTargetWidth = -1 );
 	bool	GetNextSupportedChar( uint32* pnLastChar );
 	bool	GetFirstSupportedChar( uint32* pnChar );
 	

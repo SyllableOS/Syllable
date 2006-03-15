@@ -520,70 +520,159 @@ int SFontInstance::GetStringWidth( const char *pzString, int nLength )
 	return ( nWidth );
 }
 
-IPoint SFontInstance::GetTextExtent( const char *pzString, int nLength, uint32 nFlags )
+IPoint SFontInstance::GetTextExtent( const char *pzString, int nLength, uint32 nFlags, int nTargetWidth )
 {
 	IPoint cExt( 0, m_nAscender - m_nDescender );
-	int nLineExtent = 0;
+
+	if( ( nFlags & DTF_WRAP_SOFT ) && ( nTargetWidth <= 0 ) )
+		return cExt;
 
 	g_cFontLock.Lock();
-	while( nLength > 0 )
+
+	// Count rows.
+	int i, nCharLength = 0;
+	const char *p = pzString;
+	std::list<int> vRowLens;
+
+	if( nFlags & DTF_WRAP_SOFT )
 	{
-		if( !( nFlags & DTF_IGNORE_FMT ) )
-		{
-			bool bDone;
+		int nWordWidth = 0, nLineWidth = 0;	// Width of word/line in pixels
+		int nWordLength = 0, nLineLength = 0;	// Length of word/line in bytes
 
-			do
+		for( i = nLength; i > 0; p += nCharLength )
+		{
+			// Get char length
+			nCharLength = utf8_char_length( *p );
+			nWordLength += nCharLength;
+			i -= nCharLength;
+
+			// Get glyph width
+			Glyph *pcGlyph = GetGlyph( FT_Get_Char_Index( m_pcFont->GetTTFace(), utf8_to_unicode( p ) ) );
+			if( NULL == pcGlyph )
+				continue;
+			nWordWidth += pcGlyph->m_nAdvance.x;
+
+			if( *p == ' ' || *p == '\t' || *p == '\n' )
 			{
-				bDone = false;
-				switch ( *pzString )
+				if( nLineWidth + nWordWidth > nTargetWidth )
 				{
-				case '_':
-					pzString++;
-					nLength--;
-					break;
-				case '\n':
-					pzString++;
-					nLength--;
-					cExt.y += m_nAscender - m_nDescender + m_nLineGap;
-					if( nLineExtent > cExt.x )
-						cExt.x = nLineExtent;
-					nLineExtent = 0;
-					break;
-				case 27:
-					pzString++;
-					nLength--;
-					if( nLength > 0 && *pzString != '[' )
-					{
-						pzString++;
-						nLength--;
-					}
-					break;
-				default:
-					bDone = true;
+					// Start a new line before this word
+					vRowLens.push_back( nLineLength );
+					nLineWidth = nWordWidth;
+					nLineLength = nWordLength;
 				}
+				else
+				{
+					// Continue the current line
+					nLineWidth += nWordWidth;
+					nLineLength += nWordLength;
+
+					if( *p == '\n' )
+					{
+						// Start a newline after this word
+						vRowLens.push_back( nLineLength );
+						nLineWidth = nLineLength = 0;
+					}
+				}
+				nWordWidth = nWordLength = 0;
 			}
-			while( nLength > 0 && !bDone );
 		}
 
-		int nCharLen = utf8_char_length( *pzString );
-
-		if( nCharLen > nLength )
-		{
-			break;
-		}
-		Glyph *pcGlyph = GetGlyph( FT_Get_Char_Index( m_pcFont->GetTTFace(), utf8_to_unicode( pzString ) ) );
-
-		pzString += nCharLen;
-		nLength -= nCharLen;
-		if( pcGlyph == NULL )
-		{
-			dbprintf( "Error: GetStringWidth() failed to load glyph\n" );
-			continue;
-		}
-		nLineExtent += pcGlyph->m_nAdvance.x;
+		// Push back the last line.
+		vRowLens.push_back( nLineLength );
 	}
-	if( nLineExtent > cExt.x )
-		cExt.x = nLineExtent;
+	else
+		vRowLens.push_back( nLength );
+
+	int nOffset = 0, nLineLength = 0, nLineExtent;
+	std::list<int>::iterator l;
+	for( l = vRowLens.begin(); l != vRowLens.end(); l++ )
+	{
+		int nLineLength = (*l);
+		const char *pzLine = pzString + nOffset;
+		nLineExtent = 0;
+
+		while( nLineLength > 0 )
+		{
+			if( !( nFlags & DTF_IGNORE_FMT ) )
+			{
+				bool bDone;
+
+				do
+				{
+					bDone = false;
+					switch ( *pzLine )
+					{
+						case '_':
+						{
+							if( !( nFlags & DTF_UNDERLINES ) )
+								bDone = true;
+							else
+							{
+								pzLine++;
+								nLineLength--;
+							}
+							break;
+						}
+
+						case '\n':
+						{
+							if( !( nFlags & DTF_WRAP_SOFT ) )
+							{
+								cExt.y += m_nAscender - m_nDescender + m_nLineGap;
+								if( nLineExtent > cExt.x )
+									cExt.x = nLineExtent;
+								nLineExtent = 0;
+							}
+							pzLine++;
+							nLineLength--;
+							break;
+						}
+
+						case 27:
+						{
+							pzLine++;
+							nLineLength--;
+							if( nLineLength > 0 && *pzLine != '[' )
+							{
+								pzLine++;
+								nLineLength--;
+							}
+							break;
+						}
+
+						default:
+							bDone = true;
+					}	// switch()
+				}
+				while( nLineLength > 0 && !bDone );
+			}	// if()
+
+			int nCharLen = utf8_char_length( *pzLine );
+			if( nCharLen > nLineLength )
+				break;
+
+			Glyph *pcGlyph = GetGlyph( FT_Get_Char_Index( m_pcFont->GetTTFace(), utf8_to_unicode( pzLine ) ) );
+
+			pzLine += nCharLen;
+			nLineLength -= nCharLen;
+
+			if( pcGlyph == NULL )
+			{
+				dbprintf( "Error: GetTextExtent() failed to load glyph\n" );
+				continue;
+			}
+			nLineExtent += pcGlyph->m_nAdvance.x;
+		}	// while()
+
+		if( nLineExtent > cExt.x )
+			cExt.x = nLineExtent;
+
+		if( nFlags & DTF_WRAP_SOFT )
+			cExt.y += m_nAscender - m_nDescender + m_nLineGap;
+
+		nOffset += (*l);
+	}	// for()
 
 	g_cFontLock.Unlock();
 	return ( cExt );

@@ -429,9 +429,8 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 	if( m_pcBitmap == NULL || m_pcFont == NULL || m_pcFont->GetInstance() == NULL )
 		return;
 
-	Region *pcReg = GetRegion();
 	SrvBitmap* pcBitmap = m_pcBitmap;
-
+	Region *pcReg = GetRegion();
 	if( NULL == pcReg )
 		return;
 
@@ -439,7 +438,6 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 	{
 		m_asFontPallette[0] = m_sBgColor;
 		m_asFontPallette[NUM_FONT_GRAYS - 1] = m_sFgColor;
-
 
 		for( int i = 1; i < NUM_FONT_GRAYS - 1; ++i )
 		{
@@ -451,45 +449,104 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 		/* Convert font pallette to colorspace */
 		switch ( pcBitmap->m_eColorSpc )
 		{
-		case CS_RGB16:
-			for( int i = 1; i < NUM_FONT_GRAYS; ++i )
+			case CS_RGB16:
 			{
-				m_anFontPalletteConverted[i] = COL_TO_RGB16( m_asFontPallette[i] );
+				for( int i = 1; i < NUM_FONT_GRAYS; ++i )
+					m_anFontPalletteConverted[i] = COL_TO_RGB16( m_asFontPallette[i] );
+				break;
 			}
-			break;
-		case CS_RGB32:
-		case CS_RGBA32:
-			for( int i = 1; i < NUM_FONT_GRAYS; ++i )
+
+			case CS_RGB32:
+			case CS_RGBA32:
 			{
-				m_anFontPalletteConverted[i] = COL_TO_RGB32( m_asFontPallette[i] );
+				for( int i = 1; i < NUM_FONT_GRAYS; ++i )
+					m_anFontPalletteConverted[i] = COL_TO_RGB32( m_asFontPallette[i] );
+				break;
 			}
-			break;
-		default:
-			dbprintf( "Layer::DrawString() unknown colorspace %d\n", pcBitmap->m_eColorSpc );
-			break;
+
+			default:
+			{
+				dbprintf( "Layer::DrawString() unknown colorspace %d\n", pcBitmap->m_eColorSpc );
+				break;
+			}
 		}
 		m_bFontPalletteValid = true;
 	}
 
 	if( nLength == -1 )
-	{
 		nLength = strlen( pzString );
-	}
-
-	int nRows;
-	int i;
-	const char *p;
 
 	// Count rows.
-	for( nRows = 1, p = pzString, i = nLength; i > 0; )
+	int i, nRows = 1, nCharLength = 0;
+	const char *p = pzString;
+	std::list<int> vRowLens;
+	int nTargetWidth = (int)cRect.Width();
+
+	if( ( nFlags & DTF_WRAP_SOFT ) && FontServer::Lock() )
 	{
-		if( *p == '\n' )
-			nRows++;
+		int nWordWidth = 0, nLineWidth = 0;	// Width of word/line in pixels
+		int nWordLength = 0, nLineLength = 0;	// Length of word/line in bytes
 
-		int len = utf8_char_length( *p );
+		for( i = nLength; i > 0; p += nCharLength )
+		{
+			// Get char length
+			nCharLength = utf8_char_length( *p );
+			nWordLength += nCharLength;
+			i -= nCharLength;
 
-		i -= len;
-		p +=len;
+			// Get glyph width
+			Glyph *pcGlyph = m_pcFont->GetGlyph( utf8_to_unicode( p ) );
+			if( NULL == pcGlyph )
+				continue;
+			nWordWidth += pcGlyph->m_nAdvance.x;
+
+			if( *p == ' ' || *p == '\t' || *p == '\n' )
+			{
+				if( nLineWidth + nWordWidth > nTargetWidth )
+				{
+					// Start a new line before this word
+					vRowLens.push_back( nLineLength );
+					nRows++;
+
+					nLineWidth = nWordWidth;
+					nLineLength = nWordLength;
+				}
+				else
+				{
+					// Continue the current line
+					nLineWidth += nWordWidth;
+					nLineLength += nWordLength;
+
+					if( *p == '\n' )
+					{
+						// Start a newline after this word
+						vRowLens.push_back( nLineLength );
+						nRows++;
+
+						nLineWidth = nLineLength = 0;
+					}
+				}
+				nWordWidth = nWordLength = 0;
+			}
+		}
+		FontServer::Unlock();
+
+		// Push back the last line.
+		vRowLens.push_back( nLineLength );
+	}
+	else
+	{
+		for( i = nLength; i > 0; )
+		{
+			if( *p == '\n' )
+				nRows++;
+
+			nCharLength = utf8_char_length( *p );
+
+			i -= nCharLength;
+			p += nCharLength;
+		}
+		vRowLens.push_back( nLength );
 	}
 
 	Point cTopLeft = ConvertToBitmap( Point( 0, 0 ) );
@@ -501,167 +558,201 @@ void Layer::DrawText( const Rect & cRect, const char *pzString, int nLength, uin
 	IPoint cStartPos = cPos;
 
 	if( ( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false )  && m_pcBitmap == g_pcScreenBitmap )
-	{
 		SrvSprite::Hide( static_cast < IRect > ( GetBounds() + cTopLeft ) );
-	}
 
 	if( FontServer::Lock() )
 	{
-		int nLineHeight = 0;
 		bool bNewLine = true;
-
-		nLineHeight = m_pcFont->GetInstance()->GetAscender(  ) - m_pcFont->GetInstance(  )->GetDescender(  ) + m_pcFont->GetInstance(  )->GetLineGap(  );
+		int nLineHeight = m_pcFont->GetInstance()->GetAscender(  ) - m_pcFont->GetInstance(  )->GetDescender(  ) + m_pcFont->GetInstance(  )->GetLineGap(  );
 
 		if( nFlags & DTF_ALIGN_TOP )
 		{
+			/* EMPTY */
 		}
 		else if( nFlags & DTF_ALIGN_BOTTOM )
-		{
 			cPos.y += ( int )( m_pcFont->GetInstance()->GetAscender(  ) + cRect.Height(  ) - ( nRows * nLineHeight - m_pcFont->GetInstance(  )->GetLineGap(  ) ) );
-		}
 		else
-		{
 			cPos.y += ( int )( m_pcFont->GetInstance()->GetAscender(  ) + cRect.Height(  ) * 0.5 - ( nRows * nLineHeight + 0.5 - m_pcFont->GetInstance(  )->GetLineGap(  ) ) * 0.5 );
-		}
 
-		while( nLength > 0 )
+		int nOffset = 0, nLineLength = 0;
+		std::list<int>::iterator l;
+		for( l = vRowLens.begin(); l != vRowLens.end(); l++ )
 		{
-			bool bUnderlineChar = false;
+			int nLineLength = (*l);
+			const char *pzLine = pzString + nOffset;
 
-			if( !( nFlags & DTF_IGNORE_FMT ) )
+			while( nLineLength > 0 )
 			{
-				bool bDone;
+				bool bUnderlineChar = false;
 
-				do
+				if( !( nFlags & DTF_IGNORE_FMT ) )
 				{
-					bDone = false;
-					switch ( *pzString )
+					bool bDone;
+					do
 					{
-					case '_':
-						bUnderlineChar = true;
-						pzString++;
-						nLength--;
-						break;
-					case '\n':
-						pzString++;
-						nLength--;
-						cPos.y += nLineHeight;
-						bNewLine = true;
-						break;
-					case 27:
-						pzString++;
-						nLength--;
-						switch ( *pzString )
+						bDone = false;
+						switch ( *pzLine )
 						{
-						case 'r':
-							nFlags &= ~( DTF_ALIGN_RIGHT | DTF_ALIGN_CENTER );
-							nFlags |= DTF_ALIGN_RIGHT;
-							pzString++;
-							nLength--;
-							break;
-						case 'l':
-							nFlags &= ~( DTF_ALIGN_RIGHT | DTF_ALIGN_CENTER );
-							pzString++;
-							nLength--;
-							break;
-						case 'c':
-							nFlags &= ~( DTF_ALIGN_RIGHT | DTF_ALIGN_CENTER );
-							nFlags |= DTF_ALIGN_CENTER;
-							pzString++;
-							nLength--;
-							break;
-						case 'd':
-							nFlags |= DTF_IGNORE_FMT;
-							pzString++;
-							nLength--;
-							break;
-						case '[':
-							break;
-						}
-						break;
-					default:
-						bDone = true;
+							case '_':
+							{
+								if( !( nFlags & DTF_UNDERLINES ) )
+									bDone = true;
+								else
+								{
+									bUnderlineChar = true;
+									pzLine++;
+									nLineLength--;
+								}
+								break;
+							}
+
+							case '\n':
+							{
+								if( !( nFlags & DTF_WRAP_SOFT ) )
+								{
+									cPos.y += nLineHeight;
+									bNewLine = true;
+								}
+								pzLine++;
+								nLineLength--;
+								break;
+							}
+
+							case 27:
+							{
+								pzLine++;
+								nLineLength--;
+
+								switch ( *pzLine )
+								{
+									case 'r':
+									{
+										nFlags &= ~( DTF_ALIGN_RIGHT | DTF_ALIGN_CENTER );
+										nFlags |= DTF_ALIGN_RIGHT;
+										pzLine++;
+										nLineLength--;
+										break;
+									}
+
+									case 'l':
+									{
+										nFlags &= ~( DTF_ALIGN_RIGHT | DTF_ALIGN_CENTER );
+										pzLine++;
+										nLineLength--;
+										break;
+									}
+
+									case 'c':
+									{
+										nFlags &= ~( DTF_ALIGN_RIGHT | DTF_ALIGN_CENTER );
+										nFlags |= DTF_ALIGN_CENTER;
+										pzLine++;
+										nLineLength--;
+										break;
+									}
+
+									case 'd':
+									{
+										nFlags |= DTF_IGNORE_FMT;
+										pzLine++;
+										nLineLength--;
+										break;
+									}
+
+									case '[':
+										break;
+								}
+
+								break;
+							}
+
+							default:
+								bDone = true;
+						}	// switch()
+					}
+					while( nLineLength > 0 && !bDone );
+				}	// if()
+
+				if( bNewLine )
+				{
+					if( nFlags & DTF_ALIGN_CENTER )
+						cPos.x = ( int )( cStartPos.x + cRect.Width() / 2 - ( m_pcFont->GetInstance(  )->GetTextExtent( pzLine, _FindEndOfLine( pzLine, nLineLength ), nFlags ) ).x / 2 );
+					else if( nFlags & DTF_ALIGN_RIGHT )
+						cPos.x = ( int )( cStartPos.x + cRect.Width() - ( m_pcFont->GetInstance(  )->GetTextExtent( pzLine, _FindEndOfLine( pzLine, nLineLength ), nFlags ) ).x );
+					else
+						cPos.x = cStartPos.x;
+					bNewLine = false;
+				}
+
+				int nCharLen = utf8_char_length( *pzLine );
+				if( nCharLen > nLineLength )
+					break;
+
+				Glyph *pcGlyph = m_pcFont->GetGlyph( utf8_to_unicode( pzLine ) );
+
+				pzLine += nCharLen;
+				nLineLength -= nCharLen;
+				if( NULL == pcGlyph )
+					continue;
+
+				ClipRect *pcClip;
+
+				if( m_nDrawingMode == DM_COPY )
+				{
+					ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
+					{
+						pcBitmap->m_pcDriver->RenderGlyph( pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_anFontPalletteConverted );
 					}
 				}
-				while( nLength > 0 && !bDone );
-			}
-
-			if( bNewLine )
-			{
-				if( nFlags & DTF_ALIGN_CENTER )
+				else if( m_nDrawingMode == DM_BLEND && ( pcBitmap->m_eColorSpc == CS_RGB32 || pcBitmap->m_eColorSpc == CS_RGBA32 ) )
 				{
-					cPos.x = ( int )( cStartPos.x + cRect.Width() / 2 - ( m_pcFont->GetInstance(  )->GetTextExtent( pzString, _FindEndOfLine( pzString, nLength ), nFlags ) ).x / 2 );
-				}
-				else if( nFlags & DTF_ALIGN_RIGHT )
-				{
-					cPos.x = ( int )( cStartPos.x + cRect.Width() - ( m_pcFont->GetInstance(  )->GetTextExtent( pzString, _FindEndOfLine( pzString, nLength ), nFlags ) ).x );
+					ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
+					{
+						pcBitmap->m_pcDriver->RenderGlyphBlend( pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_sFgColor );
+					}
 				}
 				else
 				{
+					ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
+					{
+						pcBitmap->m_pcDriver->RenderGlyph( pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_sFgColor );
+					}
+				}
+
+				if( bUnderlineChar )
+				{
+					ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
+					{
+						IPoint cMax( cPos );
+
+						cMax.x += pcGlyph->m_nAdvance.x;
+						pcBitmap->m_pcDriver->DrawLine( pcBitmap, pcClip->m_cBounds + cITopLeft, cPos, cMax, m_sFgColor, m_nDrawingMode );
+					}
+				}
+
+				cPos.x += pcGlyph->m_nAdvance.x;
+			}	// while()
+
+			if( nFlags & DTF_WRAP_SOFT )
+			{
+				// Newline
+				cPos.y += nLineHeight;
+				if( nFlags & DTF_ALIGN_CENTER )
+					cPos.x = ( int )( cStartPos.x + cRect.Width() / 2 - ( m_pcFont->GetInstance(  )->GetTextExtent( pzLine, _FindEndOfLine( pzLine, nLineLength ), nFlags ) ).x / 2 );
+				else if( nFlags & DTF_ALIGN_RIGHT )
+					cPos.x = ( int )( cStartPos.x + cRect.Width() - ( m_pcFont->GetInstance(  )->GetTextExtent( pzLine, _FindEndOfLine( pzLine, nLineLength ), nFlags ) ).x );
+				else
 					cPos.x = cStartPos.x;
-				}
-				bNewLine = false;
 			}
 
-			int nCharLen = utf8_char_length( *pzString );
+			nOffset += (*l);
+		} // for()
 
-			if( nCharLen > nLength )
-				break;
-
-			Glyph *pcGlyph = m_pcFont->GetGlyph( utf8_to_unicode( pzString ) );
-
-			pzString += nCharLen;
-			nLength -= nCharLen;
-			if( pcGlyph == NULL )
-			{
-				//printf( "Error: Layer::DrawString:2() failed to load glyph\n" );
-				continue;
-			}
-
-			ClipRect *pcClip;
-
-			if( m_nDrawingMode == DM_COPY )
-			{
-				ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
-				{
-					pcBitmap->m_pcDriver->RenderGlyph( pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_anFontPalletteConverted );
-				}
-			}
-			else if( m_nDrawingMode == DM_BLEND && ( pcBitmap->m_eColorSpc == CS_RGB32 || pcBitmap->m_eColorSpc == CS_RGBA32 ) )
-			{
-				ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
-				{
-					pcBitmap->m_pcDriver->RenderGlyphBlend( pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_sFgColor );
-				}
-			}
-			else
-			{
-				ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
-				{
-					pcBitmap->m_pcDriver->RenderGlyph( pcBitmap, pcGlyph, cPos, pcClip->m_cBounds + cITopLeft, m_sFgColor );
-				}
-			}
-
-			if( bUnderlineChar )
-			{
-				ENUMCLIPLIST( &pcReg->m_cRects, pcClip )
-				{
-					IPoint cMax( cPos );
-
-					cMax.x += pcGlyph->m_nAdvance.x;
-					pcBitmap->m_pcDriver->DrawLine( pcBitmap, pcClip->m_cBounds + cITopLeft, cPos, cMax, m_sFgColor, m_nDrawingMode );
-				}
-			}
-
-			cPos.x += pcGlyph->m_nAdvance.x;
-		}
 		FontServer::Unlock();
 	}
 
 	if( ( m_pcWindow == NULL || m_pcWindow->IsOffScreen() == false ) && m_pcBitmap == g_pcScreenBitmap )
-	{
 		SrvSprite::Unhide();
-	}
 
 	PutRegion( pcReg );
 }

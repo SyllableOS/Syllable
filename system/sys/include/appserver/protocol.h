@@ -393,6 +393,7 @@ typedef struct
     int		 hFontToken;		/* Font handle */
     int		 nStringCount;		/* Number of strings to measure */
 	uint32   nFlags;			/* Flags */
+	int		 nTargetWidth;		/* Max. width; only valid when DTF_WRAP_SOFT is passed */
     StringHeader_s sFirstHeader;
       /*** nStringCount - 1, string headers follows	***/
 } AR_GetTextExtents_s;

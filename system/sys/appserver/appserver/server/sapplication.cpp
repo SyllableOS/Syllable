@@ -1270,6 +1270,7 @@ bool SrvApplication::DispatchMessage( const void *pMsg, int nCode )
 			int nStrCount = psReq->nStringCount;
 			port_id hReplyPort = psReq->hReply;
 			uint32 nFlags = psReq->nFlags;
+			int nTargetWidth = psReq->nTargetWidth;
 
 			if( m_cFontLock.Lock() == 0 )
 			{
@@ -1307,7 +1308,7 @@ bool SrvApplication::DispatchMessage( const void *pMsg, int nCode )
 						break;
 					}
 
-					psReply->acExtent[i] = pcFont->GetTextExtent( psHdr->zString, psHdr->nLength, nFlags );
+					psReply->acExtent[i] = pcFont->GetTextExtent( psHdr->zString, psHdr->nLength, nFlags, nTargetWidth );
 
 					int nHdrSize = psHdr->nLength + sizeof( int );
 

@@ -73,7 +73,7 @@ void ColorView::Paint( const Rect& cUpdateRect )
 		SetBgColor( get_default_color( COL_NORMAL ) );
 		FillRect( cTextBox );
 		SetFgColor( 0 );
-		DrawText( cTextBox, m->m_cText );
+		DrawText( cTextBox, m->m_cText, DTF_UNDERLINES );
 	} else {
 		cColorBox = cBounds;
 	}
