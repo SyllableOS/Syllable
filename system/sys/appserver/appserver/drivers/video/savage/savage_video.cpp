@@ -36,50 +36,62 @@ using namespace os;
 using namespace std;
 
 /*
- * Only the new streams engine, present in the Mobile series (IX & MX) is currently supported by this driver.  The
- * Savage 2000 streams engine is not supported at all.  Adding support for the old streams engine on E.g. the ProSavage,
- * Twister etc. chips is possible; either use the new streams code as a template or contact the Syllable developers and
- * ask.  Parts of the old streams engine are already here E.g. SavageStreamsOn() is common to both and SavageInitStreamsOld()
- * is already here.
+ * Both the old & new streams engine (Mobile series IX & MX) are supported by this driver.  Some additional
+ * support for Twister chipsets is absent.  Adding support for those chips would not be difficult.
+ * The Savage 2000 streams engine is currently not supported at all.
  *
- * The Savage support YV12 but only in a planer format; Syllable presents the data as three seperate components.
- * Syllable now supports YUY2, which the Savage supports natively.
+ * The Savages support YV12 but only in a planer format; Syllable presents the data as three seperate
+ * components.  We use YUY2.
  */
 
 bool SavageDriver::CreateVideoOverlay( const IPoint& cSize, const IRect& cDst, color_space eFormat, Color32_s sColorKey, area_id *phArea )
 {
+	bool bRet = false;
+
 	if( eFormat == CS_YUY2 && m_psCard->eChip != S3_SAVAGE2000 && !m_bVideoOverlayUsed )
 	{
 		m_sColorKey = sColorKey;
-		if( S3_SAVAGE_MOBILE_SERIES( m_psCard->eChip ) )	/* We only support new streams engine properly at the moment */
-			return SavageOverlayNew( cSize, cDst, phArea );
+		if( S3_SAVAGE_MOBILE_SERIES( m_psCard->eChip ) )
+			bRet = SavageOverlayNew( cSize, cDst, phArea );
 		else
-			return false;	/* XXXKV: Support old streams engine */
+			bRet = SavageOverlayOld( cSize, cDst, phArea );
 	}
-	return false;
+	return bRet;
 }
 
 bool SavageDriver::RecreateVideoOverlay( const IPoint& cSize, const IRect& cDst, color_space eFormat, area_id *phArea )
 {
+	bool bRet = false;
+
 	if( eFormat == CS_YUY2 && m_psCard->eChip != S3_SAVAGE2000 && m_bVideoOverlayUsed )
 	{
 		delete_area( *phArea );
-		if( S3_SAVAGE_MOBILE_SERIES( m_psCard->eChip ) )	/* We only support new streams engine properly at the moment */
-			return SavageOverlayNew( cSize, cDst, phArea );
+#ifdef OFF_SCREEN_BITMAPS
+		FreeMemory( m_nVideoOffset );
+#endif
+		SavageStreamsOff( m_psCard );
+
+		if( S3_SAVAGE_MOBILE_SERIES( m_psCard->eChip ) )
+			bRet = SavageOverlayNew( cSize, cDst, phArea );
 		else
-			return false;	/* XXXKV: Support old streams engine */
+			bRet = SavageOverlayOld( cSize, cDst, phArea );
 	}
-	return false;
+	return bRet;
 }
 
 void SavageDriver::DeleteVideoOverlay( area_id *phArea )
 {
 	/* Stop video */
-	//SavageStreamsOff( m_psCard );	/* XXXKV: Implement */
+	SavageStreamsOff( m_psCard );
 
 	/* Delete area */
 	if( m_bVideoOverlayUsed )
+	{
+#ifdef OFF_SCREEN_BITMAPS
+		FreeMemory( m_nVideoOffset );
+#endif
 		delete_area( *phArea );
+	}
 	m_bVideoOverlayUsed = false;
 }
 
@@ -89,23 +101,23 @@ bool SavageDriver::SavageOverlayNew( const IPoint& cSize, const IRect& cDst, are
 
 	/* Calculate offset */
 	uint32 pitch = 0;
-	uint32 totalSize = 0;
+	uint32 totalSize = 0, offset = 0;
 
 	pitch = ( ( cSize.x << 1 ) + 0xff ) & ~0xff;
 	totalSize = pitch * cSize.y; 
 
-	/* There must be enough room between the end of the visible display & the end of the framebuffer for the overlay data.. */
-	if( psCard->scrnBytes + totalSize > (unsigned)psCard->endfb )
+#ifdef OFF_SCREEN_BITMAPS
+	/* Allocate overlay space */
+	if( AllocateMemory( totalSize, &offset ) != EOK )
 	{
 		dbprintf("No space for overlay: scrnBytes=0x%4x  totalsize=%li  endfb=0x%4x\n", psCard->scrnBytes, totalSize, psCard->endfb );
 		m_bVideoOverlayUsed = false;
 		return false;
 	}
-
-	/* Allocate the overlay space at the end of the framebuffer (Leave room for the framebuffer to grow.  Hopefully!) */
-	uint32 offset = PAGE_ALIGN( psCard->endfb - totalSize - PAGE_SIZE );
-
+#else
+	offset = PAGE_ALIGN( psCard->endfb - totalSize - PAGE_SIZE );
 	//dbprintf("Create overlay: scrnBytes=0x%x  totalSize=0x%x (offset=0x%x) endfb=0x%x\n", psCard->scrnBytes, totalSize, offset, psCard->endfb );
+#endif
 
 	*phArea = create_area( "savage_overlay", NULL, PAGE_ALIGN( totalSize ), AREA_FULL_ACCESS, AREA_NO_LOCK );
 	remap_area( *phArea, (void*)(m_nFramebufferAddr + offset) );
@@ -166,6 +178,7 @@ bool SavageDriver::SavageOverlayNew( const IPoint& cSize, const IRect& cDst, are
 	}
 
 	/* Overlay is on */
+	m_nVideoOffset = offset;
 	m_bVideoOverlayUsed = true;
 	return true;
 }
@@ -173,14 +186,17 @@ bool SavageDriver::SavageOverlayNew( const IPoint& cSize, const IRect& cDst, are
 void SavageDriver::SavageSetColorKeyNew( savage_s *psCard )
 {
 	/* Here, we reset the colorkey and all the controls. */
-	int red = m_sColorKey.red;
-	int green = m_sColorKey.green;
-	int blue = m_sColorKey.blue;
+	int red, green, blue;
 
 	switch(psCard->scrn.Bpp)
 	{
 		case 16:
 		{
+			/* 5:6:5 */
+			red = m_sColorKey.red & 0x1f;
+			green = m_sColorKey.green & 0x3f;
+			blue = m_sColorKey.blue & 0x1f;
+
 			OUTREG( SEC_STREAM_CKEY_LOW, 0x46000000 | (red<<19) | (green<<10) | (blue<<3) );
 			OUTREG( SEC_STREAM_CKEY_UPPER, 0x46020002 | (red<<19) | (green<<10) | (blue<<3) );
 		    break;
@@ -188,6 +204,10 @@ void SavageDriver::SavageSetColorKeyNew( savage_s *psCard )
 
 		case 32:
 		{
+			red = m_sColorKey.red;
+			green = m_sColorKey.green;
+			blue = m_sColorKey.blue;
+
 			OUTREG( SEC_STREAM_CKEY_LOW, 0x47000000 | (red<<16) | (green<<8) | (blue) );
 			OUTREG( SEC_STREAM_CKEY_UPPER, 0x47000000 | (red<<16) | (green<<8) | (blue) );
 			break;
@@ -196,6 +216,170 @@ void SavageDriver::SavageSetColorKeyNew( savage_s *psCard )
 
 	/* We assume destination colorkey */
 	OUTREG( BLEND_CONTROL, (INREG32(BLEND_CONTROL) | (psCard->blendBase << 9) | 0x08 ));
+}
+
+bool SavageDriver::SavageOverlayOld( const os::IPoint& cSize, const os::IRect& cDst, area_id *phArea )
+{
+	savage_s *psCard = m_psCard;
+	uint32 ssControl;
+	int scalratio;
+
+	/* Calculate offset */
+	uint32 pitch = 0;
+	uint32 totalSize = 0, offset = 0;
+
+	pitch = ( ( cSize.x << 1 ) + 0xff ) & ~0xff;
+	totalSize = pitch * cSize.y; 
+
+#ifdef OFF_SCREEN_BITMAPS
+	/* Allocate overlay space */
+	if( AllocateMemory( totalSize, &offset ) != EOK )
+	{
+		dbprintf("No space for overlay: scrnBytes=0x%4x  totalsize=%li  endfb=0x%4x\n", psCard->scrnBytes, totalSize, psCard->endfb );
+		m_bVideoOverlayUsed = false;
+		return false;
+	}
+#else
+	offset = PAGE_ALIGN( psCard->endfb - totalSize - PAGE_SIZE );
+	//dbprintf("Create overlay: scrnBytes=0x%x  totalSize=0x%x (offset=0x%x) endfb=0x%x\n", psCard->scrnBytes, totalSize, offset, psCard->endfb );
+#endif
+
+	*phArea = create_area( "savage_overlay", NULL, PAGE_ALIGN( totalSize ), AREA_FULL_ACCESS, AREA_NO_LOCK );
+	remap_area( *phArea, (void*)(m_nFramebufferAddr + offset) );
+
+	/* XXXKV: Start video */
+	int y1 = cDst.top;
+	int y2 = cDst.bottom;
+	int	x1 = cDst.left;
+	int	x2 = cDst.right;
+
+	short src_w = cSize.x;
+	short src_h = cSize.y;
+	short drw_w = cDst.Width();
+	short drw_h = cDst.Height();
+
+	//dbprintf("x1=%i y1=%i x2=%i y2=%i src_w=%i src_h=%i drw_w=%i drw_h=%i\n", x1, y1, x2, y2, src_w, src_h, drw_w, drw_h );
+
+	int vgaCRIndex, vgaCRReg, vgaIOBase;
+
+	/* XXXKV: Need to know value of vgaIOBase; probably 0x3d0 (!) */
+	vgaIOBase = 0x3d0;
+	vgaCRIndex = vgaIOBase + 4;
+	vgaCRReg = vgaIOBase + 5;
+
+	SavageStreamsOn( psCard );
+	SavageSetColorKeyOld( psCard );
+
+	/* XXXKV: Extra scaling calculations for Twisters goes here */
+
+	/* Process horizontal scaling
+	 *  upscaling and downscaling smaller than 2:1 controled by MM8198
+	 *  MM8190 controls downscaling mode larger than 2:1 */
+	scalratio = 0;
+	ssControl = 0;
+
+    if (src_w >= (drw_w * 2))
+	{
+		if (src_w < (drw_w * 4))
+			scalratio = HSCALING(2,1);
+		else if (src_w < (drw_w * 8))
+			ssControl |= HDSCALE_4;
+		else if (src_w < (drw_w * 16))
+			ssControl |= HDSCALE_8;
+		else if (src_w < (drw_w * 32))
+			ssControl |= HDSCALE_16;
+		else if (src_w < (drw_w * 64))
+			ssControl |= HDSCALE_32;
+		else
+			ssControl |= HDSCALE_64;
+	}
+	else 
+		scalratio = HSCALING(src_w,drw_w);
+
+	ssControl |= src_w;
+	ssControl |= (1 << 24);
+
+	/* Wait for VBLANK. */
+	VerticalRetraceWait();
+	OUTREG(SSTREAM_CONTROL_REG, ssControl);
+	if (scalratio)
+		OUTREG(SSTREAM_STRETCH_REG,scalratio);
+
+	/* Calculate vertical scale factor. */
+	OUTREG(SSTREAM_VINITIAL_REG, 0 );
+	OUTREG(SSTREAM_VSCALE_REG, VSCALING(src_h,drw_h));
+
+	/* Set surface location and stride. */
+	OUTREG(SSTREAM_FBADDR0_REG, (offset + (x1>>15)) & (0x1ffffff & ~BASE_PAD) );
+	OUTREG(SSTREAM_FBADDR1_REG, 0);
+	OUTREG(SSTREAM_STRIDE_REG, pitch & 0xfff );
+                                                                             
+	OUTREG(SSTREAM_WINDOW_START_REG, OS_XY(x1, y1) );
+	OUTREG(SSTREAM_WINDOW_SIZE_REG, OS_WH(x2-x1, y2-y1));
+
+	/* MM81E8:Secondary Stream Source Line Count
+	 *   bit_0~10: # of lines in the source image (before scaling)
+	 *   bit_15 = 1: Enable vertical interpolation
+	 *            0: Line duplicaion */
+
+	/* XXXKV: No vertical Interpolation used; always use line doubling. */
+	OUTREG(SSTREAM_LINES_REG, src_h );
+
+	/* Set FIFO L2 on second stream. */
+	if( psCard->lastKnownPitch != pitch )
+	{
+		unsigned char cr92;
+		psCard->lastKnownPitch = pitch;
+
+		pitch = (pitch + 7) / 8;
+		VGAOUT8(vgaCRIndex, 0x92);
+		cr92 = VGAIN8(vgaCRReg);
+		VGAOUT8(vgaCRReg, (cr92 & 0x40) | (pitch >> 8) | 0x80);
+		VGAOUT8(vgaCRIndex, 0x93);
+
+		/* Tiling is always off */
+		VGAOUT8(vgaCRReg, pitch);
+	}
+
+	/* Overlay is on */
+	m_nVideoOffset = offset;
+	m_bVideoOverlayUsed = true;
+	return true;
+}
+
+void SavageDriver::SavageSetColorKeyOld( savage_s *psCard )
+{
+	/* Here, we reset the colorkey and all the controls. */
+	int red, green, blue;
+
+	switch(psCard->scrn.Bpp)
+	{
+		case 16:
+		{
+			/* 5:6:5 */
+			red = m_sColorKey.red & 0x1f;
+			green = m_sColorKey.green & 0x3f;
+			blue = m_sColorKey.blue & 0x1f;
+
+			OUTREG( SEC_STREAM_CKEY_LOW, 0x46000000 | (red<<19) | (green<<10) | (blue<<3) );
+			OUTREG( SEC_STREAM_CKEY_UPPER, 0x46020002 | (red<<19) | (green<<10) | (blue<<3) );
+		    break;
+	    }
+
+		case 32:
+		{
+			red = m_sColorKey.red;
+			green = m_sColorKey.green;
+			blue = m_sColorKey.blue;
+
+			OUTREG( COL_CHROMA_KEY_CONTROL_REG, 0x17000000 | (red<<16) | (green<<8) | (blue) );
+			OUTREG( CHROMA_KEY_UPPER_BOUND_REG, 0x00000000 | (red<<16) | (green<<8) | (blue) );
+			break;
+		}
+	}
+
+	/* We assume destination colorkey */
+	OUTREG( BLEND_CONTROL_REG, 0x05000000 );
 }
 
 /* Common to both old & new streams engines */
@@ -246,6 +430,38 @@ void SavageDriver::SavageStreamsOn( savage_s *psCard )
 
 	/* Turn on secondary stream TV flicker filter, once we support TV. */
 	/* SR70 |= 0x10 */
+}
+
+void SavageDriver::SavageStreamsOff( savage_s *psCard )
+{
+	unsigned char jStreamsControl;
+	int vgaCRIndex, vgaCRReg, vgaIOBase;
+
+	/* XXXKV: Need to know value of vgaIOBase; probably 0x3d0 (!) */
+	vgaIOBase = 0x3d0;
+	vgaCRIndex = vgaIOBase + 4;
+	vgaCRReg = vgaIOBase + 5;
+
+	/* Unlock extended registers. */
+	VGAOUT16(vgaCRIndex, 0x4838);
+	VGAOUT16(vgaCRIndex, 0xa039);
+	VGAOUT16(0x3c4, 0x0608);
+
+	VGAOUT8( vgaCRIndex, EXT_MISC_CTRL2 );
+	if( S3_SAVAGE_MOBILE_SERIES(psCard->eChip) || (psCard->eChip == S3_SAVAGE2000) )
+		jStreamsControl = VGAIN8( vgaCRReg ) & NO_STREAMS;
+	else
+		jStreamsControl = VGAIN8( vgaCRReg ) & NO_STREAMS_OLD;
+
+	/* Wait for VBLANK. */
+	VerticalRetraceWait();
+
+	/* Kill streams. */
+	VGAOUT16( vgaCRIndex, (jStreamsControl << 8) | EXT_MISC_CTRL2 );
+
+	VGAOUT16( vgaCRIndex, 0x0093 );
+	VGAOUT8( vgaCRIndex, 0x92 );
+	VGAOUT8( vgaCRReg, VGAIN8(vgaCRReg) & 0x40 );
 }
 
 void SavageDriver::SavageInitStreamsOld( savage_s *psCard )

@@ -101,6 +101,7 @@ SavageDriver::SavageDriver( int nFd ) : m_cGELock( "savage_ge_lock" )
 	m_bIsInited = false;
 	m_hRegisterArea = m_hFramebufferArea = -1;
 	m_bVideoOverlayUsed = false;
+	m_bEngineDirty = false;
 
 	/* You can change these & recompile if you want to experiment */
 	m_bDisableCOB = false;	/* Set true of you're having problems with Savage4 or ProSavage */
@@ -395,6 +396,38 @@ SavageDriver::SavageDriver( int nFd ) : m_cGELock( "savage_ge_lock" )
 			m_cModes.push_back( sMode );
 		}
 	}
+
+	/* Calculate available space for off-screen bitmaps */
+	uint32 nVRAM, nVidTop;
+
+	nVidTop = ( 1024 * 1024 * 8 );
+	if( psCard->FramebufferSize <= nVidTop )
+	{
+		if( psCard->PanelX > 0 && psCard->PanelY > 0 )
+		{
+			/* Calculate the max. possible framebuffer size */
+			nVidTop = psCard->PanelX * ( psCard->PanelY * 4 );
+		}
+		else
+		{
+			/* XXXKV: Cross our fingers and hope.  We could always try to be more sophisticated and
+			   limit the max. available video mode if we're this low on RAM */
+			nVidTop = ( 1024 * 1024 * 4 );
+		}
+	}
+	nVRAM = psCard->endfb - nVidTop;	/* Total available off-screen memeory */
+
+	//dbprintf( "nVidTop=%d nVRAM=%d endfb=%d off-screen size=%d\n", nVidTop, nVRAM, psCard->endfb, psCard->endfb - nVidTop );
+
+#ifdef OFF_SCREEN_BITMAPS
+	psCard->nVidTop = nVidTop;
+	psCard->nVRAM = nVRAM;
+
+	/* XXXKV: These alignment values were arrived at through trial & error */
+	/* 2048 works for 32bit, 1024 *sort of* works for 16.. */
+	if( ( nVRAM > ( 1024 * 1024 * 1 ) ) && ( nVRAM < psCard->FramebufferSize ) )
+		InitMemory( nVidTop, nVRAM, 4096 - 1, 2048 - 1 );
+#endif
 
 	//dbprintf( "initialisation complete.\n" );
 
@@ -723,8 +756,6 @@ int SavageDriver::SetScreenMode( screen_mode sMode )
 	SavageInitialize2DEngine( psCard );
 
 	VGAOUT16(vgaCRIndex, 0x0140);
-
-	SavageSetGBD( psCard );
 
 	m_cGELock.Unlock();
 

@@ -86,6 +86,9 @@ typedef struct savage
 
 	uint32 FramebufferSize;
 
+	uint32 nVidTop;
+	uint32 nVRAM;
+
 	double minClock, maxClock;
 
 	/* Here are all the Options */
@@ -154,6 +157,18 @@ typedef struct savage
 #define CURS_HEIGHT 64
 #define CURS_WIDTH 64
 
+/* XXXKV: I just can not get off-screen bitmaps to work correctly in 16bit; there are rendering
+   errors when doing off-screen->screen blits (E.g. when resizing a window)  The alignment value
+   of 2048 I've arrived at is also very odd, although it does work in 32bit.
+
+   There is also an issue with some cards that have very little video memory; overlays may not
+   work because there will not be enough memory to allocate the overlay.
+
+   Currently off-screen bitmaps are a bad deal on Savages, so I've disabled them at least until
+   the time I can fix the 16bit blit bugs. */
+
+#undef OFF_SCREEN_BITMAPS
+
 class SavageDriver : public VesaDriver
 {
 	public:
@@ -170,8 +185,11 @@ class SavageDriver : public VesaDriver
 		virtual int GetScreenModeCount();
 		virtual bool GetScreenModeDesc( int nIndex, os::screen_mode *psMode );
 		virtual int SetScreenMode( os::screen_mode sMode );
-		virtual bool DrawLine( SrvBitmap *psBitmap, const os::IRect &cClipRect, const os::IPoint &cPnt1, const os::IPoint &cPnt2, const os::Color32_s &sColor, int nMode );
-		virtual bool FillRect( SrvBitmap *psBitmap, const os::IRect &cRect, const os::Color32_s &sColor, int nMode );
+
+		virtual void LockBitmap( SrvBitmap* pcDstBitmap, SrvBitmap* pcSrcBitmap, os::IRect cSrcRect, os::IRect cDstRect );
+
+		virtual bool DrawLine( SrvBitmap *pcBitmap, const os::IRect &cClipRect, const os::IPoint &cPnt1, const os::IPoint &cPnt2, const os::Color32_s &sColor, int nMode );
+		virtual bool FillRect( SrvBitmap *pcBitmap, const os::IRect &cRect, const os::Color32_s &sColor, int nMode );
 		virtual bool BltBitmap( SrvBitmap *pcDstBitmap, SrvBitmap *pcSrcBitmap, os::IRect cSrcRect, os::IRect cDstRect, int nMode, int nAlpha );
 
 		virtual bool CreateVideoOverlay( const os::IPoint& cSize, const os::IRect& cDst, os::color_space eFormat, os::Color32_s sColorKey, area_id *phArea );
@@ -189,11 +207,15 @@ class SavageDriver : public VesaDriver
 		void SavageSetGBD_Twister( savage_s *psCard );
 		void SavageSetGBD_PM( savage_s *psCard );
 		void SavageSetGBD_2000( savage_s *psCard );
+		unsigned int SavageSetBD( SrvBitmap *pcBitmap );
 
 		bool SavageOverlayNew( const os::IPoint& cSize, const os::IRect& cDst, area_id *phArea );
 		void SavageSetColorKeyNew( savage_s *psCard );
+		bool SavageOverlayOld( const os::IPoint& cSize, const os::IRect& cDst, area_id *phArea );
+		void SavageSetColorKeyOld( savage_s *psCard );
 
 		void SavageStreamsOn( savage_s *psCard );
+		void SavageStreamsOff( savage_s *psCard );
 		void SavageInitStreamsNew( savage_s *psCard );
 		void SavageInitStreamsOld( savage_s *psCard );
 
@@ -219,6 +241,7 @@ class SavageDriver : public VesaDriver
 		bool ShadowWaitQueue( savage_s *psCard, int v );
 
 		os::Locker m_cGELock;
+		bool m_bEngineDirty;
 		savage_s *m_psCard;
 
 		/* Physical addresses */
@@ -232,6 +255,7 @@ class SavageDriver : public VesaDriver
 		bool m_bIsInited;
 		
 		os::Color32_s m_sColorKey;
+		uint32 m_nVideoOffset;
 		bool m_bVideoOverlayUsed;
 
 		std::vector<os::screen_mode> m_cModes;

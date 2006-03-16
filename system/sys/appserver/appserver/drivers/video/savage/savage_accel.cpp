@@ -433,7 +433,7 @@ void SavageDriver::SavageSetGBD_M7( savage_s *psCard )
 	psCard->GlobalBD.bd1.HighPart.ResBWTile |= 0x10;/* disable block write */
 	/* HW uses width */
 	psCard->GlobalBD.bd1.HighPart.Stride = (unsigned short)(psCard->scrn.lDelta / (psCard->scrn.Bpp >> 3));
-	psCard->GlobalBD.bd1.HighPart.Bpp = (unsigned char) (psCard->scrn.Bpp);
+	psCard->GlobalBD.bd1.HighPart.Bpp = (unsigned char)(psCard->scrn.Bpp);
 	psCard->GlobalBD.bd1.Offset = 0;    
 
 	/*
@@ -818,13 +818,44 @@ void SavageDriver::SavageSetGBD_2000( savage_s *psCard )
 	OUTREG8(SEQ_DATA_REG,byte);
 }
 
-bool SavageDriver::DrawLine( SrvBitmap *psBitmap, const IRect &cClipRect, const IPoint &cPnt1, const IPoint &cPnt2, const Color32_s &sColor, int nMode )
+void SavageDriver::LockBitmap( SrvBitmap* pcDstBitmap, SrvBitmap* pcSrcBitmap, os::IRect cSrcRect, os::IRect cDstRect )
+{
+	if( ( pcDstBitmap->m_bVideoMem == false && ( pcSrcBitmap == NULL || pcSrcBitmap->m_bVideoMem == false ) ) || m_bEngineDirty == false )
+		return;
+
+	m_cGELock.Lock();
+	WaitIdle( m_psCard );
+	m_bEngineDirty = false;
+	m_cGELock.Unlock();
+}
+
+unsigned int SavageDriver::SavageSetBD( SrvBitmap *pcBitmap )
+{
+	unsigned int bd = 0;
+
+	/* HW uses width */
+	if( pcBitmap->m_eColorSpc == CS_RGB32 )
+	{
+		BCI_BD_SET_BPP( bd, 32 );
+		BCI_BD_SET_STRIDE( bd, pcBitmap->m_nBytesPerLine / 4 );
+	}
+	else
+	{
+		BCI_BD_SET_BPP( bd, 16 );
+		BCI_BD_SET_STRIDE( bd, pcBitmap->m_nBytesPerLine / 2 );
+	}
+	bd |= BCI_BD_BW_DISABLE | BCI_BD_TILE_NONE;
+
+	return bd;
+}
+
+bool SavageDriver::DrawLine( SrvBitmap *pcBitmap, const IRect &cClipRect, const IPoint &cPnt1, const IPoint &cPnt2, const Color32_s &sColor, int nMode )
 {
 	savage_s *psCard = m_psCard;
 	bool bRet;
 
-	if( psBitmap->m_bVideoMem && nMode == DM_COPY &&
-	    ( psBitmap->m_eColorSpc == CS_RGB32 || psBitmap->m_eColorSpc == CS_RGB16 ) )
+	if( pcBitmap->m_bVideoMem && nMode == DM_COPY &&
+	    ( pcBitmap->m_eColorSpc == CS_RGB32 || pcBitmap->m_eColorSpc == CS_RGB16 ) )
 	{
 		int x1 = cPnt1.x;
 		int y1 = cPnt1.y;
@@ -840,7 +871,7 @@ bool SavageDriver::DrawLine( SrvBitmap *psBitmap, const IRect &cClipRect, const 
 			int min, max, xp, yp, ym;
 			BCI_GET_PTR;
 
-			if (psBitmap->m_eColorSpc == CS_RGB32)
+			if (pcBitmap->m_eColorSpc == CS_RGB32)
 				nColor = COL_TO_RGB32(sColor);
 			else
 				nColor = COL_TO_RGB16(sColor);	/* We only support CS_RGB32 and CS_RGB16 */
@@ -871,72 +902,70 @@ bool SavageDriver::DrawLine( SrvBitmap *psBitmap, const IRect &cClipRect, const 
 			m_cGELock.Lock();
 
 			nCmd = (BCI_CMD_LINE_LAST_PIXEL | BCI_CMD_RECT_XP |	BCI_CMD_RECT_YP |
-					BCI_CMD_SEND_COLOR | BCI_CMD_DEST_GBD | BCI_CMD_SRC_SOLID);
+					BCI_CMD_SEND_COLOR | BCI_CMD_DEST_PBD_NEW | BCI_CMD_SRC_SOLID);
 
-			BCI_CMD_SET_ROP( nCmd, 0x00cc );
+			BCI_CMD_SET_ROP( nCmd, 0x00cc );	/* GXcopy */
 
-			WaitQueue( psCard, 5 );
+			WaitQueue( psCard, 8 );
 
 			BCI_SEND( nCmd );
+			BCI_SEND( pcBitmap->m_nVideoMemOffset );
+			BCI_SEND( SavageSetBD( pcBitmap ) );
 			BCI_SEND( nColor );
 			BCI_SEND( BCI_LINE_X_Y( x1, y1 ) );
 			BCI_SEND( BCI_LINE_STEPS( 2 * (min - max), 2 * min ) );
 			BCI_SEND( BCI_LINE_MISC( max, ym, xp, yp, 2 * min - max ) );
 
-			WaitIdle( psCard );
+			m_bEngineDirty = true;
 			m_cGELock.Unlock();
 			bRet = true;
 		}
 	}
 	else
-	{
-		WaitIdle( psCard );
-		bRet = DisplayDriver::DrawLine( psBitmap, cClipRect, cPnt1, cPnt2, sColor, nMode );
-	}
+		bRet = DisplayDriver::DrawLine( pcBitmap, cClipRect, cPnt1, cPnt2, sColor, nMode );
 
 	return bRet;
 }
 
-bool SavageDriver::FillRect( SrvBitmap *psBitmap, const IRect &cRect, const Color32_s &sColor, int nMode )
+bool SavageDriver::FillRect( SrvBitmap *pcBitmap, const IRect &cRect, const Color32_s &sColor, int nMode )
 {
 	savage_s *psCard = m_psCard;
 	uint32 nColor;
 	bool bRet;
 
-	if ( psBitmap->m_bVideoMem && cRect.Width() > 1 && cRect.Height() > 1 && 
-		 ( psBitmap->m_eColorSpc == CS_RGB32 || psBitmap->m_eColorSpc == CS_RGB16 ) && nMode == DM_COPY )
+	if ( pcBitmap->m_bVideoMem && cRect.Width() > 1 && cRect.Height() > 1 && 
+		 ( pcBitmap->m_eColorSpc == CS_RGB32 || pcBitmap->m_eColorSpc == CS_RGB16 ) && nMode == DM_COPY )
 	{
 		BCI_GET_PTR;
 		int nCmd;
 
-		if (psBitmap->m_eColorSpc == CS_RGB32)
+		if (pcBitmap->m_eColorSpc == CS_RGB32)
 			nColor = COL_TO_RGB32( sColor );
 		else
 		    nColor = COL_TO_RGB16( sColor );	 /* We only support CS_RGB32 and CS_RGB16 */
 
 		m_cGELock.Lock();
 
-		nCmd = BCI_CMD_RECT | BCI_CMD_RECT_XP | BCI_CMD_RECT_YP | BCI_CMD_DEST_GBD |
+		nCmd = BCI_CMD_RECT | BCI_CMD_RECT_XP | BCI_CMD_RECT_YP | BCI_CMD_DEST_PBD_NEW |
 			   BCI_CMD_SRC_SOLID | BCI_CMD_SEND_COLOR;
 
-		BCI_CMD_SET_ROP( nCmd, 0x00cc );	/* 0x00cc comes the directfb driver */
+		BCI_CMD_SET_ROP( nCmd, 0x00cc );	/* GXcopy */
 
-		WaitQueue( psCard, 6 );
-
+		WaitQueue( psCard, 7 );
 		BCI_SEND( nCmd );
+		BCI_SEND( pcBitmap->m_nVideoMemOffset );
+		BCI_SEND( SavageSetBD( pcBitmap ) );
+
 		BCI_SEND( nColor );
 		BCI_SEND( BCI_X_Y( cRect.left, cRect.top ) );
 		BCI_SEND( BCI_W_H( cRect.Width() + 1, cRect.Height() + 1) );
 
-		WaitIdle( psCard );
+		m_bEngineDirty = true;
 		m_cGELock.Unlock();
 		bRet = true;
 	}
 	else
-	{
-		WaitIdle( psCard );
-		bRet = DisplayDriver::FillRect( psBitmap, cRect, sColor, nMode );
-	}
+		bRet = DisplayDriver::FillRect( pcBitmap, cRect, sColor, nMode );
 
 	return bRet;
 }
@@ -946,24 +975,28 @@ bool SavageDriver::BltBitmap( SrvBitmap *pcDstBitmap, SrvBitmap *pcSrcBitmap, IR
 	savage_s *psCard = m_psCard;
 	bool bRet;
 
-	if( pcSrcBitmap->m_bVideoMem == true && pcDstBitmap->m_bVideoMem == true && nMode == DM_COPY && cSrcRect.Size() == cDstRect.Size() )
+	if( pcSrcBitmap->m_bVideoMem == true && pcDstBitmap->m_bVideoMem == true &&
+		nMode == DM_COPY &&
+		cSrcRect.Size() == cDstRect.Size() )
 	{
 		/* Screen to screen copy */
-		IPoint cDstPos = cDstRect.LeftTop();
 		int nWidth  = cSrcRect.Width();
 		int nHeight = cSrcRect.Height();
 		int sx = cSrcRect.left;
 		int sy = cSrcRect.top;
-		int dx = cDstPos.x;
-		int dy = cDstPos.y;
+		int dx = cDstRect.left;
+		int dy = cDstRect.top;
 
 		BCI_GET_PTR;
 		uint32 nCmd;
 
+		//dbprintf( "VRAM->VRAM copy: w=%d h=%d sx=%d sy=%d dx=%d dy=%d\n", nWidth, nHeight, sx, sy, dx, dy );
+		//dbprintf( "VRAM->VRAM copy: src=%d dst=%d\n", pcSrcBitmap->m_nVideoMemOffset, pcDstBitmap->m_nVideoMemOffset );
+
 		m_cGELock.Lock();
 
-		nCmd = (BCI_CMD_RECT | BCI_CMD_DEST_GBD | BCI_CMD_SRC_GBD);
-		BCI_CMD_SET_ROP( nCmd, 0x00cc );
+		nCmd = (BCI_CMD_RECT | BCI_CMD_DEST_PBD_NEW | BCI_CMD_SRC_SBD_COLOR_NEW);
+		BCI_CMD_SET_ROP( nCmd, 0x00cc );	/* GXcopy */
 
 		if(dx < sx)
 			nCmd |= BCI_CMD_RECT_XP;	/* Left to right */
@@ -981,23 +1014,27 @@ bool SavageDriver::BltBitmap( SrvBitmap *pcDstBitmap, SrvBitmap *pcSrcBitmap, IR
 			sy += nHeight;
 		}
 
-		WaitQueue( psCard, 6 );
-
+		WaitQueue( psCard, 9 );
 		BCI_SEND( nCmd );
+
+		/* Source */
+		BCI_SEND( pcSrcBitmap->m_nVideoMemOffset );	/* Low */
+		BCI_SEND( SavageSetBD( pcSrcBitmap ) );		/* High */
+
+		/* Dest. */
+		BCI_SEND( pcDstBitmap->m_nVideoMemOffset );	/* Low */
+		BCI_SEND( SavageSetBD( pcDstBitmap ) );		/* High */
+
 		BCI_SEND( BCI_X_Y( sx, sy ) );
 		BCI_SEND( BCI_X_Y( dx, dy ) );
 		BCI_SEND( BCI_W_H( nWidth + 1, nHeight + 1 ) );
 
-		WaitIdle( psCard );
+		m_bEngineDirty = true;
 		m_cGELock.Unlock();
 		bRet = true;
 	}
 	else
-	{
-		/* RAM to RAM/video copy */
-		WaitIdle( psCard );
 		bRet = DisplayDriver::BltBitmap( pcDstBitmap, pcSrcBitmap, cSrcRect, cDstRect, nMode, nAlpha );
-	}
 
 	return bRet;
 }
