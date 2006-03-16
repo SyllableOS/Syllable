@@ -1,3 +1,12 @@
+* March 16 2006, Kristian Van Der Vliet *
+
+Updated the Savage driver
+	o Support "old" streams engine (overlays)
+	o Fix overlays in 16bit mode with "new" streams
+	o Support for off-screen bitmaps based on an early X.org EXA patch.  This is
+	  currently disabled as I can not solve a rendering error in 16bit modes with
+	  off-screen->screen blits.  Asyncronous rendering is enabled however.
+
 * February 24 2006, Kristian Van Der Vliet *
 
 Added a Maestro 1/2[E] driver.  Ported from the Linux 2.6 OSS driver and tested
