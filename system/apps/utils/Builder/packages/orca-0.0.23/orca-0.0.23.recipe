@@ -5,7 +5,9 @@ notes				Tested with M2 0.3.1
 ;inherits			sourceforge
 
 licenses			LGPL
-home				wsrebol.sf.net
+home
+;	urlan.sf.net
+	wsrebol.sf.net
 packages
 	urlan/orca-0.0.23
 	m2					orca/support
@@ -30,4 +32,3 @@ install-files
 	ovalue.h		include
 documentation		README LICENSE ChangeLog TODO
 links				orca bin/rebol
-
