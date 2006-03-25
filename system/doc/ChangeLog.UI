@@ -1,3 +1,9 @@
+* March 26 2006, Arno Klenke *
+
+Added WID_FULL_UPDATE_ON_RESIZE flag to some widgets
+The SameWidth()/SameHeight() methods of the os::LayoutNode class can
+now reset the width/height rings.
+
 * March 15 2006, Kristian Van Der Vliet *
 
 Added DTF_WRAP_SOFT & DTF_UNDERLINES flags to DrawText() & GetTextExtent()
@@ -1093,6 +1099,7 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
 
 
