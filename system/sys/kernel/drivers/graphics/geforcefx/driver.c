@@ -51,6 +51,7 @@ enum {
 #define APPSERVER_DRIVER "geforcefx"
 
 struct gfx_device g_sDevices[] = {
+	{0x10de, 0xffff, "nVidia", "GeForce PCI express" },
 	{0x10de, 0x0100, "nVidia", "GeForce 256"},
 	{0x10de, 0x0101, "nVidia", "GeForce DDR"},
 	{0x10de, 0x0103, "nVidia", "Quadro"},
@@ -329,7 +330,9 @@ status_t device_init( int nDeviceID )
 		for ( nDeviceNum = 0; nDeviceNum < nNumDevices; ++nDeviceNum )
 		{
 			/* Compare vendor and device id */
-			if ( sInfo.nVendorID == g_sDevices[nDeviceNum].nVendorID && sInfo.nDeviceID == g_sDevices[nDeviceNum].nDeviceID )
+			if ( sInfo.nVendorID == g_sDevices[nDeviceNum].nVendorID && 
+			( sInfo.nDeviceID == g_sDevices[nDeviceNum].nDeviceID )
+			|| ( ( sInfo.nDeviceID & 0xFFF0 ) == 0x00F0 ) )
 			{
 				sprintf( zTemp, "%s %s", g_sDevices[nDeviceNum].zVendorName, g_sDevices[nDeviceNum].zDeviceName );
 				if ( claim_device( nDeviceID, sInfo.nHandle, zTemp, DEVICE_VIDEO ) != 0 )
@@ -357,6 +360,8 @@ status_t device_init( int nDeviceID )
 					printk( "Error: Failed to create device node %s\n", zNodePath );
 					continue;
 				}
+				
+				nDeviceNum = nNumDevices;
 				
 				bDevFound = true;
 			}

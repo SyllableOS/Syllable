@@ -242,15 +242,16 @@ FX::FX( int nFd ):m_cGELock( "fx_ge_lock" ), m_hRegisterArea( -1 ), m_hFrameBuff
 			break;
 		}
 	}
-
-
-	if ( !bFound )
+	
+	if( !bFound && ( ChipsetID & 0xFFF0 ) == 0x00F0 )
+	{
+		dbprintf( "GeForceFX :: Detected PCI express card\n" );
+	} else if( !bFound )
 	{
 		dbprintf( "GeForceFX :: No supported cards found\n" );
 		return;
-	}
-
-	dbprintf( "GeForceFX :: Found %s\n", asChipInfos[j].pzName );
+	} else
+		dbprintf( "GeForceFX :: Found %s\n", asChipInfos[j].pzName );
 
 	m_nFd = nFd;
 
@@ -265,6 +266,33 @@ FX::FX( int nFd ):m_cGELock( "fx_ge_lock" ), m_hRegisterArea( -1 ), m_hFrameBuff
 	remap_area( m_hFrameBufferArea, ( void * )( m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK ) );
 
 	memset( &m_sHW, 0, sizeof( m_sHW ) );
+	
+	if( !bFound )
+	{
+		/* Read PCI id */
+		vuint32 *pRegs;
+		pRegs = (vuint32*)m_pRegisterBase;
+		uint32 nID = pRegs[0x1800/4];
+		if( ( nID & 0x0000ffff ) == 0x000010DE )
+			ChipsetID = 0x10DE0000 | ( nID >> 16 );
+		else if( ( nID & 0xffff0000 ) == 0x10DE0000 )
+			ChipsetID = 0x10DE0000 | ( ( nID << 8 ) & 0x0000ff00 ) |
+                            ( ( nID >> 8 ) & 0x000000ff );
+                           
+		for ( j = 0; j < nNrDevs; j++ )
+		{
+			if ( ChipsetID == asChipInfos[j].nDeviceId )
+			{
+				bFound = true;
+				break;
+			}
+		}	
+		if( bFound )
+			dbprintf( "GeForceFX :: Found %s\n", asChipInfos[j].pzName );
+	}
+	
+	if( !bFound )
+		return;
 
 	m_sHW.Fd = nFd;
 	m_sHW.Chipset = asChipInfos[j].nDeviceId;

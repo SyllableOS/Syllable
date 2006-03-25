@@ -44,7 +44,7 @@ class RadioButton : public Control
 public:
     RadioButton( Rect cFrame, const String& cName, const String& cLabel, Message* pcMessage,
 		 uint32 nResizeMask = CF_FOLLOW_LEFT | CF_FOLLOW_TOP,
-		 uint32 nFlags  = WID_WILL_DRAW | WID_CLEAR_BACKGROUND );
+		 uint32 nFlags  = WID_WILL_DRAW | WID_CLEAR_BACKGROUND | WID_FULL_UPDATE_ON_RESIZE );
     ~RadioButton();
     virtual void	AttachedToWindow();
   

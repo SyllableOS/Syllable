@@ -602,6 +602,13 @@ void LayoutNode::AddToHeightRing( LayoutNode * pcRing )
 
 void LayoutNode::SameWidth( const char *pzName1, ... )
 {
+	if( pzName1 == NULL )
+	{
+		/* Reset */
+		m->m_sWidthRing.m_pcNext = this;
+		m->m_sWidthRing.m_pcPrev = this;
+		return;
+	}
 
 	va_list pArgs;
 
@@ -630,6 +637,13 @@ void LayoutNode::SameWidth( const char *pzName1, ... )
 
 void LayoutNode::SameHeight( const char *pzName1, ... )
 {
+	if( pzName1 == NULL )
+	{
+		/* Reset */
+		m->m_sHeightRing.m_pcNext = this;
+		m->m_sHeightRing.m_pcPrev = this;
+		return;
+	}
 
 	va_list pArgs;
 
@@ -827,7 +841,7 @@ void HLayoutNode::Layout()
 
 	for( uint i = 0; i < cChildList.size(); ++i )
 	{
-		Rect cFrame( 0.0f, 0.0f, avFinalHeights[i] - 1.0f, cBounds.bottom );
+		Rect cFrame( 0.0f, 0.0f, avFinalHeights[i] - 1.0f, cBounds.bottom - cBounds.top );
 
 		if( cFrame.Height() + 1.0f > avMaxHeights[i] )
 		{
@@ -914,7 +928,7 @@ void VLayoutNode::Layout()
 
 	for( uint i = 0; i < cChildList.size(); ++i )
 	{
-		Rect cFrame( 0.0f, 0.0f, cBounds.right, avFinalHeights[i] - 1.0f );
+		Rect cFrame( 0.0f, 0.0f, cBounds.right - cBounds.left, avFinalHeights[i] - 1.0f );
 
 		if( cFrame.Width() + 1.0f > avMaxWidths[i] )
 		{

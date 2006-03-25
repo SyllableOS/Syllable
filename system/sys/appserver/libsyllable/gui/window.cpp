@@ -932,6 +932,7 @@ void Window::_ViewDeleted( View * pcView )
 				m->m_apcFocusStack[j] = m->m_apcFocusStack[j + 1];
 			}
 			m->m_apcFocusStack[FOCUS_STACK_SIZE - 1] = NULL;
+			i = i - 1;
 		}
 	}
 }

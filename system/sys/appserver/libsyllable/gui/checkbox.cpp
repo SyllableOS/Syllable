@@ -174,12 +174,12 @@ void CheckBox::MouseUp( const Point & cPosition, uint32 nButtons, Message * pcDa
 void CheckBox::Paint( const Rect & cUpdateRect )
 {
 	Rect cBounds = GetBounds();
-
+	
 	std::string cLabel = GetLabel();
 
 	SetFgColor( get_default_color( COL_NORMAL ) );
 	FillRect( cUpdateRect );
-
+	
 	if( cLabel.empty() == false )
 	{
 		Rect cLabelRect( cBounds );
