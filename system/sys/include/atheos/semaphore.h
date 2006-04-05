@@ -54,6 +54,8 @@ status_t	lock_semaphore( sem_id hSema, uint32 nFlags, bigtime_t nTimeOut );
 status_t 	lock_semaphore_ex( sem_id hSema, int nCount, uint32 nFlags, bigtime_t nTimeOut );
 status_t	unlock_semaphore_ex( sem_id hSema, int nCount );
 
+status_t	reset_semaphore( sem_id hSema, int nCount );
+
 /* Reader-writer locks */
 status_t rwl_lock_read_ex( sem_id hSema, uint32 nFlags, bigtime_t nTime );
 status_t rwl_convert_to_anon( sem_id hSema );

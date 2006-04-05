@@ -2035,6 +2035,61 @@ status_t spinunlock_and_suspend( sem_id hWaitQueue, SpinLock_s * psLock, uint32 
 	return ( nError );
 }
 
+/** Reset the count on the given semaphore
+ * \ingroup DriverAPI
+ * \par Description:
+ * Reset the count of the given semaphore.  The semaphore must
+ * be a SEMSTYLE_COUNTING type semaphore.
+ *
+ * \par Warning
+ * Calling this function when a thread has locked the semaphore
+ * or is sleeping on the semaphore is dangerous.
+ * \param hSema
+ * The semaphore to modify.
+ * \param nCount
+ * The new count for the semaphore.
+ * \return
+ * On success 0 is returned.
+ * On error a negative error code is returned.
+ * \par Error codes:
+ *  - \b EINVAL hSema os not a valid semaphore handle.
+ * \sa lock_semaphore(), unlock_semaphore()
+ * \author Kristian Van Der Vliet (vanders@liqwyd.com)
+ *****************************************************************************/
+ 
+status_t reset_semaphore( sem_id hSema, int nCount )
+{
+	Semaphore_s *psSema;
+	int nFlg;
+
+	if ( 0 == hSema )
+	{
+		kerndbg( KERN_DEBUG, __FUNCTION__ "(): Attempt to set count for semaphore 0\n" );
+		return ( -EINVAL );
+	}
+
+	nFlg = spinlock_disable( &g_sSemListSpinLock );
+
+	psSema = get_semaphore_by_handle( -1, hSema );
+	if ( NULL == psSema )
+	{
+		kerndbg( KERN_DEBUG, __FUNCTION__ "(): Invalid semaphore handle %d\n", hSema );
+		return ( -EINVAL );
+	}
+
+	if ( ( psSema->ss_nFlags & SEM_STYLE_MASK ) != SEMSTYLE_COUNTING )
+	{
+		kerndbg( KERN_DEBUG, __FUNCTION__ "(): Incorrect semaphore style.\n" );
+		return ( -EINVAL );
+	}
+
+	psSema->ss_lNestCount = nCount;
+
+	spinunlock_enable( &g_sSemListSpinLock, nFlg );
+
+	return 0;
+}
+
 /** Non conditionally block on a semaphore (wait-queue)
  * \ingroup DriverAPI
  * \par Description:

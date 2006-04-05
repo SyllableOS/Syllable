@@ -227,6 +227,7 @@ static KernelSymbol_s g_asKernelSymbols[] = {
 	KSYMBOL( spinunlock_and_suspend ),
 	KSYMBOL( sleep_on_sem ),
 	KSYMBOL( wakeup_sem ),
+	KSYMBOL( reset_semaphore ),
 	KSYMBOL( get_semaphore_info ),
 	KSYMBOL( get_semaphore_count ),
 	KSYMBOL( get_semaphore_owner ),

@@ -135,15 +135,9 @@ int ata_pci_interrupt( int nIrq, void *pPort, SysCallRegs_s* psRegs )
 		/* Not our IRQ */
 		return( 0 );
 	}
-	
-	if( psPort->bWaitForIRQ )
-	{
-		/* Let the busmanager handle the irq */
-		unlock_semaphore( psPort->hIRQWait );
-	} else {
-		/* Clear interrupt */
-		ATA_WRITE_DMA_REG( psPort, ATA_REG_DMA_STATUS, nStatus | ATA_DMA_STATUS_IRQ | ATA_DMA_STATUS_ERROR )
-	}
+
+	/* Let the busmanager handle the irq */
+	unlock_semaphore( psPort->hIRQWait );
 	
 	return( 0 );
 }
