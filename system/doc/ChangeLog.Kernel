@@ -1,3 +1,10 @@
+* April 5 2006, Kristian Van Der Vliet *
+
+New function reset_semaphore()
+The ATA drivers now use lock()/unlock() to wait for ATA DMA completion.  This fixes DMA on
+controllers & drives which raise an IRQ early during the operation: previously this would
+cause the ATA bus manager to call wakeup_sem() before the ATA hcd had called sleep_on_sem()
+
 * March 15 2006, Kristian Van Der Vliet *
 
 Added a working ioremap() implementation to linux_compat.h  This has fixed at least one known
