@@ -1,4 +1,5 @@
 // Screen Preferences :: (C)opyright Daryl Dudey 2002
+//                       (C)opyright Jonas Jarvoll 2005
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -24,6 +25,7 @@
 #include <gui/stringview.h>
 #include <gui/dropdownmenu.h>
 #include <gui/slider.h>
+#include <gui/requesters.h>
 #include <vector>
 
 // This is the number of depths, I am only using RGB ones
@@ -37,20 +39,29 @@ public:
   virtual void HandleMessage(os::Message* pcMessage);
 
   bool OkToQuit(void);
+  void TimerTick( int nID );
 
 private:
   void ShowData();
-  void Apply();
-  void Undo();
-  void Default();
   void ColourChange();
   void ResolutionChange();
   void RefreshChange();
+  void Apply();
+  void EnableAll();
+  void DisableAll();
+  void SaveOldMode();
+  void RestoreOldMode();
 
-  // Default mode
-  os::screen_mode cCurrent;
-  os::screen_mode cUndo;
-  os::screen_mode cUndo2;
+  // Number of supported desktops
+  static const uint32 NoSupportedDesktop=32;
+
+  // Timer
+  static const int TimerId=0;
+  static const int TimerCount=15L*1000L*1000L;  // In micro seconds
+
+  // Saved mode
+  os::screen_mode cCurrentMode;
+  os::screen_mode cOldMode;
 
   // All screenmodes
   int m_nModeCount;
@@ -59,14 +70,14 @@ private:
   std::vector<uint32> m_cColorSpaces;
   std::vector<uint32> m_cRefreshRates;
 
-  // Refresh flag/custom or not
-
+  // GUI components
   os::LayoutView *pcLRoot;
   os::VLayoutNode *pcVLRoot, *pcVLSettings;
   os::HLayoutNode *pcHLWorkspace, *pcHLButtons, *pcHLResolution, *pcHLColour, *pcHLRefresh;
   os::FrameView *pcFVSettings, *pcFVAppearance;
-  os::Button *pcBDefault, *pcBApply, *pcBUndo;
+  os::Button *pcBApply, *pcBClose;
   os::DropdownMenu *pcDDMWorkspace, *pcDDMResolution, *pcDDMColour, *pcDDMRefresh;
+  os::Alert* pcConfirmAlert;
 };
 
 #endif /* __MAINWINDOW_H_ */

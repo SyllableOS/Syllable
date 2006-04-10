@@ -1,4 +1,5 @@
 // Screen Preferences :: (C)opyright 2000-2001 Daryl Dudey
+//                       (C)opyright Jonas Jarvoll 2005
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -24,13 +25,18 @@ int main(int argc, char* argv[])
 {
   PrefsScreenApp *pcPrefsScreenApp;
 
-  if ((getuid()==0)) {
-    bRoot = true;
-  } else {
-    bRoot = false;
-  }
+  bRoot = ( getuid()==0 );
 
   pcPrefsScreenApp=new PrefsScreenApp();
+
+  // Give a warning if the user is not root
+  if(!bRoot)
+  {
+	std::string cRootOnlyText="Only root is allowed to change the screen resolution.\n";
+	os::Alert* pcRootOnlyAlert=new os::Alert("Not allowed", cRootOnlyText, os::Alert::ALERT_INFO, "OK", NULL);
+  	pcRootOnlyAlert->Go(new os::Invoker());
+  }
+
   pcPrefsScreenApp->Run();
 }
 
@@ -44,11 +50,7 @@ PrefsScreenApp::PrefsScreenApp() : os::Application("application/x-vnd-ScreenPref
   int iTop = (iHeight-17)/2;
 
   // Show main window
-  if (bRoot) {
-    pcWindow = new MainWindow(os::Rect(iLeft, iTop, iLeft+280, iTop+165));
-  } else {
-    pcWindow = new MainWindow(os::Rect(iLeft, iTop, iLeft+280, iTop+115));
-  }
+  pcWindow = new MainWindow(os::Rect(iLeft, iTop, iLeft+280, iTop+165));
   pcWindow->Show();
   pcWindow->MakeFocus();
 }

@@ -1,4 +1,5 @@
 // Screen Preferences :: (C)opyright 2002 Daryl Dudey
+//                       (C)opyright Jonas Jarvoll 2005
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -22,6 +23,7 @@
 #include <gui/desktop.h>
 #include <gui/guidefines.h>
 #include <gui/image.h>
+#include <gui/requesters.h>
 #include "main.h"
 #include "mainwindow.h"
 #include "messages.h"
@@ -100,18 +102,14 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   
   // Create apply/revert/close buttons
   pcHLButtons = new os::HLayoutNode("HLButtons");
-  if (bRoot) {
-    pcVLRoot->AddChild( new os::VLayoutSpacer("", 10.0f, 10.0f));
-    pcHLButtons = new os::HLayoutNode("HLButtons");
-    pcHLButtons->AddChild( new os::HLayoutSpacer(""));
-    pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", "Apply", new os::Message(M_MW_APPLY)) );
-    pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
-    pcHLButtons->AddChild( pcBUndo = new os::Button(cRect, "BUndo", "Undo", new os::Message(M_MW_UNDO)) );
-    pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
-    pcHLButtons->AddChild( pcBDefault = new os::Button(cRect, "BDefault", "Default", new os::Message(M_MW_DEFAULT)) );
-    pcHLButtons->SameWidth( "BApply", "BUndo", "BDefault", NULL );
-    pcVLRoot->AddChild(pcHLButtons);
-  }
+  pcVLRoot->AddChild( new os::VLayoutSpacer("", 10.0f, 10.0f));
+  pcHLButtons = new os::HLayoutNode("HLButtons");
+  pcHLButtons->AddChild( new os::HLayoutSpacer(""));
+  pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", "Apply", new os::Message(M_MW_APPLY)) );
+  pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
+  pcHLButtons->AddChild( pcBClose = new os::Button(cRect, "BClose", "Close", new os::Message(M_MW_CLOSE)) );
+  pcHLButtons->SameWidth( "BApply", "BClose", NULL );
+  pcVLRoot->AddChild(pcHLButtons);
 
   // Set root and add to window
   pcLRoot->SetRoot(pcVLRoot);
@@ -119,16 +117,15 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
 
   // Set default button and initial focus (if root)
   if (bRoot) {
+	EnableAll();
     this->SetDefaultButton(pcBApply);
     pcDDMResolution->MakeFocus();
   }
 
   // Set read only if not root
   if (!bRoot) {
-    pcDDMWorkspace->SetEnable(false);
-    pcDDMResolution->SetEnable(false);
-    pcDDMColour->SetEnable(false);
-    pcDDMRefresh->SetEnable(false);
+	DisableAll();
+	pcBClose->SetEnable(true);
   }
 
   // Set tab order
@@ -136,16 +133,8 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcDDMWorkspace->SetTabOrder(iTabOrder++);
   pcDDMResolution->SetTabOrder(iTabOrder++);
   pcDDMColour->SetTabOrder(iTabOrder++);
-  if (bRoot) {
-    pcBDefault->SetTabOrder(iTabOrder++);
-    pcBUndo->SetTabOrder(iTabOrder++);
-    pcBApply->SetTabOrder(iTabOrder++);
-  }
-
-  // Get screen mode data
-  cCurrent = os::Desktop().GetScreenMode();
-  memcpy(&cUndo, &cCurrent, sizeof(cCurrent));
-  memcpy(&cUndo2, &cCurrent, sizeof(cCurrent));
+  pcBApply->SetTabOrder(iTabOrder++);
+  pcBClose->SetTabOrder(iTabOrder++);
   
   // Query all screenmodes
   m_nModeCount = os::Application::GetInstance()->GetScreenModeCount();
@@ -161,6 +150,10 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   SetIcon( pcIcon->LockBitmap() );
   delete( pcIcon );
 
+  // Get screen mode data
+  cCurrentMode = os::Desktop().GetScreenMode();
+  cOldMode = os::Desktop().GetScreenMode();
+
   // Show data
   ShowData();
 }
@@ -171,9 +164,10 @@ MainWindow::~MainWindow()
 		delete( m_pcModes );
 }
 
-void MainWindow::ShowData() 
+void MainWindow::ShowData()
 {
 	char *pzScratch = new char[20];
+
 	// Save all available resolutions
 	m_cResolutions.clear();
 	pcDDMResolution->Clear();
@@ -199,8 +193,8 @@ void MainWindow::ShowData()
 		pcDDMResolution->AppendItem( pzScratch );
 		if( i == 0 )
 			pcDDMResolution->SetSelection( pcDDMResolution->GetItemCount() - 1, false );
-		if( (int)( m_cResolutions[i] >> 16 ) == cCurrent.m_nWidth && (int)( m_cResolutions[i] & 0xffff ) ==
-			cCurrent.m_nHeight ) 
+		if( (int)( m_cResolutions[i] >> 16 ) == cCurrentMode.m_nWidth && (int)( m_cResolutions[i] & 0xffff ) ==
+			cCurrentMode.m_nHeight ) 
 			pcDDMResolution->SetSelection( pcDDMResolution->GetItemCount() - 1, false );
 	}
 	
@@ -210,7 +204,7 @@ void MainWindow::ShowData()
 	for( int i = 0; i < m_nModeCount; i++ ) 
 	{
 		bool bFound = false;
-		if( m_pcModes[i].m_nWidth == cCurrent.m_nWidth && m_pcModes[i].m_nHeight == cCurrent.m_nHeight ) { 
+		if( m_pcModes[i].m_nWidth == cCurrentMode.m_nWidth && m_pcModes[i].m_nHeight == cCurrentMode.m_nHeight ) { 
 			uint32 nSpace = (uint32)m_pcModes[i].m_eColorSpace;
 			for( uint16 j = 0; j < m_cColorSpaces.size(); j++ ) {
 				if( m_cColorSpaces[j] == nSpace )
@@ -243,7 +237,7 @@ void MainWindow::ShowData()
 		pcDDMColour->AppendItem( pzScratch );
 		if( i == 0 )
 			pcDDMColour->SetSelection( pcDDMColour->GetItemCount() - 1, false );
-		if( m_cColorSpaces[i] == (uint32)cCurrent.m_eColorSpace ) 
+		if( m_cColorSpaces[i] == (uint32)cCurrentMode.m_eColorSpace ) 
 			pcDDMColour->SetSelection( pcDDMColour->GetItemCount() - 1, false );
 		
 			
@@ -254,8 +248,8 @@ void MainWindow::ShowData()
 	bool bFirst = true;
 	for( int i = 0; i < m_nModeCount; i++ ) 
 	{
-		if( m_pcModes[i].m_nWidth == cCurrent.m_nWidth && m_pcModes[i].m_nHeight == cCurrent.m_nHeight 
-		 && m_pcModes[i].m_eColorSpace == cCurrent.m_eColorSpace ) { 
+		if( m_pcModes[i].m_nWidth == cCurrentMode.m_nWidth && m_pcModes[i].m_nHeight == cCurrentMode.m_nHeight 
+		 && m_pcModes[i].m_eColorSpace == cCurrentMode.m_eColorSpace ) { 
 			sprintf( pzScratch, "%i Hz", (int)m_pcModes[i].m_vRefreshRate );
 			m_cRefreshRates.push_back( (uint32)m_pcModes[i].m_vRefreshRate );
 			pcDDMRefresh->AppendItem( pzScratch );
@@ -263,7 +257,7 @@ void MainWindow::ShowData()
 				bFirst = false;
 				pcDDMRefresh->SetSelection( pcDDMRefresh->GetItemCount() - 1, false );
 			}
-			if( m_pcModes[i].m_vRefreshRate == cCurrent.m_vRefreshRate )
+			if( m_pcModes[i].m_vRefreshRate == cCurrentMode.m_vRefreshRate )
 				pcDDMRefresh->SetSelection( pcDDMRefresh->GetItemCount() - 1, false );
 		}
 	}
@@ -274,7 +268,6 @@ void MainWindow::ShowData()
 	pcDDMWorkspace->AppendItem("All workspaces");
 	pcDDMWorkspace->SetSelection(0);
 	
-	
 	delete( pzScratch );
 }
 
@@ -282,51 +275,27 @@ void MainWindow::Apply()
 {
   // See if this or all desktops
   if (pcDDMWorkspace->GetSelection()==0) {
-    os::Desktop().SetScreenMode(&cCurrent);
+    os::Desktop().SetScreenMode(&cCurrentMode);
   } else {
     for (uint32 i=0;i<32;i++) {
-      os::Desktop(i).SetScreenMode(&cCurrent);
+      os::Desktop(i).SetScreenMode(&cCurrentMode);
     }
   }
-
-  // Now copy current settings over the old
-  memcpy(&cUndo2, &cUndo, sizeof(cUndo));
-  memcpy(&cUndo, &cCurrent, sizeof(cCurrent));
-}
-
-void MainWindow::Undo()
-{
-  // Copy original state back
-  memcpy(&cCurrent, &cUndo2, sizeof(cUndo));
-
-  // Update controls
-  ShowData();
-  ColourChange();
-}
-
-void MainWindow::Default()
-{
-  // Create system defaults
-  cCurrent = m_pcModes[0];
-  // Update controls
-  ShowData();
-  ColourChange();
 }
 
 void MainWindow::ColourChange()
 {
 	int iPos = pcDDMColour->GetSelection();
-	cCurrent.m_eColorSpace = ( os::color_space )m_cColorSpaces[iPos];
+	cCurrentMode.m_eColorSpace = ( os::color_space )m_cColorSpaces[iPos];
 	ShowData();
 }
 
 void MainWindow::ResolutionChange()
-{
-	
+{	
   // Save the newly selected resolution
   int iPos = pcDDMResolution->GetSelection();
-  cCurrent.m_nWidth = (int)( m_cResolutions[iPos] >> 16 );
-  cCurrent.m_nHeight = (int)( m_cResolutions[iPos] & 0xffff );
+  cCurrentMode.m_nWidth = (int)( m_cResolutions[iPos] >> 16 );
+  cCurrentMode.m_nHeight = (int)( m_cResolutions[iPos] & 0xffff );
   ShowData();
 }
 
@@ -334,7 +303,7 @@ void MainWindow::RefreshChange()
 {
   // Save the newly selected refresh rate
   int iPos = pcDDMRefresh->GetSelection();
-  cCurrent.m_vRefreshRate = (float)( m_cRefreshRates[iPos] );
+  cCurrentMode.m_vRefreshRate = (float)( m_cRefreshRates[iPos] );
 }
 
 void MainWindow::HandleMessage(os::Message* pcMessage)
@@ -345,7 +314,7 @@ void MainWindow::HandleMessage(os::Message* pcMessage)
   case M_MW_COLOUR:
     ColourChange();
     break;
-   
+ 
   case M_MW_RESOLUTION:
     ResolutionChange();
     break;
@@ -354,18 +323,76 @@ void MainWindow::HandleMessage(os::Message* pcMessage)
     RefreshChange();
     break;
 
+  case M_MW_CLOSE:
+	OkToQuit();	
+	break;
+
   case M_MW_APPLY:
-    Apply();
+  {	
+	DisableAll();
+    std::string cApplyText="You are about to change the resolution of your screen.\nIf your monitor doesnt support the selected videomode\nthe screen might go black. If it does, please wait 15\nseconds to return to the old mode.\n\nDo you want to proceed?";
+    os::Alert* pcApplyAlert=new os::Alert("Change resolution", cApplyText, os::Alert::ALERT_WARNING, "Yes", "No", NULL);
+	// Set flags
+	pcApplyAlert->SetFlags(pcApplyAlert->GetFlags() | os::WND_NO_CLOSE_BUT);
+	pcApplyAlert->CenterInWindow(this);
+	pcApplyAlert->Go(new os::Invoker(new os::Message(M_MW_APPLY_ALERT), this));
     break;
+  }
+  case M_MW_APPLY_ALERT:
+  {	
+    int32 nSelection;
 
-  case M_MW_DEFAULT:
-    Default();
-    break;
+	if(pcMessage->FindInt32("which", &nSelection))
+		break;
+			
+	switch(nSelection)	
+	{
+	  case 0:  // User wants to proceed changing the resolution
+	  {
+	    SaveOldMode();		
+		Apply();
+		// Create Confirm message box
+  		std::string cConfirmText="Is the new videomode working properly?\n\nIf not please wait and you will automatically\nreturn to the old mode.";
+  		pcConfirmAlert=new os::Alert("Confirm resolution", cConfirmText, os::Alert::ALERT_QUESTION, "Yes", "No", NULL);
+		// Set flags
+	    pcConfirmAlert->SetFlags(pcConfirmAlert->GetFlags() | os::WND_NO_CLOSE_BUT);
+        pcConfirmAlert->CenterInWindow(this);
+	    pcConfirmAlert->Go(new os::Invoker(new os::Message(M_MW_CONFIRM_ALERT), this));
+   	    AddTimer(this, TimerId, TimerCount, false);
+		break;
+      }
+	  default:
+	  {
+		EnableAll();
+		break;
+	  }
+	}
+	break;
+  }
+  case M_MW_CONFIRM_ALERT:
+  {	
+    int32 nSelection;
 
-  case M_MW_UNDO:
-    Undo();
-    break;
+	if(pcMessage->FindInt32("which", &nSelection))
+		break;
 
+	// Remove the 15 seconds timer
+	RemoveTimer(this, TimerId);	
+
+	switch(nSelection)	
+	{
+	  case 0:  // Yes, the new resolution is working fine! Lets keep it
+	    break;
+	  default: // No something is not working, return to old resolution
+	   RestoreOldMode();
+       break;
+	}
+
+	// In any case we enable all buttons
+	EnableAll();
+
+	break;
+  } 
   default:
     os::Window::HandleMessage(pcMessage); break;
   }
@@ -378,7 +405,48 @@ bool MainWindow::OkToQuit()
   return true;
 }
 
+void MainWindow::EnableAll()
+{
+  pcDDMWorkspace->SetEnable(true);
+  pcDDMResolution->SetEnable(true);
+  pcDDMColour->SetEnable(true);
+  pcDDMRefresh->SetEnable(true);
+  pcBApply->SetEnable(true);
+  pcBClose->SetEnable(true);
+}
 
+void MainWindow::DisableAll()
+{
+  pcDDMWorkspace->SetEnable(false);
+  pcDDMResolution->SetEnable(false);
+  pcDDMColour->SetEnable(false);
+  pcDDMRefresh->SetEnable(false);
+  pcBApply->SetEnable(false);
+  pcBClose->SetEnable(false);
+}
 
+void MainWindow::SaveOldMode()
+{ 
+  cOldMode = os::Desktop().GetScreenMode(); 
+}
+
+void MainWindow::RestoreOldMode()
+{
+  memcpy(&cCurrentMode, &cOldMode, sizeof(cOldMode));
+  ShowData();
+  Apply();
+}
+
+void MainWindow::TimerTick( int nID )
+{
+  if(nID==TimerId) {
+	// Delete the confirmation message box 
+	pcConfirmAlert->Close();
+
+    os::Message cT(M_MW_CONFIRM_ALERT);  // Fake a NO answer of the confirm box
+	cT.AddInt32("which", 1);
+	HandleMessage(&cT);
+  }
+}
 
 

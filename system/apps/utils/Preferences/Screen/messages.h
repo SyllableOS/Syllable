@@ -1,4 +1,5 @@
 // Screen Preferences :: (C)opyright Daryl Dudey 2002
+//                       (C)opyright Jonas Jarvoll 2005
 //
 // This is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -22,8 +23,10 @@ enum Messages {
   M_MW_COLOUR,
   M_MW_REFRESH,
   M_MW_APPLY,
-  M_MW_UNDO,
-  M_MW_DEFAULT
+  M_MW_CLOSE,
+  M_MW_APPLY_ALERT,
+  M_MW_CONFIRM_ALERT,
+  M_MW_TIMEOUT
 };
 
 #endif /* __MESSAGES_H */
