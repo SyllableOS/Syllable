@@ -139,47 +139,96 @@ static const struct chip_info asChipInfos[] = {
 	{0x10DE0348, NV_ARCH_30, "GeForce FX Go5700"},
 	{0x10DE034C, NV_ARCH_30, "Quadro FX Go1000"},
 	{0x10DE034E, NV_ARCH_30, "Quadro FX 1100"},
-	{0x10DE0040, NV_ARCH_40, "GeForce FX 6800 Ultra"},
-	{0x10DE0041, NV_ARCH_40, "GeForce FX 6800"},
-	{0x10DE0042, NV_ARCH_40, "GeForce FX 6800 LE"},
-	{0x10DE0045, NV_ARCH_40, "GeForce FX 6800 GT"},
-	{0x10DE004E, NV_ARCH_40, "Quadro FX 4000"},
+	{0x10DE0040, NV_ARCH_40, "GeForce 6800 Ultra" },
+	{0x10DE0041, NV_ARCH_40, "GeForce 6800" },
+	{0x10DE0042, NV_ARCH_40, "GeForce 6800 LE" },
+	{0x10DE0043, NV_ARCH_40, "GeForce 6800 XE" },
+	{0x10DE0045, NV_ARCH_40, "GeForce 6800 GT" },
+	{0x10DE0046, NV_ARCH_40, "GeForce 6800 GT" },
+	{0x10DE0047, NV_ARCH_40, "GeForce 6800 GS" },
+	{0x10DE0048, NV_ARCH_40, "GeForce 6800 XT" },
+	{0x10DE004E, NV_ARCH_40, "Quadro FX 4000" },
+
+	{0x10DE00C0, NV_ARCH_40, "GeForce 6800 GS" },
 	{0x10DE00C1, NV_ARCH_40, "GeForce 6800" },
 	{0x10DE00C2, NV_ARCH_40, "GeForce 6800 LE" },
+	{0x10DE00C3, NV_ARCH_40, "GeForce 6800 XT" },
 	{0x10DE00C8, NV_ARCH_40, "GeForce Go 6800" },
 	{0x10DE00C9, NV_ARCH_40, "GeForce Go 6800 Ultra" },
 	{0x10DE00CC, NV_ARCH_40, "Quadro FX Go1400" },
 	{0x10DE00CD, NV_ARCH_40, "Quadro FX 3450/4000 SDI" },
 	{0x10DE00CE, NV_ARCH_40, "Quadro FX 1400" },
-	{0x10DE0140, NV_ARCH_40, "GeForce FX 6600 GT" },
-	{0x10DE0141, NV_ARCH_40, "GeForce FX 6600" },
-	{0x10DE0142, NV_ARCH_40, "GeForce FX 6600 LE" },
-	{0x10DE0144, NV_ARCH_40, "GeForce FX Go 6600" },
-	{0x10DE0145, NV_ARCH_40, "GeForce FX 6610 XL" },
-	{0x10DE0146, NV_ARCH_40, "GeForce FX Go 6600 TE/6200 TE" },
-	{0x10DE0147, NV_ARCH_40, "GeForce FX 6700 XL" },
-	{0x10DE0148, NV_ARCH_40, "GeForce FX Go 6600" },
-	{0x10DE0149, NV_ARCH_40, "GeForce FX Go 6600 GT" },
+
+	{0x10DE0140, NV_ARCH_40, "GeForce 6600 GT" },
+	{0x10DE0141, NV_ARCH_40, "GeForce 6600" },
+	{0x10DE0142, NV_ARCH_40, "GeForce 6600 LE" },
+	{0x10DE0143, NV_ARCH_40, "GeForce 6600 VE" },
+	{0x10DE0144, NV_ARCH_40, "GeForce Go 6600" },
+	{0x10DE0145, NV_ARCH_40, "GeForce 6610 XL" },
+	{0x10DE0146, NV_ARCH_40, "GeForce Go 6600 TE/6200 TE" },
+	{0x10DE0147, NV_ARCH_40, "GeForce 6700 XL" },
+	{0x10DE0148, NV_ARCH_40, "GeForce Go 6600" },
+	{0x10DE0149, NV_ARCH_40, "GeForce Go 6600 GT" },
 	{0x10DE014E, NV_ARCH_40, "Quadro FX 540" },
-	{0x10DE014F, NV_ARCH_40, "GeForce FX 6200" },
-	{0x10DE0161, NV_ARCH_40, "GeForce FX 6200 TurboCache(TM)" },
-	{0x10DE0162, NV_ARCH_40, "GeForce FX 6200SE TurboCache(TM)" },  
-	{0x10DE0164, NV_ARCH_40, "GeForce FX Go 6200" },
+	{0x10DE014F, NV_ARCH_40, "GeForce 6200" },
+
+	{0x10DE0160, NV_ARCH_40, "GeForce 6500" },
+	{0x10DE0161, NV_ARCH_40, "GeForce 6200 TurboCache(TM)" },
+	{0x10DE0162, NV_ARCH_40, "GeForce 6200SE TurboCache(TM)" },
+	{0x10DE0163, NV_ARCH_40, "GeForce 6200 LE" },
+	{0x10DE0164, NV_ARCH_40, "GeForce Go 6200" },
 	{0x10DE0165, NV_ARCH_40, "Quadro NVS 285" },
-	{0x10DE0166, NV_ARCH_40, "GeForce FX Go 6400" },
-	{0x10DE0167, NV_ARCH_40, "GeForce FX Go 6200" },
-	{0x10DE0168, NV_ARCH_40, "GeForce FX Go 6400" },
-	{0x10DE0211, NV_ARCH_40, "GeForce FX 6800" },
-	{0x10DE0212, NV_ARCH_40, "GeForce FX 6800 LE" },
-	{0x10DE0215, NV_ARCH_40, "GeForce FX 6800 GT" },
-	{0x10DE0221, NV_ARCH_40, "GeForce FX 6200" },
-	{0x10DE0091, NV_ARCH_40, "GeForce FX 7800 GTX" },
-	{0x10DE0099, NV_ARCH_40, "GeForce FX Go 7800 GTX" },
-	{0x10DE009D, NV_ARCH_40, "Quadro FX 4500" }
+	{0x10DE0166, NV_ARCH_40, "GeForce Go 6400" },
+	{0x10DE0167, NV_ARCH_40, "GeForce Go 6200" },
+	{0x10DE0168, NV_ARCH_40, "GeForce Go 6400" },
+	{0x10DE0169, NV_ARCH_40, "GeForce 6250" },
+
+	{0x10DE0211, NV_ARCH_40, "GeForce 6800" },
+	{0x10DE0212, NV_ARCH_40, "GeForce 6800 LE" },
+	{0x10DE0215, NV_ARCH_40, "GeForce 6800 GT" },
+	{0x10DE0218, NV_ARCH_40, "GeForce 6800 XT" },
+
+	{0x10DE0221, NV_ARCH_40, "GeForce 6200" },
+
+	{0x10DE0090, NV_ARCH_40, "GeForce 7800 GTX" },
+	{0x10DE0091, NV_ARCH_40, "GeForce 7800 GTX" },
+	{0x10DE0092, NV_ARCH_40, "GeForce 7800 GT" },
+	{0x10DE0093, NV_ARCH_40, "GeForce 7800 GS" },
+	{0x10DE0095, NV_ARCH_40, "GeForce 7800 SLI" },
+	{0x10DE0098, NV_ARCH_40, "GeForce Go 7800" },
+	{0x10DE0099, NV_ARCH_40, "GeForce Go 7800 GTX" },
+	{0x10DE009D, NV_ARCH_40, "Quadro FX 4500" },
+
+	{0x10DE01D1, NV_ARCH_40, "GeForce 7300 LE" },
+	{0x10DE01D6, NV_ARCH_40, "GeForce Go 7200" },
+	{0x10DE01D7, NV_ARCH_40, "GeForce Go 7300" },
+	{0x10DE01D8, NV_ARCH_40, "GeForce Go 7400" },
+	{0x10DE01DA, NV_ARCH_40, "Quadro NVS 110M" },
+	{0x10DE01DB, NV_ARCH_40, "Quadro NVS 120M" },
+	{0x10DE01DC, NV_ARCH_40, "Quadro FX 350M" },
+	{0x10DE01DE, NV_ARCH_40, "Quadro FX 350" },
+	{0x10DE01DF, NV_ARCH_40, "GeForce 7300 GS" },
+
+	{0x10DE0398, NV_ARCH_40, "GeForce Go 7600" },
+	{0x10DE0399, NV_ARCH_40, "GeForce Go 7600 GT"},
+	{0x10DE039A, NV_ARCH_40, "Quadro NVS 300M" },
+	{0x10DE039C, NV_ARCH_40, "Quadro FX 550M" },
+
+	{0x10DE0298, NV_ARCH_40, "GeForce Go 7900 GS" },
+	{0x10DE0299, NV_ARCH_40, "GeForce Go 7900 GTX" },
+	{0x10DE029A, NV_ARCH_40, "Quadro FX 2500M" },
+	{0x10DE029B, NV_ARCH_40, "Quadro FX 1500M" },
+
+	{0x10DE0240, NV_ARCH_40, "GeForce 6150" },
+	{0x10DE0241, NV_ARCH_40, "GeForce 6150 LE" },
+	{0x10DE0242, NV_ARCH_40, "GeForce 6100" },
+	{0x10DE0244, NV_ARCH_40, "GeForce Go 6150" },
+	{0x10DE0247, NV_ARCH_40, "GeForce Go 6100" }
 };
 
 using namespace os;
 
+#if 0
 inline uint32 pci_size( uint32 base, uint32 mask )
 {
 	uint32 size = base & mask;
@@ -212,7 +261,7 @@ static uint32 get_pci_memory_size( int nFd, const PCI_Info_s * pcPCIInfo, int nR
 		return pci_size( nSize, PCI_ADDRESS_IO_MASK & 0xffff );
 	}
 }
-
+#endif
 
 FX::FX( int nFd ):m_cGELock( "fx_ge_lock" ), m_hRegisterArea( -1 ), m_hFrameBufferArea( -1 )
 {
@@ -255,15 +304,8 @@ FX::FX( int nFd ):m_cGELock( "fx_ge_lock" ), m_hRegisterArea( -1 ), m_hFrameBuff
 
 	m_nFd = nFd;
 
-	int nIoSize = get_pci_memory_size( nFd, &m_cPCIInfo, 0 );
-
-	m_hRegisterArea = create_area( "geforcefx_regs", ( void ** )&m_pRegisterBase, nIoSize, AREA_FULL_ACCESS, AREA_NO_LOCK );
+	m_hRegisterArea = create_area( "geforcefx_regs", ( void ** )&m_pRegisterBase, 0x01000000, AREA_FULL_ACCESS, AREA_NO_LOCK );
 	remap_area( m_hRegisterArea, ( void * )( m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_IO_MASK ) );
-
-	int nMemSize = get_pci_memory_size( nFd, &m_cPCIInfo, 1 );
-
-	m_hFrameBufferArea = create_area( "geforcefx_framebuffer", ( void ** )&m_pFrameBufferBase, nMemSize, AREA_FULL_ACCESS | AREA_WRCOMB, AREA_NO_LOCK );
-	remap_area( m_hFrameBufferArea, ( void * )( m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK ) );
 
 	memset( &m_sHW, 0, sizeof( m_sHW ) );
 	
@@ -273,6 +315,7 @@ FX::FX( int nFd ):m_cGELock( "fx_ge_lock" ), m_hRegisterArea( -1 ), m_hFrameBuff
 		vuint32 *pRegs;
 		pRegs = (vuint32*)m_pRegisterBase;
 		uint32 nID = pRegs[0x1800/4];
+		dbprintf( "Register ID: %x\n", (uint)nID );
 		if( ( nID & 0x0000ffff ) == 0x000010DE )
 			ChipsetID = 0x10DE0000 | ( nID >> 16 );
 		else if( ( nID & 0xffff0000 ) == 0x10DE0000 )
@@ -300,13 +343,21 @@ FX::FX( int nFd ):m_cGELock( "fx_ge_lock" ), m_hRegisterArea( -1 ), m_hFrameBuff
 	m_sHW.Architecture = asChipInfos[j].nArchRev;
 	m_sHW.FbAddress = m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK;
 	m_sHW.IOAddress = m_cPCIInfo.u.h0.nBase0 & PCI_ADDRESS_MEMORY_32_MASK;
+
+	CommonSetup();
+	
+	m_sHW.FbMapSize = m_sHW.RamAmountKBytes * 1024;
+	
+	m_hFrameBufferArea = create_area( "geforcefx_framebuffer", ( void ** )&m_pFrameBufferBase, m_sHW.FbMapSize, AREA_FULL_ACCESS | AREA_WRCOMB, AREA_NO_LOCK );
+	remap_area( m_hFrameBufferArea, ( void * )( m_cPCIInfo.u.h0.nBase1 & PCI_ADDRESS_MEMORY_32_MASK ) );
+
 	m_sHW.FbBase = ( uint8 * )m_pFrameBufferBase;
 	m_sHW.FbStart = m_sHW.FbBase;
 
-	CommonSetup();
-
-	m_sHW.FbMapSize = m_sHW.RamAmountKBytes * 1024;
-	m_sHW.FbUsableSize = m_sHW.FbMapSize - ( 128 * 1024 );
+	if( m_sHW.Architecture >= NV_ARCH_40 )
+		m_sHW.FbUsableSize = m_sHW.FbMapSize - ( 560 * 1024 );
+	else
+		m_sHW.FbUsableSize = m_sHW.FbMapSize - ( 128 * 1024 );
 	m_sHW.ScratchBufferSize = 16384;
 	m_sHW.ScratchBufferStart = m_sHW.FbUsableSize - m_sHW.ScratchBufferSize;
 
@@ -532,9 +583,7 @@ int FX::SetScreenMode( os::screen_mode sMode )
 	nvReg->vpllB = nvReg->pllB;
 	nvReg->vpll2B = nvReg->pllB;
 	
-	VGA_WR08( &m_sHW.PCIO, 0x03D4, 0x1C );
-	nvReg->fifo = VGA_RD08( &m_sHW.PCIO, 0x03D5 ) & ~( 1<<5 );
-
+	
 	if ( m_sHW.CRTCnumber )
 	{
 		nvReg->head = m_sHW.PCRTC0[0x00000860 / 4] & ~0x00001000;
@@ -579,6 +628,9 @@ int FX::SetScreenMode( os::screen_mode sMode )
 	nvReg->displayV = sMode.m_nHeight;
 
 	NVLockUnlock( &m_sHW, 0 );
+	VGA_WR08( &m_sHW.PCIO, 0x03D4, 0x1C );
+	nvReg->fifo = VGA_RD08( &m_sHW.PCIO, 0x03D5 ) & ~( 1<<5 );
+
 	if ( m_sHW.twoHeads )
 	{
 		VGA_WR08( &m_sHW.PCIO, 0x03D4, 0x44 );
@@ -832,6 +884,57 @@ bool FX::FillRect( SrvBitmap * pcBitMap, const IRect & cRect, const Color32_s & 
 
 bool FX::BltBitmap( SrvBitmap * pcDstBitMap, SrvBitmap * pcSrcBitMap, IRect cSrcRect, IRect cDstRect, int nMode, int nAlpha )
 {
+	#if 0
+	if( nMode == DM_SELECT )
+	{
+		uint32 nArea = pcSrcBitMap->m_hArea;
+		ioctl( m_nFd, 100, &nArea );
+//			dbprintf( "Got DMA address %x\n", (uint)nArea );
+		vuint32* pNotifier = (vuint32*)( m_pFrameBufferBase + m_sHW.FbUsableSize + 128 * 1024 );
+		memset( (void*)pNotifier, 0xff, 0x100 );
+		//dbprintf( "DMA %i!!!\n", pNotifier[3]  );
+		m_cGELock.Lock();
+		DmaStart(&m_sHW, MEMFORMAT_NOTIFY, 1);
+        DmaNext (&m_sHW, 0);
+        DmaStart(&m_sHW, MEMFORMAT_OFFSET_IN, 8);
+        DmaNext (&m_sHW, nArea + cSrcRect.top * pcSrcBitMap->m_nBytesPerLine + cSrcRect.left * 4 );
+        DmaNext (&m_sHW, pcDstBitMap->m_nVideoMemOffset + cDstRect.top * pcDstBitMap->m_nBytesPerLine + cDstRect.left * 4 );
+        DmaNext (&m_sHW, pcSrcBitMap->m_nBytesPerLine );
+        DmaNext (&m_sHW, pcDstBitMap->m_nBytesPerLine);
+        DmaNext (&m_sHW, ( cSrcRect.Width() + 1 ) * 4 );
+        DmaNext (&m_sHW, cSrcRect.Height() + 1);
+        DmaNext (&m_sHW, 0x101);
+        DmaNext (&m_sHW, 0);
+        DmaKickoff(&m_sHW);
+        m_cGELock.Unlock();
+       //	dbprintf("Notify start!\n");
+       	int count = 0;
+        while (1) {
+        	uint32 a = pNotifier[0];
+        	uint32 b = pNotifier[1];
+        	uint32 c = pNotifier[2];
+        	uint32 status = pNotifier[3]; 
+        	
+        	count++;       	        	
+        	
+        	if( status == 0xffffffff )
+        		continue;
+        	if( !status )
+        	{
+        		//dbprintf("Finished %i!\n", status);
+        		break;
+        	}
+        	if( status & 0xffff ) {
+        		dbprintf("Error!\n");
+        		break;
+        	}
+        	snooze( 10 );
+       	}
+       	return true;
+       	//dbprintf("Notify finished %i!\n", count);
+	}
+	#endif
+	
 	if ( pcDstBitMap->m_bVideoMem == false || pcSrcBitMap->m_bVideoMem == false || nMode != DM_COPY || cSrcRect.Size() != cDstRect.Size() )
 	{
 		return DisplayDriver::BltBitmap( pcDstBitMap, pcSrcBitMap, cSrcRect, cDstRect, nMode, nAlpha );
@@ -1237,23 +1340,24 @@ void FX::CommonSetup()
 	case 0x0329:
 	case 0x032C:
 	case 0x032D:
-	case 0x0347:
-	case 0x0348:
-	case 0x0349:
-	case 0x034B:
-	case 0x034C:
-	case 0x0160:
-	case 0x0166:
-	case 0x0169:
-	case 0x016B:
-	case 0x016C:
-	case 0x016D:
-	case 0x00C8:
-	case 0x00CC:
-	case 0x0144:
-	case 0x0146:
-	case 0x0148:
-	case 0x0099:
+	 case 0x0347:
+    case 0x0348:
+    case 0x0349:
+    case 0x034B:
+    case 0x034C:
+    case 0x0160:
+    case 0x0166:
+    case 0x0169:
+    case 0x016B:
+    case 0x016C:
+    case 0x016D:
+    case 0x00C8:
+    case 0x00CC:
+    case 0x0144:
+    case 0x0146:
+    case 0x0148:
+    case 0x0098:
+    case 0x0099:
 		bMobile = true;
 		break;
 	default:

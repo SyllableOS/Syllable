@@ -117,17 +117,24 @@ static void nvGetClocks( NVPtr pNv, unsigned int *MClk, unsigned int *NVClk )
     unsigned int pll, N, M, MB, NB, P;
 
     if(pNv->Architecture >= NV_ARCH_40) {
-       pll = pNv->PMC[0x4020/4];
-       P = (pll >> 16) & 0x03;
+      pll = pNv->PMC[0x4020/4];
+       P = (pll >> 16) & 0x07;
        pll = pNv->PMC[0x4024/4];
        M = pll & 0xFF;
        N = (pll >> 8) & 0xFF;
-       MB = (pll >> 16) & 0xFF;
-       NB = (pll >> 24) & 0xFF;
+       if(((pNv->Chipset & 0xfff0) == 0x0290) ||
+          ((pNv->Chipset & 0xfff0) == 0x0390))
+       {
+          MB = 1;
+          NB = 1;
+       } else {
+          MB = (pll >> 16) & 0xFF;
+          NB = (pll >> 24) & 0xFF;
+       }
        *MClk = ((N * NB * pNv->CrystalFreqKHz) / (M * MB)) >> P;
 
        pll = pNv->PMC[0x4000/4];
-       P = (pll >> 16) & 0x03;  
+       P = (pll >> 16) & 0x07;  
        pll = pNv->PMC[0x4004/4];
        M = pll & 0xFF;
        N = (pll >> 8) & 0xFF;
@@ -551,7 +558,7 @@ static void nForceUpdateArbitrationSettings( unsigned VClk, unsigned pixelDepth,
  */
 static void CalcVClock( int clockIn, int *clockOut, U032 *pllOut, NVPtr pNv )
 {
-    unsigned lowM, highM;
+   unsigned lowM, highM;
     unsigned DeltaNew, DeltaOld;
     unsigned VClk, Freq;
     unsigned M, N, P;
@@ -594,40 +601,35 @@ static void CalcVClock( int clockIn, int *clockOut, U032 *pllOut, NVPtr pNv )
 static void CalcVClock2Stage( int clockIn, int *clockOut, U032 *pllOut, U032 *pllBOut, NVPtr pNv )
 {
 	unsigned DeltaNew, DeltaOld;
-	unsigned VClk, Freq;
-	unsigned M, N, P;
+    unsigned VClk, Freq;
+    unsigned M, N, P;
 
-	DeltaOld = 0xFFFFFFFF;
+    DeltaOld = 0xFFFFFFFF;
 
-	*pllBOut = 0x80000401;	/* fixed at x4 for now */
+    *pllBOut = 0x80000401;  /* fixed at x4 for now */
 
-	VClk = ( unsigned )clockIn;
+    VClk = (unsigned)clockIn;
 
-	for ( P = 0; P <= 6; P++ )
-	{
-		Freq = VClk << P;
-		if ( ( Freq >= 400000 ) && ( Freq <= 1000000 ) )
-		{
-			for ( M = 1; M <= 13; M++ )
-			{
-				N = ( ( VClk << P ) * M ) / ( pNv->CrystalFreqKHz << 2 );
-				if ( ( N >= 5 ) && ( N <= 255 ) )
-				{
-					Freq = ( ( ( pNv->CrystalFreqKHz << 2 ) * N ) / M ) >> P;
-					if ( Freq > VClk )
-						DeltaNew = Freq - VClk;
-					else
-						DeltaNew = VClk - Freq;
-					if ( DeltaNew < DeltaOld )
-					{
-						*pllOut = ( P << 16 ) | ( N << 8 ) | M;
-						*clockOut = Freq;
-						DeltaOld = DeltaNew;
-					}
-				}
-			}
-		}
-	}
+    for (P = 0; P <= 6; P++) {
+        Freq = VClk << P;
+        if ((Freq >= 400000) && (Freq <= 1000000)) {
+            for (M = 1; M <= 13; M++) {
+                N = ((VClk << P) * M) / (pNv->CrystalFreqKHz << 2);
+                if((N >= 5) && (N <= 255)) {
+                    Freq = (((pNv->CrystalFreqKHz << 2) * N) / M) >> P;
+                    if (Freq > VClk)
+                        DeltaNew = Freq - VClk;
+                    else
+                        DeltaNew = VClk - Freq;
+                    if (DeltaNew < DeltaOld) {
+                        *pllOut   = (P << 16) | (N << 8) | M;
+                        *clockOut = Freq;
+                        DeltaOld  = DeltaNew;
+                    }
+                }
+            }
+        }
+    }
 }
 
 /*
@@ -659,32 +661,38 @@ void NVCalcStateExt( NVPtr pNv, FX_HW_STATE * state, int bpp, int width, int hDi
 	case NV_ARCH_20:
 	case NV_ARCH_30:
 	default:
-
-		if ( ( ( pNv->Chipset & 0xffff ) == 0x01A0 ) || ( ( pNv->Chipset & 0xffff ) == 0x01f0 ) )
-		{
-			nForceUpdateArbitrationSettings( VClk, pixelDepth * 8, &( state->arbitration0 ), &( state->arbitration1 ), pNv );
-		}
-		else if(pNv->Architecture < NV_ARCH_30) {
-             nv10UpdateArbitrationSettings(VClk, 
+ 		if((pNv->Chipset & 0xfff0) == 0x0240) {
+                state->arbitration0 = 256; 
+                state->arbitration1 = 0x0480; 
+            } else
+            if(((pNv->Chipset & 0xffff) == 0x01A0) ||
+               ((pNv->Chipset & 0xffff) == 0x01f0))
+            {
+                nForceUpdateArbitrationSettings(VClk,
+                                          pixelDepth * 8,
+                                         &(state->arbitration0),
+                                         &(state->arbitration1),
+                                          pNv);
+            } else if(pNv->Architecture < NV_ARCH_30) {
+                nv10UpdateArbitrationSettings(VClk, 
                                           pixelDepth * 8, 
                                          &(state->arbitration0),
                                          &(state->arbitration1),
                                           pNv);
-       	} else {
-             nv30UpdateArbitrationSettings(pNv,
+            } else {
+                nv30UpdateArbitrationSettings(pNv,
                                          &(state->arbitration0),
                                          &(state->arbitration1));
-        }
-		state->cursor0 = 0x80 | ( pNv->CursorStart >> 17 );
-		state->cursor1 = ( pNv->CursorStart >> 11 ) << 2;
-		state->cursor2 = pNv->CursorStart >> 24;
-		if ( flags & V_DBLSCAN )
-			state->cursor1 |= 2;
-		state->pllsel = 0x10000700;
-		state->config = pNv->PFB[0x00000200 / 4];
-
-		state->general = bpp == 16 ? 0x00101100 : 0x00100100;
-		state->repaint1 = hDisplaySize < 1280 ? 0x04 : 0x00;
+            }
+            state->cursor0  = 0x80 | (pNv->CursorStart >> 17);
+            state->cursor1  = (pNv->CursorStart >> 11) << 2;
+	    state->cursor2  = pNv->CursorStart >> 24;
+	    if (flags & V_DBLSCAN) 
+		state->cursor1 |= 2;
+            state->pllsel   = 0x10000700;
+            state->config   = pNv->PFB[0x00000200/4];
+            state->general  = bpp == 16 ? 0x00101100 : 0x00100100;
+            state->repaint1 = hDisplaySize < 1280 ? 0x04 : 0x00;
 		break;
 	}
 
@@ -719,9 +727,10 @@ void NVLoadStateExt( NVPtr pNv, FX_HW_STATE * state )
     } else {
         int regions = 12;
 
-        if(((pNv->Chipset & 0xfff0) == 0x0090) ||
+       if(((pNv->Chipset & 0xfff0) == 0x0090) ||
            ((pNv->Chipset & 0xfff0) == 0x01D0) ||
-           ((pNv->Chipset & 0xfff0) == 0x0290))
+           ((pNv->Chipset & 0xfff0) == 0x0290) ||
+           ((pNv->Chipset & 0xfff0) == 0x0390))
         {
            regions = 15;
         }
@@ -866,6 +875,7 @@ void NVLoadStateExt( NVPtr pNv, FX_HW_STATE * state )
        pNv->PRAMIN[0x0825] = 0x00007FFF;
        pNv->PRAMIN[0x0826] = pNv->FbUsableSize | 0x00000002;
        pNv->PRAMIN[0x0827] = 0x00000002;
+            
 	}
 	pNv->PGRAPH[0x0080 / 4] = 0xFFFFFFFF;
 	pNv->PGRAPH[0x0080 / 4] = 0x00000000;
@@ -932,6 +942,7 @@ void NVLoadStateExt( NVPtr pNv, FX_HW_STATE * state )
                  break;
               case 0x0160:
               case 0x01D0:
+              case 0x0240:
                  pNv->PMC[0x1700/4] = pNv->PFB[0x020C/4];
                  pNv->PMC[0x1704/4] = 0;
                  pNv->PMC[0x1708/4] = 0;
@@ -945,13 +956,13 @@ void NVLoadStateExt( NVPtr pNv, FX_HW_STATE * state )
                  pNv->PGRAPH[0x082C/4] = 0x00000108;
                  break;
               case 0x0220:
-              case 0x0230:
                  pNv->PGRAPH[0x0860/4] = 0;
                  pNv->PGRAPH[0x0864/4] = 0;
                  pNv->PRAMDAC[0x0608/4] |= 0x00100000;
                  break;
               case 0x0090:
               case 0x0290:
+              case 0x0390:
                  pNv->PRAMDAC[0x0608/4] |= 0x00100000;
                  pNv->PGRAPH[0x0828/4] = 0x07830610;
                  pNv->PGRAPH[0x082C/4] = 0x0000016A;
@@ -965,7 +976,8 @@ void NVLoadStateExt( NVPtr pNv, FX_HW_STATE * state )
               pNv->PGRAPH[0x032C/4] = 0x01000000; 
               pNv->PGRAPH[0x0220/4] = 0x00001200;
 		}
-		else if ( pNv->Architecture == NV_ARCH_30 )
+		else 
+		if ( pNv->Architecture == NV_ARCH_30 )
 		{
 			pNv->PGRAPH[0x0084 / 4] = 0x40108700;
 			pNv->PGRAPH[0x0890 / 4] = 0x00140000;
@@ -1013,9 +1025,10 @@ void NVLoadStateExt( NVPtr pNv, FX_HW_STATE * state )
                 pNv->PGRAPH[(0x6900/4) + i] = pNv->PFB[(0x0240/4) + i];
               }
            } else {
-              if(((pNv->Chipset & 0xfff0) == 0x0090) ||
+             if(((pNv->Chipset & 0xfff0) == 0x0090) ||
                  ((pNv->Chipset & 0xfff0) == 0x01D0) ||
-                 ((pNv->Chipset & 0xfff0) == 0x0290))
+                 ((pNv->Chipset & 0xfff0) == 0x0290) ||
+                 ((pNv->Chipset & 0xfff0) == 0x0390))
               {
                  for(i = 0; i < 60; i++) {
                    pNv->PGRAPH[(0x0D00/4) + i] = pNv->PFB[(0x0600/4) + i];
@@ -1024,8 +1037,9 @@ void NVLoadStateExt( NVPtr pNv, FX_HW_STATE * state )
               } else {
                  for(i = 0; i < 48; i++) {
                    pNv->PGRAPH[(0x0900/4) + i] = pNv->PFB[(0x0600/4) + i];
-                   if(((pNv->Chipset & 0xfff0) != 0x0160) &&
-                      ((pNv->Chipset & 0xfff0) != 0x0220))
+                 if(((pNv->Chipset & 0xfff0) != 0x0160) &&
+                      ((pNv->Chipset & 0xfff0) != 0x0220) &&
+                      ((pNv->Chipset & 0xfff0) != 0x0240))
                    {
                       pNv->PGRAPH[(0x6900/4) + i] = pNv->PFB[(0x0600/4) + i];
                    }
@@ -1046,7 +1060,8 @@ void NVLoadStateExt( NVPtr pNv, FX_HW_STATE * state )
               } else {
                  if(((pNv->Chipset & 0xfff0) == 0x0090) ||
                     ((pNv->Chipset & 0xfff0) == 0x01D0) ||
-                    ((pNv->Chipset & 0xfff0) == 0x0290)) 
+                    ((pNv->Chipset & 0xfff0) == 0x0290) ||
+                    ((pNv->Chipset & 0xfff0) == 0x0390)) 
                  {
                     pNv->PGRAPH[0x0DF0/4] = pNv->PFB[0x0200/4];
                     pNv->PGRAPH[0x0DF4/4] = pNv->PFB[0x0204/4];

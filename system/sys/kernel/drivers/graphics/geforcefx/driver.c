@@ -147,10 +147,15 @@ struct gfx_device g_sDevices[] = {
 	{0x10de, 0x0040, "nVidia", "GeForce FX 6800 Ultra"},
 	{0x10de, 0x0041, "nVidia", "GeForce FX 6800"},
 	{0x10de, 0x0042, "nVidia", "GeForce FX 6800 LE"},
+	{0x10de, 0x0043, "nVidia", "GeForce FX 6800 XE"},
 	{0x10de, 0x0045, "nVidia", "GeForce FX 6800 GT"},
+	{0x10de, 0x0046, "nVidia", "GeForce FX 6800 GT"},
+	{0x10de, 0x0047, "nVidia", "GeForce FX 6800 GS"},
 	{0x10de, 0x004E, "nVidia", "Quadro FX 4000"},
-	{0x10de, 0x00c1, "nVidia", "GeForce FX6800" },
+	{0x10de, 0x00c0, "nVidia", "GeForce FX 6800 GS" },
+	{0x10de, 0x00c1, "nVidia", "GeForce FX 6800" },
 	{0x10de, 0x00c2, "nVidia", "GeForce FX 6800 LE" },
+	{0x10de, 0x00c3, "nVidia", "GeForce FX 6800 XT" },
 	{0x10de, 0x00c8, "nVidia", "GeForce FX Go6800" },
 	{0x10de, 0x00c9, "nVidia", "GeForce FX Go6800 Ultra" },
 	{0x10de, 0x00cc, "nVidia", "Quadro FX Go1400" },
@@ -158,6 +163,8 @@ struct gfx_device g_sDevices[] = {
 	{0x10de, 0x00ce, "nVidia", "Quadro FX Go1400" },
 	{0x10de, 0x0140, "nVidia", "GeForce FX 6600 GT"},
 	{0x10de, 0x0141, "nVidia", "GeForce FX 6600"},
+	{0x10de, 0x0142, "nVidia", "GeForce FX 6600 LE"},
+	{0x10de, 0x0143, "nVidia", "GeForce FX 6600 VE"},
 	{0x10de, 0x0144, "nVidia", "GeForce FX Go6600"},
 	{0x10de, 0x0145, "nVidia", "GeForce FX 6610 XL"},
 	{0x10de, 0x0146, "nVidia", "GeForce FX 6600 TE/ 6200 TE"},
@@ -166,20 +173,53 @@ struct gfx_device g_sDevices[] = {
 	{0x10de, 0x0149, "nVidia", "GeForce FX Go6600 GT"},
 	{0x10de, 0x014E, "nVidia", "Quadro FX 540"},
 	{0x10de, 0x014f, "nVidia", "GeForce FX 6200"},
+	{0x10de, 0x0160, "nVidia", "GeForce FX 6500"},
 	{0x10de, 0x0161, "nVidia", "GeForce FX 6200 TurboCache(TM)"},
 	{0x10de, 0x0162, "nVidia", "GeForce FX 6200 SE TurboCache(TM)"},
+	{0x10de, 0x0163, "nVidia", "GeForce FX 6200 LE"},
 	{0x10de, 0x0164, "nVidia", "GeForce FX Go6200"},
 	{0x10de, 0x0165, "nVidia", "Quadro NVS 285"},
 	{0x10de, 0x0166, "nVidia", "GeForce FX Go6400"},
 	{0x10de, 0x0167, "nVidia", "GeForce FX Go6200"},
 	{0x10de, 0x0168, "nVidia", "GeForce FX Go6400"},
+	{0x10de, 0x0169, "nVidia", "GeForce FX 6250"},
 	{0x10de, 0x0211, "nVidia", "GeForce FX 6800"},
 	{0x10de, 0x0212, "nVidia", "GeForce FX 6800 LE"},
 	{0x10de, 0x0215, "nVidia", "GeForce FX 6800 GT"},
+	{0x10de, 0x0218, "nVidia", "GeForce FX 6800 XT"},
 	{0x10de, 0x0221, "nVidia", "GeForce FX 6200"},
+	{0x10de, 0x0090, "nVidia", "GeForce FX 7800 GTX" },
 	{0x10de, 0x0091, "nVidia", "GeForce FX 7800 GTX" },
+	{0x10de, 0x0092, "nVidia", "GeForce FX 7800 GT" },
+	{0x10de, 0x0093, "nVidia", "GeForce FX 7800 GS" },
+	{0x10de, 0x0095, "nVidia", "GeForce FX 7800 SLI" },
+	{0x10de, 0x0098, "nVidia", "GeForce FX Go7800" },
 	{0x10de, 0x0099, "nVidia", "GeForce FX Go7800 GTX" },
-	{0x10de, 0x009D, "nVidia", "Quadro FX 4500" }
+	{0x10de, 0x009D, "nVidia", "Quadro FX 4500" },
+	{0x10de, 0x01d1, "nVidia", "GeForce FX 7300 LE" },
+	{0x10de, 0x01d6, "nVidia", "GeForce Go 7200" },
+	{0x10de, 0x01d7, "nVidia", "GeForce Go 7300" },
+	{0x10de, 0x01d8, "nVidia", "GeForce Go 7400" },
+	{0x10de, 0x01da, "nVidia", "Quadro NVS 110M" },
+	{0x10de, 0x01db, "nVidia", "Quadro NVS 120M" },
+	{0x10de, 0x01dc, "nVidia", "Quadro FX 350M" },
+	{0x10de, 0x01de, "nVidia", "Quadro FX 350" },
+	{0x10de, 0x01df, "nVidia", "GeForce 7300 GS" },
+	{0x10de, 0x0398, "nVidia", "GeForce Go 7600" },
+	{0x10de, 0x0399, "nVidia", "GeForce Go 7600 GT"},
+	{0x10de, 0x039A, "nVidia", "Quadro NVS 300M" },
+	{0x10de, 0x039C, "nVidia", "Quadro FX 550M" },
+
+	{0x10de, 0x0298, "nVidia", "GeForce Go 7900 GS" },
+	{0x10de, 0x0299, "nVidia", "GeForce Go 7900 GTX" },
+	{0x10de, 0x029A, "nVidia", "Quadro FX 2500M" },
+	{0x10de, 0x029B, "nVidia", "Quadro FX 1500M" },
+
+	{0x10de, 0x0240, "nVidia", "GeForce 6150" },
+	{0x10de, 0x0241, "nVidia", "GeForce 6150 LE" },
+	{0x10de, 0x0242, "nVidia", "GeForce 6100" },
+	{0x10de, 0xE0244, "nVidia", "GeForce Go 6150" },
+	{0x10de, 0xE0247, "nVidia", "GeForce Go 6100" }
 };
 
 /*****************************************************************************
@@ -270,11 +310,10 @@ status_t gfx_ioctl( void *pNode, void *pCookie, uint32 nCommand, void *pArgs, bo
 			}
 		}
 		break;
-	#if 0
-	case FX_GET_DMA_ADDRESS:
+	case 100:
 		{
 			area_id hArea;
-			iaddr_t nAddress;
+			uintptr_t nAddress;
 			
 			memcpy_from_user( &hArea, pArgs, sizeof( hArea ) );
 			if( get_area_physical_address( hArea, &nAddress ) != 0 )
@@ -284,7 +323,6 @@ status_t gfx_ioctl( void *pNode, void *pCookie, uint32 nCommand, void *pArgs, bo
 			
 		}
 		break;
-	#endif
 	default:
 		nError = -ENOIOCTLCMD;
 	}

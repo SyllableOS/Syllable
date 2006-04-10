@@ -1362,6 +1362,7 @@ void init_smp( bool bInitSMP, bool bScanACPI )
 			g_nVirtualAPICAddr = ( ( uint32 )&g_nFakeCPUID ) - APIC_ID;
 			g_asProcessorDescs[g_nBootCPU].pi_nBusSpeed = 0;
 			g_asProcessorDescs[g_nBootCPU].pi_nCoreSpeed = 0;
+			set_bit( &g_nCpuMask, g_nFakeCPUID );
 		}
 		g_asProcessorDescs[g_nBootCPU].pi_bIsPresent = true;
 		g_asProcessorDescs[g_nBootCPU].pi_bIsRunning = true;

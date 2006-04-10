@@ -179,3 +179,12 @@
 #define STRETCH_BLIT_SRC_POINT_U                                    15:0
 #define STRETCH_BLIT_SRC_POINT_V                                    31:16
 
+#define MEMFORMAT_NOTIFY                                0x0000E104
+#define MEMFORMAT_DMA_NOTIFY                            0x0000E180
+#define MEMFORMAT_OFFSET_IN                             0x0000E30C
+#define MEMFORMAT_OFFSET_OUT                            0x0000E310
+#define MEMFORMAT_PITCH_IN                              0x0000E314
+#define MEMFORMAT_PITCH_OUT                             0x0000E318
+#define MEMFORMAT_LINE_LENGTH_IN                        0x0000E31C
+#define MEMFORMAT_LINE_COUNT                            0x0000E320
+

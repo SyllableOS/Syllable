@@ -509,6 +509,57 @@ static status_t alloc_area_pages( MemArea_s *psArea, uintptr_t nStart,
 	return ( nError );
 }
 
+
+/**
+ * Allocates contiguous pages in <i>psArea</i> for the virtual memory region from
+ *  <code>nStart</code> to <code>nEnd</code>.
+ * \internal
+ * \ingroup Areas
+ * \param psArea a pointer to the <code>MemArea_s</code> to allocate pages for.
+ * \param nStart the first virtual memory address of the region to allocate.
+ * \param nEnd the last virtual memory address of the region to allocate.
+ * \param bWriteAccess <code>true</code> if writable pages are required;
+ *     <code>false</code> otherwise.
+ * \return The error code from load_area_page() on failure; <code>0</code>
+ *     otherwise.
+ * \sa load_area_page()
+ * \author Kurt Skauen (kurt@atheos.cx)
+ */
+static status_t alloc_area_pages_contiguous( MemArea_s *psArea, uintptr_t nStart,
+				  uintptr_t nEnd, bool bWriteAccess )
+{
+	MemContext_s *psSeg = psArea->a_psContext;
+	flags_t nFlags = PTE_PRESENT;
+	status_t nError = 0;
+	uintptr_t nAddr;
+	size_t nPages = ( nEnd - nStart + 1 ) >> PAGE_SHIFT;
+	uintptr_t nPhysAddr = get_free_pages( nPages, GFP_CLEAR );
+	
+	if( nPhysAddr == 0 )
+	{
+		return ( -ENOMEM );
+	}
+	
+
+	if ( psArea->a_nProtection & AREA_WRITE )
+	{
+		nFlags |= PTE_WRITE;
+	}
+	if ( ( psArea->a_nProtection & AREA_KERNEL ) == 0 )
+	{
+		nFlags |= PTE_USER;
+	}
+	for ( nAddr = nStart; nAddr < nEnd; nAddr += PAGE_SIZE, nPhysAddr += PAGE_SIZE )
+	{
+		pgd_t *pPgd = pgd_offset( psSeg, nAddr );
+		pte_t *pPte = pte_offset( pPgd, nAddr );
+		
+		PTE_VALUE( *pPte ) = nPhysAddr | nFlags;
+	}
+	flush_tlb_global();
+	return ( nError );
+}
+
 /**
  * Creates a new memory area in <i>psCtx</i> from nAddress to
  *  (nAddress + nSize - 1).
@@ -575,13 +626,17 @@ static MemArea_s *do_create_area( MemContext_s *psCtx, uintptr_t nAddress,
 		{
 			goto error3;
 		}
-		if ( nLockMode == AREA_FULL_LOCK )
+		if( nLockMode == AREA_CONTIGUOUS )
 		{
+			nError = alloc_area_pages_contiguous( psArea, psArea->a_nStart, psArea->a_nEnd, true );
+			if ( nError < 0 )
+				goto error4;
+		}
+		else if( nLockMode == AREA_FULL_LOCK )
+		{		
 			nError = alloc_area_pages( psArea, psArea->a_nStart, psArea->a_nEnd, true );
 			if ( nError < 0 )
-			{
 				goto error4;
-			}
 		}
 	}
 	return ( psArea );
@@ -2756,7 +2811,12 @@ void init_areas( void )
 	MArray_Init( &g_sAreas );
 	g_hAreaTableSema = create_semaphore( "area_table", 1, SEM_RECURSIVE );
 
-	do_create_area( g_psKernelSeg, 0, 1024 * 1024, 1024 * 1024, false, AREA_KERNEL | AREA_READ | AREA_WRITE | AREA_EXEC | AREA_CONTIGUOUS, AREA_FULL_LOCK );
-	do_create_area( g_psKernelSeg, 1024 * 1024, g_sSysBase.ex_nTotalPageCount * PAGE_SIZE - 1024 * 1024, g_sSysBase.ex_nTotalPageCount * PAGE_SIZE - 1024 * 1024, false, AREA_KERNEL | AREA_READ | AREA_WRITE | AREA_EXEC | AREA_CONTIGUOUS, AREA_FULL_LOCK );
+	do_create_area( g_psKernelSeg, 0, 1024 * 1024, 1024 * 1024, false, AREA_KERNEL | AREA_READ | AREA_WRITE | AREA_EXEC, AREA_FULL_LOCK );
+	do_create_area( g_psKernelSeg, 1024 * 1024, g_sSysBase.ex_nTotalPageCount * PAGE_SIZE - 1024 * 1024, g_sSysBase.ex_nTotalPageCount * PAGE_SIZE - 1024 * 1024, false, AREA_KERNEL | AREA_READ | AREA_WRITE | AREA_EXEC, AREA_FULL_LOCK );
 	flush_tlb();
 }
+
+
+
+
+
