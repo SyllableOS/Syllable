@@ -164,7 +164,7 @@ area_id VesaDriver::Open()
 		m_nFrameBufferSize = 1024 * 1024 * 4;
 //      m_pFrameBuffer = NULL;
 		g_nFrameBufArea = create_area( "vesa_io", NULL /*(void**) &m_pFrameBuffer */ , m_nFrameBufferSize,
-			AREA_FULL_ACCESS, AREA_NO_LOCK );
+			AREA_FULL_ACCESS | AREA_WRCOMB, AREA_NO_LOCK );
 		return ( g_nFrameBufArea );
 	}
 	return ( -1 );

@@ -584,7 +584,7 @@ void DisplayDriver::FillAlpha16( uint16 *pDst, int nMod, int W, int H, uint32 nC
 	}
 }
 
-void DisplayDriver::FillAlpha32( uint32 *pDst, int nMod, int W, int H, uint32 nColor )
+void DisplayDriver::FillAlpha32( uint32 *pDst, int nMod, int W, int H, uint32 nColor, uint32 nFlags )
 {
 	uint32 nAlpha = nColor >> 24;
 			
@@ -594,12 +594,10 @@ void DisplayDriver::FillAlpha32( uint32 *pDst, int nMod, int W, int H, uint32 nC
 		{
 			uint32 nSrcColor = nColor;
 			
-			if( nAlpha == 0xff )
-			{
-				uint32 nDstColor = *pDst;
-				uint32 nDstAlpha = nDstColor & 0xff000000;
-				*pDst = nDstAlpha | ( nSrcColor & 0x00ffffff );
-			}
+			if( nAlpha > 0xf0 && ( nFlags & Bitmap::NO_ALPHA_CHANNEL ) )
+				*pDst = 0xff000000 | ( nSrcColor & 0x00ffffff );
+			else if( nAlpha == 0xff )
+				*pDst = ( *pDst & 0xff000000 ) | ( nSrcColor & 0x00ffffff );
 			else if( nAlpha != 0x00 )
 			{
 				uint32 nDstColor = *pDst;
@@ -650,7 +648,7 @@ bool DisplayDriver::FillRect( SrvBitmap * pcBitmap, const IRect & cRect, const C
 	case CS_RGB32:
 	case CS_RGBA32:
 		if( nMode == DM_BLEND )
-			FillAlpha32( ( uint32 * )&pcBitmap->m_pRaster[BltY * pcBitmap->m_nBytesPerLine + BltX * 4], pcBitmap->m_nBytesPerLine / 4 - BltW, BltW, BltH, sColor );
+			FillAlpha32( ( uint32 * )&pcBitmap->m_pRaster[BltY * pcBitmap->m_nBytesPerLine + BltX * 4], pcBitmap->m_nBytesPerLine / 4 - BltW, BltW, BltH, sColor, pcBitmap->m_nFlags );
 		else
 			FillBlit32( ( uint32 * )&pcBitmap->m_pRaster[BltY * pcBitmap->m_nBytesPerLine + BltX * 4], pcBitmap->m_nBytesPerLine / 4 - BltW, BltW, BltH, COL_TO_RGB32( sColor ) );
 		break;
@@ -1276,11 +1274,11 @@ static inline void blit_convert_alpha( SrvBitmap * pcDst, SrvBitmap * pcSrc, con
 				{
 					uint32 nSrcColor = *pSrc++;
 					uint32 nAlpha = nSrcColor >> 24;
-				
-					if( nAlpha == 0xff )
-					{
+								
+					if( nAlpha > 0xf0 && ( pcDst->m_nFlags & Bitmap::NO_ALPHA_CHANNEL ) )
+						*pDst = 0xff000000 | ( nSrcColor & 0x00ffffff );
+					else if( nAlpha == 0xff )
 						*pDst = ( *pDst & 0xff000000 ) | ( nSrcColor & 0x00ffffff );
-					} 
 					else if( nAlpha != 0x00 )
 					{
 						uint32 nDstColor = *pDst;
@@ -1606,10 +1604,10 @@ static inline void blit_convert_stretch_alpha( SrvBitmap * pcDst, SrvBitmap * pc
 				
 				for( int x = cDstRect.left; x <= cDstRect.right; ++x )
 				{
-					if( nAlpha == 0xff )
-					{
+					if( nAlpha > 0xf0 && ( pcDst->m_nFlags & Bitmap::NO_ALPHA_CHANNEL ) )
+						*pDst++ = 0xff000000 | ( nSrc & 0x00ffffff );
+					else if( nAlpha == 0xff )
 						*pDst++ = ( *pDst & 0xff000000 ) | ( nSrc & 0x00ffffff );
-					}
 					else if( nAlpha != 0x00 )
 					{
 						uint32 nDstColor = *pDst;
@@ -1780,8 +1778,12 @@ void DisplayDriver::RenderGlyph( SrvBitmap * pcBitmap, Glyph * pcGlyph, const IP
 				{
 					if( nAlpha == NUM_FONT_GRAYS - 1 )
 					{
-						uint32 nDstAlpha = *pDst & 0xff000000;
-						*pDst = nDstAlpha | ( nFgColor & 0x00ffffff );
+						if( pcBitmap->m_nFlags & Bitmap::NO_ALPHA_CHANNEL )
+							*pDst = 0xff000000 | ( nFgColor & 0x00ffffff );
+						else {
+							uint32 nDstAlpha = *pDst & 0xff000000;
+							*pDst = nDstAlpha | ( nFgColor & 0x00ffffff );
+						}
 					}
 					else
 					{

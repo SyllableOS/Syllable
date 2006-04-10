@@ -53,7 +53,9 @@ class View;
  *	by the views will then go into the bitmap's offscreen buffer
  *	rather than the screen. The rendered image can then be read
  *	out by the application (requiers the \b SHARE_FRAMEBUFFER flag
- *	to be set aswell) or it can be blited into other views.
+ *	to be set aswell) or it can be blited into other views. The
+ *	\b NO_ALPHA_CHANNEL flag disables the alpha channel for 32 bit
+ *	bitmaps. This can improve performance if you render to this bitmap.
  *
  * \sa View, Window
  * \author	Kurt Skauen (kurt@atheos.cx)
@@ -62,7 +64,7 @@ class View;
 class Bitmap
 {
 public:
-    enum { ACCEPT_VIEWS = 0x0001, SHARE_FRAMEBUFFER = 0x0002 };
+    enum { ACCEPT_VIEWS = 0x0001, SHARE_FRAMEBUFFER = 0x0002, NO_ALPHA_CHANNEL = 0x0004 };
     Bitmap( int nWidth, int nHeight, color_space eColorSpc, uint32 nFlags = SHARE_FRAMEBUFFER );
     virtual ~Bitmap();
 

@@ -552,13 +552,15 @@ bool WndBorder::MouseMoved( Messenger * pcAppTarget, const Point & cNewPos, int 
 			m_bFrameUpdated = true;
 //                      m_cClientDeltaSize += m_cDeltaSize;
 		}
+		m_bWndMovePending = true;
+		
+		
 		DoSetFrame( cAlignedFrame );
 		SrvSprite::Hide();
 		m_pcParent->UpdateRegions( false );
 		SrvSprite::Unhide();
 
-		m_bWndMovePending = true;
-
+		
 		m_cDeltaMove = IPoint( 0, 0 );
 		m_cDeltaSize = IPoint( 0, 0 );
 	}

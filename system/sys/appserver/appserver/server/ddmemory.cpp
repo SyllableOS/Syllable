@@ -173,6 +173,7 @@ SrvBitmap* DisplayDriver::AllocateBitmap( int nWidth, int nHeight, os::color_spa
 	pcBitmap->m_bVideoMem = true;
 	pcBitmap->m_bFreeRaster = true;
 	pcBitmap->m_nVideoMemOffset = nOffset;
+	pcBitmap->m_nFlags = Bitmap::NO_ALPHA_CHANNEL;
 	return( pcBitmap );
 }
 

@@ -82,7 +82,8 @@ void TopLayer::LayerFrameChanged( Layer* pcChild, IRect cFrame )
 		{
 			IRect cBlitRect = IRect( 0, 0, pcOldBuffer->m_nWidth - 1, pcOldBuffer->m_nHeight - 1 )
 						& IRect( 0, 0, pcBackbuffer->m_nWidth - 1, pcBackbuffer->m_nHeight - 1 );
-			pcBackbuffer->m_pcDriver->BltBitmap( pcBackbuffer, pcOldBuffer, cBlitRect, IRect( IPoint( 0, 0 ), cBlitRect.Size() ), DM_COPY, 0xff );
+			if( cBlitRect.IsValid() )			
+				pcBackbuffer->m_pcDriver->BltBitmap( pcBackbuffer, pcOldBuffer, cBlitRect, IRect( IPoint( 0, 0 ), cBlitRect.Size() ), DM_COPY, 0xff );
 			/* Fill new areas with the default color */
 			if( pcBackbuffer->m_nWidth > pcOldBuffer->m_nWidth )
 				pcBackbuffer->m_pcDriver->FillRect( pcBackbuffer, os::IRect( pcOldBuffer->m_nWidth, 0, pcBackbuffer->m_nWidth - 1, pcBackbuffer->m_nHeight ),

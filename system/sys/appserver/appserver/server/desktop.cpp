@@ -672,7 +672,7 @@ bool init_desktops()
 {
 	g_pcScreenBitmap = new SrvBitmap( 0, 0, g_asDesktops[0].m_sScreenMode.m_eColorSpace, NULL, 0 );
 	g_pcScreenBitmap->m_bVideoMem = true;
-
+	g_pcScreenBitmap->m_nFlags = Bitmap::NO_ALPHA_CHANNEL;
 
 	dbprintf( "Initialize graphics driver...\n" );
 

@@ -111,7 +111,7 @@ private:
 	void		FillBlit16( uint16 *pDst, int nMod, int W, int H, uint16 nColor );
 	void		FillBlit32( uint32 *pDst, int nMod, int W, int H, uint32 nColor );
 	void		FillAlpha16( uint16 *pDst, int nMod, int W, int H, uint32 nColor );
-	void		FillAlpha32( uint32 *pDst, int nMod, int W, int H, uint32 nColor );
+	void		FillAlpha32( uint32 *pDst, int nMod, int W, int H, uint32 nColor, uint32 nFlags );
 	void		DrawLine16( SrvBitmap * pcBitmap, const os::IRect & cClip, int x1, int y1, int x2, int y2, uint16 nColor, uint32 nColor32, int nMode );
 	void 		DrawLine32( SrvBitmap * pcBitmap, const os::IRect & cClip, int x1, int y1, int x2, int y2, uint32 nColor, int nMode );
 private:
