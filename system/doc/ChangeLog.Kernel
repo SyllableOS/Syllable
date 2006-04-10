@@ -1,3 +1,8 @@
+* April 10 2006, Arno Klenke *
+
+Implemented the AREA_CONTIGUOUS flag
+Fixed mtrr support in non apic mode
+
 * April 5 2006, Kristian Van Der Vliet *
 
 New function reset_semaphore()
@@ -924,6 +929,7 @@ required; they are implemented in user space as part of libc.
 
 Applied a fix to sys/kernel/kernel/vfs/vfs.c  The fcntl() F_GETLK command
 now works as expected.
+
 
 
 

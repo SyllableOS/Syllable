@@ -1,3 +1,8 @@
+* April 10 2006, Arno Klenke *
+
+Synced geforcefx driver with X driver.
+Added the updated screen preferences
+
 * March 25 2006, Arno Klenke *
 
 The geforcefx driver should now work on cards which store their real pci device ids
@@ -1012,4 +1017,5 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
 
