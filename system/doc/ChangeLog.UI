@@ -1,3 +1,7 @@
+* April 10 2006, Arno Klenke *
+
+Added NO_ALPHA_CHANNEL flag to the os::Bitmap class
+
 * March 26 2006, Arno Klenke *
 
 Added WID_FULL_UPDATE_ON_RESIZE flag to some widgets
@@ -1099,6 +1103,7 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
 
 
