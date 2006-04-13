@@ -631,7 +631,7 @@ void pci_scan_bus( int nBusNum, int nBridgeFrom, int nBusDev )
 			if ( nVendorID != 0xffff && nVendorID != 0x0000 )
 			{
 				/* If it is not a multifunction device than we do not have to continue scanning */
-				if ( nFnc == 0 )
+				if( nFnc == 0 )
 				{
 					nHeaderType = read_pci_config( nBusNum, nDev, nFnc, PCI_HEADER_TYPE, 1 );
 				}
@@ -639,6 +639,8 @@ void pci_scan_bus( int nBusNum, int nBridgeFrom, int nBusDev )
 				{
 					if ( ( nHeaderType & PCI_MULTIFUNCTION ) == 0 )
 						continue;
+					nHeaderType = read_pci_config( nBusNum, nDev, nFnc, PCI_HEADER_TYPE, 1 );
+					nHeaderType |= PCI_MULTIFUNCTION;
 				}
 
 				/* Allocate resources for the new device */
