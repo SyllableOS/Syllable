@@ -479,13 +479,35 @@ bool ATIRadeon::InitHardware( int nFd ) {
 	FixUpMemoryMappings();
 #endif
 
-	rinfo.fb_local_base = INREG(MC_FB_LOCATION) << 16;
-
 	/* framebuffer size */
-	tmp = INREG(CONFIG_MEMSIZE);
+	if(rinfo.family == CHIP_FAMILY_RS100 ||
+		rinfo.family == CHIP_FAMILY_RS200 ||
+		rinfo.family == CHIP_FAMILY_RS300)
+	{
+		uint32 tom = INREG(NB_TOM);
+		rinfo.video_ram = (((tom >> 16) - (tom & 0xffff) + 1) << 6) * 1024;
 
-	/* mem size is bits [28:0], mask off the rest */
-	rinfo.video_ram = tmp & CONFIG_MEMSIZE_MASK;
+		OUTREG(CONFIG_MEMSIZE, rinfo.video_ram);
+
+		OUTREG(GRPH2_BUFFER_CNTL, INREG(GRPH2_BUFFER_CNTL) & ~0x7f000000);
+
+		OUTREG(MC_FB_LOCATION, tom);
+		rinfo.fb_local_base = (tom & 0xffff) << 16;
+
+		/* XXXKV: Set regs DISPLAY_BASE, DISPLAY2_BASE & OVO_BASE? */
+	}
+	else
+	{
+		tmp = INREG(CONFIG_MEMSIZE);
+
+		/* mem size is bits [28:0], mask off the rest */
+		rinfo.video_ram = tmp & CONFIG_MEMSIZE_MASK;
+
+		/* XXXKV: This seems to assume that the cards BIOS will have done the memory configuration for us.  This
+		   might not apply on all cards (E.g. IGP card).  If that's the case we need to do the equivilent of the
+		   X.org drivers SetFBLocation() */
+		rinfo.fb_local_base = INREG(MC_FB_LOCATION) << 16;
+	}
 
 	/* ram type */
 	tmp = INREG(MEM_SDRAM_MODE_REG);
@@ -552,11 +574,11 @@ bool ATIRadeon::InitHardware( int nFd ) {
 	 * reporting no ram
 	 */
 	if (rinfo.video_ram == 0) {
-		switch (rinfo.pdev.nDeviceID) {
-	       	case PCI_CHIP_RADEON_LY:
-				case PCI_CHIP_RADEON_LZ:
-	       		rinfo.video_ram = 8192 * 1024;
-	       		break;
+		switch (rinfo.pdev.nDeviceID) {	
+			case PCI_CHIP_RADEON_LY:
+			case PCI_CHIP_RADEON_LZ:
+				rinfo.video_ram = 8192 * 1024;
+				break;
 	       	default:
 	       		break;
 		}
@@ -570,12 +592,12 @@ bool ATIRadeon::InitHardware( int nFd ) {
 	m_hFramebufferArea = create_area ("radeon_fb", (void **)&m_pFramebufferBase,
 		rinfo.video_ram, AREA_FULL_ACCESS | AREA_WRCOMB, AREA_NO_LOCK);
 	if( m_hFramebufferArea < 0 ) {
-		dbprintf ("Radeon :: failed to create framebuffer area (%d)\n", m_hFramebufferArea);
+		dbprintf ("Radeon :: failed to create framebuffer area of %d bytes (%d)\n", rinfo.video_ram, m_hFramebufferArea);
 		return false;
 	}
 
 	if( remap_area (m_hFramebufferArea, (void *)((rinfo.fb_base_phys))) < 0 ) {
-		dbprintf("Radeon :: failed to create framebuffer area (%d)\n", m_hFramebufferArea);
+		dbprintf("Radeon :: failed to remap framebuffer area at physical addr 0x%x (%d)\n", rinfo.fb_base_phys, m_hFramebufferArea);
 		return false;
 	}
 	rinfo.fb_base = m_pFramebufferBase;

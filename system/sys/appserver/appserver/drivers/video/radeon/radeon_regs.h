@@ -111,6 +111,7 @@
 #define SW_SEMAPHORE                           0x013C
 #define CRTC2_GEN_CNTL                         0x03f8  
 #define CRTC2_DISPLAY_BASE_ADDR                0x033c
+#define NB_TOM                                 0x015C
 #define SURFACE_CNTL                           0x0B00  
 #define SURFACE0_LOWER_BOUND                   0x0B04  
 #define SURFACE1_LOWER_BOUND                   0x0B14  
@@ -208,6 +209,7 @@
 //#define DDA_ON_OFF			       0x02e4
 #define DVI_I2C_CNTL_1			       0x02e4
 #define GRPH_BUFFER_CNTL                       0x02F0
+#define GRPH2_BUFFER_CNTL                      0x03F0
 #define VGA_BUFFER_CNTL                        0x02F4
 #define OV0_Y_X_START                          0x0400
 #define OV0_Y_X_END                            0x0404  
