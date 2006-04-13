@@ -419,15 +419,11 @@ SavageDriver::SavageDriver( int nFd ) : m_cGELock( "savage_ge_lock" )
 
 	//dbprintf( "nVidTop=%d nVRAM=%d endfb=%d off-screen size=%d\n", nVidTop, nVRAM, psCard->endfb, psCard->endfb - nVidTop );
 
-#ifdef OFF_SCREEN_BITMAPS
 	psCard->nVidTop = nVidTop;
 	psCard->nVRAM = nVRAM;
 
-	/* XXXKV: These alignment values were arrived at through trial & error */
-	/* 2048 works for 32bit, 1024 *sort of* works for 16.. */
 	if( ( nVRAM > ( 1024 * 1024 * 1 ) ) && ( nVRAM < psCard->FramebufferSize ) )
-		InitMemory( nVidTop, nVRAM, 4096 - 1, 2048 - 1 );
-#endif
+		InitMemory( nVidTop, nVRAM, 4096 - 1, 32 - 1 );
 
 	//dbprintf( "initialisation complete.\n" );
 

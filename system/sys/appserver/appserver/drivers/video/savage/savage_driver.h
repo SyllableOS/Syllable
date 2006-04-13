@@ -154,21 +154,6 @@ typedef struct savage
 
 } savage_s;
 
-#define CURS_HEIGHT 64
-#define CURS_WIDTH 64
-
-/* XXXKV: I just can not get off-screen bitmaps to work correctly in 16bit; there are rendering
-   errors when doing off-screen->screen blits (E.g. when resizing a window)  The alignment value
-   of 2048 I've arrived at is also very odd, although it does work in 32bit.
-
-   There is also an issue with some cards that have very little video memory; overlays may not
-   work because there will not be enough memory to allocate the overlay.
-
-   Currently off-screen bitmaps are a bad deal on Savages, so I've disabled them at least until
-   the time I can fix the 16bit blit bugs. */
-
-#undef OFF_SCREEN_BITMAPS
-
 class SavageDriver : public VesaDriver
 {
 	public:

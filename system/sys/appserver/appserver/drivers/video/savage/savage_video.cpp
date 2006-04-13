@@ -66,9 +66,7 @@ bool SavageDriver::RecreateVideoOverlay( const IPoint& cSize, const IRect& cDst,
 	if( eFormat == CS_YUY2 && m_psCard->eChip != S3_SAVAGE2000 && m_bVideoOverlayUsed )
 	{
 		delete_area( *phArea );
-#ifdef OFF_SCREEN_BITMAPS
 		FreeMemory( m_nVideoOffset );
-#endif
 		SavageStreamsOff( m_psCard );
 
 		if( S3_SAVAGE_MOBILE_SERIES( m_psCard->eChip ) )
@@ -87,9 +85,7 @@ void SavageDriver::DeleteVideoOverlay( area_id *phArea )
 	/* Delete area */
 	if( m_bVideoOverlayUsed )
 	{
-#ifdef OFF_SCREEN_BITMAPS
 		FreeMemory( m_nVideoOffset );
-#endif
 		delete_area( *phArea );
 	}
 	m_bVideoOverlayUsed = false;
@@ -106,7 +102,6 @@ bool SavageDriver::SavageOverlayNew( const IPoint& cSize, const IRect& cDst, are
 	pitch = ( ( cSize.x << 1 ) + 0xff ) & ~0xff;
 	totalSize = pitch * cSize.y; 
 
-#ifdef OFF_SCREEN_BITMAPS
 	/* Allocate overlay space */
 	if( AllocateMemory( totalSize, &offset ) != EOK )
 	{
@@ -114,10 +109,6 @@ bool SavageDriver::SavageOverlayNew( const IPoint& cSize, const IRect& cDst, are
 		m_bVideoOverlayUsed = false;
 		return false;
 	}
-#else
-	offset = PAGE_ALIGN( psCard->endfb - totalSize - PAGE_SIZE );
-	//dbprintf("Create overlay: scrnBytes=0x%x  totalSize=0x%x (offset=0x%x) endfb=0x%x\n", psCard->scrnBytes, totalSize, offset, psCard->endfb );
-#endif
 
 	*phArea = create_area( "savage_overlay", NULL, PAGE_ALIGN( totalSize ), AREA_FULL_ACCESS, AREA_NO_LOCK );
 	remap_area( *phArea, (void*)(m_nFramebufferAddr + offset) );
@@ -231,7 +222,6 @@ bool SavageDriver::SavageOverlayOld( const os::IPoint& cSize, const os::IRect& c
 	pitch = ( ( cSize.x << 1 ) + 0xff ) & ~0xff;
 	totalSize = pitch * cSize.y; 
 
-#ifdef OFF_SCREEN_BITMAPS
 	/* Allocate overlay space */
 	if( AllocateMemory( totalSize, &offset ) != EOK )
 	{
@@ -239,10 +229,6 @@ bool SavageDriver::SavageOverlayOld( const os::IPoint& cSize, const os::IRect& c
 		m_bVideoOverlayUsed = false;
 		return false;
 	}
-#else
-	offset = PAGE_ALIGN( psCard->endfb - totalSize - PAGE_SIZE );
-	//dbprintf("Create overlay: scrnBytes=0x%x  totalSize=0x%x (offset=0x%x) endfb=0x%x\n", psCard->scrnBytes, totalSize, offset, psCard->endfb );
-#endif
 
 	*phArea = create_area( "savage_overlay", NULL, PAGE_ALIGN( totalSize ), AREA_FULL_ACCESS, AREA_NO_LOCK );
 	remap_area( *phArea, (void*)(m_nFramebufferAddr + offset) );
