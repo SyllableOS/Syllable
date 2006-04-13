@@ -1,3 +1,10 @@
+* April 13 2006, Kristian Van Der Vliet *
+
+Fixed memory detection on Radeon IGP cards
+PCI busmanager correctly handles multifunction devices (Patch by Arno Klenke)
+Enable the off-screen bitmaps support in the Savage driver now that they work, thanks
+to a related appserver fix from Arno.
+
 * April 10 2006, Arno Klenke *
 
 Synced geforcefx driver with X driver.
