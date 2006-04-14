@@ -1,3 +1,7 @@
+* April 14 2006, Arno Klenke *
+
+Switched the dock and the desktop to the new event system
+
 * Feburary 23 2006, Arno Klenke *
 
 Patch for the clock dock plugin by Andreas Benzler
@@ -159,6 +163,7 @@ Cleaned up message texts in DLogin.
 		* Moved code around.  It makes the code easier to read.
 		* Added error testing for scaling images.  If the image is not bigger than the 				screen resolution, the desktop will not scale the image.
 		* Fixed icon text color problems.
+
 
 
 
