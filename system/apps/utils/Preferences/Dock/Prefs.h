@@ -33,10 +33,10 @@
 #include <gui/dropdownmenu.h>
 #include <util/application.h>
 #include <util/resources.h>
+#include <util/event.h>
 #include <storage/directory.h>
 #include <storage/fsnode.h>
 #include <storage/file.h>
-#include <storage/registrar.h>
 #include <vector>
 #include "dockplugin.h"
 

@@ -28,6 +28,42 @@ enum {
 };
 
 
+class EventReceiver : public os::Looper
+{
+public:
+	EventReceiver() : os::Looper( "event_receiver" )
+	{
+		m_bReceived = false;
+	}
+	
+	void HandleMessage( os::Message* pcMsg )
+	{
+		if( m_bReceived )
+			return;
+		m_cMsg = *pcMsg;
+		m_bReceived = true;
+	}
+	
+	os::Message GetMessage()
+	{
+		Lock();
+		while( !m_bReceived )
+		{
+			Unlock();
+			snooze( 1000 );
+			Lock();
+		}
+		m_bReceived = false;
+		os::Message cMsg = m_cMsg;
+		Unlock();
+		return( cMsg );
+	}
+	
+private:
+	bool m_bReceived;
+	os::Message m_cMsg;
+};
+
 PrefsDockWin::PrefsDockWin( os::Rect cFrame )
 			: os::Window( cFrame, "dock_prefs_win", "Dock", 0/*os::WND_NOT_RESIZABLE*/ )
 {
@@ -127,15 +163,20 @@ PrefsDockWin::PrefsDockWin( os::Rect cFrame )
 	
 	try
 	{
-	os::RegistrarManager* pcManager = os::RegistrarManager::Get();
-	os::RegistrarCall_s sCall;
 	os::Message cReply;
 	os::Message cDummy;
+	
+	os::Event cEvent;
+	os::Message cMsg;
+	EventReceiver* pcReceiver = new EventReceiver();
+	pcReceiver->Run();
+	
 	/* Get enabled plugins */
-	if( pcManager->QueryCall( "os/Dock/GetPlugins", 0, &sCall ) == 0 )
+	if( cEvent.SetToRemote( "os/Dock/GetPlugins", 0 ) == 0 )
 	{
-		if( pcManager->InvokeCall( &sCall, &cDummy, &cReply ) == 0 )
+		if( cEvent.PostEvent( &cMsg, pcReceiver, 0 ) == 0 )
 		{
+			cReply = pcReceiver->GetMessage();
 			int i = 0;
 			os::String zEnabledPlugin;
 			while( cReply.FindString( "plugin", &zEnabledPlugin.str(), i ) == 0 )
@@ -146,10 +187,11 @@ PrefsDockWin::PrefsDockWin( os::Rect cFrame )
 		}
 	}
 	/* Get the position */
-	if( pcManager->QueryCall( "os/Dock/GetPosition", 0, &sCall ) == 0 )
+	if( cEvent.SetToRemote( "os/Dock/GetPosition", 0 ) == 0 )
 	{
-		if( pcManager->InvokeCall( &sCall, &cDummy, &cReply ) == 0 )
+		if( cEvent.PostEvent( &cMsg, pcReceiver, 0 ) == 0 )
 		{
+			cReply = pcReceiver->GetMessage();
 			int32 nPosition;
 			cReply.FindInt32( "position", &nPosition );
 		
@@ -163,7 +205,7 @@ PrefsDockWin::PrefsDockWin( os::Rect cFrame )
 				m_pcPos->SetSelection( 3 );
 		}
 	}
-	pcManager->Put();
+	pcReceiver->Quit();
 	} catch(...) {
 	}
 	
@@ -302,20 +344,19 @@ void PrefsDockWin::HandleMessage( os::Message* pcMessage )
 			/* Tell the Dock about the change */
 			try
 			{
-			os::RegistrarManager* pcManager = os::RegistrarManager::Get();
-			os::RegistrarCall_s sCall;
+			os::Event cEvent;
 			os::Message cReply;
 			os::Message cPlugins;
 			os::Message cPos;
 	
 			/* Plugins */
-			if( pcManager->QueryCall( "os/Dock/SetPlugins", 0, &sCall ) == 0 )
+			if( cEvent.SetToRemote( "os/Dock/SetPlugins", 0 ) == 0 )
 			{
 				for( uint i = 0; i < m_cEnabledPlugins.size(); i++ )
 					cPlugins.AddString( "plugin", m_cEnabledPlugins[i] );
-				pcManager->InvokeCall( &sCall, &cPlugins, NULL );
+				cEvent.PostEvent( &cPlugins, NULL, 0 );
 			}
-			if( pcManager->QueryCall( "os/Dock/SetPosition", 0, &sCall ) == 0 )
+			if( cEvent.SetToRemote( "os/Dock/SetPosition", 0 ) == 0 )
 			{
 				int32 nPosition = os::ALIGN_TOP;
 				if( m_pcPos->GetSelection() == 0 )
@@ -327,9 +368,8 @@ void PrefsDockWin::HandleMessage( os::Message* pcMessage )
 				else if( m_pcPos->GetSelection() == 3 )
 					nPosition = os::ALIGN_RIGHT;
 				cPos.AddInt32( "position", nPosition );
-				pcManager->InvokeCall( &sCall, &cPos, NULL );
+				cEvent.PostEvent( &cPos, NULL, 0 );
 			}
-			pcManager->Put();
 			} catch( ... ) {
 			}
 			break;

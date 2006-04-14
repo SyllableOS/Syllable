@@ -433,21 +433,24 @@ DockWin::DockWin() :
 	
 	
 	/* Register calls */
-	if( m_pcManager )
-	{
-		m_pcManager->RegisterCall( "os/Dock/GetPlugins", "Returns a list of enabled plugins",
-							os::Application::GetInstance(), os::DOCK_GET_PLUGINS );
-		m_pcManager->RegisterCall( "os/Dock/SetPlugins", "Sets the list of enabled plugins",
-							os::Application::GetInstance(), os::DOCK_SET_PLUGINS );
-		m_pcManager->RegisterCall( "os/Dock/GetPosition", "Returns the position of the dock",
-							os::Application::GetInstance(), os::DOCK_GET_POSITION );
-		m_pcManager->RegisterCall( "os/Dock/SetPosition", "Set the position of the dock",
-							os::Application::GetInstance(), os::DOCK_SET_POSITION );
-	}
+	m_pcGetPluginsEv = os::Event::Register( "os/Dock/GetPlugins", "Returns a list of enabled plugins",
+					os::Application::GetInstance(), os::DOCK_GET_PLUGINS );
+	m_pcSetPluginsEv = os::Event::Register( "os/Dock/SetPlugins", "Sets the list of enabled plugins",
+					os::Application::GetInstance(), os::DOCK_SET_PLUGINS );
+	m_pcGetPosEv = os::Event::Register( "os/Dock/GetPosition", "Returns the position of the dock",
+					os::Application::GetInstance(), os::DOCK_GET_POSITION );
+	m_pcSetPosEv = os::Event::Register( "os/Dock/SetPosition", "Set the position of the dock",
+					os::Application::GetInstance(), os::DOCK_SET_POSITION );
 }
 
 DockWin::~DockWin()
 {
+	/* Unregister events */
+	delete( m_pcGetPluginsEv );
+	delete( m_pcSetPluginsEv );
+	delete( m_pcGetPosEv );
+	delete( m_pcSetPosEv );
+	
 	delete( m_pcDesktop );
 }
 
@@ -458,10 +461,6 @@ void DockWin::Quit( int nAction )
 	/* Close filetype manager */
 	if( m_pcManager ) {
 		
-		m_pcManager->UnregisterCall( "os/Dock/GetPlugins" );
-		m_pcManager->UnregisterCall( "os/Dock/SetPlugins" );
-		m_pcManager->UnregisterCall( "os/Dock/GetPosition" );
-		m_pcManager->UnregisterCall( "os/Dock/SetPosition" );
 		m_pcManager->Put();
 		m_pcManager = NULL;
 	}

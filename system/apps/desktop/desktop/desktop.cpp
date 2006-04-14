@@ -112,40 +112,21 @@ Desktop::Desktop() : os::Window( os::Rect(), "desktop", "Desktop", os::WND_NO_BO
 	/* Register calls  */
 	try
 	{
-		os::RegistrarManager* pcManager = os::RegistrarManager::Get();
-		if( pcManager ) {
-
-			pcManager->RegisterCall( "os/Desktop/SetDesktopFont", "Sets a new desktop font",
-							os::Application::GetInstance(), M_SET_DESKTOP_FONT );
-			pcManager->RegisterCall( "os/Desktop/GetDesktopFont", "Gets a new desktop font",
-							os::Application::GetInstance(), M_GET_DESKTOP_FONT );
-
-			pcManager->RegisterCall( "os/Desktop/SetDesktopFontColor", "Sets the desktop font color",
-							os::Application::GetInstance(), M_SET_DESKTOP_FONT_COLOR );
-			pcManager->RegisterCall( "os/Desktop/GetDesktopFontColor", "Gets the desktop font color",
-							os::Application::GetInstance(), M_GET_DESKTOP_FONT_COLOR );
-
-			pcManager->RegisterCall( "os/Desktop/SetDesktopFontShadowColor", "Sets color for desktop font",
-							os::Application::GetInstance(), M_SET_DESKTOP_FONT_SHADOW_COLOR );
-			pcManager->RegisterCall( "os/Desktop/GetDesktopFontShadowColor", "Gets color for desktop font",
-							os::Application::GetInstance(), M_GET_DESKTOP_FONT_SHADOW_COLOR );
-
-			pcManager->RegisterCall( "os/Desktop/SetDesktopFontShadow", "Enables/Disables font shadow",
-							os::Application::GetInstance(), M_SET_DESKTOP_FONT_SHADOW );
-			pcManager->RegisterCall( "os/Desktop/GetDesktopFontShadow", "Gets current state of font shadow",
-							os::Application::GetInstance(), M_GET_DESKTOP_FONT_SHADOW );
-			pcManager->RegisterCall( "os/Desktop/GetSingleClickInterface", "Returns whether the single-click interface is enabled",
-							os::Application::GetInstance(), M_GET_SINGLE_CLICK );
-			pcManager->RegisterCall( "os/Desktop/SetSingleClickInterface", "Enables/Disables the single-click interface",
-							os::Application::GetInstance(), M_SET_SINGLE_CLICK );
-			pcManager->RegisterCall( "os/Desktop/GetBackgroundImage", "Returns the current background image",
-							os::Application::GetInstance(), M_GET_BACKGROUND );
-			pcManager->RegisterCall( "os/Desktop/SetBackgroundImage", "Sets the current background image",
-							os::Application::GetInstance(), M_SET_BACKGROUND );
-			pcManager->RegisterCall( "os/Desktop/Refresh","Refreshes the desktop",
-				os::Application::GetInstance(),M_REFRESH );
-			pcManager->Put();
-		}
+		m_pcGetSingleClickEv = os::Event::Register( "os/Desktop/GetSingleClickInterface", "Returns whether the single-click interface is enabled",
+						os::Application::GetInstance(), M_GET_SINGLE_CLICK );
+		m_pcSetSingleClickEv = os::Event::Register( "os/Desktop/SetSingleClickInterface", "Enables/Disables the single-click interface",
+						os::Application::GetInstance(), M_SET_SINGLE_CLICK );
+		m_pcGetFontShadowEv = os::Event::Register( "os/Desktop/GetDesktopFontShadow", "Gets current state of font shadow",
+						os::Application::GetInstance(), M_GET_DESKTOP_FONT_SHADOW );
+		m_pcSetFontShadowEv = os::Event::Register( "os/Desktop/SetDesktopFontShadow", "Enables/Disables font shadow",
+						os::Application::GetInstance(), M_SET_DESKTOP_FONT_SHADOW );
+		m_pcGetBackgroundEv = os::Event::Register( "os/Desktop/GetBackgroundImage", "Returns the current background image",
+						os::Application::GetInstance(), M_GET_BACKGROUND );
+		m_pcSetBackgroundEv = os::Event::Register( "os/Desktop/SetBackgroundImage", "Sets the current background image",
+						os::Application::GetInstance(), M_SET_BACKGROUND );
+		m_pcRefreshEv = os::Event::Register( "os/Desktop/Refresh", "Refreshes the desktop",
+						os::Application::GetInstance(), M_REFRESH );
+						
 	} catch( ... )
 	{
 	}
@@ -159,25 +140,14 @@ Desktop::~Desktop()
 {
 	try
 	{
-		os::RegistrarManager* pcManager = os::RegistrarManager::Get();
-		if( pcManager ) {
-			pcManager->UnregisterCall( "os/Desktop/SetDesktopFont" );
-			pcManager->UnregisterCall( "os/Desktop/SetDesktopFontColor" );
-			pcManager->UnregisterCall( "os/Desktop/SetDesktopFontShadowColor" );
-			pcManager->UnregisterCall( "os/Desktop/SetDesktopFontShadow" );
-			pcManager->UnregisterCall( "os/Desktop/GetDesktopFont" );
-			pcManager->UnregisterCall( "os/Desktop/GetDesktopFontColor" );
-			pcManager->UnregisterCall( "os/Desktop/GetDesktopFontShadowColor" );
-			pcManager->UnregisterCall( "os/Desktop/GetDesktopFontShadow" );
-
-			pcManager->UnregisterCall( "os/Desktop/GetSingleClickInterface" );
-			pcManager->UnregisterCall( "os/Desktop/SetSingleClickInterface" );
-			pcManager->UnregisterCall( "os/Desktop/GetBackgroundImage" );
-			pcManager->UnregisterCall( "os/Desktop/SetBackgroundImage" );
-
-			pcManager->UnregisterCall( "os/Desktop/Refresh" );
-			pcManager->Put();
-		}
+		delete( m_pcGetSingleClickEv );
+		delete( m_pcSetSingleClickEv );
+		delete( m_pcGetFontShadowEv );
+		delete( m_pcSetFontShadowEv );
+		delete( m_pcGetBackgroundEv );
+		delete( m_pcSetBackgroundEv );
+		delete( m_pcRefreshEv );
+		
 	} catch ( ... )
 	{
 	}

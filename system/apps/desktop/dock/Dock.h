@@ -32,6 +32,7 @@
 #include <util/application.h>
 #include <util/message.h>
 #include <util/locker.h>
+#include <util/event.h>
 #include <storage/nodemonitor.h>
 #include "dockplugin.h"
 #include "DockMenu.h"
@@ -130,6 +131,10 @@ private:
 	std::vector<os::DockPlugin*> m_pcPlugins;
 	std::vector<os::View*> m_pcPluginViews;
 	os::RegistrarManager* m_pcManager;
+	os::Event* m_pcGetPluginsEv;
+	os::Event* m_pcSetPluginsEv;
+	os::Event* m_pcGetPosEv;
+	os::Event* m_pcSetPosEv;
 };
 
 

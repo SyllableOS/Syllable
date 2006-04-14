@@ -28,6 +28,8 @@
 #include <util/message.h>
 #include <gui/icondirview.h>
 #include <storage/registrar.h>
+#include <util/event.h>
+
 
 class Desktop : public os::Window
 {
@@ -58,6 +60,14 @@ private:
 	os::BitmapImage* m_pcBackground;
 	bool m_bSingleClick;
 	bool m_bFontShadows;
+	
+	os::Event* m_pcGetSingleClickEv;
+	os::Event* m_pcSetSingleClickEv;
+	os::Event* m_pcGetFontShadowEv;
+	os::Event* m_pcSetFontShadowEv;
+	os::Event* m_pcGetBackgroundEv;
+	os::Event* m_pcSetBackgroundEv;
+	os::Event* m_pcRefreshEv;
 };
 
 #endif

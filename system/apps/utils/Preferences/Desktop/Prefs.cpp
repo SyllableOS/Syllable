@@ -21,7 +21,7 @@
  
 #include "Prefs.h" 
 #include <appserver/protocol.h>
-#include <storage/registrar.h>
+#include <util/event.h>
 #include <iostream>
 
 enum {
@@ -33,6 +33,43 @@ enum {
 	/* Desktop messages */
 	M_GET_SETTINGS = 100,
 	M_SET_SETTINGS
+};
+
+
+class EventReceiver : public os::Looper
+{
+public:
+	EventReceiver() : os::Looper( "event_receiver" )
+	{
+		m_bReceived = false;
+	}
+	
+	void HandleMessage( os::Message* pcMsg )
+	{
+		if( m_bReceived )
+			return;
+		m_cMsg = *pcMsg;
+		m_bReceived = true;
+	}
+	
+	os::Message GetMessage()
+	{
+		Lock();
+		while( !m_bReceived )
+		{
+			Unlock();
+			snooze( 1000 );
+			Lock();
+		}
+		m_bReceived = false;
+		os::Message cMsg = m_cMsg;
+		Unlock();
+		return( cMsg );
+	}
+	
+private:
+	bool m_bReceived;
+	os::Message m_cMsg;
 };
 
 
@@ -126,38 +163,44 @@ PrefsDesktopWin::PrefsDesktopWin( os::Rect cFrame )
 	/* Connect to the desktop and get the currently activated wallpaper */
 	try
 	{
-	os::RegistrarManager* pcManager = os::RegistrarManager::Get();
-	os::RegistrarCall_s sCall;
 	os::Message cReply;
 	os::Message cDummy;
 	m_zBackground = "None";
 	m_bSingleClickSave = false;
 	m_bFontShadowSave = true;
 	
-	if( pcManager->QueryCall( "os/Desktop/GetSingleClickInterface", 0, &sCall ) == 0 )
+	os::Event cEvent;
+	os::Message cMsg;
+	EventReceiver* pcReceiver = new EventReceiver();
+	pcReceiver->Run();
+	
+	if( cEvent.SetToRemote( "os/Desktop/GetSingleClickInterface", 0 ) == 0 )
 	{
-		if( pcManager->InvokeCall( &sCall, &cDummy, &cReply ) == 0 )
+		if( cEvent.PostEvent( &cMsg, pcReceiver, 0 ) == 0 )
 		{
+			cReply = pcReceiver->GetMessage();
 			cReply.FindBool( "single_click", &m_bSingleClickSave );
 		}
 	}
-	if( pcManager->QueryCall( "os/Desktop/GetBackgroundImage", 0, &sCall ) == 0 )
+	if( cEvent.SetToRemote( "os/Desktop/GetBackgroundImage", 0 ) == 0 )
 	{
-		if( pcManager->InvokeCall( &sCall, &cDummy, &cReply ) == 0 )
+		if( cEvent.PostEvent( &cMsg, pcReceiver, 0 ) == 0 )
 		{
+			cReply = pcReceiver->GetMessage();
 			cReply.FindString( "background_image", &m_zBackground );
 		}
 	}
-	if( pcManager->QueryCall( "os/Desktop/GetDesktopFontShadow", 0, &sCall ) == 0 )
+	if( cEvent.SetToRemote( "os/Desktop/GetDesktopFontShadow", 0 ) == 0 )
 	{
-		if( pcManager->InvokeCall( &sCall, &cDummy, &cReply ) == 0 )
+		if( cEvent.PostEvent( &cMsg, pcReceiver, 0 ) == 0 )
 		{
+			cReply = pcReceiver->GetMessage();
 			cReply.FindBool( "desktop_font_shadow", &m_bFontShadowSave );
 		}
 	}
+	pcReceiver->Quit();
 	m_pcFontShadow->SetValue( m_bFontShadowSave );
 	
-	pcManager->Put();
 	} catch(...) {
 	}
 	m_pcSingleClick->SetValue( m_bSingleClickSave );
@@ -267,8 +310,7 @@ void PrefsDesktopWin::HandleMessage( os::Message* pcMessage )
 			/* Tell the Desktop about the change */
 			try
 			{
-			os::RegistrarManager* pcManager = os::RegistrarManager::Get();
-			os::RegistrarCall_s sCall;
+			os::Event cEvent;
 			os::Message cReply;
 			os::Message cFontShadow;
 			os::Message cSingleClick;
@@ -277,14 +319,18 @@ void PrefsDesktopWin::HandleMessage( os::Message* pcMessage )
 			cSingleClick.AddBool( "single_click", m_pcSingleClick->GetValue().AsBool() );
 			cBackgroundImage.AddString( "background_image", m_zBackground );
 			
-			if( pcManager->QueryCall( "os/Desktop/SetDesktopFontShadow", 0, &sCall ) == 0 )
-				pcManager->InvokeCall( &sCall, &cFontShadow, NULL );
-			if( pcManager->QueryCall( "os/Desktop/SetSingleClickInterface", 0, &sCall ) == 0 )
-				pcManager->InvokeCall( &sCall, &cSingleClick, NULL );
-			if( pcManager->QueryCall( "os/Desktop/SetBackgroundImage", 0, &sCall ) == 0 )
-				pcManager->InvokeCall( &sCall, &cBackgroundImage, NULL );
-				
-			pcManager->Put();
+			if( cEvent.SetToRemote( "os/Desktop/SetDesktopFontShadow", 0 ) == 0 )
+			{
+				cEvent.PostEvent( &cFontShadow, NULL, 0 );
+			}
+			if( cEvent.SetToRemote( "os/Desktop/SetSingleClickInterface", 0 ) == 0 )
+			{
+				cEvent.PostEvent( &cSingleClick, NULL, 0 );
+			}
+			if( cEvent.SetToRemote( "os/Desktop/SetBackgroundImage", 0 ) == 0 )
+			{
+				cEvent.PostEvent( &cBackgroundImage, NULL, 0 );
+			}
 			} catch( ... ) {
 			}
 			
