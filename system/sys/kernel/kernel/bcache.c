@@ -639,8 +639,8 @@ size_t shrink_block_cache( size_t nBytesNeeded )
 
 		LOCK( g_sBlockCache.bc_hLock );
 		release_cache_blocks( -1 );
-
-		while ( ( nFreed = shrink_cache_heaps( -1 ) ) == -EAGAIN )
+		
+		if( ( nFreed = shrink_cache_heaps( -1 ) ) == -EAGAIN )
 		{
 			UNLOCK( g_sBlockCache.bc_hLock );
 			snooze( 1000 );

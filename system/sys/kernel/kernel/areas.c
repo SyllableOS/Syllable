@@ -271,7 +271,7 @@ static void free_area_page_tables( MemArea_s *psArea, uint32_t nStart, uint32_t 
 		nPage = PGD_PAGE( psCtx->mc_pPageDir[i] );
 		if ( nPage == 0 )
 		{
-			printk( "Error: free_area_page_tables() found NULL pointer in page table\n" );
+			printk( "Error: free_area_page_tables() found NULL pointer in page table at address 0x%x8\n", nCurAddr );
 			continue;
 		}
 		do_free_pages( nPage, 1 );
@@ -433,6 +433,7 @@ static int alloc_area_page_tables( MemArea_s *psArea, uintptr_t nStart, uintptr_
 			pDir = ( uint32_t * )get_free_page( GFP_CLEAR );
 			if ( pDir == NULL )
 			{
+				printk( "Error: alloc_area_page_tables() out of memory\n" );
 				return ( -ENOMEM );
 			}
 			PGD_VALUE( psCtx->mc_pPageDir[nDir] ) = MK_PGDIR( ( uint32_t )pDir );
@@ -1379,6 +1380,10 @@ static status_t unmap_pagedir( pgd_t * pPgd, uintptr_t nAddress, count_t nSize,
 					do_free_pages( nOldPage, 1 );
 				}
 			}
+			else if ( PTE_PAGE( *pPte ) != 0 )
+			{
+				free_swap_page( PTE_PAGE( *pPte ) );
+			}
 		}
 		PTE_VALUE( *pPte ) = 0;	// PTE_USER;
 		pPte++;
@@ -1627,6 +1632,10 @@ area_id sys_clone_area( const char *pzName, void **ppAddress,
 			{
 				atomic_inc( &g_psFirstPage[nPageNum].p_nCount );
 			}
+		}
+		else if ( PTE_PAGE( *pSrcPte ) != 0 )
+		{
+			dup_swap_page( PTE_PAGE( *pSrcPte ) );
 		}
 	}
 	psSrcArea->a_nProtection |= AREA_SHARED;
@@ -2097,6 +2106,10 @@ static status_t remap_pagedir( pgd_t * pPgd, uintptr_t nAddress, size_t nSize,
 					}
 					do_free_pages( nOldPage, 1 );
 				}
+			}
+			else if ( PTE_PAGE( *pPte ) != 0 )
+			{
+				free_swap_page( PTE_PAGE( *pPte ) );
 			}
 		}
 		PTE_VALUE( *pPte ) = nPhysAddress | PTE_PRESENT | PTE_WRITE | PTE_USER;
@@ -2747,6 +2760,11 @@ void init_kernel_mem_context()
 static void db_list_proc_areas( MemContext_s *psCtx )
 {
 	MemArea_s *psArea;
+	
+	size_t nMappedToFileSize = 0;
+	size_t nSharedSize = 0;
+	size_t nRemappedSize = 0;
+	size_t nOtherSize = 0;
 
 	for ( count_t i = 0; i < psCtx->mc_nAreaCount; ++i )
 	{
@@ -2765,8 +2783,21 @@ static void db_list_proc_areas( MemContext_s *psCtx )
 		{
 			dbprintf( DBP_DEBUGGER, "Error: db_list_proc_areas() area at index %d (%p) has invalid next pointer %p\n", i, psArea, psArea->a_psNext );
 		}
-		dbprintf( DBP_DEBUGGER, "Area %04d (%p) -> %08x-%08x %p %02d\n", i, psArea, psArea->a_nStart, psArea->a_nEnd, psArea->a_psFile, atomic_read( &psArea->a_nRefCount ) );
+		dbprintf( DBP_DEBUGGER, "Area %04d %s (%p) -> %08x-%08x %i bytes %p %02d\n", i, psArea->a_zName, psArea, psArea->a_nStart, psArea->a_nEnd, psArea->a_nEnd - psArea->a_nStart + 1, psArea->a_psFile, atomic_read( &psArea->a_nRefCount ) );
+		if( psArea->a_psFile != 0 )
+			nMappedToFileSize += psArea->a_nEnd - psArea->a_nStart + 1;
+		else if( psArea->a_nProtection & AREA_REMAPPED )
+			nRemappedSize += psArea->a_nEnd - psArea->a_nStart + 1;
+		else if( psArea->a_nProtection & AREA_SHARED )
+			nSharedSize += psArea->a_nEnd - psArea->a_nStart + 1;
+		else
+			nOtherSize += psArea->a_nEnd - psArea->a_nStart + 1;
 	}
+	dbprintf( DBP_DEBUGGER, "------------------------------\n" );
+	dbprintf( DBP_DEBUGGER, "Memory mapped size: %i bytes \n", nMappedToFileSize );
+	dbprintf( DBP_DEBUGGER, "Remapped size: %i bytes \n", nRemappedSize );
+	dbprintf( DBP_DEBUGGER, "Shared size: %i bytes\n", nSharedSize );
+	dbprintf( DBP_DEBUGGER, "Other size: %i bytes\n", nOtherSize );
 }
 
 /**

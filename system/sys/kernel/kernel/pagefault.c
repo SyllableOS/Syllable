@@ -326,11 +326,6 @@ int handle_copy_on_write( MemArea_s *psArea, pte_t * pPte, uintptr_t nVirtualAdd
 
 	atomic_dec( &psPage->p_nCount );
 
-	// is there a potential race condition if p_nCount falls to zero?
-	if ( atomic_read( &psPage->p_nCount ) == 1 )
-	{
-		register_swap_page( nPageAddr );
-	}
 //  flush_tlb_page( nVirtualAddress );
 	flush_tlb_global();
 	return ( 0 );
@@ -395,8 +390,7 @@ static int handle_not_present( MemArea_s *psArea, pte_t * pPte, uintptr_t nAddre
 				flush_tlb_global();
 				return( 0 );
 			} else {
-				shrink_caches( PAGE_SIZE );
-				return( -EAGAIN );
+				return( -ENOMEM );
 			}
 		}
 		

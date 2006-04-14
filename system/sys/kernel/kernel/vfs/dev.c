@@ -61,6 +61,7 @@ struct _Device
 	int d_nDriverImage;
 	ino_t d_nImgInode;
 	int d_nImgDeviceNum;
+	time_t d_nMTime;
 	FileNode_s *d_psFirstNode;
 };
 
@@ -305,7 +306,7 @@ static int load_device( Device_s *psDevice )
 {
 	device_init_t *pInitFunc;
 	struct stat sStat;
-
+	
 	int nError;
 	DisabledDevice_s *psDisabled = g_psFirstDisabled;
 
@@ -337,7 +338,7 @@ static int load_device( Device_s *psDevice )
 		}
 		if ( psDevice->d_nDriverImage >= 0 )
 		{
-			if ( psDevice->d_nImgDeviceNum == sStat.st_dev && psDevice->d_nImgInode == sStat.st_ino )
+			if ( psDevice->d_nImgDeviceNum == sStat.st_dev && psDevice->d_nImgInode == sStat.st_ino && psDevice->d_nMTime == sStat.st_mtime )
 			{
 				nError = 0;
 				goto error1;
@@ -367,11 +368,13 @@ static int load_device( Device_s *psDevice )
 	{
 		psDevice->d_nImgInode = sStat.st_ino;
 		psDevice->d_nImgDeviceNum = sStat.st_dev;
+		psDevice->d_nMTime = sStat.st_mtime;
 	}
 	else
 	{
 		psDevice->d_nImgInode = -1;
 		psDevice->d_nImgDeviceNum = -1;
+		psDevice->d_nMTime = -1;
 	}
 
 	nError = pInitFunc( psDevice->d_nDeviceID );
@@ -482,6 +485,7 @@ static void scan_driver_dir( FileNode_s *psParentNode, char *pzPath, int nPathBa
 				psDevice->d_nDriverImage = -1;
 				psDevice->d_nImgInode = sStat.st_ino;
 				psDevice->d_nImgDeviceNum = sStat.st_dev;
+				psDevice->d_nMTime = sStat.st_mtime;
 				psDevice->d_psFirstNode = NULL;
 
 				psDevice->d_psNext = g_psFirstDevice;
@@ -513,6 +517,7 @@ void init_boot_device( const char *pzPath )
 	psDevice->d_nDriverImage = -1;
 	psDevice->d_nImgInode = -1;
 	psDevice->d_nImgDeviceNum = -1;
+	psDevice->d_nMTime = -1;
 	psDevice->d_psFirstNode = NULL;
 
 	psDevice->d_psNext = g_psFirstDevice;
@@ -636,7 +641,7 @@ static int dfs_lookup( void *pVolume, void *pParent, const char *pzName, int nNa
 			zPath[nPathLen] = '/';
 			zPath[nPathLen + 1] = '\0';
 		}
-
+		
 		/* Look if we already have a driver for this device */
 		for ( psNode = psParentNode->fn_psFirstChild; NULL != psNode; psNode = psNode->fn_psNextSibling )
 		{
@@ -658,7 +663,8 @@ static int dfs_lookup( void *pVolume, void *pParent, const char *pzName, int nNa
 						}
 						else if ( psNode->fn_psDevice->d_nDriverImage >= 0 )
 						{
-							if ( psNode->fn_psDevice->d_nImgDeviceNum == sStat.st_dev && psNode->fn_psDevice->d_nImgInode == sStat.st_ino )
+							if ( psNode->fn_psDevice->d_nImgDeviceNum == sStat.st_dev && psNode->fn_psDevice->d_nImgInode == sStat.st_ino
+								&& psNode->fn_psDevice->d_nMTime == sStat.st_mtime )
 							{
 								bScan = false;
 								goto checked;
@@ -1043,7 +1049,7 @@ static int dfs_read_inode( void *pVolume, ino_t nInodeNum, void **ppNode )
 				zPath[nPathLen] = '/';
 				zPath[nPathLen + 1] = '\0';
 			}
-
+			
 			strcat( zPath, "sys/drivers/dev/" );
 			get_node_path( psNode, zPath );
 			/* Check if already loaded */
@@ -1062,7 +1068,8 @@ static int dfs_read_inode( void *pVolume, ino_t nInodeNum, void **ppNode )
 					}
 					else if ( psNode->fn_psDevice->d_nDriverImage >= 0 )
 					{
-						if ( psNode->fn_psDevice->d_nImgDeviceNum == sStat.st_dev && psNode->fn_psDevice->d_nImgInode == sStat.st_ino )
+						if ( psNode->fn_psDevice->d_nImgDeviceNum == sStat.st_dev && psNode->fn_psDevice->d_nImgInode == sStat.st_ino
+							&& psNode->fn_psDevice->d_nMTime == sStat.st_mtime )
 						{
 							bScan = false;
 							goto checked;

@@ -115,8 +115,9 @@ static int expand_heap( CacheHeap_s *psHeap )
 	nError = resize_area( psHeap->ch_hAreaID, nNewSize, false );
 
 	LOCK( g_sBlockCache.bc_hLock );
+	
 	psHeap->ch_bBusy = false;
-
+	
 	if ( nError < 0 )
 	{
 		printk( "expand_heap() failed to resize area from %u to %u.4 bytes\n", psHeap->ch_nSize, nNewSize );
@@ -133,6 +134,7 @@ static int expand_heap( CacheHeap_s *psHeap )
 
 		psBlock = ( CacheBlock_s * )( ( ( uint8 * )psBlock ) + nBlockSize );
 	}
+	
 	return ( 0 );
 }
 
@@ -334,6 +336,17 @@ ssize_t shrink_cache_heaps( int nIgnoredOrder )
 				continue;
 			}
 			
+			// Freelist
+			#if 0
+			int nFreeList = 0;
+			for ( psBlock = psHeap->ch_psFirstFreeBlock; psBlock != NULL; /*psBlock = psPrev->cb_psNext */  )
+			{
+				CacheBlock_s *psNext = psBlock->cb_psNext;
+				psBlock = psNext;
+				nFreeList++;
+			}
+			#endif
+			
 			// Scan backward to see which blocks we can remove
 			uint32 nBlocksToMove = 0;
 			psBlock = ( CacheBlock_s * )( ( ( uint8 * )psHeap->ch_pAddress ) + ( nMaxBlocks - 1 ) * nBlockSize );
@@ -341,16 +354,15 @@ ssize_t shrink_cache_heaps( int nIgnoredOrder )
 			{
 				if ( ( ( psBlock->cb_nFlags & CBF_USED ) && psBlock->cb_nRefCount > 0 ) || ( psBlock->cb_nFlags & CBF_BUSY ) )
 				{
+					if( psBlock->cb_nFlags & CBF_BUSY )
+						bBusy = true;
 					nBlocksToRemove = j;
 					nNewSize = ( ( nMaxBlocks - nBlocksToRemove ) * nBlockSize + PAGE_SIZE - 1 ) & PAGE_MASK;
 					nNewCount = nNewSize / nBlockSize;
-					printk( "Limited to %u.4 %u.4\n", nNewCount, nNewSize );
+					printk( "%i Limited to %u4 %u4 %x %i %i\n", (int)psHeap->ch_nBlockSize, nNewCount, nNewSize, (uint)psBlock->cb_nFlags, nBlocksToRemove, nMaxBlocks - nNewCount );
+					nBlocksToRemove = nMaxBlocks - nNewCount;
 					break;
 				} 
-				else if ( psBlock->cb_nFlags & CBF_USED )
-				{
-					nBlocksToMove++;
-				}
 				psBlock = ( CacheBlock_s * )( ( ( uint8 * )psBlock ) - nBlockSize );
 			}
 			
@@ -360,6 +372,24 @@ ssize_t shrink_cache_heaps( int nIgnoredOrder )
 				continue;
 			}
 			
+			// Check how many blocks we have to move 
+			psBlock = ( CacheBlock_s * )( ( ( uint8 * )psHeap->ch_pAddress ) + ( nMaxBlocks - 1 ) * nBlockSize );
+			for ( j = 0; j < nBlocksToRemove; ++j )
+			{
+				if ( ( ( psBlock->cb_nFlags & CBF_USED ) && psBlock->cb_nRefCount > 0 ) || ( psBlock->cb_nFlags & CBF_BUSY ) )
+				{
+					printk( "Error: Tried to remove non-removable blocks!\n" );
+					psHeap->ch_bBusy = false;
+					continue;
+				} 
+				else if ( psBlock->cb_nFlags & CBF_USED )
+				{
+					nBlocksToMove++;
+				}
+				psBlock = ( CacheBlock_s * )( ( ( uint8 * )psBlock ) - nBlockSize );
+			}
+			
+
 			// Filter out all free blocks below the new area size.
 			uint32 nFree = 0;
 			
@@ -378,10 +408,13 @@ ssize_t shrink_cache_heaps( int nIgnoredOrder )
 				psBlock = psNext;
 			}
 			
+			//printk( "Heap %i Blocks: %i Used: %i Freelist: %i New %i: Free: %i Remove: %i Move: %i\n", (int)psHeap->ch_nBlockSize, (int)nMaxBlocks, (int)psHeap->ch_nUsedBlocks, nFreeList, (int)nNewCount, (int)nFree, (int)nBlocksToRemove, (int)nBlocksToMove );
+			
+			
 			kassertw( nFree >= nBlocksToMove );
 			
 			// Copy used blocks above the new area size into free blocks below
-			psBlock = ( CacheBlock_s * )( ( ( uint8 * )psHeap->ch_pAddress ) + nNewCount * nBlockSize );
+			psBlock = ( CacheBlock_s * )( ( ( uint8 * )psHeap->ch_pAddress ) + ( nMaxBlocks - 1 ) * nBlockSize );
 			for ( j = 0; j < nBlocksToRemove; ++j )
 			{
 				if ( psBlock->cb_nFlags & CBF_USED )
@@ -404,6 +437,7 @@ ssize_t shrink_cache_heaps( int nIgnoredOrder )
 					}
 					else
 					{
+						panic( "shrink_cache_heaps(): Locked block in move list!\n" );
 						psList = &g_sBlockCache.bc_sLocked;
 					}
 					bc_remove_from_list( psList, psBlock );
@@ -419,7 +453,7 @@ ssize_t shrink_cache_heaps( int nIgnoredOrder )
 					bc_hash_insert( &g_sBlockCache.bc_sHashTab, psFreeBlock->cb_nDevice, psFreeBlock->cb_nBlockNum, psFreeBlock );
 					bc_add_to_head( psList, psFreeBlock );
 				}
-				psBlock = ( CacheBlock_s * )( ( ( uint8 * )psBlock ) + nBlockSize );
+				psBlock = ( CacheBlock_s * )( ( ( uint8 * )psBlock ) - nBlockSize );
 			}
 			
 			// Add remaining free blocks to the free list
@@ -428,10 +462,22 @@ ssize_t shrink_cache_heaps( int nIgnoredOrder )
 			nBytesFreed += psHeap->ch_nSize - nNewSize;
 			psHeap->ch_nSize = nNewSize;
 			UNLOCK( g_sBlockCache.bc_hLock );
-			resize_area( psHeap->ch_hAreaID, psHeap->ch_nSize, true );
+			if( resize_area( psHeap->ch_hAreaID, psHeap->ch_nSize, false ) != 0 )
+				printk( "shrink_cache_heaps(): Resize heap area failed!\n" );
 			LOCK( g_sBlockCache.bc_hLock );
 		}
 		psHeap->ch_bBusy = false;
 	}
+	//printk( "Freed %i bytes\n", nBytesFreed );
 	return ( ( nBytesFreed > 0 ) ? nBytesFreed : ( ( bBusy ) ? -EAGAIN : 0 ) );
 }
+
+
+
+
+
+
+
+
+
+

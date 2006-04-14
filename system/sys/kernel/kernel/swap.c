@@ -330,7 +330,7 @@ int swap_in( pte_t * pPte )
 	int nSwapPage = PTE_PAGE( *pPte ) & ~0x80000000;
 	
 
- // printk( "swap in %d (%08x)\n", nSwapPage, nNewPage );
+  //printk( "swap in %d (%08x)\n", nSwapPage, nNewPage );
   
 	if ( nNewPage == 0 )
 	{
@@ -545,7 +545,7 @@ int swap_out_pages( int nCount )
 	bigtime_t nEndTime;
 	int nSwappedOut = 0;
 	
-	memset( asSwapList, 0, sizeof( asSwapList ) );
+	memset( asSwapList, 0, sizeof( SwapNode_s ) * 16 );
 
 	nStartTime = get_real_time();
 
@@ -579,6 +579,20 @@ int swap_out_pages( int nCount )
 		
 		
 		if ( psArea->a_nLockMode & AREA_FULL_LOCK )
+		{
+			UNLOCK( g_hAreaTableSema );
+			put_area( psArea );
+			continue;
+		}
+		
+		if( psArea->a_psNextShared != psArea || psArea->a_psPrevShared != psArea )
+		{
+			UNLOCK( g_hAreaTableSema );
+			put_area( psArea );
+			continue;
+		}
+		
+		if( psArea->a_psFile != NULL )
 		{
 			UNLOCK( g_hAreaTableSema );
 			put_area( psArea );
@@ -622,6 +636,7 @@ int swap_out_pages( int nCount )
 				continue;
 			}
 			insert_swap_node( asSwapList, psArea, psPage, pPte, nAddress );
+			
 
 			if ( psPage->p_nAge == 0 )
 			{
