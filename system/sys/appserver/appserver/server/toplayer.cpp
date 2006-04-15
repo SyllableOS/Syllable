@@ -83,7 +83,7 @@ void TopLayer::LayerFrameChanged( Layer* pcChild, IRect cFrame )
 			IRect cBlitRect = IRect( 0, 0, pcOldBuffer->m_nWidth - 1, pcOldBuffer->m_nHeight - 1 )
 						& IRect( 0, 0, pcBackbuffer->m_nWidth - 1, pcBackbuffer->m_nHeight - 1 );
 			if( cBlitRect.IsValid() )			
-				pcBackbuffer->m_pcDriver->BltBitmap( pcBackbuffer, pcOldBuffer, cBlitRect, IRect( IPoint( 0, 0 ), cBlitRect.Size() ), DM_COPY, 0xff );
+				pcBackbuffer->m_pcDriver->BltBitmap( pcBackbuffer, pcOldBuffer, cBlitRect, cBlitRect, DM_COPY, 0xff );
 			/* Fill new areas with the default color */
 			if( pcBackbuffer->m_nWidth > pcOldBuffer->m_nWidth )
 				pcBackbuffer->m_pcDriver->FillRect( pcBackbuffer, os::IRect( pcOldBuffer->m_nWidth, 0, pcBackbuffer->m_nWidth - 1, pcBackbuffer->m_nHeight ),
@@ -91,9 +91,22 @@ void TopLayer::LayerFrameChanged( Layer* pcChild, IRect cFrame )
 			if( pcBackbuffer->m_nHeight > pcOldBuffer->m_nHeight )
 				pcBackbuffer->m_pcDriver->FillRect( pcBackbuffer, os::IRect( 0, pcOldBuffer->m_nHeight, pcBackbuffer->m_nWidth - 1, pcBackbuffer->m_nHeight ),
 													os::get_default_color( COL_NORMAL ), DM_COPY );													
+		} else {
+			dbprintf("Error: Failed to allocate new backbuffer -> falling back to singlebuffer!\n" );
+			/* Fall back to singlebuffer */
+			pcChild->Invalidate( true );
+			if( pcChild->GetWindow() != NULL )
+				pcChild->GetWindow()->SetFlags( pcChild->GetWindow()->GetFlags() | WND_SINGLEBUFFER );
 		}
 		pcOldBuffer->Release();
 		//dbprintf( "Released old backbuffer\n" );
+	}
+	else if( pcBackbuffer != NULL )
+	{
+		/* New backbuffer */
+		pcBackbuffer->m_pcDriver->FillRect( pcBackbuffer, os::IRect( 0, 0, pcBackbuffer->m_nWidth - 1, pcBackbuffer->m_nHeight - 1 ),
+													os::get_default_color( COL_NORMAL ), DM_COPY );													
+		pcChild->Invalidate( true );
 	}
 	pcChild->m_pcBackbuffer = pcBackbuffer;
 	if( pcBackbuffer == NULL )

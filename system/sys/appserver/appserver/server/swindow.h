@@ -82,6 +82,7 @@ public:
     port_id	GetMsgPort( void )	{ return( m_hMsgPort ); }
 
     uint32	GetFlags() const 	{ return( m_nFlags ); }
+    void	SetFlags( uint32 nFlags ) { m_nFlags = nFlags; }
     bool	DispatchMessage( os::Message* pcReq );
     bool	DispatchMessage( const void* psMsg, int nCode );
     bool	IsOffScreen() const	{ return( m_bOffscreen ); }
