@@ -1,3 +1,8 @@
+* April 15 2006, Kristian Van Der Vliet *
+
+The appserver now handles the case when you resize a backbuffered window and no
+memory can be allocated for the new window size.  Patch by Arno Klenke
+
 * April 10 2006, Arno Klenke *
 
 Added NO_ALPHA_CHANNEL flag to the os::Bitmap class
