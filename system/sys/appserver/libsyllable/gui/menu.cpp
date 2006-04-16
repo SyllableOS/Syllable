@@ -565,49 +565,54 @@ void MenuItem::SetShortcut( const String& cShortcut )
 void MenuItem::Draw()
 {
 	Menu *pcMenu = GetSuperMenu();
-	const String& cLabel = GetLabel();
-	Rect cFrame = GetFrame();
-	Rect cMFrame = pcMenu->GetBounds();
-	Image *pcImage=NULL;
-	Image *pcArrowImage=NULL;
-	font_height sHeight;
-	pcMenu->GetFontHeight(&sHeight);
-	
+
 	if( pcMenu == NULL )
 	{
 		return;
 	}
 
-	pcImage = m->GetImage( IsEnabled() ? ( m->m_bIsHighlighted ? IMG_STATE_HIGHLIGHT : IMG_STATE_NORMAL ) : IMG_STATE_GRAY );
+	const os::String& cLabel = GetLabel();  //the label of the menuitem
+	os::Rect cFrame = GetFrame();  //the frame of the menuitem
+	os::Rect cMFrame = pcMenu->GetBounds(); //the frame of the menu
+	os::Image *pcImage = NULL;  //used if we have an image for this item
+	os::Image *pcArrowImage = NULL; //used for the arrow image
 	
+	os::font_height sHeight; //the height of the menu
+	pcMenu->GetFontHeight(&sHeight);
+	
+
+	//lets load the images
+	pcImage = m->GetImage( IsEnabled() ? ( m->m_bIsHighlighted ? IMG_STATE_HIGHLIGHT : IMG_STATE_NORMAL ) : IMG_STATE_GRAY );
 	pcArrowImage = pcMenu->_GetSubMenuArrow( IsEnabled() );
 	
 	/*highlighting part*/
 	if( IsEnabled() )
 	{
-		if( m->m_bIsHighlighted )
+		if( m->m_bIsHighlighted )  //color goes to selected
 		{
 			pcMenu->SetFgColor( get_default_color( COL_SEL_MENU_BACKGROUND ) );
 		}
-		else
+		else //color goes to regular background
 		{
 			pcMenu->SetFgColor( get_default_color( COL_MENU_BACKGROUND ) );
 		}
 
-		pcMenu->FillRect( GetFrame() );
+		pcMenu->FillRect( GetFrame() ); //fill the menu with color
 
+		//if highlighted, set colors for highlight
 		if( m->m_bIsHighlighted )
 		{
 			pcMenu->SetFgColor( get_default_color( COL_SEL_MENU_TEXT ) );
 			pcMenu->SetBgColor( get_default_color( COL_SEL_MENU_BACKGROUND ) );
 		}
-		else
+		else //else set regular colors
 		{
 			pcMenu->SetFgColor( get_default_color( COL_MENU_TEXT ) );
 			pcMenu->SetBgColor( get_default_color( COL_MENU_BACKGROUND ) );
 		}
 	}
-	else
+
+	else //set normal colors
 	{
 		pcMenu->SetFgColor( get_default_color( COL_MENU_BACKGROUND ) );
 		pcMenu->FillRect( GetFrame() );
@@ -629,24 +634,30 @@ void MenuItem::Draw()
 
 	Rect cTextRect( x, cFrame.top, x + m->m_pcSuperMenu->_GetColumnWidth(1), cFrame.bottom );
 
-	if( !(m->m_cShortcut == "") ) {
+	
+	if( m->m_cShortcut != "" )  //if we have a shortcut 
+	{
 		Rect cShortcutRect( cTextRect.right, cFrame.top, cFrame.right, cFrame.bottom );
-		pcMenu->SetDrawingMode(DM_COPY);
-		pcMenu->DrawText( cShortcutRect, m->m_cShortcut, DTF_ALIGN_LEFT | DTF_ALIGN_MIDDLE | DTF_UNDERLINES );
+	
 		if( IsEnabled() == false )
 		{
 			pcMenu->SetFgColor( 100, 100, 100 );
 			pcMenu->SetDrawingMode( DM_OVER );
 			cShortcutRect.MoveTo( -1, -1 );
-			pcMenu->DrawText( cShortcutRect, m->m_cShortcut, DTF_ALIGN_LEFT | DTF_ALIGN_MIDDLE | DTF_UNDERLINES );
 			pcMenu->SetDrawingMode( DM_COPY );
+			pcMenu->DrawText( cShortcutRect, m->m_cShortcut, DTF_ALIGN_LEFT | DTF_ALIGN_MIDDLE | DTF_UNDERLINES );
+		}	
+		
+		else //we don't have a shortcut
+		{
+			pcMenu->SetDrawingMode(DM_COPY);
+			pcMenu->DrawText( cShortcutRect, m->m_cShortcut, DTF_ALIGN_LEFT | DTF_ALIGN_MIDDLE | DTF_UNDERLINES );
 		}
 	}
 
-	pcMenu->SetDrawingMode(DM_COPY);
-	pcMenu->DrawText( cTextRect, cLabel, DTF_ALIGN_LEFT | DTF_ALIGN_MIDDLE | DTF_UNDERLINES );
 
-	if( IsEnabled() == false )
+	//time to draw the text
+	if (IsEnabled() == false)
 	{
 		pcMenu->SetFgColor( 100, 100, 100 );
 		pcMenu->SetDrawingMode( DM_OVER );
@@ -655,7 +666,14 @@ void MenuItem::Draw()
 		pcMenu->SetDrawingMode( DM_COPY );
 	}
 
-	if( pcImage ) {
+	else
+	{
+		pcMenu->SetDrawingMode(DM_COPY);
+		pcMenu->DrawText( cTextRect, cLabel, DTF_ALIGN_LEFT | DTF_ALIGN_MIDDLE | DTF_UNDERLINES );
+	}
+
+	if (pcImage) //if we have an image
+	{
 		pcMenu->SetDrawingMode(DM_BLEND);
 		pcImage->Draw( Point( cFrame.left, cFrame.top + ( cFrame.Height() / 2 - pcImage->GetBounds().Height() / 2 ) + 1 ), pcMenu );
 		pcMenu->SetDrawingMode(DM_COPY);

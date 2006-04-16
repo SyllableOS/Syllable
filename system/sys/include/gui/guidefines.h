@@ -320,6 +320,9 @@ enum {
 
    	M_FONT_REQUESTED,
 	M_FONT_REQUESTER_CANCELED,
+
+	M_BOX_REQUESTED,
+	M_BOX_REQUESTER_CANCELED,
     
     /* Add new libsyllable message codes here. */
     

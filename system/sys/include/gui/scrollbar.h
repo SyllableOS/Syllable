@@ -38,7 +38,7 @@ enum	{ SB_MINSIZE = 12 };
 /** 
  * \ingroup gui
  * \par Description:
- *
+ *  The os::ScrollBar is one object that is used in a lot of other GUI elements.  It adds scrolling to an element.
  * \sa
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/

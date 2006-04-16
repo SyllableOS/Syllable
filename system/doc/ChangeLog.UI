@@ -1,3 +1,18 @@
+* April 15 2006, Rick Caudill *
+	Menu:
+		* Fixed os::Menu drawing when Menu was disabled and had a Shortcut.
+
+	ProgressBar:
+		* Added Documentation
+		* ProgressBar now draws with icon_selected default color and a black outline around the frame.
+		
+	ScrollBar:
+		* Added Documentation
+		
+	os::InputBox:
+		* Added new InputBox class to aide in getting input from a user
+		* Look at InputBox' documentation for further details.
+
 * April 15 2006, Kristian Van Der Vliet *
 
 The appserver now handles the case when you resize a backbuffered window and no

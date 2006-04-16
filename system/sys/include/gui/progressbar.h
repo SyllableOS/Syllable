@@ -33,8 +33,18 @@ namespace os
 /** 
  * \ingroup gui
  * \par Description:
- *
- * \sa
+ *	A ProgressBar is a way to show how much progress is happening in certain situations.
+ *	A ProgressBar is useful when you are doing large file copying, browsing a website, or
+ *	anything that can a bit of time to do.  It is a great way to keep the 'user' informed
+ *	when something is happening.
+ * \par The best way to use the ProgressBar is as follows
+ * \code
+		os::ProgressBar pcProgressBar = new os::ProgressBar(cProgressBarFrame,"Progress");
+		
+		...
+		//SetProgress takes a float between 0.0(i.e., when the ProgressBar is empty) and 1.0(i.e., when the ProgessBar is full)
+		pcProgressBar->SetProgress(0.1);
+ * \sa os::Rect os::String os::orientation os::View
  * \author	Kurt Skauen (kurt@atheos.cx)
  *****************************************************************************/
 
