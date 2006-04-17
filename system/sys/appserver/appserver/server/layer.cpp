@@ -648,6 +648,8 @@ void Layer::MoveToBack()
 //----------------------------------------------------------------------------
 // NAME:
 // DESC:
+//		Mark the clipping region for ourself modified if we intersect the given
+//		rectangle. Mark the children if we do not have a backbuffer.
 // NOTE:
 // SEE ALSO:
 //----------------------------------------------------------------------------
@@ -658,11 +660,14 @@ void Layer::SetDirtyRegFlags( const os::IRect& cRect )
 	{
 		m_bHasInvalidRegs = true;
 
-		Layer *pcChild;
-
-		for( pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
+		if( m_pcBackbuffer == NULL )
 		{
-			pcChild->SetDirtyRegFlags( cRect - pcChild->m_cIFrame.LeftTop() );
+			Layer *pcChild;
+
+			for( pcChild = m_pcBottomChild; NULL != pcChild; pcChild = pcChild->m_pcHigherSibling )
+			{
+				pcChild->SetDirtyRegFlags( cRect - pcChild->m_cIFrame.LeftTop() );
+			}
 		}
 	}
 }
