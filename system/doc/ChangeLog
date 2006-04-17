@@ -1,3 +1,9 @@
+* April 16 2006, Arno Klenke *
+
+Appserver patches:
+	o Added code to fallback from backbuffered to singlebuffered rendering for a window
+	o Avoid recalculating the visible areas of the layers if this is not necessary
+
 * April 13 2006, Kristian Van Der Vliet *
 
 Fixed memory detection on Radeon IGP cards
@@ -1024,5 +1030,6 @@ Added the following keymaps:
 * Jun 14 2002, Kristian Van Der Vliet *
 
 Implement get_tld(), set_tld() in process.c
+
 
 
