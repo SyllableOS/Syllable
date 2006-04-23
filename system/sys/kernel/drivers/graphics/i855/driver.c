@@ -72,7 +72,8 @@ struct gfx_device g_sDevices[] = {
 	{0x8086, 0x2582, "Intel", "i915G"},
 	{0x8086, 0x258A, "Intel", "E7221G"},
 	{0x8086, 0x2592, "Intel", "i915GM"},
-	{0x8086, 0x2772, "Intel", "i945G"}
+	{0x8086, 0x2772, "Intel", "i945G"},
+	{0x8086, 0x27A2, "Intel", "i945GM"}
 };
 
 
@@ -380,7 +381,8 @@ bool i855_init( struct gfx_node* psNode )
 	{
 		if( ( sAGPBridge.nVendorID == 0x8086 && ( sAGPBridge.nDeviceID == 0x3580 ||
 			sAGPBridge.nDeviceID == 0x3575 || sAGPBridge.nDeviceID == 0x2560 ||	sAGPBridge.nDeviceID == 0x2570 
-			|| sAGPBridge.nDeviceID == 0x2580 || sAGPBridge.nDeviceID == 0x2590 || sAGPBridge.nDeviceID == 0x2770 ) ) )
+			|| sAGPBridge.nDeviceID == 0x2580 || sAGPBridge.nDeviceID == 0x2590 || sAGPBridge.nDeviceID == 0x2770
+			|| sAGPBridge.nDeviceID == 0x27A0 ) ) )
 		{
 			bAGPFound = true;
 			break;

@@ -108,7 +108,7 @@ public:
 private:
     void		TweakMemorySize( int nFd );
     bool		InitModes();
-    bool		SetVesaMode( uint32 nMode );
+    bool		SetVesaMode( uint32 nMode, int nWidth );
     void		WaitForIdle();
     
     void		UpdateVideo();

@@ -159,24 +159,33 @@ i855::i855(  int nFd ) :
 		break;
 		case 0x2582:
 			m_bTwoPipes = true;
+			bTweakBios = true;
 			bSwapBases = true;
 			strcpy( zGPUName, "i915G" );
 		break;
 		case 0x258A:
+			bTweakBios = true;
 			bSwapBases = true;
 			strcpy( zGPUName, "E7221G" );
 		break;
 		case 0x2592:
 			m_bTwoPipes = true;
+			bTweakBios = true;
 			bSwapBases = true;
 			strcpy( zGPUName, "i915GM" );
 		break;
 		case 0x2772:
 			m_bTwoPipes = true;
+			bTweakBios = true;
 			bSwapBases = true;
 			strcpy( zGPUName, "i945G" );
 		break;
-
+		case 0x27A2:
+			m_bTwoPipes = true;
+			bTweakBios = true;
+			bSwapBases = true;
+			strcpy( zGPUName, "i945GM" );
+		break;
 		default:
 			strcpy( zGPUName, "Unknown" );
 	}
@@ -306,7 +315,7 @@ i855::i855(  int nFd ) :
 		return;
 	}
 	
-	/* Itialize command ringbuffer */
+	/* Initialize command ringbuffer */
 	OUTREG( LP_RING + RING_LEN, 0 );
 	OUTREG( LP_RING + RING_TAIL, 0 );
 	OUTREG( LP_RING + RING_HEAD, 0 );
@@ -348,44 +357,20 @@ i855::~i855()
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-/* I am not sure about this. The X-driver writes "new size - 0x21000" but on my
- machine its new size / 1024 * 4 ... */
 void i855::TweakMemorySize( int nFd )
 {
-	const char *pzString = "Total time for VGA POST:";
-	const int nLen = strlen( pzString );
-	int nReg = ( m_cPCIInfo.nDeviceID == 0x2562 ? _845_DRAM_RW_CONTROL : _855_DRAM_RW_CONTROL );
-	int nOffset = ( m_cPCIInfo.nDeviceID == 0x2562 ? -19 : -23 );
-	char* pBiosAddr = (char*)m_pRomBase;
-	int i, j = 0;
+	struct RMREGS rm;
+	memset( &rm, 0, sizeof( struct RMREGS ) );
+	rm.EAX = 0x5f11;
+	rm.ECX = 8 * 1024 * 1024 / PAGE_SIZE;
+	realint( 0x10, &rm );
 	
-	/* Search for MAGIC string */
-	for( i = 0; i < 0x10000; i++ ) {
-		if( pBiosAddr[i] == pzString[j] ) {
-			if( ++j == nLen )
-				break;
-		} else {
-			i -= j;
-			j = 0;
-		}
-	}
-	
-	if( j < nLen )
+	if( rm.EAX != 0x005f )
 	{
-		dbprintf( "Could not find ROM\n" );
-		return;
+		dbprintf( "i855:: Warning: Failed to set bios memory size\n" );
 	}
-	
-	uint32 nMemSizeBase = ( i - j + 1 + nOffset );
-	char* pPosition = pBiosAddr + nMemSizeBase;
-	
-	uint32 nOldPerm = pci_gfx_read_config( nFd, 0, 0, 0, nReg, 4 );
-	pci_gfx_write_config( nFd, 0, 0, 0, nReg, 4, 0x33330000 );
-	
-	*( uint32* )pPosition = ( 12288 * 4 ); // ????
-	
-	pci_gfx_write_config( nFd, 0, 0, 0, nReg, 4, nOldPerm );
 }
+
 
 //----------------------------------------------------------------------------
 // NAME:
@@ -412,6 +397,8 @@ bool i855::InitModes( void )
 		dbprintf( "Error: i855::InitModes() no VESA20 modes found\n" );
 		return ( false );
 	}
+	
+	dbprintf( "i855:: Detected %i kbytes video memory\n", sVesaInfo.TotalMemory * 1024 / 16 );
 
 //    dbprintf( "Found %d vesa modes\n", nModeCount );
 
@@ -557,7 +544,7 @@ int i855::SetScreenMode( screen_mode sMode )
 		}
 			
 		/* Set screenmode */
-		if( SetVesaMode( m_cModeList[m_nCurrentMode].m_nVesaMode ) )
+		if( SetVesaMode( m_cModeList[m_nCurrentMode].m_nVesaMode, m_cModeList[m_nCurrentMode].m_nWidth ) )
 		{
 			
 			/* Reinitialize command ringbuffer */
@@ -572,9 +559,13 @@ int i855::SetScreenMode( screen_mode sMode )
 			
 			OUTREG( DSPASTRIDE, m_cModeList[m_nCurrentMode].m_nBytesPerLine );
 			OUTREG( DSPABASE, m_nFrameBufferOffset );
+			OUTREG( DSPASIZE, ( ( m_cModeList[m_nCurrentMode].m_nHeight - 1 ) << 16 ) | 
+								 ( m_cModeList[m_nCurrentMode].m_nWidth - 1 ) );
 			if( m_bTwoPipes ) {
 				OUTREG( DSPBSTRIDE, m_cModeList[m_nCurrentMode].m_nBytesPerLine );
 				OUTREG( DSPBBASE, m_nFrameBufferOffset );
+				OUTREG( DSPBSIZE, ( ( m_cModeList[m_nCurrentMode].m_nHeight - 1 ) << 16 ) | 
+								 ( m_cModeList[m_nCurrentMode].m_nWidth - 1 ) );
 			}
 			
 			WaitForIdle();
@@ -746,7 +737,7 @@ bool i855::BltBitmap(SrvBitmap *pcDstBitMap, SrvBitmap *pcSrcBitMap,
 // SEE ALSO:
 //----------------------------------------------------------------------------
 
-bool i855::SetVesaMode( uint32 nMode )
+bool i855::SetVesaMode( uint32 nMode, int nWidth )
 {
 	struct RMREGS rm;
 
@@ -771,6 +762,12 @@ bool i855::SetVesaMode( uint32 nMode )
 	memset( &rm, 0, sizeof( struct RMREGS ) );
 	rm.EBX = 0x01;		// Get display offset.
 	rm.EAX = 0x4f07;
+	realint( 0x10, &rm );
+	
+	memset( &rm, 0, sizeof( struct RMREGS ) );
+	rm.EBX = 0x00;		// Set logical scan line length
+	rm.ECX = nWidth;
+	rm.EAX = 0x4f06;
 	realint( 0x10, &rm );
 
 	return ( nResult );
