@@ -1,0 +1,5 @@
+# Host: Syllable/i386 ELF
+NATDEPFILES= fork-child.o inf-ptrace.o \
+	i386-nat.o i386-syllable-nat.o
+NAT_FILE= nm-syllable.h
+

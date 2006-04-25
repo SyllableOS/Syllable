@@ -1,0 +1,120 @@
+diff -ru gdb-6.4.original/bfd/config.bfd gdb-6.4/bfd/config.bfd
+--- gdb-6.4.original/bfd/config.bfd	2005-10-25 19:40:09.000000000 +0200
++++ gdb-6.4/bfd/config.bfd	2006-04-25 01:35:44.852265400 +0200
+@@ -618,6 +618,9 @@
+     targ_defvec=bfd_elf32_i386_vec
+     targ_selfvecs=i386chaos_vec
+     ;;
++  i[3-7]86-*-syllable)
++    targ_defvec=bfd_elf32_i386_vec
++    ;;
+ 
+   i860-*-mach3* | i860-*-osf1* | i860-*-coff*)
+     targ_defvec=i860coff_vec
+diff -ru gdb-6.4.original/gdb/configure.host gdb-6.4/gdb/configure.host
+--- gdb-6.4.original/gdb/configure.host	2005-05-22 21:11:42.000000000 +0200
++++ gdb-6.4/gdb/configure.host	2006-04-25 01:35:44.000000000 +0200
+@@ -85,6 +85,7 @@
+ i[34567]86-*-sysv*)	gdb_host=i386v ;;
+ i[34567]86-*-isc*)	gdb_host=i386v ;;
+ i[34567]86-*-cygwin*)	gdb_host=cygwin ;;
++i[34567]86-*-syllable*)	gdb_host=syllable ;;
+ 
+ ia64-*-linux*)		gdb_host=linux ;;
+ 
+diff -ru gdb-6.4.original/gdb/configure.tgt gdb-6.4/gdb/configure.tgt
+--- gdb-6.4.original/gdb/configure.tgt	2005-08-15 23:46:38.000000000 +0200
++++ gdb-6.4/gdb/configure.tgt	2006-04-25 01:35:44.000000000 +0200
+@@ -101,6 +101,7 @@
+ 			build_nlm=yes
+ 			;;
+ i[34567]86-*-cygwin*)	gdb_target=cygwin  ;;
++i[34567]86-*-syllable*)	gdb_target=syllable ;;
+ i[34567]86-*-*)		gdb_target=i386 ;;
+ 
+ ia64-*-linux*)		gdb_target=linux
+diff -ru gdb-6.4.original/gdb/Makefile.in gdb-6.4/gdb/Makefile.in
+--- gdb-6.4.original/gdb/Makefile.in	2005-11-16 13:44:10.000000000 +0100
++++ gdb-6.4/gdb/Makefile.in	2006-04-25 01:35:44.000000000 +0200
+@@ -1038,6 +1038,9 @@
+ 		$(SHELL) $(srcdir)/../mkinstalldirs $(DESTDIR)$(bindir) ; \
+ 		$(INSTALL_PROGRAM) gdb$(EXEEXT) \
+ 			$(DESTDIR)$(bindir)/$$transformed_name$(EXEEXT) ; \
++		$(SHELL) $(srcdir)/../mkinstalldirs $(DESTDIR)$(libdir) ; \
++		$(INSTALL_PROGRAM) libgdb.so \
++			$(DESTDIR)$(libdir)/libgdb.so ; \
+ 		$(SHELL) $(srcdir)/../mkinstalldirs \
+ 			$(DESTDIR)$(man1dir) ; \
+ 		$(INSTALL_DATA) $(srcdir)/gdb.1 \
+@@ -1181,17 +1184,15 @@
+ init.o: init.c $(defs_h) $(call_cmds_h)
+ 
+ # Removing the old gdb first works better if it is running, at least on SunOS.
+-gdb$(EXEEXT): gdb.o libgdb.a $(ADD_DEPS) $(CDEPS) $(TDEPLIBS)
++gdb$(EXEEXT): gdb.o libgdb.so
+ 	rm -f gdb$(EXEEXT)
+ 	$(CC_LD) $(INTERNAL_LDFLAGS) $(WIN32LDAPP) \
+-		-o gdb$(EXEEXT) gdb.o libgdb.a \
+-		$(TDEPLIBS) $(TUI_LIBRARY) $(CLIBS) $(LOADLIBES)
++		-o gdb$(EXEEXT) gdb.o -L . -lgdb
+ 
+-$(TUI)$(EXEEXT): tui-main.o libgdb.a $(ADD_DEPS) $(CDEPS) $(TDEPLIBS)
++$(TUI)$(EXEEXT): tui-main.o libgdb.so
+ 	rm -f $(TUI)$(EXEEXT)
+ 	$(CC_LD) $(INTERNAL_LDFLAGS) $(WIN32LDAPP) \
+-		-o $(TUI)$(EXEEXT) tui-main.o libgdb.a \
+-		$(TDEPLIBS) $(TUI_LIBRARY) $(CLIBS) $(LOADLIBES)
++		-o $(TUI)$(EXEEXT) tui-main.o -L . -lgdb
+ 
+ nlm:	force
+ 	rootme=`pwd`; export rootme; $(MAKE) $(TARGET_FLAGS_TO_PASS) DO=all DODIRS=nlm subdir_do
+@@ -1201,10 +1202,11 @@
+ #
+ # init.o is very important.  It pulls in the rest of GDB.
+ LIBGDB_OBS= $(COMMON_OBS) $(TSOBS) $(ADD_FILES) init.o
+-libgdb.a: $(LIBGDB_OBS)
+-	-rm -f libgdb.a
+-	$(AR) q libgdb.a $(LIBGDB_OBS)
+-	$(RANLIB) libgdb.a
++libgdb.so: $(LIBGDB_OBS) $(ADD_DEPS) $(CDEPS) $(TDEPLIBS)
++	-rm -f libgdb.so
++	$(CC_LD) $(INTERNAL_LDFLAGS) -shared -plugin \
++		-o libgdb.so $(LIBGDB_OBS) \
++		$(TDEPLIBS) $(TUI_LIBRARY) $(CLIBS) $(LOADLIBES)
+ 
+ # A Mach 3.0 program to force gdb back to command level
+ 
+diff -ru gdb-6.4.original/gdb/solib.c gdb-6.4/gdb/solib.c
+--- gdb-6.4.original/gdb/solib.c	2005-06-13 20:39:11.000000000 +0200
++++ gdb-6.4/gdb/solib.c	2006-04-25 01:35:44.000000000 +0200
+@@ -216,7 +216,11 @@
+   /* If not found, next search the inferior's $LD_LIBRARY_PATH 
+      environment variable. */
+   if (found_file < 0 && solib_absolute_prefix == NULL)
++#ifndef __SYLLABLE__
+     found_file = openp (get_in_environ (inferior_environ, "LD_LIBRARY_PATH"),
++#else
++    found_file = openp (get_in_environ (inferior_environ, "DLL_PATH"),
++#endif
+ 			OPF_TRY_CWD_FIRST, in_pathname, O_RDONLY, 0,
+ 			&temp_pathname);
+ 
+diff -ru gdb-6.4.original/gdb/solib-svr4.c gdb-6.4/gdb/solib-svr4.c
+--- gdb-6.4.original/gdb/solib-svr4.c	2005-08-29 11:27:19.000000000 +0200
++++ gdb-6.4/gdb/solib-svr4.c	2006-04-25 01:35:44.000000000 +0200
+@@ -1036,6 +1036,7 @@
+ static void
+ svr4_relocate_main_executable (void)
+ {
++#ifndef __SYLLABLE__
+   asection *interp_sect;
+   CORE_ADDR pc = read_pc ();
+ 
+@@ -1127,6 +1128,7 @@
+ 
+       do_cleanups (old_chain);
+     }
++#endif
+ }
+ 
+ /*
