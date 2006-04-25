@@ -8,6 +8,7 @@ modules
 	programming/languages/gcc-3.4.3
 	programming/m4-1.4.3
 	programming/make-3.80
+	programming/gdb-6.4
 ;	programming/languages/perl-5.8.0
 ;	programming/automake-1.7.9
 	programming/automake-1.4-p6
@@ -23,4 +24,3 @@ modules
 	programming/doxygen-1.4.6
 	programming/cscope-15.5
 	programming/splint-3.1.1
-
