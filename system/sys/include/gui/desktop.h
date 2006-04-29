@@ -56,7 +56,7 @@ public:
     bool	SetColorSpace( color_space eColorSpace );
     bool	SetRefreshRate( float vRefreshRate );
     bool	Activate() const;
-    
+    int		MinimizeAll() const;
 	int32	GetWindows( Message* pcMsg ) const;
 	void	ActivateWindow( int32 nWindow ) const;
 	Bitmap*	GetWindowIcon( int32 nWindow ) const;

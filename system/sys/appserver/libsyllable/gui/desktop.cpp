@@ -244,3 +244,23 @@ Bitmap* Desktop::GetWindowIcon( int32 nWindow ) const
 	delete( pcBitmap );
 	return( NULL );
 }
+
+/** Minimizes all windows on the desktop(besides the dock and the desktop)
+ * \par Description:
+ * 
+ * \param
+ * \return Number of windows minimized
+ * \author	Rick Caudill (rick@syllable.org)
+ *****************************************************************************/
+int Desktop::MinimizeAll() const
+{
+	Message cReq( DR_MINIMIZE_ALL );
+	Message cReply;
+	Application* pcApp = Application::GetInstance();
+	cReq.AddInt32( "desktop", m->m_nDesktop );
+	Messenger( pcApp->GetServerPort() ).SendMessage( &cReq, &cReply );
+	
+	int nMinimized;
+	cReply.FindInt32("minimized",&nMinimized);
+	return (nMinimized);
+}

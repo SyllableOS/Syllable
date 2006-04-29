@@ -780,6 +780,44 @@ void AppServer::DispatchMessage( Message * pcReq )
 			pcReq->SendReply( &cReply );
 			break;
 		}
+
+	case DR_MINIMIZE_ALL:
+	{
+		dbprintf("minimize all\n");
+		int count=0;
+		int nDesktop=0;
+		
+		SrvWindow *pcWindow;
+		os::Message cReply;
+
+		if( pcReq->FindInt( "desktop", &nDesktop ) != 0 ) {
+			pcReq->SendReply( &cReply );
+			break;
+		}
+		dbprintf("desktop: %d\n",nDesktop);
+		g_cLayerGate.Close();
+
+ 		for( pcWindow = get_first_window( nDesktop ); pcWindow != NULL; pcWindow = pcWindow->m_asDTState[nDesktop].m_pcNextWindow )
+		{
+			if ( pcWindow->GetTopView()->IsVisible() && !pcWindow->IsMinimized() && !pcWindow->GetTopView()->IsBackdrop() && !(pcWindow->GetFlags() & WND_NO_BORDER)) 
+			{
+				dbprintf("window title: %s\n",pcWindow->GetTitle());
+				
+				pcWindow->SetMinimized( true );
+				pcWindow->Show( false );
+				remove_from_focusstack( pcWindow );
+				
+				pcWindow->GetTopView()->GetParent()->UpdateRegions(false);
+				count++;
+			}
+		}
+		g_cLayerGate.Open();
+		cReply.AddInt32("minimized",count);
+		pcReq->SendReply(&cReply);
+		
+		break;
+	}
+
 	case DR_CLOSE_WINDOWS:
 		{
 			g_cLayerGate.Close();
@@ -899,6 +937,7 @@ void AppServer::Run( void )
 			case DR_CLOSE_WINDOWS:
 			case DR_SET_DESKTOP_MAX_WINFRAME:
 			case DR_GET_DESKTOP_MAX_WINFRAME:
+			case DR_MINIMIZE_ALL:
 				{
 					try
 					{
@@ -1142,4 +1181,8 @@ int main( int argc, char **argv )
 	dbprintf( "WARNING : layers.device failed to initiate itself!!!\n" );
 	return ( 0 );
 }
+
+
+
+
 

@@ -1,3 +1,7 @@
+* April 29, 2006 Rick Caudill *
+
+Added Minimize All support to Appserver.  This means we can have a 'Show Desktop(TM)'
+
 * April 19 2006, Kristian Van Der Vliet *
 
 Synched the 3c59x driver with a more recent Linux version.  Recognise the following new

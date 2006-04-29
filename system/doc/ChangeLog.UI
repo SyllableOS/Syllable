@@ -1,3 +1,7 @@
+* April 29, 2006 Rick Caudill *
+     Desktop
+     	* Added Desktop::MinimizeAll to Desktop class
+     	
 * April 15 2006, Rick Caudill *
 	Menu:
 		* Fixed os::Menu drawing when Menu was disabled and had a Shortcut.
