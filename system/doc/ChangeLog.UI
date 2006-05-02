@@ -1,3 +1,8 @@
+* May 2, 2006 Arno Klenke *
+
+Delete the message queue object in the looper class
+Do not call Flush() after every M_PAINT message
+
 * April 29, 2006 Rick Caudill *
      Desktop
      	* Added Desktop::MinimizeAll to Desktop class
@@ -1127,6 +1132,7 @@ disabled controls.  The following files have been patched:
 
 	The sub-menu arrow is now drawn corretly, and menus which have children
 	are now drawn slightly larger to allow for the arrow.
+
 
 
 
