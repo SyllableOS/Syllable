@@ -158,6 +158,7 @@ Looper::~Looper()
 		delete pcTimer;
 	}
 	assert( m->m_pcFirstRestartTimer == NULL );
+	delete( m->m_pcMsgQueue );
 	delete m;
 }
 
@@ -1876,3 +1877,4 @@ void Looper::__LO_reserved7__()
 void Looper::__LO_reserved8__()
 {
 }
+

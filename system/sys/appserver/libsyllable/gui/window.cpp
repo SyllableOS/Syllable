@@ -1639,7 +1639,13 @@ void Window::DispatchMessage( Message * pcMsg, Handler * pcHandler )
 					}
 					else
 					{
-						Flush();
+						MessageQueue *pcQueue = GetMessageQueue();
+
+						pcQueue->Lock();
+						Message *pcNextMsg = pcQueue->FindMessage( M_PAINT, 0 );
+						if( pcNextMsg == NULL )
+							Flush();
+						pcQueue->Unlock();
 					}
 				}
 				else
@@ -1994,4 +2000,14 @@ void Window::__WI_reserved5__()
 void Window::__WI_reserved6__()
 {
 }
+
+
+
+
+
+
+
+
+
+
 

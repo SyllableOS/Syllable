@@ -323,9 +323,9 @@ bool Event::IsMonitorEnabled()
  * registered the event using the Register() method then the message will be sent to all applications
  * that have set a monitor to this id string.
  * \param pcData - Data that will be submitted.
- * \param pcReply - Will contain the reply message after the call. Can be NULL for remote calls and has
+ * \param pcReplyHandler - Handler for the reply message. Can be NULL for remote calls and has
  * to be NULL if you have registered the event.
- * \param nTimeout - Timeout.
+ * \param nReplyCode - The code for the reply.
  * \return 0 if successful.
  * \author	Arno Klenke (arno_klenke@yahoo.de)
  *****************************************************************************/
@@ -395,6 +395,7 @@ status_t Event::GetLastEventMessage( Message* pcReply )
 	return( m->m_cServerLink.SendMessage( &cMessage, pcReply ) );
 
 }
+
 
 
 
