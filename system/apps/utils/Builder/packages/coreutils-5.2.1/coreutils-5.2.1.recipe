@@ -29,6 +29,8 @@ links
 	bin/ls			/bin
 ;	For SaMBa:
 	bin/echo		/bin
+;	For FindUtils:
+	bin/sort		/bin
 ;	For general compatibility:
 	bin/cat			/bin
 	bin/chgrp		/bin

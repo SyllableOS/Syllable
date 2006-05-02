@@ -11,4 +11,7 @@ build-needs
 	texinfo
 
 configure-options	--enable-html
+
 documentation		README COPYING COPYING.DOC ABOUT-NLS BUGS NEWS ChangeLog AUTHORS THANKS
+; For FindUtils:
+links				bin/sed /bin
