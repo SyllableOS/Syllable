@@ -117,6 +117,7 @@ resources
 	boot/grub				GrUB-binaries-0.97
 	boot/grub				menu.lst
 ;	atheos/sys/libs			GCC-libraries-3.4.3
+	atheos/sys/fonts		fonts/URW-fonts
 	atheos/Documentation	documentation/Welcome
 	atheos/Documentation	documentation/Copyrights
 
@@ -288,4 +289,3 @@ modules
 	apps/utils/nettools
 	apps/utils/pkgmanager
 	apps/utils/systools
-
