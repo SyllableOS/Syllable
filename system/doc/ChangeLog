@@ -1,3 +1,8 @@
+* May 3 2006, Kaj de Vos *
+
+Added newer versions of the URW fonts, from Maritimus.
+Updated Danish, Icelandic and Faroese keymaps, from Flemming Sørensen.
+
 * May 1 2006, Kaj de Vos *
 
 Added empty /etc/mtab to satisfy FindUtils.
