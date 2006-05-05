@@ -1,3 +1,24 @@
+* May 5 2006, Kaj de Vos *
+
+Added binary keymaps from Maritimus. Some of them will still be overwritten by those
+that have text versions in the repository, until all issues are sorted out.
+
+				Known issues:
+	o	French and Belgian: deadkeys don't respect the shift lock.
+	o	Breton and Cherokee: multicharacter keys don't work.
+	o	Canadian Multilingual, German 453, Swedish SS-66-22-41: Group key won't work.
+	o	Complex scripts and BIDI don't work yet.
+	o	CTRL+Shift keys ignored.
+
+				Likely issues:
+	o	Portuguese Brazilian: 103rd key, keymap dot, probably won't work: please report.
+
+				Other:
+	o	Romanian keymaps allocate S & T with comma instead of S & T with cedilla:
+		use the cedilla deadkey for legacy situations.
+	o	You will need fonts able to handle the characters for them to display:
+		Install your fonts to atheos/sys/fonts/ .
+
 * May 3 2006, Kaj de Vos *
 
 Added newer versions of the URW fonts, from Maritimus.
