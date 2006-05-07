@@ -1568,7 +1568,7 @@ int ListViewContainer::InsertRow( int nPos, ListViewRow * pcRow, bool bUpdate )
 
 	for( uint i = nIndex; i < m_cRows.size(); ++i )
 	{
-		for( ; !m_cRows[i]->IsVisible() && i < m_cRows.size(  ); i++ );
+		for( ; i < m_cRows.size(  ) && !m_cRows[i]->IsVisible(); i++ );
 		if( i >= m_cRows.size() )
 			break;
 
