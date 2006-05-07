@@ -1,3 +1,7 @@
+* May 8, 2006 Kristian Van Der Vliet *
+
+Don't walk off the end of the list in ListView::InsertRow.  Fix from Jonas Jarvoll
+
 * May 2, 2006 Arno Klenke *
 
 Delete the message queue object in the looper class
