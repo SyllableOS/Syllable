@@ -3,16 +3,16 @@
 ;	.
 
 environment
-;	For some strange reason, Linux defines $OSTYPE and $MACHTYPE, but doesn't
-;	export them to child processes. If you have the misfortune of running it,
+;	For some strange reason, some Linuxes define $OSTYPE and $MACHTYPE, but don't
+;	export them to child processes. If you have the misfortune of running one of them,
 ;	define them here:
 ;	OSTYPE		linux-gnu
 ;	MACHTYPE	i586-pc-linux-gnu
 
 ;	Default anonymous access to the Syllable CVS repository:
-	CVSROOT		:pserver:anonymous@cvs.sourceforge.net:/cvsroot/syllable
+	CVSROOT		:pserver:anonymous@syllable.cvs.sourceforge.net:/cvsroot/syllable
 ;	If you have write access:
-;	CVSROOT		:ext:<Your SF user name here>@cvs.sourceforge.net:/cvsroot/syllable
+;	CVSROOT		:ext:<Your SF user name here>@syllable.cvs.sourceforge.net:/cvsroot/syllable
 
 ; native-env and ports-env must define the same variables:
 
@@ -45,4 +45,3 @@ cvs-path		syllable/system
 
 ; Don't strip binaries:
 ;no-strip
-
