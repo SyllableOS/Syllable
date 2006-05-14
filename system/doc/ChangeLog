@@ -1,3 +1,9 @@
+* May 14 2006, Kristian Van Der Vliet *
+
+Some Maestro bug fixes:
+	o Don't return IRQRET_BREAK from the IRQ handler
+	o Return usable data from SNDCTL_DSP_GETOSPACE ioctl
+
 * May 5 2006, Kaj de Vos *
 
 Added binary keymaps from Maritimus. Some of them will still be overwritten by those
