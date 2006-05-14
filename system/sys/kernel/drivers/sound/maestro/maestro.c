@@ -1629,8 +1629,12 @@ static int allocate_buffers( struct maestro_state *s )
 
 	/* alloc as big a chunk as we can */
 	for (order = (dsps_order + (16-PAGE_SHIFT) + 1); order >= (dsps_order + 2 + 1); order--)
-		if((rawbuf = (void *)kmalloc(PAGE_SIZE<<order, MEMF_KERNEL|MEMF_CLEAR)))
+	{
+		uint32 addr = kmalloc((PAGE_SIZE<<order)+PAGE_SIZE, MEMF_KERNEL|MEMF_CLEAR);
+		rawbuf = PAGE_ALIGN(addr);
+		if( rawbuf )
 			break;
+	}
 
 	if (!rawbuf)
 		return 1;
@@ -1742,7 +1746,8 @@ status_t maestro_dsp_open( void* pNode, uint32 nFlags, void **ppCookie )
 	/* The Linux OSS driver set the format & rate at this point.  This has been moved into
 	   maestro_dsp_read() & maestro_dsp_write() */
 
-	s->open_mode = 0;
+//	s->open_mode = 0;
+	s->open_mode = FMODE_WRITE;
 
 	kerndbg( KERN_DEBUG, "maestro: open done\n" );
 
