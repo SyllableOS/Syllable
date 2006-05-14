@@ -1,4 +1,4 @@
-#! ruby
+#!/usr/ruby/bin/ruby
 
 # 26 March 2005, Kaj de Vos
 #   Ask confirmation for both recognized and unrecognized partitions.
