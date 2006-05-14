@@ -1,4 +1,4 @@
-CFLAGS   += -Wall -c -O3 -std=gnu99 -fno-optimize-sibling-calls -Wstrict-prototypes -I./ -D__KERNEL__ -D__BUILD_KERNEL__ -ffreestanding -no-fPIC -mpreferred-stack-boundary=2 -fno-strict-aliasing
+CFLAGS   = -Wall -c -O3 -std=gnu99 -fno-optimize-sibling-calls -Wstrict-prototypes -I./ -D__KERNEL__ -D__BUILD_KERNEL__ -ffreestanding -no-fPIC -mpreferred-stack-boundary=2 -fno-strict-aliasing
 AFLAGS   = -c
 
 OLD_INCLUDE_PATH:=$(C_INCLUDE_PATH)
