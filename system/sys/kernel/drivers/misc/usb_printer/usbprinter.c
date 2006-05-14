@@ -238,7 +238,6 @@ status_t usbprinter_open( void* pNode, uint32 nFlags, void **pCookie )
 	{
 		/* Refill the URB and re-submit it ready for an attempt to read from the device */
 		USB_FILL_BULK(&psPrinter->sRead, psPrinter->psDev, psPrinter->nReadPipe, psPrinter->pReadBuffer, USB_PRINTER_BUF_SIZE, usbprinter_read_irq, psPrinter);
-		psPrinter->sRead.nBufferLength = 0;
 		psPrinter->bReadComplete = false;
 		psPrinter->nReadCount = 0;
 
@@ -731,7 +730,7 @@ static int usbprinter_get_device_id( struct usb_printer *psPrinter )
 
 	if( pStart != NULL )
 	{
-		pEnd = strstr( pStart, ";" );
+		pEnd = strchr( pStart, ';' );
 		if( pEnd != NULL )
 		{
 			nDescLen = pEnd - pStart;
