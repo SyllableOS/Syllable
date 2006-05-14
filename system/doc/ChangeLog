@@ -3,6 +3,8 @@
 Some Maestro bug fixes:
 	o Don't return IRQRET_BREAK from the IRQ handler
 	o Return usable data from SNDCTL_DSP_GETOSPACE ioctl
+	o Page align the DMA buffer so we don't get Bad Noise during playback (This
+	  seems to be a habit of mine)
 
 * May 5 2006, Kaj de Vos *
 
