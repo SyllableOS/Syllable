@@ -1525,7 +1525,7 @@ static int maestro_interrupt( int nIRQ, void *pData, SysCallRegs_s *psRegs )
 	uint32 event;
 
 	if ( ! (event = inb(c->iobase+0x1A)) )
-		return IRQRET_BREAK;
+		return 0;
 
 	outw(inw(c->iobase+4)&1, c->iobase+4);
 	kerndbg( KERN_DEBUG_LOW, "maestro int: %x\n",event);
@@ -1591,7 +1591,7 @@ static int maestro_interrupt( int nIRQ, void *pData, SysCallRegs_s *psRegs )
 		}
 	}
 
-	return IRQRET_BREAK;
+	return 0;
 }
 
 /* DSP interface */
