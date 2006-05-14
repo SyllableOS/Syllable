@@ -11,7 +11,7 @@ require "grub-gen.rb"
 
 # Remember to always update the version numbers below!
 
-Base = ["0.5.7", "base-syllable-%s.zip"]
+Base = ["0.6.1", "base-syllable-%s.zip"]
 Packages = {
 	"ABrowse"	=> ["0.4a", "abrowse-%s.bin.zip"],
 	"Whisper"	=> ["1.0a", "whisper-%s.bin.zip"],
