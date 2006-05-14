@@ -373,7 +373,7 @@ int afs_remove_attr( void *pVolume, void *pNode, const char *pzName, int nNameLe
 int afs_stat_attr( void *pVolume, void *pNode, const char *pzName, int nNameLen, struct attr_info *psBuffer );
 int afs_write_attr( void *pVolume, void *pNode, const char *pzName, int nNameLen, int nFlags, int nType, const void *pBuffer, off_t nPos, size_t nLen );
 int afs_read_attr( void *pVolume, void *pNode, const char *pzName, int nNameLen, int nType, void *pBuffer, off_t nPos, size_t nLen );
-int afs_delete_file_attribs( AfsVolume_s * psVolume, AfsInode_s * psInode );
+int afs_delete_file_attribs( AfsVolume_s * psVolume, AfsInode_s * psInode, bool bNoLock );
 
 
 int afs_open_indexdir( void *pVolume, void **pCookie );

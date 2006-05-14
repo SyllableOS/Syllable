@@ -623,7 +623,7 @@ int afs_remove_attr( void *pVolume, void *pNode, const char *pzName, int nNameLe
  * \return 0 on success, negative error code on failure
  * \sa
  *****************************************************************************/
-int afs_delete_file_attribs( AfsVolume_s * psVolume, AfsInode_s * psInode )
+int afs_delete_file_attribs( AfsVolume_s * psVolume, AfsInode_s * psInode, bool bNoLock )
 {
 	AfsVNode_s *psVnode = psInode->ai_psVNode;
 	AfsInode_s *psAttrDirInode;
@@ -636,7 +636,8 @@ int afs_delete_file_attribs( AfsVolume_s * psVolume, AfsInode_s * psInode )
 		return( 0 );
 	}
 
-	AFS_LOCK( psVnode );
+	if ( !bNoLock )
+		AFS_LOCK( psVnode );
 
 	nError = afs_do_read_inode( psVolume, &psInode->ai_sAttribDir, &psAttrDirInode );
 
@@ -688,7 +689,8 @@ int afs_delete_file_attribs( AfsVolume_s * psVolume, AfsInode_s * psInode )
       error2:
 	afs_put_inode( psVolume, psAttrDirInode, false );
       error1:
-	AFS_UNLOCK( psVnode );
+	if ( !bNoLock )
+		AFS_UNLOCK( psVnode );
 
 	return( nError );
 }

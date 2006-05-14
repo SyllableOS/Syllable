@@ -630,7 +630,7 @@ static int afs_empty_delme_dir( AfsVolume_s * psVolume )
 			kfree( psInode );
 			break;
 		}
-		nError = afs_delete_file_attribs( psVolume, psInode );
+		nError = afs_delete_file_attribs( psVolume, psInode, true );
 		if( nError < 0 )
 		{
 			printk( "PANIC : afs_empty_delme_dir() Failed to delete file attributes %d\n", nError );
@@ -2198,7 +2198,7 @@ static int afs_write_inode( void *pVolume, void *pNode )
 	}
 	if( atomic_read( &psInode->ai_nLinkCount ) == 0 )
 	{
-		nError = afs_delete_file_attribs( psVolume, psInode );
+		nError = afs_delete_file_attribs( psVolume, psInode, false );
 		if( nError < 0 )
 		{
 			printk( "Error: afs_write_inode() failed to delete attributes: %d\n", nError );
