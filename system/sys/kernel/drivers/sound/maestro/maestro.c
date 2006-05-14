@@ -2097,8 +2097,10 @@ status_t maestro_dsp_ioctl( void *pNode, void *pCookie, uint32 nCmd, void *pArg,
 
 		case SNDCTL_DSP_GETOSPACE:
 			kerndbg( KERN_DEBUG, "SNDCTL_DSP_GETOSPACE\n");
+#if 0
 			if (!(s->open_mode & FMODE_WRITE))
 				return -EINVAL;
+#endif
 			if (!s->dma_dac.ready && (ret = prog_dmabuf(s, 0)))
 				return ret;
 			spinlock_cli(&s->lock, flags);
@@ -2126,12 +2128,13 @@ status_t maestro_dsp_ioctl( void *pNode, void *pCookie, uint32 nCmd, void *pArg,
 			return memcpy_to_user(argp, &abinfo, sizeof(abinfo)) ? -EFAULT : 0;
 
 		case SNDCTL_DSP_GETODELAY:
+			kerndbg( KERN_DEBUG, "SNDCTL_DSP_GETODELAY\n");
 #if 0
 			if (!(s->open_mode & FMODE_WRITE))
 				return -EINVAL;
+#endif
 			if (!s->dma_dac.ready && (ret = prog_dmabuf(s, 0)))
 				return ret;
-#endif
 			spinlock_cli(&s->lock, flags);
 			maestro_update_ptr(s);
 			val = s->dma_dac.count;
