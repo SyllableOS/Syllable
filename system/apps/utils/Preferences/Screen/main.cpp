@@ -42,15 +42,10 @@ int main(int argc, char* argv[])
 
 PrefsScreenApp::PrefsScreenApp() : os::Application("application/x-vnd-ScreenPreferences")
 {
-  // Get screen width and height to centre the window
-  os::Desktop *pcDesktop = new os::Desktop();
-  int iWidth = pcDesktop->GetScreenMode().m_nWidth;
-  int iHeight = pcDesktop->GetScreenMode().m_nHeight;
-  int iLeft = (iWidth-250)/2;
-  int iTop = (iHeight-17)/2;
 
   // Show main window
-  pcWindow = new MainWindow(os::Rect(iLeft, iTop, iLeft+280, iTop+165));
+  pcWindow = new MainWindow(os::Rect());
+  pcWindow->CenterInScreen();
   pcWindow->Show();
   pcWindow->MakeFocus();
 }

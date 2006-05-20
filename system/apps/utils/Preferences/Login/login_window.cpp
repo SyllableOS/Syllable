@@ -72,8 +72,8 @@ LoginWindow::LoginWindow( const os::Rect cFrame ) : Window( cFrame, "Login", "Lo
 	BitmapImage *pcLockIcon = new BitmapImage();
 	pcLockIcon->Load( cRes.GetResourceStream( "lock.png" ) );
 	Point cIconSize = pcLockIcon->GetSize();
-	ImageView *pcLockIconView = new ImageView( Rect( 0, 0, cIconSize.x, cIconSize.y ), "login_info_icon", pcLockIcon );
-	pcInfoLayoutNode->AddChild( pcLockIconView, 0.0f );
+	m_pcLockIconView = new ImageView( Rect( 0, 0, cIconSize.x, cIconSize.y ), "login_info_icon", pcLockIcon );
+	pcInfoLayoutNode->AddChild( m_pcLockIconView, 0.0f );
 
 	const unsigned MSG_BUF_LEN = 256;
 	char acMsgBuf[MSG_BUF_LEN] = "Your system administrator has not given you permission\nto change your login details.";
@@ -100,7 +100,7 @@ LoginWindow::LoginWindow( const os::Rect cFrame ) : Window( cFrame, "Login", "Lo
 
 	cControlFrame = cInnerBounds;
 
-	StringView *pcIconText = new StringView( Rect(), "login_icon_text", "When I login to this computer, display this icon\nfor my user account." );
+	StringView *pcIconText = new StringView( Rect(), "login_icon_text", "When I login to this computer, display\nthis icon for my user account." );
 
 	cSize = pcIconText->GetPreferredSize( false );
 	cControlFrame.right = cControlFrame.left + cSize.x;
@@ -220,7 +220,7 @@ LoginWindow::LoginWindow( const os::Rect cFrame ) : Window( cFrame, "Login", "Lo
 
 	/* The Apply/Save/Cancel buttons live in a layoutview of their own */
 	Rect cButtonFrame = cBounds;
-	cButtonFrame.top = cButtonFrame.bottom - 25;
+	cButtonFrame.top = cButtonFrame.bottom - 30;
 
 	m_pcButtonLayout = new LayoutView( cButtonFrame, "login_buttons", NULL, CF_FOLLOW_LEFT | CF_FOLLOW_BOTTOM | CF_FOLLOW_RIGHT );
 
@@ -228,7 +228,7 @@ LoginWindow::LoginWindow( const os::Rect cFrame ) : Window( cFrame, "Login", "Lo
 	pcButtonsRoot->SetBorders( Rect( 5, 4, 5, 4 ) );
 	pcButtonsRoot->AddChild( new VLayoutSpacer( "login_buttons_v_spacer", 1.0f ) );
 
-	HLayoutNode *pcButtons = new HLayoutNode( "login_buttons_buttons", 0.0f );
+	HLayoutNode *pcButtons = new HLayoutNode( "login_buttons_buttons"/*, 0.0f*/ );
 	pcButtons->AddChild( new HLayoutSpacer( "login_buttons_h_spacer", 200.0f ) );
 	Button *pcOkButton = new Button( Rect(), "login_buttons_ok", "_OK", new Message( ID_WINDOW_OK ) );
 	pcButtons->AddChild( pcOkButton );
@@ -285,6 +285,10 @@ LoginWindow::LoginWindow( const os::Rect cFrame ) : Window( cFrame, "Login", "Lo
 
 LoginWindow::~LoginWindow()
 {
+	os::Image* pcImage = m_pcLockIconView->GetImage();
+	m_pcLockIconView->SetImage( NULL );
+	delete( pcImage );
+	
 	RemoveChild( m_pcInfoFrame );
 	delete( m_pcInfoFrame );
 
@@ -296,6 +300,8 @@ LoginWindow::~LoginWindow()
 
 	RemoveChild( m_pcButtonLayout );
 	delete( m_pcButtonLayout );
+	
+
 }
 
 void LoginWindow::HandleMessage( Message *pcMessage )

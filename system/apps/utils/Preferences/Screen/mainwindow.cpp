@@ -28,7 +28,7 @@
 #include "mainwindow.h"
 #include "messages.h"
 
-MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow", "Screen", os::WND_NOT_RESIZABLE)
+MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow", "Screen"/*, os::WND_NOT_RESIZABLE*/)
 {
   os::Rect cBounds = GetBounds();
   os::Rect cRect = os::Rect(0,0,0,0);
@@ -48,10 +48,9 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcHLWorkspace->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLWorkspace->AddChild( pcDDMWorkspace = new os::DropdownMenu(cRect, "DDMWorkspace"));
   pcDDMWorkspace->SetMinPreferredSize(12);
-  pcDDMWorkspace->SetMaxPreferredSize(12);
   pcDDMWorkspace->SetReadOnly(true);
   pcVLSettings->AddChild(pcHLWorkspace);
-  pcVLSettings->AddChild( new os::VLayoutSpacer("", 5.0f, 5.0f));
+  pcVLSettings->AddChild( new os::VLayoutSpacer("", 5.0f));
 
   // Resolution
   pcHLResolution = new os::HLayoutNode("HLResolution");
@@ -59,12 +58,11 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcHLResolution->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLResolution->AddChild( pcDDMResolution = new os::DropdownMenu(cRect, "DDMResolution"));
   pcDDMResolution->SetMinPreferredSize(12);
-  pcDDMResolution->SetMaxPreferredSize(12);
   pcDDMResolution->SetReadOnly(true);
   pcDDMResolution->SetSelectionMessage(new os::Message(M_MW_RESOLUTION));
   pcDDMResolution->SetTarget(this);
   pcVLSettings->AddChild(pcHLResolution);
-  pcVLSettings->AddChild( new os::VLayoutSpacer("", 5.0f, 5.0f));
+  pcVLSettings->AddChild( new os::VLayoutSpacer("", 5.0f));
 
   // Colour space
   pcHLColour = new os::HLayoutNode("HLColour");
@@ -72,12 +70,11 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcHLColour->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLColour->AddChild( pcDDMColour = new os::DropdownMenu(cRect, "DDMColour"));
   pcDDMColour->SetMinPreferredSize(12);
-  pcDDMColour->SetMaxPreferredSize(12);
   pcDDMColour->SetReadOnly(true);
   pcDDMColour->SetSelectionMessage(new os::Message(M_MW_COLOUR));
   pcDDMColour->SetTarget(this);
   pcVLSettings->AddChild(pcHLColour);
-  pcVLSettings->AddChild( new os::VLayoutSpacer("", 5.0f, 5.0f));
+  pcVLSettings->AddChild( new os::VLayoutSpacer("", 5.0f));
 
   // Refresh
   pcHLRefresh = new os::HLayoutNode("HLRefresh");
@@ -85,7 +82,6 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcHLRefresh->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
   pcHLRefresh->AddChild( pcDDMRefresh = new os::DropdownMenu(cRect, "DDMRefresh"));
   pcDDMRefresh->SetMinPreferredSize(12);
-  pcDDMRefresh->SetMaxPreferredSize(12);
   pcDDMRefresh->SetReadOnly();
   pcDDMRefresh->SetSelectionMessage(new os::Message(M_MW_REFRESH));
   pcDDMRefresh->SetTarget(this);
@@ -96,14 +92,14 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
   pcVLSettings->SameWidth( "DDMWorkspace", "DDMResolution", "DDMColour", "DDMRefresh", NULL);
 
   // Create frameview to store settings
-  pcFVSettings = new os::FrameView( cBounds, "FVSettings", "Display", os::CF_FOLLOW_ALL);
+  pcFVSettings = new os::FrameView( cBounds, "FVSettings", "Display", 0/*os::CF_FOLLOW_ALL*/);
   pcFVSettings->SetRoot(pcVLSettings);
   pcVLRoot->AddChild( pcFVSettings );
   
   // Create apply/revert/close buttons
   pcHLButtons = new os::HLayoutNode("HLButtons");
   pcVLRoot->AddChild( new os::VLayoutSpacer("", 10.0f, 10.0f));
-  pcHLButtons = new os::HLayoutNode("HLButtons");
+  pcHLButtons = new os::HLayoutNode("HLButtons", 0.0f);
   pcHLButtons->AddChild( new os::HLayoutSpacer(""));
   pcHLButtons->AddChild( pcBApply = new os::Button(cRect, "BApply", "Apply", new os::Message(M_MW_APPLY)) );
   pcHLButtons->AddChild( new os::HLayoutSpacer("", 5.0f, 5.0f) );
@@ -156,6 +152,8 @@ MainWindow::MainWindow(const os::Rect& cFrame) : os::Window(cFrame, "MainWindow"
 
   // Show data
   ShowData();
+  
+  ResizeTo( pcLRoot->GetPreferredSize( false ) );
 }
 
 MainWindow::~MainWindow()

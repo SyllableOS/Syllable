@@ -36,7 +36,7 @@ MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 500, 400 ), "main_wnd", "
 	
 	/* Create list of types */
 	m_pcTypeList = new os::TreeView( os::Rect(), "type_prefs_list", os::ListView::F_RENDER_BORDER | os::ListView::F_NO_HEADER,
-									os::CF_FOLLOW_ALL, os::WID_FULL_UPDATE_ON_RESIZE );
+									0, os::WID_FULL_UPDATE_ON_RESIZE );
 	m_pcTypeList->InsertColumn( "Type", 200 );
 	m_pcTypeList->SetSelChangeMsg( new os::Message( M_TYPE_SELECT ) );
 	
@@ -98,7 +98,7 @@ MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 500, 400 ), "main_wnd", "
 	
 	/* List */
 	m_pcExtensionList = new os::TreeView( os::Rect(), "type_prefs_extensions_list", os::ListView::F_RENDER_BORDER, 
-									os::CF_FOLLOW_ALL, os::WID_FULL_UPDATE_ON_RESIZE );
+									0, os::WID_FULL_UPDATE_ON_RESIZE );
 	m_pcExtensionList->InsertColumn( "Extensions", 500 );
 	m_pcExtensionList->SetSelChangeMsg( new os::Message( M_EXTENSION_SELECT ) );
 	pcVExtensions->AddChild( m_pcExtensionList );
@@ -135,7 +135,7 @@ MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 500, 400 ), "main_wnd", "
 	
 	/* List */
 	m_pcHandlerList = new os::TreeView( os::Rect(), "type_prefs_handlers", os::ListView::F_RENDER_BORDER, 
-									os::CF_FOLLOW_ALL, os::WID_FULL_UPDATE_ON_RESIZE );
+									0, os::WID_FULL_UPDATE_ON_RESIZE );
 	m_pcHandlerList->InsertColumn( "Default handler", 500 );
 	
 	os::HLayoutNode* pcHHandlers = new os::HLayoutNode( "type_prefs_handlers_h", 0.0f );
@@ -151,7 +151,7 @@ MainWindow::MainWindow() : os::Window( os::Rect( 0, 0, 500, 400 ), "main_wnd", "
 	pcHHandlers->SameWidth( "type_prefs_addhandler", "type_prefs_removehandler", NULL );
 	
 	pcVHandlers->AddChild( m_pcHandlerList );
-	pcVHandlers->AddChild( new os::HLayoutSpacer( "", 5.0f, 5.0f ) );
+	pcVHandlers->AddChild( new os::VLayoutSpacer( "", 5.0f, 5.0f ) );
 	pcVHandlers->AddChild( pcHHandlers );
 	
 	m_pcHandlerFrame->SetRoot( pcVHandlers );

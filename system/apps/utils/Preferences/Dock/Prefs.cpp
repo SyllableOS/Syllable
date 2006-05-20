@@ -458,15 +458,9 @@ void PrefsDockWin::HandleMessage( os::Message* pcMessage )
  
 PrefsDockApp::PrefsDockApp():os::Application( "application/x-vnd-DockPreferences" )
 {
-	/* Get screen width and height to centre the window */
-	os::Desktop * pcDesktop = new os::Desktop();
-	int iWidth = pcDesktop->GetScreenMode().m_nWidth;
-	int iHeight = pcDesktop->GetScreenMode().m_nHeight;
-	int iLeft = ( iWidth - 300 ) / 2;
-	int iTop = ( iHeight - 350 ) / 2;
-	
 	/* Show main window */
-	PrefsDockWin* pcWindow = new PrefsDockWin( os::Rect( iLeft, iTop, iLeft + 300, iTop + 350 ) );
+	PrefsDockWin* pcWindow = new PrefsDockWin( os::Rect( 0, 0, 360, 350 ) );
+	pcWindow->CenterInScreen();
 	pcWindow->Show();
 	pcWindow->MakeFocus();
 }

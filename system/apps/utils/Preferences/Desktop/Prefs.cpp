@@ -378,15 +378,9 @@ void PrefsDesktopWin::HandleMessage( os::Message* pcMessage )
  
 PrefsDesktopApp::PrefsDesktopApp():os::Application( "application/x-vnd-DesktopPreferences" )
 {
-	/* Get screen width and height to centre the window */
-	os::Desktop * pcDesktop = new os::Desktop();
-	int iWidth = pcDesktop->GetScreenMode().m_nWidth;
-	int iHeight = pcDesktop->GetScreenMode().m_nHeight;
-	int iLeft = ( iWidth - 300 ) / 2;
-	int iTop = ( iHeight - 350 ) / 2;
-	
 	/* Show main window */
-	PrefsDesktopWin* pcWindow = new PrefsDesktopWin( os::Rect( iLeft, iTop, iLeft + 320, iTop + 350 ) );
+	PrefsDesktopWin* pcWindow = new PrefsDesktopWin( os::Rect( 0, 0, 340, 350 ) );
+	pcWindow->CenterInScreen();
 	pcWindow->Show();
 	pcWindow->MakeFocus();
 }

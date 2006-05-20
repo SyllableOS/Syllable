@@ -25,6 +25,7 @@
 #include <gui/tabview.h>
 #include <gui/button.h>
 #include <gui/layoutview.h>
+#include <gui/imageview.h>
 #include <gui/view.h>
 #include <gui/frameview.h>
 #include <gui/imagebutton.h>
@@ -61,6 +62,8 @@ class LoginWindow : public os::Window
 		os::FrameView *m_pcInfoFrame, *m_pcIconFrame, *m_pcPasswordFrame;
 		os::LayoutView *m_pcButtonLayout;
 		os::TextView *m_pcCurrentPassword, *m_pcNew1Password, *m_pcNew2Password;
+
+		os::ImageView* m_pcLockIconView;
 
 		os::ImageButton *m_pcIconButton;
 		os::FileRequester *m_pcIconRequester;
