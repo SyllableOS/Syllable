@@ -502,7 +502,7 @@ bool VMware::BltBitmap(SrvBitmap *pcDstBitmap, SrvBitmap *pcSrcBitmap,
 
 void VMware::UnlockBitmap( SrvBitmap* pcDstBitmap, SrvBitmap* pcSrcBitmap, os::IRect cSrc, os::IRect cDst )
 {
-	if( ( pcDstBitmap->m_bVideoMem == false && ( pcSrcBitmap == NULL || pcSrcBitmap->m_bVideoMem == false ) ) )
+	if( pcDstBitmap->m_bVideoMem == false )
 		return;
 		
 	// ACQUIRE lock
@@ -511,8 +511,8 @@ void VMware::UnlockBitmap( SrvBitmap* pcDstBitmap, SrvBitmap* pcSrcBitmap, os::I
 	if(m_bFifoCmds)
 		FifoSync();
 	
-	Fifo_UpdateRect(0, 0, cDst.Width() + 1,
-					cDst.Height() + 1);
+	Fifo_UpdateRect(cDst.left, cDst.top, cDst.Width()+1,
+					cDst.Height()+1);
 		
 	// RELEASE lock
 	m_cGELock.Unlock();

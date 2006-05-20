@@ -269,6 +269,7 @@ FX::FX( int nFd ):m_cGELock( "fx_ge_lock" ), m_hRegisterArea( -1 ), m_hFrameBuff
 	m_bPaletteEnabled = false;
 	m_bEngineDirty = false;
 	int j;
+	m_pRegisterBase = m_pFrameBufferBase = NULL;
 
 	bool bFound = false;
 	int nNrDevs = sizeof( asChipInfos ) / sizeof( chip_info );

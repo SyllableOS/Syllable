@@ -92,6 +92,7 @@ Riva::Riva( int nFd )
 	m_bIsInitiated = false;
 	m_bPaletteEnabled = false;
 	m_bEngineDirty = false;
+	m_pRegisterBase = m_pFrameBufferBase = NULL;
 	int j;
 	
 	bool bFound = false;

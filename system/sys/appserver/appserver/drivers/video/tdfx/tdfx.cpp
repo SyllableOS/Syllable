@@ -51,6 +51,7 @@ TDFX::TDFX( int nFd ):m_cGELock( "tdfx_ge_lock" )
 	PCI_Info_s cPCIInfo;
 
 	m_bIsInitiated = false;
+	m_pRegBase = m_pFrameBufferBase = NULL;
 
 	if( ioctl( nFd, PCI_GFX_GET_PCI_INFO, &cPCIInfo ) != 0 )
 	{

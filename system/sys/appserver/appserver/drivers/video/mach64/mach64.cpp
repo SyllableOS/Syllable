@@ -500,6 +500,7 @@ vesa:
 ATImach64::ATImach64( int nFd ) : M64VesaDriver( nFd ), m_cLock ("mach64_hardware_lock") {
 
 	m_bIsInitialized = false;
+	m_pFramebufferBase = m_pRegisterBase = NULL;
 	
 	/* Get Info */
 	if( ioctl( nFd, PCI_GFX_GET_PCI_INFO, &m_cPCIInfo ) != 0 )

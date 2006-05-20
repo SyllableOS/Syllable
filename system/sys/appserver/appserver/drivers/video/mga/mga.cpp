@@ -85,6 +85,7 @@ Matrox::Matrox( int nFd ) : m_cGELock( "matrox_ge_lock" ), m_cCursorHotSpot(0,0)
 	m_hFrameBufferArea = -1;
 	m_pcCrtc = NULL;
 	m_pcDac = NULL;
+	m_pRegisterBase = m_pFrameBufferBase = NULL;
 	
 	/* Get Info */
 	if( ioctl( nFd, PCI_GFX_GET_PCI_INFO, &m_cPCIInfo ) != 0 )
